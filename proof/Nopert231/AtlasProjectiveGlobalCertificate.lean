@@ -1,13 +1,13 @@
 module
 
-public import Noperthedron.Nopert76.AtlasProjectiveGlobalRigidity
-public import Noperthedron.Nopert76.AtlasProjectiveLocalCertificate
-public import Noperthedron.Nopert76.QuadraticBernstein
+public import Noperthedron.Nopert229.AtlasProjectiveGlobalRigidity
+public import Noperthedron.Nopert229.AtlasProjectiveLocalCertificate
+public import Noperthedron.Nopert229.QuadraticBernstein
 
 @[expose] public section
 
 /-!
-# Rational projective balanced-triple certificates for Nopert #214
+# Rational projective balanced-triple certificates for Nopert #229
 
 This checker fills the gap between a full silhouette-cycle certificate and
 the symmetry-local theorem.  Three cone-interior moving support directions
@@ -16,7 +16,7 @@ quadratic in the projective view and a quadratic in the relative Cayley
 coordinates, enclosed by nested rational interval arithmetic.
 -/
 
-namespace Noperthedron.Nopert76.AtlasProjectiveGlobalCertificate
+namespace Noperthedron.Nopert229.AtlasProjectiveGlobalCertificate
 
 open Noperthedron.Checker Noperthedron.BalancedSupport
 open Noperthedron.SnubCube.ProjectiveView
@@ -1717,6 +1717,6 @@ theorem Box.valid_imp_no_translated_rupert_in_interval
   rintro ⟨p, hp, hbounded, hscale, hmem, offset, hrupert⟩
   exact box.valid_imp_not_translated_rupert h p hp hbounded hscale hmem offset hrupert
 
-end Noperthedron.Nopert76.AtlasProjectiveGlobalCertificate
+end Noperthedron.Nopert229.AtlasProjectiveGlobalCertificate
 
 end

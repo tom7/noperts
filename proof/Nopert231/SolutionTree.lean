@@ -1,21 +1,21 @@
 module
 
-public import Noperthedron.Nopert76.Certificate
-public import Noperthedron.Nopert76.LocalCertificate
-public import Noperthedron.Nopert76.Tightening
+public import Noperthedron.Nopert229.Certificate
+public import Noperthedron.Nopert229.LocalCertificate
+public import Noperthedron.Nopert229.Tightening
 public import Noperthedron.SolutionTable.Defs
 
 @[expose] public section
 
 /-!
-# Checked mixed solution trees for Nopert #214
+# Checked mixed solution trees for Nopert #229
 
 Rows split the rational symmetry-reduced Euler box, carry a global or
 symmetry-local exclusion certificate, or discard a box lying wholly outside
 the closest-representative strip `|θ₁ - θ₂| ≤ 2/3`.
 -/
 
-namespace Noperthedron.Nopert76.SolutionTree
+namespace Noperthedron.Nopert229.SolutionTree
 
 open Noperthedron.Solution
 
@@ -254,6 +254,6 @@ theorem ValidTable.no_matrixPose (table : ValidTable) :
     ¬ ∃ p : MatrixPose, RupertPose p exactPolyhedron.hull :=
   no_matrixPose_of_no_tight_translated_pose table.no_tight_translated_rupert
 
-end Noperthedron.Nopert76.SolutionTree
+end Noperthedron.Nopert229.SolutionTree
 
 end

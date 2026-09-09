@@ -1,11 +1,11 @@
 module
 
-public import Noperthedron.Nopert76.AtlasProjectiveLocalViewTree
+public import Noperthedron.Nopert229.AtlasProjectiveLocalViewTree
 
 @[expose] public section
 
 /-!
-# Packed native certificates for the Nopert #214 local view tree
+# Packed native certificates for the Nopert #229 local view tree
 
 Large generated local certificates contain very little repeated axis data.
 Representing every integer in that data as a separate Lean declaration makes
@@ -18,7 +18,7 @@ Signed rational numerators use zig-zag coding: `z >= 0` is encoded as `2*z`,
 and `z < 0` as `-2*z-1`.
 -/
 
-namespace Noperthedron.Nopert76.PackedLocalViewTree
+namespace Noperthedron.Nopert229.PackedLocalViewTree
 
 open AtlasProjectiveView AtlasProjectiveLocalCertificate
 open AtlasProjectiveLocalViewTree
@@ -196,6 +196,6 @@ def decodePackedTable (initialChild : Nat) (packed : String) : Table :=
     size := decoded.count
   }
 
-end Noperthedron.Nopert76.PackedLocalViewTree
+end Noperthedron.Nopert229.PackedLocalViewTree
 
 end

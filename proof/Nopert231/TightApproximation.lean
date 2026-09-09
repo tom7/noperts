@@ -1,23 +1,23 @@
 module
 
-public import Noperthedron.Nopert76.Approximation
+public import Noperthedron.Nopert229.Approximation
 
 @[expose] public section
 
 /-!
 # Tight rational approximation for the fivefold orbit
 
-The general Nopert #214 checker uses a deliberately loose `10⁻¹⁰` vertex
+The general Nopert #229 checker uses a deliberately loose `10⁻¹⁰` vertex
 allowance.  Near an outer silhouette transition that allowance is much larger
 than the actual rounding error in the published coordinates.  This module
 uses the exact trigonometric values at 72 and 144 degrees, together with a
 kernel-checked rational bridge for all twenty vertices, to prove the sharper
-`2 * 10⁻¹⁵` bound used by the projective local certificate.
+`5 * 10⁻¹⁶` bound used by the projective local certificate.
 -/
 
 open Real
 
-namespace Noperthedron.Nopert76
+namespace Noperthedron.Nopert229
 
 def cos72Q : ℚ := 30901699437494745 / 10^17
 def sin72Q : ℚ := 9510565162951535 / 10^16
@@ -25,7 +25,7 @@ def cos144Q : ℚ := 2 * cos72Q ^ 2 - 1
 def sin144Q : ℚ := 2 * sin72Q * cos72Q
 noncomputable def tightTrigError : ℝ := 1 / 10^16
 /-- Uniform vertex error used by the support-sensitive local checker. -/
-def tightVertexErrorQ : ℚ := 2 / 10^15
+def tightVertexErrorQ : ℚ := 6 / 10^16
 
 theorem cos72_tight :
     |Real.cos (2 * Real.pi / 5) - (cos72Q : ℝ)| ≤ 4 / 10^17 := by
@@ -242,12 +242,12 @@ theorem tightVertex_exact_close (i : VertexIndex) :
 theorem stl_tight_sq_close : ∀ i : VertexIndex,
     (rationalVertex i 0 - tightVertex i 0) ^ 2 +
     (rationalVertex i 1 - tightVertex i 1) ^ 2 +
-    (rationalVertex i 2 - tightVertex i 2) ^ 2 ≤ (18 / 10^16 : ℚ) ^ 2 := by
+    (rationalVertex i 2 - tightVertex i 2) ^ 2 ≤ (4 / 10^16 : ℚ) ^ 2 := by
   decide +kernel
 
 theorem stl_tight_close (i : VertexIndex) :
-    ‖toR3 (rationalVertex i) - toR3 (tightVertex i)‖ ≤ 18 / 10^16 := by
-  have he : (0 : ℝ) ≤ 18 / 10^16 := by norm_num
+    ‖toR3 (rationalVertex i) - toR3 (tightVertex i)‖ ≤ 4 / 10^16 := by
+  have he : (0 : ℝ) ≤ 4 / 10^16 := by norm_num
   rw [EuclideanSpace.norm_eq, ← Real.sqrt_sq he]
   apply Real.sqrt_le_sqrt
   simp only [Fin.sum_univ_three, norm_eq_abs, sq_abs, toR3, PiLp.sub_apply]
@@ -256,7 +256,7 @@ theorem stl_tight_close (i : VertexIndex) :
       (((rationalVertex i 0 - tightVertex i 0) ^ 2 +
         (rationalVertex i 1 - tightVertex i 1) ^ 2 +
         (rationalVertex i 2 - tightVertex i 2) ^ 2 : ℚ) : ℝ) ≤
-          (((18 / 10^16 : ℚ) ^ 2 : ℚ) : ℝ) := by
+          (((4 / 10^16 : ℚ) ^ 2 : ℚ) : ℝ) := by
     exact_mod_cast h
   push_cast at hreal
   norm_num at hreal ⊢
@@ -274,11 +274,11 @@ theorem vertex_close_tight (i : VertexIndex) :
       abel
     _ ≤ ‖toR3 (rationalVertex i) - toR3 (tightVertex i)‖ +
         ‖toR3 (tightVertex i) - exactVertex i‖ := norm_add_le _ _
-    _ ≤ 18 / 10^16 + 2 / 10^16 :=
+    _ ≤ 4 / 10^16 + 2 / 10^16 :=
       add_le_add (stl_tight_close i) (tightVertex_exact_close i)
     _ = (tightVertexErrorQ : ℝ) := by
       norm_num [tightVertexErrorQ]
 
-end Noperthedron.Nopert76
+end Noperthedron.Nopert229
 
 end

@@ -1,8 +1,8 @@
 module
 
-public import Noperthedron.Nopert76.FundamentalDomain
-public import Noperthedron.Nopert76.AtlasQuadratic
-public import Noperthedron.Nopert76.QuadraticBernstein
+public import Noperthedron.Nopert229.FundamentalDomain
+public import Noperthedron.Nopert229.AtlasQuadratic
+public import Noperthedron.Nopert229.QuadraticBernstein
 
 @[expose] public section
 
@@ -16,7 +16,7 @@ approximation to that quadratic and reserve a fixed `2/125` error allowance
 for the two trigonometric coefficients.
 -/
 
-namespace Noperthedron.Nopert76.AtlasFundamentalPrune
+namespace Noperthedron.Nopert229.AtlasFundamentalPrune
 
 open scoped Matrix
 open Noperthedron.Checker
@@ -400,9 +400,9 @@ private theorem narrow_second_coordinate {x y : ℝ}
       nlinarith
 
 /-- Fundamental-domain condition carried by an atlas representative. -/
-def _root_.Noperthedron.Nopert76.AtlasPose.InFivefoldFundamentalDomain
+def _root_.Noperthedron.Nopert229.AtlasPose.InFivefoldFundamentalDomain
     (p : AtlasPose ℝ) (chart : ChartIndex) : Prop :=
-  Noperthedron.Nopert76.InFivefoldFundamentalDomain
+  Noperthedron.Nopert229.InFivefoldFundamentalDomain
     (chartMatrix chart * cayleyMatrix p.x p.y p.z)
 
 private theorem chart0_fundamental_z_mem {p : AtlasPose ℝ}
@@ -544,9 +544,9 @@ theorem mem_restrictedRootInterval {p : AtlasPose ℝ}
 
 @[simp] theorem AtlasPose.matrixPoseWithOffset_inFundamentalDomain_iff
     (p : AtlasPose ℝ) (chart : ChartIndex) (offset : ℝ²) :
-    (p.matrixPoseWithOffset chart offset).InNopert76FundamentalDomain ↔
+    (p.matrixPoseWithOffset chart offset).InNopert229FundamentalDomain ↔
       p.InFivefoldFundamentalDomain chart := by
-  rw [MatrixPose.InNopert76FundamentalDomain,
+  rw [MatrixPose.InNopert229FundamentalDomain,
     AtlasPose.InFivefoldFundamentalDomain,
     AtlasPose.matrixPoseWithOffset_relativeRotation]
 
@@ -558,12 +558,12 @@ theorem matrixPoseWithOffset_ofPose_eq_rightSymmetry
           fivefoldMatrix k =
         chartMatrix chart * cayleyMatrix x y z) :
     (AtlasPose.ofPose euler x y z).matrixPoseWithOffset chart offset =
-      (euler.matrixPoseWithOffset offset).rightNopert76Symmetry k := by
+      (euler.matrixPoseWithOffset offset).rightNopert229Symmetry k := by
   let oldPose := euler.matrixPoseWithOffset offset
-  let reduced := oldPose.rightNopert76Symmetry k
+  let reduced := oldPose.rightNopert229Symmetry k
   have hrelative' : reduced.relativeRotation =
       chartMatrix chart * cayleyMatrix x y z := by
-    rw [Noperthedron.Nopert76.MatrixPose.relativeRotation_rightNopert76Symmetry]
+    rw [Noperthedron.Nopert229.MatrixPose.relativeRotation_rightNopert229Symmetry]
     exact hrelative
   apply matrixPose_ext_val
   · calc
@@ -597,9 +597,9 @@ theorem exists_fundamental_atlas_translated_pose (p : MatrixPose) :
     exists_upper_tight_translated_pose p
   let oldPose := euler.matrixPoseWithOffset offset
   obtain ⟨k, hkfund⟩ :=
-    Noperthedron.Nopert76.MatrixPose.exists_rightNopert76Symmetry_inFundamentalDomain
+    Noperthedron.Nopert229.MatrixPose.exists_rightNopert229Symmetry_inFundamentalDomain
       oldPose
-  let reduced := oldPose.rightNopert76Symmetry k
+  let reduced := oldPose.rightNopert229Symmetry k
   obtain ⟨chart, x, hx, y, hy, z, hz, hradius, hrelative⟩ :=
     exists_bounded_chart_cayley reduced.relativeRotation
       (Noperthedron.SnubCube.MatrixPose.relativeRotation_mem_SO3 reduced)
@@ -608,7 +608,7 @@ theorem exists_fundamental_atlas_translated_pose (p : MatrixPose) :
     AtlasPose.ofPose_mem_root euler x y z heuler.1 hx hy hz
   have hmatrix : q.matrixPoseWithOffset chart offset = reduced := by
     apply matrixPoseWithOffset_ofPose_eq_rightSymmetry
-    rw [← Noperthedron.Nopert76.MatrixPose.relativeRotation_rightNopert76Symmetry]
+    rw [← Noperthedron.Nopert229.MatrixPose.relativeRotation_rightNopert229Symmetry]
     exact hrelative
   have hqfund : q.InFivefoldFundamentalDomain chart := by
     rw [← AtlasPose.matrixPoseWithOffset_inFundamentalDomain_iff
@@ -618,9 +618,9 @@ theorem exists_fundamental_atlas_translated_pose (p : MatrixPose) :
   · simpa [q, AtlasPose.InViewWedge, AtlasPose.ofPose, InViewWedge]
       using hview
   · simpa [q, AtlasPose.InUpperView, AtlasPose.ofPose] using hupper
-  · rw [hmatrix, RupertPose_rightNopert76Symmetry_iff]
+  · rw [hmatrix, RupertPose_rightNopert229Symmetry_iff]
     exact heq
 
-end Noperthedron.Nopert76.AtlasFundamentalPrune
+end Noperthedron.Nopert229.AtlasFundamentalPrune
 
 end

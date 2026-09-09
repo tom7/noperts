@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert76.AtlasProjectiveGlobalCertificate
+public import Noperthedron.Nopert229.AtlasProjectiveGlobalCertificate
 
 @[expose] public section
 
@@ -14,7 +14,7 @@ positive lower bound for the mixture implies that at least one component is a
 valid pointwise obstruction.
 -/
 
-namespace Noperthedron.Nopert76.AtlasProjectiveMixedGlobalCertificate
+namespace Noperthedron.Nopert229.AtlasProjectiveMixedGlobalCertificate
 
 open Noperthedron.Checker Noperthedron.BalancedSupport
 open CayleyAtlas AtlasProjectiveView
@@ -448,6 +448,6 @@ theorem Box.valid_imp_no_translated_rupert_in_interval
   exact box.valid_imp_not_translated_rupert h p hp hbounded hscale hmem
     offset hrupert
 
-end Noperthedron.Nopert76.AtlasProjectiveMixedGlobalCertificate
+end Noperthedron.Nopert229.AtlasProjectiveMixedGlobalCertificate
 
 end

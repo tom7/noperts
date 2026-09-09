@@ -1,18 +1,18 @@
 module
 
-public import Noperthedron.Nopert76.AtlasProjectiveEdgeCertificate
-public import Noperthedron.Nopert76.AtlasFundamentalPrune
-public import Noperthedron.Nopert76.AtlasLocalCertificate
-public import Noperthedron.Nopert76.AtlasProjectiveLocalCertificate
-public import Noperthedron.Nopert76.AtlasProjectiveLocalViewTree
-public import Noperthedron.Nopert76.AtlasProjectiveGlobalCertificate
-public import Noperthedron.Nopert76.AtlasProjectiveMixedGlobalCertificate
+public import Noperthedron.Nopert229.AtlasProjectiveEdgeCertificate
+public import Noperthedron.Nopert229.AtlasFundamentalPrune
+public import Noperthedron.Nopert229.AtlasLocalCertificate
+public import Noperthedron.Nopert229.AtlasProjectiveLocalCertificate
+public import Noperthedron.Nopert229.AtlasProjectiveLocalViewTree
+public import Noperthedron.Nopert229.AtlasProjectiveGlobalCertificate
+public import Noperthedron.Nopert229.AtlasProjectiveMixedGlobalCertificate
 public import Noperthedron.ParallelBool
 
 @[expose] public section
 
 /-!
-# Mixed Cayley/projective solution trees for Nopert #214
+# Mixed Cayley/projective solution trees for Nopert #229
 
 The relative Cayley box is split along any of its five stored coordinates
 (generated trees use only `x,y,z`).  Independently, the outer view is split
@@ -20,7 +20,7 @@ from the whole sphere into eight signed roots and then by four-way midpoint
 triangle subdivision.  Leaves carry projective edge-cycle certificates.
 -/
 
-namespace Noperthedron.Nopert76.AtlasProjectiveSolutionTree
+namespace Noperthedron.Nopert229.AtlasProjectiveSolutionTree
 
 open CayleyAtlas AtlasProjectiveView
 open Noperthedron.SnubCube.ProjectiveView
@@ -539,6 +539,6 @@ theorem no_matrixPose_of_valid_tables
   exact hno ⟨q, hq, hbounded, hfund, hview, hupper, offset,
     heq.mpr hrupert⟩
 
-end Noperthedron.Nopert76.AtlasProjectiveSolutionTree
+end Noperthedron.Nopert229.AtlasProjectiveSolutionTree
 
 end

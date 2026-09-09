@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert76.AtlasQuadratic
-public import Noperthedron.Nopert76.LocalCertificate
+public import Noperthedron.Nopert229.AtlasQuadratic
+public import Noperthedron.Nopert229.LocalCertificate
 
 @[expose] public section
 
@@ -14,11 +14,11 @@ one of the five exact symmetries is checked directly in Cayley coordinates:
 each entry of the denominator-cleared mismatch is a rational quadratic.
 -/
 
-namespace Noperthedron.Nopert76.AtlasLocalCertificate
+namespace Noperthedron.Nopert229.AtlasLocalCertificate
 
 open scoped Matrix RealInnerProductSpace
 open Noperthedron.Checker
-open Noperthedron.Nopert76.CayleyAtlas
+open Noperthedron.Nopert229.CayleyAtlas
 open Noperthedron.SnubCube.CayleyEdgeCertificate
 
 structure Box where
@@ -384,7 +384,7 @@ theorem Box.valid_axisAngle_ratio (box : Box) (h : box.Valid)
         (relativeRotationAtSymmetry
           (p.matrixPoseWithOffset box.chart offset) box.symmetryIndex))) :
     1 - Real.cos a.angle ≤ |Real.sin a.angle| * (box.c : ℝ) := by
-  apply Noperthedron.Nopert76.AxisAngle.ratio_of_inner_mismatch_bound
+  apply Noperthedron.Nopert229.AxisAngle.ratio_of_inner_mismatch_bound
     (p.matrixPoseWithOffset box.chart offset) box.symmetryIndex a
     (box.c : ℝ) (box.r : ℝ)
   · exact_mod_cast h.geometry.c_nonneg
@@ -409,7 +409,7 @@ theorem Box.valid_imp_not_translated_rupert (box : Box) (h : box.Valid) :
   obtain ⟨a⟩ := Noperthedron.BalancedSupport.exists_axisAngle
     relative.val relative.property
   apply
-    Noperthedron.Nopert76.not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation
+    Noperthedron.Nopert229.not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation
       (p := p.matrixPoseWithOffset box.chart offset)
       (g := box.symmetryIndex) (a := a)
       (index := fun j i => (ebox.certificate j).contact i |>.index)
@@ -475,6 +475,6 @@ theorem Box.valid_imp_no_translated_rupert_in_interval
   rintro ⟨p, hp, offset, hrupert⟩
   exact box.valid_imp_not_translated_rupert h p hp offset hrupert
 
-end Noperthedron.Nopert76.AtlasLocalCertificate
+end Noperthedron.Nopert229.AtlasLocalCertificate
 
 end

@@ -1,12 +1,12 @@
 module
 
-public import Noperthedron.Nopert76.AtlasProjectiveSolutionTree
-public import Noperthedron.Nopert76.PackedLocalViewTree
+public import Noperthedron.Nopert229.AtlasProjectiveSolutionTree
+public import Noperthedron.Nopert229.PackedLocalViewTree
 
 @[expose] public section
 
 /-!
-# Packed runtime data for Nopert #214 global solution trees
+# Packed runtime data for Nopert #229 global solution trees
 
 The final native executable reads compact ignored artifacts instead of asking
 Lean to elaborate hundreds of thousands of generated row declarations. The
@@ -14,7 +14,7 @@ decoder is deliberately total; the semantic parallel checker remains the
 trusted validation step for every decoded value.
 -/
 
-namespace Noperthedron.Nopert76.PackedSolutionTree
+namespace Noperthedron.Nopert229.PackedSolutionTree
 
 open AtlasProjectiveSolutionTree AtlasProjectiveView
 open AtlasProjectiveEdgeCertificate AtlasProjectiveGlobalCertificate
@@ -278,6 +278,6 @@ def decodeTable (chart : CayleyAtlas.ChartIndex)
     sharedLocal := shared
   }
 
-end Noperthedron.Nopert76.PackedSolutionTree
+end Noperthedron.Nopert229.PackedSolutionTree
 
 end

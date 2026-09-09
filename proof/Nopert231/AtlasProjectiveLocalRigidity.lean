@@ -1,12 +1,12 @@
 module
 
-public import Noperthedron.Nopert76.AtlasProjectiveView
-public import Noperthedron.Nopert76.SymmetryLocal
+public import Noperthedron.Nopert229.AtlasProjectiveView
+public import Noperthedron.Nopert229.SymmetryLocal
 
 @[expose] public section
 
 /-!
-# Projective moving-direction local rigidity for Nopert #214
+# Projective moving-direction local rigidity for Nopert #229
 
 This is the signed-atlas analogue of the snub-cube projective local theorem.
 The support directions, determinant weights, and first-variation vectors vary
@@ -14,7 +14,7 @@ polynomially with the normalized projective view.  The finite-rotation ratio
 is supplied separately by the atlas-local Cayley mismatch certificate.
 -/
 
-namespace Noperthedron.Nopert76.AtlasProjectiveLocalRigidity
+namespace Noperthedron.Nopert229.AtlasProjectiveLocalRigidity
 
 open scoped RealInnerProductSpace
 open Noperthedron.BalancedSupport
@@ -185,7 +185,7 @@ theorem not_rupertPose_of_projective_local_certificates
     (p.matrixPoseWithOffset chart offset) g
   obtain ⟨a⟩ := exists_axisAngle relative.val relative.property
   apply
-    Noperthedron.Nopert76.not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation
+    Noperthedron.Nopert229.not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation
       (p := p.matrixPoseWithOffset chart offset) (g := g) (a := a)
       (index := index)
       (weight := fun j => weight root p (edge j))
@@ -215,6 +215,6 @@ theorem not_rupertPose_of_projective_local_certificates
     exact weight_balance root p (edge j) hscale
   · exact hsupport
 
-end Noperthedron.Nopert76.AtlasProjectiveLocalRigidity
+end Noperthedron.Nopert229.AtlasProjectiveLocalRigidity
 
 end

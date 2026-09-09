@@ -1,19 +1,19 @@
-import Noperthedron.Nopert76.FundamentalChart3
-import Noperthedron.Nopert76.NativeExecutable
-import Noperthedron.Nopert76.PackedSolutionTree
+import Noperthedron.Nopert229.FundamentalChart3
+import Noperthedron.Nopert229.NativeExecutable
+import Noperthedron.Nopert229.PackedSolutionTree
 
 /-!
 Native executable that reads and checks exact certificate data, then constructs
-a proof that the fivefold-symmetric Nopert #76 is not Rupert.
+a proof that the fivefold-symmetric Nopert #228 is not Rupert.
 
 This is analogous to `constructValidTable`: the expensive Boolean checks run
 as parallel native code, while kernel-proved bridge theorems turn success into
 the semantic proof consumed by the public theorem.
 -/
 
-open Noperthedron.Nopert76
-open Noperthedron.Nopert76.AtlasProjectiveSolutionTree
-open Noperthedron.Nopert76.NativeExecutable
+open Noperthedron.Nopert229
+open Noperthedron.Nopert229.AtlasProjectiveSolutionTree
+open Noperthedron.Nopert229.NativeExecutable
 
 /-- A completed local-table audit found 64 chunks materially faster than 512
 for these comparatively expensive exact-rational rows. -/

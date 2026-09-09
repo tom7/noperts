@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Emit exact tangent-cone certificates for the Nopert #214 checker model.
+"""Emit exact tangent-cone certificates for the Nopert #229 checker model.
 
 For each ordered pair of distinct vertices ``(base, target)``, find at most
 three incident edge directions at ``base`` whose nonnegative rational
@@ -18,44 +18,43 @@ import itertools
 from fractions import Fraction
 from pathlib import Path
 
-import nopert76_certificate_search
-from nopert214_certificate_search import VERTICES_Q
+from nopert229_vertices import VERTICES_Q
 
 
 ADJACENCY = (
-    (1, 4, 16, 17, 18),
-    (0, 2, 4, 18),
-    (1, 3, 4, 5, 6, 7, 18),
-    (2, 7, 18, 19),
-    (0, 1, 2, 5, 8),
-    (2, 4, 6, 8),
-    (2, 5, 7, 8, 9, 10, 11),
-    (2, 3, 6, 11),
-    (4, 5, 6, 9, 12),
-    (6, 8, 10, 12),
-    (6, 9, 11, 12, 13, 14, 15),
-    (6, 7, 10, 15),
-    (8, 9, 10, 13, 16),
-    (10, 12, 14, 16),
-    (10, 13, 15, 16, 17, 18, 19),
-    (10, 11, 14, 19),
-    (0, 12, 13, 14, 17),
-    (0, 14, 16, 18),
-    (0, 1, 2, 3, 14, 17, 19),
-    (3, 14, 15, 18),
+    (1, 4, 8, 12, 16, 17),
+    (0, 2, 4, 5, 17, 18),
+    (1, 3, 5, 6, 7, 18),
+    (2, 7, 11, 15, 18, 19),
+    (0, 1, 5, 8, 12, 16),
+    (1, 2, 4, 6, 8, 9),
+    (2, 5, 7, 9, 10, 11),
+    (2, 3, 6, 11, 15, 19),
+    (0, 4, 5, 9, 12, 16),
+    (5, 6, 8, 10, 12, 13),
+    (6, 9, 11, 13, 15),
+    (3, 6, 7, 10, 15, 19),
+    (0, 4, 8, 9, 13, 16),
+    (9, 10, 12, 14, 15, 16, 17),
+    (13, 15, 17, 19),
+    (3, 7, 10, 11, 13, 14, 19),
+    (0, 4, 8, 12, 13, 17),
+    (0, 1, 13, 14, 16, 18, 19),
+    (1, 2, 3, 17, 19),
+    (3, 7, 11, 14, 15, 17, 18),
 )
 
 
-def sub(left, right):
-    return tuple(x - y for x, y in zip(left, right))
+def sub(u, v):
+    return (u[0] - v[0], u[1] - v[1], u[2] - v[2])
 
 
-def add(left, right):
-    return tuple(x + y for x, y in zip(left, right))
+def add(u, v):
+    return (u[0] + v[0], u[1] + v[1], u[2] + v[2])
 
 
-def scale(coefficient, vector):
-    return tuple(coefficient * x for x in vector)
+def scale(c, v):
+    return (c * v[0], c * v[1], c * v[2])
 
 
 def det(columns):
@@ -135,7 +134,7 @@ def lean_combination(indices, coefficients):
             ", ".join(lean_rat(value) for value in coefficients) + "] }")
 
 
-def emit(destination):
+def emit(destination: Path):
     table = []
     max_bits = 0
     for base in range(20):
@@ -152,10 +151,10 @@ def emit(destination):
 
     lines = [
         "module", "",
-        "public import Noperthedron.Nopert76.SparseSupport",
-        "public meta import Noperthedron.Nopert76.SparseSupport", "",
+        "public import Noperthedron.Nopert229.SparseSupport",
+        "public meta import Noperthedron.Nopert229.SparseSupport", "",
         "@[expose] public section", "",
-        "namespace Noperthedron.Nopert76.GeneratedTangentCones", "",
+        "namespace Noperthedron.Nopert229.GeneratedTangentCones", "",
         "set_option linter.unusedTactic false",
         "set_option linter.unreachableTactic false",
         "set_option linter.unnecessarySeqFocus false", "",
@@ -200,7 +199,7 @@ def emit(destination):
                 "  · funext coordinate",
                 "    fin_cases coordinate <;>",
                 f"      simp [{name}, supportGenerator, rationalVertex,",
-                "        stlVertices, Fin.sum_univ_three] <;> norm_num",
+                "        rationalVertices, Fin.sum_univ_three] <;> norm_num",
                 "",
             ])
 
@@ -220,8 +219,9 @@ def emit(destination):
     lines.extend([
         "theorem table_valid_native : TangentTableValid table := by",
         "  native_decide", "",
-        "end Noperthedron.Nopert76.GeneratedTangentCones", "", "end", "",
+        "end Noperthedron.Nopert229.GeneratedTangentCones", "", "end", "",
     ])
+    destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text("\n".join(lines), encoding="utf-8")
     print(f"wrote {destination} ({destination.stat().st_size} bytes; "
           f"maximum rational component {max_bits} bits)")

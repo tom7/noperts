@@ -1,25 +1,25 @@
 module
 
-public import Noperthedron.Nopert76.AtlasQuadratic
+public import Noperthedron.Nopert229.AtlasQuadratic
 public import Noperthedron.BalancedSupport.Cycle
 public import Noperthedron.Checker.RatTrigBall
 
 @[expose] public section
 
 /-!
-# Executable edge-cycle rows for the Nopert #214 Cayley atlas
+# Executable edge-cycle rows for the Nopert #229 Cayley atlas
 
 The clockwise normals of a cyclic outer-vertex list balance identically.
 Each row combines its selected inner contacts as exact rational quadratics
 before interval evaluation, preserving cancellations between contacts.
 -/
 
-namespace Noperthedron.Nopert76.AtlasEdgeCertificate
+namespace Noperthedron.Nopert229.AtlasEdgeCertificate
 
 open scoped RealInnerProductSpace
 open Noperthedron.Checker
 open Noperthedron.BalancedSupport
-open Noperthedron.Nopert76.CayleyAtlas
+open Noperthedron.Nopert229.CayleyAtlas
 open AtlasQuadratic
 open RationalApprox
 
@@ -976,6 +976,6 @@ theorem Box.valid_imp_no_translated_rupert_in_interval
   rintro ⟨p, hp, offset, hrupert⟩
   exact box.valid_imp_not_translated_rupert h p hp offset hrupert
 
-end Noperthedron.Nopert76.AtlasEdgeCertificate
+end Noperthedron.Nopert229.AtlasEdgeCertificate
 
 end

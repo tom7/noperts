@@ -1,20 +1,20 @@
 module
 
-public import Noperthedron.Nopert76.AtlasProjectiveLocalCertificate
+public import Noperthedron.Nopert229.AtlasProjectiveLocalCertificate
 
 @[expose] public section
 
 /-!
-# Sparse support checks for Nopert #214
+# Sparse support checks for Nopert #229
 
 For a linear functional to be maximized at a vertex of a polytope, it is
 enough to compare that vertex with the generators of its tangent cone.  The
-rational checker model of Nopert #214 has at most seven such generators at
+rational checker model of Nopert #229 has at most seven such generators at
 each vertex.  This reduces the repeated local-certificate support check from
 twenty vertices to seven (with padding entries equal to the selected vertex).
 -/
 
-namespace Noperthedron.Nopert76.SparseSupport
+namespace Noperthedron.Nopert229.SparseSupport
 
 open Noperthedron.Checker
 open AtlasProjectiveView
@@ -23,26 +23,26 @@ open AtlasProjectiveLocalCertificate
 /-- Tangent-cone generators for each rational checker vertex.  Entries beyond
 the actual degree are padded by the vertex itself. -/
 def supportGenerator : VertexIndex → Fin 7 → VertexIndex := ![
-  ![1, 4, 16, 17, 18, 18, 18],
-  ![0, 2, 4, 18, 18, 18, 18],
-  ![1, 3, 4, 5, 6, 7, 18],
-  ![2, 7, 18, 19, 19, 19, 19],
-  ![0, 1, 2, 5, 8, 8, 8],
-  ![2, 4, 6, 8, 8, 8, 8],
-  ![2, 5, 7, 8, 9, 10, 11],
-  ![2, 3, 6, 11, 11, 11, 11],
-  ![4, 5, 6, 9, 12, 12, 12],
-  ![6, 8, 10, 12, 12, 12, 12],
-  ![6, 9, 11, 12, 13, 14, 15],
-  ![6, 7, 10, 15, 15, 15, 15],
-  ![8, 9, 10, 13, 16, 16, 16],
-  ![10, 12, 14, 16, 16, 16, 16],
-  ![10, 13, 15, 16, 17, 18, 19],
-  ![10, 11, 14, 19, 19, 19, 19],
-  ![0, 12, 13, 14, 17, 17, 17],
-  ![0, 14, 16, 18, 18, 18, 18],
-  ![0, 1, 2, 3, 14, 17, 19],
-  ![3, 14, 15, 18, 18, 18, 18]
+  ![1, 4, 8, 12, 16, 17, 0],
+  ![0, 2, 4, 5, 17, 18, 1],
+  ![1, 3, 5, 6, 7, 18, 2],
+  ![2, 7, 11, 15, 18, 19, 3],
+  ![0, 1, 5, 8, 12, 16, 4],
+  ![1, 2, 4, 6, 8, 9, 5],
+  ![2, 5, 7, 9, 10, 11, 6],
+  ![2, 3, 6, 11, 15, 19, 7],
+  ![0, 4, 5, 9, 12, 16, 8],
+  ![5, 6, 8, 10, 12, 13, 9],
+  ![6, 9, 11, 13, 15, 10, 10],
+  ![3, 6, 7, 10, 15, 19, 11],
+  ![0, 4, 8, 9, 13, 16, 12],
+  ![9, 10, 12, 14, 15, 16, 17],
+  ![13, 15, 17, 19, 14, 14, 14],
+  ![3, 7, 10, 11, 13, 14, 19],
+  ![0, 4, 8, 12, 13, 17, 16],
+  ![0, 1, 13, 14, 16, 18, 19],
+  ![1, 2, 3, 17, 19, 18, 18],
+  ![3, 7, 11, 14, 15, 17, 18]
 ]
 
 structure TangentCombination where
@@ -226,6 +226,6 @@ theorem Box.SparseViewValid.toViewValid {box : Box}
   barycentric := h.barycentric
   angle_bound := h.angle_bound
 
-end Noperthedron.Nopert76.SparseSupport
+end Noperthedron.Nopert229.SparseSupport
 
 end

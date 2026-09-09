@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Finset.Max
-public import Noperthedron.Nopert76.CayleyAtlas
+public import Noperthedron.Nopert229.CayleyAtlas
 
 @[expose] public section
 
@@ -15,7 +15,7 @@ each Cayley chart, allowing most of relative-rotation space to be pruned
 before geometric certificates are attempted.
 -/
 
-namespace Noperthedron.Nopert76
+namespace Noperthedron.Nopert229
 
 open scoped Matrix
 
@@ -78,15 +78,15 @@ theorem fivefoldMatrix_image_hull (k : OrbitIndex) :
   exact rotate_hull_iterated_nat k.val
 
 /-- Compose only the inner rotation by an exact symmetry. -/
-noncomputable def _root_.MatrixPose.rightNopert76Symmetry
+noncomputable def _root_.MatrixPose.rightNopert229Symmetry
     (p : MatrixPose) (k : OrbitIndex) : MatrixPose where
   innerRot := p.innerRot * fivefoldSO3 k
   outerRot := p.outerRot
   innerOffset := p.innerOffset
 
-theorem innerShadow_rightNopert76Symmetry
+theorem innerShadow_rightNopert229Symmetry
     (p : MatrixPose) (k : OrbitIndex) :
-    innerShadow (p.rightNopert76Symmetry k) exactPolyhedron.hull =
+    innerShadow (p.rightNopert229Symmetry k) exactPolyhedron.hull =
       innerShadow p exactPolyhedron.hull := by
   ext w
   constructor
@@ -96,7 +96,7 @@ theorem innerShadow_rightNopert76Symmetry
       rw [← fivefoldMatrix_image_hull k]
       exact ⟨v, hv, rfl⟩
     refine ⟨(fivefoldMatrix k).toEuclideanLin v, hgv, ?_⟩
-    simp [MatrixPose.inner_apply, MatrixPose.rightNopert76Symmetry,
+    simp [MatrixPose.inner_apply, MatrixPose.rightNopert229Symmetry,
       fivefoldSO3, Matrix.toLpLin_apply, Matrix.mulVec_mulVec]
   · rintro ⟨v, hv, rfl⟩
     have hv' : v ∈ (fivefoldMatrix k).toEuclideanLin ''
@@ -104,21 +104,21 @@ theorem innerShadow_rightNopert76Symmetry
       rwa [fivefoldMatrix_image_hull k]
     obtain ⟨u, hu, rfl⟩ := hv'
     refine ⟨u, hu, ?_⟩
-    simp [MatrixPose.inner_apply, MatrixPose.rightNopert76Symmetry,
+    simp [MatrixPose.inner_apply, MatrixPose.rightNopert229Symmetry,
       fivefoldSO3, Matrix.toLpLin_apply, Matrix.mulVec_mulVec]
 
-@[simp] theorem outerShadow_rightNopert76Symmetry
+@[simp] theorem outerShadow_rightNopert229Symmetry
     (p : MatrixPose) (k : OrbitIndex) :
-    outerShadow (p.rightNopert76Symmetry k) exactPolyhedron.hull =
+    outerShadow (p.rightNopert229Symmetry k) exactPolyhedron.hull =
       outerShadow p exactPolyhedron.hull := by
   rfl
 
-theorem RupertPose_rightNopert76Symmetry_iff
+theorem RupertPose_rightNopert229Symmetry_iff
     (p : MatrixPose) (k : OrbitIndex) :
-    RupertPose (p.rightNopert76Symmetry k) exactPolyhedron.hull ↔
+    RupertPose (p.rightNopert229Symmetry k) exactPolyhedron.hull ↔
       RupertPose p exactPolyhedron.hull := by
-  simp only [RupertPose, innerShadow_rightNopert76Symmetry,
-    outerShadow_rightNopert76Symmetry]
+  simp only [RupertPose, innerShadow_rightNopert229Symmetry,
+    outerShadow_rightNopert229Symmetry]
 
 /-- A relative rotation is in the identity fivefold Dirichlet cell when no
 right symmetry increases its trace. -/
@@ -138,24 +138,24 @@ theorem exists_mul_fivefold_inFundamentalDomain
   rw [Matrix.mul_assoc, fivefoldMatrix_mul]
   exact hmax (composeSymmetry k j) (Finset.mem_univ _)
 
-def _root_.MatrixPose.InNopert76FundamentalDomain
+def _root_.MatrixPose.InNopert229FundamentalDomain
     (p : MatrixPose) : Prop :=
   InFivefoldFundamentalDomain p.relativeRotation
 
-@[simp] theorem MatrixPose.relativeRotation_rightNopert76Symmetry
+@[simp] theorem MatrixPose.relativeRotation_rightNopert229Symmetry
     (p : MatrixPose) (k : OrbitIndex) :
-    (p.rightNopert76Symmetry k).relativeRotation =
+    (p.rightNopert229Symmetry k).relativeRotation =
       p.relativeRotation * fivefoldMatrix k := by
   simp [MatrixPose.relativeRotation,
-    MatrixPose.rightNopert76Symmetry, fivefoldSO3, Matrix.mul_assoc]
+    MatrixPose.rightNopert229Symmetry, fivefoldSO3, Matrix.mul_assoc]
 
-theorem MatrixPose.exists_rightNopert76Symmetry_inFundamentalDomain
+theorem MatrixPose.exists_rightNopert229Symmetry_inFundamentalDomain
     (p : MatrixPose) :
     ∃ k : OrbitIndex,
-      (p.rightNopert76Symmetry k).InNopert76FundamentalDomain := by
+      (p.rightNopert229Symmetry k).InNopert229FundamentalDomain := by
   obtain ⟨k, hk⟩ := exists_mul_fivefold_inFundamentalDomain p.relativeRotation
-  exact ⟨k, by simpa [MatrixPose.InNopert76FundamentalDomain] using hk⟩
+  exact ⟨k, by simpa [MatrixPose.InNopert229FundamentalDomain] using hk⟩
 
-end Noperthedron.Nopert76
+end Noperthedron.Nopert229
 
 end

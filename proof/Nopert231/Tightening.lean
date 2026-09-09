@@ -1,20 +1,20 @@
 module
 
-public import Noperthedron.Nopert76.Symmetry
+public import Noperthedron.Nopert229.Symmetry
 public import Noperthedron.BalancedSupport.UniversalDomain
 public import Noperthedron.BalancedSupport.ViewAntipode
 
 @[expose] public section
 
 /-!
-# A symmetry-reduced pose domain for Nopert #214
+# A symmetry-reduced pose domain for Nopert #229
 
 Both azimuths can be reduced modulo `2π/5`.  We retain the shape-independent
 bounds for the other three Euler parameters.  The resulting rational box is
 the domain that the certificate tree must cover.
 -/
 
-namespace Noperthedron.Nopert76
+namespace Noperthedron.Nopert229
 
 open Real
 open Noperthedron.BalancedSupport
@@ -249,6 +249,6 @@ theorem no_matrixPose_of_no_tight_translated_pose
     (MatrixPose.RupertPose_rotateBy_iff p δ exactPolyhedron.hull).mpr hp
   exact h ⟨q, hq, offset, heq.mpr hrot⟩
 
-end Noperthedron.Nopert76
+end Noperthedron.Nopert229
 
 end

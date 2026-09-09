@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert76.AtlasProjectiveLocalViewTree
-public import Noperthedron.Nopert76.GeneratedTangentCones
+public import Noperthedron.Nopert229.AtlasProjectiveLocalViewTree
+public import Noperthedron.Nopert229.GeneratedTangentCones
 
 @[expose] public section
 
@@ -14,7 +14,7 @@ proof of the sparse predicate is converted to the original `Table.Valid`
 hypothesis using the exact tangent-cone certificates.
 -/
 
-namespace Noperthedron.Nopert76.SparseLocalViewTree
+namespace Noperthedron.Nopert229.SparseLocalViewTree
 
 open AtlasProjectiveLocalViewTree
 open SparseSupport
@@ -290,6 +290,6 @@ theorem Table.Valid.of_sparseWithTasksB {table : Table} {taskCount : ℕ}
   apply Table.Valid.of_sparseParB
   exact h
 
-end Noperthedron.Nopert76.SparseLocalViewTree
+end Noperthedron.Nopert229.SparseLocalViewTree
 
 end

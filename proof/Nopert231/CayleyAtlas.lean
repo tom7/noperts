@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert76.Tightening
+public import Noperthedron.Nopert229.Tightening
 public import Noperthedron.SnubCube.CayleyInterval
 
 @[expose] public section
@@ -14,7 +14,7 @@ four matrices sum to zero.  Hence one trace is nonnegative and the existing
 bounded Cayley theorem supplies coordinates in `[-2,2]³`.
 -/
 
-namespace Noperthedron.Nopert76.CayleyAtlas
+namespace Noperthedron.Nopert229.CayleyAtlas
 
 open scoped Matrix
 
@@ -169,6 +169,6 @@ theorem exists_bounded_chart_cayley (R : Matrix (Fin 3) (Fin 3) ℝ)
   refine ⟨chart, x, hx, y, hy, z, hz, hradius, ?_⟩
   exact hrelative
 
-end Noperthedron.Nopert76.CayleyAtlas
+end Noperthedron.Nopert229.CayleyAtlas
 
 end

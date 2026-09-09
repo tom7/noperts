@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert76.AtlasProjectiveLocalCertificate
+public import Noperthedron.Nopert229.AtlasProjectiveLocalCertificate
 
 @[expose] public section
 
@@ -13,7 +13,7 @@ the Cayley interval or chart.  This tree checks that geometry once.  A small
 near-symmetry leaf in the main search to reuse the same view atlas.
 -/
 
-namespace Noperthedron.Nopert76.AtlasProjectiveLocalViewTree
+namespace Noperthedron.Nopert229.AtlasProjectiveLocalViewTree
 
 open AtlasProjectiveView AtlasProjectiveLocalCertificate
 open Noperthedron.SnubCube.ProjectiveView
@@ -230,6 +230,6 @@ theorem Table.valid_imp_not_translated_rupert (table : Table)
   · simpa [hroot] using hscale
   · simpa [hroot, htriangle] using hmem
 
-end Noperthedron.Nopert76.AtlasProjectiveLocalViewTree
+end Noperthedron.Nopert229.AtlasProjectiveLocalViewTree
 
 end

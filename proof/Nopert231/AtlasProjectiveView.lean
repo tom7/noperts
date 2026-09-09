@@ -1,22 +1,22 @@
 module
 
-public import Noperthedron.Nopert76.AtlasEdgeCertificate
-public import Noperthedron.Nopert76.AtlasFundamentalPrune
+public import Noperthedron.Nopert229.AtlasEdgeCertificate
+public import Noperthedron.Nopert229.AtlasFundamentalPrune
 public import Noperthedron.SnubCube.ProjectiveView
 
 @[expose] public section
 
 /-!
-# A signed projective atlas for Nopert #214 viewing directions
+# A signed projective atlas for Nopert #229 viewing directions
 
-Unlike the snub cube, Nopert #214 does not have enough symmetry to move
+Unlike the snub cube, Nopert #229 does not have enough symmetry to move
 every outer view into one positive chamber.  Eight signed coordinate
 triangles cover the whole sphere.  Dividing a unit view by its signed
 coordinate sum puts it in the appropriate rational triangle, and that sum
 is at least one.
 -/
 
-namespace Noperthedron.Nopert76.AtlasProjectiveView
+namespace Noperthedron.Nopert229.AtlasProjectiveView
 
 open scoped RealInnerProductSpace
 open AtlasEdgeCertificate
@@ -325,6 +325,6 @@ theorem exists_root (p : AtlasPose ℝ) :
           normalizedView_mem_root_of_sign ?_⟩ <;>
           intro c <;> fin_cases c <;> simp [rootSign, h0', h1', h2']
 
-end Noperthedron.Nopert76.AtlasProjectiveView
+end Noperthedron.Nopert229.AtlasProjectiveView
 
 end

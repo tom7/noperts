@@ -1,12 +1,12 @@
 module
 
-public import Noperthedron.Nopert76.IsNotRupert
-public import Noperthedron.Nopert76.SparseLocalViewTree
+public import Noperthedron.Nopert229.IsNotRupert
+public import Noperthedron.Nopert229.SparseLocalViewTree
 
 @[expose] public section
 
 /-!
-# Native executable proof construction for Nopert #214
+# Native executable proof construction for Nopert #229
 
 This module is the executable counterpart of the generated `native_decide`
 proofs. A release-mode program can check data-only local and global tables in
@@ -19,7 +19,7 @@ and report useful errors. Proof fields are erased by native code generation;
 their correctness comes from the specifications of the Boolean checkers.
 -/
 
-namespace Noperthedron.Nopert76.NativeExecutable
+namespace Noperthedron.Nopert229.NativeExecutable
 
 open AtlasProjectiveLocalViewTree
 open SparseLocalViewTree
@@ -214,9 +214,9 @@ def constructProof (localTaskCount globalTaskCount : Nat)
       · exact valid1.down
       · exact valid2.down
       · exact valid3.down }
-  log "constructed proof: exact Nopert #214 is not Rupert"
+  log "constructed proof: exact Nopert #229 is not Rupert"
   pure ⟨checkedCharts.notRupert⟩
 
-end Noperthedron.Nopert76.NativeExecutable
+end Noperthedron.Nopert229.NativeExecutable
 
 end

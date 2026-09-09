@@ -1,13 +1,13 @@
 module
 
-public import Noperthedron.Nopert76.Approximation
+public import Noperthedron.Nopert229.Approximation
 public import Noperthedron.Pose
 public import Noperthedron.RealMod
 
 @[expose] public section
 
 /-!
-# Fivefold symmetry of Nopert #214
+# Fivefold symmetry of Nopert #229
 
 The exact model is invariant under rotation by `2π/5` around the z axis.
 Consequently either Euler azimuth may be reduced modulo `2π/5` without
@@ -16,7 +16,7 @@ changing the corresponding projected hull.
 
 open Real
 
-namespace Noperthedron.Nopert76
+namespace Noperthedron.Nopert229
 
 def nextOrbit : OrbitIndex ≃ OrbitIndex where
   toFun k := ⟨(k.val + 1) % 5, Nat.mod_lt _ (by omega)⟩
@@ -173,6 +173,6 @@ theorem rotM_add_fifth_iterated {θ φ : ℝ} (n : ℤ) :
       ring_nf at h ⊢
       exact h.symm
 
-end Noperthedron.Nopert76
+end Noperthedron.Nopert229
 
 end

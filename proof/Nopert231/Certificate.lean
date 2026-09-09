@@ -1,20 +1,20 @@
 module
 
 public import Noperthedron.BalancedSupport.RationalCertificate
-public import Noperthedron.Nopert76.Approximation
+public import Noperthedron.Nopert229.Approximation
 
 @[expose] public section
 
 
 /-!
-# Balanced-global certificates for Nopert #214
+# Balanced-global certificates for Nopert #229
 
 The checker is the generic rational balanced-support checker instantiated
 with the printed STL coordinates.  `Approximation.lean` connects those
 rational coordinates to the intended exact fivefold-symmetric vertices.
 -/
 
-namespace Noperthedron.Nopert76.Certificate
+namespace Noperthedron.Nopert229.Certificate
 
 abbrev Contact :=
   Noperthedron.BalancedSupport.RationalCertificate.Contact VertexIndex
@@ -44,6 +44,6 @@ theorem Box.valid_imp_no_translated_rupert_in_interval
   exact Noperthedron.BalancedSupport.RationalCertificate.Box.valid_imp_no_translated_rupert_in_interval
     exactGoodPoly rationalPolyhedron exactApproximation box h
 
-end Noperthedron.Nopert76.Certificate
+end Noperthedron.Nopert229.Certificate
 
 end

@@ -1,12 +1,12 @@
 module
 
-public import Noperthedron.Nopert76.Symmetry
+public import Noperthedron.Nopert229.Symmetry
 public import Noperthedron.SnubCube.LocalRigidity
 
 @[expose] public section
 
 /-!
-# Local rigidity at the five symmetry strata of Nopert #214
+# Local rigidity at the five symmetry strata of Nopert #229
 
 This specializes the reindexed balanced-support theorem to the exact
 fivefold action.  It is the mathematical layer needed to cover the
@@ -14,7 +14,7 @@ Euler-pole equality strata, where equal shadows need not have equal Euler
 coordinates.
 -/
 
-namespace Noperthedron.Nopert76
+namespace Noperthedron.Nopert229
 
 open scoped Matrix RealInnerProductSpace
 open Noperthedron.BalancedSupport Real
@@ -250,6 +250,6 @@ theorem not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation
   rw [← hA_eq j]
   exact hremainder.trans hj
 
-end Noperthedron.Nopert76
+end Noperthedron.Nopert229
 
 end

@@ -1,12 +1,12 @@
 module
 
-public import Noperthedron.Nopert76.AtlasProjectiveSolutionTree
+public import Noperthedron.Nopert229.AtlasProjectiveSolutionTree
 public import Noperthedron.Rupert.Equivalences.RupertEquivRupertSet
 
 @[expose] public section
 
 /-!
-# The public non-Rupert conclusion for Nopert #214
+# The public non-Rupert conclusion for Nopert #229
 
 This file contains the small, certificate-independent bridge from four valid
 Cayley-chart tables to the usual vertex-set formulation of the Rupert
@@ -15,7 +15,7 @@ property.
 
 open scoped Matrix
 
-namespace Noperthedron.Nopert76
+namespace Noperthedron.Nopert229
 
 open CayleyAtlas
 open AtlasProjectiveSolutionTree
@@ -33,7 +33,7 @@ private lemma rupert_set_implies_matrix_pose {S : Set ℝ³}
   exact hshadow
 
 /-- Valid exclusion tables for all four Cayley charts prove that the exact
-fivefold-symmetric version of Nopert #214 is not Rupert. -/
+fivefold-symmetric version of Nopert #229 is not Rupert. -/
 theorem not_rupert_of_valid_tables
     (table : ChartIndex → AtlasProjectiveSolutionTree.Table)
     (hchart : ∀ chart, (table chart).chart = chart)
@@ -46,6 +46,6 @@ theorem not_rupert_of_valid_tables
   exact no_matrixPose_of_valid_tables table hchart hvalid
     (rupert_set_implies_matrix_pose hset)
 
-end Noperthedron.Nopert76
+end Noperthedron.Nopert229
 
 end

@@ -1,19 +1,19 @@
 module
 
-public import Noperthedron.Nopert76.AtlasProjectiveView
-public import Noperthedron.Nopert76.QuadraticBernstein
+public import Noperthedron.Nopert229.AtlasProjectiveView
+public import Noperthedron.Nopert229.QuadraticBernstein
 
 @[expose] public section
 
 /-!
-# Projective edge-cycle certificates for the Nopert #214 atlas
+# Projective edge-cycle certificates for the Nopert #229 atlas
 
 The two outer viewing angles are replaced by a signed rational projective
 triangle.  Support and denominator-cleared displacement are linear in the
 normalized viewing vector, so their extrema occur at triangle corners.
 -/
 
-namespace Noperthedron.Nopert76.AtlasProjectiveEdgeCertificate
+namespace Noperthedron.Nopert229.AtlasProjectiveEdgeCertificate
 
 open scoped RealInnerProductSpace
 open Noperthedron.Checker
@@ -612,6 +612,6 @@ theorem Box.valid_imp_not_translated_rupert (box : Box) (h : box.Valid)
     all_goals simp [Box.edgeShell]
     all_goals rfl
 
-end Noperthedron.Nopert76.AtlasProjectiveEdgeCertificate
+end Noperthedron.Nopert229.AtlasProjectiveEdgeCertificate
 
 end

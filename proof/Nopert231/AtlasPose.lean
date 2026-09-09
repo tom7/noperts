@@ -1,11 +1,11 @@
 module
 
-public import Noperthedron.Nopert76.CayleyAtlas
+public import Noperthedron.Nopert229.CayleyAtlas
 
 @[expose] public section
 
 /-!
-# Nopert #214 poses in the bounded Cayley atlas
+# Nopert #229 poses in the bounded Cayley atlas
 
 An atlas pose retains only the two outer viewing angles.  Its relative
 rotation is represented in one of the four rational Cayley charts.  Thus the
@@ -13,7 +13,7 @@ certificate domain is four copies of a five-dimensional rational box, with
 no Euler singularities.
 -/
 
-namespace Noperthedron.Nopert76
+namespace Noperthedron.Nopert229
 
 open scoped Matrix
 open CayleyAtlas
@@ -285,6 +285,6 @@ theorem no_matrixPose_of_no_bounded_atlas_translated_pose
   exact h ⟨chart, q, hq, hbounded, hqview, offset,
     hmatrix ▸ heulerRupert⟩
 
-end Noperthedron.Nopert76
+end Noperthedron.Nopert229
 
 end

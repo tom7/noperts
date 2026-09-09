@@ -1,11 +1,11 @@
 module
 
-public import Noperthedron.Nopert76.AtlasProjectiveLocalRigidity
+public import Noperthedron.Nopert229.AtlasProjectiveLocalRigidity
 
 @[expose] public section
 
 /-!
-# Projective moving-direction global obstruction for Nopert #214
+# Projective moving-direction global obstruction for Nopert #229
 
 A single determinant-balanced triple of moving outer support directions rules
 out a translated Rupert pose whenever its weighted inner-minus-outer
@@ -13,7 +13,7 @@ displacement is nonnegative.  Unlike the local theorem, this statement makes
 no reference to a nearby symmetry or to an axis-angle decomposition.
 -/
 
-namespace Noperthedron.Nopert76.AtlasProjectiveGlobalRigidity
+namespace Noperthedron.Nopert229.AtlasProjectiveGlobalRigidity
 
 open scoped RealInnerProductSpace
 open Noperthedron.BalancedSupport
@@ -103,6 +103,6 @@ theorem not_rupertPose_of_projective_global_certificate_with_defect
   · simpa [pose, outerProjectionLinear,
       ContinuousLinearMap.comp_apply] using hdisplacement
 
-end Noperthedron.Nopert76.AtlasProjectiveGlobalRigidity
+end Noperthedron.Nopert229.AtlasProjectiveGlobalRigidity
 
 end

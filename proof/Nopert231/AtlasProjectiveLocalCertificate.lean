@@ -1,16 +1,16 @@
 module
 
-public import Noperthedron.Nopert76.AtlasLocalCertificate
-public import Noperthedron.Nopert76.AtlasProjectiveLocalRigidity
-public import Noperthedron.Nopert76.AtlasProjectiveEdgeCertificate
-public import Noperthedron.Nopert76.TightApproximation
+public import Noperthedron.Nopert229.AtlasLocalCertificate
+public import Noperthedron.Nopert229.AtlasProjectiveLocalRigidity
+public import Noperthedron.Nopert229.AtlasProjectiveEdgeCertificate
+public import Noperthedron.Nopert229.TightApproximation
 public import Noperthedron.SnubCube.ProjectiveLocalCertificate
 
 @[expose] public section
 
-/-! # Rational projective local certificates for Nopert #214 -/
+/-! # Rational projective local certificates for Nopert #229 -/
 
-namespace Noperthedron.Nopert76.AtlasProjectiveLocalCertificate
+namespace Noperthedron.Nopert229.AtlasProjectiveLocalCertificate
 
 open scoped RealInnerProductSpace
 open Noperthedron.Checker
@@ -1743,7 +1743,7 @@ theorem Box.valid_axisAngle_ratio (box : Box) (h : box.Valid)
         (relativeRotationAtSymmetry
           (p.matrixPoseWithOffset box.chart offset) box.symmetryIndex))) :
     1 - Real.cos a.angle ≤ |Real.sin a.angle| * (box.c : ℝ) := by
-  apply Noperthedron.Nopert76.AxisAngle.ratio_of_inner_mismatch_bound
+  apply Noperthedron.Nopert229.AxisAngle.ratio_of_inner_mismatch_bound
     (p.matrixPoseWithOffset box.chart offset) box.symmetryIndex a
     (box.c : ℝ) (box.r : ℝ)
   · exact_mod_cast h.c_nonneg
@@ -1798,6 +1798,6 @@ theorem Box.valid_imp_no_translated_rupert_in_region
   rintro ⟨p, hp, offset, hscale, hmem, hrupert⟩
   exact box.valid_imp_not_translated_rupert h hp offset hscale hmem hrupert
 
-end Noperthedron.Nopert76.AtlasProjectiveLocalCertificate
+end Noperthedron.Nopert229.AtlasProjectiveLocalCertificate
 
 end

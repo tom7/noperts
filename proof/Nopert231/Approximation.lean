@@ -1,11 +1,11 @@
 module
 
-public import Noperthedron.Nopert76.Vertices
+public import Noperthedron.Nopert229.Vertices
 
 @[expose] public section
 
 /-!
-# The published coordinates approximate the intended Nopert #214
+# The published coordinates approximate the intended Nopert #229
 
 The exact object has fivefold rotational symmetry.  This file proves that the
 decimal vertices from the published STL are within the checker's `κ = 10⁻¹⁰`
@@ -14,7 +14,7 @@ budget of that exact object.  A rational Taylor vertex is used as a bridge.
 
 open RationalApprox Real
 
-namespace Noperthedron.Nopert76
+namespace Noperthedron.Nopert229
 
 private lemma piQ_lt_pi : (Noperthedron.piQ : ℝ) < π := pi_gt_d20
 
@@ -232,6 +232,6 @@ noncomputable def exactApproximation :
   bijection := Equiv.refl VertexIndex
   approx i := vertex_close i
 
-end Noperthedron.Nopert76
+end Noperthedron.Nopert229
 
 end
