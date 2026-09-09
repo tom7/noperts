@@ -7,7 +7,7 @@ globals, so retargeting it to another 4-seed fivefold solid only requires
 installing the new tables in the same orbit-major layout
 (``VERTICES_Q[k*4+j] ~= Rz(2*pi*k/5) . seed_j``).
 
-Unlike #76 and #214 which read rounded decimals from an STL file, the
+Unlike #214 which reads rounded decimals from an STL file, the
 vertices here are computed directly from the exact repair214 root
 construction to ensure the quadrilateral faces remain exactly planar.
 """
