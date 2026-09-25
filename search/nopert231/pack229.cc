@@ -28,6 +28,7 @@
 #include "base/print.h"
 #include "bignum/big-overloads.h"
 #include "bignum/big.h"
+#include "bignum/big-vec.h"
 #include "geom/hull-2d.h"
 #include "nopert229.h"
 #include "timer.h"
@@ -37,58 +38,17 @@ using vec3 = yocto::vec<double, 3>;
 
 // Polyhedron #229 rational vertices are accessed via GetVerticesQ() from nopert229.h
 
-
-struct Vec3Q {
-  BigRat x, y, z;
-  Vec3Q() : x(0), y(0), z(0) {}
-  Vec3Q(BigRat x, BigRat y, BigRat z) : x(x), y(y), z(z) {}
-
-  vec3 ToVec3D() const { return {x.ToDouble(), y.ToDouble(), z.ToDouble()}; }
-
-  Vec3Q operator+(const Vec3Q &o) const { return {x + o.x, y + o.y, z + o.z}; }
-  Vec3Q operator-(const Vec3Q &o) const { return {x - o.x, y - o.y, z - o.z}; }
-  Vec3Q operator*(const BigRat &s) const { return {x * s, y * s, z * s}; }
-  Vec3Q operator/(const BigRat &s) const { return {x / s, y / s, z / s}; }
-
-  static BigRat Dot(const Vec3Q &a, const Vec3Q &b) {
-    return a.x * b.x + a.y * b.y + a.z * b.z;
-  }
-  static Vec3Q Cross(const Vec3Q &a, const Vec3Q &b) {
-    return {
-      a.y * b.z - a.z * b.y,
-      a.z * b.x - a.x * b.z,
-      a.x * b.y - a.y * b.x
-    };
-  }
-  bool operator==(const Vec3Q &o) const {
-    return x == o.x && y == o.y && z == o.z;
-  }
-};
-
-static const std::array<Vec3Q, NUM_VERTICES> &GetVec3QVertices() {
-  static const std::array<Vec3Q, NUM_VERTICES> *cached = []() {
-    auto *arr = new std::array<Vec3Q, NUM_VERTICES>();
-    const auto &vs = GetVerticesQ();
-    for (int i = 0; i < NUM_VERTICES; i++) {
-      (*arr)[i] = Vec3Q(vs[i][0], vs[i][1], vs[i][2]);
-    }
-    return arr;
-  }();
-  return *cached;
+static inline vec3 ToDouble(const BigVecQ3 &v) {
+  return vec3{v.x.ToDouble(), v.y.ToDouble(), v.z.ToDouble()};
 }
-
-static inline const Vec3Q &VertexQ(int v) {
-  return GetVec3QVertices()[v];
-}
-
 
 struct TriangleQ {
-  Vec3Q corners[3];
+  BigVecQ3 corners[3];
 
   std::vector<TriangleQ> Subdivide() const {
-    Vec3Q m01 = (corners[0] + corners[1]) / BigRat(2);
-    Vec3Q m12 = (corners[1] + corners[2]) / BigRat(2);
-    Vec3Q m20 = (corners[2] + corners[0]) / BigRat(2);
+    BigVecQ3 m01 = (corners[0] + corners[1]) / BigRat(2);
+    BigVecQ3 m12 = (corners[1] + corners[2]) / BigRat(2);
+    BigVecQ3 m20 = (corners[2] + corners[0]) / BigRat(2);
     return {
       {corners[0], m01, m20},
       {m01, corners[1], m12},
@@ -105,8 +65,8 @@ struct TriangleQ {
 };
 
 struct CayleyBoxQ {
-  Vec3Q center;
-  Vec3Q radii;
+  BigVecQ3 center;
+  BigVecQ3 radii;
 
   int WidestAxis() const {
     if (radii.x >= radii.y && radii.x >= radii.z) return 0;
@@ -693,7 +653,7 @@ static bool LoadAtlasPack(const std::string &path, std::vector<AtlasNode> *out_n
       for (int c = 0; c < 4; c++) {
         nodes[id].children[c] = read_int();
       }
-    } else if (tag == 1) { // certificate
+    } else if (tag == 1 || tag == 2 || tag == 3) { // certificate
       nodes[id].is_leaf = true;
       read_int(); // sym
       for (int k = 0; k < 92; k++) read_int();
@@ -703,6 +663,12 @@ static bool LoadAtlasPack(const std::string &path, std::vector<AtlasNode> *out_n
       int64_t r_den = read_int();
       nodes[id].r = (double)r_num / (double)r_den;
       nodes[id].r_rat = BigRat(r_num, r_den);
+      if (tag == 2) {
+        for (int k = 0; k < 45; k++) read_int();
+      } else if (tag == 3) {
+        int64_t K = read_int();
+        for (int64_t k = 0; k < K * 23 + 14; k++) read_int();
+      }
     }
   }
 
@@ -923,7 +889,7 @@ static bool ComputeExactComponent(const TriangleQ &tri,
   };
   int inner[3] = {inner_in[0], inner_in[1], inner_in[2]};
 
-  Vec3Q edges[3];
+  BigVecQ3 edges[3];
   for (int m = 0; m < 3; m++) {
     int start = contacts[m]->edge_start;
     int finish = contacts[m]->edge_finish;
@@ -931,48 +897,48 @@ static bool ComputeExactComponent(const TriangleQ &tri,
     int finish2 = contacts[m]->edge_finish2;
     int mix = contacts[m]->mix;
 
-    const Vec3Q &v_start = VertexQ(start);
-    const Vec3Q &v_finish = VertexQ(finish);
-    Vec3Q e1 = v_start - v_finish;
+    const BigVecQ3 &v_start = VertexQ(start);
+    const BigVecQ3 &v_finish = VertexQ(finish);
+    BigVecQ3 e1 = v_start - v_finish;
 
-    const Vec3Q &v_start2 = VertexQ(start2);
-    const Vec3Q &v_finish2 = VertexQ(finish2);
-    Vec3Q e2 = v_start2 - v_finish2;
+    const BigVecQ3 &v_start2 = VertexQ(start2);
+    const BigVecQ3 &v_finish2 = VertexQ(finish2);
+    BigVecQ3 e2 = v_start2 - v_finish2;
 
     BigRat lam(mix, 1000);
     edges[m] = e1 * lam + e2 * (BigRat(1) - lam);
   }
 
-  Vec3Q coeff0 = Vec3Q::Cross(edges[1], edges[2]);
-  Vec3Q coeff1 = Vec3Q::Cross(edges[2], edges[0]);
-  Vec3Q coeff2 = Vec3Q::Cross(edges[0], edges[1]);
+  BigVecQ3 coeff0 = BigVecQ3::Cross(edges[1], edges[2]);
+  BigVecQ3 coeff1 = BigVecQ3::Cross(edges[2], edges[0]);
+  BigVecQ3 coeff2 = BigVecQ3::Cross(edges[0], edges[1]);
 
-  BigRat p0 = Vec3Q::Dot(tri.corners[0], coeff0);
-  BigRat p1 = Vec3Q::Dot(tri.corners[0], coeff1);
-  BigRat p2 = Vec3Q::Dot(tri.corners[0], coeff2);
+  BigRat p0 = BigVecQ3::Dot(tri.corners[0], coeff0);
+  BigRat p1 = BigVecQ3::Dot(tri.corners[0], coeff1);
+  BigRat p2 = BigVecQ3::Dot(tri.corners[0], coeff2);
 
   if (p0 < 0 && p1 < 0 && p2 < 0) {
     std::swap(contacts[1], contacts[2]);
     std::swap(edges[1], edges[2]);
     std::swap(inner[1], inner[2]);
-    coeff0 = Vec3Q::Cross(edges[1], edges[2]);
-    coeff1 = Vec3Q::Cross(edges[2], edges[0]);
-    coeff2 = Vec3Q::Cross(edges[0], edges[1]);
+    coeff0 = BigVecQ3::Cross(edges[1], edges[2]);
+    coeff1 = BigVecQ3::Cross(edges[2], edges[0]);
+    coeff2 = BigVecQ3::Cross(edges[0], edges[1]);
   }
 
   inner_out[0] = inner[0];
   inner_out[1] = inner[1];
   inner_out[2] = inner[2];
 
-  Vec3Q w_coeffs[3] = {coeff0, coeff1, coeff2};
+  BigVecQ3 w_coeffs[3] = {coeff0, coeff1, coeff2};
   BigRat support_error = BigRat(6, 1000000000000000LL); // 6 / 10^15
   BigRat sum_weight_upper(0);
 
   for (int m = 0; m < 3; m++) {
-    BigRat w_max = Vec3Q::Dot(tri.corners[0], w_coeffs[m]);
+    BigRat w_max = BigVecQ3::Dot(tri.corners[0], w_coeffs[m]);
     BigRat w_min = w_max;
     for (int c = 1; c < 3; c++) {
-      BigRat val = Vec3Q::Dot(tri.corners[c], w_coeffs[m]);
+      BigRat val = BigVecQ3::Dot(tri.corners[c], w_coeffs[m]);
       if (val > w_max) w_max = val;
       if (val < w_min) w_min = val;
     }
@@ -1003,12 +969,12 @@ static bool ComputeExactComponent(const TriangleQ &tri,
     vec3 wc2 = cross(e0, e1);
 
     vec3 tri_pts[6] = {
-      tri.corners[0].ToVec3D(),
-      tri.corners[1].ToVec3D(),
-      tri.corners[2].ToVec3D(),
-      (tri.corners[0].ToVec3D() + tri.corners[1].ToVec3D()) * 0.5,
-      (tri.corners[1].ToVec3D() + tri.corners[2].ToVec3D()) * 0.5,
-      (tri.corners[2].ToVec3D() + tri.corners[0].ToVec3D()) * 0.5
+      ToDouble(tri.corners[0]),
+      ToDouble(tri.corners[1]),
+      ToDouble(tri.corners[2]),
+      (ToDouble(tri.corners[0]) + ToDouble(tri.corners[1])) * 0.5,
+      (ToDouble(tri.corners[1]) + ToDouble(tri.corners[2])) * 0.5,
+      (ToDouble(tri.corners[2]) + ToDouble(tri.corners[0])) * 0.5
     };
 
     double min_x = box.center.x.ToDouble() - box.radii.x.ToDouble();
@@ -1062,7 +1028,7 @@ static bool ComputeExactComponent(const TriangleQ &tri,
     cert_out->support_index[m] = contacts[m]->vertex;
 
     int sel = contacts[m]->vertex;
-    const Vec3Q &v_sel = VertexQ(sel);
+    const BigVecQ3 &v_sel = VertexQ(sel);
     BigRat best_support = BigRat(1000000);
     int best_w = -1;
 
@@ -1071,12 +1037,12 @@ static bool ComputeExactComponent(const TriangleQ &tri,
                  (contacts[m]->mix == 1000 && sel == contacts[m]->edge_finish && k == contacts[m]->edge_start) ||
                  (contacts[m]->mix == 0 && sel == contacts[m]->edge_start2 && k == contacts[m]->edge_finish2);
       if (tie) continue;
-      const Vec3Q &v_k = VertexQ(k);
-      Vec3Q delta = v_k - v_sel;
-      Vec3Q s_coeff = Vec3Q::Cross(edges[m], delta);
-      BigRat max_s = Vec3Q::Dot(tri.corners[0], s_coeff);
+      const BigVecQ3 &v_k = VertexQ(k);
+      BigVecQ3 delta = v_k - v_sel;
+      BigVecQ3 s_coeff = BigVecQ3::Cross(edges[m], delta);
+      BigRat max_s = BigVecQ3::Dot(tri.corners[0], s_coeff);
       for (int c = 1; c < 3; c++) {
-        BigRat val = Vec3Q::Dot(tri.corners[c], s_coeff);
+        BigRat val = BigVecQ3::Dot(tri.corners[c], s_coeff);
         if (val > max_s) max_s = val;
       }
       BigRat s_upper = max_s + support_error;
@@ -1455,38 +1421,38 @@ int main(int argc, char **argv) {
   TriangleQ root_tri;
 
   if (cell_id == 12651740028) {
-    root_box.center = Vec3Q(BigRat(1, 2048), BigRat(-1, 2048), BigRat(-1, 1024));
-    root_box.radii = Vec3Q(BigRat(1, 2048), BigRat(1, 2048), BigRat(1, 3072));
-    root_tri.corners[0] = Vec3Q(BigRat(52397, 83968), BigRat(11563, 83968), BigRat(61, 256));
-    root_tri.corners[1] = Vec3Q(BigRat(26219, 41984), BigRat(11563, 83968), BigRat(487, 2048));
-    root_tri.corners[2] = Vec3Q(BigRat(52407, 83968), BigRat(5797, 41984), BigRat(487, 2048));
+    root_box.center = BigVecQ3(BigRat(1, 2048), BigRat(-1, 2048), BigRat(-1, 1024));
+    root_box.radii = BigVecQ3(BigRat(1, 2048), BigRat(1, 2048), BigRat(1, 3072));
+    root_tri.corners[0] = BigVecQ3(BigRat(52397, 83968), BigRat(11563, 83968), BigRat(61, 256));
+    root_tri.corners[1] = BigVecQ3(BigRat(26219, 41984), BigRat(11563, 83968), BigRat(487, 2048));
+    root_tri.corners[2] = BigVecQ3(BigRat(52407, 83968), BigRat(5797, 41984), BigRat(487, 2048));
   } else if (cell_id == 12651740050) {
-    root_box.center = Vec3Q(BigRat(1, 2048), BigRat(-1, 2048), BigRat(-1, 1024));
-    root_box.radii = Vec3Q(BigRat(1, 2048), BigRat(1, 2048), BigRat(1, 3072));
-    root_tri.corners[0] = Vec3Q(BigRat(52531, 83968), BigRat(5735, 41984), BigRat(487, 2048));
-    root_tri.corners[1] = Vec3Q(BigRat(13143, 20992), BigRat(5735, 41984), BigRat(243, 1024));
-    root_tri.corners[2] = Vec3Q(BigRat(52541, 83968), BigRat(11501, 83968), BigRat(243, 1024));
+    root_box.center = BigVecQ3(BigRat(1, 2048), BigRat(-1, 2048), BigRat(-1, 1024));
+    root_box.radii = BigVecQ3(BigRat(1, 2048), BigRat(1, 2048), BigRat(1, 3072));
+    root_tri.corners[0] = BigVecQ3(BigRat(52531, 83968), BigRat(5735, 41984), BigRat(487, 2048));
+    root_tri.corners[1] = BigVecQ3(BigRat(13143, 20992), BigRat(5735, 41984), BigRat(243, 1024));
+    root_tri.corners[2] = BigVecQ3(BigRat(52541, 83968), BigRat(11501, 83968), BigRat(243, 1024));
   } else if (cell_id == 12651740041) {
-    root_box.center = Vec3Q(BigRat(1, 2048), BigRat(-1, 2048), BigRat(-1, 1024));
-    root_box.radii = Vec3Q(BigRat(1, 2048), BigRat(1, 2048), BigRat(1, 3072));
-    root_tri.corners[0] = Vec3Q(BigRat(26245, 41984), BigRat(5735, 41984), BigRat(61, 256));
-    root_tri.corners[1] = Vec3Q(BigRat(1281, 2048), BigRat(279, 2048), BigRat(61, 256));
-    root_tri.corners[2] = Vec3Q(BigRat(52531, 83968), BigRat(5735, 41984), BigRat(487, 2048));
+    root_box.center = BigVecQ3(BigRat(1, 2048), BigRat(-1, 2048), BigRat(-1, 1024));
+    root_box.radii = BigVecQ3(BigRat(1, 2048), BigRat(1, 2048), BigRat(1, 3072));
+    root_tri.corners[0] = BigVecQ3(BigRat(26245, 41984), BigRat(5735, 41984), BigRat(61, 256));
+    root_tri.corners[1] = BigVecQ3(BigRat(1281, 2048), BigRat(279, 2048), BigRat(61, 256));
+    root_tri.corners[2] = BigVecQ3(BigRat(52531, 83968), BigRat(5735, 41984), BigRat(487, 2048));
   } else {
-    root_box.center = Vec3Q(BigRat(0), BigRat(0), BigRat(0));
+    root_box.center = BigVecQ3(BigRat(0), BigRat(0), BigRat(0));
     if (chart == 0) {
-      root_box.radii = Vec3Q(BigRat(1), BigRat(1), BigRat(1, 3));
+      root_box.radii = BigVecQ3(BigRat(1), BigRat(1), BigRat(1, 3));
     } else if (chart == 1) {
-      root_box.radii = Vec3Q(BigRat(1), BigRat(1, 3), BigRat(1));
+      root_box.radii = BigVecQ3(BigRat(1), BigRat(1, 3), BigRat(1));
     } else if (chart == 2) {
-      root_box.radii = Vec3Q(BigRat(1, 3), BigRat(1), BigRat(1));
+      root_box.radii = BigVecQ3(BigRat(1, 3), BigRat(1), BigRat(1));
     } else {
-      root_box.radii = Vec3Q(BigRat(1), BigRat(1), BigRat(1));
+      root_box.radii = BigVecQ3(BigRat(1), BigRat(1), BigRat(1));
     }
 
-    root_tri.corners[0] = Vec3Q(BigRat(1), BigRat(0), BigRat(0));
-    root_tri.corners[1] = Vec3Q(BigRat(10, 41), BigRat(31, 41), BigRat(0));
-    root_tri.corners[2] = Vec3Q(BigRat(0), BigRat(0), BigRat(1));
+    root_tri.corners[0] = BigVecQ3(BigRat(1), BigRat(0), BigRat(0));
+    root_tri.corners[1] = BigVecQ3(BigRat(10, 41), BigRat(31, 41), BigRat(0));
+    root_tri.corners[2] = BigVecQ3(BigRat(0), BigRat(0), BigRat(1));
   }
 
   std::vector<ParsedNode> nodes(100000);
@@ -1820,12 +1786,12 @@ int main(int argc, char **argv) {
           }
         }
         vec3 tri_pts[6] = {
-          tri.corners[0].ToVec3D(),
-          tri.corners[1].ToVec3D(),
-          tri.corners[2].ToVec3D(),
-          (tri.corners[0].ToVec3D() + tri.corners[1].ToVec3D()) * 0.5,
-          (tri.corners[1].ToVec3D() + tri.corners[2].ToVec3D()) * 0.5,
-          (tri.corners[2].ToVec3D() + tri.corners[0].ToVec3D()) * 0.5
+          ToDouble(tri.corners[0]),
+          ToDouble(tri.corners[1]),
+          ToDouble(tri.corners[2]),
+          (ToDouble(tri.corners[0]) + ToDouble(tri.corners[1])) * 0.5,
+          (ToDouble(tri.corners[1]) + ToDouble(tri.corners[2])) * 0.5,
+          (ToDouble(tri.corners[2]) + ToDouble(tri.corners[0])) * 0.5
         };
         double lx = box.center.x.ToDouble() - box.radii.x.ToDouble();
         double ly = box.center.y.ToDouble() - box.radii.y.ToDouble();
