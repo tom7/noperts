@@ -1,0 +1,68 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include "tube229.h"
+#include "tubetree229.h"
+#include "bignum/big-overloads.h"
+
+using namespace tubetree229;
+
+int main() {
+  std::string target = "03121303200";
+  TriangleQ tri = TriangleFromPath(target);
+  auto axes = Tube229::FindAllHullSupportAxes(tri, 500);
+
+  ContactInfo c_ann[3] = {
+    {3, 2, 2, 1, 800, 2},
+    {1, 4, 4, 8, 800, 4},
+    {13, 14, 14, 15, 200, 14}
+  };
+  AxisCertificate ann_cert; BigVecQ3 ann_center; BigRat ann_del; std::string err;
+  Tube229::AuditAxis(tri, c_ann, &ann_cert, &ann_center, &ann_del, &err, BigRat(1, 1000));
+  vec3 u0 = {ann_center.x.ToDouble() / ann_cert.B.ToDouble(),
+             ann_center.y.ToDouble() / ann_cert.B.ToDouble(),
+             ann_center.z.ToDouble() / ann_cert.B.ToDouble()};
+
+  int triple[3] = {0, 24, 210};
+  vec3 p1 = {axes[triple[0]].center.x.ToDouble() / axes[triple[0]].cert.B.ToDouble(),
+             axes[triple[0]].center.y.ToDouble() / axes[triple[0]].cert.B.ToDouble(),
+             axes[triple[0]].center.z.ToDouble() / axes[triple[0]].cert.B.ToDouble()};
+  vec3 p2 = {axes[triple[1]].center.x.ToDouble() / axes[triple[1]].cert.B.ToDouble(),
+             axes[triple[1]].center.y.ToDouble() / axes[triple[1]].cert.B.ToDouble(),
+             axes[triple[1]].center.z.ToDouble() / axes[triple[1]].cert.B.ToDouble()};
+  vec3 p3 = {axes[triple[2]].center.x.ToDouble() / axes[triple[2]].cert.B.ToDouble(),
+             axes[triple[2]].center.y.ToDouble() / axes[triple[2]].cert.B.ToDouble(),
+             axes[triple[2]].center.z.ToDouble() / axes[triple[2]].cert.B.ToDouble()};
+
+  double c_cone = 0.015;
+  double delta = 0.000234013;
+
+  auto det4 = [](const vec3 &a, const vec3 &b, const vec3 &c, const vec3 &d) {
+    auto d3 = [](const vec3 &x, const vec3 &y, const vec3 &z) {
+      return yocto::dot(x, yocto::cross(y, z));
+    };
+    return -d3(b, c, d) + d3(a, c, d) - d3(a, b, d) + d3(a, b, c);
+  };
+
+  for (double c_val = 0.0010; c_val <= 0.0040; c_val += 0.0002) {
+    double s = (c_val + delta) / c_cone;
+    vec3 p0 = s * u0;
+    double R = 1.75 * (c_val + delta);
+    vec3 oct[6] = {
+      {R, 0, 0}, {-R, 0, 0},
+      {0, R, 0}, {0, -R, 0},
+      {0, 0, R}, {0, 0, -R}
+    };
+    double D = det4(p0, p1, p2, p3);
+    double min_l = 1e9;
+    for (int k = 0; k < 6; k++) {
+      double l0 = det4(oct[k], p1, p2, p3) / D;
+      double l1 = det4(p0, oct[k], p2, p3) / D;
+      double l2 = det4(p0, p1, oct[k], p3) / D;
+      double l3 = det4(p0, p1, p2, oct[k]) / D;
+      min_l = std::min({min_l, l0, l1, l2, l3});
+    }
+    std::cout << "c = " << c_val << ": min barycentric = " << min_l << "\n";
+  }
+  return 0;
+}

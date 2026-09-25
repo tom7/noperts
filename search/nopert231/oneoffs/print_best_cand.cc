@@ -1,0 +1,59 @@
+#include <iostream>
+#include <vector>
+#include "tube229.h"
+#include "tubetree229.h"
+
+using namespace tubetree229;
+
+int main() {
+  std::string target = "031213002112122012121";
+  TriangleQ tri = TriangleFromPath(target);
+
+  ContactInfo c_ann[3] = {
+    {3, 2, 2, 1, 800, 2},
+    {1, 4, 4, 8, 800, 4},
+    {13, 14, 14, 15, 200, 14}
+  };
+  AxisCertificate ann_cert;
+  BigVecQ3 ann_center;
+  BigRat ann_del;
+  std::string err;
+  Tube229::AuditAxis(tri, c_ann, &ann_cert, &ann_center, &ann_del, &err, BigRat(1, 1000));
+  vec3 u0 = yocto::normalize(vec3{ann_center.x.ToDouble(), ann_center.y.ToDouble(), ann_center.z.ToDouble()});
+  vec3 e1 = yocto::normalize(yocto::cross(u0, std::abs(u0.z) < 0.9 ? vec3{0,0,1} : vec3{1,0,0}));
+  vec3 e2 = yocto::cross(u0, e1);
+
+  double x = 1.264961, y = -0.9695687;
+  vec3 p = yocto::normalize(u0 + x * e1 + y * e2);
+
+  auto c0 = tri.corners[0];
+  auto c1 = tri.corners[1];
+  auto c2 = tri.corners[2];
+  vec3 centroid = vec3{
+    (c0.x.ToDouble() + c1.x.ToDouble() + c2.x.ToDouble()) / 3.0,
+    (c0.y.ToDouble() + c1.y.ToDouble() + c2.y.ToDouble()) / 3.0,
+    (c0.z.ToDouble() + c1.z.ToDouble() + c2.z.ToDouble()) / 3.0
+  };
+
+  auto cands = Tube229::GenerateCandidatesForView(centroid, tri, true, 4, true, 1e-12);
+
+  double max_dot = -1e9;
+  int best_cand = -1;
+  for (size_t i = 0; i < cands.size(); i++) {
+    double d = yocto::dot(p, cands[i].normalized_a);
+    if (d > max_dot) {
+      max_dot = d;
+      best_cand = i;
+    }
+  }
+
+  std::cout << "Best cand index: " << best_cand << ", dot: " << max_dot << "\n";
+  const auto &c = cands[best_cand];
+  for (int j = 0; j < 3; j++) {
+    std::cout << "  Contact " << j << ": edge=(" << c.contacts[j].edge_start << "->" << c.contacts[j].edge_finish
+              << "), edge2=(" << c.contacts[j].edge_start2 << "->" << c.contacts[j].edge_finish2
+              << "), mix=" << c.contacts[j].mix << ", v=" << c.contacts[j].vertex << "\n";
+  }
+
+  return 0;
+}
