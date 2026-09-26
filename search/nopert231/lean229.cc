@@ -1,9 +1,9 @@
-#include "base/print.h"
-#include "lib229.h"
-
-#include "ansi.h"
 #include <cstdlib>
 #include <string_view>
+
+#include "base/print.h"
+#include "lib229.h"
+#include "ansi.h"
 
 // NOTE: Canonical 27-facet rational vertices (exact quad coplanarity + 2^52 power-of-two
 // denominators) are implemented in ruperts/codebdd229.cc and exported at

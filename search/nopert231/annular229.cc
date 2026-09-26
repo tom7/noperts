@@ -213,8 +213,7 @@ static vec3 GetAxisCenterDirection(const TriangleQ &tri, const AxisCertificate &
   AxisCertificate audited_cert;
   ContactInfo contacts[3] = {ax.contacts[0], ax.contacts[1], ax.contacts[2]};
   if (Tube229::AuditAxis(tri, contacts, &audited_cert, &center, &delta, &err, BigRat(1, 100))) {
-    double B = audited_cert.B.ToDouble();
-    return vec3{center.x.ToDouble() / B, center.y.ToDouble() / B, center.z.ToDouble() / B};
+    return vec3{center.x.ToDouble(), center.y.ToDouble(), center.z.ToDouble()};
   }
   return {0, 0, 1};
 }
@@ -467,9 +466,9 @@ AnnularSynthesisResult SynthesizeAnnularCertificate(
   }
 
   // 4. Find complement cage enclosing -u0
-  vec3 u0 = {ctr0.x.ToDouble() / ax0.B.ToDouble(),
-             ctr0.y.ToDouble() / ax0.B.ToDouble(),
-             ctr0.z.ToDouble() / ax0.B.ToDouble()};
+  vec3 u0 = {ctr0.x.ToDouble(),
+             ctr0.y.ToDouble(),
+             ctr0.z.ToDouble()};
   std::array<AxisCertificate, 3> comp_cage;
   if (!FindComplementCage(tri, u0, pool, config.target_c_cone.ToDouble(), &comp_cage)) {
     res.explanation = "Failed to find complement cage strictly enclosing -u0.";

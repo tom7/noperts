@@ -52,7 +52,7 @@ int main() {
   }
   std::cout << "Candidate axes: " << cand_axes.size() << "\n";
 
-  double target_c = 0.0018;
+  double target_c = 0.0005;
   std::vector<int> chosen;
   std::vector<bool> covered(cap_pts.size(), false);
   int covered_count = 0;

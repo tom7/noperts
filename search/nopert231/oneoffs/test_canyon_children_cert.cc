@@ -7,12 +7,7 @@ using namespace tubetree229;
 
 int main() {
   std::vector<std::string> canyon = {
-    "03121303021",
-    "03121303022",
-    "03121303023",
-    "03121303200",
-    "0312130332",
-    "03121300"
+    "0312130332"
   };
 
   for (const auto &path : canyon) {
