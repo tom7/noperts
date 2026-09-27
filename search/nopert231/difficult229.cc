@@ -33,6 +33,7 @@
 #include <vector>
 
 #include "ansi.h"
+#include "chart229.h"
 #include "arcfour.h"
 #include "base/logging.h"
 #include "base/print.h"
@@ -80,71 +81,112 @@ static VerificationResult VerifyDoneFile(
 
   while (std::getline(infile, line)) {
     line_no++;
-    if (line.empty() || line[0] == '#') continue;
-    std::istringstream iss(line);
-    std::string tag;
-    int64_t id, parent_id;
-    int depth;
-    if (!(iss >> tag >> id >> parent_id >> depth)) {
-      return {.valid = false, .error_message = std::format("Malformed line on line {}: '{}'", line_no, line)};
+    auto row_or_err = Chart229::Parse(line);
+    if (Chart229::IsEmptyOrComment(row_or_err)) continue;
+    if (Chart229::IsError(row_or_err)) {
+      return {.valid = false, .error_message = std::format("Line {}: {}", line_no, std::get<Chart229::ParseError>(row_or_err).message)};
     }
 
     ParsedDoneRow row;
-    row.tag = tag;
-    row.id = id;
-    row.parent_id = parent_id;
-    row.depth = depth;
+    int64_t id = 0;
+    bool ok = std::visit(
+        Chart229::Overloaded{
+            [&](const Chart229::SplitRow &sp) {
+              row.tag = "SP";
+              row.id = sp.id;
+              row.parent_id = sp.parent_id;
+              row.depth = sp.depth;
+              row.children = {sp.child0, sp.child1};
+              id = sp.id;
+              return true;
+            },
+            [&](const Chart229::SplitOriginRow &so) {
+              row.tag = "SO";
+              row.id = so.id;
+              row.parent_id = so.parent_id;
+              row.depth = so.depth;
+              row.children = {so.child0, so.child1};
+              id = so.id;
+              return true;
+            },
+            [&](const Chart229::SplitViewRow &sv) {
+              row.tag = "SV";
+              row.id = sv.id;
+              row.parent_id = sv.parent_id;
+              row.depth = sv.depth;
+              row.children = {sv.child0, sv.child1, sv.child2, sv.child3};
+              id = sv.id;
+              return true;
+            },
+            [&](const Chart229::CertRow &c) {
+              row.tag = "CE";
+              row.id = c.id;
+              row.parent_id = c.parent_id;
+              row.depth = c.depth;
+              row.margin = c.margin;
+              id = c.id;
+              return true;
+            },
+            [&](const Chart229::MixedCertRow &m) {
+              row.tag = "MX";
+              row.id = m.id;
+              row.parent_id = m.parent_id;
+              row.depth = m.depth;
+              row.margin = m.margin;
+              id = m.id;
+              return true;
+            },
+            [&](const Chart229::PruneRadiusRow &pr) {
+              row.tag = "PR";
+              row.id = pr.id;
+              row.parent_id = pr.parent_id;
+              row.depth = pr.depth;
+              row.prune_kind = "RADIUS";
+              id = pr.id;
+              return true;
+            },
+            [&](const Chart229::PruneFundamentalRow &pf) {
+              row.tag = "PR";
+              row.id = pf.id;
+              row.parent_id = pf.parent_id;
+              row.depth = pf.depth;
+              row.prune_kind = "FUNDAMENTAL";
+              row.fund_dir = pf.fund_dir;
+              id = pf.id;
+              return true;
+            },
+            [&](const Chart229::TubeRow &tu) {
+              row.tag = "TU";
+              row.id = tu.id;
+              row.parent_id = tu.parent_id;
+              row.depth = tu.depth;
+              row.tube_radius = tu.tube_radius;
+              id = tu.id;
+              return true;
+            },
+            [&](const Chart229::DifficultRow &df) {
+              if (!allow_difficult) {
+                return false;
+              }
+              row.tag = "DF";
+              row.id = df.id;
+              row.parent_id = df.parent_id;
+              row.depth = df.depth;
+              row.prune_kind = "DIFFICULT";
+              id = df.id;
+              return true;
+            },
+            [&](const auto &) {
+              return false;
+            },
+        },
+        row_or_err);
 
-    if (tag == "SP" || tag == "SPLIT" || tag == "SO" || tag == "SPLIT_ORIGIN") {
-      int64_t c0, c1;
-      if (!(iss >> c0 >> c1)) {
-        return {.valid = false, .error_message = std::format("Line {}: {} missing child IDs", line_no, tag)};
-      }
-      row.children = {c0, c1};
-    } else if (tag == "SV" || tag == "SPLIT_VIEW") {
-      int64_t c0, c1, c2, c3;
-      if (!(iss >> c0 >> c1 >> c2 >> c3)) {
-        return {.valid = false, .error_message = std::format("Line {}: SV missing 4 child IDs", line_no)};
-      }
-      row.children = {c0, c1, c2, c3};
-    } else if (tag == "CE" || tag == "CERT") {
-      int triple;
-      int in0, in1, in2;
-      if (!(iss >> triple >> row.margin >> in0 >> in1 >> in2)) {
-        return {.valid = false, .error_message = std::format("Line {}: malformed CE row", line_no)};
-      }
-    } else if (tag == "MX") {
-      int num_components;
-      if (!(iss >> num_components >> row.margin)) {
-        return {.valid = false, .error_message = std::format("Line {}: malformed MX row", line_no)};
-      }
-      for (int k = 0; k < num_components; k++) {
-        int trip, in0, in1, in2;
-        double w;
-        if (!(iss >> trip >> w >> in0 >> in1 >> in2)) {
-          return {.valid = false, .error_message = std::format("Line {}: malformed MX component {}", line_no, k)};
-        }
-      }
-    } else if (tag == "PR" || tag == "PRUNE") {
-      if (!(iss >> row.prune_kind)) {
-        return {.valid = false, .error_message = std::format("Line {}: PR missing kind", line_no)};
-      }
-      if (row.prune_kind == "FUNDAMENTAL" || row.prune_kind == "FU") {
-        if (!(iss >> row.fund_dir)) {
-          return {.valid = false, .error_message = std::format("Line {}: PR FUNDAMENTAL missing direction", line_no)};
-        }
-      }
-    } else if (tag == "TU" || tag == "TUBE") {
-      if (!(iss >> row.tube_radius)) {
-        return {.valid = false, .error_message = std::format("Line {}: TU missing radius", line_no)};
-      }
-    } else if (tag == "DF" || tag == "DI" || tag == "DIFFICULT") {
-      if (!allow_difficult) {
+    if (!ok) {
+      if (std::holds_alternative<Chart229::DifficultRow>(row_or_err)) {
         return {.valid = false, .error_message = std::format("Line {}: contains uncertified DIFFICULT leaf", line_no)};
       }
-      row.prune_kind = "DIFFICULT";
-    } else {
-      return {.valid = false, .error_message = std::format("Line {}: unrecognized row tag '{}'", line_no, tag)};
+      return {.valid = false, .error_message = std::format("Line {}: unhandled or malformed row", line_no)};
     }
 
     if (row_map.contains(id)) {

@@ -178,6 +178,11 @@ class Chart229 {
   static std::string SerializeLegacy(const DifficultRow &row);
   static std::string SerializeLegacy(const Row &row);
 
+  template <class... Ts>
+  struct Overloaded : Ts... {
+    using Ts::operator()...;
+  };
+
   // Helper inspection utilities.
   static bool IsError(const Row &row) {
     return std::holds_alternative<ParseError>(row);

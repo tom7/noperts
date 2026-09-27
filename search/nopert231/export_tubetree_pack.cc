@@ -13,6 +13,7 @@
 #include <filesystem>
 
 #include "tubetree229.h"
+#include "tube229.h"
 #include "base/logging.h"
 #include "base/stringprintf.h"
 #include "bignum/big-overloads.h"
@@ -122,11 +123,7 @@ int main(int argc, char **argv) {
     q.pop();
 
     const TreeNode *n = rows[curr_idx].node;
-    bool can_prune = prune_at_cert &&
-                     ((n->direct_cert.has_value() && n->direct_cert->r >= eff.r_lower) ||
-                      (n->decomposed_cert.has_value() && n->decomposed_cert->r >= eff.r_lower));
-
-    if (n->children.size() == 4 && !can_prune) {
+    if (n->children.size() == 4) {
       rows[curr_idx].is_leaf = false;
       for (int c = 0; c < 4; c++) {
         CHECK(n->children[c] != nullptr);
@@ -151,8 +148,7 @@ int main(int argc, char **argv) {
     }
   }
 
-  std::cout << "Flattened tree into " << rows.size() << " Lean rows ("
-            << (prune_at_cert ? "pruned" : "full") << ").\n";
+  std::cout << "Flattened tree into " << rows.size() << " Lean rows.\n";
 
   for (size_t i = 0; i < rows.size(); i++) {
     const auto &r = rows[i];
@@ -207,53 +203,133 @@ int main(int argc, char **argv) {
           << "," << ZigzagRatString(cert.delta)
           << "," << ZigzagRatString(cert.r);
     } else if (r.node->decomposed_cert.has_value()) {
-      const auto &dec = r.node->decomposed_cert.value();
+      auto dec = r.node->decomposed_cert.value();
+      TriangleQ tri = TriangleFromPath(r.node->path);
+      std::string err;
+
+      AxisCertificate coreAxis = dec.inner_core_axis;
       if (!dec.core_flock_axes.empty()) {
-        // Flock Decomposed Certificate row (tag 3):
-        // Format: tag(3), id, root(0), path_len, [path_digits], symmetryIndex,
-        // [4 axes: annular_axis, complement_axes[0..2]], c, delta, r,
-        // K, [K flock axes], defect0[0..2], D0, r_min, c_cone, c_core
-        out << ",3," << r.id << ",0," << r.rel_path.size();
-        for (char ch : r.rel_path) {
-          out << "," << (ch - '0');
-        }
-        out << "," << dec.symmetry_index;
+        coreAxis = dec.core_flock_axes[0];
+      }
 
-        // 4 certificate axes: annular_axis + 3 complement axes
-        WriteAxisPack(out, dec.annular_axis);
-        for (int a = 0; a < 3; a++) {
-          WriteAxisPack(out, dec.complement_axes[a]);
-        }
+      // Audit annular axis on tri
+      BigVecQ3 ctr_ann;
+      BigRat del_ann;
+      AxisCertificate ax_ann;
+      ContactInfo c_ann[3] = {dec.annular_axis.contacts[0], dec.annular_axis.contacts[1], dec.annular_axis.contacts[2]};
+      CHECK(Tube229::AuditAxis(tri, c_ann, &ax_ann, &ctr_ann, &del_ann, &err, BigRat("1/1000")));
+      dec.annular_axis = ax_ann;
 
-        // c (c_comp: complement cage margin), delta, r
-        out << "," << ZigzagRatString(dec.c_comp)
-            << "," << ZigzagRatString(dec.delta)
-            << "," << ZigzagRatString(dec.r);
-
-        // K flock axes
-        out << "," << dec.core_flock_axes.size();
-        for (size_t m = 0; m < dec.core_flock_axes.size(); m++) {
-          WriteAxisPack(out, dec.core_flock_axes[m]);
+      // Compute audited defect0 for annular axis
+      BigRat max_def[3] = {BigRat(0), BigRat(0), BigRat(0)};
+      BigVecQ3 edges_ann[3] = {
+        Tube229::GetExactEdge(c_ann[0]),
+        Tube229::GetExactEdge(c_ann[1]),
+        Tube229::GetExactEdge(c_ann[2])
+      };
+      BigRat supp_err(6, 1000000000000000LL);
+      for (int m = 0; m < 3; m++) {
+        int sel = c_ann[m].vertex;
+        BigVecQ3 v_sel = Tube229::VertexQ(sel);
+        for (int k = 0; k < 20; k++) {
+          bool tie = (k == sel) ||
+                     (c_ann[m].mix == 1000 && sel == c_ann[m].edge_finish && k == c_ann[m].edge_start) ||
+                     (c_ann[m].mix == 0 && sel == c_ann[m].edge_start2 && k == c_ann[m].edge_finish2);
+          if (tie) continue;
+          BigVecQ3 v_k = Tube229::VertexQ(k);
+          BigVecQ3 delta = v_k - v_sel;
+          BigVecQ3 cross = BigVecQ3::Cross(edges_ann[m], delta);
+          BigRat max_s = BigVecQ3::Dot(tri.corners[0], cross);
+          for (int c = 1; c < 3; c++) {
+            BigRat s_c = BigVecQ3::Dot(tri.corners[c], cross);
+            if (s_c > max_s) max_s = s_c;
+          }
+          BigRat supp_upper = max_s + supp_err;
+          if (supp_upper > max_def[m]) max_def[m] = supp_upper;
         }
-
-        // defect0[0..2], D0, r_min, c_cone, c_core
-        out << "," << ZigzagRatString(dec.defect0[0])
-            << "," << ZigzagRatString(dec.defect0[1])
-            << "," << ZigzagRatString(dec.defect0[2])
-            << "," << ZigzagRatString(dec.defect_D)
-            << "," << ZigzagRatString(dec.r_min)
-            << "," << ZigzagRatString(dec.c_cone)
-            << "," << ZigzagRatString(dec.c_core);
-      } else {
-        // Decomposed Certificate row (tag 2):
-        // Format: tag(2), id, root(0), path_len, [path_digits], symmetryIndex,
-        // [4 axes: annular_axis, complement_axes[0..2]], c, delta, r,
-        // coreAxis, defect0[0..2], D0, r_min, c_cone, c_core, lam, w[0..2]
-        out << ",2," << r.id << ",0," << r.rel_path.size();
-        for (char ch : r.rel_path) {
-          out << "," << (ch - '0');
+      }
+      BigRat defect0[3];
+      for (int m = 0; m < 3; m++) {
+        BigRat d = max_def[m];
+        if (d > 0) {
+          BigInt num = d.Numerator();
+          BigInt den = d.Denominator();
+          BigInt scale(1000000000LL);
+          BigInt c = (num * scale + den - 1) / den;
+          defect0[m] = BigRat(c, scale);
+        } else {
+          defect0[m] = BigRat(0);
         }
-        out << "," << dec.symmetry_index;
+      }
+      BigVecQ3 coeff0 = BigVecQ3::Cross(edges_ann[1], edges_ann[2]);
+      BigVecQ3 coeff1 = BigVecQ3::Cross(edges_ann[2], edges_ann[0]);
+      BigVecQ3 coeff2 = BigVecQ3::Cross(edges_ann[0], edges_ann[1]);
+      BigVecQ3 w_coeffs[3] = {coeff0, coeff1, coeff2};
+      BigRat weight_upper[3];
+      for (int m = 0; m < 3; m++) {
+        BigRat w_max = BigVecQ3::Dot(tri.corners[0], w_coeffs[m]);
+        for (int c = 1; c < 3; c++) {
+          BigRat val = BigVecQ3::Dot(tri.corners[c], w_coeffs[m]);
+          if (val > w_max) w_max = val;
+        }
+        weight_upper[m] = w_max + supp_err;
+      }
+      BigRat D0 = weight_upper[0] * defect0[0] +
+                  weight_upper[1] * defect0[1] +
+                  weight_upper[2] * defect0[2];
+      if (D0 > 0) {
+        BigInt num = D0.Numerator();
+        BigInt den = D0.Denominator();
+        BigInt scale(1000000000LL);
+        BigInt c = (num * scale + den - 1) / den;
+        D0 = BigRat(c, scale);
+      }
+      if (D0 > dec.defect_D) {
+        dec.defect_D = D0;
+      }
+      dec.defect0[0] = defect0[0];
+      dec.defect0[1] = defect0[1];
+      dec.defect0[2] = defect0[2];
+
+      // Audit core axis on tri (must have 0 defect)
+      BigVecQ3 ctr_core;
+      BigRat del_core;
+      AxisCertificate ax_core;
+      ContactInfo c_core_ax[3] = {coreAxis.contacts[0], coreAxis.contacts[1], coreAxis.contacts[2]};
+      if (!Tube229::AuditAxis(tri, c_core_ax, &ax_core, &ctr_core, &del_core, &err, BigRat(0))) {
+        std::cerr << "FAILED AuditAxis core on row " << r.id << " path=" << r.node->path << ": " << err << "\n";
+        abort();
+      }
+      coreAxis = ax_core;
+
+      // Audit each complement axis on tri
+      for (int a = 0; a < 3; a++) {
+        AxisCertificate ax_comp;
+        BigVecQ3 ctr_comp;
+        BigRat del_comp;
+        ContactInfo c_comp[3] = {dec.complement_axes[a].contacts[0], dec.complement_axes[a].contacts[1], dec.complement_axes[a].contacts[2]};
+        CHECK(Tube229::AuditAxis(tri, c_comp, &ax_comp, &ctr_comp, &del_comp, &err, BigRat("1/1000")));
+        dec.complement_axes[a] = ax_comp;
+      }
+
+      // True normalized centers (ctr_ann and ctr_core returned by AuditAxis are already evals/B)
+      BigVecQ3 u0 = ctr_ann;
+      BigVecQ3 v = ctr_core;
+
+      BigRat dot = BigVecQ3::Dot(u0, v);
+      BigRat u0_sq = BigVecQ3::Dot(u0, u0);
+      BigRat lam = dot / u0_sq;
+      BigVecQ3 w = v - u0 * lam;
+
+      // Decomposed Certificate row (tag 2):
+      // Format: tag(2), id, root(0), path_len, [path_digits], symmetryIndex,
+      // [4 axes: annular_axis, complement_axes[0..2]], c, delta, r,
+      // coreAxis, defect0[0..2], D0, r_min, c_cone, c_core, lam, w[0..2]
+      out << ",2," << r.id << ",0," << r.rel_path.size();
+      for (char ch : r.rel_path) {
+        out << "," << (ch - '0');
+      }
+      out << "," << dec.symmetry_index;
 
       // 4 certificate axes: annular_axis + 3 complement axes
       WriteAxisPack(out, dec.annular_axis);
@@ -267,7 +343,7 @@ int main(int argc, char **argv) {
           << "," << ZigzagRatString(dec.r);
 
       // coreAxis
-      WriteAxisPack(out, dec.inner_core_axis);
+      WriteAxisPack(out, coreAxis);
 
       // defect0[0..2], D0, r_min, c_cone, c_core, lam, w[0..2]
       out << "," << ZigzagRatString(dec.defect0[0])
@@ -277,11 +353,10 @@ int main(int argc, char **argv) {
           << "," << ZigzagRatString(dec.r_min)
           << "," << ZigzagRatString(dec.c_cone)
           << "," << ZigzagRatString(dec.c_core)
-          << "," << ZigzagRatString(dec.lam)
-          << "," << ZigzagRatString(dec.w[0])
-          << "," << ZigzagRatString(dec.w[1])
-          << "," << ZigzagRatString(dec.w[2]);
-      }
+          << "," << ZigzagRatString(lam)
+          << "," << ZigzagRatString(w.x)
+          << "," << ZigzagRatString(w.y)
+          << "," << ZigzagRatString(w.z);
     } else {
       LOG(FATAL) << "Encountered leaf node without certificate: " << r.node->path;
     }

@@ -29,6 +29,7 @@
 #include "bignum/big-overloads.h"
 #include "bignum/big.h"
 #include "bignum/big-vec.h"
+#include "chart229.h"
 #include "geom/hull-2d.h"
 #include "nopert229.h"
 #include "timer.h"
@@ -1066,104 +1067,128 @@ static bool ComputeExactComponent(const TriangleQ &tri,
 }
 
 static bool ParseRow(const std::string &line,
-                    ParsedNode *node,
-                    std::unordered_map<int64_t, StoredMixedCert> *mixed_certs,
-                    int64_t *cert_delta) {
-  if (line.empty()) return false;
-  std::istringstream iss(line);
-  std::string tag_str;
-  int64_t id, parent_id;
-  int depth;
-  if (!(iss >> tag_str >> id >> parent_id >> depth)) return false;
-
-  node->id = id;
-  node->parent_id = parent_id;
-  node->depth = depth;
-
-  if (tag_str == "CE" || tag_str == "CERT") {
-    node->tag = NodeTag::CERT;
-    if (cert_delta) (*cert_delta)++;
-    double margin = 0.0;
-    iss >> node->winning_triple >> margin >> node->inner[0] >> node->inner[1] >> node->inner[2];
-  } else if (tag_str == "MX") {
-    node->tag = NodeTag::MX;
-    if (cert_delta) (*cert_delta)++;
-    int k = 0;
-    double margin = 0.0;
-    if (iss >> k >> margin) {
-      StoredMixedCert mx;
-      mx.mix_k = k;
-      std::vector<double> float_weights(k);
-      for (int i = 0; i < k; i++) {
-        iss >> mx.mix_components[i].winning_triple
-            >> float_weights[i]
-            >> mx.mix_components[i].inner[0]
-            >> mx.mix_components[i].inner[1]
-            >> mx.mix_components[i].inner[2];
-      }
-      int64_t M = 1000000000000LL;
-      int64_t sum_w = 0;
-      for (int i = 0; i < k - 1; i++) {
-        int64_t W = std::max<int64_t>(0LL, (int64_t)std::round(float_weights[i] * M));
-        mx.mix_weights[i] = BigRat(W, M);
-        sum_w += W;
-      }
-      int64_t rem = M - sum_w;
-      if (rem < 0) rem = 0;
-      mx.mix_weights[k - 1] = BigRat(rem, M);
-      for (int i = k; i < 4; i++) {
-        mx.mix_components[i] = mx.mix_components[0];
-        mx.mix_weights[i] = BigRat(0);
-      }
-      if (mixed_certs) {
-        (*mixed_certs)[id] = std::move(mx);
-      }
-    }
-  } else if (tag_str == "PR" || tag_str == "PRUNE") {
-    std::string prune_kind;
-    iss >> prune_kind;
-    if (prune_kind == "RADIUS" || prune_kind == "RA") {
-      node->tag = NodeTag::PRUNE_RADIUS;
-    } else if (prune_kind == "FUNDAMENTAL" || prune_kind == "FU") {
-      node->tag = NodeTag::PRUNE_FUNDAMENTAL;
-      int fdir = 1;
-      iss >> fdir;
-      node->fund_dir = fdir;
-    }
-  } else if (tag_str == "TU" || tag_str == "TUBE") {
-    node->tag = NodeTag::TUBE;
-    if (iss >> node->tube_radius_str) {
-      node->tube_radius = std::stod(node->tube_radius_str);
-    }
-  } else if (tag_str == "SP" || tag_str == "SPLIT") {
-    node->tag = NodeTag::SPLIT;
-    int64_t c0, c1;
-    if (iss >> c0 >> c1) {
-      node->child_ids[0] = c0;
-      node->child_ids[1] = c1;
-    }
-  } else if (tag_str == "SO" || tag_str == "SPLIT_ORIGIN") {
-    node->tag = NodeTag::SPLIT_ORIGIN;
-    int64_t c0, c1;
-    if (iss >> c0 >> c1) {
-      node->child_ids[0] = c0;
-      node->child_ids[1] = c1;
-    }
-  } else if (tag_str == "SV" || tag_str == "SPLIT_VIEW") {
-    node->tag = NodeTag::SPLIT_VIEW;
-    int64_t c0, c1, c2, c3;
-    if (iss >> c0 >> c1 >> c2 >> c3) {
-      node->child_ids[0] = c0;
-      node->child_ids[1] = c1;
-      node->child_ids[2] = c2;
-      node->child_ids[3] = c3;
-    }
-  } else if (tag_str == "DF" || tag_str == "DI" || tag_str == "DIFFICULT") {
-    node->tag = NodeTag::DIFFICULT;
-  } else {
-    node->tag = NodeTag::NONE;
+                     ParsedNode *node,
+                     std::unordered_map<int64_t, StoredMixedCert> *mixed_certs,
+                     int64_t *cert_delta) {
+  auto row_or_err = Chart229::Parse(line);
+  if (Chart229::IsError(row_or_err) || Chart229::IsEmptyOrComment(row_or_err)) {
+    return false;
   }
-  return true;
+
+  return std::visit(
+      Chart229::Overloaded{
+          [&](const Chart229::CertRow &c) {
+            node->id = c.id;
+            node->parent_id = c.parent_id;
+            node->depth = c.depth;
+            node->tag = NodeTag::CERT;
+            if (cert_delta) (*cert_delta)++;
+            node->winning_triple = c.winning_triple;
+            node->inner[0] = c.in0;
+            node->inner[1] = c.in1;
+            node->inner[2] = c.in2;
+            return true;
+          },
+          [&](const Chart229::MixedCertRow &m) {
+            node->id = m.id;
+            node->parent_id = m.parent_id;
+            node->depth = m.depth;
+            node->tag = NodeTag::MX;
+            if (cert_delta) (*cert_delta)++;
+            int k = m.components.size();
+            StoredMixedCert mx;
+            mx.mix_k = k;
+            for (int i = 0; i < k && i < 4; i++) {
+              mx.mix_components[i].winning_triple = m.components[i].winning_triple;
+              mx.mix_components[i].inner[0] = m.components[i].in0;
+              mx.mix_components[i].inner[1] = m.components[i].in1;
+              mx.mix_components[i].inner[2] = m.components[i].in2;
+            }
+            int64_t M = 1000000000000LL;
+            int64_t sum_w = 0;
+            for (int i = 0; i < k - 1; i++) {
+              int64_t W = std::max<int64_t>(0LL, (int64_t)std::round(m.components[i].weight * M));
+              mx.mix_weights[i] = BigRat(W, M);
+              sum_w += W;
+            }
+            int64_t rem = M - sum_w;
+            if (rem < 0) rem = 0;
+            if (k > 0) mx.mix_weights[k - 1] = BigRat(rem, M);
+            for (int i = k; i < 4; i++) {
+              mx.mix_components[i] = mx.mix_components[0];
+              mx.mix_weights[i] = BigRat(0);
+            }
+            if (mixed_certs) {
+              (*mixed_certs)[m.id] = std::move(mx);
+            }
+            return true;
+          },
+          [&](const Chart229::SplitRow &sp) {
+            node->id = sp.id;
+            node->parent_id = sp.parent_id;
+            node->depth = sp.depth;
+            node->tag = NodeTag::SPLIT;
+            node->child_ids[0] = sp.child0;
+            node->child_ids[1] = sp.child1;
+            return true;
+          },
+          [&](const Chart229::SplitOriginRow &so) {
+            node->id = so.id;
+            node->parent_id = so.parent_id;
+            node->depth = so.depth;
+            node->tag = NodeTag::SPLIT_ORIGIN;
+            node->child_ids[0] = so.child0;
+            node->child_ids[1] = so.child1;
+            return true;
+          },
+          [&](const Chart229::SplitViewRow &sv) {
+            node->id = sv.id;
+            node->parent_id = sv.parent_id;
+            node->depth = sv.depth;
+            node->tag = NodeTag::SPLIT_VIEW;
+            node->child_ids[0] = sv.child0;
+            node->child_ids[1] = sv.child1;
+            node->child_ids[2] = sv.child2;
+            node->child_ids[3] = sv.child3;
+            return true;
+          },
+          [&](const Chart229::PruneRadiusRow &pr) {
+            node->id = pr.id;
+            node->parent_id = pr.parent_id;
+            node->depth = pr.depth;
+            node->tag = NodeTag::PRUNE_RADIUS;
+            return true;
+          },
+          [&](const Chart229::PruneFundamentalRow &pf) {
+            node->id = pf.id;
+            node->parent_id = pf.parent_id;
+            node->depth = pf.depth;
+            node->tag = NodeTag::PRUNE_FUNDAMENTAL;
+            node->fund_dir = pf.fund_dir;
+            return true;
+          },
+          [&](const Chart229::TubeRow &tu) {
+            node->id = tu.id;
+            node->parent_id = tu.parent_id;
+            node->depth = tu.depth;
+            node->tag = NodeTag::TUBE;
+            node->tube_radius = tu.tube_radius;
+            node->tube_radius_str = std::format("{:.17g}", tu.tube_radius);
+            return true;
+          },
+          [&](const Chart229::DifficultRow &df) {
+            node->id = df.id;
+            node->parent_id = df.parent_id;
+            node->depth = df.depth;
+            node->tag = NodeTag::DIFFICULT;
+            return true;
+          },
+          [&](const auto &) {
+            node->tag = NodeTag::NONE;
+            return false;
+          },
+      },
+      row_or_err);
 }
 
 static void LoadDoneFiles(const std::string &done_dir,
