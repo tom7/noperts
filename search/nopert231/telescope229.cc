@@ -422,7 +422,8 @@ static RollupResult RollupFrontierToLca(
     child_cell.best_margin = -1e30;
     return {
       .fully_solved = false,
-      .rows = {std::format("DF {} {} {} -1e30\n", root_id, root_parent_id, root_depth)},
+      .rows = {Chart229::Serialize(Chart229::DifficultRow{
+                   .id = root_id, .parent_id = root_parent_id, .depth = root_depth}) + "\n"},
       .lca_id = root_id,
       .child_cell = child_cell
     };
@@ -581,7 +582,8 @@ static RollupResult RollupFrontierToLca(
     int64_t id;
     if (!(iss >> tag >> id)) continue;
     if (id == lca_id) {
-      pruned_rows.push_back(std::format("DF {} {} {} -1e30\n", lca_id, lca_parent, curr_depth));
+      pruned_rows.push_back(Chart229::Serialize(Chart229::DifficultRow{
+          .id = lca_id, .parent_id = lca_parent, .depth = curr_depth}) + "\n");
       lca_emitted = true;
     } else if (!prune_set.contains(id)) {
       pruned_rows.push_back(raw);
@@ -589,7 +591,8 @@ static RollupResult RollupFrontierToLca(
   }
 
   if (!lca_emitted) {
-    pruned_rows.push_back(std::format("DF {} {} {} -1e30\n", lca_id, lca_parent, curr_depth));
+    pruned_rows.push_back(Chart229::Serialize(Chart229::DifficultRow{
+        .id = lca_id, .parent_id = lca_parent, .depth = curr_depth}) + "\n");
   }
 
   DifficultCell child_cell;
@@ -1057,7 +1060,9 @@ int main(int argc, char **argv) {
             }
             spawned_difficult_cells.push_back(rollup_results[vnode.leaf_index].child_cell);
           } else {
-            out << std::format("DF {} {} {} -1e30\n", vnode.id, vnode.parent_id, vnode.depth);
+            out << Chart229::Serialize(Chart229::DifficultRow{
+                       .id = vnode.id, .parent_id = vnode.parent_id, .depth = vnode.depth})
+                << "\n";
             DifficultCell child_cell;
             child_cell.id = vnode.id;
             child_cell.parent_id = vnode.parent_id;
@@ -1076,10 +1081,11 @@ int main(int argc, char **argv) {
         }
       } else {
         // Internal SV node
-        out << std::format("SV {} {} {} {} {} {} {}\n",
-                           vnode.id, vnode.parent_id, vnode.depth,
-                           vnode.children[0], vnode.children[1],
-                           vnode.children[2], vnode.children[3]);
+        out << Chart229::Serialize(Chart229::SplitViewRow{
+                   .id = vnode.id, .parent_id = vnode.parent_id, .depth = vnode.depth,
+                   .child0 = vnode.children[0], .child1 = vnode.children[1],
+                   .child2 = vnode.children[2], .child3 = vnode.children[3]})
+            << "\n";
         for (int c = 0; c < 4; c++) {
           int64_t cid = vnode.children[c];
           size_t c_idx = id_to_vidx[cid];

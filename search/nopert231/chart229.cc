@@ -414,6 +414,9 @@ Chart229::Row Chart229::Parse(std::string_view line) {
     if (!ParseNodeHeader()) {
       return ParseError{std::format("Malformed {} header: '{}'", tag, line)};
     }
+    // Margin is optional on DF rows (e.g. older logs or debug outputs).
+    std::string_view opt_margin = NextToken(rest);
+    (void)opt_margin;
     if (!rest.empty()) {
       return ParseError{std::format("Extra tokens on {} row: '{}'", tag, line)};
     }

@@ -566,9 +566,15 @@ static int RunDifficult(
         auto sub_tris = parent.tri.Subdivide();
         int64_t c_ids[4];
         for (int t = 0; t < 4; t++) c_ids[t] = mgr.next_node_id++;
-        mgr.row_callback(std::format("SV {} {} {} {} {} {} {}\n",
-                                     parent.id, parent.parent_id, parent.depth,
-                                     c_ids[0], c_ids[1], c_ids[2], c_ids[3]));
+        mgr.row_callback(Chart229::Serialize(Chart229::SplitViewRow{
+            .id = parent.id,
+            .parent_id = parent.parent_id,
+            .depth = parent.depth,
+            .child0 = c_ids[0],
+            .child1 = c_ids[1],
+            .child2 = c_ids[2],
+            .child3 = c_ids[3],
+        }) + "\n");
         for (int t = 3; t >= 0; t--) {
           SearchNode c = parent;
           c.id = c_ids[t];

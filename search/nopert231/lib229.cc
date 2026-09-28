@@ -2656,6 +2656,11 @@ MixtureSolveStats SolveCellMixture(
     stats.rows_written++;
     if (row_callback) row_callback(row);
   };
+  auto EmitChartRow = [&](const auto &row) {
+    std::string s = Chart229::Serialize(row);
+    s.push_back('\n');
+    EmitRow(s);
+  };
 
   ViewQuadtree base_tree;
   if (initial_quadtree != nullptr) {
@@ -2706,9 +2711,15 @@ MixtureSolveStats SolveCellMixture(
       int64_t c1_id = next_id++;
       int64_t c2_id = next_id++;
       int64_t c3_id = next_id++;
-      EmitRow(std::format("SV {} {} {} {} {} {} {}\n",
-                          parent.id, parent.parent_id, parent.depth,
-                          c0_id, c1_id, c2_id, c3_id));
+      EmitChartRow(Chart229::SplitViewRow{
+          .id = parent.id,
+          .parent_id = parent.parent_id,
+          .depth = parent.depth,
+          .child0 = c0_id,
+          .child1 = c1_id,
+          .child2 = c2_id,
+          .child3 = c3_id,
+      });
       int64_t c_ids[4] = {c0_id, c1_id, c2_id, c3_id};
       for (int t = 3; t >= 0; t--) {
         SearchNode c = parent;
@@ -2767,14 +2778,17 @@ MixtureSolveStats SolveCellMixture(
     // 1. Pruning checks
     if (OutsideBall(node.box)) {
       stats.pruned_leaves++;
-      EmitRow(std::format("PR {} {} {} RADIUS\n", node.id, node.parent_id, node.depth));
+      EmitChartRow(Chart229::PruneRadiusRow{
+          .id = node.id, .parent_id = node.parent_id, .depth = node.depth});
       continue;
     }
 
     FundamentalPruneResult fund = CheckFundamentalPrune(node.chart, node.box);
     if (fund.prune) {
       stats.pruned_leaves++;
-      EmitRow(std::format("PR {} {} {} FUNDAMENTAL {}\n", node.id, node.parent_id, node.depth, fund.direction));
+      EmitChartRow(Chart229::PruneFundamentalRow{
+          .id = node.id, .parent_id = node.parent_id, .depth = node.depth,
+          .fund_dir = fund.direction});
       continue;
     }
 
@@ -2786,7 +2800,9 @@ MixtureSolveStats SolveCellMixture(
 
     if (effective_tube_r > 0.0 && InsideIdentityTube(node.chart, node.box, effective_tube_r)) {
       stats.pruned_leaves++;
-      EmitRow(std::format("TU {} {} {} {:.17g}\n", node.id, node.parent_id, node.depth, effective_tube_r));
+      EmitChartRow(Chart229::TubeRow{
+          .id = node.id, .parent_id = node.parent_id, .depth = node.depth,
+          .tube_radius = effective_tube_r});
       continue;
     }
 
@@ -2798,9 +2814,9 @@ MixtureSolveStats SolveCellMixture(
         auto sub_tris = node.tri.Subdivide();
         int64_t c_ids[4];
         for (int t = 0; t < 4; t++) c_ids[t] = next_id++;
-        EmitRow(std::format("SV {} {} {} {} {} {} {}\n",
-                            node.id, node.parent_id, node.depth,
-                            c_ids[0], c_ids[1], c_ids[2], c_ids[3]));
+        EmitChartRow(Chart229::SplitViewRow{
+            .id = node.id, .parent_id = node.parent_id, .depth = node.depth,
+            .child0 = c_ids[0], .child1 = c_ids[1], .child2 = c_ids[2], .child3 = c_ids[3]});
         for (int t = 3; t >= 0; t--) {
           SearchNode c = node;
           c.id = c_ids[t];
@@ -2817,7 +2833,9 @@ MixtureSolveStats SolveCellMixture(
       auto [b0, b1] = node.box.Split(widest);
       SearchNode c0 = node; c0.id = next_id++; c0.parent_id = node.id; c0.depth++; c0.box_depth++; c0.box = b0;
       SearchNode c1 = node; c1.id = next_id++; c1.parent_id = node.id; c1.depth++; c1.box_depth++; c1.box = b1;
-      EmitRow(std::format("SO {} {} {} {} {}\n", node.id, node.parent_id, node.depth, c0.id, c1.id));
+      EmitChartRow(Chart229::SplitOriginRow{
+          .id = node.id, .parent_id = node.parent_id, .depth = node.depth,
+          .child0 = c0.id, .child1 = c1.id});
       if (c0.box.ContainsOrigin()) {
         stack.push_back(c1);
         stack.push_back(c0);
@@ -2871,21 +2889,9 @@ MixtureSolveStats SolveCellMixture(
       else if (max_r <= 127) stats.rank_histogram[6]++;
       else stats.rank_histogram[7]++;
       if (res.num_components == 1) {
-        EmitRow(std::format("CE {} {} {} {} {:.17g} {} {} {}\n",
-                            node.id, node.parent_id, node.depth,
-                            res.triples[0], res.margin,
-                            res.inners[0][0], res.inners[0][1], res.inners[0][2]));
+        EmitChartRow(ToCertRow(res, node.id, node.parent_id, node.depth));
       } else {
-        std::string row = std::format("MX {} {} {} {} {:.17g}",
-                                      node.id, node.parent_id, node.depth,
-                                      res.num_components, res.margin);
-        for (int k = 0; k < res.num_components; k++) {
-          row += std::format(" {} {:.17g} {} {} {}",
-                             res.triples[k], res.weights[k],
-                             res.inners[k][0], res.inners[k][1], res.inners[k][2]);
-        }
-        row += "\n";
-        EmitRow(row);
+        EmitChartRow(ToMixedCertRow(res, node.id, node.parent_id, node.depth));
       }
       continue;
     }
@@ -2925,7 +2931,9 @@ MixtureSolveStats SolveCellMixture(
       auto [b0, b1] = node.box.Split(widest);
       SearchNode c0 = node; c0.id = next_id++; c0.parent_id = node.id; c0.depth++; c0.box_depth++; c0.box = b0;
       SearchNode c1 = node; c1.id = next_id++; c1.parent_id = node.id; c1.depth++; c1.box_depth++; c1.box = b1;
-      EmitRow(std::format("SP {} {} {} {} {}\n", node.id, node.parent_id, node.depth, c0.id, c1.id));
+      EmitChartRow(Chart229::SplitRow{
+          .id = node.id, .parent_id = node.parent_id, .depth = node.depth,
+          .child0 = c0.id, .child1 = c1.id});
       stack.push_back(c1);
       stack.push_back(c0);
     } else {
@@ -2935,9 +2943,9 @@ MixtureSolveStats SolveCellMixture(
       auto sub_tris = node.tri.Subdivide();
       int64_t c_ids[4];
       for (int t = 0; t < 4; t++) c_ids[t] = next_id++;
-      EmitRow(std::format("SV {} {} {} {} {} {} {}\n",
-                          node.id, node.parent_id, node.depth,
-                          c_ids[0], c_ids[1], c_ids[2], c_ids[3]));
+      EmitChartRow(Chart229::SplitViewRow{
+          .id = node.id, .parent_id = node.parent_id, .depth = node.depth,
+          .child0 = c_ids[0], .child1 = c_ids[1], .child2 = c_ids[2], .child3 = c_ids[3]});
       for (int t = 3; t >= 0; t--) {
         SearchNode c = node;
         c.id = c_ids[t];
@@ -2995,6 +3003,11 @@ MixtureSolveStats SolveCellMixtureParallel(
       row_callback(row);
     }
   };
+  auto EmitChartRow = [&](const auto &row) {
+    std::string s = Chart229::Serialize(row);
+    s.push_back('\n');
+    EmitRow(s);
+  };
 
   // 1. Expand root quadtree (or start with root)
   std::vector<SearchNode> initial_views;
@@ -3010,9 +3023,15 @@ MixtureSolveStats SolveCellMixtureParallel(
       int64_t c1_id = next_id.fetch_add(1);
       int64_t c2_id = next_id.fetch_add(1);
       int64_t c3_id = next_id.fetch_add(1);
-      EmitRow(std::format("SV {} {} {} {} {} {} {}\n",
-                          parent.id, parent.parent_id, parent.depth,
-                          c0_id, c1_id, c2_id, c3_id));
+      EmitChartRow(Chart229::SplitViewRow{
+          .id = parent.id,
+          .parent_id = parent.parent_id,
+          .depth = parent.depth,
+          .child0 = c0_id,
+          .child1 = c1_id,
+          .child2 = c2_id,
+          .child3 = c3_id,
+      });
       int64_t c_ids[4] = {c0_id, c1_id, c2_id, c3_id};
       for (int t = 3; t >= 0; t--) {
         SearchNode c = parent;
@@ -3160,13 +3179,16 @@ MixtureSolveStats SolveCellMixtureParallel(
         // 1. Pruning checks
         if (OutsideBall(node.box)) {
           pruned_leaves.fetch_add(1);
-          EmitRow(std::format("PR {} {} {} RADIUS\n", node.id, node.parent_id, node.depth));
+          EmitChartRow(Chart229::PruneRadiusRow{
+              .id = node.id, .parent_id = node.parent_id, .depth = node.depth});
           continue;
         }
         FundamentalPruneResult fund = CheckFundamentalPrune(node.chart, node.box);
         if (fund.prune) {
           pruned_leaves.fetch_add(1);
-          EmitRow(std::format("PR {} {} {} FUNDAMENTAL {}\n", node.id, node.parent_id, node.depth, fund.direction));
+          EmitChartRow(Chart229::PruneFundamentalRow{
+              .id = node.id, .parent_id = node.parent_id, .depth = node.depth,
+              .fund_dir = fund.direction});
           continue;
         }
         double effective_tube_r = tube_radius;
@@ -3177,7 +3199,9 @@ MixtureSolveStats SolveCellMixtureParallel(
 
         if (effective_tube_r > 0.0 && InsideIdentityTube(node.chart, node.box, effective_tube_r)) {
           pruned_leaves.fetch_add(1);
-          EmitRow(std::format("TU {} {} {} {:.17g}\n", node.id, node.parent_id, node.depth, effective_tube_r));
+          EmitChartRow(Chart229::TubeRow{
+              .id = node.id, .parent_id = node.parent_id, .depth = node.depth,
+              .tube_radius = effective_tube_r});
           continue;
         }
 
@@ -3186,9 +3210,9 @@ MixtureSolveStats SolveCellMixtureParallel(
             auto sub_tris = node.tri.Subdivide();
             int64_t c_ids[4];
             for (int t = 0; t < 4; t++) c_ids[t] = next_id.fetch_add(1);
-            EmitRow(std::format("SV {} {} {} {} {} {} {}\n",
-                                node.id, node.parent_id, node.depth,
-                                c_ids[0], c_ids[1], c_ids[2], c_ids[3]));
+            EmitChartRow(Chart229::SplitViewRow{
+                .id = node.id, .parent_id = node.parent_id, .depth = node.depth,
+                .child0 = c_ids[0], .child1 = c_ids[1], .child2 = c_ids[2], .child3 = c_ids[3]});
             for (int t = 3; t >= 0; t--) {
               SearchNode c = node;
               c.id = c_ids[t];
@@ -3207,7 +3231,9 @@ MixtureSolveStats SolveCellMixtureParallel(
           int64_t c1_id = next_id.fetch_add(1);
           SearchNode c0 = node; c0.id = c0_id; c0.parent_id = node.id; c0.depth++; c0.box_depth++; c0.box = b0;
           SearchNode c1 = node; c1.id = c1_id; c1.parent_id = node.id; c1.depth++; c1.box_depth++; c1.box = b1;
-          EmitRow(std::format("SO {} {} {} {} {}\n", node.id, node.parent_id, node.depth, c0.id, c1.id));
+          EmitChartRow(Chart229::SplitOriginRow{
+              .id = node.id, .parent_id = node.parent_id, .depth = node.depth,
+              .child0 = c0_id, .child1 = c1_id});
           if (c0.box.ContainsOrigin()) {
             local_stack.push_back(c1);
             local_stack.push_back(c0);
@@ -3272,21 +3298,9 @@ MixtureSolveStats SolveCellMixtureParallel(
           cage_cache.Insert(new_hint);
 
           if (res.num_components == 1) {
-            EmitRow(std::format("CE {} {} {} {} {:.17g} {} {} {}\n",
-                                node.id, node.parent_id, node.depth,
-                                res.triples[0], res.margin,
-                                res.inners[0][0], res.inners[0][1], res.inners[0][2]));
+            EmitChartRow(ToCertRow(res, node.id, node.parent_id, node.depth));
           } else {
-            std::string mx_row = std::format("MX {} {} {} {} {:.17g}",
-                                             node.id, node.parent_id, node.depth,
-                                             res.num_components, res.margin);
-            for (int k = 0; k < res.num_components; k++) {
-              mx_row += std::format(" {} {:.17g} {} {} {}",
-                                    res.triples[k], res.weights[k],
-                                    res.inners[k][0], res.inners[k][1], res.inners[k][2]);
-            }
-            mx_row += "\n";
-            EmitRow(mx_row);
+            EmitChartRow(ToMixedCertRow(res, node.id, node.parent_id, node.depth));
           }
           continue;
         }
@@ -3327,7 +3341,9 @@ MixtureSolveStats SolveCellMixtureParallel(
           int64_t c1_id = next_id.fetch_add(1);
           SearchNode c0 = node; c0.id = c0_id; c0.parent_id = node.id; c0.depth++; c0.box_depth++; c0.box = b0;
           SearchNode c1 = node; c1.id = c1_id; c1.parent_id = node.id; c1.depth++; c1.box_depth++; c1.box = b1;
-          EmitRow(std::format("SP {} {} {} {} {}\n", node.id, node.parent_id, node.depth, c0.id, c1.id));
+          EmitChartRow(Chart229::SplitRow{
+              .id = node.id, .parent_id = node.parent_id, .depth = node.depth,
+              .child0 = c0_id, .child1 = c1_id});
           local_stack.push_back(c1);
           local_stack.push_back(c0);
         } else {
@@ -3339,9 +3355,9 @@ MixtureSolveStats SolveCellMixtureParallel(
           auto sub_tris = node.tri.Subdivide();
           int64_t c_ids[4];
           for (int t = 0; t < 4; t++) c_ids[t] = next_id.fetch_add(1);
-          EmitRow(std::format("SV {} {} {} {} {} {} {}\n",
-                              node.id, node.parent_id, node.depth,
-                              c_ids[0], c_ids[1], c_ids[2], c_ids[3]));
+          EmitChartRow(Chart229::SplitViewRow{
+              .id = node.id, .parent_id = node.parent_id, .depth = node.depth,
+              .child0 = c_ids[0], .child1 = c_ids[1], .child2 = c_ids[2], .child3 = c_ids[3]});
           for (int t = 3; t >= 0; t--) {
             SearchNode c = node;
             c.id = c_ids[t];
@@ -4538,7 +4554,9 @@ void SearchManager::Run() {
       CHECK(row_file) << log_path;
       if (show_banner) status.Print("Writing fresh log to: {}\n", log_path);
       if (auto_init_root) {
-        OutputRow("SV 0 -1 0 1 2 3 4\n");
+        OutputRow(Chart229::SplitViewRow{
+            .id = 0, .parent_id = -1, .depth = 0,
+            .child0 = 1, .child1 = 2, .child2 = 3, .child3 = 4});
       }
     }
   }
@@ -4703,8 +4721,8 @@ void SearchManager::Run() {
           if (OutsideBall(node.box)) {
             pruned_count++;
             RecordCertification(node);
-            OutputRow(std::format("PR {} {} {} RADIUS\n",
-                                  node.id, node.parent_id, node.depth));
+            OutputRow(Chart229::PruneRadiusRow{
+                .id = node.id, .parent_id = node.parent_id, .depth = node.depth});
             return;
           }
 
@@ -4714,9 +4732,9 @@ void SearchManager::Run() {
           if (fund.prune) {
             pruned_count++;
             RecordCertification(node);
-            OutputRow(std::format("PR {} {} {} FUNDAMENTAL {}\n",
-                                  node.id, node.parent_id, node.depth,
-                                  fund.direction));
+            OutputRow(Chart229::PruneFundamentalRow{
+                .id = node.id, .parent_id = node.parent_id, .depth = node.depth,
+                .fund_dir = fund.direction});
 
           } else {
             double effective_tube_r = tube_radius;
@@ -4728,9 +4746,9 @@ void SearchManager::Run() {
             if (effective_tube_r > 0.0 && InsideIdentityTube(node.chart, node.box, effective_tube_r)) {
               pruned_count++;
               RecordCertification(node);
-              OutputRow(std::format("TU {} {} {} {:.17g}\n",
-                                    node.id, node.parent_id, node.depth,
-                                    effective_tube_r));
+              OutputRow(Chart229::TubeRow{
+                  .id = node.id, .parent_id = node.parent_id, .depth = node.depth,
+                  .tube_radius = effective_tube_r});
 
             } else if (node.chart == 0 && node.box.ContainsOrigin()) {
               if (tube_atlas && tube_atlas->IsLoaded() && effective_tube_r == 0.0 && node.view_depth < max_view_depth) {
@@ -4749,9 +4767,10 @@ void SearchManager::Run() {
                   MutexLock ml(&mu);
                   stack.push_back(child);
                 }
-                OutputRow(std::format("SV {} {} {} {} {} {} {}\n", node.id,
-                                      node.parent_id, node.depth,
-                                      child_ids[0], child_ids[1], child_ids[2], child_ids[3]));
+                OutputRow(Chart229::SplitViewRow{
+                    .id = node.id, .parent_id = node.parent_id, .depth = node.depth,
+                    .child0 = child_ids[0], .child1 = child_ids[1],
+                    .child2 = child_ids[2], .child3 = child_ids[3]});
               } else {
                 int widest = node.box.WidestAxis();
                 auto [b0, b1] = node.box.Split(widest);
@@ -4773,9 +4792,9 @@ void SearchManager::Run() {
                 child1.box = b1;
 
                 split_count++;
-                OutputRow(std::format("SO {} {} {} {} {}\n",
-                                      node.id, node.parent_id, node.depth,
-                                      child0.id, child1.id));
+                OutputRow(Chart229::SplitOriginRow{
+                    .id = node.id, .parent_id = node.parent_id, .depth = node.depth,
+                    .child0 = child0.id, .child1 = child1.id});
 
                 if (child0.box.ContainsOrigin()) {
                   MutexLock ml(&mu);
@@ -4805,9 +4824,10 @@ void SearchManager::Run() {
                 MutexLock ml(&mu);
                 stack.push_back(child);
               }
-              OutputRow(std::format("SV {} {} {} {} {} {} {}\n", node.id,
-                                    node.parent_id, node.depth,
-                                    child_ids[0], child_ids[1], child_ids[2], child_ids[3]));
+              OutputRow(Chart229::SplitViewRow{
+                  .id = node.id, .parent_id = node.parent_id, .depth = node.depth,
+                  .child0 = child_ids[0], .child1 = child_ids[1],
+                  .child2 = child_ids[2], .child3 = child_ids[3]});
             } else {
               MutexLock ml(&mu);
               eval_indices.push_back(i);
@@ -5071,11 +5091,7 @@ void SearchManager::Run() {
           if (res.certified) {
             RecordCertification(node);
             // TODO: Probably should include cone_samples here so that it's easier to interpret the triangle indices.
-            OutputRow(
-                std::format("CE {} {} {} {} {:.17g} {} {} {}\n",
-                            node.id, node.parent_id, node.depth,
-                            res.winning_triple, res.margin,
-                            res.inner[0], res.inner[1], res.inner[2]));
+            OutputRow(ToCertRow(res, node.id, node.parent_id, node.depth));
             if (prioritize_related && !active_priority.empty()) {
               for (auto it = active_priority.begin(); it != active_priority.end(); ) {
                 if (it->chart == node.chart && node.box.Contains(it->w) &&
@@ -5153,8 +5169,8 @@ void SearchManager::Run() {
                       res.margin);
                 std::fflush(difficult_file);
               }
-              OutputRow(std::format("DF {} {} {} {:.17g}\n",
-                                    node.id, node.parent_id, node.depth, res.margin));
+              OutputRow(Chart229::DifficultRow{
+                  .id = node.id, .parent_id = node.parent_id, .depth = node.depth});
 
               if (verbose_status) {
                 depth_out_per.RunIf([&]{
@@ -5231,9 +5247,9 @@ void SearchManager::Run() {
               child1.box = b1;
 
               split_count++;
-              OutputRow(std::format("SP {} {} {} {} {}\n",
-                                    node.id, node.parent_id, node.depth,
-                                    child0.id, child1.id));
+              OutputRow(Chart229::SplitRow{
+                  .id = node.id, .parent_id = node.parent_id, .depth = node.depth,
+                  .child0 = child0.id, .child1 = child1.id});
 
               if (ContainsUncertifiedPriority(child0)) {
                 stack.push_back(child1);
@@ -5284,10 +5300,10 @@ void SearchManager::Run() {
                 stack.push_back(child);
               }
 
-              OutputRow(std::format("SV {} {} {} {} {} {} {}\n",
-                                    node.id, node.parent_id, node.depth,
-                                    child_ids[0], child_ids[1], child_ids[2],
-                                    child_ids[3]));
+              OutputRow(Chart229::SplitViewRow{
+                  .id = node.id, .parent_id = node.parent_id, .depth = node.depth,
+                  .child0 = child_ids[0], .child1 = child_ids[1],
+                  .child2 = child_ids[2], .child3 = child_ids[3]});
             }
           }
         }

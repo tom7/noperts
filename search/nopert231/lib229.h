@@ -24,6 +24,7 @@
 #include <vector>
 
 #include "base/logging.h"
+#include "chart229.h"
 #include "geom/polyhedra.h"
 #include "periodically.h"
 #include "status-bar.h"
@@ -76,6 +77,19 @@ struct GpuResult {
   double margin;
 };
 static_assert(sizeof(GpuResult) == 32, "GpuResult struct size mismatch");
+
+inline Chart229::CertRow ToCertRow(const GpuResult &res, int64_t id, int64_t parent_id, int depth) {
+  return Chart229::CertRow{
+      .id = id,
+      .parent_id = parent_id,
+      .depth = depth,
+      .winning_triple = res.winning_triple,
+      .margin = res.margin,
+      .in0 = res.inner[0],
+      .in1 = res.inner[1],
+      .in2 = res.inner[2],
+  };
+}
 
 inline constexpr int MAX_GPU_CONTACTS = 256;
 
@@ -401,6 +415,39 @@ struct MixtureResult {
   int pool_tested = 0; // candidates in cand_pool tested
   uint64_t pool_id = 0;
 };
+
+inline Chart229::CertRow ToCertRow(const MixtureResult &res, int64_t id, int64_t parent_id, int depth) {
+  return Chart229::CertRow{
+      .id = id,
+      .parent_id = parent_id,
+      .depth = depth,
+      .winning_triple = res.triples[0],
+      .margin = res.margin,
+      .in0 = res.inners[0][0],
+      .in1 = res.inners[0][1],
+      .in2 = res.inners[0][2],
+  };
+}
+
+inline Chart229::MixedCertRow ToMixedCertRow(const MixtureResult &res, int64_t id, int64_t parent_id, int depth) {
+  Chart229::MixedCertRow mx{
+      .id = id,
+      .parent_id = parent_id,
+      .depth = depth,
+      .margin = res.margin,
+  };
+  mx.components.reserve(res.num_components);
+  for (int k = 0; k < res.num_components; k++) {
+    mx.components.push_back({
+        .winning_triple = res.triples[k],
+        .weight = res.weights[k],
+        .in0 = res.inners[k][0],
+        .in1 = res.inners[k][1],
+        .in2 = res.inners[k][2],
+    });
+  }
+  return mx;
+}
 
 // Evaluates a box and projective triangle view using a convex mixture
 // of up to max_components (default 4) triples.
@@ -853,6 +900,12 @@ struct SearchManager {
   void FlushRowsWithLock();
   void FlushRows();
   void OutputRow(std::string_view row);
+  template <typename T>
+  void OutputRow(const T &row) {
+    std::string s = Chart229::Serialize(row);
+    s.push_back('\n');
+    OutputRow(std::string_view(s));
+  }
   void Run();
   static std::string StatusCounters();
   void MaybeMiniStatus(std::string_view op);
