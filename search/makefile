@@ -606,7 +606,7 @@ extract_tu_intervals.exe : extract_tu_intervals.o
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"
 
-generate_seeds229.exe : generate_seeds229.o lib229.o $(OBJECTS)
+generate_seeds229.exe : generate_seeds229.o lib229.o $(OBJECTS_229) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"
 
@@ -2577,3 +2577,67 @@ export_0021.exe : export_0021.o $(OBJECTS_229) $(OBJECTS)
 
 test_params_0021.exe : test_params_0021.o $(OBJECTS_229) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_sc_0021.exe : test_sc_0021.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_8_unscaled.exe : test_8_unscaled.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_0021_pool_1node.exe : test_0021_pool_1node.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+sweep_sc_0021.exe : sweep_sc_0021.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_tree_all4.exe : test_tree_all4.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+debug_cage_0021.exe : debug_cage_0021.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+solve_0021_quadtree.exe : solve_0021_quadtree.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+find_perfect_match.exe : find_perfect_match.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+adaptive_flock_0021.exe : adaptive_flock_0021.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_axis_5614.exe : test_axis_5614.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_tag2_0021.exe : test_tag2_0021.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+audit_stored_0021.exe : audit_stored_0021.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+audit_all_12_stored.exe : audit_all_12_stored.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+find_boundary_axis.exe : find_boundary_axis.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+inspect_raw_pool.exe : inspect_raw_pool.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+search_cage_0021.exe : search_cage_0021.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+find_aligned_axes.exe : find_aligned_axes.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+check_flock_distribution.exe : check_flock_distribution.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+targeted_cage_search.exe : targeted_cage_search.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+find_pure_a0.exe : find_pure_a0.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+inspect_03200.exe : inspect_03200.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
