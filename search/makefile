@@ -1,4 +1,4 @@
-default : annular229_test.exe tubetree229_test.exe nopert229_test.exe tube229_test.exe lib229_test.exe chart229_test.exe export_tubetree_pack.exe difficult229.exe lean229.exe pack229.exe test_all_pending.exe
+default : annular229_test.exe tubetree229_test.exe nopert229_test.exe tube229_test.exe lib229_test.exe chart229_test.exe export_tubetree_pack.exe difficult229.exe lean229.exe pack229.exe test_all_pending.exe normalize-chart.exe compare-charts.exe split-chart.exe split-chart_test.exe
 
 all: default test229.exe codebdd229.exe telescope229.exe convert_tubecert229.exe incrementaltube229.exe tubecert229.exe tube-visualize.exe analyzedifficult.exe replace_tu_with_difficult.exe extract_tu_intervals.exe generate_seeds229.exe apply_shallow_cert.exe verify_leaf.exe tiltperts.exe
 
@@ -615,6 +615,22 @@ apply_shallow_cert.exe : apply_shallow_cert.o $(OBJECTS_229) $(OBJECTS)
 	@echo -n "!"
 
 verify_leaf.exe : verify_leaf.o nopert229.o $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+	@echo -n "!"
+
+normalize-chart.exe : normalize-chart.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+	@echo -n "!"
+
+compare-charts.exe : compare-charts.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+	@echo -n "!"
+
+split-chart.exe : split-chart.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+	@echo -n "!"
+
+split-chart_test.exe : split-chart_test.o $(OBJECTS_229) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"
 
@@ -2617,6 +2633,43 @@ audit_stored_0021.exe : audit_stored_0021.o $(OBJECTS_229) $(OBJECTS)
 audit_all_12_stored.exe : audit_all_12_stored.o $(OBJECTS_229) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 
+audit_8_core.exe : audit_8_core.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+find_flock_cohort_a.exe : find_flock_cohort_a.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+inspect_uncovered_samples.exe : inspect_uncovered_samples.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+inspect_root_box_coverage.exe : inspect_root_box_coverage.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_quadtree_from_pool.exe : test_quadtree_from_pool.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+inspect_q00_coverage.exe : inspect_q00_coverage.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+inspect_point_axes.exe : inspect_point_axes.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+inspect_limit_point.exe : inspect_limit_point.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_refined_pool.exe : test_refined_pool.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+
+
+
+
+
+
+
+
+
+
 find_boundary_axis.exe : find_boundary_axis.o $(OBJECTS_229) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 
@@ -2641,3 +2694,80 @@ find_pure_a0.exe : find_pure_a0.o $(OBJECTS_229) $(OBJECTS)
 inspect_03200.exe : inspect_03200.o $(OBJECTS_229) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 
+inspect_stored_12.exe : inspect_stored_12.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+audit_stored_dec.exe : audit_stored_dec.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_pool_12.exe : test_pool_12.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+
+
+
+
+	$(CXX) $(CXXFLAGS) $^ -o $@
+
+test_1node_from_pool.exe : test_1node_from_pool.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_collar_flock.exe : test_collar_flock.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+sweep_inner_core.exe : sweep_inner_core.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_mix_0021.exe : test_mix_0021.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+print_exact_contacts.exe : print_exact_contacts.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+compare_0020_0021.exe : compare_0020_0021.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_adaptive_collar.exe : test_adaptive_collar.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+diag_corner.exe : diag_corner.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+diag_pool_dirs.exe : diag_pool_dirs.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_1node_pool.exe : test_1node_pool.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+print_all_bases.exe : print_all_bases.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_flock_subdiv.exe : test_flock_subdiv.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+check_param_bounds.exe : check_param_bounds.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+compare_inner_vs_pool.exe : compare_inner_vs_pool.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+print_norm_comp.exe : print_norm_comp.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_flock_around_u0.exe : test_flock_around_u0.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+build_leaf_cert.exe : build_leaf_cert.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+diag_uncovered.exe : diag_uncovered.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_corner_pool.exe : test_corner_pool.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+sweep_contacts.exe : sweep_contacts.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_0021_children.exe : test_0021_children.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
