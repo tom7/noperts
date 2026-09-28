@@ -1,8 +1,11 @@
-// split-chart_test.cc: Rigorous tests for split-chart tree partitioning logic.
+// split-chart_test.cc: Rigorous tests for split-chart tree partitioning logic
+// and Move-To-Front (MTF) shard assignment verification pass.
 
 #include <cassert>
 #include <cstdint>
 #include <cstdio>
+#include <fstream>
+#include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -17,13 +20,18 @@
     }                                                                      \
   } while (0)
 
+static void PopulateChildCounts(std::unordered_map<int64_t, InternalNode> &map) {
+  for (auto &[id, node] : map) node.num_children = 0;
+  for (const auto &[id, node] : map) {
+    if (node.parent_id != -1 && map.count(node.parent_id)) {
+      map[node.parent_id].num_children++;
+    }
+  }
+}
+
 static void TestBalancedBinaryTree() {
   printf("Testing balanced binary tree partitioning...\n");
 
-  // Complete binary tree of depth 6:
-  // Root = 1
-  // Internal nodes: 1 .. 63
-  // Leaves: 64 .. 127 (64 leaves)
   std::unordered_map<int64_t, InternalNode> node_map;
   for (int64_t i = 1; i <= 63; i++) {
     int64_t parent = (i == 1) ? -1 : (i / 2);
@@ -33,7 +41,6 @@ static void TestBalancedBinaryTree() {
         .parent_id = parent,
         .count = 0,
         .depth = depth,
-        .is_split_row = true,
     };
   }
 
@@ -44,6 +51,7 @@ static void TestBalancedBinaryTree() {
     total_leaves += 2;
   }
   CHECK(total_leaves == 64);
+  PopulateChildCounts(node_map);
 
   // Test target T = 8
   {
@@ -88,22 +96,19 @@ static void TestBalancedBinaryTree() {
 static void TestViewTreeQuadSplits() {
   printf("Testing 4-way view split tree...\n");
 
-  // Root = 0
-  // 4 children: 1, 2, 3, 4 (depth 1)
-  // Each child has 4 children: 5..20 (depth 2)
-  // Total 16 leaves at depth 2, each with 10 leaf certificates
   std::unordered_map<int64_t, InternalNode> node_map;
-  node_map[0] = InternalNode{.parent_id = -1, .count = 0, .depth = 0, .is_split_row = true};
+  node_map[0] = InternalNode{.parent_id = -1, .count = 0, .depth = 0};
   for (int64_t i = 1; i <= 4; i++) {
-    node_map[i] = InternalNode{.parent_id = 0, .count = 0, .depth = 1, .is_split_row = true};
+    node_map[i] = InternalNode{.parent_id = 0, .count = 0, .depth = 1};
   }
   int64_t total_leaves = 0;
   for (int64_t i = 5; i <= 20; i++) {
     int64_t p = 1 + (i - 5) / 4;
-    node_map[i] = InternalNode{.parent_id = p, .count = 10, .depth = 2, .is_split_row = true};
+    node_map[i] = InternalNode{.parent_id = p, .count = 10, .depth = 2};
     total_leaves += 10;
   }
   CHECK(total_leaves == 160);
+  PopulateChildCounts(node_map);
 
   // Split with T = 4
   SplitResult res = ComputeBalancedSplit(node_map, total_leaves, 4, 1000);
@@ -120,8 +125,6 @@ static void TestViewTreeQuadSplits() {
 static void TestTwoPhaseCoarseRollup() {
   printf("Testing two-phase coarse rollup and Huffman priority...\n");
 
-  // Build a deep tree with 1,000 internal nodes
-  // Let max_nodes = 50, so coarse rollup must trigger
   std::unordered_map<int64_t, InternalNode> node_map;
   int64_t total_leaves = 0;
 
@@ -131,15 +134,14 @@ static void TestTwoPhaseCoarseRollup() {
         .parent_id = parent,
         .count = 0,
         .depth = 1,
-        .is_split_row = true,
     };
   }
 
-  // The 512 leaves of the full binary tree have count = 1
   for (int64_t i = 512; i <= 1023; i++) {
     node_map[i].count = 1;
     total_leaves += 1;
   }
+  PopulateChildCounts(node_map);
 
   SplitResult res = ComputeBalancedSplit(node_map, total_leaves, 16, 64);
   CHECK(res.coarse_waves > 0);
@@ -155,16 +157,13 @@ static void TestTwoPhaseCoarseRollup() {
 static void TestSkeletonLeavesPreserved() {
   printf("Testing preservation of skeleton leaves...\n");
 
-  // Node 0 splits into 1 and 2
-  // Node 0 has 5 direct leaf certificates!
-  // Node 1 has 50 leaves, Node 2 has 50 leaves
   std::unordered_map<int64_t, InternalNode> node_map;
-  node_map[0] = InternalNode{.parent_id = -1, .count = 5, .depth = 0, .is_split_row = true};
-  node_map[1] = InternalNode{.parent_id = 0, .count = 50, .depth = 1, .is_split_row = true};
-  node_map[2] = InternalNode{.parent_id = 0, .count = 50, .depth = 1, .is_split_row = true};
+  node_map[0] = InternalNode{.parent_id = -1, .count = 5, .depth = 0};
+  node_map[1] = InternalNode{.parent_id = 0, .count = 50, .depth = 1};
+  node_map[2] = InternalNode{.parent_id = 0, .count = 50, .depth = 1};
   int64_t total_leaves = 105;
+  PopulateChildCounts(node_map);
 
-  // Split into T = 2 subcharts (should choose nodes 1 and 2)
   SplitResult res = ComputeBalancedSplit(node_map, total_leaves, 2, 100);
   CHECK(res.subcharts.size() == 2);
   CHECK(res.sum_subchart_leaves == 100);
@@ -175,12 +174,183 @@ static void TestSkeletonLeavesPreserved() {
   printf("  Preservation of skeleton leaves tests PASSED.\n");
 }
 
+static void TestLookupShardMTF() {
+  printf("Testing Move-To-Front shard lookup...\n");
+
+  std::vector<std::unordered_set<int64_t>> shard_sets(4);
+  shard_sets[0].insert({10, 11});
+  shard_sets[1].insert({20, 21});
+  shard_sets[2].insert({30, 31});
+  shard_sets[3].insert({40, 41});
+
+  std::vector<int> mtf_order = {0, 1, 2, 3};
+  std::vector<int64_t> mtf_hits(4, 0);
+
+  // Probe 30 -> found in shard 2 at pos 2
+  int s = LookupShardMTF(30, shard_sets, mtf_order, mtf_hits);
+  CHECK(s == 2);
+  CHECK(mtf_hits[2] == 1);
+  CHECK(mtf_order[0] == 2);
+  CHECK(mtf_order[1] == 0);
+  CHECK(mtf_order[2] == 1);
+  CHECK(mtf_order[3] == 3);
+
+  // Probe 31 -> found in shard 2 at pos 0!
+  s = LookupShardMTF(31, shard_sets, mtf_order, mtf_hits);
+  CHECK(s == 2);
+  CHECK(mtf_hits[0] == 1);
+  CHECK(mtf_order[0] == 2);
+
+  // Probe not found
+  s = LookupShardMTF(999, shard_sets, mtf_order, mtf_hits);
+  CHECK(s == -1);
+
+  printf("  Move-To-Front shard lookup tests PASSED.\n");
+}
+
+static void TestStreamAndAssignShards() {
+  printf("Testing StreamAndAssignShards on synthetic chart...\n");
+
+  // Create temporary chart file:
+  // Root 0 splits into 1 and 2
+  // Node 1 splits into 3 and 4
+  // Node 2 splits into 5 and 6
+  // Leaves under 3, 4, 5, 6 (10 leaves each, total 40 leaves)
+  const char *test_file = "/tmp/test_chart_assignment.rows.log";
+  {
+    std::ofstream f(test_file);
+    f << "sp 0 -1 0 1 2\n";
+    f << "sp 1 0 1 3 4\n";
+    f << "sp 2 0 1 5 6\n";
+    f << "sp 3 1 2 7 8\n";
+    f << "sp 4 1 2 9 a\n";
+    f << "sp 5 2 2 b c\n";
+    f << "sp 6 2 2 d e\n";
+    // 10 leaves under 3
+    for (int i = 0; i < 10; i++) f << "ce 10" << i << " 3 3 0 0.05 1 2 3\n";
+    // 10 leaves under 4
+    for (int i = 0; i < 10; i++) f << "ce 20" << i << " 4 3 0 0.05 1 2 3\n";
+    // 10 leaves under 5
+    for (int i = 0; i < 10; i++) f << "ce 30" << i << " 5 3 0 0.05 1 2 3\n";
+    // 10 leaves under 6
+    for (int i = 0; i < 10; i++) f << "ce 40" << i << " 6 3 0 0.05 1 2 3\n";
+  }
+
+  // Suppose subchart roots are nodes 1 and 2 (T = 2)
+  SplitResult split_res;
+  split_res.subcharts = {
+      SubchartInfo{.id = 1, .parent_id = 0, .depth = 1, .count = 20},
+      SubchartInfo{.id = 2, .parent_id = 0, .depth = 1, .count = 20},
+  };
+  split_res.skeleton_split_ids = {0};
+
+  AssignmentResult assign = StreamAndAssignShards(test_file, split_res, nullptr);
+  CHECK(assign.error.empty());
+  CHECK(assign.passes_needed == 1);
+  CHECK(assign.unassigned_rows == 0);
+  CHECK(assign.skeleton_splits == 1);
+  CHECK(assign.skeleton_leaves == 0);
+  CHECK(assign.shards.size() == 2);
+  CHECK(assign.shards[0].assigned_leaves == 20);
+  CHECK(assign.shards[0].assigned_splits == 3);  // 1, 3, 4
+  CHECK(assign.shards[1].assigned_leaves == 20);
+  CHECK(assign.shards[1].assigned_splits == 3);  // 2, 5, 6
+  CHECK(assign.is_exact_match);
+  CHECK(assign.pos0_hit_rate > 50.0);
+
+  std::remove(test_file);
+  printf("  StreamAndAssignShards synthetic tests PASSED.\n");
+}
+
+static void TestOutOfOrderAssignment() {
+  printf("Testing out-of-order row assignment multi-pass convergence...\n");
+
+  // Create temporary chart file with deliberately inverted order:
+  // Leaves appear BEFORE their split parents!
+  const char *test_file = "/tmp/test_chart_out_of_order.rows.log";
+  {
+    std::ofstream f(test_file);
+    // Leaf under 3 appears first!
+    f << "ce 100 3 3 0 0.05 1 2 3\n";
+    // Split 3 appears second!
+    f << "sp 3 1 2 7 8\n";
+    // Split 1 (the subchart root) appears third!
+    f << "sp 1 0 1 3 4\n";
+    // Skeleton split 0 appears last!
+    f << "sp 0 -1 0 1 2\n";
+  }
+
+  SplitResult split_res;
+  split_res.subcharts = {
+      SubchartInfo{.id = 1, .parent_id = 0, .depth = 1, .count = 1},
+  };
+  split_res.skeleton_split_ids = {0};
+
+  AssignmentResult assign = StreamAndAssignShards(test_file, split_res, nullptr);
+  CHECK(assign.error.empty());
+  // Because 3 appeared before 1, and leaf appeared before 3,
+  // Pass 1 resolved split 1 and seeded it into set;
+  // Pass 2 resolved split 3 and inserted it into set;
+  // Pass 3 resolved leaf 100!
+  CHECK(assign.unassigned_rows == 0);
+  CHECK(assign.shards[0].assigned_leaves == 1);
+  CHECK(assign.shards[0].assigned_splits == 2);  // 1 and 3
+  CHECK(assign.skeleton_splits == 1);           // 0
+  CHECK(assign.is_exact_match);
+
+  std::remove(test_file);
+  printf("  Out-of-order row assignment multi-pass tests PASSED.\n");
+}
+
+void TestDuplicateSplitRows() {
+  printf("Testing duplicate split row handling and disjoint sets...\n");
+  const char *test_file = "/tmp/test_chart_dup_splits.rows";
+  {
+    std::ofstream f(test_file);
+    f << "sp 0 -1 0 1 2\n";
+    f << "sp 1 0 1 10 11\n";
+    f << "sp 2 0 1 20 21\n";
+    // Duplicate split node 10 appears under parent 1, then under parent 2
+    f << "sp 10 1 2 100 101\n";
+    f << "ce 100 10 3 0 0.05 1 2 3\n";
+    f << "ce 101 10 3 0 0.05 1 2 3\n";
+    f << "sp 10 2 2 100 101\n";
+    f << "ce 102 10 3 0 0.05 1 2 3\n";
+    f << "ce 103 10 3 0 0.05 1 2 3\n";
+    f << "ce 20 2 2 0 0.05 1 2 3\n";
+  }
+
+  SplitResult split_res;
+  split_res.subcharts = {
+      SubchartInfo{.id = 1, .parent_id = 0, .depth = 1, .count = 4},
+      SubchartInfo{.id = 2, .parent_id = 0, .depth = 1, .count = 1},
+  };
+  split_res.skeleton_split_ids = {0};
+  split_res.duplicate_split_ids = {0x10};
+
+  AssignmentResult assign = StreamAndAssignShards(test_file, split_res, nullptr);
+  CHECK(assign.error.empty());
+  CHECK(assign.unassigned_rows == 0);
+  CHECK(assign.duplicate_rows_dropped == 1);
+  CHECK(assign.shards[0].assigned_leaves == 4);
+  CHECK(assign.shards[1].assigned_leaves == 1);
+  CHECK(assign.is_exact_match);
+
+  std::remove(test_file);
+  printf("  Duplicate split row handling tests PASSED.\n");
+}
+
 int main() {
   TestBalancedBinaryTree();
   TestViewTreeQuadSplits();
   TestTwoPhaseCoarseRollup();
   TestSkeletonLeavesPreserved();
+  TestLookupShardMTF();
+  TestStreamAndAssignShards();
+  TestOutOfOrderAssignment();
+  TestDuplicateSplitRows();
 
-  printf("\nAll split-chart tests PASSED successfully!\n");
+  printf("\nAll split-chart and assignment tests PASSED successfully!\n");
   return 0;
 }
+

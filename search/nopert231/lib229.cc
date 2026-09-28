@@ -4741,10 +4741,11 @@ void SearchManager::Run() {
               if (tube_atlas && tube_atlas->IsLoaded() && effective_tube_r == 0.0 && node.view_depth < max_view_depth) {
                 split_count++;
                 auto sub_tris = node.tri.Subdivide();
+                int64_t base_id = next_node_id.fetch_add(4);
                 int64_t child_ids[4] = {-1, -1, -1, -1};
                 for (int t = 3; t >= 0; t--) {
                   SearchNode child = node;
-                  child.id = next_node_id++;
+                  child.id = base_id + t;
                   child.parent_id = node.id;
                   child.depth = node.depth + 1;
                   child.view_depth = node.view_depth + 1;
@@ -4762,8 +4763,9 @@ void SearchManager::Run() {
                 int widest = node.box.WidestAxis();
                 auto [b0, b1] = node.box.Split(widest);
 
+                int64_t base_id = next_node_id.fetch_add(2);
                 SearchNode child0 = node;
-                child0.id = next_node_id++;
+                child0.id = base_id;
                 child0.parent_id = node.id;
                 child0.depth = node.depth + 1;
                 child0.box_depth = node.box_depth + 1;
@@ -4771,7 +4773,7 @@ void SearchManager::Run() {
                 child0.box = b0;
 
                 SearchNode child1 = node;
-                child1.id = next_node_id++;
+                child1.id = base_id + 1;
                 child1.parent_id = node.id;
                 child1.depth = node.depth + 1;
                 child1.box_depth = node.box_depth + 1;
@@ -4798,10 +4800,11 @@ void SearchManager::Run() {
             if (tpool->gpu_triples.empty()) {
               split_count++;
               auto sub_tris = node.tri.Subdivide();
+              int64_t base_id = next_node_id.fetch_add(4);
               int64_t child_ids[4] = {-1, -1, -1, -1};
               for (int t = sub_tris.size() - 1; t >= 0; t--) {
                 SearchNode child = node;
-                child.id = next_node_id++;
+                child.id = base_id + t;
                 child.parent_id = node.id;
                 child.depth = node.depth + 1;
                 child.view_depth = node.view_depth + 1;

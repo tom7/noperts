@@ -845,7 +845,7 @@ struct SearchManager {
 
   std::vector<SearchNode> stack; // DFS LIFO stack
   std::vector<SearchNode> current_batch; // Active batch nodes being evaluated
-  int64_t next_node_id = 0;
+  std::atomic<int64_t> next_node_id{0};
 
   static constexpr int kMaxTrackDepth = 128;
   static constexpr int kMaxTrackK = 256;

@@ -2,22 +2,31 @@
 #define _NOPERT229_SPLIT_CHART_H
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <format>
 #include <queue>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 #include <unordered_set>
+#include <variant>
 #include <vector>
 
+#include "chart229.h"
+#include "periodically.h"
 #include "status-bar.h"
+#include "timer.h"
 
 struct InternalNode {
   int64_t parent_id = -1;
   int64_t count = 0;  // Subtree leaf count rolled up into this node
-  int depth = 0;
-  bool is_split_row = false;
+  int depth = -1;
+  int num_children = 0;
 };
 
 struct SubchartInfo {
@@ -43,6 +52,9 @@ struct SplitStats {
 
 struct SplitResult {
   std::vector<SubchartInfo> subcharts;
+  std::unordered_set<int64_t> skeleton_split_ids;
+  std::unordered_set<int64_t> duplicate_split_ids;
+  int64_t duplicate_rows_dropped = 0;
   int64_t total_leaf_rows = 0;
   int64_t sum_subchart_leaves = 0;
   int64_t skeleton_leaves = 0;
@@ -51,6 +63,140 @@ struct SplitResult {
   int64_t huffman_steps = 0;
   SplitStats stats;
 };
+
+struct ShardAssignmentStats {
+  int64_t root_id = 0;
+  int64_t parent_id = -1;
+  int depth = 0;
+  int64_t expected_leaves = 0;
+  int64_t assigned_leaves = 0;
+  int64_t assigned_splits = 0;
+};
+
+struct AssignmentResult {
+  std::vector<ShardAssignmentStats> shards;
+  int64_t skeleton_splits = 0;
+  int64_t skeleton_leaves = 0;
+  int64_t total_lines = 0;
+  int64_t total_leaves = 0;
+  int64_t total_splits = 0;
+  int64_t duplicate_rows_dropped = 0;
+  int64_t unassigned_rows = 0;
+  int passes_needed = 1;
+  std::vector<int64_t> mtf_hits;
+  int64_t total_mtf_lookups = 0;
+  double pos0_hit_rate = 0.0;
+  double avg_mtf_depth = 0.0;
+  bool is_exact_match = false;
+  std::string error;
+};
+
+inline std::string FormatBytes(int64_t bytes) {
+  if (bytes >= 1024LL * 1024 * 1024 * 1024) {
+    return std::format("{:.2f} TB", bytes / (1024.0 * 1024.0 * 1024.0 * 1024.0));
+  } else if (bytes >= 1024LL * 1024 * 1024) {
+    return std::format("{:.2f} GB", bytes / (1024.0 * 1024.0 * 1024.0));
+  } else if (bytes >= 1024LL * 1024) {
+    return std::format("{:.2f} MB", bytes / (1024.0 * 1024.0));
+  } else if (bytes >= 1024) {
+    return std::format("{:.2f} KB", bytes / 1024.0);
+  } else {
+    return std::format("{} B", bytes);
+  }
+}
+
+// Fast buffered chart reader iterating over each line in chart_path.
+template <typename Fn>
+inline bool ForEachChartLine(const std::string &chart_path, Fn &&fn, StatusBar *status, const char *status_prefix) {
+  FILE *in_file = std::fopen(chart_path.c_str(), "rb");
+  if (!in_file) {
+    if (status) status->Print("Error opening '{}': {}\n", chart_path, std::strerror(errno));
+    return false;
+  }
+
+  int64_t total_bytes = -1;
+  if (fseeko(in_file, 0, SEEK_END) == 0) {
+    total_bytes = ftello(in_file);
+    fseeko(in_file, 0, SEEK_SET);
+  }
+
+  static constexpr size_t CHUNK_SIZE = 1024 * 1024;  // 1 MB
+  std::vector<char> in_buf(CHUNK_SIZE);
+  std::string remainder;
+  int64_t bytes_in = 0;
+  int64_t lines_read = 0;
+
+  Periodically progress_per(0.25);
+  Timer timer;
+
+  while (true) {
+    size_t n = std::fread(in_buf.data(), 1, in_buf.size(), in_file);
+    if (n == 0) {
+      if (std::ferror(in_file)) {
+        if (status) status->Print("Error reading input file: {}\n", std::strerror(errno));
+        std::fclose(in_file);
+        return false;
+      }
+      break;
+    }
+    bytes_in += n;
+
+    const char *ptr = in_buf.data();
+    const char *end = ptr + n;
+    const char *line_start = ptr;
+
+    if (!remainder.empty()) {
+      const char *nl = static_cast<const char *>(std::memchr(ptr, '\n', n));
+      if (nl != nullptr) {
+        remainder.append(ptr, nl - ptr);
+        if (!remainder.empty() && remainder.back() == '\r') remainder.pop_back();
+        lines_read++;
+        fn(std::string_view(remainder));
+        remainder.clear();
+        line_start = nl + 1;
+      } else {
+        remainder.append(ptr, n);
+        line_start = end;
+      }
+    }
+
+    while (line_start < end) {
+      const char *nl = static_cast<const char *>(std::memchr(line_start, '\n', end - line_start));
+      if (nl != nullptr) {
+        std::string_view line(line_start, nl - line_start);
+        if (!line.empty() && line.back() == '\r') line.remove_suffix(1);
+        lines_read++;
+        fn(line);
+        line_start = nl + 1;
+      } else {
+        remainder.assign(line_start, end - line_start);
+        break;
+      }
+    }
+
+    if (status && progress_per.ShouldRun()) {
+      double elapsed = timer.Seconds();
+      double mb_s = (bytes_in / (1024.0 * 1024.0)) / std::max(1e-6, elapsed);
+      if (total_bytes > 0) {
+        status->Progress(bytes_in, total_bytes, "{}: lines: {:L} | {:.1f} MB/s",
+                         status_prefix, lines_read, mb_s);
+      } else {
+        status->Status("{}: {} | lines: {:L} | {:.1f} MB/s",
+                       status_prefix, FormatBytes(bytes_in), lines_read, mb_s);
+      }
+    }
+  }
+
+  if (!remainder.empty()) {
+    if (remainder.back() == '\r') remainder.pop_back();
+    lines_read++;
+    fn(std::string_view(remainder));
+    remainder.clear();
+  }
+
+  std::fclose(in_file);
+  return true;
+}
 
 inline SplitStats ComputeStats(const std::vector<SubchartInfo> &subcharts, int64_t total_leaves) {
   SplitStats stats;
@@ -115,48 +261,43 @@ inline SplitResult ComputeBalancedSplit(
     return result;
   }
 
-  // Phase 1: Coarse rollup
-  // Repeatedly roll up leaf nodes of node_map into their parents until
-  // node_map.size() <= max_nodes.
-  while (node_map.size() > max_nodes && node_map.size() > (size_t)(2 * target_subcharts)) {
+  // Phase 1: Coarse rollup using child-count wave peeling (O(N), minimal memory)
+  std::vector<int64_t> current_leaves;
+  current_leaves.reserve(std::min(node_map.size() / 2, (size_t)10000000));
+  for (const auto &[id, node] : node_map) {
+    if (node.num_children == 0 && node.parent_id != -1 && node_map.count(node.parent_id)) {
+      current_leaves.push_back(id);
+    }
+  }
+
+  while (!current_leaves.empty() &&
+         node_map.size() > max_nodes &&
+         node_map.size() > (size_t)(2 * target_subcharts)) {
     result.coarse_waves++;
-    std::unordered_set<int64_t> internal_ids;
-    internal_ids.reserve(node_map.size());
-
-    for (const auto &[id, node] : node_map) {
-      if (node.parent_id != -1 && node_map.count(node.parent_id)) {
-        internal_ids.insert(node.parent_id);
-      }
-    }
-
-    std::vector<int64_t> leaves_to_rollup;
-    leaves_to_rollup.reserve(node_map.size() - internal_ids.size());
-
-    for (const auto &[id, node] : node_map) {
-      if (internal_ids.count(id) == 0 && node.parent_id != -1 && node_map.count(node.parent_id)) {
-        leaves_to_rollup.push_back(id);
-      }
-    }
-
-    if (leaves_to_rollup.empty()) {
-      break;
-    }
 
     // Guard against overshooting below target_subcharts
-    if (node_map.size() - leaves_to_rollup.size() < (size_t)target_subcharts) {
+    if (node_map.size() - current_leaves.size() < (size_t)target_subcharts) {
       break;
     }
 
-    for (int64_t id : leaves_to_rollup) {
+    std::vector<int64_t> next_leaves;
+    for (int64_t id : current_leaves) {
       auto it = node_map.find(id);
       if (it != node_map.end()) {
         auto parent_it = node_map.find(it->second.parent_id);
         if (parent_it != node_map.end()) {
           parent_it->second.count += it->second.count;
+          parent_it->second.num_children--;
+          if (parent_it->second.num_children == 0 &&
+              parent_it->second.parent_id != -1 &&
+              node_map.count(parent_it->second.parent_id)) {
+            next_leaves.push_back(parent_it->first);
+          }
         }
         node_map.erase(it);
       }
     }
+    current_leaves = std::move(next_leaves);
 
     if (status) {
       status->Status("Phase 1 coarse rollup wave {}: {:L} nodes remaining in map...",
@@ -276,7 +417,7 @@ inline SplitResult ComputeBalancedSplit(
     }
   }
 
-  // Collect final subchart roots and skeleton leaves
+  // Collect final subchart roots and skeleton splits/leaves
   result.subcharts.reserve(leaf_count);
 
   for (const auto &[id, node] : node_map) {
@@ -292,6 +433,7 @@ inline SplitResult ComputeBalancedSplit(
     } else {
       result.skeleton_splits++;
       result.skeleton_leaves += node.count;
+      result.skeleton_split_ids.insert(id);
     }
   }
 
@@ -303,6 +445,202 @@ inline SplitResult ComputeBalancedSplit(
 
   result.stats = ComputeStats(result.subcharts, result.sum_subchart_leaves);
   return result;
+}
+
+// Move-To-Front query over shard sets.
+// Returns the shard index (0..T-1), or -1 if parent_id is not in any shard set.
+inline int LookupShardMTF(
+    int64_t parent_id,
+    const std::vector<std::unordered_set<int64_t>> &shard_sets,
+    std::vector<int> &mtf_order,
+    std::vector<int64_t> &mtf_hits) {
+  for (size_t pos = 0; pos < mtf_order.size(); pos++) {
+    int s = mtf_order[pos];
+    if (shard_sets[s].contains(parent_id)) {
+      mtf_hits[pos]++;
+      if (pos > 0) {
+        int hit = mtf_order[pos];
+        for (size_t j = pos; j > 0; j--) {
+          mtf_order[j] = mtf_order[j - 1];
+        }
+        mtf_order[0] = hit;
+      }
+      return s;
+    }
+  }
+  return -1;
+}
+
+// Second pass: streams the chart file and assigns every row to its disjoint shard
+// or to the main skeleton using a Move-to-Front list of T unordered_sets.
+// Multi-pass capable: repeats streaming until all out-of-order nodes are resolved.
+inline AssignmentResult StreamAndAssignShards(
+    const std::string &chart_path,
+    const SplitResult &split_res,
+    StatusBar *status = nullptr) {
+
+  AssignmentResult res;
+  int T = split_res.subcharts.size();
+  if (T == 0) {
+    res.error = "No subcharts provided for assignment";
+    return res;
+  }
+
+  std::unordered_map<int64_t, int> root_to_shard;
+  root_to_shard.reserve(T);
+
+  std::vector<std::unordered_set<int64_t>> shard_sets(T);
+  res.shards.resize(T);
+  for (int i = 0; i < T; i++) {
+    const auto &sc = split_res.subcharts[i];
+    root_to_shard[sc.id] = i;
+    shard_sets[i].insert(sc.id);
+
+    res.shards[i].root_id = sc.id;
+    res.shards[i].parent_id = sc.parent_id;
+    res.shards[i].depth = sc.depth;
+    res.shards[i].expected_leaves = sc.count;
+  }
+
+  std::unordered_set<int64_t> skeleton_ids = split_res.skeleton_split_ids;
+  std::vector<int> mtf_order(T);
+  for (int i = 0; i < T; i++) mtf_order[i] = i;
+  res.mtf_hits.assign(T, 0);
+
+  int max_passes = 10;
+  for (int pass = 1; pass <= max_passes; pass++) {
+    res.passes_needed = pass;
+    res.total_lines = 0;
+    res.total_leaves = 0;
+    res.total_splits = 0;
+    res.skeleton_splits = 0;
+    res.skeleton_leaves = 0;
+    res.duplicate_rows_dropped = 0;
+    res.unassigned_rows = 0;
+    for (int i = 0; i < T; i++) {
+      res.shards[i].assigned_leaves = 0;
+      res.shards[i].assigned_splits = 0;
+    }
+    std::unordered_set<int64_t> seen_duplicate_ids;
+
+    std::string prefix = (pass == 1)
+        ? "Assigning shards"
+        : std::format("Pass {} resolving out-of-order rows", pass);
+
+    bool ok = ForEachChartLine(
+        chart_path,
+        [&](std::string_view line) {
+          res.total_lines++;
+          Chart229::Row row = Chart229::Parse(line);
+          if (std::holds_alternative<Chart229::ParseError>(row) ||
+              std::holds_alternative<Chart229::EmptyRow>(row) ||
+              std::holds_alternative<Chart229::CommentRow>(row)) {
+            return;
+          }
+
+          std::visit([&](const auto &r) {
+            using RowType = std::decay_t<decltype(r)>;
+            if constexpr (std::is_same_v<RowType, Chart229::SplitRow> ||
+                          std::is_same_v<RowType, Chart229::SplitOriginRow> ||
+                          std::is_same_v<RowType, Chart229::SplitViewRow>) {
+              res.total_splits++;
+
+              // 1. Drop duplicate split rows (guarantees disjoint shards)
+              if (split_res.duplicate_split_ids.contains(r.id)) {
+                if (seen_duplicate_ids.contains(r.id)) {
+                  res.duplicate_rows_dropped++;
+                  return;
+                }
+                seen_duplicate_ids.insert(r.id);
+              }
+
+              // 2. Is r.id one of the subchart roots?
+              auto root_it = root_to_shard.find(r.id);
+              if (root_it != root_to_shard.end()) {
+                int s = root_it->second;
+                res.shards[s].assigned_splits++;
+                return;
+              }
+
+              // 3. Is r.id in the main chart skeleton?
+              if (skeleton_ids.contains(r.id)) {
+                res.skeleton_splits++;
+                return;
+              }
+
+              // 4. Query parent in MTF shard sets
+              int s = LookupShardMTF(r.parent_id, shard_sets, mtf_order, res.mtf_hits);
+              if (s >= 0) {
+                res.shards[s].assigned_splits++;
+                shard_sets[s].insert(r.id);
+              } else if (skeleton_ids.contains(r.parent_id) || r.parent_id == -1) {
+                res.skeleton_splits++;
+                skeleton_ids.insert(r.id);
+              } else {
+                res.unassigned_rows++;
+              }
+            } else if constexpr (std::is_same_v<RowType, Chart229::CertRow> ||
+                                 std::is_same_v<RowType, Chart229::MixedCertRow> ||
+                                 std::is_same_v<RowType, Chart229::PruneRadiusRow> ||
+                                 std::is_same_v<RowType, Chart229::PruneFundamentalRow> ||
+                                 std::is_same_v<RowType, Chart229::TubeRow> ||
+                                 std::is_same_v<RowType, Chart229::DifficultRow>) {
+              if (root_to_shard.contains(r.id)) {
+                std::fprintf(stderr,
+                             "FATAL: Subchart root 0x%lx (%ld) is a leaf row! Aborting.\n",
+                             r.id, r.id);
+                std::abort();
+              }
+              res.total_leaves++;
+              int s = LookupShardMTF(r.parent_id, shard_sets, mtf_order, res.mtf_hits);
+              if (s >= 0) {
+                res.shards[s].assigned_leaves++;
+              } else if (skeleton_ids.contains(r.parent_id) || r.parent_id == -1) {
+                res.skeleton_leaves++;
+              } else {
+                res.unassigned_rows++;
+              }
+            }
+          }, row);
+        },
+        status, prefix.c_str());
+
+    if (!ok) {
+      res.error = "Error streaming file during shard assignment";
+      return res;
+    }
+
+    if (res.unassigned_rows == 0) {
+      break;
+    }
+    if (status) {
+      status->Print("Pass {} finished with {:L} unassigned rows; repeating...\n",
+                    pass, res.unassigned_rows);
+    }
+  }
+
+  // Compute MTF stats
+  for (int64_t h : res.mtf_hits) {
+    res.total_mtf_lookups += h;
+  }
+  if (res.total_mtf_lookups > 0) {
+    res.pos0_hit_rate = (double)res.mtf_hits[0] / res.total_mtf_lookups * 100.0;
+    double weighted_depth = 0;
+    for (size_t pos = 0; pos < res.mtf_hits.size(); pos++) {
+      weighted_depth += (double)pos * res.mtf_hits[pos];
+    }
+    res.avg_mtf_depth = weighted_depth / res.total_mtf_lookups;
+  }
+
+  // Verification checks
+  res.is_exact_match = (res.unassigned_rows == 0);
+  for (int i = 0; i < T; i++) {
+    if (res.shards[i].assigned_leaves != res.shards[i].expected_leaves) {
+      res.is_exact_match = false;
+    }
+  }
+
+  return res;
 }
 
 #endif  // _NOPERT229_SPLIT_CHART_H
