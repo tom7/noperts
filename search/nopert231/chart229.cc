@@ -2,6 +2,7 @@
 
 #include <charconv>
 #include <format>
+#include <fstream>
 #include <string>
 #include <string_view>
 #include <system_error>
@@ -427,6 +428,55 @@ Chart229::Row Chart229::Parse(std::string_view line) {
     };
   }
 
+  if (tag == "ge" || tag == "GE" || tag == "GEOMETRY") {
+    if (!ParseNodeHeader()) {
+      return ParseError{std::format("Malformed {} header: '{}'", tag, line)};
+    }
+    std::string_view bdepth_tok = NextToken(rest);
+    std::string_view vdepth_tok = NextToken(rest);
+    std::string_view chart_tok = NextToken(rest);
+    if (bdepth_tok.empty() || vdepth_tok.empty() || chart_tok.empty()) {
+      return ParseError{std::format("Malformed {} header depths: '{}'", tag, line)};
+    }
+    int box_depth = 0, view_depth = 0, chart = 0;
+    if (!ParseInt(bdepth_tok, base, box_depth) ||
+        !ParseInt(vdepth_tok, base, view_depth) ||
+        !ParseInt(chart_tok, base, chart)) {
+      return ParseError{std::format("Malformed {} depths/chart integers: '{}'", tag, line)};
+    }
+    double vals[15];
+    for (int i = 0; i < 15; i++) {
+      std::string_view tok = NextToken(rest);
+      if (tok.empty() || !ParseFloat(tok, hex_mode, vals[i])) {
+        return ParseError{std::format("Malformed {} float parameter {}: '{}'", tag, i, line)};
+      }
+    }
+    double margin = 0.0;
+    std::string_view margin_tok = NextToken(rest);
+    if (!margin_tok.empty()) {
+      if (!ParseFloat(margin_tok, hex_mode, margin)) {
+        return ParseError{std::format("Malformed {} margin: '{}'", tag, line)};
+      }
+    }
+    if (!rest.empty()) {
+      return ParseError{std::format("Extra tokens on {} row: '{}'", tag, line)};
+    }
+    return GeometryRow{
+        .id = id,
+        .parent_id = parent_id,
+        .depth = depth,
+        .box_depth = box_depth,
+        .view_depth = view_depth,
+        .chart = chart,
+        .cx = vals[0], .cy = vals[1], .cz = vals[2],
+        .rx = vals[3], .ry = vals[4], .rz = vals[5],
+        .v0x = vals[6], .v0y = vals[7], .v0z = vals[8],
+        .v1x = vals[9], .v1y = vals[10], .v1z = vals[11],
+        .v2x = vals[12], .v2y = vals[13], .v2z = vals[14],
+        .best_margin = margin,
+    };
+  }
+
   return ParseError{std::format("Unrecognized row tag '{}' on line: '{}'", tag, line)};
 }
 
@@ -566,6 +616,35 @@ std::string Chart229::Serialize(const DifficultRow &row) {
   return out;
 }
 
+std::string Chart229::Serialize(const GeometryRow &row) {
+  std::string out = "ge ";
+  AppendHexInt(out, row.id);
+  out += ' ';
+  AppendHexInt(out, row.parent_id);
+  out += ' ';
+  AppendHexInt(out, row.depth);
+  out += ' ';
+  AppendHexInt(out, row.box_depth);
+  out += ' ';
+  AppendHexInt(out, row.view_depth);
+  out += ' ';
+  AppendHexInt(out, row.chart);
+  const double coords[15] = {
+      row.cx, row.cy, row.cz,
+      row.rx, row.ry, row.rz,
+      row.v0x, row.v0y, row.v0z,
+      row.v1x, row.v1y, row.v1z,
+      row.v2x, row.v2y, row.v2z,
+  };
+  for (int i = 0; i < 15; i++) {
+    out += ' ';
+    AppendHexDouble(out, coords[i]);
+  }
+  out += ' ';
+  AppendHexDouble(out, row.best_margin);
+  return out;
+}
+
 std::string Chart229::Serialize(const Row &row) {
   return std::visit([](const auto &r) -> std::string {
     using T = std::decay_t<decltype(r)>;
@@ -637,6 +716,45 @@ std::string Chart229::SerializeLegacy(const DifficultRow &row) {
   return std::format("DF {} {} {}", row.id, row.parent_id, row.depth);
 }
 
+std::string Chart229::SerializeLegacy(const GeometryRow &row) {
+  std::string out = std::format("GE {} {} {} {} {} {} ",
+                                row.id, row.parent_id, row.depth,
+                                row.box_depth, row.view_depth, row.chart);
+  const double coords[15] = {
+      row.cx, row.cy, row.cz,
+      row.rx, row.ry, row.rz,
+      row.v0x, row.v0y, row.v0z,
+      row.v1x, row.v1y, row.v1z,
+      row.v2x, row.v2y, row.v2z,
+  };
+  for (int i = 0; i < 15; i++) {
+    AppendDecimalDouble(out, coords[i]);
+    out += ' ';
+  }
+  AppendDecimalDouble(out, row.best_margin);
+  return out;
+}
+
+std::string Chart229::SerializeLegacyDifficult(const GeometryRow &row) {
+  std::string out = std::format("{} {} {} {} {} {} ",
+                                row.id, row.parent_id, row.depth,
+                                row.box_depth, row.view_depth, row.chart);
+  const double coords[15] = {
+      row.cx, row.cy, row.cz,
+      row.rx, row.ry, row.rz,
+      row.v0x, row.v0y, row.v0z,
+      row.v1x, row.v1y, row.v1z,
+      row.v2x, row.v2y, row.v2z,
+  };
+  for (int i = 0; i < 15; i++) {
+    AppendDecimalDouble(out, coords[i]);
+    out += ' ';
+  }
+  AppendDecimalDouble(out, row.best_margin);
+  out += '\n';
+  return out;
+}
+
 std::string Chart229::SerializeLegacy(const Row &row) {
   return std::visit([](const auto &r) -> std::string {
     using T = std::decay_t<decltype(r)>;
@@ -689,4 +807,119 @@ int Chart229::GetDepth(const Row &row) {
       return r.depth;
     }
   }, row);
+}
+
+Chart229::Row Chart229::ParseLegacyDifficultLine(std::string_view line) {
+  std::string_view trimmed = TrimWhitespace(line);
+  if (trimmed.empty()) {
+    return EmptyRow{};
+  }
+  if (trimmed.front() == '#') {
+    std::string_view comment = trimmed.substr(1);
+    Util::RemoveLeadingWhitespace(&comment);
+    return CommentRow{std::string(comment)};
+  }
+
+  std::string_view peek_rest = trimmed;
+  std::string_view first_tok = NextToken(peek_rest);
+  if (first_tok == "ge" || first_tok == "GE" || first_tok == "GEOMETRY") {
+    return Parse(line);
+  }
+
+  std::string_view rest = trimmed;
+  std::string_view id_tok = NextToken(rest);
+  std::string_view pid_tok = NextToken(rest);
+  std::string_view depth_tok = NextToken(rest);
+  std::string_view bdepth_tok = NextToken(rest);
+  std::string_view vdepth_tok = NextToken(rest);
+  std::string_view chart_tok = NextToken(rest);
+  if (id_tok.empty() || pid_tok.empty() || depth_tok.empty() ||
+      bdepth_tok.empty() || vdepth_tok.empty() || chart_tok.empty()) {
+    return ParseError{std::format("Malformed legacy difficult row header: '{}'", line)};
+  }
+
+  int64_t id = 0, parent_id = -1;
+  int depth = 0, box_depth = 0, view_depth = 0, chart = 0;
+  if (!ParseInt(id_tok, 10, id) ||
+      !ParseInt(pid_tok, 10, parent_id) ||
+      !ParseInt(depth_tok, 10, depth) ||
+      !ParseInt(bdepth_tok, 10, box_depth) ||
+      !ParseInt(vdepth_tok, 10, view_depth) ||
+      !ParseInt(chart_tok, 10, chart)) {
+    return ParseError{std::format("Malformed legacy difficult integer fields: '{}'", line)};
+  }
+
+  double vals[15];
+  for (int i = 0; i < 15; i++) {
+    std::string_view tok = NextToken(rest);
+    if (tok.empty() || !ParseFloat(tok, /*hex_mode=*/false, vals[i])) {
+      return ParseError{std::format("Malformed legacy difficult float parameter {}: '{}'", i, line)};
+    }
+  }
+
+  double best_margin = 0.0;
+  std::string_view margin_tok = NextToken(rest);
+  if (!margin_tok.empty()) {
+    if (!ParseFloat(margin_tok, /*hex_mode=*/false, best_margin)) {
+      return ParseError{std::format("Malformed legacy difficult best_margin: '{}'", line)};
+    }
+  }
+  if (!rest.empty()) {
+    return ParseError{std::format("Extra tokens on legacy difficult row: '{}'", line)};
+  }
+
+  return GeometryRow{
+      .id = id,
+      .parent_id = parent_id,
+      .depth = depth,
+      .box_depth = box_depth,
+      .view_depth = view_depth,
+      .chart = chart,
+      .cx = vals[0], .cy = vals[1], .cz = vals[2],
+      .rx = vals[3], .ry = vals[4], .rz = vals[5],
+      .v0x = vals[6], .v0y = vals[7], .v0z = vals[8],
+      .v1x = vals[9], .v1y = vals[10], .v1z = vals[11],
+      .v2x = vals[12], .v2y = vals[13], .v2z = vals[14],
+      .best_margin = best_margin,
+  };
+}
+
+std::vector<Chart229::GeometryRow> Chart229::ParseLegacyDifficultContent(
+    std::string_view content, std::string *error_msg) {
+  std::vector<GeometryRow> cells;
+  while (!content.empty()) {
+    size_t nl = content.find('\n');
+    std::string_view line;
+    if (nl == std::string_view::npos) {
+      line = content;
+      content = {};
+    } else {
+      line = content.substr(0, nl);
+      content = content.substr(nl + 1);
+    }
+    Row r = ParseLegacyDifficultLine(line);
+    if (std::holds_alternative<GeometryRow>(r)) {
+      cells.push_back(std::get<GeometryRow>(r));
+    } else if (std::holds_alternative<ParseError>(r)) {
+      if (error_msg) {
+        *error_msg = std::get<ParseError>(r).message;
+      }
+      return cells;
+    }
+  }
+  return cells;
+}
+
+std::vector<Chart229::GeometryRow> Chart229::ParseLegacyDifficultFile(
+    const std::string &path, std::string *error_msg) {
+  std::ifstream in(path);
+  if (!in.is_open()) {
+    if (error_msg) {
+      *error_msg = "Could not open file: " + path;
+    }
+    return {};
+  }
+  std::string content((std::istreambuf_iterator<char>(in)),
+                      std::istreambuf_iterator<char>());
+  return ParseLegacyDifficultContent(content, error_msg);
 }

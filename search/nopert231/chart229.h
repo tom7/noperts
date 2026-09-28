@@ -9,6 +9,39 @@
 
 // Parser and serializer for Nopert #229 search tree rows and certificates.
 // Supports both the compact lowercase hexadecimal format and legacy uppercase decimal format.
+//
+// -----------------------------------------------------------------------------
+// Row ID Semantics and Scoping:
+//
+// 1. File-Local Scope:
+//    Row IDs (id, parent_id, child0..child3) are strictly internal to a single
+//    file (e.g. root chart 'chart0.rows.log' or subchart 'chart0.7c9.subchart').
+//    Within that file, IDs must be unique and form a consistent tree, but they
+//    are not required to be globally unique across different files.
+//
+// 2. External Boundary IDs ("df" rows):
+//    A "df" (difficult) row explicitly creates an external boundary:
+//      df <id> <parent_id> <depth>
+//    This row declares that the subtree rooted at <id> is expanded externally in
+//    a separate subchart file:
+//      chart<N>.<id_hex>.subchart
+//    where N is the chart index and <id_hex> is the row ID formatted in lowercase
+//    hexadecimal (matching the hex format of row IDs).
+//
+// 3. Subchart Root Geometry ("ge" rows):
+//    A subchart file should start with a "ge" (geometry) row specifying the root
+//    pose and bounding context for that subtree:
+//      ge <id> <parent_id> <depth> <box_depth> <view_depth> <chart> ...
+//    The <id> in this "ge" row corresponds directly to the external ID referenced
+//    by the parent's "df" row.
+//
+// 4. Internal Descendants and Splicing:
+//    All descendant rows inside the subchart use file-local IDs. When a packer or
+//    verifier splices subcharts into a unified certificate (e.g. pack229), internal
+//    descendant IDs are renumbered/remapped to fresh IDs to prevent collisions
+//    across independently solved subcharts. Only the external boundary ID
+//    (matching the subchart filename and "ge" row) is stitched to the parent tree.
+// -----------------------------------------------------------------------------
 class Chart229 {
  public:
   struct ParseError {
@@ -130,6 +163,34 @@ class Chart229 {
     bool operator==(const DifficultRow &other) const = default;
   };
 
+  // Geometric context row:
+  // Compact lowercase hex:
+  //   "ge <id> <parent_id> <depth> <box_depth> <view_depth> <chart> "
+  //   "<cx> <cy> <cz> <rx> <ry> <rz> "
+  //   "<v0x> <v0y> <v0z> <v1x> <v1y> <v1z> <v2x> <v2y> <v2z> "
+  //   "[best_margin]"
+  // Legacy decimal:
+  //   "GE <id> <parent_id> <depth> <box_depth> <view_depth> <chart> ..."
+  struct GeometryRow {
+    int64_t id = 0;
+    int64_t parent_id = -1;
+    int depth = 0;
+    int box_depth = 0;
+    int view_depth = 0;
+    int chart = 0;
+    // 3D Cayley box: center (cx, cy, cz) and radii (rx, ry, rz)
+    double cx = 0.0, cy = 0.0, cz = 0.0;
+    double rx = 0.0, ry = 0.0, rz = 0.0;
+    // 2D Projective view triangle: 3 corners in R^3
+    double v0x = 0.0, v0y = 0.0, v0z = 0.0;
+    double v1x = 0.0, v1y = 0.0, v1z = 0.0;
+    double v2x = 0.0, v2y = 0.0, v2z = 0.0;
+    // Clearance / best margin (optional, default 0.0)
+    double best_margin = 0.0;
+
+    bool operator==(const GeometryRow &other) const = default;
+  };
+
   using Row = std::variant<
       ParseError,
       EmptyRow,
@@ -142,7 +203,8 @@ class Chart229 {
       PruneRadiusRow,
       PruneFundamentalRow,
       TubeRow,
-      DifficultRow>;
+      DifficultRow,
+      GeometryRow>;
 
   // Parses a single line.
   // Leading whitespace and trailing whitespace/newlines (\r, \n) are trimmed.
@@ -160,6 +222,7 @@ class Chart229 {
   static std::string Serialize(const PruneFundamentalRow &row);
   static std::string Serialize(const TubeRow &row);
   static std::string Serialize(const DifficultRow &row);
+  static std::string Serialize(const GeometryRow &row);
 
   // Serializes any Row variant to the compact lowercase hex format.
   // EmptyRow serializes to "", CommentRow to "# <text>", ParseError
@@ -176,7 +239,27 @@ class Chart229 {
   static std::string SerializeLegacy(const PruneFundamentalRow &row);
   static std::string SerializeLegacy(const TubeRow &row);
   static std::string SerializeLegacy(const DifficultRow &row);
+  static std::string SerializeLegacy(const GeometryRow &row);
   static std::string SerializeLegacy(const Row &row);
+
+  // Serializes to the untagged legacy .difficult line format (with trailing newline):
+  // "<id> <parent_id> <depth> <box_depth> <view_depth> <chart> <cx> ... <best_margin>\n"
+  static std::string SerializeLegacyDifficult(const GeometryRow &row);
+
+  // Parses a single line from a legacy .difficult file.
+  // Handles blank lines (EmptyRow), comments (CommentRow), lines starting with
+  // 'ge' or 'GE', and legacy tagless 22-token decimal lines.
+  static Row ParseLegacyDifficultLine(std::string_view line);
+
+  // Parses a full legacy .difficult file from disk into GeometryRow items.
+  // Skips comments and empty lines. If error_msg is non-null and an error occurs,
+  // *error_msg is set to the first error encountered.
+  static std::vector<GeometryRow> ParseLegacyDifficultFile(
+      const std::string &path, std::string *error_msg = nullptr);
+
+  // Parses legacy .difficult content from a string buffer.
+  static std::vector<GeometryRow> ParseLegacyDifficultContent(
+      std::string_view content, std::string *error_msg = nullptr);
 
   template <class... Ts>
   struct Overloaded : Ts... {

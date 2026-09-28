@@ -303,16 +303,42 @@ struct DifficultCell {
     return node;
   }
 
+  Chart229::GeometryRow ToGeometryRow() const {
+    return Chart229::GeometryRow{
+        .id = id,
+        .parent_id = parent_id,
+        .depth = depth,
+        .box_depth = box_depth,
+        .view_depth = view_depth,
+        .chart = chart,
+        .cx = c.x, .cy = c.y, .cz = c.z,
+        .rx = r.x, .ry = r.y, .rz = r.z,
+        .v0x = v[0].x, .v0y = v[0].y, .v0z = v[0].z,
+        .v1x = v[1].x, .v1y = v[1].y, .v1z = v[1].z,
+        .v2x = v[2].x, .v2y = v[2].y, .v2z = v[2].z,
+        .best_margin = best_margin,
+    };
+  }
+
+  static DifficultCell FromGeometryRow(const Chart229::GeometryRow &g) {
+    DifficultCell cell;
+    cell.id = g.id;
+    cell.parent_id = g.parent_id;
+    cell.depth = g.depth;
+    cell.box_depth = g.box_depth;
+    cell.view_depth = g.view_depth;
+    cell.chart = g.chart;
+    cell.c = vec3{g.cx, g.cy, g.cz};
+    cell.r = vec3{g.rx, g.ry, g.rz};
+    cell.v[0] = vec3{g.v0x, g.v0y, g.v0z};
+    cell.v[1] = vec3{g.v1x, g.v1y, g.v1z};
+    cell.v[2] = vec3{g.v2x, g.v2y, g.v2z};
+    cell.best_margin = g.best_margin;
+    return cell;
+  }
+
   std::string ToString() const {
-    return std::format(
-        "{} {} {} {} {} {} {:.17g} {:.17g} {:.17g} {:.17g} {:.17g} {:.17g} "
-        "{:.17g} {:.17g} {:.17g} {:.17g} {:.17g} {:.17g} {:.17g} {:.17g} {:.17g} {:.17g}\n",
-        id, parent_id, depth, box_depth, view_depth, chart,
-        c.x, c.y, c.z, r.x, r.y, r.z,
-        v[0].x, v[0].y, v[0].z,
-        v[1].x, v[1].y, v[1].z,
-        v[2].x, v[2].y, v[2].z,
-        best_margin);
+    return Chart229::SerializeLegacyDifficult(ToGeometryRow());
   }
 };
 

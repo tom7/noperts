@@ -290,12 +290,120 @@ static void TestErrorHandling() {
   printf("  Error handling tests PASSED.\n");
 }
 
+static void TestGeometryRow() {
+  printf("Testing GeometryRow (ge and GE)...\n");
+
+  // 1. Legacy decimal GE row
+  // GE id parent_id depth box_depth view_depth chart cx cy cz rx ry rz v0x v0y v0z v1x v1y v1z v2x v2y v2z best_margin
+  std::string legacy_str =
+      "GE 500 200 12 8 4 1 "
+      "0.125 -0.5 0.75 0.015625 0.03125 0.0625 "
+      "1 0 0 0 1 0 0 0 1 "
+      "0.001953125";
+  auto ge_legacy = Chart229::Parse(legacy_str);
+  CHECK(std::holds_alternative<Chart229::GeometryRow>(ge_legacy));
+  const auto &g1 = std::get<Chart229::GeometryRow>(ge_legacy);
+  CHECK(g1.id == 500 && g1.parent_id == 200 && g1.depth == 12);
+  CHECK(g1.box_depth == 8 && g1.view_depth == 4 && g1.chart == 1);
+  CHECK(g1.cx == 0.125 && g1.cy == -0.5 && g1.cz == 0.75);
+  CHECK(g1.rx == 0.015625 && g1.ry == 0.03125 && g1.rz == 0.0625);
+  CHECK(g1.v0x == 1.0 && g1.v0y == 0.0 && g1.v0z == 0.0);
+  CHECK(g1.v1x == 0.0 && g1.v1y == 1.0 && g1.v1z == 0.0);
+  CHECK(g1.v2x == 0.0 && g1.v2y == 0.0 && g1.v2z == 1.0);
+  CHECK(g1.best_margin == 0.001953125);
+  CHECK(Chart229::GetId(ge_legacy) == 500);
+  CHECK(Chart229::GetParentId(ge_legacy) == 200);
+  CHECK(Chart229::GetDepth(ge_legacy) == 12);
+
+  // 2. Compact hex ge serialization and round-trip
+  std::string hex_str = Chart229::Serialize(g1);
+  CHECK(hex_str.rfind("ge 1f4 c8 c 8 4 1 ", 0) == 0);
+  auto ge_parsed = Chart229::Parse(hex_str);
+  CHECK(std::holds_alternative<Chart229::GeometryRow>(ge_parsed));
+  const auto &g2 = std::get<Chart229::GeometryRow>(ge_parsed);
+  CHECK(g2 == g1);
+
+  // 3. Optional best_margin omitted
+  std::string no_margin =
+      "GE 10 5 3 2 1 0 "
+      "0 0 0 1 1 1 "
+      "1 0 0 0 1 0 0 0 1";
+  auto ge_no_margin = Chart229::Parse(no_margin);
+  CHECK(std::holds_alternative<Chart229::GeometryRow>(ge_no_margin));
+  const auto &g3 = std::get<Chart229::GeometryRow>(ge_no_margin);
+  CHECK(g3.id == 10 && g3.best_margin == 0.0);
+
+  // 4. Legacy decimal serialization round-trip
+  std::string legacy_serialized = Chart229::SerializeLegacy(g1);
+  auto ge_legacy_parsed = Chart229::Parse(legacy_serialized);
+  CHECK(std::holds_alternative<Chart229::GeometryRow>(ge_legacy_parsed));
+  const auto &g4 = std::get<Chart229::GeometryRow>(ge_legacy_parsed);
+  CHECK(g4 == g1);
+
+  printf("  GeometryRow tests PASSED.\n");
+}
+
+static void TestLegacyDifficultParser() {
+  printf("Testing Legacy .difficult file parsing...\n");
+
+  // 1. Single untagged decimal line
+  std::string line =
+      "123 45 6 4 2 3 "
+      "0.5 -0.25 0.125 0.01 0.02 0.03 "
+      "1 0 0 0 1 0 0 0 1 "
+      "0.005\n";
+  auto row = Chart229::ParseLegacyDifficultLine(line);
+  CHECK(std::holds_alternative<Chart229::GeometryRow>(row));
+  const auto &g = std::get<Chart229::GeometryRow>(row);
+  CHECK(g.id == 123 && g.parent_id == 45 && g.depth == 6);
+  CHECK(g.box_depth == 4 && g.view_depth == 2 && g.chart == 3);
+  CHECK(g.cx == 0.5 && g.cy == -0.25 && g.cz == 0.125);
+  CHECK(g.rx == 0.01 && g.ry == 0.02 && g.rz == 0.03);
+  CHECK(g.best_margin == 0.005);
+
+  // 2. Untagged line without best_margin
+  std::string line2 =
+      "124 45 6 4 2 3 "
+      "0.5 -0.25 0.125 0.01 0.02 0.03 "
+      "1 0 0 0 1 0 0 0 1";
+  auto row2 = Chart229::ParseLegacyDifficultLine(line2);
+  CHECK(std::holds_alternative<Chart229::GeometryRow>(row2));
+  const auto &g2 = std::get<Chart229::GeometryRow>(row2);
+  CHECK(g2.id == 124 && g2.best_margin == 0.0);
+
+  // 3. SerializeLegacyDifficult format check
+  std::string difficult_out = Chart229::SerializeLegacyDifficult(g);
+  auto re_parsed = Chart229::ParseLegacyDifficultLine(difficult_out);
+  CHECK(std::holds_alternative<Chart229::GeometryRow>(re_parsed));
+  CHECK(std::get<Chart229::GeometryRow>(re_parsed) == g);
+
+  // 4. Multiline content with comments and blanks
+  std::string file_content =
+      "# id parent_id depth box_depth view_depth chart cx cy cz rx ry rz v0x v0y v0z v1x v1y v1z v2x v2y v2z best_margin\n"
+      "\n"
+      "123 45 6 4 2 3 0.5 -0.25 0.125 0.01 0.02 0.03 1 0 0 0 1 0 0 0 1 0.005\n"
+      "# Another comment\n"
+      "  \n"
+      "ge 7b 2d 6 4 2 3 1p-1 -1p-2 1p-3 1.47ae147ae147bp-7 1.47ae147ae147bp-6 1.eb851eb851eb8p-6 1p0 0p+0 0p+0 0p+0 1p0 0p+0 0p+0 0p+0 1p0 1.47ae147ae147bp-8\n";
+
+  std::string error;
+  auto parsed_cells = Chart229::ParseLegacyDifficultContent(file_content, &error);
+  CHECK(error.empty());
+  CHECK(parsed_cells.size() == 2);
+  CHECK(parsed_cells[0].id == 123);
+  CHECK(parsed_cells[1].id == 123);  // 0x7b == 123
+
+  printf("  Legacy .difficult file parsing tests PASSED.\n");
+}
+
 int main() {
   TestCertRow();
   TestMixedCertRow();
   TestSplitRows();
   TestPruneRows();
   TestTubeAndDifficultRows();
+  TestGeometryRow();
+  TestLegacyDifficultParser();
   TestCommentsAndUtilities();
   TestErrorHandling();
 

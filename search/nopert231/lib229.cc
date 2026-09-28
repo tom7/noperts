@@ -76,23 +76,10 @@ void SetSigInt() {
 
 std::vector<DifficultCell> ReadDifficultFile(const std::string &path) {
   std::vector<DifficultCell> cells;
-  std::ifstream in(path);
-  if (!in.is_open()) return cells;
-  std::string line;
-  while (std::getline(in, line)) {
-    if (line.empty() || line[0] == '#') continue;
-    std::istringstream iss(line);
-    DifficultCell cell;
-    if (iss >> cell.id >> cell.parent_id >> cell.depth >> cell.box_depth
-            >> cell.view_depth >> cell.chart
-            >> cell.c.x >> cell.c.y >> cell.c.z
-            >> cell.r.x >> cell.r.y >> cell.r.z
-            >> cell.v[0].x >> cell.v[0].y >> cell.v[0].z
-            >> cell.v[1].x >> cell.v[1].y >> cell.v[1].z
-            >> cell.v[2].x >> cell.v[2].y >> cell.v[2].z
-            >> cell.best_margin) {
-      cells.push_back(cell);
-    }
+  auto geom_rows = Chart229::ParseLegacyDifficultFile(path);
+  cells.reserve(geom_rows.size());
+  for (const auto &g : geom_rows) {
+    cells.push_back(DifficultCell::FromGeometryRow(g));
   }
   return cells;
 }
