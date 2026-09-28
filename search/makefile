@@ -5,7 +5,7 @@ all: default test229.exe codebdd229.exe telescope229.exe convert_tubecert229.exe
 UNAME := $(shell uname -o)
 ifeq ($(findstring Linux,$(UNAME)),Linux)
 CC=clang
-LIBCXX := $(shell echo '\#include <vector>' | clang++ -stdlib=libc++ -x c++ - -c -o /dev/null 2>/dev/null && echo -stdlib=libc++)
+LIBCXX :=
 CXX=clang++ $(LIBCXX)
 PDB_FLAG=
 else
@@ -633,6 +633,9 @@ split-chart.exe : split-chart.o $(OBJECTS_229) $(OBJECTS)
 split-chart_test.exe : split-chart_test.o $(OBJECTS_229) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"
+
+test_split : split-chart_test.exe
+	./split-chart_test.exe
 
 tiltperts.exe : tiltperts.o lib229.o $(OBJECTS_229) $(OBJECTS) $(CL_OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS) $(CL_LFLAGS) $(PDB_FLAG)
@@ -2770,4 +2773,37 @@ sweep_contacts.exe : sweep_contacts.o $(OBJECTS_229) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 
 test_0021_children.exe : test_0021_children.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_depth12.exe : test_depth12.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+diag_corner_112.exe : diag_corner_112.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_quadtree_0021.exe : test_quadtree_0021.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+find_flock_0021.exe : find_flock_0021.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_flock_0021_var.exe : test_flock_0021_var.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_solve_0021.exe : test_solve_0021.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+print_basis_0021.exe : print_basis_0021.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+solve_0021_greedy.exe : solve_0021_greedy.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+diag_cap_78.exe : diag_cap_78.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+sweep_mix_ax0.exe : sweep_mix_ax0.o $(OBJECTS_229) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+
+test_all_vertices.exe : test_all_vertices.o $(OBJECTS_229) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
