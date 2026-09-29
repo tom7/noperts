@@ -1,6 +1,5 @@
-// flatten-charts.cc: Recursively absorbs subcharts and legacy .done files
-// into parent chart/subchart files, tracking exact geometry and converting
-// large (> 50,000 rows) .done files into standalone .subchart files.
+// flatten-charts.cc: Recursively absorbs small subcharts
+// into parent chart/subchart files, tracking exact geometry.
 
 #include <chrono>
 #include <cstdint>
@@ -18,20 +17,20 @@
 static void PrintUsage(const char *argv0) {
   std::cerr << "Usage: " << argv0 << " [options] [subchart_files...]\n"
             << "Options:\n"
-            << "  --done_dir <path>    Directory containing .done and .subchart files (default: /mnt/nopertdata or .)\n"
-            << "  --threshold <N>      Row threshold for absorbing vs leaving split (default: 50000)\n"
-            << "  --chart <N>          Chart index (0, 1, 2) when auto-discovering files (default: 0)\n"
-            << "  --out <path>         Output path (only with a single input file; default: in-place)\n"
-            << "  --dry_run            Analyze and report actions without writing changes or deleting files\n"
-            << "  --keep_done          Do not delete original .done files after absorption or conversion\n"
-            << "  -v, --verbose        Verbose logging\n"
-            << "  -h, --help           Show this help message\n";
+            << "  --subcharts_dir <path> Directory containing .subchart files (default: /mnt/nopertdata or .)\n"
+            << "  --threshold <N>        Row threshold for absorbing vs leaving split (default: 50000)\n"
+            << "  --chart <N>            Chart index (0, 1, 2) when auto-discovering files (default: 0)\n"
+            << "  --out <path>           Output path (only with a single input file; default: in-place)\n"
+            << "  --dry_run              Analyze and report actions without writing changes or deleting files\n"
+            << "  --keep_subcharts       Do not delete absorbed .subchart files\n"
+            << "  -v, --verbose          Verbose logging\n"
+            << "  -h, --help             Show this help message\n";
 }
 
 int main(int argc, char **argv) {
   flatten_charts::FlattenOptions options;
   if (!std::filesystem::exists("/mnt/nopertdata")) {
-    options.done_dir = ".";
+    options.subcharts_dir = ".";
   }
 
   int chart_num = 0;
@@ -40,11 +39,11 @@ int main(int argc, char **argv) {
 
   for (int i = 1; i < argc; i++) {
     std::string arg = argv[i];
-    if (arg == "--done_dir") {
+    if (arg == "--subcharts_dir" || arg == "--done_dir") {
       if (i + 1 < argc) {
-        options.done_dir = argv[++i];
+        options.subcharts_dir = argv[++i];
       } else {
-        std::cerr << "Error: --done_dir requires an argument\n";
+        std::cerr << "Error: " << arg << " requires an argument\n";
         return 1;
       }
     } else if (arg == "--threshold") {
@@ -70,8 +69,8 @@ int main(int argc, char **argv) {
       }
     } else if (arg == "--dry_run") {
       options.dry_run = true;
-    } else if (arg == "--keep_done") {
-      options.keep_done = true;
+    } else if (arg == "--keep_subcharts" || arg == "--keep_done") {
+      options.keep_subcharts = true;
     } else if (arg == "-v" || arg == "--verbose") {
       options.verbose = true;
     } else if (arg == "-h" || arg == "--help") {
@@ -87,9 +86,9 @@ int main(int argc, char **argv) {
   }
 
   if (input_files.empty()) {
-    // Auto-discover subcharts for the specified chart in done_dir
+    // Auto-discover subcharts for the specified chart in subcharts_dir
     std::string prefix = std::format("chart{}.", chart_num);
-    for (const auto &entry : std::filesystem::directory_iterator(options.done_dir)) {
+    for (const auto &entry : std::filesystem::directory_iterator(options.subcharts_dir)) {
       if (!entry.is_regular_file()) continue;
       std::string fname = entry.path().filename().string();
       if (fname.rfind(prefix, 0) == 0 &&
@@ -100,11 +99,11 @@ int main(int argc, char **argv) {
     std::sort(input_files.begin(), input_files.end());
     if (input_files.empty()) {
       std::cerr << "No input files specified and no " << prefix << "*.subchart files found in "
-                << options.done_dir << "\n";
+                << options.subcharts_dir << "\n";
       return 1;
     }
     std::cout << "Auto-discovered " << input_files.size() << " subchart files for Chart "
-              << chart_num << " in " << options.done_dir << "\n";
+              << chart_num << " in " << options.subcharts_dir << "\n";
   }
 
   if (!single_out_path.empty() && input_files.size() > 1) {
@@ -113,7 +112,7 @@ int main(int argc, char **argv) {
   }
 
   std::cout << "Flattening " << input_files.size() << " files with threshold "
-            << options.threshold << " (done_dir: " << options.done_dir << ")\n";
+            << options.threshold << " (subcharts_dir: " << options.subcharts_dir << ")\n";
   if (options.dry_run) {
     std::cout << "*** DRY RUN MODE - No files will be modified or deleted ***\n";
   }
@@ -135,7 +134,7 @@ int main(int argc, char **argv) {
     total_stats.files_absorbed += file_stats.files_absorbed;
     total_stats.rows_absorbed += file_stats.rows_absorbed;
     total_stats.files_converted_to_subchart += file_stats.files_converted_to_subchart;
-    total_stats.done_files_removed += file_stats.done_files_removed;
+    total_stats.subcharts_removed += file_stats.subcharts_removed;
     total_stats.unresolved_df += file_stats.unresolved_df;
     total_stats.pending_df += file_stats.pending_df;
     total_stats.geometry_errors += file_stats.geometry_errors;
@@ -145,7 +144,6 @@ int main(int argc, char **argv) {
                 << std::filesystem::path(in_file).filename().string() << ": "
                 << file_stats.df_rows_found << " df rows, "
                 << file_stats.files_absorbed << " absorbed (" << file_stats.rows_absorbed << " rows), "
-                << file_stats.files_converted_to_subchart << " converted to subchart, "
                 << file_stats.pending_df << " pending, "
                 << file_stats.geometry_errors << " errors.\n";
     }
@@ -160,9 +158,7 @@ int main(int argc, char **argv) {
             << "Subtrees absorbed (<= " << options.threshold << " rows):  "
             << total_stats.files_absorbed << "\n"
             << "Rows absorbed into parents:      " << total_stats.rows_absorbed << "\n"
-            << "Converted to .subchart (> " << options.threshold << " rows): "
-            << total_stats.files_converted_to_subchart << "\n"
-            << "Legacy .done files removed:      " << total_stats.done_files_removed << "\n"
+            << "Absorbed .subchart files removed:" << total_stats.subcharts_removed << "\n"
             << "Pending unsolved df rows:        " << total_stats.pending_df << "\n"
             << "Geometry tracing errors:         " << total_stats.geometry_errors << "\n";
 

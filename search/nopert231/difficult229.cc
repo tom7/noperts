@@ -2,9 +2,10 @@
 //
 // Reads all difficult cells into memory and processes them one at a time.
 // All-or-nothing per cell:
-//   - Accumulates progress for cell #123456 into chart<chart>.123456.done.tmp
+//   - Accumulates progress for cell #123456 into chart<chart>.<hex_id>.subchart.tmp
+//     (beginning with a "ge" geometry header row)
 //   - Only if cell #123456 is 100% solved (all branches certified with no difficult leaves),
-//     it renames chart<chart>.123456.done.tmp -> chart<chart>.123456.done, removes the cell
+//     it renames chart<chart>.<hex_id>.subchart.tmp -> chart<chart>.<hex_id>.subchart, removes the cell
 //     from the in-memory unsolved list, and atomically rewrites chart<chart>.difficult.
 //   - If interrupted (Ctrl-C / SIGINT) or not fully certifiable, the temporary file is deleted,
 //     the cell remains in the unsolved list, and chart<chart>.difficult contains all unsolved cells.
@@ -53,7 +54,7 @@ struct VerificationResult {
   std::string error_message;
 };
 
-struct ParsedDoneRow {
+struct ParsedSubchartRow {
   std::string tag;
   int64_t id = -1;
   int64_t parent_id = -1;
@@ -65,17 +66,17 @@ struct ParsedDoneRow {
   double tube_radius = 0.0;
 };
 
-static VerificationResult VerifyDoneFile(
-    const DifficultCell &cell, const std::string &done_path,
+static VerificationResult VerifySubchartFile(
+    const DifficultCell &cell, const std::string &subchart_path,
     const tubetree229::TubeAtlas *tube_atlas = nullptr,
     bool allow_difficult = false,
     double experiment_tube_floor = 0.0) {
-  std::ifstream infile(done_path);
+  std::ifstream infile(subchart_path);
   if (!infile.is_open()) {
     return {.valid = false, .error_message = "Could not open file"};
   }
 
-  std::unordered_map<int64_t, ParsedDoneRow> row_map;
+  std::unordered_map<int64_t, ParsedSubchartRow> row_map;
   std::string line;
   uint64_t line_no = 0;
 
@@ -83,11 +84,13 @@ static VerificationResult VerifyDoneFile(
     line_no++;
     auto row_or_err = Chart229::Parse(line);
     if (Chart229::IsEmptyOrComment(row_or_err)) continue;
+    // Subchart files begin with a geometry header row ("ge")
+    if (std::holds_alternative<Chart229::GeometryRow>(row_or_err)) continue;
     if (Chart229::IsError(row_or_err)) {
       return {.valid = false, .error_message = std::format("Line {}: {}", line_no, std::get<Chart229::ParseError>(row_or_err).message)};
     }
 
-    ParsedDoneRow row;
+    ParsedSubchartRow row;
     int64_t id = 0;
     bool ok = std::visit(
         Chart229::Overloaded{
@@ -377,7 +380,7 @@ static int RunDifficult(
     Print("Loaded {} cached cell view-split entries from {}\n", splits.size(), splits_file);
   }
 
-  // Scan existing .done files to identify completed cells
+  // Scan existing .subchart files to identify completed cells
   std::vector<DifficultCell> unsolved_cells;
   size_t already_done = 0;
   for (const auto &c : cells) {
@@ -385,16 +388,16 @@ static int RunDifficult(
       unsolved_cells.push_back(c);
       continue;
     }
-    std::string done_file = std::format("{}/chart{}.{}.done", out_dir, c.chart, c.id);
-    if (std::filesystem::exists(done_file)) {
-      auto v = VerifyDoneFile(c, done_file, tube_atlas);
+    std::string subchart_file = std::format("{}/chart{}.{:x}.subchart", out_dir, c.chart, c.id);
+    if (std::filesystem::exists(subchart_file)) {
+      auto v = VerifySubchartFile(c, subchart_file, tube_atlas);
       if (v.valid) {
         Print(AGREEN("  ✔") " Cell #{} verified from {} ({} rows, {} leaves, worst margin: {:.6g}).\n",
-              c.id, done_file, v.total_rows, v.total_leaves, v.worst_margin);
+              c.id, subchart_file, v.total_rows, v.total_leaves, v.worst_margin);
         already_done++;
       } else {
         Print(AORANGE("  ✘") " Cell #{} has invalid existing {} ({}). Will re-solve.\n",
-              c.id, done_file, v.error_message);
+              c.id, subchart_file, v.error_message);
         unsolved_cells.push_back(c);
       }
     } else {
@@ -403,7 +406,7 @@ static int RunDifficult(
   }
 
   if (already_done > 0) {
-    Print("Found {} previously verified .done files; {} cells remaining to solve.\n",
+    Print("Found {} previously verified .subchart files; {} cells remaining to solve.\n",
           already_done, unsolved_cells.size());
     WriteDifficultFile(difficult_path, unsolved_cells);
   }
@@ -487,13 +490,13 @@ static int RunDifficult(
 
     total_processed++;
 
-    std::string done_filename = std::format("chart{}.{}.done", cell.chart, cell.id);
-    std::string done_path = std::format("{}/{}", out_dir, done_filename);
-    if (std::filesystem::exists(done_path)) {
-      auto v = VerifyDoneFile(cell, done_path, tube_atlas);
+    std::string subchart_filename = std::format("chart{}.{:x}.subchart", cell.chart, cell.id);
+    std::string subchart_path = std::format("{}/{}", out_dir, subchart_filename);
+    if (std::filesystem::exists(subchart_path)) {
+      auto v = VerifySubchartFile(cell, subchart_path, tube_atlas);
       if (v.valid) {
         mgr.status.Print(AGREEN("  ✔") " Cell #{} verified from existing {} ({} rows, {} leaves, worst margin: {:.6g}). Skipping.\n",
-                         cell.id, done_filename, v.total_rows, v.total_leaves, v.worst_margin);
+                         cell.id, subchart_filename, v.total_rows, v.total_leaves, v.worst_margin);
         total_solved++;
         total_rows_written += v.total_rows;
         unsolved_cells.erase(unsolved_cells.begin() + i);
@@ -501,11 +504,11 @@ static int RunDifficult(
         continue;
       } else {
         mgr.status.Print(AORANGE("  ✘") " Cell #{} has invalid existing {} ({}). Re-solving.\n",
-                         cell.id, done_filename, v.error_message);
+                         cell.id, subchart_filename, v.error_message);
       }
     }
 
-    std::string tmp_filename = std::format("{}.tmp", done_filename);
+    std::string tmp_filename = std::format("{}.tmp", subchart_filename);
     std::string tmp_path = std::format("{}/{}", out_dir, tmp_filename);
 
     FILE *tmp_fp = fopen(tmp_path.c_str(), "w");
@@ -514,6 +517,9 @@ static int RunDifficult(
       i++;
       continue;
     }
+
+    // Emit leading geometry header so the subchart stands alone
+    fprintf(tmp_fp, "%s\n", Chart229::Serialize(cell.ToGeometryRow()).c_str());
 
     uint64_t cell_rows = 0;
     mgr.row_callback = [&](std::string_view row) {
@@ -645,9 +651,9 @@ static int RunDifficult(
     bool solved = mgr.stack.empty() && new_difficult.empty();
     if (solved) {
       std::error_code ec;
-      std::filesystem::rename(tmp_path, done_path, ec);
+      std::filesystem::rename(tmp_path, subchart_path, ec);
       if (ec) {
-        mgr.status.Print(ARED("  Error renaming {} to {}: {}\n"), tmp_path, done_path, ec.message());
+        mgr.status.Print(ARED("  Error renaming {} to {}: {}\n"), tmp_path, subchart_path, ec.message());
         i++;
       } else {
         total_solved++;
@@ -657,7 +663,7 @@ static int RunDifficult(
         mgr.status.Print(AGREEN("  ✔")
               " Cell #{} SOLVED in {}! ({} rows -> {}) [{} remaining in {}]\n",
               cell.id, ANSI::Time(cell_seconds), FormatNum(cell_rows),
-              done_filename, FormatNum(unsolved_cells.size()), difficult_path);
+              subchart_filename, FormatNum(unsolved_cells.size()), difficult_path);
         // Do not increment i; next element slid into index i.
       }
     } else {
@@ -749,7 +755,7 @@ static int RunDifficultMixture(
   std::vector<DifficultCell> cells = ReadDifficultFile(difficult_path);
   Print("Loaded {} cells from {}\n", cells.size(), difficult_path);
 
-  // Scan existing .done files to identify completed cells
+  // Scan existing .subchart files to identify completed cells
   std::vector<DifficultCell> unsolved_cells;
   size_t already_done = 0;
   for (const auto &c : cells) {
@@ -757,16 +763,16 @@ static int RunDifficultMixture(
       unsolved_cells.push_back(c);
       continue;
     }
-    std::string done_file = std::format("{}/chart{}.{}.done", out_dir, c.chart, c.id);
-    if (std::filesystem::exists(done_file)) {
-      auto v = VerifyDoneFile(c, done_file, tube_atlas, /*allow_difficult=*/false, tube_radius);
+    std::string subchart_file = std::format("{}/chart{}.{:x}.subchart", out_dir, c.chart, c.id);
+    if (std::filesystem::exists(subchart_file)) {
+      auto v = VerifySubchartFile(c, subchart_file, tube_atlas, /*allow_difficult=*/false, tube_radius);
       if (v.valid) {
         Print(AGREEN("  ✔") " Cell #{} verified from {} ({} rows, {} leaves, worst margin: {:.6g}).\n",
-              c.id, done_file, v.total_rows, v.total_leaves, v.worst_margin);
+              c.id, subchart_file, v.total_rows, v.total_leaves, v.worst_margin);
         already_done++;
       } else {
         Print(AORANGE("  ✘") " Cell #{} has invalid existing {} ({}). Will re-solve.\n",
-              c.id, done_file, v.error_message);
+              c.id, subchart_file, v.error_message);
         unsolved_cells.push_back(c);
       }
     } else {
@@ -775,7 +781,7 @@ static int RunDifficultMixture(
   }
 
   if (already_done > 0) {
-    Print("Found {} previously verified .done files; {} cells remaining to solve.\n",
+    Print("Found {} previously verified .subchart files; {} cells remaining to solve.\n",
           already_done, unsolved_cells.size());
     WriteDifficultFile(difficult_path, unsolved_cells);
   }
@@ -834,10 +840,10 @@ static int RunDifficultMixture(
       DifficultCell cell = unsolved_cells[idx];
       if (target_cell_id >= 0 && cell.id != target_cell_id) continue;
 
-      std::string done_filename = std::format("chart{}.{}.done", cell.chart, cell.id);
-      std::string done_path = std::format("{}/{}", out_dir, done_filename);
-      if (std::filesystem::exists(done_path)) {
-        auto v = VerifyDoneFile(cell, done_path, tube_atlas);
+      std::string subchart_filename = std::format("chart{}.{:x}.subchart", cell.chart, cell.id);
+      std::string subchart_path = std::format("{}/{}", out_dir, subchart_filename);
+      if (std::filesystem::exists(subchart_path)) {
+        auto v = VerifySubchartFile(cell, subchart_path, tube_atlas);
         if (v.valid) {
           std::lock_guard<std::mutex> lock(state_mu);
           total_solved++;
@@ -847,13 +853,13 @@ static int RunDifficultMixture(
           });
           WriteDifficultFile(difficult_path, remaining_unsolved);
           status.Print(AGREEN("  ✔") " Cell #{} verified from existing {} ({} rows, {} leaves, worst margin: {:.6g}). [{} remaining in {}]\n",
-                       cell.id, done_filename, v.total_rows, v.total_leaves, v.worst_margin,
+                       cell.id, subchart_filename, v.total_rows, v.total_leaves, v.worst_margin,
                        remaining_unsolved.size(), difficult_path);
           continue;
         } else {
           std::lock_guard<std::mutex> lock(state_mu);
           status.Print(AORANGE("  ✘") " Cell #{} has invalid existing {} ({}). Re-solving.\n",
-                       cell.id, done_filename, v.error_message);
+                       cell.id, subchart_filename, v.error_message);
         }
       }
 
@@ -866,7 +872,7 @@ static int RunDifficultMixture(
                      current_proc, unsolved_cells.size(),
                      cell.id, cell.depth, cell.box_depth, cell.view_depth, cell.best_margin);
       }
-      std::string tmp_filename = std::format("{}.tmp", done_filename);
+      std::string tmp_filename = std::format("{}.tmp", subchart_filename);
       std::string tmp_path = std::format("{}/{}", out_dir, tmp_filename);
 
       FILE *tmp_fp = fopen(tmp_path.c_str(), "w");
@@ -875,6 +881,9 @@ static int RunDifficultMixture(
         status.Print(ARED("Failed to create temporary file {}\n"), tmp_path);
         continue;
       }
+
+      // Emit leading geometry header so the subchart stands alone
+      fprintf(tmp_fp, "%s\n", Chart229::Serialize(cell.ToGeometryRow()).c_str());
 
       uint64_t cell_rows = 0;
       auto row_cb = [&](std::string_view row) {
@@ -986,14 +995,14 @@ static int RunDifficultMixture(
         }
       } else {
         std::error_code ec;
-        std::filesystem::rename(tmp_path, done_path, ec);
+        std::filesystem::rename(tmp_path, subchart_path, ec);
         std::lock_guard<std::mutex> lock(state_mu);
         if (ec) {
-          status.Print(ARED("  Error renaming {} to {}: {}\n"), tmp_path, done_path, ec.message());
+          status.Print(ARED("  Error renaming {} to {}: {}\n"), tmp_path, subchart_path, ec.message());
         } else {
-          auto v = VerifyDoneFile(cell, done_path, tube_atlas, /*allow_difficult=*/false, tube_radius);
+          auto v = VerifySubchartFile(cell, subchart_path, tube_atlas, /*allow_difficult=*/false, tube_radius);
           if (!v.valid) {
-            status.Print(ARED("  POST-SOLVE VERIFICATION FAILED for {}: {}\n"), done_path, v.error_message);
+            status.Print(ARED("  POST-SOLVE VERIFICATION FAILED for {}: {}\n"), subchart_path, v.error_message);
           }
           total_solved++;
           total_rows_written += cell_rows;
@@ -1003,7 +1012,7 @@ static int RunDifficultMixture(
           WriteDifficultFile(difficult_path, remaining_unsolved);
           status.Print(AGREEN("  ✔") " Cell #{} SOLVED in {}! ({} rows, {} leaves -> {}) [{} remaining in {}]{}\n",
                        cell.id, ANSI::Time(cell_seconds), cell_rows, stats.certified_leaves,
-                       done_filename, remaining_unsolved.size(), difficult_path, cand_info);
+                       subchart_filename, remaining_unsolved.size(), difficult_path, cand_info);
           std::string hist_report = stats.FormatHistogramReport(max_depth, max_box_depth, max_view_depth);
           if (!hist_report.empty()) {
             status.Print("{}", hist_report);
@@ -1020,10 +1029,10 @@ static int RunDifficultMixture(
       DifficultCell cell = unsolved_cells[idx];
       if (target_cell_id >= 0 && cell.id != target_cell_id) continue;
 
-      std::string done_filename = std::format("chart{}.{}.done", cell.chart, cell.id);
-      std::string done_path = std::format("{}/{}", out_dir, done_filename);
-      if (std::filesystem::exists(done_path)) {
-        auto v = VerifyDoneFile(cell, done_path, tube_atlas, /*allow_difficult=*/false, tube_radius);
+      std::string subchart_filename = std::format("chart{}.{:x}.subchart", cell.chart, cell.id);
+      std::string subchart_path = std::format("{}/{}", out_dir, subchart_filename);
+      if (std::filesystem::exists(subchart_path)) {
+        auto v = VerifySubchartFile(cell, subchart_path, tube_atlas, /*allow_difficult=*/false, tube_radius);
         if (v.valid) {
           total_solved++;
           total_rows_written += v.total_rows;
@@ -1032,12 +1041,12 @@ static int RunDifficultMixture(
           });
           WriteDifficultFile(difficult_path, remaining_unsolved);
           status.Print(AGREEN("  ✔") " Cell #{} verified from existing {} ({} rows, {} leaves, worst margin: {:.6g}). [{} remaining in {}]\n",
-                       cell.id, done_filename, v.total_rows, v.total_leaves, v.worst_margin,
+                       cell.id, subchart_filename, v.total_rows, v.total_leaves, v.worst_margin,
                        remaining_unsolved.size(), difficult_path);
           continue;
         } else {
           status.Print(AORANGE("  ✘") " Cell #{} has invalid existing {} ({}). Re-solving.\n",
-                       cell.id, done_filename, v.error_message);
+                       cell.id, subchart_filename, v.error_message);
         }
       }
 
@@ -1047,7 +1056,7 @@ static int RunDifficultMixture(
                    cell.id, cell.depth, cell.box_depth, cell.view_depth, cell.best_margin,
                    actual_threads);
 
-      std::string tmp_filename = std::format("{}.tmp", done_filename);
+      std::string tmp_filename = std::format("{}.tmp", subchart_filename);
       std::string tmp_path = std::format("{}/{}", out_dir, tmp_filename);
 
       FILE *tmp_fp = fopen(tmp_path.c_str(), "w");
@@ -1057,6 +1066,9 @@ static int RunDifficultMixture(
       }
       std::vector<char> io_buf(8 * 1024 * 1024);
       setvbuf(tmp_fp, io_buf.data(), _IOFBF, io_buf.size());
+
+      // Emit leading geometry header so the subchart stands alone
+      fprintf(tmp_fp, "%s\n", Chart229::Serialize(cell.ToGeometryRow()).c_str());
 
       uint64_t cell_rows = 0;
       auto row_cb = [&](std::string_view row) {
@@ -1161,13 +1173,13 @@ static int RunDifficultMixture(
         }
       } else {
         std::error_code ec;
-        std::filesystem::rename(tmp_path, done_path, ec);
+        std::filesystem::rename(tmp_path, subchart_path, ec);
         if (ec) {
-          status.Print(ARED("  Error renaming {} to {}: {}\n"), tmp_path, done_path, ec.message());
+          status.Print(ARED("  Error renaming {} to {}: {}\n"), tmp_path, subchart_path, ec.message());
         } else {
-          auto v = VerifyDoneFile(cell, done_path, tube_atlas, /*allow_difficult=*/false, tube_radius);
+          auto v = VerifySubchartFile(cell, subchart_path, tube_atlas, /*allow_difficult=*/false, tube_radius);
           if (!v.valid) {
-            status.Print(ARED("  POST-SOLVE VERIFICATION FAILED for {}: {}\n"), done_path, v.error_message);
+            status.Print(ARED("  POST-SOLVE VERIFICATION FAILED for {}: {}\n"), subchart_path, v.error_message);
           }
           total_solved++;
           total_rows_written += cell_rows;
@@ -1177,7 +1189,7 @@ static int RunDifficultMixture(
           WriteDifficultFile(difficult_path, remaining_unsolved);
           status.Print(AGREEN("  ✔") " Cell #{} SOLVED in {}! ({} rows, {} leaves -> {}) [{} remaining in {}]{}\n",
                        cell.id, ANSI::Time(cell_seconds), cell_rows, stats.certified_leaves,
-                       done_filename, remaining_unsolved.size(), difficult_path, cand_info);
+                       subchart_filename, remaining_unsolved.size(), difficult_path, cand_info);
           std::string hist_report = stats.FormatHistogramReport(max_depth, max_box_depth, max_view_depth);
           if (!hist_report.empty()) {
             status.Print("{}", hist_report);
@@ -1257,7 +1269,7 @@ static void PrintHelp() {
   Print("Usage: ./difficult229.exe [options]\n"
         "  --chart <0|1|2>         Cayley chart index (default 0)\n"
         "  --difficult <path>      Path to difficult cells file (default chart<chart>.difficult)\n"
-        "  --out_dir <path>        Output directory for .done files and rewritten difficult file (default .)\n"
+        "  --out_dir <path>        Output directory for .subchart files and rewritten difficult file (default .)\n"
         "  --mixture               Convex triple mixture solver (DEFAULT: pulls out all mathematical stops)\n"
         "  --view_mixture          Convex triple mixture solver with aggressive view refinement\n"
         "  --single_triple         Legacy single-triple mode (no mixtures, forces subdivision)\n"

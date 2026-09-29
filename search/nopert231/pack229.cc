@@ -1,7 +1,7 @@
 // pack229.cc: Converts lean229 proof logs to Lean 4 packed format (.pack).
 // Supports standard exact rational certificates (CE) and mixed certificates (MX).
 //
-// Automatically merges resolved difficult cells from chart<chart>.<id>.done files
+// Automatically merges resolved difficult cells from chart<chart>.<hex_id>.subchart files
 // with collision-safe node renumbering and streaming low-memory verification.
 
 #include <algorithm>
@@ -1231,29 +1231,19 @@ static void LoadDoneFiles(const std::string &done_dir,
   }
 
   std::string prefix = "chart" + std::to_string(chart) + ".";
-  std::string suffix_done = ".done";
   std::string suffix_subchart = ".subchart";
 
   std::vector<std::string> matching_files;
   for (const auto &entry : std::filesystem::directory_iterator(dir_path)) {
     if (!entry.is_regular_file()) continue;
     std::string fname = entry.path().filename().string();
-    if (fname.rfind(prefix, 0) == 0) {
-      if ((fname.size() >= suffix_subchart.size() &&
-           fname.compare(fname.size() - suffix_subchart.size(), suffix_subchart.size(), suffix_subchart) == 0) ||
-          (fname.size() >= suffix_done.size() &&
-           fname.compare(fname.size() - suffix_done.size(), suffix_done.size(), suffix_done) == 0)) {
-        matching_files.push_back(entry.path().string());
-      }
+    if (fname.rfind(prefix, 0) == 0 &&
+        fname.size() >= suffix_subchart.size() &&
+        fname.compare(fname.size() - suffix_subchart.size(), suffix_subchart.size(), suffix_subchart) == 0) {
+      matching_files.push_back(entry.path().string());
     }
   }
-  std::sort(matching_files.begin(), matching_files.end(),
-            [](const std::string &a, const std::string &b) {
-              bool a_sub = (a.size() >= 9 && a.substr(a.size() - 9) == ".subchart");
-              bool b_sub = (b.size() >= 9 && b.substr(b.size() - 9) == ".subchart");
-              if (a_sub != b_sub) return a_sub > b_sub;
-              return a < b;
-            });
+  std::sort(matching_files.begin(), matching_files.end());
 
   int done_files_found = matching_files.size();
   int done_files_merged = 0;
@@ -1369,7 +1359,7 @@ static void LoadDoneFiles(const std::string &done_dir,
 
   if (done_files_merged > 0) {
     std::cout << "Merged " << done_files_merged << " / " << done_files_found
-              << " .done files (" << total_spliced_nodes << " new descendant nodes spliced, total nodes now "
+              << " .subchart files (" << total_spliced_nodes << " new descendant nodes spliced, total nodes now "
               << all_node_ids->size() << ").\n";
   }
 }
@@ -1411,25 +1401,9 @@ int main(int argc, char **argv) {
       if (s.rfind("0x", 0) == 0 || s.rfind("0X", 0) == 0) {
         cell_id = std::stoll(s, nullptr, 16);
       } else {
-        bool has_alpha = false;
-        for (char c : s) {
-          if ((c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
-            has_alpha = true;
-            break;
-          }
-        }
-        if (has_alpha) {
-          cell_id = std::stoll(s, nullptr, 16);
-        } else {
-          std::string subchart_cand = "chart" + std::to_string(chart) + "." + s + ".subchart";
-          if (std::filesystem::exists(subchart_cand)) {
-            cell_id = std::stoll(s, nullptr, 16);
-          } else {
-            cell_id = std::stoll(s, nullptr, 10);
-          }
-        }
+        cell_id = std::stoll(s, nullptr, 16);
       }
-    } else if (arg == "--done_dir" && i + 1 < argc) {
+    } else if ((arg == "--done_dir" || arg == "--subcharts_dir") && i + 1 < argc) {
       done_dir = argv[++i];
     } else if (arg == "--no_done") {
       done_dir = "none";
@@ -1450,13 +1424,7 @@ int main(int argc, char **argv) {
     ss_hex << std::hex << cell_id;
     std::string hex_str = ss_hex.str();
     if (in_path.empty()) {
-      std::string subchart_cand = "chart" + std::to_string(chart) + "." + hex_str + ".subchart";
-      std::string done_cand = "chart" + std::to_string(chart) + "." + std::to_string(cell_id) + ".done";
-      if (std::filesystem::exists(subchart_cand)) {
-        in_path = subchart_cand;
-      } else {
-        in_path = done_cand;
-      }
+      in_path = "chart" + std::to_string(chart) + "." + hex_str + ".subchart";
     }
     if (out_path.empty()) {
       out_path = "chart" + std::to_string(chart) + "." + hex_str + ".pack";

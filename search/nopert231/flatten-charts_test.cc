@@ -1,5 +1,4 @@
-// flatten-charts_test.cc: Tests for geometry tracking, subchart absorption,
-// and .done -> .subchart conversion.
+// flatten-charts_test.cc: Tests for geometry tracking and subchart absorption.
 
 #include <cassert>
 #include <cstdint>
@@ -21,7 +20,7 @@
     if (!(expr)) {                                                         \
       fprintf(stderr, "FAILED at %s:%d: %s\n", __FILE__, __LINE__, #expr); \
       abort();                                                             \
-    }                                                                      \
+      }                                                                      \
   } while (0)
 
 using namespace flatten_charts;
@@ -85,7 +84,7 @@ static void TestGeometryTracing() {
 }
 
 static void TestSmallFileAbsorption() {
-  printf("Testing absorption of <= threshold .done files...\n");
+  printf("Testing absorption of <= threshold .subchart files...\n");
 
   std::string test_dir = "./test_scratch_flatten";
   std::filesystem::create_directories(test_dir);
@@ -100,21 +99,21 @@ static void TestSmallFileAbsorption() {
     out << "df 3 1 1\n";
   }
 
-  // Create a small .done file for node 3: 3 rows (<= threshold 5)
-  // File named chart0.3.done
-  std::string done_path = test_dir + "/chart0.3.done";
+  // Create a small .subchart file for node 3: 3 rows (<= threshold 5)
+  std::string child_path = test_dir + "/chart0.3.subchart";
   {
-    std::ofstream out(done_path);
+    std::ofstream out(child_path);
+    out << "ge 3 1 1 1 0 0 0.5 0 0 0.5 1 0.5555555555555556 1 0 0 0.24390243902439024 0.7560975609756098 0 0 0 1\n";
     out << "sp 3 1 1 4 5\n";
     out << "ce 4 3 2 15 1.2p-12 1 2 4\n";
     out << "ce 5 3 2 18 1.4p-12 1 2 5\n";
   }
 
   FlattenOptions options;
-  options.done_dir = test_dir;
+  options.subcharts_dir = test_dir;
   options.threshold = 5;
   options.dry_run = false;
-  options.keep_done = false;
+  options.keep_subcharts = false;
 
   FlattenStats stats;
   bool ok = FlattenChartFile(parent_path, parent_path, options, stats, 0);
@@ -122,10 +121,10 @@ static void TestSmallFileAbsorption() {
   CHECK(stats.df_rows_found == 1);
   CHECK(stats.files_absorbed == 1);
   CHECK(stats.rows_absorbed == 3);
-  CHECK(stats.done_files_removed == 1);
+  CHECK(stats.subcharts_removed == 1);
 
-  // Verify that chart0.3.done was removed
-  CHECK(!std::filesystem::exists(done_path));
+  // Verify that child .subchart was removed
+  CHECK(!std::filesystem::exists(child_path));
 
   // Verify parent content
   std::ifstream in(parent_path);
@@ -148,8 +147,8 @@ static void TestSmallFileAbsorption() {
   printf("Small file absorption verified successfully.\n");
 }
 
-static void TestLargeFileConversion() {
-  printf("Testing conversion of > threshold .done files to .subchart...\n");
+static void TestLargeFileRetention() {
+  printf("Testing retention of > threshold .subchart files...\n");
 
   std::string test_dir = "./test_scratch_flatten_large";
   std::filesystem::create_directories(test_dir);
@@ -163,10 +162,11 @@ static void TestLargeFileConversion() {
     out << "df 3 1 1\n";
   }
 
-  // Create a .done file for node 3 with 6 rows (> threshold 5)
-  std::string done_path = test_dir + "/chart0.3.done";
+  // Create a .subchart file for node 3 with 5 rows (> threshold 4)
+  std::string child_path = test_dir + "/chart0.3.subchart";
   {
-    std::ofstream out(done_path);
+    std::ofstream out(child_path);
+    out << "ge 3 1 1 1 0 0 0.5 0 0 0.5 1 0.5555555555555556 1 0 0 0.24390243902439024 0.7560975609756098 0 0 0 1\n";
     out << "sp 3 1 1 4 5\n";
     out << "sp 4 3 2 6 7\n";
     out << "ce 5 3 2 18 1.4p-12 1 2 5\n";
@@ -175,31 +175,20 @@ static void TestLargeFileConversion() {
   }
 
   FlattenOptions options;
-  options.done_dir = test_dir;
+  options.subcharts_dir = test_dir;
   options.threshold = 4;  // threshold is 4, file has 5 rows
   options.dry_run = false;
-  options.keep_done = false;
+  options.keep_subcharts = false;
 
   FlattenStats stats;
   bool ok = FlattenChartFile(parent_path, parent_path, options, stats, 0);
   CHECK(ok);
   CHECK(stats.df_rows_found == 1);
   CHECK(stats.files_absorbed == 0);
-  CHECK(stats.files_converted_to_subchart == 1);
-  CHECK(stats.done_files_removed == 1);
+  CHECK(stats.subcharts_removed == 0);
 
-  // Original .done removed
-  CHECK(!std::filesystem::exists(done_path));
-
-  // Converted .subchart created: chart0.3.subchart
-  std::string subchart_path = test_dir + "/chart0.3.subchart";
-  CHECK(std::filesystem::exists(subchart_path));
-
-  // Check subchart contents
-  std::ifstream sub_in(subchart_path);
-  std::string sub_first_line;
-  std::getline(sub_in, sub_first_line);
-  CHECK(sub_first_line.rfind("ge 3 1 1", 0) == 0);
+  // Large subchart retained
+  CHECK(std::filesystem::exists(child_path));
 
   // Parent should STILL contain df 3
   std::ifstream p_in(parent_path);
@@ -211,13 +200,13 @@ static void TestLargeFileConversion() {
   CHECK(found_df);
 
   std::filesystem::remove_all(test_dir);
-  printf("Large file conversion verified successfully.\n");
+  printf("Large file retention verified successfully.\n");
 }
 
 int main() {
   TestGeometryTracing();
   TestSmallFileAbsorption();
-  TestLargeFileConversion();
+  TestLargeFileRetention();
   printf("All flatten-charts tests passed!\n");
   return 0;
 }

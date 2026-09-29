@@ -24,9 +24,9 @@ namespace flatten_charts {
 
 struct FlattenOptions {
   int threshold = 50000;
-  std::string done_dir = "/mnt/nopertdata";
+  std::string subcharts_dir = "/mnt/nopertdata";
   bool dry_run = false;
-  bool keep_done = false;
+  bool keep_subcharts = false;
   bool verbose = false;
 };
 
@@ -35,7 +35,7 @@ struct FlattenStats {
   int files_absorbed = 0;
   int64_t rows_absorbed = 0;
   int files_converted_to_subchart = 0;
-  int done_files_removed = 0;
+  int subcharts_removed = 0;
   int unresolved_df = 0;
   int pending_df = 0;
   int geometry_errors = 0;
@@ -234,21 +234,11 @@ inline std::optional<NodeGeometry> TraceGeometry(
   return geom;
 }
 
-inline std::string FindExternalFile(const std::string &done_dir, int chart, int64_t id) {
+inline std::string FindExternalFile(const std::string &subcharts_dir, int chart, int64_t id) {
   std::string hex_id = std::format("{:x}", id);
-  std::string dec_id = std::format("{}", id);
-
-  std::vector<std::string> candidates = {
-      std::format("{}/chart{}.{}.subchart", done_dir, chart, hex_id),
-      std::format("{}/chart{}.{}.subchart", done_dir, chart, dec_id),
-      std::format("{}/chart{}.{}.done", done_dir, chart, dec_id),
-      std::format("{}/chart{}.{}.done", done_dir, chart, hex_id),
-  };
-
-  for (const auto &path : candidates) {
-    if (std::filesystem::exists(path)) {
-      return path;
-    }
+  std::string path = std::format("{}/chart{}.{}.subchart", subcharts_dir, chart, hex_id);
+  if (std::filesystem::exists(path)) {
+    return path;
   }
   return "";
 }
@@ -259,7 +249,7 @@ struct ProcessExternalResult {
   std::vector<std::string> replacement_lines;
 };
 
-// Recursively processes an external file (either absorbing <= threshold or converting > threshold).
+// Recursively processes an external subchart file (absorbing <= threshold).
 inline ProcessExternalResult ProcessExternalFile(
     const std::string &ext_path,
     const NodeGeometry &node_geom,
@@ -269,11 +259,9 @@ inline ProcessExternalResult ProcessExternalFile(
     int recursion_depth = 0) {
   ProcessExternalResult result;
 
-  bool is_done = (ext_path.size() >= 5 && ext_path.substr(ext_path.size() - 5) == ".done");
-
   std::ifstream f(ext_path);
   if (!f.is_open()) {
-    std::cerr << "Warning: Cannot open external file: " << ext_path << "\n";
+    std::cerr << "Warning: Cannot open external subchart file: " << ext_path << "\n";
     stats.unresolved_df++;
     return result;
   }
@@ -281,9 +269,11 @@ inline ProcessExternalResult ProcessExternalFile(
   std::vector<std::string> lines;
   std::string line;
   int row_count = 0;
+  bool had_ge_header = false;
   while (std::getline(f, line)) {
     if (line.empty() || line[0] == '#') continue;
     if (line.rfind("ge ", 0) == 0 || line.rfind("GE ", 0) == 0) {
+      had_ge_header = true;
       continue;
     }
     lines.push_back(line);
@@ -292,7 +282,7 @@ inline ProcessExternalResult ProcessExternalFile(
   f.close();
 
   if (lines.empty()) {
-    std::cerr << "Warning: Empty external file: " << ext_path << "\n";
+    std::cerr << "Warning: Empty external subchart file: " << ext_path << "\n";
     stats.unresolved_df++;
     return result;
   }
@@ -300,44 +290,19 @@ inline ProcessExternalResult ProcessExternalFile(
   // Check threshold
   if (row_count > options.threshold) {
     // Large file: leave split as standalone subchart!
-    if (is_done) {
-      std::string out_subchart_path = std::format(
-          "{}/chart{}.{:x}.subchart", options.done_dir, node_geom.chart, node_geom.id);
-
-      if (options.verbose) {
-        std::cout << "Converting large .done file (" << row_count
-                  << " rows > " << options.threshold << ") to subchart: "
-                  << out_subchart_path << "\n";
-      }
-
-      if (!options.dry_run) {
-        std::string tmp_path = out_subchart_path + ".tmp";
-        std::ofstream out(tmp_path);
-        if (!out.is_open()) {
-          std::cerr << "Error: Cannot write to " << tmp_path << "\n";
-          stats.unresolved_df++;
-          return result;
-        }
-
+    if (!had_ge_header && !options.dry_run) {
+      // Ensure geometry header is prepended
+      std::string tmp_path = ext_path + ".tmp";
+      std::ofstream out(tmp_path);
+      if (out.is_open()) {
         Chart229::GeometryRow ge_row = MakeGeometryRow(node_geom);
         out << Chart229::Serialize(ge_row) << "\n";
         for (const auto &l : lines) {
           out << l << "\n";
         }
         out.close();
-
-        std::filesystem::rename(tmp_path, out_subchart_path);
-
-        if (!options.keep_done) {
-          std::error_code ec;
-          std::filesystem::remove(ext_path, ec);
-          if (!ec) {
-            stats.done_files_removed++;
-          }
-        }
+        std::filesystem::rename(tmp_path, ext_path);
       }
-
-      stats.files_converted_to_subchart++;
     }
 
     // Since it's large, we do not absorb it into the parent; parent keeps df row.
@@ -435,7 +400,7 @@ inline ProcessExternalResult ProcessExternalFile(
           nested_geom.id = get_mapped_id(nested_raw_id);
           nested_geom.parent_id = get_mapped_id(nested_raw_parent);
 
-          std::string nested_file = FindExternalFile(options.done_dir, node_geom.chart, nested_raw_id);
+          std::string nested_file = FindExternalFile(options.subcharts_dir, node_geom.chart, nested_raw_id);
           if (!nested_file.empty()) {
             auto nested_res = ProcessExternalFile(
                 nested_file, nested_geom, options, next_avail_id, stats, recursion_depth + 1);
@@ -519,14 +484,12 @@ inline ProcessExternalResult ProcessExternalFile(
     }
   }
 
-  // Remove the absorbed file if not keeping done files
-  if (!options.dry_run && !options.keep_done) {
+  // Remove the absorbed file if not keeping subchart files
+  if (!options.dry_run && !options.keep_subcharts) {
     std::error_code ec;
     std::filesystem::remove(ext_path, ec);
     if (!ec) {
-      if (is_done) {
-        stats.done_files_removed++;
-      }
+      stats.subcharts_removed++;
     }
   }
 
@@ -714,12 +677,12 @@ inline bool FlattenChartFile(
     }
 
     NodeGeometry geom = *geom_opt;
-    std::string ext_file = FindExternalFile(options.done_dir, chart_num, df.id);
+    std::string ext_file = FindExternalFile(options.subcharts_dir, chart_num, df.id);
     if (ext_file.empty()) {
       stats.pending_df++;
       if (options.verbose) {
-        std::cout << "No external .done or .subchart file found for df node "
-                  << std::format("{:x}", df.id) << " in " << options.done_dir << "\n";
+        std::cout << "No external .subchart file found for df node "
+                  << std::format("{:x}", df.id) << " in " << options.subcharts_dir << "\n";
       }
       continue;
     }

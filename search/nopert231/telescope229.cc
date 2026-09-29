@@ -2,7 +2,7 @@
 // Subdivides the view triangle of a difficult cell down N levels (4^N sub-triangles).
 // If 4^N - 1 sub-triangles are certified (by identity tube, Farkas LP, mixtures, or
 // shallow box splits), locks in the 4^N - 1 solved branches permanently into a
-// hierarchical .done file containing exactly ONE 'DF' (DIFFICULT) leaf.
+// hierarchical .subchart file containing exactly ONE 'DF' (DIFFICULT) leaf.
 // The single remaining uncertified needle sub-wedge is emitted to chart<chart>.<id>.difficult.
 //
 // TODO: telescope229 is an experimental fork of difficult229 that explores
@@ -51,7 +51,7 @@ struct VerificationResult {
   std::string error_message;
 };
 
-struct ParsedDoneRow {
+struct ParsedSubchartRow {
   std::string tag;
   int64_t id = -1;
   int64_t parent_id = -1;
@@ -63,17 +63,17 @@ struct ParsedDoneRow {
   double tube_radius = 0.0;
 };
 
-static VerificationResult VerifyDoneFile(
-    const DifficultCell &cell, const std::string &done_path,
+static VerificationResult VerifySubchartFile(
+    const DifficultCell &cell, const std::string &subchart_path,
     const tubetree229::TubeAtlas *tube_atlas = nullptr,
     bool allow_difficult = true,
     double experiment_tube_floor = 0.0) {
-  std::ifstream infile(done_path);
+  std::ifstream infile(subchart_path);
   if (!infile.is_open()) {
     return {.valid = false, .error_message = "Could not open file"};
   }
 
-  std::unordered_map<int64_t, ParsedDoneRow> row_map;
+  std::unordered_map<int64_t, ParsedSubchartRow> row_map;
   std::string line;
   uint64_t line_no = 0;
 
@@ -81,11 +81,12 @@ static VerificationResult VerifyDoneFile(
     line_no++;
     auto row_or_err = Chart229::Parse(line);
     if (Chart229::IsEmptyOrComment(row_or_err)) continue;
+    if (std::holds_alternative<Chart229::GeometryRow>(row_or_err)) continue;
     if (Chart229::IsError(row_or_err)) {
       return {.valid = false, .error_message = std::format("Line {}: {}", line_no, std::get<Chart229::ParseError>(row_or_err).message)};
     }
 
-    ParsedDoneRow row;
+    ParsedSubchartRow row;
     int64_t id = 0;
     bool ok = std::visit(
         Chart229::Overloaded{
@@ -617,14 +618,14 @@ static RollupResult RollupFrontierToLca(
   };
 }
 
-static bool StitchDoneFile(
+static bool StitchSubchartFile(
     int chart, int64_t cell_id, const std::string &out_dir,
     const tubetree229::TubeAtlas *atlas, double tube_radius,
     const std::vector<DifficultCell> &all_cells) {
   
-  std::string done_file = std::format("{}/chart{}.{}.done", out_dir, chart, cell_id);
-  if (!std::filesystem::exists(done_file)) {
-    Print(ARED("Done file not found: {}\n"), done_file);
+  std::string subchart_file = std::format("{}/chart{}.{:x}.subchart", out_dir, chart, cell_id);
+  if (!std::filesystem::exists(subchart_file)) {
+    Print(ARED("Subchart file not found: {}\n"), subchart_file);
     return false;
   }
 
@@ -648,8 +649,8 @@ static bool StitchDoneFile(
     }
   }
 
-  std::string base_template = std::format("{}/chart{}.{}.done.base", out_dir, chart, cell_id);
-  std::string template_file = std::filesystem::exists(base_template) ? base_template : done_file;
+  std::string base_template = std::format("{}/chart{}.{:x}.subchart.base", out_dir, chart, cell_id);
+  std::string template_file = std::filesystem::exists(base_template) ? base_template : subchart_file;
 
   std::ifstream in(template_file);
   std::string line;
@@ -663,9 +664,9 @@ static bool StitchDoneFile(
     auto row_or_err = Chart229::Parse(line);
     if (std::holds_alternative<Chart229::DifficultRow>(row_or_err)) {
       int64_t id = std::get<Chart229::DifficultRow>(row_or_err).id;
-      std::string child_done = std::format("{}/chart{}.{}.done", out_dir, chart, id);
-      if (std::filesystem::exists(child_done)) {
-        std::ifstream cin(child_done);
+      std::string child_subchart = std::format("{}/chart{}.{:x}.subchart", out_dir, chart, id);
+      if (std::filesystem::exists(child_subchart)) {
+        std::ifstream cin(child_subchart);
         std::string cline;
         std::unordered_map<int64_t, int64_t> id_map;
         id_map[id] = id; // Root of child matches outer tree
@@ -682,6 +683,7 @@ static bool StitchDoneFile(
         while (std::getline(cin, cline)) {
           auto crow_or_err = Chart229::Parse(cline);
           if (Chart229::IsEmptyOrComment(crow_or_err) || Chart229::IsError(crow_or_err)) continue;
+          if (std::holds_alternative<Chart229::GeometryRow>(crow_or_err)) continue;
 
           std::visit(
               Chart229::Overloaded{
@@ -759,19 +761,19 @@ static bool StitchDoneFile(
   }
   in.close();
 
-  std::string tmp_file = done_file + ".stitched";
+  std::string tmp_file = subchart_file + ".stitched";
   std::ofstream out(tmp_file);
   for (const auto &l : output_lines) {
     out << l << "\n";
   }
   out.close();
-  std::filesystem::rename(tmp_file, done_file);
+  std::filesystem::rename(tmp_file, subchart_file);
 
   Print("Stitch results for {}: stitched {} nodes, {} DF nodes remaining.\n",
-        done_file, stitched_nodes, unstitched_nodes);
+        subchart_file, stitched_nodes, unstitched_nodes);
 
   if (found_cell) {
-    auto v = VerifyDoneFile(target_cell, done_file, atlas, /*allow_difficult=*/(unstitched_nodes > 0), tube_radius);
+    auto v = VerifySubchartFile(target_cell, subchart_file, atlas, /*allow_difficult=*/(unstitched_nodes > 0), tube_radius);
     if (v.valid) {
       if (unstitched_nodes == 0) {
         Print(AGREEN("✓ Stitched certificate is 100% COMPLETE & VERIFIED! (rows: {}, leaves: {})\n"),
@@ -861,7 +863,7 @@ int main(int argc, char **argv) {
       Print(ARED("Must specify --cell_id <id> for --stitch\n"));
       return 1;
     }
-    StitchDoneFile(chart, target_cell_id, out_dir, &atlas, tube_radius, cells);
+    StitchSubchartFile(chart, target_cell_id, out_dir, &atlas, tube_radius, cells);
     return 0;
   }
 
@@ -1035,10 +1037,11 @@ int main(int argc, char **argv) {
             best_score, best_solved_lost, difficult_count);
     }
 
-    // Now emit the tree to chart<chart>.<id>.done
-    std::string done_file = std::format("{}/chart{}.{}.done", out_dir, cell.chart, cell.id);
-    std::string tmp_file = done_file + ".tmp";
+    // Now emit the tree to chart<chart>.<hex_id>.subchart
+    std::string subchart_file = std::format("{}/chart{}.{:x}.subchart", out_dir, cell.chart, cell.id);
+    std::string tmp_file = subchart_file + ".tmp";
     std::ofstream out(tmp_file);
+    out << Chart229::Serialize(cell.ToGeometryRow()) << "\n";
 
     std::vector<DifficultCell> spawned_difficult_cells;
 
@@ -1096,21 +1099,21 @@ int main(int argc, char **argv) {
 
     EmitVnode(0);
     out.close();
-    std::filesystem::rename(tmp_file, done_file);
+    std::filesystem::rename(tmp_file, subchart_file);
 
     bool allow_diff = !spawned_difficult_cells.empty();
-    auto v = VerifyDoneFile(cell, done_file, &atlas, allow_diff, tube_radius);
+    auto v = VerifySubchartFile(cell, subchart_file, &atlas, allow_diff, tube_radius);
     if (v.valid) {
       if (spawned_difficult_cells.empty()) {
         Print(AGREEN("Cell #{} FULLY SOLVED! Verified 100% certificate {} (rows: {}, leaves: {})\n"),
-              cell.id, done_file, v.total_rows, v.total_leaves);
+              cell.id, subchart_file, v.total_rows, v.total_leaves);
         fully_solved_count++;
         cells.erase(cells.begin() + c_idx);
         WriteDifficultFile(difficult_path, cells);
         c_idx--;
       } else {
-        Print(AGREEN("Verified partial .done: {} (total rows: {}, solved leaves: {}, DF leaves: {})\n"),
-              done_file, v.total_rows, v.total_leaves - v.difficult_leaves, v.difficult_leaves);
+        Print(AGREEN("Verified partial .subchart: {} (total rows: {}, solved leaves: {}, DF leaves: {})\n"),
+              subchart_file, v.total_rows, v.total_leaves - v.difficult_leaves, v.difficult_leaves);
         telescoped_count++;
         cells.erase(cells.begin() + c_idx);
         cells.insert(cells.begin() + c_idx, spawned_difficult_cells.begin(), spawned_difficult_cells.end());
@@ -1120,7 +1123,7 @@ int main(int argc, char **argv) {
         c_idx += spawned_difficult_cells.size() - 1;
       }
     } else {
-      Print(ARED("Verification failed for {}: {}\n"), done_file, v.error_message);
+      Print(ARED("Verification failed for {}: {}\n"), subchart_file, v.error_message);
     }
   }
 
