@@ -4,6 +4,7 @@
 #include <cassert>
 #include <cstdint>
 #include <cstdio>
+#include <filesystem>
 #include <fstream>
 #include <string>
 #include <unordered_map>
@@ -12,6 +13,9 @@
 
 #include "split-chart.h"
 
+#ifdef CHECK
+#undef CHECK
+#endif
 #define CHECK(expr)                                                        \
   do {                                                                     \
     if (!(expr)) {                                                         \
@@ -340,6 +344,158 @@ void TestDuplicateSplitRows() {
   printf("  Duplicate split row handling tests PASSED.\n");
 }
 
+void TestSkeletonSplitsAndGeometryPropagation() {
+  printf("Testing skeleton split collection and geometry propagation...\n");
+  const char *test_file = "/tmp/test_chart_skeleton.rows";
+  {
+    std::ofstream f(test_file);
+    // Root 0 splits view (chart 0) into 1, 2, 3, 4
+    f << "sv 0 -1 0 1 2 3 4\n";
+    // Node 1 splits Cayley box along widest axis into 10 and 11
+    f << "sp 1 0 1 10 11\n";
+    // Leaves under 10
+    f << "ce 100 10 2 0 0.05 1 2 3\n";
+    f << "ce 101 10 2 0 0.05 1 2 3\n";
+    // Leaves under 11
+    f << "ce 110 11 2 0 0.05 1 2 3\n";
+    // Leaves under 2, 3, 4
+    f << "ce 20 2 1 0 0.05 1 2 3\n";
+    f << "ce 30 3 1 0 0.05 1 2 3\n";
+    f << "ce 40 4 1 0 0.05 1 2 3\n";
+  }
+
+  SplitResult split_res;
+  split_res.subcharts = {
+      SubchartInfo{.id = 0x10, .parent_id = 1, .depth = 2, .count = 2},
+      SubchartInfo{.id = 0x11, .parent_id = 1, .depth = 2, .count = 1},
+      SubchartInfo{.id = 2, .parent_id = 0, .depth = 1, .count = 1},
+      SubchartInfo{.id = 3, .parent_id = 0, .depth = 1, .count = 1},
+      SubchartInfo{.id = 4, .parent_id = 0, .depth = 1, .count = 1},
+  };
+  split_res.skeleton_split_ids = {0, 1};
+
+  auto skeleton_splits = CollectSkeletonSplits(test_file, split_res.skeleton_split_ids);
+  CHECK(skeleton_splits.size() == 2);
+  CHECK(skeleton_splits.contains(0));
+  CHECK(skeleton_splits.contains(1));
+  CHECK(skeleton_splits[0].type == SkeletonSplitNode::VIEW);
+  CHECK(skeleton_splits[0].children.size() == 4);
+  CHECK(skeleton_splits[1].type == SkeletonSplitNode::BOX);
+  CHECK(skeleton_splits[1].children.size() == 2);
+
+  auto geoms = ComputeRootGeometries(0, skeleton_splits, split_res);
+  CHECK(geoms.size() == 5);
+  CHECK(geoms.contains(0x10));
+  CHECK(geoms.contains(0x11));
+  CHECK(geoms.contains(2));
+  CHECK(geoms.contains(3));
+  CHECK(geoms.contains(4));
+
+  // Check geometries for 0x10 and 0x11:
+  // Node 1 got tri[0].
+  // Node 1 box split along WidestAxis() (for chart 0, radii are {1, 1, 1/3}, widest is axis 0).
+  // Left child (10) has rx = 0.5, cx = -0.5.
+  // Right child (11) has rx = 0.5, cx = +0.5.
+  const auto &g10 = geoms[0x10];
+  CHECK(g10.depth == 2);
+  CHECK(g10.box_depth == 1);
+  CHECK(g10.view_depth == 1);
+  CHECK(std::abs(g10.cx - (-0.5)) < 1e-9);
+  CHECK(std::abs(g10.rx - 0.5) < 1e-9);
+
+  const auto &g11 = geoms[0x11];
+  CHECK(g11.depth == 2);
+  CHECK(g11.box_depth == 1);
+  CHECK(g11.view_depth == 1);
+  CHECK(std::abs(g11.cx - 0.5) < 1e-9);
+  CHECK(std::abs(g11.rx - 0.5) < 1e-9);
+
+  std::remove(test_file);
+  printf("  Skeleton split collection and geometry propagation tests PASSED.\n");
+}
+
+void TestStreamAndWriteShardsAndFaithfulRecreation() {
+  printf("Testing shard writing and faithful recreation verification...\n");
+  const char *test_file = "/tmp/test_chart_write_shards.rows";
+  const char *out_dir = "/tmp/test_subcharts_out";
+  std::filesystem::create_directories(out_dir);
+
+  {
+    std::ofstream f(test_file);
+    // Chart 0: Root 0 splits view into 1, 2, 3, 4
+    f << "sv 0 -1 0 1 2 3 4\n";
+    // Node 1 splits box into 10 and 11
+    f << "sp 1 0 1 10 11\n";
+    // Node 2 splits box into 20 and 21
+    f << "sp 2 0 1 20 21\n";
+    // Skeleton leaves under root 0
+    f << "ce 3 0 1 0 0.05 1 2 3\n";
+    f << "ce 4 0 1 0 0.05 1 2 3\n";
+    // Subchart 10: split node 10 + leaves
+    f << "sp 10 1 2 100 101\n";
+    f << "ce 100 10 3 0 0.05 1 2 3\n";
+    f << "ce 101 10 3 0 0.05 1 2 3\n";
+    // Subchart 11: split node 11 + leaves
+    f << "sp 11 1 2 110 111\n";
+    f << "ce 110 11 3 0 0.05 1 2 3\n";
+    f << "ce 111 11 3 0 0.05 1 2 3\n";
+    // Subchart 20: split node 20 + leaves
+    f << "sp 20 2 2 200 201\n";
+    f << "ce 200 20 3 0 0.05 1 2 3\n";
+    f << "ce 201 20 3 0 0.05 1 2 3\n";
+    // Subchart 21: split node 21 + leaves
+    f << "sp 21 2 2 210 211\n";
+    f << "ce 210 21 3 0 0.05 1 2 3\n";
+    f << "ce 211 21 3 0 0.05 1 2 3\n";
+  }
+
+  SplitResult split_res;
+  split_res.subcharts = {
+      SubchartInfo{.id = 0x10, .parent_id = 1, .depth = 2, .count = 2},
+      SubchartInfo{.id = 0x11, .parent_id = 1, .depth = 2, .count = 2},
+      SubchartInfo{.id = 0x20, .parent_id = 2, .depth = 2, .count = 2},
+      SubchartInfo{.id = 0x21, .parent_id = 2, .depth = 2, .count = 2},
+  };
+  split_res.skeleton_split_ids = {0, 1, 2};
+
+  auto skeleton_splits = CollectSkeletonSplits(test_file, split_res.skeleton_split_ids);
+  auto geoms = ComputeRootGeometries(0, skeleton_splits, split_res);
+  CHECK(geoms.size() == 4);
+
+  std::string repl_path = std::string(out_dir) + "/chart0.replacement.rows.log";
+  WriteShardsResult wres = StreamAndWriteShards(
+      test_file, split_res, geoms, out_dir, repl_path, 0, nullptr);
+
+  CHECK(wres.error.empty());
+  CHECK(wres.shards_written == 4);
+  CHECK(wres.is_exact_match);
+  CHECK(wres.total_leaf_certificates == 10);  // 8 in subcharts + 2 in skeleton
+  CHECK(wres.skeleton_leaves_written == 2);
+  for (int i = 0; i < 4; i++) {
+    CHECK(wres.shard_leaves_written[i] == 2);
+  }
+
+  // Run the faithful recreation verification
+  VerificationResult vres = VerifyFaithfulRecreation(
+      repl_path, wres.subchart_paths, 10, geoms);
+
+  CHECK(vres.ok);
+  CHECK(vres.verified_shards == 4);
+  CHECK(vres.total_recreated_leaves == 10);
+  CHECK(vres.total_skeleton_leaves == 2);
+  CHECK(vres.total_subchart_leaves == 8);
+
+  // Clean up test files
+  std::remove(test_file);
+  std::remove(repl_path.c_str());
+  for (const auto &p : wres.subchart_paths) {
+    std::remove(p.c_str());
+  }
+  std::filesystem::remove(out_dir);
+
+  printf("  Shard writing and faithful recreation verification tests PASSED.\n");
+}
+
 int main() {
   TestBalancedBinaryTree();
   TestViewTreeQuadSplits();
@@ -349,8 +505,11 @@ int main() {
   TestStreamAndAssignShards();
   TestOutOfOrderAssignment();
   TestDuplicateSplitRows();
+  TestSkeletonSplitsAndGeometryPropagation();
+  TestStreamAndWriteShardsAndFaithfulRecreation();
 
-  printf("\nAll split-chart and assignment tests PASSED successfully!\n");
+  printf("\nAll split-chart, sharding, and recreation tests PASSED successfully!\n");
   return 0;
 }
+
 

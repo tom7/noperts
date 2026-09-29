@@ -13,6 +13,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <format>
 #include <fstream>
 #include <string>
@@ -35,6 +36,10 @@ int main(int argc, char **argv) {
   std::string output_roots_path;
   bool show_all = false;
   bool skip_assignment_pass = false;
+  bool write_shards = false;
+  std::string out_dir;
+  std::string replacement_chart_path;
+  int chart_override = -1;
 
   for (int i = 1; i < argc; i++) {
     std::string_view arg = argv[i];
@@ -42,11 +47,15 @@ int main(int argc, char **argv) {
       std::fprintf(stderr,
                    "Usage: %s [options] <chart.rows.log> [target_subcharts]\n\n"
                    "Computes a balanced split of a chart into T subcharts and\n"
-                   "verifies the disjoint cleave across all rows.\n\n"
+                   "verifies or executes the disjoint cleave across all rows.\n\n"
                    "Options:\n"
                    "  -T, --target <N>     Target number of subcharts (default: 64)\n"
                    "  -N, --max_nodes <N>  Threshold for Huffman prioritized rollup (default: 131072)\n"
                    "  -o, --output <file>  Optional path to write list of chosen subchart root IDs\n"
+                   "  --write_shards       Emit .subchart files and replacement skeleton chart\n"
+                   "  --out_dir <dir>      Output directory for .subchart files (default: chart directory)\n"
+                   "  --replacement <file> Output path for replacement chart (default: <dir>/<chart>.replacement.rows.log)\n"
+                   "  --chart <N>          Explicit chart number (0..3, auto-detected from filename if omitted)\n"
                    "  --show_all           Print all subcharts in table (not just top/bottom)\n"
                    "  --skip_assignment    Skip second-pass shard assignment verification\n",
                    argv[0]);
@@ -57,6 +66,14 @@ int main(int argc, char **argv) {
       max_nodes = std::strtoull(argv[++i], nullptr, 10);
     } else if ((arg == "-o" || arg == "--output") && i + 1 < argc) {
       output_roots_path = argv[++i];
+    } else if (arg == "--write_shards") {
+      write_shards = true;
+    } else if ((arg == "--out_dir") && i + 1 < argc) {
+      out_dir = argv[++i];
+    } else if ((arg == "--replacement") && i + 1 < argc) {
+      replacement_chart_path = argv[++i];
+    } else if ((arg == "--chart") && i + 1 < argc) {
+      chart_override = std::atoi(argv[++i]);
     } else if (arg == "--show_all") {
       show_all = true;
     } else if (arg == "--skip_assignment") {
@@ -237,7 +254,109 @@ int main(int argc, char **argv) {
     return 0;
   }
 
-  // Pass 2: Shard Assignment and Verification Pass
+  int chart_num = (chart_override >= 0) ? chart_override : InferChartNumber(chart_path);
+  std::printf("\nChart index: %d\n", chart_num);
+
+  // Collect skeleton split rows
+  std::printf("Collecting %zu ancestor skeleton split rows...\n",
+              split_res.skeleton_split_ids.size());
+  Timer skel_timer;
+  auto skeleton_splits = CollectSkeletonSplits(chart_path, split_res.skeleton_split_ids, &status);
+  status.Remove();
+  std::printf("Collected %zu skeleton splits in %.3fs.\n",
+              skeleton_splits.size(), skel_timer.Seconds());
+
+  // Propagate geometry down the skeleton tree
+  std::printf("Propagating Cayley box and projective triangle geometry to subchart roots...\n");
+  auto root_geometries = ComputeRootGeometries(chart_num, skeleton_splits, split_res);
+  std::printf("Computed geometry for %zu subchart roots.\n", root_geometries.size());
+
+  if (write_shards) {
+    if (out_dir.empty()) {
+      std::filesystem::path p(chart_path);
+      out_dir = p.parent_path().string();
+      if (out_dir.empty()) out_dir = ".";
+    }
+    if (replacement_chart_path.empty()) {
+      std::filesystem::path p(chart_path);
+      std::string stem = p.stem().string();
+      if (stem.ends_with(".rows")) stem = stem.substr(0, stem.size() - 5);
+      replacement_chart_path = out_dir + "/" + stem + ".replacement.rows.log";
+    }
+
+    std::printf("\nWriting %zu subcharts to '%s' and replacement chart to '%s'...\n",
+                split_res.subcharts.size(), out_dir.c_str(), replacement_chart_path.c_str());
+
+    Timer write_timer;
+    WriteShardsResult write_res = StreamAndWriteShards(
+        chart_path, split_res, root_geometries, out_dir, replacement_chart_path,
+        chart_num, &status);
+    status.Remove();
+
+    if (!write_res.error.empty()) {
+      std::fprintf(stderr, "Error during shard emission: %s\n", write_res.error.c_str());
+      return 1;
+    }
+
+    std::printf("\n");
+    std::printf("================================================================================\n");
+    std::printf("Shard Cleave Emission Summary for: %s\n", chart_path.c_str());
+    std::printf("================================================================================\n");
+    std::printf("Emission Runtime:           %.2fs\n", write_timer.Seconds());
+    std::printf("Total rows read:            %s\n", std::format("{:L}", write_res.total_rows_read).c_str());
+    std::printf("Duplicate rows dropped:     %s\n", std::format("{:L}", write_res.duplicate_rows_dropped).c_str());
+    std::printf("Replacement skeleton rows:  %s\n", std::format("{:L}", write_res.skeleton_rows_written).c_str());
+    std::printf("Skeleton leaves written:    %s\n", std::format("{:L}", write_res.skeleton_leaves_written).c_str());
+    std::printf("Subcharts emitted:          %d\n", write_res.shards_written);
+    std::printf("Replacement chart path:     %s\n", write_res.replacement_chart_path.c_str());
+
+    std::printf("\nVerifying faithful recreation from replacement skeleton and subcharts...\n");
+    Timer verify_timer;
+    VerificationResult vres = VerifyFaithfulRecreation(
+        replacement_chart_path, write_res.subchart_paths,
+        split_res.sum_subchart_leaves + split_res.skeleton_leaves,
+        root_geometries);
+    std::printf("Verification finished in %.2fs.\n", verify_timer.Seconds());
+    std::printf("  Verified subcharts:       %d\n", vres.verified_shards);
+    std::printf("  Subchart leaves:          %s\n", std::format("{:L}", vres.total_subchart_leaves).c_str());
+    std::printf("  Skeleton leaves:          %s\n", std::format("{:L}", vres.total_skeleton_leaves).c_str());
+    std::printf("  Total recreated leaves:   %s\n", std::format("{:L}", vres.total_recreated_leaves).c_str());
+    std::printf("  Verification Verdict:     %s\n", vres.message.c_str());
+
+    std::printf("\nSubchart Shard Breakdown:\n");
+    std::printf("  %-4s  %-12s  %-12s  %-6s  %-12s  %-12s  %-10s  %-12s  %-6s\n",
+                "#", "Hex ID", "Parent", "Depth", "Exp Leaves", "Got Leaves", "Delta", "Rows", "Status");
+    std::printf("  --------------------------------------------------------------------------------------------\n");
+
+    size_t total_shards = split_res.subcharts.size();
+    for (size_t i = 0; i < total_shards; i++) {
+      const auto &sc = split_res.subcharts[i];
+      int64_t got_leaves = write_res.shard_leaves_written[i];
+      bool is_mismatch = (got_leaves != sc.count);
+      bool should_print = show_all || total_shards <= 128 || i < 20 || i >= total_shards - 10 || is_mismatch;
+      if (should_print) {
+        std::string hex_id = std::format("0x{:x}", sc.id);
+        std::string parent_str = (sc.parent_id == -1) ? "root" : std::format("0x{:x}", sc.parent_id);
+        std::string exp_str = std::format("{:L}", sc.count);
+        std::string got_str = std::format("{:L}", got_leaves);
+        int64_t diff = got_leaves - sc.count;
+        std::string delta_str = (diff == 0) ? "0" : std::format("{:+d}", diff);
+        std::string rows_str = std::format("{:L}", write_res.shard_rows_written[i]);
+        const char *status_str = (!is_mismatch) ? "✓" : "✗";
+
+        std::printf("  %-4zu  %-12s  %-12s  %-6d  %-12s  %-12s  %-10s  %-12s  %-6s\n",
+                    i + 1, hex_id.c_str(), parent_str.c_str(), sc.depth,
+                    exp_str.c_str(), got_str.c_str(), delta_str.c_str(), rows_str.c_str(), status_str);
+      } else if (i == 20) {
+        std::printf("  ... (intermediate subcharts omitted; pass --show_all to view all) ...\n");
+      }
+    }
+    std::printf("================================================================================\n");
+
+    return vres.ok ? 0 : 1;
+  }
+
+  // Pass 2: In-memory Shard Assignment and Verification Pass
   std::printf("\nStarting Pass 2: Shard assignment verification with Move-To-Front sets...\n");
   Timer pass2_timer;
   AssignmentResult assign_res = StreamAndAssignShards(chart_path, split_res, &status);

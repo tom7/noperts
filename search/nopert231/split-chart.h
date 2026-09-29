@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "chart229.h"
+#include "lib229.h"
 #include "periodically.h"
 #include "status-bar.h"
 #include "timer.h"
@@ -641,6 +642,567 @@ inline AssignmentResult StreamAndAssignShards(
   }
 
   return res;
+}
+
+// Helper to infer chart number from filename like "chart0.rows.log"
+inline int InferChartNumber(const std::string &path, int default_chart = 0) {
+  size_t p = path.rfind("chart");
+  if (p != std::string::npos) {
+    size_t start = p + 5;
+    size_t end = start;
+    while (end < path.size() && std::isdigit(path[end])) {
+      end++;
+    }
+    if (end > start) {
+      return std::atoi(path.substr(start, end - start).c_str());
+    }
+  }
+  return default_chart;
+}
+
+// Information for a skeleton ancestor split node
+struct SkeletonSplitNode {
+  int64_t id = 0;
+  int64_t parent_id = -1;
+  int depth = 0;
+  enum SplitType { BOX, VIEW } type = BOX;
+  std::vector<int64_t> children;
+  std::string raw_line;
+};
+
+// Fast collection of ancestor split rows for the skeleton.
+// Since shallow skeleton splits occur near the start of the chart file,
+// this typically scans only a few hundred lines.
+inline std::unordered_map<int64_t, SkeletonSplitNode> CollectSkeletonSplits(
+    const std::string &chart_path,
+    const std::unordered_set<int64_t> &skeleton_split_ids,
+    StatusBar *status = nullptr) {
+  std::unordered_map<int64_t, SkeletonSplitNode> skeleton_splits;
+  if (skeleton_split_ids.empty()) return skeleton_splits;
+
+  skeleton_splits.reserve(skeleton_split_ids.size());
+
+  ForEachChartLine(
+      chart_path,
+      [&](std::string_view line) {
+        if (skeleton_splits.size() == skeleton_split_ids.size()) {
+          return;
+        }
+        Chart229::Row row = Chart229::Parse(line);
+        std::visit([&](const auto &r) {
+          using RowType = std::decay_t<decltype(r)>;
+          if constexpr (std::is_same_v<RowType, Chart229::SplitRow> ||
+                        std::is_same_v<RowType, Chart229::SplitOriginRow>) {
+            if (skeleton_split_ids.contains(r.id)) {
+              if (!skeleton_splits.contains(r.id)) {
+                skeleton_splits[r.id] = SkeletonSplitNode{
+                    .id = r.id,
+                    .parent_id = r.parent_id,
+                    .depth = r.depth,
+                    .type = SkeletonSplitNode::BOX,
+                    .children = {r.child0, r.child1},
+                    .raw_line = std::string(line),
+                };
+              }
+            }
+          } else if constexpr (std::is_same_v<RowType, Chart229::SplitViewRow>) {
+            if (skeleton_split_ids.contains(r.id)) {
+              if (!skeleton_splits.contains(r.id)) {
+                skeleton_splits[r.id] = SkeletonSplitNode{
+                    .id = r.id,
+                    .parent_id = r.parent_id,
+                    .depth = r.depth,
+                    .type = SkeletonSplitNode::VIEW,
+                    .children = {r.child0, r.child1, r.child2, r.child3},
+                    .raw_line = std::string(line),
+                };
+              }
+            }
+          }
+        }, row);
+      },
+      status, "Collecting skeleton splits");
+
+  return skeleton_splits;
+}
+
+// Determines the geometry of identified subchart roots by recursing from the
+// chart root down the ancestor skeleton tree.
+inline std::unordered_map<int64_t, Chart229::GeometryRow> ComputeRootGeometries(
+    int chart_num,
+    const std::unordered_map<int64_t, SkeletonSplitNode> &skeleton_splits,
+    const SplitResult &split_res,
+    const std::optional<Chart229::GeometryRow> &initial_ge = std::nullopt) {
+
+  std::unordered_set<int64_t> root_ids;
+  for (const auto &sc : split_res.subcharts) {
+    root_ids.insert(sc.id);
+  }
+
+  SearchNode root;
+  if (initial_ge.has_value()) {
+    DifficultCell cell = DifficultCell::FromGeometryRow(*initial_ge);
+    root = cell.ToSearchNode();
+  } else {
+    root.id = 0;
+    root.parent_id = -1;
+    root.depth = 0;
+    root.box_depth = 0;
+    root.view_depth = 0;
+    root.chart = chart_num;
+    root.box.center = {0.0, 0.0, 0.0};
+    if (chart_num == 0) {
+      root.box.radii = {1.0, 1.0, 1.0 / 3.0};
+    } else if (chart_num == 1) {
+      root.box.radii = {1.0, 1.0 / 3.0, 1.0};
+    } else if (chart_num == 2) {
+      root.box.radii = {1.0 / 3.0, 1.0, 1.0};
+    } else {
+      root.box.radii = {1.0, 1.0, 1.0};
+    }
+    root.tri.corners[0] = {1.0, 0.0, 0.0};
+    root.tri.corners[1] = {10.0 / 41.0, 31.0 / 41.0, 0.0};
+    root.tri.corners[2] = {0.0, 0.0, 1.0};
+  }
+
+  std::unordered_map<int64_t, Chart229::GeometryRow> root_geometries;
+
+  std::function<void(const SearchNode &)> Traverse = [&](const SearchNode &curr) {
+    if (root_ids.contains(curr.id)) {
+      root_geometries[curr.id] = Chart229::GeometryRow{
+          .id = curr.id,
+          .parent_id = curr.parent_id,
+          .depth = curr.depth,
+          .box_depth = curr.box_depth,
+          .view_depth = curr.view_depth,
+          .chart = curr.chart,
+          .cx = curr.box.center.x,
+          .cy = curr.box.center.y,
+          .cz = curr.box.center.z,
+          .rx = curr.box.radii.x,
+          .ry = curr.box.radii.y,
+          .rz = curr.box.radii.z,
+          .v0x = curr.tri.corners[0].x,
+          .v0y = curr.tri.corners[0].y,
+          .v0z = curr.tri.corners[0].z,
+          .v1x = curr.tri.corners[1].x,
+          .v1y = curr.tri.corners[1].y,
+          .v1z = curr.tri.corners[1].z,
+          .v2x = curr.tri.corners[2].x,
+          .v2y = curr.tri.corners[2].y,
+          .v2z = curr.tri.corners[2].z,
+          .best_margin = 0.0,
+      };
+      return;
+    }
+
+    auto it = skeleton_splits.find(curr.id);
+    if (it == skeleton_splits.end()) {
+      return;
+    }
+
+    const auto &split = it->second;
+    if (split.type == SkeletonSplitNode::BOX) {
+      int widest = curr.box.WidestAxis();
+      auto [b0, b1] = curr.box.Split(widest);
+      if (split.children.size() >= 2) {
+        SearchNode c0 = curr;
+        c0.id = split.children[0];
+        c0.parent_id = curr.id;
+        c0.depth = curr.depth + 1;
+        c0.box_depth = curr.box_depth + 1;
+        c0.box = b0;
+        Traverse(c0);
+
+        SearchNode c1 = curr;
+        c1.id = split.children[1];
+        c1.parent_id = curr.id;
+        c1.depth = curr.depth + 1;
+        c1.box_depth = curr.box_depth + 1;
+        c1.box = b1;
+        Traverse(c1);
+      }
+    } else if (split.type == SkeletonSplitNode::VIEW) {
+      auto sub_tris = curr.tri.Subdivide();
+      for (size_t t = 0; t < 4 && t < split.children.size(); t++) {
+        SearchNode c = curr;
+        c.id = split.children[t];
+        c.parent_id = curr.id;
+        c.depth = curr.depth + 1;
+        c.view_depth = curr.view_depth + 1;
+        c.tri = sub_tris[t];
+        Traverse(c);
+      }
+    }
+  };
+
+  Traverse(root);
+  return root_geometries;
+}
+
+// Result of writing out shards and replacement chart
+struct WriteShardsResult {
+  std::string error;
+  int shards_written = 0;
+  int64_t total_rows_read = 0;
+  int64_t duplicate_rows_dropped = 0;
+  int64_t skeleton_rows_written = 0;
+  int64_t skeleton_leaves_written = 0;
+  int64_t total_leaf_certificates = 0;
+  std::vector<int64_t> shard_rows_written;
+  std::vector<int64_t> shard_leaves_written;
+  std::vector<std::string> subchart_paths;
+  std::string replacement_chart_path;
+  bool is_exact_match = false;
+};
+
+// Creates subchart files starting with "ge" rows and streams the chart file,
+// routing rows to their respective subchart FILE* or to the replacement chart file.
+inline WriteShardsResult StreamAndWriteShards(
+    const std::string &chart_path,
+    const SplitResult &split_res,
+    const std::unordered_map<int64_t, Chart229::GeometryRow> &root_geometries,
+    const std::string &output_dir,
+    const std::string &replacement_chart_path,
+    int chart_num,
+    StatusBar *status = nullptr) {
+
+  WriteShardsResult res;
+  int T = split_res.subcharts.size();
+  if (T == 0) {
+    res.error = "No subcharts provided to write";
+    return res;
+  }
+  if (root_geometries.size() != static_cast<size_t>(T)) {
+    res.error = std::format("Mismatch: {} subcharts but {} geometries computed",
+                            T, root_geometries.size());
+    return res;
+  }
+
+  std::unordered_map<int64_t, int> root_to_shard;
+  root_to_shard.reserve(T);
+  std::vector<std::unordered_set<int64_t>> shard_sets(T);
+  res.shard_rows_written.assign(T, 0);
+  res.shard_leaves_written.assign(T, 0);
+  res.subchart_paths.resize(T);
+
+  std::vector<FILE *> subchart_files(T, nullptr);
+  std::vector<std::vector<char>> subchart_buffers(T, std::vector<char>(64 * 1024));
+
+  for (int i = 0; i < T; i++) {
+    const auto &sc = split_res.subcharts[i];
+    root_to_shard[sc.id] = i;
+    shard_sets[i].insert(sc.id);
+
+    std::string filename = std::format("chart{}.{:x}.subchart", chart_num, sc.id);
+    std::string path = output_dir.empty() ? filename : (output_dir + "/" + filename);
+    res.subchart_paths[i] = path;
+
+    FILE *f = std::fopen(path.c_str(), "w");
+    if (!f) {
+      res.error = std::format("Could not open subchart file '{}': {}", path, std::strerror(errno));
+      for (int j = 0; j < i; j++) if (subchart_files[j]) std::fclose(subchart_files[j]);
+      return res;
+    }
+    std::setvbuf(f, subchart_buffers[i].data(), _IOFBF, subchart_buffers[i].size());
+    subchart_files[i] = f;
+
+    // Write line 1: ge row
+    auto ge_it = root_geometries.find(sc.id);
+    if (ge_it == root_geometries.end()) {
+      res.error = std::format("Missing geometry for root 0x{:x}", sc.id);
+      for (int j = 0; j <= i; j++) if (subchart_files[j]) std::fclose(subchart_files[j]);
+      return res;
+    }
+    std::string ge_str = Chart229::Serialize(ge_it->second) + "\n";
+    std::fputs(ge_str.c_str(), f);
+    res.shard_rows_written[i]++;
+  }
+
+  FILE *repl_f = std::fopen(replacement_chart_path.c_str(), "w");
+  if (!repl_f) {
+    res.error = std::format("Could not open replacement chart file '{}': {}",
+                            replacement_chart_path, std::strerror(errno));
+    for (int j = 0; j < T; j++) if (subchart_files[j]) std::fclose(subchart_files[j]);
+    return res;
+  }
+  std::vector<char> repl_buffer(64 * 1024);
+  std::setvbuf(repl_f, repl_buffer.data(), _IOFBF, repl_buffer.size());
+  res.replacement_chart_path = replacement_chart_path;
+
+  std::unordered_set<int64_t> skeleton_ids = split_res.skeleton_split_ids;
+  std::vector<int> mtf_order(T);
+  for (int i = 0; i < T; i++) mtf_order[i] = i;
+  std::vector<int64_t> mtf_hits(T, 0);
+
+  std::unordered_set<int64_t> seen_duplicate_ids;
+
+  auto WriteLine = [](FILE *f, std::string_view sv) {
+    std::fwrite(sv.data(), 1, sv.size(), f);
+    std::fputc('\n', f);
+  };
+
+  bool ok = ForEachChartLine(
+      chart_path,
+      [&](std::string_view line) {
+        res.total_rows_read++;
+        Chart229::Row row = Chart229::Parse(line);
+        if (std::holds_alternative<Chart229::ParseError>(row) ||
+            std::holds_alternative<Chart229::EmptyRow>(row)) {
+          return;
+        }
+
+        if (std::holds_alternative<Chart229::CommentRow>(row)) {
+          WriteLine(repl_f, line);
+          res.skeleton_rows_written++;
+          return;
+        }
+
+        std::visit([&](const auto &r) {
+          using RowType = std::decay_t<decltype(r)>;
+          if constexpr (std::is_same_v<RowType, Chart229::SplitRow> ||
+                        std::is_same_v<RowType, Chart229::SplitOriginRow> ||
+                        std::is_same_v<RowType, Chart229::SplitViewRow>) {
+
+            // 1. Drop duplicate split rows
+            if (split_res.duplicate_split_ids.contains(r.id)) {
+              if (seen_duplicate_ids.contains(r.id)) {
+                res.duplicate_rows_dropped++;
+                return;
+              }
+              seen_duplicate_ids.insert(r.id);
+            }
+
+            // 2. Is this one of the subchart roots?
+            auto root_it = root_to_shard.find(r.id);
+            if (root_it != root_to_shard.end()) {
+              int s = root_it->second;
+              // Write root split line into its subchart file
+              WriteLine(subchart_files[s], line);
+              res.shard_rows_written[s]++;
+
+              // Write df row into replacement skeleton chart
+              std::string df_line = Chart229::Serialize(Chart229::DifficultRow{
+                  .id = r.id,
+                  .parent_id = r.parent_id,
+                  .depth = r.depth,
+              });
+              WriteLine(repl_f, df_line);
+              res.skeleton_rows_written++;
+              return;
+            }
+
+            // 3. Is this a skeleton split row?
+            if (skeleton_ids.contains(r.id)) {
+              WriteLine(repl_f, line);
+              res.skeleton_rows_written++;
+              return;
+            }
+
+            // 4. Query parent in MTF shard sets
+            int s = LookupShardMTF(r.parent_id, shard_sets, mtf_order, mtf_hits);
+            if (s >= 0) {
+              shard_sets[s].insert(r.id);
+              WriteLine(subchart_files[s], line);
+              res.shard_rows_written[s]++;
+            } else if (skeleton_ids.contains(r.parent_id) || r.parent_id == -1) {
+              skeleton_ids.insert(r.id);
+              WriteLine(repl_f, line);
+              res.skeleton_rows_written++;
+            }
+          } else if constexpr (std::is_same_v<RowType, Chart229::CertRow> ||
+                               std::is_same_v<RowType, Chart229::MixedCertRow> ||
+                               std::is_same_v<RowType, Chart229::PruneRadiusRow> ||
+                               std::is_same_v<RowType, Chart229::PruneFundamentalRow> ||
+                               std::is_same_v<RowType, Chart229::TubeRow> ||
+                               std::is_same_v<RowType, Chart229::DifficultRow>) {
+            res.total_leaf_certificates++;
+            int s = LookupShardMTF(r.parent_id, shard_sets, mtf_order, mtf_hits);
+            if (s >= 0) {
+              WriteLine(subchart_files[s], line);
+              res.shard_rows_written[s]++;
+              res.shard_leaves_written[s]++;
+            } else if (skeleton_ids.contains(r.parent_id) || r.parent_id == -1) {
+              WriteLine(repl_f, line);
+              res.skeleton_rows_written++;
+              res.skeleton_leaves_written++;
+            }
+          }
+        }, row);
+      },
+      status, "Cleaving chart into subcharts and replacement skeleton");
+
+  // Close all open files
+  for (FILE *f : subchart_files) {
+    if (f) std::fclose(f);
+  }
+  std::fclose(repl_f);
+
+  if (!ok) {
+    res.error = "Error streaming chart file during shard emission";
+    return res;
+  }
+
+  res.shards_written = T;
+  res.is_exact_match = true;
+  for (int i = 0; i < T; i++) {
+    if (res.shard_leaves_written[i] != split_res.subcharts[i].count) {
+      res.is_exact_match = false;
+    }
+  }
+
+  return res;
+}
+
+// Verification result for checking faithful recreation
+struct VerificationResult {
+  bool ok = false;
+  std::string message;
+  int64_t total_subchart_leaves = 0;
+  int64_t total_skeleton_leaves = 0;
+  int64_t total_recreated_leaves = 0;
+  int verified_shards = 0;
+};
+
+// Verifies that the replacement chart and emitted subcharts constitute a faithful,
+// complete, and disjoint recreation of the original chart.
+inline VerificationResult VerifyFaithfulRecreation(
+    const std::string &replacement_chart_path,
+    const std::vector<std::string> &subchart_paths,
+    int64_t expected_total_leaves,
+    const std::unordered_map<int64_t, Chart229::GeometryRow> &expected_geometries) {
+
+  VerificationResult vres;
+
+  // 1. Verify replacement chart file
+  std::unordered_set<int64_t> df_ids;
+  bool repl_ok = ForEachChartLine(
+      replacement_chart_path,
+      [&](std::string_view line) {
+        Chart229::Row row = Chart229::Parse(line);
+        std::visit([&](const auto &r) {
+          using RowType = std::decay_t<decltype(r)>;
+          if constexpr (std::is_same_v<RowType, Chart229::DifficultRow>) {
+            df_ids.insert(r.id);
+          } else if constexpr (std::is_same_v<RowType, Chart229::CertRow> ||
+                               std::is_same_v<RowType, Chart229::MixedCertRow> ||
+                               std::is_same_v<RowType, Chart229::PruneRadiusRow> ||
+                               std::is_same_v<RowType, Chart229::PruneFundamentalRow> ||
+                               std::is_same_v<RowType, Chart229::TubeRow>) {
+            vres.total_skeleton_leaves++;
+          }
+        }, row);
+      },
+      nullptr, "Verifying replacement chart");
+
+  if (!repl_ok) {
+    vres.message = "Failed to read replacement chart file";
+    return vres;
+  }
+
+  if (df_ids.size() != subchart_paths.size()) {
+    vres.message = std::format("Replacement chart has {} df rows, but expected {}",
+                               df_ids.size(), subchart_paths.size());
+    return vres;
+  }
+
+  // 2. Verify each subchart
+  for (const std::string &path : subchart_paths) {
+    bool first_line = true;
+    bool second_line = true;
+    int64_t subchart_root_id = -1;
+    int64_t leaves_in_shard = 0;
+
+    bool sub_ok = ForEachChartLine(
+        path,
+        [&](std::string_view line) {
+          if (first_line) {
+            first_line = false;
+            Chart229::Row row = Chart229::Parse(line);
+            if (!std::holds_alternative<Chart229::GeometryRow>(row)) {
+              vres.message = std::format("First line of {} is not a 'ge' row: '{}'", path, line);
+              return;
+            }
+            const auto &ge = std::get<Chart229::GeometryRow>(row);
+            subchart_root_id = ge.id;
+            auto exp_it = expected_geometries.find(ge.id);
+            if (exp_it == expected_geometries.end()) {
+              vres.message = std::format("Unexpected root ID 0x{:x} in {}", ge.id, path);
+              return;
+            }
+            if (ge.depth != exp_it->second.depth ||
+                ge.box_depth != exp_it->second.box_depth ||
+                ge.view_depth != exp_it->second.view_depth ||
+                ge.chart != exp_it->second.chart) {
+              vres.message = std::format("Geometry metadata mismatch in {}", path);
+              return;
+            }
+            return;
+          }
+
+          if (second_line) {
+            second_line = false;
+            Chart229::Row row = Chart229::Parse(line);
+            bool is_split = (std::holds_alternative<Chart229::SplitRow>(row) ||
+                             std::holds_alternative<Chart229::SplitOriginRow>(row) ||
+                             std::holds_alternative<Chart229::SplitViewRow>(row));
+            if (!is_split) {
+              vres.message = std::format("Second line of {} is not a split row: '{}'", path, line);
+              return;
+            }
+            std::visit([&](const auto &r) {
+              using RowType = std::decay_t<decltype(r)>;
+              if constexpr (std::is_same_v<RowType, Chart229::SplitRow> ||
+                            std::is_same_v<RowType, Chart229::SplitOriginRow> ||
+                            std::is_same_v<RowType, Chart229::SplitViewRow>) {
+                if (r.id != subchart_root_id) {
+                  vres.message = std::format("Second line root ID mismatch in {}: got 0x{:x}, expected 0x{:x}",
+                                             path, r.id, subchart_root_id);
+                }
+              }
+            }, row);
+          }
+
+          Chart229::Row row = Chart229::Parse(line);
+          std::visit([&](const auto &r) {
+            using RowType = std::decay_t<decltype(r)>;
+            if constexpr (std::is_same_v<RowType, Chart229::CertRow> ||
+                          std::is_same_v<RowType, Chart229::MixedCertRow> ||
+                          std::is_same_v<RowType, Chart229::PruneRadiusRow> ||
+                          std::is_same_v<RowType, Chart229::PruneFundamentalRow> ||
+                          std::is_same_v<RowType, Chart229::TubeRow> ||
+                          std::is_same_v<RowType, Chart229::DifficultRow>) {
+              leaves_in_shard++;
+            }
+          }, row);
+        },
+        nullptr, "Verifying subchart");
+
+    if (!sub_ok || !vres.message.empty()) {
+      if (vres.message.empty()) vres.message = "Failed to stream subchart " + path;
+      return vres;
+    }
+
+    if (!df_ids.contains(subchart_root_id)) {
+      vres.message = std::format("Subchart root 0x{:x} ({}) not found in replacement skeleton 'df' rows",
+                                 subchart_root_id, path);
+      return vres;
+    }
+
+    vres.total_subchart_leaves += leaves_in_shard;
+    vres.verified_shards++;
+  }
+
+  vres.total_recreated_leaves = vres.total_subchart_leaves + vres.total_skeleton_leaves;
+  if (vres.total_recreated_leaves != expected_total_leaves) {
+    vres.message = std::format("Leaf count mismatch: recreated {} leaves vs original {}",
+                               vres.total_recreated_leaves, expected_total_leaves);
+    return vres;
+  }
+
+  vres.ok = true;
+  vres.message = "FAITHFUL RECREATION CONFIRMED ✓";
+  return vres;
 }
 
 #endif  // _NOPERT229_SPLIT_CHART_H

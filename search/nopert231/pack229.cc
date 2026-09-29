@@ -43,6 +43,25 @@ static inline vec3 ToDouble(const BigVecQ3 &v) {
   return vec3{v.x.ToDouble(), v.y.ToDouble(), v.z.ToDouble()};
 }
 
+// Subchart geometry coordinates are exact dyadics or have factor 3 (Cayley box)
+// or factor 41 (projective triangle). Convert float coordinates back to exact BigRat.
+static BigRat DoubleToExactSubchartRat(double val) {
+  if (val == 0.0) return BigRat(0);
+  bool neg = val < 0.0;
+  if (neg) val = -val;
+  for (int k = 0; k <= 30; k++) {
+    for (int64_t base : {1LL, 3LL, 41LL}) {
+      int64_t den = base * (1LL << k);
+      double scaled = val * (double)den;
+      double r = std::round(scaled);
+      if (std::abs(scaled - r) < 1e-5) {
+        return BigRat(neg ? -(int64_t)r : (int64_t)r, den);
+      }
+    }
+  }
+  return BigRat::FromDouble(neg ? -val : val);
+}
+
 struct TriangleQ {
   BigVecQ3 corners[3];
 
@@ -874,7 +893,8 @@ static bool ComputeExactComponent(const TriangleQ &tri,
                                    BigRat *ball_multiplier_out,
                                    int64_t node_id,
                                    bool verbose = true,
-                                   bool check_displacement = true) {
+                                   bool check_displacement = true,
+                                   int chart = 0) {
   if (winning_triple < 0 || winning_triple >= (int)pool->gpu_triples.size()) {
     if (verbose) {
       std::cerr << "Error: node " << node_id << " winning triple " << winning_triple
@@ -986,6 +1006,8 @@ static bool ComputeExactComponent(const TriangleQ &tri,
     double wz = 2.0 * box.radii.z.ToDouble();
 
     vec3 s_sgn = {1.0, 1.0, 1.0};
+    if (chart == 1) { s_sgn.y = -1.0; s_sgn.z = -1.0; }
+    else if (chart == 2) { s_sgn.x = -1.0; s_sgn.z = -1.0; }
     double defect_penalty = triple.weighted_defect_upper * 1.0001;
     double disp_error = 1.8e-13;
 
@@ -1183,6 +1205,10 @@ static bool ParseRow(const std::string &line,
             node->tag = NodeTag::DIFFICULT;
             return true;
           },
+          [&](const Chart229::GeometryRow &) {
+            node->tag = NodeTag::NONE;
+            return false;
+          },
           [&](const auto &) {
             node->tag = NodeTag::NONE;
             return false;
@@ -1205,18 +1231,29 @@ static void LoadDoneFiles(const std::string &done_dir,
   }
 
   std::string prefix = "chart" + std::to_string(chart) + ".";
-  std::string suffix = ".done";
+  std::string suffix_done = ".done";
+  std::string suffix_subchart = ".subchart";
 
   std::vector<std::string> matching_files;
   for (const auto &entry : std::filesystem::directory_iterator(dir_path)) {
     if (!entry.is_regular_file()) continue;
     std::string fname = entry.path().filename().string();
-    if (fname.rfind(prefix, 0) == 0 && fname.size() >= suffix.size() &&
-        fname.compare(fname.size() - suffix.size(), suffix.size(), suffix) == 0) {
-      matching_files.push_back(entry.path().string());
+    if (fname.rfind(prefix, 0) == 0) {
+      if ((fname.size() >= suffix_subchart.size() &&
+           fname.compare(fname.size() - suffix_subchart.size(), suffix_subchart.size(), suffix_subchart) == 0) ||
+          (fname.size() >= suffix_done.size() &&
+           fname.compare(fname.size() - suffix_done.size(), suffix_done.size(), suffix_done) == 0)) {
+        matching_files.push_back(entry.path().string());
+      }
     }
   }
-  std::sort(matching_files.begin(), matching_files.end());
+  std::sort(matching_files.begin(), matching_files.end(),
+            [](const std::string &a, const std::string &b) {
+              bool a_sub = (a.size() >= 9 && a.substr(a.size() - 9) == ".subchart");
+              bool b_sub = (b.size() >= 9 && b.substr(b.size() - 9) == ".subchart");
+              if (a_sub != b_sub) return a_sub > b_sub;
+              return a < b;
+            });
 
   int done_files_found = matching_files.size();
   int done_files_merged = 0;
@@ -1256,7 +1293,7 @@ static void LoadDoneFiles(const std::string &done_dir,
       }
 
       if (target_node_id < 0 || target_node_id >= (int64_t)nodes->size() ||
-          (*nodes)[target_node_id].tag == NodeTag::NONE) {
+          (*nodes)[target_node_id].tag != NodeTag::DIFFICULT) {
         continue;
       }
 
@@ -1370,7 +1407,28 @@ int main(int argc, char **argv) {
     } else if (arg == "--legacy_sort") {
       legacy_sort = true;
     } else if (arg == "--cell" && i + 1 < argc) {
-      cell_id = std::stoll(argv[++i]);
+      std::string s = argv[++i];
+      if (s.rfind("0x", 0) == 0 || s.rfind("0X", 0) == 0) {
+        cell_id = std::stoll(s, nullptr, 16);
+      } else {
+        bool has_alpha = false;
+        for (char c : s) {
+          if ((c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
+            has_alpha = true;
+            break;
+          }
+        }
+        if (has_alpha) {
+          cell_id = std::stoll(s, nullptr, 16);
+        } else {
+          std::string subchart_cand = "chart" + std::to_string(chart) + "." + s + ".subchart";
+          if (std::filesystem::exists(subchart_cand)) {
+            cell_id = std::stoll(s, nullptr, 16);
+          } else {
+            cell_id = std::stoll(s, nullptr, 10);
+          }
+        }
+      }
     } else if (arg == "--done_dir" && i + 1 < argc) {
       done_dir = argv[++i];
     } else if (arg == "--no_done") {
@@ -1388,15 +1446,69 @@ int main(int argc, char **argv) {
   }
 
   if (cell_id != 0) {
-    if (in_path.empty()) in_path = "chart" + std::to_string(chart) + "." + std::to_string(cell_id) + ".done";
-    if (out_path.empty()) out_path = "chart" + std::to_string(chart) + "." + std::to_string(cell_id) + ".pack";
+    std::stringstream ss_hex;
+    ss_hex << std::hex << cell_id;
+    std::string hex_str = ss_hex.str();
+    if (in_path.empty()) {
+      std::string subchart_cand = "chart" + std::to_string(chart) + "." + hex_str + ".subchart";
+      std::string done_cand = "chart" + std::to_string(chart) + "." + std::to_string(cell_id) + ".done";
+      if (std::filesystem::exists(subchart_cand)) {
+        in_path = subchart_cand;
+      } else {
+        in_path = done_cand;
+      }
+    }
+    if (out_path.empty()) {
+      out_path = "chart" + std::to_string(chart) + "." + hex_str + ".pack";
+    }
     done_dir = "none";
   }
 
   if (in_path.empty()) in_path = "chart" + std::to_string(chart) + ".rows.log";
-  if (out_path.empty()) out_path = "chart" + std::to_string(chart) + ".pack";
+
+  // Check if in_path has a geometry header ("ge")
+  std::optional<Chart229::GeometryRow> ge_header;
+  {
+    std::ifstream peek_file(in_path);
+    if (peek_file.is_open()) {
+      std::string first_line;
+      while (std::getline(peek_file, first_line)) {
+        if (first_line.empty()) continue;
+        auto row_or_err = Chart229::Parse(first_line);
+        if (std::holds_alternative<Chart229::GeometryRow>(row_or_err)) {
+          ge_header = std::get<Chart229::GeometryRow>(row_or_err);
+        }
+        break;
+      }
+    }
+  }
+
+  if (ge_header.has_value()) {
+    if (cell_id == 0) {
+      cell_id = ge_header->id;
+      done_dir = "none";
+    }
+    if (pos_arg == 0) {
+      chart = ge_header->chart;
+    }
+  }
+
+  if (out_path.empty()) {
+    if (in_path.size() >= 9 && in_path.substr(in_path.size() - 9) == ".subchart") {
+      out_path = in_path.substr(0, in_path.size() - 9) + ".pack";
+    } else if (cell_id != 0) {
+      std::stringstream ss_hex;
+      ss_hex << std::hex << cell_id;
+      out_path = "chart" + std::to_string(chart) + "." + ss_hex.str() + ".pack";
+    } else {
+      out_path = "chart" + std::to_string(chart) + ".pack";
+    }
+  }
 
   std::cout << "Packing chart " << chart << " from " << in_path << " into " << out_path << "...\n";
+  if (ge_header.has_value()) {
+    std::cout << "Using geometry from subchart header (cell 0x" << std::hex << cell_id << std::dec << ")\n";
+  }
   Timer total_timer;
 
   // Identity tube atlas loading
@@ -1445,7 +1557,23 @@ int main(int argc, char **argv) {
   CayleyBoxQ root_box;
   TriangleQ root_tri;
 
-  if (cell_id == 12651740028) {
+  if (ge_header.has_value()) {
+    root_box.center = BigVecQ3(DoubleToExactSubchartRat(ge_header->cx),
+                               DoubleToExactSubchartRat(ge_header->cy),
+                               DoubleToExactSubchartRat(ge_header->cz));
+    root_box.radii = BigVecQ3(DoubleToExactSubchartRat(ge_header->rx),
+                              DoubleToExactSubchartRat(ge_header->ry),
+                              DoubleToExactSubchartRat(ge_header->rz));
+    root_tri.corners[0] = BigVecQ3(DoubleToExactSubchartRat(ge_header->v0x),
+                                   DoubleToExactSubchartRat(ge_header->v0y),
+                                   DoubleToExactSubchartRat(ge_header->v0z));
+    root_tri.corners[1] = BigVecQ3(DoubleToExactSubchartRat(ge_header->v1x),
+                                   DoubleToExactSubchartRat(ge_header->v1y),
+                                   DoubleToExactSubchartRat(ge_header->v1z));
+    root_tri.corners[2] = BigVecQ3(DoubleToExactSubchartRat(ge_header->v2x),
+                                   DoubleToExactSubchartRat(ge_header->v2y),
+                                   DoubleToExactSubchartRat(ge_header->v2z));
+  } else if (cell_id == 12651740028) {
     root_box.center = BigVecQ3(BigRat(1, 2048), BigRat(-1, 2048), BigRat(-1, 1024));
     root_box.radii = BigVecQ3(BigRat(1, 2048), BigRat(1, 2048), BigRat(1, 3072));
     root_tri.corners[0] = BigVecQ3(BigRat(52397, 83968), BigRat(11563, 83968), BigRat(61, 256));
@@ -1762,7 +1890,7 @@ int main(int argc, char **argv) {
           auto pool = get_pool(s);
           if (node.winning_triple >= (int)pool->gpu_triples.size()) continue;
           if (ComputeExactComponent(tri, box, node.winning_triple, node.inner, sc.inner, pool,
-                                     &sc.axis_cert, &sc.ball_multiplier, id, false, true)) {
+                                     &sc.axis_cert, &sc.ball_multiplier, id, false, true, chart)) {
             verified = true;
             break;
           }
@@ -1774,7 +1902,7 @@ int main(int argc, char **argv) {
             if (node.winning_triple < (int)pool->gpu_triples.size()) {
               std::cerr << "Attempting with samples=" << s << ":\n";
               ComputeExactComponent(tri, box, node.winning_triple, node.inner, sc.inner, pool,
-                                    &sc.axis_cert, &sc.ball_multiplier, id, true, true);
+                                    &sc.axis_cert, &sc.ball_multiplier, id, true, true, chart);
             }
           }
           std::cerr << "\n" << ARED("Failed to verify certificate for node ") << id << "\n";
@@ -1805,7 +1933,8 @@ int main(int argc, char **argv) {
                                      &mx.mix_components[i].ball_multiplier,
                                      id,
                                      true,
-                                     false)) {
+                                     false,
+                                     chart)) {
             std::cerr << "\n" << ARED("Failed to verify mixed component ") << i << " for node " << id << "\n";
             return 1;
           }
