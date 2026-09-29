@@ -953,5 +953,120 @@ std::optional<NearestCertifiedNodeResult> FindNearestCertifiedNode(
   return std::nullopt;
 }
 
+static int CountLeavesInNode(const TreeNode &node) {
+  if (node.is_leaf()) return 1;
+  int count = 0;
+  for (const auto &child : node.children) {
+    if (child) count += CountLeavesInNode(*child);
+  }
+  return count;
+}
+
+static bool CheckFullyCertifiedInNode(const TreeNode &node) {
+  if (node.is_leaf()) {
+    return node.has_certificate() && node.GetCertifiedRadius() > BigRat(0);
+  }
+  for (const auto &child : node.children) {
+    if (!child || !CheckFullyCertifiedInNode(*child)) return false;
+  }
+  return true;
+}
+
+int CodeTree::TotalLeaves() const {
+  int total = 0;
+  for (const auto &ct : triangles) {
+    if (ct.root) total += CountLeavesInNode(*ct.root);
+  }
+  return total;
+}
+
+bool CodeTree::IsFullyCertified() const {
+  if (triangles.empty()) return false;
+  for (const auto &ct : triangles) {
+    if (!ct.root || !CheckFullyCertifiedInNode(*ct.root)) return false;
+  }
+  return true;
+}
+
+bool SaveCodeTreeJson(const CodeTree &code_tree, const std::string &filepath) {
+  std::string s;
+  s.reserve(4 * 1024 * 1024);
+  s += "{\n\"format\": \"tubetree229_code_v1\",\n";
+  s += "\"code_id\": " + std::to_string(code_tree.code_id) + ",\n";
+  s += "\"code_hex\": \"" + code_tree.code_hex + "\",\n";
+  s += "\"num_triangles\": " + std::to_string(code_tree.triangles.size()) + ",\n";
+  s += "\"triangles\": [\n";
+
+  for (size_t t = 0; t < code_tree.triangles.size(); t++) {
+    const auto &ct = code_tree.triangles[t];
+    s += "{\n";
+    s += "\"triangle_index\": " + std::to_string(ct.triangle_index) + ",\n";
+    s += "\"corners\": [\n";
+    for (int k = 0; k < 3; k++) {
+      s += "  {\"x\": \"" + ct.triangle.corners[k].x.ToString() +
+           "\", \"y\": \"" + ct.triangle.corners[k].y.ToString() +
+           "\", \"z\": \"" + ct.triangle.corners[k].z.ToString() + "\"}";
+      if (k + 1 < 3) s += ",\n";
+      else s += "\n";
+    }
+    s += "],\n";
+    s += "\"tree\": ";
+    if (ct.root) {
+      SerializeNode(*ct.root, s, false);
+    } else {
+      s += "null";
+    }
+    s += "\n}";
+    if (t + 1 < code_tree.triangles.size()) s += ",\n";
+    else s += "\n";
+  }
+
+  s += "]\n}\n";
+  return Util::WriteFile(filepath, s);
+}
+
+std::unique_ptr<CodeTree> LoadCodeTreeJson(const std::string &filepath) {
+  std::string content = Util::ReadFile(filepath);
+  if (content.empty()) return nullptr;
+
+  rapidjson::Document doc;
+  doc.Parse(content.c_str());
+  if (doc.HasParseError() || !doc.IsObject()) return nullptr;
+
+  auto code_tree = std::make_unique<CodeTree>();
+  if (doc.HasMember("code_id") && doc["code_id"].IsInt()) {
+    code_tree->code_id = doc["code_id"].GetInt();
+  }
+  if (doc.HasMember("code_hex") && doc["code_hex"].IsString()) {
+    code_tree->code_hex = doc["code_hex"].GetString();
+  }
+
+  if (doc.HasMember("triangles") && doc["triangles"].IsArray()) {
+    const auto &tri_arr = doc["triangles"].GetArray();
+    for (rapidjson::SizeType t = 0; t < tri_arr.Size(); t++) {
+      const auto &tval = tri_arr[t];
+      CodeTriangleTree ct;
+      if (tval.HasMember("triangle_index") && tval["triangle_index"].IsInt()) {
+        ct.triangle_index = tval["triangle_index"].GetInt();
+      }
+      if (tval.HasMember("corners") && tval["corners"].IsArray()) {
+        const auto &c_arr = tval["corners"].GetArray();
+        for (int k = 0; k < 3 && k < (int)c_arr.Size(); k++) {
+          ct.triangle.corners[k] = BigVecQ3(
+              c_arr[k]["x"].GetString(),
+              c_arr[k]["y"].GetString(),
+              c_arr[k]["z"].GetString());
+        }
+      }
+      if (tval.HasMember("tree") && tval["tree"].IsObject()) {
+        ct.root = DeserializeNode(tval["tree"], false, "");
+      }
+      code_tree->triangles.push_back(std::move(ct));
+    }
+  }
+
+  return code_tree;
+}
+
 } // namespace tubetree229
 

@@ -49,42 +49,11 @@ static inline vec3 ToDouble(const BigVecQ3 &v) {
   return vec3{v.x.ToDouble(), v.y.ToDouble(), v.z.ToDouble()};
 }
 
-struct TriangleQ {
-  BigVecQ3 corners[3];
-
-  void Subdivide(TriangleQ children[4]) const {
-    BigVecQ3 m01 = (corners[0] + corners[1]) / BigRat(2);
-    BigVecQ3 m12 = (corners[1] + corners[2]) / BigRat(2);
-    BigVecQ3 m20 = (corners[2] + corners[0]) / BigRat(2);
-    children[0] = {corners[0], m01, m20};
-    children[1] = {m01, corners[1], m12};
-    children[2] = {m20, m12, corners[2]};
-    children[3] = {m01, m12, m20};
-  }
-};
-
-struct ContactInfo {
-  int edge_start = 0;
-  int edge_finish = 0;
-  int edge_start2 = 0;
-  int edge_finish2 = 0;
-  int mix = 1000; // 0..1000 (mix / 1000)
-  int vertex = 0; // support vertex
-};
-
-struct AxisCertificate {
-  ContactInfo contacts[3];
-  int nonzero_witness[3] = {-1, -1, -1};
-  BigRat B;
-};
-
-struct LocalCertificate {
-  AxisCertificate axes[4];
-  BigRat c;
-  BigRat delta;
-  BigRat r;
-  int symmetry_index = 0;
-};
+#include "tubetree229.h"
+using tubetree229::TriangleQ;
+using tubetree229::ContactInfo;
+using tubetree229::AxisCertificate;
+using LocalCertificate = tubetree229::TubeCertificate;
 
 // Quadratic polynomial in 3 variables with basis:
 // 1, x, y, z, x², xy, xz, y², yz, z²
@@ -376,9 +345,28 @@ static bool ReauditCertificate(const TriangleQ &tri, const LocalCertificate &in_
   BigRat delta = std::max({deltas[0], deltas[1], deltas[2], deltas[3]});
   BigRat axis_radius = ExactTetrahedronAxisRadius(centers);
   BigRat cover_radius = axis_radius * BigRat(19, 20) * BigRat(4, 7);
-  BigRat c = FloorTo(cover_radius - delta, 1000000000LL);
 
-  if (c < target_c) {
+  if (target_c > BigRat(0) && cover_radius <= target_c) {
+    if (fail_reason) *fail_reason = StringPrintf("cover_radius <= target_c (cover=%s, target=%s)",
+                                                 cover_radius.ToString().c_str(), target_c.ToString().c_str());
+    return false;
+  }
+
+  BigRat margin = cover_radius - delta;
+  if (margin <= BigRat(0)) {
+    if (fail_reason) *fail_reason = StringPrintf("cover <= delta (cover=%s, delta=%s)",
+                                                 cover_radius.ToString().c_str(), delta.ToString().c_str());
+    return false;
+  }
+
+  BigRat c;
+  if (margin >= BigRat("1/1000000000")) {
+    c = FloorTo(margin, 1000000000LL);
+  } else {
+    c = margin * BigRat(19, 20);
+  }
+
+  if (target_c > BigRat(0) && c < target_c) {
     if (fail_reason) *fail_reason = StringPrintf("c < target_c (c=%s, target=%s, cover=%s, delta=%s)",
                                                  c.ToString().c_str(), target_c.ToString().c_str(),
                                                  cover_radius.ToString().c_str(), delta.ToString().c_str());
@@ -444,7 +432,7 @@ static bool ReauditCertificate(const TriangleQ &tri, const LocalCertificate &in_
       break;
     }
   }
-  if (certified_r < tube_radius) {
+  if (tube_radius > BigRat(0) && certified_r < tube_radius) {
     if (tube_radius * tube_radius * (BigRat(1) + c * c) <= BigRat(4) * c * c) {
       certified_r = tube_radius;
     } else {

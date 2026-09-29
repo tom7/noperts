@@ -182,7 +182,11 @@ struct TreeNode {
     return BigRat(0);
   }
 
+  // Optional explicit triangle (used when tree originates from a code triangle instead of root wedge).
+  std::optional<TriangleQ> explicit_triangle;
+
   TriangleQ GetTriangle() const {
+    if (explicit_triangle.has_value()) return *explicit_triangle;
     return TriangleFromPath(path);
   }
 };
@@ -347,6 +351,29 @@ class TubeAtlas {
 std::optional<NearestCertifiedNodeResult> FindNearestCertifiedNode(
     const TreeNode &root, const vec3 &direction);
 
+
+// Tree representation for a single projective triangle belonging to a code cell.
+struct CodeTriangleTree {
+  int triangle_index = 0;
+  TriangleQ triangle;
+  std::unique_ptr<TreeNode> root;
+};
+
+// Tree representation for an entire code cell X, containing trees for all its projective triangles.
+struct CodeTree {
+  int code_id = 0;
+  std::string code_hex;
+  std::vector<CodeTriangleTree> triangles;
+
+  int TotalLeaves() const;
+  bool IsFullyCertified() const;
+};
+
+// Serializes a CodeTree to JSON (tree.X.json).
+bool SaveCodeTreeJson(const CodeTree &code_tree, const std::string &filepath);
+
+// Deserializes a CodeTree from JSON.
+std::unique_ptr<CodeTree> LoadCodeTreeJson(const std::string &filepath);
 
 } // namespace tubetree229
 
