@@ -212,12 +212,15 @@ static bool ExportCodeTriangle(int code_id, int tri_idx, const TriangleQ &base_t
 
 int main(int argc, char **argv) {
   std::string out_dir = ".artifacts/nopert229/packs";
+  std::string trees_dir = "trees";
   int single_code = -1;
 
   for (int i = 1; i < argc; i++) {
     std::string arg = argv[i];
     if (arg == "--out_dir" && i + 1 < argc) {
       out_dir = argv[++i];
+    } else if (arg == "--trees_dir" && i + 1 < argc) {
+      trees_dir = argv[++i];
     } else if (arg == "--code" && i + 1 < argc) {
       single_code = std::stoi(argv[++i]);
     }
@@ -237,7 +240,7 @@ int main(int argc, char **argv) {
   for (int code_idx = 0; code_idx < 79; code_idx++) {
     if (single_code >= 0 && code_idx != single_code) continue;
 
-    std::string json_path = StringPrintf("trees/tree.%d.json", code_idx);
+    std::string json_path = StringPrintf("%s/tree.%d.json", trees_dir.c_str(), code_idx);
     if (!std::filesystem::exists(json_path)) {
       std::cout << "[Skip] " << json_path << " does not exist.\n";
       continue;
