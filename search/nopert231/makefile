@@ -1,6 +1,18 @@
 default : annular229_test.exe tubetree229_test.exe nopert229_test.exe tube229_test.exe lib229_test.exe chart229_test.exe export_tubetree_pack.exe difficult229.exe lean229.exe pack229.exe test_all_pending.exe normalize-chart.exe compare-charts.exe split-chart.exe split-chart_test.exe flatten-charts.exe flatten-charts_test.exe
 
-all: default test229.exe codebdd229.exe telescope229.exe convert_tubecert229.exe incrementaltube229.exe tubecert229.exe tube-visualize.exe analyzedifficult.exe replace_tu_with_difficult.exe extract_tu_intervals.exe generate_seeds229.exe apply_shallow_cert.exe verify_leaf.exe tiltperts.exe
+all: default test229.exe codebdd229.exe telescope229.exe convert_tubecert229.exe incrementaltube229.exe tubecert229.exe tube-visualize.exe analyzedifficult.exe replace_tu_with_difficult.exe extract_tu_intervals.exe generate_seeds229.exe apply_shallow_cert.exe verify_leaf.exe
+
+# Quad-planar identity tube pipeline (notes/Q.md):
+#  tubecode229: restartable (journaled) Tag 1 tree synthesis per code cell.
+#  export_codetrees_pack: packs trees/tree.X.json for Lean's validate_code_pack.
+#  tube-scoreboard: per-triangle status of all 79 codes / 157 triangles.
+#  oneoffs/probe48edge: samples Tag 1 margins on sub-triangles along an edge
+#    or a fixed path (reproduces the code 48 corner analysis, Q.md 1.7B).
+#  oneoffs/canyon_depth, canyon_truedepth: first-order rigidity depth at a
+#    single view (sampled / column-generated contacts), Q.md 1.8.
+#  oneoffs/canyon_passage: searches for a near-identity Rupert passage at a
+#    view (Q.md 1.8); oneoffs/rupert_witness229.py turns one into Lean data.
+qtube: tubecode229.exe export_codetrees_pack.exe tube-scoreboard.exe oneoffs/probe48edge.exe oneoffs/canyon_depth.exe oneoffs/canyon_truedepth.exe oneoffs/canyon_passage.exe
 
 UNAME := $(shell uname -o)
 ifeq ($(findstring Linux,$(UNAME)),Linux)
