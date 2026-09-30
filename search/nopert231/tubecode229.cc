@@ -23,8 +23,10 @@ using vec3 = yocto::vec<double, 3>;
 #include "tubecert229.cc"
 
 #include "tubetree229.h"
+#include "annular229.h"
 
 using namespace tubetree229;
+using namespace annular229;
 
 struct SolverOptions {
   std::string bdd_json = "codebdd229.json";
@@ -151,6 +153,7 @@ static bool FindBestCageForTriangle(
 
 // Recursive adaptive synthesizer for a single projective triangle
 static bool CertifyTriangleRecursive(
+    int code_idx,
     const TriangleQ &tri,
     const std::string &path,
     const LocalCertificate *parent_cert,
@@ -195,10 +198,10 @@ static bool CertifyTriangleRecursive(
     }
   }
 
-  // 2. Try finding a local cage for this triangle if parent axes not valid or depth <= 4!
+  // 2. Try finding a local cage for this triangle if parent axes not valid or depth <= 6!
   LocalCertificate local_cert;
   bool has_local = false;
-  if (!parent_axes_valid) {
+  if (!parent_axes_valid || depth <= 6) {
     double local_margin = 0;
     has_local = FindBestCageForTriangle(tri, seed, &local_cert, &local_margin);
     if (has_local) {
@@ -212,8 +215,64 @@ static bool CertifyTriangleRecursive(
         leaf->direct_bounds.direct_c_lower = tc.c;
         *out_node = std::move(leaf);
         (*leaf_counter)++;
+        if (*leaf_counter % 25 == 0) {
+          std::cout << "[Progress Code " << code_idx << "] " << *leaf_counter << " leaves (depth " << depth << ")\n" << std::flush;
+        }
         return true;
       }
+    }
+  }
+
+  // 2.5 Try Tag 2 Annular Certificate if depth >= 7 on canyon codes (48 and 75)
+  if ((code_idx == 48 || code_idx == 75) && depth >= 7) {
+    std::vector<ContactInfo> custom_c0;
+    if (code_idx == 48) {
+      custom_c0 = {
+        {3, 2, 2, 1, 800, 2},
+        {1, 4, 4, 8, 800, 4},
+        {13, 14, 14, 15, 200, 14}
+      };
+    } else if (code_idx == 75) {
+      custom_c0 = {
+        {3, 2, 2, 1, 800, 2},
+        {1, 4, 4, 8, 800, 4},
+        {9, 10, 10, 15, 800, 10}
+      };
+    }
+
+    std::vector<AxisCertificate> seed_axes(3);
+    seed_axes[0].contacts[0] = {2, 1, 1, 4, 0, 1};
+    seed_axes[0].contacts[1] = {10, 15, 15, 19, 500, 15};
+    seed_axes[0].contacts[2] = {3, 2, 2, 1, 0, 2};
+
+    seed_axes[1].contacts[0] = {2, 1, 1, 4, 0, 1};
+    seed_axes[1].contacts[1] = {10, 15, 15, 19, 666, 15};
+    seed_axes[1].contacts[2] = {3, 2, 2, 1, 0, 2};
+
+    seed_axes[2].contacts[0] = {2, 1, 1, 4, 0, 1};
+    seed_axes[2].contacts[1] = {1, 4, 4, 8, 333, 4};
+    seed_axes[2].contacts[2] = {15, 19, 19, 3, 1000, 19};
+
+    AnnularConfig ann_config;
+    ann_config.auto_tune_parameters = true;
+    ann_config.max_flock_size = 1; // Strict Tag 2
+    ann_config.cap_sample_count = 500;
+    ann_config.hull_axes_limit = 2000;
+
+    AnnularSynthesisResult res = SynthesizeAnnularCertificate(tri, seed_axes, ann_config, custom_c0);
+    if (res.success && res.cert.core_flock_axes.size() == 1) {
+      auto leaf = std::make_unique<TreeNode>();
+      leaf->path = path;
+      leaf->explicit_triangle = tri;
+      leaf->decomposed_cert = res.cert;
+      leaf->direct_bounds.direct_r_lower = res.cert.r;
+      leaf->direct_bounds.direct_c_lower = res.cert.c_core;
+      *out_node = std::move(leaf);
+      (*leaf_counter)++;
+      if (*leaf_counter % 25 == 0) {
+        std::cout << "[Progress Code " << code_idx << "] " << *leaf_counter << " leaves (depth " << depth << ")\n" << std::flush;
+      }
+      return true;
     }
   }
 
@@ -235,7 +294,7 @@ static bool CertifyTriangleRecursive(
 
   for (int i = 0; i < 4; i++) {
     std::string child_path = path.empty() ? std::to_string(i) : (path + std::to_string(i));
-    if (!CertifyTriangleRecursive(children_tri[i], child_path, next_cert, seed, opt,
+    if (!CertifyTriangleRecursive(code_idx, children_tri[i], child_path, next_cert, seed, opt,
                                   &split_node->children[i], depth + 1, leaf_counter)) {
       return false;
     }
@@ -299,13 +358,15 @@ static bool SolveCode(
     double root_margin = 0;
     bool has_root = FindBestCageForTriangle(ct.triangle, &seed, &root_cert, &root_margin);
 
+    std::cout << "[Code " << code_idx << ", Tri " << t_idx + 1 << "/" << tri_arr.Size() << "] Starting...\n" << std::flush;
     int leaf_count = 0;
     std::unique_ptr<TreeNode> root;
-    if (!CertifyTriangleRecursive(ct.triangle, "", has_root ? &root_cert : nullptr, &seed, opt, &root, 0, &leaf_count)) {
+    if (!CertifyTriangleRecursive(code_idx, ct.triangle, "", has_root ? &root_cert : nullptr, &seed, opt, &root, 0, &leaf_count)) {
       std::cerr << "[Code " << code_idx << ", Tri " << t_idx << "] Certification failed!\n";
       return false;
     }
 
+    std::cout << "[Code " << code_idx << ", Tri " << t_idx + 1 << "/" << tri_arr.Size() << "] Certified: " << leaf_count << " leaves.\n" << std::flush;
     total_code_leaves += leaf_count;
     ct.root = std::move(root);
     code_tree.triangles.push_back(std::move(ct));
@@ -325,6 +386,7 @@ static bool SolveCode(
   return true;
 }
 
+#ifndef TUBECODE_NO_MAIN
 int main(int argc, char **argv) {
   SolverOptions opt;
   for (int i = 1; i < argc; i++) {
@@ -396,3 +458,4 @@ int main(int argc, char **argv) {
 
   return (failed_count.load() == 0) ? 0 : 1;
 }
+#endif

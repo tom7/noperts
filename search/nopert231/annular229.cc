@@ -406,7 +406,8 @@ bool FindComplementCage(
 AnnularSynthesisResult SynthesizeAnnularCertificate(
     const TriangleQ &tri,
     const std::vector<AxisCertificate> &seed_axes,
-    const AnnularConfig &initial_config) {
+    const AnnularConfig &initial_config,
+    const std::vector<ContactInfo> &custom_c0) {
   AnnularSynthesisResult res;
   AnnularConfig config = initial_config;
 
@@ -425,6 +426,11 @@ AnnularSynthesisResult SynthesizeAnnularCertificate(
     {1, 4, 4, 8, 800, 4},
     {13, 14, 14, 15, 200, 14}
   };
+  if (custom_c0.size() == 3) {
+    c0[0] = custom_c0[0];
+    c0[1] = custom_c0[1];
+    c0[2] = custom_c0[2];
+  }
   AxisCertificate ax0;
   BigVecQ3 ctr0;
   BigRat del0;
@@ -465,30 +471,26 @@ AnnularSynthesisResult SynthesizeAnnularCertificate(
     return res;
   }
 
-  // 4. Find complement cage enclosing -u0
+  // 4 & 5. Find valid complement cage and core flock across cone_sweep
   vec3 u0 = {ctr0.x.ToDouble(),
              ctr0.y.ToDouble(),
              ctr0.z.ToDouble()};
   std::array<AxisCertificate, 3> comp_cage;
-  if (!FindComplementCage(tri, u0, pool, config.target_c_cone.ToDouble(), &comp_cage)) {
-    res.explanation = "Failed to find complement cage strictly enclosing -u0.";
-    return res;
-  }
-
-  // 5. Find core flock covering cap C(u0, c_cone)
-  // If greedy cover on the initial c_cone leaves an uncovered boundary point,
-  // we step c_cone slightly larger in [0.028, 0.035].
   std::vector<AxisCertificate> flock;
   bool flock_ok = false;
 
   std::vector<double> cone_sweep;
   if (config.auto_tune_parameters) {
-    cone_sweep = {config.target_c_cone.ToDouble(), 0.030, 0.032, 0.035};
+    cone_sweep = {0.030, 0.035, 0.040, 0.050, 0.060, 0.080, 0.100};
   } else {
     cone_sweep = {config.target_c_cone.ToDouble()};
   }
 
   for (double c_cone_val : cone_sweep) {
+    if (!FindComplementCage(tri, u0, pool, c_cone_val, &comp_cage)) {
+      continue;
+    }
+
     BigRat cur_c_cone(std::round(c_cone_val * 1000.0), 1000);
     BigRat cur_r_min, cur_c_core;
     if (config.auto_tune_parameters) {
@@ -514,7 +516,7 @@ AnnularSynthesisResult SynthesizeAnnularCertificate(
   }
 
   if (!flock_ok) {
-    res.explanation = "Failed to cover spherical cap with greedy core flock.";
+    res.explanation = "Failed to find complement cage and core flock covering spherical cap.";
     return res;
   }
 

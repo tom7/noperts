@@ -202,7 +202,8 @@ bool FindCoreFlockGreedy(
 AnnularSynthesisResult SynthesizeAnnularCertificate(
     const tubetree229::TriangleQ &tri,
     const std::vector<tubetree229::AxisCertificate> &seed_axes = {},
-    const AnnularConfig &config = AnnularConfig{});
+    const AnnularConfig &config = AnnularConfig{},
+    const std::vector<tubetree229::ContactInfo> &custom_c0 = {});
 
 }  // namespace annular229
 
