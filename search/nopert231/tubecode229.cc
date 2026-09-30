@@ -8,6 +8,7 @@
 #include <atomic>
 #include <filesystem>
 #include <array>
+#include <future>
 
 #include "rapidjson/document.h"
 #include "util.h"
@@ -161,7 +162,8 @@ static bool CertifyTriangleRecursive(
     const SolverOptions &opt,
     std::unique_ptr<TreeNode> *out_node,
     int depth,
-    int *leaf_counter) {
+    std::atomic<int> *leaf_counter,
+    std::atomic<int> *active_threads) {
 
   // Handle degenerate triangles
   if (IsDegenerateTriangle(tri)) {
@@ -292,13 +294,44 @@ static bool CertifyTriangleRecursive(
 
   const LocalCertificate *next_cert = has_local ? &local_cert : parent_cert;
 
-  for (int i = 0; i < 4; i++) {
-    std::string child_path = path.empty() ? std::to_string(i) : (path + std::to_string(i));
-    if (!CertifyTriangleRecursive(code_idx, children_tri[i], child_path, next_cert, seed, opt,
-                                  &split_node->children[i], depth + 1, leaf_counter)) {
-      return false;
+  std::vector<std::future<bool>> async_futs;
+  std::vector<int> async_indices;
+
+  for (int i = 0; i < 3; i++) {
+    int cur = active_threads->load(std::memory_order_relaxed);
+    if (cur < 12 && active_threads->compare_exchange_weak(cur, cur + 1)) {
+      std::string child_path = path.empty() ? std::to_string(i) : (path + std::to_string(i));
+      TriangleQ child_tri = children_tri[i];
+      unsigned int child_seed = *seed + (i + 1) * 10007;
+      async_indices.push_back(i);
+      async_futs.push_back(std::async(std::launch::async, [=, &split_node]() mutable {
+        bool res = CertifyTriangleRecursive(code_idx, child_tri, child_path, next_cert, &child_seed, opt,
+                                            &split_node->children[i], depth + 1, leaf_counter, active_threads);
+        active_threads->fetch_sub(1, std::memory_order_relaxed);
+        return res;
+      }));
     }
   }
+
+  bool all_ok = true;
+  for (int i = 0; i < 4; i++) {
+    bool was_async = false;
+    for (int idx : async_indices) {
+      if (idx == i) { was_async = true; break; }
+    }
+    if (!was_async) {
+      std::string child_path = path.empty() ? std::to_string(i) : (path + std::to_string(i));
+      if (!CertifyTriangleRecursive(code_idx, children_tri[i], child_path, next_cert, seed, opt,
+                                    &split_node->children[i], depth + 1, leaf_counter, active_threads)) {
+        all_ok = false;
+      }
+    }
+  }
+
+  for (auto &fut : async_futs) {
+    if (!fut.get()) all_ok = false;
+  }
+  if (!all_ok) return false;
 
   *out_node = std::move(split_node);
   return true;
@@ -359,15 +392,16 @@ static bool SolveCode(
     bool has_root = FindBestCageForTriangle(ct.triangle, &seed, &root_cert, &root_margin);
 
     std::cout << "[Code " << code_idx << ", Tri " << t_idx + 1 << "/" << tri_arr.Size() << "] Starting...\n" << std::flush;
-    int leaf_count = 0;
+    std::atomic<int> leaf_count{0};
+    std::atomic<int> active_threads{1};
     std::unique_ptr<TreeNode> root;
-    if (!CertifyTriangleRecursive(code_idx, ct.triangle, "", has_root ? &root_cert : nullptr, &seed, opt, &root, 0, &leaf_count)) {
+    if (!CertifyTriangleRecursive(code_idx, ct.triangle, "", has_root ? &root_cert : nullptr, &seed, opt, &root, 0, &leaf_count, &active_threads)) {
       std::cerr << "[Code " << code_idx << ", Tri " << t_idx << "] Certification failed!\n";
       return false;
     }
 
-    std::cout << "[Code " << code_idx << ", Tri " << t_idx + 1 << "/" << tri_arr.Size() << "] Certified: " << leaf_count << " leaves.\n" << std::flush;
-    total_code_leaves += leaf_count;
+    std::cout << "[Code " << code_idx << ", Tri " << t_idx + 1 << "/" << tri_arr.Size() << "] Certified: " << leaf_count.load() << " leaves.\n" << std::flush;
+    total_code_leaves += leaf_count.load();
     ct.root = std::move(root);
     code_tree.triangles.push_back(std::move(ct));
   }

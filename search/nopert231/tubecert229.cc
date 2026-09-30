@@ -36,9 +36,9 @@
 #include "nopert229.h"
 #include "util.h"
 #include "yocto-math.h"
-
 #include "rapidjson/document.h"
 #include "rapidjson/error/en.h"
+#include "tubetree229.h"
 
 using vec2 = yocto::vec<double, 2>;
 using vec3 = yocto::vec<double, 3>;
@@ -49,7 +49,6 @@ static inline vec3 ToDouble(const BigVecQ3 &v) {
   return vec3{v.x.ToDouble(), v.y.ToDouble(), v.z.ToDouble()};
 }
 
-#include "tubetree229.h"
 using tubetree229::TriangleQ;
 using tubetree229::ContactInfo;
 using tubetree229::AxisCertificate;
