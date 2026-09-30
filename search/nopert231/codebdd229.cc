@@ -35,6 +35,7 @@
 #include "geom/hull-2d.h"
 #include "nopert229.h"
 #include "timer.h"
+#include "util.h"
 #include "yocto-math.h"
 
 using vec2 = yocto::vec<double, 2>;
@@ -122,13 +123,22 @@ std::string FormatRat(const BigRat &r) {
 // 4. Enforces exact horizontal top and bottom caps (exact identical rational z).
 // 5. Algebraically planarizes the 5 tilted quads in Q^3 by projecting Level 1 vertices
 //    along the quad normal vector in exact rational arithmetic.
-std::vector<BigVecQ3> GenerateBestPossibleRationalVertices(bool verbose = true) {
-  constexpr double ROOT[4][3] = {
+//
+// If root_override is given, it replaces the four #229 seeds (in the same
+// Lean-frame order: top cap, ring at z ~ 0.3, ring at z ~ -0.04, bottom cap).
+std::vector<BigVecQ3> GenerateBestPossibleRationalVertices(
+    bool verbose = true,
+    const std::optional<std::array<std::array<double, 3>, 4>> &root_override = std::nullopt) {
+  double ROOT[4][3] = {
     {  0.0428407320766475,  0.5680663556187131,  0.5648167326177671 }, // Seed 0 (Top cap)
     { -0.1710940528198280,  0.9384169756351713,  0.3001672949030625 }, // Seed 1 (Ring 1)
     { -0.2791996671138589,  0.8916783831939151, -0.0420605170858861 }, // Seed 2 (Ring 2)
     {  0.0581211699562287,  0.6025790913331870, -0.7643399516054460 }  // Seed 3 (Bottom cap)
   };
+  if (root_override.has_value()) {
+    for (int s = 0; s < 4; s++)
+      for (int c = 0; c < 3; c++) ROOT[s][c] = (*root_override)[s][c];
+  }
 
   // 1. Generate 20 continuous C5 orbit vertices in double
   std::vector<std::array<double, 3>> double_verts;
@@ -244,6 +254,54 @@ std::vector<BigVecQ3> GenerateBestPossibleRationalVertices(bool verbose = true) 
   }
 
   return verts;
+}
+
+// Reads a root file written by ruperts/repair-margin (lines "rootK x y z",
+// K = 0..3 from the bottom cap to the top cap, in the ruperts database
+// frame) and converts it to the Lean-frame seeds used above: reverse the
+// order (seed 0 = top cap) and scale so that every vertex has norm
+// slightly below 1 (Lean's GoodPoly needs norm <= 1). Rotations about z
+// preserve norms, so the seeds' norms are the vertices' norms.
+static std::array<std::array<double, 3>, 4> LoadRootFileAsLeanSeeds(const std::string &filename) {
+  std::array<std::array<double, 3>, 4> db;
+  int found = 0;
+  for (const std::string &line : Util::ReadFileToLines(filename)) {
+    std::vector<std::string> tok = Util::Tokens(line, [](char c) { return c == ' '; });
+    if (tok.size() == 4 && tok[0].size() == 5 && tok[0].rfind("root", 0) == 0) {
+      const int k = tok[0][4] - '0';
+      CHECK(k >= 0 && k < 4) << line;
+      db[k] = {std::stod(tok[1]), std::stod(tok[2]), std::stod(tok[3])};
+      found |= 1 << k;
+    }
+  }
+  CHECK(found == 15) << "Expected root0..root3 lines in " << filename;
+  // Make the quad exactly planar in double, as ruperts/repair214 and
+  // repair-margin do: derive root1.z from the other roots.
+  {
+    const auto &r0 = db[0], &r1 = db[1], &r2 = db[2];
+    const double theta = -2.0 * std::numbers::pi / 5.0;
+    const double ct = std::cos(theta), st = std::sin(theta);
+    const double rx = ct * r1[0] - st * r1[1], ry = st * r1[0] + ct * r1[1];
+    const double dx = rx - r1[0], dy = ry - r1[1];
+    const double C1 = (r2[0] - r0[0]) * dy - (r2[1] - r0[1]) * dx;
+    CHECK(std::abs(C1) > 1e-9);
+    const double C2 = (r2[2] - r0[2]) * ((r1[0] - r0[0]) * dy - (r1[1] - r0[1]) * dx);
+    const double z1 = r0[2] + C2 / C1;
+    Print("root1.z {:.17g} -> derived {:.17g} (change {:+.3e})\n", db[1][2], z1, z1 - db[1][2]);
+    db[1][2] = z1;
+  }
+  double max_norm = 0.0;
+  for (const auto &r : db) max_norm = std::max(max_norm, std::sqrt(r[0] * r[0] + r[1] * r[1] + r[2] * r[2]));
+  const double scale = (1.0 - 1e-9) / max_norm;
+  std::array<std::array<double, 3>, 4> seeds;
+  for (int s = 0; s < 4; s++)
+    for (int c = 0; c < 3; c++) seeds[s][c] = db[3 - s][c] * scale;
+  CHECK(seeds[0][2] > seeds[1][2] && seeds[1][2] > seeds[2][2] && seeds[2][2] > seeds[3][2])
+      << "Unexpected ring heights in " << filename;
+  Print("Loaded root file {} (scale {:.17g}):\n", filename, scale);
+  for (int s = 0; s < 4; s++)
+    Print("  seed {}: ({:.17g}, {:.17g}, {:.17g})\n", s, seeds[s][0], seeds[s][1], seeds[s][2]);
+  return seeds;
 }
 
 // Exports rational vertices in Lean, C++, and JSON formats
@@ -939,6 +997,7 @@ int main(int argc, char **argv) {
   bool export_only = false;
   std::string output_path = "codebdd229.json";
   std::string export_prefix = "vertices229_exact27";
+  std::string root_file;
 
   for (int i = 1; i < argc; i++) {
     std::string_view arg = argv[i];
@@ -950,6 +1009,8 @@ int main(int argc, char **argv) {
       use_stl = false;
     } else if (arg.starts_with("--output=")) {
       output_path = arg.substr(9);
+    } else if (arg.starts_with("--root_file=")) {
+      root_file = arg.substr(12);
     } else if (arg.starts_with("--export_prefix=")) {
       export_prefix = arg.substr(16);
     } else if (arg.starts_with("-")) {
@@ -969,7 +1030,9 @@ int main(int argc, char **argv) {
     }
   } else {
     Print(AGREEN("Using best-possible rational coordinates (exact quads, 2^52 denoms)...\n\n"));
-    verts = GenerateBestPossibleRationalVertices(true);
+    std::optional<std::array<std::array<double, 3>, 4>> seeds;
+    if (!root_file.empty()) seeds = LoadRootFileAsLeanSeeds(root_file);
+    verts = GenerateBestPossibleRationalVertices(true, seeds);
   }
 
   // Always export rational representations in Lean 4, C++, and JSON formats
