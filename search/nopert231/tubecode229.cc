@@ -1,14 +1,36 @@
-#include <iostream>
-#include <vector>
-#include <cmath>
+// Identity-tube certificate synthesis for the 79 face-visibility code cells
+// of Nopert #229 (see notes/Q.md). For each projective triangle of each
+// code cell (from codebdd229.json) we build a quadtree whose leaves carry
+// pure Tag 1 (4-axis cage) certificates, audited in exact arithmetic
+// with the same conditions as Lean's Box.ViewValid.
+//
+// The solver is restartable: every certified leaf ("L") and every split
+// ("S") is appended to trees/code.<X>.journal as soon as it is decided.
+// On restart the journal is replayed and only the pending frontier is
+// worked on. Leaves are re-audited on replay, so a journal can never
+// inject an unchecked certificate. When every triangle of a code is
+// complete, the tree is written to trees/tree.<X>.json (the format read
+// by export_codetrees_pack).
+//
+// With --import, a code with no journal is seeded from its existing
+// tree.<X>.json: split nodes and Tag 1 leaves are kept (and re-audited);
+// any other leaves (e.g. Tag 2) become pending again.
+
+#include <array>
+#include <atomic>
 #include <chrono>
+#include <cmath>
+#include <condition_variable>
+#include <cstdio>
+#include <filesystem>
+#include <functional>
+#include <iostream>
+#include <map>
+#include <mutex>
+#include <optional>
 #include <string>
 #include <thread>
-#include <mutex>
-#include <atomic>
-#include <filesystem>
-#include <array>
-#include <future>
+#include <vector>
 
 #include "rapidjson/document.h"
 #include "util.h"
@@ -24,35 +46,21 @@ using vec3 = yocto::vec<double, 3>;
 #include "tubecert229.cc"
 
 #include "tubetree229.h"
-#include "annular229.h"
 
 using namespace tubetree229;
-using namespace annular229;
 
 struct SolverOptions {
   std::string bdd_json = "codebdd229.json";
   std::string output_dir = "trees";
   int code_id = -1; // -1 means all
+  int tri_id = -1;  // -1 means all triangles of the code
   int num_threads = 16;
-  int max_depth = 26;
+  int max_depth = 30;
   BigRat target_c{0}; // Any positive rational c > 0
   BigRat target_r{0}; // Any positive rational r > 0
   bool force = false;
+  bool import_tree = false;
 };
-
-// Check if a triangle has near-zero area (< 1e-16)
-static bool IsDegenerateTriangle(const TriangleQ &tri) {
-  vec3 c0 = ToDouble(tri.corners[0]);
-  vec3 c1 = ToDouble(tri.corners[1]);
-  vec3 c2 = ToDouble(tri.corners[2]);
-  vec3 normal = yocto::cross(c1 - c0, c2 - c0);
-  return yocto::length(normal) < 1e-16;
-}
-
-// Convert audited LocalCertificate to TubeCertificate
-static TubeCertificate ToTubeCertificate(const LocalCertificate &audited) {
-  return audited;
-}
 
 // Find best cage for a given triangle, pre-validating AuditAxis on tri
 static bool FindBestCageForTriangle(
@@ -76,6 +84,21 @@ static bool FindBestCageForTriangle(
   std::vector<vec3> pts;
   for (const auto &cand : candidates) pts.push_back(cand.normalized_a);
 
+  // Axis audits are exact and expensive; memoize them per candidate.
+  std::vector<int8_t> audit_ok(candidates.size(), -1);
+  auto Audited = [&](int idx) {
+    if (audit_ok[idx] < 0) {
+      ContactInfo cts[3] = {candidates[idx].contacts[0],
+                            candidates[idx].contacts[1],
+                            candidates[idx].contacts[2]};
+      AxisCertificate ax;
+      BigVecQ3 cent;
+      BigRat del;
+      audit_ok[idx] = AuditAxis(tri, cts, &ax, &cent, &del, nullptr) ? 1 : 0;
+    }
+    return audit_ok[idx] == 1;
+  };
+
   double best_margin = 0.0;
   std::array<int, 4> best_tet = {-1, -1, -1, -1};
   int N = pts.size();
@@ -87,26 +110,10 @@ static bool FindBestCageForTriangle(
     vec3 tpts[4] = {pts[i0], pts[i1], pts[i2], pts[i3]};
     double margin;
     double bary[4];
-    if (TetrahedronOriginMargin(tpts, &margin, bary)) {
-      if (margin > best_margin) {
-        bool all_ok = true;
-        for (int idx : {i0, i1, i2, i3}) {
-          ContactInfo cts[3] = {candidates[idx].contacts[0],
-                                candidates[idx].contacts[1],
-                                candidates[idx].contacts[2]};
-          AxisCertificate ax;
-          BigVecQ3 cent;
-          BigRat del;
-          std::string reason;
-          if (!AuditAxis(tri, cts, &ax, &cent, &del, &reason)) {
-            all_ok = false;
-            break;
-          }
-        }
-        if (all_ok) {
-          best_margin = margin;
-          best_tet = {i0, i1, i2, i3};
-        }
+    if (TetrahedronOriginMargin(tpts, &margin, bary) && margin > best_margin) {
+      if (Audited(i0) && Audited(i1) && Audited(i2) && Audited(i3)) {
+        best_margin = margin;
+        best_tet = {i0, i1, i2, i3};
       }
     }
   }
@@ -120,19 +127,7 @@ static bool FindBestCageForTriangle(
       double bary[4];
       if (TetrahedronOriginMargin(tpts, &margin, bary) && margin > 0) {
         bool all_ok = true;
-        for (int idx : wolfe_tet) {
-          ContactInfo cts[3] = {candidates[idx].contacts[0],
-                                candidates[idx].contacts[1],
-                                candidates[idx].contacts[2]};
-          AxisCertificate ax;
-          BigVecQ3 cent;
-          BigRat del;
-          std::string reason;
-          if (!AuditAxis(tri, cts, &ax, &cent, &del, &reason)) {
-            all_ok = false;
-            break;
-          }
-        }
+        for (int idx : wolfe_tet) all_ok = all_ok && Audited(idx);
         if (all_ok) {
           best_margin = margin;
           best_tet = wolfe_tet;
@@ -152,273 +147,468 @@ static bool FindBestCageForTriangle(
   return true;
 }
 
-// Recursive adaptive synthesizer for a single projective triangle
-static bool CertifyTriangleRecursive(
-    int code_idx,
-    const TriangleQ &tri,
-    const std::string &path,
-    const LocalCertificate *parent_cert,
-    unsigned int *seed,
-    const SolverOptions &opt,
-    std::unique_ptr<TreeNode> *out_node,
-    int depth,
-    std::atomic<int> *leaf_counter,
-    std::atomic<int> *active_threads) {
+// ---------------- Journal ----------------
 
-  // Handle degenerate triangles
-  if (IsDegenerateTriangle(tri)) {
-    auto leaf = std::make_unique<TreeNode>();
-    leaf->path = path;
-    leaf->explicit_triangle = tri;
-    leaf->direct_bounds.direct_r_lower = opt.target_r;
-    leaf->direct_bounds.direct_c_lower = opt.target_c;
-    *out_node = std::move(leaf);
-    (*leaf_counter)++;
+// Journal lines (one record per line, space separated):
+//   L <tri> <path> <sym> <72 ints: 4 axes x 3 contacts x
+//                          (edge_start edge_finish edge_start2 edge_finish2 mix vertex)>
+//   S <tri> <path>
+// The root path is written as ".". A truncated final line is ignored.
+
+static std::string PathToken(const std::string &path) {
+  return path.empty() ? "." : path;
+}
+
+static std::string LeafLine(int tri, const std::string &path, const LocalCertificate &cert) {
+  std::string s = StringPrintf("L %d %s %d", tri, PathToken(path).c_str(), cert.symmetry_index);
+  for (int a = 0; a < 4; a++) {
+    for (int k = 0; k < 3; k++) {
+      const ContactInfo &c = cert.axes[a].contacts[k];
+      StringAppendF(&s, " %d %d %d %d %d %d", c.edge_start, c.edge_finish,
+                    c.edge_start2, c.edge_finish2, c.mix, c.vertex);
+    }
+  }
+  s += "\n";
+  return s;
+}
+
+struct JournalRecord {
+  bool is_split = false;
+  LocalCertificate cert; // contacts only (for leaves)
+};
+
+// Key: (triangle index, path).
+using JournalMap = std::map<std::pair<int, std::string>, JournalRecord>;
+
+static bool ParseJournalLine(const std::string &line, int *tri, std::string *path,
+                             JournalRecord *rec) {
+  std::vector<std::string> tok = Util::Tokens(line, [](char c) { return c == ' '; });
+  if (tok.size() < 3) return false;
+  *tri = atoi(tok[1].c_str());
+  *path = tok[2] == "." ? "" : tok[2];
+  for (char c : *path) if (c < '0' || c > '3') return false;
+  if (tok[0] == "S") {
+    if (tok.size() != 3) return false;
+    rec->is_split = true;
+    return true;
+  }
+  if (tok[0] != "L" || tok.size() != 4 + 72) return false;
+  rec->is_split = false;
+  rec->cert.symmetry_index = atoi(tok[3].c_str());
+  int t = 4;
+  for (int a = 0; a < 4; a++) {
+    for (int k = 0; k < 3; k++) {
+      ContactInfo &c = rec->cert.axes[a].contacts[k];
+      c.edge_start = atoi(tok[t++].c_str());
+      c.edge_finish = atoi(tok[t++].c_str());
+      c.edge_start2 = atoi(tok[t++].c_str());
+      c.edge_finish2 = atoi(tok[t++].c_str());
+      c.mix = atoi(tok[t++].c_str());
+      c.vertex = atoi(tok[t++].c_str());
+    }
+  }
+  return true;
+}
+
+static JournalMap ReadJournal(const std::string &filename) {
+  JournalMap m;
+  if (!std::filesystem::exists(filename)) return m;
+  std::string content = Util::ReadFile(filename);
+  size_t pos = 0;
+  int bad = 0;
+  while (pos < content.size()) {
+    size_t nl = content.find('\n', pos);
+    // Without a newline, the last record was cut off mid-write.
+    if (nl == std::string::npos) { bad++; break; }
+    std::string line = content.substr(pos, nl - pos);
+    pos = nl + 1;
+    int tri;
+    std::string path;
+    JournalRecord rec;
+    if (!ParseJournalLine(line, &tri, &path, &rec)) { bad++; continue; }
+    // First record wins; a node is only decided once.
+    m.emplace(std::make_pair(tri, path), rec);
+  }
+  if (bad) {
+    std::cerr << "[journal] " << filename << ": ignored " << bad << " malformed/truncated lines\n";
+  }
+  return m;
+}
+
+// Import from an existing tree.X.json: keep splits and Tag 1 leaves.
+static void ImportTreeNode(int tri, const TreeNode &node, const std::string &path,
+                           JournalMap *m, int *leaves, int *dropped) {
+  if (!node.children.empty()) {
+    (*m)[{tri, path}].is_split = true;
+    for (int c = 0; c < (int)node.children.size(); c++) {
+      if (node.children[c])
+        ImportTreeNode(tri, *node.children[c], path + (char)('0' + c), m, leaves, dropped);
+    }
+  } else if (node.direct_cert.has_value()) {
+    JournalRecord rec;
+    rec.cert = node.direct_cert.value();
+    (*m)[{tri, path}] = rec;
+    (*leaves)++;
+  } else {
+    (*dropped)++;
+  }
+}
+
+// ---------------- Solver ----------------
+
+struct WorkItem {
+  int tri = 0;
+  std::string path;
+  TriangleQ triangle;
+  std::optional<LocalCertificate> hint;
+  // Number of consecutive ancestors that skipped the fresh cage search.
+  int skips = 0;
+};
+
+class CodeSolver {
+ public:
+  CodeSolver(int code_idx, const rapidjson::Value &code_obj, const SolverOptions &opt)
+      : code_idx_(code_idx), opt_(opt) {
+    code_hex_ = code_obj["code_hex"].GetString();
+    const auto &tri_arr = code_obj["triangles"].GetArray();
+    for (rapidjson::SizeType t = 0; t < tri_arr.Size(); t++) {
+      TriangleQ tq;
+      for (int k = 0; k < 3; k++) {
+        tq.corners[k] = BigVecQ3(tri_arr[t][k]["x"].GetString(),
+                                 tri_arr[t][k]["y"].GetString(),
+                                 tri_arr[t][k]["z"].GetString());
+      }
+      roots_.push_back(tq);
+    }
+    journal_path_ = StringPrintf("%s/code.%d.journal", opt.output_dir.c_str(), code_idx);
+    tree_path_ = StringPrintf("%s/tree.%d.json", opt.output_dir.c_str(), code_idx);
+  }
+
+  // Returns true if every triangle of the code is fully certified.
+  bool Run() {
+    if (!opt_.force && !std::filesystem::exists(journal_path_) &&
+        std::filesystem::exists(tree_path_)) {
+      auto loaded = LoadCodeTreeJson(tree_path_);
+      if (loaded && loaded->IsFullyCertified() && AllTag1(*loaded)) {
+        printf("[Code %d] %s already fully certified with Tag 1 (%d leaves). Skipping.\n",
+               code_idx_, tree_path_.c_str(), loaded->TotalLeaves());
+        return true;
+      }
+      if (loaded && opt_.import_tree) {
+        JournalMap m;
+        int leaves = 0, dropped = 0;
+        for (const auto &ct : loaded->triangles) {
+          if (ct.root) ImportTreeNode(ct.triangle_index, *ct.root, "", &m, &leaves, &dropped);
+        }
+        std::string s;
+        for (const auto &[key, rec] : m) {
+          if (rec.is_split) s += StringPrintf("S %d %s\n", key.first, PathToken(key.second).c_str());
+          else s += LeafLine(key.first, key.second, rec.cert);
+        }
+        CHECK(Util::WriteFile(journal_path_, s));
+        printf("[Code %d] Imported %d Tag 1 leaves from %s (%d other leaves left pending).\n",
+               code_idx_, leaves, tree_path_.c_str(), dropped);
+      }
+    }
+    if (opt_.force && std::filesystem::exists(journal_path_)) {
+      std::filesystem::rename(journal_path_, journal_path_ + ".old");
+    }
+
+    journal_ = ReadJournal(journal_path_);
+    std::vector<WorkItem> replay_leaves;
+    for (int t = 0; t < (int)roots_.size(); t++) {
+      if (opt_.tri_id >= 0 && t != opt_.tri_id) continue;
+      Replay(t, "", roots_[t], &replay_leaves);
+    }
+    int replayed = AuditReplayedLeaves(&replay_leaves);
+    printf("[Code %d] Replayed %d journal leaves; %zu pending nodes.\n",
+           code_idx_, replayed, queue_.size());
+    fflush(stdout);
+
+    journal_out_ = fopen(journal_path_.c_str(), "ab");
+    CHECK(journal_out_ != nullptr) << journal_path_;
+
+    auto start = std::chrono::steady_clock::now();
+    std::vector<std::thread> threads;
+    for (int i = 0; i < opt_.num_threads; i++) {
+      threads.emplace_back([this, i]() { Worker(i); });
+    }
+    std::thread status([this, start]() { StatusLoop(start); });
+    for (auto &th : threads) th.join();
+    {
+      std::lock_guard<std::mutex> l(mu_);
+      done_ = true;
+    }
+    status_cv_.notify_all();
+    status.join();
+    fclose(journal_out_);
+    journal_out_ = nullptr;
+
+    printf("[Code %d] Finished: %lld new leaves, %lld new splits, %lld failures.\n",
+           code_idx_, (long long)new_leaves_.load(), (long long)new_splits_.load(),
+           (long long)failures_.load());
+    if (failures_.load() > 0) return false;
+    if (opt_.tri_id >= 0) {
+      printf("[Code %d] Only triangle %d was solved; not writing %s.\n",
+             code_idx_, opt_.tri_id, tree_path_.c_str());
+      return true;
+    }
+    return WriteTree();
+  }
+
+ private:
+  static bool AllTag1(const CodeTree &ct) {
+    std::function<bool(const TreeNode &)> rec = [&](const TreeNode &n) {
+      if (!n.children.empty()) {
+        for (const auto &c : n.children) if (!c || !rec(*c)) return false;
+        return true;
+      }
+      return n.direct_cert.has_value() && !n.decomposed_cert.has_value();
+    };
+    for (const auto &t : ct.triangles) if (!t.root || !rec(*t.root)) return false;
     return true;
   }
 
-  // 1. Try auditing parent cage if available
-  LocalCertificate audited;
-  std::string fail_reason;
-  bool parent_axes_valid = false;
-  if (parent_cert != nullptr) {
-    if (ReauditCertificate(tri, *parent_cert, opt.target_c, opt.target_r, &audited, &fail_reason)) {
-      auto leaf = std::make_unique<TreeNode>();
-      leaf->path = path;
-      leaf->explicit_triangle = tri;
-      TubeCertificate tc = ToTubeCertificate(audited);
-      leaf->direct_cert = tc;
-      leaf->direct_bounds.direct_r_lower = tc.r;
-      leaf->direct_bounds.direct_c_lower = tc.c;
-      *out_node = std::move(leaf);
-      (*leaf_counter)++;
-      return true;
+  // Walk the journal from a node; queue pending nodes and collect the
+  // journal leaves, which are re-audited (in parallel) before being
+  // trusted.
+  void Replay(int tri, const std::string &path, const TriangleQ &triangle,
+              std::vector<WorkItem> *leaves) {
+    auto it = journal_.find({tri, path});
+    if (it == journal_.end()) {
+      queue_.push_back({tri, path, triangle, std::nullopt});
+      return;
     }
-    if (depth > 4 && (fail_reason.rfind("cover <= delta", 0) == 0 ||
-                      fail_reason.rfind("c < target_c", 0) == 0)) {
-      parent_axes_valid = true;
+    if (it->second.is_split) {
+      TriangleQ ch[4];
+      triangle.Subdivide(ch);
+      for (int c = 0; c < 4; c++) Replay(tri, path + (char)('0' + c), ch[c], leaves);
+      return;
     }
+    leaves->push_back({tri, path, triangle, it->second.cert});
   }
 
-  // 2. Try finding a local cage for this triangle if parent axes not valid or depth <= 6!
-  LocalCertificate local_cert;
-  bool has_local = false;
-  if (!parent_axes_valid || depth <= 6) {
-    double local_margin = 0;
-    has_local = FindBestCageForTriangle(tri, seed, &local_cert, &local_margin);
-    if (has_local) {
-      if (ReauditCertificate(tri, local_cert, opt.target_c, opt.target_r, &audited, &fail_reason)) {
-        auto leaf = std::make_unique<TreeNode>();
-        leaf->path = path;
-        leaf->explicit_triangle = tri;
-        TubeCertificate tc = ToTubeCertificate(audited);
-        leaf->direct_cert = tc;
-        leaf->direct_bounds.direct_r_lower = tc.r;
-        leaf->direct_bounds.direct_c_lower = tc.c;
-        *out_node = std::move(leaf);
-        (*leaf_counter)++;
-        if (*leaf_counter % 25 == 0) {
-          std::cout << "[Progress Code " << code_idx << "] " << *leaf_counter << " leaves (depth " << depth << ")\n" << std::flush;
+  // Re-audit journal leaves; failures go back to the queue (with their
+  // contacts as a hint).
+  int AuditReplayedLeaves(std::vector<WorkItem> *leaves) {
+    std::atomic<size_t> next{0};
+    std::atomic<int> good{0};
+    std::vector<std::thread> threads;
+    for (int i = 0; i < opt_.num_threads; i++) {
+      threads.emplace_back([&]() {
+        for (;;) {
+          size_t idx = next.fetch_add(1);
+          if (idx >= leaves->size()) return;
+          WorkItem &item = (*leaves)[idx];
+          LocalCertificate audited;
+          std::string why;
+          bool ok = ReauditCertificate(item.triangle, *item.hint, opt_.target_c,
+                                       opt_.target_r, &audited, &why);
+          std::lock_guard<std::mutex> l(mu_);
+          if (ok) {
+            audited_[{item.tri, item.path}] = audited;
+            good++;
+          } else {
+            fprintf(stderr, "[Code %d] journal leaf tri %d path %s failed re-audit (%s); requeued\n",
+                    code_idx_, item.tri, PathToken(item.path).c_str(), why.c_str());
+            journal_.erase({item.tri, item.path});
+            queue_.push_back(item);
+          }
         }
+      });
+    }
+    for (auto &th : threads) th.join();
+    return good.load();
+  }
+
+  void Append(const std::string &line) {
+    // Called with mu_ held.
+    fwrite(line.data(), 1, line.size(), journal_out_);
+    fflush(journal_out_);
+  }
+
+  bool TryCertify(const WorkItem &item, unsigned int *seed, LocalCertificate *out,
+                  std::optional<LocalCertificate> *next_hint, bool *skip_search) {
+    const int depth = item.path.size();
+    std::string why;
+    *skip_search = false;
+    if (item.hint.has_value()) {
+      BigRat cover(-1), delta(-1);
+      if (ReauditCertificate(item.triangle, *item.hint, opt_.target_c, opt_.target_r, out, &why,
+                             &cover, &delta))
         return true;
+      // If the parent's cage fails only because the variation delta is a
+      // bit too large, one or two more splits (which roughly halve delta)
+      // will fix it; skip the (expensive) fresh search. Never skip more
+      // than twice in a row, since a cage with tiny cover never recovers.
+      if (depth > 6 && item.skips < 2 && why.rfind("cover <= delta", 0) == 0 &&
+          cover > BigRat(0) && cover * BigRat(4) >= delta) {
+        *skip_search = true;
+        return false;
       }
     }
-  }
 
-  // 2.5 Try Tag 2 Annular Certificate if depth >= 7 on canyon codes (48 and 75)
-  if ((code_idx == 48 || code_idx == 75) && depth >= 7) {
-    std::vector<ContactInfo> custom_c0;
-    if (code_idx == 48) {
-      custom_c0 = {
-        {3, 2, 2, 1, 800, 2},
-        {1, 4, 4, 8, 800, 4},
-        {13, 14, 14, 15, 200, 14}
-      };
-    } else if (code_idx == 75) {
-      custom_c0 = {
-        {3, 2, 2, 1, 800, 2},
-        {1, 4, 4, 8, 800, 4},
-        {9, 10, 10, 15, 800, 10}
-      };
+    LocalCertificate local;
+    double margin = 0;
+    bool has_local = FindBestCageForTriangle(item.triangle, seed, &local, &margin);
+    if (!has_local) {
+      has_local = SynthesizeCertificate(item.triangle, depth, opt_.target_c, opt_.target_r,
+                                        &local, false);
     }
-
-    std::vector<AxisCertificate> seed_axes(3);
-    seed_axes[0].contacts[0] = {2, 1, 1, 4, 0, 1};
-    seed_axes[0].contacts[1] = {10, 15, 15, 19, 500, 15};
-    seed_axes[0].contacts[2] = {3, 2, 2, 1, 0, 2};
-
-    seed_axes[1].contacts[0] = {2, 1, 1, 4, 0, 1};
-    seed_axes[1].contacts[1] = {10, 15, 15, 19, 666, 15};
-    seed_axes[1].contacts[2] = {3, 2, 2, 1, 0, 2};
-
-    seed_axes[2].contacts[0] = {2, 1, 1, 4, 0, 1};
-    seed_axes[2].contacts[1] = {1, 4, 4, 8, 333, 4};
-    seed_axes[2].contacts[2] = {15, 19, 19, 3, 1000, 19};
-
-    AnnularConfig ann_config;
-    ann_config.auto_tune_parameters = true;
-    ann_config.max_flock_size = 1; // Strict Tag 2
-    ann_config.cap_sample_count = 500;
-    ann_config.hull_axes_limit = 2000;
-
-    AnnularSynthesisResult res = SynthesizeAnnularCertificate(tri, seed_axes, ann_config, custom_c0);
-    if (res.success && res.cert.core_flock_axes.size() == 1) {
-      auto leaf = std::make_unique<TreeNode>();
-      leaf->path = path;
-      leaf->explicit_triangle = tri;
-      leaf->decomposed_cert = res.cert;
-      leaf->direct_bounds.direct_r_lower = res.cert.r;
-      leaf->direct_bounds.direct_c_lower = res.cert.c_core;
-      *out_node = std::move(leaf);
-      (*leaf_counter)++;
-      if (*leaf_counter % 25 == 0) {
-        std::cout << "[Progress Code " << code_idx << "] " << *leaf_counter << " leaves (depth " << depth << ")\n" << std::flush;
-      }
-      return true;
+    if (has_local) {
+      if (ReauditCertificate(item.triangle, local, opt_.target_c, opt_.target_r, out, &why))
+        return true;
+      *next_hint = local;
     }
-  }
-
-  if (depth >= opt.max_depth) {
-    std::cerr << "Failed at depth " << depth << " (path=" << path << "): " << fail_reason << "\n";
     return false;
   }
 
-  // 3. Subdivide into 4 children
-  TriangleQ children_tri[4];
-  tri.Subdivide(children_tri);
-
-  auto split_node = std::make_unique<TreeNode>();
-  split_node->path = path;
-  split_node->explicit_triangle = tri;
-  split_node->children.resize(4);
-
-  const LocalCertificate *next_cert = has_local ? &local_cert : parent_cert;
-
-  std::vector<std::future<bool>> async_futs;
-  std::vector<int> async_indices;
-
-  for (int i = 0; i < 3; i++) {
-    int cur = active_threads->load(std::memory_order_relaxed);
-    if (cur < 12 && active_threads->compare_exchange_weak(cur, cur + 1)) {
-      std::string child_path = path.empty() ? std::to_string(i) : (path + std::to_string(i));
-      TriangleQ child_tri = children_tri[i];
-      unsigned int child_seed = *seed + (i + 1) * 10007;
-      async_indices.push_back(i);
-      async_futs.push_back(std::async(std::launch::async, [=, &split_node]() mutable {
-        bool res = CertifyTriangleRecursive(code_idx, child_tri, child_path, next_cert, &child_seed, opt,
-                                            &split_node->children[i], depth + 1, leaf_counter, active_threads);
-        active_threads->fetch_sub(1, std::memory_order_relaxed);
-        return res;
-      }));
-    }
-  }
-
-  bool all_ok = true;
-  for (int i = 0; i < 4; i++) {
-    bool was_async = false;
-    for (int idx : async_indices) {
-      if (idx == i) { was_async = true; break; }
-    }
-    if (!was_async) {
-      std::string child_path = path.empty() ? std::to_string(i) : (path + std::to_string(i));
-      if (!CertifyTriangleRecursive(code_idx, children_tri[i], child_path, next_cert, seed, opt,
-                                    &split_node->children[i], depth + 1, leaf_counter, active_threads)) {
-        all_ok = false;
+  void Worker(int thread_idx) {
+    for (;;) {
+      WorkItem item;
+      {
+        std::unique_lock<std::mutex> l(mu_);
+        cv_.wait(l, [this]() { return !queue_.empty() || active_ == 0; });
+        if (queue_.empty()) {
+          cv_.notify_all();
+          return;
+        }
+        // LIFO keeps the frontier small (depth-first).
+        item = std::move(queue_.back());
+        queue_.pop_back();
+        active_++;
       }
+
+      unsigned int seed = 42 + 1000 * code_idx_ + 7919 * item.tri;
+      for (char c : item.path) seed = seed * 31 + c;
+
+      LocalCertificate audited;
+      std::optional<LocalCertificate> next_hint = item.hint;
+      bool skipped = false;
+      bool ok = TryCertify(item, &seed, &audited, &next_hint, &skipped);
+      const int depth = item.path.size();
+
+      std::vector<WorkItem> children;
+      {
+        std::lock_guard<std::mutex> l(mu_);
+        if (ok) {
+          Append(LeafLine(item.tri, item.path, audited));
+          journal_[{item.tri, item.path}].cert = audited;
+          audited_[{item.tri, item.path}] = audited;
+          new_leaves_++;
+          min_c_ = min_c_ == 0 ? audited.c.ToDouble() : std::min(min_c_, audited.c.ToDouble());
+        } else if (depth >= opt_.max_depth) {
+          failures_++;
+          fprintf(stderr, "[Code %d] FAILED tri %d path %s at max depth %d\n",
+                  code_idx_, item.tri, item.path.c_str(), depth);
+        } else {
+          Append(StringPrintf("S %d %s\n", item.tri, PathToken(item.path).c_str()));
+          journal_[{item.tri, item.path}].is_split = true;
+          new_splits_++;
+          max_depth_seen_ = std::max(max_depth_seen_, depth + 1);
+          TriangleQ ch[4];
+          item.triangle.Subdivide(ch);
+          // Push in reverse so child 0 is processed first.
+          for (int c = 3; c >= 0; c--) {
+            queue_.push_back({item.tri, item.path + (char)('0' + c), ch[c], next_hint,
+                              skipped ? item.skips + 1 : 0});
+          }
+        }
+        active_--;
+      }
+      cv_.notify_all();
     }
   }
 
-  for (auto &fut : async_futs) {
-    if (!fut.get()) all_ok = false;
-  }
-  if (!all_ok) return false;
-
-  *out_node = std::move(split_node);
-  return true;
-}
-
-// Solves a single Code
-static bool SolveCode(
-    int code_idx,
-    const rapidjson::Value &code_obj,
-    const SolverOptions &opt) {
-
-  std::string chex = code_obj["code_hex"].GetString();
-  std::string out_path = StringPrintf("%s/tree.%d.json", opt.output_dir.c_str(), code_idx);
-
-  // Check if already completed
-  if (!opt.force && std::filesystem::exists(out_path)) {
-    auto loaded = LoadCodeTreeJson(out_path);
-    if (loaded && loaded->IsFullyCertified()) {
-      std::cout << "[Code " << code_idx << "] Already fully certified ("
-                << loaded->TotalLeaves() << " leaves). Skipping.\n";
-      return true;
+  void StatusLoop(std::chrono::steady_clock::time_point start) {
+    std::unique_lock<std::mutex> l(mu_);
+    auto next_report = std::chrono::steady_clock::now() + std::chrono::seconds(60);
+    while (!done_) {
+      status_cv_.wait_until(l, next_report);
+      if (done_) break;
+      if (std::chrono::steady_clock::now() < next_report) continue;
+      next_report += std::chrono::seconds(60);
+      double secs = std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count();
+      printf("[Code %d %.0fs] leaves +%lld, splits +%lld, pending %zu, active %d, max depth %d, min c %.3g, failures %lld\n",
+             code_idx_, secs, (long long)new_leaves_.load(), (long long)new_splits_.load(),
+             queue_.size(), active_, max_depth_seen_, min_c_, (long long)failures_.load());
+      fflush(stdout);
     }
   }
 
-  const auto &tri_arr = code_obj["triangles"].GetArray();
-  CodeTree code_tree;
-  code_tree.code_id = code_idx;
-  code_tree.code_hex = chex;
-
-  auto t_start = std::chrono::high_resolution_clock::now();
-  int total_code_leaves = 0;
-  unsigned int seed = 42 + code_idx * 1000;
-
-  for (size_t t_idx = 0; t_idx < tri_arr.Size(); t_idx++) {
-    CodeTriangleTree ct;
-    ct.triangle_index = static_cast<int>(t_idx);
-    for (int k = 0; k < 3; k++) {
-      ct.triangle.corners[k] = BigVecQ3(
-          tri_arr[t_idx][k]["x"].GetString(),
-          tri_arr[t_idx][k]["y"].GetString(),
-          tri_arr[t_idx][k]["z"].GetString());
-    }
-
-    if (IsDegenerateTriangle(ct.triangle)) {
-      auto leaf = std::make_unique<TreeNode>();
-      leaf->path = "";
-      leaf->explicit_triangle = ct.triangle;
-      leaf->direct_bounds.direct_r_lower = opt.target_r;
-      leaf->direct_bounds.direct_c_lower = opt.target_c;
-      ct.root = std::move(leaf);
-      total_code_leaves++;
+  // Build the full tree from the (audited) journal records and save.
+  bool WriteTree() {
+    const JournalMap &m = journal_;
+    CodeTree code_tree;
+    code_tree.code_id = code_idx_;
+    code_tree.code_hex = code_hex_;
+    int total = 0;
+    for (int t = 0; t < (int)roots_.size(); t++) {
+      CodeTriangleTree ct;
+      ct.triangle_index = t;
+      ct.triangle = roots_[t];
+      ct.root = Build(m, t, "", roots_[t], &total);
+      if (!ct.root) {
+        fprintf(stderr, "[Code %d] Triangle %d incomplete; not writing tree.\n", code_idx_, t);
+        return false;
+      }
       code_tree.triangles.push_back(std::move(ct));
-      continue;
     }
-
-    LocalCertificate root_cert;
-    double root_margin = 0;
-    bool has_root = FindBestCageForTriangle(ct.triangle, &seed, &root_cert, &root_margin);
-
-    std::cout << "[Code " << code_idx << ", Tri " << t_idx + 1 << "/" << tri_arr.Size() << "] Starting...\n" << std::flush;
-    std::atomic<int> leaf_count{0};
-    std::atomic<int> active_threads{1};
-    std::unique_ptr<TreeNode> root;
-    if (!CertifyTriangleRecursive(code_idx, ct.triangle, "", has_root ? &root_cert : nullptr, &seed, opt, &root, 0, &leaf_count, &active_threads)) {
-      std::cerr << "[Code " << code_idx << ", Tri " << t_idx << "] Certification failed!\n";
+    CHECK(code_tree.IsFullyCertified());
+    if (!SaveCodeTreeJson(code_tree, tree_path_)) {
+      fprintf(stderr, "[Code %d] Failed to save %s\n", code_idx_, tree_path_.c_str());
       return false;
     }
-
-    std::cout << "[Code " << code_idx << ", Tri " << t_idx + 1 << "/" << tri_arr.Size() << "] Certified: " << leaf_count.load() << " leaves.\n" << std::flush;
-    total_code_leaves += leaf_count.load();
-    ct.root = std::move(root);
-    code_tree.triangles.push_back(std::move(ct));
+    printf("[Code %d] SUCCESS: %d Tag 1 leaves across %zu triangles -> %s\n",
+           code_idx_, total, roots_.size(), tree_path_.c_str());
+    return true;
   }
 
-  auto t_end = std::chrono::high_resolution_clock::now();
-  double elapsed_s = std::chrono::duration<double>(t_end - t_start).count();
-
-  if (!SaveCodeTreeJson(code_tree, out_path)) {
-    std::cerr << "[Code " << code_idx << "] Failed to save " << out_path << "!\n";
-    return false;
+  std::unique_ptr<TreeNode> Build(const JournalMap &m, int tri, const std::string &path,
+                                  const TriangleQ &triangle, int *total) {
+    auto it = m.find({tri, path});
+    if (it == m.end()) return nullptr;
+    auto node = std::make_unique<TreeNode>();
+    node->path = path;
+    node->explicit_triangle = triangle;
+    if (it->second.is_split) {
+      TriangleQ ch[4];
+      triangle.Subdivide(ch);
+      node->children.resize(4);
+      for (int c = 0; c < 4; c++) {
+        node->children[c] = Build(m, tri, path + (char)('0' + c), ch[c], total);
+        if (!node->children[c]) return nullptr;
+      }
+      return node;
+    }
+    auto ait = audited_.find({tri, path});
+    if (ait == audited_.end()) return nullptr;
+    const LocalCertificate &audited = ait->second;
+    node->direct_cert = audited;
+    node->direct_bounds.direct_r_lower = audited.r;
+    node->direct_bounds.direct_c_lower = audited.c;
+    (*total)++;
+    return node;
   }
 
-  std::cout << "[Code " << code_idx << "] SUCCESS! " << total_code_leaves
-            << " leaves across " << code_tree.triangles.size()
-            << " triangles in " << elapsed_s << " s -> " << out_path << "\n";
-  return true;
-}
+  const int code_idx_;
+  const SolverOptions opt_;
+  std::string code_hex_;
+  std::vector<TriangleQ> roots_;
+  std::string journal_path_, tree_path_;
+  JournalMap journal_;
+  FILE *journal_out_ = nullptr;
+
+  std::mutex mu_;
+  std::condition_variable cv_, status_cv_;
+  std::map<std::pair<int, std::string>, LocalCertificate> audited_;
+  std::vector<WorkItem> queue_;
+  int active_ = 0;
+  bool done_ = false;
+  int max_depth_seen_ = 0;
+  double min_c_ = 0;
+  std::atomic<int64_t> new_leaves_{0}, new_splits_{0}, failures_{0};
+};
 
 #ifndef TUBECODE_NO_MAIN
 int main(int argc, char **argv) {
@@ -427,6 +617,8 @@ int main(int argc, char **argv) {
     std::string arg = argv[i];
     if (arg == "--code" && i + 1 < argc) {
       opt.code_id = std::stoi(argv[++i]);
+    } else if (arg == "--tri" && i + 1 < argc) {
+      opt.tri_id = std::stoi(argv[++i]);
     } else if (arg == "--threads" && i + 1 < argc) {
       opt.num_threads = std::stoi(argv[++i]);
     } else if (arg == "--max_depth" && i + 1 < argc) {
@@ -435,6 +627,13 @@ int main(int argc, char **argv) {
       opt.output_dir = argv[++i];
     } else if (arg == "--force") {
       opt.force = true;
+    } else if (arg == "--import") {
+      opt.import_tree = true;
+    } else {
+      fprintf(stderr, "Unknown argument %s\n"
+              "Usage: tubecode229.exe [--code X [--tri T]] [--threads N] [--max_depth D]\n"
+              "                       [--output_dir DIR] [--force] [--import]\n", arg.c_str());
+      return 2;
     }
   }
 
@@ -448,48 +647,25 @@ int main(int argc, char **argv) {
   const auto &codes = doc["codes"].GetArray();
   int num_codes = static_cast<int>(codes.Size());
 
+  std::vector<int> todo;
   if (opt.code_id >= 0) {
     if (opt.code_id >= num_codes) {
       std::cerr << "Invalid code id " << opt.code_id << " (total " << num_codes << ")\n";
       return 1;
     }
-    return SolveCode(opt.code_id, codes[opt.code_id], opt) ? 0 : 1;
+    todo.push_back(opt.code_id);
+  } else {
+    for (int c = 0; c < num_codes; c++) todo.push_back(c);
   }
 
-  // Multi-threaded pool for all codes
-  std::cout << "Starting parallel synthesis for all " << num_codes
-            << " codes using " << opt.num_threads << " worker threads...\n";
-
-  std::atomic<int> next_code{0};
-  std::atomic<int> completed_count{0};
-  std::atomic<int> failed_count{0};
-
-  auto worker = [&]() {
-    while (true) {
-      int c_idx = next_code.fetch_add(1);
-      if (c_idx >= num_codes) break;
-      if (SolveCode(c_idx, codes[c_idx], opt)) {
-        completed_count.fetch_add(1);
-      } else {
-        failed_count.fetch_add(1);
-      }
-    }
-  };
-
-  std::vector<std::thread> threads;
-  for (int t = 0; t < opt.num_threads; t++) {
-    threads.emplace_back(worker);
+  // Codes are solved one at a time, each using all worker threads.
+  int ok = 0, failed = 0;
+  for (int c : todo) {
+    CodeSolver solver(c, codes[c], opt);
+    if (solver.Run()) ok++;
+    else failed++;
   }
-  for (auto &th : threads) {
-    th.join();
-  }
-
-  std::cout << "\n======================================================\n";
-  std::cout << "Synthesis Finished: " << completed_count.load() << "/"
-            << num_codes << " codes successful, "
-            << failed_count.load() << " failed.\n";
-  std::cout << "======================================================\n";
-
-  return (failed_count.load() == 0) ? 0 : 1;
+  printf("Synthesis finished: %d/%zu codes complete, %d incomplete.\n", ok, todo.size(), failed);
+  return failed == 0 ? 0 : 1;
 }
 #endif

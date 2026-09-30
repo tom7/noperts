@@ -323,10 +323,14 @@ static bool AuditAxis(const TriangleQ &tri, ContactInfo contacts[3], AxisCertifi
 }
 
 // Re-audit an entire 4-axis certificate on triangle tri
+// If out_cover/out_delta are given, they receive the cage's cover radius and
+// variation delta whenever all four axes audit (even if the cage fails).
 static bool ReauditCertificate(const TriangleQ &tri, const LocalCertificate &in_cert,
                                const BigRat &target_c, const BigRat &tube_radius,
                                LocalCertificate *out_cert,
-                               std::string *fail_reason = nullptr) {
+                               std::string *fail_reason = nullptr,
+                               BigRat *out_cover = nullptr,
+                               BigRat *out_delta = nullptr) {
   *out_cert = in_cert;
   BigVecQ3 centers[4];
   BigRat deltas[4];
@@ -344,6 +348,8 @@ static bool ReauditCertificate(const TriangleQ &tri, const LocalCertificate &in_
   BigRat delta = std::max({deltas[0], deltas[1], deltas[2], deltas[3]});
   BigRat axis_radius = ExactTetrahedronAxisRadius(centers);
   BigRat cover_radius = axis_radius * BigRat(19, 20) * BigRat(4, 7);
+  if (out_cover) *out_cover = cover_radius;
+  if (out_delta) *out_delta = delta;
 
   if (target_c > BigRat(0) && cover_radius <= target_c) {
     if (fail_reason) *fail_reason = StringPrintf("cover_radius <= target_c (cover=%s, target=%s)",
