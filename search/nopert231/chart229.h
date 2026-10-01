@@ -70,8 +70,7 @@ class Chart229 {
     int in1 = 0;
     int in2 = 0;
     // Cone samples of the candidate pool that winning_triple indexes into
-    // (the pool is a function of the view triangle and this). 0 = unknown
-    // (legacy rows without the field).
+    // (the pool is a function of the view triangle and this). Required.
     int cone_samples = 0;
 
     bool operator==(const CertRow &other) const = default;
@@ -93,7 +92,7 @@ class Chart229 {
     int depth = 0;
     double margin = 0.0;
     std::vector<MixedComponent> components;
-    // As in CertRow; 0 = unknown (legacy).
+    // As in CertRow. Required.
     int cone_samples = 0;
 
     bool operator==(const MixedCertRow &other) const = default;

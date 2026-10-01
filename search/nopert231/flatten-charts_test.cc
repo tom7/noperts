@@ -95,7 +95,7 @@ static void TestSmallFileAbsorption() {
     std::ofstream out(parent_path);
     out << "ge 1 -1 0 0 0 0 0 0 0 1 1 0.5555555555555556 1 0 0 0.24390243902439024 0.7560975609756098 0 0 0 1\n";
     out << "sp 1 -1 0 2 3\n";
-    out << "ce 2 1 1 12 1.5p-10 1 2 3\n";
+    out << "ce 2 1 1 12 1.5p-10 1 2 3 8\n";
     out << "df 3 1 1\n";
   }
 
@@ -105,8 +105,8 @@ static void TestSmallFileAbsorption() {
     std::ofstream out(child_path);
     out << "ge 3 1 1 1 0 0 0.5 0 0 0.5 1 0.5555555555555556 1 0 0 0.24390243902439024 0.7560975609756098 0 0 0 1\n";
     out << "sp 3 1 1 4 5\n";
-    out << "ce 4 3 2 15 1.2p-12 1 2 4\n";
-    out << "ce 5 3 2 18 1.4p-12 1 2 5\n";
+    out << "ce 4 3 2 15 1.2p-12 1 2 4 8\n";
+    out << "ce 5 3 2 18 1.4p-12 1 2 5 8\n";
   }
 
   FlattenOptions options;
@@ -158,7 +158,7 @@ static void TestLargeFileRetention() {
     std::ofstream out(parent_path);
     out << "ge 1 -1 0 0 0 0 0 0 0 1 1 0.5555555555555556 1 0 0 0.24390243902439024 0.7560975609756098 0 0 0 1\n";
     out << "sp 1 -1 0 2 3\n";
-    out << "ce 2 1 1 12 1.5p-10 1 2 3\n";
+    out << "ce 2 1 1 12 1.5p-10 1 2 3 8\n";
     out << "df 3 1 1\n";
   }
 
@@ -169,9 +169,9 @@ static void TestLargeFileRetention() {
     out << "ge 3 1 1 1 0 0 0.5 0 0 0.5 1 0.5555555555555556 1 0 0 0.24390243902439024 0.7560975609756098 0 0 0 1\n";
     out << "sp 3 1 1 4 5\n";
     out << "sp 4 3 2 6 7\n";
-    out << "ce 5 3 2 18 1.4p-12 1 2 5\n";
-    out << "ce 6 4 3 20 1.1p-12 1 2 6\n";
-    out << "ce 7 4 3 22 1.3p-12 1 2 7\n";
+    out << "ce 5 3 2 18 1.4p-12 1 2 5 8\n";
+    out << "ce 6 4 3 20 1.1p-12 1 2 6 8\n";
+    out << "ce 7 4 3 22 1.3p-12 1 2 7 8\n";
   }
 
   FlattenOptions options;

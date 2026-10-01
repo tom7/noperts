@@ -550,8 +550,7 @@ struct StoredMixedComponent {
 
 struct StoredMixedCert {
   int mix_k = 0;
-  // Cone samples of the candidate pool the triples index into (0 = unknown,
-  // legacy row).
+  // Cone samples of the candidate pool the triples index into.
   int cone_samples = 0;
   BigRat mix_weights[4] = {BigRat(0), BigRat(0), BigRat(0), BigRat(0)};
   StoredMixedComponent mix_components[4];
@@ -583,8 +582,7 @@ struct ParsedNode {
   NodeTag tag = NodeTag::NONE;
   uint8_t fund_dir = 1;
   int winning_triple = -1;
-  // For CERT rows: cone samples of the pool winning_triple indexes into
-  // (0 = unknown, legacy row).
+  // For CERT rows: cone samples of the pool winning_triple indexes into.
   int cone_samples = 0;
   int inner[3] = {0, 0, 0};
   double tube_radius = 0.0;
@@ -1377,11 +1375,6 @@ int main(int argc, char **argv) {
   int chart = 0;
   std::string in_path;
   std::string out_path;
-  int cone_samples = 8;
-  int escalate_depth = 36;
-  int escalate_cone_samples = 12;
-  int deep_escalate_depth = 38;
-  int deep_escalate_cone_samples = 14;
   bool fill_pending = false;
   bool legacy_sort = false;
   std::string done_dir = ".";
@@ -1391,17 +1384,7 @@ int main(int argc, char **argv) {
   int pos_arg = 0;
   for (int i = 1; i < argc; i++) {
     std::string arg = argv[i];
-    if (arg == "--cone_samples" && i + 1 < argc) {
-      cone_samples = std::atoi(argv[++i]);
-    } else if (arg == "--escalate_depth" && i + 1 < argc) {
-      escalate_depth = std::atoi(argv[++i]);
-    } else if (arg == "--escalate_cone_samples" && i + 1 < argc) {
-      escalate_cone_samples = std::atoi(argv[++i]);
-    } else if (arg == "--deep_escalate_depth" && i + 1 < argc) {
-      deep_escalate_depth = std::atoi(argv[++i]);
-    } else if (arg == "--deep_escalate_cone_samples" && i + 1 < argc) {
-      deep_escalate_cone_samples = std::atoi(argv[++i]);
-    } else if (arg == "--fill_pending") {
+    if (arg == "--fill_pending") {
       fill_pending = true;
     } else if (arg == "--legacy_sort") {
       legacy_sort = true;
@@ -1827,45 +1810,11 @@ int main(int argc, char **argv) {
       return pool;
     };
 
-    auto get_pool_for_triple = [&](int depth, int max_triple) -> std::shared_ptr<const TrianglePool> {
-      int samples = cone_samples;
-      if (deep_escalate_depth > 0 && depth >= deep_escalate_depth) {
-        samples = deep_escalate_cone_samples;
-      } else if (escalate_depth > 0 && depth >= escalate_depth) {
-        samples = escalate_cone_samples;
-      }
-      auto pool = get_pool(samples);
-      if (max_triple < (int)pool->gpu_triples.size()) return pool;
-      static const int escalate_steps[] = {8, 10, 12, 14, 16, 18, 20};
-      for (int s : escalate_steps) {
-        if (s <= samples) continue;
-        pool = get_pool(s);
-        if (max_triple < (int)pool->gpu_triples.size()) return pool;
-      }
-      return pool;
-    };
-
     for (int64_t id : certs_by_tri[t]) {
       const auto &node = nodes[id];
       if (node.tag == NodeTag::CERT) {
-        int primary_samples = cone_samples;
-        if (deep_escalate_depth > 0 && node.depth >= deep_escalate_depth) {
-          primary_samples = deep_escalate_cone_samples;
-        } else if (escalate_depth > 0 && node.depth >= escalate_depth) {
-          primary_samples = escalate_cone_samples;
-        }
-
-        // Rows record the pool's cone samples; legacy rows don't, so for
-        // those we try the likely values.
-        std::vector<int> candidate_samples;
-        if (node.cone_samples > 0) {
-          candidate_samples = {node.cone_samples};
-        } else {
-          candidate_samples = {primary_samples};
-          for (int s : {12, 8, 14, 16, 10, 18, 20}) {
-            if (s != primary_samples) candidate_samples.push_back(s);
-          }
-        }
+        // The row records the pool its triple index refers to.
+        std::vector<int> candidate_samples = {node.cone_samples};
 
         StoredCert sc;
         bool verified = false;
@@ -1901,20 +1850,12 @@ int main(int argc, char **argv) {
             max_triple = mx.mix_components[i].winning_triple;
           }
         }
-        std::shared_ptr<const TrianglePool> pool;
-        if (mx.cone_samples > 0) {
-          pool = get_pool(mx.cone_samples);
-          if (max_triple >= (int)pool->gpu_triples.size()) {
-            std::cerr << ARED("MX node ") << id << " triple " << max_triple
-                      << " out of range for its pool (cone_samples " << mx.cone_samples << ")\n";
-            return 1;
-          }
-        } else {
-          // Legacy row without cone_samples: guess.
-          pool = get_pool(cone_samples);
-          if (max_triple >= (int)pool->gpu_triples.size()) {
-            pool = get_pool_for_triple(node.depth, max_triple);
-          }
+        // The row records the pool its triple indices refer to.
+        std::shared_ptr<const TrianglePool> pool = get_pool(mx.cone_samples);
+        if (max_triple >= (int)pool->gpu_triples.size()) {
+          std::cerr << ARED("MX node ") << id << " triple " << max_triple
+                    << " out of range for its pool (cone_samples " << mx.cone_samples << ")\n";
+          return 1;
         }
         const CayleyBoxQ &box = intervals[node.interval_id];
         for (int i = 0; i < mx.mix_k; i++) {

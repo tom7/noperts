@@ -231,13 +231,13 @@ static void TestStreamAndAssignShards() {
     f << "sp 5 2 2 b c\n";
     f << "sp 6 2 2 d e\n";
     // 10 leaves under 3
-    for (int i = 0; i < 10; i++) f << "ce 10" << i << " 3 3 0 0.05 1 2 3\n";
+    for (int i = 0; i < 10; i++) f << "ce 10" << i << " 3 3 0 0.05 1 2 3 8\n";
     // 10 leaves under 4
-    for (int i = 0; i < 10; i++) f << "ce 20" << i << " 4 3 0 0.05 1 2 3\n";
+    for (int i = 0; i < 10; i++) f << "ce 20" << i << " 4 3 0 0.05 1 2 3 8\n";
     // 10 leaves under 5
-    for (int i = 0; i < 10; i++) f << "ce 30" << i << " 5 3 0 0.05 1 2 3\n";
+    for (int i = 0; i < 10; i++) f << "ce 30" << i << " 5 3 0 0.05 1 2 3 8\n";
     // 10 leaves under 6
-    for (int i = 0; i < 10; i++) f << "ce 40" << i << " 6 3 0 0.05 1 2 3\n";
+    for (int i = 0; i < 10; i++) f << "ce 40" << i << " 6 3 0 0.05 1 2 3 8\n";
   }
 
   // Suppose subchart roots are nodes 1 and 2 (T = 2)
@@ -275,7 +275,7 @@ static void TestOutOfOrderAssignment() {
   {
     std::ofstream f(test_file);
     // Leaf under 3 appears first!
-    f << "ce 100 3 3 0 0.05 1 2 3\n";
+    f << "ce 100 3 3 0 0.05 1 2 3 8\n";
     // Split 3 appears second!
     f << "sp 3 1 2 7 8\n";
     // Split 1 (the subchart root) appears third!
@@ -316,12 +316,12 @@ void TestDuplicateSplitRows() {
     f << "sp 2 0 1 20 21\n";
     // Duplicate split node 10 appears under parent 1, then under parent 2
     f << "sp 10 1 2 100 101\n";
-    f << "ce 100 10 3 0 0.05 1 2 3\n";
-    f << "ce 101 10 3 0 0.05 1 2 3\n";
+    f << "ce 100 10 3 0 0.05 1 2 3 8\n";
+    f << "ce 101 10 3 0 0.05 1 2 3 8\n";
     f << "sp 10 2 2 100 101\n";
-    f << "ce 102 10 3 0 0.05 1 2 3\n";
-    f << "ce 103 10 3 0 0.05 1 2 3\n";
-    f << "ce 20 2 2 0 0.05 1 2 3\n";
+    f << "ce 102 10 3 0 0.05 1 2 3 8\n";
+    f << "ce 103 10 3 0 0.05 1 2 3 8\n";
+    f << "ce 20 2 2 0 0.05 1 2 3 8\n";
   }
 
   SplitResult split_res;
@@ -354,14 +354,14 @@ void TestSkeletonSplitsAndGeometryPropagation() {
     // Node 1 splits Cayley box along widest axis into 10 and 11
     f << "sp 1 0 1 10 11\n";
     // Leaves under 10
-    f << "ce 100 10 2 0 0.05 1 2 3\n";
-    f << "ce 101 10 2 0 0.05 1 2 3\n";
+    f << "ce 100 10 2 0 0.05 1 2 3 8\n";
+    f << "ce 101 10 2 0 0.05 1 2 3 8\n";
     // Leaves under 11
-    f << "ce 110 11 2 0 0.05 1 2 3\n";
+    f << "ce 110 11 2 0 0.05 1 2 3 8\n";
     // Leaves under 2, 3, 4
-    f << "ce 20 2 1 0 0.05 1 2 3\n";
-    f << "ce 30 3 1 0 0.05 1 2 3\n";
-    f << "ce 40 4 1 0 0.05 1 2 3\n";
+    f << "ce 20 2 1 0 0.05 1 2 3 8\n";
+    f << "ce 30 3 1 0 0.05 1 2 3 8\n";
+    f << "ce 40 4 1 0 0.05 1 2 3 8\n";
   }
 
   SplitResult split_res;
@@ -429,24 +429,24 @@ void TestStreamAndWriteShardsAndFaithfulRecreation() {
     // Node 2 splits box into 20 and 21
     f << "sp 2 0 1 20 21\n";
     // Skeleton leaves under root 0
-    f << "ce 3 0 1 0 0.05 1 2 3\n";
-    f << "ce 4 0 1 0 0.05 1 2 3\n";
+    f << "ce 3 0 1 0 0.05 1 2 3 8\n";
+    f << "ce 4 0 1 0 0.05 1 2 3 8\n";
     // Subchart 10: split node 10 + leaves
     f << "sp 10 1 2 100 101\n";
-    f << "ce 100 10 3 0 0.05 1 2 3\n";
-    f << "ce 101 10 3 0 0.05 1 2 3\n";
+    f << "ce 100 10 3 0 0.05 1 2 3 8\n";
+    f << "ce 101 10 3 0 0.05 1 2 3 8\n";
     // Subchart 11: split node 11 + leaves
     f << "sp 11 1 2 110 111\n";
-    f << "ce 110 11 3 0 0.05 1 2 3\n";
-    f << "ce 111 11 3 0 0.05 1 2 3\n";
+    f << "ce 110 11 3 0 0.05 1 2 3 8\n";
+    f << "ce 111 11 3 0 0.05 1 2 3 8\n";
     // Subchart 20: split node 20 + leaves
     f << "sp 20 2 2 200 201\n";
-    f << "ce 200 20 3 0 0.05 1 2 3\n";
-    f << "ce 201 20 3 0 0.05 1 2 3\n";
+    f << "ce 200 20 3 0 0.05 1 2 3 8\n";
+    f << "ce 201 20 3 0 0.05 1 2 3 8\n";
     // Subchart 21: split node 21 + leaves
     f << "sp 21 2 2 210 211\n";
-    f << "ce 210 21 3 0 0.05 1 2 3\n";
-    f << "ce 211 21 3 0 0.05 1 2 3\n";
+    f << "ce 210 21 3 0 0.05 1 2 3 8\n";
+    f << "ce 211 21 3 0 0.05 1 2 3 8\n";
   }
 
   SplitResult split_res;

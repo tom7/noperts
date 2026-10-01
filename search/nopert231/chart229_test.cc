@@ -12,7 +12,7 @@ static void TestCertRow() {
   printf("Testing CertRow...\n");
 
   // 1. Legacy decimal parsing (CE and CERT tags)
-  std::string_view legacy_ce = "CE 1993 1975 10 1805 0.00063884886633153561 7 13 1";
+  std::string_view legacy_ce = "CE 1993 1975 10 1805 0.00063884886633153561 7 13 1 8";
   auto r1 = Chart229::Parse(legacy_ce);
   CHECK(std::holds_alternative<Chart229::CertRow>(r1));
   const auto &c1 = std::get<Chart229::CertRow>(r1);
@@ -23,14 +23,14 @@ static void TestCertRow() {
   CHECK(std::abs(c1.margin - 0.00063884886633153561) < 1e-18);
   CHECK(c1.in0 == 7 && c1.in1 == 13 && c1.in2 == 1);
 
-  std::string_view legacy_cert = "CERT 100 50 5 12 0.001 1 2 3";
+  std::string_view legacy_cert = "CERT 100 50 5 12 0.001 1 2 3 8";
   auto r2 = Chart229::Parse(legacy_cert);
   CHECK(std::holds_alternative<Chart229::CertRow>(r2));
   const auto &c2 = std::get<Chart229::CertRow>(r2);
   CHECK(c2.id == 100 && c2.parent_id == 50 && c2.depth == 5);
 
   // 2. Compact hex parsing (lowercase ce)
-  std::string_view hex_ce = "ce 7c9 7b7 a 70d 1.4ef0d7e762624p-11 7 d 1";
+  std::string_view hex_ce = "ce 7c9 7b7 a 70d 1.4ef0d7e762624p-11 7 d 1 8";
   auto r3 = Chart229::Parse(hex_ce);
   CHECK(std::holds_alternative<Chart229::CertRow>(r3));
   const auto &c3 = std::get<Chart229::CertRow>(r3);
@@ -42,7 +42,7 @@ static void TestCertRow() {
   CHECK(c3.margin == c1.margin);
 
   // 3. Alternative hex float syntax (from SMALLER_CERTS.txt example: unnormalized mantissa)
-  std::string_view hex_ce_alt = "ce 7c9 7b7 a 70d a.7786bf3b131200dp-14 7 d 1";
+  std::string_view hex_ce_alt = "ce 7c9 7b7 a 70d a.7786bf3b131200dp-14 7 d 1 8";
   auto r4 = Chart229::Parse(hex_ce_alt);
   CHECK(std::holds_alternative<Chart229::CertRow>(r4));
   const auto &c4 = std::get<Chart229::CertRow>(r4);
@@ -50,14 +50,14 @@ static void TestCertRow() {
 
   // 4. Serialization to compact lowercase hex
   std::string serialized = Chart229::Serialize(c1);
-  CHECK(serialized == "ce 7c9 7b7 a 70d 1.4ef0d7e762624p-11 7 d 1");
+  CHECK(serialized == "ce 7c9 7b7 a 70d 1.4ef0d7e762624p-11 7 d 1 8");
 
   // 5. Round trip
   auto r_rt = Chart229::Parse(serialized);
   CHECK(std::holds_alternative<Chart229::CertRow>(r_rt));
   CHECK(std::get<Chart229::CertRow>(r_rt) == c1);
 
-  // 6. Root node with parent_id = -1
+  // 6. Root node with parent_id = -1; cone_samples is written in hex.
   Chart229::CertRow root_cert{
       .id = 0,
       .parent_id = -1,
@@ -67,27 +67,19 @@ static void TestCertRow() {
       .in0 = 1,
       .in1 = 2,
       .in2 = 3,
+      .cone_samples = 12,
   };
   std::string root_s = Chart229::Serialize(root_cert);
-  CHECK(root_s == "ce 0 -1 0 2a 1p-1 1 2 3");
+  CHECK(root_s == "ce 0 -1 0 2a 1p-1 1 2 3 c");
   auto root_parsed = Chart229::Parse(root_s);
   CHECK(std::holds_alternative<Chart229::CertRow>(root_parsed));
   CHECK(std::get<Chart229::CertRow>(root_parsed) == root_cert);
+  auto root_legacy = Chart229::Parse(Chart229::SerializeLegacy(root_cert));
+  CHECK(std::holds_alternative<Chart229::CertRow>(root_legacy));
+  CHECK(std::get<Chart229::CertRow>(root_legacy) == root_cert);
 
-  // 7. Trailing cone_samples (pool the triple index refers to)
-  Chart229::CertRow cs_cert = root_cert;
-  cs_cert.cone_samples = 12;
-  std::string cs_s = Chart229::Serialize(cs_cert);
-  CHECK(cs_s == "ce 0 -1 0 2a 1p-1 1 2 3 c");
-  auto cs_parsed = Chart229::Parse(cs_s);
-  CHECK(std::holds_alternative<Chart229::CertRow>(cs_parsed));
-  CHECK(std::get<Chart229::CertRow>(cs_parsed) == cs_cert);
-  // Legacy decimal form with cone_samples, and rows without it parse as 0.
-  auto cs_legacy = Chart229::Parse(Chart229::SerializeLegacy(cs_cert));
-  CHECK(std::holds_alternative<Chart229::CertRow>(cs_legacy));
-  CHECK(std::get<Chart229::CertRow>(cs_legacy).cone_samples == 12);
-  CHECK(std::get<Chart229::CertRow>(root_parsed).cone_samples == 0);
-  // cone_samples must be positive.
+  // 7. cone_samples (the pool the triple index refers to) is required and positive.
+  CHECK(Chart229::IsError(Chart229::Parse("ce 0 -1 0 2a 1p-1 1 2 3")));
   CHECK(Chart229::IsError(Chart229::Parse("ce 0 -1 0 2a 1p-1 1 2 3 0")));
 
   printf("  CertRow tests PASSED.\n");
@@ -97,7 +89,7 @@ static void TestMixedCertRow() {
   printf("Testing MixedCertRow...\n");
 
   // 1. Legacy decimal parsing
-  std::string_view legacy_mx = "MX 18 3 4 2 0.0009765625 256 0.5 1 2 3 257 0.5 4 5 6";
+  std::string_view legacy_mx = "MX 18 3 4 2 0.0009765625 256 0.5 1 2 3 257 0.5 4 5 6 8";
   auto r1 = Chart229::Parse(legacy_mx);
   CHECK(std::holds_alternative<Chart229::MixedCertRow>(r1));
   const auto &m1 = std::get<Chart229::MixedCertRow>(r1);
@@ -115,24 +107,16 @@ static void TestMixedCertRow() {
 
   // 2. Compact hex serialization
   std::string s_hex = Chart229::Serialize(m1);
-  CHECK(s_hex == "mx 12 3 4 2 1p-10 100 1p-1 1 2 3 101 1p-1 4 5 6");
+  CHECK(s_hex == "mx 12 3 4 2 1p-10 100 1p-1 1 2 3 101 1p-1 4 5 6 8");
 
   // 3. Compact hex parsing & round trip
   auto r2 = Chart229::Parse(s_hex);
   CHECK(std::holds_alternative<Chart229::MixedCertRow>(r2));
   CHECK(std::get<Chart229::MixedCertRow>(r2) == m1);
 
-  // 4. Trailing cone_samples
-  Chart229::MixedCertRow m_cs = m1;
-  m_cs.cone_samples = 14;
-  std::string s_cs = Chart229::Serialize(m_cs);
-  CHECK(s_cs == "mx 12 3 4 2 1p-10 100 1p-1 1 2 3 101 1p-1 4 5 6 e");
-  auto r_cs = Chart229::Parse(s_cs);
-  CHECK(std::holds_alternative<Chart229::MixedCertRow>(r_cs));
-  CHECK(std::get<Chart229::MixedCertRow>(r_cs) == m_cs);
-  auto r_cs_legacy = Chart229::Parse(Chart229::SerializeLegacy(m_cs));
-  CHECK(std::holds_alternative<Chart229::MixedCertRow>(r_cs_legacy));
-  CHECK(std::get<Chart229::MixedCertRow>(r_cs_legacy).cone_samples == 14);
+  // 4. cone_samples is parsed (decimal 8 in the legacy row) and required.
+  CHECK(m1.cone_samples == 8);
+  CHECK(Chart229::IsError(Chart229::Parse("mx 12 3 4 2 1p-10 100 1p-1 1 2 3 101 1p-1 4 5 6")));
 
   printf("  MixedCertRow tests PASSED.\n");
 }
@@ -271,7 +255,7 @@ static void TestCommentsAndUtilities() {
   CHECK(Chart229::IsEmptyOrComment(c1));
 
   // Node ID/Parent/Depth utilities
-  auto row_cert = Chart229::Parse("ce 7c9 7b7 a 70d 1.4ef0d7e762624p-11 7 d 1");
+  auto row_cert = Chart229::Parse("ce 7c9 7b7 a 70d 1.4ef0d7e762624p-11 7 d 1 8");
   CHECK(Chart229::GetId(row_cert) == 1993);
   CHECK(Chart229::GetParentId(row_cert) == 1975);
   CHECK(Chart229::GetDepth(row_cert) == 10);
@@ -282,12 +266,12 @@ static void TestCommentsAndUtilities() {
   CHECK(Chart229::GetDepth(row_empty) == 0);
 
   // Mixed whitespace (spaces and tabs) tokenization via cc-lib Util
-  auto row_tab = Chart229::Parse("ce \t 7c9 \t\t 7b7 \t a \t 70d \t 1.4ef0d7e762624p-11 \t 7 \t d \t 1 \t ");
+  auto row_tab = Chart229::Parse("ce \t 7c9 \t\t 7b7 \t a \t 70d \t 1.4ef0d7e762624p-11 \t 7 \t d \t 1 \t 8 \t ");
   CHECK(std::holds_alternative<Chart229::CertRow>(row_tab));
   CHECK(std::get<Chart229::CertRow>(row_tab) == std::get<Chart229::CertRow>(row_cert));
 
   // Legacy serialization
-  CHECK(Chart229::SerializeLegacy(row_cert) == "CE 1993 1975 10 1805 0.00063884886633153561 7 13 1");
+  CHECK(Chart229::SerializeLegacy(row_cert) == "CE 1993 1975 10 1805 0.00063884886633153561 7 13 1 8");
 
   printf("  Comments and utilities tests PASSED.\n");
 }
