@@ -206,10 +206,10 @@ int main(int argc, char **argv) {
         const double sec =
             std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count();
         printf("[%zu/%zu subtrees, %.0fs] nodes %lld (%.0f/s): ce %lld tu %lld pr %lld pf %lld "
-               "df %lld\n",
+               "df %lld (max pool %lld triples)\n",
                finished, items.size(), sec, (long long)total.nodes, total.nodes / std::max(sec, 1e-9),
                (long long)total.ce, (long long)total.tu, (long long)total.pr, (long long)total.pf,
-               (long long)total.df);
+               (long long)total.df, (long long)total.max_pool_triples);
         fflush(stdout);
       }
     }

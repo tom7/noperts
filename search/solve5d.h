@@ -16,7 +16,6 @@
 #define _NOPERT229_SOLVE5D_H
 
 #include <cstdint>
-#include <map>
 #include <memory>
 #include <optional>
 #include <string>
@@ -69,6 +68,7 @@ struct Stats {
   // rejected (a sign the double screen is too optimistic).
   int64_t exact_rejects = 0;
   double worst_margin = 1e300;
+  int64_t max_pool_triples = 0;
   void Add(const Stats &o);
 };
 
@@ -98,8 +98,11 @@ class Solver {
   Job job_;
   Options opt_;
   Stats stats_;
-  // Pools by view path (shared by the box splits of one view).
-  std::map<std::string, std::unique_ptr<contacts5d::ContactPool>> pools_;
+  // Pools of the most recently used views (the depth-first search revisits a
+  // view across consecutive box splits). Pools can be large (up to ~C(256,3)
+  // triples), so only a few are kept.
+  static constexpr size_t kMaxCachedPools = 4;
+  std::vector<std::pair<std::string, std::unique_ptr<contacts5d::ContactPool>>> pools_;
 };
 
 }  // namespace solve5d
