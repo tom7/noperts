@@ -17,6 +17,7 @@ void Stats::Add(const Stats &o) {
   pf += o.pf;
   df += o.df;
   exact_rejects += o.exact_rejects;
+  max_pool_triples = std::max(max_pool_triples, o.max_pool_triples);
   worst_margin = std::min(worst_margin, o.worst_margin);
 }
 
@@ -58,15 +59,21 @@ std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
 
 const contacts5d::ContactPool &Solver::Pool(const Node &node) {
   const std::string view = rows5d::ViewPath(node.path);
-  auto it = pools_.find(view);
-  if (it == pools_.end()) {
-    contacts5d::PoolParams params;
-    params.cone_samples = opt_.cone_samples;
-    auto pool = std::make_unique<contacts5d::ContactPool>(
-        contacts5d::BuildContactPool(geom5d::ToDouble(node.tri), params));
-    it = pools_.emplace(view, std::move(pool)).first;
+  for (size_t i = 0; i < pools_.size(); i++) {
+    if (pools_[i].first == view) {
+      // Move to the front (most recently used).
+      std::rotate(pools_.begin(), pools_.begin() + i, pools_.begin() + i + 1);
+      return *pools_.front().second;
+    }
   }
-  return *it->second;
+  contacts5d::PoolParams params;
+  params.cone_samples = opt_.cone_samples;
+  auto pool = std::make_unique<contacts5d::ContactPool>(
+      contacts5d::BuildContactPool(geom5d::ToDouble(node.tri), params));
+  stats_.max_pool_triples = std::max<int64_t>(stats_.max_pool_triples, pool->triples.size());
+  pools_.insert(pools_.begin(), {view, std::move(pool)});
+  if (pools_.size() > kMaxCachedPools) pools_.pop_back();
+  return *pools_.front().second;
 }
 
 std::optional<rows5d::Leaf> Solver::TryLeaf(const Node &node) {
