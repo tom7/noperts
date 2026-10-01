@@ -36,6 +36,16 @@ TriangleQ SplitTriangle(const TriangleQ &t, int child);
 // Applies the subdivision digits ('0'..'3') in order.
 TriangleQ SplitTrianglePath(TriangleQ t, std::string_view path);
 
+// Whether every corner of `inner` is in the closed triangle `outer` (both on
+// the plane x + y + z = 1), i.e. Lean's InTriangle(inner) ⊆ InTriangle(outer).
+bool TriangleContains(const TriangleQ &outer, const TriangleQ &inner);
+// A triangle on the plane x + y + z = 1 containing t whose coordinates are
+// dyadic with about `rel_bits` bits below t's size: t enlarged about its
+// centroid by a relative 2^-(rel_bits - 4), corners rounded to the grid.
+// Checking a certificate over it is much cheaper than over t, whose
+// coordinates come from facet-plane intersections (~1000 bits).
+TriangleQ OuterDyadicTriangle(const TriangleQ &t, int rel_bits = 30);
+
 struct TriangleD {
   std::array<vec3, 3> corners;
 };

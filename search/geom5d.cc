@@ -33,6 +33,58 @@ TriangleQ SplitTrianglePath(TriangleQ t, std::string_view path) {
   return t;
 }
 
+bool TriangleContains(const TriangleQ &outer, const TriangleQ &inner) {
+  const Q one(1);
+  for (const auto &t : {outer, inner}) {
+    for (const auto &c : t) CHECK(c[0] + c[1] + c[2] == one) << "triangle not on x + y + z = 1";
+  }
+  // Barycentric coordinates in the (x, y) projection, which is affine on
+  // the plane.
+  const Q ax = outer[1][0] - outer[0][0], ay = outer[1][1] - outer[0][1];
+  const Q bx = outer[2][0] - outer[0][0], by = outer[2][1] - outer[0][1];
+  const Q det = ax * by - ay * bx;
+  CHECK(BigRat::Sign(det) != 0) << "degenerate outer triangle";
+  for (const auto &p : inner) {
+    const Q px = p[0] - outer[0][0], py = p[1] - outer[0][1];
+    // p - outer[0] = s (outer[1] - outer[0]) + u (outer[2] - outer[0]).
+    const Q s = (px * by - py * bx) / det;
+    const Q u = (ax * py - ay * px) / det;
+    if (BigRat::Sign(s) < 0 || BigRat::Sign(u) < 0 || one < s + u) return false;
+  }
+  return true;
+}
+
+TriangleQ OuterDyadicTriangle(const TriangleQ &t, int rel_bits) {
+  const TriangleD d = ToDouble(t);
+  double size = 0.0;
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      for (int k = 0; k < 3; k++) size = std::max(size, std::abs(d.corners[i][k] - d.corners[j][k]));
+    }
+  }
+  CHECK(size > 0.0);
+  const int bits = (int)std::ceil(-std::log2(size)) + rel_bits;
+  const BigInt scale = BigInt::Pow(BigInt(2), bits);
+  auto round = [&](const Q &v) {
+    auto [num, den] = (v * Q(scale, BigInt(1)) + Q(1, 2)).Parts();
+    return Q(BigInt::DivFloor(num, den), scale);
+  };
+  const Q third(1, 3);
+  const VecQ g = {(t[0][0] + t[1][0] + t[2][0]) * third, (t[0][1] + t[1][1] + t[2][1]) * third,
+                  (t[0][2] + t[1][2] + t[2][2]) * third};
+  for (int e = rel_bits - 4; e > 0; e--) {
+    const Q grow = Q(1) + Q(BigInt(1), BigInt::Pow(BigInt(2), e));
+    TriangleQ out;
+    for (int i = 0; i < 3; i++) {
+      const Q x = round(g[0] + (t[i][0] - g[0]) * grow), y = round(g[1] + (t[i][1] - g[1]) * grow);
+      out[i] = {x, y, Q(1) - x - y};
+    }
+    if (TriangleContains(out, t)) return out;
+  }
+  LOG(FATAL) << "no dyadic outer triangle";
+  return t;
+}
+
 TriangleD ToDouble(const TriangleQ &t) {
   TriangleD d;
   for (int i = 0; i < 3; i++) {
