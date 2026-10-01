@@ -1,4 +1,4 @@
-default : exact5d_test.exe geom5d_test.exe contacts5d_test.exe cert5d_test.exe annular229_test.exe tubetree229_test.exe nopert231_test.exe tube229_test.exe lib229_test.exe chart229_test.exe difficult229.exe lean229.exe pack229.exe test_all_pending.exe normalize-chart.exe compare-charts.exe split-chart.exe split-chart_test.exe flatten-charts.exe flatten-charts_test.exe
+default : exact5d_test.exe geom5d_test.exe contacts5d_test.exe cert5d_test.exe tubeatlas5d_test.exe annular229_test.exe tubetree229_test.exe nopert231_test.exe tube229_test.exe lib229_test.exe chart229_test.exe difficult229.exe lean229.exe pack229.exe test_all_pending.exe normalize-chart.exe compare-charts.exe split-chart.exe split-chart_test.exe flatten-charts.exe flatten-charts_test.exe
 
 all: default test229.exe codebdd229.exe convert_tubecert229.exe incrementaltube229.exe tubecert229.exe tube-visualize.exe analyzedifficult.exe replace_tu_with_difficult.exe extract_tu_intervals.exe generate_seeds229.exe apply_shallow_cert.exe
 
@@ -72,7 +72,7 @@ RUPERTS_OBJECTS=$(RUPERTS)/ruperts-util.o $(RUPERTS)/big-csg.o $(RUPERTS)/render
 OBJECTS=$(CC_LIB_OBJECTS) $(CODEC_OBJECTS) $(SQLITE_OBJECTS) $(RUPERTS_OBJECTS)
 
 # library objects shared in Nopert 229 search. No OpenCL.
-OBJECTS_229=nopert231.o tube229.o tubetree229.o annular229.o chart229.o exact5d.o geom5d.o contacts5d.o bounds5d.o cert5d.o
+OBJECTS_229=nopert231.o tube229.o tubetree229.o annular229.o chart229.o exact5d.o geom5d.o contacts5d.o bounds5d.o cert5d.o tubeatlas5d.o
 
 $(CC_LIB)/%.o : $(CC_LIB)/%.cc
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
