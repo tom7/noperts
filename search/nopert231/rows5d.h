@@ -11,6 +11,8 @@
 //
 // Journal lines (text):
 //   ce <path> <cone_samples> <triple> <in0> <in1> <in2>   projectiveGlobal (ballMultiplier 0)
+//   mx <path> <cone_samples> <K> {<triple> <in0> <in1> <in2> <weight>}^K
+//                                 projectiveMixedGlobal; exact weights summing to 1
 //   tu <path> <r>                 symmetryTube with radius r (exact rational)
 //   pr <path>                     radiusPrune
 //   pf <path> <+|->               fundamentalPrune (direction positive/negative)
@@ -52,6 +54,15 @@ struct CertLeaf {
   int triple = 0;
   std::array<int, 3> inner{};
 };
+struct MixedLeaf {
+  int cone_samples = 0;
+  struct Component {
+    int triple = 0;
+    std::array<int, 3> inner{};
+    BigRat weight;
+  };
+  std::vector<Component> components;  // 1..4
+};
 struct TubeLeaf {
   BigRat r;
 };
@@ -60,7 +71,7 @@ struct FundamentalPruneLeaf {
   int direction = 1;  // +1 positive, -1 negative
 };
 struct DeferredLeaf {};
-using Leaf = std::variant<CertLeaf, TubeLeaf, RadiusPruneLeaf, FundamentalPruneLeaf, DeferredLeaf>;
+using Leaf = std::variant<CertLeaf, MixedLeaf, TubeLeaf, RadiusPruneLeaf, FundamentalPruneLeaf, DeferredLeaf>;
 
 struct Record {
   std::string path;

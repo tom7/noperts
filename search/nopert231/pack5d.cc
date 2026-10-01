@@ -167,6 +167,34 @@ class Packer {
             for (int m = 0; m < 3; m++) r += std::format(",{}", g.inner_index[m]);
             r += "," + Zigzag(g.ball_multiplier);
             return r;
+          } else if constexpr (std::is_same_v<T, rows5d::MixedLeaf>) {
+            contacts5d::PoolParams params;
+            params.cone_samples = l.cone_samples;
+            const auto pool = contacts5d::BuildContactPool(geom5d::ToDouble(tri), params);
+            std::vector<int> triples;
+            std::vector<std::array<int, 3>> inner;
+            std::vector<BigRat> weights;
+            for (const auto &c : l.components) {
+              CHECK(c.triple < (int)pool.triples.size()) << "stale triple index at " << path;
+              triples.push_back(c.triple);
+              inner.push_back(c.inner);
+              weights.push_back(c.weight);
+            }
+            const exact5d::MixedBox m = cert5d::ExactMixedBox(pool, triples, inner, weights, tri, box, chart_);
+            if (exact_check_) CHECK(exact5d::Valid(m)) << "mixture fails exactly at " << path;
+            std::string r = std::format(",9,{},{},0,{}", id, iv, tri_id);
+            for (int k = 0; k < 4; k++) r += "," + Zigzag(m.weight[k]);
+            for (int k = 0; k < 4; k++) {
+              const auto &c = m.component[k].certificate;
+              for (const auto *arr : {&c.edge_start, &c.edge_finish, &c.edge_start2, &c.edge_finish2,
+                                      &c.mix, &c.index, &c.nonzero_witness}) {
+                for (int i = 0; i < 3; i++) r += std::format(",{}", (*arr)[i]);
+              }
+              r += "," + Zigzag(c.B);
+              for (int i = 0; i < 3; i++) r += std::format(",{}", m.component[k].inner_index[i]);
+              r += "," + Zigzag(m.component[k].ball_multiplier);
+            }
+            return r;
           } else if constexpr (std::is_same_v<T, rows5d::TubeLeaf>) {
             const std::string view = rows5d::ViewPath(path);
             std::string r = std::format(",6,{},{},0,{},{},{}", id, iv, Zigzag(l.r), t, view.size());

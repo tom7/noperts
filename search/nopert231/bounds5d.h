@@ -35,7 +35,9 @@ std::array<Quad, 3> Displacement(int chart, int inner, int outer);
 // One contact's term n . (e x d(w)) = d(w) . (n x e), for view n.
 Quad ContactTerm(const std::array<Quad, 3> &d, const vec3 &n, const vec3 &e);
 
-// QuadraticBernstein.lower over the box.
+// QuadraticBernstein.coefficient over the box, for (i, j, k) in 0..2 as
+// index 9 i + 3 j + k; QuadraticBernstein.lower is their minimum.
+std::array<double, 27> BernsteinCoefficients(const Quad &q, const geom5d::BoxD &box);
 double BernsteinLower(const Quad &q, const geom5d::BoxD &box);
 
 // AtlasEdgeCertificate.Box.dBound and displacementError.

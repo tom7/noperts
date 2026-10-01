@@ -53,6 +53,13 @@ std::string FormatRecord(const Record &r) {
         if constexpr (std::is_same_v<T, CertLeaf>) {
           return std::format("ce {} {} {} {} {} {}", p, leaf.cone_samples, leaf.triple,
                              leaf.inner[0], leaf.inner[1], leaf.inner[2]);
+        } else if constexpr (std::is_same_v<T, MixedLeaf>) {
+          std::string out = std::format("mx {} {} {}", p, leaf.cone_samples, leaf.components.size());
+          for (const auto &c : leaf.components) {
+            out += std::format(" {} {} {} {} {}", c.triple, c.inner[0], c.inner[1], c.inner[2],
+                               c.weight.ToString());
+          }
+          return out;
         } else if constexpr (std::is_same_v<T, TubeLeaf>) {
           return std::format("tu {} {}", p, leaf.r.ToString());
         } else if constexpr (std::is_same_v<T, RadiusPruneLeaf>) {
@@ -89,6 +96,18 @@ Journal ParseJournal(std::string_view text) {
       CertLeaf c;
       CHECK(ss >> c.cone_samples >> c.triple >> c.inner[0] >> c.inner[1] >> c.inner[2]) << line;
       leaf = c;
+    } else if (tag == "mx") {
+      MixedLeaf m;
+      int k = 0;
+      CHECK(ss >> m.cone_samples >> k && k >= 1 && k <= 4) << line;
+      for (int i = 0; i < k; i++) {
+        MixedLeaf::Component c;
+        std::string w;
+        CHECK(ss >> c.triple >> c.inner[0] >> c.inner[1] >> c.inner[2] >> w) << line;
+        c.weight = BigRat(std::string_view(w));
+        m.components.push_back(c);
+      }
+      leaf = m;
     } else if (tag == "tu") {
       std::string r;
       CHECK(ss >> r) << line;

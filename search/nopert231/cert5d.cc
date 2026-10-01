@@ -6,6 +6,8 @@
 #include <vector>
 
 #include "base/logging.h"
+#include "bignum/big-overloads.h"
+#include "lp5d.h"
 #include "nopert231.h"
 
 namespace cert5d {
@@ -62,48 +64,36 @@ std::vector<int> BestInner(const ContactPool &pool, const geom5d::TriangleD &tri
   return best;
 }
 
-double DisplacementLower(const ContactPool &pool, const Triple &triple,
-                         const std::array<int, 3> &inner, const geom5d::TriangleD &tri,
-                         const geom5d::BoxD &box, int chart, double ball_multiplier) {
+namespace {
+// The distinct view-control quadratics: corners 0, 1, 2, then the
+// off-diagonal controls 2 Q(mid) - (Q(t_i) + Q(t_j)) / 2 for 01, 02, 12.
+std::array<Quad, 6> ViewControls(const ContactPool &pool, const Triple &triple,
+                                 const std::array<int, 3> &inner, const geom5d::TriangleD &tri,
+                                 int chart, double ball_multiplier) {
   std::array<std::array<Quad, 3>, 3> d;
   for (int i = 0; i < 3; i++) {
     d[i] = bounds5d::Displacement(chart, inner[i], pool.contacts[triple.c[i]].vertex);
   }
-  std::array<Quad, 3> at_corner;
+  std::array<Quad, 6> out;
+  for (int i = 0; i < 3; i++) out[i] = ViewDisplacement(pool, triple, d, tri.corners[i], ball_multiplier);
+  int n = 3;
   for (int i = 0; i < 3; i++) {
-    at_corner[i] = ViewDisplacement(pool, triple, d, tri.corners[i], ball_multiplier);
-  }
-  double lower = 1e300;
-  for (int i = 0; i < 3; i++) {
-    lower = std::min(lower, bounds5d::BernsteinLower(at_corner[i], box));
     for (int j = i + 1; j < 3; j++) {
       const vec3 mid = (tri.corners[i] + tri.corners[j]) * 0.5;
-      // Off-diagonal control: 2 Q(mid) - (Q(t_i) + Q(t_j)) / 2.
-      const Quad control = bounds5d::Add(
+      out[n++] = bounds5d::Add(
           bounds5d::Scale(2.0, ViewDisplacement(pool, triple, d, mid, ball_multiplier)),
-          bounds5d::Scale(-0.5, bounds5d::Add(at_corner[i], at_corner[j])));
-      lower = std::min(lower, bounds5d::BernsteinLower(control, box));
+          bounds5d::Scale(-0.5, bounds5d::Add(out[i], out[j])));
     }
   }
-  return lower;
+  return out;
 }
 
-double Margin(const ContactPool &pool, const Triple &triple, const std::array<int, 3> &inner,
-              const geom5d::TriangleD &tri, const geom5d::BoxD &box, int chart,
-              double ball_multiplier) {
-  return DisplacementLower(pool, triple, inner, tri, box, chart, ball_multiplier) -
-         bounds5d::DBound(box) * triple.weighted_defect_upper -
-         bounds5d::DisplacementError(box);
-}
-
-Single BestSingle(const ContactPool &pool, const geom5d::TriangleD &tri,
-                  const geom5d::BoxD &box, int chart, int max_full) {
-  Single best;
-  if (pool.triples.empty()) return best;
-  const std::vector<int> inner_of = BestInner(pool, tri, box, chart);
-
-  // Screen: the displacement at the box center and centroid view, minus the
-  // defect charge.
+// Center screening of all triples: (score, triple index), best first for
+// the top `keep`.
+std::vector<std::pair<double, int>> ScreenTriples(const ContactPool &pool,
+                                                  const geom5d::TriangleD &tri,
+                                                  const geom5d::BoxD &box, int chart,
+                                                  const std::vector<int> &inner_of, int keep) {
   const vec3 view = geom5d::Centroid(tri);
   std::vector<double> term(pool.contacts.size());
   for (size_t c = 0; c < pool.contacts.size(); c++) {
@@ -122,13 +112,44 @@ Single BestSingle(const ContactPool &pool, const geom5d::TriangleD &tri,
     for (int i = 0; i < 3; i++) v += yocto::dot(view, w[i]) * term[tr.c[i]];
     screened.push_back({v - dbound * tr.weighted_defect_upper, (int)t});
   }
-  const int full = std::min<int>(max_full, screened.size());
-  std::partial_sort(screened.begin(), screened.begin() + full, screened.end(),
+  keep = std::min<int>(keep, screened.size());
+  std::partial_sort(screened.begin(), screened.begin() + keep, screened.end(),
                     [](const auto &a, const auto &b) { return a.first > b.first; });
-  for (int f = 0; f < full; f++) {
-    const int t = screened[f].second;
+  screened.resize(keep);
+  return screened;
+}
+
+std::array<int, 3> InnerOf(const std::vector<int> &inner_of, const Triple &tr) {
+  return {inner_of[tr.c[0]], inner_of[tr.c[1]], inner_of[tr.c[2]]};
+}
+}  // namespace
+
+double DisplacementLower(const ContactPool &pool, const Triple &triple,
+                         const std::array<int, 3> &inner, const geom5d::TriangleD &tri,
+                         const geom5d::BoxD &box, int chart, double ball_multiplier) {
+  double lower = 1e300;
+  for (const Quad &q : ViewControls(pool, triple, inner, tri, chart, ball_multiplier)) {
+    lower = std::min(lower, bounds5d::BernsteinLower(q, box));
+  }
+  return lower;
+}
+
+double Margin(const ContactPool &pool, const Triple &triple, const std::array<int, 3> &inner,
+              const geom5d::TriangleD &tri, const geom5d::BoxD &box, int chart,
+              double ball_multiplier) {
+  return DisplacementLower(pool, triple, inner, tri, box, chart, ball_multiplier) -
+         bounds5d::DBound(box) * triple.weighted_defect_upper -
+         bounds5d::DisplacementError(box);
+}
+
+Single BestSingle(const ContactPool &pool, const geom5d::TriangleD &tri,
+                  const geom5d::BoxD &box, int chart, int max_full) {
+  Single best;
+  if (pool.triples.empty()) return best;
+  const std::vector<int> inner_of = BestInner(pool, tri, box, chart);
+  for (const auto &[score, t] : ScreenTriples(pool, tri, box, chart, inner_of, max_full)) {
     const Triple &tr = pool.triples[t];
-    const std::array<int, 3> inner = {inner_of[tr.c[0]], inner_of[tr.c[1]], inner_of[tr.c[2]]};
+    const std::array<int, 3> inner = InnerOf(inner_of, tr);
     const double m = Margin(pool, tr, inner, tri, box, chart);
     if (m > best.margin) best = Single{.triple = t, .inner = inner, .margin = m};
   }
@@ -147,6 +168,124 @@ exact5d::GlobalBox ExactGlobalBox(const ContactPool &pool, const Single &s,
   g.inner_index = s.inner;
   g.ball_multiplier = exact5d::Q(0);
   return g;
+}
+
+std::vector<double> MixtureColumn(const ContactPool &pool, const Triple &triple,
+                                  const std::array<int, 3> &inner, const geom5d::TriangleD &tri,
+                                  const geom5d::BoxD &box, int chart) {
+  const double charge = bounds5d::DBound(box) * triple.weighted_defect_upper;
+  std::vector<double> col;
+  col.reserve(6 * 27);
+  for (const Quad &q : ViewControls(pool, triple, inner, tri, chart, 0.0)) {
+    for (double c : bounds5d::BernsteinCoefficients(q, box)) col.push_back(c - charge);
+  }
+  return col;
+}
+
+Mixture BestMixture(const ContactPool &pool, const geom5d::TriangleD &tri,
+                    const geom5d::BoxD &box, int chart, int max_components, int candidates) {
+  Mixture best;
+  if (pool.triples.empty()) return best;
+  const std::vector<int> inner_of = BestInner(pool, tri, box, chart);
+  const auto screened = ScreenTriples(pool, tri, box, chart, inner_of, candidates);
+  std::vector<std::vector<double>> cols;
+  for (const auto &[score, t] : screened) {
+    cols.push_back(MixtureColumn(pool, pool.triples[t], InnerOf(inner_of, pool.triples[t]), tri, box, chart));
+  }
+  const double err = bounds5d::DisplacementError(box);
+  // Start from the best single column.
+  std::vector<int> chosen;
+  {
+    int bi = 0;
+    double bv = -1e300;
+    for (size_t c = 0; c < cols.size(); c++) {
+      const double v = *std::min_element(cols[c].begin(), cols[c].end());
+      if (v > bv) {
+        bv = v;
+        bi = c;
+      }
+    }
+    chosen.push_back(bi);
+  }
+  auto solve = [&](const std::vector<int> &set) {
+    std::vector<std::vector<double>> a;
+    for (int c : set) a.push_back(cols[c]);
+    return lp5d::SolveMaxMin(a);
+  };
+  lp5d::MaxMin mm = solve(chosen);
+  while ((int)chosen.size() < max_components) {
+    // The bottleneck coefficient of the current mixture.
+    int bottleneck = 0;
+    double low = 1e300;
+    for (size_t r = 0; r < cols[0].size(); r++) {
+      double v = 0.0;
+      for (size_t k = 0; k < chosen.size(); k++) v += mm.w[k] * cols[chosen[k]][r];
+      if (v < low) {
+        low = v;
+        bottleneck = r;
+      }
+    }
+    int add = -1;
+    double add_v = low;
+    for (size_t c = 0; c < cols.size(); c++) {
+      if (std::find(chosen.begin(), chosen.end(), (int)c) != chosen.end()) continue;
+      if (cols[c][bottleneck] > add_v) {
+        add_v = cols[c][bottleneck];
+        add = c;
+      }
+    }
+    if (add < 0) break;
+    std::vector<int> trial = chosen;
+    trial.push_back(add);
+    const lp5d::MaxMin tmm = solve(trial);
+    if (!(tmm.value > mm.value)) break;
+    chosen = trial;
+    mm = tmm;
+  }
+  for (size_t k = 0; k < chosen.size(); k++) {
+    const int t = screened[chosen[k]].second;
+    best.triples.push_back(t);
+    best.inner.push_back(InnerOf(inner_of, pool.triples[t]));
+    best.w.push_back(mm.w[k]);
+  }
+  best.margin = mm.value - err;
+  return best;
+}
+
+std::vector<BigRat> RationalWeights(const std::vector<double> &w) {
+  const int64_t scale = int64_t{1} << 40;
+  std::vector<BigRat> out;
+  BigRat sum(0);
+  for (size_t k = 0; k + 1 < w.size(); k++) {
+    // Rounded down, so the first K-1 never sum past 1.
+    const BigRat q((int64_t)std::floor(std::max(0.0, w[k]) * scale), scale);
+    out.push_back(q);
+    sum = sum + q;
+  }
+  BigRat last = BigRat(1) - sum;
+  CHECK(!(last < BigRat(0))) << "weights exceed 1";
+  out.push_back(last);
+  return out;
+}
+
+exact5d::MixedBox ExactMixedBox(const ContactPool &pool, const std::vector<int> &triples,
+                                const std::vector<std::array<int, 3>> &inner,
+                                const std::vector<BigRat> &weights,
+                                const exact5d::TriangleQ &tri, const geom5d::BoxQ &box,
+                                int chart) {
+  CHECK(!triples.empty() && triples.size() <= 4 && triples.size() == weights.size());
+  exact5d::MixedBox m;
+  m.interval = geom5d::ToInterval(box);
+  m.triangle = tri;
+  m.chart = chart;
+  for (int k = 0; k < 4; k++) {
+    const int src = k < (int)triples.size() ? k : 0;
+    m.component[k].certificate = contacts5d::ToAxisCertificate(pool, pool.triples[triples[src]], tri);
+    m.component[k].inner_index = inner[src];
+    m.component[k].ball_multiplier = exact5d::Q(0);
+    m.weight[k] = k < (int)triples.size() ? weights[k] : BigRat(0);
+  }
+  return m;
 }
 
 }  // namespace cert5d

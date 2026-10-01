@@ -12,6 +12,7 @@ namespace solve5d {
 void Stats::Add(const Stats &o) {
   nodes += o.nodes;
   ce += o.ce;
+  mx += o.mx;
   tu += o.tu;
   pr += o.pr;
   pf += o.pf;
@@ -86,16 +87,33 @@ std::optional<rows5d::Leaf> Solver::TryLeaf(const Node &node) {
   if (pool.triples.empty()) return std::nullopt;
   const geom5d::TriangleD td = geom5d::ToDouble(node.tri);
   const cert5d::Single s = cert5d::BestSingle(pool, td, bd, job_.chart, opt_.max_full);
-  if (s.triple < 0 || !(s.margin > 0)) return std::nullopt;
-  if (opt_.exact_check) {
-    const exact5d::GlobalBox g = cert5d::ExactGlobalBox(pool, s, node.tri, node.box, job_.chart);
-    if (!exact5d::Valid(g)) {
-      stats_.exact_rejects++;
-      return std::nullopt;
+  if (s.triple >= 0 && s.margin > 0) {
+    bool ok = true;
+    if (opt_.exact_check) {
+      ok = exact5d::Valid(cert5d::ExactGlobalBox(pool, s, node.tri, node.box, job_.chart));
+      if (!ok) stats_.exact_rejects++;
+    }
+    if (ok) {
+      stats_.worst_margin = std::min(stats_.worst_margin, s.margin);
+      return rows5d::CertLeaf{.cone_samples = opt_.cone_samples, .triple = s.triple, .inner = s.inner};
     }
   }
-  stats_.worst_margin = std::min(stats_.worst_margin, s.margin);
-  return rows5d::CertLeaf{.cone_samples = opt_.cone_samples, .triple = s.triple, .inner = s.inner};
+  if (opt_.max_mix_components <= 1) return std::nullopt;
+  const cert5d::Mixture m = cert5d::BestMixture(pool, td, bd, job_.chart, opt_.max_mix_components);
+  if (m.triples.size() < 2 || !(m.margin > 0)) return std::nullopt;
+  const std::vector<BigRat> weights = cert5d::RationalWeights(m.w);
+  if (opt_.exact_check &&
+      !exact5d::Valid(cert5d::ExactMixedBox(pool, m.triples, m.inner, weights, node.tri, node.box,
+                                            job_.chart))) {
+    stats_.exact_rejects++;
+    return std::nullopt;
+  }
+  stats_.worst_margin = std::min(stats_.worst_margin, m.margin);
+  rows5d::MixedLeaf leaf{.cone_samples = opt_.cone_samples};
+  for (size_t k = 0; k < m.triples.size(); k++) {
+    leaf.components.push_back({.triple = m.triples[k], .inner = m.inner[k], .weight = weights[k]});
+  }
+  return leaf;
 }
 
 char Solver::ChooseSplit(const Node &node) const {
@@ -124,6 +142,7 @@ std::vector<rows5d::Record> Solver::SolveSubtree(const Node &root, int64_t max_n
           [&](const auto &l) {
             using T = std::decay_t<decltype(l)>;
             if constexpr (std::is_same_v<T, rows5d::CertLeaf>) stats_.ce++;
+            if constexpr (std::is_same_v<T, rows5d::MixedLeaf>) stats_.mx++;
             if constexpr (std::is_same_v<T, rows5d::TubeLeaf>) stats_.tu++;
             if constexpr (std::is_same_v<T, rows5d::RadiusPruneLeaf>) stats_.pr++;
             if constexpr (std::is_same_v<T, rows5d::FundamentalPruneLeaf>) stats_.pf++;

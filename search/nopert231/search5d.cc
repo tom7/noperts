@@ -143,6 +143,7 @@ int main(int argc, char **argv) {
     else if (a == "--split_kappa") args.opt.split_kappa = std::stod(next());
     else if (a == "--max_depth") args.opt.max_depth = std::stoi(next());
     else if (a == "--exact_check") args.opt.exact_check = true;
+    else if (a == "--max_mix") args.opt.max_mix_components = std::stoi(next());
     else if (a == "--retry_deferred") args.retry_deferred = true;
     else LOG(FATAL) << "unknown argument " << a;
   }
@@ -205,10 +206,10 @@ int main(int argc, char **argv) {
       if (finished % 64 == 0 || finished == items.size()) {
         const double sec =
             std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count();
-        printf("[%zu/%zu subtrees, %.0fs] nodes %lld (%.0f/s): ce %lld tu %lld pr %lld pf %lld "
+        printf("[%zu/%zu subtrees, %.0fs] nodes %lld (%.0f/s): ce %lld mx %lld tu %lld pr %lld pf %lld "
                "df %lld (max pool %lld triples)\n",
                finished, items.size(), sec, (long long)total.nodes, total.nodes / std::max(sec, 1e-9),
-               (long long)total.ce, (long long)total.tu, (long long)total.pr, (long long)total.pf,
+               (long long)total.ce, (long long)total.mx, (long long)total.tu, (long long)total.pr, (long long)total.pf,
                (long long)total.df, (long long)total.max_pool_triples);
         fflush(stdout);
       }

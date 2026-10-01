@@ -53,6 +53,44 @@ exact5d::GlobalBox ExactGlobalBox(const contacts5d::ContactPool &pool, const Sin
                                   const exact5d::TriangleQ &tri, const geom5d::BoxQ &box,
                                   int chart);
 
+// Mixtures (Lean's projectiveMixedGlobal): a convex combination of up to four
+// triples' view-control quadratics. Its Bernstein coefficients are the same
+// combination of each component's, so the best weights solve
+//   max_w min_r sum_k w_k a[k][r],  a[k] = MixtureColumn(component k).
+struct Mixture {
+  std::vector<int> triples;
+  std::vector<std::array<int, 3>> inner;
+  std::vector<double> w;
+  double margin = -1e300;  // max-min value minus displacementError
+};
+
+// The 6 x 27 Bernstein coefficients of a component's distinct view controls
+// (corners, then the 01, 02, 12 off-diagonal controls), minus
+// dBound * weightedDefectUpper.
+std::vector<double> MixtureColumn(const contacts5d::ContactPool &pool,
+                                  const contacts5d::Triple &triple,
+                                  const std::array<int, 3> &inner, const geom5d::TriangleD &tri,
+                                  const geom5d::BoxD &box, int chart);
+
+// Greedy column generation: start from the best single triple; repeatedly
+// add the screened candidate that best raises the current bottleneck
+// coefficient, re-solving the weights, up to max_components.
+Mixture BestMixture(const contacts5d::ContactPool &pool, const geom5d::TriangleD &tri,
+                    const geom5d::BoxD &box, int chart, int max_components = 4,
+                    int candidates = 128);
+
+// Exact weights for Lean: each rounded down to a multiple of 2^-40, the last
+// taking the remainder (so they are nonnegative and sum to exactly 1).
+std::vector<BigRat> RationalWeights(const std::vector<double> &w);
+
+// The exact Lean mixed box (padded to four components with zero weight).
+exact5d::MixedBox ExactMixedBox(const contacts5d::ContactPool &pool,
+                                const std::vector<int> &triples,
+                                const std::vector<std::array<int, 3>> &inner,
+                                const std::vector<BigRat> &weights,
+                                const exact5d::TriangleQ &tri, const geom5d::BoxQ &box,
+                                int chart);
+
 }  // namespace cert5d
 
 #endif

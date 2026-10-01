@@ -8,6 +8,7 @@
 //       table certifies at this view (tubeatlas5d)
 //   ce  a single contact triple certifies the node (cert5d) with a positive
 //       (conservative) double margin; optionally confirmed by exact5d
+//   mx  else a mixture of up to four triples does
 //
 // Prunes and tubes are decided with the exact predicates Lean uses (exact5d);
 // certificates are confirmed exactly at packing time (and by Lean).
@@ -40,6 +41,9 @@ struct Options {
   double split_kappa = 0.5;
   // Nodes deeper than this become deferred (df) leaves.
   int max_depth = 80;
+  // When no single triple certifies a node, try a mixture of up to this many
+  // triples (Lean's projectiveMixedGlobal); 1 disables mixtures.
+  int max_mix_components = 4;
   // Confirm every certificate leaf with exact5d before accepting it. Off by
   // default: it costs ~30x the double search (the code triangles' corners are
   // ~1000-bit rationals), the double margin is conservative (no exact
@@ -63,7 +67,7 @@ std::vector<Node> Children(const Node &node, char split);
 
 struct Stats {
   int64_t nodes = 0;
-  int64_t ce = 0, tu = 0, pr = 0, pf = 0, df = 0;
+  int64_t ce = 0, mx = 0, tu = 0, pr = 0, pf = 0, df = 0;
   // Certificates whose double margin was positive but which the exact check
   // rejected (a sign the double screen is too optimistic).
   int64_t exact_rejects = 0;
