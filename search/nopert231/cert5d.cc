@@ -253,18 +253,29 @@ Mixture BestMixture(const ContactPool &pool, const geom5d::TriangleD &tri,
 }
 
 std::vector<BigRat> RationalWeights(const std::vector<double> &w) {
-  const int64_t scale = int64_t{1} << 40;
-  std::vector<BigRat> out;
-  BigRat sum(0);
+  CHECK(!w.empty());
+  constexpr int64_t kScale = int64_t{1} << 40;
+  double total = 0.0;
+  for (double x : w) total += std::max(0.0, x);
+  CHECK(total > 0.0);
+  // Integer numerators over 2^40: the first K-1 rounded down after
+  // normalizing (the LP's weights can sum to 1 + 1e-12), the last taking the
+  // remainder, which is kept nonnegative.
+  std::vector<int64_t> num(w.size(), 0);
+  int64_t sum = 0;
   for (size_t k = 0; k + 1 < w.size(); k++) {
-    // Rounded down, so the first K-1 never sum past 1.
-    const BigRat q((int64_t)std::floor(std::max(0.0, w[k]) * scale), scale);
-    out.push_back(q);
-    sum = sum + q;
+    num[k] = (int64_t)std::floor(std::max(0.0, w[k]) / total * (double)kScale);
+    sum += num[k];
   }
-  BigRat last = BigRat(1) - sum;
-  CHECK(!(last < BigRat(0))) << "weights exceed 1";
-  out.push_back(last);
+  while (sum > kScale) {
+    const size_t big = std::max_element(num.begin(), num.end() - 1) - num.begin();
+    const int64_t cut = std::min(num[big], sum - kScale);
+    num[big] -= cut;
+    sum -= cut;
+  }
+  num.back() = kScale - sum;
+  std::vector<BigRat> out;
+  for (int64_t n : num) out.push_back(BigRat(n, kScale));
   return out;
 }
 
