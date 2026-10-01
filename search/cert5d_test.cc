@@ -87,6 +87,19 @@ int main() {
          positive, valid);
   CHECK(valid > 0) << "expected some certified boxes";
 
+  // Rational weights are nonnegative and sum to exactly 1, even when the LP's
+  // weights overshoot 1 slightly.
+  for (const std::vector<double> &w : std::vector<std::vector<double>>{
+           {0.5, 0.5 + 1e-12}, {0.3, 0.7 + 1e-12, 1e-13}, {1.0}, {0.25, 0.25, 0.25, 0.25 + 3e-12}}) {
+    const auto q = cert5d::RationalWeights(w);
+    BigRat sum(0);
+    for (const auto &x : q) {
+      CHECK(!(x < BigRat(0)));
+      sum = sum + x;
+    }
+    CHECK(sum == BigRat(1));
+  }
+
   // Mixtures, on larger boxes (where single triples often fail).
   int mixed_tried = 0, single_ok = 0, mixed_ok = 0, mixed_valid = 0;
   for (int n = 0; n < 40; n++) {
