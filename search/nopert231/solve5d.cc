@@ -141,9 +141,11 @@ std::vector<rows5d::Record> Solver::SolveSubtree(const Node &root, int64_t max_n
     Node node = std::move(stack.back());
     stack.pop_back();
     stats_.nodes++;
+    if (live_ != nullptr) live_->nodes++;
     visited++;
     if (visited > max_nodes || (int)node.path.size() > opt_.max_depth) {
       stats_.df++;
+      if (live_ != nullptr) live_->df++;
       out.push_back({node.path, rows5d::DeferredLeaf{}});
       continue;
     }
@@ -158,6 +160,10 @@ std::vector<rows5d::Record> Solver::SolveSubtree(const Node &root, int64_t max_n
             if constexpr (std::is_same_v<T, rows5d::FundamentalPruneLeaf>) stats_.pf++;
           },
           *leaf);
+      if (live_ != nullptr) {
+        live_->leaves++;
+        if (std::holds_alternative<rows5d::TubeLeaf>(*leaf)) live_->tu++;
+      }
       out.push_back({node.path, *leaf});
       continue;
     }
