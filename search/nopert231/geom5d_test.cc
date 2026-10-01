@@ -47,6 +47,46 @@ static void TestTriangles() {
   printf("  triangles OK\n");
 }
 
+static void TestOuterDyadic() {
+  // TriangleContains: a triangle contains itself and its children, not its
+  // parent; corners on the boundary count.
+  const TriangleQ w = Wedge();
+  CHECK(TriangleContains(w, w));
+  for (int c = 0; c < 4; c++) {
+    CHECK(TriangleContains(w, SplitTriangle(w, c)));
+    if (c < 3) CHECK(!TriangleContains(SplitTriangle(w, c), w));
+  }
+  CHECK(!TriangleContains(SplitTriangle(w, 0), SplitTriangle(w, 1)));
+
+  // OuterDyadicTriangle contains its triangle, has short dyadic coordinates
+  // on the plane, and is only slightly larger.
+  std::mt19937_64 rng(2);
+  TriangleQ t = w;
+  for (int depth = 0; depth < 25; depth++) {
+    t = SplitTriangle(t, rng() % 4);
+    for (int rel_bits : {10, 30}) {
+      const TriangleQ o = OuterDyadicTriangle(t, rel_bits);
+      CHECK(TriangleContains(o, t));
+      // Not trivially contained in a big triangle: o is inside the parent
+      // wedge enlarged a little, and its corners are near t's.
+      const TriangleD td = ToDouble(t), od = ToDouble(o);
+      const double size = AngularDiameter(td);
+      for (int i = 0; i < 3; i++) {
+        CHECK(o[i][0] + o[i][1] + o[i][2] == Q(1));
+        for (int k = 0; k < 2; k++) {
+          // Dyadic with a small denominator.
+          const BigInt den = o[i][k].Denominator();
+          CHECK(den.ToString().size() < 40) << den.ToString();
+          CHECK(std::abs(od.corners[i][k] - td.corners[i][k]) <=
+                size * std::ldexp(1.0, 4 - rel_bits) + 1e-300)
+              << depth << " " << rel_bits;
+        }
+      }
+    }
+  }
+  printf("  outer dyadic OK\n");
+}
+
 static void TestBoxes() {
   for (int chart = 0; chart < 4; chart++) {
     const BoxQ root = RootBox(chart);
@@ -115,6 +155,7 @@ static void TestRotations() {
 
 int main() {
   TestTriangles();
+  TestOuterDyadic();
   TestBoxes();
   TestRotations();
   printf("geom5d tests PASSED\n");
