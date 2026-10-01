@@ -1,6 +1,6 @@
-default : annular229_test.exe tubetree229_test.exe nopert231_test.exe tube229_test.exe lib229_test.exe chart229_test.exe export_tubetree_pack.exe difficult229.exe lean229.exe pack229.exe test_all_pending.exe normalize-chart.exe compare-charts.exe split-chart.exe split-chart_test.exe flatten-charts.exe flatten-charts_test.exe
+default : annular229_test.exe tubetree229_test.exe nopert231_test.exe tube229_test.exe lib229_test.exe chart229_test.exe difficult229.exe lean229.exe pack229.exe test_all_pending.exe normalize-chart.exe compare-charts.exe split-chart.exe split-chart_test.exe flatten-charts.exe flatten-charts_test.exe
 
-all: default test229.exe codebdd229.exe telescope229.exe convert_tubecert229.exe incrementaltube229.exe tubecert229.exe tube-visualize.exe analyzedifficult.exe replace_tu_with_difficult.exe extract_tu_intervals.exe generate_seeds229.exe apply_shallow_cert.exe verify_leaf.exe
+all: default test229.exe codebdd229.exe convert_tubecert229.exe incrementaltube229.exe tubecert229.exe tube-visualize.exe analyzedifficult.exe replace_tu_with_difficult.exe extract_tu_intervals.exe generate_seeds229.exe apply_shallow_cert.exe
 
 # Quad-planar identity tube pipeline (notes/Q.md):
 #  tubecode229: restartable (journaled) Tag 1 tree synthesis per code cell.
@@ -93,6 +93,13 @@ $(CODEC)/%.o : $(CODEC)/%.cc
 # Generic pattern rules for executables
 %.exe : %.o $(OBJECTS_229) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
+	@echo -n "!"
+
+# Programs using lib229 (the 5D search library) also need lib229.o and
+# OpenCL.
+LIB229_EXES=lib229_test.exe lean229.exe difficult229.exe pack229.exe test229.exe generate_seeds229.exe
+$(LIB229_EXES) : %.exe : %.o lib229.o $(OBJECTS_229) $(OBJECTS) $(CL_OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS) $(CL_LFLAGS)
 	@echo -n "!"
 
 oneoffs/%.o : oneoffs/%.cc *.h makefile
