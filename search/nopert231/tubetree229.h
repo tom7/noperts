@@ -40,13 +40,17 @@ TriangleQ GetRootWedge();
 // An empty path "" represents the full root wedge.
 TriangleQ TriangleFromPath(std::string_view path);
 
+// Contact directions mix two edges with weight mix / kMixScale. Must match
+// Lean's AxisCertificate.mix : Fin 1001 with mixQ = mix / 1000.
+inline constexpr int kMixScale = 1000;
+
 // Information identifying a contact point on the silhouette.
 struct ContactInfo {
   int edge_start = 0;
   int edge_finish = 0;
   int edge_start2 = 0;
   int edge_finish2 = 0;
-  int mix = 1000; // 0..1000 representing interpolation weight (mix / 1000)
+  int mix = kMixScale; // 0..kMixScale: interpolation weight mix / kMixScale
   int vertex = 0; // support vertex index (0..19 for Nopert #229)
 };
 

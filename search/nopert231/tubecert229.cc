@@ -51,6 +51,7 @@ static inline vec3 ToDouble(const BigVecQ3 &v) {
 
 using tubetree229::TriangleQ;
 using tubetree229::ContactInfo;
+using tubetree229::kMixScale;
 using tubetree229::AxisCertificate;
 using LocalCertificate = tubetree229::TubeCertificate;
 
@@ -103,7 +104,7 @@ static BigVecQ3 GetExactEdge(const ContactInfo &c) {
   const BigVecQ3 &v_finish = VertexQ(c.edge_finish);
   const BigVecQ3 &v_start2 = VertexQ(c.edge_start2);
   const BigVecQ3 &v_finish2 = VertexQ(c.edge_finish2);
-  BigRat mixQ(c.mix, 1000);
+  BigRat mixQ(c.mix, kMixScale);
   return (v_start - v_finish) * mixQ + (v_start2 - v_finish2) * (BigRat(1) - mixQ);
 }
 
@@ -231,7 +232,7 @@ static bool AuditAxis(const TriangleQ &tri, ContactInfo contacts[3], AxisCertifi
     int best_w = -1;
     for (int k = 0; k < 20; k++) {
       bool tie = (k == sel) ||
-                 (contacts[m].mix == 1000 && sel == contacts[m].edge_finish && k == contacts[m].edge_start) ||
+                 (contacts[m].mix == kMixScale && sel == contacts[m].edge_finish && k == contacts[m].edge_start) ||
                  (contacts[m].mix == 0 && sel == contacts[m].edge_start2 && k == contacts[m].edge_finish2);
       BigRat s_upper(0);
       if (!tie) {
@@ -509,7 +510,7 @@ static inline vec3 GetDoubleEdge(const ContactInfo &c) {
   vec3 v_finish = Vertex(c.edge_finish);
   vec3 v_start2 = Vertex(c.edge_start2);
   vec3 v_finish2 = Vertex(c.edge_finish2);
-  double mixD = c.mix / 1000.0;
+  double mixD = c.mix / (double)kMixScale;
   return (v_start - v_finish) * mixD + (v_start2 - v_finish2) * (1.0 - mixD);
 }
 
@@ -571,7 +572,7 @@ static void GenerateCandidatesForView(
     }
 
     for (double lam : samples) {
-      int mix = std::clamp(static_cast<int>(std::round(1000.0 * lam)), 0, 1000);
+      int mix = std::clamp(static_cast<int>(std::round(kMixScale * lam)), 0, kMixScale);
       ContactInfo ci;
       ci.vertex = vertex;
       ci.edge_start = previous;
@@ -608,7 +609,7 @@ static void GenerateCandidatesForView(
     bool ok = true;
     for (int k = 0; k < 20; k++) {
       bool tie = (k == sel) ||
-                 (c.mix == 1000 && sel == c.edge_finish && k == c.edge_start) ||
+                 (c.mix == kMixScale && sel == c.edge_finish && k == c.edge_start) ||
                  (c.mix == 0 && sel == c.edge_start2 && k == c.edge_finish2);
       if (tie) continue;
       vec3 delta = Vertex(k) - Vertex(sel);

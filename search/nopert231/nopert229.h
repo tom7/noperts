@@ -7,6 +7,7 @@
 #include "bignum/big-vec.h"
 #include "bignum/big.h"
 #include "yocto-math.h"
+#include "vertices229_exact27.h"
 
 // ============================================================================
 // MATHEMATICAL BACKGROUND & COORDINATE REPRESENTATION:
@@ -56,35 +57,14 @@
 // See noteperts/QUAD_FACES.md for full analysis and derivation.
 // ============================================================================
 
-// 20 vertices of Nopert #229, derived algebraically from repair214.cc
-// and scaled strictly inside the unit sphere for Lean's GoodPoly invariant.
-inline constexpr int NUM_VERTICES = 20;
-inline constexpr double VERTICES[NUM_VERTICES][3] = {
-  {  4.28407320766475141e-02,  5.68066355618713104e-01,  5.64816732617767103e-01 }, // 0
-  { -1.71094052819827924e-01,  9.38416975635171347e-01,  3.00167294903062487e-01 }, // 1
-  { -2.79199667113859018e-01,  8.91678383193915236e-01, -4.20605170858860955e-02 }, // 2
-  {  5.81211699562287354e-02,  6.02579091333186989e-01, -7.64339951605446100e-01 }, // 3
-
-  { -5.27024694936069071e-01,  2.16286115223175202e-01,  5.64816732617767103e-01 }, // 4
-  { -9.45358549637631773e-01,  1.27266679447564340e-01,  3.00167294903062432e-01 }, // 5
-  { -9.34313978738110507e-01,  1.00091111676230415e-02, -4.20605170858860955e-02 }, // 6
-  { -5.55126342146210705e-01,  2.41483697098537897e-01, -7.64339951605446100e-01 }, // 7
-
-  { -3.68559906457682773e-01, -4.34394185116114828e-01,  5.64816732617767103e-01 }, // 8
-  { -4.13169662411533134e-01, -8.59761842101238960e-01,  3.00167294903062432e-01 }, // 9
-  { -2.98238127910440021e-01, -8.85492412295147968e-01, -4.20605170858860955e-02 }, // 10
-  { -4.01208117452990232e-01, -4.53333958797306202e-01, -7.64339951605446100e-01 }, // 11
-
-  {  2.99242145854739183e-01, -4.84756486140247800e-01,  5.64816732617767103e-01 }, // 12
-  {  6.90005655146984531e-01, -6.58628720096350317e-01,  3.00167294903062487e-01 }, // 13
-  {  7.49992678948319780e-01, -5.57273518746159935e-01, -4.20605170858860955e-02 }, // 14
-  {  3.07166088997902875e-01, -5.21659491889817639e-01, -7.64339951605446100e-01 }, // 15
-
-  {  5.53501723462365147e-01,  1.34798200414474323e-01,  5.64816732617767103e-01 }, // 16
-  {  8.39616609722008467e-01,  4.52706907114853507e-01,  3.00167294903062487e-01 }, // 17
-  {  7.61759094814089543e-01,  5.41078436679769403e-01, -4.20605170858860955e-02 }, // 18
-  {  5.91047200645069326e-01,  1.30930662255398955e-01, -7.64339951605446100e-01 }  // 19
-};
+// The vertex coordinates come from the generated header (single source of
+// truth; regenerate with codebdd229 --export_rational / --root_file). Its
+// double array matches the exact rationals VertexQ229 to < 1e-15.
+// (Previously a separate hard-coded copy of #229's doubles lived here, which
+// silently went stale when the exact model was regenerated for a new
+// candidate.)
+inline constexpr int NUM_VERTICES = NUM_VERTICES_229;
+inline constexpr const double (&VERTICES)[NUM_VERTICES][3] = VERTICES_229;
 
 inline constexpr yocto::vec<double, 3> Vertex(size_t v) {
   return yocto::vec<double, 3>{
