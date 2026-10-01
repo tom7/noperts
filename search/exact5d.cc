@@ -509,4 +509,90 @@ bool Valid(const MixedBox &box) {
   return !(DisplacementSlack(box) < Q(0));
 }
 
+// RatQuadratic3.evalTightBall in closed form: centered linear terms are
+// (0, |g| r), centered cross products (0, r_i r_j), and the centered squares
+// (r²/2, r²/2), all combined by exact ball addition and scaling.
+RatBall QuadEvalTightBall(const std::array<RatBall, 3> &vars, const Quad3 &q) {
+  const Q &x = vars[0].center, &y = vars[1].center, &z = vars[2].center;
+  const Q &rx = vars[0].radius, &ry = vars[1].radius, &rz = vars[2].radius;
+  const Q two(2);
+  const Q gx = q.cx + two * q.cxx * x + q.cxy * y + q.cxz * z;
+  const Q gy = q.cy + q.cxy * x + two * q.cyy * y + q.cyz * z;
+  const Q gz = q.cz + q.cxz * x + q.cyz * y + two * q.czz * z;
+  auto A = [](const Q &v) { return BigRat::Abs(v); };
+  const Q sx = rx * rx / two, sy = ry * ry / two, sz = rz * rz / two;
+  const Q center = QuadEvalQ(q, x, y, z) + q.cxx * sx + q.cyy * sy + q.czz * sz;
+  const Q radius = A(gx) * rx + A(gy) * ry + A(gz) * rz +
+                   A(q.cxx) * sx + A(q.cyy) * sy + A(q.czz) * sz +
+                   A(q.cxy) * (rx * ry) + A(q.cxz) * (rx * rz) + A(q.cyz) * (ry * rz);
+  return {center, radius};
+}
+
+Q SqrtQUp16(const Q &x) {
+  if (!(x > Q(0))) return Q(0);
+  const BigInt scale16 = BigInt::Pow(BigInt(10), 16);
+  const BigInt scale32 = BigInt::Pow(BigInt(10), 32);
+  const BigInt c = BigRat::Ceil(x * Q(scale32, BigInt(1)));
+  return Q(BigInt::Sqrt(c) + BigInt(1), scale16);
+}
+
+bool OutsideCayleyBall(const Interval5 &iv) {
+  auto min_abs = [](const Q &lo, const Q &hi) {
+    if (!(lo > Q(0)) && !(hi < Q(0))) return Q(0);
+    return BigRat::Min(BigRat::Abs(lo), BigRat::Abs(hi));
+  };
+  const Q mx = min_abs(iv.min[2], iv.max[2]);
+  const Q my = min_abs(iv.min[3], iv.max[3]);
+  const Q mz = min_abs(iv.min[4], iv.max[4]);
+  return mx * mx + my * my + mz * mz > Q(3);
+}
+
+namespace {
+// AtlasFundamentalPrune.advantageQuadratic
+Quad3 AdvantageQuadratic(int chart, int direction) {
+  auto num = [chart](int i, int j) { return QuadScale(ChartSign(chart, i), NumeratorQuadratic(i, j)); };
+  const Quad3 a = QuadAdd(num(0, 0), num(1, 1));
+  const Quad3 b = QuadSub(num(0, 1), num(1, 0));
+  return QuadAdd(QuadScale(Q(-690983, 1000000), a),
+                 QuadScale(Q(direction * 951057, 1000000), b));
+}
+}  // namespace
+
+Q FundamentalLower(const Interval5 &iv, int chart, int direction) {
+  CHECK(direction == 1 || direction == -1);
+  const auto vars = RelativeBalls(iv);
+  const Quad3 q = AdvantageQuadratic(chart, direction);
+  const RatBall tight = QuadEvalTightBall(vars, q);
+  return BigRat::Max(tight.center - tight.radius, BernsteinLower(vars, q));
+}
+
+bool FundamentalPruneValid(const Interval5 &iv, int chart, int direction) {
+  return Q(2, 125000) < FundamentalLower(iv, chart, direction);
+}
+
+Q IdentityMismatchRadius(const Interval5 &iv) {
+  Q sum(0);
+  for (int a = 2; a < 5; a++) {
+    const RatBall b = BallOfEndpoints(iv.min[a], iv.max[a]);
+    const Q upper = BigRat::Abs(b.center) + b.radius;
+    sum = sum + upper * upper;
+  }
+  return Q(2) * SqrtQUp16(sum);
+}
+
+bool IdentityTubeValid(const Interval5 &iv, const Q &r) {
+  return !(r < IdentityMismatchRadius(iv));
+}
+
+Interval5 RestrictedRootInterval(int chart) {
+  Interval5 iv;
+  iv.min = {Q(0), Q(0), Q(-1), Q(-1), Q(-1)};
+  iv.max = {Q(8, 5), Q(4), Q(1), Q(1), Q(1)};
+  static constexpr int kCoordinate[4] = {4, 3, 2, 4};
+  const Q width = chart == 3 ? Q(1) : Q(1, 3);
+  iv.min[kCoordinate[chart]] = -width;
+  iv.max[kCoordinate[chart]] = width;
+  return iv;
+}
+
 }  // namespace exact5d
