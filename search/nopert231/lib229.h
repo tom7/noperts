@@ -659,7 +659,6 @@ MixtureSolveStats SolveCellMixture(
     int cone_samples = 8,
     int max_components = 4,
     double split_kappa = 0.5,
-    double tube_radius = 1e-4,
     double time_limit_sec = 10.0,
     std::function<void(std::string_view)> row_callback = nullptr,
     std::atomic<bool> *interrupted = nullptr,
@@ -685,7 +684,6 @@ MixtureSolveStats SolveCellMixtureParallel(
     int cone_samples = 8,
     int max_components = 4,
     double split_kappa = 0.5,
-    double tube_radius = 1e-4,
     double time_limit_sec = 10.0,
     std::function<void(std::string_view)> row_callback = nullptr,
     std::atomic<bool> *interrupted = nullptr,
@@ -834,7 +832,6 @@ struct SearchManager {
   bool resume = true;
   bool prioritize_related = true;
   double related_epsilon = 0.05;
-  double tube_radius = 1e-4;
   const tubetree229::TubeAtlas *tube_atlas = nullptr;
   double split_kappa = 1.0;
   int pre_vsplits = 0;

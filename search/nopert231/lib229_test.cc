@@ -577,7 +577,6 @@ void TestParallelMixtureSolver() {
       /*cone_samples=*/8,
       /*max_components=*/4,
       /*split_kappa=*/0.5,
-      /*tube_radius=*/1e-4,
       /*time_limit_sec=*/5.0,
       row_cb,
       /*interrupted=*/nullptr,

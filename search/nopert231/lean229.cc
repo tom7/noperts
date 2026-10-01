@@ -49,8 +49,6 @@ int main(int argc, char **argv) {
       mgr.num_threads = std::atoi(argv[++i]);
     } else if (arg == "--output_dir" && i + 1 < argc) {
       mgr.output_dir = argv[++i];
-    } else if (arg == "--tube_radius" && i + 1 < argc) {
-      mgr.tube_radius = std::atof(argv[++i]);
     } else if (arg == "--split_kappa" && i + 1 < argc) {
       mgr.split_kappa = std::atof(argv[++i]);
     } else if (arg == "--triangle_cache" && i + 1 < argc) {
@@ -92,7 +90,6 @@ int main(int argc, char **argv) {
             "  --lp_escalate_box_depth <D> Box depth to trigger LP CPU escalation (default 0 = disabled)\n"
             "  --split_kappa <K>   Box-to-view angular diameter split bias (default 1.0)\n"
             "  --triangle_cache <N> Maximum unique triangle pools to cache in RAM (default 20480)\n"
-            "  --tube_radius <R>   Identity symmetry tube radius (default 1e-4)\n"
             "  --threads <T>       CPU fallback worker threads (default 8)\n"
             "  --output_dir <DIR>  Output directory for logs and checkpoints\n"
             "  --cpu               Force multi-threaded CPU execution\n"

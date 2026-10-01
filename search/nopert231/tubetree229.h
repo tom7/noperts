@@ -314,24 +314,6 @@ class TubeAtlas {
     return nullptr;
   }
 
-  // Finds the nearest certified node (direct_r_lower > 0 or effective_r_lower > 0)
-  // to a given 3D unit direction vector.
-  // If subwedge is in 0..3, restricts search to that tree. If -1, searches all loaded trees.
-  std::optional<NearestCertifiedNodeResult> FindNearestCertifiedNode(
-      const vec3 &direction, int subwedge = -1) const;
-
-  // Finds the nearest certified node to a spherical view triangle.
-  std::optional<NearestCertifiedNodeResult> FindNearestCertifiedNodeForTriangle(
-      const vec3 corners[3], int subwedge = -1) const;
-  std::optional<NearestCertifiedNodeResult> FindNearestCertifiedNodeForTriangle(
-      const std::array<vec3, 3> &corners, int subwedge = -1) const {
-    return FindNearestCertifiedNodeForTriangle(corners.data(), subwedge);
-  }
-
-  // Finds the nearest certified node to a given base-4 path.
-  std::optional<NearestCertifiedNodeResult> FindNearestCertifiedNodeForPath(
-      std::string_view path, int subwedge = -1) const;
-
  private:
   struct CertifiedCacheEntry {
     const FastNode *node = nullptr;

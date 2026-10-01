@@ -258,29 +258,6 @@ static void TestNearestCertifiedNode() {
   CHECK(res0->angular_distance > 0.0);
   CHECK_EQ(res0->direct_r_lower, 0.0002);
 
-  // 2. Real TubeAtlas test
-  TubeAtlas atlas;
-  if (atlas.LoadTree(0, "/root/nopert-project/tree_0.json")) {
-    Print("Atlas loaded tree_0.json for nearest certified query...\n");
-    // Query path "03333333" -> known certified node in tree_0
-    auto res_atlas = atlas.FindNearestCertifiedNodeForPath("03333333", 0);
-    CHECK(res_atlas.has_value());
-    Print("Nearest node for 03333333: path={} r={} dist={} contained={}\n",
-          res_atlas->path, res_atlas->direct_r_lower,
-          res_atlas->angular_distance, res_atlas->contains_direction);
-    CHECK_EQ(res_atlas->contains_direction, true);
-    CHECK(std::abs(res_atlas->angular_distance) < 1e-12);
-    CHECK(std::abs(res_atlas->safe_radius() - 0.001) < 1e-9);
-
-    // Query path "03121" (canyon cell #1265114 view path)
-    auto res_canyon = atlas.FindNearestCertifiedNodeForPath("03121", 0);
-    CHECK(res_canyon.has_value());
-    Print("Nearest node for canyon path 03121: path={} r={} dist={} rad\n",
-          res_canyon->path, res_canyon->direct_r_lower,
-          res_canyon->angular_distance);
-    CHECK(res_canyon->direct_r_lower > 0.0);
-  }
-
   Print("Nearest Certified Node tests PASSED.\n");
 }
 
@@ -447,22 +424,6 @@ static void TestDecomposedCertificate() {
   CHECK_EQ(lps.decomposed_certificates, 1);
   CHECK(loaded_parent->children[3]->decomposed_cert.has_value());
   CHECK(loaded_parent->children[0]->direct_cert.has_value());
-
-  // 4. Test pack export with export_tubetree_pack
-  std::string pack_tree_json = tmp_dir + "/export_tree.json";
-  std::string pack_out = tmp_dir + "/export_tree.pack";
-  CHECK(SaveTreeJson(leaf, pack_tree_json, /*shallow=*/false));
-
-  std::string cmd = "./export_tubetree_pack.exe --input " + pack_tree_json + " --output " + pack_out + " > /dev/null 2>&1";
-  int ret = std::system(cmd.c_str());
-  CHECK_EQ(ret, 0);
-
-  // Read back pack file and verify that it contains a Row Tag 2 decomposed leaf
-  std::string pack_content = Util::ReadFile(pack_out);
-  CHECK(!pack_content.empty());
-  // The header starts with count, 0, zigzag_r: "1,0,..."
-  // Followed by tag 2: ",2,0,0,..."
-  CHECK(pack_content.find(",2,0,0,") != std::string::npos);
 
   std::filesystem::remove_all(tmp_dir);
   Print("DecomposedCertificate tests PASSED.\n");

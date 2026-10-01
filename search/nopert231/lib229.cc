@@ -2622,7 +2622,6 @@ MixtureSolveStats SolveCellMixture(
     int cone_samples,
     int max_components,
     double split_kappa,
-    double tube_radius,
     double time_limit_sec,
     std::function<void(std::string_view)> row_callback,
     std::atomic<bool> *interrupted,
@@ -2779,11 +2778,9 @@ MixtureSolveStats SolveCellMixture(
       continue;
     }
 
-    double effective_tube_r = tube_radius;
-    if (tube_atlas && tube_atlas->IsLoaded()) {
-      double safe_r = tube_atlas->GetSafeRadiusForTriangle(node.tri.corners);
-      effective_tube_r = std::max(safe_r, tube_radius);
-    }
+    // Only the radius the identity-tube atlas certifies for this view.
+    const double effective_tube_r = (tube_atlas && tube_atlas->IsLoaded()) ?
+        tube_atlas->GetSafeRadiusForTriangle(node.tri.corners) : 0.0;
 
     if (effective_tube_r > 0.0 && InsideIdentityTube(node.chart, node.box, effective_tube_r)) {
       stats.pruned_leaves++;
@@ -2959,7 +2956,6 @@ MixtureSolveStats SolveCellMixtureParallel(
     int cone_samples,
     int max_components,
     double split_kappa,
-    double tube_radius,
     double time_limit_sec,
     std::function<void(std::string_view)> row_callback,
     std::atomic<bool> *interrupted,
@@ -2970,7 +2966,7 @@ MixtureSolveStats SolveCellMixtureParallel(
     return SolveCellMixture(
         cell, max_depth, max_box_depth, max_view_depth,
         max_nodes, max_split_delta, cone_samples, max_components,
-        split_kappa, tube_radius, time_limit_sec, row_callback,
+        split_kappa, time_limit_sec, row_callback,
         interrupted, 0, initial_quadtree, tube_atlas, progress_callback);
   }
 
@@ -3178,11 +3174,9 @@ MixtureSolveStats SolveCellMixtureParallel(
               .fund_dir = fund.direction});
           continue;
         }
-        double effective_tube_r = tube_radius;
-        if (tube_atlas && tube_atlas->IsLoaded()) {
-          double safe_r = tube_atlas->GetSafeRadiusForTriangle(node.tri.corners);
-          effective_tube_r = std::max(safe_r, tube_radius);
-        }
+        // Only the radius the identity-tube atlas certifies for this view.
+        const double effective_tube_r = (tube_atlas && tube_atlas->IsLoaded()) ?
+            tube_atlas->GetSafeRadiusForTriangle(node.tri.corners) : 0.0;
 
         if (effective_tube_r > 0.0 && InsideIdentityTube(node.chart, node.box, effective_tube_r)) {
           pruned_leaves.fetch_add(1);
@@ -4724,11 +4718,9 @@ void SearchManager::Run() {
                 .fund_dir = fund.direction});
 
           } else {
-            double effective_tube_r = tube_radius;
-            if (tube_atlas && tube_atlas->IsLoaded()) {
-              double safe_r = tube_atlas->GetSafeRadiusForTriangle(node.tri.corners);
-              effective_tube_r = std::max(safe_r, tube_radius);
-            }
+            // Only the radius the identity-tube atlas certifies for this view.
+            const double effective_tube_r = (tube_atlas && tube_atlas->IsLoaded()) ?
+                tube_atlas->GetSafeRadiusForTriangle(node.tri.corners) : 0.0;
 
             if (effective_tube_r > 0.0 && InsideIdentityTube(node.chart, node.box, effective_tube_r)) {
               pruned_count++;
