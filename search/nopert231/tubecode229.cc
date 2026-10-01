@@ -86,6 +86,32 @@ static double TetraMargin(const vec3 p[4]) {
   return margin;
 }
 
+// Lean's Tag 1 check needs the axis-aligned octahedron with vertices
+// +-rho e_k inside the tetrahedron of axis centers; this is the largest such
+// rho (negative if the origin is outside): min over faces of h / |n|_inf,
+// where h is the origin's distance to the face and n its unit normal.
+static double TetraAxisRadius(const vec3 p[4]) {
+  double scale = 0;
+  for (int i = 0; i < 4; i++) scale = std::max(scale, yocto::length(p[i]));
+  const double vol6 = yocto::dot(yocto::cross(p[1] - p[0], p[2] - p[0]), p[3] - p[0]);
+  if (!(std::abs(vol6) > 1e-9 * scale * scale * scale)) return -std::numeric_limits<double>::infinity();
+  double radius = std::numeric_limits<double>::infinity();
+  for (int skip = 0; skip < 4; skip++) {
+    vec3 f[3];
+    for (int j = 0, k = 0; j < 4; j++) if (j != skip) f[k++] = p[j];
+    vec3 n = yocto::normalize(yocto::cross(f[1] - f[0], f[2] - f[0]));
+    if (yocto::dot(n, p[skip] - f[0]) < 0) n = -n;
+    const double h = -yocto::dot(n, f[0]);
+    const double ninf = std::max({std::abs(n.x), std::abs(n.y), std::abs(n.z)});
+    radius = std::min(radius, h > 0 ? h / ninf : h);
+  }
+  return radius;
+}
+
+// If set, cages are chosen to maximize TetraAxisRadius (what Lean checks)
+// and the support-point brute force always runs. (--axis_radius)
+static bool g_axis_radius_objective = false;
+
 // Deterministic search for a tetrahedron of candidate points containing
 // the origin with a large margin: start from the support points in four
 // regular-tetrahedron directions, then repeatedly take the face nearest
@@ -195,6 +221,13 @@ static bool FindBestCageForTriangle(
   double best_margin = 0.0;
   std::array<int, 4> best_tet = {-1, -1, -1, -1};
   int N = pts.size();
+  // Score of a tetrahedron of candidates (positive iff usable).
+  auto Score = [&](const std::array<int, 4> &t) -> double {
+    vec3 tp[4] = {pts[t[0]], pts[t[1]], pts[t[2]], pts[t[3]]};
+    if (g_axis_radius_objective) return TetraAxisRadius(tp);
+    double m, bary[4];
+    return TetrahedronOriginMargin(tp, &m, bary) ? m : -std::numeric_limits<double>::infinity();
+  };
 
   // 0. Deterministic support-point search; candidates failing the exact
   // audit are excluded and the search rerun.
@@ -209,10 +242,8 @@ static bool FindBestCageForTriangle(
         if (!Audited(idx)) { excluded[idx] = 1; all_ok = false; }
       }
       if (all_ok) {
-        double m2;
-        double bary[4];
-        vec3 tpts[4] = {pts[tet[0]], pts[tet[1]], pts[tet[2]], pts[tet[3]]};
-        if (TetrahedronOriginMargin(tpts, &m2, bary) && m2 > best_margin) {
+        const double m2 = Score(tet);
+        if (m2 > best_margin) {
           best_margin = m2;
           best_tet = tet;
         }
@@ -224,7 +255,7 @@ static bool FindBestCageForTriangle(
   // 0b. If that failed: brute force over all 4-subsets of the support
   // points in 256 directions (the hull's relevant extreme points), taking
   // the best tetrahedra in order until one passes the exact audit.
-  if (best_margin <= 0) {
+  if (best_margin <= 0 || g_axis_radius_objective) {
     std::vector<int> sup;
     {
       std::vector<int8_t> seen(N, 0);
@@ -256,7 +287,7 @@ static bool FindBestCageForTriangle(
         for (int c = b + 1; c < S; c++)
           for (int d = c + 1; d < S; d++) {
             const vec3 tp[4] = {pts[sup[a]], pts[sup[b]], pts[sup[c]], pts[sup[d]]};
-            const double m = TetraMargin(tp);
+            const double m = g_axis_radius_objective ? TetraAxisRadius(tp) : TetraMargin(tp);
             if (m <= 0) continue;
             if (top.size() < 32 || m > top.back().first) {
               top.push_back({m, {sup[a], sup[b], sup[c], sup[d]}});
@@ -266,9 +297,8 @@ static bool FindBestCageForTriangle(
           }
     for (const auto &[m, tet] : top) {
       if (Audited(tet[0]) && Audited(tet[1]) && Audited(tet[2]) && Audited(tet[3])) {
-        double m2, bary[4];
-        vec3 tpts[4] = {pts[tet[0]], pts[tet[1]], pts[tet[2]], pts[tet[3]]};
-        if (TetrahedronOriginMargin(tpts, &m2, bary) && m2 > best_margin) {
+        const double m2 = Score(tet);
+        if (m2 > best_margin) {
           best_margin = m2;
           best_tet = tet;
         }
@@ -281,10 +311,8 @@ static bool FindBestCageForTriangle(
   for (int trial = 0; trial < 25000; trial++) {
     int i0 = rand_r(seed) % N, i1 = rand_r(seed) % N, i2 = rand_r(seed) % N, i3 = rand_r(seed) % N;
     if (i0 == i1 || i0 == i2 || i0 == i3 || i1 == i2 || i1 == i3 || i2 == i3) continue;
-    vec3 tpts[4] = {pts[i0], pts[i1], pts[i2], pts[i3]};
-    double margin;
-    double bary[4];
-    if (TetrahedronOriginMargin(tpts, &margin, bary) && margin > best_margin) {
+    const double margin = Score({i0, i1, i2, i3});
+    if (margin > best_margin) {
       if (Audited(i0) && Audited(i1) && Audited(i2) && Audited(i3)) {
         best_margin = margin;
         best_tet = {i0, i1, i2, i3};
@@ -803,10 +831,12 @@ int main(int argc, char **argv) {
       opt.force = true;
     } else if (arg == "--import") {
       opt.import_tree = true;
+    } else if (arg == "--axis_radius") {
+      g_axis_radius_objective = true;
     } else {
       fprintf(stderr, "Unknown argument %s\n"
               "Usage: tubecode229.exe [--code X [--tri T]] [--threads N] [--max_depth D]\n"
-              "                       [--output_dir DIR] [--force] [--import]\n", arg.c_str());
+              "                       [--output_dir DIR] [--force] [--import] [--axis_radius]\n", arg.c_str());
       return 2;
     }
   }
