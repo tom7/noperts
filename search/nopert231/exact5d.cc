@@ -469,6 +469,15 @@ Q SupportAt(const GlobalBox &box, int corner, int i, int k) {
   return Precompute(box).support_at[corner][i][k];
 }
 Q SupportUpper(const GlobalBox &box, int i, int k) { return SupportUpperP(box, Precompute(box), i, k); }
+std::array<std::vector<Q>, 3> SupportUppers(const GlobalBox &box) {
+  const Pre p = Precompute(box);
+  std::array<std::vector<Q>, 3> out;
+  for (int i = 0; i < 3; i++) {
+    out[i].reserve(NUM_VERTICES);
+    for (int k = 0; k < NUM_VERTICES; k++) out[i].push_back(SupportUpperP(box, p, i, k));
+  }
+  return out;
+}
 Q WeightAt(const GlobalBox &box, int corner, int i) { return Precompute(box).weight_at[corner][i]; }
 Q WeightLower(const GlobalBox &box, int i) { return WeightLowerP(Precompute(box), i); }
 Q WeightUpper(const GlobalBox &box, int i) { return WeightUpperP(Precompute(box), i); }

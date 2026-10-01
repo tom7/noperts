@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
   const int rel_bits = argc > 5 ? std::stoi(argv[5]) : 30;
   const auto atlas = tubeatlas5d::TubeAtlas::Load("trees_r1", "codebdd229.json");
   const rows5d::Journal j = rows5d::ReadJournal(argv[1]);
-  double exact_s = 0.0, relax_s = 0.0;
+  double exact_s = 0.0, relax_s = 0.0, build_s = 0.0;
   int n = 0, exact_ok = 0, relax_ok = 0;
   using clock = std::chrono::steady_clock;
   for (const auto &r : j.leaves) {
@@ -41,7 +41,9 @@ int main(int argc, char **argv) {
     const exact5d::GlobalBox exact_box = cert5d::ExactGlobalBox(pool, s, tri, box, chart);
     const exact5d::TriangleQ outer = geom5d::OuterDyadicTriangle(tri, rel_bits);
     CHECK(geom5d::TriangleContains(outer, tri));
+    auto tb = clock::now();
     const exact5d::GlobalBox outer_box = cert5d::ExactGlobalBox(pool, s, outer, box, chart);
+    build_s += std::chrono::duration<double>(clock::now() - tb).count();
     auto t0 = clock::now();
     exact_ok += exact5d::Valid(exact_box);
     auto t1 = clock::now();
@@ -52,7 +54,8 @@ int main(int argc, char **argv) {
     relax_s += std::chrono::duration<double>(t3 - t2).count();
     if (++n >= max_leaves) break;
   }
-  printf("%d leaves: exact %.1f ms/leaf (%d valid), outer dyadic %.1f ms/leaf (%d valid)\n", n,
-         1000 * exact_s / n, exact_ok, 1000 * relax_s / n, relax_ok);
+  printf("%d leaves: exact %.1f ms/leaf (%d valid), outer dyadic %.1f ms/leaf (%d valid); "
+         "building over the outer triangle %.1f ms/leaf\n", n,
+         1000 * exact_s / n, exact_ok, 1000 * relax_s / n, relax_ok, 1000 * build_s / n);
   return 0;
 }

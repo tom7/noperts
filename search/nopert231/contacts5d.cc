@@ -245,17 +245,11 @@ exact5d::AxisCertificate ToAxisCertificate(const ContactPool &pool, const Triple
   exact5d::GlobalBox probe;
   probe.triangle = tri;
   probe.certificate = cert;
+  const auto support = exact5d::SupportUppers(probe);
   for (int m = 0; m < 3; m++) {
     int best = 0;
-    exact5d::Q best_v;
-    bool first = true;
-    for (int k = 0; k < NUM_VERTICES; k++) {
-      const exact5d::Q v = exact5d::SupportUpper(probe, m, k);
-      if (first || v < best_v) {
-        best = k;
-        best_v = v;
-        first = false;
-      }
+    for (int k = 1; k < NUM_VERTICES; k++) {
+      if (support[m][k] < support[m][best]) best = k;
     }
     cert.nonzero_witness[m] = best;
   }
