@@ -28,6 +28,7 @@
 #include <mutex>
 #include <set>
 #include <string>
+#include <condition_variable>
 #include <thread>
 #include <vector>
 
@@ -188,6 +189,7 @@ int main(int argc, char **argv) {
   fflush(stdout);
 
   std::atomic<size_t> next{0};
+  solve5d::LiveCounters live;
   std::mutex stats_mu;
   solve5d::Stats total;
   size_t finished = 0;
@@ -198,6 +200,7 @@ int main(int argc, char **argv) {
       if (i >= items.size()) return;
       WorkItem &item = items[i];
       solve5d::Solver solver(&atlas, item.state->job, args.opt);
+      solver.SetLive(&live);
       const auto records = solver.SolveSubtree(item.node, args.subtree_budget);
       item.state->Append(records, item.node.path);
       std::lock_guard<std::mutex> l(stats_mu);
@@ -215,9 +218,31 @@ int main(int argc, char **argv) {
       }
     }
   };
+  // A status line every minute, from the live counters (subtrees can run
+  // for a long time before they are committed).
+  std::mutex done_mu;
+  std::condition_variable done_cv;
+  bool done = false;
+  std::thread status([&]() {
+    std::unique_lock<std::mutex> l(done_mu);
+    while (!done_cv.wait_for(l, std::chrono::seconds(60), [&]() { return done; })) {
+      const double sec =
+          std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count();
+      printf("  [%.0fs] live: nodes %lld, leaves %lld (tu %lld), df %lld\n", sec,
+             (long long)live.nodes.load(), (long long)live.leaves.load(),
+             (long long)live.tu.load(), (long long)live.df.load());
+      fflush(stdout);
+    }
+  });
   std::vector<std::thread> pool;
   for (int k = 0; k < args.threads; k++) pool.emplace_back(worker);
   for (auto &th : pool) th.join();
+  {
+    std::lock_guard<std::mutex> l(done_mu);
+    done = true;
+  }
+  done_cv.notify_all();
+  status.join();
   printf("Finished: %lld nodes, %lld deferred leaves%s\n", (long long)total.nodes,
          (long long)total.df, total.df ? " (rerun with a larger --subtree_budget to retry)" : "");
   return 0;

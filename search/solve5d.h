@@ -18,6 +18,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <atomic>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -76,6 +77,12 @@ struct Stats {
   void Add(const Stats &o);
 };
 
+// Counters shared by concurrent solvers, readable while they run (for
+// progress reports); the per-solver Stats are only complete at the end.
+struct LiveCounters {
+  std::atomic<int64_t> nodes{0}, leaves{0}, tu{0}, df{0};
+};
+
 class Solver {
  public:
   Solver(const tubeatlas5d::TubeAtlas *atlas, const Job &job, const Options &opt)
@@ -94,6 +101,8 @@ class Solver {
   std::vector<rows5d::Record> SolveSubtree(const Node &root, int64_t max_nodes);
 
   const Stats &stats() const { return stats_; }
+  // Also count into `live` (may be null) as the search goes.
+  void SetLive(LiveCounters *live) { live_ = live; }
 
  private:
   const contacts5d::ContactPool &Pool(const Node &node);
@@ -102,6 +111,7 @@ class Solver {
   Job job_;
   Options opt_;
   Stats stats_;
+  LiveCounters *live_ = nullptr;
   // Pools of the most recently used views (the depth-first search revisits a
   // view across consecutive box splits). Pools can be large (up to ~C(256,3)
   // triples), so only a few are kept.
