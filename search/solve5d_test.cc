@@ -57,6 +57,7 @@ int main() {
   }
   const auto atlas = tubeatlas5d::TubeAtlas::Load("trees_r1", "codebdd229.json");
   Options opt;
+  // The search screens in double; VerifySubtree checks every leaf exactly.
   // A few subtrees in different charts, a few levels down from the root.
   struct Case {
     Job job;

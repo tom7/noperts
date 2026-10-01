@@ -151,51 +151,6 @@ Q EndpointAbsBound(const Q &lo, const Q &hi) {
   return BigRat::Max(BigRat::Abs(lo), BigRat::Abs(hi));
 }
 
-// Box.adjustedViewDisplacementQuadratic
-Quad3 AdjustedViewDisplacementQuadratic(const GlobalBox &box, const VecQ &n) {
-  Quad3 disp;
-  for (int i = 0; i < 3; i++) {
-    // Box.weightQ, Box.viewContactQuadratic
-    const Q w = Dot(n, WeightCoefficient(box.certificate, i));
-    Quad3 contact;
-    for (int c = 0; c < 3; c++) contact = QuadAdd(contact, QuadScale(n[c], ContactQuadratic(box, i, c)));
-    disp = QuadAdd(disp, QuadScale(w, contact));
-  }
-  // Box.cayleyConstraintQuadratic = x² + y² + z² - 3
-  Quad3 constraint;
-  constraint.c0 = Q(-3);
-  constraint.cxx = Q(1);
-  constraint.cyy = Q(1);
-  constraint.czz = Q(1);
-  return QuadAdd(disp, QuadScale(box.ball_multiplier, constraint));
-}
-
-// Box.viewCoefficientQuadratic and Box.coefficientBall, for coefficient
-// selector `which` (0 = c0, ..., 9 = czz).
-RatBall CoefficientBall(const GlobalBox &box, int which) {
-  auto select = [which](const Quad3 &q) -> const Q & {
-    switch (which) {
-    case 0: return q.c0;
-    case 1: return q.cx;
-    case 2: return q.cy;
-    case 3: return q.cz;
-    case 4: return q.cxx;
-    case 5: return q.cxy;
-    case 6: return q.cxz;
-    case 7: return q.cyy;
-    case 8: return q.cyz;
-    default: return q.czz;
-    }
-  };
-  Quad3 sum;
-  for (int i = 0; i < 3; i++) {
-    VecQ coeff;
-    for (int c = 0; c < 3; c++) coeff[c] = select(ContactQuadratic(box, i, c));
-    sum = QuadAdd(sum, MulLinear(WeightCoefficient(box.certificate, i), coeff));
-  }
-  return QuadEvalBall(TriangleBalls(box.triangle), sum);
-}
-
 }  // namespace
 
 RatBall BallConst(const Q &q) { return {q, Q(0)}; }
@@ -294,48 +249,83 @@ VecQ WeightCoefficient(const AxisCertificate &cert, int i) {
   return Cross(EdgeQ(cert, a), EdgeQ(cert, b));
 }
 
-Q SupportAt(const GlobalBox &box, int corner, int i, int k) {
-  const VecQ delta = Sub(Vertex(k), Vertex(box.certificate.index[i]));
-  return Dot(box.triangle[corner], Cross(EdgeQ(box.certificate, i), delta));
+namespace {
+
+// The subexpressions shared by a box's checks, each computed once (the Lean
+// definitions recompute them; the values are identical).
+struct Pre {
+  std::array<VecQ, 3> edge;   // Box.certificate.edgeQ i
+  std::array<VecQ, 3> wcoef;  // weightCoefficient i
+  // localShell.supportAt 0 corner i k, as [corner][i][k].
+  std::array<std::array<std::vector<Q>, 3>, 3> support_at;
+  // localShell.weightAt 0 corner i, as [corner][i].
+  std::array<std::array<Q, 3>, 3> weight_at;
+  // Box.contactQuadratic i c, as [i][c].
+  std::array<std::array<Quad3, 3>, 3> contact;
+};
+
+Pre Precompute(const GlobalBox &box) {
+  Pre p;
+  const AxisCertificate &cert = box.certificate;
+  for (int i = 0; i < 3; i++) p.edge[i] = EdgeQ(cert, i);
+  for (int i = 0; i < 3; i++) p.wcoef[i] = Cross(p.edge[(i + 1) % 3], p.edge[(i + 2) % 3]);
+  for (int i = 0; i < 3; i++) {
+    const VecQ vs = Vertex(cert.index[i]);
+    std::vector<VecQ> cross(NUM_VERTICES);
+    for (int k = 0; k < NUM_VERTICES; k++) cross[k] = Cross(p.edge[i], Sub(Vertex(k), vs));
+    for (int corner = 0; corner < 3; corner++) {
+      p.support_at[corner][i].resize(NUM_VERTICES);
+      for (int k = 0; k < NUM_VERTICES; k++) {
+        p.support_at[corner][i][k] = Dot(box.triangle[corner], cross[k]);
+      }
+      p.weight_at[corner][i] = Dot(box.triangle[corner], p.wcoef[i]);
+    }
+    std::array<Quad3, 3> d;
+    for (int c = 0; c < 3; c++) {
+      d[c] = DisplacementQuadratic(box.chart, box.inner_index[i], cert.index[i], c);
+    }
+    const VecQ &e = p.edge[i];
+    p.contact[i][0] = QuadSub(QuadScale(e[1], d[2]), QuadScale(e[2], d[1]));
+    p.contact[i][1] = QuadSub(QuadScale(e[2], d[0]), QuadScale(e[0], d[2]));
+    p.contact[i][2] = QuadSub(QuadScale(e[0], d[1]), QuadScale(e[1], d[0]));
+  }
+  return p;
 }
 
-Q SupportUpper(const GlobalBox &box, int i, int k) {
+Q SupportUpperP(const GlobalBox &box, const Pre &p, int i, int k) {
   if (ExactSupportTie(box.certificate, i, k)) return Q(0);
-  return Max3(SupportAt(box, 0, i, k), SupportAt(box, 1, i, k), SupportAt(box, 2, i, k)) +
-         SupportError();
+  return Max3(p.support_at[0][i][k], p.support_at[1][i][k], p.support_at[2][i][k]) + SupportError();
 }
 
-Q WeightAt(const GlobalBox &box, int corner, int i) {
-  return Dot(box.triangle[corner], WeightCoefficient(box.certificate, i));
+Q WeightLowerP(const Pre &p, int i) {
+  return Min3(p.weight_at[0][i], p.weight_at[1][i], p.weight_at[2][i]) - SupportError();
 }
 
-Q WeightLower(const GlobalBox &box, int i) {
-  return Min3(WeightAt(box, 0, i), WeightAt(box, 1, i), WeightAt(box, 2, i)) - SupportError();
-}
-
-Q WeightUpper(const GlobalBox &box, int i) {
-  return Max3(WeightAt(box, 0, i), WeightAt(box, 1, i), WeightAt(box, 2, i)) + SupportError();
+Q WeightUpperP(const Pre &p, int i) {
+  return Max3(p.weight_at[0][i], p.weight_at[1][i], p.weight_at[2][i]) + SupportError();
 }
 
 // Box.weightedSupportControl / weightedSupportUpper / contactDefectUpper /
 // weightedDefectUpper.
-Q WeightedDefectUpper(const GlobalBox &box) {
+Q WeightedDefectUpperP(const GlobalBox &box, const Pre &p) {
   const Q se = SupportError();
   Q total(0);
   for (int i = 0; i < 3; i++) {
+    std::array<Q, 3> w;
+    for (int a = 0; a < 3; a++) w[a] = p.weight_at[a][i] + se;
     Q contact(0);  // max 0 (max over k ...)
     for (int k = 0; k < NUM_VERTICES; k++) {
-      Q upper;
-      bool first = true;
-      for (int a = 0; a < 3; a++) {
-        for (int b = 0; b < 3; b++) {
-          Q control(0);
-          if (k != box.certificate.index[i]) {
-            control = ((WeightAt(box, a, i) + se) * (SupportAt(box, b, i, k) + se) +
-                       (WeightAt(box, b, i) + se) * (SupportAt(box, a, i, k) + se)) / Q(2);
+      Q upper(0);
+      if (k != box.certificate.index[i]) {
+        std::array<Q, 3> sv;
+        for (int a = 0; a < 3; a++) sv[a] = p.support_at[a][i][k] + se;
+        bool first = true;
+        for (int a = 0; a < 3; a++) {
+          for (int b = 0; b < 3; b++) {
+            const Q control = (w[a] * sv[b] + w[b] * sv[a]) / Q(2);
+            if (first || control > upper) upper = control;
+            first = false;
           }
-          if (first || control > upper) upper = control;
-          first = false;
         }
       }
       contact = BigRat::Max(contact, upper);
@@ -345,34 +335,49 @@ Q WeightedDefectUpper(const GlobalBox &box) {
   return total;
 }
 
-Quad3 ContactQuadratic(const GlobalBox &box, int i, int c) {
-  const VecQ edge = EdgeQ(box.certificate, i);
-  auto d = [&](int cc) {
-    return DisplacementQuadratic(box.chart, box.inner_index[i], box.certificate.index[i], cc);
-  };
-  switch (c) {
-  case 0: return QuadSub(QuadScale(edge[1], d(2)), QuadScale(edge[2], d(1)));
-  case 1: return QuadSub(QuadScale(edge[2], d(0)), QuadScale(edge[0], d(2)));
-  default: return QuadSub(QuadScale(edge[0], d(1)), QuadScale(edge[1], d(0)));
+// Box.adjustedViewDisplacementQuadratic at view n.
+Quad3 AdjustedViewDisplacementQuadraticP(const GlobalBox &box, const Pre &p, const VecQ &n) {
+  Quad3 disp;
+  for (int i = 0; i < 3; i++) {
+    const Q w = Dot(n, p.wcoef[i]);  // Box.weightQ
+    Quad3 contact;                    // Box.viewContactQuadratic
+    for (int c = 0; c < 3; c++) contact = QuadAdd(contact, QuadScale(n[c], p.contact[i][c]));
+    disp = QuadAdd(disp, QuadScale(w, contact));
   }
+  // Box.cayleyConstraintQuadratic = x² + y² + z² - 3
+  Quad3 constraint;
+  constraint.c0 = Q(-3);
+  constraint.cxx = Q(1);
+  constraint.cyy = Q(1);
+  constraint.czz = Q(1);
+  return QuadAdd(disp, QuadScale(box.ball_multiplier, constraint));
 }
 
-Quad3 ViewControlQuadratic(const GlobalBox &box, int i, int j) {
-  if (i == j) return AdjustedViewDisplacementQuadratic(box, box.triangle[i]);
-  const Quad3 mid =
-      AdjustedViewDisplacementQuadratic(box, Midpoint(box.triangle[i], box.triangle[j]));
-  return QuadSub(QuadScale(Q(2), mid),
-                 QuadScale(Q(1, 2), QuadAdd(AdjustedViewDisplacementQuadratic(box, box.triangle[i]),
-                                            AdjustedViewDisplacementQuadratic(box, box.triangle[j]))));
+// Box.viewControlQuadratic i j for all i, j (as [i][j]).
+std::array<std::array<Quad3, 3>, 3> ViewControlsP(const GlobalBox &box, const Pre &p) {
+  std::array<Quad3, 3> corner;
+  for (int i = 0; i < 3; i++) corner[i] = AdjustedViewDisplacementQuadraticP(box, p, box.triangle[i]);
+  std::array<std::array<Quad3, 3>, 3> out;
+  for (int i = 0; i < 3; i++) {
+    out[i][i] = corner[i];
+    for (int j = i + 1; j < 3; j++) {
+      const Quad3 mid =
+          AdjustedViewDisplacementQuadraticP(box, p, Midpoint(box.triangle[i], box.triangle[j]));
+      out[i][j] = QuadSub(QuadScale(Q(2), mid), QuadScale(Q(1, 2), QuadAdd(corner[i], corner[j])));
+      out[j][i] = out[i][j];
+    }
+  }
+  return out;
 }
 
-Q BernsteinDisplacementLower(const GlobalBox &box) {
+Q BernsteinDisplacementLowerP(const GlobalBox &box, const Pre &p) {
   const auto vars = RelativeBalls(box.interval);
+  const auto controls = ViewControlsP(box, p);
   Q best;
   bool first = true;
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
-      const Q l = BernsteinLower(vars, ViewControlQuadratic(box, i, j));
+      const Q l = BernsteinLower(vars, controls[i][j]);
       if (first || l < best) best = l;
       first = false;
     }
@@ -380,18 +385,44 @@ Q BernsteinDisplacementLower(const GlobalBox &box) {
   return best;
 }
 
-RatBall AdjustedDisplacementBall(const GlobalBox &box) {
+// Box.viewCoefficientQuadratic and Box.coefficientBall for coefficient
+// selector `which` (0 = c0, ..., 9 = czz).
+RatBall CoefficientBallP(const GlobalBox &box, const Pre &p, int which) {
+  auto select = [which](const Quad3 &q) -> const Q & {
+    switch (which) {
+    case 0: return q.c0;
+    case 1: return q.cx;
+    case 2: return q.cy;
+    case 3: return q.cz;
+    case 4: return q.cxx;
+    case 5: return q.cxy;
+    case 6: return q.cxz;
+    case 7: return q.cyy;
+    case 8: return q.cyz;
+    default: return q.czz;
+    }
+  };
+  Quad3 sum;
+  for (int i = 0; i < 3; i++) {
+    VecQ coeff;
+    for (int c = 0; c < 3; c++) coeff[c] = select(p.contact[i][c]);
+    sum = QuadAdd(sum, MulLinear(p.wcoef[i], coeff));
+  }
+  return QuadEvalBall(TriangleBalls(box.triangle), sum);
+}
+
+RatBall AdjustedDisplacementBallP(const GlobalBox &box, const Pre &p) {
   const Q &lambda = box.ball_multiplier;
-  const RatBall b0 = BallAdd(CoefficientBall(box, 0), BallConst(Q(-3) * lambda));
-  const RatBall bx = CoefficientBall(box, 1);
-  const RatBall by = CoefficientBall(box, 2);
-  const RatBall bz = CoefficientBall(box, 3);
-  const RatBall bxx = BallAdd(CoefficientBall(box, 4), BallConst(lambda));
-  const RatBall bxy = CoefficientBall(box, 5);
-  const RatBall bxz = CoefficientBall(box, 6);
-  const RatBall byy = BallAdd(CoefficientBall(box, 7), BallConst(lambda));
-  const RatBall byz = CoefficientBall(box, 8);
-  const RatBall bzz = BallAdd(CoefficientBall(box, 9), BallConst(lambda));
+  const RatBall b0 = BallAdd(CoefficientBallP(box, p, 0), BallConst(Q(-3) * lambda));
+  const RatBall bx = CoefficientBallP(box, p, 1);
+  const RatBall by = CoefficientBallP(box, p, 2);
+  const RatBall bz = CoefficientBallP(box, p, 3);
+  const RatBall bxx = BallAdd(CoefficientBallP(box, p, 4), BallConst(lambda));
+  const RatBall bxy = CoefficientBallP(box, p, 5);
+  const RatBall bxz = CoefficientBallP(box, p, 6);
+  const RatBall byy = BallAdd(CoefficientBallP(box, p, 7), BallConst(lambda));
+  const RatBall byz = CoefficientBallP(box, p, 8);
+  const RatBall bzz = BallAdd(CoefficientBallP(box, p, 9), BallConst(lambda));
   const auto rel = RelativeBalls(box.interval);
   const RatBall &x = rel[0], &y = rel[1], &z = rel[2];
   RatBall acc = BallAdd(b0, BallMul(bx, x));
@@ -406,9 +437,54 @@ RatBall AdjustedDisplacementBall(const GlobalBox &box) {
   return acc;
 }
 
+Q CertifiedDisplacementLowerP(const GlobalBox &box, const Pre &p) {
+  const RatBall b = AdjustedDisplacementBallP(box, p);
+  return BigRat::Max(b.center - b.radius, BernsteinDisplacementLowerP(box, p));
+}
+
+bool AdmissibleP(const GlobalBox &box, const Pre &p) {
+  // SignedTriangleValid for root 0: nonnegative coordinates summing to 1.
+  for (int i = 0; i < 3; i++) {
+    for (int c = 0; c < 3; c++) {
+      if (box.triangle[i][c] < Q(0)) return false;
+    }
+    if (!(box.triangle[i][0] + box.triangle[i][1] + box.triangle[i][2] == Q(1))) return false;
+  }
+  bool any_pos = false;
+  for (int i = 0; i < 3; i++) {
+    const Q wl = WeightLowerP(p, i);
+    if (wl < Q(0)) return false;
+    if (wl > Q(0)) any_pos = true;
+  }
+  if (!any_pos) return false;
+  for (int i = 0; i < 3; i++) {
+    if (!(SupportUpperP(box, p, i, box.certificate.nonzero_witness[i]) < Q(0))) return false;
+  }
+  return !(box.ball_multiplier < Q(0));
+}
+
+}  // namespace
+
+Q SupportAt(const GlobalBox &box, int corner, int i, int k) {
+  return Precompute(box).support_at[corner][i][k];
+}
+Q SupportUpper(const GlobalBox &box, int i, int k) { return SupportUpperP(box, Precompute(box), i, k); }
+Q WeightAt(const GlobalBox &box, int corner, int i) { return Precompute(box).weight_at[corner][i]; }
+Q WeightLower(const GlobalBox &box, int i) { return WeightLowerP(Precompute(box), i); }
+Q WeightUpper(const GlobalBox &box, int i) { return WeightUpperP(Precompute(box), i); }
+Q WeightedDefectUpper(const GlobalBox &box) { return WeightedDefectUpperP(box, Precompute(box)); }
+Quad3 ContactQuadratic(const GlobalBox &box, int i, int c) { return Precompute(box).contact[i][c]; }
+Quad3 ViewControlQuadratic(const GlobalBox &box, int i, int j) {
+  return ViewControlsP(box, Precompute(box))[i][j];
+}
+Q BernsteinDisplacementLower(const GlobalBox &box) {
+  return BernsteinDisplacementLowerP(box, Precompute(box));
+}
+RatBall AdjustedDisplacementBall(const GlobalBox &box) {
+  return AdjustedDisplacementBallP(box, Precompute(box));
+}
 Q CertifiedDisplacementLower(const GlobalBox &box) {
-  const RatBall b = AdjustedDisplacementBall(box);
-  return BigRat::Max(b.center - b.radius, BernsteinDisplacementLower(box));
+  return CertifiedDisplacementLowerP(box, Precompute(box));
 }
 
 Q DBound(const GlobalBox &box) {
@@ -423,34 +499,20 @@ Q DisplacementError(const GlobalBox &box) {
   return Q(300) * DBound(box) * TightVertexErrorQ();
 }
 
-bool Admissible(const GlobalBox &box) {
-  // SignedTriangleValid for root 0: nonnegative coordinates summing to 1.
-  for (int i = 0; i < 3; i++) {
-    for (int c = 0; c < 3; c++) {
-      if (box.triangle[i][c] < Q(0)) return false;
-    }
-    if (!(box.triangle[i][0] + box.triangle[i][1] + box.triangle[i][2] == Q(1))) return false;
-  }
-  bool any_pos = false;
-  for (int i = 0; i < 3; i++) {
-    const Q wl = WeightLower(box, i);
-    if (wl < Q(0)) return false;
-    if (wl > Q(0)) any_pos = true;
-  }
-  if (!any_pos) return false;
-  for (int i = 0; i < 3; i++) {
-    if (!(SupportUpper(box, i, box.certificate.nonzero_witness[i]) < Q(0))) return false;
-  }
-  return !(box.ball_multiplier < Q(0));
-}
+bool Admissible(const GlobalBox &box) { return AdmissibleP(box, Precompute(box)); }
 
 Q DisplacementSlack(const GlobalBox &box) {
-  return CertifiedDisplacementLower(box) - DBound(box) * WeightedDefectUpper(box) -
+  const Pre p = Precompute(box);
+  return CertifiedDisplacementLowerP(box, p) - DBound(box) * WeightedDefectUpperP(box, p) -
          DisplacementError(box);
 }
 
 bool Valid(const GlobalBox &box) {
-  return Admissible(box) && !(DisplacementSlack(box) < Q(0));
+  const Pre p = Precompute(box);
+  if (!AdmissibleP(box, p)) return false;
+  return !(CertifiedDisplacementLowerP(box, p) - DBound(box) * WeightedDefectUpperP(box, p) -
+               DisplacementError(box) <
+           Q(0));
 }
 
 GlobalBox ComponentBox(const MixedBox &box, int k) {
@@ -464,18 +526,29 @@ GlobalBox ComponentBox(const MixedBox &box, int k) {
   return g;
 }
 
-Q BernsteinDisplacementLower(const MixedBox &box) {
-  const auto vars = RelativeBalls(box.interval);
+namespace {
+struct MixedPre {
   std::array<GlobalBox, 4> comps;
-  for (int k = 0; k < 4; k++) comps[k] = ComponentBox(box, k);
+  std::array<Pre, 4> pre;
+};
+MixedPre PrecomputeMixed(const MixedBox &box) {
+  MixedPre m;
+  for (int k = 0; k < 4; k++) {
+    m.comps[k] = ComponentBox(box, k);
+    m.pre[k] = Precompute(m.comps[k]);
+  }
+  return m;
+}
+Q MixedBernsteinLowerP(const MixedBox &box, const MixedPre &m) {
+  const auto vars = RelativeBalls(box.interval);
+  std::array<std::array<std::array<Quad3, 3>, 3>, 4> controls;
+  for (int k = 0; k < 4; k++) controls[k] = ViewControlsP(m.comps[k], m.pre[k]);
   Q best;
   bool first = true;
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
       Quad3 control;
-      for (int k = 0; k < 4; k++) {
-        control = QuadAdd(control, QuadScale(box.weight[k], ViewControlQuadratic(comps[k], i, j)));
-      }
+      for (int k = 0; k < 4; k++) control = QuadAdd(control, QuadScale(box.weight[k], controls[k][i][j]));
       const Q l = BernsteinLower(vars, control);
       if (first || l < best) best = l;
       first = false;
@@ -483,16 +556,25 @@ Q BernsteinDisplacementLower(const MixedBox &box) {
   }
   return best;
 }
+Q MixedWeightedDefectUpperP(const MixedBox &box, const MixedPre &m) {
+  Q total(0);
+  for (int k = 0; k < 4; k++) total = total + box.weight[k] * WeightedDefectUpperP(m.comps[k], m.pre[k]);
+  return total;
+}
+}  // namespace
+
+Q BernsteinDisplacementLower(const MixedBox &box) {
+  return MixedBernsteinLowerP(box, PrecomputeMixed(box));
+}
 
 Q WeightedDefectUpper(const MixedBox &box) {
-  Q total(0);
-  for (int k = 0; k < 4; k++) total = total + box.weight[k] * WeightedDefectUpper(ComponentBox(box, k));
-  return total;
+  return MixedWeightedDefectUpperP(box, PrecomputeMixed(box));
 }
 
 Q DisplacementSlack(const MixedBox &box) {
-  const GlobalBox c0 = ComponentBox(box, 0);
-  return BernsteinDisplacementLower(box) - DBound(c0) * WeightedDefectUpper(box) -
+  const MixedPre m = PrecomputeMixed(box);
+  const GlobalBox &c0 = m.comps[0];
+  return MixedBernsteinLowerP(box, m) - DBound(c0) * MixedWeightedDefectUpperP(box, m) -
          DisplacementError(c0);
 }
 
@@ -503,10 +585,14 @@ bool Valid(const MixedBox &box) {
     sum = sum + box.weight[k];
   }
   if (!(sum == Q(1))) return false;
+  const MixedPre m = PrecomputeMixed(box);
   for (int k = 0; k < 4; k++) {
-    if (!Admissible(ComponentBox(box, k))) return false;
+    if (!AdmissibleP(m.comps[k], m.pre[k])) return false;
   }
-  return !(DisplacementSlack(box) < Q(0));
+  const GlobalBox &c0 = m.comps[0];
+  return !(MixedBernsteinLowerP(box, m) - DBound(c0) * MixedWeightedDefectUpperP(box, m) -
+               DisplacementError(c0) <
+           Q(0));
 }
 
 // RatQuadratic3.evalTightBall in closed form: centered linear terms are
