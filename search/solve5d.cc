@@ -120,15 +120,14 @@ char Solver::ChooseSplit(const Node &node) const {
   const geom5d::BoxD bd = geom5d::ToDouble(node.box);
   const int axis = geom5d::WidestAxis(bd);
   if (job_.chart == 0 && geom5d::ContainsOrigin(bd)) {
-    // Only the identity tube can close a box containing the identity. A view
-    // split helps only while the tube table has deeper nodes there (with
-    // larger certified radii); past its leaf the radius is fixed, so shrink
-    // the box instead.
-    const std::string view = rows5d::ViewPath(node.path);
-    const auto reached = atlas_->Walk(job_.t, view);
-    const bool tube_deeper = reached.depth == (int)view.size() &&
-                             atlas_->Walk(job_.t, view + '0').depth > reached.depth;
-    return tube_deeper ? 'v' : (char)('x' + axis);
+    // Only the identity tube can close a box containing the identity. If the
+    // box is too big for every radius certified below this view, shrink it;
+    // otherwise refine the view while the tube table goes deeper (deeper
+    // nodes can certify larger radii), and shrink the box past its leaves.
+    const auto reached = atlas_->Walk(job_.t, rows5d::ViewPath(node.path));
+    const BigRat mismatch = exact5d::IdentityMismatchRadius(geom5d::ToInterval(node.box));
+    if (reached.leaf || reached.r_upper < mismatch) return (char)('x' + axis);
+    return 'v';
   }
   const double view = geom5d::AngularDiameter(geom5d::ToDouble(node.tri));
   return bd.radius[axis] > opt_.split_kappa * view ? (char)('x' + axis) : 'v';

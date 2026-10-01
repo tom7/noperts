@@ -38,6 +38,11 @@ class TubeAtlas {
     // How many digits of the path the walk consumed.
     int depth = 0;
     BigRat r_lower{0};
+    // The largest certificate radius in the reached node's subtree: an
+    // upper bound on the radius any further view refinement can certify.
+    BigRat r_upper{0};
+    // Whether the reached node is a leaf of the table.
+    bool leaf = false;
   };
   // The node Lean reaches walking `path` (digits '0'..'3') from the root of
   // triangle t's table.
@@ -47,6 +52,7 @@ class TubeAtlas {
   struct Node {
     int children[4] = {-1, -1, -1, -1};  // all -1 for a leaf
     BigRat r_lower{0};
+    BigRat r_upper{0};
   };
   struct Table {
     int code = 0, tri = 0;

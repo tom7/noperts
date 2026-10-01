@@ -15,26 +15,32 @@ namespace tubeatlas5d {
 
 namespace {
 
-// Flattens a tree, computing each node's subtree-minimum certificate radius.
-// Returns the index of `node` in `out`.
+// Flattens a tree, computing each node's subtree minimum and maximum
+// certificate radius.
+// Returns the index of `node` in the output arrays.
 int Flatten(const tubetree229::TreeNode &node, std::vector<BigRat> *r_lower,
-            std::vector<std::array<int, 4>> *children) {
+            std::vector<BigRat> *r_upper, std::vector<std::array<int, 4>> *children) {
   const int idx = r_lower->size();
   r_lower->push_back(BigRat(0));
+  r_upper->push_back(BigRat(0));
   children->push_back({-1, -1, -1, -1});
   if (node.children.size() == 4) {
-    BigRat r;
+    BigRat lo, hi;
     for (int c = 0; c < 4; c++) {
       CHECK(node.children[c] != nullptr) << "missing child of " << node.path;
-      const int ci = Flatten(*node.children[c], r_lower, children);
+      const int ci = Flatten(*node.children[c], r_lower, r_upper, children);
       (*children)[idx][c] = ci;
-      r = (c == 0) ? (*r_lower)[ci] : BigRat::Min(r, (*r_lower)[ci]);
+      lo = (c == 0) ? (*r_lower)[ci] : BigRat::Min(lo, (*r_lower)[ci]);
+      hi = (c == 0) ? (*r_upper)[ci] : BigRat::Max(hi, (*r_upper)[ci]);
     }
-    (*r_lower)[idx] = r;
+    (*r_lower)[idx] = lo;
+    (*r_upper)[idx] = hi;
   } else {
     CHECK(node.direct_cert.has_value() || node.decomposed_cert.has_value())
         << "uncertified leaf " << node.path;
-    (*r_lower)[idx] = node.direct_cert.has_value() ? node.direct_cert->r : node.decomposed_cert->r;
+    const BigRat r = node.direct_cert.has_value() ? node.direct_cert->r : node.decomposed_cert->r;
+    (*r_lower)[idx] = r;
+    (*r_upper)[idx] = r;
   }
   return idx;
 }
@@ -67,12 +73,13 @@ TubeAtlas TubeAtlas::Load(const std::string &trees_dir, const std::string &bdd_j
             << "tree triangle differs from the code triangle: code " << code << " tri " << t;
       }
       CHECK(tree->triangles[t].root != nullptr) << path;
-      std::vector<BigRat> r_lower;
+      std::vector<BigRat> r_lower, r_upper;
       std::vector<std::array<int, 4>> children;
-      Flatten(*tree->triangles[t].root, &r_lower, &children);
+      Flatten(*tree->triangles[t].root, &r_lower, &r_upper, &children);
       table.nodes.resize(r_lower.size());
       for (size_t n = 0; n < r_lower.size(); n++) {
         table.nodes[n].r_lower = r_lower[n];
+        table.nodes[n].r_upper = r_upper[n];
         for (int c = 0; c < 4; c++) table.nodes[n].children[c] = children[n][c];
       }
       atlas.tables_.push_back(std::move(table));
@@ -92,7 +99,9 @@ TubeAtlas::Reached TubeAtlas::Walk(int t, std::string_view path) const {
     node = child;
     depth++;
   }
-  return Reached{.depth = depth, .r_lower = table.nodes[node].r_lower};
+  const Node &n = table.nodes[node];
+  return Reached{.depth = depth, .r_lower = n.r_lower, .r_upper = n.r_upper,
+                 .leaf = n.children[0] < 0};
 }
 
 }  // namespace tubeatlas5d
