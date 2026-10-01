@@ -17,6 +17,7 @@
 #define _NOPERT229_EXACT5D_H
 
 #include <array>
+#include <vector>
 
 #include "bignum/big.h"
 
@@ -106,6 +107,9 @@ VecQ EdgeQ(const AxisCertificate &cert, int i);
 VecQ WeightCoefficient(const AxisCertificate &cert, int i);
 Q SupportAt(const GlobalBox &box, int corner, int i, int k);
 Q SupportUpper(const GlobalBox &box, int i, int k);
+// SupportUpper(box, i, k) for every contact i and vertex k, sharing one
+// precomputation (row i has NUM_VERTICES entries).
+std::array<std::vector<Q>, 3> SupportUppers(const GlobalBox &box);
 Q WeightAt(const GlobalBox &box, int corner, int i);
 Q WeightLower(const GlobalBox &box, int i);
 Q WeightUpper(const GlobalBox &box, int i);
