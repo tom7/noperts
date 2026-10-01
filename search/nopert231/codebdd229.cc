@@ -262,7 +262,8 @@ std::vector<BigVecQ3> GenerateBestPossibleRationalVertices(
 // order (seed 0 = top cap) and scale so that every vertex has norm
 // slightly below 1 (Lean's GoodPoly needs norm <= 1). Rotations about z
 // preserve norms, so the seeds' norms are the vertices' norms.
-static std::array<std::array<double, 3>, 4> LoadRootFileAsLeanSeeds(const std::string &filename) {
+static std::array<std::array<double, 3>, 4> LoadRootFileAsLeanSeeds(const std::string &filename,
+                                                                    int scale_attempt = 0) {
   std::array<std::array<double, 3>, 4> db;
   int found = 0;
   for (const std::string &line : Util::ReadFileToLines(filename)) {
@@ -292,16 +293,44 @@ static std::array<std::array<double, 3>, 4> LoadRootFileAsLeanSeeds(const std::s
   }
   double max_norm = 0.0;
   for (const auto &r : db) max_norm = std::max(max_norm, std::sqrt(r[0] * r[0] + r[1] * r[1] + r[2] * r[2]));
-  const double scale = (1.0 - 1e-9) / max_norm;
+  // The scale is free (Rupertness is scale-invariant); different attempts
+  // shift the 2^52 rounding (see TightVertexDistance below).
+  const double scale = (1.0 - 1e-9 * (1 + scale_attempt)) / max_norm;
   std::array<std::array<double, 3>, 4> seeds;
   for (int s = 0; s < 4; s++)
     for (int c = 0; c < 3; c++) seeds[s][c] = db[3 - s][c] * scale;
   CHECK(seeds[0][2] > seeds[1][2] && seeds[1][2] > seeds[2][2] && seeds[2][2] > seeds[3][2])
       << "Unexpected ring heights in " << filename;
-  Print("Loaded root file {} (scale {:.17g}):\n", filename, scale);
-  for (int s = 0; s < 4; s++)
-    Print("  seed {}: ({:.17g}, {:.17g}, {:.17g})\n", s, seeds[s][0], seeds[s][1], seeds[s][2]);
+  if (scale_attempt == 0) {
+    Print("Loaded root file {} (scale {:.17g}):\n", filename, scale);
+    for (int s = 0; s < 4; s++)
+      Print("  seed {}: ({:.17g}, {:.17g}, {:.17g})\n", s, seeds[s][0], seeds[s][1], seeds[s][2]);
+  }
   return seeds;
+}
+
+// Lean (TightApproximation.lean, stl_tight_sq_close) requires every
+// rational vertex to be within 4e-16 of tightVertex, the seed rotated with
+// the rational approximations cos72Q, sin72Q. Returns the max distance
+// squared, computed exactly.
+static BigRat TightVertexDistanceSq(const std::vector<BigVecQ3> &verts) {
+  const BigRat cos72("30901699437494745/100000000000000000");
+  const BigRat sin72("9510565162951535/10000000000000000");
+  const BigRat cos144 = BigRat(2) * cos72 * cos72 - BigRat(1);
+  const BigRat sin144 = BigRat(2) * sin72 * cos72;
+  const BigRat tc[5] = {BigRat(1), cos72, cos144, cos144, cos72};
+  const BigRat ts[5] = {BigRat(0), sin72, sin144, -sin144, -sin72};
+  BigRat worst(0);
+  for (int i = 0; i < 20; i++) {
+    const int k = i / 4, sd = i % 4;
+    const BigVecQ3 &v = verts[sd];
+    const BigRat tx = tc[k] * v.x - ts[k] * v.y;
+    const BigRat ty = ts[k] * v.x + tc[k] * v.y;
+    const BigRat dx = verts[i].x - tx, dy = verts[i].y - ty, dz = verts[i].z - v.z;
+    const BigRat d2 = dx * dx + dy * dy + dz * dz;
+    if (d2 > worst) worst = d2;
+  }
+  return worst;
 }
 
 // Exports rational vertices in Lean, C++, and JSON formats
@@ -1030,9 +1059,25 @@ int main(int argc, char **argv) {
     }
   } else {
     Print(AGREEN("Using best-possible rational coordinates (exact quads, 2^52 denoms)...\n\n"));
-    std::optional<std::array<std::array<double, 3>, 4>> seeds;
-    if (!root_file.empty()) seeds = LoadRootFileAsLeanSeeds(root_file);
-    verts = GenerateBestPossibleRationalVertices(true, seeds);
+    if (root_file.empty()) {
+      verts = GenerateBestPossibleRationalVertices(true);
+    } else {
+      // Try scales until the rational vertices are comfortably within
+      // Lean's 4e-16 tightVertex bound (target 3.6e-16).
+      const BigRat target = BigRat(36, 100000000000000000LL) * BigRat(36, 100000000000000000LL);
+      for (int attempt = 0; ; attempt++) {
+        CHECK(attempt < 1000) << "No scale found within the tightVertex bound";
+        auto seeds = LoadRootFileAsLeanSeeds(root_file, attempt);
+        auto v = GenerateBestPossibleRationalVertices(false, seeds);
+        const BigRat d2 = TightVertexDistanceSq(v);
+        if (d2 <= target) {
+          Print("Scale attempt {}: max |rational - tight| = {:.3e} (Lean bound 4e-16)\n",
+                attempt, std::sqrt(d2.ToDouble()));
+          verts = GenerateBestPossibleRationalVertices(true, seeds);
+          break;
+        }
+      }
+    }
   }
 
   // Always export rational representations in Lean 4, C++, and JSON formats
