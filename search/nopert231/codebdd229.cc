@@ -1057,8 +1057,9 @@ int main(int argc, char **argv) {
   std::string export_prefix = "vertices231_exact27";
   // Root seeds of the polyhedron (DB frame; see LoadRootFileAsLeanSeeds).
   std::string root_file = "nopert231_root.txt";
-  // Round code-triangle corners to 2^-triangle_bits (0 = keep exact).
-  int triangle_bits = 64;
+  // Round code-triangle corners to 2^-triangle_bits (0 = keep exact, the
+  // committed data; rounding is parked, see notes/R.md).
+  int triangle_bits = 0;
 
   for (int i = 1; i < argc; i++) {
     std::string_view arg = argv[i];
