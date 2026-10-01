@@ -1,0 +1,512 @@
+#include "exact5d.h"
+
+#include <array>
+
+#include "base/logging.h"
+#include "bignum/big.h"
+#include "bignum/big-overloads.h"
+#include "nopert231.h"
+
+namespace exact5d {
+
+namespace {
+
+VecQ Vertex(int k) {
+  const BigVecQ3 &v = VertexQ(k);
+  return {v.x, v.y, v.z};
+}
+
+VecQ Sub(const VecQ &a, const VecQ &b) {
+  return {a[0] - b[0], a[1] - b[1], a[2] - b[2]};
+}
+
+VecQ Add(const VecQ &a, const VecQ &b) {
+  return {a[0] + b[0], a[1] + b[1], a[2] + b[2]};
+}
+
+VecQ Scale(const Q &s, const VecQ &a) {
+  return {s * a[0], s * a[1], s * a[2]};
+}
+
+// LocalCertificate.crossQ
+VecQ Cross(const VecQ &u, const VecQ &v) {
+  return {u[1] * v[2] - u[2] * v[1],
+          u[2] * v[0] - u[0] * v[2],
+          u[0] * v[1] - u[1] * v[0]};
+}
+
+// AtlasProjectiveEdgeCertificate.dotQ
+Q Dot(const VecQ &a, const VecQ &b) {
+  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+}
+
+// SnubCube.ProjectiveView.midpoint
+VecQ Midpoint(const VecQ &a, const VecQ &b) {
+  const Q two(2);
+  return {(a[0] + b[0]) / two, (a[1] + b[1]) / two, (a[2] + b[2]) / two};
+}
+
+Q Max3(const Q &a, const Q &b, const Q &c) { return BigRat::Max(a, BigRat::Max(b, c)); }
+Q Min3(const Q &a, const Q &b, const Q &c) { return BigRat::Min(a, BigRat::Min(b, c)); }
+
+// AtlasProjectiveLocalCertificate.AxisCertificate.mixQ
+Q MixQ(const AxisCertificate &cert, int i) { return Q(cert.mix[i], 1000); }
+
+// SnubCube.ProjectiveLocalCertificate.mulLinear
+Quad3 MulLinear(const VecQ &a, const VecQ &b) {
+  Quad3 q;
+  q.cxx = a[0] * b[0];
+  q.cxy = a[0] * b[1] + a[1] * b[0];
+  q.cxz = a[0] * b[2] + a[2] * b[0];
+  q.cyy = a[1] * b[1];
+  q.cyz = a[1] * b[2] + a[2] * b[1];
+  q.czz = a[2] * b[2];
+  return q;
+}
+
+Quad3 Monomial(int which) {
+  Quad3 q;
+  switch (which) {
+  case 0: q.c0 = Q(1); break;
+  case 1: q.cx = Q(1); break;
+  case 2: q.cy = Q(1); break;
+  case 3: q.cz = Q(1); break;
+  case 4: q.cxx = Q(1); break;
+  case 5: q.cxy = Q(1); break;
+  case 6: q.cxz = Q(1); break;
+  case 7: q.cyy = Q(1); break;
+  case 8: q.cyz = Q(1); break;
+  case 9: q.czz = Q(1); break;
+  }
+  return q;
+}
+
+// SnubCube.CayleyEdgeCertificate.{denomQuadratic, numeratorQuadratic}
+Quad3 DenomQuadratic() {
+  return QuadAdd(QuadAdd(QuadAdd(Monomial(0), Monomial(4)), Monomial(7)), Monomial(9));
+}
+
+Quad3 NumeratorQuadratic(int c, int j) {
+  const Quad3 one = Monomial(0), x = Monomial(1), y = Monomial(2), z = Monomial(3);
+  const Quad3 xx = Monomial(4), xy = Monomial(5), xz = Monomial(6);
+  const Quad3 yy = Monomial(7), yz = Monomial(8), zz = Monomial(9);
+  const Q two(2);
+  switch (c * 3 + j) {
+  case 0: return QuadSub(QuadSub(QuadAdd(one, xx), yy), zz);
+  case 1: return QuadScale(two, QuadSub(xy, z));
+  case 2: return QuadScale(two, QuadAdd(xz, y));
+  case 3: return QuadScale(two, QuadAdd(xy, z));
+  case 4: return QuadSub(QuadAdd(QuadSub(one, xx), yy), zz);
+  case 5: return QuadScale(two, QuadSub(yz, x));
+  case 6: return QuadScale(two, QuadSub(xz, y));
+  case 7: return QuadScale(two, QuadAdd(yz, x));
+  case 8: return QuadAdd(QuadSub(QuadSub(one, xx), yy), zz);
+  }
+  LOG(FATAL) << "bad index";
+  return {};
+}
+
+// AtlasQuadratic.chartSign
+Q ChartSign(int chart, int c) {
+  return (chart == 0 || chart == c + 1) ? Q(1) : Q(-1);
+}
+
+// AtlasQuadratic.displacementQuadratic
+Quad3 DisplacementQuadratic(int chart, int inner, int outer, int c) {
+  const VecQ vin = Vertex(inner), vout = Vertex(outer);
+  Quad3 sum;
+  for (int j = 0; j < 3; j++) {
+    sum = QuadAdd(sum, QuadScale(vin[j], QuadScale(ChartSign(chart, c), NumeratorQuadratic(c, j))));
+  }
+  return QuadSub(sum, QuadScale(vout[c], DenomQuadratic()));
+}
+
+// Box.localShell.triangleBalls
+std::array<RatBall, 3> TriangleBalls(const TriangleQ &tri) {
+  std::array<RatBall, 3> balls;
+  for (int c = 0; c < 3; c++) {
+    balls[c] = BallOfEndpoints(Min3(tri[0][c], tri[1][c], tri[2][c]),
+                               Max3(tri[0][c], tri[1][c], tri[2][c]));
+  }
+  return balls;
+}
+
+// Box.relativeBalls: the Cayley coordinates x, y, z.
+std::array<RatBall, 3> RelativeBalls(const Interval5 &iv) {
+  return {BallOfEndpoints(iv.min[2], iv.max[2]),
+          BallOfEndpoints(iv.min[3], iv.max[3]),
+          BallOfEndpoints(iv.min[4], iv.max[4])};
+}
+
+// AtlasProjectiveLocalCertificate.Box.exactSupportTie
+bool ExactSupportTie(const AxisCertificate &cert, int i, int k) {
+  const int s = cert.index[i];
+  return k == s ||
+         (cert.mix[i] == 1000 && s == cert.edge_finish[i] && k == cert.edge_start[i]) ||
+         (cert.mix[i] == 0 && s == cert.edge_start2[i] && k == cert.edge_finish2[i]);
+}
+
+// AtlasEdgeCertificate.endpointAbsBound
+Q EndpointAbsBound(const Q &lo, const Q &hi) {
+  return BigRat::Max(BigRat::Abs(lo), BigRat::Abs(hi));
+}
+
+// Box.adjustedViewDisplacementQuadratic
+Quad3 AdjustedViewDisplacementQuadratic(const GlobalBox &box, const VecQ &n) {
+  Quad3 disp;
+  for (int i = 0; i < 3; i++) {
+    // Box.weightQ, Box.viewContactQuadratic
+    const Q w = Dot(n, WeightCoefficient(box.certificate, i));
+    Quad3 contact;
+    for (int c = 0; c < 3; c++) contact = QuadAdd(contact, QuadScale(n[c], ContactQuadratic(box, i, c)));
+    disp = QuadAdd(disp, QuadScale(w, contact));
+  }
+  // Box.cayleyConstraintQuadratic = x² + y² + z² - 3
+  Quad3 constraint;
+  constraint.c0 = Q(-3);
+  constraint.cxx = Q(1);
+  constraint.cyy = Q(1);
+  constraint.czz = Q(1);
+  return QuadAdd(disp, QuadScale(box.ball_multiplier, constraint));
+}
+
+// Box.viewCoefficientQuadratic and Box.coefficientBall, for coefficient
+// selector `which` (0 = c0, ..., 9 = czz).
+RatBall CoefficientBall(const GlobalBox &box, int which) {
+  auto select = [which](const Quad3 &q) -> const Q & {
+    switch (which) {
+    case 0: return q.c0;
+    case 1: return q.cx;
+    case 2: return q.cy;
+    case 3: return q.cz;
+    case 4: return q.cxx;
+    case 5: return q.cxy;
+    case 6: return q.cxz;
+    case 7: return q.cyy;
+    case 8: return q.cyz;
+    default: return q.czz;
+    }
+  };
+  Quad3 sum;
+  for (int i = 0; i < 3; i++) {
+    VecQ coeff;
+    for (int c = 0; c < 3; c++) coeff[c] = select(ContactQuadratic(box, i, c));
+    sum = QuadAdd(sum, MulLinear(WeightCoefficient(box.certificate, i), coeff));
+  }
+  return QuadEvalBall(TriangleBalls(box.triangle), sum);
+}
+
+}  // namespace
+
+RatBall BallConst(const Q &q) { return {q, Q(0)}; }
+RatBall BallAdd(const RatBall &a, const RatBall &b) {
+  return {a.center + b.center, a.radius + b.radius};
+}
+RatBall BallNeg(const RatBall &a) { return {-a.center, a.radius}; }
+RatBall BallSub(const RatBall &a, const RatBall &b) { return BallAdd(a, BallNeg(b)); }
+RatBall BallMul(const RatBall &a, const RatBall &b) {
+  return {a.center * b.center,
+          BigRat::Abs(a.center) * b.radius + a.radius * BigRat::Abs(b.center) +
+              a.radius * b.radius};
+}
+RatBall BallOfEndpoints(const Q &lo, const Q &hi) {
+  return {(lo + hi) / Q(2), (hi - lo) / Q(2)};
+}
+
+Quad3 QuadAdd(const Quad3 &a, const Quad3 &b) {
+  return {a.c0 + b.c0, a.cx + b.cx, a.cy + b.cy, a.cz + b.cz, a.cxx + b.cxx,
+          a.cxy + b.cxy, a.cxz + b.cxz, a.cyy + b.cyy, a.cyz + b.cyz, a.czz + b.czz};
+}
+Quad3 QuadSub(const Quad3 &a, const Quad3 &b) {
+  return {a.c0 - b.c0, a.cx - b.cx, a.cy - b.cy, a.cz - b.cz, a.cxx - b.cxx,
+          a.cxy - b.cxy, a.cxz - b.cxz, a.cyy - b.cyy, a.cyz - b.cyz, a.czz - b.czz};
+}
+Quad3 QuadScale(const Q &s, const Quad3 &a) {
+  return {s * a.c0, s * a.cx, s * a.cy, s * a.cz, s * a.cxx,
+          s * a.cxy, s * a.cxz, s * a.cyy, s * a.cyz, s * a.czz};
+}
+Q QuadEvalQ(const Quad3 &q, const Q &x, const Q &y, const Q &z) {
+  return q.c0 + q.cx * x + q.cy * y + q.cz * z + q.cxx * x * x +
+         q.cxy * x * y + q.cxz * x * z + q.cyy * y * y + q.cyz * y * z + q.czz * z * z;
+}
+
+// RatQuadratic3.evalBall = RatPolynomial.evalBall of centeredPolynomial. Each
+// centered variable (v - c) evaluates to the ball (0, r) and constants have
+// radius 0, so the tree evaluates exactly to center Q(c) and radius
+// sum |g_i| r_i + sum |c_ij| r_i r_j (g = gradient at the center).
+RatBall QuadEvalBall(const std::array<RatBall, 3> &vars, const Quad3 &q) {
+  const Q &x = vars[0].center, &y = vars[1].center, &z = vars[2].center;
+  const Q &rx = vars[0].radius, &ry = vars[1].radius, &rz = vars[2].radius;
+  const Q two(2);
+  const Q gx = q.cx + two * q.cxx * x + q.cxy * y + q.cxz * z;
+  const Q gy = q.cy + q.cxy * x + two * q.cyy * y + q.cyz * z;
+  const Q gz = q.cz + q.cxz * x + q.cyz * y + two * q.czz * z;
+  auto A = [](const Q &v) { return BigRat::Abs(v); };
+  Q radius = A(gx) * rx + A(gy) * ry + A(gz) * rz +
+             A(q.cxx) * (rx * rx) + A(q.cxy) * (rx * ry) + A(q.cxz) * (rx * rz) +
+             A(q.cyy) * (ry * ry) + A(q.cyz) * (ry * rz) + A(q.czz) * (rz * rz);
+  return {QuadEvalQ(q, x, y, z), radius};
+}
+
+// QuadraticBernstein.coefficient and lower.
+Q BernsteinLower(const std::array<RatBall, 3> &vars, const Quad3 &q) {
+  const Q two(2);
+  const Q lx = vars[0].center - vars[0].radius;
+  const Q ly = vars[1].center - vars[1].radius;
+  const Q lz = vars[2].center - vars[2].radius;
+  const Q wx = two * vars[0].radius, wy = two * vars[1].radius, wz = two * vars[2].radius;
+  const Q a0 = QuadEvalQ(q, lx, ly, lz);
+  const Q ax = wx * (q.cx + two * q.cxx * lx + q.cxy * ly + q.cxz * lz);
+  const Q ay = wy * (q.cy + q.cxy * lx + two * q.cyy * ly + q.cyz * lz);
+  const Q az = wz * (q.cz + q.cxz * lx + q.cyz * ly + two * q.czz * lz);
+  const Q axx = q.cxx * wx * wx, ayy = q.cyy * wy * wy, azz = q.czz * wz * wz;
+  const Q axy = q.cxy * wx * wy, axz = q.cxz * wx * wz, ayz = q.cyz * wy * wz;
+  Q best;
+  bool first = true;
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      for (int k = 0; k < 3; k++) {
+        const Q u(i, 2), v(j, 2), w(k, 2);
+        Q coeff = a0 + u * ax + v * ay + w * az;
+        if (i == 2) coeff = coeff + axx;
+        if (j == 2) coeff = coeff + ayy;
+        if (k == 2) coeff = coeff + azz;
+        coeff = coeff + u * v * axy + u * w * axz + v * w * ayz;
+        if (first || coeff < best) best = coeff;
+        first = false;
+      }
+    }
+  }
+  return best;
+}
+
+Q TightVertexErrorQ() { return Q(6, 10000000000000000LL); }
+Q SupportError() { return Q(10) * TightVertexErrorQ(); }
+
+VecQ EdgeQ(const AxisCertificate &cert, int i) {
+  const Q m = MixQ(cert, i);
+  return Add(Scale(m, Sub(Vertex(cert.edge_start[i]), Vertex(cert.edge_finish[i]))),
+             Scale(Q(1) - m, Sub(Vertex(cert.edge_start2[i]), Vertex(cert.edge_finish2[i]))));
+}
+
+VecQ WeightCoefficient(const AxisCertificate &cert, int i) {
+  const int a = (i + 1) % 3, b = (i + 2) % 3;
+  return Cross(EdgeQ(cert, a), EdgeQ(cert, b));
+}
+
+Q SupportAt(const GlobalBox &box, int corner, int i, int k) {
+  const VecQ delta = Sub(Vertex(k), Vertex(box.certificate.index[i]));
+  return Dot(box.triangle[corner], Cross(EdgeQ(box.certificate, i), delta));
+}
+
+Q SupportUpper(const GlobalBox &box, int i, int k) {
+  if (ExactSupportTie(box.certificate, i, k)) return Q(0);
+  return Max3(SupportAt(box, 0, i, k), SupportAt(box, 1, i, k), SupportAt(box, 2, i, k)) +
+         SupportError();
+}
+
+Q WeightAt(const GlobalBox &box, int corner, int i) {
+  return Dot(box.triangle[corner], WeightCoefficient(box.certificate, i));
+}
+
+Q WeightLower(const GlobalBox &box, int i) {
+  return Min3(WeightAt(box, 0, i), WeightAt(box, 1, i), WeightAt(box, 2, i)) - SupportError();
+}
+
+Q WeightUpper(const GlobalBox &box, int i) {
+  return Max3(WeightAt(box, 0, i), WeightAt(box, 1, i), WeightAt(box, 2, i)) + SupportError();
+}
+
+// Box.weightedSupportControl / weightedSupportUpper / contactDefectUpper /
+// weightedDefectUpper.
+Q WeightedDefectUpper(const GlobalBox &box) {
+  const Q se = SupportError();
+  Q total(0);
+  for (int i = 0; i < 3; i++) {
+    Q contact(0);  // max 0 (max over k ...)
+    for (int k = 0; k < NUM_VERTICES; k++) {
+      Q upper;
+      bool first = true;
+      for (int a = 0; a < 3; a++) {
+        for (int b = 0; b < 3; b++) {
+          Q control(0);
+          if (k != box.certificate.index[i]) {
+            control = ((WeightAt(box, a, i) + se) * (SupportAt(box, b, i, k) + se) +
+                       (WeightAt(box, b, i) + se) * (SupportAt(box, a, i, k) + se)) / Q(2);
+          }
+          if (first || control > upper) upper = control;
+          first = false;
+        }
+      }
+      contact = BigRat::Max(contact, upper);
+    }
+    total = total + contact;
+  }
+  return total;
+}
+
+Quad3 ContactQuadratic(const GlobalBox &box, int i, int c) {
+  const VecQ edge = EdgeQ(box.certificate, i);
+  auto d = [&](int cc) {
+    return DisplacementQuadratic(box.chart, box.inner_index[i], box.certificate.index[i], cc);
+  };
+  switch (c) {
+  case 0: return QuadSub(QuadScale(edge[1], d(2)), QuadScale(edge[2], d(1)));
+  case 1: return QuadSub(QuadScale(edge[2], d(0)), QuadScale(edge[0], d(2)));
+  default: return QuadSub(QuadScale(edge[0], d(1)), QuadScale(edge[1], d(0)));
+  }
+}
+
+Quad3 ViewControlQuadratic(const GlobalBox &box, int i, int j) {
+  if (i == j) return AdjustedViewDisplacementQuadratic(box, box.triangle[i]);
+  const Quad3 mid =
+      AdjustedViewDisplacementQuadratic(box, Midpoint(box.triangle[i], box.triangle[j]));
+  return QuadSub(QuadScale(Q(2), mid),
+                 QuadScale(Q(1, 2), QuadAdd(AdjustedViewDisplacementQuadratic(box, box.triangle[i]),
+                                            AdjustedViewDisplacementQuadratic(box, box.triangle[j]))));
+}
+
+Q BernsteinDisplacementLower(const GlobalBox &box) {
+  const auto vars = RelativeBalls(box.interval);
+  Q best;
+  bool first = true;
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      const Q l = BernsteinLower(vars, ViewControlQuadratic(box, i, j));
+      if (first || l < best) best = l;
+      first = false;
+    }
+  }
+  return best;
+}
+
+RatBall AdjustedDisplacementBall(const GlobalBox &box) {
+  const Q &lambda = box.ball_multiplier;
+  const RatBall b0 = BallAdd(CoefficientBall(box, 0), BallConst(Q(-3) * lambda));
+  const RatBall bx = CoefficientBall(box, 1);
+  const RatBall by = CoefficientBall(box, 2);
+  const RatBall bz = CoefficientBall(box, 3);
+  const RatBall bxx = BallAdd(CoefficientBall(box, 4), BallConst(lambda));
+  const RatBall bxy = CoefficientBall(box, 5);
+  const RatBall bxz = CoefficientBall(box, 6);
+  const RatBall byy = BallAdd(CoefficientBall(box, 7), BallConst(lambda));
+  const RatBall byz = CoefficientBall(box, 8);
+  const RatBall bzz = BallAdd(CoefficientBall(box, 9), BallConst(lambda));
+  const auto rel = RelativeBalls(box.interval);
+  const RatBall &x = rel[0], &y = rel[1], &z = rel[2];
+  RatBall acc = BallAdd(b0, BallMul(bx, x));
+  acc = BallAdd(acc, BallMul(by, y));
+  acc = BallAdd(acc, BallMul(bz, z));
+  acc = BallAdd(acc, BallMul(bxx, BallMul(x, x)));
+  acc = BallAdd(acc, BallMul(bxy, BallMul(x, y)));
+  acc = BallAdd(acc, BallMul(bxz, BallMul(x, z)));
+  acc = BallAdd(acc, BallMul(byy, BallMul(y, y)));
+  acc = BallAdd(acc, BallMul(byz, BallMul(y, z)));
+  acc = BallAdd(acc, BallMul(bzz, BallMul(z, z)));
+  return acc;
+}
+
+Q CertifiedDisplacementLower(const GlobalBox &box) {
+  const RatBall b = AdjustedDisplacementBall(box);
+  return BigRat::Max(b.center - b.radius, BernsteinDisplacementLower(box));
+}
+
+Q DBound(const GlobalBox &box) {
+  const auto &iv = box.interval;
+  const Q ex = EndpointAbsBound(iv.min[2], iv.max[2]);
+  const Q ey = EndpointAbsBound(iv.min[3], iv.max[3]);
+  const Q ez = EndpointAbsBound(iv.min[4], iv.max[4]);
+  return Q(1) + ex * ex + ey * ey + ez * ez;
+}
+
+Q DisplacementError(const GlobalBox &box) {
+  return Q(300) * DBound(box) * TightVertexErrorQ();
+}
+
+bool Admissible(const GlobalBox &box) {
+  // SignedTriangleValid for root 0: nonnegative coordinates summing to 1.
+  for (int i = 0; i < 3; i++) {
+    for (int c = 0; c < 3; c++) {
+      if (box.triangle[i][c] < Q(0)) return false;
+    }
+    if (!(box.triangle[i][0] + box.triangle[i][1] + box.triangle[i][2] == Q(1))) return false;
+  }
+  bool any_pos = false;
+  for (int i = 0; i < 3; i++) {
+    const Q wl = WeightLower(box, i);
+    if (wl < Q(0)) return false;
+    if (wl > Q(0)) any_pos = true;
+  }
+  if (!any_pos) return false;
+  for (int i = 0; i < 3; i++) {
+    if (!(SupportUpper(box, i, box.certificate.nonzero_witness[i]) < Q(0))) return false;
+  }
+  return !(box.ball_multiplier < Q(0));
+}
+
+Q DisplacementSlack(const GlobalBox &box) {
+  return CertifiedDisplacementLower(box) - DBound(box) * WeightedDefectUpper(box) -
+         DisplacementError(box);
+}
+
+bool Valid(const GlobalBox &box) {
+  return Admissible(box) && !(DisplacementSlack(box) < Q(0));
+}
+
+GlobalBox ComponentBox(const MixedBox &box, int k) {
+  GlobalBox g;
+  g.interval = box.interval;
+  g.triangle = box.triangle;
+  g.chart = box.chart;
+  g.certificate = box.component[k].certificate;
+  g.inner_index = box.component[k].inner_index;
+  g.ball_multiplier = box.component[k].ball_multiplier;
+  return g;
+}
+
+Q BernsteinDisplacementLower(const MixedBox &box) {
+  const auto vars = RelativeBalls(box.interval);
+  std::array<GlobalBox, 4> comps;
+  for (int k = 0; k < 4; k++) comps[k] = ComponentBox(box, k);
+  Q best;
+  bool first = true;
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      Quad3 control;
+      for (int k = 0; k < 4; k++) {
+        control = QuadAdd(control, QuadScale(box.weight[k], ViewControlQuadratic(comps[k], i, j)));
+      }
+      const Q l = BernsteinLower(vars, control);
+      if (first || l < best) best = l;
+      first = false;
+    }
+  }
+  return best;
+}
+
+Q WeightedDefectUpper(const MixedBox &box) {
+  Q total(0);
+  for (int k = 0; k < 4; k++) total = total + box.weight[k] * WeightedDefectUpper(ComponentBox(box, k));
+  return total;
+}
+
+Q DisplacementSlack(const MixedBox &box) {
+  const GlobalBox c0 = ComponentBox(box, 0);
+  return BernsteinDisplacementLower(box) - DBound(c0) * WeightedDefectUpper(box) -
+         DisplacementError(c0);
+}
+
+bool Valid(const MixedBox &box) {
+  Q sum(0);
+  for (int k = 0; k < 4; k++) {
+    if (box.weight[k] < Q(0)) return false;
+    sum = sum + box.weight[k];
+  }
+  if (!(sum == Q(1))) return false;
+  for (int k = 0; k < 4; k++) {
+    if (!Admissible(ComponentBox(box, k))) return false;
+  }
+  return !(DisplacementSlack(box) < Q(0));
+}
+
+}  // namespace exact5d
