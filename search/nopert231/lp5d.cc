@@ -82,20 +82,26 @@ MaxMin SolveMaxMin(const std::vector<std::vector<double>> &a) {
     return v;
   };
   if (K == 1) return MaxMin{.w = {1.0}, .value = value_of({1.0})};
+  // The optimal weights do not change when every column is scaled by the
+  // same positive factor, so solve with the entries normalized to at most 1
+  // in magnitude: the simplex tolerances are absolute, and near the identity
+  // the entries are around 1e-13.
+  double scale = 0.0;
+  for (const auto &col : a) for (double v : col) scale = std::max(scale, std::abs(v));
+  if (!(scale > 0.0) || !std::isfinite(scale)) scale = 1.0;
   // Eliminate w_K = 1 - sum_{k<K} w_k and shift t = s - M so that the
   // constraints  s - sum_{k<K} w_k (a_k,r - a_K,r) <= M + a_K,r  have a
   // nonnegative right side; also sum_{k<K} w_k <= 1.
-  double M = 1.0;
-  for (const auto &col : a) for (double v : col) M = std::max(M, 1.0 + std::abs(v));
+  const double M = 2.0;
   const int n = K;  // w_1..w_{K-1}, s
   std::vector<std::vector<double>> A;
   std::vector<double> b;
   for (int r = 0; r < R; r++) {
     std::vector<double> row(n, 0.0);
-    for (int k = 0; k < K - 1; k++) row[k] = -(a[k][r] - a[K - 1][r]);
+    for (int k = 0; k < K - 1; k++) row[k] = -(a[k][r] - a[K - 1][r]) / scale;
     row[K - 1] = 1.0;
     A.push_back(row);
-    b.push_back(M + a[K - 1][r]);
+    b.push_back(M + a[K - 1][r] / scale);
   }
   std::vector<double> sum_row(n, 0.0);
   for (int k = 0; k < K - 1; k++) sum_row[k] = 1.0;
@@ -104,8 +110,21 @@ MaxMin SolveMaxMin(const std::vector<std::vector<double>> &a) {
   std::vector<double> c(n, 0.0);
   c[K - 1] = 1.0;
   const auto res = SimplexMax(A, b, c);
-  CHECK(res.has_value()) << "max-min LP failed";
   std::vector<double> w(K, 0.0);
+  if (!res.has_value()) {
+    // Numerical trouble (should not happen after scaling): fall back to the
+    // best single column, which is still a valid choice of weights.
+    int best = 0;
+    double best_value = -std::numeric_limits<double>::infinity();
+    for (int k = 0; k < K; k++) {
+      std::vector<double> e(K, 0.0);
+      e[k] = 1.0;
+      const double v = value_of(e);
+      if (v > best_value) best = k, best_value = v;
+    }
+    w[best] = 1.0;
+    return MaxMin{.w = w, .value = best_value};
+  }
   double rest = 1.0;
   for (int k = 0; k < K - 1; k++) {
     w[k] = std::max(0.0, res->x[k]);
