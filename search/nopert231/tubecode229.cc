@@ -62,6 +62,99 @@ struct SolverOptions {
   bool import_tree = false;
 };
 
+// Signed margin of the origin inside the tetrahedron with vertices p[0..3]:
+// the minimum over faces of the distance from the origin to the face plane,
+// positive iff the origin is strictly inside.
+static double TetraMargin(const vec3 p[4]) {
+  // Reject (nearly) flat tetrahedra: their face orientations are noise.
+  double scale = 0;
+  for (int i = 0; i < 4; i++) scale = std::max(scale, yocto::length(p[i]));
+  const double vol6 = yocto::dot(yocto::cross(p[1] - p[0], p[2] - p[0]), p[3] - p[0]);
+  if (!(std::abs(vol6) > 1e-9 * scale * scale * scale)) return -std::numeric_limits<double>::infinity();
+  double margin = std::numeric_limits<double>::infinity();
+  for (int skip = 0; skip < 4; skip++) {
+    vec3 f[3];
+    for (int j = 0, k = 0; j < 4; j++) if (j != skip) f[k++] = p[j];
+    vec3 n = yocto::cross(f[1] - f[0], f[2] - f[0]);
+    const double ln = yocto::length(n);
+    if (ln < 1e-300) return -std::numeric_limits<double>::infinity();
+    n /= ln;
+    // Orient n toward the opposite vertex (inward).
+    if (yocto::dot(n, p[skip] - f[0]) < 0) n = -n;
+    margin = std::min(margin, -yocto::dot(n, f[0]));
+  }
+  return margin;
+}
+
+// Deterministic search for a tetrahedron of candidate points containing
+// the origin with a large margin: start from the support points in four
+// regular-tetrahedron directions, then repeatedly take the face nearest
+// the origin, find the support point along its outward normal, and swap
+// it in for whichever vertex most improves the margin. Points with
+// usable(i) == false are skipped. Random 4-subsets almost never contain
+// the origin when the point cloud is elongated and the origin is near its
+// boundary (e.g. close to an edge-on quad), which is where this matters.
+static bool SupportSearchTetra(const std::vector<vec3> &pts,
+                               const std::function<bool(int)> &usable,
+                               std::array<int, 4> *out, double *out_margin) {
+  const int N = pts.size();
+  auto Support = [&](const vec3 &d) {
+    int best = -1;
+    double bv = -std::numeric_limits<double>::infinity();
+    for (int i = 0; i < N; i++) {
+      const double v = yocto::dot(pts[i], d);
+      if (v > bv && usable(i)) { bv = v; best = i; }
+    }
+    return best;
+  };
+  const vec3 dirs[4] = {vec3{1, 1, 1}, vec3{1, -1, -1}, vec3{-1, 1, -1}, vec3{-1, -1, 1}};
+  std::array<int, 4> cur;
+  for (int k = 0; k < 4; k++) {
+    cur[k] = Support(yocto::normalize(dirs[k]));
+    if (cur[k] < 0) return false;
+  }
+  auto Margin = [&](const std::array<int, 4> &t) {
+    vec3 p[4] = {pts[t[0]], pts[t[1]], pts[t[2]], pts[t[3]]};
+    return TetraMargin(p);
+  };
+  double cur_m = Margin(cur);
+  for (int iter = 0; iter < 500; iter++) {
+    // Face nearest the origin (smallest signed distance), and its outward normal.
+    vec3 p[4] = {pts[cur[0]], pts[cur[1]], pts[cur[2]], pts[cur[3]]};
+    double worst = std::numeric_limits<double>::infinity();
+    vec3 out_n{0, 0, 0};
+    for (int skip = 0; skip < 4; skip++) {
+      vec3 f[3];
+      for (int j = 0, k = 0; j < 4; j++) if (j != skip) f[k++] = p[j];
+      vec3 n = yocto::cross(f[1] - f[0], f[2] - f[0]);
+      const double ln = yocto::length(n);
+      if (ln < 1e-300) continue;
+      n /= ln;
+      if (yocto::dot(n, p[skip] - f[0]) < 0) n = -n;
+      const double dist = -yocto::dot(n, f[0]);
+      if (dist < worst) { worst = dist; out_n = -n; }
+    }
+    if (yocto::length(out_n) == 0) break;
+    const int sp = Support(out_n);
+    if (sp < 0) break;
+    std::array<int, 4> best_t = cur;
+    double best_m = cur_m;
+    for (int k = 0; k < 4; k++) {
+      if (cur[k] == sp) continue;
+      std::array<int, 4> t = cur;
+      t[k] = sp;
+      const double m = Margin(t);
+      if (m > best_m) { best_m = m; best_t = t; }
+    }
+    if (best_m <= cur_m * (1 + 1e-12) + 1e-300) break;
+    cur = best_t;
+    cur_m = best_m;
+  }
+  *out = cur;
+  *out_margin = cur_m;
+  return cur_m > 0;
+}
+
 // Find best cage for a given triangle, pre-validating AuditAxis on tri
 static bool FindBestCageForTriangle(
     const TriangleQ &tri,
@@ -102,6 +195,31 @@ static bool FindBestCageForTriangle(
   double best_margin = 0.0;
   std::array<int, 4> best_tet = {-1, -1, -1, -1};
   int N = pts.size();
+
+  // 0. Deterministic support-point search; candidates failing the exact
+  // audit are excluded and the search rerun.
+  {
+    std::vector<int8_t> excluded(N, 0);
+    for (int round = 0; round < 8; round++) {
+      std::array<int, 4> tet;
+      double margin = 0;
+      if (!SupportSearchTetra(pts, [&](int i) { return !excluded[i]; }, &tet, &margin)) break;
+      bool all_ok = true;
+      for (int idx : tet) {
+        if (!Audited(idx)) { excluded[idx] = 1; all_ok = false; }
+      }
+      if (all_ok) {
+        double m2;
+        double bary[4];
+        vec3 tpts[4] = {pts[tet[0]], pts[tet[1]], pts[tet[2]], pts[tet[3]]};
+        if (TetrahedronOriginMargin(tpts, &m2, bary) && m2 > best_margin) {
+          best_margin = m2;
+          best_tet = tet;
+        }
+        break;
+      }
+    }
+  }
 
   // 1. Search for maximal margin cage via trials
   for (int trial = 0; trial < 25000; trial++) {

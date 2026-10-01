@@ -5,6 +5,7 @@
 //
 // Usage: probe48edge.exe [code] [tri] [max_depth] [samples_per_depth]
 
+#include <map>
 #define TUBECODE_NO_MAIN
 #include "../tubecode229.cc"
 
@@ -57,10 +58,28 @@ int main(int argc, char **argv) {
                  ReauditCertificate(tri, cert, zero, zero, &audited, &why)) {
         ok = true;
       }
+      std::string diag;
+      if (!ok) {
+        vec3 c0 = ToDouble(tri.corners[0]), c1 = ToDouble(tri.corners[1]), c2 = ToDouble(tri.corners[2]);
+        vec3 center = yocto::normalize((c0 + c1 + c2) / 3.0);
+        std::vector<CandidateTriple> cands;
+        GenerateCandidatesForView(center, tri, 8, true, 1e-13, &cands);
+        std::map<std::string, int> reasons;
+        int pass = 0;
+        for (const auto &cd : cands) {
+          ContactInfo cts[3] = {cd.contacts[0], cd.contacts[1], cd.contacts[2]};
+          AxisCertificate ax; BigVecQ3 cent; BigRat del; std::string why2;
+          if (AuditAxis(tri, cts, &ax, &cent, &del, &why2)) pass++;
+          else reasons[why2.substr(0, why2.find('('))]++;
+        }
+        diag = StringPrintf(" [cands %zu, audit-pass %d;", cands.size(), pass);
+        for (auto &[k, v] : reasons) diag += StringPrintf(" %s:%d", k.c_str(), v);
+        diag += "]";
+      }
       std::lock_guard<std::mutex> l(mu);
       printf("depth %2d path %-20s %s c=%.3e r=%s %s\n", depth, path.c_str(),
              ok ? "OK  " : "FAIL", ok ? audited.c.ToDouble() : 0.0,
-             ok ? audited.r.ToString().c_str() : "-", ok ? "" : why.substr(0, 90).c_str());
+             ok ? audited.r.ToString().c_str() : "-", ok ? "" : (why.substr(0, 60) + diag).c_str());
       fflush(stdout);
     }
   };
