@@ -78,7 +78,9 @@ struct GpuResult {
 };
 static_assert(sizeof(GpuResult) == 32, "GpuResult struct size mismatch");
 
-inline Chart229::CertRow ToCertRow(const GpuResult &res, int64_t id, int64_t parent_id, int depth) {
+// cone_samples: of the pool that res.winning_triple indexes into.
+inline Chart229::CertRow ToCertRow(const GpuResult &res, int64_t id, int64_t parent_id, int depth,
+                                   int cone_samples) {
   return Chart229::CertRow{
       .id = id,
       .parent_id = parent_id,
@@ -88,6 +90,7 @@ inline Chart229::CertRow ToCertRow(const GpuResult &res, int64_t id, int64_t par
       .in0 = res.inner[0],
       .in1 = res.inner[1],
       .in2 = res.inner[2],
+      .cone_samples = cone_samples,
   };
 }
 
@@ -427,6 +430,8 @@ struct FarkasCageCache {
 // mathematically matching Lean 4's AtlasProjectiveMixedGlobalCertificate.
 struct MixtureResult {
   bool certified = false;
+  // Cone samples of the candidate pool the triple indices refer to.
+  int cone_samples = 0;
   int num_components = 0;
   int triples[4] = {-1, -1, -1, -1};
   int inners[4][3] = {{-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}, {-1, -1, -1}};
@@ -452,6 +457,7 @@ inline Chart229::CertRow ToCertRow(const MixtureResult &res, int64_t id, int64_t
       .in0 = res.inners[0][0],
       .in1 = res.inners[0][1],
       .in2 = res.inners[0][2],
+      .cone_samples = res.cone_samples,
   };
 }
 
@@ -472,6 +478,7 @@ inline Chart229::MixedCertRow ToMixedCertRow(const MixtureResult &res, int64_t i
         .in2 = res.inners[k][2],
     });
   }
+  mx.cone_samples = res.cone_samples;
   return mx;
 }
 

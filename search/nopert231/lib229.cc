@@ -1536,6 +1536,7 @@ MixtureResult EvaluateBoxCPUMixture(
     int cone_samples, int max_components,
     const FarkasCageCache *cache) {
   MixtureResult res;
+  res.cone_samples = cone_samples;
 
   double sx = 1.0, sy = 1.0, sz = 1.0;
   if (chart == 1) { sy = -1.0; sz = -1.0; }
@@ -2840,7 +2841,6 @@ MixtureSolveStats SolveCellMixture(
       stats.min_leaf_depth = std::min(stats.min_leaf_depth, (int)node.depth);
       stats.max_leaf_depth = std::max(stats.max_leaf_depth, (int)node.depth);
       stats.leaf_depth_histogram[std::clamp((int)node.depth, 0, 159)]++;
-      // TODO: Probably should include cone_samples here so that it's easier to interpret the triangle indices.
       if (res.strategy_used == 0) stats.k1_count++;
       else if (res.strategy_used == 1) stats.corner_count++;
       else if (res.strategy_used == 2) stats.greedy_count++;
@@ -5015,6 +5015,8 @@ void SearchManager::Run() {
           const auto &node = current_batch[idx];
           max_view_depth_reached = std::max<int>(max_view_depth_reached, (int)node.view_depth);
           auto res = results[idx];
+          // Cone samples of the pool that res's triple index refers to.
+          int res_cone_samples = EffectiveConeSamples(node);
 
           bool near_depth_out = (node.depth >= max_depth - 2);
           bool deep_box_with_narrow_view =
@@ -5065,6 +5067,7 @@ void SearchManager::Run() {
               if (esc_res.certified) {
                 ctr_esc_certified++;
                 res = esc_res;
+                res_cone_samples = cs;
                 break;
               }
             }
@@ -5072,8 +5075,7 @@ void SearchManager::Run() {
 
           if (res.certified) {
             RecordCertification(node);
-            // TODO: Probably should include cone_samples here so that it's easier to interpret the triangle indices.
-            OutputRow(ToCertRow(res, node.id, node.parent_id, node.depth));
+            OutputRow(ToCertRow(res, node.id, node.parent_id, node.depth, res_cone_samples));
             if (prioritize_related && !active_priority.empty()) {
               for (auto it = active_priority.begin(); it != active_priority.end(); ) {
                 if (it->chart == node.chart && node.box.Contains(it->w) &&

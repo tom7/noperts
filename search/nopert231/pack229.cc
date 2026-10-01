@@ -550,6 +550,9 @@ struct StoredMixedComponent {
 
 struct StoredMixedCert {
   int mix_k = 0;
+  // Cone samples of the candidate pool the triples index into (0 = unknown,
+  // legacy row).
+  int cone_samples = 0;
   BigRat mix_weights[4] = {BigRat(0), BigRat(0), BigRat(0), BigRat(0)};
   StoredMixedComponent mix_components[4];
 };
@@ -580,6 +583,9 @@ struct ParsedNode {
   NodeTag tag = NodeTag::NONE;
   uint8_t fund_dir = 1;
   int winning_triple = -1;
+  // For CERT rows: cone samples of the pool winning_triple indexes into
+  // (0 = unknown, legacy row).
+  int cone_samples = 0;
   int inner[3] = {0, 0, 0};
   double tube_radius = 0.0;
   std::string tube_radius_str;
@@ -1106,6 +1112,7 @@ static bool ParseRow(const std::string &line,
             node->tag = NodeTag::CERT;
             if (cert_delta) (*cert_delta)++;
             node->winning_triple = c.winning_triple;
+            node->cone_samples = c.cone_samples;
             node->inner[0] = c.in0;
             node->inner[1] = c.in1;
             node->inner[2] = c.in2;
@@ -1120,6 +1127,7 @@ static bool ParseRow(const std::string &line,
             int k = m.components.size();
             StoredMixedCert mx;
             mx.mix_k = k;
+            mx.cone_samples = m.cone_samples;
             for (int i = 0; i < k && i < 4; i++) {
               mx.mix_components[i].winning_triple = m.components[i].winning_triple;
               mx.mix_components[i].inner[0] = m.components[i].in0;
@@ -1300,6 +1308,7 @@ static void LoadDoneFiles(const std::string &done_dir,
       auto &root_node = (*nodes)[target_node_id];
       root_node.tag = file_rows[0].tag;
       root_node.winning_triple = file_rows[0].winning_triple;
+      root_node.cone_samples = file_rows[0].cone_samples;
       for (int m = 0; m < 3; m++) root_node.inner[m] = file_rows[0].inner[m];
       root_node.tube_radius = file_rows[0].tube_radius;
       root_node.tube_radius_str = file_rows[0].tube_radius_str;
@@ -1846,9 +1855,16 @@ int main(int argc, char **argv) {
           primary_samples = escalate_cone_samples;
         }
 
-        std::vector<int> candidate_samples = {primary_samples};
-        for (int s : {12, 8, 14, 16, 10, 18, 20}) {
-          if (s != primary_samples) candidate_samples.push_back(s);
+        // Rows record the pool's cone samples; legacy rows don't, so for
+        // those we try the likely values.
+        std::vector<int> candidate_samples;
+        if (node.cone_samples > 0) {
+          candidate_samples = {node.cone_samples};
+        } else {
+          candidate_samples = {primary_samples};
+          for (int s : {12, 8, 14, 16, 10, 18, 20}) {
+            if (s != primary_samples) candidate_samples.push_back(s);
+          }
         }
 
         StoredCert sc;
@@ -1885,9 +1901,20 @@ int main(int argc, char **argv) {
             max_triple = mx.mix_components[i].winning_triple;
           }
         }
-        auto pool = get_pool(cone_samples);
-        if (max_triple >= (int)pool->gpu_triples.size()) {
-          pool = get_pool_for_triple(node.depth, max_triple);
+        std::shared_ptr<const TrianglePool> pool;
+        if (mx.cone_samples > 0) {
+          pool = get_pool(mx.cone_samples);
+          if (max_triple >= (int)pool->gpu_triples.size()) {
+            std::cerr << ARED("MX node ") << id << " triple " << max_triple
+                      << " out of range for its pool (cone_samples " << mx.cone_samples << ")\n";
+            return 1;
+          }
+        } else {
+          // Legacy row without cone_samples: guess.
+          pool = get_pool(cone_samples);
+          if (max_triple >= (int)pool->gpu_triples.size()) {
+            pool = get_pool_for_triple(node.depth, max_triple);
+          }
         }
         const CayleyBoxQ &box = intervals[node.interval_id];
         for (int i = 0; i < mx.mix_k; i++) {

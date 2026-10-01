@@ -74,6 +74,22 @@ static void TestCertRow() {
   CHECK(std::holds_alternative<Chart229::CertRow>(root_parsed));
   CHECK(std::get<Chart229::CertRow>(root_parsed) == root_cert);
 
+  // 7. Trailing cone_samples (pool the triple index refers to)
+  Chart229::CertRow cs_cert = root_cert;
+  cs_cert.cone_samples = 12;
+  std::string cs_s = Chart229::Serialize(cs_cert);
+  CHECK(cs_s == "ce 0 -1 0 2a 1p-1 1 2 3 c");
+  auto cs_parsed = Chart229::Parse(cs_s);
+  CHECK(std::holds_alternative<Chart229::CertRow>(cs_parsed));
+  CHECK(std::get<Chart229::CertRow>(cs_parsed) == cs_cert);
+  // Legacy decimal form with cone_samples, and rows without it parse as 0.
+  auto cs_legacy = Chart229::Parse(Chart229::SerializeLegacy(cs_cert));
+  CHECK(std::holds_alternative<Chart229::CertRow>(cs_legacy));
+  CHECK(std::get<Chart229::CertRow>(cs_legacy).cone_samples == 12);
+  CHECK(std::get<Chart229::CertRow>(root_parsed).cone_samples == 0);
+  // cone_samples must be positive.
+  CHECK(Chart229::IsError(Chart229::Parse("ce 0 -1 0 2a 1p-1 1 2 3 0")));
+
   printf("  CertRow tests PASSED.\n");
 }
 
@@ -105,6 +121,18 @@ static void TestMixedCertRow() {
   auto r2 = Chart229::Parse(s_hex);
   CHECK(std::holds_alternative<Chart229::MixedCertRow>(r2));
   CHECK(std::get<Chart229::MixedCertRow>(r2) == m1);
+
+  // 4. Trailing cone_samples
+  Chart229::MixedCertRow m_cs = m1;
+  m_cs.cone_samples = 14;
+  std::string s_cs = Chart229::Serialize(m_cs);
+  CHECK(s_cs == "mx 12 3 4 2 1p-10 100 1p-1 1 2 3 101 1p-1 4 5 6 e");
+  auto r_cs = Chart229::Parse(s_cs);
+  CHECK(std::holds_alternative<Chart229::MixedCertRow>(r_cs));
+  CHECK(std::get<Chart229::MixedCertRow>(r_cs) == m_cs);
+  auto r_cs_legacy = Chart229::Parse(Chart229::SerializeLegacy(m_cs));
+  CHECK(std::holds_alternative<Chart229::MixedCertRow>(r_cs_legacy));
+  CHECK(std::get<Chart229::MixedCertRow>(r_cs_legacy).cone_samples == 14);
 
   printf("  MixedCertRow tests PASSED.\n");
 }

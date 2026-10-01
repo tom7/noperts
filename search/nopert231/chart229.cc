@@ -146,6 +146,13 @@ Chart229::Row Chart229::Parse(std::string_view line) {
         !ParseInt(in2_tok, base, in2)) {
       return ParseError{std::format("Malformed {} row parameters: '{}'", tag, line)};
     }
+    // Optional trailing cone_samples.
+    int cone_samples = 0;
+    if (std::string_view cs_tok = NextToken(rest); !cs_tok.empty()) {
+      if (!ParseInt(cs_tok, base, cone_samples) || cone_samples <= 0) {
+        return ParseError{std::format("Malformed {} cone_samples: '{}'", tag, line)};
+      }
+    }
     if (!rest.empty()) {
       return ParseError{std::format("Extra tokens on {} row: '{}'", tag, line)};
     }
@@ -158,6 +165,7 @@ Chart229::Row Chart229::Parse(std::string_view line) {
         .in0 = in0,
         .in1 = in1,
         .in2 = in2,
+        .cone_samples = cone_samples,
     };
   }
 
@@ -204,6 +212,13 @@ Chart229::Row Chart229::Parse(std::string_view line) {
           .in2 = in2,
       });
     }
+    // Optional trailing cone_samples.
+    int cone_samples = 0;
+    if (std::string_view cs_tok = NextToken(rest); !cs_tok.empty()) {
+      if (!ParseInt(cs_tok, base, cone_samples) || cone_samples <= 0) {
+        return ParseError{std::format("Malformed {} cone_samples: '{}'", tag, line)};
+      }
+    }
     if (!rest.empty()) {
       return ParseError{std::format("Extra tokens on {} row: '{}'", tag, line)};
     }
@@ -213,6 +228,7 @@ Chart229::Row Chart229::Parse(std::string_view line) {
         .depth = depth,
         .margin = margin,
         .components = std::move(comps),
+        .cone_samples = cone_samples,
     };
   }
 
@@ -497,6 +513,10 @@ std::string Chart229::Serialize(const CertRow &row) {
   AppendHexInt(out, row.in1);
   out += ' ';
   AppendHexInt(out, row.in2);
+  if (row.cone_samples > 0) {
+    out += ' ';
+    AppendHexInt(out, row.cone_samples);
+  }
   return out;
 }
 
@@ -522,6 +542,10 @@ std::string Chart229::Serialize(const MixedCertRow &row) {
     AppendHexInt(out, comp.in1);
     out += ' ';
     AppendHexInt(out, comp.in2);
+  }
+  if (row.cone_samples > 0) {
+    out += ' ';
+    AppendHexInt(out, row.cone_samples);
   }
   return out;
 }
@@ -666,6 +690,7 @@ std::string Chart229::SerializeLegacy(const CertRow &row) {
                                 row.winning_triple);
   AppendDecimalDouble(out, row.margin);
   out += std::format(" {} {} {}", row.in0, row.in1, row.in2);
+  if (row.cone_samples > 0) out += std::format(" {}", row.cone_samples);
   return out;
 }
 
@@ -679,6 +704,7 @@ std::string Chart229::SerializeLegacy(const MixedCertRow &row) {
     AppendDecimalDouble(out, comp.weight);
     out += std::format(" {} {} {}", comp.in0, comp.in1, comp.in2);
   }
+  if (row.cone_samples > 0) out += std::format(" {}", row.cone_samples);
   return out;
 }
 
