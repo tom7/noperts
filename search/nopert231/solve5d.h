@@ -6,11 +6,11 @@
 //   pf  the box lies outside the fivefold fundamental domain
 //   tu  chart 0, and the box lies in the identity tube of the radius the tube
 //       table certifies at this view (tubeatlas5d)
-//   ce  a single contact triple certifies the node (cert5d), confirmed exactly
-//       by exact5d
+//   ce  a single contact triple certifies the node (cert5d) with a positive
+//       (conservative) double margin; optionally confirmed by exact5d
 //
-// All leaves are checked with the exact predicates Lean uses (exact5d), so a
-// completed tree packs into rows Lean accepts.
+// Prunes and tubes are decided with the exact predicates Lean uses (exact5d);
+// certificates are confirmed exactly at packing time (and by Lean).
 
 #ifndef _NOPERT229_SOLVE5D_H
 #define _NOPERT229_SOLVE5D_H
@@ -41,8 +41,11 @@ struct Options {
   double split_kappa = 0.5;
   // Nodes deeper than this become deferred (df) leaves.
   int max_depth = 80;
-  // Confirm every certificate leaf with exact5d before accepting it.
-  bool exact_check = true;
+  // Confirm every certificate leaf with exact5d before accepting it. Off by
+  // default: it costs ~30x the double search (the code triangles' corners are
+  // ~1000-bit rationals), the double margin is conservative (no exact
+  // rejections seen), and packing and Lean check every leaf anyway.
+  bool exact_check = false;
 };
 
 struct Job {
