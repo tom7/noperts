@@ -115,6 +115,44 @@ std::string FormatRat(const BigRat &r) {
   return std::format("{}/{}", num.ToString(), den.ToString());
 }
 
+// Nearest multiple of 2^-bits.
+static BigRat RoundDyadic(const BigRat &v, int bits) {
+  const BigInt scale = BigInt::Pow(BigInt(2), bits);
+  auto [num, den] = (v * BigRat(scale, BigInt(1)) + BigRat(1, 2)).Parts();
+  return BigRat(BigInt::DivFloor(num, den), scale);
+}
+
+// Rounds a code-triangle corner (a point on the plane x + y + z = 1 inside
+// upperWedgeTriangle) to dyadic coordinates with denominator 2^bits, staying
+// on the plane and on whichever wedge edge it lies on. The rule depends only
+// on the point, so corners shared by adjacent triangles stay shared and the
+// triangulation stays gap-free. (The exact corners are intersections of
+// facet planes and run to ~1000-bit rationals, which dominated the cost of
+// checking certificates in Lean; certificates are checked over their own
+// triangle, so the triangles need not be exact code cells, only cover the
+// wedge, which the wedge-cover certificate checks.)
+static BigVecQ3 RoundCorner(const BigVecQ3 &p, int bits) {
+  const BigRat zero(0), one(1);
+  const bool on_z = p.z == zero, on_y = p.y == zero,
+             on_w2 = BigRat(31) * p.x == BigRat(10) * p.y;
+  // Corners of the wedge stay exact (only (10/41, 31/41, 0) is not dyadic).
+  if ((int)on_z + (int)on_y + (int)on_w2 >= 2) return p;
+  if (p.z == zero) {
+    BigRat x = RoundDyadic(p.x, bits);
+    return BigVecQ3(x, one - x, zero);
+  }
+  if (p.y == zero) {
+    BigRat x = RoundDyadic(p.x, bits);
+    return BigVecQ3(x, zero, one - x);
+  }
+  if (BigRat(31) * p.x == BigRat(10) * p.y) {
+    BigRat t = RoundDyadic(p.x / BigRat(10), bits);
+    return BigVecQ3(BigRat(10) * t, BigRat(31) * t, one - BigRat(41) * t);
+  }
+  BigRat x = RoundDyadic(p.x, bits), y = RoundDyadic(p.y, bits);
+  return BigVecQ3(x, y, one - x - y);
+}
+
 // Generate the best-possible rational vertices of the candidate (Nopert #231):
 // 1. Starts from the 4 seed vertices (Lean-frame order: top cap, ring at
 //    z ~ 0.3, ring at z ~ -0.04, bottom cap), as loaded from the root file.
@@ -1019,6 +1057,8 @@ int main(int argc, char **argv) {
   std::string export_prefix = "vertices231_exact27";
   // Root seeds of the polyhedron (DB frame; see LoadRootFileAsLeanSeeds).
   std::string root_file = "nopert231_root.txt";
+  // Round code-triangle corners to 2^-triangle_bits (0 = keep exact).
+  int triangle_bits = 64;
 
   for (int i = 1; i < argc; i++) {
     std::string_view arg = argv[i];
@@ -1032,6 +1072,8 @@ int main(int argc, char **argv) {
       output_path = arg.substr(9);
     } else if (arg.starts_with("--root_file=")) {
       root_file = arg.substr(12);
+    } else if (arg.starts_with("--triangle_bits=")) {
+      triangle_bits = std::stoi(std::string(arg.substr(16)));
     } else if (arg.starts_with("--export_prefix=")) {
       export_prefix = arg.substr(16);
     } else if (arg.starts_with("-")) {
@@ -1110,6 +1152,29 @@ int main(int argc, char **argv) {
 
   Print("\n" AGREEN("SUCCESS!") " Discovered " ACYAN("{}") " non-empty codes in upperWedgeTriangle.\n",
         feasible_codes.size());
+
+  if (triangle_bits > 0) {
+    int rounded = 0;
+    for (auto &fc : feasible_codes) {
+      for (auto &tri : fc.triangles) {
+        const BigRat det0 = BigVecQ3::Det(tri[0], tri[1], tri[2]);
+        std::array<BigVecQ3, 3> r = {RoundCorner(tri[0], triangle_bits),
+                                     RoundCorner(tri[1], triangle_bits),
+                                     RoundCorner(tri[2], triangle_bits)};
+        const BigRat det1 = BigVecQ3::Det(r[0], r[1], r[2]);
+        CHECK(det1 != BigRat(0) && (det1 > BigRat(0)) == (det0 > BigRat(0)))
+            << "Rounding to 2^-" << triangle_bits << " flipped or flattened a triangle of code "
+            << fc.hex_id << "; use more --triangle_bits";
+        for (int c = 0; c < 3; c++) {
+          CHECK(r[c].x + r[c].y + r[c].z == BigRat(1));
+          if (!(r[c].x == tri[c].x && r[c].y == tri[c].y && r[c].z == tri[c].z)) rounded++;
+        }
+        tri = r;
+      }
+    }
+    Print("Rounded {} triangle corners to multiples of 2^-{} (orientation preserved).\n",
+          rounded, triangle_bits);
+  }
 
   size_t total_triangles = 0;
   std::map<size_t, int> hull_size_counts;

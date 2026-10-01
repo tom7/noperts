@@ -9,12 +9,14 @@
 #include <queue>
 #include <filesystem>
 
+#include "rapidjson/document.h"
 #include "tubetree229.h"
 #include "tube229.h"
 #include "base/logging.h"
 #include "base/stringprintf.h"
 #include "bignum/big-overloads.h"
 #include "timer.h"
+#include "util.h"
 
 using namespace tubetree229;
 
@@ -214,6 +216,11 @@ int main(int argc, char **argv) {
   std::string out_dir = ".artifacts/nopert229/packs";
   std::string trees_dir = "trees";
   int single_code = -1;
+  // If set, take each base triangle from this codebdd229.json instead of the
+  // tree file (e.g. after codebdd rounded the corners to dyadics). The tree's
+  // certificates are checked against the new triangle in Lean; here we only
+  // require it to be within 2^-56 of the triangle the tree was built on.
+  std::string bdd_json;
 
   for (int i = 1; i < argc; i++) {
     std::string arg = argv[i];
@@ -223,6 +230,8 @@ int main(int argc, char **argv) {
       trees_dir = argv[++i];
     } else if (arg == "--code" && i + 1 < argc) {
       single_code = std::stoi(argv[++i]);
+    } else if (arg == "--bdd" && i + 1 < argc) {
+      bdd_json = argv[++i];
     }
   }
 
@@ -236,6 +245,12 @@ int main(int argc, char **argv) {
 
   int total_exported_triangles = 0;
   int total_exported_rows = 0;
+
+  rapidjson::Document bdd;
+  if (!bdd_json.empty()) {
+    bdd.Parse(Util::ReadFile(bdd_json).c_str());
+    CHECK(!bdd.HasParseError() && bdd.HasMember("codes")) << "Bad BDD JSON " << bdd_json;
+  }
 
   for (int code_idx = 0; code_idx < 79; code_idx++) {
     if (single_code >= 0 && code_idx != single_code) continue;
@@ -259,9 +274,23 @@ int main(int argc, char **argv) {
       std::string pack_name = StringPrintf("code_%d_tri_%zu.pack", code_idx, t);
       std::string pack_path = out_dir + "/" + pack_name;
 
+      TriangleQ base = ct.triangle;
+      if (!bdd_json.empty()) {
+        const auto &bt = bdd["codes"][code_idx]["triangles"][(rapidjson::SizeType)t];
+        const BigRat tol(BigInt(1), BigInt::Pow(BigInt(2), 56));
+        for (int c = 0; c < 3; c++) {
+          BigVecQ3 corner(bt[c]["x"].GetString(), bt[c]["y"].GetString(), bt[c]["z"].GetString());
+          for (int k = 0; k < 3; k++) {
+            CHECK(BigRat::Abs(corner[k] - base.corners[c][k]) <= tol)
+                << "Code " << code_idx << " tri " << t << " corner " << c
+                << " moved by more than 2^-56 in " << bdd_json;
+          }
+          base.corners[c] = corner;
+        }
+      }
       int num_rows = 0;
       BigRat r_lower;
-      if (!ExportCodeTriangle(code_idx, t, ct.triangle, *ct.root, pack_path, &num_rows, &r_lower)) {
+      if (!ExportCodeTriangle(code_idx, t, base, *ct.root, pack_path, &num_rows, &r_lower)) {
         std::cerr << "  [Warning] Code " << code_idx << " Tri " << t << " is incomplete, skipping.\n";
         code_ok = false;
         continue;
