@@ -110,6 +110,24 @@ static bool ExportCodeTriangle(int code_id, int tri_idx, const TriangleQ &base_t
 
   *out_num_rows = rows.size();
 
+  // rLower of each row: the minimum certified tube radius over the leaves of
+  // its subtree (Lean checks r <= rLower <= each child's rLower, and a leaf's
+  // rLower is its certificate's r). Rows are in BFS order, so children come
+  // after parents; fill bottom-up.
+  std::vector<BigRat> r_lower(rows.size());
+  for (int i = (int)rows.size() - 1; i >= 0; i--) {
+    const auto &r = rows[i];
+    if (r.is_leaf) {
+      r_lower[i] = r.node->direct_cert.has_value() ? r.node->direct_cert->r
+                                                    : r.node->decomposed_cert->r;
+    } else {
+      r_lower[i] = r_lower[r.child_ids[0]];
+      for (int c = 1; c < 4; c++) r_lower[i] = BigRat::Min(r_lower[i], r_lower[r.child_ids[c]]);
+    }
+  }
+  CHECK(r_lower[0] >= eff.r_lower)
+      << "subtree radius below the table radius";
+
   std::ofstream out(out_path, std::ios::binary);
   if (!out.is_open()) {
     std::cerr << "Error: Failed to open output file " << out_path << "\n";
@@ -131,7 +149,7 @@ static bool ExportCodeTriangle(int code_id, int tri_idx, const TriangleQ &base_t
 
     if (!r.is_leaf) {
       // Split row (tag 0):
-      // tag, id, root(0), path_len, [path_digits], c0, c1, c2, c3
+      // tag, id, root(0), path_len, [path_digits], c0, c1, c2, c3, rLower
       out << ",0," << r.id << ",0," << r.rel_path.size();
       for (char ch : r.rel_path) {
         out << "," << (ch - '0');
@@ -139,7 +157,8 @@ static bool ExportCodeTriangle(int code_id, int tri_idx, const TriangleQ &base_t
       out << "," << r.child_ids[0]
           << "," << r.child_ids[1]
           << "," << r.child_ids[2]
-          << "," << r.child_ids[3];
+          << "," << r.child_ids[3]
+          << "," << ZigzagRatString(r_lower[i]);
     } else if (r.node->direct_cert.has_value()) {
       // Certificate row (tag 1):
       // tag, id, root(0), path_len, [path_digits], symmetryIndex(0),
