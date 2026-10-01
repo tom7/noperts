@@ -132,6 +132,31 @@ Q WeightedDefectUpper(const MixedBox &box);
 bool Valid(const MixedBox &box);
 Q DisplacementSlack(const MixedBox &box);
 
+// Leaves that need no certificate data beyond the pose box.
+
+// RatQuadratic3.evalTightBall (keeps the nonnegativity of the centered
+// diagonal squares).
+RatBall QuadEvalTightBall(const std::array<RatBall, 3> &vars, const Quad3 &q);
+// RationalApprox.sqrtQUp16: an upper bound on sqrt(x) that is a multiple of
+// 10^-16 (0 for x <= 0).
+Q SqrtQUp16(const Q &x);
+
+// radiusPrune: AtlasProjectiveSolutionTree.Interval.outsideCayleyBall.
+bool OutsideCayleyBall(const Interval5 &iv);
+
+// fundamentalPrune: AtlasFundamentalPrune.Box.Valid. direction is +1
+// (Direction.positive) or -1 (Direction.negative).
+Q FundamentalLower(const Interval5 &iv, int chart, int direction);
+bool FundamentalPruneValid(const Interval5 &iv, int chart, int direction);
+
+// symmetryTube: AtlasProjectiveLocalViewTree.Tube.Valid for chart 0 and
+// symmetry index 0 (the identity tube), i.e. identityMismatchRadius <= r.
+Q IdentityMismatchRadius(const Interval5 &iv);
+bool IdentityTubeValid(const Interval5 &iv, const Q &r);
+
+// AtlasFundamentalPrune.restrictedRootInterval: the root pose box of a chart.
+Interval5 RestrictedRootInterval(int chart);
+
 }  // namespace exact5d
 
 #endif

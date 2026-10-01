@@ -163,6 +163,7 @@ int main(int argc, char **argv) {
   }
   const int num_global = argc > 1 ? atoi(argv[1]) : 150;
   const int num_mixed = argc > 2 ? atoi(argv[2]) : 40;
+  const int num_prune = argc > 3 ? atoi(argv[3]) : 300;
 
   rapidjson::Document doc;
   doc.Parse(Util::ReadFile("codebdd229.json").c_str());
@@ -230,6 +231,37 @@ int main(int argc, char **argv) {
     mboxes.push_back(b);
   }
 
+  // Prune/tube boxes: centers spread over the whole chart range (so the
+  // fundamental prune and the ball prune both pass and fail), tube radii
+  // near the identity mismatch radius.
+  struct PruneCase {
+    Interval5 iv;
+    int chart;
+    Q r;
+  };
+  std::vector<PruneCase> pcases;
+  for (int n = 0; n < num_prune; n++) {
+    PruneCase pc;
+    pc.chart = rng() % 4;
+    std::array<Q, 3> center, radius;
+    for (int a = 0; a < 3; a++) {
+      center[a] = Q((int64_t)(rng() % 4097) - 2048, 1024);  // [-2, 2]
+      radius[a] = Q(1, (int64_t)1 << (1 + rng() % 12));
+      pc.iv.min[a + 2] = center[a] - radius[a];
+      pc.iv.max[a + 2] = center[a] + radius[a];
+    }
+    pc.iv.min[0] = Q(0); pc.iv.max[0] = Q(8, 5); pc.iv.min[1] = Q(0); pc.iv.max[1] = Q(4);
+    // r just above or below the mismatch radius, or arbitrary.
+    const Q m = IdentityMismatchRadius(pc.iv);
+    const int mode = rng() % 3;
+    pc.r = mode == 0 ? m : mode == 1 ? m - Q(1, 10000000000000000LL) : Q((int64_t)(rng() % 1000), 100);
+    pcases.push_back(pc);
+    input << "P " << pc.chart;
+    for (int a = 0; a < 3; a++) input << " " << R(center[a]);
+    for (int a = 0; a < 3; a++) input << " " << R(radius[a]);
+    input << " " << R(pc.r) << "\n";
+  }
+
   const std::string in_path = std::filesystem::temp_directory_path() / "exact5d_test_input.txt";
   { std::ofstream f(in_path); f << input.str(); }
   const std::string cmd = std::format("{} < {}", GOLDEN, in_path);
@@ -244,7 +276,7 @@ int main(int argc, char **argv) {
     }
   }
   CHECK(pclose(p) == 0);
-  CHECK((int)lines.size() == num_global + num_mixed) << lines.size();
+  CHECK((int)lines.size() == num_global + num_mixed + num_prune) << lines.size();
 
   int compared = 0, admissible = 0, valid = 0;
   auto expect = [&](const std::vector<std::string> &tok, size_t idx, const Q &got,
@@ -291,8 +323,31 @@ int main(int argc, char **argv) {
     expect(tok, 1, WeightedDefectUpper(b), "mixed weightedDefectUpper", n);
     CHECK(tok[2] == (Valid(b) ? "1" : "0")) << "mixed box " << n << " valid";
   }
-  printf("exact5d agrees with Lean: %d global + %d mixed boxes, %d exact quantities "
-         "(%d admissible, %d valid)\n",
-         num_global, num_mixed, compared, admissible, valid);
+  int outside = 0, fund_valid = 0, tube_valid = 0;
+  for (int n = 0; n < num_prune; n++) {
+    std::vector<std::string> tok;
+    std::istringstream ss(lines[num_global + num_mixed + n]);
+    for (std::string t; ss >> t;) tok.push_back(t);
+    const PruneCase &pc = pcases[n];
+    CHECK(tok.size() == 7) << lines[num_global + num_mixed + n];
+    const bool out = OutsideCayleyBall(pc.iv);
+    CHECK(tok[0] == (out ? "1" : "0")) << "prune " << n << " outsideCayleyBall";
+    expect(tok, 1, FundamentalLower(pc.iv, pc.chart, 1), "fundamental lower +", n);
+    expect(tok, 2, FundamentalLower(pc.iv, pc.chart, -1), "fundamental lower -", n);
+    const bool fp = FundamentalPruneValid(pc.iv, pc.chart, 1);
+    const bool fn = FundamentalPruneValid(pc.iv, pc.chart, -1);
+    CHECK(tok[3] == (fp ? "1" : "0")) << "prune " << n << " fundamental +";
+    CHECK(tok[4] == (fn ? "1" : "0")) << "prune " << n << " fundamental -";
+    expect(tok, 5, IdentityMismatchRadius(pc.iv), "identity mismatch radius", n);
+    const bool tv = IdentityTubeValid(pc.iv, pc.r);
+    CHECK(tok[6] == (tv ? "1" : "0")) << "prune " << n << " tube valid";
+    outside += out;
+    fund_valid += fp + fn;
+    tube_valid += tv;
+  }
+  printf("exact5d agrees with Lean: %d global + %d mixed + %d prune boxes, %d exact quantities "
+         "(%d admissible, %d valid; %d outside ball, %d fundamental prunes, %d tube-valid)\n",
+         num_global, num_mixed, num_prune, compared, admissible, valid, outside, fund_valid,
+         tube_valid);
   return 0;
 }
