@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
   }
 
   printf("%-5s %-4s %-9s %9s %9s %8s %8s %8s %7s %5s  %s\n", "chart", "t", "code.tri", "leaves",
-         "ce", "tu", "pr", "pf", "df", "depth", "status");
+         "ce+mx", "tu", "pr", "pf", "df", "depth", "status");
   int packable = 0, started = 0, jobs = 0;
   for (int chart : charts) {
     for (int t = 0; t < (int)code_tri.size(); t++) {
@@ -68,7 +68,8 @@ int main(int argc, char **argv) {
         std::visit(
             [&](const auto &l) {
               using T = std::decay_t<decltype(l)>;
-              if constexpr (std::is_same_v<T, rows5d::CertLeaf>) ce++;
+              if constexpr (std::is_same_v<T, rows5d::CertLeaf> ||
+                            std::is_same_v<T, rows5d::MixedLeaf>) ce++;
               else if constexpr (std::is_same_v<T, rows5d::TubeLeaf>) tu++;
               else if constexpr (std::is_same_v<T, rows5d::RadiusPruneLeaf>) pr++;
               else if constexpr (std::is_same_v<T, rows5d::FundamentalPruneLeaf>) pf++;

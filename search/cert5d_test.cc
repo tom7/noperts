@@ -86,6 +86,43 @@ int main() {
   printf("%d boxes evaluated: %d with positive double margin, %d exactly Valid\n", evaluated,
          positive, valid);
   CHECK(valid > 0) << "expected some certified boxes";
+
+  // Mixtures, on larger boxes (where single triples often fail).
+  int mixed_tried = 0, single_ok = 0, mixed_ok = 0, mixed_valid = 0;
+  for (int n = 0; n < 40; n++) {
+    const int chart = rng() % 3;
+    exact5d::TriangleQ tq = tris[rng() % tris.size()];
+    std::string path;
+    for (int d = 0; d < 4; d++) path += (char)('0' + rng() % 4);
+    tq = geom5d::SplitTrianglePath(tq, path);
+    const geom5d::TriangleD td = geom5d::ToDouble(tq);
+    const geom5d::BoxQ bq = SmallBox(rng, chart, 3);
+    const geom5d::BoxD bd = geom5d::ToDouble(bq);
+    const auto pool = contacts5d::BuildContactPool(td, contacts5d::PoolParams{});
+    if (pool.triples.empty()) continue;
+    const cert5d::Single s = cert5d::BestSingle(pool, td, bd, chart);
+    const cert5d::Mixture m = cert5d::BestMixture(pool, td, bd, chart);
+    mixed_tried++;
+    single_ok += s.margin > 0;
+    CHECK(m.margin >= s.margin - 1e-12 * (1 + std::abs(s.margin))) << m.margin << " < " << s.margin;
+    if (m.margin > 1e-9) {
+      mixed_ok++;
+      const auto weights = cert5d::RationalWeights(m.w);
+      BigRat sum(0);
+      for (const auto &w : weights) {
+        CHECK(!(w < BigRat(0)));
+        sum = sum + w;
+      }
+      CHECK(sum == BigRat(1));
+      const exact5d::MixedBox mb = cert5d::ExactMixedBox(pool, m.triples, m.inner, weights, tq, bq, chart);
+      const bool v = exact5d::Valid(mb);
+      CHECK(v) << "mixture margin " << m.margin << " but exact invalid (slack "
+               << exact5d::DisplacementSlack(mb).ToDouble() << ")";
+      mixed_valid += v;
+    }
+  }
+  printf("%d larger boxes: single certifies %d, mixture %d (%d exactly Valid)\n", mixed_tried,
+         single_ok, mixed_ok, mixed_valid);
   printf("cert5d tests PASSED\n");
   return 0;
 }

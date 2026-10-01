@@ -36,6 +36,20 @@ static void VerifySubtree(const tubeatlas5d::TubeAtlas &atlas, const Job &job,
             CHECK(job.chart == 0);
             CHECK(exact5d::IdentityTubeValid(iv, l.r));
             CHECK(l.r == atlas.Walk(job.t, rows5d::ViewPath(r.path)).r_lower);
+          } else if constexpr (std::is_same_v<T, rows5d::MixedLeaf>) {
+            contacts5d::PoolParams params;
+            params.cone_samples = l.cone_samples;
+            const auto pool = contacts5d::BuildContactPool(geom5d::ToDouble(tri), params);
+            std::vector<int> triples;
+            std::vector<std::array<int, 3>> inner;
+            std::vector<BigRat> weights;
+            for (const auto &c : l.components) {
+              triples.push_back(c.triple);
+              inner.push_back(c.inner);
+              weights.push_back(c.weight);
+            }
+            CHECK(exact5d::Valid(cert5d::ExactMixedBox(pool, triples, inner, weights, tri, box, job.chart)))
+                << "mixture leaf " << r.path;
           } else if constexpr (std::is_same_v<T, rows5d::CertLeaf>) {
             contacts5d::PoolParams params;
             params.cone_samples = l.cone_samples;
@@ -83,9 +97,9 @@ int main() {
     const double sec =
         std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count();
     const Stats &s = solver.stats();
-    printf("  t=%d chart=%d root '%s': %lld nodes in %.1fs: ce %lld tu %lld pr %lld pf %lld df %lld "
+    printf("  t=%d chart=%d root '%s': %lld nodes in %.1fs: ce %lld mx %lld tu %lld pr %lld pf %lld df %lld "
            "(exact rejects %lld)\n",
-           c.job.t, c.job.chart, node.path.c_str(), (long long)s.nodes, sec, (long long)s.ce,
+           c.job.t, c.job.chart, node.path.c_str(), (long long)s.nodes, sec, (long long)s.ce, (long long)s.mx,
            (long long)s.tu, (long long)s.pr, (long long)s.pf, (long long)s.df,
            (long long)s.exact_rejects);
     VerifySubtree(atlas, c.job, node, leaves, opt);
