@@ -7,7 +7,7 @@
 
 // NOTE: Canonical 27-facet rational vertices (exact quad coplanarity + 2^52 power-of-two
 // denominators) are implemented in ruperts/codebdd229.cc and exported at
-// vertices229_exact27.h / vertices229_exact27.lean. See noteperts/QUAD_FACES.md.
+// vertices231_exact27.h / vertices231_exact27.lean. See noteperts/QUAD_FACES.md.
 
 int main(int argc, char **argv) {
   ANSI::Init();

@@ -2,6 +2,8 @@
 # Rupert passage of Nopert #229, in the format of
 # Noperthedron/Nopert229/RupertWitness.lean (RationalChecks over tightVertex).
 # Usage: python3 oneoffs/rupert_witness229.py code tri t s wx wy wz theta
+# #229-specific: reads #229's vertices229_exact27.json, which lives on branch q
+# (branch R carries #231's vertices instead). Run from a checkout of q.
 import json, math, sys, itertools
 from fractions import Fraction as F
 

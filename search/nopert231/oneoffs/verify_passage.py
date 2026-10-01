@@ -2,6 +2,8 @@
 # Builds rational Cayley rotations approximating the float witness, then
 # checks with Fractions that every projected inner vertex is strictly inside
 # the projected outer hull. Prints the worst margin.
+# #229-specific: reads #229's vertices229_exact27.json, which lives on branch q
+# (branch R carries #231's vertices instead). Run from a checkout of q.
 import json, math, sys
 from fractions import Fraction as F
 

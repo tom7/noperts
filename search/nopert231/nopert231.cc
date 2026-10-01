@@ -1,6 +1,6 @@
 
-#include "nopert229.h"
-#include "vertices229_exact27.h"
+#include "nopert231.h"
+#include "vertices231_exact27.h"
 
 #include <array>
 
@@ -11,7 +11,7 @@ const std::array<std::array<BigRat, 3>, NUM_VERTICES> &GetVerticesQ() {
   static const auto *v = []() {
     auto *res = new std::array<std::array<BigRat, 3>, NUM_VERTICES>;
     for (int i = 0; i < NUM_VERTICES; i++) {
-      BigVecQ3 vq = VertexQ229(i);
+      BigVecQ3 vq = VertexQ231(i);
       (*res)[i] = {vq.x, vq.y, vq.z};
     }
     return res;
@@ -23,7 +23,7 @@ const BigVecQ3 &VertexQ(size_t v) {
   static const auto *table = []() {
     auto *res = new std::array<BigVecQ3, NUM_VERTICES>;
     for (int i = 0; i < NUM_VERTICES; i++) {
-      (*res)[i] = VertexQ229(i);
+      (*res)[i] = VertexQ231(i);
     }
     return res;
   }();

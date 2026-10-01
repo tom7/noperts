@@ -31,13 +31,13 @@
 #include "bignum/big-vec.h"
 #include "chart229.h"
 #include "geom/hull-2d.h"
-#include "nopert229.h"
+#include "nopert231.h"
 #include "timer.h"
 #include "yocto-math.h"
 
 using vec3 = yocto::vec<double, 3>;
 
-// Polyhedron #229 rational vertices are accessed via GetVerticesQ() from nopert229.h
+// Polyhedron #229 rational vertices are accessed via GetVerticesQ() from nopert231.h
 
 static inline vec3 ToDouble(const BigVecQ3 &v) {
   return vec3{v.x.ToDouble(), v.y.ToDouble(), v.z.ToDouble()};

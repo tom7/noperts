@@ -2,6 +2,8 @@
 # frame of nopert_229 (DB = Lean / s, rotated about z by phi), check it
 # exactly against the DB vertices, and print FrameStrings.
 # Usage: python3 witness_to_db_frame.py code tri t s wx wy wz theta
+# #229-specific: reads #229's vertices229_exact27.json, which lives on branch q
+# (branch R carries #231's vertices instead). Run from a checkout of q.
 import sqlite3, json, math, sys, itertools, subprocess
 from fractions import Fraction as F
 sys.path.insert(0, '.')

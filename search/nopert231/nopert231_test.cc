@@ -1,7 +1,7 @@
-// nopert229_test.cc: Tests for Nopert candidate #229 geometry,
+// nopert231_test.cc: Tests for Nopert #231 geometry,
 // verifying double vs. rational coordinate agreement and C5 rotational symmetry.
 
-#include "nopert229.h"
+#include "nopert231.h"
 
 #include <cmath>
 #include <cstdlib>
@@ -60,7 +60,7 @@ static void TestC5Symmetry() {
   const double sin_theta = std::sin(angle);
 
   // 1. Check orbit rotation in double precision:
-  // Polyhedron #229 has 5 orbits (k = 0..4) of 4 seeds (s = 0..3): vertex index = 4*k + s.
+  // Polyhedron #231 has 5 orbits (k = 0..4) of 4 seeds (s = 0..3): vertex index = 4*k + s.
   // Rotating orbit k by +2*pi/5 around the z-axis aligns with orbit (k + 1) % 5.
   double max_rot_err = 0.0;
   for (int k = 0; k < 5; k++) {
@@ -166,11 +166,11 @@ static void TestSingleton() {
 int main(int argc, char **argv) {
   ANSI::Init();
 
-  Print("=== Running Nopert #229 Geometry Unit Tests ===\n");
+  Print("=== Running Nopert #231 Geometry Unit Tests ===\n");
   TestDoubleRationalAgreement();
   TestC5Symmetry();
   TestQuadPlanarityQ3();
   TestSingleton();
-  Print("=== All Nopert #229 Tests Passed! ===\n");
+  Print("=== All Nopert #231 Tests Passed! ===\n");
   return 0;
 }

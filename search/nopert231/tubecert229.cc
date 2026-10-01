@@ -33,7 +33,7 @@
 #include "base/stringprintf.h"
 #include "bignum/big-overloads.h"
 #include "bignum/big.h"
-#include "nopert229.h"
+#include "nopert231.h"
 #include "util.h"
 #include "yocto-math.h"
 #include "rapidjson/document.h"
@@ -43,7 +43,7 @@
 using vec2 = yocto::vec<double, 2>;
 using vec3 = yocto::vec<double, 3>;
 
-// Polyhedron #229 rational vertices are accessed via GetVerticesQ() from nopert229.h
+// Polyhedron #229 rational vertices are accessed via GetVerticesQ() from nopert231.h
 
 static inline vec3 ToDouble(const BigVecQ3 &v) {
   return vec3{v.x.ToDouble(), v.y.ToDouble(), v.z.ToDouble()};
