@@ -14,6 +14,13 @@ all: default test229.exe codebdd229.exe convert_tubecert229.exe incrementaltube2
 #    view (Q.md 1.8); oneoffs/rupert_witness229.py turns one into Lean data.
 qtube: tubecode229.exe export_codetrees_pack.exe tube-scoreboard.exe oneoffs/probe48edge.exe oneoffs/canyon_depth.exe oneoffs/canyon_truedepth.exe oneoffs/canyon_passage.exe
 
+# 5D search (notes/SEARCH5D.md):
+#  search5d: parallel journaled search per (code triangle, chart) job.
+#  pack5d: journals -> Lean global packs (check with Noperthedron's
+#    check_global_rows / constructNopert229).
+#  scoreboard5d: per-job status from the journals.
+s5d: search5d.exe pack5d.exe scoreboard5d.exe
+
 UNAME := $(shell uname -o)
 ifeq ($(findstring Linux,$(UNAME)),Linux)
 CC=clang
