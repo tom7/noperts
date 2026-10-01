@@ -26,14 +26,16 @@ int main() {
   mm = SolveMaxMin({{3, -1}, {-1, 1}});
   CHECK(std::abs(mm.value - 1.0 / 3) < 1e-12) << mm.value;
 
-  // Random problems: the LP optimum beats sampled weights.
+  // Random problems: the LP optimum beats sampled weights, at any scale
+  // (near the identity, the 5D search's columns are around 1e-13).
   std::mt19937_64 rng(3);
   std::normal_distribution<double> g;
   std::uniform_real_distribution<double> u(0, 1);
-  for (int n = 0; n < 200; n++) {
+  for (int n = 0; n < 600; n++) {
+    const double scale = n < 200 ? 1.0 : n < 400 ? 1e-13 : 1e8;
     const int K = 1 + rng() % 4, R = 1 + rng() % 162;
     std::vector<std::vector<double>> a(K, std::vector<double>(R));
-    for (auto &col : a) for (double &v : col) v = g(rng);
+    for (auto &col : a) for (double &v : col) v = scale * g(rng);
     const MaxMin best = SolveMaxMin(a);
     double sum = 0.0;
     for (double w : best.w) {
@@ -51,7 +53,7 @@ int main() {
         for (int k = 0; k < K; k++) acc += w[k] / tot * a[k][r];
         v = std::min(v, acc);
       }
-      CHECK(v <= best.value + 1e-9) << v << " > " << best.value;
+      CHECK(v <= best.value + 1e-9 * scale) << v << " > " << best.value;
     }
   }
   printf("lp5d tests PASSED\n");
