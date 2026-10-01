@@ -101,6 +101,40 @@ int main(int argc, char **argv) {
     printf("SupportSearchTetra: ok %d margin %.3e; TetrahedronOriginMargin ok %d margin %.3e\n", ok, m, ok2, m2);
   }
   {
+    std::vector<vec3> pts;
+    for (const auto &cd : cands) pts.push_back(cd.normalized_a);
+    const int N = pts.size();
+    std::vector<int> sup;
+    std::vector<int8_t> seen(N, 0);
+    for (int i = 0; i < 256; i++) {
+      const double z = 1 - 2 * (i + 0.5) / 256, r = std::sqrt(std::max(0.0, 1 - z * z));
+      const double ph = i * 2.399963229728653;
+      const vec3 d{r * std::cos(ph), r * std::sin(ph), z};
+      int bi = -1; double bv = -1e300;
+      for (int j = 0; j < N; j++) { double v = yocto::dot(pts[j], d); if (v > bv) { bv = v; bi = j; } }
+      if (!seen[bi]) { seen[bi] = 1; sup.push_back(bi); }
+    }
+    double best = -1e300; int npos = 0;
+    const int S = sup.size();
+    for (int a = 0; a < S; a++) for (int b = a + 1; b < S; b++) for (int c = b + 1; c < S; c++) for (int d = c + 1; d < S; d++) {
+      const vec3 tp[4] = {pts[sup[a]], pts[sup[b]], pts[sup[c]], pts[sup[d]]};
+      double m = TetraMargin(tp);
+      if (m > 0) npos++;
+      best = std::max(best, m);
+    }
+    // Depth restricted to the support set.
+    double depth = 1e30;
+    for (int i = 0; i < 4000; i++) {
+      double z = 1 - 2 * (i + 0.5) / 4000, r = std::sqrt(1 - z * z), ph = i * 2.399963229728653;
+      vec3 d{r * std::cos(ph), r * std::sin(ph), z};
+      double mx = -1e30;
+      for (int j : sup) mx = std::max(mx, yocto::dot(pts[j], d));
+      depth = std::min(depth, mx);
+    }
+    printf("support set %d points; depth of conv(support) %.3e; brute force best tetra margin %.3e (%d positive)\n",
+           S, depth, best, npos);
+  }
+  {
     LocalCertificate lc; double m = 0; unsigned int sd2 = 5;
     bool ok = FindBestCageForTriangle(tri, &sd2, &lc, &m);
     printf("FindBestCageForTriangle: %s margin %.3e\n", ok ? "found" : "none", m);

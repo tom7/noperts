@@ -221,6 +221,62 @@ static bool FindBestCageForTriangle(
     }
   }
 
+  // 0b. If that failed: brute force over all 4-subsets of the support
+  // points in 256 directions (the hull's relevant extreme points), taking
+  // the best tetrahedra in order until one passes the exact audit.
+  if (best_margin <= 0) {
+    std::vector<int> sup;
+    {
+      std::vector<int8_t> seen(N, 0);
+      const int K = 256;
+      for (int i = 0; i < K; i++) {
+        const double z = 1 - 2 * (i + 0.5) / K, r = std::sqrt(std::max(0.0, 1 - z * z));
+        const double ph = i * 2.399963229728653;
+        const vec3 d{r * std::cos(ph), r * std::sin(ph), z};
+        // Support point among candidates that pass the exact audit.
+        for (;;) {
+          int bi = -1;
+          double bv = -std::numeric_limits<double>::infinity();
+          for (int j = 0; j < N; j++) {
+            if (audit_ok[j] == 0) continue;
+            const double v = yocto::dot(pts[j], d);
+            if (v > bv) { bv = v; bi = j; }
+          }
+          if (bi < 0) break;
+          if (!Audited(bi)) continue;  // marks audit_ok[bi] = 0
+          if (!seen[bi]) { seen[bi] = 1; sup.push_back(bi); }
+          break;
+        }
+      }
+    }
+    const int S = sup.size();
+    std::vector<std::pair<double, std::array<int, 4>>> top;
+    for (int a = 0; a < S; a++)
+      for (int b = a + 1; b < S; b++)
+        for (int c = b + 1; c < S; c++)
+          for (int d = c + 1; d < S; d++) {
+            const vec3 tp[4] = {pts[sup[a]], pts[sup[b]], pts[sup[c]], pts[sup[d]]};
+            const double m = TetraMargin(tp);
+            if (m <= 0) continue;
+            if (top.size() < 32 || m > top.back().first) {
+              top.push_back({m, {sup[a], sup[b], sup[c], sup[d]}});
+              std::sort(top.begin(), top.end(), [](const auto &x, const auto &y) { return x.first > y.first; });
+              if (top.size() > 32) top.pop_back();
+            }
+          }
+    for (const auto &[m, tet] : top) {
+      if (Audited(tet[0]) && Audited(tet[1]) && Audited(tet[2]) && Audited(tet[3])) {
+        double m2, bary[4];
+        vec3 tpts[4] = {pts[tet[0]], pts[tet[1]], pts[tet[2]], pts[tet[3]]};
+        if (TetrahedronOriginMargin(tpts, &m2, bary) && m2 > best_margin) {
+          best_margin = m2;
+          best_tet = tet;
+        }
+        break;
+      }
+    }
+  }
+
   // 1. Search for maximal margin cage via trials
   for (int trial = 0; trial < 25000; trial++) {
     int i0 = rand_r(seed) % N, i1 = rand_r(seed) % N, i2 = rand_r(seed) % N, i3 = rand_r(seed) % N;
