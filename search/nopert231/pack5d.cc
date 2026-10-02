@@ -14,11 +14,20 @@
 // wherever they hold exactly there; --exact_check also confirms the ones
 // kept on their exact triangle.
 //
-// Usage: pack5d.exe --chart C (--all | --t T) [--journals jobs] [--out FILE]
-//                   [--trees_dir trees_r2] [--bdd codebdd229.json] [--exact_check]
-//                   [--threads 8]
+// Per code (--per_code DIR): one pack per job, DIR/c<C>/t<T>.pack, each like
+// a --t pack (row 0 is the job's root). Lean's decodeCodeTables concatenates
+// them behind a codeRoot row into the chart table, so a re-searched code
+// only needs its own pack (and check) redone: packs newer than their journal
+// are skipped unless --force.
+//
+// Usage: pack5d.exe --chart C (--all | --t T | --per_code DIR) [--journals jobs]
+//                   [--out FILE] [--trees_dir trees_r2] [--bdd codebdd229.json]
+//                   [--exact_check] [--threads 8] [--force]
 
 #include <atomic>
+#include <algorithm>
+#include <mutex>
+#include <filesystem>
 #include <chrono>
 #include <cstdio>
 #include <deque>
@@ -455,10 +464,73 @@ class Packer {
 
 }  // namespace
 
+namespace {
+
+// Reads a job's journal and builds its tree.
+rows5d::Tree ReadTree(const std::string &journals, int chart, int t) {
+  const auto j = rows5d::ReadJournal(std::format("{}/c{}/t{}.journal", journals, chart, t));
+  CHECK(!j.leaves.empty()) << "no journal for t=" << t << " chart=" << chart;
+  auto built = rows5d::BuildTree(j.leaves);
+  CHECK(std::holds_alternative<rows5d::Tree>(built))
+      << "job t=" << t << " chart=" << chart << ": " << std::get<std::string>(built);
+  return std::move(std::get<rows5d::Tree>(built));
+}
+
+// Packs each job (t in `jobs`) to its own file under out_dir, skipping
+// packs newer than their journal unless `force`. Large jobs go one at a
+// time with all threads; the rest run concurrently, one thread each.
+void PackPerCode(const tubeatlas5d::TubeAtlas &atlas, int chart, bool exact_check,
+                 const std::string &journals, const std::string &out_dir,
+                 const std::vector<int> &jobs, bool force, int threads) {
+  namespace fs = std::filesystem;
+  fs::create_directories(std::format("{}/c{}", out_dir, chart));
+  struct Job {
+    int t;
+    uintmax_t journal_bytes;
+  };
+  std::vector<Job> todo;
+  for (int t : jobs) {
+    const fs::path journal = std::format("{}/c{}/t{}.journal", journals, chart, t);
+    const fs::path pack = std::format("{}/c{}/t{}.pack", out_dir, chart, t);
+    CHECK(fs::exists(journal)) << "no journal " << journal;
+    if (!force && fs::exists(pack) && fs::last_write_time(pack) > fs::last_write_time(journal)) {
+      continue;
+    }
+    todo.push_back({t, fs::file_size(journal)});
+  }
+  std::sort(todo.begin(), todo.end(),
+            [](const Job &a, const Job &b) { return a.journal_bytes > b.journal_bytes; });
+  printf("%zu of %zu code packs to write\n", todo.size(), jobs.size());
+  fflush(stdout);
+  std::mutex out_mu;
+  std::atomic<int> done = 0;
+  auto pack_one = [&](const Job &job, int job_threads) {
+    const rows5d::Tree tree = ReadTree(journals, chart, job.t);
+    Packer packer(atlas, chart, exact_check);
+    packer.SetThreads(job_threads);
+    packer.AddJob(job.t, tree, 0);
+    const std::string path = std::format("{}/c{}/t{}.pack", out_dir, chart, job.t);
+    // Write then rename, so a pack that exists is complete.
+    packer.Write(path + ".tmp");
+    fs::rename(path + ".tmp", path);
+    std::lock_guard<std::mutex> l(out_mu);
+    printf("[%d/%zu] wrote %s: %zu rows (%lld regionRelax)\n", ++done, todo.size(),
+           path.c_str(), packer.NumRows(), (long long)packer.RelaxRows());
+    fflush(stdout);
+  };
+  // Journals above this size get all threads to themselves.
+  constexpr uintmax_t kLarge = 20'000'000;
+  size_t k = 0;
+  for (; k < todo.size() && todo[k].journal_bytes > kLarge; k++) pack_one(todo[k], threads);
+  ParallelComp(todo.size() - k, [&](int64_t i) { pack_one(todo[k + i], 1); }, threads);
+}
+
+}  // namespace
+
 int main(int argc, char **argv) {
   int chart = -1, single = -1, threads = 8;
-  bool all = false, exact_check = false;
-  std::string journals = "jobs", out, trees_dir = "trees_r2", bdd = "codebdd229.json";
+  bool all = false, exact_check = false, force = false;
+  std::string journals = "jobs", out, trees_dir = "trees_r2", bdd = "codebdd229.json", per_code;
   for (int i = 1; i < argc; i++) {
     const std::string a = argv[i];
     auto next = [&]() -> std::string {
@@ -468,19 +540,33 @@ int main(int argc, char **argv) {
     if (a == "--chart") chart = std::stoi(next());
     else if (a == "--t") single = std::stoi(next());
     else if (a == "--all") all = true;
+    else if (a == "--per_code") per_code = next();
     else if (a == "--journals") journals = next();
     else if (a == "--out") out = next();
     else if (a == "--trees_dir") trees_dir = next();
     else if (a == "--bdd") bdd = next();
     else if (a == "--exact_check") exact_check = true;
     else if (a == "--threads") threads = std::stoi(next());
+    else if (a == "--force") force = true;
     else LOG(FATAL) << "unknown argument " << a;
   }
   CHECK(chart >= 0 && chart <= 2) << "--chart 0..2";
-  CHECK(all != (single >= 0)) << "exactly one of --all, --t";
-  if (out.empty()) out = all ? std::format("chart{}.pack", chart) : std::format("chart{}.t{}.pack", chart, single);
 
   const auto atlas = tubeatlas5d::TubeAtlas::Load(trees_dir, bdd);
+  if (!per_code.empty()) {
+    CHECK(!all) << "--per_code packs every job (or the --t job)";
+    std::vector<int> jobs;
+    if (single >= 0) {
+      jobs.push_back(single);
+    } else {
+      for (int t = 0; t < atlas.NumTriangles(); t++) jobs.push_back(t);
+    }
+    PackPerCode(atlas, chart, exact_check, journals, per_code, jobs, force, threads);
+    return 0;
+  }
+  CHECK(all != (single >= 0)) << "exactly one of --all, --t, --per_code";
+  if (out.empty()) out = all ? std::format("chart{}.pack", chart) : std::format("chart{}.t{}.pack", chart, single);
+
   Packer packer(atlas, chart, exact_check);
   packer.SetThreads(threads);
   // Journals are read and turned into trees in parallel.
@@ -491,15 +577,8 @@ int main(int argc, char **argv) {
     jobs.push_back(single);
   }
   std::vector<rows5d::Tree> trees(jobs.size());
-  ParallelComp(jobs.size(), [&](int64_t k) {
-    const int t = jobs[k];
-    const auto j = rows5d::ReadJournal(std::format("{}/c{}/t{}.journal", journals, chart, t));
-    CHECK(!j.leaves.empty()) << "no journal for t=" << t << " chart=" << chart;
-    auto built = rows5d::BuildTree(j.leaves);
-    CHECK(std::holds_alternative<rows5d::Tree>(built))
-        << "job t=" << t << " chart=" << chart << ": " << std::get<std::string>(built);
-    trees[k] = std::move(std::get<rows5d::Tree>(built));
-  }, threads);
+  ParallelComp(jobs.size(), [&](int64_t k) { trees[k] = ReadTree(journals, chart, jobs[k]); },
+               threads);
   printf("read %zu job trees\n", trees.size());
   fflush(stdout);
   if (all) {

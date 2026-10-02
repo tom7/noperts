@@ -2,7 +2,12 @@
 // journals: leaves by kind, deferred leaves, deepest node, and whether the
 // job's tree is complete (packable: a complete tree with no deferred leaves).
 //
-// Usage: scoreboard5d.exe [--journals jobs] [--charts 0,1,2] [--bdd codebdd229.json]
+// A packable job is also "packed" when its per-code pack (pack5d --per_code)
+// is newer than its journal, and "checked" when Lean's check_global_rows
+// passed on that pack (its .checked file is newer than the pack).
+//
+// Usage: scoreboard5d.exe [--journals jobs] [--packs packs] [--charts 0,1,2]
+//                         [--bdd codebdd229.json]
 //                         [--all]   (also list jobs with no journal yet)
 
 #include <cstdio>
@@ -18,7 +23,7 @@
 #include "util.h"
 
 int main(int argc, char **argv) {
-  std::string journals = "jobs", bdd = "codebdd229.json";
+  std::string journals = "jobs", packs = "packs", bdd = "codebdd229.json";
   std::vector<int> charts = {0, 1, 2};
   bool list_all = false;
   for (int i = 1; i < argc; i++) {
@@ -28,6 +33,7 @@ int main(int argc, char **argv) {
       return argv[++i];
     };
     if (a == "--journals") journals = next();
+    else if (a == "--packs") packs = next();
     else if (a == "--bdd") bdd = next();
     else if (a == "--all") list_all = true;
     else if (a == "--charts") {
@@ -50,7 +56,7 @@ int main(int argc, char **argv) {
 
   printf("%-5s %-4s %-9s %9s %9s %8s %8s %8s %7s %5s  %s\n", "chart", "t", "code.tri", "leaves",
          "ce+mx", "tu", "pr", "pf", "df", "depth", "status");
-  int packable = 0, started = 0, jobs = 0;
+  int packable = 0, started = 0, jobs = 0, packed = 0, checked_count = 0;
   for (int chart : charts) {
     for (int t = 0; t < (int)code_tri.size(); t++) {
       jobs++;
@@ -83,11 +89,25 @@ int main(int argc, char **argv) {
       const bool complete = std::holds_alternative<rows5d::Tree>(rows5d::BuildTree(j.leaves));
       const char *status = !complete ? "incomplete" : df ? "deferred leaves" : "PACKABLE";
       packable += complete && !df;
+      if (complete && !df) {
+        namespace fs = std::filesystem;
+        const fs::path pack = std::format("{}/c{}/t{}.pack", packs, chart, t);
+        const fs::path checked = std::format("{}/c{}/t{}.pack.checked", packs, chart, t);
+        if (fs::exists(pack) && fs::last_write_time(pack) > fs::last_write_time(path)) {
+          status = "PACKED";
+          packed++;
+          if (fs::exists(checked) && fs::last_write_time(checked) > fs::last_write_time(pack)) {
+            status = "CHECKED";
+            checked_count++;
+          }
+        }
+      }
       printf("%-5d %-4d %4d.%-4d %9zu %9lld %8lld %8lld %8lld %7lld %5zu  %s\n", chart, t,
              code_tri[t].first, code_tri[t].second, j.leaves.size(), (long long)ce, (long long)tu,
              (long long)pr, (long long)pf, (long long)df, depth, status);
     }
   }
-  printf("%d of %d jobs started, %d packable\n", started, jobs, packable);
+  printf("%d of %d jobs started, %d packable, %d packed, %d checked\n", started, jobs, packable,
+         packed, checked_count);
   return 0;
 }
