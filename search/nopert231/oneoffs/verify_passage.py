@@ -4,6 +4,7 @@
 # the projected outer hull. Prints the worst margin.
 # #229-specific: reads #229's vertices229_exact27.json, which lives on branch q
 # (branch R carries #231's vertices instead). Run from a checkout of q.
+# Usage: python3 oneoffs/verify_passage.py code tri t s wx wy wz theta
 import json, math, sys
 from fractions import Fraction as F
 
