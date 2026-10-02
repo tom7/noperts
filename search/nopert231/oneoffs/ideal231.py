@@ -88,3 +88,17 @@ assert len(H) == 20 and all(len(h) == 3 for h in H)
 print('max |double - rationalVertex| = %.4e' % max(norm(sub(H[i], R[i])) for i in range(20)))
 print('max |double - exactVertex|    = %.4e' % max(norm(sub(H[i], E[i])) for i in range(20)))
 print('max |double - idealVertex|    = %.4e' % max(norm(sub(H[i], V[i])) for i in range(20)))
+
+# ruperts.sqlite's nopert_231 (what tostl.exe reads): the same shape up to a
+# uniform scale (codebdd229 rescales to max vertex norm about 1 - 1e-9) and
+# vertex order. Fit the scale by least squares after matching vertices.
+import sqlite3
+db = sqlite3.connect('/root/quad/ruperts/ruperts.sqlite')
+vals = [D(float(x)) for x in db.execute('select vertices from noperts where id=231').fetchone()[0].split(',')]
+P = [tuple(vals[3 * i:3 * i + 3]) for i in range(20)]
+s0 = (D(1) - D('1e-9')) / max(norm(p) for p in P)
+match = [min(range(20), key=lambda j: norm(sub(tuple(s0 * u for u in p), E[j]))) for p in P]
+assert sorted(match) == list(range(20))
+lam = sum(dot(P[i], E[match[i]]) for i in range(20)) / sum(dot(P[i], P[i]) for i in range(20))
+print('ruperts.sqlite nopert_231, scaled by %.15f: max |db - exactVertex| = %.4e'
+      % (lam, max(norm(sub(tuple(lam * u for u in P[i]), E[match[i]])) for i in range(20))))
