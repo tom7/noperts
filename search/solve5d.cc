@@ -92,7 +92,13 @@ std::optional<rows5d::Leaf> Solver::TryLeaf(const Node &node) {
   const contacts5d::ContactPool &pool = Pool(node);
   if (pool.triples.empty()) return std::nullopt;
   const geom5d::TriangleD td = geom5d::ToDouble(node.tri);
-  const cert5d::Single s = cert5d::BestSingle(pool, td, bd, job_.chart, opt_.max_full);
+  cert5d::Single s = cert5d::BestSingle(pool, td, bd, job_.chart, opt_.max_full);
+  for (int full = opt_.max_full * 4; !(s.margin > 0) && full <= opt_.max_full_retry &&
+                                     full / 4 < (int)pool.triples.size();
+       full *= 4) {
+    const cert5d::Single wider = cert5d::BestSingle(pool, td, bd, job_.chart, full);
+    if (wider.margin > s.margin) s = wider;
+  }
   last_failed_ = Failed{.path = node.path, .pool = &pool, .best = s};
   if (s.triple >= 0 && s.margin > 0) {
     bool ok = true;

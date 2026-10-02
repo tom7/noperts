@@ -37,6 +37,10 @@ struct Options {
   int cone_samples = 8;
   // Triples fully evaluated per node after center screening.
   int max_full = 64;
+  // If no screened triple certifies, retry with the top max_full * 4, then
+  // * 16, up to this many (the center screen can miss the best triple in
+  // large pools; 0 disables the retries).
+  int max_full_retry = 0;
   // Split the box when its widest half-width exceeds split_kappa times the
   // view triangle's angular diameter, else split the view.
   double split_kappa = 0.5;
