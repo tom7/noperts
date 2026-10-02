@@ -4,6 +4,8 @@
 #include "rigidity-margin.h"
 
 #include <algorithm>
+#include <atomic>
+#include <tuple>
 #include <array>
 #include <cmath>
 #include <limits>
@@ -18,6 +20,8 @@
 namespace rigidity {
 
 constexpr double kMergeAngle = 1e-7;
+// Projected hull edges shorter than this (for circumradius ~1) are collapsed.
+constexpr double kMinEdge = 1e-9;
 
 
 double Cross2(const vec2 &a, const vec2 &b) { return a.x * b.y - a.y * b.x; }
@@ -33,6 +37,9 @@ static std::optional<LPResult> SimplexMax(const std::vector<std::vector<double>>
                                           const std::vector<double> &b,
                                           const std::vector<double> &c) {
   constexpr double kEps = 1e-12;
+  // Pivot elements below this are not used: pivoting on a tiny element in
+  // this unscaled tableau gave wrong optima (coefficients here are O(1)).
+  constexpr double kPivotEps = 1e-9;
   const int m = A.size(), n = c.size();
   const int cols = n + m + 1;
   std::vector<double> T((m + 1) * cols, 0.0);
@@ -63,7 +70,7 @@ static std::optional<LPResult> SimplexMax(const std::vector<std::vector<double>>
     int leave = -1;
     double best = 0.0;
     for (int i = 0; i < m; i++) {
-      if (At(i, enter) > kEps) {
+      if (At(i, enter) > kPivotEps) {
         const double ratio = At(i, cols - 1) / At(i, enter);
         if (leave < 0 || ratio < best - kEps ||
             (ratio <= best + kEps && basis[i] < basis[leave])) {
@@ -128,7 +135,13 @@ std::pair<double, vec3> MinOnCubeFace(const std::vector<Constraint> &cons,
   A.push_back({1, 0, 0, 0, 0, 0, 0}); b.push_back(2.0);
   A.push_back({0, 1, 0, 0, 0, 0, 0}); b.push_back(2.0);
   auto r = SimplexMax(A, b, {0, 0, 0, 0, 0, 0, 1.0});
-  CHECK(r.has_value()) << "LP unbounded?";
+  if (!r.has_value()) {
+    // Unbounded: the constraint normals do not surround the origin (a
+    // degenerate silhouette). Reported as -infinity so callers see the view.
+    vec3 w{0, 0, 0};
+    w[c] = sign;
+    return {-std::numeric_limits<double>::infinity(), w};
+  }
   vec3 w;
   w[c] = sign;
   w[i1] = r->x[0] - 1.0;
@@ -156,6 +169,27 @@ std::vector<Constraint> SilhouetteConstraints(const std::vector<vec3> &verts, ve
   for (size_t i = 0; i < hull.size(); i++)
     area += Cross2(p[hull[i]], p[hull[(i + 1) % hull.size()]]);
   if (area < 0) std::reverse(hull.begin(), hull.end());
+
+  // Collapse hull vertices closer than kMinEdge to the previous one into a
+  // single corner: the normal of such a tiny edge is numerically
+  // meaningless (at views where two vertices nearly coincide in projection
+  // it flipped the margin's sign), and first-order analysis only applies to
+  // rotations much smaller than the edge anyway. A collapsed vertex is
+  // constrained by both edges at its corner.
+  std::vector<std::vector<int>> attached(nv);
+  for (bool again = true; again && hull.size() > 3;) {
+    again = false;
+    for (size_t i = 0; i < hull.size(); i++) {
+      const size_t j = (i + 1) % hull.size();
+      if (yocto::length(p[hull[j]] - p[hull[i]]) < kMinEdge) {
+        attached[hull[i]].push_back(hull[j]);
+        for (int k : attached[hull[j]]) attached[hull[i]].push_back(k);
+        hull.erase(hull.begin() + j);
+        again = true;
+        break;
+      }
+    }
+  }
 
   // Merge hull vertices whose exterior angle is below kMergeAngle into
   // the straight edge through their neighbors. (Nearly parallel edge
@@ -191,6 +225,9 @@ std::vector<Constraint> SilhouetteConstraints(const std::vector<vec3> &verts, ve
     const vec3 N = f * n.x + g * n.y;
     cons.push_back({n, yocto::cross(verts[ia], N)});
     cons.push_back({n, yocto::cross(verts[ib], N)});
+    for (int c : {ia, ib}) {
+      for (int k : attached[c]) cons.push_back({n, yocto::cross(verts[k], N)});
+    }
     if (!robust) {
       for (int k = 0; k < nv; k++) {
         if (k == ia || k == ib) continue;
@@ -204,6 +241,44 @@ std::vector<Constraint> SilhouetteConstraints(const std::vector<vec3> &verts, ve
   return cons;
 }
 
+std::atomic<int64_t> lp_fallbacks{0};
+
+// min of f over the cube face w[c] = sign without the face LP: a grid, then
+// pattern search (f is convex there), using only EvalF.
+static std::pair<double, vec3> MinOnCubeFaceSearch(const std::vector<Constraint> &cons, int c,
+                                                   double sign) {
+  const int i1 = (c + 1) % 3, i2 = (c + 2) % 3;
+  auto at = [&](double x, double y) {
+    vec3 w{0, 0, 0};
+    w[c] = sign;
+    w[i1] = std::clamp(x, -1.0, 1.0);
+    w[i2] = std::clamp(y, -1.0, 1.0);
+    return w;
+  };
+  constexpr int kGrid = 40;
+  double best = std::numeric_limits<double>::infinity(), bx = 0, by = 0;
+  for (int i = 0; i <= kGrid; i++) {
+    for (int j = 0; j <= kGrid; j++) {
+      const double x = -1 + 2.0 * i / kGrid, y = -1 + 2.0 * j / kGrid;
+      const double f = EvalF(cons, at(x, y));
+      if (f < best) { best = f; bx = x; by = y; }
+    }
+  }
+  for (double step = 2.0 / kGrid; step > 1e-12; step *= 0.5) {
+    for (bool improved = true; improved;) {
+      improved = false;
+      for (int k = 0; k < 8; k++) {
+        const double x = bx + step * std::cos(k * std::numbers::pi / 4);
+        const double y = by + step * std::sin(k * std::numbers::pi / 4);
+        const vec3 w = at(x, y);
+        const double f = EvalF(cons, w);
+        if (f < best) { best = f; bx = w[i1]; by = w[i2]; improved = true; }
+      }
+    }
+  }
+  return {best, at(bx, by)};
+}
+
 Margin FirstOrderMargin(const std::vector<vec3> &verts, vec3 u, bool robust) {
   const std::vector<Constraint> cons = SilhouetteConstraints(verts, u, robust);
   if (cons.size() < 3) return Margin{};
@@ -211,7 +286,15 @@ Margin FirstOrderMargin(const std::vector<vec3> &verts, vec3 u, bool robust) {
   best.m = std::numeric_limits<double>::infinity();
   for (int c = 0; c < 3; c++) {
     for (double sign : {1.0, -1.0}) {
-      const auto [val, w] = MinOnCubeFace(cons, c, sign);
+      auto [val, w] = MinOnCubeFace(cons, c, sign);
+      // The face LP occasionally returns a value that f does not attain at
+      // its own minimizer (degenerate instances). Check it with a direct
+      // evaluation, and on disagreement fall back to a search.
+      const double check = EvalF(cons, w);
+      if (!(std::abs(check - val) <= 1e-9 * (1 + std::abs(val)))) {
+        lp_fallbacks++;
+        std::tie(val, w) = MinOnCubeFaceSearch(cons, c, sign);
+      }
       if (val < best.m) { best.m = val; best.axis = w; }
     }
   }
@@ -353,6 +436,36 @@ PassageResult SearchPassage(const std::vector<vec3> &verts, vec3 u0, vec3 axis0)
     }
   }
   return best;
+}
+
+PassageResult SearchPassageAt(const std::vector<vec3> &verts, vec3 u0, vec3 axis0, double theta) {
+  auto Perp = [](const vec3 &v) {
+    vec3 e1 = yocto::normalize(yocto::cross(v, std::abs(v.z) < 0.9 ? vec3{0, 0, 1} : vec3{1, 0, 0}));
+    return std::make_pair(e1, yocto::cross(v, e1));
+  };
+  vec3 u = yocto::normalize(u0), ax = yocto::normalize(axis0);
+  double cur = PassageClearance(verts, u, ax, theta);
+  // Pattern search in 4 dims: 2 for the view, 2 for the axis.
+  for (double step = 1e-1; step > 1e-10; step *= 0.5) {
+    for (bool improved = true; improved;) {
+      improved = false;
+      for (int dim = 0; dim < 4; dim++) {
+        for (double sg : {1.0, -1.0}) {
+          vec3 u2 = u, a2 = ax;
+          if (dim < 2) {
+            auto [e1, e2] = Perp(u);
+            u2 = yocto::normalize(u + (dim == 0 ? e1 : e2) * (sg * step * 0.1));
+          } else {
+            auto [e1, e2] = Perp(ax);
+            a2 = yocto::normalize(ax + (dim == 2 ? e1 : e2) * (sg * step));
+          }
+          const double v = PassageClearance(verts, u2, a2, theta);
+          if (v > cur) { cur = v; u = u2; ax = a2; improved = true; }
+        }
+      }
+    }
+  }
+  return {cur, u, ax, theta};
 }
 
 }  // namespace rigidity

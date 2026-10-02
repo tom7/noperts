@@ -19,6 +19,8 @@
 #ifndef _NOPERT229_RIGIDITY_MARGIN_H
 #define _NOPERT229_RIGIDITY_MARGIN_H
 
+#include <atomic>
+#include <cstdint>
 #include <limits>
 #include <utility>
 #include <vector>
@@ -55,6 +57,9 @@ double EvalF(const std::vector<Constraint> &cons, const vec3 &w);
 std::pair<double, vec3> MinOnCubeFace(const std::vector<Constraint> &cons, int coord, double sign);
 
 Margin FirstOrderMargin(const std::vector<vec3> &verts, vec3 u, bool robust);
+// How often FirstOrderMargin's face LP disagreed with a direct evaluation and
+// a search was used instead (the LP is occasionally wrong on degenerate views).
+extern std::atomic<int64_t> lp_fallbacks;
 
 // Local minimization of the true margin over views near u0: (margin, view).
 std::pair<double, vec3> RefineView(const std::vector<vec3> &verts, vec3 u0);
@@ -70,6 +75,10 @@ struct PassageResult { double clearance; vec3 u; vec3 axis; double theta; };
 // Local search for a passage near view u0 and axis axis0, over theta in
 // [1e-12, 1e-3], the axis and the view.
 PassageResult SearchPassage(const std::vector<vec3> &verts, vec3 u0, vec3 axis0);
+// The same at a fixed rotation angle theta (over the view and the axis).
+// Where the first-order margin is ~0, SearchPassage drifts to theta -> 0
+// (clearance -> 0-); this probes each scale of theta separately.
+PassageResult SearchPassageAt(const std::vector<vec3> &verts, vec3 u0, vec3 axis0, double theta);
 
 }  // namespace rigidity
 

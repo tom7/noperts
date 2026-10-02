@@ -20,7 +20,11 @@
 // (length per radian).
 //
 // Usage: polyrigidity.exe (--name snubdodecahedron | --nopert ID) [--grid N]
-//          [--circle_samples N] [--threads N] [--worst K] [--search]
+//          [--circle_samples N] [--threads N] [--worst K] [--search] [--deep N]
+//   --deep N: at each worst view, maximize the passage clearance at fixed
+//     theta = 1e-6 ... 1e-2 from N random starting axes (plus the margin's
+//     axis); for views where the first-order margin is ~0 and only higher
+//     order terms decide.
 //   e.g. polyrigidity.exe --name deltoidalhexecontahedron --search
 //        polyrigidity.exe --nopert 214 --search   (finds #214's passage)
 
@@ -33,6 +37,7 @@
 #include <mutex>
 #include <numbers>
 #include <optional>
+#include <random>
 #include <string>
 #include <vector>
 
@@ -79,6 +84,7 @@ int main(int argc, char **argv) {
   std::string name;
   int nopert = -1, grid = 200000, circle_samples = 20000, threads = 60, worst_k = 12;
   bool search = false;
+  int deep = 0;  // --deep N: fixed-theta searches from N axes per worst view
   for (int i = 1; i < argc; i++) {
     const std::string a = argv[i];
     auto next = [&]() -> std::string {
@@ -92,6 +98,7 @@ int main(int argc, char **argv) {
     else if (a == "--threads") threads = std::stoi(next());
     else if (a == "--worst") worst_k = std::stoi(next());
     else if (a == "--search") search = true;
+    else if (a == "--deep") deep = std::stoi(next());
     else LOG(FATAL) << "unknown argument " << a;
   }
   CHECK(name.empty() != (nopert < 0)) << "exactly one of --name, --nopert";
@@ -155,7 +162,8 @@ int main(int argc, char **argv) {
     const int64_t d = ++done;
     if (d % 2000000 == 0) Print("  {} / {} views ({:.0f}s)\n", d, jobs.size(), timer.Seconds());
   }, threads);
-  Print("surveyed in {:.0f}s\n", timer.Seconds());
+  Print("surveyed in {:.0f}s ({} face LPs replaced by a search after a failed check)\n",
+        timer.Seconds(), rigidity::lp_fallbacks.load());
 
   // The worst distinct views, true and robust.
   auto worst_of = [&](std::vector<View> v) {
@@ -202,7 +210,38 @@ int main(int argc, char **argv) {
     global_min = std::min(global_min, rm);
     best_clearance = std::max(best_clearance, clearance);
   }, std::min(threads, (int)candidates.size()));
+  if (deep > 0) {
+    struct Start { vec3 u, axis; double theta; };
+    std::vector<Start> starts;
+    std::mt19937_64 rng(1);
+    std::normal_distribution<double> gauss;
+    for (const View &v : candidates) {
+      const auto [rm, ru] = rigidity::RefineView(verts, v.u);
+      const vec3 margin_axis = rigidity::FirstOrderMargin(verts, ru, false).axis;
+      for (double theta : {1e-6, 1e-5, 1e-4, 1e-3, 1e-2}) {
+        starts.push_back({ru, margin_axis, theta});
+        starts.push_back({ru, -margin_axis, theta});
+        for (int k = 0; k < deep; k++) {
+          starts.push_back({ru, yocto::normalize(vec3{gauss(rng), gauss(rng), gauss(rng)}), theta});
+        }
+      }
+    }
+    Print("deep search: {} fixed-theta searches\n", starts.size());
+    std::vector<rigidity::PassageResult> res(starts.size());
+    ParallelComp(starts.size(), [&](int64_t i) {
+      res[i] = rigidity::SearchPassageAt(verts, starts[i].u, starts[i].axis, starts[i].theta);
+    }, threads);
+    for (double theta : {1e-6, 1e-5, 1e-4, 1e-3, 1e-2}) {
+      rigidity::PassageResult b{-1e300};
+      for (const auto &r : res) if (r.theta == theta && r.clearance > b.clearance) b = r;
+      Print("  theta {:.0e}: best clearance {:+.4e} (clearance/theta^2 {:+.3e}) at u=({:.9f},{:.9f},{:.9f}) "
+            "axis ({:.6f},{:.6f},{:.6f}){}\n", theta, b.clearance, b.clearance / (theta * theta),
+            b.u.x, b.u.y, b.u.z, b.axis.x, b.axis.y, b.axis.z,
+            b.clearance > 0 ? "  ** CANDIDATE PASSAGE **" : "");
+      best_clearance = std::max(best_clearance, b.clearance);
+    }
+  }
   Print("{}: worst first-order margin {:+.4e}{}\n", label, global_min,
-        search ? std::format("; best passage clearance {:+.4e}", best_clearance) : "");
+        (search || deep) ? std::format("; best passage clearance {:+.4e}", best_clearance) : "");
   return 0;
 }
