@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <optional>
 
 #include "base/logging.h"
 #include "bignum/big.h"
@@ -43,7 +44,9 @@ bool TriangleContains(const TriangleQ &outer, const TriangleQ &inner) {
   const Q ax = outer[1][0] - outer[0][0], ay = outer[1][1] - outer[0][1];
   const Q bx = outer[2][0] - outer[0][0], by = outer[2][1] - outer[0][1];
   const Q det = ax * by - ay * bx;
-  CHECK(BigRat::Sign(det) != 0) << "degenerate outer triangle";
+  // A degenerate outer triangle (e.g. a sliver collapsed by rounding)
+  // contains no proper triangle.
+  if (BigRat::Sign(det) == 0) return false;
   for (const auto &p : inner) {
     const Q px = p[0] - outer[0][0], py = p[1] - outer[0][1];
     // p - outer[0] = s (outer[1] - outer[0]) + u (outer[2] - outer[0]).
@@ -54,7 +57,7 @@ bool TriangleContains(const TriangleQ &outer, const TriangleQ &inner) {
   return true;
 }
 
-TriangleQ OuterDyadicTriangle(const TriangleQ &t, int rel_bits) {
+static std::optional<TriangleQ> OuterDyadicTriangleBits(const TriangleQ &t, int rel_bits) {
   const TriangleD d = ToDouble(t);
   double size = 0.0;
   for (int i = 0; i < 3; i++) {
@@ -81,7 +84,15 @@ TriangleQ OuterDyadicTriangle(const TriangleQ &t, int rel_bits) {
     }
     if (TriangleContains(out, t)) return out;
   }
-  LOG(FATAL) << "no dyadic outer triangle";
+  return std::nullopt;
+}
+
+TriangleQ OuterDyadicTriangle(const TriangleQ &t, int rel_bits) {
+  // Slivers (much thinner than their extent) need a finer grid; the exact
+  // triangle itself is the last resort.
+  for (int extra : {0, 16, 32, 64}) {
+    if (auto out = OuterDyadicTriangleBits(t, rel_bits + extra)) return *out;
+  }
   return t;
 }
 
