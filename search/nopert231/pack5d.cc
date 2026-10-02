@@ -15,7 +15,7 @@
 // kept on their exact triangle.
 //
 // Usage: pack5d.exe --chart C (--all | --t T) [--journals jobs] [--out FILE]
-//                   [--trees_dir trees_r1] [--bdd codebdd229.json] [--exact_check]
+//                   [--trees_dir trees_r2] [--bdd codebdd229.json] [--exact_check]
 //                   [--threads 8]
 
 #include <atomic>
@@ -384,7 +384,7 @@ class Packer {
 int main(int argc, char **argv) {
   int chart = -1, single = -1, threads = 8;
   bool all = false, exact_check = false;
-  std::string journals = "jobs", out, trees_dir = "trees_r1", bdd = "codebdd229.json";
+  std::string journals = "jobs", out, trees_dir = "trees_r2", bdd = "codebdd229.json";
   for (int i = 1; i < argc; i++) {
     const std::string a = argv[i];
     auto next = [&]() -> std::string {

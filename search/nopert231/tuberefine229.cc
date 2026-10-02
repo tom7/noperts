@@ -23,7 +23,7 @@
 // <out_dir>/code.<code>.journal so tubecode229 can resume from it. The input
 // directory is not modified.
 //
-// Usage: tuberefine229.exe --code X [--in_dir trees_r1] [--out_dir trees_r2]
+// Usage: tuberefine229.exe --code X [--in_dir trees_r2] [--out_dir trees_r3]
 //          [--goal 1/50000] [--levels 4] [--threads 16] [--tri T]
 //        tuberefine229.exe --test
 
@@ -180,7 +180,7 @@ void Test() {
 
 int main(int argc, char **argv) {
   int code = -1, levels = 4, threads = 16, only_tri = -1;
-  std::string in_dir = "trees_r1", out_dir = "trees_r2";
+  std::string in_dir = "trees_r2", out_dir = "trees_r3";
   BigRat goal("1/50000");
   for (int i = 1; i < argc; i++) {
     const std::string a = argv[i];

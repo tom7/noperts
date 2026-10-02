@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
   const int t = std::stoi(argv[2]), chart = std::stoi(argv[3]);
   const int max_leaves = argc > 4 ? std::stoi(argv[4]) : 100;
   const int rel_bits = argc > 5 ? std::stoi(argv[5]) : 30;
-  const auto atlas = tubeatlas5d::TubeAtlas::Load("trees_r1", "codebdd229.json");
+  const auto atlas = tubeatlas5d::TubeAtlas::Load("trees_r2", "codebdd229.json");
   const rows5d::Journal j = rows5d::ReadJournal(argv[1]);
   double exact_s = 0.0, relax_s = 0.0, build_s = 0.0;
   int n = 0, exact_ok = 0, relax_ok = 0;

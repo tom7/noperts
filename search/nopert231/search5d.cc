@@ -10,7 +10,7 @@
 // Usage:
 //   search5d.exe --t <triangle>[,<triangle>...] | --code <code> | --all
 //                [--charts 0,1,2] [--threads N] [--commit_depth D]
-//                [--subtree_budget N] [--out_dir jobs] [--trees_dir trees_r1]
+//                [--subtree_budget N] [--out_dir jobs] [--trees_dir trees_r2]
 //                [--bdd codebdd229.json] [--cone_samples N] [--split_kappa K]
 //                [--exact_check] [--retry_deferred]
 //
@@ -47,7 +47,7 @@ struct Args {
   int commit_depth = 6;
   int64_t subtree_budget = 200000;
   std::string out_dir = "jobs";
-  std::string trees_dir = "trees_r1";
+  std::string trees_dir = "trees_r2";
   std::string bdd = "codebdd229.json";
   bool retry_deferred = false;
   solve5d::Options opt;

@@ -12,14 +12,14 @@
 
 using namespace tubeatlas5d;
 
-static constexpr const char *MANIFEST = "../Noperthedron/.artifacts/nopert229r/packs/manifest.txt";
+static constexpr const char *MANIFEST = "../Noperthedron/.artifacts/nopert229r/packs_r2/manifest.txt";
 
 int main() {
-  if (!std::filesystem::exists("trees_r1/tree.0.json")) {
-    printf("SKIPPED: trees_r1 not present\n");
+  if (!std::filesystem::exists("trees_r2/tree.0.json")) {
+    printf("SKIPPED: trees_r2 not present\n");
     return 0;
   }
-  const TubeAtlas atlas = TubeAtlas::Load("trees_r1", "codebdd229.json");
+  const TubeAtlas atlas = TubeAtlas::Load("trees_r2", "codebdd229.json");
   CHECK(atlas.NumTriangles() == 153) << atlas.NumTriangles();
 
   // The root radius of each table equals the exported pack's table radius
