@@ -35,6 +35,9 @@ int main(int argc, char **argv) {
       for (const auto &tok : Util::Split(next(), ',')) charts.push_back(std::stoi(tok));
     } else LOG(FATAL) << "unknown argument " << a;
   }
+  // A wrong --journals directory would otherwise just show nothing started.
+  CHECK(std::filesystem::is_directory(journals))
+      << "no journal directory " << journals << " (pass --journals DIR)";
   rapidjson::Document doc;
   doc.Parse(Util::ReadFile(bdd).c_str());
   CHECK(!doc.HasParseError());
