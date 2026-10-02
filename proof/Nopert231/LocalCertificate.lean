@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert229.Certificate
-public import Noperthedron.Nopert229.SymmetryLocal
+public import Noperthedron.Nopert231.Certificate
+public import Noperthedron.Nopert231.SymmetryLocal
 public import Noperthedron.SnubCube.LocalCertificate
 
 @[expose] public section
@@ -15,7 +15,7 @@ of the tree interval it covers.  This is important for adaptive subdivision:
 any rational leaf contained in the certified neighborhood may use the row.
 -/
 
-namespace Noperthedron.Nopert229.LocalCertificate
+namespace Noperthedron.Nopert231.LocalCertificate
 
 variable {P : C5Model}
 
@@ -718,7 +718,7 @@ theorem valid_axisAngle_ratio (box : Box) (h : box.Valid)
         (relativeRotationAtSymmetry
           (q.matrixPoseWithOffset offset) box.symmetryIndex))) :
     1 - Real.cos a.angle ≤ |Real.sin a.angle| * (box.c : ℝ) := by
-  apply Noperthedron.Nopert229.AxisAngle.ratio_of_inner_mismatch_bound
+  apply Noperthedron.Nopert231.AxisAngle.ratio_of_inner_mismatch_bound
     (q.matrixPoseWithOffset offset) box.symmetryIndex a
     (box.c : ℝ) (box.r : ℝ)
   · exact_mod_cast h.c_nonneg
@@ -1154,7 +1154,7 @@ theorem Box.valid_imp_not_translated_rupert (box : Box) (h : box.Valid) :
   obtain ⟨a⟩ := Noperthedron.BalancedSupport.exists_axisAngle
     relative.val relative.property
   apply
-    Noperthedron.Nopert229.not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation
+    Noperthedron.Nopert231.not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation
       (p := q.matrixPoseWithOffset offset) (g := box.symmetryIndex) (a := a)
       (index := fun j i => (box.certificate j).contact i |>.index)
       (weight := fun j => (box.certificate j).realWeight)
@@ -1199,6 +1199,6 @@ theorem Box.valid_imp_no_translated_rupert_in_interval
   exact box.valid_imp_not_translated_rupert h q
     (box.near_center_of_mem_realInterval hq) offset hrupert
 
-end Noperthedron.Nopert229.LocalCertificate
+end Noperthedron.Nopert231.LocalCertificate
 
 end

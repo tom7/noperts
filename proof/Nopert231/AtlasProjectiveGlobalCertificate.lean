@@ -1,8 +1,8 @@
 module
 
-public import Noperthedron.Nopert229.AtlasProjectiveGlobalRigidity
-public import Noperthedron.Nopert229.AtlasProjectiveLocalCertificate
-public import Noperthedron.Nopert229.QuadraticBernstein
+public import Noperthedron.Nopert231.AtlasProjectiveGlobalRigidity
+public import Noperthedron.Nopert231.AtlasProjectiveLocalCertificate
+public import Noperthedron.Nopert231.QuadraticBernstein
 
 @[expose] public section
 
@@ -16,7 +16,7 @@ quadratic in the projective view and a quadratic in the relative Cayley
 coordinates, enclosed by nested rational interval arithmetic.
 -/
 
-namespace Noperthedron.Nopert229.AtlasProjectiveGlobalCertificate
+namespace Noperthedron.Nopert231.AtlasProjectiveGlobalCertificate
 
 variable {P : C5Model}
 
@@ -2013,6 +2013,6 @@ theorem Box.valid_imp_no_translated_rupert_in_interval
   rintro ⟨p, hp, hbounded, hscale, hmem, offset, hrupert⟩
   exact box.valid_imp_not_translated_rupert h p hp hbounded hscale hmem offset hrupert
 
-end Noperthedron.Nopert229.AtlasProjectiveGlobalCertificate
+end Noperthedron.Nopert231.AtlasProjectiveGlobalCertificate
 
 end

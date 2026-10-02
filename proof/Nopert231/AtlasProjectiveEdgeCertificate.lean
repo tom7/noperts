@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert229.AtlasProjectiveView
-public import Noperthedron.Nopert229.QuadraticBernstein
+public import Noperthedron.Nopert231.AtlasProjectiveView
+public import Noperthedron.Nopert231.QuadraticBernstein
 
 @[expose] public section
 
@@ -13,7 +13,7 @@ triangle.  Support and denominator-cleared displacement are linear in the
 normalized viewing vector, so their extrema occur at triangle corners.
 -/
 
-namespace Noperthedron.Nopert229.AtlasProjectiveEdgeCertificate
+namespace Noperthedron.Nopert231.AtlasProjectiveEdgeCertificate
 
 variable {P : C5Model}
 
@@ -614,6 +614,6 @@ theorem Box.valid_imp_not_translated_rupert (box : Box) (h : box.Valid)
     all_goals simp [Box.edgeShell]
     all_goals rfl
 
-end Noperthedron.Nopert229.AtlasProjectiveEdgeCertificate
+end Noperthedron.Nopert231.AtlasProjectiveEdgeCertificate
 
 end

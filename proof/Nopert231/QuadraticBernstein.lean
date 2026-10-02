@@ -12,7 +12,7 @@ This specializes the tensor Bernstein convex-hull theorem to the ten-field
 quadratic representation used by the Nopert #229 atlas checker.
 -/
 
-namespace Noperthedron.Nopert229.QuadraticBernstein
+namespace Noperthedron.Nopert231.QuadraticBernstein
 
 open Noperthedron.Checker
 open Noperthedron.SnubCube.BernsteinCertificate
@@ -221,6 +221,6 @@ theorem lower_le_evalReal {vars : Fin 3 → RatBall} {x y z : ℝ}
   push_cast at h ⊢
   exact h
 
-end Noperthedron.Nopert229.QuadraticBernstein
+end Noperthedron.Nopert231.QuadraticBernstein
 
 end

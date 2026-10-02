@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert229.AtlasProjectiveLocalViewTree
-public import Noperthedron.Nopert229.WedgeCoverData
+public import Noperthedron.Nopert231.AtlasProjectiveLocalViewTree
+public import Noperthedron.Nopert231.WedgeCoverData
 
 @[expose] public section
 
@@ -16,7 +16,7 @@ out every pose in the upper fivefold view wedge whose tube is within the
 smallest table radius.
 -/
 
-namespace Noperthedron.Nopert229.IdentityTube
+namespace Noperthedron.Nopert231.IdentityTube
 
 variable {P : C5Model}
 
@@ -67,6 +67,6 @@ theorem not_translated_rupert_of_tables (tables : ℕ → Table)
   · simpa [hroot] using hscale
   · simpa [hroot, htriangle, htri] using hin
 
-end Noperthedron.Nopert229.IdentityTube
+end Noperthedron.Nopert231.IdentityTube
 
 end

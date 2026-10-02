@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert229.AtlasProjectiveView
-public import Noperthedron.Nopert229.SymmetryLocal
+public import Noperthedron.Nopert231.AtlasProjectiveView
+public import Noperthedron.Nopert231.SymmetryLocal
 
 @[expose] public section
 
@@ -14,7 +14,7 @@ polynomially with the normalized projective view.  The finite-rotation ratio
 is supplied separately by the atlas-local Cayley mismatch certificate.
 -/
 
-namespace Noperthedron.Nopert229.AtlasProjectiveLocalRigidity
+namespace Noperthedron.Nopert231.AtlasProjectiveLocalRigidity
 
 variable {P : C5Model}
 
@@ -187,7 +187,7 @@ theorem not_rupertPose_of_projective_local_certificates
     (p.matrixPoseWithOffset chart offset) g
   obtain ⟨a⟩ := exists_axisAngle relative.val relative.property
   apply
-    Noperthedron.Nopert229.not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation
+    Noperthedron.Nopert231.not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation
       (p := p.matrixPoseWithOffset chart offset) (g := g) (a := a)
       (index := index)
       (weight := fun j => weight root p (edge j))
@@ -253,7 +253,7 @@ theorem not_rupertPose_of_projective_local_certificates_with_defect
     (p.matrixPoseWithOffset chart offset) g
   obtain ⟨a⟩ := exists_axisAngle relative.val relative.property
   apply
-    Noperthedron.Nopert229.not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation_with_defect
+    Noperthedron.Nopert231.not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation_with_defect
       (p := p.matrixPoseWithOffset chart offset) (g := g) (a := a)
       (index := index)
       (weight := fun j => weight root p (edge j))
@@ -330,7 +330,7 @@ theorem not_rupertPose_of_projective_local_certificates_with_decomposition
     (p.matrixPoseWithOffset chart offset) g
   obtain ⟨a⟩ := exists_axisAngle relative.val relative.property
   apply
-    Noperthedron.Nopert229.not_rupertPose_of_decomposed_symmetry_certificates
+    Noperthedron.Nopert231.not_rupertPose_of_decomposed_symmetry_certificates
       (p := p.matrixPoseWithOffset chart offset) (g := g) (a := a)
       (exceptional := exceptional)
       (index := index)
@@ -362,7 +362,7 @@ theorem not_rupertPose_of_projective_local_certificates_with_decomposition
   · exact hsupport
   · exact hexceptional a
 
-end Noperthedron.Nopert229.AtlasProjectiveLocalRigidity
+end Noperthedron.Nopert231.AtlasProjectiveLocalRigidity
 
 end
 

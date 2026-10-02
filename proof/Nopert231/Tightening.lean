@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert229.Symmetry
+public import Noperthedron.Nopert231.Symmetry
 public import Noperthedron.BalancedSupport.UniversalDomain
 public import Noperthedron.BalancedSupport.ViewAntipode
 
@@ -14,7 +14,7 @@ bounds for the other three Euler parameters.  The resulting rational box is
 the domain that the certificate tree must cover.
 -/
 
-namespace Noperthedron.Nopert229
+namespace Noperthedron.Nopert231
 
 variable {P : C5Model}
 
@@ -251,6 +251,6 @@ theorem no_matrixPose_of_no_tight_translated_pose
     (MatrixPose.RupertPose_rotateBy_iff p δ P.polyhedron.hull).mpr hp
   exact h ⟨q, hq, offset, heq.mpr hrot⟩
 
-end Noperthedron.Nopert229
+end Noperthedron.Nopert231
 
 end

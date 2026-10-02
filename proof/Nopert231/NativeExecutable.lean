@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert229.IsNotRupert
-public import Noperthedron.Nopert229.SparseLocalViewTree
+public import Noperthedron.Nopert231.IsNotRupert
+public import Noperthedron.Nopert231.SparseLocalViewTree
 
 @[expose] public section
 
@@ -19,7 +19,7 @@ and report useful errors. Proof fields are erased by native code generation;
 their correctness comes from the specifications of the Boolean checkers.
 -/
 
-namespace Noperthedron.Nopert229.NativeExecutable
+namespace Noperthedron.Nopert231.NativeExecutable
 
 variable {P : C5Model}
 
@@ -215,6 +215,6 @@ def constructProof (localTaskCount globalTaskCount : Nat)
   log "constructed proof: no C5Model (fivefold-symmetric polyhedron within 6e-16 of the rational vertices) is Rupert"
   pure ⟨checkedCharts.notRupert⟩
 
-end Noperthedron.Nopert229.NativeExecutable
+end Noperthedron.Nopert231.NativeExecutable
 
 end

@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert229.AtlasProjectiveLocalCertificate
-public import Noperthedron.Nopert229.AtlasProjectiveAnnularCertificate
+public import Noperthedron.Nopert231.AtlasProjectiveLocalCertificate
+public import Noperthedron.Nopert231.AtlasProjectiveAnnularCertificate
 
 @[expose] public section
 
@@ -14,7 +14,7 @@ the Cayley interval or chart.  This tree checks that geometry once.  A small
 near-symmetry leaf in the main search to reuse the same view atlas.
 -/
 
-namespace Noperthedron.Nopert229.AtlasProjectiveLocalViewTree
+namespace Noperthedron.Nopert231.AtlasProjectiveLocalViewTree
 
 variable {P : C5Model}
 
@@ -455,6 +455,6 @@ theorem Table.valid_imp_not_translated_rupert_below_node (table : Table)
   table.valid_imp_not_translated_rupert_at_node_rLower hvalid nodeId hnode tube
     htubeSymmetry htubeRadius htube hp offset hscale (inTriangle_of_splitPath hmem)
 
-end Noperthedron.Nopert229.AtlasProjectiveLocalViewTree
+end Noperthedron.Nopert231.AtlasProjectiveLocalViewTree
 
 end

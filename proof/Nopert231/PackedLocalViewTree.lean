@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert229.AtlasProjectiveLocalViewTree
-public import Noperthedron.Nopert229.QuadCoverTree
+public import Noperthedron.Nopert231.AtlasProjectiveLocalViewTree
+public import Noperthedron.Nopert231.QuadCoverTree
 
 @[expose] public section
 
@@ -19,7 +19,7 @@ Signed rational numerators use zig-zag coding: `z >= 0` is encoded as `2*z`,
 and `z < 0` as `-2*z-1`.
 -/
 
-namespace Noperthedron.Nopert229.PackedLocalViewTree
+namespace Noperthedron.Nopert231.PackedLocalViewTree
 
 open AtlasProjectiveView AtlasProjectiveLocalCertificate
 open AtlasProjectiveLocalViewTree
@@ -362,6 +362,6 @@ def decodePackedCodeTriangle (data : ByteArray) : Table :=
     size := decoded.count
   }
 
-end Noperthedron.Nopert229.PackedLocalViewTree
+end Noperthedron.Nopert231.PackedLocalViewTree
 
 end

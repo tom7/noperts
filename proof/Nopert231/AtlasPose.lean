@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert229.CayleyAtlas
+public import Noperthedron.Nopert231.CayleyAtlas
 
 @[expose] public section
 
@@ -13,7 +13,7 @@ certificate domain is four copies of a five-dimensional rational box, with
 no Euler singularities.
 -/
 
-namespace Noperthedron.Nopert229
+namespace Noperthedron.Nopert231
 
 variable {P : C5Model}
 
@@ -287,6 +287,6 @@ theorem no_matrixPose_of_no_bounded_atlas_translated_pose
   exact h ⟨chart, q, hq, hbounded, hqview, offset,
     hmatrix ▸ heulerRupert⟩
 
-end Noperthedron.Nopert229
+end Noperthedron.Nopert231
 
 end

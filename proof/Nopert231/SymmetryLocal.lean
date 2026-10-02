@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert229.Symmetry
+public import Noperthedron.Nopert231.Symmetry
 public import Noperthedron.SnubCube.LocalRigidity
 
 @[expose] public section
@@ -14,7 +14,7 @@ Euler-pole equality strata, where equal shadows need not have equal Euler
 coordinates.
 -/
 
-namespace Noperthedron.Nopert229
+namespace Noperthedron.Nopert231
 
 variable {P : C5Model}
 
@@ -405,7 +405,7 @@ theorem not_rupertPose_of_decomposed_symmetry_certificates
     exact hremainder.trans hj
   · exact hexceptional hex
 
-end Noperthedron.Nopert229
+end Noperthedron.Nopert231
 
 end
 

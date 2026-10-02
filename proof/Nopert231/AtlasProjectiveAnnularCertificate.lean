@@ -4,10 +4,10 @@ public import Noperthedron.BalancedSupport.FiniteRotation
 public import Noperthedron.BalancedSupport.LocalRigidity
 public import Noperthedron.BalancedSupport.AxisFree
 public import Noperthedron.BalancedSupport.Rodrigues
-public import Noperthedron.Nopert229.SymmetryLocal
-public import Noperthedron.Nopert229.AtlasProjectiveLocalCertificate
-public import Noperthedron.Nopert229.AtlasProjectiveLocalRigidity
-public import Noperthedron.Nopert229.QuadCoverTree
+public import Noperthedron.Nopert231.SymmetryLocal
+public import Noperthedron.Nopert231.AtlasProjectiveLocalCertificate
+public import Noperthedron.Nopert231.AtlasProjectiveLocalRigidity
+public import Noperthedron.Nopert231.QuadCoverTree
 public import Mathlib.Data.Matrix.Mul
 
 @[expose] public section
@@ -32,7 +32,7 @@ Together, `LinearOrder.le_total ‖Q - 1‖ r0` ensures that every pose in the c
 is unconditionally ruled out.
 -/
 
-namespace Noperthedron.Nopert229.AtlasProjectiveLocalCertificate
+namespace Noperthedron.Nopert231.AtlasProjectiveLocalCertificate
 
 variable {P : C5Model}
 
@@ -1847,7 +1847,7 @@ theorem Box.FlockDecomposedViewValid.retarget {box : Box}
   cases h
   constructor <;> assumption
 
-end Noperthedron.Nopert229.AtlasProjectiveLocalCertificate
+end Noperthedron.Nopert231.AtlasProjectiveLocalCertificate
 
 
 

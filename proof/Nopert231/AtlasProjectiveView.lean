@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert229.AtlasEdgeCertificate
-public import Noperthedron.Nopert229.AtlasFundamentalPrune
+public import Noperthedron.Nopert231.AtlasEdgeCertificate
+public import Noperthedron.Nopert231.AtlasFundamentalPrune
 public import Noperthedron.SnubCube.ProjectiveView
 
 @[expose] public section
@@ -16,7 +16,7 @@ coordinate sum puts it in the appropriate rational triangle, and that sum
 is at least one.
 -/
 
-namespace Noperthedron.Nopert229.AtlasProjectiveView
+namespace Noperthedron.Nopert231.AtlasProjectiveView
 
 open scoped RealInnerProductSpace
 open AtlasEdgeCertificate
@@ -325,6 +325,6 @@ theorem exists_root (p : AtlasPose ℝ) :
           normalizedView_mem_root_of_sign ?_⟩ <;>
           intro c <;> fin_cases c <;> simp [rootSign, h0', h1', h2']
 
-end Noperthedron.Nopert229.AtlasProjectiveView
+end Noperthedron.Nopert231.AtlasProjectiveView
 
 end

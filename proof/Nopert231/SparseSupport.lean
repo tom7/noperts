@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert229.AtlasProjectiveLocalCertificate
+public import Noperthedron.Nopert231.AtlasProjectiveLocalCertificate
 
 @[expose] public section
 
@@ -14,7 +14,7 @@ each vertex.  This reduces the repeated local-certificate support check from
 twenty vertices to seven (with padding entries equal to the selected vertex).
 -/
 
-namespace Noperthedron.Nopert229.SparseSupport
+namespace Noperthedron.Nopert231.SparseSupport
 
 open Noperthedron.Checker
 open AtlasProjectiveView
@@ -236,6 +236,6 @@ theorem Box.SparseViewValid.toViewValid {box : Box}
   barycentric := h.barycentric
   angle_bound := h.angle_bound
 
-end Noperthedron.Nopert229.SparseSupport
+end Noperthedron.Nopert231.SparseSupport
 
 end

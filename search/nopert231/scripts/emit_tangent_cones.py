@@ -18,7 +18,7 @@ import itertools
 from fractions import Fraction
 from pathlib import Path
 
-from nopert229_vertices import VERTICES_Q
+from nopert231_vertices import VERTICES_Q
 
 
 ADJACENCY = (
@@ -151,10 +151,10 @@ def emit(destination: Path):
 
     lines = [
         "module", "",
-        "public import Noperthedron.Nopert229.SparseSupport",
-        "public meta import Noperthedron.Nopert229.SparseSupport", "",
+        "public import Noperthedron.Nopert231.SparseSupport",
+        "public meta import Noperthedron.Nopert231.SparseSupport", "",
         "@[expose] public section", "",
-        "namespace Noperthedron.Nopert229.GeneratedTangentCones", "",
+        "namespace Noperthedron.Nopert231.GeneratedTangentCones", "",
         "set_option linter.unusedTactic false",
         "set_option linter.unreachableTactic false",
         "set_option linter.unnecessarySeqFocus false", "",
@@ -219,7 +219,7 @@ def emit(destination: Path):
     lines.extend([
         "theorem table_valid_native : TangentTableValid table := by",
         "  native_decide", "",
-        "end Noperthedron.Nopert229.GeneratedTangentCones", "", "end", "",
+        "end Noperthedron.Nopert231.GeneratedTangentCones", "", "end", "",
     ])
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text("\n".join(lines), encoding="utf-8")

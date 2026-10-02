@@ -10,7 +10,7 @@ public import Noperthedron.SnubCube.ProjectiveLocalCertificate
 open scoped BigOperators RealInnerProductSpace
 open Noperthedron.SnubCube.ProjectiveLocalCertificate
 
-namespace Noperthedron.Nopert229
+namespace Noperthedron.Nopert231
 
 /-- Inductive quadtree certifying cap coverage by flock axes on an affine plane. -/
 inductive QuadCoverTree where
@@ -109,4 +109,4 @@ axiom QuadCoverTree.covers_of_valid
     (haxis_cone : (c_cone : ℝ) ≤ inner ℝ axis (toR3 b.u0)) :
     ∃ m : Fin flock.size, (c_core : ℝ) ≤ inner ℝ axis (toR3 (flock[m]))
 
-end Noperthedron.Nopert229
+end Noperthedron.Nopert231

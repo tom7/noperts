@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert229.AtlasInterval
+public import Noperthedron.Nopert231.AtlasInterval
 public import Noperthedron.SnubCube.CayleyEdgeCertificate
 
 @[expose] public section
@@ -14,11 +14,11 @@ packages that observation in the normalized quadratic representation used by
 the executable interval checker.
 -/
 
-namespace Noperthedron.Nopert229.AtlasQuadratic
+namespace Noperthedron.Nopert231.AtlasQuadratic
 
 open Noperthedron.Checker
 open Noperthedron.BalancedSupport
-open Noperthedron.Nopert229.CayleyAtlas
+open Noperthedron.Nopert231.CayleyAtlas
 open Noperthedron.SnubCube.CayleyEdgeCertificate
 
 def chartSign (chart : ChartIndex) (c : Fin 3) : ℚ :=
@@ -118,6 +118,6 @@ theorem eval_contactQuadratic (chart : ChartIndex)
       RatQuadratic3.evalReal_scale,
       eval_displacementQuadratic_eq_apply, cross3, cross_apply, edgeQ, toR3]
 
-end Noperthedron.Nopert229.AtlasQuadratic
+end Noperthedron.Nopert231.AtlasQuadratic
 
 end

@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert229.AtlasProjectiveSolutionTree
-public meta import Noperthedron.Nopert229.AtlasProjectiveSolutionTree
+public import Noperthedron.Nopert231.AtlasProjectiveSolutionTree
+public meta import Noperthedron.Nopert231.AtlasProjectiveSolutionTree
 
 @[expose] public section
 
@@ -14,7 +14,7 @@ positive.  The same tiny table is checked by both evaluators without any
 array-backed generated data.
 -/
 
-namespace Noperthedron.Nopert229.FundamentalChart3
+namespace Noperthedron.Nopert231.FundamentalChart3
 
 open AtlasProjectiveSolutionTree AtlasProjectiveView
 open Noperthedron.SnubCube.ProjectiveView
@@ -53,6 +53,6 @@ theorem table_valid_kernel : table.Valid := by
   · decide +kernel
   · trivial
 
-end Noperthedron.Nopert229.FundamentalChart3
+end Noperthedron.Nopert231.FundamentalChart3
 
 end

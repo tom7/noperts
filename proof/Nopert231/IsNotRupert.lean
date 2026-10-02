@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert229.AtlasProjectiveSolutionTree
+public import Noperthedron.Nopert231.AtlasProjectiveSolutionTree
 public import Noperthedron.Rupert.Equivalences.RupertEquivRupertSet
 
 @[expose] public section
@@ -15,7 +15,7 @@ property.
 
 open scoped Matrix
 
-namespace Noperthedron.Nopert229
+namespace Noperthedron.Nopert231
 
 variable {P : C5Model}
 
@@ -48,6 +48,6 @@ theorem not_rupert_of_valid_tables
   exact no_matrixPose_of_valid_tables table hchart hvalid
     (rupert_set_implies_matrix_pose hset)
 
-end Noperthedron.Nopert229
+end Noperthedron.Nopert231
 
 end

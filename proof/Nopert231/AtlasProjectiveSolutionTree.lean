@@ -1,13 +1,13 @@
 module
 
-public import Noperthedron.Nopert229.AtlasProjectiveEdgeCertificate
-public import Noperthedron.Nopert229.AtlasFundamentalPrune
-public import Noperthedron.Nopert229.AtlasLocalCertificate
-public import Noperthedron.Nopert229.AtlasProjectiveLocalCertificate
-public import Noperthedron.Nopert229.AtlasProjectiveLocalViewTree
-public import Noperthedron.Nopert229.AtlasProjectiveGlobalCertificate
-public import Noperthedron.Nopert229.AtlasProjectiveMixedGlobalCertificate
-public import Noperthedron.Nopert229.WedgeCoverData
+public import Noperthedron.Nopert231.AtlasProjectiveEdgeCertificate
+public import Noperthedron.Nopert231.AtlasFundamentalPrune
+public import Noperthedron.Nopert231.AtlasLocalCertificate
+public import Noperthedron.Nopert231.AtlasProjectiveLocalCertificate
+public import Noperthedron.Nopert231.AtlasProjectiveLocalViewTree
+public import Noperthedron.Nopert231.AtlasProjectiveGlobalCertificate
+public import Noperthedron.Nopert231.AtlasProjectiveMixedGlobalCertificate
+public import Noperthedron.Nopert231.WedgeCoverData
 public import Noperthedron.ParallelBool
 
 @[expose] public section
@@ -21,7 +21,7 @@ from the whole sphere into eight signed roots and then by four-way midpoint
 triangle subdivision.  Leaves carry projective edge-cycle certificates.
 -/
 
-namespace Noperthedron.Nopert229.AtlasProjectiveSolutionTree
+namespace Noperthedron.Nopert231.AtlasProjectiveSolutionTree
 
 variable {P : C5Model}
 
@@ -720,6 +720,6 @@ theorem no_matrixPose_of_valid_tables
   exact hno ⟨q, hq, hbounded, hfund, hview, hupper, offset,
     heq.mpr hrupert⟩
 
-end Noperthedron.Nopert229.AtlasProjectiveSolutionTree
+end Noperthedron.Nopert231.AtlasProjectiveSolutionTree
 
 end

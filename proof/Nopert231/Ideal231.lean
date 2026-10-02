@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert229.TightApproximation
+public import Noperthedron.Nopert231.TightApproximation
 
 @[expose] public section
 
@@ -23,7 +23,7 @@ enclosures of the rotations and of `z1`; `vertexH` is compared with
 
 open Real
 
-namespace Noperthedron.Nopert229.Ideal231
+namespace Noperthedron.Nopert231.Ideal231
 
 /-! ### 40-digit rational enclosures of cos and sin of 72° and 144° -/
 
@@ -405,6 +405,6 @@ theorem quadVolume_zero : quadVolume 0 = 0 := by
 theorem quad_planar (k : OrbitIndex) : quadVolume k = 0 := by
   rw [quadVolume_eq, quadVolume_zero]
 
-end Noperthedron.Nopert229.Ideal231
+end Noperthedron.Nopert231.Ideal231
 
 end

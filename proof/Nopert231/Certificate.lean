@@ -1,7 +1,7 @@
 module
 
 public import Noperthedron.BalancedSupport.RationalCertificate
-public import Noperthedron.Nopert229.Approximation
+public import Noperthedron.Nopert231.Approximation
 
 @[expose] public section
 
@@ -14,7 +14,7 @@ with the printed STL coordinates.  `Approximation.lean` connects those
 rational coordinates to the intended exact fivefold-symmetric vertices.
 -/
 
-namespace Noperthedron.Nopert229.Certificate
+namespace Noperthedron.Nopert231.Certificate
 
 abbrev Contact :=
   Noperthedron.BalancedSupport.RationalCertificate.Contact VertexIndex
@@ -44,6 +44,6 @@ theorem Box.valid_imp_no_translated_rupert_in_interval
   exact Noperthedron.BalancedSupport.RationalCertificate.Box.valid_imp_no_translated_rupert_in_interval
     exactGoodPoly rationalPolyhedron exactApproximation box h
 
-end Noperthedron.Nopert229.Certificate
+end Noperthedron.Nopert231.Certificate
 
 end

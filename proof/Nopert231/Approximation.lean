@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert229.Vertices
+public import Noperthedron.Nopert231.Vertices
 
 @[expose] public section
 
@@ -14,7 +14,7 @@ budget of that exact object.  A rational Taylor vertex is used as a bridge.
 
 open RationalApprox Real
 
-namespace Noperthedron.Nopert229
+namespace Noperthedron.Nopert231
 
 private lemma piQ_lt_pi : (Noperthedron.piQ : ℝ) < π := pi_gt_d20
 
@@ -242,6 +242,6 @@ noncomputable def C5Model.approximation (P : C5Model) :
   bijection := Equiv.refl VertexIndex
   approx i := P.vertex_close i
 
-end Noperthedron.Nopert229
+end Noperthedron.Nopert231
 
 end

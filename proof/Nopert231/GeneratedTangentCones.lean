@@ -1,11 +1,11 @@
 module
 
-public import Noperthedron.Nopert229.SparseSupport
-public meta import Noperthedron.Nopert229.SparseSupport
+public import Noperthedron.Nopert231.SparseSupport
+public meta import Noperthedron.Nopert231.SparseSupport
 
 @[expose] public section
 
-namespace Noperthedron.Nopert229.GeneratedTangentCones
+namespace Noperthedron.Nopert231.GeneratedTangentCones
 
 set_option linter.unusedTactic false
 set_option linter.unreachableTactic false
@@ -8143,6 +8143,6 @@ theorem table_valid_kernel : TangentTableValid table := by
 theorem table_valid_native : TangentTableValid table := by
   native_decide
 
-end Noperthedron.Nopert229.GeneratedTangentCones
+end Noperthedron.Nopert231.GeneratedTangentCones
 
 end

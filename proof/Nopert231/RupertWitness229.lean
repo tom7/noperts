@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert229.TightApproximation
+public import Noperthedron.Nopert231.TightApproximation
 public import Noperthedron.Rupert.Equivalences.RupertEquivRupertSet
 public import Noperthedron.Cayley
 public import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
@@ -41,7 +41,7 @@ this file was a verbatim copy of the Nopert #214 witness.)
 
 open Matrix
 
-namespace Noperthedron.Nopert229
+namespace Noperthedron.Nopert231
 
 namespace RupertWitness
 
@@ -488,6 +488,6 @@ theorem isRupert_exactVerts : IsRupert exactVerts := by
     exact innerVertex_mem i
   · exact (convex_convexHull ℝ _).interior
 
-end Noperthedron.Nopert229
+end Noperthedron.Nopert231
 
 end
