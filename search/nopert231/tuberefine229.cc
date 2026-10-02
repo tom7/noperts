@@ -11,20 +11,24 @@
 //     r^2 (1 + c^2) <= 4 c^2 (Lean's angle_bound); tubecode229 rounds it down
 //     to a coarse list (1/1000, 1/2000, 1/4000, ...), losing up to 2x. Every
 //     leaf gets MaxTubeRadius(c) instead, if larger.
-//  2. Refinement. Each leaf with r < --goal is subdivided (up to --levels
+//  2. Refinement. Each leaf below its goal is subdivided (up to --levels
 //     levels). The parent's cage is valid on each child, and its variation
 //     delta roughly halves per level; near R1's canyon, delta is what eats
 //     the cage margin (c = cover - delta), so this alone lifts tiny radii.
 //     A fresh cage search runs only where the inherited cage fails or falls
 //     short. A refined subtree replaces the leaf only if its minimum radius
 //     is larger than the leaf's (and, among options, the fewest nodes win).
+//     A leaf's goal is max(--goal, MaxTubeRadius(--goal_frac * cover)),
+//     where cover = c + delta is its cage's cover radius: refinement only
+//     shrinks delta, so 2 * cover bounds the radius any refinement of that
+//     cage can reach, and --goal_frac says how close to go.
 //
 // Output: <out_dir>/tree.<code>.json (the native format), and a regenerated
 // <out_dir>/code.<code>.journal so tubecode229 can resume from it. The input
 // directory is not modified.
 //
 // Usage: tuberefine229.exe --code X [--in_dir trees_r2] [--out_dir trees_r3]
-//          [--goal 1/50000] [--levels 4] [--threads 16] [--tri T]
+//          [--goal 1/50000] [--goal_frac 0] [--levels 4] [--threads 16] [--tri T]
 //        tuberefine229.exe --test
 
 #include <algorithm>
@@ -181,7 +185,7 @@ void Test() {
 int main(int argc, char **argv) {
   int code = -1, levels = 4, threads = 16, only_tri = -1;
   std::string in_dir = "trees_r2", out_dir = "trees_r3";
-  BigRat goal("1/50000");
+  BigRat goal("1/50000"), goal_frac(0);
   for (int i = 1; i < argc; i++) {
     const std::string a = argv[i];
     auto next = [&]() -> std::string {
@@ -196,6 +200,7 @@ int main(int argc, char **argv) {
     else if (a == "--in_dir") in_dir = next();
     else if (a == "--out_dir") out_dir = next();
     else if (a == "--goal") goal = BigRat(std::string_view(next()));
+    else if (a == "--goal_frac") goal_frac = BigRat(std::string_view(next()));
     else if (a == "--levels") levels = std::stoi(next());
     else if (a == "--threads") threads = std::stoi(next());
     else LOG(FATAL) << "unknown argument " << a;
@@ -230,10 +235,13 @@ int main(int argc, char **argv) {
 
     // 2. Refine the leaves below the goal, in parallel.
     std::vector<int> todo;
+    std::vector<BigRat> goals(leaves.size());
     for (int i = 0; i < (int)leaves.size(); i++) {
-      if (leaves[i].node->direct_cert->r < goal) todo.push_back(i);
+      const LocalCertificate &cert = *leaves[i].node->direct_cert;
+      goals[i] = BigRat::Max(goal, MaxTubeRadius(goal_frac * (cert.c + cert.delta)));
+      if (cert.r < goals[i]) todo.push_back(i);
     }
-    printf("[code %d tri %d] %zu leaves; %d finer radii; min r %s -> %s; refining %zu below %s\n",
+    printf("[code %d tri %d] %zu leaves; %d finer radii; min r %s -> %s; refining %zu below their goals (>= %s)\n",
            code, ct.triangle_index, leaves.size(), finer, before.ToString().c_str(),
            after_fine.ToString().c_str(), todo.size(), goal.ToString().c_str());
     fflush(stdout);
@@ -250,7 +258,8 @@ int main(int argc, char **argv) {
           const LeafRef &l = leaves[todo[j]];
           unsigned int seed = 7 + 1000 * code;
           for (char c : l.node->path) seed = seed * 31 + c;
-          results[j] = Refine(l.tri, l.node->path, *l.node->direct_cert, goal, levels, &seed);
+          results[j] = Refine(l.tri, l.node->path, *l.node->direct_cert, goals[todo[j]], levels,
+                              &seed);
           if (results[j].min_r > l.node->direct_cert->r) improved++;
           const int d = ++done;
           if (d % 100 == 0) {
