@@ -77,7 +77,7 @@ RUPERTS_OBJECTS=$(RUPERTS)/ruperts-util.o $(RUPERTS)/big-csg.o $(RUPERTS)/render
 OBJECTS=$(CC_LIB_OBJECTS) $(CODEC_OBJECTS) $(SQLITE_OBJECTS) $(RUPERTS_OBJECTS)
 
 # Library objects shared by the #231 tools. No OpenCL.
-OBJECTS_231=nopert231.o tube231.o tubetree231.o exact5d.o geom5d.o contacts5d.o bounds5d.o cert5d.o tubeatlas5d.o rows5d.o solve5d.o lp5d.o
+OBJECTS_231=nopert231.o tube231.o tubetree231.o rigidity-margin.o exact5d.o geom5d.o contacts5d.o bounds5d.o cert5d.o tubeatlas5d.o rows5d.o solve5d.o lp5d.o
 
 $(CC_LIB)/%.o : $(CC_LIB)/%.cc
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
