@@ -2,7 +2,7 @@
 default : exact5d_test.exe geom5d_test.exe contacts5d_test.exe cert5d_test.exe tubeatlas5d_test.exe rows5d_test.exe solve5d_test.exe lp5d_test.exe tubetree231_test.exe nopert231_test.exe tube231_test.exe
 
 # Every program (rebuild.sh runs the pipeline; see notes/R.md).
-all: default qtube s5d codebdd231.exe tube-visualize.exe repair-margin.exe
+all: default qtube s5d codebdd231.exe tube-visualize.exe repair-margin.exe polyrigidity.exe
 
 # Identity tube (notes/Q.md, R.md):
 #  codebdd231: exact rational model, codes and code triangles (codebdd231.json).
@@ -103,7 +103,13 @@ $(CODEC)/%.o : $(CODEC)/%.cc
 # First-order rigidity margin of the identity pose over all views, for
 # repairing #214 (survey, sensitivity, and optimization modes; see
 # nopert229/notes/R.md).
-repair-margin.exe : repair-margin.o $(OBJECTS)
+repair-margin.exe : repair-margin.o rigidity-margin.o $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+	@echo -n "!"
+
+# Near-identity Rupert passage survey (first-order margin over all views,
+# then a passage search at the worst) for any polyhedron.
+polyrigidity.exe : polyrigidity.o rigidity-margin.o $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"
 
