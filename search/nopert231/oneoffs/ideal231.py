@@ -76,3 +76,15 @@ print('max |idealVertex - rationalVertex| = %.4e  (checker allowance 6e-16)'
 print('ideal seeds (40 digits):')
 for j, p in enumerate(ideal):
   print(f'  s{j} = (' + ', '.join(f'{u:.40f}' for u in p) + ')')
+
+# The double vertices in nopert229's vertices231_exact27.h, against the
+# verified model (same vertex order).
+hdr = open('/root/quad/nopert229/vertices231_exact27.h').read()
+block = hdr[hdr.index('VERTICES_231[NUM_VERTICES_231][3]'):]
+block = block[:block.index('};')]
+H = [tuple(D(float(x)) for x in re.findall(r'-?\d\.\d+e[-+]\d+', row))
+     for row in re.findall(r'\{([^{}]+)\}', block)]
+assert len(H) == 20 and all(len(h) == 3 for h in H)
+print('max |double - rationalVertex| = %.4e' % max(norm(sub(H[i], R[i])) for i in range(20)))
+print('max |double - exactVertex|    = %.4e' % max(norm(sub(H[i], E[i])) for i in range(20)))
+print('max |double - idealVertex|    = %.4e' % max(norm(sub(H[i], V[i])) for i in range(20)))
