@@ -45,6 +45,10 @@ struct Options {
   // compared with the view diameter times min(1, view_scale * |center|).
   // 0 disables the scaling (the original rule).
   double view_scale = 0.0;
+  // Decide between the box (halved on its widest axis) and the view by
+  // lookahead: the best (failed) single triple's worst margin over the
+  // children of each. The rule above is the fallback.
+  bool view_lookahead = false;
   // Which Cayley axis a box split halves (when the box, not the view, is
   // split): 0 = the widest; 1 = lookahead: the axis whose halves keep the
   // largest worse-half margin for the best (failed) single triple at this
@@ -124,6 +128,9 @@ class Solver {
   const contacts5d::ContactPool &Pool(const Node &node);
   // The lookahead axis for split_rule 1, or -1.
   int LookaheadAxis(const Node &node, const geom5d::BoxD &bd) const;
+  // For view_lookahead: whether splitting the view beats halving the box on
+  // `axis`, or nullopt if there is no failed triple at this node.
+  std::optional<bool> ViewBeatsBox(const Node &node, const geom5d::BoxD &bd, int axis) const;
   // The peel cut for split_rule 2, if any.
   std::optional<Split> PeelCut(const Node &node, const geom5d::BoxD &bd) const;
 
