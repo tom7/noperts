@@ -192,6 +192,32 @@ std::optional<Split> Solver::PeelCut(const Node &node, const geom5d::BoxD &bd) c
   return best;
 }
 
+std::optional<bool> Solver::ViewBeatsBox(const Node &node, const geom5d::BoxD &bd,
+                                         int axis) const {
+  if (last_failed_.path != node.path || last_failed_.pool == nullptr ||
+      last_failed_.best.triple < 0) {
+    return std::nullopt;
+  }
+  const contacts5d::ContactPool &pool = *last_failed_.pool;
+  const contacts5d::Triple &triple = pool.triples[last_failed_.best.triple];
+  const auto &inner = last_failed_.best.inner;
+  const geom5d::TriangleD td = geom5d::ToDouble(node.tri);
+  double box_score = 1e300;
+  for (double side : {-1.0, 1.0}) {
+    geom5d::BoxD half = bd;
+    half.radius[axis] *= 0.5;
+    half.center[axis] += side * half.radius[axis];
+    box_score = std::min(box_score, cert5d::Margin(pool, triple, inner, td, half, job_.chart));
+  }
+  // The pool's defect bounds hold on sub-triangles, so this is conservative.
+  double view_score = 1e300;
+  for (int k = 0; k < 4; k++) {
+    view_score = std::min(view_score, cert5d::Margin(pool, triple, inner,
+                                                     geom5d::SplitTriangle(td, k), bd, job_.chart));
+  }
+  return view_score > box_score;
+}
+
 Split Solver::ChooseSplit(const Node &node) const {
   const geom5d::BoxD bd = geom5d::ToDouble(node.box);
   int axis = geom5d::WidestAxis(bd);
@@ -208,6 +234,12 @@ Split Solver::ChooseSplit(const Node &node) const {
   double view = geom5d::AngularDiameter(geom5d::ToDouble(node.tri));
   if (job_.chart == 0 && opt_.view_scale > 0) {
     view *= std::min(1.0, opt_.view_scale * yocto::length(bd.center));
+  }
+  if (opt_.view_lookahead) {
+    if (auto v = ViewBeatsBox(node, bd, axis)) {
+      if (*v) return Split{.view = true};
+      return Split{.view = false, .axis = axis};
+    }
   }
   if (!(bd.radius[axis] > opt_.split_kappa * view)) return Split{.view = true};
   if (opt_.split_rule >= 2) {

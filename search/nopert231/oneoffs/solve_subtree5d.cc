@@ -17,7 +17,9 @@ int main(int argc, char **argv) {
   const int t = std::stoi(argv[1]), chart = std::stoi(argv[2]);
   solve5d::Options opt;
   opt.view_scale = std::stod(argv[3]);
-  opt.split_rule = std::stoi(argv[4]);
+  // split_rule 10 + r: rule r with view_lookahead.
+  opt.split_rule = std::stoi(argv[4]) % 10;
+  opt.view_lookahead = std::stoi(argv[4]) >= 10;
   opt.max_depth = 200;
   const long long budget = std::stoll(argv[5]);
   const auto atlas = tubeatlas5d::TubeAtlas::Load("trees_r2", "codebdd229.json");

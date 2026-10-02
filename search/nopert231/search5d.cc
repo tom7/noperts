@@ -13,7 +13,7 @@
 //                [--subtree_budget N] [--out_dir jobs] [--trees_dir trees_r2]
 //                [--bdd codebdd229.json] [--cone_samples N] [--split_kappa K]
 //                [--split_rule 0|1|2] [--min_peel 5..7]
-//                [--view_scale S]
+//                [--view_scale S] [--view_lookahead]
 //                [--exact_check] [--retry_deferred]
 //
 // --retry_deferred also solves every deferred (df) leaf in the journals again
@@ -106,6 +106,7 @@ void ExpandTop(const tubeatlas5d::TubeAtlas &atlas, const Args &args, JobState *
   solve5d::Options top_opt = args.opt;
   top_opt.split_rule = 0;
   top_opt.view_scale = 0.0;
+  top_opt.view_lookahead = false;
   solve5d::Solver solver(&atlas, state->job, top_opt);
   std::vector<solve5d::Node> stack = {solve5d::RootNode(atlas, state->job)};
   while (!stack.empty()) {
@@ -151,6 +152,7 @@ int main(int argc, char **argv) {
     else if (a == "--split_kappa") args.opt.split_kappa = std::stod(next());
     else if (a == "--split_rule") args.opt.split_rule = std::stoi(next());
     else if (a == "--view_scale") args.opt.view_scale = std::stod(next());
+    else if (a == "--view_lookahead") args.opt.view_lookahead = true;
     else if (a == "--min_peel") args.opt.min_peel_eighths = std::stoi(next());
     else if (a == "--max_depth") args.opt.max_depth = std::stoi(next());
     else if (a == "--exact_check") args.opt.exact_check = true;
