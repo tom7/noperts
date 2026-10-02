@@ -40,6 +40,20 @@ struct Options {
   // Split the box when its widest half-width exceeds split_kappa times the
   // view triangle's angular diameter, else split the view.
   double split_kappa = 0.5;
+  // Near the identity (chart 0) a certificate's displacement and its
+  // sensitivity to the view both shrink like the rotation, so the box is
+  // compared with the view diameter times min(1, view_scale * |center|).
+  // 0 disables the scaling (the original rule).
+  double view_scale = 0.0;
+  // Which Cayley axis a box split halves (when the box, not the view, is
+  // split): 0 = the widest; 1 = lookahead: the axis whose halves keep the
+  // largest worse-half margin for the best (failed) single triple at this
+  // node, falling back to the widest when no triple was evaluated; 2 = as
+  // 1, but first try to peel: cut (Lean cayleySplitAt, at an eighths point
+  // of any axis) so that the larger part, at least min_peel_eighths / 8 of
+  // the range and more than half, holds for that triple.
+  int split_rule = 0;
+  int min_peel_eighths = 5;
   // Nodes deeper than this become deferred (df) leaves.
   int max_depth = 80;
   // When no single triple certifies a node, try a mixture of up to this many
@@ -64,7 +78,9 @@ struct Node {
 };
 
 Node RootNode(const tubeatlas5d::TubeAtlas &atlas, const Job &job);
-std::vector<Node> Children(const Node &node, char split);
+// The split choice for a node (its path is not used).
+using Split = rows5d::Split;
+std::vector<Node> Children(const Node &node, const Split &split);
 
 struct Stats {
   int64_t nodes = 0;
@@ -92,8 +108,8 @@ class Solver {
   std::optional<rows5d::Leaf> TryPrune(const Node &node) const;
   // Any leaf (prunes first, then a certificate).
   std::optional<rows5d::Leaf> TryLeaf(const Node &node);
-  // 'v' for a view split, or the box step's axis as 'x', 'y', 'z'.
-  char ChooseSplit(const Node &node) const;
+  // A view split, or a box split (axis and cut).
+  Split ChooseSplit(const Node &node) const;
 
   // Solves the subtree at `root` depth first. After `max_nodes` nodes (or
   // past opt.max_depth), unexplored nodes become deferred leaves, so the
@@ -106,12 +122,25 @@ class Solver {
 
  private:
   const contacts5d::ContactPool &Pool(const Node &node);
+  // The lookahead axis for split_rule 1, or -1.
+  int LookaheadAxis(const Node &node, const geom5d::BoxD &bd) const;
+  // The peel cut for split_rule 2, if any.
+  std::optional<Split> PeelCut(const Node &node, const geom5d::BoxD &bd) const;
 
   const tubeatlas5d::TubeAtlas *atlas_;
   Job job_;
   Options opt_;
   Stats stats_;
   LiveCounters *live_ = nullptr;
+  // The best single triple of the last node TryLeaf failed to close (for the
+  // lookahead split rule). `pool` points into pools_ and is valid until the
+  // next Pool() call.
+  struct Failed {
+    std::string path;
+    const contacts5d::ContactPool *pool = nullptr;
+    cert5d::Single best;
+  };
+  Failed last_failed_;
   // Pools of the most recently used views (the depth-first search revisits a
   // view across consecutive box splits). Pools can be large (up to ~C(256,3)
   // triples), so only a few are kept.

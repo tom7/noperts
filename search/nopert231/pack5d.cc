@@ -119,7 +119,7 @@ class Packer {
       }
       const rows5d::Split &s = *it->second;
       nodes[q].split = &s;
-      const auto kids = ChildPaths(s);
+      const auto kids = rows5d::ChildPaths(s);
       for (int k = 0; k < (int)kids.size(); k++) {
         N c{.path = kids[k], .parent = (int)q};
         if (s.view) {
@@ -129,8 +129,13 @@ class Packer {
           c.box = nodes[q].box;
         } else {
           c.view = nodes[q].view;
-          c.box = k == 0 ? geom5d::LowerHalf(nodes[q].box, s.axis)
-                         : geom5d::UpperHalf(nodes[q].box, s.axis);
+          if (s.eighths == 4) {
+            c.box = k == 0 ? geom5d::LowerHalf(nodes[q].box, s.axis)
+                           : geom5d::UpperHalf(nodes[q].box, s.axis);
+          } else {
+            c.box = k == 0 ? geom5d::LowerAt(nodes[q].box, s.axis, s.eighths)
+                           : geom5d::UpperAt(nodes[q].box, s.axis, s.eighths);
+          }
         }
         nodes[q].kids.push_back(nodes.size());
         nodes.push_back(std::move(c));
@@ -237,9 +242,15 @@ class Packer {
         if (node.split->view) {
           row = std::format(",2,{},{},{},{},{},{},0,{}", id, iv, id_of[k[0]], id_of[k[1]],
                             id_of[k[2]], id_of[k[3]], region);
-        } else {
+        } else if (node.split->eighths == 4) {
           row = std::format(",1,{},{},{},{},{},0,{}", id, iv, id_of[k[0]], id_of[k[1]],
                             node.split->axis + 2, region);
+        } else {
+          // Lean cayleySplitAt.
+          row = std::format(",12,{},{},{},{},{},{},0,{}", id, iv, id_of[k[0]], id_of[k[1]],
+                            node.split->axis + 2,
+                            Zigzag(geom5d::CutPoint(node.box, node.split->axis, node.split->eighths)),
+                            region);
         }
       } else if (IsCertificate(*node.leaf)) {
         // Each certificate is used over the triangle it was built for.
@@ -277,11 +288,6 @@ class Packer {
   size_t NumRows() const { return rows_.size(); }
 
  private:
-  static std::vector<std::string> ChildPaths(const rows5d::Split &s) {
-    if (s.view) return {s.path + '0', s.path + '1', s.path + '2', s.path + '3'};
-    return {s.path + rows5d::BoxStep(s.axis, false), s.path + rows5d::BoxStep(s.axis, true)};
-  }
-
   static bool IsCertificate(const rows5d::Leaf &leaf) {
     return std::holds_alternative<rows5d::CertLeaf>(leaf) ||
            std::holds_alternative<rows5d::MixedLeaf>(leaf);

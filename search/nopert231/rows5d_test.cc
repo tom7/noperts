@@ -19,6 +19,20 @@ int main() {
   const geom5d::BoxQ b = NodeBox(root, "0b2e");
   CHECK(b.lo[0] == BigRat(0) && b.hi[0] == BigRat(1));                    // x upper half
   CHECK(b.lo[2] == BigRat(-1, 3) && b.hi[2] == BigRat(0));                // z lower half
+  // Cut steps: a letter and an eighths digit ('4' is written as a box step).
+  CHECK(CutStep(0, false, 3) == "A3" && CutStep(2, true, 7) == "F7" && CutStep(1, true, 4) == "d");
+  CHECK(ViewPath("A31D52") == "12");
+  CHECK(!ParseSteps("A4").has_value() && !ParseSteps("A").has_value() && !ParseSteps("A8").has_value());
+  {
+    const auto steps = *ParseSteps("2B3a");
+    CHECK(steps.size() == 3 && steps[1].offset == 1 && steps[1].length == 2 && steps[1].child == 1 &&
+          steps[1].eighths == 3 && steps[2].offset == 3);
+    // x range [lo, hi] of the root; B3 is [lo + 3/8 (hi - lo), hi].
+    const geom5d::BoxQ c = NodeBox(root, "B3");
+    CHECK(c.lo[0] == root.lo[0] + (root.hi[0] - root.lo[0]) * BigRat(3, 8) && c.hi[0] == root.hi[0]);
+    const geom5d::BoxQ d = NodeBox(root, "E5");
+    CHECK(d.lo[2] == root.lo[2] && d.hi[2] == root.lo[2] + (root.hi[2] - root.lo[2]) * BigRat(5, 8));
+  }
 
   // Records round-trip through the journal format.
   std::string text;
@@ -71,6 +85,28 @@ int main() {
   auto sub = BuildTree(leaves, "3");
   CHECK(std::holds_alternative<Tree>(sub));
   CHECK(std::get<Tree>(sub).leaves.size() == 5);
+
+  // Trees with cuts.
+  {
+    std::vector<Record> cl = {{"A3", RadiusPruneLeaf{}}, {"B3C6", RadiusPruneLeaf{}},
+                              {"B3D60", RadiusPruneLeaf{}}, {"B3D61", RadiusPruneLeaf{}},
+                              {"B3D62", RadiusPruneLeaf{}}, {"B3D63", RadiusPruneLeaf{}}};
+    auto ct = BuildTree(cl);
+    CHECK(std::holds_alternative<Tree>(ct)) << std::get<std::string>(ct);
+    const Tree &tr = std::get<Tree>(ct);
+    CHECK(tr.splits.size() == 3);
+    CHECK(tr.splits[0].path == "" && !tr.splits[0].view && tr.splits[0].axis == 0 &&
+          tr.splits[0].eighths == 3);
+    CHECK(tr.splits[1].path == "B3" && tr.splits[1].axis == 1 && tr.splits[1].eighths == 6);
+    CHECK(tr.splits[2].path == "B3D6" && tr.splits[2].view);
+    CHECK(ChildPaths(tr.splits[1]) == std::vector<std::string>({"B3C6", "B3D6"}));
+    // A cut and a midpoint split of the same axis at one node are mixed.
+    cl.push_back({"a", RadiusPruneLeaf{}});
+    CHECK(std::holds_alternative<std::string>(BuildTree(cl)));
+    // Journals accept cut paths.
+    const Journal jc = ParseJournal("pr A3\npr B3\n");
+    CHECK(jc.leaves.size() == 2 && jc.leaves[1].path == "B3");
+  }
 
   printf("rows5d tests PASSED\n");
   return 0;

@@ -4,8 +4,11 @@
 // A node is named by its split path from the job's root (the code triangle
 // and the chart's root box): '0'..'3' take that view child
 // (ProjectiveView.split), and 'a'/'b', 'c'/'d', 'e'/'f' take the lower/upper
-// half of the box in x, y, z (AtlasInterval.lowerHalf/upperHalf). The
-// journal records only leaves; a node is a split exactly when longer leaf
+// half of the box in x, y, z (AtlasInterval.lowerHalf/upperHalf). A cut at
+// another point is two characters: 'A'/'B', 'C'/'D', 'E'/'F' take the part
+// below/above the cut in x, y, z, followed by a digit '1'..'7', the cut's
+// position in eighths of the range (AtlasInterval.lowerAt/upperAt; Lean's
+// cayleySplitAt). The journal records only leaves; a node is a split exactly when longer leaf
 // paths extend it, and the next character says which kind, so the tree (and
 // Lean's rows) can be rebuilt from the leaves alone.
 //
@@ -36,13 +39,27 @@
 
 namespace rows5d {
 
-// Split path characters.
+// Split path characters (a cut step is a cut letter and an eighths digit).
 bool IsViewStep(char c);
 bool IsBoxStep(char c);
-// For a box step: the axis (0..2) and whether it is the upper half.
+bool IsCutStep(char c);
+// For a box or cut step letter: the axis (0..2) and whether it is the upper
+// part.
 int BoxAxis(char c);
 bool BoxUpper(char c);
 char BoxStep(int axis, bool upper);
+std::string CutStep(int axis, bool upper, int eighths);
+
+// One parsed step of a path.
+struct Step {
+  size_t offset = 0, length = 1;  // its characters in the path
+  bool view = false;
+  int child = 0;    // view: 0..3; box: 0 lower, 1 upper
+  int axis = 0;     // box
+  int eighths = 4;  // box: the cut position; 4 is the midpoint (one char)
+};
+// The steps of a path, or nullopt if it is malformed.
+std::optional<std::vector<Step>> ParseSteps(std::string_view path);
 // The view digits of a path, in order (the path in the tube table).
 std::string ViewPath(std::string_view path);
 // The node's exact triangle and box from the job root.
@@ -100,7 +117,10 @@ struct Split {
   std::string path;
   bool view = true;  // view split (4 children) or box split
   int axis = 0;      // for a box split
+  int eighths = 4;   // for a box split: the cut (4 = midpoint, cayleySplit)
 };
+// The children's paths, in order (view children 0..3; lower, then upper).
+std::vector<std::string> ChildPaths(const Split &s);
 struct Tree {
   std::vector<Split> splits;     // preorder
   std::vector<Record> leaves;    // in path order

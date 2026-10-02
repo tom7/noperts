@@ -15,32 +15,81 @@ namespace rows5d {
 
 bool IsViewStep(char c) { return c >= '0' && c <= '3'; }
 bool IsBoxStep(char c) { return c >= 'a' && c <= 'f'; }
-int BoxAxis(char c) { return (c - 'a') / 2; }
-bool BoxUpper(char c) { return ((c - 'a') % 2) == 1; }
+bool IsCutStep(char c) { return c >= 'A' && c <= 'F'; }
+int BoxAxis(char c) { return IsCutStep(c) ? (c - 'A') / 2 : (c - 'a') / 2; }
+bool BoxUpper(char c) { return (IsCutStep(c) ? (c - 'A') % 2 : (c - 'a') % 2) == 1; }
 char BoxStep(int axis, bool upper) { return (char)('a' + 2 * axis + (upper ? 1 : 0)); }
+std::string CutStep(int axis, bool upper, int eighths) {
+  CHECK(eighths >= 1 && eighths <= 7) << eighths;
+  if (eighths == 4) return std::string(1, BoxStep(axis, upper));
+  return std::string{(char)('A' + 2 * axis + (upper ? 1 : 0)), (char)('0' + eighths)};
+}
+
+std::optional<std::vector<Step>> ParseSteps(std::string_view path) {
+  std::vector<Step> steps;
+  steps.reserve(path.size());
+  for (size_t i = 0; i < path.size();) {
+    const char c = path[i];
+    Step s{.offset = i};
+    if (IsViewStep(c)) {
+      s.view = true;
+      s.child = c - '0';
+    } else if (IsBoxStep(c)) {
+      s.axis = BoxAxis(c);
+      s.child = BoxUpper(c) ? 1 : 0;
+    } else if (IsCutStep(c) && i + 1 < path.size() && path[i + 1] >= '1' && path[i + 1] <= '7' &&
+               path[i + 1] != '4') {
+      s.length = 2;
+      s.axis = BoxAxis(c);
+      s.child = BoxUpper(c) ? 1 : 0;
+      s.eighths = path[i + 1] - '0';
+    } else {
+      return std::nullopt;
+    }
+    i += s.length;
+    steps.push_back(s);
+  }
+  return steps;
+}
+
+static std::vector<Step> Steps(std::string_view path) {
+  auto s = ParseSteps(path);
+  CHECK(s.has_value()) << "bad path " << path;
+  return *s;
+}
 
 std::string ViewPath(std::string_view path) {
   std::string v;
-  for (char c : path) {
-    if (IsViewStep(c)) v += c;
+  for (const Step &s : Steps(path)) {
+    if (s.view) v += (char)('0' + s.child);
   }
   return v;
 }
 
 exact5d::TriangleQ NodeTriangle(const exact5d::TriangleQ &root, std::string_view path) {
   exact5d::TriangleQ t = root;
-  for (char c : path) {
-    if (IsViewStep(c)) t = geom5d::SplitTriangle(t, c - '0');
+  for (const Step &s : Steps(path)) {
+    if (s.view) t = geom5d::SplitTriangle(t, s.child);
   }
   return t;
 }
 
+static geom5d::BoxQ ChildBox(const geom5d::BoxQ &b, int axis, int eighths, bool upper) {
+  if (eighths == 4) return upper ? geom5d::UpperHalf(b, axis) : geom5d::LowerHalf(b, axis);
+  return upper ? geom5d::UpperAt(b, axis, eighths) : geom5d::LowerAt(b, axis, eighths);
+}
+
 geom5d::BoxQ NodeBox(const geom5d::BoxQ &root, std::string_view path) {
   geom5d::BoxQ b = root;
-  for (char c : path) {
-    if (IsBoxStep(c)) b = BoxUpper(c) ? geom5d::UpperHalf(b, BoxAxis(c)) : geom5d::LowerHalf(b, BoxAxis(c));
+  for (const Step &s : Steps(path)) {
+    if (!s.view) b = ChildBox(b, s.axis, s.eighths, s.child == 1);
   }
   return b;
+}
+
+std::vector<std::string> ChildPaths(const Split &s) {
+  if (s.view) return {s.path + '0', s.path + '1', s.path + '2', s.path + '3'};
+  return {s.path + CutStep(s.axis, false, s.eighths), s.path + CutStep(s.axis, true, s.eighths)};
 }
 
 static std::string PathToken(std::string_view p) { return p.empty() ? "." : std::string(p); }
@@ -75,9 +124,7 @@ std::string FormatRecord(const Record &r) {
 
 std::string FormatDone(std::string_view path) { return std::format("done {}", PathToken(path)); }
 
-static bool ValidPath(std::string_view p) {
-  return std::all_of(p.begin(), p.end(), [](char c) { return IsViewStep(c) || IsBoxStep(c); });
-}
+static bool ValidPath(std::string_view p) { return ParseSteps(p).has_value(); }
 
 Journal ParseJournal(std::string_view text) {
   std::map<std::string, Leaf> leaves;
@@ -155,43 +202,33 @@ std::variant<Tree, std::string> BuildTree(const std::vector<Record> &leaves,
     leaf_at[r.path] = &r;
   }
   if (leaf_at.empty()) return std::string("no leaves under the root");
-  // Internal nodes: proper prefixes of leaf paths (from root).
-  std::map<std::string, char> next_step;  // internal node -> a following step
+  // Internal nodes: proper prefixes of leaf paths (from root), at step
+  // boundaries, with the split their next step implies.
+  std::map<std::string, Split> split_at;
   for (const auto &[p, r] : leaf_at) {
-    for (size_t len = root.size(); len < p.size(); len++) {
-      const std::string prefix = p.substr(0, len);
+    for (const Step &st : Steps(std::string_view(p).substr(root.size()))) {
+      const std::string prefix = p.substr(0, root.size() + st.offset);
       if (leaf_at.count(prefix)) return std::format("leaf {} has descendants", PathToken(prefix));
-      const char step = p[len];
-      auto it = next_step.find(prefix);
-      if (it == next_step.end()) {
-        next_step[prefix] = step;
-      } else {
-        const bool same_kind = IsViewStep(it->second) ? IsViewStep(step)
-                                                       : (IsBoxStep(step) && BoxAxis(step) == BoxAxis(it->second));
-        if (!same_kind) return std::format("mixed splits at {}", PathToken(prefix));
+      const Split s{.path = prefix, .view = st.view, .axis = st.view ? 0 : st.axis,
+                    .eighths = st.view ? 4 : st.eighths};
+      auto it = split_at.find(prefix);
+      if (it == split_at.end()) {
+        split_at[prefix] = s;
+      } else if (it->second.view != s.view || it->second.axis != s.axis ||
+                 it->second.eighths != s.eighths) {
+        return std::format("mixed splits at {}", PathToken(prefix));
       }
     }
   }
   Tree tree;
   // Every child of every internal node must be a leaf or internal.
-  for (const auto &[node, step] : next_step) {
-    Split s;
-    s.path = node;
-    s.view = IsViewStep(step);
-    s.axis = s.view ? 0 : BoxAxis(step);
-    std::vector<std::string> children;
-    if (s.view) {
-      for (char c = '0'; c <= '3'; c++) children.push_back(node + c);
-    } else {
-      children.push_back(node + BoxStep(s.axis, false));
-      children.push_back(node + BoxStep(s.axis, true));
-    }
-    for (const auto &c : children) {
-      if (!leaf_at.count(c) && !next_step.count(c)) return std::format("missing child {}", PathToken(c));
+  for (const auto &[node, s] : split_at) {
+    for (const auto &c : ChildPaths(s)) {
+      if (!leaf_at.count(c) && !split_at.count(c)) return std::format("missing child {}", PathToken(c));
     }
     tree.splits.push_back(s);
   }
-  if (!leaf_at.count(std::string(root)) && !next_step.count(std::string(root))) {
+  if (!leaf_at.count(std::string(root)) && !split_at.count(std::string(root))) {
     return std::string("root is neither a leaf nor a split");
   }
   for (const auto &[p, r] : leaf_at) tree.leaves.push_back(*r);
