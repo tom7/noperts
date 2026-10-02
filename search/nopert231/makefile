@@ -102,6 +102,13 @@ $(CODEC)/%.o : $(CODEC)/%.cc
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"
 
+# First-order rigidity margin of the identity pose over all views, for
+# repairing #214 (survey, sensitivity, and optimization modes; see
+# nopert229/notes/R.md).
+repair-margin.exe : repair-margin.o $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+	@echo -n "!"
+
 # Programs using lib229 (the 5D search library) also need lib229.o and
 # OpenCL.
 LIB229_EXES=lib229_test.exe lean229.exe difficult229.exe pack229.exe test229.exe generate_seeds229.exe
