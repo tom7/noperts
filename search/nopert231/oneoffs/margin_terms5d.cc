@@ -20,6 +20,11 @@ static void Report(const char *label, const solve5d::Node &node, int chart) {
   const auto td = geom5d::ToDouble(node.tri);
   const auto bd = geom5d::ToDouble(node.box);
   const auto pool = contacts5d::BuildContactPool(td, params);
+  for (int full : {64, 256, 1024, 4096}) {
+    const auto f = cert5d::BestSingle(pool, td, bd, chart, full);
+    printf("  [max_full %d: %.4g]", full, f.margin);
+  }
+  printf("\n");
   const auto s = cert5d::BestSingle(pool, td, bd, chart, 64);
   if (s.triple < 0) {
     printf("  %s: no triple\n", label);
