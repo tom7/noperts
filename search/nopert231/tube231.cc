@@ -1,4 +1,4 @@
-#include "tube229.h"
+#include "tube231.h"
 
 #include <algorithm>
 #include <array>
@@ -17,11 +17,11 @@
 #include "bignum/big-vec.h"
 #include "bignum/big.h"
 #include "nopert231.h"
-#include "tubetree229.h"
+#include "tubetree231.h"
 #include "util.h"
 #include "yocto-math.h"
 
-using namespace tubetree229;
+using namespace tubetree231;
 using vec2 = yocto::vec<double, 2>;
 using vec3 = yocto::vec<double, 3>;
 
@@ -29,12 +29,12 @@ static inline vec3 ToDouble(const BigVecQ3 &v) {
   return vec3{v.x.ToDouble(), v.y.ToDouble(), v.z.ToDouble()};
 }
 
-BigVecQ3 Tube229::VertexQ(int v) {
+BigVecQ3 Tube231::VertexQ(int v) {
   const auto &vs = GetVerticesQ();
   return BigVecQ3(vs[v][0], vs[v][1], vs[v][2]);
 }
 
-vec3 Tube229::GetDoubleEdge(const ContactInfo &c) {
+vec3 Tube231::GetDoubleEdge(const ContactInfo &c) {
   vec3 v_start = Vertex(c.edge_start);
   vec3 v_finish = Vertex(c.edge_finish);
   vec3 v_start2 = Vertex(c.edge_start2);
@@ -43,7 +43,7 @@ vec3 Tube229::GetDoubleEdge(const ContactInfo &c) {
   return (v_start - v_finish) * mixD + (v_start2 - v_finish2) * (1.0 - mixD);
 }
 
-BigVecQ3 Tube229::GetExactEdge(const ContactInfo &c) {
+BigVecQ3 Tube231::GetExactEdge(const ContactInfo &c) {
   const auto &vs = GetVerticesQ();
   BigVecQ3 v_start(vs[c.edge_start][0], vs[c.edge_start][1], vs[c.edge_start][2]);
   BigVecQ3 v_finish(vs[c.edge_finish][0], vs[c.edge_finish][1], vs[c.edge_finish][2]);
@@ -57,7 +57,7 @@ static inline double Cross2(const vec2 &a, const vec2 &b) {
   return a.x * b.y - a.y * b.x;
 }
 
-std::vector<int> Tube229::ConvexHull2D(const std::vector<vec2> &points) {
+std::vector<int> Tube231::ConvexHull2D(const std::vector<vec2> &points) {
   int n = points.size();
   std::vector<int> p(n);
   std::iota(p.begin(), p.end(), 0);
@@ -96,7 +96,7 @@ std::vector<int> Tube229::ConvexHull2D(const std::vector<vec2> &points) {
   return hull;
 }
 
-std::vector<ContactInfo> Tube229::GenerateSilhouetteContacts(
+std::vector<ContactInfo> Tube231::GenerateSilhouetteContacts(
     const vec3 &view,
     const std::vector<int> &mix_samples_permille) {
   std::vector<ContactInfo> contacts;
@@ -142,7 +142,7 @@ std::vector<ContactInfo> Tube229::GenerateSilhouetteContacts(
   return contacts;
 }
 
-std::vector<Tube229::CandidateTriple> Tube229::GenerateCandidateTriples(
+std::vector<Tube231::CandidateTriple> Tube231::GenerateCandidateTriples(
     const TriangleQ &tri,
     const std::vector<ContactInfo> &contacts,
     double screen_support_error) {
@@ -341,7 +341,7 @@ std::vector<Tube229::CandidateTriple> Tube229::GenerateCandidateTriples(
   return out_candidates;
 }
 
-bool Tube229::DoubleCheckAxis(
+bool Tube231::DoubleCheckAxis(
     const TriangleQ &tri,
     const ContactInfo contacts[3],
     CandidateTriple *out_cand,
@@ -443,7 +443,7 @@ bool Tube229::DoubleCheckAxis(
   return true;
 }
 
-std::vector<Tube229::CandidateTriple> Tube229::GenerateCandidatesForView(
+std::vector<Tube231::CandidateTriple> Tube231::GenerateCandidatesForView(
     const vec3 &view,
     const TriangleQ &tri,
     bool evaluate_over_triangle,
@@ -643,7 +643,7 @@ std::vector<Tube229::CandidateTriple> Tube229::GenerateCandidatesForView(
   return out_candidates;
 }
 
-std::vector<Tube229::CandidateTriple> Tube229::FindOpposingCandidates(
+std::vector<Tube231::CandidateTriple> Tube231::FindOpposingCandidates(
     const TriangleQ &tri,
     const vec3 &oppose_dir,
     int max_candidates,
@@ -726,7 +726,7 @@ std::vector<Tube229::CandidateTriple> Tube229::FindOpposingCandidates(
   return result;
 }
 
-bool Tube229::PointInTetrahedron(
+bool Tube231::PointInTetrahedron(
     const vec3 &p, const vec3 &v0, const vec3 &v1, const vec3 &v2, const vec3 &v3,
     double *out_margin) {
   auto orient = [](const vec3 &a, const vec3 &b, const vec3 &c, const vec3 &d) {
@@ -816,7 +816,7 @@ static ClosestResult ClosestOriginPoint(const std::vector<vec3> &pts, const std:
   return best;
 }
 
-bool Tube229::ClosestOriginFace(
+bool Tube231::ClosestOriginFace(
     const std::vector<CandidateTriple> &candidates,
     const std::array<int, 4> &simplex,
     std::array<int, 3> *out_face,
@@ -837,7 +837,7 @@ bool Tube229::ClosestOriginFace(
   return false;
 }
 
-bool Tube229::FindBalancedTetrahedron(
+bool Tube231::FindBalancedTetrahedron(
     const std::vector<vec3> &pts,
     std::array<int, 4> *out_simplex,
     vec3 *out_separating_normal) {
@@ -913,7 +913,7 @@ bool Tube229::FindBalancedTetrahedron(
   return false;
 }
 
-bool Tube229::FindBalancedTetrahedron(
+bool Tube231::FindBalancedTetrahedron(
     const std::vector<CandidateTriple> &candidates,
     std::array<int, 4> *out_simplex,
     vec3 *out_separating_normal) {
@@ -924,7 +924,7 @@ bool Tube229::FindBalancedTetrahedron(
   return FindBalancedTetrahedron(pts, out_simplex, out_separating_normal);
 }
 
-bool Tube229::FindExtremalTetrahedron(
+bool Tube231::FindExtremalTetrahedron(
     const std::vector<vec3> &pts,
     std::array<int, 4> *out_indices) {
   int n = pts.size();
@@ -992,7 +992,7 @@ bool Tube229::FindExtremalTetrahedron(
   return false;
 }
 
-bool Tube229::FindExtremalTetrahedron(
+bool Tube231::FindExtremalTetrahedron(
     const std::vector<CandidateTriple> &candidates,
     std::array<int, 4> *out_indices) {
   int n = candidates.size();
@@ -1002,7 +1002,7 @@ bool Tube229::FindExtremalTetrahedron(
   return FindExtremalTetrahedron(pts, out_indices);
 }
 
-bool Tube229::RefinePoolCuttingPlane(
+bool Tube231::RefinePoolCuttingPlane(
     const std::vector<vec3> &pts,
     std::set<int> *in_out_pool,
     std::array<int, 4> *out_simplex,
@@ -1184,7 +1184,7 @@ static bool Barycentric4(const BigVecQ3 pts[4], const BigVecQ3 &target, BigRat l
   return true;
 }
 
-BigRat Tube229::ExactTetrahedronAxisRadius(const BigVecQ3 pts[4]) {
+BigRat Tube231::ExactTetrahedronAxisRadius(const BigVecQ3 pts[4]) {
   BigRat zero[4];
   if (!Barycentric4(pts, {BigRat(0), BigRat(0), BigRat(0)}, zero)) return BigRat(0);
   for (int i = 0; i < 4; i++) {
@@ -1210,7 +1210,7 @@ BigRat Tube229::ExactTetrahedronAxisRadius(const BigVecQ3 pts[4]) {
   return min_bound;
 }
 
-bool Tube229::AuditAxis(
+bool Tube231::AuditAxis(
     const TriangleQ &tri, ContactInfo contacts[3], AxisCertificate *out_cert,
     BigVecQ3 *out_center, BigRat *out_delta, std::string *fail_reason,
     const BigRat &max_allowed_defect) {
@@ -1387,7 +1387,7 @@ static const BigRat CANDIDATE_RS[] = {
   BigRat("1/10000000000000000000000000") // 1e-25
 };
 
-bool Tube229::AuditCertificateAdaptive(
+bool Tube231::AuditCertificateAdaptive(
     const TriangleQ &tri,
     const TubeCertificate &in_cert,
     TubeCertificate *out_cert,
@@ -1507,7 +1507,7 @@ static void AddContactDeduplicated(std::vector<ContactInfo> *dest, const Contact
 }
 
 // Helper to deduplicate CandidateTriple entries
-static bool AddCandidateDeduplicated(std::vector<Tube229::CandidateTriple> *dest, const Tube229::CandidateTriple &c) {
+static bool AddCandidateDeduplicated(std::vector<Tube231::CandidateTriple> *dest, const Tube231::CandidateTriple &c) {
   for (const auto &ex : *dest) {
     if (yocto::length(ex.normalized_a - c.normalized_a) < 1e-6) {
       return false;
@@ -1520,7 +1520,7 @@ static bool AddCandidateDeduplicated(std::vector<Tube229::CandidateTriple> *dest
 // Fast single-view synthesis for easy leaves:
 // Evaluates silhouette contacts at centroid only, tests balanced tet on well-conditioned
 // candidates (B >= 0.8) and full candidate pool, with a one-shot targeted opposing search fallback.
-bool Tube229::SynthesizeCertificateFast(
+bool Tube231::SynthesizeCertificateFast(
     const TriangleQ &tri,
     int depth,
     TubeCertificate *out_cert,
@@ -1613,7 +1613,7 @@ bool Tube229::SynthesizeCertificateFast(
 // 3. Executes an iterative cutting-plane loop with Wolfe's algorithm and FindOpposingCandidates,
 //    progressively querying opposing candidates in separating normal directions.
 // 4. Incorporates RefinePoolCuttingPlane and regular extremal tetrahedron searches.
-bool Tube229::SynthesizeCertificateIterative(
+bool Tube231::SynthesizeCertificateIterative(
     const TriangleQ &tri,
     int depth,
     TubeCertificate *out_cert,
@@ -1843,7 +1843,7 @@ bool Tube229::SynthesizeCertificateIterative(
 // General synthesis entry point:
 // Tries Fast single-view synthesis first for efficiency.
 // If Fast fails and !fast_only, escalates to powerful Multi-View Iterative cutting-plane search.
-bool Tube229::SynthesizeCertificate(
+bool Tube231::SynthesizeCertificate(
     const TriangleQ &tri,
     int depth,
     TubeCertificate *out_cert,
@@ -1863,7 +1863,7 @@ bool Tube229::SynthesizeCertificate(
 // DECOMPOSED & ANNULAR CERTIFICATE ROUTINES (THREE-WAY SPLIT THEOREM)
 // ============================================================================
 
-bool Tube229::FindHullSupportAxis(
+bool Tube231::FindHullSupportAxis(
     const TriangleQ &tri,
     AxisCertificate *out_cert,
     BigVecQ3 *out_center,
@@ -2003,8 +2003,8 @@ bool Tube229::FindHullSupportAxis(
   return false;
 }
 
-std::vector<Tube229::AuditedAxis> Tube229::FindAllHullSupportAxes(
-    const tubetree229::TriangleQ &tri,
+std::vector<Tube231::AuditedAxis> Tube231::FindAllHullSupportAxes(
+    const tubetree231::TriangleQ &tri,
     size_t max_axes) {
   std::vector<AuditedAxis> result;
   vec3 c0 = ToDouble(tri.corners[0]);
@@ -2120,7 +2120,7 @@ std::vector<Tube229::AuditedAxis> Tube229::FindAllHullSupportAxes(
   return result;
 }
 
-bool Tube229::CheckAnnularDominance(
+bool Tube231::CheckAnnularDominance(
     const BigRat &B,
     const BigRat &defect_D,
     const BigRat &c_cone,
@@ -2194,7 +2194,7 @@ bool Tube229::CheckAnnularDominance(
   return false;
 }
 
-bool Tube229::EvaluateComplementConeCoverage(
+bool Tube231::EvaluateComplementConeCoverage(
     const TriangleQ &tri,
     const std::vector<AxisCertificate> &axes,
     const vec3 &exceptional_axis_dir,
@@ -2255,7 +2255,7 @@ bool Tube229::EvaluateComplementConeCoverage(
   return true;
 }
 
-bool Tube229::SynthesizeDecomposedCertificate(
+bool Tube231::SynthesizeDecomposedCertificate(
     const TriangleQ &tri,
     int depth,
     DecomposedCertificate *out_decomp,

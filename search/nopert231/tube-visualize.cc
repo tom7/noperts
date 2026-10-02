@@ -1,4 +1,4 @@
-// High-resolution spherical map and margin visualization for Nopert #229.
+// High-resolution spherical map and margin visualization for Nopert #231.
 // Visualizes incremental tubetree data (tubetree229_v1) and empirical clearances
 // across the upper wedge fundamental domain, the projective plane, and the full sphere.
 
@@ -26,7 +26,7 @@
 #include "image.h"
 #include "ruperts-util.h"
 #include "timer.h"
-#include "tubetree229.h"
+#include "tubetree231.h"
 #include "util.h"
 #include "yocto-math.h"
 
@@ -44,7 +44,7 @@ static inline vec3 ToDouble(const BigVecQ3 &v) {
 
 using vec2 = yocto::vec<double, 2>;
 using vec3 = yocto::vec<double, 3>;
-using namespace tubetree229;
+using namespace tubetree231;
 
 // 4K UHD 16:9 canvas dimensions.
 static constexpr int WIDTH  = 3840;
@@ -61,7 +61,7 @@ static constexpr double PHI_MAX_DEG  = 72.0;
 static constexpr double ELEV_MAX_DEG = 90.0;
 static constexpr double PHI_MAX_RAD  = PHI_MAX_DEG * std::numbers::pi / 180.0;
 
-// Empirically discovered pinch canyons for Nopert #229.
+// Empirically discovered pinch canyons of Nopert #229 (its views; not #231).
 struct CanyonGuide {
   const char *name;
   double phi_deg;
@@ -402,7 +402,7 @@ static void CollectLeaves(const TreeNode &node,
   }
 }
 
-// Load a tubetree229_v1 JSON file using tubetree229 library.
+// Load a tubetree229_v1 JSON file using tubetree231 library.
 static bool LoadTubeTree(const std::string &path,
                          std::vector<LeafTriangle> *leaves,
                          int *total_nodes_out,
@@ -640,7 +640,7 @@ static void RenderWedgeEquirect(const std::vector<LeafTriangle> &leaves,
 
   // Header Title & Subtitle
   BlendTextOutline2x32(&base_img, 60, 30, 0x000000FF, 0xFFFFFFFF,
-                       "Nopert #229: Certified Clearance Margin Map (Upper Wedge Fundamental Domain)");
+                       "Nopert #231: Certified Clearance Margin Map (Upper Wedge Fundamental Domain)");
   base_img.BlendText2x32(60, 68, 0x99AAB8FF,
                          "Equirectangular projection of unit sphere S^2: Azimuth phi in [0, 72 deg], Elevation alpha in [0, 90 deg]");
   base_img.BlendText2x32(60, 102, 0x00FFCCFF,
@@ -796,7 +796,7 @@ static void RenderWedgeLambert(const std::vector<LeafTriangle> &leaves,
 
   // Header Title & Brief Stats
   BlendTextOutline2x32(&base_img, 60, 30, 0x000000FF, 0xFFFFFFFF,
-                       "Nopert #229: Certified Margin Map (Lambert Equal-Area)");
+                       "Nopert #231: Certified Margin Map (Lambert Equal-Area)");
   base_img.BlendText2x32(60, 68, 0x99AAB8FF,
                          "Lambert cylindrical equal-area preserves solid angle on unit sphere S^2 (phi in [0, 72 deg], z in [0, 1])");
   base_img.BlendText2x32(60, 102, 0x00FFCCFF,
@@ -946,7 +946,7 @@ static void RenderFullSphere(const std::vector<LeafTriangle> &leaves,
   base_img.Clear32(0x101218FF);
 
   BlendTextOutline2x32(&base_img, 60, 30, 0x000000FF, 0xFFFFFFFF,
-                       "Nopert #229: Full View Sphere Clearance Map (360 x 180 deg)");
+                       "Nopert #231: Full View Sphere Clearance Map (360 x 180 deg)");
   base_img.BlendText2x32(60, 68, 0x99AAB8FF,
                          "Replicated across fivefold rotational symmetry (C5) and elevation reflection | Sector 0 framed with Tree 0..3 brackets");
 
@@ -1219,7 +1219,7 @@ static void RenderProjectivePlane(const std::vector<LeafTriangle> &leaves,
   base_img.Clear32(0x101218FF);
 
   BlendTextOutline2x32(&base_img, 60, 30, 0x000000FF, 0xFFFFFFFF,
-                       "Nopert #229: Projective Triangle Domain ('Nested Triforces')");
+                       "Nopert #231: Projective Triangle Domain ('Nested Triforces')");
   base_img.BlendText2x32(60, 68, 0x99AAB8FF,
                          "Exact native geometry of recursive projective quadtree bisection on the plane x + y + z = 1");
   base_img.BlendText2x32(60, 102, 0x00FFCCFF,
@@ -1923,7 +1923,7 @@ int main(int argc, char **argv) {
     }
   }
 
-  Printf("=== Nopert #229 Identity Tube & View Sphere Margin Visualization ===\n");
+  Printf("=== Nopert #231 Identity Tube & View Sphere Margin Visualization ===\n");
   if (!tree_file.empty()) {
     Printf("Direct Tree File:    %s\n", tree_file.c_str());
   } else {

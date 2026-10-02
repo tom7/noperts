@@ -1,14 +1,14 @@
-// Incremental improvement of identity-tube trees (written by tubecode229):
+// Incremental improvement of identity-tube trees (written by tubecode231):
 // larger certified radii where the 5D search needs them, without touching
 // anything else, so that every node's rLower (the minimum certificate radius
 // over its subtree, which the 5D search's "tu" rows cite) can only grow and
 // existing 5D journals stay valid.
 //
-// Two steps, both exact (the same audit as tubecode229 and Lean's
+// Two steps, both exact (the same audit as tubecode231 and Lean's
 // Box.ViewValid):
 //
 //  1. Fine radii. A leaf's radius r only has to satisfy
-//     r^2 (1 + c^2) <= 4 c^2 (Lean's angle_bound); tubecode229 rounds it down
+//     r^2 (1 + c^2) <= 4 c^2 (Lean's angle_bound); tubecode231 rounds it down
 //     to a coarse list (1/1000, 1/2000, 1/4000, ...), losing up to 2x. Every
 //     leaf gets MaxTubeRadius(c) instead, if larger.
 //  2. Refinement. Each leaf below its goal is subdivided (up to --levels
@@ -24,12 +24,12 @@
 //     cage can reach, and --goal_frac says how close to go.
 //
 // Output: <out_dir>/tree.<code>.json (the native format), and a regenerated
-// <out_dir>/code.<code>.journal so tubecode229 can resume from it. The input
+// <out_dir>/code.<code>.journal so tubecode231 can resume from it. The input
 // directory is not modified.
 //
-// Usage: tuberefine229.exe --code X [--in_dir trees_r2] [--out_dir trees_r3]
+// Usage: tuberefine231.exe --code X [--in_dir trees_r2] [--out_dir trees_r3]
 //          [--goal 1/50000] [--goal_frac 0] [--levels 4] [--threads 16] [--tri T]
-//        tuberefine229.exe --test
+//        tuberefine231.exe --test
 
 #include <algorithm>
 #include <atomic>
@@ -45,7 +45,7 @@
 #include <vector>
 
 #define TUBECODE_NO_MAIN
-#include "tubecode229.cc"
+#include "tubecode231.cc"
 
 namespace {
 
@@ -133,7 +133,7 @@ Refined Refine(const TriangleQ &tri, const std::string &path, const LocalCertifi
   return split;
 }
 
-// The leaves of a tree with their triangles (tubetree229 subdivision order).
+// The leaves of a tree with their triangles (tubetree231 subdivision order).
 struct LeafRef {
   TreeNode *node;
   TriangleQ tri;
@@ -148,7 +148,7 @@ void CollectLeaves(TreeNode *node, const TriangleQ &tri, std::vector<LeafRef> *o
   for (int c = 0; c < 4; c++) CollectLeaves(node->children[c].get(), ch[c], out);
 }
 
-// Journal lines (tubecode229's format) for a tree.
+// Journal lines (tubecode231's format) for a tree.
 void JournalLines(int tri, const TreeNode &node, std::string *out) {
   if (!node.children.empty()) {
     *out += StringPrintf("S %d %s\n", tri, PathToken(node.path).c_str());
@@ -177,7 +177,7 @@ void Test() {
   }
   CHECK(MaxTubeRadius(BigRat(0)) == BigRat(0));
   CHECK(MaxTubeRadius(BigRat(-1)) == BigRat(0));
-  printf("tuberefine229 tests PASSED\n");
+  printf("tuberefine231 tests PASSED\n");
 }
 
 }  // namespace

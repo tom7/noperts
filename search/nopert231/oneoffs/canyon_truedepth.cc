@@ -14,7 +14,7 @@
 //   u = c1 + t (c2 - c1) + s (c0 - (c1 + t (c2 - c1)))
 
 #define TUBECODE_NO_MAIN
-#include "../tubecode229.cc"
+#include "../tubecode231.cc"
 
 namespace {
 
@@ -108,7 +108,7 @@ int main(int argc, char **argv) {
   double t = atof(argv[3]), s = atof(argv[4]);
   double screen = argc > 5 ? atof(argv[5]) : 1e-13;
 
-  std::string bdd = Util::ReadFile("codebdd229.json");
+  std::string bdd = Util::ReadFile("codebdd231.json");
   rapidjson::Document doc;
   doc.Parse(bdd.c_str());
   const auto &tj = doc["codes"][code]["triangles"][tri_idx];

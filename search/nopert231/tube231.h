@@ -1,58 +1,58 @@
-#ifndef _RUPERTS_TUBE229_H
-#define _RUPERTS_TUBE229_H
+#ifndef _RUPERTS_TUBE231_H
+#define _RUPERTS_TUBE231_H
 
 #include <vector>
 #include <string>
 #include <array>
 #include <set>
 
-#include "tubetree229.h"
+#include "tubetree231.h"
 #include "yocto-math.h"
 #include "bignum/big.h"
 #include "bignum/big-vec.h"
 
 // Collection of geometric, optimization, and exact verification routines
-// for 4-axis identity tube certificates of Nopert #229.
-class Tube229 {
+// for 4-axis identity tube certificates of Nopert #231.
+class Tube231 {
  public:
   using vec2 = yocto::vec<double, 2>;
   using vec3 = yocto::vec<double, 3>;
 
   struct CandidateTriple {
-    tubetree229::ContactInfo contacts[3];
+    tubetree231::ContactInfo contacts[3];
     vec3 normalized_a;
     double strict_slack = 0.0;
     double B = 0.0;
   };
 
-  // Exact rational vertex access for Nopert #229 (0..19).
+  // Exact rational vertex access for Nopert #231 (0..19).
   static BigVecQ3 VertexQ(int v);
 
   // Approximate double edge vector for a contact.
-  static vec3 GetDoubleEdge(const tubetree229::ContactInfo &c);
+  static vec3 GetDoubleEdge(const tubetree231::ContactInfo &c);
 
   // Exact rational edge vector for a contact.
-  static BigVecQ3 GetExactEdge(const tubetree229::ContactInfo &c);
+  static BigVecQ3 GetExactEdge(const tubetree231::ContactInfo &c);
 
   // 2D convex hull of projected silhouette points.
   static std::vector<int> ConvexHull2D(const std::vector<vec2> &points);
 
   // Generates silhouette boundary contacts for a given view direction with specified mix values.
-  static std::vector<tubetree229::ContactInfo> GenerateSilhouetteContacts(
+  static std::vector<tubetree231::ContactInfo> GenerateSilhouetteContacts(
       const vec3 &view,
       const std::vector<int> &mix_samples_permille);
 
   // Generates valid 3-contact CandidateTriples over a triangle with configurable screening tolerance.
   static std::vector<CandidateTriple> GenerateCandidateTriples(
-      const tubetree229::TriangleQ &tri,
-      const std::vector<tubetree229::ContactInfo> &contacts,
+      const tubetree231::TriangleQ &tri,
+      const std::vector<tubetree231::ContactInfo> &contacts,
       double screen_support_error = 1e-12);
 
   // Generates valid candidate triples over triangle tri for a specific view direction.
   // Computes view-specific 2D convex hull, silhouette contacts, and valid 3-contact combinations.
   static std::vector<CandidateTriple> GenerateCandidatesForView(
       const vec3 &view,
-      const tubetree229::TriangleQ &tri,
+      const tubetree231::TriangleQ &tri,
       bool evaluate_over_triangle = true,
       int cone_samples = 4,
       bool include_boundaries = false,
@@ -61,7 +61,7 @@ class Tube229 {
   // Targeted Opposing Search (Tom Idea Point 4):
   // Given an unblocked direction n, specifically finds candidate triples with a · n < 0 (maximizing a · (-n)).
   static std::vector<CandidateTriple> FindOpposingCandidates(
-      const tubetree229::TriangleQ &tri,
+      const tubetree231::TriangleQ &tri,
       const vec3 &oppose_dir,
       int max_candidates = 50,
       double screen_support_error = 1e-12);
@@ -103,8 +103,8 @@ class Tube229 {
   // Checks support over all vertices and corners, positive weights over all corners.
   // Returns true and fills out_cand if geometrically valid.
   static bool DoubleCheckAxis(
-      const tubetree229::TriangleQ &tri,
-      const tubetree229::ContactInfo contacts[3],
+      const tubetree231::TriangleQ &tri,
+      const tubetree231::ContactInfo contacts[3],
       CandidateTriple *out_cand = nullptr,
       double screen_support_error = 1e-12);
 
@@ -114,9 +114,9 @@ class Tube229 {
   // Audits a single 3-contact axis over triangle tri in exact
   // rational arithmetic.
   static bool AuditAxis(
-      const tubetree229::TriangleQ &tri,
-      tubetree229::ContactInfo contacts[3],
-      tubetree229::AxisCertificate *out_cert,
+      const tubetree231::TriangleQ &tri,
+      tubetree231::ContactInfo contacts[3],
+      tubetree231::AxisCertificate *out_cert,
       BigVecQ3 *out_center,
       BigRat *out_delta,
       std::string *fail_reason = nullptr,
@@ -124,9 +124,9 @@ class Tube229 {
 
   // Exact adaptive rational audit of a 4-axis cage.
   static bool AuditCertificateAdaptive(
-      const tubetree229::TriangleQ &tri,
-      const tubetree229::TubeCertificate &test_cert,
-      tubetree229::TubeCertificate *out_cert,
+      const tubetree231::TriangleQ &tri,
+      const tubetree231::TubeCertificate &test_cert,
+      tubetree231::TubeCertificate *out_cert,
       std::string *fail_reason = nullptr);
 
   // Extremal regular tetrahedron orientation search.
@@ -140,10 +140,10 @@ class Tube229 {
   // Fast single-view synthesis for easy leaves:
   // Samples centroid only, tests balanced tet, with one-shot opposing fallback.
   static bool SynthesizeCertificateFast(
-      const tubetree229::TriangleQ &tri,
+      const tubetree231::TriangleQ &tri,
       int depth,
-      tubetree229::TubeCertificate *out_cert,
-      const std::vector<tubetree229::ContactInfo> &extra_contacts = {},
+      tubetree231::TubeCertificate *out_cert,
+      const std::vector<tubetree231::ContactInfo> &extra_contacts = {},
       const std::vector<CandidateTriple> &extra_axes = {});
 
   // Powerful multi-view & iterative cutting-plane synthesis for hard / canyon leaves:
@@ -151,20 +151,20 @@ class Tube229 {
   // and executes an iterative cutting-plane loop with FindOpposingCandidates,
   // RefinePoolCuttingPlane, and FindExtremalTetrahedron up to max_opposing_iters.
   static bool SynthesizeCertificateIterative(
-      const tubetree229::TriangleQ &tri,
+      const tubetree231::TriangleQ &tri,
       int depth,
-      tubetree229::TubeCertificate *out_cert,
-      const std::vector<tubetree229::ContactInfo> &extra_contacts = {},
+      tubetree231::TubeCertificate *out_cert,
+      const std::vector<tubetree231::ContactInfo> &extra_contacts = {},
       const std::vector<CandidateTriple> &extra_axes = {},
       int max_opposing_iters = 5);
 
   // General synthesis: runs SynthesizeCertificateFast first; if that fails and !fast_only,
   // escalates to SynthesizeCertificateIterative.
   static bool SynthesizeCertificate(
-      const tubetree229::TriangleQ &tri,
+      const tubetree231::TriangleQ &tri,
       int depth,
-      tubetree229::TubeCertificate *out_cert,
-      const std::vector<tubetree229::ContactInfo> &extra_contacts = {},
+      tubetree231::TubeCertificate *out_cert,
+      const std::vector<tubetree231::ContactInfo> &extra_contacts = {},
       const std::vector<CandidateTriple> &extra_axes = {},
       bool fast_only = false);
 
@@ -173,7 +173,7 @@ class Tube229 {
   // ============================================================================
 
   // Searches for a 3-contact axis certificate whose contacts lie strictly on the
-  // true projected 2D convex hull of Polyhedron #229 for triangle tri (Idea 3 from TINY_SLIVER.md).
+  // true projected 2D convex hull of Polyhedron #231 for triangle tri (Idea 3 from TINY_SLIVER.md).
   //
   // Unlike standard silhouette generation where contact chords must be incident on
   // their support vertex, this searches over decoupled combinations of extreme hull
@@ -187,20 +187,20 @@ class Tube229 {
   //
   // Returns true and populates out_cert (and optionally out_center, out_delta) on success.
   static bool FindHullSupportAxis(
-      const tubetree229::TriangleQ &tri,
-      tubetree229::AxisCertificate *out_cert,
+      const tubetree231::TriangleQ &tri,
+      tubetree231::AxisCertificate *out_cert,
       BigVecQ3 *out_center = nullptr,
       BigRat *out_delta = nullptr,
       std::string *fail_reason = nullptr);
 
   struct AuditedAxis {
-    tubetree229::AxisCertificate cert;
+    tubetree231::AxisCertificate cert;
     BigVecQ3 center;
     BigRat delta;
   };
 
   static std::vector<AuditedAxis> FindAllHullSupportAxes(
-      const tubetree229::TriangleQ &tri,
+      const tubetree231::TriangleQ &tri,
       size_t max_axes = 200);
 
   // Verifies the annular dominance condition for an axis with a known support defect D:
@@ -234,8 +234,8 @@ class Tube229 {
   //
   // Returns true and writes out_c_comp if coverage is certified with margin > 0.
   static bool EvaluateComplementConeCoverage(
-      const tubetree229::TriangleQ &tri,
-      const std::vector<tubetree229::AxisCertificate> &axes,
+      const tubetree231::TriangleQ &tri,
+      const std::vector<tubetree231::AxisCertificate> &axes,
       const vec3 &exceptional_axis_dir,
       double c_cone_thresh,
       BigRat *out_c_comp,
@@ -251,11 +251,11 @@ class Tube229 {
   //
   // Returns true and populates out_decomp on success.
   static bool SynthesizeDecomposedCertificate(
-      const tubetree229::TriangleQ &tri,
+      const tubetree231::TriangleQ &tri,
       int depth,
-      tubetree229::DecomposedCertificate *out_decomp,
-      const tubetree229::TubeCertificate *sibling_cert = nullptr,
+      tubetree231::DecomposedCertificate *out_decomp,
+      const tubetree231::TubeCertificate *sibling_cert = nullptr,
       std::string *fail_reason = nullptr);
 };
 
-#endif  // _RUPERTS_TUBE229_H
+#endif  // _RUPERTS_TUBE231_H

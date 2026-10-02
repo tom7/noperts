@@ -1,5 +1,5 @@
-#ifndef RUPERTS_TUBETREE229_H_
-#define RUPERTS_TUBETREE229_H_
+#ifndef RUPERTS_TUBETREE231_H_
+#define RUPERTS_TUBETREE231_H_
 
 #include <algorithm>
 #include <array>
@@ -15,7 +15,7 @@
 #include "bignum/big-vec.h"
 #include "yocto-math.h"
 
-namespace tubetree229 {
+namespace tubetree231 {
 
 using vec3 = yocto::vec<double, 3>;
 
@@ -51,7 +51,7 @@ struct ContactInfo {
   int edge_start2 = 0;
   int edge_finish2 = 0;
   int mix = kMixScale; // 0..kMixScale: interpolation weight mix / kMixScale
-  int vertex = 0; // support vertex index (0..19 for Nopert #229)
+  int vertex = 0; // support vertex index (0..19 for Nopert #231)
 };
 
 // A single axis certificate consisting of 3 contacts enclosing the axis in 2D.
@@ -361,6 +361,6 @@ bool SaveCodeTreeJson(const CodeTree &code_tree, const std::string &filepath);
 // Deserializes a CodeTree from JSON.
 std::unique_ptr<CodeTree> LoadCodeTreeJson(const std::string &filepath);
 
-} // namespace tubetree229
+} // namespace tubetree231
 
-#endif // RUPERTS_TUBETREE229_H_
+#endif // RUPERTS_TUBETREE231_H_

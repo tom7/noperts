@@ -19,7 +19,7 @@ int main() {
     printf("SKIPPED: trees_r2 not present\n");
     return 0;
   }
-  const TubeAtlas atlas = TubeAtlas::Load("trees_r2", "codebdd229.json");
+  const TubeAtlas atlas = TubeAtlas::Load("trees_r2", "codebdd231.json");
   CHECK(atlas.NumTriangles() == 153) << atlas.NumTriangles();
 
   // The root radius of each table equals the exported pack's table radius

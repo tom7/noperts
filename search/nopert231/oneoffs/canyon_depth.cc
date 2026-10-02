@@ -9,7 +9,7 @@
 // Usage: canyon_depth.exe code tri t s [screen_support_error] [cone_samples]
 
 #define TUBECODE_NO_MAIN
-#include "../tubecode229.cc"
+#include "../tubecode231.cc"
 
 int main(int argc, char **argv) {
   CHECK(argc >= 5) << "usage: code tri t s [screen] [cone_samples]";
@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
   double screen = argc > 5 ? atof(argv[5]) : 1e-13;
   int cone_samples = argc > 6 ? atoi(argv[6]) : 8;
 
-  std::string bdd = Util::ReadFile("codebdd229.json");
+  std::string bdd = Util::ReadFile("codebdd231.json");
   rapidjson::Document doc;
   doc.Parse(bdd.c_str());
   const auto &tj = doc["codes"][code]["triangles"][tri_idx];

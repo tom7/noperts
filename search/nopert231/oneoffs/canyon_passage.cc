@@ -8,7 +8,7 @@
 // Usage: canyon_passage.exe code tri t s [omega_x omega_y omega_z]
 
 #define TUBECODE_NO_MAIN
-#include "../tubecode229.cc"
+#include "../tubecode231.cc"
 
 namespace {
 
@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
   if (argc >= 8) omega = vec3{atof(argv[5]), atof(argv[6]), atof(argv[7])};
   omega = yocto::normalize(omega);
 
-  std::string bdd = Util::ReadFile("codebdd229.json");
+  std::string bdd = Util::ReadFile("codebdd231.json");
   rapidjson::Document doc;
   doc.Parse(bdd.c_str());
   const auto &tj = doc["codes"][code]["triangles"][tri_idx];

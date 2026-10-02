@@ -1,4 +1,4 @@
-// Identity Tube Local Certificate Search for Nopert #229
+// Identity Tube Local Certificate Search for Nopert #231
 // High-performance multithreaded C++ implementation with exact GMP BigRat audit.
 
 #include <algorithm>
@@ -38,22 +38,22 @@
 #include "yocto-math.h"
 #include "rapidjson/document.h"
 #include "rapidjson/error/en.h"
-#include "tubetree229.h"
+#include "tubetree231.h"
 
 using vec2 = yocto::vec<double, 2>;
 using vec3 = yocto::vec<double, 3>;
 
-// Polyhedron #229 rational vertices are accessed via GetVerticesQ() from nopert231.h
+// Polyhedron #231 rational vertices are accessed via GetVerticesQ() from nopert231.h
 
 static inline vec3 ToDouble(const BigVecQ3 &v) {
   return vec3{v.x.ToDouble(), v.y.ToDouble(), v.z.ToDouble()};
 }
 
-using tubetree229::TriangleQ;
-using tubetree229::ContactInfo;
-using tubetree229::kMixScale;
-using tubetree229::AxisCertificate;
-using LocalCertificate = tubetree229::TubeCertificate;
+using tubetree231::TriangleQ;
+using tubetree231::ContactInfo;
+using tubetree231::kMixScale;
+using tubetree231::AxisCertificate;
+using LocalCertificate = tubetree231::TubeCertificate;
 
 // Quadratic polynomial in 3 variables with basis:
 // 1, x, y, z, x², xy, xz, y², yz, z²

@@ -9,8 +9,8 @@
 // Quadratics are over the Cayley coordinates (x, y, z), with coefficients
 // in Lean's order c0, cx, cy, cz, cxx, cxy, cxz, cyy, cyz, czz.
 
-#ifndef _NOPERT229_BOUNDS5D_H
-#define _NOPERT229_BOUNDS5D_H
+#ifndef _NOPERT231_BOUNDS5D_H
+#define _NOPERT231_BOUNDS5D_H
 
 #include <array>
 

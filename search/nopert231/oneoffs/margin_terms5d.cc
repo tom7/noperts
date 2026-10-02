@@ -44,7 +44,7 @@ static void Report(const char *label, const solve5d::Node &node, int chart) {
 
 int main(int argc, char **argv) {
   const int t = std::stoi(argv[1]), chart = std::stoi(argv[2]);
-  const auto atlas = tubeatlas5d::TubeAtlas::Load("trees_r2", "codebdd229.json");
+  const auto atlas = tubeatlas5d::TubeAtlas::Load("trees_r2", "codebdd231.json");
   const auto root = solve5d::RootNode(atlas, {.t = t, .chart = chart});
   for (int i = 3; i < argc; i++) {
     const std::string path = argv[i];

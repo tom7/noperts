@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
   const int t = std::stoi(argv[1]), chart = std::stoi(argv[2]);
   const std::string view = argv[3];
   const geom5d::vec3 w = {std::stod(argv[4]), std::stod(argv[5]), std::stod(argv[6])};
-  const auto atlas = tubeatlas5d::TubeAtlas::Load("trees_r2", "codebdd229.json");
+  const auto atlas = tubeatlas5d::TubeAtlas::Load("trees_r2", "codebdd231.json");
   const auto root = solve5d::RootNode(atlas, {.t = t, .chart = chart});
   printf("|w| = %.4g\n", yocto::length(w));
   for (int extra = 0; extra <= 8; extra += 4) {

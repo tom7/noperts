@@ -7,7 +7,7 @@
 // Usage: multicage_probe.exe code min_leaf_depth samples [K]
 #include <map>
 #define TUBECODE_NO_MAIN
-#include "../tubecode229.cc"
+#include "../tubecode231.cc"
 
 // Max t with t*e in conv(pts) (pts assumed to contain the origin inside),
 // via facet enumeration; returns -1 if the origin is not strictly inside.
@@ -159,7 +159,7 @@ int main(int argc, char **argv) {
   CHECK(argc >= 4);
   const int code = atoi(argv[1]), min_depth = atoi(argv[2]), samples = atoi(argv[3]);
   const int K = argc > 4 ? atoi(argv[4]) : 512;
-  std::string bdd = Util::ReadFile("codebdd229.json");
+  std::string bdd = Util::ReadFile("codebdd231.json");
   rapidjson::Document doc;
   doc.Parse(bdd.c_str());
   std::vector<std::pair<int, std::string>> deep;

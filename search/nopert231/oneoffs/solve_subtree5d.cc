@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
   opt.view_lookahead = std::stoi(argv[4]) >= 10;
   opt.max_depth = 200;
   const long long budget = std::stoll(argv[5]);
-  const auto atlas = tubeatlas5d::TubeAtlas::Load("trees_r2", "codebdd229.json");
+  const auto atlas = tubeatlas5d::TubeAtlas::Load("trees_r2", "codebdd231.json");
   const auto root = solve5d::RootNode(atlas, {.t = t, .chart = chart});
   std::vector<std::string> paths(argv + 6, argv + argc);
   std::vector<std::string> out(paths.size());

@@ -1,24 +1,22 @@
-default : exact5d_test.exe geom5d_test.exe contacts5d_test.exe cert5d_test.exe tubeatlas5d_test.exe rows5d_test.exe solve5d_test.exe lp5d_test.exe annular229_test.exe tubetree229_test.exe nopert231_test.exe tube229_test.exe lib229_test.exe chart229_test.exe difficult229.exe lean229.exe pack229.exe test_all_pending.exe normalize-chart.exe compare-charts.exe split-chart.exe split-chart_test.exe flatten-charts.exe flatten-charts_test.exe
+# Unit tests of the 5D library and the identity-tube code.
+default : exact5d_test.exe geom5d_test.exe contacts5d_test.exe cert5d_test.exe tubeatlas5d_test.exe rows5d_test.exe solve5d_test.exe lp5d_test.exe tubetree231_test.exe nopert231_test.exe tube231_test.exe
 
-all: default test229.exe codebdd229.exe convert_tubecert229.exe incrementaltube229.exe tubecert229.exe tube-visualize.exe analyzedifficult.exe replace_tu_with_difficult.exe extract_tu_intervals.exe generate_seeds229.exe apply_shallow_cert.exe
+# Every program (rebuild.sh runs the pipeline; see notes/R.md).
+all: default qtube s5d codebdd231.exe tube-visualize.exe repair-margin.exe
 
-# Quad-planar identity tube pipeline (notes/Q.md):
-#  tubecode229: restartable (journaled) Tag 1 tree synthesis per code cell.
-#  export_codetrees_pack: packs trees/tree.X.json for Lean's validate_code_pack.
-#  tube-scoreboard: per-triangle status of all 79 codes / 157 triangles.
-#  oneoffs/probe48edge: samples Tag 1 margins on sub-triangles along an edge
-#    or a fixed path (reproduces the code 48 corner analysis, Q.md 1.7B).
-#  oneoffs/canyon_depth, canyon_truedepth: first-order rigidity depth at a
-#    single view (sampled / column-generated contacts), Q.md 1.8.
-#  oneoffs/canyon_passage: searches for a near-identity Rupert passage at a
-#    view (Q.md 1.8); oneoffs/rupert_witness229.py turns one into Lean data.
-qtube: tubecode229.exe export_codetrees_pack.exe tube-scoreboard.exe oneoffs/probe48edge.exe oneoffs/canyon_depth.exe oneoffs/canyon_truedepth.exe oneoffs/canyon_passage.exe
+# Identity tube (notes/Q.md, R.md):
+#  codebdd231: exact rational model, codes and code triangles (codebdd231.json).
+#  tubecode231: restartable (journaled) Tag 1 tree synthesis per code.
+#  tuberefine231: refines tube leaves to larger certified radii (monotone).
+#  export_codetrees_pack: tube trees -> Lean packs (validate_code_pack).
+#  tube-scoreboard: per-triangle status of the tube trees.
+qtube: tubecode231.exe tuberefine231.exe export_codetrees_pack.exe tube-scoreboard.exe
 
 # 5D search (notes/SEARCH5D.md):
 #  search5d: parallel journaled search per (code triangle, chart) job.
-#  pack5d: journals -> Lean global packs (check with Noperthedron's
+#  pack5d: journals -> Lean packs, one per code (check with Noperthedron's
 #    check_global_rows / constructNopert229).
-#  scoreboard5d: per-job status from the journals.
+#  scoreboard5d: per-job status from the journals and packs.
 s5d: search5d.exe pack5d.exe scoreboard5d.exe
 
 UNAME := $(shell uname -o)
@@ -28,7 +26,7 @@ LIBCXX :=
 CXX=clang++ $(LIBCXX)
 PDB_FLAG=
 else
-PDB_FLAG=-Wl,--pdb=lean229.pdb
+PDB_FLAG=-Wl,--pdb=nopert231.pdb
 endif
 
 CL_LFLAGS=-lOpenCL
@@ -78,8 +76,8 @@ RUPERTS_OBJECTS=$(RUPERTS)/ruperts-util.o $(RUPERTS)/big-csg.o $(RUPERTS)/render
 
 OBJECTS=$(CC_LIB_OBJECTS) $(CODEC_OBJECTS) $(SQLITE_OBJECTS) $(RUPERTS_OBJECTS)
 
-# library objects shared in Nopert 229 search. No OpenCL.
-OBJECTS_229=nopert231.o tube229.o tubetree229.o annular229.o chart229.o exact5d.o geom5d.o contacts5d.o bounds5d.o cert5d.o tubeatlas5d.o rows5d.o solve5d.o lp5d.o
+# Library objects shared by the #231 tools. No OpenCL.
+OBJECTS_231=nopert231.o tube231.o tubetree231.o exact5d.o geom5d.o contacts5d.o bounds5d.o cert5d.o tubeatlas5d.o rows5d.o solve5d.o lp5d.o
 
 $(CC_LIB)/%.o : $(CC_LIB)/%.cc
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -98,7 +96,7 @@ $(CODEC)/%.o : $(CODEC)/%.cc
 	@echo -n "."
 
 # Generic pattern rules for executables
-%.exe : %.o $(OBJECTS_229) $(OBJECTS)
+%.exe : %.o $(OBJECTS_231) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"
 
@@ -107,13 +105,6 @@ $(CODEC)/%.o : $(CODEC)/%.cc
 # nopert229/notes/R.md).
 repair-margin.exe : repair-margin.o $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
-	@echo -n "!"
-
-# Programs using lib229 (the 5D search library) also need lib229.o and
-# OpenCL.
-LIB229_EXES=lib229_test.exe lean229.exe difficult229.exe pack229.exe test229.exe generate_seeds229.exe
-$(LIB229_EXES) : %.exe : %.o lib229.o $(OBJECTS_229) $(OBJECTS) $(CL_OBJECTS)
-	@$(CXX) $^ -o $@ $(LFLAGS) $(CL_LFLAGS)
 	@echo -n "!"
 
 # Oneoffs kept for reuse (each source has a Usage line); build with
@@ -129,17 +120,15 @@ $(LIB229_EXES) : %.exe : %.o lib229.o $(OBJECTS_229) $(OBJECTS) $(CL_OBJECTS)
 #     canyon_truedepth first-order rigidity depth at a view (column generation)
 #     canyon_depth     Tag 1 feasibility at single views near a code-triangle edge
 #     multicage_probe  how much multi-axis cages would coarsen a code's tube tree
-#   Python (python3 oneoffs/<name>.py):
+#   Python:
 #     ideal231.py      idealized #231 (planar quads): formulae, and distances to the
 #                      verified model, the double vertices and ruperts.sqlite
-#     verify_passage.py, witness_to_db_frame.py, rupert_witness229.py
-#                      exact check of a passage, DB-frame conversion, and Lean witness
-#                      data; the #229 passage (run on branch q, which has #229's data)
+#   (#229's passage-witness scripts are on branch q, with #229's data.)
 oneoffs/%.o : oneoffs/%.cc *.h makefile
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 	@echo -n "."
 
-oneoffs/%.exe : oneoffs/%.o $(OBJECTS_229) $(OBJECTS)
+oneoffs/%.exe : oneoffs/%.o $(OBJECTS_231) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"
 

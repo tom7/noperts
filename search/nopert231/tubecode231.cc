@@ -1,6 +1,6 @@
 // Identity-tube certificate synthesis for the 79 face-visibility code cells
-// of Nopert #229 (see notes/Q.md). For each projective triangle of each
-// code cell (from codebdd229.json) we build a quadtree whose leaves carry
+// of Nopert #231 (see notes/Q.md). For each projective triangle of each
+// code cell (from codebdd231.json) we build a quadtree whose leaves carry
 // pure Tag 1 (4-axis cage) certificates, audited in exact arithmetic
 // with the same conditions as Lean's Box.ViewValid.
 //
@@ -43,14 +43,14 @@
 using vec3 = yocto::vec<double, 3>;
 
 #define TUBECERT_NO_MAIN
-#include "tubecert229.cc"
+#include "tubecert231.cc"
 
-#include "tubetree229.h"
+#include "tubetree231.h"
 
-using namespace tubetree229;
+using namespace tubetree231;
 
 struct SolverOptions {
-  std::string bdd_json = "codebdd229.json";
+  std::string bdd_json = "codebdd231.json";
   std::string output_dir = "trees";
   int code_id = -1; // -1 means all
   int tri_id = -1;  // -1 means all triangles of the code
@@ -835,7 +835,7 @@ int main(int argc, char **argv) {
       g_axis_radius_objective = true;
     } else {
       fprintf(stderr, "Unknown argument %s\n"
-              "Usage: tubecode229.exe [--code X [--tri T]] [--threads N] [--max_depth D]\n"
+              "Usage: tubecode231.exe [--code X [--tri T]] [--threads N] [--max_depth D]\n"
               "                       [--output_dir DIR] [--force] [--import] [--axis_radius]\n", arg.c_str());
       return 2;
     }

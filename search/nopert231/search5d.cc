@@ -11,7 +11,7 @@
 //   search5d.exe --t <triangle>[,<triangle>...] | --code <code> | --all
 //                [--charts 0,1,2] [--threads N] [--commit_depth D]
 //                [--subtree_budget N] [--out_dir jobs] [--trees_dir trees_r2]
-//                [--bdd codebdd229.json] [--cone_samples N] [--split_kappa K]
+//                [--bdd codebdd231.json] [--cone_samples N] [--split_kappa K]
 //                [--split_rule 0|1|2] [--min_peel 5..7]
 //                [--view_scale S] [--view_lookahead]
 //                [--max_full_retry N]
@@ -54,7 +54,7 @@ struct Args {
   int64_t subtree_budget = 200000;
   std::string out_dir = "jobs";
   std::string trees_dir = "trees_r2";
-  std::string bdd = "codebdd229.json";
+  std::string bdd = "codebdd231.json";
   bool retry_deferred = false;
   bool requeue_deferred = false;
   solve5d::Options opt;

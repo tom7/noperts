@@ -1,4 +1,4 @@
-#include "tube229.h"
+#include "tube231.h"
 
 #include <algorithm>
 #include <iostream>
@@ -14,11 +14,11 @@
 #include "bignum/big-vec.h"
 #include "bignum/big.h"
 #include "nopert231.h"
-#include "tubetree229.h"
+#include "tubetree231.h"
 #include "util.h"
 #include "yocto-math.h"
 
-using namespace tubetree229;
+using namespace tubetree231;
 using vec2 = yocto::vec<double, 2>;
 using vec3 = yocto::vec<double, 3>;
 
@@ -37,11 +37,11 @@ static void TestBasicSilhouette() {
   vec3 centroid = (root_f[0] + root_f[1] + root_f[2]) / 3.0;
 
   std::vector<int> mixes = {0, 500, 1000};
-  std::vector<ContactInfo> contacts = Tube229::GenerateSilhouetteContacts(centroid, mixes);
+  std::vector<ContactInfo> contacts = Tube231::GenerateSilhouetteContacts(centroid, mixes);
   CHECK(!contacts.empty());
   std::cout << "  Root wedge centroid produced " << contacts.size() << " silhouette contacts.\n";
 
-  std::vector<Tube229::CandidateTriple> triples = Tube229::GenerateCandidateTriples(root, contacts, 1e-12);
+  std::vector<Tube231::CandidateTriple> triples = Tube231::GenerateCandidateTriples(root, contacts, 1e-12);
   std::cout << "  Root wedge produced " << triples.size() << " candidate triples.\n";
   std::cout << "[PASS] TestBasicSilhouette\n";
 }
@@ -59,13 +59,13 @@ static void TestTargetedOpposingSearch() {
   };
   vec3 centroid = (tri_f[0] + tri_f[1] + tri_f[2]) / 3.0;
   std::vector<int> std_mixes = {0, 1, 143, 286, 429, 571, 714, 857, 999, 1000};
-  std::vector<ContactInfo> raw_contacts = Tube229::GenerateSilhouetteContacts(centroid, std_mixes);
-  std::vector<Tube229::CandidateTriple> std_cands = Tube229::GenerateCandidateTriples(tri, raw_contacts, 1e-12);
+  std::vector<ContactInfo> raw_contacts = Tube231::GenerateSilhouetteContacts(centroid, std_mixes);
+  std::vector<Tube231::CandidateTriple> std_cands = Tube231::GenerateCandidateTriples(tri, raw_contacts, 1e-12);
   std::cout << "  Std candidates generated: " << std_cands.size() << "\n";
 
   std::array<int, 4> simplex;
   vec3 separating_norm = {0, 0, 0};
-  bool enclosed = Tube229::FindBalancedTetrahedron(std_cands, &simplex, &separating_norm);
+  bool enclosed = Tube231::FindBalancedTetrahedron(std_cands, &simplex, &separating_norm);
   std::cout << "  Std candidates enclosed origin: " << (enclosed ? "YES" : "NO") << "\n";
   if (!enclosed) {
     vec3 unit_n = yocto::normalize(separating_norm);
@@ -79,9 +79,9 @@ static void TestTargetedOpposingSearch() {
     double min_contact_torque_dot = 1e30;
 
     for (size_t vi = 0; vi < views.size(); vi++) {
-      std::vector<ContactInfo> sc = Tube229::GenerateSilhouetteContacts(views[vi], fine_mixes);
+      std::vector<ContactInfo> sc = Tube231::GenerateSilhouetteContacts(views[vi], fine_mixes);
       for (const auto &c : sc) {
-        vec3 edge = Tube229::GetDoubleEdge(c);
+        vec3 edge = Tube231::GetDoubleEdge(c);
         int sel = c.vertex;
         bool ok = true;
         for (int k = 0; k < NUM_VERTICES; k++) {
@@ -116,8 +116,8 @@ static void TestTargetedOpposingSearch() {
     std::cout << "  Total opposing contacts found: " << opposing_contact_count
               << ", min tau · n = " << min_contact_torque_dot << "\n";
 
-    std::vector<Tube229::CandidateTriple> opposing_cands =
-        Tube229::FindOpposingCandidates(tri, separating_norm, 50, 1e-12);
+    std::vector<Tube231::CandidateTriple> opposing_cands =
+        Tube231::FindOpposingCandidates(tri, separating_norm, 50, 1e-12);
     std::cout << "  FindOpposingCandidates(separating_norm) returned: " << opposing_cands.size() << " candidates.\n";
     for (size_t i = 0; i < opposing_cands.size(); i++) {
       double dot = yocto::dot(opposing_cands[i].normalized_a, unit_n);
@@ -136,8 +136,8 @@ static void TestTargetedOpposingSearch() {
   // Test with arbitrary test direction v_test where opposing candidates are guaranteed to exist.
   vec3 v_test = {1.0, 0.0, 0.0};
   int max_req = 15;
-  std::vector<Tube229::CandidateTriple> test_opp =
-      Tube229::FindOpposingCandidates(tri, v_test, max_req, 1e-12);
+  std::vector<Tube231::CandidateTriple> test_opp =
+      Tube231::FindOpposingCandidates(tri, v_test, max_req, 1e-12);
   CHECK(!test_opp.empty());
   CHECK((int)test_opp.size() <= max_req);
   for (size_t i = 0; i < test_opp.size(); i++) {
@@ -185,11 +185,11 @@ static void TestSiblingCertificateOnDifficultLeaf() {
   };
   vec3 centroid = (tri_f[0] + tri_f[1] + tri_f[2]) / 3.0;
   std::vector<int> std_mixes = {0, 1, 143, 286, 429, 571, 714, 857, 999, 1000};
-  std::vector<ContactInfo> raw = Tube229::GenerateSilhouetteContacts(centroid, std_mixes);
+  std::vector<ContactInfo> raw = Tube231::GenerateSilhouetteContacts(centroid, std_mixes);
   std::vector<ContactInfo> valid_for_tri;
   for (const auto &c : raw) {
     bool ok = true;
-    vec3 edge = Tube229::GetDoubleEdge(c);
+    vec3 edge = Tube231::GetDoubleEdge(c);
     int sel = c.vertex;
     for (int k = 0; k < NUM_VERTICES; k++) {
       bool tie = (k == sel) ||
@@ -217,7 +217,7 @@ static void TestSiblingCertificateOnDifficultLeaf() {
   double min_worst_s = 1e30;
   for (int m = 0; m <= 1000; m++) {
     ContactInfo c = {13, 14, 14, 15, m, 14};
-    vec3 edge = Tube229::GetDoubleEdge(c);
+    vec3 edge = Tube231::GetDoubleEdge(c);
     int sel = c.vertex;
     double worst_s = -1e30;
     for (int k = 0; k < 20; k++) {
@@ -246,7 +246,7 @@ static void TestSiblingCertificateOnDifficultLeaf() {
     BigVecQ3 center;
     BigRat delta;
     std::string fail;
-    if (Tube229::AuditAxis(tri, test_c, &ac, &center, &delta, &fail)) {
+    if (Tube231::AuditAxis(tri, test_c, &ac, &center, &delta, &fail)) {
       axis0_replacements.push_back(c);
     }
   }
@@ -259,7 +259,7 @@ static void TestSiblingCertificateOnDifficultLeaf() {
     BigVecQ3 center;
     BigRat delta;
     std::string fail;
-    if (Tube229::AuditAxis(tri, test_c, &ac, &center, &delta, &fail)) {
+    if (Tube231::AuditAxis(tri, test_c, &ac, &center, &delta, &fail)) {
       axis2_replacements.push_back(c);
     }
   }
@@ -271,7 +271,7 @@ static void TestSiblingCertificateOnDifficultLeaf() {
   BigRat sib0_deltas[4];
   for (int a = 0; a < 4; a++) {
     AxisCertificate ac;
-    Tube229::AuditAxis(sib0_tri, sibling_cert.axes[a].contacts, &ac, &sib0_centers[a], &sib0_deltas[a]);
+    Tube231::AuditAxis(sib0_tri, sibling_cert.axes[a].contacts, &ac, &sib0_centers[a], &sib0_deltas[a]);
     std::cout << "    sib0 center[" << a << "] = ("
               << sib0_centers[a].x.ToDouble() << ", "
               << sib0_centers[a].y.ToDouble() << ", "
@@ -280,7 +280,7 @@ static void TestSiblingCertificateOnDifficultLeaf() {
   }
   TubeCertificate sib0_out;
   std::string sib0_fail;
-  bool sib0_ok = Tube229::AuditCertificateAdaptive(sib0_tri, sibling_cert, &sib0_out, &sib0_fail);
+  bool sib0_ok = Tube231::AuditCertificateAdaptive(sib0_tri, sibling_cert, &sib0_out, &sib0_fail);
   std::cout << "  Audit on SIBLING 0: " << (sib0_ok ? "SUCCESS" : ("FAILED: " + sib0_fail)) << "\n";
   if (sib0_ok) {
     std::cout << "    sib0 c = " << sib0_out.c.ToString() << " (" << sib0_out.c.ToDouble() << ")\n";
@@ -301,7 +301,7 @@ static void TestSiblingCertificateOnDifficultLeaf() {
       for (int a = 0; a < 4; a++) {
         AxisCertificate ac;
         ContactInfo contacts[3] = {cand.axes[a].contacts[0], cand.axes[a].contacts[1], cand.axes[a].contacts[2]};
-        if (!Tube229::AuditAxis(tri, contacts, &ac, &c_pts[a], &d_pts[a])) {
+        if (!Tube231::AuditAxis(tri, contacts, &ac, &c_pts[a], &d_pts[a])) {
           all_axes_ok = false;
           break;
         }
@@ -317,7 +317,7 @@ static void TestSiblingCertificateOnDifficultLeaf() {
         }
         first_c_pts = false;
       }
-      BigRat axis_r = Tube229::ExactTetrahedronAxisRadius(c_pts);
+      BigRat axis_r = Tube231::ExactTetrahedronAxisRadius(c_pts);
       if (axis_r > max_cover) max_cover = axis_r;
     }
   }
@@ -350,7 +350,7 @@ void TestNodeDepth18() {
 
     std::vector<ContactInfo> all_contacts;
     for (const auto &sv : sample_views) {
-      std::vector<ContactInfo> v_contacts = Tube229::GenerateSilhouetteContacts(sv, mix_samples);
+      std::vector<ContactInfo> v_contacts = Tube231::GenerateSilhouetteContacts(sv, mix_samples);
       all_contacts.insert(all_contacts.end(), v_contacts.begin(), v_contacts.end());
     }
     // Deduplicate contacts
@@ -367,10 +367,10 @@ void TestNodeDepth18() {
       }
       if (!exists) unique_contacts.push_back(c);
     }
-    std::vector<Tube229::CandidateTriple> all_cands = Tube229::GenerateCandidateTriples(tri, unique_contacts, 2e-14);
+    std::vector<Tube231::CandidateTriple> all_cands = Tube231::GenerateCandidateTriples(tri, unique_contacts, 2e-14);
     std::array<int, 4> simplex;
     vec3 sep_norm;
-    bool enclosed = Tube229::FindBalancedTetrahedron(all_cands, &simplex, &sep_norm);
+    bool enclosed = Tube231::FindBalancedTetrahedron(all_cands, &simplex, &sep_norm);
     std::cout << "  cone_samples=" << cone_samples << ": unique_contacts=" << unique_contacts.size()
               << " candidates=" << all_cands.size()
               << " enclosed=" << (enclosed ? "YES" : "NO")
@@ -384,7 +384,7 @@ void TestNodeDepth18() {
       }
       TubeCertificate out_cert;
       std::string fail;
-      bool ok = Tube229::AuditCertificateAdaptive(tri, cert, &out_cert, &fail);
+      bool ok = Tube231::AuditCertificateAdaptive(tri, cert, &out_cert, &fail);
       std::cout << "    Audit: " << (ok ? "SUCCESS" : ("FAIL: " + fail)) << "\n";
       if (ok) {
         std::cout << "    c = " << out_cert.c.ToString() << " (" << out_cert.c.ToDouble() << ")\n";
@@ -408,7 +408,7 @@ void TestTripleV2V4V10() {
 
   // Let us inspect the contacts generated at centroid
   std::vector<int> mix_samples = {0, 10, 50, 100, 200, 500, 800, 1000};
-  std::vector<ContactInfo> contacts = Tube229::GenerateSilhouetteContacts(centroid, mix_samples);
+  std::vector<ContactInfo> contacts = Tube231::GenerateSilhouetteContacts(centroid, mix_samples);
   std::cout << "  Contacts generated: " << contacts.size() << "\n";
   for (const auto &c : contacts) {
     if (c.vertex == 10) {
@@ -420,7 +420,7 @@ void TestTripleV2V4V10() {
   // Filter contacts by support on tri
   std::vector<ContactInfo> valid_c;
   for (const auto &c : contacts) {
-    vec3 edge = Tube229::GetDoubleEdge(c);
+    vec3 edge = Tube231::GetDoubleEdge(c);
     bool valid = true;
     for (int k = 0; k < NUM_VERTICES; k++) {
       bool tie = (k == c.vertex) ||
@@ -465,7 +465,7 @@ void TestTripleV2V4V10() {
         BigVecQ3 center;
         BigRat delta;
         std::string fail;
-        if (Tube229::AuditAxis(tri, triple, &ac, &center, &delta, &fail)) {
+        if (Tube231::AuditAxis(tri, triple, &ac, &center, &delta, &fail)) {
           vec3 c_f = {center.x.ToDouble(), center.y.ToDouble(), center.z.ToDouble()};
           double dot_n = yocto::dot(c_f, sep_norm);
           if (dot_n < 0) {
@@ -523,7 +523,7 @@ void TestCertificate003133OnTargetTri() {
     BigVecQ3 center;
     BigRat delta;
     std::string fail;
-    bool ok = Tube229::AuditAxis(tri, c, &ac, &center, &delta, &fail);
+    bool ok = Tube231::AuditAxis(tri, c, &ac, &center, &delta, &fail);
     std::cout << "  m1=" << m1 << " -> " << (ok ? "SUCCESS" : ("FAIL: " + fail));
     if (ok) {
       std::cout << " center = (" << center.x.ToDouble() << ", " << center.y.ToDouble() << ", " << center.z.ToDouble() << ") delta=" << delta.ToDouble();
@@ -533,7 +533,7 @@ void TestCertificate003133OnTargetTri() {
 
   TubeCertificate out_cert;
   std::string fail;
-  bool ok = Tube229::AuditCertificateAdaptive(tri, cert, &out_cert, &fail);
+  bool ok = Tube231::AuditCertificateAdaptive(tri, cert, &out_cert, &fail);
   std::cout << "  Full cert audit on difficult leaf: " << (ok ? "SUCCESS" : ("FAIL: " + fail)) << "\n";
   if (ok) {
     std::cout << "    c = " << out_cert.c.ToString() << " (" << out_cert.c.ToDouble() << ")\n";
@@ -552,8 +552,8 @@ void TestDoubleCheckAxis() {
     {3, 2, 2, 1, 800, 2},
     {8, 9, 9, 10, 800, 9}
   };
-  Tube229::CandidateTriple cand1;
-  bool ok1 = Tube229::DoubleCheckAxis(tri, ax1, &cand1);
+  Tube231::CandidateTriple cand1;
+  bool ok1 = Tube231::DoubleCheckAxis(tri, ax1, &cand1);
   CHECK(ok1);
   std::cout << "  Axis 1 double check: SUCCESS! norm_a = ("
             << cand1.normalized_a.x << ", " << cand1.normalized_a.y << ", " << cand1.normalized_a.z << ")\n";
@@ -564,8 +564,8 @@ void TestDoubleCheckAxis() {
     {1, 0, 0, 4, 200, 0},
     {8, 9, 9, 10, 800, 9}
   };
-  Tube229::CandidateTriple cand0;
-  bool ok0 = Tube229::DoubleCheckAxis(tri, ax0, &cand0);
+  Tube231::CandidateTriple cand0;
+  bool ok0 = Tube231::DoubleCheckAxis(tri, ax0, &cand0);
   CHECK(!ok0);
   std::cout << "  Axis 0 double check: correctly REJECTED (support violation)!\n";
 }
@@ -595,7 +595,7 @@ void TestNearOriginFaceCuttingPlane() {
   // aborted without checking opposing candidates), this would fail on iteration 0.
   // With the fix, it orients the face normal away from the pool, searches in
   // direction -v, pulls in p4, and successfully cages the origin.
-  bool ok = Tube229::RefinePoolCuttingPlane(pts, &pool, &simplex, &margin);
+  bool ok = Tube231::RefinePoolCuttingPlane(pts, &pool, &simplex, &margin);
   CHECK(ok);
   CHECK(margin > 1e-8);
   std::cout << "  RefinePoolCuttingPlane successfully caged origin! Margin = " << margin
@@ -603,14 +603,14 @@ void TestNearOriginFaceCuttingPlane() {
             << simplex[2] << ", " << simplex[3] << "]\n";
 
   // Also verify Wolfe's algorithm handles this near-origin face geometry
-  std::vector<Tube229::CandidateTriple> cands;
+  std::vector<Tube231::CandidateTriple> cands;
   for (size_t i = 0; i < pts.size(); i++) {
-    Tube229::CandidateTriple c;
+    Tube231::CandidateTriple c;
     c.normalized_a = pts[i];
     cands.push_back(c);
   }
   std::array<int, 4> wolfe_simplex;
-  bool wolfe_ok = Tube229::FindBalancedTetrahedron(cands, &wolfe_simplex);
+  bool wolfe_ok = Tube231::FindBalancedTetrahedron(cands, &wolfe_simplex);
   CHECK(wolfe_ok);
   std::cout << "  FindBalancedTetrahedron successfully caged origin!\n";
   std::cout << "[PASS] TestNearOriginFaceCuttingPlane\n";
@@ -630,10 +630,10 @@ static void TestExtremalTetrahedron() {
     {-0.5, -0.5, -0.5}
   };
   std::array<int, 4> indices;
-  bool ok = Tube229::FindExtremalTetrahedron(pts, &indices);
+  bool ok = Tube231::FindExtremalTetrahedron(pts, &indices);
   CHECK(ok);
   double margin = 0;
-  bool enclosed = Tube229::PointInTetrahedron(
+  bool enclosed = Tube231::PointInTetrahedron(
       vec3{0, 0, 0}, pts[indices[0]], pts[indices[1]], pts[indices[2]], pts[indices[3]], &margin);
   CHECK(enclosed && margin > 1e-6);
   std::cout << "  FindExtremalTetrahedron found enclosing tet: ["
@@ -649,7 +649,7 @@ static void TestExtremalTetrahedron() {
     { 0.0,  0.0,  1.0}
   };
   std::array<int, 4> bad_indices;
-  bool bad_ok = Tube229::FindExtremalTetrahedron(upper_pts, &bad_indices);
+  bool bad_ok = Tube231::FindExtremalTetrahedron(upper_pts, &bad_indices);
   CHECK(!bad_ok);
   std::cout << "  Upper half-space points correctly rejected (cannot enclose origin).\n";
   std::cout << "[PASS] TestExtremalTetrahedron\n";
@@ -662,7 +662,7 @@ static void TestSynthesizeFastAndIterative() {
   std::string leaf30_path = "031213002112121221112212122210";
   TriangleQ leaf30_tri = TriangleFromPath(leaf30_path);
   TubeCertificate leaf30_fast;
-  bool leaf30_fast_ok = Tube229::SynthesizeCertificateFast(leaf30_tri, leaf30_path.size(), &leaf30_fast);
+  bool leaf30_fast_ok = Tube231::SynthesizeCertificateFast(leaf30_tri, leaf30_path.size(), &leaf30_fast);
   std::cout << "  Leaf depth 30 \"" << leaf30_path << "\" Fast synthesis: "
             << (leaf30_fast_ok ? "SUCCESS" : "FAILED") << "\n";
   if (leaf30_fast_ok) {
@@ -673,7 +673,7 @@ static void TestSynthesizeFastAndIterative() {
   }
 
   TubeCertificate leaf30_iter;
-  bool leaf30_iter_ok = Tube229::SynthesizeCertificateIterative(leaf30_tri, leaf30_path.size(), &leaf30_iter);
+  bool leaf30_iter_ok = Tube231::SynthesizeCertificateIterative(leaf30_tri, leaf30_path.size(), &leaf30_iter);
   std::cout << "  Leaf depth 30 \"" << leaf30_path << "\" Iterative synthesis: "
             << (leaf30_iter_ok ? "SUCCESS" : "FAILED") << "\n";
   if (leaf30_iter_ok) {
@@ -692,12 +692,12 @@ static void TestSynthesizeFastAndIterative() {
   TriangleQ canyon_tri = TriangleFromPath(canyon_path);
 
   TubeCertificate canyon_fast;
-  bool canyon_fast_ok = Tube229::SynthesizeCertificateFast(canyon_tri, canyon_path.size(), &canyon_fast);
+  bool canyon_fast_ok = Tube231::SynthesizeCertificateFast(canyon_tri, canyon_path.size(), &canyon_fast);
   std::cout << "  Canyon path \"003133\" Fast synthesis: " << (canyon_fast_ok ? "SUCCESS" : "FAILED") << "\n";
   CHECK(!canyon_fast_ok);
 
   TubeCertificate canyon_iter;
-  bool canyon_iter_ok = Tube229::SynthesizeCertificateIterative(canyon_tri, canyon_path.size(), &canyon_iter);
+  bool canyon_iter_ok = Tube231::SynthesizeCertificateIterative(canyon_tri, canyon_path.size(), &canyon_iter);
   std::cout << "  Canyon path \"003133\" Iterative synthesis: " << (canyon_iter_ok ? "SUCCESS" : "FAILED") << "\n";
   CHECK(canyon_iter_ok);
   if (canyon_iter_ok) {
@@ -711,7 +711,7 @@ static void TestSynthesizeFastAndIterative() {
   std::string d18_path = "031213032001032213";
   TriangleQ d18_tri = TriangleFromPath(d18_path);
   TubeCertificate d18_cert;
-  bool d18_ok = Tube229::SynthesizeCertificate(d18_tri, d18_path.size(), &d18_cert);
+  bool d18_ok = Tube231::SynthesizeCertificate(d18_tri, d18_path.size(), &d18_cert);
   std::cout << "  Depth-18 path \"031213032001032213\" SynthesizeCertificate: "
             << (d18_ok ? "SUCCESS" : "FAILED") << "\n";
   if (d18_ok) {
@@ -733,7 +733,7 @@ static void TestFindHullSupportAxis() {
   BigVecQ3 center;
   BigRat delta;
   std::string fail;
-  bool ok = Tube229::FindHullSupportAxis(tri, &inner_core, &center, &delta, &fail);
+  bool ok = Tube231::FindHullSupportAxis(tri, &inner_core, &center, &delta, &fail);
   std::cout << "  FindHullSupportAxis on " << leaf_path << ": " << (ok ? "SUCCESS" : ("FAIL: " + fail)) << "\n";
   CHECK(ok);
   std::cout << "    Contacts: v=(" << inner_core.contacts[0].vertex << ", "
@@ -758,7 +758,7 @@ static void TestCheckAnnularDominance() {
   // 1. Valid test with explicit radii: r_min = 1/10000, r = 1/2000
   BigRat r_min = BigRat(1, 10000);
   BigRat r = BigRat(1, 2000);
-  bool ok = Tube229::CheckAnnularDominance(B, defect_D, c_cone, delta, &r_min, &r);
+  bool ok = Tube231::CheckAnnularDominance(B, defect_D, c_cone, delta, &r_min, &r);
   std::cout << "  CheckAnnularDominance (explicit radii): " << (ok ? "SUCCESS" : "FAIL") << "\n";
   CHECK(ok);
 
@@ -766,14 +766,14 @@ static void TestCheckAnnularDominance() {
   BigRat bad_defect = BigRat(1, 10);
   BigRat bad_r_min = r_min;
   BigRat bad_r = r;
-  bool bad_ok = Tube229::CheckAnnularDominance(B, bad_defect, c_cone, delta, &bad_r_min, &bad_r);
+  bool bad_ok = Tube231::CheckAnnularDominance(B, bad_defect, c_cone, delta, &bad_r_min, &bad_r);
   std::cout << "  CheckAnnularDominance (excessive defect): correctly rejected (" << (!bad_ok ? "PASS" : "FAIL") << ")\n";
   CHECK(!bad_ok);
 
   // 3. Automatic solve mode (unspecified radii)
   BigRat auto_r_min{0};
   BigRat auto_r{0};
-  bool auto_ok = Tube229::CheckAnnularDominance(B, defect_D, c_cone, delta, &auto_r_min, &auto_r);
+  bool auto_ok = Tube231::CheckAnnularDominance(B, defect_D, c_cone, delta, &auto_r_min, &auto_r);
   std::cout << "  CheckAnnularDominance (auto solve): " << (auto_ok ? "SUCCESS" : "FAIL")
             << " r_min=" << auto_r_min.ToString() << " r=" << auto_r.ToString() << "\n";
   CHECK(auto_ok);
@@ -805,7 +805,7 @@ static void TestEvaluateComplementConeCoverage() {
   // Exceptional axis direction a_0
   vec3 exc_dir = {-0.196204, 0.260296, -0.945384};
   BigRat c_comp;
-  bool ok = Tube229::EvaluateComplementConeCoverage(tri, comp_axes, exc_dir, 0.20, &c_comp, 20000);
+  bool ok = Tube231::EvaluateComplementConeCoverage(tri, comp_axes, exc_dir, 0.20, &c_comp, 20000);
   std::cout << "  EvaluateComplementConeCoverage: " << (ok ? "SUCCESS" : "FAIL")
             << " c_comp=" << c_comp.ToString() << " (" << c_comp.ToDouble() << ")\n";
   CHECK(ok);
@@ -842,7 +842,7 @@ static void TestSynthesizeDecomposedCertificate() {
 
   DecomposedCertificate decomp;
   std::string fail;
-  bool ok = Tube229::SynthesizeDecomposedCertificate(tri, leaf_path.size(), &decomp, &sib_cert, &fail);
+  bool ok = Tube231::SynthesizeDecomposedCertificate(tri, leaf_path.size(), &decomp, &sib_cert, &fail);
   std::cout << "  SynthesizeDecomposedCertificate: " << (ok ? "SUCCESS" : ("FAIL: " + fail)) << "\n";
   CHECK(ok);
   std::cout << "    Inner Core B = " << decomp.inner_core_axis.B.ToString() << "\n";
@@ -862,7 +862,7 @@ static void TestSynthesizeDecomposedCertificate() {
 int main(int argc, char **argv) {
   ANSI::Init();
 
-  Print("=== Running Tube229 Unit Tests ===\n");
+  Print("=== Running Tube231 Unit Tests ===\n");
   TestBasicSilhouette();
   TestExtremalTetrahedron();
   TestNearOriginFaceCuttingPlane();
@@ -876,7 +876,7 @@ int main(int argc, char **argv) {
   TestCheckAnnularDominance();
   TestEvaluateComplementConeCoverage();
   TestSynthesizeDecomposedCertificate();
-  Print("=== All Tube229 Unit Tests Passed! ===\n");
+  Print("=== All Tube231 Unit Tests Passed! ===\n");
   Print("OK\n");
   return 0;
 }

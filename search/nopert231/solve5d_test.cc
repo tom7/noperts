@@ -69,7 +69,7 @@ int main() {
     printf("SKIPPED: trees_r2 not present\n");
     return 0;
   }
-  const auto atlas = tubeatlas5d::TubeAtlas::Load("trees_r2", "codebdd229.json");
+  const auto atlas = tubeatlas5d::TubeAtlas::Load("trees_r2", "codebdd231.json");
   Options opt;
   // The search screens in double; VerifySubtree checks every leaf exactly.
   // A few subtrees in different charts, a few levels down from the root.
