@@ -116,6 +116,25 @@ $(LIB229_EXES) : %.exe : %.o lib229.o $(OBJECTS_229) $(OBJECTS) $(CL_OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS) $(CL_LFLAGS)
 	@echo -n "!"
 
+# Oneoffs kept for reuse (each source has a Usage line); build with
+# make oneoffs/<name>.exe.
+#   5D search diagnostics (#231):
+#     margin_terms5d   terms of the best certificate margin at given 5D nodes, and at the
+#                      same box one view level coarser (diagnosed the split-rule wall)
+#     point_margin5d   best margin at a pose as box and view shrink: positive (subdivision
+#                      ends) or tending to zero (a possible Rupert passage)
+#     solve_subtree5d  re-solve given 5D subtrees with a chosen split rule; compare rules
+#   Passage and rigidity probes at single views (any candidate):
+#     canyon_passage   search for a near-identity Rupert passage at a fixed outer view
+#     canyon_truedepth first-order rigidity depth at a view (column generation)
+#     canyon_depth     Tag 1 feasibility at single views near a code-triangle edge
+#     multicage_probe  how much multi-axis cages would coarsen a code's tube tree
+#   Python (python3 oneoffs/<name>.py):
+#     ideal231.py      idealized #231 (planar quads): formulae, and distances to the
+#                      verified model, the double vertices and ruperts.sqlite
+#     verify_passage.py, witness_to_db_frame.py, rupert_witness229.py
+#                      exact check of a passage, DB-frame conversion, and Lean witness
+#                      data; the #229 passage (run on branch q, which has #229's data)
 oneoffs/%.o : oneoffs/%.cc *.h makefile
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 	@echo -n "."
