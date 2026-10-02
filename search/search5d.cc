@@ -15,10 +15,13 @@
 //                [--split_rule 0|1|2] [--min_peel 5..7]
 //                [--view_scale S] [--view_lookahead]
 //                [--max_full_retry N]
-//                [--exact_check] [--retry_deferred]
+//                [--exact_check] [--retry_deferred] [--requeue_deferred]
 //
 // --retry_deferred also solves every deferred (df) leaf in the journals again
 // (typically with a larger --subtree_budget); its new records replace it.
+// --requeue_deferred puts each solved subtree's deferred leaves back on the
+// work queue in the same run, so the search goes on until nothing is
+// deferred (except at --max_depth), without per-round restarts.
 
 #include <atomic>
 #include <chrono>
@@ -53,6 +56,7 @@ struct Args {
   std::string trees_dir = "trees_r2";
   std::string bdd = "codebdd229.json";
   bool retry_deferred = false;
+  bool requeue_deferred = false;
   solve5d::Options opt;
 };
 
@@ -160,6 +164,7 @@ int main(int argc, char **argv) {
     else if (a == "--exact_check") args.opt.exact_check = true;
     else if (a == "--max_mix") args.opt.max_mix_components = std::stoi(next());
     else if (a == "--retry_deferred") args.retry_deferred = true;
+    else if (a == "--requeue_deferred") args.requeue_deferred = true;
     else LOG(FATAL) << "unknown argument " << a;
   }
   if (args.threads <= 0) args.threads = std::max(1u, std::thread::hardware_concurrency());
@@ -202,7 +207,14 @@ int main(int argc, char **argv) {
          args.threads);
   fflush(stdout);
 
-  std::atomic<size_t> next{0};
+  // The work queue. With --requeue_deferred, the deferred leaves of each
+  // solved subtree go back on the queue at once (journaled like a
+  // --retry_deferred round, without restarting the process).
+  std::mutex queue_mu;
+  std::condition_variable queue_cv;
+  std::deque<WorkItem> queue(items.begin(), items.end());
+  size_t in_flight = 0, queued_total = items.size();
+  int64_t requeued = 0;
   solve5d::LiveCounters live;
   std::mutex stats_mu;
   solve5d::Stats total;
@@ -210,22 +222,47 @@ int main(int argc, char **argv) {
   const auto start = std::chrono::steady_clock::now();
   auto worker = [&]() {
     for (;;) {
-      const size_t i = next.fetch_add(1);
-      if (i >= items.size()) return;
-      WorkItem &item = items[i];
+      WorkItem item;
+      {
+        std::unique_lock<std::mutex> l(queue_mu);
+        queue_cv.wait(l, [&]() { return !queue.empty() || in_flight == 0; });
+        if (queue.empty()) return;
+        item = std::move(queue.front());
+        queue.pop_front();
+        in_flight++;
+      }
       solve5d::Solver solver(&atlas, item.state->job, args.opt);
       solver.SetLive(&live);
       const auto records = solver.SolveSubtree(item.node, args.subtree_budget);
       item.state->Append(records, item.node.path);
+      std::vector<WorkItem> more;
+      if (args.requeue_deferred) {
+        const solve5d::Node root = solve5d::RootNode(atlas, item.state->job);
+        for (const auto &r : records) {
+          if (!std::holds_alternative<rows5d::DeferredLeaf>(r.leaf)) continue;
+          if ((int)r.path.size() > args.opt.max_depth) continue;
+          more.push_back({item.state, solve5d::Node{.path = r.path,
+                                                    .tri = rows5d::NodeTriangle(root.tri, r.path),
+                                                    .box = rows5d::NodeBox(root.box, r.path)}});
+        }
+      }
+      {
+        std::lock_guard<std::mutex> l(queue_mu);
+        for (auto &m : more) queue.push_back(std::move(m));
+        queued_total += more.size();
+        requeued += more.size();
+        in_flight--;
+      }
+      queue_cv.notify_all();
       std::lock_guard<std::mutex> l(stats_mu);
       total.Add(solver.stats());
       finished++;
-      if (finished % 64 == 0 || finished == items.size()) {
+      if (finished % 64 == 0) {
         const double sec =
             std::chrono::duration<double>(std::chrono::steady_clock::now() - start).count();
         printf("[%zu/%zu subtrees, %.0fs] nodes %lld (%.0f/s): ce %lld mx %lld tu %lld pr %lld pf %lld "
                "df %lld (max pool %lld triples)\n",
-               finished, items.size(), sec, (long long)total.nodes, total.nodes / std::max(sec, 1e-9),
+               finished, queued_total, sec, (long long)total.nodes, total.nodes / std::max(sec, 1e-9),
                (long long)total.ce, (long long)total.mx, (long long)total.tu, (long long)total.pr, (long long)total.pf,
                (long long)total.df, (long long)total.max_pool_triples);
         fflush(stdout);
@@ -257,7 +294,8 @@ int main(int argc, char **argv) {
   }
   done_cv.notify_all();
   status.join();
-  printf("Finished: %lld nodes, %lld deferred leaves%s\n", (long long)total.nodes,
-         (long long)total.df, total.df ? " (rerun with a larger --subtree_budget to retry)" : "");
+  const int64_t left = total.df - requeued;
+  printf("Finished: %lld nodes, %lld deferred leaves%s\n", (long long)total.nodes, (long long)left,
+         left ? " (rerun with a larger --subtree_budget to retry)" : "");
   return 0;
 }
