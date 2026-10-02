@@ -377,7 +377,7 @@ void ExportRationalVertices(const std::vector<BigVecQ3> &verts, std::string_view
     lean_out << "- All vertices strictly inside unit sphere (GoodPoly invariant).\n";
     lean_out << "- See noteperts/QUAD_FACES.md.\n";
     lean_out << "-/\n\n";
-    lean_out << "namespace Noperthedron.Nopert229\n\n";
+    lean_out << "namespace Noperthedron.Nopert231\n\n";
     lean_out << "def rationalVertices : VertexIndex → Fin 3 → ℚ := ![\n";
     for (size_t i = 0; i < verts.size(); i++) {
       lean_out << std::format("  ![{}, {}, {}]{}\n",
@@ -387,7 +387,7 @@ void ExportRationalVertices(const std::vector<BigVecQ3> &verts, std::string_view
                               (i + 1 < verts.size()) ? "," : "");
     }
     lean_out << "]\n\n";
-    lean_out << "end Noperthedron.Nopert229\n";
+    lean_out << "end Noperthedron.Nopert231\n";
     lean_out.close();
     Print("  Exported Lean 4 rational vertices to: " AGREEN("{}\n"), lean_path);
   }
