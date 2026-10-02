@@ -55,22 +55,26 @@ class Packer {
   Packer(const tubeatlas5d::TubeAtlas &atlas, int chart, bool exact_check)
       : atlas_(atlas), chart_(chart), exact_check_(exact_check) {}
 
-  int Interval(const geom5d::BoxQ &b) {
-    std::string key;
-    for (int a = 0; a < 3; a++) key += b.lo[a].ToString() + " " + b.hi[a].ToString() + " ";
-    auto [it, fresh] = interval_ids_.emplace(key, (int)intervals_.size());
-    if (fresh) {
-      std::string s;
-      for (int a = 0; a < 3; a++) s += "," + Zigzag((b.lo[a] + b.hi[a]) / BigRat(2));
-      for (int a = 0; a < 3; a++) s += "," + Zigzag((b.hi[a] - b.lo[a]) / BigRat(2));
-      intervals_.push_back(s);
-    }
-    return it->second;
+  // The pack encoding of an interval or a triangle (also its dedup key).
+  static std::string IntervalString(const geom5d::BoxQ &b) {
+    std::string s;
+    for (int a = 0; a < 3; a++) s += "," + Zigzag((b.lo[a] + b.hi[a]) / BigRat(2));
+    for (int a = 0; a < 3; a++) s += "," + Zigzag((b.hi[a] - b.lo[a]) / BigRat(2));
+    return s;
   }
-
-  int Triangle(const exact5d::TriangleQ &t) {
+  static std::string TriangleString(const exact5d::TriangleQ &t) {
     std::string s;
     for (int i = 0; i < 3; i++) for (int c = 0; c < 3; c++) s += "," + Zigzag(t[i][c]);
+    return s;
+  }
+
+  // Table indices, numbered in order of first use.
+  int IntervalId(const std::string &s) {
+    auto [it, fresh] = interval_ids_.emplace(s, (int)intervals_.size());
+    if (fresh) intervals_.push_back(s);
+    return it->second;
+  }
+  int TriangleId(const std::string &s) {
     auto [it, fresh] = triangle_ids_.emplace(s, (int)triangles_.size());
     if (fresh) triangles_.push_back(s);
     return it->second;
@@ -84,21 +88,24 @@ class Packer {
   // subtree that has no view splits and no tube leaves, contains a
   // certificate, and whose certificates all hold exactly over the outer
   // triangle (checked here with exact5d, at about the cost of building them).
-  int AddJob(int t, const std::vector<rows5d::Record> &leaves, int first_id) {
+  //
+  // The exact arithmetic (view triangles with ~1000-bit corners, their outer
+  // triangles, boxes, encodings, certificates) runs in parallel; only the
+  // table numbering is sequential, in row order.
+  int AddJob(int t, const rows5d::Tree &tree, int first_id) {
     const solve5d::Node root = solve5d::RootNode(atlas_, {.t = t, .chart = chart_});
-    auto built = rows5d::BuildTree(leaves);
-    CHECK(std::holds_alternative<rows5d::Tree>(built))
-        << "job t=" << t << " chart=" << chart_ << ": " << std::get<std::string>(built);
-    const rows5d::Tree &tree = std::get<rows5d::Tree>(built);
     std::unordered_map<std::string, const rows5d::Split *> split_at;
     for (const auto &s : tree.splits) split_at[s.path] = &s;
     std::unordered_map<std::string, const rows5d::Leaf *> leaf_at;
     for (const auto &r : tree.leaves) leaf_at[r.path] = &r.leaf;
 
-    // Nodes in breadth-first order, with their parents, boxes and views.
+    // Nodes in breadth-first order (so depth never decreases), with their
+    // parents and views; boxes and triangles are filled in below.
     struct N {
       std::string path;
       int parent = -1;
+      int depth = 0;
+      int child = 0;  // index among the parent's children
       const rows5d::Split *split = nullptr;
       const rows5d::Leaf *leaf = nullptr;
       std::vector<int> kids;
@@ -106,10 +113,13 @@ class Packer {
       geom5d::BoxQ box;
     };
     struct View {
+      int parent = -1, child = 0, depth = 0;
       exact5d::TriangleQ exact, outer;
+      std::string exact_str, outer_str;
     };
     std::vector<N> nodes;
-    std::vector<View> views = {{root.tri, geom5d::OuterDyadicTriangle(root.tri)}};
+    std::vector<View> views(1);
+    views[0].exact = root.tri;
     nodes.push_back({.path = "", .view = 0, .box = root.box});
     for (size_t q = 0; q < nodes.size(); q++) {
       auto it = split_at.find(nodes[q].path);
@@ -121,26 +131,51 @@ class Packer {
       nodes[q].split = &s;
       const auto kids = rows5d::ChildPaths(s);
       for (int k = 0; k < (int)kids.size(); k++) {
-        N c{.path = kids[k], .parent = (int)q};
+        N c{.path = kids[k], .parent = (int)q, .depth = nodes[q].depth + 1, .child = k};
         if (s.view) {
-          const exact5d::TriangleQ tri = geom5d::SplitTriangle(views[nodes[q].view].exact, k);
           c.view = views.size();
-          views.push_back({tri, geom5d::OuterDyadicTriangle(tri)});
-          c.box = nodes[q].box;
+          views.push_back({.parent = nodes[q].view, .child = k,
+                           .depth = views[nodes[q].view].depth + 1});
         } else {
           c.view = nodes[q].view;
-          if (s.eighths == 4) {
-            c.box = k == 0 ? geom5d::LowerHalf(nodes[q].box, s.axis)
-                           : geom5d::UpperHalf(nodes[q].box, s.axis);
-          } else {
-            c.box = k == 0 ? geom5d::LowerAt(nodes[q].box, s.axis, s.eighths)
-                           : geom5d::UpperAt(nodes[q].box, s.axis, s.eighths);
-          }
         }
         nodes[q].kids.push_back(nodes.size());
         nodes.push_back(std::move(c));
       }
     }
+    // Calls f(i) for every element, level by level (each level after its
+    // parents' level), in parallel within a level.
+    auto by_levels = [&](size_t n, auto depth_of, const auto &f) {
+      size_t lo = 0;
+      while (lo < n) {
+        size_t hi = lo;
+        while (hi < n && depth_of(hi) == depth_of(lo)) hi++;
+        ParallelComp(hi - lo, [&](int64_t k) { f(lo + k); }, threads_);
+        lo = hi;
+      }
+    };
+    by_levels(nodes.size(), [&](size_t n) { return nodes[n].depth; }, [&](size_t n) {
+      N &node = nodes[n];
+      if (node.parent < 0) return;
+      const N &p = nodes[node.parent];
+      const rows5d::Split &s = *p.split;
+      if (s.view) {
+        node.box = p.box;
+      } else if (s.eighths == 4) {
+        node.box = node.child == 0 ? geom5d::LowerHalf(p.box, s.axis)
+                                   : geom5d::UpperHalf(p.box, s.axis);
+      } else {
+        node.box = node.child == 0 ? geom5d::LowerAt(p.box, s.axis, s.eighths)
+                                   : geom5d::UpperAt(p.box, s.axis, s.eighths);
+      }
+    });
+    by_levels(views.size(), [&](size_t v) { return views[v].depth; }, [&](size_t v) {
+      View &view = views[v];
+      if (view.parent >= 0) view.exact = geom5d::SplitTriangle(views[view.parent].exact, view.child);
+      view.outer = geom5d::OuterDyadicTriangle(view.exact);
+      view.exact_str = TriangleString(view.exact);
+      view.outer_str = TriangleString(view.outer);
+    });
 
     // Certificate leaves, built over the outer triangle (and checked), or
     // over the exact one if that fails. Grouped by view to share the pool.
@@ -225,42 +260,63 @@ class Packer {
       content_id[n] = relax_point(n) ? next++ : id_of[n];
       relaxed[n] = relax_point(n) || (n > 0 && relaxed[nodes[n].parent]);
     }
+    // Interval encodings in parallel; then table numbers in row order.
+    std::vector<std::string> iv_str(nodes.size());
+    ParallelComp(nodes.size(), [&](int64_t n) { iv_str[n] = IntervalString(nodes[n].box); },
+                 threads_);
+    std::vector<int> iv_of(nodes.size()), tri_of(nodes.size()), exact_tri(nodes.size(), -1),
+        outer_tri(nodes.size(), -1);
     for (int n = 0; n < (int)nodes.size(); n++) {
-      const N &node = nodes[n];
-      const View &view = views[node.view];
-      const int iv = Interval(node.box);
+      const View &view = views[nodes[n].view];
+      iv_of[n] = IntervalId(iv_str[n]);
       if (relax_point(n)) {
-        rows_.push_back(std::format(",11,{},{},{},0,{},{}", id_of[n], iv, content_id[n],
-                                    Triangle(view.exact), Triangle(view.outer)));
+        exact_tri[n] = TriangleId(view.exact_str);
+        outer_tri[n] = TriangleId(view.outer_str);
         relax_rows_++;
       }
-      const int id = content_id[n];
-      const int region = Triangle(relaxed[n] ? view.outer : view.exact);
+      tri_of[n] = TriangleId(relaxed[n] ? view.outer_str : view.exact_str);
+    }
+    std::vector<std::string>().swap(iv_str);
+    // Rows in parallel.
+    std::vector<std::string> out(nodes.size()), relax_out(nodes.size());
+    ParallelComp(nodes.size(), [&](int64_t n) {
+      const N &node = nodes[n];
+      const int iv = iv_of[n];
       std::string row;
+      if (relax_point(n)) {
+        relax_out[n] = std::format(",11,{},{},{},0,{},{}", id_of[n], iv, content_id[n],
+                                   exact_tri[n], outer_tri[n]);
+      }
+      const int id = content_id[n];
+      const int region = tri_of[n];
       if (node.split != nullptr) {
         const std::vector<int> &k = node.kids;
         if (node.split->view) {
-          row = std::format(",2,{},{},{},{},{},{},0,{}", id, iv, id_of[k[0]], id_of[k[1]],
-                            id_of[k[2]], id_of[k[3]], region);
+          row += std::format(",2,{},{},{},{},{},{},0,{}", id, iv, id_of[k[0]], id_of[k[1]],
+                             id_of[k[2]], id_of[k[3]], region);
         } else if (node.split->eighths == 4) {
-          row = std::format(",1,{},{},{},{},{},0,{}", id, iv, id_of[k[0]], id_of[k[1]],
-                            node.split->axis + 2, region);
+          row += std::format(",1,{},{},{},{},{},0,{}", id, iv, id_of[k[0]], id_of[k[1]],
+                             node.split->axis + 2, region);
         } else {
           // Lean cayleySplitAt.
-          row = std::format(",12,{},{},{},{},{},{},0,{}", id, iv, id_of[k[0]], id_of[k[1]],
-                            node.split->axis + 2,
-                            Zigzag(geom5d::CutPoint(node.box, node.split->axis, node.split->eighths)),
-                            region);
+          row += std::format(",12,{},{},{},{},{},{},0,{}", id, iv, id_of[k[0]], id_of[k[1]],
+                             node.split->axis + 2,
+                             Zigzag(geom5d::CutPoint(node.box, node.split->axis, node.split->eighths)),
+                             region);
         }
       } else if (IsCertificate(*node.leaf)) {
         // Each certificate is used over the triangle it was built for.
         CHECK(relaxed[n] == built_rows[n].outer_ok) << node.path;
         const char *tag = std::holds_alternative<rows5d::CertLeaf>(*node.leaf) ? "4" : "9";
-        row = std::format(",{},{},{},0,{}", tag, id, iv, region) + built_rows[n].body;
+        row += std::format(",{},{},{},0,{}", tag, id, iv, region) + built_rows[n].body;
       } else {
-        row = OtherLeafRow(t, node.path, *node.leaf, id, iv, region);
+        row += OtherLeafRow(t, node.path, *node.leaf, id, iv, region);
       }
-      rows_.push_back(row);
+      out[n] = std::move(row);
+    }, threads_);
+    for (size_t n = 0; n < nodes.size(); n++) {
+      if (!relax_out[n].empty()) rows_.push_back(std::move(relax_out[n]));
+      rows_.push_back(std::move(out[n]));
     }
     return first_id;
   }
@@ -269,7 +325,8 @@ class Packer {
   void SetThreads(int threads) { threads_ = threads; }
 
   void AddCodeRoot(const std::vector<int> &children) {
-    std::string row = std::format(",10,0,{},{}", Interval(geom5d::RootBox(chart_)), children.size());
+    std::string row = std::format(",10,0,{},{}", IntervalId(IntervalString(geom5d::RootBox(chart_))),
+                                  children.size());
     for (int c : children) row += std::format(",{}", c);
     rows_.insert(rows_.begin(), row);
   }
@@ -415,22 +472,38 @@ int main(int argc, char **argv) {
   const auto atlas = tubeatlas5d::TubeAtlas::Load(trees_dir, bdd);
   Packer packer(atlas, chart, exact_check);
   packer.SetThreads(threads);
-  auto leaves_of = [&](int t) {
+  // Journals are read and turned into trees in parallel.
+  std::vector<int> jobs;
+  if (all) {
+    for (int t = 0; t < atlas.NumTriangles(); t++) jobs.push_back(t);
+  } else {
+    jobs.push_back(single);
+  }
+  std::vector<rows5d::Tree> trees(jobs.size());
+  ParallelComp(jobs.size(), [&](int64_t k) {
+    const int t = jobs[k];
     const auto j = rows5d::ReadJournal(std::format("{}/c{}/t{}.journal", journals, chart, t));
     CHECK(!j.leaves.empty()) << "no journal for t=" << t << " chart=" << chart;
-    return j.leaves;
-  };
+    auto built = rows5d::BuildTree(j.leaves);
+    CHECK(std::holds_alternative<rows5d::Tree>(built))
+        << "job t=" << t << " chart=" << chart << ": " << std::get<std::string>(built);
+    trees[k] = std::move(std::get<rows5d::Tree>(built));
+  }, threads);
+  printf("read %zu job trees\n", trees.size());
+  fflush(stdout);
   if (all) {
     std::vector<int> roots;
     int next_id = 1;  // row 0 is the code root
-    for (int t = 0; t < atlas.NumTriangles(); t++) {
+    for (size_t k = 0; k < jobs.size(); k++) {
       const size_t before = packer.NumRows();
-      roots.push_back(packer.AddJob(t, leaves_of(t), next_id));
+      roots.push_back(packer.AddJob(jobs[k], trees[k], next_id));
       next_id += packer.NumRows() - before;
+      rows5d::Tree().splits.swap(trees[k].splits);
+      std::vector<rows5d::Record>().swap(trees[k].leaves);
     }
     packer.AddCodeRoot(roots);
   } else {
-    packer.AddJob(single, leaves_of(single), 0);
+    packer.AddJob(single, trees[0], 0);
   }
   packer.Write(out);
   printf("wrote %s: %zu rows (%lld regionRelax)\n", out.c_str(), packer.NumRows(),
