@@ -13,8 +13,8 @@
 // Only view root 0 (the upper fivefold view, all signs +) is supported; that
 // is the only root the 5D search uses.
 
-#ifndef _NOPERT229_EXACT5D_H
-#define _NOPERT229_EXACT5D_H
+#ifndef _NOPERT231_EXACT5D_H
+#define _NOPERT231_EXACT5D_H
 
 #include <array>
 #include <vector>

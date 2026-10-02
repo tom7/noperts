@@ -2,23 +2,23 @@
 # Rebuilds the proof that Nopert #231 is not Rupert, end to end, with the
 # parameters that produced the verified result (see notes/R.md):
 #
-#   model   exact rational model, codes and code triangles (codebdd229), and
+#   model   exact rational model, codes and code triangles (codebdd231), and
 #           the Lean data generated from them
-#   tube    identity tube: one quadtree of Tag 1 cages per code (tubecode229),
-#           refined to radius 2e-5 (tuberefine229)
+#   tube    identity tube: one quadtree of Tag 1 cages per code (tubecode231),
+#           refined to radius 2e-5 (tuberefine231)
 #   tubepack  tube trees -> Lean packs + manifest (export_codetrees_pack)
 #   search  5D search, charts 0-2 (search5d), until nothing is deferred
 #   pack    per-code 5D packs (pack5d --per_code)
 #   verify  Lean: check every table and build the proof (constructNopert229)
 #
-# Every stage is restartable: tubecode229 and search5d journal their work,
+# Every stage is restartable: tubecode231 and search5d journal their work,
 # and pack5d skips packs newer than their journals.
 #
 # Usage: ./rebuild.sh [--from STAGE] [--only STAGE] [--dry_run] [--threads N]
 #        [--work DIR]   (default /root/quad/tmp/rebuild)
 #
 # The model stage regenerates committed source files (vertices231_exact27.*,
-# codebdd229.json, and Noperthedron's Vertices.lean etc.), so it only runs
+# codebdd231.json, and Noperthedron's Vertices.lean etc.), so it only runs
 # when asked for (--from model or --only model).
 set -euo pipefail
 
@@ -69,30 +69,30 @@ PACKS=$WORK/packs
 run mkdir -p "$WORK"
 
 echo "== build"
-run make -C "$NOPERT" -j 16 codebdd229.exe tubecode229.exe tuberefine229.exe \
+run make -C "$NOPERT" -j 16 codebdd231.exe tubecode231.exe tuberefine231.exe \
   export_codetrees_pack.exe search5d.exe pack5d.exe scoreboard5d.exe
 (cd "$LEAN" && lean_run lake build constructNopert229 check_global_rows validate_code_pack)
 
 if want model; then
   echo "== model"
-  (cd "$NOPERT" && run ./codebdd229.exe --root_file=nopert231_root.txt)
+  (cd "$NOPERT" && run ./codebdd231.exe --root_file=nopert231_root.txt)
   (cd "$LEAN" && run python3 scripts/nopert229_update_vertices.py \
     && run python3 scripts/nopert229_emit_tangent_cones.py Noperthedron/Nopert229/GeneratedTangentCones.lean \
     && run python3 scripts/nopert229_emit_wedge_cover.py Noperthedron/Nopert229/WedgeCoverData.lean)
-  run make -C "$NOPERT" -j 16 codebdd229.exe tubecode229.exe tuberefine229.exe \
+  run make -C "$NOPERT" -j 16 codebdd231.exe tubecode231.exe tuberefine231.exe \
     export_codetrees_pack.exe search5d.exe pack5d.exe
   (cd "$LEAN" && lean_run lake build constructNopert229 check_global_rows validate_code_pack)
 fi
 
-NCODES=$(python3 -c "import json; print(len(json.load(open('$NOPERT/codebdd229.json'))['codes']))")
+NCODES=$(python3 -c "import json; print(len(json.load(open('$NOPERT/codebdd231.json'))['codes']))")
 
 if want tube; then
   echo "== tube ($NCODES codes)"
   for code in $(seq 0 $((NCODES - 1))); do
-    (cd "$NOPERT" && run ./tubecode229.exe --code "$code" --output_dir "$TREES1" --threads "$THREADS")
+    (cd "$NOPERT" && run ./tubecode231.exe --code "$code" --output_dir "$TREES1" --threads "$THREADS")
   done
   for code in $(seq 0 $((NCODES - 1))); do
-    (cd "$NOPERT" && run ./tuberefine229.exe --code "$code" --in_dir "$TREES1" --out_dir "$TREES2" \
+    (cd "$NOPERT" && run ./tuberefine231.exe --code "$code" --in_dir "$TREES1" --out_dir "$TREES2" \
       --goal 1/50000 --threads "$THREADS")
   done
 fi
@@ -100,7 +100,7 @@ fi
 if want tubepack; then
   echo "== tubepack"
   (cd "$NOPERT" && run ./export_codetrees_pack.exe --trees_dir "$TREES2" --out_dir "$TUBEPACKS" \
-    --bdd codebdd229.json)
+    --bdd codebdd231.json)
 fi
 
 if want search; then
