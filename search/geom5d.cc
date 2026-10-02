@@ -139,6 +139,23 @@ BoxQ UpperHalf(const BoxQ &b, int axis) {
   return r;
 }
 
+Q CutPoint(const BoxQ &b, int axis, int eighths) {
+  CHECK(eighths >= 1 && eighths <= 7) << eighths;
+  return b.lo[axis] + (b.hi[axis] - b.lo[axis]) * Q(eighths, 8);
+}
+
+BoxQ LowerAt(const BoxQ &b, int axis, int eighths) {
+  BoxQ r = b;
+  r.hi[axis] = CutPoint(b, axis, eighths);
+  return r;
+}
+
+BoxQ UpperAt(const BoxQ &b, int axis, int eighths) {
+  BoxQ r = b;
+  r.lo[axis] = CutPoint(b, axis, eighths);
+  return r;
+}
+
 Interval5 ToInterval(const BoxQ &b) {
   Interval5 iv;
   iv.min[0] = Q(0);

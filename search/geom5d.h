@@ -63,6 +63,12 @@ BoxQ RootBox(int chart);
 // The lower or upper half along axis (0..2 = x, y, z).
 BoxQ LowerHalf(const BoxQ &b, int axis);
 BoxQ UpperHalf(const BoxQ &b, int axis);
+// The cut point lo + (hi - lo) * eighths / 8 along axis (eighths in 1..7),
+// and the parts below and above it (AtlasInterval.lowerAt / upperAt; the
+// point is inside the range, so Lean's clamp does nothing).
+Q CutPoint(const BoxQ &b, int axis, int eighths);
+BoxQ LowerAt(const BoxQ &b, int axis, int eighths);
+BoxQ UpperAt(const BoxQ &b, int axis, int eighths);
 // The pose interval Lean rows carry: θ, φ at their fixed root range.
 Interval5 ToInterval(const BoxQ &b);
 
