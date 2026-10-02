@@ -19,6 +19,7 @@
 //                   [--threads 8]
 
 #include <atomic>
+#include <chrono>
 #include <cstdio>
 #include <deque>
 #include <format>
@@ -154,6 +155,14 @@ class Packer {
         lo = hi;
       }
     };
+    const auto job_start = std::chrono::steady_clock::now();
+    auto phase = [&](const char *what) {
+      if (nodes.size() < 1000000) return;
+      printf("  t=%d: %s (%.0fs)\n", t, what,
+             std::chrono::duration<double>(std::chrono::steady_clock::now() - job_start).count());
+      fflush(stdout);
+    };
+    phase(std::format("{} nodes, {} views", nodes.size(), views.size()).c_str());
     by_levels(nodes.size(), [&](size_t n) { return nodes[n].depth; }, [&](size_t n) {
       N &node = nodes[n];
       if (node.parent < 0) return;
@@ -177,6 +186,7 @@ class Packer {
       view.outer_str = TriangleString(view.outer);
     });
 
+    phase("boxes and view triangles done");
     // Certificate leaves, built over the outer triangle (and checked), or
     // over the exact one if that fails. Grouped by view to share the pool.
     struct Built {
@@ -228,6 +238,7 @@ class Packer {
              (long long)relax_failures.load());
     }
 
+    phase("certificates built");
     // Relaxable subtrees, bottom-up (children come after parents).
     std::vector<char> relaxable(nodes.size(), 0), has_cert(nodes.size(), 0);
     for (int n = (int)nodes.size() - 1; n >= 0; n--) {
@@ -498,6 +509,9 @@ int main(int argc, char **argv) {
       const size_t before = packer.NumRows();
       roots.push_back(packer.AddJob(jobs[k], trees[k], next_id));
       next_id += packer.NumRows() - before;
+      printf("[%zu/%zu jobs] t=%d: %zu rows (total %zu)\n", k + 1, jobs.size(), jobs[k],
+             packer.NumRows() - before, packer.NumRows());
+      fflush(stdout);
       rows5d::Tree().splits.swap(trees[k].splits);
       std::vector<rows5d::Record>().swap(trees[k].leaves);
     }
