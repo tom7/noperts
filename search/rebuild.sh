@@ -9,7 +9,7 @@
 #   tubepack  tube trees -> Lean packs + manifest (export_codetrees_pack)
 #   search  5D search, charts 0-2 (search5d), until nothing is deferred
 #   pack    per-code 5D packs (pack5d --per_code)
-#   verify  Lean: check every table and build the proof (constructNopert229)
+#   verify  Lean: check every table and build the proof (constructNopert231)
 #
 # Every stage is restartable: tubecode231 and search5d journal their work,
 # and pack5d skips packs newer than their journals.
@@ -71,17 +71,17 @@ run mkdir -p "$WORK"
 echo "== build"
 run make -C "$NOPERT" -j 16 codebdd231.exe tubecode231.exe tuberefine231.exe \
   export_codetrees_pack.exe search5d.exe pack5d.exe scoreboard5d.exe
-(cd "$LEAN" && lean_run lake build constructNopert229 check_global_rows validate_code_pack)
+(cd "$LEAN" && lean_run lake build constructNopert231 check_global_rows validate_code_pack)
 
 if want model; then
   echo "== model"
   (cd "$NOPERT" && run ./codebdd231.exe --root_file=nopert231_root.txt)
-  (cd "$LEAN" && run python3 scripts/nopert229_update_vertices.py \
-    && run python3 scripts/nopert229_emit_tangent_cones.py Noperthedron/Nopert229/GeneratedTangentCones.lean \
-    && run python3 scripts/nopert229_emit_wedge_cover.py Noperthedron/Nopert229/WedgeCoverData.lean)
+  (cd "$LEAN" && run python3 scripts/nopert231_update_vertices.py \
+    && run python3 scripts/nopert231_emit_tangent_cones.py Noperthedron/Nopert231/GeneratedTangentCones.lean \
+    && run python3 scripts/nopert231_emit_wedge_cover.py Noperthedron/Nopert231/WedgeCoverData.lean)
   run make -C "$NOPERT" -j 16 codebdd231.exe tubecode231.exe tuberefine231.exe \
     export_codetrees_pack.exe search5d.exe pack5d.exe
-  (cd "$LEAN" && lean_run lake build constructNopert229 check_global_rows validate_code_pack)
+  (cd "$LEAN" && lean_run lake build constructNopert231 check_global_rows validate_code_pack)
 fi
 
 NCODES=$(python3 -c "import json; print(len(json.load(open('$NOPERT/codebdd231.json'))['codes']))")
@@ -122,5 +122,5 @@ fi
 
 if want verify; then
   echo "== verify"
-  (cd "$LEAN" && lean_run .lake/build/bin/constructNopert229 "$TUBEPACKS/manifest.txt" "$PACKS")
+  (cd "$LEAN" && lean_run .lake/build/bin/constructNopert231 "$TUBEPACKS/manifest.txt" "$PACKS")
 fi

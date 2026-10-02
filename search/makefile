@@ -15,7 +15,7 @@ qtube: tubecode231.exe tuberefine231.exe export_codetrees_pack.exe tube-scoreboa
 # 5D search (notes/SEARCH5D.md):
 #  search5d: parallel journaled search per (code triangle, chart) job.
 #  pack5d: journals -> Lean packs, one per code (check with Noperthedron's
-#    check_global_rows / constructNopert229).
+#    check_global_rows / constructNopert231).
 #  scoreboard5d: per-job status from the journals and packs.
 s5d: search5d.exe pack5d.exe scoreboard5d.exe
 
