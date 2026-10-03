@@ -103,7 +103,10 @@ run mkdir -p "$WORK"
 echo "== build"
 run make -C "$NOPERT" -j "$THREADS" codebdd231.exe tubecode231.exe tuberefine231.exe \
   export_codetrees_pack.exe search5d.exe pack5d.exe scoreboard5d.exe
-(cd "$LEAN" && lean_run lake build constructNopert231 check_global_rows validate_code_pack)
+# Lean is needed only by the model (generated sources) and verify stages.
+if want model || want verify; then
+  (cd "$LEAN" && lean_run lake build constructNopert231 check_global_rows validate_code_pack)
+fi
 
 if want model; then
   echo "== model"
