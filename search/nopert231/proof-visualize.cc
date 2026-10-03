@@ -50,8 +50,8 @@ struct Frame {
   vec3 e1 = yocto::normalize(vec3{1, -1, 0}), e2 = yocto::normalize(vec3{1, 1, -2});
   vec2 lo{1e9, 1e9}, hi{-1e9, -1e9};
   double scale = 1, ox = 0, oy = 0;
-  // Leave room on the right for the color bar.
-  static constexpr int kMargin = 80, kBar = 360;
+  // Leave room on the right for the color bar and at the top for the title.
+  static constexpr int kMargin = 80, kBar = 360, kTop = 140;
 
   vec2 Plane(const vec3 &p) const { return {yocto::dot(p, e1), yocto::dot(p, e2)}; }
   void Fit(const std::vector<geom5d::TriangleD> &tris) {
@@ -62,10 +62,10 @@ struct Frame {
         hi = {std::max(hi.x, q.x), std::max(hi.y, q.y)};
       }
     }
-    const double w = width - 2 * kMargin - kBar, h = height - 2 * kMargin;
+    const double w = width - 2 * kMargin - kBar, h = height - kTop - kMargin;
     scale = std::min(w / (hi.x - lo.x), h / (hi.y - lo.y));
     ox = kMargin + (w - scale * (hi.x - lo.x)) / 2;
-    oy = kMargin + (h - scale * (hi.y - lo.y)) / 2;
+    oy = kTop + (h - scale * (hi.y - lo.y)) / 2;
   }
   vec2 Pixel(const vec3 &p) const {
     const vec2 q = Plane(p);
