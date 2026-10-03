@@ -25,7 +25,21 @@
 # them).
 #
 # Usage: ./rebuild.sh [--from STAGE] [--only STAGE] [--dry_run] [--threads N]
-#        [--work DIR]   (default /root/quad/tmp/rebuild)
+#        [--mem_gb G] [--work DIR]   (default /root/quad/tmp/rebuild)
+#
+# Resources: --threads defaults to every core (nproc). The tools also use it
+# for the build; the Lean verifier sizes its own pool to the machine.
+# Measured peak memory (2026-10-03, 64 cores):
+#   tube stages, check_identity_tube   a few GB
+#   search5d                           ~15 GB
+#   pack5d chart 0                     ~46-51 GB (all of code 51.0's tree)
+#   constructNopert231                 ~30 GB
+# So the rebuild needs ~64 GB of RAM (or swap). --mem_gb caps every stage
+# (default: the larger of 90% of RAM and 60 GB; never below what the
+# rebuild needs, since swap can make up the difference). C++ tools get it
+# as ulimit -v plus 16 GB for virtual-only reservations (thread stacks,
+# malloc arenas); Lean runs in a systemd scope with MemoryMax (ulimit -v
+# would stop Lean from creating threads).
 #
 # The model stage regenerates committed source files (vertices231_exact27.*,
 # codebdd231.json, and Noperthedron's Vertices.lean etc.), so it only runs
@@ -36,7 +50,9 @@ STAGES=(model tube tubepack search pack verify)
 FROM=tube
 ONLY=""
 DRY=0
-THREADS=60
+THREADS=$(nproc)
+RAM_GB=$(awk '/MemTotal/ {print int($2 / 1048576)}' /proc/meminfo)
+MEM_GB=$(( RAM_GB * 9 / 10 > 60 ? RAM_GB * 9 / 10 : 60 ))
 WORK=/root/quad/tmp/rebuild
 NOPERT=$(cd "$(dirname "$0")" && pwd)
 LEAN=$NOPERT/../Noperthedron
@@ -46,6 +62,7 @@ while [ $# -gt 0 ]; do
     --only) ONLY=$2; shift 2 ;;
     --dry_run) DRY=1; shift ;;
     --threads) THREADS=$2; shift 2 ;;
+    --mem_gb) MEM_GB=$2; shift 2 ;;
     --work) WORK=$2; shift 2 ;;
     *) echo "unknown argument $1" >&2; exit 1 ;;
   esac
@@ -57,7 +74,7 @@ run() {
 }
 # Lean executables run under a memory cap (ulimit -v would stop Lean's threads).
 lean_run() {
-  run systemd-run --scope -q -p MemoryMax=100G -p MemorySwapMax=0 "$@"
+  run systemd-run --scope -q -p MemoryMax="${MEM_GB}G" "$@"
 }
 want() {
   local stage=$1
@@ -70,7 +87,11 @@ want() {
   return 1
 }
 
-ulimit -v 120000000
+echo "== resources: $THREADS threads, memory cap ${MEM_GB} GB (RAM ${RAM_GB} GB)"
+if [ "$RAM_GB" -lt 64 ]; then
+  echo "warning: ${RAM_GB} GB of RAM; pack5d needs ~50 GB at peak, so expect swapping" >&2
+fi
+ulimit -v $(( (MEM_GB + 16) * 1048576 ))
 TREES1=$WORK/trees_r1
 TREES2=$WORK/trees_r2
 TUBEPACKS=$WORK/tube_packs
@@ -79,7 +100,7 @@ PACKS=$WORK/packs
 run mkdir -p "$WORK"
 
 echo "== build"
-run make -C "$NOPERT" -j 16 codebdd231.exe tubecode231.exe tuberefine231.exe \
+run make -C "$NOPERT" -j "$THREADS" codebdd231.exe tubecode231.exe tuberefine231.exe \
   export_codetrees_pack.exe search5d.exe pack5d.exe scoreboard5d.exe
 (cd "$LEAN" && lean_run lake build constructNopert231 check_global_rows validate_code_pack)
 
@@ -89,7 +110,7 @@ if want model; then
   (cd "$LEAN" && run python3 scripts/nopert231_update_vertices.py \
     && run python3 scripts/nopert231_emit_tangent_cones.py Noperthedron/Nopert231/GeneratedTangentCones.lean \
     && run python3 scripts/nopert231_emit_wedge_cover.py Noperthedron/Nopert231/WedgeCoverData.lean)
-  run make -C "$NOPERT" -j 16 codebdd231.exe tubecode231.exe tuberefine231.exe \
+  run make -C "$NOPERT" -j "$THREADS" codebdd231.exe tubecode231.exe tuberefine231.exe \
     export_codetrees_pack.exe search5d.exe pack5d.exe
   (cd "$LEAN" && lean_run lake build constructNopert231 check_global_rows validate_code_pack)
 fi
