@@ -20,6 +20,9 @@
 #   neighbor m00 m01 ... m22 the 12 rotations by +-72 degrees about the six
 #                            5-fold axes (the Dirichlet-cell neighbors of the
 #                            identity in SO(3)/I), row-major, 40 decimals
+#   view_triangle a b c ...  the view domain: a rational triangle on the plane
+#                            x + y + z = 1 (3 corners, 9 fractions) containing
+#                            the Schwarz chamber of Ih at the z pole
 #
 # Usage: python3 snub_model.py [out=snub_model.txt] [header=symmetry_neighbors.h]
 
@@ -163,6 +166,49 @@ mfaces = [sorted(index[m] for m in f) for f in faces]
 neighbors = [g for g in fgroup if abs(trace(g) - phi) < TOL]  # angle 72: trace 1 + 2 cos 72 = phi
 assert len(neighbors) == 12
 
+# View domain: the Schwarz (2,3,5) chamber of Ih = I x {+-1} at the z pole
+# between the mirrors at azimuths 18 and 54 degrees. Its corners are z, the
+# 3-fold axis at azimuth 18 (polar 37.38 degrees) and the 2-fold axis at
+# azimuth 54 (polar 31.72 degrees); its third side is on the bisector of z
+# and the 5-fold axis at azimuth 54. VIEW_TRIANGLE is a rational triangle on
+# the plane x + y + z = 1 containing it, bounded by y >= (8/25) x (tan 18 =
+# 0.3249), y <= (69/50) x (tan 54 = 1.3764), and 1.95 x + 2.3 y <= 1 (the
+# bisector is 1.95106 x + 2.30902 y <= 1); every exact corner is checked to
+# be inside, so the chamber (their convex hull) is.
+def axis_of(g):
+    v = [g[2][1] - g[1][2], g[0][2] - g[2][0], g[1][0] - g[0][1]]
+    if norm(v) < TOL:  # rotation by pi: from g + I
+        return rotation_axis(g)
+    return [x / norm(v) for x in v]
+def azimuth_deg(v): return math.degrees(math.atan2(float(v[1]), float(v[0]))) % 360
+def find_axis(tr, az):
+    for g in fgroup:
+        if abs(trace(g) - tr) < TOL:
+            for sgn in (1, -1):
+                v = [sgn * x for x in axis_of(g)]
+                if v[2] > 0 and abs(azimuth_deg(v) - az) < 1e-6 and float(v[2]) > 0.7:
+                    return v
+    raise AssertionError((tr, az))
+corner3 = find_axis(zero, 18)        # 3-fold: trace 1 + 2 cos 120 = 0
+corner2 = find_axis(-one, 54)        # 2-fold: trace -1
+chamber = [[zero, zero, one], corner3, corner2]
+from fractions import Fraction as F
+VIEW_TRIANGLE = [(F(0), F(0), F(1)), (F(500, 1343), F(160, 1343), F(683, 1343)),
+                 (F(250, 1281), F(345, 1281), F(686, 1281))]
+for c in VIEW_TRIANGLE: assert sum(c) == 1
+def proj(v):
+    t = sum(v)
+    return [x / t for x in v]
+def in_triangle(p, tri):  # barycentric coordinates, all > 0 (strict)
+    a, b, c = [[D(x.numerator) / D(x.denominator) for x in t] for t in tri]
+    def det2(u, v, w): return (u[0] - w[0]) * (v[1] - w[1]) - (v[0] - w[0]) * (u[1] - w[1])
+    total = det2(a, b, c)
+    l = [det2(p, b, c) / total, det2(a, p, c) / total, det2(a, b, p) / total]
+    return min(l)
+for k, cnr in enumerate(chamber):
+    m = in_triangle(proj(cnr), VIEW_TRIANGLE)
+    assert m > 0 or (k == 0 and abs(m) < TOL), (k, m)  # the pole is a shared corner
+
 out = sys.argv[1] if len(sys.argv) > 1 else "snub_model.txt"
 fmt = lambda x: f"{x:.40f}"
 with open(out, "w") as f:
@@ -173,6 +219,7 @@ with open(out, "w") as f:
         if len(fc) > 3: f.write("face " + " ".join(map(str, fc)) + "\n")
     for g in neighbors:
         f.write("neighbor " + " ".join(fmt(x) for x in flat(g)) + "\n")
+    f.write("view_triangle " + " ".join(f"{x.numerator}/{x.denominator}" for c in VIEW_TRIANGLE for x in c) + "\n")
 # The neighbors rounded to 10^-12 (|exact - rational| < 10^-12 per entry), for
 # the search's icosahedral prune (exact5d IcoPrune*) and, identically, Lean.
 hdr = sys.argv[2] if len(sys.argv) > 2 else "symmetry_neighbors.h"
