@@ -115,6 +115,8 @@ std::string FormatRecord(const Record &r) {
           return std::format("pr {}", p);
         } else if constexpr (std::is_same_v<T, FundamentalPruneLeaf>) {
           return std::format("pf {} {}", p, leaf.direction > 0 ? "+" : "-");
+        } else if constexpr (std::is_same_v<T, IcoPruneLeaf>) {
+          return std::format("pi {} {}", p, leaf.neighbor);
         } else {
           return std::format("df {}", p);
         }
@@ -165,6 +167,10 @@ Journal ParseJournal(std::string_view text) {
       std::string d;
       CHECK(ss >> d && (d == "+" || d == "-")) << line;
       leaf = FundamentalPruneLeaf{d == "+" ? 1 : -1};
+    } else if (tag == "pi") {
+      IcoPruneLeaf l;
+      CHECK(ss >> l.neighbor && l.neighbor >= 0) << line;
+      leaf = l;
     } else if (tag == "df") {
       leaf = DeferredLeaf{};
     } else if (tag == "done") {

@@ -7,6 +7,8 @@
 #include <string_view>
 #include <vector>
 #include <queue>
+#include <algorithm>
+#include <cstdio>
 #include <filesystem>
 
 #include "rapidjson/document.h"
@@ -271,7 +273,19 @@ int main(int argc, char **argv) {
     CHECK(!bdd.HasParseError() && bdd.HasMember("codes")) << "Bad BDD JSON " << bdd_json;
   }
 
-  for (int code_idx = 0; code_idx < 79; code_idx++) {
+  // Every code: from the BDD if given, else every tree.<N>.json in trees_dir.
+  int num_codes = 0;
+  if (!bdd_json.empty()) {
+    num_codes = bdd["codes"].Size();
+  } else {
+    for (const auto &entry : std::filesystem::directory_iterator(trees_dir)) {
+      int n = -1;
+      if (std::sscanf(entry.path().filename().c_str(), "tree.%d.json", &n) == 1) {
+        num_codes = std::max(num_codes, n + 1);
+      }
+    }
+  }
+  for (int code_idx = 0; code_idx < num_codes; code_idx++) {
     if (single_code >= 0 && code_idx != single_code) continue;
 
     std::string json_path = StringPrintf("%s/tree.%d.json", trees_dir.c_str(), code_idx);

@@ -152,6 +152,12 @@ bool OutsideCayleyBall(const Interval5 &iv);
 // (Direction.positive) or -1 (Direction.negative).
 Q FundamentalLower(const Interval5 &iv, int chart, int direction);
 bool FundamentalPruneValid(const Interval5 &iv, int chart, int direction);
+// Icosahedral prune (snub dodecahedron): some right symmetry, the rotation
+// by +-72 degrees about one of the six 5-fold axes (neighbor n of
+// symmetry_neighbors.h), strictly increases trace over the whole box, so the
+// box is outside the identity's icosahedral Dirichlet cell.
+Q IcoPruneLower(const Interval5 &iv, int chart, int n);
+bool IcoPruneValid(const Interval5 &iv, int chart, int n);
 
 // symmetryTube: AtlasProjectiveLocalViewTree.Tube.Valid for chart 0 and
 // symmetry index 0 (the identity tube), i.e. identityMismatchRadius <= r.

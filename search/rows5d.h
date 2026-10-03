@@ -19,6 +19,8 @@
 //   tu <path> <r>                 symmetryTube with radius r (exact rational)
 //   pr <path>                     radiusPrune
 //   pf <path> <+|->               fundamentalPrune (direction positive/negative)
+//   pi <path> <n>                 icosahedral prune by symmetry neighbor n
+//                                 (symmetry_neighbors.h; exact5d::IcoPruneValid)
 //   df <path>                     deferred: an unresolved subtree (not packable)
 //   done <path>                   the subtree at <path> is complete: every leaf
 //                                 below it is in the journal (written after them)
@@ -88,7 +90,11 @@ struct FundamentalPruneLeaf {
   int direction = 1;  // +1 positive, -1 negative
 };
 struct DeferredLeaf {};
-using Leaf = std::variant<CertLeaf, MixedLeaf, TubeLeaf, RadiusPruneLeaf, FundamentalPruneLeaf, DeferredLeaf>;
+struct IcoPruneLeaf {
+  int neighbor = 0;
+};
+using Leaf = std::variant<CertLeaf, MixedLeaf, TubeLeaf, RadiusPruneLeaf, FundamentalPruneLeaf, DeferredLeaf,
+                          IcoPruneLeaf>;
 
 struct Record {
   std::string path;

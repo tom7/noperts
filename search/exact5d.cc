@@ -1,5 +1,7 @@
 #include "exact5d.h"
 
+#include "symmetry_neighbors.h"
+
 #include <array>
 
 #include "base/logging.h"
@@ -663,6 +665,38 @@ Q FundamentalLower(const Interval5 &iv, int chart, int direction) {
 
 bool FundamentalPruneValid(const Interval5 &iv, int chart, int direction) {
   return Q(2, 125000) < FundamentalLower(iv, chart, direction);
+}
+
+namespace {
+// Icosahedral prune: the trace advantage of right-composing with neighbor n,
+// trace(R G) - trace(R), times the Cayley denominator:
+// sum_ij s_i Num_ij(w) (G~_ji - delta_ij), with G~ the rounded neighbor.
+Quad3 IcoAdvantageQuadratic(int chart, int n) {
+  CHECK(n >= 0 && n < NUM_SYMMETRY_NEIGHBORS);
+  Quad3 sum;
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      const Q g = Q(SYMMETRY_NEIGHBOR_NUM[n][3 * j + i], SYMMETRY_NEIGHBOR_DENOM) - Q(i == j ? 1 : 0);
+      sum = QuadAdd(sum, QuadScale(g, QuadScale(ChartSign(chart, i), NumeratorQuadratic(i, j))));
+    }
+  }
+  return sum;
+}
+}  // namespace
+
+Q IcoPruneLower(const Interval5 &iv, int chart, int n) {
+  const auto vars = RelativeBalls(iv);
+  const Quad3 q = IcoAdvantageQuadratic(chart, n);
+  const RatBall tight = QuadEvalTightBall(vars, q);
+  return BigRat::Max(tight.center - tight.radius, BernsteinLower(vars, q));
+}
+
+// |G - G~| < 10^-12 per entry and |Num_ij| <= 1 + |w|^2 <= 4 on the bounded
+// region, so the rounding changes the quadratic by less than 36 * 10^-12.
+Q IcoPruneAllowance() { return Q(36, SYMMETRY_NEIGHBOR_DENOM); }
+
+bool IcoPruneValid(const Interval5 &iv, int chart, int n) {
+  return IcoPruneAllowance() < IcoPruneLower(iv, chart, n);
 }
 
 Q IdentityMismatchRadius(const Interval5 &iv) {

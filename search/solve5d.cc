@@ -6,6 +6,7 @@
 #include "base/logging.h"
 #include "bignum/big.h"
 #include "bignum/big-overloads.h"
+#include "symmetry_neighbors.h"
 
 namespace solve5d {
 
@@ -56,6 +57,23 @@ std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
   if (exact5d::OutsideCayleyBall(iv)) return rows5d::RadiusPruneLeaf{};
   for (int dir : {1, -1}) {
     if (exact5d::FundamentalPruneValid(iv, job_.chart, dir)) return rows5d::FundamentalPruneLeaf{dir};
+  }
+  // Icosahedral prune: a neighbor that increases trace over the whole box.
+  // The exact lower bound is at most the value at the center, so only try
+  // neighbors whose advantage there (in double) is clearly positive.
+  {
+    const geom5d::BoxD b = geom5d::ToDouble(node.box);
+    const geom5d::mat3 r = geom5d::RelativeRotation(job_.chart, b.center);
+    for (int n = 0; n < NUM_SYMMETRY_NEIGHBORS; n++) {
+      double adv = 0;
+      for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+          const double g = (double)SYMMETRY_NEIGHBOR_NUM[n][3 * j + i] / SYMMETRY_NEIGHBOR_DENOM;
+          adv += r[j][i] * (g - (i == j ? 1.0 : 0.0));  // yocto: r[col][row]
+        }
+      }
+      if (adv > 1e-9 && exact5d::IcoPruneValid(iv, job_.chart, n)) return rows5d::IcoPruneLeaf{n};
+    }
   }
   if (job_.chart == 0) {
     const auto reached = atlas_->Walk(job_.t, rows5d::ViewPath(node.path));
@@ -282,7 +300,8 @@ std::vector<rows5d::Record> Solver::SolveSubtree(const Node &root, int64_t max_n
             if constexpr (std::is_same_v<T, rows5d::MixedLeaf>) stats_.mx++;
             if constexpr (std::is_same_v<T, rows5d::TubeLeaf>) stats_.tu++;
             if constexpr (std::is_same_v<T, rows5d::RadiusPruneLeaf>) stats_.pr++;
-            if constexpr (std::is_same_v<T, rows5d::FundamentalPruneLeaf>) stats_.pf++;
+            if constexpr (std::is_same_v<T, rows5d::FundamentalPruneLeaf> ||
+                          std::is_same_v<T, rows5d::IcoPruneLeaf>) stats_.pf++;
           },
           *leaf);
       if (live_ != nullptr) {

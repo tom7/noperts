@@ -347,7 +347,8 @@ class Packer {
       } else {
         // Prune rows do not depend on their region.
         relaxable[n] = std::holds_alternative<rows5d::RadiusPruneLeaf>(node.leaf->leaf) ||
-                       std::holds_alternative<rows5d::FundamentalPruneLeaf>(node.leaf->leaf);
+                       std::holds_alternative<rows5d::FundamentalPruneLeaf>(node.leaf->leaf) ||
+                       std::holds_alternative<rows5d::IcoPruneLeaf>(node.leaf->leaf);
       }
     }
     auto relax_point = [&](int n) {
@@ -544,6 +545,9 @@ class Packer {
             return r;
           } else if constexpr (std::is_same_v<T, rows5d::RadiusPruneLeaf>) {
             return std::format(",7,{},{},0,{}", id, iv, tri_id);
+          } else if constexpr (std::is_same_v<T, rows5d::IcoPruneLeaf>) {
+            // Lean Row.icoPrune (tag 13): neighbor index.
+            return std::format(",13,{},{},{},0,{}", id, iv, l.neighbor, tri_id);
           } else if constexpr (std::is_same_v<T, rows5d::FundamentalPruneLeaf>) {
             return std::format(",8,{},{},{},0,{}", id, iv, l.direction > 0 ? 1 : 0, tri_id);
           } else if constexpr (std::is_same_v<T, rows5d::DeferredLeaf>) {
