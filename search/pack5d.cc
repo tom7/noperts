@@ -53,6 +53,20 @@
 
 namespace {
 
+// Current and peak resident memory, from /proc/self/status.
+std::string MemoryString() {
+  std::ifstream f("/proc/self/status");
+  std::string line, rss = "?", hwm = "?";
+  while (std::getline(f, line)) {
+    auto gb = [&](std::string *out) {
+      *out = std::format("{:.1f}G", std::stod(line.substr(line.find(':') + 1)) / (1 << 20));
+    };
+    if (line.rfind("VmRSS:", 0) == 0) gb(&rss);
+    if (line.rfind("VmHWM:", 0) == 0) gb(&hwm);
+  }
+  return std::format("rss {}, peak {}", rss, hwm);
+}
+
 std::string Zigzag(const BigRat &r) {
   const BigInt num = r.Numerator();
   const BigInt den = r.Denominator();
@@ -167,8 +181,9 @@ class Packer {
     const auto job_start = std::chrono::steady_clock::now();
     auto phase = [&](const char *what) {
       if (nodes.size() < 1000000) return;
-      printf("  t=%d: %s (%.0fs)\n", t, what,
-             std::chrono::duration<double>(std::chrono::steady_clock::now() - job_start).count());
+      printf("  t=%d: %s (%.0fs; %s)\n", t, what,
+             std::chrono::duration<double>(std::chrono::steady_clock::now() - job_start).count(),
+             MemoryString().c_str());
       fflush(stdout);
     };
     phase(std::format("{} nodes, {} views", nodes.size(), views.size()).c_str());
@@ -187,6 +202,7 @@ class Packer {
                                    : geom5d::UpperAt(p.box, s.axis, s.eighths);
       }
     });
+    phase("boxes done");
     by_levels(views.size(), [&](size_t v) { return views[v].depth; }, [&](size_t v) {
       View &view = views[v];
       if (view.parent >= 0) view.exact = geom5d::SplitTriangle(views[view.parent].exact, view.child);
@@ -195,7 +211,7 @@ class Packer {
       view.outer_str = TriangleString(view.outer);
     });
 
-    phase("boxes and view triangles done");
+    phase("view triangles done");
     // Certificate leaves, built over the outer triangle (and checked), or
     // over the exact one if that fails. Grouped by view to share the pool.
     struct Built {
@@ -297,6 +313,7 @@ class Packer {
       tri_of[n] = TriangleId(relaxed[n] ? view.outer_str : view.exact_str);
     }
     std::vector<std::string>().swap(iv_str);
+    phase("table ids done");
     // Rows in parallel.
     std::vector<std::string> out(nodes.size()), relax_out(nodes.size());
     ParallelComp(nodes.size(), [&](int64_t n) {
@@ -334,6 +351,7 @@ class Packer {
       }
       out[n] = std::move(row);
     }, threads_);
+    phase("rows done");
     for (size_t n = 0; n < nodes.size(); n++) {
       if (!relax_out[n].empty()) rows_.push_back(std::move(relax_out[n]));
       rows_.push_back(std::move(out[n]));
