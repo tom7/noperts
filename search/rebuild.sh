@@ -32,10 +32,11 @@
 # Measured peak memory (2026-10-03, 64 cores):
 #   tube stages, check_identity_tube   a few GB
 #   search5d                           ~15 GB
-#   pack5d chart 0                     ~46-51 GB (all of code 51.0's tree)
+#   pack5d chart 0                     ~10 GB (code 51.0; was ~50 GB before
+#                                      interning view triangles and boxes)
 #   constructNopert231                 ~30 GB
-# So the rebuild needs ~64 GB of RAM (or swap). --mem_gb caps every stage
-# (default: the larger of 90% of RAM and 60 GB; never below what the
+# So the rebuild needs ~32 GB of RAM (or swap). --mem_gb caps every stage
+# (default: the larger of 90% of RAM and 40 GB; never below what the
 # rebuild needs, since swap can make up the difference). C++ tools get it
 # as ulimit -v plus 16 GB for virtual-only reservations (thread stacks,
 # malloc arenas); Lean runs in a systemd scope with MemoryMax (ulimit -v
@@ -52,7 +53,7 @@ ONLY=""
 DRY=0
 THREADS=$(nproc)
 RAM_GB=$(awk '/MemTotal/ {print int($2 / 1048576)}' /proc/meminfo)
-MEM_GB=$(( RAM_GB * 9 / 10 > 60 ? RAM_GB * 9 / 10 : 60 ))
+MEM_GB=$(( RAM_GB * 9 / 10 > 40 ? RAM_GB * 9 / 10 : 40 ))
 WORK=/root/quad/tmp/rebuild
 NOPERT=$(cd "$(dirname "$0")" && pwd)
 LEAN=$NOPERT/../Noperthedron
@@ -88,8 +89,8 @@ want() {
 }
 
 echo "== resources: $THREADS threads, memory cap ${MEM_GB} GB (RAM ${RAM_GB} GB)"
-if [ "$RAM_GB" -lt 64 ]; then
-  echo "warning: ${RAM_GB} GB of RAM; pack5d needs ~50 GB at peak, so expect swapping" >&2
+if [ "$RAM_GB" -lt 40 ]; then
+  echo "warning: ${RAM_GB} GB of RAM; Lean verification needs ~30 GB at peak, so expect swapping" >&2
 fi
 ulimit -v $(( (MEM_GB + 16) * 1048576 ))
 TREES1=$WORK/trees_r1
