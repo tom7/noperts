@@ -14,7 +14,9 @@
 // Usage: proof-visualize.exe (--tube | --search5d | --margin) [--out FILE.png]
 //          [--trees_dir trees_r2] [--bdd codebdd231.json] [--journals jobs]
 //          [--chart C] [--zoom T] [--threads N] [--width 3840 --height 2160]
-//   --zoom T: fit the image to code triangle T (e.g. 102, code 51.0: the canyon).
+//   --zoom T: fit the image to code triangle T (e.g. 102, code 51.0: the canyon),
+//     outlined in red.
+//   --labels: write each code triangle's "code.tri" at its centroid.
 //   e.g. proof-visualize.exe --tube --out tube.png
 //        proof-visualize.exe --search5d --chart 0 --out search_c0.png
 
@@ -182,6 +184,7 @@ ImageRGBA Render(const Frame &fr, const std::vector<double> &vals, double lo, do
 int main(int argc, char **argv) {
   std::string mode, out, trees_dir = "trees_r2", bdd = "codebdd231.json", journals = "jobs";
   int chart = -1, threads = 60, zoom = -1;
+  bool labels = false;
   Frame fr;
   for (int i = 1; i < argc; i++) {
     const std::string a = argv[i];
@@ -196,6 +199,7 @@ int main(int argc, char **argv) {
     else if (a == "--journals") journals = next();
     else if (a == "--chart") chart = std::stoi(next());
     else if (a == "--zoom") zoom = std::stoi(next());
+    else if (a == "--labels") labels = true;
     else if (a == "--threads") threads = std::stoi(next());
     else if (a == "--width") fr.width = std::stoi(next());
     else if (a == "--height") fr.height = std::stoi(next());
@@ -294,8 +298,25 @@ int main(int argc, char **argv) {
     img = Render(fr, vals, -4.0, -0.5, code_tris,
                  "Nopert #231: first-order rigidity margin of the identity pose", "margin");
   }
+  if (zoom >= 0) {
+    for (int i = 0; i < 3; i++) {
+      const auto &t = code_tris[zoom];
+      const vec2 a = fr.Pixel(t.corners[i]), b = fr.Pixel(t.corners[(i + 1) % 3]);
+      img.BlendThickLine32(a.x, a.y, b.x, b.y, 3.0f, 0xFF3030C0);
+    }
+  }
+  if (labels) {
+    for (int t = 0; t < atlas.NumTriangles(); t++) {
+      const auto [code, tri] = atlas.CodeAndTriangle(t);
+      const std::string s = std::format("{}.{}", code, tri);
+      const vec2 c = fr.Pixel(geom5d::Centroid(code_tris[t]));
+      const int w = 18 * (int)s.size() + 4, x = (int)c.x - w / 2, y = (int)c.y - 18;
+      if (x < 0 || y < 0 || x + w > fr.width - Frame::kBar || y + 36 > fr.height) continue;
+      img.BlendRect32(x - 4, y - 2, w + 8, 40, 0x000000A0);
+      BigText(&img, x, y, 0xFFFFFFFF, s, 2);
+    }
+  }
   CHECK(img.Save(out)) << out;
-  (void)zoom;
   Print("wrote {}\n", out);
   return 0;
 }
