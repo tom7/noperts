@@ -14,6 +14,16 @@
 # Every stage is restartable: tubecode231 and search5d journal their work,
 # and pack5d skips packs newer than their journals.
 #
+# Reproducibility: tubecode231, tuberefine231 and pack5d are deterministic
+# (independent of --threads); search5d is not (work order). The verified
+# tube (archive r1_verified_2026-10-02/trees_r1) is NOT what the tube stage
+# produces today: 35 of its 77 codes come from an older binary (before the
+# deterministic support-point search, 2026-10-01), so a run from the tube
+# stage builds a different (equally checkable) tube and then needs its own
+# search. To re-verify the archived result, start from the archived trees,
+# journals or packs (--from pack / --from verify with --work pointing at
+# them).
+#
 # Usage: ./rebuild.sh [--from STAGE] [--only STAGE] [--dry_run] [--threads N]
 #        [--work DIR]   (default /root/quad/tmp/rebuild)
 #
