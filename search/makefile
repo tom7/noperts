@@ -113,6 +113,11 @@ polyrigidity.exe : polyrigidity.o rigidity-margin.o $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"
 
+# Floating-point check of the icosahedral prune (snub, S.md §2.3): the
+# symmetry neighbors, the extent of the Dirichlet cell, and sampled points
+# of every pi leaf in the journals.
+#   icoprune_check.exe --journals DIR   (built by the generic %.exe rule)
+
 # Oneoffs kept for reuse (each source has a Usage line); build with
 # make oneoffs/<name>.exe.
 #   5D search diagnostics (#231):
