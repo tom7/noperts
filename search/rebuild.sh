@@ -26,6 +26,8 @@
 #
 # Usage: ./rebuild.sh [--from STAGE] [--only STAGE] [--dry_run] [--threads N]
 #        [--mem_gb G] [--work DIR]   (default /root/quad/tmp/rebuild)
+#        [--model_file FILE]  model stage: a generic model (e.g. snub_model.txt)
+#                             instead of #231's nopert231_root.txt
 #
 # Resources: --threads defaults to every core (nproc). The tools also use it
 # for the build; the Lean verifier sizes its own pool to the machine.
@@ -55,6 +57,7 @@ THREADS=$(nproc)
 RAM_GB=$(awk '/MemTotal/ {print int($2 / 1048576)}' /proc/meminfo)
 MEM_GB=$(( RAM_GB * 9 / 10 > 40 ? RAM_GB * 9 / 10 : 40 ))
 WORK=/root/quad/tmp/rebuild
+MODEL_FILE=""
 NOPERT=$(cd "$(dirname "$0")" && pwd)
 LEAN=$NOPERT/../Noperthedron
 while [ $# -gt 0 ]; do
@@ -65,6 +68,7 @@ while [ $# -gt 0 ]; do
     --threads) THREADS=$2; shift 2 ;;
     --mem_gb) MEM_GB=$2; shift 2 ;;
     --work) WORK=$2; shift 2 ;;
+    --model_file) MODEL_FILE=$2; shift 2 ;;
     *) echo "unknown argument $1" >&2; exit 1 ;;
   esac
 done
@@ -110,7 +114,11 @@ fi
 
 if want model; then
   echo "== model"
-  (cd "$NOPERT" && run ./codebdd231.exe --root_file=nopert231_root.txt)
+  if [ -n "$MODEL_FILE" ]; then
+    (cd "$NOPERT" && run ./codebdd231.exe --model_file="$MODEL_FILE" codebdd231.json)
+  else
+    (cd "$NOPERT" && run ./codebdd231.exe --root_file=nopert231_root.txt)
+  fi
   (cd "$LEAN" && run python3 scripts/nopert231_update_vertices.py \
     && run python3 scripts/nopert231_emit_tangent_cones.py Noperthedron/Nopert231/GeneratedTangentCones.lean \
     && run python3 scripts/nopert231_emit_wedge_cover.py Noperthedron/Nopert231/WedgeCoverData.lean)
