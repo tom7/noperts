@@ -113,173 +113,241 @@ class Packer {
   // certificate, and whose certificates all hold exactly over the outer
   // triangle (checked here with exact5d, at about the cost of building them).
   //
+  // View triangles and boxes are interned: the search often splits the box
+  // before the view, so one view triangle recurs under many boxes and one
+  // box under many views (chart 0, t=102: 16.4M nodes, 2.35M view nodes,
+  // 118,800 distinct triangles, 226,641 distinct boxes). Each distinct one
+  // is computed and encoded once, and certificates over the same triangle
+  // share contact pools.
+  //
   // The exact arithmetic (view triangles with ~1000-bit corners, their outer
   // triangles, boxes, encodings, certificates) runs in parallel; only the
   // table numbering is sequential, in row order.
   int AddJob(int t, const rows5d::Tree &tree, int first_id) {
     const solve5d::Node root = solve5d::RootNode(atlas_, {.t = t, .chart = chart_});
-    std::unordered_map<std::string, const rows5d::Split *> split_at;
-    for (const auto &s : tree.splits) split_at[s.path] = &s;
-    std::unordered_map<std::string, const rows5d::Leaf *> leaf_at;
-    for (const auto &r : tree.leaves) leaf_at[r.path] = &r.leaf;
 
-    // Nodes in breadth-first order (so depth never decreases), with their
-    // parents and views; boxes and triangles are filled in below.
-    struct N {
-      std::string path;
-      int parent = -1;
-      int depth = 0;
-      int child = 0;  // index among the parent's children
-      const rows5d::Split *split = nullptr;
-      const rows5d::Leaf *leaf = nullptr;
-      std::vector<int> kids;
-      int view = 0;  // index into views
-      geom5d::BoxQ box;
-    };
-    struct View {
+    // Distinct view triangles and boxes, each derived from its parent.
+    struct Tri {
       int parent = -1, child = 0, depth = 0;
       exact5d::TriangleQ exact, outer;
       std::string exact_str, outer_str;
     };
-    std::vector<N> nodes;
-    std::vector<View> views(1);
-    views[0].exact = root.tri;
-    nodes.push_back({.path = "", .view = 0, .box = root.box});
-    for (size_t q = 0; q < nodes.size(); q++) {
-      auto it = split_at.find(nodes[q].path);
-      if (it == split_at.end()) {
-        nodes[q].leaf = leaf_at.at(nodes[q].path);
-        continue;
+    struct Box {
+      int parent = -1, axis = 0, eighths = 4, depth = 0;
+      bool upper = false;
+      geom5d::BoxQ box;
+      std::string str;
+    };
+    std::vector<Tri> tris(1);
+    std::vector<Box> boxes(1);
+    tris[0].exact = root.tri;
+    boxes[0].box = root.box;
+    std::unordered_map<int64_t, int> tri_key, box_key;
+    auto intern_tri = [&](int parent, int child) {
+      auto [it, fresh] = tri_key.emplace((int64_t)parent * 4 + child, (int)tris.size());
+      if (fresh) tris.push_back({.parent = parent, .child = child, .depth = tris[parent].depth + 1});
+      return it->second;
+    };
+    auto intern_box = [&](int parent, int axis, int eighths, bool upper) {
+      const int64_t key = (int64_t)parent * 64 + axis * 16 + eighths * 2 + (upper ? 1 : 0);
+      auto [it, fresh] = box_key.emplace(key, (int)boxes.size());
+      if (fresh) {
+        boxes.push_back({.parent = parent, .axis = axis, .eighths = eighths,
+                         .depth = boxes[parent].depth + 1, .upper = upper});
       }
-      const rows5d::Split &s = *it->second;
-      nodes[q].split = &s;
-      const auto kids = rows5d::ChildPaths(s);
-      for (int k = 0; k < (int)kids.size(); k++) {
-        N c{.path = kids[k], .parent = (int)q, .depth = nodes[q].depth + 1, .child = k};
-        if (s.view) {
-          c.view = views.size();
-          views.push_back({.parent = nodes[q].view, .child = k,
-                           .depth = views[nodes[q].view].depth + 1});
+      return it->second;
+    };
+
+    // Nodes in breadth-first order (so a node's children are contiguous and
+    // come after it). A node's path is its split's or leaf record's.
+    struct N {
+      const rows5d::Split *split = nullptr;
+      const rows5d::Record *leaf = nullptr;
+      int parent = -1;
+      int first_kid = 0;
+      int tri = 0, box = 0;
+      uint8_t child = 0, num_kids = 0;
+      const std::string &Path() const { return split != nullptr ? split->path : leaf->path; }
+    };
+    std::vector<N> nodes(1);
+    {
+      std::unordered_map<std::string_view, const rows5d::Split *> split_at;
+      split_at.reserve(tree.splits.size());
+      for (const auto &s : tree.splits) split_at[s.path] = &s;
+      std::unordered_map<std::string_view, const rows5d::Record *> leaf_at;
+      leaf_at.reserve(tree.leaves.size());
+      for (const auto &r : tree.leaves) leaf_at[r.path] = &r;
+      auto resolve = [&](std::string_view path, N *n) {
+        if (auto it = split_at.find(path); it != split_at.end()) {
+          n->split = it->second;
         } else {
-          c.view = nodes[q].view;
+          auto jt = leaf_at.find(path);
+          CHECK(jt != leaf_at.end()) << "no node at " << path << " (job t=" << t << ")";
+          n->leaf = jt->second;
         }
-        nodes[q].kids.push_back(nodes.size());
-        nodes.push_back(std::move(c));
+      };
+      resolve("", &nodes[0]);
+      for (size_t q = 0; q < nodes.size(); q++) {
+        if (nodes[q].split == nullptr) continue;
+        const rows5d::Split &s = *nodes[q].split;
+        const int tri = nodes[q].tri, box = nodes[q].box;
+        const auto kids = rows5d::ChildPaths(s);
+        nodes[q].first_kid = nodes.size();
+        nodes[q].num_kids = kids.size();
+        for (int k = 0; k < (int)kids.size(); k++) {
+          N c{.parent = (int)q, .child = (uint8_t)k};
+          if (s.view) {
+            c.tri = intern_tri(tri, k);
+            c.box = box;
+          } else {
+            c.tri = tri;
+            c.box = intern_box(box, s.axis, s.eighths, k == 1);
+          }
+          resolve(kids[k], &c);
+          nodes.push_back(c);
+        }
       }
     }
-    // Calls f(i) for every element, level by level (each level after its
-    // parents' level), in parallel within a level.
-    auto by_levels = [&](size_t n, auto depth_of, const auto &f) {
-      size_t lo = 0;
-      while (lo < n) {
-        size_t hi = lo;
-        while (hi < n && depth_of(hi) == depth_of(lo)) hi++;
-        ParallelComp(hi - lo, [&](int64_t k) { f(lo + k); }, threads_);
-        lo = hi;
-      }
-    };
+    std::unordered_map<int64_t, int>().swap(tri_key);
+    std::unordered_map<int64_t, int>().swap(box_key);
+
     const auto job_start = std::chrono::steady_clock::now();
-    auto phase = [&](const char *what) {
+    auto phase = [&](const std::string &what) {
       if (nodes.size() < 1000000) return;
-      printf("  t=%d: %s (%.0fs; %s)\n", t, what,
+      printf("  t=%d: %s (%.0fs; %s)\n", t, what.c_str(),
              std::chrono::duration<double>(std::chrono::steady_clock::now() - job_start).count(),
              MemoryString().c_str());
       fflush(stdout);
     };
-    phase(std::format("{} nodes, {} views", nodes.size(), views.size()).c_str());
-    by_levels(nodes.size(), [&](size_t n) { return nodes[n].depth; }, [&](size_t n) {
-      N &node = nodes[n];
-      if (node.parent < 0) return;
-      const N &p = nodes[node.parent];
-      const rows5d::Split &s = *p.split;
-      if (s.view) {
-        node.box = p.box;
-      } else if (s.eighths == 4) {
-        node.box = node.child == 0 ? geom5d::LowerHalf(p.box, s.axis)
-                                   : geom5d::UpperHalf(p.box, s.axis);
-      } else {
-        node.box = node.child == 0 ? geom5d::LowerAt(p.box, s.axis, s.eighths)
-                                   : geom5d::UpperAt(p.box, s.axis, s.eighths);
-      }
-    });
-    phase("boxes done");
-    by_levels(views.size(), [&](size_t v) { return views[v].depth; }, [&](size_t v) {
-      View &view = views[v];
-      if (view.parent >= 0) view.exact = geom5d::SplitTriangle(views[view.parent].exact, view.child);
-      view.outer = geom5d::OuterDyadicTriangle(view.exact);
-      view.exact_str = TriangleString(view.exact);
-      view.outer_str = TriangleString(view.outer);
-    });
+    phase(std::format("{} nodes, {} distinct view triangles, {} distinct boxes", nodes.size(),
+                      tris.size(), boxes.size()));
 
-    phase("view triangles done");
-    // Certificate leaves, built over the outer triangle (and checked), or
-    // over the exact one if that fails. Grouped by view to share the pool.
-    struct Built {
-      bool outer_ok = false;
-      std::string body;  // the row after its triangle index
+    // Calls f(i) for every i < n, in parallel, after every i' of smaller depth.
+    auto by_depth = [&](size_t n, auto depth_of, const auto &f) {
+      std::vector<std::vector<int>> levels;
+      for (size_t i = 0; i < n; i++) {
+        const int d = depth_of(i);
+        if (d >= (int)levels.size()) levels.resize(d + 1);
+        levels[d].push_back(i);
+      }
+      for (const auto &level : levels) {
+        ParallelComp(level.size(), [&](int64_t k) { f(level[k]); }, threads_);
+      }
     };
-    std::vector<Built> built_rows(nodes.size());
-    std::map<int, std::vector<int>> cert_by_view;
-    for (int n = 0; n < (int)nodes.size(); n++) {
-      if (nodes[n].leaf != nullptr && IsCertificate(*nodes[n].leaf)) {
-        cert_by_view[nodes[n].view].push_back(n);
-      }
-    }
-    std::vector<const std::vector<int> *> groups;
-    for (const auto &[v, g] : cert_by_view) groups.push_back(&g);
-    std::atomic<int64_t> relax_failures = 0;
-    ParallelComp(groups.size(), [&](int64_t gi) {
-      const std::vector<int> &group = *groups[gi];
-      const View &view = views[nodes[group[0]].view];
-      std::map<int, contacts5d::ContactPool> pools;  // by cone_samples
-      auto pool_for = [&](int cone_samples) -> const contacts5d::ContactPool & {
-        auto it = pools.find(cone_samples);
-        if (it == pools.end()) {
-          contacts5d::PoolParams params;
-          params.cone_samples = cone_samples;
-          it = pools.emplace(cone_samples,
-                             contacts5d::BuildContactPool(geom5d::ToDouble(view.exact), params))
-                   .first;
+    by_depth(boxes.size(), [&](size_t b) { return boxes[b].depth; }, [&](int b) {
+      Box &box = boxes[b];
+      if (box.parent >= 0) {
+        const geom5d::BoxQ &p = boxes[box.parent].box;
+        if (box.eighths == 4) {
+          box.box = box.upper ? geom5d::UpperHalf(p, box.axis) : geom5d::LowerHalf(p, box.axis);
+        } else {
+          box.box = box.upper ? geom5d::UpperAt(p, box.axis, box.eighths)
+                              : geom5d::LowerAt(p, box.axis, box.eighths);
         }
-        return it->second;
-      };
-      for (int n : group) {
-        Built &b = built_rows[n];
-        bool ok = false;
-        b.body = CertBody(nodes[n].path, *nodes[n].leaf, view.outer, nodes[n].box, pool_for,
-                          /*check=*/true, &ok);
-        if (ok) {
-          b.outer_ok = true;
-          continue;
-        }
-        relax_failures++;
-        b.body = CertBody(nodes[n].path, *nodes[n].leaf, view.exact, nodes[n].box, pool_for,
-                          exact_check_, &ok);
-        CHECK(ok) << "certificate fails exactly at " << nodes[n].path;
       }
-    }, threads_);
-    if (relax_failures > 0) {
-      printf("t=%d: %lld certificates fail over the outer triangle; kept exact\n", t,
-             (long long)relax_failures.load());
-    }
+      box.str = IntervalString(box.box);
+    });
+    by_depth(tris.size(), [&](size_t v) { return tris[v].depth; }, [&](int v) {
+      Tri &tri = tris[v];
+      if (tri.parent >= 0) tri.exact = geom5d::SplitTriangle(tris[tri.parent].exact, tri.child);
+      tri.outer = geom5d::OuterDyadicTriangle(tri.exact);
+      tri.exact_str = TriangleString(tri.exact);
+      tri.outer_str = TriangleString(tri.outer);
+    });
+    phase("boxes and view triangles done");
 
+    // Certificate leaves, built over the outer triangle (and checked), or
+    // over the exact one if that fails. Grouped by triangle to share the
+    // contact pool, in chunks for load balance. Each chunk's row bodies (the
+    // row after its triangle index) go into one buffer.
+    struct BodyRef {
+      int chunk = -1;
+      uint32_t offset = 0, length = 0;
+    };
+    std::vector<BodyRef> body_ref(nodes.size());
+    std::vector<char> outer_ok(nodes.size(), 0);
+    std::vector<std::string> body_buf;
+    {
+      std::vector<std::vector<int>> by_tri(tris.size());
+      for (int n = 0; n < (int)nodes.size(); n++) {
+        if (nodes[n].leaf != nullptr && IsCertificate(nodes[n].leaf->leaf)) {
+          by_tri[nodes[n].tri].push_back(n);
+        }
+      }
+      struct Chunk {
+        int tri;
+        size_t lo, hi;  // into by_tri[tri]
+      };
+      constexpr size_t kChunk = 4096;
+      std::vector<Chunk> chunks;
+      for (int v = 0; v < (int)tris.size(); v++) {
+        for (size_t lo = 0; lo < by_tri[v].size(); lo += kChunk) {
+          chunks.push_back({v, lo, std::min(by_tri[v].size(), lo + kChunk)});
+        }
+      }
+      body_buf.resize(chunks.size());
+      std::atomic<int64_t> relax_failures = 0;
+      ParallelComp(chunks.size(), [&](int64_t ci) {
+        const Chunk &chunk = chunks[ci];
+        const Tri &tri = tris[chunk.tri];
+        std::map<int, contacts5d::ContactPool> pools;  // by cone_samples
+        auto pool_for = [&](int cone_samples) -> const contacts5d::ContactPool & {
+          auto it = pools.find(cone_samples);
+          if (it == pools.end()) {
+            contacts5d::PoolParams params;
+            params.cone_samples = cone_samples;
+            it = pools.emplace(cone_samples,
+                               contacts5d::BuildContactPool(geom5d::ToDouble(tri.exact), params))
+                     .first;
+          }
+          return it->second;
+        };
+        std::string &buf = body_buf[ci];
+        for (size_t i = chunk.lo; i < chunk.hi; i++) {
+          const int n = by_tri[chunk.tri][i];
+          const N &node = nodes[n];
+          const geom5d::BoxQ &box = boxes[node.box].box;
+          bool ok = false;
+          std::string body = CertBody(node.Path(), node.leaf->leaf, tri.outer, box, pool_for,
+                                      /*check=*/true, &ok);
+          if (ok) {
+            outer_ok[n] = 1;
+          } else {
+            relax_failures++;
+            body = CertBody(node.Path(), node.leaf->leaf, tri.exact, box, pool_for, exact_check_,
+                            &ok);
+            CHECK(ok) << "certificate fails exactly at " << node.Path();
+          }
+          body_ref[n] = {(int)ci, (uint32_t)buf.size(), (uint32_t)body.size()};
+          buf += body;
+        }
+      }, threads_);
+      if (relax_failures > 0) {
+        printf("t=%d: %lld certificates fail over the outer triangle; kept exact\n", t,
+               (long long)relax_failures.load());
+      }
+    }
     phase("certificates built");
+
     // Relaxable subtrees, bottom-up (children come after parents).
     std::vector<char> relaxable(nodes.size(), 0), has_cert(nodes.size(), 0);
     for (int n = (int)nodes.size() - 1; n >= 0; n--) {
       const N &node = nodes[n];
       if (node.split != nullptr) {
         bool r = !node.split->view, c = false;
-        for (int k : node.kids) r = r && relaxable[k], c = c || has_cert[k];
+        for (int k = node.first_kid; k < node.first_kid + node.num_kids; k++) {
+          r = r && relaxable[k];
+          c = c || has_cert[k];
+        }
         relaxable[n] = r;
         has_cert[n] = c;
-      } else if (IsCertificate(*node.leaf)) {
-        relaxable[n] = built_rows[n].outer_ok;
+      } else if (IsCertificate(node.leaf->leaf)) {
+        relaxable[n] = outer_ok[n];
         has_cert[n] = 1;
       } else {
         // Prune rows do not depend on their region.
-        relaxable[n] = std::holds_alternative<rows5d::RadiusPruneLeaf>(*node.leaf) ||
-                       std::holds_alternative<rows5d::FundamentalPruneLeaf>(*node.leaf);
+        relaxable[n] = std::holds_alternative<rows5d::RadiusPruneLeaf>(node.leaf->leaf) ||
+                       std::holds_alternative<rows5d::FundamentalPruneLeaf>(node.leaf->leaf);
       }
     }
     auto relax_point = [&](int n) {
@@ -296,66 +364,85 @@ class Packer {
       content_id[n] = relax_point(n) ? next++ : id_of[n];
       relaxed[n] = relax_point(n) || (n > 0 && relaxed[nodes[n].parent]);
     }
-    // Interval encodings in parallel; then table numbers in row order.
-    std::vector<std::string> iv_str(nodes.size());
-    ParallelComp(nodes.size(), [&](int64_t n) { iv_str[n] = IntervalString(nodes[n].box); },
-                 threads_);
-    std::vector<int> iv_of(nodes.size()), tri_of(nodes.size()), exact_tri(nodes.size(), -1),
-        outer_tri(nodes.size(), -1);
+    // Table numbers in row order (first use), each distinct box and
+    // triangle looked up once.
+    std::vector<int> box_iv(boxes.size(), -1), tri_exact(tris.size(), -1),
+        tri_outer(tris.size(), -1);
+    auto iv_id = [&](int b) {
+      if (box_iv[b] < 0) box_iv[b] = IntervalId(boxes[b].str);
+      return box_iv[b];
+    };
+    auto exact_id = [&](int v) {
+      if (tri_exact[v] < 0) tri_exact[v] = TriangleId(tris[v].exact_str);
+      return tri_exact[v];
+    };
+    auto outer_id = [&](int v) {
+      if (tri_outer[v] < 0) tri_outer[v] = TriangleId(tris[v].outer_str);
+      return tri_outer[v];
+    };
+    std::vector<int> iv_of(nodes.size()), tri_of(nodes.size());
     for (int n = 0; n < (int)nodes.size(); n++) {
-      const View &view = views[nodes[n].view];
-      iv_of[n] = IntervalId(iv_str[n]);
+      const int v = nodes[n].tri;
+      iv_of[n] = iv_id(nodes[n].box);
       if (relax_point(n)) {
-        exact_tri[n] = TriangleId(view.exact_str);
-        outer_tri[n] = TriangleId(view.outer_str);
+        exact_id(v);
+        outer_id(v);
         relax_rows_++;
       }
-      tri_of[n] = TriangleId(relaxed[n] ? view.outer_str : view.exact_str);
+      tri_of[n] = relaxed[n] ? outer_id(v) : exact_id(v);
     }
-    std::vector<std::string>().swap(iv_str);
     phase("table ids done");
-    // Rows in parallel.
-    std::vector<std::string> out(nodes.size()), relax_out(nodes.size());
-    ParallelComp(nodes.size(), [&](int64_t n) {
-      const N &node = nodes[n];
-      const int iv = iv_of[n];
-      std::string row;
-      if (relax_point(n)) {
-        relax_out[n] = std::format(",11,{},{},{},0,{},{}", id_of[n], iv, content_id[n],
-                                   exact_tri[n], outer_tri[n]);
-      }
-      const int id = content_id[n];
-      const int region = tri_of[n];
-      if (node.split != nullptr) {
-        const std::vector<int> &k = node.kids;
-        if (node.split->view) {
-          row += std::format(",2,{},{},{},{},{},{},0,{}", id, iv, id_of[k[0]], id_of[k[1]],
-                             id_of[k[2]], id_of[k[3]], region);
-        } else if (node.split->eighths == 4) {
-          row += std::format(",1,{},{},{},{},{},0,{}", id, iv, id_of[k[0]], id_of[k[1]],
-                             node.split->axis + 2, region);
-        } else {
-          // Lean cayleySplitAt.
-          row += std::format(",12,{},{},{},{},{},{},0,{}", id, iv, id_of[k[0]], id_of[k[1]],
-                             node.split->axis + 2,
-                             Zigzag(geom5d::CutPoint(node.box, node.split->axis, node.split->eighths)),
-                             region);
+
+    // Rows in parallel, in chunks of consecutive nodes.
+    constexpr int kRowChunk = 65536;
+    const int num_chunks = (nodes.size() + kRowChunk - 1) / kRowChunk;
+    std::vector<std::string> out(num_chunks);
+    std::atomic<int64_t> rows = 0;
+    ParallelComp(num_chunks, [&](int64_t ci) {
+      std::string &row = out[ci];
+      const int hi = std::min<int>(nodes.size(), (ci + 1) * kRowChunk);
+      for (int n = ci * kRowChunk; n < hi; n++) {
+        const N &node = nodes[n];
+        const int iv = iv_of[n];
+        if (relax_point(n)) {
+          row += std::format(",11,{},{},{},0,{},{}", id_of[n], iv, content_id[n],
+                             tri_exact[node.tri], tri_outer[node.tri]);
+          rows++;
         }
-      } else if (IsCertificate(*node.leaf)) {
-        // Each certificate is used over the triangle it was built for.
-        CHECK(relaxed[n] == built_rows[n].outer_ok) << node.path;
-        const char *tag = std::holds_alternative<rows5d::CertLeaf>(*node.leaf) ? "4" : "9";
-        row += std::format(",{},{},{},0,{}", tag, id, iv, region) + built_rows[n].body;
-      } else {
-        row += OtherLeafRow(t, node.path, *node.leaf, id, iv, region);
+        rows++;
+        const int id = content_id[n];
+        const int region = tri_of[n];
+        if (node.split != nullptr) {
+          const int k = node.first_kid;
+          if (node.split->view) {
+            row += std::format(",2,{},{},{},{},{},{},0,{}", id, iv, id_of[k], id_of[k + 1],
+                               id_of[k + 2], id_of[k + 3], region);
+          } else if (node.split->eighths == 4) {
+            row += std::format(",1,{},{},{},{},{},0,{}", id, iv, id_of[k], id_of[k + 1],
+                               node.split->axis + 2, region);
+          } else {
+            // Lean cayleySplitAt.
+            const geom5d::BoxQ &box = boxes[node.box].box;
+            row += std::format(",12,{},{},{},{},{},{},0,{}", id, iv, id_of[k], id_of[k + 1],
+                               node.split->axis + 2,
+                               Zigzag(geom5d::CutPoint(box, node.split->axis, node.split->eighths)),
+                               region);
+          }
+        } else if (IsCertificate(node.leaf->leaf)) {
+          // Each certificate is used over the triangle it was built for.
+          CHECK(relaxed[n] == outer_ok[n]) << node.Path();
+          const char *tag = std::holds_alternative<rows5d::CertLeaf>(node.leaf->leaf) ? "4" : "9";
+          const BodyRef &b = body_ref[n];
+          row += std::format(",{},{},{},0,{}", tag, id, iv, region);
+          row.append(body_buf[b.chunk], b.offset, b.length);
+        } else {
+          row += OtherLeafRow(t, node.Path(), node.leaf->leaf, id, iv, region);
+        }
       }
-      out[n] = std::move(row);
     }, threads_);
     phase("rows done");
-    for (size_t n = 0; n < nodes.size(); n++) {
-      if (!relax_out[n].empty()) rows_.push_back(std::move(relax_out[n]));
-      rows_.push_back(std::move(out[n]));
-    }
+    num_rows_ += rows.load();
+    for (auto &chunk : out) rows_.push_back(std::move(chunk));
     return first_id;
   }
 
@@ -367,12 +454,13 @@ class Packer {
                                   children.size());
     for (int c : children) row += std::format(",{}", c);
     rows_.insert(rows_.begin(), row);
+    num_rows_++;
   }
 
   void Write(const std::string &path) const {
     std::ofstream f(path, std::ios::binary);
     CHECK(f.good()) << path;
-    f << rows_.size() << "," << intervals_.size();
+    f << num_rows_ << "," << intervals_.size();
     for (const auto &s : intervals_) f << s;
     f << "," << triangles_.size();
     for (const auto &s : triangles_) f << s;
@@ -380,7 +468,7 @@ class Packer {
     f << "\n";
   }
 
-  size_t NumRows() const { return rows_.size(); }
+  size_t NumRows() const { return num_rows_; }
 
  private:
   static bool IsCertificate(const rows5d::Leaf &leaf) {
@@ -475,7 +563,9 @@ class Packer {
   bool exact_check_;
   int threads_ = 8;
   int64_t relax_rows_ = 0;
+  // The rows, concatenated in chunks (each row starts with ',').
   std::vector<std::string> rows_;
+  size_t num_rows_ = 0;
   std::vector<std::string> intervals_, triangles_;
   std::unordered_map<std::string, int> interval_ids_, triangle_ids_;
 };
