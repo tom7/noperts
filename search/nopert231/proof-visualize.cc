@@ -131,12 +131,22 @@ void BigText(ImageRGBA *img, int x, int y, uint32_t color, const std::string &s,
   img->BlendImage(x, y, t.ScaleBy(scale / 2));
 }
 
+constexpr uint32_t kBackground = 0x101018FF;
+
+// 10^v as a color-bar label: "1e-4", or "3.2e-1" between powers of ten.
+std::string PowerOfTen(double v) {
+  const double e = std::floor(v + 1e-9);
+  const double mant = std::pow(10.0, v - e);
+  if (mant < 1.05) return std::format("1e{}", (int)e);
+  return std::format("{:.1f}e{}", mant, (int)e);
+}
+
 // Paints values (log10, NaN = none) with a color bar labeled lo..hi.
 ImageRGBA Render(const Frame &fr, const std::vector<double> &vals, double lo, double hi,
                  const std::vector<geom5d::TriangleD> &outlines, const std::string &title,
                  const std::string &unit) {
   ImageRGBA img(fr.width, fr.height);
-  img.Clear32(0x101018FF);
+  img.Clear32(kBackground);
   for (int y = 0; y < fr.height; y++) {
     for (int x = 0; x < fr.width; x++) {
       const double v = vals[y * fr.width + x];
@@ -149,15 +159,21 @@ ImageRGBA Render(const Frame &fr, const std::vector<double> &vals, double lo, do
       img.BlendLineAA32(a.x, a.y, b.x, b.y, 0xFFFFFF60);
     }
   }
-  // Color bar.
+  // Color bar, on a plain panel (zoomed views fill the whole image).
+  img.FillRect32(fr.width - Frame::kBar, 0, Frame::kBar, fr.height, kBackground);
   const int bx = fr.width - Frame::kBar + 40, by = 260, bh = fr.height - 520, bw = 60;
   for (int i = 0; i < bh; i++) img.FillRect32(bx, by + i, bw, 1, Viridis(1.0 - (double)i / bh));
   for (int k = 0; k <= 4; k++) {
     const double v = hi - (hi - lo) * k / 4;
-    BigText(&img, bx + bw + 16, by + bh * k / 4 - 18, 0xEEEEEEFF, std::format("1e{:.1f}", v));
+    BigText(&img, bx + bw + 16, by + bh * k / 4 - 18, 0xEEEEEEFF, PowerOfTen(v));
   }
   BigText(&img, bx - 20, by - 90, 0xEEEEEEFF, unit);
-  BigText(&img, Frame::kMargin, 20, 0xFFFFFFFF, title, 6);
+  // The title at the largest even scale (up to 6) that fits beside the bar.
+  const int avail = fr.width - Frame::kBar - Frame::kMargin;
+  int scale = 6;
+  while (scale > 2 && 9 * scale * (int)title.size() > avail) scale -= 2;
+  img.FillRect32(0, 0, fr.width - Frame::kBar, 20 + 18 * scale, kBackground);
+  BigText(&img, Frame::kMargin, 20, 0xFFFFFFFF, title, scale);
   return img;
 }
 
@@ -260,7 +276,7 @@ int main(int argc, char **argv) {
     img = Render(fr, vals, 3.0, 11.0, code_tris,
                  std::format("Nopert #231: 5D search leaves per unit view area ({})",
                              chart >= 0 ? std::format("chart {}", chart) : std::string("charts 0-2")),
-                 "leaves/area");
+                 "leaves");
   } else {
     std::vector<rigidity::vec3> verts;
     for (int i = 0; i < NUM_VERTICES; i++) verts.push_back({VERTICES[i][0], VERTICES[i][1], VERTICES[i][2]});
