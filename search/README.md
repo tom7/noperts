@@ -3,7 +3,7 @@
 A polyhedron is *Rupert* if a hole can be cut through it through which a congruent copy can pass, and a *Nopert* if it is not Rupert (Lean: `¬ IsRupert`). This repository, together with the Lean formalization on the `pentagonalhexecontahedron` branch of [Noperthedron](https://github.com/jcreedcmu/Noperthedron), proves that **every pentagonal hexecontahedron is a Nopert**:
 
 ```lean
--- Noperthedron/SnubDodecahedron/Statement.lean
+-- Noperthedron/PentagonalHexecontahedron/Statement.lean
 theorem polarDualSnubDodecahedron_not_rupert (h : ∀ P : IModel, ¬ IsRupert P.toC5.verts) :
     ∀ V : Finset ℝ³, (V : Set ℝ³) = pentagonalHexecontahedron → ¬ IsRupert V
 theorem pentagonalHexecontahedron_not_rupert (h : ∀ P : IModel, ¬ IsRupert P.toC5.verts) :
@@ -83,6 +83,6 @@ As for the snub dodecahedron (the solids share the icosahedral group and frame):
 - 5D search and packing: `exact5d`, `geom5d`, `contacts5d`, `bounds5d`, `cert5d`, `lp5d`, `rows5d`, `solve5d`, `tubeatlas5d`; `search5d.cc`, `pack5d.cc`, `scoreboard5d.cc`; `icoprune_check.cc`.
 - Rendering: `codebdd --texture`, `viewmap.cc`, `rigidity-margin.{h,cc}`, `blender_code_texture.py`.
 - `rebuild.sh` runs the whole pipeline; `*_test.cc` are unit tests (`make`).
-- Lean (Noperthedron `pentagonalhexecontahedron`): `Noperthedron/SnubDodecahedron/` (shared with the snub dodecahedron's proof), plus the generic `Noperthedron/Atlas/`.
+- Lean (Noperthedron `pentagonalhexecontahedron`): `Noperthedron/PentagonalHexecontahedron/`, plus the generic `Noperthedron/Atlas/`.
 
 See `notes/HISTORY.md` for how this code came to be.

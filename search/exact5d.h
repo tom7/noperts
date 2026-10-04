@@ -1,8 +1,8 @@
 // Exact rational checks for the 5D search's certificate leaves, ported 1:1
 // from the Lean definitions that decide them:
 //
-//   projectiveGlobal       Noperthedron/SnubDodecahedron/AtlasProjectiveGlobalCertificate.lean
-//   projectiveMixedGlobal  Noperthedron/SnubDodecahedron/AtlasProjectiveMixedGlobalCertificate.lean
+//   projectiveGlobal       Noperthedron/PentagonalHexecontahedron/AtlasProjectiveGlobalCertificate.lean
+//   projectiveMixedGlobal  Noperthedron/PentagonalHexecontahedron/AtlasProjectiveMixedGlobalCertificate.lean
 //
 // Lean is the specification. Each function here carries the name of the Lean
 // definition it mirrors, and exact5d_test checks agreement with Lean on
@@ -153,7 +153,7 @@ bool OutsideCayleyBall(const Interval5 &iv);
 // (Direction.positive) or -1 (Direction.negative).
 Q FundamentalLower(const Interval5 &iv, int chart, int direction);
 bool FundamentalPruneValid(const Interval5 &iv, int chart, int direction);
-// Icosahedral prune (snub dodecahedron): some right symmetry, the rotation
+// Icosahedral prune (icosahedral solids): some right symmetry, the rotation
 // by +-72 degrees about one of the six 5-fold axes (neighbor n of
 // symmetry_neighbors.h), strictly increases trace over the whole box, so the
 // box is outside the identity's icosahedral Dirichlet cell.

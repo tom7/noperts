@@ -14,7 +14,7 @@ qtube: tubecode.exe tuberefine.exe export_codetrees_pack.exe
 # 5D search:
 #  search5d: parallel journaled search per (code triangle, chart) job.
 #  pack5d: journals -> Lean packs, one per code (checked by Noperthedron's
-#    constructSnubDodecahedron).
+#    constructPentagonalHexecontahedron).
 #  scoreboard5d: per-job status from the journals and packs.
 #  icoprune_check: floating-point check of the icosahedral prune leaves
 #    (icoprune_check.exe --journals DIR).

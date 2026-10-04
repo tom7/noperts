@@ -123,7 +123,7 @@ if want model; then
   (cd "$NOPERT" && run python3 ph_crosscheck.py "$MODEL_FILE")
   (cd "$NOPERT" && run ./codebdd.exe --model_file="$MODEL_FILE" codebdd.json)
   (cd "$LEAN" && run python3 scripts/update_vertices.py \
-    && run python3 scripts/emit_wedge_cover.py Noperthedron/SnubDodecahedron/WedgeCoverData.lean \
+    && run python3 scripts/emit_wedge_cover.py Noperthedron/PentagonalHexecontahedron/WedgeCoverData.lean \
     && run python3 scripts/snub_ico_group.py \
     && run python3 scripts/ph_statement_data.py)
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
