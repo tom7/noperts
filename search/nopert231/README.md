@@ -1,6 +1,6 @@
-# Nopert #231 is not Rupert
+# Candidate #231 is a Nopert
 
-A convex polyhedron is *Rupert* if a hole can be cut through it through which a congruent copy can pass. Nopert #231 is a convex polyhedron with 20 vertices and 27 faces (2 pentagons, 20 triangles and 5 planar quadrilaterals) and fivefold rotational symmetry about the z axis. This repository, together with the Lean formalization on the `nopert231` branch of [Noperthedron](https://github.com/jcreedcmu/Noperthedron), proves that it is not Rupert.
+A convex polyhedron is *Rupert* if a hole can be cut through it through which a congruent copy can pass, and a *Nopert* if it is not Rupert (Lean: `¬ IsRupert`). Candidate #231 is a convex polyhedron with 20 vertices and 27 faces (2 pentagons, 20 triangles and 5 planar quadrilaterals) and fivefold rotational symmetry about the z axis. This repository, together with the Lean formalization on the `nopert231` branch of [Noperthedron](https://github.com/jcreedcmu/Noperthedron), proves that it is a Nopert.
 
 ## What is proved
 
