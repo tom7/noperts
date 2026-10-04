@@ -2,7 +2,7 @@
 default : exact5d_test.exe geom5d_test.exe contacts5d_test.exe cert5d_test.exe tubeatlas5d_test.exe rows5d_test.exe solve5d_test.exe lp5d_test.exe tubetree_test.exe model_test.exe tube_test.exe
 
 # Every program of the pipeline (rebuild.sh runs it; see README.md).
-all: default qtube s5d codebdd.exe
+all: default qtube s5d codebdd.exe viewmap.exe
 
 # Rational model and identity tube:
 #  codebdd: exact rational model (model_vertices.*), codes and code
@@ -18,6 +18,10 @@ qtube: tubecode.exe tuberefine.exe export_codetrees_pack.exe
 #    check_global_rows / constructNopert231).
 #  scoreboard5d: per-job status from the journals and packs.
 s5d: search5d.exe pack5d.exe scoreboard5d.exe
+
+# Rendering (not part of the proof):
+#  viewmap: the first-order margin, search density or tube radius over all
+#    views, as an equirectangular image and a UDIM-textured OBJ of the solid.
 
 UNAME := $(shell uname -o)
 ifeq ($(findstring Linux,$(UNAME)),Linux)
@@ -94,6 +98,10 @@ $(CODEC)/%.o : $(CODEC)/%.cc
 %.o : %.cc *.h makefile
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 	@echo -n "."
+
+viewmap.exe : viewmap.o rigidity-margin.o $(OBJECTS_CORE) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+	@echo -n "!"
 
 # Generic pattern rules for executables
 %.exe : %.o $(OBJECTS_CORE) $(OBJECTS)
