@@ -4,8 +4,8 @@
 // exact5d::Valid confirms it on the exact box, so what the search writes is
 // what Lean accepts.
 
-#ifndef _NOPERT231_CERT5D_H
-#define _NOPERT231_CERT5D_H
+#ifndef _NOPERT_CERT5D_H
+#define _NOPERT_CERT5D_H
 
 #include <array>
 #include <vector>

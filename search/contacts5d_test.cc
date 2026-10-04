@@ -1,8 +1,10 @@
 #include "contacts5d.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <random>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -11,7 +13,7 @@
 #include "bignum/big-overloads.h"
 #include "exact5d.h"
 #include "geom5d.h"
-#include "nopert231.h"
+#include "model.h"
 #include "rapidjson/document.h"
 #include "util.h"
 
@@ -20,7 +22,7 @@ using exact5d::Q;
 
 static std::vector<exact5d::TriangleQ> CodeTriangles() {
   rapidjson::Document doc;
-  doc.Parse(Util::ReadFile("codebdd231.json").c_str());
+  doc.Parse(Util::ReadFile("codebdd.json").c_str());
   CHECK(!doc.HasParseError());
   std::vector<exact5d::TriangleQ> out;
   for (const auto &code : doc["codes"].GetArray()) {
@@ -36,18 +38,61 @@ static std::vector<exact5d::TriangleQ> CodeTriangles() {
   return out;
 }
 
+// The facets of the hull of the (double) vertices, each as its sorted
+// vertex set: the vertex sets of supporting planes through three vertices.
+static std::set<std::vector<int>> HullFacets() {
+  std::set<std::vector<int>> facets;
+  for (int i = 0; i < NUM_VERTICES; i++) {
+    for (int j = i + 1; j < NUM_VERTICES; j++) {
+      for (int k = j + 1; k < NUM_VERTICES; k++) {
+        const vec3 a = Vertex(i), b = Vertex(j), c = Vertex(k);
+        const vec3 n = yocto::cross(b - a, c - a);
+        const double len = yocto::length(n);
+        if (len < 1e-9) continue;
+        const double eps = 1e-9 * len;
+        bool pos = false, neg = false;
+        std::vector<int> on;
+        for (int v = 0; v < NUM_VERTICES; v++) {
+          const double d = yocto::dot(n, Vertex(v) - a);
+          if (d > eps) pos = true;
+          else if (d < -eps) neg = true;
+          else on.push_back(v);
+        }
+        if (!(pos && neg)) facets.insert(on);
+      }
+    }
+  }
+  return facets;
+}
+
 static void TestEdges() {
   const auto &edges = PolyhedronEdges();
-  // Euler: 20 vertices, 27 faces -> 45 edges.
-  CHECK((int)edges.size() == NUM_VERTICES + 27 - 2) << edges.size();
+  const std::set<std::vector<int>> facets = HullFacets();
+  // Euler's formula for a convex polyhedron.
+  CHECK((int)edges.size() == NUM_VERTICES + (int)facets.size() - 2)
+      << edges.size() << " edges, " << facets.size() << " facets";
   std::vector<int> degree(NUM_VERTICES, 0);
   for (const auto &[a, b] : edges) {
     CHECK(a < b);
     degree[a]++;
     degree[b]++;
+    // Every edge lies on exactly two facets.
+    int on = 0;
+    for (const auto &f : facets) {
+      if (std::binary_search(f.begin(), f.end(), a) && std::binary_search(f.begin(), f.end(), b)) on++;
+    }
+    CHECK(on == 2) << a << "-" << b << " on " << on << " facets";
   }
   for (int d : degree) CHECK(d >= 3);
-  printf("  %d polyhedron edges OK\n", (int)edges.size());
+  // A facet with k vertices has k edges.
+  for (const auto &f : facets) {
+    int fe = 0;
+    for (const auto &[a, b] : edges) {
+      if (std::binary_search(f.begin(), f.end(), a) && std::binary_search(f.begin(), f.end(), b)) fe++;
+    }
+    CHECK(fe == (int)f.size()) << fe << " edges on a facet with " << f.size() << " vertices";
+  }
+  printf("  %d polyhedron edges, %d facets OK\n", (int)edges.size(), (int)facets.size());
 }
 
 static void TestPools() {

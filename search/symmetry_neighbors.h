@@ -2,8 +2,8 @@
 // six 5-fold axes of the snub dodecahedron (5-fold frame), each entry
 // rounded to a multiple of 10^-12 (error < 10^-12). The icosahedral
 // prune (exact5d::IcoPruneValid) uses them.
-#ifndef _NOPERT231_SYMMETRY_NEIGHBORS_H
-#define _NOPERT231_SYMMETRY_NEIGHBORS_H
+#ifndef _NOPERT_SYMMETRY_NEIGHBORS_H
+#define _NOPERT_SYMMETRY_NEIGHBORS_H
 
 #include <cstdint>
 

@@ -2,7 +2,9 @@
 
 #include <chrono>
 #include <cstdio>
+#include <cstdlib>
 #include <filesystem>
+#include <string>
 #include <variant>
 
 #include "base/logging.h"
@@ -64,12 +66,17 @@ static void VerifySubtree(const tubeatlas5d::TubeAtlas &atlas, const Job &job,
   }
 }
 
-int main() {
-  if (!std::filesystem::exists("trees_r2/tree.0.json")) {
-    printf("SKIPPED: trees_r2 not present\n");
+// Usage: solve5d_test.exe [TREES_DIR]
+// TREES_DIR (or $TREES_DIR) holds the tube trees (tree.<code>.json, e.g.
+// tuberefine's output) for ./codebdd.json; without it the test is skipped.
+int main(int argc, char **argv) {
+  const char *env_trees = getenv("TREES_DIR");
+  const std::string trees_dir = argc > 1 ? argv[1] : (env_trees != nullptr ? env_trees : "");
+  if (trees_dir.empty() || !std::filesystem::exists(trees_dir + "/tree.0.json")) {
+    printf("SKIPPED: no tube trees (pass TREES_DIR)\n");
     return 0;
   }
-  const auto atlas = tubeatlas5d::TubeAtlas::Load("trees_r2", "codebdd231.json");
+  const auto atlas = tubeatlas5d::TubeAtlas::Load(trees_dir, "codebdd.json");
   Options opt;
   // The search screens in double; VerifySubtree checks every leaf exactly.
   // A few subtrees in different charts, a few levels down from the root.

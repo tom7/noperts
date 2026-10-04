@@ -8,3 +8,5 @@ jobs
 packs
 trees*/
 *.log
+codebdd.json
+rebuild-work/

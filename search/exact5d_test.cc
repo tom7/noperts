@@ -8,6 +8,7 @@
 // not admissible, which still exercises all the quantities.
 
 #include <cstdio>
+#include <unistd.h>
 #include <filesystem>
 #include <format>
 #include <fstream>
@@ -20,9 +21,9 @@
 #include "bignum/big.h"
 #include "bignum/big-overloads.h"
 #include "exact5d.h"
-#include "nopert231.h"
-#include "tube231.h"
-#include "tubetree231.h"
+#include "model.h"
+#include "tube.h"
+#include "tubetree.h"
 #include "rapidjson/document.h"
 #include "util.h"
 
@@ -68,18 +69,18 @@ static AxisCertificate RandomCert(std::mt19937_64 &rng) {
 }
 
 // A certificate from real silhouette contacts at the triangle's centroid
-// view (Tube231's candidate generator), with the nonzero witness chosen as
+// view (Tube's candidate generator), with the nonzero witness chosen as
 // the vertex of most negative exact support bound. These are often
 // admissible. Returns false if there are no candidates.
 static bool RealisticCert(const TriangleQ &tri, std::mt19937_64 &rng, AxisCertificate *out) {
-  tubetree231::TriangleQ t;
+  tubetree::TriangleQ t;
   for (int i = 0; i < 3; i++) t.corners[i] = BigVecQ3(tri[i][0], tri[i][1], tri[i][2]);
   vec3 view = {0, 0, 0};
   for (int i = 0; i < 3; i++) {
     view += vec3{tri[i][0].ToDouble(), tri[i][1].ToDouble(), tri[i][2].ToDouble()};
   }
   view = yocto::normalize(view);
-  auto cands = Tube231::GenerateCandidatesForView(view, t, true, 4);
+  auto cands = Tube::GenerateCandidatesForView(view, t, true, 4);
   if (cands.empty()) return false;
   const auto &cand = cands[rng() % cands.size()];
   AxisCertificate c;
@@ -166,7 +167,7 @@ int main(int argc, char **argv) {
   const int num_prune = argc > 3 ? atoi(argv[3]) : 300;
 
   rapidjson::Document doc;
-  doc.Parse(Util::ReadFile("codebdd231.json").c_str());
+  doc.Parse(Util::ReadFile("codebdd.json").c_str());
   CHECK(!doc.HasParseError());
   std::vector<TriangleQ> code_tris;
   for (const auto &code : doc["codes"].GetArray()) {
@@ -262,7 +263,7 @@ int main(int argc, char **argv) {
     input << " " << R(pc.r) << "\n";
   }
 
-  const std::string in_path = std::filesystem::temp_directory_path() / "exact5d_test_input.txt";
+  const std::string in_path = std::filesystem::temp_directory_path() / std::format("exact5d_test_input.{}.txt", (int)getpid());
   { std::ofstream f(in_path); f << input.str(); }
   const std::string cmd = std::format("{} < {}", GOLDEN, in_path);
   FILE *p = popen(cmd.c_str(), "r");

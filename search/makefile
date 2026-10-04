@@ -1,22 +1,23 @@
-# Unit tests of the 5D library and the identity-tube code.
-default : exact5d_test.exe geom5d_test.exe contacts5d_test.exe cert5d_test.exe tubeatlas5d_test.exe rows5d_test.exe solve5d_test.exe lp5d_test.exe tubetree231_test.exe nopert231_test.exe tube231_test.exe
+# Unit tests.
+default : exact5d_test.exe geom5d_test.exe contacts5d_test.exe cert5d_test.exe tubeatlas5d_test.exe rows5d_test.exe solve5d_test.exe lp5d_test.exe tubetree_test.exe model_test.exe tube_test.exe
 
-# Every program (rebuild.sh runs the pipeline; see notes/R.md).
-all: default qtube s5d codebdd231.exe tube-visualize.exe repair-margin.exe polyrigidity.exe proof-visualize.exe
+# Every program of the pipeline (rebuild.sh runs it).
+all: default qtube s5d codebdd.exe icoprune_check.exe
 
-# Identity tube (notes/Q.md, R.md):
-#  codebdd231: exact rational model, codes and code triangles (codebdd231.json).
-#  tubecode231: restartable (journaled) Tag 1 tree synthesis per code.
-#  tuberefine231: refines tube leaves to larger certified radii (monotone).
+# Identity tube:
+#  codebdd: exact rational model, codes and code triangles (codebdd.json).
+#  tubecode: restartable (journaled) Tag 1 tree synthesis per code.
+#  tuberefine: refines tube leaves to larger certified radii (monotone).
 #  export_codetrees_pack: tube trees -> Lean packs (validate_code_pack).
-#  tube-scoreboard: per-triangle status of the tube trees.
-qtube: tubecode231.exe tuberefine231.exe export_codetrees_pack.exe tube-scoreboard.exe
+qtube: tubecode.exe tuberefine.exe export_codetrees_pack.exe
 
-# 5D search (notes/SEARCH5D.md):
+# 5D search:
 #  search5d: parallel journaled search per (code triangle, chart) job.
-#  pack5d: journals -> Lean packs, one per code (check with Noperthedron's
-#    check_global_rows / constructNopert231).
+#  pack5d: journals -> Lean packs, one per code (checked by Noperthedron's
+#    constructSnubDodecahedron).
 #  scoreboard5d: per-job status from the journals and packs.
+#  icoprune_check: floating-point check of the icosahedral prune leaves
+#    (icoprune_check.exe --journals DIR).
 s5d: search5d.exe pack5d.exe scoreboard5d.exe
 
 UNAME := $(shell uname -o)
@@ -26,7 +27,7 @@ LIBCXX :=
 CXX=clang++ $(LIBCXX)
 PDB_FLAG=
 else
-PDB_FLAG=-Wl,--pdb=nopert231.pdb
+PDB_FLAG=-Wl,--pdb=nopert.pdb
 endif
 
 CL_LFLAGS=-lOpenCL
@@ -76,8 +77,8 @@ RUPERTS_OBJECTS=$(RUPERTS)/ruperts-util.o $(RUPERTS)/big-csg.o $(RUPERTS)/render
 
 OBJECTS=$(CC_LIB_OBJECTS) $(CODEC_OBJECTS) $(SQLITE_OBJECTS) $(RUPERTS_OBJECTS)
 
-# Library objects shared by the #231 tools. No OpenCL.
-OBJECTS_231=nopert231.o tube231.o tubetree231.o rigidity-margin.o exact5d.o geom5d.o contacts5d.o bounds5d.o cert5d.o tubeatlas5d.o rows5d.o solve5d.o lp5d.o
+# Library objects shared by the tools. No OpenCL.
+OBJECTS_CORE=model.o tube.o tubetree.o exact5d.o geom5d.o contacts5d.o bounds5d.o cert5d.o tubeatlas5d.o rows5d.o solve5d.o lp5d.o
 
 $(CC_LIB)/%.o : $(CC_LIB)/%.cc
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -96,58 +97,6 @@ $(CODEC)/%.o : $(CODEC)/%.cc
 	@echo -n "."
 
 # Generic pattern rules for executables
-%.exe : %.o $(OBJECTS_231) $(OBJECTS)
+%.exe : %.o $(OBJECTS_CORE) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"
-
-# First-order rigidity margin of the identity pose over all views, for
-# repairing #214 (survey, sensitivity, and optimization modes; see
-# nopert229/notes/R.md).
-repair-margin.exe : repair-margin.o rigidity-margin.o $(OBJECTS)
-	@$(CXX) $^ -o $@ $(LFLAGS)
-	@echo -n "!"
-
-# Near-identity Rupert passage survey (first-order margin over all views,
-# then a passage search at the worst) for any polyhedron.
-polyrigidity.exe : polyrigidity.o rigidity-margin.o $(OBJECTS)
-	@$(CXX) $^ -o $@ $(LFLAGS)
-	@echo -n "!"
-
-# Floating-point check of the icosahedral prune (snub, S.md §2.3): the
-# symmetry neighbors, the extent of the Dirichlet cell, and sampled points
-# of every pi leaf in the journals.
-#   icoprune_check.exe --journals DIR   (built by the generic %.exe rule)
-
-# Oneoffs kept for reuse (each source has a Usage line); build with
-# make oneoffs/<name>.exe.
-#   5D search diagnostics (#231):
-#     margin_terms5d   terms of the best certificate margin at given 5D nodes, and at the
-#                      same box one view level coarser (diagnosed the split-rule wall)
-#     point_margin5d   best margin at a pose as box and view shrink: positive (subdivision
-#                      ends) or tending to zero (a possible Rupert passage)
-#     solve_subtree5d  re-solve given 5D subtrees with a chosen split rule; compare rules
-#   Passage and rigidity probes at single views (any candidate):
-#     canyon_passage   search for a near-identity Rupert passage at a fixed outer view
-#     canyon_truedepth first-order rigidity depth at a view (column generation)
-#     canyon_depth     Tag 1 feasibility at single views near a code-triangle edge
-#     multicage_probe  how much multi-axis cages would coarsen a code's tube tree
-#   Python:
-#     ideal231.py      idealized #231 (planar quads): formulae, and distances to the
-#                      verified model, the double vertices and ruperts.sqlite
-#   (#229's passage-witness scripts are on branch q, with #229's data.)
-oneoffs/%.o : oneoffs/%.cc *.h makefile
-	@$(CXX) $(CXXFLAGS) -c $< -o $@
-	@echo -n "."
-
-oneoffs/%.exe : oneoffs/%.o $(OBJECTS_231) $(OBJECTS)
-	@$(CXX) $^ -o $@ $(LFLAGS)
-	@echo -n "!"
-
-test_split : split-chart_test.exe
-	./split-chart_test.exe
-
-test_flatten : flatten-charts_test.exe
-	./flatten-charts_test.exe
-
-clean :
-	rm -f *.o *.exe oneoffs/*.o oneoffs/*.exe

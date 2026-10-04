@@ -1,4 +1,4 @@
-// Checks the icosahedral prune of the 5D search (S.md §2.3, step 1) in
+// Checks the icosahedral prune of the 5D search (Lean: AtlasIcoPrune) in
 // floating point, independently of the exact quadratic bound:
 //
 //   neighbors  each of the 12 rounded symmetry neighbors (symmetry_neighbors.h)
@@ -25,7 +25,7 @@
 #include "geom5d.h"
 #include "rows5d.h"
 #include "symmetry_neighbors.h"
-#include "vertices231_exact27.h"
+#include "model_vertices.h"
 
 namespace {
 
@@ -90,14 +90,14 @@ bool CheckNeighbors(std::vector<M> *group) {
     // A rotation by 72 degrees has trace 1 + 2 cos 72 = (1 + sqrt 5) / 2.
     const double tr_err = std::abs(Trace(g) - (1 + std::sqrt(5.0)) / 2);
     double worst_match = 0;
-    for (int v = 0; v < NUM_VERTICES_231; v++) {
+    for (int v = 0; v < NUM_VERTICES_MODEL; v++) {
       double gv[3] = {0, 0, 0};
       for (int i = 0; i < 3; i++)
-        for (int k = 0; k < 3; k++) gv[i] += g[3 * i + k] * VERTICES_231[v][k];
+        for (int k = 0; k < 3; k++) gv[i] += g[3 * i + k] * VERTICES_MODEL[v][k];
       double best = 1e300;
-      for (int u = 0; u < NUM_VERTICES_231; u++) {
+      for (int u = 0; u < NUM_VERTICES_MODEL; u++) {
         double d = 0;
-        for (int i = 0; i < 3; i++) d = std::max(d, std::abs(gv[i] - VERTICES_231[u][i]));
+        for (int i = 0; i < 3; i++) d = std::max(d, std::abs(gv[i] - VERTICES_MODEL[u][i]));
         best = std::min(best, d);
       }
       worst_match = std::max(worst_match, best);

@@ -10,15 +10,17 @@
 
 using namespace geom5d;
 
-static TriangleQ Wedge() {
-  return {VecQ{Q(1), Q(0), Q(0)}, VecQ{Q(10, 41), Q(31, 41), Q(0)}, VecQ{Q(0), Q(0), Q(1)}};
+// A triangle on the plane u0+u1+u2 = 1 (the view triangle in codebdd.json).
+static TriangleQ BaseTriangle() {
+  return {VecQ{Q(0), Q(0), Q(1)}, VecQ{Q(500, 1343), Q(160, 1343), Q(683, 1343)},
+          VecQ{Q(250, 1281), Q(115, 427), Q(98, 183)}};
 }
 
 static void TestTriangles() {
   // Exact and double splits agree; children of a triangle on the plane
   // u0+u1+u2 = 1 stay on it; the central child's corners are the midpoints.
   std::mt19937_64 rng(1);
-  TriangleQ t = Wedge();
+  TriangleQ t = BaseTriangle();
   TriangleD d = ToDouble(t);
   std::string path;
   for (int depth = 0; depth < 30; depth++) {
@@ -31,12 +33,12 @@ static void TestTriangles() {
       for (int k = 0; k < 3; k++) CHECK(std::abs(t[i][k].ToDouble() - d.corners[i][k]) < 1e-15);
     }
   }
-  const TriangleQ t2 = SplitTrianglePath(Wedge(), path);
+  const TriangleQ t2 = SplitTrianglePath(BaseTriangle(), path);
   for (int i = 0; i < 3; i++) for (int k = 0; k < 3; k++) CHECK(t2[i][k] == t[i][k]);
 
   // Child 3's corners are the edge midpoints; every corner of a child is a
   // convex combination of the parent's corners with weights in {0, 1/2, 1}.
-  const TriangleQ w = Wedge();
+  const TriangleQ w = BaseTriangle();
   const TriangleQ c3 = SplitTriangle(w, 3);
   for (int k = 0; k < 3; k++) {
     CHECK(c3[0][k] == (w[0][k] + w[1][k]) / Q(2));
@@ -50,11 +52,13 @@ static void TestTriangles() {
 static void TestOuterDyadic() {
   // TriangleContains: a triangle contains itself and its children, not its
   // parent; corners on the boundary count.
-  const TriangleQ w = Wedge();
+  const TriangleQ w = BaseTriangle();
   CHECK(TriangleContains(w, w));
   for (int c = 0; c < 4; c++) {
     CHECK(TriangleContains(w, SplitTriangle(w, c)));
-    if (c < 3) CHECK(!TriangleContains(SplitTriangle(w, c), w));
+    if (c < 3) {
+      CHECK(!TriangleContains(SplitTriangle(w, c), w));
+    }
   }
   CHECK(!TriangleContains(SplitTriangle(w, 0), SplitTriangle(w, 1)));
 
@@ -67,8 +71,7 @@ static void TestOuterDyadic() {
     for (int rel_bits : {10, 30}) {
       const TriangleQ o = OuterDyadicTriangle(t, rel_bits);
       CHECK(TriangleContains(o, t));
-      // Not trivially contained in a big triangle: o is inside the parent
-      // wedge enlarged a little, and its corners are near t's.
+      // Not trivially contained in a big triangle: its corners are near t's.
       const TriangleD td = ToDouble(t), od = ToDouble(o);
       const double size = AngularDiameter(td);
       for (int i = 0; i < 3; i++) {

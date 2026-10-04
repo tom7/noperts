@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Exact model of the snub dodecahedron for the C5 pipeline (codebdd231
+# Exact model of the snub dodecahedron for the C5 pipeline (codebdd
 # --model_file), in a frame with a 5-fold axis (through two pentagons) on z
 # and a 2-fold axis on x.
 #
@@ -229,7 +229,7 @@ with open(hdr, "w") as f:
             "// six 5-fold axes of the snub dodecahedron (5-fold frame), each entry\n"
             "// rounded to a multiple of 10^-12 (error < 10^-12). The icosahedral\n"
             "// prune (exact5d::IcoPruneValid) uses them.\n"
-            "#ifndef _NOPERT231_SYMMETRY_NEIGHBORS_H\n#define _NOPERT231_SYMMETRY_NEIGHBORS_H\n\n"
+            "#ifndef _NOPERT_SYMMETRY_NEIGHBORS_H\n#define _NOPERT_SYMMETRY_NEIGHBORS_H\n\n"
             "#include <cstdint>\n\n"
             f"inline constexpr int NUM_SYMMETRY_NEIGHBORS = {len(neighbors)};\n"
             f"inline constexpr int64_t SYMMETRY_NEIGHBOR_DENOM = {scale};\n"

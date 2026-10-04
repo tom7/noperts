@@ -19,7 +19,7 @@ using exact5d::Q;
 
 static std::vector<exact5d::TriangleQ> CodeTriangles() {
   rapidjson::Document doc;
-  doc.Parse(Util::ReadFile("codebdd231.json").c_str());
+  doc.Parse(Util::ReadFile("codebdd.json").c_str());
   CHECK(!doc.HasParseError());
   std::vector<exact5d::TriangleQ> out;
   for (const auto &code : doc["codes"].GetArray()) {

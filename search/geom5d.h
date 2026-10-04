@@ -12,8 +12,8 @@
 //
 // All functions are pure.
 
-#ifndef _NOPERT231_GEOM5D_H
-#define _NOPERT231_GEOM5D_H
+#ifndef _NOPERT_GEOM5D_H
+#define _NOPERT_GEOM5D_H
 
 #include <array>
 #include <string_view>

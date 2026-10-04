@@ -1,6 +1,7 @@
 #include "tubeatlas5d.h"
 
 #include <cstdio>
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
@@ -9,23 +10,52 @@
 #include "base/logging.h"
 #include "bignum/big.h"
 #include "bignum/big-overloads.h"
+#include "rapidjson/document.h"
+#include "util.h"
 
 using namespace tubeatlas5d;
 
-static constexpr const char *MANIFEST = "../Noperthedron/.artifacts/nopert229r/packs_r2/manifest.txt";
+// Usage: tubeatlas5d_test.exe [TREES_DIR [MANIFEST]]
+//
+// TREES_DIR (or $TREES_DIR) holds the tube trees (tree.<code>.json, e.g.
+// tuberefine's output) for the code triangles of ./codebdd.json; MANIFEST
+// (or $TUBE_MANIFEST) is export_codetrees_pack's manifest.txt for those
+// trees. Without trees the test is skipped; without a manifest, the
+// manifest check is.
 
-int main() {
-  if (!std::filesystem::exists("trees_r2/tree.0.json")) {
-    printf("SKIPPED: trees_r2 not present\n");
+// The total number of code triangles in bdd_json.
+static int NumCodeTriangles(const std::string &bdd_json) {
+  rapidjson::Document doc;
+  doc.Parse(Util::ReadFile(bdd_json).c_str());
+  CHECK(!doc.HasParseError()) << bdd_json;
+  int n = 0;
+  for (const auto &code : doc["codes"].GetArray()) n += code["triangles"].Size();
+  return n;
+}
+
+static std::string ArgOrEnv(int argc, char **argv, int i, const char *env) {
+  if (argc > i) return argv[i];
+  const char *e = getenv(env);
+  return e != nullptr ? e : "";
+}
+
+int main(int argc, char **argv) {
+  const std::string trees_dir = ArgOrEnv(argc, argv, 1, "TREES_DIR");
+  const std::string manifest = ArgOrEnv(argc, argv, 2, "TUBE_MANIFEST");
+  if (trees_dir.empty() || !std::filesystem::exists(trees_dir + "/tree.0.json")) {
+    printf("SKIPPED: no tube trees (pass TREES_DIR)\n");
     return 0;
   }
-  const TubeAtlas atlas = TubeAtlas::Load("trees_r2", "codebdd231.json");
-  CHECK(atlas.NumTriangles() == 153) << atlas.NumTriangles();
+  const TubeAtlas atlas = TubeAtlas::Load(trees_dir, "codebdd.json");
+  const int num_triangles = NumCodeTriangles("codebdd.json");
+  CHECK(atlas.NumTriangles() == num_triangles) << atlas.NumTriangles();
 
   // The root radius of each table equals the exported pack's table radius
   // (manifest: file code tri rows r), which Lean validated.
-  if (std::filesystem::exists(MANIFEST)) {
-    std::ifstream f(MANIFEST);
+  if (manifest.empty() || !std::filesystem::exists(manifest)) {
+    printf("  SKIPPED manifest check (pass MANIFEST)\n");
+  } else {
+    std::ifstream f(manifest);
     std::string line;
     int t = 0;
     while (std::getline(f, line)) {
@@ -37,7 +67,7 @@ int main() {
       CHECK(atlas.Walk(t, "").r_lower == BigRat(std::string_view(r))) << line;
       t++;
     }
-    CHECK(t == 153);
+    CHECK(t == num_triangles);
     printf("  root radii match the pack manifest\n");
   }
 
