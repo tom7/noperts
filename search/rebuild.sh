@@ -1,14 +1,19 @@
 #!/bin/bash
-# Rebuilds the proof that the snub dodecahedron is not Rupert, end to end:
+# Rebuilds the proof that the pentagonal hexecontahedron is a Nopert (not
+# Rupert), end to end:
 #
-#   model   exact rational model, codes and code triangles (codebdd), and
-#           the Lean data generated from them
+#   model   the exact model (the polar dual of the snub dodecahedron,
+#           ph_model.py, checked against McCooey's coordinates by
+#           ph_crosscheck.py), codes and code triangles (codebdd), and the
+#           Lean data generated from them
 #   tube    identity tube: one quadtree of Tag 1 cages per code (tubecode),
-#           refined to radius 2e-5 (tuberefine)
+#           refined to radius 2e-5 (tuberefine; larger for the codes in
+#           TUBE_GOALS)
 #   tubepack  tube trees -> Lean packs + manifest (export_codetrees_pack)
 #   search  5D search, charts 0-2 (search5d), until nothing is deferred
 #   pack    per-code 5D packs (pack5d --per_code)
-#   verify  Lean: check every table and build the proof (constructSnubDodecahedron)
+#   verify  Lean: check every table and build the proof
+#           (constructPentagonalHexecontahedron)
 #
 # Every stage is restartable: tubecode and search5d journal their work,
 # and pack5d skips packs newer than their journals.
@@ -20,7 +25,7 @@
 #
 # Usage: ./rebuild.sh [--from STAGE] [--only STAGE] [--dry_run] [--threads N]
 #        [--mem_gb G] [--work DIR]   (default ./rebuild-work)
-#        [--model_file FILE]  model stage: the model file (default snub_model.txt)
+#        [--model_file FILE]  model stage: the model file (default ph_model.txt)
 #
 # Resources: --threads defaults to every core (nproc). The tools also use it
 # for the build; the Lean verifier sizes its own pool to the machine.
@@ -29,7 +34,7 @@
 #   search5d                           ~15 GB
 #   pack5d chart 0                     ~10 GB (code 51.0; was ~50 GB before
 #                                      interning view triangles and boxes)
-#   constructSnubDodecahedron          ~30 GB
+#   the Lean verifier                  ~30 GB
 # So the rebuild needs ~32 GB of RAM (or swap). --mem_gb caps every stage
 # (default: the larger of 90% of RAM and 40 GB; never below what the
 # rebuild needs, since swap can make up the difference). C++ tools get it
@@ -50,7 +55,7 @@ THREADS=$(nproc)
 RAM_GB=$(awk '/MemTotal/ {print int($2 / 1048576)}' /proc/meminfo)
 MEM_GB=$(( RAM_GB * 9 / 10 > 40 ? RAM_GB * 9 / 10 : 40 ))
 WORK=""
-MODEL_FILE=snub_model.txt
+MODEL_FILE=ph_model.txt
 NOPERT=$(cd "$(dirname "$0")" && pwd)
 LEAN=$NOPERT/../Noperthedron
 # The Lean generator scripts read codebdd's outputs and the model files here.
@@ -106,21 +111,40 @@ run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
 # Lean is needed only by the model (generated sources) and verify stages.
 # (The model stage builds Lean after regenerating its data.)
 if want verify && ! want model; then
-  (cd "$LEAN" && lean_run lake build constructSnubDodecahedron check_global_rows validate_code_pack)
+  (cd "$LEAN" && lean_run lake build constructPentagonalHexecontahedron check_global_rows validate_code_pack)
 fi
 
 if want model; then
   echo "== model"
-  (cd "$NOPERT" && run python3 snub_model.py "$MODEL_FILE" symmetry_neighbors.h)
+  # The snub dodecahedron's model (its frame, view triangle and symmetry
+  # neighbors), then its polar dual.
+  (cd "$NOPERT" && run python3 snub_model.py snub_model.txt symmetry_neighbors.h)
+  (cd "$NOPERT" && run python3 ph_model.py snub_model.txt "$MODEL_FILE")
+  (cd "$NOPERT" && run python3 ph_crosscheck.py "$MODEL_FILE")
   (cd "$NOPERT" && run ./codebdd.exe --model_file="$MODEL_FILE" codebdd.json)
   (cd "$LEAN" && run python3 scripts/update_vertices.py \
-    && run python3 scripts/emit_tangent_cones.py Noperthedron/SnubDodecahedron/GeneratedTangentCones.lean \
     && run python3 scripts/emit_wedge_cover.py Noperthedron/SnubDodecahedron/WedgeCoverData.lean \
-    && run python3 scripts/snub_ico_group.py)
+    && run python3 scripts/snub_ico_group.py \
+    && run python3 scripts/ph_statement_data.py)
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
     export_codetrees_pack.exe search5d.exe pack5d.exe
-  (cd "$LEAN" && lean_run lake build constructSnubDodecahedron check_global_rows validate_code_pack)
+  (cd "$LEAN" && lean_run lake build constructPentagonalHexecontahedron check_global_rows validate_code_pack)
 fi
+
+# Tube radius goals. Code 18's code triangle is certified by a single tube
+# leaf of radius 8e-4, well above the default goal, so tuberefine would not
+# split it; the 5D search must then certify rotations just past 8e-4 over
+# the whole code triangle, which it does only very slowly. A larger goal
+# splits the triangle (82 leaves, radius >= 1.5e-3) and the search finishes
+# in a minute.
+TUBE_GOALS="18:1/400"
+tube_goal() {
+  local entry
+  for entry in $TUBE_GOALS; do
+    if [ "${entry%%:*}" = "$1" ]; then echo "${entry#*:}"; return; fi
+  done
+  echo 1/50000
+}
 
 NCODES=$(python3 -c "import json; print(len(json.load(open('$NOPERT/codebdd.json'))['codes']))")
 
@@ -131,7 +155,7 @@ if want tube; then
   done
   for code in $(seq 0 $((NCODES - 1))); do
     (cd "$NOPERT" && run ./tuberefine.exe --code "$code" --in_dir "$TREES1" --out_dir "$TREES2" \
-      --goal 1/50000 --threads "$THREADS")
+      --goal "$(tube_goal "$code")" --threads "$THREADS")
   done
 fi
 
@@ -160,5 +184,5 @@ fi
 
 if want verify; then
   echo "== verify"
-  (cd "$LEAN" && lean_run .lake/build/bin/constructSnubDodecahedron "$TUBEPACKS/manifest.txt" "$PACKS")
+  (cd "$LEAN" && lean_run .lake/build/bin/constructPentagonalHexecontahedron "$TUBEPACKS/manifest.txt" "$PACKS")
 fi
