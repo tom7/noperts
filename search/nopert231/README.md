@@ -69,6 +69,8 @@ Peak memory is about 32 GB (the Lean verifier); `--mem_gb` caps every stage. `tu
 - `TREES_DIR` (default `trees_r2`; e.g. `work/trees_r2` after the tube stage): solve5d, tubeatlas5d;
 - `TUBE_MANIFEST` (optional, e.g. `work/tube_packs/manifest.txt`): tubeatlas5d compares the tree radii with the exported packs.
 
+**Code texture (for rendering).** `./codebdd.exe --texture=BASE` also writes `BASE.png`, an equirectangular image (8192×4096; `--texture_width`) of all view directions colored by face-visibility code up to the solid's symmetries and the antipode; `BASE.txt`, the legend (each class's color, area and `codebdd.json` codes); and `BASE.stl`, the solid in the image's frame. `blender_code_texture.py` applies it to an object in Blender (an Environment Texture node fed with object coordinates, so each surface point takes the color of its direction).
+
 ## How the proof works
 
 ### The polyhedron and its rational model
