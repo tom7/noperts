@@ -67,13 +67,43 @@ static std::set<std::vector<int>> HullFacets() {
 
 static void TestEdges() {
   const auto &edges = PolyhedronEdges();
-  const std::set<std::vector<int>> facets = HullFacets();
-  // Euler's formula for a convex polyhedron.
-  CHECK((int)edges.size() == NUM_VERTICES + (int)facets.size() - 2)
-      << edges.size() << " edges, " << facets.size() << " facets";
-  std::vector<int> degree(NUM_VERTICES, 0);
+  // A point may be listed in several slots (a vertex on the C5 axis is listed
+  // once per orbit). Compare by points: each slot's representative is the
+  // first slot holding the same point.
+  std::vector<int> rep(NUM_VERTICES);
+  for (int v = 0; v < NUM_VERTICES; v++) {
+    rep[v] = v;
+    for (int u = 0; u < v; u++) {
+      if (VertexQ(u) == VertexQ(v)) { rep[v] = u; break; }
+    }
+  }
+  std::set<std::vector<int>> facets;
+  for (const auto &f : HullFacets()) {
+    std::set<int> r;
+    for (int v : f) r.insert(rep[v]);
+    facets.insert(std::vector<int>(r.begin(), r.end()));
+  }
+  std::set<std::pair<int, int>> point_edges;
   for (const auto &[a, b] : edges) {
     CHECK(a < b);
+    CHECK(rep[a] != rep[b]) << a << "-" << b << " joins two copies of one point";
+    point_edges.insert({std::min(rep[a], rep[b]), std::max(rep[a], rep[b])});
+  }
+  // Every slot's edges are its representative's.
+  for (const auto &[a, b] : edges) {
+    for (int c = 0; c < NUM_VERTICES; c++) {
+      if (rep[c] != rep[a] || c == a) continue;
+      CHECK(std::find(edges.begin(), edges.end(), std::make_pair(std::min(c, b), std::max(c, b))) !=
+            edges.end()) << "copy " << c << " of " << a << " lacks the edge to " << b;
+    }
+  }
+  int points = 0;
+  for (int v = 0; v < NUM_VERTICES; v++) points += rep[v] == v;
+  // Euler's formula for a convex polyhedron.
+  CHECK((int)point_edges.size() == points + (int)facets.size() - 2)
+      << point_edges.size() << " edges, " << points << " points, " << facets.size() << " facets";
+  std::vector<int> degree(NUM_VERTICES, 0);
+  for (const auto &[a, b] : point_edges) {
     degree[a]++;
     degree[b]++;
     // Every edge lies on exactly two facets.
@@ -83,16 +113,19 @@ static void TestEdges() {
     }
     CHECK(on == 2) << a << "-" << b << " on " << on << " facets";
   }
-  for (int d : degree) CHECK(d >= 3);
+  for (int v = 0; v < NUM_VERTICES; v++) {
+    if (rep[v] == v) CHECK(degree[v] >= 3);
+  }
   // A facet with k vertices has k edges.
   for (const auto &f : facets) {
     int fe = 0;
-    for (const auto &[a, b] : edges) {
+    for (const auto &[a, b] : point_edges) {
       if (std::binary_search(f.begin(), f.end(), a) && std::binary_search(f.begin(), f.end(), b)) fe++;
     }
     CHECK(fe == (int)f.size()) << fe << " edges on a facet with " << f.size() << " vertices";
   }
-  printf("  %d polyhedron edges, %d facets OK\n", (int)edges.size(), (int)facets.size());
+  printf("  %d polyhedron edges (%d between distinct points), %d points, %d facets OK\n",
+         (int)edges.size(), (int)point_edges.size(), points, (int)facets.size());
 }
 
 static void TestPools() {

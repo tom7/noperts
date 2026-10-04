@@ -103,11 +103,24 @@ double WeightedDefectUpper(const geom5d::TriangleD &tri, const std::vector<Conta
 const std::vector<std::pair<int, int>> &PolyhedronEdges() {
   static const std::vector<std::pair<int, int>> *edges = [] {
     // Facet planes: triples (a, b, c) with all vertices on one side
-    // (exactly), deduplicated by the set of vertices on the plane.
+    // (exactly), deduplicated by the set of vertices on the plane. A
+    // floating-point pass first discards triples with vertices clearly on
+    // both sides (model coordinates can have hundreds of bits).
     std::vector<std::vector<int>> facets;
     for (int a = 0; a < NUM_VERTICES; a++) {
       for (int b = a + 1; b < NUM_VERTICES; b++) {
         for (int c = b + 1; c < NUM_VERTICES; c++) {
+          const vec3 nd = yocto::cross(V(b) - V(a), V(c) - V(a));
+          const double scale = yocto::length(nd);
+          if (scale > 1e-6) {
+            bool pos = false, neg = false;
+            for (int k = 0; k < NUM_VERTICES && !(pos && neg); k++) {
+              const double s = yocto::dot(nd, V(k) - V(a)) / scale;
+              if (s > 1e-9) pos = true;
+              else if (s < -1e-9) neg = true;
+            }
+            if (pos && neg) continue;
+          }
           const BigVecQ3 n = BigVecQ3::Cross(VertexQ(b) - VertexQ(a), VertexQ(c) - VertexQ(a));
           if (n.x == BigRat(0) && n.y == BigRat(0) && n.z == BigRat(0)) continue;
           const BigRat d = BigVecQ3::Dot(n, VertexQ(a));
@@ -134,7 +147,8 @@ const std::vector<std::pair<int, int>> &PolyhedronEdges() {
             shared++;
           }
         }
-        if (shared >= 2) out->push_back({i, j});
+        // Two copies of one point (a vertex listed in several slots) are not an edge.
+        if (shared >= 2 && !(VertexQ(i) == VertexQ(j))) out->push_back({i, j});
       }
     }
     return out;
