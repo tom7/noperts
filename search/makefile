@@ -2,7 +2,7 @@
 default : exact5d_test.exe geom5d_test.exe contacts5d_test.exe cert5d_test.exe tubeatlas5d_test.exe rows5d_test.exe solve5d_test.exe lp5d_test.exe tubetree_test.exe model_test.exe tube_test.exe
 
 # Every program of the pipeline (rebuild.sh runs it).
-all: default qtube s5d codebdd.exe icoprune_check.exe viewmap.exe
+all: default qtube s5d codebdd.exe icoprune_check.exe viewmap.exe shadowanim.exe
 
 # Identity tube:
 #  codebdd: exact rational model, codes and code triangles (codebdd.json).
@@ -23,6 +23,7 @@ s5d: search5d.exe pack5d.exe scoreboard5d.exe
 # Rendering (not part of the proof):
 #  viewmap: the first-order margin, search density or tube radius over all
 #    views, as an equirectangular image and a UDIM-textured OBJ of the solid.
+#  shadowanim: an animation of first-order rigidity (shadowanim.txt).
 
 UNAME := $(shell uname -o)
 ifeq ($(findstring Linux,$(UNAME)),Linux)
@@ -99,6 +100,10 @@ $(CODEC)/%.o : $(CODEC)/%.cc
 %.o : %.cc *.h makefile
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 	@echo -n "."
+
+shadowanim.exe : shadowanim.o rigidity-margin.o $(OBJECTS_CORE) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+	@echo -n "!"
 
 viewmap.exe : viewmap.o rigidity-margin.o $(OBJECTS_CORE) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
