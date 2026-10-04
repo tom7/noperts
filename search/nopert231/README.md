@@ -46,20 +46,22 @@ Prerequisites:
 ./rebuild.sh --work /path/to/work
 ```
 
-`rebuild.sh` runs these stages. Each is restartable (`--from STAGE`, `--only STAGE`; `--dry_run` prints the commands). Times were measured on a 64-core machine, partly while it was shared with other jobs.
+`rebuild.sh` runs these stages. Each is restartable (`--from STAGE`, `--only STAGE`; `--dry_run` prints the commands). Times are from a run on a 64-core machine (64 threads), from a clean checkout, on 2026-10-04; the last part of `verify` shared the machine with another job.
 
 | stage | what | time |
 |---|---|---|
-| model | `codebdd` computes the rational model, the face-visibility codes and their triangles; the Lean data (vertices, tangent cones, the wedge cover) is regenerated from them and Lean is rebuilt. Only on request (`--from model`), since it rewrites committed files. | under a second for `codebdd`; a few minutes for the scripts; then the Lean build |
-| tube | `tubecode` and `tuberefine` build the identity tube, one tree per code | ~13 min (36 threads) |
-| tubepack | `export_codetrees_pack`: the tube trees become Lean packs and a manifest | ~1 min |
-| search | `search5d`: the 5D search over (view, relative rotation), charts 0-2 | ~1 h (40 threads) |
-| pack | `pack5d --per_code`: per-code certificate packs | about 1 h |
-| verify | `constructNopert231` on the tube packs and the per-code packs | ~3 h |
+| model | `codebdd` computes the rational model, the face-visibility codes and their triangles; the Lean data (vertices, tangent cones, the wedge cover) is regenerated from them and Lean is rebuilt. Only on request (`--from model`), since it rewrites committed files. | ~7 min, including the Lean build (with Mathlib already built; `codebdd` itself takes under a second) |
+| tube | `tubecode` and `tuberefine` build the identity tube, one tree per code | ~8 min |
+| tubepack | `export_codetrees_pack`: the tube trees become Lean packs and a manifest | <1 min |
+| search | `search5d`: the 5D search over (view, relative rotation), charts 0-2 | ~56 min (the last ~45 min on a few hard triangles) |
+| pack | `pack5d --per_code`: per-code certificate packs | ~52 min |
+| verify | `constructNopert231` on the tube packs and the per-code packs | ~2 h 46 min |
 
 The build step builds the C++ tools and the Lean executables first. `codebdd.json` (the code database, 0.4 s to compute) is not committed; when it is missing, `rebuild.sh` regenerates it and checks that the vertex files it writes equal the committed `model_vertices.*` byte for byte.
 
-Peak memory is about 30 GB (the Lean verifier); `--mem_gb` caps every stage. `tubecode`, `tuberefine`, `codebdd` and `pack5d` are deterministic (independent of the thread count). `search5d` is not, so a fresh search gives different but equally checkable packs. To re-check existing data, point `--work` at it and start from `pack` or `verify`.
+`./rebuild.sh --from model --work DIR` took 4 h 49 min in all and exited 0. The model stage regenerated every committed file byte for byte.
+
+Peak memory is about 32 GB (the Lean verifier); `--mem_gb` caps every stage. `tubecode`, `tuberefine`, `codebdd` and `pack5d` are deterministic (independent of the thread count). `search5d` is not, so a fresh search gives different but equally checkable packs. To re-check existing data, point `--work` at it and start from `pack` or `verify`.
 
 **Unit tests.** `make` builds them and `make test` runs them. Tests that need generated data skip cleanly when it is absent; these environment variables point them at it:
 - `CODEBDD_JSON` (default `codebdd.json`): contacts5d, cert5d, exact5d, solve5d, tubeatlas5d;
@@ -102,7 +104,7 @@ Near R = identity no finite subdivision can work, since the two shadows coincide
 - tube leaves (`tu`): the box lies within the tube radius of the identity, citing a node of the code's tube tree;
 - prunes: outside the rotation radius, or outside the fivefold fundamental cell.
 
-The search is journaled and restartable; deferred leaves are retried in the same run. A full run took 61 minutes (40 threads): 21.2M nodes, 12.7M leaves, none deferred.
+The search is journaled and restartable; deferred leaves are retried in the same run. The run above: 21.2M nodes in 56 minutes (64 threads), every deferred leaf retried and solved (0 deferred at the end).
 
 ### Packs and checking
 
