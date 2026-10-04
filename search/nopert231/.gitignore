@@ -3,8 +3,9 @@
 *.pdb
 *.ptx
 *~
-.artifacts
 jobs
 packs
 trees*/
 *.log
+codebdd.json
+work/

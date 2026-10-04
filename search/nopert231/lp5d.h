@@ -1,7 +1,7 @@
 // Small dense linear programs for the 5D search.
 
-#ifndef _NOPERT231_LP5D_H
-#define _NOPERT231_LP5D_H
+#ifndef _NOPERT_LP5D_H
+#define _NOPERT_LP5D_H
 
 #include <optional>
 #include <vector>

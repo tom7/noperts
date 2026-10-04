@@ -3,7 +3,7 @@
 // rationals (what the Lean rows record) and doubles (what the search
 // evaluates with). Subdivisions match Lean exactly:
 //
-//   view split   SnubCube.ProjectiveView.split (children: three corners, then
+//   view split   Atlas.ProjectiveView.split (children: three corners, then
 //                the central triangle)
 //   box split    AtlasInterval.lowerHalf / upperHalf (halve one coordinate at
 //                its exact midpoint)
@@ -12,8 +12,8 @@
 //
 // All functions are pure.
 
-#ifndef _NOPERT231_GEOM5D_H
-#define _NOPERT231_GEOM5D_H
+#ifndef _NOPERT_GEOM5D_H
+#define _NOPERT_GEOM5D_H
 
 #include <array>
 #include <string_view>

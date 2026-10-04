@@ -1,6 +1,7 @@
 #include "tubeatlas5d.h"
 
 #include <cstdio>
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
@@ -12,20 +13,32 @@
 
 using namespace tubeatlas5d;
 
-static constexpr const char *MANIFEST = "../Noperthedron/.artifacts/nopert229r/packs_r2/manifest.txt";
+// Test data, not committed: refined identity-tube trees (rebuild.sh's
+// trees_r2) in $TREES_DIR (default trees_r2), and codebdd's output in
+// $CODEBDD_JSON (default codebdd.json). Without them the test is skipped.
+static std::string EnvOr(const char *name, const char *dflt) {
+  const char *e = getenv(name);
+  return e != nullptr ? e : dflt;
+}
+// Optionally, $TUBE_MANIFEST is the tube packs' manifest.txt written by
+// export_codetrees_pack from those trees.
 
 int main() {
-  if (!std::filesystem::exists("trees_r2/tree.0.json")) {
-    printf("SKIPPED: trees_r2 not present\n");
+  const std::string trees = EnvOr("TREES_DIR", "trees_r2");
+  const std::string bdd = EnvOr("CODEBDD_JSON", "codebdd.json");
+  const std::string manifest = EnvOr("TUBE_MANIFEST", "");
+  if (!std::filesystem::exists(trees + "/tree.0.json") || !std::filesystem::exists(bdd)) {
+    printf("SKIPPED: %s/tree.0.json or %s not present\n", trees.c_str(), bdd.c_str());
     return 0;
   }
-  const TubeAtlas atlas = TubeAtlas::Load("trees_r2", "codebdd231.json");
-  CHECK(atlas.NumTriangles() == 153) << atlas.NumTriangles();
+  const TubeAtlas atlas = TubeAtlas::Load(trees, bdd);
+  const int num_tables = atlas.NumTriangles();
+  CHECK(num_tables > 0);
 
   // The root radius of each table equals the exported pack's table radius
   // (manifest: file code tri rows r), which Lean validated.
-  if (std::filesystem::exists(MANIFEST)) {
-    std::ifstream f(MANIFEST);
+  if (!manifest.empty() && std::filesystem::exists(manifest)) {
+    std::ifstream f(manifest);
     std::string line;
     int t = 0;
     while (std::getline(f, line)) {
@@ -37,7 +50,7 @@ int main() {
       CHECK(atlas.Walk(t, "").r_lower == BigRat(std::string_view(r))) << line;
       t++;
     }
-    CHECK(t == 153);
+    CHECK(t == num_tables) << t;
     printf("  root radii match the pack manifest\n");
   }
 

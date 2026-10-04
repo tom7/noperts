@@ -1,8 +1,8 @@
 // Exact rational checks for the 5D search's certificate leaves, ported 1:1
 // from the Lean definitions that decide them:
 //
-//   projectiveGlobal       Noperthedron/Nopert229/AtlasProjectiveGlobalCertificate.lean
-//   projectiveMixedGlobal  Noperthedron/Nopert229/AtlasProjectiveMixedGlobalCertificate.lean
+//   projectiveGlobal       Noperthedron/Nopert231/AtlasProjectiveGlobalCertificate.lean
+//   projectiveMixedGlobal  Noperthedron/Nopert231/AtlasProjectiveMixedGlobalCertificate.lean
 //
 // Lean is the specification. Each function here carries the name of the Lean
 // definition it mirrors, and exact5d_test checks agreement with Lean on
@@ -13,8 +13,8 @@
 // Only view root 0 (the upper fivefold view, all signs +) is supported; that
 // is the only root the 5D search uses.
 
-#ifndef _NOPERT231_EXACT5D_H
-#define _NOPERT231_EXACT5D_H
+#ifndef _NOPERT_EXACT5D_H
+#define _NOPERT_EXACT5D_H
 
 #include <array>
 #include <vector>

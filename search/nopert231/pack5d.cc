@@ -21,7 +21,7 @@
 // are skipped unless --force.
 //
 // Usage: pack5d.exe --chart C (--all | --t T | --per_code DIR) [--journals jobs]
-//                   [--out FILE] [--trees_dir trees_r2] [--bdd codebdd231.json]
+//                   [--out FILE] [--trees_dir trees_r2] [--bdd codebdd.json]
 //                   [--exact_check] [--threads 8] [--force]
 
 #include <atomic>
@@ -638,7 +638,7 @@ void PackPerCode(const tubeatlas5d::TubeAtlas &atlas, int chart, bool exact_chec
 int main(int argc, char **argv) {
   int chart = -1, single = -1, threads = 8;
   bool all = false, exact_check = false, force = false;
-  std::string journals = "jobs", out, trees_dir = "trees_r2", bdd = "codebdd231.json", per_code;
+  std::string journals = "jobs", out, trees_dir = "trees_r2", bdd = "codebdd.json", per_code;
   for (int i = 1; i < argc; i++) {
     const std::string a = argv[i];
     auto next = [&]() -> std::string {

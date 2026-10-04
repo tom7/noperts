@@ -8,7 +8,7 @@
 #include "bignum/big.h"
 #include "bignum/big-overloads.h"
 #include "rapidjson/document.h"
-#include "tubetree231.h"
+#include "tubetree.h"
 #include "util.h"
 
 namespace tubeatlas5d {
@@ -18,7 +18,7 @@ namespace {
 // Flattens a tree, computing each node's subtree minimum and maximum
 // certificate radius.
 // Returns the index of `node` in the output arrays.
-int Flatten(const tubetree231::TreeNode &node, std::vector<BigRat> *r_lower,
+int Flatten(const tubetree::TreeNode &node, std::vector<BigRat> *r_lower,
             std::vector<BigRat> *r_upper, std::vector<std::array<int, 4>> *children) {
   const int idx = r_lower->size();
   r_lower->push_back(BigRat(0));
@@ -55,7 +55,7 @@ TubeAtlas TubeAtlas::Load(const std::string &trees_dir, const std::string &bdd_j
   const auto &codes = doc["codes"];
   for (rapidjson::SizeType code = 0; code < codes.Size(); code++) {
     const std::string path = std::format("{}/tree.{}.json", trees_dir, code);
-    auto tree = tubetree231::LoadCodeTreeJson(path);
+    auto tree = tubetree::LoadCodeTreeJson(path);
     CHECK(tree != nullptr) << "cannot load " << path;
     const auto &tris = codes[code]["triangles"];
     CHECK(tree->triangles.size() == tris.Size()) << path;

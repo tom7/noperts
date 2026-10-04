@@ -2,7 +2,9 @@
 
 #include <chrono>
 #include <cstdio>
+#include <cstdlib>
 #include <filesystem>
+#include <string>
 #include <variant>
 
 #include "base/logging.h"
@@ -64,12 +66,22 @@ static void VerifySubtree(const tubeatlas5d::TubeAtlas &atlas, const Job &job,
   }
 }
 
+// Test data, not committed: refined identity-tube trees (rebuild.sh's
+// trees_r2) in $TREES_DIR (default trees_r2), and codebdd's output in
+// $CODEBDD_JSON (default codebdd.json). Without them the test is skipped.
+static std::string EnvOr(const char *name, const char *dflt) {
+  const char *e = getenv(name);
+  return e != nullptr ? e : dflt;
+}
+
 int main() {
-  if (!std::filesystem::exists("trees_r2/tree.0.json")) {
-    printf("SKIPPED: trees_r2 not present\n");
+  const std::string trees = EnvOr("TREES_DIR", "trees_r2");
+  const std::string bdd = EnvOr("CODEBDD_JSON", "codebdd.json");
+  if (!std::filesystem::exists(trees + "/tree.0.json") || !std::filesystem::exists(bdd)) {
+    printf("SKIPPED: %s/tree.0.json or %s not present\n", trees.c_str(), bdd.c_str());
     return 0;
   }
-  const auto atlas = tubeatlas5d::TubeAtlas::Load("trees_r2", "codebdd231.json");
+  const auto atlas = tubeatlas5d::TubeAtlas::Load(trees, bdd);
   Options opt;
   // The search screens in double; VerifySubtree checks every leaf exactly.
   // A few subtrees in different charts, a few levels down from the root.

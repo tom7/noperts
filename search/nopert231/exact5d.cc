@@ -5,7 +5,7 @@
 #include "base/logging.h"
 #include "bignum/big.h"
 #include "bignum/big-overloads.h"
-#include "nopert231.h"
+#include "model.h"
 
 namespace exact5d {
 
@@ -40,7 +40,7 @@ Q Dot(const VecQ &a, const VecQ &b) {
   return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
 
-// SnubCube.ProjectiveView.midpoint
+// Atlas.ProjectiveView.midpoint
 VecQ Midpoint(const VecQ &a, const VecQ &b) {
   const Q two(2);
   return {(a[0] + b[0]) / two, (a[1] + b[1]) / two, (a[2] + b[2]) / two};
@@ -52,7 +52,7 @@ Q Min3(const Q &a, const Q &b, const Q &c) { return BigRat::Min(a, BigRat::Min(b
 // AtlasProjectiveLocalCertificate.AxisCertificate.mixQ
 Q MixQ(const AxisCertificate &cert, int i) { return Q(cert.mix[i], 1000); }
 
-// SnubCube.ProjectiveLocalCertificate.mulLinear
+// Atlas.ProjectiveLocalCertificate.mulLinear
 Quad3 MulLinear(const VecQ &a, const VecQ &b) {
   Quad3 q;
   q.cxx = a[0] * b[0];
@@ -81,7 +81,7 @@ Quad3 Monomial(int which) {
   return q;
 }
 
-// SnubCube.CayleyEdgeCertificate.{denomQuadratic, numeratorQuadratic}
+// Atlas.CayleyEdgeCertificate.{denomQuadratic, numeratorQuadratic}
 Quad3 DenomQuadratic() {
   return QuadAdd(QuadAdd(QuadAdd(Monomial(0), Monomial(4)), Monomial(7)), Monomial(9));
 }

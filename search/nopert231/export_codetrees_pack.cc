@@ -1,4 +1,4 @@
-// export_codetrees_pack.cc: Program to export tubetree231 code trees (trees/tree.<id>.json)
+// export_codetrees_pack.cc: Program to export tubetree code trees (trees/tree.<id>.json)
 // to Lean 4 packed format (.pack).
 
 #include <iostream>
@@ -10,15 +10,15 @@
 #include <filesystem>
 
 #include "rapidjson/document.h"
-#include "tubetree231.h"
-#include "tube231.h"
+#include "tubetree.h"
+#include "tube.h"
 #include "base/logging.h"
 #include "base/stringprintf.h"
 #include "bignum/big-overloads.h"
 #include "timer.h"
 #include "util.h"
 
-using namespace tubetree231;
+using namespace tubetree;
 
 static inline std::string ZigzagRatString(const BigRat &r) {
   BigInt num = r.Numerator();
@@ -232,10 +232,10 @@ static bool ExportCodeTriangle(int code_id, int tri_idx, const TriangleQ &base_t
 }
 
 int main(int argc, char **argv) {
-  std::string out_dir = ".artifacts/nopert229/packs";
+  std::string out_dir = "tube_packs";
   std::string trees_dir = "trees";
   int single_code = -1;
-  // If set, take each base triangle from this codebdd231.json instead of the
+  // If set, take each base triangle from this codebdd.json instead of the
   // tree file (e.g. after codebdd rounded the corners to dyadics). The tree's
   // certificates are checked against the new triangle in Lean; here we only
   // require it to be within 2^-56 of the triangle the tree was built on.

@@ -7,7 +7,7 @@
 // passed on that pack (its .checked file is newer than the pack).
 //
 // Usage: scoreboard5d.exe [--journals jobs] [--packs packs] [--charts 0,1,2]
-//                         [--bdd codebdd231.json]
+//                         [--bdd codebdd.json]
 //                         [--all]   (also list jobs with no journal yet)
 
 #include <cstdio>
@@ -23,7 +23,7 @@
 #include "util.h"
 
 int main(int argc, char **argv) {
-  std::string journals = "jobs", packs = "packs", bdd = "codebdd231.json";
+  std::string journals = "jobs", packs = "packs", bdd = "codebdd.json";
   std::vector<int> charts = {0, 1, 2};
   bool list_all = false;
   for (int i = 1; i < argc; i++) {

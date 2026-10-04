@@ -25,8 +25,8 @@
 // The root path is written as ".". Integers are decimal. A truncated last
 // line is ignored.
 
-#ifndef _NOPERT231_ROWS5D_H
-#define _NOPERT231_ROWS5D_H
+#ifndef _NOPERT_ROWS5D_H
+#define _NOPERT_ROWS5D_H
 
 #include <optional>
 #include <string>

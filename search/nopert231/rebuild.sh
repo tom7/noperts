@@ -1,39 +1,34 @@
 #!/bin/bash
 # Rebuilds the proof that Nopert #231 is not Rupert, end to end, with the
-# parameters that produced the verified result (see notes/R.md):
+# parameters that produced the verified result (see README.md):
 #
-#   model   exact rational model, codes and code triangles (codebdd231), and
+#   model   exact rational model, codes and code triangles (codebdd), and
 #           the Lean data generated from them
-#   tube    identity tube: one quadtree of Tag 1 cages per code (tubecode231),
-#           refined to radius 2e-5 (tuberefine231)
+#   tube    identity tube: one quadtree of Tag 1 cages per code (tubecode),
+#           refined to radius 2e-5 (tuberefine)
 #   tubepack  tube trees -> Lean packs + manifest (export_codetrees_pack)
 #   search  5D search, charts 0-2 (search5d), until nothing is deferred
 #   pack    per-code 5D packs (pack5d --per_code)
 #   verify  Lean: check every table and build the proof (constructNopert231)
 #
-# Every stage is restartable: tubecode231 and search5d journal their work,
+# Every stage is restartable: tubecode and search5d journal their work,
 # and pack5d skips packs newer than their journals.
 #
-# Reproducibility: tubecode231, tuberefine231 and pack5d are deterministic
-# (independent of --threads); search5d is not (work order). The verified
-# tube (archive r1_verified_2026-10-02/trees_r1) is NOT what the tube stage
-# produces today: 35 of its 77 codes come from an older binary (before the
-# deterministic support-point search, 2026-10-01), so a run from the tube
-# stage builds a different (equally checkable) tube and then needs its own
-# search. To re-verify the archived result, start from the archived trees,
-# journals or packs (--from pack / --from verify with --work pointing at
-# them).
+# Reproducibility: codebdd, tubecode, tuberefine and pack5d are
+# deterministic (independent of --threads); search5d is not (work order),
+# so a fresh search gives a different but equally checkable set of packs.
+# To re-verify an existing result, start from its trees, journals or packs
+# (--from pack / --from verify with --work pointing at them).
 #
 # Usage: ./rebuild.sh [--from STAGE] [--only STAGE] [--dry_run] [--threads N]
-#        [--mem_gb G] [--work DIR]   (default /root/quad/tmp/rebuild)
+#        [--mem_gb G] [--work DIR]   (default work/ next to this script)
 #
 # Resources: --threads defaults to every core (nproc). The tools also use it
 # for the build; the Lean verifier sizes its own pool to the machine.
-# Measured peak memory (2026-10-03, 64 cores):
-#   tube stages, check_identity_tube   a few GB
+# Measured peak memory (64 cores):
+#   tube stages                        a few GB
 #   search5d                           ~15 GB
-#   pack5d chart 0                     ~10 GB (code 51.0; was ~50 GB before
-#                                      interning view triangles and boxes)
+#   pack5d chart 0                     ~10 GB
 #   constructNopert231                 ~30 GB
 # So the rebuild needs ~32 GB of RAM (or swap). --mem_gb caps every stage
 # (default: the larger of 90% of RAM and 40 GB; never below what the
@@ -42,9 +37,12 @@
 # malloc arenas); Lean runs in a systemd scope with MemoryMax (ulimit -v
 # would stop Lean from creating threads).
 #
-# The model stage regenerates committed source files (vertices231_exact27.*,
-# codebdd231.json, and Noperthedron's Vertices.lean etc.), so it only runs
-# when asked for (--from model or --only model).
+# The model stage regenerates committed source files (model_vertices.*,
+# and Noperthedron's Vertices.lean, GeneratedTangentCones.lean and
+# WedgeCoverData.lean), so it only runs when asked for (--from model or
+# --only model). codebdd.json is not committed: when it is missing, the
+# other stages first regenerate it with codebdd, writing the vertex files
+# to the work directory and checking that they equal the committed ones.
 set -euo pipefail
 
 STAGES=(model tube tubepack search pack verify)
@@ -54,9 +52,11 @@ DRY=0
 THREADS=$(nproc)
 RAM_GB=$(awk '/MemTotal/ {print int($2 / 1048576)}' /proc/meminfo)
 MEM_GB=$(( RAM_GB * 9 / 10 > 40 ? RAM_GB * 9 / 10 : 40 ))
-WORK=/root/quad/tmp/rebuild
 NOPERT=$(cd "$(dirname "$0")" && pwd)
 LEAN=$NOPERT/../Noperthedron
+WORK=$NOPERT/work
+# The Lean generator scripts read codebdd's outputs from here.
+export MODEL_DIR=$NOPERT
 while [ $# -gt 0 ]; do
   case $1 in
     --from) FROM=$2; shift 2 ;;
@@ -68,6 +68,9 @@ while [ $# -gt 0 ]; do
     *) echo "unknown argument $1" >&2; exit 1 ;;
   esac
 done
+
+# The tools run in $NOPERT, so the work directory must be absolute.
+WORK=$(realpath -m "$WORK")
 
 run() {
   echo "+ $*"
@@ -101,30 +104,41 @@ PACKS=$WORK/packs
 run mkdir -p "$WORK"
 
 echo "== build"
-run make -C "$NOPERT" -j "$THREADS" codebdd231.exe tubecode231.exe tuberefine231.exe \
+run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
   export_codetrees_pack.exe search5d.exe pack5d.exe scoreboard5d.exe
 (cd "$LEAN" && lean_run lake build constructNopert231 check_global_rows validate_code_pack)
 
 if want model; then
   echo "== model"
-  (cd "$NOPERT" && run ./codebdd231.exe --root_file=nopert231_root.txt)
-  (cd "$LEAN" && run python3 scripts/nopert231_update_vertices.py \
-    && run python3 scripts/nopert231_emit_tangent_cones.py Noperthedron/Nopert231/GeneratedTangentCones.lean \
-    && run python3 scripts/nopert231_emit_wedge_cover.py Noperthedron/Nopert231/WedgeCoverData.lean)
-  run make -C "$NOPERT" -j "$THREADS" codebdd231.exe tubecode231.exe tuberefine231.exe \
+  (cd "$NOPERT" && run ./codebdd.exe --root_file=nopert231_root.txt)
+  (cd "$LEAN" && run python3 scripts/update_vertices.py \
+    && run python3 scripts/emit_tangent_cones.py Noperthedron/Nopert231/GeneratedTangentCones.lean \
+    && run python3 scripts/emit_wedge_cover.py Noperthedron/Nopert231/WedgeCoverData.lean)
+  run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
     export_codetrees_pack.exe search5d.exe pack5d.exe
   (cd "$LEAN" && lean_run lake build constructNopert231 check_global_rows validate_code_pack)
+elif [ ! -f "$NOPERT/codebdd.json" ]; then
+  echo "== codebdd.json (not committed; regenerating it)"
+  (cd "$NOPERT" && run ./codebdd.exe --root_file=nopert231_root.txt \
+    --export_prefix="$WORK/model_vertices")
+  for ext in h json lean; do
+    run cmp "$WORK/model_vertices.$ext" "$NOPERT/model_vertices.$ext"
+  done
 fi
 
-NCODES=$(python3 -c "import json; print(len(json.load(open('$NOPERT/codebdd231.json'))['codes']))")
+if [ $DRY -eq 0 ] || [ -f "$NOPERT/codebdd.json" ]; then
+  NCODES=$(python3 -c "import json; print(len(json.load(open('$NOPERT/codebdd.json'))['codes']))")
+else
+  NCODES=77
+fi
 
 if want tube; then
   echo "== tube ($NCODES codes)"
   for code in $(seq 0 $((NCODES - 1))); do
-    (cd "$NOPERT" && run ./tubecode231.exe --code "$code" --output_dir "$TREES1" --threads "$THREADS")
+    (cd "$NOPERT" && run ./tubecode.exe --code "$code" --output_dir "$TREES1" --threads "$THREADS")
   done
   for code in $(seq 0 $((NCODES - 1))); do
-    (cd "$NOPERT" && run ./tuberefine231.exe --code "$code" --in_dir "$TREES1" --out_dir "$TREES2" \
+    (cd "$NOPERT" && run ./tuberefine.exe --code "$code" --in_dir "$TREES1" --out_dir "$TREES2" \
       --goal 1/50000 --threads "$THREADS")
   done
 fi
@@ -132,7 +146,7 @@ fi
 if want tubepack; then
   echo "== tubepack"
   (cd "$NOPERT" && run ./export_codetrees_pack.exe --trees_dir "$TREES2" --out_dir "$TUBEPACKS" \
-    --bdd codebdd231.json)
+    --bdd codebdd.json)
 fi
 
 if want search; then

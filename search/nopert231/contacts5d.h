@@ -12,8 +12,8 @@
 // certificate rows index triples by position in it and record the params, so
 // the pool can be rebuilt exactly when packing.
 
-#ifndef _NOPERT231_CONTACTS5D_H
-#define _NOPERT231_CONTACTS5D_H
+#ifndef _NOPERT_CONTACTS5D_H
+#define _NOPERT_CONTACTS5D_H
 
 #include <array>
 #include <utility>
