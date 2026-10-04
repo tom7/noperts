@@ -153,6 +153,10 @@ struct ModelFile {
   int seeds = 0;
   std::vector<std::array<BigRat, 3>> vertices;
   std::vector<std::vector<int>> faces;
+  // If given ("rational_vertex i p/q p/q p/q"), the rational model itself,
+  // used as is (no rounding or planarization): for models whose faces share
+  // vertices, which the generator makes exactly planar together.
+  std::vector<BigVecQ3> rational_vertices;
   // The view domain (a rational triangle on x + y + z = 1):
   // "view_triangle x0 y0 z0 x1 ... z2".
   std::optional<std::array<BigVecQ3, 3>> view_triangle;
@@ -190,6 +194,11 @@ static ModelFile LoadModelFile(const std::string &filename) {
     } else if (tok[0] == "vertex" && tok.size() == 5) {
       CHECK(std::stoi(tok[1]) == (int)m.vertices.size()) << line;
       m.vertices.push_back({DecimalRat(tok[2]), DecimalRat(tok[3]), DecimalRat(tok[4])});
+    } else if (tok[0] == "rational_vertex" && tok.size() == 5) {
+      CHECK(std::stoi(tok[1]) == (int)m.rational_vertices.size()) << line;
+      m.rational_vertices.push_back(BigVecQ3(BigRat(std::string_view(tok[2])),
+                                             BigRat(std::string_view(tok[3])),
+                                             BigRat(std::string_view(tok[4]))));
     } else if (tok[0] == "face") {
       std::vector<int> f;
       for (size_t i = 1; i < tok.size(); i++) f.push_back(std::stoi(tok[i]));
@@ -208,6 +217,8 @@ static ModelFile LoadModelFile(const std::string &filename) {
   CHECK(m.seeds > 0 && (int)m.vertices.size() == 5 * m.seeds)
       << filename << ": expected 5 * seeds vertices, got " << m.vertices.size();
   for (const auto &f : m.faces) for (int v : f) CHECK(v >= 0 && v < (int)m.vertices.size());
+  CHECK(m.rational_vertices.empty() || m.rational_vertices.size() == m.vertices.size())
+      << filename << ": rational_vertex count";
   return m;
 }
 
@@ -1041,7 +1052,23 @@ int main(int argc, char **argv) {
   const std::array<BigVecQ3, 3> view_corners = *model.view_triangle;
   std::vector<BigVecQ3> verts;
   const BigRat target = BigRat(36, 100000000000000000LL) * BigRat(36, 100000000000000000LL);
-  for (int attempt = 0; ; attempt++) {
+  if (!model.rational_vertices.empty()) {
+    verts = model.rational_vertices;
+    const BigRat d2 = TightVertexDistanceSq(verts);
+    Print("Rational vertices from the model file: max |rational - tight| = {:.3e} (Lean bound 4e-16)\n",
+          std::sqrt(d2.ToDouble()));
+    CHECK(d2 <= target) << "the model file's rational vertices are not within the tightVertex bound";
+    BigRat worst(0);
+    for (size_t i = 0; i < verts.size(); i++) {
+      const BigRat dx = verts[i].x - model.vertices[i][0], dy = verts[i].y - model.vertices[i][1],
+                   dz = verts[i].z - model.vertices[i][2];
+      worst = std::max(worst, dx * dx + dy * dy + dz * dz);
+    }
+    Print("  Max distance from the exact model: {:.3e} (budget 6e-16)\n", std::sqrt(worst.ToDouble()));
+    CHECK(worst <= BigRat(36, 100000000000000000LL) * BigRat(1, 100000000000000LL))
+        << "rational vertices more than 6e-16 from the exact model";
+  }
+  for (int attempt = 0; verts.empty(); attempt++) {
     CHECK(attempt < 1000) << "No scale found within the tightVertex bound";
     auto v = ModelRationalVertices(model, attempt, false);
     const BigRat d2 = TightVertexDistanceSq(v);
