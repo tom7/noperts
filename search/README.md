@@ -44,7 +44,7 @@ Prerequisites:
 | pack | `pack5d`: per-code certificate packs |
 | verify | `constructPentagonalHexecontahedron` on the packs |
 
-The verifier ends with:
+The verifier takes about 23 minutes on 64 cores (chart 0: 595,098 rows) and ends with:
 
 ```
 constructed proof: no IModel (I-orbit within 6e-16 of the rational vertices) is Rupert
