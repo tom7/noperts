@@ -27,6 +27,7 @@
 //
 // Usage: capcert.exe [--cap u0|ux] [--aniso] [--mu0 41/512] [--max_depth 30]
 //          [--threads 60] [--try 24] [--only kind:side:axis:sign,...] [--double] [--frame_only]
+//          [--export FILE]
 
 #include <algorithm>
 #include <array>
@@ -238,12 +239,16 @@ template <class T> Iv ToIv(const T &x);
 template <> Iv ToIv<double>(const double &x) { return IvOf(x); }  // double mode: not rigorous
 template <> Iv ToIv<KNum>(const KNum &x) { return IvOfK(x); }
 template <class T> Dense ToDense(const PolyT<T> &p) {
+  // Degrees from the nonzero coefficients only (cancelled terms stay in the map),
+  // so that the Lean checker (NPoly.degIn) uses the same Bernstein degrees.
   Dense d;
-  for (const auto &[e, c] : p.t) for (int i = 0; i < NV; i++) d.deg[i] = std::max(d.deg[i], (int)e[i]);
+  for (const auto &[e, c] : p.t)
+    if (!IsZeroT(c)) for (int i = 0; i < NV; i++) d.deg[i] = std::max(d.deg[i], (int)e[i]);
   int n = 1;
   for (int i = 0; i < NV; i++) n *= d.deg[i] + 1;
   d.c.assign(n, IvOf(0));
-  for (const auto &[e, c] : p.t) d.c[d.Index(e)] = d.c[d.Index(e)] + ToIv(c);
+  for (const auto &[e, c] : p.t)
+    if (!IsZeroT(c)) d.c[d.Index(e)] = d.c[d.Index(e)] + ToIv(c);
   return d;
 }
 
@@ -299,6 +304,19 @@ double BernsteinLower(const Dense &d, const Box &box) {
   double m = INFINITY;
   for (const Iv &x : c) m = std::min(m, x.lo);
   return m;
+}
+
+// The exact rational value of a double (all box endpoints are dyadic).
+std::string DyadicQ(double x) {
+  if (x == 0) return "0";
+  int e;
+  const double m = std::frexp(x, &e);
+  int64_t mi = (int64_t)std::ldexp(m, 53);
+  e -= 53;
+  while (e < 0 && mi % 2 == 0) { mi /= 2; e++; }
+  BigInt p(1);
+  for (int i = 0; i < std::abs(e); i++) p = p * BigInt(2);
+  return (e >= 0 ? Q(BigInt(mi) * p) : Q(BigInt(mi), p)).ToString();
 }
 
 // ----- The solid, the frame, the witnesses -----
@@ -630,9 +648,12 @@ struct Certifier {
     return within(0, 1) && within(1, 0) && within(2, 0);
   }
 
-  bool Rec(Box box, int depth) {
-    if (InCone(box)) return true;
-    if (!cell.c.empty() && BernsteinLower(cell, box) > 0) { stats->pruned++; return true; }
+  // Certifies the box; appends its certificate tree to *out (preorder: 'X' inside a
+  // cone chart, 'P' outside the half-turn cell, 'L<witness>,' a witness leaf, 'F'
+  // failed, 'S<axis>' a split at the midpoint followed by the two halves).
+  bool Rec(Box box, int depth, std::string *out) {
+    if (InCone(box)) { *out += 'X'; return true; }
+    if (!cell.c.empty() && BernsteinLower(cell, box) > 0) { stats->pruned++; *out += 'P'; return true; }
     // Screen witnesses by their worst value over the box's center and its 2 NV
     // face centers (a witness valid on only part of the box ranks low).
     std::vector<std::array<double, NV>> pts;
@@ -681,10 +702,11 @@ struct Certifier {
         const double lb = BernsteinLower(P, box);
         if (!(exact ? lb >= 0 : lb >= -1e-13)) { all = false; break; }
       }
-      if (all) { stats->ok++; return true; }
+      if (all) { stats->ok++; *out += 'L' + std::to_string(sc[r].second) + ','; return true; }
     }
     if (depth >= max_depth) {
       stats->failed++;
+      *out += 'F';
       std::lock_guard<std::mutex> l(mu);
       if (fail_boxes.size() < 5) {
         std::string s;
@@ -703,8 +725,9 @@ struct Certifier {
     auto b1 = box, b2 = box;
     b1[best].second = m;
     b2[best].first = m;
-    const bool r1 = Rec(b1, depth + 1);
-    const bool r2 = Rec(b2, depth + 1);
+    *out += 'S' + std::to_string(best);
+    const bool r1 = Rec(b1, depth + 1, out);
+    const bool r2 = Rec(b2, depth + 1, out);
     return r1 && r2;
   }
 };
@@ -719,6 +742,7 @@ int main(int argc, char **argv) {
   bool aniso = false, exact = true, mix = true;
   std::string debug_box;
   bool frame_only = false;
+  std::string export_file;
   int ratio_z = 0, ratio_z_face = 0;
   double strong_scale = 2;
   Q mu0(41, 512);
@@ -737,6 +761,7 @@ int main(int argc, char **argv) {
     else if (a == "--strong_scale") strong_scale = std::stod(next());
     else if (a == "--debug_box") debug_box = next();
     else if (a == "--frame_only") frame_only = true;
+    else if (a == "--export") export_file = next();
     else if (a == "--ratio_z") ratio_z = std::stoi(next());
     else if (a == "--ratio_z_face") ratio_z_face = std::stoi(next());
     else LOG(FATAL) << "unknown argument " << a;
@@ -961,6 +986,7 @@ int main(int argc, char **argv) {
     }
     return 0;
   }
+  std::vector<std::string> task_out(tasks.size());
   std::atomic<size_t> next{0};
   std::mutex out_mu;
   std::vector<std::thread> ts;
@@ -970,7 +996,7 @@ int main(int argc, char **argv) {
         const size_t q = next++;
         if (q >= tasks.size()) return;
         const Task &task = tasks[q];
-        if (!certs[task.chart]->Rec(task.box, 4)) chart_ok[task.chart] = false;
+        if (!certs[task.chart]->Rec(task.box, 4, &task_out[q])) chart_ok[task.chart] = false;
         if (--pending[task.chart] == 0) {
           const ChartId &ch = charts[task.chart];
           const Stats &s = *stats[task.chart];
@@ -986,5 +1012,41 @@ int main(int argc, char **argv) {
     });
   }
   for (auto &t : ts) t.join();
+  if (!export_file.empty()) {
+    // The certificate for the Lean checker: the setup, the exact solid and witnesses,
+    // and per chart its root box and certificate tree (the 4 x 4 task split of the
+    // first two coordinates is two midpoint splits of each).
+    FILE *f = fopen(export_file.c_str(), "w");
+    CHECK(f != nullptr) << export_file;
+    auto kq = [](const KNum &x) {
+      return x.a.ToString() + " " + x.b.ToString() + " " + x.c.ToString() + " " + x.d.ToString();
+    };
+    auto kv = [&](const V3<KNum> &v) { return kq(v[0]) + "  " + kq(v[1]) + "  " + kq(v[2]); };
+    fprintf(f, "cap %s aniso %d half_turn %d tie_cones %d mu0 %s strong_scale %s t0 %s ratio_z %d ratio_z_face %d\n",
+            cap.c_str(), (int)st.aniso, (int)st.half_turn, (int)st.tie_cones, mu0.ToString().c_str(),
+            DyadicQ(st.strong_scale).c_str(), DyadicQ(st.t0).c_str(), st.ratio_z, st.ratio_z_face);
+    fprintf(f, "frame %s  %s  %s\n", kv(st.pk.x).c_str(), kv(st.pk.e1).c_str(), kv(st.pk.e2).c_str());
+    for (size_t i = 0; i < st.pk.V.size(); i++) fprintf(f, "vertex %zu %s\n", i, kv(st.pk.V[i]).c_str());
+    for (size_t i = 0; i < st.pk.W.size(); i++)
+      fprintf(f, "witness %zu %d %s\n", i, st.pk.W[i].k, kv(st.pk.W[i].c).c_str());
+    size_t q = 0;
+    for (size_t k = 0; k < charts.size(); k++) {
+      if (!certs[k]) continue;
+      const ChartId &ch = charts[k];
+      CHECK(chart_ok[k]) << "export of a failed chart";
+      std::string box;
+      for (const auto &[lo, hi] : ch.box) box += " " + DyadicQ(lo) + " " + DyadicQ(hi);
+      fprintf(f, "chart %s %d %d %d %d %d %d%s\n", ch.kind.c_str(), ch.side, ch.axis, ch.sign > 0 ? 1 : -1, ch.ratio,
+              ch.ratio_coord, ch.ratio_sign > 0 ? 1 : -1, box.c_str());
+      CHECK(tasks[q].chart == k);
+      auto t = [&](int i, int j) { return task_out[q + 4 * i + j]; };
+      auto quarter = [&](int i) { return "S1S1" + t(i, 0) + t(i, 1) + "S1" + t(i, 2) + t(i, 3); };
+      fprintf(f, "tree S0S0%s%sS0%s%s\n", quarter(0).c_str(), quarter(1).c_str(), quarter(2).c_str(),
+              quarter(3).c_str());
+      q += 16;
+    }
+    fclose(f);
+    printf("exported %s\n", export_file.c_str());
+  }
   return 0;
 }
