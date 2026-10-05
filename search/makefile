@@ -2,7 +2,7 @@
 default : exact5d_test.exe geom5d_test.exe contacts5d_test.exe cert5d_test.exe tubeatlas5d_test.exe rows5d_test.exe solve5d_test.exe lp5d_test.exe tubetree_test.exe model_test.exe tube_test.exe
 
 # Every program of the pipeline (rebuild.sh runs it).
-all: default qtube s5d codebdd.exe icoprune_check.exe halfturn_check.exe tieviz.exe tietube.exe viewmap.exe shadowanim.exe
+all: default qtube s5d codebdd.exe icoprune_check.exe halfturn_check.exe tieviz.exe tietube.exe dfwhere.exe capcert.exe viewmap.exe shadowanim.exe
 
 # Identity tube:
 #  codebdd: exact rational model, codes and code triangles (codebdd.json).
@@ -127,5 +127,15 @@ tieviz.exe : tieviz.o $(OBJECTS_CORE) $(OBJECTS)
 
 # tietube: exact tie tubes for the deltoidal hexecontahedron (dh_tie_data.py; notes/T.md).
 tietube.exe : tietube.o $(OBJECTS_CORE) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+	@echo -n "!"
+
+# dfwhere: where a 5D job's deferred leaves are (diagnostic).
+dfwhere.exe : dfwhere.o $(OBJECTS_CORE) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+	@echo -n "!"
+
+# capcert: cap certificates for the deltoidal hexecontahedron's special views (work in progress; notes/T.md).
+capcert.exe : capcert.o $(OBJECTS_CORE) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"
