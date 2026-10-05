@@ -284,6 +284,7 @@ struct Problem {
   std::vector<Witness> W;
   bool half_turn = false;
   bool tie_cones = false;  // cone charts at the tie M(u) (ux)
+  bool aniso = false;      // anisotropic weights (ux): w = mu s1 (x cross a) + mu^2 (s2 a + s3 x)
   double mu0 = 0.01, t0 = 0.25;
 };
 
@@ -305,24 +306,25 @@ Chart MakeChart(const Problem &pr, const std::string &kind, int side, int axis, 
   if (kind == "Fe") {
     for (int i = 0; i < 3; i++) s[i] = p[i];
     const Vec3 XA = Cross(pr.x, A), XB = Cross(pr.x, B);
-    ch.sM_A = {Dot(XA, pr.e1), Dot(XA, pr.e2)};
-    ch.sM_B = {Dot(XB, pr.e1), Dot(XB, pr.e2)};
+    ch.sM_A = pr.aniso ? std::array<double, 2>{1, 0} : std::array<double, 2>{Dot(XA, pr.e1), Dot(XA, pr.e2)};
+    ch.sM_B = pr.aniso ? std::array<double, 2>{0, 0} : std::array<double, 2>{Dot(XB, pr.e1), Dot(XB, pr.e2)};
     ch.box = {{{0, pr.mu0}, {-1, 1}, {-2, 2}, {-2, 2}, {-2, 2}}};
   } else if (kind == "Mcone") {
     // s = s_M(tau) + t sigma, s_M = x cross a (the tie M(u) = H_u H_x in the
     // weighted chart), sigma on the cube face (axis, sign).
     ch.cone = true;
     const Vec3 XA = Cross(pr.x, A), XB = Cross(pr.x, B);
-    const Poly sM[3] = {Poly::Const(Dot(XA, pr.e1)) + Dot(XB, pr.e1) * tau,
-                        Poly::Const(Dot(XA, pr.e2)) + Dot(XB, pr.e2) * tau, Poly::Const(0)};
+    // In the anisotropic chart w_M = mu (x cross a) is exactly s = (1, 0, 0).
+    const Poly sM[3] = {pr.aniso ? Poly::Const(1) : Poly::Const(Dot(XA, pr.e1)) + Dot(XB, pr.e1) * tau,
+                        pr.aniso ? Poly() : Poly::Const(Dot(XA, pr.e2)) + Dot(XB, pr.e2) * tau, Poly()};
     int o = 0;
     for (int i = 0; i < 3; i++) {
       const Poly sig = i == axis ? Poly::Const(sign) : p[1 + o++];
       s[i] = sM[i] + p[0] * sig;
     }
     ch.box = {{{0, pr.mu0}, {-1, 1}, {0, pr.t0}, {-1, 1}, {-1, 1}}};
-    ch.sM_A = {Dot(XA, pr.e1), Dot(XA, pr.e2)};
-    ch.sM_B = {Dot(XB, pr.e1), Dot(XB, pr.e2)};
+    ch.sM_A = pr.aniso ? std::array<double, 2>{1, 0} : std::array<double, 2>{Dot(XA, pr.e1), Dot(XA, pr.e2)};
+    ch.sM_B = pr.aniso ? std::array<double, 2>{0, 0} : std::array<double, 2>{Dot(XB, pr.e1), Dot(XB, pr.e2)};
   } else if (kind == "cone") {
     ch.cone = true;
     int o = 0;
@@ -338,7 +340,13 @@ Chart MakeChart(const Problem &pr, const std::string &kind, int side, int axis, 
     ch.box = {{{0, pr.mu0}, {-1, 1}, {0, 1}, {-2, 2}, {-2, 2}}};
   }
   ch.u = PConst(pr.x) + (mu * e) * a;
-  ch.w = (mu * s[0]) * PConst(pr.e1) + (mu * s[1]) * PConst(pr.e2) + ((mu * mu) * s[2]) * PConst(pr.x);
+  if (pr.aniso) {
+    // Weights: the tie direction m(a) = x cross a weight 1; a and x weight 2.
+    const PVec m = PCross(PConst(pr.x), a);
+    ch.w = (mu * s[0]) * m + ((mu * mu) * s[1]) * a + ((mu * mu) * s[2]) * PConst(pr.x);
+  } else {
+    ch.w = (mu * s[0]) * PConst(pr.e1) + (mu * s[1]) * PConst(pr.e2) + ((mu * mu) * s[2]) * PConst(pr.x);
+  }
   if (pr.half_turn) {
     // 2 u^T N G u - |u|^2 (tr(N G) + tr N), G = H_x.
     const Poly ww = PDot(ch.w, ch.w), one_m = Poly::Const(1) - ww;
@@ -494,6 +502,7 @@ int main(int argc, char **argv) {
   double mu0 = 0.01;
   int max_depth = 40, threads = 60;
   std::string only;
+  bool aniso = false;
   for (int i = 1; i < argc; i++) {
     const std::string a = argv[i];
     auto next = [&]() -> std::string { CHECK(i + 1 < argc); return argv[++i]; };
@@ -502,6 +511,7 @@ int main(int argc, char **argv) {
     else if (a == "--max_depth") max_depth = std::stoi(next());
     else if (a == "--threads") threads = std::stoi(next());
     else if (a == "--try") g_try = std::stoi(next());
+    else if (a == "--aniso") aniso = true;
     else if (a == "--only") only = next();  // kind:side:axis:sign, e.g. Fe:2:0:1 (prefixes allowed)
     else LOG(FATAL) << "unknown argument " << a;
   }
@@ -515,6 +525,7 @@ int main(int argc, char **argv) {
     pr.x = Norm({std::cos(M_PI / 10), std::sin(M_PI / 10), 2});
     pr.tie_cones = true;
   }
+  pr.aniso = aniso;
   pr.e1 = Norm(Cross(pr.x, {0, 0, 1}));
   pr.e2 = Cross(pr.x, pr.e1);
   const std::vector<int> supp = SupportVertices(pr.s, pr.x);
@@ -540,33 +551,59 @@ int main(int argc, char **argv) {
         charts.push_back(MakeChart(pr, "face", side, ax, sg));
       }
   }
+  // Tasks: (chart, sub-box): each chart's box split 4 x 4 over (mu, tau).
+  struct Task { size_t chart; std::array<std::pair<double, double>, NV> box; };
+  std::vector<Task> tasks;
+  std::vector<std::unique_ptr<Certifier>> certs(charts.size());
+  std::vector<std::unique_ptr<Stats>> stats(charts.size());
+  std::vector<std::atomic<int>> pending(charts.size());
+  std::vector<std::atomic<bool>> chart_ok(charts.size());
+  for (size_t k = 0; k < charts.size(); k++) {
+    const Chart &ch = charts[k];
+    if (!only.empty()) {
+      const std::string id = ch.kind + ":" + std::to_string(ch.side) + ":" + std::to_string(ch.axis) + ":" +
+                             (ch.sign > 0 ? "1" : "-1");
+      bool match = false;
+      std::stringstream ss(only);
+      std::string item;
+      while (std::getline(ss, item, ',')) match = match || id.rfind(item, 0) == 0;
+      if (!match) continue;
+    }
+    stats[k] = std::make_unique<Stats>();
+    certs[k] = std::make_unique<Certifier>(pr, ch, max_depth, stats[k].get());
+    chart_ok[k] = true;
+    pending[k] = 16;
+    for (int i = 0; i < 4; i++)
+      for (int j = 0; j < 4; j++) {
+        auto b = ch.box;
+        const double m0 = b[0].first, m1 = b[0].second, t0 = b[1].first, t1 = b[1].second;
+        b[0] = {m0 + (m1 - m0) * i / 4, m0 + (m1 - m0) * (i + 1) / 4};
+        b[1] = {t0 + (t1 - t0) * j / 4, t0 + (t1 - t0) * (j + 1) / 4};
+        tasks.push_back({k, b});
+      }
+  }
   std::atomic<size_t> next{0};
   std::mutex out_mu;
   std::vector<std::thread> ts;
-  for (int t = 0; t < std::min<int>(threads, charts.size()); t++) {
+  for (int t = 0; t < threads; t++) {
     ts.emplace_back([&]() {
       for (;;) {
-        const size_t k = next++;
-        if (k >= charts.size()) return;
-        const Chart &ch = charts[k];
-        if (!only.empty()) {
-          const std::string id = ch.kind + ":" + std::to_string(ch.side) + ":" + std::to_string(ch.axis) + ":" +
-                                 (ch.sign > 0 ? "1" : "-1");
-          bool match = false;
-          std::stringstream ss(only);
-          std::string item;
-          while (std::getline(ss, item, ',')) match = match || id.rfind(item, 0) == 0;
-          if (!match) continue;
+        const size_t q = next++;
+        if (q >= tasks.size()) return;
+        const Task &task = tasks[q];
+        // Sub-boxes start at depth 4 (two splits each of mu and tau).
+        const bool ok = certs[task.chart]->Rec(task.box, 4);
+        if (!ok) chart_ok[task.chart] = false;
+        if (--pending[task.chart] == 0) {
+          const Chart &ch = charts[task.chart];
+          const Stats &st = *stats[task.chart];
+          std::lock_guard<std::mutex> l(out_mu);
+          printf("%-5s side %d axis %d sign %+.0f: %s  boxes %lld pruned %lld failed %lld\n", ch.kind.c_str(),
+                 ch.side, ch.axis, ch.sign, chart_ok[task.chart] ? "OK" : "FAIL", (long long)st.ok.load(),
+                 (long long)st.pruned.load(), (long long)st.failed.load());
+          for (const auto &s : certs[task.chart]->fail_boxes) printf("    fail %s\n", s.c_str());
+          fflush(stdout);
         }
-        Stats st;
-        Certifier cert(pr, ch, max_depth, &st);
-        const bool ok = cert.Rec(ch.box, 0);
-        std::lock_guard<std::mutex> l(out_mu);
-        printf("%-4s side %d axis %d sign %+.0f: %s  boxes %lld pruned %lld failed %lld\n", ch.kind.c_str(),
-               ch.side, ch.axis, ch.sign, ok ? "OK" : "FAIL", (long long)st.ok.load(), (long long)st.pruned.load(),
-               (long long)st.failed.load());
-        for (const auto &s : cert.fail_boxes) printf("    fail %s\n", s.c_str());
-        fflush(stdout);
       }
     });
   }
