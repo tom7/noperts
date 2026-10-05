@@ -14,7 +14,7 @@
 //                [--bdd codebdd.json] [--cone_samples N] [--split_kappa K]
 //                [--split_rule 0|1|2] [--min_peel 5..7]
 //                [--view_scale S] [--view_lookahead]
-//                [--max_full_retry N] [--half_turn_prune]
+//                [--max_full_retry N] [--half_turn_prune] [--tie_dir DIR]
 //                [--exact_check] [--retry_deferred] [--requeue_deferred]
 //
 // --retry_deferred also solves every deferred (df) leaf in the journals again
@@ -37,6 +37,9 @@
 #include <condition_variable>
 #include <thread>
 #include <vector>
+#include <optional>
+
+#include "tie_normals.h"
 
 #include "base/logging.h"
 #include "rows5d.h"
@@ -57,6 +60,7 @@ struct Args {
   std::string bdd = "codebdd.json";
   bool retry_deferred = false;
   bool requeue_deferred = false;
+  std::string tie_dir;
   solve5d::Options opt;
 };
 
@@ -160,6 +164,7 @@ int main(int argc, char **argv) {
     else if (a == "--view_lookahead") args.opt.view_lookahead = true;
     else if (a == "--max_full_retry") args.opt.max_full_retry = std::stoi(next());
     else if (a == "--half_turn_prune") args.opt.half_turn_prune = true;
+    else if (a == "--tie_dir") args.tie_dir = next();
     else if (a == "--min_peel") args.opt.min_peel_eighths = std::stoi(next());
     else if (a == "--max_depth") args.opt.max_depth = std::stoi(next());
     else if (a == "--exact_check") args.opt.exact_check = true;
@@ -171,6 +176,12 @@ int main(int argc, char **argv) {
   if (args.threads <= 0) args.threads = std::max(1u, std::thread::hardware_concurrency());
 
   const auto atlas = tubeatlas5d::TubeAtlas::Load(args.trees_dir, args.bdd);
+  // Tie tubes (deltoidal hexecontahedron; tietube.cc output).
+  std::optional<tieatlas5d::TieAtlas> ties;
+  if (!args.tie_dir.empty()) {
+    ties = tieatlas5d::TieAtlas::Load(args.tie_dir, NUM_TIE_NORMALS, atlas.NumTriangles());
+    args.opt.ties = &*ties;
+  }
   if (all) {
     for (int t = 0; t < atlas.NumTriangles(); t++) args.triangles.push_back(t);
   } else if (code >= 0) {

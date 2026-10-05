@@ -173,6 +173,14 @@ Q IcoPruneLower(const Interval5 &iv, int chart, int n);
 Q HalfTurnPruneLower(const Interval5 &iv, const TriangleQ &tri, int chart, int g, int c, int d);
 Q HalfTurnPruneAllowance(const TriangleQ &tri, int c, int d);
 bool HalfTurnPruneValid(const Interval5 &iv, const TriangleQ &tri, int chart, int g);
+// Tie leaf (deltoidal hexecontahedron): every pose of the box has
+// trace(H_u R H_x) >= tau = (3 - rho^2) / (1 + rho^2), i.e. the Cayley vector
+// of S = H_u R H_x has norm <= rho, which the tie tube (tietube.cc) of
+// pinning normal n certifies for the view. Same Bernstein form as the
+// half-turn prune, with G = H_x (tie_normals.h) and -tau (P_c.P_d) D(w) in
+// place of -(P_c.P_d) trace(N).
+Q TieLeafLower(const Interval5 &iv, const TriangleQ &tri, int chart, int n, const Q &rho, int c, int d);
+bool TieLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, int n, const Q &rho);
 bool IcoPruneValid(const Interval5 &iv, int chart, int n);
 
 // symmetryTube: AtlasProjectiveLocalViewTree.Tube.Valid for chart 0 and

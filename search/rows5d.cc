@@ -119,6 +119,8 @@ std::string FormatRecord(const Record &r) {
           return std::format("pi {} {}", p, leaf.neighbor);
         } else if constexpr (std::is_same_v<T, HalfTurnPruneLeaf>) {
           return std::format("ph {} {}", p, leaf.element);
+        } else if constexpr (std::is_same_v<T, TieLeaf>) {
+          return std::format("tl {} {} {}", p, leaf.normal, leaf.rho.ToString());
         } else {
           return std::format("df {}", p);
         }
@@ -172,6 +174,12 @@ Journal ParseJournal(std::string_view text) {
     } else if (tag == "pi") {
       IcoPruneLeaf l;
       CHECK(ss >> l.neighbor && l.neighbor >= 0) << line;
+      leaf = l;
+    } else if (tag == "tl") {
+      TieLeaf l;
+      std::string r;
+      CHECK(ss >> l.normal >> r) << line;
+      l.rho = BigRat(std::string_view(r));
       leaf = l;
     } else if (tag == "ph") {
       HalfTurnPruneLeaf l;

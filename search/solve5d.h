@@ -29,6 +29,7 @@
 #include "exact5d.h"
 #include "geom5d.h"
 #include "rows5d.h"
+#include "tieatlas5d.h"
 #include "tubeatlas5d.h"
 
 namespace solve5d {
@@ -44,6 +45,8 @@ struct Options {
   // Half-turn prune (exact5d::HalfTurnPruneValid): only for centrally
   // symmetric solids (the deltoidal hexecontahedron).
   bool half_turn_prune = false;
+  // Tie leaves (deltoidal hexecontahedron): radii certified by tietube.cc.
+  const tieatlas5d::TieAtlas *ties = nullptr;
   // Split the box when its widest half-width exceeds split_kappa times the
   // view triangle's angular diameter, else split the view.
   double split_kappa = 0.5;

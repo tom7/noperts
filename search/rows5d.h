@@ -23,6 +23,8 @@
 //                                 (symmetry_neighbors.h; exact5d::IcoPruneValid)
 //   ph <path> <g>                 half-turn prune by group element g (ico_group.h;
 //                                 exact5d::HalfTurnPruneValid; centrally symmetric solids)
+//   tl <path> <n> <rho>           tie leaf: pinning normal n (tie_normals.h), tie tube radius rho
+//                                 (exact5d::TieLeafValid; tietube.cc certifies the tube)
 //   df <path>                     deferred: an unresolved subtree (not packable)
 //   done <path>                   the subtree at <path> is complete: every leaf
 //                                 below it is in the journal (written after them)
@@ -98,8 +100,12 @@ struct IcoPruneLeaf {
 struct HalfTurnPruneLeaf {
   int element = 0;
 };
+struct TieLeaf {
+  int normal = 0;
+  BigRat rho;
+};
 using Leaf = std::variant<CertLeaf, MixedLeaf, TubeLeaf, RadiusPruneLeaf, FundamentalPruneLeaf, DeferredLeaf,
-                          IcoPruneLeaf, HalfTurnPruneLeaf>;
+                          IcoPruneLeaf, HalfTurnPruneLeaf, TieLeaf>;
 
 struct Record {
   std::string path;

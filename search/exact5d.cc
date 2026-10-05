@@ -2,6 +2,7 @@
 
 #include "symmetry_neighbors.h"
 #include "ico_group.h"
+#include "tie_normals.h"
 
 #include <array>
 
@@ -742,6 +743,45 @@ bool HalfTurnPruneValid(const Interval5 &iv, const TriangleQ &tri, int chart, in
   for (int c = 0; c < 3; c++) {
     for (int d = c; d < 3; d++) {
       if (!(HalfTurnPruneAllowance(tri, c, d) < HalfTurnPruneLower(iv, tri, chart, g, c, d))) return false;
+    }
+  }
+  return true;
+}
+
+namespace {
+Quad3 TieCoefficientQuadratic(const TriangleQ &tri, int chart, int n, const Q &tau, int c, int d) {
+  CHECK(n >= 0 && n < NUM_TIE_NORMALS && c >= 0 && c < 3 && d >= 0 && d < 3);
+  auto G = [n](int i, int j) { return Q(TIE_HALF_TURN_NUM[n][3 * i + j], TIE_HALF_TURN_DENOM); };
+  const VecQ &pc = tri[c], &pd = tri[d];
+  VecQ gpc, gpd;
+  for (int k = 0; k < 3; k++) {
+    gpc[k] = G(k, 0) * pc[0] + G(k, 1) * pc[1] + G(k, 2) * pc[2];
+    gpd[k] = G(k, 0) * pd[0] + G(k, 1) * pd[1] + G(k, 2) * pd[2];
+  }
+  const Q dot = pc[0] * pd[0] + pc[1] * pd[1] + pc[2] * pd[2];
+  Quad3 sum;
+  for (int i = 0; i < 3; i++) {
+    for (int k = 0; k < 3; k++) {
+      const Q coeff = pc[i] * gpd[k] + pd[i] * gpc[k] - dot * G(k, i);
+      sum = QuadAdd(sum, QuadScale(coeff, QuadScale(ChartSign(chart, i), NumeratorQuadratic(i, k))));
+    }
+  }
+  return QuadSub(sum, QuadScale(tau * dot, DenomQuadratic()));
+}
+}  // namespace
+
+Q TieLeafLower(const Interval5 &iv, const TriangleQ &tri, int chart, int n, const Q &rho, int c, int d) {
+  const Q tau = (Q(3) - rho * rho) / (Q(1) + rho * rho);
+  const auto vars = RelativeBalls(iv);
+  const Quad3 q = TieCoefficientQuadratic(tri, chart, n, tau, c, d);
+  const RatBall tight = QuadEvalTightBall(vars, q);
+  return BigRat::Max(tight.center - tight.radius, BernsteinLower(vars, q));
+}
+
+bool TieLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, int n, const Q &rho) {
+  for (int c = 0; c < 3; c++) {
+    for (int d = c; d < 3; d++) {
+      if (!(HalfTurnPruneAllowance(tri, c, d) < TieLeafLower(iv, tri, chart, n, rho, c, d))) return false;
     }
   }
   return true;

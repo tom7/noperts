@@ -2,7 +2,7 @@
 default : exact5d_test.exe geom5d_test.exe contacts5d_test.exe cert5d_test.exe tubeatlas5d_test.exe rows5d_test.exe solve5d_test.exe lp5d_test.exe tubetree_test.exe model_test.exe tube_test.exe
 
 # Every program of the pipeline (rebuild.sh runs it).
-all: default qtube s5d codebdd.exe icoprune_check.exe halfturn_check.exe tieviz.exe viewmap.exe shadowanim.exe
+all: default qtube s5d codebdd.exe icoprune_check.exe halfturn_check.exe tieviz.exe tietube.exe viewmap.exe shadowanim.exe
 
 # Identity tube:
 #  codebdd: exact rational model, codes and code triangles (codebdd.json).
@@ -85,7 +85,7 @@ RUPERTS_OBJECTS=$(RUPERTS)/ruperts-util.o $(RUPERTS)/big-csg.o $(RUPERTS)/render
 OBJECTS=$(CC_LIB_OBJECTS) $(CODEC_OBJECTS) $(SQLITE_OBJECTS) $(RUPERTS_OBJECTS)
 
 # Library objects shared by the tools. No OpenCL.
-OBJECTS_CORE=model.o tube.o tubetree.o exact5d.o geom5d.o contacts5d.o bounds5d.o cert5d.o tubeatlas5d.o rows5d.o solve5d.o lp5d.o
+OBJECTS_CORE=model.o tube.o tubetree.o tieatlas5d.o exact5d.o geom5d.o contacts5d.o bounds5d.o cert5d.o tubeatlas5d.o rows5d.o solve5d.o lp5d.o
 
 $(CC_LIB)/%.o : $(CC_LIB)/%.cc
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -122,5 +122,10 @@ halfturn_check.exe : halfturn_check.o rigidity-margin.o $(OBJECTS_CORE) $(OBJECT
 
 # tieviz: 4K pictures/animations of the deltoidal hexecontahedron's ties (video; see tieviz.txt).
 tieviz.exe : tieviz.o $(OBJECTS_CORE) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+	@echo -n "!"
+
+# tietube: exact tie tubes for the deltoidal hexecontahedron (dh_tie_data.py; notes/T.md).
+tietube.exe : tietube.o $(OBJECTS_CORE) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"

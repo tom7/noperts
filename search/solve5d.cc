@@ -1,6 +1,7 @@
 #include "solve5d.h"
 
 #include "ico_group.h"
+#include "tie_normals.h"
 
 #include <algorithm>
 #include <cmath>
@@ -109,6 +110,34 @@ std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
     for (size_t k = 0; k < cand.size() && k < 3; k++) {
       if (exact5d::HalfTurnPruneValid(iv, node.tri, job_.chart, cand[k].second))
         return rows5d::HalfTurnPruneLeaf{cand[k].second};
+    }
+  }
+  // Tie leaves: the box lies within the tie tube about H_u H_x (deltoidal
+  // hexecontahedron). Screen trace(H_u R H_x) at the center first.
+  if (opt_.ties != nullptr) {
+    const geom5d::BoxD b = geom5d::ToDouble(node.box);
+    const geom5d::mat3 r = geom5d::RelativeRotation(job_.chart, b.center);
+    const geom5d::TriangleD td = geom5d::ToDouble(node.tri);
+    const geom5d::vec3 u = yocto::normalize(td.corners[0] + td.corners[1] + td.corners[2]);
+    const std::string vp = rows5d::ViewPath(node.path);
+    for (int n = 0; n < opt_.ties->NumNormals(); n++) {
+      const BigRat rho = opt_.ties->Radius(n, job_.t, vp);
+      if (!(rho > BigRat(0))) continue;
+      const double rd = rho.ToDouble(), tau = (3 - rd * rd) / (1 + rd * rd);
+      // trace(H_u M) = 2 u.M u - trace M, M = R H.
+      double m[3][3];
+      for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++) {
+          m[i][j] = 0;
+          for (int k = 0; k < 3; k++) m[i][j] += r[k][i] * (double)TIE_HALF_TURN_NUM[n][3 * k + j] / TIE_HALF_TURN_DENOM;
+        }
+      double umu = 0, trm = 0;
+      for (int i = 0; i < 3; i++) {
+        trm += m[i][i];
+        for (int j = 0; j < 3; j++) umu += u[i] * m[i][j] * u[j];
+      }
+      if (2 * umu - trm > tau && exact5d::TieLeafValid(iv, node.tri, job_.chart, n, rho))
+        return rows5d::TieLeaf{n, rho};
     }
   }
   if (job_.chart == 0) {
@@ -338,7 +367,8 @@ std::vector<rows5d::Record> Solver::SolveSubtree(const Node &root, int64_t max_n
             if constexpr (std::is_same_v<T, rows5d::RadiusPruneLeaf>) stats_.pr++;
             if constexpr (std::is_same_v<T, rows5d::FundamentalPruneLeaf> ||
                           std::is_same_v<T, rows5d::IcoPruneLeaf> ||
-                          std::is_same_v<T, rows5d::HalfTurnPruneLeaf>) stats_.pf++;
+                          std::is_same_v<T, rows5d::HalfTurnPruneLeaf> ||
+                          std::is_same_v<T, rows5d::TieLeaf>) stats_.pf++;
           },
           *leaf);
       if (live_ != nullptr) {

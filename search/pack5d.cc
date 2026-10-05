@@ -550,6 +550,10 @@ class Packer {
             return std::format(",13,{},{},{},0,{}", id, iv, l.neighbor, tri_id);
           } else if constexpr (std::is_same_v<T, rows5d::FundamentalPruneLeaf>) {
             return std::format(",8,{},{},{},0,{}", id, iv, l.direction > 0 ? 1 : 0, tri_id);
+          } else if constexpr (std::is_same_v<T, rows5d::TieLeaf>) {
+            // Lean Row.tieLeaf (tag 15): pinning normal, tie tube radius;
+            // depends on the view triangle, so never relaxed.
+            return std::format(",15,{},{},{},{},0,{}", id, iv, l.normal, Zigzag(l.rho), tri_id);
           } else if constexpr (std::is_same_v<T, rows5d::HalfTurnPruneLeaf>) {
             // Lean Row.halfTurnPrune (tag 14): group element index (icoEntry);
             // depends on the view triangle, so never relaxed.
