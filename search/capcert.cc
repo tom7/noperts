@@ -37,6 +37,7 @@
 #include <cstdio>
 #include <fstream>
 #include <map>
+#include <set>
 #include <memory>
 #include <mutex>
 #include <sstream>
@@ -424,6 +425,10 @@ struct Setup {
   int ratio_z = 0;       // Z for the ratio blow-up (0: off): Fe and cone charts
   int ratio_z_face = 0;  // Z for face charts (0: ratio_z)
   int tie_ratio = 0;     // Z2 for the tie-centred side-2 strong-face charts (0: off)
+  std::set<std::string> tie_charts;  // base charts using the tie scheme (kind:side:axis:sign)
+  int tie_k = 0, tie_kp = 0;         // K, K' (0: Z + Z2 + 8, K + 16)
+  int TieK(int z) const { return tie_k > 0 ? tie_k : z + tie_ratio + 8; }
+  int TieKp(int z) const { return tie_kp > 0 ? tie_kp : TieK(z) + 16; }
   // --z_override kind:side:axis:sign=Z,... (per base chart; e.g. the two ux strong faces need 1024).
   std::map<std::string, int> z_override;
   int Z(const std::string &kind, int side, int axis, double sign) const {
@@ -548,6 +553,16 @@ struct ChartId {
   //   4 (beyond, e large): e = (Z - Z2) mu + p0, s0 = e + Z2 mu + p1, p1 in [0, 2];
   //   6 (beyond, e small): e = mu p0, p0 in [0, Z - Z2], s0 = Z mu + p1, p1 in [0, 2];
   //   5 (between): e = (Z + Z2) mu + p0, s0 = Z mu + p1 p0, p1 in [0, 1].
+  // Tie scheme (--tie_charts; replaces all ratio charts of the listed side-2
+  // strong-face base charts; s0 is the weak coordinate, e the view offset; K >=
+  // Z + Z2, K' > K):
+  //   10: e = mu p0 (p0 in [0, K]), s0 = mu p1 (p1 in [-K', K'])
+  //   11/12: e = mu p0, s0 = +-(K' mu + p1) (p1 in [0, 2])
+  //   13: e = K mu + p0 (p0 in [0, 1]), s0 = mu p1 (p1 in [-Z, Z])
+  //   14: e = K mu + p0, s0 = -(Z mu + p1) (p1 in [0, 2])
+  //   15: e = K mu + p0, s0 = e + mu p1 (p1 in [-Z2, Z2])
+  //   16: e = K mu + p0, s0 = e + Z2 mu + p1 (p1 in [0, 2])
+  //   17: e = K mu + p0, s0 = Z mu + p1 (p0 + (K - Z - Z2) mu) (p1 in [0, 1])
   int ratio = 0, ratio_coord = 0;
   double ratio_sign = 1;
 };
@@ -617,7 +632,23 @@ ChartT<T> MakeChart(const Setup &st, const Problem<T> &pr, const ChartId &id) {
       const T r = ScaleT<T>(st.Range(i));
       s[i] = i == id.axis ? P::Const(id.sign > 0 ? r : Zero<T>() - r) : pv[1 + o++];
     }
-    if (id.ratio >= 3) {
+    if (id.ratio >= 10) {
+      CHECK(id.axis != 0);
+      const int zi = st.Z(id.kind, id.side, id.axis, id.sign);
+      const T Z = ScaleT<T>(zi), Z2 = ScaleT<T>(st.tie_ratio), K = ScaleT<T>(st.TieK(zi)),
+              Kp = ScaleT<T>(st.TieKp(zi)), m1 = Zero<T>() - one;
+      const P q = p[1];
+      switch (id.ratio) {
+        case 10: e = mu * p[0]; s[0] = mu * q; break;
+        case 11: e = mu * p[0]; s[0] = Kp * mu + q; break;
+        case 12: e = mu * p[0]; s[0] = m1 * (Kp * mu + q); break;
+        case 13: e = K * mu + p[0]; s[0] = mu * q; break;
+        case 14: e = K * mu + p[0]; s[0] = m1 * (Z * mu + q); break;
+        case 15: e = K * mu + p[0]; s[0] = e + mu * q; break;
+        case 16: e = K * mu + p[0]; s[0] = e + Z2 * mu + q; break;
+        default: e = K * mu + p[0]; s[0] = Z * mu + q * (p[0] + (K - Z - Z2) * mu); break;
+      }
+    } else if (id.ratio >= 3) {
       CHECK(id.ratio_coord == 0 && id.axis != 0);
       const T Z = ScaleT<T>(st.Z(id.kind, id.side, id.axis, id.sign)), Z2 = ScaleT<T>(st.tie_ratio);
       const P q = p[1];  // s0's chart variable (axis != 0)
@@ -883,7 +914,8 @@ int main(int argc, char **argv) {
   int mcm = 1;
   std::string export_file;
   std::map<std::string, int> z_override;
-  int ratio_z = 0, ratio_z_face = 0, tie_ratio = 0;
+  int ratio_z = 0, ratio_z_face = 0, tie_ratio = 0, tie_k = 0, tie_kp = 0;
+  std::set<std::string> tie_charts;
   double strong_scale = 2;
   Q mu0(41, 512);
   for (int i = 1; i < argc; i++) {
@@ -916,6 +948,13 @@ int main(int argc, char **argv) {
     else if (a == "--ratio_z") ratio_z = std::stoi(next());
     else if (a == "--ratio_z_face") ratio_z_face = std::stoi(next());
     else if (a == "--tie_ratio") tie_ratio = std::stoi(next());
+    else if (a == "--tie_charts") {
+      std::stringstream ss(next());
+      std::string item;
+      while (std::getline(ss, item, ',')) tie_charts.insert(item);
+    }
+    else if (a == "--tie_k") tie_k = std::stoi(next());
+    else if (a == "--tie_kp") tie_kp = std::stoi(next());
     else LOG(FATAL) << "unknown argument " << a;
   }
   Setup st;
@@ -927,6 +966,9 @@ int main(int argc, char **argv) {
   st.ratio_z = ratio_z;
   st.ratio_z_face = ratio_z_face;
   st.tie_ratio = tie_ratio;
+  st.tie_charts = tie_charts;
+  st.tie_k = tie_k;
+  st.tie_kp = tie_kp;
   st.t0m = t0m;
   st.mcm = mcm;
   st.z_override = z_override;
@@ -1045,6 +1087,24 @@ int main(int argc, char **argv) {
     for (const ChartId &c : charts) {
       const bool strong_dom = c.kind == "Fe" || st.Strong(c.axis);
       if (!strong_dom) { out.push_back(c); continue; }
+      if (st.tie_charts.count(c.kind + ":" + std::to_string(c.side) + ":" + std::to_string(c.axis) + ":" +
+                              (c.sign > 0 ? "1" : "-1"))) {
+        CHECK(c.kind == "face" && c.axis != 0 && st.tie_ratio > 0);
+        const int z = st.Z(c.kind, c.side, c.axis, c.sign), z2 = st.tie_ratio, k = st.TieK(z), kp = st.TieKp(z);
+        CHECK(k >= z + z2 && kp > k) << "tie scheme needs K >= Z + Z2, K' > K";
+        const std::pair<double, double> boxes[8][2] = {
+            {{0, (double)k}, {-(double)kp, (double)kp}}, {{0, (double)k}, {0, 2}}, {{0, (double)k}, {0, 2}},
+            {{0, 1}, {-(double)z, (double)z}}, {{0, 1}, {0, 2}}, {{0, 1}, {-(double)z2, (double)z2}},
+            {{0, 1}, {0, 2}}, {{0, 1}, {0, 1}}};
+        for (int m = 0; m < 8; m++) {
+          ChartId o = c;
+          o.ratio = 10 + m;
+          o.box[2] = boxes[m][0];
+          o.box[3] = boxes[m][1];
+          out.push_back(o);
+        }
+        continue;
+      }
       auto pidx = [&](int i) {
         if (c.kind == "Fe") return i;
         int o = 0;
@@ -1064,7 +1124,7 @@ int main(int argc, char **argv) {
           o.ratio_coord = i;
           o.ratio_sign = sg;
           o.box[2 + pidx(i)] = {0, c.box[2 + pidx(i)].second};
-          if (st.tie_ratio > 0 && c.kind == "face" && c.side == 2 && i == 0 && sg > 0) {
+          if (st.tie_ratio > 0 && st.tie_charts.empty() && c.kind == "face" && c.side == 2 && i == 0 && sg > 0) {
             // Tie-centred replacement of s0 >= Z mu (see ChartId).
             const double z2 = st.tie_ratio;
             const double z = st.Z(c.kind, c.side, c.axis, c.sign);
@@ -1197,6 +1257,17 @@ int main(int argc, char **argv) {
             cap.c_str(), (int)st.aniso, (int)st.half_turn, (int)st.tie_cones, mu0.ToString().c_str(),
             DyadicQ(st.strong_scale).c_str(), DyadicQ(st.t0).c_str(), st.ratio_z, st.ratio_z_face, DyadicQ(st.t0m).c_str(), st.mcm);
     fprintf(f, "frame %s  %s  %s\n", kv(st.pk.x).c_str(), kv(st.pk.e1).c_str(), kv(st.pk.e2).c_str());
+    // The tie scheme's base charts (Lean Setup.tieCharts): kind side axis sign Z2 K K'.
+    for (const std::string &tc : st.tie_charts) {
+      std::vector<std::string> p;
+      std::stringstream ss(tc);
+      std::string item;
+      while (std::getline(ss, item, ':')) p.push_back(item);
+      CHECK(p.size() == 4) << tc;
+      const int z = st.Z(p[0], std::stoi(p[1]), std::stoi(p[2]), std::stod(p[3]));
+      fprintf(f, "tie_chart %s %s %s %s %d %d %d\n", p[0].c_str(), p[1].c_str(), p[2].c_str(), p[3].c_str(),
+              st.tie_ratio, st.TieK(z), st.TieKp(z));
+    }
     for (size_t i = 0; i < st.pk.V.size(); i++) fprintf(f, "vertex %zu %s\n", i, kv(st.pk.V[i]).c_str());
     for (size_t i = 0; i < st.pk.W.size(); i++)
       fprintf(f, "witness %zu %d %s\n", i, st.pk.W[i].k, kv(st.pk.W[i].c).c_str());
