@@ -26,7 +26,7 @@
 // stay exactly 0). --double runs the floating-point version (feasibility).
 //
 // Usage: capcert.exe [--cap u0|ux] [--aniso] [--mu0 41/512] [--max_depth 30]
-//          [--threads 60] [--try 24] [--only kind:side:axis:sign,...] [--double] [--frame_only]
+//          [--threads 60] [--try 24] [--only kind:side:axis:sign,...] [--double] [--frame_only] [--z_override kind:side:axis:sign=Z,...]
 //          [--export FILE]
 
 #include <algorithm>
@@ -47,6 +47,7 @@
 #include "base/logging.h"
 #include "bignum/big.h"
 #include "bignum/big-overloads.h"
+#include "exact5d.h"
 
 namespace {
 
@@ -307,6 +308,17 @@ double BernsteinLower(const Dense &d, const Box &box) {
 }
 
 // The exact rational value of a double (all box endpoints are dyadic).
+Q DyadicRat(double x) {
+  if (x == 0) return Q(0);
+  int e;
+  const double m = std::frexp(x, &e);
+  int64_t mi = (int64_t)std::ldexp(m, 53);
+  e -= 53;
+  while (e < 0 && mi % 2 == 0) { mi /= 2; e++; }
+  BigInt p(1);
+  for (int i = 0; i < std::abs(e); i++) p = p * BigInt(2);
+  return e >= 0 ? Q(BigInt(mi) * p) : Q(BigInt(mi), p);
+}
 std::string DyadicQ(double x) {
   if (x == 0) return "0";
   int e;
@@ -317,6 +329,74 @@ std::string DyadicQ(double x) {
   BigInt p(1);
   for (int i = 0; i < std::abs(e); i++) p = p * BigInt(2);
   return (e >= 0 ? Q(BigInt(mi) * p) : Q(BigInt(mi), p)).ToString();
+}
+
+// Exact tensor Bernstein lower bound (the fallback when the interval bound is
+// slightly negative because a coefficient vanishes only by cancellation): the
+// coefficients are computed exactly in K and bounded below by the rational
+// enclosure of Lean's IcoQ.lo — the same test as the Lean checker
+// (NPoly.lowerDeg at the same uniform degrees).
+struct DenseK {
+  std::array<int, NV> deg{};
+  std::vector<KNum> c;
+};
+DenseK ToDenseK(const PolyT<KNum> &p) {
+  DenseK d;
+  for (const auto &[e, c] : p.t)
+    if (!IsZero(c)) for (int i = 0; i < NV; i++) d.deg[i] = std::max(d.deg[i], (int)e[i]);
+  int n = 1;
+  for (int i = 0; i < NV; i++) n *= d.deg[i] + 1;
+  d.c.assign(n, KNum(0));
+  for (const auto &[e, c] : p.t) {
+    if (IsZero(c)) continue;
+    int idx = 0;
+    for (int i = 0; i < NV; i++) idx = idx * (d.deg[i] + 1) + e[i];
+    d.c[idx] = d.c[idx] + c;
+  }
+  return d;
+}
+KNum ScaleK(const Q &q, const KNum &x) { return {q * x.a, q * x.b, q * x.c, q * x.d}; }
+Q ExactBernsteinLower(const DenseK &d, const std::array<std::pair<Q, Q>, NV> &box) {
+  std::vector<KNum> c = d.c;
+  std::array<int, NV> sz, stride;
+  for (int i = 0; i < NV; i++) sz[i] = d.deg[i] + 1;
+  stride[NV - 1] = 1;
+  for (int i = NV - 2; i >= 0; i--) stride[i] = stride[i + 1] * sz[i + 1];
+  const int n = c.size();
+  for (int ax = 0; ax < NV; ax++) {
+    const int D = d.deg[ax];
+    if (D == 0) continue;
+    const Q lo = box[ax].first, h = box[ax].second - box[ax].first;
+    std::vector<KNum> col(D + 1), out(D + 1);
+    for (int base = 0; base < n; base++) {
+      if ((base / stride[ax]) % sz[ax] != 0) continue;
+      for (int k = 0; k <= D; k++) col[k] = c[base + k * stride[ax]];
+      for (int k = 0; k <= D; k++) out[k] = KNum(0);
+      for (int j = 0; j <= D; j++) {
+        if (IsZero(col[j])) continue;
+        for (int k = 0; k <= j; k++) {
+          Q w((int64_t)std::llround(Binom(j, k)));
+          for (int r = 0; r < j - k; r++) w = w * lo;
+          for (int r = 0; r < k; r++) w = w * h;
+          out[k] = out[k] + ScaleK(w, col[j]);
+        }
+      }
+      for (int I = 0; I <= D; I++) {
+        KNum s(0);
+        for (int J = 0; J <= I; J++)
+          s = s + ScaleK(Q((int64_t)std::llround(Binom(I, J))) / Q((int64_t)std::llround(Binom(D, J))), out[J]);
+        col[I] = s;
+      }
+      for (int k = 0; k <= D; k++) c[base + k * stride[ax]] = col[k];
+    }
+  }
+  bool first = true;
+  Q m(0);
+  for (const KNum &x : c) {
+    const Q l = exact5d::KLower(exact5d::KQ{x.a, x.b, x.c, x.d});
+    if (first || l < m) { m = l; first = false; }
+  }
+  return m;
 }
 
 // ----- The solid, the frame, the witnesses -----
@@ -340,7 +420,14 @@ struct Setup {
   bool Strong(int i) const { return aniso ? i >= 1 : i == 2; }
   int ratio_z = 0;       // Z for the ratio blow-up (0: off): Fe and cone charts
   int ratio_z_face = 0;  // Z for face charts (0: ratio_z)
-  int Z(const std::string &kind) const { return kind == "face" && ratio_z_face > 0 ? ratio_z_face : ratio_z; }
+  // --z_override kind:side:axis:sign=Z,... (per base chart; e.g. the two ux strong faces need 1024).
+  std::map<std::string, int> z_override;
+  int Z(const std::string &kind, int side, int axis, double sign) const {
+    const auto it = z_override.find(kind + ":" + std::to_string(side) + ":" + std::to_string(axis) + ":" +
+                                    (sign > 0 ? "1" : "-1"));
+    if (it != z_override.end()) return it->second;
+    return kind == "face" && ratio_z_face > 0 ? ratio_z_face : ratio_z;
+  }
   double Range(int i) const { return Strong(i) ? strong_scale : 2.0; }
 };
 
@@ -489,7 +576,7 @@ ChartT<T> MakeChart(const Setup &st, const Problem<T> &pr, const ChartId &id) {
   } else if (id.ratio == 2) {
     const int k = pvar[id.ratio_coord];
     CHECK(k >= 0);
-    const T Z = ScaleT<T>(st.Z(id.kind)), sg = id.ratio_sign > 0 ? one : Zero<T>() - one;
+    const T Z = ScaleT<T>(st.Z(id.kind, id.side, id.axis, id.sign)), sg = id.ratio_sign > 0 ? one : Zero<T>() - one;
     pv[k] = sg * (Z * mu + p[k]);
   }
   P e = P::Const(one), s[3];
@@ -585,6 +672,7 @@ struct Certifier {
   std::unique_ptr<ChartT<KNum>> chk;
   Dense cell;
   std::vector<std::unique_ptr<std::vector<Dense>>> cache;
+  std::vector<std::unique_ptr<std::vector<DenseK>>> kcache;  // exact mode: the exact polynomials
   std::mutex mu;
   std::vector<std::string> fail_boxes;
 
@@ -598,6 +686,7 @@ struct Certifier {
       cell = ToDense(chd.cell);
     }
     cache.resize(st.pd.W.size());
+    kcache.resize(st.pd.W.size());
   }
   bool Cone() const { return id.kind == "cone" || id.kind == "Mcone"; }
 
@@ -618,6 +707,18 @@ struct Certifier {
     if (!cache[wi]) cache[wi] = std::make_unique<std::vector<Dense>>(std::move(ds));
     return *cache[wi];
   }
+  const std::vector<DenseK> &GetK(int wi) {
+    {
+      std::lock_guard<std::mutex> l(mu);
+      if (kcache[wi]) return *kcache[wi];
+    }
+    std::vector<DenseK> ds;
+    const auto &w = st.pk.W[wi];
+    for (const auto &p : WitnessPolys(st.pk, *chk, Cone(), st.pk.V[w.k], w.c)) ds.push_back(ToDenseK(p));
+    std::lock_guard<std::mutex> l(mu);
+    if (!kcache[wi]) kcache[wi] = std::make_unique<std::vector<DenseK>>(std::move(ds));
+    return *kcache[wi];
+  }
 
   // The interval of chart coordinate s_i over the box (Fe charts, any ratio mode).
   std::pair<double, double> SRange(const Box &box, int i) const {
@@ -629,7 +730,7 @@ struct Certifier {
       return {*std::min_element(c, c + 4), *std::max_element(c, c + 4)};
     }
     if (i != id.ratio_coord) return v;
-    const double z = st.Z(id.kind);
+    const double z = st.Z(id.kind, id.side, id.axis, id.sign);
     const double lo = z * m0 + v.first, hi = z * m1 + v.second;
     return id.ratio_sign > 0 ? std::pair<double, double>{lo, hi} : std::pair<double, double>{-hi, -lo};
   }
@@ -696,11 +797,19 @@ struct Certifier {
       if (sc[r].first <= -1e-9) break;
       const auto &ds = Get(sc[r].second);
       bool all = true;
-      for (const Dense &P : ds) {
-        // Non-strict: P >= 0 suffices. Exact mode: rigorous (exact zeros stay 0).
-        // Double mode: allows rounding noise (feasibility only).
-        const double lb = BernsteinLower(P, box);
-        if (!(exact ? lb >= 0 : lb >= -1e-13)) { all = false; break; }
+      for (size_t j = 0; j < ds.size(); j++) {
+        // Non-strict: P >= 0 suffices. Exact mode: rigorous (exact zeros stay 0);
+        // a slightly negative interval bound (a coefficient that vanishes by
+        // cancellation) is redone with exact coefficients. Double mode: allows
+        // rounding noise (feasibility only).
+        const double lb = BernsteinLower(ds[j], box);
+        bool ok = exact ? lb >= 0 : lb >= -1e-13;
+        if (!ok && exact && lb > -1e-9) {
+          std::array<std::pair<Q, Q>, NV> qb;
+          for (int i = 0; i < NV; i++) qb[i] = {DyadicRat(box[i].first), DyadicRat(box[i].second)};
+          ok = !(ExactBernsteinLower(GetK(sc[r].second)[j], qb) < Q(0));
+        }
+        if (!ok) { all = false; break; }
       }
       if (all) { stats->ok++; *out += 'L' + std::to_string(sc[r].second) + ','; return true; }
     }
@@ -743,6 +852,7 @@ int main(int argc, char **argv) {
   std::string debug_box;
   bool frame_only = false;
   std::string export_file;
+  std::map<std::string, int> z_override;
   int ratio_z = 0, ratio_z_face = 0;
   double strong_scale = 2;
   Q mu0(41, 512);
@@ -761,6 +871,15 @@ int main(int argc, char **argv) {
     else if (a == "--strong_scale") strong_scale = std::stod(next());
     else if (a == "--debug_box") debug_box = next();
     else if (a == "--frame_only") frame_only = true;
+    else if (a == "--z_override") {
+      std::stringstream ss(next());
+      std::string item;
+      while (std::getline(ss, item, ',')) {
+        const size_t eq = item.find('=');
+        CHECK(eq != std::string::npos) << item;
+        z_override[item.substr(0, eq)] = std::stoi(item.substr(eq + 1));
+      }
+    }
     else if (a == "--export") export_file = next();
     else if (a == "--ratio_z") ratio_z = std::stoi(next());
     else if (a == "--ratio_z_face") ratio_z_face = std::stoi(next());
@@ -774,6 +893,7 @@ int main(int argc, char **argv) {
   st.strong_scale = strong_scale;
   st.ratio_z = ratio_z;
   st.ratio_z_face = ratio_z_face;
+  st.z_override = z_override;
   const KNum s72{Q(0), Q(0), Q(1), Q(0)}, sqrt5{Q(0), Q(1), Q(0), Q(0)};
   if (cap == "u0") {
     // u0: the 2-fold vertex direction nearest (0.309, 0.425, 0.851); |v| = sqrt5.
@@ -898,7 +1018,7 @@ int main(int argc, char **argv) {
       ChartId in = c;
       in.ratio = 1;
       for (int i = 0; i < 3; i++)
-        if (!st.Strong(i) && pidx(i) >= 0) in.box[2 + pidx(i)] = {-(double)st.Z(c.kind), (double)st.Z(c.kind)};
+        if (!st.Strong(i) && pidx(i) >= 0) in.box[2 + pidx(i)] = {-(double)st.Z(c.kind, c.side, c.axis, c.sign), (double)st.Z(c.kind, c.side, c.axis, c.sign)};
       out.push_back(in);
       for (int i = 0; i < 3; i++) {
         if (st.Strong(i) || pidx(i) < 0) continue;
@@ -960,6 +1080,8 @@ int main(int argc, char **argv) {
       const std::string id2 = ch.kind + ":" + std::to_string(ch.side) + ":" + std::to_string(ch.axis) + ":" +
                               (ch.sign > 0 ? "1" : "-1");
       if (id2 != idstr) continue;
+      printf("chart %s side %d axis %d sign %+.0f ratio %d/%d%+.0f\n", ch.kind.c_str(), ch.side, ch.axis, ch.sign,
+             ch.ratio, ch.ratio_coord, ch.ratio_sign);
       Stats s0;
       Certifier cert(st, ch, exact, max_depth, &s0);
       std::vector<std::tuple<double, int, int>> res;
@@ -1036,8 +1158,8 @@ int main(int argc, char **argv) {
       CHECK(chart_ok[k]) << "export of a failed chart";
       std::string box;
       for (const auto &[lo, hi] : ch.box) box += " " + DyadicQ(lo) + " " + DyadicQ(hi);
-      fprintf(f, "chart %s %d %d %d %d %d %d%s\n", ch.kind.c_str(), ch.side, ch.axis, ch.sign > 0 ? 1 : -1, ch.ratio,
-              ch.ratio_coord, ch.ratio_sign > 0 ? 1 : -1, box.c_str());
+      fprintf(f, "chart %s %d %d %d %d %d %d z %d%s\n", ch.kind.c_str(), ch.side, ch.axis, ch.sign > 0 ? 1 : -1, ch.ratio,
+              ch.ratio_coord, ch.ratio_sign > 0 ? 1 : -1, st.Z(ch.kind, ch.side, ch.axis, ch.sign), box.c_str());
       CHECK(tasks[q].chart == k);
       auto t = [&](int i, int j) { return task_out[q + 4 * i + j]; };
       auto quarter = [&](int i) { return "S1S1" + t(i, 0) + t(i, 1) + "S1" + t(i, 2) + t(i, 3); };
