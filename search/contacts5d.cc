@@ -75,23 +75,63 @@ bool AddCornerContacts(const geom5d::TriangleD &tri, const PoolParams &params, i
 
 // Double-precision version of Lean's Box.weightedDefectUpper for one triple,
 // with a margin (1e-9 added to each affine factor; Lean adds 6e-15).
-double WeightedDefectUpper(const geom5d::TriangleD &tri, const std::vector<Contact> &contacts,
+//
+// For contact i the bound is max(0, max over vertices k and corner pairs (a, b)
+// of (w_a s_kb + w_b s_ka) / 2), where s_k depends only on the contact and the
+// weights w_a > 0 on the triple. With positive weights the maximum over k is
+// attained on the Pareto frontier of the points (s_kb, s_ka), so each
+// contact's frontiers are computed once per pool (DefectFrontiers) and the
+// value is the same as the direct maximum over all vertices.
+constexpr double kDefectError = 1e-9;
+
+struct DefectFrontiers {
+  // Pairs (0,0), (1,1), (2,2): the maximum s_ka; pairs (0,1), (0,2), (1,2): the
+  // staircase of points (s_kb, s_ka) not dominated in both coordinates.
+  double diag[3];
+  std::vector<std::pair<double, double>> off[3];
+};
+
+DefectFrontiers MakeDefectFrontiers(const geom5d::TriangleD &tri, const Contact &ct) {
+  DefectFrontiers f;
+  std::vector<std::array<double, 3>> S;
+  for (int k = 0; k < NUM_VERTICES; k++) {
+    if (k == ct.vertex) continue;
+    const vec3 s_coeff = yocto::cross(ct.edge, V(k) - V(ct.vertex));
+    std::array<double, 3> s;
+    for (int a = 0; a < 3; a++) s[a] = yocto::dot(tri.corners[a], s_coeff) + kDefectError;
+    S.push_back(s);
+  }
+  for (int a = 0; a < 3; a++) {
+    f.diag[a] = -1e300;
+    for (const auto &s : S) f.diag[a] = std::max(f.diag[a], s[a]);
+  }
+  static constexpr int kPairs[3][2] = {{0, 1}, {0, 2}, {1, 2}};
+  for (int p = 0; p < 3; p++) {
+    const int a = kPairs[p][0], b = kPairs[p][1];
+    std::vector<std::pair<double, double>> pts;
+    for (const auto &s : S) pts.push_back({s[b], s[a]});
+    std::sort(pts.begin(), pts.end(), [](auto &x, auto &y) { return x.first > y.first || (x.first == y.first && x.second > y.second); });
+    double best_y = -1e300;
+    for (const auto &q : pts) {
+      if (q.second > best_y) { f.off[p].push_back(q); best_y = q.second; }
+    }
+  }
+  return f;
+}
+
+double WeightedDefectUpper(const geom5d::TriangleD &tri, const std::vector<DefectFrontiers> &fr,
                            const std::array<int, 3> &c, const std::array<vec3, 3> &w_coeff) {
-  constexpr double error = 1e-9;
+  static constexpr int kPairs[3][2] = {{0, 1}, {0, 2}, {1, 2}};
   double total = 0.0;
   for (int i = 0; i < 3; i++) {
-    const Contact &ct = contacts[c[i]];
+    const DefectFrontiers &f = fr[c[i]];
     double w[3];
-    for (int a = 0; a < 3; a++) w[a] = yocto::dot(tri.corners[a], w_coeff[i]) + error;
+    for (int a = 0; a < 3; a++) w[a] = yocto::dot(tri.corners[a], w_coeff[i]) + kDefectError;
     double upper = 0.0;
-    for (int k = 0; k < NUM_VERTICES; k++) {
-      if (k == ct.vertex) continue;
-      const vec3 s_coeff = yocto::cross(ct.edge, V(k) - V(ct.vertex));
-      double s[3];
-      for (int a = 0; a < 3; a++) s[a] = yocto::dot(tri.corners[a], s_coeff) + error;
-      for (int a = 0; a < 3; a++) {
-        for (int b = 0; b < 3; b++) upper = std::max(upper, 0.5 * (w[a] * s[b] + w[b] * s[a]));
-      }
+    for (int a = 0; a < 3; a++) upper = std::max(upper, w[a] * f.diag[a]);
+    for (int p = 0; p < 3; p++) {
+      const double wa = w[kPairs[p][0]], wb = w[kPairs[p][1]];
+      for (const auto &[sb, sa] : f.off[p]) upper = std::max(upper, 0.5 * (wa * sb + wb * sa));
     }
     total += upper;
   }
@@ -211,6 +251,9 @@ ContactPool BuildContactPool(const geom5d::TriangleD &tri, const PoolParams &par
 
   // Triples whose three contact weights are positive over the triangle.
   const int C = contacts.size();
+  std::vector<DefectFrontiers> frontiers;
+  frontiers.reserve(C);
+  for (const Contact &ct : contacts) frontiers.push_back(MakeDefectFrontiers(tri, ct));
   for (int i = 0; i < C; i++) {
     for (int j = i + 1; j < C; j++) {
       for (int k = j + 1; k < C; k++) {
@@ -236,7 +279,7 @@ ContactPool BuildContactPool(const geom5d::TriangleD &tri, const PoolParams &par
         }
         if (!ok) continue;
         pool.triples.push_back(Triple{.c = c,
-                                      .weighted_defect_upper = WeightedDefectUpper(tri, contacts, c, w)});
+                                      .weighted_defect_upper = WeightedDefectUpper(tri, frontiers, c, w)});
       }
     }
   }
