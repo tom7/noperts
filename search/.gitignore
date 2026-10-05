@@ -10,3 +10,4 @@ trees*/
 *.log
 codebdd.json
 rebuild-work/
+__pycache__/
