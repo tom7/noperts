@@ -21,6 +21,8 @@
 //   pf <path> <+|->               fundamentalPrune (direction positive/negative)
 //   pi <path> <n>                 icosahedral prune by symmetry neighbor n
 //                                 (symmetry_neighbors.h; exact5d::IcoPruneValid)
+//   ph <path> <g>                 half-turn prune by group element g (ico_group.h;
+//                                 exact5d::HalfTurnPruneValid; centrally symmetric solids)
 //   df <path>                     deferred: an unresolved subtree (not packable)
 //   done <path>                   the subtree at <path> is complete: every leaf
 //                                 below it is in the journal (written after them)
@@ -93,8 +95,11 @@ struct DeferredLeaf {};
 struct IcoPruneLeaf {
   int neighbor = 0;
 };
+struct HalfTurnPruneLeaf {
+  int element = 0;
+};
 using Leaf = std::variant<CertLeaf, MixedLeaf, TubeLeaf, RadiusPruneLeaf, FundamentalPruneLeaf, DeferredLeaf,
-                          IcoPruneLeaf>;
+                          IcoPruneLeaf, HalfTurnPruneLeaf>;
 
 struct Record {
   std::string path;

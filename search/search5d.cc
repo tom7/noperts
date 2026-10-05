@@ -14,7 +14,7 @@
 //                [--bdd codebdd.json] [--cone_samples N] [--split_kappa K]
 //                [--split_rule 0|1|2] [--min_peel 5..7]
 //                [--view_scale S] [--view_lookahead]
-//                [--max_full_retry N]
+//                [--max_full_retry N] [--half_turn_prune]
 //                [--exact_check] [--retry_deferred] [--requeue_deferred]
 //
 // --retry_deferred also solves every deferred (df) leaf in the journals again
@@ -159,6 +159,7 @@ int main(int argc, char **argv) {
     else if (a == "--view_scale") args.opt.view_scale = std::stod(next());
     else if (a == "--view_lookahead") args.opt.view_lookahead = true;
     else if (a == "--max_full_retry") args.opt.max_full_retry = std::stoi(next());
+    else if (a == "--half_turn_prune") args.opt.half_turn_prune = true;
     else if (a == "--min_peel") args.opt.min_peel_eighths = std::stoi(next());
     else if (a == "--max_depth") args.opt.max_depth = std::stoi(next());
     else if (a == "--exact_check") args.opt.exact_check = true;

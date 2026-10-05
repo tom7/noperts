@@ -46,6 +46,7 @@ EffectiveBounds ComputeEffectiveBounds(const TreeNode &node) {
     if (node.decomposed_cert->r > b.r_lower) b.r_lower = node.decomposed_cert->r;
     if (node.decomposed_cert->c_comp > b.c_lower) b.c_lower = node.decomposed_cert->c_comp;
   }
+  if (node.cap.has_value() && node.cap->r > b.r_lower) b.r_lower = node.cap->r;
   b.complete = (b.r_lower > BigRat(0));
 
   if (node.children.size() == 4) {
@@ -240,6 +241,12 @@ static void SerializeNode(const TreeNode &node, std::string &out) {
     SerializeDecomposedCertificate(*node.decomposed_cert, out);
   }
 
+  // Cap leaf
+  if (node.cap.has_value()) {
+    out += ",\n\"cap\": {\"index\": " + std::to_string(node.cap->index) + ", \"r\": \"" +
+           node.cap->r.ToString() + "\"}";
+  }
+
   if (!node.children.empty()) {
     out += ",\n\"children\": [\n";
     for (size_t i = 0; i < node.children.size(); i++) {
@@ -336,6 +343,13 @@ static std::unique_ptr<TreeNode> DeserializeNode(const rapidjson::Value &val) {
   }
 
   // Decomposed certificate
+  if (val.HasMember("cap") && val["cap"].IsObject()) {
+    const auto &cobj = val["cap"];
+    CapLeaf cap;
+    cap.index = GetIntVal(cobj["index"]);
+    cap.r = BigRat(cobj["r"].GetString());
+    node->cap = cap;
+  }
   if (val.HasMember("decomposed_certificate") && val["decomposed_certificate"].IsObject()) {
     const auto &dobj = val["decomposed_certificate"];
     DecomposedCertificate dc;

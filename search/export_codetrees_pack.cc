@@ -103,6 +103,11 @@ static bool ExportCodeTriangle(int code_id, int tri_idx, const TriangleQ &base_t
       }
     } else {
       rows[curr_idx].is_leaf = true;
+      if (n->cap.has_value()) {
+        std::cerr << "Error: cap leaf at path \"" << n->path
+                  << "\": the Lean packs have no cap rows yet (cap theorem " << n->cap->index << ")\n";
+        return false;
+      }
       if (!n->direct_cert.has_value() && !n->decomposed_cert.has_value()) {
         std::cerr << "Error: Leaf at path \"" << n->path << "\" lacks any certificate!\n";
         return false;

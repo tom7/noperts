@@ -1,6 +1,7 @@
 #include "exact5d.h"
 
 #include "symmetry_neighbors.h"
+#include "ico_group.h"
 
 #include <array>
 
@@ -697,6 +698,53 @@ Q IcoPruneAllowance() { return Q(36, SYMMETRY_NEIGHBOR_DENOM); }
 
 bool IcoPruneValid(const Interval5 &iv, int chart, int n) {
   return IcoPruneAllowance() < IcoPruneLower(iv, chart, n);
+}
+
+namespace {
+Quad3 HalfTurnCoefficientQuadratic(const TriangleQ &tri, int chart, int g, int c, int d) {
+  CHECK(g >= 0 && g < ICO_GROUP_SIZE && c >= 0 && c < 3 && d >= 0 && d < 3);
+  auto G = [g](int i, int j) { return Q(ICO_GROUP_NUM[g][3 * i + j], ICO_GROUP_DENOM); };
+  const VecQ &pc = tri[c], &pd = tri[d];
+  VecQ gpc, gpd;
+  for (int k = 0; k < 3; k++) {
+    gpc[k] = G(k, 0) * pc[0] + G(k, 1) * pc[1] + G(k, 2) * pc[2];
+    gpd[k] = G(k, 0) * pd[0] + G(k, 1) * pd[1] + G(k, 2) * pd[2];
+  }
+  const Q dot = pc[0] * pd[0] + pc[1] * pd[1] + pc[2] * pd[2];
+  Quad3 sum;
+  for (int i = 0; i < 3; i++) {
+    for (int k = 0; k < 3; k++) {
+      const Q coeff = pc[i] * gpd[k] + pd[i] * gpc[k] - dot * (G(k, i) + Q(i == k ? 1 : 0));
+      sum = QuadAdd(sum, QuadScale(coeff, QuadScale(ChartSign(chart, i), NumeratorQuadratic(i, k))));
+    }
+  }
+  return sum;
+}
+}  // namespace
+
+Q HalfTurnPruneLower(const Interval5 &iv, const TriangleQ &tri, int chart, int g, int c, int d) {
+  const auto vars = RelativeBalls(iv);
+  const Quad3 q = HalfTurnCoefficientQuadratic(tri, chart, g, c, d);
+  const RatBall tight = QuadEvalTightBall(vars, q);
+  return BigRat::Max(tight.center - tight.radius, BernsteinLower(vars, q));
+}
+
+// |G - G~| <= 5 * 10^-13 per entry and |N_ik| <= 1 + |w|^2 <= 4 on the bounded
+// region, so b_cd changes by at most
+// 4 * 5 * 10^-13 * (3 |P_c|_1 + 3 |P_d|_1 + 9 |P_c . P_d|).
+Q HalfTurnPruneAllowance(const TriangleQ &tri, int c, int d) {
+  auto l1 = [](const VecQ &p) { return BigRat::Abs(p[0]) + BigRat::Abs(p[1]) + BigRat::Abs(p[2]); };
+  const Q dot = tri[c][0] * tri[d][0] + tri[c][1] * tri[d][1] + tri[c][2] * tri[d][2];
+  return Q(2, 1000000000000) * (Q(3) * (l1(tri[c]) + l1(tri[d])) + Q(9) * BigRat::Abs(dot));
+}
+
+bool HalfTurnPruneValid(const Interval5 &iv, const TriangleQ &tri, int chart, int g) {
+  for (int c = 0; c < 3; c++) {
+    for (int d = c; d < 3; d++) {
+      if (!(HalfTurnPruneAllowance(tri, c, d) < HalfTurnPruneLower(iv, tri, chart, g, c, d))) return false;
+    }
+  }
+  return true;
 }
 
 Q IdentityMismatchRadius(const Interval5 &iv) {

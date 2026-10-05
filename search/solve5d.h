@@ -41,6 +41,9 @@ struct Options {
   // * 16, up to this many (the center screen can miss the best triple in
   // large pools; 0 disables the retries).
   int max_full_retry = 0;
+  // Half-turn prune (exact5d::HalfTurnPruneValid): only for centrally
+  // symmetric solids (the deltoidal hexecontahedron).
+  bool half_turn_prune = false;
   // Split the box when its widest half-width exceeds split_kappa times the
   // view triangle's angular diameter, else split the view.
   double split_kappa = 0.5;

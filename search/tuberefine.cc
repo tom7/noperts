@@ -140,7 +140,8 @@ struct LeafRef {
 };
 void CollectLeaves(TreeNode *node, const TriangleQ &tri, std::vector<LeafRef> *out) {
   if (node->children.empty()) {
-    out->push_back({node, tri});
+    // Cap leaves have no cage to refine (their radius is the cap theorem's).
+    if (!node->cap.has_value()) out->push_back({node, tri});
     return;
   }
   TriangleQ ch[4];
@@ -153,7 +154,7 @@ void JournalLines(int tri, const TreeNode &node, std::string *out) {
   if (!node.children.empty()) {
     *out += StringPrintf("S %d %s\n", tri, PathToken(node.path).c_str());
     for (const auto &c : node.children) JournalLines(tri, *c, out);
-  } else {
+  } else if (node.direct_cert.has_value()) {
     *out += LeafLine(tri, node.path, *node.direct_cert);
   }
 }

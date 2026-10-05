@@ -36,9 +36,9 @@ int Flatten(const tubetree::TreeNode &node, std::vector<BigRat> *r_lower,
     (*r_lower)[idx] = lo;
     (*r_upper)[idx] = hi;
   } else {
-    CHECK(node.direct_cert.has_value() || node.decomposed_cert.has_value())
-        << "uncertified leaf " << node.path;
-    const BigRat r = node.direct_cert.has_value() ? node.direct_cert->r : node.decomposed_cert->r;
+    // Cap leaves (tubetree::CapLeaf) carry the radius their cap theorem certifies.
+    CHECK(node.has_certificate()) << "uncertified leaf " << node.path;
+    const BigRat r = node.GetCertifiedRadius();
     (*r_lower)[idx] = r;
     (*r_upper)[idx] = r;
   }

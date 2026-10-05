@@ -82,7 +82,8 @@ int main(int argc, char **argv) {
               else if constexpr (std::is_same_v<T, rows5d::TubeLeaf>) tu++;
               else if constexpr (std::is_same_v<T, rows5d::RadiusPruneLeaf>) pr++;
               else if constexpr (std::is_same_v<T, rows5d::FundamentalPruneLeaf> ||
-                                 std::is_same_v<T, rows5d::IcoPruneLeaf>) pf++;
+                                 std::is_same_v<T, rows5d::IcoPruneLeaf> ||
+                                 std::is_same_v<T, rows5d::HalfTurnPruneLeaf>) pf++;
               else df++;
             },
             r.leaf);

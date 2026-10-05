@@ -1,5 +1,7 @@
 #include "solve5d.h"
 
+#include "ico_group.h"
+
 #include <algorithm>
 #include <cmath>
 
@@ -73,6 +75,40 @@ std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
         }
       }
       if (adv > 1e-9 && exact5d::IcoPruneValid(iv, job_.chart, n)) return rows5d::IcoPruneLeaf{n};
+    }
+  }
+  // Half-turn prune: some g with trace(H_u R g) > trace(R) over the whole
+  // box and view triangle. Screen in double at the box center and the
+  // triangle's centroid; try the best few exactly.
+  if (opt_.half_turn_prune) {
+    const geom5d::BoxD b = geom5d::ToDouble(node.box);
+    const geom5d::mat3 r = geom5d::RelativeRotation(job_.chart, b.center);
+    const geom5d::TriangleD td = geom5d::ToDouble(node.tri);
+    const geom5d::vec3 u = yocto::normalize(td.corners[0] + td.corners[1] + td.corners[2]);
+    double tr = 0;
+    for (int i = 0; i < 3; i++) tr += r[i][i];
+    std::vector<std::pair<double, int>> cand;
+    for (int g = 0; g < ICO_GROUP_SIZE; g++) {
+      // M = R G (yocto: r[col][row]); trace(H_u M) = 2 u.M u - trace M.
+      double m[3][3];
+      for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+          m[i][j] = 0;
+          for (int k = 0; k < 3; k++) m[i][j] += r[k][i] * (double)ICO_GROUP_NUM[g][3 * k + j] / ICO_GROUP_DENOM;
+        }
+      }
+      double umu = 0, trm = 0;
+      for (int i = 0; i < 3; i++) {
+        trm += m[i][i];
+        for (int j = 0; j < 3; j++) umu += u[i] * m[i][j] * u[j];
+      }
+      const double adv = 2 * umu - trm - tr;
+      if (adv > 1e-9) cand.push_back({adv, g});
+    }
+    std::sort(cand.rbegin(), cand.rend());
+    for (size_t k = 0; k < cand.size() && k < 3; k++) {
+      if (exact5d::HalfTurnPruneValid(iv, node.tri, job_.chart, cand[k].second))
+        return rows5d::HalfTurnPruneLeaf{cand[k].second};
     }
   }
   if (job_.chart == 0) {
@@ -301,7 +337,8 @@ std::vector<rows5d::Record> Solver::SolveSubtree(const Node &root, int64_t max_n
             if constexpr (std::is_same_v<T, rows5d::TubeLeaf>) stats_.tu++;
             if constexpr (std::is_same_v<T, rows5d::RadiusPruneLeaf>) stats_.pr++;
             if constexpr (std::is_same_v<T, rows5d::FundamentalPruneLeaf> ||
-                          std::is_same_v<T, rows5d::IcoPruneLeaf>) stats_.pf++;
+                          std::is_same_v<T, rows5d::IcoPruneLeaf> ||
+                          std::is_same_v<T, rows5d::HalfTurnPruneLeaf>) stats_.pf++;
           },
           *leaf);
       if (live_ != nullptr) {

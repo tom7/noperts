@@ -122,6 +122,15 @@ struct DecomposedCertificate {
 // On disk each node stores only its own DIRECT data.
 // ============================================================================
 
+// A cap leaf: the triangle lies in a small spherical cap around a view where
+// no first-order cage exists (the deltoidal hexecontahedron's 2-fold axis
+// view and two-kite view: tubecode --cap). It carries the radius that a
+// separate exact argument for the cap (cap theorem `index`) must certify.
+struct CapLeaf {
+  int index = 0;
+  BigRat r{0};
+};
+
 struct NodeBounds {
   BigRat direct_r_lower{0};
   BigRat direct_r_upper{0};
@@ -147,6 +156,8 @@ struct TreeNode {
 
   // Optional decomposed certificate covering this exact triangle (Three-Way Split).
   std::optional<DecomposedCertificate> decomposed_cert;
+  // Or a cap leaf (no certificate here; see CapLeaf).
+  std::optional<CapLeaf> cap;
 
   // Direct bounds computed directly on this triangle.
   NodeBounds direct_bounds;
@@ -158,11 +169,12 @@ struct TreeNode {
   bool is_leaf() const { return children.empty(); }
   bool is_split() const { return !children.empty(); }
   bool has_certificate() const {
-    return direct_cert.has_value() || decomposed_cert.has_value();
+    return direct_cert.has_value() || decomposed_cert.has_value() || cap.has_value();
   }
   BigRat GetCertifiedRadius() const {
     if (direct_cert.has_value()) return direct_cert->r;
     if (decomposed_cert.has_value()) return decomposed_cert->r;
+    if (cap.has_value()) return cap->r;
     return BigRat(0);
   }
 

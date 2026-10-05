@@ -66,6 +66,11 @@ struct SolverOptions {
   // triangles inside a cap become cap leaves instead of being certified.
   struct Cap { double c[3]; double rho; };
   std::vector<Cap> caps;
+  // --cap_r R: the tube radius cap leaves claim (tubetree::CapLeaf), for the
+  // cap theorems to certify. With R > 0 the tree is written with cap leaves
+  // (it is not packable until Lean has the cap theorems); with 0 (default)
+  // codes with cap leaves stay incomplete.
+  BigRat cap_r{0};
 };
 
 // Signed margin of the origin inside the tetrahedron with vertices p[0..3]:
@@ -433,6 +438,7 @@ static JournalMap ReadJournal(const std::string &filename) {
     int tri;
     std::string path;
     JournalRecord rec;
+    if (line.rfind("C ", 0) == 0) continue;  // cap leaf (informational)
     if (!ParseJournalLine(line, &tri, &path, &rec)) { bad++; continue; }
     // First record wins; a node is only decided once.
     m.emplace(std::make_pair(tri, path), rec);
@@ -583,6 +589,10 @@ class CodeSolver {
   // trusted.
   void Replay(int tri, const std::string &path, const TriangleQ &triangle,
               std::vector<WorkItem> *leaves) {
+    if (InCap(triangle)) {
+      cap_leaves_++;
+      return;
+    }
     auto it = journal_.find({tri, path});
     if (it == journal_.end()) {
       queue_.push_back({tri, path, triangle, std::nullopt});
@@ -677,15 +687,19 @@ class CodeSolver {
   // Whether every point of the triangle is within the cap: its corners
   // are, and the cap (a spherical disk of radius < 90 degrees) is convex
   // on the sphere, so the geodesic triangle is too.
-  bool InCap(const TriangleQ &tri) const {
-    for (const auto &cap : opt_.caps) {
+  bool InCap(const TriangleQ &tri, int *index = nullptr) const {
+    for (int ci = 0; ci < (int)opt_.caps.size(); ci++) {
+      const auto &cap = opt_.caps[ci];
       const vec3 c{cap.c[0], cap.c[1], cap.c[2]};
       bool in = true;
       for (int k = 0; k < 3 && in; k++) {
         const vec3 v = yocto::normalize(vec3{tri.corners[k].x.ToDouble(), tri.corners[k].y.ToDouble(), tri.corners[k].z.ToDouble()});
         in = std::acos(std::clamp(yocto::dot(v, c), -1.0, 1.0)) <= cap.rho;
       }
-      if (in) return true;
+      if (in) {
+        if (index) *index = ci;
+        return true;
+      }
     }
     return false;
   }
@@ -804,6 +818,18 @@ class CodeSolver {
 
   std::unique_ptr<TreeNode> Build(const JournalMap &m, int tri, const std::string &path,
                                   const TriangleQ &triangle, int *total) {
+    // A triangle inside a cap is a cap leaf, whatever the journal has below
+    // it (earlier runs without the cap split it down to max depth).
+    int cap_index = -1;
+    if (opt_.cap_r > BigRat(0) && InCap(triangle, &cap_index)) {
+      auto node = std::make_unique<TreeNode>();
+      node->path = path;
+      node->explicit_triangle = triangle;
+      node->cap = tubetree::CapLeaf{cap_index, opt_.cap_r};
+      node->direct_bounds.direct_r_lower = opt_.cap_r;
+      (*total)++;
+      return node;
+    }
     auto it = m.find({tri, path});
     if (it == m.end()) return nullptr;
     auto node = std::make_unique<TreeNode>();
@@ -873,6 +899,8 @@ int main(int argc, char **argv) {
       const double n = std::sqrt(cap.c[0] * cap.c[0] + cap.c[1] * cap.c[1] + cap.c[2] * cap.c[2]);
       for (double &x : cap.c) x /= n;
       opt.caps.push_back(cap);
+    } else if (arg == "--cap_r" && i + 1 < argc) {
+      opt.cap_r = BigRat(std::string_view(argv[++i]));
     } else if (arg == "--axis_radius") {
       g_axis_radius_objective = true;
     } else {

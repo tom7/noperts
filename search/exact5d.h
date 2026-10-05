@@ -158,6 +158,21 @@ bool FundamentalPruneValid(const Interval5 &iv, int chart, int direction);
 // symmetry_neighbors.h), strictly increases trace over the whole box, so the
 // box is outside the identity's icosahedral Dirichlet cell.
 Q IcoPruneLower(const Interval5 &iv, int chart, int n);
+// Half-turn prune (centrally symmetric icosahedral solids, e.g. the deltoidal
+// hexecontahedron): a pose (u, R) is a passage iff (u, H_u R g) is, for H_u
+// the half-turn about the view u and g in I (pi_u(H_u X) = -pi_u(X), K = -K,
+// gK = K). So R may be taken to maximize the trace over {R g, H_u R g}, and a
+// box is pruned when trace(H_u R g) > trace(R) over all of it for one g
+// (index into ico_group.h). With u = p / |p|, p = sum_c lambda_c P_c over
+// the view triangle's corners, (trace(H_p R G) - trace(R)) |p|^2 D(w) is a
+// homogeneous quadratic in lambda with degree-2 Bernstein coefficients
+// b_cd(w), quadratic in the Cayley coordinates w:
+//   b_cd = sum_ik N_ik [P_c,i (G P_d)_k + P_d,i (G P_c)_k - (P_c.P_d)(G_ki + delta_ik)],
+// N = S Num(w) the Cayley numerator in the chart. The prune holds when every
+// b_cd exceeds its rounding allowance on the box.
+Q HalfTurnPruneLower(const Interval5 &iv, const TriangleQ &tri, int chart, int g, int c, int d);
+Q HalfTurnPruneAllowance(const TriangleQ &tri, int c, int d);
+bool HalfTurnPruneValid(const Interval5 &iv, const TriangleQ &tri, int chart, int g);
 bool IcoPruneValid(const Interval5 &iv, int chart, int n);
 
 // symmetryTube: AtlasProjectiveLocalViewTree.Tube.Valid for chart 0 and
