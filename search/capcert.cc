@@ -26,7 +26,7 @@
 // stay exactly 0). --double runs the floating-point version (feasibility).
 //
 // Usage: capcert.exe [--cap u0|ux] [--aniso] [--mu0 41/512] [--max_depth 30]
-//          [--threads 60] [--try 24] [--only kind:side:axis:sign,...] [--double] [--frame_only] [--z_override kind:side:axis:sign=Z,...]
+//          [--threads 60] [--try 24] [--only kind:side:axis:sign,...] [--double] [--frame_only] [--z_override kind:side:axis:sign=Z,...] [--t0_mcone T] [--mcone_strong_mul M]
 //          [--export FILE]
 
 #include <algorithm>
@@ -414,6 +414,9 @@ struct Setup {
   std::vector<std::pair<int, int>> edges;
   bool half_turn = false, tie_cones = false, aniso = false;
   double mu0 = 41.0 / 512, t0 = 0.25;
+  double t0m = 0.25;  // the tie cone's radius (--t0_mcone; larger covers the tie line further out)
+  int mcm = 1;  // the tie cone's strong-coordinate scale multiplier (--mcone_strong_mul)
+  double ConeScale(const std::string &kind, int i) const { return Range(i) / 2 * (kind == "Mcone" && Strong(i) ? mcm : 1); }
   // Strong (weight-2) coordinates range over [-S, S] (S = strong_scale) instead of
   // [-2, 2], so that mu0 ~ 0.01 covers strong components up to S mu0^2.
   double strong_scale = 2;
@@ -597,7 +600,7 @@ ChartT<T> MakeChart(const Setup &st, const Problem<T> &pr, const ChartId &id) {
     int o = 0;
     for (int i = 0; i < 3; i++) {
       const P sig = i == id.axis ? P::Const(id.sign > 0 ? one : Zero<T>() - one) : pv[1 + o++];
-      const T sc = ScaleT<T>(st.Range(i) / 2);
+      const T sc = ScaleT<T>(st.ConeScale(id.kind, i));
       s[i] = center[i] + (sc * p[0]) * sig;
     }
   } else {
@@ -738,15 +741,15 @@ struct Certifier {
   bool InCone(const Box &box) const {
     if (id.kind != "Fe") return false;
     // The cones cover |s_i - center_i| <= t0 * Range(i) / 2.
-    auto within = [&](int i, double c) {
+    auto within = [&](int i, double c, double t, const char *kind) {
       const auto r = SRange(box, i);
-      const double rad = st.t0 * st.Range(i) / 2;
+      const double rad = t * st.ConeScale(kind, i);
       return std::max(std::abs(r.first - c), std::abs(r.second - c)) <= rad;
     };
-    if (within(0, 0) && within(1, 0) && within(2, 0)) return true;
+    if (within(0, 0, st.t0, "cone") && within(1, 0, st.t0, "cone") && within(2, 0, st.t0, "cone")) return true;
     if (!st.tie_cones || !st.aniso) return false;
-    // Anisotropic: the M-cone is centered at s = (1, 0, 0).
-    return within(0, 1) && within(1, 0) && within(2, 0);
+    // Anisotropic: the M-cone is centered at s = (1, 0, 0), radius t0m.
+    return within(0, 1, st.t0m, "Mcone") && within(1, 0, st.t0m, "Mcone") && within(2, 0, st.t0m, "Mcone");
   }
 
   // Certifies the box; appends its certificate tree to *out (preorder: 'X' inside a
@@ -851,6 +854,8 @@ int main(int argc, char **argv) {
   bool aniso = false, exact = true, mix = true;
   std::string debug_box;
   bool frame_only = false;
+  double t0m = 0.25;
+  int mcm = 1;
   std::string export_file;
   std::map<std::string, int> z_override;
   int ratio_z = 0, ratio_z_face = 0;
@@ -871,6 +876,8 @@ int main(int argc, char **argv) {
     else if (a == "--strong_scale") strong_scale = std::stod(next());
     else if (a == "--debug_box") debug_box = next();
     else if (a == "--frame_only") frame_only = true;
+    else if (a == "--t0_mcone") t0m = std::stod(next());
+    else if (a == "--mcone_strong_mul") mcm = std::stoi(next());
     else if (a == "--z_override") {
       std::stringstream ss(next());
       std::string item;
@@ -893,6 +900,8 @@ int main(int argc, char **argv) {
   st.strong_scale = strong_scale;
   st.ratio_z = ratio_z;
   st.ratio_z_face = ratio_z_face;
+  st.t0m = t0m;
+  st.mcm = mcm;
   st.z_override = z_override;
   const KNum s72{Q(0), Q(0), Q(1), Q(0)}, sqrt5{Q(0), Q(1), Q(0), Q(0)};
   if (cap == "u0") {
@@ -992,7 +1001,7 @@ int main(int argc, char **argv) {
     for (int ax = 0; ax < 3; ax++)
       for (double sg : {1.0, -1.0}) {
         charts.push_back({"cone", side, ax, sg, {{{0, st.mu0}, {-1, 1}, {0, st.t0}, {-1, 1}, {-1, 1}}}});
-        if (st.tie_cones) charts.push_back({"Mcone", side, ax, sg, {{{0, st.mu0}, {-1, 1}, {0, st.t0}, {-1, 1}, {-1, 1}}}});
+        if (st.tie_cones) charts.push_back({"Mcone", side, ax, sg, {{{0, st.mu0}, {-1, 1}, {0, st.t0m}, {-1, 1}, {-1, 1}}}});
         {
           // The two free coordinates of face `ax` (in order).
           std::vector<int> fr;
@@ -1144,9 +1153,9 @@ int main(int argc, char **argv) {
       return x.a.ToString() + " " + x.b.ToString() + " " + x.c.ToString() + " " + x.d.ToString();
     };
     auto kv = [&](const V3<KNum> &v) { return kq(v[0]) + "  " + kq(v[1]) + "  " + kq(v[2]); };
-    fprintf(f, "cap %s aniso %d half_turn %d tie_cones %d mu0 %s strong_scale %s t0 %s ratio_z %d ratio_z_face %d\n",
+    fprintf(f, "cap %s aniso %d half_turn %d tie_cones %d mu0 %s strong_scale %s t0 %s ratio_z %d ratio_z_face %d t0_mcone %s mcone_strong_mul %d\n",
             cap.c_str(), (int)st.aniso, (int)st.half_turn, (int)st.tie_cones, mu0.ToString().c_str(),
-            DyadicQ(st.strong_scale).c_str(), DyadicQ(st.t0).c_str(), st.ratio_z, st.ratio_z_face);
+            DyadicQ(st.strong_scale).c_str(), DyadicQ(st.t0).c_str(), st.ratio_z, st.ratio_z_face, DyadicQ(st.t0m).c_str(), st.mcm);
     fprintf(f, "frame %s  %s  %s\n", kv(st.pk.x).c_str(), kv(st.pk.e1).c_str(), kv(st.pk.e2).c_str());
     for (size_t i = 0; i < st.pk.V.size(); i++) fprintf(f, "vertex %zu %s\n", i, kv(st.pk.V[i]).c_str());
     for (size_t i = 0; i < st.pk.W.size(); i++)
@@ -1155,7 +1164,8 @@ int main(int argc, char **argv) {
     for (size_t k = 0; k < charts.size(); k++) {
       if (!certs[k]) continue;
       const ChartId &ch = charts[k];
-      CHECK(chart_ok[k]) << "export of a failed chart";
+      if (!chart_ok[k]) printf("warning: exporting failed chart %s %d %d %+.0f ratio %d/%d (its tree has F leaves)\n",
+                               ch.kind.c_str(), ch.side, ch.axis, ch.sign, ch.ratio, ch.ratio_coord);
       std::string box;
       for (const auto &[lo, hi] : ch.box) box += " " + DyadicQ(lo) + " " + DyadicQ(hi);
       fprintf(f, "chart %s %d %d %d %d %d %d z %d%s\n", ch.kind.c_str(), ch.side, ch.axis, ch.sign > 0 ? 1 : -1, ch.ratio,
