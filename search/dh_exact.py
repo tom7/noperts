@@ -18,6 +18,7 @@ Usage: python3 dh_exact.py [model=dh_model.txt] [out=dh_exact.txt]
 """
 
 import itertools
+from decimal import Decimal, getcontext
 import math
 import sys
 from fractions import Fraction as F
@@ -138,5 +139,17 @@ with open(out, "w") as f:
     for slot in sorted(slots):
         f.write(f"kvertex {slot} " + "  ".join(kstr(c) for c in cand[slots[slot]]) + "\n")
     f.write("pinning " + "  ".join(kstr(c) for c in x) + "\n")
+    # The frame rows (model = scale * T * McCooey) and the scale to 45 digits:
+    # the model's top vertex is (0, 0, 1 - 10^-9), so scale = (1 - 10^-9) / |five|.
+    for name, e in (("frame_e1", e1), ("frame_e2", e2), ("frame_e3", e3)):
+        f.write(name + " " + "  ".join(kstr(c) for c in e) + "\n")
+    getcontext().prec = 80
+    d5 = Decimal(5).sqrt()
+    dnfive = (Decimal(nfive.v[0].numerator) / nfive.v[0].denominator
+              + Decimal(nfive.v[1].numerator) / nfive.v[1].denominator * d5
+              + (Decimal(nfive.v[2].numerator) / nfive.v[2].denominator
+                 + Decimal(nfive.v[3].numerator) / nfive.v[3].denominator * d5) * ((5 + d5) / 8).sqrt())
+    kappa = (1 - Decimal(10) ** -9) / dnfive
+    f.write(f"scale {int((kappa * 10 ** 45).to_integral_value())}/{10 ** 45}\n")
 print(f"wrote {out}: 70 slots in K, model scale {scale:.15f}; pinning plane x = (cos18, sin18, 2) holds "
       f"{len(pinned)} vertices exactly")
