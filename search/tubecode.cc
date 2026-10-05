@@ -59,6 +59,13 @@ struct SolverOptions {
   BigRat target_r{0}; // Any positive rational r > 0
   bool force = false;
   bool import_tree = false;
+  // --cap x,y,z,rho: views within angle rho of the unit vector (x, y, z)
+  // are left to a separate argument (the deltoidal hexecontahedron's 2-fold
+  // axis views, where no first-order cage exists): triangles inside the cap
+  // become cap leaves instead of being certified.
+  bool has_cap = false;
+  double cap[3] = {0, 0, 1};
+  double cap_rho = 0;
 };
 
 // Signed margin of the origin inside the tetrahedron with vertices p[0..3]:
@@ -545,6 +552,7 @@ class CodeSolver {
     fclose(journal_out_);
     journal_out_ = nullptr;
 
+    if (cap_leaves_.load() > 0) printf("[Code %d] %lld cap leaves (left to the cap argument).\n", code_idx_, (long long)cap_leaves_.load());
     printf("[Code %d] Finished: %lld new leaves, %lld new splits, %lld failures.\n",
            code_idx_, (long long)new_leaves_.load(), (long long)new_splits_.load(),
            (long long)failures_.load());
@@ -629,9 +637,10 @@ class CodeSolver {
   }
 
   bool TryCertify(const WorkItem &item, unsigned int *seed, LocalCertificate *out,
-                  std::optional<LocalCertificate> *next_hint, bool *skip_search) {
+                  std::optional<LocalCertificate> *next_hint, bool *skip_search,
+                  std::string *why_out) {
     const int depth = item.path.size();
-    std::string why;
+    std::string &why = *why_out;
     *skip_search = false;
     if (item.hint.has_value()) {
       BigRat cover(-1), delta(-1);
@@ -652,6 +661,7 @@ class CodeSolver {
     LocalCertificate local;
     double margin = 0;
     bool has_local = FindBestCageForTriangle(item.triangle, seed, &local, &margin);
+    why = has_local ? "" : StringPrintf("no cage (margin %.3g)", margin);
     if (!has_local) {
       has_local = SynthesizeCertificate(item.triangle, depth, opt_.target_c, opt_.target_r,
                                         &local, false);
@@ -662,6 +672,19 @@ class CodeSolver {
       *next_hint = local;
     }
     return false;
+  }
+
+  // Whether every point of the triangle is within the cap: its corners
+  // are, and the cap (a spherical disk of radius < 90 degrees) is convex
+  // on the sphere, so the geodesic triangle is too.
+  bool InCap(const TriangleQ &tri) const {
+    if (!opt_.has_cap) return false;
+    const vec3 c{opt_.cap[0], opt_.cap[1], opt_.cap[2]};
+    for (int k = 0; k < 3; k++) {
+      const vec3 v = yocto::normalize(vec3{tri.corners[k].x.ToDouble(), tri.corners[k].y.ToDouble(), tri.corners[k].z.ToDouble()});
+      if (std::acos(std::clamp(yocto::dot(v, c), -1.0, 1.0)) > opt_.cap_rho) return false;
+    }
+    return true;
   }
 
   void Worker(int thread_idx) {
@@ -686,8 +709,17 @@ class CodeSolver {
       LocalCertificate audited;
       std::optional<LocalCertificate> next_hint = item.hint;
       bool skipped = false;
-      bool ok = TryCertify(item, &seed, &audited, &next_hint, &skipped);
       const int depth = item.path.size();
+      if (InCap(item.triangle)) {
+        std::lock_guard<std::mutex> l(mu_);
+        Append(StringPrintf("C %d %s\n", item.tri, PathToken(item.path).c_str()));
+        cap_leaves_++;
+        active_--;
+        cv_.notify_all();
+        continue;
+      }
+      std::string why;
+      bool ok = TryCertify(item, &seed, &audited, &next_hint, &skipped, &why);
 
       std::vector<WorkItem> children;
       {
@@ -700,8 +732,10 @@ class CodeSolver {
           min_c_ = min_c_ == 0 ? audited.c.ToDouble() : std::min(min_c_, audited.c.ToDouble());
         } else if (depth >= opt_.max_depth) {
           failures_++;
-          fprintf(stderr, "[Code %d] FAILED tri %d path %s at max depth %d\n",
-                  code_idx_, item.tri, item.path.c_str(), depth);
+          const auto &cc = item.triangle.corners;
+          fprintf(stderr, "[Code %d] FAILED tri %d path %s at max depth %d near (%.10f %.10f %.10f): %s\n",
+                  code_idx_, item.tri, item.path.c_str(), depth,
+                  cc[0].x.ToDouble(), cc[0].y.ToDouble(), cc[0].z.ToDouble(), why.c_str());
         } else {
           Append(StringPrintf("S %d %s\n", item.tri, PathToken(item.path).c_str()));
           journal_[{item.tri, item.path}].is_split = true;
@@ -808,7 +842,7 @@ class CodeSolver {
   bool done_ = false;
   int max_depth_seen_ = 0;
   double min_c_ = 0;
-  std::atomic<int64_t> new_leaves_{0}, new_splits_{0}, failures_{0};
+  std::atomic<int64_t> new_leaves_{0}, new_splits_{0}, failures_{0}, cap_leaves_{0};
 };
 
 #ifndef TUBECODE_NO_MAIN
@@ -830,6 +864,11 @@ int main(int argc, char **argv) {
       opt.force = true;
     } else if (arg == "--import") {
       opt.import_tree = true;
+    } else if (arg == "--cap" && i + 1 < argc) {
+      opt.has_cap = true;
+      CHECK(std::sscanf(argv[++i], "%lf,%lf,%lf,%lf", &opt.cap[0], &opt.cap[1], &opt.cap[2], &opt.cap_rho) == 4);
+      const double n = std::sqrt(opt.cap[0] * opt.cap[0] + opt.cap[1] * opt.cap[1] + opt.cap[2] * opt.cap[2]);
+      for (double &x : opt.cap) x /= n;
     } else if (arg == "--axis_radius") {
       g_axis_radius_objective = true;
     } else {

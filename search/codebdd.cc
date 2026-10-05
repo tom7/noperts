@@ -320,6 +320,8 @@ static BigRat TightVertexDistanceSq(const std::vector<BigVecQ3> &verts) {
 
 std::vector<PlaneQ> ExtractPlanes(const std::vector<BigVecQ3> &verts,
                                   const std::array<BigVecQ3, 3> &view_corners_);
+std::vector<PlaneQ> FinishPlanes(const std::vector<std::pair<BigVecQ3, std::vector<int>>> &raw_planes,
+                                 const std::array<BigVecQ3, 3> &view_corners_);
 
 // Exports rational vertices in Lean, C++, and JSON formats
 void ExportRationalVertices(const std::vector<BigVecQ3> &verts, std::string_view base_name,
@@ -492,11 +494,19 @@ std::vector<PlaneQ> ExtractPlanes(const std::vector<BigVecQ3> &verts,
   }
 
   CHECK(raw_planes.size() >= 4) << "degenerate hull: " << raw_planes.size() << " facet planes";
+  std::vector<std::pair<BigVecQ3, std::vector<int>>> normals;
+  for (const auto &rp : raw_planes) normals.push_back({rp.normal, rp.support});
+  return FinishPlanes(normals, view_corners_);
+}
 
+// Integer normals (coprime), sorted and indexed, with the view-domain flag.
+std::vector<PlaneQ> FinishPlanes(const std::vector<std::pair<BigVecQ3, std::vector<int>>> &raw_planes,
+                                 const std::array<BigVecQ3, 3> &view_corners_) {
   std::vector<PlaneQ> planes;
   planes.reserve(raw_planes.size());
 
-  for (const auto &rp : raw_planes) {
+  for (const auto &[normal, support] : raw_planes) {
+    struct { const BigVecQ3 &normal; const std::vector<int> &support; } rp{normal, support};
     auto [xn, xd] = rp.normal.x.Parts();
     auto [yn, yd] = rp.normal.y.Parts();
     auto [zn, zd] = rp.normal.z.Parts();
@@ -545,6 +555,32 @@ std::vector<PlaneQ> ExtractPlanes(const std::vector<BigVecQ3> &verts,
   }
 
   return planes;
+}
+
+// The facet planes of the model's listed faces (--model_faces), for models
+// whose rational vertices cannot make every face exactly planar: each
+// face's outward normal from its exact vertices (the cross product of two
+// diagonals, or of two edges for a triangle), rounded to a direction with
+// integer components of ~60 bits. The codes are then sign vectors of these
+// planes; the certificates never use faces.
+std::vector<PlaneQ> PlanesFromModelFaces(const ModelFile &m,
+                                         const std::array<BigVecQ3, 3> &view_corners_) {
+  std::vector<std::pair<BigVecQ3, std::vector<int>>> raw;
+  auto V = [&](int i) { return BigVecQ3(m.vertices[i][0], m.vertices[i][1], m.vertices[i][2]); };
+  for (const auto &f : m.faces) {
+    const int k = f.size();
+    BigVecQ3 n = k >= 4 ? BigVecQ3::Cross(V(f[2]) - V(f[0]), V(f[3]) - V(f[1]))
+                        : BigVecQ3::Cross(V(f[1]) - V(f[0]), V(f[2]) - V(f[0]));
+    BigVecQ3 c{BigRat(0), BigRat(0), BigRat(0)};
+    for (int v : f) c = c + V(v);
+    if (BigVecQ3::Dot(n, c) < BigRat(0)) n = BigVecQ3(-n.x, -n.y, -n.z);
+    const double mx = std::max({std::abs(n.x.ToDouble()), std::abs(n.y.ToDouble()), std::abs(n.z.ToDouble())});
+    CHECK(mx > 0) << "degenerate face";
+    const BigRat sc = BigRat::FromDouble(std::ldexp(1.0, 60) / mx);
+    auto R = [&](const BigRat &x) { return BigRat(BigRat::Floor(x * sc + BigRat(1, 2))); };
+    raw.push_back({BigVecQ3(R(n.x), R(n.y), R(n.z)), f});
+  }
+  return FinishPlanes(raw, view_corners_);
 }
 
 // Clip polygon with plane s * (normal . u) >= 0
@@ -1321,6 +1357,7 @@ int main(int argc, char **argv) {
   std::string model_file = "snub_model.txt";
   std::string texture_base;
   int texture_width = 8192;
+  bool model_faces = false;
 
   for (int i = 1; i < argc; i++) {
     std::string_view arg = argv[i];
@@ -1330,6 +1367,8 @@ int main(int argc, char **argv) {
       output_path = arg.substr(9);
     } else if (arg.starts_with("--model_file=")) {
       model_file = arg.substr(13);
+    } else if (arg == "--model_faces") {
+      model_faces = true;
     } else if (arg.starts_with("--texture=")) {
       texture_base = arg.substr(10);
     } else if (arg.starts_with("--texture_width=")) {
@@ -1390,7 +1429,8 @@ int main(int argc, char **argv) {
   }
 
   Print("Extracting facet planes from vertices...\n");
-  std::vector<PlaneQ> planes = ExtractPlanes(verts, view_corners);
+  std::vector<PlaneQ> planes = model_faces ? PlanesFromModelFaces(model, view_corners)
+                                            : ExtractPlanes(verts, view_corners);
   for (const auto &v : verts) g_hull_vertices.push_back(vec3{v.x.ToDouble(), v.y.ToDouble(), v.z.ToDouble()});
   Print("Found " AGREEN("{}") " facet planes.\n", planes.size());
 
