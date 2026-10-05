@@ -74,6 +74,25 @@ std::string Zigzag(const BigRat &r) {
   return zz.ToString() + "," + den.ToString();
 }
 
+// Tie nodes (dh_tie_lean.py's nodes.txt: "<normal> <t> <path> <index>"): a tie
+// leaf row cites the deepest listed node on its view path (Lean Row.tieLeaf).
+std::map<std::string, int> g_tie_nodes;
+void LoadTieNodes(const std::string &file) {
+  std::ifstream in(file);
+  CHECK(in.good()) << file;
+  int n, t, k;
+  std::string path;
+  while (in >> n >> t >> path >> k) g_tie_nodes[std::format("{} {} {}", n, t, path == "." ? "" : path)] = k;
+}
+int TieNode(int n, int t, const std::string &view) {
+  for (int len = (int)view.size(); len >= 0; len--) {
+    const auto it = g_tie_nodes.find(std::format("{} {} {}", n, t, view.substr(0, len)));
+    if (it != g_tie_nodes.end()) return it->second;
+  }
+  LOG(FATAL) << "no tie node for normal " << n << " t " << t << " view " << view << " (--tie_nodes)";
+  return -1;
+}
+
 class Packer {
  public:
   Packer(const tubeatlas5d::TubeAtlas &atlas, int chart, bool exact_check)
@@ -554,9 +573,10 @@ class Packer {
             // Lean Row.capLeaf (tag 16): the cap theorem's domain.
             return std::format(",16,{},{},{},0,{}", id, iv, l.cap, tri_id);
           } else if constexpr (std::is_same_v<T, rows5d::TieLeaf>) {
-            // Lean Row.tieLeaf (tag 15): pinning normal, tie tube radius;
+            // Lean Row.tieLeaf (tag 15): pinning normal, tie tube radius, tie node;
             // depends on the view triangle, so never relaxed.
-            return std::format(",15,{},{},{},{},0,{}", id, iv, l.normal, Zigzag(l.rho), tri_id);
+            const int node = TieNode(l.normal, t, rows5d::ViewPath(path));
+            return std::format(",15,{},{},{},{},{},0,{}", id, iv, l.normal, Zigzag(l.rho), node, tri_id);
           } else if constexpr (std::is_same_v<T, rows5d::HalfTurnPruneLeaf>) {
             // Lean Row.halfTurnPrune (tag 14): group element index (icoEntry);
             // depends on the view triangle, so never relaxed.
@@ -671,6 +691,7 @@ int main(int argc, char **argv) {
     else if (a == "--exact_check") exact_check = true;
     else if (a == "--threads") threads = std::stoi(next());
     else if (a == "--force") force = true;
+    else if (a == "--tie_nodes") LoadTieNodes(next());
     else LOG(FATAL) << "unknown argument " << a;
   }
   CHECK(chart >= 0 && chart <= 2) << "--chart 0..2";

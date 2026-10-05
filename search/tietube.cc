@@ -438,8 +438,11 @@ struct Certifier {
     }
   }
 
+  // rec (export): the face tree in preorder (Lean CTree over (s1, s2, t, 0, 0)):
+  // "L<w>," a witness leaf (w = 2 k + (sign < 0)), and a quad split as "S1" (s2
+  // halves) each "S0" (s1 halves), children in the order lower, upper.
   bool CoverBox(const std::vector<std::array<CornerData, 3>> &cds, const Face &F, double s1lo, double s1hi,
-                double s2lo, double s2hi, double rho, int depth, int64_t *boxes) const {
+                double s2lo, double s2hi, double rho, int depth, int64_t *boxes, std::string *rec = nullptr) const {
     std::vector<std::pair<double, int>> order;
     for (int sk : valid_) {
       const int k = std::abs(sk) - 1;
@@ -453,15 +456,19 @@ struct Certifier {
       const int sk = order[r].second, k = std::abs(sk) - 1, sign = sk > 0 ? 1 : -1;
       if (Covers(cds, k, F, s1lo, s1hi, s2lo, s2hi, rho, sign)) {
         (*boxes)++;
+        if (rec) *rec += std::format("L{},", 2 * k + (sign < 0 ? 1 : 0));
         return true;
       }
     }
     if (depth >= max_sigma_depth) return false;
     const double m1 = 0.5 * (s1lo + s1hi), m2 = 0.5 * (s2lo + s2hi);
-    return CoverBox(cds, F, s1lo, m1, s2lo, m2, rho, depth + 1, boxes) &&
-           CoverBox(cds, F, m1, s1hi, s2lo, m2, rho, depth + 1, boxes) &&
-           CoverBox(cds, F, s1lo, m1, m2, s2hi, rho, depth + 1, boxes) &&
-           CoverBox(cds, F, m1, s1hi, m2, s2hi, rho, depth + 1, boxes);
+    if (rec) *rec += "S1S0";
+    if (!(CoverBox(cds, F, s1lo, m1, s2lo, m2, rho, depth + 1, boxes, rec) &&
+          CoverBox(cds, F, m1, s1hi, s2lo, m2, rho, depth + 1, boxes, rec)))
+      return false;
+    if (rec) *rec += "S0";
+    return CoverBox(cds, F, s1lo, m1, m2, s2hi, rho, depth + 1, boxes, rec) &&
+           CoverBox(cds, F, m1, s1hi, m2, s2hi, rho, depth + 1, boxes, rec);
   }
 
   // Double-precision screen at the centroid view: the first-order cage margin
@@ -543,15 +550,18 @@ struct Certifier {
     return best;
   }
 
-  // Whether radius rho is certified on the triangle.
-  bool Certify(const exact5d::TriangleQ &tri, double rho, int64_t *boxes) {
+  // Whether radius rho is certified on the triangle (faces: the six face trees
+  // in Lean's order (0,+), (0,-), (1,+), ..., when recording).
+  bool Certify(const exact5d::TriangleQ &tri, double rho, int64_t *boxes, std::vector<std::string> *faces = nullptr) {
     const auto cds = Prepare(tri);
     FindValid(cds);
     if (valid_.empty()) return false;
     for (int f = 0; f < 3; f++) {
       for (double sg : {1.0, -1.0}) {
         Face F{f, f == 0 ? 1 : 0, f == 2 ? 1 : 2, sg};
-        if (!CoverBox(cds, F, -1, 1, -1, 1, rho, 0, boxes)) return false;
+        std::string rec;
+        if (!CoverBox(cds, F, -1, 1, -1, 1, rho, 0, boxes, faces ? &rec : nullptr)) return false;
+        if (faces) faces->push_back(rec);
       }
     }
     return true;
@@ -564,7 +574,7 @@ int main(int argc, char **argv) {
   std::fesetround(FE_TONEAREST);
   InitConstants();
   std::string data_file = "dh_tie_data.txt", trees_dir = "/mnt/nopertdata/work/dh/work/trees_r1",
-              bdd = "codebdd.json", out_dir = "/mnt/nopertdata/work/dh/work/tie";
+              bdd = "codebdd.json", out_dir = "/mnt/nopertdata/work/dh/work/tie", export_dir;
   std::vector<int> normals, tris;
   int max_depth = 8, threads = 60, start_depth = 3;
   bool debug = false;
@@ -602,6 +612,7 @@ int main(int argc, char **argv) {
       caps.push_back(c);
     }
     else if (a == "--sigma_depth") sigma_depth = std::stoi(next());
+    else if (a == "--export_dir") export_dir = next();
     else LOG(FATAL) << "unknown argument " << a;
   }
   const Data data = LoadData(data_file);
@@ -610,6 +621,7 @@ int main(int argc, char **argv) {
   if (normals.empty()) for (size_t n = 0; n < data.normals.size(); n++) normals.push_back(n);
   if (tris.empty()) for (int t = 0; t < atlas.NumTriangles(); t++) tris.push_back(t);
   std::filesystem::create_directories(out_dir);
+  if (!export_dir.empty()) std::filesystem::create_directories(export_dir);
 
   // Jobs: (normal, triangle). Each writes out_dir/n<n>_t<t>.txt: "path rho" per node
   // (rho 0 = uncertified leaf at max depth).
@@ -626,7 +638,15 @@ int main(int argc, char **argv) {
       Certifier cert{data, job.n};
       cert.max_sigma_depth = sigma_depth;
       cert.Init();
-      std::string out;
+      std::string out, exp;
+      auto tri_str = [](const exact5d::TriangleQ &tri) {
+        std::string s;
+        for (int c = 0; c < 3; c++) for (int a = 0; a < 3; a++) s += " " + tri[c][a].ToString();
+        return s;
+      };
+      auto exp_node = [&](const std::string &path, const char *kind, const Q &rho, const exact5d::TriangleQ &tri) {
+        exp += std::format("node {} {} {}{}\n", path.empty() ? "." : path, kind, rho.ToString(), tri_str(tri));
+      };
       int64_t boxes = 0, nodes = 0, failed = 0;
       double min_rho_seen = 1;
       int64_t skipped = 0;
@@ -651,12 +671,14 @@ int main(int argc, char **argv) {
           }
           if (in_any) {
             out += std::format("{} C\n", path.empty() ? "." : path);
+            exp_node(path, "X", Q(0), tri);
             return;
           }
         }
         if ((int)path.size() >= start_depth) {
           if (cert.MinProtrusion(tri) > far_protrusion) {
             out += std::format("{} F\n", path);
+            exp_node(path, "X", Q(0), tri);
             skipped++;
             return;
           }
@@ -672,6 +694,7 @@ int main(int argc, char **argv) {
           }
           if (!(m > 0)) {
             out += std::format("{} N\n", path);
+            exp_node(path, "X", Q(0), tri);
             skipped++;
             return;
           }
@@ -693,6 +716,12 @@ int main(int argc, char **argv) {
           if (lo < (int)ladder.size()) {
             out += std::format("{} {}\n", path, ladder[lo].ToString());
             min_rho_seen = std::min(min_rho_seen, ladder[lo].ToDouble());
+            if (!export_dir.empty()) {
+              std::vector<std::string> faces;
+              CHECK(cert.Certify(tri, ladder[lo].ToDouble(), &boxes, &faces)) << "recording certify failed";
+              exp_node(path, "L", ladder[lo], tri);
+              for (const std::string &f : faces) exp += "face " + f + "\n";
+            }
             return;
           }
           if ((int)path.size() >= max_depth) {
@@ -700,17 +729,23 @@ int main(int argc, char **argv) {
             for (int a = 0; a < 3; a++) c[a] = (tri[0][a] + tri[1][a] + tri[2][a]).ToDouble();
             const double n = std::sqrt(c[0] * c[0] + c[1] * c[1] + c[2] * c[2]);
             out += std::format("{} 0 {:.6f} {:.6f} {:.6f}\n", path, c[0] / n, c[1] / n, c[2] / n);
+            exp_node(path, "X", Q(0), tri);
             failed++;
             return;
           }
         }
         out += std::format("{} S\n", path.empty() ? "." : path);
+        exp_node(path, "S", Q(0), tri);
         for (int c = 0; c < 4; c++) rec(geom5d::SplitTriangle(tri, c), path + (char)('0' + c));
       };
       rec(atlas.Triangle(job.t), "");
       {
         std::ofstream f(std::format("{}/n{}_t{}.txt", out_dir, job.n, job.t));
         f << out;
+      }
+      if (!export_dir.empty()) {
+        std::ofstream f(std::format("{}/n{}_t{}.cert", export_dir, job.n, job.t));
+        f << exp;
       }
       std::lock_guard<std::mutex> l(mu);
       printf("normal %d triangle %d: %lld nodes, %lld sigma boxes, %lld uncertified, %lld no cage, min rho %.4g\n",

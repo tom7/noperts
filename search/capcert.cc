@@ -423,6 +423,7 @@ struct Setup {
   bool Strong(int i) const { return aniso ? i >= 1 : i == 2; }
   int ratio_z = 0;       // Z for the ratio blow-up (0: off): Fe and cone charts
   int ratio_z_face = 0;  // Z for face charts (0: ratio_z)
+  int tie_ratio = 0;     // Z2 for the tie-centred side-2 strong-face charts (0: off)
   // --z_override kind:side:axis:sign=Z,... (per base chart; e.g. the two ux strong faces need 1024).
   std::map<std::string, int> z_override;
   int Z(const std::string &kind, int side, int axis, double sign) const {
@@ -541,6 +542,12 @@ struct ChartId {
   // 0 none; 1 inner: every weak coordinate's variable v becomes mu v (v in
   // [-Z, Z]); 2 outer: weak coordinate `ratio_coord` becomes ratio_sign (Z mu + v)
   // (v in [0, range]).
+  // Tie-centred modes (side-2 strong faces, --tie_ratio Z2; they replace ratio 2 on
+  // weak coordinate 0 with sign +, i.e. s0 >= Z mu): the tie locus is s0 = e.
+  //   3 (band): e = (Z - Z2) mu + p0, s0 = e + mu p1, p1 in [-Z2, Z2];
+  //   4 (beyond, e large): e = (Z - Z2) mu + p0, s0 = e + Z2 mu + p1, p1 in [0, 2];
+  //   6 (beyond, e small): e = mu p0, p0 in [0, Z - Z2], s0 = Z mu + p1, p1 in [0, 2];
+  //   5 (between): e = (Z + Z2) mu + p0, s0 = Z mu + p1 p0, p1 in [0, 1].
   int ratio = 0, ratio_coord = 0;
   double ratio_sign = 1;
 };
@@ -609,6 +616,24 @@ ChartT<T> MakeChart(const Setup &st, const Problem<T> &pr, const ChartId &id) {
     for (int i = 0; i < 3; i++) {
       const T r = ScaleT<T>(st.Range(i));
       s[i] = i == id.axis ? P::Const(id.sign > 0 ? r : Zero<T>() - r) : pv[1 + o++];
+    }
+    if (id.ratio >= 3) {
+      CHECK(id.ratio_coord == 0 && id.axis != 0);
+      const T Z = ScaleT<T>(st.Z(id.kind, id.side, id.axis, id.sign)), Z2 = ScaleT<T>(st.tie_ratio);
+      const P q = p[1];  // s0's chart variable (axis != 0)
+      if (id.ratio == 3) {
+        e = (Z - Z2) * mu + p[0];
+        s[0] = e + mu * q;
+      } else if (id.ratio == 4) {
+        e = (Z - Z2) * mu + p[0];
+        s[0] = e + Z2 * mu + q;
+      } else if (id.ratio == 6) {
+        e = mu * p[0];
+        s[0] = Z * mu + q;
+      } else {
+        e = (Z + Z2) * mu + p[0];
+        s[0] = Z * mu + q * p[0];
+      }
     }
   }
   ch.u = PConst(pr.x) + (mu * e) * a;
@@ -858,7 +883,7 @@ int main(int argc, char **argv) {
   int mcm = 1;
   std::string export_file;
   std::map<std::string, int> z_override;
-  int ratio_z = 0, ratio_z_face = 0;
+  int ratio_z = 0, ratio_z_face = 0, tie_ratio = 0;
   double strong_scale = 2;
   Q mu0(41, 512);
   for (int i = 1; i < argc; i++) {
@@ -890,6 +915,7 @@ int main(int argc, char **argv) {
     else if (a == "--export") export_file = next();
     else if (a == "--ratio_z") ratio_z = std::stoi(next());
     else if (a == "--ratio_z_face") ratio_z_face = std::stoi(next());
+    else if (a == "--tie_ratio") tie_ratio = std::stoi(next());
     else LOG(FATAL) << "unknown argument " << a;
   }
   Setup st;
@@ -900,6 +926,7 @@ int main(int argc, char **argv) {
   st.strong_scale = strong_scale;
   st.ratio_z = ratio_z;
   st.ratio_z_face = ratio_z_face;
+  st.tie_ratio = tie_ratio;
   st.t0m = t0m;
   st.mcm = mcm;
   st.z_override = z_override;
@@ -1037,6 +1064,19 @@ int main(int argc, char **argv) {
           o.ratio_coord = i;
           o.ratio_sign = sg;
           o.box[2 + pidx(i)] = {0, c.box[2 + pidx(i)].second};
+          if (st.tie_ratio > 0 && c.kind == "face" && c.side == 2 && i == 0 && sg > 0) {
+            // Tie-centred replacement of s0 >= Z mu (see ChartId).
+            const double z2 = st.tie_ratio;
+            const double z = st.Z(c.kind, c.side, c.axis, c.sign);
+            CHECK(z > z2);
+            ChartId b = o, f = o, g = o, m = o;
+            b.ratio = 3; b.box[2] = {0, 1}; b.box[2 + pidx(i)] = {-z2, z2};
+            f.ratio = 4; f.box[2] = {0, 1}; f.box[2 + pidx(i)] = {0, 2};
+            g.ratio = 6; g.box[2] = {0, z - z2}; g.box[2 + pidx(i)] = {0, 2};
+            m.ratio = 5; m.box[2] = {0, 1}; m.box[2 + pidx(i)] = {0, 1};
+            out.push_back(b); out.push_back(f); out.push_back(g); out.push_back(m);
+            continue;
+          }
           out.push_back(o);
         }
       }
