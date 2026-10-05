@@ -59,13 +59,13 @@ struct SolverOptions {
   BigRat target_r{0}; // Any positive rational r > 0
   bool force = false;
   bool import_tree = false;
-  // --cap x,y,z,rho: views within angle rho of the unit vector (x, y, z)
-  // are left to a separate argument (the deltoidal hexecontahedron's 2-fold
-  // axis views, where no first-order cage exists): triangles inside the cap
-  // become cap leaves instead of being certified.
-  bool has_cap = false;
-  double cap[3] = {0, 0, 1};
-  double cap_rho = 0;
+  // --cap x,y,z,rho (repeatable): views within angle rho of the unit vector
+  // (x, y, z) are left to a separate argument (the deltoidal
+  // hexecontahedron's 2-fold axis view and its two-kite views, where the
+  // first-order margin tends to 0 and no first-order cage exists):
+  // triangles inside a cap become cap leaves instead of being certified.
+  struct Cap { double c[3]; double rho; };
+  std::vector<Cap> caps;
 };
 
 // Signed margin of the origin inside the tetrahedron with vertices p[0..3]:
@@ -678,13 +678,16 @@ class CodeSolver {
   // are, and the cap (a spherical disk of radius < 90 degrees) is convex
   // on the sphere, so the geodesic triangle is too.
   bool InCap(const TriangleQ &tri) const {
-    if (!opt_.has_cap) return false;
-    const vec3 c{opt_.cap[0], opt_.cap[1], opt_.cap[2]};
-    for (int k = 0; k < 3; k++) {
-      const vec3 v = yocto::normalize(vec3{tri.corners[k].x.ToDouble(), tri.corners[k].y.ToDouble(), tri.corners[k].z.ToDouble()});
-      if (std::acos(std::clamp(yocto::dot(v, c), -1.0, 1.0)) > opt_.cap_rho) return false;
+    for (const auto &cap : opt_.caps) {
+      const vec3 c{cap.c[0], cap.c[1], cap.c[2]};
+      bool in = true;
+      for (int k = 0; k < 3 && in; k++) {
+        const vec3 v = yocto::normalize(vec3{tri.corners[k].x.ToDouble(), tri.corners[k].y.ToDouble(), tri.corners[k].z.ToDouble()});
+        in = std::acos(std::clamp(yocto::dot(v, c), -1.0, 1.0)) <= cap.rho;
+      }
+      if (in) return true;
     }
-    return true;
+    return false;
   }
 
   void Worker(int thread_idx) {
@@ -865,10 +868,11 @@ int main(int argc, char **argv) {
     } else if (arg == "--import") {
       opt.import_tree = true;
     } else if (arg == "--cap" && i + 1 < argc) {
-      opt.has_cap = true;
-      CHECK(std::sscanf(argv[++i], "%lf,%lf,%lf,%lf", &opt.cap[0], &opt.cap[1], &opt.cap[2], &opt.cap_rho) == 4);
-      const double n = std::sqrt(opt.cap[0] * opt.cap[0] + opt.cap[1] * opt.cap[1] + opt.cap[2] * opt.cap[2]);
-      for (double &x : opt.cap) x /= n;
+      SolverOptions::Cap cap;
+      CHECK(std::sscanf(argv[++i], "%lf,%lf,%lf,%lf", &cap.c[0], &cap.c[1], &cap.c[2], &cap.rho) == 4);
+      const double n = std::sqrt(cap.c[0] * cap.c[0] + cap.c[1] * cap.c[1] + cap.c[2] * cap.c[2]);
+      for (double &x : cap.c) x /= n;
+      opt.caps.push_back(cap);
     } else if (arg == "--axis_radius") {
       g_axis_radius_objective = true;
     } else {
