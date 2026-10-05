@@ -71,6 +71,12 @@ struct SolverOptions {
   // (it is not packable until Lean has the cap theorems); with 0 (default)
   // codes with cap leaves stay incomplete.
   BigRat cap_r{0};
+  // --min_r R: a leaf whose certified tube radius is below R is split instead
+  // (until --max_depth, where any radius is kept); journal leaves below R are
+  // re-certified. Small radii come from a large variation delta across the
+  // triangle, which splitting reduces; a tiny radius forces the 5D search to
+  // cover rotations down to it (the reached node's subtree minimum).
+  BigRat min_r{0};
 };
 
 // Signed margin of the origin inside the tetrahedron with vertices p[0..3]:
@@ -623,6 +629,10 @@ class CodeSolver {
           std::string why;
           bool ok = ReauditCertificate(item.triangle, *item.hint, opt_.target_c,
                                        opt_.target_r, &audited, &why);
+          if (ok && opt_.min_r > BigRat(0) && audited.r < opt_.min_r && (int)item.path.size() < opt_.max_depth) {
+            ok = false;
+            why = "r < min_r";
+          }
           std::lock_guard<std::mutex> l(mu_);
           if (ok) {
             audited_[{item.tri, item.path}] = audited;
@@ -737,6 +747,11 @@ class CodeSolver {
       }
       std::string why;
       bool ok = TryCertify(item, &seed, &audited, &next_hint, &skipped, &why);
+      if (ok && opt_.min_r > BigRat(0) && audited.r < opt_.min_r && depth < opt_.max_depth) {
+        ok = false;
+        next_hint = audited;
+        why = "r < min_r";
+      }
 
       std::vector<WorkItem> children;
       {
@@ -901,11 +916,13 @@ int main(int argc, char **argv) {
       opt.caps.push_back(cap);
     } else if (arg == "--cap_r" && i + 1 < argc) {
       opt.cap_r = BigRat(std::string_view(argv[++i]));
+    } else if (arg == "--min_r" && i + 1 < argc) {
+      opt.min_r = BigRat(std::string_view(argv[++i]));
     } else if (arg == "--axis_radius") {
       g_axis_radius_objective = true;
     } else {
       fprintf(stderr, "Unknown argument %s\n"
-              "Usage: tubecode.exe [--code X [--tri T]] [--threads N] [--max_depth D]\n"
+              "Usage: tubecode.exe [--code X [--tri T]] [--threads N] [--max_depth D] [--min_r R]\n"
               "                       [--output_dir DIR] [--force] [--import] [--axis_radius]\n", arg.c_str());
       return 2;
     }
