@@ -60,11 +60,6 @@ static bool ExportCodeTriangle(int code_id, int tri_idx, const TriangleQ &base_t
                                const TreeNode &root_node, const std::string &out_path,
                                int *out_num_rows, BigRat *out_r) {
   EffectiveBounds eff = ComputeEffectiveBounds(root_node);
-  if (eff.r_lower <= BigRat(0)) {
-    std::cerr << "Error: Code " << code_id << " Tri " << tri_idx << " r_lower <= 0!\n";
-    return false;
-  }
-  *out_r = eff.r_lower;
 
   // BFS traversal to assign topological row IDs (0 <= parent_id < child_id < N)
   std::vector<LeanRow> rows;
@@ -103,12 +98,8 @@ static bool ExportCodeTriangle(int code_id, int tri_idx, const TriangleQ &base_t
       }
     } else {
       rows[curr_idx].is_leaf = true;
-      if (n->cap.has_value()) {
-        std::cerr << "Error: cap leaf at path \"" << n->path
-                  << "\": the Lean packs have no cap rows yet (cap theorem " << n->cap->index << ")\n";
-        return false;
-      }
-      if (!n->direct_cert.has_value() && !n->decomposed_cert.has_value()) {
+      // Cap leaves become Lean `empty` rows (rLower -1: no tube may cite them).
+      if (!n->cap.has_value() && !n->direct_cert.has_value() && !n->decomposed_cert.has_value()) {
         std::cerr << "Error: Leaf at path \"" << n->path << "\" lacks any certificate!\n";
         return false;
       }
@@ -125,15 +116,21 @@ static bool ExportCodeTriangle(int code_id, int tri_idx, const TriangleQ &base_t
   for (int i = (int)rows.size() - 1; i >= 0; i--) {
     const auto &r = rows[i];
     if (r.is_leaf) {
-      r_lower[i] = r.node->direct_cert.has_value() ? r.node->direct_cert->r
-                                                    : r.node->decomposed_cert->r;
+      r_lower[i] = r.node->cap.has_value() ? BigRat(-1)
+                   : r.node->direct_cert.has_value() ? r.node->direct_cert->r
+                                                     : r.node->decomposed_cert->r;
     } else {
       r_lower[i] = r_lower[r.child_ids[0]];
       for (int c = 1; c < 4; c++) r_lower[i] = BigRat::Min(r_lower[i], r_lower[r.child_ids[c]]);
     }
   }
-  CHECK(r_lower[0] >= eff.r_lower)
-      << "subtree radius below the table radius";
+  // The table radius: the root's (the minimum over the leaves; -1 with a cap leaf).
+  const BigRat table_r = r_lower.empty() ? eff.r_lower : r_lower[0];
+  if (!(table_r > BigRat(0)) && table_r != BigRat(-1)) {
+    std::cerr << "Error: Code " << code_id << " Tri " << tri_idx << " r_lower <= 0!\n";
+    return false;
+  }
+  *out_r = table_r;
 
   std::ofstream out(out_path, std::ios::binary);
   if (!out.is_open()) {
@@ -143,7 +140,7 @@ static bool ExportCodeTriangle(int code_id, int tri_idx, const TriangleQ &base_t
 
   // Header: count, symmetryIndex(0), ZigzagRatString(table_r),
   // followed by 9 rationals for base triangle corners [c0.x, c0.y, c0.z, c1.x, c1.y, c1.z, c2.x, c2.y, c2.z]
-  out << rows.size() << ",0," << ZigzagRatString(eff.r_lower);
+  out << rows.size() << ",0," << ZigzagRatString(table_r);
   for (int c = 0; c < 3; c++) {
     out << "," << ZigzagRatString(base_tri.corners[c].x)
         << "," << ZigzagRatString(base_tri.corners[c].y)
@@ -166,6 +163,10 @@ static bool ExportCodeTriangle(int code_id, int tri_idx, const TriangleQ &base_t
           << "," << r.child_ids[2]
           << "," << r.child_ids[3]
           << "," << ZigzagRatString(r_lower[i]);
+    } else if (r.node->cap.has_value()) {
+      // Empty row (tag 4; a cap leaf): tag, id, root(0), path_len, [path_digits]
+      out << ",4," << r.id << ",0," << r.rel_path.size();
+      for (char ch : r.rel_path) out << "," << (ch - '0');
     } else if (r.node->direct_cert.has_value()) {
       // Certificate row (tag 1):
       // tag, id, root(0), path_len, [path_digits], symmetryIndex(0),
