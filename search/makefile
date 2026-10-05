@@ -2,7 +2,7 @@
 default : exact5d_test.exe geom5d_test.exe contacts5d_test.exe cert5d_test.exe tubeatlas5d_test.exe rows5d_test.exe solve5d_test.exe lp5d_test.exe tubetree_test.exe model_test.exe tube_test.exe
 
 # Every program of the pipeline (rebuild.sh runs it).
-all: default qtube s5d codebdd.exe icoprune_check.exe halfturn_check.exe tieviz.exe tietube.exe dfwhere.exe capcert.exe viewmap.exe shadowanim.exe
+all: default qtube s5d codebdd.exe icoprune_check.exe halfturn_check.exe tieviz.exe tietube.exe dfwhere.exe capleaf_check.exe capcert.exe viewmap.exe shadowanim.exe
 
 # Identity tube:
 #  codebdd: exact rational model, codes and code triangles (codebdd.json).
@@ -134,6 +134,10 @@ tietube.exe : tietube.o $(OBJECTS_CORE) $(OBJECTS)
 dfwhere.exe : dfwhere.o $(OBJECTS_CORE) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"
+
+# capleaf_check: exact re-check of the 5D journals' cap leaves.
+capleaf_check.exe : capleaf_check.o $(OBJECTS_CORE) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
 
 # capcert: cap certificates for the deltoidal hexecontahedron's special views (work in progress; notes/T.md).
 capcert.exe : capcert.o $(OBJECTS_CORE) $(OBJECTS)

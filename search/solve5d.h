@@ -49,7 +49,8 @@ struct Options {
   const tieatlas5d::TieAtlas *ties = nullptr;
   // Cap leaves (deltoidal hexecontahedron; capcert.cc certifies each cap):
   // views in the cone {|u.e_i| <= mu0 (u.x)} and rotations |w| <= wmax (chart 0).
-  struct Cap { double x[3], e1[3], e2[3]; double mu0, wmax; };
+  // Screened in double, then checked exactly (exact5d::CapLeafValid).
+  struct Cap { double x[3], e1[3], e2[3]; double mu0, wmax; exact5d::CapExact exact; };
   std::vector<Cap> caps;
   // Split the box when its widest half-width exceeds split_kappa times the
   // view triangle's angular diameter, else split the view.

@@ -33,6 +33,7 @@
 #include <fstream>
 #include <mutex>
 #include <set>
+#include <sstream>
 #include <string>
 #include <condition_variable>
 #include <thread>
@@ -166,11 +167,26 @@ int main(int argc, char **argv) {
     else if (a == "--half_turn_prune") args.opt.half_turn_prune = true;
     else if (a == "--tie_dir") args.tie_dir = next();
     else if (a == "--caps") {
+      // dh_caps.py: 9 + 2 doubles, then the exact frame (36 rationals), mu0, wmax^2.
       std::ifstream in(next());
-      solve5d::Options::Cap c;
-      while (in >> c.x[0] >> c.x[1] >> c.x[2] >> c.e1[0] >> c.e1[1] >> c.e1[2] >> c.e2[0] >> c.e2[1] >> c.e2[2] >>
-             c.mu0 >> c.wmax)
+      std::string line;
+      while (std::getline(in, line)) {
+        std::istringstream ss(line);
+        solve5d::Options::Cap c;
+        CHECK(ss >> c.x[0] >> c.x[1] >> c.x[2] >> c.e1[0] >> c.e1[1] >> c.e1[2] >> c.e2[0] >> c.e2[1] >> c.e2[2] >>
+              c.mu0 >> c.wmax) << line;
+        std::string t[38];
+        for (auto &tok : t) CHECK(ss >> tok) << "caps file without the exact frame: " << line;
+        for (int f = 0; f < 3; f++)
+          for (int a = 0; a < 3; a++) {
+            const std::string *q = &t[4 * (3 * f + a)];
+            c.exact.frame[f][a] = {BigRat(std::string_view(q[0])), BigRat(std::string_view(q[1])),
+                                   BigRat(std::string_view(q[2])), BigRat(std::string_view(q[3]))};
+          }
+        c.exact.mu0 = BigRat(std::string_view(t[36]));
+        c.exact.wmax2 = BigRat(std::string_view(t[37]));
         args.opt.caps.push_back(c);
+      }
     }
     else if (a == "--min_peel") args.opt.min_peel_eighths = std::stoi(next());
     else if (a == "--max_depth") args.opt.max_depth = std::stoi(next());

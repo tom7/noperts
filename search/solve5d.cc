@@ -136,7 +136,7 @@ std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
         const double p2 = P[0] * cap.e2[0] + P[1] * cap.e2[1] + P[2] * cap.e2[2];
         in = px > 0 && std::abs(p1) <= cap.mu0 * px * (1 - 1e-9) && std::abs(p2) <= cap.mu0 * px * (1 - 1e-9);
       }
-      if (in) return rows5d::CapLeaf{(int)ci};
+      if (in && exact5d::CapLeafValid(iv, node.tri, job_.chart, cap.exact)) return rows5d::CapLeaf{(int)ci};
     }
   }
   // Tie leaves: the box lies within the tie tube about H_u H_x (deltoidal

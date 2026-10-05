@@ -182,6 +182,19 @@ bool HalfTurnPruneValid(const Interval5 &iv, const TriangleQ &tri, int chart, in
 Q TieLeafLower(const Interval5 &iv, const TriangleQ &tri, int chart, int n, const Q &rho, int c, int d);
 bool TieLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, int n, const Q &rho);
 bool IcoPruneValid(const Interval5 &iv, int chart, int n);
+// Cap leaf (deltoidal hexecontahedron): every view of the triangle is in the
+// cone {|u.e1|, |u.e2| <= mu0 (u.x)} of a cap that capcert.cc certifies, and
+// the box (chart 0) is in the Cayley ball |w|^2 <= wmax2. The frame is exact in
+// K = Q(sqrt5, sin 72) (a + b sqrt5 + c s + d s sqrt5); signs are decided by
+// the rational enclosure of Lean's IcoQ.lo (sqrt5 and sin 72 to 1e-25).
+struct KQ { Q a, b, c, d; };
+struct CapExact {
+  std::array<std::array<KQ, 3>, 3> frame;  // x, e1, e2
+  Q mu0, wmax2;
+};
+Q KLower(const KQ &x);
+bool CapLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, const CapExact &cap);
+
 
 // symmetryTube: AtlasProjectiveLocalViewTree.Tube.Valid for chart 0 and
 // symmetry index 0 (the identity tube), i.e. identityMismatchRadius <= r.

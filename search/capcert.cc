@@ -26,7 +26,7 @@
 // stay exactly 0). --double runs the floating-point version (feasibility).
 //
 // Usage: capcert.exe [--cap u0|ux] [--aniso] [--mu0 41/512] [--max_depth 30]
-//          [--threads 60] [--try 24] [--only kind:side:axis:sign,...] [--double]
+//          [--threads 60] [--try 24] [--only kind:side:axis:sign,...] [--double] [--frame_only]
 
 #include <algorithm>
 #include <array>
@@ -718,6 +718,7 @@ int main(int argc, char **argv) {
   int max_depth = 30, threads = 60;
   bool aniso = false, exact = true, mix = true;
   std::string debug_box;
+  bool frame_only = false;
   int ratio_z = 0, ratio_z_face = 0;
   double strong_scale = 2;
   Q mu0(41, 512);
@@ -735,6 +736,7 @@ int main(int argc, char **argv) {
     else if (a == "--no_mix") mix = false;
     else if (a == "--strong_scale") strong_scale = std::stod(next());
     else if (a == "--debug_box") debug_box = next();
+    else if (a == "--frame_only") frame_only = true;
     else if (a == "--ratio_z") ratio_z = std::stoi(next());
     else if (a == "--ratio_z_face") ratio_z_face = std::stoi(next());
     else LOG(FATAL) << "unknown argument " << a;
@@ -827,7 +829,16 @@ int main(int argc, char **argv) {
          st.pd.W.size(), mu0.ToString().c_str());
   printf("frame %.17g %.17g %.17g  %.17g %.17g %.17g  %.17g %.17g %.17g\n", st.pd.x[0], st.pd.x[1], st.pd.x[2],
          st.pd.e1[0], st.pd.e1[1], st.pd.e1[2], st.pd.e2[0], st.pd.e2[1], st.pd.e2[2]);
+  {
+    // The exact frame (each coordinate a + b sqrt5 + c s + d s sqrt5, s = sin 72): dh_caps.py.
+    std::string kf = "kframe";
+    for (const V3<KNum> *v : {&st.pk.x, &st.pk.e1, &st.pk.e2})
+      for (int a = 0; a < 3; a++)
+        for (const Q *q : {&(*v)[a].a, &(*v)[a].b, &(*v)[a].c, &(*v)[a].d}) kf += " " + q->ToString();
+    printf("%s\n", kf.c_str());
+  }
   fflush(stdout);
+  if (frame_only) return 0;
 
   std::vector<ChartId> charts;
   for (int side = 0; side < 4; side++) {

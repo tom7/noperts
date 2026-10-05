@@ -779,6 +779,47 @@ Q TieLeafLower(const Interval5 &iv, const TriangleQ &tri, int chart, int n, cons
   return BigRat::Max(tight.center - tight.radius, BernsteinLower(vars, q));
 }
 
+Q KLower(const KQ &x) {
+  // IcoField.sqrt5Lo/Hi, s72Lo/Hi; IcoQ.lo.
+  static const Q s5lo(std::string_view("22360679774997896964091736/10000000000000000000000000"));
+  static const Q s5hi(std::string_view("22360679774997896964091737/10000000000000000000000000"));
+  static const Q slo(std::string_view("9510565162951535721164393/10000000000000000000000000"));
+  static const Q shi(std::string_view("9510565162951535721164394/10000000000000000000000000"));
+  auto lomul = [](const Q &k, const Q &l, const Q &u) { return Q::Sign(k) >= 0 ? k * l : k * u; };
+  return x.a + lomul(x.b, s5lo, s5hi) + lomul(x.c, slo, shi) + lomul(x.d, s5lo * slo, s5hi * shi);
+}
+
+bool CapLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, const CapExact &cap) {
+  if (chart != 0) return false;
+  Q w2(0);
+  for (int a = 2; a < 5; a++) {
+    const Q lo2 = iv.min[a] * iv.min[a], hi2 = iv.max[a] * iv.max[a];
+    w2 = w2 + (lo2 < hi2 ? hi2 : lo2);
+  }
+  if (cap.wmax2 < w2) return false;
+  auto dot = [&](const VecQ &p, int f) {
+    KQ r{Q(0), Q(0), Q(0), Q(0)};
+    for (int a = 0; a < 3; a++) {
+      const KQ &c = cap.frame[f][a];
+      r = {r.a + p[a] * c.a, r.b + p[a] * c.b, r.c + p[a] * c.c, r.d + p[a] * c.d};
+    }
+    return r;
+  };
+  auto comb = [](const Q &m, const KQ &x, const Q &s, const KQ &y) {
+    return KQ{m * x.a + s * y.a, m * x.b + s * y.b, m * x.c + s * y.c, m * x.d + s * y.d};
+  };
+  for (const VecQ &p : tri) {
+    const KQ px = dot(p, 0);
+    if (!(Q(0) < KLower(px))) return false;
+    for (int f = 1; f <= 2; f++) {
+      const KQ pf = dot(p, f);
+      if (KLower(comb(cap.mu0, px, Q(-1), pf)) < Q(0)) return false;
+      if (KLower(comb(cap.mu0, px, Q(1), pf)) < Q(0)) return false;
+    }
+  }
+  return true;
+}
+
 bool TieLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, int n, const Q &rho) {
   for (int c = 0; c < 3; c++) {
     for (int d = c; d < 3; d++) {
