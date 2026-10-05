@@ -112,6 +112,33 @@ std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
         return rows5d::HalfTurnPruneLeaf{cand[k].second};
     }
   }
+  // Cap leaves: the whole box is in a certified cap domain (chart 0).
+  if (job_.chart == 0 && !opt_.caps.empty()) {
+    const geom5d::TriangleD td = geom5d::ToDouble(node.tri);
+    const geom5d::BoxD b = geom5d::ToDouble(node.box);
+    double wmax2 = 0;
+    for (int m = 0; m < 8; m++) {
+      double n2 = 0;
+      for (int a = 0; a < 3; a++) {
+        const double c = b.center[a] + ((m >> a) & 1 ? b.radius[a] : -b.radius[a]);
+        n2 += c * c;
+      }
+      wmax2 = std::max(wmax2, n2);
+    }
+    for (size_t ci = 0; ci < opt_.caps.size(); ci++) {
+      const auto &cap = opt_.caps[ci];
+      if (wmax2 > cap.wmax * cap.wmax * (1 - 1e-9)) continue;
+      bool in = true;
+      for (int k = 0; k < 3 && in; k++) {
+        const auto &P = td.corners[k];
+        const double px = P[0] * cap.x[0] + P[1] * cap.x[1] + P[2] * cap.x[2];
+        const double p1 = P[0] * cap.e1[0] + P[1] * cap.e1[1] + P[2] * cap.e1[2];
+        const double p2 = P[0] * cap.e2[0] + P[1] * cap.e2[1] + P[2] * cap.e2[2];
+        in = px > 0 && std::abs(p1) <= cap.mu0 * px * (1 - 1e-9) && std::abs(p2) <= cap.mu0 * px * (1 - 1e-9);
+      }
+      if (in) return rows5d::CapLeaf{(int)ci};
+    }
+  }
   // Tie leaves: the box lies within the tie tube about H_u H_x (deltoidal
   // hexecontahedron). Screen trace(H_u R H_x) at the center first.
   if (opt_.ties != nullptr) {
@@ -368,7 +395,8 @@ std::vector<rows5d::Record> Solver::SolveSubtree(const Node &root, int64_t max_n
             if constexpr (std::is_same_v<T, rows5d::FundamentalPruneLeaf> ||
                           std::is_same_v<T, rows5d::IcoPruneLeaf> ||
                           std::is_same_v<T, rows5d::HalfTurnPruneLeaf> ||
-                          std::is_same_v<T, rows5d::TieLeaf>) stats_.pf++;
+                          std::is_same_v<T, rows5d::TieLeaf> ||
+                          std::is_same_v<T, rows5d::CapLeaf>) stats_.pf++;
           },
           *leaf);
       if (live_ != nullptr) {

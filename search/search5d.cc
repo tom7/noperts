@@ -14,7 +14,7 @@
 //                [--bdd codebdd.json] [--cone_samples N] [--split_kappa K]
 //                [--split_rule 0|1|2] [--min_peel 5..7]
 //                [--view_scale S] [--view_lookahead]
-//                [--max_full_retry N] [--half_turn_prune] [--tie_dir DIR]
+//                [--max_full_retry N] [--half_turn_prune] [--tie_dir DIR] [--caps FILE]
 //                [--exact_check] [--retry_deferred] [--requeue_deferred]
 //
 // --retry_deferred also solves every deferred (df) leaf in the journals again
@@ -165,6 +165,13 @@ int main(int argc, char **argv) {
     else if (a == "--max_full_retry") args.opt.max_full_retry = std::stoi(next());
     else if (a == "--half_turn_prune") args.opt.half_turn_prune = true;
     else if (a == "--tie_dir") args.tie_dir = next();
+    else if (a == "--caps") {
+      std::ifstream in(next());
+      solve5d::Options::Cap c;
+      while (in >> c.x[0] >> c.x[1] >> c.x[2] >> c.e1[0] >> c.e1[1] >> c.e1[2] >> c.e2[0] >> c.e2[1] >> c.e2[2] >>
+             c.mu0 >> c.wmax)
+        args.opt.caps.push_back(c);
+    }
     else if (a == "--min_peel") args.opt.min_peel_eighths = std::stoi(next());
     else if (a == "--max_depth") args.opt.max_depth = std::stoi(next());
     else if (a == "--exact_check") args.opt.exact_check = true;

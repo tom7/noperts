@@ -47,6 +47,10 @@ struct Options {
   bool half_turn_prune = false;
   // Tie leaves (deltoidal hexecontahedron): radii certified by tietube.cc.
   const tieatlas5d::TieAtlas *ties = nullptr;
+  // Cap leaves (deltoidal hexecontahedron; capcert.cc certifies each cap):
+  // views in the cone {|u.e_i| <= mu0 (u.x)} and rotations |w| <= wmax (chart 0).
+  struct Cap { double x[3], e1[3], e2[3]; double mu0, wmax; };
+  std::vector<Cap> caps;
   // Split the box when its widest half-width exceeds split_kappa times the
   // view triangle's angular diameter, else split the view.
   double split_kappa = 0.5;

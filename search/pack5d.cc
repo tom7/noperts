@@ -550,6 +550,9 @@ class Packer {
             return std::format(",13,{},{},{},0,{}", id, iv, l.neighbor, tri_id);
           } else if constexpr (std::is_same_v<T, rows5d::FundamentalPruneLeaf>) {
             return std::format(",8,{},{},{},0,{}", id, iv, l.direction > 0 ? 1 : 0, tri_id);
+          } else if constexpr (std::is_same_v<T, rows5d::CapLeaf>) {
+            // Lean Row.capLeaf (tag 16): the cap theorem's domain.
+            return std::format(",16,{},{},{},0,{}", id, iv, l.cap, tri_id);
           } else if constexpr (std::is_same_v<T, rows5d::TieLeaf>) {
             // Lean Row.tieLeaf (tag 15): pinning normal, tie tube radius;
             // depends on the view triangle, so never relaxed.

@@ -320,7 +320,9 @@ struct Setup {
   // [-2, 2], so that mu0 ~ 0.01 covers strong components up to S mu0^2.
   double strong_scale = 2;
   bool Strong(int i) const { return aniso ? i >= 1 : i == 2; }
-  int ratio_z = 0;  // Z for the ratio blow-up (0: off)
+  int ratio_z = 0;       // Z for the ratio blow-up (0: off): Fe and cone charts
+  int ratio_z_face = 0;  // Z for face charts (0: ratio_z)
+  int Z(const std::string &kind) const { return kind == "face" && ratio_z_face > 0 ? ratio_z_face : ratio_z; }
   double Range(int i) const { return Strong(i) ? strong_scale : 2.0; }
 };
 
@@ -469,7 +471,7 @@ ChartT<T> MakeChart(const Setup &st, const Problem<T> &pr, const ChartId &id) {
   } else if (id.ratio == 2) {
     const int k = pvar[id.ratio_coord];
     CHECK(k >= 0);
-    const T Z = ScaleT<T>(st.ratio_z), sg = id.ratio_sign > 0 ? one : Zero<T>() - one;
+    const T Z = ScaleT<T>(st.Z(id.kind)), sg = id.ratio_sign > 0 ? one : Zero<T>() - one;
     pv[k] = sg * (Z * mu + p[k]);
   }
   P e = P::Const(one), s[3];
@@ -609,7 +611,7 @@ struct Certifier {
       return {*std::min_element(c, c + 4), *std::max_element(c, c + 4)};
     }
     if (i != id.ratio_coord) return v;
-    const double z = st.ratio_z;
+    const double z = st.Z(id.kind);
     const double lo = z * m0 + v.first, hi = z * m1 + v.second;
     return id.ratio_sign > 0 ? std::pair<double, double>{lo, hi} : std::pair<double, double>{-hi, -lo};
   }
@@ -716,7 +718,7 @@ int main(int argc, char **argv) {
   int max_depth = 30, threads = 60;
   bool aniso = false, exact = true, mix = true;
   std::string debug_box;
-  int ratio_z = 0;
+  int ratio_z = 0, ratio_z_face = 0;
   double strong_scale = 2;
   Q mu0(41, 512);
   for (int i = 1; i < argc; i++) {
@@ -734,6 +736,7 @@ int main(int argc, char **argv) {
     else if (a == "--strong_scale") strong_scale = std::stod(next());
     else if (a == "--debug_box") debug_box = next();
     else if (a == "--ratio_z") ratio_z = std::stoi(next());
+    else if (a == "--ratio_z_face") ratio_z_face = std::stoi(next());
     else LOG(FATAL) << "unknown argument " << a;
   }
   Setup st;
@@ -743,6 +746,7 @@ int main(int argc, char **argv) {
   st.aniso = aniso;
   st.strong_scale = strong_scale;
   st.ratio_z = ratio_z;
+  st.ratio_z_face = ratio_z_face;
   const KNum s72{Q(0), Q(0), Q(1), Q(0)}, sqrt5{Q(0), Q(1), Q(0), Q(0)};
   if (cap == "u0") {
     // u0: the 2-fold vertex direction nearest (0.309, 0.425, 0.851); |v| = sqrt5.
@@ -821,6 +825,8 @@ int main(int argc, char **argv) {
   printf("cap %s (%s, %s): %zu vertices, %zu support vertices, %zu witnesses, mu0 %s\n", cap.c_str(),
          aniso ? "anisotropic" : "isotropic", exact ? "exact" : "double", st.pd.V.size(), supp.size(),
          st.pd.W.size(), mu0.ToString().c_str());
+  printf("frame %.17g %.17g %.17g  %.17g %.17g %.17g  %.17g %.17g %.17g\n", st.pd.x[0], st.pd.x[1], st.pd.x[2],
+         st.pd.e1[0], st.pd.e1[1], st.pd.e1[2], st.pd.e2[0], st.pd.e2[1], st.pd.e2[2]);
   fflush(stdout);
 
   std::vector<ChartId> charts;
@@ -856,7 +862,7 @@ int main(int argc, char **argv) {
       ChartId in = c;
       in.ratio = 1;
       for (int i = 0; i < 3; i++)
-        if (!st.Strong(i) && pidx(i) >= 0) in.box[2 + pidx(i)] = {-(double)st.ratio_z, (double)st.ratio_z};
+        if (!st.Strong(i) && pidx(i) >= 0) in.box[2 + pidx(i)] = {-(double)st.Z(c.kind), (double)st.Z(c.kind)};
       out.push_back(in);
       for (int i = 0; i < 3; i++) {
         if (st.Strong(i) || pidx(i) < 0) continue;
