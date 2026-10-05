@@ -2,7 +2,7 @@
 default : exact5d_test.exe geom5d_test.exe contacts5d_test.exe cert5d_test.exe tubeatlas5d_test.exe rows5d_test.exe solve5d_test.exe lp5d_test.exe tubetree_test.exe model_test.exe tube_test.exe
 
 # Every program of the pipeline (rebuild.sh runs it).
-all: default qtube s5d codebdd.exe icoprune_check.exe halfturn_check.exe viewmap.exe shadowanim.exe
+all: default qtube s5d codebdd.exe icoprune_check.exe halfturn_check.exe tieviz.exe viewmap.exe shadowanim.exe
 
 # Identity tube:
 #  codebdd: exact rational model, codes and code triangles (codebdd.json).
@@ -117,5 +117,10 @@ viewmap.exe : viewmap.o rigidity-margin.o $(OBJECTS_CORE) $(OBJECTS)
 	@echo -n "!"
 
 halfturn_check.exe : halfturn_check.o rigidity-margin.o $(OBJECTS_CORE) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+	@echo -n "!"
+
+# tieviz: 4K pictures/animations of the deltoidal hexecontahedron's ties (video; see tieviz.txt).
+tieviz.exe : tieviz.o $(OBJECTS_CORE) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"
