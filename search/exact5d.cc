@@ -730,13 +730,14 @@ Q HalfTurnPruneLower(const Interval5 &iv, const TriangleQ &tri, int chart, int g
   return BigRat::Max(tight.center - tight.radius, BernsteinLower(vars, q));
 }
 
-// |G - G~| <= 5 * 10^-13 per entry and |N_ik| <= 1 + |w|^2 <= 4 on the bounded
-// region, so b_cd changes by at most
-// 4 * 5 * 10^-13 * (3 |P_c|_1 + 3 |P_d|_1 + 9 |P_c . P_d|).
+// |G - G~| <= 5 * 10^-13 per entry, so |(G - G~) P|_k <= 5 * 10^-13 |P|_1, and
+// |N_ik| <= 1 + |w|^2 <= 4 on the bounded region; summing over i, k, b_cd
+// changes by at most 4 * 5 * 10^-13 * (6 |P_c|_1 |P_d|_1 + 9 |P_c . P_d|)
+// (Lean: AtlasHalfTurnPrune.allowance).
 Q HalfTurnPruneAllowance(const TriangleQ &tri, int c, int d) {
   auto l1 = [](const VecQ &p) { return BigRat::Abs(p[0]) + BigRat::Abs(p[1]) + BigRat::Abs(p[2]); };
   const Q dot = tri[c][0] * tri[d][0] + tri[c][1] * tri[d][1] + tri[c][2] * tri[d][2];
-  return Q(2, 1000000000000) * (Q(3) * (l1(tri[c]) + l1(tri[d])) + Q(9) * BigRat::Abs(dot));
+  return Q(2, 1000000000000) * (Q(6) * l1(tri[c]) * l1(tri[d]) + Q(9) * BigRat::Abs(dot));
 }
 
 bool HalfTurnPruneValid(const Interval5 &iv, const TriangleQ &tri, int chart, int g) {
