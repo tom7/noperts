@@ -56,6 +56,7 @@ struct Model {
   std::vector<std::vector<int>> faces;    // slot indices
   std::vector<vec3> verts;                // distinct vertices
   std::vector<int> slot_vert;             // slot -> distinct index
+  std::vector<std::pair<int, int>> edges;  // distinct vertex pairs
 };
 
 Model LoadModel(const std::string &file, double eta) {
@@ -94,6 +95,28 @@ Model LoadModel(const std::string &file, double eta) {
       m.verts.push_back(p);
     }
     m.slot_vert.push_back(found);
+  }
+  // Edges: each face's vertices in cyclic order around its centroid (the
+  // model lists them by index).
+  for (const auto &face : m.faces) {
+    std::vector<int> f;
+    for (int s : face) {
+      const int v = m.slot_vert[s];
+      if (std::find(f.begin(), f.end(), v) == f.end()) f.push_back(v);
+    }
+    vec3 c{0, 0, 0};
+    for (int v : f) c += m.verts[v];
+    c = c / (double)f.size();
+    const vec3 n = yocto::normalize(c), e1 = yocto::normalize(m.verts[f[0]] - c), e2 = yocto::cross(n, e1);
+    std::sort(f.begin(), f.end(), [&](int a, int b) {
+      return std::atan2(yocto::dot(m.verts[a] - c, e2), yocto::dot(m.verts[a] - c, e1)) <
+             std::atan2(yocto::dot(m.verts[b] - c, e2), yocto::dot(m.verts[b] - c, e1));
+    });
+    for (size_t k = 0; k < f.size(); k++) {
+      auto e = std::minmax(f[k], f[(k + 1) % f.size()]);
+      if (std::find(m.edges.begin(), m.edges.end(), std::pair<int, int>(e.first, e.second)) == m.edges.end())
+        m.edges.push_back({e.first, e.second});
+    }
   }
   return m;
 }
@@ -150,10 +173,12 @@ bool Inside(const std::vector<vec2> &poly, const vec2 &p) {
 struct Shadows {
   std::vector<vec2> outer, inner;  // hulls, counterclockwise
   std::vector<vec2> inner_pts;     // every inner vertex
+  std::vector<std::pair<vec2, vec2>> outer_edges, inner_edges;  // projected polyhedron edges
   double clearance = 0;            // min depth of an inner vertex (positive: strictly inside)
 };
 
-Shadows MakeShadows(const std::vector<vec3> &verts, const ViewFrame &fr, const vec3 &axis, double theta) {
+Shadows MakeShadows(const Model &m, const ViewFrame &fr, const vec3 &axis, double theta) {
+  const std::vector<vec3> &verts = m.verts;
   std::vector<vec2> o, in;
   for (const vec3 &v : verts) {
     o.push_back({yocto::dot(v, fr.f), yocto::dot(v, fr.g)});
@@ -164,19 +189,26 @@ Shadows MakeShadows(const std::vector<vec3> &verts, const ViewFrame &fr, const v
   sh.outer = HullOf(o);
   sh.inner = HullOf(in);
   sh.inner_pts = in;
+  for (const auto &[a, b] : m.edges) {
+    sh.outer_edges.push_back({o[a], o[b]});
+    sh.inner_edges.push_back({in[a], in[b]});
+  }
   sh.clearance = 1e300;
   for (const vec2 &p : in) sh.clearance = std::min(sh.clearance, -Outside(sh.outer, p));
   return sh;
 }
 
-constexpr uint32_t kBackground = 0x101018FF;
-constexpr uint32_t kOuter = 0x4A5A7AFF;
-constexpr uint32_t kInner = 0xE8A838FF;
-constexpr uint32_t kInnerLine = 0xF4F4F4FF;
-constexpr uint32_t kOuterLine = 0x9FB4E0FF;
-constexpr uint32_t kProtrude = 0xFF3040FF;
+// Outer green, inner red: faint fills and polyhedron edges, bright hulls.
+constexpr uint32_t kBackground = 0x0E0E14FF;
+constexpr uint32_t kOuter = 0x30E070FF;
+constexpr uint32_t kInner = 0xFF3838FF;
+constexpr double kFillAlpha = 0.10;
+constexpr uint32_t kOuterEdge = 0x30E07058;
+constexpr uint32_t kInnerEdge = 0xFF383858;
+constexpr uint32_t kOuterLine = 0x40FF80FF;
+constexpr uint32_t kInnerLine = 0xFF4848FF;
 constexpr uint32_t kFrame = 0x8090B0FF;
-constexpr uint32_t kTouch = 0x40F0A0FF;
+constexpr uint32_t kTouch = 0xFFFFFFFF;
 
 uint32_t Mix(uint32_t a, uint32_t b, double t) {
   auto ch = [&](int s) {
@@ -218,12 +250,15 @@ void PaintWindow(ImageRGBA *img, int x0, int y0, int w, int h, const Shadows &sh
           pro_n += in && !o;
         }
       }
-      uint32_t c = Mix(kBackground, kOuter, out_n / 9.0);
-      c = Mix(c, kInner, 0.45 * in_n / 9.0);
-      if (pro_n > 0) c = Mix(c, kProtrude, pro_n / 9.0);
+      uint32_t c = Mix(kBackground, kOuter, kFillAlpha * out_n / 9.0);
+      // The inner fill; where it leaves the outer shadow (a protrusion) it is stronger.
+      c = Mix(c, kInner, kFillAlpha * in_n / 9.0 + 0.5 * pro_n / 9.0);
       img->SetPixel32(x, y, c);
     }
   }, 32);
+  // Polyhedron edges (faint; inner on top), then the hulls (bright).
+  for (const auto &[a, b] : sh.outer_edges) ClippedLine(img, x0, y0, w, h, toPix(a), toPix(b), line * 0.5f, kOuterEdge);
+  for (const auto &[a, b] : sh.inner_edges) ClippedLine(img, x0, y0, w, h, toPix(a), toPix(b), line * 0.5f, kInnerEdge);
   for (size_t i = 0; i < sh.outer.size(); i++) {
     ClippedLine(img, x0, y0, w, h, toPix(sh.outer[i]), toPix(sh.outer[(i + 1) % sh.outer.size()]), line,
                 kOuterLine);
@@ -242,7 +277,33 @@ void PaintWindow(ImageRGBA *img, int x0, int y0, int w, int h, const Shadows &sh
 
 // The inner vertices nearest the outer boundary (touching ones first), at
 // most k distinct places.
+// A reflection symmetry of the picture (both hulls), as a unit axis, if any.
+std::optional<vec2> MirrorAxis(const Shadows &sh, double radius) {
+  std::vector<vec2> cands;
+  for (size_t i = 0; i < sh.outer.size(); i++) {
+    cands.push_back(sh.outer[i]);
+    cands.push_back((sh.outer[i] + sh.outer[(i + 1) % sh.outer.size()]) * 0.5);
+  }
+  auto matches = [&](const std::vector<vec2> &pts, const vec2 &ax) {
+    for (const vec2 &p : pts) {
+      const vec2 r = ax * (2 * yocto::dot(p, ax)) - p;
+      bool hit = false;
+      for (const vec2 &q : pts) hit = hit || yocto::distance(r, q) < 1e-9 * radius;
+      if (!hit) return false;
+    }
+    return true;
+  };
+  for (const vec2 &c : cands) {
+    if (yocto::length(c) < 1e-9) continue;
+    for (const vec2 &ax : {yocto::normalize(c), vec2{-yocto::normalize(c).y, yocto::normalize(c).x}}) {
+      if (matches(sh.outer, ax) && matches(sh.inner, ax)) return ax;
+    }
+  }
+  return std::nullopt;
+}
+
 std::vector<vec2> ClosePlaces(const Shadows &sh, double radius, int k) {
+  const std::optional<vec2> mirror = MirrorAxis(sh, radius);
   std::vector<std::pair<double, vec2>> cand;
   for (const vec2 &p : sh.inner_pts) cand.push_back({std::abs(Outside(sh.outer, p)), p});
   std::sort(cand.begin(), cand.end(), [](const auto &a, const auto &b) { return a.first < b.first; });
@@ -252,6 +313,13 @@ std::vector<vec2> ClosePlaces(const Shadows &sh, double radius, int k) {
     for (const vec2 &q : out) near = near || yocto::distance(p, q) < 0.15 * radius;
     // Skip antipodal duplicates (the picture is centrally symmetric).
     for (const vec2 &q : out) near = near || yocto::distance(p, -q) < 0.15 * radius;
+    // And mirror images, when the picture has a reflection symmetry.
+    if (mirror.has_value()) {
+      for (const vec2 &q : out) {
+        const vec2 r = *mirror * (2 * yocto::dot(q, *mirror)) - q;
+        near = near || yocto::distance(p, r) < 0.15 * radius || yocto::distance(p, -r) < 0.15 * radius;
+      }
+    }
     if (!near) out.push_back(p);
     if ((int)out.size() == k) break;
   }
@@ -270,7 +338,8 @@ ImageRGBA Render(int W, int H, const Shadows &sh, double radius, double zoom) {
   }
   PaintWindow(&img, 0, 0, left, H, sh, vec2{0, 0}, sc, 2.5f, {});
   const std::vector<vec2> places = ClosePlaces(sh, radius, 3);
-  const int pad = H / 40, iw = W - left - 2 * pad, ih = (H - 4 * pad) / 3;
+  const int np = std::max<int>(1, places.size());
+  const int pad = H / 40, iw = W - left - 2 * pad, ih = (H - (np + 1) * pad) / np;
   for (size_t i = 0; i < places.size(); i++) {
     const int x0 = left + pad, y0 = pad + i * (ih + pad);
     PaintWindow(&img, x0, y0, iw, ih, sh, places[i], zoom, 3.0f, touch);
@@ -382,7 +451,7 @@ int main(int argc, char **argv) {
 
   auto still_image = [&](const vec3 &u, const vec3 &ax, double th, const std::string &file) {
     const ViewFrame fr = NextFrame(u, std::nullopt);
-    const Shadows sh = MakeShadows(m.verts, fr, ax, th);
+    const Shadows sh = MakeShadows(m, fr, ax, th);
     Render(W, H, sh, radius, zoom).Save(file);
     Print("wrote {}: view ({:.9f} {:.9f} {:.9f}) axis ({:.9f} {:.9f} {:.9f}) theta {:.9f} ({:.3f} deg), "
           "eta {}, clearance {:+.3e}\n", file, u.x, u.y, u.z, ax.x, ax.y, ax.z, th, th * 180 / std::numbers::pi,
@@ -432,7 +501,7 @@ int main(int argc, char **argv) {
       Model mm;
       const Model *mp = pose_of(i, &u, &ax, &th, &mm);
       fr = NextFrame(u, fr);
-      const Shadows sh = MakeShadows(mp->verts, *fr, ax, th);
+      const Shadows sh = MakeShadows(*mp, *fr, ax, th);
       mov->AddFrame(Render(W, H, sh, radius, zoom));
       if (i % 60 == 0) Print("frame {}/{}: theta {:.4f} deg, clearance {:+.3e}\n", i, n, th * 180 / std::numbers::pi,
                              sh.clearance);

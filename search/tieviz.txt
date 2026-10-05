@@ -3,15 +3,17 @@ tieviz: the deltoidal hexecontahedron's special poses
 
 Every picture has the same layout. On the left, the whole "shadow" of the
 deltoidal hexecontahedron (DH) seen along a view direction u: the projection
-of the solid onto the plane perpendicular to u, filled in slate blue with a
-light blue outline. On top of it, in translucent amber with a white outline,
-the shadow of a rotated copy of the same solid (the "inner" copy). Rupert's
-property asks for a pose in which the amber shadow fits strictly inside the
-blue one; anything sticking out would be red. On the right, three insets
-magnify the places where the amber outline comes closest to the blue one.
-Small green circles mark vertices of the amber shadow lying exactly on the
-blue outline (touching). The picture is centrally symmetric, so each inset
-also stands for the opposite side.
+of the solid onto the plane perpendicular to u, outlined in bright green
+(faint green fill and faint green projected polyhedron edges). On top of it,
+in red (bright outline, faint fill and edges), the shadow of a rotated copy
+of the same solid (the "inner" copy). Rupert's property asks for a pose in
+which the red outline fits strictly inside the green one; a part sticking out
+would be filled solid red. On the right, insets magnify the places where the
+red outline comes closest to the green one (three, or two when the picture
+is mirror symmetric and a third would repeat one). Small white circles mark
+vertices of the red outline lying exactly on the green one (touching). The
+picture is centrally symmetric, so each inset also stands for the opposite
+side.
 
 Stills (3840x2160 PNG)
 ----------------------
@@ -26,7 +28,7 @@ tie_b015.png, tie_b005.png, tie_b020.png, tie_b015_a002.png
   shadow of the reflected solid lies inside the DH's shadow and touches it.
   The reflection composed with the reflection perpendicular to u (which does
   not change the shadow) is a rotation, so this is a real rotated copy of the
-  DH: the amber shadow fits, but only with ties — it touches the outline at
+  DH: the red shadow fits, but only with ties — it touches the outline at
   about ten places and nowhere has room to spare. The file names give the
   view's position in the wedge (b = distance from x along the wedge, a =
   sideways); the rotation angle is twice the angle between u and x (5.7
@@ -39,7 +41,7 @@ mirror_u0.png
   The simplest tie. Near a 2-fold axis (the view here is 0.1 rad off one),
   the plane perpendicular to the axis is a mirror of the DH, so the
   reflected solid IS the DH, and the rotated copy's shadow equals the
-  original shadow exactly: every vertex of the outline touches (green). This
+  original shadow exactly: every vertex of the outline touches (white circles). This
   one is harmless (a symmetry argument removes it), but it is why the 2-fold
   views are hard.
 
@@ -47,7 +49,7 @@ fold_eta0.001_passage.png
   The punchline. Push the twelve 5-fold vertices of the DH outward by 0.1%
   (keeping all its symmetry; the kite faces fold very slightly). The ties
   open up: in the pose shown (near the b = 0.15 tie, rotation 17 degrees)
-  the amber shadow fits strictly inside, with gaps of about 7e-5 (the insets
+  the red shadow fits strictly inside, with gaps of about 7e-5 (the insets
   are magnified 50 times more than in the tie pictures). So this slightly
   folded DH is Rupert: a copy of it passes through a hole in itself.
   dh_boundary.py checks this pose in 50-digit arithmetic. Pushing the
@@ -60,7 +62,7 @@ Animations (3840x2160, 60 Hz, lossless PNG .mov)
 wedge_sweep.mov (12 s)
   The view slides along the wedge from almost exactly x (rotation angle
   0.2 degrees) out to b = 0.2 (23 degrees), always with the tie rotation.
-  The shadow changes shape and the rotation grows, but the amber copy
+  The shadow changes shape and the rotation grows, but the red copy
   always fits with ties and never with room to spare. Near the start the
   rotation is tiny and the two shadows nearly coincide: that end of the
   wedge is the "cap" where the computer proof needs second-order (curvature)
