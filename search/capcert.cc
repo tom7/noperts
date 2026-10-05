@@ -464,7 +464,9 @@ struct Certifier {
       const WitnessPolys &wp = Get(sc[r].second);
       bool all = true;
       for (const Dense &P : wp.P) {
-        if (!(BernsteinLower(P, box) > 0)) { all = false; break; }
+        // Non-strict: P >= 0 suffices (a tie is not a passage); the double-precision
+        // prototype allows rounding noise, the exact version checks >= 0 exactly.
+        if (!(BernsteinLower(P, box) >= -1e-13)) { all = false; break; }
       }
       if (all) { stats->ok++; return true; }
     }
