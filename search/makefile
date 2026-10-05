@@ -135,6 +135,10 @@ dfwhere.exe : dfwhere.o $(OBJECTS_CORE) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"
 
+tufix.exe : tufix.o $(OBJECTS_CORE) $(OBJECTS)
+	@$(CXX) $^ -o $@ $(LFLAGS)
+	@echo -n "!"
+
 # pool_check: the pools' weighted defect bounds (Pareto frontiers) equal the direct maximum.
 pool_check.exe : pool_check.o $(OBJECTS_CORE) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)

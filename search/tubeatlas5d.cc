@@ -36,9 +36,11 @@ int Flatten(const tubetree::TreeNode &node, std::vector<BigRat> *r_lower,
     (*r_lower)[idx] = lo;
     (*r_upper)[idx] = hi;
   } else {
-    // Cap leaves (tubetree::CapLeaf) carry the radius their cap theorem certifies.
-    CHECK(node.has_certificate()) << "uncertified leaf " << node.path;
-    const BigRat r = node.GetCertifiedRadius();
+    // Cap leaves (tubetree::CapLeaf) certify no tube: the cap theorems cover their own
+    // domains (cap leaves of the 5D search), and Lean's local tables give them rLower -1
+    // (Row.empty), so no tube leaf may use them (radius 0 here).
+    CHECK(node.has_certificate() || node.cap.has_value()) << "uncertified leaf " << node.path;
+    const BigRat r = node.cap.has_value() ? BigRat(0) : node.GetCertifiedRadius();
     (*r_lower)[idx] = r;
     (*r_upper)[idx] = r;
   }
