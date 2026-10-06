@@ -27,9 +27,9 @@
 # Usage: ./rebuild.sh [--from STAGE] [--only STAGE] [--dry_run] [--threads N]
 #        [--mem_gb G] [--work DIR]   (default ./rebuild-work)
 #
-# Resources (2026-10-05, 64 cores): capcert ux ~1 h (exact, 24 threads), the
-# 5D search several hours, pack5d chart 0 ~45 min (2.2 GB of packs), the Lean
-# verifier several hours (caps ~30 min, ties ~4 min, chart 0 ~36 M rows).
+# Resources (measured 2026-10-06, 64 cores, --from model: 8 h 10 min in all):
+# model through ties ~6 min, search 4 h 36 min, pack 35 min (chart 0 2 GB),
+# verify 2 h 52 min (caps 19 min, ties 4 min, chart 0 32.9 M rows; ~30 GB).
 # Lean runs in a systemd scope with MemoryMax (ulimit -v would stop Lean from
 # creating threads).
 #
