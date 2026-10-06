@@ -1,7 +1,9 @@
 # The deltoidal hexecontahedron is a Nopert
 
-**Status (2026-10-05): all certificates are built and all Lean is written (no `sorry`); the end-to-end run of
-the checker is in progress. Until it prints the line below, this is not a proof.**
+**Status (2026-10-06): verified.** `constructDeltoidalHexecontahedron` checked every certificate (3 caps,
+250 tie nodes, the view cover, 39 tube tables, 36.2 M chart-0 rows) in 3 h 05 min on 64 cores (peak 30 GB) and
+printed `instantiated: no deltoidal hexecontahedron is Rupert`. A from-scratch reproduction with `rebuild.sh`
+is still to be done.
 
 A polyhedron is *Rupert* if a hole can be cut through it through which a congruent copy can pass, and a *Nopert*
 if it is not Rupert (Lean: `¬ IsRupert`). This repository, together with the Lean formalization on the
@@ -58,8 +60,9 @@ tie certificates (`tietube --export_dir`, `dh_tie_lean.py`), tube packs (`export
 constructDeltoidalHexecontahedron tubepacks/manifest.txt packs certs tie_lean
 ```
 
-checks caps, ties and tables and prints `instantiated: no deltoidal hexecontahedron is Rupert`. A `rebuild.sh`
-for the DH (as for the pentagonal hexecontahedron) is still to be written; the commands are in the working log.
+checks caps, ties and tables and prints `instantiated: no deltoidal hexecontahedron is Rupert`.
+`./rebuild.sh --from model --work DIR` runs the whole pipeline (stages model, tube, tubepack, caps, ties, search,
+pack, verify; `--dry_run` prints the commands).
 
 ## Code map (DH-specific)
 
@@ -72,4 +75,4 @@ for the DH (as for the pentagonal hexecontahedron) is still to be written; the c
 - Lean (Noperthedron `deltoidalhexecontahedron`, `Noperthedron/PentagonalHexecontahedron/`): `DHStatement`,
   `DHCaps`, `DHTies`, `DHChecks`, `DHDecode`, the cap and tie modules above, and `constructDeltoidalHexecontahedron`.
 
-The working log (`notes/T.md`, to be added to this branch when the run completes) records how this proof came to be.
+The working log `notes/T.md` records how this proof came to be.
