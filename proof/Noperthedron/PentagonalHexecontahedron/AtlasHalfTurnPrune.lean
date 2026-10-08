@@ -28,10 +28,6 @@ namespace Noperthedron.PentagonalHexecontahedron
 open Noperthedron.Atlas
 open scoped Matrix
 
-/-- The half-turn about the line through `u` (for u ≠ 0). -/
-noncomputable def halfTurnMat (u : Fin 3 → ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
-  fun i j => 2 * u i * u j / (∑ k, u k ^ 2) - if i = j then 1 else 0
-
 /-- No element of I gives a larger trace after the half-turn about the view. -/
 def InHalfTurnCell (u : Fin 3 → ℝ) (R : Matrix (Fin 3) (Fin 3) ℝ) : Prop :=
   ∀ g : IcoIndex, Matrix.trace (halfTurnMat u * R * icoMatrix g) ≤ Matrix.trace R

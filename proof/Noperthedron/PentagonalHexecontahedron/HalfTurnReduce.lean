@@ -22,26 +22,6 @@ namespace Noperthedron.PentagonalHexecontahedron
 
 open scoped Matrix
 
-theorem view_sq_sum (p : MatrixPose) : ∑ k, p.view k ^ 2 = 1 := by
-  have h := (Matrix.mem_orthogonalGroup_iff (Fin 3) ℝ).mp p.outerRot.property.1
-  have h22 := congrFun (congrFun h 2) 2
-  simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply_eq] at h22
-  simpa [MatrixPose.view, sq] using h22
-
-theorem halfTurnMat_view (p : MatrixPose) :
-    halfTurnMat p.view = p.outerRot.valᵀ * halfTurnZMat * p.outerRot.val := by
-  have horth := (Matrix.mem_orthogonalGroup_iff' (Fin 3) ℝ).mp p.outerRot.property.1
-  have hs : p.outerRot.val 2 0 ^ 2 + p.outerRot.val 2 1 ^ 2 + p.outerRot.val 2 2 ^ 2 = 1 := by
-    have := view_sq_sum p
-    simpa [MatrixPose.view, Fin.sum_univ_three] using this
-  ext i j
-  have hij := congrFun (congrFun horth i) j
-  simp only [Matrix.mul_apply, Matrix.transpose_apply, Fin.sum_univ_three] at hij
-  simp only [halfTurnMat, Matrix.mul_apply, Matrix.transpose_apply, Fin.sum_univ_three, halfTurnZMat,
-    MatrixPose.view, hs, div_one]
-  simp [Matrix.of_apply, Matrix.one_apply] at hij ⊢
-  split_ifs at hij ⊢ <;> linarith
-
 theorem relativeRotation_leftHalfTurn (p : MatrixPose) (G : SO3) :
     (p.leftHalfTurn G).relativeRotation = halfTurnMat p.view * p.relativeRotation * G.val := by
   have horth := (Matrix.mem_orthogonalGroup_iff (Fin 3) ℝ).mp p.outerRot.property.1
@@ -53,13 +33,6 @@ theorem relativeRotation_leftHalfTurn (p : MatrixPose) (G : SO3) :
     simp only [Matrix.mul_assoc]]
   rw [horth, Matrix.mul_one]
   simp only [Matrix.mul_assoc]
-
-theorem halfTurnMat_mul_self (u : Fin 3 → ℝ) (hu : ∑ k, u k ^ 2 ≠ 0) :
-    halfTurnMat u * halfTurnMat u = 1 := by
-  ext i j
-  simp only [halfTurnMat, Matrix.mul_apply, Fin.sum_univ_three, Matrix.one_apply] at hu ⊢
-  field_simp
-  fin_cases i <;> fin_cases j <;> simp <;> ring_nf <;> nlinarith [hu]
 
 /-- The candidate (b, g): (H_u if b) · R · g. -/
 noncomputable def htCandidate (u : Fin 3 → ℝ) (R : Matrix (Fin 3) (Fin 3) ℝ) (b : Bool) (g : IcoIndex) :

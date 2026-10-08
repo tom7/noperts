@@ -244,6 +244,11 @@ theorem exists_candView_domain (u : Fin 3 → ℝ) : ∃ s b j, InC3vViewDomain 
             all_goals (try constructorm* _ ∧ _)
             all_goals linarith⟩
 
+theorem view_viewAntipode (p : MatrixPose) : p.viewAntipode.view = -p.view := by
+  funext k
+  simp [MatrixPose.view, MatrixPose.viewAntipode, MatrixPose.viewAntipodeRotation,
+    Matrix.mul_apply, Rx_mat, Fin.sum_univ_three]
+
 /-- The candidate poses, realizing `candView`. -/
 noncomputable def candPose (p : MatrixPose) (s b : Bool) (j : Fin 3) : MatrixPose :=
   let q := if b then p.mirrorScene j else p.bothRightC3 j

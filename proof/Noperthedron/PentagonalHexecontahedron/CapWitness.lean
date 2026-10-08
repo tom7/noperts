@@ -20,21 +20,6 @@ namespace Noperthedron.PentagonalHexecontahedron
 
 open scoped RealInnerProductSpace
 
-/-- A linear functional bounded by M on A is < M on the interior of A (n ≠ 0). -/
-theorem inner_lt_of_mem_interior {A : Set ℝ²} {n : ℝ²} (hn : n ≠ 0) {M : ℝ}
-    (hA : ∀ y ∈ A, ⟪n, y⟫ ≤ M) {y : ℝ²} (hy : y ∈ interior A) : ⟪n, y⟫ < M := by
-  have hnhds : A ∈ nhds y := mem_interior_iff_mem_nhds.mp hy
-  have hcont : Filter.Tendsto (fun t : ℝ => y + t • n) (nhds 0) (nhds y) := by
-    have : Continuous (fun t : ℝ => y + t • n) := by fun_prop
-    simpa using this.tendsto 0
-  have hev : ∀ᶠ t in nhdsWithin (0 : ℝ) (Set.Ioi 0), y + t • n ∈ A :=
-    (hcont.eventually hnhds).filter_mono nhdsWithin_le_nhds
-  obtain ⟨t, ht, ht0⟩ := (hev.and self_mem_nhdsWithin).exists
-  have h := hA _ ht
-  rw [inner_add_right, inner_smul_right, real_inner_self_eq_norm_sq] at h
-  have hpos : 0 < t * ‖n‖ ^ 2 := mul_pos ht0 (by positivity)
-  linarith
-
 theorem not_rupertPose_of_witness (p : MatrixPose) (S : Set ℝ³) (hS : ∀ v ∈ S, -v ∈ S)
     (n : ℝ²) (hn : n ≠ 0) (M : ℝ)
     (hM : ∀ v ∈ S, ⟪n, proj_xyL (PoseLike.outer p v)⟫ ≤ M)

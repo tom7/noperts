@@ -1,6 +1,7 @@
 module
 
 public import Noperthedron.PentagonalHexecontahedron.IcoReduction
+public import Noperthedron.PentagonalHexecontahedron.HalfTurnBasic
 public import Noperthedron.PentagonalHexecontahedron.AtlasProjectiveView
 
 @[expose] public section
@@ -195,10 +196,6 @@ noncomputable def _root_.MatrixPose.bothRightIco (p : MatrixPose) (g : IcoIndex)
   innerRot := p.innerRot * icoSO3 g
   outerRot := p.outerRot * icoSO3 g
   innerOffset := p.innerOffset
-
-/-- The view of a pose: the third row of its outer rotation. -/
-noncomputable def _root_.MatrixPose.view (p : MatrixPose) : Fin 3 → ℝ :=
-  fun k => p.outerRot.val 2 k
 
 theorem view_bothRightIco (p : MatrixPose) (g : IcoIndex) :
     (p.bothRightIco g).view = viewCandidate p.view true g := by

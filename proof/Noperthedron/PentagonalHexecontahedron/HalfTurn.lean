@@ -1,6 +1,7 @@
 module
 
 public import Noperthedron.PentagonalHexecontahedron.IcoReduction
+public import Noperthedron.PentagonalHexecontahedron.HalfTurnBasic
 
 @[expose] public section
 
@@ -22,36 +23,11 @@ namespace Noperthedron.PentagonalHexecontahedron
 
 open scoped Matrix
 
-/-- The half-turn about the projection axis z. -/
-def halfTurnZMat : Matrix (Fin 3) (Fin 3) ℝ := !![-1, 0, 0; 0, -1, 0; 0, 0, 1]
-
-theorem halfTurnZMat_mem : halfTurnZMat ∈ SO3 := by
-  rw [Matrix.mem_specialOrthogonalGroup_iff, Matrix.mem_orthogonalGroup_iff]
-  refine ⟨?_, ?_⟩
-  · ext i j
-    fin_cases i <;> fin_cases j <;>
-      simp [halfTurnZMat, Matrix.mul_apply, Fin.sum_univ_three]
-  · simp [halfTurnZMat, Matrix.det_fin_three]
-
-noncomputable def halfTurnZ : SO3 := ⟨halfTurnZMat, halfTurnZMat_mem⟩
-
-theorem proj_halfTurnZ (v : ℝ³) :
-    proj_xyL (halfTurnZMat.toEuclideanLin v) = -proj_xyL v := by
-  ext i
-  fin_cases i <;>
-    simp [proj_xyL, proj_xy_mat, halfTurnZMat, Matrix.toLpLin_apply, Matrix.mulVec,
-      dotProduct, Fin.sum_univ_three]
-
 /-- Turn the inner copy by H_z, compose it with G on the right, negate the offset. -/
 noncomputable def _root_.MatrixPose.leftHalfTurn (p : MatrixPose) (G : SO3) : MatrixPose where
   innerRot := halfTurnZ * p.innerRot * G
   outerRot := p.outerRot
   innerOffset := -p.innerOffset
-
-theorem proj_inject_xy (w : ℝ²) : proj_xyL (inject_xy w) = w := by
-  ext i
-  fin_cases i <;> simp [proj_xyL, proj_xy_mat, inject_xy, Matrix.toLpLin_apply, Matrix.mulVec,
-    dotProduct, Fin.sum_univ_three]
 
 theorem proj_inner_leftHalfTurn (p : MatrixPose) (G : SO3) (v : ℝ³) :
     proj_xyL (PoseLike.inner (p.leftHalfTurn G) v) =
