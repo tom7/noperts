@@ -52,6 +52,11 @@ struct PoolParams {
   // Off-silhouette contacts (at vertices not on the centroid view's hull,
   // along real polyhedron edges) are kept if their defect is at most this.
   double off_silhouette_max_defect = 0.002;
+  // Bridge contacts across silhouette edges shorter than bridge_ratio times
+  // the longest (0: none), kept if their defect is at most bridge_max_defect.
+  // Part of the pool definition (journals index triples in it).
+  double bridge_ratio = 0.1;
+  double bridge_max_defect = 0.01;
   // Triples are indexed by 8 bits on the GPU.
   int max_contacts = 256;
 };

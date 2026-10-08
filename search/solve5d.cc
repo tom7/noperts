@@ -351,6 +351,10 @@ Split Solver::ChooseSplit(const Node &node) const {
   }
   if (opt_.view_lookahead) {
     if (auto v = ViewBeatsBox(node, bd, axis)) {
+      const double balance = opt_.split_kappa * view;
+      const double band = opt_.lookahead_band;
+      if (band > 0 && *v && bd.radius[axis] > band * balance) return Split{.view = false, .axis = axis};
+      if (band > 0 && !*v && bd.radius[axis] * band < balance) return Split{.view = true};
       if (*v) return Split{.view = true};
       return Split{.view = false, .axis = axis};
     }

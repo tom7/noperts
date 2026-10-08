@@ -73,6 +73,39 @@ bool AddCornerContacts(const geom5d::TriangleD &tri, const PoolParams &params, i
   return true;
 }
 
+// Adds bridge contacts across a short silhouette edge (vertex, next): at
+// `vertex` and at `next`, edge directions interpolating (prev - vertex) and
+// (next - next2), skipping the short edge, whose direction turns quickly with
+// the view (e.g. near a view along that polyhedron edge, where its endpoints
+// coincide in projection). The support defect of the other endpoint is
+// small (about the edge's projected length). Lean's AxisCertificate takes
+// any two edges and any support vertex.
+bool AddBridgeContacts(const geom5d::TriangleD &tri, const PoolParams &params, int prev,
+                       int vertex, int next, int next2, std::vector<Contact> *contacts) {
+  for (int at : {vertex, next}) {
+    for (int s = 0; s <= params.cone_samples + 1; s++) {
+      const int mix = (int)std::lround(1000.0 * s / (params.cone_samples + 1.0));
+      const vec3 e = ContactEdge(prev, vertex, next, next2, mix);
+      const auto [max_upper, min_upper] = SupportExcess(tri, at, e);
+      if (min_upper >= 0.0 || max_upper > params.bridge_max_defect) continue;
+      const vec3 e_norm = yocto::normalize(e);
+      bool duplicate = false;
+      for (const Contact &ex : *contacts) {
+        if (ex.vertex == at && yocto::dot(e_norm, yocto::normalize(ex.edge)) > 1.0 - 1e-9) {
+          duplicate = true;
+          break;
+        }
+      }
+      if (duplicate) continue;
+      if ((int)contacts->size() >= params.max_contacts) return false;
+      contacts->push_back(Contact{.vertex = at, .edge_start = prev, .edge_finish = vertex,
+                                  .edge_start2 = next, .edge_finish2 = next2, .mix = mix,
+                                  .edge = e, .defect = std::max(0.0, max_upper)});
+    }
+  }
+  return true;
+}
+
 // Double-precision version of Lean's Box.weightedDefectUpper for one triple,
 // with a margin (1e-9 added to each affine factor; Lean adds 6e-15).
 //
@@ -228,6 +261,23 @@ ContactPool BuildContactPool(const geom5d::TriangleD &tri, const PoolParams &par
   for (int i = 0; i < H && room; i++) {
     room = AddCornerContacts(tri, params, hull[(i - 1 + H) % H], hull[i], hull[(i + 1) % H],
                              1e30, &contacts);
+  }
+
+  // Bridge contacts across short silhouette edges (projected length below
+  // bridge_ratio times the longest).
+  if (params.bridge_ratio > 0 && H >= 4) {
+    const vec3 uview = yocto::normalize(view);
+    auto proj_len = [&](int a, int b) {
+      const vec3 d = V(a) - V(b);
+      return yocto::length(d - uview * yocto::dot(d, uview));
+    };
+    double longest = 0;
+    for (int i = 0; i < H; i++) longest = std::max(longest, proj_len(hull[i], hull[(i + 1) % H]));
+    for (int i = 0; i < H && room; i++) {
+      const int v = hull[i], n = hull[(i + 1) % H];
+      if (proj_len(v, n) >= params.bridge_ratio * longest) continue;
+      room = AddBridgeContacts(tri, params, hull[(i - 1 + H) % H], v, n, hull[(i + 2) % H], &contacts);
+    }
   }
 
   // Off-silhouette contacts at the other vertices, between any two of

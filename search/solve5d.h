@@ -67,6 +67,13 @@ struct Options {
   // lookahead: the best (failed) single triple's worst margin over the
   // children of each. The rule above is the fallback.
   bool view_lookahead = false;
+  // With view_lookahead: keep the lookahead's choice within a factor `band`
+  // of the rule above (box half-width vs split_kappa * scaled view): split
+  // the view when the box is already band times smaller than that, the box
+  // when it is band times larger. 0: unbounded (the lookahead alone, which
+  // can split one side forever where neither split changes the margin of
+  // the best failed triple).
+  double lookahead_band = 0.0;
   // Which Cayley axis a box split halves (when the box, not the view, is
   // split): 0 = the widest; 1 = lookahead: the axis whose halves keep the
   // largest worse-half margin for the best (failed) single triple at this
