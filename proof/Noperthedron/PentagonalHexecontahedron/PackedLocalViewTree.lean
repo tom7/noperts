@@ -68,11 +68,20 @@ def readRat : Decoder Rat := do
   let denominator ← readNat
   pure ((((zigzagInt numerator : Int) : Rat) / (denominator : Rat)) : Rat)
 
+/-- The C++ pipeline numbers K's 7 vertices in `Nopert7.vertexQ` order
+(codebdd/exact5d); the model has 9 rotation-major slots (`vertexQIndex`). C++
+vertex `n` is read as the first slot holding it. -/
+def vertexSlotTable : Array VertexIndex :=
+  ((List.range 7).map fun n =>
+    ((List.finRange 9).find? fun s => (vertexQIndex s).val = n).getD 0).toArray
+
+def vertexSlot (n : Nat) : VertexIndex := vertexSlotTable[n]?.getD 0
+
 def readVertices : Decoder (Fin 3 → VertexIndex) := do
   let a ← readNat
   let b ← readNat
   let c ← readNat
-  pure ![finMod a, finMod b, finMod c]
+  pure ![vertexSlot a, vertexSlot b, vertexSlot c]
 
 def readMix : Decoder (Fin 3 → Fin 1001) := do
   let a ← readNat

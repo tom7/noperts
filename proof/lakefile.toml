@@ -87,3 +87,8 @@ buildType = "release"
 name = "checkNopert7Cap"
 root = "checkNopert7Cap"
 buildType = "release"
+
+[[lean_exe]]
+name = "constructNopert7"
+root = "constructNopert7"
+buildType = "release"

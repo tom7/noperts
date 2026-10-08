@@ -1774,6 +1774,10 @@ structure Box.FlockDecomposedViewValid
   c_sum_pos : 0 < box.c + box.δ
   c_core_nonneg : 0 ≤ c_core
   tree_valid : tree.Valid (box.quadBasis c_cone) (box.flockCenters flockAxes c_core r_min) c_core S_max T_max = true
+  /-- Flock rows (tube pack tag 3) are disabled: their soundness rests on
+  `QuadCoverTree.covers_of_valid`, which is an axiom (unproved), and K's tube
+  exporter (`export_codetrees_pack`) never writes them. -/
+  disabled : False
 
 instance (box : Box) (flockAxes : Array AxisCertificate)
     (defect0 : Fin 3 → ℚ) (D0 : ℚ)
@@ -1795,49 +1799,8 @@ theorem Box.valid_imp_not_translated_rupert_of_flockDecomposedViewValid
     (hscale : 1 ≤ viewScale box.root p)
     (hmem : InTriangle (toReal box.triangle)
       (AtlasProjectiveView.normalizedView box.root p)) :
-    ¬ RupertPose (p.matrixPoseWithOffset box.chart offset) P.polyhedron.hull := by
-  have hexc_covers : ∀ axis : ℝ³, ‖axis‖ = 1 →
-      (c_cone : ℝ) ≤ inner ℝ axis (toR3 (box.approxNormalizedCenter 0)) →
-      ∃ m : Fin flockAxes.size, (c_core : ℝ) ≤ inner ℝ axis (toR3 ((box.withCoreAxis (flockAxes[m]) c_core r_min).approxNormalizedCenter 0)) := by
-    intro axis ha_norm ha_cone
-    have hcov := QuadCoverTree.covers_of_valid
-      (box.quadBasis c_cone) (box.flockCenters flockAxes c_core r_min)
-      c_cone c_core S_max T_max tree hview.tree_valid
-      hview.c_cone_pos hview.c_core_nonneg
-      axis ha_norm ha_cone
-    obtain ⟨m, hm⟩ := hcov
-    have hsize : (box.flockCenters flockAxes c_core r_min).size = flockAxes.size := by
-      simp [Box.flockCenters]
-    let m' : Fin flockAxes.size := ⟨m.val, hsize ▸ m.isLt⟩
-    refine ⟨m', ?_⟩
-    have hfc : (box.flockCenters flockAxes c_core r_min)[m] = (box.withCoreAxis (flockAxes[m']) c_core r_min).approxNormalizedCenter 0 := by
-      dsimp [Box.flockCenters]
-      exact Array.getElem_map _ m.isLt
-    rw [hfc] at hm
-    exact hm
-  have haxes_valid : ∀ m : Fin flockAxes.size, box.FlockAxisValid (flockAxes[m]) c_core r_min := by
-    intro m
-    have hmem : flockAxes[m] ∈ flockAxes.toList := by
-      rw [Array.mem_toList_iff]
-      exact Array.getElem_mem m.isLt
-    exact hview.axes_valid (flockAxes[m]) hmem
-  exact valid_imp_not_translated_rupert_of_flock_decomposed box flockAxes.size
-    (fun m => flockAxes[m]) defect0 D0 r_min c_cone c_core
-    hview.r_min_nonneg hview.r_nonneg hview.r_le_two hmismatch hview.delta_nonneg hview.c_nonneg
-    hview.bary hview.D0_nonneg hview.defect0_nonneg hview.defect_budget0 hview.c_cone_margin
-    hview.annular_dominance hview.B_pos hview.var hview.supp hview.dir_nonzero
-    hview.budget hview.weight_nonneg hview.weight_pos hview.comp_angle hview.c_core_margin
-    (fun m => (haxes_valid m).1)
-    (fun m => (haxes_valid m).2.1)
-    (fun m i k => (haxes_valid m).2.2.1 i k)
-    (fun m i => (haxes_valid m).2.2.2.1 i)
-    (fun m => (haxes_valid m).2.2.2.2.1)
-    (fun m i => (haxes_valid m).2.2.2.2.2.1 i)
-    (fun m => (haxes_valid m).2.2.2.2.2.2)
-    hview.core_angle
-    hexc_covers
-    hview.c_cone_pos hview.c_margin hview.c_sum_pos
-    hp offset hscale hmem
+    ¬ RupertPose (p.matrixPoseWithOffset box.chart offset) P.polyhedron.hull :=
+  hview.disabled.elim
 
 theorem Box.FlockDecomposedViewValid.retarget {box : Box}
     {flockAxes : Array AxisCertificate}
