@@ -223,7 +223,7 @@ def readRow (base : AtlasProjectiveView.Triangle Rat) : Decoder Row := do
       root := fin8 root
       triangle
       chart := 0
-      symmetryIndex := fin5 symmetryIndex
+      symmetryIndex := finMod symmetryIndex
       certificate
       c
       δ
@@ -252,7 +252,7 @@ def readRow (base : AtlasProjectiveView.Triangle Rat) : Decoder Row := do
       root := fin8 root
       triangle
       chart := 0
-      symmetryIndex := fin5 symmetryIndex
+      symmetryIndex := finMod symmetryIndex
       certificate
       c
       δ
@@ -268,7 +268,7 @@ def readRow (base : AtlasProjectiveView.Triangle Rat) : Decoder Row := do
       root := fin8 root
       triangle
       chart := 0
-      symmetryIndex := fin5 symmetryIndex
+      symmetryIndex := finMod symmetryIndex
       certificate
       c
       δ
@@ -294,7 +294,7 @@ def decodeTable (initialChild symmetryIndex : Nat) (r : Rat)
   let base := split upperWedgeTriangle (fin4 initialChild)
   let rows := decodeRows base count packed
   {
-    symmetryIndex := fin5 symmetryIndex
+    symmetryIndex := finMod symmetryIndex
     r
     root := 0
     triangle := base
@@ -321,7 +321,7 @@ def decodePackedByteArray (initialChild : Nat) (data : ByteArray) : Table :=
   let base := split upperWedgeTriangle (fin4 initialChild)
   let decoded := (readDecoded base { data }).1
   {
-    symmetryIndex := fin5 decoded.symmetryIndex
+    symmetryIndex := finMod decoded.symmetryIndex
     r := decoded.r
     root := 0
     triangle := base
@@ -359,7 +359,7 @@ def readDecodedCodeTable : Decoder DecodedCodeTable := do
 def decodePackedCodeTriangle (data : ByteArray) : Table :=
   let decoded := (readDecodedCodeTable { data }).1
   {
-    symmetryIndex := fin5 decoded.symmetryIndex
+    symmetryIndex := finMod decoded.symmetryIndex
     r := decoded.r
     root := 0
     triangle := decoded.base
