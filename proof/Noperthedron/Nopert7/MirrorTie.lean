@@ -16,9 +16,10 @@ shadow unchanged (no central symmetry needed, offset kept), and the pose stays
 Rupert iff it was (`RupertPose_mirrorTie_iff`). In terms of the outer view u
 the relative rotation becomes H_u R Q (`relativeRotation_mirrorTie`): the same
 form as the deltoidal hexecontahedron's half-turn reduction, with Q ranging
-over the solid's improper symmetries instead of (H_u-composed) rotations. So
-`InHalfTurnCell` and its prune boxes apply as they are, with group elements
-−σ.
+over the solid's improper symmetries instead of (H_u-composed) rotations. The
+cell condition has the same shape as `InHalfTurnCell` (`Cell.lean`); the DH
+prune boxes (`AtlasHalfTurnPrune.Box`, indexed by `IcoIndex`) need
+generalizing to an indexed table of Q's.
 
 For a 3-fold axis along (1,1,1), the mirrors of a C3v solid are the
 coordinate transpositions; Q = −σ is then rational.
