@@ -10,10 +10,10 @@
 // the search (to pre-check a leaf before writing it) and in packing, so that
 // what C++ accepts is exactly what Lean accepts.
 //
-// The checks are written for any view root: a triangle's corners are on
-// their root's plane (sum_i s_i u_i = 1), so each point is a positive
-// multiple of its view, and nothing here depends on which root. (For K the
-// view domain uses roots 0 and 1; the root itself is only recorded in packs.)
+// Any view root (Lean's rootSign, binary order): a triangle's corners are on
+// their root's plane (sum_i s_i u_i = 1, s_i u_i >= 0), so each point is a
+// positive multiple of its view. Only Admissible depends on the root (it
+// checks SignedTriangleValid); for K the view domain uses roots 0 and 1.
 
 #ifndef _NOPERT_EXACT5D_H
 #define _NOPERT_EXACT5D_H
@@ -27,7 +27,7 @@ namespace exact5d {
 
 using Q = BigRat;
 using VecQ = std::array<Q, 3>;
-// Three projective corners (each on the plane u0 + u1 + u2 = 1 for root 0).
+// Three projective corners (each on their root's plane; u0 + u1 + u2 = 1 for root 0).
 using TriangleQ = std::array<VecQ, 3>;
 
 // Checker.RatBall: the set [center - radius, center + radius].
@@ -76,9 +76,10 @@ struct Interval5 {
   std::array<Q, 5> min, max;
 };
 
-// AtlasProjectiveGlobalCertificate.Box (root fixed to 0).
+// AtlasProjectiveGlobalCertificate.Box.
 struct GlobalBox {
   Interval5 interval;
+  int root = 0;
   TriangleQ triangle;
   int chart = 0;
   AxisCertificate certificate;
@@ -94,6 +95,7 @@ struct MixedComponent {
 };
 struct MixedBox {
   Interval5 interval;
+  int root = 0;
   TriangleQ triangle;
   int chart = 0;
   std::array<MixedComponent, 4> component;

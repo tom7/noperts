@@ -31,6 +31,9 @@ class TubeAtlas {
 
   int NumTriangles() const { return (int)tables_.size(); }
   const exact5d::TriangleQ &Triangle(int t) const { return tables_[t].triangle; }
+  // The projective root of global triangle t (its code's "root" in the
+  // BDD, 0 if absent; checked against the corners).
+  int Root(int t) const { return tables_[t].root; }
   // The code and the triangle index within it, for global triangle t.
   std::pair<int, int> CodeAndTriangle(int t) const { return {tables_[t].code, tables_[t].tri}; }
 
@@ -55,7 +58,7 @@ class TubeAtlas {
     BigRat r_upper{0};
   };
   struct Table {
-    int code = 0, tri = 0;
+    int code = 0, tri = 0, root = 0;
     exact5d::TriangleQ triangle;
     std::vector<Node> nodes;  // nodes[0] is the root
   };

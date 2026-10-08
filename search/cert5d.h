@@ -49,9 +49,10 @@ Single BestSingle(const contacts5d::ContactPool &pool, const geom5d::TriangleD &
                   const geom5d::BoxD &box, int chart, int max_full = 64);
 
 // The exact Lean box for a single-triple candidate.
+// (root: the view triangle's projective root, Lean's Box.root.)
 exact5d::GlobalBox ExactGlobalBox(const contacts5d::ContactPool &pool, const Single &s,
                                   const exact5d::TriangleQ &tri, const geom5d::BoxQ &box,
-                                  int chart);
+                                  int chart, int root);
 
 // Mixtures (Lean's projectiveMixedGlobal): a convex combination of up to four
 // triples' view-control quadratics. Its Bernstein coefficients are the same
@@ -89,7 +90,7 @@ exact5d::MixedBox ExactMixedBox(const contacts5d::ContactPool &pool,
                                 const std::vector<std::array<int, 3>> &inner,
                                 const std::vector<BigRat> &weights,
                                 const exact5d::TriangleQ &tri, const geom5d::BoxQ &box,
-                                int chart);
+                                int chart, int root);
 
 }  // namespace cert5d
 

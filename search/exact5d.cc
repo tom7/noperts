@@ -448,12 +448,16 @@ Q CertifiedDisplacementLowerP(const GlobalBox &box, const Pre &p) {
 }
 
 bool AdmissibleP(const GlobalBox &box, const Pre &p) {
-  // SignedTriangleValid for root 0: nonnegative coordinates summing to 1.
+  // SignedTriangleValid root: signed coordinates nonnegative, summing to 1.
+  CHECK(box.root >= 0 && box.root < 8);
   for (int i = 0; i < 3; i++) {
+    Q sum(0);
     for (int c = 0; c < 3; c++) {
-      if (box.triangle[i][c] < Q(0)) return false;
+      const Q v = (box.root >> (2 - c)) & 1 ? -box.triangle[i][c] : box.triangle[i][c];
+      if (v < Q(0)) return false;
+      sum = sum + v;
     }
-    if (!(box.triangle[i][0] + box.triangle[i][1] + box.triangle[i][2] == Q(1))) return false;
+    if (!(sum == Q(1))) return false;
   }
   bool any_pos = false;
   for (int i = 0; i < 3; i++) {
@@ -532,6 +536,7 @@ bool Valid(const GlobalBox &box) {
 GlobalBox ComponentBox(const MixedBox &box, int k) {
   GlobalBox g;
   g.interval = box.interval;
+  g.root = box.root;
   g.triangle = box.triangle;
   g.chart = box.chart;
   g.certificate = box.component[k].certificate;

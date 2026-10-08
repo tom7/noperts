@@ -56,10 +56,29 @@ struct LeanRow {
   const TreeNode *node = nullptr;
 };
 
+// The projective root of a code triangle (Lean AtlasProjectiveView.rootSign,
+// binary order): the first r whose signed coordinates are nonnegative and sum
+// to 1 at every corner (SignedTriangleValid), or -1.
+static int CodeTriangleRoot(const TriangleQ &t) {
+  for (int root = 0; root < 8; root++) {
+    bool ok = true;
+    for (int c = 0; c < 3 && ok; c++) {
+      const BigVecQ3 &p = t.corners[c];
+      const BigRat x = (root & 4) ? -p.x : p.x, y = (root & 2) ? -p.y : p.y, z = (root & 1) ? -p.z : p.z;
+      ok = x >= BigRat(0) && y >= BigRat(0) && z >= BigRat(0) && x + y + z == BigRat(1);
+    }
+    if (ok) return root;
+  }
+  return -1;
+}
+
 static bool ExportCodeTriangle(int code_id, int tri_idx, const TriangleQ &base_tri,
                                const TreeNode &root_node, const std::string &out_path,
                                int *out_num_rows, BigRat *out_r) {
   EffectiveBounds eff = ComputeEffectiveBounds(root_node);
+  // Every row's root field: the code triangle's projective root.
+  const int root = CodeTriangleRoot(base_tri);
+  CHECK(root >= 0) << "code " << code_id << " tri " << tri_idx << " is in no projective root";
 
   // BFS traversal to assign topological row IDs (0 <= parent_id < child_id < N)
   std::vector<LeanRow> rows;
@@ -153,8 +172,8 @@ static bool ExportCodeTriangle(int code_id, int tri_idx, const TriangleQ &base_t
 
     if (!r.is_leaf) {
       // Split row (tag 0):
-      // tag, id, root(0), path_len, [path_digits], c0, c1, c2, c3, rLower
-      out << ",0," << r.id << ",0," << r.rel_path.size();
+      // tag, id, root, path_len, [path_digits], c0, c1, c2, c3, rLower
+      out << ",0," << r.id << "," << root << "," << r.rel_path.size();
       for (char ch : r.rel_path) {
         out << "," << (ch - '0');
       }
@@ -164,15 +183,15 @@ static bool ExportCodeTriangle(int code_id, int tri_idx, const TriangleQ &base_t
           << "," << r.child_ids[3]
           << "," << ZigzagRatString(r_lower[i]);
     } else if (r.node->cap.has_value()) {
-      // Empty row (tag 4; a cap leaf): tag, id, root(0), path_len, [path_digits]
-      out << ",4," << r.id << ",0," << r.rel_path.size();
+      // Empty row (tag 4; a cap leaf): tag, id, root, path_len, [path_digits]
+      out << ",4," << r.id << "," << root << "," << r.rel_path.size();
       for (char ch : r.rel_path) out << "," << (ch - '0');
     } else if (r.node->direct_cert.has_value()) {
       // Certificate row (tag 1):
-      // tag, id, root(0), path_len, [path_digits], symmetryIndex(0),
+      // tag, id, root, path_len, [path_digits], symmetryIndex(0),
       // [4 axes], c, delta, r
       TubeCertificate cert = r.node->direct_cert.value();
-      out << ",1," << r.id << ",0," << r.rel_path.size();
+      out << ",1," << r.id << "," << root << "," << r.rel_path.size();
       for (char ch : r.rel_path) {
         out << "," << (ch - '0');
       }
@@ -195,10 +214,10 @@ static bool ExportCodeTriangle(int code_id, int tri_idx, const TriangleQ &base_t
       }
 
       // Decomposed Certificate row (tag 2):
-      // Format: tag(2), id, root(0), path_len, [path_digits], symmetryIndex,
+      // Format: tag(2), id, root, path_len, [path_digits], symmetryIndex,
       // [4 axes: annular_axis, complement_axes[0..2]], c, delta, r,
       // coreAxis, defect0[0..2], D0, r_min, c_cone, c_core, lam, w[0..2]
-      out << ",2," << r.id << ",0," << r.rel_path.size();
+      out << ",2," << r.id << "," << root << "," << r.rel_path.size();
       for (char ch : r.rel_path) {
         out << "," << (ch - '0');
       }

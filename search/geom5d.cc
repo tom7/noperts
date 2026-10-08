@@ -34,11 +34,45 @@ TriangleQ SplitTrianglePath(TriangleQ t, std::string_view path) {
   return t;
 }
 
+int RootSign(int root, int c) { return (root >> (2 - c)) & 1 ? -1 : 1; }
+
+bool SignedTriangleValid(int root, const TriangleQ &t) {
+  for (const auto &p : t) {
+    Q sum(0);
+    for (int c = 0; c < 3; c++) {
+      const Q v = RootSign(root, c) > 0 ? p[c] : -p[c];
+      if (v < Q(0)) return false;
+      sum = sum + v;
+    }
+    if (!(sum == Q(1))) return false;
+  }
+  return true;
+}
+
+int TriangleRoot(const TriangleQ &t) {
+  for (int root = 0; root < 8; root++) {
+    if (SignedTriangleValid(root, t)) return root;
+  }
+  return -1;
+}
+
+// Whether p is on root's plane.
+static bool OnRootPlane(int root, const VecQ &p) {
+  Q sum(0);
+  for (int c = 0; c < 3; c++) sum = sum + (RootSign(root, c) > 0 ? p[c] : -p[c]);
+  return sum == Q(1);
+}
+
 bool TriangleContains(const TriangleQ &outer, const TriangleQ &inner) {
   const Q one(1);
-  for (const auto &t : {outer, inner}) {
-    for (const auto &c : t) CHECK(c[0] + c[1] + c[2] == one) << "triangle not on x + y + z = 1";
+  // Both on one root plane (any root's plane through outer's corners; the
+  // (x, y) projection is affine and injective on it).
+  int root = -1;
+  for (int r = 0; r < 8 && root < 0; r++) {
+    if (OnRootPlane(r, outer[0]) && OnRootPlane(r, outer[1]) && OnRootPlane(r, outer[2])) root = r;
   }
+  CHECK(root >= 0) << "outer triangle not on a root plane";
+  for (const auto &c : inner) CHECK(OnRootPlane(root, c)) << "triangles not on one root plane";
   // Barycentric coordinates in the (x, y) projection, which is affine on
   // the plane.
   const Q ax = outer[1][0] - outer[0][0], ay = outer[1][1] - outer[0][1];
@@ -77,13 +111,19 @@ static std::optional<TriangleQ> OuterDyadicTriangleBits(const TriangleQ &t, int 
   const Q third(1, 3);
   const VecQ g = {(t[0][0] + t[1][0] + t[2][0]) * third, (t[0][1] + t[1][1] + t[2][1]) * third,
                   (t[0][2] + t[1][2] + t[2][2]) * third};
+  const int root = TriangleRoot(t);
+  if (root < 0) return std::nullopt;
+  const Q s0(RootSign(root, 0)), s1(RootSign(root, 1)), s2(RootSign(root, 2));
   for (int e = rel_bits - 4; e > 0; e--) {
     const Q grow = Q(1) + Q(BigInt(1), BigInt::Pow(BigInt(2), e));
     TriangleQ out;
     for (int i = 0; i < 3; i++) {
       const Q x = round(g[0] + (t[i][0] - g[0]) * grow), y = round(g[1] + (t[i][1] - g[1]) * grow);
-      out[i] = {x, y, Q(1) - x - y};
+      // On the root plane s0 x + s1 y + s2 z = 1.
+      out[i] = {x, y, s2 * (Q(1) - s0 * x - s1 * y)};
     }
+    // Leaving the root's octant only gets worse with more growth.
+    if (!SignedTriangleValid(root, out)) return std::nullopt;
     if (TriangleContains(out, t)) return out;
   }
   return std::nullopt;

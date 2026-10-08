@@ -211,7 +211,7 @@ std::optional<rows5d::Leaf> Solver::TryLeaf(const Node &node) {
   if (s.triple >= 0 && s.margin > 0) {
     bool ok = true;
     if (opt_.exact_check) {
-      ok = exact5d::Valid(cert5d::ExactGlobalBox(pool, s, node.tri, node.box, job_.chart));
+      ok = exact5d::Valid(cert5d::ExactGlobalBox(pool, s, node.tri, node.box, job_.chart, atlas_->Root(job_.t)));
       if (!ok) stats_.exact_rejects++;
     }
     if (ok) {
@@ -225,7 +225,7 @@ std::optional<rows5d::Leaf> Solver::TryLeaf(const Node &node) {
   const std::vector<BigRat> weights = cert5d::RationalWeights(m.w);
   if (opt_.exact_check &&
       !exact5d::Valid(cert5d::ExactMixedBox(pool, m.triples, m.inner, weights, node.tri, node.box,
-                                            job_.chart))) {
+                                            job_.chart, atlas_->Root(job_.t)))) {
     stats_.exact_rejects++;
     return std::nullopt;
   }

@@ -7,6 +7,7 @@
 #include "base/logging.h"
 #include "bignum/big.h"
 #include "bignum/big-overloads.h"
+#include "geom5d.h"
 #include "rapidjson/document.h"
 #include "tubetree.h"
 #include "util.h"
@@ -65,6 +66,7 @@ TubeAtlas TubeAtlas::Load(const std::string &trees_dir, const std::string &bdd_j
       Table table;
       table.code = code;
       table.tri = t;
+      table.root = codes[code].HasMember("root") ? codes[code]["root"].GetInt() : 0;
       for (int i = 0; i < 3; i++) {
         table.triangle[i] = {BigRat(std::string_view(tris[t][i]["x"].GetString())),
                              BigRat(std::string_view(tris[t][i]["y"].GetString())),
@@ -74,6 +76,8 @@ TubeAtlas TubeAtlas::Load(const std::string &trees_dir, const std::string &bdd_j
               tc.z == table.triangle[i][2])
             << "tree triangle differs from the code triangle: code " << code << " tri " << t;
       }
+      CHECK(geom5d::SignedTriangleValid(table.root, table.triangle))
+          << "code " << code << " tri " << t << " is not in root " << table.root;
       CHECK(tree->triangles[t].root != nullptr) << path;
       std::vector<BigRat> r_lower, r_upper;
       std::vector<std::array<int, 4>> children;

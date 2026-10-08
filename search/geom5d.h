@@ -36,14 +36,25 @@ TriangleQ SplitTriangle(const TriangleQ &t, int child);
 // Applies the subdivision digits ('0'..'3') in order.
 TriangleQ SplitTrianglePath(TriangleQ t, std::string_view path);
 
-// Whether every corner of `inner` is in the closed triangle `outer` (both on
-// the plane x + y + z = 1), i.e. Lean's InTriangle(inner) ⊆ InTriangle(outer).
+// Projective roots (Lean AtlasProjectiveView.rootSign, binary order): root r
+// has signs s_c = -1 iff bit (2 - c) of r is set; its triangle lies on the
+// plane sum_c s_c u_c = 1 with s_c u_c >= 0 (Lean SignedTriangleValid).
+int RootSign(int root, int c);
+bool SignedTriangleValid(int root, const TriangleQ &t);
+// The first root r with SignedTriangleValid(r, t), or -1. (Unique for a
+// nondegenerate triangle unless all corners share a zero coordinate.)
+int TriangleRoot(const TriangleQ &t);
+
+// Whether every corner of `inner` is in the closed triangle `outer` (all on
+// one root plane), i.e. Lean's InTriangle(inner) ⊆ InTriangle(outer).
 bool TriangleContains(const TriangleQ &outer, const TriangleQ &inner);
-// A triangle on the plane x + y + z = 1 containing t whose coordinates are
-// dyadic with about `rel_bits` bits below t's size: t enlarged about its
-// centroid by a relative 2^-(rel_bits - 4), corners rounded to the grid.
-// Checking a certificate over it is much cheaper than over t, whose
-// coordinates come from facet-plane intersections (~1000 bits).
+// A triangle on t's root plane, SignedTriangleValid for that root,
+// containing t, whose coordinates are dyadic with about `rel_bits` bits
+// below t's size: t enlarged about its centroid by a relative
+// 2^-(rel_bits - 4), corners rounded to the grid; t itself if there is none
+// (e.g. t touches its root's boundary). Checking a certificate over it is
+// much cheaper than over t, whose coordinates come from facet-plane
+// intersections (~1000 bits).
 TriangleQ OuterDyadicTriangle(const TriangleQ &t, int rel_bits = 30);
 
 struct TriangleD {

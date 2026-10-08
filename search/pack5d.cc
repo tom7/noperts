@@ -144,6 +144,8 @@ class Packer {
   // table numbering is sequential, in row order.
   int AddJob(int t, const rows5d::Tree &tree, int first_id) {
     const solve5d::Node root = solve5d::RootNode(atlas_, {.t = t, .chart = chart_});
+    // The view triangles' projective root (Lean's region root), per job.
+    const int view_root = atlas_.Root(t);
 
     // Distinct view triangles and boxes, each derived from its parent.
     struct Tri {
@@ -327,14 +329,14 @@ class Packer {
           const N &node = nodes[n];
           const geom5d::BoxQ &box = boxes[node.box].box;
           bool ok = false;
-          std::string body = CertBody(node.Path(), node.leaf->leaf, tri.outer, box, pool_for,
-                                      /*check=*/true, &ok);
+          std::string body = CertBody(node.Path(), node.leaf->leaf, tri.outer, view_root, box,
+                                      pool_for, /*check=*/true, &ok);
           if (ok) {
             outer_ok[n] = 1;
           } else {
             relax_failures++;
-            body = CertBody(node.Path(), node.leaf->leaf, tri.exact, box, pool_for, exact_check_,
-                            &ok);
+            body = CertBody(node.Path(), node.leaf->leaf, tri.exact, view_root, box, pool_for,
+                            exact_check_, &ok);
             CHECK(ok) << "certificate fails exactly at " << node.Path();
           }
           body_ref[n] = {(int)ci, (uint32_t)buf.size(), (uint32_t)body.size()};
@@ -425,7 +427,7 @@ class Packer {
         const N &node = nodes[n];
         const int iv = iv_of[n];
         if (relax_point(n)) {
-          row += std::format(",11,{},{},{},0,{},{}", id_of[n], iv, content_id[n],
+          row += std::format(",11,{},{},{},{},{},{}", id_of[n], iv, content_id[n], view_root,
                              tri_exact[node.tri], tri_outer[node.tri]);
           rows++;
         }
@@ -435,28 +437,28 @@ class Packer {
         if (node.split != nullptr) {
           const int k = node.first_kid;
           if (node.split->view) {
-            row += std::format(",2,{},{},{},{},{},{},0,{}", id, iv, id_of[k], id_of[k + 1],
-                               id_of[k + 2], id_of[k + 3], region);
+            row += std::format(",2,{},{},{},{},{},{},{},{}", id, iv, id_of[k], id_of[k + 1],
+                               id_of[k + 2], id_of[k + 3], view_root, region);
           } else if (node.split->eighths == 4) {
-            row += std::format(",1,{},{},{},{},{},0,{}", id, iv, id_of[k], id_of[k + 1],
-                               node.split->axis + 2, region);
+            row += std::format(",1,{},{},{},{},{},{},{}", id, iv, id_of[k], id_of[k + 1],
+                               node.split->axis + 2, view_root, region);
           } else {
             // Lean cayleySplitAt.
             const geom5d::BoxQ &box = boxes[node.box].box;
-            row += std::format(",12,{},{},{},{},{},{},0,{}", id, iv, id_of[k], id_of[k + 1],
+            row += std::format(",12,{},{},{},{},{},{},{},{}", id, iv, id_of[k], id_of[k + 1],
                                node.split->axis + 2,
                                Zigzag(geom5d::CutPoint(box, node.split->axis, node.split->eighths)),
-                               region);
+                               view_root, region);
           }
         } else if (IsCertificate(node.leaf->leaf)) {
           // Each certificate is used over the triangle it was built for.
           CHECK(relaxed[n] == outer_ok[n]) << node.Path();
           const char *tag = std::holds_alternative<rows5d::CertLeaf>(node.leaf->leaf) ? "4" : "9";
           const BodyRef &b = body_ref[n];
-          row += std::format(",{},{},{},0,{}", tag, id, iv, region);
+          row += std::format(",{},{},{},{},{}", tag, id, iv, view_root, region);
           row.append(body_buf[b.chunk], b.offset, b.length);
         } else {
-          row += OtherLeafRow(t, node.Path(), node.leaf->leaf, id, iv, region);
+          row += OtherLeafRow(t, node.Path(), node.leaf->leaf, id, iv, view_root, region);
         }
       }
     }, threads_);
@@ -501,13 +503,13 @@ class Packer {
   // otherwise *ok is true.
   template <class PoolFor>
   std::string CertBody(const std::string &path, const rows5d::Leaf &leaf,
-                       const exact5d::TriangleQ &tri, const geom5d::BoxQ &box,
+                       const exact5d::TriangleQ &tri, int root, const geom5d::BoxQ &box,
                        const PoolFor &pool_for, bool check, bool *ok) const {
     if (const auto *l = std::get_if<rows5d::CertLeaf>(&leaf)) {
       const auto &pool = pool_for(l->cone_samples);
       CHECK(l->triple < (int)pool.triples.size()) << "stale triple index at " << path;
       const cert5d::Single s{.triple = l->triple, .inner = l->inner};
-      const exact5d::GlobalBox g = cert5d::ExactGlobalBox(pool, s, tri, box, chart_);
+      const exact5d::GlobalBox g = cert5d::ExactGlobalBox(pool, s, tri, box, chart_, root);
       *ok = !check || exact5d::Valid(g);
       const auto &c = g.certificate;
       std::string r;
@@ -532,7 +534,7 @@ class Packer {
       weights.push_back(c.weight);
     }
     const exact5d::MixedBox m =
-        cert5d::ExactMixedBox(pool, triples, inner, weights, tri, box, chart_);
+        cert5d::ExactMixedBox(pool, triples, inner, weights, tri, box, chart_, root);
     *ok = !check || exact5d::Valid(m);
     std::string r;
     for (int k = 0; k < 4; k++) r += "," + Zigzag(m.weight[k]);
@@ -550,8 +552,10 @@ class Packer {
   }
 
   // Rows of the other leaves (tube, radius prune, fundamental prune).
+  // (root: the region's projective root; the tube row's first 0 is its
+  // symmetry index.)
   std::string OtherLeafRow(int t, const std::string &path, const rows5d::Leaf &leaf, int id,
-                           int iv, int tri_id) const {
+                           int iv, int root, int tri_id) const {
     return std::visit(
         [&](const auto &l) -> std::string {
           using T = std::decay_t<decltype(l)>;
@@ -560,27 +564,27 @@ class Packer {
             std::string r =
                 std::format(",6,{},{},0,{},{},{}", id, iv, Zigzag(l.r), t, view.size());
             for (char c : view) r += std::format(",{}", c - '0');
-            r += std::format(",0,{}", tri_id);
+            r += std::format(",{},{}", root, tri_id);
             return r;
           } else if constexpr (std::is_same_v<T, rows5d::RadiusPruneLeaf>) {
-            return std::format(",7,{},{},0,{}", id, iv, tri_id);
+            return std::format(",7,{},{},{},{}", id, iv, root, tri_id);
           } else if constexpr (std::is_same_v<T, rows5d::IcoPruneLeaf>) {
             // Lean Row.icoPrune (tag 13): neighbor index.
-            return std::format(",13,{},{},{},0,{}", id, iv, l.neighbor, tri_id);
+            return std::format(",13,{},{},{},{},{}", id, iv, l.neighbor, root, tri_id);
           } else if constexpr (std::is_same_v<T, rows5d::FundamentalPruneLeaf>) {
-            return std::format(",8,{},{},{},0,{}", id, iv, l.direction > 0 ? 1 : 0, tri_id);
+            return std::format(",8,{},{},{},{},{}", id, iv, l.direction > 0 ? 1 : 0, root, tri_id);
           } else if constexpr (std::is_same_v<T, rows5d::CapLeaf>) {
             // Lean Row.capLeaf (tag 16): the cap theorem's domain.
-            return std::format(",16,{},{},{},0,{}", id, iv, l.cap, tri_id);
+            return std::format(",16,{},{},{},{},{}", id, iv, l.cap, root, tri_id);
           } else if constexpr (std::is_same_v<T, rows5d::TieLeaf>) {
             // Lean Row.tieLeaf (tag 15): pinning normal, tie tube radius, tie node;
             // depends on the view triangle, so never relaxed.
             const int node = TieNode(l.normal, t, rows5d::ViewPath(path));
-            return std::format(",15,{},{},{},{},{},0,{}", id, iv, l.normal, Zigzag(l.rho), node, tri_id);
+            return std::format(",15,{},{},{},{},{},{},{}", id, iv, l.normal, Zigzag(l.rho), node, root, tri_id);
           } else if constexpr (std::is_same_v<T, rows5d::HalfTurnPruneLeaf>) {
             // Lean Row.halfTurnPrune (tag 14): group element index (icoEntry);
             // depends on the view triangle, so never relaxed.
-            return std::format(",14,{},{},{},0,{}", id, iv, l.element, tri_id);
+            return std::format(",14,{},{},{},{},{}", id, iv, l.element, root, tri_id);
           } else if constexpr (std::is_same_v<T, rows5d::DeferredLeaf>) {
             LOG(FATAL) << "deferred leaf " << path << " (job t=" << t
                        << "): finish the search before packing";
@@ -694,7 +698,7 @@ int main(int argc, char **argv) {
     else if (a == "--tie_nodes") LoadTieNodes(next());
     else LOG(FATAL) << "unknown argument " << a;
   }
-  CHECK(chart >= 0 && chart <= 2) << "--chart 0..2";
+  CHECK(chart >= 0 && chart <= 3) << "--chart 0..3";
 
   const auto atlas = tubeatlas5d::TubeAtlas::Load(trees_dir, bdd);
   if (!per_code.empty()) {

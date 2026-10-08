@@ -158,10 +158,11 @@ Single BestSingle(const ContactPool &pool, const geom5d::TriangleD &tri,
 
 exact5d::GlobalBox ExactGlobalBox(const ContactPool &pool, const Single &s,
                                   const exact5d::TriangleQ &tri, const geom5d::BoxQ &box,
-                                  int chart) {
+                                  int chart, int root) {
   CHECK(s.triple >= 0);
   exact5d::GlobalBox g;
   g.interval = geom5d::ToInterval(box);
+  g.root = root;
   g.triangle = tri;
   g.chart = chart;
   g.certificate = contacts5d::ToAxisCertificate(pool, pool.triples[s.triple], tri);
@@ -283,10 +284,11 @@ exact5d::MixedBox ExactMixedBox(const ContactPool &pool, const std::vector<int> 
                                 const std::vector<std::array<int, 3>> &inner,
                                 const std::vector<BigRat> &weights,
                                 const exact5d::TriangleQ &tri, const geom5d::BoxQ &box,
-                                int chart) {
+                                int chart, int root) {
   CHECK(!triples.empty() && triples.size() <= 4 && triples.size() == weights.size());
   exact5d::MixedBox m;
   m.interval = geom5d::ToInterval(box);
+  m.root = root;
   m.triangle = tri;
   m.chart = chart;
   for (int k = 0; k < 4; k++) {
