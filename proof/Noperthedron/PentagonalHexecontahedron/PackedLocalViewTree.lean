@@ -355,13 +355,14 @@ def readDecodedCodeTable : Decoder DecodedCodeTable := do
   let rows ← readRows base count
   pure { count, symmetryIndex, r, base, rows }
 
-/-- Decode a self-describing packed code-triangle artifact from binary bytes. -/
+/-- Decode a self-describing packed code-triangle artifact from binary bytes.
+The table's root is its first row's (the code triangle's projective root). -/
 def decodePackedCodeTriangle (data : ByteArray) : Table :=
   let decoded := (readDecodedCodeTable { data }).1
   {
     symmetryIndex := finMod decoded.symmetryIndex
     r := decoded.r
-    root := 0
+    root := (decoded.rows[0]?.map Row.root).getD 0
     triangle := decoded.base
     get := fun i => decoded.rows[i]!
     size := decoded.count

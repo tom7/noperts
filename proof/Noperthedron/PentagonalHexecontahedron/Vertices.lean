@@ -211,8 +211,10 @@ distance bound, so they cover every `C5Model` below (the name is kept from
 the fivefold pipeline), not just `exactVertex`. -/
 
 /-- The per-vertex distance the certificates allow between a model vertex and
-`rationalVertex` (`TightApproximation.tightVertexErrorQ` has this value). -/
-def modelErrorQ : ℚ := 6 / 10^16
+`rationalVertex` (`TightApproximation.tightVertexErrorQ` has this value): 0,
+since the rational model is the solid itself (the C++ checker's `MODEL_EXACT`:
+zero support error, so exact support ties are allowed). -/
+def modelErrorQ : ℚ := 0
 
 /-- A polyhedron with exact C3 symmetry about (1,1,1), near the rational
 model: vertex `i` is seed `seedIndex i` moved by `c3Mat (orbitIndex i)`, and
@@ -253,14 +255,14 @@ theorem vertex_norm_pos (i : VertexIndex) : 0 < ‖P.vertex i‖ := by
   rw [norm_sub_rev] at h
   have hc := P.vertex_close_model i
   have hr := (norm_toR3_rationalVertex i).1
-  norm_num [modelErrorQ] at hc
+  rw [show ((modelErrorQ : ℚ) : ℝ) = 0 by norm_num [modelErrorQ]] at hc
   linarith
 
 theorem vertex_norm_le_one (i : VertexIndex) : ‖P.vertex i‖ ≤ 1 := by
   have h := norm_le_norm_add_norm_sub' (P.vertex i) (toR3 (rationalVertex i))
   have hc := P.vertex_close_model i
   have hr := (norm_toR3_rationalVertex i).2
-  norm_num [modelErrorQ] at hc
+  rw [show ((modelErrorQ : ℚ) : ℝ) = 0 by norm_num [modelErrorQ]] at hc
   linarith
 
 noncomputable def goodPoly : GoodPoly VertexIndex where

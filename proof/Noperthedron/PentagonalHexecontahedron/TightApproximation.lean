@@ -8,16 +8,17 @@ public import Noperthedron.PentagonalHexecontahedron.Approximation
 # The tight vertex error
 
 The projective local certificates use a per-vertex error `tightVertexErrorQ`
-(`6 · 10⁻¹⁶`, the value `modelErrorQ` has). For the fivefold pipeline this
-bounded trigonometric rounding; here the rational model is exact, so the
-exact model meets it with distance 0, and every `C5Model` meets it by its
-`close` field.
+(the value `modelErrorQ` has). For the fivefold pipeline this was `6 · 10⁻¹⁶`
+and bounded trigonometric rounding; here the rational model is exact, so it
+is 0 (the C++ checker's `MODEL_EXACT`: `supportError = 0`, and exact support
+ties pass the `≤ 0` support checks), the exact model meets it with distance 0,
+and every `C5Model` meets it by its `close` field.
 -/
 
 namespace Noperthedron.PentagonalHexecontahedron
 
 /-- Uniform vertex error used by the support-sensitive local checker. -/
-def tightVertexErrorQ : ℚ := 6 / 10^16
+def tightVertexErrorQ : ℚ := 0
 
 theorem vertex_close_tight (i : VertexIndex) :
     ‖exactVertex i - toR3 (rationalVertex i)‖ ≤
