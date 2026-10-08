@@ -11,10 +11,14 @@ public import Noperthedron.PentagonalHexecontahedron.CapCert
 u·x > 0, |u·eᵢ| ≤ μ₀ u·x, whose relative rotation has trace ≥ τ, and (if G
 is given) whose relative rotation R satisfies tr(H_u R G) ≤ tr R. The trace
 bound replaces the Cayley ball |w| ≤ wmax (tr cayley(w) = (3 − |w|²)/(1 + |w|²)),
-so the claim is invariant under conjugation (`CapClaim.image`).
+so the claim is invariant under conjugation.
 
 `CapCert.claim`: a checked certificate proves the claim of its cap with
-τ = (3 − wmax²)/(1 + wmax²).
+τ = (3 − wmax²)/(1 + wmax²), for the dual frame vectors (|x|²/|fᵢ|²) fᵢ of an
+unnormalized orthogonal frame (`dualVec`), when the ball |w| ≤ wmax lies in
+the certificate's weighted box of frame coordinates. (The deltoidal
+hexecontahedron's images of caps under its icosahedral group are gone with
+the icosahedral layer.)
 -/
 
 namespace Noperthedron.PentagonalHexecontahedron.Cap
@@ -40,124 +44,82 @@ theorem rdot_cayley_bound {w : Fin 3 → ℝ} {wmax : ℝ} (hw0 : 0 ≤ wmax)
   simp only [rdot]
   nlinarith
 
-theorem CapCert.claim (c : CapCert) (hc : c.check = true) (hS : 2 ≤ c.st.strongScale)
-    (hmcm : 1 ≤ c.st.mcm) (ht0 : 0 ≤ (c.pr.t0 : ℝ)) (ht0m : 0 ≤ (c.pr.t0m : ℝ)) (wmax : ℝ) (hw0 : 0 ≤ wmax) (hw3 : wmax ^ 2 ≤ 3) (hw1 : wmax ≤ 2 * c.pr.mu0)
-    (hw2 : wmax ≤ c.st.strongScale * (c.pr.mu0 : ℝ) ^ 2)
-    (κ : ℝ) (hκ : 0 < κ) (S : Set ℝ³) (hSdef : S = convexHull ℝ {v | ∃ vj ∈ c.verts.toList.map kv, v = κ • toEuc vj})
-    (hSsym : ∀ v ∈ S, -v ∈ S) :
-    CapClaim S (kv c.st.x) (kv c.st.e1) (kv c.st.e2) c.pr.mu0 ((3 - wmax ^ 2) / (1 + wmax ^ 2))
+/-- The dual frame vector (|x|²/|fᵢ|²) fᵢ: u·(dualVec i) = |x|² (frame coordinate i of u), so the
+cone |u·dualVec i| ≤ μ₀ u·x is |uᵢ| ≤ μ₀ u_x in frame coordinates. -/
+noncomputable def dualVec (st : Setup) (i : Fin 3) : Fin 3 → ℝ :=
+  (rdot (kv st.x) (kv st.x) / rdot (frameVec st i) (frameVec st i)) • frameVec st i
+
+theorem rdot_dualVec (st : Setup) (u : Fin 3 → ℝ) (i : Fin 3) :
+    rdot u (dualVec st i) = rdot (kv st.x) (kv st.x) * frameCoord st u i := by
+  simp only [dualVec, frameCoord, rdot, Pi.smul_apply, smul_eq_mul]; ring
+
+theorem rdot_x_eq (st : Setup) (u : Fin 3 → ℝ) :
+    rdot u (kv st.x) = rdot (kv st.x) (kv st.x) * frameCoord st u 2 := by
+  have hx : frameVec st 2 = kv st.x := rfl
+  by_cases h0 : rdot (kv st.x) (kv st.x) = 0
+  · have : kv st.x = 0 := by
+      funext k
+      simp only [rdot] at h0
+      fin_cases k <;> simp <;> nlinarith [mul_self_nonneg (kv st.x 0), mul_self_nonneg (kv st.x 1),
+        mul_self_nonneg (kv st.x 2)]
+    rw [h0, this]; simp [rdot]
+  · simp only [frameCoord, hx]; field_simp
+
+/-- A Cayley ball |w| ≤ wmax inside the weighted box of frame coordinates. -/
+theorem frameCoord_le_of_ball (st : Setup) (hF : FrameOK st) {w : Fin 3 → ℝ} {wmax B : ℝ} (i : Fin 3)
+    (hw : rdot w w ≤ wmax ^ 2) (hB : 0 ≤ B) (hb : wmax ^ 2 ≤ B ^ 2 * rdot (frameVec st i) (frameVec st i)) :
+    |frameCoord st w i| ≤ B := by
+  have hf : 0 < rdot (frameVec st i) (frameVec st i) := by
+    obtain ⟨-, h1, h2, h3, -⟩ := hF
+    fin_cases i
+    · exact h1
+    · exact h2
+    · exact h3
+  set f := frameVec st i
+  set F := rdot f f
+  unfold frameCoord
+  rw [abs_div, abs_of_pos hf, div_le_iff₀ hf]
+  have hcs := rdot_sq_le w f
+  have h1 : rdot w f ^ 2 ≤ (B * F) ^ 2 := by
+    calc rdot w f ^ 2 ≤ rdot w w * F := hcs
+      _ ≤ wmax ^ 2 * F := mul_le_mul_of_nonneg_right hw hf.le
+      _ ≤ B ^ 2 * F * F := mul_le_mul_of_nonneg_right hb hf.le
+      _ = (B * F) ^ 2 := by ring
+  exact abs_le_of_sq_le_sq' h1 (by positivity) |> fun h => abs_le.mpr ⟨h.1, h.2⟩
+
+/-- **A checked certificate proves its cap's claim** (trace form, for the solution tree): the cone
+in dual-frame form and the Cayley ball |w| ≤ wmax inside the certificate's weighted box. -/
+theorem CapCert.claim (c : CapCert) (hc : c.check = true) (hS : 2 ≤ c.st.strongScale) (hmcm : 1 ≤ c.st.mcm)
+    (wmax : ℝ) (hw0 : 0 ≤ wmax) (hw3 : wmax ^ 2 ≤ 3)
+    (hwi : ∀ i : Fin 3, wmax ^ 2 ≤ ((c.st.range i : ℝ) * (c.pr.mu0 : ℝ) ^ isoWt i) ^ 2 *
+      rdot (frameVec c.st i) (frameVec c.st i))
+    (hmu : 0 ≤ (c.pr.mu0 : ℝ))
+    (S : Set ℝ³) (hSdef : S = convexHull ℝ {v | ∃ vj ∈ c.verts.toList.map kv, v = toEuc vj}) :
+    CapClaim S (kv c.st.x) (dualVec c.st 0) (dualVec c.st 1) c.pr.mu0 ((3 - wmax ^ 2) / (1 + wmax ^ 2))
       (if c.usePrune then some (gMat c.Gcol) else none) := by
   intro p hx he1 he2 htr hcell
+  obtain ⟨hF, -, -, -⟩ := c.check_sound hc
+  have hxx : 0 < rdot (kv c.st.x) (kv c.st.x) := hF.2.2.2.1
   have hτ : 0 ≤ (3 - wmax ^ 2) / (1 + wmax ^ 2) := div_nonneg (by linarith) (by positivity)
   obtain ⟨wx, wy, wz, -, hR⟩ := Noperthedron.exists_cayleyMatrix_of_trace_nonneg p.relativeRotation
     (Noperthedron.Atlas.MatrixPose.relativeRotation_mem_SO3 p) (le_trans hτ htr)
   let w : Fin 3 → ℝ := ![wx, wy, wz]
   have hRw : p.relativeRotation = cayleyMatrix (w 0) (w 1) (w 2) := hR
-  apply c.not_rupert hc hS hmcm ht0 ht0m wmax hw0 hw1 hw2 κ hκ S hSdef hSsym p hx he1 he2 w hRw
-  · apply rdot_cayley_bound hw0
+  have hball : rdot w w ≤ wmax ^ 2 := by
+    apply rdot_cayley_bound hw0
     rw [← hRw]; exact htr
+  rw [rdot_x_eq] at hx he1 he2
+  rw [rdot_dualVec] at he1 he2
+  have hx' : 0 < frameCoord c.st p.view 2 := (mul_pos_iff_of_pos_left hxx).mp hx
+  apply c.not_rupert hc hS hmcm S hSdef p hx'
+  · rw [abs_mul, abs_of_pos hxx] at he1
+    nlinarith
+  · rw [abs_mul, abs_of_pos hxx] at he2
+    nlinarith
+  · exact hRw
+  · intro i
+    apply frameCoord_le_of_ball c.st hF i hball (by positivity) (hwi i)
   · intro hp
     exact hcell (gMat c.Gcol) (by simp [hp])
-
-/-- The image of a frame vector under g (and a sign). -/
-noncomputable def imgVec (g : IcoIndex) (sgn : Bool) (v : Fin 3 → ℝ) : Fin 3 → ℝ :=
-  (if sgn then (1 : ℝ) else -1) • (icoMatrix g).mulVec v
-
-theorem rdot_transpose_mulVec (M : Matrix (Fin 3) (Fin 3) ℝ) (u v : Fin 3 → ℝ) :
-    rdot (Mᵀ.mulVec u) v = rdot u (M.mulVec v) := by
-  simp [rdot, Matrix.mulVec, dotProduct, Fin.sum_univ_three, Matrix.transpose_apply]; ring
-
-theorem relativeRotation_viewAntipode (p : MatrixPose) : p.viewAntipode.relativeRotation = p.relativeRotation := by
-  have hR := (Matrix.mem_orthogonalGroup_iff' (Fin 3) ℝ).mp MatrixPose.viewAntipodeRotation.property.1
-  simp only [MatrixPose.relativeRotation, MatrixPose.viewAntipode]
-  show (MatrixPose.viewAntipodeRotation.val * p.outerRot.val)ᵀ * (MatrixPose.viewAntipodeRotation.val * p.innerRot.val) = _
-  rw [Matrix.transpose_mul, Matrix.mul_assoc, ← Matrix.mul_assoc _ MatrixPose.viewAntipodeRotation.val, hR,
-    Matrix.one_mul]
-
-theorem halfTurnMat_neg (u : Fin 3 → ℝ) : halfTurnMat (-u) = halfTurnMat u := by
-  have := halfTurnMat_smul (-1) (by norm_num) u
-  simpa using this
-
-theorem halfTurnMat_view_bothRightIco (p : MatrixPose) (g : IcoIndex) :
-    halfTurnMat (p.bothRightIco g).view = (icoMatrix g)ᵀ * halfTurnMat p.view * icoMatrix g := by
-  rw [halfTurnMat_view, halfTurnMat_view]
-  simp only [MatrixPose.bothRightIco, icoSO3]
-  show (p.outerRot.val * icoMatrix g)ᵀ * halfTurnZMat * (p.outerRot.val * icoMatrix g) = _
-  rw [Matrix.transpose_mul]
-  simp only [Matrix.mul_assoc]
-
-theorem relativeRotation_bothRightIco (p : MatrixPose) (g : IcoIndex) :
-    (p.bothRightIco g).relativeRotation = (icoMatrix g)ᵀ * p.relativeRotation * icoMatrix g := by
-  simp only [MatrixPose.relativeRotation, MatrixPose.bothRightIco, icoSO3]
-  show (p.outerRot.val * icoMatrix g)ᵀ * (p.innerRot.val * icoMatrix g) = _
-  rw [Matrix.transpose_mul]
-  simp only [Matrix.mul_assoc]
-
-theorem view_viewAntipode' (p : MatrixPose) : p.viewAntipode.view = -p.view := view_viewAntipode p
-
-/-- **Images of a cap.** The claim for the frame (x, e₁, e₂) gives the claim for (s g x, s g e₁, s g e₂),
-with the half-turn condition for g G gᵀ. -/
-theorem CapClaim.image (P : IModel) {x e1 e2 : Fin 3 → ℝ} {mu0 τ : ℝ} {G : Option (Matrix (Fin 3) (Fin 3) ℝ)}
-    (h : CapClaim P.toC5.polyhedron.hull x e1 e2 mu0 τ G) (g : IcoIndex) (sgn : Bool) :
-    CapClaim P.toC5.polyhedron.hull (imgVec g sgn x) (imgVec g sgn e1) (imgVec g sgn e2) mu0 τ
-      (G.map fun G₀ => icoMatrix g * G₀ * (icoMatrix g)ᵀ) := by
-  intro p hx he1 he2 htr hcell
-  -- p₁: the view turned to s u; p₂: conjugated by g.
-  let p₁ := if sgn then p else p.viewAntipode
-  have hv₁ : p₁.view = (if sgn then (1 : ℝ) else -1) • p.view := by
-    cases sgn
-    · simp [p₁, view_viewAntipode]
-    · simp [p₁]
-  have hR₁ : p₁.relativeRotation = p.relativeRotation := by
-    cases sgn
-    · simp [p₁, relativeRotation_viewAntipode]
-    · simp [p₁]
-  have hrup₁ : RupertPose p₁ P.toC5.polyhedron.hull ↔ RupertPose p P.toC5.polyhedron.hull := by
-    cases sgn
-    · simp only [p₁, Bool.false_eq_true, if_false]; exact MatrixPose.RupertPose_viewAntipode_iff p _
-    · simp [p₁]
-  let p₂ := p₁.bothRightIco g
-  have hv₂ : p₂.view = (icoMatrix g)ᵀ.mulVec p₁.view := by
-    rw [view_bothRightIco]; simp [viewCandidate]
-  have hdot : ∀ v : Fin 3 → ℝ, rdot p₂.view v = rdot p.view (imgVec g sgn v) := by
-    intro v
-    rw [hv₂, rdot_transpose_mulVec, hv₁]
-    simp only [imgVec, rdot, Pi.smul_apply, smul_eq_mul]
-    ring
-  have hR₂ : p₂.relativeRotation = (icoMatrix g)ᵀ * p.relativeRotation * icoMatrix g := by
-    rw [relativeRotation_bothRightIco, hR₁]
-  have horth := (Matrix.mem_orthogonalGroup_iff (Fin 3) ℝ).mp (icoMatrix_mem_SO3 g).1
-  have horth' := (Matrix.mem_orthogonalGroup_iff' (Fin 3) ℝ).mp (icoMatrix_mem_SO3 g).1
-  have htr₂ : Matrix.trace p₂.relativeRotation = Matrix.trace p.relativeRotation := by
-    rw [hR₂, Matrix.trace_mul_comm, ← Matrix.mul_assoc, horth, Matrix.one_mul]
-  intro hrup
-  apply h p₂ (by rw [hdot]; exact hx) (by rw [hdot, hdot]; exact he1) (by rw [hdot, hdot]; exact he2)
-    (by rw [htr₂]; exact htr)
-  · intro G₀ hG₀
-    have hc := hcell (icoMatrix g * G₀ * (icoMatrix g)ᵀ) (by rw [hG₀]; rfl)
-    have hH : halfTurnMat p₂.view = (icoMatrix g)ᵀ * halfTurnMat p₁.view * icoMatrix g :=
-      halfTurnMat_view_bothRightIco p₁ g
-    have hH₁ : halfTurnMat p₁.view = halfTurnMat p.view := by
-      rw [hv₁]; cases sgn
-      · simp only [Bool.false_eq_true, if_false]; rw [halfTurnMat_smul (-1) (by norm_num)]
-      · simp
-    have htrc : Matrix.trace ((icoMatrix g)ᵀ * p.relativeRotation * icoMatrix g) = Matrix.trace p.relativeRotation := by
-      rw [← hR₂]; exact htr₂
-    rw [hH, hH₁, hR₂, htrc]
-    calc Matrix.trace ((icoMatrix g)ᵀ * halfTurnMat p.view * icoMatrix g *
-          ((icoMatrix g)ᵀ * p.relativeRotation * icoMatrix g) * G₀)
-        = Matrix.trace (halfTurnMat p.view * p.relativeRotation * (icoMatrix g * G₀ * (icoMatrix g)ᵀ)) := by
-          rw [show (icoMatrix g)ᵀ * halfTurnMat p.view * icoMatrix g *
-              ((icoMatrix g)ᵀ * p.relativeRotation * icoMatrix g) * G₀ =
-              (icoMatrix g)ᵀ * (halfTurnMat p.view * p.relativeRotation * (icoMatrix g * G₀)) by
-            simp only [Matrix.mul_assoc]
-            rw [← Matrix.mul_assoc (icoMatrix g) (icoMatrix g)ᵀ, horth, Matrix.one_mul]]
-          rw [Matrix.trace_mul_comm]
-          simp only [Matrix.mul_assoc]
-      _ ≤ _ := hc
-  · exact (hrup₁.mpr (by
-      have := (P.RupertPose_bothRightIco_iff p₁ g).mpr
-      exact hrup)) |> fun h' => by
-        exact (P.RupertPose_bothRightIco_iff p₁ g).mpr (hrup₁.mpr hrup)
 
 end Noperthedron.PentagonalHexecontahedron.Cap

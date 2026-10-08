@@ -82,3 +82,8 @@ buildType = "release"
 name = "dhBench"
 root = "dhBench"
 buildType = "release"
+
+[[lean_exe]]
+name = "checkNopert7Cap"
+root = "checkNopert7Cap"
+buildType = "release"
