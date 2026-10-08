@@ -1,9 +1,12 @@
-// Solving 5D search nodes. A job is a code triangle t and a chart (0..2;
-// chart 3 is a fixed table in Lean). A node, named by its split path
-// (rows5d), is closed by the cheapest applicable leaf, else split:
+// Solving 5D search nodes. A job is a code triangle t and a chart (0..3; for
+// K all four Cayley charts are searched over the whole cube). A node, named
+// by its split path (rows5d), is closed by the cheapest applicable leaf,
+// else split:
 //
 //   pr  the box lies outside the Cayley ball
-//   pf  the box lies outside the fivefold fundamental domain
+//   ip  the box lies outside the C3 cell (trace(R c_k) > trace R, exact)
+//   ph  the box lies outside the mirror cell (trace(H_u R Q_g) > trace R)
+//   cl  (with --caps) the box is in a certified cap domain
 //   tu  chart 0, and the box lies in the identity tube of the radius the tube
 //       table certifies at this view (tubeatlas5d)
 //   ce  a single contact triple certifies the node (cert5d) with a positive
@@ -42,8 +45,8 @@ struct Options {
   // * 16, up to this many (the center screen can miss the best triple in
   // large pools; 0 disables the retries).
   int max_full_retry = 0;
-  // Half-turn prune (exact5d::HalfTurnPruneValid): only for centrally
-  // symmetric solids (the deltoidal hexecontahedron).
+  // Mirror prune (exact5d::HalfTurnPruneValid with mirror_q.h's Q table):
+  // K's C3v cell (always wanted for K).
   bool half_turn_prune = false;
   // Tie leaves (deltoidal hexecontahedron): radii certified by tietube.cc.
   const tieatlas5d::TieAtlas *ties = nullptr;

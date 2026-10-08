@@ -10,9 +10,10 @@
 // the search (to pre-check a leaf before writing it) and in packing, so that
 // what C++ accepts is exactly what Lean accepts.
 //
-// Only view root 0 (Lean's rootSign 0 = (+1, +1, +1), the positive octant,
-// which contains the model's view triangle) is supported; that is the only
-// root the 5D search uses.
+// The checks are written for any view root: a triangle's corners are on
+// their root's plane (sum_i s_i u_i = 1), so each point is a positive
+// multiple of its view, and nothing here depends on which root. (For K the
+// view domain uses roots 0 and 1; the root itself is only recorded in packs.)
 
 #ifndef _NOPERT_EXACT5D_H
 #define _NOPERT_EXACT5D_H
@@ -153,17 +154,16 @@ bool OutsideCayleyBall(const Interval5 &iv);
 // (Direction.positive) or -1 (Direction.negative).
 Q FundamentalLower(const Interval5 &iv, int chart, int direction);
 bool FundamentalPruneValid(const Interval5 &iv, int chart, int direction);
-// Icosahedral prune (icosahedral solids): some right symmetry, the rotation
-// by +-72 degrees about one of the six 5-fold axes (neighbor n of
-// symmetry_neighbors.h), strictly increases trace over the whole box, so the
-// box is outside the identity's icosahedral Dirichlet cell.
+// C3 cell prune (K; formerly the icosahedral prune): some right symmetry,
+// c3Mat (n + 1) (neighbor n of symmetry_neighbors.h, exact), strictly
+// increases trace over the whole box, so the box is outside the C3v cell.
 Q IcoPruneLower(const Interval5 &iv, int chart, int n);
-// Half-turn prune (centrally symmetric icosahedral solids, e.g. the deltoidal
-// hexecontahedron): a pose (u, R) is a passage iff (u, H_u R g) is, for H_u
-// the half-turn about the view u and g in I (pi_u(H_u X) = -pi_u(X), K = -K,
-// gK = K). So R may be taken to maximize the trace over {R g, H_u R g}, and a
-// box is pruned when trace(H_u R g) > trace(R) over all of it for one g
-// (index into ico_group.h). With u = p / |p|, p = sum_c lambda_c P_c over
+// Mirror prune (K; formerly the DH's half-turn prune): a pose (u, R) is a
+// passage iff (u, H_u R Q_g) is, for H_u the half-turn about the view u and
+// Q_g = -sigma_g (sigma_g a mirror of K; Lean: Nopert7.MirrorTie). So R may
+// be taken in the C3v cell, and a box is pruned when trace(H_u R Q_g) >
+// trace(R) over all of it for one g (index into mirror_q.h, exact: the
+// allowance is 0). With u = p / |p|, p = sum_c lambda_c P_c over
 // the view triangle's corners, (trace(H_p R G) - trace(R)) |p|^2 D(w) is a
 // homogeneous quadratic in lambda with degree-2 Bernstein coefficients
 // b_cd(w), quadratic in the Cayley coordinates w:
@@ -201,7 +201,9 @@ bool CapLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, const Ca
 Q IdentityMismatchRadius(const Interval5 &iv);
 bool IdentityTubeValid(const Interval5 &iv, const Q &r);
 
-// AtlasFundamentalPrune.restrictedRootInterval: the root pose box of a chart.
+// The root pose box of a chart: for K, AtlasPose.rootInterval for every
+// chart (the DH's AtlasFundamentalPrune.restrictedRootInterval narrowed one
+// coordinate to [-1/3, 1/3] in charts 0-2 by the fivefold symmetry).
 Interval5 RestrictedRootInterval(int chart);
 
 }  // namespace exact5d

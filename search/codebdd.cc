@@ -66,7 +66,9 @@ struct HalfSpace {
   std::string label;
 };
 
-// A convex polygon on the projective plane x + y + z = 1
+// A convex polygon on a projective root's plane (sum_i s_i u_i = 1; the
+// clipping only forms affine combinations, so it stays on the plane, and
+// every point is a positive multiple of its view direction).
 struct ProjectivePoly {
   std::vector<BigVecQ3> vertices;
   // Halfspaces that form the edges of this polygon
@@ -113,6 +115,7 @@ static std::string CodeHex(const Code &c, size_t num_planes) {
 
 // A leaf node representing a feasible non-empty code cell
 struct FeasibleCode {
+  int root = 0;  // the projective root of its view triangle (all corners)
   Code code_val;
   std::string hex_id;
   std::string bit_string;
@@ -160,10 +163,30 @@ struct ModelFile {
   // used as is (no rounding or planarization): for models whose faces share
   // vertices, which the generator makes exactly planar together.
   std::vector<BigVecQ3> rational_vertices;
-  // The view domain (a rational triangle on x + y + z = 1):
-  // "view_triangle x0 y0 z0 x1 ... z2".
-  std::optional<std::array<BigVecQ3, 3>> view_triangle;
+  // The view domain: one or more rational triangles, each in one projective
+  // root (Lean's AtlasProjectiveView.rootSign): every corner c satisfies
+  // sum_i s_i c_i = 1 and s_i c_i >= 0 for the root's sign vector s.
+  // "view_triangle x0 y0 z0 x1 ... z2", one line per triangle.
+  std::vector<std::array<BigVecQ3, 3>> view_triangles;
 };
+
+// Lean's rootSign order: root = 4 [s0 < 0] + 2 [s1 < 0] + [s2 < 0].
+static int RootSign(int root, int c) { return (root >> (2 - c)) & 1 ? -1 : 1; }
+
+// The first projective root containing every corner of t (SignedTriangleValid),
+// or -1.
+static int TriangleRoot(const std::array<BigVecQ3, 3> &t) {
+  for (int root = 0; root < 8; root++) {
+    bool ok = true;
+    for (const BigVecQ3 &c : t) {
+      const BigRat s0(RootSign(root, 0)), s1(RootSign(root, 1)), s2(RootSign(root, 2));
+      ok = ok && s0 * c.x >= BigRat(0) && s1 * c.y >= BigRat(0) && s2 * c.z >= BigRat(0) &&
+           s0 * c.x + s1 * c.y + s2 * c.z == BigRat(1);
+    }
+    if (ok) return root;
+  }
+  return -1;
+}
 
 // A decimal string ("-0.1234") as an exact rational.
 static BigRat DecimalRat(std::string_view s) {
@@ -203,22 +226,27 @@ static ModelFile LoadModelFile(const std::string &filename) {
                                              BigRat(std::string_view(tok[3])),
                                              BigRat(std::string_view(tok[4]))));
     } else if (tok[0] == "face") {
+      // (C5 models list only the non-triangular faces; others may list all.)
       std::vector<int> f;
       for (size_t i = 1; i < tok.size(); i++) f.push_back(std::stoi(tok[i]));
-      CHECK(f.size() >= 4) << "only non-triangular faces are listed: " << line;
+      CHECK(f.size() >= 3) << line;
       m.faces.push_back(std::move(f));
     } else if (tok[0] == "view_triangle" && tok.size() == 10) {
       std::array<BigVecQ3, 3> t;
       for (int c = 0; c < 3; c++) {
         t[c] = BigVecQ3(BigRat(std::string_view(tok[1 + 3 * c])), BigRat(std::string_view(tok[2 + 3 * c])),
                         BigRat(std::string_view(tok[3 + 3 * c])));
-        CHECK(t[c].x + t[c].y + t[c].z == BigRat(1)) << "view_triangle corner not on x + y + z = 1";
       }
-      m.view_triangle = t;
+      CHECK(TriangleRoot(t) >= 0) << "view_triangle is not in one projective root: " << line;
+      m.view_triangles.push_back(t);
     }
   }
-  CHECK(m.seeds > 0 && (int)m.vertices.size() == 5 * m.seeds)
+  // C5 models (seeds S): vertex S k + s is seed s rotated by 2 pi k / 5.
+  // Others (no seeds line) must give their rational vertices.
+  CHECK(m.seeds == 0 || (int)m.vertices.size() == 5 * m.seeds)
       << filename << ": expected 5 * seeds vertices, got " << m.vertices.size();
+  CHECK(m.seeds > 0 || !m.rational_vertices.empty())
+      << filename << ": a model without C5 seeds needs rational_vertex lines";
   for (const auto &f : m.faces) for (int v : f) CHECK(v >= 0 && v < (int)m.vertices.size());
   CHECK(m.rational_vertices.empty() || m.rational_vertices.size() == m.vertices.size())
       << filename << ": rational_vertex count";
@@ -318,14 +346,47 @@ static BigRat TightVertexDistanceSq(const std::vector<BigVecQ3> &verts) {
   return worst;
 }
 
+// Models with a C3v symmetry about (1,1,1) (no C5 seeds; c3v_model.py): the
+// rotations are the cyclic coordinate permutations, the mirrors the
+// transpositions, so the rational vertex set must be exactly invariant
+// under every coordinate permutation. Returns, for each permutation in the
+// order (x,y,z) -> (y,z,x), (z,x,y), then the transpositions fixing x, y, z
+// (Lean's c3Mat 1, c3Mat 2, mirrorMat 0, 1, 2), the induced vertex
+// permutation; empty if the set is not invariant.
+static std::vector<std::vector<int>> C3vVertexPermutations(const std::vector<BigVecQ3> &verts) {
+  auto apply = [](int g, const BigVecQ3 &v) {
+    switch (g) {
+    case 0: return BigVecQ3(v.y, v.z, v.x);  // c3Mat 1 v
+    case 1: return BigVecQ3(v.z, v.x, v.y);  // c3Mat 2 v
+    case 2: return BigVecQ3(v.x, v.z, v.y);  // mirrorMat 0 v
+    case 3: return BigVecQ3(v.z, v.y, v.x);  // mirrorMat 1 v
+    default: return BigVecQ3(v.y, v.x, v.z); // mirrorMat 2 v
+    }
+  };
+  std::vector<std::vector<int>> perms;
+  for (int g = 0; g < 5; g++) {
+    std::vector<int> p;
+    for (const BigVecQ3 &v : verts) {
+      const BigVecQ3 w = apply(g, v);
+      int hit = -1;
+      for (size_t j = 0; j < verts.size(); j++)
+        if (verts[j].x == w.x && verts[j].y == w.y && verts[j].z == w.z) hit = j;
+      if (hit < 0) return {};
+      p.push_back(hit);
+    }
+    perms.push_back(std::move(p));
+  }
+  return perms;
+}
+
 std::vector<PlaneQ> ExtractPlanes(const std::vector<BigVecQ3> &verts,
-                                  const std::array<BigVecQ3, 3> &view_corners_);
+                                  const std::vector<std::array<BigVecQ3, 3>> &view_domains);
 std::vector<PlaneQ> FinishPlanes(const std::vector<std::pair<BigVecQ3, std::vector<int>>> &raw_planes,
-                                 const std::array<BigVecQ3, 3> &view_corners_);
+                                 const std::vector<std::array<BigVecQ3, 3>> &view_domains);
 
 // Exports rational vertices in Lean, C++, and JSON formats
 void ExportRationalVertices(const std::vector<BigVecQ3> &verts, std::string_view base_name,
-                            std::string_view model_name) {
+                            std::string_view model_name, int num_seeds) {
   const size_t n = verts.size();
   // 1. Export Lean 4 definition
   std::string lean_path = std::format("{}.lean", base_name);
@@ -333,8 +394,12 @@ void ExportRationalVertices(const std::vector<BigVecQ3> &verts, std::string_view
   if (lean_out.good()) {
     lean_out << "/-!\n";
     lean_out << "Generated by codebdd.cc: the rational model of " << model_name << ".\n";
-    lean_out << "Coordinates are multiples of 2^-52 (non-triangular faces snapped exactly planar),\n";
-    lean_out << "within 6e-16 of the exact solid and strictly inside the unit sphere.\n";
+    if (num_seeds > 0) {
+      lean_out << "Coordinates are multiples of 2^-52 (non-triangular faces snapped exactly planar),\n";
+      lean_out << "within 6e-16 of the exact solid and strictly inside the unit sphere.\n";
+    } else {
+      lean_out << "The model file's exact rational vertices (strictly inside the unit sphere).\n";
+    }
     lean_out << "scripts/update_vertices.py installs these rows into Vertices.lean.\n";
     lean_out << "-/\n\n";
     lean_out << "namespace Model\n\n";
@@ -398,7 +463,7 @@ void ExportRationalVertices(const std::vector<BigVecQ3> &verts, std::string_view
     j_out << "{\n";
     j_out << "  \"name\": \"" << model_name << " (best-possible exact rational export)\",\n";
     j_out << "  \"num_vertices\": " << verts.size() << ",\n";
-    j_out << "  \"num_seeds\": " << verts.size() / 5 << ",\n";
+    j_out << "  \"num_seeds\": " << num_seeds << ",\n";
     j_out << "  \"power_of_two_denominator\": true,\n";
     j_out << "  \"base_quantization_bits\": 52,\n";
     j_out << "  \"exact_quad_coplanarity\": true,\n";
@@ -424,7 +489,7 @@ void ExportRationalVertices(const std::vector<BigVecQ3> &verts, std::string_view
 // Extract the facet planes of the model; crosses_view is relative to
 // the view domain `view_corners_`.
 std::vector<PlaneQ> ExtractPlanes(const std::vector<BigVecQ3> &verts,
-                                  const std::array<BigVecQ3, 3> &view_corners_) {
+                                  const std::vector<std::array<BigVecQ3, 3>> &view_corners_) {
   const size_t num_verts = verts.size();
 
   // Centroid
@@ -501,7 +566,7 @@ std::vector<PlaneQ> ExtractPlanes(const std::vector<BigVecQ3> &verts,
 
 // Integer normals (coprime), sorted and indexed, with the view-domain flag.
 std::vector<PlaneQ> FinishPlanes(const std::vector<std::pair<BigVecQ3, std::vector<int>>> &raw_planes,
-                                 const std::array<BigVecQ3, 3> &view_corners_) {
+                                 const std::vector<std::array<BigVecQ3, 3>> &view_domains) {
   std::vector<PlaneQ> planes;
   planes.reserve(raw_planes.size());
 
@@ -543,15 +608,17 @@ std::vector<PlaneQ> FinishPlanes(const std::vector<std::pair<BigVecQ3, std::vect
     planes[idx].index = idx;
   }
 
-  // Check which planes cross the view domain
+  // Check which planes cross (some triangle of) the view domain
   for (auto &p : planes) {
-    bool has_pos = false, has_neg = false;
-    for (const auto &c : view_corners_) {
-      BigRat d = BigVecQ3::Dot(p.normal, c);
-      if (d > 0) has_pos = true;
-      if (d < 0) has_neg = true;
+    for (const auto &tri : view_domains) {
+      bool has_pos = false, has_neg = false;
+      for (const auto &c : tri) {
+        BigRat d = BigVecQ3::Dot(p.normal, c);
+        if (d > 0) has_pos = true;
+        if (d < 0) has_neg = true;
+      }
+      p.crosses_view = p.crosses_view || (has_pos && has_neg);
     }
-    p.crosses_view = (has_pos && has_neg);
   }
 
   return planes;
@@ -564,7 +631,7 @@ std::vector<PlaneQ> FinishPlanes(const std::vector<std::pair<BigVecQ3, std::vect
 // integer components of ~60 bits. The codes are then sign vectors of these
 // planes; the certificates never use faces.
 std::vector<PlaneQ> PlanesFromModelFaces(const ModelFile &m,
-                                         const std::array<BigVecQ3, 3> &view_corners_) {
+                                         const std::vector<std::array<BigVecQ3, 3>> &view_corners_) {
   std::vector<std::pair<BigVecQ3, std::vector<int>>> raw;
   auto V = [&](int i) { return BigVecQ3(m.vertices[i][0], m.vertices[i][1], m.vertices[i][2]); };
   for (const auto &f : m.faces) {
@@ -904,15 +971,26 @@ std::unique_ptr<BDDNode> BuildBDD(
   return node;
 }
 
-// Write BDD and codes to JSON
+// One view triangle of the domain, its root and BDD; its codes are
+// codes[first_code .. first_code + num_codes).
+struct ViewDomain {
+  int root = 0;
+  ProjectivePoly poly;
+  std::unique_ptr<BDDNode> tree;
+  int first_code = 0, num_codes = 0;
+};
+
+// Write BDD and codes to JSON. With one view triangle the format is the
+// original one ("fundamental_domain", "tree") plus the roots; with several,
+// "view_domains" lists each one's root, corners, bounding planes, code range
+// and tree instead.
 void SerializeJSON(
     std::ostream &out,
     std::string_view model_name,
     const std::vector<BigVecQ3> &verts,
     const std::vector<PlaneQ> &planes,
     const std::vector<FeasibleCode> &codes,
-    const BDDNode *root,
-    const ProjectivePoly *view_domain) {
+    const std::vector<ViewDomain> &domains) {
 
   out << "{\n";
   out << "  \"polyhedron\": {\n";
@@ -927,26 +1005,30 @@ void SerializeJSON(
   out << "    ]\n";
   out << "  },\n";
 
-  {
-    // The view triangle.
+  // A view triangle's root, corners and bounding planes (indented by pad).
+  auto DomainFields = [&](const ViewDomain &d, const std::string &pad) {
+    out << pad << "\"name\": \"viewTriangle\",\n";
+    out << pad << "\"root\": " << d.root << ",\n";
+    out << pad << "\"corners\": [\n";
+    for (int k = 0; k < 3; k++) {
+      const BigVecQ3 &c = d.poly.vertices[k];
+      out << pad << std::format("  {{\"x\": \"{}\", \"y\": \"{}\", \"z\": \"{}\"}}{}\n", FormatRat(c.x),
+                                FormatRat(c.y), FormatRat(c.z), k < 2 ? "," : "");
+    }
+    out << pad << "],\n";
+    out << pad << "\"bounding_planes\": [\n";
+    for (int k = 0; k < 3; k++) {
+      const HalfSpace &h = d.poly.boundary_planes[k];
+      out << pad << std::format("  {{\"label\": \"{}\", \"normal\": [\"{}\", \"{}\", \"{}\"]}}{}\n", h.label,
+                                FormatRat(h.normal.x), FormatRat(h.normal.y), FormatRat(h.normal.z),
+                                k < 2 ? "," : "");
+    }
+    out << pad << "]";
+  };
+  if (domains.size() == 1) {
     out << "  \"fundamental_domain\": {\n";
-    out << "    \"name\": \"viewTriangle\",\n";
-    out << "    \"corners\": [\n";
-    for (int k = 0; k < 3; k++) {
-      const BigVecQ3 &c = view_domain->vertices[k];
-      out << std::format("      {{\"x\": \"{}\", \"y\": \"{}\", \"z\": \"{}\"}}{}\n", FormatRat(c.x),
-                         FormatRat(c.y), FormatRat(c.z), k < 2 ? "," : "");
-    }
-    out << "    ],\n";
-    out << "    \"bounding_planes\": [\n";
-    for (int k = 0; k < 3; k++) {
-      const HalfSpace &h = view_domain->boundary_planes[k];
-      out << std::format("      {{\"label\": \"{}\", \"normal\": [\"{}\", \"{}\", \"{}\"]}}{}\n", h.label,
-                         FormatRat(h.normal.x), FormatRat(h.normal.y), FormatRat(h.normal.z),
-                         k < 2 ? "," : "");
-    }
-    out << "    ]\n";
-    out << "  },\n";
+    DomainFields(domains[0], "    ");
+    out << "\n  },\n";
   }
 
   out << "  \"num_planes\": " << planes.size() << ",\n";
@@ -972,6 +1054,7 @@ void SerializeJSON(
     const auto &c = codes[i];
     out << "    {\n";
     out << "      \"code_hex\": \"" << c.hex_id << "\",\n";
+    out << "      \"root\": " << c.root << ",\n";
     if (planes.size() <= 32) out << "      \"code_uint32\": " << c.code_val.to_ullong() << ",\n";
     out << "      \"bit_string\": \"" << c.bit_string << "\",\n";
     out << "      \"num_polygon_vertices\": " << c.poly.vertices.size() << ",\n";
@@ -1048,8 +1131,22 @@ void SerializeJSON(
     }
   };
 
-  out << "  \"tree\":\n";
-  SerializeNode(SerializeNode, root, 4);
+  if (domains.size() == 1) {
+    out << "  \"tree\":\n";
+    SerializeNode(SerializeNode, domains[0].tree.get(), 4);
+  } else {
+    out << "  \"view_domains\": [\n";
+    for (size_t k = 0; k < domains.size(); k++) {
+      out << "    {\n";
+      DomainFields(domains[k], "      ");
+      out << ",\n      \"first_code\": " << domains[k].first_code << ",\n";
+      out << "      \"num_codes\": " << domains[k].num_codes << ",\n";
+      out << "      \"tree\":\n";
+      SerializeNode(SerializeNode, domains[k].tree.get(), 8);
+      out << "\n    }" << (k + 1 < domains.size() ? "," : "") << "\n";
+    }
+    out << "  ]";
+  }
   out << "\n}\n";
 }
 
@@ -1388,11 +1485,33 @@ int main(int argc, char **argv) {
   // comfortably within the 4e-16 bound (target 3.6e-16).
   const ModelFile model = LoadModelFile(model_file);
   const std::string model_name = model.name;
-  CHECK(model.view_triangle.has_value()) << model_file << ": no view_triangle";
-  const std::array<BigVecQ3, 3> view_corners = *model.view_triangle;
+  CHECK(!model.view_triangles.empty()) << model_file << ": no view_triangle";
+  const std::vector<std::array<BigVecQ3, 3>> &view_corners = model.view_triangles;
   std::vector<BigVecQ3> verts;
   const BigRat target = BigRat(36, 100000000000000000LL) * BigRat(36, 100000000000000000LL);
-  if (!model.rational_vertices.empty()) {
+  if (model.seeds == 0) {
+    // No C5 structure: the rational vertices are the model (exactly C3v, checked).
+    verts = model.rational_vertices;
+    const auto perms = C3vVertexPermutations(verts);
+    CHECK(!perms.empty()) << "the rational vertices are not invariant under the coordinate permutations";
+    static const char *kNames[5] = {"c3Mat 1", "c3Mat 2", "mirrorMat 0", "mirrorMat 1", "mirrorMat 2"};
+    Print("Rational vertices from the model file (no C5 seeds): exactly C3v about (1,1,1)\n");
+    for (int g = 0; g < 5; g++) {
+      std::string p;
+      for (int v : perms[g]) p += std::format(" {}", v);
+      Print("  {:12} permutes the vertices as [{} ]\n", kNames[g], p);
+    }
+    BigRat worst(0);
+    for (size_t i = 0; i < verts.size(); i++) {
+      const BigRat dx = verts[i].x - model.vertices[i][0], dy = verts[i].y - model.vertices[i][1],
+                   dz = verts[i].z - model.vertices[i][2];
+      worst = std::max(worst, dx * dx + dy * dy + dz * dz);
+      CHECK(BigVecQ3::Dot(verts[i], verts[i]) < BigRat(1)) << "vertex " << i << " has norm >= 1";
+    }
+    Print("  Max distance from the decimal vertices: {:.3e}\n", std::sqrt(worst.ToDouble()));
+    CHECK(worst <= BigRat(36, 100000000000000000LL) * BigRat(1, 100000000000000LL))
+        << "rational vertices more than 6e-16 from the vertex lines";
+  } else if (!model.rational_vertices.empty()) {
     verts = model.rational_vertices;
     const BigRat d2 = TightVertexDistanceSq(verts);
     Print("Rational vertices from the model file: max |rational - tight| = {:.3e} (Lean bound 4e-16)\n",
@@ -1421,7 +1540,7 @@ int main(int argc, char **argv) {
   }
 
   // Always export rational representations in Lean 4, C++, and JSON formats
-  ExportRationalVertices(verts, export_prefix, model_name);
+  ExportRationalVertices(verts, export_prefix, model_name, model.seeds);
 
   if (export_only) {
     Print("\n" AGREEN("Rational vertices exported successfully.") " Exiting (--export_rational).\n");
@@ -1441,24 +1560,35 @@ int main(int argc, char **argv) {
   Print("Planes crossing the view domain: " ACYAN("{}") " (constant sign: {})\n\n",
         crossing_count, planes.size() - crossing_count);
 
-  // Initial root polygon: the model's view triangle. Edge k is opposite
-  // corner k: normal cross(c_{k+1}, c_{k+2}), oriented so that corner k is on
-  // the positive side.
-  ProjectivePoly root_poly;
-  root_poly.vertices = {view_corners[0], view_corners[1], view_corners[2]};
-  for (int k = 0; k < 3; k++) {
-    BigVecQ3 n = BigVecQ3::Cross(view_corners[(k + 1) % 3], view_corners[(k + 2) % 3]);
-    if (BigVecQ3::Dot(n, view_corners[k]) < BigRat(0)) n = BigVecQ3(-n.x, -n.y, -n.z);
-    CHECK(BigVecQ3::Dot(n, view_corners[k]) > BigRat(0)) << "degenerate view triangle";
-    root_poly.boundary_planes.push_back({-1, +1, n, std::format("W{}", k)});
-  }
-
-  std::vector<HalfSpace> active_path = root_poly.boundary_planes;
+  // Each view triangle is partitioned separately; its codes follow the
+  // previous triangles' (a code cell meeting two triangles appears in both).
+  // Initial root polygon: the view triangle. Edge k is opposite corner k:
+  // normal cross(c_{k+1}, c_{k+2}), oriented so that corner k is on the
+  // positive side. (The triangle is on its root's plane, so a positive
+  // multiple of each view: the signs u . n are the codes.)
   std::vector<FeasibleCode> feasible_codes;
-
-  Print("Recursively partitioning the view domain into BDD...\n");
+  std::vector<ViewDomain> domains;
   CHECK((int)planes.size() <= kMaxPlanes) << planes.size() << " planes";
-  auto root = BuildBDD(root_poly, planes, 0, Code(), active_path, feasible_codes);
+  for (const auto &corners : view_corners) {
+    ViewDomain dom;
+    dom.root = TriangleRoot(corners);
+    ProjectivePoly &root_poly = dom.poly;
+    root_poly.vertices = {corners[0], corners[1], corners[2]};
+    for (int k = 0; k < 3; k++) {
+      BigVecQ3 n = BigVecQ3::Cross(corners[(k + 1) % 3], corners[(k + 2) % 3]);
+      if (BigVecQ3::Dot(n, corners[k]) < BigRat(0)) n = BigVecQ3(-n.x, -n.y, -n.z);
+      CHECK(BigVecQ3::Dot(n, corners[k]) > BigRat(0)) << "degenerate view triangle";
+      root_poly.boundary_planes.push_back({-1, +1, n, std::format("W{}", k)});
+    }
+    std::vector<HalfSpace> active_path = root_poly.boundary_planes;
+    Print("Recursively partitioning view triangle {} (root {}) into BDD...\n", domains.size(), dom.root);
+    dom.first_code = feasible_codes.size();
+    dom.tree = BuildBDD(root_poly, planes, 0, Code(), active_path, feasible_codes);
+    dom.num_codes = feasible_codes.size() - dom.first_code;
+    for (int c = dom.first_code; c < (int)feasible_codes.size(); c++) feasible_codes[c].root = dom.root;
+    Print("  {} codes\n", dom.num_codes);
+    domains.push_back(std::move(dom));
+  }
 
   Print("\n" AGREEN("SUCCESS!") " Discovered " ACYAN("{}") " non-empty codes in the view domain.\n",
         feasible_codes.size());
@@ -1480,7 +1610,7 @@ int main(int argc, char **argv) {
   Print("\nWriting BDD and code database to " AYELLOW("{}") "...\n", output_path);
   std::ofstream out(output_path);
   CHECK(out.good()) << "Failed to open " << output_path << " for writing";
-  SerializeJSON(out, model_name, verts, planes, feasible_codes, root.get(), &root_poly);
+  SerializeJSON(out, model_name, verts, planes, feasible_codes, domains);
   out.close();
 
   if (!texture_base.empty()) {

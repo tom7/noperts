@@ -79,6 +79,12 @@ for i, v in enumerate(verts):
 for i, v in enumerate(verts):
   print("rational_vertex %d %s" % (i, " ".join(str(c) for c in v)))
 for f in faces: print("face", *f)
+# The view domain D' = {u0 >= u1 >= 0, u1 >= u2} (Lean: Nopert7.InC3vViewDomain),
+# the cone over (1,1,1), (1,0,0), (0,0,-1), as two triangles split by u2 = 0:
+# T1 = (1,1,1), (1,1,0), (1,0,0) in projective root 0 (on u0 + u1 + u2 = 1) and
+# T2 = (1,0,0), (1,1,0), (0,0,-1) in root 1 (on u0 + u1 - u2 = 1); codebdd.
+print("view_triangle 1/3 1/3 1/3 1/2 1/2 0 1 0 0")
+print("view_triangle 1 0 0 1/2 1/2 0 0 0 -1")
 assert r2 < 1
 if len(sys.argv) > 3:
   def perm_of(f):

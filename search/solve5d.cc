@@ -1,6 +1,6 @@
 #include "solve5d.h"
 
-#include "ico_group.h"
+#include "mirror_q.h"
 #include "tie_normals.h"
 
 #include <algorithm>
@@ -31,7 +31,7 @@ void Stats::Add(const Stats &o) {
 }
 
 Node RootNode(const tubeatlas5d::TubeAtlas &atlas, const Job &job) {
-  CHECK(job.chart >= 0 && job.chart <= 2);
+  CHECK(job.chart >= 0 && job.chart <= 3);
   return Node{.path = "", .tri = atlas.Triangle(job.t), .box = geom5d::RootBox(job.chart)};
 }
 
@@ -58,10 +58,8 @@ std::vector<Node> Children(const Node &node, const Split &split) {
 std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
   const exact5d::Interval5 iv = geom5d::ToInterval(node.box);
   if (exact5d::OutsideCayleyBall(iv)) return rows5d::RadiusPruneLeaf{};
-  for (int dir : {1, -1}) {
-    if (exact5d::FundamentalPruneValid(iv, job_.chart, dir)) return rows5d::FundamentalPruneLeaf{dir};
-  }
-  // Icosahedral prune: a neighbor that increases trace over the whole box.
+  // (K: no fivefold fundamental prune; the C3 cell prune below replaces it.)
+  // C3 cell prune: a rotation c_k of C3 that increases trace over the whole box.
   // The exact lower bound is at most the value at the center, so only try
   // neighbors whose advantage there (in double) is clearly positive.
   {
@@ -78,9 +76,9 @@ std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
       if (adv > 1e-9 && exact5d::IcoPruneValid(iv, job_.chart, n)) return rows5d::IcoPruneLeaf{n};
     }
   }
-  // Half-turn prune: some g with trace(H_u R g) > trace(R) over the whole
-  // box and view triangle. Screen in double at the box center and the
-  // triangle's centroid; try the best few exactly.
+  // Mirror (half-turn) prune: some Q_g with trace(H_u R Q_g) > trace(R) over
+  // the whole box and view triangle. Screen in double at the box center and
+  // the triangle's centroid; try the best few exactly.
   if (opt_.half_turn_prune) {
     const geom5d::BoxD b = geom5d::ToDouble(node.box);
     const geom5d::mat3 r = geom5d::RelativeRotation(job_.chart, b.center);
@@ -89,13 +87,13 @@ std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
     double tr = 0;
     for (int i = 0; i < 3; i++) tr += r[i][i];
     std::vector<std::pair<double, int>> cand;
-    for (int g = 0; g < ICO_GROUP_SIZE; g++) {
+    for (int g = 0; g < MIRROR_Q_SIZE; g++) {
       // M = R G (yocto: r[col][row]); trace(H_u M) = 2 u.M u - trace M.
       double m[3][3];
       for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
           m[i][j] = 0;
-          for (int k = 0; k < 3; k++) m[i][j] += r[k][i] * (double)ICO_GROUP_NUM[g][3 * k + j] / ICO_GROUP_DENOM;
+          for (int k = 0; k < 3; k++) m[i][j] += r[k][i] * (double)MIRROR_Q_NUM[g][3 * k + j] / MIRROR_Q_DENOM;
         }
       }
       double umu = 0, trm = 0;

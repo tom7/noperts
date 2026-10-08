@@ -52,7 +52,7 @@ namespace {
 
 struct Args {
   std::vector<int> triangles;
-  std::vector<int> charts = {0, 1, 2};
+  std::vector<int> charts = {0, 1, 2, 3};
   int threads = 0;
   int commit_depth = 6;
   int64_t subtree_budget = 200000;
@@ -218,7 +218,7 @@ int main(int argc, char **argv) {
   std::deque<JobState> states;
   std::vector<WorkItem> items;
   for (int chart : args.charts) {
-    CHECK(chart >= 0 && chart <= 2) << "chart 3 is a fixed table in Lean";
+    CHECK(chart >= 0 && chart <= 3) << "chart " << chart;
     std::filesystem::create_directories(std::format("{}/c{}", args.out_dir, chart));
     for (int t : args.triangles) {
       JobState &s = states.emplace_back();

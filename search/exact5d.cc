@@ -1,7 +1,7 @@
 #include "exact5d.h"
 
 #include "symmetry_neighbors.h"
-#include "ico_group.h"
+#include "mirror_q.h"
 #include "tie_normals.h"
 
 #include <array>
@@ -693,9 +693,10 @@ Q IcoPruneLower(const Interval5 &iv, int chart, int n) {
   return BigRat::Max(tight.center - tight.radius, BernsteinLower(vars, q));
 }
 
-// |G - G~| < 10^-12 per entry and |Num_ij| <= 1 + |w|^2 <= 4 on the bounded
-// region, so the rounding changes the quadratic by less than 36 * 10^-12.
-Q IcoPruneAllowance() { return Q(36, SYMMETRY_NEIGHBOR_DENOM); }
+// Rounded tables (the snub/DH neighbors): |G - G~| < 10^-12 per entry and
+// |Num_ij| <= 1 + |w|^2 <= 4 on the bounded region, so the rounding changes
+// the quadratic by less than 36 * 10^-12. Exact tables (K's C3): 0.
+Q IcoPruneAllowance() { return SYMMETRY_NEIGHBOR_EXACT ? Q(0) : Q(36, SYMMETRY_NEIGHBOR_DENOM); }
 
 bool IcoPruneValid(const Interval5 &iv, int chart, int n) {
   return IcoPruneAllowance() < IcoPruneLower(iv, chart, n);
@@ -703,8 +704,8 @@ bool IcoPruneValid(const Interval5 &iv, int chart, int n) {
 
 namespace {
 Quad3 HalfTurnCoefficientQuadratic(const TriangleQ &tri, int chart, int g, int c, int d) {
-  CHECK(g >= 0 && g < ICO_GROUP_SIZE && c >= 0 && c < 3 && d >= 0 && d < 3);
-  auto G = [g](int i, int j) { return Q(ICO_GROUP_NUM[g][3 * i + j], ICO_GROUP_DENOM); };
+  CHECK(g >= 0 && g < MIRROR_Q_SIZE && c >= 0 && c < 3 && d >= 0 && d < 3);
+  auto G = [g](int i, int j) { return Q(MIRROR_Q_NUM[g][3 * i + j], MIRROR_Q_DENOM); };
   const VecQ &pc = tri[c], &pd = tri[d];
   VecQ gpc, gpd;
   for (int k = 0; k < 3; k++) {
@@ -730,14 +731,21 @@ Q HalfTurnPruneLower(const Interval5 &iv, const TriangleQ &tri, int chart, int g
   return BigRat::Max(tight.center - tight.radius, BernsteinLower(vars, q));
 }
 
-// |G - G~| <= 5 * 10^-13 per entry, so |(G - G~) P|_k <= 5 * 10^-13 |P|_1, and
-// |N_ik| <= 1 + |w|^2 <= 4 on the bounded region; summing over i, k, b_cd
-// changes by at most 4 * 5 * 10^-13 * (6 |P_c|_1 |P_d|_1 + 9 |P_c . P_d|)
+// For a table rounded to 10^-12 (the DH's icosahedral group, its tie
+// half-turns): |G - G~| <= 5 * 10^-13 per entry, so
+// |(G - G~) P|_k <= 5 * 10^-13 |P|_1, and |N_ik| <= 1 + |w|^2 <= 4 on the
+// bounded region; summing over i, k, b_cd changes by at most
+// 4 * 5 * 10^-13 * (6 |P_c|_1 |P_d|_1 + 9 |P_c . P_d|)
 // (Lean: AtlasHalfTurnPrune.allowance).
-Q HalfTurnPruneAllowance(const TriangleQ &tri, int c, int d) {
+static Q RoundedTableAllowance(const TriangleQ &tri, int c, int d) {
   auto l1 = [](const VecQ &p) { return BigRat::Abs(p[0]) + BigRat::Abs(p[1]) + BigRat::Abs(p[2]); };
   const Q dot = tri[c][0] * tri[d][0] + tri[c][1] * tri[d][1] + tri[c][2] * tri[d][2];
   return Q(2, 1000000000000) * (Q(6) * l1(tri[c]) * l1(tri[d]) + Q(9) * BigRat::Abs(dot));
+}
+
+// K's Q table is exact (mirror_q.h): no allowance.
+Q HalfTurnPruneAllowance(const TriangleQ &tri, int c, int d) {
+  return MIRROR_Q_EXACT ? Q(0) : RoundedTableAllowance(tri, c, d);
 }
 
 bool HalfTurnPruneValid(const Interval5 &iv, const TriangleQ &tri, int chart, int g) {
@@ -823,7 +831,7 @@ bool CapLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, const Ca
 bool TieLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, int n, const Q &rho) {
   for (int c = 0; c < 3; c++) {
     for (int d = c; d < 3; d++) {
-      if (!(HalfTurnPruneAllowance(tri, c, d) < TieLeafLower(iv, tri, chart, n, rho, c, d))) return false;
+      if (!(RoundedTableAllowance(tri, c, d) < TieLeafLower(iv, tri, chart, n, rho, c, d))) return false;
     }
   }
   return true;
@@ -844,13 +852,12 @@ bool IdentityTubeValid(const Interval5 &iv, const Q &r) {
 }
 
 Interval5 RestrictedRootInterval(int chart) {
+  // K (C3v, no fivefold narrowing): every chart is searched over the whole
+  // root interval (AtlasPose.rootInterval), the Cayley cube [-1, 1]^3.
+  CHECK(chart >= 0 && chart <= 3);
   Interval5 iv;
   iv.min = {Q(0), Q(0), Q(-1), Q(-1), Q(-1)};
   iv.max = {Q(8, 5), Q(4), Q(1), Q(1), Q(1)};
-  static constexpr int kCoordinate[4] = {4, 3, 2, 4};
-  const Q width = chart == 3 ? Q(1) : Q(1, 3);
-  iv.min[kCoordinate[chart]] = -width;
-  iv.max[kCoordinate[chart]] = width;
   return iv;
 }
 
