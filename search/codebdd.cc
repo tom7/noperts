@@ -427,6 +427,10 @@ void ExportRationalVertices(const std::vector<BigVecQ3> &verts, std::string_view
     h_out << "#include \"bignum/big.h\"\n";
     h_out << "#include \"bignum/big-vec.h\"\n\n";
     h_out << "inline constexpr int NUM_VERTICES_MODEL = " << n << ";\n\n";
+    h_out << "// Whether these rationals are the solid itself (no C5 seeds: no rounded\n";
+    h_out << "// model class around them), so the certificates need no model error terms\n";
+    h_out << "// (tightVertexErrorQ = supportError = 0) and exact support ties are allowed.\n";
+    h_out << "inline constexpr bool MODEL_EXACT = " << (num_seeds == 0 ? "true" : "false") << ";\n\n";
     h_out << "inline constexpr double VERTICES_MODEL[NUM_VERTICES_MODEL][3] = {\n";
     for (size_t i = 0; i < verts.size(); i++) {
       h_out << std::format("  {{ {: .17e}, {: .17e}, {: .17e} }}{}\n",

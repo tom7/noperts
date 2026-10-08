@@ -7,6 +7,11 @@
 
 inline constexpr int NUM_VERTICES_MODEL = 7;
 
+// Whether these rationals are the solid itself (no C5 seeds: no rounded
+// model class around them), so the certificates need no model error terms
+// (tightVertexErrorQ = supportError = 0) and exact support ties are allowed.
+inline constexpr bool MODEL_EXACT = true;
+
 inline constexpr double VERTICES_MODEL[NUM_VERTICES_MODEL][3] = {
   { -8.97062301635742188e-01,  3.12472343444824219e-01,  3.12472343444824219e-01 },
   {  3.12472343444824219e-01, -8.97062301635742188e-01,  3.12472343444824219e-01 },

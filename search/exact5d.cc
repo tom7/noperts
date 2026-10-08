@@ -239,7 +239,8 @@ Q BernsteinLower(const std::array<RatBall, 3> &vars, const Quad3 &q) {
   return best;
 }
 
-Q TightVertexErrorQ() { return Q(6, 10000000000000000LL); }
+// (0 for an exact model, MODEL_EXACT: the solid is the rational model.)
+Q TightVertexErrorQ() { return MODEL_EXACT ? Q(0) : Q(6, 10000000000000000LL); }
 Q SupportError() { return Q(10) * TightVertexErrorQ(); }
 
 VecQ EdgeQ(const AxisCertificate &cert, int i) {

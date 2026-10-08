@@ -197,7 +197,10 @@ static bool AuditAxis(const TriangleQ &tri, ContactInfo contacts[3], AxisCertifi
   }
 
   BigVecQ3 w_coeffs[3] = {coeff0, coeff1, coeff2};
-  BigRat support_error(6, 1000000000000000LL); // 6 / 10^15
+  // 6 / 10^15 (Lean's supportError); 0 for an exact model (MODEL_EXACT), where
+  // exact support ties (e.g. at a view along an edge, whose endpoints
+  // coincide in projection) are allowed. Weights stay strictly positive.
+  const BigRat support_error = MODEL_EXACT ? BigRat(0) : BigRat(6, 1000000000000000LL);
   BigRat weight_upper[3];
   BigRat sum_weight_upper(0);
 
@@ -209,7 +212,7 @@ static bool AuditAxis(const TriangleQ &tri, ContactInfo contacts[3], AxisCertifi
       if (val > w_max) w_max = val;
       if (val < w_min) w_min = val;
     }
-    if (w_min < support_error) {
+    if (w_min < support_error || !(w_min > BigRat(0))) {
       if (fail_reason) *fail_reason = StringPrintf("w_min < support_error (m=%d, w_min=%s)", m, w_min.ToString().c_str());
       return false;
     }

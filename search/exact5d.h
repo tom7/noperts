@@ -101,7 +101,7 @@ struct MixedBox {
 };
 
 // The constants of the Lean checker.
-Q TightVertexErrorQ();  // 6 / 10^16
+Q TightVertexErrorQ();  // 6 / 10^16 (0 for an exact model, MODEL_EXACT)
 Q SupportError();       // 10 * tightVertexErrorQ
 
 // Per-box quantities (names follow the Lean Box.* definitions).

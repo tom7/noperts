@@ -214,7 +214,9 @@ static bool FindBestCageForTriangle(
   center = center / clen;
 
   std::vector<CandidateTriple> candidates;
-  GenerateCandidatesForView(center, tri, 8, true, 1e-13, &candidates);
+  // (An exact model admits exact support ties, which the double screen must
+  // not reject: a slightly negative error lets them through to the audit.)
+  GenerateCandidatesForView(center, tri, 8, true, MODEL_EXACT ? -1e-12 : 1e-13, &candidates);
   if (candidates.size() < 4) return false;
 
   std::vector<vec3> pts;
