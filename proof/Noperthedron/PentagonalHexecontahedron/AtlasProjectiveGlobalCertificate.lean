@@ -617,7 +617,7 @@ instance (box : Box) : Coe box.Valid box.Admissible :=
     box.certificate.supportIndex box.localShell i = box.certificate.index i := by
   unfold AxisCertificate.supportIndex Box.localShell symmetryAction
   have horbit :
-      (⟨((orbitIndex (box.certificate.index i)).val + (0 : Fin 5).val) % 5,
+      (⟨((orbitIndex (box.certificate.index i)).val + (0 : Fin 3).val) % 3,
         Nat.mod_lt _ (by omega)⟩ : OrbitIndex) =
         orbitIndex (box.certificate.index i) := by
     apply Fin.ext

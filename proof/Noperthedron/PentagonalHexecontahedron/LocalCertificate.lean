@@ -68,12 +68,17 @@ def crossQ (u v : Fin 3 → ℚ) : Fin 3 → ℚ :=
     u 2 * v 0 - u 0 * v 2,
     u 0 * v 1 - u 1 * v 0]
 
-/-- Rational Taylor approximation to the exact fivefold symmetry matrix. -/
-def symmetryMatrixQ (g : OrbitIndex) : Matrix (Fin 3) (Fin 3) ℚ :=
-  let q := 2 * Noperthedron.piQ * reducedOrbit g / 5
-  !![RationalApprox.cosℚ q, -RationalApprox.sinℚ q, 0;
-     RationalApprox.sinℚ q,  RationalApprox.cosℚ q, 0;
-     0, 0, 1]
+/-- The exact C3 symmetry matrix `Nopert7.c3Mat g`, over ℚ
+(`symmetryMatrixQ_map`). -/
+def symmetryMatrixQ : OrbitIndex → Matrix (Fin 3) (Fin 3) ℚ
+  | 0 => 1
+  | 1 => !![0, 1, 0; 0, 0, 1; 1, 0, 0]
+  | 2 => !![0, 0, 1; 1, 0, 0; 0, 1, 0]
+
+theorem symmetryMatrixQ_map (g : OrbitIndex) :
+    ((symmetryMatrixQ g).map fun x => (x : ℝ)) = Nopert7.c3Mat g := by
+  fin_cases g <;> ext i j <;> fin_cases i <;> fin_cases j <;>
+    simp [symmetryMatrixQ, Nopert7.c3Mat]
 
 noncomputable def symmetryQCLM (g : OrbitIndex) : ℝ³ →L[ℝ] ℝ³ :=
   ((symmetryMatrixQ g).map fun x => (x : ℝ)).toEuclideanLin.toContinuousLinearMap
@@ -166,51 +171,18 @@ def Box.εα (box : Box) : ℚ :=
 def Box.eulerRadius (box : Box) : ℚ :=
   box.εα + box.εφ₁ + box.εθ₁ + box.εφ₂ + box.εθ₂
 
-def symmetryError : ℚ := κℚ / 2
+/-- The symmetry matrices are exact. -/
+def symmetryError : ℚ := 0
 
 theorem symmetryQCLM_difference_norm_bounded (g : OrbitIndex) :
     ‖Noperthedron.Atlas.so3CLM (symmetry g) - symmetryQCLM g‖ ≤
       (symmetryError : ℝ) := by
-  let A : Matrix (Fin 3) (Fin 3) ℝ :=
-    (symmetry g).val - (symmetryMatrixQ g).map fun x => (x : ℝ)
-  have hclm :
-      Noperthedron.Atlas.so3CLM (symmetry g) - symmetryQCLM g =
-        A.toEuclideanLin.toContinuousLinearMap := by
+  have hclm : Noperthedron.Atlas.so3CLM (symmetry g) = symmetryQCLM g := by
     ext v
-    simp only [Noperthedron.Atlas.so3CLM, symmetryQCLM, A,
-      ContinuousLinearMap.sub_apply, LinearMap.coe_toContinuousLinearMap',
-      Matrix.toEuclideanLin_apply, Matrix.sub_mulVec]
+    simp only [Noperthedron.Atlas.so3CLM, symmetryQCLM, symmetryMatrixQ_map]
     rfl
-  rw [hclm]
-  apply Noperthedron.BalancedSupport.matrix_opNorm_le_of_sum_sq_le
-  · norm_num [symmetryError, RationalApprox.κ, RationalApprox.κℚ]
-  · have hc := cos_symmetry_combined_error g
-    have hs := sin_symmetry_combined_error g
-    have hsum :
-        ∑ i, ∑ j, A i j ^ 2 =
-          2 * (((RationalApprox.cosℚ
-              (2 * Noperthedron.piQ * reducedOrbit g / 5) : ℚ) : ℝ) -
-                Real.cos (2 * Real.pi * (g : ℝ) / 5)) ^ 2 +
-          2 * (((RationalApprox.sinℚ
-              (2 * Noperthedron.piQ * reducedOrbit g / 5) : ℚ) : ℝ) -
-                Real.sin (2 * Real.pi * (g : ℝ) / 5)) ^ 2 := by
-      simp [A, symmetry, symmetryMatrixQ, Noperthedron.Atlas.so3CLM,
-        Rz_mat, Fin.sum_univ_three]
-      ring
-    rw [hsum]
-    let ce : ℝ := ((RationalApprox.cosℚ
-      (2 * Noperthedron.piQ * reducedOrbit g / 5) : ℚ) : ℝ) -
-        Real.cos (2 * Real.pi * (g : ℝ) / 5)
-    let se : ℝ := ((RationalApprox.sinℚ
-      (2 * Noperthedron.piQ * reducedOrbit g / 5) : ℚ) : ℝ) -
-        Real.sin (2 * Real.pi * (g : ℝ) / 5)
-    have hc2 : ce ^ 2 ≤ (RationalApprox.κ / 6) ^ 2 :=
-      sq_le_sq' (abs_le.mp hc).1 (abs_le.mp hc).2
-    have hs2 : se ^ 2 ≤ (RationalApprox.κ / 6) ^ 2 :=
-      sq_le_sq' (abs_le.mp hs).1 (abs_le.mp hs).2
-    change 2 * ce ^ 2 + 2 * se ^ 2 ≤ _
-    norm_num [symmetryError, RationalApprox.κ, RationalApprox.κℚ] at ⊢ hc2 hs2
-    nlinarith
+  rw [hclm, sub_self, norm_zero]
+  norm_num [symmetryError]
 
 def Box.mismatchRadius (box : Box) : ℚ :=
   RationalApprox.sqrtℚUp16 box.mismatchFrobeniusSq +

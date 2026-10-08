@@ -156,10 +156,41 @@ def AtlasPose.ofPose (euler : Pose ℝ) (x y z : ℝ) : AtlasPose ℝ :=
 def AtlasPose.CayleyBounded (p : AtlasPose ℝ) : Prop :=
   p.x ^ 2 + p.y ^ 2 + p.z ^ 2 ≤ 3
 
-/-- The exact outer-view wedge inherited from the symmetry-reduced Euler
-representative. -/
+/-- The exact outer-view wedge covered by the atlas (azimuth in `[0, 2π/5]`;
+the C3v view domain has azimuth in `[0, π/4]`). -/
 def AtlasPose.InViewWedge (p : AtlasPose ℝ) : Prop :=
   p.θ ∈ Set.Icc 0 (2 * Real.pi / 5) ∧ p.φ ∈ Set.Icc 0 Real.pi
+
+/-- Bounds for the corner `2π/5` of the view wedge (moved here from
+`AtlasFundamentalPrune`, whose fivefold cell no longer applies). -/
+theorem cos_two_pi_div_five_bounds :
+    |Real.cos (2 * Real.pi / 5) - (309017 / 1000000 : ℝ)| ≤
+      1 / 1000000 := by
+  have hsqrt0 : 0 ≤ Real.sqrt 5 := Real.sqrt_nonneg _
+  have hsqrtSq : (Real.sqrt 5) ^ 2 = 5 := by norm_num
+  have hsqrtLower : (2236067 / 1000000 : ℝ) ≤ Real.sqrt 5 := by
+    nlinarith [sq_nonneg (Real.sqrt 5 - 2236067 / 1000000)]
+  have hsqrtUpper : Real.sqrt 5 ≤ (2236069 / 1000000 : ℝ) := by
+    nlinarith [sq_nonneg (Real.sqrt 5 - 2236069 / 1000000)]
+  rw [show 2 * Real.pi / 5 = 2 * (Real.pi / 5) by ring,
+    Real.cos_two_mul, Real.cos_pi_div_five]
+  rw [abs_le]
+  constructor <;> nlinarith
+
+theorem sin_two_pi_div_five_bounds :
+    |Real.sin (2 * Real.pi / 5) - (951057 / 1000000 : ℝ)| ≤
+      1 / 1000000 := by
+  have hangle0 : 0 < 2 * Real.pi / 5 := by positivity
+  have hanglePi : 2 * Real.pi / 5 < Real.pi := by
+    nlinarith [Real.pi_pos]
+  have hsin0 : 0 < Real.sin (2 * Real.pi / 5) :=
+    Real.sin_pos_of_pos_of_lt_pi hangle0 hanglePi
+  have hcosBounds := cos_two_pi_div_five_bounds
+  rw [abs_le] at hcosBounds ⊢
+  have htrig := Real.sin_sq_add_cos_sq (2 * Real.pi / 5)
+  constructor <;> nlinarith [sq_nonneg
+    (Real.sin (2 * Real.pi / 5) - 951056 / 1000000),
+    sq_nonneg (Real.sin (2 * Real.pi / 5) - 951058 / 1000000)]
 
 /-- The unoriented viewing line is represented by its upper-hemisphere
 normal. -/

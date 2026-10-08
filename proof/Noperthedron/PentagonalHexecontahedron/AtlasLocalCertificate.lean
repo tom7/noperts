@@ -10,7 +10,7 @@ public import Noperthedron.PentagonalHexecontahedron.LocalCertificate
 
 The outer support geometry is inherited from the established Euler local
 certificate on the equality stratum.  Proximity of the relative rotation to
-one of the five exact symmetries is checked directly in Cayley coordinates:
+one of the three exact C3 symmetries is checked directly in Cayley coordinates:
 each entry of the denominator-cleared mismatch is a rational quadratic.
 -/
 

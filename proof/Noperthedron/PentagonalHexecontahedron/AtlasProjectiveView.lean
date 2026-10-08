@@ -1,7 +1,8 @@
 module
 
 public import Noperthedron.PentagonalHexecontahedron.AtlasEdgeCertificate
-public import Noperthedron.PentagonalHexecontahedron.AtlasFundamentalPrune
+public import Noperthedron.PentagonalHexecontahedron.FundamentalDomain
+public import Noperthedron.Atlas.QuadraticBernstein
 public import Noperthedron.Atlas.ProjectiveView
 
 @[expose] public section
@@ -40,13 +41,13 @@ def signedBasis (root : Fin 8) (c : Fin 3) : Vector ℚ :=
 def rootTriangle (root : Fin 8) : Triangle ℚ :=
   fun c => signedBasis root c
 
-/-- A rational projective triangle containing the exact upper fivefold
+/-- A rational projective triangle containing the exact upper
 viewing wedge.  Its slanted vertex has slope `31/10`, just above
 `tan(2π/5)`. -/
 def upperWedgeTriangle : Triangle ℚ :=
   ![![1, 0, 0], ![10 / 41, 31 / 41, 0], ![0, 0, 1]]
 
-/-- The two signed projective roots that meet the exact fivefold-reduced
+/-- The two signed projective roots that meet the exact
 viewing wedge. -/
 def wedgeRoot (root : Fin 2) : Fin 8 :=
   ⟨root.val, by omega⟩
@@ -164,8 +165,8 @@ theorem viewVector_second_le_slope_first {p : AtlasPose ℝ}
     · exact sub_nonneg.mpr hθ.2
     · nlinarith [hθ.1, hangleHalf, Real.pi_pos]
   rw [Real.sin_sub] at hdiff
-  have hc := AtlasFundamentalPrune.cos_two_pi_div_five_bounds
-  have hs := AtlasFundamentalPrune.sin_two_pi_div_five_bounds
+  have hc := cos_two_pi_div_five_bounds
+  have hs := sin_two_pi_div_five_bounds
   change |Real.cos angle - (309017 / 1000000 : ℝ)| ≤
     1 / 1000000 at hc
   change |Real.sin angle - (951057 / 1000000 : ℝ)| ≤
@@ -184,7 +185,7 @@ theorem viewVector_second_le_slope_first {p : AtlasPose ℝ}
   simpa [viewVector, mul_assoc, mul_left_comm, mul_comm] using
     mul_le_mul_of_nonneg_right htrig hsinφ
 
-/-- In the upper representative of the exact fivefold wedge, the single
+/-- In the upper representative of the exact view wedge, the single
 signed root `+++` contains the viewing direction. -/
 theorem upperView_mem_root (p : AtlasPose ℝ)
     (hview : p.InViewWedge) (hupper : p.InUpperView) :
@@ -199,7 +200,7 @@ theorem upperView_mem_root (p : AtlasPose ℝ)
   exact ⟨one_le_viewScale_of_sign hsign,
     normalizedView_mem_root_of_sign hsign⟩
 
-/-- The upper fivefold view belongs to the sharper rational wedge triangle. -/
+/-- The upper wedge view belongs to the sharper rational wedge triangle. -/
 theorem upperView_mem_wedgeTriangle (p : AtlasPose ℝ)
     (hview : p.InViewWedge) (hupper : p.InUpperView) :
     1 ≤ viewScale 0 p ∧
@@ -253,7 +254,7 @@ theorem upperView_mem_wedgeTriangle (p : AtlasPose ℝ)
       simp [weight, u, upperWedgeTriangle, affinePoint, toReal,
         Fin.sum_univ_three] <;> ring_nf
 
-/-- Every view in the exact fivefold-reduced wedge belongs to one of the
+/-- Every view in the exact view wedge belongs to one of the
 two projective roots `+++` and `++-`. -/
 theorem exists_wedgeRoot (p : AtlasPose ℝ) (hview : p.InViewWedge) :
     ∃ root : Fin 2,

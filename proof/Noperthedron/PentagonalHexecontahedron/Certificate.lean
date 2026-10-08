@@ -11,7 +11,7 @@ public import Noperthedron.PentagonalHexecontahedron.Approximation
 
 The checker is the generic rational balanced-support checker instantiated
 with the printed STL coordinates.  `Approximation.lean` connects those
-rational coordinates to the intended exact fivefold-symmetric vertices.
+rational coordinates to the exact C3-symmetric vertices.
 -/
 
 namespace Noperthedron.PentagonalHexecontahedron.Certificate
