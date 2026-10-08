@@ -141,4 +141,70 @@ theorem view_mirrorScene (p : MatrixPose) (i : Fin 3) :
   simp [MatrixPose.view, MatrixPose.mirrorScene, halfTurnZ, mirrorQ, halfTurnZMat, Matrix.mul_apply,
     Fin.sum_univ_three, Matrix.vecMul, dotProduct]
 
+/-- The candidate views: ±(c_jᵀ u) (not b) or ±(Q_jᵀ u) (b), negated if s. -/
+noncomputable def candView (u : Fin 3 → ℝ) (s b : Bool) (j : Fin 3) : Fin 3 → ℝ :=
+  fun l => (if s then -1 else 1) * ∑ m, u m * (if b then mirrorQMat j else c3Mat j) m l
+
+/-- Some candidate view lies in the domain. -/
+theorem exists_candView_domain (u : Fin 3 → ℝ) : ∃ s b j, InC3vViewDomain (candView u s b j) := by
+  rcases le_total (u 0) (u 1) with h01 | h01 <;> rcases le_total (u 1) (u 2) with h12 | h12 <;>
+    rcases le_total (u 0) (u 2) with h02 | h02 <;> rcases le_total 0 (u 0 + u 1 + u 2) with hs | hs
+  all_goals first
+    | (refine ⟨false, false, 0, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
+        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
+    | (refine ⟨false, false, 1, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
+        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
+    | (refine ⟨false, false, 2, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
+        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
+    | (refine ⟨true, true, 0, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
+        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
+    | (refine ⟨true, true, 1, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
+        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
+    | (refine ⟨true, true, 2, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
+        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
+    | (refine ⟨true, false, 0, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
+        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
+    | (refine ⟨true, false, 1, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
+        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
+    | (refine ⟨true, false, 2, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
+        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
+    | (refine ⟨false, true, 0, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
+        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
+    | (refine ⟨false, true, 1, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
+        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
+    | (refine ⟨false, true, 2, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
+        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
+
+theorem view_viewAntipode (p : MatrixPose) : p.viewAntipode.view = -p.view := by
+  funext k
+  simp [MatrixPose.view, MatrixPose.viewAntipode, MatrixPose.viewAntipodeRotation,
+    Matrix.mul_apply, Rx_mat, Fin.sum_univ_three]
+
+/-- The candidate poses, realizing `candView`. -/
+noncomputable def candPose (p : MatrixPose) (s b : Bool) (j : Fin 3) : MatrixPose :=
+  let q := if b then p.mirrorScene j else p.bothRightC3 j
+  if s then q.viewAntipode else q
+
+theorem view_candPose (p : MatrixPose) (s b : Bool) (j : Fin 3) :
+    (candPose p s b j).view = candView p.view s b j := by
+  funext l
+  cases s <;> cases b <;>
+    simp [candPose, candView, view_viewAntipode, view_mirrorScene, view_bothRightC3]
+
+theorem RupertPose_candPose_iff (S : Set ℝ³) (hc : ∀ k, (c3Mat k).toEuclideanLin '' S = S)
+    (hm : ∀ i, (fun v => -((mirrorQMat i).toEuclideanLin v)) '' S = S)
+    (p : MatrixPose) (s b : Bool) (j : Fin 3) :
+    RupertPose (candPose p s b j) S ↔ RupertPose p S := by
+  cases s <;> cases b <;>
+    simp only [candPose, Bool.false_eq_true, if_false, if_true, MatrixPose.RupertPose_viewAntipode_iff,
+      RupertPose_mirrorScene_iff S _ _ (hm j), RupertPose_bothRightC3_iff S _ _ (hc j)]
+
+/-- Every pose of a C3v solid is equivalent to one whose view lies in the
+domain. -/
+theorem exists_viewDomain_pose (S : Set ℝ³) (hc : ∀ k, (c3Mat k).toEuclideanLin '' S = S)
+    (hm : ∀ i, (fun v => -((mirrorQMat i).toEuclideanLin v)) '' S = S) (p : MatrixPose) :
+    ∃ p' : MatrixPose, InC3vViewDomain p'.view ∧ (RupertPose p' S ↔ RupertPose p S) := by
+  obtain ⟨s, b, j, h⟩ := exists_candView_domain p.view
+  exact ⟨candPose p s b j, by rwa [view_candPose], RupertPose_candPose_iff S hc hm p s b j⟩
+
 end Noperthedron.Nopert7
