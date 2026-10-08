@@ -21,10 +21,11 @@ third row of the outer rotation):
 
 Together they reach every ±P u with P a coordinate permutation, so every
 pose is equivalent to one whose view lies in the domain
-u₀ ≥ u₁ ≥ u₂, u₀ + u₁ + u₂ ≥ 0 (`InC3vViewDomain`): the image maximizing
-f(v) = 3 v₀ + 2 v₁ + v₂ is sorted (a transposition of an unsorted pair would
-increase f) and has a nonnegative sum (negating and reversing would
-increase f by 4 times the sum's absolute value).
+u₀ ≥ u₁ ≥ 0, u₁ ≥ u₂ (`InC3vViewDomain`, the cone over (1,1,1), (1,0,0) and
+(0,0,−1), 1/12 of the sphere): sort u, and if the middle coordinate is
+negative apply u ↦ −(u₂, u₁, u₀). The domain lies in the projective roots 0
+and 1, its Euler azimuth is in [0, π/4], and it contains one mirror normal,
+(1,0,−1)/√2, on its boundary.
 -/
 
 namespace Noperthedron.Nopert7
@@ -32,8 +33,8 @@ namespace Noperthedron.Nopert7
 open scoped Matrix
 open Noperthedron.PentagonalHexecontahedron
 
-/-- The view domain: sorted, with a nonnegative sum. -/
-def InC3vViewDomain (u : Fin 3 → ℝ) : Prop := u 1 ≤ u 0 ∧ u 2 ≤ u 1 ∧ 0 ≤ u 0 + u 1 + u 2
+/-- The view domain: u₀ ≥ u₁ ≥ 0 and u₁ ≥ u₂. -/
+def InC3vViewDomain (u : Fin 3 → ℝ) : Prop := u 1 ≤ u 0 ∧ 0 ≤ u 1 ∧ u 2 ≤ u 1
 
 noncomputable def _root_.MatrixPose.bothRightC3 (p : MatrixPose) (k : Fin 3) : MatrixPose where
   innerRot := p.innerRot * c3SO3 k
@@ -147,38 +148,101 @@ noncomputable def candView (u : Fin 3 → ℝ) (s b : Bool) (j : Fin 3) : Fin 3 
 
 /-- Some candidate view lies in the domain. -/
 theorem exists_candView_domain (u : Fin 3 → ℝ) : ∃ s b j, InC3vViewDomain (candView u s b j) := by
-  rcases le_total (u 0) (u 1) with h01 | h01 <;> rcases le_total (u 1) (u 2) with h12 | h12 <;>
-    rcases le_total (u 0) (u 2) with h02 | h02 <;> rcases le_total 0 (u 0 + u 1 + u 2) with hs | hs
-  all_goals first
-    | (refine ⟨false, false, 0, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
-        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
-    | (refine ⟨false, false, 1, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
-        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
-    | (refine ⟨false, false, 2, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
-        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
-    | (refine ⟨true, true, 0, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
-        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
-    | (refine ⟨true, true, 1, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
-        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
-    | (refine ⟨true, true, 2, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
-        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
-    | (refine ⟨true, false, 0, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
-        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
-    | (refine ⟨true, false, 1, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
-        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
-    | (refine ⟨true, false, 2, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
-        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
-    | (refine ⟨false, true, 0, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
-        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
-    | (refine ⟨false, true, 1, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
-        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
-    | (refine ⟨false, true, 2, ?_⟩; simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat,
-        Fin.sum_univ_three]; simp; refine ⟨?_, ?_, ?_⟩ <;> linarith)
-
-theorem view_viewAntipode (p : MatrixPose) : p.viewAntipode.view = -p.view := by
-  funext k
-  simp [MatrixPose.view, MatrixPose.viewAntipode, MatrixPose.viewAntipodeRotation,
-    Matrix.mul_apply, Rx_mat, Fin.sum_univ_three]
+  rcases le_total (u 0) (u 1) with h01 | h01
+  · rcases le_total (u 1) (u 2) with h12 | h12
+    · rcases le_total (u 0) (u 2) with h02 | h02
+      · rcases le_total 0 (u 1) with hm | hm
+        · exact ⟨true, true, 1, by
+            simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat, Fin.sum_univ_three]
+            simp
+            all_goals (try constructorm* _ ∧ _)
+            all_goals linarith⟩
+        · exact ⟨true, false, 0, by
+            simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat, Fin.sum_univ_three]
+            simp
+            all_goals (try constructorm* _ ∧ _)
+            all_goals linarith⟩
+      · rcases le_total 0 (u 1) with hm | hm
+        · exact ⟨false, false, 0, by
+            simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat, Fin.sum_univ_three]
+            simp
+            all_goals (try constructorm* _ ∧ _)
+            all_goals linarith⟩
+        · exact ⟨false, true, 1, by
+            simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat, Fin.sum_univ_three]
+            simp
+            all_goals (try constructorm* _ ∧ _)
+            all_goals linarith⟩
+    · rcases le_total (u 0) (u 2) with h02 | h02
+      · rcases le_total 0 (u 2) with hm | hm
+        · exact ⟨false, false, 2, by
+            simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat, Fin.sum_univ_three]
+            simp
+            all_goals (try constructorm* _ ∧ _)
+            all_goals linarith⟩
+        · exact ⟨false, true, 0, by
+            simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat, Fin.sum_univ_three]
+            simp
+            all_goals (try constructorm* _ ∧ _)
+            all_goals linarith⟩
+      · rcases le_total 0 (u 0) with hm | hm
+        · exact ⟨true, true, 2, by
+            simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat, Fin.sum_univ_three]
+            simp
+            all_goals (try constructorm* _ ∧ _)
+            all_goals linarith⟩
+        · exact ⟨true, false, 1, by
+            simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat, Fin.sum_univ_three]
+            simp
+            all_goals (try constructorm* _ ∧ _)
+            all_goals linarith⟩
+  · rcases le_total (u 1) (u 2) with h12 | h12
+    · rcases le_total (u 0) (u 2) with h02 | h02
+      · rcases le_total 0 (u 0) with hm | hm
+        · exact ⟨false, false, 1, by
+            simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat, Fin.sum_univ_three]
+            simp
+            all_goals (try constructorm* _ ∧ _)
+            all_goals linarith⟩
+        · exact ⟨false, true, 2, by
+            simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat, Fin.sum_univ_three]
+            simp
+            all_goals (try constructorm* _ ∧ _)
+            all_goals linarith⟩
+      · rcases le_total 0 (u 2) with hm | hm
+        · exact ⟨true, true, 0, by
+            simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat, Fin.sum_univ_three]
+            simp
+            all_goals (try constructorm* _ ∧ _)
+            all_goals linarith⟩
+        · exact ⟨true, false, 2, by
+            simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat, Fin.sum_univ_three]
+            simp
+            all_goals (try constructorm* _ ∧ _)
+            all_goals linarith⟩
+    · rcases le_total (u 0) (u 2) with h02 | h02
+      · rcases le_total 0 (u 1) with hm | hm
+        · exact ⟨false, false, 0, by
+            simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat, Fin.sum_univ_three]
+            simp
+            all_goals (try constructorm* _ ∧ _)
+            all_goals linarith⟩
+        · exact ⟨false, true, 1, by
+            simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat, Fin.sum_univ_three]
+            simp
+            all_goals (try constructorm* _ ∧ _)
+            all_goals linarith⟩
+      · rcases le_total 0 (u 1) with hm | hm
+        · exact ⟨false, false, 0, by
+            simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat, Fin.sum_univ_three]
+            simp
+            all_goals (try constructorm* _ ∧ _)
+            all_goals linarith⟩
+        · exact ⟨false, true, 1, by
+            simp only [InC3vViewDomain, candView, c3Mat, mirrorQMat, mirrorMat, Fin.sum_univ_three]
+            simp
+            all_goals (try constructorm* _ ∧ _)
+            all_goals linarith⟩
 
 /-- The candidate poses, realizing `candView`. -/
 noncomputable def candPose (p : MatrixPose) (s b : Bool) (j : Fin 3) : MatrixPose :=
