@@ -27,7 +27,10 @@ root) decodes and checks the data natively and instantiates it.
   `CapRealize`, `CapCoverMain` (every cap pose is a chart point: `cap_cover`, `tie_decomp`, `realize_tie`),
   `CapBridge`, `CapTheorem`, `CapTree`, `CapCheck`, `CapCert` (certificate check ⇒ every chart point good ⇒
   `CapCert.claim`), `CapClaim` (images s·g of a cap), `CapRow` (`Row.capLeaf`, tag 16), `DHCapData` (generated),
-  `DHCaps` (`capsHold_of_certs`).
+  `DHCaps` (`capsHold_of_certs`). On branch `nopert7` the stack is re-targeted to the 7-vertex solid's cap
+  (`Nopert7/Caps`, `CapsNative`, `CapLeaf`): isotropic (u0) charts only, an orthogonal unnormalized rational
+  frame, two-sided width witnesses (k, k', c) instead of central symmetry, no icosahedral images; `CapRow`,
+  `DHCapData`, `DHCaps` (DH-only) no longer build.
 - **Tie tubes** — `TieCheck` (tie certificates ⇒ `TieClaim`), `AtlasTiePrune` (the tie row's trace bound),
   `TieRow` (`Row.tieLeaf`, tag 15; `TiesHold`), `DHTieData` (generated), `DHTies` (`tiesHold_of_certs`).
 - **Executable glue** — `DHChecks` (parallel checks with kernel bridges), `DHDecode` (untrusted decoding);

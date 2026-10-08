@@ -117,12 +117,15 @@ theorem kv_ksub (a b : KVec) : kv (ksub a b) = kv a - kv b := by
   simp only [kv, PVec.kval, ksub, Pi.sub_apply]
   rw [show IcoQ.sub = (· - ·) from rfl, IcoQ.val_sub]
 
-/-- The differences v_j − v_j' of all ordered pairs of vertices (the width witness compares
-v_k − v_k' with each of them). -/
-def pairDiffs (V : Array KVec) : Array KVec := V.flatMap fun a => V.map fun b => ksub a b
+/-- The differences v_j − v_j' of all ordered pairs of vertices, without repetitions (the width
+witness compares v_k − v_k' with each of them; the n pairs j = j' all give 0). -/
+def pairDiffs (V : Array KVec) : Array KVec :=
+  (V.toList.flatMap fun a => V.toList.map fun b => ksub a b).dedup.toArray
 
-theorem mem_pairDiffs {V : Array KVec} {a b : KVec} (ha : a ∈ V) (hb : b ∈ V) : ksub a b ∈ pairDiffs V :=
-  Array.mem_flatMap.mpr ⟨a, ha, Array.mem_map.mpr ⟨b, hb, rfl⟩⟩
+theorem mem_pairDiffs {V : Array KVec} {a b : KVec} (ha : a ∈ V) (hb : b ∈ V) : ksub a b ∈ pairDiffs V := by
+  unfold pairDiffs
+  rw [List.mem_toArray, List.mem_dedup]
+  exact List.mem_flatMap.mpr ⟨a, Array.mem_toList_iff.mpr ha, List.mem_map.mpr ⟨b, Array.mem_toList_iff.mpr hb, rfl⟩⟩
 
 /-- u × c ≠ 0 on a leaf box: |u × c|² has a positive Bernstein bound on the box. -/
 def dOkBox (st : Setup) (id : ChartId) (c : KVec) (box : Box) : Bool :=

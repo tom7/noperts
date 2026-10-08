@@ -24,28 +24,93 @@ namespace Noperthedron.Nopert7
 open Noperthedron.PentagonalHexecontahedron
 open Noperthedron.PentagonalHexecontahedron.Cap
 
-def chartPred (c : CapCert) (i : ℕ) : Bool :=
-  match c.charts[i]? with
-  | some e => chartCheck c e.1 e.2
+/-- A chart's witness cache (as in `chartCheck`). -/
+def chartCache (c : CapCert) (id : ChartId) (t : CTree) : Array (Option WitData) :=
+  (Array.range c.wits.size).map fun wi => if t.leafIds.contains wi then witData c id wi else none
+
+/-- The subtrees of a certificate tree at depth d (or its leaves above d), with their boxes. -/
+def subtrees : ℕ → CTree → Box → List (CTree × Box)
+  | 0, t, b => [(t, b)]
+  | d + 1, .split a l r, b => subtrees d l (half b a false) ++ subtrees d r (half b a true)
+  | _ + 1, t, b => [(t, b)]
+
+theorem check_subtrees (L : ℕ → Box → Bool) (P C : Box → Bool) :
+    ∀ (d : ℕ) (t : CTree) (b : Box),
+      t.check L P C b = (subtrees d t b).all (fun e => e.1.check L P C e.2)
+  | 0, t, b => by simp [subtrees]
+  | d + 1, .split a l r, b => by
+    simp only [subtrees, List.all_append, CTree.check]
+    rw [check_subtrees L P C d l, check_subtrees L P C d r]
+  | _ + 1, .leaf _, b => by simp [subtrees]
+  | _ + 1, .prune, b => by simp [subtrees]
+  | _ + 1, .cone, b => by simp [subtrees]
+  | _ + 1, .fail, b => by simp [subtrees]
+
+/-- The parallel work items: (chart index, subtree, box) for the subtrees at depth d of every chart. -/
+def parItems (c : CapCert) (d : ℕ) : List (ℕ × CTree × Box) :=
+  (List.range c.charts.length).flatMap fun i =>
+    match c.charts[i]? with
+    | some e => (subtrees d e.2 (rootBox c.st c.pr e.1)).map fun s => (i, s)
+    | none => []
+
+/-- The check of one work item, with the charts' caches computed as tasks. -/
+def itemPred (c : CapCert) (caches : Array (Task (Array (Option WitData)))) (items : Array (ℕ × CTree × Box))
+    (k : ℕ) : Bool :=
+  match items[k]? with
+  | some (i, t, b) =>
+    match c.charts[i]?, caches[i]? with
+    | some e, some ca => t.check (leafCheck c e.1 ca.get) (fun box => c.usePrune && pruneOk c.st e.1 c.Gcol box)
+        (coneOk c.st c.pr e.1) b
+    | _, _ => false
   | none => true
 
-/-- `CapCert.check` with the chart trees checked in parallel. -/
+/-- The chart conditions of `chartCheck` other than the tree. -/
+def chartHead (c : CapCert) (e : ChartId × CTree) : Bool :=
+  decide (∀ i : Fin 5, 0 ≤ (rootBox c.st c.pr e.1 i).2) && decide (e.1.axis < 3) && decide (e.1.side < 4)
+
+/-- The subtree depth of the parallel check (up to 2⁶ tasks per chart). -/
+def parDepth : ℕ := 6
+
+/-- `CapCert.check` with the charts' witness caches and the subtrees at depth `parDepth` of every
+chart checked as parallel native tasks. -/
 def capCheckPar (c : CapCert) : Bool :=
+  let caches : Array (Task (Array (Option WitData))) :=
+    c.charts.toArray.map fun e => Task.spawn fun _ => chartCache c e.1 e.2
+  let items := (parItems c parDepth).toArray
   decide (0 < c.verts.size) && c.zList.all (fun e => decide (0 < e.2)) && Cap.frameCheck c.st &&
-    (c.charts.map (·.1) == chartList c.st c.pr c.zOf) &&
-    ParallelBool.allParB (chartPred c) c.charts.length c.charts.length && c.tieCheck
+    (c.charts.map (·.1) == chartList c.st c.pr c.zOf) && c.charts.all (chartHead c) &&
+    ParallelBool.allParB (itemPred c caches items) items.size items.size && c.tieCheck
 
 theorem check_of_par (c : CapCert) (h : capCheckPar c = true) : c.check = true := by
   simp only [capCheckPar, Bool.and_eq_true] at h
-  obtain ⟨⟨⟨⟨⟨hV, hz⟩, hF⟩, hlist⟩, hpar⟩, htc⟩ := h
+  obtain ⟨⟨⟨⟨⟨⟨hV, hz⟩, hF⟩, hlist⟩, hhead⟩, hpar⟩, htc⟩ := h
   have hall := ParallelBool.all_of_parB hpar
   simp only [CapCert.check, Bool.and_eq_true]
   refine ⟨⟨⟨⟨⟨hV, hz⟩, hF⟩, hlist⟩, ?_⟩, htc⟩
   rw [List.all_eq_true]
   intro e he
   obtain ⟨i, hi, rfl⟩ := List.getElem_of_mem he
-  have := hall i hi
-  simpa [chartPred, List.getElem?_eq_getElem hi] using this
+  have hh := List.all_eq_true.mp hhead _ he
+  simp only [chartHead, Bool.and_eq_true] at hh
+  unfold chartCheck
+  simp only [Bool.and_eq_true]
+  refine ⟨hh, ?_⟩
+  rw [check_subtrees _ _ _ parDepth, List.all_eq_true]
+  intro s hs
+  -- The item (i, s) is checked.
+  have hmem : (i, s) ∈ parItems c parDepth := by
+    unfold parItems
+    refine List.mem_flatMap.mpr ⟨i, List.mem_range.mpr hi, ?_⟩
+    rw [List.getElem?_eq_getElem hi]
+    exact List.mem_map.mpr ⟨s, hs, rfl⟩
+  obtain ⟨k, hk⟩ := List.mem_iff_getElem?.mp hmem
+  have hklt : k < (parItems c parDepth).toArray.size := by
+    simp only [List.size_toArray]
+    exact (List.getElem?_eq_some_iff.mp hk).1
+  have hp := hall k hklt
+  simp only [itemPred, List.getElem?_toArray, hk, List.getElem?_eq_getElem hi, Array.getElem?_map,
+    List.getElem?_toArray, Option.map_some] at hp
+  exact hp
 
 /-- `certOk` with the parallel check. -/
 def certOkPar (c : CapCert) : Bool :=
