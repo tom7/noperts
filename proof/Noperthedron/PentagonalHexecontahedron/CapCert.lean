@@ -9,8 +9,8 @@ public import Noperthedron.PentagonalHexecontahedron.CapCheck
 
 `CapCert`: a cap (frame, parameters, the exact vertices, the witnesses) and
 per chart of Lean's `chartList` its certificate tree. `CapCert.check` checks
-(natively) that the charts are exactly `chartList`, that the frame is
-orthonormal, and every tree; `CapCert.check_sound` gives `ChartGood` at every
+(natively) that the charts are exactly `chartList`, that the cap is isotropic
+with an orthogonal frame, and every tree (width witnesses (k, k', c)); `CapCert.check_sound` gives `ChartGood` at every
 point of every chart, hence (`cap_pose_not_rupert`) the cap theorem.
 -/
 
@@ -23,7 +23,8 @@ structure CapCert where
   pr : Params
   zList : List ((Kind × ℕ × ℕ × Bool) × ℕ)
   verts : Array KVec
-  wits : Array (ℕ × KVec)
+  /-- Width witnesses (k, k', c). -/
+  wits : Array (ℕ × ℕ × KVec)
   usePrune : Bool
   Gcol : Fin 3 → KVec
   charts : List (ChartId × CTree)
@@ -33,25 +34,28 @@ def CapCert.zOf (c : CapCert) (b : Kind × ℕ × ℕ × Bool) : ℕ :=
   | some e => e.2
   | none => 1
 
-/-- Per used witness: the vertex, the direction, the screened polynomials and the d ≠ 0 check. -/
+/-- Per used witness: the vertices, the direction, the screened polynomials and the d ≠ 0 check
+on the root box. -/
 structure WitData where
   vk : KVec
+  vk' : KVec
   c : KVec
   Q : Array (NPoly 5)
   dok : Bool
 
 def witData (c : CapCert) (id : ChartId) (wi : ℕ) : Option WitData :=
   match c.wits[wi]? with
-  | some (k, cv) =>
-    match c.verts[k]? with
-    | some vk => some ⟨vk, cv, screened (witnessPolys (makeChart c.st id) id c.verts vk cv) (rootBox c.st c.pr id),
+  | some (k, k', cv) =>
+    match c.verts[k]?, c.verts[k']? with
+    | some vk, some vk' => some ⟨vk, vk', cv,
+        screened (witnessPolys (makeChart c.st id) id (pairDiffs c.verts) (ksub vk vk') cv) (rootBox c.st c.pr id),
         dOk c.st c.pr id cv⟩
-    | none => none
+    | _, _ => none
   | none => none
 
 def leafCheck (c : CapCert) (id : ChartId) (cache : Array (Option WitData)) (wi : ℕ) (box : Box) : Bool :=
   match cache[wi]? with
-  | some (some d) => d.dok && boxOk d.Q box
+  | some (some d) => (d.dok || dOkBox c.st id d.c box) && boxOk d.Q box
   | _ => false
 
 def CTree.leafIds : CTree → List ℕ
@@ -67,8 +71,10 @@ def chartCheck (c : CapCert) (id : ChartId) (t : CTree) : Bool :=
   decide (∀ i : Fin 5, 0 ≤ (root i).2) && decide (id.axis < 3) && decide (id.side < 4) &&
     t.check (leafCheck c id cache) (fun box => c.usePrune && pruneOk c.st id c.Gcol box) (coneOk c.st c.pr id) root
 
+/-- An isotropic cap with an orthogonal frame (|f|² > 0 by the rational lower enclosure). -/
 def frameCheck (st : Setup) : Bool :=
-  decide (kdot st.e1 st.e1 = IcoQ.one) && decide (kdot st.e2 st.e2 = IcoQ.one) && decide (kdot st.x st.x = IcoQ.one) &&
+  !st.aniso && decide (0 < IcoQ.lo (kdot st.e1 st.e1)) && decide (0 < IcoQ.lo (kdot st.e2 st.e2)) &&
+  decide (0 < IcoQ.lo (kdot st.x st.x)) &&
   decide (kdot st.e1 st.e2 = IcoQ.zero) && decide (kdot st.e1 st.x = IcoQ.zero) && decide (kdot st.e2 st.x = IcoQ.zero)
 
 /-- The tie scheme's parameters are admissible (`TieOK`). -/
@@ -97,14 +103,15 @@ theorem CapCert.tieOK (c : CapCert) (h : c.tieCheck = true) : TieOK c.st c.pr c.
     exact ⟨h1, h2, h3, h4, h5⟩
 
 theorem frameCheck_sound (st : Setup) (h : frameCheck st = true) : FrameOK st := by
-  simp only [frameCheck, Bool.and_eq_true, decide_eq_true_eq] at h
-  obtain ⟨⟨⟨⟨⟨h11, h22⟩, hxx⟩, h12⟩, h1x⟩, h2x⟩ := h
+  simp only [frameCheck, Bool.and_eq_true, decide_eq_true_eq, Bool.not_eq_eq_eq_not, Bool.not_true] at h
+  obtain ⟨⟨⟨⟨⟨⟨han, h11⟩, h22⟩, hxx⟩, h12⟩, h1x⟩, h2x⟩ := h
   have hv : ∀ a b : KVec, ∀ q : IcoQ, kdot a b = q → rdot (kv a) (kv b) = q.val := by
     intro a b q hq; rw [← val_kdot, hq]
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
-  · rw [hv _ _ _ h11]; exact icoOne_val
-  · rw [hv _ _ _ h22]; exact icoOne_val
-  · rw [hv _ _ _ hxx]; exact icoOne_val
+  have hpos : ∀ a b : KVec, 0 < IcoQ.lo (kdot a b) → 0 < rdot (kv a) (kv b) := by
+    intro a b hl
+    rw [← val_kdot]
+    exact lt_of_lt_of_le (by exact_mod_cast hl) (IcoQ.lo_le_val _)
+  refine ⟨han, hpos _ _ h11, hpos _ _ h22, hpos _ _ hxx, ?_, ?_, ?_⟩
   · rw [hv _ _ _ h12]; simp [IcoQ.val, IcoQ.zero]
   · rw [hv _ _ _ h1x]; simp [IcoQ.val, IcoQ.zero]
   · rw [hv _ _ _ h2x]; simp [IcoQ.val, IcoQ.zero]
@@ -129,14 +136,17 @@ theorem cache_spec (c : CapCert) (id : ChartId) (used : List ℕ) (wi : ℕ) (d 
   · simp at h
 
 theorem witData_spec (c : CapCert) (id : ChartId) (wi : ℕ) (d : WitData) (h : witData c id wi = some d) :
-    ∃ vk ∈ c.verts, ∃ cv : KVec, d = ⟨vk, cv,
-      screened (witnessPolys (makeChart c.st id) id c.verts vk cv) (rootBox c.st c.pr id), dOk c.st c.pr id cv⟩ := by
-  rcases hw : c.wits[wi]? with _ | ⟨k, cv⟩
+    ∃ vk ∈ c.verts, ∃ vk' ∈ c.verts, ∃ cv : KVec, d = ⟨vk, vk', cv,
+      screened (witnessPolys (makeChart c.st id) id (pairDiffs c.verts) (ksub vk vk') cv) (rootBox c.st c.pr id),
+      dOk c.st c.pr id cv⟩ := by
+  rcases hw : c.wits[wi]? with _ | ⟨k, k', cv⟩
   · simp only [witData, hw] at h; cases h
   · rcases hv : c.verts[k]? with _ | vk
     · simp only [witData, hw, hv] at h; cases h
-    · simp only [witData, hw, hv, Option.some.injEq] at h
-      exact ⟨vk, Array.mem_of_getElem? hv, cv, h.symm⟩
+    · rcases hv' : c.verts[k']? with _ | vk'
+      · simp only [witData, hw, hv, hv'] at h; cases h
+      · simp only [witData, hw, hv, hv', Option.some.injEq] at h
+        exact ⟨vk, Array.mem_of_getElem? hv, vk', Array.mem_of_getElem? hv', cv, h.symm⟩
 
 set_option maxHeartbeats 1000000 in
 /-- **Certificate soundness**: a checked cap certificate makes every chart point good. -/
@@ -168,15 +178,17 @@ theorem CapCert.check_sound (c : CapCert) (h : c.check = true) :
     unfold leafCheck at hleaf
     split at hleaf
     · next d hd =>
-      obtain ⟨vk, hvk, cv, rfl⟩ := witData_spec c id' wi d (cache_spec c id' _ wi _ hd)
-      have hok : witnessLeafOk c.st c.pr id' c.verts vk cv box = true := by
+      obtain ⟨vk, hvk, vk', hvk', cv, rfl⟩ := witData_spec c id' wi d (cache_spec c id' _ wi _ hd)
+      have hok : witnessLeafOk c.st c.pr id' c.verts vk vk' cv box = true := by
         unfold witnessLeafOk; simpa only using hleaf
-      obtain ⟨hdn, hval⟩ := witnessLeafOk_sound c.st c.pr id' hax c.verts vk cv box hok hw hbw y hyb hyr
+      obtain ⟨hdn, hval⟩ := witnessLeafOk_sound c.st c.pr id' hax c.verts vk vk' cv box hok hw hbw y hyb hyr
       right; right
-      refine ⟨kv vk, List.mem_map.mpr ⟨vk, Array.mem_toList_iff.mpr hvk, rfl⟩, kv cv, hdn, ?_⟩
-      intro vj' hvj'
-      obtain ⟨vj, hvj, rfl⟩ := List.mem_map.mp hvj'
-      exact hval vj (Array.mem_toList_iff.mp hvj)
+      refine ⟨kv vk, List.mem_map.mpr ⟨vk, Array.mem_toList_iff.mpr hvk, rfl⟩,
+        kv vk', List.mem_map.mpr ⟨vk', Array.mem_toList_iff.mpr hvk', rfl⟩, kv cv, hdn, ?_⟩
+      intro vj₁ hvj₁ vj₂ hvj₂
+      obtain ⟨vj, hvj, rfl⟩ := List.mem_map.mp hvj₁
+      obtain ⟨vj', hvj', rfl⟩ := List.mem_map.mp hvj₂
+      exact hval vj (Array.mem_toList_iff.mp hvj) vj' (Array.mem_toList_iff.mp hvj')
     · exact absurd hleaf (by simp)
   · -- Half-turn prune leaves.
     intro box hbw hprune y hyb hyr
@@ -210,19 +222,18 @@ theorem CapCert.check_sound (c : CapCert) (h : c.check = true) :
 open scoped Matrix in
 /-- **The cap theorem from a checked certificate.** -/
 theorem CapCert.not_rupert (c : CapCert) (hc : c.check = true) (hS : 2 ≤ c.st.strongScale)
-    (hmcm : 1 ≤ c.st.mcm) (ht0 : 0 ≤ (c.pr.t0 : ℝ)) (ht0m : 0 ≤ (c.pr.t0m : ℝ)) (wmax : ℝ) (hw0 : 0 ≤ wmax) (hw1 : wmax ≤ 2 * c.pr.mu0)
-    (hw2 : wmax ≤ c.st.strongScale * (c.pr.mu0 : ℝ) ^ 2)
-    (κ : ℝ) (hκ : 0 < κ) (S : Set ℝ³) (hSdef : S = convexHull ℝ {v | ∃ vj ∈ c.verts.toList.map kv, v = κ • toEuc vj})
-    (hSsym : ∀ v ∈ S, -v ∈ S) (p : MatrixPose)
-    (hx : 0 < rdot p.view (kv c.st.x))
-    (he1 : |rdot p.view (kv c.st.e1)| ≤ c.pr.mu0 * rdot p.view (kv c.st.x))
-    (he2 : |rdot p.view (kv c.st.e2)| ≤ c.pr.mu0 * rdot p.view (kv c.st.x))
-    (w : Fin 3 → ℝ) (hR : p.relativeRotation = cayleyMatrix (w 0) (w 1) (w 2)) (hw : rdot w w ≤ wmax ^ 2)
+    (hmcm : 1 ≤ c.st.mcm) (S : Set ℝ³) (hSdef : S = convexHull ℝ {v | ∃ vj ∈ c.verts.toList.map kv, v = toEuc vj})
+    (p : MatrixPose)
+    (hx : 0 < frameCoord c.st p.view 2)
+    (he1 : |frameCoord c.st p.view 0| ≤ c.pr.mu0 * frameCoord c.st p.view 2)
+    (he2 : |frameCoord c.st p.view 1| ≤ c.pr.mu0 * frameCoord c.st p.view 2)
+    (w : Fin 3 → ℝ) (hR : p.relativeRotation = cayleyMatrix (w 0) (w 1) (w 2))
+    (hw : ∀ i, |frameCoord c.st w i| ≤ (c.st.range i : ℝ) * (c.pr.mu0 : ℝ) ^ isoWt i)
     (hcell : c.usePrune = true →
       Matrix.trace (halfTurnMat p.view * p.relativeRotation * gMat c.Gcol) ≤ Matrix.trace p.relativeRotation) :
     ¬ RupertPose p S := by
   obtain ⟨hF, hz, htie, hgood⟩ := c.check_sound hc
-  exact cap_pose_not_rupert c.st c.pr c.zOf hz htie hF hS hmcm ht0 ht0m wmax hw0 hw1 hw2 _ c.usePrune (gMat c.Gcol) hgood κ hκ S
-    hSdef hSsym p hx he1 he2 w hR hw hcell
+  exact cap_pose_not_rupert c.st c.pr c.zOf hz htie hF hS hmcm _ c.usePrune (gMat c.Gcol) hgood S
+    hSdef p hx he1 he2 w hR hw hcell
 
 end Noperthedron.PentagonalHexecontahedron.Cap

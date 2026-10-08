@@ -119,15 +119,6 @@ end IModel
 
 /-! ### The half-turn cell at views given by a projective region -/
 
-theorem halfTurnMat_smul (κ : ℝ) (hκ : κ ≠ 0) (u : Fin 3 → ℝ) : halfTurnMat (κ • u) = halfTurnMat u := by
-  ext i j
-  simp only [halfTurnMat, Pi.smul_apply, smul_eq_mul]
-  congr 1
-  rw [show ∑ k, (κ * u k) ^ 2 = κ ^ 2 * ∑ k, u k ^ 2 by rw [Finset.mul_sum]; congr 1; ext k; ring]
-  by_cases hs : ∑ k, u k ^ 2 = 0
-  · rw [hs]; simp
-  · field_simp
-
 theorem inHalfTurnCell_smul {u : Fin 3 → ℝ} {κ : ℝ} (hκ : κ ≠ 0) {R : Matrix (Fin 3) (Fin 3) ℝ}
     (h : InHalfTurnCell (κ • u) R) : InHalfTurnCell u R := by
   intro g

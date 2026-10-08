@@ -2,6 +2,8 @@ module
 
 public import Noperthedron.PentagonalHexecontahedron.CapWitness
 public import Noperthedron.PentagonalHexecontahedron.CapCoverMain
+public import Noperthedron.Nopert7.WidthWitness
+public import Noperthedron.Atlas.CayleyPose
 
 @[expose] public section
 
@@ -12,6 +14,11 @@ public import Noperthedron.PentagonalHexecontahedron.CapCoverMain
 centrally symmetric solid S has ⟪d, v⟫ ≤ M, and some v_k ∈ S has
 ⟪d, R v_k⟫ ≥ M for the relative rotation R, then the pose is not Rupert.
 (The witness n = proj(O d) of `CapWitness`, with O the outer rotation.)
+
+`not_rupert_of_width_support`: the two-sided form for solids without central
+symmetry (`Nopert7.not_rupertPose_of_width_witness`): if ⟪d, ·⟫ ≤ M₊ and
+−⟪d, ·⟫ ≤ M₋ on S and ⟪d, R v_k⟫ − ⟪d, R v_k'⟫ ≥ M₊ + M₋, the pose is not
+Rupert (any offset).
 -/
 
 namespace Noperthedron.PentagonalHexecontahedron
@@ -67,5 +74,41 @@ theorem not_rupert_of_support (p : MatrixPose) (S : Set ℝ³) (hS : ∀ v ∈ S
     simp only [LinearMap.coe_toAffineMap]
     rw [inner_proj_xyL, inner_orth O hO, hview, zero_mul, sub_zero]
     exact hM v hv
+
+theorem not_rupert_of_width_support (p : MatrixPose) (S : Set ℝ³)
+    (d : ℝ³) (hd : d ≠ 0) (hview : (p.outerRot.val.toEuclideanLin d) 2 = 0)
+    (Mp Mm : ℝ) (hMp : ∀ v ∈ S, ⟪d, v⟫ ≤ Mp) (hMm : ∀ v ∈ S, -⟪d, v⟫ ≤ Mm)
+    (vk vk' : ℝ³) (hvk : vk ∈ S) (hvk' : vk' ∈ S)
+    (hk : Mp + Mm ≤ ⟪d, p.relativeRotation.toEuclideanLin vk⟫ - ⟪d, p.relativeRotation.toEuclideanLin vk'⟫) :
+    ¬ RupertPose p S := by
+  set O := p.outerRot.val
+  have hO : Oᵀ * O = 1 := (Matrix.mem_orthogonalGroup_iff' (Fin 3) ℝ).mp p.outerRot.property.1
+  set n := proj_xyL (O.toEuclideanLin d)
+  have hn : n ≠ 0 := by
+    intro h0
+    have h1 : ⟪n, n⟫ = 0 := by rw [h0]; simp
+    rw [inner_proj_xyL, inner_orth O hO, hview, mul_zero, sub_zero] at h1
+    exact hd (inner_self_eq_zero.mp h1)
+  -- ⟪n, proj(O v)⟫ = ⟪d, v⟫.
+  have hproj : ∀ v : ℝ³, ⟪n, proj_xyL (O.toEuclideanLin v)⟫ = ⟪d, v⟫ := by
+    intro v
+    rw [inner_proj_xyL, inner_orth O hO, hview, zero_mul, sub_zero]
+  have hinner : ∀ v : ℝ³, p.innerRot.val.toEuclideanLin v = O.toEuclideanLin (p.relativeRotation.toEuclideanLin v) := by
+    intro v
+    rw [← Noperthedron.Atlas.MatrixPose.outer_mul_relativeRotation p]
+    simp [Matrix.toLpLin_apply, Matrix.mulVec_mulVec, O]
+  apply Noperthedron.Nopert7.not_rupertPose_of_width_witness p S n hn Mp Mm _ _ vk vk' hvk hvk'
+  · rw [hinner, hinner, hproj, hproj]
+    exact hk
+  · intro v hv
+    show ⟪n, proj_xyL (p.outerRot.val.toEuclideanLin.toAffineMap v)⟫ ≤ Mp
+    simp only [LinearMap.coe_toAffineMap]
+    rw [hproj]
+    exact hMp v hv
+  · intro v hv
+    show -⟪n, proj_xyL (p.outerRot.val.toEuclideanLin.toAffineMap v)⟫ ≤ Mm
+    simp only [LinearMap.coe_toAffineMap]
+    rw [hproj]
+    exact hMm v hv
 
 end Noperthedron.PentagonalHexecontahedron

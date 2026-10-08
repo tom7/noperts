@@ -8,7 +8,8 @@ public import Noperthedron.PentagonalHexecontahedron.CapCover
 # Frame coordinates of the cap charts
 
 For an orthonormal frame (x, e₁, e₂) every vector is the sum of its frame
-components (`decomp_orthonormal`); for a ⊥ x, a ≠ 0, every w is
+components (`decomp_orthonormal`); for an orthogonal one (the unnormalized
+rational frames), of its components w·f/|f|² f (`decomp_orthogonal`); for a ⊥ x, a ≠ 0, every w is
 α (x × a) + β a + γ x with α = w·(x×a)/|a|², β = w·a/|a|², γ = w·x
 (`decomp_aniso`). These are the Cayley coordinates of the isotropic (u0) and
 anisotropic (ux) charts.
@@ -82,6 +83,47 @@ theorem decomp_aniso {x a : Fin 3 → ℝ} (hx : rdot x x = 1) (hxa : rdot x a =
     rw [hsm', ← hn2]
     field_simp
   simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, hk]
+
+/-- Three vectors are pairwise orthogonal and nonzero (the unnormalized frames). -/
+def Orthogonal3 (a b c : Fin 3 → ℝ) : Prop :=
+  0 < rdot a a ∧ 0 < rdot b b ∧ 0 < rdot c c ∧ rdot a b = 0 ∧ rdot a c = 0 ∧ rdot b c = 0
+
+/-- The decomposition in an orthogonal frame: w = Σ (w·f/|f|²) f. -/
+theorem decomp_orthogonal {a b c : Fin 3 → ℝ} (h : Orthogonal3 a b c) (w : Fin 3 → ℝ) :
+    w = (rdot w a / rdot a a) • a + (rdot w b / rdot b b) • b + (rdot w c / rdot c c) • c := by
+  obtain ⟨ha, hb, hc, hab, hac, hbc⟩ := h
+  have hsm : ∀ (k : ℝ) (u v : Fin 3 → ℝ), rdot (k • u) v = k * rdot u v := by
+    intro k u v; simp only [rdot, Pi.smul_apply, smul_eq_mul]; ring
+  have hsm' : ∀ (k : ℝ) (u v : Fin 3 → ℝ), rdot u (k • v) = k * rdot u v := by
+    intro k u v; simp only [rdot, Pi.smul_apply, smul_eq_mul]; ring
+  -- Normalize.
+  have unit : ∀ v : Fin 3 → ℝ, 0 < rdot v v →
+      rdot ((1 / Real.sqrt (rdot v v)) • v) ((1 / Real.sqrt (rdot v v)) • v) = 1 := by
+    intro v hv
+    have hn := Real.sq_sqrt hv.le
+    have hn0 : Real.sqrt (rdot v v) ≠ 0 := (Real.sqrt_pos.mpr hv).ne'
+    rw [hsm, hsm']
+    field_simp
+    linarith
+  have hon : Orthonormal3 ((1 / Real.sqrt (rdot a a)) • a) ((1 / Real.sqrt (rdot b b)) • b)
+      ((1 / Real.sqrt (rdot c c)) • c) := by
+    refine ⟨unit a ha, unit b hb, unit c hc, ?_, ?_, ?_⟩
+    · rw [hsm, hsm', hab]; ring
+    · rw [hsm, hsm', hac]; ring
+    · rw [hsm, hsm', hbc]; ring
+  have hd := decomp_orthonormal hon w
+  have hk : ∀ v : Fin 3 → ℝ, 0 < rdot v v → ∀ k : Fin 3,
+      rdot w ((1 / Real.sqrt (rdot v v)) • v) * ((1 / Real.sqrt (rdot v v)) * v k) =
+        rdot w v / rdot v v * v k := by
+    intro v hv k
+    have hn := Real.sq_sqrt hv.le
+    rw [hsm']
+    have e : 1 / Real.sqrt (rdot v v) * rdot w v * (1 / Real.sqrt (rdot v v) * v k) =
+        rdot w v * v k / Real.sqrt (rdot v v) ^ 2 := by ring
+    rw [e, hn]; ring
+  conv_lhs => rw [hd]
+  funext k
+  simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul, hk a ha, hk b hb, hk c hc]
 
 /-- Bounds of the weighted coordinates by |w|. -/
 theorem abs_rdot_le_of_unit {e : Fin 3 → ℝ} (he : rdot e e = 1) (w : Fin 3 → ℝ) :

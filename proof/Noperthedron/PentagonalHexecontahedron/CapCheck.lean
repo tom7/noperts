@@ -6,7 +6,7 @@ public import Noperthedron.PentagonalHexecontahedron.CapTree
 @[expose] public section
 
 /-!
-# Checking a cap certificate (witness leaves)
+# Checking a cap certificate (width-witness leaves)
 
 For a chart `id` with root box `B` and a witness (v_k, c):
 
@@ -14,7 +14,9 @@ For a chart `id` with root box `B` and a witness (v_k, c):
   positive) gives u × c ≠ 0 on B (`dOk_sound`).
 * `screened`: the divided witness polynomials whose bound on B is negative;
   the others are ≥ 0 on B (`screened_sound`).
-* `witnessLeafOk`: `dOk` and every screened polynomial ≥ 0 on the leaf box;
+* `witnessLeafOk`: a width witness (v_k, v_k', c): `dOk` (or u × c ≠ 0 on the
+  leaf box, `dOkBox`) and every screened polynomial of v_k − v_k' against the
+  differences v_j − v_j' (`pairDiffs`) ≥ 0 on the leaf box;
   `witnessLeafOk_sound` gives the witness disjunct of `ChartGood` on the leaf
   box (points of B).
 -/
@@ -107,26 +109,62 @@ theorem y2_nonneg_of_root_cone (st : Setup) (pr : Params) (id : ChartId) (hk : i
   rw [show ((2 : Fin 5) : ℕ) = 2 from rfl, rootLoHi_two_cone st pr id hk' hax] at this
   simpa using this
 
-/-- A witness leaf: u × c ≠ 0 on the root box, and the screened divided witness polynomials
-are ≥ 0 on the leaf box. -/
-def witnessLeafOk (st : Setup) (pr : Params) (id : ChartId) (V : Array KVec) (vk c : KVec) (box : Box) : Bool :=
-  dOk st pr id c && boxOk (screened (witnessPolys (makeChart st id) id V vk c) (rootBox st pr id)) box
+/-- a − b, exactly. -/
+def ksub (a b : KVec) : KVec := fun i => IcoQ.sub (a i) (b i)
+
+theorem kv_ksub (a b : KVec) : kv (ksub a b) = kv a - kv b := by
+  funext i
+  simp only [kv, PVec.kval, ksub, Pi.sub_apply]
+  rw [show IcoQ.sub = (· - ·) from rfl, IcoQ.val_sub]
+
+/-- The differences v_j − v_j' of all ordered pairs of vertices (the width witness compares
+v_k − v_k' with each of them). -/
+def pairDiffs (V : Array KVec) : Array KVec := V.flatMap fun a => V.map fun b => ksub a b
+
+theorem mem_pairDiffs {V : Array KVec} {a b : KVec} (ha : a ∈ V) (hb : b ∈ V) : ksub a b ∈ pairDiffs V :=
+  Array.mem_flatMap.mpr ⟨a, ha, Array.mem_map.mpr ⟨b, hb, rfl⟩⟩
+
+/-- u × c ≠ 0 on a leaf box: |u × c|² has a positive Bernstein bound on the box. -/
+def dOkBox (st : Setup) (id : ChartId) (c : KVec) (box : Box) : Bool :=
+  let q := dPoly st id c
+  decide (0 < NPoly.lowerDeg 5 (degs q) q box)
+
+theorem dOkBox_sound (st : Setup) (id : ChartId) (c : KVec) (box : Box) (h : dOkBox st id c box = true)
+    (hw : ∀ i, 0 ≤ (box i).2) (y : Fin 5 → ℝ) (hy : InBoxR box y) :
+    rcross (rChartU st id y) (kv c) ≠ 0 := by
+  intro h0
+  have hl := lowerDeg_le_eval 5 (degs (dPoly st id c)) (dPoly st id c) box y hw hy
+  have hpos : (0 : ℚ) < NPoly.lowerDeg 5 (degs (dPoly st id c)) (dPoly st id c) box := of_decide_eq_true h
+  rw [eval_dPoly, h0] at hl
+  simp [rdot] at hl
+  linarith
+
+/-- A width-witness leaf (v_k, v_k', c): u × c ≠ 0 (on the root box, else on the leaf box), and the
+screened divided witness polynomials of v_k − v_k' against every v_j − v_j' are ≥ 0 on the leaf box. -/
+def witnessLeafOk (st : Setup) (pr : Params) (id : ChartId) (V : Array KVec) (vk vk' c : KVec) (box : Box) :
+    Bool :=
+  (dOk st pr id c || dOkBox st id c box) &&
+    boxOk (screened (witnessPolys (makeChart st id) id (pairDiffs V) (ksub vk vk') c) (rootBox st pr id)) box
 
 theorem witnessLeafOk_sound (st : Setup) (pr : Params) (id : ChartId) (hax : id.axis < 3) (V : Array KVec)
-    (vk c : KVec) (box : Box) (h : witnessLeafOk st pr id V vk c box = true)
+    (vk vk' c : KVec) (box : Box) (h : witnessLeafOk st pr id V vk vk' c box = true)
     (hrw : ∀ i, 0 ≤ (rootBox st pr id i).2) (hbw : ∀ i, 0 ≤ (box i).2)
     (y : Fin 5 → ℝ) (hyb : InBoxR box y) (hyr : InBoxR (rootBox st pr id) y) :
     rcross (rChartU st id y) (kv c) ≠ 0 ∧
-      ∀ vj ∈ V, 0 ≤ witnessValue (rChartU st id y) (rChartW st id y) (kv vk) (kv c) (kv vj) := by
-  simp only [witnessLeafOk, Bool.and_eq_true] at h
-  refine ⟨dOk_sound st pr id c h.1 hrw y hyr, ?_⟩
+      ∀ vj ∈ V, ∀ vj' ∈ V, 0 ≤ witnessValue (rChartU st id y) (rChartW st id y) (kv vk - kv vk') (kv c)
+        (kv vj - kv vj') := by
+  simp only [witnessLeafOk, Bool.and_eq_true, Bool.or_eq_true] at h
+  refine ⟨?_, ?_⟩
+  · rcases h.1 with h1 | h1
+    · exact dOk_sound st pr id c h1 hrw y hyr
+    · exact dOkBox_sound st id c box h1 hbw y hyb
   have hs := boxOk_sound hbw h.2 hyb
   have hall := screened_sound _ _ hrw y hyr hs
-  have hnn := witnessPoly_nonneg (makeChart st id) id V vk c y (y0_nonneg_of_root st pr id y hyr)
-    (fun hc => y2_nonneg_of_root_cone st pr id hc hax y hyr) hall
-  intro vj hvj
-  have := hnn vj hvj
-  rwa [eval_chart_witnessPoly] at this
+  have hnn := witnessPoly_nonneg (makeChart st id) id (pairDiffs V) (ksub vk vk') c y
+    (y0_nonneg_of_root st pr id y hyr) (fun hc => y2_nonneg_of_root_cone st pr id hc hax y hyr) hall
+  intro vj hvj vj' hvj'
+  have := hnn _ (mem_pairDiffs hvj hvj')
+  rwa [eval_chart_witnessPoly, kv_ksub, kv_ksub] at this
 
 /-! ### Cone-region leaves (F_e charts) -/
 
@@ -277,7 +315,8 @@ theorem exists_basis_cross_ne (u : Fin 3 → ℝ) (hu : u ≠ 0) : ∃ c : Fin 3
   simp [rcross] at e0 e0' e1 e1' e2
   funext k; fin_cases k <;> simp_all
 
-/-- A chart point with w = 0 (the identity rotation) is good: a support witness. -/
+/-- A chart point with w = 0 (the identity rotation) is good: a width witness (the vertices of
+largest and smallest ⟪·, d⟫). -/
 theorem chartGood_of_w_zero (st : Setup) (pr : Params) (V : List (Fin 3 → ℝ)) (hV : V ≠ [])
     (usePrune : Bool) (G : Matrix (Fin 3) (Fin 3) ℝ) (id : ChartId) (y : Fin 5 → ℝ)
     (hu : rChartU st id y ≠ 0) (hw : rChartW st id y = 0) : ChartGood st pr V usePrune G id y := by
@@ -289,12 +328,14 @@ theorem chartGood_of_w_zero (st : Setup) (pr : Params) (V : List (Fin 3 → ℝ)
     obtain ⟨v, hv⟩ := List.exists_mem_of_ne_nil V hV
     exact ⟨v, List.mem_toFinset.mpr hv⟩
   obtain ⟨vk, hvk, hmax⟩ := Finset.exists_max_image V.toFinset (fun v => rdot v d) hne
-  refine ⟨vk, List.mem_toFinset.mp hvk, c, hc, fun vj hvj => ?_⟩
+  obtain ⟨vk', hvk', hmin⟩ := Finset.exists_min_image V.toFinset (fun v => rdot v d) hne
+  refine ⟨vk, List.mem_toFinset.mp hvk, vk', List.mem_toFinset.mp hvk', c, hc, fun vj hvj vj' hvj' => ?_⟩
   unfold witnessValue
   rw [hw, rcayleyNum_zero]
-  have := hmax vj (List.mem_toFinset.mpr hvj)
-  simp only [rdot, Pi.zero_apply, mul_zero, add_zero] at this ⊢
-  linarith
+  have h1 := hmax vj (List.mem_toFinset.mpr hvj)
+  have h2 := hmin vj' (List.mem_toFinset.mpr hvj')
+  simp only [rdot, Pi.zero_apply, Pi.sub_apply, mul_zero, add_zero] at h1 h2 ⊢
+  nlinarith
 
 /-! ### Half-turn prune leaves -/
 
@@ -438,24 +479,25 @@ theorem pruneOk_sound (st : Setup) (id : ChartId) (Gcol : Fin 3 → KVec) (box :
 /-! ### Chart points: u ≠ 0, and w = 0 at μ = 0 or at the identity cone's tip -/
 
 theorem rChartU_dot_x (st : Setup) (hF : FrameOK st) (id : ChartId) (hside : id.side < 4) (y : Fin 5 → ℝ) :
-    rdot (rChartU st id y) (kv st.x) = 1 := by
-  obtain ⟨h11, h22, hxx, h12, h1x, h2x⟩ := hF
+    rdot (rChartU st id y) (kv st.x) = rdot (kv st.x) (kv st.x) := by
+  obtain ⟨-, -, -, -, -, h1x, h2x⟩ := hF
   obtain ⟨hA, hB⟩ := frameAB_val st id.side hside
   rw [rChartU_eq, hA, hB]
-  simp only [rdot, Pi.add_apply, Pi.smul_apply, smul_eq_mul] at hxx h1x h2x ⊢
-  have e1 : kv st.e1 0 * kv st.x 0 + kv st.e1 1 * kv st.x 1 + kv st.e1 2 * kv st.x 2 = 0 := h1x
-  have e2 : kv st.e2 0 * kv st.x 0 + kv st.e2 1 * kv st.x 1 + kv st.e2 2 * kv st.x 2 = 0 := h2x
-  linear_combination hxx + (y 0 * (rES st id (st.frameAB id.side).1 (st.frameAB id.side).2 y).1 *
-    ((sideA id.side).1 + y 1 * (sideB id.side).1)) * e1 +
+  simp only [rdot, Pi.add_apply, Pi.smul_apply, smul_eq_mul] at h1x h2x ⊢
+  linear_combination (y 0 * (rES st id (st.frameAB id.side).1 (st.frameAB id.side).2 y).1 *
+    ((sideA id.side).1 + y 1 * (sideB id.side).1)) * h1x +
     (y 0 * (rES st id (st.frameAB id.side).1 (st.frameAB id.side).2 y).1 *
-    ((sideA id.side).2 + y 1 * (sideB id.side).2)) * e2
+    ((sideA id.side).2 + y 1 * (sideB id.side).2)) * h2x
 
 theorem rChartU_ne_zero (st : Setup) (hF : FrameOK st) (id : ChartId) (hside : id.side < 4) (y : Fin 5 → ℝ) :
     rChartU st id y ≠ 0 := by
   intro h
   have := rChartU_dot_x st hF id hside y
   rw [h] at this
+  have hx := hF.2.2.2.1
   simp [rdot] at this
+  simp only [rdot] at hx
+  linarith
 
 theorem rdot_self_ne_zero_of_ne {u : Fin 3 → ℝ} (hu : u ≠ 0) : rdot u u ≠ 0 := by
   intro h

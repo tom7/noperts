@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.PentagonalHexecontahedron.HalfTurn
+public import Noperthedron.PentagonalHexecontahedron.HalfTurnBasic
 
 @[expose] public section
 

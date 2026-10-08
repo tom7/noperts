@@ -80,6 +80,16 @@ theorem halfTurnMat_mul_self (u : Fin 3 → ℝ) (hu : ∑ k, u k ^ 2 ≠ 0) :
   field_simp
   fin_cases i <;> fin_cases j <;> simp <;> ring_nf <;> nlinarith [hu]
 
+/-- H_u depends only on the line through u. -/
+theorem halfTurnMat_smul (κ : ℝ) (hκ : κ ≠ 0) (u : Fin 3 → ℝ) : halfTurnMat (κ • u) = halfTurnMat u := by
+  ext i j
+  simp only [halfTurnMat, Pi.smul_apply, smul_eq_mul]
+  congr 1
+  rw [show ∑ k, (κ * u k) ^ 2 = κ ^ 2 * ∑ k, u k ^ 2 by rw [Finset.mul_sum]; congr 1; ext k; ring]
+  by_cases hs : ∑ k, u k ^ 2 = 0
+  · rw [hs]; simp
+  · field_simp
+
 /-- A linear functional bounded by M on A is < M on the interior of A (n ≠ 0). -/
 theorem inner_lt_of_mem_interior {A : Set ℝ²} {n : ℝ²} (hn : n ≠ 0) {M : ℝ}
     (hA : ∀ y ∈ A, ⟪n, y⟫ ≤ M) {y : ℝ²} (hy : y ∈ interior A) : ⟪n, y⟫ < M := by
