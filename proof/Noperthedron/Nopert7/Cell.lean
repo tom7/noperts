@@ -25,10 +25,6 @@ namespace Noperthedron.Nopert7
 open scoped Matrix
 open Noperthedron.PentagonalHexecontahedron
 
-theorem c3_mul_c3 (k k' : Fin 3) : c3Mat k * c3Mat k' = c3Mat (k + k') := by
-  fin_cases k <;> fin_cases k' <;> simp only [Fin.reduceAdd, Fin.isValue] <;> ext a b <;>
-    fin_cases a <;> fin_cases b <;> simp [c3Mat, Matrix.mul_apply, Fin.sum_univ_three, Matrix.one_apply]
-
 /-- The negation in Fin 3, as a table (literal subtraction does not reduce
 inside the matrix definitions). -/
 def negIdx : Fin 3 → Fin 3

@@ -6,10 +6,11 @@ public import Noperthedron.Atlas.LocalRigidity
 @[expose] public section
 
 /-!
-# Local rigidity at the five symmetry strata
+# Local rigidity at the three symmetry strata
 
 This specializes the reindexed balanced-support theorem to the exact
-fivefold action.  It is the mathematical layer needed to cover the
+C3 action (`symmetry g = Nopert7.c3SO3 g`, the cyclic coordinate
+permutations).  It is the mathematical layer needed to cover the
 Euler-pole equality strata, where equal shadows need not have equal Euler
 coordinates.
 -/
@@ -22,12 +23,9 @@ open scoped Matrix RealInnerProductSpace
 open Noperthedron.BalancedSupport Real
 
 noncomputable def symmetry (g : OrbitIndex) : SO3 :=
-  ⟨Rz_mat (2 * π * (g : ℝ) / 5), MatrixPose.Rz_mat_mem_SO3 _⟩
+  Nopert7.c3SO3 g
 
-@[simp] theorem symmetry_zero : symmetry 0 = 1 := by
-  apply Subtype.ext
-  ext i j
-  fin_cases i <;> fin_cases j <;> simp [symmetry, Rz_mat]
+@[simp] theorem symmetry_zero : symmetry 0 = 1 := rfl
 
 @[simp] theorem so3CLM_symmetry_zero :
     Noperthedron.Atlas.so3CLM (symmetry 0) = 1 := by
@@ -36,7 +34,7 @@ noncomputable def symmetry (g : OrbitIndex) : SO3 :=
 
 def symmetryAction (g : OrbitIndex) (i : VertexIndex) : VertexIndex :=
   vertexIndex
-    ⟨((orbitIndex i).val + g.val) % 5, Nat.mod_lt _ (by omega)⟩
+    ⟨((orbitIndex i).val + g.val) % 3, Nat.mod_lt _ (by omega)⟩
     (seedIndex i)
 
 noncomputable def relativeRotationAtSymmetry
@@ -53,7 +51,7 @@ noncomputable def equalityPose (outer : SO3) (g : OrbitIndex) : MatrixPose where
     relativeRotationAtSymmetry (equalityPose outer g) g = 1 := by
   simp [relativeRotationAtSymmetry, relativeRotation, equalityPose, ← mul_assoc]
 
-/-- Matrix distance to a fivefold equality stratum is bounded by the direct
+/-- Matrix distance to a C3 equality stratum is bounded by the direct
 inner-versus-symmetry mismatch.  This formulation is independent of Euler
 coordinates and therefore remains well behaved at their poles. -/
 theorem norm_relativeRotationAtSymmetry_one_le_inner_mismatch
@@ -98,7 +96,7 @@ theorem norm_relativeRotationAtSymmetry_one_le_inner_mismatch
     _ = _ := by simp [q, equalityPose]
 
 /-- Division-free local-angle test from a certified matrix mismatch to one
-of the exact fivefold equality strata. -/
+of the exact C3 equality strata. -/
 theorem AxisAngle.ratio_of_inner_mismatch_bound
     (p : MatrixPose) (g : OrbitIndex)
     (a : AxisAngle
@@ -113,52 +111,18 @@ theorem AxisAngle.ratio_of_inner_mismatch_bound
       hmismatch
   · exact hsmall
 
-private lemma RzL_apply_add (α β : ℝ) (v : ℝ³) :
-    RzL (α + β) v = RzL α (RzL β v) := by
-  have h := RzC.map_add_eq_mul α β
-  simp only [RzC_coe] at h
-  rw [h]
-  rfl
-
-private lemma RzL_periodic (x : ℝ) (z : ℤ) :
-    RzL (x + z * (2 * π)) = RzL x := by
-  simp only [RzL, Rz_mat_add_int_mul_two_pi]
-
-private lemma RzL_nat_mod_five (x : ℕ) :
-    RzL (2 * π * ((x % 5 : ℕ) : ℝ) / 5) =
-      RzL (2 * π * (x : ℝ) / 5) := by
-  have hreal : ((x % 5 : ℕ) : ℝ) + 5 * ((x / 5 : ℕ) : ℝ) = (x : ℝ) := by
-    exact_mod_cast Nat.mod_add_div x 5
-  have hcast : ((-((x / 5 : ℕ) : ℤ) : ℤ) : ℝ) =
-      -((x / 5 : ℕ) : ℝ) := by
-    push_cast
-    rfl
-  rw [show 2 * π * ((x % 5 : ℕ) : ℝ) / 5 =
-      2 * π * (x : ℝ) / 5 +
-        ((-((x / 5 : ℕ) : ℤ) : ℤ) : ℝ) * (2 * π) by
-    rw [hcast]
-    linear_combination (2 * π / 5) * hreal,
-    RzL_periodic]
-
 theorem symmetry_apply_exactVertex (g : OrbitIndex) (i : VertexIndex) :
     Noperthedron.Atlas.so3CLM (symmetry g) (P.vertex i) =
       P.vertex (symmetryAction g i) := by
-  let k := orbitIndex i
-  let s := seedIndex i
-  have hi : vertexIndex k s = i := indexEquiv.symm_apply_apply i
-  rw [← hi]
-  simp only [C5Model.vertex, orbitIndex_vertexIndex, seedIndex_vertexIndex,
-    symmetryAction]
-  change RzL (2 * π * (g : ℝ) / 5)
-      (RzL (2 * π * (k : ℝ) / 5) (P.seed s)) = _
-  rw [← RzL_apply_add]
-  rw [show 2 * π * (g : ℝ) / 5 + 2 * π * (k : ℝ) / 5 =
-      2 * π * ((g.val + k.val : ℕ) : ℝ) / 5 by push_cast; ring]
-  rw [← RzL_nat_mod_five (g.val + k.val)]
-  simp [Nat.add_comm]
+  change (Nopert7.c3Mat g).toEuclideanLin (P.vertex i) = _
+  rw [rotate_vertex']
+  congr 2
+  apply Fin.ext
+  simp only [Fin.val_add]
+  omega
 
 /-- The inner vertex `i` tracks the outer vertex obtained by the exact
-fivefold action after the chosen symmetry is removed. -/
+C3 action after the chosen symmetry is removed. -/
 theorem outer_relative_at_symmetry_apply
     (p : MatrixPose) (g : OrbitIndex) (i : VertexIndex) :
     outerProjectionLinear p
@@ -211,7 +175,7 @@ theorem not_rupertPose_of_symmetry_axisAngle_certificate
   · simpa [C5Model.polyhedron] using hdominates
 
 /-- Four perturbation-stable balanced triples eliminate the unknown local
-rotation axis around any of the five symmetry strata. -/
+rotation axis around any of the three symmetry strata. -/
 theorem not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation
     {J κ : Type} [Fintype J] [Nonempty J] [Fintype κ] [Nonempty κ]
     (p : MatrixPose) (g : OrbitIndex)

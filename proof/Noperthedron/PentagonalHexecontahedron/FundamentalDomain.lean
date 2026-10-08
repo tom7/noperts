@@ -6,14 +6,13 @@ public import Noperthedron.PentagonalHexecontahedron.CayleyAtlas
 @[expose] public section
 
 /-!
-# The fivefold relative-rotation cell
+# The threefold relative-rotation cell
 
-The rotations about z by multiples of 2π/5 are symmetries of the model. A
-relative rotation is in the fivefold max-trace (Dirichlet) cell when none of
-them increases its trace on the right. The icosahedral cell
-(`InIcoFundamentalDomain`) lies inside this one, so the fivefold prune rows
-(`AtlasFundamentalPrune`), whose conditions are two quadratic inequalities
-per Cayley chart, stay sound.
+The C3 rotations `c3Mat k` about (1,1,1) are symmetries of the model. A
+relative rotation is in the C3 max-trace (Dirichlet) cell when none of them
+increases its trace on the right. (The names `fivefoldMatrix` and
+`InFivefoldFundamentalDomain` are kept from the fivefold pipeline;
+`fivefoldMatrix k` is now `Nopert7.c3Mat k`.)
 -/
 
 namespace Noperthedron.PentagonalHexecontahedron
@@ -22,51 +21,27 @@ variable {P : C5Model}
 
 open scoped Matrix
 
-/-- The `k`th exact rotation around the symmetry axis. -/
+/-- The `k`th exact rotation around the symmetry axis (1,1,1). -/
 noncomputable def fivefoldMatrix (k : OrbitIndex) :
     Matrix (Fin 3) (Fin 3) ℝ :=
-  Rz_mat ((k : ℝ) * (2 * Real.pi / 5))
+  Nopert7.c3Mat k
 
 def composeSymmetry (a b : OrbitIndex) : OrbitIndex :=
-  ⟨(a.val + b.val) % 5, Nat.mod_lt _ (by omega)⟩
+  ⟨(a.val + b.val) % 3, Nat.mod_lt _ (by omega)⟩
 
-@[simp] theorem fivefoldMatrix_zero : fivefoldMatrix 0 = 1 := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> simp [fivefoldMatrix, Rz_mat]
+@[simp] theorem fivefoldMatrix_zero : fivefoldMatrix 0 = 1 := rfl
+
+theorem composeSymmetry_eq_add (a b : OrbitIndex) : composeSymmetry a b = a + b := by
+  apply Fin.ext
+  simp [composeSymmetry, Fin.val_add]
 
 theorem fivefoldMatrix_mul (a b : OrbitIndex) :
     fivefoldMatrix a * fivefoldMatrix b =
       fivefoldMatrix (composeSymmetry a b) := by
-  change Rz_mat ((a : ℝ) * (2 * Real.pi / 5)) *
-      Rz_mat ((b : ℝ) * (2 * Real.pi / 5)) =
-    Rz_mat ((composeSymmetry a b : ℝ) * (2 * Real.pi / 5))
-  rw [Bounding.Rz_mat_mul_Rz_mat]
-  have hdecomp : (a.val : ℝ) + (b.val : ℝ) =
-      (((a.val + b.val) % 5 : ℕ) : ℝ) +
-        5 * (((a.val + b.val) / 5 : ℕ) : ℝ) := by
-    exact_mod_cast (Nat.mod_add_div (a.val + b.val) 5).symm
-  have hangle :
-      (a : ℝ) * (2 * Real.pi / 5) +
-          (b : ℝ) * (2 * Real.pi / 5) =
-        (composeSymmetry a b : ℝ) * (2 * Real.pi / 5) +
-          ((((a.val + b.val) / 5 : ℕ) : ℝ) * (2 * Real.pi)) := by
-    change (a.val : ℝ) * (2 * Real.pi / 5) +
-        (b.val : ℝ) * (2 * Real.pi / 5) =
-      (((a.val + b.val) % 5 : ℕ) : ℝ) * (2 * Real.pi / 5) +
-        ((((a.val + b.val) / 5 : ℕ) : ℝ) * (2 * Real.pi))
-    calc
-      _ = ((a.val : ℝ) + b.val) * (2 * Real.pi / 5) := by ring
-      _ = ((((a.val + b.val) % 5 : ℕ) : ℝ) +
-          5 * (((a.val + b.val) / 5 : ℕ) : ℝ)) *
-            (2 * Real.pi / 5) := by rw [hdecomp]
-      _ = _ := by ring
-  rw [hangle]
-  convert Rz_mat_add_int_mul_two_pi
-    (Int.ofNat ((a.val + b.val) / 5))
-    ((composeSymmetry a b : ℝ) * (2 * Real.pi / 5)) using 1 <;>
-    norm_num
+  rw [composeSymmetry_eq_add]
+  exact Nopert7.c3_mul_c3 a b
 
-/-- A relative rotation is in the identity fivefold Dirichlet cell when no
+/-- A relative rotation is in the identity C3 Dirichlet cell when no
 right symmetry increases its trace. -/
 def InFivefoldFundamentalDomain
     (R : Matrix (Fin 3) (Fin 3) ℝ) : Prop :=
