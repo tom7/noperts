@@ -64,10 +64,9 @@ run() {
   if [ $DRY -eq 0 ]; then "$@"; fi
 }
 # A command in a memory-capped scope (no swap); prints its peak memory.
-SCOPE_N=0
 capped() {
-  SCOPE_N=$((SCOPE_N + 1))
-  local unit="nopert7-$$-$SCOPE_N"
+  # (Called in subshells: the unit name must not depend on a counter.)
+  local unit="nopert7-$$-$(date +%s%N)"
   echo "+ [scope ${MEM_GB}G] $*" >&2
   if [ $DRY -eq 0 ]; then
     systemd-run --user --scope -q --unit="$unit" -p MemoryMax="${MEM_GB}G" -p MemorySwapMax=0 \
@@ -94,6 +93,9 @@ stage_end() {
 }
 
 run mkdir -p "$WORK"
+# The journals and packs are large (t3 alone: ~3 GB of journal); a full disk
+# silently truncates them.
+echo "== free space: $(df -h "$WORK" | awk 'NR == 2 {print $4}')"
 echo "== $THREADS threads, memory cap ${MEM_GB} GB, work $WORK"
 NCODES=15
 NTRI=22
@@ -169,8 +171,10 @@ if want search; then
     log=$WORK/search_round$round.log
     extra=()
     [ $round -gt 1 ] && extra=(--retry_deferred)
-    (cd "$NOPERT" && capped ./search5d.exe "${SEARCH[@]}" "${extra[@]}") > "$log" 2>&1
+    rc=0
+    (cd "$NOPERT" && capped ./search5d.exe "${SEARCH[@]}" "${extra[@]}") > "$log" 2>&1 || rc=$?
     [ $DRY -eq 1 ] && break
+    echo "search round $round: exit status $rc"
     grep -E "jobs|^Finished|peak memory" "$log"
     grep -q "^Finished: .* 0 deferred leaves" "$log" && break
   done
