@@ -107,38 +107,58 @@ theorem CheckedChartTables.notRupert (checked : CheckedChartTables) :
     CapOk → ¬ IsRupert verts :=
   fun hcap => not_rupert_of_valid_tables checked.tables checked.charts checked.valid hcap
 
+/-- Check one chart's table and keep only the fact that a valid table for
+the chart exists (so the table's data can be freed before the next chart). -/
+def checkChart (taskCount : Nat) (shared : SharedLocalTables)
+    (sharedValid : SharedLocalValid shared) (chart : CayleyAtlas.ChartIndex)
+    (table : {table : SolutionTree.Table // table.chart = chart ∧ table.sharedLocal = shared}) :
+    IO (PLift (∃ table : SolutionTree.Table, table.chart = chart ∧ table.Valid)) := do
+  have hs : SharedLocalValid table.1.sharedLocal := by
+    rw [table.2.2]
+    exact sharedValid
+  let valid ← checkGlobal s!"{chart}" taskCount table.1 hs
+  pure ⟨⟨table.1, table.2.1, valid.down⟩⟩
+
 /-- Check all tables and construct `CapOk → ¬ IsRupert verts`. The chart
-tables are supplied as a function of the checked shared-local tables; the two
-equations keep a wrapper from checking rows under the wrong chart or tubes. -/
+tables are loaded one at a time, as a function of the checked shared-local
+tables; the two equations keep a loader from checking rows under the wrong
+chart or tubes. Each chart's data is dropped once it is checked. -/
 def constructProof (localTaskCount globalTaskCount : Nat)
     (localTables : SharedLocalTables)
-    (globalTables : SharedLocalTables → CayleyAtlas.ChartIndex → SolutionTree.Table)
-    (hchart : ∀ shared chart, (globalTables shared chart).chart = chart)
-    (hshared : ∀ shared chart, (globalTables shared chart).sharedLocal = shared) :
+    (loadChart : (shared : SharedLocalTables) → (chart : CayleyAtlas.ChartIndex) →
+      IO {table : SolutionTree.Table // table.chart = chart ∧ table.sharedLocal = shared}) :
     IO (PLift (CapOk → ¬ IsRupert verts)) := do
   let checkedLocal ← checkLocalAll localTaskCount localTables
   let shared := localTables
   have sharedValid : SharedLocalValid shared := checkedLocal.down
-  have hs : ∀ chart, SharedLocalValid (globalTables shared chart).sharedLocal := by
-    intro chart
-    rw [hshared shared chart]
-    exact sharedValid
-  let valid0 ← checkGlobal "0" globalTaskCount (globalTables shared 0) (hs 0)
-  let valid1 ← checkGlobal "1" globalTaskCount (globalTables shared 1) (hs 1)
-  let valid2 ← checkGlobal "2" globalTaskCount (globalTables shared 2) (hs 2)
-  let valid3 ← checkGlobal "3" globalTaskCount (globalTables shared 3) (hs 3)
-  let checked : CheckedChartTables := {
-    tables := globalTables shared
-    charts := hchart shared
-    valid := by
-      intro chart
-      fin_cases chart
-      · exact valid0.down
-      · exact valid1.down
-      · exact valid2.down
-      · exact valid3.down }
+  let valid0 ← checkChart globalTaskCount shared sharedValid 0 (← loadChart shared 0)
+  let valid1 ← checkChart globalTaskCount shared sharedValid 1 (← loadChart shared 1)
+  let valid2 ← checkChart globalTaskCount shared sharedValid 2 (← loadChart shared 2)
+  let valid3 ← checkChart globalTaskCount shared sharedValid 3 (← loadChart shared 3)
+  have notRupert : CapOk → ¬ IsRupert verts := by
+    obtain ⟨t0, c0, v0⟩ := valid0.down
+    obtain ⟨t1, c1, v1⟩ := valid1.down
+    obtain ⟨t2, c2, v2⟩ := valid2.down
+    obtain ⟨t3, c3, v3⟩ := valid3.down
+    let checked : CheckedChartTables := {
+      tables := ![t0, t1, t2, t3]
+      charts := by
+        intro chart
+        fin_cases chart
+        · exact c0
+        · exact c1
+        · exact c2
+        · exact c3
+      valid := by
+        intro chart
+        fin_cases chart
+        · exact v0
+        · exact v1
+        · exact v2
+        · exact v3 }
+    exact checked.notRupert
   log "constructed: CapOk → ¬ IsRupert verts"
-  pure ⟨checked.notRupert⟩
+  pure ⟨notRupert⟩
 
 /-- Check a cap certificate (`capcert7.exe --export`) natively and return `CapOk`. -/
 def checkCap (c : Cap.CapCert) : IO (PLift CapOk) := do

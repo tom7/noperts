@@ -190,12 +190,13 @@ def readPath : Nat → Decoder (List (Fin 4))
       let rest ← readPath length
       pure (fin4 child :: rest)
 
-def readRow (chart : CayleyAtlas.ChartIndex) (intervals : Array SolutionTree.Interval)
+/-- Decode one row; `intervalOf` resolves the pack's interval indices. -/
+def readRow (chart : CayleyAtlas.ChartIndex) (intervalOf : Nat → SolutionTree.Interval)
     (triangles : Array SolutionTree.Triangle) : Decoder Row := do
   let tag ← readNat
   let id ← readNat
   let intervalIndex ← readNat
-  let interval := intervalAt intervals intervalIndex
+  let interval := intervalOf intervalIndex
   if tag = 0 then
     -- viewRoot (DH only): not a K row.
     let _child ← readNat
@@ -286,7 +287,7 @@ def readRows (chart : CayleyAtlas.ChartIndex) (intervals : Array SolutionTree.In
     (triangles : Array SolutionTree.Triangle) : Nat → Array Row → Decoder (Array Row)
   | 0, rows => pure rows
   | count + 1, rows => do
-      let row ← readRow chart intervals triangles
+      let row ← readRow chart (intervalAt intervals) triangles
       readRows chart intervals triangles count (rows.push row)
 
 structure Decoded where
@@ -339,5 +340,108 @@ def decodeCodeTables (chart : CayleyAtlas.ChartIndex) (shared : SharedLocalTable
   let rows := (decoded.zip offsets).foldl
     (fun (rows : Array Row) (d, offset) => rows ++ d.rows.map (shiftRow offset)) #[root]
   { chart, get := fun i => rows[i]!, size, sharedLocal := shared }
+
+/-! ## Lazy decoding
+
+A chart pack is kept as its bytes plus the byte offset of every interval and
+row; `get i` decodes row `i` on demand (and its interval). The decoded table
+is checked exactly as an eagerly decoded one (`Table.get` is any function), so
+the decoder stays untrusted plumbing, but no pack's rows are ever all
+materialized. -/
+
+/-- Skip `count` comma-terminated numbers from byte `pos`. -/
+def skipNumbers (data : ByteArray) (pos count : Nat) : Nat := Id.run do
+  let mut pos := pos
+  let mut left := count
+  let size := data.size
+  while h : pos < size ∧ 0 < left do
+    if data[pos]'h.1 = 44 then
+      left := left - 1
+    pos := pos + 1
+  pos
+
+/-- One chart pack: its bytes, the byte offsets of its intervals and rows, and
+its (few) triangles. -/
+structure LazyPack where
+  data : ByteArray
+  count : Nat
+  intervalStarts : Array Nat
+  triangles : Array SolutionTree.Triangle
+  rowStarts : Array Nat
+
+/-- Index a chart pack (one decoding pass to find the row boundaries; each
+row is dropped right after it is read). -/
+def LazyPack.index (chart : CayleyAtlas.ChartIndex) (data : ByteArray) : LazyPack := Id.run do
+  let (count, cursor) := (readNat : Decoder Nat) { data }
+  let (intervalCount, cursor) := (readNat : Decoder Nat) cursor
+  let mut pos := cursor.pos
+  let mut intervalStarts : Array Nat := Array.mkEmpty intervalCount
+  for _ in [0:intervalCount] do
+    intervalStarts := intervalStarts.push pos
+    pos := skipNumbers data pos 12
+  let (triangleCount, cursor) := (readNat : Decoder Nat) { data, pos }
+  let (triangles, cursor) := readMany readTriangle triangleCount #[] cursor
+  let mut cursor := cursor
+  let mut rowStarts : Array Nat := Array.mkEmpty count
+  for _ in [0:count] do
+    rowStarts := rowStarts.push cursor.pos
+    cursor := (readRow chart (fun _ => AtlasPose.rootInterval ℚ) triangles cursor).2
+  pure { data, count, intervalStarts, triangles, rowStarts }
+
+def LazyPack.interval (pack : LazyPack) (k : Nat) : SolutionTree.Interval :=
+  match pack.intervalStarts[k]? with
+  | some pos => (readInterval { data := pack.data, pos }).1
+  | none => AtlasPose.rootInterval ℚ
+
+/-- Row `i` of the pack (a placeholder past the end; the checker never reads
+past `size`). -/
+def LazyPack.row (chart : CayleyAtlas.ChartIndex) (pack : LazyPack) (i : Nat) : Row :=
+  match pack.rowStarts[i]? with
+  | some pos => (readRow chart pack.interval pack.triangles { data := pack.data, pos }).1
+  | none => .radiusPrune i (AtlasPose.rootInterval ℚ) .sphere
+
+/-- Lazily decode one chart pack (`pack5d --chart C --all`, or a single job). -/
+def decodeTableLazy (chart : CayleyAtlas.ChartIndex) (shared : SharedLocalTables)
+    (data : ByteArray) : Table :=
+  let pack := LazyPack.index chart data
+  { chart, get := pack.row chart, size := pack.count, sharedLocal := shared }
+
+/-- Per-code packs behind a `codeRoot` row, decoded on demand: the rows of
+`decodeCodeTables` (row 0 the `codeRoot`, then each code's rows shifted by its
+offset). -/
+structure LazyCodeTables where
+  packs : Array LazyPack
+  /-- The global id of each pack's row 0. -/
+  offsets : Array Nat
+  size : Nat
+
+def LazyCodeTables.ofPacks (packs : Array LazyPack) : LazyCodeTables :=
+  let (offsets, size) := packs.foldl
+    (fun (acc : Array Nat × Nat) p => (acc.1.push acc.2, acc.2 + p.count)) (#[], 1)
+  { packs, offsets, size }
+
+/-- The pack holding global row `i ≥ 1` (the last one starting at or before it). -/
+def LazyCodeTables.packOf (tables : LazyCodeTables) (i : Nat) : Nat := Id.run do
+  let mut found := 0
+  for k in [0:tables.offsets.size] do
+    if tables.offsets[k]! ≤ i then found := k
+  found
+
+def LazyCodeTables.get (chart : CayleyAtlas.ChartIndex) (tables : LazyCodeTables)
+    (i : Nat) : Row :=
+  if i = 0 then .codeRoot 0 tables.offsets (AtlasPose.rootInterval ℚ)
+  else
+    let k := tables.packOf i
+    let offset := tables.offsets[k]!
+    match tables.packs[k]? with
+    | some pack => shiftRow offset (pack.row chart (i - offset))
+    | none => .radiusPrune i (AtlasPose.rootInterval ℚ) .sphere
+
+/-- Lazily decode a chart table from its per-code packs (`decodeCodeTables`'s
+layout, from the packs' bytes). -/
+def decodeCodeTablesLazy (chart : CayleyAtlas.ChartIndex) (shared : SharedLocalTables)
+    (packs : Array LazyPack) : Table :=
+  let tables := LazyCodeTables.ofPacks packs
+  { chart, get := tables.get chart, size := tables.size, sharedLocal := shared }
 
 end Noperthedron.Nopert7.PackedSolutionTree
