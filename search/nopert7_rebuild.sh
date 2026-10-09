@@ -169,8 +169,9 @@ if want search; then
   # the first round; later rounds pick up subtrees cut short).
   for round in 1 2 3 4 5 6; do
     log=$WORK/search_round$round.log
-    extra=()
-    [ $round -gt 1 ] && extra=(--retry_deferred)
+    # --retry_deferred: also the deferred leaves already in the journals
+    # (e.g. after an interrupted run), so "0 deferred" means none anywhere.
+    extra=(--retry_deferred)
     rc=0
     (cd "$NOPERT" && capped ./search5d.exe "${SEARCH[@]}" "${extra[@]}") > "$log" 2>&1 || rc=$?
     [ $DRY -eq 1 ] && break
