@@ -377,6 +377,41 @@ theorem isDoubleNormalDir_image_iff {E : Type*} [NormedAddCommGroup E]
   rwa [← Set.image_comp, show (f.symm ∘ f : E → E) = id from funext f.symm_apply_apply,
     Set.image_id, f.symm_apply_apply] at this
 
+/-- Rotations preserve inner products. -/
+theorem inner_toEuclideanLin_SO3 {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R ∈ SO3) (x y : ℝ³) :
+    ⟪R.toEuclideanLin x, R.toEuclideanLin y⟫ = ⟪x, y⟫ := by
+  have hRR : Rᵀ * R = 1 := (Matrix.mem_orthogonalGroup_iff' (Fin 3) ℝ).mp hR.1
+  have e : ∀ i j, R 0 i * R 0 j + R 1 i * R 1 j + R 2 i * R 2 j =
+      (1 : Matrix (Fin 3) (Fin 3) ℝ) i j := fun i j => by
+    have := congrFun (congrFun hRR i) j
+    simpa [Matrix.mul_apply, Fin.sum_univ_three] using this
+  have h00 := e 0 0; have h01 := e 0 1; have h02 := e 0 2
+  have h10 := e 1 0; have h11 := e 1 1; have h12 := e 1 2
+  have h20 := e 2 0; have h21 := e 2 1; have h22 := e 2 2
+  simp at h00 h01 h02 h10 h11 h12 h20 h21 h22
+  simp only [PiLp.inner_apply, Fin.sum_univ_three, Matrix.toLpLin_apply, Matrix.mulVec,
+    dotProduct, RCLike.inner_apply, conj_trivial]
+  linear_combination x 0 * y 0 * h00 + x 0 * y 1 * h01 + x 0 * y 2 * h02 + x 1 * y 0 * h10 +
+    x 1 * y 1 * h11 + x 1 * y 2 * h12 + x 2 * y 0 * h20 + x 2 * y 1 * h21 + x 2 * y 2 * h22
+
+/-- A rotation as a linear isometry equivalence. -/
+noncomputable def so3Isometry {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R ∈ SO3) : ℝ³ ≃ₗᵢ[ℝ] ℝ³ :=
+  LinearEquiv.isometryOfInner
+    (LinearEquiv.ofLinear R.toEuclideanLin Rᵀ.toEuclideanLin
+      (by
+        have h : R * Rᵀ = 1 := by
+          simpa using (Matrix.mem_orthogonalGroup_iff (Fin 3) ℝ).mp hR.1
+        ext x i
+        simp [Matrix.toLpLin_apply, Matrix.mulVec_mulVec, h])
+      (by
+        have h : Rᵀ * R = 1 := (Matrix.mem_orthogonalGroup_iff' (Fin 3) ℝ).mp hR.1
+        ext x i
+        simp [Matrix.toLpLin_apply, Matrix.mulVec_mulVec, h]))
+    (inner_toEuclideanLin_SO3 hR)
+
+@[simp] theorem so3Isometry_apply {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R ∈ SO3) (x : ℝ³) :
+    so3Isometry hR x = R.toEuclideanLin x := rfl
+
 end SmallRupert
 
 end

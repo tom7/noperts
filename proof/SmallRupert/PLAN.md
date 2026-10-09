@@ -4,6 +4,17 @@ Formalization of `nopert229/notes/LEMMAS.md` (coplanar silhouettes) against
 `IsRupert` from `Noperthedron/MainTheorem.lean`. Build: `lake build SmallRupert`
 (imports only Mathlib and `Noperthedron.Rupert.Basic`).
 
+## Status
+
+Fully proved (axioms: propext, Classical.choice, Quot.sound only):
+`isRupert_bipyramid` (Tom's challenge, any number of waist points), and on
+its path L1 (`isRupert_of_firstOrderInward`, `eventually_innerShadow_subset`,
+Cayley curve), L3 existence (`exists_admissible_inward_field`, general convex
+polygon), L2 realization (`exists_motion_of_admissible`), L4 transfer and
+finiteness cases, the plane form of Theorem 5
+(`exists_firstOrderInward_of_plane`), rotation invariance and rotations to the
+standard view. Everything else is still `sorry`.
+
 ## Modules and dependency order
 
 | module | content (LEMMAS.md) | key statements |
