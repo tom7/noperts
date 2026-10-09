@@ -137,6 +137,38 @@ theorem isRupert_image_rotation' (Q : Matrix (Fin 3) (Fin 3) ℝ) (hQ : Q ∈ SO
   rw [hset R1 off, h2]
   exact hsub
 
+/-- `proj_xy` as a linear map. -/
+noncomputable def projL : ℝ³ →ₗ[ℝ] ℝ² where
+  toFun := proj_xy
+  map_add' x y := by ext i; fin_cases i <;> simp [proj_xy]
+  map_smul' c x := by ext i; fin_cases i <;> simp [proj_xy]
+
+theorem projL_apply (x : ℝ³) : projL x = proj_xy x := rfl
+
+theorem proj_xy_add' (x y : ℝ³) : proj_xy (x + y) = proj_xy x + proj_xy y := projL.map_add x y
+
+theorem proj_xy_smul' (c : ℝ) (x : ℝ³) : proj_xy (c • x) = c • proj_xy x := projL.map_smul c x
+
+theorem proj_xy_sub' (x y : ℝ³) : proj_xy (x - y) = proj_xy x - proj_xy y := projL.map_sub x y
+
+/-- Inner products with horizontal vectors survive the projection. -/
+theorem inner_proj_xy_of_horizontal {x : ℝ³} (hx : x 2 = 0) (y : ℝ³) :
+    ⟪proj_xy x, proj_xy y⟫ = ⟪x, y⟫ := by
+  simp [proj_xy, PiLp.inner_apply, Fin.sum_univ_three, Fin.sum_univ_two, hx]
+
+/-- A vector parallel to a non-vertical plane (`⟪N, z⟫ = 0`, `N 2 ≠ 0`) with
+zero projection is zero. -/
+theorem eq_zero_of_proj_xy_eq_zero {N z : ℝ³} (hN : N 2 ≠ 0) (hz : ⟪N, z⟫ = 0)
+    (hp : proj_xy z = 0) : z = 0 := by
+  have h0 : z 0 = 0 := by simpa [proj_xy] using congrArg (fun w : ℝ² => w 0) hp
+  have h1 : z 1 = 0 := by simpa [proj_xy] using congrArg (fun w : ℝ² => w 1) hp
+  have h2 : z 2 = 0 := by
+    simp [PiLp.inner_apply, Fin.sum_univ_three, h0, h1] at hz
+    rcases hz with h | h
+    · exact h
+    · exact absurd h hN
+  ext i; fin_cases i <;> simp [h0, h1, h2]
+
 /-- Rupertness is invariant under rotating the vertex set.  (Proved as
 `_root_.isRupert_image_rotation` in
 `Noperthedron/PentagonalHexecontahedron/IcoInstance.lean`, applied to `Qᵀ`;

@@ -87,17 +87,6 @@ theorem eventually_forall_mem_interior {ι : Type*} (s : Finset ι) {S : Set ℝ
   exact hS.combo_closure_interior_mem_interior (h0 i hi) hyin
     (by rw [sub_nonneg, div_le_one hε]; exact htε.le) (div_pos ht0 hε) (by ring)
 
-/-- `proj_xy` as a linear map. -/
-noncomputable def projL : ℝ³ →ₗ[ℝ] ℝ² where
-  toFun := proj_xy
-  map_add' x y := by ext i; fin_cases i <;> simp [proj_xy]
-  map_smul' c x := by ext i; fin_cases i <;> simp [proj_xy]
-
-theorem projL_apply (x : ℝ³) : projL x = proj_xy x := rfl
-
-theorem proj_xy_add' (x y : ℝ³) : proj_xy (x + y) = proj_xy x + proj_xy y := projL.map_add x y
-
-theorem proj_xy_smul' (c : ℝ) (x : ℝ³) : proj_xy (c • x) = c • proj_xy x := projL.map_smul c x
 
 /-- The screen trajectory of a point under a matrix curve has the screen
 velocity as derivative. -/
