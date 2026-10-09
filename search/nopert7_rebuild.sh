@@ -193,6 +193,10 @@ fi
 
 if want verify; then
   stage_begin verify
+  # Build the checker (no-op if current), never alongside another Lean build.
+  if [ $DRY -eq 0 ]; then while pgrep -x lake > /dev/null; do sleep 30; done; fi
+  (cd "$LEAN" && run timeout 6000 systemd-run --user --scope -q -p MemoryMax=48G -p MemorySwapMax=0 \
+    lake build constructNopert7)
   [ -x "$LEAN/.lake/build/bin/constructNopert7" ] || {
     echo "missing $LEAN/.lake/build/bin/constructNopert7 (lake build constructNopert7)" >&2; exit 1; }
   capped "$LEAN/.lake/build/bin/constructNopert7" "$TUBEPACKS/manifest.txt" "$PACKS" "$CAP_CERT" \
