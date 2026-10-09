@@ -57,15 +57,20 @@ Stages, in order: `model`, `tube`, `tubepack`, `cap`, `search`, `pack`,
 
 Each stage appends its wall time and peak memory to `work/stages.log`.
 
-Measured times:
+Measured times. The 64-core column is a from-scratch run in a fresh clone
+(2ab73f4, 2026-10-09), 4 h 22 min in total:
 
-| Stage | 16-core VM, 12 threads | 64-core VM |
+| Stage | 16-core VM, 12 threads | 64-core VM, 64 threads |
 |---|---|---|
-| tube + tubepack | 11 min | |
-| cap | 2 min | |
-| search | about 2 h of compute | |
-| pack | 2 h 20 min | |
-| verify | about 9–10 h, 15 GB peak | about 4 h |
+| model | | 7 s |
+| tube + tubepack | 11 min | 3.6 min |
+| cap | 2 min | 33 s |
+| search | about 2 h of compute | 28 min (one round) |
+| pack | 2 h 20 min | 49 min |
+| verify | 8 h 22 min, 15.7 GB peak | 3 h 1 min, including the Lean build; 15.2 GB peak |
+
+Table sizes from both runs: chart 0 has 83,340,081 rows; charts 1–3 have
+144,165, 124,872 and 104,577; tube tables total 1.39M rows.
 
 ## Verifying existing certificates
 
