@@ -5,20 +5,15 @@ public import SmallRupert.Coplanar
 @[expose] public section
 
 /-!
-# Corollaries 5.3 and 5.4: pyramids and segments crossing a plane
+# The waist lemma and the bipyramid theorem
 
-* `isRupert_of_pyramid` (Cor. 5.3): all points but one coplanar.
-* `isRupert_of_segment_crossing` (Cor. 5.4, bipyramid lemma): the points off
-  the plane are `D` and `E`, and the segment `DE` crosses the relative
-  interior of `F₀`.
-
-Cor. 5.4 is stated with its *conclusion-ready* hypothesis "segment `DE` meets
-`relint F₀`" instead of LEMMAS.md's "`D`, `E` on opposite sides of `Π`, not
-on a common face of `K`".  The latter implies the former only through two
-polytope facts not in Mathlib (a plane section is the hull of the vertices
-and edge crossings in it; an open segment on no proper face lies in
-`int K`), and the crossing form is what the ≤ 5-vertex proof produces
-directly (via Radon's theorem).
+`isRupert_of_waist`: Theorem 5 when the silhouette plane is `z = 0`: the
+points of `Q` project, along an oblique direction `u₀`, into the interior of
+the waist polygon `conv (proj_xy P)`.  The proof tilts `u₀` to a nearby
+generic view (avoiding the finitely many bad planes `badNormals`), rotates it
+to the standard view, and applies `exists_firstOrderInward_of_plane` (L2, L3,
+L4) and L1.  `isRupert_bipyramid` is the case `Q = {D, E}`, `u₀ = E - D`.
+The frame-free form is `isRupert_of_crossing` (Crossing.lean).
 -/
 
 namespace SmallRupert

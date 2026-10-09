@@ -7,13 +7,32 @@ Formalization of `nopert229/notes/LEMMAS.md` (coplanar silhouettes) against
 ## Status
 
 Fully proved (axioms: propext, Classical.choice, Quot.sound only):
-`isRupert_bipyramid` (Tom's challenge, any number of waist points), and on
-its path L1 (`isRupert_of_firstOrderInward`, `eventually_innerShadow_subset`,
-Cayley curve), L3 existence (`exists_admissible_inward_field`, general convex
-polygon), L2 realization (`exists_motion_of_admissible`), L4 transfer and
-finiteness cases, the plane form of Theorem 5
-(`exists_firstOrderInward_of_plane`), rotation invariance and rotations to the
-standard view. Everything else is still `sorry`.
+- `isRupert_bipyramid` (any number of waist points), via the waist lemma
+  `isRupert_of_waist` (Pyramid.lean);
+- `isRupert_of_crossing` (Crossing.lean): Theorem 5 in any frame, with the
+  "line through `v` meets a positive combination of `W`" hypothesis;
+- `isRupert_of_admissibleViews_nonempty` (general L5, LEMMAS.md's `U_Π ≠ ∅`),
+  `isRupert_of_segment_crossing` (Cor. 5.4), `isRupert_of_pyramid` (Cor. 5.3);
+- `isRupert_of_card_le_five` (Cor. 5.6), via a minimal hull subset, the
+  pyramid case, and Radon's theorem for five points in general position;
+- `isRupert_bicap_normalForm` and `isRupert_bicappedTetrahedron` (Cor. 5.7);
+- on the way: L1, L2 realization, L3 existence (general convex polygon), the
+  L4 transfer, rotation/translation invariance of `IsRupert`.
+
+Still `sorry` (none is used by the theorems above): the L3 obstruction and
+L2(d) obstruction (optional), the `⇒` halves of L2/L4 iffs, L3.0 range form,
+the generic-view density statements of Coplanar.lean (`dense_generic_...`,
+`isOpen_admissibleViews`, `exists_firstOrderInward_of_coplanar`,
+`isRupert_of_generic_admissibleView`), and SixVertices.lean.
+
+Remaining six-vertex work (estimates, given `isRupert_of_crossing`):
+- frustum (T1, concurrent lateral lines): explicit view from `O` through the
+  centroid, weights `(1 - α) c + α A`: ~80 lines;
+- parallel prism with unequal lateral edges (T1): WLOG ordering, explicit
+  chord of the lateral trapezoid: ~200 lines;
+- T5 normal form: case `γ₂ < b₂` is `isRupert_bicap_case` with `a' = 0`
+  (needs `0 ≤ a'` instead of `0 < a'`, a one-line change); case `γ₂ > b₂`
+  (plane `E S₃ S₄`, LEMMAS.md's computation): ~200 lines.
 
 ## Modules and dependency order
 
@@ -23,7 +42,9 @@ standard view. Everything else is still `sorry`.
 | `FirstOrder` | L1 | `eventually_forall_mem_interior`, `eventually_innerShadow_subset`, `isRupert_of_firstOrderInward` |
 | `DoubleNormal` | L3, L3.0, L4 transfer | `exists_admissible_inward_field` (L3 existence), `isDoubleNormalDir_convexHull_cases`, `isDoubleNormalDir_proj_iff'` |
 | `Coplanar` | L2, L4, L5 | `exists_motion_iff`, `exists_firstOrderInward_of_plane`, `isRupert_of_admissibleViews_nonempty` |
-| `Pyramid` | Cor. 5.3, 5.4 | `isRupert_of_pyramid`, `isRupert_of_segment_crossing`, `isRupert_bipyramid` |
+| `Pyramid` | waist lemma | `isRupert_of_waist`, `isRupert_bipyramid` |
+| `Planes` | plane utilities | `exists_plane_of_coplanar`, `det4`, `sum_smul_mem_interior_convexHull` |
+| `Crossing` | L5 (any frame), Cor. 5.3, 5.4 | `isRupert_of_crossing`, `isRupert_of_admissibleViews_nonempty`, `isRupert_of_pyramid`, `isRupert_of_segment_crossing` |
 | `FewVertices` | Cor. 5.6 | `isRupert_of_card_le_five` |
 | `BicappedTetrahedron` | Cor. 5.7 | `isRupert_bicap_normalForm`, `isRupert_bicappedTetrahedron` |
 | `SixVertices` | L6 (partial) | frustum, parallel prism, T5 normal form |

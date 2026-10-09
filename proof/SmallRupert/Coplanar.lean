@@ -18,8 +18,10 @@ public import SmallRupert.DoubleNormal
   projects along `u` into the relative interior of `F₀ = conv W`.
 * L4 (`dense_generic_admissibleViews`): views orthogonal to no double normal
   of `F₀` are dense in `U_Π` (the bad set lies on finitely many great circles).
-* L5 (`exists_firstOrderInward_of_coplanar`, `isRupert_of_generic_admissibleView`,
-  `isRupert_of_admissibleViews_nonempty`): the coplanar-silhouette theorem.
+* L5 (`exists_firstOrderInward_of_plane`, proved; `exists_firstOrderInward_of_coplanar`,
+  `isRupert_of_generic_admissibleView`): the coplanar-silhouette theorem in the
+  standard view.  The headline `isRupert_of_admissibleViews_nonempty` is proved
+  in Crossing.lean.
 
 Formulation.  Instead of LEMMAS.md's `W = V ∩ Π` we allow any `W ⊆ V`, with
 `Π := affineSpan ℝ W`; points of `V \ W` that happen to lie in `Π` must then
@@ -319,15 +321,6 @@ theorem isRupert_of_generic_admissibleView (V W : Finset ℝ³) (hWV : W ⊆ V)
     (hgen : ∀ δ : ℝ³, IsDoubleNormalDir (convexHull ℝ (W : Set ℝ³)) δ → ⟪δ, u⟫ ≠ 0) :
     IsRupert V := by
   sorry
-
-/-- **Theorem 5 (coplanar-silhouette theorem).**  If some subset `W ⊆ V`,
-not collinear, has an admissible view (`U_Π ≠ ∅` for `Π = affineSpan W`),
-then `V` is Rupert. -/
-theorem isRupert_of_admissibleViews_nonempty (V W : Finset ℝ³) (hWV : W ⊆ V)
-    (hW : ¬ Collinear ℝ (W : Set ℝ³)) (hU : (admissibleViews V W).Nonempty) :
-    IsRupert V := by
-  obtain ⟨u, hu, hgen⟩ := exists_generic_admissibleView V W hW hU
-  exact isRupert_of_generic_admissibleView V W hWV hW u hu hgen
 
 end SmallRupert
 
