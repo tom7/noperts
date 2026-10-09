@@ -90,7 +90,7 @@ to `(A, P, Q, T)`; if `βγ' < qp'` and `γ' < p'`, the plane `AQT` has an
 admissible view `X - P`. -/
 theorem isRupert_bicap_case (A P Q T : ℝ³) (hind : AffineIndependent ℝ ![A, P, Q, T])
     (a β q t a' p' γ' t' : ℝ) (ha : 0 < a) (hβ : 0 < β) (_hq : 0 < q) (ht : 0 < t)
-    (ha' : 0 < a') (hp' : 0 < p') (hγ' : 0 < γ') (ht' : 0 < t')
+    (ha' : 0 ≤ a') (hp' : 0 < p') (hγ' : 0 < γ') (ht' : 0 < t')
     (hs : a - β + q + t = 1) (hs' : a' + p' - γ' + t' = 1)
     (hconv : β * γ' < q * p') (hcase : γ' < p') :
     IsRupert {A, P, Q, T, a • A - β • P + q • Q + t • T, a' • A + p' • P - γ' • Q + t' • T} := by
@@ -213,8 +213,8 @@ theorem isRupert_bicap_normalForm (A B C T : ℝ³) (hind : AffineIndependent �
     IsRupert {A, B, C, T, a₁ • A - β₁ • B + c₁ • C + t₁ • T,
       a₂ • A + b₂ • B - γ₂ • C + t₂ • T} := by
   by_cases hy : γ₂ < b₂
-  · exact isRupert_bicap_case A B C T hind a₁ β₁ c₁ t₁ a₂ b₂ γ₂ t₂ ha₁ hβ₁ hc₁ ht₁ ha₂ hb₂ hγ₂
-      ht₂ hsum₁ hsum₂ hAT hy
+  · exact isRupert_bicap_case A B C T hind a₁ β₁ c₁ t₁ a₂ b₂ γ₂ t₂ ha₁ hβ₁ hc₁ ht₁ ha₂.le hb₂
+      hγ₂ ht₂ hsum₁ hsum₂ hAT hy
   · push Not at hy
     have hx : β₁ < c₁ := by
       by_contra hx; push Not at hx
@@ -224,7 +224,7 @@ theorem isRupert_bicap_normalForm (A B C T : ℝ³) (hind : AffineIndependent �
       have := hind.comp_embedding (Equiv.swap (1 : Fin 4) 2).toEmbedding
       convert this using 1
       funext i; fin_cases i <;> rfl
-    have h := isRupert_bicap_case A C B T hind' a₂ γ₂ b₂ t₂ a₁ c₁ β₁ t₁ ha₂ hγ₂ hb₂ ht₂ ha₁ hc₁
+    have h := isRupert_bicap_case A C B T hind' a₂ γ₂ b₂ t₂ a₁ c₁ β₁ t₁ ha₂ hγ₂ hb₂ ht₂ ha₁.le hc₁
       hβ₁ ht₁ (by linarith) (by linarith) (by linarith) hx
     have e1 : a₂ • A - γ₂ • C + b₂ • B + t₂ • T = a₂ • A + b₂ • B - γ₂ • C + t₂ • T := by module
     have e2 : a₁ • A + c₁ • C - β₁ • B + t₁ • T = a₁ • A - β₁ • B + c₁ • C + t₁ • T := by module

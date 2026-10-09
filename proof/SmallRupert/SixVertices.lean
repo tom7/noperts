@@ -20,13 +20,66 @@ public import SmallRupert.Crossing
 
 namespace SmallRupert
 
-/-- **T1, concurrent lateral lines (frustum).**  `A' = O + α (A - O)` etc.
-with `α, β, γ ∈ (0, 1)`: view from `O` through the big triangle `ABC`. -/
-theorem isRupert_frustum (A B C O : ℝ³) (hABC : ¬ Collinear ℝ ({A, B, C} : Set ℝ³))
-    (hO : O ∉ affineSpan ℝ ({A, B, C} : Set ℝ³)) (α β γ : ℝ)
+open scoped RealInnerProductSpace
+
+/-- **T1, concurrent lateral lines (frustum).**  A triangular prism whose
+three lateral lines meet at a point `O` (LEMMAS.md L6, first T1 case): the
+small end is `A' = O + α (A - O)` etc. with `α, β, γ ∈ (0, 1)`, and `OABC` is
+a nondegenerate tetrahedron.  View from `O` through the centroid of the big
+end `ABC`. -/
+theorem isRupert_frustum (A B C O : ℝ³) (hind : AffineIndependent ℝ ![A, B, C, O]) (α β γ : ℝ)
     (hα : α ∈ Set.Ioo (0 : ℝ) 1) (hβ : β ∈ Set.Ioo (0 : ℝ) 1) (hγ : γ ∈ Set.Ioo (0 : ℝ) 1) :
     IsRupert {A, B, C, O + α • (A - O), O + β • (B - O), O + γ • (C - O)} := by
-  sorry
+  classical
+  obtain ⟨hα0, hα1⟩ := hα
+  obtain ⟨hβ0, hβ1⟩ := hβ
+  obtain ⟨hγ0, hγ1⟩ := hγ
+  have hdet : det4 A B C O ≠ 0 := fun h0 =>
+    not_coplanar_of_affineIndependent hind (coplanar_of_det4_eq_zero h0)
+  set N := cross (B - A) (C - A) with hNdef
+  set c := ⟪N, A⟫ with hc
+  have hN : N ≠ 0 := fun h0 => hdet (by simp [det4, ← hNdef, h0])
+  have hind3 : AffineIndependent ℝ ![A, B, C] := affineIndependent_of_cross_ne_zero hN
+  have hinj := hind3.injective
+  have hAB : A ≠ B := fun h => by have := @hinj 0 1 (by simp [h]); exact absurd this (by decide)
+  have hAC : A ≠ C := fun h => by have := @hinj 0 2 (by simp [h]); exact absurd this (by decide)
+  have hBC : B ≠ C := fun h => by have := @hinj 1 2 (by simp [h]); exact absurd this (by decide)
+  have hNB : ⟪N, B⟫ = c := by
+    have := inner_cross_left (B - A) (C - A); rw [← hNdef, inner_sub_right] at this; linarith
+  have hNC : ⟪N, C⟫ = c := by
+    have := inner_cross_right (B - A) (C - A); rw [← hNdef, inner_sub_right] at this; linarith
+  have hWN : ∀ w ∈ ({A, B, C} : Finset ℝ³), ⟪N, w⟫ = c := by
+    intro w hw
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hw
+    rcases hw with rfl | rfl | rfl
+    · rfl
+    · exact hNB
+    · exact hNC
+  set G := (1 / 3 : ℝ) • A + (1 / 3 : ℝ) • B + (1 / 3 : ℝ) • C
+  have hNG : ⟪N, G⟫ = c := by
+    simp only [G, inner_add_right, real_inner_smul_right, hNB, hNC, ← hc]; ring
+  have hu₀ : ⟪N, G - O⟫ ≠ 0 := by
+    rw [inner_sub_right, hNG]
+    intro h0; apply hdet
+    simp only [det4, ← hNdef, inner_sub_right]; linarith
+  refine isRupert_of_crossing _ {A, B, C} (by intro x hx; simp at hx ⊢; tauto) N c hWN
+    (by simp) (by simp) (by simp) hind3 (G - O) hu₀ ?_
+  intro v hv hvW
+  simp only [Finset.mem_insert, Finset.mem_singleton] at hv hvW
+  push Not at hvW
+  rcases hv with rfl | rfl | rfl | rfl | rfl | rfl
+  · exact absurd rfl hvW.1
+  · exact absurd rfl hvW.2.1
+  · exact absurd rfl hvW.2.2
+  · exact exists_weights3 hAB hAC hBC (t := 1 - α) (α := α + (1 - α) / 3)
+      (β := (1 - α) / 3) (γ := (1 - α) / 3) (by linarith) (by linarith) (by linarith)
+      (by ring) (by simp only [G]; module)
+  · exact exists_weights3 hAB hAC hBC (t := 1 - β) (α := (1 - β) / 3)
+      (β := β + (1 - β) / 3) (γ := (1 - β) / 3) (by linarith) (by linarith) (by linarith)
+      (by ring) (by simp only [G]; module)
+  · exact exists_weights3 hAB hAC hBC (t := 1 - γ) (α := (1 - γ) / 3)
+      (β := (1 - γ) / 3) (γ := γ + (1 - γ) / 3) (by linarith) (by linarith) (by linarith)
+      (by ring) (by simp only [G]; module)
 
 /-- **T1, parallel lateral edges of unequal lengths.**  `A' = A + s_A w` etc.
 with `s_A, s_B, s_C > 0` not all equal: view through a lateral quadrilateral
