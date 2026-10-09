@@ -369,6 +369,152 @@ theorem deg_lemma (g : ℕ → ℝ²) (m T : ℕ) (hT0 : 0 < T) (hTm : T < m)
     show y s = 0
     linarith
 
+/-- **Theorem 7.3, Steps 2–4.**  Forces `g 0, …, g (m-1)` (the nonzero corner
+forces in cyclic order, starting at the deepest one) with zero sum and zero
+depth moment, at depths rising strictly from `0` to `T` and falling strictly
+back, whose directions have the sign-switch properties of an angularly sorted
+sequence (`hSS`, and the orientation at the extreme forces `hOr0`, `hOrT`),
+are all parallel. -/
+theorem forces_parallel (g : ℕ → ℝ²) (ζ : ℕ → ℝ) (m T : ℕ) (hT0 : 0 < T) (hTm : T < m)
+    (hgT : g T ≠ 0) (h1 : ∑ s ∈ range m, g s = 0) (h2 : ∑ s ∈ range m, ζ s • g s = 0)
+    (hrise : ∀ n, 1 ≤ n → n ≤ T → ζ (n - 1) < ζ n)
+    (hfall : ∀ n, T < n → n < m → ζ n < ζ (n - 1)) (hwrap : ζ 0 < ζ (m - 1))
+    (hSS : ∀ D, SSlin (fun s => cross2 D (g s)) m)
+    (hOr0 : ∃ j, j ≤ m ∧ (∀ s, 0 < s → s < j → 0 ≤ cross2 (g 0) (g s)) ∧
+      (∀ s, j ≤ s → s < m → cross2 (g 0) (g s) ≤ 0))
+    (hOrT : ∃ j, j ≤ m ∧ (∀ s, 0 < s → s < j → 0 ≤ cross2 (g T) (g ((T + s) % m))) ∧
+      (∀ s, j ≤ s → s < m → cross2 (g T) (g ((T + s) % m)) ≤ 0)) :
+    ∀ s < m, cross2 (g 0) (g s) = 0 := by
+  have hm : 0 < m := by omega
+  set V : ℕ → ℝ² := fun n => ∑ s ∈ range n, g s with hV
+  set D := V T + (1 / 2 : ℝ) • g T - (1 / 2 : ℝ) • g 0 with hD
+  set w : ℕ → ℝ := fun n => (if n = m then ζ 0 else ζ n) - ζ (n - 1) with hw
+  have hw1 : ∀ n, 1 ≤ n → n ≤ T → 0 < w n := fun n h1 h2 => by
+    simp only [hw, if_neg (show n ≠ m by omega)]; linarith [hrise n h1 h2]
+  have hw2 : ∀ n, T < n → n ≤ m → w n < 0 := fun n h1 h2 => by
+    simp only [hw]
+    rcases eq_or_lt_of_le h2 with rfl | h2
+    · rw [if_pos rfl]; linarith
+    · rw [if_neg (by omega)]; linarith [hfall n h1 h2]
+  by_cases ha : cross2 D (g 0) = 0
+  · -- the separating line contains force edge `0`
+    refine deg_lemma g m T hT0 hTm h1 w (Or.inl ⟨hw1, hw2⟩) hOr0 ?_ ?_
+    · exact abel_identity g ζ m hm h1 h2 (g 0) ((1 / 2 : ℝ) • g 0)
+    · rw [cross2_comm]; simpa [hD, hV] using ha
+  by_cases hb : cross2 D (g T) = 0
+  · -- the separating line contains force edge `T`: rotate `T` to the front
+    set g' : ℕ → ℝ² := fun s => g ((T + s) % m) with hg'
+    set ζ' : ℕ → ℝ := fun s => ζ ((T + s) % m) with hζ'
+    have hg'0 : g' 0 = g T := by simp [hg', Nat.mod_eq_of_lt hTm]
+    have hg'T : g' (m - T) = g 0 := by simp [hg', show T + (m - T) = m by omega]
+    have h1' : ∑ s ∈ range m, g' s = 0 := by rw [sum_range_rotate g m T hTm]; exact h1
+    have h2' : ∑ s ∈ range m, ζ' s • g' s = 0 := by
+      rw [sum_range_rotate (fun r => ζ r • g r) m T hTm]; exact h2
+    have hV' : ∑ s ∈ range (m - T), g' s = -V T := by
+      have e : ∑ s ∈ range (m - T), g' s = ∑ r ∈ Ico T m, g r := by
+        rw [sum_Ico_eq_sum_range]
+        exact sum_congr rfl fun s hs => by
+          rw [mem_range] at hs; simp [hg', Nat.mod_eq_of_lt (show T + s < m by omega)]
+      rw [e]
+      have := sum_range_add_sum_Ico g hTm.le
+      rw [h1] at this
+      simp only [hV]
+      rw [eq_neg_iff_add_eq_zero, add_comm]; exact this
+    set w' : ℕ → ℝ := fun n => (if n = m then ζ' 0 else ζ' n) - ζ' (n - 1) with hw'
+    have hwr1 : ∀ n, 1 ≤ n → n ≤ m - T → w' n < 0 := by
+      intro n h1 h2
+      simp only [hw', hζ', if_neg (show n ≠ m by omega)]
+      rcases eq_or_lt_of_le h2 with rfl | h2
+      · rw [show T + (m - T) = m by omega, Nat.mod_self,
+          Nat.mod_eq_of_lt (show T + (m - T - 1) < m by omega),
+          show T + (m - T - 1) = m - 1 by omega]
+        exact sub_neg.mpr hwrap
+      · rw [Nat.mod_eq_of_lt (show T + n < m by omega),
+          Nat.mod_eq_of_lt (show T + (n - 1) < m by omega)]
+        have := hfall (T + n) (by omega) (by omega)
+        rw [show T + n - 1 = T + (n - 1) by omega] at this
+        linarith
+    have hwr2 : ∀ n, m - T < n → n ≤ m → 0 < w' n := by
+      intro n h1 h2
+      simp only [hw', hζ']
+      rcases eq_or_lt_of_le h2 with rfl | h2
+      · rw [if_pos rfl, Nat.add_zero, Nat.mod_eq_of_lt hTm,
+          show T + (n - 1) = (T - 1) + n by omega, Nat.add_mod_right,
+          Nat.mod_eq_of_lt (show T - 1 < n by omega)]
+        have := hrise T hT0 le_rfl
+        linarith
+      · rw [if_neg (by omega), show T + n = (T + n - m) + m by omega, Nat.add_mod_right,
+          Nat.mod_eq_of_lt (show T + n - m < m by omega),
+          show T + (n - 1) = (T + n - 1 - m) + m by omega, Nat.add_mod_right,
+          Nat.mod_eq_of_lt (show T + n - 1 - m < m by omega)]
+        have := hrise (T + n - m) (by omega) (by omega)
+        rw [show T + n - m - 1 = T + n - 1 - m by omega] at this
+        linarith
+    have hdeg := deg_lemma g' m (m - T) (by omega) (by omega) h1' w'
+      (Or.inr ⟨hwr1, hwr2⟩) (by simpa [hg'0] using hOrT)
+      (by
+        have := abel_identity g' ζ' m hm h1' h2' (g' 0) ((1 / 2 : ℝ) • g' 0)
+        exact this)
+      (by
+        rw [hV', hg'T, hg'0]
+        have : -V T + (1 / 2 : ℝ) • g 0 - (1 / 2 : ℝ) • g T = -D := by
+          simp only [hD]; abel
+        rw [this, cross2_neg_right, cross2_comm, neg_neg]
+        simpa using hb)
+    have hall : ∀ r < m, cross2 (g T) (g r) = 0 := by
+      intro r hr
+      have := hdeg ((r + (m - T)) % m) (Nat.mod_lt _ hm)
+      rw [hg'0] at this
+      simp only [hg'] at this
+      rwa [Nat.add_mod_mod, show T + (r + (m - T)) = r + m by omega, Nat.add_mod_right,
+        Nat.mod_eq_of_lt hr] at this
+    intro r hr
+    exact cross2_trans hgT (hall 0 hm) (hall r hr)
+  -- generic case: strict separation, contradicting the depth balance
+  exfalso
+  set x : ℕ → ℝ := fun s => cross2 D (g s) with hx
+  have hsum : ∑ r ∈ range m, x r = 0 := by
+    have := congrArg (cross2 D) h1
+    rw [cross2_sum_right] at this
+    simpa [hx, cross2] using this
+  have hY : ∀ n, cross2 D (∑ s ∈ range n, g s - (1 / 2 : ℝ) • g 0) =
+      ∑ r ∈ range n, x r - x 0 / 2 := by
+    intro n
+    rw [cross2_sub_right, cross2_sum_right, cross2_smul_right]
+    simp only [hx]
+    ring
+  have hmid : (∑ r ∈ range T, x r - x 0 / 2) + x T / 2 = 0 := by
+    rw [← hY]
+    have e : (∑ s ∈ range T, g s - (1 / 2 : ℝ) • g 0) + (1 / 2 : ℝ) • g T = D := by
+      simp only [hD, hV]; abel
+    have : cross2 D (∑ s ∈ range T, g s - (1 / 2 : ℝ) • g 0) + x T / 2 = cross2 D D := by
+      calc cross2 D (∑ s ∈ range T, g s - (1 / 2 : ℝ) • g 0) + x T / 2
+          = cross2 D ((∑ s ∈ range T, g s - (1 / 2 : ℝ) • g 0) + (1 / 2 : ℝ) • g T) := by
+            rw [cross2_add_right, cross2_smul_right]; simp only [hx]; ring
+        _ = cross2 D D := by rw [e]
+    rw [this, cross2_self]
+  obtain ⟨hpos, hneg⟩ := sign_lemma x m T hT0 hTm (hSS D) hsum hmid ha hb
+  have habel := abel_identity g ζ m hm h1 h2 D ((1 / 2 : ℝ) • g 0)
+  simp only [hY] at habel
+  have : 0 < ∑ n ∈ Ico 1 (m + 1), w n * (x 0 * (∑ r ∈ range n, x r - x 0 / 2)) := by
+    rw [← sum_Ico_consecutive _ (show 1 ≤ T + 1 by omega) (show T + 1 ≤ m + 1 by omega)]
+    have hA : 0 < ∑ n ∈ Ico 1 (T + 1), w n * (x 0 * (∑ r ∈ range n, x r - x 0 / 2)) := by
+      apply sum_pos
+      · intro n hn; rw [mem_Ico] at hn
+        exact mul_pos (hw1 n hn.1 (by omega)) (hpos n hn.1 (by omega))
+      · exact ⟨1, mem_Ico.mpr ⟨le_rfl, by omega⟩⟩
+    have hB : 0 ≤ ∑ n ∈ Ico (T + 1) (m + 1), w n * (x 0 * (∑ r ∈ range n, x r - x 0 / 2)) :=
+      sum_nonneg fun n hn => by
+        rw [mem_Ico] at hn
+        exact (mul_pos_of_neg_of_neg (hw2 n (by omega) (by omega)) (hneg n (by omega) (by omega))).le
+    linarith
+  have hzero : ∑ n ∈ Ico 1 (m + 1), w n * (x 0 * (∑ r ∈ range n, x r - x 0 / 2)) = 0 := by
+    have : ∑ n ∈ Ico 1 (m + 1), w n * (x 0 * (∑ r ∈ range n, x r - x 0 / 2)) =
+        x 0 * ∑ n ∈ Ico 1 (m + 1), w n * (∑ r ∈ range n, x r - x 0 / 2) := by
+      rw [mul_sum]; exact sum_congr rfl fun n _ => by ring
+    rw [this, habel, mul_zero]
+  linarith
+
 end SmallRupert
 
 end
