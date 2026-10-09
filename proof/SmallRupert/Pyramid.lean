@@ -190,50 +190,33 @@ theorem exists_avoid_badNormals {P : Finset ℝ³} (hP : ∀ p ∈ P, p 2 = 0) :
     field_simp
     linarith
 
-/-- **Bipyramid theorem** (Tom's challenge; Cor. 5.4 with the waist in
-`z = 0`).  `P` is a finite set in the plane `z = 0`, `D` is above and `E`
-below it, and the point `X = D + (D₂ / (D₂ - E₂)) (E - D)` where the segment
-`DE` crosses the plane projects into the interior of the waist polygon
-`conv (proj_xy P)`.  Then `insert D (insert E P)` is Rupert, for any number of
-waist points.  (The view `E - D` itself may be face-on, `g = 0`; the proof
-uses a slightly tilted generic view `E - D + t ζ`.) -/
-theorem isRupert_bipyramid (P : Finset ℝ³) (hP : ∀ p ∈ P, p 2 = 0) (D E : ℝ³)
-    (hD : 0 < D 2) (hE : E 2 < 0)
-    (hX : proj_xy (D + (D 2 / (D 2 - E 2)) • (E - D)) ∈
+/-- **Waist lemma** (Theorem 5 with the plane `z = 0`, frame-specific form).
+`P` lies in `z = 0`, and along the oblique direction `u₀` every point of `Q`
+projects into the interior of the waist polygon `conv (proj_xy P)`.  Then
+`P ∪ Q` is Rupert (at a slightly tilted generic view). -/
+theorem isRupert_of_waist (P Q : Finset ℝ³) (hP : ∀ p ∈ P, p 2 = 0)
+    (hint : (interior (convexHull ℝ ((P.image proj_xy : Finset ℝ²) : Set ℝ²))).Nonempty)
+    (u₀ : ℝ³) (hu₀ : u₀ 2 ≠ 0)
+    (hQ : ∀ q ∈ Q, proj_xy (q - (q 2 / u₀ 2) • u₀) ∈
       interior (convexHull ℝ ((P.image proj_xy : Finset ℝ²) : Set ℝ²))) :
-    IsRupert (insert D (insert E P)) := by
+    IsRupert (P ∪ Q) := by
   classical
-  set V := insert D (insert E P) with hVdef
+  set V := P ∪ Q with hVdef
   set Fp := convexHull ℝ ((P.image proj_xy : Finset ℝ²) : Set ℝ²) with hFp
   set I := interior Fp with hI
-  have hDP : D ∉ P := fun h => by have := hP D h; linarith
-  have hEP : E ∉ P := fun h => by have := hP E h; linarith
   -- parallel projection along `u` onto the waist plane, in screen coordinates
   set π : ℝ³ → ℝ³ → ℝ² := fun u x => proj_xy (x - (x 2 / u 2) • u) with hπ
-  set u₀ := E - D with hu₀
-  have hu₀2 : u₀ 2 = E 2 - D 2 := by simp [hu₀]
-  have hne : E 2 - D 2 ≠ 0 := by linarith
-  have hne' : -E 2 + D 2 ≠ 0 := by linarith
-  have hne'' : D 2 - E 2 ≠ 0 := by linarith
-  have hπD : π u₀ D = proj_xy (D + (D 2 / (D 2 - E 2)) • (E - D)) := by
-    simp only [hπ, hu₀2]
-    congr 1
-    ext i; fin_cases i <;> simp [hu₀] <;> field_simp <;> ring
-  have hπE : π u₀ E = proj_xy (D + (D 2 / (D 2 - E 2)) • (E - D)) := by
-    simp only [hπ, hu₀2]
-    congr 1
-    ext i; fin_cases i <;> simp [hu₀] <;> field_simp <;> ring
   have hc2 : Continuous fun u : ℝ³ => u 2 := (EuclideanSpace.proj (2 : Fin 3)).continuous
   have hcπ : ∀ x : ℝ³, ContinuousAt (fun u => π u x) u₀ := by
     intro x
     have h1 : ContinuousAt (fun u : ℝ³ => x - (x 2 / u 2) • u) u₀ :=
       continuousAt_const.sub ((continuousAt_const.div hc2.continuousAt
-        (by rw [hu₀2]; exact hne)).smul continuousAt_id)
+        hu₀).smul continuousAt_id)
     exact (projL.continuous_of_finiteDimensional.continuousAt).comp h1
-  have hev : ∀ᶠ u in 𝓝 u₀, u 2 ≠ 0 ∧ π u D ∈ I ∧ π u E ∈ I :=
-    (hc2.continuousAt.eventually_ne (by rw [hu₀2]; exact hne)).and
-      (((hcπ D).eventually (isOpen_interior.mem_nhds (by show π u₀ D ∈ interior Fp; rw [hπD]; exact hX))).and
-        ((hcπ E).eventually (isOpen_interior.mem_nhds (by show π u₀ E ∈ interior Fp; rw [hπE]; exact hX))))
+  have hev : ∀ᶠ u in 𝓝 u₀, u 2 ≠ 0 ∧ ∀ q ∈ Q, π u q ∈ I := by
+    refine (hc2.continuousAt.eventually_ne hu₀).and ?_
+    rw [eventually_all_finset]
+    exact fun q hq => (hcπ q).eventually (isOpen_interior.mem_nhds (hQ q hq))
   -- a generic tilt
   obtain ⟨ζ, hζ⟩ := exists_avoid_badNormals hP
   have hline : Tendsto (fun t : ℝ => u₀ + t • ζ) (𝓝 0) (𝓝 u₀) := by
@@ -255,7 +238,7 @@ theorem isRupert_bipyramid (P : Finset ℝ³) (hP : ∀ p ∈ P, p 2 = 0) (D E :
     simp only [t₀]
     field_simp
     linarith
-  obtain ⟨t, hgen_t, hu2, hπDu, hπEu⟩ :=
+  obtain ⟨t, hgen_t, hu2, hπQ⟩ :=
     (hgen_ev.and ((hline.eventually hev).filter_mono nhdsWithin_le_nhds)).exists
   set u := u₀ + t • ζ with hu
   have hu0 : u ≠ 0 := fun h => hu2 (by rw [h]; rfl)
@@ -327,25 +310,23 @@ theorem isRupert_bipyramid (P : Finset ℝ³) (hP : ∀ p ∈ P, p 2 = 0) (D E :
     exact (Te.toHomeomorph.image_interior Fp).symm
   -- apply the plane form of Theorem 5 to the rotated solid
   have hsub : P.image R.toEuclideanLin ⊆ V.image R.toEuclideanLin :=
-    Finset.image_subset_image (fun p hp => by simp [hVdef, hp])
+    Finset.image_subset_image Finset.subset_union_left
   obtain ⟨ω, τ, hfo⟩ := exists_firstOrderInward_of_plane (V.image R.toEuclideanLin)
     (P.image R.toEuclideanLin) hsub N 0 hN2
     (by
       intro w hw
       obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp hw
       rw [hN, ← hfx, f.inner_map_map, inner_ez', hP p hp])
-    (by rw [hintW']; exact ⟨_, Set.mem_image_of_mem _ (show proj_xy _ ∈ I from hX)⟩)
+    (by rw [hintW']; obtain ⟨x, hx⟩ := hint; exact ⟨_, Set.mem_image_of_mem _ hx⟩)
     (by
       intro v hv hvW
       obtain ⟨x, hx, rfl⟩ := Finset.mem_image.mp hv
       have hxP : x ∉ P := fun h => hvW (Finset.mem_image_of_mem _ h)
       rw [hintW', hTπ x]
       refine ⟨π u x, ?_, hTe _⟩
-      rcases Finset.mem_insert.mp hx with rfl | hx
-      · exact hπDu
-      rcases Finset.mem_insert.mp hx with rfl | hx
-      · exact hπEu
-      · exact absurd hx hxP)
+      rcases Finset.mem_union.mp hx with hx | hx
+      · exact absurd hx hxP
+      · exact hπQ x hx)
     (by
       intro δ' hδ'
       have hconv : convexHull ℝ ((P.image R.toEuclideanLin : Finset ℝ³) : Set ℝ³) =
@@ -359,6 +340,33 @@ theorem isRupert_bipyramid (P : Finset ℝ³) (hP : ∀ p ∈ P, p 2 = 0) (D E :
       exact mul_ne_zero (inv_ne_zero hr)
         (inner_ne_zero_of_badNormals hP u hgen_t _ hδ'))
   exact isRupert_of_firstOrderInward_image V R hR ω τ hfo
+
+/-- **Bipyramid theorem** (Tom's challenge; Cor. 5.4 with the waist in
+`z = 0`).  `P` is a finite set in the plane `z = 0`, `D` is above and `E`
+below it, and the point `X = D + (D₂ / (D₂ - E₂)) (E - D)` where the segment
+`DE` crosses the plane projects into the interior of the waist polygon
+`conv (proj_xy P)`.  Then `insert D (insert E P)` is Rupert, for any number of
+waist points.  (The view `E - D` itself may be face-on, `g = 0`; the proof
+uses a slightly tilted generic view `E - D + t ζ`.) -/
+theorem isRupert_bipyramid (P : Finset ℝ³) (hP : ∀ p ∈ P, p 2 = 0) (D E : ℝ³)
+    (hD : 0 < D 2) (hE : E 2 < 0)
+    (hX : proj_xy (D + (D 2 / (D 2 - E 2)) • (E - D)) ∈
+      interior (convexHull ℝ ((P.image proj_xy : Finset ℝ²) : Set ℝ²))) :
+    IsRupert (insert D (insert E P)) := by
+  classical
+  have hne : E 2 - D 2 ≠ 0 := by linarith
+  have hne' : -E 2 + D 2 ≠ 0 := by linarith
+  have hne'' : D 2 - E 2 ≠ 0 := by linarith
+  have hu2 : (E - D) 2 = E 2 - D 2 := by simp
+  have hV : insert D (insert E P) = P ∪ {D, E} := by
+    ext x; simp only [Finset.mem_insert, Finset.mem_union, Finset.mem_singleton]; tauto
+  rw [hV]
+  refine isRupert_of_waist P {D, E} hP ⟨_, hX⟩ (E - D) (by rw [hu2]; exact hne) ?_
+  intro q hq
+  rw [Finset.mem_insert, Finset.mem_singleton] at hq
+  convert hX using 2
+  rcases hq with rfl | rfl <;>
+    (rw [hu2]; ext i; fin_cases i <;> simp <;> field_simp <;> ring)
 
 end SmallRupert
 
