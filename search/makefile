@@ -82,7 +82,10 @@ SQLITE_OBJECTS=$(SQLITE)/database.o $(SQLITE)/sqlite3.o
 
 RUPERTS_OBJECTS=$(RUPERTS)/ruperts-util.o $(RUPERTS)/big-csg.o $(RUPERTS)/rendering.o $(RUPERTS)/solutions.o $(RUPERTS)/shrinklutions.o $(RUPERTS)/hull.o $(RUPERTS)/big-polyhedra.o $(RUPERTS)/textured-mesh.o $(RUPERTS)/smallest-sphere.o $(RUPERTS)/dyson.o $(RUPERTS)/z3decs.o $(RUPERTS)/patches.o $(RUPERTS)/intervals.o $(RUPERTS)/hypercube.o
 
-OBJECTS=$(CC_LIB_OBJECTS) $(CODEC_OBJECTS) $(SQLITE_OBJECTS) $(RUPERTS_OBJECTS)
+# The proof pipeline needs only cc-lib. The animation tools (shadowanim,
+# viewmap) also need ../codec, ../sqlite and ../ruperts from tom7misc.
+OBJECTS=$(CC_LIB_OBJECTS)
+FULL_OBJECTS=$(CC_LIB_OBJECTS) $(CODEC_OBJECTS) $(SQLITE_OBJECTS) $(RUPERTS_OBJECTS)
 
 # Library objects shared by the tools. No OpenCL.
 OBJECTS_CORE=model.o tube.o tubetree.o tieatlas5d.o exact5d.o geom5d.o contacts5d.o bounds5d.o cert5d.o tubeatlas5d.o rows5d.o solve5d.o lp5d.o
@@ -103,11 +106,11 @@ $(CODEC)/%.o : $(CODEC)/%.cc
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 	@echo -n "."
 
-shadowanim.exe : shadowanim.o rigidity-margin.o $(OBJECTS_CORE) $(OBJECTS)
+shadowanim.exe : shadowanim.o rigidity-margin.o $(OBJECTS_CORE) $(FULL_OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"
 
-viewmap.exe : viewmap.o rigidity-margin.o $(OBJECTS_CORE) $(OBJECTS)
+viewmap.exe : viewmap.o rigidity-margin.o $(OBJECTS_CORE) $(FULL_OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"
 
