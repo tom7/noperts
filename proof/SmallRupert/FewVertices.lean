@@ -193,6 +193,110 @@ theorem isRupert_five (V : Finset ℝ³) {A B C D E : ℝ³}
   · exact ⟨s, μ, hpos, hsumμ, hsumX.symm⟩
   · exact ⟨s - 1, μ, hpos, hsumμ, by rw [hsumX]; module⟩
 
+/-- **Corollary 5.6.** Every convex polyhedron with at most five vertices is
+Rupert.  `V` need not consist of vertices only. -/
+theorem isRupert_of_card_le_five (V : Finset ℝ³) (hV : V.card ≤ 5)
+    (hint : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) : IsRupert V := by
+  classical
+  obtain ⟨V', hV'V, hhull, hmin⟩ := exists_hull_minimal V
+  rw [← hhull] at hint
+  apply (isRupert_congr_hull hhull).mp
+  by_cases hpyr : ∃ E ∈ V', Coplanar ℝ ((V'.erase E : Finset ℝ³) : Set ℝ³)
+  · obtain ⟨E, -, hE⟩ := hpyr
+    exact isRupert_of_pyramid V' E hint hE
+  push Not at hpyr
+  have hne : V'.Nonempty := by
+    rcases V'.eq_empty_or_nonempty with h | h
+    · rw [h, Finset.coe_empty, convexHull_empty, interior_empty] at hint
+      exact absurd hint Set.not_nonempty_empty
+    · exact h
+  have hcard5 : V'.card = 5 := by
+    have h1 := Finset.card_le_card hV'V
+    by_contra h5
+    obtain ⟨E, hE⟩ := hne
+    apply hpyr E hE
+    apply coplanar_of_card_le_three
+    rw [Finset.card_erase_of_mem hE]; omega
+  -- Radon's theorem
+  let f : V' → ℝ³ := Subtype.val
+  have hnai : ¬ AffineIndependent ℝ f := by
+    intro hai
+    have := hai.card_le_finrank_succ
+    rw [Fintype.card_coe, hcard5] at this
+    have h2 := Submodule.finrank_le (vectorSpan ℝ (Set.range f))
+    rw [finrank_euclideanSpace, Fintype.card_fin] at h2
+    omega
+  obtain ⟨I, X, hX1, hX2⟩ := Convex.radon_partition hnai
+  set S₁ : Finset ℝ³ := (Finset.univ.filter (· ∈ I)).image Subtype.val with hS₁def
+  set S₂ : Finset ℝ³ := (Finset.univ.filter (· ∉ I)).image Subtype.val with hS₂def
+  have hS₁ : (S₁ : Set ℝ³) = f '' I := by ext x; simp [S₁, f]
+  have hS₂ : (S₂ : Set ℝ³) = f '' Iᶜ := by ext x; simp [S₂, f]
+  rw [← hS₁] at hX1
+  rw [← hS₂] at hX2
+  have hsub₁ : S₁ ⊆ V' := fun x hx => by
+    obtain ⟨y, -, rfl⟩ := Finset.mem_image.mp hx; exact y.2
+  have hsub₂ : S₂ ⊆ V' := fun x hx => by
+    obtain ⟨y, -, rfl⟩ := Finset.mem_image.mp hx; exact y.2
+  have hunion : S₁ ∪ S₂ = V' := by
+    apply le_antisymm (Finset.union_subset hsub₁ hsub₂)
+    intro x hx
+    by_cases hI : (⟨x, hx⟩ : V') ∈ I
+    · exact Finset.mem_union_left _ (Finset.mem_image.mpr ⟨⟨x, hx⟩, by simp [hI], rfl⟩)
+    · exact Finset.mem_union_right _ (Finset.mem_image.mpr ⟨⟨x, hx⟩, by simp [hI], rfl⟩)
+  have hdisj : Disjoint S₁ S₂ := by
+    rw [Finset.disjoint_left]
+    intro x h1 h2
+    obtain ⟨y, hy, rfl⟩ := Finset.mem_image.mp h1
+    obtain ⟨z, hz, hzy⟩ := Finset.mem_image.mp h2
+    have : z = y := Subtype.ext hzy
+    subst this
+    simp at hy hz
+    exact hz hy
+  have hcardsum : S₁.card + S₂.card = 5 := by
+    rw [← Finset.card_union_of_disjoint hdisj, hunion, hcard5]
+  -- neither part is empty or a single point
+  have hbig : ∀ T T' : Finset ℝ³, T ∪ T' = V' → Disjoint T T' →
+      X ∈ convexHull ℝ (T : Set ℝ³) → X ∈ convexHull ℝ (T' : Set ℝ³) → 2 ≤ T.card := by
+    intro T T' hTT' hd hXT hXT'
+    by_contra hlt
+    push Not at hlt
+    rcases Finset.card_le_one_iff_subset_singleton.mp (by omega : T.card ≤ 1) with ⟨x, hx⟩
+    rcases T.eq_empty_or_nonempty with h | ⟨y, hy⟩
+    · rw [h, Finset.coe_empty, convexHull_empty] at hXT; exact hXT
+    · have hyx := Finset.mem_singleton.mp (hx hy)
+      subst hyx
+      have hT : T = {y} := Finset.eq_singleton_iff_unique_mem.mpr
+        ⟨hy, fun z hz => Finset.mem_singleton.mp (hx hz)⟩
+      rw [hT, Finset.coe_singleton, convexHull_singleton, Set.mem_singleton_iff] at hXT
+      subst hXT
+      have hyV : X ∈ V' := by rw [← hTT']; exact Finset.mem_union_left _ hy
+      apply hmin X hyV
+      refine convexHull_mono (fun z hz => ?_) hXT'
+      have hzV : z ∈ V' := by rw [← hTT']; exact Finset.mem_union_right _ hz
+      refine Finset.mem_coe.mpr (Finset.mem_erase.mpr ⟨fun h => ?_, hzV⟩)
+      subst h
+      exact Finset.disjoint_left.mp hd hy hz
+  have hc₁ := hbig S₁ S₂ hunion hdisj hX1 hX2
+  have hc₂ := hbig S₂ S₁ (by rw [Finset.union_comm]; exact hunion) hdisj.symm hX2 hX1
+  -- the `2 + 3` split
+  have key : ∀ T T' : Finset ℝ³, T.card = 2 → T'.card = 3 → T ∪ T' = V' →
+      X ∈ convexHull ℝ (T : Set ℝ³) → X ∈ convexHull ℝ (T' : Set ℝ³) → IsRupert V' := by
+    intro T T' h2 h3 hTT' hXT hXT'
+    obtain ⟨D, E, -, rfl⟩ := Finset.card_eq_two.mp h2
+    obtain ⟨A, B, C, hAB, hAC, hBC, rfl⟩ := Finset.card_eq_three.mp h3
+    rw [Finset.coe_pair, convexHull_pair, segment_eq_image'] at hXT
+    obtain ⟨θ, -, rfl⟩ := hXT
+    have hmem : ∀ x, x ∈ V' ↔ x = D ∨ x = E ∨ x = A ∨ x = B ∨ x = C := fun x => by
+      rw [← hTT']; simp; tauto
+    refine isRupert_five V' (fun x hx => ?_) ((hmem A).mpr (by simp)) ((hmem B).mpr (by simp))
+      ((hmem C).mpr (by simp)) ((hmem D).mpr (by simp)) ((hmem E).mpr (by simp))
+      hAB hAC hBC hpyr hXT'
+    rcases (hmem x).mp hx with h | h | h | h | h <;> simp [h]
+  rcases (by omega : (S₁.card = 2 ∧ S₂.card = 3) ∨ (S₁.card = 3 ∧ S₂.card = 2)) with
+    ⟨h1, h2⟩ | ⟨h1, h2⟩
+  · exact key S₁ S₂ h1 h2 hunion hX1 hX2
+  · exact key S₂ S₁ h2 h1 (by rw [Finset.union_comm]; exact hunion) hX2 hX1
+
 end SmallRupert
 
 end
