@@ -10,3 +10,4 @@ public import SmallRupert.Crossing
 public import SmallRupert.FewVertices
 public import SmallRupert.BicappedTetrahedron
 public import SmallRupert.SixVertices
+public import SmallRupert.Unimodal
