@@ -182,6 +182,28 @@ theorem isRupert_bicap_case (A P Q T : ℝ³) (hind : AffineIndependent ℝ ![A,
       (by linear_combination hs' + p' * hsumx) ?_
     simp only [X]; module
 
+/-- Barycentric coordinates with respect to four affinely independent points. -/
+theorem exists_bary {A B C T : ℝ³} (hind : AffineIndependent ℝ ![A, B, C, T]) (K : ℝ³) :
+    ∃ lA lB lC lT : ℝ, lA + lB + lC + lT = 1 ∧ K = lA • A + lB • B + lC • C + lT • T := by
+  have hspan : affineSpan ℝ (Set.range ![A, B, C, T]) = ⊤ :=
+    (hind.affineSpan_eq_top_iff_card_eq_finrank_add_one).mpr (by simp)
+  obtain ⟨w, hw, hK⟩ := eq_affineCombination_of_mem_affineSpan_of_fintype
+    (show K ∈ affineSpan ℝ (Set.range ![A, B, C, T]) by rw [hspan]; trivial)
+  rw [Finset.univ.affineCombination_eq_linear_combination _ _ hw, Fin.sum_univ_four] at hK
+  rw [Fin.sum_univ_four] at hw
+  exact ⟨w 0, w 1, w 2, w 3, hw, by simpa using hK⟩
+
+/-- An affine functional on an affine combination of four points. -/
+theorem affine_apply_comb4 (f : ℝ³ →ᵃ[ℝ] ℝ) {A B C T : ℝ³} {lA lB lC lT : ℝ}
+    (h1 : lA + lB + lC + lT = 1) :
+    f (lA • A + lB • B + lC • C + lT • T) = lA * f A + lB * f B + lC * f C + lT * f T := by
+  have hf : ∀ x, f x = f.linear x + f 0 := fun x => by
+    have := f.map_vadd 0 x
+    rwa [vadd_eq_add, add_zero, vadd_eq_add] at this
+  rw [hf, hf A, hf B, hf C, hf T]
+  simp only [map_add, map_smul, smul_eq_mul]
+  linear_combination (-(f 0)) * h1
+
 /-- **Corollary 5.7, normal form.** -/
 theorem isRupert_bicap_normalForm (A B C T : ℝ³) (hind : AffineIndependent ℝ ![A, B, C, T])
     (a₁ β₁ c₁ t₁ a₂ b₂ γ₂ t₂ : ℝ) (ha₁ : 0 < a₁) (hβ₁ : 0 < β₁) (hc₁ : 0 < c₁) (ht₁ : 0 < t₁)
@@ -217,7 +239,95 @@ theorem IsBicappedTetrahedron.exists_normalForm {A B C T K₁ K₂ : ℝ³}
       0 < a₂ ∧ 0 < b₂ ∧ 0 < γ₂ ∧ 0 < t₂ ∧
       a₁ - β₁ + c₁ + t₁ = 1 ∧ a₂ + b₂ - γ₂ + t₂ = 1 ∧ β₁ * γ₂ < c₁ * b₂ ∧
       K₁ = a₁ • A - β₁ • B + c₁ • C + t₁ • T ∧ K₂ = a₂ • A + b₂ • B - γ₂ • C + t₂ • T := by
-  sorry
+  have hnd := h.nodup
+  simp only [List.nodup_cons, List.mem_cons, List.mem_singleton, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨hAB, hAC, hAT, hAK₁, hAK₂⟩, ⟨hBC, hBT, hBK₁, hBK₂⟩, ⟨hCT, hCK₁, hCK₂⟩,
+    ⟨hTK₁, hTK₂⟩, hK₁K₂, -⟩ := hnd
+  obtain ⟨l1A, l1B, l1C, l1T, hs1, hK₁⟩ := exists_bary h.affineIndependent K₁
+  obtain ⟨l2A, l2B, l2C, l2T, hs2, hK₂⟩ := exists_bary h.affineIndependent K₂
+  have ev1 := fun f : ℝ³ →ᵃ[ℝ] ℝ => (hK₁ ▸ affine_apply_comb4 f hs1 :
+    f K₁ = l1A * f A + l1B * f B + l1C * f C + l1T * f T)
+  have ev2 := fun f : ℝ³ →ᵃ[ℝ] ℝ => (hK₂ ▸ affine_apply_comb4 f hs2 :
+    f K₂ = l2A * f A + l2B * f B + l2C * f C + l2T * f T)
+  -- face BCT: positive `A`-coordinates
+  obtain ⟨f, fB, fC, fT, hf⟩ := h.facet_BCT
+  have fA := hf A (by simp) hAB hAC hAT
+  have fK₁ := hf K₁ (by simp) (Ne.symm hBK₁) (Ne.symm hCK₁) (Ne.symm hTK₁)
+  have fK₂ := hf K₂ (by simp) (Ne.symm hBK₂) (Ne.symm hCK₂) (Ne.symm hTK₂)
+  rw [ev1, fB, fC, fT] at fK₁
+  rw [ev2, fB, fC, fT] at fK₂
+  simp only [mul_zero, add_zero] at fK₁ fK₂
+  have h1A : 0 < l1A := by
+    by_contra hc; push Not at hc; linarith [mul_nonneg_of_nonpos_of_nonpos hc fA.le]
+  have h2A : 0 < l2A := by
+    by_contra hc; push Not at hc; linarith [mul_nonneg_of_nonpos_of_nonpos hc fA.le]
+  -- face ABC: positive `T`-coordinates
+  obtain ⟨g, gA, gB, gC, hg⟩ := h.facet_ABC
+  have gT := hg T (by simp) (Ne.symm hAT) (Ne.symm hBT) (Ne.symm hCT)
+  have gK₁ := hg K₁ (by simp) (Ne.symm hAK₁) (Ne.symm hBK₁) (Ne.symm hCK₁)
+  have gK₂ := hg K₂ (by simp) (Ne.symm hAK₂) (Ne.symm hBK₂) (Ne.symm hCK₂)
+  rw [ev1, gA, gB, gC] at gK₁
+  rw [ev2, gA, gB, gC] at gK₂
+  simp only [mul_zero, zero_add] at gK₁ gK₂
+  have h1T : 0 < l1T := by
+    by_contra hc; push Not at hc; linarith [mul_nonneg_of_nonpos_of_nonpos hc gT.le]
+  have h2T : 0 < l2T := by
+    by_contra hc; push Not at hc; linarith [mul_nonneg_of_nonpos_of_nonpos hc gT.le]
+  -- face K₁AC: negative `B`-coordinate of `K₁`
+  obtain ⟨hh, hhK, hhA, hhC, hhx⟩ := h.facet_K₁AC
+  have hhB := hhx B (by simp) hBK₁ (Ne.symm hAB) hBC
+  have hhT := hhx T (by simp) hTK₁ (Ne.symm hAT) (Ne.symm hCT)
+  have e := ev1 hh
+  rw [hhK, hhA, hhC] at e
+  simp only [mul_zero, zero_add, add_zero] at e
+  have h1B : l1B < 0 := by
+    by_contra hc; push Not at hc
+    linarith [mul_nonpos_of_nonneg_of_nonpos hc hhB.le, mul_neg_of_pos_of_neg h1T hhT]
+  -- face K₁TA: positive `C`-coordinate of `K₁`, and convexity at `AT`
+  obtain ⟨k, kK, kT, kA, hk⟩ := h.facet_K₁TA
+  have kB := hk B (by simp) hBK₁ hBT (Ne.symm hAB)
+  have kC := hk C (by simp) hCK₁ hCT (Ne.symm hAC)
+  have kK₂ := hk K₂ (by simp) (Ne.symm hK₁K₂) (Ne.symm hTK₂) (Ne.symm hAK₂)
+  have e1 := ev1 k
+  rw [kK, kT, kA] at e1
+  rw [ev2, kT, kA] at kK₂
+  simp only [mul_zero, zero_add, add_zero] at e1 kK₂
+  have h1C : 0 < l1C := by
+    by_contra hc; push Not at hc
+    linarith [mul_nonneg_of_nonpos_of_nonpos hc kC.le, mul_pos_of_neg_of_neg h1B kB]
+  -- face K₂AB: negative `C`-coordinate of `K₂`
+  obtain ⟨m, mK, mA, mB, hm⟩ := h.facet_K₂AB
+  have mC := hm C (by simp) hCK₂ (Ne.symm hAC) (Ne.symm hBC)
+  have mT := hm T (by simp) hTK₂ (Ne.symm hAT) (Ne.symm hBT)
+  have e2 := ev2 m
+  rw [mK, mA, mB] at e2
+  simp only [mul_zero, zero_add, add_zero] at e2
+  have h2C : l2C < 0 := by
+    by_contra hc; push Not at hc
+    linarith [mul_nonpos_of_nonneg_of_nonpos hc mC.le, mul_neg_of_pos_of_neg h2T mT]
+  -- face K₂TA: positive `B`-coordinate of `K₂`
+  obtain ⟨n, nK, nT, nA, hn⟩ := h.facet_K₂TA
+  have nB := hn B (by simp) hBK₂ hBT (Ne.symm hAB)
+  have nC := hn C (by simp) hCK₂ hCT (Ne.symm hAC)
+  have e3 := ev2 n
+  rw [nK, nT, nA] at e3
+  simp only [mul_zero, zero_add, add_zero] at e3
+  have h2B : 0 < l2B := by
+    by_contra hc; push Not at hc
+    linarith [mul_nonneg_of_nonpos_of_nonpos hc nB.le, mul_pos_of_neg_of_neg h2C nC]
+  have hconv : l1B * l2C < l1C * l2B := by
+    have hid : k B * (l1C * l2B - l1B * l2C) = l1C * (l2B * k B + l2C * k C) := by
+      linear_combination l2C * e1
+    have hneg : k B * (l1C * l2B - l1B * l2C) < 0 := by
+      rw [hid]; exact mul_neg_of_pos_of_neg h1C (by linarith)
+    by_contra hc; push Not at hc
+    linarith [mul_nonneg_of_nonpos_of_nonpos kB.le (show l1C * l2B - l1B * l2C ≤ 0 by linarith)]
+  refine ⟨l1A, -l1B, l1C, l1T, l2A, l2B, -l2C, l2T, h1A, by linarith, h1C, h1T, h2A, h2B,
+    by linarith, h2T, by linarith, by linarith,
+    by linarith [show (-l1B) * (-l2C) = l1B * l2C by ring], ?_, ?_⟩
+  · rw [hK₁]; module
+  · rw [hK₂]; module
 
 /-- **Corollary 5.7.** Every bicapped tetrahedron is Rupert. -/
 theorem isRupert_bicappedTetrahedron {A B C T K₁ K₂ : ℝ³}
