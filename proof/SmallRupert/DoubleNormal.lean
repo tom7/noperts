@@ -523,7 +523,76 @@ theorem exists_admissible_inward_field (W : Finset ℝ²)
       have h3 := mul_neg_of_pos_of_neg (show 0 < 1 - θ by linarith) (hA h1')
       have h4 := mul_neg_of_pos_of_neg h0 (hB h0)
       linarith
-  all_goals sorry
+  -- a uniform `δ` by compactness
+  set Kp : ℝ² → Set ℝ² := fun p => {n | ‖n‖ = 1} ∩ ⋂ q ∈ F, {n | ⟪n, q - p⟫ ≤ 0} with hKp
+  have hKpc : ∀ p, IsCompact (Kp p) := fun p =>
+    (isCompact_sphere (0 : ℝ²) 1).of_isClosed_subset
+      ((isClosed_eq continuous_norm continuous_const).inter
+        (isClosed_biInter fun q _ => isClosed_le (continuous_id.inner continuous_const)
+          continuous_const))
+      (fun n hn => by simpa using hn.1)
+  set K : Set (ℝ² × ℝ²) := ⋃ p ∈ (W : Set ℝ²), {p} ×ˢ Kp p
+  have hKc : IsCompact K := W.finite_toSet.isCompact_biUnion fun p _ =>
+    isCompact_singleton.prod (hKpc p)
+  have hwc : Continuous w := by simp only [hw]; fun_prop
+  have hzc : Continuous z := by simp only [hz, hσ]; fun_prop
+  obtain ⟨δ, hδ, hδK⟩ := exists_pos_add_smul_neg hKc
+    (f := fun x => ⟪x.2, w x.1⟫) (g := fun x => ⟪x.2, z x.1⟫)
+    (continuous_snd.inner (hwc.comp continuous_fst))
+    (continuous_snd.inner (hzc.comp continuous_fst))
+    (by
+      rintro ⟨p, n⟩ hx
+      simp only [K, Set.mem_iUnion, Set.mem_prod, Set.mem_singleton_iff] at hx
+      obtain ⟨p', hp', rfl, hn⟩ := hx
+      have hpF : p ∈ F := subset_convexHull ℝ _ hp'
+      have := (Set.mem_iInter₂.mp hn.2) _ (hwF p hpF)
+      simpa using this)
+    (by
+      rintro ⟨p, n⟩ hx hf
+      simp only [K, Set.mem_iUnion, Set.mem_prod, Set.mem_singleton_iff] at hx
+      obtain ⟨p', hp', rfl, hn⟩ := hx
+      exact hdefect p (subset_convexHull ℝ _ hp') n hn.1
+        (fun q hq => Set.mem_iInter₂.mp hn.2 q hq) hf)
+  -- the linear part and the constant
+  set M : ℝ² →ₗ[ℝ] ℝ² := (1 / L) • (innerₛₗ ℝ u).smulRight (b - a) - LinearMap.id +
+    δ • ((-κ / ‖u‖ ^ 2) • (innerₛₗ ℝ ŵ).smulRight u +
+      (k / ‖u‖ ^ 2) • (innerₛₗ ℝ (b - a)).smulRight ŵ) with hMdef
+  have hM : ∀ p, M p = (⟪u, p⟫ / L) • (b - a) - p +
+      δ • ((-κ * ⟪ŵ, p⟫ / ‖u‖ ^ 2) • u + (k * ⟪b - a, p⟫ / ‖u‖ ^ 2) • ŵ) := by
+    intro p
+    simp only [hMdef, LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply,
+      LinearMap.smulRight_apply, innerₛₗ_apply_apply, LinearMap.id_apply]
+    simp only [smul_smul]
+    congr 1
+    · congr 1; ring_nf
+    · congr 1; congr 1 <;> congr 1 <;> ring
+  have hv : ∀ p, M p + (w 0 + δ • z 0) = w p + δ • z p := by
+    intro p
+    rw [hM]
+    simp only [hw, hz, hσ, inner_zero_right, inner_sub_right, sub_zero, zero_sub]
+    module
+  refine ⟨M, w 0 + δ • z 0, ?_, fun p hp => ?_⟩
+  · rw [hM]
+    simp only [inner_add_right, inner_sub_right, real_inner_smul_right, huu, huw, hwu, hubaL]
+    field_simp
+    ring
+  · rw [hv]
+    have hpF : p ∈ F := subset_convexHull ℝ _ hp
+    refine isInwardAt_of_forall_normal hFconv ⟨c, hc⟩ (subset_closure hpF) _ (fun n hn hN => ?_)
+    have hnpos : 0 < ‖n‖ := norm_pos_iff.mpr hn
+    set n' := (1 / ‖n‖) • n
+    have hn' : n' ∈ Kp p := by
+      refine ⟨by simp [n', norm_smul, hnpos.ne'], Set.mem_iInter₂.mpr fun q hq => ?_⟩
+      simp only [Set.mem_setOf_eq, n', real_inner_smul_left]
+      exact mul_nonpos_of_nonneg_of_nonpos (by positivity) (hN q hq)
+    have := hδK (p, n') (Set.mem_biUnion hp ⟨rfl, hn'⟩)
+    simp only [n', real_inner_smul_left] at this
+    rw [inner_add_right, real_inner_smul_right]
+    have h2 : 1 / ‖n‖ * (⟪n, w p⟫ + δ * ⟪n, z p⟫) < 0 := by linarith
+    by_contra hc
+    push Not at hc
+    have := mul_nonneg (show 0 ≤ 1 / ‖n‖ by positivity) hc
+    linarith
 
 /-- **Lemma 3 (obstruction direction; optional, not used by the Rupert
 theorems).** Along a double normal `[a, b]` every admissible field has
