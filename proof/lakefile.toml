@@ -1,0 +1,94 @@
+name = "Noperthedron"
+defaultTargets = ["Noperthedron"]
+
+[leanOptions]
+pp.unicode.fun = true
+autoImplicit = false
+relaxedAutoImplicit = false
+weak.linter.style.multiGoal = true
+weak.linter.style.cdot = true
+
+[[require]]
+name = "checkdecls"
+git = "https://github.com/PatrickMassot/checkdecls.git"
+
+[[require]]
+name = "tryAtEachStep"
+git = "https://github.com/dwrensha/tryAtEachStep"
+rev = "lean-v4.32.0"
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4"
+rev = "v4.32.0"
+
+[[lean_lib]]
+name = "Noperthedron"
+
+# Build-on-demand verification of the expensive computational step; not in
+# defaultTargets so CI never pays for it. See Noperthedron/ComputationalStep.lean.
+[[lean_lib]]
+name = "NativeCaseAnalysis"
+
+[[lean_lib]]
+name = "KernelCaseAnalysis"
+
+# Patched copy of the `checkdecls` dependency's executable (see CheckDecls.lean):
+# checks blueprint declarations against the defaultTargets libraries only, so
+# the build-on-demand NativeCaseAnalysis/KernelCaseAnalysis libs don't break CI.
+# Defined in the root package so `lake exe checkdecls` resolves to it.
+[[lean_exe]]
+name = "checkdecls"
+root = "CheckDecls"
+supportInterpreter = true
+weakLinkArgs = ["-lLake"]
+
+[[lean_exe]]
+name = "constructValidTable"
+root = "constructValidTable"
+buildType = "release"
+[[lean_exe]]
+name = "benchRows"
+root = "benchRows"
+buildType = "release"
+
+[[lean_exe]]
+name = "constructDeltoidalHexecontahedron"
+root = "constructDeltoidalHexecontahedron"
+buildType = "release"
+
+[[lean_exe]]
+name = "validate_code_pack"
+root = "validate_code_pack"
+buildType = "release"
+
+[[lean_exe]]
+name = "bench_rat"
+root = "bench_rat"
+buildType = "release"
+
+[[lean_exe]]
+name = "exact5d_golden"
+root = "exact5d_golden"
+buildType = "release"
+
+[[lean_exe]]
+name = "check_global_rows"
+root = "check_global_rows"
+buildType = "release"
+
+
+[[lean_exe]]
+name = "dhBench"
+root = "dhBench"
+buildType = "release"
+
+[[lean_exe]]
+name = "checkNopert7Cap"
+root = "checkNopert7Cap"
+buildType = "release"
+
+[[lean_exe]]
+name = "constructNopert7"
+root = "constructNopert7"
+buildType = "release"

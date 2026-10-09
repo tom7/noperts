@@ -1,0 +1,89 @@
+module
+
+public import Mathlib.Algebra.Order.Archimedean.Real.Hom
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+
+public import Noperthedron.Basic
+public import Noperthedron.Bounding.OpNorm
+public import Noperthedron.PoseInterval
+
+public section
+
+
+namespace Local
+
+open scoped RealInnerProductSpace Real
+open scoped Matrix
+
+/-- [SY25] Lemma 21.
+
+`rotM θ φ` consists of the first two rows of a rotation whose third row is
+`vecX θ φ`, so this is Parseval for that rotated orthonormal basis. -/
+theorem pythagoras {θ φ : ℝ} (P : Euc(3)) :
+    ‖rotM θ φ P‖ ^ 2 = ‖P‖ ^ 2 - ⟪vecX θ φ, P⟫ ^ 2 := by
+  set w : ℝ³ := RyL φ (RzL (-θ) P) with hw
+  have h1 : rotM θ φ P = reduceL w := by rw [rotM_identity]; rfl
+  have h2 : ⟪vecX θ φ, P⟫ = w 2 := by
+    rw [vecX_identity,
+      show ((RzL θ ∘L RyL (-φ)) !₂[0, 0, 1] : ℝ³) = rot3 2 θ (rot3 1 (-φ) !₂[0, 0, 1]) from rfl,
+      Bounding.inner_rot3_left, Bounding.inner_rot3_left, neg_neg,
+      show (rot3 1 φ (rot3 2 (-θ) P) : ℝ³) = w from rfl]
+    simp [PiLp.inner_apply, Fin.sum_univ_three]
+  have h3 : ‖w‖ = ‖P‖ := by rw [hw, Bounding.Ry_preserves_norm, Bounding.Rz_preserves_norm]
+  have h4 : ‖reduceL w‖ ^ 2 + w 2 ^ 2 = ‖w‖ ^ 2 := by
+    have e : reduceL w = !₂[w 1, -(w 0)] := by
+      ext i; fin_cases i <;> simp [reduceL, Matrix.vecHead, Matrix.vecTail]
+    rw [e, PiLp.norm_sq_eq_of_L2, PiLp.norm_sq_eq_of_L2, Fin.sum_univ_two, Fin.sum_univ_three]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one,
+      Real.norm_eq_abs, sq_abs]
+    ring
+  rw [h1, h2, ← h3]
+  linarith [h4]
+
+/-- [SY25] Lemma 24 -/
+theorem abs_sub_inner_bars_le {m n : ℕ} (A B A_ B_ : Euc(m) →L[ℝ] Euc(n)) (P₁ P₂ : Euc(m)) :
+    |⟪A P₁, B P₂⟫ - ⟪A_ P₁, B_ P₂⟫| ≤
+    ‖P₁‖ * ‖P₂‖ * (‖A - A_‖ * ‖B_‖ + ‖A_‖ * ‖B - B_‖ + ‖A - A_‖ * ‖B - B_‖) := by
+  have h₁ := calc
+    ⟪A P₁, B P₂⟫ = ⟪(A - A_) P₁ + A_ P₁, (B - B_) P₂ + B_ P₂⟫ := by simp
+               _ = ⟪(A - A_) P₁, B_ P₂⟫ + ⟪A_ P₁, (B - B_) P₂⟫ +
+                   ⟪(A - A_) P₁, (B - B_) P₂⟫ + ⟪A_ P₁, B_ P₂⟫ :=
+                 by simp only [inner_add_left, inner_add_right]
+                    ring
+  -- Then the inequality follows from the triangle inequality,
+  -- the Cauchy-Schwarz inequality and the submultiplicativity of ‖.‖:
+  calc
+    _ ≤ |⟪(A - A_) P₁, B_ P₂⟫| + |⟪A_ P₁, (B - B_) P₂⟫| + |⟪(A - A_) P₁, (B - B_) P₂⟫| :=
+      by rw [h₁]; ring_nf; exact abs_add_three _ _ _
+    _ ≤ ‖(A - A_) P₁‖ * ‖B_ P₂‖ + ‖A_ P₁‖ * ‖(B - B_) P₂‖ + ‖(A - A_) P₁‖ * ‖(B - B_) P₂‖ :=
+      by simp only [←Real.norm_eq_abs]
+         grw [norm_inner_le_norm, norm_inner_le_norm, norm_inner_le_norm]
+    _ ≤ _ :=
+      by grw [ContinuousLinearMap.le_opNorm, ContinuousLinearMap.le_opNorm,
+              ContinuousLinearMap.le_opNorm, ContinuousLinearMap.le_opNorm]
+         linarith only
+
+/-- [SY25] Lemma 25 -/
+theorem abs_sub_inner_le {m n : ℕ} (A B : Euc(m) →L[ℝ] Euc(n)) (P₁ P₂ : Euc(m)) :
+    |⟪A P₁, A P₂⟫ - ⟪B P₁, B P₂⟫| ≤ ‖P₁‖ * ‖P₂‖ * ‖A - B‖ * (‖A‖ + ‖B‖ + ‖A - B‖) := by
+  -- Exactly the same proof as the one for `abs_sub_inner_bars_le` yields:
+  have h₁ : |⟪A P₁, A P₂⟫ - ⟪B P₁, B P₂⟫| ≤
+      ‖P₁‖ * ‖P₂‖ * ‖A - B‖ * (2 * ‖B‖ + ‖A - B‖) := by
+    have := abs_sub_inner_bars_le A A B B P₁ P₂
+    linarith [mul_comm ‖A - B‖ ‖B‖]
+  -- Exchanging A and B, however, also gives the same inequality with 2 * ‖A‖ instead
+  -- of 2 * ‖B‖.
+  have h₂ : |⟪A P₁, A P₂⟫ - ⟪B P₁, B P₂⟫| ≤
+      ‖P₁‖ * ‖P₂‖ * ‖A - B‖ * (2 * ‖A‖ + ‖A - B‖) := by
+    simp only [norm_sub_rev A B, abs_sub_comm ⟪A P₁, A P₂⟫ ⟪B P₁, B P₂⟫]
+    have := abs_sub_inner_bars_le B B A A P₁ P₂
+    linarith [mul_comm ‖B - A‖ ‖A‖]
+  -- Taking the arithmetic mean of these two upper bounds produces the desired
+  -- symmetric inequality.
+  have heq : ‖P₁‖ * ‖P₂‖ * ‖A - B‖ * (2 * ‖B‖ + ‖A - B‖) +
+      ‖P₁‖ * ‖P₂‖ * ‖A - B‖ * (2 * ‖A‖ + ‖A - B‖) =
+      2 * (‖P₁‖ * ‖P₂‖ * ‖A - B‖ * (‖A‖ + ‖B‖ + ‖A - B‖)) := by ring
+  linarith
+
+end Local
+end

@@ -1,0 +1,66 @@
+name: Compile blueprint
+
+on:
+  push:
+    branches:
+      - main # Trigger on pushes to the default branch
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:        # Allow manual triggering of the workflow from the GitHub Actions interface
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read  # Read access to repository contents
+  pages: write    # Write access to GitHub Pages
+  id-token: write # Write access to ID tokens
+
+jobs:
+  build_project:
+    runs-on: ubuntu-latest
+    name: Build project
+    steps:
+      - name: Cleanup to free disk space
+        uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be
+        with:
+          # this might remove tools that are actually needed,
+          # if set to "true" but frees about 6 GB
+          tool-cache: false
+          # all of these default to true, but feel free to set to
+          # "false" if necessary for your workflow
+          android: true
+          dotnet: false
+          haskell: false
+          large-packages: false
+          docker-images: false
+          swap-storage: false
+
+      - name: Checkout project
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0 # Fetch all history for all branches and tags
+
+      - name: Don't 'import Mathlib'
+        run: |
+          ! (find Noperthedron -type f -name "*.lean" -exec grep -Hn '^import Mathlib$' {} +)
+
+      - name: Don't '#exit'
+        run: |
+          ! (find Noperthedron -type f -name "*.lean" -exec grep -Hn '^#exit$' {} +)
+
+      - name: Build the project
+        uses: leanprover/lean-action@c544e89643240c6b398f14a431bcdc6309e36b3e # v1.4.0
+        with:
+          use-github-cache: false
+
+      - name: "lake exe mk_all --check"
+        run: |
+          set -e
+          lake exe mk_all --lib Noperthedron --check
+
+      - name: Compile blueprint and documentation
+        # uses: leanprover-community/docgen-action@7b5b9a1822650bd45aaeb4182d94bceba2030f89 # 2026-04-14
+        # workaround for docs 404 issue
+        uses: dwrensha/docgen-action@8c6b36d29c4d59d70087597ff2ddb2d1b96f02d6
+        with:
+          blueprint: true
+          homepage: home_page
