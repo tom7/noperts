@@ -19,20 +19,19 @@ Fully proved (axioms: propext, Classical.choice, Quot.sound only):
 - on the way: L1, L2 realization, L3 existence (general convex polygon), the
   L4 transfer, rotation/translation invariance of `IsRupert`.
 
+- six vertices (SixVertices.lean): `isRupert_frustum` and
+  `isRupert_parallelPrism` (T1 except translation prisms),
+  `isRupert_cappedSquarePyramid` (T5 with facet hypotheses, unless
+  `S₁S₄ ∥ S₂S₃`) and its normal form `isRupert_cappedSquarePyramid_normalForm`.
+
 Still `sorry` (none is used by the theorems above): the L3 obstruction and
 L2(d) obstruction (optional), the `⇒` halves of L2/L4 iffs, L3.0 range form,
 the generic-view density statements of Coplanar.lean (`dense_generic_...`,
 `isOpen_admissibleViews`, `exists_firstOrderInward_of_coplanar`,
-`isRupert_of_generic_admissibleView`), and SixVertices.lean.
+`isRupert_of_generic_admissibleView`).
 
-Remaining six-vertex work (estimates, given `isRupert_of_crossing`):
-- frustum (T1, concurrent lateral lines): explicit view from `O` through the
-  centroid, weights `(1 - α) c + α A`: ~80 lines;
-- parallel prism with unequal lateral edges (T1): WLOG ordering, explicit
-  chord of the lateral trapezoid: ~200 lines;
-- T5 normal form: case `γ₂ < b₂` is `isRupert_bicap_case` with `a' = 0`
-  (needs `0 ≤ a'` instead of `0 < a'`, a one-line change); case `γ₂ > b₂`
-  (plane `E S₃ S₄`, LEMMAS.md's computation): ~200 lines.
+Not formalized: LEMMAS.md L7 (unimodal silhouettes, translation prisms),
+pending review of the paper proof.
 
 ## Modules and dependency order
 
@@ -47,7 +46,7 @@ Remaining six-vertex work (estimates, given `isRupert_of_crossing`):
 | `Crossing` | L5 (any frame), Cor. 5.3, 5.4 | `isRupert_of_crossing`, `isRupert_of_admissibleViews_nonempty`, `isRupert_of_pyramid`, `isRupert_of_segment_crossing` |
 | `FewVertices` | Cor. 5.6 | `isRupert_of_card_le_five` |
 | `BicappedTetrahedron` | Cor. 5.7 | `isRupert_bicap_normalForm`, `isRupert_bicappedTetrahedron` |
-| `SixVertices` | L6 (partial) | frustum, parallel prism, T5 normal form |
+| `SixVertices` | L6 (partial) | `isRupert_frustum`, `isRupert_parallelPrism`, `isRupert_cappedSquarePyramid` |
 
 Order of work: Basic → FirstOrder → DoubleNormal → Coplanar (L2 + plane form
 of L5) → `isRupert_bipyramid` → FewVertices → general L5 → Bicap → SixVertices.

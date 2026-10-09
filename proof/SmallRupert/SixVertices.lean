@@ -8,13 +8,18 @@ public import SmallRupert.Crossing
 /-!
 # L6 (partial): six-vertex types covered by the coplanar-silhouette theorem
 
+All proved via `isRupert_of_crossing`:
 * T2, pentagonal pyramids: `isRupert_of_pyramid`.
 * T7, bicapped tetrahedra: `isRupert_bicappedTetrahedron`.
-* T1, triangular prisms whose lateral lines meet (`isRupert_frustum`), and
-  prisms with parallel lateral edges not all of the same length
-  (`isRupert_parallelPrism`).  Translation prisms `T + [0, w]` are open.
-* T5 (capped square pyramid) in normal form, unless `S₁S₄ ∥ S₂S₃`
-  (`isRupert_cappedSquarePyramid_normalForm`).
+* T1, triangular prisms whose lateral lines meet at a point (`isRupert_frustum`),
+  and prisms with parallel lateral edges not all of the same length
+  (`isRupert_parallelPrism`, via `isRupert_prism_core`).  Translation prisms
+  `T + [0, w]` are not covered (LEMMAS.md L7, not formalized).
+* T5, capped square pyramids, unless the base edges `S₁S₄` and `S₂S₃` next to
+  the capped base edge are parallel: `isRupert_cappedSquarePyramid`
+  (combinatorial, via `IsCappedSquarePyramid.exists_normalForm`) and
+  `isRupert_cappedSquarePyramid_normalForm` (barycentric normal form; the
+  plane `ES₁S₂` when `γ₂ < b₂`, the lateral face `ES₃S₄` when `γ₂ > b₂`).
 * T3, T4, T6: not covered in general (LEMMAS.md L6); nothing stated.
 -/
 
@@ -347,9 +352,7 @@ theorem isRupert_cappedSquarePyramid_lateral (A B C T : ℝ³)
       linarith
     · field_simp
       simp only [φK, ξA, ξB, ξS]
-      first
-        | linear_combination t₂ * hsum₁ - t₁ * hsum₂
-        | linear_combination -(t₂ * hsum₁ - t₁ * hsum₂)
+      linear_combination t₂ * hsum₁ - t₁ * hsum₂
     · simp only [X, hS, hK, φK]
       match_scalars <;> field_simp <;> ring
   · exact absurd rfl hvW.2.2
@@ -371,6 +374,149 @@ theorem isRupert_cappedSquarePyramid_normalForm (A B C T : ℝ³)
     simpa using this
   · exact isRupert_cappedSquarePyramid_lateral A B C T hind a₁ β₁ c₁ t₁ b₂ γ₂ t₂ ha₁ hβ₁ hc₁ ht₁
       hb₂ hγ₂ ht₂ hsum₁ hsum₂ hconv h
+
+/-- `F ⊆ V` spans a facet of `conv V`: an affine functional vanishes on `F` and
+is negative on the other points of `V`. -/
+def IsFacet (V F : Finset ℝ³) : Prop :=
+  ∃ f : ℝ³ →ᵃ[ℝ] ℝ, (∀ x ∈ F, f x = 0) ∧ ∀ x ∈ V, x ∉ F → f x < 0
+
+/-- **T5, combinatorial form.**  A square pyramid with apex `E` and base
+`S₁S₂S₃S₄` (cyclic order, a planar quadrilateral facet), capped by `K` over the
+lateral face `ES₁S₂`: the facets are the base, `ES₂S₃`, `ES₃S₄`, `ES₄S₁`,
+`KES₁`, `KS₁S₂`, `KS₂E`. -/
+structure IsCappedSquarePyramid (E S₁ S₂ S₃ S₄ K : ℝ³) : Prop where
+  nodup : [E, S₁, S₂, S₃, S₄, K].Nodup
+  affineIndependent : AffineIndependent ℝ ![E, S₃, S₂, S₁]
+  base : IsFacet {E, S₁, S₂, S₃, S₄, K} {S₁, S₂, S₃, S₄}
+  facet_ES₂S₃ : IsFacetTriangle {E, S₁, S₂, S₃, S₄, K} E S₂ S₃
+  facet_ES₃S₄ : IsFacetTriangle {E, S₁, S₂, S₃, S₄, K} E S₃ S₄
+  facet_ES₄S₁ : IsFacetTriangle {E, S₁, S₂, S₃, S₄, K} E S₄ S₁
+  facet_KES₁ : IsFacetTriangle {E, S₁, S₂, S₃, S₄, K} K E S₁
+  facet_KS₁S₂ : IsFacetTriangle {E, S₁, S₂, S₃, S₄, K} K S₁ S₂
+  facet_KS₂E : IsFacetTriangle {E, S₁, S₂, S₃, S₄, K} K S₂ E
+
+/-- The facet conditions put a capped square pyramid in normal form with
+respect to `(A, B, C, T) = (E, S₃, S₂, S₁)` (LEMMAS.md L6, T5). -/
+theorem IsCappedSquarePyramid.exists_normalForm {E S₁ S₂ S₃ S₄ K : ℝ³}
+    (h : IsCappedSquarePyramid E S₁ S₂ S₃ S₄ K) :
+    ∃ a₁ β₁ c₁ t₁ b₂ γ₂ t₂ : ℝ, 0 < a₁ ∧ 0 < β₁ ∧ 0 < c₁ ∧ 0 < t₁ ∧
+      0 < b₂ ∧ 0 < γ₂ ∧ 0 < t₂ ∧
+      a₁ - β₁ + c₁ + t₁ = 1 ∧ b₂ - γ₂ + t₂ = 1 ∧ β₁ * γ₂ < c₁ * b₂ ∧
+      K = a₁ • E - β₁ • S₃ + c₁ • S₂ + t₁ • S₁ ∧ S₄ = b₂ • S₃ - γ₂ • S₂ + t₂ • S₁ := by
+  have hnd := h.nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨hE1, hE2, hE3, hE4, hEK⟩, ⟨h12, h13, h14, h1K⟩, ⟨h23, h24, h2K⟩,
+    ⟨h34, h3K⟩, h4K, -⟩ := hnd
+  have h1E := Ne.symm hE1; have h2E := Ne.symm hE2; have h3E := Ne.symm hE3
+  have h4E := Ne.symm hE4; have hKE := Ne.symm hEK; have h21 := Ne.symm h12
+  have h31 := Ne.symm h13; have h41 := Ne.symm h14; have hK1 := Ne.symm h1K
+  have h32 := Ne.symm h23; have h42 := Ne.symm h24; have hK2 := Ne.symm h2K
+  have h43 := Ne.symm h34; have hK3 := Ne.symm h3K; have hK4 := Ne.symm h4K
+  obtain ⟨l1A, l1B, l1C, l1T, hs1, hK⟩ := exists_bary h.affineIndependent K
+  obtain ⟨l2A, l2B, l2C, l2T, hs2, hS⟩ := exists_bary h.affineIndependent S₄
+  have ev1 := fun f : ℝ³ →ᵃ[ℝ] ℝ => (hK ▸ affine_apply_comb4 f hs1 :
+    f K = l1A * f E + l1B * f S₃ + l1C * f S₂ + l1T * f S₁)
+  have ev2 := fun f : ℝ³ →ᵃ[ℝ] ℝ => (hS ▸ affine_apply_comb4 f hs2 :
+    f S₄ = l2A * f E + l2B * f S₃ + l2C * f S₂ + l2T * f S₁)
+  -- the base: `S₄` has no `E`-coordinate, `K` a positive one
+  obtain ⟨f, hf0, hf⟩ := h.base
+  have f1 := hf0 S₁ (by simp); have f2 := hf0 S₂ (by simp)
+  have f3 := hf0 S₃ (by simp); have f4 := hf0 S₄ (by simp)
+  have fE := hf E (by simp) (by simp [hE1, hE2, hE3, hE4])
+  have fK := hf K (by simp) (by simp [Ne.symm h1K, Ne.symm h2K, Ne.symm h3K, Ne.symm h4K])
+  have e0 := ev2 f
+  rw [f4, f3, f2, f1] at e0
+  simp only [mul_zero, add_zero] at e0
+  have h2A : l2A = 0 := (mul_eq_zero.mp e0.symm).resolve_right fE.ne
+  rw [ev1, f3, f2, f1] at fK
+  simp only [mul_zero, add_zero] at fK
+  have h1A : 0 < l1A := by
+    by_contra hc; push Not at hc; linarith [mul_nonneg_of_nonpos_of_nonpos hc fE.le]
+  -- face `ES₂S₃`: positive `S₁`-coordinates
+  obtain ⟨g, gE, g2, g3, hg⟩ := h.facet_ES₂S₃
+  have g1 := hg S₁ (by simp) (by assumption) (by assumption) (by assumption)
+  have gK := hg K (by simp) (by assumption) (by assumption) (by assumption)
+  have g4 := hg S₄ (by simp) (by assumption) (by assumption) (by assumption)
+  rw [ev1, gE, g2, g3] at gK
+  rw [ev2, gE, g2, g3] at g4
+  simp only [mul_zero, zero_add] at gK g4
+  have h1T : 0 < l1T := by
+    by_contra hc; push Not at hc; linarith [mul_nonneg_of_nonpos_of_nonpos hc g1.le]
+  have h2T : 0 < l2T := by
+    by_contra hc; push Not at hc; linarith [mul_nonneg_of_nonpos_of_nonpos hc g1.le]
+  -- face `ES₃S₄`: negative `S₂`-coordinate of `S₄`
+  obtain ⟨k, kE, k3, k4, hk⟩ := h.facet_ES₃S₄
+  have k2 := hk S₂ (by simp) (by assumption) (by assumption) (by assumption)
+  have k1 := hk S₁ (by simp) (by assumption) (by assumption) (by assumption)
+  have ek := ev2 k
+  rw [k4, kE, k3] at ek
+  simp only [mul_zero, zero_add] at ek
+  have h2C : l2C < 0 := by
+    by_contra hc; push Not at hc
+    linarith [mul_nonpos_of_nonneg_of_nonpos hc k2.le, mul_neg_of_pos_of_neg h2T k1]
+  -- face `ES₄S₁`: positive `S₃`-coordinate of `S₄`
+  obtain ⟨m, mE, m4, m1, hm⟩ := h.facet_ES₄S₁
+  have m3 := hm S₃ (by simp) (by assumption) (by assumption) (by assumption)
+  have m2 := hm S₂ (by simp) (by assumption) (by assumption) (by assumption)
+  have em := ev2 m
+  rw [m4, mE, m1] at em
+  simp only [mul_zero, zero_add, add_zero] at em
+  have h2B : 0 < l2B := by
+    by_contra hc; push Not at hc
+    linarith [mul_nonneg_of_nonpos_of_nonpos hc m3.le, mul_pos_of_neg_of_neg h2C m2]
+  -- face `KS₂E`: negative `S₃`-coordinate of `K`
+  obtain ⟨n, nK, n2, nE, hn⟩ := h.facet_KS₂E
+  have n3 := hn S₃ (by simp) (by assumption) (by assumption) (by assumption)
+  have n1 := hn S₁ (by simp) (by assumption) (by assumption) (by assumption)
+  have en := ev1 n
+  rw [nK, nE, n2] at en
+  simp only [mul_zero, zero_add, add_zero] at en
+  have h1B : l1B < 0 := by
+    by_contra hc; push Not at hc
+    linarith [mul_nonpos_of_nonneg_of_nonpos hc n3.le, mul_neg_of_pos_of_neg h1T n1]
+  -- face `KES₁`: positive `S₂`-coordinate of `K`, and convexity at `ES₁`
+  obtain ⟨q, qK, qE, q1, hq⟩ := h.facet_KES₁
+  have q3 := hq S₃ (by simp) (by assumption) (by assumption) (by assumption)
+  have q2 := hq S₂ (by simp) (by assumption) (by assumption) (by assumption)
+  have q4 := hq S₄ (by simp) (by assumption) (by assumption) (by assumption)
+  have eq1 := ev1 q
+  rw [qK, qE, q1] at eq1
+  rw [ev2, qE, q1] at q4
+  simp only [mul_zero, zero_add, add_zero] at eq1 q4
+  have h1C : 0 < l1C := by
+    by_contra hc; push Not at hc
+    linarith [mul_nonneg_of_nonpos_of_nonpos hc q2.le, mul_pos_of_neg_of_neg h1B q3]
+  have hconv : l1B * l2C < l1C * l2B := by
+    have hid : q S₃ * (l1C * l2B - l1B * l2C) = l1C * (l2B * q S₃ + l2C * q S₂) := by
+      linear_combination l2C * eq1
+    have hneg : q S₃ * (l1C * l2B - l1B * l2C) < 0 := by
+      rw [hid]; exact mul_neg_of_pos_of_neg h1C (by linarith)
+    by_contra hc; push Not at hc
+    linarith [mul_nonneg_of_nonpos_of_nonpos q3.le (show l1C * l2B - l1B * l2C ≤ 0 by linarith)]
+  refine ⟨l1A, -l1B, l1C, l1T, l2B, -l2C, l2T, h1A, by linarith, h1C, h1T, h2B,
+    by linarith, h2T, by linarith, by linarith,
+    by linarith [show (-l1B) * (-l2C) = l1B * l2C by ring], ?_, ?_⟩
+  · rw [hK]; module
+  · rw [hS, h2A]; module
+
+/-- **T5, combinatorial form.**  A capped square pyramid is Rupert unless the two
+base edges `S₁S₄` and `S₂S₃` next to the capped base edge `S₁S₂` are parallel. -/
+theorem isRupert_cappedSquarePyramid {E S₁ S₂ S₃ S₄ K : ℝ³}
+    (h : IsCappedSquarePyramid E S₁ S₂ S₃ S₄ K)
+    (hpar : ∀ k : ℝ, S₄ - S₁ ≠ k • (S₃ - S₂)) : IsRupert {E, S₁, S₂, S₃, S₄, K} := by
+  obtain ⟨a₁, β₁, c₁, t₁, b₂, γ₂, t₂, ha₁, hβ₁, hc₁, ht₁, hb₂, hγ₂, ht₂, hs₁, hs₂, hconv,
+    hK, hS⟩ := h.exists_normalForm
+  have hne : γ₂ ≠ b₂ := by
+    intro he
+    apply hpar b₂
+    have ht : t₂ = 1 := by linarith
+    rw [hS, he, ht]; module
+  have := isRupert_cappedSquarePyramid_normalForm E S₃ S₂ S₁ h.affineIndependent a₁ β₁ c₁ t₁
+    b₂ γ₂ t₂ ha₁ hβ₁ hc₁ ht₁ hb₂ hγ₂ ht₂ hs₁ hs₂ hconv hne
+  rw [← hK, ← hS] at this
+  convert this using 1
+  ext x; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
 
 end SmallRupert
 
