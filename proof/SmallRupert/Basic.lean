@@ -2,6 +2,9 @@ module
 
 public import Mathlib.Analysis.Convex.Intrinsic
 public import Mathlib.Analysis.Convex.Topology
+public import Mathlib.Analysis.InnerProductSpace.Dual
+public import Mathlib.Analysis.LocallyConvex.Separation
+public import Mathlib.Topology.Sequences
 public import Noperthedron.Rupert.Basic
 
 @[expose] public section
@@ -94,6 +97,46 @@ theorem isRupert_congr_hull {V V' : Finset ℝ³}
 theorem outerShadow_one (S : Set ℝ³) : outerShadow 1 S = proj_xy '' S := by
   ext x; simp [outerShadow]
 
+theorem transpose_mem_SO3 {Q : Matrix (Fin 3) (Fin 3) ℝ} (hQ : Q ∈ SO3) : Qᵀ ∈ SO3 := by
+  have := (Matrix.mem_specialOrthogonalGroup_iff).mp hQ
+  rw [Matrix.mem_specialOrthogonalGroup_iff, Matrix.mem_orthogonalGroup_iff]
+  exact ⟨by simpa using (Matrix.mem_orthogonalGroup_iff' (Fin 3) ℝ).mp this.1,
+    by simpa using this.2⟩
+
+/-- Copy of `_root_.isRupert_image_rotation`
+(`Noperthedron/PentagonalHexecontahedron/IcoInstance.lean`). -/
+theorem isRupert_image_rotation' (Q : Matrix (Fin 3) (Fin 3) ℝ) (hQ : Q ∈ SO3)
+    (V : Finset ℝ³) (h : IsRupert V) : IsRupert (V.image Q.toEuclideanLin) := by
+  obtain ⟨R1, hR1, off, R2, hR2, hsub⟩ := h
+  have hQt : Qᵀ ∈ SO3 := transpose_mem_SO3 hQ
+  have hQtQ : Qᵀ * Q = 1 := (Matrix.mem_orthogonalGroup_iff' (Fin 3) ℝ).mp hQ.1
+  have hhull : convexHull ℝ (↑(V.image Q.toEuclideanLin) : Set ℝ³) =
+      Q.toEuclideanLin '' convexHull ℝ ↑V := by
+    rw [Finset.coe_image, LinearMap.image_convexHull]
+  have hback : ∀ (R : Matrix (Fin 3) (Fin 3) ℝ) (p : ℝ³),
+      (R * Qᵀ).toEuclideanLin (Q.toEuclideanLin p) = R.toEuclideanLin p := by
+    intro R p
+    simp [Matrix.toLpLin_apply, Matrix.mulVec_mulVec, hQtQ]
+  have hset : ∀ (R : Matrix (Fin 3) (Fin 3) ℝ) (o : ℝ²),
+      { x | ∃ p ∈ convexHull ℝ (↑(V.image Q.toEuclideanLin) : Set ℝ³),
+          o + proj_xy ((R * Qᵀ).toEuclideanLin p) = x } =
+        { x | ∃ p ∈ convexHull ℝ (↑V : Set ℝ³), o + proj_xy (R.toEuclideanLin p) = x } := by
+    intro R o
+    rw [hhull]
+    ext y
+    constructor
+    · rintro ⟨p, ⟨q, hq, rfl⟩, rfl⟩
+      exact ⟨q, hq, by rw [hback]⟩
+    · rintro ⟨q, hq, rfl⟩
+      exact ⟨Q.toEuclideanLin q, ⟨q, hq, rfl⟩, by rw [hback]⟩
+  refine ⟨R1 * Qᵀ, Submonoid.mul_mem _ hR1 hQt, off, R2 * Qᵀ,
+    Submonoid.mul_mem _ hR2 hQt, ?_⟩
+  dsimp only at hsub ⊢
+  have h2 := hset R2 0
+  simp only [zero_add] at h2
+  rw [hset R1 off, h2]
+  exact hsub
+
 /-- Rupertness is invariant under rotating the vertex set.  (Proved as
 `_root_.isRupert_image_rotation` in
 `Noperthedron/PentagonalHexecontahedron/IcoInstance.lean`, applied to `Qᵀ`;
@@ -101,13 +144,152 @@ that file is too heavy to import here, so the proof is to be moved to a light
 module.) -/
 theorem isRupert_of_isRupert_image_rotation (Q : Matrix (Fin 3) (Fin 3) ℝ) (hQ : Q ∈ SO3)
     (V : Finset ℝ³) (h : IsRupert (V.image Q.toEuclideanLin)) : IsRupert V := by
-  sorry
+  have hQt : Qᵀ ∈ SO3 := transpose_mem_SO3 hQ
+  have hQtQ : Qᵀ * Q = 1 := (Matrix.mem_orthogonalGroup_iff' (Fin 3) ℝ).mp hQ.1
+  have := isRupert_image_rotation' Qᵀ hQt _ h
+  rwa [Finset.image_image, show (Qᵀ.toEuclideanLin ∘ Q.toEuclideanLin) = id by
+    funext p; simp [Matrix.toLpLin_apply, Matrix.mulVec_mulVec, hQtQ], Finset.image_id] at this
+
+/-- Rotation about the z-axis with `cos = c`, `sin = s`. -/
+def rotZ (c s : ℝ) : Matrix (Fin 3) (Fin 3) ℝ := !![c, -s, 0; s, c, 0; 0, 0, 1]
+
+/-- Rotation about the x-axis with `cos = c`, `sin = s`. -/
+def rotX (c s : ℝ) : Matrix (Fin 3) (Fin 3) ℝ := !![1, 0, 0; 0, c, -s; 0, s, c]
+
+theorem rotZ_mem_SO3 {c s : ℝ} (h : c ^ 2 + s ^ 2 = 1) : rotZ c s ∈ SO3 := by
+  rw [Matrix.mem_specialOrthogonalGroup_iff, Matrix.mem_orthogonalGroup_iff]
+  constructor
+  · ext i j
+    fin_cases i <;> fin_cases j <;>
+      simp [rotZ, Matrix.mul_apply, Fin.sum_univ_three] <;>
+        first | ring1 | linear_combination h | linear_combination -h
+  · simp [rotZ, Matrix.det_fin_three]; linear_combination h
+
+theorem rotX_mem_SO3 {c s : ℝ} (h : c ^ 2 + s ^ 2 = 1) : rotX c s ∈ SO3 := by
+  rw [Matrix.mem_specialOrthogonalGroup_iff, Matrix.mem_orthogonalGroup_iff]
+  constructor
+  · ext i j
+    fin_cases i <;> fin_cases j <;>
+      simp [rotX, Matrix.mul_apply, Fin.sum_univ_three] <;>
+        first | ring1 | linear_combination h | linear_combination -h
+  · simp [rotX, Matrix.det_fin_three]; linear_combination h
 
 /-- Every nonzero direction is taken to the standard view axis by some
 rotation. -/
 theorem exists_rotation_to_ez (u : ℝ³) (hu : u ≠ 0) :
     ∃ R ∈ SO3, ∃ r : ℝ, r ≠ 0 ∧ R.toEuclideanLin u = r • ez := by
-  sorry
+  set ρ := √(u 0 ^ 2 + u 1 ^ 2) with hρ
+  have hρ2 : ρ ^ 2 = u 0 ^ 2 + u 1 ^ 2 := Real.sq_sqrt (by positivity)
+  set n := √(ρ ^ 2 + u 2 ^ 2) with hn
+  have hn2 : n ^ 2 = ρ ^ 2 + u 2 ^ 2 := Real.sq_sqrt (by positivity)
+  have hnpos : 0 < n := by
+    rw [hn, Real.sqrt_pos, hρ2]
+    by_contra hle
+    apply hu
+    ext i
+    fin_cases i <;> simp <;> nlinarith [sq_nonneg (u 0), sq_nonneg (u 1), sq_nonneg (u 2)]
+  -- first rotation about the z-axis: u ↦ (0, ρ, u 2)
+  obtain ⟨c, s, hcs, h0, h1⟩ : ∃ c s : ℝ, c ^ 2 + s ^ 2 = 1 ∧ c * u 0 - s * u 1 = 0 ∧
+      s * u 0 + c * u 1 = ρ := by
+    by_cases hρ0 : ρ = 0
+    · have hu0 : u 0 = 0 := by nlinarith [sq_nonneg (u 0), sq_nonneg (u 1)]
+      have hu1 : u 1 = 0 := by nlinarith [sq_nonneg (u 0), sq_nonneg (u 1)]
+      exact ⟨1, 0, by norm_num, by simp [hu0, hu1], by simp [hu0, hu1, hρ0]⟩
+    · refine ⟨u 1 / ρ, u 0 / ρ, ?_, ?_, ?_⟩
+      · field_simp; linarith
+      · field_simp; ring
+      · field_simp; linarith
+  refine ⟨rotX (u 2 / n) (ρ / n) * rotZ c s,
+    Submonoid.mul_mem _ (rotX_mem_SO3 (by field_simp; linarith)) (rotZ_mem_SO3 hcs),
+    n, hnpos.ne', ?_⟩
+  ext i
+  fin_cases i <;>
+    simp [rotX, rotZ, ez, Matrix.toLpLin_apply, dotProduct, Fin.sum_univ_three] <;>
+    field_simp
+  · linear_combination h0
+  · linear_combination (u 2) * h1
+  · linear_combination ρ * h1 - hn2
+
+/-- An inward direction makes a negative angle with every nonzero normal. -/
+theorem IsInwardAt.inner_neg {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    {S : Set E} {p d : E} (h : IsInwardAt S p d) {n : E} (hn : n ≠ 0)
+    (hN : ∀ q ∈ S, ⟪n, q - p⟫ ≤ 0) : ⟪n, d⟫ < 0 := by
+  obtain ⟨ε, hε, hin⟩ := h
+  obtain ⟨r, hr, hball⟩ := Metric.isOpen_iff.mp isOpen_interior _ hin
+  have hn' : 0 < ‖n‖ := norm_pos_iff.mpr hn
+  set q := p + ε • d + (r / 2 / ‖n‖) • n with hq
+  have hqS : q ∈ S := interior_subset (hball (by
+    rw [Metric.mem_ball, dist_eq_norm, hq, add_sub_cancel_left, norm_smul, Real.norm_eq_abs,
+      abs_of_pos (by positivity), div_mul_cancel₀ _ hn'.ne']
+    linarith))
+  have := hN q hqS
+  rw [hq, show p + ε • d + (r / 2 / ‖n‖) • n - p = ε • d + (r / 2 / ‖n‖) • n by abel,
+    inner_add_right, inner_smul_right, inner_smul_right, real_inner_self_eq_norm_sq] at this
+  have h2 : 0 < r / 2 / ‖n‖ * ‖n‖ ^ 2 := by positivity
+  by_contra hcon
+  push Not at hcon
+  nlinarith [mul_nonneg hε.le hcon]
+
+/-- Converse of `IsInwardAt.inner_neg` (separation plus compactness of the
+unit sphere). -/
+theorem isInwardAt_of_forall_normal {E : Type*} [NormedAddCommGroup E]
+    [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] {S : Set E} (hS : Convex ℝ S)
+    (hint : (interior S).Nonempty) {p : E} (hp : p ∈ closure S) (d : E)
+    (h : ∀ n : E, n ≠ 0 → (∀ q ∈ S, ⟪n, q - p⟫ ≤ 0) → ⟪n, d⟫ < 0) : IsInwardAt S p d := by
+  by_contra hne
+  have hne' : ∀ k : ℕ, p + (1 / ((k : ℝ) + 1)) • d ∉ interior S := fun k hk =>
+    hne ⟨_, by positivity, hk⟩
+  -- separating unit normals
+  have hsep : ∀ k : ℕ, ∃ m : E, ‖m‖ = 1 ∧
+      ∀ a ∈ closure S, ⟪m, a⟫ ≤ ⟪m, p + (1 / ((k : ℝ) + 1)) • d⟫ := by
+    intro k
+    obtain ⟨f, hf⟩ := geometric_hahn_banach_open_point hS.interior isOpen_interior (hne' k)
+    set n := (InnerProductSpace.toDual ℝ E).symm f
+    have hnf : ∀ x, ⟪n, x⟫ = f x := fun x => InnerProductSpace.toDual_symm_apply
+    have hn0 : n ≠ 0 := by
+      intro h0
+      obtain ⟨a, ha⟩ := hint
+      have := hf a ha
+      rw [← hnf, ← hnf, h0, inner_zero_left, inner_zero_left] at this
+      exact lt_irrefl _ this
+    have hnpos : 0 < ‖n‖ := norm_pos_iff.mpr hn0
+    refine ⟨(1 / ‖n‖) • n, by
+      rw [norm_smul, Real.norm_eq_abs, abs_of_pos (by positivity)]; field_simp, ?_⟩
+    have hcl : closure S ⊆ {a | ⟪n, a⟫ ≤ ⟪n, p + (1 / ((k : ℝ) + 1)) • d⟫} := by
+      rw [← hS.closure_interior_eq_closure_of_nonempty_interior hint]
+      refine closure_minimal (fun a ha => ?_) (isClosed_le (by fun_prop) (by fun_prop))
+      simp only [Set.mem_setOf_eq, hnf]
+      exact (hf a ha).le
+    intro a ha
+    rw [inner_smul_left, inner_smul_left]
+    exact mul_le_mul_of_nonneg_left (hcl ha) (by simp [hnpos.le])
+  choose m hm1 hm using hsep
+  obtain ⟨m₀, hm₀, φ, hφ, hlim⟩ :=
+    (isCompact_sphere (0 : E) 1).tendsto_subseq (x := m) (fun k => by simp [hm1 k])
+  have hm₀1 : ‖m₀‖ = 1 := by simpa using hm₀
+  have hε : Tendsto (fun k => 1 / ((φ k : ℝ) + 1)) atTop (𝓝 0) :=
+    tendsto_one_div_add_atTop_nhds_zero_nat.comp hφ.tendsto_atTop
+  have hlimit : ∀ a ∈ closure S, ⟪m₀, a⟫ ≤ ⟪m₀, p⟫ := by
+    intro a ha
+    have h1 : Tendsto (fun k => ⟪m (φ k), p + (1 / ((φ k : ℝ) + 1)) • d⟫ - ⟪m (φ k), a⟫)
+        atTop (𝓝 (⟪m₀, p + (0 : ℝ) • d⟫ - ⟪m₀, a⟫)) :=
+      ((hlim.inner (tendsto_const_nhds.add (hε.smul tendsto_const_nhds))).sub
+        (hlim.inner tendsto_const_nhds))
+    have := ge_of_tendsto h1 (Eventually.of_forall fun k => sub_nonneg.mpr (hm (φ k) a ha))
+    simpa using this
+  have hd : 0 ≤ ⟪m₀, d⟫ := by
+    have hk : ∀ k, 0 ≤ ⟪m (φ k), d⟫ := by
+      intro k
+      have := hm (φ k) p hp
+      rw [inner_add_right, inner_smul_right] at this
+      have hpos : (0 : ℝ) < 1 / ((φ k : ℝ) + 1) := by positivity
+      nlinarith
+    exact ge_of_tendsto (hlim.inner tendsto_const_nhds) (Eventually.of_forall hk)
+  have hm0 : m₀ ≠ 0 := by rintro rfl; simp at hm₀1
+  have := h m₀ hm0 (fun q hq => by
+    have := hlimit q (subset_closure hq)
+    rw [inner_sub_right]; linarith)
+  linarith
 
 /-- `IsInwardAt` is the interior of the tangent cone, described by normals:
 for a convex set with nonempty interior in a finite-dimensional space and
@@ -117,27 +299,51 @@ the one or two edges at `p`, which is LEMMAS.md's `int T_S(p)`.) -/
 theorem isInwardAt_iff_forall_normal {E : Type*} [NormedAddCommGroup E]
     [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] {S : Set E} (hS : Convex ℝ S)
     (hint : (interior S).Nonempty) {p : E} (hp : p ∈ closure S) (d : E) :
-    IsInwardAt S p d ↔ ∀ n : E, n ≠ 0 → (∀ q ∈ S, ⟪n, q - p⟫ ≤ 0) → ⟪n, d⟫ < 0 := by
-  sorry
+    IsInwardAt S p d ↔ ∀ n : E, n ≠ 0 → (∀ q ∈ S, ⟪n, q - p⟫ ≤ 0) → ⟪n, d⟫ < 0 :=
+  ⟨fun h _ hn hN => h.inner_neg hn hN, isInwardAt_of_forall_normal hS hint hp d⟩
 
 /-- Once some step along `d` enters the interior, all smaller steps do. -/
 theorem IsInwardAt.eventually {E : Type*} [AddCommGroup E] [Module ℝ E] [TopologicalSpace E]
     [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] {S : Set E} (hS : Convex ℝ S) {p d : E}
     (hp : p ∈ closure S) (h : IsInwardAt S p d) :
     ∀ᶠ ε in 𝓝[>] (0 : ℝ), p + ε • d ∈ interior S := by
-  sorry
+  obtain ⟨ε₀, hε₀, hin⟩ := h
+  filter_upwards [Ioo_mem_nhdsGT hε₀] with ε hε
+  have h1 : (1 - ε / ε₀) • p + (ε / ε₀) • (p + ε₀ • d) = p + ε • d := by
+    rw [smul_add, smul_smul, div_mul_cancel₀ _ hε₀.ne']
+    module
+  rw [← h1]
+  exact hS.combo_closure_interior_mem_interior hp hin
+    (by rw [sub_nonneg, div_le_one hε₀]; exact hε.2.le) (div_pos hε.1 hε₀) (by ring)
 
 /-- Every point of the interior is inward in every direction. -/
 theorem isInwardAt_of_mem_interior {E : Type*} [AddCommGroup E] [Module ℝ E]
     [TopologicalSpace E] [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] {S : Set E} {p : E}
     (hp : p ∈ interior S) (d : E) : IsInwardAt S p d := by
-  sorry
+  have hc : Continuous fun ε : ℝ => p + ε • d := by fun_prop
+  have hev : ∀ᶠ ε in 𝓝 (0 : ℝ), p + ε • d ∈ interior S :=
+    hc.continuousAt.preimage_mem_nhds (by simpa using isOpen_interior.mem_nhds hp)
+  obtain ⟨ε, hε, hεpos⟩ := (hev.filter_mono nhdsWithin_le_nhds |>.and
+    (self_mem_nhdsWithin : Set.Ioi (0:ℝ) ∈ 𝓝[>] 0)).exists
+  exact ⟨ε, hεpos, hε⟩
 
 /-- `IsDoubleNormalDir` is invariant under linear isometries. -/
 theorem isDoubleNormalDir_image_iff {E : Type*} [NormedAddCommGroup E]
     [InnerProductSpace ℝ E] (f : E ≃ₗᵢ[ℝ] E) (F : Set E) (u : E) :
     IsDoubleNormalDir (f '' F) (f u) ↔ IsDoubleNormalDir F u := by
-  sorry
+  have key : ∀ (f : E ≃ₗᵢ[ℝ] E) (F : Set E) (u : E),
+      IsDoubleNormalDir F u → IsDoubleNormalDir (f '' F) (f u) := by
+    rintro f F u ⟨a, ha, b, hb, hab, ⟨t, ht⟩, hB, hA⟩
+    refine ⟨f a, ⟨a, ha, rfl⟩, f b, ⟨b, hb, rfl⟩, fun h => hab (f.injective h),
+      ⟨t, by rw [← map_sub, ht, map_smul]⟩, ?_, ?_⟩
+    · rintro _ ⟨q, hq, rfl⟩
+      rw [← map_sub, ← map_sub, f.inner_map_map]; exact hB q hq
+    · rintro _ ⟨q, hq, rfl⟩
+      rw [← map_sub, ← map_sub, f.inner_map_map]; exact hA q hq
+  refine ⟨fun h => ?_, key f F u⟩
+  have := key f.symm _ _ h
+  rwa [← Set.image_comp, show (f.symm ∘ f : E → E) = id from funext f.symm_apply_apply,
+    Set.image_id, f.symm_apply_apply] at this
 
 end SmallRupert
 
