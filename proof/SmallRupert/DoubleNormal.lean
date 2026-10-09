@@ -171,6 +171,98 @@ theorem isDoubleNormalDir_iff_ranges (W : Finset ℝ²)
         ⟪rot90 u, a⟫ = ⟪rot90 u, b⟫ := by
   sorry
 
+section Helpers
+
+theorem inner_rot90_left_self (u : ℝ²) : ⟪rot90 u, u⟫ = 0 := by
+  simp [rot90, PiLp.inner_apply, Fin.sum_univ_two]; ring
+
+theorem inner_rot90_right_self (u : ℝ²) : ⟪u, rot90 u⟫ = 0 := by
+  rw [real_inner_comm]; exact inner_rot90_left_self u
+
+/-- Orthogonal decomposition along `u` and `J u`. -/
+theorem norm_sq_smul_eq (u p : ℝ²) :
+    ‖u‖ ^ 2 • p = ⟪u, p⟫ • u + ⟪rot90 u, p⟫ • rot90 u := by
+  have hn : ‖u‖ ^ 2 = u 0 ^ 2 + u 1 ^ 2 := by
+    rw [EuclideanSpace.real_norm_sq_eq, Fin.sum_univ_two]
+  ext i
+  fin_cases i <;> simp [rot90, PiLp.inner_apply, Fin.sum_univ_two, hn] <;> ring
+
+theorem inner_rot90_rot90 (u : ℝ²) : ⟪rot90 u, rot90 u⟫ = ‖u‖ ^ 2 := by
+  rw [real_inner_self_eq_norm_sq, EuclideanSpace.real_norm_sq_eq,
+    EuclideanSpace.real_norm_sq_eq, Fin.sum_univ_two, Fin.sum_univ_two]
+  simp [rot90]; ring
+
+theorem eq_of_inner_eq_of_inner_rot90_eq {u : ℝ²} (hu : u ≠ 0) {p q : ℝ²}
+    (hx : ⟪u, p⟫ = ⟪u, q⟫) (hy : ⟪rot90 u, p⟫ = ⟪rot90 u, q⟫) : p = q := by
+  have hn : ‖u‖ ^ 2 ≠ 0 := by positivity
+  have := norm_sq_smul_eq u p
+  rw [hx, hy, ← norm_sq_smul_eq u q] at this
+  exact (smul_right_injective _ hn this.symm).symm
+
+/-- Disjoint compact convex nonempty subsets of `ℝ` are strictly separated
+by a point `y₀`, with orientation `κ`. -/
+theorem exists_strict_separation_real {A B : Set ℝ} (hA : IsCompact A) (hB : IsCompact B)
+    (hAc : Convex ℝ A) (hBc : Convex ℝ B) (hAn : A.Nonempty) (hBn : B.Nonempty)
+    (hdisj : Disjoint A B) :
+    ∃ κ y₀ : ℝ, (∀ y ∈ A, 0 < κ * (y₀ - y)) ∧ (∀ y ∈ B, κ * (y₀ - y) < 0) := by
+  have hA1 := hA.sInf_mem hAn
+  have hA2 := hA.sSup_mem hAn
+  have hB1 := hB.sInf_mem hBn
+  have hB2 := hB.sSup_mem hBn
+  have hAb := hA.bddBelow; have hAa := hA.bddAbove
+  have hBb := hB.bddBelow; have hBa := hB.bddAbove
+  by_cases h1 : sSup A < sInf B
+  · refine ⟨1, (sSup A + sInf B) / 2, fun y hy => ?_, fun y hy => ?_⟩
+    · have := le_csSup hAa hy; linarith
+    · have := csInf_le hBb hy; linarith
+  by_cases h2 : sSup B < sInf A
+  · refine ⟨-1, (sSup B + sInf A) / 2, fun y hy => ?_, fun y hy => ?_⟩
+    · have := csInf_le hAb hy; linarith
+    · have := le_csSup hBa hy; linarith
+  exfalso
+  push Not at h1 h2
+  set m := max (sInf A) (sInf B)
+  have hmA : m ∈ A := hAc.ordConnected.out hA1 hA2
+    ⟨le_max_left _ _, max_le (csInf_le_csSup hAn hAb hAa) h1⟩
+  have hmB : m ∈ B := hBc.ordConnected.out hB1 hB2
+    ⟨le_max_right _ _, max_le h2 (csInf_le_csSup hBn hBb hBa)⟩
+  exact Set.disjoint_left.mp hdisj hmA hmB
+
+/-- If `f ≤ 0` on a compact set and `g < 0` wherever `f = 0`, then
+`f + δ g < 0` for some `δ > 0`. -/
+theorem exists_pos_add_smul_neg {X : Type*} [TopologicalSpace X] {K : Set X}
+    (hK : IsCompact K) {f g : X → ℝ}
+    (hf : Continuous f) (hg : Continuous g) (hf0 : ∀ n ∈ K, f n ≤ 0)
+    (hfg : ∀ n ∈ K, f n = 0 → g n < 0) :
+    ∃ δ > (0 : ℝ), ∀ n ∈ K, f n + δ * g n < 0 := by
+  set K' := K ∩ {n | 0 ≤ g n}
+  have hK' : IsCompact K' := hK.inter_right (isClosed_le continuous_const hg)
+  rcases K'.eq_empty_or_nonempty with he | hne
+  · refine ⟨1, one_pos, fun n hn => ?_⟩
+    have hgn : g n < 0 := by
+      by_contra hc; push Not at hc
+      exact (Set.eq_empty_iff_forall_notMem.mp he) n ⟨hn, hc⟩
+    linarith [hf0 n hn]
+  obtain ⟨n₁, hn₁, hmax₁⟩ := hK'.exists_isMaxOn hne hf.continuousOn
+  obtain ⟨n₂, hn₂, hmax₂⟩ := hK'.exists_isMaxOn hne hg.continuousOn
+  have hm : f n₁ < 0 := lt_of_le_of_ne (hf0 n₁ hn₁.1) (fun h => by
+    have := hfg n₁ hn₁.1 h; linarith [hn₁.2.out])
+  have hG : 0 ≤ g n₂ := hn₂.2
+  refine ⟨-f n₁ / (g n₂ + 1), div_pos (by linarith) (by linarith), fun n hn => ?_⟩
+  by_cases hgn : 0 ≤ g n
+  · have h1 : f n ≤ f n₁ := hmax₁ (show n ∈ K' from ⟨hn, hgn⟩)
+    have h2 : g n ≤ g n₂ := hmax₂ (show n ∈ K' from ⟨hn, hgn⟩)
+    have h3 : -f n₁ / (g n₂ + 1) * g n ≤ -f n₁ / (g n₂ + 1) * g n₂ :=
+      mul_le_mul_of_nonneg_left h2 (div_pos (by linarith) (by linarith)).le
+    have h4 : -f n₁ / (g n₂ + 1) * g n₂ < -f n₁ := by
+      rw [div_mul_eq_mul_div, div_lt_iff₀ (by linarith)]; nlinarith
+    linarith
+  · push Not at hgn
+    have := mul_neg_of_pos_of_neg (div_pos (by linarith : 0 < -f n₁) (by linarith : 0 < g n₂ + 1)) hgn
+    linarith [hf0 n hn]
+
+end Helpers
+
 /-- **Lemma 3 (construction direction).** If `u` is not a double-normal
 direction of the polygon `F = conv W`, there is an affine field
 `p ↦ M p + b` with `⟪u, M u⟫ = 0` that points strictly into `F` at every
@@ -185,7 +277,253 @@ theorem exists_admissible_inward_field (W : Finset ℝ²)
     (hnd : ¬ IsDoubleNormalDir (convexHull ℝ (W : Set ℝ²)) u) :
     ∃ (M : ℝ² →ₗ[ℝ] ℝ²) (b : ℝ²), ⟪u, M u⟫ = 0 ∧
       ∀ p ∈ W, IsInwardAt (convexHull ℝ (W : Set ℝ²)) p (M p + b) := by
-  sorry
+  set F := convexHull ℝ (W : Set ℝ²) with hFdef
+  set ŵ := rot90 u with hŵ
+  have hFc : IsCompact F := W.finite_toSet.isCompact_convexHull ℝ
+  have hFconv : Convex ℝ F := convex_convexHull ℝ (W : Set ℝ²)
+  obtain ⟨c, hc⟩ := hW
+  have hcF : c ∈ F := interior_subset hc
+  have hu2 : 0 < ‖u‖ ^ 2 := by positivity
+  have huu : ⟪u, u⟫ = ‖u‖ ^ 2 := real_inner_self_eq_norm_sq u
+  have huw : ⟪u, ŵ⟫ = 0 := inner_rot90_right_self u
+  have hwu : ⟪ŵ, u⟫ = 0 := inner_rot90_left_self u
+  have hww : ⟪ŵ, ŵ⟫ = ‖u‖ ^ 2 := inner_rot90_rot90 u
+  -- every direction towards the interior point `c` is inward
+  have hinw : ∀ p ∈ F, ∀ μ > (0 : ℝ), IsInwardAt F p (μ • (c - p)) := by
+    intro p hp μ hμ
+    refine ⟨min 1 (1 / μ), lt_min one_pos (by positivity), ?_⟩
+    have h1 : p + min 1 (1 / μ) • μ • (c - p) =
+        (1 - min 1 (1 / μ) * μ) • p + (min 1 (1 / μ) * μ) • c := by
+      rw [smul_smul]; module
+    rw [h1]
+    have hle : min 1 (1 / μ) * μ ≤ 1 := by
+      calc min 1 (1 / μ) * μ ≤ 1 / μ * μ := by gcongr; exact min_le_right _ _
+        _ = 1 := by field_simp
+    exact hFconv.combo_closure_interior_mem_interior (subset_closure hp) hc
+      (by linarith) (mul_pos (lt_min one_pos (by positivity)) hμ) (by ring)
+  have hcont : Continuous fun p : ℝ² => ⟪u, p⟫ := continuous_const.inner continuous_id
+  obtain ⟨a, haF, hmin⟩ := hFc.exists_isMinOn ⟨c, hcF⟩ hcont.continuousOn
+  obtain ⟨b, hbF, hmax⟩ := hFc.exists_isMaxOn ⟨c, hcF⟩ hcont.continuousOn
+  have hmin' : ∀ q ∈ F, ⟪u, a⟫ ≤ ⟪u, q⟫ := fun q hq => hmin hq
+  have hmax' : ∀ q ∈ F, ⟪u, q⟫ ≤ ⟪u, b⟫ := fun q hq => hmax hq
+  have hca : ⟪u, a⟫ < ⟪u, c⟫ := by
+    have := (hinw a haF 1 one_pos).inner_neg (neg_ne_zero.mpr hu) (fun q hq => by
+      rw [inner_neg_left, inner_sub_right]; linarith [hmin' q hq])
+    rw [one_smul, inner_neg_left, inner_sub_right] at this; linarith
+  have hcb : ⟪u, c⟫ < ⟪u, b⟫ := by
+    have := (hinw b hbF 1 one_pos).inner_neg hu (fun q hq => by
+      rw [inner_sub_right]; linarith [hmax' q hq])
+    rw [one_smul, inner_sub_right] at this; linarith
+  set L := ⟪u, b⟫ - ⟪u, a⟫ with hL
+  have hLpos : 0 < L := by linarith
+  -- the two extreme faces and their `ŵ`-ranges
+  set FA := F ∩ {p | ⟪u, p⟫ = ⟪u, a⟫}
+  set FB := F ∩ {p | ⟪u, p⟫ = ⟪u, b⟫}
+  have hFAc : IsCompact FA := hFc.inter_right (isClosed_eq hcont continuous_const)
+  have hFBc : IsCompact FB := hFc.inter_right (isClosed_eq hcont continuous_const)
+  have hFAv : Convex ℝ FA := hFconv.inter (convex_hyperplane
+    (innerₛₗ ℝ u).isLinear _)
+  have hFBv : Convex ℝ FB := hFconv.inter (convex_hyperplane
+    (innerₛₗ ℝ u).isLinear _)
+  obtain ⟨κ, y₀, hκA, hκB⟩ := exists_strict_separation_real
+    (hFAc.image (innerₛₗ ℝ ŵ).continuous_of_finiteDimensional)
+    (hFBc.image (innerₛₗ ℝ ŵ).continuous_of_finiteDimensional)
+    (hFAv.linear_image (innerₛₗ ℝ ŵ)) (hFBv.linear_image (innerₛₗ ℝ ŵ))
+    ⟨_, ⟨a, ⟨haF, rfl⟩, rfl⟩⟩ ⟨_, ⟨b, ⟨hbF, rfl⟩, rfl⟩⟩ (by
+      rw [Set.disjoint_left]
+      rintro _ ⟨a', ⟨ha'F, ha'⟩, rfl⟩ ⟨b', ⟨hb'F, hb'⟩, hy⟩
+      simp only [innerₛₗ_apply_apply, Set.mem_setOf_eq] at hy ha' hb'
+      apply hnd
+      have hba : b' - a' = (L / ‖u‖ ^ 2) • u := by
+        apply eq_of_inner_eq_of_inner_rot90_eq hu
+        · rw [inner_sub_right, inner_smul_right, huu, ha', hb']; field_simp; exact hL.symm
+        · rw [inner_sub_right, inner_smul_right, hy, ← hŵ, hwu]; ring
+      have hc0 : 0 ≤ L / ‖u‖ ^ 2 := by positivity
+      refine ⟨a', ha'F, b', hb'F, fun h => by rw [h] at ha'; linarith,
+        ⟨L / ‖u‖ ^ 2, hba⟩, fun q hq => ?_, fun q hq => ?_⟩
+      · rw [hba, real_inner_smul_left, inner_sub_right]
+        exact mul_nonpos_of_nonneg_of_nonpos hc0 (by linarith [hmax' q hq])
+      · rw [show a' - b' = -(b' - a') by abel, hba, inner_neg_left, real_inner_smul_left,
+          inner_sub_right]
+        have := mul_nonneg hc0 (show 0 ≤ ⟪u, q⟫ - ⟪u, a'⟫ by linarith [hmin' q hq])
+        linarith)
+  -- the construction
+  set σ : ℝ² → ℝ := fun p => κ * (y₀ - ⟪ŵ, p⟫) with hσ
+  have hσa : ∀ p ∈ F, ⟪u, p⟫ = ⟪u, a⟫ → 0 < σ p := fun p hp hpa =>
+    hκA _ ⟨p, ⟨hp, hpa⟩, rfl⟩
+  have hσb : ∀ p ∈ F, ⟪u, p⟫ = ⟪u, b⟫ → σ p < 0 := fun p hp hpb =>
+    hκB _ ⟨p, ⟨hp, hpb⟩, rfl⟩
+  set μa := σ a / (⟪u, c⟫ - ⟪u, a⟫) with hμa
+  set μb := σ b / (⟪u, c⟫ - ⟪u, b⟫) with hμb
+  have hμa0 : 0 < μa := div_pos (hσa a haF rfl) (by linarith)
+  have hμb0 : 0 < μb := div_pos_of_neg_of_neg (hσb b hbF rfl) (by linarith)
+  set da := μa • (c - a)
+  set db := μb • (c - b)
+  have hab : a ≠ b := fun h => by rw [h] at hca; linarith
+  have hab2 : 0 < ‖b - a‖ ^ 2 := by
+    have : b - a ≠ 0 := sub_ne_zero.mpr hab.symm
+    positivity
+  set k := (⟪ŵ, db⟫ - ⟪ŵ, da⟫) / ‖b - a‖ ^ 2
+  -- squash `w` and shear `z`
+  set w : ℝ² → ℝ² := fun p => a + ((⟪u, p⟫ - ⟪u, a⟫) / L) • (b - a) - p with hw
+  set z : ℝ² → ℝ² := fun p => (σ p / ‖u‖ ^ 2) • u +
+    ((⟪ŵ, da⟫ + k * ⟪b - a, p - a⟫) / ‖u‖ ^ 2) • ŵ with hz
+  have hcaL : ⟪u, c⟫ - ⟪u, a⟫ ≠ 0 := by linarith
+  have hcbL : ⟪u, c⟫ - ⟪u, b⟫ ≠ 0 := by linarith
+  have hbaN : ‖b - a‖ ≠ 0 := norm_ne_zero_iff.mpr (sub_ne_zero.mpr hab.symm)
+  have hza : z a = da := by
+    apply eq_of_inner_eq_of_inner_rot90_eq hu
+    · simp only [hz, inner_add_right, real_inner_smul_right, huu, huw]
+      simp only [da, real_inner_smul_right, inner_sub_right, hμa]
+      field_simp
+      ring
+    · simp only [hz, ← hŵ, inner_add_right, real_inner_smul_right, hwu, hww, sub_self,
+        inner_zero_right]
+      field_simp
+      ring
+  have hzb : z b = db := by
+    apply eq_of_inner_eq_of_inner_rot90_eq hu
+    · simp only [hz, inner_add_right, real_inner_smul_right, huu, huw]
+      simp only [db, real_inner_smul_right, inner_sub_right, hμb]
+      field_simp
+      ring
+    · simp only [hz, ← hŵ, inner_add_right, real_inner_smul_right, hwu, hww,
+        real_inner_self_eq_norm_sq]
+      simp only [k, ← inner_sub_right, real_inner_self_eq_norm_sq]
+      field_simp
+      rw [inner_sub_right]
+      ring
+  -- basic facts about `w` and `z`
+  have hubaL : ⟪u, b - a⟫ = L := by rw [inner_sub_right]
+  have hwx : ∀ p, ⟪u, w p⟫ = 0 := by
+    intro p
+    simp only [hw, inner_add_right, inner_sub_right, real_inner_smul_right]
+    rw [← hL]
+    field_simp
+    ring
+  have hθ : ∀ p ∈ F, 0 ≤ (⟪u, p⟫ - ⟪u, a⟫) / L ∧ (⟪u, p⟫ - ⟪u, a⟫) / L ≤ 1 := by
+    intro p hp
+    refine ⟨div_nonneg (by linarith [hmin' p hp]) hLpos.le, ?_⟩
+    rw [div_le_one hLpos]; linarith [hmax' p hp]
+  have hwF : ∀ p ∈ F, p + w p ∈ F := by
+    intro p hp
+    obtain ⟨h0, h1⟩ := hθ p hp
+    have : p + w p = (1 - (⟪u, p⟫ - ⟪u, a⟫) / L) • a + ((⟪u, p⟫ - ⟪u, a⟫) / L) • b := by
+      simp only [hw]; module
+    rw [this]
+    exact hFconv haF hbF (by linarith) h0 (by ring)
+  have hzu : ∀ p, ⟪u, z p⟫ = σ p := by
+    intro p
+    simp only [hz, inner_add_right, real_inner_smul_right, huu, huw]
+    field_simp
+    ring
+  have hzw : ∀ p, ⟪ŵ, z p⟫ = ⟪ŵ, da⟫ + k * ⟪b - a, p - a⟫ := by
+    intro p
+    simp only [hz, inner_add_right, real_inner_smul_right, hwu, hww]
+    field_simp
+    ring
+  have hzaff : ∀ θ : ℝ, z ((1 - θ) • a + θ • b) = (1 - θ) • z a + θ • z b := by
+    intro θ
+    apply eq_of_inner_eq_of_inner_rot90_eq hu
+    · simp only [inner_add_right, real_inner_smul_right, hzu, hσ]; ring
+    · simp only [← hŵ, inner_add_right, real_inner_smul_right, hzw, inner_sub_right]; ring
+  -- the defect analysis
+  have hdefect : ∀ p ∈ F, ∀ n : ℝ², ‖n‖ = 1 → (∀ q ∈ F, ⟪n, q - p⟫ ≤ 0) →
+      ⟪n, w p⟫ = 0 → ⟪n, z p⟫ < 0 := by
+    intro p hp n hn1 hN hf
+    have hn0 : n ≠ 0 := by rintro rfl; simp at hn1
+    have hdec := norm_sq_smul_eq u n
+    have hinner : ∀ x, ‖u‖ ^ 2 * ⟪n, x⟫ = ⟪u, n⟫ * ⟪u, x⟫ + ⟪ŵ, n⟫ * ⟪ŵ, x⟫ := by
+      intro x
+      rw [← real_inner_smul_left, hdec, inner_add_left, real_inner_smul_left,
+        real_inner_smul_left]
+    by_cases hy : ⟪ŵ, n⟫ = 0
+    · have hx : ⟪u, n⟫ ≠ 0 := by
+        intro hx
+        apply hn0
+        have := hdec
+        rw [hx, hy, zero_smul, zero_smul, add_zero] at this
+        exact (smul_eq_zero.mp this).resolve_left hu2.ne'
+      have hz' : ‖u‖ ^ 2 * ⟪n, z p⟫ = ⟪u, n⟫ * σ p := by rw [hinner, hy, hzu]; ring
+      have hq : ∀ q ∈ F, ⟪u, n⟫ * (⟪u, q⟫ - ⟪u, p⟫) ≤ 0 := by
+        intro q hq
+        have := hinner (q - p)
+        rw [hy, zero_mul, add_zero] at this
+        rw [← inner_sub_right, ← this]
+        exact mul_nonpos_of_nonneg_of_nonpos hu2.le (hN q hq)
+      have hfin : ‖u‖ ^ 2 * ⟪n, z p⟫ < 0 → ⟪n, z p⟫ < 0 := fun h => by
+        by_contra hc; push Not at hc; have := mul_nonneg hu2.le hc; linarith
+      rcases lt_or_gt_of_ne hx with hneg | hpos
+      · have h1 := hq a haF
+        have hpa : ⟪u, p⟫ = ⟪u, a⟫ := by
+          refine le_antisymm ?_ (hmin' p hp)
+          by_contra hc; push Not at hc
+          have := mul_pos_of_neg_of_neg hneg (show ⟪u, a⟫ - ⟪u, p⟫ < 0 by linarith); linarith
+        have h2 := hσa p hp hpa
+        exact hfin (by rw [hz']; exact mul_neg_of_neg_of_pos hneg h2)
+      · have h1 := hq b hbF
+        have hpb : ⟪u, p⟫ = ⟪u, b⟫ := by
+          refine le_antisymm (hmax' p hp) ?_
+          by_contra hc; push Not at hc
+          have := mul_pos hpos (show 0 < ⟪u, b⟫ - ⟪u, p⟫ by linarith); linarith
+        have h2 := hσb p hp hpb
+        exact hfin (by rw [hz']; exact mul_neg_of_pos_of_neg hpos h2)
+    · -- `p` lies on the chord `[a, b]`
+      have hwy : ⟪ŵ, w p⟫ = 0 := by
+        have := hinner (w p)
+        rw [hf, hwx] at this
+        simp only [mul_zero, zero_add] at this
+        exact (mul_eq_zero.mp this.symm).resolve_left hy
+      have hw0 : w p = 0 := eq_of_inner_eq_of_inner_rot90_eq hu (by rw [hwx, inner_zero_right])
+        (by rw [← hŵ, hwy, inner_zero_right])
+      obtain ⟨hθ0, hθ1⟩ := hθ p hp
+      have hpw : p + w p = (1 - (⟪u, p⟫ - ⟪u, a⟫) / L) • a + ((⟪u, p⟫ - ⟪u, a⟫) / L) • b := by
+        simp only [hw]; module
+      generalize (⟪u, p⟫ - ⟪u, a⟫) / L = θ at hθ0 hθ1 hpw
+      have hpθ : p = (1 - θ) • a + θ • b := by rwa [hw0, add_zero] at hpw
+      set sn := ⟪n, b - a⟫
+      have hna : ⟪n, a - p⟫ = -θ * sn := by
+        rw [hpθ, show a - ((1 - θ) • a + θ • b) = -θ • (b - a) by module, real_inner_smul_right]
+      have hnb : ⟪n, b - p⟫ = (1 - θ) * sn := by
+        rw [hpθ, show b - ((1 - θ) • a + θ • b) = (1 - θ) • (b - a) by module,
+          real_inner_smul_right]
+      have h1 := hN a haF
+      have h2 := hN b hbF
+      rw [hna] at h1
+      rw [hnb] at h2
+      have hA : θ < 1 → ⟪n, z a⟫ < 0 := by
+        intro hlt
+        have hs : sn ≤ 0 := by
+          by_contra hc; push Not at hc
+          have := mul_pos (show 0 < 1 - θ by linarith) hc; linarith
+        rw [hza]
+        refine (hinw a haF μa hμa0).inner_neg hn0 (fun q hq => ?_)
+        have := hN q hq
+        rw [show q - a = (q - p) - (a - p) by abel, inner_sub_right, hna]
+        have := mul_nonpos_of_nonneg_of_nonpos hθ0 hs
+        linarith
+      have hB : 0 < θ → ⟪n, z b⟫ < 0 := by
+        intro hgt
+        have hs : 0 ≤ sn := by
+          by_contra hc; push Not at hc
+          have := mul_pos hgt (show 0 < -sn by linarith); linarith
+        rw [hzb]
+        refine (hinw b hbF μb hμb0).inner_neg hn0 (fun q hq => ?_)
+        have := hN q hq
+        rw [show q - b = (q - p) - (b - p) by abel, inner_sub_right, hnb]
+        have := mul_nonneg (show 0 ≤ 1 - θ by linarith) hs
+        linarith
+      rw [hpθ, hzaff, inner_add_right, real_inner_smul_right, real_inner_smul_right]
+      rcases eq_or_lt_of_le hθ0 with h0 | h0
+      · rw [← h0]; simp only [sub_zero, one_mul, zero_mul, add_zero]
+        exact hA (by rw [← h0]; exact zero_lt_one)
+      rcases eq_or_lt_of_le hθ1 with h1' | h1'
+      · rw [h1']; simp only [sub_self, zero_mul, one_mul, zero_add]
+        exact hB (by rw [h1']; exact zero_lt_one)
+      have h3 := mul_neg_of_pos_of_neg (show 0 < 1 - θ by linarith) (hA h1')
+      have h4 := mul_neg_of_pos_of_neg h0 (hB h0)
+      linarith
+  all_goals sorry
 
 /-- **Lemma 3 (obstruction direction; optional, not used by the Rupert
 theorems).** Along a double normal `[a, b]` every admissible field has
