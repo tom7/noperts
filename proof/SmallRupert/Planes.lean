@@ -153,6 +153,73 @@ theorem coplanar_of_det4_eq_zero {a b c d : ℝ³} (h : det4 a b c d = 0) :
   · simp [N, PiLp.inner_apply, Fin.sum_univ_three]; linear_combination h1
   · simp [N, PiLp.inner_apply, Fin.sum_univ_three]; linear_combination h2
 
+/-- A combination of the points of `T` with all weights positive lies in the
+interior of `conv T` (when that interior is nonempty). -/
+theorem sum_smul_mem_interior_convexHull (T : Finset ℝ²) (lam : ℝ² → ℝ)
+    (hpos : ∀ y ∈ T, 0 < lam y) (h1 : ∑ y ∈ T, lam y = 1)
+    (hint : (interior (convexHull ℝ (T : Set ℝ²))).Nonempty) :
+    ∑ y ∈ T, lam y • y ∈ interior (convexHull ℝ (T : Set ℝ²)) := by
+  obtain ⟨c, hc⟩ := hint
+  obtain ⟨ν, hν0, hν1, hνc⟩ := Finset.mem_convexHull.mp (interior_subset hc)
+  rw [Finset.centerMass_eq_of_sum_1 _ _ hν1] at hνc
+  have hT : T.Nonempty := by
+    rcases T.eq_empty_or_nonempty with h | h
+    · rw [h, Finset.sum_empty] at h1; exact absurd h1 zero_ne_one
+    · exact h
+  obtain ⟨y₀, hy₀, hmin⟩ := T.exists_min_image lam hT
+  set m := lam y₀
+  have hm : 0 < m := hpos y₀ hy₀
+  have hm1 : m ≤ 1 := by
+    rw [← h1]; exact Finset.single_le_sum (fun y hy => (hpos y hy).le) hy₀
+  set ε := m / 2
+  have hε : 0 < ε := by positivity
+  have hε1 : ε < 1 := by simp only [ε]; linarith
+  have hνle : ∀ y ∈ T, ν y ≤ 1 := fun y hy => by
+    rw [← hν1]; exact Finset.single_le_sum (fun y hy => hν0 y hy) hy
+  set Y := ∑ y ∈ T, ((lam y - ε * ν y) / (1 - ε)) • y
+  have hY : Y ∈ convexHull ℝ (T : Set ℝ²) := by
+    refine (convex_convexHull ℝ _).sum_mem (fun y hy => ?_) ?_
+      (fun y hy => subset_convexHull ℝ _ (Finset.mem_coe.mpr hy))
+    · apply div_nonneg _ (by linarith)
+      have h1' := hmin y hy
+      have h2' := mul_le_mul_of_nonneg_left (hνle y hy) hε.le
+      have h3' : ε = m / 2 := rfl
+      linarith
+    · rw [← Finset.sum_div, Finset.sum_sub_distrib, ← Finset.mul_sum, h1, hν1, mul_one,
+        div_self (by linarith)]
+  have hX : ∑ y ∈ T, lam y • y = (1 - ε) • Y + ε • c := by
+    rw [← hνc, Finset.smul_sum, Finset.smul_sum, ← Finset.sum_add_distrib]
+    refine Finset.sum_congr rfl fun y _ => ?_
+    simp only [id, smul_smul, ← add_smul]
+    congr 1
+    have hne : 1 - ε ≠ 0 := by linarith
+    field_simp
+    ring
+  rw [hX]
+  exact (convex_convexHull ℝ _).combo_closure_interior_mem_interior (subset_closure hY) hc
+    (by linarith) hε (by ring)
+
+/-- Index-based version of `sum_smul_mem_interior_convexHull`. -/
+theorem sum_smul_mem_interior_convexHull_image {ι : Type*} [DecidableEq ι] (s : Finset ι)
+    (φ : ι → ℝ²) (μ : ι → ℝ) (hpos : ∀ i ∈ s, 0 < μ i) (h1 : ∑ i ∈ s, μ i = 1)
+    (hint : (interior (convexHull ℝ ((s.image φ : Finset ℝ²) : Set ℝ²))).Nonempty) :
+    ∑ i ∈ s, μ i • φ i ∈ interior (convexHull ℝ ((s.image φ : Finset ℝ²) : Set ℝ²)) := by
+  classical
+  set lam : ℝ² → ℝ := fun y => ∑ i ∈ s with φ i = y, μ i
+  have hmaps : ∀ i ∈ s, φ i ∈ s.image φ := fun i hi => Finset.mem_image_of_mem φ hi
+  have hsum : ∑ i ∈ s, μ i • φ i = ∑ y ∈ s.image φ, lam y • y := by
+    rw [← Finset.sum_fiberwise_of_maps_to hmaps]
+    refine Finset.sum_congr rfl fun y _ => ?_
+    rw [Finset.sum_smul]
+    refine Finset.sum_congr rfl fun i hi => ?_
+    rw [(Finset.mem_filter.mp hi).2]
+  rw [hsum]
+  refine sum_smul_mem_interior_convexHull _ lam (fun y hy => ?_) ?_ hint
+  · obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hy
+    exact Finset.sum_pos (fun j hj => hpos j (Finset.mem_filter.mp hj).1)
+      ⟨i, Finset.mem_filter.mpr ⟨hi, rfl⟩⟩
+  · rw [← h1]; exact Finset.sum_fiberwise_of_maps_to hmaps μ
+
 end SmallRupert
 
 end

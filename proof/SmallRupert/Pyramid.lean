@@ -26,32 +26,6 @@ namespace SmallRupert
 open scoped RealInnerProductSpace Topology
 open Filter
 
-/-- The view `u = c - E` from the apex through a relative-interior point `c`
-of the base is admissible. -/
-theorem sub_mem_admissibleViews_of_pyramid (V : Finset ℝ³) (E : ℝ³)
-    (hE : E ∉ affineSpan ℝ ((V.erase E : Finset ℝ³) : Set ℝ³)) (c : ℝ³)
-    (hc : c ∈ intrinsicInterior ℝ (convexHull ℝ ((V.erase E : Finset ℝ³) : Set ℝ³))) :
-    c - E ∈ admissibleViews V (V.erase E) := by
-  sorry
-
-/-- **Corollary 5.3 (pyramids).** If all points of `V` but one are coplanar
-(and `conv V` is solid), `V` is Rupert. -/
-theorem isRupert_of_pyramid (V : Finset ℝ³) (E : ℝ³)
-    (hint : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty)
-    (hplane : Coplanar ℝ ((V.erase E : Finset ℝ³) : Set ℝ³)) :
-    IsRupert V := by
-  sorry
-
-/-- **Corollary 5.4 (bipyramid lemma), crossing form.** If every point of
-`V \ W` is `D` or `E`, `D` is off the plane of `W`, and the segment `DE` meets
-`relint (conv W)`, then `u = E - D` is admissible and `V` is Rupert. -/
-theorem isRupert_of_segment_crossing (V W : Finset ℝ³) (D E : ℝ³) (hWV : W ⊆ V)
-    (hVW : ∀ v ∈ V, v ∉ W → v = D ∨ v = E) (hW : ¬ Collinear ℝ (W : Set ℝ³))
-    (hD : D ∉ affineSpan ℝ (W : Set ℝ³))
-    (hX : (segment ℝ D E ∩ intrinsicInterior ℝ (convexHull ℝ (W : Set ℝ³))).Nonempty) :
-    IsRupert V := by
-  sorry
-
 /-! ### Helpers for the bipyramid theorem -/
 
 /-- The horizontal lift `q ↦ (q, 0)`. -/

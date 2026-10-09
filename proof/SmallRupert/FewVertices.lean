@@ -1,6 +1,6 @@
 module
 
-public import SmallRupert.Pyramid
+public import SmallRupert.Crossing
 public import Mathlib.Analysis.Convex.Radon
 
 @[expose] public section

@@ -412,6 +412,51 @@ noncomputable def so3Isometry {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R ∈ SO3) 
 @[simp] theorem so3Isometry_apply {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R ∈ SO3) (x : ℝ³) :
     so3Isometry hR x = R.toEuclideanLin x := rfl
 
+/-- Copy of `_root_.isRupert_image_add`
+(`Noperthedron/PentagonalHexecontahedron/IcoInstance.lean`). -/
+theorem isRupert_image_add' (c : ℝ³) (V : Finset ℝ³) (h : IsRupert V) :
+    IsRupert (V.image fun x => c + x) := by
+  obtain ⟨R1, hR1, off, R2, hR2, hsub⟩ := h
+  let d := proj_xy (R2.toEuclideanLin c)
+  refine ⟨R1, hR1, off + d - proj_xy (R1.toEuclideanLin c), R2, hR2, ?_⟩
+  dsimp only at hsub ⊢
+  have hhull : convexHull ℝ (↑(V.image fun x => c + x) : Set ℝ³) =
+      (fun x => c + x) '' convexHull ℝ ↑V := by
+    rw [Finset.coe_image]
+    have := AffineMap.image_convexHull
+      (AffineEquiv.constVAdd ℝ ℝ³ c).toAffineMap (↑V : Set ℝ³)
+    simpa [vadd_eq_add] using this.symm
+  let e : ℝ² ≃ₜ ℝ² := Homeomorph.addRight d
+  have himg : ∀ (o o' : ℝ²) (R : Matrix (Fin 3) (Fin 3) ℝ),
+      o' = o + d - proj_xy (R.toEuclideanLin c) →
+      { x | ∃ p ∈ convexHull ℝ (↑(V.image fun x => c + x) : Set ℝ³),
+          o' + proj_xy (R.toEuclideanLin p) = x } =
+        e '' { x | ∃ p ∈ convexHull ℝ (↑V : Set ℝ³), o + proj_xy (R.toEuclideanLin p) = x } := by
+    intro o o' R ho
+    rw [hhull]
+    ext y
+    constructor
+    · rintro ⟨p, ⟨q, hq, rfl⟩, rfl⟩
+      refine ⟨o + proj_xy (R.toEuclideanLin q), ⟨q, hq, rfl⟩, ?_⟩
+      simp only [e, Homeomorph.coe_addRight, ho, map_add, proj_xy_add']
+      abel
+    · rintro ⟨x, ⟨q, hq, rfl⟩, rfl⟩
+      refine ⟨c + q, ⟨q, hq, rfl⟩, ?_⟩
+      simp only [e, Homeomorph.coe_addRight, ho, map_add, proj_xy_add']
+      abel
+  have h1 := himg off _ R1 rfl
+  have h2 := himg 0 0 R2 (by simp [d])
+  simp only [zero_add] at h2
+  rw [h1, h2, ← e.image_interior]
+  exact Set.image_mono hsub
+
+/-- Rupertness is invariant under translation (converse direction). -/
+theorem isRupert_of_isRupert_image_add (c : ℝ³) (V : Finset ℝ³)
+    (h : IsRupert (V.image fun x => c + x)) : IsRupert V := by
+  have := isRupert_image_add' (-c) _ h
+  rwa [Finset.image_image, show ((fun x => -c + x) ∘ fun x => c + x) = id by
+    funext x; simp, Finset.image_id] at this
+
 end SmallRupert
 
 end

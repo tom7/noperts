@@ -1,7 +1,7 @@
 module
 
 public import SmallRupert.BicappedTetrahedron
-public import SmallRupert.Pyramid
+public import SmallRupert.Crossing
 
 @[expose] public section
 
