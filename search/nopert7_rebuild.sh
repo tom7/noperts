@@ -23,7 +23,7 @@
 #
 # Usage: ./nopert7_rebuild.sh [--from STAGE] [--only STAGE] [--dry_run]
 #        [--threads N] [--mem_gb G] [--work DIR]
-#        (default: from tube, 12 threads, 40 GB, ../minimal-runs/m5)
+#        (default: from tube, 12 threads, 40 GB, ../work)
 # Long stages run in a systemd scope with MemoryMax (and no swap); each
 # stage's wall time and the scope's peak memory are appended to
 # WORK/stages.log.
@@ -37,7 +37,7 @@ THREADS=12
 MEM_GB=40
 WORK=""
 NOPERT=$(cd "$(dirname "$0")" && pwd)
-LEAN=$NOPERT/../Noperthedron-nopert7
+LEAN=$NOPERT/../proof
 while [ $# -gt 0 ]; do
   case $1 in
     --from) FROM=$2; shift 2 ;;
@@ -49,7 +49,7 @@ while [ $# -gt 0 ]; do
     *) echo "unknown argument $1" >&2; exit 1 ;;
   esac
 done
-[ -n "$WORK" ] || WORK=$NOPERT/../minimal-runs/m5
+[ -n "$WORK" ] || WORK=$NOPERT/../work
 TREES_RAW=$WORK/trees_raw
 TREES=$WORK/trees
 TUBEPACKS=$WORK/tube_packs
@@ -106,8 +106,8 @@ run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe expo
 
 if want model; then
   stage_begin model
-  # The candidate's coordinates (minimal-runs/candidates).
-  XYZ=$NOPERT/../minimal-runs/candidates/7v-cocta-c3v-2.xyz
+  # The candidate's coordinates.
+  XYZ=$NOPERT/7v-cocta-c3v-2.xyz
   if [ $DRY -eq 0 ]; then (cd "$NOPERT" && python3 c3v_model.py "$XYZ" > nopert233_model.txt); fi
   (cd "$NOPERT" && run ./codebdd.exe --model_file=nopert233_model.txt codebdd.json)
   run make -C "$NOPERT" -j "$THREADS" tubecode.exe tuberefine.exe export_codetrees_pack.exe search5d.exe pack5d.exe
