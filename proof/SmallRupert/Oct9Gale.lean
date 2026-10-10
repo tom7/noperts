@@ -151,6 +151,54 @@ theorem pole_signs {t t' e e' g g' : ℝ³} (F : OctFacets t t' e e' g g') {L : 
     have hee : 0 < L e * L e := mul_self_pos.mpr he
     nlinarith
 
+/-- **Not bad (Lemmas 9.5, 9.7 and Step 2, in dependency form).**  If the
+dependency vanishing at the hidden vertex `x'` is negative at the tail `x`,
+nonnegative at both poles and nonpositive at `y'` and on `x + y`, then the
+edge `x → y` is not bad. -/
+theorem not_bad_of_dep {x x' y y' p p' : ℝ³} {L : ℝ³ → ℝ} (hL : IsDep x x' y y' p p' L)
+    (hxy : x ≠ y) (h0 : L x' = 0) (hx : L x < 0) (hxy' : L x + L y ≤ 0) (hy' : L y' ≤ 0)
+    (hp : 0 ≤ L p) (hp' : 0 ≤ L p') :
+    ¬ max ⟪y, y - x⟫ ⟪y', y - x⟫ ≤ min ⟪p, y - x⟫ ⟪p', y - x⟫ := by
+  intro hbad
+  have hφ := hL.apply (f := fun t => ⟪t, y - x⟫) (N := y - x)
+    (fun a b => by simp only [← inner_sub_left, real_inner_comm])
+  simp only [h0, zero_mul, add_zero] at hφ
+  set M := max ⟪y, y - x⟫ ⟪y', y - x⟫
+  have hyM : ⟪y, y - x⟫ ≤ M := le_max_left _ _
+  have hy'M : ⟪y', y - x⟫ ≤ M := le_max_right _ _
+  have hpM : M ≤ ⟪p, y - x⟫ := le_trans hbad (min_le_left _ _)
+  have hp'M : M ≤ ⟪p', y - x⟫ := le_trans hbad (min_le_right _ _)
+  have hn : 0 < ⟪y - x, y - x⟫ := real_inner_self_pos.mpr (sub_ne_zero.mpr (Ne.symm hxy))
+  have hxv : ⟪x, y - x⟫ = ⟪y, y - x⟫ - ⟪y - x, y - x⟫ := by rw [inner_sub_left]; ring
+  have hs := hL.sum
+  rw [h0] at hs
+  rw [hxv] at hφ
+  have hsM : (L x + L y + L y' + L p + L p') * M = 0 := by
+    rw [show L x + L y + L y' + L p + L p' = 0 by linarith, zero_mul]
+  linarith [mul_le_mul_of_nonneg_left hpM hp, mul_le_mul_of_nonneg_left hp'M hp',
+    mul_le_mul_of_nonpos_left hy'M hy', mul_le_mul_of_nonpos_left hyM hxy',
+    mul_neg_of_neg_of_pos hx hn]
+
+/-- **Lemma 9.6 (one facet).**  A dependency `μ` vanishing at `p'`, applied to
+the facet `x' y' p`, compares the two other values. -/
+theorem facet_lt_of_dep {x x' y y' p p' : ℝ³} {L : ℝ³ → ℝ} (hL : IsDep x x' y y' p p' L)
+    (G : FacetFn {x, x', y, y', p, p'} x' y' p) (hnd : [x, x', y, y', p, p'].Nodup)
+    (h0 : L p' = 0) (hs : L x * (L x + L y) < 0) : G.f x < G.f y := by
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨hxx', hxy, hxy', hxp, hxp'⟩, ⟨hx'y, hx'y', hx'p, hx'p'⟩, ⟨hyy', hyp, hyp'⟩,
+    ⟨hy'p, hy'p'⟩, hpp', -⟩ := hnd
+  have r := hL.apply G.hN
+  rw [G.hP, G.hQ, G.hR, h0] at r
+  have nx := G.neg x (by simp) hxx' hxy' hxp
+  have ny := G.neg y (by simp) (Ne.symm hx'y) hyy' hyp
+  have e : L x * (G.f x - G.f y) = -(L x + L y) * G.f y := by linarith
+  rcases lt_or_gt_of_ne (show L x ≠ 0 by rintro h; simp [h] at hs) with h | h
+  · have : 0 < L x + L y := by nlinarith
+    nlinarith
+  · have : L x + L y < 0 := by nlinarith
+    nlinarith
+
 end SmallRupert
 
 end
