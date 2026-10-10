@@ -1,6 +1,6 @@
 module
 
-public import SmallRupert.L8T3
+public import SmallRupert.Oct9Axis
 
 @[expose] public section
 
