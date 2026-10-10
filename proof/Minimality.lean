@@ -3,6 +3,7 @@ module
 public import Nopert
 public import Minimality.SixClass
 public import Minimality.Planar
+public import MainTheorem
 
 /-!
 # Every nopert has at least 7 points
@@ -74,5 +75,13 @@ theorem isRupert_iff_of_card_le_six (V : Finset ℝ³) (hV : V.card ≤ 6) :
     · by_cases hpl : Coplanar ℝ (V : Set ℝ³)
       · exact isRupert_of_coplanar_of_not_collinear V hpl hcol
       · exact isRupert_of_card_le_six V hV hpl
+
+/-- **No nopert has fewer than 7 vertices**, in the form stated in
+`MainTheorem.lean`: a solid convex hull of at most 6 points is Rupert. -/
+theorem notExistsNonRupertPolyhedronBelowSize7 :
+    NotExistsNonRupertPolyhedronBelowSize7 := by
+  rintro ⟨V, hcard, hint, hnR⟩
+  exact hnR (isRupert_of_card_le_six V (by omega)
+    ((not_coplanar_iff_interior_convexHull_nonempty _).mpr hint))
 
 end
