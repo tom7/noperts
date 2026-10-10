@@ -1,5 +1,5 @@
-name = "Noperthedron"
-defaultTargets = ["Noperthedron"]
+name = "noperts"
+defaultTargets = ["Noperthedron", "Septopert", "SmallRupert", "constructSeptopert", "checkSeptopertCap"]
 
 [leanOptions]
 pp.unicode.fun = true
@@ -24,64 +24,15 @@ rev = "v4.32.0"
 
 [[lean_lib]]
 name = "Noperthedron"
-
-# Build-on-demand verification of the expensive computational step; not in
-# defaultTargets so CI never pays for it. See Noperthedron/ComputationalStep.lean.
-[[lean_lib]]
-name = "NativeCaseAnalysis"
+roots = []
+globs = ["Noperthedron.+"]
 
 [[lean_lib]]
-name = "KernelCaseAnalysis"
+name = "Septopert"
+globs = ["Septopert.+"]
 
-# Patched copy of the `checkdecls` dependency's executable (see CheckDecls.lean):
-# checks blueprint declarations against the defaultTargets libraries only, so
-# the build-on-demand NativeCaseAnalysis/KernelCaseAnalysis libs don't break CI.
-# Defined in the root package so `lake exe checkdecls` resolves to it.
-[[lean_exe]]
-name = "checkdecls"
-root = "CheckDecls"
-supportInterpreter = true
-weakLinkArgs = ["-lLake"]
-
-[[lean_exe]]
-name = "constructValidTable"
-root = "constructValidTable"
-buildType = "release"
-[[lean_exe]]
-name = "benchRows"
-root = "benchRows"
-buildType = "release"
-
-[[lean_exe]]
-name = "constructDeltoidalHexecontahedron"
-root = "constructDeltoidalHexecontahedron"
-buildType = "release"
-
-[[lean_exe]]
-name = "validate_code_pack"
-root = "validate_code_pack"
-buildType = "release"
-
-[[lean_exe]]
-name = "bench_rat"
-root = "bench_rat"
-buildType = "release"
-
-[[lean_exe]]
-name = "exact5d_golden"
-root = "exact5d_golden"
-buildType = "release"
-
-[[lean_exe]]
-name = "check_global_rows"
-root = "check_global_rows"
-buildType = "release"
-
-
-[[lean_exe]]
-name = "dhBench"
-root = "dhBench"
-buildType = "release"
+[[lean_lib]]
+name = "SmallRupert"
 
 [[lean_exe]]
 name = "checkSeptopertCap"
@@ -92,11 +43,3 @@ buildType = "release"
 name = "constructSeptopert"
 root = "constructSeptopert"
 buildType = "release"
-
-# Small polyhedra are Rupert (coplanar-silhouette theorem, notes/LEMMAS.md).
-[[lean_lib]]
-name = "SmallRupert"
-
-[[lean_lib]]
-name = "Septopert"
-globs = ["Septopert.+"]
