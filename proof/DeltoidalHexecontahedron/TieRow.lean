@@ -11,7 +11,7 @@ public import DeltoidalHexecontahedron.HalfTurnPose
 `TieClaimT S x T ρ`: no pose whose view is a positive multiple of a point of the
 triangle T and whose rotation S = H_u R H_x has trace ≥ τ(ρ) is Rupert (the
 triangle form of `TieClaim`). `TiesHold S`: every tie node of `dhTieNodes` has
-its claim (proved for the exact solid from the tie certificates, DHTies.lean).
+its claim (proved for the exact solid from the tie certificates, Ties.lean).
 
 `tieLeaf_sound`: a tie leaf (a valid `AtlasTiePrune.Box` over a view triangle
 inside a tie node's triangle, with radius at most the node's) has no Rupert

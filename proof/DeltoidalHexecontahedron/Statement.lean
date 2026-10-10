@@ -1,6 +1,6 @@
 module
 
-public import DeltoidalHexecontahedron.DHStatementData
+public import DeltoidalHexecontahedron.StatementData
 public import DeltoidalHexecontahedron.CapRow
 public import DeltoidalHexecontahedron.IcoInstance
 public import DeltoidalHexecontahedron.HalfTurnPose

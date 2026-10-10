@@ -1,7 +1,7 @@
 module
 
 public import DeltoidalHexecontahedron.AtlasHalfTurnPrune
-public import DeltoidalHexecontahedron.DHTieData
+public import DeltoidalHexecontahedron.TieData
 
 @[expose] public section
 

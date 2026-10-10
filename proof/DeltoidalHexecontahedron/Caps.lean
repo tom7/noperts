@@ -1,6 +1,6 @@
 module
 
-public import DeltoidalHexecontahedron.DHStatement
+public import DeltoidalHexecontahedron.Statement
 public import DeltoidalHexecontahedron.AtlasProjectiveSolutionTree
 
 @[expose] public section

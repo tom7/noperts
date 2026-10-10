@@ -301,7 +301,7 @@ theorem Node.check_split {tris : Array Tri} {cs : List V} {n : V} {pos neg : Nod
     (Node.split n pos neg).check tris cs = true := by
   simp only [Node.check, hp, hn, Bool.and_self]
 
-/-! ### Any base triangle (the snub's T) -/
+/-! ### Any base triangle (the model's T) -/
 
 /-- A base triangle must be nondegenerate, with corners on the plane `u 0 + u 1 + u 2 = 1`. -/
 def baseTriangleValid (base : Tri) : Bool :=

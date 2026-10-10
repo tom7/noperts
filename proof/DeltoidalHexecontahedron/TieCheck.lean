@@ -112,7 +112,7 @@ theorem cube_face (ρ : ℚ) (w : Fin 3 → ℝ) (hw : ∀ k, |w k| ≤ ρ) :
 
 /-! ### Tie data and the leaf test -/
 
-/-- A tie node (DHTieData): pinning normal, view triangle, certified radius, children (split nodes;
+/-- A tie node (TieData): pinning normal, view triangle, certified radius, children (split nodes;
 empty for a certified leaf). -/
 structure TieNode where
   normal : ℕ

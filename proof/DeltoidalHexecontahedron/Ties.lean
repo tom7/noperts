@@ -1,6 +1,6 @@
 module
 
-public import DeltoidalHexecontahedron.DHCaps
+public import DeltoidalHexecontahedron.Caps
 public import DeltoidalHexecontahedron.TieRow
 
 @[expose] public section

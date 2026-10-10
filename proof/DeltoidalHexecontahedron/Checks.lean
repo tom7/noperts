@@ -1,6 +1,6 @@
 module
 
-public import DeltoidalHexecontahedron.DHTies
+public import DeltoidalHexecontahedron.Ties
 public import ParallelBool
 
 @[expose] public section

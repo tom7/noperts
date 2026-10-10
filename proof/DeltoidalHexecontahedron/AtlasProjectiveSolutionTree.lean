@@ -11,7 +11,7 @@ public import DeltoidalHexecontahedron.WedgeCoverData
 public import ParallelBool
 public import DeltoidalHexecontahedron.IcoView
 public import DeltoidalHexecontahedron.HalfTurnPose
-public import DeltoidalHexecontahedron.DHCapData
+public import DeltoidalHexecontahedron.CapData
 public import DeltoidalHexecontahedron.TieRow
 
 @[expose] public section

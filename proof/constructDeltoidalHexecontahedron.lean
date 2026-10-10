@@ -1,5 +1,5 @@
 import DeltoidalHexecontahedron.FundamentalChart3
-import DeltoidalHexecontahedron.DHDecode
+import DeltoidalHexecontahedron.Decode
 import DeltoidalHexecontahedron.NativeExecutable
 import DeltoidalHexecontahedron.PackedSolutionTree
 
@@ -9,7 +9,7 @@ deltoidal hexecontahedron, then constructs a proof that no deltoidal
 hexecontahedron is Rupert.
 
 Three kinds of data are decoded (untrusted) and checked natively, in parallel:
-- the solution tables (packs, as for the pentagonal hexecontahedron), which
+- the solution tables (packs), which
   exclude every centrally symmetric `IModel` whose exact claims hold;
 - the three cap certificates (nopert229 `capcert --export`: u0, ux, u0 wide),
   which give the cap claims for the exact solid (`capsHold_of_certs`);
@@ -26,7 +26,7 @@ open DeltoidalHexecontahedron.NativeExecutable
 open DeltoidalHexecontahedron.Cap
 open DeltoidalHexecontahedron.Tie
 open DeltoidalHexecontahedron.DH
-open DeltoidalHexecontahedron.DHDecode
+open DeltoidalHexecontahedron.Decode
 
 private def localTaskCount : Nat := 64
 private def globalTaskCount : Nat := 256
@@ -61,7 +61,7 @@ def main (args : List String) : IO Unit := do
     let tiesStart ← IO.monoMsNow
     if hties : tiesCheckPar ties = true then
       IO.println s!"valid ties: {(← IO.monoMsNow) - tiesStart} ms"
-      -- Tables (as for the pentagonal hexecontahedron).
+      -- Tables.
       let packDir := (System.FilePath.mk manifestPath).parent.getD "."
       let mut localTables : SharedLocalTables := #[]
       for line in ← IO.FS.lines manifestPath do

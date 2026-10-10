@@ -81,3 +81,13 @@ called `SmallRupert`. Archived data and logs (e.g.
 `/mnt/nopertdata/archive/septopert/README.txt` on the 64-core VM), the
 working notes and older branches (`nopert7` in Noperthedron at d7f04505 and
 in nopert229 at 5a52be2) use those names.
+
+The deltoidal hexecontahedron's Lean proof (`proof/DeltoidalHexecontahedron/`)
+comes from the `deltoidalhexecontahedron` branch of Noperthedron (b45e0b34),
+where it lived in `Noperthedron/PentagonalHexecontahedron/`: that directory
+was the shared icosahedral pipeline, edited in place for each solid (snub
+dodecahedron, then pentagonal hexecontahedron, then the DH), and was the
+ancestor of `Pipeline/`. There the modules `Statement`, `StatementData`,
+`Caps`, `CapData`, `Ties`, `TieData`, `Checks` and `Decode` had a `DH` prefix
+(`DHStatement`, ...). The search that produced its data is on nopert229's
+`deltoidalhexecontahedron` branch.

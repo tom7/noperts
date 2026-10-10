@@ -1,6 +1,6 @@
 module
 
-public import DeltoidalHexecontahedron.DHChecks
+public import DeltoidalHexecontahedron.Checks
 
 @[expose] public section
 
@@ -14,7 +14,7 @@ is checked natively (`capsCheckPar`, `tiesCheckPar`) before it is used.
 
 open Noperts Noperts.Pipeline Noperts.Pipeline.Cap
 
-namespace DeltoidalHexecontahedron.DHDecode
+namespace DeltoidalHexecontahedron.Decode
 
 open DeltoidalHexecontahedron.Cap
 open DeltoidalHexecontahedron.Tie
@@ -152,4 +152,4 @@ def decodeTies (dataLines nodeLines : Array String) (certFiles : Array (ℕ × �
 
 def readLines (path : String) : IO (Array String) := IO.FS.lines path
 
-end DeltoidalHexecontahedron.DHDecode
+end DeltoidalHexecontahedron.Decode
