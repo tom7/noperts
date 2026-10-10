@@ -68,7 +68,7 @@ smallest number of vertices of a nopert.
 
 ## What is proved and what is verified
 
-This is a **Lean verification**, not a plain Lean proof:
+This is a **Lean verification**, not a direct kernel-only Lean proof:
 
 1. **Lean proof.** `isNopert_of_certificatesValid` is checked by Lean's
    kernel and depends only on the standard axioms (`propext`,
