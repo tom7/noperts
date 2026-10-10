@@ -1,5 +1,5 @@
 name = "noperts"
-defaultTargets = ["Noperts", "Septopert", "SmallRupert", "constructSeptopert", "checkSeptopertCap"]
+defaultTargets = ["Noperts", "Septopert", "Minimality", "constructSeptopert", "checkSeptopertCap"]
 
 [leanOptions]
 pp.unicode.fun = true
@@ -58,7 +58,7 @@ name = "Septopert"
 globs = ["Septopert.+"]
 
 [[lean_lib]]
-name = "SmallRupert"
+name = "Minimality"
 
 [[lean_exe]]
 name = "checkSeptopertCap"
