@@ -353,6 +353,229 @@ theorem IsCcwPolygon.forces_oriented {k : ℕ} [NeZero k] {p : ZMod k → ℝ²}
         push Not at h
         exact (h h2).le
 
+theorem proj_xy_liftPt (q : ℝ²) (t : ℝ) : proj_xy (liftPt q t) = q := by
+  ext i; fin_cases i <;> simp [proj_xy, liftPt]
+
+theorem liftPt_two (q : ℝ²) (t : ℝ) : (liftPt q t) 2 = t := by simp [liftPt]
+
+/-- In the plane, a vector parallel to `e` is `⟪e, v⟫ / ‖e‖²` times `e`. -/
+theorem norm_sq_smul_of_cross2 {v e : ℝ²} (h : cross2 v e = 0) :
+    ‖e‖ ^ 2 • v = ⟪e, v⟫ • e := by
+  have hn : ‖e‖ ^ 2 = e 0 ^ 2 + e 1 ^ 2 := by
+    rw [EuclideanSpace.real_norm_sq_eq, Fin.sum_univ_two]
+  simp only [cross2] at h
+  ext i; fin_cases i <;> simp [hn, PiLp.inner_apply, Fin.sum_univ_two]
+  · linear_combination (e 1) * h
+  · linear_combination (-(e 0)) * h
+
+/-- The hull of the corners lies in the slab between the extreme values of a
+linear functional. -/
+theorem convexHull_le_of_corners {k : ℕ} {p : ZMod k → ℝ²} {e : ℝ²} {M : ℝ}
+    (h : ∀ i, ⟪e, p i⟫ ≤ M) : ∀ q ∈ convexHull ℝ (Set.range p), ⟪e, q⟫ ≤ M := by
+  intro q hq
+  have : convexHull ℝ (Set.range p) ⊆ {q | ⟪e, q⟫ ≤ M} :=
+    convexHull_min (by rintro _ ⟨i, rfl⟩; exact h i)
+      (convex_halfSpace_le (innerₛₗ ℝ e).isLinear M)
+  exact this hq
+
+theorem convexHull_ge_of_corners {k : ℕ} {p : ZMod k → ℝ²} {e : ℝ²} {μ : ℝ}
+    (h : ∀ i, μ ≤ ⟪e, p i⟫) : ∀ q ∈ convexHull ℝ (Set.range p), μ ≤ ⟪e, q⟫ := by
+  intro q hq
+  have : convexHull ℝ (Set.range p) ⊆ {q | μ ≤ ⟪e, q⟫} :=
+    convexHull_min (by rintro _ ⟨i, rfl⟩; exact h i)
+      (convex_halfSpace_ge (innerₛₗ ℝ e).isLinear μ)
+  exact this hq
+
+/-- The corners maximising a nonzero linear functional lie in one edge
+`{a, a + 1}`. -/
+theorem IsCcwPolygon.max_edge {k : ℕ} [NeZero k] {p : ZMod k → ℝ²} (hp : IsCcwPolygon p)
+    {e : ℝ²} (he : e ≠ 0) (B : ZMod k) (hB : ∀ l, ⟪e, p l⟫ ≤ ⟪e, p B⟫) (S : ZMod k → Prop)
+    (hS : ∀ i, S i → ⟪e, p i⟫ = ⟪e, p B⟫) :
+    ∃ a : ZMod k, ∀ i, S i → i = a ∨ i = a + 1 := by
+  by_cases hm : S (B - 1)
+  · refine ⟨B - 1, fun i hi => ?_⟩
+    rcases hp.max_adjacent he hB (hS i hi) with h | h | h
+    · exact Or.inl h
+    · right; rw [h]; ring
+    · exfalso
+      exact hp.not_three_max he B (hS _ hm) (by rw [← h]; exact hS i hi)
+  · refine ⟨B, fun i hi => ?_⟩
+    rcases hp.max_adjacent he hB (hS i hi) with h | h | h
+    · exact absurd (h ▸ hi) hm
+    · exact Or.inl h
+    · exact Or.inr h
+
+/-- **Step 5.**  Parallel corner forces with zero sum, zero depth moment and
+zero torque give a horizontal double normal. -/
+theorem IsCcwPolygon.hdn_of_parallel {k : ℕ} [NeZero k] {p : ZMod k → ℝ²} (hp : IsCcwPolygon p)
+    (z : ZMod k → ℝ) {f : ZMod k → ℝ²}
+    (hf : ∀ i, f i ∈ normalConeAt (convexHull ℝ (Set.range p)) (p i))
+    {e : ℝ²} (he : e ≠ 0) (c : ZMod k → ℝ) (hfc : ∀ i, f i = c i • e) {B : ZMod k}
+    (hcB : 0 < c B) (h1 : ∑ i, f i = 0) (h2 : ∑ i, z i • f i = 0)
+    (h3 : ∑ i, cross2 (p i) (f i) = 0) : HasHorizontalDoubleNormal p z := by
+  classical
+  have hk := hp.1
+  have hc1 : ∑ i, c i = 0 := by
+    have : (∑ i, c i) • e = 0 := by rw [sum_smul, ← h1]; exact sum_congr rfl fun i _ => (hfc i).symm
+    exact (smul_eq_zero.mp this).resolve_right he
+  have hc2 : ∑ i, c i * z i = 0 := by
+    have : (∑ i, c i * z i) • e = 0 := by
+      rw [sum_smul, ← h2]; exact sum_congr rfl fun i _ => by rw [hfc i, smul_smul, mul_comm]
+    exact (smul_eq_zero.mp this).resolve_right he
+  have hc3 : cross2 (∑ i, c i • p i) e = 0 := by
+    rw [cross2_comm, cross2_sum_right, neg_eq_zero, ← neg_eq_zero, ← h3, ← sum_neg_distrib]
+    exact sum_congr rfl fun i _ => by
+      rw [hfc i, cross2_smul_right, cross2_smul_right, cross2_comm e (p i)]; ring
+  -- maximisers and minimisers
+  have hmaxP : ∀ i, 0 < c i → ∀ j, ⟪e, p j⟫ ≤ ⟪e, p i⟫ := by
+    intro i hi j
+    have := hf i (p j) (subset_convexHull ℝ _ ⟨j, rfl⟩)
+    rw [hfc i, real_inner_smul_left, inner_sub_right] at this
+    have := (mul_nonpos_iff.mp this)
+    rcases this with ⟨_, h⟩ | ⟨h, _⟩
+    · linarith
+    · linarith
+  have hminN : ∀ i, c i < 0 → ∀ j, ⟪e, p i⟫ ≤ ⟪e, p j⟫ := by
+    intro i hi j
+    have := hf i (p j) (subset_convexHull ℝ _ ⟨j, rfl⟩)
+    rw [hfc i, real_inner_smul_left, inner_sub_right] at this
+    rcases mul_nonpos_iff.mp this with ⟨h, _⟩ | ⟨_, h⟩
+    · linarith
+    · linarith
+  obtain ⟨b0, hb0⟩ : ∃ i, c i < 0 := by
+    by_contra hcon; push Not at hcon
+    have : 0 < ∑ i, c i := by
+      rw [← add_sum_erase _ _ (mem_univ B)]
+      have := sum_nonneg fun i (_ : i ∈ univ.erase B) => hcon i
+      linarith
+    linarith
+  set M := ⟪e, p B⟫ with hM
+  set μ := ⟪e, p b0⟫ with hμ
+  have hPM : ∀ i, 0 < c i → ⟪e, p i⟫ = M := fun i hi =>
+    le_antisymm (hmaxP B hcB i) (hmaxP i hi B)
+  have hNμ : ∀ i, c i < 0 → ⟪e, p i⟫ = μ := fun i hi =>
+    le_antisymm (hminN i hi b0) (hminN b0 hb0 i)
+  have hle : ∀ j, ⟪e, p j⟫ ≤ M := hmaxP B hcB
+  have hge : ∀ j, μ ≤ ⟪e, p j⟫ := hminN b0 hb0
+  have hμM : μ < M := by
+    by_contra hcon; push Not at hcon
+    have heq : ∀ j, ⟪e, p j⟫ = M := fun j => le_antisymm (hle j) (by linarith [hge j])
+    exact hp.not_three_max he B (by rw [heq, heq]) (by rw [heq, heq])
+  obtain ⟨a, ha⟩ := hp.max_edge he B hle (fun i => 0 < c i) hPM
+  obtain ⟨b, hb⟩ := hp.max_edge (neg_ne_zero.mpr he) b0
+    (fun l => by rw [inner_neg_left, inner_neg_left]; linarith [hge l])
+    (fun i => c i < 0) (fun i hi => by rw [inner_neg_left, inner_neg_left, hNμ i hi])
+  have hneA : a ≠ a + 1 := zmod_ne_add_one (by omega) a
+  have hneB : b ≠ b + 1 := zmod_ne_add_one (by omega) b
+  set cp : ZMod k → ℝ := fun i => max (c i) 0
+  set cn : ZMod k → ℝ := fun i => max (-c i) 0
+  have hcpcn : ∀ i, c i = cp i - cn i := fun i => by
+    simp only [cp, cn]; rcases le_total 0 (c i) with h | h
+    · rw [max_eq_left h, max_eq_right (by linarith)]; ring
+    · rw [max_eq_right h, max_eq_left (by linarith)]; ring
+  have hcp0 : ∀ i, 0 ≤ cp i := fun i => le_max_right _ _
+  have hcn0 : ∀ i, 0 ≤ cn i := fun i => le_max_right _ _
+  have hcp_supp : ∀ i, i ≠ a ∧ i ≠ a + 1 → cp i = 0 := fun i hi => by
+    simp only [cp]; apply max_eq_right; by_contra h; push Not at h
+    rcases ha i h with h' | h'
+    · exact hi.1 h'
+    · exact hi.2 h'
+  have hcn_supp : ∀ i, i ≠ b ∧ i ≠ b + 1 → cn i = 0 := fun i hi => by
+    simp only [cn]; apply max_eq_right; by_contra h; push Not at h
+    rcases hb i (by linarith) with h' | h'
+    · exact hi.1 h'
+    · exact hi.2 h'
+  have hcpM : ∀ i, cp i * ⟪e, p i⟫ = cp i * M := fun i => by
+    by_cases h : 0 < c i
+    · rw [hPM i h]
+    · simp only [cp, max_eq_right (not_lt.mp h), zero_mul]
+  have hcnμ : ∀ i, cn i * ⟪e, p i⟫ = cn i * μ := fun i => by
+    by_cases h : c i < 0
+    · rw [hNμ i h]
+    · simp only [cn, max_eq_right (by linarith [not_lt.mp h] : -c i ≤ 0), zero_mul]
+  set C := ∑ i, cp i with hC
+  have hCn : ∑ i, cn i = C := by
+    have : ∑ i, (cp i - cn i) = 0 := by rw [← hc1]; exact sum_congr rfl fun i _ => (hcpcn i).symm
+    rw [sum_sub_distrib] at this; linarith
+  have hCpos : 0 < C := by
+    rw [hC, ← add_sum_erase _ _ (mem_univ B)]
+    have : 0 < cp B := lt_max_of_lt_left hcB
+    linarith [sum_nonneg fun i (_ : i ∈ univ.erase B) => hcp0 i]
+  set x : ZMod k → ℝ³ := fun i => liftPt (p i) (z i) with hx
+  set Yp : ℝ³ := (1 / C) • ∑ i, cp i • x i with hYp
+  set Yn : ℝ³ := (1 / C) • ∑ i, cn i • x i with hYn
+  -- the points lie on silhouette edges
+  have hCa : cp a + cp (a + 1) = C := by
+    rw [hC, Fintype.sum_eq_add a (a + 1) hneA hcp_supp]
+  have hCb : cn b + cn (b + 1) = C := by
+    rw [← hCn, Fintype.sum_eq_add b (b + 1) hneB hcn_supp]
+  have hYp_seg : Yp ∈ segment ℝ (x a) (x (a + 1)) := by
+    refine ⟨cp a / C, cp (a + 1) / C, div_nonneg (hcp0 a) hCpos.le,
+      div_nonneg (hcp0 _) hCpos.le, by rw [← add_div, hCa, div_self hCpos.ne'], ?_⟩
+    rw [hYp, Fintype.sum_eq_add a (a + 1) hneA (fun i hi => by rw [hcp_supp i hi, zero_smul]),
+      smul_add, smul_smul, smul_smul]
+    congr 1 <;> congr 1 <;> ring
+  have hYn_seg : Yn ∈ segment ℝ (x b) (x (b + 1)) := by
+    refine ⟨cn b / C, cn (b + 1) / C, div_nonneg (hcn0 b) hCpos.le,
+      div_nonneg (hcn0 _) hCpos.le, by rw [← add_div, hCb, div_self hCpos.ne'], ?_⟩
+    rw [hYn, Fintype.sum_eq_add b (b + 1) hneB (fun i hi => by rw [hcn_supp i hi, zero_smul]),
+      smul_add, smul_smul, smul_smul]
+    congr 1 <;> congr 1 <;> ring
+  -- projections and depths
+  have hproj : ∀ w : ZMod k → ℝ, proj_xy ((1 / C) • ∑ i, w i • x i) =
+      (1 / C) • ∑ i, w i • p i := fun w => by
+    rw [← projL_apply, map_smul, map_sum]
+    simp only [map_smul, projL_apply, hx, proj_xy_liftPt]
+  have hdepth : ∀ w : ZMod k → ℝ, ((1 / C) • ∑ i, w i • x i) 2 = (1 / C) * ∑ i, w i * z i :=
+    fun w => by
+      simp only [PiLp.smul_apply, smul_eq_mul, WithLp.ofLp_sum, Finset.sum_apply, hx, liftPt_two]
+  have hz_eq : Yp 2 = Yn 2 := by
+    rw [hYp, hYn, hdepth, hdepth]
+    congr 1
+    have : ∑ i, (cp i - cn i) * z i = 0 := by
+      rw [← hc2]; exact sum_congr rfl fun i _ => by rw [hcpcn i]
+    simp only [sub_mul, sum_sub_distrib] at this
+    linarith
+  set v := proj_xy Yp - proj_xy Yn with hv
+  have hv_eq : v = (1 / C) • ∑ i, c i • p i := by
+    rw [hv, hYp, hYn, hproj, hproj, ← smul_sub, ← sum_sub_distrib]
+    congr 1
+    exact sum_congr rfl fun i _ => by rw [hcpcn i, sub_smul]
+  have hvc : cross2 v e = 0 := by
+    rw [hv_eq, cross2_comm, cross2_smul_right, cross2_comm, hc3]; ring
+  have hep : ⟪e, proj_xy Yp⟫ = M := by
+    rw [hYp, hproj, real_inner_smul_right, inner_sum]
+    simp only [real_inner_smul_right, hcpM, ← sum_mul, ← hC]
+    field_simp
+  have hen : ⟪e, proj_xy Yn⟫ = μ := by
+    rw [hYn, hproj, real_inner_smul_right, inner_sum]
+    simp only [real_inner_smul_right, hcnμ, ← sum_mul, hCn]
+    field_simp
+  have hev : ⟪e, v⟫ = M - μ := by rw [hv, inner_sub_right, hep, hen]
+  have he2 : 0 < ‖e‖ ^ 2 := by positivity
+  set lam := (M - μ) / ‖e‖ ^ 2 with hlam
+  have hlam0 : 0 < lam := div_pos (by linarith) he2
+  have hvl : v = lam • e := by
+    have := norm_sq_smul_of_cross2 hvc
+    rw [hev] at this
+    apply smul_right_injective ℝ² he2.ne'
+    simp only
+    rw [this, smul_smul, hlam, mul_div_cancel₀ _ he2.ne']
+  refine ⟨Yn, Yp, ⟨b, hYn_seg⟩, ⟨a, hYp_seg⟩, hz_eq.symm, ?_, ?_, ?_⟩
+  · intro h
+    have : v = 0 := by rw [hv, h, sub_self]
+    rw [hvl] at this
+    exact he ((smul_eq_zero.mp this).resolve_left hlam0.ne')
+  · intro q hq
+    rw [show proj_xy Yp - proj_xy Yn = v from rfl, hvl, real_inner_smul_left, inner_sub_right, hep]
+    exact mul_nonpos_of_nonneg_of_nonpos hlam0.le
+      (by linarith [convexHull_le_of_corners hle q hq])
+  · intro q hq
+    rw [show proj_xy Yn - proj_xy Yp = -v by rw [hv]; abel, hvl, inner_neg_left,
+      real_inner_smul_left, inner_sub_right, hen]
+    have := convexHull_ge_of_corners hge q hq
+    nlinarith
+
 end SmallRupert
 
 end
