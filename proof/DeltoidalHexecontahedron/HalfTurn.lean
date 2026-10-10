@@ -1,6 +1,7 @@
 module
 
-public import DeltoidalHexecontahedron.IcoReduction
+public import Pipeline.IcoReduction
+public import DeltoidalHexecontahedron.SolidModel
 public import Pipeline.HalfTurnBasic
 
 @[expose] public section

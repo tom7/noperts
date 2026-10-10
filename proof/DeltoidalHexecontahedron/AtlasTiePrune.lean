@@ -129,7 +129,7 @@ def Box.lower (box : Box) (c d : Fin 3) : ℚ :=
 def Box.Valid (box : Box) : Prop :=
   box.normal < Tie.dhTieX.size ∧ ∀ cd ∈ pairs, allowance box.triangle cd.1 cd.2 < box.lower cd.1 cd.2
 
-instance (box : Box) : Decidable box.Valid := by
+@[reducible] instance (box : Box) : Decidable box.Valid := by
   unfold Box.Valid
   infer_instance
 

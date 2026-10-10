@@ -4,6 +4,7 @@ import PentagonalHexecontahedron
 import SnubDodecahedron
 import SnubDodecahedron.NativeExecutable
 import PentagonalHexecontahedron.NativeExecutable
+import DeltoidalHexecontahedron.NativeExecutable
 import Nopert231
 import ProofOfMainTheorem
 
@@ -35,6 +36,12 @@ end
 
 section
 open PentagonalHexecontahedron
+example : (inferInstance : Noperts.Pipeline.SparseLocalViewTree.CertificateViewCheck) =
+    Noperts.Pipeline.SparseLocalViewTree.CertificateViewCheck.allVertices := rfl
+end
+
+section
+open DeltoidalHexecontahedron
 example : (inferInstance : Noperts.Pipeline.SparseLocalViewTree.CertificateViewCheck) =
     Noperts.Pipeline.SparseLocalViewTree.CertificateViewCheck.allVertices := rfl
 end

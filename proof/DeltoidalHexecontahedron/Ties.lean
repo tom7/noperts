@@ -117,7 +117,7 @@ theorem tiesHold_of_certs (C : TieCerts) (h : tiesCheck C = true) : TiesHold dhI
 exclude every centrally symmetric `IModel` whose exact claims hold), checked cap certificates and
 checked tie certificates. -/
 theorem deltoidalHexecontahedron_not_rupert_of_checks
-    (htables : ∀ P : IModel, P.CentrallySymmetric →
+    (htables : ∀ P : IModel, IModel.CentrallySymmetric P →
       AtlasProjectiveSolutionTree.ExactClaims P.toC5.polyhedron.hull → ¬ IsRupert P.toC5.verts)
     (caps : Array CapCert) (hcaps : capsCheck caps = true)
     (ties : TieCerts) (hties : tiesCheck ties = true) :

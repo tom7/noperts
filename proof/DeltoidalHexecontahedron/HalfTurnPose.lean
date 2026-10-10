@@ -88,7 +88,7 @@ theorem exists_halfTurn_atlas_translated_pose (P : IModel)
     (hsym : ∀ v ∈ P.toC5.polyhedron.hull, -v ∈ P.toC5.polyhedron.hull) (p : MatrixPose) :
     ∃ chart : CayleyAtlas.ChartIndex, ∃ q : AtlasPose ℝ, ∃ offset : ℝ²,
       q ∈ AtlasPose.rootInterval ℝ ∧ q.CayleyBounded ∧ q.InViewWedge ∧
-      (q.InUpperView ∧ q.InIcoView) ∧ q.InIcoFundamentalDomain chart ∧ q.InHalfTurnCell chart ∧
+      (q.InUpperView ∧ q.InIcoView) ∧ q.InIcoFundamentalDomain chart ∧ AtlasPose.InHalfTurnCell q chart ∧
       (RupertPose (q.matrixPoseWithOffset chart offset) P.toC5.polyhedron.hull ↔
         RupertPose p P.toC5.polyhedron.hull) := by
   obtain ⟨p1, hcone1, heq1⟩ := P.exists_viewCone_pose p
@@ -131,7 +131,7 @@ theorem inHalfTurnCell_smul {u : Fin 3 → ℝ} {κ : ℝ} (hκ : κ ≠ 0) {R :
 viewScale · Σ w_c T_c, so its half-turn cell is the one at the triangle point. -/
 theorem inHalfTurnCell_of_region {p : AtlasPose ℝ} {chart : ChartIndex} {root : Fin 8}
     {T : AtlasProjectiveView.Triangle ℚ}
-    (hcell : p.InHalfTurnCell chart) (hscale : 1 ≤ AtlasProjectiveView.viewScale root p)
+    (hcell : AtlasPose.InHalfTurnCell p chart) (hscale : 1 ≤ AtlasProjectiveView.viewScale root p)
     {w : Fin 3 → ℝ} (hw : AtlasProjectiveView.normalizedView root p =
       Noperts.Atlas.ProjectiveView.affinePoint (Noperts.Atlas.ProjectiveView.toReal T) w) :
     InHalfTurnCell (AtlasHalfTurnPrune.viewOf T w) (chartMatrix chart * cayleyMatrix p.x p.y p.z) := by

@@ -2,7 +2,7 @@ module
 
 public import DeltoidalHexecontahedron.StatementData
 public import DeltoidalHexecontahedron.CapRow
-public import DeltoidalHexecontahedron.IcoInstance
+public import Pipeline.IcoInstance
 public import DeltoidalHexecontahedron.HalfTurnPose
 
 @[expose] public section
@@ -195,7 +195,7 @@ def orbitCheck : Bool :=
 
 /-- The base slots are fixed by their stabilizers. -/
 def stabCheck : Bool :=
-  (List.finRange orbitCount).all fun o => (icoStab o.val).all fun h => keq (icoApplyK h (slotK o.val)) (slotK o.val)
+  (List.finRange iOrbitCount).all fun o => (icoStab o.val).all fun h => keq (icoApplyK h (slotK o.val)) (slotK o.val)
 
 /-- The slots are closed under negation. -/
 def symCheck : Bool :=
@@ -215,13 +215,13 @@ theorem ico_smul_toEuc (n : Nat) (κ : ℝ) (v : Fin 3 → ℝ) :
   congr 1
 
 /-- The base point of orbit o. -/
-noncomputable def dhV0 (o : Fin orbitCount) : ℝ³ := (dhScale : ℝ) • toEuc (kv (slotK o.val))
+noncomputable def dhV0 (o : Fin iOrbitCount) : ℝ³ := (dhScale : ℝ) • toEuc (kv (slotK o.val))
 
-def dhBox (o : Fin orbitCount) : RatBox where
+def dhBox (o : Fin iOrbitCount) : RatBox where
   lo r := dhScale * IcoQ.lo (slotK o.val r)
   hi r := dhScale * IcoQ.hi (slotK o.val r)
 
-theorem dhV0_mem (o : Fin orbitCount) : (dhBox o).Mem (dhV0 o) := by
+theorem dhV0_mem (o : Fin iOrbitCount) : (dhBox o).Mem (dhV0 o) := by
   intro r
   have hk := dhScale_pos
   have h1 := IcoQ.lo_le_val (slotK o.val r)
@@ -232,7 +232,7 @@ theorem dhV0_mem (o : Fin orbitCount) : (dhBox o).Mem (dhV0 o) := by
 
 theorem dhClose : closeCheck dhBox = true := by decide +kernel
 
-theorem dhV0_fixed (o : Fin orbitCount) (h : Nat) (hh : h ∈ icoStab o.val) :
+theorem dhV0_fixed (o : Fin iOrbitCount) (h : Nat) (hh : h ∈ icoStab o.val) :
     (ico h).toEuclideanLin (dhV0 o) = dhV0 o := by
   have hc := stabCheck_eq
   simp only [stabCheck, List.all_eq_true, List.mem_finRange, forall_const] at hc
@@ -247,7 +247,7 @@ theorem dhIModel_vertex (i : VertexIndex) :
     dhIModel.toC5.vertex i = (dhScale : ℝ) • toEuc (kv (slotK i.val)) := by
   have hc := orbitCheck_eq
   simp only [orbitCheck, List.all_eq_true, List.mem_range] at hc
-  have hi := eq_of_keq (hc i.val (by simpa using i.isLt))
+  have hi := eq_of_keq (hc i.val i.isLt)
   rw [IModel.toC5_vertex, IModel.orbit]
   change (ico (vElem i.val)).toEuclideanLin (dhV0 (vOrbit i.val)) = _
   rw [dhV0, ico_smul_toEuc, ← kv_icoApplyK, hi]
@@ -260,9 +260,9 @@ theorem dhIModel_verts :
     Set.mem_setOf_eq, dhIModel_vertex]
   constructor
   · rintro ⟨i, rfl⟩
-    exact ⟨i.val, by simpa using i.isLt, rfl⟩
+    exact ⟨i.val, i.isLt, rfl⟩
   · rintro ⟨j, hj, rfl⟩
-    exact ⟨⟨j, by simpa using hj⟩, rfl⟩
+    exact ⟨⟨j, hj⟩, rfl⟩
 
 /-- … which is `dhScale · T` of McCooey's solid. -/
 theorem dhIModel_verts_mcCooey :
@@ -289,7 +289,7 @@ theorem dhIModel_verts_mcCooey :
 
 /-! ### Central symmetry and the hull for cap certificates -/
 
-theorem dhIModel_centrallySymmetric : dhIModel.CentrallySymmetric := by
+theorem dhIModel_centrallySymmetric : IModel.CentrallySymmetric dhIModel := by
   intro v hv
   have hc := symCheck_eq
   simp only [symCheck, List.all_eq_true, List.any_eq_true, List.mem_range] at hc

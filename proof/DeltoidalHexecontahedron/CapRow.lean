@@ -161,7 +161,7 @@ theorem capLeaf_sound (S : Set ℝ³) (bases : Array CapBase)
     (img : CapImg) (hclaims : ∀ b, bases[img.base]? = some b → ImgClaim S b img)
     (iv : AtlasInterval ℚ) (root : Fin 8) (T : AtlasProjectiveView.Triangle ℚ)
     (h : capLeafOk bases img iv T = true) (p : AtlasPose ℝ) (hp : p ∈ iv.toReal)
-    (hcell : p.InHalfTurnCell 0) (hscale : 1 ≤ AtlasProjectiveView.viewScale root p)
+    (hcell : AtlasPose.InHalfTurnCell p 0) (hscale : 1 ≤ AtlasProjectiveView.viewScale root p)
     (htri : Noperts.Atlas.ProjectiveView.InTriangle (Noperts.Atlas.ProjectiveView.toReal T)
       (AtlasProjectiveView.normalizedView root p)) (offset : ℝ²) :
     ¬ RupertPose (p.matrixPoseWithOffset 0 offset) S := by

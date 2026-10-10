@@ -2,7 +2,7 @@ module
 
 public import DeltoidalHexecontahedron.HalfTurn
 public import DeltoidalHexecontahedron.AtlasHalfTurnPrune
-public import DeltoidalHexecontahedron.IcoView
+public import Pipeline.IcoView
 
 @[expose] public section
 

@@ -1,6 +1,6 @@
 module
 
-public import DeltoidalHexecontahedron.AtlasIcoPrune
+public import Pipeline.AtlasIcoPrune
 public import DeltoidalHexecontahedron.IcoGroupRounded
 public import DeltoidalHexecontahedron.HalfTurn
 public import Pipeline.HalfTurnBasic
@@ -123,7 +123,7 @@ def pairs : List (Fin 3 × Fin 3) := [(0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2
 def Box.Valid (box : Box) : Prop :=
   ∀ cd ∈ pairs, allowance box.triangle cd.1 cd.2 < box.lower cd.1 cd.2
 
-instance (box : Box) : Decidable box.Valid := by
+@[reducible] instance (box : Box) : Decidable box.Valid := by
   unfold Box.Valid
   infer_instance
 

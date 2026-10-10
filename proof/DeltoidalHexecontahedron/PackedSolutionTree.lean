@@ -1,7 +1,7 @@
 module
 
 public import DeltoidalHexecontahedron.AtlasProjectiveSolutionTree
-public import DeltoidalHexecontahedron.PackedLocalViewTree
+public import Pipeline.PackedLocalViewTree
 
 @[expose] public section
 

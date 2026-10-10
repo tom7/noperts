@@ -1,15 +1,15 @@
 module
 
-public import DeltoidalHexecontahedron.AtlasProjectiveEdgeCertificate
-public import DeltoidalHexecontahedron.AtlasFundamentalPrune
-public import DeltoidalHexecontahedron.AtlasLocalCertificate
-public import DeltoidalHexecontahedron.AtlasProjectiveLocalCertificate
-public import DeltoidalHexecontahedron.AtlasProjectiveLocalViewTree
-public import DeltoidalHexecontahedron.AtlasProjectiveGlobalCertificate
-public import DeltoidalHexecontahedron.AtlasProjectiveMixedGlobalCertificate
+public import Pipeline.AtlasProjectiveEdgeCertificate
+public import Pipeline.AtlasFundamentalPrune
+public import Pipeline.AtlasLocalCertificate
+public import Pipeline.AtlasProjectiveLocalCertificate
+public import Pipeline.AtlasProjectiveLocalViewTree
+public import Pipeline.AtlasProjectiveGlobalCertificate
+public import Pipeline.AtlasProjectiveMixedGlobalCertificate
 public import DeltoidalHexecontahedron.WedgeCoverData
 public import ParallelBool
-public import DeltoidalHexecontahedron.IcoView
+public import Pipeline.IcoView
 public import DeltoidalHexecontahedron.HalfTurnPose
 public import DeltoidalHexecontahedron.CapData
 public import DeltoidalHexecontahedron.TieRow
@@ -44,7 +44,7 @@ abbrev SharedLocalTables := Array AtlasProjectiveLocalViewTree.Table
 def SharedLocalValid (shared : SharedLocalTables) : Prop :=
   ∀ index (h : index < shared.size), shared[index].Valid
 
-instance (shared : SharedLocalTables) :
+@[reducible] instance (shared : SharedLocalTables) :
     Decidable (SharedLocalValid shared) := by
   unfold SharedLocalValid
   infer_instance
@@ -63,7 +63,7 @@ def Region.Mem : Region → AtlasPose ℝ → Prop
 def NoRupert (chart : ChartIndex) (interval : Interval)
     (region : Region) : Prop :=
   ¬ ∃ p ∈ interval.toReal, p.CayleyBounded ∧
-    (p.InIcoFundamentalDomain chart ∧ p.InHalfTurnCell chart) ∧ p.InViewWedge ∧
+    (p.InIcoFundamentalDomain chart ∧ AtlasPose.InHalfTurnCell p chart) ∧ p.InViewWedge ∧
     (p.InUpperView ∧ p.InIcoView) ∧
     ∃ offset : ℝ²,
     region.Mem p ∧
@@ -104,7 +104,7 @@ def Interval.outsideCayleyBall (interval : Interval) : Prop :=
     minAbsBound interval.min.y interval.max.y ^ 2 +
     minAbsBound interval.min.z interval.max.z ^ 2 > 3
 
-instance (interval : Interval) : Decidable interval.outsideCayleyBall := by
+@[reducible] instance (interval : Interval) : Decidable interval.outsideCayleyBall := by
   unfold Interval.outsideCayleyBall minAbsBound
   infer_instance
 
@@ -386,7 +386,7 @@ def SymmetryTubeMatches (tube : AtlasProjectiveLocalViewTree.Tube)
           region = .triangle (table.get nodeId).root
             (AtlasProjectiveLocalViewTree.splitPath (table.get nodeId).triangle rest)
 
-instance (tube : AtlasProjectiveLocalViewTree.Tube) (path : List (Fin 4)) (region : Region)
+@[reducible] instance (tube : AtlasProjectiveLocalViewTree.Tube) (path : List (Fin 4)) (region : Region)
     (table : Option AtlasProjectiveLocalViewTree.Table) :
     Decidable (SymmetryTubeMatches tube path region table) := by
   cases table
@@ -446,7 +446,7 @@ def Row.ValidAt (chart : ChartIndex) (get : ℕ → Row)
         (get children[t]).interval = interval ∧
         (get children[t]).region = .triangle 0 (WedgeCover.codeTriangles.getD t 0)
 
-instance (chart : ChartIndex) (get : ℕ → Row) (size : ℕ)
+@[reducible] instance (chart : ChartIndex) (get : ℕ → Row) (size : ℕ)
     (shared : SharedLocalTables) (row : Row) :
     Decidable (row.ValidAt chart get size shared) := by
   cases row <;> simp only [Row.ValidAt] <;> infer_instance
@@ -456,7 +456,7 @@ def RowsValidAt (chart : ChartIndex) (get : ℕ → Row)
   ∀ i : Fin size,
     (get i).id = i ∧ (get i).ValidAt chart get size shared
 
-instance (chart : ChartIndex) (get : ℕ → Row) (size : ℕ)
+@[reducible] instance (chart : ChartIndex) (get : ℕ → Row) (size : ℕ)
     (shared : SharedLocalTables) :
     Decidable (RowsValidAt chart get size shared) := by
   unfold RowsValidAt
@@ -472,7 +472,7 @@ def RowsValidRangeAt (chart : ChartIndex) (get : ℕ → Row) (size start count 
     (get (start + j.val)).id = start + j.val ∧
       (get (start + j.val)).ValidAt chart get size shared
 
-instance (chart : ChartIndex) (get : ℕ → Row) (size start count : ℕ)
+@[reducible] instance (chart : ChartIndex) (get : ℕ → Row) (size start count : ℕ)
     (shared : SharedLocalTables) :
     Decidable (RowsValidRangeAt chart get size start count shared) := by
   unfold RowsValidRangeAt
@@ -712,7 +712,7 @@ def Table.Valid (table : Table) : Prop :=
     (table.get 0).region = .sphere ∧
     SharedLocalValid table.sharedLocal
 
-instance (table : Table) : Decidable table.Valid := by
+@[reducible] instance (table : Table) : Decidable table.Valid := by
   unfold Table.Valid
   infer_instance
 
@@ -799,7 +799,7 @@ theorem Table.valid_imp_no_chart_translated_pose
     (table : Table) (h : table.Valid) (hcover : WedgeCover.coverValid = true)
     (hcaps : ExactClaims P.polyhedron.hull) :
     ¬ ∃ p ∈ AtlasPose.rootInterval ℝ,
-      p.CayleyBounded ∧ (p.InIcoFundamentalDomain table.chart ∧ p.InHalfTurnCell table.chart) ∧
+      p.CayleyBounded ∧ (p.InIcoFundamentalDomain table.chart ∧ AtlasPose.InHalfTurnCell p table.chart) ∧
       p.InViewWedge ∧ (p.InUpperView ∧ p.InIcoView) ∧ ∃ offset : ℝ²,
       RupertPose (p.matrixPoseWithOffset table.chart offset)
         P.polyhedron.hull := by
