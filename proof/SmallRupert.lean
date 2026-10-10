@@ -25,6 +25,7 @@ public import SmallRupert.L8T4
 public import SmallRupert.L8T3
 public import SmallRupert.Witnesses
 public import SmallRupert.OctahedronAll
+public import SmallRupert.SixClass
 
 /-!
 # SmallRupert: Rupert theorems for small polyhedra (overview)

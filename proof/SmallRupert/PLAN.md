@@ -91,6 +91,21 @@ the generic-view density statements of Coplanar.lean (`dense_generic_...`,
   Lemma 8.8; the tie-break tilts are (±(p - y) + η (y' - y)) with η small,
   i.e. the paper's (±1, η) in 3D form.
 
+- L10, the classification step (LEMMAS.md L10, nopert229 `minimal`): IN
+  PROGRESS.  Classification-free route: minimal subset; ≤ 5 points
+  (Cor. 5.6); five coplanar (pyramid); otherwise setting (S) (`Six V`).  Two
+  barycentric dependencies give Gale signs `galeD`; a point without an
+  O-partner gives a 2+4 split (Lemma 10.1), else three O-pairs form a prism
+  (Prop. 10.2: frustum / parallel / translation).  A split with coplanar `W`
+  is a segment crossing (Lemma 10.3); otherwise the normal form `NF`
+  (classes I, I½, II, II½, III of `(β_w, γ_w)`) and the case table of
+  Theorem 10.4 give `IsOctahedron`, `IsBicappedTetrahedron`, `IsT4`,
+  `IsCappedSquarePyramid`, `IsT3`, with every facet from three Gale signs
+  (`isFacetTriangle_of_gale`, `isFacet_quad_of_gale`).
+  Files: `SixGale.lean` (dependencies, §10.1, Lemma 10.1, Prop. 10.2),
+  `SixClass.lean` (NF, case table, Lemma 10.3, `isRupert_of_card_le_six`).
+  Statements committed; proofs `sorry` so far.
+
 ## Modules and dependency order
 
 | module | content (LEMMAS.md) | key statements |
