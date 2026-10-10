@@ -27,12 +27,11 @@ The result has two parts, and they are trusted differently.
 1. **A Lean proof** (`isNopert_of_certificatesValid` below): *if* the
    certificate data is valid, *then* the Septopert is a nopert: a genuine
    solid (its points are not all in one plane, which is proved outright)
-   that is not Rupert. The data is
-   a large table that splits up every way the solid could be rotated and
-   records, for each piece, why no passage exists there. This part is checked
-   by Lean's kernel in the usual way. It depends only on the standard axioms
-   (`propext`, `Classical.choice`, `Quot.sound`) and on nothing about how the
-   data was produced.
+   that is not Rupert. The data is a large table that splits up every way
+   the solid could be rotated and records, for each piece, why no passage
+   exists there. This part is checked by Lean's kernel in the usual way.
+   It depends only on the standard axioms (`propext`, `Classical.choice`,
+   `Quot.sound`) and on nothing about how the data was produced.
 
 2. **A Lean verification** that the data is valid. The data is about 85
    million table rows (6.7 GB), far too much for the kernel to check directly.
@@ -51,6 +50,8 @@ The result has two parts, and they are trusted differently.
 
 The program that *found* the data (the C++ in `search/`) does not need to be
 trusted at all: a mistake there can only produce data that fails the checks.
+That said, it does its own checking, and might be considered its own independent
+verification of the result.
 
 See `septopert.md` at the top of the repository for how to obtain the data,
 rerun the verification, and the times it takes.
