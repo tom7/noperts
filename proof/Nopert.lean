@@ -31,8 +31,9 @@ def IsNopert (V : Finset ℝ³) : Prop :=
   ¬ Coplanar ℝ (V : Set ℝ³) ∧ ¬ IsRupert V
 
 /-- A set of points in `ℝ³` is not contained in a plane iff its convex hull has
-nonempty interior.  (So `IsNopert V` says the same as the hypotheses of
-`ExistsNonRupertPolyhedron`.) -/
+nonempty interior.  (So `IsNopert V` says the same as the conditions on `vs`
+in `ExistsNonRupertPolyhedronSizeSeven` and `NotExistsNonRupertPolyhedronBelowSizeSeven`,
+apart from the number of points.) -/
 theorem not_coplanar_iff_interior_convexHull_nonempty (S : Set ℝ³) :
     ¬ Coplanar ℝ S ↔ (interior (convexHull ℝ S)).Nonempty := by
   rcases S.eq_empty_or_nonempty with rfl | hne
@@ -55,7 +56,8 @@ theorem IsNopert.interior_nonempty {V : Finset ℝ³} (h : IsNopert V) :
     (interior (convexHull ℝ (V : Set ℝ³))).Nonempty :=
   (not_coplanar_iff_interior_convexHull_nonempty _).mp h.1
 
-/-- `IsNopert` is equivalent to the formulation of `ExistsNonRupertPolyhedron`. -/
+/-- `IsNopert` is equivalent to the formulation used in `MainTheorem.lean`: a
+convex hull with nonempty interior that is not Rupert. -/
 theorem isNopert_iff (V : Finset ℝ³) :
     IsNopert V ↔ (interior (convexHull ℝ (V : Set ℝ³))).Nonempty ∧ ¬ IsRupert V := by
   rw [IsNopert, not_coplanar_iff_interior_convexHull_nonempty]

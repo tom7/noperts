@@ -1,7 +1,7 @@
 name = "noperts"
-defaultTargets = ["Noperts", "Septopert", "Minimality", "DeltoidalHexecontahedron",
-  "PentagonalHexecontahedron", "SnubDodecahedron", "constructSeptopert",
-  "checkSeptopertCap", "constructDeltoidalHexecontahedron",
+defaultTargets = ["Noperts", "Septopert", "Minimality", "ProofOfMainTheorem",
+  "DeltoidalHexecontahedron", "PentagonalHexecontahedron", "SnubDodecahedron",
+  "constructSeptopert", "checkSeptopertCap", "constructDeltoidalHexecontahedron",
   "constructPentagonalHexecontahedron", "constructSnubDodecahedron"]
 
 [leanOptions]
@@ -63,6 +63,10 @@ globs = ["Septopert", "Septopert.+"]
 [[lean_lib]]
 name = "Minimality"
 globs = ["Minimality", "Minimality.+"]
+
+[[lean_lib]]
+name = "ProofOfMainTheorem"
+globs = ["ProofOfMainTheorem"]
 
 [[lean_lib]]
 name = "DeltoidalHexecontahedron"
