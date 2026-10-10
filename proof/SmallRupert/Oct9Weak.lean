@@ -201,6 +201,101 @@ theorem det3_four (N e w u v : ℝ³) :
   simp only [det3_expand, PiLp.inner_apply, Fin.sum_univ_three, RCLike.inner_apply,
     conj_trivial]; ring
 
+/-- `det3_pos_of_combo` with an orientation factor `σ`. -/
+theorem det3_pos_of_combo_σ {f₁ f₂ : ℝ³ → ℝ} {N₁ N₂ : ℝ³}
+    (h₁ : ∀ y z, f₁ y - f₁ z = ⟪N₁, y - z⟫) (h₂ : ∀ y z, f₂ y - f₂ z = ⟪N₂, y - z⟫)
+    {P Q u : ℝ³} (h1P : f₁ P = 0) (h1Q : f₁ Q = 0) (h2P : f₂ P = 0) (h2Q : f₂ Q = 0)
+    {α β : ℝ} (hαβ : α * ⟪N₁, u⟫ + β * ⟪N₂, u⟫ = 0) {r w : ℝ³} {σ : ℝ}
+    (hr : 0 < σ * det3 (Q - P) (r - P) u) (hgr : α * f₁ r + β * f₂ r < 0)
+    (hgw : α * f₁ w + β * f₂ w < 0) : 0 < σ * det3 (Q - P) (w - P) u := by
+  set N := α • N₁ + β • N₂
+  have hg : ∀ z, ⟪N, z - P⟫ = α * f₁ z + β * f₂ z := by
+    intro z
+    simp only [N, inner_add_left, real_inner_smul_left, ← h₁, ← h₂, h1P, h2P, sub_zero]
+  have hNe : ⟪N, Q - P⟫ = 0 := by rw [hg, h1Q, h2Q]; ring
+  have hNu : ⟪N, u⟫ = 0 := by
+    simp only [N, inner_add_left, real_inner_smul_left]; linarith
+  have key := det3_mul_inner_eq (w := w - P) (w' := r - P) hNe hNu
+  rw [hg, hg] at key
+  have key' : (σ * det3 (Q - P) (w - P) u) * (α * f₁ r + β * f₂ r) =
+      (σ * det3 (Q - P) (r - P) u) * (α * f₁ w + β * f₂ w) := by
+    rw [mul_assoc, key]; ring
+  nlinarith
+
+/-- A facet `G` through `P`, `Q`, `R` containing the view direction `u`. -/
+theorem vert_face_pos_σ {V : Finset ℝ³} {P Q R : ℝ³} (G : FacetFn V P Q R) {u : ℝ³}
+    (hu : ⟪G.N, u⟫ = 0) {σ : ℝ} {r w : ℝ³}
+    (hr : r ∈ V) (hrP : r ≠ P) (hrQ : r ≠ Q) (hrR : r ≠ R) (hw : w ∈ V) (hwP : w ≠ P)
+    (hwQ : w ≠ Q) (hwR : w ≠ R) (href : 0 < σ * det3 (Q - P) (r - P) u) :
+    0 < σ * det3 (Q - P) (w - P) u :=
+  det3_pos_of_combo_σ G.hN G.hN G.hP G.hQ G.hP G.hQ (α := 1) (β := 0) (by rw [hu]; ring) href
+    (by have := G.neg r hr hrP hrQ hrR; linarith) (by have := G.neg w hw hwP hwQ hwR; linarith)
+
+/-- A far edge `PQ` between a lower facet `x Q P` and an upper facet `x' Q P`. -/
+theorem far_edge_pos_σ {V : Finset ℝ³} {x x' y P Q : ℝ³} (G : FacetFn V x Q P)
+    (H : FacetFn V x' Q P) (hx : x ∈ V) (hx' : x' ∈ V) (hxx' : x ≠ x') (hxP : x ≠ P)
+    (hxQ : x ≠ Q) (hx'P : x' ≠ P) (hx'Q : x' ≠ Q) (hGy : G.f y < 0) (hq : H.f x < H.f y)
+    {σ : ℝ} {r w : ℝ³} (hr : r ∈ V) (hrP : r ≠ P) (hrQ : r ≠ Q) (hw : w ∈ V) (hwP : w ≠ P)
+    (hwQ : w ≠ Q) (href : 0 < σ * det3 (Q - P) (r - P) (y - x)) :
+    0 < σ * det3 (Q - P) (w - P) (y - x) := by
+  have key : ∀ z ∈ V, z ≠ P → z ≠ Q →
+      (H.f y - H.f x) * G.f z + (-(G.f y - G.f x)) * H.f z < 0 := by
+    intro z hz hzP hzQ
+    have hα : 0 < H.f y - H.f x := by linarith
+    have hβ : 0 < -(G.f y - G.f x) := by rw [G.hP]; linarith
+    by_cases hzx : z = x
+    · subst hzx; rw [G.hP]; nlinarith [H.neg z hz hxx' hzQ hzP]
+    by_cases hzx' : z = x'
+    · subst hzx'; rw [H.hP]; nlinarith [G.neg z hz (Ne.symm hxx') hzQ hzP]
+    nlinarith [G.neg z hz hzx hzQ hzP, H.neg z hz hzx' hzQ hzP]
+  refine det3_pos_of_combo_σ G.hN H.hN G.hR G.hQ H.hR H.hQ ?_ href (key r hr hrP hrQ)
+    (key w hw hwP hwQ)
+  rw [← G.hN, ← H.hN]; ring
+
+/-- The determinant tests at the edge view of a *weak* quad edge `x → y`
+(the face `x' y' p'` contains `u = y - x`), with orientation `σ`. -/
+theorem weak_edge_tests {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
+    (hq₁ : F.a'b'c.f x < F.a'b'c.f y) (hT : F.a'b'c'.f x = F.a'b'c'.f y) {σ : ℝ}
+    (hor : 0 < σ * det3 (p - y) (p' - y) (y - x)) :
+    (∀ w ∈ ({x, x', y, y', p, p'} : Finset ℝ³), w ≠ y → w ≠ p → w ≠ x →
+      0 < σ * det3 (p - y) (w - y) (y - x)) ∧
+    (∀ w ∈ ({x, x', y, y', p, p'} : Finset ℝ³), w ≠ p → w ≠ y' →
+      0 < σ * det3 (y' - p) (w - p) (y - x)) ∧
+    (∀ w ∈ ({x, x', y, y', p, p'} : Finset ℝ³), w ≠ y' → w ≠ p' → w ≠ x' →
+      0 < σ * det3 (p' - y') (w - y') (y - x)) ∧
+    (∀ w ∈ ({x, x', y, y', p, p'} : Finset ℝ³), w ≠ p' → w ≠ y → w ≠ x →
+      0 < σ * det3 (y - p') (w - p') (y - x)) := by
+  set V : Finset ℝ³ := {x, x', y, y', p, p'}
+  have hnd := F.nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨hxx', hxy, hxy', hxp, hxp'⟩, ⟨hx'y, hx'y', hx'p, hx'p'⟩, ⟨hyy', hyp, hyp'⟩,
+    ⟨hy'p, hy'p'⟩, hpp', -⟩ := hnd
+  have mx : x ∈ V := by simp [V]
+  have mx' : x' ∈ V := by simp [V]
+  have my : y ∈ V := by simp [V]
+  have my' : y' ∈ V := by simp [V]
+  have mp : p ∈ V := by simp [V]
+  have mp' : p' ∈ V := by simp [V]
+  have hBu : ⟪F.abc.N, y - x⟫ = 0 := by rw [← F.abc.hN, F.abc.hP, F.abc.hQ]; ring
+  have hB'u : ⟪F.abc'.N, y - x⟫ = 0 := by rw [← F.abc'.hN, F.abc'.hP, F.abc'.hQ]; ring
+  have hTu : ⟪F.a'b'c'.N, y - x⟫ = 0 := by rw [← F.a'b'c'.hN, hT]; ring
+  have E1 : ∀ w ∈ V, w ≠ y → w ≠ p → w ≠ x → 0 < σ * det3 (p - y) (w - y) (y - x) :=
+    fun w hw hwy hwp hwx => vert_face_pos_σ F.abc.p12.p23 hBu mp' (Ne.symm hyp')
+      (Ne.symm hpp') (Ne.symm hxp') hw hwy hwp hwx hor
+  have E2 : ∀ w ∈ V, w ≠ p → w ≠ y' → 0 < σ * det3 (y' - p) (w - p) (y - x) :=
+    fun w hw hwp hwy' => far_edge_pos_σ F.ab'c F.a'b'c mx mx' hxx' hxp hxy' hx'p hx'y'
+      (F.ab'c.neg y my (Ne.symm hxy) hyy' hyp) hq₁ my hyp hyy' hw hwp hwy'
+      (by rw [det3_cyc y p y']; exact E1 y' my' (Ne.symm hyy') hy'p (Ne.symm hxy'))
+  have E3 : ∀ w ∈ V, w ≠ y' → w ≠ p' → w ≠ x' → 0 < σ * det3 (p' - y') (w - y') (y - x) :=
+    fun w hw hwy' hwp' hwx' => vert_face_pos_σ F.a'b'c'.p12.p23 hTu mp (Ne.symm hy'p) hpp'
+      (Ne.symm hx'p) hw hwy' hwp' hwx'
+      (by rw [det3_cyc p y' p']; exact E2 p' mp' (Ne.symm hpp') (Ne.symm hy'p'))
+  have E4 : ∀ w ∈ V, w ≠ p' → w ≠ y → w ≠ x → 0 < σ * det3 (y - p') (w - p') (y - x) :=
+    fun w hw hwp' hwy hwx => vert_face_pos_σ F.abc'.p23.p12.p23 hB'u mp hpp' (Ne.symm hyp)
+      (Ne.symm hxp) hw hwp' hwy hwx (by rw [← det3_cyc p' y p]; exact hor)
+  exact ⟨E1, E2, E3, E4⟩
+
 end SmallRupert
 
 end
