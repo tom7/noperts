@@ -45,8 +45,8 @@ In lowest terms (the form used in Lean, `septopert` in
   and 3 (vertex 6). Combinatorially a gyroelongated triangular pyramid: a
   triangular antiprism (vertices 0–5) with a pyramid (apex 6) on its larger
   face.
-- `search/septopert.xyz` has the same solid in floating point, and
-  `search/septopert_model.txt` the exact model the search uses.
+- `search/septopert_model.txt` is the exact (rational) model the search
+  uses; `proof/Septopert/ModelData.lean` has the same vertices.
 
 ## The statement
 
@@ -68,7 +68,7 @@ smallest number of vertices of a nopert.
 
 ## What is proved and what is verified
 
-This is a **Lean verification**, not a plain Lean proof:
+This is a **Lean verification**, not a direct kernel-only Lean proof:
 
 1. **Lean proof.** `isNopert_of_certificatesValid` is checked by Lean's
    kernel and depends only on the standard axioms (`propext`,
@@ -96,8 +96,8 @@ See [BUILDING.md](BUILDING.md) for requirements. From a fresh clone:
 search/septopert_rebuild.sh --from model --threads 64 --mem_gb 100
 ```
 
-This builds everything, regenerates the exact model from
-`search/septopert.xyz`, runs the search, packs the tables into `work/`, and
+This builds everything, runs `codebdd` on the exact model
+`search/septopert_model.txt`, runs the search, packs the tables into `work/`, and
 finally runs `constructSeptopert` on them. Stages: `model`, `tube`,
 `tubepack`, `cap`, `search`, `pack`, `verify`; `--from STAGE` restarts at a
 stage, `--only STAGE` runs one, `--work DIR` moves the output. Each stage

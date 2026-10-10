@@ -448,7 +448,7 @@ KNum ParseKTok(std::istringstream &ss) {
 std::string g_model = "septopert_model.txt";
 
 void LoadSolid(Setup *s) {
-  // Exact rational vertices and the faces from the model file (c3v_model.py).
+  // Exact rational vertices and the faces from the model file.
   std::ifstream in(g_model);
   CHECK(in.good()) << g_model;
   std::string line;

@@ -2,8 +2,8 @@ import Septopert.NativeExecutable
 import Septopert.PackedSolutionTree
 
 /-!
-Native executable that reads and checks the 7-vertex solid's certificate data
-and constructs `¬ IsRupert Septopert.verts`.
+Native executable that reads and checks the 7-vertex "Septopert"'s
+certificate data and constructs `¬ IsRupert Septopert.verts`.
 
 Data (decoded untrusted, checked natively in parallel):
 - the identity-tube packs (`export_codetrees_pack`; `manifest.txt` lists one
@@ -15,8 +15,9 @@ Data (decoded untrusted, checked natively in parallel):
   loaded, checked and dropped one at a time);
 - the cap certificate (`capcert_septopert.exe --export`, `cap-1_16.cert`).
 
-Worker threads: the runtime's default (hardware threads); set `LEAN_NUM_THREADS`
-to use fewer. Each table is checked in 256 row chunks.
+Worker threads: the runtime's default (hardware threads); set
+`LEAN_NUM_THREADS` to use fewer. Each table is checked in 256 row
+chunks.
 
 Usage:
   constructSeptopert <tube manifest.txt> <chart directory> <cap.cert>

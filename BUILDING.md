@@ -52,7 +52,7 @@ page with its statement, trust model and reproduction steps:
 
 - Linux
 - elan (the toolchain is pinned in `proof/lean-toolchain`, v4.32.0)
-- for `search/`: clang, GMP, python3, svn
+- for `search/`: clang, GMP, svn, python3 (only to regenerate the Septopert view-cover data in `proof/scripts`)
 - `systemd-run --user`, which the Septopert's rebuild uses to cap each
   stage's memory
 

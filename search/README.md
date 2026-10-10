@@ -4,7 +4,7 @@ The C++ certificate search for the Septopert. Main entry: `septopert_rebuild.sh`
 
 Build with `make` (after `../get-cc-lib.sh`; see `../BUILDING.md`). `make all` builds every tool and test.
 
-- `c3v_model.py`: exact model from `septopert.xyz` to `septopert_model.txt`.
+- `septopert_model.txt`: the exact model (rational vertices).
 - `codebdd.exe`: codes and code triangles (`codebdd.json`), model vertices.
 - `tubecode.exe`, `tuberefine.exe`: identity-tube trees per code.
 - `export_codetrees_pack.exe`: tube trees to Lean packs.
