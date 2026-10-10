@@ -21,7 +21,7 @@ The results in this repository:
 
 Elsewhere there are claimed proofs or verifications that the rhombicosidodecahedron<sup>[[1]](https://github.com/oscardssmith/Nopert.jl), [[2]](https://github.com/bence-hervay/nopert-rid)</sup> and snub cube are Nopert, so this classifies all of the Platonic, Archimedean, and Catalan solids.
 
-* A Lean verification that my nopert candidate #232 is indeed a Nopert. This looks identical to the solid I showed in my video (#214) and conjectured is Nopert, but fixes the problem that [#214 is actually Rupert](https://youtu.be/XFeKRSN9l9w)!
+* A Lean verification that my nopert candidate #231 is indeed a Nopert. This looks identical to the solid I showed in my video (#214) and conjectured is Nopert, but fixes the problem that [#214 is actually Rupert](https://youtu.be/XFeKRSN9l9w)!
 * The description and verification of the <b>Septopert</b>, a new 7-vertex Nopert.
 * A Lean proof (kernel-only) that this is minimal; every convex polyhedron with six or fewer vertices is Rupert.
 
@@ -66,7 +66,7 @@ is invariant of scale and rigid transformations, of course.
 
 ## Minimality
 
-TODO.
+
 
 ## Prints Nopert
 
@@ -76,7 +76,7 @@ Here is [septopert.stl](septopert.stl), a model you could 3D print.
 
 This work builds heavily on the [Noperthedron formalization](https://github.com/jcreedcmu/Noperthedron) by Jason Reed, David Renshaw, and others. That is a formalization of Jakob Steininger and Sergey Yurkevich's paper [*A convex polyhedron without Rupert's property*](https://arxiv.org/abs/2508.18475) ("SY25") which introduces the Noperthedron and its original verification.
 
-AI: Embarrasingly much AI is involved here. David did the initial attempt at proving my "Candidate 214" (as well as some other unsolved solids). This required extending the mathematics to deal with non–point-symmetric solids, among other things. He used Sol 5.6 and Fable 5.0 for that. But he actually ended up discovering that my #214 [is Rupert](https://youtu.be/XFeKRSN9l9w). I picked it up from there with the goal of repairing #214 to redeem myself. Using Antigravity (Gemini 3.7 and 3.8 Flash) and Claude Code (Opus 5.5) I verified a repaired, identical-looking shape #231. This proof was not easy, and does use ideas from my [original attempt at proving the snub cube the first Nopert](https://youtu.be/QH4MviUE0_s) but you can tell how much of it is actually AI by the fact that I completed it while on vacationing in Greece! It was briefly the smallest proven Nopert with 20 vertices and 27 faces. 
+AI: Embarrasingly much AI is involved here. David did the initial attempt at proving my "Candidate 214" (as well as some other unsolved solids). This required extending the mathematics to deal with non–point-symmetric solids, among other things. He used Sol 5.6 and Fable 5.0 for that. But he actually ended up discovering that my #214 [is Rupert](https://youtu.be/XFeKRSN9l9w). I picked it up from there with the goal of repairing #214 to redeem myself. Using Antigravity (Gemini 3.7 and 3.8 Flash) and Claude Code (Opus 5.5) I verified a repaired, identical-looking shape #231. This proof was not easy, and does use ideas from my [original attempt at proving the snub cube the first Nopert](https://youtu.be/QH4MviUE0_s) but you can tell how much of it is actually AI by the fact that I completed it while on vacationing in Greece! It was briefly the smallest proven Nopert with 20 vertices and 27 faces.
 
 Meanwhile we learned that earlier this year, Tony Zeng [proposed](https://arxiv.org/pdf/2604.26531) a much smaller solid (8 vertices) as a candidate Nopert. David was able to [verify it](https://github.com/dwrensha/StellatedTetrahedron/tree/main) in Lean using the improved machinery. 
 
