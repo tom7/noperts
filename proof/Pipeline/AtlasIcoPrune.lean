@@ -1,7 +1,7 @@
 module
 
-public import PentagonalHexecontahedron.AtlasFundamentalPrune
-public import PentagonalHexecontahedron.IcoGroup
+public import Pipeline.AtlasFundamentalPrune
+public import Pipeline.IcoGroup
 
 @[expose] public section
 
@@ -24,9 +24,9 @@ ball, so `approximationError` = 36 · 10⁻¹² covers the rounding. This is
 `exact5d::IcoPruneValid` in the C++ search.
 -/
 
-open Noperts Noperts.Pipeline
+namespace Noperts.Pipeline
 
-namespace PentagonalHexecontahedron
+variable [FivefoldSolid]
 
 open Noperts.Atlas
 
@@ -50,8 +50,7 @@ theorem exists_mul_ico_inFundamentalDomain (R : Matrix (Fin 3) (Fin 3) ℝ) :
 theorem exists_icoMatrix_eq_fivefoldMatrix (k : OrbitIndex) :
     ∃ g : IcoIndex, fivefoldMatrix k = icoMatrix g := by
   have hrz : fivefoldMatrix 1 = icoMatrix ⟨icoRzIndex, by decide⟩ := by
-    rw [icoMatrix, ico_rz]
-    simp [fivefoldMatrix]
+    rw [icoMatrix, ico_rz, fivefoldMatrix_one]
   suffices h : ∀ n (hn : n < 5), ∃ g : IcoIndex, fivefoldMatrix ⟨n, hn⟩ = icoMatrix g from
     h k.val k.isLt
   intro n
@@ -60,11 +59,11 @@ theorem exists_icoMatrix_eq_fivefoldMatrix (k : OrbitIndex) :
   | succ n ih =>
     intro hn
     obtain ⟨g, hg⟩ := ih (by omega)
-    have hstep : fivefoldMatrix ⟨n + 1, hn⟩ = fivefoldMatrix 1 * fivefoldMatrix ⟨n, by omega⟩ := by
+    have hstep : fivefoldMatrix ⟨n + 1, hn⟩ = fivefoldMatrix 1 * fivefoldMatrix ⟨n, by rw [orbitCount_eq_five]; omega⟩ := by
       rw [fivefoldMatrix_mul]
       congr 1
       ext
-      simp [composeSymmetry]
+      simp [composeSymmetry, orbitCount_eq_five]
       omega
     obtain ⟨k, hk⟩ := exists_icoMatrix_mul ⟨icoRzIndex, by decide⟩ g
     exact ⟨k, by rw [hstep, hrz, hg, hk]⟩
@@ -286,4 +285,4 @@ theorem Box.valid_imp_not_inIcoFundamentalDomain
 
 end AtlasIcoPrune
 
-end PentagonalHexecontahedron
+end Noperts.Pipeline

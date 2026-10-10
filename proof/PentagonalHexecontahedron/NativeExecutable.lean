@@ -1,7 +1,7 @@
 module
 
 public import PentagonalHexecontahedron.IsNotRupert
-public import PentagonalHexecontahedron.SparseLocalViewTree
+public import Pipeline.SparseLocalViewTree
 
 @[expose] public section
 

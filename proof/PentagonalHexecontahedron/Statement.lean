@@ -879,7 +879,7 @@ def phScale : ℚ := (phScaleNum : ℚ) / 10 ^ 40
 def orbitWikiOf (o : Nat) : Nat := orbitWiki.getD o 0
 
 /-- The model's base point of orbit o: phScale · T · S_{g_o} (base pole o). -/
-noncomputable def phV0 (o : Fin orbitCount) : ℝ³ :=
+noncomputable def phV0 (o : Fin iOrbitCount) : ℝ³ :=
   (phScale : ℝ) • snubFrame.toEuclideanLin ((wiki (orbitWikiOf o.val)).toEuclideanLin (basePole o.val))
 
 /-- The pole's numerator b × c + c × a + a × b, enclosed. -/
@@ -928,7 +928,7 @@ theorem basePole_mem_box {o : Nat} (ho : o < 3) : (poleBox o).Mem (basePole o) :
   simp only [poleBox, basePole, pole, PiLp.smul_apply, smul_eq_mul]
   exact key
 
-def phV0Box (o : Fin orbitCount) : RatBox :=
+def phV0Box (o : Fin iOrbitCount) : RatBox :=
   let B := imageBoxK snubFrameT (imageBoxK (wikiEntry (orbitWikiOf o.val)) (poleBox o.val))
   ⟨fun r => phScale * B.lo r, fun r => phScale * B.hi r⟩
 
@@ -936,7 +936,7 @@ theorem phScale_pos : (0 : ℝ) < (phScale : ℝ) := by norm_num [phScale, phSca
 
 theorem orbitWiki_lt : ∀ o < 3, orbitWikiOf o < 60 := by decide
 
-theorem phV0_mem (o : Fin orbitCount) : (phV0Box o).Mem (phV0 o) := by
+theorem phV0_mem (o : Fin iOrbitCount) : (phV0Box o).Mem (phV0 o) := by
   have ho : o.val < 3 := o.isLt
   have h1 := imageK_mem (wikiEntry (orbitWikiOf o.val)) _ (basePole_mem_box ho)
   have h2 : (imageBoxK snubFrameT (imageBoxK (wikiEntry (orbitWikiOf o.val)) (poleBox o.val))).Mem
@@ -985,7 +985,7 @@ theorem ico_mul_snubFrame_of {h σ : Nat}
   rw [ico, snubFrame, wiki, Matrix.smul_mul, Matrix.mul_smul, Matrix.smul_mul,
     Matrix.mul_smul, h8]
 
-theorem phV0_fixed (o : Fin orbitCount) (h : Nat) (hh : h ∈ icoStab o.val) :
+theorem phV0_fixed (o : Fin iOrbitCount) (h : Nat) (hh : h ∈ icoStab o.val) :
     (ico h).toEuclideanLin (phV0 o) = phV0 o := by
   have hc := stabConjCheck_eq
   simp only [stabConjCheck, List.all_eq_true, List.mem_range, Bool.and_eq_true] at hc

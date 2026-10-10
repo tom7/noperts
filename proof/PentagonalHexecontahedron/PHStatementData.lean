@@ -1,6 +1,6 @@
 module
 
-public import PentagonalHexecontahedron.IcoGroupData
+public import Pipeline.IcoGroupData
 
 @[expose] public section
 

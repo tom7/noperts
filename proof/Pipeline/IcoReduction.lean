@@ -1,7 +1,7 @@
 module
 
-public import PentagonalHexecontahedron.AtlasIcoPrune
-public import PentagonalHexecontahedron.IcoModel
+public import Pipeline.AtlasIcoPrune
+public import Pipeline.IcoModel
 
 @[expose] public section
 
@@ -15,9 +15,9 @@ reduction 1). `IcoView.IModel.exists_ico_full_atlas_translated_pose` combines
 it with the view reduction.
 -/
 
-open Noperts Noperts.Pipeline
+namespace Noperts.Pipeline
 
-namespace PentagonalHexecontahedron
+variable [IcosahedralSolid]
 
 open scoped Matrix
 open CayleyAtlas
@@ -37,11 +37,11 @@ noncomputable def MatrixPose.rightIcoSymmetry (p : MatrixPose) (g : IcoIndex) :
 
 /-- The icosahedral cell condition carried by an atlas representative. -/
 def AtlasPose.InIcoFundamentalDomain (p : AtlasPose ℝ) (chart : ChartIndex) : Prop :=
-  PentagonalHexecontahedron.InIcoFundamentalDomain (chartMatrix chart * cayleyMatrix p.x p.y p.z)
+  Noperts.Pipeline.InIcoFundamentalDomain (chartMatrix chart * cayleyMatrix p.x p.y p.z)
 
 theorem AtlasPose.InIcoFundamentalDomain.toFivefold {p : AtlasPose ℝ} {chart : ChartIndex}
     (h : p.InIcoFundamentalDomain chart) : p.InFivefoldFundamentalDomain chart :=
-  PentagonalHexecontahedron.InIcoFundamentalDomain.toFivefold (R := chartMatrix chart * cayleyMatrix p.x p.y p.z) h
+  Noperts.Pipeline.InIcoFundamentalDomain.toFivefold (R := chartMatrix chart * cayleyMatrix p.x p.y p.z) h
 
 namespace IModel
 
@@ -105,4 +105,4 @@ theorem matrixPoseWithOffset_ofPose_eq_rightIcoSymmetry
 
 end IModel
 
-end PentagonalHexecontahedron
+end Noperts.Pipeline

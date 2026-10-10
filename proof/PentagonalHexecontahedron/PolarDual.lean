@@ -1,6 +1,7 @@
 module
 
-public import PentagonalHexecontahedron.IcoInstance
+public import Pipeline.IcoInstance
+public import PentagonalHexecontahedron.SolidModel
 
 @[expose] public section
 

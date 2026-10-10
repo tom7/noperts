@@ -1,7 +1,8 @@
 module
 
-public import PentagonalHexecontahedron.FundamentalDomain
-public import PentagonalHexecontahedron.AtlasQuadratic
+public import Pipeline.FundamentalDomain
+public import Pipeline.FivefoldSymmetry
+public import Pipeline.AtlasQuadratic
 public import Atlas.QuadraticBernstein
 public import Pipeline.FivefoldTrig
 
@@ -17,13 +18,11 @@ approximation to that quadratic and reserve a fixed `2/125` error allowance
 for the two trigonometric coefficients.
 -/
 
-open Noperts
-
-namespace PentagonalHexecontahedron.AtlasFundamentalPrune
+namespace Noperts.Pipeline.AtlasFundamentalPrune
 
 open Noperts.Atlas
 
-variable {P : C5Model}
+variable [FivefoldSolid] {P : C5Model}
 
 open scoped Matrix
 open Noperts.Checker
@@ -85,7 +84,7 @@ def Box.lower (box : Box) : ℚ :=
 
 def Box.Valid (box : Box) : Prop := approximationError < box.lower
 
-instance (box : Box) : Decidable box.Valid := by
+@[reducible] instance (box : Box) : Decidable box.Valid := by
   unfold Box.Valid
   infer_instance
 
@@ -234,14 +233,14 @@ theorem fivefoldMatrix_direction (direction : Direction) :
       Rz_mat ((direction.signQ : ℝ) * (2 * Real.pi / 5)) := by
   cases direction
   · simp only [Direction.symmetryIndex, Direction.signQ]
-    rw [fivefoldMatrix]
+    rw [fivefoldMatrix_eq]
     have hangle : ((4 : OrbitIndex) : ℝ) * (2 * Real.pi / 5) =
         (-1 : ℝ) * (2 * Real.pi / 5) + (1 : ℤ) * (2 * Real.pi) := by
       norm_num
       ring
     rw [hangle, Rz_mat_add_int_mul_two_pi]
     norm_num
-  · simp [Direction.symmetryIndex, Direction.signQ, fivefoldMatrix]
+  · simp [Direction.symmetryIndex, Direction.signQ, fivefoldMatrix_eq]
 
 theorem trace_advantage_eq (chart : ChartIndex) (direction : Direction)
     (x y z : ℝ) :
@@ -378,9 +377,9 @@ private theorem narrow_second_coordinate {x y : ℝ}
       nlinarith
 
 /-- Fundamental-domain condition carried by an atlas representative. -/
-def _root_.PentagonalHexecontahedron.AtlasPose.InFivefoldFundamentalDomain
+def _root_.Noperts.Pipeline.AtlasPose.InFivefoldFundamentalDomain
     (p : AtlasPose ℝ) (chart : ChartIndex) : Prop :=
-  PentagonalHexecontahedron.InFivefoldFundamentalDomain
+  Noperts.Pipeline.InFivefoldFundamentalDomain
     (chartMatrix chart * cayleyMatrix p.x p.y p.z)
 
 private theorem chart0_fundamental_z_mem {p : AtlasPose ℝ}
@@ -520,6 +519,6 @@ theorem mem_restrictedRootInterval {p : AtlasPose ℝ}
   · simpa [restrictedRootInterval_min, restrictedRootInterval_max,
       AtlasPose.get_set_of_ne _ _ hi] using hp' i
 
-end PentagonalHexecontahedron.AtlasFundamentalPrune
+end Noperts.Pipeline.AtlasFundamentalPrune
 
 end

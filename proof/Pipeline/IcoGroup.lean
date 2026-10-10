@@ -1,7 +1,7 @@
 module
 
 public import Basic
-public import PentagonalHexecontahedron.IcoGroupData
+public import Pipeline.IcoGroupData
 
 @[expose] public section
 
@@ -20,9 +20,7 @@ coordinates and transported to ℝ through `IcoZ.val` (IcoField.lean):
 - element `icoRzIndex` is Rz(2π/5).
 -/
 
-open Noperts Noperts.Pipeline
-
-namespace PentagonalHexecontahedron
+namespace Noperts.Pipeline
 
 open scoped Matrix
 
@@ -204,4 +202,26 @@ theorem ico_rz : ico icoRzIndex = Rz_mat (2 * Real.pi / 5) := by
   fin_cases i <;> fin_cases j <;>
     simp [ico, icoRzIndex, icoEntry, M3.toMatrix, M3.entry, IcoZ.val, hc, hs] <;> ring
 
-end PentagonalHexecontahedron
+/-! ### Inverses -/
+
+def icoInv (g : Nat) : Nat := icoInverseIndex.getD g 0
+
+/-- `icoInv g` is the transpose of `g`. -/
+def icoInvCheck : Bool :=
+  (List.range 60).all fun g =>
+    decide (icoInv g < 60) && decide (icoEntry (icoInv g) = M3.transpose (icoEntry g))
+
+theorem icoInvCheck_eq : icoInvCheck = true := by decide +kernel
+
+theorem ico_mul_icoInv {g : Nat} (hg : g < 60) : icoInv g < 60 ∧ ico g * ico (icoInv g) = 1 := by
+  have hc := icoInvCheck_eq
+  simp only [icoInvCheck, List.all_eq_true, List.mem_range, Bool.and_eq_true,
+    decide_eq_true_eq] at hc
+  obtain ⟨hlt, heq⟩ := hc g hg
+  refine ⟨hlt, ?_⟩
+  have htr : ico (icoInv g) = (ico g)ᵀ := by
+    rw [ico, ico, heq, M3.toMatrix_transpose, Matrix.transpose_smul]
+  rw [htr]
+  exact Matrix.mul_eq_one_comm.mp (icoMatrix_transpose_mul ⟨g, hg⟩)
+
+end Noperts.Pipeline

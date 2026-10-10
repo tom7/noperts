@@ -1,8 +1,8 @@
 module
 
-public import PentagonalHexecontahedron.IcoReduction
+public import Pipeline.IcoReduction
 public import Pipeline.HalfTurnBasic
-public import PentagonalHexecontahedron.AtlasProjectiveView
+public import Pipeline.AtlasProjectiveView
 
 @[expose] public section
 
@@ -23,9 +23,9 @@ K-combination of the vectors c + H_i c (generated Farkas data, decided
 here), so ⟨w, m_j⟩ ≥ 0: w lies in cone(T) (`InViewCone`).
 -/
 
-open Noperts Noperts.Pipeline
+namespace Noperts.Pipeline
 
-namespace PentagonalHexecontahedron
+variable [IcosahedralSolid]
 
 open scoped Matrix
 
@@ -527,4 +527,4 @@ theorem IModel.exists_ico_full_atlas_translated_pose (P : IModel) (p : MatrixPos
   · simpa [q, AtlasPose.InUpperView, AtlasPose.ofPose] using hupper
   · rw [hmatrix, P.RupertPose_rightIcoSymmetry_iff, heq, heq1]
 
-end PentagonalHexecontahedron
+end Noperts.Pipeline

@@ -1,15 +1,16 @@
 module
 
-public import PentagonalHexecontahedron.AtlasProjectiveEdgeCertificate
-public import PentagonalHexecontahedron.AtlasFundamentalPrune
-public import PentagonalHexecontahedron.AtlasLocalCertificate
-public import PentagonalHexecontahedron.AtlasProjectiveLocalCertificate
-public import PentagonalHexecontahedron.AtlasProjectiveLocalViewTree
-public import PentagonalHexecontahedron.AtlasProjectiveGlobalCertificate
-public import PentagonalHexecontahedron.AtlasProjectiveMixedGlobalCertificate
+public import Pipeline.AtlasProjectiveEdgeCertificate
+public import Pipeline.AtlasFundamentalPrune
+public import PentagonalHexecontahedron.SolidModel
+public import Pipeline.AtlasLocalCertificate
+public import Pipeline.AtlasProjectiveLocalCertificate
+public import Pipeline.AtlasProjectiveLocalViewTree
+public import Pipeline.AtlasProjectiveGlobalCertificate
+public import Pipeline.AtlasProjectiveMixedGlobalCertificate
 public import PentagonalHexecontahedron.WedgeCoverData
 public import ParallelBool
-public import PentagonalHexecontahedron.IcoView
+public import Pipeline.IcoView
 
 @[expose] public section
 

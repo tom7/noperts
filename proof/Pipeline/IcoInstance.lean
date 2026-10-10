@@ -1,6 +1,6 @@
 module
 
-public import PentagonalHexecontahedron.IcoModel
+public import Pipeline.IcoModel
 public import MainTheorem
 
 @[expose] public section
@@ -16,9 +16,9 @@ arithmetic (entries enclosed by `IcoZ.lo`/`IcoZ.hi`) and bounds the distance
 of the image box to `rationalVertex i` by `modelErrorQ`.
 -/
 
-open Noperts Noperts.Pipeline
+namespace Noperts.Pipeline
 
-namespace PentagonalHexecontahedron
+variable [IcosahedralSolid]
 
 open scoped Matrix
 
@@ -85,7 +85,7 @@ def imageHi (g : Nat) (B : RatBox) (r : Fin 3) : ℚ :=
 /-- A bound on `(x − q)²` for x in [lo, hi]. -/
 def sqDistBound (lo hi q : ℚ) : ℚ := max ((lo - q) ^ 2) ((hi - q) ^ 2)
 
-def closeCheck (B : Fin orbitCount → RatBox) : Bool :=
+def closeCheck (B : IOrbitIndex → RatBox) : Bool :=
   (List.finRange (Fintype.card VertexIndex)).all fun n =>
     let i : VertexIndex := Fin.cast (by simp) n
     let b := B (vOrbit i.val)
@@ -127,9 +127,9 @@ theorem sq_le_sqDistBound {lo hi q : ℚ} {x : ℝ} (hx : (lo : ℝ) ≤ x ∧ x
   · exact (by nlinarith : (x - q) ^ 2 ≤ ((lo : ℝ) - q) ^ 2).trans (le_max_left _ _)
 
 /-- Base points in checked boxes, fixed by their stabilizers, are an `IModel`. -/
-noncomputable def IModel.ofBoxes (B : Fin orbitCount → RatBox) (hcheck : closeCheck B = true)
-    (v0 : Fin orbitCount → ℝ³) (hv : ∀ o, (B o).Mem (v0 o))
-    (hfixed : ∀ o : Fin orbitCount, ∀ h ∈ icoStab o.val, (ico h).toEuclideanLin (v0 o) = v0 o) :
+noncomputable def IModel.ofBoxes (B : IOrbitIndex → RatBox) (hcheck : closeCheck B = true)
+    (v0 : IOrbitIndex → ℝ³) (hv : ∀ o, (B o).Mem (v0 o))
+    (hfixed : ∀ o : IOrbitIndex, ∀ h ∈ icoStab o.val, (ico h).toEuclideanLin (v0 o) = v0 o) :
     IModel where
   v0 := v0
   fixed := hfixed
@@ -154,7 +154,7 @@ noncomputable def IModel.ofBoxes (B : Fin orbitCount → RatBox) (hcheck : close
             simp [toR3, Real.norm_eq_abs, sq_abs]
         _ ≤ _ := Finset.sum_le_sum fun r _ => hb r
         _ ≤ _ := hiR
-    have hpos : (0 : ℝ) ≤ (modelErrorQ : ℝ) := by norm_num [modelErrorQ]
+    have hpos : (0 : ℝ) ≤ (modelErrorQ : ℝ) := by exact_mod_cast modelErrorQ_nonneg
     exact (sq_le_sq₀ (norm_nonneg _) hpos).mp hsq
 
 /-! ### Similarities preserve Rupert-ness -/
@@ -315,4 +315,4 @@ theorem isRupert_image_similarity (c : EuclideanSpace ℝ (Fin 3)) (s : ℝ) (hs
   funext x
   simp [hMQ, smul_smul, mul_comm]
 
-end PentagonalHexecontahedron
+end Noperts.Pipeline
