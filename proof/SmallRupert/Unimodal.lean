@@ -38,6 +38,7 @@ interior", and (G2) is injectivity of the depths, part of `IsCyclicUnimodal`.
 namespace SmallRupert
 
 open scoped RealInnerProductSpace
+open Finset
 
 /-- The convex hull of a compact set in a finite-dimensional normed space is
 compact (Carathéodory). -/
@@ -130,7 +131,7 @@ theorem exists_forces_of_not_firstOrderInward (V : Finset ℝ³)
   have hA : IsCompact A := V.isCompact_biUnion fun v _ => (hK v).image (ha v)
   have hC := isCompact_convexHull_of_isCompact hA
   by_cases h0 : (0 : ℝ³ × ℝ³) ∈ convexHull ℝ A
-  · rw [convexHull_eq] at h0
+  · rw [_root_.convexHull_eq] at h0
     obtain ⟨ι, t, w, z, hw0, hw1, hzA, hsum⟩ := h0
     rw [Finset.centerMass_eq_of_sum_1 _ _ hw1] at hsum
     have hz' : ∀ i ∈ t, ∃ v ∈ V, ∃ n ∈ K v, a v n = z i := by
@@ -259,7 +260,94 @@ theorem hasHorizontalDoubleNormal_of_forces {k : ℕ} [NeZero k] (p : ZMod k →
     (hf : ∀ i, f i ∈ normalConeAt (convexHull ℝ (Set.range p)) (p i)) (hne : ∃ i, f i ≠ 0)
     (h1 : ∑ i, f i = 0) (h2 : ∑ i, z i • f i = 0) (h3 : ∑ i, cross2 (p i) (f i) = 0) :
     HasHorizontalDoubleNormal p z := by
-  sorry
+  classical
+  have hk := hp.1
+  set Sup := univ.filter (fun i => f i ≠ 0) with hSup
+  have hSupne : Sup.Nonempty := by
+    obtain ⟨i, hi⟩ := hne; exact ⟨i, by simp [hSup, hi]⟩
+  obtain ⟨B, hBS, hBmin⟩ := Sup.exists_min_image z hSupne
+  obtain ⟨T₀, hTS, hTmax⟩ := Sup.exists_max_image z hSupne
+  have hfB : f B ≠ 0 := (mem_filter.mp hBS).2
+  have hfT : f T₀ ≠ 0 := (mem_filter.mp hTS).2
+  have hBT : B ≠ T₀ := by
+    intro hBT
+    have hall : ∀ i, f i ≠ 0 → i = B := fun i hi => by
+      have e1 := hBmin i (by simp [hSup, hi])
+      have e2 := hTmax i (by simp [hSup, hi])
+      rw [← hBT] at e2
+      exact hz.1 (le_antisymm e2 e1)
+    apply hfB
+    rw [← h1, ← add_sum_erase _ _ (mem_univ B)]
+    have : ∑ i ∈ univ.erase B, f i = 0 := sum_eq_zero fun i hi => by
+      by_contra h; exact (mem_erase.mp hi).1 (hall i h)
+    rw [this, add_zero]
+  set T := (T₀ - B).val with hTdef
+  have hT0 : 0 < T := by
+    rw [hTdef]; exact (ZMod.val_pos).mpr (sub_ne_zero.mpr hBT.symm)
+  have hTk : T < k := ZMod.val_lt _
+  have hBT' : B + (T : ZMod k) = T₀ := by rw [hTdef, ZMod.natCast_zmod_val]; ring
+  set g : ℕ → ℝ² := fun n => f (B + n) with hg
+  set ζ : ℕ → ℝ := fun n => z (B + n) with hζ
+  have hg0 : g 0 = f B := by simp [hg]
+  have hgT : g T = f T₀ := by simp only [hg, hBT']
+  have hζinj : ∀ a b, a < k → b < k → a ≠ b → ζ a ≠ ζ b := fun a b ha hb hab h =>
+    zmod_add_ne ha hb hab B (hz.1 h)
+  have hζmin : ∀ a, g a ≠ 0 → ζ 0 ≤ ζ a := fun a ha => by
+    simp only [hζ, Nat.cast_zero, add_zero]; exact hBmin _ (by simpa [hSup] using ha)
+  have hζmax : ∀ a, g a ≠ 0 → ζ a ≤ ζ T := fun a ha => by
+    simp only [hζ, hBT']; exact hTmax _ (by simpa [hSup] using ha)
+  have hζ0T : ζ 0 < ζ T := lt_of_le_of_ne (hζmin T (by rw [hgT]; exact hfT))
+    (hζinj 0 T (by omega) hTk (by omega))
+  have hcore := forces_parallel g ζ k T hT0 hTk (by rw [hg0]; exact hfB) (by rw [hgT]; exact hfT)
+    (by rw [← sum_zmod_eq_sum_range f B]; exact h1)
+    (by rw [← sum_zmod_eq_sum_range (fun i => z i • f i) B]; exact h2)
+    (by
+      intro a b hab hbT ha hb
+      by_contra hc; push Not at hc
+      have hlt : ζ b < ζ a := lt_of_le_of_ne hc (hζinj b a (by omega) (by omega) (by omega))
+      have ha0 : 0 < a := by
+        by_contra h0; have : a = 0 := by omega
+        subst this; linarith [hζmin b hb]
+      have hbT' : b < T := by
+        by_contra h0; have : b = T := by omega
+        subst this; linarith [hζmax a ha]
+      exact hz.noZig B ha0 hab hbT' hTk (Or.inl ⟨lt_of_le_of_ne (hζmin a ha)
+        (hζinj 0 a (by omega) (by omega) (by omega)), hlt,
+        lt_of_le_of_ne (hζmax b hb) (hζinj b T (by omega) hTk (by omega)), hζ0T⟩))
+    (by
+      intro a b hTa hab hbk ha hb
+      by_contra hc; push Not at hc
+      have hlt : ζ a < ζ b := lt_of_le_of_ne hc (hζinj a b (by omega) hbk (by omega))
+      have haT : T < a := by
+        by_contra h0; have : a = T := by omega
+        subst this; linarith [hζmax b hb]
+      exact hz.noZig B hT0 haT hab hbk (Or.inl ⟨hζ0T,
+        lt_of_le_of_ne (hζmax a ha) (hζinj a T (by omega) hTk (by omega)), hlt,
+        lt_of_le_of_ne (hζmin b hb) (hζinj 0 b (by omega) hbk (by omega))⟩))
+    (fun a ha0 hak ha => lt_of_le_of_ne (hζmin a ha) (hζinj 0 a (by omega) hak (by omega)))
+    (fun D => hp.forces_SS hf B D)
+    (by
+      obtain ⟨j, hj, h1', h2'⟩ := hp.forces_oriented hf B
+      exact ⟨j, hj, fun s a b => by rw [hg0]; exact h1' s a b,
+        fun s a b => by rw [hg0]; exact h2' s a b⟩)
+    (by
+      obtain ⟨j, hj, h1', h2'⟩ := hp.forces_oriented hf T₀
+      have hidx : ∀ s : ℕ, B + (((T + s) % k : ℕ) : ZMod k) = T₀ + (s : ZMod k) := fun s => by
+        rw [ZMod.natCast_mod, Nat.cast_add, ← add_assoc, hBT']
+      exact ⟨j, hj, fun s a b => by simp only [hg, hidx, hBT']; exact h1' s a b,
+        fun s a b => by simp only [hg, hidx, hBT']; exact h2' s a b⟩)
+  -- all forces are parallel to `f B`
+  have hpar : ∀ i, cross2 (f B) (f i) = 0 := fun i => by
+    have := hcore (i - B).val (ZMod.val_lt _)
+    rwa [hg0, show g (i - B).val = f i by simp only [hg, ZMod.natCast_zmod_val]; ring_nf] at this
+  have he2 : 0 < ‖f B‖ ^ 2 := by have := norm_pos_iff.mpr hfB; positivity
+  refine hp.hdn_of_parallel z hf hfB (fun i => ⟪f B, f i⟫ / ‖f B‖ ^ 2) (fun i => ?_) (B := B)
+    ?_ h1 h2 h3
+  · have := norm_sq_smul_of_cross2 (v := f i) (e := f B) (by rw [cross2_comm, hpar i, neg_zero])
+    apply smul_right_injective ℝ² he2.ne'
+    simp only
+    rw [this, smul_smul, mul_div_cancel₀ _ he2.ne']
+  · simp only [real_inner_self_eq_norm_sq, div_self he2.ne']; exact one_pos
 
 /-- **Theorem 7.3 at an explicit standard view.**  The silhouette is the cycle
 `x`, every other point of `V` projects into the interior of the shadow, the
