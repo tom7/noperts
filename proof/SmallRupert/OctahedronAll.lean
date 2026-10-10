@@ -1,6 +1,6 @@
 module
 
-public import SmallRupert.Oct9Quad
+public import SmallRupert.Oct9Gale
 
 @[expose] public section
 
