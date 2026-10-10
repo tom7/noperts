@@ -51,18 +51,29 @@ page with its statement, trust model and reproduction steps:
   License: Apache-2.0 (`proof/LICENSE`). Derived from the
   [Noperthedron](https://github.com/jcreedcmu/Noperthedron) formalization,
   whose history it keeps.
-- `search/`: the C++ certificate search for data-backed results (currently
-  the Septopert; the searches for the deltoidal and pentagonal
-  hexecontahedra and the snub dodecahedron are still on the
-  `deltoidalhexecontahedron`, `pentagonalhexecontahedron` and
-  `snubdodecahedron` branches of nopert229). License: GPLv3
-  (`search/COPYING`).
+- `search/`: the C++ certificate searches that produced the data.
+  - `search/` itself: the Septopert's search (`septopert_rebuild.sh`).
+  - `search/dh/`, `search/ph/`, `search/sd/`: the searches for the
+    deltoidal hexecontahedron, pentagonal hexecontahedron and snub
+    dodecahedron, each with its own `rebuild.sh` (see the result's page).
+    They are copies of the code that produced the verified data, imported
+    from the corresponding branches of the author's search repository;
+    they share much code with `search/` and with each other, which will be
+    deduplicated later.
+  - Each writes its output to a `work*/` directory at the repository root
+    (`work/`, `work-dh/`, `work-ph/`, `work-sd/`), ignored by git.
+
+  License: GPLv3 (`search/COPYING`). Exception: the Python scripts that
+  generate Lean data files (`search/dh/scripts/`, `search/ph/scripts/`,
+  `search/sd/lean_scripts/`) derive from the Apache-2.0 Noperthedron
+  project and say so in a header ("THIS FILE ONLY: Uses APACHE 2.0
+  license"); the license text is `search/APACHE20.txt`.
 - `cc-lib/`: not in the repository. `./get-cc-lib.sh` checks out svn
   revision 7488 of tom7misc's `trunk/cc-lib`; the build expects it next to
   `search/`. It is GPLv3, with some files under other compatible licenses
   noted in their headers.
-- `work/`: created by the Septopert's rebuild and ignored by git; holds all
-  generated data.
+- `work/` (and `work-dh/`, `work-ph/`, `work-sd/`): created by the
+  rebuilds and ignored by git; they hold all generated data.
 
 `proof/` and `search/` are separate programs that only exchange data files.
 
@@ -70,7 +81,9 @@ page with its statement, trust model and reproduction steps:
 
 - Linux
 - elan (the toolchain is pinned in `proof/lean-toolchain`, v4.32.0)
-- for `search/`: clang, GMP, svn, python3 (only to regenerate the Septopert view-cover data in `proof/scripts`)
+- for `search/`: clang, GMP, svn, python3 (python3 regenerates Lean data
+  files: the Septopert's view cover in `proof/scripts/`, and the model
+  stages of `search/dh/`, `search/ph/` and `search/sd/`)
 - `systemd-run --user`, which the Septopert's rebuild uses to cap each
   stage's memory
 

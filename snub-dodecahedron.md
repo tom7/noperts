@@ -146,11 +146,33 @@ table (`proof/SnubDodecahedron/GeneratedTangentCones.lean`, 4 MB) took about
 
 ## Reproducing the data
 
-The search is not yet in this repository's `search/`. It is on the
-`snubdodecahedron` branch of nopert229 (b8c9065), whose `README.md` describes
-it, and `./rebuild.sh --from model --model_file snub_model.txt --work DIR`
-runs the whole pipeline. A from-scratch run on 64 cores (2026-10-04) took
-1 h 3 min, with a peak of about 26 GB:
+The C++ search that produced the data is in [`search/sd/`](search/sd/), from
+the `snubdodecahedron` branch of nopert229 (b8c9065); its
+[`README.md`](search/sd/README.md) describes the method and the tools. The
+generators of the Lean data are in `search/sd/lean_scripts/`; they reproduce
+the committed files in `proof/SnubDodecahedron/` (`Vertices.lean`,
+`SparseSupport.lean`, `GeneratedTangentCones.lean`, `WedgeCoverData.lean`,
+`IcoGroupData.lean`) byte for byte. With cc-lib in place
+(`./get-cc-lib.sh`, see [BUILDING.md](BUILDING.md)):
+
+```sh
+make -C search/sd -j 16
+search/sd/rebuild.sh --from model --model_file snub_model.txt --work DIR
+```
+
+`rebuild.sh` runs the stages model, tube, tubepack, search, pack and verify;
+each is restartable (`--from STAGE`, `--only STAGE`), and `--dry_run` prints
+the commands. The work directory defaults to `work-sd/`. The model stage
+rewrites the committed model and Lean data files in place and rebuilds
+`constructSnubDodecahedron` (the tangent-cone table alone takes about 40 min
+on 16 cores, see above); without `--from model` the run starts at the tube
+stage, which needs `search/sd/codebdd.json` from the model stage
+(`(cd search/sd && ./codebdd.exe --model_file=snub_model.txt codebdd.json)`,
+about 30 s). The verify stage runs `proof/`'s `constructSnubDodecahedron` on
+the packs.
+
+A from-scratch run on the branch, on 64 cores (2026-10-04), took 1 h 3 min,
+with a peak of about 26 GB:
 
 | Stage | 64 cores |
 |---|---|
@@ -162,4 +184,5 @@ runs the whole pipeline. A from-scratch run on 64 cores (2026-10-04) took
 | verify | about 7 min |
 
 The model stage regenerated every committed data file byte for byte,
-including the generated Lean files.
+including the generated Lean files. The pipeline has not yet been run end to
+end in this repository.
