@@ -1,8 +1,9 @@
-# Minimality: proof plan
+# Minimality: every nopert has at least 7 points (proof plan)
 
 Formalization of `nopert229/notes/LEMMAS.md` (coplanar silhouettes) against
 `IsRupert` from `MainTheorem.lean`. Build: `lake build Minimality`
-(imports only Mathlib and `Noperts.Rupert.Basic`).
+(the proofs import only Mathlib and `Rupert.Basic`; the entry point also
+imports the core module `Nopert`).
 
 ## Status
 
@@ -24,11 +25,17 @@ Fully proved (axioms: propext, Classical.choice, Quot.sound only):
   `isRupert_cappedSquarePyramid` (T5 with facet hypotheses, unless
   `S₁S₄ ∥ S₂S₃`) and its normal form `isRupert_cappedSquarePyramid_normalForm`.
 
-Still `sorry` (none is used by the theorems above): the L3 obstruction and
-L2(d) obstruction (optional), the `⇒` halves of L2/L4 iffs, L3.0 range form,
-the generic-view density statements of Coplanar.lean (`dense_generic_...`,
-`isOpen_admissibleViews`, `exists_firstOrderInward_of_coplanar`,
-`isRupert_of_generic_admissibleView`).
+No `sorry` remains.  Statements that were planned but are not used by any
+Rupert theorem (the L3 and L2(d) obstruction directions, the `⇒` halves of
+the L2/L4 iffs, the L3.0 range forms, the generic-view density statements of
+L4) were deleted unproved.
+
+Entry point: `Minimality.lean` states the headline results for readers
+(`seven_le_card_of_isNopert`, `isRupert_of_card_le_six`,
+`isRupert_of_coplanar_of_not_collinear`, `not_isRupert_of_collinear`,
+`isRupert_iff_of_card_le_six`), with `IsNopert` from the core module
+`Nopert.lean`.  The flat (coplanar or collinear) cases are in `Planar.lean`.
+`README.md` has the overview of all headline theorems.
 
 - L7, unimodal silhouettes (all proved, standard axioms only):
   - Lemma 7.1, direction used: `exists_forces_of_not_firstOrderInward`
@@ -117,7 +124,7 @@ the generic-view density statements of Coplanar.lean (`dense_generic_...`,
 | `Basic` | §0 setting | `IsInwardAt`, `IsDoubleNormalDir`, `screenVel`, `isRupert_iff_shadows`, rotation invariance, `isInwardAt_iff_forall_normal` |
 | `FirstOrder` | L1 | `eventually_forall_mem_interior`, `eventually_innerShadow_subset`, `isRupert_of_firstOrderInward` |
 | `DoubleNormal` | L3, L3.0, L4 transfer | `exists_admissible_inward_field` (L3 existence), `isDoubleNormalDir_convexHull_cases`, `isDoubleNormalDir_proj_iff'` |
-| `Coplanar` | L2, L4, L5 | `exists_motion_iff`, `exists_firstOrderInward_of_plane`, `isRupert_of_admissibleViews_nonempty` |
+| `Coplanar` | L2, L5 | `exists_motion_of_admissible`, `exists_firstOrderInward_of_plane` |
 | `Pyramid` | waist lemma | `isRupert_of_waist`, `isRupert_bipyramid` |
 | `Planes` | plane utilities | `exists_plane_of_coplanar`, `det4`, `sum_smul_mem_interior_convexHull` |
 | `Crossing` | L5 (any frame), Cor. 5.3, 5.4 | `isRupert_of_crossing`, `isRupert_of_admissibleViews_nonempty`, `isRupert_of_pyramid`, `isRupert_of_segment_crossing` |
@@ -141,13 +148,13 @@ the generic-view density statements of Coplanar.lean (`dense_generic_...`,
 | `OctaTools`, `Oct9Axis`, `Oct9Data`, `Oct9Quad`, `Oct9Gale`, `Oct9Par`, `OctahedronAll` | L9 | see Status |
 | `SixGale` | L10.1, 10.1, 10.2 | `IsDepOn`, `Six`, `GaleFrame`, `isFacetTriangle_of_gale`, `exists_split_of_no_partner`, `isRupert_of_all_partners` |
 | `SixClass` | L10.3, 10.4, 10.0 | `NF`, `NF.isRupert`, `isRupert_split_coplanar`, `isRupert_of_card_le_six` |
+| `Planar` | flat sets | `isRupert_of_coplanar_of_not_collinear`, `not_isRupert_of_collinear`, `isRupert_empty` |
 
 Order of work: Basic → FirstOrder → DoubleNormal → Coplanar (L2 + plane form
 of L5) → `isRupert_bipyramid` → FewVertices → general L5 → Bicap → SixVertices.
 
-Directions not needed by any Rupert theorem (optional): L3 obstruction
-(`not_forall_inward_of_isDoubleNormalDir`), L2(d) obstruction
-(`not_forall_inward_rigid`), the `⇒` halves of the L2/L4 iffs.
+Directions not needed by any Rupert theorem (L3 obstruction, L2(d)
+obstruction, the `⇒` halves of the L2/L4 iffs) are not formalized.
 
 ## Design choices
 

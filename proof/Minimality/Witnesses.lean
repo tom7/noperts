@@ -3,6 +3,7 @@ module
 public import Minimality.L8T3
 public import Minimality.L8T4
 public import Minimality.OctahedronAll
+public import Minimality.Planar
 
 @[expose] public section
 
@@ -419,6 +420,35 @@ example := isRupert_T4 witness_T4
 example := isRupert_T3 witness_T3
 example := isRupert_T3 witness_T3_parallel
 example := isRupert_octahedron_conditionA witness_octahedron witness_conditionA
+
+/-! Flat sets: a square is Rupert, a single point is not. -/
+
+/-- The unit square in the plane `z = 0` (four coplanar, non-collinear points)
+is Rupert. -/
+example : IsRupert {!₂[0, 0, 0], !₂[1, 0, 0], !₂[1, 1, 0], !₂[0, 1, 0]} := by
+  apply isRupert_of_coplanar_of_not_collinear
+  · refine coplanar_of_plane (N := ez) (by simp [ez]) (c := 0) fun x hx => ?_
+    simp only [Finset.coe_insert, Finset.coe_singleton, Set.mem_insert_iff,
+      Set.mem_singleton_iff] at hx
+    rcases hx with rfl | rfl | rfl | rfl <;> simp [ez, PiLp.inner_apply]
+  · intro hcol
+    rw [collinear_iff_of_mem (p₀ := !₂[0, 0, 0]) (by simp)] at hcol
+    obtain ⟨v, hv⟩ := hcol
+    obtain ⟨r₁, h₁⟩ := hv !₂[1, 0, 0] (by simp)
+    obtain ⟨r₂, h₂⟩ := hv !₂[0, 1, 0] (by simp)
+    have a0 := congrArg (· 0) h₁
+    have a1 := congrArg (· 1) h₁
+    have b1 := congrArg (· 1) h₂
+    simp only [vadd_eq_add, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul] at a0 a1 b1
+    simp at a0 a1 b1
+    have hr₁ : r₁ ≠ 0 := by rintro rfl; simp at a0
+    have hv1 : v 1 = 0 := a1.resolve_left hr₁
+    rw [hv1, mul_zero] at b1
+    exact one_ne_zero b1
+
+/-- A single point is not Rupert. -/
+example (p : ℝ³) : ¬ IsRupert {p} :=
+  not_isRupert_of_collinear {p} (by simp [collinear_singleton]) (Finset.singleton_nonempty p)
 
 end Minimality
 
