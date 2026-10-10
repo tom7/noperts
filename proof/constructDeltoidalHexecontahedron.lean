@@ -2,21 +2,30 @@ import DeltoidalHexecontahedron.FundamentalChart3
 import DeltoidalHexecontahedron.Decode
 import DeltoidalHexecontahedron.NativeExecutable
 import DeltoidalHexecontahedron.PackedSolutionTree
+import DeltoidalHexecontahedron
 
 /-!
 Native executable that reads and checks the exact certificate data for the
-deltoidal hexecontahedron, then constructs a proof that no deltoidal
-hexecontahedron is Rupert.
+deltoidal hexecontahedron, then establishes `CertificatesValid` and so
+`isNopert_of_certificatesValid`: every deltoidal hexecontahedron is a nopert
+(`DeltoidalHexecontahedron.lean`).
 
 Three kinds of data are decoded (untrusted) and checked natively, in parallel:
-- the solution tables (packs), which
-  exclude every centrally symmetric `IModel` whose exact claims hold;
+- the solution tables (tube packs and chart packs), which exclude every
+  centrally symmetric `IModel` whose exact claims hold;
 - the three cap certificates (nopert229 `capcert --export`: u0, ux, u0 wide),
   which give the cap claims for the exact solid (`capsHold_of_certs`);
 - the tie certificates (nopert229 `tietube --export_dir`, with `dh_tie_data.txt`
   and `nodes.txt`), which give the tie nodes' claims (`tiesHold_of_certs`).
-Kernel-proved bridges (`check_of_par`, `tiesCheck_of_par`,
-`deltoidalHexecontahedron_not_rupert_of_checks`) turn success into the theorem.
+The view cover, the tube tables and the four chart tables are checked as in
+`NativeExecutable.constructProof`. Kernel-proved bridges (`capsCheck_of_par`,
+`tiesCheck_of_par`, `Table.Valid.of_withTasksB`) turn success into
+`CertificatesValid`.
+
+Usage:
+  constructDeltoidalHexecontahedron <tube manifest.txt> <chart directory>
+    <cap directory: u0.cert ux.cert u0_wide.cert>
+    <tie directory: dh_tie_data.txt nodes.txt n*_t*.cert>
 -/
 
 open Noperts Noperts.Pipeline Noperts.Pipeline.Cap
@@ -91,14 +100,40 @@ def main (args : List String) : IO Unit := do
             decode 1 shared chartData[1]!,
             decode 2 shared chartData[2]!,
             { FundamentalChart3.table with sharedLocal := shared }]
-      let checked ← constructProof localTaskCount globalTaskCount
-        localTables globalTables
-        (by intro shared chart; fin_cases chart <;> rfl)
-        (by intro shared chart; fin_cases chart <;> rfl)
-      let _dh : ∀ V : Finset ℝ³, IsDeltoidalHexecontahedron V → ¬ IsRupert V :=
-        deltoidalHexecontahedron_not_rupert_of_checks checked.down caps (capsCheck_of_par caps hcaps)
-          ties (tiesCheck_of_par ties hties)
-      IO.println "instantiated: no deltoidal hexecontahedron is Rupert"
+      let tables := globalTables localTables
+      have hchart : ∀ chart, (tables chart).chart = chart := by
+        intro chart; fin_cases chart <;> rfl
+      have hshared : ∀ chart, (tables chart).sharedLocal = localTables := by
+        intro chart; fin_cases chart <;> rfl
+      -- The checks of `NativeExecutable.constructProof`, kept here so that the
+      -- checked tables give `CertificatesValid`.
+      let coverStart ← IO.monoNanosNow
+      log "checking the view cover (code triangles cover T)"
+      let cover : PLift (WedgeCover.coverValid = true) ←
+        if h : WedgeCover.coverValid = true then pure ⟨h⟩
+        else throw (IO.userError "the view cover is invalid")
+      log s!"view cover valid ({(← IO.monoNanosNow) - coverStart} ns)"
+      let checkedLocal ← checkLocalAll localTaskCount localTables
+      let sharedValid (chart : CayleyAtlas.ChartIndex) :
+          AtlasProjectiveSolutionTree.SharedLocalValid (tables chart).sharedLocal := by
+        rw [hshared chart]; exact checkedLocal.down
+      let valid0 ← checkGlobal "0" globalTaskCount (tables 0) (sharedValid 0)
+      let valid1 ← checkGlobal "1" globalTaskCount (tables 1) (sharedValid 1)
+      let valid2 ← checkGlobal "2" globalTaskCount (tables 2) (sharedValid 2)
+      let valid3 ← checkGlobal "3" globalTaskCount (tables 3) (sharedValid 3)
+      have hvalid : ∀ chart, (tables chart).Valid := by
+        intro chart
+        fin_cases chart
+        · exact valid0.down
+        · exact valid1.down
+        · exact valid2.down
+        · exact valid3.down
+      have hcv : CertificatesValid :=
+        ⟨⟨tables, hchart, hvalid⟩, cover.down, ⟨caps, capsCheck_of_par caps hcaps⟩,
+          ⟨ties, tiesCheck_of_par ties hties⟩⟩
+      let _dh : ∀ V : Finset ℝ³, IsDeltoidalHexecontahedron V → IsNopert V :=
+        isNopert_of_certificatesValid hcv
+      IO.println "instantiated: IsNopert V for every deltoidal hexecontahedron V (none is Rupert)"
     else
       throw (IO.userError "the tie certificates are not valid")
   else

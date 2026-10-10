@@ -5,6 +5,9 @@ page with its statement, trust model and reproduction steps:
 
 - [septopert.md](septopert.md): the Septopert, a 7-vertex nopert (a Lean
   verification backed by certificate data);
+- [deltoidal-hexecontahedron.md](deltoidal-hexecontahedron.md): the deltoidal
+  hexecontahedron is a nopert (a Lean verification backed by certificate
+  data);
 - [minimality.md](minimality.md): every nopert has at least 7 vertices (a
   Lean proof).
 
@@ -12,21 +15,30 @@ page with its statement, trust model and reproduction steps:
 
 - `proof/`: one Lean 4 + Mathlib project (`lakefile.toml`). Libraries:
   - `Noperts` (the modules directly in `proof/` and its subdirectories other
-    than the two below): shared definitions and machinery. `IsRupert` is
+    than the three below): shared definitions and machinery. `IsRupert` is
     defined in `proof/MainTheorem.lean`. `Pipeline/` defines the certificate
     tables and their checks, used by data-backed results.
   - `Septopert`: entry point `proof/Septopert.lean`, details in
     `proof/Septopert/`.
   - `Minimality`: entry point `proof/Minimality.lean`, details in
     `proof/Minimality/`.
+  - `DeltoidalHexecontahedron`: entry point
+    `proof/DeltoidalHexecontahedron.lean`, details in
+    `proof/DeltoidalHexecontahedron/` (its own copy of the certificate
+    pipeline; it shares the core and the model-independent parts of
+    `Pipeline/`).
   - Executables: `constructSeptopert` (checks the Septopert's certificate
-    data) and `checkSeptopertCap` (checks only its cap certificate).
+    data), `checkSeptopertCap` (checks only its cap certificate) and
+    `constructDeltoidalHexecontahedron` (checks the deltoidal
+    hexecontahedron's certificate data).
 
   License: Apache-2.0 (`proof/LICENSE`). Derived from the
   [Noperthedron](https://github.com/jcreedcmu/Noperthedron) formalization,
   whose history it keeps.
 - `search/`: the C++ certificate search for data-backed results (currently
-  the Septopert). License: GPLv3 (`search/COPYING`).
+  the Septopert; the deltoidal hexecontahedron's is still on the
+  `deltoidalhexecontahedron` branch of nopert229). License: GPLv3
+  (`search/COPYING`).
 - `cc-lib/`: not in the repository. `./get-cc-lib.sh` checks out svn
   revision 7488 of tom7misc's `trunk/cc-lib`; the build expects it next to
   `search/`. It is GPLv3, with some files under other compatible licenses

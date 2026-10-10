@@ -64,7 +64,7 @@ globs = ["Minimality", "Minimality.+"]
 
 [[lean_lib]]
 name = "DeltoidalHexecontahedron"
-globs = ["DeltoidalHexecontahedron.+"]
+globs = ["DeltoidalHexecontahedron", "DeltoidalHexecontahedron.+"]
 
 [[lean_exe]]
 name = "checkSeptopertCap"
