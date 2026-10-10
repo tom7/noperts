@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# THIS FILE ONLY: Uses APACHE 2.0 license. See search/APACHE20.txt.
+# (Derived from the Noperthedron formalization project, which is Apache-2.0.)
 """Emit a Lean certificate that the code triangles cover their base triangle
 (the JSON's fundamental domain, the model's view triangle T).
 

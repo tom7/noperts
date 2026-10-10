@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# THIS FILE ONLY: Uses APACHE 2.0 license. See search/APACHE20.txt.
+# (Derived from the Noperthedron formalization project, which is Apache-2.0.)
 """Exact vertices of the model.
 
 The vertices come from the generated `model_vertices.json` in the C++

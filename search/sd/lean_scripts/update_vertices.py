@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# THIS FILE ONLY: Uses APACHE 2.0 license. See search/APACHE20.txt.
+# (Derived from the Noperthedron formalization project, which is Apache-2.0.)
 """Install new exact rational vertices into proof/SnubDodecahedron/Vertices.lean.
 
 Reads the rational vertex list exported by the C++ tool codebdd

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# THIS FILE ONLY: Uses APACHE 2.0 license. See search/APACHE20.txt.
+# (Derived from the Noperthedron formalization project, which is Apache-2.0.)
 """Generate proof/DeltoidalHexecontahedron/StatementData.lean: the exact deltoidal hexecontahedron.
 
 Reads nopert229's dh_exact.txt (written by dh_exact.py from dh_model.txt):

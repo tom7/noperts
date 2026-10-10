@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# THIS FILE ONLY: Uses APACHE 2.0 license. See search/APACHE20.txt.
+# (Derived from the Noperthedron formalization project, which is Apache-2.0.)
 """Generate proof/PentagonalHexecontahedron/PHStatementData.lean: the certificate
 data for Statement.lean, which identifies the pentagonal hexecontahedron (the
 facet poles of Wikipedia's snub dodecahedron) with an `IModel`.
