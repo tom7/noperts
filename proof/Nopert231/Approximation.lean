@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert231.Vertices
+public import Nopert231.Vertices
 
 @[expose] public section
 
@@ -14,15 +14,15 @@ budget of that exact object.  A rational Taylor vertex is used as a bridge.
 
 open RationalApprox Real
 
-namespace Noperthedron.Nopert231
+namespace Nopert231
 
-private lemma piQ_lt_pi : (Noperthedron.piQ : ℝ) < π := pi_gt_d20
+private lemma piQ_lt_pi : (piQ : ℝ) < π := pi_gt_d20
 
-private lemma pi_sub_piQ_lt : π - (Noperthedron.piQ : ℝ) < 1 / 10 ^ 20 := by
+private lemma pi_sub_piQ_lt : π - (piQ : ℝ) < 1 / 10 ^ 20 := by
   have h := pi_lt_d20
   have : (3.14159265358979323847 : ℝ) =
-      (Noperthedron.piQ : ℝ) + 1 / 10 ^ 20 := by
-    norm_num [Noperthedron.piQ]
+      (piQ : ℝ) + 1 / 10 ^ 20 := by
+    norm_num [piQ]
   linarith
 
 def reducedOrbit (k : OrbitIndex) : ℚ :=
@@ -33,8 +33,8 @@ private lemma reducedOrbit_abs_le_two (k : OrbitIndex) :
   fin_cases k <;> norm_num [reducedOrbit]
 
 private lemma rationalAngle_mem (k : OrbitIndex) :
-    ((2 * Noperthedron.piQ * reducedOrbit k / 5 : ℚ) : ℝ) ∈ Set.Icc (-4) 4 := by
-  fin_cases k <;> norm_num [reducedOrbit, Noperthedron.piQ]
+    ((2 * piQ * reducedOrbit k / 5 : ℚ) : ℝ) ∈ Set.Icc (-4) 4 := by
+  fin_cases k <;> norm_num [reducedOrbit, piQ]
 
 private lemma cos_orbit_reduced (k : OrbitIndex) :
     Real.cos (2 * π * (k : ℝ) / 5) =
@@ -59,28 +59,28 @@ private lemma sin_orbit_reduced (k : OrbitIndex) :
     all_goals norm_num
 
 private lemma angle_error (k : OrbitIndex) :
-    |((2 * Noperthedron.piQ * reducedOrbit k / 5 : ℚ) : ℝ) -
+    |((2 * piQ * reducedOrbit k / 5 : ℚ) : ℝ) -
       2 * π * (reducedOrbit k : ℝ) / 5| ≤ κ / 42 := by
-  have hpi : 0 ≤ π - (Noperthedron.piQ : ℝ) :=
+  have hpi : 0 ≤ π - (piQ : ℝ) :=
     le_of_lt (sub_pos.mpr piQ_lt_pi)
   have hk := reducedOrbit_abs_le_two k
   have hdiff :
-      |((2 * Noperthedron.piQ * reducedOrbit k / 5 : ℚ) : ℝ) -
+      |((2 * piQ * reducedOrbit k / 5 : ℚ) : ℝ) -
           2 * π * (reducedOrbit k : ℝ) / 5| =
         (2 * |(reducedOrbit k : ℝ)| / 5) *
-          (π - (Noperthedron.piQ : ℝ)) := by
+          (π - (piQ : ℝ)) := by
     push_cast
-    rw [show 2 * (Noperthedron.piQ : ℝ) * (reducedOrbit k : ℝ) / 5 -
+    rw [show 2 * (piQ : ℝ) * (reducedOrbit k : ℝ) / 5 -
         2 * π * (reducedOrbit k : ℝ) / 5 =
         -(2 * (reducedOrbit k : ℝ) / 5 *
-          (π - (Noperthedron.piQ : ℝ))) by ring]
+          (π - (piQ : ℝ))) by ring]
     rw [abs_neg, abs_mul, abs_div, abs_mul, abs_of_nonneg hpi]
     norm_num
   rw [hdiff]
   calc
     (2 * |(reducedOrbit k : ℝ)| / 5) *
-        (π - (Noperthedron.piQ : ℝ))
-      ≤ (4 / 5 : ℝ) * (π - (Noperthedron.piQ : ℝ)) := by
+        (π - (piQ : ℝ))
+      ≤ (4 / 5 : ℝ) * (π - (piQ : ℝ)) := by
         nlinarith [hk]
     _ ≤ (4 / 5 : ℝ) * (1 / 10 ^ 20) := by
         gcongr
@@ -89,9 +89,9 @@ private lemma angle_error (k : OrbitIndex) :
 
 theorem cos_symmetry_combined_error (k : OrbitIndex) :
     |((RationalApprox.cosℚ
-        (2 * Noperthedron.piQ * reducedOrbit k / 5) : ℚ) : ℝ) -
+        (2 * piQ * reducedOrbit k / 5) : ℚ) : ℝ) -
       Real.cos (2 * π * (k : ℝ) / 5)| ≤ κ / 6 := by
-  let q : ℚ := 2 * Noperthedron.piQ * reducedOrbit k / 5
+  let q : ℚ := 2 * piQ * reducedOrbit k / 5
   let x : ℝ := 2 * π * (reducedOrbit k : ℝ) / 5
   have ht := RationalApprox.cosℚ_approx' (q : ℝ) (rationalAngle_mem k)
   have hm : |Real.cos (q : ℝ) - Real.cos x| ≤ |(q : ℝ) - x| :=
@@ -112,9 +112,9 @@ theorem cos_symmetry_combined_error (k : OrbitIndex) :
 
 theorem sin_symmetry_combined_error (k : OrbitIndex) :
     |((RationalApprox.sinℚ
-        (2 * Noperthedron.piQ * reducedOrbit k / 5) : ℚ) : ℝ) -
+        (2 * piQ * reducedOrbit k / 5) : ℚ) : ℝ) -
       Real.sin (2 * π * (k : ℝ) / 5)| ≤ κ / 6 := by
-  let q : ℚ := 2 * Noperthedron.piQ * reducedOrbit k / 5
+  let q : ℚ := 2 * piQ * reducedOrbit k / 5
   let x : ℝ := 2 * π * (reducedOrbit k : ℝ) / 5
   have ht := RationalApprox.sinℚ_approx' (q : ℝ) (rationalAngle_mem k)
   have hm : |Real.sin (q : ℝ) - Real.sin x| ≤ |(q : ℝ) - x| :=
@@ -155,7 +155,7 @@ theorem taylorVertex_close (i : VertexIndex) :
     ‖toR3 (taylorVertex i) - exactVertex i‖ ≤ κ / 2 := by
   let k := orbitIndex i
   let s := seedIndex i
-  let q : ℚ := 2 * Noperthedron.piQ * reducedOrbit k / 5
+  let q : ℚ := 2 * piQ * reducedOrbit k / 5
   let θ : ℝ := 2 * π * (k : ℝ) / 5
   let ce : ℝ := ((RationalApprox.cosℚ q : ℚ) : ℝ) - Real.cos θ
   let se : ℝ := ((RationalApprox.sinℚ q : ℚ) : ℝ) - Real.sin θ
@@ -242,6 +242,6 @@ noncomputable def C5Model.approximation (P : C5Model) :
   bijection := Equiv.refl VertexIndex
   approx i := P.vertex_close i
 
-end Noperthedron.Nopert231
+end Nopert231
 
 end

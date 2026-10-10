@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert231.AtlasProjectiveLocalViewTree
-public import Noperthedron.Nopert231.WedgeCoverData
+public import Nopert231.AtlasProjectiveLocalViewTree
+public import Nopert231.WedgeCoverData
 
 @[expose] public section
 
@@ -16,12 +16,14 @@ out every pose in the upper fivefold view wedge whose tube is within the
 smallest table radius.
 -/
 
-namespace Noperthedron.Nopert231.IdentityTube
+open Noperts
+
+namespace Nopert231.IdentityTube
 
 variable {P : C5Model}
 
 open AtlasProjectiveView AtlasProjectiveLocalViewTree WedgeCover
-open Noperthedron.Atlas.ProjectiveView
+open Noperts.Atlas.ProjectiveView
 
 /-- The tables match the code triangles: table `t` is rooted at the upper
 signed root, has triangle `codeTriangles[t]`, shares the symmetry index `s`,
@@ -67,6 +69,6 @@ theorem not_translated_rupert_of_tables (tables : ℕ → Table)
   · simpa [hroot] using hscale
   · simpa [hroot, htriangle, htri] using hin
 
-end Noperthedron.Nopert231.IdentityTube
+end Nopert231.IdentityTube
 
 end

@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Finset.Max
-public import Noperthedron.Nopert231.CayleyAtlas
+public import Nopert231.CayleyAtlas
 
 @[expose] public section
 
@@ -15,7 +15,9 @@ each Cayley chart, allowing most of relative-rotation space to be pruned
 before geometric certificates are attempted.
 -/
 
-namespace Noperthedron.Nopert231
+open Noperts
+
+namespace Nopert231
 
 variable {P : C5Model}
 
@@ -158,6 +160,6 @@ theorem MatrixPose.exists_rightNopert231Symmetry_inFundamentalDomain
   obtain ⟨k, hk⟩ := exists_mul_fivefold_inFundamentalDomain p.relativeRotation
   exact ⟨k, by simpa [MatrixPose.InNopert231FundamentalDomain] using hk⟩
 
-end Noperthedron.Nopert231
+end Nopert231
 
 end

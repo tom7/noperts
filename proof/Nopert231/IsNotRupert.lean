@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert231.AtlasProjectiveSolutionTree
-public import Noperthedron.Rupert.Equivalences.RupertEquivRupertSet
+public import Nopert231.AtlasProjectiveSolutionTree
+public import Rupert.Equivalences.RupertEquivRupertSet
 
 @[expose] public section
 
@@ -13,9 +13,11 @@ Cayley-chart tables to the usual vertex-set formulation of the Rupert
 property.
 -/
 
+open Noperts
+
 open scoped Matrix
 
-namespace Noperthedron.Nopert231
+namespace Nopert231
 
 variable {P : C5Model}
 
@@ -49,6 +51,6 @@ theorem not_rupert_of_valid_tables
   exact no_matrixPose_of_valid_tables table hchart hvalid
     (rupert_set_implies_matrix_pose hset)
 
-end Noperthedron.Nopert231
+end Nopert231
 
 end

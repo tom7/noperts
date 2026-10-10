@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert231.AtlasProjectiveSolutionTree
-public import Noperthedron.Nopert231.PackedLocalViewTree
+public import Nopert231.AtlasProjectiveSolutionTree
+public import Nopert231.PackedLocalViewTree
 
 @[expose] public section
 
@@ -14,13 +14,15 @@ decoder is deliberately total; the semantic parallel checker remains the
 trusted validation step for every decoded value.
 -/
 
-namespace Noperthedron.Nopert231.PackedSolutionTree
+open Noperts
+
+namespace Nopert231.PackedSolutionTree
 
 open AtlasProjectiveSolutionTree AtlasProjectiveView
 open AtlasProjectiveEdgeCertificate AtlasProjectiveGlobalCertificate
 open AtlasProjectiveLocalCertificate
 open PackedLocalViewTree
-open Noperthedron.Atlas.ProjectiveView
+open Noperts.Atlas.ProjectiveView
 
 abbrev Decoder := PackedLocalViewTree.Decoder
 
@@ -344,6 +346,6 @@ def decodeCodeTables (chart : CayleyAtlas.ChartIndex)
     sharedLocal := shared
   }
 
-end Noperthedron.Nopert231.PackedSolutionTree
+end Nopert231.PackedSolutionTree
 
 end

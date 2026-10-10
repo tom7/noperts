@@ -1,14 +1,14 @@
 module
 
-public import Noperthedron.Nopert231.AtlasProjectiveEdgeCertificate
-public import Noperthedron.Nopert231.AtlasFundamentalPrune
-public import Noperthedron.Nopert231.AtlasLocalCertificate
-public import Noperthedron.Nopert231.AtlasProjectiveLocalCertificate
-public import Noperthedron.Nopert231.AtlasProjectiveLocalViewTree
-public import Noperthedron.Nopert231.AtlasProjectiveGlobalCertificate
-public import Noperthedron.Nopert231.AtlasProjectiveMixedGlobalCertificate
-public import Noperthedron.Nopert231.WedgeCoverData
-public import Noperthedron.ParallelBool
+public import Nopert231.AtlasProjectiveEdgeCertificate
+public import Nopert231.AtlasFundamentalPrune
+public import Nopert231.AtlasLocalCertificate
+public import Nopert231.AtlasProjectiveLocalCertificate
+public import Nopert231.AtlasProjectiveLocalViewTree
+public import Nopert231.AtlasProjectiveGlobalCertificate
+public import Nopert231.AtlasProjectiveMixedGlobalCertificate
+public import Nopert231.WedgeCoverData
+public import ParallelBool
 
 @[expose] public section
 
@@ -21,12 +21,14 @@ from the whole sphere into eight signed roots and then by four-way midpoint
 triangle subdivision.  Leaves carry projective edge-cycle certificates.
 -/
 
-namespace Noperthedron.Nopert231.AtlasProjectiveSolutionTree
+open Noperts
+
+namespace Nopert231.AtlasProjectiveSolutionTree
 
 variable {P : C5Model}
 
 open CayleyAtlas AtlasProjectiveView
-open Noperthedron.Atlas.ProjectiveView
+open Noperts.Atlas.ProjectiveView
 
 abbrev Interval := AtlasInterval ℚ
 abbrev Triangle := AtlasProjectiveView.Triangle ℚ
@@ -636,7 +638,7 @@ theorem validIxAtB_eq_true_iff (chart : ChartIndex) (get : ℕ → Row)
 /-- Native parallel Boolean check of every row in a global chart table. -/
 def rowsValidAtParB (chart : ChartIndex) (get : ℕ → Row) (size : ℕ)
     (shared : SharedLocalTables) (taskCount : ℕ) : Bool :=
-  Noperthedron.ParallelBool.allParB
+  Noperts.ParallelBool.allParB
     (validIxAtB chart get size shared) size taskCount
 
 theorem rowsValidAt_of_parB {chart : ChartIndex} {get : ℕ → Row}
@@ -644,7 +646,7 @@ theorem rowsValidAt_of_parB {chart : ChartIndex} {get : ℕ → Row}
     (h : rowsValidAtParB chart get size shared taskCount = true) :
     RowsValidAt chart get size shared := by
   intro i
-  have hindex := Noperthedron.ParallelBool.all_of_parB h i.val i.isLt
+  have hindex := Noperts.ParallelBool.all_of_parB h i.val i.isLt
   rw [validIxAtB_eq_true_iff] at hindex
   exact hindex i.isLt
 
@@ -661,7 +663,7 @@ def tableCoreValidParB (table : Table) (taskCount : ℕ) : Bool :=
 progress reporting. -/
 def tableCoreTasks (table : Table) (taskCount : ℕ) : List (Task Bool) :=
   let chunkSize := table.size / taskCount + 1
-  Noperthedron.ParallelBool.chunkTasks
+  Noperts.ParallelBool.chunkTasks
     (validIxAtB table.chart table.get table.size table.sharedLocal)
     taskCount chunkSize
 
@@ -673,7 +675,7 @@ def tableCoreValidWithTasksB (table : Table) (taskCount : ℕ)
     (table.get 0).interval =
       AtlasFundamentalPrune.restrictedRootInterval table.chart ∧
     (table.get 0).region = .sphere) &&
-  Noperthedron.ParallelBool.allWithTasksB table.size taskCount chunkSize tasks
+  Noperts.ParallelBool.allWithTasksB table.size taskCount chunkSize tasks
 
 theorem Table.Valid.of_parB {table : Table} {taskCount : ℕ}
     (hshared : SharedLocalValid table.sharedLocal)
@@ -720,6 +722,6 @@ theorem no_matrixPose_of_valid_tables
   exact hno ⟨q, hq, hbounded, hfund, hview, hupper, offset,
     heq.mpr hrupert⟩
 
-end Noperthedron.Nopert231.AtlasProjectiveSolutionTree
+end Nopert231.AtlasProjectiveSolutionTree
 
 end

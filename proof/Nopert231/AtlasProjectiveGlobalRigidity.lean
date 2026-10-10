@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert231.AtlasProjectiveLocalRigidity
+public import Nopert231.AtlasProjectiveLocalRigidity
 
 @[expose] public section
 
@@ -13,12 +13,14 @@ displacement is nonnegative.  Unlike the local theorem, this statement makes
 no reference to a nearby symmetry or to an axis-angle decomposition.
 -/
 
-namespace Noperthedron.Nopert231.AtlasProjectiveGlobalRigidity
+open Noperts
+
+namespace Nopert231.AtlasProjectiveGlobalRigidity
 
 variable {P : C5Model}
 
 open scoped RealInnerProductSpace
-open Noperthedron.BalancedSupport
+open Noperts.BalancedSupport
 open AtlasProjectiveLocalRigidity
 open AtlasProjectiveView
 
@@ -105,6 +107,6 @@ theorem not_rupertPose_of_projective_global_certificate_with_defect
   · simpa [pose, outerProjectionLinear,
       ContinuousLinearMap.comp_apply] using hdisplacement
 
-end Noperthedron.Nopert231.AtlasProjectiveGlobalRigidity
+end Nopert231.AtlasProjectiveGlobalRigidity
 
 end

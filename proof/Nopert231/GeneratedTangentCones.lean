@@ -1,11 +1,13 @@
 module
 
-public import Noperthedron.Nopert231.SparseSupport
-public meta import Noperthedron.Nopert231.SparseSupport
+public import Nopert231.SparseSupport
+public meta import Nopert231.SparseSupport
 
 @[expose] public section
 
-namespace Noperthedron.Nopert231.GeneratedTangentCones
+open Noperts
+
+namespace Nopert231.GeneratedTangentCones
 
 set_option linter.unusedTactic false
 set_option linter.unreachableTactic false
@@ -8140,9 +8142,6 @@ theorem table_valid_kernel : TangentTableValid table := by
   · exact valid_19_18
   · exact (htarget rfl).elim
 
-theorem table_valid_native : TangentTableValid table := by
-  native_decide
-
-end Noperthedron.Nopert231.GeneratedTangentCones
+end Nopert231.GeneratedTangentCones
 
 end

@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert231.AtlasQuadratic
-public import Noperthedron.Nopert231.LocalCertificate
+public import Nopert231.AtlasQuadratic
+public import Nopert231.LocalCertificate
 
 @[expose] public section
 
@@ -14,14 +14,16 @@ one of the five exact symmetries is checked directly in Cayley coordinates:
 each entry of the denominator-cleared mismatch is a rational quadratic.
 -/
 
-namespace Noperthedron.Nopert231.AtlasLocalCertificate
+open Noperts
+
+namespace Nopert231.AtlasLocalCertificate
 
 variable {P : C5Model}
 
 open scoped Matrix RealInnerProductSpace
-open Noperthedron.Checker
-open Noperthedron.Nopert231.CayleyAtlas
-open Noperthedron.Atlas.CayleyEdgeCertificate
+open Noperts.Checker
+open Nopert231.CayleyAtlas
+open Noperts.Atlas.CayleyEdgeCertificate
 
 structure Box where
   interval : AtlasInterval ℚ
@@ -154,7 +156,7 @@ theorem Box.eval_mismatchQuadratic (box : Box) (p : AtlasPose ℝ)
   simp only [Box.mismatchQuadratic, RatQuadratic3.evalReal_sub,
     RatQuadratic3.evalReal_scale,
     AtlasQuadratic.eval_numeratorQuadratic,
-    Noperthedron.Atlas.CayleyEdgeCertificate.eval_denomQuadratic]
+    Noperts.Atlas.CayleyEdgeCertificate.eval_denomQuadratic]
   push_cast
   ring
 
@@ -251,7 +253,7 @@ theorem Box.clearedMismatchCLM_norm_le (box : Box) {p : AtlasPose ℝ}
     (hp : p ∈ box.interval.toReal) :
     ‖box.clearedMismatchCLM p‖ ≤
       (RationalApprox.sqrtℚUp16 box.mismatchFrobeniusSqUpper : ℝ) := by
-  apply Noperthedron.BalancedSupport.matrix_opNorm_le_of_sum_sq_le
+  apply Noperts.BalancedSupport.matrix_opNorm_le_of_sum_sq_le
   · exact_mod_cast RationalApprox.sqrtℚUp16_nonneg
       box.mismatchFrobeniusSqUpper
   · have hsq := RationalApprox.le_mul_self_sqrtℚUp16
@@ -340,7 +342,7 @@ noncomputable def Box.relativeCLM (box : Box) (p : AtlasPose ℝ) :
 noncomputable def Box.exactRelativeMismatchCLM (box : Box)
     (p : AtlasPose ℝ) : ℝ³ →L[ℝ] ℝ³ :=
   box.relativeCLM p -
-    Noperthedron.Atlas.so3CLM (symmetry box.symmetryIndex)
+    Noperts.Atlas.so3CLM (symmetry box.symmetryIndex)
 
 theorem Box.rationalRelativeMismatchCLM_eq (box : Box)
     (p : AtlasPose ℝ) :
@@ -397,7 +399,7 @@ theorem Box.exactRelativeMismatchCLM_norm_le (box : Box)
     have hdecomp : box.exactRelativeMismatchCLM p =
         box.rationalRelativeMismatchCLM p +
           (LocalCertificate.symmetryQCLM box.symmetryIndex -
-            Noperthedron.Atlas.so3CLM (symmetry box.symmetryIndex)) := by
+            Noperts.Atlas.so3CLM (symmetry box.symmetryIndex)) := by
       rw [box.rationalRelativeMismatchCLM_eq]
       unfold Box.exactRelativeMismatchCLM
       abel
@@ -405,7 +407,7 @@ theorem Box.exactRelativeMismatchCLM_norm_le (box : Box)
     calc
       _ ≤ ‖box.rationalRelativeMismatchCLM p‖ +
           ‖LocalCertificate.symmetryQCLM box.symmetryIndex -
-            Noperthedron.Atlas.so3CLM (symmetry box.symmetryIndex)‖ :=
+            Noperts.Atlas.so3CLM (symmetry box.symmetryIndex)‖ :=
         norm_add_le _ _
       _ ≤ (RationalApprox.sqrtℚUp16 box.mismatchFrobeniusSqUpper : ℝ) +
           (LocalCertificate.symmetryError : ℝ) := by
@@ -415,20 +417,20 @@ theorem Box.exactRelativeMismatchCLM_norm_le (box : Box)
 
 theorem Box.relativeCLM_eq_so3CLM (box : Box) (p : AtlasPose ℝ) :
     box.relativeCLM p =
-      Noperthedron.Atlas.so3CLM
+      Noperts.Atlas.so3CLM
         (chartSO3 box.chart * cayleySO3 p.x p.y p.z) := by
   ext v
-  simp [Box.relativeCLM, Noperthedron.Atlas.so3CLM,
+  simp [Box.relativeCLM, Noperts.Atlas.so3CLM,
     chartSO3, cayleySO3, Matrix.mulVec_mulVec]
 
 theorem Box.poseMismatch_eq_outer_comp (box : Box) (p : AtlasPose ℝ)
     (offset : ℝ²) :
-    Noperthedron.Atlas.so3CLM
+    Noperts.Atlas.so3CLM
         (p.matrixPoseWithOffset box.chart offset).innerRot -
-      Noperthedron.Atlas.so3CLM
+      Noperts.Atlas.so3CLM
         ((p.matrixPoseWithOffset box.chart offset).outerRot *
           symmetry box.symmetryIndex) =
-      Noperthedron.Atlas.so3CLM
+      Noperts.Atlas.so3CLM
           (p.matrixPoseWithOffset box.chart offset).outerRot ∘L
         box.exactRelativeMismatchCLM p := by
   let pose := p.matrixPoseWithOffset box.chart offset
@@ -438,9 +440,9 @@ theorem Box.poseMismatch_eq_outer_comp (box : Box) (p : AtlasPose ℝ)
       p.outerSO3 * (chartSO3 box.chart * cayleySO3 p.x p.y p.z)
     rw [mul_assoc]
   rw [hinner,
-    Noperthedron.Atlas.so3CLM_mul pose.outerRot
+    Noperts.Atlas.so3CLM_mul pose.outerRot
       (chartSO3 box.chart * cayleySO3 p.x p.y p.z),
-    Noperthedron.Atlas.so3CLM_mul pose.outerRot
+    Noperts.Atlas.so3CLM_mul pose.outerRot
       (symmetry box.symmetryIndex),
     ← box.relativeCLM_eq_so3CLM]
   unfold Box.exactRelativeMismatchCLM
@@ -449,30 +451,30 @@ theorem Box.poseMismatch_eq_outer_comp (box : Box) (p : AtlasPose ℝ)
 
 theorem Box.valid_mismatch_bound (box : Box) (h : box.Valid)
     {p : AtlasPose ℝ} (hp : p ∈ box.interval.toReal) (offset : ℝ²) :
-    ‖Noperthedron.Atlas.so3CLM
+    ‖Noperts.Atlas.so3CLM
         (p.matrixPoseWithOffset box.chart offset).innerRot -
-      Noperthedron.Atlas.so3CLM
+      Noperts.Atlas.so3CLM
         ((p.matrixPoseWithOffset box.chart offset).outerRot *
           symmetry box.symmetryIndex)‖ ≤ (box.r : ℝ) := by
   rw [box.poseMismatch_eq_outer_comp]
   calc
-    _ ≤ ‖Noperthedron.Atlas.so3CLM
+    _ ≤ ‖Noperts.Atlas.so3CLM
           (p.matrixPoseWithOffset box.chart offset).outerRot‖ *
         ‖box.exactRelativeMismatchCLM p‖ :=
       ContinuousLinearMap.opNorm_comp_le _ _
     _ = ‖box.exactRelativeMismatchCLM p‖ := by
-      rw [Noperthedron.Atlas.so3CLM_norm, one_mul]
+      rw [Noperts.Atlas.so3CLM_norm, one_mul]
     _ ≤ (box.mismatchRadius : ℝ) := box.exactRelativeMismatchCLM_norm_le hp
     _ ≤ (box.r : ℝ) := by exact_mod_cast h.mismatch_bound
 
 theorem Box.valid_axisAngle_ratio (box : Box) (h : box.Valid)
     {p : AtlasPose ℝ} (hp : p ∈ box.interval.toReal) (offset : ℝ²)
-    (a : Noperthedron.BalancedSupport.AxisAngle
-      (Noperthedron.Atlas.so3CLM
+    (a : Noperts.BalancedSupport.AxisAngle
+      (Noperts.Atlas.so3CLM
         (relativeRotationAtSymmetry
           (p.matrixPoseWithOffset box.chart offset) box.symmetryIndex))) :
     1 - Real.cos a.angle ≤ |Real.sin a.angle| * (box.c : ℝ) := by
-  apply Noperthedron.Nopert231.AxisAngle.ratio_of_inner_mismatch_bound
+  apply Nopert231.AxisAngle.ratio_of_inner_mismatch_bound
     (p.matrixPoseWithOffset box.chart offset) box.symmetryIndex a
     (box.c : ℝ) (box.r : ℝ)
   · exact_mod_cast h.geometry.c_nonneg
@@ -494,16 +496,16 @@ theorem Box.valid_imp_not_translated_rupert (box : Box) (h : box.Valid) :
   have hqnear := ebox.near_center_of_mem_realInterval hqmem
   let relative := relativeRotationAtSymmetry
     (p.matrixPoseWithOffset box.chart offset) box.symmetryIndex
-  obtain ⟨a⟩ := Noperthedron.BalancedSupport.exists_axisAngle
+  obtain ⟨a⟩ := Noperts.BalancedSupport.exists_axisAngle
     relative.val relative.property
   apply
-    Noperthedron.Nopert231.not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation
+    Nopert231.not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation
       (p := p.matrixPoseWithOffset box.chart offset)
       (g := box.symmetryIndex) (a := a)
       (index := fun j i => (ebox.certificate j).contact i |>.index)
       (weight := fun j => (ebox.certificate j).realWeight)
       (direction := fun j => (ebox.certificate j).realDirection)
-      (A := fun j => Noperthedron.Atlas.firstVariationVector
+      (A := fun j => Noperts.Atlas.firstVariationVector
         (p.matrixPoseWithOffset box.chart offset)
         (ebox.certificate j).realWeight
         (ebox.certificate j).realDirection
@@ -517,8 +519,8 @@ theorem Box.valid_imp_not_translated_rupert (box : Box) (h : box.Valid) :
   · intro j
     exact_mod_cast LocalCertificate.AxisCertificate.B_pos ebox h.geometry j
   · intro j
-    simpa [ebox, q, Noperthedron.Atlas.firstVariationVector,
-      Noperthedron.Atlas.outerLift, Noperthedron.Atlas.outerFrame,
+    simpa [ebox, q, Noperts.Atlas.firstVariationVector,
+      Noperts.Atlas.outerLift, Noperts.Atlas.outerFrame,
       outerPose, AtlasPose.outerSO3, AtlasPose.matrixPoseWithOffset,
       Pose.matrixPoseWithOffset,
       Pose.matrixPoseOfPose] using
@@ -548,7 +550,7 @@ theorem Box.valid_imp_not_translated_rupert (box : Box) (h : box.Valid) :
   · intro j i k
     simpa [ebox, q, Box.eulerBox,
       LocalCertificate.AxisCertificate.realDirection,
-      Noperthedron.BalancedSupport.outerProjectionLinear, outerPose,
+      Noperts.BalancedSupport.outerProjectionLinear, outerPose,
       AtlasPose.outerSO3, AtlasPose.matrixPoseWithOffset,
       Pose.matrixPoseWithOffset,
       Pose.matrixPoseOfPose] using
@@ -563,6 +565,6 @@ theorem Box.valid_imp_no_translated_rupert_in_interval
   rintro ⟨p, hp, offset, hrupert⟩
   exact box.valid_imp_not_translated_rupert h p hp offset hrupert
 
-end Noperthedron.Nopert231.AtlasLocalCertificate
+end Nopert231.AtlasLocalCertificate
 
 end

@@ -1,8 +1,8 @@
 module
 
-public import Noperthedron.Nopert231.Approximation
-public import Noperthedron.Pose
-public import Noperthedron.RealMod
+public import Nopert231.Approximation
+public import Pose
+public import RealMod
 
 @[expose] public section
 
@@ -16,7 +16,7 @@ changing the corresponding projected hull.
 
 open Real
 
-namespace Noperthedron.Nopert231
+namespace Nopert231
 
 variable {P : C5Model}
 
@@ -175,6 +175,6 @@ theorem rotM_add_fifth_iterated {θ φ : ℝ} (n : ℤ) :
       ring_nf at h ⊢
       exact h.symm
 
-end Noperthedron.Nopert231
+end Nopert231
 
 end

@@ -1,16 +1,16 @@
 module
 
-public import Noperthedron.Atlas.LocalCertificate
-public import Noperthedron.Nopert231.Certificate
-public import Noperthedron.Nopert231.SymmetryLocal
-public import Noperthedron.Checker.SqrtFixed
-public import Noperthedron.RationalApprox.RationalBalancedGlobal
-public import Noperthedron.RationalApprox.Basic
+public import Atlas.LocalCertificate
+public import Nopert231.Certificate
+public import Nopert231.SymmetryLocal
+public import Checker.SqrtFixed
+public import RationalApprox.RationalBalancedGlobal
+public import RationalApprox.Basic
 public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Tactic.DeriveFintype
-public import Noperthedron.Basic
-public import Noperthedron.Atlas.LocalRigidity
+public import Basic
+public import Atlas.LocalRigidity
 
 @[expose] public section
 
@@ -23,7 +23,9 @@ of the tree interval it covers.  This is important for adaptive subdivision:
 any rational leaf contained in the certified neighborhood may use the row.
 -/
 
-namespace Noperthedron.Nopert231.LocalCertificate
+open Noperts
+
+namespace Nopert231.LocalCertificate
 
 variable {P : C5Model}
 
@@ -70,7 +72,7 @@ def crossQ (u v : Fin 3 → ℚ) : Fin 3 → ℚ :=
 
 /-- Rational Taylor approximation to the exact fivefold symmetry matrix. -/
 def symmetryMatrixQ (g : OrbitIndex) : Matrix (Fin 3) (Fin 3) ℚ :=
-  let q := 2 * Noperthedron.piQ * reducedOrbit g / 5
+  let q := 2 * piQ * reducedOrbit g / 5
   !![RationalApprox.cosℚ q, -RationalApprox.sinℚ q, 0;
      RationalApprox.sinℚ q,  RationalApprox.cosℚ q, 0;
      0, 0, 1]
@@ -79,9 +81,9 @@ noncomputable def symmetryQCLM (g : OrbitIndex) : ℝ³ →L[ℝ] ℝ³ :=
   ((symmetryMatrixQ g).map fun x => (x : ℝ)).toEuclideanLin.toContinuousLinearMap
 
 def Box.mismatchMatrix (box : Box) : Matrix (Fin 3) (Fin 3) ℚ :=
-  Noperthedron.Atlas.LocalCertificate.rotRMQ
+  Noperts.Atlas.LocalCertificate.rotRMQ
       box.center.θ₁ box.center.φ₁ box.center.α -
-    Noperthedron.Atlas.LocalCertificate.rotRMQ
+    Noperts.Atlas.LocalCertificate.rotRMQ
       box.center.θ₂ box.center.φ₂ 0 * symmetryMatrixQ box.symmetryIndex
 
 def Box.mismatchFrobeniusSq (box : Box) : ℚ :=
@@ -95,19 +97,19 @@ noncomputable def Box.centerMismatchCLM (box : Box) : ℝ³ →L[ℝ] ℝ³ :=
       box.center.toReal.φ₁ box.center.toReal.α -
     rotRM box.center.toReal.θ₂
         box.center.toReal.φ₂ 0 ∘L
-      Noperthedron.Atlas.so3CLM (symmetry box.symmetryIndex)
+      Noperts.Atlas.so3CLM (symmetry box.symmetryIndex)
 
 private theorem Box.mismatchQCLM_eq (box : Box) :
     box.mismatchQCLM =
-      Noperthedron.Atlas.LocalCertificate.rotRMQCLM
+      Noperts.Atlas.LocalCertificate.rotRMQCLM
           box.center.θ₁ box.center.φ₁ box.center.α -
-        Noperthedron.Atlas.LocalCertificate.rotRMQCLM
+        Noperts.Atlas.LocalCertificate.rotRMQCLM
             box.center.θ₂ box.center.φ₂ 0 ∘L
           symmetryQCLM box.symmetryIndex := by
   have hmat : (box.mismatchMatrix.map fun x => (x : ℝ)) =
-      (Noperthedron.Atlas.LocalCertificate.rotRMQ
+      (Noperts.Atlas.LocalCertificate.rotRMQ
         box.center.θ₁ box.center.φ₁ box.center.α).map (fun x => (x : ℝ)) -
-      (Noperthedron.Atlas.LocalCertificate.rotRMQ
+      (Noperts.Atlas.LocalCertificate.rotRMQ
         box.center.θ₂ box.center.φ₂ 0).map (fun x => (x : ℝ)) *
         (symmetryMatrixQ box.symmetryIndex).map (fun x => (x : ℝ)) := by
     ext i j
@@ -117,7 +119,7 @@ private theorem Box.mismatchQCLM_eq (box : Box) :
     rfl
   ext v
   simp only [Box.mismatchQCLM,
-    Noperthedron.Atlas.LocalCertificate.rotRMQCLM, symmetryQCLM,
+    Noperts.Atlas.LocalCertificate.rotRMQCLM, symmetryQCLM,
     ContinuousLinearMap.sub_apply, ContinuousLinearMap.comp_apply,
     LinearMap.coe_toContinuousLinearMap', Matrix.ofLp_toLpLin,
     Matrix.toLin'_apply, Matrix.toLpLin_apply]
@@ -132,7 +134,7 @@ private theorem mismatchFrobeniusSq_nonneg (box : Box) :
 theorem Box.mismatchQCLM_norm_le_sqrt (box : Box) :
     ‖box.mismatchQCLM‖ ≤
       (RationalApprox.sqrtℚUp16 box.mismatchFrobeniusSq : ℝ) := by
-  apply Noperthedron.BalancedSupport.matrix_opNorm_le_of_sum_sq_le
+  apply Noperts.BalancedSupport.matrix_opNorm_le_of_sum_sq_le
   · exact_mod_cast RationalApprox.sqrtℚUp16_nonneg box.mismatchFrobeniusSq
   · have hsq := RationalApprox.le_mul_self_sqrtℚUp16
       (mismatchFrobeniusSq_nonneg box)
@@ -169,40 +171,40 @@ def Box.eulerRadius (box : Box) : ℚ :=
 def symmetryError : ℚ := κℚ / 2
 
 theorem symmetryQCLM_difference_norm_bounded (g : OrbitIndex) :
-    ‖Noperthedron.Atlas.so3CLM (symmetry g) - symmetryQCLM g‖ ≤
+    ‖Noperts.Atlas.so3CLM (symmetry g) - symmetryQCLM g‖ ≤
       (symmetryError : ℝ) := by
   let A : Matrix (Fin 3) (Fin 3) ℝ :=
     (symmetry g).val - (symmetryMatrixQ g).map fun x => (x : ℝ)
   have hclm :
-      Noperthedron.Atlas.so3CLM (symmetry g) - symmetryQCLM g =
+      Noperts.Atlas.so3CLM (symmetry g) - symmetryQCLM g =
         A.toEuclideanLin.toContinuousLinearMap := by
     ext v
-    simp only [Noperthedron.Atlas.so3CLM, symmetryQCLM, A,
+    simp only [Noperts.Atlas.so3CLM, symmetryQCLM, A,
       ContinuousLinearMap.sub_apply, LinearMap.coe_toContinuousLinearMap',
       Matrix.toEuclideanLin_apply, Matrix.sub_mulVec]
     rfl
   rw [hclm]
-  apply Noperthedron.BalancedSupport.matrix_opNorm_le_of_sum_sq_le
+  apply Noperts.BalancedSupport.matrix_opNorm_le_of_sum_sq_le
   · norm_num [symmetryError, RationalApprox.κ, RationalApprox.κℚ]
   · have hc := cos_symmetry_combined_error g
     have hs := sin_symmetry_combined_error g
     have hsum :
         ∑ i, ∑ j, A i j ^ 2 =
           2 * (((RationalApprox.cosℚ
-              (2 * Noperthedron.piQ * reducedOrbit g / 5) : ℚ) : ℝ) -
+              (2 * piQ * reducedOrbit g / 5) : ℚ) : ℝ) -
                 Real.cos (2 * Real.pi * (g : ℝ) / 5)) ^ 2 +
           2 * (((RationalApprox.sinℚ
-              (2 * Noperthedron.piQ * reducedOrbit g / 5) : ℚ) : ℝ) -
+              (2 * piQ * reducedOrbit g / 5) : ℚ) : ℝ) -
                 Real.sin (2 * Real.pi * (g : ℝ) / 5)) ^ 2 := by
-      simp [A, symmetry, symmetryMatrixQ, Noperthedron.Atlas.so3CLM,
+      simp [A, symmetry, symmetryMatrixQ, Noperts.Atlas.so3CLM,
         Rz_mat, Fin.sum_univ_three]
       ring
     rw [hsum]
     let ce : ℝ := ((RationalApprox.cosℚ
-      (2 * Noperthedron.piQ * reducedOrbit g / 5) : ℚ) : ℝ) -
+      (2 * piQ * reducedOrbit g / 5) : ℚ) : ℝ) -
         Real.cos (2 * Real.pi * (g : ℝ) / 5)
     let se : ℝ := ((RationalApprox.sinℚ
-      (2 * Noperthedron.piQ * reducedOrbit g / 5) : ℚ) : ℝ) -
+      (2 * piQ * reducedOrbit g / 5) : ℚ) : ℝ) -
         Real.sin (2 * Real.pi * (g : ℝ) / 5)
     have hc2 : ce ^ 2 ≤ (RationalApprox.κ / 6) ^ 2 :=
       sq_le_sq' (abs_le.mp hc).1 (abs_le.mp hc).2
@@ -214,8 +216,8 @@ theorem symmetryQCLM_difference_norm_bounded (g : OrbitIndex) :
 
 def Box.mismatchRadius (box : Box) : ℚ :=
   RationalApprox.sqrtℚUp16 box.mismatchFrobeniusSq +
-    2 * Noperthedron.Atlas.LocalCertificate.rotationError +
-    (1 + Noperthedron.Atlas.LocalCertificate.rotationError) * symmetryError +
+    2 * Noperts.Atlas.LocalCertificate.rotationError +
+    (1 + Noperts.Atlas.LocalCertificate.rotationError) * symmetryError +
     box.eulerRadius
 
 def Box.outerRadius (box : Box) : ℚ := box.εφ₂ + box.εθ₂
@@ -515,14 +517,14 @@ lemma AxisCertificate.real_balance (box : Box) (h : box.GeometricValid)
 noncomputable def AxisCertificate.normalizedAAt
     (box : Box) (cert : AxisCertificate) (q : Pose ℝ) (offset : ℝ²) : ℝ³ :=
   ((cert.B : ℝ)⁻¹) •
-    Noperthedron.Atlas.firstVariationVector
+    Noperts.Atlas.firstVariationVector
       (q.matrixPoseWithOffset offset) cert.realWeight cert.realDirection
       (cert.realVertex (P := P) box)
 
 lemma AxisCertificate.firstVariation_eq_B_smul_normalizedAAt
     (box : Box) (h : box.GeometricValid) (j : Fin 4)
     (q : Pose ℝ) (offset : ℝ²) :
-    Noperthedron.Atlas.firstVariationVector
+    Noperts.Atlas.firstVariationVector
         (q.matrixPoseWithOffset offset) (box.certificate j).realWeight
         (box.certificate j).realDirection
         ((box.certificate j).realVertex (P := P) box) =
@@ -532,8 +534,8 @@ lemma AxisCertificate.firstVariation_eq_B_smul_normalizedAAt
   simp [ne_of_gt (AxisCertificate.B_pos box h j)]
 
 private theorem rotationError_nonneg :
-    0 ≤ Noperthedron.Atlas.LocalCertificate.rotationError := by
-  norm_num [Noperthedron.Atlas.LocalCertificate.rotationError,
+    0 ≤ Noperts.Atlas.LocalCertificate.rotationError := by
+  norm_num [Noperts.Atlas.LocalCertificate.rotationError,
     RationalApprox.κℚ]
 
 private theorem symmetryError_nonneg : 0 ≤ symmetryError := by
@@ -542,8 +544,8 @@ private theorem symmetryError_nonneg : 0 ≤ symmetryError := by
 theorem valid_center_mismatch_bound (box : Box) (h : box.Valid) :
     ‖box.centerMismatchCLM‖ ≤
       (RationalApprox.sqrtℚUp16 box.mismatchFrobeniusSq : ℝ) +
-        2 * (Noperthedron.Atlas.LocalCertificate.rotationError : ℝ) +
-        (1 + (Noperthedron.Atlas.LocalCertificate.rotationError : ℝ)) *
+        2 * (Noperts.Atlas.LocalCertificate.rotationError : ℝ) +
+        (1 + (Noperts.Atlas.LocalCertificate.rotationError : ℝ)) *
           (symmetryError : ℝ) := by
   obtain ⟨hθ₁q, hθ₂q, hφ₁q, hφ₂q, hαq⟩ :=
     PoseInterval.contains_iff_components.mp h.center_in_four
@@ -552,15 +554,15 @@ theorem valid_center_mismatch_bound (box : Box) (h : box.Valid) :
   have hα := RationalApprox.cast_Icc4_mem ⟨box.center.α, hαq⟩
   have hθ₂ := RationalApprox.cast_Icc4_mem ⟨box.center.θ₂, hθ₂q⟩
   have hφ₂ := RationalApprox.cast_Icc4_mem ⟨box.center.φ₂, hφ₂q⟩
-  have hin := Noperthedron.Atlas.LocalCertificate.rotRMQ_difference_norm_bounded
+  have hin := Noperts.Atlas.LocalCertificate.rotRMQ_difference_norm_bounded
     box.center.θ₁ box.center.φ₁ box.center.α hθ₁ hφ₁ hα
-  have hout := Noperthedron.Atlas.LocalCertificate.rotRMQ_difference_norm_bounded
+  have hout := Noperts.Atlas.LocalCertificate.rotRMQ_difference_norm_bounded
     box.center.θ₂ box.center.φ₂ 0 hθ₂ hφ₂ (by norm_num)
   have hsym := symmetryQCLM_difference_norm_bounded box.symmetryIndex
   let exactOuter := rotRM box.center.toReal.θ₂ box.center.toReal.φ₂ 0
-  let approxOuter := Noperthedron.Atlas.LocalCertificate.rotRMQCLM
+  let approxOuter := Noperts.Atlas.LocalCertificate.rotRMQCLM
     box.center.θ₂ box.center.φ₂ 0
-  let exactSym := Noperthedron.Atlas.so3CLM (symmetry box.symmetryIndex)
+  let exactSym := Noperts.Atlas.so3CLM (symmetry box.symmetryIndex)
   let approxSym := symmetryQCLM box.symmetryIndex
   have hexactOuter : ‖exactOuter‖ = 1 := by
     dsimp [exactOuter]
@@ -568,21 +570,21 @@ theorem valid_center_mismatch_bound (box : Box) (h : box.Valid) :
     rw [Bounding.Rz_preserves_op_norm, Bounding.Rz_preserves_op_norm,
       Bounding.Ry_preserves_op_norm, Bounding.Rz_norm_one]
   have happroxOuter : ‖approxOuter‖ ≤
-      1 + (Noperthedron.Atlas.LocalCertificate.rotationError : ℝ) := by
+      1 + (Noperts.Atlas.LocalCertificate.rotationError : ℝ) := by
     calc
       ‖approxOuter‖ = ‖exactOuter - (exactOuter - approxOuter)‖ := by
         congr 1
         abel
       _ ≤ ‖exactOuter‖ + ‖exactOuter - approxOuter‖ :=
         norm_sub_le exactOuter (exactOuter - approxOuter)
-      _ ≤ 1 + (Noperthedron.Atlas.LocalCertificate.rotationError : ℝ) := by
+      _ ≤ 1 + (Noperts.Atlas.LocalCertificate.rotationError : ℝ) := by
         rw [hexactOuter]
         gcongr
         simpa [exactOuter, approxOuter] using hout
   have hdecomp : box.centerMismatchCLM - box.mismatchQCLM =
       (rotRM box.center.toReal.θ₁ box.center.toReal.φ₁
           box.center.toReal.α -
-        Noperthedron.Atlas.LocalCertificate.rotRMQCLM
+        Noperts.Atlas.LocalCertificate.rotRMQCLM
           box.center.θ₁ box.center.φ₁ box.center.α) -
       ((exactOuter - approxOuter) ∘L exactSym +
         approxOuter ∘L (exactSym - approxSym)) := by
@@ -591,41 +593,41 @@ theorem valid_center_mismatch_bound (box : Box) (h : box.Valid) :
     simp [Box.centerMismatchCLM, exactOuter, approxOuter, exactSym, approxSym]
     ring
   have hdiff : ‖box.centerMismatchCLM - box.mismatchQCLM‖ ≤
-      2 * (Noperthedron.Atlas.LocalCertificate.rotationError : ℝ) +
-        (1 + (Noperthedron.Atlas.LocalCertificate.rotationError : ℝ)) *
+      2 * (Noperts.Atlas.LocalCertificate.rotationError : ℝ) +
+        (1 + (Noperts.Atlas.LocalCertificate.rotationError : ℝ)) *
           (symmetryError : ℝ) := by
     rw [hdecomp]
     calc
       ‖(rotRM box.center.toReal.θ₁ box.center.toReal.φ₁
             box.center.toReal.α -
-          Noperthedron.Atlas.LocalCertificate.rotRMQCLM
+          Noperts.Atlas.LocalCertificate.rotRMQCLM
             box.center.θ₁ box.center.φ₁ box.center.α) -
         ((exactOuter - approxOuter) ∘L exactSym +
           approxOuter ∘L (exactSym - approxSym))‖ ≤
         ‖rotRM box.center.toReal.θ₁ box.center.toReal.φ₁
             box.center.toReal.α -
-          Noperthedron.Atlas.LocalCertificate.rotRMQCLM
+          Noperts.Atlas.LocalCertificate.rotRMQCLM
             box.center.θ₁ box.center.φ₁ box.center.α‖ +
         (‖(exactOuter - approxOuter) ∘L exactSym‖ +
           ‖approxOuter ∘L (exactSym - approxSym)‖) := by
         exact (norm_sub_le _ _).trans (add_le_add le_rfl (norm_add_le _ _))
-      _ ≤ (Noperthedron.Atlas.LocalCertificate.rotationError : ℝ) +
-          ((Noperthedron.Atlas.LocalCertificate.rotationError : ℝ) * 1 +
-            (1 + (Noperthedron.Atlas.LocalCertificate.rotationError : ℝ)) *
+      _ ≤ (Noperts.Atlas.LocalCertificate.rotationError : ℝ) +
+          ((Noperts.Atlas.LocalCertificate.rotationError : ℝ) * 1 +
+            (1 + (Noperts.Atlas.LocalCertificate.rotationError : ℝ)) *
               (symmetryError : ℝ)) := by
         apply add_le_add hin
         apply add_le_add
         · exact (ContinuousLinearMap.opNorm_comp_le _ _).trans
             (mul_le_mul (by simpa [exactOuter, approxOuter] using hout)
-              (le_of_eq (Noperthedron.Atlas.so3CLM_norm _))
+              (le_of_eq (Noperts.Atlas.so3CLM_norm _))
               (norm_nonneg _) (by exact_mod_cast rotationError_nonneg))
         · apply (ContinuousLinearMap.opNorm_comp_le _ _).trans
           calc
             ‖approxOuter‖ * ‖exactSym - approxSym‖ ≤
-                (1 + (Noperthedron.Atlas.LocalCertificate.rotationError : ℝ)) *
+                (1 + (Noperts.Atlas.LocalCertificate.rotationError : ℝ)) *
                   ‖exactSym - approxSym‖ :=
               mul_le_mul_of_nonneg_right happroxOuter (norm_nonneg _)
-            _ ≤ (1 + (Noperthedron.Atlas.LocalCertificate.rotationError : ℝ)) *
+            _ ≤ (1 + (Noperts.Atlas.LocalCertificate.rotationError : ℝ)) *
                 (symmetryError : ℝ) :=
               mul_le_mul_of_nonneg_left (by simpa [exactSym, approxSym] using hsym)
                 (by exact_mod_cast add_nonneg (by norm_num) rotationError_nonneg)
@@ -642,15 +644,15 @@ theorem valid_center_mismatch_bound (box : Box) (h : box.Valid) :
 
 private theorem poseMismatch_eq (q : Pose ℝ) (offset : ℝ²)
     (g : OrbitIndex) :
-    Noperthedron.Atlas.so3CLM (q.matrixPoseWithOffset offset).innerRot -
-        Noperthedron.Atlas.so3CLM
+    Noperts.Atlas.so3CLM (q.matrixPoseWithOffset offset).innerRot -
+        Noperts.Atlas.so3CLM
           ((q.matrixPoseWithOffset offset).outerRot * symmetry g) =
       rotRM q.θ₁ q.φ₁ q.α -
         rotRM q.θ₂ q.φ₂ 0 ∘L
-          Noperthedron.Atlas.so3CLM (symmetry g) := by
-  rw [Noperthedron.Atlas.so3CLM_mul]
+          Noperts.Atlas.so3CLM (symmetry g) := by
+  rw [Noperts.Atlas.so3CLM_mul]
   simp only [Pose.matrixPoseWithOffset, Pose.matrixPoseOfPose,
-    Noperthedron.Atlas.so3CLM]
+    Noperts.Atlas.so3CLM]
   rw [← rotRM_eq_rotRM_mat, ← rotRM_eq_rotRM_mat]
 
 theorem valid_mismatch_bound (box : Box) (h : box.Valid)
@@ -658,18 +660,18 @@ theorem valid_mismatch_bound (box : Box) (h : box.Valid)
     (hq : Pose.near box.center.toReal (box.εα : ℝ) (box.εθ₁ : ℝ)
       (box.εφ₁ : ℝ) (box.εθ₂ : ℝ) (box.εφ₂ : ℝ) q)
     (offset : ℝ²) :
-    ‖Noperthedron.Atlas.so3CLM (q.matrixPoseWithOffset offset).innerRot -
-        Noperthedron.Atlas.so3CLM
+    ‖Noperts.Atlas.so3CLM (q.matrixPoseWithOffset offset).innerRot -
+        Noperts.Atlas.so3CLM
           ((q.matrixPoseWithOffset offset).outerRot *
             symmetry box.symmetryIndex)‖ ≤ (box.r : ℝ) := by
   rw [poseMismatch_eq]
   let current : ℝ³ →L[ℝ] ℝ³ :=
     rotRM q.θ₁ q.φ₁ q.α - rotRM q.θ₂ q.φ₂ 0 ∘L
-      Noperthedron.Atlas.so3CLM (symmetry box.symmetryIndex)
-  have hin := Noperthedron.BalancedSupport.norm_rotRM_sub_le
+      Noperts.Atlas.so3CLM (symmetry box.symmetryIndex)
+  have hin := Noperts.BalancedSupport.norm_rotRM_sub_le
     q.θ₁ q.φ₁ q.α box.center.toReal.θ₁ box.center.toReal.φ₁
       box.center.toReal.α
-  have hout := Noperthedron.BalancedSupport.norm_rotRM_sub_le
+  have hout := Noperts.BalancedSupport.norm_rotRM_sub_le
     q.θ₂ q.φ₂ 0 box.center.toReal.θ₂ box.center.toReal.φ₂ 0
   norm_num at hout
   have hdecomp : current - box.centerMismatchCLM =
@@ -677,7 +679,7 @@ theorem valid_mismatch_bound (box : Box) (h : box.Valid)
         rotRM box.center.toReal.θ₁ box.center.toReal.φ₁ box.center.toReal.α) -
       (rotRM q.θ₂ q.φ₂ 0 -
         rotRM box.center.toReal.θ₂ box.center.toReal.φ₂ 0) ∘L
-          Noperthedron.Atlas.so3CLM (symmetry box.symmetryIndex) := by
+          Noperts.Atlas.so3CLM (symmetry box.symmetryIndex) := by
     ext v
     simp [current, Box.centerMismatchCLM]
     ring
@@ -688,13 +690,13 @@ theorem valid_mismatch_bound (box : Box) (h : box.Valid)
           rotRM box.center.toReal.θ₁ box.center.toReal.φ₁ box.center.toReal.α‖ +
         ‖(rotRM q.θ₂ q.φ₂ 0 -
           rotRM box.center.toReal.θ₂ box.center.toReal.φ₂ 0) ∘L
-            Noperthedron.Atlas.so3CLM (symmetry box.symmetryIndex)‖ := norm_sub_le _ _
+            Noperts.Atlas.so3CLM (symmetry box.symmetryIndex)‖ := norm_sub_le _ _
       _ ≤ (|q.α - box.center.toReal.α| + |q.φ₁ - box.center.toReal.φ₁| +
           |q.θ₁ - box.center.toReal.θ₁|) +
         (|q.φ₂ - box.center.toReal.φ₂| + |q.θ₂ - box.center.toReal.θ₂|) := by
         apply add_le_add hin
         exact (ContinuousLinearMap.opNorm_comp_le _ _).trans (by
-          rw [Noperthedron.Atlas.so3CLM_norm, mul_one]
+          rw [Noperts.Atlas.so3CLM_norm, mul_one]
           exact hout)
       _ ≤ (box.eulerRadius : ℝ) := by
         rw [show (box.eulerRadius : ℝ) =
@@ -704,8 +706,8 @@ theorem valid_mismatch_bound (box : Box) (h : box.Valid)
   have hcenter := valid_center_mismatch_bound box h
   have hcurrent : ‖current‖ ≤
       (RationalApprox.sqrtℚUp16 box.mismatchFrobeniusSq : ℝ) +
-        2 * (Noperthedron.Atlas.LocalCertificate.rotationError : ℝ) +
-        (1 + (Noperthedron.Atlas.LocalCertificate.rotationError : ℝ)) *
+        2 * (Noperts.Atlas.LocalCertificate.rotationError : ℝ) +
+        (1 + (Noperts.Atlas.LocalCertificate.rotationError : ℝ)) *
           (symmetryError : ℝ) + (box.eulerRadius : ℝ) := by
     calc
       ‖current‖ = ‖box.centerMismatchCLM + (current - box.centerMismatchCLM)‖ := by
@@ -721,12 +723,12 @@ theorem valid_axisAngle_ratio (box : Box) (h : box.Valid)
     (hq : Pose.near box.center.toReal (box.εα : ℝ) (box.εθ₁ : ℝ)
       (box.εφ₁ : ℝ) (box.εθ₂ : ℝ) (box.εφ₂ : ℝ) q)
     (offset : ℝ²)
-    (a : Noperthedron.BalancedSupport.AxisAngle
-      (Noperthedron.Atlas.so3CLM
+    (a : Noperts.BalancedSupport.AxisAngle
+      (Noperts.Atlas.so3CLM
         (relativeRotationAtSymmetry
           (q.matrixPoseWithOffset offset) box.symmetryIndex))) :
     1 - Real.cos a.angle ≤ |Real.sin a.angle| * (box.c : ℝ) := by
-  apply Noperthedron.Nopert231.AxisAngle.ratio_of_inner_mismatch_bound
+  apply Nopert231.AxisAngle.ratio_of_inner_mismatch_bound
     (q.matrixPoseWithOffset offset) box.symmetryIndex a
     (box.c : ℝ) (box.r : ℝ)
   · exact_mod_cast h.c_nonneg
@@ -736,10 +738,10 @@ theorem valid_axisAngle_ratio (box : Box) (h : box.Valid)
 
 private theorem toR3_crossQ (u v : Fin 3 → ℚ) :
     toR3 (crossQ u v) =
-      Noperthedron.BalancedSupport.cross3 (toR3 u) (toR3 v) := by
+      Noperts.BalancedSupport.cross3 (toR3 u) (toR3 v) := by
   ext i
   fin_cases i <;>
-    simp [crossQ, Noperthedron.BalancedSupport.cross3, cross_apply, toR3]
+    simp [crossQ, Noperts.BalancedSupport.cross3, cross_apply, toR3]
 
 private theorem toR3_sum {ι : Type} [Fintype ι] (f : ι → Fin 3 → ℚ) :
     toR3 (∑ i, f i) = ∑ i, toR3 (f i) := by
@@ -777,7 +779,7 @@ lemma AxisCertificate.toR3_approxLift (box : Box)
 lemma AxisCertificate.toR3_approxA (box : Box) (cert : AxisCertificate) :
     toR3 (cert.approxA box) =
       ∑ i, (cert.weight i : ℝ) •
-        Noperthedron.BalancedSupport.cross3
+        Noperts.BalancedSupport.cross3
           (toR3 (rationalVertex (symmetryAction box.symmetryIndex
             (cert.contact i).index)))
           ((RationalApprox.rotMℚℝ (box.center.θ₂ : ℝ)
@@ -811,10 +813,10 @@ theorem valid_center_normalizedA_approx (box : Box)
     toR3 (rationalVertex
       (symmetryAction box.symmetryIndex (cert.contact i).index))
   let exactLift : Fin 3 → ℝ³ := fun i =>
-    Noperthedron.Atlas.outerLift
+    Noperts.Atlas.outerLift
       (box.center.toReal.matrixPoseWithOffset 0) (cert.realDirection i)
   let approxLift : Fin 3 → ℝ³ := fun i => toR3 (cert.approxLift box i)
-  have hbound := Noperthedron.Atlas.norm_normalizedWeightedCross_approx_sub_le
+  have hbound := Noperts.Atlas.norm_normalizedWeightedCross_approx_sub_le
     cert.realWeight (cert.realVertex box) approxVertex exactLift approxLift
     (cert.normalizedAAt box box.center.toReal 0)
     (toR3 (box.approxNormalizedA j)) (cert.B : ℝ) RationalApprox.κ
@@ -838,19 +840,19 @@ theorem valid_center_normalizedA_approx (box : Box)
         (P.approximation.approx
           (symmetryAction box.symmetryIndex (cert.contact i).index)))
     (fun i => by
-      have hlift := Noperthedron.Atlas.norm_outerLift_rationalApprox_sub_le
+      have hlift := Noperts.Atlas.norm_outerLift_rationalApprox_sub_le
         box.center h.center_in_four (0 : ℝ²) (cert.realDirection i)
         (direction_norm_eq_one (h.direction_unit j i))
       simpa [exactLift, approxLift, AxisCertificate.realDirection,
         cert.toR3_approxLift] using hlift)
     (fun i => by
-      have hlift := Noperthedron.Atlas.norm_rationalApprox_outerLift_le
+      have hlift := Noperts.Atlas.norm_rationalApprox_outerLift_le
         box.center h.center_in_four (cert.realDirection i)
         (direction_norm_eq_one (h.direction_unit j i))
       simpa [approxLift, AxisCertificate.realDirection,
         cert.toR3_approxLift] using hlift)
     (by
-      simpa [Noperthedron.Atlas.firstVariationVector, exactLift,
+      simpa [Noperts.Atlas.firstVariationVector, exactLift,
         AxisCertificate.realWeight, AxisCertificate.realDirection,
         AxisCertificate.realVertex, C5Model.vertex, approxVertex, cert] using
           (AxisCertificate.firstVariation_eq_B_smul_normalizedAAt
@@ -886,7 +888,7 @@ theorem valid_normalizedA_move (box : Box) (h : box.GeometricValid)
           (‖cert.realDirection i‖ * ‖cert.realVertex (P := P) box i‖) ≤ (cert.B : ℝ) :=
     AxisCertificate.real_remainder_le_B (P := P) box h j
   have hcenterMove :=
-    Noperthedron.Atlas.norm_normalizedFirstVariation_matrixPoseWithOffset_sub_le_of_budget_bound
+    Noperts.Atlas.norm_normalizedFirstVariation_matrixPoseWithOffset_sub_le_of_budget_bound
       q box.center.toReal offset 0 cert.realWeight cert.realDirection
       (cert.realVertex box) (cert.normalizedAAt box q offset)
       (cert.normalizedAAt box box.center.toReal 0) (cert.B : ℝ)
@@ -1043,14 +1045,14 @@ theorem contact_support_matrixPose (box : Box) (contact : Contact)
       (box.εφ₁ : ℝ) (box.εθ₂ : ℝ) (box.εφ₂ : ℝ) q)
     (offset : ℝ²) (k : VertexIndex) :
     ⟪toR2 contact.direction,
-        Noperthedron.BalancedSupport.outerProjectionLinear
+        Noperts.BalancedSupport.outerProjectionLinear
           (q.matrixPoseWithOffset offset) (P.vertex k)⟫ ≤
       ⟪toR2 contact.direction,
-        Noperthedron.BalancedSupport.outerProjectionLinear
+        Noperts.BalancedSupport.outerProjectionLinear
           (q.matrixPoseWithOffset offset)
           (P.vertex (symmetryAction box.symmetryIndex contact.index))⟫ := by
-  simpa [Noperthedron.BalancedSupport.outerProjectionLinear,
-    Noperthedron.BalancedSupport.matrixPoseWithOffset_outer_rotation_project] using
+  simpa [Noperts.BalancedSupport.outerProjectionLinear,
+    Noperts.BalancedSupport.matrixPoseWithOffset_outer_rotation_project] using
     contact_support_pose box contact hcenter hdirection hsupported hq k
 
 theorem valid_contact_support_matrixPose (box : Box) (h : box.GeometricValid)
@@ -1059,10 +1061,10 @@ theorem valid_contact_support_matrixPose (box : Box) (h : box.GeometricValid)
       (box.εφ₁ : ℝ) (box.εθ₂ : ℝ) (box.εφ₂ : ℝ) q)
     (offset : ℝ²) (j : Fin 4) (i : Fin 3) (k : VertexIndex) :
     ⟪toR2 ((box.certificate j).contact i).direction,
-        Noperthedron.BalancedSupport.outerProjectionLinear
+        Noperts.BalancedSupport.outerProjectionLinear
           (q.matrixPoseWithOffset offset) (P.vertex k)⟫ ≤
       ⟪toR2 ((box.certificate j).contact i).direction,
-        Noperthedron.BalancedSupport.outerProjectionLinear
+        Noperts.BalancedSupport.outerProjectionLinear
           (q.matrixPoseWithOffset offset)
           (P.vertex (symmetryAction box.symmetryIndex
             ((box.certificate j).contact i).index))⟫ :=
@@ -1074,7 +1076,7 @@ private theorem barycentric_mem_convexHull (box : Box)
     (h : box.GeometricValid) (k : Fin 6) :
     toR3 (box.octahedronTarget k) ∈
       convexHull ℝ {toR3 (box.approxNormalizedA j) | j} := by
-  apply Noperthedron.BalancedSupport.mem_convexHull_of_barycentric
+  apply Noperts.BalancedSupport.mem_convexHull_of_barycentric
     (fun j => toR3 (box.approxNormalizedA j))
     (fun j => (box.barycentric k j : ℝ))
   · intro j
@@ -1093,7 +1095,7 @@ theorem valid_center_axis_cover (box : Box) (h : box.GeometricValid)
     (axis : ℝ³) (haxis : ‖axis‖ = 1) :
     ∃ j, ((box.c + box.axisPerturbation : ℚ) : ℝ) ≤
       ⟪axis, toR3 (box.approxNormalizedA j)⟫ := by
-  apply Noperthedron.BalancedSupport.octahedral_axis_cover
+  apply Noperts.BalancedSupport.octahedral_axis_cover
     (fun j => toR3 (box.approxNormalizedA j))
     ((box.c + box.axisPerturbation : ℚ) : ℝ)
   · exact_mod_cast add_nonneg h.c_nonneg
@@ -1101,50 +1103,50 @@ theorem valid_center_axis_cover (box : Box) (h : box.GeometricValid)
         (by norm_num [centerVectorError, RationalApprox.κℚ]))
   · have heq : toR3 (box.octahedronTarget 0) =
         (7 / 4 * (((box.c + box.axisPerturbation : ℚ) : ℝ))) •
-          Noperthedron.BalancedSupport.xAxis3 := by
+          Noperts.BalancedSupport.xAxis3 := by
       rw [Box.octahedronTarget, octahedronAxis_zero]
       ext i
-      fin_cases i <;> norm_num [Noperthedron.BalancedSupport.xAxis3, toR3]
+      fin_cases i <;> norm_num [Noperts.BalancedSupport.xAxis3, toR3]
     rw [← heq]
     exact barycentric_mem_convexHull box h 0
   · have heq : toR3 (box.octahedronTarget 1) =
         (- (7 / 4 * (((box.c + box.axisPerturbation : ℚ) : ℝ)))) •
-          Noperthedron.BalancedSupport.xAxis3 := by
+          Noperts.BalancedSupport.xAxis3 := by
       rw [Box.octahedronTarget, octahedronAxis_one]
       ext i
-      fin_cases i <;> norm_num [Noperthedron.BalancedSupport.xAxis3, toR3]
+      fin_cases i <;> norm_num [Noperts.BalancedSupport.xAxis3, toR3]
     rw [← heq]
     exact barycentric_mem_convexHull box h 1
   · have heq : toR3 (box.octahedronTarget 2) =
         (7 / 4 * (((box.c + box.axisPerturbation : ℚ) : ℝ))) •
-          Noperthedron.BalancedSupport.yAxis3 := by
+          Noperts.BalancedSupport.yAxis3 := by
       rw [Box.octahedronTarget, octahedronAxis_two]
       ext i
-      fin_cases i <;> norm_num [Noperthedron.BalancedSupport.yAxis3, toR3]
+      fin_cases i <;> norm_num [Noperts.BalancedSupport.yAxis3, toR3]
     rw [← heq]
     exact barycentric_mem_convexHull box h 2
   · have heq : toR3 (box.octahedronTarget 3) =
         (- (7 / 4 * (((box.c + box.axisPerturbation : ℚ) : ℝ)))) •
-          Noperthedron.BalancedSupport.yAxis3 := by
+          Noperts.BalancedSupport.yAxis3 := by
       rw [Box.octahedronTarget, octahedronAxis_three]
       ext i
-      fin_cases i <;> norm_num [Noperthedron.BalancedSupport.yAxis3, toR3]
+      fin_cases i <;> norm_num [Noperts.BalancedSupport.yAxis3, toR3]
     rw [← heq]
     exact barycentric_mem_convexHull box h 3
   · have heq : toR3 (box.octahedronTarget 4) =
         (7 / 4 * (((box.c + box.axisPerturbation : ℚ) : ℝ))) •
-          Noperthedron.BalancedSupport.zAxis3 := by
+          Noperts.BalancedSupport.zAxis3 := by
       rw [Box.octahedronTarget, octahedronAxis_four]
       ext i
-      fin_cases i <;> norm_num [Noperthedron.BalancedSupport.zAxis3, toR3]
+      fin_cases i <;> norm_num [Noperts.BalancedSupport.zAxis3, toR3]
     rw [← heq]
     exact barycentric_mem_convexHull box h 4
   · have heq : toR3 (box.octahedronTarget 5) =
         (- (7 / 4 * (((box.c + box.axisPerturbation : ℚ) : ℝ)))) •
-          Noperthedron.BalancedSupport.zAxis3 := by
+          Noperts.BalancedSupport.zAxis3 := by
       rw [Box.octahedronTarget, octahedronAxis_five]
       ext i
-      fin_cases i <;> norm_num [Noperthedron.BalancedSupport.zAxis3, toR3]
+      fin_cases i <;> norm_num [Noperts.BalancedSupport.zAxis3, toR3]
     rw [← heq]
     exact barycentric_mem_convexHull box h 5
   · exact haxis
@@ -1159,15 +1161,15 @@ theorem Box.valid_imp_not_translated_rupert (box : Box) (h : box.Valid) :
   let hg := h.geometric
   let relative := relativeRotationAtSymmetry
     (q.matrixPoseWithOffset offset) box.symmetryIndex
-  obtain ⟨a⟩ := Noperthedron.BalancedSupport.exists_axisAngle
+  obtain ⟨a⟩ := Noperts.BalancedSupport.exists_axisAngle
     relative.val relative.property
   apply
-    Noperthedron.Nopert231.not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation
+    Nopert231.not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation
       (p := q.matrixPoseWithOffset offset) (g := box.symmetryIndex) (a := a)
       (index := fun j i => (box.certificate j).contact i |>.index)
       (weight := fun j => (box.certificate j).realWeight)
       (direction := fun j => (box.certificate j).realDirection)
-      (A := fun j => Noperthedron.Atlas.firstVariationVector
+      (A := fun j => Noperts.Atlas.firstVariationVector
         (q.matrixPoseWithOffset offset) (box.certificate j).realWeight
         (box.certificate j).realDirection
         ((box.certificate j).realVertex (P := P) box))
@@ -1207,6 +1209,6 @@ theorem Box.valid_imp_no_translated_rupert_in_interval
   exact box.valid_imp_not_translated_rupert h q
     (box.near_center_of_mem_realInterval hq) offset hrupert
 
-end Noperthedron.Nopert231.LocalCertificate
+end Nopert231.LocalCertificate
 
 end

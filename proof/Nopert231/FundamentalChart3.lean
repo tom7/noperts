@@ -1,7 +1,6 @@
 module
 
-public import Noperthedron.Nopert231.AtlasProjectiveSolutionTree
-public meta import Noperthedron.Nopert231.AtlasProjectiveSolutionTree
+public import Nopert231.AtlasProjectiveSolutionTree
 
 @[expose] public section
 
@@ -10,14 +9,16 @@ public meta import Noperthedron.Nopert231.AtlasProjectiveSolutionTree
 
 In the fivefold max-trace fundamental domain, chart 3 is empty.  Splitting
 once at `z = 0` makes the two adjacent-symmetry advantages uniformly
-positive.  The same tiny table is checked by both evaluators without any
-array-backed generated data.
+positive.  The same tiny table is checked by the kernel (`table_valid_kernel`) and,
+natively, by the executable, without any array-backed generated data.
 -/
 
-namespace Noperthedron.Nopert231.FundamentalChart3
+open Noperts
+
+namespace Nopert231.FundamentalChart3
 
 open AtlasProjectiveSolutionTree AtlasProjectiveView
-open Noperthedron.Atlas.ProjectiveView
+open Noperts.Atlas.ProjectiveView
 
 def root : AtlasProjectiveSolutionTree.Interval :=
   AtlasFundamentalPrune.restrictedRootInterval 3
@@ -41,8 +42,6 @@ def table : AtlasProjectiveSolutionTree.Table where
   get := getRowKernel
   size := 4
 
-theorem table_valid_native : table.Valid := by native_decide
-
 private theorem rows_valid_range_kernel :
     RowsValidRangeAt 3 getRowKernel 4 0 4 #[] := by
   decide +kernel
@@ -53,6 +52,6 @@ theorem table_valid_kernel : table.Valid := by
   · decide +kernel
   · trivial
 
-end Noperthedron.Nopert231.FundamentalChart3
+end Nopert231.FundamentalChart3
 
 end

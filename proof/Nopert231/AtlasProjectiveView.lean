@@ -1,8 +1,8 @@
 module
 
-public import Noperthedron.Nopert231.AtlasEdgeCertificate
-public import Noperthedron.Nopert231.AtlasFundamentalPrune
-public import Noperthedron.Atlas.ProjectiveView
+public import Nopert231.AtlasEdgeCertificate
+public import Nopert231.AtlasFundamentalPrune
+public import Atlas.ProjectiveView
 
 @[expose] public section
 
@@ -16,11 +16,13 @@ coordinate sum puts it in the appropriate rational triangle, and that sum
 is at least one.
 -/
 
-namespace Noperthedron.Nopert231.AtlasProjectiveView
+open Noperts
+
+namespace Nopert231.AtlasProjectiveView
 
 open scoped RealInnerProductSpace
 open AtlasEdgeCertificate
-open Noperthedron.Atlas.ProjectiveView
+open Noperts.Atlas.ProjectiveView
 
 abbrev Vector (R : Type) := Fin 3 → R
 abbrev Triangle (R : Type) := Fin 3 → Vector R
@@ -325,6 +327,6 @@ theorem exists_root (p : AtlasPose ℝ) :
           normalizedView_mem_root_of_sign ?_⟩ <;>
           intro c <;> fin_cases c <;> simp [rootSign, h0', h1', h2']
 
-end Noperthedron.Nopert231.AtlasProjectiveView
+end Nopert231.AtlasProjectiveView
 
 end

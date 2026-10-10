@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert231.CayleyAtlas
+public import Nopert231.CayleyAtlas
 
 @[expose] public section
 
@@ -13,7 +13,9 @@ certificate domain is four copies of a five-dimensional rational box, with
 no Euler singularities.
 -/
 
-namespace Noperthedron.Nopert231
+open Noperts
+
+namespace Nopert231
 
 variable {P : C5Model}
 
@@ -187,7 +189,7 @@ theorem AtlasPose.matrixPoseWithOffset_ofPose_eq (euler : Pose ℝ)
       euler.matrixPoseWithOffset offset := by
   let oldPose := euler.matrixPoseWithOffset offset
   have hrecover :=
-    Noperthedron.Atlas.MatrixPose.outer_mul_relativeRotation oldPose
+    Noperts.Atlas.MatrixPose.outer_mul_relativeRotation oldPose
   apply matrixPose_ext_val
   · calc
       ((AtlasPose.ofPose euler x y z).matrixPoseWithOffset chart offset).innerRot.val =
@@ -212,7 +214,7 @@ theorem exists_atlas_pose_of_tight_pose (euler : Pose ℝ) (offset : ℝ²)
   let oldPose := euler.matrixPoseWithOffset offset
   obtain ⟨chart, x, hx, y, hy, z, hz, _hradius, hrelative⟩ :=
     exists_bounded_chart_cayley oldPose.relativeRotation
-      (Noperthedron.Atlas.MatrixPose.relativeRotation_mem_SO3 oldPose)
+      (Noperts.Atlas.MatrixPose.relativeRotation_mem_SO3 oldPose)
   refine ⟨chart, AtlasPose.ofPose euler x y z,
     AtlasPose.ofPose_mem_root euler x y z heuler hx hy hz, ?_⟩
   exact AtlasPose.matrixPoseWithOffset_ofPose_eq
@@ -229,7 +231,7 @@ theorem exists_bounded_atlas_pose_of_tight_pose
   let oldPose := euler.matrixPoseWithOffset offset
   obtain ⟨chart, x, hx, y, hy, z, hz, hradius, hrelative⟩ :=
     exists_bounded_chart_cayley oldPose.relativeRotation
-      (Noperthedron.Atlas.MatrixPose.relativeRotation_mem_SO3 oldPose)
+      (Noperts.Atlas.MatrixPose.relativeRotation_mem_SO3 oldPose)
   refine ⟨chart, AtlasPose.ofPose euler x y z,
     AtlasPose.ofPose_mem_root euler x y z heuler hx hy hz,
     hradius, by simpa [AtlasPose.InViewWedge, AtlasPose.ofPose, InViewWedge]
@@ -287,6 +289,6 @@ theorem no_matrixPose_of_no_bounded_atlas_translated_pose
   exact h ⟨chart, q, hq, hbounded, hqview, offset,
     hmatrix ▸ heulerRupert⟩
 
-end Noperthedron.Nopert231
+end Nopert231
 
 end

@@ -1,13 +1,15 @@
 module
 
-public import Noperthedron.Checker.RatBall
-public import Noperthedron.Nopert231.AtlasPose
+public import Checker.RatBall
+public import Nopert231.AtlasPose
 
 @[expose] public section
 
 /-! # Rational boxes for Nopert #231 atlas poses -/
 
-namespace Noperthedron.Nopert231
+open Noperts
+
+namespace Nopert231
 
 @[reducible]
 def AtlasInterval (R : Type) [PartialOrder R] : Type :=
@@ -231,6 +233,6 @@ theorem rootInterval_toReal :
 
 end AtlasInterval
 
-end Noperthedron.Nopert231
+end Nopert231
 
 end

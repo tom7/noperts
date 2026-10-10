@@ -1,7 +1,7 @@
-import Noperthedron.Nopert231.FundamentalChart3
-import Noperthedron.Nopert231.Ideal231
-import Noperthedron.Nopert231.NativeExecutable
-import Noperthedron.Nopert231.PackedSolutionTree
+import Nopert231.FundamentalChart3
+import Nopert231.Ideal231
+import Nopert231.NativeExecutable
+import Nopert231.PackedSolutionTree
 
 /-!
 Native executable that reads and checks exact certificate data, then constructs
@@ -12,9 +12,11 @@ as parallel native code, while kernel-proved bridge theorems turn success into
 the semantic proof consumed by the public theorem.
 -/
 
-open Noperthedron.Nopert231
-open Noperthedron.Nopert231.AtlasProjectiveSolutionTree
-open Noperthedron.Nopert231.NativeExecutable
+open Noperts
+
+open Nopert231
+open Nopert231.AtlasProjectiveSolutionTree
+open Nopert231.NativeExecutable
 
 /-- A completed local-table audit found 64 chunks materially faster than 512
 for these comparatively expensive exact-rational rows. -/

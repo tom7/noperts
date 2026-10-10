@@ -1,8 +1,8 @@
 module
 
-public import Noperthedron.Nopert231.Symmetry
-public import Noperthedron.BalancedSupport.UniversalDomain
-public import Noperthedron.BalancedSupport.ViewAntipode
+public import Nopert231.Symmetry
+public import BalancedSupport.UniversalDomain
+public import BalancedSupport.ViewAntipode
 
 @[expose] public section
 
@@ -14,12 +14,14 @@ bounds for the other three Euler parameters.  The resulting rational box is
 the domain that the certificate tree must cover.
 -/
 
-namespace Noperthedron.Nopert231
+open Noperts
+
+namespace Nopert231
 
 variable {P : C5Model}
 
 open Real
-open Noperthedron.BalancedSupport
+open Noperts.BalancedSupport
 
 noncomputable def tightPoseInterval : PoseInterval ℝ :=
   PoseInterval.mk
@@ -47,12 +49,12 @@ private theorem translated_innerShadow_eq (p : Pose ℝ) (offset : ℝ²)
   constructor
   · rintro ⟨v, hv, rfl⟩
     refine ⟨p.inner v, ⟨v, hv, rfl⟩, ?_⟩
-    rw [Noperthedron.BalancedSupport.project_inner_apply,
+    rw [Noperts.BalancedSupport.project_inner_apply,
       matrixPoseWithOffset_inner_rotation_project]
     rfl
   · rintro ⟨y, ⟨v, hv, rfl⟩, rfl⟩
     refine ⟨v, hv, ?_⟩
-    rw [Noperthedron.BalancedSupport.project_inner_apply,
+    rw [Noperts.BalancedSupport.project_inner_apply,
       matrixPoseWithOffset_inner_rotation_project]
     rfl
 
@@ -151,7 +153,7 @@ theorem exists_tight_translated_pose (p : MatrixPose) :
       (RupertPose (q.matrixPoseWithOffset offset) P.polyhedron.hull ↔
         RupertPose (p.rotateBy δ) P.polyhedron.hull) := by
   obtain ⟨δ, p0, offset, hp0, _hθ0, hφ0, heq⟩ :=
-    Noperthedron.BalancedSupport.exists_universal_translated_pose p
+    Noperts.BalancedSupport.exists_universal_translated_pose p
   obtain ⟨q, hθ₂, hdiff, hφ₁, hφ₂, hα, hinner, houter⟩ := tighten_theta p0
   have hq : q ∈ tightPoseInterval := by
     rw [NonemptyInterval.mem_def, Pose.le_iff, Pose.le_iff]
@@ -190,7 +192,7 @@ theorem exists_upper_tight_translated_pose (p : MatrixPose) :
   have hp' : 0 ≤ p'.outerRot.val 2 2 :=
     MatrixPose.upperViewRepresentative_outer_22_nonneg p
   obtain ⟨δ, p0, offset, hp0, _hθ0, hφ0, heq⟩ :=
-    Noperthedron.BalancedSupport.exists_universal_translated_pose p'
+    Noperts.BalancedSupport.exists_universal_translated_pose p'
   have hcos : 0 ≤ Real.cos p0.φ₂ := by
     have hout22 := congrArg
       (fun pose : MatrixPose ↦ pose.outerRot.val 2 2) heq
@@ -251,6 +253,6 @@ theorem no_matrixPose_of_no_tight_translated_pose
     (MatrixPose.RupertPose_rotateBy_iff p δ P.polyhedron.hull).mpr hp
   exact h ⟨q, hq, offset, heq.mpr hrot⟩
 
-end Noperthedron.Nopert231
+end Nopert231
 
 end

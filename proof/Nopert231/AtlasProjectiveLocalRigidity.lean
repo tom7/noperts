@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert231.AtlasProjectiveView
-public import Noperthedron.Nopert231.SymmetryLocal
+public import Nopert231.AtlasProjectiveView
+public import Nopert231.SymmetryLocal
 
 @[expose] public section
 
@@ -9,18 +9,20 @@ public import Noperthedron.Nopert231.SymmetryLocal
 # Projective moving-direction local rigidity for Nopert #231
 
 This is the signed-atlas version of the projective local theorem in
-`Noperthedron.Atlas.LocalRigidity`. The support directions, determinant weights, and first-variation vectors vary
+`Noperts.Atlas.LocalRigidity`. The support directions, determinant weights, and first-variation vectors vary
 polynomially with the normalized projective view.  The finite-rotation ratio
 is supplied separately by the atlas-local Cayley mismatch certificate.
 -/
 
-namespace Noperthedron.Nopert231.AtlasProjectiveLocalRigidity
+open Noperts
+
+namespace Nopert231.AtlasProjectiveLocalRigidity
 
 variable {P : C5Model}
 
 open scoped RealInnerProductSpace
-open Noperthedron.BalancedSupport
-open Noperthedron.Atlas.ProjectiveView
+open Noperts.BalancedSupport
+open Noperts.Atlas.ProjectiveView
 open AtlasEdgeCertificate AtlasProjectiveView
 
 abbrev EdgeTriple := Fin 3 → ℝ³
@@ -108,13 +110,13 @@ theorem inner_direction_outerProjection_eq_support
 theorem outerLift_direction (root : Fin 8) (p : AtlasPose ℝ)
     (chart : CayleyAtlas.ChartIndex) (offset : ℝ²) (edge : ℝ³)
     (hscale : viewScale root p ≠ 0) :
-    Noperthedron.Atlas.outerLift
+    Noperts.Atlas.outerLift
         (p.matrixPoseWithOffset chart offset) (direction root p edge) =
       cross3 (WithLp.toLp 2
         (AtlasProjectiveView.normalizedView root p)) edge := by
   apply ext_inner_right ℝ
   intro v
-  rw [← Noperthedron.Atlas.inner_outerProjection_eq_outerLift]
+  rw [← Noperts.Atlas.inner_outerProjection_eq_outerLift]
   rw [direction, real_inner_smul_left]
   have hproj :
       outerProjectionLinear (p.matrixPoseWithOffset chart offset) v =
@@ -138,11 +140,11 @@ noncomputable def variationVector (root : Fin 8) (p : AtlasPose ℝ)
 theorem firstVariationVector_eq (root : Fin 8) (p : AtlasPose ℝ)
     (chart : CayleyAtlas.ChartIndex) (offset : ℝ²) (edge : EdgeTriple)
     (vertex : VertexTriple) (hscale : viewScale root p ≠ 0) :
-    Noperthedron.Atlas.firstVariationVector
+    Noperts.Atlas.firstVariationVector
         (p.matrixPoseWithOffset chart offset) (weight root p edge)
         (fun i => direction root p (edge i)) vertex =
       variationVector root p edge vertex := by
-  unfold Noperthedron.Atlas.firstVariationVector variationVector
+  unfold Noperts.Atlas.firstVariationVector variationVector
   apply Finset.sum_congr rfl
   intro i _
   rw [outerLift_direction root p chart offset (edge i) hscale]
@@ -167,7 +169,7 @@ theorem not_rupertPose_of_projective_local_certificates
       (‖direction root p (edge j i)‖ *
         ‖P.vertex (symmetryAction g (index j i))‖) ≤ B j)
     (hratio : ∀ a : AxisAngle
-      (Noperthedron.Atlas.so3CLM
+      (Noperts.Atlas.so3CLM
         (relativeRotationAtSymmetry
           (p.matrixPoseWithOffset chart offset) g)),
       1 - Real.cos a.angle ≤ |Real.sin a.angle| * c)
@@ -187,7 +189,7 @@ theorem not_rupertPose_of_projective_local_certificates
     (p.matrixPoseWithOffset chart offset) g
   obtain ⟨a⟩ := exists_axisAngle relative.val relative.property
   apply
-    Noperthedron.Nopert231.not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation
+    Nopert231.not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation
       (p := p.matrixPoseWithOffset chart offset) (g := g) (a := a)
       (index := index)
       (weight := fun j => weight root p (edge j))
@@ -233,7 +235,7 @@ theorem not_rupertPose_of_projective_local_certificates_with_defect
         ‖P.vertex (symmetryAction g (index j i))‖) ≤ B j)
     (hD_bound : ∀ j, ∑ i, weight root p (edge j) i * defect j i ≤ D j)
     (hratio : ∀ a : AxisAngle
-      (Noperthedron.Atlas.so3CLM
+      (Noperts.Atlas.so3CLM
         (relativeRotationAtSymmetry
           (p.matrixPoseWithOffset chart offset) g)),
       ∀ j, (1 - Real.cos a.angle) * B j + D j ≤ |Real.sin a.angle| * c * B j)
@@ -253,7 +255,7 @@ theorem not_rupertPose_of_projective_local_certificates_with_defect
     (p.matrixPoseWithOffset chart offset) g
   obtain ⟨a⟩ := exists_axisAngle relative.val relative.property
   apply
-    Noperthedron.Nopert231.not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation_with_defect
+    Nopert231.not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation_with_defect
       (p := p.matrixPoseWithOffset chart offset) (g := g) (a := a)
       (index := index)
       (weight := fun j => weight root p (edge j))
@@ -304,7 +306,7 @@ theorem not_rupertPose_of_projective_local_certificates_with_decomposition
       (‖direction root p (edge j i)‖ *
         ‖P.vertex (symmetryAction g (index j i))‖) ≤ B j)
     (hratio : ∀ a : AxisAngle
-      (Noperthedron.Atlas.so3CLM
+      (Noperts.Atlas.so3CLM
         (relativeRotationAtSymmetry
           (p.matrixPoseWithOffset chart offset) g)),
       1 - Real.cos a.angle ≤ |Real.sin a.angle| * c)
@@ -319,7 +321,7 @@ theorem not_rupertPose_of_projective_local_certificates_with_decomposition
           outerProjectionLinear (p.matrixPoseWithOffset chart offset)
             (P.vertex (symmetryAction g (index j i)))⟫)
     (hexceptional : ∀ a : AxisAngle
-      (Noperthedron.Atlas.so3CLM
+      (Noperts.Atlas.so3CLM
         (relativeRotationAtSymmetry
           (p.matrixPoseWithOffset chart offset) g)),
       exceptional a.signedAxis → ¬ RupertPose (p.matrixPoseWithOffset chart offset)
@@ -330,7 +332,7 @@ theorem not_rupertPose_of_projective_local_certificates_with_decomposition
     (p.matrixPoseWithOffset chart offset) g
   obtain ⟨a⟩ := exists_axisAngle relative.val relative.property
   apply
-    Noperthedron.Nopert231.not_rupertPose_of_decomposed_symmetry_certificates
+    Nopert231.not_rupertPose_of_decomposed_symmetry_certificates
       (p := p.matrixPoseWithOffset chart offset) (g := g) (a := a)
       (exceptional := exceptional)
       (index := index)
@@ -362,7 +364,7 @@ theorem not_rupertPose_of_projective_local_certificates_with_decomposition
   · exact hsupport
   · exact hexceptional a
 
-end Noperthedron.Nopert231.AtlasProjectiveLocalRigidity
+end Nopert231.AtlasProjectiveLocalRigidity
 
 end
 

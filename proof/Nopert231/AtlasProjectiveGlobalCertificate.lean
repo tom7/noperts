@@ -1,8 +1,8 @@
 module
 
-public import Noperthedron.Nopert231.AtlasProjectiveGlobalRigidity
-public import Noperthedron.Nopert231.AtlasProjectiveLocalCertificate
-public import Noperthedron.Nopert231.QuadraticBernstein
+public import Nopert231.AtlasProjectiveGlobalRigidity
+public import Nopert231.AtlasProjectiveLocalCertificate
+public import Atlas.QuadraticBernstein
 
 @[expose] public section
 
@@ -16,12 +16,16 @@ quadratic in the projective view and a quadratic in the relative Cayley
 coordinates, enclosed by nested rational interval arithmetic.
 -/
 
-namespace Noperthedron.Nopert231.AtlasProjectiveGlobalCertificate
+open Noperts
+
+namespace Nopert231.AtlasProjectiveGlobalCertificate
+
+open Noperts.Atlas
 
 variable {P : C5Model}
 
-open Noperthedron.Checker Noperthedron.BalancedSupport
-open Noperthedron.Atlas.ProjectiveView
+open Noperts.Checker Noperts.BalancedSupport
+open Noperts.Atlas.ProjectiveView
 open AtlasProjectiveView AtlasProjectiveEdgeCertificate
 open AtlasProjectiveLocalRigidity
 open AtlasProjectiveLocalCertificate
@@ -199,7 +203,7 @@ interval. -/
 def Box.viewCoefficientQuadratic (box : Box)
     (coefficient : RatQuadratic3 → ℚ) : RatQuadratic3 :=
   let f := fun i =>
-    Noperthedron.Atlas.ProjectiveLocalCertificate.mulLinear
+    Noperts.Atlas.ProjectiveLocalCertificate.mulLinear
       (box.certificate.weightCoefficient i)
       (fun c => coefficient (box.contactQuadratic i c))
   f 0 + f 1 + f 2
@@ -295,7 +299,7 @@ def Box.viewControlQuadratic (box : Box) (i j : Fin 3) : RatQuadratic3 :=
   else
     RatQuadratic3.scale 2
         (box.adjustedViewDisplacementQuadratic
-          (Noperthedron.Atlas.ProjectiveView.midpoint
+          (Noperts.Atlas.ProjectiveView.midpoint
             (box.triangle i) (box.triangle j))) -
       RatQuadratic3.scale (1 / 2)
         (box.adjustedViewDisplacementQuadratic (box.triangle i) +
@@ -364,7 +368,7 @@ def bernsteinOf (vars : Fin 3 → RatBall) (q0 q1 q2 m01 m02 m12 : RatQuadratic3
 
 def Box.bernsteinWith (box : Box) (cq : Array RatQuadratic3) (wc : Array ℚ) : ℚ :=
   let t := box.triangle
-  let mid := Noperthedron.Atlas.ProjectiveView.midpoint
+  let mid := Noperts.Atlas.ProjectiveView.midpoint
   bernsteinOf box.relativeBalls
     (box.viewQuadraticWith cq wc (vec3Array (t 0)))
     (box.viewQuadraticWith cq wc (vec3Array (t 1)))
@@ -377,10 +381,10 @@ def Box.bernsteinDisplacementLowerFast (box : Box) : ℚ :=
   box.bernsteinWith box.contactQuadraticTable box.weightCoefficientTable
 
 theorem midpoint_comm (a b : VectorQ) :
-    Noperthedron.Atlas.ProjectiveView.midpoint a b =
-      Noperthedron.Atlas.ProjectiveView.midpoint b a := by
+    Noperts.Atlas.ProjectiveView.midpoint a b =
+      Noperts.Atlas.ProjectiveView.midpoint b a := by
   funext c
-  simp [Noperthedron.Atlas.ProjectiveView.midpoint, add_comm]
+  simp [Noperts.Atlas.ProjectiveView.midpoint, add_comm]
 
 theorem Box.bernsteinDisplacementLowerFast_eq (box : Box) :
     box.bernsteinDisplacementLowerFast = box.bernsteinDisplacementLower := by
@@ -403,7 +407,7 @@ def Box.viewQuadratics (box : Box) : Array RatQuadratic3 :=
   let cq := box.contactQuadraticTable
   let wc := box.weightCoefficientTable
   let t := box.triangle
-  let mid := Noperthedron.Atlas.ProjectiveView.midpoint
+  let mid := Noperts.Atlas.ProjectiveView.midpoint
   #[box.viewQuadraticWith cq wc (vec3Array (t 0)),
     box.viewQuadraticWith cq wc (vec3Array (t 1)),
     box.viewQuadraticWith cq wc (vec3Array (t 2)),
@@ -475,18 +479,18 @@ instead of re-deriving them at every access. -/
 def Box.coefficientBallWith (box : Box) (cq : Array RatQuadratic3) (wc : Array ℚ)
     (coefficient : RatQuadratic3 → ℚ) : RatBall :=
   RatQuadratic3.evalBall box.localShell.triangleBalls
-    (Noperthedron.Atlas.ProjectiveLocalCertificate.mulLinear
+    (Noperts.Atlas.ProjectiveLocalCertificate.mulLinear
         (fun c => wc.getD c.val 0) (fun c => coefficient (cq.getD c.val quadZero)) +
-      Noperthedron.Atlas.ProjectiveLocalCertificate.mulLinear
+      Noperts.Atlas.ProjectiveLocalCertificate.mulLinear
         (fun c => wc.getD (3 + c.val) 0) (fun c => coefficient (cq.getD (3 + c.val) quadZero)) +
-      Noperthedron.Atlas.ProjectiveLocalCertificate.mulLinear
+      Noperts.Atlas.ProjectiveLocalCertificate.mulLinear
         (fun c => wc.getD (6 + c.val) 0) (fun c => coefficient (cq.getD (6 + c.val) quadZero)))
 
 theorem Box.coefficientBallWith_eq (box : Box) (coefficient : RatQuadratic3 → ℚ) :
     box.coefficientBallWith box.contactQuadraticTable box.weightCoefficientTable coefficient =
       box.coefficientBall coefficient := by
   unfold Box.coefficientBallWith Box.coefficientBall Box.viewCoefficientQuadratic
-    Noperthedron.Atlas.ProjectiveLocalCertificate.mulLinear
+    Noperts.Atlas.ProjectiveLocalCertificate.mulLinear
   rfl
 
 def Box.adjustedDisplacementBallWith (box : Box) (cq : Array RatQuadratic3)
@@ -859,7 +863,7 @@ theorem Box.eval_viewCoefficientQuadratic (box : Box)
       ∑ i, box.certificate.approxWeight n i *
         linearValue n (fun c => (coefficient (box.contactQuadratic i c) : ℝ)) := by
   simp [Box.viewCoefficientQuadratic, Fin.sum_univ_three,
-    Noperthedron.Atlas.ProjectiveLocalCertificate.evalReal_mulLinear,
+    Noperts.Atlas.ProjectiveLocalCertificate.evalReal_mulLinear,
     AxisCertificate.approxWeight, linearValue]
 
 theorem Box.coefficientBall_holds (box : Box)
@@ -1047,16 +1051,16 @@ theorem Box.viewDisplacementQuadratic_eval (box : Box) (n : VectorQ)
     box.cayleyConstraintQuadratic_eval]
 
 noncomputable def bilinearControl
-    (triangle : Noperthedron.Atlas.ProjectiveView.Triangle ℝ)
-    (a b : Noperthedron.Atlas.ProjectiveView.Vector ℝ)
+    (triangle : Noperts.Atlas.ProjectiveView.Triangle ℝ)
+    (a b : Noperts.Atlas.ProjectiveView.Vector ℝ)
     (i j : Fin 3) : ℝ :=
   (linearValue (triangle i) a * linearValue (triangle j) b +
     linearValue (triangle j) a * linearValue (triangle i) b) / 2
 
 theorem bilinearControl_sum
-    (triangle : Noperthedron.Atlas.ProjectiveView.Triangle ℝ)
+    (triangle : Noperts.Atlas.ProjectiveView.Triangle ℝ)
     (weight : Fin 3 → ℝ)
-    (a b : Noperthedron.Atlas.ProjectiveView.Vector ℝ) :
+    (a b : Noperts.Atlas.ProjectiveView.Vector ℝ) :
     (∑ i, ∑ j, weight i * weight j * bilinearControl triangle a b i j) =
       linearValue (affinePoint triangle weight) a *
         linearValue (affinePoint triangle weight) b := by
@@ -1065,7 +1069,7 @@ theorem bilinearControl_sum
 
 noncomputable def Box.contactCoefficientValue (box : Box)
     (i : Fin 3) (x y z : ℝ) :
-    Noperthedron.Atlas.ProjectiveView.Vector ℝ :=
+    Noperts.Atlas.ProjectiveView.Vector ℝ :=
   fun c => (box.contactQuadratic i c).evalReal x y z
 
 noncomputable def Box.viewControlValue (box : Box) (i j : Fin 3)
@@ -1073,7 +1077,7 @@ noncomputable def Box.viewControlValue (box : Box) (i j : Fin 3)
   if i = j then box.viewDisplacementValue (box.viewToReal (box.triangle i)) x y z
   else
     2 * box.viewDisplacementValue
-        (box.viewToReal (Noperthedron.Atlas.ProjectiveView.midpoint
+        (box.viewToReal (Noperts.Atlas.ProjectiveView.midpoint
           (box.triangle i) (box.triangle j))) x y z -
       (box.viewDisplacementValue (box.viewToReal (box.triangle i)) x y z +
         box.viewDisplacementValue (box.viewToReal (box.triangle j)) x y z) / 2
@@ -1094,7 +1098,7 @@ theorem Box.viewControlValue_eq_sum_bilinear (box : Box) (i j : Fin 3)
       Box.contactCoefficientValue, bilinearControl, hij,
       Box.viewToReal, AxisCertificate.approxWeight,
       linearValue, toReal, Fin.sum_univ_three,
-      Noperthedron.Atlas.ProjectiveView.midpoint]
+      Noperts.Atlas.ProjectiveView.midpoint]
     ring
 
 theorem Box.viewControlQuadratic_eval (box : Box) (i j : Fin 3)
@@ -2013,6 +2017,6 @@ theorem Box.valid_imp_no_translated_rupert_in_interval
   rintro ⟨p, hp, hbounded, hscale, hmem, offset, hrupert⟩
   exact box.valid_imp_not_translated_rupert h p hp hbounded hscale hmem offset hrupert
 
-end Noperthedron.Nopert231.AtlasProjectiveGlobalCertificate
+end Nopert231.AtlasProjectiveGlobalCertificate
 
 end

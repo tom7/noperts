@@ -1,8 +1,8 @@
 module
 
-public import Noperthedron.Nopert231.AtlasQuadratic
-public import Noperthedron.BalancedSupport.Cycle
-public import Noperthedron.Checker.RatTrigBall
+public import Nopert231.AtlasQuadratic
+public import BalancedSupport.Cycle
+public import Checker.RatTrigBall
 
 @[expose] public section
 
@@ -14,14 +14,16 @@ Each row combines its selected inner contacts as exact rational quadratics
 before interval evaluation, preserving cancellations between contacts.
 -/
 
-namespace Noperthedron.Nopert231.AtlasEdgeCertificate
+open Noperts
+
+namespace Nopert231.AtlasEdgeCertificate
 
 variable {P : C5Model}
 
 open scoped RealInnerProductSpace
-open Noperthedron.Checker
-open Noperthedron.BalancedSupport
-open Noperthedron.Nopert231.CayleyAtlas
+open Noperts.Checker
+open Noperts.BalancedSupport
+open Nopert231.CayleyAtlas
 open AtlasQuadratic
 open RationalApprox
 
@@ -972,6 +974,6 @@ theorem Box.valid_imp_no_translated_rupert_in_interval
   rintro ⟨p, hp, offset, hrupert⟩
   exact box.valid_imp_not_translated_rupert h p hp offset hrupert
 
-end Noperthedron.Nopert231.AtlasEdgeCertificate
+end Nopert231.AtlasEdgeCertificate
 
 end

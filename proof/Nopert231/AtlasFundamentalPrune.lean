@@ -1,8 +1,8 @@
 module
 
-public import Noperthedron.Nopert231.FundamentalDomain
-public import Noperthedron.Nopert231.AtlasQuadratic
-public import Noperthedron.Nopert231.QuadraticBernstein
+public import Nopert231.FundamentalDomain
+public import Nopert231.AtlasQuadratic
+public import Atlas.QuadraticBernstein
 
 @[expose] public section
 
@@ -16,12 +16,16 @@ approximation to that quadratic and reserve a fixed `2/125` error allowance
 for the two trigonometric coefficients.
 -/
 
-namespace Noperthedron.Nopert231.AtlasFundamentalPrune
+open Noperts
+
+namespace Nopert231.AtlasFundamentalPrune
+
+open Noperts.Atlas
 
 variable {P : C5Model}
 
 open scoped Matrix
-open Noperthedron.Checker
+open Noperts.Checker
 open CayleyAtlas
 
 inductive Direction where
@@ -402,9 +406,9 @@ private theorem narrow_second_coordinate {x y : ℝ}
       nlinarith
 
 /-- Fundamental-domain condition carried by an atlas representative. -/
-def _root_.Noperthedron.Nopert231.AtlasPose.InFivefoldFundamentalDomain
+def _root_.Nopert231.AtlasPose.InFivefoldFundamentalDomain
     (p : AtlasPose ℝ) (chart : ChartIndex) : Prop :=
-  Noperthedron.Nopert231.InFivefoldFundamentalDomain
+  Nopert231.InFivefoldFundamentalDomain
     (chartMatrix chart * cayleyMatrix p.x p.y p.z)
 
 private theorem chart0_fundamental_z_mem {p : AtlasPose ℝ}
@@ -565,7 +569,7 @@ theorem matrixPoseWithOffset_ofPose_eq_rightSymmetry
   let reduced := oldPose.rightNopert231Symmetry k
   have hrelative' : reduced.relativeRotation =
       chartMatrix chart * cayleyMatrix x y z := by
-    rw [Noperthedron.Nopert231.MatrixPose.relativeRotation_rightNopert231Symmetry]
+    rw [Nopert231.MatrixPose.relativeRotation_rightNopert231Symmetry]
     exact hrelative
   apply matrixPose_ext_val
   · calc
@@ -581,7 +585,7 @@ theorem matrixPoseWithOffset_ofPose_eq_rightSymmetry
             rw [hrelative']
             rfl
       _ = reduced.innerRot.val :=
-            Noperthedron.Atlas.MatrixPose.outer_mul_relativeRotation
+            Noperts.Atlas.MatrixPose.outer_mul_relativeRotation
               reduced
   · rfl
   · rfl
@@ -599,18 +603,18 @@ theorem exists_fundamental_atlas_translated_pose (p : MatrixPose) :
     exists_upper_tight_translated_pose p
   let oldPose := euler.matrixPoseWithOffset offset
   obtain ⟨k, hkfund⟩ :=
-    Noperthedron.Nopert231.MatrixPose.exists_rightNopert231Symmetry_inFundamentalDomain
+    Nopert231.MatrixPose.exists_rightNopert231Symmetry_inFundamentalDomain
       oldPose
   let reduced := oldPose.rightNopert231Symmetry k
   obtain ⟨chart, x, hx, y, hy, z, hz, hradius, hrelative⟩ :=
     exists_bounded_chart_cayley reduced.relativeRotation
-      (Noperthedron.Atlas.MatrixPose.relativeRotation_mem_SO3 reduced)
+      (Noperts.Atlas.MatrixPose.relativeRotation_mem_SO3 reduced)
   let q := AtlasPose.ofPose euler x y z
   have hq : q ∈ AtlasPose.rootInterval ℝ :=
     AtlasPose.ofPose_mem_root euler x y z heuler.1 hx hy hz
   have hmatrix : q.matrixPoseWithOffset chart offset = reduced := by
     apply matrixPoseWithOffset_ofPose_eq_rightSymmetry
-    rw [← Noperthedron.Nopert231.MatrixPose.relativeRotation_rightNopert231Symmetry]
+    rw [← Nopert231.MatrixPose.relativeRotation_rightNopert231Symmetry]
     exact hrelative
   have hqfund : q.InFivefoldFundamentalDomain chart := by
     rw [← AtlasPose.matrixPoseWithOffset_inFundamentalDomain_iff
@@ -623,6 +627,6 @@ theorem exists_fundamental_atlas_translated_pose (p : MatrixPose) :
   · rw [hmatrix, RupertPose_rightNopert231Symmetry_iff]
     exact heq
 
-end Noperthedron.Nopert231.AtlasFundamentalPrune
+end Nopert231.AtlasFundamentalPrune
 
 end

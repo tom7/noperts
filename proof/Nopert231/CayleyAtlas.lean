@@ -1,8 +1,8 @@
 module
 
-public import Noperthedron.Nopert231.Tightening
-public import Noperthedron.Checker.RatBall
-public import Noperthedron.Atlas.CayleyPose
+public import Nopert231.Tightening
+public import Checker.RatBall
+public import Atlas.CayleyPose
 
 @[expose] public section
 
@@ -15,7 +15,9 @@ four matrices sum to zero.  Hence one trace is nonnegative and the existing
 bounded Cayley theorem supplies coordinates in `[-2,2]³`.
 -/
 
-namespace Noperthedron.Nopert231.CayleyAtlas
+open Noperts
+
+namespace Nopert231.CayleyAtlas
 
 open scoped Matrix
 
@@ -174,6 +176,6 @@ theorem exists_bounded_chart_cayley (R : Matrix (Fin 3) (Fin 3) ℝ)
   refine ⟨chart, x, hx, y, hy, z, hz, hradius, ?_⟩
   exact hrelative
 
-end Noperthedron.Nopert231.CayleyAtlas
+end Nopert231.CayleyAtlas
 
 end

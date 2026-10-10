@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert231.AtlasProjectiveLocalCertificate
-public import Noperthedron.Nopert231.AtlasProjectiveAnnularCertificate
+public import Nopert231.AtlasProjectiveLocalCertificate
+public import Nopert231.AtlasProjectiveAnnularCertificate
 
 @[expose] public section
 
@@ -14,12 +14,16 @@ the Cayley interval or chart.  This tree checks that geometry once.  A small
 near-symmetry leaf in the main search to reuse the same view atlas.
 -/
 
-namespace Noperthedron.Nopert231.AtlasProjectiveLocalViewTree
+open Noperts
+
+namespace Nopert231.AtlasProjectiveLocalViewTree
+
+open Noperts.Atlas
 
 variable {P : C5Model}
 
 open AtlasProjectiveView AtlasProjectiveLocalCertificate
-open Noperthedron.Atlas.ProjectiveView
+open Noperts.Atlas.ProjectiveView
 
 structure Tube where
   interval : AtlasInterval ℚ
@@ -88,7 +92,7 @@ def Row.ValidAt (symmetryIndex : OrbitIndex) (r : ℚ)
       id < children child ∧ children child < size ∧
       (get (children child)).root = root ∧
       (get (children child)).triangle =
-        Noperthedron.Atlas.ProjectiveView.split triangle child ∧
+        Noperts.Atlas.ProjectiveView.split triangle child ∧
       rLower ≤ (get (children child)).rLower
   | .certificate _ box =>
       box.symmetryIndex = symmetryIndex ∧ r ≤ box.r ∧ box.ViewValid
@@ -376,12 +380,12 @@ split further by some digits. -/
 def splitPath (triangle : AtlasProjectiveView.Triangle ℚ) :
     List (Fin 4) → AtlasProjectiveView.Triangle ℚ
   | [] => triangle
-  | c :: cs => splitPath (Noperthedron.Atlas.ProjectiveView.split triangle c) cs
+  | c :: cs => splitPath (Noperts.Atlas.ProjectiveView.split triangle c) cs
 
 /-- A sub-triangle of the four-way split lies inside its parent. -/
 theorem inTriangle_of_split {triangle : AtlasProjectiveView.Triangle ℚ} {child : Fin 4}
     {point : Fin 3 → ℝ}
-    (h : InTriangle (toReal (Noperthedron.Atlas.ProjectiveView.split triangle child)) point) :
+    (h : InTriangle (toReal (Noperts.Atlas.ProjectiveView.split triangle child)) point) :
     InTriangle (toReal triangle) point := by
   obtain ⟨w, hnonneg, hsum, hpoint⟩ := h
   have h0 := hnonneg 0
@@ -393,25 +397,25 @@ theorem inTriangle_of_split {triangle : AtlasProjectiveView.Triangle ℚ} {child
     · intro i; fin_cases i <;> simp <;> positivity
     · simp [Fin.sum_univ_three]; linarith
     · rw [hpoint]; funext c
-      simp [affinePoint, Fin.sum_univ_three, Noperthedron.Atlas.ProjectiveView.split, toReal]
+      simp [affinePoint, Fin.sum_univ_three, Noperts.Atlas.ProjectiveView.split, toReal]
       ring
   · refine ⟨![w 0 / 2, w 0 / 2 + w 1 + w 2 / 2, w 2 / 2], ?_, ?_, ?_⟩
     · intro i; fin_cases i <;> simp <;> positivity
     · simp [Fin.sum_univ_three]; linarith
     · rw [hpoint]; funext c
-      simp [affinePoint, Fin.sum_univ_three, Noperthedron.Atlas.ProjectiveView.split, toReal]
+      simp [affinePoint, Fin.sum_univ_three, Noperts.Atlas.ProjectiveView.split, toReal]
       ring
   · refine ⟨![w 0 / 2, w 1 / 2, w 0 / 2 + w 1 / 2 + w 2], ?_, ?_, ?_⟩
     · intro i; fin_cases i <;> simp <;> positivity
     · simp [Fin.sum_univ_three]; linarith
     · rw [hpoint]; funext c
-      simp [affinePoint, Fin.sum_univ_three, Noperthedron.Atlas.ProjectiveView.split, toReal]
+      simp [affinePoint, Fin.sum_univ_three, Noperts.Atlas.ProjectiveView.split, toReal]
       ring
   · refine ⟨![w 0 / 2 + w 2 / 2, w 0 / 2 + w 1 / 2, w 1 / 2 + w 2 / 2], ?_, ?_, ?_⟩
     · intro i; fin_cases i <;> simp <;> positivity
     · simp [Fin.sum_univ_three]; linarith
     · rw [hpoint]; funext c
-      simp [affinePoint, Fin.sum_univ_three, Noperthedron.Atlas.ProjectiveView.split, toReal]
+      simp [affinePoint, Fin.sum_univ_three, Noperts.Atlas.ProjectiveView.split, toReal]
       ring
 
 theorem inTriangle_of_splitPath {triangle : AtlasProjectiveView.Triangle ℚ}
@@ -455,6 +459,6 @@ theorem Table.valid_imp_not_translated_rupert_below_node (table : Table)
   table.valid_imp_not_translated_rupert_at_node_rLower hvalid nodeId hnode tube
     htubeSymmetry htubeRadius htube hp offset hscale (inTriangle_of_splitPath hmem)
 
-end Noperthedron.Nopert231.AtlasProjectiveLocalViewTree
+end Nopert231.AtlasProjectiveLocalViewTree
 
 end

@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.BalancedSupport.RationalCertificate
-public import Noperthedron.Nopert231.Approximation
+public import BalancedSupport.RationalCertificate
+public import Nopert231.Approximation
 
 @[expose] public section
 
@@ -14,15 +14,17 @@ with the rational vertices.  `Approximation.lean` connects those
 rational coordinates to the intended exact fivefold-symmetric vertices.
 -/
 
-namespace Noperthedron.Nopert231.Certificate
+open Noperts
+
+namespace Nopert231.Certificate
 
 abbrev Contact :=
-  Noperthedron.BalancedSupport.RationalCertificate.Contact VertexIndex
+  Noperts.BalancedSupport.RationalCertificate.Contact VertexIndex
 abbrev Box :=
-  Noperthedron.BalancedSupport.RationalCertificate.Box VertexIndex
+  Noperts.BalancedSupport.RationalCertificate.Box VertexIndex
 
 def Box.Valid (box : Box) : Prop :=
-  Noperthedron.BalancedSupport.RationalCertificate.Box.Valid
+  Noperts.BalancedSupport.RationalCertificate.Box.Valid
     rationalPolyhedron box
 
 instance (box : Box) : Decidable box.Valid := by
@@ -34,16 +36,16 @@ theorem Box.valid_imp_not_translated_rupert (box : Box) (h : box.Valid) :
         (box.εφ₁ : ℝ) (box.εθ₂ : ℝ) (box.εφ₂ : ℝ) q →
       ∀ offset : ℝ²,
         ¬ RupertPose (q.matrixPoseWithOffset offset) exactGoodPoly.hull := by
-  exact Noperthedron.BalancedSupport.RationalCertificate.Box.valid_imp_not_translated_rupert
+  exact Noperts.BalancedSupport.RationalCertificate.Box.valid_imp_not_translated_rupert
     exactGoodPoly rationalPolyhedron exactApproximation box h
 
 theorem Box.valid_imp_no_translated_rupert_in_interval
     (box : Box) (h : box.Valid) :
     ¬ ∃ q ∈ box.realInterval, ∃ offset : ℝ²,
       RupertPose (q.matrixPoseWithOffset offset) exactGoodPoly.hull := by
-  exact Noperthedron.BalancedSupport.RationalCertificate.Box.valid_imp_no_translated_rupert_in_interval
+  exact Noperts.BalancedSupport.RationalCertificate.Box.valid_imp_no_translated_rupert_in_interval
     exactGoodPoly rationalPolyhedron exactApproximation box h
 
-end Noperthedron.Nopert231.Certificate
+end Nopert231.Certificate
 
 end

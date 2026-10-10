@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert231.AtlasProjectiveLocalViewTree
-public import Noperthedron.Nopert231.GeneratedTangentCones
+public import Nopert231.AtlasProjectiveLocalViewTree
+public import Nopert231.GeneratedTangentCones
 
 @[expose] public section
 
@@ -14,7 +14,9 @@ proof of the sparse predicate is converted to the original `Table.Valid`
 hypothesis using the exact tangent-cone certificates.
 -/
 
-namespace Noperthedron.Nopert231.SparseLocalViewTree
+open Noperts
+
+namespace Nopert231.SparseLocalViewTree
 
 open AtlasProjectiveLocalViewTree
 open SparseSupport
@@ -25,7 +27,7 @@ def SparseRowValidAt (symmetryIndex : OrbitIndex) (r : ℚ)
       id < children child ∧ children child < size ∧
       (get (children child)).root = root ∧
       (get (children child)).triangle =
-        Noperthedron.Atlas.ProjectiveView.split triangle child ∧
+        Noperts.Atlas.ProjectiveView.split triangle child ∧
       rLower ≤ (get (children child)).rLower
   | .certificate _ box =>
       box.symmetryIndex = symmetryIndex ∧ r ≤ box.r ∧
@@ -299,6 +301,6 @@ theorem Table.Valid.of_sparseWithTasksB {table : Table} {taskCount : ℕ}
   apply Table.Valid.of_sparseParB
   exact h
 
-end Noperthedron.Nopert231.SparseLocalViewTree
+end Nopert231.SparseLocalViewTree
 
 end

@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert231.AtlasProjectiveView
-public import Noperthedron.Nopert231.QuadraticBernstein
+public import Nopert231.AtlasProjectiveView
+public import Atlas.QuadraticBernstein
 
 @[expose] public section
 
@@ -13,14 +13,18 @@ triangle.  Support and denominator-cleared displacement are linear in the
 normalized viewing vector, so their extrema occur at triangle corners.
 -/
 
-namespace Noperthedron.Nopert231.AtlasProjectiveEdgeCertificate
+open Noperts
+
+namespace Nopert231.AtlasProjectiveEdgeCertificate
+
+open Noperts.Atlas
 
 variable {P : C5Model}
 
 open scoped RealInnerProductSpace
-open Noperthedron.Checker
-open Noperthedron.BalancedSupport
-open Noperthedron.Atlas.ProjectiveView
+open Noperts.Checker
+open Noperts.BalancedSupport
+open Noperts.Atlas.ProjectiveView
 open AtlasEdgeCertificate AtlasProjectiveView
 open CayleyAtlas
 
@@ -55,12 +59,12 @@ theorem signedPointValid_midpoint {root : Fin 8}
     {a b : AtlasProjectiveView.Vector ℚ}
     (ha : SignedPointValid root a) (hb : SignedPointValid root b) :
     SignedPointValid root
-      (Noperthedron.Atlas.ProjectiveView.midpoint a b) := by
+      (Noperts.Atlas.ProjectiveView.midpoint a b) := by
   constructor
   · intro c
-    simp only [Noperthedron.Atlas.ProjectiveView.midpoint]
+    simp only [Noperts.Atlas.ProjectiveView.midpoint]
     nlinarith [ha.1 c, hb.1 c]
-  · simp only [Noperthedron.Atlas.ProjectiveView.midpoint,
+  · simp only [Noperts.Atlas.ProjectiveView.midpoint,
       Fin.sum_univ_three]
     have ha' := ha.2
     have hb' := hb.2
@@ -89,43 +93,43 @@ theorem SignedTriangleValid.split {root : Fin 8}
     {triangle : AtlasProjectiveView.Triangle ℚ}
     (h : SignedTriangleValid root triangle) (child : Fin 4) :
     SignedTriangleValid root
-      (Noperthedron.Atlas.ProjectiveView.split triangle child) := by
+      (Noperts.Atlas.ProjectiveView.split triangle child) := by
   have hp (i : Fin 3) : SignedPointValid root (triangle i) := h i
   intro i
   change SignedPointValid root
-    (Noperthedron.Atlas.ProjectiveView.split triangle child i)
+    (Noperts.Atlas.ProjectiveView.split triangle child i)
   fin_cases child
   · fin_cases i
-    · simpa [Noperthedron.Atlas.ProjectiveView.split] using hp 0
-    · simpa [Noperthedron.Atlas.ProjectiveView.split] using
+    · simpa [Noperts.Atlas.ProjectiveView.split] using hp 0
+    · simpa [Noperts.Atlas.ProjectiveView.split] using
         signedPointValid_midpoint (hp 0) (hp 1)
-    · simpa [Noperthedron.Atlas.ProjectiveView.split] using
+    · simpa [Noperts.Atlas.ProjectiveView.split] using
         signedPointValid_midpoint (hp 0) (hp 2)
   · fin_cases i
-    · simpa [Noperthedron.Atlas.ProjectiveView.split] using
+    · simpa [Noperts.Atlas.ProjectiveView.split] using
         signedPointValid_midpoint (hp 0) (hp 1)
-    · simpa [Noperthedron.Atlas.ProjectiveView.split] using hp 1
-    · simpa [Noperthedron.Atlas.ProjectiveView.split] using
+    · simpa [Noperts.Atlas.ProjectiveView.split] using hp 1
+    · simpa [Noperts.Atlas.ProjectiveView.split] using
         signedPointValid_midpoint (hp 1) (hp 2)
   · fin_cases i
-    · simpa [Noperthedron.Atlas.ProjectiveView.split] using
+    · simpa [Noperts.Atlas.ProjectiveView.split] using
         signedPointValid_midpoint (hp 0) (hp 2)
-    · simpa [Noperthedron.Atlas.ProjectiveView.split] using
+    · simpa [Noperts.Atlas.ProjectiveView.split] using
         signedPointValid_midpoint (hp 1) (hp 2)
-    · simpa [Noperthedron.Atlas.ProjectiveView.split] using hp 2
+    · simpa [Noperts.Atlas.ProjectiveView.split] using hp 2
   · fin_cases i
-    · simpa [Noperthedron.Atlas.ProjectiveView.split] using
+    · simpa [Noperts.Atlas.ProjectiveView.split] using
         signedPointValid_midpoint (hp 0) (hp 1)
-    · simpa [Noperthedron.Atlas.ProjectiveView.split] using
+    · simpa [Noperts.Atlas.ProjectiveView.split] using
         signedPointValid_midpoint (hp 1) (hp 2)
-    · have hm : Noperthedron.Atlas.ProjectiveView.midpoint
+    · have hm : Noperts.Atlas.ProjectiveView.midpoint
           (triangle 0) (triangle 2) =
-          Noperthedron.Atlas.ProjectiveView.midpoint
+          Noperts.Atlas.ProjectiveView.midpoint
             (triangle 2) (triangle 0) := by
         funext c
-        simp [Noperthedron.Atlas.ProjectiveView.midpoint, add_comm]
+        simp [Noperts.Atlas.ProjectiveView.midpoint, add_comm]
       change SignedPointValid root
-        (Noperthedron.Atlas.ProjectiveView.midpoint
+        (Noperts.Atlas.ProjectiveView.midpoint
           (triangle 2) (triangle 0))
       rw [← hm]
       exact signedPointValid_midpoint (hp 0) (hp 2)
@@ -614,6 +618,6 @@ theorem Box.valid_imp_not_translated_rupert (box : Box) (h : box.Valid)
     all_goals simp [Box.edgeShell]
     all_goals rfl
 
-end Noperthedron.Nopert231.AtlasProjectiveEdgeCertificate
+end Nopert231.AtlasProjectiveEdgeCertificate
 
 end

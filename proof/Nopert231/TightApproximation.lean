@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert231.Approximation
+public import Nopert231.Approximation
 
 @[expose] public section
 
@@ -17,7 +17,7 @@ kernel-checked rational bridge for all twenty vertices, to prove the sharper
 
 open Real
 
-namespace Noperthedron.Nopert231
+namespace Nopert231
 
 def cos72Q : ℚ := 30901699437494745 / 10^17
 def sin72Q : ℚ := 9510565162951535 / 10^16
@@ -296,6 +296,6 @@ theorem exactModel_vertex (i : VertexIndex) : exactModel.vertex i = exactVertex 
 
 theorem exactModel_verts : exactModel.verts = exactVerts := rfl
 
-end Noperthedron.Nopert231
+end Nopert231
 
 end

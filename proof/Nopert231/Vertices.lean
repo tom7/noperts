@@ -1,7 +1,9 @@
 module
 
-public import Noperthedron.RationalApprox.TrigLemmas
-public import Noperthedron.Vertices.Taylor
+public import RationalApprox.TrigLemmas
+public import Basic
+public import Bounding
+public import PointSym
 public import Mathlib.Analysis.Real.Pi.Bounds
 
 @[expose] public section
@@ -22,7 +24,10 @@ the certificates cover all of them (see `Ideal231` for the exactly planar one).
 Vertices are scaled to lie inside the unit sphere (the GoodPoly invariant).
 -/
 
-namespace Noperthedron.Nopert231
+namespace Nopert231
+
+/-- Rational approximation of π, matching Mathlib's `pi_gt_d20` bound. -/
+def piQ : ℚ := 3.14159265358979323846
 
 abbrev VertexIndex := Fin 20
 abbrev SeedIndex := Fin 4
@@ -121,7 +126,7 @@ absolute values below `π`. -/
 def taylorVertex (i : VertexIndex) : Fin 3 → ℚ :=
   let k := orbitIndex i
   let k' : ℚ := if k.val ≤ 2 then k.val else k.val - 5
-  let θ : ℚ := 2 * Noperthedron.piQ * k' / 5
+  let θ : ℚ := 2 * piQ * k' / 5
   let c := RationalApprox.cosℚ θ
   let s := RationalApprox.sinℚ θ
   let v := seedVertex (seedIndex i)
@@ -257,6 +262,6 @@ noncomputable def goodPoly : GoodPoly VertexIndex where
 
 end C5Model
 
-end Noperthedron.Nopert231
+end Nopert231
 
 end
