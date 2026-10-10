@@ -27,9 +27,10 @@ LEMMAS.md L7, in the standard view (`proj_xy`, depth = coordinate 2).
   7.3 at an explicit view): a generic unimodal silhouette without horizontal
   double normal gives a passage.
 * `exists_badPlanes` (Lemma 7.4) and `isRupert_of_genericUnimodalView`
-  (Theorem 7.5): a generic unimodal view suffices.
-* `isRupert_translationPrism` (Theorem 7.7) and
-  `isRupert_octahedron_conditionA` (Corollary 7.8).
+  (Theorem 7.5): a generic unimodal view suffices.  The robust forms
+  `isRupert_of_eventually_unimodal` and `isRupert_of_open_unimodal` allow
+  depth ties at the given view.
+* Theorem 7.7 and Corollary 7.8 are in `Prism.lean` and `Octahedron.lean`.
 
 The silhouette at an explicit view is given by a cyclic list of points
 `x : ZMod k → ℝ³` of `V`: (G1) is `IsCcwPolygon (proj_xy ∘ x)` (strictly convex,

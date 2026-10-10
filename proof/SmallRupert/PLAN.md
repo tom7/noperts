@@ -30,8 +30,23 @@ the generic-view density statements of Coplanar.lean (`dense_generic_...`,
 `isOpen_admissibleViews`, `exists_firstOrderInward_of_coplanar`,
 `isRupert_of_generic_admissibleView`).
 
-Not formalized: LEMMAS.md L7 (unimodal silhouettes, translation prisms),
-pending review of the paper proof.
+- L7, unimodal silhouettes (all proved, standard axioms only):
+  - Lemma 7.1, direction used: `exists_forces_of_not_firstOrderInward`
+    (normal-cone form; no (G1) needed);
+  - Theorem 7.3 (⇒), pure polygon form: `hasHorizontalDoubleNormal_of_forces`
+    (CycSeq/Polygon/Thm73: sign-switch sequences, cyclic-order API for
+    corners over `ZMod k`, no-zigzag, Step 5);
+  - Theorem 7.3 at an explicit view: `exists_firstOrderInward_of_unimodal`,
+    `isRupert_of_unimodalView`;
+  - Lemma 7.4: `exists_badPlanes` (BadViews; stated without (G1)/(G2), the
+    bad great circles come from `badDirs V`);
+  - Theorem 7.5: `isRupert_of_genericUnimodalView`, plus the robust forms
+    `isRupert_of_eventually_unimodal` and `isRupert_of_open_unimodal`
+    (Perturb: openness of (G1)/interior/unimodality, density of views off
+    finitely many great circles);
+  - Theorem 7.7: `isRupert_translationPrism` (Prism; every translation prism
+    except right prisms over non-obtuse triangles);
+  - Corollary 7.8: `isRupert_octahedron_conditionA` (Octahedron).
 
 ## Modules and dependency order
 
@@ -47,6 +62,14 @@ pending review of the paper proof.
 | `FewVertices` | Cor. 5.6 | `isRupert_of_card_le_five` |
 | `BicappedTetrahedron` | Cor. 5.7 | `isRupert_bicap_normalForm`, `isRupert_bicappedTetrahedron` |
 | `SixVertices` | L6 (partial) | `isRupert_frustum`, `isRupert_parallelPrism`, `isRupert_cappedSquarePyramid` |
+| `CycSeq` | L7 Thm 7.3 core | sign-switch sequences, `forces_parallel` |
+| `Polygon` | corner API | `IsCcwPolygon`, `normalConeAt`, `normalCone_decomp` |
+| `Thm73` | Thm 7.3 glue | `IsCyclicUnimodal`, `HasHorizontalDoubleNormal`, `noZig`, `hdn_of_parallel` |
+| `BadViews` | Lemma 7.4 | `badDirs`, `exists_badDir_of_hdn` |
+| `Perturb` | genericity | `IsCcwPolygon.mem_interior_iff`, `eventually_isCcwPolygon`, `exists_rotation_near_avoiding` |
+| `Unimodal` | Lemma 7.1, Thms 7.3, 7.5 | `exists_forces_of_not_firstOrderInward`, `isRupert_of_genericUnimodalView` |
+| `Octahedron` | Cor. 7.8 | `isRupert_octahedron_conditionA` |
+| `Prism` | Thm 7.7 | `isRupert_translationPrism` |
 
 Order of work: Basic → FirstOrder → DoubleNormal → Coplanar (L2 + plane form
 of L5) → `isRupert_bipyramid` → FewVertices → general L5 → Bicap → SixVertices.
