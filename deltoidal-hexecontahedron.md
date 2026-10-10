@@ -173,3 +173,9 @@ That run regenerated every committed data file byte for byte, and its cap and
 tie certificates were identical to the verified run's. Its chart tables are
 not the same as the verified run's (32.9 M against 36.2 M chart-0 rows); both
 passed.
+
+In this repository (2026-10-10, 16 cores): the model stage, the cap frames
+and the tube and tie stages (about 2 min together) regenerate the model files
+in `search/dh/` and all seven generated Lean files in
+`proof/DeltoidalHexecontahedron/` byte for byte (with 250 tie nodes). The cap
+certificates, the search, the packs and the check have not been rerun here.
