@@ -21,10 +21,10 @@ cell's boundary.
 -/
 
 namespace Septopert
-open Noperthedron
+open Noperts
 
 open scoped Matrix
-open Noperthedron.Pipeline
+open Noperts.Pipeline
 
 /-- The negation in Fin 3, as a table (literal subtraction does not reduce
 inside the matrix definitions). -/

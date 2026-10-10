@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Basic
+public import Basic
 
 @[expose] public section
 
@@ -8,8 +8,8 @@ public import Noperthedron.Basic
 # The C3 rotations about (1,1,1)
 
 The cyclic coordinate permutations, as exact matrices. They live in their own
-file (importing only `Noperthedron.Basic`) so that the model layer
-(`Noperthedron.Pipeline.Vertices`) can use them without importing the
+file (importing only `Noperts.Basic`) so that the model layer
+(`Noperts.Pipeline.Vertices`) can use them without importing the
 mirror-tie and cell layers (`Group`, `Cell`), which import the certificate
 pipeline.
 -/

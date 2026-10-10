@@ -2,7 +2,7 @@ module
 
 public import Septopert.IsNotRupert
 public import Septopert.CapsNative
-public import Noperthedron.Pipeline.SparseLocalViewTree
+public import Pipeline.SparseLocalViewTree
 
 @[expose] public section
 
@@ -18,9 +18,9 @@ cover needs no native check (`ViewCover.coverValid_eq` is kernel-checked).
 -/
 
 namespace Septopert.NativeExecutable
-open Noperthedron
+open Noperts
 
-open Noperthedron.Pipeline
+open Noperts.Pipeline
 open AtlasProjectiveLocalViewTree
 open SparseLocalViewTree
 open SolutionTree

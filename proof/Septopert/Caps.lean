@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Pipeline.CapClaim
+public import Pipeline.CapClaim
 public import Septopert.Model
 
 @[expose] public section
@@ -37,11 +37,11 @@ the cone with dual frame vectors (0, 2, 0), (1, 0, 1) and the Cayley ball
 -/
 
 namespace Septopert
-open Noperthedron
+open Noperts
 
-open Noperthedron.Pipeline
-open Noperthedron.Pipeline.Cap
-open Noperthedron.Pipeline.PVec
+open Noperts.Pipeline
+open Noperts.Pipeline.Cap
+open Noperts.Pipeline.PVec
 open scoped Matrix
 
 /-- A rational number in K. -/

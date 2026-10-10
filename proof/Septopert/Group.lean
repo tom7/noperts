@@ -26,7 +26,7 @@ under both operations of the reduction.
 -/
 
 namespace Septopert
-open Noperthedron
+open Noperts
 
 open scoped Matrix
 

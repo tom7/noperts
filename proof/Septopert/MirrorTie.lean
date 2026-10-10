@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Pipeline.HalfTurnBasic
-public import Noperthedron.Atlas.FundamentalDomain
+public import Pipeline.HalfTurnBasic
+public import Atlas.FundamentalDomain
 
 @[expose] public section
 
@@ -27,10 +27,10 @@ coordinate transpositions; Q = −σ is then rational.
 -/
 
 namespace Septopert
-open Noperthedron
+open Noperts
 
 open scoped Matrix
-open Noperthedron.Pipeline
+open Noperts.Pipeline
 
 /-- Turn the inner copy into H_z · innerRot · Q (= D · innerRot · (−Q)), keeping
 the offset. -/

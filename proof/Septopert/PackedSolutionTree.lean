@@ -1,7 +1,7 @@
 module
 
 public import Septopert.SolutionTree
-public import Noperthedron.Pipeline.PackedLocalViewTree
+public import Pipeline.PackedLocalViewTree
 
 @[expose] public section
 
@@ -23,14 +23,14 @@ The decoder is untrusted plumbing: every decoded row is checked by
 -/
 
 namespace Septopert.PackedSolutionTree
-open Noperthedron
+open Noperts
 
-open Noperthedron.Pipeline
+open Noperts.Pipeline
 open SolutionTree AtlasProjectiveView
 open AtlasProjectiveEdgeCertificate AtlasProjectiveGlobalCertificate
 open AtlasProjectiveLocalCertificate
 open PackedLocalViewTree
-open Noperthedron.Atlas.ProjectiveView
+open Noperts.Atlas.ProjectiveView
 
 abbrev Decoder := PackedLocalViewTree.Decoder
 

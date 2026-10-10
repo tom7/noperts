@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Pipeline.WedgeCover
+public import Pipeline.WedgeCover
 public import Septopert.ViewReduce
 public import Septopert.Reduce
 
@@ -28,11 +28,11 @@ place of `u ⬝ (1,1,1) = 1`); a leaf names a code triangle of the same root.
 -/
 
 namespace Septopert.ViewCover
-open Noperthedron
+open Noperts
 
-open Noperthedron.Atlas.ProjectiveView
-open Noperthedron.Pipeline
-open Noperthedron.Pipeline.WedgeCover
+open Noperts.Atlas.ProjectiveView
+open Noperts.Pipeline
+open Noperts.Pipeline.WedgeCover
   (V Tri dotQ crossQ detQ vecEq orient edgeFn combo dotR vecEq_iff dotR_add dotR_smul dotR_neg
     dotR_zero dotR_combo_nonneg)
 

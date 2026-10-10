@@ -2,9 +2,9 @@ module
 
 public import Septopert.ViewReduce
 public import Septopert.Model
-public import Noperthedron.Pipeline.AtlasPose
-public import Noperthedron.Pipeline.TightApproximation
-public import Noperthedron.Atlas.Tightening
+public import Pipeline.AtlasPose
+public import Pipeline.TightApproximation
+public import Atlas.Tightening
 
 @[expose] public section
 
@@ -40,10 +40,10 @@ Steps:
 -/
 
 namespace Septopert
-open Noperthedron
+open Noperts
 
 open scoped Matrix
-open Noperthedron.Pipeline CayleyAtlas Real
+open Noperts.Pipeline CayleyAtlas Real
 
 /-! ### Right C3 on the inner copy -/
 
@@ -167,7 +167,7 @@ theorem exists_euler_outer (p : MatrixPose) (hdom : InC3vViewDomain p.view) :
     ∃ δ θ φ : ℝ, θ ∈ Set.Icc 0 (π / 4) ∧ φ ∈ Set.Icc 0 π ∧
       (p.rotateBy δ).outerRot.val = rotRM_mat θ φ 0 := by
   obtain ⟨θo, φo, αo, hθo, hφo, -, hM⟩ :=
-    Noperthedron.Atlas.SO3_to_bounded_rotRM_params p.outerRot.val p.outerRot.property
+    Noperts.Atlas.SO3_to_bounded_rotRM_params p.outerRot.val p.outerRot.property
   have hout : Rz_mat (-αo) * p.outerRot.val = rotRM_mat θo φo 0 := by
     rw [hM, Rz_mul_rotRM_mat, neg_add_cancel]
   have hview : ∀ k, p.view k = rotRM_mat θo φo 0 2 k := by
@@ -201,7 +201,7 @@ theorem matrixPoseWithOffset_eq_of (q : AtlasPose ℝ) (reduced : MatrixPose)
               rotRM_mat q.θ q.φ 0 * (chartMatrix chart * cayleyMatrix q.x q.y q.z)
             rw [Matrix.mul_assoc]
       _ = reduced.outerRot.val * reduced.relativeRotation := by rw [hrelative, houter]
-      _ = reduced.innerRot.val := Noperthedron.Atlas.MatrixPose.outer_mul_relativeRotation reduced
+      _ = reduced.innerRot.val := Noperts.Atlas.MatrixPose.outer_mul_relativeRotation reduced
   · exact houter.symm
   · rfl
 
@@ -223,7 +223,7 @@ theorem exists_c3v_atlas_translated_pose (S : Set ℝ³)
   obtain ⟨reduced, houter, hcell, hiff⟩ := exists_c3v_reduced S hc hm (p1.rotateBy δ)
   obtain ⟨chart, x, hx, y, hy, z, hz, hradius, hrelative⟩ :=
     exists_bounded_chart_cayley reduced.relativeRotation
-      (Noperthedron.Atlas.MatrixPose.relativeRotation_mem_SO3 reduced)
+      (Noperts.Atlas.MatrixPose.relativeRotation_mem_SO3 reduced)
   let q : AtlasPose ℝ := ⟨θ, φ, x, y, z⟩
   have houter' : reduced.outerRot.val = rotRM_mat q.θ q.φ 0 := by rw [houter]; exact hout
   have hview : (fun k => rotRM_mat q.θ q.φ 0 2 k) = (p1.rotateBy δ).view := by

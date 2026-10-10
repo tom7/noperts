@@ -1,12 +1,12 @@
 module
 
-public import Noperthedron.Pipeline.AtlasProjectiveEdgeCertificate
-public import Noperthedron.Pipeline.AtlasLocalCertificate
-public import Noperthedron.Pipeline.AtlasProjectiveLocalCertificate
-public import Noperthedron.Pipeline.AtlasProjectiveLocalViewTree
-public import Noperthedron.Pipeline.AtlasProjectiveGlobalCertificate
-public import Noperthedron.Pipeline.AtlasProjectiveMixedGlobalCertificate
-public import Noperthedron.ParallelBool
+public import Pipeline.AtlasProjectiveEdgeCertificate
+public import Pipeline.AtlasLocalCertificate
+public import Pipeline.AtlasProjectiveLocalCertificate
+public import Pipeline.AtlasProjectiveLocalViewTree
+public import Pipeline.AtlasProjectiveGlobalCertificate
+public import Pipeline.AtlasProjectiveMixedGlobalCertificate
+public import ParallelBool
 public import Septopert.CellPrune
 public import Septopert.ViewCoverData
 public import Septopert.CapLeaf
@@ -39,11 +39,11 @@ No fivefold/icosahedral/half-turn/upper-view predicates, no tie rows.
 -/
 
 namespace Septopert.SolutionTree
-open Noperthedron
+open Noperts
 
-open Noperthedron.Pipeline
+open Noperts.Pipeline
 open CayleyAtlas AtlasProjectiveView
-open Noperthedron.Atlas.ProjectiveView
+open Noperts.Atlas.ProjectiveView
 
 abbrev Interval := AtlasInterval ℚ
 abbrev Triangle := AtlasProjectiveView.Triangle ℚ
@@ -610,14 +610,14 @@ theorem validIxAtB_eq_true_iff (chart : ChartIndex) (get : ℕ → Row)
 
 def rowsValidAtParB (chart : ChartIndex) (get : ℕ → Row) (size : ℕ)
     (shared : SharedLocalTables) (taskCount : ℕ) : Bool :=
-  Noperthedron.ParallelBool.allParB (validIxAtB chart get size shared) size taskCount
+  Noperts.ParallelBool.allParB (validIxAtB chart get size shared) size taskCount
 
 theorem rowsValidAt_of_parB {chart : ChartIndex} {get : ℕ → Row}
     {size : ℕ} {shared : SharedLocalTables} {taskCount : ℕ}
     (h : rowsValidAtParB chart get size shared taskCount = true) :
     RowsValidAt chart get size shared := by
   intro i
-  have hindex := Noperthedron.ParallelBool.all_of_parB h i.val i.isLt
+  have hindex := Noperts.ParallelBool.all_of_parB h i.val i.isLt
   rw [validIxAtB_eq_true_iff] at hindex
   exact hindex i.isLt
 
@@ -632,13 +632,13 @@ def tableCoreValidParB (table : Table) (taskCount : ℕ) : Bool :=
 /-- The native row tasks used by `tableCoreValidWithTasksB`. -/
 def tableCoreTasks (table : Table) (taskCount : ℕ) : List (Task Bool) :=
   let chunkSize := table.size / taskCount + 1
-  Noperthedron.ParallelBool.chunkTasks
+  Noperts.ParallelBool.chunkTasks
     (validIxAtB table.chart table.get table.size table.sharedLocal) taskCount chunkSize
 
 def tableCoreValidWithTasksB (table : Table) (taskCount : ℕ)
     (tasks : List (Task Bool)) : Bool :=
   let chunkSize := table.size / taskCount + 1
-  tableRootB table && Noperthedron.ParallelBool.allWithTasksB table.size taskCount chunkSize tasks
+  tableRootB table && Noperts.ParallelBool.allWithTasksB table.size taskCount chunkSize tasks
 
 theorem Table.Valid.of_parB {table : Table} {taskCount : ℕ}
     (hshared : SharedLocalValid table.sharedLocal)

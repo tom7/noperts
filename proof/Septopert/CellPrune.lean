@@ -1,8 +1,8 @@
 module
 
 public import Septopert.Cell
-public import Noperthedron.Pipeline.AtlasQuadratic
-public import Noperthedron.Atlas.QuadraticBernstein
+public import Pipeline.AtlasQuadratic
+public import Atlas.QuadraticBernstein
 
 @[expose] public section
 
@@ -32,12 +32,12 @@ given projectively (`viewScale · Σ w_c T_c`) can be replaced by Σ w_c T_c.
 -/
 
 namespace Septopert
-open Noperthedron
+open Noperts
 
 open scoped Matrix
-open Noperthedron.Checker
-open Noperthedron.Atlas
-open Noperthedron.Pipeline
+open Noperts.Checker
+open Noperts.Atlas
+open Noperts.Pipeline
 open CayleyAtlas
 
 /-! ### Exact rational tables -/

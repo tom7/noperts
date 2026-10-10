@@ -1,7 +1,7 @@
 module
 
 public import Septopert.Caps
-public import Noperthedron.ParallelBool
+public import ParallelBool
 
 @[expose] public section
 
@@ -20,10 +20,10 @@ against `certOk`'s constants, every tree with Lean's own Bernstein bounds).
 -/
 
 namespace Septopert
-open Noperthedron
+open Noperts
 
-open Noperthedron.Pipeline
-open Noperthedron.Pipeline.Cap
+open Noperts.Pipeline
+open Noperts.Pipeline.Cap
 
 /-- A chart's witness cache (as in `chartCheck`). -/
 def chartCache (c : CapCert) (id : ChartId) (t : CTree) : Array (Option WitData) :=

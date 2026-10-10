@@ -1,7 +1,7 @@
 module
 
 public import Septopert.Cell
-public import Noperthedron.BalancedSupport.ViewAntipode
+public import BalancedSupport.ViewAntipode
 
 @[expose] public section
 
@@ -29,10 +29,10 @@ and 1, its Euler azimuth is in [0, π/4], and it contains one mirror normal,
 -/
 
 namespace Septopert
-open Noperthedron
+open Noperts
 
 open scoped Matrix
-open Noperthedron.Pipeline
+open Noperts.Pipeline
 
 /-- The view domain: u₀ ≥ u₁ ≥ 0 and u₁ ≥ u₂. -/
 def InC3vViewDomain (u : Fin 3 → ℝ) : Prop := u 1 ≤ u 0 ∧ 0 ≤ u 1 ∧ u 2 ≤ u 1

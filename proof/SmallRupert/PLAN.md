@@ -1,8 +1,8 @@
 # SmallRupert: proof plan
 
 Formalization of `nopert229/notes/LEMMAS.md` (coplanar silhouettes) against
-`IsRupert` from `Noperthedron/MainTheorem.lean`. Build: `lake build SmallRupert`
-(imports only Mathlib and `Noperthedron.Rupert.Basic`).
+`IsRupert` from `MainTheorem.lean`. Build: `lake build SmallRupert`
+(imports only Mathlib and `Noperts.Rupert.Basic`).
 
 ## Status
 
@@ -165,7 +165,7 @@ Directions not needed by any Rupert theorem (optional): L3 obstruction
 * **Rotation curve.** L1 is stated for any matrix curve with `R 0 = 1`,
   `R' 0 = [ω]×` entrywise (no matrix norm instance needed). The corollary uses
   the Cayley curve `cayley ((s/2) ω)` (same formula as
-  `Noperthedron.cayleyMatrix`, SO(3) for every `s`, rational entries, so the
+  `Noperts.cayleyMatrix`, SO(3) for every `s`, rational entries, so the
   derivative is `HasDerivAt.div` of polynomials). Preferred over
   `NormedSpace.exp`, where Mathlib lacks `det (exp A) = exp (tr A)`.
 * **Coplanar theorem.** `W ⊆ V` arbitrary (not `V ∩ Π`), `Π = affineSpan W`,

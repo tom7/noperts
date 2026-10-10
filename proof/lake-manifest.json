@@ -111,6 +111,6 @@
    "inputRev": "v4.32.0",
    "inherited": true,
    "configFile": "lakefile.toml"}],
- "name": "Noperthedron",
+ "name": "noperts",
  "lakeDir": ".lake",
  "fixedToolchain": false}

@@ -1,5 +1,5 @@
 name = "noperts"
-defaultTargets = ["Noperthedron", "Septopert", "SmallRupert", "constructSeptopert", "checkSeptopertCap"]
+defaultTargets = ["Noperts", "Septopert", "SmallRupert", "constructSeptopert", "checkSeptopertCap"]
 
 [leanOptions]
 pp.unicode.fun = true
@@ -23,9 +23,35 @@ git = "https://github.com/leanprover-community/mathlib4"
 rev = "v4.32.0"
 
 [[lean_lib]]
-name = "Noperthedron"
+name = "Noperts"
 roots = []
-globs = ["Noperthedron.+"]
+globs = [
+  "Basic",
+  "Bounding",
+  "Cayley",
+  "ConvertPose",
+  "EuclideanSpaceNotation",
+  "Global",
+  "MainTheorem",
+  "MatrixPose",
+  "ParallelBool",
+  "PointSym",
+  "Pose",
+  "PoseClasses",
+  "PoseInterval",
+  "PoseParam",
+  "RealMod",
+  "Util",
+  "Atlas.+",
+  "BalancedSupport.+",
+  "Bounding.+",
+  "Checker.+",
+  "Global.+",
+  "Pipeline.+",
+  "RationalApprox.+",
+  "Rupert.+",
+  "Vertices.+",
+]
 
 [[lean_lib]]
 name = "Septopert"

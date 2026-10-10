@@ -5,7 +5,7 @@ public import Mathlib.Analysis.Convex.Topology
 public import Mathlib.Analysis.InnerProductSpace.Dual
 public import Mathlib.Analysis.LocallyConvex.Separation
 public import Mathlib.Topology.Sequences
-public import Noperthedron.Rupert.Basic
+public import Rupert.Basic
 
 @[expose] public section
 
@@ -13,7 +13,7 @@ public import Noperthedron.Rupert.Basic
 # Small Rupert polyhedra: shared definitions
 
 Setting of `notes/LEMMAS.md` §0, in the conventions of `IsRupert`
-(`Noperthedron/MainTheorem.lean`): the screen is the xy-plane, a point
+(`MainTheorem.lean`): the screen is the xy-plane, a point
 `x : ℝ³` has screen position `proj_xy x` and depth `x 2`, and the *standard
 view* is the direction `ez = e₂` (LEMMAS.md's `e_z`).  A general view `u` is
 reduced to the standard one by a rotation (`exists_rotation_to_ez`,
@@ -104,7 +104,7 @@ theorem transpose_mem_SO3 {Q : Matrix (Fin 3) (Fin 3) ℝ} (hQ : Q ∈ SO3) : Q�
     by simpa using this.2⟩
 
 /-- Copy of `_root_.isRupert_image_rotation`
-(`Noperthedron/PentagonalHexecontahedron/IcoInstance.lean`). -/
+(`PentagonalHexecontahedron/IcoInstance.lean`). -/
 theorem isRupert_image_rotation' (Q : Matrix (Fin 3) (Fin 3) ℝ) (hQ : Q ∈ SO3)
     (V : Finset ℝ³) (h : IsRupert V) : IsRupert (V.image Q.toEuclideanLin) := by
   obtain ⟨R1, hR1, off, R2, hR2, hsub⟩ := h
@@ -171,7 +171,7 @@ theorem eq_zero_of_proj_xy_eq_zero {N z : ℝ³} (hN : N 2 ≠ 0) (hz : ⟪N, z�
 
 /-- Rupertness is invariant under rotating the vertex set.  (Proved as
 `_root_.isRupert_image_rotation` in
-`Noperthedron/PentagonalHexecontahedron/IcoInstance.lean`, applied to `Qᵀ`;
+`PentagonalHexecontahedron/IcoInstance.lean`, applied to `Qᵀ`;
 that file is too heavy to import here, so the proof is to be moved to a light
 module.) -/
 theorem isRupert_of_isRupert_image_rotation (Q : Matrix (Fin 3) (Fin 3) ℝ) (hQ : Q ∈ SO3)
@@ -413,7 +413,7 @@ noncomputable def so3Isometry {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R ∈ SO3) 
     so3Isometry hR x = R.toEuclideanLin x := rfl
 
 /-- Copy of `_root_.isRupert_image_add`
-(`Noperthedron/PentagonalHexecontahedron/IcoInstance.lean`). -/
+(`PentagonalHexecontahedron/IcoInstance.lean`). -/
 theorem isRupert_image_add' (c : ℝ³) (V : Finset ℝ³) (h : IsRupert V) :
     IsRupert (V.image fun x => c + x) := by
   obtain ⟨R1, hR1, off, R2, hR2, hsub⟩ := h

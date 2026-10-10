@@ -103,7 +103,7 @@ theorem not_rupert_of_valid_tables (table : CayleyAtlas.ChartIndex → SolutionT
 
 - `verts` is the set of the seven rational points `vertexQ` in
   `Septopert/ModelData.lean`.
-- `IsRupert` is defined in `proof/Noperthedron/MainTheorem.lean`.
+- `IsRupert` is defined in `proof/MainTheorem.lean`.
 - `#print axioms` on the theorem lists only `propext`, `Classical.choice`
   and `Quot.sound`.
 - `Table.Valid` includes the coverage condition: row 0 is the root interval

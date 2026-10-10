@@ -8,8 +8,8 @@ Native executable that decodes and checks the 7-vertex solid's cap certificate
 Usage: `checkSeptopertCap <cap.cert>` (add `diag` for per-chart results).
 -/
 
-open Noperthedron.Pipeline
-open Noperthedron.Pipeline.Cap
+open Noperts.Pipeline
+open Noperts.Pipeline.Cap
 open Septopert
 
 def main (args : List String) : IO Unit := do

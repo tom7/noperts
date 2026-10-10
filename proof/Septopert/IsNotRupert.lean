@@ -1,7 +1,7 @@
 module
 
 public import Septopert.SolutionTree
-public import Noperthedron.Rupert.Equivalences.RupertEquivRupertSet
+public import Rupert.Equivalences.RupertEquivRupertSet
 
 @[expose] public section
 
@@ -18,9 +18,9 @@ vertex-set form of `MainTheorem.IsRupert` (as the DH's
 -/
 
 namespace Septopert
-open Noperthedron
+open Noperts
 
-open Noperthedron.Pipeline
+open Noperts.Pipeline
 open SolutionTree
 
 /-- The vertices of the Septopert. -/

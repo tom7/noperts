@@ -2,7 +2,7 @@ module
 
 public import Septopert.Caps
 public import Septopert.Reduce
-public import Noperthedron.Pipeline.AtlasProjectiveView
+public import Pipeline.AtlasProjectiveView
 
 @[expose] public section
 
@@ -19,11 +19,11 @@ the offset.
 -/
 
 namespace Septopert
-open Noperthedron
+open Noperts
 
-open Noperthedron.Pipeline
-open Noperthedron.Pipeline.Cap
-open Noperthedron.Pipeline.PVec
+open Noperts.Pipeline
+open Noperts.Pipeline.Cap
+open Noperts.Pipeline.PVec
 open scoped Matrix
 
 /-- A triangle corner lies in the cap's view cone. -/
@@ -139,7 +139,7 @@ theorem capLeaf_sound (c : CapCert) (hc : certOk c = true) (iv : AtlasInterval �
     (T : AtlasProjectiveView.Triangle ℚ) (h : capLeafOk iv T = true) (p : AtlasPose ℝ) (hp : p ∈ iv.toReal)
     (hcell : InC3vCell (fun k => rotRM_mat p.θ p.φ 0 2 k) (CayleyAtlas.chartMatrix 0 * cayleyMatrix p.x p.y p.z))
     (hscale : 0 < AtlasProjectiveView.viewScale root p)
-    (htri : Noperthedron.Atlas.ProjectiveView.InTriangle (Noperthedron.Atlas.ProjectiveView.toReal T)
+    (htri : Noperts.Atlas.ProjectiveView.InTriangle (Noperts.Atlas.ProjectiveView.toReal T)
       (AtlasProjectiveView.normalizedView root p)) (offset : ℝ²) :
     ¬ RupertPose (p.matrixPoseWithOffset 0 offset) solid := by
   simp only [capLeafOk, Bool.and_eq_true, List.all_eq_true, List.mem_finRange, true_implies] at h
@@ -150,8 +150,8 @@ theorem capLeaf_sound (c : CapCert) (hc : certOk c = true) (iv : AtlasInterval �
   have hview : pose.view = fun k => κ * ∑ c, wt c * (T c k : ℝ) := by
     funext k
     have hk := congrFun hwT k
-    simp only [AtlasProjectiveView.normalizedView, Noperthedron.Atlas.ProjectiveView.affinePoint,
-      Noperthedron.Atlas.ProjectiveView.toReal] at hk
+    simp only [AtlasProjectiveView.normalizedView, Noperts.Atlas.ProjectiveView.affinePoint,
+      Noperts.Atlas.ProjectiveView.toReal] at hk
     simp only [pose, MatrixPose.view, AtlasPose.matrixPoseWithOffset_outerRot_val]
     have hv : rotRM_mat p.θ p.φ 0 2 k = AtlasEdgeCertificate.viewVector p k := by
       obtain ⟨e0, e1, e2⟩ := rotRM_mat_row2_zero p.θ p.φ

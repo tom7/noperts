@@ -30,7 +30,7 @@ Usage:
     root, as the full run does, without checking the tube tables.)
 -/
 
-open Noperthedron.Pipeline
+open Noperts.Pipeline
 open Septopert
 open Septopert.SolutionTree
 open Septopert.NativeExecutable

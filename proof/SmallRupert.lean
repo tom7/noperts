@@ -31,7 +31,7 @@ public import SmallRupert.SixClass
 # SmallRupert: Rupert theorems for small polyhedra (overview)
 
 Formalization of `nopert229/notes/LEMMAS.md` against `IsRupert` from
-`Noperthedron/MainTheorem.lean`.  `V : Finset ℝ³` is the vertex set (it may
+`MainTheorem.lean`.  `V : Finset ℝ³` is the vertex set (it may
 contain non-extreme points).  Every theorem below depends only on `propext`,
 `Classical.choice` and `Quot.sound`.  Headline theorems:
 

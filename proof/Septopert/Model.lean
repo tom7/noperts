@@ -17,7 +17,7 @@ coordinate permutation maps the vertex set onto itself (`c3Perm`,
 -/
 
 namespace Septopert
-open Noperthedron
+open Noperts
 
 open scoped Matrix
 

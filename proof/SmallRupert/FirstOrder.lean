@@ -23,7 +23,7 @@ The rotation curve `R_s` is arbitrary as long as `R 0 = 1` and `R' 0 = [ω]×`
 entrywise (`eventually_innerShadow_subset`).  LEMMAS.md uses
 `R_s = exp(s[ω]×)`; for the `IsRupert` corollary we use the Cayley curve
 `rotCurve ω s`, the rational rotation with Cayley vector `(s/2)ω`, which is in
-`SO(3)` for every `s` (same formula as `Noperthedron.cayleyMatrix`).
+`SO(3)` for every `s` (same formula as `Noperts.cayleyMatrix`).
 -/
 
 namespace SmallRupert
@@ -166,7 +166,7 @@ def cayleyDen (v : ℝ³) : ℝ := 1 + v 0 ^ 2 + v 1 ^ 2 + v 2 ^ 2
 theorem cayleyDen_pos (v : ℝ³) : 0 < cayleyDen v := by unfold cayleyDen; positivity
 
 /-- The Cayley rotation with Cayley vector `v` (the unit quaternion
-proportional to `(1, v)`); the same matrix as `Noperthedron.cayleyMatrix`. -/
+proportional to `(1, v)`); the same matrix as `Noperts.cayleyMatrix`. -/
 noncomputable def cayley (v : ℝ³) : Matrix (Fin 3) (Fin 3) ℝ :=
   !![(1 + v 0 ^ 2 - v 1 ^ 2 - v 2 ^ 2) / cayleyDen v, 2 * (v 0 * v 1 - v 2) / cayleyDen v,
       2 * (v 0 * v 2 + v 1) / cayleyDen v;

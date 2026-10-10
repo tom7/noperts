@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Pipeline.HalfTurnBasic
+public import Pipeline.HalfTurnBasic
 
 @[expose] public section
 
@@ -19,10 +19,10 @@ in the direction n.
 -/
 
 namespace Septopert
-open Noperthedron
+open Noperts
 
 open scoped RealInnerProductSpace
-open Noperthedron.Pipeline
+open Noperts.Pipeline
 
 theorem not_rupertPose_of_width_witness (p : MatrixPose) (S : Set ℝ³)
     (n : ℝ²) (hn : n ≠ 0) (Mp Mm : ℝ)

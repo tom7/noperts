@@ -131,10 +131,10 @@ def main():
         "(`codebdd.exe --model_file=septopert_model.txt`). -/",
         "",
         "namespace Septopert.ViewCover",
-        "open Noperthedron",
+        "open Noperts",
         "",
-        "open Noperthedron.Atlas.ProjectiveView",
-        "open Noperthedron.Pipeline.WedgeCover (V Tri)",
+        "open Noperts.Atlas.ProjectiveView",
+        "open Noperts.Pipeline.WedgeCover (V Tri)",
         "",
         "/-- The code triangles with their projective roots: codes in order, each",
         "code's triangles in order (the code packs' triangle index t). -/",
@@ -160,12 +160,12 @@ def main():
     lines.append("")
     lines.append("/-- Every atlas pose with view in D′ lies over a code triangle (in that")
     lines.append("triangle's root, at view scale ≥ 1). -/")
-    lines.append("theorem codeTriangles_cover (p : Noperthedron.Pipeline.AtlasPose ℝ)")
+    lines.append("theorem codeTriangles_cover (p : Noperts.Pipeline.AtlasPose ℝ)")
     lines.append("    (hdom : InC3vViewDomain (fun k => rotRM_mat p.θ p.φ 0 2 k)) :")
     lines.append("    ∃ t : ℕ, ∃ root : Fin 8, ∃ tri, codeTriangles[t]? = some (root, tri) ∧")
-    lines.append("      1 ≤ Noperthedron.Pipeline.AtlasProjectiveView.viewScale root p ∧")
+    lines.append("      1 ≤ Noperts.Pipeline.AtlasProjectiveView.viewScale root p ∧")
     lines.append("      InTriangle (toReal tri)")
-    lines.append("        (Noperthedron.Pipeline.AtlasProjectiveView.normalizedView root p) := by")
+    lines.append("        (Noperts.Pipeline.AtlasProjectiveView.normalizedView root p) := by")
     lines.append("  have h := coverValid_eq")
     lines.append("  simp only [coverValid, Bool.and_eq_true] at h")
     lines.append("  exact viewDomain_covered codeTriangles coverTree0 coverTree1 h.1 h.2 p hdom")
