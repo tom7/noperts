@@ -84,9 +84,35 @@ the generic-view density statements of Coplanar.lean (`dense_generic_...`,
     labels, f ≠ 0).
   - OctahedronAll: `isRupert_octahedron_normalized`,
     `isRupert_octahedron_nonplanar` (sign normalization), main assembly.
-  Next: the f = 0 case (LEMMAS §9.6: Lemma 9.10 degenerate edge view,
-  Cor. 9.0 lexicographic tilt, Lemma 9.11 with Mixed case via Lemma 8.8,
-  5-cycle, tie-breaks; lateral-edge counting).  Not started.
+  f = 0 case, in progress (Oct9Weak.lean, then Oct9Par.lean):
+  - done: `isRupert_of_tilted_unimodal_σ` (Cor. 8.0' for either
+    orientation σ = ±1, by reversing the cycle), `Q5a`/`Q5b` (5-cycle
+    unimodality), `det3_four` (four-vector identity for tilt tests).
+  - Weak edge lemma (Lemma 9.11), planned statement: `F : OctFacets x x' y y'
+    p p'`, `U.f x < U.f y` for U = F.a'b'c (strict), top T = F.a'b'c' with
+    `T.f x = T.f y = T.f p` (top ∥ bottom), not bad ⇒ IsRupert ∨ touching ∨
+    (⟪p - y', y - x⟫ = 0 ∧ ⟪p - y', p - y⟫ = 0).  Proof plan (u = y - x,
+    depths a,Y,b,c,d,e of x,y,p,y',x',p'; σ = sign det3 (p-y) (p'-y) u):
+    tests E1..E4 as in `quad_edge_tests` but σ-signed and E3 from the
+    vertical top face (x' gives 0); top-face edges y'→x', x'→p' have tests
+    = positive multiples of E3 (four-point identity + facets U, L' = F.ab'c',
+    H = F.a'bc'); tilt tests reduce via `det3_four` to s₁ = det3 (p-y) u v,
+    s₂ = det3 (y-p') u v, s₃ = det3 (p'-y') u v (τ3 = (L'(x')/L'(y)) s₃).
+    Cases: NWS4(Y,b,c,e) → cycle (y,p,y',p'), v = y' - x; else
+    min(Y,c) ≥ max(b,e) and a < max(b,e) (`quad_edge_lower`); b < c →
+    5-cycle (x,p,y',x',p'), v = x - y', Q5a (e < d from the four-point
+    identity in the top face); b = c = e → touching; b = c > e and
+    ⟪p-y', p-y⟫ > 0 → (y,p,y',p'), v = (p-y) + η(y'-y), NWS4 with the tie
+    broken lexicographically; < 0 → 5-cycle (x,y,p,y',p'),
+    v = -(p-y) + η(y'-y), Q5b; = 0 → lateral failure.
+  - Pair lemma (W = C, U = A): e₁ = b→a (p = c), e₂ = a'→b' (p = c'); quad
+    and not-bad signs from Gale as in `isRupert_gale_core` (f = 0 ⇒ galeF ≡ 0);
+    top ∥ bottom from f = 0 (apply l, m to the facet functions); both
+    touching ⇒ `isRupert_of_touching_pair`.  Result: IsRupert ∨ c - a' ⊥ bottom
+    ∨ b - c' ⊥ bottom.  Pairs A, B by cyclic relabeling (needs galeD a b > 0,
+    galeD b c > 0); WLOG galeD c a > 0 by perm₁₂.
+  - Counting: two of c - a', b - c', a - b' ⊥ bottom ⇒ four vertices of two
+    adjacent faces coplanar (contradiction with a facet function).
 
 ## Modules and dependency order
 
