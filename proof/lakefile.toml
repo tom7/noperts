@@ -92,3 +92,7 @@ buildType = "release"
 name = "constructSeptopert"
 root = "constructSeptopert"
 buildType = "release"
+
+# Small polyhedra are Rupert (coplanar-silhouette theorem, notes/LEMMAS.md).
+[[lean_lib]]
+name = "SmallRupert"
