@@ -21,3 +21,5 @@ public import SmallRupert.Prism
 public import SmallRupert.Tilt
 public import SmallRupert.RightPrism
 public import SmallRupert.L8Shapes
+public import SmallRupert.L8T4
+public import SmallRupert.L8T3
