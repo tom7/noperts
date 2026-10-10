@@ -334,6 +334,301 @@ theorem IsT3.exists_normalForm {A B C A' B' C' : ℝ³} (h : IsT3 A B C A' B' C'
   · rw [hA', hlB, hlC]; simp only [cmb]; module
   · rw [hB', hmA, hmC]; simp only [cmb]; module
 
+set_option maxHeartbeats 4000000 in
+/-- **T3, case `(X, Y) = (A, B)`**: the silhouette is the face `ABC`. -/
+theorem isRupert_T3_i {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) ≠ 0)
+    {α α' β β' : ℝ} (hα : 0 < α) (hα' : 0 < α') (hβ : 0 < β) (hβ' : 0 < β')
+    (h1α : α < 1) (h1β : β < 1) :
+    IsRupert {A, B, C, C + cmb (A - C) (B - C) (C' - C) α 0 α',
+      C + cmb (A - C) (B - C) (C' - C) 0 β β', C'} := by
+  classical
+  set f₁ := A - C
+  set f₂ := B - C
+  set f₃ := C' - C
+  obtain ⟨σ, hσ, hD⟩ := det3_pos_or_neg hΔ
+  have hσ0 : σ ≠ 0 := by rcases hσ with rfl | rfl <;> norm_num
+  set P := fun a b c : ℝ => C + cmb f₁ f₂ f₃ a b c with hP
+  have eA' : C + cmb f₁ f₂ f₃ α 0 α' = P α 0 α' := rfl
+  have eB' : C + cmb f₁ f₂ f₃ 0 β β' = P 0 β β' := rfl
+  have eA : A = P 1 0 0 := by simp [hP, cmb, f₁]
+  have eB : B = P 0 1 0 := by simp [hP, cmb, f₂]
+  have eC : C = P 0 0 0 := by simp [hP, cmb]
+  have eC' : C' = P 0 0 1 := by simp [hP, cmb, f₃]
+  rw [eA', eB', eA, eB, eC, eC']
+  set V : Finset ℝ³ := {P 1 0 0, P 0 1 0, P 0 0 0, P α 0 α', P 0 β β', P 0 0 1} with hV
+  have hmemV : ∀ z ∈ V, z = P 1 0 0 ∨ z = P 0 1 0 ∨ z = P 0 0 0 ∨ z = P α 0 α' ∨
+      z = P 0 β β' ∨ z = P 0 0 1 := by
+    intro z hz; simpa [hV] using hz
+  set u₀ := σ • cmb f₁ f₂ f₃ 0 0 1 with hu₀
+  have hd : cmb f₁ f₂ f₃ 0 0 1 = f₃ := by simp [cmb]
+  have hf₃ : f₃ ≠ 0 := by
+    intro h0
+    have := (cmb_eq_zero hΔ (hd.trans h0)).2.2
+    norm_num at this
+  have hu₀0 : u₀ ≠ 0 := by rw [hu₀, hd]; exact smul_ne_zero hσ0 hf₃
+  have hs0 : 0 < ⟪f₃, f₃⟫ := real_inner_self_pos.mpr hf₃
+  have hdepth : ∀ a b c, ⟪P a b c, u₀⟫ =
+      ⟪C, u₀⟫ + σ * (a * ⟪f₁, f₃⟫ + b * ⟪f₂, f₃⟫ + c * ⟪f₃, f₃⟫) := by
+    intro a b c
+    rw [hP]; simp only [inner_add_cmb, hu₀, hd, real_inner_smul_right]; ring
+  obtain ⟨a0, a1, a2⟩ := zmod3_add_one
+  replace h1α := sub_pos.mpr h1α
+  replace h1β := sub_pos.mpr h1β
+  have Pαβ := mul_pos hα' hβ
+  refine isRupert_of_tilted_three V u₀ (σ • cmb f₁ f₂ f₃ (-1 / 2) (-β / 2) (-β' / 2)) hu₀0
+    (tri (P 1 0 0) (P 0 1 0) (P 0 0 0)) ?_ ?_ ?_
+  · intro i; rcases zmod3_cases i with rfl | rfl | rfl <;>
+      simp [hV, a0, a1, a2, tri_0, tri_1, tri_2]
+  · intro i j hi hj
+    rcases zmod3_pairs i j hi hj with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
+    simp only [a0, a1, a2, tri_0, tri_1, tri_2, hP, add_cmb_sub, hu₀] <;>
+    first
+      | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+          (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
+          (by simp only [detc]; clear * - hα hα' hβ hβ' h1α h1β Pαβ; linarith)
+      | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+          (by simp only [detc]; clear * - hα hα' hβ hβ' h1α h1β Pαβ; linarith)
+  · intro z hz hzx i
+    have hx0 := hzx 0; have hx1 := hzx 1; have hx2 := hzx 2
+    simp only [tri_0, tri_1, tri_2] at hx0 hx1 hx2
+    rcases hmemV z hz with rfl | rfl | rfl | rfl | rfl | rfl <;>
+      try (first | exact absurd rfl hx0 | exact absurd rfl hx1 | exact absurd rfl hx2)
+    all_goals
+      rcases zmod3_cases i with rfl | rfl | rfl <;>
+      simp only [a0, a1, a2, tri_0, tri_1, tri_2, hP, add_cmb_sub, hu₀] <;>
+      first
+        | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+            (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
+            (by simp only [detc]; clear * - hα hα' hβ hβ' h1α h1β Pαβ; linarith)
+        | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+            (by simp only [detc]; clear * - hα hα' hβ hβ' h1α h1β Pαβ; linarith)
+
+set_option maxHeartbeats 4000000 in
+/-- **T3, case `(X, Y) = (A', B')`**: the silhouette is the face `A'B'C'`. -/
+theorem isRupert_T3_ii {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) ≠ 0)
+    {α α' β β' : ℝ} (hα : 0 < α) (hα' : 0 < α') (hβ : 0 < β) (hβ' : 0 < β')
+    (h1α : 1 < α) (h1β : 1 < β) (haa : 1 < α + α') (hbb : 1 < β + β') :
+    IsRupert {A, B, C, C + cmb (A - C) (B - C) (C' - C) α 0 α',
+      C + cmb (A - C) (B - C) (C' - C) 0 β β', C'} := by
+  classical
+  set f₁ := A - C
+  set f₂ := B - C
+  set f₃ := C' - C
+  obtain ⟨σ, hσ, hD⟩ := det3_pos_or_neg hΔ
+  have hσ0 : σ ≠ 0 := by rcases hσ with rfl | rfl <;> norm_num
+  set P := fun a b c : ℝ => C + cmb f₁ f₂ f₃ a b c with hP
+  have eA' : C + cmb f₁ f₂ f₃ α 0 α' = P α 0 α' := rfl
+  have eB' : C + cmb f₁ f₂ f₃ 0 β β' = P 0 β β' := rfl
+  have eA : A = P 1 0 0 := by simp [hP, cmb, f₁]
+  have eB : B = P 0 1 0 := by simp [hP, cmb, f₂]
+  have eC : C = P 0 0 0 := by simp [hP, cmb]
+  have eC' : C' = P 0 0 1 := by simp [hP, cmb, f₃]
+  rw [eA', eB', eA, eB, eC, eC']
+  set V : Finset ℝ³ := {P 1 0 0, P 0 1 0, P 0 0 0, P α 0 α', P 0 β β', P 0 0 1} with hV
+  have hmemV : ∀ z ∈ V, z = P 1 0 0 ∨ z = P 0 1 0 ∨ z = P 0 0 0 ∨ z = P α 0 α' ∨
+      z = P 0 β β' ∨ z = P 0 0 1 := by
+    intro z hz; simpa [hV] using hz
+  set u₀ := σ • cmb f₁ f₂ f₃ 0 0 1 with hu₀
+  have hd : cmb f₁ f₂ f₃ 0 0 1 = f₃ := by simp [cmb]
+  have hf₃ : f₃ ≠ 0 := by
+    intro h0
+    have := (cmb_eq_zero hΔ (hd.trans h0)).2.2
+    norm_num at this
+  have hu₀0 : u₀ ≠ 0 := by rw [hu₀, hd]; exact smul_ne_zero hσ0 hf₃
+  have hs0 : 0 < ⟪f₃, f₃⟫ := real_inner_self_pos.mpr hf₃
+  have hdepth : ∀ a b c, ⟪P a b c, u₀⟫ =
+      ⟪C, u₀⟫ + σ * (a * ⟪f₁, f₃⟫ + b * ⟪f₂, f₃⟫ + c * ⟪f₃, f₃⟫) := by
+    intro a b c
+    rw [hP]; simp only [inner_add_cmb, hu₀, hd, real_inner_smul_right]; ring
+  obtain ⟨a0, a1, a2⟩ := zmod3_add_one
+  have Q1 := mul_pos hβ (sub_pos.mpr h1α)
+  have Q2 := mul_pos hα (sub_pos.mpr h1β)
+  have Q3 := mul_pos hα hβ
+  have Q4 := mul_pos hβ (sub_pos.mpr haa)
+  replace hbb := sub_pos.mpr hbb
+  refine isRupert_of_tilted_three V u₀ (σ • cmb f₁ f₂ f₃ (1 / 2) (β / 2) (β' / 2)) hu₀0
+    (tri (P α 0 α') (P 0 β β') (P 0 0 1)) ?_ ?_ ?_
+  · intro i; rcases zmod3_cases i with rfl | rfl | rfl <;>
+      simp [hV, a0, a1, a2, tri_0, tri_1, tri_2]
+  · intro i j hi hj
+    rcases zmod3_pairs i j hi hj with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
+    simp only [a0, a1, a2, tri_0, tri_1, tri_2, hP, add_cmb_sub, hu₀] <;>
+    first
+      | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+          (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
+          (by simp only [detc]; clear * - hα hα' hβ hβ' Q1 Q2 Q3 hbb Q4; linarith)
+      | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+          (by simp only [detc]; clear * - hα hα' hβ hβ' Q1 Q2 Q3 hbb Q4; linarith)
+  · intro z hz hzx i
+    have hx0 := hzx 0; have hx1 := hzx 1; have hx2 := hzx 2
+    simp only [tri_0, tri_1, tri_2] at hx0 hx1 hx2
+    rcases hmemV z hz with rfl | rfl | rfl | rfl | rfl | rfl <;>
+      try (first | exact absurd rfl hx0 | exact absurd rfl hx1 | exact absurd rfl hx2)
+    all_goals
+      rcases zmod3_cases i with rfl | rfl | rfl <;>
+      simp only [a0, a1, a2, tri_0, tri_1, tri_2, hP, add_cmb_sub, hu₀] <;>
+      first
+        | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+            (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
+            (by simp only [detc]; clear * - hα hα' hβ hβ' Q1 Q2 Q3 hbb Q4; linarith)
+        | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+            (by simp only [detc]; clear * - hα hα' hβ hβ' Q1 Q2 Q3 hbb Q4; linarith)
+
+set_option maxHeartbeats 4000000 in
+/-- **T3, case `(X, Y) = (A, B')`**: one of `LU`, `UU`, `LL` is robustly unimodal. -/
+theorem isRupert_T3_iii {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) ≠ 0)
+    {α α' β β' : ℝ} (hα : 0 < α) (hα' : 0 < α') (hβ : 0 < β) (hβ' : 0 < β')
+    (h1α : α < 1) (h1β : 1 < β) (haa : 1 < α + α') (hbb : 1 < β + β') :
+    IsRupert {A, B, C, C + cmb (A - C) (B - C) (C' - C) α 0 α',
+      C + cmb (A - C) (B - C) (C' - C) 0 β β', C'} := by
+  classical
+  set f₁ := A - C
+  set f₂ := B - C
+  set f₃ := C' - C
+  obtain ⟨σ, hσ, hD⟩ := det3_pos_or_neg hΔ
+  have hσ0 : σ ≠ 0 := by rcases hσ with rfl | rfl <;> norm_num
+  set P := fun a b c : ℝ => C + cmb f₁ f₂ f₃ a b c with hP
+  have eA' : C + cmb f₁ f₂ f₃ α 0 α' = P α 0 α' := rfl
+  have eB' : C + cmb f₁ f₂ f₃ 0 β β' = P 0 β β' := rfl
+  have eA : A = P 1 0 0 := by simp [hP, cmb, f₁]
+  have eB : B = P 0 1 0 := by simp [hP, cmb, f₂]
+  have eC : C = P 0 0 0 := by simp [hP, cmb]
+  have eC' : C' = P 0 0 1 := by simp [hP, cmb, f₃]
+  rw [eA', eB', eA, eB, eC, eC']
+  set V : Finset ℝ³ := {P 1 0 0, P 0 1 0, P 0 0 0, P α 0 α', P 0 β β', P 0 0 1} with hV
+  have hmemV : ∀ z ∈ V, z = P 1 0 0 ∨ z = P 0 1 0 ∨ z = P 0 0 0 ∨ z = P α 0 α' ∨
+      z = P 0 β β' ∨ z = P 0 0 1 := by
+    intro z hz; simpa [hV] using hz
+  set u₀ := σ • cmb f₁ f₂ f₃ 0 0 1 with hu₀
+  have hd : cmb f₁ f₂ f₃ 0 0 1 = f₃ := by simp [cmb]
+  have hf₃ : f₃ ≠ 0 := by
+    intro h0
+    have := (cmb_eq_zero hΔ (hd.trans h0)).2.2
+    norm_num at this
+  have hu₀0 : u₀ ≠ 0 := by rw [hu₀, hd]; exact smul_ne_zero hσ0 hf₃
+  have hs0 : 0 < ⟪f₃, f₃⟫ := real_inner_self_pos.mpr hf₃
+  have hdepth : ∀ a b c, ⟪P a b c, u₀⟫ =
+      ⟪C, u₀⟫ + σ * (a * ⟪f₁, f₃⟫ + b * ⟪f₂, f₃⟫ + c * ⟪f₃, f₃⟫) := by
+    intro a b c
+    rw [hP]; simp only [inner_add_cmb, hu₀, hd, real_inner_smul_right]; ring
+  obtain ⟨a0, a1, a2, a3⟩ := zmod4_add_one
+  replace h1α := sub_pos.mpr h1α
+  replace h1β := sub_pos.mpr h1β
+  have Q1 := mul_pos hβ h1α
+  have Q2 := mul_pos hα h1β
+  have Q3 := mul_pos hα hβ
+  have Q4 := mul_pos hβ (sub_pos.mpr haa)
+  have Q5 := mul_pos hα' hβ
+  replace hbb := sub_pos.mpr hbb
+  have hA : ⟪f₁, f₃⟫ < α * ⟪f₁, f₃⟫ + α' * ⟪f₃, f₃⟫ ∨ ⟪f₃, f₃⟫ < α * ⟪f₁, f₃⟫ + α' * ⟪f₃, f₃⟫ := by
+    rcases le_or_gt ⟪f₁, f₃⟫ ⟪f₃, f₃⟫ with h | h
+    · left; nlinarith
+    · right; nlinarith
+  have hB : ⟪f₂, f₃⟫ < 0 ∨ ⟪f₂, f₃⟫ < β * ⟪f₂, f₃⟫ + β' * ⟪f₃, f₃⟫ := by
+    rcases lt_or_ge ⟪f₂, f₃⟫ 0 with h | h
+    · left; exact h
+    · right; nlinarith
+  rcases t3_nws_iii hs0 hA hB with h | h | h
+  · -- LU = (A, B', C', C)
+    have hQ : NWS4 fun i => ⟪quad (P 1 0 0) (P 0 β β') (P 0 0 1) (P 0 0 0) i, u₀⟫ := by
+      have := h.affine ⟪C, u₀⟫ hσ0
+      convert this using 2 with i
+      rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
+        simp only [quad_0, quad_1, quad_2, quad_3, hdepth] <;> ring
+    refine isRupert_of_tilted_NWS4 V u₀ (σ • cmb f₁ f₂ f₃ 1 (-β / 2) (-β' / 2)) hu₀0 (quad (P 1 0 0) (P 0 β β') (P 0 0 1) (P 0 0 0)) ?_ ?_ ?_ hQ
+    · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
+        simp [hV, a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3]
+    · intro i j hi hj
+      rcases zmod4_pairs i j hi hj with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
+        ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
+      simp only [a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3, hP, add_cmb_sub, hu₀] <;>
+      first
+        | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+            (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
+            (by simp only [detc]; clear * - hα hα' hβ hβ' h1α h1β Q1 Q2 Q3 Q4 Q5 hbb; linarith)
+        | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+            (by simp only [detc]; clear * - hα hα' hβ hβ' h1α h1β Q1 Q2 Q3 Q4 Q5 hbb; linarith)
+    · intro z hz hzx i
+      have hx0 := hzx 0; have hx1 := hzx 1; have hx2 := hzx 2; have hx3 := hzx 3
+      simp only [quad_0, quad_1, quad_2, quad_3] at hx0 hx1 hx2 hx3
+      rcases hmemV z hz with rfl | rfl | rfl | rfl | rfl | rfl <;>
+        try (first | exact absurd rfl hx0 | exact absurd rfl hx1 | exact absurd rfl hx2 | exact absurd rfl hx3)
+      all_goals
+        rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
+        simp only [a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3, hP, add_cmb_sub, hu₀] <;>
+        first
+          | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+              (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
+              (by simp only [detc]; clear * - hα hα' hβ hβ' h1α h1β Q1 Q2 Q3 Q4 Q5 hbb; linarith)
+          | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+              (by simp only [detc]; clear * - hα hα' hβ hβ' h1α h1β Q1 Q2 Q3 Q4 Q5 hbb; linarith)
+  · -- UU = (A, B', C', A')
+    have hQ : NWS4 fun i => ⟪quad (P 1 0 0) (P 0 β β') (P 0 0 1) (P α 0 α') i, u₀⟫ := by
+      have := h.affine ⟪C, u₀⟫ hσ0
+      convert this using 2 with i
+      rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
+        simp only [quad_0, quad_1, quad_2, quad_3, hdepth] <;> ring
+    refine isRupert_of_tilted_NWS4 V u₀ (σ • cmb f₁ f₂ f₃ (1 / 2) (β / 2) (β' / 2)) hu₀0 (quad (P 1 0 0) (P 0 β β') (P 0 0 1) (P α 0 α')) ?_ ?_ ?_ hQ
+    · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
+        simp [hV, a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3]
+    · intro i j hi hj
+      rcases zmod4_pairs i j hi hj with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
+        ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
+      simp only [a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3, hP, add_cmb_sub, hu₀] <;>
+      first
+        | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+            (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
+            (by simp only [detc]; clear * - hα hα' hβ hβ' h1α h1β Q1 Q2 Q3 Q4 Q5 hbb; linarith)
+        | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+            (by simp only [detc]; clear * - hα hα' hβ hβ' h1α h1β Q1 Q2 Q3 Q4 Q5 hbb; linarith)
+    · intro z hz hzx i
+      have hx0 := hzx 0; have hx1 := hzx 1; have hx2 := hzx 2; have hx3 := hzx 3
+      simp only [quad_0, quad_1, quad_2, quad_3] at hx0 hx1 hx2 hx3
+      rcases hmemV z hz with rfl | rfl | rfl | rfl | rfl | rfl <;>
+        try (first | exact absurd rfl hx0 | exact absurd rfl hx1 | exact absurd rfl hx2 | exact absurd rfl hx3)
+      all_goals
+        rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
+        simp only [a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3, hP, add_cmb_sub, hu₀] <;>
+        first
+          | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+              (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
+              (by simp only [detc]; clear * - hα hα' hβ hβ' h1α h1β Q1 Q2 Q3 Q4 Q5 hbb; linarith)
+          | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+              (by simp only [detc]; clear * - hα hα' hβ hβ' h1α h1β Q1 Q2 Q3 Q4 Q5 hbb; linarith)
+  · -- LL = (A, B', B, C)
+    have hQ : NWS4 fun i => ⟪quad (P 1 0 0) (P 0 β β') (P 0 1 0) (P 0 0 0) i, u₀⟫ := by
+      have := h.affine ⟪C, u₀⟫ hσ0
+      convert this using 2 with i
+      rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
+        simp only [quad_0, quad_1, quad_2, quad_3, hdepth] <;> ring
+    refine isRupert_of_tilted_NWS4 V u₀ (σ • cmb f₁ f₂ f₃ (-1 / 2) (-β / 2) (-β' / 2)) hu₀0 (quad (P 1 0 0) (P 0 β β') (P 0 1 0) (P 0 0 0)) ?_ ?_ ?_ hQ
+    · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
+        simp [hV, a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3]
+    · intro i j hi hj
+      rcases zmod4_pairs i j hi hj with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
+        ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
+      simp only [a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3, hP, add_cmb_sub, hu₀] <;>
+      first
+        | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+            (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
+            (by simp only [detc]; clear * - hα hα' hβ hβ' h1α h1β Q1 Q2 Q3 Q4 Q5 hbb; linarith)
+        | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+            (by simp only [detc]; clear * - hα hα' hβ hβ' h1α h1β Q1 Q2 Q3 Q4 Q5 hbb; linarith)
+    · intro z hz hzx i
+      have hx0 := hzx 0; have hx1 := hzx 1; have hx2 := hzx 2; have hx3 := hzx 3
+      simp only [quad_0, quad_1, quad_2, quad_3] at hx0 hx1 hx2 hx3
+      rcases hmemV z hz with rfl | rfl | rfl | rfl | rfl | rfl <;>
+        try (first | exact absurd rfl hx0 | exact absurd rfl hx1 | exact absurd rfl hx2 | exact absurd rfl hx3)
+      all_goals
+        rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
+        simp only [a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3, hP, add_cmb_sub, hu₀] <;>
+        first
+          | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+              (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
+              (by simp only [detc]; clear * - hα hα' hβ hβ' h1α h1β Q1 Q2 Q3 Q4 Q5 hbb; linarith)
+          | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+              (by simp only [detc]; clear * - hα hα' hβ hβ' h1α h1β Q1 Q2 Q3 Q4 Q5 hbb; linarith)
+
 /-- **Theorem 8.4.**  Every T3 is Rupert. -/
 theorem isRupert_T3 {A B C A' B' C' : ℝ³} (h : IsT3 A B C A' B' C') :
     IsRupert {A, B, C, A', B', C'} := by
