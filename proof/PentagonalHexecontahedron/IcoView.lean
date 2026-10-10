@@ -194,13 +194,13 @@ theorem exists_view_dirichlet (v : Fin 3 → ℝ) :
 /-! ### Realizing the reduced view by a pose -/
 
 /-- Compose both rotations on the right with a rotation of I. -/
-noncomputable def _root_.MatrixPose.bothRightIco (p : MatrixPose) (g : IcoIndex) : MatrixPose where
+noncomputable def MatrixPose.bothRightIco (p : MatrixPose) (g : IcoIndex) : MatrixPose where
   innerRot := p.innerRot * icoSO3 g
   outerRot := p.outerRot * icoSO3 g
   innerOffset := p.innerOffset
 
 theorem view_bothRightIco (p : MatrixPose) (g : IcoIndex) :
-    (p.bothRightIco g).view = viewCandidate p.view true g := by
+    (MatrixPose.bothRightIco p g).view = viewCandidate p.view true g := by
   funext k
   simp [MatrixPose.view, MatrixPose.bothRightIco, icoSO3, viewCandidate, Matrix.mul_apply,
     Matrix.mulVec, dotProduct, Fin.sum_univ_three, Matrix.transpose_apply]
@@ -216,7 +216,7 @@ namespace IModel
 variable (P : IModel)
 
 theorem outerShadow_bothRightIco (p : MatrixPose) (g : IcoIndex) :
-    outerShadow (p.bothRightIco g) P.toC5.polyhedron.hull =
+    outerShadow (MatrixPose.bothRightIco p g) P.toC5.polyhedron.hull =
       outerShadow p P.toC5.polyhedron.hull := by
   ext w
   constructor
@@ -236,7 +236,7 @@ theorem outerShadow_bothRightIco (p : MatrixPose) (g : IcoIndex) :
       Matrix.mulVec_mulVec]
 
 theorem innerShadow_bothRightIco (p : MatrixPose) (g : IcoIndex) :
-    innerShadow (p.bothRightIco g) P.toC5.polyhedron.hull =
+    innerShadow (MatrixPose.bothRightIco p g) P.toC5.polyhedron.hull =
       innerShadow p P.toC5.polyhedron.hull := by
   ext w
   constructor
@@ -256,7 +256,7 @@ theorem innerShadow_bothRightIco (p : MatrixPose) (g : IcoIndex) :
       Matrix.toLpLin_apply, Matrix.mulVec_mulVec]
 
 theorem RupertPose_bothRightIco_iff (p : MatrixPose) (g : IcoIndex) :
-    RupertPose (p.bothRightIco g) P.toC5.polyhedron.hull ↔
+    RupertPose (MatrixPose.bothRightIco p g) P.toC5.polyhedron.hull ↔
       RupertPose p P.toC5.polyhedron.hull := by
   simp only [RupertPose, P.innerShadow_bothRightIco, P.outerShadow_bothRightIco]
 
@@ -267,13 +267,13 @@ theorem exists_viewCone_pose (p : MatrixPose) :
   obtain ⟨s, g, hwalls⟩ := exists_view_dirichlet p.view
   have hcone := inViewCone_of_walls hwalls
   cases s
-  · refine ⟨(p.bothRightIco g).viewAntipode, ?_, ?_⟩
+  · refine ⟨(MatrixPose.bothRightIco p g).viewAntipode, ?_, ?_⟩
     · rw [view_viewAntipode, view_bothRightIco]
       convert hcone using 1
       funext k
       simp [viewCandidate]
     · rw [MatrixPose.RupertPose_viewAntipode_iff, P.RupertPose_bothRightIco_iff]
-  · exact ⟨p.bothRightIco g, by rwa [view_bothRightIco], P.RupertPose_bothRightIco_iff p g⟩
+  · exact ⟨MatrixPose.bothRightIco p g, by rwa [view_bothRightIco], P.RupertPose_bothRightIco_iff p g⟩
 
 end IModel
 
@@ -505,7 +505,7 @@ theorem IModel.exists_ico_full_atlas_translated_pose (P : IModel) (p : MatrixPos
     exists_tight_pose_viewCone P.toC5 p1 hcone1
   let oldPose := euler.matrixPoseWithOffset offset
   obtain ⟨g, hgfund⟩ := exists_mul_ico_inFundamentalDomain oldPose.relativeRotation
-  let reduced := oldPose.rightIcoSymmetry g
+  let reduced := MatrixPose.rightIcoSymmetry oldPose g
   obtain ⟨chart, x, hx, y, hy, z, hz, hradius, hrelative⟩ :=
     CayleyAtlas.exists_bounded_chart_cayley reduced.relativeRotation
       (Noperts.Atlas.MatrixPose.relativeRotation_mem_SO3 reduced)

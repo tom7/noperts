@@ -25,14 +25,14 @@ open CayleyAtlas
 noncomputable def icoSO3 (g : IcoIndex) : SO3 := ⟨icoMatrix g, icoMatrix_mem_SO3 g⟩
 
 /-- Compose only the inner rotation with a rotation of I. -/
-noncomputable def _root_.MatrixPose.rightIcoSymmetry (p : MatrixPose) (g : IcoIndex) :
+noncomputable def MatrixPose.rightIcoSymmetry (p : MatrixPose) (g : IcoIndex) :
     MatrixPose where
   innerRot := p.innerRot * icoSO3 g
   outerRot := p.outerRot
   innerOffset := p.innerOffset
 
 @[simp] theorem MatrixPose.relativeRotation_rightIcoSymmetry (p : MatrixPose) (g : IcoIndex) :
-    (p.rightIcoSymmetry g).relativeRotation = p.relativeRotation * icoMatrix g := by
+    (MatrixPose.rightIcoSymmetry p g).relativeRotation = p.relativeRotation * icoMatrix g := by
   simp [MatrixPose.relativeRotation, MatrixPose.rightIcoSymmetry, icoSO3, Matrix.mul_assoc]
 
 /-- The icosahedral cell condition carried by an atlas representative. -/
@@ -48,7 +48,7 @@ namespace IModel
 variable (P : IModel)
 
 theorem innerShadow_rightIcoSymmetry (p : MatrixPose) (g : IcoIndex) :
-    innerShadow (p.rightIcoSymmetry g) P.toC5.polyhedron.hull =
+    innerShadow (MatrixPose.rightIcoSymmetry p g) P.toC5.polyhedron.hull =
       innerShadow p P.toC5.polyhedron.hull := by
   ext w
   constructor
@@ -68,9 +68,9 @@ theorem innerShadow_rightIcoSymmetry (p : MatrixPose) (g : IcoIndex) :
       Matrix.toLpLin_apply, Matrix.mulVec_mulVec]
 
 theorem RupertPose_rightIcoSymmetry_iff (p : MatrixPose) (g : IcoIndex) :
-    RupertPose (p.rightIcoSymmetry g) P.toC5.polyhedron.hull ↔
+    RupertPose (MatrixPose.rightIcoSymmetry p g) P.toC5.polyhedron.hull ↔
       RupertPose p P.toC5.polyhedron.hull := by
-  have houter : outerShadow (p.rightIcoSymmetry g) P.toC5.polyhedron.hull =
+  have houter : outerShadow (MatrixPose.rightIcoSymmetry p g) P.toC5.polyhedron.hull =
       outerShadow p P.toC5.polyhedron.hull := rfl
   simp only [RupertPose, P.innerShadow_rightIcoSymmetry, houter]
 
@@ -81,9 +81,9 @@ theorem matrixPoseWithOffset_ofPose_eq_rightIcoSymmetry
       (euler.matrixPoseWithOffset offset).relativeRotation * icoMatrix g =
         chartMatrix chart * cayleyMatrix x y z) :
     (AtlasPose.ofPose euler x y z).matrixPoseWithOffset chart offset =
-      (euler.matrixPoseWithOffset offset).rightIcoSymmetry g := by
+      MatrixPose.rightIcoSymmetry (euler.matrixPoseWithOffset offset) g := by
   let oldPose := euler.matrixPoseWithOffset offset
-  let reduced := oldPose.rightIcoSymmetry g
+  let reduced := MatrixPose.rightIcoSymmetry oldPose g
   have hrelative' : reduced.relativeRotation =
       chartMatrix chart * cayleyMatrix x y z := by
     rw [MatrixPose.relativeRotation_rightIcoSymmetry]
