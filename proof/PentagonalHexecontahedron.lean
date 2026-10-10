@@ -139,7 +139,7 @@ theorem coplanar_image {X : Set ℝ³} (g : ℝ³ →ᵃ[ℝ] ℝ³) (h : Coplan
   exact (Submodule.finrank_map_le _ _).trans h
 
 /-- Interval enclosure of the difference of two boxes, coordinate `r`. -/
-def boxSubIv (A B : RatBox) (r : Fin 3) : Iv := (A.iv r).sub (B.iv r)
+def boxSubIv (A B : RatBox) (r : Fin 3) : Iv := (RatBox.iv A r).sub (RatBox.iv B r)
 
 theorem boxSubIv_mem {A B : RatBox} {a b : ℝ³} (ha : A.Mem a) (hb : B.Mem b) (r : Fin 3) :
     (boxSubIv A B r).Mem ((a - b) r) := by

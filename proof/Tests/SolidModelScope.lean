@@ -2,6 +2,7 @@ import Septopert
 import DeltoidalHexecontahedron
 import PentagonalHexecontahedron
 import SnubDodecahedron
+import Nopert231
 import ProofOfMainTheorem
 
 /-!

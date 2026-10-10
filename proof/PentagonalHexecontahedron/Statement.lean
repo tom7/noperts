@@ -336,7 +336,7 @@ theorem det3I_mem {u v w : Fin 3 → Iv} {a b c : ℝ³} (ha : ∀ r, (u r).Mem 
     (Iv.mul_mem (ha 2) (Iv.sub_mem (Iv.mul_mem (hb 0) (hc 1)) (Iv.mul_mem (hb 1) (hc 0))))
 
 /-- Interval coordinates of vertex g, and of the difference of two vertices. -/
-def vIv (g : Nat) (r : Fin 3) : Iv := (vBox g).iv r
+def vIv (g : Nat) (r : Fin 3) : Iv := RatBox.iv (vBox g) r
 def dIv (g h : Nat) (r : Fin 3) : Iv := (vIv g r).sub (vIv h r)
 
 theorem vIv_mem {g : Nat} (hg : g < 60) (r : Fin 3) : (vIv g r).Mem (snubV g r) :=
