@@ -21,8 +21,8 @@ against `certOk`'s constants, every tree with Lean's own Bernstein bounds).
 
 namespace Noperthedron.Septopert
 
-open Noperthedron.PentagonalHexecontahedron
-open Noperthedron.PentagonalHexecontahedron.Cap
+open Noperthedron.Pipeline
+open Noperthedron.Pipeline.Cap
 
 /-- A chart's witness cache (as in `chartCheck`). -/
 def chartCache (c : CapCert) (id : ChartId) (t : CTree) : Array (Option WitData) :=

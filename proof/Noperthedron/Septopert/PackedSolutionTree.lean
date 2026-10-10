@@ -1,7 +1,7 @@
 module
 
 public import Noperthedron.Septopert.SolutionTree
-public import Noperthedron.PentagonalHexecontahedron.PackedLocalViewTree
+public import Noperthedron.Pipeline.PackedLocalViewTree
 
 @[expose] public section
 
@@ -24,7 +24,7 @@ The decoder is untrusted plumbing: every decoded row is checked by
 
 namespace Noperthedron.Septopert.PackedSolutionTree
 
-open Noperthedron.PentagonalHexecontahedron
+open Noperthedron.Pipeline
 open SolutionTree AtlasProjectiveView
 open AtlasProjectiveEdgeCertificate AtlasProjectiveGlobalCertificate
 open AtlasProjectiveLocalCertificate
@@ -89,7 +89,7 @@ def intervalAt (intervals : Array SolutionTree.Interval) (index : Nat) : Solutio
 def triangleAt (triangles : Array SolutionTree.Triangle) (index : Nat) : SolutionTree.Triangle :=
   (triangles[index]?).getD (rootTriangle 0)
 
-def vertexAt (values : Array Nat) (index : Nat) : PentagonalHexecontahedron.VertexIndex :=
+def vertexAt (values : Array Nat) (index : Nat) : Pipeline.VertexIndex :=
   vertexSlot ((values[index]?).getD 0)
 
 def readRegion (triangles : Array SolutionTree.Triangle) : Decoder Region := do

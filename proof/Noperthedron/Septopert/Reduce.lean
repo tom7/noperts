@@ -2,8 +2,8 @@ module
 
 public import Noperthedron.Septopert.ViewReduce
 public import Noperthedron.Septopert.Model
-public import Noperthedron.PentagonalHexecontahedron.AtlasPose
-public import Noperthedron.PentagonalHexecontahedron.TightApproximation
+public import Noperthedron.Pipeline.AtlasPose
+public import Noperthedron.Pipeline.TightApproximation
 public import Noperthedron.Atlas.Tightening
 
 @[expose] public section
@@ -42,7 +42,7 @@ Steps:
 namespace Noperthedron.Septopert
 
 open scoped Matrix
-open Noperthedron.PentagonalHexecontahedron CayleyAtlas Real
+open Noperthedron.Pipeline CayleyAtlas Real
 
 /-! ### Right C3 on the inner copy -/
 

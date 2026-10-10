@@ -1,11 +1,11 @@
-import Noperthedron.PentagonalHexecontahedron.DHDecode
-import Noperthedron.PentagonalHexecontahedron.PackedLocalViewTree
-import Noperthedron.PentagonalHexecontahedron.PackedSolutionTree
+import Noperthedron.Pipeline.DHDecode
+import Noperthedron.Pipeline.PackedLocalViewTree
+import Noperthedron.Pipeline.PackedSolutionTree
 
-open Noperthedron.PentagonalHexecontahedron
-open Noperthedron.PentagonalHexecontahedron.Cap
-open Noperthedron.PentagonalHexecontahedron.DH
-open Noperthedron.PentagonalHexecontahedron.DHDecode
+open Noperthedron.Pipeline
+open Noperthedron.Pipeline.Cap
+open Noperthedron.Pipeline.DH
+open Noperthedron.Pipeline.DHDecode
 
 instance : Inhabited Tie.TieNode := ⟨⟨0, fun _ _ => 0, 0, []⟩⟩
 instance : Inhabited Tie.TieNormal := ⟨⟨fun _ => IcoQ.zero, #[], #[]⟩⟩

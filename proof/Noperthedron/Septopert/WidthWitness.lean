@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.PentagonalHexecontahedron.HalfTurnBasic
+public import Noperthedron.Pipeline.HalfTurnBasic
 
 @[expose] public section
 
@@ -21,7 +21,7 @@ in the direction n.
 namespace Noperthedron.Septopert
 
 open scoped RealInnerProductSpace
-open Noperthedron.PentagonalHexecontahedron
+open Noperthedron.Pipeline
 
 theorem not_rupertPose_of_width_witness (p : MatrixPose) (S : Set ℝ³)
     (n : ℝ²) (hn : n ≠ 0) (Mp Mm : ℝ)

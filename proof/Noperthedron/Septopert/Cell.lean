@@ -23,7 +23,7 @@ cell's boundary.
 namespace Noperthedron.Septopert
 
 open scoped Matrix
-open Noperthedron.PentagonalHexecontahedron
+open Noperthedron.Pipeline
 
 /-- The negation in Fin 3, as a table (literal subtraction does not reduce
 inside the matrix definitions). -/

@@ -19,7 +19,7 @@ vertex-set form of `MainTheorem.IsRupert` (as the DH's
 
 namespace Noperthedron.Septopert
 
-open Noperthedron.PentagonalHexecontahedron
+open Noperthedron.Pipeline
 open SolutionTree
 
 /-- The vertices of the Septopert. -/

@@ -41,7 +41,7 @@ for bi, spec in enumerate(sys.argv[2:]):
 with open(sys.argv[1], 'w') as f:
     f.write("""module
 
-public import Noperthedron.PentagonalHexecontahedron.CapRow
+public import Noperthedron.Pipeline.CapRow
 
 @[expose] public section
 
@@ -52,7 +52,7 @@ The base caps (exact frames, μ₀, wmax², half-turn element) and the images in
 the order of the 5D search's caps file (cap leaf `cl <path> <index>`).
 -/
 
-namespace Noperthedron.PentagonalHexecontahedron.Cap
+namespace Noperthedron.Pipeline.Cap
 
 def dhCapBases : Array CapBase := #[
 """)
@@ -61,5 +61,5 @@ def dhCapBases : Array CapBase := #[
                        for (x, e1, e2, mu0, w2, gi) in bases))
     f.write("]\n\ndef dhCapImgs : Array CapImg := #[\n")
     f.write(",\n".join(f"  ⟨{b}, ⟨{n}, by decide⟩, {'true' if s else 'false'}⟩" for (b, n, s) in imgs))
-    f.write("]\n\nend Noperthedron.PentagonalHexecontahedron.Cap\n")
+    f.write("]\n\nend Noperthedron.Pipeline.Cap\n")
 print(f"{len(bases)} bases, {len(imgs)} images", file=sys.stderr)

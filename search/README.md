@@ -11,7 +11,7 @@ if it is not Rupert (Lean: `¬ IsRupert`). This repository, together with the Le
 **every deltoidal hexecontahedron is a Nopert**:
 
 ```lean
--- Noperthedron/PentagonalHexecontahedron/DHTies.lean
+-- Noperthedron/Pipeline/DHTies.lean
 theorem deltoidalHexecontahedron_not_rupert_of_checks
     (htables : ∀ P : IModel, P.CentrallySymmetric →
       AtlasProjectiveSolutionTree.ExactClaims P.toC5.polyhedron.hull → ¬ IsRupert P.toC5.verts)
@@ -75,7 +75,7 @@ peak ~30 GB).
 - Ties: `dh_tie_data.py` (`dh_tie_data.txt`, `tie_normals.h`), `tietube.cc`, `tieatlas5d`, `dh_tie_lean.py`
   (Lean `DHTieData`), `tieviz.cc` (renderings).
 - 5D search: as for the pentagonal hexecontahedron, plus cap and tie leaves; `tufix.cc` (tube leaves at cap nodes).
-- Lean (Noperthedron `deltoidalhexecontahedron`, `Noperthedron/PentagonalHexecontahedron/`): `DHStatement`,
+- Lean (Noperthedron `deltoidalhexecontahedron`, `Noperthedron/Pipeline/`): `DHStatement`,
   `DHCaps`, `DHTies`, `DHChecks`, `DHDecode`, the cap and tie modules above, and `constructDeltoidalHexecontahedron`.
 
 The working log `notes/T.md` records how this proof came to be.

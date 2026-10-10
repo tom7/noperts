@@ -1,11 +1,11 @@
 module
 
-public import Noperthedron.PentagonalHexecontahedron.AtlasProjectiveEdgeCertificate
-public import Noperthedron.PentagonalHexecontahedron.AtlasLocalCertificate
-public import Noperthedron.PentagonalHexecontahedron.AtlasProjectiveLocalCertificate
-public import Noperthedron.PentagonalHexecontahedron.AtlasProjectiveLocalViewTree
-public import Noperthedron.PentagonalHexecontahedron.AtlasProjectiveGlobalCertificate
-public import Noperthedron.PentagonalHexecontahedron.AtlasProjectiveMixedGlobalCertificate
+public import Noperthedron.Pipeline.AtlasProjectiveEdgeCertificate
+public import Noperthedron.Pipeline.AtlasLocalCertificate
+public import Noperthedron.Pipeline.AtlasProjectiveLocalCertificate
+public import Noperthedron.Pipeline.AtlasProjectiveLocalViewTree
+public import Noperthedron.Pipeline.AtlasProjectiveGlobalCertificate
+public import Noperthedron.Pipeline.AtlasProjectiveMixedGlobalCertificate
 public import Noperthedron.ParallelBool
 public import Noperthedron.Septopert.CellPrune
 public import Noperthedron.Septopert.ViewCoverData
@@ -40,7 +40,7 @@ No fivefold/icosahedral/half-turn/upper-view predicates, no tie rows.
 
 namespace Noperthedron.Septopert.SolutionTree
 
-open Noperthedron.PentagonalHexecontahedron
+open Noperthedron.Pipeline
 open CayleyAtlas AtlasProjectiveView
 open Noperthedron.Atlas.ProjectiveView
 

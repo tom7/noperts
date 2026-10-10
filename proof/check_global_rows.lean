@@ -1,6 +1,6 @@
-import Noperthedron.PentagonalHexecontahedron.NativeExecutable
-import Noperthedron.PentagonalHexecontahedron.PackedLocalViewTree
-import Noperthedron.PentagonalHexecontahedron.PackedSolutionTree
+import Noperthedron.Pipeline.NativeExecutable
+import Noperthedron.Pipeline.PackedLocalViewTree
+import Noperthedron.Pipeline.PackedSolutionTree
 
 /-!
 Development checker for 5D search packs (pack5d): decodes a
@@ -21,8 +21,8 @@ bookkeeping for `scoreboard5d`, not part of any proof (the proof
 is `constructPentagonalHexecontahedron`, which decodes the codes with `decodeCodeTables`).
 -/
 
-open Noperthedron.PentagonalHexecontahedron
-open Noperthedron.PentagonalHexecontahedron.AtlasProjectiveSolutionTree
+open Noperthedron.Pipeline
+open Noperthedron.Pipeline.AtlasProjectiveSolutionTree
 
 /-- Whether `a` was modified after `b` (both exist). -/
 def newerThan (a b : System.FilePath) : IO Bool := do

@@ -1,7 +1,7 @@
 module
 
 public import Noperthedron.Septopert.Cell
-public import Noperthedron.PentagonalHexecontahedron.AtlasQuadratic
+public import Noperthedron.Pipeline.AtlasQuadratic
 public import Noperthedron.Atlas.QuadraticBernstein
 
 @[expose] public section
@@ -36,7 +36,7 @@ namespace Noperthedron.Septopert
 open scoped Matrix
 open Noperthedron.Checker
 open Noperthedron.Atlas
-open Noperthedron.PentagonalHexecontahedron
+open Noperthedron.Pipeline
 open CayleyAtlas
 
 /-! ### Exact rational tables -/

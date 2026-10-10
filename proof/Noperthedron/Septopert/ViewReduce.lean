@@ -31,7 +31,7 @@ and 1, its Euler azimuth is in [0, π/4], and it contains one mirror normal,
 namespace Noperthedron.Septopert
 
 open scoped Matrix
-open Noperthedron.PentagonalHexecontahedron
+open Noperthedron.Pipeline
 
 /-- The view domain: u₀ ≥ u₁ ≥ 0 and u₁ ≥ u₂. -/
 def InC3vViewDomain (u : Fin 3 → ℝ) : Prop := u 1 ≤ u 0 ∧ 0 ≤ u 1 ∧ u 2 ≤ u 1

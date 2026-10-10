@@ -1,8 +1,8 @@
 // Exact rational checks for the 5D search's certificate leaves, ported 1:1
 // from the Lean definitions that decide them:
 //
-//   projectiveGlobal       Noperthedron/PentagonalHexecontahedron/AtlasProjectiveGlobalCertificate.lean
-//   projectiveMixedGlobal  Noperthedron/PentagonalHexecontahedron/AtlasProjectiveMixedGlobalCertificate.lean
+//   projectiveGlobal       Noperthedron/Pipeline/AtlasProjectiveGlobalCertificate.lean
+//   projectiveMixedGlobal  Noperthedron/Pipeline/AtlasProjectiveMixedGlobalCertificate.lean
 //
 // Lean is the specification. Each function here carries the name of the Lean
 // definition it mirrors, and exact5d_test checks agreement with Lean on

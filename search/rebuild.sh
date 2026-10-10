@@ -117,7 +117,7 @@ if want model; then
   (cd "$NOPERT" && run python3 dh_tie_data.py dh_exact.txt dh_tie_data.txt)
   (cd "$LEAN" && run python3 scripts/update_vertices.py \
     && run python3 scripts/emit_wedge_cover.py --bdd "$NOPERT/codebdd.json" \
-         Noperthedron/PentagonalHexecontahedron/WedgeCoverData.lean \
+         Noperthedron/Pipeline/WedgeCoverData.lean \
     && run python3 scripts/snub_ico_group.py --model_file dh_model.txt \
     && run python3 scripts/dh_statement_data.py)
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe export_codetrees_pack.exe capcert.exe \
@@ -153,7 +153,7 @@ if want caps; then
       && python3 dh_caps.py 41/1024 1/320 "$WORK/frame_u0.txt") > "$CAPS_FILE"
   fi
   (cd "$NOPERT" && run python3 dh_cap_lean.py \
-    "$LEAN/Noperthedron/PentagonalHexecontahedron/DHCapData.lean" \
+    "$LEAN/Noperthedron/Pipeline/DHCapData.lean" \
     "$WORK/frame_u0.txt:41/4096:1/50:prune" "$WORK/frame_ux.txt:41/4096:1/80" "$WORK/frame_u0.txt:41/1024:1/320:prune")
 fi
 

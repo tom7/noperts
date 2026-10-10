@@ -1,6 +1,6 @@
-import Noperthedron.PentagonalHexecontahedron.AtlasProjectiveGlobalCertificate
-import Noperthedron.PentagonalHexecontahedron.AtlasProjectiveMixedGlobalCertificate
-import Noperthedron.PentagonalHexecontahedron.PackedSolutionTree
+import Noperthedron.Pipeline.AtlasProjectiveGlobalCertificate
+import Noperthedron.Pipeline.AtlasProjectiveMixedGlobalCertificate
+import Noperthedron.Pipeline.PackedSolutionTree
 
 /-!
 Golden values for the C++ port `exact5d.{h,cc}`: reads boxes, one
@@ -28,8 +28,8 @@ direction positive and negative, their validity (0/1 each), the chart-0
 identity tube's mismatchRadius, and Tube.Valid for radius r (0/1).
 -/
 
-open Noperthedron.PentagonalHexecontahedron
-open Noperthedron.PentagonalHexecontahedron.AtlasProjectiveLocalCertificate
+open Noperthedron.Pipeline
+open Noperthedron.Pipeline.AtlasProjectiveLocalCertificate
 
 deriving instance Inhabited for AxisCertificate
 deriving instance Inhabited for AtlasProjectiveMixedGlobalCertificate.Component

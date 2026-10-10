@@ -1,7 +1,7 @@
-import Noperthedron.PentagonalHexecontahedron.FundamentalChart3
-import Noperthedron.PentagonalHexecontahedron.DHDecode
-import Noperthedron.PentagonalHexecontahedron.NativeExecutable
-import Noperthedron.PentagonalHexecontahedron.PackedSolutionTree
+import Noperthedron.Pipeline.FundamentalChart3
+import Noperthedron.Pipeline.DHDecode
+import Noperthedron.Pipeline.NativeExecutable
+import Noperthedron.Pipeline.PackedSolutionTree
 
 /-!
 Native executable that reads and checks the exact certificate data for the
@@ -19,13 +19,13 @@ Kernel-proved bridges (`check_of_par`, `tiesCheck_of_par`,
 `deltoidalHexecontahedron_not_rupert_of_checks`) turn success into the theorem.
 -/
 
-open Noperthedron.PentagonalHexecontahedron
-open Noperthedron.PentagonalHexecontahedron.AtlasProjectiveSolutionTree
-open Noperthedron.PentagonalHexecontahedron.NativeExecutable
-open Noperthedron.PentagonalHexecontahedron.Cap
-open Noperthedron.PentagonalHexecontahedron.Tie
-open Noperthedron.PentagonalHexecontahedron.DH
-open Noperthedron.PentagonalHexecontahedron.DHDecode
+open Noperthedron.Pipeline
+open Noperthedron.Pipeline.AtlasProjectiveSolutionTree
+open Noperthedron.Pipeline.NativeExecutable
+open Noperthedron.Pipeline.Cap
+open Noperthedron.Pipeline.Tie
+open Noperthedron.Pipeline.DH
+open Noperthedron.Pipeline.DHDecode
 
 private def localTaskCount : Nat := 64
 private def globalTaskCount : Nat := 256

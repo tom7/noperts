@@ -2,7 +2,7 @@ module
 
 public import Noperthedron.Septopert.Caps
 public import Noperthedron.Septopert.Reduce
-public import Noperthedron.PentagonalHexecontahedron.AtlasProjectiveView
+public import Noperthedron.Pipeline.AtlasProjectiveView
 
 @[expose] public section
 
@@ -20,9 +20,9 @@ the offset.
 
 namespace Noperthedron.Septopert
 
-open Noperthedron.PentagonalHexecontahedron
-open Noperthedron.PentagonalHexecontahedron.Cap
-open Noperthedron.PentagonalHexecontahedron.PVec
+open Noperthedron.Pipeline
+open Noperthedron.Pipeline.Cap
+open Noperthedron.Pipeline.PVec
 open scoped Matrix
 
 /-- A triangle corner lies in the cap's view cone. -/

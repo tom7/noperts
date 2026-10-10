@@ -9,7 +9,7 @@ public import Noperthedron.Basic
 
 The cyclic coordinate permutations, as exact matrices. They live in their own
 file (importing only `Noperthedron.Basic`) so that the model layer
-(`PentagonalHexecontahedron.Vertices`) can use them without importing the
+(`Noperthedron.Pipeline.Vertices`) can use them without importing the
 mirror-tie and cell layers (`Group`, `Cell`), which import the certificate
 pipeline.
 -/
