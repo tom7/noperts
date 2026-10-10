@@ -76,8 +76,7 @@ theorem isRupert_iff_of_card_le_six (V : Finset ℝ³) (hV : V.card ≤ 6) :
       · exact isRupert_of_coplanar_of_not_collinear V hpl hcol
       · exact isRupert_of_card_le_six V hV hpl
 
-/-- **No nopert has fewer than 7 vertices**, in the form stated in
-`MainTheorem.lean`: a solid convex hull of at most 6 points is Rupert. -/
+/-- Every nontrivial convex polyhedron with fewer than 7 vertices is Rupert. -/
 theorem notExistsNonRupertPolyhedronBelowSize7 :
     NotExistsNonRupertPolyhedronBelowSize7 := by
   rintro ⟨V, hcard, hint, hnR⟩
