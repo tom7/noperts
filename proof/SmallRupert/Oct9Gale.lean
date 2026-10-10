@@ -182,7 +182,8 @@ theorem not_bad_of_dep {x x' y y' p p' : ℝ³} {L : ℝ³ → ℝ} (hL : IsDep 
 /-- **Lemma 9.6 (one facet).**  A dependency `μ` vanishing at `p'`, applied to
 the facet `x' y' p`, compares the two other values. -/
 theorem facet_lt_of_dep {x x' y y' p p' : ℝ³} {L : ℝ³ → ℝ} (hL : IsDep x x' y y' p p' L)
-    (G : FacetFn {x, x', y, y', p, p'} x' y' p) (hnd : [x, x', y, y', p, p'].Nodup)
+    {V : Finset ℝ³} (G : FacetFn V x' y' p) (hxV : x ∈ V) (hyV : y ∈ V)
+    (hnd : [x, x', y, y', p, p'].Nodup)
     (h0 : L p' = 0) (hs : L x * (L x + L y) < 0) : G.f x < G.f y := by
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd
@@ -190,8 +191,8 @@ theorem facet_lt_of_dep {x x' y y' p p' : ℝ³} {L : ℝ³ → ℝ} (hL : IsDep
     ⟨hy'p, hy'p'⟩, hpp', -⟩ := hnd
   have r := hL.apply G.hN
   rw [G.hP, G.hQ, G.hR, h0] at r
-  have nx := G.neg x (by simp) hxx' hxy' hxp
-  have ny := G.neg y (by simp) (Ne.symm hx'y) hyy' hyp
+  have nx := G.neg x hxV hxx' hxy' hxp
+  have ny := G.neg y hyV (Ne.symm hx'y) hyy' hyp
   have e : L x * (G.f x - G.f y) = -(L x + L y) * G.f y := by linarith
   rcases lt_or_gt_of_ne (show L x ≠ 0 by rintro h; simp [h] at hs) with h | h
   · have : 0 < L x + L y := by nlinarith
@@ -459,6 +460,109 @@ theorem arc_lemma {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c')
   have e2 : (G.m a + G.m b + G.m c) * galeD G.l G.m a a' = 0 := by
     simp only [galeD]; linear_combination G.m a' * z1 - G.m a * z2
   exact ⟨(mul_eq_zero.mp e1).resolve_right hκ, (mul_eq_zero.mp e2).resolve_right hκ⟩
+
+theorem galeD_sum {a a' b b' c c' : ℝ³} {l m : ℝ³ → ℝ} (hl : IsDep a a' b b' c c' l)
+    (hm : IsDep a a' b b' c c' m) (s : ℝ³) :
+    galeD l m s a + galeD l m s a' + galeD l m s b + galeD l m s b' + galeD l m s c +
+      galeD l m s c' = 0 := by
+  have h1 := hl.sum; have h2 := hm.sum
+  simp only [galeD]; linear_combination l s * h2 - m s * h1
+
+theorem IsDep.galeD' {a a' b b' c c' : ℝ³} {l m : ℝ³ → ℝ} (hl : IsDep a a' b b' c c' l)
+    (hm : IsDep a a' b b' c c' m) (s : ℝ³) :
+    IsDep a a' b b' c c' (fun t => SmallRupert.galeD l m t s) := by
+  have := hl.comb hm (m s) (-l s)
+  convert this using 2 with t; simp only [SmallRupert.galeD]; ring
+
+theorem finset_perm_ba {a a' b b' c c' : ℝ³} :
+    ({b, b', a, a', c', c} : Finset ℝ³) = {a, a', b, b', c, c'} := by
+  ext z; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
+
+theorem finset_perm_a'b' {a a' b b' c c' : ℝ³} :
+    ({a', a, b', b, c', c} : Finset ℝ³) = {a, a', b, b', c, c'} := by
+  ext z; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
+
+theorem finset_perm_c'c {a a' b b' c c' : ℝ³} :
+    ({c', c, b, b', a, a'} : Finset ℝ³) = {a, a', b, b', c, c'} := by
+  ext z; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
+
+/-- **Steps 1–3 of §9.5** for a normalized labeling (`κ_A, κ_B, κ_C > 0`),
+the arc-lemma pair `W = C` and `U = A`: the crossed pair `b → a`, `a' → b'`
+with poles `c'`, `c` gives a passage. -/
+theorem isRupert_gale_core {a a' b b' c c' : ℝ³} (h : IsOctahedron a a' b b' c c')
+    (G : GaleData a a' b b' c c') (hκa : 0 < galeD G.l G.m a a')
+    (hκb : 0 < galeD G.l G.m b b') (hκc : 0 < galeD G.l G.m c c')
+    (hfc : 0 < galeF G.l G.m a b c c) (hfc' : 0 < galeF G.l G.m a b c c')
+    (hU : 0 < galeD G.l G.m c a) : IsRupert {a, a', b, b', c, c'} := by
+  obtain ⟨F⟩ := h.nonempty_octFacets
+  have hl := G.hl; have hm := G.hm
+  have anti := galeD_anti G.l G.m
+  have self := galeD_self G.l G.m
+  -- pole signs at `c`, `c'`, `a`, `b'`
+  obtain ⟨c1, c2, c3⟩ := pole_signs F.perm₂₃.perm₁₂ (hl.galeD hm c).perm₂₃.perm₁₂
+    (self c) hκc.ne'
+  obtain ⟨d1, d2, d3⟩ := pole_signs F.perm₂₃.perm₁₂.swap₁ (hl.galeD hm c').perm₂₃.perm₁₂.swap₁
+    (self c') (by rw [anti]; linarith)
+  obtain ⟨a1, a2, a3⟩ := pole_signs F (hl.galeD hm a) (self a) hκa.ne'
+  obtain ⟨b1, b2, b3⟩ := pole_signs F.perm₁₂.swap₁ (hl.galeD hm b').perm₁₂.swap₁
+    (self b') (by rw [anti]; linarith)
+  -- signs of `det(g_c, ·)` and `det(g_c', ·)`
+  have hca' : 0 < galeD G.l G.m c a' := pos_of_mul_pos_pos c1 hU
+  have hcb : galeD G.l G.m c b < 0 := neg_of_mul_neg_pos (by rwa [mul_comm] at c3) hU
+  have hcb' : galeD G.l G.m c b' < 0 := neg_of_mul_pos_neg (by linarith) hcb
+  have hc'a : 0 < galeD G.l G.m c' a := by
+    have e : galeD G.l G.m a c * galeD G.l G.m a c' = galeD G.l G.m c a * galeD G.l G.m c' a := by
+      rw [anti c a, anti c' a]; ring
+    exact pos_of_mul_pos_pos (e ▸ a2) hU
+  have hc'a' : 0 < galeD G.l G.m c' a' := pos_of_mul_pos_pos d1 hc'a
+  have hc'b : galeD G.l G.m c' b < 0 := neg_of_mul_neg_pos (by rwa [mul_comm] at d3) hc'a
+  have hc'b' : galeD G.l G.m c' b' < 0 := neg_of_mul_pos_neg (by linarith) hc'b
+  -- signs of `det(g_a, ·)` and `det(g_b', ·)`
+  have hac : galeD G.l G.m a c < 0 := by rw [anti]; linarith
+  have hab : 0 < galeD G.l G.m a b := pos_of_mul_neg_neg (by linarith) hac
+  have hab' : 0 < galeD G.l G.m a b' := pos_of_mul_pos_pos a1 hab
+  have hb'c : 0 < galeD G.l G.m b' c := by rw [anti]; linarith
+  have hb'a : galeD G.l G.m b' a < 0 := neg_of_mul_neg_pos b3 hb'c
+  have hb'a' : galeD G.l G.m b' a' < 0 := neg_of_mul_pos_neg b1 hb'a
+  have hb'c' : 0 < galeD G.l G.m b' c' := by rw [anti]; linarith
+  -- sums
+  have sc := galeD_sum hl hm c
+  have sc' := galeD_sum hl hm c'
+  rw [galeF_eq] at hfc hfc'
+  rw [self] at sc hfc
+  rw [self] at sc'
+  have hcc' := anti c c'
+  -- the crossed pair
+  have hndb := (F.perm₁₂.swap₃).nodup
+  have hnda := (F.swap₁.swap₂.swap₃).nodup
+  have hq₁ := facet_lt_of_dep (hl.galeD hm c).perm₁₂.swap₃ (F.perm₁₂.swap₃).a'b'c (by simp)
+    (by simp) hndb (self c) (by nlinarith)
+  have hq₂ := facet_lt_of_dep (hl.galeD hm c').perm₁₂ (F.perm₁₂.swap₃).a'b'c' (by simp)
+    (by simp) (F.perm₁₂).nodup (self c') (by nlinarith)
+  have hr₁ := facet_lt_of_dep (hl.galeD hm c).swap₁.swap₂.swap₃ (F.swap₁.swap₂.swap₃).a'b'c
+    (by simp) (by simp) hnda (self c) (by nlinarith)
+  have hr₂ := facet_lt_of_dep (hl.galeD hm c').swap₁.swap₂ (F.swap₁.swap₂.swap₃).a'b'c'
+    (by simp) (by simp) (F.swap₁.swap₂).nodup (self c') (by nlinarith)
+  have hnd := F.nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  have hnba : a ≠ b := hnd.1.2.1
+  have hnab' : a' ≠ b' := hnd.2.1.2.1
+  have hgood₁ := not_bad_of_dep (hl.galeD hm b').perm₁₂.swap₃ (Ne.symm hnba) (self b')
+    (by rw [anti]; linarith) (by rw [anti b b']; linarith) hb'a'.le hb'c'.le hb'c.le
+  have hgood₂ := not_bad_of_dep (L := fun t => galeD G.l G.m t a)
+    (hl.galeD' hm a).swap₁.swap₂.swap₃ hnab' (self a) (by rw [anti]; linarith)
+    (by rw [anti a a', anti a b']; linarith) (by rw [anti]; linarith) hc'a.le hU.le
+  by_cases ht₁ : ⟪c', a - b⟫ = ⟪c, a - b⟫ ∧ ⟪c, a - b⟫ = ⟪a', a - b⟫ ∧ ⟪a', a - b⟫ < ⟪a, a - b⟫
+  · by_cases ht₂ : ⟪c', b' - a'⟫ = ⟪c, b' - a'⟫ ∧ ⟪c, b' - a'⟫ = ⟪b, b' - a'⟫ ∧
+        ⟪b, b' - a'⟫ < ⟪b', b' - a'⟫
+    · have := isRupert_of_touching_pair h.perm₂₃.perm₁₂.perm₂₃.swap₁
+        (by rw [inner_sub_left]; linarith [ht₁.1]) (by rw [inner_sub_left]; linarith [ht₂.1])
+      rwa [finset_perm_c'c] at this
+    · have := isRupert_quad_edge F.swap₁.swap₂.swap₃ hr₁ hr₂ hgood₂ ht₂
+      rwa [finset_perm_a'b'] at this
+  · have := isRupert_quad_edge F.perm₁₂.swap₃ hq₁ hq₂ hgood₁ ht₁
+    rwa [finset_perm_ba] at this
 
 end SmallRupert
 
