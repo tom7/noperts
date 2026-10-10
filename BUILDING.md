@@ -25,26 +25,39 @@ page with its statement, trust model and reproduction steps:
   - `Noperts` (the modules directly in `proof/` and its subdirectories other
     than the six below): shared definitions and machinery. `IsRupert` is
     defined in `proof/MainTheorem.lean`. `Pipeline/` defines the certificate
-    tables and their checks, used by data-backed results.
+    tables and their checks, used by the data-backed results other than
+    candidate #231. It is generic over the solid: a solid is a `SolidModel`
+    (`Pipeline/SolidModel.lean`: its rational vertices, cyclic symmetry and
+    error bounds); the icosahedral solids are `IcosahedralSolid`s
+    (`Pipeline/IcoModel.lean`, via `Pipeline/FivefoldModel.lean`); and each
+    solid provides these as scoped instances, in effect only inside its own
+    namespace. The pentagonal hexecontahedron and the snub dodecahedron also
+    share the top layer (`Pipeline/AtlasProjectiveSolutionTree.lean`, the
+    decoder `PackedSolutionTree`, `IsNotRupert`, the executable checker
+    `NativeExecutable`) and Wikipedia's snub dodecahedron
+    (`Pipeline/WikipediaSnub.lean`).
   - `Septopert`: entry point `proof/Septopert.lean`, details in
-    `proof/Septopert/`.
+    `proof/Septopert/` (its model, `SolidModel.lean`; its own solution tree,
+    with C3 and mirror reductions and caps).
   - `Minimality`: entry point `proof/Minimality.lean`, details in
     `proof/Minimality/`.
   - `DeltoidalHexecontahedron`: entry point
     `proof/DeltoidalHexecontahedron.lean`, details in
-    `proof/DeltoidalHexecontahedron/` (its own copy of the certificate
-    pipeline; it shares the core and the model-independent parts of
-    `Pipeline/`).
+    `proof/DeltoidalHexecontahedron/` (its model and orbit data,
+    `SolidModel.lean` and `OrbitData.lean`; its statement; and its own
+    solution tree, with the half-turn reduction, caps and ties).
   - `PentagonalHexecontahedron`: entry point
     `proof/PentagonalHexecontahedron.lean`, details in
-    `proof/PentagonalHexecontahedron/` (its own copy of the certificate
-    pipeline, likewise; from `Pipeline/` it uses only `IcoField` and
-    `HalfTurnBasic`).
+    `proof/PentagonalHexecontahedron/` (its model, orbit and view-cover data
+    and its statement).
   - `SnubDodecahedron`: entry point `proof/SnubDodecahedron.lean`, details
-    in `proof/SnubDodecahedron/` (likewise; from `Pipeline/` it uses only
-    `IcoField` and `HalfTurnBasic`).
+    in `proof/SnubDodecahedron/` (likewise, plus its tangent-cone tables,
+    with which its executable checks the identity-tube rows more cheaply).
   - `Nopert231`: entry point `proof/Nopert231.lean`, details in
     `proof/Nopert231/` (its own pipeline, which uses the core's `Atlas/`).
+  - `Tests`: checks that run at build time: every headline uses only the
+    standard axioms, no solid's model is in scope without opening its
+    namespace, and the chart-3 table is valid for each solid that uses it.
   - Executables: `constructSeptopert` (checks the Septopert's certificate
     data), `checkSeptopertCap` (checks only its cap certificate),
     `constructDeltoidalHexecontahedron` (checks the deltoidal
@@ -151,8 +164,8 @@ where it lived in the same-named `Noperthedron/PentagonalHexecontahedron/`
 that directory. Its `IcoField` is now `Pipeline/IcoField`. Eight declarations
 that the branch put at the root (`proj_xy_smul`, `proj_xy_add`,
 `isRupert_image_{smul,add,rotation,similarity}`, `MatrixPose.bothRightIco`,
-`MatrixPose.rightIcoSymmetry`) are in the `PentagonalHexecontahedron`
-namespace here. The search that produced its data is on nopert229's
+`MatrixPose.rightIcoSymmetry`) are in the `Noperts.Pipeline` namespace
+here. The search that produced its data is on nopert229's
 `pentagonalhexecontahedron` branch.
 
 The snub dodecahedron's Lean proof (`proof/SnubDodecahedron/`) comes from
@@ -162,8 +175,23 @@ that branch is the first instantiation of the shared icosahedral pipeline.
 Earlier commits of that branch called it `Nopert231`
 (`Noperthedron/Nopert231/`, `constructNopert231`). Its `IcoField` is now
 `Pipeline/IcoField`, and the same eight root declarations as the pentagonal
-hexecontahedron's are in the `SnubDodecahedron` namespace here. The search
+hexecontahedron's are in the `Noperts.Pipeline` namespace here. The search
 that produced its data is on nopert229's `snubdodecahedron` branch.
+
+Until 2026-10-10 the deltoidal and pentagonal hexecontahedra and the snub
+dodecahedron each had their own copy of the certificate pipeline in their
+directory (the branch's `PentagonalHexecontahedron/` or `SnubDodecahedron/`
+directory, renamed), and `Pipeline/` was the Septopert's. They were merged
+into `Pipeline/`, made generic over the solid (`SolidModel`,
+`IcosahedralSolid`): each solid's `Vertices.lean` became its `SolidModel.lean`,
+the per-solid part of its `IcoGroupData.lean` its `OrbitData.lean`, and the
+rest of its copy was deleted. `C5Model` is now `CyclicModel`, the generic
+`fivefoldMatrix` is `symmetryMatrix` and the generic
+`InFivefoldFundamentalDomain` is `InSymmetryFundamentalDomain`. The
+pentagonal hexecontahedron's `WikipediaSnub.lean` (a copy of the first half
+of the snub dodecahedron's statement) is now `Pipeline/WikipediaSnub.lean`.
+The generators of the solids' Lean data in `search/` still write the old
+layout.
 
 Candidate #231's Lean proof (`proof/Nopert231/`) comes, with its history,
 from the `nopert231` branch of Noperthedron (0c83e4ba), where it lived in

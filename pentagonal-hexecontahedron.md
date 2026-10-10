@@ -23,7 +23,7 @@ Lean entry point:
   ⟨x, y⟩ ≤ 1 for every vertex x of the snub, with equality at three affinely
   independent vertices.
 - The snub dodecahedron is Wikipedia's definition, taken literally
-  (`proof/PentagonalHexecontahedron/WikipediaSnub.lean`). Let φ be the golden
+  (`proof/Pipeline/WikipediaSnub.lean`). Let φ be the golden
   ratio and ξ ≈ 0.94315 the real zero of x³ + 2x² − φ². The 60 vertices are
   the images of
 
@@ -126,12 +126,14 @@ there can only produce data that fails the checks.
     `QuadCoverTree.covers_of_valid` by a proof. The shared core here
     includes that fix.
 - **In this repository:** the same modules, renamed (see
-  [BUILDING.md](BUILDING.md), "Former names"), with an entry point. No check
-  function changed. Eight root-level names were moved into the
-  `PentagonalHexecontahedron` namespace, so that the PH and the DH can be
-  imported together. The code was moved, though, so the result must be
-  verified again here on the VM before it can be recorded against a commit of
-  this repository. That run has not been done yet.
+  [BUILDING.md](BUILDING.md), "Former names"), with an entry point. Since
+  the deduplication of 2026-10-10, its certificate pipeline is the shared
+  `proof/Pipeline/`, instantiated at its model (`SolidModel.lean`). The
+  check functions are the same, except that the local-view tree now also
+  accepts the deltoidal hexecontahedron's `empty` rows (pack tag 4), which
+  the PH's data does not use. The code was moved, so the result must be
+  verified again here on the VM before it can be recorded against a commit
+  of this repository. That run has not been done yet.
 
 ## Verifying existing data
 
@@ -174,7 +176,11 @@ commands. The model stage rewrites committed files: the model files in
 (`Vertices.lean`, `WedgeCoverData.lean`, `IcoGroupData.lean`,
 `PHStatementData.lean`). It must run once in a fresh checkout, because the
 later stages read its `codebdd.json`. The verify stage runs
-`constructPentagonalHexecontahedron` on the new packs.
+`constructPentagonalHexecontahedron` on the new packs. Since the deduplication of 2026-10-10 (see [BUILDING.md](BUILDING.md),
+"Former names"), the vertices are in `SolidModel.lean` and the solid's orbit
+tables in `OrbitData.lean`; the rest of `IcoGroupData` is the shared
+`proof/Pipeline/IcoGroupData.lean`. The generators have not been adapted
+yet: a model stage still writes the old files.
 
 On nopert229, a from-scratch run on 64 cores (125 GB, 2026-10-05, Mathlib
 already built) took 2 h 37 min, with a peak of 9.7 GB in one process:

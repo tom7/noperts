@@ -45,11 +45,11 @@ through one copy that the other copy can pass through.
 ## A neighborhood of a rational model
 
 The certificates are checked against fixed rational vertices
-(`SnubDodecahedron/Vertices.lean`), not against the irrational solid. The
+(`SnubDodecahedron/RationalVertices.lean`), not against the irrational solid. The
 solution tables exclude every *`IModel`*: every polyhedron whose 60 vertices
 are an orbit of the icosahedral rotation group I (in a frame where z is a
 5-fold axis) within 6·10⁻¹⁶ of that rational model
-(`SnubDodecahedron/IcoModel.lean`). The exact solid is one of them: the
+(`Pipeline/IcoModel.lean`). The exact solid is one of them: the
 kernel decides, by exact arithmetic in K = ℚ(√5, sin 72°) and a rational
 enclosure of ξ, that a rotation and scaling of `snubDodecahedron` is an
 `IModel` (`snubIModel`, `snubIModel_verts`). Similarities, reflections

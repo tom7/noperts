@@ -110,10 +110,13 @@ there can only produce data that fails the checks.
   covered 3 caps, 250 tie nodes, the view cover, 39 tube tables and 36.2
   million chart-0 rows, and took 3 h 05 min with a peak of 30 GB.
 - **In this repository:** the same modules, renamed (see
-  [BUILDING.md](BUILDING.md), "Former names"), and an entry point. No check
-  function changed, but the code was moved, so the result must be verified
-  again here on the VM before it can be recorded against a commit of this
-  repository. That run has not been done yet.
+  [BUILDING.md](BUILDING.md), "Former names"), and an entry point. Since
+  the deduplication of 2026-10-10, its certificate pipeline is the shared
+  `proof/Pipeline/`, instantiated at its model (`SolidModel.lean`); the
+  shared modules were the DH's, made generic, so the check functions are the
+  same. The code was moved, so the result must be verified again here on the
+  VM before it can be recorded against a commit of this repository. That run
+  has not been done yet.
 
 ## Verifying existing data
 
@@ -157,7 +160,11 @@ files: the model files in `search/dh/` and the Lean data in
 `proof/DeltoidalHexecontahedron/` (`Vertices`, `WedgeCoverData`,
 `IcoGroupData`, `StatementData`, `CapData`, `TieData`). The verify stage
 builds and runs `constructDeltoidalHexecontahedron` in `proof/`, in a
-memory-capped `systemd-run --user` scope.
+memory-capped `systemd-run --user` scope. Since the deduplication of 2026-10-10 (see [BUILDING.md](BUILDING.md),
+"Former names"), the vertices are in `SolidModel.lean` and the solid's orbit
+tables in `OrbitData.lean`; the rest of `IcoGroupData` is the shared
+`proof/Pipeline/IcoGroupData.lean`. The generators have not been adapted
+yet: a model stage still writes the old files.
 
 A from-scratch run on 64 cores (2026-10-06, then in nopert229 and
 Noperthedron) took 8 h 10 min:
@@ -174,7 +181,7 @@ tie certificates were identical to the verified run's. Its chart tables are
 not the same as the verified run's (32.9 M against 36.2 M chart-0 rows); both
 passed.
 
-In this repository (2026-10-10, 16 cores): the model stage, the cap frames
+In this repository (2026-10-10, 16 cores, before the deduplication): the model stage, the cap frames
 and the tube and tie stages (about 2 min together) regenerate the model files
 in `search/dh/` and all seven generated Lean files in
 `proof/DeltoidalHexecontahedron/` byte for byte (with 250 tie nodes). The cap

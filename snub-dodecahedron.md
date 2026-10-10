@@ -22,7 +22,8 @@ and M₂ (the cyclic shift of coordinates, the rotation by 2π/3 about
 (1, 1, 1)).
 
 - These are 60 points (`snubDodecahedron` in
-  `proof/SnubDodecahedron/Statement.lean`). `SnubOrbit` is the orbit defined
+  `proof/Pipeline/WikipediaSnub.lean`, shared with the pentagonal
+  hexecontahedron). `SnubOrbit` is the orbit defined
   literally as above, and `mem_snubDodecahedron_iff` shows it is the same
   set. ξ is defined as a root of the cubic, and `snubXiW_unique` shows it is
   the only real one.
@@ -62,7 +63,7 @@ view domain.
 ## A neighborhood of a rational model
 
 The certificates are checked against fixed rational vertices
-(`proof/SnubDodecahedron/Vertices.lean`), not the irrational solid:
+(`proof/SnubDodecahedron/RationalVertices.lean`), not the irrational solid:
 
 - In a frame where z is a 5-fold axis, the unit-circumradius solid, scaled by
   1 − 10⁻⁹, is rounded to multiples of 2⁻⁵², and its pentagons are made
@@ -112,10 +113,16 @@ there can only produce data that fails the checks.
   (bc31c747, 2026-10-08) adds the QuadCoverTree fix, which replaced an axiom
   by a proved theorem; it is also in this repository's core.
 - **In this repository:** the same modules, renamed (see
-  [BUILDING.md](BUILDING.md), "Former names"), and an entry point. No check
-  function changed, but the code was moved, so the result must be verified
-  again here on the VM before it can be recorded against a commit of this
-  repository. That run has not been done yet.
+  [BUILDING.md](BUILDING.md), "Former names"), and an entry point. Since
+  the deduplication of 2026-10-10, its certificate pipeline is the shared
+  `proof/Pipeline/`, instantiated at its model (`SolidModel.lean`, one free
+  orbit of I). The check functions are the same, except that the local-view
+  tree now also accepts the deltoidal hexecontahedron's `empty` rows (pack
+  tag 4), which the SD's data does not use; its identity-tube rows are still
+  checked against the tangent-cone generators (`SparseSupport.lean`). The
+  code was moved, so the result must be verified again here on the VM before
+  it can be recorded against a commit of this repository. That run has not
+  been done yet.
 
 ## Verifying existing data
 
@@ -152,7 +159,13 @@ the `snubdodecahedron` branch of nopert229 (b8c9065); its
 generators of the Lean data are in `search/sd/lean_scripts/`; they reproduce
 the committed files in `proof/SnubDodecahedron/` (`Vertices.lean`,
 `SparseSupport.lean`, `GeneratedTangentCones.lean`, `WedgeCoverData.lean`,
-`IcoGroupData.lean`) byte for byte. With cc-lib in place
+`IcoGroupData.lean`) byte for byte, as they were before the deduplication of
+2026-10-10. Since then the vertices are in `RationalVertices.lean`, the
+orbit tables in `OrbitData.lean` (the rest of `IcoGroupData` is the shared
+`proof/Pipeline/IcoGroupData.lean`), `SparseSupport.lean` has new imports and
+the `certificateViewCheck` instance, and `WedgeCoverData.lean` has new
+imports; the generators have not been
+adapted yet. With cc-lib in place
 (`./get-cc-lib.sh`, see [BUILDING.md](BUILDING.md)):
 
 ```sh

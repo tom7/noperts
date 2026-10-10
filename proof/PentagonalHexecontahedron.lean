@@ -57,7 +57,7 @@ through one copy that the other copy can pass through.
 
 ## How the proof goes
 
-The solution tables exclude every `IModel` (`IcoModel.lean`): every solid
+The solution tables exclude every `IModel` (`Pipeline/IcoModel.lean`): every solid
 whose vertices are the orbits, under the icosahedral rotation group, of three
 points (one on a 5-fold axis, one on a 3-fold axis and one generic, each fixed
 by its stabilizer) within 6·10⁻¹⁶ of a fixed rational model. The kernel
