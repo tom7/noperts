@@ -1,0 +1,13 @@
+*.o
+*.exe
+*.pdb
+*.ptx
+*~
+.artifacts
+jobs
+packs
+trees*/
+*.log
+codebdd.json
+rebuild-work/
+__pycache__/
