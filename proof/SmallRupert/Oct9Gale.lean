@@ -356,6 +356,110 @@ theorem isRupert_of_kappa_zero {a a' b b' c c' : ℝ³} (h : IsOctahedron a a' b
     IsRupert {a, a', b, b', c, c'} :=
   isRupert_planar_equator h (G.planar_of_kappa hκ)
 
+/-- A dependency that is `≤ 0` on the face opposite `abc` vanishes identically. -/
+theorem dep_zero_of_face {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c') {D : ℝ³ → ℝ}
+    (hD : IsDep a a' b b' c c' D) (h1 : D a' ≤ 0) (h2 : D b' ≤ 0) (h3 : D c' ≤ 0) :
+    D a = 0 ∧ D a' = 0 ∧ D b = 0 ∧ D b' = 0 ∧ D c = 0 ∧ D c' = 0 := by
+  have hnd := F.nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨haa', hab, hab', hac, hac'⟩, ⟨ha'b, ha'b', ha'c, ha'c'⟩, ⟨hbb', hbc, hbc'⟩,
+    ⟨hb'c, hb'c'⟩, hcc', -⟩ := hnd
+  have r := hD.apply F.abc.hN
+  rw [F.abc.hP, F.abc.hQ, F.abc.hR] at r
+  have n1 := F.abc.neg a' (by simp) (Ne.symm haa') ha'b ha'c
+  have n2 := F.abc.neg b' (by simp) (Ne.symm hab') (Ne.symm hbb') hb'c
+  have n3 := F.abc.neg c' (by simp) (Ne.symm hac') (Ne.symm hbc') (Ne.symm hcc')
+  have p1 := mul_nonneg_of_nonpos_of_nonpos h1 n1.le
+  have p2 := mul_nonneg_of_nonpos_of_nonpos h2 n2.le
+  have p3 := mul_nonneg_of_nonpos_of_nonpos h3 n3.le
+  have z1 : D a' = 0 := by
+    have : D a' * F.abc.f a' = 0 := by linarith
+    exact (mul_eq_zero.mp this).resolve_right n1.ne
+  have z2 : D b' = 0 := by
+    have : D b' * F.abc.f b' = 0 := by linarith
+    exact (mul_eq_zero.mp this).resolve_right n2.ne
+  have z3 : D c' = 0 := by
+    have : D c' * F.abc.f c' = 0 := by linarith
+    exact (mul_eq_zero.mp this).resolve_right n3.ne
+  have hcr : cross (b - a) (c - a) ≠ 0 :=
+    cross_ne_zero_of_affine F.abc'.hN hab F.abc'.hP F.abc'.hQ
+      (F.abc'.neg c (by simp) (Ne.symm hac) (Ne.symm hbc) hcc')
+  have hs := hD.sum; have hv := hD.vsum
+  rw [z1, z2, z3] at hs hv
+  simp only [zero_smul, add_zero] at hv
+  have hrel : D b • (b - a) + D c • (c - a) + (0 : ℝ) • (0 : ℝ³) = 0 := by
+    have ha : D a = -(D b + D c) := by linarith
+    rw [ha] at hv; rw [← hv]; simp only [smul_sub, smul_zero]; module
+  -- `cross (b - a) (c - a) ≠ 0` forces both coefficients to vanish
+  have key : ∀ α β : ℝ, α • (b - a) + β • (c - a) = 0 → α = 0 ∧ β = 0 := by
+    intro α β h
+    have hb : α • cross (b - a) (c - a) = 0 := by
+      have : cross (α • (b - a) + β • (c - a)) (c - a) = α • cross (b - a) (c - a) := by
+        ext i; fin_cases i <;>
+          simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, cross_apply_zero, cross_apply_one,
+            cross_apply_two, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul] <;> ring
+      rw [← this, h]; ext i; fin_cases i <;> simp [cross_apply_zero, cross_apply_one, cross_apply_two]
+    have hc : β • cross (b - a) (c - a) = 0 := by
+      have : cross (b - a) (α • (b - a) + β • (c - a)) = β • cross (b - a) (c - a) := by
+        ext i; fin_cases i <;>
+          simp only [Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, cross_apply_zero, cross_apply_one,
+            cross_apply_two, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul] <;> ring
+      rw [← this, h]; ext i; fin_cases i <;> simp [cross_apply_zero, cross_apply_one, cross_apply_two]
+    exact ⟨(smul_eq_zero.mp hb).resolve_right hcr, (smul_eq_zero.mp hc).resolve_right hcr⟩
+  rw [zero_smul, add_zero] at hrel
+  obtain ⟨zb, zc⟩ := key _ _ hrel
+  exact ⟨by linarith, z1, zb, z2, zc, z3⟩
+
+/-- `det(g_t, f)` for `f = g_a + g_b + g_c`. -/
+def galeF (l m : ℝ³ → ℝ) (a b c : ℝ³) (t : ℝ³) : ℝ :=
+  l t * (m a + m b + m c) - m t * (l a + l b + l c)
+
+theorem galeF_eq (l m : ℝ³ → ℝ) (a b c t : ℝ³) :
+    galeF l m a b c t = galeD l m t a + galeD l m t b + galeD l m t c := by
+  simp only [galeF, galeD]; ring
+
+/-- **Lemma 9.8 (arc lemma)**, for `f = g_a + g_b + g_c ≠ 0`. -/
+theorem arc_lemma {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c')
+    (G : GaleData a a' b b' c c') (hκ : galeD G.l G.m a a' ≠ 0)
+    (hf : ¬(G.l a + G.l b + G.l c = 0 ∧ G.m a + G.m b + G.m c = 0)) :
+    (0 < galeF G.l G.m a b c a ∧ 0 < galeF G.l G.m a b c a') ∨
+    (0 < galeF G.l G.m a b c b ∧ 0 < galeF G.l G.m a b c b') ∨
+    (0 < galeF G.l G.m a b c c ∧ 0 < galeF G.l G.m a b c c') := by
+  set D := galeF G.l G.m a b c with hDdef
+  have hD : IsDep a a' b b' c c' D := by
+    have := G.hl.comb G.hm (G.m a + G.m b + G.m c) (-(G.l a + G.l b + G.l c))
+    convert this using 2 with t; simp only [hDdef, galeF]; ring
+  by_contra hno
+  simp only [not_or, not_and_or, not_lt] at hno
+  obtain ⟨hA, hB, hC⟩ := hno
+  have hz : D a = 0 ∧ D a' = 0 := by
+    rcases hA with hA | hA <;> rcases hB with hB | hB <;> rcases hC with hC | hC
+    · have := dep_zero_of_face F.swap₁.swap₂.swap₃ hD.swap₁.swap₂.swap₃ hA hB hC
+      exact ⟨this.2.1, this.1⟩
+    · have := dep_zero_of_face F.swap₁.swap₂ hD.swap₁.swap₂ hA hB hC
+      exact ⟨this.2.1, this.1⟩
+    · have := dep_zero_of_face F.swap₁.swap₃ hD.swap₁.swap₃ hA hB hC
+      exact ⟨this.2.1, this.1⟩
+    · have := dep_zero_of_face F.swap₁ hD.swap₁ hA hB hC
+      exact ⟨this.2.1, this.1⟩
+    · have := dep_zero_of_face F.swap₂.swap₃ hD.swap₂.swap₃ hA hB hC
+      exact ⟨this.1, this.2.1⟩
+    · have := dep_zero_of_face F.swap₂ hD.swap₂ hA hB hC
+      exact ⟨this.1, this.2.1⟩
+    · have := dep_zero_of_face F.swap₃ hD.swap₃ hA hB hC
+      exact ⟨this.1, this.2.1⟩
+    · have := dep_zero_of_face F hD hA hB hC
+      exact ⟨this.1, this.2.1⟩
+  obtain ⟨z1, z2⟩ := hz
+  simp only [hDdef, galeF] at z1 z2
+  apply hf
+  have e1 : (G.l a + G.l b + G.l c) * galeD G.l G.m a a' = 0 := by
+    simp only [galeD]; linear_combination -G.l a * z2 + G.l a' * z1
+  have e2 : (G.m a + G.m b + G.m c) * galeD G.l G.m a a' = 0 := by
+    simp only [galeD]; linear_combination G.m a' * z1 - G.m a * z2
+  exact ⟨(mul_eq_zero.mp e1).resolve_right hκ, (mul_eq_zero.mp e2).resolve_right hκ⟩
+
 end SmallRupert
 
 end
