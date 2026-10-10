@@ -90,41 +90,353 @@ theorem NF.mirror {V : Finset ℝ³} {D E P Q R S : ℝ³} {l m : ℝ³ → ℝ}
 
 /-! ### The case table (Theorem 10.4) -/
 
+/-- Permutation of a six-element `Finset` literal. -/
+macro "perm6" : tactic => `(tactic| first | with_reducible rfl | (ext x; simp only [Finset.mem_insert, Finset.mem_singleton]; constructor <;> intro h <;> rcases h with h | h | h | h | h | h <;> simp only [h, true_or, or_true]))
+
+/-- `Nodup` of a permuted six-element list, from the pairwise distinctness in
+context. -/
+macro "nodup6" : tactic => `(tactic| (simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or, List.nodup_nil, and_true, not_false_eq_true]; (repeat' constructor); all_goals (intro h; subst h; contradiction)))
+
+/-- The order lemma for classes `I` and `III` (uses `(H)`). -/
+theorem g_I_III {l m : ℝ³ → ℝ} {a b : ℝ} (ha : 0 < a) (hb : 0 < b) {x z : ℝ³}
+    (hx : 0 < a * l x + b * m x) (hz : 0 < a * l z + b * m z) (hxl : 0 < l x) (hxm : m x < 0)
+    (hzl : l z < 0) (hzm : 0 < m z) : galeD l m z x < 0 := by
+  have e1 : -(b * m x) < a * l x := by linarith
+  have e2 : -(a * l z) < b * m z := by linarith
+  have p1 : 0 < -(b * m x) := by nlinarith
+  have p2 : 0 < -(a * l z) := by nlinarith
+  have h := mul_lt_mul'' e1 e2 p1.le p2.le
+  have key : 0 < (a * b) * (l x * m z - m x * l z) := by nlinarith
+  have hab : 0 < a * b := mul_pos ha hb
+  have : 0 < l x * m z - m x * l z := (pos_iff_pos_of_mul_pos key).mp hab
+  simp only [galeD]; linarith
+
+/-- The five classes of a point of `W`. -/
+theorem nf_class {l m : ℝ³ → ℝ} {a b : ℝ} (ha : 0 < a) (hb : 0 < b) {X : ℝ³}
+    (h : 0 < a * l X + b * m X) :
+    (0 < l X ∧ m X < 0) ∨ (0 < l X ∧ m X = 0) ∨ (0 < l X ∧ 0 < m X) ∨ (l X = 0 ∧ 0 < m X) ∨
+      (l X < 0 ∧ 0 < m X) := by
+  rcases lt_trichotomy (l X) 0 with h1 | h1 | h1 <;>
+    rcases lt_trichotomy (m X) 0 with h2 | h2 | h2
+  · nlinarith [mul_neg_of_pos_of_neg ha h1, mul_neg_of_pos_of_neg hb h2]
+  · rw [h2, mul_zero, add_zero] at h; nlinarith [mul_neg_of_pos_of_neg ha h1]
+  · exact Or.inr (Or.inr (Or.inr (Or.inr ⟨h1, h2⟩)))
+  · rw [h1, mul_zero, zero_add] at h; nlinarith [mul_neg_of_pos_of_neg hb h2]
+  · rw [h1, h2] at h; simp at h
+  · exact Or.inr (Or.inr (Or.inr (Or.inl ⟨h1, h2⟩)))
+  · exact Or.inl ⟨h1, h2⟩
+  · exact Or.inr (Or.inl ⟨h1, h2⟩)
+  · exact Or.inr (Or.inr (Or.inl ⟨h1, h2⟩))
+
 /-- `(Q, R) = (I, III)`: an octahedron with opposite pairs `PQ`, `DE`, `RS`. -/
 theorem NF.case_oct {V : Finset ℝ³} {D E P Q R S : ℝ³} {l m : ℝ³ → ℝ}
-    (h : NF V D E P Q R S l m) (hP : 0 < l P ∧ m P < 0) (hQ : 0 < l Q ∧ m Q < 0)
-    (hR : l R < 0 ∧ 0 < m R) (hS : l S < 0 ∧ 0 < m S) : IsRupert V := by
-  sorry
+    (h : NF V D E P Q R S l m) (hP : 0 < l P ∧ m P < 0) (hQ : 0 < l Q ∧ m Q < 0) (hR : l R < 0 ∧ 0 < m R) (hS : l S < 0 ∧ 0 < m S) :
+    IsRupert V := by
+  obtain ⟨six, eq, nodup, hl, hm, lD, mD, lE, mE, a, b, ha, hb, HP, HQ, HR, HS⟩ := h
+  obtain ⟨hPl, hPm⟩ := hP
+  obtain ⟨hQl, hQm⟩ := hQ
+  obtain ⟨hRl, hRm⟩ := hR
+  obtain ⟨hSl, hSm⟩ := hS
+  have nd := nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+    List.nodup_nil, and_true] at nd
+  obtain ⟨⟨hDE, hDP, hDQ, hDR, hDS⟩, ⟨hEP, hEQ, hER, hES⟩, ⟨hPQ, hPR, hPS⟩, ⟨hQR, hQS⟩, hRS, -⟩ := nd
+  have gWD : ∀ X, galeD l m X D = m X := fun X => by simp only [galeD, lD, mD]; ring
+  have gDW : ∀ X, galeD l m D X = -m X := fun X => by simp only [galeD, lD, mD]; ring
+  have gWE : ∀ X, galeD l m X E = -l X := fun X => by simp only [galeD, lE, mE]; ring
+  have gEW : ∀ X, galeD l m E X = l X := fun X => by simp only [galeD, lE, mE]; ring
+  have gED : galeD l m E D = -1 := by simp only [galeD, lD, mD, lE, mE]; ring
+  have gDE : galeD l m D E = 1 := by simp only [galeD, lD, mD, lE, mE]; ring
+  have sRP : galeD l m R P < 0 := g_I_III ha hb HP HR hPl hPm hRl hRm
+  have sRQ : galeD l m R Q < 0 := g_I_III ha hb HQ HR hQl hQm hRl hRm
+  have sSP : galeD l m S P < 0 := g_I_III ha hb HP HS hPl hPm hSl hSm
+  have sSQ : galeD l m S Q < 0 := g_I_III ha hb HQ HS hQl hQm hSl hSm
+  have hVs : V = {P, Q, D, E, R, S} := by rw [eq]; perm6
+  rw [hVs] at six hl hm ⊢
+  exact isRupert_octahedron ⟨
+    by nodup6,
+    isFacetTriangle_of_gale (X := Q) (Y := E) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sSQ),
+    isFacetTriangle_of_gale (X := Q) (Y := E) (Z := R) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sRQ),
+    isFacetTriangle_of_gale (X := Q) (Y := D) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWD]; linarith) (by rw [gDW]; linarith)
+      (sSQ),
+    isFacetTriangle_of_gale (X := Q) (Y := D) (Z := R) six hl hm (by perm6) (by nodup6)
+      (by rw [gWD]; linarith) (by rw [gDW]; linarith)
+      (sRQ),
+    isFacetTriangle_of_gale (X := P) (Y := E) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sSP),
+    isFacetTriangle_of_gale (X := P) (Y := E) (Z := R) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sRP),
+    isFacetTriangle_of_gale (X := P) (Y := D) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWD]; linarith) (by rw [gDW]; linarith)
+      (sSP),
+    isFacetTriangle_of_gale (X := P) (Y := D) (Z := R) six hl hm (by perm6) (by nodup6)
+      (by rw [gWD]; linarith) (by rw [gDW]; linarith)
+      (sRP)⟩
 
 /-- `(Q, R) = (II, II)`: a bicapped tetrahedron with caps `E`, `D`. -/
 theorem NF.case_bicap₁ {V : Finset ℝ³} {D E P Q R S : ℝ³} {l m : ℝ³ → ℝ}
-    (h : NF V D E P Q R S l m) (hP : 0 < l P ∧ m P < 0) (hQ : 0 < l Q ∧ 0 < m Q)
-    (hR : 0 < l R ∧ 0 < m R) (hS : l S < 0 ∧ 0 < m S) : IsRupert V := by
-  sorry
+    (h : NF V D E P Q R S l m) (hP : 0 < l P ∧ m P < 0) (hQ : 0 < l Q ∧ 0 < m Q) (hR : 0 < l R ∧ 0 < m R) (hS : l S < 0 ∧ 0 < m S) :
+    IsRupert V := by
+  obtain ⟨six, eq, nodup, hl, hm, lD, mD, lE, mE, a, b, ha, hb, HP, HQ, HR, HS⟩ := h
+  obtain ⟨hPl, hPm⟩ := hP
+  obtain ⟨hQl, hQm⟩ := hQ
+  obtain ⟨hRl, hRm⟩ := hR
+  obtain ⟨hSl, hSm⟩ := hS
+  have nd := nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+    List.nodup_nil, and_true] at nd
+  obtain ⟨⟨hDE, hDP, hDQ, hDR, hDS⟩, ⟨hEP, hEQ, hER, hES⟩, ⟨hPQ, hPR, hPS⟩, ⟨hQR, hQS⟩, hRS, -⟩ := nd
+  have gWD : ∀ X, galeD l m X D = m X := fun X => by simp only [galeD, lD, mD]; ring
+  have gDW : ∀ X, galeD l m D X = -m X := fun X => by simp only [galeD, lD, mD]; ring
+  have gWE : ∀ X, galeD l m X E = -l X := fun X => by simp only [galeD, lE, mE]; ring
+  have gEW : ∀ X, galeD l m E X = l X := fun X => by simp only [galeD, lE, mE]; ring
+  have gED : galeD l m E D = -1 := by simp only [galeD, lD, mD, lE, mE]; ring
+  have gDE : galeD l m D E = 1 := by simp only [galeD, lD, mD, lE, mE]; ring
+  have sQP : galeD l m Q P < 0 := by simp only [galeD]; nlinarith [hQl, hQm, hPl, hPm]
+  have sRP : galeD l m R P < 0 := by simp only [galeD]; nlinarith [hRl, hRm, hPl, hPm]
+  have sSP : galeD l m S P < 0 := g_I_III ha hb HP HS hPl hPm hSl hSm
+  have sSQ : galeD l m S Q < 0 := by simp only [galeD]; nlinarith [hSl, hSm, hQl, hQm]
+  have sSR : galeD l m S R < 0 := by simp only [galeD]; nlinarith [hSl, hSm, hRl, hRm]
+  have hVs : V = {Q, P, S, R, E, D} := by rw [eq]; perm6
+  rw [hVs] at six hl hm ⊢
+  exact isRupert_bicappedTetrahedron ⟨
+    by nodup6,
+    affineIndependent_of_gale (X := E) (Y := D) six hl hm (by perm6) (by nodup6) (by norm_num [gED]),
+    isFacetTriangle_of_gale (X := P) (Y := D) (Z := R) six hl hm (by perm6) (by nodup6)
+      (by rw [gWD]; linarith) (by rw [gDW]; linarith)
+      (sRP),
+    isFacetTriangle_of_gale (X := P) (Y := D) (Z := Q) six hl hm (by perm6) (by nodup6)
+      (by rw [gWD]; linarith) (by rw [gDW]; linarith)
+      (sQP),
+    isFacetTriangle_of_gale (X := P) (Y := D) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWD]; linarith) (by rw [gDW]; linarith)
+      (sSP),
+    isFacetTriangle_of_gale (X := R) (Y := E) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sSR),
+    isFacetTriangle_of_gale (X := Q) (Y := E) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sSQ),
+    isFacetTriangle_of_gale (X := P) (Y := E) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sSP),
+    isFacetTriangle_of_gale (X := D) (Y := R) (Z := E) six hl hm (by perm6) (by nodup6)
+      (by rw [gDW]; linarith) (by rw [gWE]; linarith)
+      (by norm_num [gED]),
+    isFacetTriangle_of_gale (X := D) (Y := Q) (Z := E) six hl hm (by perm6) (by nodup6)
+      (by rw [gDW]; linarith) (by rw [gWE]; linarith)
+      (by rw [gED]; norm_num)⟩
 
 /-- `(Q, R) = (II, III)`: a bicapped tetrahedron with caps `E`, `P`. -/
 theorem NF.case_bicap₂ {V : Finset ℝ³} {D E P Q R S : ℝ³} {l m : ℝ³ → ℝ}
-    (h : NF V D E P Q R S l m) (hP : 0 < l P ∧ m P < 0) (hQ : 0 < l Q ∧ 0 < m Q)
-    (hR : l R < 0 ∧ 0 < m R) (hS : l S < 0 ∧ 0 < m S) : IsRupert V := by
-  sorry
+    (h : NF V D E P Q R S l m) (hP : 0 < l P ∧ m P < 0) (hQ : 0 < l Q ∧ 0 < m Q) (hR : l R < 0 ∧ 0 < m R) (hS : l S < 0 ∧ 0 < m S) :
+    IsRupert V := by
+  obtain ⟨six, eq, nodup, hl, hm, lD, mD, lE, mE, a, b, ha, hb, HP, HQ, HR, HS⟩ := h
+  obtain ⟨hPl, hPm⟩ := hP
+  obtain ⟨hQl, hQm⟩ := hQ
+  obtain ⟨hRl, hRm⟩ := hR
+  obtain ⟨hSl, hSm⟩ := hS
+  have nd := nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+    List.nodup_nil, and_true] at nd
+  obtain ⟨⟨hDE, hDP, hDQ, hDR, hDS⟩, ⟨hEP, hEQ, hER, hES⟩, ⟨hPQ, hPR, hPS⟩, ⟨hQR, hQS⟩, hRS, -⟩ := nd
+  have gWD : ∀ X, galeD l m X D = m X := fun X => by simp only [galeD, lD, mD]; ring
+  have gDW : ∀ X, galeD l m D X = -m X := fun X => by simp only [galeD, lD, mD]; ring
+  have gWE : ∀ X, galeD l m X E = -l X := fun X => by simp only [galeD, lE, mE]; ring
+  have gEW : ∀ X, galeD l m E X = l X := fun X => by simp only [galeD, lE, mE]; ring
+  have gED : galeD l m E D = -1 := by simp only [galeD, lD, mD, lE, mE]; ring
+  have gDE : galeD l m D E = 1 := by simp only [galeD, lD, mD, lE, mE]; ring
+  have sQP : galeD l m Q P < 0 := by simp only [galeD]; nlinarith [hQl, hQm, hPl, hPm]
+  have sRP : galeD l m R P < 0 := g_I_III ha hb HP HR hPl hPm hRl hRm
+  have sRQ : galeD l m R Q < 0 := by simp only [galeD]; nlinarith [hRl, hRm, hQl, hQm]
+  have sSP : galeD l m S P < 0 := g_I_III ha hb HP HS hPl hPm hSl hSm
+  have sSQ : galeD l m S Q < 0 := by simp only [galeD]; nlinarith [hSl, hSm, hQl, hQm]
+  have hVs : V = {R, D, Q, S, E, P} := by rw [eq]; perm6
+  rw [hVs] at six hl hm ⊢
+  exact isRupert_bicappedTetrahedron ⟨
+    by nodup6,
+    affineIndependent_of_gale (X := E) (Y := P) six hl hm (by perm6) (by nodup6) (by rw [gEW]; exact hPl.ne'),
+    isFacetTriangle_of_gale (X := P) (Y := D) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWD]; linarith) (by rw [gDW]; linarith)
+      (sSP),
+    isFacetTriangle_of_gale (X := P) (Y := D) (Z := R) six hl hm (by perm6) (by nodup6)
+      (by rw [gWD]; linarith) (by rw [gDW]; linarith)
+      (sRP),
+    isFacetTriangle_of_gale (X := P) (Y := D) (Z := Q) six hl hm (by perm6) (by nodup6)
+      (by rw [gWD]; linarith) (by rw [gDW]; linarith)
+      (sQP),
+    isFacetTriangle_of_gale (X := Q) (Y := E) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sSQ),
+    isFacetTriangle_of_gale (X := Q) (Y := E) (Z := R) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sRQ),
+    isFacetTriangle_of_gale (X := D) (Y := Q) (Z := E) six hl hm (by perm6) (by nodup6)
+      (by rw [gDW]; linarith) (by rw [gWE]; linarith)
+      (by norm_num [gED]),
+    isFacetTriangle_of_gale (X := P) (Y := E) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sSP),
+    isFacetTriangle_of_gale (X := P) (Y := E) (Z := R) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sRP)⟩
 
 /-- `(Q, R) = (I½, III)`: a T4. -/
 theorem NF.case_T4 {V : Finset ℝ³} {D E P Q R S : ℝ³} {l m : ℝ³ → ℝ}
-    (h : NF V D E P Q R S l m) (hP : 0 < l P ∧ m P < 0) (hQ : 0 < l Q ∧ m Q = 0)
-    (hR : l R < 0 ∧ 0 < m R) (hS : l S < 0 ∧ 0 < m S) : IsRupert V := by
-  sorry
+    (h : NF V D E P Q R S l m) (hP : 0 < l P ∧ m P < 0) (hQ : 0 < l Q ∧ m Q = 0) (hR : l R < 0 ∧ 0 < m R) (hS : l S < 0 ∧ 0 < m S) :
+    IsRupert V := by
+  obtain ⟨six, eq, nodup, hl, hm, lD, mD, lE, mE, a, b, ha, hb, HP, HQ, HR, HS⟩ := h
+  obtain ⟨hPl, hPm⟩ := hP
+  obtain ⟨hQl, hQm⟩ := hQ
+  obtain ⟨hRl, hRm⟩ := hR
+  obtain ⟨hSl, hSm⟩ := hS
+  have nd := nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+    List.nodup_nil, and_true] at nd
+  obtain ⟨⟨hDE, hDP, hDQ, hDR, hDS⟩, ⟨hEP, hEQ, hER, hES⟩, ⟨hPQ, hPR, hPS⟩, ⟨hQR, hQS⟩, hRS, -⟩ := nd
+  have gWD : ∀ X, galeD l m X D = m X := fun X => by simp only [galeD, lD, mD]; ring
+  have gDW : ∀ X, galeD l m D X = -m X := fun X => by simp only [galeD, lD, mD]; ring
+  have gWE : ∀ X, galeD l m X E = -l X := fun X => by simp only [galeD, lE, mE]; ring
+  have gEW : ∀ X, galeD l m E X = l X := fun X => by simp only [galeD, lE, mE]; ring
+  have gED : galeD l m E D = -1 := by simp only [galeD, lD, mD, lE, mE]; ring
+  have gDE : galeD l m D E = 1 := by simp only [galeD, lD, mD, lE, mE]; ring
+  have sRP : galeD l m R P < 0 := g_I_III ha hb HP HR hPl hPm hRl hRm
+  have sRQ : galeD l m R Q < 0 := by simp only [galeD]; nlinarith [hRl, hRm, hQl, hQm]
+  have sSP : galeD l m S P < 0 := g_I_III ha hb HP HS hPl hPm hSl hSm
+  have sSQ : galeD l m S Q < 0 := by simp only [galeD]; nlinarith [hSl, hSm, hQl, hQm]
+  have hVs : V = {R, D, Q, S, E, P} := by rw [eq]; perm6
+  rw [hVs] at six hl hm ⊢
+  exact isRupert_T4 ⟨
+    by nodup6,
+    affineIndependent_of_gale (X := E) (Y := P) six hl hm (by perm6) (by nodup6) (by rw [gEW]; exact hPl.ne'),
+    isFacet_quad_of_gale (X := D) (Y := Q) six hl hm (by perm6) (by nodup6)
+      (by rw [gDW, hQm, neg_zero])
+      (by rw [gDW, show galeD l m Q P = l Q * m P - m Q * l P from rfl, hQm]
+          nlinarith [mul_pos hQl (mul_pos_of_neg_of_neg hPm hPm)]),
+    isFacetTriangle_of_gale (X := P) (Y := D) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWD]; linarith) (by rw [gDW]; linarith)
+      (sSP),
+    isFacetTriangle_of_gale (X := P) (Y := D) (Z := R) six hl hm (by perm6) (by nodup6)
+      (by rw [gWD]; linarith) (by rw [gDW]; linarith)
+      (sRP),
+    isFacetTriangle_of_gale (X := Q) (Y := E) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sSQ),
+    isFacetTriangle_of_gale (X := Q) (Y := E) (Z := R) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sRQ),
+    isFacetTriangle_of_gale (X := P) (Y := E) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sSP),
+    isFacetTriangle_of_gale (X := P) (Y := E) (Z := R) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sRP)⟩
 
 /-- `(Q, R) = (I½, II)`: a T5 with apex `Q`. -/
 theorem NF.case_T5 {V : Finset ℝ³} {D E P Q R S : ℝ³} {l m : ℝ³ → ℝ}
-    (h : NF V D E P Q R S l m) (hP : 0 < l P ∧ m P < 0) (hQ : 0 < l Q ∧ m Q = 0)
-    (hR : 0 < l R ∧ 0 < m R) (hS : l S < 0 ∧ 0 < m S) : IsRupert V := by
-  sorry
+    (h : NF V D E P Q R S l m) (hP : 0 < l P ∧ m P < 0) (hQ : 0 < l Q ∧ m Q = 0) (hR : 0 < l R ∧ 0 < m R) (hS : l S < 0 ∧ 0 < m S) :
+    IsRupert V := by
+  obtain ⟨six, eq, nodup, hl, hm, lD, mD, lE, mE, a, b, ha, hb, HP, HQ, HR, HS⟩ := h
+  obtain ⟨hPl, hPm⟩ := hP
+  obtain ⟨hQl, hQm⟩ := hQ
+  obtain ⟨hRl, hRm⟩ := hR
+  obtain ⟨hSl, hSm⟩ := hS
+  have nd := nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+    List.nodup_nil, and_true] at nd
+  obtain ⟨⟨hDE, hDP, hDQ, hDR, hDS⟩, ⟨hEP, hEQ, hER, hES⟩, ⟨hPQ, hPR, hPS⟩, ⟨hQR, hQS⟩, hRS, -⟩ := nd
+  have gWD : ∀ X, galeD l m X D = m X := fun X => by simp only [galeD, lD, mD]; ring
+  have gDW : ∀ X, galeD l m D X = -m X := fun X => by simp only [galeD, lD, mD]; ring
+  have gWE : ∀ X, galeD l m X E = -l X := fun X => by simp only [galeD, lE, mE]; ring
+  have gEW : ∀ X, galeD l m E X = l X := fun X => by simp only [galeD, lE, mE]; ring
+  have gED : galeD l m E D = -1 := by simp only [galeD, lD, mD, lE, mE]; ring
+  have gDE : galeD l m D E = 1 := by simp only [galeD, lD, mD, lE, mE]; ring
+  have sRP : galeD l m R P < 0 := by simp only [galeD]; nlinarith [hRl, hRm, hPl, hPm]
+  have sSP : galeD l m S P < 0 := g_I_III ha hb HP HS hPl hPm hSl hSm
+  have sSQ : galeD l m S Q < 0 := by simp only [galeD]; nlinarith [hSl, hSm, hQl, hQm]
+  have sSR : galeD l m S R < 0 := by simp only [galeD]; nlinarith [hSl, hSm, hRl, hRm]
+  have hVs : V = {Q, P, R, E, S, D} := by rw [eq]; perm6
+  rw [hVs] at six hl hm ⊢
+  exact isRupert_cappedSquarePyramid_all ⟨
+    by nodup6,
+    affineIndependent_of_gale (X := S) (Y := D) six hl hm (by perm6) (by nodup6) (by rw [gWD]; exact hSm.ne'),
+    isFacet_quad_of_gale (X := D) (Y := Q) six hl hm (by perm6) (by nodup6)
+      (by rw [gDW, hQm, neg_zero])
+      (by rw [gDW, show galeD l m Q S = l Q * m S - m Q * l S from rfl, hQm]
+          nlinarith [mul_pos hQl (mul_pos hSm hSm)]),
+    isFacetTriangle_of_gale (X := P) (Y := D) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWD]; linarith) (by rw [gDW]; linarith)
+      (sSP),
+    isFacetTriangle_of_gale (X := P) (Y := D) (Z := R) six hl hm (by perm6) (by nodup6)
+      (by rw [gWD]; linarith) (by rw [gDW]; linarith)
+      (sRP),
+    isFacetTriangle_of_gale (X := D) (Y := R) (Z := E) six hl hm (by perm6) (by nodup6)
+      (by rw [gDW]; linarith) (by rw [gWE]; linarith)
+      (by norm_num [gED]),
+    isFacetTriangle_of_gale (X := R) (Y := E) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sSR),
+    isFacetTriangle_of_gale (X := Q) (Y := E) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sSQ),
+    isFacetTriangle_of_gale (X := P) (Y := E) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sSP)⟩
 
 /-- `(Q, R) = (I½, II½)`: a T3. -/
 theorem NF.case_T3 {V : Finset ℝ³} {D E P Q R S : ℝ³} {l m : ℝ³ → ℝ}
-    (h : NF V D E P Q R S l m) (hP : 0 < l P ∧ m P < 0) (hQ : 0 < l Q ∧ m Q = 0)
-    (hR : l R = 0 ∧ 0 < m R) (hS : l S < 0 ∧ 0 < m S) : IsRupert V := by
-  sorry
+    (h : NF V D E P Q R S l m) (hP : 0 < l P ∧ m P < 0) (hQ : 0 < l Q ∧ m Q = 0) (hR : l R = 0 ∧ 0 < m R) (hS : l S < 0 ∧ 0 < m S) :
+    IsRupert V := by
+  obtain ⟨six, eq, nodup, hl, hm, lD, mD, lE, mE, a, b, ha, hb, HP, HQ, HR, HS⟩ := h
+  obtain ⟨hPl, hPm⟩ := hP
+  obtain ⟨hQl, hQm⟩ := hQ
+  obtain ⟨hRl, hRm⟩ := hR
+  obtain ⟨hSl, hSm⟩ := hS
+  have nd := nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+    List.nodup_nil, and_true] at nd
+  obtain ⟨⟨hDE, hDP, hDQ, hDR, hDS⟩, ⟨hEP, hEQ, hER, hES⟩, ⟨hPQ, hPR, hPS⟩, ⟨hQR, hQS⟩, hRS, -⟩ := nd
+  have gWD : ∀ X, galeD l m X D = m X := fun X => by simp only [galeD, lD, mD]; ring
+  have gDW : ∀ X, galeD l m D X = -m X := fun X => by simp only [galeD, lD, mD]; ring
+  have gWE : ∀ X, galeD l m X E = -l X := fun X => by simp only [galeD, lE, mE]; ring
+  have gEW : ∀ X, galeD l m E X = l X := fun X => by simp only [galeD, lE, mE]; ring
+  have gED : galeD l m E D = -1 := by simp only [galeD, lD, mD, lE, mE]; ring
+  have gDE : galeD l m D E = 1 := by simp only [galeD, lD, mD, lE, mE]; ring
+  have sRP : galeD l m R P < 0 := by simp only [galeD]; nlinarith [hRl, hRm, hPl, hPm]
+  have sSP : galeD l m S P < 0 := g_I_III ha hb HP HS hPl hPm hSl hSm
+  have sSQ : galeD l m S Q < 0 := by simp only [galeD]; nlinarith [hSl, hSm, hQl, hQm]
+  have hVs : V = {R, D, P, E, Q, S} := by rw [eq]; perm6
+  rw [hVs] at six hl hm ⊢
+  exact isRupert_T3 ⟨
+    by nodup6,
+    affineIndependent_of_gale (X := E) (Y := Q) six hl hm (by perm6) (by nodup6) (by rw [gEW]; exact hQl.ne'),
+    isFacet_quad_of_gale (X := D) (Y := Q) six hl hm (by perm6) (by nodup6)
+      (by rw [gDW, hQm, neg_zero])
+      (by rw [gDE, gWE]; linarith),
+    isFacet_quad_of_gale (X := E) (Y := R) six hl hm (by perm6) (by nodup6)
+      (by rw [gEW, hRl])
+      (by rw [gEW, show galeD l m R Q = l R * m Q - m R * l Q from rfl, hRl, hQm]
+          nlinarith [mul_pos hRm (mul_pos hQl hQl)]),
+    isFacetTriangle_of_gale (X := Q) (Y := E) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sSQ),
+    isFacetTriangle_of_gale (X := P) (Y := D) (Z := R) six hl hm (by perm6) (by nodup6)
+      (by rw [gWD]; linarith) (by rw [gDW]; linarith)
+      (sRP),
+    isFacetTriangle_of_gale (X := P) (Y := E) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWE]; linarith) (by rw [gEW]; linarith)
+      (sSP),
+    isFacetTriangle_of_gale (X := P) (Y := D) (Z := S) six hl hm (by perm6) (by nodup6)
+      (by rw [gWD]; linarith) (by rw [gDW]; linarith)
+      (sSP)⟩
+
 
 /-- **Theorem 10.4.** Every normal form is Rupert. -/
 theorem NF.isRupert {V : Finset ℝ³} {D E P Q R S : ℝ³} {l m : ℝ³ → ℝ}
