@@ -438,10 +438,136 @@ theorem NF.case_T3 {V : Finset ℝ³} {D E P Q R S : ℝ³} {l m : ℝ³ → ℝ
       (sSP)⟩
 
 
+/-- Every point of the normal form is one of the six. -/
+theorem NF.mem {V : Finset ℝ³} {D E P Q R S : ℝ³} {l m : ℝ³ → ℝ}
+    (h : NF V D E P Q R S l m) {t : ℝ³} (ht : t ∈ V) :
+    t = D ∨ t = E ∨ t = P ∨ t = Q ∨ t = R ∨ t = S := by
+  rw [h.eq] at ht; simpa only [Finset.mem_insert, Finset.mem_singleton] using ht
+
+/-- **Theorem 10.4**, with `P ∈ I` and `S ∈ III`: the case table. -/
+theorem NF.isRupert_core {V : Finset ℝ³} {D E P Q R S : ℝ³} {l m : ℝ³ → ℝ}
+    (h : NF V D E P Q R S l m) (hP : m P < 0) (hS : l S < 0) : IsRupert V := by
+  obtain ⟨a, b, ha, hb, HP, HQ, HR, HS⟩ := h.H
+  have cP : 0 < l P ∧ m P < 0 := by
+    refine ⟨?_, hP⟩
+    have : 0 < a * l P := by nlinarith [mul_neg_of_pos_of_neg hb hP]
+    exact (pos_iff_pos_of_mul_pos this).mp ha
+  have cS : l S < 0 ∧ 0 < m S := by
+    refine ⟨hS, ?_⟩
+    have : 0 < b * m S := by nlinarith [mul_neg_of_pos_of_neg ha hS]
+    exact (pos_iff_pos_of_mul_pos this).mp hb
+  have mS : S ∈ V := by rw [h.eq]; simp
+  have mP : P ∈ V := by rw [h.eq]; simp
+  -- vertex conditions at `S` (via `-m`) and at `P` (via `-l`)
+  have hγ : 0 < m Q ∨ 0 < m R := by
+    by_contra hc
+    push Not at hc
+    refine h.six.not_single_neg h.hm.neg mS (by show -m S < 0; linarith [cS.2]) (fun t ht hts => ?_)
+    show 0 ≤ -m t
+    rcases h.mem ht with rfl | rfl | rfl | rfl | rfl | rfl
+    · rw [h.mD]; norm_num
+    · rw [h.mE]; norm_num
+    · linarith
+    · linarith [hc.1]
+    · linarith [hc.2]
+    · exact absurd rfl hts
+  have hβ : 0 < l Q ∨ 0 < l R := by
+    by_contra hc
+    push Not at hc
+    refine h.six.not_single_neg h.hl.neg mP (by show -l P < 0; linarith [cP.1]) (fun t ht htp => ?_)
+    show 0 ≤ -l t
+    rcases h.mem ht with rfl | rfl | rfl | rfl | rfl | rfl
+    · rw [h.lD]; norm_num
+    · rw [h.lE]; norm_num
+    · exact absurd rfl htp
+    · linarith [hc.1]
+    · linarith [hc.2]
+    · linarith
+  rcases nf_class ha hb HQ with hQ | hQ | hQ | hQ | hQ <;>
+    rcases nf_class ha hb HR with hR | hR | hR | hR | hR
+  -- Q ∈ I
+  · rcases hγ with h' | h' <;> linarith [hQ.2, hR.2]
+  · rcases hγ with h' | h' <;> linarith [hQ.2, hR.2]
+  · exact h.mirror.case_bicap₂ ⟨cS.2, cS.1⟩ ⟨hR.2, hR.1⟩ ⟨hQ.2, hQ.1⟩ ⟨cP.2, cP.1⟩
+  · exact h.mirror.case_T4 ⟨cS.2, cS.1⟩ ⟨hR.2, hR.1⟩ ⟨hQ.2, hQ.1⟩ ⟨cP.2, cP.1⟩
+  · exact h.case_oct cP hQ hR cS
+  -- Q ∈ I½
+  · rcases hγ with h' | h' <;> linarith [hQ.2, hR.2]
+  · rcases hγ with h' | h' <;> linarith [hQ.2, hR.2]
+  · exact h.case_T5 cP hQ hR cS
+  · exact h.case_T3 cP hQ hR cS
+  · exact h.case_T4 cP hQ hR cS
+  -- Q ∈ II
+  · exact h.swapQR.mirror.case_bicap₂ ⟨cS.2, cS.1⟩ ⟨hQ.2, hQ.1⟩ ⟨hR.2, hR.1⟩ ⟨cP.2, cP.1⟩
+  · exact h.swapQR.case_T5 cP hR hQ cS
+  · exact h.case_bicap₁ cP hQ hR cS
+  · exact h.mirror.case_T5 ⟨cS.2, cS.1⟩ ⟨hR.2, hR.1⟩ ⟨hQ.2, hQ.1⟩ ⟨cP.2, cP.1⟩
+  · exact h.case_bicap₂ cP hQ hR cS
+  -- Q ∈ II½
+  · exact h.swapQR.mirror.case_T4 ⟨cS.2, cS.1⟩ ⟨hQ.2, hQ.1⟩ ⟨hR.2, hR.1⟩ ⟨cP.2, cP.1⟩
+  · exact h.swapQR.case_T3 cP hR hQ cS
+  · exact h.swapQR.mirror.case_T5 ⟨cS.2, cS.1⟩ ⟨hQ.2, hQ.1⟩ ⟨hR.2, hR.1⟩ ⟨cP.2, cP.1⟩
+  · rcases hβ with h' | h' <;> linarith [hQ.1, hR.1]
+  · rcases hβ with h' | h' <;> linarith [hQ.1, hR.1]
+  -- Q ∈ III
+  · exact h.swapQR.case_oct cP hR hQ cS
+  · exact h.swapQR.case_T4 cP hR hQ cS
+  · exact h.swapQR.case_bicap₂ cP hR hQ cS
+  · rcases hβ with h' | h' <;> linarith [hQ.1, hR.1]
+  · rcases hβ with h' | h' <;> linarith [hQ.1, hR.1]
+
 /-- **Theorem 10.4.** Every normal form is Rupert. -/
 theorem NF.isRupert {V : Finset ℝ³} {D E P Q R S : ℝ³} {l m : ℝ³ → ℝ}
     (h : NF V D E P Q R S l m) : IsRupert V := by
-  sorry
+  obtain ⟨a, b, ha, hb, HP, HQ, HR, HS⟩ := h.H
+  have mD : D ∈ V := by rw [h.eq]; simp
+  have mE : E ∈ V := by rw [h.eq]; simp
+  -- `E` and `D` are vertices: some `m w < 0` and some `l w < 0`
+  have hm4 : m P < 0 ∨ m Q < 0 ∨ m R < 0 ∨ m S < 0 := by
+    by_contra hc
+    push Not at hc
+    refine h.six.not_single_neg h.hm mE (by rw [h.mE]; norm_num) (fun t ht hte => ?_)
+    rcases h.mem ht with rfl | rfl | rfl | rfl | rfl | rfl
+    · rw [h.mD]
+    · exact absurd rfl hte
+    · exact hc.1
+    · exact hc.2.1
+    · exact hc.2.2.1
+    · exact hc.2.2.2
+  have hl4 : l P < 0 ∨ l Q < 0 ∨ l R < 0 ∨ l S < 0 := by
+    by_contra hc
+    push Not at hc
+    refine h.six.not_single_neg h.hl mD (by rw [h.lD]; norm_num) (fun t ht htd => ?_)
+    rcases h.mem ht with rfl | rfl | rfl | rfl | rfl | rfl
+    · exact absurd rfl htd
+    · rw [h.lE]
+    · exact hc.1
+    · exact hc.2.1
+    · exact hc.2.2.1
+    · exact hc.2.2.2
+  have no : ∀ X, 0 < a * l X + b * m X → m X < 0 → l X < 0 → False := fun X hX h1 h2 => by
+    nlinarith [mul_neg_of_pos_of_neg ha h2, mul_neg_of_pos_of_neg hb h1]
+  rcases hm4 with h1 | h1 | h1 | h1 <;> rcases hl4 with h2 | h2 | h2 | h2
+  -- `m P < 0`
+  · exact absurd h2 (fun h2 => no P HP h1 h2)
+  · exact h.swapQR.swapRS.isRupert_core h1 h2
+  · exact h.swapRS.isRupert_core h1 h2
+  · exact h.isRupert_core h1 h2
+  -- `m Q < 0`
+  · exact h.swapPQ.swapQR.swapRS.isRupert_core h1 h2
+  · exact absurd h2 (fun h2 => no Q HQ h1 h2)
+  · exact h.swapPQ.swapRS.isRupert_core h1 h2
+  · exact h.swapPQ.isRupert_core h1 h2
+  -- `m R < 0`
+  · exact h.swapQR.swapPQ.swapQR.swapRS.isRupert_core h1 h2
+  · exact h.swapQR.swapPQ.swapRS.isRupert_core h1 h2
+  · exact absurd h2 (fun h2 => no R HR h1 h2)
+  · exact h.swapQR.swapPQ.isRupert_core h1 h2
+  -- `m S < 0`
+  · exact h.swapRS.swapQR.swapPQ.swapQR.swapRS.isRupert_core h1 h2
+  · exact h.swapRS.swapQR.swapPQ.swapRS.isRupert_core h1 h2
+  · exact h.swapRS.swapQR.swapPQ.isRupert_core h1 h2
+  · exact absurd h2 (fun h2 => no S HS h1 h2)
 
 /-! ### The split -/
 
