@@ -1,6 +1,7 @@
 module
 
 public import Pipeline.CapBridge
+public import Pipeline.CapCoverMain
 
 @[expose] public section
 

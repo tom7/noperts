@@ -18,11 +18,9 @@ difference). That is, the inner shadow is at least as wide as the outer one
 in the direction n.
 -/
 
-namespace Septopert
-open Noperts
+namespace Noperts.Pipeline
 
 open scoped RealInnerProductSpace
-open Noperts.Pipeline
 
 theorem not_rupertPose_of_width_witness (p : MatrixPose) (S : Set ℝ³)
     (n : ℝ²) (hn : n ≠ 0) (Mp Mm : ℝ)
@@ -50,4 +48,4 @@ theorem not_rupertPose_of_width_witness (p : MatrixPose) (S : Set ℝ³)
     inner_neg_left] at h2
   linarith
 
-end Septopert
+end Noperts.Pipeline

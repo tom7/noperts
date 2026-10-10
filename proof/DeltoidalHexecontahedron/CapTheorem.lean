@@ -1,6 +1,7 @@
 module
 
-public import DeltoidalHexecontahedron.CapBridge
+public import Pipeline.CapBridge
+public import DeltoidalHexecontahedron.CapCoverMain
 public import DeltoidalHexecontahedron.HalfTurnPose
 
 @[expose] public section

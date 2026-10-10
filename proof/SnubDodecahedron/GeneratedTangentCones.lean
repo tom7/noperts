@@ -1,11 +1,9 @@
 module
 
-public import SnubDodecahedron.SparseSupport
-public meta import SnubDodecahedron.SparseSupport
+public import SnubDodecahedron.TangentCones
+public meta import SnubDodecahedron.TangentCones
 
 @[expose] public section
-
-open Noperts
 
 namespace SnubDodecahedron.GeneratedTangentCones
 

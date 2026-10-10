@@ -166,8 +166,8 @@ theorem viewVector_second_le_slope_first {p : AtlasPose ℝ}
     · exact sub_nonneg.mpr hθ.2
     · nlinarith [hθ.1, hangleHalf, Real.pi_pos]
   rw [Real.sin_sub] at hdiff
-  have hc := AtlasFundamentalPrune.cos_two_pi_div_five_bounds
-  have hs := AtlasFundamentalPrune.sin_two_pi_div_five_bounds
+  have hc := Pipeline.cos_two_pi_div_five_bounds
+  have hs := Pipeline.sin_two_pi_div_five_bounds
   change |Real.cos angle - (309017 / 1000000 : ℝ)| ≤
     1 / 1000000 at hc
   change |Real.sin angle - (951057 / 1000000 : ℝ)| ≤

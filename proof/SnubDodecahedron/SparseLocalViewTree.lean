@@ -2,6 +2,7 @@ module
 
 public import SnubDodecahedron.AtlasProjectiveLocalViewTree
 public import SnubDodecahedron.GeneratedTangentCones
+public import SnubDodecahedron.SparseSupport
 
 @[expose] public section
 

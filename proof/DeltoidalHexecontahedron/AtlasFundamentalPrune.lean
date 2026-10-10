@@ -3,6 +3,7 @@ module
 public import DeltoidalHexecontahedron.FundamentalDomain
 public import DeltoidalHexecontahedron.AtlasQuadratic
 public import Atlas.QuadraticBernstein
+public import Pipeline.FivefoldTrig
 
 @[expose] public section
 
@@ -88,35 +89,6 @@ instance (box : Box) : Decidable box.Valid := by
   unfold Box.Valid
   infer_instance
 
-theorem cos_two_pi_div_five_bounds :
-    |Real.cos (2 * Real.pi / 5) - (309017 / 1000000 : ℝ)| ≤
-      1 / 1000000 := by
-  have hsqrt0 : 0 ≤ Real.sqrt 5 := Real.sqrt_nonneg _
-  have hsqrtSq : (Real.sqrt 5) ^ 2 = 5 := by norm_num
-  have hsqrtLower : (2236067 / 1000000 : ℝ) ≤ Real.sqrt 5 := by
-    nlinarith [sq_nonneg (Real.sqrt 5 - 2236067 / 1000000)]
-  have hsqrtUpper : Real.sqrt 5 ≤ (2236069 / 1000000 : ℝ) := by
-    nlinarith [sq_nonneg (Real.sqrt 5 - 2236069 / 1000000)]
-  rw [show 2 * Real.pi / 5 = 2 * (Real.pi / 5) by ring,
-    Real.cos_two_mul, Real.cos_pi_div_five]
-  rw [abs_le]
-  constructor <;> nlinarith
-
-theorem sin_two_pi_div_five_bounds :
-    |Real.sin (2 * Real.pi / 5) - (951057 / 1000000 : ℝ)| ≤
-      1 / 1000000 := by
-  have hangle0 : 0 < 2 * Real.pi / 5 := by positivity
-  have hanglePi : 2 * Real.pi / 5 < Real.pi := by
-    nlinarith [Real.pi_pos]
-  have hsin0 : 0 < Real.sin (2 * Real.pi / 5) :=
-    Real.sin_pos_of_pos_of_lt_pi hangle0 hanglePi
-  have hcosBounds := cos_two_pi_div_five_bounds
-  rw [abs_le] at hcosBounds ⊢
-  have htrig := Real.sin_sq_add_cos_sq (2 * Real.pi / 5)
-  constructor <;> nlinarith [sq_nonneg
-    (Real.sin (2 * Real.pi / 5) - 951056 / 1000000),
-    sq_nonneg (Real.sin (2 * Real.pi / 5) - 951058 / 1000000)]
-
 theorem eval_a_abs_le_eight (chart : ChartIndex) (x y z : ℝ)
     (hbounded : x ^ 2 + y ^ 2 + z ^ 2 ≤ 3) :
     |(aQuadratic chart).evalReal x y z| ≤ 8 := by
@@ -151,8 +123,8 @@ theorem advantage_approximation_error (chart : ChartIndex)
     |exactAdvantage chart direction x y z -
         (advantageQuadratic chart direction).evalReal x y z| ≤
       (approximationError : ℝ) := by
-  have hc := cos_two_pi_div_five_bounds
-  have hs := sin_two_pi_div_five_bounds
+  have hc := Pipeline.cos_two_pi_div_five_bounds
+  have hs := Pipeline.sin_two_pi_div_five_bounds
   have ha := eval_a_abs_le_eight chart x y z hbounded
   have hb := eval_b_abs_le_eight chart x y z hbounded
   have hsign : |(direction.signQ : ℝ)| = 1 := by
