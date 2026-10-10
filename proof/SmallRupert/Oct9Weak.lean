@@ -613,6 +613,91 @@ theorem isRupert_weak_cycle5a {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' 
     · exact absurd h h1
     · exact absurd h h4
 
+/-- **Lemma 9.11, the 5-cycle `(x, y, p, y', p')`** (the vertices over `q`
+in the order `x, y`; lower chain on the top face). -/
+theorem isRupert_weak_cycle5b {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
+    (hq₁ : F.a'b'c.f x < F.a'b'c.f y) (hT : F.a'b'c'.f x = F.a'b'c'.f y) {σ : ℝ}
+    (hσ : σ = 1 ∨ σ = -1) (hor : 0 < σ * det3 (p - y) (p' - y) (y - x)) (v : ℝ³)
+    (t0p : 0 < σ * det3 (y - x) (p - x) v) (t0y' : 0 < σ * det3 (y - x) (y' - x) v)
+    (t0p' : 0 < σ * det3 (y - x) (p' - x) v) (t0x' : 0 < σ * det3 (y - x) (x' - x) v)
+    (t1 : 0 < σ * det3 (p - y) (x - y) v) (t2 : 0 < σ * det3 (x - p') (y - p') v)
+    (t3 : 0 < σ * det3 (p' - y') (y - x) v)
+    (hQ : ∀ᶠ ε in 𝓝[>] (0 : ℝ), WQ5b fun i => ⟪quint x y p y' p' i, (y - x) + ε • v⟫) :
+    IsRupert {x, x', y, y', p, p'} := by
+  classical
+  obtain ⟨E1, E2, E3, E4⟩ := weak_edge_tests F hq₁ hT hor
+  have hnd := F.nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨hxx', hxy, hxy', hxp, hxp'⟩, ⟨hx'y, hx'y', hx'p, hx'p'⟩, ⟨hyy', hyp, hyp'⟩,
+    ⟨hy'p, hy'p'⟩, hpp', -⟩ := hnd
+  set V : Finset ℝ³ := {x, x', y, y', p, p'} with hV
+  have mx : x ∈ V := by simp [V]
+  have mx' : x' ∈ V := by simp [V]
+  have my : y ∈ V := by simp [V]
+  have my' : y' ∈ V := by simp [V]
+  have mp : p ∈ V := by simp [V]
+  have mp' : p' ∈ V := by simp [V]
+  have hmemV : ∀ z ∈ V, z = x ∨ z = x' ∨ z = y ∨ z = y' ∨ z = p ∨ z = p' := by
+    intro z hz; simpa [V] using hz
+  have hu : y - x ≠ 0 := sub_ne_zero.mpr (Ne.symm hxy)
+  have t3' : 0 < σ * det3 (p' - y') (x' - y') v := by
+    have e := weak_tau3 F hT v
+    have hLy := F.ab'c'.neg y my (Ne.symm hxy) hyy' hyp'
+    have hLx' := F.ab'c'.neg x' mx' (Ne.symm hxx') hx'y' hx'p'
+    have : (σ * det3 (p' - y') (x' - y') v) * F.ab'c'.f y =
+        (σ * det3 (p' - y') (y - x) v) * F.ab'c'.f x' := by
+      rw [mul_assoc, mul_comm (det3 _ _ _), e]; ring
+    nlinarith [mul_neg_of_pos_of_neg t3 hLx']
+  have z3 : det3 (p' - y') (x' - y') (y - x) = 0 :=
+    weak_top_perp F hT (weak_top_N F).1 (weak_top_N F).2
+  have z0 : ∀ w : ℝ³, det3 (y - x) (w - x) (y - x) = 0 := fun w => by
+    simp only [det3_expand, PiLp.sub_apply]; ring
+  have S4 : ∀ w ∈ V, w ≠ p' → w ≠ y → w ≠ x → 0 < σ * det3 (x - p') (w - p') (y - x) :=
+    fun w hw h1 h2 h3 => by rw [det3_shift_p']; exact E4 w hw h1 h2 h3
+  obtain ⟨a0, a1, a2, a3, a4⟩ := zmod5_add_one
+  refine isRupert_of_tilted_unimodal_σ V (y - x) v hu (by norm_num) (quint x y p y' p') ?_ σ
+    hσ ?_ ?_ WQ5b isOpen_WQ5b (fun z c hc hz => hz.mul hc) hQ
+    (fun z hz hQ => hQ.unimodal hz)
+  · intro i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
+      simp [V, quint_0, quint_1, quint_2, quint_3, quint_4]
+  · intro i j hi hj
+    rcases weak_zmod5_pairs i j hi hj with ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ |
+      ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ <;>
+    simp only [a0, a1, a2, a3, a4, quint_0, quint_1, quint_2, quint_3, quint_4]
+    · exact Or.inr ⟨z0 p, t0p⟩
+    · exact Or.inr ⟨z0 y', t0y'⟩
+    · exact Or.inr ⟨z0 p', t0p'⟩
+    · exact Or.inl (E1 y' my' (Ne.symm hyy') hy'p (Ne.symm hxy'))
+    · exact Or.inl (E1 p' mp' (Ne.symm hyp') (Ne.symm hpp') (Ne.symm hxp'))
+    · exact Or.inr ⟨det3_xy_zero p x y, t1⟩
+    · exact Or.inl (E2 p' mp' (Ne.symm hpp') (Ne.symm hy'p'))
+    · exact Or.inl (E2 x mx hxp hxy')
+    · exact Or.inl (E2 y my hyp hyy')
+    · exact Or.inl (E3 x mx hxy' hxp' hxx')
+    · exact Or.inl (E3 y my hyy' hyp' (Ne.symm hx'y))
+    · exact Or.inl (E3 p mp (Ne.symm hy'p) hpp' (Ne.symm hx'p))
+    · exact Or.inr ⟨by rw [det3_shift_p', det3_self_left'], t2⟩
+    · exact Or.inl (S4 p mp hpp' (Ne.symm hyp) (Ne.symm hxp))
+    · exact Or.inl (S4 y' my' hy'p' (Ne.symm hyy') (Ne.symm hxy'))
+  · intro z hz hzx i
+    have h0 := hzx 0; have h1 := hzx 1; have h2 := hzx 2; have h3 := hzx 3; have h4 := hzx 4
+    simp only [quint_0, quint_1, quint_2, quint_3, quint_4] at h0 h1 h2 h3 h4
+    rcases hmemV z hz with h | h | h | h | h | h
+    · exact absurd h h0
+    · rw [h]
+      rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
+        simp only [a0, a1, a2, a3, a4, quint_0, quint_1, quint_2, quint_3, quint_4]
+      · exact Or.inr ⟨z0 x', t0x'⟩
+      · exact Or.inl (E1 x' mx' hx'y hx'p (Ne.symm hxx'))
+      · exact Or.inl (E2 x' mx' hx'p hx'y')
+      · exact Or.inr ⟨z3, t3'⟩
+      · exact Or.inl (S4 x' mx' hx'p' hx'y (Ne.symm hxx'))
+    · exact absurd h h1
+    · exact absurd h h3
+    · exact absurd h h2
+    · exact absurd h h4
+
 end SmallRupert
 
 end
