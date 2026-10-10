@@ -260,6 +260,99 @@ theorem SSlin_rotate {x : ℕ → ℝ} {k : ℕ} (hx : SSlin x k) (o : ℕ) (ho 
     have := this.neg
     simpa using this
 
+theorem cross2_outNormal (D x y : ℝ²) : cross2 D (outNormal x y) = -⟪D, y - x⟫ := by
+  simp [outNormal, cross2, PiLp.inner_apply, Fin.sum_univ_two]; ring
+
+/-- The force at a corner, tested against `D`, is a nonnegative combination of
+the (negated) increments of `⟪D, ·⟫` along the two edges at the corner. -/
+theorem IsCcwPolygon.corner_value {k : ℕ} {p : ZMod k → ℝ²} (hp : IsCcwPolygon p) (i : ZMod k)
+    {f : ℝ²} (hf : f ∈ normalConeAt (convexHull ℝ (Set.range p)) (p i)) (D : ℝ²) :
+    ∃ a b : ℝ, 0 ≤ a ∧ 0 ≤ b ∧
+      cross2 D f = a * -⟪D, p i - p (i - 1)⟫ + b * -⟪D, p (i + 1) - p i⟫ := by
+  obtain ⟨a, b, ha, hb, rfl⟩ := hp.normalCone_decomp i hf
+  refine ⟨a, b, ha, hb, ?_⟩
+  rw [cross2_add_right, cross2_smul_right, cross2_smul_right, cross2_outNormal,
+    cross2_outNormal]
+
+theorem zmod_add_natCast_pred {k : ℕ} (M : ZMod k) {n : ℕ} (hn : 1 ≤ n) :
+    M + (n : ZMod k) - 1 = M + ((n - 1 : ℕ) : ZMod k) := by
+  rw [Nat.cast_sub hn, Nat.cast_one]; ring
+
+theorem zmod_add_natCast_succ {k : ℕ} (M : ZMod k) (n : ℕ) :
+    M + (n : ZMod k) + 1 = M + ((n + 1 : ℕ) : ZMod k) := by
+  rw [Nat.cast_succ]; ring
+
+/-- Corner values of the forces against `D`, read from a corner maximising
+`⟪ν, ·⟫`: `≥ 0` strictly inside the decreasing run, `≤ 0` strictly inside the
+increasing run (Step 1). -/
+theorem IsCcwPolygon.corner_signs {k : ℕ} {p : ZMod k → ℝ²} (hp : IsCcwPolygon p)
+    {f : ZMod k → ℝ²} (hf : ∀ i, f i ∈ normalConeAt (convexHull ℝ (Set.range p)) (p i))
+    (D : ℝ²) (M : ZMod k) (t : ℕ)
+    (hle : ∀ n, n < t → ⟪D, p (M + ((n + 1 : ℕ) : ZMod k)) - p (M + (n : ZMod k))⟫ ≤ 0)
+    (hge : ∀ n, t ≤ n → n < k → 0 ≤ ⟪D, p (M + ((n + 1 : ℕ) : ZMod k)) - p (M + (n : ZMod k))⟫) :
+    (∀ n, 1 ≤ n → n < t → 0 ≤ cross2 D (f (M + n))) ∧
+      (∀ n, t + 1 ≤ n → n < k → cross2 D (f (M + n)) ≤ 0) := by
+  constructor
+  · intro n h1 h2
+    obtain ⟨a, b, ha, hb, h⟩ := hp.corner_value (M + n) (hf _) D
+    rw [h, zmod_add_natCast_pred M h1, zmod_add_natCast_succ M n]
+    have e1 := hle (n - 1) (by omega)
+    rw [show n - 1 + 1 = n by omega] at e1
+    have e2 := hle n h2
+    nlinarith [mul_nonneg ha (neg_nonneg.mpr e1), mul_nonneg hb (neg_nonneg.mpr e2)]
+  · intro n h1 h2
+    obtain ⟨a, b, ha, hb, h⟩ := hp.corner_value (M + n) (hf _) D
+    rw [h, zmod_add_natCast_pred M (by omega), zmod_add_natCast_succ M n]
+    have e1 := hge (n - 1) (by omega) (by omega)
+    rw [show n - 1 + 1 = n by omega] at e1
+    have e2 := hge n (by omega) h2
+    nlinarith [mul_nonneg ha e1, mul_nonneg hb e2]
+
+/-- **Sign switch (Step 1)** of the corner forces against any `D`, read from
+any base corner `B`. -/
+theorem IsCcwPolygon.forces_SS {k : ℕ} [NeZero k] {p : ZMod k → ℝ²} (hp : IsCcwPolygon p)
+    {f : ZMod k → ℝ²} (hf : ∀ i, f i ∈ normalConeAt (convexHull ℝ (Set.range p)) (p i))
+    (B : ZMod k) (D : ℝ²) : SSlin (fun n => cross2 D (f (B + n))) k := by
+  obtain ⟨M, -, hM⟩ := (univ : Finset (ZMod k)).exists_max_image (fun i => ⟪D, p i⟫)
+    univ_nonempty
+  obtain ⟨t, htk, hle, hge⟩ := hp.pattern_from_max D M (fun i => hM i (mem_univ _))
+  obtain ⟨hpos, hneg⟩ := hp.corner_signs hf D M t hle hge
+  have hSS := SSlin_of_two_free (fun n => cross2 D (f (M + n))) k t htk hpos hneg
+  have hrot := SSlin_rotate hSS (B - M).val (ZMod.val_lt _)
+  convert hrot using 2 with n
+  congr 2
+  rw [ZMod.natCast_mod, Nat.cast_add, ZMod.natCast_zmod_val]; ring
+
+/-- **Orientation at a forced corner (Step 1).**  Read from a corner `u` with a
+nonzero force, the forces turn left first and then right. -/
+theorem IsCcwPolygon.forces_oriented {k : ℕ} [NeZero k] {p : ZMod k → ℝ²} (hp : IsCcwPolygon p)
+    {f : ZMod k → ℝ²} (hf : ∀ i, f i ∈ normalConeAt (convexHull ℝ (Set.range p)) (p i))
+    (u : ZMod k) :
+    ∃ j, j ≤ k ∧ (∀ s, 0 < s → s < j → 0 ≤ cross2 (f u) (f (u + s))) ∧
+      (∀ s, j ≤ s → s < k → cross2 (f u) (f (u + s)) ≤ 0) := by
+  have hmax : ∀ i, ⟪f u, p i⟫ ≤ ⟪f u, p u⟫ := fun i => by
+    have := hf u (p i) (subset_convexHull ℝ _ ⟨i, rfl⟩)
+    rw [inner_sub_right] at this; linarith
+  obtain ⟨t, htk, hle, hge⟩ := hp.pattern_from_max (f u) u hmax
+  obtain ⟨hpos, hneg⟩ := hp.corner_signs hf (f u) u t hle hge
+  refine ⟨if t < k ∧ 0 ≤ cross2 (f u) (f (u + t)) then t + 1 else t, ?_, fun s h1 h2 => ?_,
+    fun s h1 h2 => ?_⟩
+  · split_ifs with h <;> omega
+  · by_cases hst : s < t
+    · exact hpos s h1 hst
+    · split_ifs at h2 with h
+      · have : s = t := by omega
+        rw [this]; exact h.2
+      · omega
+  · by_cases hst : t + 1 ≤ s
+    · exact hneg s hst h2
+    · split_ifs at h1 with h
+      · omega
+      · have : s = t := by omega
+        subst this
+        push Not at h
+        exact (h h2).le
+
 end SmallRupert
 
 end
