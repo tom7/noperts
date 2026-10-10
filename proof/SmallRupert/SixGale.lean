@@ -655,12 +655,141 @@ theorem affineIndependent_of_gale {V : Finset ℝ³} (hS : Six V) {l m : ℝ³ �
 def IsOPair (l m : ℝ³ → ℝ) (s t : ℝ³) : Prop :=
   s ≠ t ∧ galeD l m s t = 0 ∧ l s * l t + m s * m t < 0
 
+/-- Perturbing a dependency `M` by `δ ν` (`ν < 0` where `M` vanishes): if `M`
+is positive at exactly two points, this is a 2+4 split. -/
+theorem exists_split_of_perturb {V : Finset ℝ³} {M ν : ℝ³ → ℝ} (hM : IsDepOn V M)
+    (hν : IsDepOn V ν) (hνZ : ∀ t ∈ V, M t = 0 → ν t < 0)
+    (h2 : (V.filter (fun t => 0 < M t)).card = 2) :
+    ∃ D ∈ V, ∃ E ∈ V, D ≠ E ∧ ∃ μ : ℝ³ → ℝ, IsDepOn V μ ∧ 0 < μ D ∧ 0 < μ E ∧
+      ∀ x ∈ V, x ≠ D → x ≠ E → μ x < 0 := by
+  classical
+  have hev : ∀ᶠ δ in 𝓝[>] (0 : ℝ), ∀ t ∈ V,
+      (0 < M t → 0 < M t + δ * ν t) ∧ (M t < 0 → M t + δ * ν t < 0) := by
+    rw [Filter.eventually_all_finset]
+    intro t _
+    have hc : Tendsto (fun δ : ℝ => M t + δ * ν t) (𝓝[>] 0) (𝓝 (M t)) := by
+      have hcont : Continuous (fun δ : ℝ => M t + δ * ν t) := by fun_prop
+      have := hcont.tendsto 0
+      simp only [zero_mul, add_zero] at this
+      exact this.mono_left nhdsWithin_le_nhds
+    rcases lt_trichotomy (M t) 0 with h | h | h
+    · exact (hc.eventually (Iio_mem_nhds h)).mono fun δ hδ =>
+        ⟨fun h' => absurd h' (not_lt.mpr h.le), fun _ => hδ⟩
+    · exact Filter.Eventually.of_forall fun δ =>
+        ⟨fun h' => absurd h' (by rw [h]; exact lt_irrefl 0), fun h' => absurd h' (by rw [h]; exact lt_irrefl 0)⟩
+    · exact (hc.eventually (Ioi_mem_nhds h)).mono fun δ hδ =>
+        ⟨fun _ => hδ, fun h' => absurd h' (not_lt.mpr h.le)⟩
+  obtain ⟨δ, hδ, hδpos⟩ := (hev.and self_mem_nhdsWithin).exists
+  have hδ0 : 0 < δ := hδpos
+  obtain ⟨D, E, hDE, hPE⟩ := Finset.card_eq_two.mp h2
+  have hD : D ∈ V.filter (fun t => 0 < M t) := by rw [hPE]; simp
+  have hE : E ∈ V.filter (fun t => 0 < M t) := by rw [hPE]; simp
+  rw [Finset.mem_filter] at hD hE
+  have hμ : IsDepOn V (fun t => 1 * M t + δ * ν t) := hM.comb hν 1 δ
+  refine ⟨D, hD.1, E, hE.1, hDE, fun t => 1 * M t + δ * ν t, hμ, ?_, ?_, ?_⟩
+  · simp only [one_mul]; exact ((hδ D hD.1).1 hD.2)
+  · simp only [one_mul]; exact ((hδ E hE.1).1 hE.2)
+  · intro x hx hxD hxE
+    simp only [one_mul]
+    have hxP : x ∉ V.filter (fun t => 0 < M t) := by rw [hPE]; simp [hxD, hxE]
+    rw [Finset.mem_filter] at hxP
+    have hMx : M x ≤ 0 := not_lt.mp (fun h => hxP ⟨hx, h⟩)
+    rcases hMx.lt_or_eq with h | h
+    · exact (hδ x hx).2 h
+    · rw [h, zero_add]; exact mul_neg_of_pos_of_neg hδ0 (hνZ x hx h)
+
 /-- **Lemma 10.1.** A point without an O-partner gives a 2+4 split. -/
 theorem exists_split_of_no_partner {V : Finset ℝ³} (hS : Six V) {l m : ℝ³ → ℝ}
     (hF : GaleFrame V l m) {i : ℝ³} (hi : i ∈ V) (hno : ∀ j ∈ V, ¬ IsOPair l m i j) :
     ∃ D ∈ V, ∃ E ∈ V, D ≠ E ∧ ∃ μ : ℝ³ → ℝ, IsDepOn V μ ∧ 0 < μ D ∧ 0 < μ E ∧
       ∀ x ∈ V, x ≠ D → x ≠ E → μ x < 0 := by
-  sorry
+  classical
+  have hl := hF.hl
+  have hm := hF.hm
+  set L : ℝ³ → ℝ := galeD l m i with hLdef
+  set ν : ℝ³ → ℝ := fun t => -(l i * l t + m i * m t) with hνdef
+  have hL : IsDepOn V L := hl.galeD hm i
+  have hν : IsDepOn V ν := hl.nu hm i
+  have hgi2 : 0 < l i * l i + m i * m i := by
+    rcases hF.ne i hi with h | h
+    · have := mul_self_pos.mpr h; nlinarith [mul_self_nonneg (m i)]
+    · have := mul_self_pos.mpr h; nlinarith [mul_self_nonneg (l i)]
+  have hνZ : ∀ t ∈ V, L t = 0 → ν t < 0 := by
+    intro t ht hLt
+    by_cases hti : t = i
+    · rw [hti]; simp only [hνdef]; linarith
+    · have hge : 0 ≤ l i * l t + m i * m t := by
+        by_contra hc; push Not at hc; exact hno t ht ⟨Ne.symm hti, hLt, hc⟩
+      have hne : l i * l t + m i * m t ≠ 0 := by
+        intro h0
+        have hLt' : l i * m t - m i * l t = 0 := hLt
+        have e1 : (l i * l i + m i * m i) * l t = 0 := by
+          linear_combination l i * h0 - m i * hLt'
+        have e2 : (l i * l i + m i * m i) * m t = 0 := by
+          linear_combination m i * h0 + l i * hLt'
+        rcases hF.ne t ht with h | h
+        · exact h ((mul_eq_zero.mp e1).resolve_left hgi2.ne')
+        · exact h ((mul_eq_zero.mp e2).resolve_left hgi2.ne')
+      simp only [hνdef]; linarith [lt_of_le_of_ne hge (Ne.symm hne)]
+  have hLne : ∃ t ∈ V, L t ≠ 0 := hF.exists_galeD_ne hi
+  -- the three sign classes of `L`
+  have hcard : (V.filter (fun t => 0 < L t)).card + (V.filter (fun t => L t < 0)).card +
+      (V.filter (fun t => L t = 0)).card = 6 := by
+    have h1 := Finset.card_filter_add_card_filter_not (s := V) (fun t => 0 < L t)
+    have h2 := Finset.card_filter_add_card_filter_not (s := V.filter (fun t => ¬ 0 < L t))
+      (fun t => L t < 0)
+    have e1 : (V.filter (fun t => ¬ 0 < L t)).filter (fun t => L t < 0) =
+        V.filter (fun t => L t < 0) := by
+      ext t; simp only [Finset.mem_filter]
+      exact ⟨fun h => ⟨h.1.1, h.2⟩, fun h => ⟨⟨h.1, not_lt.mpr h.2.le⟩, h.2⟩⟩
+    have e2 : (V.filter (fun t => ¬ 0 < L t)).filter (fun t => ¬ L t < 0) =
+        V.filter (fun t => L t = 0) := by
+      ext t; simp only [Finset.mem_filter, not_lt]
+      exact ⟨fun h => ⟨h.1.1, le_antisymm h.1.2 h.2⟩,
+        fun h => ⟨⟨h.1, h.2.le⟩, h.2.ge⟩⟩
+    rw [e1, e2] at h2
+    rw [← hS.card]; omega
+  have hZ : (V.filter (fun t => L t = 0)).card ≤ 2 := by
+    by_contra hc
+    push Not at hc
+    obtain ⟨a, b, c, ha, hb, hc', hab, hac, hbc⟩ := Finset.two_lt_card_iff.mp hc
+    rw [Finset.mem_filter] at ha hb hc'
+    exact hS.no_three_zeros hL hLne ha.1 hb.1 hc'.1 hab hac hbc ha.2 hb.2 hc'.2
+  have hiZ : 1 ≤ (V.filter (fun t => L t = 0)).card :=
+    Finset.card_pos.mpr ⟨i, Finset.mem_filter.mpr ⟨hi, galeD_self l m i⟩⟩
+  have hP : 2 ≤ (V.filter (fun t => 0 < L t)).card := by
+    by_contra hc
+    push Not at hc
+    have h1 := Finset.card_le_one.mp (Nat.lt_succ_iff.mp hc)
+    by_cases hv : ∃ v ∈ V, 0 < L v
+    · obtain ⟨v, hv, hLv⟩ := hv
+      refine hS.not_single_neg hL.neg hv (by linarith) (fun t ht htv => ?_)
+      have : ¬ 0 < L t := fun h => htv (h1 t (Finset.mem_filter.mpr ⟨ht, h⟩) v
+        (Finset.mem_filter.mpr ⟨hv, hLv⟩))
+      linarith [not_lt.mp this]
+    · push Not at hv
+      obtain ⟨t, ht, hLt⟩ := hLne
+      exact hLt (hL.eq_zero_of_nonpos hv t ht)
+  have hN : 2 ≤ (V.filter (fun t => L t < 0)).card := by
+    by_contra hc
+    push Not at hc
+    have h1 := Finset.card_le_one.mp (Nat.lt_succ_iff.mp hc)
+    by_cases hv : ∃ v ∈ V, L v < 0
+    · obtain ⟨v, hv, hLv⟩ := hv
+      refine hS.not_single_neg hL hv hLv (fun t ht htv => ?_)
+      exact not_lt.mp fun h => htv (h1 t (Finset.mem_filter.mpr ⟨ht, h⟩) v
+        (Finset.mem_filter.mpr ⟨hv, hLv⟩))
+    · push Not at hv
+      obtain ⟨t, ht, hLt⟩ := hLne
+      have := hL.neg.eq_zero_of_nonpos (fun t ht => by linarith [hv t ht]) t ht
+      exact hLt (by linarith)
+  rcases (show (V.filter (fun t => 0 < L t)).card = 2 ∨ (V.filter (fun t => L t < 0)).card = 2
+    by omega) with h2 | h2
+  · exact exists_split_of_perturb hL hν hνZ h2
+  · refine exists_split_of_perturb hL.neg hν (fun t ht h0 => hνZ t ht (by linarith)) ?_
+    have : V.filter (fun t => 0 < -L t) = V.filter (fun t => L t < 0) := by
+      ext t; simp only [Finset.mem_filter, neg_pos]
+    rw [this]; exact h2
 
 /-! ### Proposition 10.2: prisms -/
 
