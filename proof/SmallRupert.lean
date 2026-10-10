@@ -18,3 +18,6 @@ public import SmallRupert.Perturb
 public import SmallRupert.Unimodal
 public import SmallRupert.Octahedron
 public import SmallRupert.Prism
+public import SmallRupert.Tilt
+public import SmallRupert.RightPrism
+public import SmallRupert.L8Shapes
