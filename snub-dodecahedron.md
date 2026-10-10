@@ -140,8 +140,9 @@ branch this took about 7 min on 64 cores.
 
 Building the library takes longer than the check: the generated tangent-cone
 table (`proof/SnubDodecahedron/GeneratedTangentCones.lean`, 4 MB) took about
-18 min to build on the branch, and the view-cover data
-(`WedgeCoverData.lean`) is 12 MB.
+18 min to build on the branch's VM, and 41 min with a peak of 25 GB on a
+16-core workstation for this repository; the view-cover data
+(`WedgeCoverData.lean`, 12 MB) took 4.5 min.
 
 ## Reproducing the data
 
