@@ -23,7 +23,7 @@ defined as the **polar dual of Wikipedia's snub dodecahedron**: the set of
 poles of the facet planes of its convex hull (`facetPoles`), that is, the
 points y with ⟪x, y⟫ ≤ 1 for every vertex x of the snub, with equality at three
 affinely independent vertices. The snub dodecahedron is Wikipedia's definition,
-literally (`PentagonalHexecontahedron/WikipediaSnub.lean`): with φ the golden
+literally (`Pipeline/WikipediaSnub.lean`): with φ the golden
 ratio and ξ ≈ 0.94315 the real zero of x³ + 2x² − φ², its 60 vertices are the
 images of
 
@@ -107,7 +107,7 @@ data, how to rerun the verification, and the times it takes.
 
 namespace PentagonalHexecontahedron
 
-open Noperts Noperts.Pipeline
+open Noperts Noperts.Pipeline Noperts.Pipeline.WikipediaSnub
 open scoped Matrix
 
 /-- The certificate data is valid: there are four solution tables, one for

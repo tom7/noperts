@@ -24,7 +24,7 @@ directory holds chart0.pack through chart2.pack, or per-code packs
 c<chart>/t<t>.pack (pack5d --per_code).
 -/
 
-open Noperts Noperts.Pipeline
+open Noperts Noperts.Pipeline Noperts.Pipeline.WikipediaSnub
 open SnubDodecahedron
 open Noperts.Pipeline.AtlasProjectiveSolutionTree
 open Noperts.Pipeline.NativeExecutable

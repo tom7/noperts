@@ -1,7 +1,6 @@
 module
 
-public import Pipeline.IcoInstance
-public import PentagonalHexecontahedron.SolidModel
+public import Pipeline.IcoGroup
 public import Mathlib.Topology.Order.IntermediateValue
 public import Mathlib.Topology.Algebra.Polynomial
 
@@ -19,13 +18,18 @@ vertices are the images of
 under repeated multiplication by M₁ (the rotation by 2π/5 about (0, 1, φ))
 and M₂ (the cyclic shift of coordinates, the rotation by 2π/3 about
 (1, 1, 1)). `SnubOrbit` is that set, literally; `snubDodecahedron` is the
-same 60 points as a `Finset` (`mem_snubDodecahedron_iff`). The pentagonal
-hexecontahedron is its polar dual (Statement.lean).
+same 60 points as a `Finset` (`mem_snubDodecahedron_iff`).
+
+The snub dodecahedron's statement (`SnubDodecahedron.IsSnubDodecahedron`) is
+about this set, and the pentagonal hexecontahedron is its polar dual
+(`PentagonalHexecontahedron.Statement`). The group tables (`wikiEntry`, ...)
+are in `Pipeline.IcoGroupData`; `snubFrame` rotates the snub into the
+5-fold frame of the certificate pipeline.
 -/
 
 open Noperts Noperts.Pipeline
 
-namespace PentagonalHexecontahedron
+namespace Noperts.Pipeline.WikipediaSnub
 
 open IcoZ
 open scoped Matrix
@@ -301,4 +305,7 @@ theorem snubP_eq (c : Fin 3) :
     (try (have h53 : sqrt5 ^ 3 = 5 * sqrt5 := by rw [pow_succ, h5]
           rw [h53]; ring))
 
-end PentagonalHexecontahedron
+
+end Noperts.Pipeline.WikipediaSnub
+
+end

@@ -1,6 +1,8 @@
 module
 
-public import PentagonalHexecontahedron.WikipediaSnub
+public import Pipeline.WikipediaSnub
+public import Pipeline.IcoInstance
+public import PentagonalHexecontahedron.SolidModel
 public import PentagonalHexecontahedron.PolarDual
 public import PentagonalHexecontahedron.PHStatementData
 
@@ -39,7 +41,7 @@ coordinates), checked numerically (nopert229's ph_crosscheck.py): up to
 similarity they agree to 4·10⁻⁴⁰, as mirror images.
 -/
 
-open Noperts Noperts.Pipeline
+open Noperts Noperts.Pipeline Noperts.Pipeline.WikipediaSnub
 
 namespace PentagonalHexecontahedron
 

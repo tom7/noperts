@@ -95,7 +95,7 @@ rerun the verification, and the times it takes.
 
 namespace SnubDodecahedron
 
-open Noperts Noperts.Pipeline IcoZ
+open Noperts Noperts.Pipeline Noperts.Pipeline.WikipediaSnub IcoZ
 open scoped Matrix
 
 /-- The certificate data is valid: there are four solution tables, one for
