@@ -564,6 +564,56 @@ theorem isRupert_gale_core {a a' b b' c c' : ℝ³} (h : IsOctahedron a a' b b' 
   · have := isRupert_quad_edge F.perm₁₂.swap₃ hq₁ hq₂ hgood₁ ht₁
     rwa [finset_perm_ba] at this
 
+theorem isRupert_congr_set {s t : Finset ℝ³} (h : IsRupert s) (e : s = t) : IsRupert t := e ▸ h
+
+
+theorem galeF_perm₁₂ (l m : ℝ³ → ℝ) (a b c t : ℝ³) : galeF l m b a c t = galeF l m a b c t := by
+  simp only [galeF]; ring
+
+theorem galeF_perm₂₃ (l m : ℝ³ → ℝ) (a b c t : ℝ³) : galeF l m a c b t = galeF l m a b c t := by
+  simp only [galeF]; ring
+
+/-- The generic case with the arc-lemma pair `W = C` (either `U`). -/
+theorem isRupert_gale_W {a a' b b' c c' : ℝ³} (h : IsOctahedron a a' b b' c c')
+    (G : GaleData a a' b b' c c') (hκa : 0 < galeD G.l G.m a a')
+    (hκb : 0 < galeD G.l G.m b b') (hκc : 0 < galeD G.l G.m c c')
+    (hfc : 0 < galeF G.l G.m a b c c) (hfc' : 0 < galeF G.l G.m a b c c') :
+    IsRupert {a, a', b, b', c, c'} := by
+  obtain ⟨F⟩ := h.nonempty_octFacets
+  obtain ⟨-, -, c3⟩ := pole_signs F.perm₂₃.perm₁₂ (G.hl.galeD G.hm c).perm₂₃.perm₁₂
+    (galeD_self _ _ c) hκc.ne'
+  rcases lt_or_gt_of_ne (show galeD G.l G.m c a ≠ 0 by intro h0; rw [h0, zero_mul] at c3; linarith)
+    with hU | hU
+  · have hb : 0 < galeD G.l G.m c b := pos_of_mul_neg_neg (by rwa [mul_comm] at c3) hU
+    refine isRupert_congr_set (isRupert_gale_core h.perm₁₂ G.perm₁₂ hκb hκa hκc ?_ ?_ hb) ?_
+    · simpa [GaleData.perm₁₂, galeF_perm₁₂] using hfc
+    · simpa [GaleData.perm₁₂, galeF_perm₁₂] using hfc'
+    · ext z; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
+  · exact isRupert_gale_core h G hκa hκb hκc hfc hfc' hU
+
+/-- **Theorem 9.9, generic case** (§9.5): normalized labels (`κ > 0` on all
+three pairs) and `f = g_a + g_b + g_c ≠ 0`. -/
+theorem isRupert_octahedron_generic {a a' b b' c c' : ℝ³} (h : IsOctahedron a a' b b' c c')
+    (G : GaleData a a' b b' c c') (hκa : 0 < galeD G.l G.m a a')
+    (hκb : 0 < galeD G.l G.m b b') (hκc : 0 < galeD G.l G.m c c')
+    (hf : ¬(G.l a + G.l b + G.l c = 0 ∧ G.m a + G.m b + G.m c = 0)) :
+    IsRupert {a, a', b, b', c, c'} := by
+  obtain ⟨F⟩ := h.nonempty_octFacets
+  rcases arc_lemma F G hκa.ne' hf with ⟨h1, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2⟩
+  · -- `W = A`: relabel `(b, c, a)`
+    refine isRupert_congr_set (isRupert_gale_W h.perm₁₂.perm₂₃ G.perm₁₂.perm₂₃ hκb hκc hκa ?_ ?_) ?_
+    · simpa [GaleData.perm₁₂, GaleData.perm₂₃, galeF_perm₁₂, galeF_perm₂₃, galeF] using
+        (by simp only [galeF] at h1 ⊢; linarith : 0 < galeF G.l G.m b c a a)
+    · simpa [GaleData.perm₁₂, GaleData.perm₂₃, galeF_perm₁₂, galeF_perm₂₃, galeF] using
+        (by simp only [galeF] at h2 ⊢; linarith : 0 < galeF G.l G.m b c a a')
+    · ext z; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
+  · -- `W = B`: relabel `(a, c, b)`
+    refine isRupert_congr_set (isRupert_gale_W h.perm₂₃ G.perm₂₃ hκa hκc hκb ?_ ?_) ?_
+    · simpa [GaleData.perm₂₃, galeF_perm₂₃] using h1
+    · simpa [GaleData.perm₂₃, galeF_perm₂₃] using h2
+    · ext z; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
+  · exact isRupert_gale_W h G hκa hκb hκc h1 h2
+
 end SmallRupert
 
 end
