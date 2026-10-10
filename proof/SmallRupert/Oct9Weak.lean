@@ -767,6 +767,256 @@ theorem eventually_depth_lt {a b v u : ℝ³}
   filter_upwards [this] with ε hε
   simp only [inner_add_right, real_inner_smul_right]; linarith
 
+/-- An affine test `σ * (A + η * B)` that is eventually positive in `η`. -/
+theorem eventually_test {σ A B : ℝ} (h : 0 < σ * A ∨ (A = 0 ∧ 0 < σ * B)) :
+    ∀ᶠ η in 𝓝[>] (0 : ℝ), 0 < σ * (A + η * B) := by
+  have := eventually_pos_affine (A := σ * A) (B := σ * B)
+    (by rcases h with h | ⟨h1, h2⟩; exacts [Or.inl h, Or.inr ⟨by rw [h1, mul_zero], h2⟩])
+  filter_upwards [this] with η hη; linarith [hη]
+
+set_option maxHeartbeats 1600000 in
+/-- **Lemma 9.11** for a weak quad edge `x → y` (orientation `σ`): a passage,
+or the edge is touching, or its lateral edge `p y'` is orthogonal to `y - x`
+and to `p - y` (parallel to the normal of the faces `x y p ∥ x' y' p'`). -/
+theorem isRupert_weak_edge_σ {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
+    (hq₁ : F.a'b'c.f x < F.a'b'c.f y) (hT : F.a'b'c'.f x = F.a'b'c'.f y)
+    (hTp : F.a'b'c'.f p = F.a'b'c'.f y) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
+    (hor : 0 < σ * det3 (p - y) (p' - y) (y - x))
+    (hgood : ¬ max ⟪y, y - x⟫ ⟪y', y - x⟫ ≤ min ⟪p, y - x⟫ ⟪p', y - x⟫) :
+    IsRupert {x, x', y, y', p, p'} ∨
+      (⟪p, y - x⟫ = ⟪p', y - x⟫ ∧ ⟪p', y - x⟫ = ⟪y', y - x⟫ ∧ ⟪y', y - x⟫ < ⟪y, y - x⟫) ∨
+      (⟪p - y', y - x⟫ = 0 ∧ ⟪p - y', p - y⟫ = 0) := by
+  classical
+  obtain ⟨E1, E2, E3, E4⟩ := weak_edge_tests F hq₁ hT hor
+  have hnd := F.nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨hxx', hxy, hxy', hxp, hxp'⟩, ⟨hx'y, hx'y', hx'p, hx'p'⟩, ⟨hyy', hyp, hyp'⟩,
+    ⟨hy'p, hy'p'⟩, hpp', -⟩ := hnd
+  have mx : x ∈ ({x, x', y, y', p, p'} : Finset ℝ³) := by simp
+  have mx' : x' ∈ ({x, x', y, y', p, p'} : Finset ℝ³) := by simp
+  have my : y ∈ ({x, x', y, y', p, p'} : Finset ℝ³) := by simp
+  have my' : y' ∈ ({x, x', y, y', p, p'} : Finset ℝ³) := by simp
+  have mp : p ∈ ({x, x', y, y', p, p'} : Finset ℝ³) := by simp
+  have mp' : p' ∈ ({x, x', y, y', p, p'} : Finset ℝ³) := by simp
+  have e1y' := E1 y' my' (Ne.symm hyy') hy'p (Ne.symm hxy')
+  have e1x' := E1 x' mx' hx'y hx'p (Ne.symm hxx')
+  have e4y' := E4 y' my' hy'p' (Ne.symm hyy') (Ne.symm hxy')
+  have e3x := E3 x mx hxy' hxp' hxx'
+  have e2p' := E2 p' mp' (Ne.symm hpp') (Ne.symm hy'p')
+  have hTN := weak_top_N F
+  have hpy : ⟪F.a'b'c'.N, p - y⟫ = 0 := by rw [← F.a'b'c'.hN, hTp, sub_self]
+  have hyN : ⟪F.a'b'c'.N, y - p⟫ = 0 := by rw [← F.a'b'c'.hN, hTp, sub_self]
+  have hLy := F.ab'c'.neg y my (Ne.symm hxy) hyy' hyp'
+  have hLx' := F.ab'c'.neg x' mx' (Ne.symm hxx') hx'y' hx'p'
+  -- the depths
+  set Y := ⟪y, y - x⟫
+  set a := ⟪x, y - x⟫
+  set b := ⟪p, y - x⟫
+  set c := ⟪y', y - x⟫
+  set d := ⟪x', y - x⟫
+  set e := ⟪p', y - x⟫
+  by_cases hN : NWS4 (quad Y b c e)
+  · -- Mixed: the 4-cycle `(y, p, y', p')`, tilt `y' - x`
+    left
+    refine isRupert_weak_cycle4 F hq₁ hT hσ hor (y' - x) (by rw [det3_tilt_y]; exact e1y')
+      (by rw [det3_tilt_p']; exact e4y') ?_ ?_
+    · have : det3 (p' - y') (y - x) (y' - x) = det3 (p' - y') (x - y') (y - x) := by
+        simp only [det3_expand, PiLp.sub_apply]; ring
+      rw [this]; exact e3x
+    · refine eventually_of_isOpen isOpen_NWS4 (quad y p y' p') (y - x) (y' - x) ?_
+      convert hN using 1; funext i
+      rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rfl
+  -- separated: `min(Y, c) ≥ max(b, e)`
+  have hY : b ≤ Y ∧ e ≤ Y ∧ b ≤ c ∧ e ≤ c := by
+    simp only [NWS4, quad_0, quad_1, quad_2, quad_3] at hN
+    simp only [max_le_iff, le_min_iff, not_and_or, not_le] at hgood
+    by_contra hc
+    apply hN
+    constructor
+    · simp only [not_and_or, not_le] at hc; exact hc
+    · rcases hgood with (h | h) | (h | h) <;> simp only [h, true_or, or_true]
+  obtain ⟨hY1, hY2, hY3, hY4⟩ := hY
+  -- the lower boundary: `a < max(b, e)`
+  have hS₂ : 0 < σ * det3 (y' - x) (p' - x) (y - x) := by rw [← det3_cyc x y' p']; exact e3x
+  have hS₃ : 0 < σ * det3 (p - x) (p' - x) (y - x) := by rw [det3_shift_xy]; exact hor
+  have hS₄ : 0 < σ * det3 (p - x) (y' - x) (y - x) := by rw [det3_shift_xy]; exact e1y'
+  have hlow := quad_edge_lower_σ F e2p' hS₂ hS₃ hS₄
+  have hsum := four_point_sum x p y' p' (y - x)
+  have hx_lt : a < b ∨ a < e := by
+    by_contra hc; push Not at hc
+    obtain ⟨c1, c2⟩ := hc
+    rcases le_total b e with hpp | hpp
+    · nlinarith [mul_le_mul_of_nonneg_left c2 e2p'.le, mul_le_mul_of_nonneg_left hY4 hS₃.le,
+        mul_le_mul_of_nonneg_left hpp hS₂.le, mul_eq_zero_of_left hsum (σ * e)]
+    · nlinarith [mul_le_mul_of_nonneg_left c1 e2p'.le, mul_le_mul_of_nonneg_left hY3 hS₃.le,
+        mul_le_mul_of_nonneg_left hpp hS₄.le, mul_eq_zero_of_left hsum (σ * b)]
+  rcases lt_or_eq_of_le hY3 with hbc | hbc
+  · -- the 5-cycle `(x, p, y', x', p')`, tilt `x - y'`
+    left
+    -- `x'` lies above the chord `y' p'`: `e < d`
+    have hed : e < d := by
+      obtain ⟨-, -, i3, i4⟩ := weak_top_face F hT x
+      obtain ⟨s3, s1⟩ := weak_top_signs F hq₁ hT e3x
+      have huu : 0 < ⟪y - x, y - x⟫ := real_inner_self_pos.mpr (sub_ne_zero.mpr (Ne.symm hxy))
+      by_contra hde; push Not at hde
+      have k1 : 0 < (σ * det3 (p' - y') (x - y') (y - x)) * (-F.ab'c'.f x') * ⟪y - x, y - x⟫ :=
+        mul_pos (mul_pos e3x (by linarith)) huu
+      have k2 : σ * (det3 (p' - x') (x - x') (y - x) * c - det3 (p' - y') (x - y') (y - x) * d +
+          det3 (x' - y') (x - y') (y - x) * e) < 0 := by
+        have : F.ab'c'.f y * (σ * (det3 (p' - x') (x - x') (y - x) * c -
+            det3 (p' - y') (x - y') (y - x) * d + det3 (x' - y') (x - y') (y - x) * e)) =
+            (σ * det3 (p' - y') (x - y') (y - x)) * (-F.ab'c'.f x') * ⟪y - x, y - x⟫ := by
+          rw [← mul_assoc, mul_comm (F.ab'c'.f y) σ, mul_assoc, i3]; ring
+        nlinarith
+      have k3 : σ * det3 (p' - y') (x - y') (y - x) = σ * det3 (p' - x') (x - x') (y - x) +
+          σ * det3 (x' - y') (x - y') (y - x) := by linear_combination -σ * i4
+      have k4 : σ * det3 (p' - y') (x - y') (y - x) * d = σ * det3 (p' - x') (x - x') (y - x) * d +
+          σ * det3 (x' - y') (x - y') (y - x) * d := by rw [k3]; ring
+      have k5 := mul_le_mul_of_nonneg_left (show d ≤ c by linarith) s1.le
+      have k6 := mul_le_mul_of_nonneg_left hde s3.le
+      have k7 : σ * (det3 (p' - x') (x - x') (y - x) * c - det3 (p' - y') (x - y') (y - x) * d +
+          det3 (x' - y') (x - y') (y - x) * e) = σ * det3 (p' - x') (x - x') (y - x) * c -
+          σ * det3 (p' - y') (x - y') (y - x) * d + σ * det3 (x' - y') (x - y') (y - x) * e := by
+        ring
+      linarith
+    refine isRupert_weak_cycle5a F hq₁ hT hσ hor (x - y') (by rw [det3_tilt_x]; exact e1y')
+      (by rw [det3_tilt_x']; exact e4y') ?_ ?_
+    · have e0 := weak_tau3 F hT (x - y')
+      have i1 : det3 (p' - y') (y - x) (x - y') = -det3 (p' - y') (x - y') (y - x) := by
+        simp only [det3_expand, PiLp.sub_apply]; ring
+      rw [i1] at e0
+      rw [det3_swap12]
+      have k : F.ab'c'.f y * (σ * det3 (p' - y') (x' - y') (x - y')) =
+          (-F.ab'c'.f x') * (σ * det3 (p' - y') (x - y') (y - x)) := by
+        linear_combination σ * e0
+      have kp : 0 < (-F.ab'c'.f x') * (σ * det3 (p' - y') (x - y') (y - x)) :=
+        mul_pos (by linarith) e3x
+      nlinarith
+    · refine eventually_of_isOpen isOpen_WQ5a (quint x p y' x' p') (y - x) (x - y') ?_
+      simp only [WQ5a, quint_0, quint_1, quint_2, quint_3, quint_4]
+      exact ⟨hbc, hed, hx_lt⟩
+  -- `b = c`
+  by_cases heb : e = b
+  · right; left
+    simp only [max_le_iff, le_min_iff, not_and_or, not_le] at hgood
+    refine ⟨heb.symm, by rw [heb, hbc], ?_⟩
+    rcases hgood with (h | h) | (h | h) <;> linarith
+  have heb' : e < b := lt_of_le_of_ne (hbc ▸ hY4) heb
+  rcases lt_trichotomy ⟪p - y', p - y⟫ 0 with hneg | hzero | hpos
+  · -- the tie with `ω < t₂`: the 5-cycle `(x, y, p, y', p')`, tilt `(y - p) + η (y' - y)`
+    left
+    have hab : a < b := by rcases hx_lt with h | h; exacts [h, by linarith]
+    have i0p : ∀ η : ℝ, det3 (y - x) (p - x) ((y - p) + η • (y' - y)) =
+        0 + η * det3 (p - y) (y' - y) (y - x) := fun η => by
+      rw [det3_add_smul]; congr 1 <;> [skip; congr 1] <;>
+        simp only [det3_expand, PiLp.sub_apply] <;> ring
+    have i0y' : ∀ η : ℝ, det3 (y - x) (y' - x) ((y - p) + η • (y' - y)) =
+        det3 (p - y) (y' - y) (y - x) + η * det3 (y - x) (y' - x) (y' - y) := fun η => by
+      rw [det3_add_smul]; congr 1; simp only [det3_expand, PiLp.sub_apply]; ring
+    have i0p' : ∀ η : ℝ, det3 (y - x) (p' - x) ((y - p) + η • (y' - y)) =
+        det3 (p - y) (p' - y) (y - x) + η * det3 (y - x) (p' - x) (y' - y) := fun η => by
+      rw [det3_add_smul]; congr 1; simp only [det3_expand, PiLp.sub_apply]; ring
+    have i0x' : ∀ η : ℝ, det3 (y - x) (x' - x) ((y - p) + η • (y' - y)) =
+        det3 (p - y) (x' - y) (y - x) + η * det3 (y - x) (x' - x) (y' - y) := fun η => by
+      rw [det3_add_smul]; congr 1; simp only [det3_expand, PiLp.sub_apply]; ring
+    have i1 : ∀ η : ℝ, det3 (p - y) (x - y) ((y - p) + η • (y' - y)) =
+        0 + η * det3 (p - y) (y' - y) (y - x) := fun η => by
+      rw [det3_add_smul]; congr 1 <;> [skip; congr 1] <;>
+        simp only [det3_expand, PiLp.sub_apply] <;> ring
+    have i2 : ∀ η : ℝ, det3 (x - p') (y - p') ((y - p) + η • (y' - y)) =
+        det3 (p - y) (p' - y) (y - x) + η * det3 (x - p') (y - p') (y' - y) := fun η => by
+      rw [det3_add_smul]; congr 1; simp only [det3_expand, PiLp.sub_apply]; ring
+    have z3 : det3 (p' - y') (y - x) (y - p) = 0 := by
+      have := weak_top_perp F hT hTN.1 hyN
+      have e : det3 (p' - y') (y - x) (y - p) = -det3 (p' - y') (y - p) (y - x) := by
+        simp only [det3_expand, PiLp.sub_apply]; ring
+      rw [e, this, neg_zero]
+    have i3 : ∀ η : ℝ, det3 (p' - y') (y - x) ((y - p) + η • (y' - y)) =
+        0 + η * det3 (p' - y') (x - y') (y - x) := fun η => by
+      rw [det3_add_smul, z3]; congr 1; congr 1; simp only [det3_expand, PiLp.sub_apply]; ring
+    have iq1 : ∀ η : ℝ, ⟪y - p, (y - p) + η • (y' - y)⟫ =
+        ⟪y - p, y - p⟫ + η * ⟪y - p, y' - y⟫ := fun η => by
+      rw [inner_add_right, real_inner_smul_right]
+    have iq2 : ∀ η : ℝ, ⟪p - y', (y - p) + η • (y' - y)⟫ =
+        -⟪p - y', p - y⟫ + η * ⟪p - y', y' - y⟫ := fun η => by
+      rw [inner_add_right, real_inner_smul_right, ← neg_sub p y, inner_neg_right]
+    have hpy0 : 0 < ⟪y - p, y - p⟫ := real_inner_self_pos.mpr (sub_ne_zero.mpr hyp)
+    obtain ⟨η, c1, c2, c3, c4, c5, c6, c7, c8, -⟩ :=
+      ((eventually_test (σ := σ) (A := 0) (B := det3 (p - y) (y' - y) (y - x))
+        (Or.inr ⟨rfl, e1y'⟩)).and
+      ((eventually_test (σ := σ) (B := det3 (y - x) (y' - x) (y' - y)) (Or.inl e1y')).and
+      ((eventually_test (σ := σ) (B := det3 (y - x) (p' - x) (y' - y)) (Or.inl hor)).and
+      ((eventually_test (σ := σ) (B := det3 (y - x) (x' - x) (y' - y)) (Or.inl e1x')).and
+      ((eventually_test (σ := σ) (B := det3 (x - p') (y - p') (y' - y)) (Or.inl hor)).and
+      ((eventually_test (σ := σ) (A := 0) (B := det3 (p' - y') (x - y') (y - x))
+        (Or.inr ⟨rfl, e3x⟩)).and
+      ((eventually_test (σ := 1) (A := ⟪y - p, y - p⟫) (B := ⟪y - p, y' - y⟫)
+        (Or.inl (by linarith))).and
+      ((eventually_test (σ := 1) (A := -⟪p - y', p - y⟫) (B := ⟪p - y', y' - y⟫)
+        (Or.inl (by linarith))).and
+      (self_mem_nhdsWithin : ∀ᶠ η in 𝓝[>] (0 : ℝ), η ∈ Set.Ioi 0))))))))).exists
+    refine isRupert_weak_cycle5b F hq₁ hT hσ hor ((y - p) + η • (y' - y))
+      (by rw [i0p]; exact c1) (by rw [i0y']; exact c2) (by rw [i0p']; exact c3)
+      (by rw [i0x']; exact c4) (by rw [i1]; exact c1) (by rw [i2]; exact c5)
+      (by rw [i3]; exact c6) ?_
+    rw [one_mul] at c7 c8
+    rw [← iq1] at c7
+    rw [← iq2] at c8
+    filter_upwards [eventually_depth_lt (a := x) (b := y) (v := (y - p) + η • (y' - y))
+        (u := y - x) (Or.inl (by linarith)),
+      eventually_depth_lt (a := p) (b := y) (v := (y - p) + η • (y' - y)) (u := y - x)
+        (by rcases lt_or_eq_of_le hY1 with h | h
+            · exact Or.inl h
+            · refine Or.inr ⟨h, ?_⟩; rw [inner_sub_left] at c7; linarith),
+      eventually_depth_lt (a := y') (b := p) (v := (y - p) + η • (y' - y)) (u := y - x)
+        (Or.inr ⟨hbc.symm, by rw [inner_sub_left] at c8; linarith⟩),
+      eventually_depth_lt (a := p') (b := y') (v := (y - p) + η • (y' - y)) (u := y - x)
+        (Or.inl (by linarith))] with ε h1 h2 h3 h4
+    simp only [WQ5b, quint_0, quint_1, quint_2, quint_3, quint_4]
+    exact ⟨h1, h2, h3, h4⟩
+  · -- the lateral edge `p y'` is parallel to the normal
+    right; right
+    exact ⟨by rw [inner_sub_left]; linarith, hzero⟩
+  · -- the tie with `ω > t₂`: the 4-cycle `(y, p, y', p')`, tilt `(p - y) + η (y' - y)`
+    left
+    have i1 : ∀ η : ℝ, det3 (p - y) (x - y) ((p - y) + η • (y' - y)) =
+        0 + η * det3 (p - y) (y' - y) (y - x) := fun η => by
+      rw [det3_add_smul]; congr 1 <;> [skip; congr 1] <;>
+        simp only [det3_expand, PiLp.sub_apply] <;> ring
+    have i2 : ∀ η : ℝ, det3 (y - p') (x - p') ((p - y) + η • (y' - y)) =
+        det3 (p - y) (p' - y) (y - x) + η * det3 (y - p') (x - p') (y' - y) := fun η => by
+      rw [det3_add_smul]; congr 1; simp only [det3_expand, PiLp.sub_apply]; ring
+    have z3 : det3 (p' - y') (y - x) (p - y) = 0 := by
+      have := weak_top_perp F hT hTN.1 hpy
+      have e : det3 (p' - y') (y - x) (p - y) = -det3 (p' - y') (p - y) (y - x) := by
+        simp only [det3_expand, PiLp.sub_apply]; ring
+      rw [e, this, neg_zero]
+    have i3 : ∀ η : ℝ, det3 (p' - y') (y - x) ((p - y) + η • (y' - y)) =
+        0 + η * det3 (p' - y') (x - y') (y - x) := fun η => by
+      rw [det3_add_smul, z3]; congr 1; congr 1; simp only [det3_expand, PiLp.sub_apply]; ring
+    have iq : ∀ η : ℝ, ⟪p - y', (p - y) + η • (y' - y)⟫ =
+        ⟪p - y', p - y⟫ + η * ⟪p - y', y' - y⟫ := fun η => by
+      rw [inner_add_right, real_inner_smul_right]
+    obtain ⟨η, c1, c2, c3, c4, -⟩ :=
+      ((eventually_test (σ := σ) (A := 0) (B := det3 (p - y) (y' - y) (y - x))
+        (Or.inr ⟨rfl, e1y'⟩)).and
+      ((eventually_test (σ := σ) (B := det3 (y - p') (x - p') (y' - y)) (Or.inl hor)).and
+      ((eventually_test (σ := σ) (A := 0) (B := det3 (p' - y') (x - y') (y - x))
+        (Or.inr ⟨rfl, e3x⟩)).and
+      ((eventually_test (σ := 1) (A := ⟪p - y', p - y⟫) (B := ⟪p - y', y' - y⟫)
+        (Or.inl (by linarith))).and
+      (self_mem_nhdsWithin : ∀ᶠ η in 𝓝[>] (0 : ℝ), η ∈ Set.Ioi 0))))).exists
+    refine isRupert_weak_cycle4 F hq₁ hT hσ hor ((p - y) + η • (y' - y))
+      (by rw [i1]; exact c1) (by rw [i2]; exact c2) (by rw [i3]; exact c3) ?_
+    rw [one_mul, ← iq] at c4
+    filter_upwards [eventually_depth_lt (a := y') (b := p) (v := (p - y) + η • (y' - y))
+        (u := y - x) (Or.inr ⟨hbc.symm, by rw [inner_sub_left] at c4; linarith⟩),
+      eventually_depth_lt (a := p') (b := y) (v := (p - y) + η • (y' - y)) (u := y - x)
+        (Or.inl (by linarith))] with ε h1 h2
+    simp only [NWS4, quad_0, quad_1, quad_2, quad_3]
+    exact ⟨Or.inr (Or.inr (Or.inl h1)), Or.inr (Or.inl h2)⟩
+
 end SmallRupert
 
 end
