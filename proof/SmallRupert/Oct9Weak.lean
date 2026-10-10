@@ -1017,6 +1017,19 @@ theorem isRupert_weak_edge_σ {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' 
     simp only [NWS4, quad_0, quad_1, quad_2, quad_3]
     exact ⟨Or.inr (Or.inr (Or.inl h1)), Or.inr (Or.inl h2)⟩
 
+/-- **Lemma 9.11** for a weak quad edge `x → y`: a passage, or the edge is
+touching, or its lateral edge `p y'` is orthogonal to `y - x` and `p - y`. -/
+theorem isRupert_weak_edge {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
+    (hq₁ : F.a'b'c.f x < F.a'b'c.f y) (hT : F.a'b'c'.f x = F.a'b'c'.f y)
+    (hTp : F.a'b'c'.f p = F.a'b'c'.f y)
+    (hgood : ¬ max ⟪y, y - x⟫ ⟪y', y - x⟫ ≤ min ⟪p, y - x⟫ ⟪p', y - x⟫) :
+    IsRupert {x, x', y, y', p, p'} ∨
+      (⟪p, y - x⟫ = ⟪p', y - x⟫ ∧ ⟪p', y - x⟫ = ⟪y', y - x⟫ ∧ ⟪y', y - x⟫ < ⟪y, y - x⟫) ∨
+      (⟪p - y', y - x⟫ = 0 ∧ ⟪p - y', p - y⟫ = 0) := by
+  rcases lt_or_gt_of_ne (quad_orient_ne F) with h | h
+  · exact isRupert_weak_edge_σ F hq₁ hT hTp (σ := -1) (Or.inr rfl) (by linarith) hgood
+  · exact isRupert_weak_edge_σ F hq₁ hT hTp (σ := 1) (Or.inl rfl) (by linarith) hgood
+
 end SmallRupert
 
 end
