@@ -10,8 +10,8 @@ public import Bounding.SmallConsecutiveRotations
 # Operator-norm bounds for nearby Euler rotations
 
 These estimates turn a rational box radius in the five pose coordinates into
-the division-free small-rotation hypothesis used by the snub-cube local
-checker.
+the division-free small-rotation hypothesis used by the local
+certificate checkers.
 -/
 
 namespace Noperts.BalancedSupport

@@ -9,7 +9,7 @@ public import RationalApprox.RationalBalancedGlobal
 # Generic decidable balanced-global box certificates
 
 This is the polyhedron-parameterized form of the rational checker first used
-for the snub cube.  A box stores three rational contacts.  Exact unit length,
+for an earlier snub-cube attempt.  A box stores three rational contacts.  Exact unit length,
 nonnegative weights, balance, and the aggregate Taylor inequality are all
 decidable over `ℚ`; the soundness theorem accepts any real/rational
 polyhedron pair connected by `κApproxPoly`.

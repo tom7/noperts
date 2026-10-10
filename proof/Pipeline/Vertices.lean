@@ -1,7 +1,9 @@
 module
 
 public import RationalApprox.TrigLemmas
-public import Vertices.Taylor
+public import Basic
+public import Bounding
+public import PointSym
 public import Mathlib.Analysis.Real.Pi.Bounds
 public import Septopert.C3
 public import Septopert.ModelData

@@ -7,7 +7,6 @@ public import PoseInterval
 public import Global.Basic
 public import Global.BoundedPartialsControlDifference
 public import Global.RotationPartials
-public import Vertices.Exact
 
 @[expose] public section
 

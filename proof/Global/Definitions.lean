@@ -6,8 +6,8 @@ Authors: Cameron Freer
 module
 
 public import Mathlib.Analysis.InnerProductSpace.Calculus
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 public import PoseInterval
-public import Vertices.Exact
 
 @[expose] public section
 

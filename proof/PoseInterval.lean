@@ -38,21 +38,6 @@ abbrev min_le_max {R : Type} [PartialOrder R] (iv : PoseInterval R) : iv.min ≤
 end PoseInterval
 
 /--
-The 5d box in parameter space that represents what constraints we can
-impose on angles taking advantage of the particular symmetries of the
-Noperthedron.
--/
-noncomputable
-def tightInterval : PoseInterval ℝ :=
-  PoseInterval.mk
-    { θ₁ := 0, θ₂ := 0, φ₁ := 0, φ₂ := 0, α := -(π / 2) }
-    { θ₁ := 2 * π / 15, θ₂ := 2 * π / 15, φ₁ := π, φ₂ := π / 2, α := π / 2 }
-    (by
-      rw [Pose.le_iff]
-      have hπ := Real.pi_pos
-      refine ⟨?_, ?_, hπ.le, ?_, ?_⟩ <;> linarith)
-
-/--
 The `[-4, 4]^5` box, used to constrain poses for rational approximation reasoning.
 Polymorphic over the value type so the same name works at both `ℚ` and `ℝ`.
 -/

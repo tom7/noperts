@@ -9,7 +9,7 @@ public import MatrixPose
 /-!
 # Balanced-support certificates for full Rupert poses
 
-The snub cube is not centrally symmetric, so its proof must retain the planar
+A polyhedron need not be centrally symmetric, so the proof must retain the planar
 translation in `MatrixPose`.  The balance equation below cancels that offset;
 no common-center reduction is used.
 -/
