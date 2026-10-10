@@ -3,7 +3,7 @@ module
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 
 /-!
-This file states our main theorem using only Mathlib imports, following the conventions
+This file states the main theorem using only Mathlib imports, following the conventions
 proposed on Zulip here:
 https://leanprover.zulipchat.com/#narrow/channel/219941-Machine-Learning-for-Theorem-Proving/topic/Discussion.3A.20AI-written.20mathematical.20proofs/near/556956066
 
@@ -28,12 +28,27 @@ def IsRupert (vertices : Finset (EuclideanSpace ℝ (Fin 3))) : Prop :=
    inner_shadow ⊆ interior outer_shadow
 
 /--
-The main result we want to prove: there exists a convex polyhedron (represented as
-a finite set of vertices) that does not have the Rupert Property.
+There exists a nontrivial convex polyhedron with seven vertices that does not have the Rupert Property.
 -/
-def ExistsNonRupertPolyhedron : Prop :=
+def ExistsNonRupertPolyhedronSize7 : Prop :=
   ∃ vs : Finset (EuclideanSpace ℝ (Fin 3)),
+    vs.card = 7 ∧
     (interior (convexHull ℝ vs : Set (EuclideanSpace ℝ (Fin 3)))).Nonempty ∧
     ¬IsRupert vs
+
+/--
+There does not exist a nontrivial convex polyhedron with fewer than seven vertices that does not have the Rupert Property.
+-/
+def NotExistsNonRupertPolyhedronBelowSize7 : Prop :=
+  ¬∃ vs : Finset (EuclideanSpace ℝ (Fin 3)),
+    vs.card < 7 ∧
+    (interior (convexHull ℝ vs : Set (EuclideanSpace ℝ (Fin 3)))).Nonempty ∧
+    ¬IsRupert vs
+
+/--
+Seven vertices is the smallest Nopert
+-/
+def MinimalNopert : Prop :=
+  ExistsNonRupertPolyhedronSize7 ∧ NotExistsNonRupertPolyhedronBelowSize7
 
 end
