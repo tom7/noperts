@@ -401,6 +401,129 @@ theorem weak_top_signs {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
       rw [mul_assoc, i2]; ring
     nlinarith [mul_pos hw p4]
 
+/-- Vectors parallel to the top face `x' y' p'` (which contains `u = y - x`). -/
+theorem weak_top_perp {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
+    (hT : F.a'b'c'.f x = F.a'b'c'.f y) {a b : ℝ³} (ha : ⟪F.a'b'c'.N, a⟫ = 0)
+    (hb : ⟪F.a'b'c'.N, b⟫ = 0) : det3 a b (y - x) = 0 := by
+  have hnd := F.nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨hxx', hxy, hxy', hxp, hxp'⟩, -, -, -, -, -⟩ := hnd
+  set T := F.a'b'c'
+  have hTx : T.f x < 0 := T.neg x (by simp) hxx' hxy' hxp'
+  have hTN : T.N ≠ 0 := by
+    intro h0
+    have := T.hN x x'
+    rw [h0, inner_zero_left, T.hP] at this
+    linarith
+  refine det3_eq_zero_of_perp hTN ?_ ?_ ?_ <;> rw [real_inner_comm]
+  · exact ha
+  · exact hb
+  · rw [← T.hN, hT]; ring
+
+theorem weak_top_N {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p') :
+    ⟪F.a'b'c'.N, p' - y'⟫ = 0 ∧ ⟪F.a'b'c'.N, x' - y'⟫ = 0 := by
+  constructor <;> rw [← F.a'b'c'.hN]
+  · rw [F.a'b'c'.hR, F.a'b'c'.hQ]; ring
+  · rw [F.a'b'c'.hP, F.a'b'c'.hQ]; ring
+
+/-- The tilt test on the top face, through the lower face `x y' p'`. -/
+theorem weak_tau3 {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
+    (hT : F.a'b'c'.f x = F.a'b'c'.f y) (v : ℝ³) :
+    F.ab'c'.f y * det3 (p' - y') (x' - y') v = F.ab'c'.f x' * det3 (p' - y') (y - x) v := by
+  have h4 := det3_four F.ab'c'.N (p' - y') (x' - y') (y - x) v
+  have e1 : ⟪F.ab'c'.N, y - x⟫ = F.ab'c'.f y := by rw [← F.ab'c'.hN, F.ab'c'.hP, sub_zero]
+  have e2 : ⟪F.ab'c'.N, x' - y'⟫ = F.ab'c'.f x' := by rw [← F.ab'c'.hN, F.ab'c'.hQ, sub_zero]
+  have e3 : ⟪F.ab'c'.N, p' - y'⟫ = 0 := by rw [← F.ab'c'.hN, F.ab'c'.hQ, F.ab'c'.hR, sub_zero]
+  have e4 : det3 (p' - y') (x' - y') (y - x) = 0 :=
+    weak_top_perp F hT (weak_top_N F).1 (weak_top_N F).2
+  rw [e1, e2, e3, e4] at h4
+  linarith
+
+theorem det3_neg_mid (a b c : ℝ³) : det3 a (-b) c = -det3 a b c := by
+  simp only [det3_expand, PiLp.neg_apply]; ring
+
+theorem det3_sub_mid (a b c : ℝ³) : det3 a (a - b) c = -det3 a b c := by
+  simp only [det3_expand, PiLp.sub_apply]; ring
+
+/-- **Lemma 9.11, the 4-cycle `(y, p, y', p')`** (closing by `y`, lower chain on
+the top face), for a tilt `v` with the three sign conditions. -/
+theorem isRupert_weak_cycle4 {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
+    (hq₁ : F.a'b'c.f x < F.a'b'c.f y) (hT : F.a'b'c'.f x = F.a'b'c'.f y) {σ : ℝ}
+    (hσ : σ = 1 ∨ σ = -1) (hor : 0 < σ * det3 (p - y) (p' - y) (y - x)) (v : ℝ³)
+    (t1 : 0 < σ * det3 (p - y) (x - y) v) (t2 : 0 < σ * det3 (y - p') (x - p') v)
+    (t3 : 0 < σ * det3 (p' - y') (y - x) v)
+    (hQ : ∀ᶠ ε in 𝓝[>] (0 : ℝ),
+      NWS4 fun i => ⟪quad y p y' p' i, (y - x) + ε • v⟫) :
+    IsRupert {x, x', y, y', p, p'} := by
+  classical
+  obtain ⟨E1, E2, E3, E4⟩ := weak_edge_tests F hq₁ hT hor
+  have hnd := F.nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨hxx', hxy, hxy', hxp, hxp'⟩, ⟨hx'y, hx'y', hx'p, hx'p'⟩, ⟨hyy', hyp, hyp'⟩,
+    ⟨hy'p, hy'p'⟩, hpp', -⟩ := hnd
+  set V : Finset ℝ³ := {x, x', y, y', p, p'} with hV
+  have mx : x ∈ V := by simp [V]
+  have mx' : x' ∈ V := by simp [V]
+  have my : y ∈ V := by simp [V]
+  have my' : y' ∈ V := by simp [V]
+  have mp : p ∈ V := by simp [V]
+  have mp' : p' ∈ V := by simp [V]
+  have hmemV : ∀ z ∈ V, z = x ∨ z = x' ∨ z = y ∨ z = y' ∨ z = p ∨ z = p' := by
+    intro z hz; simpa [V] using hz
+  have hu : y - x ≠ 0 := sub_ne_zero.mpr (Ne.symm hxy)
+  have t3' : 0 < σ * det3 (p' - y') (x' - y') v := by
+    have e := weak_tau3 F hT v
+    have hLy := F.ab'c'.neg y my (Ne.symm hxy) hyy' hyp'
+    have hLx' := F.ab'c'.neg x' mx' (Ne.symm hxx') hx'y' hx'p'
+    have : (σ * det3 (p' - y') (x' - y') v) * F.ab'c'.f y =
+        (σ * det3 (p' - y') (y - x) v) * F.ab'c'.f x' := by
+      rw [mul_assoc, mul_comm (det3 _ _ _), e]; ring
+    nlinarith [mul_neg_of_pos_of_neg t3 hLx']
+  have z3 : det3 (p' - y') (x' - y') (y - x) = 0 :=
+    weak_top_perp F hT (weak_top_N F).1 (weak_top_N F).2
+  obtain ⟨a0, a1, a2, a3⟩ := zmod4_add_one
+  refine isRupert_of_tilted_unimodal_σ V (y - x) v hu (by norm_num) (quad y p y' p') ?_ σ hσ
+    ?_ ?_ NWS4 isOpen_NWS4 (fun z c hc hz => hz.mul hc.ne') hQ
+    (fun z hz hQ => isCyclicUnimodal_of_NWS4 hz hQ)
+  · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
+      simp [V, quad_0, quad_1, quad_2, quad_3]
+  · intro i j hi hj
+    rcases zmod4_pairs i j hi hj with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
+      ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
+    simp only [a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3] <;> refine Or.inl ?_
+    · exact E1 y' my' (Ne.symm hyy') hy'p (Ne.symm hxy')
+    · exact E1 p' mp' (Ne.symm hyp') (Ne.symm hpp') (Ne.symm hxp')
+    · exact E2 p' mp' (Ne.symm hpp') (Ne.symm hy'p')
+    · exact E2 y my hyp hyy'
+    · exact E3 y my hyy' hyp' (Ne.symm hx'y)
+    · exact E3 p mp (Ne.symm hy'p) hpp' (Ne.symm hx'p)
+    · exact E4 p mp hpp' (Ne.symm hyp) (Ne.symm hxp)
+    · exact E4 y' my' hy'p' (Ne.symm hyy') (Ne.symm hxy')
+  · intro z hz hzx i
+    have h0 := hzx 0; have h1 := hzx 1; have h2 := hzx 2; have h3 := hzx 3
+    simp only [quad_0, quad_1, quad_2, quad_3] at h0 h1 h2 h3
+    rcases hmemV z hz with h | h | h | h | h | h
+    · rw [h]
+      rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
+        simp only [a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3]
+      · exact Or.inr ⟨det3_xy_zero p x y, t1⟩
+      · exact Or.inl (E2 x mx hxp hxy')
+      · exact Or.inl (E3 x mx hxy' hxp' hxx')
+      · exact Or.inr ⟨det3_xy_zero' p' x y, t2⟩
+    · rw [h]
+      rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
+        simp only [a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3]
+      · exact Or.inl (E1 x' mx' hx'y hx'p (Ne.symm hxx'))
+      · exact Or.inl (E2 x' mx' hx'p hx'y')
+      · exact Or.inr ⟨z3, t3'⟩
+      · exact Or.inl (E4 x' mx' hx'p' hx'y (Ne.symm hxx'))
+    · exact absurd h h0
+    · exact absurd h h2
+    · exact absurd h h1
+    · exact absurd h h3
+
 end SmallRupert
 
 end
