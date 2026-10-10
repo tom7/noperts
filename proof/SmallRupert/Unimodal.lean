@@ -1,6 +1,7 @@
 module
 
 public import SmallRupert.SixVertices
+public import SmallRupert.Thm73
 public import Mathlib.Analysis.Convex.Caratheodory
 
 @[expose] public section
@@ -37,12 +38,6 @@ interior", and (G2) is injectivity of the depths, part of `IsCyclicUnimodal`.
 namespace SmallRupert
 
 open scoped RealInnerProductSpace
-
-/-- The normal cone of `S` at `p`. -/
-def normalConeAt (S : Set ℝ²) (p : ℝ²) : Set ℝ² := {n | ∀ q ∈ S, ⟪n, q - p⟫ ≤ 0}
-
-/-- The 2D cross product `a × b = a₀ b₁ - a₁ b₀`. -/
-def cross2 (a b : ℝ²) : ℝ := a 0 * b 1 - a 1 * b 0
 
 /-- The convex hull of a compact set in a finite-dimensional normed space is
 compact (Carathéodory). -/
@@ -254,30 +249,6 @@ theorem exists_forces_of_not_firstOrderInward (V : Finset ℝ³)
     by_contra hcon; push Not at hcon
     have := mul_nonneg (show 0 ≤ 1 / ‖n‖ by positivity) hcon
     linarith
-
-/-- `p` lists the corners of a strictly convex polygon counterclockwise: every
-corner lies strictly to the left of every directed edge not containing it. -/
-def IsCcwPolygon {k : ℕ} (p : ZMod k → ℝ²) : Prop :=
-  3 ≤ k ∧ ∀ i j : ZMod k, j ≠ i → j ≠ i + 1 → 0 < cross2 (p (i + 1) - p i) (p j - p i)
-
-/-- A cyclic sequence of distinct reals with exactly one local maximum (hence
-exactly one local minimum). -/
-def IsCyclicUnimodal {k : ℕ} [NeZero k] (z : ZMod k → ℝ) : Prop :=
-  Function.Injective z ∧
-    (Finset.univ.filter (fun i : ZMod k => z (i - 1) < z i ∧ z (i + 1) < z i)).card = 1
-
-/-- The corner `(p i, z i)` of the silhouette cycle in `ℝ³`. -/
-noncomputable def liftPt (q : ℝ²) (t : ℝ) : ℝ³ := !₂[q 0, q 1, t]
-
-/-- The silhouette cycle `C = x₀x₁⋯x_{k-1}x₀` has a *horizontal double normal*:
-two points of `C` at the same depth whose projections span a double normal of
-the shadow `conv p`. -/
-def HasHorizontalDoubleNormal {k : ℕ} (p : ZMod k → ℝ²) (z : ZMod k → ℝ) : Prop :=
-  ∃ y y' : ℝ³, (∃ i, y ∈ segment ℝ (liftPt (p i) (z i)) (liftPt (p (i + 1)) (z (i + 1)))) ∧
-    (∃ j, y' ∈ segment ℝ (liftPt (p j) (z j)) (liftPt (p (j + 1)) (z (j + 1)))) ∧
-    y 2 = y' 2 ∧ proj_xy y ≠ proj_xy y' ∧
-    proj_xy y' - proj_xy y ∈ normalConeAt (convexHull ℝ (Set.range p)) (proj_xy y') ∧
-    proj_xy y - proj_xy y' ∈ normalConeAt (convexHull ℝ (Set.range p)) (proj_xy y)
 
 /-- **Theorem 7.3 (⇒), polygon form.**  Forces in the normal cones of a
 strictly convex counterclockwise polygon, not all zero, with zero sum, zero
