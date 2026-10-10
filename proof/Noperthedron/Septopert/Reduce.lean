@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert7.ViewReduce
-public import Noperthedron.Nopert7.Model
+public import Noperthedron.Septopert.ViewReduce
+public import Noperthedron.Septopert.Model
 public import Noperthedron.PentagonalHexecontahedron.AtlasPose
 public import Noperthedron.PentagonalHexecontahedron.TightApproximation
 public import Noperthedron.Atlas.Tightening
@@ -39,7 +39,7 @@ Steps:
 9-slot model of `Vertices`.
 -/
 
-namespace Noperthedron.Nopert7
+namespace Noperthedron.Septopert
 
 open scoped Matrix
 open Noperthedron.PentagonalHexecontahedron CayleyAtlas Real
@@ -275,4 +275,4 @@ theorem exactModel_hull_eq_solid : exactModel.polyhedron.hull = solid := by
     obtain ⟨i, rfl⟩ := vertexQIndex_surjective a
     exact ⟨i, rfl⟩
 
-end Noperthedron.Nopert7
+end Noperthedron.Septopert

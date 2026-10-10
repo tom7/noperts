@@ -1,7 +1,7 @@
 // Solving 5D search nodes. A job is a code triangle t and a chart (0..3; for
-// K all four Cayley charts are searched over the whole cube). A node, named
-// by its split path (rows5d), is closed by the cheapest applicable leaf,
-// else split:
+// the Septopert all four Cayley charts are searched over the whole cube). A
+// node, named by its split path (rows5d), is closed by the cheapest
+// applicable leaf, else split:
 //
 //   pr  the box lies outside the Cayley ball
 //   ip  the box lies outside the C3 cell (trace(R c_k) > trace R, exact)
@@ -46,7 +46,7 @@ struct Options {
   // large pools; 0 disables the retries).
   int max_full_retry = 0;
   // Mirror prune (exact5d::HalfTurnPruneValid with mirror_q.h's Q table):
-  // K's C3v cell (always wanted for K).
+  // the Septopert's C3v cell (always wanted for the Septopert).
   bool half_turn_prune = false;
   // Tie leaves (deltoidal hexecontahedron): radii certified by tietube.cc.
   const tieatlas5d::TieAtlas *ties = nullptr;

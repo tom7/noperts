@@ -3,33 +3,34 @@ module
 public import Noperthedron.RationalApprox.TrigLemmas
 public import Noperthedron.Vertices.Taylor
 public import Mathlib.Analysis.Real.Pi.Bounds
-public import Noperthedron.Nopert7.C3
-public import Noperthedron.Nopert7.ModelData
+public import Noperthedron.Septopert.C3
+public import Noperthedron.Septopert.ModelData
 
 @[expose] public section
 
 /-!
 # Exact and rational vertices of the model
 
-The 7-vertex solid K (`Noperthedron.Nopert7`, data in `Nopert7.ModelData`),
+The Septopert (`Noperthedron.Septopert`, data in `Septopert.ModelData`),
 symmetric under C3v with the 3-fold axis along (1,1,1), so that the C3
-rotations are the cyclic coordinate permutations `Nopert7.c3Mat k` (exact
+rotations are the cyclic coordinate permutations `Septopert.c3Mat k` (exact
 rational matrices). The layout is rotation-major, as for the deltoidal
-hexecontahedron's axis vertices: three seeds v0, v3, v6 (`Nopert7.vertexQ`
+hexecontahedron's axis vertices: three seeds v0, v3, v6 (`Septopert.vertexQ`
 indices), and vertex `3k + s` is seed `s` rotated by `c3Mat k`. The axis
 vertex v6 is fixed by C3, so it appears three times (vertices 2, 5, 8);
-the other six vertices of K appear once each (`rationalVertex_eq_vertexQ`).
+the other six vertices of the Septopert appear once each
+(`rationalVertex_eq_vertexQ`).
 
 `rationalVertices` is exact: `exactVertex i = toR3 (rationalVertex i)`
 (`exactVertex_eq`). `C5Model` (the name is historical) is any polyhedron with
 exact C3 symmetry within `modelErrorQ` of the rational model; the
-certificates cover all of them, K itself at distance 0. Vertices lie inside
-the unit sphere (the GoodPoly invariant).
+certificates cover all of them, the Septopert itself at distance 0. Vertices
+lie inside the unit sphere (the GoodPoly invariant).
 -/
 
 namespace Noperthedron.PentagonalHexecontahedron
 
-open Noperthedron.Nopert7 (c3Mat c3SO3)
+open Noperthedron.Septopert (c3Mat c3SO3)
 
 abbrev VertexIndex := Fin 9
 abbrev SeedIndex := Fin 3
@@ -110,23 +111,23 @@ def vertexIndex (k : OrbitIndex) (s : SeedIndex) : VertexIndex :=
     seedIndex (vertexIndex k s) = s := by
   exact congrArg Prod.snd (indexEquiv.apply_symm_apply (k, s))
 
-/-- The `Nopert7.vertexQ` index of each seed: v0, v3, v6. -/
+/-- The `Septopert.vertexQ` index of each seed: v0, v3, v6. -/
 def seedVertexQIndex : SeedIndex → Fin 7 := ![0, 3, 6]
 
-/-- The `Nopert7.vertexQ` index of vertex `i`: its seed moved by `c3Perm`. -/
+/-- The `Septopert.vertexQ` index of vertex `i`: its seed moved by `c3Perm`. -/
 def vertexQIndex (i : VertexIndex) : Fin 7 :=
-  Nopert7.c3Perm (orbitIndex i) (seedVertexQIndex (seedIndex i))
+  Septopert.c3Perm (orbitIndex i) (seedVertexQIndex (seedIndex i))
 
 theorem seedVertex_eq_vertexQ (s : SeedIndex) :
-    seedVertex s = Nopert7.vertexQ (seedVertexQIndex s) := by
+    seedVertex s = Septopert.vertexQ (seedVertexQIndex s) := by
   revert s; decide +kernel
 
-/-- The rational vertices are K's vertices (v6 three times). -/
+/-- The rational vertices are the Septopert's vertices (v6 three times). -/
 theorem rationalVertex_eq_vertexQ (i : VertexIndex) :
-    rationalVertex i = Nopert7.vertexQ (vertexQIndex i) := by
+    rationalVertex i = Septopert.vertexQ (vertexQIndex i) := by
   revert i; decide +kernel
 
-/-- Every vertex of K is a model vertex. -/
+/-- Every vertex of the Septopert is a model vertex. -/
 theorem vertexQIndex_surjective : Function.Surjective vertexQIndex := by
   intro a
   fin_cases a

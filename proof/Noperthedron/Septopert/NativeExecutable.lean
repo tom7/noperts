@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert7.IsNotRupert
-public import Noperthedron.Nopert7.CapsNative
+public import Noperthedron.Septopert.IsNotRupert
+public import Noperthedron.Septopert.CapsNative
 public import Noperthedron.PentagonalHexecontahedron.SparseLocalViewTree
 
 @[expose] public section
@@ -9,15 +9,15 @@ public import Noperthedron.PentagonalHexecontahedron.SparseLocalViewTree
 /-!
 # Native executable proof construction for the 7-vertex solid
 
-The DH's `NativeExecutable` re-targeted to K: a release-mode program checks the
-shared identity-tube tables and the four chart tables in parallel (data-only,
-untrusted decoders) and keeps the semantic validity proofs in `PLift`;
+The DH's `NativeExecutable` re-targeted to the Septopert: a release-mode program
+checks the shared identity-tube tables and the four chart tables in parallel
+(data-only, untrusted decoders) and keeps the semantic validity proofs in `PLift`;
 `constructProof` returns `CapOk → ¬ IsRupert verts`, and the cap certificate
 check (`CapsNative.certOkPar`, `certOk_of_par`) supplies `CapOk`. The view
 cover needs no native check (`ViewCover.coverValid_eq` is kernel-checked).
 -/
 
-namespace Noperthedron.Nopert7.NativeExecutable
+namespace Noperthedron.Septopert.NativeExecutable
 
 open Noperthedron.PentagonalHexecontahedron
 open AtlasProjectiveLocalViewTree
@@ -160,7 +160,7 @@ def constructProof (localTaskCount globalTaskCount : Nat)
   log "constructed: CapOk → ¬ IsRupert verts"
   pure ⟨notRupert⟩
 
-/-- Check a cap certificate (`capcert7.exe --export`) natively and return `CapOk`. -/
+/-- Check a cap certificate (`capcert_septopert.exe --export`) natively and return `CapOk`. -/
 def checkCap (c : Cap.CapCert) : IO (PLift CapOk) := do
   let t0 ← IO.monoMsNow
   if h : certOkPar c = true then
@@ -169,4 +169,4 @@ def checkCap (c : Cap.CapCert) : IO (PLift CapOk) := do
   else
     throw (IO.userError "the cap certificate is not valid")
 
-end Noperthedron.Nopert7.NativeExecutable
+end Noperthedron.Septopert.NativeExecutable

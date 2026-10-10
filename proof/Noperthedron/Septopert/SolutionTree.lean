@@ -7,18 +7,18 @@ public import Noperthedron.PentagonalHexecontahedron.AtlasProjectiveLocalViewTre
 public import Noperthedron.PentagonalHexecontahedron.AtlasProjectiveGlobalCertificate
 public import Noperthedron.PentagonalHexecontahedron.AtlasProjectiveMixedGlobalCertificate
 public import Noperthedron.ParallelBool
-public import Noperthedron.Nopert7.CellPrune
-public import Noperthedron.Nopert7.ViewCoverData
-public import Noperthedron.Nopert7.CapLeaf
+public import Noperthedron.Septopert.CellPrune
+public import Noperthedron.Septopert.ViewCoverData
+public import Noperthedron.Septopert.CapLeaf
 
 @[expose] public section
 
 /-!
 # Solution trees for the 7-vertex solid
 
-The DH's `AtlasProjectiveSolutionTree` re-targeted to K (`solid`): a chart
-table's rows cover the atlas root box `AtlasPose.rootInterval` (all four
-charts, no fivefold narrowing) for the poses the C3v reduction
+The DH's `AtlasProjectiveSolutionTree` re-targeted to the Septopert (`solid`): a
+chart table's rows cover the atlas root box `AtlasPose.rootInterval` (all
+four charts, no fivefold narrowing) for the poses the C3v reduction
 (`exists_c3v_atlas_translated_pose_solid`) leaves: Cayley-bounded, relative
 rotation chart · cayley in the C3v cell at the view (`InCell`), view in D′
 (`InDomain`). Rows:
@@ -38,7 +38,7 @@ rotation chart · cayley in the C3v cell at the view (`InCell`), view in D′
 No fivefold/icosahedral/half-turn/upper-view predicates, no tie rows.
 -/
 
-namespace Noperthedron.Nopert7.SolutionTree
+namespace Noperthedron.Septopert.SolutionTree
 
 open Noperthedron.PentagonalHexecontahedron
 open CayleyAtlas AtlasProjectiveView
@@ -680,4 +680,4 @@ theorem no_matrixPose_of_valid_tables (table : ChartIndex → Table)
   rw [hchart chart] at hno
   exact hno ⟨q, hq, hbounded, hcell, hdom, offset, heq.mpr hrupert⟩
 
-end Noperthedron.Nopert7.SolutionTree
+end Noperthedron.Septopert.SolutionTree

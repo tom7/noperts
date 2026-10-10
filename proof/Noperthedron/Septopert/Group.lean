@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert7.MirrorTie
-public import Noperthedron.Nopert7.C3
+public import Noperthedron.Septopert.MirrorTie
+public import Noperthedron.Septopert.C3
 
 @[expose] public section
 
@@ -25,7 +25,7 @@ mirrorQMat (i + k)), which makes the set of mirror-tie candidates closed
 under both operations of the reduction.
 -/
 
-namespace Noperthedron.Nopert7
+namespace Noperthedron.Septopert
 
 open scoped Matrix
 
@@ -52,4 +52,4 @@ theorem c3_mul_mirrorQ (k i : Fin 3) : c3Mat k * mirrorQMat i = mirrorQMat (i + 
   fin_cases k <;> fin_cases i <;> ext a b <;> fin_cases a <;> fin_cases b <;>
     simp [c3Mat, mirrorQMat, mirrorMat, Matrix.mul_apply, Fin.sum_univ_three]
 
-end Noperthedron.Nopert7
+end Noperthedron.Septopert

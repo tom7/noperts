@@ -1,9 +1,9 @@
-// The mirror-tie rotations of K (nopert_233, axis (1,1,1)): Q_i = -sigma_i for
+// The mirror-tie rotations of the Septopert (axis (1,1,1)): Q_i = -sigma_i for
 // the mirror sigma_i = the transposition of the two coordinates other than i
-// (Noperthedron's Nopert7.mirrorQMat i, the half-turn about the mirror's
+// (Noperthedron's Septopert.mirrorQMat i, the half-turn about the mirror's
 // normal), exact (denominator 1, no rounding allowance). The mirror prune
 // (exact5d::HalfTurnPruneValid) removes boxes where trace(H_u R Q_i) >
-// trace(R) over the whole box and view triangle (Lean: Nopert7.InC3vCell).
+// trace(R) over the whole box and view triangle (Lean: Septopert.InC3vCell).
 #ifndef _NOPERT_MIRROR_Q_H
 #define _NOPERT_MIRROR_Q_H
 

@@ -1,7 +1,7 @@
 // turntable: renders a model file's solid spinning, as PNG frames (for an
 // animated GIF; see turntable_gif.py). Not used by the proof.
 //
-// Usage: turntable.exe --model_file nopert233_model.txt --out_dir DIR
+// Usage: turntable.exe --model_file septopert_model.txt --out_dir DIR
 //                      [--frames 72] [--size 480] [--tilt 0.9] [--elevation 0.35]
 //
 // The solid's 3-fold axis (1,1,1) is tilted by --tilt radians from the
@@ -83,7 +83,7 @@ Model ReadModel(const std::string &filename) {
 }  // namespace
 
 int main(int argc, char **argv) {
-  std::string model_file = "nopert233_model.txt", out_dir;
+  std::string model_file = "septopert_model.txt", out_dir;
   int frames = 72, size = 480;
   double tilt = 0.9, elevation = 0.35;
   for (int i = 1; i < argc; i++) {

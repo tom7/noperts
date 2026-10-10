@@ -9,7 +9,7 @@ public import Noperthedron.Atlas.LocalRigidity
 # Local rigidity at the three symmetry strata
 
 This specializes the reindexed balanced-support theorem to the exact
-C3 action (`symmetry g = Nopert7.c3SO3 g`, the cyclic coordinate
+C3 action (`symmetry g = Septopert.c3SO3 g`, the cyclic coordinate
 permutations).  It is the mathematical layer needed to cover the
 Euler-pole equality strata, where equal shadows need not have equal Euler
 coordinates.
@@ -23,7 +23,7 @@ open scoped Matrix RealInnerProductSpace
 open Noperthedron.BalancedSupport Real
 
 noncomputable def symmetry (g : OrbitIndex) : SO3 :=
-  Nopert7.c3SO3 g
+  Septopert.c3SO3 g
 
 @[simp] theorem symmetry_zero : symmetry 0 = 1 := rfl
 
@@ -114,7 +114,7 @@ theorem AxisAngle.ratio_of_inner_mismatch_bound
 theorem symmetry_apply_exactVertex (g : OrbitIndex) (i : VertexIndex) :
     Noperthedron.Atlas.so3CLM (symmetry g) (P.vertex i) =
       P.vertex (symmetryAction g i) := by
-  change (Nopert7.c3Mat g).toEuclideanLin (P.vertex i) = _
+  change (Septopert.c3Mat g).toEuclideanLin (P.vertex i) = _
   rw [rotate_vertex']
   congr 2
   apply Fin.ext

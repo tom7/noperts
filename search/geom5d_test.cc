@@ -98,7 +98,7 @@ static void TestBoxes() {
     for (int a = 0; a < 5; a++) {
       CHECK(iv.min[a] == iv2.min[a] && iv.max[a] == iv2.max[a]);
     }
-    // K: every chart is the full Cayley cube [-1, 1]^3 (no fivefold narrowing).
+    // Septopert: every chart is the full Cayley cube [-1, 1]^3 (no fivefold narrowing).
     for (int a = 0; a < 3; a++) CHECK(root.lo[a] == Q(-1) && root.hi[a] == Q(1));
 
     BoxQ b = root;

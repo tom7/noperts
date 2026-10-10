@@ -14,7 +14,7 @@ mirror-tie and cell layers (`Group`, `Cell`), which import the certificate
 pipeline.
 -/
 
-namespace Noperthedron.Nopert7
+namespace Noperthedron.Septopert
 
 open scoped Matrix
 
@@ -37,4 +37,4 @@ theorem c3_mul_c3 (k k' : Fin 3) : c3Mat k * c3Mat k' = c3Mat (k + k') := by
   fin_cases k <;> fin_cases k' <;> simp only [Fin.reduceAdd, Fin.isValue] <;> ext a b <;>
     fin_cases a <;> fin_cases b <;> simp [c3Mat, Matrix.mul_apply, Fin.sum_univ_three, Matrix.one_apply]
 
-end Noperthedron.Nopert7
+end Noperthedron.Septopert

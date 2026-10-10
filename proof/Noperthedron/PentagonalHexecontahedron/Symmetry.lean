@@ -23,7 +23,7 @@ namespace Noperthedron.PentagonalHexecontahedron
 
 variable {P : C5Model}
 
-open Noperthedron.Nopert7 (c3Mat c3_mul_c3)
+open Noperthedron.Septopert (c3Mat c3_mul_c3)
 
 theorem toEuclideanLin_mul_apply (A B : Matrix (Fin 3) (Fin 3) ℝ) (v : ℝ³) :
     A.toEuclideanLin (B.toEuclideanLin v) = (A * B).toEuclideanLin v := by

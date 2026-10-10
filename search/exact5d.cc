@@ -701,7 +701,7 @@ Q IcoPruneLower(const Interval5 &iv, int chart, int n) {
 
 // Rounded tables (the snub/DH neighbors): |G - G~| < 10^-12 per entry and
 // |Num_ij| <= 1 + |w|^2 <= 4 on the bounded region, so the rounding changes
-// the quadratic by less than 36 * 10^-12. Exact tables (K's C3): 0.
+// the quadratic by less than 36 * 10^-12. Exact tables (the Septopert's C3): 0.
 Q IcoPruneAllowance() { return SYMMETRY_NEIGHBOR_EXACT ? Q(0) : Q(36, SYMMETRY_NEIGHBOR_DENOM); }
 
 bool IcoPruneValid(const Interval5 &iv, int chart, int n) {
@@ -749,7 +749,7 @@ static Q RoundedTableAllowance(const TriangleQ &tri, int c, int d) {
   return Q(2, 1000000000000) * (Q(6) * l1(tri[c]) * l1(tri[d]) + Q(9) * BigRat::Abs(dot));
 }
 
-// K's Q table is exact (mirror_q.h): no allowance.
+// The Septopert's Q table is exact (mirror_q.h): no allowance.
 Q HalfTurnPruneAllowance(const TriangleQ &tri, int c, int d) {
   return MIRROR_Q_EXACT ? Q(0) : RoundedTableAllowance(tri, c, d);
 }
@@ -858,8 +858,8 @@ bool IdentityTubeValid(const Interval5 &iv, const Q &r) {
 }
 
 Interval5 RestrictedRootInterval(int chart) {
-  // K (C3v, no fivefold narrowing): every chart is searched over the whole
-  // root interval (AtlasPose.rootInterval), the Cayley cube [-1, 1]^3.
+  // The Septopert (C3v, no fivefold narrowing): every chart is searched over
+  // the whole root interval (AtlasPose.rootInterval), the Cayley cube [-1, 1]^3.
   CHECK(chart >= 0 && chart <= 3);
   Interval5 iv;
   iv.min = {Q(0), Q(0), Q(-1), Q(-1), Q(-1)};

@@ -1,9 +1,9 @@
-// capcert7: the cap certificate for the 7-vertex C3v candidate (nopert_233,
-// nopert233_model.txt) at its mirror normal, after capcert.cc (the deltoidal
-// hexecontahedron's caps; this is its u0 case). Near the mirror normal x the
-// identity's first-order cage degenerates and the mirror tie H_u Q (Q = H_x,
-// -Q the mirror) approaches the identity, so the poses (view u = x + mu e a,
-// Cayley rotation w) are blown up in weighted coordinates
+// capcert_septopert: the cap certificate for the Septopert (the 7-vertex C3v
+// solid, septopert_model.txt) at its mirror normal, after capcert.cc (the
+// deltoidal hexecontahedron's caps; this is its u0 case). Near the mirror
+// normal x the identity's first-order cage degenerates and the mirror tie
+// H_u Q (Q = H_x, -Q the mirror) approaches the identity, so the poses (view
+// u = x + mu e a, Cayley rotation w) are blown up in weighted coordinates
 //   w = mu (s1 e1 + s2 e2) + mu^2 s3 x
 // with charts on the faces of the weighted cube max(e, |s|/2) = 1 and a cone
 // chart at the identity. The frame is rational and unnormalized:
@@ -17,16 +17,16 @@
 // (each divided by the largest powers of mu and of the cone radius t that
 // divide it): then the inner shadow is at least as wide as the outer one in
 // the direction d, so the pose is not a passage, whatever the offset
-// (Lean: Nopert7/WidthWitness.lean). Boxes outside the mirror-tie cell
+// (Lean: Septopert/WidthWitness.lean). Boxes outside the mirror-tie cell
 // (tr(H_u R Q) > tr R) are pruned.
 //
 // Witnesses are screened in double precision; the exact mode computes over
 // Q (the KNum field's rational part; the solid and frame are rational) with
 // outward-rounded Bernstein bounds. --double: feasibility only.
 //
-// Usage: capcert7.exe [--model nopert233_model.txt] [--mu0 1/64] [--max_depth 30]
-//          [--threads 60] [--try 24] [--only kind:side:axis:sign,...] [--double]
-//          [--strong_scale S] [--ratio_z Z] [--export FILE]
+// Usage: capcert_septopert.exe [--model septopert_model.txt] [--mu0 1/64]
+//          [--max_depth 30] [--threads 60] [--try 24]
+//          [--only kind:side:axis:sign,...] [--double] [--strong_scale S] [--ratio_z Z] [--export FILE]
 
 #include <algorithm>
 #include <array>
@@ -446,7 +446,7 @@ KNum ParseKTok(std::istringstream &ss) {
   return {Q(std::string_view(t[0])), Q(std::string_view(t[1])), Q(std::string_view(t[2])), Q(std::string_view(t[3]))};
 }
 
-std::string g_model = "nopert233_model.txt";
+std::string g_model = "septopert_model.txt";
 
 void LoadSolid(Setup *s) {
   // Exact rational vertices and the faces from the model file (c3v_model.py).

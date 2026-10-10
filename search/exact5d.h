@@ -13,7 +13,8 @@
 // Any view root (Lean's rootSign, binary order): a triangle's corners are on
 // their root's plane (sum_i s_i u_i = 1, s_i u_i >= 0), so each point is a
 // positive multiple of its view. Only Admissible depends on the root (it
-// checks SignedTriangleValid); for K the view domain uses roots 0 and 1.
+// checks SignedTriangleValid); for the Septopert the view domain uses roots 0
+// and 1.
 
 #ifndef _NOPERT_EXACT5D_H
 #define _NOPERT_EXACT5D_H
@@ -156,16 +157,18 @@ bool OutsideCayleyBall(const Interval5 &iv);
 // (Direction.positive) or -1 (Direction.negative).
 Q FundamentalLower(const Interval5 &iv, int chart, int direction);
 bool FundamentalPruneValid(const Interval5 &iv, int chart, int direction);
-// C3 cell prune (K; formerly the icosahedral prune): some right symmetry,
-// c3Mat (n + 1) (neighbor n of symmetry_neighbors.h, exact), strictly
-// increases trace over the whole box, so the box is outside the C3v cell.
+// C3 cell prune (Septopert; formerly the icosahedral prune): some right
+// symmetry, c3Mat (n + 1) (neighbor n of symmetry_neighbors.h, exact),
+// strictly increases trace over the whole box, so the box is outside the C3v
+// cell.
 Q IcoPruneLower(const Interval5 &iv, int chart, int n);
-// Mirror prune (K; formerly the DH's half-turn prune): a pose (u, R) is a
-// passage iff (u, H_u R Q_g) is, for H_u the half-turn about the view u and
-// Q_g = -sigma_g (sigma_g a mirror of K; Lean: Nopert7.MirrorTie). So R may
-// be taken in the C3v cell, and a box is pruned when trace(H_u R Q_g) >
-// trace(R) over all of it for one g (index into mirror_q.h, exact: the
-// allowance is 0). With u = p / |p|, p = sum_c lambda_c P_c over
+// Mirror prune (Septopert; formerly the DH's half-turn prune): a pose (u, R)
+// is a passage iff (u, H_u R Q_g) is, for H_u the half-turn about the view u
+// and Q_g = -sigma_g (sigma_g a mirror of the Septopert; Lean:
+// Septopert.MirrorTie). So R may be taken in the C3v cell, and a box is
+// pruned when trace(H_u R Q_g) > trace(R) over all of it for one g (index
+// into mirror_q.h, exact: the allowance is 0). With u = p / |p|,
+// p = sum_c lambda_c P_c over
 // the view triangle's corners, (trace(H_p R G) - trace(R)) |p|^2 D(w) is a
 // homogeneous quadratic in lambda with degree-2 Bernstein coefficients
 // b_cd(w), quadratic in the Cayley coordinates w:
@@ -203,8 +206,8 @@ bool CapLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, const Ca
 Q IdentityMismatchRadius(const Interval5 &iv);
 bool IdentityTubeValid(const Interval5 &iv, const Q &r);
 
-// The root pose box of a chart: for K, AtlasPose.rootInterval for every
-// chart (the DH's AtlasFundamentalPrune.restrictedRootInterval narrowed one
+// The root pose box of a chart: for the Septopert, AtlasPose.rootInterval
+// for every chart (the DH's AtlasFundamentalPrune.restrictedRootInterval narrowed one
 // coordinate to [-1/3, 1/3] in charts 0-2 by the fivefold symmetry).
 Interval5 RestrictedRootInterval(int chart);
 

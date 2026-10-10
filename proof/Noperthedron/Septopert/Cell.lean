@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert7.Group
+public import Noperthedron.Septopert.Group
 
 @[expose] public section
 
@@ -20,7 +20,7 @@ pose is the identity; the mirror ties are images of the identity on the
 cell's boundary.
 -/
 
-namespace Noperthedron.Nopert7
+namespace Noperthedron.Septopert
 
 open scoped Matrix
 open Noperthedron.PentagonalHexecontahedron
@@ -81,4 +81,4 @@ theorem exists_c3v_reduction (u : Fin 3 → ℝ) (hu : ∑ k, u k ^ 2 ≠ 0) (R 
           _ = R * c3Mat (j + negIdx i) := by rw [hH, mirrorQ_mul_mirrorQ, Matrix.one_mul]
       rwa [heq]
 
-end Noperthedron.Nopert7
+end Noperthedron.Septopert

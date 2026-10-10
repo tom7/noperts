@@ -1,22 +1,22 @@
-import Noperthedron.Nopert7.CapsNative
+import Noperthedron.Septopert.CapsNative
 
 /-!
 Native executable that decodes and checks the 7-vertex solid's cap certificate
-(nopert7 `capcert7.exe --export`) and instantiates the cap theorem
-(`Nopert7.capHolds_of_cert`; the region form is `Nopert7.cap_not_rupert`).
+(`capcert_septopert.exe --export`) and instantiates the cap theorem
+(`Septopert.capHolds_of_cert`; the region form is `Septopert.cap_not_rupert`).
 
-Usage: `checkNopert7Cap <cap.cert>` (add `diag` for per-chart results).
+Usage: `checkSeptopertCap <cap.cert>` (add `diag` for per-chart results).
 -/
 
 open Noperthedron.PentagonalHexecontahedron
 open Noperthedron.PentagonalHexecontahedron.Cap
-open Noperthedron.Nopert7
+open Noperthedron.Septopert
 
 def main (args : List String) : IO Unit := do
   let (file, diag) ← match args with
     | [f] => pure (f, false)
     | [f, "diag"] => pure (f, true)
-    | _ => throw (IO.userError "usage: checkNopert7Cap <cap.cert> [diag]")
+    | _ => throw (IO.userError "usage: checkSeptopertCap <cap.cert> [diag]")
   let c := decodeCert (← IO.FS.lines file)
   IO.println s!"cap: {c.charts.length} charts, {c.verts.size} vertices, {c.wits.size} witnesses, mu0 {c.pr.mu0}"
   if diag then
@@ -29,6 +29,6 @@ def main (args : List String) : IO Unit := do
   if h : certOkPar c = true then
     IO.println s!"valid cap certificate: {(← IO.monoMsNow) - t0} ms"
     let _holds : CapHolds := capHolds_of_cert c (certOk_of_par c h)
-    IO.println "instantiated: CapHolds (Nopert7.capHolds_of_cert)"
+    IO.println "instantiated: CapHolds (Septopert.capHolds_of_cert)"
   else
     throw (IO.userError s!"the cap certificate is not valid ({(← IO.monoMsNow) - t0} ms)")

@@ -68,7 +68,7 @@ def crossQ (u v : Fin 3 → ℚ) : Fin 3 → ℚ :=
     u 2 * v 0 - u 0 * v 2,
     u 0 * v 1 - u 1 * v 0]
 
-/-- The exact C3 symmetry matrix `Nopert7.c3Mat g`, over ℚ
+/-- The exact C3 symmetry matrix `Septopert.c3Mat g`, over ℚ
 (`symmetryMatrixQ_map`). -/
 def symmetryMatrixQ : OrbitIndex → Matrix (Fin 3) (Fin 3) ℚ
   | 0 => 1
@@ -76,9 +76,9 @@ def symmetryMatrixQ : OrbitIndex → Matrix (Fin 3) (Fin 3) ℚ
   | 2 => !![0, 0, 1; 1, 0, 0; 0, 1, 0]
 
 theorem symmetryMatrixQ_map (g : OrbitIndex) :
-    ((symmetryMatrixQ g).map fun x => (x : ℝ)) = Nopert7.c3Mat g := by
+    ((symmetryMatrixQ g).map fun x => (x : ℝ)) = Septopert.c3Mat g := by
   fin_cases g <;> ext i j <;> fin_cases i <;> fin_cases j <;>
-    simp [symmetryMatrixQ, Nopert7.c3Mat]
+    simp [symmetryMatrixQ, Septopert.c3Mat]
 
 noncomputable def symmetryQCLM (g : OrbitIndex) : ℝ³ →L[ℝ] ℝ³ :=
   ((symmetryMatrixQ g).map fun x => (x : ℝ)).toEuclideanLin.toContinuousLinearMap

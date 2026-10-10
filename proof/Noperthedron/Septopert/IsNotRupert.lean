@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert7.SolutionTree
+public import Noperthedron.Septopert.SolutionTree
 public import Noperthedron.Rupert.Equivalences.RupertEquivRupertSet
 
 @[expose] public section
@@ -8,20 +8,21 @@ public import Noperthedron.Rupert.Equivalences.RupertEquivRupertSet
 /-!
 # The 7-vertex solid is not Rupert, given valid tables
 
-`verts` is K's vertex set (the 7 rational vertices of `ModelData`), whose
-convex hull is `solid`. `not_rupert_of_valid_tables`: four valid chart tables
+`verts` is the Septopert's vertex set (the 7 rational vertices of
+`ModelData`), whose convex hull is `solid`.
+`not_rupert_of_valid_tables`: four valid chart tables
 (`SolutionTree.Table.Valid`, with their shared identity-tube tables) and a
 checked cap certificate (`SolutionTree.CapOk`) give `¬ IsRupert verts`, in the
 vertex-set form of `MainTheorem.IsRupert` (as the DH's
 `not_rupert_of_valid_tables`).
 -/
 
-namespace Noperthedron.Nopert7
+namespace Noperthedron.Septopert
 
 open Noperthedron.PentagonalHexecontahedron
 open SolutionTree
 
-/-- The vertices of K. -/
+/-- The vertices of the Septopert. -/
 noncomputable def verts : Finset ℝ³ := Finset.univ.image fun i : Fin 7 => toR3 (vertexQ i)
 
 theorem convexHull_verts : convexHull ℝ (verts : Set ℝ³) = solid := by
@@ -39,7 +40,7 @@ theorem exists_matrixPose_of_rupertSet {S : Set ℝ³} (h : IsRupertSet S) :
   repeat rw [← proj_xy_eq_proj_xyL]
   exact hshadow
 
-/-- **K is not Rupert**, given four valid chart tables and a checked cap
+/-- **The Septopert is not Rupert**, given four valid chart tables and a checked cap
 certificate. -/
 theorem not_rupert_of_valid_tables (table : CayleyAtlas.ChartIndex → SolutionTree.Table)
     (hchart : ∀ chart, (table chart).chart = chart)
@@ -52,4 +53,4 @@ theorem not_rupert_of_valid_tables (table : CayleyAtlas.ChartIndex → SolutionT
   exact no_matrixPose_of_valid_tables table hchart hvalid hcap
     (exists_matrixPose_of_rupertSet hset)
 
-end Noperthedron.Nopert7
+end Noperthedron.Septopert

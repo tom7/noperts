@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Nopert7.Caps
-public import Noperthedron.Nopert7.Reduce
+public import Noperthedron.Septopert.Caps
+public import Noperthedron.Septopert.Reduce
 public import Noperthedron.PentagonalHexecontahedron.AtlasProjectiveView
 
 @[expose] public section
@@ -18,7 +18,7 @@ triangle and whose relative rotation lies in the C3v cell is Rupert, whatever
 the offset.
 -/
 
-namespace Noperthedron.Nopert7
+namespace Noperthedron.Septopert
 
 open Noperthedron.PentagonalHexecontahedron
 open Noperthedron.PentagonalHexecontahedron.Cap
@@ -168,4 +168,4 @@ theorem capLeaf_sound (c : CapCert) (hc : certOk c = true) (iv : AtlasInterval â
       rw [CayleyAtlas.chartMatrix_zero, Matrix.one_mul]]
     exact hcell
 
-end Noperthedron.Nopert7
+end Noperthedron.Septopert

@@ -1,27 +1,27 @@
 #!/bin/bash
-# Rebuilds the proof that the 7-vertex C3v candidate nopert_233 (K) is a
-# Nopert, end to end (notes/NOPERT7.md, M5):
+# Rebuilds the proof that the Septopert (the 7-vertex C3v solid) is a Nopert,
+# end to end (working notes, M5):
 #
-#   model    the exact model (c3v_model.py -> nopert233_model.txt, with the two
+#   model    the exact model (c3v_model.py -> septopert_model.txt, with the two
 #            view triangles T1/T2) and codebdd (model_vertices.*, codebdd.json)
 #   tube     identity tube per code (tubecode --min_r 1/100000, the cap at the
 #            mirror normal n = (1,0,-1)/sqrt2 left to the cap certificate),
 #            then tuberefine on the codes away from the cap (codes 7, 9, 11-13
 #            touch n and are not refined: it only multiplies their leaves)
 #   tubepack tube trees -> Lean tube packs + manifest (export_codetrees_pack)
-#   cap      the cap certificate at n (capcert7 --mu0 1/16 --max_depth 38)
+#   cap      the cap certificate at n (capcert_septopert --mu0 1/16 --max_depth 38)
 #            and the search's caps file (frame x = (1,0,-1), e1 = (0,2,0),
 #            e2 = (1,0,1), mu0 = 1/16, |w| <= 1/91)
 #   search   5D search, 22 code triangles x charts 0-3, rounds until nothing
 #            is deferred (search5d --retry_deferred --requeue_deferred)
 #   pack     per-code 5D packs c<C>/t<T>.pack (pack5d --per_code)
-#   verify   Lean: constructNopert7 <tube manifest> <packs> <cap.cert>
+#   verify   Lean: constructSeptopert <tube manifest> <packs> <cap.cert>
 #
 # Every stage is restartable (tubecode and search5d journal their work; pack5d
 # skips packs newer than their journals). search5d is not deterministic (work
 # order); the others are.
 #
-# Usage: ./nopert7_rebuild.sh [--from STAGE] [--only STAGE] [--dry_run]
+# Usage: ./septopert_rebuild.sh [--from STAGE] [--only STAGE] [--dry_run]
 #        [--threads N] [--mem_gb G] [--work DIR]
 #        (default: from tube, 12 threads, 40 GB, ../work)
 # Long stages run in a systemd scope with MemoryMax (and no swap); each
@@ -66,7 +66,7 @@ run() {
 # A command in a memory-capped scope (no swap); prints its peak memory.
 capped() {
   # (Called in subshells: the unit name must not depend on a counter.)
-  local unit="nopert7-$$-$(date +%s%N)"
+  local unit="septopert-$$-$(date +%s%N)"
   echo "+ [scope ${MEM_GB}G] $*" >&2
   if [ $DRY -eq 0 ]; then
     systemd-run --user --scope -q --unit="$unit" -p MemoryMax="${MEM_GB}G" -p MemorySwapMax=0 \
@@ -102,14 +102,14 @@ NTRI=22
 
 echo "== build"
 run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe export_codetrees_pack.exe \
-  capcert7.exe search5d.exe pack5d.exe dfwhere.exe
+  capcert_septopert.exe search5d.exe pack5d.exe dfwhere.exe
 
 if want model; then
   stage_begin model
   # The candidate's coordinates.
-  XYZ=$NOPERT/7v-cocta-c3v-2.xyz
-  if [ $DRY -eq 0 ]; then (cd "$NOPERT" && python3 c3v_model.py "$XYZ" > nopert233_model.txt); fi
-  (cd "$NOPERT" && run ./codebdd.exe --model_file=nopert233_model.txt codebdd.json)
+  XYZ=$NOPERT/septopert.xyz
+  if [ $DRY -eq 0 ]; then (cd "$NOPERT" && python3 c3v_model.py "$XYZ" > septopert_model.txt); fi
+  (cd "$NOPERT" && run ./codebdd.exe --model_file=septopert_model.txt codebdd.json)
   run make -C "$NOPERT" -j "$THREADS" tubecode.exe tuberefine.exe export_codetrees_pack.exe search5d.exe pack5d.exe
   stage_end model
 fi
@@ -149,7 +149,7 @@ fi
 
 if want cap; then
   stage_begin cap
-  (cd "$NOPERT" && capped ./capcert7.exe --model nopert233_model.txt --mu0 1/16 --max_depth 38 \
+  (cd "$NOPERT" && capped ./capcert_septopert.exe --model septopert_model.txt --mu0 1/16 --max_depth 38 \
     --threads "$THREADS" --export "$CAP_CERT")
   # The search's caps file (search5d --caps): x e1 e2 mu0 wmax (doubles),
   # the exact frame (a b c d per coordinate, here rational: b = c = d = 0),
@@ -196,10 +196,10 @@ if want verify; then
   # Build the checker (no-op if current), never alongside another Lean build.
   if [ $DRY -eq 0 ]; then while pgrep -x lake > /dev/null; do sleep 30; done; fi
   (cd "$LEAN" && run timeout 6000 systemd-run --user --scope -q -p MemoryMax=48G -p MemorySwapMax=0 \
-    lake build constructNopert7)
-  [ -x "$LEAN/.lake/build/bin/constructNopert7" ] || {
-    echo "missing $LEAN/.lake/build/bin/constructNopert7 (lake build constructNopert7)" >&2; exit 1; }
-  capped "$LEAN/.lake/build/bin/constructNopert7" "$TUBEPACKS/manifest.txt" "$PACKS" "$CAP_CERT" \
+    lake build constructSeptopert)
+  [ -x "$LEAN/.lake/build/bin/constructSeptopert" ] || {
+    echo "missing $LEAN/.lake/build/bin/constructSeptopert (lake build constructSeptopert)" >&2; exit 1; }
+  capped "$LEAN/.lake/build/bin/constructSeptopert" "$TUBEPACKS/manifest.txt" "$PACKS" "$CAP_CERT" \
     2>&1 | tee "$WORK/verify.log"
   stage_end verify
 fi

@@ -150,11 +150,12 @@ pool_check.exe : pool_check.o $(OBJECTS_CORE) $(OBJECTS)
 capleaf_check.exe : capleaf_check.o $(OBJECTS_CORE) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 
-# capcert: cap certificates for the deltoidal hexecontahedron's special views (work in progress; notes/T.md).
-capcert7.exe : capcert7.o $(OBJECTS_CORE) $(OBJECTS)
+# capcert_septopert: the Septopert's cap certificate at its mirror normal.
+capcert_septopert.exe : capcert_septopert.o $(OBJECTS_CORE) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"
 
+# capcert: cap certificates for the deltoidal hexecontahedron's special views (work in progress; notes/T.md).
 capcert.exe : capcert.o $(OBJECTS_CORE) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"

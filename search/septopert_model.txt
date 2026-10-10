@@ -1,4 +1,4 @@
-name 7v-cocta-c3v-2
+name septopert
 # axis (1,1,1); C3v = coordinate permutations; denominators 1048576
 # max |v| = 0.999999351926; degrees [5, 5, 5, 4, 4, 4, 3]
 vertex 0 -0.89706230163574218750 0.31247234344482421875 0.31247234344482421875

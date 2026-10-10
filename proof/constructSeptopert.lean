@@ -1,9 +1,9 @@
-import Noperthedron.Nopert7.NativeExecutable
-import Noperthedron.Nopert7.PackedSolutionTree
+import Noperthedron.Septopert.NativeExecutable
+import Noperthedron.Septopert.PackedSolutionTree
 
 /-!
 Native executable that reads and checks the 7-vertex solid's certificate data
-and constructs `¬ IsRupert Nopert7.verts` (K, `nopert_233`).
+and constructs `¬ IsRupert Septopert.verts`.
 
 Data (decoded untrusted, checked natively in parallel):
 - the identity-tube packs (`export_codetrees_pack`; `manifest.txt` lists one
@@ -13,27 +13,27 @@ Data (decoded untrusted, checked natively in parallel):
   (`PackedSolutionTree.decodeCodeTablesLazy`: each pack is kept as bytes with
   a row/interval offset index and rows are decoded on demand; the charts are
   loaded, checked and dropped one at a time);
-- the cap certificate (`capcert7.exe --export`, `cap-1_16.cert`).
+- the cap certificate (`capcert_septopert.exe --export`, `cap-1_16.cert`).
 
 Worker threads: the runtime's default (hardware threads); set `LEAN_NUM_THREADS`
 to use fewer. Each table is checked in 256 row chunks.
 
 Usage:
-  constructNopert7 <tube manifest.txt> <chart directory> <cap.cert>
-  constructNopert7 rows <tube manifest.txt> <chart> <job pack> [locals]
+  constructSeptopert <tube manifest.txt> <chart directory> <cap.cert>
+  constructSeptopert rows <tube manifest.txt> <chart> <job pack> [locals]
     (smoke test: decode one job pack (row 0 = the job's root) and check every
     row's `ValidAt` natively, reporting failures; with `locals`, also check
     the tube tables the job's tube rows use.)
-  constructNopert7 local <tube manifest.txt> <index>   (check one tube table)
-  constructNopert7 chart <tube manifest.txt> <chart directory> <chart>
+  constructSeptopert local <tube manifest.txt> <index>   (check one tube table)
+  constructSeptopert chart <tube manifest.txt> <chart directory> <chart>
     (smoke test: load one chart's code packs and check all its rows and its
     root, as the full run does, without checking the tube tables.)
 -/
 
 open Noperthedron.PentagonalHexecontahedron
-open Noperthedron.Nopert7
-open Noperthedron.Nopert7.SolutionTree
-open Noperthedron.Nopert7.NativeExecutable
+open Noperthedron.Septopert
+open Noperthedron.Septopert.SolutionTree
+open Noperthedron.Septopert.NativeExecutable
 
 /-- Row chunks per table: many more than worker threads, so that expensive
 subtrees (contiguous row ranges) do not leave threads idle. The number of
@@ -137,7 +137,7 @@ def fullMode (manifestPath directory capPath : String) : IO Unit := do
   let checked ← constructProof chunks chunks localTables
     (loadChart directory localTables.size)
   let _k : ¬ IsRupert verts := checked.down capOk.down
-  IO.println "instantiated: ¬ IsRupert Nopert7.verts (the 7-vertex solid is not Rupert)"
+  IO.println "instantiated: ¬ IsRupert Septopert.verts (the Septopert is not Rupert)"
 
 def main (args : List String) : IO Unit := do
   match args with
@@ -153,4 +153,4 @@ def main (args : List String) : IO Unit := do
   | ["chart", m, d, c] => chartMode m d (Fin.ofNat 4 c.toNat!)
   | [m, d, cap] => fullMode m d cap
   | _ => throw (IO.userError
-      "usage: constructNopert7 <tube manifest.txt> <chart directory> <cap.cert>\n       constructNopert7 rows <tube manifest.txt> <chart> <job pack> [locals]")
+      "usage: constructSeptopert <tube manifest.txt> <chart directory> <cap.cert>\n       constructSeptopert rows <tube manifest.txt> <chart> <job pack> [locals]")

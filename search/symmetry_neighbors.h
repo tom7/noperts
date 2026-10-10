@@ -1,8 +1,8 @@
-// The nontrivial rotations of K's C3 (nopert_233, axis (1,1,1); Noperthedron's
-// Nopert7.c3Mat 1 and c3Mat 2: the cyclic coordinate permutations), exact
+// The nontrivial rotations of the Septopert's C3 (axis (1,1,1); Noperthedron's
+// Septopert.c3Mat 1 and c3Mat 2: the cyclic coordinate permutations), exact
 // (denominator 1, no rounding allowance). The C3 cell prune
 // (exact5d::IcoPruneValid) removes boxes where trace(R c_k) > trace(R) for
-// k = n + 1 (Lean: Nopert7.InC3vCell).
+// k = n + 1 (Lean: Septopert.InC3vCell).
 #ifndef _NOPERT_SYMMETRY_NEIGHBORS_H
 #define _NOPERT_SYMMETRY_NEIGHBORS_H
 

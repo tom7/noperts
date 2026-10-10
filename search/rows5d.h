@@ -18,10 +18,11 @@
 //                                 projectiveMixedGlobal; exact weights summing to 1
 //   tu <path> <r>                 symmetryTube with radius r (exact rational)
 //   pr <path>                     radiusPrune
-//   pf <path> <+|->               fundamentalPrune (direction positive/negative; not used for K)
-//   pi <path> <n>                 C3 cell prune by c3Mat (n + 1) (K; formerly the icosahedral
+//   pf <path> <+|->               fundamentalPrune (direction positive/negative; not used for the
+//                                 Septopert)
+//   pi <path> <n>                 C3 cell prune by c3Mat (n + 1) (Septopert; formerly the icosahedral
 //                                 prune; symmetry_neighbors.h; exact5d::IcoPruneValid)
-//   ph <path> <g>                 mirror prune by Q_g = mirrorQMat g (K; formerly the DH's
+//   ph <path> <g>                 mirror prune by Q_g = mirrorQMat g (Septopert; formerly the DH's
 //                                 half-turn prune; mirror_q.h; exact5d::HalfTurnPruneValid)
 //   cl <path> <c>                 cap leaf: the box lies in cap c's certified domain (capcert.cc)
 //   tl <path> <n> <rho>           tie leaf: pinning normal n (tie_normals.h), tie tube radius rho

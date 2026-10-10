@@ -84,11 +84,11 @@ root = "dhBench"
 buildType = "release"
 
 [[lean_exe]]
-name = "checkNopert7Cap"
-root = "checkNopert7Cap"
+name = "checkSeptopertCap"
+root = "checkSeptopertCap"
 buildType = "release"
 
 [[lean_exe]]
-name = "constructNopert7"
-root = "constructNopert7"
+name = "constructSeptopert"
+root = "constructSeptopert"
 buildType = "release"

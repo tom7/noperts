@@ -1,7 +1,7 @@
 module
 
 public import Noperthedron.PentagonalHexecontahedron.CapClaim
-public import Noperthedron.Nopert7.Model
+public import Noperthedron.Septopert.Model
 
 @[expose] public section
 
@@ -11,9 +11,10 @@ public import Noperthedron.Nopert7.Model
 Near the mirror normal x = (1, 0, −1) (the normal of the mirror swapping the
 first and third coordinates) the mirror tie H_u R Q (Q = `mirrorQMat 1` = H_x)
 approaches the identity, so poses there are certified by a cap certificate
-(nopert7 `capcert7.cc --export`, the isotropic (u0) charts of the deltoidal
-hexecontahedron's caps over ℚ, with two-sided width witnesses). The frame is
-rational and unnormalized: x = (1, 0, −1), e₁ = (0, 1, 0), e₂ = (1, 0, 1).
+(`capcert_septopert.cc --export`, the isotropic (u0) charts of the
+deltoidal hexecontahedron's caps over ℚ, with two-sided width witnesses).
+The frame is rational and unnormalized: x = (1, 0, −1), e₁ = (0, 1, 0),
+e₂ = (1, 0, 1).
 
 `certOk`: the certificate passes `CapCert.check` (Lean's own chart list,
 every tree rechecked with Bernstein bounds over ℚ) and is a certificate for
@@ -35,7 +36,7 @@ the cone with dual frame vectors (0, 2, 0), (1, 0, 1) and the Cayley ball
 |w|² ≤ 1/8192 as a trace bound) for the solution tree.
 -/
 
-namespace Noperthedron.Nopert7
+namespace Noperthedron.Septopert
 
 open Noperthedron.PentagonalHexecontahedron
 open Noperthedron.PentagonalHexecontahedron.Cap
@@ -198,4 +199,4 @@ theorem capHolds_of_cert (c : CapCert) (hc : certOk c = true) : CapHolds := by
   rw [hd0, hd1, hx, kv_capX, hmu, if_pos hpr, hG, gMat_capGcol] at hclaim
   exact hclaim
 
-end Noperthedron.Nopert7
+end Noperthedron.Septopert

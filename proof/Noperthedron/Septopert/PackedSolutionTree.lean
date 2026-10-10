@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert7.SolutionTree
+public import Noperthedron.Septopert.SolutionTree
 public import Noperthedron.PentagonalHexecontahedron.PackedLocalViewTree
 
 @[expose] public section
@@ -8,13 +8,13 @@ public import Noperthedron.PentagonalHexecontahedron.PackedLocalViewTree
 /-!
 # Packed chart tables for the 7-vertex solid
 
-The DH's `PackedSolutionTree` decoder for K's packs (nopert7 `pack5d`;
-NOPERT7.md "Formats for Lean (M3b)"): the layout is unchanged; every region's
-`root, triangleIndex` pair carries the job's projective root (0 or 1); tag 13
-is the C3 prune (neighbor n ∈ {0,1}: c3Mat (n+1)), tag 14 the mirror prune
-(element g: mirrorQMat g), tag 16 a cap leaf; tags 0 (viewRoot), 8
-(fundamentalPrune) and 15 (tieLeaf) are not part of K's trees and decode to
-`radiusPrune` rows (which the checker rejects unless the box is outside the
+The DH's `PackedSolutionTree` decoder for the Septopert's packs (`pack5d`;
+working notes, "Formats for Lean (M3b)"): the layout is unchanged; every
+region's `root, triangleIndex` pair carries the job's projective root (0 or
+1); tag 13 is the C3 prune (neighbor n ∈ {0,1}: c3Mat (n+1)), tag 14 the
+mirror prune (element g: mirrorQMat g), tag 16 a cap leaf; tags 0 (viewRoot),
+8 (fundamentalPrune) and 15 (tieLeaf) are not part of the Septopert's trees
+and decode to `radiusPrune` rows (which the checker rejects unless the box is outside the
 Cayley ball). Per-code packs (`pack5d --per_code`) are concatenated behind a
 `codeRoot` row over `AtlasPose.rootInterval` (all four charts).
 
@@ -22,7 +22,7 @@ The decoder is untrusted plumbing: every decoded row is checked by
 `SolutionTree.Table.Valid`.
 -/
 
-namespace Noperthedron.Nopert7.PackedSolutionTree
+namespace Noperthedron.Septopert.PackedSolutionTree
 
 open Noperthedron.PentagonalHexecontahedron
 open SolutionTree AtlasProjectiveView
@@ -198,7 +198,7 @@ def readRow (chart : CayleyAtlas.ChartIndex) (intervalOf : Nat → SolutionTree.
   let intervalIndex ← readNat
   let interval := intervalOf intervalIndex
   if tag = 0 then
-    -- viewRoot (DH only): not a K row.
+    -- viewRoot (DH only): not a Septopert row.
     let _child ← readNat
     pure (.radiusPrune id interval .sphere)
   else if tag = 1 then
@@ -234,7 +234,7 @@ def readRow (chart : CayleyAtlas.ChartIndex) (intervalOf : Nat → SolutionTree.
     let region ← readRegion triangles
     pure (.radiusPrune id interval region)
   else if tag = 8 then
-    -- fundamentalPrune (DH only): not a K row.
+    -- fundamentalPrune (DH only): not a Septopert row.
     let _direction ← readNat
     let region ← readRegion triangles
     pure (.radiusPrune id interval region)
@@ -250,7 +250,7 @@ def readRow (chart : CayleyAtlas.ChartIndex) (intervalOf : Nat → SolutionTree.
         pure (.mirrorPrune id { interval, chart, triangle, element := finMod element } root)
     | .sphere => pure (.radiusPrune id interval region)
   else if tag = 15 then
-    -- tieLeaf (DH only): not a K row.
+    -- tieLeaf (DH only): not a Septopert row.
     let _normal ← readNat
     let _rho ← readRat
     let _node ← readNat
@@ -444,4 +444,4 @@ def decodeCodeTablesLazy (chart : CayleyAtlas.ChartIndex) (shared : SharedLocalT
   let tables := LazyCodeTables.ofPacks packs
   { chart, get := tables.get chart, size := tables.size, sharedLocal := shared }
 
-end Noperthedron.Nopert7.PackedSolutionTree
+end Noperthedron.Septopert.PackedSolutionTree

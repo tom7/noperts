@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exact rational C3v model of a 7-vertex candidate (nopert_233).
+"""Exact rational C3v model of a 7-vertex candidate (the Septopert).
 
 Puts the 3-fold axis along (1,1,1), where C3v acts by permuting coordinates,
 so that a rational model is exactly C3v-symmetric. The input (an .xyz file,
@@ -13,7 +13,7 @@ generated exactly. Checks: 7 distinct vertices, all extreme, triangular faces
 The input is scaled to circumradius SCALE = 1 - 1e-6 first (the proof
 infrastructure needs every vertex strictly inside the unit ball).
 With a third argument, also writes the Lean data module there
-(`Noperthedron.Nopert7.ModelData`: the vertices and, for each of c3Mat k
+(`Noperthedron.Septopert.ModelData`: the vertices and, for each of c3Mat k
 and mirrorMat i, the vertex permutation it induces).
 
 Usage: python3 c3v_model.py candidate.xyz [den=2^20 [ModelData.lean]] > model.txt
@@ -79,7 +79,7 @@ for i, v in enumerate(verts):
 for i, v in enumerate(verts):
   print("rational_vertex %d %s" % (i, " ".join(str(c) for c in v)))
 for f in faces: print("face", *f)
-# The view domain D' = {u0 >= u1 >= 0, u1 >= u2} (Lean: Nopert7.InC3vViewDomain),
+# The view domain D' = {u0 >= u1 >= 0, u1 >= u2} (Lean: Septopert.InC3vViewDomain),
 # the cone over (1,1,1), (1,0,0), (0,0,-1), as two triangles split by u2 = 0:
 # T1 = (1,1,1), (1,1,0), (1,0,0) in projective root 0 (on u0 + u1 + u2 = 1) and
 # T2 = (1,0,0), (1,1,0), (0,0,-1) in root 1 (on u0 + u1 - u2 = 1); codebdd.
@@ -108,7 +108,7 @@ denominators %d. `c3Perm k` and `mirrorPerm i` are the vertex permutations
 induced by `c3Mat k` and `mirrorMat i` (coordinate permutations).
 -/
 
-namespace Noperthedron.Nopert7
+namespace Noperthedron.Septopert
 
 def vertexQ : Fin 7 → Fin 3 → ℚ := ![
 %s]
@@ -117,7 +117,7 @@ def c3Perm : Fin 3 → Fin 7 → Fin 7 := ![%s]
 
 def mirrorPerm : Fin 3 → Fin 7 → Fin 7 := ![%s]
 
-end Noperthedron.Nopert7
+end Noperthedron.Septopert
 """ % (path.split('/')[-1], den,
        ",\n".join("  ![%s]" % ", ".join(q(c) for c in v) for v in verts),
        ", ".join(fin7(perm_of(g)) for g in c3),

@@ -58,7 +58,7 @@ std::vector<Node> Children(const Node &node, const Split &split) {
 std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
   const exact5d::Interval5 iv = geom5d::ToInterval(node.box);
   if (exact5d::OutsideCayleyBall(iv)) return rows5d::RadiusPruneLeaf{};
-  // (K: no fivefold fundamental prune; the C3 cell prune below replaces it.)
+  // (Septopert: no fivefold fundamental prune; the C3 cell prune below replaces it.)
   // C3 cell prune: a rotation c_k of C3 that increases trace over the whole box.
   // The exact lower bound is at most the value at the center, so only try
   // neighbors whose advantage there (in double) is clearly positive.

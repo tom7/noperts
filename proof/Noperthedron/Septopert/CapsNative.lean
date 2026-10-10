@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Nopert7.Caps
+public import Noperthedron.Septopert.Caps
 public import Noperthedron.ParallelBool
 
 @[expose] public section
@@ -13,13 +13,13 @@ native tasks (`ParallelBool.allParB`); `check_of_par` recovers the sequential
 check, so a native run proves `certOk` (`certOk_of_par`) and hence the cap
 (`capHolds_of_cert`, `cap_not_rupert`).
 
-`decodeCert` reads a `capcert7 --export` file. Nothing in the decoding is
+`decodeCert` reads a `capcert_septopert --export` file. Nothing in the decoding is
 trusted: the decoded certificate is checked before it is used (its chart list
 against Lean's `chartList`, its frame, μ₀, vertices and half-turn element
 against `certOk`'s constants, every tree with Lean's own Bernstein bounds).
 -/
 
-namespace Noperthedron.Nopert7
+namespace Noperthedron.Septopert
 
 open Noperthedron.PentagonalHexecontahedron
 open Noperthedron.PentagonalHexecontahedron.Cap
@@ -161,8 +161,9 @@ partial def parseTree (s : Array Char) (i : ℕ) : CTree × ℕ :=
 
 def kindOf (s : String) : Kind := match s with | "Fe" => .fe | "cone" => .cone | "Mcone" => .mcone | _ => .face
 
-/-- Decodes a `capcert7 --export` file (`witness i k k' c`). Without ratio blow-ups capcert7 exports
-z = 0, which no polynomial or box uses (ratio 0); it is read as 1 (`CapCert.check` wants z > 0). -/
+/-- Decodes a `capcert_septopert --export` file (`witness i k k' c`). Without ratio blow-ups
+capcert_septopert exports z = 0, which no polynomial or box uses (ratio 0); it is read as 1
+(`CapCert.check` wants z > 0). -/
 def decodeCert (lines : Array String) : CapCert := Id.run do
   let mut V : Array KVec := #[]
   let mut W : Array (ℕ × ℕ × KVec) := #[]
@@ -210,4 +211,4 @@ def decodeCert (lines : Array String) : CapCert := Id.run do
            pr := ⟨mu0, t0, t0m, tie, ratioOn⟩, zList := zl, verts := V, wits := W, usePrune := halfTurn,
            Gcol := capGcol, charts := charts.toList }
 
-end Noperthedron.Nopert7
+end Noperthedron.Septopert

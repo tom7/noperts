@@ -2,7 +2,7 @@ module
 
 public import Noperthedron.PentagonalHexecontahedron.CapWitness
 public import Noperthedron.PentagonalHexecontahedron.CapCoverMain
-public import Noperthedron.Nopert7.WidthWitness
+public import Noperthedron.Septopert.WidthWitness
 public import Noperthedron.Atlas.CayleyPose
 
 @[expose] public section
@@ -16,7 +16,7 @@ centrally symmetric solid S has ⟪d, v⟫ ≤ M, and some v_k ∈ S has
 (The witness n = proj(O d) of `CapWitness`, with O the outer rotation.)
 
 `not_rupert_of_width_support`: the two-sided form for solids without central
-symmetry (`Nopert7.not_rupertPose_of_width_witness`): if ⟪d, ·⟫ ≤ M₊ and
+symmetry (`Septopert.not_rupertPose_of_width_witness`): if ⟪d, ·⟫ ≤ M₊ and
 −⟪d, ·⟫ ≤ M₋ on S and ⟪d, R v_k⟫ − ⟪d, R v_k'⟫ ≥ M₊ + M₋, the pose is not
 Rupert (any offset).
 -/
@@ -97,7 +97,7 @@ theorem not_rupert_of_width_support (p : MatrixPose) (S : Set ℝ³)
     intro v
     rw [← Noperthedron.Atlas.MatrixPose.outer_mul_relativeRotation p]
     simp [Matrix.toLpLin_apply, Matrix.mulVec_mulVec, O]
-  apply Noperthedron.Nopert7.not_rupertPose_of_width_witness p S n hn Mp Mm _ _ vk vk' hvk hvk'
+  apply Noperthedron.Septopert.not_rupertPose_of_width_witness p S n hn Mp Mm _ _ vk vk' hvk hvk'
   · rw [hinner, hinner, hproj, hproj]
     exact hk
   · intro v hv

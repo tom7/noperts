@@ -12,7 +12,7 @@ The C3 rotations `c3Mat k` about (1,1,1) are symmetries of the model. A
 relative rotation is in the C3 max-trace (Dirichlet) cell when none of them
 increases its trace on the right. (The names `fivefoldMatrix` and
 `InFivefoldFundamentalDomain` are kept from the fivefold pipeline;
-`fivefoldMatrix k` is now `Nopert7.c3Mat k`.)
+`fivefoldMatrix k` is now `Septopert.c3Mat k`.)
 -/
 
 namespace Noperthedron.PentagonalHexecontahedron
@@ -24,7 +24,7 @@ open scoped Matrix
 /-- The `k`th exact rotation around the symmetry axis (1,1,1). -/
 noncomputable def fivefoldMatrix (k : OrbitIndex) :
     Matrix (Fin 3) (Fin 3) ℝ :=
-  Nopert7.c3Mat k
+  Septopert.c3Mat k
 
 def composeSymmetry (a b : OrbitIndex) : OrbitIndex :=
   ⟨(a.val + b.val) % 3, Nat.mod_lt _ (by omega)⟩
@@ -39,7 +39,7 @@ theorem fivefoldMatrix_mul (a b : OrbitIndex) :
     fivefoldMatrix a * fivefoldMatrix b =
       fivefoldMatrix (composeSymmetry a b) := by
   rw [composeSymmetry_eq_add]
-  exact Nopert7.c3_mul_c3 a b
+  exact Septopert.c3_mul_c3 a b
 
 /-- A relative rotation is in the identity C3 Dirichlet cell when no
 right symmetry increases its trace. -/
