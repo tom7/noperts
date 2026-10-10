@@ -153,6 +153,113 @@ theorem IsCyclicUnimodal.noZig {k : ℕ} [NeZero k] {z : ZMod k → ℝ} (hz : I
       push_cast; linear_combination heq
     rcases natCast_mod_two hk0 (by omega) (by omega) this with h | h <;> omega
 
+/-- Sums over `ZMod k` read linearly from any base point. -/
+theorem sum_zmod_eq_sum_range {k : ℕ} [NeZero k] {M : Type*} [AddCommMonoid M]
+    (F : ZMod k → M) (B : ZMod k) : ∑ i, F i = ∑ n ∈ range k, F (B + n) := by
+  rw [← Equiv.sum_comp (Equiv.addLeft B) F]
+  simp only [Equiv.coe_addLeft]
+  symm
+  refine sum_bij (fun n _ => (n : ZMod k)) (fun _ _ => mem_univ _) (fun a ha b hb h => ?_)
+    (fun i _ => ⟨i.val, mem_range.mpr (ZMod.val_lt i), ZMod.natCast_zmod_val i⟩)
+    (fun _ _ => rfl)
+  rw [mem_range] at ha hb
+  rw [ZMod.natCast_eq_natCast_iff', Nat.mod_eq_of_lt ha, Nat.mod_eq_of_lt hb] at h
+  exact h
+
+/-- Sign pattern with two free positions `0` and `t`. -/
+theorem SSlin_of_two_free (c : ℕ → ℝ) (k t : ℕ) (htk : t ≤ k)
+    (hpos : ∀ n, 1 ≤ n → n < t → 0 ≤ c n) (hneg : ∀ n, t + 1 ≤ n → n < k → c n ≤ 0) :
+    SSlin c k := by
+  by_cases ht0 : t = 0
+  · subst ht0
+    by_cases hc0 : 0 ≤ c 0
+    · refine ⟨0, min 1 k, by omega, by omega, Or.inl ⟨fun n h1 h2 => ?_, fun n h1 h2 => ?_⟩⟩
+      · have : n = 0 := by omega
+        rw [this]; exact hc0
+      · exact hneg n (by omega) h1
+    · refine ⟨0, 0, le_rfl, by omega, Or.inl ⟨fun n h1 h2 => by omega, fun n h1 h2 => ?_⟩⟩
+      rcases Nat.eq_zero_or_pos n with rfl | hn
+      · linarith
+      · exact hneg n (by omega) h1
+  set i0 := if 0 ≤ c 0 then 0 else 1 with hi0
+  set j0 := if t < k ∧ 0 ≤ c t then t + 1 else t with hj0
+  refine ⟨i0, j0, ?_, ?_, Or.inl ⟨fun n h1 h2 => ?_, fun n h1 h2 => ?_⟩⟩
+  · simp only [hi0, hj0]; split_ifs <;> omega
+  · simp only [hj0]; split_ifs with h <;> omega
+  · rcases Nat.eq_zero_or_pos n with rfl | hn
+    · simp only [hi0] at h1; split_ifs at h1 with h
+      · exact h
+      · omega
+    · by_cases hnt : n < t
+      · exact hpos n hn hnt
+      · have : n = t := by simp only [hj0] at h2; split_ifs at h2 <;> omega
+        subst this
+        simp only [hj0] at h2; split_ifs at h2 with h
+        · exact h.2
+        · omega
+  · rcases Nat.eq_zero_or_pos n with rfl | hn
+    · rcases h2 with h2 | h2
+      · simp only [hi0] at h2; split_ifs at h2 with h
+        · omega
+        · push Not at h; exact h.le
+      · simp only [hj0] at h2; split_ifs at h2 <;> omega
+    · by_cases hnt : t + 1 ≤ n
+      · exact hneg n hnt h1
+      · rcases h2 with h2 | h2
+        · simp only [hi0] at h2; split_ifs at h2 <;> omega
+        · have : n = t := by simp only [hj0] at h2; split_ifs at h2 <;> omega
+          subst this
+          simp only [hj0] at h2; split_ifs at h2 with h
+          · omega
+          · push Not at h; exact (h h1).le
+
+theorem mod_add_lt {k o n : ℕ} (ho : o < k) (hn : n < k) :
+    (o + n) % k = if o + n < k then o + n else o + n - k := by
+  split_ifs with h
+  · exact Nat.mod_eq_of_lt h
+  · rw [Nat.mod_eq_sub_mod (by omega), Nat.mod_eq_of_lt (by omega)]
+
+/-- The sign-switch property survives a cyclic rotation of the index. -/
+theorem SSlin_rotate {x : ℕ → ℝ} {k : ℕ} (hx : SSlin x k) (o : ℕ) (ho : o < k) :
+    SSlin (fun n => x ((o + n) % k)) k := by
+  -- the case "nonnegative on `[i, j)`, nonpositive outside"
+  have caseA : ∀ x : ℕ → ℝ, ∀ i j, i ≤ j → j ≤ k → (∀ n, i ≤ n → n < j → 0 ≤ x n) →
+      (∀ n, n < k → (n < i ∨ j ≤ n) → x n ≤ 0) → SSlin (fun n => x ((o + n) % k)) k := by
+    intro x i j hij hjk hin hout
+    by_cases hoi : o ≤ i
+    · refine ⟨i - o, j - o, by omega, by omega, Or.inl ⟨fun n h1 h2 => ?_, fun n h1 h2 => ?_⟩⟩
+      · dsimp only; rw [mod_add_lt ho (by omega), if_pos (by omega)]; exact hin _ (by omega) (by omega)
+      · dsimp only; rw [mod_add_lt ho h1]
+        split_ifs with h
+        · exact hout _ h (by omega)
+        · exact hout _ (by omega) (by omega)
+    · by_cases hjo : o ≤ j
+      · refine ⟨j - o, i + k - o, by omega, by omega, Or.inr ⟨fun n h1 h2 => ?_,
+          fun n h1 h2 => ?_⟩⟩
+        · dsimp only; rw [mod_add_lt ho (by omega)]
+          split_ifs with h
+          · exact hout _ h (by omega)
+          · exact hout _ (by omega) (by omega)
+        · dsimp only; rw [mod_add_lt ho h1]
+          split_ifs with h
+          · exact hin _ (by omega) (by omega)
+          · exact hin _ (by omega) (by omega)
+      · refine ⟨i + k - o, j + k - o, by omega, by omega, Or.inl ⟨fun n h1 h2 => ?_,
+          fun n h1 h2 => ?_⟩⟩
+        · dsimp only; rw [mod_add_lt ho (by omega), if_neg (by omega)]
+          exact hin _ (by omega) (by omega)
+        · dsimp only; rw [mod_add_lt ho h1]
+          split_ifs with h
+          · exact hout _ h (by omega)
+          · exact hout _ (by omega) (by omega)
+  obtain ⟨i, j, hij, hjk, hc⟩ := hx
+  rcases hc with ⟨h1, h2⟩ | ⟨h1, h2⟩
+  · exact caseA x i j hij hjk h1 h2
+  · have := caseA (fun n => -x n) i j hij hjk (fun n a b => by simp [h1 n a b])
+      (fun n a b => by simp [h2 n a b])
+    have := this.neg
+    simpa using this
+
 end SmallRupert
 
 end
