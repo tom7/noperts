@@ -2,6 +2,8 @@ module
 
 public import SmallRupert.SixVertices
 public import SmallRupert.Thm73
+public import SmallRupert.BadViews
+public import SmallRupert.Perturb
 public import Mathlib.Analysis.Convex.Caratheodory
 
 @[expose] public section
@@ -37,8 +39,8 @@ interior", and (G2) is injectivity of the depths, part of `IsCyclicUnimodal`.
 
 namespace SmallRupert
 
-open scoped RealInnerProductSpace
-open Finset
+open scoped RealInnerProductSpace Topology
+open Finset Filter
 
 /-- The convex hull of a compact set in a finite-dimensional normed space is
 compact (Carathéodory). -/
@@ -418,18 +420,53 @@ theorem isRupert_of_unimodalView (V : Finset ℝ³) (R : Matrix (Fin 3) (Fin 3) 
     hz hnd
   exact isRupert_of_firstOrderInward_image V R hR ω τ h
 
-/-- **Lemma 7.4 (exceptional views).**  Horizontal double normals at generic
-views occur only for views `u = Rᵀ e_z` on finitely many great circles
-`l ⟂ u`, determined by `V` alone (cases (a)–(e) of LEMMAS.md). -/
+/-- **Lemma 7.4 (exceptional views).**  Horizontal double normals occur only
+for views `u = Rᵀ e_z` on finitely many great circles `l ⟂ u`, determined by `V`
+alone (cases (a)–(e) of LEMMAS.md).  Stated without (G1)/(G2): any closed
+cycle of points of `V` with a horizontal double normal is covered. -/
 theorem exists_badPlanes (V : Finset ℝ³) :
     ∃ Λ : Finset ℝ³, (∀ l ∈ Λ, l ≠ 0) ∧
-      ∀ R ∈ SO3, ∀ (k : ℕ) [NeZero k] (x : ZMod k → ℝ³), (∀ i, x i ∈ V) →
-        IsCcwPolygon (fun i => proj_xy (R.toEuclideanLin (x i))) →
-        IsCyclicUnimodal (fun i => (R.toEuclideanLin (x i)) 2) →
+      ∀ R ∈ SO3, ∀ (k : ℕ) (x : ZMod k → ℝ³), (∀ i, x i ∈ V) →
         HasHorizontalDoubleNormal (fun i => proj_xy (R.toEuclideanLin (x i)))
           (fun i => (R.toEuclideanLin (x i)) 2) →
-        ∃ l ∈ Λ, (R.toEuclideanLin l) 2 = 0 := by
-  sorry
+        ∃ l ∈ Λ, (R.toEuclideanLin l) 2 = 0 :=
+  ⟨badDirs V, fun _ hl => ne_zero_of_mem_badDirs hl,
+    fun R hR _ x hxV h => exists_badDir_of_hdn V R hR x hxV h⟩
+
+/-- **Theorem 7.5, robust form.**  If every view near `R₀` (rotation or not)
+that avoids the great circles of a finite set `Λ₀` has the silhouette `x` with
+the other points inside and a unimodal silhouette, then `V` is Rupert.  (Used
+for Theorem 7.7 and Corollary 7.8, where `Λ₀` breaks depth ties.) -/
+theorem isRupert_of_eventually_unimodal (V : Finset ℝ³) {R₀ : Matrix (Fin 3) (Fin 3) ℝ}
+    (hR₀ : R₀ ∈ SO3) (Λ₀ : Finset ℝ³) (hΛ₀ : ∀ l ∈ Λ₀, l ≠ 0) {k : ℕ} [NeZero k]
+    (x : ZMod k → ℝ³) (hxV : ∀ i, x i ∈ V)
+    (h : ∀ᶠ R in 𝓝 R₀, (∀ l ∈ Λ₀, (R.toEuclideanLin l) 2 ≠ 0) →
+      IsCcwPolygon (fun i => proj_xy (R.toEuclideanLin (x i))) ∧
+      (∀ v ∈ V, (∀ i, v ≠ x i) → proj_xy (R.toEuclideanLin v) ∈
+        interior (convexHull ℝ (Set.range fun i => proj_xy (R.toEuclideanLin (x i))))) ∧
+      IsCyclicUnimodal (fun i => (R.toEuclideanLin (x i)) 2)) :
+    IsRupert V := by
+  classical
+  obtain ⟨R, hRU, hR, hRΛ⟩ := exists_rotation_near_avoiding hR₀ (Λ₀ ∪ badDirs V)
+    (fun l hl => by
+      rcases mem_union.mp hl with hl | hl
+      · exact hΛ₀ l hl
+      · exact ne_zero_of_mem_badDirs hl) h
+  obtain ⟨hp, hin, hz⟩ := hRU fun l hl => hRΛ l (mem_union_left _ hl)
+  refine isRupert_of_unimodalView V R hR x hxV hp hin hz fun hdn => ?_
+  obtain ⟨l, hl, hl0⟩ := exists_badDir_of_hdn V R hR x hxV hdn
+  exact hRΛ l (mem_union_right _ hl) hl0
+
+theorem continuous_proj_xy : Continuous (proj_xy : ℝ³ → ℝ²) :=
+  projL.continuous_of_finiteDimensional
+
+theorem continuous_proj_toEuclideanLin (v : ℝ³) :
+    Continuous fun R : Matrix (Fin 3) (Fin 3) ℝ => proj_xy (R.toEuclideanLin v) :=
+  continuous_proj_xy.comp (continuous_toEuclideanLin_apply v)
+
+theorem continuous_depth_toEuclideanLin (v : ℝ³) :
+    Continuous fun R : Matrix (Fin 3) (Fin 3) ℝ => (R.toEuclideanLin v) 2 :=
+  (PiLp.continuous_apply 2 _ 2).comp (continuous_toEuclideanLin_apply v)
 
 /-- **Theorem 7.5 (unimodal view criterion).**  A generic view (strictly
 convex silhouette `x`, all other points inside, distinct corner depths) with a
@@ -441,7 +478,29 @@ theorem isRupert_of_genericUnimodalView (V : Finset ℝ³) (R : Matrix (Fin 3) (
       interior (convexHull ℝ (Set.range fun i => proj_xy (R.toEuclideanLin (x i)))))
     (hz : IsCyclicUnimodal (fun i => (R.toEuclideanLin (x i)) 2)) :
     IsRupert V := by
-  sorry
+  classical
+  let P : Matrix (Fin 3) (Fin 3) ℝ → ZMod k → ℝ² := fun R' i => proj_xy (R'.toEuclideanLin (x i))
+  let Z : Matrix (Fin 3) (Fin 3) ℝ → ZMod k → ℝ := fun R' i => (R'.toEuclideanLin (x i)) 2
+  have hc : ∀ i, ContinuousAt (fun R' => P R' i) R := fun i =>
+    (continuous_proj_toEuclideanLin (x i)).continuousAt
+  have hcz : ∀ i, ContinuousAt (fun R' => Z R' i) R := fun i =>
+    (continuous_depth_toEuclideanLin (x i)).continuousAt
+  have hp' : IsCcwPolygon (P R) := hp
+  have hz' : IsCyclicUnimodal (Z R) := hz
+  refine isRupert_of_eventually_unimodal V hR ∅ (by simp) x hxV ?_
+  have hin' : ∀ᶠ R' in 𝓝 R, ∀ v ∈ V, (∀ i, v ≠ x i) → proj_xy (R'.toEuclideanLin v) ∈
+      interior (convexHull ℝ (Set.range (P R'))) := by
+    refine (eventually_all_finset V).2 fun v hv => ?_
+    by_cases hvx : ∀ i, v ≠ x i
+    · have hq : ContinuousAt (fun R' : Matrix (Fin 3) (Fin 3) ℝ => proj_xy (R'.toEuclideanLin v)) R :=
+        (continuous_proj_toEuclideanLin v).continuousAt
+      have h0 : proj_xy (R.toEuclideanLin v) ∈ interior (convexHull ℝ (Set.range (P R))) :=
+        hin v hv hvx
+      exact (eventually_mem_interior hc hq hp' h0).mono fun _ h _ => h
+    · exact Eventually.of_forall fun _ h => absurd h hvx
+  filter_upwards [eventually_isCcwPolygon hc hp', hin', eventually_isCyclicUnimodal hcz hz']
+    with R' h1 h2 h3
+  exact fun _ => ⟨h1, h2, h3⟩
 
 /-- **Theorem 7.7 (translation prisms).**  `K = T + [0, w]` for a triangle
 `T = ABC` and `w` not parallel to its plane.  If `w` is not perpendicular to
