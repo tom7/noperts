@@ -793,11 +793,367 @@ theorem exists_split_of_no_partner {V : Finset ℝ³} (hS : Six V) {l m : ℝ³ 
 
 /-! ### Proposition 10.2: prisms -/
 
+theorem IsOPair.symm {l m : ℝ³ → ℝ} {s t : ℝ³} (h : IsOPair l m s t) : IsOPair l m t s := by
+  obtain ⟨h1, h2, h3⟩ := h
+  refine ⟨h1.symm, ?_, by linarith [mul_comm (l s) (l t), mul_comm (m s) (m t)]⟩
+  rw [galeD_anti, h2, neg_zero]
+
+/-- The Gale vector of an O-partner is a negative multiple. -/
+theorem IsOPair.coeff {V : Finset ℝ³} {l m : ℝ³ → ℝ} (hF : GaleFrame V l m) {s t : ℝ³}
+    (hs : s ∈ V) (h : IsOPair l m s t) : ∃ a, 0 < a ∧ l t = -a * l s ∧ m t = -a * m s := by
+  obtain ⟨-, h2, h3⟩ := h
+  have hn : 0 < l s * l s + m s * m s := by
+    rcases hF.ne s hs with h | h
+    · have := mul_self_pos.mpr h; nlinarith [mul_self_nonneg (m s)]
+    · have := mul_self_pos.mpr h; nlinarith [mul_self_nonneg (l s)]
+  have h2' : l s * m t - m s * l t = 0 := h2
+  refine ⟨-(l s * l t + m s * m t) / (l s * l s + m s * m s), div_pos (by linarith) hn, ?_, ?_⟩
+  · rw [neg_div, neg_neg, div_mul_eq_mul_div, eq_div_iff hn.ne']
+    linear_combination (-(m s)) * h2'
+  · rw [neg_div, neg_neg, div_mul_eq_mul_div, eq_div_iff hn.ne']
+    linear_combination l s * h2'
+
+/-- O-partners are unique. -/
+theorem partner_unique {V : Finset ℝ³} (hS : Six V) {l m : ℝ³ → ℝ} (hF : GaleFrame V l m)
+    {s t u : ℝ³} (hs : s ∈ V) (ht : t ∈ V) (hu : u ∈ V) (h1 : IsOPair l m s t)
+    (h2 : IsOPair l m s u) : t = u := by
+  by_contra htu
+  exact hF.no_three_parallel hS hs ht hu h1.1 h2.1 htu h1.2.1 h2.2.1
+
+theorem galeD_pair {l m : ℝ³ → ℝ} {X X' : ℝ³} {a : ℝ} (hl : l X' = -a * l X)
+    (hm : m X' = -a * m X) (s : ℝ³) : galeD l m s X' = -a * galeD l m s X := by
+  simp only [galeD, hl, hm]; ring
+
+/-- If every point has an O-partner, the six points split into three O-pairs. -/
+theorem exists_three_pairs {V : Finset ℝ³} (hS : Six V) {l m : ℝ³ → ℝ} (hF : GaleFrame V l m)
+    (hall : ∀ i ∈ V, ∃ j ∈ V, IsOPair l m i j) :
+    ∃ A A' B B' C C' : ℝ³, V = {A, A', B, B', C, C'} ∧ [A, A', B, B', C, C'].Nodup ∧
+      IsOPair l m A A' ∧ IsOPair l m B B' ∧ IsOPair l m C C' := by
+  classical
+  obtain ⟨A, hA⟩ : V.Nonempty := Finset.card_pos.mp (by rw [hS.card]; norm_num)
+  obtain ⟨A', hA', hAA'⟩ := hall A hA
+  -- `t` has at most one partner, seen from either side
+  have uniq : ∀ s ∈ V, ∀ t ∈ V, ∀ u ∈ V, IsOPair l m s t → IsOPair l m u t → s = u :=
+    fun s hs t ht u hu h1 h2 => partner_unique hS hF ht hs hu h1.symm h2.symm
+  have hAA'ne := hAA'.1
+  have hV₁ : ((V.erase A).erase A').card = 4 := by
+    rw [Finset.card_erase_of_mem (Finset.mem_erase.mpr ⟨hAA'ne.symm, hA'⟩),
+      Finset.card_erase_of_mem hA, hS.card]
+  obtain ⟨B, hB₁⟩ : ((V.erase A).erase A').Nonempty :=
+    Finset.card_pos.mp (by rw [hV₁]; norm_num)
+  obtain ⟨hBA', hBA, hB⟩ : B ≠ A' ∧ B ≠ A ∧ B ∈ V := by
+    simpa only [Finset.mem_erase] using hB₁
+  obtain ⟨B', hB', hBB'⟩ := hall B hB
+  have hB'A : B' ≠ A := fun h => hBA' (partner_unique hS hF hA hB hA' (h ▸ hBB'.symm) hAA')
+  have hB'A' : B' ≠ A' := fun h => hBA (uniq B hB A' hA' A hA (h ▸ hBB') hAA')
+  have hBB'ne := hBB'.1
+  have hV₂ : ((((V.erase A).erase A').erase B).erase B').card = 2 := by
+    rw [Finset.card_erase_of_mem (by simp only [Finset.mem_erase]; exact
+        ⟨hBB'ne.symm, hB'A', hB'A, hB'⟩),
+      Finset.card_erase_of_mem hB₁, hV₁]
+  obtain ⟨C, C₂, hCC₂, hV₂eq⟩ := Finset.card_eq_two.mp hV₂
+  have hmem₂ : ∀ x, x ∈ ({C, C₂} : Finset ℝ³) ↔ x ≠ B' ∧ x ≠ B ∧ x ≠ A' ∧ x ≠ A ∧ x ∈ V := by
+    intro x; rw [← hV₂eq]; simp only [Finset.mem_erase]
+  obtain ⟨hCB', hCB, hCA', hCA, hC⟩ := (hmem₂ C).mp (by simp)
+  obtain ⟨hC₂B', hC₂B, hC₂A', hC₂A, hC₂⟩ := (hmem₂ C₂).mp (by simp)
+  obtain ⟨C', hC', hCC'⟩ := hall C hC
+  have hC'A : C' ≠ A := fun h => hCA' (partner_unique hS hF hA hC hA' (h ▸ hCC'.symm) hAA')
+  have hC'A' : C' ≠ A' := fun h => hCA (uniq C hC A' hA' A hA (h ▸ hCC') hAA')
+  have hC'B : C' ≠ B := fun h => hCB' (partner_unique hS hF hB hC hB' (h ▸ hCC'.symm) hBB')
+  have hC'B' : C' ≠ B' := fun h => hCB (uniq C hC B' hB' B hB (h ▸ hCC') hBB')
+  have hC'C₂ : C' = C₂ := by
+    have := (hmem₂ C').mpr ⟨hC'B', hC'B, hC'A', hC'A, hC'⟩
+    simp only [Finset.mem_insert, Finset.mem_singleton] at this
+    rcases this with h | h
+    · exact absurd h hCC'.1.symm
+    · exact h
+  subst hC'C₂
+  refine ⟨A, A', B, B', C, C', ?_, ?_, hAA', hBB', hCC'⟩
+  · ext x
+    simp only [Finset.mem_insert, Finset.mem_singleton]
+    constructor
+    · intro hx
+      by_cases h1 : x = A; · exact Or.inl h1
+      by_cases h2 : x = A'; · exact Or.inr (Or.inl h2)
+      by_cases h3 : x = B; · exact Or.inr (Or.inr (Or.inl h3))
+      by_cases h4 : x = B'; · exact Or.inr (Or.inr (Or.inr (Or.inl h4)))
+      have := (hmem₂ x).mpr ⟨h4, h3, h2, h1, hx⟩
+      simp only [Finset.mem_insert, Finset.mem_singleton] at this
+      tauto
+    · rintro (rfl | rfl | rfl | rfl | rfl | rfl) <;> assumption
+  · simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+      List.nodup_nil, and_true, not_false_eq_true]
+    refine ⟨⟨hAA'ne, Ne.symm hBA, Ne.symm hB'A, Ne.symm hCA, Ne.symm hC'A⟩,
+      ⟨Ne.symm hBA', Ne.symm hB'A', Ne.symm hCA', Ne.symm hC'A'⟩,
+      ⟨hBB'ne, Ne.symm hCB, Ne.symm hC'B⟩, ⟨Ne.symm hCB', Ne.symm hC'B'⟩, hCC'.1⟩
+
+/-- A frustum pair `X' = O + r (X - O)` with the far point first. -/
+theorem pair_frustum {O X X' : ℝ³} {r : ℝ} (hr : 0 < r) (hr1 : r ≠ 1)
+    (h : X' = O + r • (X - O)) : ∃ F N : ℝ³, ∃ α : ℝ, (∀ x, (x = X ∨ x = X') ↔ (x = F ∨ x = N)) ∧
+      0 < α ∧ α < 1 ∧ N = O + α • (F - O) := by
+  rcases lt_or_gt_of_ne hr1 with h1 | h1
+  · exact ⟨X, X', r, fun x => Iff.rfl, hr, h1, h⟩
+  · refine ⟨X', X, r⁻¹, fun x => or_comm, inv_pos.mpr hr, inv_lt_one_of_one_lt₀ h1, ?_⟩
+    rw [h, add_sub_cancel_left, smul_smul, inv_mul_cancel₀ hr.ne', one_smul, add_sub_cancel]
+
+/-- A parallel pair `X' = X + s w` with the positive shift. -/
+theorem pair_parallel {X X' w : ℝ³} {s : ℝ} (hs : s ≠ 0) (h : X' = X + s • w) :
+    ∃ F N : ℝ³, ∃ σ : ℝ, (∀ x, (x = X ∨ x = X') ↔ (x = F ∨ x = N)) ∧ 0 < σ ∧
+      N = F + σ • w := by
+  rcases lt_or_gt_of_ne hs with h1 | h1
+  · refine ⟨X', X, -s, fun x => or_comm, by linarith, ?_⟩
+    rw [h, neg_smul, add_neg_cancel_right]
+  · exact ⟨X, X', s, fun x => Iff.rfl, h1, h⟩
+
+theorem finset_of_pairs {A A' B B' C C' F₁ N₁ F₂ N₂ F₃ N₃ : ℝ³}
+    (h₁ : ∀ x, (x = A ∨ x = A') ↔ (x = F₁ ∨ x = N₁))
+    (h₂ : ∀ x, (x = B ∨ x = B') ↔ (x = F₂ ∨ x = N₂))
+    (h₃ : ∀ x, (x = C ∨ x = C') ↔ (x = F₃ ∨ x = N₃)) :
+    ({A, A', B, B', C, C'} : Finset ℝ³) = {F₁, F₂, F₃, N₁, N₂, N₃} := by
+  ext x
+  simp only [Finset.mem_insert, Finset.mem_singleton]
+  calc (x = A ∨ x = A' ∨ x = B ∨ x = B' ∨ x = C ∨ x = C') ↔
+        ((x = A ∨ x = A') ∨ (x = B ∨ x = B') ∨ (x = C ∨ x = C')) := by simp only [or_assoc]
+    _ ↔ ((x = F₁ ∨ x = N₁) ∨ (x = F₂ ∨ x = N₂) ∨ (x = F₃ ∨ x = N₃)) := by rw [h₁, h₂, h₃]
+    _ ↔ (x = F₁ ∨ x = F₂ ∨ x = F₃ ∨ x = N₁ ∨ x = N₂ ∨ x = N₃) := by
+        constructor
+        · rintro ((h | h) | (h | h) | (h | h)) <;> simp only [h, true_or, or_true]
+        · rintro (h | h | h | h | h | h) <;> simp only [h, true_or, or_true]
+
+/-- Pair memberships and distinctness of the representatives. -/
+theorem pair_mem {A A' F N : ℝ³} (h : ∀ x, (x = A ∨ x = A') ↔ (x = F ∨ x = N)) :
+    (F = A ∨ F = A') ∧ (N = A ∨ N = A') :=
+  ⟨(h F).mpr (Or.inl rfl), (h N).mpr (Or.inr rfl)⟩
+
+/-- **Parallel prisms**: lateral edges `A' - A = w`, `B' - B = s_B w`, `C' - C = s_C w`. -/
+theorem isRupert_parallel_of_shifts {V : Finset ℝ³} (hS : Six V) {A A' B B' C C' w : ℝ³}
+    (hV : V = {A, A', B, B', C, C'}) (hnd : [A, A', B, B', C, C'].Nodup) {sB sC : ℝ}
+    (hsB : sB ≠ 0) (hsC : sC ≠ 0) (hA' : A' = A + w) (hB' : B' = B + sB • w)
+    (hC' : C' = C + sC • w) : IsRupert V := by
+  have hnd' := hnd
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+    List.nodup_nil, and_true] at hnd'
+  obtain ⟨⟨h12, h13, h14, h15, h16⟩, ⟨h23, h24, h25, h26⟩, ⟨h34, h35, h36⟩, ⟨h45, h46⟩, h56, -⟩ :=
+    hnd'
+  obtain ⟨FB, NB, σB, hpB, hσB, hNB⟩ := pair_parallel hsB hB'
+  obtain ⟨FC, NC, σC, hpC, hσC, hNC⟩ := pair_parallel hsC hC'
+  have hV' : V = {A, FB, FC, A', NB, NC} := by
+    rw [hV]; exact finset_of_pairs (fun x => Iff.rfl) hpB hpC
+  obtain ⟨hFB, -⟩ := pair_mem hpB
+  obtain ⟨hFC, -⟩ := pair_mem hpC
+  have hAFB : A ≠ FB := by rcases hFB with h | h <;> rw [h] <;> assumption
+  have hAFC : A ≠ FC := by rcases hFC with h | h <;> rw [h] <;> assumption
+  have hFBFC : FB ≠ FC := by
+    rcases hFB with h | h <;> rcases hFC with h' | h' <;> rw [h, h'] <;> assumption
+  have memV : ∀ x, (x = A ∨ x = A' ∨ x = B ∨ x = B' ∨ x = C ∨ x = C') → x ∈ V := by
+    intro x hx; rw [hV]; simpa using hx
+  have hN := hS.cross_ne_zero (memV A (by simp)) (memV FB (by tauto)) (memV FC (by tauto))
+    hAFB hAFC hFBFC
+  have hind : AffineIndependent ℝ ![A, FB, FC, A + w] := by
+    apply affineIndependent_of_det3
+    rw [add_sub_cancel_left]
+    intro hdet
+    set N := cross (FB - A) (FC - A) with hNdef
+    set k := ⟪N, A⟫
+    obtain ⟨g2, g3⟩ := plane_three A FB FC
+    rw [← hNdef] at g2 g3
+    have hw : ⟪N, w⟫ = 0 := hdet
+    have g1 : ⟪N, A⟫ - k = 0 := sub_self _
+    refine hS.plane_contra hV' hN g1 g2 g3 ?_ ?_ ?_
+    · rw [hA', inner_add_right, hw]; linarith
+    · rw [hNB, inner_add_right, real_inner_smul_right, hw]; linarith
+    · rw [hNC, inner_add_right, real_inner_smul_right, hw]; linarith
+  by_cases htr : σB = 1 ∧ σC = 1
+  · obtain ⟨rfl, rfl⟩ := htr
+    rw [one_smul] at hNB hNC
+    rw [hV', hA', hNB, hNC]
+    exact isRupert_translationPrism_all A FB FC w hind
+  · have := isRupert_parallelPrism A FB FC w hind 1 σB σC one_pos hσB hσC
+      (fun h => htr ⟨h.1.symm, h.2 ▸ h.1.symm⟩)
+    rwa [one_smul, ← hA', ← hNB, ← hNC, ← hV'] at this
+
+/-- **Frustums**: three lateral lines through `O`, `X' = O + r_X (X - O)`. -/
+theorem isRupert_frustum_of_ratios {V : Finset ℝ³} (hS : Six V) {A A' B B' C C' O : ℝ³}
+    (hV : V = {A, A', B, B', C, C'}) (hnd : [A, A', B, B', C, C'].Nodup) {rA rB rC : ℝ}
+    (hrA : 0 < rA) (hrB : 0 < rB) (hrC : 0 < rC) (hrA1 : rA ≠ 1) (hrB1 : rB ≠ 1) (hrC1 : rC ≠ 1)
+    (hA' : A' = O + rA • (A - O)) (hB' : B' = O + rB • (B - O)) (hC' : C' = O + rC • (C - O)) :
+    IsRupert V := by
+  have hnd' := hnd
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+    List.nodup_nil, and_true] at hnd'
+  obtain ⟨⟨h12, h13, h14, h15, h16⟩, ⟨h23, h24, h25, h26⟩, ⟨h34, h35, h36⟩, ⟨h45, h46⟩, h56, -⟩ :=
+    hnd'
+  obtain ⟨FA, NA, α, hpA, hα, hα1, hNA⟩ := pair_frustum hrA hrA1 hA'
+  obtain ⟨FB, NB, β, hpB, hβ, hβ1, hNB⟩ := pair_frustum hrB hrB1 hB'
+  obtain ⟨FC, NC, γ, hpC, hγ, hγ1, hNC⟩ := pair_frustum hrC hrC1 hC'
+  have hV' : V = {FA, FB, FC, NA, NB, NC} := by rw [hV]; exact finset_of_pairs hpA hpB hpC
+  obtain ⟨hFA, -⟩ := pair_mem hpA
+  obtain ⟨hFB, -⟩ := pair_mem hpB
+  obtain ⟨hFC, -⟩ := pair_mem hpC
+  have hAB : FA ≠ FB := by
+    rcases hFA with h | h <;> rcases hFB with h' | h' <;> rw [h, h'] <;> assumption
+  have hAC : FA ≠ FC := by
+    rcases hFA with h | h <;> rcases hFC with h' | h' <;> rw [h, h'] <;> assumption
+  have hBC : FB ≠ FC := by
+    rcases hFB with h | h <;> rcases hFC with h' | h' <;> rw [h, h'] <;> assumption
+  have memV : ∀ x, (x = A ∨ x = A' ∨ x = B ∨ x = B' ∨ x = C ∨ x = C') → x ∈ V := by
+    intro x hx; rw [hV]; simpa using hx
+  have hN := hS.cross_ne_zero (memV FA (by tauto)) (memV FB (by tauto)) (memV FC (by tauto))
+    hAB hAC hBC
+  have hind : AffineIndependent ℝ ![FA, FB, FC, O] := by
+    apply affineIndependent_of_det3
+    intro hdet
+    set N := cross (FB - FA) (FC - FA) with hNdef
+    set k := ⟪N, FA⟫
+    obtain ⟨g2, g3⟩ := plane_three FA FB FC
+    rw [← hNdef] at g2 g3
+    have g1 : ⟪N, FA⟫ - k = 0 := sub_self _
+    have gO : ⟪N, O⟫ - k = 0 := by
+      have : det3 (FB - FA) (FC - FA) (O - FA) = ⟪N, O⟫ - k := by
+        simp only [det3, hNdef, inner_sub_right]; rfl
+      rw [← this, hdet]
+    have near : ∀ (F : ℝ³) (t : ℝ), ⟪N, F⟫ - k = 0 → ⟪N, O + t • (F - O)⟫ - k = 0 := by
+      intro F t hF
+      rw [inner_add_right, real_inner_smul_right, inner_sub_right]
+      linear_combination (1 - t) * gO + t * hF
+    refine hS.plane_contra hV' hN g1 g2 g3 ?_ ?_ ?_
+    · rw [hNA]; exact near FA α g1
+    · rw [hNB]; exact near FB β g2
+    · rw [hNC]; exact near FC γ g3
+  rw [hV', hNA, hNB, hNC]
+  exact isRupert_frustum FA FB FC O hind α β γ ⟨hα, hα1⟩ ⟨hβ, hβ1⟩ ⟨hγ, hγ1⟩
+
+/-- Parallel lateral edges from one Gale dependency. -/
+theorem parallel_rel {X X' Y Y' : ℝ³} {LX LY : ℝ}
+    (hv : LX • (X - X') + LY • (Y - Y') = 0) (hLY : LY ≠ 0) :
+    Y' = Y + (-(LX / LY)) • (X' - X) := by
+  have e : LY * (LX / LY) = LX := mul_div_cancel₀ LX hLY
+  have h0 : LY • (Y' - (Y + (-(LX / LY)) • (X' - X))) = 0 := by
+    linear_combination (norm := module) -hv + e • (X' - X)
+  rcases smul_eq_zero.mp h0 with h | h
+  · exact absurd h hLY
+  · exact sub_eq_zero.mp h
+
+theorem frustum_of_rel {O Y Y' : ℝ³} {y : ℝ} (h2 : (1 - y) • O = Y - y • Y') (hy : y ≠ 0) :
+    Y' = O + y⁻¹ • (Y - O) := by
+  calc Y' = y⁻¹ • (y • Y') := by rw [smul_smul, inv_mul_cancel₀ hy, one_smul]
+    _ = y⁻¹ • ((Y - O) + y • O) := by congr 1; linear_combination (norm := module) h2
+    _ = O + y⁻¹ • (Y - O) := by
+        rw [smul_add, smul_smul, inv_mul_cancel₀ hy, one_smul, add_comm]
+
+/-- Concurrent lateral lines from one Gale dependency. -/
+theorem frustum_rel {O X X' Y Y' : ℝ³} {x y LX LY : ℝ} (hO : (1 - x) • O = X - x • X')
+    (hs : LX * (1 - x) + LY * (1 - y) = 0) (hv : LX • (X - x • X') + LY • (Y - y • Y') = 0)
+    (hLY : LY ≠ 0) (hy : y ≠ 0) : Y' = O + y⁻¹ • (Y - O) := by
+  have h1 : (LY * (1 - y)) • O = LY • (Y - y • Y') := by
+    linear_combination (norm := module) hs • O - LX • hO - hv
+  have h2 : (1 - y) • O = Y - y • Y' := by
+    rw [← smul_smul] at h1
+    exact smul_right_injective _ hLY h1
+  exact frustum_of_rel h2 hy
+
+/-- **Proposition 10.2** for named O-pairs. -/
+theorem isRupert_prism_of_pairs {V : Finset ℝ³} (hS : Six V) {l m : ℝ³ → ℝ}
+    (hF : GaleFrame V l m) {A A' B B' C C' : ℝ³} (hV : V = {A, A', B, B', C, C'})
+    (hnd : [A, A', B, B', C, C'].Nodup) (hA : IsOPair l m A A') (hB : IsOPair l m B B')
+    (hC : IsOPair l m C C') : IsRupert V := by
+  have hnd' := hnd
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+    List.nodup_nil, and_true] at hnd'
+  obtain ⟨⟨h12, h13, h14, h15, h16⟩, ⟨h23, h24, h25, h26⟩, ⟨h34, h35, h36⟩, ⟨h45, h46⟩, h56, -⟩ :=
+    hnd'
+  have mA : A ∈ V := by rw [hV]; simp
+  have mA' : A' ∈ V := by rw [hV]; simp
+  have mB : B ∈ V := by rw [hV]; simp
+  have mB' : B' ∈ V := by rw [hV]; simp
+  have mC : C ∈ V := by rw [hV]; simp
+  have mC' : C' ∈ V := by rw [hV]; simp
+  obtain ⟨a, ha, laA, maA⟩ := hA.coeff hF mA
+  obtain ⟨b, hb, lbB, mbB⟩ := hB.coeff hF mB
+  obtain ⟨c, hc, lcC, mcC⟩ := hC.coeff hF mC
+  have gA' := galeD_pair laA maA
+  have gB' := galeD_pair lbB mbB
+  have gC' := galeD_pair lcC mcC
+  -- nonvanishing Gale determinants across pairs
+  have npar : ∀ {s s' t : ℝ³}, s ∈ V → s' ∈ V → t ∈ V → s ≠ s' → s ≠ t → s' ≠ t →
+      galeD l m s s' = 0 → galeD l m s t ≠ 0 :=
+    fun hs hs' ht h1 h2 h3 h0 h => hF.no_three_parallel hS hs hs' ht h1 h2 h3 h0 h
+  have LA : galeD l m C A ≠ 0 := npar mC mC' mA h56 (Ne.symm h15) (Ne.symm h16) hC.2.1
+  have LB : galeD l m C B ≠ 0 := npar mC mC' mB h56 (Ne.symm h35) (Ne.symm h36) hC.2.1
+  have KC : galeD l m A C ≠ 0 := npar mA mA' mC h12 h15 h25 hA.2.1
+  have JA : galeD l m B A ≠ 0 := npar mB mB' mA h34 (Ne.symm h13) (Ne.symm h14) hB.2.1
+  have JC : galeD l m B C ≠ 0 := npar mB mB' mC h34 h35 h45 hB.2.1
+  -- the relations of the dependencies `galeD C`, `galeD A`, `galeD B`
+  have dep := fun s => hF.hl.galeD hF.hm s
+  have sC := (dep C).1
+  have vC := (dep C).2
+  have sA := (dep A).1
+  have sB := (dep B).1
+  have vB := (dep B).2
+  rw [hV, sum_six hnd] at sC vC sA sB vB
+  rw [gA', gB', galeD_self, hC.2.1] at sC vC
+  rw [galeD_self, hA.2.1, gB', gC'] at sA
+  rw [gA', galeD_self, hB.2.1, gC'] at sB vB
+  set PA := galeD l m C A
+  set PB := galeD l m C B
+  set QB := galeD l m A B
+  set QC := galeD l m A C
+  set RA := galeD l m B A
+  set RC := galeD l m B C
+  have sC' : PA * (1 - a) + PB * (1 - b) = 0 := by linarith
+  have sA' : QB * (1 - b) + QC * (1 - c) = 0 := by linarith
+  have sB' : RA * (1 - a) + RC * (1 - c) = 0 := by linarith
+  have vC' : PA • (A - a • A') + PB • (B - b • B') = 0 := by
+    rw [← vC]; module
+  have vB' : RA • (A - a • A') + RC • (C - c • C') = 0 := by
+    rw [← vB]; module
+  by_cases ha1 : a = 1
+  · subst ha1
+    have hb1 : b = 1 := by
+      have : PB * (1 - b) = 0 := by linarith
+      rcases mul_eq_zero.mp this with h | h
+      · exact absurd h LB
+      · linarith
+    subst hb1
+    have hc1 : c = 1 := by
+      have : QC * (1 - c) = 0 := by linarith
+      rcases mul_eq_zero.mp this with h | h
+      · exact absurd h KC
+      · linarith
+    subst hc1
+    simp only [one_smul] at vC' vB'
+    refine isRupert_parallel_of_shifts hS hV hnd (w := A' - A)
+      (neg_ne_zero.mpr (div_ne_zero LA LB)) (neg_ne_zero.mpr (div_ne_zero JA JC))
+      (by abel) (parallel_rel vC' LB) (parallel_rel vB' JC)
+  · have ha1' : 1 - a ≠ 0 := sub_ne_zero.mpr (Ne.symm ha1)
+    have hb1 : 1 - b ≠ 0 := by
+      intro h; rw [h, mul_zero, add_zero] at sC'
+      rcases mul_eq_zero.mp sC' with h' | h'
+      · exact LA h'
+      · exact ha1' h'
+    have hc1 : 1 - c ≠ 0 := by
+      intro h; rw [h, mul_zero, add_zero] at sB'
+      rcases mul_eq_zero.mp sB' with h' | h'
+      · exact JA h'
+      · exact ha1' h'
+    set O := (1 - a)⁻¹ • (A - a • A') with hOdef
+    have hO : (1 - a) • O = A - a • A' := by
+      rw [hOdef, smul_smul, mul_inv_cancel₀ ha1', one_smul]
+    have hA'' : A' = O + a⁻¹ • (A - O) := frustum_of_rel hO ha.ne'
+    have hB'' : B' = O + b⁻¹ • (B - O) := frustum_rel hO sC' vC' LB hb.ne'
+    have hC'' : C' = O + c⁻¹ • (C - O) := frustum_rel hO sB' vB' JC hc.ne'
+    refine isRupert_frustum_of_ratios hS hV hnd (inv_pos.mpr ha) (inv_pos.mpr hb)
+      (inv_pos.mpr hc) ?_ ?_ ?_ hA'' hB'' hC''
+    · intro h; apply ha1; rw [← inv_inv a, h, inv_one]
+    · intro h; apply hb1; rw [← inv_inv b, h, inv_one, sub_self]
+    · intro h; apply hc1; rw [← inv_inv c, h, inv_one, sub_self]
+
 /-- **Proposition 10.2.** If every point has an O-partner, `V` is a prism and
 Rupert. -/
 theorem isRupert_of_all_partners {V : Finset ℝ³} (hS : Six V) {l m : ℝ³ → ℝ}
     (hF : GaleFrame V l m) (hall : ∀ i ∈ V, ∃ j ∈ V, IsOPair l m i j) : IsRupert V := by
-  sorry
+  obtain ⟨A, A', B, B', C, C', hV, hnd, hA, hB, hC⟩ := exists_three_pairs hS hF hall
+  exact isRupert_prism_of_pairs hS hF hV hnd hA hB hC
 
 end SmallRupert
 
