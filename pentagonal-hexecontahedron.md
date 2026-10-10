@@ -38,7 +38,7 @@ Lean entry point:
   are the three orbits above. `phPoles` is the same set as a `Finset`.
 - David McCooey's coordinates (cc-lib's `PentagonalHexecontahedron()`) are the
   mirror image of this set, up to similarity. This was checked numerically to
-  4·10⁻⁴⁰ by nopert229's `ph_crosscheck.py`, not by Lean. Since the statement
+  4·10⁻⁴⁰ by `search/ph/ph_crosscheck.py`, not by Lean. Since the statement
   includes reflections, McCooey's solid is covered.
 
 ## The statement
@@ -157,11 +157,27 @@ tables. A run takes about 23 min on 64 cores.
 
 ## Reproducing the data
 
-The search is not yet in this repository's `search/`. It is on the
-`pentagonalhexecontahedron` branch of nopert229 (04d115c), whose `README.md`
-describes it. `./rebuild.sh --from model --work DIR` runs the whole pipeline.
-A from-scratch run on 64 cores (125 GB, 2026-10-05, Mathlib already built)
-took 2 h 37 min, with a peak of 9.7 GB in one process:
+The search is in [`search/ph/`](search/ph/), copied from the
+`pentagonalhexecontahedron` branch of nopert229 (04d115c). Its `README.md`
+describes it. Build the tools and run the whole pipeline with:
+
+```sh
+./get-cc-lib.sh
+make -C search/ph -j 16
+search/ph/rebuild.sh --from model --work DIR    # default DIR: work-ph/
+```
+
+The stages are model, tube, tubepack, search, pack and verify. Each can be
+restarted (`--from STAGE`, `--only STAGE`), and `--dry_run` prints the
+commands. The model stage rewrites committed files: the model files in
+`search/ph/` and the generated Lean data in `proof/PentagonalHexecontahedron/`
+(`Vertices.lean`, `WedgeCoverData.lean`, `IcoGroupData.lean`,
+`PHStatementData.lean`). It must run once in a fresh checkout, because the
+later stages read its `codebdd.json`. The verify stage runs
+`constructPentagonalHexecontahedron` on the new packs.
+
+On nopert229, a from-scratch run on 64 cores (125 GB, 2026-10-05, Mathlib
+already built) took 2 h 37 min, with a peak of 9.7 GB in one process:
 
 | Stage | 64 cores |
 |---|---|
@@ -172,4 +188,5 @@ took 2 h 37 min, with a peak of 9.7 GB in one process:
 | pack | 43 min |
 | verify | 23 min (chart 0: 595,098 rows) |
 
-That run regenerated every committed data file byte for byte.
+That run regenerated every committed data file byte for byte. The pipeline
+has not yet been run end to end from `search/ph/`.
