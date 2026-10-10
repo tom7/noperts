@@ -14,6 +14,8 @@ page with its statement, trust model and reproduction steps:
 - [snub-dodecahedron.md](snub-dodecahedron.md): the snub dodecahedron, of
   either chirality, is a nopert (a Lean verification backed by certificate
   data);
+- [nopert231.md](nopert231.md): candidate #231, a 20-vertex nopert with
+  fivefold symmetry (a Lean verification backed by certificate data);
 - [minimality.md](minimality.md): every nopert has at least 7 vertices (a
   Lean proof).
 
@@ -21,7 +23,7 @@ page with its statement, trust model and reproduction steps:
 
 - `proof/`: one Lean 4 + Mathlib project (`lakefile.toml`). Libraries:
   - `Noperts` (the modules directly in `proof/` and its subdirectories other
-    than the five below): shared definitions and machinery. `IsRupert` is
+    than the six below): shared definitions and machinery. `IsRupert` is
     defined in `proof/MainTheorem.lean`. `Pipeline/` defines the certificate
     tables and their checks, used by data-backed results.
   - `Septopert`: entry point `proof/Septopert.lean`, details in
@@ -41,12 +43,15 @@ page with its statement, trust model and reproduction steps:
   - `SnubDodecahedron`: entry point `proof/SnubDodecahedron.lean`, details
     in `proof/SnubDodecahedron/` (likewise; from `Pipeline/` it uses only
     `IcoField` and `HalfTurnBasic`).
+  - `Nopert231`: entry point `proof/Nopert231.lean`, details in
+    `proof/Nopert231/` (its own pipeline, which uses the core's `Atlas/`).
   - Executables: `constructSeptopert` (checks the Septopert's certificate
     data), `checkSeptopertCap` (checks only its cap certificate),
     `constructDeltoidalHexecontahedron` (checks the deltoidal
     hexecontahedron's certificate data), `constructPentagonalHexecontahedron`
     (checks the pentagonal hexecontahedron's) and `constructSnubDodecahedron`
-    (checks the snub dodecahedron's).
+    (checks the snub dodecahedron's) and `constructNopert231` (checks
+    candidate #231's).
 
   License: Apache-2.0 (`proof/LICENSE`). Derived from the
   [Noperthedron](https://github.com/jcreedcmu/Noperthedron) formalization,
@@ -60,19 +65,22 @@ page with its statement, trust model and reproduction steps:
     from the corresponding branches of the author's search repository;
     they share much code with `search/` and with each other, which will be
     deduplicated later.
+  - `search/nopert231/`: the search for candidate #231, with its history
+    (see [nopert231.md](nopert231.md)).
   - Each writes its output to a `work*/` directory at the repository root
-    (`work/`, `work-dh/`, `work-ph/`, `work-sd/`), ignored by git.
+    (`work/`, `work-dh/`, `work-ph/`, `work-sd/`, `work-231/`), ignored by
+    git.
 
   License: GPLv3 (`search/COPYING`). Exception: the Python scripts that
   generate Lean data files (`search/dh/scripts/`, `search/ph/scripts/`,
-  `search/sd/lean_scripts/`) derive from the Apache-2.0 Noperthedron
+  `search/sd/lean_scripts/`, `search/nopert231/scripts/`) derive from the Apache-2.0 Noperthedron
   project and say so in a header ("THIS FILE ONLY: Uses APACHE 2.0
   license"); the license text is `search/APACHE20.txt`.
 - `cc-lib/`: not in the repository. `./get-cc-lib.sh` checks out svn
   revision 7488 of tom7misc's `trunk/cc-lib`; the build expects it next to
   `search/`. It is GPLv3, with some files under other compatible licenses
   noted in their headers.
-- `work/` (and `work-dh/`, `work-ph/`, `work-sd/`): created by the
+- `work/` (and `work-dh/`, `work-ph/`, `work-sd/`, `work-231/`): created by the
   rebuilds and ignored by git; they hold all generated data.
 
 `proof/` and `search/` are separate programs that only exchange data files.
@@ -83,7 +91,8 @@ page with its statement, trust model and reproduction steps:
 - elan (the toolchain is pinned in `proof/lean-toolchain`, v4.32.0)
 - for `search/`: clang, GMP, svn, python3 (python3 regenerates Lean data
   files: the Septopert's view cover in `proof/scripts/`, and the model
-  stages of `search/dh/`, `search/ph/` and `search/sd/`)
+  stages of `search/dh/`, `search/ph/`, `search/sd/` and
+  `search/nopert231/`)
 - `systemd-run --user`, which the Septopert's rebuild uses to cap each
   stage's memory
 
@@ -155,3 +164,12 @@ Earlier commits of that branch called it `Nopert231`
 `Pipeline/IcoField`, and the same eight root declarations as the pentagonal
 hexecontahedron's are in the `SnubDodecahedron` namespace here. The search
 that produced its data is on nopert229's `snubdodecahedron` branch.
+
+Candidate #231's Lean proof (`proof/Nopert231/`) comes, with its history,
+from the `nopert231` branch of Noperthedron (0c83e4ba), where it lived in
+`Noperthedron/Nopert231/` (namespace `Noperthedron.Nopert231`). That
+pipeline started as candidate #76 and was renamed to #229 and then #231 in
+place, so older commits call it `Nopert76` or `Nopert229`. Its search
+(`search/nopert231/`), also with its history, comes from nopert229's
+`nopert231` branch (e53dfda). This is a different `Nopert231` from the one
+in the snub dodecahedron's branch history above.
