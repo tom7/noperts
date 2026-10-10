@@ -1,6 +1,7 @@
 module
 
-public import SnubDodecahedron.IcoInstance
+public import Pipeline.IcoInstance
+public import SnubDodecahedron.SolidModel
 public import Mathlib.Topology.Order.IntermediateValue
 public import Mathlib.Topology.Algebra.Polynomial
 
@@ -399,10 +400,21 @@ theorem snubV0_mem : snubBox.Mem snubV0 := by
   · exact mul_le_mul_of_nonneg_left (by linarith [hA.1]) hq.le
   · exact mul_le_mul_of_nonneg_left (by linarith [hA.2]) hq.le
 
-theorem snubBox_close : closeCheck snubBox = true := by decide +kernel
+theorem snubBox_close : closeCheck (fun _ => snubBox) = true := by decide +kernel
+
+/-- The base point's stabilizer is trivial (`OrbitData`). -/
+theorem snubV0_fixed (o : IOrbitIndex) : ∀ h ∈ icoStab o.val,
+    (ico h).toEuclideanLin snubV0 = snubV0 := by
+  have hstab : ∀ o : IOrbitIndex, icoStab o.val = [0] := by decide
+  intro h hh
+  rw [hstab o, List.mem_singleton] at hh
+  subst hh
+  simp
 
 /-- The snub dodecahedron (scaled and rotated into the 5-fold frame) as an `IModel`. -/
-noncomputable def snubIModel : IModel := IModel.ofBox snubBox snubBox_close snubV0 snubV0_mem
+noncomputable def snubIModel : IModel :=
+  IModel.ofBoxes (fun _ => snubBox) snubBox_close (fun _ => snubV0) (fun _ => snubV0_mem)
+    snubV0_fixed
 
 theorem snubIModel_verts :
     snubIModel.toC5.verts =

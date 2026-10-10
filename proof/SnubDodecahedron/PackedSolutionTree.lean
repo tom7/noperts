@@ -1,7 +1,7 @@
 module
 
 public import SnubDodecahedron.AtlasProjectiveSolutionTree
-public import SnubDodecahedron.PackedLocalViewTree
+public import Pipeline.PackedLocalViewTree
 
 @[expose] public section
 

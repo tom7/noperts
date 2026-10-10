@@ -1,7 +1,8 @@
 module
 
 public import SnubDodecahedron.IsNotRupert
-public import SnubDodecahedron.SparseLocalViewTree
+public import Pipeline.SparseLocalViewTree
+public import SnubDodecahedron.SparseSupport
 
 @[expose] public section
 

@@ -9,8 +9,15 @@ public import Pipeline.AtlasProjectiveLocalViewTree
 
 The semantic tree and its final theorem remain unchanged. This module
 provides the decidable predicate checked for generated rows, and its
-parallel native checker. A certificate row's support conditions are checked
-against every vertex (`Box.ViewValid`; the identity tube has few rows).
+parallel native checker.
+
+A certificate row's support conditions are checked by the solid's
+`CertificateViewCheck`. By default (`CertificateViewCheck.allVertices`) that
+is `Box.ViewValid` itself: the support conditions against every vertex (the
+identity tube has few rows). A solid may supply a cheaper sufficient check
+instead, as a scoped instance: the snub dodecahedron checks each support
+vertex against its tangent-cone generators only
+(`SnubDodecahedron.SparseSupport`).
 -/
 
 namespace Noperts.Pipeline.SparseLocalViewTree
@@ -18,6 +25,27 @@ namespace Noperts.Pipeline.SparseLocalViewTree
 variable [SolidModel]
 
 open AtlasProjectiveLocalViewTree
+
+/-- How the native checker validates a certificate row's view conditions: a
+decidable predicate on boxes that implies `Box.ViewValid`. -/
+class CertificateViewCheck where
+  Valid : AtlasProjectiveLocalCertificate.Box → Prop
+  decValid : DecidablePred Valid
+  toViewValid : ∀ {box : AtlasProjectiveLocalCertificate.Box}, Valid box → box.ViewValid
+
+/-- The default: check `Box.ViewValid` itself (every vertex). Low priority, so
+that a solid's scoped instance takes precedence. -/
+@[reducible] instance (priority := low) CertificateViewCheck.allVertices :
+    CertificateViewCheck where
+  Valid box := box.ViewValid
+  decValid _ := inferInstance
+  toViewValid h := h
+
+@[reducible] instance (box : AtlasProjectiveLocalCertificate.Box) [c : CertificateViewCheck] :
+    Decidable (CertificateViewCheck.Valid box) :=
+  c.decValid box
+
+variable [CertificateViewCheck]
 
 def SparseRowValidAt (symmetryIndex : OrbitIndex) (r : ℚ)
     (get : ℕ → Row) (size : ℕ) : Row → Prop
@@ -28,7 +56,7 @@ def SparseRowValidAt (symmetryIndex : OrbitIndex) (r : ℚ)
         Noperts.Atlas.ProjectiveView.split triangle child ∧
       rLower ≤ (get (children child)).rLower
   | .certificate _ box =>
-      box.symmetryIndex = symmetryIndex ∧ r ≤ box.r ∧ box.ViewValid
+      box.symmetryIndex = symmetryIndex ∧ r ≤ box.r ∧ CertificateViewCheck.Valid box
   | .decomposed _ box coreAxis defect0 D0 r_min c_cone c_core lam w =>
       box.symmetryIndex = symmetryIndex ∧ r ≤ box.r ∧
       box.DecomposedViewValid coreAxis defect0 D0 r_min c_cone c_core lam w
@@ -95,7 +123,7 @@ theorem Row.ValidAt.of_sparse {symmetryIndex : OrbitIndex} {r : ℚ}
   cases row with
   | split => exact h
   | certificate id box =>
-      exact h
+      exact ⟨h.1, h.2.1, CertificateViewCheck.toViewValid h.2.2⟩
   | decomposed => exact h
   | flockDecomposed => exact h
   | empty => exact h
@@ -129,7 +157,7 @@ computation, so the proof below reduces the parallel implementation to the
 same sparse row predicate used above.
 -/
 
-omit [SolidModel] in
+omit [SolidModel] [CertificateViewCheck] in
 private theorem foldlAndFactor {n : ℕ} (p : Fin n → Bool) (init : Bool) :
     Fin.foldl n (fun acc i => acc && p i) init =
       (init && Fin.foldl n (fun acc i => acc && p i) true) := by
@@ -141,7 +169,7 @@ private theorem foldlAndFactor {n : ℕ} (p : Fin n → Bool) (init : Bool) :
       ih (fun i => p i.succ) (true && p 0)]
     simp [Bool.and_assoc]
 
-omit [SolidModel] in
+omit [SolidModel] [CertificateViewCheck] in
 private theorem foldlAndEqTrueIff {n : ℕ} (p : Fin n → Bool) :
     Fin.foldl n (fun acc i => acc && p i) true = true ↔
       ∀ i, p i = true := by
@@ -152,7 +180,7 @@ private theorem foldlAndEqTrueIff {n : ℕ} (p : Fin n → Bool) :
     simp only [Bool.true_and, Bool.and_eq_true]
     rw [ih (fun i => p i.succ), Fin.forall_fin_succ]
 
-omit [SolidModel] in
+omit [SolidModel] [CertificateViewCheck] in
 private theorem taskGetSpawn {α : Type} (fn : Unit → α)
     (priority : Task.Priority) :
     (Task.spawn fn priority).get = fn () := rfl

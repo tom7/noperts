@@ -1,6 +1,8 @@
 module
 
-public import SnubDodecahedron.AtlasProjectiveLocalCertificate
+public import Pipeline.SparseLocalViewTree
+public import SnubDodecahedron.SolidModel
+public import SnubDodecahedron.GeneratedTangentCones
 public import SnubDodecahedron.TangentCones
 
 @[expose] public section
@@ -16,7 +18,7 @@ support check from all sixty vertices to seven (with padding entries equal
 to the selected vertex).
 -/
 
-open Noperts
+open Noperts Noperts.Pipeline
 
 namespace SnubDodecahedron.SparseSupport
 
@@ -51,15 +53,18 @@ theorem supportAt_eq_sum
         box.supportAt j corner i
           (supportGenerator ((box.certificate j).supportIndex box i)
             (combination.generator l)) := by
-  have hdelta := hcombination.2.2.2
+  have hdelta : Noperts.Pipeline.rationalVertex target -
+      Noperts.Pipeline.rationalVertex ((box.certificate j).supportIndex box i) = _ :=
+    hcombination.2.2.2
   unfold Box.supportAt AxisCertificate.deltaQ
   rw [hdelta]
   rw [crossQ_sum3, dotQ_sum3]
+  rfl
 
 /-- Fast decision of one contact's tangent-generator support checks in
 compiled code (the contact's edge is evaluated once; see
 `Box.supportListOK`). -/
-instance (priority := high) (box : Box) (j : Fin 4) (i : Fin 3) :
+@[reducible] instance (priority := high) (box : Box) (j : Fin 4) (i : Fin 3) :
     Decidable (∀ generator : Fin 7, box.supportUpper j i
       (supportGenerator ((box.certificate j).supportIndex box i) generator) ≤ 0) :=
   decidable_of_iff (box.supportListOK j i ((List.finRange 7).map
@@ -96,7 +101,7 @@ structure Box.SparseViewValid (box : Box) : Prop where
   barycentric : box.barycentricValid
   angle_bound : box.r ^ 2 * (1 + box.c ^ 2) ≤ 4 * box.c ^ 2
 
-instance (box : Box) : Decidable (Box.SparseViewValid box) :=
+@[reducible] instance (box : Box) : Decidable (Box.SparseViewValid box) :=
   decidable_of_iff _ (Box.sparseViewValid_iff box).symm
 
 theorem Box.SparseViewValid.support_all {box : Box}
@@ -156,7 +161,7 @@ theorem Box.SparseViewValid.support_all {box : Box}
             ring
           _ ≤ -supportError := by
             have herror : 0 < supportError := by
-              norm_num [supportError, tightVertexErrorQ]
+              decide +kernel
             nlinarith [hselected.2.1]
       simp [Box.supportUpper, Box.exactSupportTie, htie', hzero,
         hthousand]
@@ -187,5 +192,23 @@ theorem Box.SparseViewValid.toViewValid {box : Box}
   angle_bound := h.angle_bound
 
 end SnubDodecahedron.SparseSupport
+
+namespace SnubDodecahedron
+
+open Noperts.Pipeline SparseSupport
+
+/-- The snub dodecahedron's native checker validates certificate rows by
+`Box.SparseViewValid` (tangent-cone generators; sound by the kernel-checked
+tangent-cone table `GeneratedTangentCones.table_valid_kernel`) instead of the
+default check against every vertex. A scoped instance, in effect inside
+`namespace SnubDodecahedron`. -/
+@[reducible] scoped instance certificateViewCheck :
+    SparseLocalViewTree.CertificateViewCheck where
+  Valid := Box.SparseViewValid
+  decValid _ := inferInstance
+  toViewValid h := h.toViewValid GeneratedTangentCones.table
+    GeneratedTangentCones.table_valid_kernel
+
+end SnubDodecahedron
 
 end
