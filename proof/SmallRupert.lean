@@ -80,13 +80,24 @@ contain non-extreme points).  Every theorem below depends only on `propext`,
 * `isRupert_of_tilted_unimodal_σ` — Cor. 8.0′ for either orientation (eventual `Q`,
   covering the lexicographic tie-breaks of Cor. 9.0).
 
+**Every polyhedron with at most six vertices (L10)**
+* `isRupert_of_card_le_six` — Theorem 10.0: `V.card ≤ 6` and a solid hull give `IsRupert V`.
+* `exists_split_of_no_partner` — Lemma 10.1: a point without an O-partner gives a 2+4 Radon split.
+* `isRupert_of_all_partners` — Prop. 10.2: three O-pairs make a prism (frustum, parallel, translation).
+* `isRupert_split_coplanar` — Lemma 10.3: a split with coplanar `W` is a segment crossing.
+* `NF.isRupert` — Theorem 10.4: the case table (T3–T7) of a split in normal form.
+* `isFacetTriangle_of_gale`, `isFacet_quad_of_gale`, `affineIndependent_of_gale` — facets
+  and independent tetrahedra from signs of Gale determinants (L10.1 (e)).
+
 **Non-vacuity** (`Witnesses.lean`): explicit rational instances of every
 hypothesis structure (`IsBicappedTetrahedron`, `IsCappedSquarePyramid` generic
 and with `S₁S₄ ∥ S₂S₃`, `IsT4`, `IsT3` generic and with `BB' ∥ CC'`,
 `IsOctahedron` with Condition A), each fed to its headline theorem (the
 octahedron also to `isRupert_octahedron`).
 
-Not formalized: the 6-vertex classification itself (that every convex polyhedron
-with 6 vertices is one of T1–T7 with the stated face structure), the L3/L2(d)
-obstruction directions, and the conjectures of LEMMAS.md.
+The classification step is classification-free in the sense of L10: no face
+lattices or combinatorial types are computed; the facet structures required by
+the per-type theorems are read off from signs of two affine dependencies.
+Not formalized: the L3/L2(d) obstruction directions, and the conjectures of
+LEMMAS.md.
 -/

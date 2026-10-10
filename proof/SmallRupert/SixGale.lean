@@ -47,7 +47,7 @@ theorem sum_six {M : Type*} [AddCommMonoid M] {a b c d e f : ℝ³}
     (hnd : [a, b, c, d, e, f].Nodup) (g : ℝ³ → M) :
     ∑ t ∈ ({a, b, c, d, e, f} : Finset ℝ³), g t = g a + g b + g c + g d + g e + g f := by
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true, List.mem_singleton] at hnd
+    List.nodup_nil, and_true] at hnd
   obtain ⟨⟨hab, hac, had, hae, haf⟩, ⟨hbc, hbd, hbe, hbf⟩, ⟨hcd, hce, hcf⟩, ⟨hde, hdf⟩, hef, -⟩ := hnd
   rw [Finset.sum_insert (by simp [hab, hac, had, hae, haf]),
     Finset.sum_insert (by simp [hbc, hbd, hbe, hbf]), Finset.sum_insert (by simp [hcd, hce, hcf]),
@@ -268,7 +268,7 @@ theorem exists_six_of_card {V : Finset ℝ³} (h : V.card = 6) :
   refine ⟨a, b, c, d, e, f, ?_, rfl⟩
   simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at ha hb hc
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true, List.mem_singleton]
+    List.nodup_nil, and_true]
   tauto
 
 /-- An affine functional constant on three of four frame points, with zero
@@ -292,7 +292,7 @@ theorem galeFrame_of_det4 {V : Finset ℝ³} (hS : Six V) {A B C T D₀ E₀ : �
   classical
   have hnd' := hnd
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true, List.mem_singleton] at hnd'
+    List.nodup_nil, and_true] at hnd'
   obtain ⟨⟨hAB, hAC, hAT, hAD, hAE⟩, ⟨hBC, hBT, hBD, hBE⟩, ⟨hCT, hCD, hCE⟩, ⟨hTD, hTE⟩, hDE, -⟩ :=
     hnd'
   have hind : AffineIndependent ℝ ![A, B, C, T] := affineIndependent_of_det3 hdet
@@ -397,7 +397,7 @@ theorem Six.exists_galeFrame {V : Finset ℝ³} (hS : Six V) : ∃ l m, GaleFram
   obtain ⟨a, b, c, d, e, f, hnd, hV⟩ := exists_six_of_card hS.card
   have hnd' := hnd
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true, List.mem_singleton] at hnd'
+    List.nodup_nil, and_true] at hnd'
   obtain ⟨⟨hab, hac, had, hae, haf⟩, ⟨hbc, hbd, hbe, hbf⟩, ⟨hcd, hce, hcf⟩, ⟨hde, hdf⟩, hef, -⟩ :=
     hnd'
   have hN := hS.cross_ne_zero (P := a) (Q := b) (R := c) (by rw [hV]; simp) (by rw [hV]; simp)
@@ -408,13 +408,13 @@ theorem Six.exists_galeFrame {V : Finset ℝ³} (hS : Six V) : ∃ l m, GaleFram
   · refine galeFrame_of_det4 hS (A := a) (B := b) (C := c) (T := e) (D₀ := d) (E₀ := f)
       (by rw [hV]; ext x; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto) ?_ h5
     simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-      List.nodup_nil, and_true, List.mem_singleton]
+      List.nodup_nil, and_true]
     tauto
   by_cases h6 : det4 a b c f ≠ 0
   · refine galeFrame_of_det4 hS (A := a) (B := b) (C := c) (T := f) (D₀ := d) (E₀ := e)
       (by rw [hV]; ext x; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto) ?_ h6
     simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-      List.nodup_nil, and_true, List.mem_singleton]
+      List.nodup_nil, and_true]
     tauto
   push Not at h4 h5 h6
   exfalso

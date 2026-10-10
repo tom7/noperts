@@ -99,8 +99,8 @@ macro "nodup6" : tactic => `(tactic| (simp only [List.nodup_cons, List.mem_cons,
 
 /-- The order lemma for classes `I` and `III` (uses `(H)`). -/
 theorem g_I_III {l m : ℝ³ → ℝ} {a b : ℝ} (ha : 0 < a) (hb : 0 < b) {x z : ℝ³}
-    (hx : 0 < a * l x + b * m x) (hz : 0 < a * l z + b * m z) (hxl : 0 < l x) (hxm : m x < 0)
-    (hzl : l z < 0) (hzm : 0 < m z) : galeD l m z x < 0 := by
+    (hx : 0 < a * l x + b * m x) (hz : 0 < a * l z + b * m z) (_hxl : 0 < l x) (hxm : m x < 0)
+    (hzl : l z < 0) (_hzm : 0 < m z) : galeD l m z x < 0 := by
   have e1 : -(b * m x) < a * l x := by linarith
   have e2 : -(a * l z) < b * m z := by linarith
   have p1 : 0 < -(b * m x) := by nlinarith
@@ -574,7 +574,7 @@ theorem NF.isRupert {V : Finset ℝ³} {D E P Q R S : ℝ³} {l m : ℝ³ → �
 theorem sum_four {M : Type*} [AddCommMonoid M] {a b c d : ℝ³} (hnd : [a, b, c, d].Nodup)
     (g : ℝ³ → M) : ∑ t ∈ ({a, b, c, d} : Finset ℝ³), g t = g a + g b + g c + g d := by
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true, List.mem_singleton] at hnd
+    List.nodup_nil, and_true] at hnd
   obtain ⟨⟨hab, hac, had⟩, ⟨hbc, hbd⟩, hcd, -⟩ := hnd
   rw [Finset.sum_insert (by simp [hab, hac, had]), Finset.sum_insert (by simp [hbc, hbd]),
     Finset.sum_pair hcd]
@@ -589,7 +589,7 @@ theorem exists_four_of_card {W : Finset ℝ³} (h : W.card = 4) :
   refine ⟨a, b, c, d, ?_, rfl⟩
   simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at ha
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true, List.mem_singleton, not_false_eq_true]
+    List.nodup_nil, and_true, not_false_eq_true]
   tauto
 
 /-- **Lemma 10.3.**  A split with coplanar `W`: the segment `DE` crosses
