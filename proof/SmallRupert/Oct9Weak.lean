@@ -698,6 +698,75 @@ theorem isRupert_weak_cycle5b {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' 
     · exact absurd h h2
     · exact absurd h h4
 
+/-- `quad_edge_lower` with an orientation factor `σ`. -/
+theorem quad_edge_lower_σ {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p') {σ : ℝ}
+    (hS₁ : 0 < σ * det3 (y' - p) (p' - p) (y - x)) (hS₂ : 0 < σ * det3 (y' - x) (p' - x) (y - x))
+    (hS₃ : 0 < σ * det3 (p - x) (p' - x) (y - x)) (hS₄ : 0 < σ * det3 (p - x) (y' - x) (y - x)) :
+    σ * (det3 (y' - p) (p' - p) (y - x) * ⟪x, y - x⟫ +
+      det3 (p - x) (p' - x) (y - x) * ⟪y', y - x⟫) <
+    σ * (det3 (y' - x) (p' - x) (y - x) * ⟪p, y - x⟫ +
+      det3 (p - x) (y' - x) (y - x) * ⟪p', y - x⟫) := by
+  have hnd := F.nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨hxx', hxy, hxy', hxp, hxp'⟩, ⟨hx'y, hx'y', hx'p, hx'p'⟩, ⟨hyy', hyp, hyp'⟩,
+    ⟨hy'p, hy'p'⟩, hpp', -⟩ := hnd
+  set u := y - x
+  have hu : u ≠ 0 := sub_ne_zero.mpr (Ne.symm hxy)
+  set S₁ := det3 (y' - p) (p' - p) u
+  set S₂ := det3 (y' - x) (p' - x) u
+  set S₃ := det3 (p - x) (p' - x) u
+  set S₄ := det3 (p - x) (y' - x) u
+  have hpar := four_point_parallel x p y' p' u hu
+  have hsum := four_point_sum x p y' p' u
+  set L := S₁ • x - S₂ • p + S₃ • y' - S₄ • p'
+  set lam := ⟪L, u⟫ / ⟪u, u⟫
+  have hL : L = -S₂ • (p - x) + S₃ • (y' - x) - S₄ • (p' - x) := by
+    have : S₁ = S₂ - S₃ + S₄ := by linarith
+    simp only [L, this]; module
+  have hGL : ⟪F.ab'c.N, L⟫ = -S₄ * F.ab'c.f p' := by
+    rw [hL, inner_sub_right, inner_add_right, real_inner_smul_right, real_inner_smul_right,
+      real_inner_smul_right, ← F.ab'c.hN, ← F.ab'c.hN, ← F.ab'c.hN, F.ab'c.hP, F.ab'c.hQ,
+      F.ab'c.hR]
+    ring
+  have hGp' := F.ab'c.neg p' (by simp) (Ne.symm hxp') (Ne.symm hy'p') (Ne.symm hpp')
+  have hGy := F.ab'c.neg y (by simp) (Ne.symm hxy) hyy' hyp
+  have hGu : ⟪F.ab'c.N, u⟫ = F.ab'c.f y := by rw [← F.ab'c.hN, F.ab'c.hP, sub_zero]
+  have e : ⟪F.ab'c.N, L⟫ = lam * F.ab'c.f y := by
+    rw [← hGu, ← real_inner_smul_right, ← hpar]
+  rw [hGL] at e
+  have hlam : σ * lam < 0 := by
+    have h1 : 0 < (σ * S₄) * (-F.ab'c.f p') := mul_pos hS₄ (by linarith)
+    have h2 : (σ * lam) * F.ab'c.f y = (σ * S₄) * (-F.ab'c.f p') := by
+      rw [mul_assoc, ← e]; ring
+    nlinarith
+  have huu : 0 < ⟪u, u⟫ := real_inner_self_pos.mpr hu
+  have hLu : σ * ⟪L, u⟫ < 0 := by
+    have : ⟪L, u⟫ = lam * ⟪u, u⟫ := by
+      conv_lhs => rw [hpar]
+      rw [real_inner_smul_left]
+    rw [this, ← mul_assoc]; nlinarith
+  simp only [L, inner_sub_left, inner_add_left, real_inner_smul_left] at hLu
+  nlinarith
+
+/-- An open condition on the limit depths holds at all small tilts. -/
+theorem eventually_of_isOpen {k : ℕ} {Q : (ZMod k → ℝ) → Prop} (hQo : IsOpen {z | Q z})
+    (x : ZMod k → ℝ³) (u v : ℝ³) (h0 : Q fun i => ⟪x i, u⟫) :
+    ∀ᶠ ε in 𝓝[>] (0 : ℝ), Q fun i => ⟪x i, u + ε • v⟫ := by
+  have hc : Continuous fun ε : ℝ => fun i => ⟪x i, u + ε • v⟫ := by fun_prop
+  have : ∀ᶠ ε in 𝓝 (0 : ℝ), Q fun i => ⟪x i, u + ε • v⟫ :=
+    hc.continuousAt.eventually (hQo.mem_nhds (by simpa using h0))
+  exact this.filter_mono nhdsWithin_le_nhds
+
+/-- A strict comparison of tilted depths, with a lexicographic tie-break. -/
+theorem eventually_depth_lt {a b v u : ℝ³}
+    (h : ⟪a, u⟫ < ⟪b, u⟫ ∨ (⟪a, u⟫ = ⟪b, u⟫ ∧ ⟪a, v⟫ < ⟪b, v⟫)) :
+    ∀ᶠ ε in 𝓝[>] (0 : ℝ), ⟪a, u + ε • v⟫ < ⟪b, u + ε • v⟫ := by
+  have := eventually_pos_affine (A := ⟪b, u⟫ - ⟪a, u⟫) (B := ⟪b, v⟫ - ⟪a, v⟫)
+    (by rcases h with h | ⟨h1, h2⟩; exacts [Or.inl (by linarith), Or.inr ⟨by linarith, by linarith⟩])
+  filter_upwards [this] with ε hε
+  simp only [inner_add_right, real_inner_smul_right]; linarith
+
 end SmallRupert
 
 end
