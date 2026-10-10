@@ -93,3 +93,6 @@ capleaf_check.exe : capleaf_check.o $(OBJECTS_CORE) $(OBJECTS)
 capcert_septopert.exe : capcert_septopert.o $(OBJECTS_CORE) $(OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"
+
+clean :
+	rm -f *.exe *.o $(OBJECTS)
