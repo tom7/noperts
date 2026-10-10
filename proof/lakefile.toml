@@ -55,7 +55,7 @@ globs = [
 
 [[lean_lib]]
 name = "Septopert"
-globs = ["Septopert.+"]
+globs = ["Septopert", "Septopert.+"]
 
 [[lean_lib]]
 name = "Minimality"
