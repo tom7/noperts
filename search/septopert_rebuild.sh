@@ -2,8 +2,8 @@
 # Rebuilds the proof that the Septopert (the 7-vertex C3v solid) is a Nopert,
 # end to end (working notes, M5):
 #
-#   model    the exact model (c3v_model.py -> septopert_model.txt, with the two
-#            view triangles T1/T2) and codebdd (model_vertices.*, codebdd.json)
+#   model    codebdd on the committed exact model septopert_model.txt (with the
+#            two view triangles T1/T2): model_vertices.*, codebdd.json
 #   tube     identity tube per code (tubecode --min_r 1/100000, the cap at the
 #            mirror normal n = (1,0,-1)/sqrt2 left to the cap certificate),
 #            then tuberefine on the codes away from the cap (codes 7, 9, 11-13
@@ -106,9 +106,6 @@ run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe expo
 
 if want model; then
   stage_begin model
-  # The candidate's coordinates.
-  XYZ=$NOPERT/septopert.xyz
-  if [ $DRY -eq 0 ]; then (cd "$NOPERT" && python3 c3v_model.py "$XYZ" > septopert_model.txt); fi
   (cd "$NOPERT" && run ./codebdd.exe --model_file=septopert_model.txt codebdd.json)
   run make -C "$NOPERT" -j "$THREADS" tubecode.exe tuberefine.exe export_codetrees_pack.exe search5d.exe pack5d.exe
   stage_end model

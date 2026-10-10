@@ -344,7 +344,7 @@ static BigRat TightVertexDistanceSq(const std::vector<BigVecQ3> &verts) {
   return worst;
 }
 
-// Models with a C3v symmetry about (1,1,1) (no C5 seeds; c3v_model.py): the
+// Models with a C3v symmetry about (1,1,1) (no C5 seeds): the
 // rotations are the cyclic coordinate permutations, the mirrors the
 // transpositions, so the rational vertex set must be exactly invariant
 // under every coordinate permutation. Returns, for each permutation in the
