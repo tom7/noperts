@@ -127,36 +127,36 @@ theorem zmod5_table (i : ZMod 5) :
   revert i; decide
 
 /-- The 5-cycle `(x, p, y', x', p')` of Lemma 9.11 (`b < c`, `e < d`, `a < max(b, e)`). -/
-def Q5a (z : ZMod 5 → ℝ) : Prop := z 1 < z 2 ∧ z 4 < z 3 ∧ (z 0 < z 1 ∨ z 0 < z 4)
+def WQ5a (z : ZMod 5 → ℝ) : Prop := z 1 < z 2 ∧ z 4 < z 3 ∧ (z 0 < z 1 ∨ z 0 < z 4)
 
 /-- The 5-cycle `(x, y, p, y', p')` of Lemma 9.11 (the tie with `ω < t₂`). -/
-def Q5b (z : ZMod 5 → ℝ) : Prop := z 0 < z 1 ∧ z 2 < z 1 ∧ z 3 < z 2 ∧ z 4 < z 3
+def WQ5b (z : ZMod 5 → ℝ) : Prop := z 0 < z 1 ∧ z 2 < z 1 ∧ z 3 < z 2 ∧ z 4 < z 3
 
-theorem isOpen_Q5a : IsOpen {z : ZMod 5 → ℝ | Q5a z} := by
+theorem isOpen_WQ5a : IsOpen {z : ZMod 5 → ℝ | WQ5a z} := by
   have hlt : ∀ i j : ZMod 5, IsOpen {z : ZMod 5 → ℝ | z i < z j} := fun i j =>
     isOpen_lt (continuous_apply i) (continuous_apply j)
-  simp only [Q5a, Set.setOf_and, Set.setOf_or]
+  simp only [WQ5a, Set.setOf_and, Set.setOf_or]
   exact (hlt 1 2).inter ((hlt 4 3).inter ((hlt 0 1).union (hlt 0 4)))
 
-theorem isOpen_Q5b : IsOpen {z : ZMod 5 → ℝ | Q5b z} := by
+theorem isOpen_WQ5b : IsOpen {z : ZMod 5 → ℝ | WQ5b z} := by
   have hlt : ∀ i j : ZMod 5, IsOpen {z : ZMod 5 → ℝ | z i < z j} := fun i j =>
     isOpen_lt (continuous_apply i) (continuous_apply j)
-  simp only [Q5b, Set.setOf_and]
+  simp only [WQ5b, Set.setOf_and]
   exact (hlt 0 1).inter ((hlt 2 1).inter ((hlt 3 2).inter (hlt 4 3)))
 
-theorem Q5a.mul {z : ZMod 5 → ℝ} (h : Q5a z) {c : ℝ} (hc : 0 < c) : Q5a fun i => c * z i := by
+theorem WQ5a.mul {z : ZMod 5 → ℝ} (h : WQ5a z) {c : ℝ} (hc : 0 < c) : WQ5a fun i => c * z i := by
   obtain ⟨h1, h2, h3⟩ := h
   refine ⟨by simp only; nlinarith, by simp only; nlinarith, ?_⟩
   rcases h3 with h3 | h3
   · exact Or.inl (by simp only; nlinarith)
   · exact Or.inr (by simp only; nlinarith)
 
-theorem Q5b.mul {z : ZMod 5 → ℝ} (h : Q5b z) {c : ℝ} (hc : 0 < c) : Q5b fun i => c * z i := by
+theorem WQ5b.mul {z : ZMod 5 → ℝ} (h : WQ5b z) {c : ℝ} (hc : 0 < c) : WQ5b fun i => c * z i := by
   obtain ⟨h1, h2, h3, h4⟩ := h
   exact ⟨by simp only; nlinarith, by simp only; nlinarith, by simp only; nlinarith,
     by simp only; nlinarith⟩
 
-theorem Q5a.unimodal {z : ZMod 5 → ℝ} (hinj : Function.Injective z) (h : Q5a z) :
+theorem WQ5a.unimodal {z : ZMod 5 → ℝ} (hinj : Function.Injective z) (h : WQ5a z) :
     IsCyclicUnimodal z := by
   obtain ⟨h1, h2, h3⟩ := h
   have h23 : z 2 ≠ z 3 := hinj.ne (by decide)
@@ -180,7 +180,7 @@ theorem Q5a.unimodal {z : ZMod 5 → ℝ} (hinj : Function.Injective z) (h : Q5a
     · linarith [hc.1]
     · linarith [hc.1]
 
-theorem Q5b.unimodal {z : ZMod 5 → ℝ} (hinj : Function.Injective z) (h : Q5b z) :
+theorem WQ5b.unimodal {z : ZMod 5 → ℝ} (hinj : Function.Injective z) (h : WQ5b z) :
     IsCyclicUnimodal z := by
   obtain ⟨h1, h2, h3, h4⟩ := h
   refine isCyclicUnimodal_of_unique hinj 1 ⟨by rw [show (1 - 1 : ZMod 5) = 0 from by decide]; exact h1, by rw [show (1 + 1 : ZMod 5) = 2 from by decide]; exact h2⟩ ?_
@@ -523,6 +523,95 @@ theorem isRupert_weak_cycle4 {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p
     · exact absurd h h2
     · exact absurd h h1
     · exact absurd h h3
+
+theorem weak_zmod5_pairs : ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
+    (i = 0 ∧ (j = 2 ∨ j = 3 ∨ j = 4)) ∨ (i = 1 ∧ (j = 3 ∨ j = 4 ∨ j = 0)) ∨
+    (i = 2 ∧ (j = 4 ∨ j = 0 ∨ j = 1)) ∨ (i = 3 ∧ (j = 0 ∨ j = 1 ∨ j = 2)) ∨
+    (i = 4 ∧ (j = 1 ∨ j = 2 ∨ j = 3)) := by decide
+
+theorem det3_self_left' (a b : ℝ³) : det3 a a b = 0 := by
+  simp only [det3_expand]; ring
+
+/-- **Lemma 9.11, the 5-cycle `(x, p, y', x', p')`** (closing by `x`, upper chain
+on the top face). -/
+theorem isRupert_weak_cycle5a {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
+    (hq₁ : F.a'b'c.f x < F.a'b'c.f y) (hT : F.a'b'c'.f x = F.a'b'c'.f y) {σ : ℝ}
+    (hσ : σ = 1 ∨ σ = -1) (hor : 0 < σ * det3 (p - y) (p' - y) (y - x)) (v : ℝ³)
+    (t1 : 0 < σ * det3 (p - x) (y - x) v) (t2 : 0 < σ * det3 (x - p') (y - p') v)
+    (t3 : 0 < σ * det3 (x' - y') (p' - y') v)
+    (hQ : ∀ᶠ ε in 𝓝[>] (0 : ℝ), WQ5a fun i => ⟪quint x p y' x' p' i, (y - x) + ε • v⟫) :
+    IsRupert {x, x', y, y', p, p'} := by
+  classical
+  obtain ⟨E1, E2, E3, E4⟩ := weak_edge_tests F hq₁ hT hor
+  have hnd := F.nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨hxx', hxy, hxy', hxp, hxp'⟩, ⟨hx'y, hx'y', hx'p, hx'p'⟩, ⟨hyy', hyp, hyp'⟩,
+    ⟨hy'p, hy'p'⟩, hpp', -⟩ := hnd
+  set V : Finset ℝ³ := {x, x', y, y', p, p'} with hV
+  have mx : x ∈ V := by simp [V]
+  have mx' : x' ∈ V := by simp [V]
+  have my : y ∈ V := by simp [V]
+  have my' : y' ∈ V := by simp [V]
+  have mp : p ∈ V := by simp [V]
+  have mp' : p' ∈ V := by simp [V]
+  have hmemV : ∀ z ∈ V, z = x ∨ z = x' ∨ z = y ∨ z = y' ∨ z = p ∨ z = p' := by
+    intro z hz; simpa [V] using hz
+  have hu : y - x ≠ 0 := sub_ne_zero.mpr (Ne.symm hxy)
+  have z3 : det3 (x' - y') (p' - y') (y - x) = 0 := by
+    rw [← neg_eq_zero, ← det3_swap12]
+    exact weak_top_perp F hT (weak_top_N F).1 (weak_top_N F).2
+  have cyc' : ∀ w : ℝ³, det3 (p' - x') (y' - x') w = det3 (x' - y') (p' - y') w :=
+    fun w => det3_cyc y' x' p' w
+  have TSx := weak_top_signs F hq₁ hT (E3 x mx hxy' hxp' hxx')
+  have TSp := weak_top_signs F hq₁ hT (E3 p mp (Ne.symm hy'p) hpp' (Ne.symm hx'p))
+  have TSy := weak_top_signs F hq₁ hT (E3 y my hyy' hyp' (Ne.symm hx'y))
+  have S1 : ∀ w ∈ V, w ≠ y → w ≠ p → w ≠ x → 0 < σ * det3 (p - x) (w - x) (y - x) :=
+    fun w hw h1 h2 h3 => by rw [det3_shift_xy]; exact E1 w hw h1 h2 h3
+  have S4 : ∀ w ∈ V, w ≠ p' → w ≠ y → w ≠ x → 0 < σ * det3 (x - p') (w - p') (y - x) :=
+    fun w hw h1 h2 h3 => by rw [det3_shift_p']; exact E4 w hw h1 h2 h3
+  obtain ⟨a0, a1, a2, a3, a4⟩ := zmod5_add_one
+  refine isRupert_of_tilted_unimodal_σ V (y - x) v hu (by norm_num) (quint x p y' x' p') ?_ σ
+    hσ ?_ ?_ WQ5a isOpen_WQ5a (fun z c hc hz => hz.mul hc) hQ
+    (fun z hz hQ => hQ.unimodal hz)
+  · intro i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
+      simp [V, quint_0, quint_1, quint_2, quint_3, quint_4]
+  · intro i j hi hj
+    rcases weak_zmod5_pairs i j hi hj with ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ |
+      ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ <;>
+    simp only [a0, a1, a2, a3, a4, quint_0, quint_1, quint_2, quint_3, quint_4]
+    · exact Or.inl (S1 y' my' (Ne.symm hyy') hy'p (Ne.symm hxy'))
+    · exact Or.inl (S1 x' mx' hx'y hx'p (Ne.symm hxx'))
+    · exact Or.inl (S1 p' mp' (Ne.symm hyp') (Ne.symm hpp') (Ne.symm hxp'))
+    · exact Or.inl (E2 x' mx' hx'p hx'y')
+    · exact Or.inl (E2 p' mp' (Ne.symm hpp') (Ne.symm hy'p'))
+    · exact Or.inl (E2 x mx hxp hxy')
+    · exact Or.inr ⟨z3, t3⟩
+    · exact Or.inl TSx.1
+    · exact Or.inl TSp.1
+    · exact Or.inl TSx.2
+    · exact Or.inl TSp.2
+    · exact Or.inr ⟨by rw [cyc']; exact z3, by rw [cyc']; exact t3⟩
+    · exact Or.inl (S4 p mp hpp' (Ne.symm hyp) (Ne.symm hxp))
+    · exact Or.inl (S4 y' my' hy'p' (Ne.symm hyy') (Ne.symm hxy'))
+    · exact Or.inl (S4 x' mx' hx'p' hx'y (Ne.symm hxx'))
+  · intro z hz hzx i
+    have h0 := hzx 0; have h1 := hzx 1; have h2 := hzx 2; have h3 := hzx 3; have h4 := hzx 4
+    simp only [quint_0, quint_1, quint_2, quint_3, quint_4] at h0 h1 h2 h3 h4
+    rcases hmemV z hz with h | h | h | h | h | h
+    · exact absurd h h0
+    · exact absurd h h3
+    · rw [h]
+      rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
+        simp only [a0, a1, a2, a3, a4, quint_0, quint_1, quint_2, quint_3, quint_4]
+      · exact Or.inr ⟨det3_self_u _ x y, t1⟩
+      · exact Or.inl (E2 y my hyp hyy')
+      · exact Or.inl TSy.1
+      · exact Or.inl TSy.2
+      · exact Or.inr ⟨by rw [det3_shift_p', det3_self_left'], t2⟩
+    · exact absurd h h2
+    · exact absurd h h1
+    · exact absurd h h4
 
 end SmallRupert
 
