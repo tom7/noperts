@@ -199,6 +199,163 @@ theorem facet_lt_of_dep {x x' y y' p p' : ℝ³} {L : ℝ³ → ℝ} (hL : IsDep
   · have : L x + L y < 0 := by nlinarith
     nlinarith
 
+/-- Cramer's rule in `det3` form. -/
+theorem cramer (e₁ e₂ e₃ v : ℝ³) :
+    det3 e₁ e₂ e₃ • v = det3 v e₂ e₃ • e₁ + det3 e₁ v e₃ • e₂ + det3 e₁ e₂ v • e₃ := by
+  ext i; fin_cases i <;>
+    simp only [det3_expand, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk, PiLp.add_apply,
+      PiLp.smul_apply, smul_eq_mul] <;> ring
+
+/-- A nontrivial linear relation makes `det3` vanish. -/
+theorem det3_eq_zero_of_lin {u v w : ℝ³} {α β γ : ℝ} (h : α • u + β • v + γ • w = 0)
+    (hne : ¬(α = 0 ∧ β = 0 ∧ γ = 0)) : det3 u v w = 0 := by
+  have h0 := congrArg (· 0) h; have h1 := congrArg (· 1) h; have h2 := congrArg (· 2) h
+  simp only [PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, PiLp.zero_apply] at h0 h1 h2
+  have ea : α * det3 u v w = 0 := by
+    rw [det3_expand]
+    linear_combination (v 1 * w 2 - v 2 * w 1) * h0 - (v 0 * w 2 - v 2 * w 0) * h1 +
+      (v 0 * w 1 - v 1 * w 0) * h2
+  have eb : β * det3 u v w = 0 := by
+    rw [det3_expand]
+    linear_combination (u 2 * w 1 - u 1 * w 2) * h0 - (u 2 * w 0 - u 0 * w 2) * h1 +
+      (u 1 * w 0 - u 0 * w 1) * h2
+  have ec : γ * det3 u v w = 0 := by
+    rw [det3_expand]
+    linear_combination (u 1 * v 2 - u 2 * v 1) * h0 - (u 0 * v 2 - u 2 * v 0) * h1 +
+      (u 0 * v 1 - u 1 * v 0) * h2
+  by_contra hd
+  exact hne ⟨(mul_eq_zero.mp ea).resolve_right hd, (mul_eq_zero.mp eb).resolve_right hd,
+    (mul_eq_zero.mp ec).resolve_right hd⟩
+
+/-- Two dependencies `l`, `m` of the six vertices that are independent on them
+(the Gale vectors are `g_t = (-m t, l t)`). -/
+structure GaleData (a a' b b' c c' : ℝ³) where
+  l : ℝ³ → ℝ
+  m : ℝ³ → ℝ
+  hl : IsDep a a' b b' c c' l
+  hm : IsDep a a' b b' c c' m
+  indep : ∀ α β : ℝ, α * l a + β * m a = 0 → α * l a' + β * m a' = 0 →
+    α * l b + β * m b = 0 → α * l b' + β * m b' = 0 →
+    α * l c + β * m c = 0 → α * l c' + β * m c' = 0 → α = 0 ∧ β = 0
+
+def GaleData.swap₁ {a a' b b' c c' : ℝ³} (G : GaleData a a' b b' c c') : GaleData a' a b b' c c' :=
+  ⟨G.l, G.m, G.hl.swap₁, G.hm.swap₁, fun α β h1 h2 h3 h4 h5 h6 => G.indep α β h2 h1 h3 h4 h5 h6⟩
+
+def GaleData.swap₂ {a a' b b' c c' : ℝ³} (G : GaleData a a' b b' c c') : GaleData a a' b' b c c' :=
+  ⟨G.l, G.m, G.hl.swap₂, G.hm.swap₂, fun α β h1 h2 h3 h4 h5 h6 => G.indep α β h1 h2 h4 h3 h5 h6⟩
+
+def GaleData.swap₃ {a a' b b' c c' : ℝ³} (G : GaleData a a' b b' c c') : GaleData a a' b b' c' c :=
+  ⟨G.l, G.m, G.hl.swap₃, G.hm.swap₃, fun α β h1 h2 h3 h4 h5 h6 => G.indep α β h1 h2 h3 h4 h6 h5⟩
+
+def GaleData.perm₁₂ {a a' b b' c c' : ℝ³} (G : GaleData a a' b b' c c') : GaleData b b' a a' c c' :=
+  ⟨G.l, G.m, G.hl.perm₁₂, G.hm.perm₁₂, fun α β h1 h2 h3 h4 h5 h6 => G.indep α β h3 h4 h1 h2 h5 h6⟩
+
+def GaleData.perm₂₃ {a a' b b' c c' : ℝ³} (G : GaleData a a' b b' c c') : GaleData a a' c c' b b' :=
+  ⟨G.l, G.m, G.hl.perm₂₃, G.hm.perm₂₃, fun α β h1 h2 h3 h4 h5 h6 => G.indep α β h1 h2 h5 h6 h3 h4⟩
+
+/-- The dependency expressing `v` in the frame `a, b, c, a'` (Cramer). -/
+noncomputable def frameDep (a b c a' v : ℝ³) (t : ℝ³) : ℝ :=
+  if t = v then -det3 (b - a) (c - a) (a' - a)
+  else if t = b then det3 (v - a) (c - a) (a' - a)
+  else if t = c then det3 (b - a) (v - a) (a' - a)
+  else if t = a' then det3 (b - a) (c - a) (v - a)
+  else if t = a then det3 (b - a) (c - a) (a' - a) - det3 (v - a) (c - a) (a' - a) -
+    det3 (b - a) (v - a) (a' - a) - det3 (b - a) (c - a) (v - a)
+  else 0
+
+theorem frameDep_isDep {a a' b c v w : ℝ³} (hnd : [a, a', b, v, c, w].Nodup) :
+    IsDep a a' b v c w (frameDep a b c a' v) := by
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨haa', hab, hav, hac, haw⟩, ⟨ha'b, ha'v, ha'c, ha'w⟩, ⟨hbv, hbc, hbw⟩,
+    ⟨hvc, hvw⟩, hcw, -⟩ := hnd
+  have hcr := cramer (b - a) (c - a) (a' - a) (v - a)
+  constructor <;> simp only [frameDep, ↓reduceIte, haa', Ne.symm haa', hab, Ne.symm hab, hav, Ne.symm hav, hac, Ne.symm hac, haw, Ne.symm haw, ha'b, Ne.symm ha'b, ha'v, Ne.symm ha'v, ha'c, Ne.symm ha'c, ha'w, Ne.symm ha'w, hbv, Ne.symm hbv, hbc, Ne.symm hbc, hbw, Ne.symm hbw, hvc, Ne.symm hvc, hvw, Ne.symm hvw, hcw, Ne.symm hcw]
+  · ring
+  · rw [zero_smul, add_zero]
+    linear_combination (norm := module) -hcr
+
+theorem IsDep.swap₂₃' {a a' b b' c c' : ℝ³} {l : ℝ³ → ℝ} (h : IsDep a a' b c' c b' l) :
+    IsDep a a' b b' c c' l :=
+  ⟨by linarith [h.sum], by rw [← h.vsum]; abel⟩
+
+theorem frame_det_ne {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c') :
+    det3 (b - a) (c - a) (a' - a) ≠ 0 := by
+  have hnd := F.nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨haa', hab, hab', hac, hac'⟩, ⟨ha'b, ha'b', ha'c, ha'c'⟩, ⟨hbb', hbc, hbc'⟩,
+    ⟨hb'c, hb'c'⟩, hcc', -⟩ := hnd
+  have hcr : cross (b - a) (c - a) ≠ 0 :=
+    cross_ne_zero_of_affine F.abc'.hN hab F.abc'.hP F.abc'.hQ
+      (F.abc'.neg c (by simp) (Ne.symm hac) (Ne.symm hbc) hcc')
+  intro h0
+  have := affine_zero_of_coplanar F.abc.hN F.abc.hP F.abc.hQ F.abc.hR hcr h0
+  have := F.abc.neg a' (by simp) (Ne.symm haa') ha'b ha'c
+  linarith
+
+theorem OctFacets.nonempty_galeData {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c') :
+    Nonempty (GaleData a a' b b' c c') := by
+  have hD := frame_det_ne F
+  have hnd := F.nodup
+  have hnd' : [a, a', b, c', c, b'].Nodup :=
+    nodup_perm_aux (by
+      have : [a, a', b, b', c, c'].Perm [a, a', b, c', c, b'] := by
+        rw [List.perm_iff_count]; intro z; simp only [List.count_cons, List.count_nil]; omega
+      exact this) hnd
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨haa', hab, hab', hac, hac'⟩, ⟨ha'b, ha'b', ha'c, ha'c'⟩, ⟨hbb', hbc, hbc'⟩,
+    ⟨hb'c, hb'c'⟩, hcc', -⟩ := hnd
+  refine ⟨⟨frameDep a b c a' b', frameDep a b c a' c', frameDep_isDep F.nodup,
+    (frameDep_isDep hnd').swap₂₃', fun α β _ _ _ h4 _ h6 => ?_⟩⟩
+  simp only [frameDep, ↓reduceIte, haa', Ne.symm haa', hab, Ne.symm hab, hab', Ne.symm hab', hac, Ne.symm hac, hac', Ne.symm hac', ha'b, Ne.symm ha'b, ha'b', Ne.symm ha'b', ha'c, Ne.symm ha'c, ha'c', Ne.symm ha'c', hbb', Ne.symm hbb', hbc, Ne.symm hbc, hbc', Ne.symm hbc', hb'c, Ne.symm hb'c, hb'c', Ne.symm hb'c', hcc', Ne.symm hcc'] at h4 h6
+  constructor
+  · have : α * det3 (b - a) (c - a) (a' - a) = 0 := by linarith
+    exact (mul_eq_zero.mp this).resolve_right hD
+  · have : β * det3 (b - a) (c - a) (a' - a) = 0 := by linarith
+    exact (mul_eq_zero.mp this).resolve_right hD
+
+theorem IsOctahedron.nonempty_galeData {a a' b b' c c' : ℝ³} (h : IsOctahedron a a' b b' c c') :
+    Nonempty (GaleData a a' b b' c c') :=
+  let ⟨F⟩ := h.nonempty_octFacets; F.nonempty_galeData
+
+/-- **(G2)** If `κ_A = det(g_a, g_a') = 0`, the equator `b, c, b', c'` is planar. -/
+theorem GaleData.planar_of_kappa {a a' b b' c c' : ℝ³} (G : GaleData a a' b b' c c')
+    (hκ : galeD G.l G.m a a' = 0) : det3 (c - b) (b' - b) (c' - b) = 0 := by
+  simp only [galeD] at hκ
+  obtain ⟨α, β, hne, h1, h2⟩ : ∃ α β : ℝ, ¬(α = 0 ∧ β = 0) ∧ α * G.l a + β * G.m a = 0 ∧
+      α * G.l a' + β * G.m a' = 0 := by
+    by_cases ha : G.l a = 0 ∧ G.m a = 0
+    · by_cases ha' : G.l a' = 0 ∧ G.m a' = 0
+      · exact ⟨1, 0, by simp, by simp [ha.1], by simp [ha'.1]⟩
+      · refine ⟨G.m a', -G.l a', fun h => ha' ⟨by linarith [h.2], h.1⟩, ?_, ?_⟩
+        · linear_combination hκ
+        · ring
+    · refine ⟨G.m a, -G.l a, fun h => ha ⟨by linarith [h.2], h.1⟩, ?_, ?_⟩
+      · ring
+      · linear_combination -hκ
+  have hL := G.hl.comb G.hm α β
+  generalize hLdef : (fun t => α * G.l t + β * G.m t) = L at hL
+  have h1' : L a = 0 := by rw [← hLdef]; exact h1
+  have h2' : L a' = 0 := by rw [← hLdef]; exact h2
+  have hs := hL.sum; have hv := hL.vsum
+  rw [h1', h2', zero_smul, zero_smul] at hv
+  rw [h1', h2'] at hs
+  have hrel : L c • (c - b) + L b' • (b' - b) + L c' • (c' - b) = 0 := by
+    have hb : L b = -(L b' + L c + L c') := by linarith
+    rw [hb] at hv; rw [← hv]; simp only [smul_sub]; module
+  refine det3_eq_zero_of_lin hrel ?_
+  rintro ⟨e1, e2, e3⟩
+  have e0 : L b = 0 := by linarith
+  rw [← hLdef] at e0 e1 e2 e3
+  exact hne (G.indep α β h1 h2 e0 e2 e1 e3)
+
+theorem isRupert_of_kappa_zero {a a' b b' c c' : ℝ³} (h : IsOctahedron a a' b b' c c')
+    (G : GaleData a a' b b' c c') (hκ : galeD G.l G.m a a' = 0) :
+    IsRupert {a, a', b, b', c, c'} :=
+  isRupert_planar_equator h (G.planar_of_kappa hκ)
+
 end SmallRupert
 
 end
