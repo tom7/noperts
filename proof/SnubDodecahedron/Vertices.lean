@@ -1,6 +1,10 @@
 module
 
 public import SnubDodecahedron.RationalVertices
+public import RationalApprox.TrigLemmas
+public import Basic
+public import Bounding
+public import PointSym
 
 @[expose] public section
 
