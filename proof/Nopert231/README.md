@@ -1,3 +1,13 @@
+> **In this repository** the entry point is `../Nopert231.lean` (headline
+> `Nopert231.isNopert_of_certificatesValid`; see `../../nopert231.md`). The text
+> below is the README of Noperthedron's `nopert231` branch (0c83e4ba), whose
+> names differ: `Noperthedron/Nopert231/` is `proof/Nopert231/` here (namespace
+> `Nopert231`), `Noperthedron/Atlas/` is `proof/Atlas/` (which also holds
+> `QuadCoverTree` and `QuadraticBernstein`), the generator scripts are in
+> `search/nopert231/scripts/`, and the executables other than
+> `constructNopert231` are not here. No `native_decide` is used here: chart 3
+> and the tangent cones are checked by the kernel (`table_valid_kernel`).
+
 # Candidate #231 is a Nopert
 
 This directory, with the generic `Noperthedron/Atlas/` library, formalizes the proof that Candidate #231 is a Nopert (not Rupert, `¬ IsRupert`). Candidate #231 is a convex polyhedron with 20 vertices and 27 faces (2 pentagons, 20 triangles, 5 planar quadrilaterals) and fivefold symmetry about the z axis. The certificate data is produced by the C++ pipeline (the `nopert231` branch of the companion C++ repository); its `README.md` explains how the proof works and how to rebuild it with `rebuild.sh`.
