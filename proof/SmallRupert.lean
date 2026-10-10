@@ -68,11 +68,24 @@ contain non-extreme points).  Every theorem below depends only on `propext`,
 * `isRupert_T4` — Theorem 8.3: every T4.
 * `isRupert_T3` — Theorem 8.4: every T3.
 
+**Every octahedron (L9)**
+* `isRupert_octahedron` — Theorem 9.9: every convex octahedron (`IsOctahedron`, type T6).
+* `isRupert_planar_equator` — an octahedron with a planar equator (Cor. 5.4).
+* `isRupert_of_touching_pair` — Lemma 9.4: two touching quad edges (axis view).
+* `isRupert_quad_edge` — Lemma 9.3: a quad edge that is neither bad nor touching.
+* `isRupert_octahedron_generic` — §9.5: the Gale-diagram selection (`f ≠ 0`).
+* `isRupert_weak_edge` — Lemma 9.11: weak quad edges (parallel faces).
+* `isRupert_octahedron_parallel` — §9.6: the case `f = 0`.
+* `isRupert_of_tilted_unimodal_σ` — Cor. 8.0′ for either orientation (eventual `Q`,
+  covering the lexicographic tie-breaks of Cor. 9.0).
+
 **Non-vacuity** (`Witnesses.lean`): explicit rational instances of every
 hypothesis structure (`IsBicappedTetrahedron`, `IsCappedSquarePyramid` generic
 and with `S₁S₄ ∥ S₂S₃`, `IsT4`, `IsT3` generic and with `BB' ∥ CC'`,
-`IsOctahedron` with Condition A), each fed to its headline theorem.
+`IsOctahedron` with Condition A), each fed to its headline theorem (the
+octahedron also to `isRupert_octahedron`).
 
-Not formalized: the octahedra in general (T6), the L3/L2(d) obstruction
-directions, and the conjectures of LEMMAS.md.
+Not formalized: the 6-vertex classification itself (that every convex polyhedron
+with 6 vertices is one of T1–T7 with the stated face structure), the L3/L2(d)
+obstruction directions, and the conjectures of LEMMAS.md.
 -/

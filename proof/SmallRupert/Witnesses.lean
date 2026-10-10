@@ -2,6 +2,7 @@ module
 
 public import SmallRupert.L8T3
 public import SmallRupert.L8T4
+public import SmallRupert.OctahedronAll
 
 @[expose] public section
 
@@ -365,6 +366,12 @@ theorem witness_octahedron : IsOctahedron !₂[0, 0, 10] !₂[0, 0, -10] !₂[10
     intro x hx h1 h2 h3
     simp only [Finset.mem_insert, Finset.mem_singleton] at hx
     rcases hx with rfl | rfl | rfl | rfl | rfl | rfl <;> first | exact absurd rfl ‹_› | wnum
+
+/-- Theorem 9.9 applied to the witness octahedron. -/
+theorem witness_octahedron_rupert :
+    IsRupert {!₂[0, 0, 10], !₂[0, 0, -10], !₂[10, 0, 1], !₂[-10, 0, -1], !₂[0, 10, 1],
+      !₂[0, -10, -1]} :=
+  isRupert_octahedron witness_octahedron
 
 /-- Condition A holds for `witness_octahedron`. -/
 theorem witness_conditionA :

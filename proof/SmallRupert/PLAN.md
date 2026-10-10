@@ -64,55 +64,32 @@ the generic-view density statements of Coplanar.lean (`dense_generic_...`,
   `S₁S₄ ∥ S₂S₃`), `IsT4`, `IsT3` (generic, and with `BB' ∥ CC'`) and
   `IsOctahedron` with Condition A, each applied to its headline theorem.
 
-- L9, Theorem 9.9 (every octahedron is Rupert) -- IN PROGRESS.
-  `isRupert_octahedron` (OctahedronAll.lean) is assembled and its ONLY
-  remaining `sorry` is `isRupert_octahedron_parallel` (Oct9Par.lean, the
-  f = 0 case of LEMMAS §9.6).  Proved (standard axioms):
+- L9, Theorem 9.9 (every convex octahedron is Rupert): DONE, standard axioms.
+  Headline `isRupert_octahedron (h : IsOctahedron a a' b b' c c') :
+  IsRupert {a, a', b, b', c, c'}` (OctahedronAll.lean), applied to the witness
+  in `witness_octahedron_rupert`.  Structure:
   - OctaTools: det3/cross algebra, combination lemmas, four-point identity,
     `IsOctahedron.swap₁/₂/₃/perm₁₂/perm₂₃`.
   - Oct9Axis: `isRupert_axis_NWS`, `isRupert_planar_equator` (Cor. 5.4 for a
     planar equator), `isRupert_of_touching_pair` (Lemma 9.4).
   - Oct9Data: `FacetFn`, `OctFacets` (8 facet functions) and their symmetries.
-  - Oct9Quad: `isRupert_quad_edge` (Lemma 9.3: quad edge, not bad, not touching).
-  - Oct9Gale: `IsDep`, `galeD l m s t = l s * m t - m s * l t` (= det(g_s, g_t)),
-    `pole_signs` (pole coordinates (i)), `not_bad_of_dep` (replaces Lemmas
-    9.5 + 9.7 + Step 2: a dependency λ with λ x' = 0, λ x < 0, λ p, λ p' ≥ 0,
-    λ y' ≤ 0, λ x + λ y ≤ 0 shows x→y is not bad), `facet_lt_of_dep` (Lemma
-    9.6), `GaleData` (Cramer frame a, b, c, a'), `isRupert_of_kappa_zero`
-    (G2: κ = 0 ⇒ planar equator), `arc_lemma` (9.8), `isRupert_gale_core`
-    (Steps 1–3 for W = C, U = A), `isRupert_octahedron_generic` (normalized
-    labels, f ≠ 0).
-  - OctahedronAll: `isRupert_octahedron_normalized`,
-    `isRupert_octahedron_nonplanar` (sign normalization), main assembly.
-  f = 0 case, in progress (Oct9Weak.lean, then Oct9Par.lean):
-  - done: `isRupert_of_tilted_unimodal_σ` (Cor. 8.0' for either
-    orientation σ = ±1, by reversing the cycle), `Q5a`/`Q5b` (5-cycle
-    unimodality), `det3_four` (four-vector identity for tilt tests).
-  - Weak edge lemma (Lemma 9.11), planned statement: `F : OctFacets x x' y y'
-    p p'`, `U.f x < U.f y` for U = F.a'b'c (strict), top T = F.a'b'c' with
-    `T.f x = T.f y = T.f p` (top ∥ bottom), not bad ⇒ IsRupert ∨ touching ∨
-    (⟪p - y', y - x⟫ = 0 ∧ ⟪p - y', p - y⟫ = 0).  Proof plan (u = y - x,
-    depths a,Y,b,c,d,e of x,y,p,y',x',p'; σ = sign det3 (p-y) (p'-y) u):
-    tests E1..E4 as in `quad_edge_tests` but σ-signed and E3 from the
-    vertical top face (x' gives 0); top-face edges y'→x', x'→p' have tests
-    = positive multiples of E3 (four-point identity + facets U, L' = F.ab'c',
-    H = F.a'bc'); tilt tests reduce via `det3_four` to s₁ = det3 (p-y) u v,
-    s₂ = det3 (y-p') u v, s₃ = det3 (p'-y') u v (τ3 = (L'(x')/L'(y)) s₃).
-    Cases: NWS4(Y,b,c,e) → cycle (y,p,y',p'), v = y' - x; else
-    min(Y,c) ≥ max(b,e) and a < max(b,e) (`quad_edge_lower`); b < c →
-    5-cycle (x,p,y',x',p'), v = x - y', Q5a (e < d from the four-point
-    identity in the top face); b = c = e → touching; b = c > e and
-    ⟪p-y', p-y⟫ > 0 → (y,p,y',p'), v = (p-y) + η(y'-y), NWS4 with the tie
-    broken lexicographically; < 0 → 5-cycle (x,y,p,y',p'),
-    v = -(p-y) + η(y'-y), Q5b; = 0 → lateral failure.
-  - Pair lemma (W = C, U = A): e₁ = b→a (p = c), e₂ = a'→b' (p = c'); quad
-    and not-bad signs from Gale as in `isRupert_gale_core` (f = 0 ⇒ galeF ≡ 0);
-    top ∥ bottom from f = 0 (apply l, m to the facet functions); both
-    touching ⇒ `isRupert_of_touching_pair`.  Result: IsRupert ∨ c - a' ⊥ bottom
-    ∨ b - c' ⊥ bottom.  Pairs A, B by cyclic relabeling (needs galeD a b > 0,
-    galeD b c > 0); WLOG galeD c a > 0 by perm₁₂.
-  - Counting: two of c - a', b - c', a - b' ⊥ bottom ⇒ four vertices of two
-    adjacent faces coplanar (contradiction with a facet function).
+  - Oct9Quad: `isRupert_quad_edge` (Lemma 9.3).
+  - Oct9Gale: dependencies `IsDep`, `galeD` (= det(g_s, g_t)), `pole_signs`,
+    `not_bad_of_dep` (replaces Lemmas 9.5 + 9.7 + Step 2 by one dependency
+    inequality), `facet_lt_of_dep` (Lemma 9.6), `GaleData` (Cramer frame),
+    `isRupert_of_kappa_zero` (G2), `arc_lemma` (9.8), `isRupert_gale_core`,
+    `isRupert_octahedron_generic` (§9.5, f ≠ 0).
+  - Oct9Weak: `isRupert_of_tilted_unimodal_σ` (Cor. 8.0′ either orientation,
+    eventual Q = lexicographic Cor. 9.0), weak-edge tests, top-face identities,
+    the three cycles of Lemma 9.11, `isRupert_weak_edge` (Lemma 9.11).
+  - Oct9Par: `facet_eq_of_f0` (f = 0 ⇒ abc ∥ a'b'c'), `isRupert_pair_f0`,
+    lateral-edge counting, `isRupert_octahedron_parallel` (§9.6).
+  - OctahedronAll: sign normalization and assembly.
+  Deviations from the text (all equivalent or stronger): "not bad" is proved
+  directly from one affine dependency instead of the axis view (9.5, 9.7);
+  the Mixed case of 9.11 uses the closing-by-y 4-cycle (NWS4) instead of
+  Lemma 8.8; the tie-break tilts are (±(p - y) + η (y' - y)) with η small,
+  i.e. the paper's (±1, η) in 3D form.
 
 ## Modules and dependency order
 
