@@ -1,0 +1,11 @@
+*.o
+*.exe
+*.pdb
+*.ptx
+*~
+jobs
+packs
+trees*/
+*.log
+codebdd.json
+work/

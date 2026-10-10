@@ -36,8 +36,6 @@ In lowest terms (the form used in Lean, `septopert` in
 
 - The statement is about these points unscaled (largest |v| ≈ 0.99999935).
   The integer form is the same solid scaled by 2^20.
-- Every coordinate is exactly representable in binary; a float32 file (e.g.
-  an STL) only approximates them.
 - Symmetry C3v: a 3-fold axis along (1,1,1) and three mirror planes (each
   swapping two coordinates). Vertices 0–2 are the permutations of (a, b, b),
   vertices 3–5 those of (c, d, d), and vertex 6 is e·(1,1,1).

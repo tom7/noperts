@@ -60,7 +60,7 @@ triangles cover the view domain.
 
 The DH is only just not Rupert. It has poses with clearance exactly 0
 (*ties*), and moving its twelve 5-fold vertices outward by 0.1% gives a Rupert
-solid (checked numerically to 50 digits by nopert229's `dh_boundary.py`; this
+solid (checked numerically to 50 digits by `search/dh/dh_boundary.py`; this
 is not part of the Lean result). So, unlike for the Septopert, there is no
 true statement about all solids near a rational model, and the proof uses the
 exact solid near the ties:
@@ -140,10 +140,27 @@ about 30 GB.
 
 ## Reproducing the data
 
-The search is not yet in this repository's `search/`. It is on the
-`deltoidalhexecontahedron` branch of nopert229 (c0d289a), whose `README.md`
-describes it, and `./rebuild.sh --from model --work DIR` runs the whole
-pipeline. A from-scratch run on 64 cores (2026-10-06) took 8 h 10 min:
+The search that produced the data is in [`search/dh/`](search/dh/) (from
+the `deltoidalhexecontahedron` branch of nopert229, c0d289a; its `README.md`
+describes it). To run the whole pipeline:
+
+```sh
+./get-cc-lib.sh
+search/dh/rebuild.sh --from model --work DIR
+```
+
+The stages are model, tube, tubepack, caps, ties, search, pack and verify
+(`--from STAGE`, `--only STAGE`; `--dry_run` prints the commands; `--work`
+defaults to `work-dh/`). Without `--from` it starts at tube, with the
+committed model data. The model, caps and ties stages regenerate committed
+files: the model files in `search/dh/` and the Lean data in
+`proof/DeltoidalHexecontahedron/` (`Vertices`, `WedgeCoverData`,
+`IcoGroupData`, `StatementData`, `CapData`, `TieData`). The verify stage
+builds and runs `constructDeltoidalHexecontahedron` in `proof/`, in a
+memory-capped `systemd-run --user` scope.
+
+A from-scratch run on 64 cores (2026-10-06, then in nopert229 and
+Noperthedron) took 8 h 10 min:
 
 | Stage | 64 cores |
 |---|---|
@@ -156,3 +173,9 @@ That run regenerated every committed data file byte for byte, and its cap and
 tie certificates were identical to the verified run's. Its chart tables are
 not the same as the verified run's (32.9 M against 36.2 M chart-0 rows); both
 passed.
+
+In this repository (2026-10-10, 16 cores): the model stage, the cap frames
+and the tube and tie stages (about 2 min together) regenerate the model files
+in `search/dh/` and all seven generated Lean files in
+`proof/DeltoidalHexecontahedron/` byte for byte (with 250 tie nodes). The cap
+certificates, the search, the packs and the check have not been rerun here.

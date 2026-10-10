@@ -1,0 +1,54 @@
+shadowanim: almost passing through itself (the canyon)
+=====================================================
+
+What it shows
+-------------
+A polyhedron is Rupert if a copy of it can pass through a hole in it: seen
+from some direction, the shadow of a slightly turned copy fits strictly
+inside the shadow of the original. The animation shows the two shadows for
+Candidate #231:
+
+- the original's shadow, filled (blue-grey);
+- the turned copy's shadow, outlined (white): the copy is rotated by a tiny
+  angle (1e-7 radians) about the axis that helps it most, then slid sideways
+  as well as possible (an exact linear program);
+- in red, wherever the copy's shadow sticks out of the original's.
+
+At this angle the two shadows coincide to the eye, so the left half shows
+the whole shadow and the right half three magnified insets, centered on the
+three places where the copy sticks out most (circled on the left). The
+magnification is the same in every frame, so the size of the red is
+comparable across the whole animation.
+
+Phase 1 (12 s). The viewing direction travels from an ordinary view to the
+"canyon": the direction from which #231 comes closest to passing through
+itself. The approach slows down exponentially, because the canyon is very
+narrow. The red shrinks from a clear band to nothing visible: at the
+canyon, the copy sticks out by only about 3e-4 of the rotation angle (3e-11
+here, a tenth of a pixel even in the insets). Seen from there, a quadrilateral
+face is almost edge-on, and two of its corners are nearly hidden behind the
+silhouette.
+
+Phase 2 (8 s). The view stays at the canyon, and the axis of the copy's
+rotation swings away from the best one and back. The red reappears: only
+rotations very close to that one axis come close to fitting.
+
+What it means for the proof
+---------------------------
+The red never disappears completely: to first order, every small rotation
+of the copy sticks out somewhere, by at least (angle x margin), where the
+margin depends on the view and is smallest (about 2e-4 to 4e-4, depending
+on the side) at the canyon. The proof's "identity tube" turns this into a
+certificate: near the identity rotation, three contact points (the circled
+places) block every small rotation, with an explicit radius. The canyon is
+where those certificates are thinnest and the computer search had to work
+hardest.
+
+How it was made
+---------------
+nopert229/shadowanim.cc (branch nopert231). The canyon direction is
+(0.9151, 0.2020, 0.3490) in the frame of ruperts/nopert_231.stl; viewmap's
+--margin output lists it with the object rotation that shows it in Blender.
+Usage: ./shadowanim.exe --out canyon.mov [--width 3840 --height 2160]
+  [--seconds1 12 --seconds2 8] [--theta 1e-7] [--canyon x,y,z] [--start x,y,z]
+Frames are lossless PNG in a .mov at 60 Hz (codec/mov.h).

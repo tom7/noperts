@@ -1,8 +1,9 @@
 name = "noperts"
 defaultTargets = ["Noperts", "Septopert", "Minimality", "ProofOfMainTheorem",
-  "DeltoidalHexecontahedron", "PentagonalHexecontahedron", "SnubDodecahedron",
+  "DeltoidalHexecontahedron", "PentagonalHexecontahedron", "SnubDodecahedron", "Nopert231",
   "constructSeptopert", "checkSeptopertCap", "constructDeltoidalHexecontahedron",
-  "constructPentagonalHexecontahedron", "constructSnubDodecahedron", "Tests"]
+  "constructPentagonalHexecontahedron", "constructSnubDodecahedron", "constructNopert231",
+  "Tests"]
 
 [leanOptions]
 pp.unicode.fun = true
@@ -84,6 +85,10 @@ globs = ["PentagonalHexecontahedron", "PentagonalHexecontahedron.+"]
 name = "SnubDodecahedron"
 globs = ["SnubDodecahedron", "SnubDodecahedron.+"]
 
+[[lean_lib]]
+name = "Nopert231"
+globs = ["Nopert231", "Nopert231.+"]
+
 [[lean_exe]]
 name = "checkSeptopertCap"
 root = "checkSeptopertCap"
@@ -107,4 +112,9 @@ buildType = "release"
 [[lean_exe]]
 name = "constructSnubDodecahedron"
 root = "constructSnubDodecahedron"
+buildType = "release"
+
+[[lean_exe]]
+name = "constructNopert231"
+root = "constructNopert231"
 buildType = "release"
