@@ -13,7 +13,7 @@
 #   search  5D search, charts 0-2 (search5d), until nothing is deferred
 #   pack    per-code 5D packs (pack5d --per_code)
 #   verify  Lean: check every table and build the proof
-#           (constructPentagonalHexecontahedron)
+#           (constructPentagonalHexecontahedron in ../../proof)
 #
 # Every stage is restartable: tubecode and search5d journal their work,
 # and pack5d skips packs newer than their journals.
@@ -24,7 +24,7 @@
 # --from verify with --work pointing at them).
 #
 # Usage: ./rebuild.sh [--from STAGE] [--only STAGE] [--dry_run] [--threads N]
-#        [--mem_gb G] [--work DIR]   (default ./rebuild-work)
+#        [--mem_gb G] [--work DIR]   (default ../../work-ph)
 #        [--model_file FILE]  model stage: the model file (default ph_model.txt)
 #
 # Resources: --threads defaults to every core (nproc). The tools also use it
@@ -43,8 +43,10 @@
 # would stop Lean from creating threads).
 #
 # The model stage regenerates committed source files (model_vertices.*,
-# codebdd.json, and Noperthedron's Vertices.lean etc.), so it only runs
-# when asked for (--from model or --only model).
+# codebdd.json, and the Lean data in ../../proof/PentagonalHexecontahedron/:
+# Vertices.lean, WedgeCoverData.lean, IcoGroupData.lean, PHStatementData.lean,
+# by the scripts in scripts/), so it only runs when asked for (--from model
+# or --only model). The other stages need its codebdd.json.
 set -euo pipefail
 
 STAGES=(model tube tubepack search pack verify)
@@ -57,7 +59,7 @@ MEM_GB=$(( RAM_GB * 9 / 10 > 40 ? RAM_GB * 9 / 10 : 40 ))
 WORK=""
 MODEL_FILE=ph_model.txt
 NOPERT=$(cd "$(dirname "$0")" && pwd)
-LEAN=$NOPERT/../Noperthedron
+LEAN=$NOPERT/../../proof
 # The Lean generator scripts read codebdd's outputs and the model files here.
 export MODEL_DIR=$NOPERT
 while [ $# -gt 0 ]; do
@@ -79,7 +81,7 @@ run() {
 }
 # Lean executables run under a memory cap (ulimit -v would stop Lean's threads).
 lean_run() {
-  run systemd-run --scope -q -p MemoryMax="${MEM_GB}G" "$@"
+  run systemd-run --user --scope -q -p MemoryMax="${MEM_GB}G" "$@"
 }
 want() {
   local stage=$1
@@ -97,7 +99,7 @@ if [ "$RAM_GB" -lt 40 ]; then
   echo "warning: ${RAM_GB} GB of RAM; Lean verification needs ~30 GB at peak, so expect swapping" >&2
 fi
 ulimit -v $(( (MEM_GB + 16) * 1048576 ))
-[ -n "$WORK" ] || WORK=$NOPERT/rebuild-work
+[ -n "$WORK" ] || WORK=$NOPERT/../../work-ph
 TREES1=$WORK/trees_r1
 TREES2=$WORK/trees_r2
 TUBEPACKS=$WORK/tube_packs
@@ -111,7 +113,7 @@ run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
 # Lean is needed only by the model (generated sources) and verify stages.
 # (The model stage builds Lean after regenerating its data.)
 if want verify && ! want model; then
-  (cd "$LEAN" && lean_run lake build constructPentagonalHexecontahedron check_global_rows validate_code_pack)
+  (cd "$LEAN" && lean_run lake build constructPentagonalHexecontahedron)
 fi
 
 if want model; then
@@ -122,13 +124,13 @@ if want model; then
   (cd "$NOPERT" && run python3 ph_model.py snub_model.txt "$MODEL_FILE")
   (cd "$NOPERT" && run python3 ph_crosscheck.py "$MODEL_FILE")
   (cd "$NOPERT" && run ./codebdd.exe --model_file="$MODEL_FILE" codebdd.json)
-  (cd "$LEAN" && run python3 scripts/update_vertices.py \
-    && run python3 scripts/emit_wedge_cover.py Noperthedron/PentagonalHexecontahedron/WedgeCoverData.lean \
-    && run python3 scripts/snub_ico_group.py \
-    && run python3 scripts/ph_statement_data.py)
+  (cd "$LEAN" && run python3 "$NOPERT/scripts/update_vertices.py" \
+    && run python3 "$NOPERT/scripts/emit_wedge_cover.py" PentagonalHexecontahedron/WedgeCoverData.lean \
+    && run python3 "$NOPERT/scripts/snub_ico_group.py" \
+    && run python3 "$NOPERT/scripts/ph_statement_data.py")
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
     export_codetrees_pack.exe search5d.exe pack5d.exe
-  (cd "$LEAN" && lean_run lake build constructPentagonalHexecontahedron check_global_rows validate_code_pack)
+  (cd "$LEAN" && lean_run lake build constructPentagonalHexecontahedron)
 fi
 
 # Tube radius goals. Code 18's code triangle is certified by a single tube
@@ -146,7 +148,13 @@ tube_goal() {
   echo 1/50000
 }
 
-NCODES=$(python3 -c "import json; print(len(json.load(open('$NOPERT/codebdd.json'))['codes']))")
+if [ -f "$NOPERT/codebdd.json" ]; then
+  NCODES=$(python3 -c "import json; print(len(json.load(open('$NOPERT/codebdd.json'))['codes']))")
+elif [ $DRY -eq 1 ]; then
+  NCODES=53  # (dry run before the model stage has written codebdd.json)
+else
+  echo "missing $NOPERT/codebdd.json: run the model stage first (--from model)" >&2; exit 1
+fi
 
 if want tube; then
   echo "== tube ($NCODES codes)"

@@ -1,4 +1,23 @@
-# The pentagonal hexecontahedron is a Nopert
+# search/ph: the pentagonal hexecontahedron's certificate search
+
+This directory is the C++ search that produced the certificate data for the
+pentagonal hexecontahedron ([../../pentagonal-hexecontahedron.md](../../pentagonal-hexecontahedron.md)).
+It comes from the `pentagonalhexecontahedron` branch of nopert229 at 04d115c,
+without its working notes (`notes/`). Changes: paths (cc-lib at `../../cc-lib`,
+the Lean project at `../../proof`, work directory `../../work-ph`), the
+makefile (cc-lib only; `shadowanim` also needs tom7misc's codec), and the
+Lean data generators in `scripts/` (`update_vertices.py`,
+`emit_wedge_cover.py`, `snub_ico_group.py`, `ph_statement_data.py`), which
+come from the same-named branch of Noperthedron (da2965b3; Apache-2.0 there)
+and now write this repository's module names into
+`../../proof/PentagonalHexecontahedron/`. License: GPLv3 (`../COPYING`).
+
+The text below is the branch's README. Its Lean names are the branch's
+(`Noperthedron/PentagonalHexecontahedron/`); in this repository the modules
+are in `proof/PentagonalHexecontahedron/` and the statement is
+`isNopert_of_certificatesValid` (see the page above).
+
+## The pentagonal hexecontahedron is a Nopert
 
 A polyhedron is *Rupert* if a hole can be cut through it through which a congruent copy can pass, and a *Nopert* if it is not Rupert (Lean: `¬ IsRupert`). This repository, together with the Lean formalization on the `pentagonalhexecontahedron` branch of [Noperthedron](https://github.com/jcreedcmu/Noperthedron), proves that **every pentagonal hexecontahedron is a Nopert**:
 
@@ -25,9 +44,9 @@ The same solid is cc-lib's `PentagonalHexecontahedron()` (`geom/polyhedra.cc`, D
 ## Reproducing the proof
 
 Prerequisites:
-- this repository, with `../cc-lib`, `../ruperts`, `../codec` and `../sqlite` beside it (as for the other tom7 projects);
-- clang with C++23, and GMP;
-- a checkout of Noperthedron's `pentagonalhexecontahedron` branch at `../Noperthedron`, with its Lean toolchain (elan/lake).
+- cc-lib at `../../cc-lib` (`../../get-cc-lib.sh`);
+- clang with C++23, GMP and python3;
+- the Lean project `../../proof`, with its toolchain (elan/lake).
 
 ```
 ./rebuild.sh --from model --work /path/to/work
@@ -87,5 +106,3 @@ As for the snub dodecahedron (the solids share the icosahedral group and frame):
 - Rendering: `codebdd --texture`, `viewmap.cc`, `rigidity-margin.{h,cc}`, `blender_code_texture.py`.
 - `rebuild.sh` runs the whole pipeline; `*_test.cc` are unit tests (`make`).
 - Lean (Noperthedron `pentagonalhexecontahedron`): `Noperthedron/PentagonalHexecontahedron/`, plus the generic `Noperthedron/Atlas/`.
-
-See `notes/HISTORY.md` for how this code came to be.
