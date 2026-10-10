@@ -1,6 +1,6 @@
 module
 
-public import SmallRupert.Oct9Axis
+public import SmallRupert.Oct9Quad
 
 @[expose] public section
 
