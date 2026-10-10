@@ -1,5 +1,6 @@
 name = "noperts"
-defaultTargets = ["Noperts", "Septopert", "Minimality", "constructSeptopert", "checkSeptopertCap"]
+defaultTargets = ["Noperts", "Septopert", "Minimality", "DeltoidalHexecontahedron",
+  "constructSeptopert", "checkSeptopertCap", "constructDeltoidalHexecontahedron"]
 
 [leanOptions]
 pp.unicode.fun = true
@@ -61,6 +62,10 @@ globs = ["Septopert", "Septopert.+"]
 name = "Minimality"
 globs = ["Minimality", "Minimality.+"]
 
+[[lean_lib]]
+name = "DeltoidalHexecontahedron"
+globs = ["DeltoidalHexecontahedron.+"]
+
 [[lean_exe]]
 name = "checkSeptopertCap"
 root = "checkSeptopertCap"
@@ -69,4 +74,9 @@ buildType = "release"
 [[lean_exe]]
 name = "constructSeptopert"
 root = "constructSeptopert"
+buildType = "release"
+
+[[lean_exe]]
+name = "constructDeltoidalHexecontahedron"
+root = "constructDeltoidalHexecontahedron"
 buildType = "release"

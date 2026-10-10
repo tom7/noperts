@@ -1,0 +1,485 @@
+module
+
+public import DeltoidalHexecontahedron.CapTheorem
+public import Pipeline.CapTree
+
+@[expose] public section
+
+/-!
+# Checking a cap certificate (witness leaves)
+
+For a chart `id` with root box `B` and a witness (v_k, c):
+
+* `dPoly`: |u × c|² as a polynomial; `dOk` (its Bernstein bound on B is
+  positive) gives u × c ≠ 0 on B (`dOk_sound`).
+* `screened`: the divided witness polynomials whose bound on B is negative;
+  the others are ≥ 0 on B (`screened_sound`).
+* `witnessLeafOk`: `dOk` and every screened polynomial ≥ 0 on the leaf box;
+  `witnessLeafOk_sound` gives the witness disjunct of `ChartGood` on the leaf
+  box (points of B).
+-/
+
+open Noperts Noperts.Pipeline Noperts.Pipeline.Cap
+
+namespace DeltoidalHexecontahedron.Cap
+
+open NPoly PVec
+
+def dPoly (st : Setup) (id : ChartId) (c : KVec) : NPoly 5 :=
+  let d := PVec.cross (makeChart st id).u (PVec.const c)
+  PVec.dot d d
+
+theorem eval_dPoly (st : Setup) (id : ChartId) (c : KVec) (y : Fin 5 → ℝ) :
+    NPoly.eval 5 (dPoly st id c) y = rdot (rcross (rChartU st id y) (kv c)) (rcross (rChartU st id y) (kv c)) := by
+  simp only [dPoly, PVec.eval_dot, PVec.eval_cross, PVec.eval_const, eval_makeChart_u, kv]
+
+def dOk (st : Setup) (pr : Params) (id : ChartId) (c : KVec) : Bool :=
+  let q := dPoly st id c
+  decide (0 < NPoly.lowerDeg 5 (degs q) q (rootBox st pr id))
+
+theorem rootBox_width_nonneg (st : Setup) (pr : Params) (id : ChartId) (h : ∀ v, (rootLoHi st pr id v).1 ≤ (rootLoHi st pr id v).2) :
+    ∀ i, 0 ≤ (rootBox st pr id i).2 := by
+  intro i; simp only [rootBox]; linarith [h i]
+
+theorem dOk_sound (st : Setup) (pr : Params) (id : ChartId) (c : KVec) (h : dOk st pr id c = true)
+    (hw : ∀ i, 0 ≤ (rootBox st pr id i).2) (y : Fin 5 → ℝ) (hy : InBoxR (rootBox st pr id) y) :
+    rcross (rChartU st id y) (kv c) ≠ 0 := by
+  intro h0
+  have hl := lowerDeg_le_eval 5 (degs (dPoly st id c)) (dPoly st id c) (rootBox st pr id) y hw hy
+  have hpos : (0 : ℚ) < NPoly.lowerDeg 5 (degs (dPoly st id c)) (dPoly st id c) (rootBox st pr id) :=
+    of_decide_eq_true h
+  rw [eval_dPoly, h0] at hl
+  simp [rdot] at hl
+  linarith
+
+/-- The divided witness polynomials not already ≥ 0 on the root box. -/
+def screened (Q : Array (NPoly 5)) (box : Box) : Array (NPoly 5) :=
+  Q.filter fun q => decide (NPoly.lowerDeg 5 (degs q) q box < 0)
+
+theorem screened_sound (Q : Array (NPoly 5)) (box : Box) (hw : ∀ i, 0 ≤ (box i).2)
+    (y : Fin 5 → ℝ) (hy : InBoxR box y) (hs : ∀ q ∈ screened Q box, 0 ≤ NPoly.eval 5 q y) :
+    ∀ q ∈ Q, 0 ≤ NPoly.eval 5 q y := by
+  intro q hq
+  by_cases hneg : NPoly.lowerDeg 5 (degs q) q box < 0
+  · exact hs q (Array.mem_filter.mpr ⟨hq, by simpa using hneg⟩)
+  · push Not at hneg
+    have := lowerDeg_le_eval 5 (degs q) q box y hw hy
+    exact le_trans (by exact_mod_cast hneg) this
+
+/-- The real value of the witness polynomial of the chart. -/
+theorem eval_chart_witnessPoly (st : Setup) (id : ChartId) (vk c vj : KVec) (y : Fin 5 → ℝ) :
+    NPoly.eval 5 (witnessPoly (witnessParts (makeChart st id).u (makeChart st id).w vk c) vj) y =
+      witnessValue (rChartU st id y) (rChartW st id y) (kv vk) (kv c) (kv vj) := by
+  rw [eval_witnessPoly, eval_makeChart_u, eval_makeChart_w]
+  rfl
+
+theorem rootLoHi_zero (st : Setup) (pr : Params) (id : ChartId) : rootLoHi st pr id 0 = (0, pr.mu0) := by
+  rw [rootLoHi_std' st pr id 0 (tieLoHiOf_of_v st id 0 (by norm_num))]; unfold rootLoHiStd; simp [baseLoHi]
+
+theorem rootLoHi_two_cone (st : Setup) (pr : Params) (id : ChartId) (hk : id.kind = .cone ∨ id.kind = .mcone)
+    (hax : id.axis < 3) : rootLoHi st pr id 2 = (0, pr.coneT id.kind) := by
+  have hnfe : id.kind ≠ .fe := by rcases hk with h | h <;> rw [h] <;> simp
+  have hnw : ¬ IsWeakP st id 0 := by
+    rintro ⟨i, -, -, hi⟩; have := pvarOf_ne_zero_of_ne_fe id hnfe hi; omega
+  have hb : baseLoHi st pr id.kind id.axis 2 = (0, pr.coneT id.kind) := by
+    rcases hk with h | h <;> simp [baseLoHi, h, Params.coneT]
+  rcases Nat.lt_or_ge id.ratio 3 with hr | hr
+  · interval_cases hr2 : id.ratio
+    · rw [rootLoHi_ratio0 st pr id hr2, hb]
+    · rw [rootLoHi_ratio1 st pr id hr2, if_neg (by simpa using hnw), hb]
+    · rw [rootLoHi_ratio2 st pr id hr2, if_neg, hb]
+      rintro ⟨-, hp⟩
+      have := pvarOf_ne_zero_of_ne_fe id hnfe hp
+      omega
+  · rw [rootLoHi_std' st pr id 2 (tieLoHiOf_of_ne_face st id (by rcases hk with h | h <;> rw [h] <;> simp) 2)]
+    unfold rootLoHiStd; simp only [show (2 : ℕ) ≤ 2 from le_refl _, if_true]
+    rw [if_neg (by omega), if_neg (by omega), hb]
+
+theorem y0_nonneg_of_root (st : Setup) (pr : Params) (id : ChartId) (y : Fin 5 → ℝ)
+    (hy : InBoxR (rootBox st pr id) y) : 0 ≤ y 0 := by
+  have := ((inBoxR_iff st pr id y).mp hy 0).1
+  rw [show ((0 : Fin 5) : ℕ) = 0 from rfl, rootLoHi_zero] at this
+  simpa using this
+
+theorem y2_nonneg_of_root_cone (st : Setup) (pr : Params) (id : ChartId) (hk : isCone id = true)
+    (hax : id.axis < 3) (y : Fin 5 → ℝ) (hy : InBoxR (rootBox st pr id) y) : 0 ≤ y 2 := by
+  have hk' : id.kind = .cone ∨ id.kind = .mcone := by
+    unfold isCone at hk; simpa using hk
+  have := ((inBoxR_iff st pr id y).mp hy 2).1
+  rw [show ((2 : Fin 5) : ℕ) = 2 from rfl, rootLoHi_two_cone st pr id hk' hax] at this
+  simpa using this
+
+/-- A witness leaf: u × c ≠ 0 on the root box, and the screened divided witness polynomials
+are ≥ 0 on the leaf box. -/
+def witnessLeafOk (st : Setup) (pr : Params) (id : ChartId) (V : Array KVec) (vk c : KVec) (box : Box) : Bool :=
+  dOk st pr id c && boxOk (screened (witnessPolys (makeChart st id) id V vk c) (rootBox st pr id)) box
+
+theorem witnessLeafOk_sound (st : Setup) (pr : Params) (id : ChartId) (hax : id.axis < 3) (V : Array KVec)
+    (vk c : KVec) (box : Box) (h : witnessLeafOk st pr id V vk c box = true)
+    (hrw : ∀ i, 0 ≤ (rootBox st pr id i).2) (hbw : ∀ i, 0 ≤ (box i).2)
+    (y : Fin 5 → ℝ) (hyb : InBoxR box y) (hyr : InBoxR (rootBox st pr id) y) :
+    rcross (rChartU st id y) (kv c) ≠ 0 ∧
+      ∀ vj ∈ V, 0 ≤ witnessValue (rChartU st id y) (rChartW st id y) (kv vk) (kv c) (kv vj) := by
+  simp only [witnessLeafOk, Bool.and_eq_true] at h
+  refine ⟨dOk_sound st pr id c h.1 hrw y hyr, ?_⟩
+  have hs := boxOk_sound hbw h.2 hyb
+  have hall := screened_sound _ _ hrw y hyr hs
+  have hnn := witnessPoly_nonneg (makeChart st id) id V vk c y (y0_nonneg_of_root st pr id y hyr)
+    (fun hc => y2_nonneg_of_root_cone st pr id hc hax y hyr) hall
+  intro vj hvj
+  have := hnn vj hvj
+  rwa [eval_chart_witnessPoly] at this
+
+/-! ### Cone-region leaves (F_e charts) -/
+
+def ivl (box : Box) (v : Fin 5) : ℚ × ℚ := ((box v).1, (box v).1 + (box v).2)
+
+def mulIvl (a b : ℚ × ℚ) : ℚ × ℚ :=
+  let p := [a.1 * b.1, a.1 * b.2, a.2 * b.1, a.2 * b.2]
+  (p.foldr min (a.1 * b.1), p.foldr max (a.1 * b.1))
+
+theorem le_mul_of_corners {a1 a2 b1 b2 x y m : ℝ} (hx : a1 ≤ x ∧ x ≤ a2) (hy : b1 ≤ y ∧ y ≤ b2)
+    (h11 : m ≤ a1 * b1) (h12 : m ≤ a1 * b2) (h21 : m ≤ a2 * b1) (h22 : m ≤ a2 * b2) : m ≤ x * y := by
+  rcases le_total 0 y with hy0 | hy0
+  · have hxy : a1 * y ≤ x * y := mul_le_mul_of_nonneg_right hx.1 hy0
+    rcases le_total 0 a1 with ha | ha
+    · have : a1 * b1 ≤ a1 * y := mul_le_mul_of_nonneg_left hy.1 ha
+      linarith
+    · have : a1 * b2 ≤ a1 * y := mul_le_mul_of_nonpos_left hy.2 ha
+      linarith
+  · have hxy : a2 * y ≤ x * y := mul_le_mul_of_nonpos_right hx.2 hy0
+    rcases le_total 0 a2 with ha | ha
+    · have : a2 * b1 ≤ a2 * y := mul_le_mul_of_nonneg_left hy.1 ha
+      linarith
+    · have : a2 * b2 ≤ a2 * y := mul_le_mul_of_nonpos_left hy.2 ha
+      linarith
+
+theorem mul_le_of_corners {a1 a2 b1 b2 x y M : ℝ} (hx : a1 ≤ x ∧ x ≤ a2) (hy : b1 ≤ y ∧ y ≤ b2)
+    (h11 : a1 * b1 ≤ M) (h12 : a1 * b2 ≤ M) (h21 : a2 * b1 ≤ M) (h22 : a2 * b2 ≤ M) : x * y ≤ M := by
+  have := le_mul_of_corners (m := -M) (x := x) (y := -y) (b1 := -b2) (b2 := -b1) hx ⟨by linarith, by linarith⟩
+    (by linarith) (by linarith) (by linarith) (by linarith)
+  linarith
+
+theorem mem_mulIvl {a b : ℚ × ℚ} {x y : ℝ} (hx : (a.1 : ℝ) ≤ x ∧ x ≤ a.2) (hy : (b.1 : ℝ) ≤ y ∧ y ≤ b.2) :
+    ((mulIvl a b).1 : ℝ) ≤ x * y ∧ x * y ≤ (mulIvl a b).2 := by
+  obtain ⟨a1, a2⟩ := a; obtain ⟨b1, b2⟩ := b
+  simp only [mulIvl, List.foldr_cons, List.foldr_nil] at *
+  push_cast
+  constructor
+  · apply le_mul_of_corners hx hy
+    · exact min_le_left _ _
+    · exact le_trans (min_le_right _ _) (min_le_left _ _)
+    · exact le_trans (min_le_right _ _) (le_trans (min_le_right _ _) (min_le_left _ _))
+    · exact le_trans (min_le_right _ _) (le_trans (min_le_right _ _) (le_trans (min_le_right _ _) (min_le_left _ _)))
+  · apply mul_le_of_corners hx hy
+    · exact le_max_left _ _
+    · exact le_trans (le_max_left _ _) (le_max_right _ _)
+    · exact le_trans (le_trans (le_max_left _ _) (le_max_right _ _)) (le_max_right _ _)
+    · exact le_trans (le_trans (le_trans (le_max_left _ _) (le_max_right _ _)) (le_max_right _ _)) (le_max_right _ _)
+
+/-- The interval of the F_e chart's s_i over the box (after the ratio substitution). -/
+def sRange (st : Setup) (id : ChartId) (box : Box) (i : Fin 3) : ℚ × ℚ :=
+  let v : Fin 5 := ⟨2 + i, by omega⟩
+  if id.ratio = 1 ∧ (List.range 3).any (fun j => !st.strong j && pvarOf id j = some (i : ℕ)) = true then
+    mulIvl (ivl box 0) (ivl box v)
+  else if id.ratio = 2 ∧ pvarOf id id.ratioCoord = some (i : ℕ) then
+    let l := (id.z : ℚ) * (ivl box 0).1 + (ivl box v).1
+    let h := (id.z : ℚ) * (ivl box 0).2 + (ivl box v).2
+    if id.ratioSign then (l, h) else (-h, -l)
+  else ivl box v
+
+theorem mem_ivl {box : Box} {y : Fin 5 → ℝ} (hy : InBoxR box y) (v : Fin 5) :
+    ((ivl box v).1 : ℝ) ≤ y v ∧ y v ≤ (ivl box v).2 := by
+  obtain ⟨h1, h2⟩ := hy v
+  simp only [ivl]; push_cast; exact ⟨h1, h2⟩
+
+theorem sRange_sound (st : Setup) (id : ChartId) (box : Box) (y : Fin 5 → ℝ) (hy : InBoxR box y) (i : Fin 3) :
+    ((sRange st id box i).1 : ℝ) ≤ rRatioVar st id y i ∧ rRatioVar st id y i ≤ (sRange st id box i).2 := by
+  have hv : rpv y i = y ⟨2 + i, by omega⟩ := rpv_eq y i i.isLt
+  have h0 := mem_ivl hy 0
+  have hvv := mem_ivl hy ⟨2 + i, by omega⟩
+  unfold sRange rRatioVar
+  by_cases h1 : id.ratio = 1
+  · by_cases hw : (List.range 3).any (fun j => !st.strong j && pvarOf id j = some (i : ℕ)) = true
+    · rw [if_pos ⟨h1, hw⟩, if_pos h1, if_pos hw, hv]
+      exact mem_mulIvl h0 hvv
+    · rw [if_neg (fun h => hw h.2), if_neg (by rw [h1]; omega), if_pos h1, if_neg hw, hv]
+      exact hvv
+  · rw [if_neg (fun h => h1 h.1), if_neg h1]
+    by_cases h2 : id.ratio = 2 ∧ pvarOf id id.ratioCoord = some (i : ℕ)
+    · rw [if_pos h2, if_pos h2]
+      have hz : (0 : ℝ) ≤ id.z := by positivity
+      simp only
+      rw [hv]
+      split_ifs
+      · push_cast; constructor <;> nlinarith [h0.1, h0.2, hvv.1, hvv.2]
+      · push_cast; constructor <;> nlinarith [h0.1, h0.2, hvv.1, hvv.2]
+    · rw [if_neg h2, if_neg h2, hv]; exact hvv
+
+/-- |s − c| ≤ bound on the whole interval. -/
+def within (r : ℚ × ℚ) (c bound : ℚ) : Bool := decide (max |r.1 - c| |r.2 - c| ≤ bound)
+
+theorem within_sound {r : ℚ × ℚ} {c bound : ℚ} (h : within r c bound = true) {x : ℝ}
+    (hx : (r.1 : ℝ) ≤ x ∧ x ≤ r.2) : |x - c| ≤ bound := by
+  have hb := of_decide_eq_true h
+  have h1 : |(r.1 : ℝ) - c| ≤ bound := by
+    have := le_trans (le_max_left _ _) hb; exact_mod_cast this
+  have h2 : |(r.2 : ℝ) - c| ≤ bound := by
+    have := le_trans (le_max_right _ _) hb; exact_mod_cast this
+  rw [abs_le] at h1 h2 ⊢
+  constructor <;> linarith [hx.1, hx.2, h1.1, h1.2, h2.1, h2.2]
+
+/-- An F_e box inside the cone region (identity cone, or the tie cone at (1, 0, 0)). -/
+def coneOk (st : Setup) (pr : Params) (id : ChartId) (box : Box) : Bool :=
+  let w (i : Fin 3) (c : ℚ) := within (sRange st id box i) c (pr.t0 * st.coneScale .cone i)
+  let wm (i : Fin 3) (c : ℚ) := within (sRange st id box i) c (pr.t0m * st.coneScale .mcone i)
+  decide (id.kind = .fe) && ((w 0 0 && w 1 0 && w 2 0) || (st.aniso && pr.tieCones && wm 0 1 && wm 1 0 && wm 2 0))
+
+theorem coneOk_sound (st : Setup) (pr : Params) (id : ChartId) (box : Box) (h : coneOk st pr id box = true)
+    (y : Fin 5 → ℝ) (hy : InBoxR box y) :
+    id.kind = .fe ∧ InConeRegion st pr (rES st id (st.frameAB id.side).1 (st.frameAB id.side).2 y).2 := by
+  simp only [coneOk, Bool.and_eq_true, Bool.or_eq_true, decide_eq_true_eq] at h
+  obtain ⟨hfe, h⟩ := h
+  refine ⟨hfe, ?_⟩
+  have hs : ∀ i : Fin 3, (rES st id (st.frameAB id.side).1 (st.frameAB id.side).2 y).2 i = rRatioVar st id y i := by
+    intro i; simp [rES, hfe]
+  have hw : ∀ (i : Fin 3) (c t : ℚ) (k : Kind), within (sRange st id box i) c (t * st.coneScale k i) = true →
+      |rRatioVar st id y i - c| ≤ (t : ℝ) * st.coneScale k i := by
+    intro i c t k hc
+    have := within_sound hc (sRange_sound st id box y hy i)
+    push_cast at this; exact this
+  unfold InConeRegion
+  rcases h with ⟨⟨h0, h1⟩, h2⟩ | ⟨⟨⟨⟨han, htie⟩, h0⟩, h1⟩, h2⟩
+  · left
+    intro i
+    rw [hs]
+    fin_cases i
+    · simpa using hw 0 0 _ _ h0
+    · simpa using hw 1 0 _ _ h1
+    · simpa using hw 2 0 _ _ h2
+  · right
+    refine ⟨han, htie, ?_, ?_, ?_⟩
+    · rw [hs]; simpa using hw 0 1 _ _ h0
+    · rw [hs]; simpa using hw 1 0 _ _ h1
+    · rw [hs]; simpa using hw 2 0 _ _ h2
+
+/-! ### The identity pose -/
+
+theorem rcayleyNum_zero (v : Fin 3 → ℝ) : rcayleyNum 0 v = v := by
+  funext k; fin_cases k <;> simp [rcayleyNum, rdot, rcross]
+
+theorem exists_basis_cross_ne (u : Fin 3 → ℝ) (hu : u ≠ 0) : ∃ c : Fin 3 → ℝ, rcross u c ≠ 0 := by
+  by_contra h
+  push Not at h
+  apply hu
+  have h0 := h (Pi.single 0 1); have h1 := h (Pi.single 1 1); have h2 := h (Pi.single 2 1)
+  have e0 := congrFun h0 1; have e0' := congrFun h0 2
+  have e1 := congrFun h1 0; have e1' := congrFun h1 2
+  have e2 := congrFun h2 0
+  simp [rcross] at e0 e0' e1 e1' e2
+  funext k; fin_cases k <;> simp_all
+
+/-- A chart point with w = 0 (the identity rotation) is good: a support witness. -/
+theorem chartGood_of_w_zero (st : Setup) (pr : Params) (V : List (Fin 3 → ℝ)) (hV : V ≠ [])
+    (usePrune : Bool) (G : Matrix (Fin 3) (Fin 3) ℝ) (id : ChartId) (y : Fin 5 → ℝ)
+    (hu : rChartU st id y ≠ 0) (hw : rChartW st id y = 0) : ChartGood st pr V usePrune G id y := by
+  right; right
+  obtain ⟨c, hc⟩ := exists_basis_cross_ne _ hu
+  set d := rcross (rChartU st id y) c
+  classical
+  have hne : V.toFinset.Nonempty := by
+    obtain ⟨v, hv⟩ := List.exists_mem_of_ne_nil V hV
+    exact ⟨v, List.mem_toFinset.mpr hv⟩
+  obtain ⟨vk, hvk, hmax⟩ := Finset.exists_max_image V.toFinset (fun v => rdot v d) hne
+  refine ⟨vk, List.mem_toFinset.mp hvk, c, hc, fun vj hvj => ?_⟩
+  unfold witnessValue
+  rw [hw, rcayleyNum_zero]
+  have := hmax vj (List.mem_toFinset.mpr hvj)
+  simp only [rdot, Pi.zero_apply, mul_zero, add_zero] at this ⊢
+  linarith
+
+/-! ### Half-turn prune leaves -/
+
+/-- The unit vectors of K³. -/
+def kbasis (j : Fin 3) : KVec := fun i => if i = j then IcoQ.one else IcoQ.zero
+
+/-- capcert's cell polynomial 2 u·(N G u) − |u|² (tr(N G) + tr N), N = N(w) the Cayley numerator,
+for G given by its columns. -/
+def cellPoly (st : Setup) (id : ChartId) (Gcol : Fin 3 → KVec) : NPoly 5 :=
+  let ch := makeChart st id
+  let NG : Fin 3 → PVec := fun j => cayleyNum ch.w (Gcol j)
+  let Ncol : Fin 3 → PVec := fun j => cayleyNum ch.w (kbasis j)
+  let NGu : PVec := PVec.add (PVec.smul (ch.u 0) (NG 0)) (PVec.add (PVec.smul (ch.u 1) (NG 1)) (PVec.smul (ch.u 2) (NG 2)))
+  let tr : NPoly 5 := NPoly.add 5 (NPoly.add 5 (NG 0 0) (NG 1 1)) (NPoly.add 5 (NG 2 2)
+    (NPoly.add 5 (NPoly.add 5 (Ncol 0 0) (Ncol 1 1)) (Ncol 2 2)))
+  NPoly.sub 5 (NPoly.mul 5 npTwo (PVec.dot ch.u NGu)) (NPoly.mul 5 (PVec.dot ch.u ch.u) tr)
+
+/-- The real matrix of G's columns. -/
+noncomputable def gMat (Gcol : Fin 3 → KVec) : Matrix (Fin 3) (Fin 3) ℝ := fun i j => (Gcol j i).val
+
+theorem rcayleyNum_eq (w v : Fin 3 → ℝ) :
+    rcayleyNum w v = (cayleyNumeratorMatrix (w 0) (w 1) (w 2)).mulVec v := by
+  funext k
+  fin_cases k <;> simp [rcayleyNum, rdot, rcross, cayleyNumeratorMatrix, Matrix.mulVec, dotProduct,
+    Fin.sum_univ_three] <;> ring
+
+theorem eval_cellPoly (st : Setup) (id : ChartId) (Gcol : Fin 3 → KVec) (y : Fin 5 → ℝ) :
+    let u := rChartU st id y
+    let w := rChartW st id y
+    let N := cayleyNumeratorMatrix (w 0) (w 1) (w 2)
+    NPoly.eval 5 (cellPoly st id Gcol) y =
+      2 * rdot u ((N * gMat Gcol).mulVec u) - rdot u u * (Matrix.trace (N * gMat Gcol) + Matrix.trace N) := by
+  have hb : ∀ j i : Fin 3, (kbasis j i).val = if i = j then 1 else 0 := by
+    intro j i; unfold kbasis; split_ifs <;> simp [IcoQ.val, IcoQ.one, IcoQ.zero]
+  simp only [cellPoly, NPoly.eval_sub, NPoly.eval_mul, PVec.eval_dot, NPoly.eval_add, npTwo, NPoly.eval_const,
+    IcoQ.val_ofRat]
+  simp only [PVec.eval_add, PVec.eval_smul, eval_cayleyNum, eval_makeChart_u, eval_makeChart_w]
+  have e : ∀ j : Fin 3, NPoly.eval 5 (cayleyNum (makeChart st id).w (Gcol j) j) y =
+      rcayleyNum (rChartW st id y) (kv (Gcol j)) j := by
+    intro j
+    have := congrFun (eval_cayleyNum (makeChart st id).w (Gcol j) y) j
+    rw [eval_makeChart_w] at this; exact this
+  have e2 : ∀ j k : Fin 3, NPoly.eval 5 (cayleyNum (makeChart st id).w (kbasis j) k) y =
+      rcayleyNum (rChartW st id y) (kv (kbasis j)) k := by
+    intro j k
+    have := congrFun (eval_cayleyNum (makeChart st id).w (kbasis j) y) k
+    rw [eval_makeChart_w] at this; exact this
+  have eu : ∀ k, NPoly.eval 5 ((makeChart st id).u k) y = rChartU st id y k :=
+    fun k => congrFun (eval_makeChart_u st id y) k
+  simp only [eu, e, e2]
+  generalize rChartU st id y = u
+  generalize rChartW st id y = w
+  simp only [rcayleyNum_eq, gMat, kv, PVec.kval, hb, rdot, Matrix.mulVec, dotProduct, Fin.sum_univ_three,
+    Matrix.mul_apply, Matrix.trace, Matrix.diag, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+  push_cast
+  simp
+  ring
+
+theorem trace_halfTurnMat_mul (u : Fin 3 → ℝ) (hu : rdot u u ≠ 0) (M : Matrix (Fin 3) (Fin 3) ℝ) :
+    Matrix.trace (halfTurnMat u * M) = 2 * rdot u (M.mulVec u) / rdot u u - Matrix.trace M := by
+  have hsum : (∑ k, u k ^ 2) = rdot u u := by simp [rdot, Fin.sum_univ_three]; ring
+  simp only [halfTurnMat, hsum, Matrix.trace, Matrix.diag, Matrix.mul_apply, Fin.sum_univ_three, Matrix.mulVec,
+    dotProduct, Matrix.one_apply, Matrix.of_apply]
+  simp only [rdot] at hu ⊢
+  have hu2 : u 0 ^ 2 + u 1 ^ 2 + u 2 ^ 2 ≠ 0 := by convert hu using 1; ring
+  field_simp
+  simp only [Matrix.mulVec, dotProduct, Fin.sum_univ_three]
+  norm_num [Fin.ext_iff]
+  ring
+
+theorem trace_halfTurn_sub (u w : Fin 3 → ℝ) (hu : rdot u u ≠ 0) (G : Matrix (Fin 3) (Fin 3) ℝ) :
+    let N := cayleyNumeratorMatrix (w 0) (w 1) (w 2)
+    (1 + rdot w w) * rdot u u * (Matrix.trace (halfTurnMat u * cayleyMatrix (w 0) (w 1) (w 2) * G) -
+      Matrix.trace (cayleyMatrix (w 0) (w 1) (w 2))) =
+      2 * rdot u ((N * G).mulVec u) - rdot u u * (Matrix.trace (N * G) + Matrix.trace N) := by
+  have hD : (1 + rdot w w) = cayleyDenom (w 0) (w 1) (w 2) := by simp [rdot, cayleyDenom]; ring
+  have hne := cayleyDenom_ne (w 0) (w 1) (w 2)
+  set N := cayleyNumeratorMatrix (w 0) (w 1) (w 2)
+  set D := cayleyDenom (w 0) (w 1) (w 2)
+  have hR : cayleyMatrix (w 0) (w 1) (w 2) = D⁻¹ • N := by
+    rw [cayleyMatrix_eq_div_numerator]; ext i j; simp [N, D, div_eq_inv_mul]
+  simp only []
+  rw [Matrix.mul_assoc, trace_halfTurnMat_mul u hu, hR, hD]
+  rw [Matrix.smul_mul, Matrix.smul_mulVec, Matrix.trace_smul, Matrix.trace_smul]
+  have hrd : ∀ (k : ℝ) (v : Fin 3 → ℝ), rdot u (k • v) = k * rdot u v := by
+    intro k v; simp only [rdot, Pi.smul_apply, smul_eq_mul]; ring
+  rw [hrd]
+  simp only [smul_eq_mul]
+  field_simp
+  ring
+
+/-- A half-turn prune leaf: the divided cell polynomial is positive on the box (identity cones
+and F_e/face charts; never the tie cone). -/
+def cellQ (st : Setup) (id : ChartId) (Gcol : Fin 3 → KVec) : NPoly 5 :=
+  let q := NPoly.divOut 5 0 64 (cellPoly st id Gcol)
+  if isCone id then NPoly.divOut 5 2 64 q else q
+
+def pruneOk (st : Setup) (id : ChartId) (Gcol : Fin 3 → KVec) (box : Box) : Bool :=
+  let q := cellQ st id Gcol
+  decide (id.kind ≠ .mcone) && decide (0 < NPoly.lowerDeg 5 (degs q) q box)
+
+theorem pruneOk_sound (st : Setup) (id : ChartId) (Gcol : Fin 3 → KVec) (box : Box)
+    (h : pruneOk st id Gcol box = true) (hbw : ∀ i, 0 ≤ (box i).2) (y : Fin 5 → ℝ) (hy : InBoxR box y)
+    (hμ : 0 < y 0) (ht : isCone id = true → 0 < y 2) (hu : rdot (rChartU st id y) (rChartU st id y) ≠ 0) :
+    Matrix.trace (cayleyMatrix (rChartW st id y 0) (rChartW st id y 1) (rChartW st id y 2)) <
+      Matrix.trace (halfTurnMat (rChartU st id y) *
+        cayleyMatrix (rChartW st id y 0) (rChartW st id y 1) (rChartW st id y 2) * gMat Gcol) := by
+  simp only [pruneOk, Bool.and_eq_true, decide_eq_true_eq] at h
+  obtain ⟨-, hpos⟩ := h
+  have hl := lowerDeg_le_eval 5 (degs (cellQ st id Gcol)) (cellQ st id Gcol) box y hbw hy
+  have hq : 0 < NPoly.eval 5 (cellQ st id Gcol) y := lt_of_lt_of_le (by exact_mod_cast hpos) hl
+  -- cell = μ^m t^n Q > 0.
+  have hcell : 0 < NPoly.eval 5 (cellPoly st id Gcol) y := by
+    obtain ⟨m, hm⟩ := eval_divOut 5 0 y 64 (cellPoly st id Gcol)
+    rw [hm]
+    apply mul_pos (pow_pos hμ m)
+    unfold cellQ at hq
+    by_cases hc : isCone id = true
+    · simp only [hc, if_true] at hq
+      obtain ⟨n, hn⟩ := eval_divOut 5 2 y 64 (NPoly.divOut 5 0 64 (cellPoly st id Gcol))
+      rw [hn]
+      exact mul_pos (pow_pos (ht hc) n) hq
+    · simp only [hc] at hq
+      simpa using hq
+  rw [eval_cellPoly] at hcell
+  have hid := trace_halfTurn_sub (rChartU st id y) (rChartW st id y) hu (gMat Gcol)
+  simp only [] at hid
+  rw [← hid] at hcell
+  have hD : 0 < 1 + rdot (rChartW st id y) (rChartW st id y) := by
+    simp only [rdot]; nlinarith [mul_self_nonneg (rChartW st id y 0), mul_self_nonneg (rChartW st id y 1),
+      mul_self_nonneg (rChartW st id y 2)]
+  have hU : 0 < rdot (rChartU st id y) (rChartU st id y) := by
+    rcases lt_or_gt_of_ne hu with h | h
+    · exfalso; simp only [rdot] at h
+      nlinarith [mul_self_nonneg (rChartU st id y 0), mul_self_nonneg (rChartU st id y 1),
+        mul_self_nonneg (rChartU st id y 2)]
+    · exact h
+  have := (mul_pos_iff_of_pos_left (mul_pos hD hU)).mp hcell
+  linarith
+
+/-! ### Chart points: u ≠ 0, and w = 0 at μ = 0 or at the identity cone's tip -/
+
+theorem rChartU_dot_x (st : Setup) (hF : FrameOK st) (id : ChartId) (hside : id.side < 4) (y : Fin 5 → ℝ) :
+    rdot (rChartU st id y) (kv st.x) = 1 := by
+  obtain ⟨h11, h22, hxx, h12, h1x, h2x⟩ := hF
+  obtain ⟨hA, hB⟩ := frameAB_val st id.side hside
+  rw [rChartU_eq, hA, hB]
+  simp only [rdot, Pi.add_apply, Pi.smul_apply, smul_eq_mul] at hxx h1x h2x ⊢
+  have e1 : kv st.e1 0 * kv st.x 0 + kv st.e1 1 * kv st.x 1 + kv st.e1 2 * kv st.x 2 = 0 := h1x
+  have e2 : kv st.e2 0 * kv st.x 0 + kv st.e2 1 * kv st.x 1 + kv st.e2 2 * kv st.x 2 = 0 := h2x
+  linear_combination hxx + (y 0 * (rES st id (st.frameAB id.side).1 (st.frameAB id.side).2 y).1 *
+    ((sideA id.side).1 + y 1 * (sideB id.side).1)) * e1 +
+    (y 0 * (rES st id (st.frameAB id.side).1 (st.frameAB id.side).2 y).1 *
+    ((sideA id.side).2 + y 1 * (sideB id.side).2)) * e2
+
+theorem rChartU_ne_zero (st : Setup) (hF : FrameOK st) (id : ChartId) (hside : id.side < 4) (y : Fin 5 → ℝ) :
+    rChartU st id y ≠ 0 := by
+  intro h
+  have := rChartU_dot_x st hF id hside y
+  rw [h] at this
+  simp [rdot] at this
+
+theorem rdot_self_ne_zero_of_ne {u : Fin 3 → ℝ} (hu : u ≠ 0) : rdot u u ≠ 0 := by
+  intro h
+  apply hu
+  simp only [rdot] at h
+  have h0 : u 0 = 0 := by nlinarith [mul_self_nonneg (u 0), mul_self_nonneg (u 1), mul_self_nonneg (u 2)]
+  have h1 : u 1 = 0 := by nlinarith [mul_self_nonneg (u 0), mul_self_nonneg (u 1), mul_self_nonneg (u 2)]
+  have h2 : u 2 = 0 := by nlinarith [mul_self_nonneg (u 0), mul_self_nonneg (u 1), mul_self_nonneg (u 2)]
+  funext k; fin_cases k <;> simp [h0, h1, h2]
+
+theorem rChartW_mu_zero (st : Setup) (id : ChartId) (y : Fin 5 → ℝ) (h0 : y 0 = 0) : rChartW st id y = 0 := by
+  rw [rChartW_eq]
+  simp only [h0, zero_mul, zero_smul, add_zero]
+  split_ifs <;> rfl
+
+theorem rChartW_cone_tip (st : Setup) (id : ChartId) (hk : id.kind = .cone) (y : Fin 5 → ℝ) (h2 : y 2 = 0) :
+    rChartW st id y = 0 := by
+  have hs : (rES st id (st.frameAB id.side).1 (st.frameAB id.side).2 y).2 = 0 := by
+    funext i
+    simp [rES, hk, rpv, h2]
+  rw [rChartW_eq]
+  simp only [hs, Pi.zero_apply, mul_zero, zero_smul, add_zero]
+  split_ifs <;> rfl
+
+end DeltoidalHexecontahedron.Cap
