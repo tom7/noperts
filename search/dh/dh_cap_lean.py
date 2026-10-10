@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Writes the Lean cap table (Noperthedron/.../DHCapData.lean) for the 5D cap
+"""Writes the Lean cap table (proof/DeltoidalHexecontahedron/CapData.lean) for the 5D cap
 leaves: the base caps (exact frame from capcert's kframe, μ₀, wmax², the
 half-turn element H_x for u0) and the images (base, g, s) in exactly the order
 of the caps file the search uses (dh_caps.py per base, concatenated).
@@ -41,7 +41,7 @@ for bi, spec in enumerate(sys.argv[2:]):
 with open(sys.argv[1], 'w') as f:
     f.write("""module
 
-public import Noperthedron.PentagonalHexecontahedron.CapRow
+public import DeltoidalHexecontahedron.CapRow
 
 @[expose] public section
 
@@ -52,7 +52,9 @@ The base caps (exact frames, μ₀, wmax², half-turn element) and the images in
 the order of the 5D search's caps file (cap leaf `cl <path> <index>`).
 -/
 
-namespace Noperthedron.PentagonalHexecontahedron.Cap
+open Noperts Noperts.Pipeline Noperts.Pipeline.Cap
+
+namespace DeltoidalHexecontahedron.Cap
 
 def dhCapBases : Array CapBase := #[
 """)
@@ -61,5 +63,5 @@ def dhCapBases : Array CapBase := #[
                        for (x, e1, e2, mu0, w2, gi) in bases))
     f.write("]\n\ndef dhCapImgs : Array CapImg := #[\n")
     f.write(",\n".join(f"  ⟨{b}, ⟨{n}, by decide⟩, {'true' if s else 'false'}⟩" for (b, n, s) in imgs))
-    f.write("]\n\nend Noperthedron.PentagonalHexecontahedron.Cap\n")
+    f.write("]\n\nend DeltoidalHexecontahedron.Cap\n")
 print(f"{len(bases)} bases, {len(imgs)} images", file=sys.stderr)

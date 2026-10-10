@@ -10,13 +10,13 @@
 #            caps (u0, ux) left to the cap theorems
 #   tubepack tube trees -> Lean packs + manifest (export_codetrees_pack)
 #   caps     the three cap certificates (capcert --export: u0, ux, u0 wide),
-#            the search's caps file (dh_caps.py) and Lean's DHCapData
+#            the search's caps file (dh_caps.py) and Lean's CapData
 #   ties     the tie tubes with their certificates (tietube --export_dir) and
-#            Lean's DHTieData (dh_tie_lean.py)
+#            Lean's TieData (dh_tie_lean.py)
 #   search   5D search, charts 0-2 (search5d), until nothing is deferred
 #   pack     per-code 5D packs (pack5d --per_code --tie_nodes)
 #   verify   Lean: check caps, ties and every table and build the proof
-#            (constructDeltoidalHexecontahedron)
+#            (constructDeltoidalHexecontahedron in ../../proof)
 #
 # Every stage is restartable: tubecode and search5d journal their work, and
 # pack5d skips packs newer than their journals. capcert, tietube, tubecode and
@@ -25,7 +25,7 @@
 # certificates (--from verify with --work pointing at them).
 #
 # Usage: ./rebuild.sh [--from STAGE] [--only STAGE] [--dry_run] [--threads N]
-#        [--mem_gb G] [--work DIR]   (default ./rebuild-work)
+#        [--mem_gb G] [--work DIR]   (default ../../work-dh)
 #
 # Resources (measured 2026-10-06, 64 cores, --from model: 8 h 10 min in all):
 # model through ties ~6 min, search 4 h 36 min, pack 35 min (chart 0 2 GB),
@@ -35,7 +35,8 @@
 #
 # The model, caps and ties stages regenerate committed source files (the model
 # files, codebdd.json, dh_exact.txt, dh_tie_data.txt, tie_normals.h, and
-# Noperthedron's Vertices.lean, DHStatementData, DHCapData, DHTieData etc.), so
+# ../../proof/DeltoidalHexecontahedron's Vertices, WedgeCoverData, IcoGroupData,
+# StatementData, CapData and TieData, the first four with scripts/), so
 # they only run when asked for (--from model, --only caps, ...); the default
 # start is tube (with the committed data).
 set -euo pipefail
@@ -49,9 +50,9 @@ RAM_GB=$(awk '/MemTotal/ {print int($2 / 1048576)}' /proc/meminfo)
 MEM_GB=$(( RAM_GB * 9 / 10 > 40 ? RAM_GB * 9 / 10 : 40 ))
 WORK=""
 NOPERT=$(cd "$(dirname "$0")" && pwd)
-LEAN=$NOPERT/../Noperthedron
+LEAN=$(cd "$NOPERT/../../proof" && pwd)
 export MODEL_DIR=$NOPERT
-export NOPERTHEDRON=$LEAN
+export NOPERTS_PROOF=$LEAN
 while [ $# -gt 0 ]; do
   case $1 in
     --from) FROM=$2; shift 2 ;;
@@ -68,8 +69,14 @@ run() {
   echo "+ $*" >&2
   if [ $DRY -eq 0 ]; then "$@"; fi
 }
+# run, with stdout to the file $1 (not opened in a dry run).
+run_to() {
+  local out=$1; shift
+  echo "+ $* > $out" >&2
+  if [ $DRY -eq 0 ]; then "$@" > "$out"; fi
+}
 lean_run() {
-  run systemd-run --scope -q -p MemoryMax="${MEM_GB}G" -p MemorySwapMax=0 "$@"
+  run systemd-run --user --scope -q -p MemoryMax="${MEM_GB}G" -p MemorySwapMax=0 "$@"
 }
 want() {
   local stage=$1
@@ -83,7 +90,7 @@ want() {
 }
 
 echo "== resources: $THREADS threads, memory cap ${MEM_GB} GB (RAM ${RAM_GB} GB)"
-[ -n "$WORK" ] || WORK=$NOPERT/rebuild-work
+[ -n "$WORK" ] || WORK=$(cd "$NOPERT/../.." && pwd)/work-dh
 TREES=$WORK/trees
 TUBEPACKS=$WORK/tube_packs
 CERTS=$WORK/certs
@@ -106,7 +113,7 @@ echo "== build"
 run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe export_codetrees_pack.exe capcert.exe \
   tietube.exe search5d.exe pack5d.exe scoreboard5d.exe
 build_lean() {
-  (cd "$LEAN" && lean_run lake build constructDeltoidalHexecontahedron check_global_rows dhBench)
+  (cd "$LEAN" && lean_run lake build constructDeltoidalHexecontahedron)
 }
 
 if want model; then
@@ -115,9 +122,9 @@ if want model; then
   (cd "$NOPERT" && run ./codebdd.exe --model_file=dh_model.txt --model_faces codebdd.json)
   (cd "$NOPERT" && run python3 dh_exact.py dh_model.txt dh_exact.txt)
   (cd "$NOPERT" && run python3 dh_tie_data.py dh_exact.txt dh_tie_data.txt)
-  (cd "$LEAN" && run python3 scripts/update_vertices.py \
-    && run python3 scripts/emit_wedge_cover.py --bdd "$NOPERT/codebdd.json" \
-         Noperthedron/PentagonalHexecontahedron/WedgeCoverData.lean \
+  (cd "$NOPERT" && run python3 scripts/update_vertices.py \
+    && run python3 scripts/emit_wedge_cover.py --bdd codebdd.json \
+         "$LEAN/DeltoidalHexecontahedron/WedgeCoverData.lean" \
     && run python3 scripts/snub_ico_group.py --model_file dh_model.txt \
     && run python3 scripts/dh_statement_data.py)
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe export_codetrees_pack.exe capcert.exe \
@@ -141,8 +148,8 @@ fi
 
 if want caps; then
   echo "== caps"
-  (cd "$NOPERT" && run ./capcert.exe --cap u0 --frame_only > "$WORK/frame_u0.txt")
-  (cd "$NOPERT" && run ./capcert.exe --cap ux --aniso --frame_only > "$WORK/frame_ux.txt")
+  (cd "$NOPERT" && run_to "$WORK/frame_u0.txt" ./capcert.exe --cap u0 --frame_only)
+  (cd "$NOPERT" && run_to "$WORK/frame_ux.txt" ./capcert.exe --cap ux --aniso --frame_only)
   (cd "$NOPERT" && run ./capcert.exe "${CAP_U0[@]}" --threads "$THREADS" --export "$CERTS/u0.cert")
   (cd "$NOPERT" && run ./capcert.exe "${CAP_UX[@]}" --threads "$THREADS" --export "$CERTS/ux.cert")
   (cd "$NOPERT" && run ./capcert.exe "${CAP_U0W[@]}" --threads "$THREADS" --export "$CERTS/u0_wide.cert")
@@ -153,7 +160,7 @@ if want caps; then
       && python3 dh_caps.py 41/1024 1/320 "$WORK/frame_u0.txt") > "$CAPS_FILE"
   fi
   (cd "$NOPERT" && run python3 dh_cap_lean.py \
-    "$LEAN/Noperthedron/PentagonalHexecontahedron/DHCapData.lean" \
+    "$LEAN/DeltoidalHexecontahedron/CapData.lean" \
     "$WORK/frame_u0.txt:41/4096:1/50:prune" "$WORK/frame_ux.txt:41/4096:1/80" "$WORK/frame_u0.txt:41/1024:1/320:prune")
 fi
 

@@ -1,4 +1,29 @@
-# The deltoidal hexecontahedron is a Nopert
+# search/dh/
+
+The C++ certificate search for the deltoidal hexecontahedron
+([../../deltoidal-hexecontahedron.md](../../deltoidal-hexecontahedron.md)).
+It comes from nopert229's `deltoidalhexecontahedron` branch at c0d289a (the
+tree of that commit, without its private working notes `notes/`), with paths
+fixed for this repository: cc-lib at `../../cc-lib` (`../../get-cc-lib.sh`),
+the Lean project at `../../proof` (executable
+`constructDeltoidalHexecontahedron`, generated Lean data in
+`proof/DeltoidalHexecontahedron/`), and the work directory `../../work-dh`.
+`scripts/` holds the four Lean-data generators that were in Noperthedron's
+`scripts/` (b45e0b34: `update_vertices.py`, `emit_wedge_cover.py`,
+`snub_ico_group.py`, `dh_statement_data.py`), changed only to write this
+repository's module names. License: GPLv3 (`../COPYING`).
+
+Build with `make` (unit tests) or `make all`; `./rebuild.sh` builds what it
+needs. `tieviz.exe` and `shadowanim.exe` (renderings, not part of the proof)
+also need tom7misc's `codec` next to `cc-lib` (`make CODEC=DIR`).
+
+The rest of this file is the branch's README. Its Lean names are the
+former ones (`DHTies` is now `DeltoidalHexecontahedron/Ties.lean`, and so on;
+see `../../BUILDING.md`, "Former names").
+
+---
+
+## The deltoidal hexecontahedron is a Nopert
 
 **Status (2026-10-06): verified.** `constructDeltoidalHexecontahedron` checked every certificate (3 caps,
 250 tie nodes, the view cover, 39 tube tables, 36.2 M chart-0 rows) in 3 h 05 min on 64 cores (peak 30 GB) and
@@ -78,4 +103,4 @@ peak ~30 GB).
 - Lean (Noperthedron `deltoidalhexecontahedron`, `Noperthedron/PentagonalHexecontahedron/`): `DHStatement`,
   `DHCaps`, `DHTies`, `DHChecks`, `DHDecode`, the cap and tie modules above, and `constructDeltoidalHexecontahedron`.
 
-The working log `notes/T.md` records how this proof came to be.
+The working log `notes/T.md` (not included here) records how this proof came to be.
