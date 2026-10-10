@@ -53,23 +53,27 @@ In lowest terms (the form used in Lean, `septopert` in
 In [`proof/Septopert.lean`](proof/Septopert.lean):
 
 ```lean
-theorem not_isRupert_of_certificatesValid (h : CertificatesValid) :
-    ¬ IsRupert septopert
+theorem isNopert_of_certificatesValid (h : CertificatesValid) : IsNopert septopert
 ```
 
-`IsRupert` (in `proof/MainTheorem.lean`) is the Rupert property: two copies
-of the solid, each rotated, can be placed so that the shadow of one lies
-strictly inside the shadow of the other. `CertificatesValid` says that the
-certificate data (four solution tables and a cap certificate) passes Lean's
-validity checks.
+`IsNopert V` (in `proof/Nopert.lean`) says that the points of `V` are not all
+in one plane, so their convex hull is a genuine solid, and that this solid is
+not Rupert. `IsRupert` (in `proof/MainTheorem.lean`) is the Rupert property:
+two copies of the solid, each rotated, can be placed so that the shadow of
+one lies strictly inside the shadow of the other. `CertificatesValid` says
+that the certificate data (four solution tables and a cap certificate) passes
+Lean's validity checks. The same `IsNopert` is used by the
+[minimality](minimality.md) result, so the two together say that 7 is the
+smallest number of vertices of a nopert.
 
 ## What is proved and what is verified
 
 This is a **Lean verification**, not a plain Lean proof:
 
-1. **Lean proof.** `not_isRupert_of_certificatesValid` is checked by Lean's
+1. **Lean proof.** `isNopert_of_certificatesValid` is checked by Lean's
    kernel and depends only on the standard axioms (`propext`,
-   `Classical.choice`, `Quot.sound`).
+   `Classical.choice`, `Quot.sound`). Its "genuine solid" half needs no data
+   at all.
 2. **Verification of the data.** The data is about 85 million table rows
    (6.7 GB), too much for the kernel. The program `constructSeptopert` runs
    the same Lean validity checks as compiled code on every row, and only if

@@ -1,6 +1,7 @@
 module
 
 public import Septopert.IsNotRupert
+public import Nopert
 
 @[expose] public section
 
@@ -23,8 +24,10 @@ through one copy that the other copy can pass through.
 
 The result has two parts, and they are trusted differently.
 
-1. **A Lean proof** (`not_isRupert_of_certificatesValid` below): *if* the
-   certificate data is valid, *then* the Septopert is not Rupert. The data is
+1. **A Lean proof** (`isNopert_of_certificatesValid` below): *if* the
+   certificate data is valid, *then* the Septopert is a nopert: a genuine
+   solid (its points are not all in one plane, which is proved outright)
+   that is not Rupert. The data is
    a large table that splits up every way the solid could be rotated and
    records, for each piece, why no passage exists there. This part is checked
    by Lean's kernel in the usual way. It depends only on the standard axioms
@@ -36,7 +39,7 @@ The result has two parts, and they are trusted differently.
    Instead, the program `constructSeptopert` (in `constructSeptopert.lean`)
    reads the data, runs Lean's own validity checks on every row as compiled
    code, and, only if every check passes, uses part 1 to build a value of type
-   `¬ IsRupert septopert` and prints
+   `¬ IsRupert septopert` (hence `IsNopert septopert`) and prints
 
        instantiated: ¬ IsRupert Septopert.verts (the Septopert is not Rupert)
 
@@ -101,12 +104,31 @@ theorem septopert_eq_verts : septopert = verts := by
   rw [huniv]
   simp only [Finset.image_insert, Finset.image_singleton, h0, h1, h2, h3, h4, h5, h6]
 
-/-- **If the certificate data is valid, the Septopert is not Rupert.** -/
+/-- If the certificate data is valid, the Septopert is not Rupert. -/
 theorem not_isRupert_of_certificatesValid (h : CertificatesValid) :
     ¬ IsRupert septopert := by
   obtain ⟨table, hchart, hvalid, hcap⟩ := h
   rw [septopert_eq_verts]
   exact not_rupert_of_valid_tables table hchart hvalid hcap
+
+/-- The Septopert is a genuine solid: its points are not all in one plane.
+(Proved outright: vertices 0, 1, 2 and 6 span a tetrahedron.) -/
+theorem not_coplanar_septopert : ¬ Coplanar ℝ (septopert : Set ℝ³) := by
+  refine not_coplanar_of_det3_ne_zero
+    (a := !₂[-470319/524288, 327651/1048576, 327651/1048576])
+    (b := !₂[327651/1048576, -470319/524288, 327651/1048576])
+    (c := !₂[327651/1048576, 327651/1048576, -470319/524288])
+    (d := !₂[-514207/1048576, -514207/1048576, -514207/1048576])
+    (by simp [septopert]) (by simp [septopert]) (by simp [septopert]) (by simp [septopert]) ?_
+  simp [det3, Matrix.det_fin_three]
+  norm_num
+
+/-- **The Septopert is a nopert**, given valid certificate data: it is a
+genuine solid (`not_coplanar_septopert`, a Lean proof) and it is not Rupert
+(`not_isRupert_of_certificatesValid`; the data's validity is what
+`constructSeptopert` verifies). `IsNopert` is defined in `Nopert.lean`. -/
+theorem isNopert_of_certificatesValid (h : CertificatesValid) : IsNopert septopert :=
+  ⟨not_coplanar_septopert, not_isRupert_of_certificatesValid h⟩
 
 end Septopert
 
