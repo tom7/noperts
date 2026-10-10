@@ -446,26 +446,208 @@ theorem GaleFrame.no_three_parallel {V : Finset ℝ³} {l m : ℝ³ → ℝ} (hS
 
 /-! ### §10.1 (e): facets from Gale signs -/
 
+theorem affOf_apply' (n x : ℝ³) (c : ℝ) : affOf n c x = ⟪n, x⟫ + c := rfl
+
+/-- A dependency applied to `x ↦ ⟪N, x⟫ - k`. -/
+theorem IsDepOn.apply_inner {V : Finset ℝ³} {l : ℝ³ → ℝ} (hl : IsDepOn V l) (N : ℝ³) (k : ℝ) :
+    ∑ t ∈ V, l t * (⟪N, t⟫ - k) = 0 := by
+  have := hl.apply (affOf N (-k))
+  simpa only [affOf_apply', ← sub_eq_add_neg] using this
+
+/-- The six-term relation of a Gale dependency `galeD l m s` and a plane function. -/
+theorem gale_rel {V : Finset ℝ³} {l m : ℝ³ → ℝ} (hl : IsDepOn V l) (hm : IsDepOn V m)
+    {a b c d e f : ℝ³} (hV : V = {a, b, c, d, e, f}) (hnd : [a, b, c, d, e, f].Nodup)
+    (N : ℝ³) (k : ℝ) (s : ℝ³) :
+    galeD l m s a * (⟪N, a⟫ - k) + galeD l m s b * (⟪N, b⟫ - k) +
+      galeD l m s c * (⟪N, c⟫ - k) + galeD l m s d * (⟪N, d⟫ - k) +
+      galeD l m s e * (⟪N, e⟫ - k) + galeD l m s f * (⟪N, f⟫ - k) = 0 := by
+  have := (hl.galeD hm s).apply_inner N k
+  rwa [hV, sum_six hnd] at this
+
+/-- The plane of three non-collinear points `P Q R`, as `⟪N, x⟫ = ⟪N, P⟫`. -/
+theorem plane_three (P Q R : ℝ³) :
+    ⟪cross (Q - P) (R - P), Q⟫ - ⟪cross (Q - P) (R - P), P⟫ = 0 ∧
+      ⟪cross (Q - P) (R - P), R⟫ - ⟪cross (Q - P) (R - P), P⟫ = 0 := by
+  have h1 := inner_cross_left (Q - P) (R - P)
+  have h2 := inner_cross_right (Q - P) (R - P)
+  rw [inner_sub_right] at h1 h2
+  exact ⟨h1, h2⟩
+
+/-- If a plane function vanishes on all six points, `V` is coplanar. -/
+theorem Six.plane_contra {V : Finset ℝ³} (hS : Six V) {a b c d e f : ℝ³}
+    (hV : V = {a, b, c, d, e, f}) {N : ℝ³} (hN : N ≠ 0) {k : ℝ} (ha : ⟪N, a⟫ - k = 0)
+    (hb : ⟪N, b⟫ - k = 0) (hc : ⟪N, c⟫ - k = 0) (hd : ⟪N, d⟫ - k = 0) (he : ⟪N, e⟫ - k = 0)
+    (hf : ⟪N, f⟫ - k = 0) : False := by
+  apply hS.noncop
+  refine coplanar_of_plane hN (c := k) (fun x hx => ?_)
+  rw [hV] at hx
+  simp only [Finset.coe_insert, Finset.coe_singleton, Set.mem_insert_iff,
+    Set.mem_singleton_iff] at hx
+  rcases hx with rfl | rfl | rfl | rfl | rfl | rfl <;> linarith
+
 /-- A triangle facet from three negative Gale determinants of its complement. -/
 theorem isFacetTriangle_of_gale {V : Finset ℝ³} (hS : Six V) {l m : ℝ³ → ℝ}
     (hl : IsDepOn V l) (hm : IsDepOn V m) {P Q R X Y Z : ℝ³} (hV : V = {P, Q, R, X, Y, Z})
     (hnd : [P, Q, R, X, Y, Z].Nodup) (h₁ : galeD l m X Y < 0) (h₂ : galeD l m Y Z < 0)
     (h₃ : galeD l m Z X < 0) : IsFacetTriangle V P Q R := by
-  sorry
+  have hnd' := hnd
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+    List.nodup_nil, and_true] at hnd'
+  obtain ⟨⟨hPQ, hPR, hPX, hPY, hPZ⟩, ⟨hQR, hQX, hQY, hQZ⟩, ⟨hRX, hRY, hRZ⟩, ⟨hXY, hXZ⟩, hYZ, -⟩ :=
+    hnd'
+  have hN := hS.cross_ne_zero (P := P) (Q := Q) (R := R) (by rw [hV]; simp) (by rw [hV]; simp)
+    (by rw [hV]; simp) hPQ hPR hQR
+  set N := cross (Q - P) (R - P) with hNdef
+  set k := ⟪N, P⟫ with hk
+  obtain ⟨gQ, gR⟩ := plane_three P Q R
+  rw [← hNdef, ← hk] at gQ gR
+  have gP : ⟪N, P⟫ - k = 0 := sub_self _
+  have e1 := gale_rel hl hm hV hnd N k X
+  have e2 := gale_rel hl hm hV hnd N k Y
+  rw [gP, gQ, gR, galeD_self] at e1
+  rw [gP, gQ, gR, galeD_self] at e2
+  rw [galeD_anti l m Z X] at e1
+  rw [galeD_anti l m X Y] at e2
+  set p := galeD l m X Y
+  set q := galeD l m Y Z
+  set r := galeD l m Z X
+  set fX := ⟪N, X⟫ - k
+  set fY := ⟪N, Y⟫ - k
+  set fZ := ⟪N, Z⟫ - k
+  -- `p fY = r fZ` and `p fX = q fZ`
+  have r1 : p * fY = r * fZ := by linarith
+  have r2 : p * fX = q * fZ := by linarith
+  have hmem : ∀ x ∈ V, x ≠ P → x ≠ Q → x ≠ R → x = X ∨ x = Y ∨ x = Z := by
+    intro x hx h1 h2 h3
+    rw [hV] at hx
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+    tauto
+  rcases lt_trichotomy fZ 0 with hZ | hZ | hZ
+  · have hY : fY < 0 := by nlinarith
+    have hX : fX < 0 := by nlinarith
+    refine ⟨affOf N (-k), by simp only [affOf_apply']; linarith,
+      by simp only [affOf_apply']; linarith, by simp only [affOf_apply']; linarith, ?_⟩
+    intro x hx h1 h2 h3
+    simp only [affOf_apply']
+    rcases hmem x hx h1 h2 h3 with rfl | rfl | rfl <;> linarith
+  · exfalso
+    have hY : fY = 0 := by
+      rw [hZ, mul_zero] at r1; exact (mul_eq_zero.mp r1).resolve_left h₁.ne
+    have hX : fX = 0 := by
+      rw [hZ, mul_zero] at r2; exact (mul_eq_zero.mp r2).resolve_left h₁.ne
+    exact hS.plane_contra hV hN gP gQ gR hX hY hZ
+  · have hY : 0 < fY := by nlinarith
+    have hX : 0 < fX := by nlinarith
+    refine ⟨affOf (-N) k, by simp only [affOf_apply', inner_neg_left]; linarith,
+      by simp only [affOf_apply', inner_neg_left]; linarith,
+      by simp only [affOf_apply', inner_neg_left]; linarith, ?_⟩
+    intro x hx h1 h2 h3
+    simp only [affOf_apply', inner_neg_left]
+    rcases hmem x hx h1 h2 h3 with rfl | rfl | rfl <;> linarith
 
 /-- A quadrilateral facet from a parallel opposite complementary pair. -/
 theorem isFacet_quad_of_gale {V : Finset ℝ³} (hS : Six V) {l m : ℝ³ → ℝ}
     (hl : IsDepOn V l) (hm : IsDepOn V m) {P Q R Z X Y : ℝ³} (hV : V = {P, Q, R, Z, X, Y})
     (hnd : [P, Q, R, Z, X, Y].Nodup) (h₀ : galeD l m X Y = 0)
     (h₁ : galeD l m X Z * galeD l m Y Z < 0) : IsFacet V {P, Q, R, Z} := by
-  sorry
+  have hnd' := hnd
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+    List.nodup_nil, and_true] at hnd'
+  obtain ⟨⟨hPQ, hPR, hPZ, hPX, hPY⟩, ⟨hQR, hQZ, hQX, hQY⟩, ⟨hRZ, hRX, hRY⟩, ⟨hZX, hZY⟩, hXY, -⟩ :=
+    hnd'
+  have hN := hS.cross_ne_zero (P := P) (Q := Q) (R := R) (by rw [hV]; simp) (by rw [hV]; simp)
+    (by rw [hV]; simp) hPQ hPR hQR
+  set N := cross (Q - P) (R - P) with hNdef
+  set k := ⟪N, P⟫ with hk
+  obtain ⟨gQ, gR⟩ := plane_three P Q R
+  rw [← hNdef, ← hk] at gQ gR
+  have gP : ⟪N, P⟫ - k = 0 := sub_self _
+  have e1 := gale_rel hl hm hV hnd N k X
+  have e2 := gale_rel hl hm hV hnd N k Z
+  rw [gP, gQ, gR, galeD_self, h₀] at e1
+  rw [gP, gQ, gR, galeD_self, galeD_anti l m X Z, galeD_anti l m Y Z] at e2
+  have hXZ : galeD l m X Z ≠ 0 := by intro h0; rw [h0, zero_mul] at h₁; exact lt_irrefl 0 h₁
+  have gZ : ⟪N, Z⟫ - k = 0 := by
+    have : galeD l m X Z * (⟪N, Z⟫ - k) = 0 := by linarith
+    exact (mul_eq_zero.mp this).resolve_left hXZ
+  rw [gZ, mul_zero] at e2
+  set a := galeD l m X Z
+  set b := galeD l m Y Z
+  set fX := ⟪N, X⟫ - k
+  set fY := ⟪N, Y⟫ - k
+  have r : a * fX + b * fY = 0 := by linarith
+  have hmem : ∀ x ∈ V, x ∉ ({P, Q, R, Z} : Finset ℝ³) → x = X ∨ x = Y := by
+    intro x hx hxF
+    rw [hV] at hx
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx hxF
+    tauto
+  have hF : ∀ x ∈ ({P, Q, R, Z} : Finset ℝ³), ⟪N, x⟫ - k = 0 := by
+    intro x hx
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+    rcases hx with rfl | rfl | rfl | rfl <;> assumption
+  have key : (a * b) * fY = -(a * a) * fX := by linear_combination a * r
+  have ha2 : 0 < a * a := mul_self_pos.mpr hXZ
+  rcases lt_trichotomy fX 0 with hX | hX | hX
+  · have hY : fY < 0 := by
+      by_contra hc; push Not at hc
+      have h1 : (a * b) * fY ≤ 0 := mul_nonpos_of_nonpos_of_nonneg h₁.le hc
+      have h2 : 0 < -(a * a) * fX := by nlinarith
+      linarith
+    refine ⟨affOf N (-k), fun x hx => ?_, fun x hx hxF => ?_⟩
+    · simp only [affOf_apply']; linarith [hF x hx]
+    · simp only [affOf_apply']
+      rcases hmem x hx hxF with rfl | rfl <;> linarith
+  · exfalso
+    have hY : fY = 0 := by
+      rw [hX, mul_zero, zero_add] at r
+      exact (mul_eq_zero.mp r).resolve_left (by intro h0; rw [h0, mul_zero] at h₁; linarith)
+    exact hS.plane_contra hV hN gP gQ gR gZ hX hY
+  · have hY : 0 < fY := by
+      by_contra hc; push Not at hc
+      have h1 : 0 ≤ (a * b) * fY := mul_nonneg_of_nonpos_of_nonpos h₁.le hc
+      have h2 : -(a * a) * fX < 0 := by nlinarith
+      linarith
+    refine ⟨affOf (-N) k, fun x hx => ?_, fun x hx hxF => ?_⟩
+    · simp only [affOf_apply', inner_neg_left]; linarith [hF x hx]
+    · simp only [affOf_apply', inner_neg_left]
+      rcases hmem x hx hxF with rfl | rfl <;> linarith
 
 /-- The complement of a non-parallel pair is an independent tetrahedron. -/
 theorem affineIndependent_of_gale {V : Finset ℝ³} (hS : Six V) {l m : ℝ³ → ℝ}
     (hl : IsDepOn V l) (hm : IsDepOn V m) {A B C T X Y : ℝ³} (hV : V = {A, B, C, T, X, Y})
     (hnd : [A, B, C, T, X, Y].Nodup) (h : galeD l m X Y ≠ 0) :
     AffineIndependent ℝ ![A, B, C, T] := by
-  sorry
+  have hnd' := hnd
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+    List.nodup_nil, and_true] at hnd'
+  obtain ⟨⟨hAB, hAC, hAT, hAX, hAY⟩, ⟨hBC, hBT, hBX, hBY⟩, ⟨hCT, hCX, hCY⟩, ⟨hTX, hTY⟩, hXY, -⟩ :=
+    hnd'
+  have hN := hS.cross_ne_zero (P := A) (Q := B) (R := C) (by rw [hV]; simp) (by rw [hV]; simp)
+    (by rw [hV]; simp) hAB hAC hBC
+  apply affineIndependent_of_det3
+  intro hdet
+  set N := cross (B - A) (C - A) with hNdef
+  set k := ⟪N, A⟫ with hk
+  obtain ⟨gB, gC⟩ := plane_three A B C
+  rw [← hNdef, ← hk] at gB gC
+  have gA : ⟪N, A⟫ - k = 0 := sub_self _
+  have gT : ⟪N, T⟫ - k = 0 := by
+    have : det3 (B - A) (C - A) (T - A) = ⟪N, T⟫ - k := by
+      simp only [det3, hNdef, hk, inner_sub_right]
+    rw [← this, hdet]
+  have e1 := gale_rel hl hm hV hnd N k X
+  have e2 := gale_rel hl hm hV hnd N k Y
+  rw [gA, gB, gC, gT, galeD_self] at e1
+  rw [gA, gB, gC, gT, galeD_self] at e2
+  have gY : ⟪N, Y⟫ - k = 0 := by
+    have : galeD l m X Y * (⟪N, Y⟫ - k) = 0 := by linarith
+    exact (mul_eq_zero.mp this).resolve_left h
+  rw [gY] at e2
+  have gX : ⟪N, X⟫ - k = 0 := by
+    have : galeD l m Y X * (⟪N, X⟫ - k) = 0 := by linarith
+    refine (mul_eq_zero.mp this).resolve_left ?_
+    rw [galeD_anti]; exact neg_ne_zero.mpr h
+  exact hS.plane_contra hV hN gA gB gC gT gX gY
 
 /-! ### Lemma 10.1: a 2+4 split -/
 
