@@ -59,9 +59,10 @@ the generic-view density statements of Coplanar.lean (`dense_generic_...`,
   - Theorem 8.2: `isRupert_cappedSquarePyramid_all` (every T5) (L8Shapes);
   - Theorem 8.3: `isRupert_T4` (every T4, structure `IsT4`) (L8T4);
   - Theorem 8.4: `isRupert_T3` (every T3, structure `IsT3`) (L8T3).
-  The facet structures `IsT4`, `IsT3` (and the T5 exceptional case) were
-  checked non-vacuous on exact rational examples (hull facets computed in
-  Python), not in Lean.
+- Non-vacuity (Witnesses.lean, in Lean): explicit rational instances of
+  `IsBicappedTetrahedron`, `IsCappedSquarePyramid` (generic, and with
+  `S₁S₄ ∥ S₂S₃`), `IsT4`, `IsT3` (generic, and with `BB' ∥ CC'`) and
+  `IsOctahedron` with Condition A, each applied to its headline theorem.
 
 ## Modules and dependency order
 
@@ -90,6 +91,7 @@ the generic-view density statements of Coplanar.lean (`dense_generic_...`,
 | `L8Shapes` | Thm 8.2, tools | `cmb`, `det3_cmb`, `NWS4`, `isRupert_cappedSquarePyramid_all` |
 | `L8T4` | Thm 8.3 | `IsT4`, `isRupert_T4` |
 | `L8T3` | Thm 8.4 | `IsT3`, `isRupert_T3` |
+| `Witnesses` | non-vacuity | `witness_*`, `affineIndependent_of_det3` |
 
 Order of work: Basic → FirstOrder → DoubleNormal → Coplanar (L2 + plane form
 of L5) → `isRupert_bipyramid` → FewVertices → general L5 → Bicap → SixVertices.
