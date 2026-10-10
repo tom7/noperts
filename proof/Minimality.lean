@@ -1,103 +1,78 @@
 module
 
-public import Minimality.Basic
-public import Minimality.FirstOrder
-public import Minimality.DoubleNormal
-public import Minimality.Coplanar
-public import Minimality.Planes
-public import Minimality.Pyramid
-public import Minimality.Crossing
-public import Minimality.FewVertices
-public import Minimality.BicappedTetrahedron
-public import Minimality.SixVertices
-public import Minimality.CycSeq
-public import Minimality.Polygon
-public import Minimality.Thm73
-public import Minimality.BadViews
-public import Minimality.Perturb
-public import Minimality.Unimodal
-public import Minimality.Octahedron
-public import Minimality.Prism
-public import Minimality.Tilt
-public import Minimality.RightPrism
-public import Minimality.L8Shapes
-public import Minimality.L8T4
-public import Minimality.L8T3
-public import Minimality.Witnesses
-public import Minimality.OctahedronAll
+public import Nopert
 public import Minimality.SixClass
+public import Minimality.Planar
 
 /-!
-# Minimality: Rupert theorems for small polyhedra (overview)
+# Every nopert has at least 7 points
 
-Formalization of `nopert229/notes/LEMMAS.md` against `IsRupert` from
-`MainTheorem.lean`.  `V : Finset ℝ³` is the vertex set (it may
-contain non-extreme points).  Every theorem below depends only on `propext`,
-`Classical.choice` and `Quot.sound`.  Headline theorems:
+A convex polyhedron is *Rupert* if a copy of it can pass through a straight
+hole cut in another copy of the same size (`IsRupert`, `MainTheorem.lean`:
+some view of the polyhedron, possibly shifted, fits strictly inside the
+shadow of another view).  A *nopert* is a solid convex polyhedron that is not
+Rupert (`IsNopert`, `Nopert.lean`).  Polyhedra are given by finite sets
+`V : Finset ℝ³` of points; the polyhedron is their convex hull.
 
-**Lemma 1 and the coplanar silhouette (L1–L5)**
-* `isRupert_of_firstOrderInward` — a strictly inward first-order motion gives a passage (L1).
-* `isRupert_of_crossing` — Theorem 5, frame-free crossing form.
-* `isRupert_of_admissibleViews_nonempty` — Theorem 5 (an admissible coplanar view).
-* `isRupert_of_pyramid` — Cor. 5.3: pyramids.
-* `isRupert_of_segment_crossing` — Cor. 5.4: bipyramid lemma, crossing form.
-* `isRupert_bipyramid` — bipyramids over any waist polygon (via `isRupert_of_waist`).
-* `isRupert_of_card_le_five` — Cor. 5.6: every polyhedron with at most 5 vertices.
-* `isRupert_bicappedTetrahedron` — Cor. 5.7: every bicapped tetrahedron (T7).
+This file states the main results; the proofs are in the `Minimality/`
+modules (see `Minimality/README.md` for an overview).
 
-**Six vertices (L6)**
-* `isRupert_frustum` — T1 frustum (three lateral lines through a point).
-* `isRupert_parallelPrism` — T1 with parallel lateral edges, not a translation prism.
-* `isRupert_cappedSquarePyramid` — T5 unless `S₁S₄ ∥ S₂S₃`.
+* `seven_le_card_of_isNopert`: every nopert has at least 7 points.  This
+  follows from `isRupert_of_card_le_six`: every solid convex polyhedron
+  given by at most 6 points is Rupert.
+* For flat point sets the answer is known for any number of points: points in
+  a plane, not all on one line, are Rupert
+  (`isRupert_of_coplanar_of_not_collinear`), while points on one line are not
+  (`not_isRupert_of_collinear`).  Hence `isRupert_iff_of_card_le_six`:
+  at most 6 points are Rupert exactly when they are not all on one line (or
+  there are none at all).
 
-**Unimodal silhouettes (L7)**
-* `exists_forces_of_not_firstOrderInward` — Lemma 7.1 (needed direction).
-* `hasHorizontalDoubleNormal_of_forces` — Theorem 7.3 (⇒), pure polygon form.
-* `isRupert_of_unimodalView` — Theorem 7.3 at an explicit view.
-* `exists_badPlanes` — Lemma 7.4: bad views lie on finitely many great circles.
-* `isRupert_of_genericUnimodalView` — Theorem 7.5 (plus `isRupert_of_open_unimodal`).
-* `isRupert_translationPrism` — Theorem 7.7: translation prisms, unless right over a non-obtuse triangle.
-* `isRupert_octahedron_conditionA` — Cor. 7.8: octahedra with Condition A.
-
-**Tilting off degenerate views (L8)**
-* `isRupert_of_tiltCert` — frame-free Lemma 1 with local certificates.
-* `eventually_tilted_cycle` — Lemma 8.0, instance-wise determinant form.
-* `isRupert_of_tilted_unimodal` — Cor. 8.0′ (robust unimodality).
-* `isRupert_rightPrism` — Theorem 8.1: every right prism over a convex polygon.
-* `isRupert_translationPrism_all` — every triangular translation prism (7.7 + 8.1).
-* `isRupert_cappedSquarePyramid_all` — Theorem 8.2: every T5.
-* `isRupert_T4` — Theorem 8.3: every T4.
-* `isRupert_T3` — Theorem 8.4: every T3.
-
-**Every octahedron (L9)**
-* `isRupert_octahedron` — Theorem 9.9: every convex octahedron (`IsOctahedron`, type T6).
-* `isRupert_planar_equator` — an octahedron with a planar equator (Cor. 5.4).
-* `isRupert_of_touching_pair` — Lemma 9.4: two touching quad edges (axis view).
-* `isRupert_quad_edge` — Lemma 9.3: a quad edge that is neither bad nor touching.
-* `isRupert_octahedron_generic` — §9.5: the Gale-diagram selection (`f ≠ 0`).
-* `isRupert_weak_edge` — Lemma 9.11: weak quad edges (parallel faces).
-* `isRupert_octahedron_parallel` — §9.6: the case `f = 0`.
-* `isRupert_of_tilted_unimodal_σ` — Cor. 8.0′ for either orientation (eventual `Q`,
-  covering the lexicographic tie-breaks of Cor. 9.0).
-
-**Every polyhedron with at most six vertices (L10)**
-* `isRupert_of_card_le_six` — Theorem 10.0: `V.card ≤ 6` and a solid hull give `IsRupert V`.
-* `exists_split_of_no_partner` — Lemma 10.1: a point without an O-partner gives a 2+4 Radon split.
-* `isRupert_of_all_partners` — Prop. 10.2: three O-pairs make a prism (frustum, parallel, translation).
-* `isRupert_split_coplanar` — Lemma 10.3: a split with coplanar `W` is a segment crossing.
-* `NF.isRupert` — Theorem 10.4: the case table (T3–T7) of a split in normal form.
-* `isFacetTriangle_of_gale`, `isFacet_quad_of_gale`, `affineIndependent_of_gale` — facets
-  and independent tetrahedra from signs of Gale determinants (L10.1 (e)).
-
-**Non-vacuity** (`Witnesses.lean`): explicit rational instances of every
-hypothesis structure (`IsBicappedTetrahedron`, `IsCappedSquarePyramid` generic
-and with `S₁S₄ ∥ S₂S₃`, `IsT4`, `IsT3` generic and with `BB' ∥ CC'`,
-`IsOctahedron` with Condition A), each fed to its headline theorem (the
-octahedron also to `isRupert_octahedron`).
-
-The classification step is classification-free in the sense of L10: no face
-lattices or combinatorial types are computed; the facet structures required by
-the per-type theorems are read off from signs of two affine dependencies.
-Not formalized: the L3/L2(d) obstruction directions, and the conjectures of
-LEMMAS.md.
+All results depend only on the three standard axioms `propext`,
+`Classical.choice` and `Quot.sound`.
 -/
+
+@[expose] public section
+
+/-- **Every solid convex polyhedron with at most 6 vertices is Rupert.**
+More precisely: at most 6 points of `ℝ³`, not all in one plane, have a Rupert
+convex hull.  (The points need not all be vertices of the hull.) -/
+theorem isRupert_of_card_le_six (V : Finset ℝ³) (hV : V.card ≤ 6)
+    (hsolid : ¬ Coplanar ℝ (V : Set ℝ³)) : IsRupert V :=
+  Minimality.isRupert_of_card_le_six V hV
+    ((not_coplanar_iff_interior_convexHull_nonempty _).mp hsolid)
+
+/-- **Every nopert has at least 7 points** (hence at least 7 vertices: its
+vertex set has the same convex hull, so is a nopert too). -/
+theorem seven_le_card_of_isNopert (V : Finset ℝ³) (h : IsNopert V) : 7 ≤ V.card := by
+  by_contra hlt
+  exact h.2 (isRupert_of_card_le_six V (by omega) h.1)
+
+/-- **Flat polygons are Rupert.**  Points in a plane, not all on one line, are
+Rupert, whatever their number: hold one copy face-on and pass the other
+through it edge-on. -/
+theorem isRupert_of_coplanar_of_not_collinear (V : Finset ℝ³)
+    (hpl : Coplanar ℝ (V : Set ℝ³)) (hcol : ¬ Collinear ℝ (V : Set ℝ³)) : IsRupert V :=
+  Minimality.isRupert_of_coplanar_of_not_collinear V hpl hcol
+
+/-- **Segments and points are not Rupert.**  A nonempty set of points on one
+line is not Rupert: all its shadows lie on lines, so they have no interior. -/
+theorem not_isRupert_of_collinear (V : Finset ℝ³) (h : Collinear ℝ (V : Set ℝ³))
+    (hne : V.Nonempty) : ¬ IsRupert V :=
+  Minimality.not_isRupert_of_collinear V h hne
+
+/-- **At most 6 points: exactly the non-collinear sets are Rupert** (and the
+empty set, vacuously). -/
+theorem isRupert_iff_of_card_le_six (V : Finset ℝ³) (hV : V.card ≤ 6) :
+    IsRupert V ↔ (V = ∅ ∨ ¬ Collinear ℝ (V : Set ℝ³)) := by
+  constructor
+  · intro hR
+    by_contra hcon
+    push Not at hcon
+    exact not_isRupert_of_collinear V hcon.2 hcon.1 hR
+  · rintro (rfl | hcol)
+    · exact Minimality.isRupert_empty
+    · by_cases hpl : Coplanar ℝ (V : Set ℝ³)
+      · exact isRupert_of_coplanar_of_not_collinear V hpl hcol
+      · exact isRupert_of_card_le_six V hV hpl
+
+end

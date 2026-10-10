@@ -10,7 +10,7 @@ public import Rupert.Basic
 @[expose] public section
 
 /-!
-# Small Rupert polyhedra: shared definitions
+# Minimality: shared definitions
 
 Setting of `notes/LEMMAS.md` §0, in the conventions of `IsRupert`
 (`MainTheorem.lean`): the screen is the xy-plane, a point
