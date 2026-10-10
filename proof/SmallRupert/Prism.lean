@@ -274,7 +274,7 @@ theorem rotZ_mul_apply (c s : ℝ) (R : Matrix (Fin 3) (Fin 3) ℝ) (v : ℝ³) 
     simp [Matrix.toLpLin_apply, Matrix.mulVec_mulVec]
   rw [e]
   generalize R.toEuclideanLin v = u
-  ext i; fin_cases i <;> simp [rotZ, Matrix.toLpLin_apply, dotProduct, Fin.sum_univ_three] <;> ring
+  ext i; fin_cases i <;> simp [rotZ, Matrix.toLpLin_apply, dotProduct, Fin.sum_univ_three] ; ring
 
 /-- **Translation prisms in a frame with `w` vertical.**  In the frame of `R`
 (`R w = λ e_z`, `λ > 0`), with screen projections `p`, a direction `a` puts the
@@ -386,6 +386,128 @@ theorem isRupert_prism_frame {X Y Z w : ℝ³} {R : Matrix (Fin 3) (Fin 3) ℝ} 
           Real.sin ε * (cross2 a (proj_xy (R.toEuclideanLin X)) / na) := by ring
       linarith
 
+/-! ### Choosing the frame -/
+
+/-- Rotations preserve the triple product. -/
+theorem inner_cross_toEuclideanLin {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R ∈ SO3) (a b c : ℝ³) :
+    ⟪cross (R.toEuclideanLin a) (R.toEuclideanLin b), R.toEuclideanLin c⟫ = ⟪cross a b, c⟫ := by
+  have hdet : R.det = 1 := (Matrix.mem_specialOrthogonalGroup_iff.mp hR).2
+  let M : Matrix (Fin 3) (Fin 3) ℝ := Matrix.of fun i j => ![a, b, c] j i
+  have h1 : ⟪cross a b, c⟫ = M.det := by
+    simp [M, Matrix.det_fin_three, cross, PiLp.inner_apply, Fin.sum_univ_three]; ring
+  have h2 : ⟪cross (R.toEuclideanLin a) (R.toEuclideanLin b), R.toEuclideanLin c⟫ =
+      (R * M).det := by
+    simp [M, Matrix.det_fin_three, cross, PiLp.inner_apply, Fin.sum_univ_three,
+      Matrix.toLpLin_apply, Matrix.mulVec, dotProduct]
+    ring
+  rw [h2, Matrix.det_mul, hdet, one_mul, h1]
+
+theorem inner_cross_ez (u v : ℝ³) : ⟪cross u v, ez⟫ = cross2 (proj_xy u) (proj_xy v) := by
+  rw [inner_ez]; simp [cross, cross2, proj_xy]
+
+theorem exists_rotation_to_ez_pos (u : ℝ³) (hu : u ≠ 0) :
+    ∃ R ∈ SO3, ∃ lam : ℝ, 0 < lam ∧ R.toEuclideanLin u = lam • ez := by
+  obtain ⟨R, hR, r, hr, hRu⟩ := exists_rotation_to_ez u hu
+  rcases lt_or_gt_of_ne hr with hr | hr
+  · refine ⟨rotX (-1) 0 * R, mul_mem (rotX_mem_SO3 (by norm_num)) hR, -r, by linarith, ?_⟩
+    have e : (rotX (-1) 0 * R).toEuclideanLin u = (rotX (-1) 0).toEuclideanLin
+        (R.toEuclideanLin u) := by simp [Matrix.toLpLin_apply, Matrix.mulVec_mulVec]
+    rw [e, hRu]
+    ext i; fin_cases i <;> simp [rotX, ez, Matrix.toLpLin_apply]
+  · exact ⟨R, hR, r, hr, hRu⟩
+
+/-- A direction putting `Z` strictly between `X` and `Y` (`f = Z - X`,
+`e = Y - X`, `XYZ` counterclockwise). -/
+theorem exists_dir_between {e f : ℝ²} (h : 0 < cross2 e f) :
+    ∃ a : ℝ², 0 < ⟪a, f⟫ ∧ 0 < ⟪a, e - f⟫ := by
+  refine ⟨!₂[-((1 / 2 : ℝ) * e 1 - f 1), (1 / 2 : ℝ) * e 0 - f 0], ?_, ?_⟩ <;>
+    simp [cross2, PiLp.inner_apply, Fin.sum_univ_two] at h ⊢ <;> nlinarith
+
+/-- With an obtuse angle at `Z`, the direction can also put `Z` strictly behind
+`X` across it. -/
+theorem exists_dir_between_obtuse {e f : ℝ²} (h : 0 < cross2 e f) (hob : 0 < ⟪f, e - f⟫) :
+    ∃ a : ℝ², 0 < ⟪a, f⟫ ∧ 0 < ⟪a, e - f⟫ ∧ cross2 a f < 0 := by
+  set C := cross2 e f
+  set N := ⟪f, e - f⟫
+  have hf : 0 < f 0 ^ 2 + f 1 ^ 2 := by
+    by_contra hc; push Not at hc
+    have h0 : f 0 = 0 := by nlinarith [sq_nonneg (f 0), sq_nonneg (f 1)]
+    have h1 : f 1 = 0 := by nlinarith [sq_nonneg (f 0), sq_nonneg (f 1)]
+    simp [C, cross2, h0, h1] at h
+  set η := N / (2 * C)
+  have hη : 0 < η := by positivity
+  have hC : C = e 0 * f 1 - e 1 * f 0 := rfl
+  have hN : N = f 0 * (e 0 - f 0) + f 1 * (e 1 - f 1) := by
+    simp [N, PiLp.inner_apply, Fin.sum_univ_two]; ring
+  refine ⟨!₂[f 0 - η * f 1, f 1 + η * f 0], ?_, ?_, ?_⟩
+  · simp [PiLp.inner_apply, Fin.sum_univ_two]; nlinarith
+  · have e1 : ⟪(!₂[f 0 - η * f 1, f 1 + η * f 0] : ℝ²), e - f⟫ = N - η * C := by
+      simp [PiLp.inner_apply, Fin.sum_univ_two]; rw [hN, hC]; ring
+    have e2 : η * C = N / 2 := by simp only [η]; field_simp
+    rw [e1, e2]; linarith
+  · simp [cross2]; nlinarith
+
+/-- **Translation prisms, one vertex.**  For a labelling `X, Y, Z` of the
+triangle with `w` off its plane: if `Z` is strictly below `X` or `Y` along `w`,
+or `w ⟂ T` and the angle at `Z` is obtuse, the prism is Rupert. -/
+theorem isRupert_prism_vertex {X Y Z w : ℝ³} (hD : ⟪cross (Y - X) (Z - X), w⟫ ≠ 0)
+    (hcase : (⟪w, Z⟫ < ⟪w, X⟫ ∨ ⟪w, Z⟫ < ⟪w, Y⟫) ∨
+      (⟪w, Z⟫ = ⟪w, X⟫ ∧ ⟪w, Z⟫ = ⟪w, Y⟫ ∧ ⟪X - Z, Y - Z⟫ < 0)) :
+    IsRupert {X, Y, Z, X + w, Y + w, Z + w} := by
+  have hw0 : w ≠ 0 := by rintro rfl; simp at hD
+  obtain ⟨R, hR, lam, hlam, hRw⟩ := exists_rotation_to_ez_pos w hw0
+  set p : ℝ³ → ℝ² := fun v => proj_xy (R.toEuclideanLin v) with hp
+  have hdepth : ∀ v, lam * (R.toEuclideanLin v) 2 = ⟪w, v⟫ := by
+    intro v
+    rw [← inner_ez, ← real_inner_smul_right, ← hRw, inner_toEuclideanLin_SO3 hR, real_inner_comm]
+  have hcr : ∀ U V W : ℝ³, lam * cross2 (p V - p U) (p W - p U) = ⟪cross (V - U) (W - U), w⟫ := by
+    intro U V W
+    have := inner_cross_toEuclideanLin hR (V - U) (W - U) w
+    rw [hRw, real_inner_smul_right, inner_cross_ez, map_sub, map_sub, proj_xy_sub',
+      proj_xy_sub'] at this
+    exact this
+  -- the oriented case
+  have main : ∀ X Y : ℝ³, ((⟪w, Z⟫ < ⟪w, X⟫ ∨ ⟪w, Z⟫ < ⟪w, Y⟫) ∨
+      (⟪w, Z⟫ = ⟪w, X⟫ ∧ ⟪w, Z⟫ = ⟪w, Y⟫ ∧ ⟪X - Z, Y - Z⟫ < 0)) →
+      0 < cross2 (p Y - p X) (p Z - p X) → IsRupert {X, Y, Z, X + w, Y + w, Z + w} := by
+    intro X Y hc h3
+    have hlt : ∀ U V, ⟪w, U⟫ < ⟪w, V⟫ → (R.toEuclideanLin U) 2 < (R.toEuclideanLin V) 2 :=
+      fun U V h => by rw [← hdepth, ← hdepth] at h; exact lt_of_mul_lt_mul_left h hlam.le
+    have heq : ∀ U V, ⟪w, U⟫ = ⟪w, V⟫ → (R.toEuclideanLin U) 2 = (R.toEuclideanLin V) 2 :=
+      fun U V h => by rw [← hdepth, ← hdepth] at h; exact mul_left_cancel₀ hlam.ne' h
+    rcases hc with hc | ⟨hZX, hZY, hob⟩
+    · obtain ⟨a, ha1, ha2⟩ := exists_dir_between h3
+      refine isRupert_prism_frame hR hlam hRw a ha1 (by rwa [sub_sub_sub_cancel_right] at ha2) h3
+        (Or.inl ?_)
+      rcases hc with hc | hc
+      · exact Or.inl (hlt _ _ hc)
+      · exact Or.inr (hlt _ _ hc)
+    · have hob' : 0 < ⟪p Z - p X, (p Y - p X) - (p Z - p X)⟫ := by
+        rw [sub_sub_sub_cancel_right, ← neg_sub (p X) (p Z), inner_neg_left, neg_pos]
+        have hh : (R.toEuclideanLin X - R.toEuclideanLin Z) 2 = 0 := by
+          rw [PiLp.sub_apply, heq _ _ hZX]; ring
+        simp only [hp]
+        rw [← proj_xy_sub', ← proj_xy_sub', inner_proj_xy_of_horizontal hh, ← map_sub, ← map_sub,
+          inner_toEuclideanLin_SO3 hR]
+        exact hob
+      obtain ⟨a, ha1, ha2, ha3⟩ := exists_dir_between_obtuse h3 hob'
+      exact isRupert_prism_frame hR hlam hRw a ha1 (by rwa [sub_sub_sub_cancel_right] at ha2) h3
+        (Or.inr ⟨heq _ _ hZX, ha3⟩)
+  have hne : cross2 (p Y - p X) (p Z - p X) ≠ 0 := by
+    intro h0; apply hD; rw [← hcr, h0, mul_zero]
+  rcases lt_or_gt_of_ne hne with hneg | hpos
+  · have hset : ({X, Y, Z, X + w, Y + w, Z + w} : Finset ℝ³) = {Y, X, Z, Y + w, X + w, Z + w} := by
+      ext v; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
+    rw [hset]
+    refine main Y X ?_ ?_
+    · rcases hcase with hc | ⟨h1, h2, h3⟩
+      · exact Or.inl hc.symm
+      · refine Or.inr ⟨h2, h1, ?_⟩; rw [real_inner_comm]; exact h3
+    · have : cross2 (p X - p Y) (p Z - p Y) = -cross2 (p Y - p X) (p Z - p X) := by
+        simp [cross2]; ring
+      rw [this]; linarith
+  · exact main X Y hcase hpos
+
 /-- **Theorem 7.7 (translation prisms).**  `K = T + [0, w]` for a triangle
 `T = ABC` and `w` not parallel to its plane.  If `w` is not perpendicular to
 the plane of `T`, or `T` has an obtuse angle, `K` is Rupert.  (Right prisms over
@@ -394,7 +516,47 @@ theorem isRupert_translationPrism (A B C w : ℝ³) (hind : AffineIndependent �
     (h : ⟪w, B - A⟫ ≠ 0 ∨ ⟪w, C - A⟫ ≠ 0 ∨ ⟪B - A, C - A⟫ < 0 ∨ ⟪A - B, C - B⟫ < 0 ∨
       ⟪A - C, B - C⟫ < 0) :
     IsRupert {A, B, C, A + w, B + w, C + w} := by
-  sorry
+  have hD : ⟪cross (B - A) (C - A), w⟫ ≠ 0 := by
+    intro h0
+    exact not_coplanar_of_affineIndependent hind
+      (coplanar_of_det4_eq_zero (by rw [det4, add_sub_cancel_left]; exact h0))
+  have hBCA : ⟪cross (C - B) (A - B), w⟫ ≠ 0 := by
+    have e : ⟪cross (C - B) (A - B), w⟫ = ⟪cross (B - A) (C - A), w⟫ := by
+      simp [cross, PiLp.inner_apply, Fin.sum_univ_three]; ring
+    rwa [e]
+  have hACB : ⟪cross (C - A) (B - A), w⟫ ≠ 0 := by
+    have e : ⟪cross (C - A) (B - A), w⟫ = -⟪cross (B - A) (C - A), w⟫ := by
+      simp [cross, PiLp.inner_apply, Fin.sum_univ_three]; ring
+    rw [e]; exact neg_ne_zero.mpr hD
+  have sBCA : ({B, C, A, B + w, C + w, A + w} : Finset ℝ³) = {A, B, C, A + w, B + w, C + w} := by
+    ext v; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
+  have sACB : ({A, C, B, A + w, C + w, B + w} : Finset ℝ³) = {A, B, C, A + w, B + w, C + w} := by
+    ext v; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
+  rw [inner_sub_right, inner_sub_right] at h
+  by_cases ha : ⟪w, B⟫ - ⟪w, A⟫ ≠ 0 ∨ ⟪w, C⟫ - ⟪w, A⟫ ≠ 0
+  · -- (a) `w` is not perpendicular to `T`: a lowest vertex
+    by_cases hA : ⟪w, A⟫ < ⟪w, B⟫ ∨ ⟪w, A⟫ < ⟪w, C⟫
+    · rw [← sBCA]; exact isRupert_prism_vertex hBCA (Or.inl hA)
+    push Not at hA
+    rcases hA.1.lt_or_eq with hB | hB
+    · rw [← sACB]; exact isRupert_prism_vertex hACB (Or.inl (Or.inl hB))
+    · have hC : ⟪w, C⟫ < ⟪w, A⟫ := by
+        refine lt_of_le_of_ne hA.2 fun hC => ?_
+        rcases ha with ha | ha
+        · exact ha (by rw [hB]; ring)
+        · exact ha (by rw [hC]; ring)
+      exact isRupert_prism_vertex hD (Or.inl (Or.inl hC))
+  · -- (b) `w ⟂ T` and an obtuse angle
+    push Not at ha
+    have hAB : ⟪w, A⟫ = ⟪w, B⟫ := by linarith [ha.1]
+    have hAC : ⟪w, A⟫ = ⟪w, C⟫ := by linarith [ha.2]
+    rcases h with h | h | h | h | h
+    · exact absurd ha.1 h
+    · exact absurd ha.2 h
+    · rw [← sBCA]; exact isRupert_prism_vertex hBCA (Or.inr ⟨hAB, hAC, h⟩)
+    · rw [← sACB]
+      exact isRupert_prism_vertex hACB (Or.inr ⟨hAB.symm, hAB.symm.trans hAC, h⟩)
+    · exact isRupert_prism_vertex hD (Or.inr ⟨hAC.symm, hAC.symm.trans hAB, h⟩)
 
 end SmallRupert
 
