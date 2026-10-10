@@ -1,3 +1,24 @@
+> **Provenance.** This directory is the C++ certificate search that produced
+> candidate #231's certificate data. It comes, with its history, from the
+> `nopert231` branch of nopert229 at commit e53dfda (2026-10-04), minus the
+> branch's private working notes (`notes/`). GPLv3 (`../COPYING`). Changes:
+> build and script paths point into this repository (cc-lib at `../../cc-lib`,
+> the Lean project at `../../proof`, work directory `../../work-231`;
+> `shadowanim.exe`, a rendering, also needs tom7misc's codec at `../../codec`
+> and is not in `make all`), and the Lean data generators, which were in
+> Noperthedron's `scripts/` (`nopert231` branch, 0c83e4ba; also imported with
+> their history), are in `scripts/`, emitting this repository's module names.
+> They reproduce the committed `proof/Nopert231/` data byte for byte. The text
+> below is the branch's README: Lean names and paths in it are the branch's
+> (Noperthedron `Noperthedron/Nopert231/...` is `proof/Nopert231/...` here,
+> namespace `Nopert231`; `Noperthedron/Atlas/...` is `proof/Atlas/...`). Two
+> differences: here no `native_decide` is used anywhere (chart 3 and the tangent
+> cones are checked by the kernel, `table_valid_kernel`), and the executables
+> `validate_code_pack`, `check_identity_tube`, `check_global_rows` and
+> `exact5d_golden` are not in this repository (so `exact5d_test` skips its
+> comparison with Lean). For the statement as proved in this repository and
+> how to run the pipeline here, see [`../../nopert231.md`](../../nopert231.md).
+
 # Candidate #231 is a Nopert
 
 A convex polyhedron is *Rupert* if a hole can be cut through it through which a congruent copy can pass, and a *Nopert* if it is not Rupert (Lean: `¬ IsRupert`). Candidate #231 is a convex polyhedron with 20 vertices and 27 faces (2 pentagons, 20 triangles and 5 planar quadrilaterals) and fivefold rotational symmetry about the z axis. This repository, together with the Lean formalization on the `nopert231` branch of [Noperthedron](https://github.com/jcreedcmu/Noperthedron), proves that it is a Nopert.

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# THIS FILE ONLY: Uses APACHE 2.0 license. See search/APACHE20.txt.
+# (Derived from the Noperthedron formalization project, which is Apache-2.0.)
 """Emit exact tangent-cone certificates for the rational model's vertices.
 
 For each ordered pair of distinct vertices ``(base, target)``, find at most
@@ -154,10 +156,11 @@ def emit(destination: Path):
 
     lines = [
         "module", "",
-        "public import Noperthedron.Nopert231.SparseSupport",
-        "public meta import Noperthedron.Nopert231.SparseSupport", "",
+        "public import Nopert231.SparseSupport",
+        "public meta import Nopert231.SparseSupport", "",
         "@[expose] public section", "",
-        "namespace Noperthedron.Nopert231.GeneratedTangentCones", "",
+        "open Noperts", "",
+        "namespace Nopert231.GeneratedTangentCones", "",
         "set_option linter.unusedTactic false",
         "set_option linter.unreachableTactic false",
         "set_option linter.unnecessarySeqFocus false", "",
@@ -220,9 +223,7 @@ def emit(destination: Path):
     lines.append("")
 
     lines.extend([
-        "theorem table_valid_native : TangentTableValid table := by",
-        "  native_decide", "",
-        "end Noperthedron.Nopert231.GeneratedTangentCones", "", "end", "",
+        "end Nopert231.GeneratedTangentCones", "", "end", "",
     ])
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text("\n".join(lines), encoding="utf-8")

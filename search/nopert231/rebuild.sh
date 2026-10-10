@@ -9,7 +9,8 @@
 #   tubepack  tube trees -> Lean packs + manifest (export_codetrees_pack)
 #   search  5D search, charts 0-2 (search5d), until nothing is deferred
 #   pack    per-code 5D packs (pack5d --per_code)
-#   verify  Lean: check every table and build the proof (constructNopert231)
+#   verify  Lean: check every table and build the proof (constructNopert231
+#           in ../../proof)
 #
 # Every stage is restartable: tubecode and search5d journal their work,
 # and pack5d skips packs newer than their journals.
@@ -21,7 +22,7 @@
 # (--from pack / --from verify with --work pointing at them).
 #
 # Usage: ./rebuild.sh [--from STAGE] [--only STAGE] [--dry_run] [--threads N]
-#        [--mem_gb G] [--work DIR]   (default work/ next to this script)
+#        [--mem_gb G] [--work DIR]   (default ../../work-231)
 #
 # Resources: --threads defaults to every core (nproc). The tools also use it
 # for the build; the Lean verifier sizes its own pool to the machine.
@@ -38,8 +39,8 @@
 # would stop Lean from creating threads).
 #
 # The model stage regenerates committed source files (model_vertices.*,
-# and Noperthedron's Vertices.lean, GeneratedTangentCones.lean and
-# WedgeCoverData.lean), so it only runs when asked for (--from model or
+# and ../../proof/Nopert231's Vertices.lean, GeneratedTangentCones.lean and
+# WedgeCoverData.lean, with scripts/), so it only runs when asked for (--from model or
 # --only model). codebdd.json is not committed: when it is missing, the
 # other stages first regenerate it with codebdd, writing the vertex files
 # to the work directory and checking that they equal the committed ones.
@@ -53,8 +54,8 @@ THREADS=$(nproc)
 RAM_GB=$(awk '/MemTotal/ {print int($2 / 1048576)}' /proc/meminfo)
 MEM_GB=$(( RAM_GB * 9 / 10 > 40 ? RAM_GB * 9 / 10 : 40 ))
 NOPERT=$(cd "$(dirname "$0")" && pwd)
-LEAN=$NOPERT/../Noperthedron
-WORK=$NOPERT/work
+LEAN=$(cd "$NOPERT/../../proof" && pwd)
+WORK=$(cd "$NOPERT/../.." && pwd)/work-231
 # The Lean generator scripts read codebdd's outputs from here.
 export MODEL_DIR=$NOPERT
 while [ $# -gt 0 ]; do
@@ -78,7 +79,7 @@ run() {
 }
 # Lean executables run under a memory cap (ulimit -v would stop Lean's threads).
 lean_run() {
-  run systemd-run --scope -q -p MemoryMax="${MEM_GB}G" "$@"
+  run systemd-run --user --scope -q -p MemoryMax="${MEM_GB}G" "$@"
 }
 want() {
   local stage=$1
@@ -106,17 +107,17 @@ run mkdir -p "$WORK"
 echo "== build"
 run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
   export_codetrees_pack.exe search5d.exe pack5d.exe scoreboard5d.exe
-(cd "$LEAN" && lean_run lake build constructNopert231 check_global_rows validate_code_pack)
+(cd "$LEAN" && lean_run lake build constructNopert231)
 
 if want model; then
   echo "== model"
   (cd "$NOPERT" && run ./codebdd.exe --root_file=nopert231_root.txt)
-  (cd "$LEAN" && run python3 scripts/update_vertices.py \
-    && run python3 scripts/emit_tangent_cones.py Noperthedron/Nopert231/GeneratedTangentCones.lean \
-    && run python3 scripts/emit_wedge_cover.py Noperthedron/Nopert231/WedgeCoverData.lean)
+  (cd "$NOPERT" && run python3 scripts/update_vertices.py \
+    && run python3 scripts/emit_tangent_cones.py "$LEAN/Nopert231/GeneratedTangentCones.lean" \
+    && run python3 scripts/emit_wedge_cover.py "$LEAN/Nopert231/WedgeCoverData.lean")
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
     export_codetrees_pack.exe search5d.exe pack5d.exe
-  (cd "$LEAN" && lean_run lake build constructNopert231 check_global_rows validate_code_pack)
+  (cd "$LEAN" && lean_run lake build constructNopert231)
 elif [ ! -f "$NOPERT/codebdd.json" ]; then
   echo "== codebdd.json (not committed; regenerating it)"
   (cd "$NOPERT" && run ./codebdd.exe --root_file=nopert231_root.txt \
