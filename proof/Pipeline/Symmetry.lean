@@ -9,7 +9,7 @@ public import RealMod
 /-!
 # The cyclic symmetry of the model
 
-Every `C5Model` is invariant under the solid's exact cyclic symmetry:
+Every `CyclicModel` is invariant under the solid's exact cyclic symmetry:
 `symmetryMatrix g` maps vertex `(k, s)` to vertex `(g + k, s)`
 (`rotate_vertex`), hence permutes the vertices and fixes the hull
 (`rotate_hull`). This is all the certificate pipeline uses of the symmetry.
@@ -20,7 +20,7 @@ Every `C5Model` is invariant under the solid's exact cyclic symmetry:
 
 namespace Noperts.Pipeline
 
-variable [SolidModel] {P : C5Model}
+variable [SolidModel] {P : CyclicModel}
 
 omit [SolidModel] in
 theorem toEuclideanLin_mul_apply (A B : Matrix (Fin 3) (Fin 3) ℝ) (v : ℝ³) :
@@ -30,7 +30,7 @@ theorem toEuclideanLin_mul_apply (A B : Matrix (Fin 3) (Fin 3) ℝ) (v : ℝ³) 
 theorem rotate_vertex (g k : OrbitIndex) (s : SeedIndex) :
     (symmetryMatrix g).toEuclideanLin (P.vertex (vertexIndex k s)) =
       P.vertex (vertexIndex (g + k) s) := by
-  simp only [C5Model.vertex, orbitIndex_vertexIndex, seedIndex_vertexIndex]
+  simp only [CyclicModel.vertex, orbitIndex_vertexIndex, seedIndex_vertexIndex]
   rw [toEuclideanLin_mul_apply, symmetryMatrix_mul]
 
 theorem rotate_vertex' (g : OrbitIndex) (i : VertexIndex) :
@@ -43,7 +43,7 @@ theorem rotate_vertex' (g : OrbitIndex) (i : VertexIndex) :
 theorem rotate_vertices (g : OrbitIndex) :
     (symmetryMatrix g).toEuclideanLin '' (P.verts : Set ℝ³) = P.verts := by
   ext x
-  simp only [C5Model.verts, Finset.coe_image, Finset.coe_univ, Set.image_univ,
+  simp only [CyclicModel.verts, Finset.coe_image, Finset.coe_univ, Set.image_univ,
     Set.mem_image, Set.mem_range]
   constructor
   · rintro ⟨y, ⟨i, rfl⟩, rfl⟩

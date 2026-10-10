@@ -23,7 +23,7 @@ open Noperts Noperts.Pipeline
 
 namespace DeltoidalHexecontahedron.NativeExecutable
 
-variable {P : C5Model}
+variable {P : CyclicModel}
 
 open AtlasProjectiveLocalViewTree
 open SparseLocalViewTree

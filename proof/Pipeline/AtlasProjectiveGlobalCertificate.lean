@@ -20,7 +20,7 @@ namespace Noperts.Pipeline.AtlasProjectiveGlobalCertificate
 
 open Noperts.Atlas
 
-variable [SolidModel] {P : C5Model}
+variable [SolidModel] {P : CyclicModel}
 
 open Noperts.Checker Noperts.BalancedSupport
 open Noperts.Atlas.ProjectiveView

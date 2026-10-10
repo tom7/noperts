@@ -34,10 +34,10 @@ z axis: `symmetryMatrixQ` holds rational Taylor values of cos and sin of
 seeds.
 
 The certificates are checked against `rationalVertex`, and they cover every
-`C5Model` (below): every polyhedron whose vertex `i` is seed `seedIndex i`,
+`CyclicModel` (below): every polyhedron whose vertex `i` is seed `seedIndex i`,
 moved by `symmetryMatrix (orbitIndex i)`, within `modelErrorQ` of
-`rationalVertex i`. (The name `C5Model` is historical; the symmetry is
-whatever cyclic group the solid's model provides.)
+`rationalVertex i`. (It was called `C5Model` before the pipeline was made
+generic; the symmetry is whatever cyclic group the solid's model provides.)
 
 Each solid provides its instance as a `scoped instance` in its own namespace,
 so that no instance is in scope merely by importing a solid, and the solid's
@@ -216,22 +216,22 @@ theorem modelErrorQ_real_le : (modelErrorQ : ℝ) ≤ 1 / 10 ^ 12 := by
 
 The certificates are checked against `rationalVertex`. What they need from
 the real polyhedron is only the exact cyclic symmetry and a per-vertex
-distance bound, so they cover every `C5Model` below, not just the rotated
+distance bound, so they cover every `CyclicModel` below, not just the rotated
 rational seeds (`exactModel`). -/
 
 /-- A polyhedron with the solid's exact cyclic symmetry, near the rational
 model: vertex `i` is seed `seedIndex i` moved by
 `symmetryMatrix (orbitIndex i)`, and each vertex is within `modelErrorQ` of
 `rationalVertex i`. -/
-structure C5Model where
+structure CyclicModel where
   seed : SeedIndex → ℝ³
   close : ∀ i : VertexIndex,
     ‖(symmetryMatrix (orbitIndex i)).toEuclideanLin (seed (seedIndex i)) -
       toR3 (rationalVertex i)‖ ≤ (modelErrorQ : ℝ)
 
-namespace C5Model
+namespace CyclicModel
 
-variable (P : C5Model)
+variable (P : CyclicModel)
 
 /-- Vertex `i`: seed `seedIndex i` moved by `symmetryMatrix (orbitIndex i)`. -/
 noncomputable def vertex (i : VertexIndex) : ℝ³ :=
@@ -274,11 +274,11 @@ noncomputable def goodPoly : GoodPoly VertexIndex where
   nontriv := P.vertex_norm_pos
   vertex_radius_le_one := P.vertex_norm_le_one
 
-end C5Model
+end CyclicModel
 
 /-- The rational seeds moved by the exact symmetry: the model the solid's
 data describes (for the Septopert, the rational vertices themselves). -/
-noncomputable def exactModel : C5Model where
+noncomputable def exactModel : CyclicModel where
   seed s := toR3 (seedVertex s)
   close := SolidModel.seed_close
 

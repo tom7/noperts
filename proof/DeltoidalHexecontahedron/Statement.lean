@@ -256,7 +256,7 @@ theorem dhIModel_vertex (i : VertexIndex) :
 theorem dhIModel_verts :
     (dhIModel.toC5.verts : Set ℝ³) = {v | ∃ j < 70, v = (dhScale : ℝ) • toEuc (kv (slotK j))} := by
   ext v
-  simp only [C5Model.verts, Finset.coe_image, Finset.coe_univ, Set.image_univ, Set.mem_range,
+  simp only [CyclicModel.verts, Finset.coe_image, Finset.coe_univ, Set.image_univ, Set.mem_range,
     Set.mem_setOf_eq, dhIModel_vertex]
   constructor
   · rintro ⟨i, rfl⟩
@@ -293,7 +293,7 @@ theorem dhIModel_centrallySymmetric : IModel.CentrallySymmetric dhIModel := by
   intro v hv
   have hc := symCheck_eq
   simp only [symCheck, List.all_eq_true, List.any_eq_true, List.mem_range] at hc
-  rw [C5Model.polyhedron_hull] at hv ⊢
+  rw [CyclicModel.polyhedron_hull] at hv ⊢
   have hneg : (-LinearMap.id : ℝ³ →ₗ[ℝ] ℝ³) '' (dhIModel.toC5.verts : Set ℝ³) = dhIModel.toC5.verts := by
     rw [dhIModel_verts]
     ext w
@@ -323,7 +323,7 @@ def sameSlots (L : List KVec) : Bool :=
 theorem dhHull_eq (L : List KVec) (hL : sameSlots L = true) :
     dhIModel.toC5.polyhedron.hull =
       convexHull ℝ {v | ∃ vj ∈ L.map kv, v = (dhScale : ℝ) • toEuc vj} := by
-  rw [C5Model.polyhedron_hull, dhIModel_verts]
+  rw [CyclicModel.polyhedron_hull, dhIModel_verts]
   simp only [sameSlots, Bool.and_eq_true, List.all_eq_true, List.any_eq_true, List.mem_range] at hL
   congr 1
   ext v

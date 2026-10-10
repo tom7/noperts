@@ -16,7 +16,7 @@ before interval evaluation, preserving cancellations between contacts.
 
 namespace Noperts.Pipeline.AtlasEdgeCertificate
 
-variable [SolidModel] {P : C5Model}
+variable [SolidModel] {P : CyclicModel}
 
 open scoped RealInnerProductSpace
 open Noperts.Checker
@@ -967,10 +967,10 @@ theorem Box.valid_imp_not_translated_rupert (box : Box) (h : box.Valid) :
     box.innerIndex box.outerIndex (fun i => (box.defect i : ℝ))
   · exact box.valid_direction_nonzero h hp offset
   · intro i k
-    simpa [C5Model.polyhedron] using box.valid_support h hp offset i k
+    simpa [CyclicModel.polyhedron] using box.valid_support h hp offset i k
   · have hactual := box.valid_actualDisplacement (P := P) h hp
     rw [box.actualDisplacement_eq_sum p offset] at hactual
-    simpa [Box.totalDefect, C5Model.polyhedron] using hactual
+    simpa [Box.totalDefect, CyclicModel.polyhedron] using hactual
 
 theorem Box.valid_imp_no_translated_rupert_in_interval
     (box : Box) (h : box.Valid) :

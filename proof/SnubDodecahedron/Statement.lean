@@ -166,7 +166,7 @@ theorem snubIModel_verts :
     rw [snubV0, map_smul, ← IModel.toEuclideanLin_mul, ico_mul_snubFrame i.isLt,
       IModel.toEuclideanLin_mul]
   ext v
-  simp only [C5Model.verts, snubDodecahedron, Finset.mem_image, Finset.mem_univ, true_and,
+  simp only [CyclicModel.verts, snubDodecahedron, Finset.mem_image, Finset.mem_univ, true_and,
     Finset.mem_range, zero_add]
   constructor
   · rintro ⟨i, rfl⟩

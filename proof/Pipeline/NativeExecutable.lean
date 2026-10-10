@@ -23,7 +23,7 @@ open Noperts Noperts.Pipeline
 
 namespace Noperts.Pipeline.NativeExecutable
 
-variable [IcosahedralSolid] [CodeTriangleCover] [SparseLocalViewTree.CertificateViewCheck] {P : C5Model}
+variable [IcosahedralSolid] [CodeTriangleCover] [SparseLocalViewTree.CertificateViewCheck] {P : CyclicModel}
 
 open AtlasProjectiveLocalViewTree
 open SparseLocalViewTree

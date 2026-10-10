@@ -18,7 +18,7 @@ namespace Noperts.Pipeline.AtlasProjectiveLocalViewTree
 
 open Noperts.Atlas
 
-variable [SolidModel] {P : C5Model}
+variable [SolidModel] {P : CyclicModel}
 
 open AtlasProjectiveView AtlasProjectiveLocalCertificate
 open Noperts.Atlas.ProjectiveView

@@ -16,7 +16,7 @@ is supplied separately by the atlas-local Cayley mismatch certificate.
 
 namespace Noperts.Pipeline.AtlasProjectiveLocalRigidity
 
-variable [SolidModel] {P : C5Model}
+variable [SolidModel] {P : CyclicModel}
 
 open scoped RealInnerProductSpace
 open Noperts.BalancedSupport

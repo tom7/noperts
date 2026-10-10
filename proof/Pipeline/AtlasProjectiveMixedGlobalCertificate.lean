@@ -18,7 +18,7 @@ namespace Noperts.Pipeline.AtlasProjectiveMixedGlobalCertificate
 
 open Noperts.Atlas
 
-variable [SolidModel] {P : C5Model}
+variable [SolidModel] {P : CyclicModel}
 
 open Noperts.Checker Noperts.BalancedSupport
 open CayleyAtlas AtlasProjectiveView

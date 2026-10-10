@@ -267,7 +267,7 @@ theorem exactModel_hull_eq_solid : exactModel.polyhedron.hull = solid := by
   unfold solid Polyhedron.hull
   congr 1
   ext v
-  simp only [Set.mem_setOf_eq, C5Model.polyhedron_vertex, exactModel_vertex, exactVertex_eq,
+  simp only [Set.mem_setOf_eq, CyclicModel.polyhedron_vertex, exactModel_vertex, exactVertex_eq,
     rationalVertex_eq_vertexQ, poly]
   constructor
   · rintro ⟨i, rfl⟩

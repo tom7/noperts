@@ -16,7 +16,7 @@ coordinates.
 
 namespace Noperts.Pipeline
 
-variable [SolidModel] {P : C5Model}
+variable [SolidModel] {P : CyclicModel}
 
 open scoped Matrix RealInnerProductSpace
 open Noperts.BalancedSupport Real
@@ -172,8 +172,8 @@ theorem not_rupertPose_of_symmetry_axisAngle_certificate
     weight direction hdirection hweight hweight_pos hbalance
   · intro i
     exact (outer_relative_at_symmetry_apply p g (index i)).symm
-  · simpa [C5Model.polyhedron] using hsupport
-  · simpa [C5Model.polyhedron] using hdominates
+  · simpa [CyclicModel.polyhedron] using hsupport
+  · simpa [CyclicModel.polyhedron] using hdominates
 
 /-- Four perturbation-stable balanced triples eliminate the unknown local
 rotation axis around any of the symmetry strata. -/
@@ -257,8 +257,8 @@ theorem not_rupertPose_of_symmetry_axisAngle_certificate_with_defect
     weight direction defect hdirection hweight hweight_pos hbalance
   · intro i
     exact (outer_relative_at_symmetry_apply p g (index i)).symm
-  · simpa [C5Model.polyhedron] using hsupport
-  · simpa [C5Model.polyhedron] using hdominates
+  · simpa [CyclicModel.polyhedron] using hsupport
+  · simpa [CyclicModel.polyhedron] using hdominates
 
 /-- Defect-tolerant version of `not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation`.
 When the first variation dominates the remainder plus the weighted defect across

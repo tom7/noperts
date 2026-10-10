@@ -18,7 +18,7 @@ checks them (`icoOrbitsCheck`, the instance's `orbits_check`).
 
 An `IModel` is any choice of base points, each fixed by its stabilizer,
 whose orbit slots lie within `modelErrorQ` of the rational model. It is a
-`C5Model` (slot `S k + s` is `Rz(2π/5)^k` · slot `s`, `S` the number of
+`CyclicModel` (slot `S k + s` is `Rz(2π/5)^k` · slot `s`, `S` the number of
 seeds), and its hull is invariant under all 60 rotations,
 `IModel.icoMatrix_image_hull`. The certificates cover every `IModel`; the
 true solid is one. (The snub dodecahedron has one orbit with trivial
@@ -194,7 +194,7 @@ theorem slot_eq (i : VertexIndex) :
   exact Nat.div_add_mod _ _
 
 /-- The fivefold model with seeds `orbit s`. -/
-noncomputable def toC5 : C5Model where
+noncomputable def toC5 : CyclicModel where
   seed s := P.orbit s.val
   close i := by
     have h := P.orbit_rotationMajor (orbitIndex i).val (seedIndex i).val
@@ -209,7 +209,7 @@ theorem toC5_vertex (i : VertexIndex) : P.toC5.vertex i = P.orbit i.val := by
   have h := P.orbit_rotationMajor (orbitIndex i).val (seedIndex i).val
     (orbitIndex i).isLt (by simp [seedCount])
   rw [slot_eq] at h
-  rw [h, C5Model.vertex_eq_RzL]
+  rw [h, CyclicModel.vertex_eq_RzL]
   rfl
 
 /-- A rotation of I moves each vertex to a vertex. -/
@@ -227,7 +227,7 @@ theorem exists_ico_vertex {g : Nat} (hg : g < 60) (i : VertexIndex) :
 theorem icoMatrix_image_verts (g : IcoIndex) :
     (icoMatrix g).toEuclideanLin '' (P.toC5.verts : Set ℝ³) = P.toC5.verts := by
   ext x
-  simp only [C5Model.verts, Finset.coe_image, Finset.coe_univ, Set.image_univ,
+  simp only [CyclicModel.verts, Finset.coe_image, Finset.coe_univ, Set.image_univ,
     Set.mem_image, Set.mem_range]
   constructor
   · rintro ⟨y, ⟨i, rfl⟩, rfl⟩

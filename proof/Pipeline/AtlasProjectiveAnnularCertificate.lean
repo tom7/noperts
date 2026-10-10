@@ -36,7 +36,7 @@ namespace Noperts.Pipeline.AtlasProjectiveLocalCertificate
 
 open Noperts.Atlas
 
-variable [SolidModel] {P : C5Model}
+variable [SolidModel] {P : CyclicModel}
 
 open scoped BigOperators Real RealInnerProductSpace
 open Noperts.BalancedSupport

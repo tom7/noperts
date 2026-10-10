@@ -13,7 +13,7 @@ public import Atlas.ProjectiveLocalCertificate
 namespace Noperts.Pipeline.AtlasProjectiveLocalCertificate
 
 
-variable [SolidModel] {P : C5Model}
+variable [SolidModel] {P : CyclicModel}
 
 open scoped RealInnerProductSpace
 open Noperts.Checker

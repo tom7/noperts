@@ -19,7 +19,7 @@ open Noperts Noperts.Pipeline
 
 namespace DeltoidalHexecontahedron
 
-variable {P : C5Model}
+variable {P : CyclicModel}
 
 open CayleyAtlas
 open AtlasProjectiveSolutionTree

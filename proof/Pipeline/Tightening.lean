@@ -22,7 +22,7 @@ apply and was removed.)
 
 namespace Noperts.Pipeline
 
-variable [SolidModel] {P : C5Model}
+variable [SolidModel] {P : CyclicModel}
 
 open Real
 open Noperts.BalancedSupport

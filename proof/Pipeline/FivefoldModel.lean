@@ -600,7 +600,7 @@ theorem symmetryMatrix_apply_eq_RzL (k : OrbitIndex) (v : ℝ³) :
   rfl
 
 /-- Vertex `i` of a fivefold model is its seed rotated by `2π (orbitIndex i)/5`. -/
-theorem C5Model.vertex_eq_RzL (P : C5Model) (i : VertexIndex) :
+theorem CyclicModel.vertex_eq_RzL (P : CyclicModel) (i : VertexIndex) :
     P.vertex i = RzL (2 * Real.pi * (orbitIndex i : ℝ) / 5) (P.seed (seedIndex i)) :=
   symmetryMatrix_apply_eq_RzL _ _
 

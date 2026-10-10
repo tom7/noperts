@@ -22,7 +22,7 @@ namespace Noperts.Pipeline.AtlasFundamentalPrune
 
 open Noperts.Atlas
 
-variable [FivefoldSolid] {P : C5Model}
+variable [FivefoldSolid] {P : CyclicModel}
 
 open scoped Matrix
 open Noperts.Checker
@@ -235,27 +235,27 @@ theorem trace_mul_Rz_sub (R : Matrix (Fin 3) (Fin 3) ℝ) (angle : ℝ) :
   simp [Matrix.trace, Matrix.mul_apply, Rz_mat, Fin.sum_univ_three]
   ring
 
-theorem fivefoldMatrix_direction (direction : Direction) :
-    fivefoldMatrix direction.symmetryIndex =
+theorem symmetryMatrix_direction (direction : Direction) :
+    symmetryMatrix direction.symmetryIndex =
       Rz_mat ((direction.signQ : ℝ) * (2 * Real.pi / 5)) := by
   cases direction
   · simp only [Direction.symmetryIndex, Direction.signQ]
-    rw [fivefoldMatrix_eq]
+    rw [symmetryMatrix_eq_Rz_mat]
     have hangle : ((4 : OrbitIndex) : ℝ) * (2 * Real.pi / 5) =
         (-1 : ℝ) * (2 * Real.pi / 5) + (1 : ℤ) * (2 * Real.pi) := by
       norm_num
       ring
     rw [hangle, Rz_mat_add_int_mul_two_pi]
     norm_num
-  · simp [Direction.symmetryIndex, Direction.signQ, fivefoldMatrix_eq]
+  · simp [Direction.symmetryIndex, Direction.signQ, symmetryMatrix_eq_Rz_mat]
 
 theorem trace_advantage_eq (chart : ChartIndex) (direction : Direction)
     (x y z : ℝ) :
     Matrix.trace ((chartMatrix chart * cayleyMatrix x y z) *
-        fivefoldMatrix direction.symmetryIndex) -
+        symmetryMatrix direction.symmetryIndex) -
         Matrix.trace (chartMatrix chart * cayleyMatrix x y z) =
       exactAdvantage chart direction x y z / cayleyDenom x y z := by
-  rw [fivefoldMatrix_direction, trace_mul_Rz_sub]
+  rw [symmetryMatrix_direction, trace_mul_Rz_sub]
   rw [exactAdvantage, eval_a_eq_denom_mul, eval_b_eq_denom_mul]
   cases direction <;>
     simp [Direction.signQ, Real.cos_neg, Real.sin_neg] <;>
@@ -264,12 +264,12 @@ theorem trace_advantage_eq (chart : ChartIndex) (direction : Direction)
 theorem positive_exactAdvantage_not_inFundamentalDomain
     {chart : ChartIndex} {direction : Direction} {x y z : ℝ}
     (hpositive : 0 < exactAdvantage chart direction x y z) :
-    ¬ InFivefoldFundamentalDomain
+    ¬ InSymmetryFundamentalDomain
       (chartMatrix chart * cayleyMatrix x y z) := by
   intro hfund
   have htrace : 0 <
       Matrix.trace ((chartMatrix chart * cayleyMatrix x y z) *
-          fivefoldMatrix direction.symmetryIndex) -
+          symmetryMatrix direction.symmetryIndex) -
         Matrix.trace (chartMatrix chart * cayleyMatrix x y z) := by
     rw [trace_advantage_eq]
     exact div_pos hpositive (cayleyDenom_pos x y z)
@@ -279,7 +279,7 @@ theorem positive_exactAdvantage_not_inFundamentalDomain
 theorem Box.valid_imp_not_inFundamentalDomain
     (box : Box) (hvalid : box.Valid) {p : AtlasPose ℝ}
     (hp : p ∈ box.interval.toReal) (hbounded : p.CayleyBounded) :
-    ¬ InFivefoldFundamentalDomain
+    ¬ InSymmetryFundamentalDomain
       (chartMatrix box.chart * cayleyMatrix p.x p.y p.z) := by
   have hlower := box.lower_le_eval hp
   have herr := advantage_approximation_error box.chart box.direction
@@ -301,14 +301,14 @@ an adjacent trace advantage is at most its uniform approximation error. -/
 theorem advantage_eval_le_error_of_inFundamentalDomain
     (chart : ChartIndex) (direction : Direction) (x y z : ℝ)
     (hbounded : x ^ 2 + y ^ 2 + z ^ 2 ≤ 3)
-    (hfund : InFivefoldFundamentalDomain
+    (hfund : InSymmetryFundamentalDomain
       (chartMatrix chart * cayleyMatrix x y z)) :
     (advantageQuadratic chart direction).evalReal x y z ≤
       approximationError := by
   have htrace := hfund direction.symmetryIndex
   have htrace' :
       Matrix.trace ((chartMatrix chart * cayleyMatrix x y z) *
-          fivefoldMatrix direction.symmetryIndex) -
+          symmetryMatrix direction.symmetryIndex) -
         Matrix.trace (chartMatrix chart * cayleyMatrix x y z) ≤ 0 :=
     sub_nonpos.mpr htrace
   rw [trace_advantage_eq] at htrace'
@@ -387,7 +387,7 @@ private theorem narrow_second_coordinate {x y : ℝ}
 /-- Fundamental-domain condition carried by an atlas representative. -/
 def _root_.Noperts.Pipeline.AtlasPose.InFivefoldFundamentalDomain
     (p : AtlasPose ℝ) (chart : ChartIndex) : Prop :=
-  Noperts.Pipeline.InFivefoldFundamentalDomain
+  Noperts.Pipeline.InSymmetryFundamentalDomain
     (chartMatrix chart * cayleyMatrix p.x p.y p.z)
 
 private theorem chart0_fundamental_z_mem {p : AtlasPose ℝ}

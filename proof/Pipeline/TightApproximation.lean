@@ -13,7 +13,7 @@ allowance is much larger than the actual rounding, use the solid's own
 per-vertex error `tightVertexErrorQ = modelErrorQ` instead: 0 for the
 Septopert (the C++ checker's `MODEL_EXACT`: `supportError = 0`, and exact
 support ties pass the `≤ 0` support checks), `6 · 10⁻¹⁶` for the icosahedral
-solids. Every `C5Model` meets it by its `close` field.
+solids. Every `CyclicModel` meets it by its `close` field.
 -/
 
 namespace Noperts.Pipeline
@@ -30,8 +30,8 @@ theorem tightVertexErrorQ_nonneg : 0 ≤ tightVertexErrorQ := modelErrorQ_nonneg
 theorem tightVertexErrorQ_real_nonneg : (0 : ℝ) ≤ (tightVertexErrorQ : ℝ) := by
   exact_mod_cast tightVertexErrorQ_nonneg
 
-/-- Every `C5Model` meets the tight bound the projective certificates use. -/
-theorem C5Model.vertex_close_tight (P : C5Model) (i : VertexIndex) :
+/-- Every `CyclicModel` meets the tight bound the projective certificates use. -/
+theorem CyclicModel.vertex_close_tight (P : CyclicModel) (i : VertexIndex) :
     ‖P.vertex i - toR3 (rationalVertex i)‖ ≤ (tightVertexErrorQ : ℝ) :=
   P.vertex_close_model i
 

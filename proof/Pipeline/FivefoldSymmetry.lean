@@ -21,7 +21,7 @@ Euler axis, and its reduction is different; see `Septopert.Reduce`.)
 
 namespace Noperts.Pipeline
 
-variable [FivefoldSolid] {P : C5Model}
+variable [FivefoldSolid] {P : CyclicModel}
 
 open Real
 open Noperts.BalancedSupport
@@ -34,12 +34,12 @@ private lemma RzL_apply_add (α β : ℝ) (v : ℝ³) :
   rw [h]
   rfl
 
-theorem fivefoldMatrix_eq (k : OrbitIndex) :
-    fivefoldMatrix k = Rz_mat ((k : ℝ) * (2 * π / 5)) := by
-  rw [fivefoldMatrix, symmetryMatrix_eq_fivefoldRotation, fivefoldRotation_eq_mul]
+theorem symmetryMatrix_eq_Rz_mat (k : OrbitIndex) :
+    symmetryMatrix k = Rz_mat ((k : ℝ) * (2 * π / 5)) := by
+  rw [symmetryMatrix_eq_fivefoldRotation, fivefoldRotation_eq_mul]
 
-theorem fivefoldMatrix_one : fivefoldMatrix 1 = Rz_mat (2 * π / 5) := by
-  rw [fivefoldMatrix_eq, show ((1 : OrbitIndex) : ℕ) = 1 from rfl]
+theorem symmetryMatrix_one_eq_Rz_mat : symmetryMatrix 1 = Rz_mat (2 * π / 5) := by
+  rw [symmetryMatrix_eq_Rz_mat, show ((1 : OrbitIndex) : ℕ) = 1 from rfl]
   simp
 
 /-- The rotation by `2π/5` about z preserves the hull. -/

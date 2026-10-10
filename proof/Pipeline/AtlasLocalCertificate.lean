@@ -16,7 +16,7 @@ each entry of the denominator-cleared mismatch is a rational quadratic.
 
 namespace Noperts.Pipeline.AtlasLocalCertificate
 
-variable [SolidModel] {P : C5Model}
+variable [SolidModel] {P : CyclicModel}
 
 open scoped Matrix RealInnerProductSpace
 open Noperts.Checker

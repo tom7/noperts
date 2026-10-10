@@ -25,7 +25,7 @@ any rational leaf contained in the certified neighborhood may use the row.
 
 namespace Noperts.Pipeline.LocalCertificate
 
-variable [SolidModel] {P : C5Model}
+variable [SolidModel] {P : CyclicModel}
 
 open RationalApprox GlobalTheorem
 open scoped Matrix RealInnerProductSpace
@@ -820,7 +820,7 @@ theorem valid_center_normalizedA_approx (box : Box)
         toR3 (rationalVertex
           (symmetryAction box.symmetryIndex (cert.contact i).index))‖ ≤
             RationalApprox.κ
-      simpa [C5Model.approximation, C5Model.polyhedron, rationalPolyhedron] using
+      simpa [CyclicModel.approximation, CyclicModel.polyhedron, rationalPolyhedron] using
         (P.approximation.approx
           (symmetryAction box.symmetryIndex (cert.contact i).index)))
     (fun i => by
@@ -838,7 +838,7 @@ theorem valid_center_normalizedA_approx (box : Box)
     (by
       simpa [Noperts.Atlas.firstVariationVector, exactLift,
         AxisCertificate.realWeight, AxisCertificate.realDirection,
-        AxisCertificate.realVertex, C5Model.vertex, approxVertex, cert] using
+        AxisCertificate.realVertex, CyclicModel.vertex, approxVertex, cert] using
           (AxisCertificate.firstVariation_eq_B_smul_normalizedAAt
             box h j box.center.toReal (0 : ℝ²)))
     (by
@@ -1004,7 +1004,7 @@ theorem contact_support_pose (box : Box) (contact : Contact)
           (rationalVertex selected) contact.direction : ℚ) : ℝ) ≤
         _root_.GlobalTheorem.G pbar 0 (box.εθ₂ : ℝ) (box.εφ₂ : ℝ)
           (P.vertex selected) (toR2 contact.direction) := by
-    simpa [pbar, C5Model.approximation, rationalPolyhedron] using
+    simpa [pbar, CyclicModel.approximation, rationalPolyhedron] using
       (Gℚ_le_G (p_ := outerAsInner box.center) (εα := (0 : ℚ))
         (εθ := box.εθ₂) (εφ := box.εφ₂)
         (by norm_num) box.εθ₂_nonneg box.εφ₂_nonneg

@@ -394,7 +394,7 @@ theorem eulerView_eq_of_sin_eq_zero {θ θ' φ : ℝ} (h : Real.sin φ = 0) :
 variable [IcosahedralSolid] in
 /-- `exists_upper_tight_translated_pose`, for a pose whose view is in
 cone(T), keeping the view: the tightened Euler angles have the same view. -/
-theorem exists_tight_pose_viewCone (P : C5Model) (p : MatrixPose) (hcone : InViewCone p.view) :
+theorem exists_tight_pose_viewCone (P : CyclicModel) (p : MatrixPose) (hcone : InViewCone p.view) :
     ∃ q : Pose ℝ, ∃ offset : ℝ²,
       InTightPoseRegion q ∧ InViewWedge q ∧ q.φ₂ ≤ Real.pi / 2 ∧
       InViewCone (eulerView q.θ₂ q.φ₂) ∧

@@ -1057,7 +1057,7 @@ theorem phIModel_verts :
   simp only [slotCheck, Bool.and_eq_true, List.all_eq_true, List.mem_range,
     decide_eq_true_eq] at hc
   ext v
-  simp only [C5Model.verts, Finset.coe_image, Finset.coe_univ, Set.image_univ, Set.mem_range,
+  simp only [CyclicModel.verts, Finset.coe_image, Finset.coe_univ, Set.image_univ, Set.mem_range,
     Set.mem_image, Finset.mem_coe, mem_phPoles]
   constructor
   · rintro ⟨i, rfl⟩

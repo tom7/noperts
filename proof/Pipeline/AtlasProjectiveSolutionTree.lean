@@ -27,7 +27,7 @@ open Noperts Noperts.Pipeline
 
 namespace Noperts.Pipeline.AtlasProjectiveSolutionTree
 
-variable [IcosahedralSolid] [CodeTriangleCover] {P : C5Model}
+variable [IcosahedralSolid] [CodeTriangleCover] {P : CyclicModel}
 
 open CayleyAtlas AtlasProjectiveView
 open Noperts.Atlas.ProjectiveView

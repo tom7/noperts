@@ -46,11 +46,11 @@ theorem exists_mul_ico_inFundamentalDomain (R : Matrix (Fin 3) (Fin 3) ℝ) :
   exact hmax k (Finset.mem_univ _)
 
 variable [FivefoldSolid] in
-theorem exists_icoMatrix_eq_fivefoldMatrix (k : OrbitIndex) :
-    ∃ g : IcoIndex, fivefoldMatrix k = icoMatrix g := by
-  have hrz : fivefoldMatrix 1 = icoMatrix ⟨icoRzIndex, by decide⟩ := by
-    rw [icoMatrix, ico_rz, fivefoldMatrix_one]
-  suffices h : ∀ n (hn : n < 5), ∃ g : IcoIndex, fivefoldMatrix ⟨n, hn⟩ = icoMatrix g from
+theorem exists_icoMatrix_eq_symmetryMatrix (k : OrbitIndex) :
+    ∃ g : IcoIndex, symmetryMatrix k = icoMatrix g := by
+  have hrz : symmetryMatrix 1 = icoMatrix ⟨icoRzIndex, by decide⟩ := by
+    rw [icoMatrix, ico_rz, symmetryMatrix_one_eq_Rz_mat]
+  suffices h : ∀ n (hn : n < 5), ∃ g : IcoIndex, symmetryMatrix ⟨n, hn⟩ = icoMatrix g from
     h k.val k.isLt
   intro n
   induction n with
@@ -58,8 +58,8 @@ theorem exists_icoMatrix_eq_fivefoldMatrix (k : OrbitIndex) :
   | succ n ih =>
     intro hn
     obtain ⟨g, hg⟩ := ih (by omega)
-    have hstep : fivefoldMatrix ⟨n + 1, hn⟩ = fivefoldMatrix 1 * fivefoldMatrix ⟨n, by rw [orbitCount_eq_five]; omega⟩ := by
-      rw [fivefoldMatrix_mul]
+    have hstep : symmetryMatrix ⟨n + 1, hn⟩ = symmetryMatrix 1 * symmetryMatrix ⟨n, by rw [orbitCount_eq_five]; omega⟩ := by
+      rw [symmetryMatrix_mul_composeSymmetry]
       congr 1
       ext
       simp [composeSymmetry, orbitCount_eq_five]
@@ -69,9 +69,9 @@ theorem exists_icoMatrix_eq_fivefoldMatrix (k : OrbitIndex) :
 
 variable [FivefoldSolid] in
 theorem InIcoFundamentalDomain.toFivefold {R : Matrix (Fin 3) (Fin 3) ℝ}
-    (h : InIcoFundamentalDomain R) : InFivefoldFundamentalDomain R := by
+    (h : InIcoFundamentalDomain R) : InSymmetryFundamentalDomain R := by
   intro k
-  obtain ⟨g, hg⟩ := exists_icoMatrix_eq_fivefoldMatrix k
+  obtain ⟨g, hg⟩ := exists_icoMatrix_eq_symmetryMatrix k
   rw [hg]
   exact h g
 

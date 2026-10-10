@@ -17,7 +17,7 @@ namespace Noperts.Pipeline.AtlasProjectiveEdgeCertificate
 
 open Noperts.Atlas
 
-variable [SolidModel] {P : C5Model}
+variable [SolidModel] {P : CyclicModel}
 
 open scoped RealInnerProductSpace
 open Noperts.Checker
@@ -612,7 +612,7 @@ theorem Box.valid_imp_not_translated_rupert (box : Box) (h : box.Valid)
     (fun i => viewScale box.root p * (box.defect i : ℝ))
   · exact box.valid_direction_nonzero h offset hscale hmem
   · intro i k
-    simpa [C5Model.polyhedron] using box.valid_support h offset hscale hmem i k
+    simpa [CyclicModel.polyhedron] using box.valid_support h offset hscale hmem i k
   · have hactual := box.valid_actualDisplacement (P := P) h hp hbounded hscale hmem
     rw [box.edgeShell.actualDisplacement_eq_sum p offset] at hactual
     rw [Box.totalDefect] at hactual
