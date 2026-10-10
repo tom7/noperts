@@ -151,15 +151,15 @@ noncomputable def IModel.ofBox (B : RatBox) (hcheck : closeCheck B = true) (v0 :
 
 /-! ### Similarities preserve Rupert-ness -/
 
-theorem _root_.proj_xy_smul (t : ℝ) (v : EuclideanSpace ℝ (Fin 3)) : proj_xy (t • v) = t • proj_xy v := by
+theorem proj_xy_smul (t : ℝ) (v : EuclideanSpace ℝ (Fin 3)) : proj_xy (t • v) = t • proj_xy v := by
   ext i; fin_cases i <;> simp [proj_xy]
 
-theorem _root_.proj_xy_add (u v : EuclideanSpace ℝ (Fin 3)) : proj_xy (u + v) = proj_xy u + proj_xy v := by
+theorem proj_xy_add (u v : EuclideanSpace ℝ (Fin 3)) : proj_xy (u + v) = proj_xy u + proj_xy v := by
   ext i; fin_cases i <;> simp [proj_xy]
 
 /-- Rupert-ness is invariant under a nonzero scaling (a negative one is a
 point reflection). -/
-theorem _root_.isRupert_image_smul (t : ℝ) (ht : t ≠ 0)
+theorem isRupert_image_smul (t : ℝ) (ht : t ≠ 0)
     (V : Finset (EuclideanSpace ℝ (Fin 3))) (h : IsRupert V) :
     IsRupert (V.image fun x => t • x) := by
   obtain ⟨R1, hR1, off, R2, hR2, hsub⟩ := h
@@ -194,7 +194,7 @@ theorem _root_.isRupert_image_smul (t : ℝ) (ht : t ≠ 0)
   exact Set.image_mono hsub
 
 /-- Rupert-ness is invariant under translation. -/
-theorem _root_.isRupert_image_add (c : EuclideanSpace ℝ (Fin 3))
+theorem isRupert_image_add (c : EuclideanSpace ℝ (Fin 3))
     (V : Finset (EuclideanSpace ℝ (Fin 3))) (h : IsRupert V) :
     IsRupert (V.image fun x => c + x) := by
   obtain ⟨R1, hR1, off, R2, hR2, hsub⟩ := h
@@ -233,7 +233,7 @@ theorem _root_.isRupert_image_add (c : EuclideanSpace ℝ (Fin 3))
   rw [h1, h2, ← e.image_interior]
   exact Set.image_mono hsub
 /-- Rupert-ness is invariant under rotating the vertex set. -/
-theorem _root_.isRupert_image_rotation (Q : Matrix (Fin 3) (Fin 3) ℝ)
+theorem isRupert_image_rotation (Q : Matrix (Fin 3) (Fin 3) ℝ)
     (hQ : Q ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ)
     (V : Finset (EuclideanSpace ℝ (Fin 3))) (h : IsRupert V) :
     IsRupert (V.image Q.toEuclideanLin) := by
@@ -275,7 +275,7 @@ theorem _root_.isRupert_image_rotation (Q : Matrix (Fin 3) (Fin 3) ℝ)
 
 /-- Rupert-ness is invariant under every similarity x ↦ c + s M x (s > 0, M
 orthogonal, including reflections). -/
-theorem _root_.isRupert_image_similarity (c : EuclideanSpace ℝ (Fin 3)) (s : ℝ) (hs : 0 < s)
+theorem isRupert_image_similarity (c : EuclideanSpace ℝ (Fin 3)) (s : ℝ) (hs : 0 < s)
     (M : Matrix (Fin 3) (Fin 3) ℝ) (hM : M ∈ Matrix.orthogonalGroup (Fin 3) ℝ)
     (V : Finset (EuclideanSpace ℝ (Fin 3))) (h : IsRupert V) :
     IsRupert (V.image fun x => c + s • M.toEuclideanLin x) := by
