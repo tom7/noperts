@@ -44,7 +44,8 @@
 #
 # The model stage regenerates committed source files (model_vertices.*,
 # codebdd.json, and the Lean data in ../../proof/PentagonalHexecontahedron/:
-# Vertices.lean, WedgeCoverData.lean, IcoGroupData.lean, PHStatementData.lean,
+# SolidModel.lean (vertices), WedgeCoverData.lean, OrbitData.lean,
+# PHStatementData.lean, and ../../proof/Pipeline/IcoGroupData.lean,
 # by the scripts in scripts/), so it only runs when asked for (--from model
 # or --only model). The other stages need its codebdd.json.
 set -euo pipefail

@@ -35,8 +35,9 @@
 #
 # The model, caps and ties stages regenerate committed source files (the model
 # files, codebdd.json, dh_exact.txt, dh_tie_data.txt, tie_normals.h, and
-# ../../proof/DeltoidalHexecontahedron's Vertices, WedgeCoverData, IcoGroupData,
-# StatementData, CapData and TieData, the first four with scripts/), so
+# ../../proof/DeltoidalHexecontahedron's SolidModel (vertices), WedgeCoverData,
+# OrbitData, StatementData, CapData and TieData, and ../../proof/Pipeline/
+# IcoGroupData; all but CapData and TieData with scripts/), so
 # they only run when asked for (--from model, --only caps, ...); the default
 # start is tube (with the committed data).
 set -euo pipefail

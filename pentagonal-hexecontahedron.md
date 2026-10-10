@@ -173,14 +173,18 @@ The stages are model, tube, tubepack, search, pack and verify. Each can be
 restarted (`--from STAGE`, `--only STAGE`), and `--dry_run` prints the
 commands. The model stage rewrites committed files: the model files in
 `search/ph/` and the generated Lean data in `proof/PentagonalHexecontahedron/`
-(`Vertices.lean`, `WedgeCoverData.lean`, `IcoGroupData.lean`,
-`PHStatementData.lean`). It must run once in a fresh checkout, because the
+(`SolidModel.lean`'s vertex tables, `WedgeCoverData.lean`, `OrbitData.lean`,
+`PHStatementData.lean`) and `proof/Pipeline/IcoGroupData.lean`. It must run once in a fresh checkout, because the
 later stages read its `codebdd.json`. The verify stage runs
 `constructPentagonalHexecontahedron` on the new packs. Since the deduplication of 2026-10-10 (see [BUILDING.md](BUILDING.md),
 "Former names"), the vertices are in `SolidModel.lean` and the solid's orbit
 tables in `OrbitData.lean`; the rest of `IcoGroupData` is the shared
-`proof/Pipeline/IcoGroupData.lean`. The generators have not been adapted
-yet: a model stage still writes the old files.
+`proof/Pipeline/IcoGroupData.lean`. The generators were adapted to this
+layout on 2026-10-10: run from the committed model files (with the
+`codebdd.json` that `codebdd.exe` writes from `ph_model.txt`), the scripts in
+`search/ph/scripts/` reproduce `SolidModel.lean` (updated in place),
+`WedgeCoverData.lean`, `OrbitData.lean`, `PHStatementData.lean` and
+`Pipeline/IcoGroupData.lean` byte for byte.
 
 On nopert229, a from-scratch run on 64 cores (125 GB, 2026-10-05, Mathlib
 already built) took 2 h 37 min, with a peak of 9.7 GB in one process:

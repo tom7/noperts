@@ -36,7 +36,9 @@
 # would stop Lean from creating threads).
 #
 # The model stage regenerates committed source files (model_vertices.*,
-# codebdd.json, and ../../proof/SnubDodecahedron/Vertices.lean etc., with the
+# codebdd.json, and ../../proof/SnubDodecahedron/'s RationalVertices (and the seed
+# count in SolidModel), TangentCones (supportGenerator), GeneratedTangentCones,
+# WedgeCoverData and OrbitData, and ../../proof/Pipeline/IcoGroupData.lean, with the
 # generators in lean_scripts/), so it only runs
 # when asked for (--from model or --only model).
 set -euo pipefail

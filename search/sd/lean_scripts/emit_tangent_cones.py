@@ -41,7 +41,7 @@ def hull_adjacency():
 
 ADJACENCY = hull_adjacency()
 NUM_VERTICES = len(VERTICES_Q)
-# SparseSupport.supportGenerator has rows of this width (padded with the vertex).
+# SparseSupport.supportGenerator (defined in TangentCones.lean) has rows of this width (padded with the vertex).
 GENERATOR_WIDTH = 7
 assert max(len(row) for row in ADJACENCY) <= GENERATOR_WIDTH
 
@@ -151,10 +151,9 @@ def emit(destination: Path):
 
     lines = [
         "module", "",
-        "public import SnubDodecahedron.SparseSupport",
-        "public meta import SnubDodecahedron.SparseSupport", "",
+        "public import SnubDodecahedron.TangentCones",
+        "public meta import SnubDodecahedron.TangentCones", "",
         "@[expose] public section", "",
-        "open Noperts", "",
         "namespace SnubDodecahedron.GeneratedTangentCones", "",
         "set_option linter.unusedTactic false",
         "set_option linter.unreachableTactic false",
@@ -237,8 +236,8 @@ def emit(destination: Path):
           f"maximum rational component {max_bits} bits)")
 
 
-def write_support_generator(sparse_support: Path):
-    """Rewrites the body of `supportGenerator` in SparseSupport.lean: row
+def write_support_generator(tangent_cones: Path):
+    """Rewrites the body of `supportGenerator` in TangentCones.lean: row
     `base` lists ADJACENCY[base], padded with `base` to GENERATOR_WIDTH."""
     import re
     rows = []
@@ -246,23 +245,23 @@ def write_support_generator(sparse_support: Path):
         padded = list(row) + [base] * (GENERATOR_WIDTH - len(row))
         rows.append("  ![" + ", ".join(map(str, padded)) + "]")
     header = f"def supportGenerator : VertexIndex → Fin {GENERATOR_WIDTH} → VertexIndex := !["
-    text = sparse_support.read_text(encoding="utf-8")
+    text = tangent_cones.read_text(encoding="utf-8")
     pattern = re.compile(re.escape(header) + r"\n.*?\n\]", re.S)
     text, k = pattern.subn(lambda _: header + "\n" + ",\n".join(rows) + "\n]", text, count=1)
     if k != 1:
-        raise SystemExit(f"{sparse_support}: no supportGenerator definition")
-    sparse_support.write_text(text, encoding="utf-8")
-    print(f"updated {sparse_support} ({NUM_VERTICES} rows)")
+        raise SystemExit(f"{tangent_cones}: no supportGenerator definition")
+    tangent_cones.write_text(text, encoding="utf-8")
+    print(f"updated {tangent_cones} ({NUM_VERTICES} rows)")
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("output", type=Path)
-    parser.add_argument("--sparse_support", type=Path,
+    parser.add_argument("--tangent_cones", type=Path,
                         default=Path(__file__).resolve().parents[3] / "proof" /
-                        "SnubDodecahedron" / "SparseSupport.lean")
+                        "SnubDodecahedron" / "TangentCones.lean")
     args = parser.parse_args()
-    write_support_generator(args.sparse_support)
+    write_support_generator(args.tangent_cones)
     emit(args.output)
 
 

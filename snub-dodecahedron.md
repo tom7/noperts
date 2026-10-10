@@ -157,15 +157,14 @@ The C++ search that produced the data is in [`search/sd/`](search/sd/), from
 the `snubdodecahedron` branch of nopert229 (b8c9065); its
 [`README.md`](search/sd/README.md) describes the method and the tools. The
 generators of the Lean data are in `search/sd/lean_scripts/`; they reproduce
-the committed files in `proof/SnubDodecahedron/` (`Vertices.lean`,
-`SparseSupport.lean`, `GeneratedTangentCones.lean`, `WedgeCoverData.lean`,
-`IcoGroupData.lean`) byte for byte, as they were before the deduplication of
-2026-10-10. Since then the vertices are in `RationalVertices.lean`, the
-orbit tables in `OrbitData.lean` (the rest of `IcoGroupData` is the shared
-`proof/Pipeline/IcoGroupData.lean`), `SparseSupport.lean` has new imports and
-the `certificateViewCheck` instance, and `WedgeCoverData.lean` has new
-imports; the generators have not been
-adapted yet. With cc-lib in place
+the committed generated files (`RationalVertices.lean`, `TangentCones.lean`'s
+`supportGenerator`, `GeneratedTangentCones.lean`, `WedgeCoverData.lean`,
+`OrbitData.lean`, the shared `proof/Pipeline/IcoGroupData.lean`, and the seed
+count in `SolidModel.lean`) byte for byte (verified on 2026-10-10, after the
+deduplication: the vertices are in `RationalVertices.lean`, the orbit tables
+in `OrbitData.lean`, the tangent-cone generators in `TangentCones.lean`, and
+`SparseSupport.lean` is now entirely hand-written, with the
+`certificateViewCheck` instance). With cc-lib in place
 (`./get-cc-lib.sh`, see [BUILDING.md](BUILDING.md)):
 
 ```sh

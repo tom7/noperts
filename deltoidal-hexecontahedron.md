@@ -157,14 +157,21 @@ The stages are model, tube, tubepack, caps, ties, search, pack and verify
 defaults to `work-dh/`). Without `--from` it starts at tube, with the
 committed model data. The model, caps and ties stages regenerate committed
 files: the model files in `search/dh/` and the Lean data in
-`proof/DeltoidalHexecontahedron/` (`Vertices`, `WedgeCoverData`,
-`IcoGroupData`, `StatementData`, `CapData`, `TieData`). The verify stage
+`proof/DeltoidalHexecontahedron/` (`SolidModel`'s vertex tables,
+`WedgeCoverData`, `OrbitData`, `StatementData`, `CapData`, `TieData`) and
+`proof/Pipeline/IcoGroupData.lean`. The verify stage
 builds and runs `constructDeltoidalHexecontahedron` in `proof/`, in a
 memory-capped `systemd-run --user` scope. Since the deduplication of 2026-10-10 (see [BUILDING.md](BUILDING.md),
 "Former names"), the vertices are in `SolidModel.lean` and the solid's orbit
 tables in `OrbitData.lean`; the rest of `IcoGroupData` is the shared
-`proof/Pipeline/IcoGroupData.lean`. The generators have not been adapted
-yet: a model stage still writes the old files.
+`proof/Pipeline/IcoGroupData.lean`. The generators were adapted to this
+layout on 2026-10-10: run from the committed model files (with the
+`codebdd.json` that `codebdd.exe` writes from `dh_model.txt`, about 0.1 s),
+`scripts/update_vertices.py`, `emit_wedge_cover.py`, `snub_ico_group.py` and
+`dh_statement_data.py` reproduce `SolidModel.lean` (updated in place),
+`WedgeCoverData.lean`, `OrbitData.lean`, `StatementData.lean` and
+`Pipeline/IcoGroupData.lean` byte for byte. (`CapData` and `TieData`, from the
+caps and ties stages, are unchanged by the deduplication and were not rerun.)
 
 A from-scratch run on 64 cores (2026-10-06, then in nopert229 and
 Noperthedron) took 8 h 10 min:
