@@ -16,3 +16,5 @@ public import SmallRupert.Thm73
 public import SmallRupert.BadViews
 public import SmallRupert.Perturb
 public import SmallRupert.Unimodal
+public import SmallRupert.Octahedron
+public import SmallRupert.Prism

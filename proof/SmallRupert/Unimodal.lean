@@ -502,37 +502,53 @@ theorem isRupert_of_genericUnimodalView (V : Finset ℝ³) (R : Matrix (Fin 3) (
     with R' h1 h2 h3
   exact fun _ => ⟨h1, h2, h3⟩
 
-/-- **Theorem 7.7 (translation prisms).**  `K = T + [0, w]` for a triangle
-`T = ABC` and `w` not parallel to its plane.  If `w` is not perpendicular to
-the plane of `T`, or `T` has an obtuse angle, `K` is Rupert.  (Right prisms over
-non-obtuse triangles remain open.) -/
-theorem isRupert_translationPrism (A B C w : ℝ³) (hind : AffineIndependent ℝ ![A, B, C, A + w])
-    (h : ⟪w, B - A⟫ ≠ 0 ∨ ⟪w, C - A⟫ ≠ 0 ∨ ⟪B - A, C - A⟫ < 0 ∨ ⟪A - B, C - B⟫ < 0 ∨
-      ⟪A - C, B - C⟫ < 0) :
-    IsRupert {A, B, C, A + w, B + w, C + w} := by
-  sorry
-
-/-- An octahedron with opposite vertex pairs `(a, a')`, `(b, b')`, `(c, c')`:
-the eight triangles with one vertex from each pair are facets. -/
-structure IsOctahedron (a a' b b' c c' : ℝ³) : Prop where
-  nodup : [a, a', b, b', c, c'].Nodup
-  facet_abc : IsFacetTriangle {a, a', b, b', c, c'} a b c
-  facet_abc' : IsFacetTriangle {a, a', b, b', c, c'} a b c'
-  facet_ab'c : IsFacetTriangle {a, a', b, b', c, c'} a b' c
-  facet_ab'c' : IsFacetTriangle {a, a', b, b', c, c'} a b' c'
-  facet_a'bc : IsFacetTriangle {a, a', b, b', c, c'} a' b c
-  facet_a'bc' : IsFacetTriangle {a, a', b, b', c, c'} a' b c'
-  facet_a'b'c : IsFacetTriangle {a, a', b, b', c, c'} a' b' c
-  facet_a'b'c' : IsFacetTriangle {a, a', b, b', c, c'} a' b' c'
-
-/-- **Corollary 7.8 (Condition A).**  With `d = a - a'`, if the projections of
-the diagonals `bb'` and `cc'` onto the axis `aa'` overlap in more than a point,
-the octahedron is Rupert. -/
-theorem isRupert_octahedron_conditionA {a a' b b' c c' : ℝ³} (h : IsOctahedron a a' b b' c c')
-    (hA : max (min ⟪a - a', b⟫ ⟪a - a', b'⟫) (min ⟪a - a', c⟫ ⟪a - a', c'⟫) <
-      min (max ⟪a - a', b⟫ ⟪a - a', b'⟫) (max ⟪a - a', c⟫ ⟪a - a', c'⟫)) :
-    IsRupert {a, a', b, b', c, c'} := by
-  sorry
+/-- **Theorem 7.5, open-condition form.**  At the view of `R₀` the cycle `x`
+(distinct points of `V`) is a strictly convex counterclockwise silhouette, every
+other point of `V` is strictly left of every edge, and the corner depths satisfy
+an open condition `Q` which forces cyclic unimodality once the depths are
+distinct.  Then `V` is Rupert.  (Ties in depth at `R₀` are allowed.) -/
+theorem isRupert_of_open_unimodal (V : Finset ℝ³) {R₀ : Matrix (Fin 3) (Fin 3) ℝ}
+    (hR₀ : R₀ ∈ SO3) {k : ℕ} [NeZero k] (x : ZMod k → ℝ³) (hxV : ∀ i, x i ∈ V)
+    (hxinj : Function.Injective x)
+    (hp : IsCcwPolygon (fun i => proj_xy (R₀.toEuclideanLin (x i))))
+    (hin : ∀ v ∈ V, (∀ i, v ≠ x i) → ∀ i,
+      0 < cross2 (proj_xy (R₀.toEuclideanLin (x (i + 1))) - proj_xy (R₀.toEuclideanLin (x i)))
+        (proj_xy (R₀.toEuclideanLin v) - proj_xy (R₀.toEuclideanLin (x i))))
+    (Q : (ZMod k → ℝ) → Prop) (hQo : IsOpen {z | Q z})
+    (hQ : Q fun i => (R₀.toEuclideanLin (x i)) 2)
+    (hQu : ∀ z, Function.Injective z → Q z → IsCyclicUnimodal z) : IsRupert V := by
+  classical
+  let P : Matrix (Fin 3) (Fin 3) ℝ → ZMod k → ℝ² := fun R' i => proj_xy (R'.toEuclideanLin (x i))
+  let Z : Matrix (Fin 3) (Fin 3) ℝ → ZMod k → ℝ := fun R' i => (R'.toEuclideanLin (x i)) 2
+  have hc : ∀ i, ContinuousAt (fun R' => P R' i) R₀ := fun i =>
+    (continuous_proj_toEuclideanLin (x i)).continuousAt
+  have hZ : Continuous Z := continuous_pi fun i => continuous_depth_toEuclideanLin (x i)
+  have hp' : IsCcwPolygon (P R₀) := hp
+  set Λ₀ : Finset ℝ³ := ((univ ×ˢ univ).filter (fun q : ZMod k × ZMod k => q.1 ≠ q.2)).image
+    (fun q => x q.1 - x q.2) with hΛ₀
+  have hΛ : ∀ l ∈ Λ₀, l ≠ 0 := by
+    intro l hl
+    obtain ⟨q, hq, rfl⟩ := mem_image.mp hl
+    exact sub_ne_zero.mpr (hxinj.ne (mem_filter.mp hq).2)
+  refine isRupert_of_eventually_unimodal V hR₀ Λ₀ hΛ x hxV ?_
+  have hin' : ∀ᶠ R' in 𝓝 R₀, ∀ v ∈ V, (∀ i, v ≠ x i) →
+      ∀ i, 0 < cross2 (P R' (i + 1) - P R' i) (proj_xy (R'.toEuclideanLin v) - P R' i) := by
+    refine (eventually_all_finset V).2 fun v hv => ?_
+    by_cases hvx : ∀ i, v ≠ x i
+    · have hq : ContinuousAt (fun R' : Matrix (Fin 3) (Fin 3) ℝ =>
+          proj_xy (R'.toEuclideanLin v)) R₀ := (continuous_proj_toEuclideanLin v).continuousAt
+      exact (eventually_left hc hq (hin v hv hvx)).mono fun _ h _ => h
+    · exact Eventually.of_forall fun _ h => absurd h hvx
+  have hQ' : ∀ᶠ R' in 𝓝 R₀, Q (Z R') :=
+    hZ.continuousAt.preimage_mem_nhds (hQo.mem_nhds hQ)
+  filter_upwards [eventually_isCcwPolygon hc hp', hin', hQ'] with R' h1 h2 h3 hΛR
+  have hinj : Function.Injective (Z R') := by
+    intro i j hij
+    by_contra hne
+    apply hΛR (x i - x j) (mem_image.mpr ⟨(i, j), by simp [hne], rfl⟩)
+    rw [map_sub, PiLp.sub_apply]
+    exact sub_eq_zero.mpr hij
+  exact ⟨h1, fun v hv hvx => h1.mem_interior_of_left (h2 v hv hvx), hQu _ hinj h3⟩
 
 end SmallRupert
 
