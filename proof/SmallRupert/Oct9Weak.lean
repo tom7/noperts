@@ -296,6 +296,111 @@ theorem weak_edge_tests {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
       (Ne.symm hxp) hw hwp' hwy hwx (by rw [← det3_cyc p' y p]; exact hor)
   exact ⟨E1, E2, E3, E4⟩
 
+theorem inner_four {f : ℝ³ → ℝ} {N : ℝ³} (hf : ∀ y z, f y - f z = ⟪N, y - z⟫)
+    (A B C D : ℝ³) (c₁ c₂ c₃ c₄ : ℝ) (hs : c₁ - c₂ + c₃ - c₄ = 0) :
+    ⟪N, c₁ • A - c₂ • B + c₃ • C - c₄ • D⟫ = c₁ * f A - c₂ * f B + c₃ * f C - c₄ * f D := by
+  have e : ∀ t, ⟪N, t⟫ = f t - f A + ⟪N, A⟫ := fun t => by rw [hf, inner_sub_right]; ring
+  simp only [inner_sub_right, inner_add_right, real_inner_smul_right]
+  rw [e B, e C, e D]
+  linear_combination (⟪N, A⟫ - f A) * hs
+
+/-- **The top face of a weak quad edge** (the face `x' y' p'` containing
+`u = y - x`): four-point identities for an arbitrary point `w`. -/
+theorem weak_top_face {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
+    (hT : F.a'b'c'.f x = F.a'b'c'.f y) (w : ℝ³) :
+    det3 (x' - y') (w - y') (y - x) * (F.a'b'c.f p' * F.ab'c'.f y) =
+      det3 (p' - y') (w - y') (y - x) * (-F.ab'c'.f x' * (F.a'b'c.f y - F.a'b'c.f x)) ∧
+    det3 (p' - x') (w - x') (y - x) * (F.a'bc'.f y' * F.ab'c'.f y) =
+      det3 (p' - y') (w - y') (y - x) * (F.ab'c'.f x' * F.a'bc'.f x) ∧
+    F.ab'c'.f y * (det3 (p' - x') (w - x') (y - x) * ⟪y', y - x⟫ -
+      det3 (p' - y') (w - y') (y - x) * ⟪x', y - x⟫ +
+      det3 (x' - y') (w - y') (y - x) * ⟪p', y - x⟫) =
+      -det3 (p' - y') (w - y') (y - x) * F.ab'c'.f x' * ⟪y - x, y - x⟫ ∧
+    det3 (p' - x') (w - x') (y - x) - det3 (p' - y') (w - y') (y - x) +
+      det3 (x' - y') (w - y') (y - x) = 0 := by
+  have hnd := F.nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨hxx', hxy, hxy', hxp, hxp'⟩, ⟨hx'y, hx'y', hx'p, hx'p'⟩, ⟨hyy', hyp, hyp'⟩,
+    ⟨hy'p, hy'p'⟩, hpp', -⟩ := hnd
+  set u := y - x with hu_def
+  have hu : u ≠ 0 := sub_ne_zero.mpr (Ne.symm hxy)
+  set T := F.a'b'c'
+  have hTx : T.f x < 0 := T.neg x (by simp) hxx' hxy' hxp'
+  have hTN : T.N ≠ 0 := by
+    intro h0
+    have := T.hN x x'
+    rw [h0, inner_zero_left, T.hP] at this
+    linarith
+  have hS0 : det3 (x' - y') (p' - y') u = 0 := by
+    refine det3_eq_zero_of_perp hTN ?_ ?_ ?_ <;> rw [real_inner_comm, ← T.hN]
+    · rw [T.hP, T.hQ]; ring
+    · rw [T.hR, T.hQ]; ring
+    · rw [hT]; ring
+  have hpar := four_point_parallel y' x' p' w u hu
+  have hsum := four_point_sum y' x' p' w u
+  rw [hS0] at hpar hsum
+  set S1 := det3 (p' - x') (w - x') u
+  set S2 := det3 (p' - y') (w - y') u
+  set S3 := det3 (x' - y') (w - y') u
+  set Vv := S1 • y' - S2 • x' + S3 • p' - (0 : ℝ) • w
+  set μ := ⟪Vv, u⟫ / ⟪u, u⟫
+  have hs : S1 - S2 + S3 - 0 = 0 := hsum
+  have app : ∀ {f : ℝ³ → ℝ} {N : ℝ³}, (∀ y z, f y - f z = ⟪N, y - z⟫) →
+      S1 * f y' - S2 * f x' + S3 * f p' - 0 * f w = μ * (f y - f x) := by
+    intro f N hf
+    rw [← inner_four hf y' x' p' w S1 S2 S3 0 hs, hf]
+    change ⟪N, Vv⟫ = μ * ⟪N, u⟫
+    rw [hpar, real_inner_smul_right]
+  have hL := app F.ab'c'.hN
+  rw [F.ab'c'.hQ, F.ab'c'.hR, F.ab'c'.hP] at hL
+  have hU := app F.a'b'c.hN
+  rw [F.a'b'c.hP, F.a'b'c.hQ] at hU
+  have hH := app F.a'bc'.hN
+  rw [F.a'bc'.hP, F.a'bc'.hQ, F.a'bc'.hR] at hH
+  have hVu : S1 * ⟪y', u⟫ - S2 * ⟪x', u⟫ + S3 * ⟪p', u⟫ = μ * ⟪u, u⟫ := by
+    have := congrArg (fun z => ⟪z, u⟫) hpar
+    simp only [Vv, inner_sub_left, inner_add_left, real_inner_smul_left, zero_mul,
+      sub_zero] at this
+    rw [this]
+  refine ⟨?_, ?_, ?_, by linarith⟩
+  · linear_combination F.ab'c'.f y * hU - (F.a'b'c.f y - F.a'b'c.f x) * hL
+  · linear_combination F.ab'c'.f y * hH + F.a'bc'.f x * hL
+  · linear_combination F.ab'c'.f y * hVu - ⟪u, u⟫ * hL
+
+/-- Signs on the top face: the tests of the edges `y' → x'` and `x' → p'` have
+the sign of the test of `y' → p'`. -/
+theorem weak_top_signs {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
+    (hq₁ : F.a'b'c.f x < F.a'b'c.f y) (hT : F.a'b'c'.f x = F.a'b'c'.f y) {σ : ℝ} {w : ℝ³}
+    (hw : 0 < σ * det3 (p' - y') (w - y') (y - x)) :
+    0 < σ * det3 (x' - y') (w - y') (y - x) ∧ 0 < σ * det3 (p' - x') (w - x') (y - x) := by
+  have hnd := F.nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨hxx', hxy, hxy', hxp, hxp'⟩, ⟨hx'y, hx'y', hx'p, hx'p'⟩, ⟨hyy', hyp, hyp'⟩,
+    ⟨hy'p, hy'p'⟩, hpp', -⟩ := hnd
+  obtain ⟨i1, i2, -, -⟩ := weak_top_face F hT w
+  have hUp' := F.a'b'c.neg p' (by simp) (Ne.symm hx'p') (Ne.symm hy'p') (Ne.symm hpp')
+  have hLy := F.ab'c'.neg y (by simp) (Ne.symm hxy) hyy' hyp'
+  have hLx' := F.ab'c'.neg x' (by simp) (Ne.symm hxx') hx'y' hx'p'
+  have hHy' := F.a'bc'.neg y' (by simp) (Ne.symm hx'y') (Ne.symm hyy') hy'p'
+  have hHx := F.a'bc'.neg x (by simp) hxx' hxy hxp'
+  have p1 : 0 < F.a'b'c.f p' * F.ab'c'.f y := mul_pos_of_neg_of_neg hUp' hLy
+  have p2 : 0 < -F.ab'c'.f x' * (F.a'b'c.f y - F.a'b'c.f x) := by
+    apply mul_pos <;> linarith
+  have p3 : 0 < F.a'bc'.f y' * F.ab'c'.f y := mul_pos_of_neg_of_neg hHy' hLy
+  have p4 : 0 < F.ab'c'.f x' * F.a'bc'.f x := mul_pos_of_neg_of_neg hLx' hHx
+  constructor
+  · have e : (σ * det3 (x' - y') (w - y') (y - x)) * (F.a'b'c.f p' * F.ab'c'.f y) =
+        (σ * det3 (p' - y') (w - y') (y - x)) * (-F.ab'c'.f x' * (F.a'b'c.f y - F.a'b'c.f x)) := by
+      rw [mul_assoc, i1]; ring
+    exact pos_of_mul_pos_pos (by rw [mul_comm, e]; exact mul_pos hw p2) p1 |> fun h => by
+      nlinarith
+  · have e : (σ * det3 (p' - x') (w - x') (y - x)) * (F.a'bc'.f y' * F.ab'c'.f y) =
+        (σ * det3 (p' - y') (w - y') (y - x)) * (F.ab'c'.f x' * F.a'bc'.f x) := by
+      rw [mul_assoc, i2]; ring
+    nlinarith [mul_pos hw p4]
+
 end SmallRupert
 
 end
