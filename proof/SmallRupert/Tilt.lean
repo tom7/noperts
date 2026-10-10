@@ -220,27 +220,22 @@ theorem eventually_tilted_cycle (V : Finset ℝ³) (u₀ v : ℝ³) {k : ℕ} [N
   simp only [proj_rot_sub]
   exact cross2_proj_rot_pos hR hr hRw (h2 y hy hyx i)
 
-/-- **Corollary 8.0′ (robust unimodality).**  In Lemma 8.0, if the limit depths
-`⟪x i, u₀⟫` satisfy an open, scale-invariant condition `Q` that forces cyclic
-unimodality once the depths are distinct, then `V` is Rupert. -/
-theorem isRupert_of_tilted_unimodal (V : Finset ℝ³) (u₀ v : ℝ³) (hu₀ : u₀ ≠ 0) {k : ℕ}
+/-- **Corollary 8.0′, eventual form.**  As Corollary 8.0′, but the depth
+condition `Q` is only required at the tilted views `u₀ + εv` for all small
+`ε > 0` (this covers robust unimodality of the limit depths, and also the
+lexicographic tie-breaks of Corollary 9.0). -/
+theorem isRupert_of_tilted_unimodal' (V : Finset ℝ³) (u₀ v : ℝ³) (hu₀ : u₀ ≠ 0) {k : ℕ}
     [NeZero k] (hk : 3 ≤ k) (x : ZMod k → ℝ³) (hxV : ∀ i, x i ∈ V)
     (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → TiltSign (x (i + 1) - x i) (x j - x i) u₀ v)
     (hrest : ∀ y ∈ V, (∀ j, y ≠ x j) → ∀ i, TiltSign (x (i + 1) - x i) (y - x i) u₀ v)
     (Q : (ZMod k → ℝ) → Prop) (hQo : IsOpen {z | Q z})
     (hQs : ∀ z : ZMod k → ℝ, ∀ c : ℝ, 0 < c → Q z → Q (fun i => c * z i))
-    (hQ : Q fun i => ⟪x i, u₀⟫)
+    (hQe : ∀ᶠ ε in 𝓝[>] (0 : ℝ), Q fun i => ⟪x i, u₀ + ε • v⟫)
     (hQu : ∀ z, Function.Injective z → Q z → IsCyclicUnimodal z) : IsRupert V := by
   classical
   have hne : ∀ᶠ ε in 𝓝[>] (0 : ℝ), u₀ + ε • v ≠ 0 := by
     have hc : Continuous fun ε : ℝ => u₀ + ε • v := by fun_prop
     exact (hc.continuousAt.eventually_ne (by simpa using hu₀)).filter_mono nhdsWithin_le_nhds
-  have hQe : ∀ᶠ ε in 𝓝[>] (0 : ℝ), Q fun i => ⟪x i, u₀ + ε • v⟫ := by
-    have hc : Continuous fun ε : ℝ => fun i => ⟪x i, u₀ + ε • v⟫ :=
-      continuous_pi fun i => by fun_prop
-    have h0 : (fun ε : ℝ => fun i => ⟪x i, u₀ + ε • v⟫) 0 ∈ {z | Q z} := by simpa using hQ
-    exact Eventually.filter_mono nhdsWithin_le_nhds
-      (hc.continuousAt.preimage_mem_nhds (hQo.mem_nhds h0))
   obtain ⟨ε, ⟨h1, h2⟩, hw, hQε⟩ :=
     ((eventually_tilted_dets V u₀ v x hcyc hrest).and (hne.and hQe)).exists
   obtain ⟨R, hR, r, hr, hRw⟩ := exists_rotation_to_ez_pos _ hw
@@ -260,6 +255,24 @@ theorem isRupert_of_tilted_unimodal (V : Finset ℝ³) (u₀ v : ℝ³) (hu₀ :
     exact cross2_proj_rot_pos hR hr hRw (h2 y hy hyx i)
   · simp only [hdepth]
     exact hQs _ _ (inv_pos.mpr hr) hQε
+
+/-- **Corollary 8.0′ (robust unimodality).**  In Lemma 8.0, if the limit depths
+`⟪x i, u₀⟫` satisfy an open, scale-invariant condition `Q` that forces cyclic
+unimodality once the depths are distinct, then `V` is Rupert. -/
+theorem isRupert_of_tilted_unimodal (V : Finset ℝ³) (u₀ v : ℝ³) (hu₀ : u₀ ≠ 0) {k : ℕ}
+    [NeZero k] (hk : 3 ≤ k) (x : ZMod k → ℝ³) (hxV : ∀ i, x i ∈ V)
+    (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → TiltSign (x (i + 1) - x i) (x j - x i) u₀ v)
+    (hrest : ∀ y ∈ V, (∀ j, y ≠ x j) → ∀ i, TiltSign (x (i + 1) - x i) (y - x i) u₀ v)
+    (Q : (ZMod k → ℝ) → Prop) (hQo : IsOpen {z | Q z})
+    (hQs : ∀ z : ZMod k → ℝ, ∀ c : ℝ, 0 < c → Q z → Q (fun i => c * z i))
+    (hQ : Q fun i => ⟪x i, u₀⟫)
+    (hQu : ∀ z, Function.Injective z → Q z → IsCyclicUnimodal z) : IsRupert V := by
+  refine isRupert_of_tilted_unimodal' V u₀ v hu₀ hk x hxV hcyc hrest Q hQo hQs ?_ hQu
+  have hc : Continuous fun ε : ℝ => fun i => ⟪x i, u₀ + ε • v⟫ :=
+    continuous_pi fun i => by fun_prop
+  have h0 : (fun ε : ℝ => fun i => ⟪x i, u₀ + ε • v⟫) 0 ∈ {z | Q z} := by simpa using hQ
+  exact Eventually.filter_mono nhdsWithin_le_nhds
+    (hc.continuousAt.preimage_mem_nhds (hQo.mem_nhds h0))
 
 end SmallRupert
 
