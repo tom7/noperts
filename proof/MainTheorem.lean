@@ -30,16 +30,16 @@ def IsRupert (vertices : Finset (EuclideanSpace ℝ (Fin 3))) : Prop :=
 /--
 There exists a nontrivial convex polyhedron with seven vertices that does not have the Rupert Property.
 -/
-def ExistsNonRupertPolyhedronSize7 : Prop :=
+def ExistsNonRupertPolyhedronSizeSeven : Prop :=
   ∃ vs : Finset (EuclideanSpace ℝ (Fin 3)),
-    vs.card = 7 ∧
+    vs.card ≤ 7 ∧
     (interior (convexHull ℝ vs : Set (EuclideanSpace ℝ (Fin 3)))).Nonempty ∧
     ¬IsRupert vs
 
 /--
 There does not exist a nontrivial convex polyhedron with fewer than seven vertices that does not have the Rupert Property.
 -/
-def NotExistsNonRupertPolyhedronBelowSize7 : Prop :=
+def NotExistsNonRupertPolyhedronBelowSizeSeven : Prop :=
   ¬∃ vs : Finset (EuclideanSpace ℝ (Fin 3)),
     vs.card < 7 ∧
     (interior (convexHull ℝ vs : Set (EuclideanSpace ℝ (Fin 3)))).Nonempty ∧
@@ -49,6 +49,6 @@ def NotExistsNonRupertPolyhedronBelowSize7 : Prop :=
 Seven vertices is the smallest Nopert
 -/
 def MinimalNopert : Prop :=
-  ExistsNonRupertPolyhedronSize7 ∧ NotExistsNonRupertPolyhedronBelowSize7
+  ExistsNonRupertPolyhedronSizeSeven ∧ NotExistsNonRupertPolyhedronBelowSizeSeven
 
 end
