@@ -1,15 +1,22 @@
 import PentagonalHexecontahedron.FundamentalChart3
-import PentagonalHexecontahedron.Statement
 import PentagonalHexecontahedron.NativeExecutable
 import PentagonalHexecontahedron.PackedSolutionTree
+import PentagonalHexecontahedron
 
 /-!
-Native executable that reads and checks exact certificate data, then constructs
-a proof that no pentagonal hexecontahedron is Rupert.
+Native executable that reads and checks the exact certificate data for the
+pentagonal hexecontahedron, then establishes `CertificatesValid` and so
+`isNopert_of_certificatesValid`: every pentagonal hexecontahedron (every
+similar copy of the polar dual of Wikipedia's snub dodecahedron, either
+chirality) is a nopert (`PentagonalHexecontahedron.lean`).
 
-This is analogous to `constructValidTable`: the expensive Boolean checks run
-as parallel native code, while kernel-proved bridge theorems turn success into
-the semantic proof consumed by the public theorem.
+The solution tables (tube packs and chart packs) are decoded (untrusted) and
+checked natively, in parallel: the view cover, the tube tables and the four
+chart tables, as in `NativeExecutable.constructProof`. Kernel-proved bridges
+(`Table.Valid.of_withTasksB`) turn success into `CertificatesValid`.
+
+Usage:
+  constructPentagonalHexecontahedron <tube manifest.txt> <chart directory>
 -/
 
 open Noperts Noperts.Pipeline
@@ -69,16 +76,35 @@ def main (args : List String) : IO Unit := do
         decode 1 shared chartData[1]!,
         decode 2 shared chartData[2]!,
         { FundamentalChart3.table with sharedLocal := shared }]
-  let checked ← constructProof localTaskCount globalTaskCount
-    localTables globalTables
-    (by intro shared chart; fin_cases chart <;> rfl)
-    (by intro shared chart; fin_cases chart <;> rfl)
-  let proof : ∀ P : IModel, ¬ IsRupert P.toC5.verts := checked.down
-  -- Every pentagonal hexecontahedron (the polar dual of Wikipedia's snub
-  -- dodecahedron, any similar copy, either chirality) is an `IModel` up to similarity.
-  let _ph : ∀ V : Finset ℝ³, IsPentagonalHexecontahedron V → ¬ IsRupert V :=
-    pentagonalHexecontahedron_not_rupert proof
-  let _dual : ∀ V : Finset ℝ³, (V : Set ℝ³) = pentagonalHexecontahedron → ¬ IsRupert V :=
-    polarDualSnubDodecahedron_not_rupert proof
-  IO.println "instantiated: no pentagonal hexecontahedron is Rupert"
-  IO.println "instantiated: the polar dual of Wikipedia's snub dodecahedron is not Rupert"
+  let tables := globalTables localTables
+  have hchart : ∀ chart, (tables chart).chart = chart := by
+    intro chart; fin_cases chart <;> rfl
+  have hshared : ∀ chart, (tables chart).sharedLocal = localTables := by
+    intro chart; fin_cases chart <;> rfl
+  -- The checks of `NativeExecutable.constructProof`, kept here so that the
+  -- checked tables give `CertificatesValid`.
+  let coverStart ← IO.monoNanosNow
+  log "checking the view cover (code triangles cover T)"
+  let cover : PLift (WedgeCover.coverValid = true) ←
+    if h : WedgeCover.coverValid = true then pure ⟨h⟩
+    else throw (IO.userError "the view cover is invalid")
+  log s!"view cover valid ({(← IO.monoNanosNow) - coverStart} ns)"
+  let checkedLocal ← checkLocalAll localTaskCount localTables
+  let sharedValid (chart : CayleyAtlas.ChartIndex) :
+      AtlasProjectiveSolutionTree.SharedLocalValid (tables chart).sharedLocal := by
+    rw [hshared chart]; exact checkedLocal.down
+  let valid0 ← checkGlobal "0" globalTaskCount (tables 0) (sharedValid 0)
+  let valid1 ← checkGlobal "1" globalTaskCount (tables 1) (sharedValid 1)
+  let valid2 ← checkGlobal "2" globalTaskCount (tables 2) (sharedValid 2)
+  let valid3 ← checkGlobal "3" globalTaskCount (tables 3) (sharedValid 3)
+  have hvalid : ∀ chart, (tables chart).Valid := by
+    intro chart
+    fin_cases chart
+    · exact valid0.down
+    · exact valid1.down
+    · exact valid2.down
+    · exact valid3.down
+  have hcv : CertificatesValid := ⟨⟨tables, hchart, hvalid⟩, cover.down⟩
+  let _ph : ∀ V : Finset ℝ³, IsPentagonalHexecontahedron V → IsNopert V :=
+    isNopert_of_certificatesValid hcv
+  IO.println "instantiated: IsNopert V for every pentagonal hexecontahedron V (none is Rupert)"

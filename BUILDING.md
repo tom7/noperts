@@ -8,6 +8,9 @@ page with its statement, trust model and reproduction steps:
 - [deltoidal-hexecontahedron.md](deltoidal-hexecontahedron.md): the deltoidal
   hexecontahedron is a nopert (a Lean verification backed by certificate
   data);
+- [pentagonal-hexecontahedron.md](pentagonal-hexecontahedron.md): the
+  pentagonal hexecontahedron, in both chiralities, is a nopert (a Lean
+  verification backed by certificate data);
 - [minimality.md](minimality.md): every nopert has at least 7 vertices (a
   Lean proof).
 
@@ -15,7 +18,7 @@ page with its statement, trust model and reproduction steps:
 
 - `proof/`: one Lean 4 + Mathlib project (`lakefile.toml`). Libraries:
   - `Noperts` (the modules directly in `proof/` and its subdirectories other
-    than the three below): shared definitions and machinery. `IsRupert` is
+    than the four below): shared definitions and machinery. `IsRupert` is
     defined in `proof/MainTheorem.lean`. `Pipeline/` defines the certificate
     tables and their checks, used by data-backed results.
   - `Septopert`: entry point `proof/Septopert.lean`, details in
@@ -27,17 +30,25 @@ page with its statement, trust model and reproduction steps:
     `proof/DeltoidalHexecontahedron/` (its own copy of the certificate
     pipeline; it shares the core and the model-independent parts of
     `Pipeline/`).
+  - `PentagonalHexecontahedron`: entry point
+    `proof/PentagonalHexecontahedron.lean`, details in
+    `proof/PentagonalHexecontahedron/` (its own copy of the certificate
+    pipeline, likewise; from `Pipeline/` it uses only `IcoField` and
+    `HalfTurnBasic`).
   - Executables: `constructSeptopert` (checks the Septopert's certificate
-    data), `checkSeptopertCap` (checks only its cap certificate) and
+    data), `checkSeptopertCap` (checks only its cap certificate),
     `constructDeltoidalHexecontahedron` (checks the deltoidal
-    hexecontahedron's certificate data).
+    hexecontahedron's certificate data) and
+    `constructPentagonalHexecontahedron` (checks the pentagonal
+    hexecontahedron's).
 
   License: Apache-2.0 (`proof/LICENSE`). Derived from the
   [Noperthedron](https://github.com/jcreedcmu/Noperthedron) formalization,
   whose history it keeps.
 - `search/`: the C++ certificate search for data-backed results (currently
-  the Septopert; the deltoidal hexecontahedron's is still on the
-  `deltoidalhexecontahedron` branch of nopert229). License: GPLv3
+  the Septopert; the searches for the deltoidal and pentagonal
+  hexecontahedra are still on the `deltoidalhexecontahedron` and
+  `pentagonalhexecontahedron` branches of nopert229). License: GPLv3
   (`search/COPYING`).
 - `cc-lib/`: not in the repository. `./get-cc-lib.sh` checks out svn
   revision 7488 of tom7misc's `trunk/cc-lib`; the build expects it next to
@@ -103,3 +114,14 @@ ancestor of `Pipeline/`. There the modules `Statement`, `StatementData`,
 `Caps`, `CapData`, `Ties`, `TieData`, `Checks` and `Decode` had a `DH` prefix
 (`DHStatement`, ...). The search that produced its data is on nopert229's
 `deltoidalhexecontahedron` branch.
+
+The pentagonal hexecontahedron's Lean proof (`proof/PentagonalHexecontahedron/`)
+comes from the `pentagonalhexecontahedron` branch of Noperthedron (da2965b3),
+where it lived in the same-named `Noperthedron/PentagonalHexecontahedron/`
+(namespace `Noperthedron.PentagonalHexecontahedron`), before the DH reused
+that directory. Its `IcoField` is now `Pipeline/IcoField`. Eight declarations
+that the branch put at the root (`proj_xy_smul`, `proj_xy_add`,
+`isRupert_image_{smul,add,rotation,similarity}`, `MatrixPose.bothRightIco`,
+`MatrixPose.rightIcoSymmetry`) are in the `PentagonalHexecontahedron`
+namespace here. The search that produced its data is on nopert229's
+`pentagonalhexecontahedron` branch.
