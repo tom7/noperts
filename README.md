@@ -18,7 +18,7 @@ The convex hull of these 7 points. Each coordinate is an integer divided by
 ```
 
 These are exactly the points `vertexQ` in
-`proof/Noperthedron/Nopert7/ModelData.lean`, the vertices the proof is
+`proof/Noperthedron/Septopert/ModelData.lean`, the vertices the proof is
 about. In lowest terms:
 
 | vertex | x | y | z |
@@ -45,6 +45,6 @@ about. In lowest terms:
 - Viewed down the axis from the small face: a triforce. Triangle 3-4-5
   projects to within 3.5% of the medial triangle of 0-1-2, and vertex 6 is
   hidden behind the centre.
-- In the code: `Nopert7`, also "K", and `nopert_233` in the search database.
+- In the code: `Septopert` (Lean) and `septopert` (file names, search code).
 
 See BUILDING.md for building and verifying.

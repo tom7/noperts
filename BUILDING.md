@@ -2,17 +2,17 @@
 
 Reference notes on building, rebuilding and verifying the proof.
 
-The proof currently covers one solid, which the code calls `Nopert7`. It is
-also called K, and `nopert_233` in the search database.
+The proof currently covers one solid, the Septopert (`Septopert` in Lean,
+`septopert` in file names and in the search code).
 
 ## Layout
 
 - `proof/`: Lean 4 + Mathlib. It holds the definitions, the soundness
   theorems, the certificate checkers and the native driver
-  `constructNopert7`. Imported with full history from Noperthedron, branch
-  `nopert7` (commit d7f04505). License: Apache-2.0 (`proof/LICENSE`).
-- `search/`: the C++ certificate search. Imported from nopert229, branch
-  `nopert7` (commit 5a52be2), with history filtered to these files. License:
+  `constructSeptopert`. Imported with full history from Noperthedron (commit
+  d7f04505; see "Former names"). License: Apache-2.0 (`proof/LICENSE`).
+- `search/`: the C++ certificate search. Imported from nopert229 (commit
+  5a52be2), with history filtered to these files. License:
   GPLv3 (`search/COPYING`).
 - `cc-lib/`: not in the repository. `./get-cc-lib.sh` checks out svn
   revision 7488 of tom7misc's `trunk/cc-lib`; the build expects it next to
@@ -41,7 +41,7 @@ also called K, and `nopert_233` in the search database.
 ```sh
 ./get-cc-lib.sh
 (cd proof && lake exe cache get)      # Mathlib build cache
-search/nopert7_rebuild.sh --from model --threads 64 --mem_gb 100
+search/septopert_rebuild.sh --from model --threads 64 --mem_gb 100
 ```
 
 Stages, in order: `model`, `tube`, `tubepack`, `cap`, `search`, `pack`,
@@ -75,8 +75,8 @@ Table sizes from both runs: chart 0 has 83,340,081 rows; charts 1–3 have
 ## Verifying existing certificates
 
 ```sh
-(cd proof && lake build constructNopert7)
-cd work && LEAN_NUM_THREADS=64 ../proof/.lake/build/bin/constructNopert7 \
+(cd proof && lake build constructSeptopert)
+cd work && LEAN_NUM_THREADS=64 ../proof/.lake/build/bin/constructSeptopert \
   tube_packs/manifest.txt packs cap-1_16.cert
 ```
 
@@ -88,11 +88,11 @@ The verifier checks, in order:
 
 On success it prints:
 
-    instantiated: ¬ IsRupert Nopert7.verts (the 7-vertex solid is not Rupert)
+    instantiated: ¬ IsRupert Septopert.verts (the Septopert is not Rupert)
 
 ## What is proved and what is trusted
 
-`proof/Noperthedron/Nopert7/IsNotRupert.lean`:
+`proof/Noperthedron/Septopert/IsNotRupert.lean`:
 
 ```lean
 theorem not_rupert_of_valid_tables (table : CayleyAtlas.ChartIndex → SolutionTree.Table)
@@ -102,14 +102,14 @@ theorem not_rupert_of_valid_tables (table : CayleyAtlas.ChartIndex → SolutionT
 ```
 
 - `verts` is the set of the seven rational points `vertexQ` in
-  `Nopert7/ModelData.lean`.
+  `Septopert/ModelData.lean`.
 - `IsRupert` is defined in `proof/Noperthedron/MainTheorem.lean`.
 - `#print axioms` on the theorem lists only `propext`, `Classical.choice`
   and `Quot.sound`.
 - `Table.Valid` includes the coverage condition: row 0 is the root interval
   over the code triangles.
 
-`constructNopert7` turns validity of the actual data into a value of type
+`constructSeptopert` turns validity of the actual data into a value of type
 `¬ IsRupert verts` at run time. If all checks return true, it applies the
 theorem to the tables it checked. Trusted components:
 
@@ -130,3 +130,13 @@ output, intended to be CC0. From the run that this import was verified on
 - `tube_packs/`: 382 MB, 22 tables
 - `packs/`: 6.3 GB, 88 code packs. `packs/c0/t3.pack` alone is 5.2 GB,
   above GitHub's 2 GB release-asset limit.
+
+## Former names
+
+Until 2026-10-09 the code called the Septopert `Nopert7` (`constructNopert7`,
+`checkNopert7Cap`, `Noperthedron/Nopert7/`, `nopert7_rebuild.sh`,
+`capcert7`), K in comments, and `nopert_233` in the search database (model
+`nopert233_model.txt`, coordinates `7v-cocta-c3v-2.xyz`). Archived data and
+logs (e.g. `/mnt/nopertdata/archive/septopert/README.txt` on the 64-core VM),
+the working notes (`NOPERT7.md`) and older branches (`nopert7` in Noperthedron
+at d7f04505 and in nopert229 at 5a52be2) use those names.
