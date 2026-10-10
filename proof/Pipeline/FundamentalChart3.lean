@@ -1,6 +1,6 @@
 module
 
-public import SnubDodecahedron.AtlasProjectiveSolutionTree
+public import Pipeline.AtlasProjectiveSolutionTree
 
 @[expose] public section
 
@@ -9,13 +9,16 @@ public import SnubDodecahedron.AtlasProjectiveSolutionTree
 
 In the fivefold max-trace fundamental domain, chart 3 is empty.  Splitting
 once at `z = 0` makes the two adjacent-symmetry advantages uniformly
-positive.  The same tiny table is checked by the kernel (`table_valid_kernel`) and,
-natively, by the executable, without any array-backed generated data.
+positive. The executable checks this tiny table natively, like the other
+charts, without any array-backed generated data; `Tests/FundamentalChart3`
+also checks it with the kernel for each solid.
 -/
 
 open Noperts Noperts.Pipeline
 
-namespace SnubDodecahedron.FundamentalChart3
+namespace Noperts.Pipeline.FundamentalChart3
+
+variable [IcosahedralSolid] [CodeTriangleCover]
 
 open AtlasProjectiveSolutionTree AtlasProjectiveView
 open Noperts.Atlas.ProjectiveView
@@ -42,16 +45,6 @@ def table : AtlasProjectiveSolutionTree.Table where
   get := getRowKernel
   size := 4
 
-private theorem rows_valid_range_kernel :
-    RowsValidRangeAt 3 getRowKernel 4 0 4 #[] := by
-  decide +kernel
-
-theorem table_valid_kernel : table.Valid := by
-  refine ⟨by decide, rowsValidAt_of_range rows_valid_range_kernel, ?_, ?_, ?_⟩
-  · decide +kernel
-  · decide +kernel
-  · trivial
-
-end SnubDodecahedron.FundamentalChart3
+end Noperts.Pipeline.FundamentalChart3
 
 end

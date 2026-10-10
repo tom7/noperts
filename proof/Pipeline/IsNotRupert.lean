@@ -1,6 +1,6 @@
 module
 
-public import PentagonalHexecontahedron.AtlasProjectiveSolutionTree
+public import Pipeline.AtlasProjectiveSolutionTree
 public import Rupert.Equivalences.RupertEquivRupertSet
 
 @[expose] public section
@@ -17,13 +17,14 @@ open scoped Matrix
 
 open Noperts Noperts.Pipeline
 
-namespace PentagonalHexecontahedron
+namespace Noperts.Pipeline.AtlasProjectiveSolutionTree
 
-variable {P : C5Model}
+variable [IcosahedralSolid] [CodeTriangleCover] {P : C5Model}
 
 open CayleyAtlas
 open AtlasProjectiveSolutionTree
 
+omit [IcosahedralSolid] [CodeTriangleCover] in
 private lemma rupert_set_implies_matrix_pose {S : Set ℝ³}
     (h : IsRupertSet S) :
     ∃ p : MatrixPose, RupertPose p S := by
@@ -51,6 +52,6 @@ theorem not_rupert_of_valid_tables (Q : IModel)
   exact no_matrixPose_of_valid_tables Q table hchart hvalid hcover
     (rupert_set_implies_matrix_pose hset)
 
-end PentagonalHexecontahedron
+end Noperts.Pipeline.AtlasProjectiveSolutionTree
 
 end

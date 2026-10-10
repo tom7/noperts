@@ -156,6 +156,7 @@ theorem toEuclideanLin_mul (A B : Matrix (Fin 3) (Fin 3) ℝ) (v : ℝ³) :
     (A * B).toEuclideanLin v = A.toEuclideanLin (B.toEuclideanLin v) := by
   simp [Matrix.toLpLin_apply, Matrix.mulVec_mulVec]
 
+omit [IcosahedralSolid] in
 private theorem RzL_apply_add (α β : ℝ) (v : ℝ³) :
     RzL (α + β) v = RzL α (RzL β v) := by
   have h := RzC.map_add_eq_mul α β

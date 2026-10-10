@@ -320,6 +320,7 @@ theorem advantage_eval_le_error_of_inFundamentalDomain
   rw [abs_le] at herr
   nlinarith
 
+omit [FivefoldSolid] in
 /-- The two adjacent fivefold inequalities force the second coordinate into
 the rational interval `[-1/3, 1/3]` whenever the first lies in `[-1, 1]`.
 The true irrational cutoff is about `0.325`, so the rational interval has a

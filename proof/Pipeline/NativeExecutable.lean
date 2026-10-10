@@ -1,6 +1,6 @@
 module
 
-public import PentagonalHexecontahedron.IsNotRupert
+public import Pipeline.IsNotRupert
 public import Pipeline.SparseLocalViewTree
 
 @[expose] public section
@@ -21,9 +21,9 @@ their correctness comes from the specifications of the Boolean checkers.
 
 open Noperts Noperts.Pipeline
 
-namespace PentagonalHexecontahedron.NativeExecutable
+namespace Noperts.Pipeline.NativeExecutable
 
-variable {P : C5Model}
+variable [IcosahedralSolid] [CodeTriangleCover] [SparseLocalViewTree.CertificateViewCheck] {P : C5Model}
 
 open AtlasProjectiveLocalViewTree
 open SparseLocalViewTree
@@ -151,12 +151,14 @@ structure CheckedChartTables where
   valid : ∀ chart, (tables chart).Valid
   cover : WedgeCover.coverValid = true
 
+omit [SparseLocalViewTree.CertificateViewCheck] in
 /-- The proof object constructed by a successful executable run: the checked
 tables and view cover exclude every `IModel` (I-orbits within `modelErrorQ`
 of the rational vertices) at once. -/
 theorem CheckedChartTables.notRupert (checked : CheckedChartTables) :
     ∀ P : IModel, ¬ IsRupert P.toC5.verts :=
-  fun P => not_rupert_of_valid_tables P checked.tables checked.charts checked.valid checked.cover
+  fun P => AtlasProjectiveSolutionTree.not_rupert_of_valid_tables P checked.tables
+    checked.charts checked.valid checked.cover
 
 /-- Check all certificate data and construct the final non-Rupert proof.
 
@@ -227,6 +229,6 @@ def constructProof (localTaskCount globalTaskCount : Nat)
   log "constructed proof: no IModel (I-orbit within 6e-16 of the rational vertices) is Rupert"
   pure ⟨checkedCharts.notRupert⟩
 
-end PentagonalHexecontahedron.NativeExecutable
+end Noperts.Pipeline.NativeExecutable
 
 end

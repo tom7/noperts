@@ -1,7 +1,7 @@
 module
 
 public import SnubDodecahedron.Statement
-public import SnubDodecahedron.IsNotRupert
+public import Pipeline.IsNotRupert
 public import Nopert
 
 @[expose] public section
@@ -114,7 +114,7 @@ whose vertices are an I-orbit within 6·10⁻¹⁶ of the rational model. -/
 theorem not_isRupert_iModel_of_certificatesValid (h : CertificatesValid) :
     ∀ P : IModel, ¬ IsRupert P.toC5.verts := by
   obtain ⟨⟨table, hchart, hvalid⟩, hcover⟩ := h
-  exact fun P => not_rupert_of_valid_tables P table hchart hvalid hcover
+  exact fun P => AtlasProjectiveSolutionTree.not_rupert_of_valid_tables P table hchart hvalid hcover
 
 /-- If the certificate data is valid, no snub dodecahedron is Rupert. -/
 theorem not_isRupert_of_certificatesValid (h : CertificatesValid) :

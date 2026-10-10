@@ -1,6 +1,6 @@
 module
 
-public import PentagonalHexecontahedron.AtlasProjectiveSolutionTree
+public import Pipeline.AtlasProjectiveSolutionTree
 public import Pipeline.PackedLocalViewTree
 
 @[expose] public section
@@ -16,7 +16,9 @@ trusted validation step for every decoded value.
 
 open Noperts Noperts.Pipeline
 
-namespace PentagonalHexecontahedron.PackedSolutionTree
+namespace Noperts.Pipeline.PackedSolutionTree
+
+variable [IcosahedralSolid] [CodeTriangleCover]
 
 open AtlasProjectiveSolutionTree AtlasProjectiveView
 open AtlasProjectiveEdgeCertificate AtlasProjectiveGlobalCertificate
@@ -351,6 +353,6 @@ def decodeCodeTables (chart : CayleyAtlas.ChartIndex)
     sharedLocal := shared
   }
 
-end PentagonalHexecontahedron.PackedSolutionTree
+end Noperts.Pipeline.PackedSolutionTree
 
 end

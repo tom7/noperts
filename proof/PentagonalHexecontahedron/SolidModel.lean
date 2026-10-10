@@ -1,6 +1,7 @@
 module
 
-public import Pipeline.IcoModel
+public import Pipeline.CodeTriangleCover
+public import PentagonalHexecontahedron.WedgeCoverData
 public import PentagonalHexecontahedron.OrbitData
 
 @[expose] public section
@@ -218,6 +219,18 @@ scoped instance icosahedralSolid : IcosahedralSolid where
   orbitSlot := orbitSlot
   orbitStab := orbitStab
   orbits_check := orbits_check
+
+/-- The code triangles that cover the view triangle (`WedgeCoverData`), for the
+shared solution tree. A scoped instance, like `icosahedralSolid`. -/
+scoped instance codeTriangleCover : CodeTriangleCover where
+  codeTriangles := WedgeCover.codeTriangles
+  baseTriangle := WedgeCover.baseTriangle
+  coverTree := WedgeCover.coverTree
+  baseTriangle_valid := WedgeCover.baseTriangle_valid
+  icoViewTriangle_eq := by
+    congr 1
+    funext k c
+    fin_cases k <;> fin_cases c <;> decide +kernel
 
 end PentagonalHexecontahedron
 

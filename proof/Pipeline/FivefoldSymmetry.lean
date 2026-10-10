@@ -26,6 +26,7 @@ variable [FivefoldSolid] {P : C5Model}
 open Real
 open Noperts.BalancedSupport
 
+omit [FivefoldSolid] in
 private lemma RzL_apply_add (α β : ℝ) (v : ℝ³) :
     RzL (α + β) v = RzL α (RzL β v) := by
   have h := RzC.map_add_eq_mul α β

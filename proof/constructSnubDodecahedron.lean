@@ -1,6 +1,7 @@
-import SnubDodecahedron.FundamentalChart3
-import SnubDodecahedron.NativeExecutable
-import SnubDodecahedron.PackedSolutionTree
+import Pipeline.FundamentalChart3
+import Pipeline.NativeExecutable
+import Pipeline.PackedSolutionTree
+import SnubDodecahedron.SparseSupport
 import SnubDodecahedron
 
 /-!
@@ -25,8 +26,8 @@ c<chart>/t<t>.pack (pack5d --per_code).
 
 open Noperts Noperts.Pipeline
 open SnubDodecahedron
-open SnubDodecahedron.AtlasProjectiveSolutionTree
-open SnubDodecahedron.NativeExecutable
+open Noperts.Pipeline.AtlasProjectiveSolutionTree
+open Noperts.Pipeline.NativeExecutable
 
 /-- A completed local-table audit found 64 chunks materially faster than 512
 for these comparatively expensive exact-rational rows. -/
@@ -89,8 +90,8 @@ def main (args : List String) : IO Unit := do
   -- checked tables give `CertificatesValid`.
   let coverStart ← IO.monoNanosNow
   log "checking the view cover (code triangles cover T)"
-  let cover : PLift (WedgeCover.coverValid = true) ←
-    if h : WedgeCover.coverValid = true then pure ⟨h⟩
+  let cover : PLift (SnubDodecahedron.WedgeCover.coverValid = true) ←
+    if h : SnubDodecahedron.WedgeCover.coverValid = true then pure ⟨h⟩
     else throw (IO.userError "the view cover is invalid")
   log s!"view cover valid ({(← IO.monoNanosNow) - coverStart} ns)"
   let checkedLocal ← checkLocalAll localTaskCount localTables

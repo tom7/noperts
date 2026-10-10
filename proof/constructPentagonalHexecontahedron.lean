@@ -1,6 +1,6 @@
-import PentagonalHexecontahedron.FundamentalChart3
-import PentagonalHexecontahedron.NativeExecutable
-import PentagonalHexecontahedron.PackedSolutionTree
+import Pipeline.FundamentalChart3
+import Pipeline.NativeExecutable
+import Pipeline.PackedSolutionTree
 import PentagonalHexecontahedron
 
 /-!
@@ -21,8 +21,8 @@ Usage:
 
 open Noperts Noperts.Pipeline
 open PentagonalHexecontahedron
-open PentagonalHexecontahedron.AtlasProjectiveSolutionTree
-open PentagonalHexecontahedron.NativeExecutable
+open Noperts.Pipeline.AtlasProjectiveSolutionTree
+open Noperts.Pipeline.NativeExecutable
 
 /-- A completed local-table audit found 64 chunks materially faster than 512
 for these comparatively expensive exact-rational rows. -/
@@ -85,8 +85,8 @@ def main (args : List String) : IO Unit := do
   -- checked tables give `CertificatesValid`.
   let coverStart ← IO.monoNanosNow
   log "checking the view cover (code triangles cover T)"
-  let cover : PLift (WedgeCover.coverValid = true) ←
-    if h : WedgeCover.coverValid = true then pure ⟨h⟩
+  let cover : PLift (PentagonalHexecontahedron.WedgeCover.coverValid = true) ←
+    if h : PentagonalHexecontahedron.WedgeCover.coverValid = true then pure ⟨h⟩
     else throw (IO.userError "the view cover is invalid")
   log s!"view cover valid ({(← IO.monoNanosNow) - coverStart} ns)"
   let checkedLocal ← checkLocalAll localTaskCount localTables

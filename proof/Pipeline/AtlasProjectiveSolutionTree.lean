@@ -2,13 +2,13 @@ module
 
 public import Pipeline.AtlasProjectiveEdgeCertificate
 public import Pipeline.AtlasFundamentalPrune
-public import PentagonalHexecontahedron.SolidModel
+public import Pipeline.IcoModel
 public import Pipeline.AtlasLocalCertificate
 public import Pipeline.AtlasProjectiveLocalCertificate
 public import Pipeline.AtlasProjectiveLocalViewTree
 public import Pipeline.AtlasProjectiveGlobalCertificate
 public import Pipeline.AtlasProjectiveMixedGlobalCertificate
-public import PentagonalHexecontahedron.WedgeCoverData
+public import Pipeline.CodeTriangleCover
 public import ParallelBool
 public import Pipeline.IcoView
 
@@ -25,9 +25,9 @@ triangle subdivision.  Leaves carry projective edge-cycle certificates.
 
 open Noperts Noperts.Pipeline
 
-namespace PentagonalHexecontahedron.AtlasProjectiveSolutionTree
+namespace Noperts.Pipeline.AtlasProjectiveSolutionTree
 
-variable {P : C5Model}
+variable [IcosahedralSolid] [CodeTriangleCover] {P : C5Model}
 
 open CayleyAtlas AtlasProjectiveView
 open Noperts.Atlas.ProjectiveView
@@ -68,6 +68,7 @@ def NoRupert (chart : ChartIndex) (interval : Interval)
       RupertPose (p.matrixPoseWithOffset chart offset)
         P.polyhedron.hull
 
+omit [CodeTriangleCover] in
 theorem noRupert_halves (chart : ChartIndex) (interval : Interval)
     (region : Region) (coordinate : Fin 5)
     (hlower : NoRupert (P := P) chart (interval.lowerHalf coordinate) region)
@@ -81,6 +82,7 @@ theorem noRupert_halves (chart : ChartIndex) (interval : Interval)
   · exact hupper ⟨p, hu, hbounded, hfund, hview, hupperView,
       offset, hregion, hrupert⟩
 
+omit [CodeTriangleCover] in
 theorem noRupert_cut (chart : ChartIndex) (interval : Interval)
     (region : Region) (coordinate : Fin 5) (t : ℚ)
     (hlower : NoRupert (P := P) chart (interval.lowerAt coordinate t) region)
@@ -106,6 +108,7 @@ def Interval.outsideCayleyBall (interval : Interval) : Prop :=
   unfold Interval.outsideCayleyBall minAbsBound
   infer_instance
 
+omit [IcosahedralSolid] [CodeTriangleCover] in
 private theorem minAbsBound_le_abs {lo hi : ℚ} {x : ℝ}
     (hx : x ∈ Set.Icc (lo : ℝ) (hi : ℝ)) :
     (minAbsBound lo hi : ℚ) ≤ |x| := by
@@ -133,6 +136,7 @@ private theorem minAbsBound_le_abs {lo hi : ℚ} {x : ℝ}
         rw [Rat.cast_abs, abs_of_pos hloR, abs_of_pos hx0]
         exact hx.1)
 
+omit [CodeTriangleCover] in
 theorem noRupert_of_outsideCayleyBall (chart : ChartIndex)
     (interval : Interval) (region : Region)
     (h : interval.outsideCayleyBall) : NoRupert (P := P) chart interval region := by
@@ -198,6 +202,7 @@ def cornerInB (outer : Triangle) (point : AtlasProjectiveView.Vector ℚ) : Bool
 def triangleWithinB (outer inner : Triangle) : Bool :=
   cornerInB outer (inner 0) && cornerInB outer (inner 1) && cornerInB outer (inner 2)
 
+omit [IcosahedralSolid] [CodeTriangleCover] in
 theorem inTriangle_of_cornerInWith {outer : Triangle}
     {point : AtlasProjectiveView.Vector ℚ} {su : ℚ × ℚ}
     (h : cornerInWith outer point su = true) :
@@ -217,11 +222,13 @@ theorem inTriangle_of_cornerInWith {outer : Triangle}
     push_cast
     simp
 
+omit [IcosahedralSolid] [CodeTriangleCover] in
 theorem inTriangle_of_cornerInB {outer : Triangle}
     {point : AtlasProjectiveView.Vector ℚ} (h : cornerInB outer point = true) :
     InTriangle (toReal outer) (fun c => (point c : ℝ)) :=
   inTriangle_of_cornerInWith h
 
+omit [IcosahedralSolid] [CodeTriangleCover] in
 /-- Triangles are convex: if every corner of `inner` lies in `outer`, so
 does every point of `inner`. -/
 theorem inTriangle_of_triangleWithinB {outer inner : Triangle}
@@ -459,13 +466,12 @@ theorem rowsValidAt_of_range {chart : ChartIndex} {get : ℕ → Row} {size : �
   intro i
   simpa using h.2 ⟨i.val, i.isLt⟩
 
+omit [IcosahedralSolid] in
 /-- The view triangle of the icosahedral reduction is the base triangle the
 code triangles cover (both come from the model file). -/
 theorem icoViewTriangle_eq_baseTriangle :
-    toReal icoViewTriangle = toReal WedgeCover.baseTriangle := by
-  congr 1
-  funext k c
-  fin_cases k <;> fin_cases c <;> decide +kernel
+    toReal icoViewTriangle = toReal WedgeCover.baseTriangle :=
+  CodeTriangleCover.icoViewTriangle_eq
 
 theorem valid_imp_noRupert_ix (chart : ChartIndex) (get : ℕ → Row)
     (size : ℕ) (shared : SharedLocalTables)
@@ -746,6 +752,6 @@ theorem no_matrixPose_of_valid_tables (Q : IModel)
   exact hno ⟨q, hq, hbounded, hfund, hview, hupper, offset,
     heq.mpr hrupert⟩
 
-end PentagonalHexecontahedron.AtlasProjectiveSolutionTree
+end Noperts.Pipeline.AtlasProjectiveSolutionTree
 
 end

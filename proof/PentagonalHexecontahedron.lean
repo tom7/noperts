@@ -1,7 +1,7 @@
 module
 
 public import PentagonalHexecontahedron.Statement
-public import PentagonalHexecontahedron.IsNotRupert
+public import Pipeline.IsNotRupert
 public import Nopert
 
 @[expose] public section
@@ -127,7 +127,7 @@ theorem not_isRupert_of_certificatesValid (h : CertificatesValid) :
     ∀ V : Finset ℝ³, IsPentagonalHexecontahedron V → ¬ IsRupert V := by
   obtain ⟨⟨table, hchart, hvalid⟩, hcover⟩ := h
   exact pentagonalHexecontahedron_not_rupert
-    (fun P => not_rupert_of_valid_tables P table hchart hvalid hcover)
+    (fun P => AtlasProjectiveSolutionTree.not_rupert_of_valid_tables P table hchart hvalid hcover)
 
 /-! ### Not coplanar -/
 

@@ -2,8 +2,8 @@ import Septopert
 import DeltoidalHexecontahedron
 import PentagonalHexecontahedron
 import SnubDodecahedron
-import SnubDodecahedron.NativeExecutable
-import PentagonalHexecontahedron.NativeExecutable
+import Pipeline.NativeExecutable
+import SnubDodecahedron.SparseSupport
 import DeltoidalHexecontahedron.NativeExecutable
 import Nopert231
 import ProofOfMainTheorem
