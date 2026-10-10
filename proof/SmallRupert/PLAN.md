@@ -65,49 +65,28 @@ the generic-view density statements of Coplanar.lean (`dense_generic_...`,
   `IsOctahedron` with Condition A, each applied to its headline theorem.
 
 - L9, Theorem 9.9 (every octahedron is Rupert) -- IN PROGRESS.
-  Headline `isRupert_octahedron` (OctahedronAll.lean) is still `sorry`.
-  Proved so far (standard axioms):
+  `isRupert_octahedron` (OctahedronAll.lean) is assembled and its ONLY
+  remaining `sorry` is `isRupert_octahedron_parallel` (Oct9Par.lean, the
+  f = 0 case of LEMMAS §9.6).  Proved (standard axioms):
   - OctaTools: det3/cross algebra, combination lemmas, four-point identity,
     `IsOctahedron.swap₁/₂/₃/perm₁₂/perm₂₃`.
   - Oct9Axis: `isRupert_axis_NWS`, `isRupert_planar_equator` (Cor. 5.4 for a
     planar equator), `isRupert_of_touching_pair` (Lemma 9.4).
   - Oct9Data: `FacetFn`, `OctFacets` (8 facet functions) and their symmetries.
   - Oct9Quad: `isRupert_quad_edge` (Lemma 9.3: quad edge, not bad, not touching).
-  - Oct9Gale: `IsDep` (affine dependency as a function on the vertices),
-    `IsDep.apply` (dependency applied to an affine function), swaps/perms,
-    `galeD l m s t = l s * m t - m s * l t` (= det(g_s, g_t)), Plücker,
-    `pole_signs` (pole coordinates (i): dep vanishing at t, nonzero at t'
-    has equal signs on each diagonal of t's equator, opposite across).
-  Next (generic case f ≠ 0), planned proofs:
-  1. Not bad (replaces Lemmas 9.5 + 9.7 + Step 2): if a dependency λ has
-     λ x' = 0, λ x < 0, λ p, λ p' ≥ 0, λ y' ≤ 0, λ x + λ y ≤ 0, then x→y is
-     not bad.  Proof: apply λ to φ = ⟪y - x, ·⟫ (Σ λ_t φ(t) = 0) and bound
-     each term by m = max(φ y, φ y'); get 0 ≥ (-λ x)|y-x|² > 0.
-  2. Quad condition (Lemma 9.6): facet F through x', y', p and dependency μ
-     with μ p' = 0 give μ x F(x) + μ y F(y) = 0; so μ x (μ x + μ y) < 0
-     implies F(x) < F(y).
-  3. Gale data: frame a, b, c, a' (det3 (b-a) (c-a) (a'-a) ≠ 0 from facets
-     abc, abc' via `affine_zero_of_coplanar`, `cross_ne_zero_of_affine`);
-     Cramer gives deps l (l b' = -D, l c' = 0), m (m b' = 0, m c' = -D);
-     independence: α l + β m vanishing on all six ⇒ α = β = 0.
-  4. κ_W := galeD w w' = 0 ⇒ the equator of W is planar (nonzero dep
-     vanishing at w, w' lives on the equator; `det3 = 0` from a nontrivial
-     linear relation) ⇒ `isRupert_planar_equator`.
-  5. Arc lemma: D t := l t * Mf - m t * Lf (Lf = l a + l b + l c, etc.;
-     det(g_t, f)).  If no pair has D > 0 at both, choose t_W with D ≤ 0;
-     applying D to the facet function of the antipodal face forces D = 0 on
-     the t_W, then D is a dep on a face (non-collinear) so D ≡ 0, hence all
-     κ = 0 (contradiction).  8 cases via OctFacets/IsDep swaps.
-  6. Assembly: WLOG κ_A, κ_B, κ_C > 0 (swap within pairs); f ≠ 0 ⇒ arc
-     lemma gives W (WLOG C by perms), G3 via `pole_signs` gives U (WLOG A
-     by perm₁₂); crossed pair x→y = b→a, y'→x' = a'→b', poles p = c',
-     p' = c.  Quad conditions from μ = galeD c, ν = galeD c' (step 2); not
-     bad from λ = galeD b' and λ = -galeD a (step 1); then
-     `isRupert_quad_edge` for whichever edge is not touching, else
-     `isRupert_of_touching_pair`.
-  Then the f = 0 case (LEMMAS 9.6: Lemma 9.10, Cor. 9.0, Lemma 9.11, Mixed
-  case via Lemma 8.8, lateral-edge counting) -- not started; expected to be
-  the hardest part.
+  - Oct9Gale: `IsDep`, `galeD l m s t = l s * m t - m s * l t` (= det(g_s, g_t)),
+    `pole_signs` (pole coordinates (i)), `not_bad_of_dep` (replaces Lemmas
+    9.5 + 9.7 + Step 2: a dependency λ with λ x' = 0, λ x < 0, λ p, λ p' ≥ 0,
+    λ y' ≤ 0, λ x + λ y ≤ 0 shows x→y is not bad), `facet_lt_of_dep` (Lemma
+    9.6), `GaleData` (Cramer frame a, b, c, a'), `isRupert_of_kappa_zero`
+    (G2: κ = 0 ⇒ planar equator), `arc_lemma` (9.8), `isRupert_gale_core`
+    (Steps 1–3 for W = C, U = A), `isRupert_octahedron_generic` (normalized
+    labels, f ≠ 0).
+  - OctahedronAll: `isRupert_octahedron_normalized`,
+    `isRupert_octahedron_nonplanar` (sign normalization), main assembly.
+  Next: the f = 0 case (LEMMAS §9.6: Lemma 9.10 degenerate edge view,
+  Cor. 9.0 lexicographic tilt, Lemma 9.11 with Mixed case via Lemma 8.8,
+  5-cycle, tie-breaks; lateral-edge counting).  Not started.
 
 ## Modules and dependency order
 
@@ -137,7 +116,7 @@ the generic-view density statements of Coplanar.lean (`dense_generic_...`,
 | `L8T4` | Thm 8.3 | `IsT4`, `isRupert_T4` |
 | `L8T3` | Thm 8.4 | `IsT3`, `isRupert_T3` |
 | `Witnesses` | non-vacuity | `witness_*`, `affineIndependent_of_det3` |
-| `OctaTools`, `Oct9Axis`, `Oct9Data`, `Oct9Quad`, `Oct9Gale`, `OctahedronAll` | L9 | see Status |
+| `OctaTools`, `Oct9Axis`, `Oct9Data`, `Oct9Quad`, `Oct9Gale`, `Oct9Par`, `OctahedronAll` | L9 | see Status |
 
 Order of work: Basic → FirstOrder → DoubleNormal → Coplanar (L2 + plane form
 of L5) → `isRupert_bipyramid` → FewVertices → general L5 → Bicap → SixVertices.
