@@ -1,15 +1,26 @@
 import SnubDodecahedron.FundamentalChart3
-import SnubDodecahedron.Statement
 import SnubDodecahedron.NativeExecutable
 import SnubDodecahedron.PackedSolutionTree
+import SnubDodecahedron
 
 /-!
-Native executable that reads and checks exact certificate data, then constructs
-a proof that no snub dodecahedron is Rupert (`snubDodecahedron_not_rupert`).
+Native executable that reads and checks the exact certificate data for the
+snub dodecahedron, then establishes `CertificatesValid` and so
+`isNopert_of_certificatesValid`: every snub dodecahedron (Wikipedia's
+coordinates, any similar copy, either chirality) is a nopert
+(`SnubDodecahedron.lean`).
 
-This is analogous to `constructValidTable`: the expensive Boolean checks run
-as parallel native code, while kernel-proved bridge theorems turn success into
-the semantic proof consumed by the public theorem.
+The solution tables (tube packs and chart packs) are decoded (untrusted) and
+checked natively, in parallel, together with the view cover, as in
+`NativeExecutable.constructProof`; they exclude every `IModel` (I-orbit within
+6·10⁻¹⁶ of the rational model). Kernel-proved bridges turn success into
+`CertificatesValid`.
+
+Usage:
+  constructSnubDodecahedron <tube manifest.txt> <chart directory>
+The manifest lists the identity-tube code packs in code order; the chart
+directory holds chart0.pack through chart2.pack, or per-code packs
+c<chart>/t<t>.pack (pack5d --per_code).
 -/
 
 open Noperts Noperts.Pipeline
@@ -69,15 +80,37 @@ def main (args : List String) : IO Unit := do
         decode 1 shared chartData[1]!,
         decode 2 shared chartData[2]!,
         { FundamentalChart3.table with sharedLocal := shared }]
-  let checked ← constructProof localTaskCount globalTaskCount
-    localTables globalTables
-    (by intro shared chart; fin_cases chart <;> rfl)
-    (by intro shared chart; fin_cases chart <;> rfl)
-  let proof : ∀ P : IModel, ¬ IsRupert P.toC5.verts := checked.down
-  -- Every snub dodecahedron (Wikipedia's coordinates, any similar copy,
-  -- either chirality) is an `IModel` up to similarity.
-  let _snub : ∀ V : Finset ℝ³, IsSnubDodecahedron V → ¬ IsRupert V :=
-    snubDodecahedron_not_rupert proof
-  let _wikipedia : ¬ IsRupert snubDodecahedron := wikipediaSnubDodecahedron_not_rupert proof
-  IO.println "instantiated: no snub dodecahedron is Rupert"
-  IO.println "instantiated: Wikipedia's snub dodecahedron is not Rupert"
+  let tables := globalTables localTables
+  have hchart : ∀ chart, (tables chart).chart = chart := by
+    intro chart; fin_cases chart <;> rfl
+  have hshared : ∀ chart, (tables chart).sharedLocal = localTables := by
+    intro chart; fin_cases chart <;> rfl
+  -- The checks of `NativeExecutable.constructProof`, kept here so that the
+  -- checked tables give `CertificatesValid`.
+  let coverStart ← IO.monoNanosNow
+  log "checking the view cover (code triangles cover T)"
+  let cover : PLift (WedgeCover.coverValid = true) ←
+    if h : WedgeCover.coverValid = true then pure ⟨h⟩
+    else throw (IO.userError "the view cover is invalid")
+  log s!"view cover valid ({(← IO.monoNanosNow) - coverStart} ns)"
+  let checkedLocal ← checkLocalAll localTaskCount localTables
+  let sharedValid (chart : CayleyAtlas.ChartIndex) :
+      AtlasProjectiveSolutionTree.SharedLocalValid (tables chart).sharedLocal := by
+    rw [hshared chart]; exact checkedLocal.down
+  let valid0 ← checkGlobal "0" globalTaskCount (tables 0) (sharedValid 0)
+  let valid1 ← checkGlobal "1" globalTaskCount (tables 1) (sharedValid 1)
+  let valid2 ← checkGlobal "2" globalTaskCount (tables 2) (sharedValid 2)
+  let valid3 ← checkGlobal "3" globalTaskCount (tables 3) (sharedValid 3)
+  have hvalid : ∀ chart, (tables chart).Valid := by
+    intro chart
+    fin_cases chart
+    · exact valid0.down
+    · exact valid1.down
+    · exact valid2.down
+    · exact valid3.down
+  have hcv : CertificatesValid := ⟨⟨tables, hchart, hvalid⟩, cover.down⟩
+  log "constructed proof: no IModel (I-orbit within 6e-16 of the rational vertices) is Rupert"
+  let _snub : ∀ V : Finset ℝ³, IsSnubDodecahedron V → IsNopert V :=
+    isNopert_of_certificatesValid hcv
+  let _wikipedia : IsNopert snubDodecahedron := isNopert_snubDodecahedron_of_certificatesValid hcv
+  IO.println "instantiated: IsNopert V for every snub dodecahedron V (none is Rupert)"
