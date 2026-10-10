@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Septopert.Cell
+public import Septopert.Cell
 public import Noperthedron.BalancedSupport.ViewAntipode
 
 @[expose] public section
@@ -28,7 +28,8 @@ and 1, its Euler azimuth is in [0, π/4], and it contains one mirror normal,
 (1,0,−1)/√2, on its boundary.
 -/
 
-namespace Noperthedron.Septopert
+namespace Septopert
+open Noperthedron
 
 open scoped Matrix
 open Noperthedron.Pipeline
@@ -276,4 +277,4 @@ theorem exists_viewDomain_pose (S : Set ℝ³) (hc : ∀ k, (c3Mat k).toEuclidea
   obtain ⟨s, b, j, h⟩ := exists_candView_domain p.view
   exact ⟨candPose p s b j, by rwa [view_candPose], RupertPose_candPose_iff S hc hm p s b j⟩
 
-end Noperthedron.Septopert
+end Septopert

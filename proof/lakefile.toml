@@ -96,3 +96,7 @@ buildType = "release"
 # Small polyhedra are Rupert (coplanar-silhouette theorem, notes/LEMMAS.md).
 [[lean_lib]]
 name = "SmallRupert"
+
+[[lean_lib]]
+name = "Septopert"
+globs = ["Septopert.+"]

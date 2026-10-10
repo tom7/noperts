@@ -18,7 +18,7 @@ The convex hull of these 7 points. Each coordinate is an integer divided by
 ```
 
 These are exactly the points `vertexQ` in
-`proof/Noperthedron/Septopert/ModelData.lean`, the vertices the proof is
+`proof/Septopert/ModelData.lean`, the vertices the proof is
 about. In lowest terms:
 
 | vertex | x | y | z |

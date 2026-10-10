@@ -92,7 +92,7 @@ On success it prints:
 
 ## What is proved and what is trusted
 
-`proof/Noperthedron/Septopert/IsNotRupert.lean`:
+`proof/Septopert/IsNotRupert.lean`:
 
 ```lean
 theorem not_rupert_of_valid_tables (table : CayleyAtlas.ChartIndex → SolutionTree.Table)

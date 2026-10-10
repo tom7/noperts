@@ -26,7 +26,8 @@ For a 3-fold axis along (1,1,1), the mirrors of a C3v solid are the
 coordinate transpositions; Q = −σ is then rational.
 -/
 
-namespace Noperthedron.Septopert
+namespace Septopert
+open Noperthedron
 
 open scoped Matrix
 open Noperthedron.Pipeline
@@ -90,4 +91,4 @@ theorem relativeRotation_mirrorTie (p : MatrixPose) (Q : SO3) :
   rw [horth, Matrix.mul_one]
   simp only [Matrix.mul_assoc]
 
-end Noperthedron.Septopert
+end Septopert

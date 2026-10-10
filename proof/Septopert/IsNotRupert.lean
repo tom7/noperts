@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Septopert.SolutionTree
+public import Septopert.SolutionTree
 public import Noperthedron.Rupert.Equivalences.RupertEquivRupertSet
 
 @[expose] public section
@@ -17,7 +17,8 @@ vertex-set form of `MainTheorem.IsRupert` (as the DH's
 `not_rupert_of_valid_tables`).
 -/
 
-namespace Noperthedron.Septopert
+namespace Septopert
+open Noperthedron
 
 open Noperthedron.Pipeline
 open SolutionTree
@@ -53,4 +54,4 @@ theorem not_rupert_of_valid_tables (table : CayleyAtlas.ChartIndex → SolutionT
   exact no_matrixPose_of_valid_tables table hchart hvalid hcap
     (exists_matrixPose_of_rupertSet hset)
 
-end Noperthedron.Septopert
+end Septopert

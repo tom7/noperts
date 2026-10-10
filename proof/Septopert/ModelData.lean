@@ -12,7 +12,7 @@ denominators 1048576. `c3Perm k` and `mirrorPerm i` are the vertex permutations
 induced by `c3Mat k` and `mirrorMat i` (coordinate permutations).
 -/
 
-namespace Noperthedron.Septopert
+namespace Septopert
 
 def vertexQ : Fin 7 → Fin 3 → ℚ := ![
   ![(-470319 / 524288 : ℚ), (327651 / 1048576 : ℚ), (327651 / 1048576 : ℚ)],
@@ -27,4 +27,4 @@ def c3Perm : Fin 3 → Fin 7 → Fin 7 := ![![0, 1, 2, 3, 4, 5, 6], ![2, 0, 1, 5
 
 def mirrorPerm : Fin 3 → Fin 7 → Fin 7 := ![![0, 2, 1, 3, 5, 4, 6], ![2, 1, 0, 5, 4, 3, 6], ![1, 0, 2, 4, 3, 5, 6]]
 
-end Noperthedron.Septopert
+end Septopert

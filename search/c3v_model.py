@@ -13,7 +13,7 @@ generated exactly. Checks: 7 distinct vertices, all extreme, triangular faces
 The input is scaled to circumradius SCALE = 1 - 1e-6 first (the proof
 infrastructure needs every vertex strictly inside the unit ball).
 With a third argument, also writes the Lean data module there
-(`Noperthedron.Septopert.ModelData`: the vertices and, for each of c3Mat k
+(`Septopert.ModelData`: the vertices and, for each of c3Mat k
 and mirrorMat i, the vertex permutation it induces).
 
 Usage: python3 c3v_model.py candidate.xyz [den=2^20 [ModelData.lean]] > model.txt
@@ -108,7 +108,7 @@ denominators %d. `c3Perm k` and `mirrorPerm i` are the vertex permutations
 induced by `c3Mat k` and `mirrorMat i` (coordinate permutations).
 -/
 
-namespace Noperthedron.Septopert
+namespace Septopert
 
 def vertexQ : Fin 7 → Fin 3 → ℚ := ![
 %s]
@@ -117,7 +117,7 @@ def c3Perm : Fin 3 → Fin 7 → Fin 7 := ![%s]
 
 def mirrorPerm : Fin 3 → Fin 7 → Fin 7 := ![%s]
 
-end Noperthedron.Septopert
+end Septopert
 """ % (path.split('/')[-1], den,
        ",\n".join("  ![%s]" % ", ".join(q(c) for c in v) for v in verts),
        ", ".join(fin7(perm_of(g)) for g in c3),

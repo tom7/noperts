@@ -1,5 +1,5 @@
-import Noperthedron.Septopert.NativeExecutable
-import Noperthedron.Septopert.PackedSolutionTree
+import Septopert.NativeExecutable
+import Septopert.PackedSolutionTree
 
 /-!
 Native executable that reads and checks the 7-vertex solid's certificate data
@@ -31,9 +31,9 @@ Usage:
 -/
 
 open Noperthedron.Pipeline
-open Noperthedron.Septopert
-open Noperthedron.Septopert.SolutionTree
-open Noperthedron.Septopert.NativeExecutable
+open Septopert
+open Septopert.SolutionTree
+open Septopert.NativeExecutable
 
 /-- Row chunks per table: many more than worker threads, so that expensive
 subtrees (contiguous row ranges) do not leave threads idle. The number of

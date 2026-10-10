@@ -7,9 +7,9 @@ public import Noperthedron.Pipeline.AtlasProjectiveLocalViewTree
 public import Noperthedron.Pipeline.AtlasProjectiveGlobalCertificate
 public import Noperthedron.Pipeline.AtlasProjectiveMixedGlobalCertificate
 public import Noperthedron.ParallelBool
-public import Noperthedron.Septopert.CellPrune
-public import Noperthedron.Septopert.ViewCoverData
-public import Noperthedron.Septopert.CapLeaf
+public import Septopert.CellPrune
+public import Septopert.ViewCoverData
+public import Septopert.CapLeaf
 
 @[expose] public section
 
@@ -38,7 +38,8 @@ rotation chart · cayley in the C3v cell at the view (`InCell`), view in D′
 No fivefold/icosahedral/half-turn/upper-view predicates, no tie rows.
 -/
 
-namespace Noperthedron.Septopert.SolutionTree
+namespace Septopert.SolutionTree
+open Noperthedron
 
 open Noperthedron.Pipeline
 open CayleyAtlas AtlasProjectiveView
@@ -680,4 +681,4 @@ theorem no_matrixPose_of_valid_tables (table : ChartIndex → Table)
   rw [hchart chart] at hno
   exact hno ⟨q, hq, hbounded, hcell, hdom, offset, heq.mpr hrupert⟩
 
-end Noperthedron.Septopert.SolutionTree
+end Septopert.SolutionTree

@@ -1,7 +1,7 @@
 module
 
 public import Noperthedron.Pipeline.CapClaim
-public import Noperthedron.Septopert.Model
+public import Septopert.Model
 
 @[expose] public section
 
@@ -36,7 +36,8 @@ the cone with dual frame vectors (0, 2, 0), (1, 0, 1) and the Cayley ball
 |w|² ≤ 1/8192 as a trace bound) for the solution tree.
 -/
 
-namespace Noperthedron.Septopert
+namespace Septopert
+open Noperthedron
 
 open Noperthedron.Pipeline
 open Noperthedron.Pipeline.Cap
@@ -199,4 +200,4 @@ theorem capHolds_of_cert (c : CapCert) (hc : certOk c = true) : CapHolds := by
   rw [hd0, hd1, hx, kv_capX, hmu, if_pos hpr, hG, gMat_capGcol] at hclaim
   exact hclaim
 
-end Noperthedron.Septopert
+end Septopert

@@ -2,7 +2,7 @@ module
 
 public import Noperthedron.Pipeline.CapWitness
 public import Noperthedron.Pipeline.CapCoverMain
-public import Noperthedron.Septopert.WidthWitness
+public import Septopert.WidthWitness
 public import Noperthedron.Atlas.CayleyPose
 
 @[expose] public section
@@ -97,7 +97,7 @@ theorem not_rupert_of_width_support (p : MatrixPose) (S : Set ℝ³)
     intro v
     rw [← Noperthedron.Atlas.MatrixPose.outer_mul_relativeRotation p]
     simp [Matrix.toLpLin_apply, Matrix.mulVec_mulVec, O]
-  apply Noperthedron.Septopert.not_rupertPose_of_width_witness p S n hn Mp Mm _ _ vk vk' hvk hvk'
+  apply Septopert.not_rupertPose_of_width_witness p S n hn Mp Mm _ _ vk vk' hvk hvk'
   · rw [hinner, hinner, hproj, hproj]
     exact hk
   · intro v hv

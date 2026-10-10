@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Septopert.Cell
+public import Septopert.Cell
 public import Noperthedron.Pipeline.AtlasQuadratic
 public import Noperthedron.Atlas.QuadraticBernstein
 
@@ -31,7 +31,8 @@ allowance: a box is pruned when a Bernstein/ball lower bound of the
 given projectively (`viewScale · Σ w_c T_c`) can be replaced by Σ w_c T_c.
 -/
 
-namespace Noperthedron.Septopert
+namespace Septopert
+open Noperthedron
 
 open scoped Matrix
 open Noperthedron.Checker
@@ -354,4 +355,4 @@ theorem inC3vCell_smul {u : Fin 3 → ℝ} {κ : ℝ} (hκ : κ ≠ 0) {R : Matr
   have := h.2 i
   rwa [halfTurnMat_smul κ hκ] at this
 
-end Noperthedron.Septopert
+end Septopert

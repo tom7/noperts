@@ -1,8 +1,8 @@
 module
 
 public import Noperthedron.Pipeline.WedgeCover
-public import Noperthedron.Septopert.ViewReduce
-public import Noperthedron.Septopert.Reduce
+public import Septopert.ViewReduce
+public import Septopert.Reduce
 
 @[expose] public section
 
@@ -27,7 +27,8 @@ T1 and T2: per root, a decision tree over half-spaces `u ⬝ a ≥ 0` (as
 place of `u ⬝ (1,1,1) = 1`); a leaf names a code triangle of the same root.
 -/
 
-namespace Noperthedron.Septopert.ViewCover
+namespace Septopert.ViewCover
+open Noperthedron
 
 open Noperthedron.Atlas.ProjectiveView
 open Noperthedron.Pipeline
@@ -348,4 +349,4 @@ theorem viewDomain_covered (tris : Array (Fin 8 × Tri)) (tree0 tree1 : Node)
   · obtain ⟨t, tri, ht, hin⟩ := base_covered 1 baseT2 baseT2_valid tris tree1 h1 _ hm
     exact ⟨t, 1, tri, ht, hs, hin⟩
 
-end Noperthedron.Septopert.ViewCover
+end Septopert.ViewCover

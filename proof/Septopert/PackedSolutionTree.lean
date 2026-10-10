@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Septopert.SolutionTree
+public import Septopert.SolutionTree
 public import Noperthedron.Pipeline.PackedLocalViewTree
 
 @[expose] public section
@@ -22,7 +22,8 @@ The decoder is untrusted plumbing: every decoded row is checked by
 `SolutionTree.Table.Valid`.
 -/
 
-namespace Noperthedron.Septopert.PackedSolutionTree
+namespace Septopert.PackedSolutionTree
+open Noperthedron
 
 open Noperthedron.Pipeline
 open SolutionTree AtlasProjectiveView
@@ -444,4 +445,4 @@ def decodeCodeTablesLazy (chart : CayleyAtlas.ChartIndex) (shared : SharedLocalT
   let tables := LazyCodeTables.ofPacks packs
   { chart, get := tables.get chart, size := tables.size, sharedLocal := shared }
 
-end Noperthedron.Septopert.PackedSolutionTree
+end Septopert.PackedSolutionTree

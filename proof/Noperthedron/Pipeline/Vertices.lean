@@ -3,15 +3,15 @@ module
 public import Noperthedron.RationalApprox.TrigLemmas
 public import Noperthedron.Vertices.Taylor
 public import Mathlib.Analysis.Real.Pi.Bounds
-public import Noperthedron.Septopert.C3
-public import Noperthedron.Septopert.ModelData
+public import Septopert.C3
+public import Septopert.ModelData
 
 @[expose] public section
 
 /-!
 # Exact and rational vertices of the model
 
-The Septopert (`Noperthedron.Septopert`, data in `Septopert.ModelData`),
+The Septopert (`Septopert`, data in `Septopert.ModelData`),
 symmetric under C3v with the 3-fold axis along (1,1,1), so that the C3
 rotations are the cyclic coordinate permutations `Septopert.c3Mat k` (exact
 rational matrices). The layout is rotation-major, as for the deltoidal
@@ -30,7 +30,7 @@ lie inside the unit sphere (the GoodPoly invariant).
 
 namespace Noperthedron.Pipeline
 
-open Noperthedron.Septopert (c3Mat c3SO3)
+open Septopert (c3Mat c3SO3)
 
 abbrev VertexIndex := Fin 9
 abbrev SeedIndex := Fin 3

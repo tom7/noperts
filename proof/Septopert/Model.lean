@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Septopert.ModelData
-public import Noperthedron.Septopert.Cell
+public import Septopert.ModelData
+public import Septopert.Cell
 
 @[expose] public section
 
@@ -16,7 +16,8 @@ coordinate permutation maps the vertex set onto itself (`c3Perm`,
 (`RupertPose_mirrorTie_iff`, `exists_viewDomain_pose`).
 -/
 
-namespace Noperthedron.Septopert
+namespace Septopert
+open Noperthedron
 
 open scoped Matrix
 
@@ -77,4 +78,4 @@ theorem mirrorQ_neg_image_solid (i : Fin 3) :
   rw [h]
   exact mirrorMat_image_solid i
 
-end Noperthedron.Septopert
+end Septopert

@@ -1,7 +1,7 @@
 module
 
-public import Noperthedron.Septopert.IsNotRupert
-public import Noperthedron.Septopert.CapsNative
+public import Septopert.IsNotRupert
+public import Septopert.CapsNative
 public import Noperthedron.Pipeline.SparseLocalViewTree
 
 @[expose] public section
@@ -17,7 +17,8 @@ check (`CapsNative.certOkPar`, `certOk_of_par`) supplies `CapOk`. The view
 cover needs no native check (`ViewCover.coverValid_eq` is kernel-checked).
 -/
 
-namespace Noperthedron.Septopert.NativeExecutable
+namespace Septopert.NativeExecutable
+open Noperthedron
 
 open Noperthedron.Pipeline
 open AtlasProjectiveLocalViewTree
@@ -169,4 +170,4 @@ def checkCap (c : Cap.CapCert) : IO (PLift CapOk) := do
   else
     throw (IO.userError "the cap certificate is not valid")
 
-end Noperthedron.Septopert.NativeExecutable
+end Septopert.NativeExecutable

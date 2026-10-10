@@ -1,6 +1,6 @@
 module
 
-public import Noperthedron.Septopert.Caps
+public import Septopert.Caps
 public import Noperthedron.ParallelBool
 
 @[expose] public section
@@ -19,7 +19,8 @@ against Lean's `chartList`, its frame, μ₀, vertices and half-turn element
 against `certOk`'s constants, every tree with Lean's own Bernstein bounds).
 -/
 
-namespace Noperthedron.Septopert
+namespace Septopert
+open Noperthedron
 
 open Noperthedron.Pipeline
 open Noperthedron.Pipeline.Cap
@@ -211,4 +212,4 @@ def decodeCert (lines : Array String) : CapCert := Id.run do
            pr := ⟨mu0, t0, t0m, tie, ratioOn⟩, zList := zl, verts := V, wits := W, usePrune := halfTurn,
            Gcol := capGcol, charts := charts.toList }
 
-end Noperthedron.Septopert
+end Septopert
