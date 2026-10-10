@@ -604,6 +604,7 @@ theorem C5Model.vertex_eq_RzL (P : C5Model) (i : VertexIndex) :
     P.vertex i = RzL (2 * Real.pi * (orbitIndex i : ℝ) / 5) (P.seed (seedIndex i)) :=
   symmetryMatrix_apply_eq_RzL _ _
 
+omit [FivefoldSolid] in
 /-- Slot arithmetic for the rotation-major layout. -/
 theorem fivefold_slot_lt {S k s : ℕ} (hk : k + 1 < 5) (hs : s < S) :
     S * k + s < 5 * S - S := by

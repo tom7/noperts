@@ -151,6 +151,7 @@ variable (P : IModel)
 /-- Slot `n`: `ico (vElem n) · v0 (vOrbit n)`. -/
 noncomputable def orbit (n : Nat) : ℝ³ := (ico (vElem n)).toEuclideanLin (P.v0 (vOrbit n))
 
+omit [IcosahedralSolid] in
 theorem toEuclideanLin_mul (A B : Matrix (Fin 3) (Fin 3) ℝ) (v : ℝ³) :
     (A * B).toEuclideanLin v = A.toEuclideanLin (B.toEuclideanLin v) := by
   simp [Matrix.toLpLin_apply, Matrix.mulVec_mulVec]

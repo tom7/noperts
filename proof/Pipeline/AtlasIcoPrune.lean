@@ -26,8 +26,6 @@ ball, so `approximationError` = 36 · 10⁻¹² covers the rounding. This is
 
 namespace Noperts.Pipeline
 
-variable [FivefoldSolid]
-
 open Noperts.Atlas
 
 open scoped Matrix
@@ -47,6 +45,7 @@ theorem exists_mul_ico_inFundamentalDomain (R : Matrix (Fin 3) (Fin 3) ℝ) :
   rw [Matrix.mul_assoc, hk]
   exact hmax k (Finset.mem_univ _)
 
+variable [FivefoldSolid] in
 theorem exists_icoMatrix_eq_fivefoldMatrix (k : OrbitIndex) :
     ∃ g : IcoIndex, fivefoldMatrix k = icoMatrix g := by
   have hrz : fivefoldMatrix 1 = icoMatrix ⟨icoRzIndex, by decide⟩ := by
@@ -68,6 +67,7 @@ theorem exists_icoMatrix_eq_fivefoldMatrix (k : OrbitIndex) :
     obtain ⟨k, hk⟩ := exists_icoMatrix_mul ⟨icoRzIndex, by decide⟩ g
     exact ⟨k, by rw [hstep, hrz, hg, hk]⟩
 
+variable [FivefoldSolid] in
 theorem InIcoFundamentalDomain.toFivefold {R : Matrix (Fin 3) (Fin 3) ℝ}
     (h : InIcoFundamentalDomain R) : InFivefoldFundamentalDomain R := by
   intro k
@@ -161,7 +161,7 @@ def Box.lower (box : Box) : ℚ :=
 
 def Box.Valid (box : Box) : Prop := approximationError < box.lower
 
-instance (box : Box) : Decidable box.Valid := by
+@[reducible] instance (box : Box) : Decidable box.Valid := by
   unfold Box.Valid
   infer_instance
 

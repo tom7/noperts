@@ -88,6 +88,7 @@ def Box.Valid (box : Box) : Prop := approximationError < box.lower
   unfold Box.Valid
   infer_instance
 
+omit [FivefoldSolid] in
 theorem eval_a_abs_le_eight (chart : ChartIndex) (x y z : ℝ)
     (hbounded : x ^ 2 + y ^ 2 + z ^ 2 ≤ 3) :
     |(aQuadratic chart).evalReal x y z| ≤ 8 := by
@@ -98,6 +99,7 @@ theorem eval_a_abs_le_eight (chart : ChartIndex) (x y z : ℝ)
     rw [abs_le] <;>
     constructor <;> nlinarith [sq_nonneg x, sq_nonneg y, sq_nonneg z]
 
+omit [FivefoldSolid] in
 theorem eval_b_abs_le_eight (chart : ChartIndex) (x y z : ℝ)
     (hbounded : x ^ 2 + y ^ 2 + z ^ 2 ≤ 3) :
     |(bQuadratic chart).evalReal x y z| ≤ 8 := by
@@ -116,6 +118,7 @@ noncomputable def exactAdvantage (chart : ChartIndex) (direction : Direction)
     (direction.signQ : ℝ) * Real.sin (2 * Real.pi / 5) *
       (bQuadratic chart).evalReal x y z
 
+omit [FivefoldSolid] in
 theorem advantage_approximation_error (chart : ChartIndex)
     (direction : Direction) (x y z : ℝ)
     (hbounded : x ^ 2 + y ^ 2 + z ^ 2 ≤ 3) :
@@ -172,6 +175,7 @@ theorem advantage_approximation_error (chart : ChartIndex)
       norm_num [approximationError]
       linarith
 
+omit [FivefoldSolid] in
 theorem Box.lower_le_eval (box : Box) {p : AtlasPose ℝ}
     (hp : p ∈ box.interval.toReal) :
     (box.lower : ℝ) ≤
@@ -193,6 +197,7 @@ theorem Box.lower_le_eval (box : Box) {p : AtlasPose ℝ}
   push_cast
   exact max_le htight hbernstein
 
+omit [FivefoldSolid] in
 theorem eval_a_eq_denom_mul (chart : ChartIndex) (x y z : ℝ) :
     (aQuadratic chart).evalReal x y z =
       cayleyDenom x y z *
@@ -207,6 +212,7 @@ theorem eval_a_eq_denom_mul (chart : ChartIndex) (x y z : ℝ) :
   rw [hmatrix]
   simp [mul_add]
 
+omit [FivefoldSolid] in
 theorem eval_b_eq_denom_mul (chart : ChartIndex) (x y z : ℝ) :
     (bQuadratic chart).evalReal x y z =
       cayleyDenom x y z *
@@ -221,6 +227,7 @@ theorem eval_b_eq_denom_mul (chart : ChartIndex) (x y z : ℝ) :
   rw [hmatrix]
   simp [mul_sub]
 
+omit [FivefoldSolid] in
 theorem trace_mul_Rz_sub (R : Matrix (Fin 3) (Fin 3) ℝ) (angle : ℝ) :
     Matrix.trace (R * Rz_mat angle) - Matrix.trace R =
       (Real.cos angle - 1) * (R 0 0 + R 1 1) +
@@ -479,11 +486,13 @@ def restrictedRootInterval (chart : ChartIndex) : AtlasInterval ℚ :=
           (AtlasPose.le_iff_forall_get _ _).mp
             (AtlasInterval.min_le_max root) i)
 
+omit [FivefoldSolid] in
 @[simp] theorem restrictedRootInterval_min (chart : ChartIndex) :
     AtlasInterval.min (restrictedRootInterval chart) =
       (AtlasInterval.min (AtlasPose.rootInterval ℚ)).set
         (restrictedCoordinate chart) (-restrictedWidth chart) := rfl
 
+omit [FivefoldSolid] in
 @[simp] theorem restrictedRootInterval_max (chart : ChartIndex) :
     AtlasInterval.max (restrictedRootInterval chart) =
       (AtlasInterval.max (AtlasPose.rootInterval ℚ)).set

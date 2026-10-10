@@ -17,8 +17,6 @@ it with the view reduction.
 
 namespace Noperts.Pipeline
 
-variable [IcosahedralSolid]
-
 open scoped Matrix
 open CayleyAtlas
 
@@ -38,6 +36,8 @@ noncomputable def MatrixPose.rightIcoSymmetry (p : MatrixPose) (g : IcoIndex) :
 /-- The icosahedral cell condition carried by an atlas representative. -/
 def AtlasPose.InIcoFundamentalDomain (p : AtlasPose ℝ) (chart : ChartIndex) : Prop :=
   Noperts.Pipeline.InIcoFundamentalDomain (chartMatrix chart * cayleyMatrix p.x p.y p.z)
+
+variable [IcosahedralSolid]
 
 theorem AtlasPose.InIcoFundamentalDomain.toFivefold {p : AtlasPose ℝ} {chart : ChartIndex}
     (h : p.InIcoFundamentalDomain chart) : p.InFivefoldFundamentalDomain chart :=
@@ -74,6 +74,7 @@ theorem RupertPose_rightIcoSymmetry_iff (p : MatrixPose) (g : IcoIndex) :
       outerShadow p P.toC5.polyhedron.hull := rfl
   simp only [RupertPose, P.innerShadow_rightIcoSymmetry, houter]
 
+omit [IcosahedralSolid] in
 theorem matrixPoseWithOffset_ofPose_eq_rightIcoSymmetry
     (euler : Pose ℝ) (offset : ℝ²) (g : IcoIndex)
     (chart : ChartIndex) (x y z : ℝ)

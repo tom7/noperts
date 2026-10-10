@@ -18,8 +18,6 @@ of the image box to `rationalVertex i` by `modelErrorQ`.
 
 namespace Noperts.Pipeline
 
-variable [IcosahedralSolid]
-
 open scoped Matrix
 
 /-- A closed rational box. -/
@@ -85,6 +83,7 @@ def imageHi (g : Nat) (B : RatBox) (r : Fin 3) : ℚ :=
 /-- A bound on `(x − q)²` for x in [lo, hi]. -/
 def sqDistBound (lo hi q : ℚ) : ℚ := max ((lo - q) ^ 2) ((hi - q) ^ 2)
 
+variable [IcosahedralSolid] in
 def closeCheck (B : IOrbitIndex → RatBox) : Bool :=
   (List.finRange (Fintype.card VertexIndex)).all fun n =>
     let i : VertexIndex := Fin.cast (by simp) n
@@ -126,6 +125,7 @@ theorem sq_le_sqDistBound {lo hi q : ℚ} {x : ℝ} (hx : (lo : ℝ) ≤ x ∧ x
   · exact (by nlinarith : (x - q) ^ 2 ≤ ((hi : ℝ) - q) ^ 2).trans (le_max_right _ _)
   · exact (by nlinarith : (x - q) ^ 2 ≤ ((lo : ℝ) - q) ^ 2).trans (le_max_left _ _)
 
+variable [IcosahedralSolid] in
 /-- Base points in checked boxes, fixed by their stabilizers, are an `IModel`. -/
 noncomputable def IModel.ofBoxes (B : IOrbitIndex → RatBox) (hcheck : closeCheck B = true)
     (v0 : IOrbitIndex → ℝ³) (hv : ∀ o, (B o).Mem (v0 o))
@@ -279,7 +279,6 @@ theorem isRupert_image_rotation (Q : Matrix (Fin 3) (Fin 3) ℝ)
   simp only [zero_add] at h2
   rw [hset R1 off, h2]
   exact hsub
-
 
 /-- Rupert-ness is invariant under every similarity x ↦ c + s M x (s > 0, M
 orthogonal, including reflections). -/

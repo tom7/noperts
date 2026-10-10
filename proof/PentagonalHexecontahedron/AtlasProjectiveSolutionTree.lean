@@ -42,7 +42,7 @@ abbrev SharedLocalTables := Array AtlasProjectiveLocalViewTree.Table
 def SharedLocalValid (shared : SharedLocalTables) : Prop :=
   ∀ index (h : index < shared.size), shared[index].Valid
 
-instance (shared : SharedLocalTables) :
+@[reducible] instance (shared : SharedLocalTables) :
     Decidable (SharedLocalValid shared) := by
   unfold SharedLocalValid
   infer_instance
@@ -102,7 +102,7 @@ def Interval.outsideCayleyBall (interval : Interval) : Prop :=
     minAbsBound interval.min.y interval.max.y ^ 2 +
     minAbsBound interval.min.z interval.max.z ^ 2 > 3
 
-instance (interval : Interval) : Decidable interval.outsideCayleyBall := by
+@[reducible] instance (interval : Interval) : Decidable interval.outsideCayleyBall := by
   unfold Interval.outsideCayleyBall minAbsBound
   infer_instance
 
@@ -346,7 +346,7 @@ def SymmetryTubeMatches (tube : AtlasProjectiveLocalViewTree.Tube)
           region = .triangle (table.get nodeId).root
             (AtlasProjectiveLocalViewTree.splitPath (table.get nodeId).triangle rest)
 
-instance (tube : AtlasProjectiveLocalViewTree.Tube) (path : List (Fin 4)) (region : Region)
+@[reducible] instance (tube : AtlasProjectiveLocalViewTree.Tube) (path : List (Fin 4)) (region : Region)
     (table : Option AtlasProjectiveLocalViewTree.Table) :
     Decidable (SymmetryTubeMatches tube path region table) := by
   cases table
@@ -403,7 +403,7 @@ def Row.ValidAt (chart : ChartIndex) (get : ℕ → Row)
         (get children[t]).interval = interval ∧
         (get children[t]).region = .triangle 0 (WedgeCover.codeTriangles.getD t 0)
 
-instance (chart : ChartIndex) (get : ℕ → Row) (size : ℕ)
+@[reducible] instance (chart : ChartIndex) (get : ℕ → Row) (size : ℕ)
     (shared : SharedLocalTables) (row : Row) :
     Decidable (row.ValidAt chart get size shared) := by
   cases row <;> simp only [Row.ValidAt] <;> infer_instance
@@ -413,7 +413,7 @@ def RowsValidAt (chart : ChartIndex) (get : ℕ → Row)
   ∀ i : Fin size,
     (get i).id = i ∧ (get i).ValidAt chart get size shared
 
-instance (chart : ChartIndex) (get : ℕ → Row) (size : ℕ)
+@[reducible] instance (chart : ChartIndex) (get : ℕ → Row) (size : ℕ)
     (shared : SharedLocalTables) :
     Decidable (RowsValidAt chart get size shared) := by
   unfold RowsValidAt
@@ -429,7 +429,7 @@ def RowsValidRangeAt (chart : ChartIndex) (get : ℕ → Row) (size start count 
     (get (start + j.val)).id = start + j.val ∧
       (get (start + j.val)).ValidAt chart get size shared
 
-instance (chart : ChartIndex) (get : ℕ → Row) (size start count : ℕ)
+@[reducible] instance (chart : ChartIndex) (get : ℕ → Row) (size start count : ℕ)
     (shared : SharedLocalTables) :
     Decidable (RowsValidRangeAt chart get size start count shared) := by
   unfold RowsValidRangeAt
@@ -632,7 +632,7 @@ def Table.Valid (table : Table) : Prop :=
     (table.get 0).region = .sphere ∧
     SharedLocalValid table.sharedLocal
 
-instance (table : Table) : Decidable table.Valid := by
+@[reducible] instance (table : Table) : Decidable table.Valid := by
   unfold Table.Valid
   infer_instance
 

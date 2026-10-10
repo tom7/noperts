@@ -25,8 +25,6 @@ here), so ⟨w, m_j⟩ ≥ 0: w lies in cone(T) (`InViewCone`).
 
 namespace Noperts.Pipeline
 
-variable [IcosahedralSolid]
-
 open scoped Matrix
 
 /-! ### Data access -/
@@ -213,7 +211,7 @@ theorem view_viewAntipode (p : MatrixPose) : p.viewAntipode.view = -p.view := by
 
 namespace IModel
 
-variable (P : IModel)
+variable [IcosahedralSolid] (P : IModel)
 
 theorem outerShadow_bothRightIco (p : MatrixPose) (g : IcoIndex) :
     outerShadow (MatrixPose.bothRightIco p g) P.toC5.polyhedron.hull =
@@ -393,6 +391,7 @@ theorem eulerView_eq_of_sin_eq_zero {θ θ' φ : ℝ} (h : Real.sin φ = 0) :
   funext k
   fin_cases k <;> simp [eulerView, h]
 
+variable [IcosahedralSolid] in
 /-- `exists_upper_tight_translated_pose`, for a pose whose view is in
 cone(T), keeping the view: the tightened Euler angles have the same view. -/
 theorem exists_tight_pose_viewCone (P : C5Model) (p : MatrixPose) (hcone : InViewCone p.view) :
@@ -491,6 +490,7 @@ theorem AtlasPose.inIcoView_ofPose (euler : Pose ℝ) (x y z : ℝ)
   rw [hv]
   exact h
 
+variable [IcosahedralSolid] in
 /-- Every matrix pose has an equivalent bounded atlas representative whose
 view lies in cone(T) (and in the fivefold wedge) and whose relative rotation lies in
 the icosahedral cell. -/
