@@ -576,6 +576,67 @@ theorem IsCcwPolygon.hdn_of_parallel {k : ℕ} [NeZero k] {p : ZMod k → ℝ²}
     have := convexHull_ge_of_corners hge q hq
     nlinarith
 
+theorem IsCcwPolygon.injective {k : ℕ} {p : ZMod k → ℝ²} (hp : IsCcwPolygon p) :
+    Function.Injective p := by
+  intro i j hij
+  by_contra hne
+  by_cases h1 : j = i + 1
+  · have h := hp.2 (i - 1) j (by rw [h1]; exact (zmod_sub_one_ne_add_one hp.1 i).symm)
+      (by rw [h1, sub_add_cancel]; exact (zmod_ne_add_one (by have := hp.1; omega) i).symm)
+    rw [sub_add_cancel, ← hij, cross2_self] at h
+    exact lt_irrefl _ h
+  · have h := hp.2 i j (Ne.symm hne) h1
+    rw [← hij, sub_self] at h
+    simp [cross2] at h
+
+/-- Three points with positive orientation are affinely independent. -/
+theorem affineIndependent_of_cross2_pos {a b c : ℝ²} (h : 0 < cross2 (b - a) (c - a)) :
+    AffineIndependent ℝ ![a, b, c] := by
+  rw [affineIndependent_iff_not_collinear_set]
+  intro hcol
+  obtain ⟨v, hv⟩ := (collinear_iff_of_mem (p₀ := a) (by simp)).mp hcol
+  obtain ⟨rb, hrb⟩ := hv b (by simp)
+  obtain ⟨rc, hrc⟩ := hv c (by simp)
+  rw [vadd_eq_add] at hrb hrc
+  rw [hrb, hrc, add_sub_cancel_right, add_sub_cancel_right, cross2_smul_right,
+    show cross2 (rb • v) v = rb * cross2 v v by simp [cross2]; ring, cross2_self] at h
+  simp at h
+
+/-- A strictly convex polygon has interior points. -/
+theorem IsCcwPolygon.interior_nonempty {k : ℕ} {p : ZMod k → ℝ²} (hp : IsCcwPolygon p) :
+    (interior (convexHull ℝ (Set.range p))).Nonempty := by
+  have hk := hp.1
+  have h2 : (2 : ZMod k) ≠ 0 := by
+    have := zmod_add_ne (k := k) (a := 2) (b := 0) (by omega) (by omega) (by omega) 0
+    simpa using this
+  have h21 : (2 : ZMod k) ≠ 0 + 1 := by
+    have := zmod_add_ne (k := k) (a := 2) (b := 1) (by omega) (by omega) (by omega) 0
+    simpa using this
+  have hpos := hp.2 0 2 h2 h21
+  rw [zero_add] at hpos
+  have hind := affineIndependent_of_cross2_pos hpos
+  have hspan : affineSpan ℝ (Set.range ![p 0, p 1, p 2]) = ⊤ :=
+    (hind.affineSpan_eq_top_iff_card_eq_finrank_add_one).mpr (by simp)
+  have := (interior_convexHull_nonempty_iff_affineSpan_eq_top).mpr hspan
+  refine this.mono (interior_mono (convexHull_mono ?_))
+  rintro _ ⟨i, rfl⟩
+  fin_cases i <;> simp
+
+/-- At an interior point the normal cone is `{0}`. -/
+theorem normalConeAt_eq_zero_of_mem_interior {S : Set ℝ²} {q n : ℝ²} (hq : q ∈ interior S)
+    (hn : n ∈ normalConeAt S q) : n = 0 := by
+  by_contra hn0
+  obtain ⟨r, hr, hball⟩ := Metric.isOpen_iff.mp isOpen_interior q hq
+  have hnpos : 0 < ‖n‖ := norm_pos_iff.mpr hn0
+  have hmem : q + (r / 2 / ‖n‖) • n ∈ S := interior_subset (hball (by
+    rw [Metric.mem_ball, dist_eq_norm, add_sub_cancel_left, norm_smul, Real.norm_eq_abs,
+      abs_of_pos (by positivity), div_mul_cancel₀ _ hnpos.ne']
+    linarith))
+  have := hn _ hmem
+  rw [add_sub_cancel_left, real_inner_smul_right, real_inner_self_eq_norm_sq] at this
+  have : 0 < r / 2 / ‖n‖ * ‖n‖ ^ 2 := by positivity
+  linarith
+
 end SmallRupert
 
 end

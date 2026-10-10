@@ -360,7 +360,43 @@ theorem exists_firstOrderInward_of_unimodal (V : Finset ℝ³) {k : ℕ} [NeZero
     (hz : IsCyclicUnimodal (fun i => x i 2))
     (hnd : ¬ HasHorizontalDoubleNormal (fun i => proj_xy (x i)) (fun i => x i 2)) :
     ∃ ω τ : ℝ³, FirstOrderInward V ω τ := by
-  sorry
+  classical
+  by_contra hno
+  push Not at hno
+  set p : ZMod k → ℝ² := fun i => proj_xy (x i) with hpdef
+  set Q := convexHull ℝ (Set.range p) with hQdef
+  have hSQ : proj_xy '' convexHull ℝ (V : Set ℝ³) = Q := by
+    rw [show (proj_xy : ℝ³ → ℝ²) = projL from rfl, LinearMap.image_convexHull]
+    apply le_antisymm
+    · apply convexHull_min _ (convex_convexHull ℝ _)
+      rintro _ ⟨v, hv, rfl⟩
+      by_cases hc : ∃ i, v = x i
+      · obtain ⟨i, rfl⟩ := hc; exact subset_convexHull ℝ _ ⟨i, rfl⟩
+      · push Not at hc; exact interior_subset (hin v hv hc)
+    · apply convexHull_mono
+      rintro _ ⟨i, rfl⟩; exact ⟨x i, hxV i, rfl⟩
+  obtain ⟨f, hfN, ⟨v₀, hv₀, hf₀⟩, hE1, hE2, hE3⟩ :=
+    exists_forces_of_not_firstOrderInward V (by rw [hSQ]; exact hp.interior_nonempty) hno
+  rw [hSQ] at hfN
+  have hzero : ∀ v ∈ V, (∀ i, v ≠ x i) → f v = 0 := fun v hv hc =>
+    normalConeAt_eq_zero_of_mem_interior (hin v hv hc) (hfN v hv)
+  have hxinj : Function.Injective x := fun i j h => hp.injective (by rw [hpdef]; dsimp only; rw [h])
+  have himg : univ.image x ⊆ V := fun v hv => by
+    obtain ⟨i, -, rfl⟩ := mem_image.mp hv; exact hxV i
+  have hred : ∀ {M : Type} [AddCommMonoid M] (G : ℝ³ → M), (∀ v, f v = 0 → G v = 0) →
+      ∑ v ∈ V, G v = ∑ i, G (x i) := by
+    intro M _ G hG
+    rw [← sum_subset himg (fun v hv hni => hG v (hzero v hv fun i h => hni (by
+      rw [h]; exact mem_image_of_mem x (mem_univ i)))), sum_image (fun i _ j _ h => hxinj h)]
+  refine hnd (hasHorizontalDoubleNormal_of_forces p (fun i => x i 2) hp hz (fun i => f (x i))
+    (fun i => hfN (x i) (hxV i)) ?_ ?_ ?_ ?_)
+  · by_contra hall; push Not at hall
+    by_cases hc : ∃ i, v₀ = x i
+    · obtain ⟨i, rfl⟩ := hc; exact hf₀ (hall i)
+    · push Not at hc; exact hf₀ (hzero v₀ hv₀ hc)
+  · rw [← hred f (fun v h => h)]; exact hE1
+  · rw [← hred (fun v => v 2 • f v) (fun v h => by simp [h])]; exact hE2
+  · rw [← hred (fun v => cross2 (proj_xy v) (f v)) (fun v h => by simp [h, cross2])]; exact hE3
 
 /-- **Theorem 7.3, Rupert form, at the view of a rotation `R`.** -/
 theorem isRupert_of_unimodalView (V : Finset ℝ³) (R : Matrix (Fin 3) (Fin 3) ℝ) (hR : R ∈ SO3)
@@ -372,7 +408,15 @@ theorem isRupert_of_unimodalView (V : Finset ℝ³) (R : Matrix (Fin 3) (Fin 3) 
     (hnd : ¬ HasHorizontalDoubleNormal (fun i => proj_xy (R.toEuclideanLin (x i)))
       (fun i => (R.toEuclideanLin (x i)) 2)) :
     IsRupert V := by
-  sorry
+  classical
+  obtain ⟨ω, τ, h⟩ := exists_firstOrderInward_of_unimodal (V.image R.toEuclideanLin)
+    (fun i => R.toEuclideanLin (x i)) (fun i => mem_image_of_mem _ (hxV i)) hp
+    (by
+      intro w hw hc
+      obtain ⟨v, hv, rfl⟩ := mem_image.mp hw
+      exact hin v hv fun i h => hc i (by rw [h]))
+    hz hnd
+  exact isRupert_of_firstOrderInward_image V R hR ω τ h
 
 /-- **Lemma 7.4 (exceptional views).**  Horizontal double normals at generic
 views occur only for views `u = Rᵀ e_z` on finitely many great circles
