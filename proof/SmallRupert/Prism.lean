@@ -159,8 +159,7 @@ theorem depth_rotX_mul (c s : ℝ) (R : Matrix (Fin 3) (Fin 3) ℝ) (v : ℝ³) 
 vertical and pointing up), `Z` is strictly between `X` and `Y` in the first
 coordinate and above the line `XY`, and for small tilts `ε > 0` towards the
 second axis `Z` is deeper than `X` or `Y`.  Then the prism is Rupert. -/
-theorem isRupert_prism_view {X Y Z w : ℝ³} (hnd : [X, Y, Z, X + w, Y + w, Z + w].Nodup)
-    {R₁ : Matrix (Fin 3) (Fin 3) ℝ} (hR₁ : R₁ ∈ SO3) {lam : ℝ} (hlam : 0 < lam)
+theorem isRupert_prism_view {X Y Z w : ℝ³} {R₁ : Matrix (Fin 3) (Fin 3) ℝ} (hR₁ : R₁ ∈ SO3) {lam : ℝ} (hlam : 0 < lam)
     (hw : R₁.toEuclideanLin w = lam • ez)
     (h1 : (R₁.toEuclideanLin X) 0 < (R₁.toEuclideanLin Z) 0)
     (h2 : (R₁.toEuclideanLin Z) 0 < (R₁.toEuclideanLin Y) 0)
@@ -223,18 +222,10 @@ theorem isRupert_prism_view {X Y Z w : ℝ³} (hnd : [X, Y, Z, X + w, Y + w, Z +
       simp only [cross2, PiLp.sub_apply, hP, Matrix.cons_val_zero,
         Matrix.cons_val_one]
       exact hFε)
-  -- distinctness
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true] at hnd
-  obtain ⟨⟨hXY, hXZ, hXX', hXY', hXZ'⟩, ⟨hYZ, hYX', hYY', hYZ'⟩, ⟨hZX', hZY', hZZ'⟩,
-    ⟨hX'Y', hX'Z'⟩, hY'Z', -⟩ := hnd
   set V : Finset ℝ³ := {X, Y, Z, X + w, Y + w, Z + w} with hV
   have hxV : ∀ i, quint X (X + w) (Y + w) Y Z i ∈ V := by
     intro i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> simp [hV, quint_0,
       quint_1, quint_2, quint_3, quint_4]
-  have hinj : Function.Injective (quint X (X + w) (Y + w) Y Z) :=
-    quint_injective hXX' hXY' hXY hXZ hX'Y' (Ne.symm hYX') (Ne.symm hZX') (Ne.symm hYY')
-      (Ne.symm hZY') hYZ
   have hPx : (fun i => proj_xy (R₀.toEuclideanLin (quint X (X + w) (Y + w) Y Z i))) =
       quint (proj_xy (R₀.toEuclideanLin X)) (proj_xy (R₀.toEuclideanLin X) + S)
         (proj_xy (R₀.toEuclideanLin Y) + S) (proj_xy (R₀.toEuclideanLin Y))
@@ -246,6 +237,12 @@ theorem isRupert_prism_view {X Y Z w : ℝ³} (hnd : [X, Y, Z, X + w, Y + w, Z +
     · exact hPadd Y
     · rfl
     · rfl
+  -- the corners are distinct since their projections are
+  have hinj : Function.Injective (quint X (X + w) (Y + w) Y Z) := by
+    intro i j hij
+    apply hpent.1.injective
+    rw [← congrFun hPx i, ← congrFun hPx j]
+    simp only [hij]
   refine isRupert_of_open_unimodal V hR₀ (quint X (X + w) (Y + w) Y Z) hxV hinj ?_ ?_ PentaCond
     isOpen_pentaCond ?_ (fun z hz hQ => isCyclicUnimodal_five hz hQ)
   · rw [hPx]; exact hpent.1
@@ -269,6 +266,125 @@ theorem isRupert_prism_view {X Y Z w : ℝ³} (hnd : [X, Y, Z, X + w, Y + w, Z +
     · show (R₀.toEuclideanLin Z) 2 < (R₀.toEuclideanLin X) 2 ∨
         (R₀.toEuclideanLin Z) 2 < (R₀.toEuclideanLin Y) 2
       rw [hD, hD, hD]; exact h4ε
+
+theorem rotZ_mul_apply (c s : ℝ) (R : Matrix (Fin 3) (Fin 3) ℝ) (v : ℝ³) :
+    (rotZ c s * R).toEuclideanLin v = !₂[c * (R.toEuclideanLin v) 0 - s * (R.toEuclideanLin v) 1,
+      s * (R.toEuclideanLin v) 0 + c * (R.toEuclideanLin v) 1, (R.toEuclideanLin v) 2] := by
+  have e : (rotZ c s * R).toEuclideanLin v = (rotZ c s).toEuclideanLin (R.toEuclideanLin v) := by
+    simp [Matrix.toLpLin_apply, Matrix.mulVec_mulVec]
+  rw [e]
+  generalize R.toEuclideanLin v = u
+  ext i; fin_cases i <;> simp [rotZ, Matrix.toLpLin_apply, dotProduct, Fin.sum_univ_three] <;> ring
+
+/-- **Translation prisms in a frame with `w` vertical.**  In the frame of `R`
+(`R w = λ e_z`, `λ > 0`), with screen projections `p`, a direction `a` puts the
+projection of `Z` strictly between those of `X` and `Y`, `Z` lies left of
+`XY`, and either `Z` is strictly below `X` or `Y` in depth, or `X, Z` have equal
+depth and `Z` is behind `X` across `a`.  Then the prism is Rupert. -/
+theorem isRupert_prism_frame {X Y Z w : ℝ³} {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R ∈ SO3)
+    {lam : ℝ} (hlam : 0 < lam) (hw : R.toEuclideanLin w = lam • ez) (a : ℝ²)
+    (ha1 : 0 < ⟪a, proj_xy (R.toEuclideanLin Z) - proj_xy (R.toEuclideanLin X)⟫)
+    (ha2 : 0 < ⟪a, proj_xy (R.toEuclideanLin Y) - proj_xy (R.toEuclideanLin Z)⟫)
+    (h3 : 0 < cross2 (proj_xy (R.toEuclideanLin Y) - proj_xy (R.toEuclideanLin X))
+      (proj_xy (R.toEuclideanLin Z) - proj_xy (R.toEuclideanLin X)))
+    (h4 : ((R.toEuclideanLin Z) 2 < (R.toEuclideanLin X) 2 ∨
+        (R.toEuclideanLin Z) 2 < (R.toEuclideanLin Y) 2) ∨
+      ((R.toEuclideanLin Z) 2 = (R.toEuclideanLin X) 2 ∧
+        cross2 a (proj_xy (R.toEuclideanLin Z) - proj_xy (R.toEuclideanLin X)) < 0)) :
+    IsRupert {X, Y, Z, X + w, Y + w, Z + w} := by
+  set na := Real.sqrt (a 0 ^ 2 + a 1 ^ 2) with hna
+  have ha0 : a ≠ 0 := by rintro rfl; simp at ha1
+  have hpos : 0 < a 0 ^ 2 + a 1 ^ 2 := by
+    by_contra hc; push Not at hc
+    apply ha0; ext i; fin_cases i
+    · simp; nlinarith [sq_nonneg (a 0), sq_nonneg (a 1)]
+    · simp; nlinarith [sq_nonneg (a 0), sq_nonneg (a 1)]
+  have hna0 : 0 < na := Real.sqrt_pos.mpr hpos
+  have hna2 : na ^ 2 = a 0 ^ 2 + a 1 ^ 2 := Real.sq_sqrt hpos.le
+  set c := a 0 / na
+  set s := -(a 1 / na)
+  have hcs : c ^ 2 + s ^ 2 = 1 := by
+    simp only [c, s, div_pow, neg_sq]; rw [← add_div, ← hna2]; exact div_self (by positivity)
+  set R₁ := rotZ c s * R with hR₁def
+  have hR₁ : R₁ ∈ SO3 := mul_mem (rotZ_mem_SO3 hcs) hR
+  have hc0 : ∀ v, (R₁.toEuclideanLin v) 0 =
+      ⟪a, proj_xy (R.toEuclideanLin v)⟫ / na := fun v => by
+    rw [hR₁def, rotZ_mul_apply]
+    simp [c, s, proj_xy, PiLp.inner_apply, Fin.sum_univ_two]; ring
+  have hc1 : ∀ v, (R₁.toEuclideanLin v) 1 = cross2 a (proj_xy (R.toEuclideanLin v)) / na :=
+    fun v => by
+      rw [hR₁def, rotZ_mul_apply]
+      simp [c, s, proj_xy, cross2]; ring
+  have hc2 : ∀ v, (R₁.toEuclideanLin v) 2 = (R.toEuclideanLin v) 2 := fun v => by
+    rw [hR₁def, rotZ_mul_apply]; simp
+  have hw' : R₁.toEuclideanLin w = lam • ez := by
+    rw [hR₁def, rotZ_mul_apply, hw]
+    ext i; fin_cases i <;> simp [ez]
+  refine isRupert_prism_view hR₁ hlam hw' ?_ ?_ ?_ ?_
+  · rw [hc0, hc0]
+    rw [inner_sub_right] at ha1
+    exact div_lt_div_of_pos_right (by linarith) hna0
+  · rw [hc0, hc0]
+    rw [inner_sub_right] at ha2
+    exact div_lt_div_of_pos_right (by linarith) hna0
+  · have key : ∀ v, proj_xy (R₁.toEuclideanLin v) =
+        !₂[c * (R.toEuclideanLin v) 0 - s * (R.toEuclideanLin v) 1,
+          s * (R.toEuclideanLin v) 0 + c * (R.toEuclideanLin v) 1] := fun v => by
+      rw [hR₁def, rotZ_mul_apply]; ext i; fin_cases i <;> simp [proj_xy]
+    rw [key, key, key]
+    clear_value c s
+    generalize R.toEuclideanLin X = x at h3 ⊢
+    generalize R.toEuclideanLin Y = y at h3 ⊢
+    generalize R.toEuclideanLin Z = z at h3 ⊢
+    have e : cross2 (!₂[c * y 0 - s * y 1, s * y 0 + c * y 1] - !₂[c * x 0 - s * x 1,
+        s * x 0 + c * x 1]) (!₂[c * z 0 - s * z 1, s * z 0 + c * z 1] - !₂[c * x 0 - s * x 1,
+        s * x 0 + c * x 1]) = (c ^ 2 + s ^ 2) * cross2 (proj_xy y - proj_xy x)
+          (proj_xy z - proj_xy x) := by
+      simp [cross2, proj_xy]; ring
+    rw [e, hcs, one_mul]; exact h3
+  · simp only [hc1, hc2]
+    rcases h4 with (hZX | hZY) | ⟨heq, hcr⟩
+    · have hG : Continuous fun ε : ℝ =>
+          Real.sin ε * (cross2 a (proj_xy (R.toEuclideanLin Z)) / na) +
+            Real.cos ε * (R.toEuclideanLin Z) 2 -
+          (Real.sin ε * (cross2 a (proj_xy (R.toEuclideanLin X)) / na) +
+            Real.cos ε * (R.toEuclideanLin X) 2) := by fun_prop
+      have h0 : (fun ε : ℝ =>
+          Real.sin ε * (cross2 a (proj_xy (R.toEuclideanLin Z)) / na) +
+            Real.cos ε * (R.toEuclideanLin Z) 2 -
+          (Real.sin ε * (cross2 a (proj_xy (R.toEuclideanLin X)) / na) +
+            Real.cos ε * (R.toEuclideanLin X) 2)) 0 < 0 := by
+        simp only [Real.sin_zero, Real.cos_zero, zero_mul, one_mul, zero_add]; linarith
+      filter_upwards [(hG.continuousAt.eventually (gt_mem_nhds h0)).filter_mono
+        nhdsWithin_le_nhds] with ε hε
+      left; linarith
+    · have hG : Continuous fun ε : ℝ =>
+          Real.sin ε * (cross2 a (proj_xy (R.toEuclideanLin Z)) / na) +
+            Real.cos ε * (R.toEuclideanLin Z) 2 -
+          (Real.sin ε * (cross2 a (proj_xy (R.toEuclideanLin Y)) / na) +
+            Real.cos ε * (R.toEuclideanLin Y) 2) := by fun_prop
+      have h0 : (fun ε : ℝ =>
+          Real.sin ε * (cross2 a (proj_xy (R.toEuclideanLin Z)) / na) +
+            Real.cos ε * (R.toEuclideanLin Z) 2 -
+          (Real.sin ε * (cross2 a (proj_xy (R.toEuclideanLin Y)) / na) +
+            Real.cos ε * (R.toEuclideanLin Y) 2)) 0 < 0 := by
+        simp only [Real.sin_zero, Real.cos_zero, zero_mul, one_mul, zero_add]; linarith
+      filter_upwards [(hG.continuousAt.eventually (gt_mem_nhds h0)).filter_mono
+        nhdsWithin_le_nhds] with ε hε
+      right; linarith
+    · filter_upwards [Ioo_mem_nhdsGT Real.pi_pos] with ε hε
+      left
+      have hs : 0 < Real.sin ε := Real.sin_pos_of_pos_of_lt_pi hε.1 hε.2
+      rw [cross2_sub_right] at hcr
+      have : Real.sin ε * ((cross2 a (proj_xy (R.toEuclideanLin Z)) -
+          cross2 a (proj_xy (R.toEuclideanLin X))) / na) < 0 :=
+        mul_neg_of_pos_of_neg hs (div_neg_of_neg_of_pos hcr hna0)
+      rw [heq]
+      have e : Real.sin ε * ((cross2 a (proj_xy (R.toEuclideanLin Z)) -
+          cross2 a (proj_xy (R.toEuclideanLin X))) / na) =
+          Real.sin ε * (cross2 a (proj_xy (R.toEuclideanLin Z)) / na) -
+          Real.sin ε * (cross2 a (proj_xy (R.toEuclideanLin X)) / na) := by ring
+      linarith
 
 /-- **Theorem 7.7 (translation prisms).**  `K = T + [0, w]` for a triangle
 `T = ABC` and `w` not parallel to its plane.  If `w` is not perpendicular to
