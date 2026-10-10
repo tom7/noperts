@@ -1,5 +1,5 @@
 // model_test.cc: Tests of the rational model (model.h): double and rational
-// coordinates agree, and the vertices have the 5-fold symmetry about z.
+// coordinates agree, and the vertices are strictly inside the unit sphere.
 
 #include "model.h"
 
@@ -16,10 +16,6 @@
 #include "yocto-math.h"
 
 using vec3 = yocto::vec<double, 3>;
-
-// Vertex SEEDS * k + s is seed s rotated by 2 pi k / 5.
-static constexpr int SEEDS = NUM_VERTICES / 5;
-static_assert(SEEDS * 5 == NUM_VERTICES);
 
 // Double and rational coordinates agree to within floating-point precision.
 static void TestDoubleRationalAgreement() {
@@ -39,33 +35,15 @@ static void TestDoubleRationalAgreement() {
   Print("[PASS] TestDoubleRationalAgreement\n");
 }
 
-// The 5-fold rotation about z maps orbit k to orbit k + 1, preserving z and
-// the cylindrical radius (to within the model's rounding).
-static void TestC5Symmetry() {
-  Print("[RUN] TestC5Symmetry\n");
-  constexpr double angle = 2.0 * std::numbers::pi / 5.0;
-  const double c = std::cos(angle), s = std::sin(angle);
-  double max_rot_err = 0.0;
-  for (int k = 0; k < 5; k++) {
-    for (int seed = 0; seed < SEEDS; seed++) {
-      vec3 cur = Vertex(SEEDS * k + seed);
-      vec3 next = Vertex(SEEDS * ((k + 1) % 5) + seed);
-      vec3 rotated = {c * cur.x - s * cur.y, s * cur.x + c * cur.y, cur.z};
-      max_rot_err = std::max(max_rot_err, (double)yocto::length(rotated - next));
-      CHECK_LT(std::abs(cur.z - next.z), 1e-15);
-      CHECK_LT(std::abs(std::hypot(cur.x, cur.y) - std::hypot(next.x, next.y)), 1e-14);
-    }
-  }
-  Print("  Max C5 rotation error: {}\n", max_rot_err);
-  CHECK_LT(max_rot_err, 1e-14);
-
-  // Every vertex is strictly inside the unit sphere (Lean's GoodPoly invariant).
+// Every vertex is strictly inside the unit sphere (Lean's GoodPoly invariant).
+static void TestInsideUnitSphere() {
+  Print("[RUN] TestInsideUnitSphere\n");
   for (int v = 0; v < NUM_VERTICES; v++) {
     double norm = yocto::length(Vertex(v));
     CHECK_LT(norm, 1.0);
     CHECK_GT(norm, 0.0);
   }
-  Print("[PASS] TestC5Symmetry\n");
+  Print("[PASS] TestInsideUnitSphere\n");
 }
 
 // VertexQ returns a stable reference (singleton table).
@@ -79,7 +57,7 @@ int main(int argc, char **argv) {
   ANSI::Init();
   Print("=== Model tests ({} vertices) ===\n", NUM_VERTICES);
   TestDoubleRationalAgreement();
-  TestC5Symmetry();
+  TestInsideUnitSphere();
   TestSingleton();
   Print("=== All model tests passed ===\n");
   return 0;

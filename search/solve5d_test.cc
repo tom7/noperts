@@ -50,7 +50,7 @@ static void VerifySubtree(const tubeatlas5d::TubeAtlas &atlas, const Job &job,
               inner.push_back(c.inner);
               weights.push_back(c.weight);
             }
-            CHECK(exact5d::Valid(cert5d::ExactMixedBox(pool, triples, inner, weights, tri, box, job.chart)))
+            CHECK(exact5d::Valid(cert5d::ExactMixedBox(pool, triples, inner, weights, tri, box, job.chart, atlas.Root(job.t))))
                 << "mixture leaf " << r.path;
           } else if constexpr (std::is_same_v<T, rows5d::CertLeaf>) {
             contacts5d::PoolParams params;
@@ -58,7 +58,7 @@ static void VerifySubtree(const tubeatlas5d::TubeAtlas &atlas, const Job &job,
             const auto pool = contacts5d::BuildContactPool(geom5d::ToDouble(tri), params);
             CHECK(l.triple < (int)pool.triples.size());
             const cert5d::Single s{.triple = l.triple, .inner = l.inner};
-            CHECK(exact5d::Valid(cert5d::ExactGlobalBox(pool, s, tri, box, job.chart)))
+            CHECK(exact5d::Valid(cert5d::ExactGlobalBox(pool, s, tri, box, job.chart, atlas.Root(job.t))))
                 << "certificate leaf " << r.path;
           }
         },

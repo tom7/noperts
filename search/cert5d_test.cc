@@ -17,12 +17,13 @@
 
 using exact5d::Q;
 
-static std::vector<exact5d::TriangleQ> CodeTriangles() {
+static std::vector<exact5d::TriangleQ> CodeTriangles(std::vector<int> *roots) {
   rapidjson::Document doc;
   doc.Parse(Util::ReadFile("codebdd.json").c_str());
   CHECK(!doc.HasParseError());
   std::vector<exact5d::TriangleQ> out;
   for (const auto &code : doc["codes"].GetArray()) {
+    const int root = code.HasMember("root") ? code["root"].GetInt() : 0;
     for (const auto &t : code["triangles"].GetArray()) {
       exact5d::TriangleQ tri;
       for (int i = 0; i < 3; i++) {
@@ -30,6 +31,7 @@ static std::vector<exact5d::TriangleQ> CodeTriangles() {
                   Q(std::string_view(t[i]["z"].GetString()))};
       }
       out.push_back(tri);
+      roots->push_back(root);
     }
   }
   return out;
@@ -46,12 +48,15 @@ static geom5d::BoxQ SmallBox(std::mt19937_64 &rng, int chart, int k) {
 }
 
 int main() {
-  const auto tris = CodeTriangles();
+  std::vector<int> roots;
+  const auto tris = CodeTriangles(&roots);
   std::mt19937_64 rng(11);
   int evaluated = 0, positive = 0, valid = 0;
   for (int n = 0; n < 40; n++) {
     const int chart = rng() % 3;
-    exact5d::TriangleQ tq = tris[rng() % tris.size()];
+    const size_t ti = rng() % tris.size();
+    exact5d::TriangleQ tq = tris[ti];
+    const int root = roots[ti];
     std::string path;
     for (int d = 0; d < 6; d++) path += (char)('0' + rng() % 4);
     tq = geom5d::SplitTrianglePath(tq, path);
@@ -65,7 +70,7 @@ int main() {
     if (s.triple < 0) continue;
     evaluated++;
 
-    const exact5d::GlobalBox g = cert5d::ExactGlobalBox(pool, s, tq, bq, chart);
+    const exact5d::GlobalBox g = cert5d::ExactGlobalBox(pool, s, tq, bq, chart, root);
     CHECK(exact5d::Admissible(g));
     // The double Bernstein bound mirrors the exact one.
     const double lower_d =
@@ -104,7 +109,9 @@ int main() {
   int mixed_tried = 0, single_ok = 0, mixed_ok = 0, mixed_valid = 0;
   for (int n = 0; n < 40; n++) {
     const int chart = rng() % 3;
-    exact5d::TriangleQ tq = tris[rng() % tris.size()];
+    const size_t ti = rng() % tris.size();
+    exact5d::TriangleQ tq = tris[ti];
+    const int root = roots[ti];
     std::string path;
     for (int d = 0; d < 4; d++) path += (char)('0' + rng() % 4);
     tq = geom5d::SplitTrianglePath(tq, path);
@@ -127,7 +134,7 @@ int main() {
         sum = sum + w;
       }
       CHECK(sum == BigRat(1));
-      const exact5d::MixedBox mb = cert5d::ExactMixedBox(pool, m.triples, m.inner, weights, tq, bq, chart);
+      const exact5d::MixedBox mb = cert5d::ExactMixedBox(pool, m.triples, m.inner, weights, tq, bq, chart, root);
       const bool v = exact5d::Valid(mb);
       CHECK(v) << "mixture margin " << m.margin << " but exact invalid (slack "
                << exact5d::DisplacementSlack(mb).ToDouble() << ")";

@@ -1,6 +1,5 @@
 // capcert_septopert: the cap certificate for the Septopert (the 7-vertex C3v
-// solid, septopert_model.txt) at its mirror normal, after capcert.cc (the
-// deltoidal hexecontahedron's caps; this is its u0 case). Near the mirror
+// solid, septopert_model.txt) at its mirror normal. Near the mirror
 // normal x the identity's first-order cage degenerates and the mirror tie
 // H_u Q (Q = H_x, -Q the mirror) approaches the identity, so the poses (view
 // u = x + mu e a, Cayley rotation w) are blown up in weighted coordinates
@@ -1034,7 +1033,7 @@ int main(int argc, char **argv) {
   printf("frame %.17g %.17g %.17g  %.17g %.17g %.17g  %.17g %.17g %.17g\n", st.pd.x[0], st.pd.x[1], st.pd.x[2],
          st.pd.e1[0], st.pd.e1[1], st.pd.e1[2], st.pd.e2[0], st.pd.e2[1], st.pd.e2[2]);
   {
-    // The exact frame (each coordinate a + b sqrt5 + c s + d s sqrt5, s = sin 72): dh_caps.py.
+    // The exact frame (each coordinate a + b sqrt5 + c s + d s sqrt5, s = sin 72), as in the caps file written by septopert_rebuild.sh.
     std::string kf = "kframe";
     for (const V3<KNum> *v : {&st.pk.x, &st.pk.e1, &st.pk.e2})
       for (int a = 0; a < 3; a++)

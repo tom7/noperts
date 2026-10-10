@@ -18,7 +18,7 @@ int main() {
   const geom5d::BoxQ root = geom5d::RootBox(0);
   const geom5d::BoxQ b = NodeBox(root, "0b2e");
   CHECK(b.lo[0] == BigRat(0) && b.hi[0] == BigRat(1));                    // x upper half
-  CHECK(b.lo[2] == BigRat(-1, 3) && b.hi[2] == BigRat(0));                // z lower half
+  CHECK(b.lo[2] == BigRat(-1) && b.hi[2] == BigRat(0));                // z lower half
   // Cut steps: a letter and an eighths digit ('4' is written as a box step).
   CHECK(CutStep(0, false, 3) == "A3" && CutStep(2, true, 7) == "F7" && CutStep(1, true, 4) == "d");
   CHECK(ViewPath("A31D52") == "12");

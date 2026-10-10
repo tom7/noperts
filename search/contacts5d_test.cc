@@ -20,12 +20,13 @@
 using namespace contacts5d;
 using exact5d::Q;
 
-static std::vector<exact5d::TriangleQ> CodeTriangles() {
+static std::vector<exact5d::TriangleQ> CodeTriangles(std::vector<int> *roots) {
   rapidjson::Document doc;
   doc.Parse(Util::ReadFile("codebdd.json").c_str());
   CHECK(!doc.HasParseError());
   std::vector<exact5d::TriangleQ> out;
   for (const auto &code : doc["codes"].GetArray()) {
+    const int root = code.HasMember("root") ? code["root"].GetInt() : 0;
     for (const auto &t : code["triangles"].GetArray()) {
       exact5d::TriangleQ tri;
       for (int i = 0; i < 3; i++) {
@@ -33,6 +34,7 @@ static std::vector<exact5d::TriangleQ> CodeTriangles() {
                   Q(std::string_view(t[i]["z"].GetString()))};
       }
       out.push_back(tri);
+      roots->push_back(root);
     }
   }
   return out;
@@ -129,11 +131,13 @@ static void TestEdges() {
 }
 
 static void TestPools() {
-  const auto tris = CodeTriangles();
+  std::vector<int> roots;
+  const auto tris = CodeTriangles(&roots);
   std::mt19937_64 rng(5);
   int pools = 0, triples_checked = 0;
   for (int n = 0; n < 12; n++) {
-    exact5d::TriangleQ tq = tris[rng() % tris.size()];
+    const size_t ti = rng() % tris.size();
+    exact5d::TriangleQ tq = tris[ti];
     std::string path;
     const int depth = rng() % 8;
     for (int d = 0; d < depth; d++) path += (char)('0' + rng() % 4);
@@ -170,6 +174,7 @@ static void TestPools() {
       exact5d::GlobalBox box;
       box.interval = geom5d::ToInterval(geom5d::RootBox(0));
       box.triangle = tq;
+      box.root = roots[ti];
       box.certificate = ToAxisCertificate(pool, tr, tq);
       box.inner_index = box.certificate.index;
       CHECK(exact5d::Admissible(box)) << "pool " << n << " triple " << t;

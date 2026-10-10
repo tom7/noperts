@@ -150,7 +150,7 @@ static BigRat RoundDyadic(const BigRat &v, int bits) {
   return BigRat(BigInt::DivFloor(num, den), scale);
 }
 
-// A model file (e.g. snub_model.py's): the vertices to high precision in C5
+// A model file (e.g. septopert_model.txt): the vertices to high precision in C5
 // order (vertex S k + s is seed s rotated by 2 pi k / 5), and the faces that
 // are not triangles. Lines: "name N", "seeds S", "vertex i x y z",
 // "face i j k ...", and others (ignored).
@@ -1455,7 +1455,7 @@ int main(int argc, char **argv) {
   bool export_only = false;
   std::string output_path = "codebdd.json";
   std::string export_prefix = "model_vertices";
-  std::string model_file = "snub_model.txt";
+  std::string model_file = "septopert_model.txt";
   std::string texture_base;
   int texture_width = 8192;
   bool model_faces = false;
