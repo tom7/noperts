@@ -180,13 +180,154 @@ theorem isRupert_pair_f0 {a a' b b' c c' : ℝ³} (h : IsOctahedron a a' b b' c 
   · right; left; exact l₁
 
 
+theorem finset_perm_bca {a a' b b' c c' : ℝ³} :
+    ({b, b', c, c', a, a'} : Finset ℝ³) = {a, a', b, b', c, c'} := by
+  ext z; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
+
+theorem finset_perm_cab {a a' b b' c c' : ℝ³} :
+    ({c, c', a, a', b, b'} : Finset ℝ³) = {a, a', b, b', c, c'} := by
+  ext z; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
+
+/-- **§9.6 with `U = A` for the pair `C`**: all three pairs, and the count of
+lateral edges parallel to the normal. -/
+theorem isRupert_octahedron_parallel_core {a a' b b' c c' : ℝ³}
+    (h : IsOctahedron a a' b b' c c') (G : GaleData a a' b b' c c')
+    (hκa : 0 < galeD G.l G.m a a') (hκb : 0 < galeD G.l G.m b b')
+    (hκc : 0 < galeD G.l G.m c c')
+    (hf : G.l a + G.l b + G.l c = 0 ∧ G.m a + G.m b + G.m c = 0)
+    (hU : 0 < galeD G.l G.m c a) : IsRupert {a, a', b, b', c, c'} := by
+  obtain ⟨F⟩ := h.nonempty_octFacets
+  have hl := G.hl; have hm := G.hm
+  have anti := galeD_anti G.l G.m
+  have self := galeD_self G.l G.m
+  obtain ⟨-, -, a3⟩ := pole_signs F (hl.galeD hm a) (self a) hκa.ne'
+  obtain ⟨-, -, e3⟩ := pole_signs F.perm₁₂ (hl.galeD hm b).perm₁₂ (self b) hκb.ne'
+  have hac : galeD G.l G.m a c < 0 := by rw [anti]; linarith
+  have hab : 0 < galeD G.l G.m a b := pos_of_mul_neg_neg (by linarith) hac
+  have hbc : 0 < galeD G.l G.m b c := by
+    have : galeD G.l G.m b a < 0 := by rw [anti]; linarith
+    exact pos_of_mul_neg_neg (by linarith) this
+  have hbc0 : galeD G.l G.m b c ≠ 0 := hbc.ne'
+  -- the three pairs
+  have PC := isRupert_pair_f0 h G hκa hκb hκc hf hU
+  have PA := isRupert_pair_f0 h.perm₁₂.perm₂₃ G.perm₁₂.perm₂₃ hκb hκc hκa
+    ⟨by simp only [GaleData.perm₁₂, GaleData.perm₂₃]; linarith [hf.1],
+     by simp only [GaleData.perm₁₂, GaleData.perm₂₃]; linarith [hf.2]⟩ hab
+  have PB := isRupert_pair_f0 h.perm₂₃.perm₁₂ G.perm₂₃.perm₁₂ hκc hκa hκb
+    ⟨by simp only [GaleData.perm₁₂, GaleData.perm₂₃]; linarith [hf.1],
+     by simp only [GaleData.perm₁₂, GaleData.perm₂₃]; linarith [hf.2]⟩ hbc
+  rw [finset_perm_bca] at PA
+  rw [finset_perm_cab] at PB
+  -- the geometry of the parallel faces
+  have hnd := F.nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨haa', hab', hab'', hac', hac''⟩, ⟨ha'b, ha'b', ha'c, ha'c'⟩, ⟨hbb', hbc', hbc''⟩,
+    ⟨hb'c, hb'c'⟩, hcc', -⟩ := hnd
+  set n := cross (b - a) (c - a) with hn_def
+  have hn : n ≠ 0 :=
+    cross_ne_zero_of_affine F.abc'.hN hab' F.abc'.hP F.abc'.hQ
+      (F.abc'.neg c (by simp) (Ne.symm hac') (Ne.symm hbc') hcc')
+  have hn' : cross (b' - a') (c' - a') ≠ 0 :=
+    cross_ne_zero_of_affine F.a'b'c.hN ha'b' F.a'b'c.hP F.a'b'c.hQ
+      (F.a'b'c.neg c' (by simp) (Ne.symm ha'c') (Ne.symm hb'c') (Ne.symm hcc'))
+  set T := F.a'b'c'
+  obtain ⟨T1, T2⟩ := facet_eq_of_f0 hl hm hf.1 hf.2 hbc0 T.hN T.hP T.hQ T.hR
+  have hTN : T.N ≠ 0 := by
+    intro h0
+    have := T.hN a a'
+    rw [h0, inner_zero_left, T.hP] at this
+    linarith [T.neg a (by simp) haa' hab'' hac'']
+  have topPerp : ∀ d : ℝ³, ⟪d, b' - a'⟫ = 0 → ⟪d, c' - a'⟫ = 0 →
+      ⟪d, b - a⟫ = 0 ∧ ⟪d, c - a⟫ = 0 := by
+    intro d h1 h2
+    have n1 : ⟪T.N, b' - a'⟫ = 0 := by rw [← T.hN, T.hP, T.hQ, sub_zero]
+    have n2 : ⟪T.N, c' - a'⟫ = 0 := by rw [← T.hN, T.hP, T.hR, sub_zero]
+    exact ⟨perp_transfer hn' hTN n1 n2 h1 h2 (by rw [← T.hN, T1, T2]; ring),
+      perp_transfer hn' hTN n1 n2 h1 h2 (by rw [← T.hN, T1]; ring)⟩
+  have toN : ∀ d : ℝ³, ⟪d, b - a⟫ = 0 ∧ ⟪d, c - a⟫ = 0 → ∃ s : ℝ, d = s • n :=
+    fun d hd => eq_smul_cross_of_perp hn hd.1 hd.2
+  -- the three lateral edges
+  have X12 : ∀ s t : ℝ, c - a' = s • n → c' - b = t • n → False := by
+    intro s t h1 h2
+    have hs : s ≠ 0 := by
+      rintro rfl; rw [zero_smul, sub_eq_zero] at h1; exact ha'c h1.symm
+    exact two_parallel_contra F.a'bc.hN F.a'bc.hP F.a'bc.hR F.a'bc.hQ
+      (F.a'bc.neg c' (by simp) (Ne.symm ha'c') (Ne.symm hbc'') (Ne.symm hcc')) h1 hs h2
+  have X23 : ∀ s t : ℝ, c' - b = s • n → a - b' = t • n → False := by
+    intro s t h1 h2
+    have ht : t ≠ 0 := by
+      rintro rfl; rw [zero_smul, sub_eq_zero] at h2; exact hab'' h2
+    have h1' : b - c' = (-s) • n := by rw [neg_smul, ← h1]; abel
+    exact two_parallel_contra F.ab'c'.hN F.ab'c'.hQ F.ab'c'.hP F.ab'c'.hR
+      (F.ab'c'.neg b (by simp) (Ne.symm hab') hbb' hbc'') h2 ht h1'
+  have X13 : ∀ s t : ℝ, c - a' = s • n → a - b' = t • n → False := by
+    intro s t h1 h2
+    have hs : s ≠ 0 := by
+      rintro rfl; rw [zero_smul, sub_eq_zero] at h1; exact ha'c h1.symm
+    exact two_parallel_contra F.a'b'c.hN F.a'b'c.hP F.a'b'c.hR F.a'b'c.hQ
+      (F.a'b'c.neg a (by simp) haa' hab'' hac') h1 hs h2
+  -- each pair contributes one of them
+  have hC : IsRupert {a, a', b, b', c, c'} ∨ (∃ s : ℝ, c - a' = s • n) ∨
+      (∃ s : ℝ, c' - b = s • n) := by
+    rcases PC with R | ⟨h1, h2⟩ | ⟨h1, h2⟩
+    · exact Or.inl R
+    · refine Or.inr (Or.inl (toN _ ⟨?_, h2⟩))
+      simp only [inner_sub_left, inner_sub_right] at h1 ⊢; linarith
+    · refine Or.inr (Or.inr (toN _ (topPerp _ h1 ?_)))
+      simp only [inner_sub_left, inner_sub_right] at h1 h2 ⊢; linarith
+  have hA : IsRupert {a, a', b, b', c, c'} ∨ (∃ s : ℝ, a - b' = s • n) ∨
+      (∃ s : ℝ, c - a' = s • n) := by
+    rcases PA with R | ⟨h1, h2⟩ | ⟨h1, h2⟩
+    · exact Or.inl R
+    · refine Or.inr (Or.inl (toN _ ⟨?_, ?_⟩))
+      · simp only [inner_sub_left, inner_sub_right] at h1 h2 ⊢; linarith
+      · simp only [inner_sub_left, inner_sub_right] at h1 h2 ⊢; linarith
+    · obtain ⟨s, hs⟩ := toN (a' - c) (topPerp (a' - c) (by
+        simp only [inner_sub_left, inner_sub_right] at h1 h2 ⊢; linarith) (by
+        simp only [inner_sub_left, inner_sub_right] at h1 h2 ⊢; linarith))
+      exact Or.inr (Or.inr ⟨-s, by rw [neg_smul, ← hs]; abel⟩)
+  have hB : IsRupert {a, a', b, b', c, c'} ∨ (∃ s : ℝ, c' - b = s • n) ∨
+      (∃ s : ℝ, a - b' = s • n) := by
+    rcases PB with R | ⟨h1, h2⟩ | ⟨h1, h2⟩
+    · exact Or.inl R
+    · obtain ⟨s, hs⟩ := toN (b - c') ⟨by
+        simp only [inner_sub_left, inner_sub_right] at h1 h2 ⊢; linarith, h1⟩
+      exact Or.inr (Or.inl ⟨-s, by rw [neg_smul, ← hs]; abel⟩)
+    · obtain ⟨s, hs⟩ := toN (b' - a) (topPerp (b' - a) h2 (by
+        simp only [inner_sub_left, inner_sub_right] at h1 h2 ⊢; linarith))
+      exact Or.inr (Or.inr ⟨-s, by rw [neg_smul, ← hs]; abel⟩)
+  rcases hC with R | ⟨s1, x1⟩ | ⟨s2, x2⟩
+  · exact R
+  · rcases hA with R | ⟨s3, x3⟩ | -
+    · exact R
+    · exact (X13 s1 s3 x1 x3).elim
+    · rcases hB with R | ⟨s2, x2⟩ | ⟨s3, x3⟩
+      · exact R
+      · exact (X12 s1 s2 x1 x2).elim
+      · exact (X13 s1 s3 x1 x3).elim
+  · rcases hA with R | ⟨s3, x3⟩ | ⟨s1, x1⟩
+    · exact R
+    · exact (X23 s2 s3 x2 x3).elim
+    · exact (X12 s1 s2 x1 x2).elim
+
 /-- **Theorem 9.9, case `f = 0`** (§9.6). -/
 theorem isRupert_octahedron_parallel {a a' b b' c c' : ℝ³} (h : IsOctahedron a a' b b' c c')
     (G : GaleData a a' b b' c c') (hκa : 0 < galeD G.l G.m a a')
     (hκb : 0 < galeD G.l G.m b b') (hκc : 0 < galeD G.l G.m c c')
     (hf : G.l a + G.l b + G.l c = 0 ∧ G.m a + G.m b + G.m c = 0) :
     IsRupert {a, a', b, b', c, c'} := by
-  sorry
+  obtain ⟨F⟩ := h.nonempty_octFacets
+  obtain ⟨-, -, c3⟩ := pole_signs F.perm₂₃.perm₁₂ (G.hl.galeD G.hm c).perm₂₃.perm₁₂
+    (galeD_self _ _ c) hκc.ne'
+  rcases lt_or_gt_of_ne (show galeD G.l G.m c a ≠ 0 by intro h0; rw [h0, zero_mul] at c3; linarith)
+    with hU | hU
+  · have hb : 0 < galeD G.l G.m c b := pos_of_mul_neg_neg (by rwa [mul_comm] at c3) hU
+    refine isRupert_congr_set (isRupert_octahedron_parallel_core h.perm₁₂ G.perm₁₂ hκb hκa hκc
+      ⟨?_, ?_⟩ hb) finset_perm_bac
+    · simp only [GaleData.perm₁₂]; linarith [hf.1]
+    · simp only [GaleData.perm₁₂]; linarith [hf.2]
+  · exact isRupert_octahedron_parallel_core h G hκa hκb hκc hf hU
 
 end SmallRupert
 
