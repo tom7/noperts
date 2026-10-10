@@ -47,6 +47,21 @@ the generic-view density statements of Coplanar.lean (`dense_generic_...`,
   - Theorem 7.7: `isRupert_translationPrism` (Prism; every translation prism
     except right prisms over non-obtuse triangles);
   - Corollary 7.8: `isRupert_octahedron_conditionA` (Octahedron).
+- L8, tilting off degenerate views (all proved, standard axioms only):
+  - frame-free Lemma 1 with local certificates `isRupert_of_tiltCert`;
+    Lemma 8.0 instance-wise in determinant form `eventually_tilted_cycle`
+    (`D0 ≥ 0`, `D0 = 0 ⇒ D1 > 0` per test, via `eventually_pos_affine`);
+    Corollary 8.0′ `isRupert_of_tilted_unimodal` (Tilt);
+  - Theorem 8.1: `isRupert_rightPrism` (every right prism over a strictly
+    convex polygon, explicit motion, no L7), and with 7.7
+    `isRupert_translationPrism_all` (every triangular translation prism)
+    (RightPrism);
+  - Theorem 8.2: `isRupert_cappedSquarePyramid_all` (every T5) (L8Shapes);
+  - Theorem 8.3: `isRupert_T4` (every T4, structure `IsT4`) (L8T4);
+  - Theorem 8.4: `isRupert_T3` (every T3, structure `IsT3`) (L8T3).
+  The facet structures `IsT4`, `IsT3` (and the T5 exceptional case) were
+  checked non-vacuous on exact rational examples (hull facets computed in
+  Python), not in Lean.
 
 ## Modules and dependency order
 
@@ -70,6 +85,11 @@ the generic-view density statements of Coplanar.lean (`dense_generic_...`,
 | `Unimodal` | Lemma 7.1, Thms 7.3, 7.5 | `exists_forces_of_not_firstOrderInward`, `isRupert_of_genericUnimodalView` |
 | `Octahedron` | Cor. 7.8 | `isRupert_octahedron_conditionA` |
 | `Prism` | Thm 7.7 | `isRupert_translationPrism` |
+| `Tilt` | Lemma 8.0, Cor. 8.0′ | `isRupert_of_tiltCert`, `eventually_tilted_cycle`, `isRupert_of_tilted_unimodal` |
+| `RightPrism` | Thm 8.1 | `isRupert_rightPrism`, `isRupert_translationPrism_all` |
+| `L8Shapes` | Thm 8.2, tools | `cmb`, `det3_cmb`, `NWS4`, `isRupert_cappedSquarePyramid_all` |
+| `L8T4` | Thm 8.3 | `IsT4`, `isRupert_T4` |
+| `L8T3` | Thm 8.4 | `IsT3`, `isRupert_T3` |
 
 Order of work: Basic → FirstOrder → DoubleNormal → Coplanar (L2 + plane form
 of L5) → `isRupert_bipyramid` → FewVertices → general L5 → Bicap → SixVertices.

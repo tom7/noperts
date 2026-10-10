@@ -6,12 +6,15 @@ public import SmallRupert.Octahedron
 @[expose] public section
 
 /-!
-# Theorems 8.2–8.4: every T5, T4 and T3 is Rupert
+# Theorem 8.2 (every T5) and tools for Theorems 8.3, 8.4
 
-Each shape is given by its facet structure (as for T5 in `SixVertices.lean`).
-The views are tilted off a direction parallel to an edge or face
-(Lemma 8.0); one of two or three predicted 4-cycles (or a 5-cycle) is robustly
-unimodal, and Corollary 8.0′ (with Theorem 7.5) gives the passage.
+Shapes are given by their facet structures and put in a normal form in an
+affine frame `cmb f₁ f₂ f₃`; every determinant test of Lemma 8.0 is then a
+coefficient determinant (`det3_cmb`) times the frame's orientation.  The views
+are tilted off a direction parallel to an edge or face; one of two or three
+predicted cycles is robustly unimodal (`NWS4` for 4-cycles), and
+Corollary 8.0′ (with Theorem 7.5) gives the passage.  T4 and T3 are in
+`L8T4.lean` and `L8T3.lean`.
 -/
 
 namespace SmallRupert
