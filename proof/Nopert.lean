@@ -32,7 +32,7 @@ def IsNopert (V : Finset ℝ³) : Prop :=
 
 /-- A set of points in `ℝ³` is not contained in a plane iff its convex hull has
 nonempty interior.  (So `IsNopert V` says the same as the conditions on `vs`
-in `ExistsNonRupertPolyhedronSize7` and `NotExistsNonRupertPolyhedronBelowSize7`,
+in `ExistsNonRupertPolyhedronSizeSeven` and `NotExistsNonRupertPolyhedronBelowSizeSeven`,
 apart from the number of points.) -/
 theorem not_coplanar_iff_interior_convexHull_nonempty (S : Set ℝ³) :
     ¬ Coplanar ℝ S ↔ (interior (convexHull ℝ S)).Nonempty := by
