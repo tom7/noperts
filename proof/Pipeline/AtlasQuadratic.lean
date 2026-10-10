@@ -16,6 +16,8 @@ the executable interval checker.
 
 namespace Noperts.Pipeline.AtlasQuadratic
 
+variable [SolidModel]
+
 open Noperts.Checker
 open Noperts.BalancedSupport
 open Noperts.Pipeline.CayleyAtlas
@@ -24,6 +26,7 @@ open Noperts.Atlas.CayleyEdgeCertificate
 def chartSign (chart : ChartIndex) (c : Fin 3) : ℚ :=
   if chart.val = 0 ∨ chart.val = c.val + 1 then 1 else -1
 
+omit [SolidModel] in
 theorem chartMatrix_apply (chart : ChartIndex) (i j : Fin 3) :
     chartMatrix chart i j =
       if i ≠ j then 0 else (chartSign chart i : ℝ) := by
@@ -33,6 +36,7 @@ theorem chartMatrix_apply (chart : ChartIndex) (i j : Fin 3) :
     split_ifs <;> norm_num
   · simp [chartMatrix, hij]
 
+omit [SolidModel] in
 theorem chartMatrix_eq_diagonal (chart : ChartIndex) :
     chartMatrix chart = Matrix.diagonal fun i => (chartSign chart i : ℝ) := by
   ext i j
@@ -48,6 +52,7 @@ def numeratorQuadratic (chart : ChartIndex) :
   fun i j => RatQuadratic3.scale (chartSign chart i)
     (Noperts.Atlas.CayleyEdgeCertificate.numeratorQuadratic i j)
 
+omit [SolidModel] in
 theorem eval_numeratorQuadratic (chart : ChartIndex) (i j : Fin 3)
     (x y z : ℝ) :
     (numeratorQuadratic chart i j).evalReal x y z =

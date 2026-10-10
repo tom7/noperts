@@ -21,6 +21,8 @@ and `z < 0` as `-2*z-1`.
 
 namespace Noperts.Pipeline.PackedLocalViewTree
 
+variable [SolidModel]
+
 open Noperts.Atlas
 
 open AtlasProjectiveView AtlasProjectiveLocalCertificate
@@ -68,14 +70,9 @@ def readRat : Decoder Rat := do
   let denominator ← readNat
   pure ((((zigzagInt numerator : Int) : Rat) / (denominator : Rat)) : Rat)
 
-/-- The C++ pipeline numbers the Septopert's 7 vertices in `Septopert.vertexQ`
-order (codebdd/exact5d); the model has 9 rotation-major slots
-(`vertexQIndex`). C++ vertex `n` is read as the first slot holding it. -/
-def vertexSlotTable : Array VertexIndex :=
-  ((List.range 7).map fun n =>
-    ((List.finRange 9).find? fun s => (vertexQIndex s).val = n).getD 0).toArray
-
-def vertexSlot (n : Nat) : VertexIndex := vertexSlotTable[n]?.getD 0
+/-- The model slot of the C++ checker's vertex number `n` (for the
+Septopert, the first of the slots holding that vertex). -/
+def vertexSlot (n : Nat) : VertexIndex := SolidModel.vertexSlot n
 
 def readVertices : Decoder (Fin 3 → VertexIndex) := do
   let a ← readNat

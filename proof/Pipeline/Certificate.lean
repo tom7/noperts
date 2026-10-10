@@ -16,6 +16,8 @@ rational coordinates to the exact C3-symmetric vertices.
 
 namespace Noperts.Pipeline.Certificate
 
+variable [SolidModel]
+
 abbrev Contact :=
   Noperts.BalancedSupport.RationalCertificate.Contact VertexIndex
 abbrev Box :=
@@ -25,7 +27,7 @@ def Box.Valid (box : Box) : Prop :=
   Noperts.BalancedSupport.RationalCertificate.Box.Valid
     rationalPolyhedron box
 
-instance (box : Box) : Decidable box.Valid := by
+@[reducible] instance (box : Box) : Decidable box.Valid := by
   unfold Box.Valid
   infer_instance
 

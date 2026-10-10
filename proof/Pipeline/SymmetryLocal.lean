@@ -6,26 +6,26 @@ public import Atlas.LocalRigidity
 @[expose] public section
 
 /-!
-# Local rigidity at the three symmetry strata
+# Local rigidity at the symmetry strata
 
-This specializes the reindexed balanced-support theorem to the exact
-C3 action (`symmetry g = Septopert.c3SO3 g`, the cyclic coordinate
-permutations).  It is the mathematical layer needed to cover the
+This specializes the reindexed balanced-support theorem to the model's exact
+cyclic symmetry (`symmetry g = symmetryMatrix g` as an element of SO(3)).  It is the mathematical layer needed to cover the
 Euler-pole equality strata, where equal shadows need not have equal Euler
 coordinates.
 -/
 
 namespace Noperts.Pipeline
 
-variable {P : C5Model}
+variable [SolidModel] {P : C5Model}
 
 open scoped Matrix RealInnerProductSpace
 open Noperts.BalancedSupport Real
 
 noncomputable def symmetry (g : OrbitIndex) : SO3 :=
-  Septopert.c3SO3 g
+  ⟨symmetryMatrix g, symmetryMatrix_mem g⟩
 
-@[simp] theorem symmetry_zero : symmetry 0 = 1 := rfl
+@[simp] theorem symmetry_zero : symmetry 0 = 1 :=
+  Subtype.ext symmetryMatrix_zero
 
 @[simp] theorem so3CLM_symmetry_zero :
     Noperts.Atlas.so3CLM (symmetry 0) = 1 := by
@@ -34,7 +34,8 @@ noncomputable def symmetry (g : OrbitIndex) : SO3 :=
 
 def symmetryAction (g : OrbitIndex) (i : VertexIndex) : VertexIndex :=
   vertexIndex
-    ⟨((orbitIndex i).val + g.val) % 3, Nat.mod_lt _ (by omega)⟩
+    ⟨((orbitIndex i).val + g.val) % SolidModel.orbitCount,
+      Nat.mod_lt _ SolidModel.orbitCount_pos⟩
     (seedIndex i)
 
 noncomputable def relativeRotationAtSymmetry
@@ -51,7 +52,7 @@ noncomputable def equalityPose (outer : SO3) (g : OrbitIndex) : MatrixPose where
     relativeRotationAtSymmetry (equalityPose outer g) g = 1 := by
   simp [relativeRotationAtSymmetry, relativeRotation, equalityPose, ← mul_assoc]
 
-/-- Matrix distance to a C3 equality stratum is bounded by the direct
+/-- Matrix distance to a symmetry equality stratum is bounded by the direct
 inner-versus-symmetry mismatch.  This formulation is independent of Euler
 coordinates and therefore remains well behaved at their poles. -/
 theorem norm_relativeRotationAtSymmetry_one_le_inner_mismatch
@@ -96,7 +97,7 @@ theorem norm_relativeRotationAtSymmetry_one_le_inner_mismatch
     _ = _ := by simp [q, equalityPose]
 
 /-- Division-free local-angle test from a certified matrix mismatch to one
-of the exact C3 equality strata. -/
+of the exact symmetry equality strata. -/
 theorem AxisAngle.ratio_of_inner_mismatch_bound
     (p : MatrixPose) (g : OrbitIndex)
     (a : AxisAngle
@@ -114,15 +115,15 @@ theorem AxisAngle.ratio_of_inner_mismatch_bound
 theorem symmetry_apply_exactVertex (g : OrbitIndex) (i : VertexIndex) :
     Noperts.Atlas.so3CLM (symmetry g) (P.vertex i) =
       P.vertex (symmetryAction g i) := by
-  change (Septopert.c3Mat g).toEuclideanLin (P.vertex i) = _
+  change (symmetryMatrix g).toEuclideanLin (P.vertex i) = _
   rw [rotate_vertex']
   congr 2
   apply Fin.ext
-  simp only [Fin.val_add]
-  omega
+  simp only [Fin.val_add, symmetryAction, orbitIndex_vertexIndex]
+  rw [Nat.add_comm]
 
 /-- The inner vertex `i` tracks the outer vertex obtained by the exact
-C3 action after the chosen symmetry is removed. -/
+symmetry action after the chosen symmetry is removed. -/
 theorem outer_relative_at_symmetry_apply
     (p : MatrixPose) (g : OrbitIndex) (i : VertexIndex) :
     outerProjectionLinear p
@@ -175,7 +176,7 @@ theorem not_rupertPose_of_symmetry_axisAngle_certificate
   · simpa [C5Model.polyhedron] using hdominates
 
 /-- Four perturbation-stable balanced triples eliminate the unknown local
-rotation axis around any of the three symmetry strata. -/
+rotation axis around any of the symmetry strata. -/
 theorem not_rupertPose_of_axisFree_symmetry_certificates_of_cover_perturbation
     {J κ : Type} [Fintype J] [Nonempty J] [Fintype κ] [Nonempty κ]
     (p : MatrixPose) (g : OrbitIndex)

@@ -16,7 +16,7 @@ is supplied separately by the atlas-local Cayley mismatch certificate.
 
 namespace Noperts.Pipeline.AtlasProjectiveLocalRigidity
 
-variable {P : C5Model}
+variable [SolidModel] {P : C5Model}
 
 open scoped RealInnerProductSpace
 open Noperts.BalancedSupport
@@ -26,6 +26,7 @@ open AtlasEdgeCertificate AtlasProjectiveView
 abbrev EdgeTriple := Fin 3 → ℝ³
 abbrev VertexTriple := Fin 3 → ℝ³
 
+omit [SolidModel] in
 theorem det2_rotM_eq_view (p : AtlasPose ℝ) (a b : ℝ³) :
     det2 (rotM p.θ p.φ a) (rotM p.θ p.φ b) =
       ∑ c, viewVector p c * cross3 a b c := by
@@ -36,6 +37,7 @@ theorem det2_rotM_eq_view (p : AtlasPose ℝ) (a b : ℝ³) :
   linear_combination
     (Real.cos p.φ * (a 0 * b 1 - a 1 * b 0)) * htrig
 
+omit [SolidModel] in
 theorem det2_smul_same (c : ℝ) (a b : ℝ²) :
     det2 (c • a) (c • b) = c ^ 2 * det2 a b := by
   simp [det2]
@@ -55,6 +57,7 @@ noncomputable def weight (root : Fin 8) (p : AtlasPose ℝ)
   linearValue (AtlasProjectiveView.normalizedView root p)
     (cross3 (edge 0) (edge 1))]
 
+omit [SolidModel] in
 theorem det2_direction (root : Fin 8) (p : AtlasPose ℝ) (a b : ℝ³)
     (hscale : viewScale root p ≠ 0) :
     det2 (direction root p a) (direction root p b) =
@@ -67,6 +70,7 @@ theorem det2_direction (root : Fin 8) (p : AtlasPose ℝ) (a b : ℝ³)
     Fin.sum_univ_three]
   field_simp [hscale]
 
+omit [SolidModel] in
 theorem weight_eq_viewScale_mul_determinantWeights
     (root : Fin 8) (p : AtlasPose ℝ) (edge : EdgeTriple)
     (hscale : viewScale root p ≠ 0) (i : Fin 3) :
@@ -77,6 +81,7 @@ theorem weight_eq_viewScale_mul_determinantWeights
     rw [det2_direction root p _ _ hscale] <;>
     field_simp [hscale]
 
+omit [SolidModel] in
 theorem weight_balance (root : Fin 8) (p : AtlasPose ℝ)
     (edge : EdgeTriple) (hscale : viewScale root p ≠ 0) :
     ∑ i, weight root p edge i • direction root p (edge i) = 0 := by
@@ -86,6 +91,7 @@ theorem weight_balance (root : Fin 8) (p : AtlasPose ℝ)
     root p edge hscale, mul_smul]
   rw [← Finset.smul_sum, hdet, smul_zero]
 
+omit [SolidModel] in
 theorem inner_direction_outerProjection_eq_support
     (root : Fin 8) (p : AtlasPose ℝ) (chart : CayleyAtlas.ChartIndex)
     (offset : ℝ²) (edge delta : ℝ³)
@@ -105,6 +111,7 @@ theorem inner_direction_outerProjection_eq_support
     Fin.sum_univ_three]
   field_simp [hscale]
 
+omit [SolidModel] in
 theorem outerLift_direction (root : Fin 8) (p : AtlasPose ℝ)
     (chart : CayleyAtlas.ChartIndex) (offset : ℝ²) (edge : ℝ³)
     (hscale : viewScale root p ≠ 0) :
@@ -135,6 +142,7 @@ noncomputable def variationVector (root : Fin 8) (p : AtlasPose ℝ)
       (cross3 (WithLp.toLp 2
         (AtlasProjectiveView.normalizedView root p)) (edge i))
 
+omit [SolidModel] in
 theorem firstVariationVector_eq (root : Fin 8) (p : AtlasPose ℝ)
     (chart : CayleyAtlas.ChartIndex) (offset : ℝ²) (edge : EdgeTriple)
     (vertex : VertexTriple) (hscale : viewScale root p ≠ 0) :

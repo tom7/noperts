@@ -16,7 +16,7 @@ before interval evaluation, preserving cancellations between contacts.
 
 namespace Noperts.Pipeline.AtlasEdgeCertificate
 
-variable {P : C5Model}
+variable [SolidModel] {P : C5Model}
 
 open scoped RealInnerProductSpace
 open Noperts.Checker
@@ -130,7 +130,7 @@ def Box.center (box : Box) : AtlasPose ℚ where
 def Box.centerInFour (box : Box) : Prop :=
   box.center.θ ∈ Set.Icc (-4) 4 ∧ box.center.φ ∈ Set.Icc (-4) 4
 
-instance (box : Box) : Decidable box.centerInFour := by
+@[reducible] instance (box : Box) : Decidable box.centerInFour := by
   unfold Box.centerInFour
   infer_instance
 
@@ -143,7 +143,7 @@ structure Box.Valid (box : Box) : Prop where
     box.dBound * box.totalDefect + box.displacementError ≤
       box.displacementBall.center - box.displacementBall.radius
 
-instance (box : Box) : Decidable box.Valid :=
+@[reducible] instance (box : Box) : Decidable box.Valid :=
   decidable_of_iff _ (Box.valid_iff box).symm
 
 /-! ## Sound interval evaluation of the rational model -/
@@ -152,6 +152,7 @@ noncomputable def viewVector (p : AtlasPose ℝ) : ℝ³ :=
   WithLp.toLp 2 ![Real.cos p.θ * Real.sin p.φ,
     Real.sin p.θ * Real.sin p.φ, Real.cos p.φ]
 
+omit [SolidModel] in
 /-- Scalar-triple-product form of a projected clockwise edge normal. -/
 theorem inner_quarterTurn_rotM_eq (p : AtlasPose ℝ) (a b : ℝ³) :
     ⟪quarterTurn (rotM p.θ p.φ a), rotM p.θ p.φ b⟫ =
@@ -170,6 +171,7 @@ noncomputable def Box.approxDelta (box : Box)
     (i : Fin (box.edgePred + 1)) (k : VertexIndex) : ℝ³ :=
   toR3 (box.deltaQ i k)
 
+omit [SolidModel] in
 theorem toR3_crossQ (a b : Fin 3 → ℚ) :
     toR3 (crossQ a b) = cross3 (toR3 a) (toR3 b) := by
   ext c
@@ -221,6 +223,7 @@ theorem Box.eval_totalQuadratic_pose (box : Box) (c : Fin 3)
     AtlasQuadratic.approxDisplacementVector] using
     box.eval_totalQuadratic c p.x p.y p.z
 
+omit [SolidModel] in
 theorem dotConstBalls_holds {a : Fin 3 → ℚ} {b : Fin 3 → RatBall}
     {v : Fin 3 → ℝ} (hb : ∀ c, (b c).Holds (v c)) :
     (dotConstBalls a b).Holds
@@ -321,6 +324,7 @@ noncomputable def Box.actualTotalVector (box : Box)
 noncomputable def Box.actualDisplacement (box : Box)
     (p : AtlasPose ℝ) : ℝ := ⟪viewVector p, box.actualTotalVector (P := P) p⟫
 
+omit [SolidModel] in
 theorem chart_numerator_apply_eq_denom_smul (chart : ChartIndex)
     (x y z : ℝ) (v : ℝ³) :
     (chartMatrix chart * cayleyNumeratorMatrix x y z).toEuclideanLin v =
@@ -368,6 +372,7 @@ theorem norm_rationalVertex_le (i : VertexIndex) :
   have hκ : (0 : ℝ) ≤ RationalApprox.κ := by norm_num [RationalApprox.κ]
   linarith
 
+omit [SolidModel] in
 theorem norm_chartMatrix_apply (chart : ChartIndex) (v : ℝ³) :
     ‖(chartMatrix chart).toEuclideanLin v‖ = ‖v‖ := by
   have hs (i : Fin 3) : ((AtlasQuadratic.chartSign chart i : ℚ) : ℝ) ^ 2 = 1 := by
@@ -434,6 +439,7 @@ theorem Box.exactEdge_sub_approx_norm_le (box : Box)
       (P.approximation.approx (box.outerIndex (box.next i)))
     _ = 2 * RationalApprox.κ := by ring
 
+omit [SolidModel] in
 private theorem abs_le_endpointAbsBound {lo hi : ℚ} {x : ℝ}
     (hx : x ∈ Set.Icc (lo : ℝ) (hi : ℝ)) :
     |x| ≤ (endpointAbsBound lo hi : ℚ) := by
@@ -470,6 +476,7 @@ theorem Box.denom_le_dBound (box : Box) {p : AtlasPose ℝ}
   simp only [cayleyDenom, sq_abs] at ⊢ hxsq hysq hzsq
   linarith
 
+omit [SolidModel] in
 theorem norm_chartNumerator_apply_le (chart : ChartIndex)
     (x y z : ℝ) (v : ℝ³) :
     ‖(chartMatrix chart * cayleyNumeratorMatrix x y z).toEuclideanLin v‖ ≤
@@ -626,6 +633,7 @@ theorem Box.exactTotal_sub_approx_norm_le_error (box : Box)
     _ = (box.edgePred + 1 : ℝ) * 10 * (box.dBound : ℝ) *
         RationalApprox.κ := by simp; ring
 
+omit [SolidModel] in
 theorem viewVector_norm (p : AtlasPose ℝ) : ‖viewVector p‖ = 1 := by
   simpa [viewVector, vecX] using Bounding.vecX_norm_one p.θ p.φ
 

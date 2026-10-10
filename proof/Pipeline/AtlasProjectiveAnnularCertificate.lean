@@ -36,7 +36,7 @@ namespace Noperts.Pipeline.AtlasProjectiveLocalCertificate
 
 open Noperts.Atlas
 
-variable {P : C5Model}
+variable [SolidModel] {P : C5Model}
 
 open scoped BigOperators Real RealInnerProductSpace
 open Noperts.BalancedSupport
@@ -88,7 +88,7 @@ structure TwoZoneBox.Valid (box : TwoZoneBox) : Prop where
       box.r0 ^ 2 * (1 - (1 / 4) * box.outerBox.r ^ 2) *
         (box.outerBox.c ^ 2 * (box.outerBox.certificate j).B ^ 2)
 
-instance (box : TwoZoneBox) : Decidable box.Valid :=
+@[reducible] instance (box : TwoZoneBox) : Decidable box.Valid :=
   decidable_of_iff _ (TwoZoneBox.valid_iff box).symm
 
 /-- A valid two-zone annular certificate rules out every translated pose in its
@@ -1104,6 +1104,7 @@ def Box.withCoreAxis (box : Box) (coreAxis : AxisCertificate) (c_core : ℚ) (r_
   δ := box.δ
   r := r_min
 
+omit [SolidModel] in
 theorem bessel_two_poly (u w a : ℝ³) (hortho : inner ℝ u w = (0 : ℝ)) :
     let A := inner ℝ u u
     let B := inner ℝ w w
@@ -1124,6 +1125,7 @@ theorem bessel_two_poly (u w a : ℝ³) (hortho : inner ℝ u w = (0 : ℝ)) :
   rw [hortho, hsym, hua, hwa]
   ring
 
+omit [SolidModel] in
 theorem inner_covers_of_ortho_projection
     (u v : ℝ³) (c1 c2 : ℝ)
     (lam : ℝ) (w : ℝ³)
@@ -1179,6 +1181,7 @@ theorem inner_covers_of_ortho_projection
   have hlam_x : lam * c1 ≤ lam * x := by nlinarith
   linarith
 
+omit [SolidModel] in
 theorem inner_toR3 (u w : Fin 3 → ℚ) :
     inner ℝ (toR3 u) (toR3 w) = ((∑ i, u i * w i : ℚ) : ℝ) := by
   rw [EuclideanSpace.inner_eq_star_dotProduct]
@@ -1189,21 +1192,25 @@ theorem inner_toR3 (u w : Fin 3 → ℚ) :
   push_cast
   ring
 
+omit [SolidModel] in
 theorem inner_self_toR3 (u : Fin 3 → ℚ) :
     inner ℝ (toR3 u) (toR3 u) = ((∑ i, (u i)^2 : ℚ) : ℝ) := by
   have := inner_toR3 u u
   simpa [sq] using this
 
+omit [SolidModel] in
 theorem toR3_smul (s : ℚ) (v : Fin 3 → ℚ) :
     toR3 (s • v) = (s : ℝ) • toR3 v := by
   ext i
   dsimp [toR3]
   simp
 
+omit [SolidModel] in
 theorem inner_toR3_smul (a : ℝ³) (s : ℚ) (v : Fin 3 → ℚ) :
     inner ℝ a (toR3 (s • v)) = (s : ℝ) * inner ℝ a (toR3 v) := by
   rw [toR3_smul, real_inner_smul_right]
 
+omit [SolidModel] in
 theorem decomposed_axis_cover_zero (a : ℝ³) (c_cone box_c box_δ : ℚ) (v : Fin 3 → ℚ)
     (hc_cone_pos : 0 < c_cone)
     (hc_sum_pos : 0 < box_c + box_δ)
@@ -1240,7 +1247,7 @@ def Box.decomposedBarycentricValid (box : Box) (c_cone : ℚ) : Prop :=
   LocalCertificate.tetraDetQ (box.decomposedCenter c_cone) ≠ 0 ∧
     ∀ k j, 0 ≤ box.decomposedBarycentric c_cone k j
 
-instance (box : Box) (c_cone : ℚ) : Decidable (box.decomposedBarycentricValid c_cone) := by
+@[reducible] instance (box : Box) (c_cone : ℚ) : Decidable (box.decomposedBarycentricValid c_cone) := by
   unfold Box.decomposedBarycentricValid
   infer_instance
 
@@ -1505,7 +1512,7 @@ structure Box.DecomposedViewValid
   hineq : (∑ i, (w i) ^ 2) * ((∑ i, (box.approxNormalizedCenter 0 i) ^ 2) - c_cone^2) ≤
     (∑ i, (box.approxNormalizedCenter 0 i) ^ 2) * (lam * c_cone - c_core)^2
 
-instance (box : Box) (coreAxis : AxisCertificate)
+@[reducible] instance (box : Box) (coreAxis : AxisCertificate)
     (defect0 : Fin 3 → ℚ) (D0 : ℚ)
     (r_min : ℚ) (c_cone : ℚ) (c_core : ℚ)
     (lam : ℚ) (w : Fin 3 → ℚ) :
@@ -1732,7 +1739,7 @@ def Box.FlockAxisValid (box : Box) (axis : AxisCertificate) (c_core r_min : ℚ)
   (∀ i, 0 ≤ (box.withCoreAxis axis c_core r_min).weightLower 0 i) ∧
   (∃ i, 0 < (box.withCoreAxis axis c_core r_min).weightLower 0 i)
 
-instance (box : Box) (axis : AxisCertificate) (c_core r_min : ℚ) :
+@[reducible] instance (box : Box) (axis : AxisCertificate) (c_core r_min : ℚ) :
     Decidable (box.FlockAxisValid axis c_core r_min) := by
   unfold Box.FlockAxisValid
   infer_instance
@@ -1775,7 +1782,7 @@ structure Box.FlockDecomposedViewValid
   c_core_nonneg : 0 ≤ c_core
   tree_valid : tree.Valid (box.quadBasis c_cone) (box.flockCenters flockAxes c_core r_min) c_core S_max T_max = true
 
-instance (box : Box) (flockAxes : Array AxisCertificate)
+@[reducible] instance (box : Box) (flockAxes : Array AxisCertificate)
     (defect0 : Fin 3 → ℚ) (D0 : ℚ)
     (r_min : ℚ) (c_cone : ℚ) (c_core : ℚ)
     (S_max T_max : ℚ)

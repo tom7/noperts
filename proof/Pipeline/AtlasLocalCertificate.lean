@@ -16,7 +16,7 @@ each entry of the denominator-cleared mismatch is a rational quadratic.
 
 namespace Noperts.Pipeline.AtlasLocalCertificate
 
-variable {P : C5Model}
+variable [SolidModel] {P : C5Model}
 
 open scoped Matrix RealInnerProductSpace
 open Noperts.Checker
@@ -40,6 +40,7 @@ def outerPose {R : Type} [Zero R] (p : AtlasPose R) : Pose R where
   φ₂ := p.φ
   α := 0
 
+omit [SolidModel] in
 @[simp] theorem outerPose_toReal (p : AtlasPose ℚ) :
     (outerPose p).toReal = outerPose p.toReal := by
   cases p
@@ -113,7 +114,7 @@ structure Box.Valid (box : Box) : Prop where
   mismatch_bound : box.mismatchRadius ≤ box.r
   angle_bound : box.r ^ 2 * (1 + box.c ^ 2) ≤ 4 * box.c ^ 2
 
-instance (box : Box) : Decidable box.Valid :=
+@[reducible] instance (box : Box) : Decidable box.Valid :=
   decidable_of_iff _ (Box.valid_iff box).symm
 
 theorem Box.outerPose_mem_eulerRealInterval (box : Box) {p : AtlasPose ℝ}
@@ -158,6 +159,7 @@ theorem Box.eval_mismatchQuadratic (box : Box) (p : AtlasPose ℝ)
   push_cast
   ring
 
+omit [SolidModel] in
 private theorem abs_le_center_abs_add_radius {b : RatBall} {x : ℝ}
     (h : b.Holds x) : |x| ≤ (|b.center| + b.radius : ℚ) := by
   calc
@@ -313,6 +315,7 @@ theorem Box.rationalRelativeMismatchCLM_eq_inv_smul (box : Box)
   ext v i
   simp [Matrix.toLpLin_apply]
 
+omit [SolidModel] in
 theorem cayleyDenom_one_le (x y z : ℝ) : 1 ≤ cayleyDenom x y z := by
   unfold cayleyDenom
   nlinarith [sq_nonneg x, sq_nonneg y, sq_nonneg z]

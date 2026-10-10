@@ -18,7 +18,7 @@ namespace Noperts.Pipeline.AtlasProjectiveLocalViewTree
 
 open Noperts.Atlas
 
-variable {P : C5Model}
+variable [SolidModel] {P : C5Model}
 
 open AtlasProjectiveView AtlasProjectiveLocalCertificate
 open Noperts.Atlas.ProjectiveView
@@ -42,7 +42,7 @@ abbrev Tube.mismatchRadius (tube : Tube) : ℚ := tube.shell.mismatchRadius
 
 def Tube.Valid (tube : Tube) : Prop := tube.mismatchRadius ≤ tube.r
 
-instance (tube : Tube) : Decidable tube.Valid := by
+@[reducible] instance (tube : Tube) : Decidable tube.Valid := by
   unfold Tube.Valid
   infer_instance
 
@@ -87,7 +87,7 @@ def Row.rLower : Row → ℚ
   | .certificate _ box | .decomposed _ box .. | .flockDecomposed _ box .. => box.r
   | .empty .. => -1
 
-instance : Inhabited Row where
+@[reducible] instance : Inhabited Row where
   default := .split 0 (fun _ => 0) 0 upperWedgeTriangle 0
 
 def Row.ValidAt (symmetryIndex : OrbitIndex) (r : ℚ)
@@ -108,7 +108,7 @@ def Row.ValidAt (symmetryIndex : OrbitIndex) (r : ℚ)
       box.FlockDecomposedViewValid flockAxes defect0 D0 r_min c_cone c_core S_max T_max tree
   | .empty .. => r ≤ -1
 
-instance (symmetryIndex : OrbitIndex) (r : ℚ) (get : ℕ → Row)
+@[reducible] instance (symmetryIndex : OrbitIndex) (r : ℚ) (get : ℕ → Row)
     (size : ℕ) (row : Row) :
     Decidable (row.ValidAt symmetryIndex r get size) := by
   cases row <;> simp only [Row.ValidAt] <;> infer_instance
@@ -118,7 +118,7 @@ def RowsValidAt (symmetryIndex : OrbitIndex) (r : ℚ)
   ∀ i : Fin size,
     (get i).id = i ∧ (get i).ValidAt symmetryIndex r get size
 
-instance (symmetryIndex : OrbitIndex) (r : ℚ) (get : ℕ → Row)
+@[reducible] instance (symmetryIndex : OrbitIndex) (r : ℚ) (get : ℕ → Row)
     (size : ℕ) : Decidable (RowsValidAt symmetryIndex r get size) := by
   unfold RowsValidAt
   infer_instance
@@ -132,7 +132,7 @@ def RowsValidRangeAt (symmetryIndex : OrbitIndex) (r : ℚ)
     (get (start + j.val)).id = start + j.val ∧
       (get (start + j.val)).ValidAt symmetryIndex r get size
 
-instance (symmetryIndex : OrbitIndex) (r : ℚ) (get : ℕ → Row)
+@[reducible] instance (symmetryIndex : OrbitIndex) (r : ℚ) (get : ℕ → Row)
     (size start count : ℕ) :
     Decidable (RowsValidRangeAt symmetryIndex r get size start count) := by
   unfold RowsValidRangeAt
@@ -276,8 +276,8 @@ theorem valid_imp_not_rupert_ix (symmetryIndex : OrbitIndex) (r : ℚ)
           have := RationalApprox.sqrtℚUp16_nonneg (tube.shell.identityRadiusSqUpper)
           linarith
         · have h1 := RationalApprox.sqrtℚUp16_nonneg (tube.shell.mismatchFrobeniusSqUpper)
-          have h2 : (0 : ℚ) ≤ LocalCertificate.symmetryError := by
-            norm_num [LocalCertificate.symmetryError, RationalApprox.κ, RationalApprox.κℚ]
+          have h2 : (0 : ℚ) ≤ LocalCertificate.symmetryError :=
+            LocalCertificate.symmetryError_nonneg
           linarith
       have hr : tube.r ≤ -1 := htubeRadius
       have hv : tube.mismatchRadius ≤ tube.r := htube
@@ -311,7 +311,7 @@ def Table.Valid (table : Table) : Prop :=
     (table.get 0).root = table.root ∧
     (table.get 0).triangle = table.triangle
 
-instance (table : Table) : Decidable table.Valid := by
+@[reducible] instance (table : Table) : Decidable table.Valid := by
   unfold Table.Valid
   infer_instance
 
@@ -402,6 +402,7 @@ def splitPath (triangle : AtlasProjectiveView.Triangle ℚ) :
   | [] => triangle
   | c :: cs => splitPath (Noperts.Atlas.ProjectiveView.split triangle c) cs
 
+omit [SolidModel] in
 /-- A sub-triangle of the four-way split lies inside its parent. -/
 theorem inTriangle_of_split {triangle : AtlasProjectiveView.Triangle ℚ} {child : Fin 4}
     {point : Fin 3 → ℝ}
@@ -438,6 +439,7 @@ theorem inTriangle_of_split {triangle : AtlasProjectiveView.Triangle ℚ} {child
       simp [affinePoint, Fin.sum_univ_three, Noperts.Atlas.ProjectiveView.split, toReal]
       ring
 
+omit [SolidModel] in
 theorem inTriangle_of_splitPath {triangle : AtlasProjectiveView.Triangle ℚ}
     {path : List (Fin 4)} {point : Fin 3 → ℝ}
     (h : InTriangle (toReal (splitPath triangle path)) point) :

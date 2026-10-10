@@ -18,7 +18,7 @@ namespace Noperts.Pipeline.AtlasProjectiveMixedGlobalCertificate
 
 open Noperts.Atlas
 
-variable {P : C5Model}
+variable [SolidModel] {P : C5Model}
 
 open Noperts.Checker Noperts.BalancedSupport
 open CayleyAtlas AtlasProjectiveView
@@ -87,9 +87,10 @@ def Box.bernsteinDisplacementLowerFast (box : Box) : ℚ :=
     (box.componentBox 0).viewQuadratics (box.componentBox 1).viewQuadratics
     (box.componentBox 2).viewQuadratics (box.componentBox 3).viewQuadratics
 
+omit [SolidModel] in
 @[csimp] theorem Box.bernsteinDisplacementLower_eq_fast :
     @Box.bernsteinDisplacementLower = @Box.bernsteinDisplacementLowerFast := by
-  funext box
+  funext _ box
   unfold Box.bernsteinDisplacementLowerFast mixedBernsteinOf Box.bernsteinDisplacementLower
     Box.viewControlQuadratic
   simp only [AtlasProjectiveGlobalCertificate.Box.controlOf_viewQuadratics]
@@ -111,7 +112,7 @@ structure Box.Valid (box : Box) : Prop where
   displacement : box.displacementError ≤
     box.bernsteinDisplacementLower - box.dBound * box.weightedDefectUpper
 
-instance (box : Box) : Decidable box.Valid :=
+@[reducible] instance (box : Box) : Decidable box.Valid :=
   decidable_of_iff _ (Box.valid_iff box).symm
 
 theorem Box.bernsteinDisplacementLower_le_control (box : Box)
@@ -163,6 +164,7 @@ theorem Box.viewControl_sum (box : Box) (viewWeight : Fin 3 → ℝ)
       rw [(box.componentBox k).viewControl_sum viewWeight hsum x y z]
       simp [Box.componentBox]
 
+omit [SolidModel] in
 private theorem lower_le_weighted_sum {ι : Type} [Fintype ι]
     (weight value : ι → ℝ) (lower : ℝ)
     (hweight : ∀ i, 0 ≤ weight i) (hsum : ∑ i, weight i = 1)
@@ -176,6 +178,7 @@ private theorem lower_le_weighted_sum {ι : Type} [Fintype ι]
       intro i _
       exact mul_le_mul_of_nonneg_left (hlower i) (hweight i)
 
+omit [SolidModel] in
 private theorem weighted_sum_le_upper {ι : Type} [Fintype ι]
     (weight value : ι → ℝ) (upper : ℝ)
     (hweight : ∀ i, 0 ≤ weight i) (hsum : ∑ i, weight i = 1)

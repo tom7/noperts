@@ -15,6 +15,8 @@ against every vertex (`Box.ViewValid`; the identity tube has few rows).
 
 namespace Noperts.Pipeline.SparseLocalViewTree
 
+variable [SolidModel]
+
 open AtlasProjectiveLocalViewTree
 
 def SparseRowValidAt (symmetryIndex : OrbitIndex) (r : ℚ)
@@ -35,7 +37,7 @@ def SparseRowValidAt (symmetryIndex : OrbitIndex) (r : ℚ)
       box.FlockDecomposedViewValid flockAxes defect0 D0 r_min c_cone c_core S_max T_max tree
   | .empty .. => r ≤ -1
 
-instance (symmetryIndex : OrbitIndex) (r : ℚ) (get : ℕ → Row)
+@[reducible] instance (symmetryIndex : OrbitIndex) (r : ℚ) (get : ℕ → Row)
     (size : ℕ) (row : Row) :
     Decidable (SparseRowValidAt symmetryIndex r get size row) := by
   cases row <;> simp only [SparseRowValidAt] <;> infer_instance
@@ -45,7 +47,7 @@ def SparseRowsValidAt (symmetryIndex : OrbitIndex) (r : ℚ)
   ∀ i : Fin size,
     (get i).id = i ∧ SparseRowValidAt symmetryIndex r get size (get i)
 
-instance (symmetryIndex : OrbitIndex) (r : ℚ) (get : ℕ → Row)
+@[reducible] instance (symmetryIndex : OrbitIndex) (r : ℚ) (get : ℕ → Row)
     (size : ℕ) : Decidable (SparseRowsValidAt symmetryIndex r get size) := by
   unfold SparseRowsValidAt
   infer_instance
@@ -56,7 +58,7 @@ def SparseRowsValidRangeAt (symmetryIndex : OrbitIndex) (r : ℚ)
     (get (start + j.val)).id = start + j.val ∧
       SparseRowValidAt symmetryIndex r get size (get (start + j.val))
 
-instance (symmetryIndex : OrbitIndex) (r : ℚ) (get : ℕ → Row)
+@[reducible] instance (symmetryIndex : OrbitIndex) (r : ℚ) (get : ℕ → Row)
     (size start count : ℕ) :
     Decidable (SparseRowsValidRangeAt symmetryIndex r get size start count) := by
   unfold SparseRowsValidRangeAt
@@ -111,7 +113,7 @@ def SparseTableValid (table : Table) : Prop :=
     (table.get 0).root = table.root ∧
     (table.get 0).triangle = table.triangle
 
-instance (table : Table) : Decidable (SparseTableValid table) := by
+@[reducible] instance (table : Table) : Decidable (SparseTableValid table) := by
   unfold SparseTableValid
   infer_instance
 
@@ -127,6 +129,7 @@ computation, so the proof below reduces the parallel implementation to the
 same sparse row predicate used above.
 -/
 
+omit [SolidModel] in
 private theorem foldlAndFactor {n : ℕ} (p : Fin n → Bool) (init : Bool) :
     Fin.foldl n (fun acc i => acc && p i) init =
       (init && Fin.foldl n (fun acc i => acc && p i) true) := by
@@ -138,6 +141,7 @@ private theorem foldlAndFactor {n : ℕ} (p : Fin n → Bool) (init : Bool) :
       ih (fun i => p i.succ) (true && p 0)]
     simp [Bool.and_assoc]
 
+omit [SolidModel] in
 private theorem foldlAndEqTrueIff {n : ℕ} (p : Fin n → Bool) :
     Fin.foldl n (fun acc i => acc && p i) true = true ↔
       ∀ i, p i = true := by
@@ -148,6 +152,7 @@ private theorem foldlAndEqTrueIff {n : ℕ} (p : Fin n → Bool) :
     simp only [Bool.true_and, Bool.and_eq_true]
     rw [ih (fun i => p i.succ), Fin.forall_fin_succ]
 
+omit [SolidModel] in
 private theorem taskGetSpawn {α : Type} (fn : Unit → α)
     (priority : Task.Priority) :
     (Task.spawn fn priority).get = fn () := rfl

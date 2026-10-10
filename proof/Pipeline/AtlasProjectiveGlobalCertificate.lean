@@ -20,7 +20,7 @@ namespace Noperts.Pipeline.AtlasProjectiveGlobalCertificate
 
 open Noperts.Atlas
 
-variable {P : C5Model}
+variable [SolidModel] {P : C5Model}
 
 open Noperts.Checker Noperts.BalancedSupport
 open Noperts.Atlas.ProjectiveView
@@ -124,6 +124,7 @@ def Box.cornerDots (box : Box) (n : Array ℚ) : Array ℚ :=
 
 def vec3Array (v : VectorQ) : Array ℚ := #[v 0, v 1, v 2]
 
+omit [SolidModel] in
 theorem vec3Array_getD (v : VectorQ) (c : Fin 3) : (vec3Array v).getD c.val 0 = v c := by
   fin_cases c <;> simp [vec3Array]
 
@@ -175,9 +176,10 @@ theorem Box.contactDefectUpperFast_eq (box : Box) (i : Fin 3) :
   unfold Box.contactDefectUpperFast Box.contactDefectUpper
   simp only [Box.weightedSupportUpper_eq_of]
 
+omit [SolidModel] in
 @[csimp] theorem Box.contactDefectUpper_eq_fast :
     @Box.contactDefectUpper = @Box.contactDefectUpperFast := by
-  funext box i
+  funext _ box i
   exact (box.contactDefectUpperFast_eq i).symm
 
 def Box.weightedDefectUpper (box : Box) : ℚ :=
@@ -378,6 +380,7 @@ def Box.bernsteinWith (box : Box) (cq : Array RatQuadratic3) (wc : Array ℚ) : 
 def Box.bernsteinDisplacementLowerFast (box : Box) : ℚ :=
   box.bernsteinWith box.contactQuadraticTable box.weightCoefficientTable
 
+omit [SolidModel] in
 theorem midpoint_comm (a b : VectorQ) :
     Noperts.Atlas.ProjectiveView.midpoint a b =
       Noperts.Atlas.ProjectiveView.midpoint b a := by
@@ -394,9 +397,10 @@ theorem Box.bernsteinDisplacementLowerFast_eq (box : Box) :
     midpoint_comm (box.triangle 2) (box.triangle 0),
     midpoint_comm (box.triangle 2) (box.triangle 1)]
 
+omit [SolidModel] in
 @[csimp] theorem Box.bernsteinDisplacementLower_eq_fast :
     @Box.bernsteinDisplacementLower = @Box.bernsteinDisplacementLowerFast := by
-  funext box
+  funext _ box
   exact box.bernsteinDisplacementLowerFast_eq.symm
 
 /-- The six distinct view quadratics (corners, then midpoints 01, 02, 12),
@@ -532,9 +536,10 @@ def Box.adjustedDisplacementBallWith (box : Box) (cq : Array RatQuadratic3)
 def Box.adjustedDisplacementBallFast (box : Box) : RatBall :=
   box.adjustedDisplacementBallWith box.contactQuadraticTable box.weightCoefficientTable
 
+omit [SolidModel] in
 @[csimp] theorem Box.adjustedDisplacementBall_eq_fast :
     @Box.adjustedDisplacementBall = @Box.adjustedDisplacementBallFast := by
-  funext box
+  funext _ box
   unfold Box.adjustedDisplacementBallFast Box.adjustedDisplacementBallWith
     Box.adjustedDisplacementBall
   simp only [Box.coefficientBallWith_eq]
@@ -565,7 +570,8 @@ causing certificates in these critical regions to fail the displacement obligati
 (`displacementError ≤ certifiedDisplacementLower - dBound * defect`) and forcing deep
 subdivision or stalling as `DIFFICULT`.
 
-By using `tightVertexErrorQ = 6 / 10^16` (proved in `TightApproximation.vertex_close_tight`),
+By using the model's `tightVertexErrorQ` (`6 / 10^16` for the fivefold solids, 0 for the
+Septopert; `TightApproximation.vertex_close_tight`),
 `displacementError` drops to `300 * box.dBound * (6 / 10^16) ≈ 3.6e-13`. This reduces the
 error term by over 166,000×, recovering almost the entire physical clearance margin for
 search and certification.
@@ -599,7 +605,7 @@ structure Box.Admissible (box : Box) : Prop where
     box.supportUpper i (box.certificate.nonzeroWitness i) < 0
   ball_multiplier_nonneg : 0 ≤ box.ballMultiplier
 
-instance (box : Box) : Decidable box.Admissible :=
+@[reducible] instance (box : Box) : Decidable box.Admissible :=
   decidable_of_iff _ (Box.admissible_iff box).symm
 
 @[mk_iff]
@@ -607,21 +613,21 @@ structure Box.Valid (box : Box) : Prop extends Box.Admissible box where
   displacement : box.displacementError ≤
     box.certifiedDisplacementLower - box.dBound * box.weightedDefectUpper
 
-instance (box : Box) : Decidable box.Valid :=
+@[reducible] instance (box : Box) : Decidable box.Valid :=
   decidable_of_iff _ (Box.valid_iff box).symm
 
-instance (box : Box) : Coe box.Valid box.Admissible :=
+@[reducible] instance (box : Box) : Coe box.Valid box.Admissible :=
   ⟨Box.Valid.toAdmissible⟩
 
 @[simp] theorem Box.localShell_supportIndex (box : Box) (i : Fin 3) :
     box.certificate.supportIndex box.localShell i = box.certificate.index i := by
   unfold AxisCertificate.supportIndex Box.localShell symmetryAction
   have horbit :
-      (⟨((orbitIndex (box.certificate.index i)).val + (0 : Fin 3).val) % 3,
-        Nat.mod_lt _ (by omega)⟩ : OrbitIndex) =
+      (⟨((orbitIndex (box.certificate.index i)).val + (0 : OrbitIndex).val) %
+          SolidModel.orbitCount, Nat.mod_lt _ SolidModel.orbitCount_pos⟩ : OrbitIndex) =
         orbitIndex (box.certificate.index i) := by
     apply Fin.ext
-    simp
+    simp [Nat.mod_eq_of_lt (orbitIndex (box.certificate.index i)).isLt]
   rw [horbit]
   exact indexEquiv.symm_apply_apply (box.certificate.index i)
 
@@ -673,8 +679,9 @@ theorem Box.weightUpper_nonneg (box : Box) (h : box.Admissible) (i : Fin 3) :
   have hmin := min3_le (fun corner => box.localShell.weightAt 0 corner i) 0
   have hmax := le_max3 (fun corner => box.localShell.weightAt 0 corner i) 0
   have herr : 0 ≤ AtlasProjectiveLocalCertificate.supportError := by
-    norm_num [AtlasProjectiveLocalCertificate.supportError,
-      tightVertexErrorQ]
+    have := tightVertexErrorQ_nonneg
+    unfold AtlasProjectiveLocalCertificate.supportError
+    linarith
   have hnonneg := h.weight_nonneg i
   unfold Box.weightLower at hnonneg
   unfold Box.weightUpper
@@ -1054,6 +1061,7 @@ noncomputable def bilinearControl
   (linearValue (triangle i) a * linearValue (triangle j) b +
     linearValue (triangle j) a * linearValue (triangle i) b) / 2
 
+omit [SolidModel] in
 theorem bilinearControl_sum
     (triangle : Noperts.Atlas.ProjectiveView.Triangle ℝ)
     (weight : Fin 3 → ℝ)
@@ -1152,6 +1160,7 @@ theorem Box.viewControl_sum (box : Box) (weight : Fin 3 → ℝ)
       rw [box.viewControlValue_sum weight hsum x y z, hsum]
     _ = _ := by ring
 
+omit [SolidModel] in
 private theorem lower_le_weighted_sum {ι : Type} [Fintype ι]
     (weight value : ι → ℝ) (lower : ℝ)
     (hweight : ∀ i, 0 ≤ weight i) (hsum : ∑ i, weight i = 1)
@@ -1165,6 +1174,7 @@ private theorem lower_le_weighted_sum {ι : Type} [Fintype ι]
       intro i _
       exact mul_le_mul_of_nonneg_left (hlower i) (hweight i)
 
+omit [SolidModel] in
 private theorem weighted_sum_le_upper {ι : Type} [Fintype ι]
     (weight value : ι → ℝ) (upper : ℝ)
     (hweight : ∀ i, 0 ≤ weight i) (hsum : ∑ i, weight i = 1)
@@ -1196,6 +1206,7 @@ noncomputable def symmetricControl (left right : Fin 3 → ℝ)
     (a b : Fin 3) : ℝ :=
   (left a * right b + left b * right a) / 2
 
+omit [SolidModel] in
 theorem symmetricControl_sum (left right weight : Fin 3 → ℝ) :
     (∑ a, ∑ b, weight a * weight b *
       symmetricControl left right a b) =
@@ -1298,8 +1309,7 @@ theorem Box.exactWeight_mul_exactSupport_le_contactDefect
               (AtlasProjectiveLocalCertificate.supportError : ℝ) := by
         have herrorEq : 10 * (tightVertexErrorQ : ℝ) =
             (AtlasProjectiveLocalCertificate.supportError : ℝ) := by
-          norm_num [AtlasProjectiveLocalCertificate.supportError,
-            tightVertexErrorQ]
+          norm_num [AtlasProjectiveLocalCertificate.supportError]
         have herr :
             box.certificate.exactWeight (P := P) box.localShell p i -
               box.certificate.approxWeight
@@ -1518,6 +1528,7 @@ theorem Box.adjustedDisplacementBall_holds (box : Box)
     simp only [Box.adjustedDisplacementBall, Box.reconstructedDisplacement,
       value, n] <;> push_cast <;> ring
 
+omit [SolidModel] in
 private theorem abs_le_endpointAbsBound {lo hi : ℚ} {x : ℝ}
     (hx : x ∈ Set.Icc (lo : ℝ) (hi : ℝ)) :
     |x| ≤ (AtlasEdgeCertificate.endpointAbsBound lo hi : ℚ) := by
@@ -1660,14 +1671,14 @@ theorem Box.exactContact_sub_approx_norm_le (box : Box)
         ((cross3_norm_le _ _).trans (mul_le_mul
           (box.certificate.exactEdge_sub_approx_tight_norm_le i)
           (box.exactDisplacementVector_norm_le p i)
-          (norm_nonneg _) (by norm_num [tightVertexErrorQ])))
+          (norm_nonneg _) (by nlinarith [tightVertexErrorQ_real_nonneg])))
         ((cross3_norm_le _ _).trans (mul_le_mul
           (box.certificate.approxEdge_norm_le i)
           (box.exactDisplacement_sub_approx_norm_le p i)
-          (norm_nonneg _) (by norm_num [RationalApprox.κ, tightVertexErrorQ])))
+          (norm_nonneg _) (by norm_num [RationalApprox.κ] <;> nlinarith [tightVertexErrorQ_real_nonneg])))
     _ ≤ 10 * cayleyDenom p.x p.y p.z * (tightVertexErrorQ : ℝ) := by
       have hd := (cayleyDenom_pos p.x p.y p.z).le
-      have hk : 0 ≤ (tightVertexErrorQ : ℝ) := by norm_num [tightVertexErrorQ]
+      have hk : 0 ≤ (tightVertexErrorQ : ℝ) := tightVertexErrorQ_real_nonneg
       have hfactor : 4 + 4 * (1 + RationalApprox.κ) ≤ (10 : ℝ) := by
         norm_num [RationalApprox.κ]
       calc
@@ -1760,14 +1771,14 @@ theorem Box.weightedContact_error (box : Box)
           (box.certificate.exactWeight_sub_approx_tight_abs_le
             box.localShell hscale i)
           (box.exactContactValue_abs_le hscale i)
-          (abs_nonneg _) (by norm_num [tightVertexErrorQ]))
+          (abs_nonneg _) (by nlinarith [tightVertexErrorQ_real_nonneg]))
         (mul_le_mul
           (box.certificate.approxWeight_abs_le box.localShell hscale i)
           (box.contactValue_error hscale i)
-          (abs_nonneg _) (by norm_num [RationalApprox.κ, tightVertexErrorQ]))
+          (abs_nonneg _) (by norm_num [RationalApprox.κ] <;> nlinarith [tightVertexErrorQ_real_nonneg]))
     _ ≤ 100 * cayleyDenom p.x p.y p.z * (tightVertexErrorQ : ℝ) := by
       have hd := (cayleyDenom_pos p.x p.y p.z).le
-      have hk : 0 ≤ (tightVertexErrorQ : ℝ) := by norm_num [tightVertexErrorQ]
+      have hk : 0 ≤ (tightVertexErrorQ : ℝ) := tightVertexErrorQ_real_nonneg
       have hfactor : 40 + 10 * (4 + 10 * RationalApprox.κ) ≤ (100 : ℝ) := by
         norm_num [RationalApprox.κ]
       calc
@@ -1812,10 +1823,10 @@ theorem Box.clearedDisplacement_error (box : Box)
       simp
       ring
     _ ≤ 300 * (box.dBound : ℝ) * (tightVertexErrorQ : ℝ) := by
-      have hk : 0 ≤ (tightVertexErrorQ : ℝ) := by norm_num [tightVertexErrorQ]
+      have hk : 0 ≤ (tightVertexErrorQ : ℝ) := tightVertexErrorQ_real_nonneg
       nlinarith [box.denom_le_dBound hp]
     _ = (box.displacementError : ℝ) := by
-      simp [Box.displacementError, tightVertexErrorQ]
+      simp [Box.displacementError]
 
 noncomputable def Box.actualDisplacementVector (box : Box)
     (p : AtlasPose ℝ) (i : Fin 3) : ℝ³ :=

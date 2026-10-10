@@ -16,8 +16,6 @@ no Euler singularities.
 
 namespace Noperts.Pipeline
 
-variable {P : C5Model}
-
 open scoped Matrix
 open CayleyAtlas
 

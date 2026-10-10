@@ -15,7 +15,7 @@ no reference to a nearby symmetry or to an axis-angle decomposition.
 
 namespace Noperts.Pipeline.AtlasProjectiveGlobalRigidity
 
-variable {P : C5Model}
+variable [SolidModel] {P : C5Model}
 
 open scoped RealInnerProductSpace
 open Noperts.BalancedSupport

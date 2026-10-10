@@ -25,7 +25,7 @@ any rational leaf contained in the certified neighborhood may use the row.
 
 namespace Noperts.Pipeline.LocalCertificate
 
-variable {P : C5Model}
+variable [SolidModel] {P : C5Model}
 
 open RationalApprox GlobalTheorem
 open scoped Matrix RealInnerProductSpace
@@ -59,7 +59,7 @@ def AxisCertificate.B (cert : AxisCertificate) : ℚ := ∑ i, cert.weight i
 
 def directionUnit (u : Fin 2 → ℚ) : Prop := u 0 ^ 2 + u 1 ^ 2 = 1
 
-instance (u : Fin 2 → ℚ) : Decidable (directionUnit u) := by
+@[reducible] instance (u : Fin 2 → ℚ) : Decidable (directionUnit u) := by
   unfold directionUnit
   infer_instance
 
@@ -68,17 +68,10 @@ def crossQ (u v : Fin 3 → ℚ) : Fin 3 → ℚ :=
     u 2 * v 0 - u 0 * v 2,
     u 0 * v 1 - u 1 * v 0]
 
-/-- The exact C3 symmetry matrix `Septopert.c3Mat g`, over ℚ
-(`symmetryMatrixQ_map`). -/
-def symmetryMatrixQ : OrbitIndex → Matrix (Fin 3) (Fin 3) ℚ
-  | 0 => 1
-  | 1 => !![0, 1, 0; 0, 0, 1; 1, 0, 0]
-  | 2 => !![0, 0, 1; 1, 0, 0; 0, 1, 0]
-
-theorem symmetryMatrixQ_map (g : OrbitIndex) :
-    ((symmetryMatrixQ g).map fun x => (x : ℝ)) = Septopert.c3Mat g := by
-  fin_cases g <;> ext i j <;> fin_cases i <;> fin_cases j <;>
-    simp [symmetryMatrixQ, Septopert.c3Mat]
+/-- The rational stand-in for the symmetry rotation `g` (exact for the
+Septopert, rational Taylor values for the fivefold solids). -/
+def symmetryMatrixQ (g : OrbitIndex) : Matrix (Fin 3) (Fin 3) ℚ :=
+  SolidModel.symmetryMatrixQ g
 
 noncomputable def symmetryQCLM (g : OrbitIndex) : ℝ³ →L[ℝ] ℝ³ :=
   ((symmetryMatrixQ g).map fun x => (x : ℝ)).toEuclideanLin.toContinuousLinearMap
@@ -171,18 +164,21 @@ def Box.εα (box : Box) : ℚ :=
 def Box.eulerRadius (box : Box) : ℚ :=
   box.εα + box.εφ₁ + box.εθ₁ + box.εφ₂ + box.εθ₂
 
-/-- The symmetry matrices are exact. -/
-def symmetryError : ℚ := 0
+/-- The operator-norm error of `symmetryMatrixQ` (0 for the Septopert). -/
+def symmetryError : ℚ := SolidModel.symmetryErrorQ
 
 theorem symmetryQCLM_difference_norm_bounded (g : OrbitIndex) :
     ‖Noperts.Atlas.so3CLM (symmetry g) - symmetryQCLM g‖ ≤
       (symmetryError : ℝ) := by
-  have hclm : Noperts.Atlas.so3CLM (symmetry g) = symmetryQCLM g := by
+  have hclm : Noperts.Atlas.so3CLM (symmetry g) - symmetryQCLM g =
+      LinearMap.toContinuousLinearMap (Matrix.toEuclideanLin
+        (symmetryMatrix g - (symmetryMatrixQ g).map fun x => (x : ℝ))) := by
     ext v
-    simp only [Noperts.Atlas.so3CLM, symmetryQCLM, symmetryMatrixQ_map]
+    simp only [Noperts.Atlas.so3CLM, symmetryQCLM, ContinuousLinearMap.sub_apply,
+      LinearMap.coe_toContinuousLinearMap', Matrix.toEuclideanLin_apply, Matrix.sub_mulVec]
     rfl
-  rw [hclm, sub_self, norm_zero]
-  norm_num [symmetryError]
+  rw [hclm]
+  exact SolidModel.symmetryQ_close g
 
 def Box.mismatchRadius (box : Box) : ℚ :=
   RationalApprox.sqrtℚUp16 box.mismatchFrobeniusSq +
@@ -238,11 +234,13 @@ def tetraBarycentricQ (p : Fin 4 → Fin 3 → ℚ) (target : Fin 3 → ℚ) :
   let l2 := det3Q a b y / D
   ![l0, l1, l2, 1 - l0 - l1 - l2]
 
+omit [SolidModel] in
 theorem tetraBarycentricQ_sum (p : Fin 4 → Fin 3 → ℚ)
     (target : Fin 3 → ℚ) :
     ∑ j, tetraBarycentricQ p target j = 1 := by
   simp [tetraBarycentricQ, Fin.sum_univ_four]
 
+omit [SolidModel] in
 theorem tetraBarycentricQ_combination (p : Fin 4 → Fin 3 → ℚ)
     (target : Fin 3 → ℚ) (hdet : tetraDetQ p ≠ 0) :
     ∑ j, tetraBarycentricQ p target j • p j = target := by
@@ -258,11 +256,17 @@ def octahedronAxis : Fin 6 → Fin 3 → ℚ := ![
   ![1, 0, 0], ![-1, 0, 0], ![0, 1, 0],
   ![0, -1, 0], ![0, 0, 1], ![0, 0, -1]]
 
+omit [SolidModel] in
 @[simp] lemma octahedronAxis_zero : octahedronAxis 0 = ![1, 0, 0] := by decide
+omit [SolidModel] in
 @[simp] lemma octahedronAxis_one : octahedronAxis 1 = ![-1, 0, 0] := by decide
+omit [SolidModel] in
 @[simp] lemma octahedronAxis_two : octahedronAxis 2 = ![0, 1, 0] := by decide
+omit [SolidModel] in
 @[simp] lemma octahedronAxis_three : octahedronAxis 3 = ![0, -1, 0] := by decide
+omit [SolidModel] in
 @[simp] lemma octahedronAxis_four : octahedronAxis 4 = ![0, 0, 1] := by decide
+omit [SolidModel] in
 @[simp] lemma octahedronAxis_five : octahedronAxis 5 = ![0, 0, -1] := by decide
 
 def Box.octahedronTarget (box : Box) (k : Fin 6) : Fin 3 → ℚ :=
@@ -284,14 +288,14 @@ def Contact.supported (box : Box) (contact : Contact) : Prop :=
         Gℚ (outerAsInner box.center) 0 box.εθ₂ box.εφ₂
           (rationalVertex selected) contact.direction
 
-instance (box : Box) (contact : Contact) : Decidable (contact.supported box) := by
+@[reducible] instance (box : Box) (contact : Contact) : Decidable (contact.supported box) := by
   unfold Contact.supported
   infer_instance
 
 def AxisCertificate.balanced (cert : AxisCertificate) : Prop :=
   ∑ i, cert.weight i • (cert.contact i).direction = 0
 
-instance (cert : AxisCertificate) : Decidable cert.balanced := by
+@[reducible] instance (cert : AxisCertificate) : Decidable cert.balanced := by
   unfold AxisCertificate.balanced
   infer_instance
 
@@ -302,7 +306,7 @@ def Box.barycentricValid (box : Box) : Prop :=
   tetraDetQ box.approxNormalizedA ≠ 0 ∧
     ∀ k j, 0 ≤ box.barycentric k j
 
-instance (box : Box) : Decidable box.barycentricValid := by
+@[reducible] instance (box : Box) : Decidable box.barycentricValid := by
   unfold Box.barycentricValid
   infer_instance
 
@@ -316,7 +320,7 @@ structure Box.GeometricValid (box : Box) : Prop where
   supported : ∀ j i, ((box.certificate j).contact i).supported box
   barycentric : box.barycentricValid
 
-instance (box : Box) : Decidable box.GeometricValid :=
+@[reducible] instance (box : Box) : Decidable box.GeometricValid :=
   decidable_of_iff _ (Box.geometricValid_iff box).symm
 
 @[mk_iff]
@@ -332,7 +336,7 @@ structure Box.Valid (box : Box) : Prop where
   mismatch_bound : box.mismatchRadius ≤ box.r
   angle_bound : box.r ^ 2 * (1 + box.c ^ 2) ≤ 4 * box.c ^ 2
 
-instance (box : Box) : Decidable box.Valid :=
+@[reducible] instance (box : Box) : Decidable box.Valid :=
   decidable_of_iff _ (Box.valid_iff box).symm
 
 theorem Box.Valid.geometric {box : Box} (h : box.Valid) : box.GeometricValid where
@@ -354,6 +358,7 @@ def Box.realInterval (box : Box) : PoseInterval ℝ :=
     exact ⟨by exact_mod_cast h1, by exact_mod_cast h2,
       by exact_mod_cast h3, by exact_mod_cast h4, by exact_mod_cast h5⟩)
 
+omit [SolidModel] in
 private theorem endpointRadius_nonneg (lo hi center : ℚ) :
     0 ≤ endpointRadius lo hi center :=
   (abs_nonneg (lo - center)).trans (le_max_left _ _)
@@ -373,6 +378,7 @@ theorem Box.εφ₂_nonneg (box : Box) : 0 ≤ box.εφ₂ :=
 theorem Box.εα_nonneg (box : Box) : 0 ≤ box.εα :=
   endpointRadius_nonneg _ _ _
 
+omit [SolidModel] in
 private theorem abs_sub_center_le_endpointRadius
     {lo hi center : ℚ} {x : ℝ}
     (hx : x ∈ Set.Icc (lo : ℝ) (hi : ℝ)) :
@@ -411,6 +417,7 @@ theorem Box.near_center_of_mem_realInterval (box : Box)
     abs_sub_center_le_endpointRadius ⟨l4, u4⟩,
     abs_sub_center_le_endpointRadius ⟨l5, u5⟩⟩
 
+omit [SolidModel] in
 private theorem direction_norm_eq_one {u : Fin 2 → ℚ} (h : directionUnit u) :
     ‖toR2 u‖ = 1 := by
   rw [EuclideanSpace.norm_eq, ← Real.sqrt_one]
@@ -503,13 +510,16 @@ lemma AxisCertificate.firstVariation_eq_B_smul_normalizedAAt
   rw [AxisCertificate.normalizedAAt, smul_smul]
   simp [ne_of_gt (AxisCertificate.B_pos box h j)]
 
+omit [SolidModel] in
 private theorem rotationError_nonneg :
     0 ≤ Noperts.Atlas.LocalCertificate.rotationError := by
   norm_num [Noperts.Atlas.LocalCertificate.rotationError,
     RationalApprox.κℚ]
 
-private theorem symmetryError_nonneg : 0 ≤ symmetryError := by
-  norm_num [symmetryError, RationalApprox.κℚ]
+theorem symmetryError_nonneg : 0 ≤ symmetryError := by
+  have h : (0 : ℝ) ≤ (symmetryError : ℝ) :=
+    (norm_nonneg _).trans (SolidModel.symmetryQ_close 0)
+  exact_mod_cast h
 
 theorem valid_center_mismatch_bound (box : Box) (h : box.Valid) :
     ‖box.centerMismatchCLM‖ ≤
@@ -706,6 +716,7 @@ theorem valid_axisAngle_ratio (box : Box) (h : box.Valid)
   · exact valid_mismatch_bound box h hq offset
   · exact_mod_cast h.angle_bound
 
+omit [SolidModel] in
 private theorem toR3_crossQ (u v : Fin 3 → ℚ) :
     toR3 (crossQ u v) =
       Noperts.BalancedSupport.cross3 (toR3 u) (toR3 v) := by
@@ -713,16 +724,19 @@ private theorem toR3_crossQ (u v : Fin 3 → ℚ) :
   fin_cases i <;>
     simp [crossQ, Noperts.BalancedSupport.cross3, cross_apply, toR3]
 
+omit [SolidModel] in
 private theorem toR3_sum {ι : Type} [Fintype ι] (f : ι → Fin 3 → ℚ) :
     toR3 (∑ i, f i) = ∑ i, toR3 (f i) := by
   ext coordinate
   simp [toR3]
 
+omit [SolidModel] in
 private theorem toR3_smul (a : ℚ) (v : Fin 3 → ℚ) :
     toR3 (a • v) = (a : ℝ) • toR3 v := by
   ext coordinate
   simp [toR3]
 
+omit [SolidModel] in
 private theorem toR3_rotMℚ_transpose_mulVec
     (theta phi : ℚ) (u : Fin 2 → ℚ) :
     toR3 ((RationalApprox.rotMℚ_mat theta phi)ᵀ *ᵥ u) =
@@ -900,10 +914,12 @@ private noncomputable def outerAsInnerReal (p : Pose ℝ) : Pose ℝ where
   φ₂ := p.φ₂
   α := 0
 
+omit [SolidModel] in
 @[simp] private theorem outerAsInner_toReal (p : Pose ℚ) :
     (outerAsInner p).toReal = outerAsInnerReal p.toReal := by
   simp [outerAsInner, outerAsInnerReal, Pose.toReal]
 
+omit [SolidModel] in
 private theorem outerAsInner_mem_four {p : Pose ℚ}
     (hp : p ∈ fourInterval ℚ) : outerAsInner p ∈ fourInterval ℚ := by
   obtain ⟨hθ₁, hθ₂, hφ₁, hφ₂, hα⟩ :=
@@ -917,9 +933,11 @@ private theorem outerAsInner_mem_four {p : Pose ℚ}
         (0 : ℚ) ∈ Set.Icc (-4 : ℚ) 4 by
       exact ⟨hθ₂, hθ₂, hφ₂, hφ₂, by norm_num⟩)
 
+omit [SolidModel] in
 private theorem outerAsInnerReal_inner_eq_outer (p : Pose ℝ) :
     Pose.inner (outerAsInnerReal p) = Pose.outer p := rfl
 
+omit [SolidModel] in
 private theorem outerAsInnerReal_near {pbar q : Pose ℝ}
     {εα εθ₁ εφ₁ εθ₂ εφ₂ : ℝ}
     (hq : Pose.near pbar εα εθ₁ εφ₁ εθ₂ εφ₂ q) :

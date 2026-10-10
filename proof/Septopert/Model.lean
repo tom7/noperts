@@ -2,6 +2,7 @@ module
 
 public import Septopert.ModelData
 public import Septopert.Cell
+public import Septopert.SolidModel
 
 @[expose] public section
 

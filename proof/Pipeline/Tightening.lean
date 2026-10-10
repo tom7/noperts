@@ -22,7 +22,7 @@ apply and was removed.)
 
 namespace Noperts.Pipeline
 
-variable {P : C5Model}
+variable [SolidModel] {P : C5Model}
 
 open Real
 open Noperts.BalancedSupport
@@ -39,6 +39,7 @@ first two outer viewing coordinates. -/
 def InViewWedge (q : Pose ℝ) : Prop :=
   q.θ₂ ∈ Set.Icc 0 (2 * π / 5) ∧ q.φ₂ ∈ Set.Icc 0 π
 
+omit [SolidModel] in
 private theorem translated_innerShadow_eq (p : Pose ℝ) (offset : ℝ²)
     (S : Set ℝ³) :
     innerShadow (p.matrixPoseWithOffset offset) S =
@@ -56,6 +57,7 @@ private theorem translated_innerShadow_eq (p : Pose ℝ) (offset : ℝ²)
       matrixPoseWithOffset_inner_rotation_project]
     rfl
 
+omit [SolidModel] in
 private theorem translated_outerShadow_eq (p : Pose ℝ) (offset : ℝ²)
     (S : Set ℝ³) :
     outerShadow (p.matrixPoseWithOffset offset) S = p.outer '' S := by

@@ -9,7 +9,7 @@ public import Basic
 
 The cyclic coordinate permutations, as exact matrices. They live in their own
 file (importing only `Noperts.Basic`) so that the model layer
-(`Noperts.Pipeline.Vertices`) can use them without importing the
+(`Septopert.SolidModel`) can use them without importing the
 mirror-tie and cell layers (`Group`, `Cell`), which import the certificate
 pipeline.
 -/

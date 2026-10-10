@@ -17,7 +17,7 @@ namespace Noperts.Pipeline.AtlasProjectiveEdgeCertificate
 
 open Noperts.Atlas
 
-variable {P : C5Model}
+variable [SolidModel] {P : C5Model}
 
 open scoped RealInnerProductSpace
 open Noperts.Checker
@@ -29,9 +29,11 @@ open CayleyAtlas
 def max3 (f : Fin 3 → ℚ) : ℚ := max (f 0) (max (f 1) (f 2))
 def min3 (f : Fin 3 → ℚ) : ℚ := min (f 0) (min (f 1) (f 2))
 
+omit [SolidModel] in
 theorem le_max3 (f : Fin 3 → ℚ) (i : Fin 3) : f i ≤ max3 f := by
   fin_cases i <;> simp [max3]
 
+omit [SolidModel] in
 theorem min3_le (f : Fin 3 → ℚ) (i : Fin 3) : min3 f ≤ f i := by
   fin_cases i <;> simp [min3]
 
@@ -43,7 +45,7 @@ def SignedTriangleValid (root : Fin 8)
   ∀ i, (∀ c, 0 ≤ rootSign root c * triangle i c) ∧
     (∑ c, rootSign root c * triangle i c) = 1
 
-instance (root : Fin 8) (triangle : AtlasProjectiveView.Triangle ℚ) :
+@[reducible] instance (root : Fin 8) (triangle : AtlasProjectiveView.Triangle ℚ) :
     Decidable (SignedTriangleValid root triangle) := by
   unfold SignedTriangleValid
   infer_instance
@@ -53,6 +55,7 @@ def SignedPointValid (root : Fin 8)
   (∀ c, 0 ≤ rootSign root c * point c) ∧
     (∑ c, rootSign root c * point c) = 1
 
+omit [SolidModel] in
 theorem signedPointValid_midpoint {root : Fin 8}
     {a b : AtlasProjectiveView.Vector ℚ}
     (ha : SignedPointValid root a) (hb : SignedPointValid root b) :
@@ -69,6 +72,7 @@ theorem signedPointValid_midpoint {root : Fin 8}
     simp only [Fin.sum_univ_three] at ha' hb'
     linear_combination (ha' + hb') / 2
 
+omit [SolidModel] in
 theorem rootTriangle_valid (root : Fin 8) :
     SignedTriangleValid root (rootTriangle root) := by
   intro i
@@ -87,6 +91,7 @@ theorem rootTriangle_valid (root : Fin 8) :
     · simp [rootTriangle, signedBasis]
       nlinarith [rootSign_sq root 2]
 
+omit [SolidModel] in
 theorem SignedTriangleValid.split {root : Fin 8}
     {triangle : AtlasProjectiveView.Triangle ℚ}
     (h : SignedTriangleValid root triangle) (child : Fin 4) :
@@ -213,7 +218,7 @@ structure Box.Valid (box : Box) : Prop where
     box.edgeShell.dBound * box.totalDefect +
       box.edgeShell.displacementError ≤ box.adjustedDisplacementLower
 
-instance (box : Box) : Decidable box.Valid :=
+@[reducible] instance (box : Box) : Decidable box.Valid :=
   decidable_of_iff _ (Box.valid_iff box).symm
 
 noncomputable def Box.projectiveApproxSupport (box : Box)
@@ -303,6 +308,7 @@ theorem Box.viewQuadratic_eval (box : Box) (j : Fin 3)
   simp [Box.viewQuadratic, linearValue, toReal,
     box.edgeShell.eval_totalQuadratic_pose, Fin.sum_univ_three]
 
+omit [SolidModel] in
 theorem cayleyConstraintQuadratic_eval (x y z : ℝ) :
     cayleyConstraintQuadratic.evalReal x y z =
       x ^ 2 + y ^ 2 + z ^ 2 - 3 := by

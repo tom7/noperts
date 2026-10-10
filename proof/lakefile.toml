@@ -2,7 +2,7 @@ name = "noperts"
 defaultTargets = ["Noperts", "Septopert", "Minimality", "ProofOfMainTheorem",
   "DeltoidalHexecontahedron", "PentagonalHexecontahedron", "SnubDodecahedron",
   "constructSeptopert", "checkSeptopertCap", "constructDeltoidalHexecontahedron",
-  "constructPentagonalHexecontahedron", "constructSnubDodecahedron"]
+  "constructPentagonalHexecontahedron", "constructSnubDodecahedron", "Tests"]
 
 [leanOptions]
 pp.unicode.fun = true
@@ -67,6 +67,10 @@ globs = ["Minimality", "Minimality.+"]
 [[lean_lib]]
 name = "ProofOfMainTheorem"
 globs = ["ProofOfMainTheorem"]
+
+[[lean_lib]]
+name = "Tests"
+globs = ["Tests.+"]
 
 [[lean_lib]]
 name = "DeltoidalHexecontahedron"

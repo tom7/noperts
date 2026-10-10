@@ -6,30 +6,31 @@ public import Pipeline.CayleyAtlas
 @[expose] public section
 
 /-!
-# The threefold relative-rotation cell
+# The relative-rotation cell of the cyclic symmetry
 
-The C3 rotations `c3Mat k` about (1,1,1) are symmetries of the model. A
-relative rotation is in the C3 max-trace (Dirichlet) cell when none of them
-increases its trace on the right. (The names `fivefoldMatrix` and
-`InFivefoldFundamentalDomain` are kept from the fivefold pipeline;
-`fivefoldMatrix k` is now `Septopert.c3Mat k`.)
+The rotations `symmetryMatrix k` of the model's cyclic symmetry are
+symmetries of the model. A relative rotation is in the max-trace (Dirichlet)
+cell when none of them increases its trace on the right. (The names
+`fivefoldMatrix` and `InFivefoldFundamentalDomain` are kept from the fivefold
+pipeline, where the symmetry is C5 about z; for the Septopert it is C3 about
+(1,1,1).)
 -/
 
 namespace Noperts.Pipeline
 
-variable {P : C5Model}
+variable [SolidModel] {P : C5Model}
 
 open scoped Matrix
 
-/-- The `k`th exact rotation around the symmetry axis (1,1,1). -/
+/-- The `k`th exact rotation of the symmetry. -/
 noncomputable def fivefoldMatrix (k : OrbitIndex) :
     Matrix (Fin 3) (Fin 3) ℝ :=
-  Septopert.c3Mat k
+  symmetryMatrix k
 
 def composeSymmetry (a b : OrbitIndex) : OrbitIndex :=
-  ⟨(a.val + b.val) % 3, Nat.mod_lt _ (by omega)⟩
+  ⟨(a.val + b.val) % SolidModel.orbitCount, Nat.mod_lt _ SolidModel.orbitCount_pos⟩
 
-@[simp] theorem fivefoldMatrix_zero : fivefoldMatrix 0 = 1 := rfl
+@[simp] theorem fivefoldMatrix_zero : fivefoldMatrix 0 = 1 := symmetryMatrix_zero
 
 theorem composeSymmetry_eq_add (a b : OrbitIndex) : composeSymmetry a b = a + b := by
   apply Fin.ext
@@ -39,9 +40,9 @@ theorem fivefoldMatrix_mul (a b : OrbitIndex) :
     fivefoldMatrix a * fivefoldMatrix b =
       fivefoldMatrix (composeSymmetry a b) := by
   rw [composeSymmetry_eq_add]
-  exact Septopert.c3_mul_c3 a b
+  exact symmetryMatrix_mul a b
 
-/-- A relative rotation is in the identity C3 Dirichlet cell when no
+/-- A relative rotation is in the identity Dirichlet cell when no
 right symmetry increases its trace. -/
 def InFivefoldFundamentalDomain
     (R : Matrix (Fin 3) (Fin 3) ℝ) : Prop :=

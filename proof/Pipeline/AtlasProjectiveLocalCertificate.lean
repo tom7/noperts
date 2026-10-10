@@ -13,7 +13,7 @@ public import Atlas.ProjectiveLocalCertificate
 namespace Noperts.Pipeline.AtlasProjectiveLocalCertificate
 
 
-variable {P : C5Model}
+variable [SolidModel] {P : C5Model}
 
 open scoped RealInnerProductSpace
 open Noperts.Checker
@@ -152,7 +152,7 @@ def Box.exactSupportTie (box : Box) (j : Fin 4) (i : Fin 3)
     (cert.mix i = 0 ∧ cert.supportIndex box i = cert.edgeStart₂ i ∧
       k = cert.edgeFinish₂ i)
 
-instance (box : Box) (j : Fin 4) (i : Fin 3) (k : VertexIndex) :
+@[reducible] instance (box : Box) (j : Fin 4) (i : Fin 3) (k : VertexIndex) :
     Decidable (box.exactSupportTie j i k) := by
   unfold Box.exactSupportTie
   infer_instance
@@ -204,7 +204,7 @@ theorem Box.supportListOK_iff (box : Box) (j : Fin 4) (i : Fin 3) (ks : List Ver
   simp only [Box.supportListOK, he, Box.supportUpperWith_edgeQ, List.all_eq_true,
     decide_eq_true_eq]
 
-instance (priority := high) (box : Box) (j : Fin 4) (i : Fin 3) :
+@[reducible] instance (priority := high) (box : Box) (j : Fin 4) (i : Fin 3) :
     Decidable (∀ k : VertexIndex, box.supportUpper j i k ≤ 0) :=
   decidable_of_iff (box.supportListOK j i (List.finRange _) = true)
     (by simp [Box.supportListOK_iff, List.mem_finRange])
@@ -279,6 +279,7 @@ def tetraBarycentricArr (p : Fin 4 → Fin 3 → ℚ) (target : Fin 3 → ℚ) :
   let l2 := LocalCertificate.det3Q a b y / D
   #[l0, l1, l2, 1 - l0 - l1 - l2]
 
+omit [SolidModel] in
 theorem tetraBarycentricArr_getElem! (p : Fin 4 → Fin 3 → ℚ) (target : Fin 3 → ℚ)
     (j : Fin 4) :
     (tetraBarycentricArr p target)[j.val]! = LocalCertificate.tetraBarycentricQ p target j := by
@@ -296,7 +297,7 @@ theorem baryNonnegOn_iff (t : Array (Array ℚ)) (box : Box) :
       ∀ k j, 0 ≤ LocalCertificate.tetraBarycentricQ (tableGet43 t) (box.octahedronTarget k) j := by
   simp [baryNonnegOn, List.all_eq_true, List.mem_finRange, tetraBarycentricArr_getElem!]
 
-instance (t : Array (Array ℚ)) (box : Box) : Decidable (barycentricValidOn t box) :=
+@[reducible] instance (t : Array (Array ℚ)) (box : Box) : Decidable (barycentricValidOn t box) :=
   decidable_of_iff (LocalCertificate.tetraDetQ (tableGet43 t) ≠ 0 ∧ baryNonnegOn t box = true)
     (by rw [baryNonnegOn_iff]; rfl)
 
@@ -305,7 +306,7 @@ theorem Box.barycentricValid_iff_on (box : Box) :
   simp only [barycentricValidOn, Box.tableGet43_centerTable, Box.barycentricValid,
     Box.barycentric]
 
-instance (box : Box) : Decidable box.barycentricValid :=
+@[reducible] instance (box : Box) : Decidable box.barycentricValid :=
   -- Tabulate the centers once (data, so compiled code shares it).
   let t := box.centerTable
   have h : barycentricValidOn t box ↔ box.barycentricValid := box.barycentricValid_iff_on
@@ -342,7 +343,7 @@ structure Box.ViewValid (box : Box) : Prop where
   barycentric : box.barycentricValid
   angle_bound : box.r ^ 2 * (1 + box.c ^ 2) ≤ 4 * box.c ^ 2
 
-instance (box : Box) : Decidable box.ViewValid :=
+@[reducible] instance (box : Box) : Decidable box.ViewValid :=
   decidable_of_iff _ (Box.viewValid_iff box).symm
 
 @[mk_iff]
@@ -365,7 +366,7 @@ structure Box.Valid (box : Box) : Prop where
   mismatch_bound : box.mismatchRadius ≤ box.r
   angle_bound : box.r ^ 2 * (1 + box.c ^ 2) ≤ 4 * box.c ^ 2
 
-instance (box : Box) : Decidable box.Valid :=
+@[reducible] instance (box : Box) : Decidable box.Valid :=
   decidable_of_iff _ (Box.valid_iff box).symm
 
 theorem Box.Valid.viewValid {box : Box} (h : box.Valid) : box.ViewValid where
@@ -871,13 +872,13 @@ theorem AxisCertificate.supportCross_tight_error (box : Box)
         ((cross3_norm_le _ _).trans (mul_le_mul
           (cert.exactEdge_sub_approx_tight_norm_le i)
           (cert.exactDelta_norm_le_two box i k) (norm_nonneg _)
-          (by norm_num [tightVertexErrorQ])))
+          (by nlinarith [tightVertexErrorQ_real_nonneg])))
         ((cross3_norm_le _ _).trans (mul_le_mul
           (cert.approxEdge_norm_le i)
           (cert.exactDelta_sub_approx_tight_norm_le box i k) (norm_nonneg _)
-          (by norm_num [RationalApprox.κ, tightVertexErrorQ])))
+          (by norm_num [RationalApprox.κ] <;> nlinarith [tightVertexErrorQ_real_nonneg])))
     _ ≤ 10 * (tightVertexErrorQ : ℝ) := by
-      norm_num [RationalApprox.κ, tightVertexErrorQ]
+      norm_num [RationalApprox.κ] <;> nlinarith [tightVertexErrorQ_real_nonneg]
 
 theorem AxisCertificate.supportCross_error (box : Box)
     (cert : AxisCertificate) (i : Fin 3) (k : VertexIndex) :
@@ -926,11 +927,13 @@ noncomputable def AxisCertificate.exactSupport (box : Box)
   linearValue (AtlasProjectiveView.normalizedView box.root p)
     (cross3 (cert.exactEdge (P := P) i) (cert.exactDelta (P := P) box i k))
 
+omit [SolidModel] in
 theorem linearValue_eq_inner_toLp (n : Fin 3 → ℝ) (v : ℝ³) :
     linearValue n v = inner ℝ (WithLp.toLp 2 n) v := by
   simp [linearValue, PiLp.inner_apply, Fin.sum_univ_three]
   ring
 
+omit [SolidModel] in
 theorem linearValue_cast_eq_inner_toR3 (n : Fin 3 → ℝ)
     (q : Fin 3 → ℚ) :
     linearValue n (fun c => (q c : ℝ)) =
@@ -980,10 +983,10 @@ theorem AxisCertificate.exactSupport_sub_approx_abs_le (box : Box)
       exact (mul_le_mul_of_nonneg_left (cert.supportCross_tight_error box i k)
         (norm_nonneg _)).trans
           (mul_le_of_le_one_left
-            (by norm_num [tightVertexErrorQ])
+            (by nlinarith [tightVertexErrorQ_real_nonneg])
             (normalizedView3_norm_le_one box p hscale))
     _ = (supportError : ℝ) := by
-      norm_num [supportError, tightVertexErrorQ]
+      norm_num [supportError]
 
 theorem Box.exactSupport_eq_zero_of_tie (box : Box) {p : AtlasPose ℝ}
     (j : Fin 4) (i : Fin 3) (k : VertexIndex)
@@ -1164,6 +1167,7 @@ noncomputable def AxisCertificate.exactWeight (box : Box)
     (cert : AxisCertificate) (p : AtlasPose ℝ) (i : Fin 3) : ℝ :=
   weight box.root p (fun j => cert.exactEdge (P := P) j) i
 
+omit [SolidModel] in
 theorem toR3_crossQ (a b : Fin 3 → ℚ) :
     toR3 (LocalCertificate.crossQ a b) = cross3 (toR3 a) (toR3 b) := by
   ext c
@@ -1243,13 +1247,13 @@ theorem AxisCertificate.crossEdge_tight_error (cert : AxisCertificate)
         ((cross3_norm_le _ _).trans (mul_le_mul
           (cert.exactEdge_sub_approx_tight_norm_le i)
           (cert.exactEdge_norm_le_two j) (norm_nonneg _)
-          (by norm_num [tightVertexErrorQ])))
+          (by nlinarith [tightVertexErrorQ_real_nonneg])))
         ((cross3_norm_le _ _).trans (mul_le_mul
           (cert.approxEdge_norm_le i)
           (cert.exactEdge_sub_approx_tight_norm_le j) (norm_nonneg _)
-          (by norm_num [RationalApprox.κ, tightVertexErrorQ])))
+          (by norm_num [RationalApprox.κ] <;> nlinarith [tightVertexErrorQ_real_nonneg])))
     _ ≤ 10 * (tightVertexErrorQ : ℝ) := by
-      norm_num [RationalApprox.κ, tightVertexErrorQ]
+      norm_num [RationalApprox.κ] <;> nlinarith [tightVertexErrorQ_real_nonneg]
 
 theorem AxisCertificate.exactWeight_sub_approx_abs_le (box : Box)
     (cert : AxisCertificate) {p : AtlasPose ℝ}
@@ -1293,7 +1297,7 @@ theorem AxisCertificate.exactWeight_sub_approx_tight_abs_le (box : Box)
       ((mul_le_mul_of_nonneg_left (cert.crossEdge_tight_error _ _)
         (norm_nonneg _)).trans
           (mul_le_of_le_one_left
-            (by norm_num [tightVertexErrorQ]) hn))
+            (by nlinarith [tightVertexErrorQ_real_nonneg]) hn))
 
 theorem Box.weightAt_cast (box : Box) (j : Fin 4)
     (corner : Fin 3) (i : Fin 3) :
@@ -1325,7 +1329,7 @@ theorem Box.weightLower_le_exact (box : Box)
   rw [abs_le] at herr
   have herrorEq : (10 * (tightVertexErrorQ : ℝ)) =
       (supportError : ℝ) := by
-    norm_num [supportError, tightVertexErrorQ]
+    norm_num [supportError]
   simp only [Box.weightLower]
   push_cast
   rw [herrorEq] at herr
@@ -1355,7 +1359,7 @@ theorem Box.exactWeight_le_upper (box : Box)
   rw [abs_le] at herr
   have herrorEq : (10 * (tightVertexErrorQ : ℝ)) =
       (supportError : ℝ) := by
-    norm_num [supportError, tightVertexErrorQ]
+    norm_num [supportError]
   simp only [Box.weightUpper]
   push_cast
   rw [herrorEq] at herr
