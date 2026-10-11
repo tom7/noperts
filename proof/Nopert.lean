@@ -12,11 +12,12 @@ set_option doc.verso.suggestions false
 /-!
 # Noperts
 
-A *nopert* is a convex polyhedron without the Rupert property.  Here a convex
-polyhedron is given, as in {name}`IsRupert` (`MainTheorem.lean`), by a finite set of
-points {lit}`V` of {lit}`ℝ³`: the polyhedron is their convex hull.  For it to be a genuine
-solid, the points must not all lie in one plane ({name}`Coplanar`), which is the same
-as the hull having nonempty interior
+A *nopert* is a convex polyhedron without the Rupert property. Here a
+convex polyhedron is given, as in {name}`IsRupert`
+(`MainTheorem.lean`), by a finite set of points {lit}`V` of {lit}`ℝ³`:
+the polyhedron is their convex hull. For it to be a genuine solid, the
+points must not all lie in one plane ({name}`Coplanar`), which is the
+same as the hull having nonempty interior
 ({lit}`not_coplanar_iff_interior_convexHull_nonempty`).
 
 Also here: `Noperts.det3` and `Noperts.not_coplanar_of_det3_ne_zero`, a
@@ -33,10 +34,12 @@ their convex hull is a genuine solid) and whose convex hull is not Rupert. -/
 def IsNopert (V : Finset ℝ³) : Prop :=
   ¬ Coplanar ℝ (V : Set ℝ³) ∧ ¬ IsRupert V
 
-/-- A set of points in {lit}`ℝ³` is not contained in a plane iff its convex hull has
-nonempty interior.  (So {lit}`IsNopert V` says the same as the conditions on {lit}`vs`
-in {name}`ExistsNonRupertPolyhedronSizeSeven` and {name}`NotExistsNonRupertPolyhedronBelowSizeSeven`,
-apart from the number of points.) -/
+/-- A set of points in {lit}`ℝ³` is not contained in a plane iff its
+convex hull has nonempty interior. (So {lit}`IsNopert V` says the same
+as the conditions on {lit}`vs` in
+{name}`ExistsNonRupertPolyhedronSizeSeven` and
+{name}`NotExistsNonRupertPolyhedronBelowSizeSeven`, apart from the
+number of points.) -/
 theorem not_coplanar_iff_interior_convexHull_nonempty (S : Set ℝ³) :
     ¬ Coplanar ℝ S ↔ (interior (convexHull ℝ S)).Nonempty := by
   rcases S.eq_empty_or_nonempty with rfl | hne
@@ -59,8 +62,9 @@ theorem IsNopert.interior_nonempty {V : Finset ℝ³} (h : IsNopert V) :
     (interior (convexHull ℝ (V : Set ℝ³))).Nonempty :=
   (not_coplanar_iff_interior_convexHull_nonempty _).mp h.1
 
-/-- {name}`IsNopert` is equivalent to the formulation used in `MainTheorem.lean`: a
-convex hull with nonempty interior that is not Rupert. -/
+/-- {name}`IsNopert` is equivalent to the formulation used in
+`MainTheorem.lean`: a convex hull with nonempty interior that
+is not Rupert. -/
 theorem isNopert_iff (V : Finset ℝ³) :
     IsNopert V ↔ (interior (convexHull ℝ (V : Set ℝ³))).Nonempty ∧ ¬ IsRupert V := by
   rw [IsNopert, not_coplanar_iff_interior_convexHull_nonempty]

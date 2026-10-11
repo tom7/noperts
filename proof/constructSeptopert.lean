@@ -2,7 +2,7 @@ import Septopert.NativeExecutable
 import Septopert.PackedSolutionTree
 
 /-!
-Native executable that reads and checks the 7-vertex "Septopert"'s
+Native executable that reads and checks the 7-vertex Septopert's
 certificate data and constructs `¬ IsRupert Septopert.verts`.
 
 Data (decoded untrusted, checked natively in parallel):
