@@ -119,7 +119,9 @@ there can only produce data that fails the checks.
   orbit of I). The check functions are the same, except that the local-view
   tree now also accepts the deltoidal hexecontahedron's `empty` rows (pack
   tag 4), which the SD's data does not use; its identity-tube rows are still
-  checked against the tangent-cone generators (`SparseSupport.lean`). The
+  checked against the tangent-cone generators (`SparseSupport.lean`, which
+  since the same day only provides the generators and their table to the
+  check shared with candidate #231, `proof/Pipeline/SparseSupport.lean`). The
   code was moved, so the result must be verified again here on the VM before
   it can be recorded against a commit of this repository. That run has not
   been done yet.
@@ -164,7 +166,7 @@ count in `SolidModel.lean`) byte for byte (verified on 2026-10-10, after the
 deduplication: the vertices are in `RationalVertices.lean`, the orbit tables
 in `OrbitData.lean`, the tangent-cone generators in `TangentCones.lean`, and
 `SparseSupport.lean` is now entirely hand-written, with the
-`certificateViewCheck` instance). With cc-lib in place
+`tangentCones` and `certificateViewCheck` instances). With cc-lib in place
 (`./get-cc-lib.sh`, see [BUILDING.md](BUILDING.md)):
 
 ```sh

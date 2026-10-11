@@ -25,8 +25,8 @@ page with its statement, trust model and reproduction steps:
   - `Noperts` (the modules directly in `proof/` and its subdirectories other
     than the six below): shared definitions and machinery. `IsRupert` is
     defined in `proof/MainTheorem.lean`. `Pipeline/` defines the certificate
-    tables and their checks, used by the data-backed results other than
-    candidate #231. It is generic over the solid: a solid is a `SolidModel`
+    tables and their checks, used by all the data-backed results. It is
+    generic over the solid: a solid is a `SolidModel`
     (`Pipeline/SolidModel.lean`: its rational vertices, cyclic symmetry and
     error bounds); the icosahedral solids are `IcosahedralSolid`s
     (`Pipeline/IcoModel.lean`, via `Pipeline/FivefoldModel.lean`); and each
@@ -35,7 +35,11 @@ page with its statement, trust model and reproduction steps:
     share the top layer (`Pipeline/AtlasProjectiveSolutionTree.lean`, the
     decoder `PackedSolutionTree`, `IsNotRupert`, the executable checker
     `NativeExecutable`) and Wikipedia's snub dodecahedron
-    (`Pipeline/WikipediaSnub.lean`).
+    (`Pipeline/WikipediaSnub.lean`). Candidate #231 is a `FivefoldSolid` that
+    is not icosahedral; it has its own top layer, over the fivefold-reduced
+    domain of `Pipeline/FivefoldReduction.lean`. The snub dodecahedron and
+    #231 check identity-tube rows against tangent-cone generators
+    (`Pipeline/SparseSupport.lean`).
   - `Septopert`: entry point `proof/Septopert.lean`, details in
     `proof/Septopert/` (its model, `SolidModel.lean`; its own solution tree,
     with C3 and mirror reductions and caps).
@@ -54,7 +58,9 @@ page with its statement, trust model and reproduction steps:
     in `proof/SnubDodecahedron/` (likewise, plus its tangent-cone tables,
     with which its executable checks the identity-tube rows more cheaply).
   - `Nopert231`: entry point `proof/Nopert231.lean`, details in
-    `proof/Nopert231/` (its own pipeline, which uses the core's `Atlas/`).
+    `proof/Nopert231/` (its model, `SolidModel.lean`; its data, tangent cones
+    and view cover; idealized #231, `Ideal231.lean`; and its own solution
+    tree, with the fivefold reduction).
   - `Tests`: checks that run at build time: every headline uses only the
     standard axioms, no solid's model is in scope without opening its
     namespace, and the chart-3 table is valid for each solid that uses it.
@@ -209,3 +215,19 @@ place, so older commits call it `Nopert76` or `Nopert229`. Its search
 (`search/nopert231/`), also with its history, comes from nopert229's
 `nopert231` branch (e53dfda). This is a different `Nopert231` from the one
 in the snub dodecahedron's branch history above.
+
+Until 2026-10-10 candidate #231 also had its own copy of the certificate
+pipeline in `proof/Nopert231/` (the branch's, which predates `Pipeline/`). The
+copies were deleted and #231 became a `FivefoldSolid` (`Nopert231/SolidModel.lean`;
+`Vertices.lean` keeps only the data). Its `C5Model` is now an abbreviation of
+the pipeline's `CyclicModel` for its model (same fields; vertices
+`symmetryMatrix k` applied to the seeds, which is `RzL (2πk/5)`,
+`C5Model.vertex_eq`); `exactVerts`, `exactModel`, `rationalVertex`,
+`modelErrorQ` and the other model names are the pipeline's. The fivefold-only
+pose reduction of its top layer moved to `Pipeline/FivefoldReduction.lean`,
+where `MatrixPose.rightNopert231Symmetry` is `MatrixPose.rightSymmetry` and
+`MatrixPose.InNopert231FundamentalDomain p` is
+`InSymmetryFundamentalDomain p.relativeRotation`. Its `SparseSupport.lean` now
+holds only the tangent-cone definitions that `GeneratedTangentCones` is about;
+the sparse support check it shared, up to the table, with the snub
+dodecahedron's `SparseSupport.lean` is `Pipeline/SparseSupport.lean`.

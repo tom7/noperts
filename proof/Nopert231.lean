@@ -30,13 +30,16 @@ rationals. The five quadrilaterals are exactly planar in ℚ. The seeds are
 
 Rounding breaks the fivefold symmetry slightly, so the rational model itself is
 not what the theorem is about. The theorem is about every *`C5Model`*
-(`Nopert231/Vertices.lean`): every polyhedron whose 20 vertices are four real
-seeds rotated *exactly* by 2πk/5 about z (k = 0, …, 4), with each vertex within
-`modelErrorQ` = 6·10⁻¹⁶ of the corresponding rational vertex. Two of them are
-named:
+(`Nopert231/SolidModel.lean`): every polyhedron whose 20 vertices are four real
+seeds rotated *exactly* by 2πk/5 about z (k = 0, …, 4; vertex 4k + s is seed s
+rotated by 2πk/5, `C5Model.vertex_eq`), with each vertex within `modelErrorQ` =
+6·10⁻¹⁶ of the corresponding rational vertex. (`C5Model` is the certificate
+pipeline's `CyclicModel` for this solid's model, `Nopert231.fivefoldSolid`.)
+Two of them are named:
 
-- `exactVerts` (`exactModel`): the four rational seeds above, rotated exactly.
-  Its quadrilaterals are planar only to about 2·10⁻¹⁶.
+- `exactVerts` (`exactModel`, the pipeline's, for this solid): the four
+  rational seeds above, rotated exactly. Its quadrilaterals are planar only to
+  about 2·10⁻¹⁶.
 - `Ideal231.model`: **idealized #231**, with exact fivefold symmetry and
   exactly planar quadrilaterals (`Ideal231.quad_planar`): seeds 0, 2 and 3 as
   above, and seed 1's height replaced by the one that puts it in the plane of

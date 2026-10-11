@@ -1,12 +1,15 @@
 > **In this repository** the entry point is `../Nopert231.lean` (headline
 > `Nopert231.isNopert_of_certificatesValid`; see `../../nopert231.md`). The text
-> below is the README of Noperthedron's `nopert231` branch (0c83e4ba), whose
-> names differ: `Noperthedron/Nopert231/` is `proof/Nopert231/` here (namespace
-> `Nopert231`), `Noperthedron/Atlas/` is `proof/Atlas/` (which also holds
-> `QuadCoverTree` and `QuadraticBernstein`), the generator scripts are in
-> `search/nopert231/scripts/`, and the executables other than
-> `constructNopert231` are not here. No `native_decide` is used here: chart 3
-> and the tangent cones are checked by the kernel (`table_valid_kernel`).
+> below is adapted from the README of Noperthedron's `nopert231` branch
+> (0c83e4ba), whose names differ: `Noperthedron/Nopert231/` is
+> `proof/Nopert231/` here (namespace `Nopert231`), `Noperthedron/Atlas/` is
+> `proof/Atlas/` (which also holds `QuadCoverTree` and `QuadraticBernstein`), the
+> generator scripts are in `search/nopert231/scripts/`, and the executables
+> other than `constructNopert231` are not here. No `native_decide` is used
+> here: chart 3 and the tangent cones are checked by the kernel
+> (`table_valid_kernel`). Since 2026-10-10 most of the branch's pipeline is the
+> shared `proof/Pipeline/` (see "Files" below, which describes this
+> repository's layout); the check functions are the same.
 
 # Candidate #231 is a Nopert
 
@@ -28,42 +31,69 @@ CheckedChartTables.notRupert : ∀ P : C5Model, ¬ IsRupert P.verts
 ```
 
 - `IsRupert` is the upstream statement of the Rupert property (`Noperthedron/MainTheorem.lean`).
-- `C5Model` (`Vertices.lean`): four real seeds rotated by 2πk/5 about z, with every vertex within `modelErrorQ` = 6·10⁻¹⁶ of the rational vertices `rationalVertices`.
+- `C5Model` (`SolidModel.lean`): four real seeds rotated by 2πk/5 about z, with every vertex within `modelErrorQ` = 6·10⁻¹⁶ of the rational vertices `rationalVertices`.
 - Trust: the kernel proves the bridge from valid tables to `¬ IsRupert` and every geometric lemma. The tables are checked by compiled code (`Table.Valid` decided natively, the same trust as `native_decide`), and the program carries the resulting proofs into the final value. It prints `constructed proof: no C5Model ... is Rupert` and then the instantiations.
 
 The other executables check parts of the data: `validate_code_pack` (one identity-tube table), `check_identity_tube` (the whole tube: tables matched to the code triangles), `check_global_rows` (per-code 5D packs, for development) and `exact5d_golden` (golden values for the C++ port of the checks).
 
 ## Files
 
+The certificate pipeline is the shared `../Pipeline/` (namespace
+`Noperts.Pipeline`), generic over the solid's model. This directory holds what
+is particular to candidate #231:
+
 Model and approximation:
-- `Vertices.lean`: `rationalVertices` (generated; see below), `exactVertex`, `exactVerts`, `C5Model`.
-- `Approximation.lean`, `TightApproximation.lean`: the rational vertices are close to the exact fivefold rotations of the seeds (`tightVertexErrorQ` = 6·10⁻¹⁶); `exactModel` as a `C5Model`.
-- `Ideal231.lean`: idealized #231 (seed 1's height chosen so that the quads are exactly planar, `quad_planar`) as a `C5Model`, with its closeness decided by the kernel.
-- `GeneratedTangentCones.lean` (generated): tangent-cone generators of each vertex, used by `SparseSupport.lean` to check support with at most seven comparisons.
+- `Vertices.lean` (data; generated bodies, see below): `rationalVertices` and
+  `seedVertex`, with a table that compiled code reads instead of the literal.
+- `SolidModel.lean`: the kernel-checked facts about the data and the scoped
+  instance `fivefoldSolid : FivefoldSolid` (`Pipeline/FivefoldModel.lean`:
+  rotations by 2πk/5 about z, rational Taylor symmetry matrices within κ/2,
+  the rational vertices within 6·10⁻¹⁶ of the exactly rotated seeds via
+  17-digit rotations); `C5Model` is the pipeline's `CyclicModel` for this
+  model.
+- `Ideal231.lean`: idealized #231 (seed 1's height chosen so that the quads
+  are exactly planar, `quad_planar`) as a `C5Model`, with its closeness decided
+  by the kernel.
+- `SparseSupport.lean` and `GeneratedTangentCones.lean` (generated): the
+  tangent-cone generators of each vertex and the kernel-checked table showing
+  that every other vertex lies in their cone; `SparseViewCheck.lean` gives them
+  to the shared sparse support check (`Pipeline/SparseSupport.lean`), which
+  checks support against at most seven vertices.
+- `WedgeCover.lean`, `WedgeCoverData.lean` (generated): `codeTriangles_cover`,
+  the code triangles cover the upper wedge (decision tree checked by
+  `decide +kernel`; the checker is `Pipeline/WedgeCover.lean`).
 
-Symmetry and the pose domain:
-- `Symmetry.lean`, `SymmetryLocal.lean`: the fivefold rotation; local rigidity at the symmetry strata.
-- `Tightening.lean`: reduction to the view wedge (azimuth in [0, 2π/5], upper hemisphere) and bounded pose parameters.
-- `CayleyAtlas.lean`, `AtlasPose.lean`, `AtlasInterval.lean`, `AtlasQuadratic.lean`, `QuadraticBernstein.lean`: the relative rotation in four bounded Cayley charts, rational boxes, exact quadratics and their Bernstein bounds.
-- `FundamentalDomain.lean`, `AtlasFundamentalPrune.lean`, `FundamentalChart3.lean`: the max-trace fivefold fundamental domain; the quadratic pruning rows; the fixed table excluding chart 3.
-- `AtlasProjectiveView.lean`: projective view triangles, `upperWedgeTriangle` = (1,0,0), (10/41, 31/41, 0), (0,0,1).
-- `WedgeCover.lean`, `WedgeCoverData.lean` (generated): `codeTriangles_cover`, the code triangles cover the upper wedge (decision tree checked by `decide +kernel`).
+The top layer, which is particular to #231's fivefold reduction (the
+icosahedral solids share another one in `Pipeline/`):
+- `AtlasProjectiveSolutionTree.lean`: the 5D tables (rows: code root, view and
+  Cayley splits, relaxed regions, certificates, tube citations, fivefold
+  fundamental-domain prunes) and their soundness, over the domain of
+  `Pipeline/FivefoldReduction.lean` (azimuths reduced modulo 2π/5, upper view,
+  max-trace cell of C5, four Cayley charts).
+- `FundamentalChart3.lean`: the fixed four-row table excluding chart 3.
+- `IsNotRupert.lean`: `not_rupert_of_valid_tables`, from four valid chart
+  tables to `¬ IsRupert P.verts`.
+- `PackedSolutionTree.lean`: the decoder for the chart packs (untrusted: the
+  decoded tables are what is checked); the tube packs use
+  `Pipeline/PackedLocalViewTree.lean`.
+- `NativeExecutable.lean`: the parallel native checker and
+  `CheckedChartTables`.
+- `IdentityTube.lean`: `not_translated_rupert_of_tables` for the per-triangle
+  identity-tube tables (not used by the headline).
 
-Certificates:
-- `Certificate.lean`, `LocalCertificate.lean`, `AtlasLocalCertificate.lean`: balanced-support certificates and symmetry-local certificates.
-- `AtlasEdgeCertificate.lean`, `AtlasProjectiveEdgeCertificate.lean`: edge-cycle rows in the Cayley atlas, over projective view triangles.
-- `AtlasProjectiveGlobalRigidity.lean`, `AtlasProjectiveGlobalCertificate.lean`, `AtlasProjectiveMixedGlobalCertificate.lean`: balanced-triple certificates away from the identity, and convex mixtures of them.
-- `AtlasProjectiveLocalRigidity.lean`, `AtlasProjectiveLocalCertificate.lean`, `AtlasProjectiveAnnularCertificate.lean`, `QuadCoverTree.lean`: local (identity-tube) certificates: axis cages over a view triangle.
-- `AtlasProjectiveLocalViewTree.lean`, `SparseLocalViewTree.lean`, `IdentityTube.lean`: identity-tube tables, one per code triangle, and `not_translated_rupert_of_tables`.
-- `AtlasProjectiveSolutionTree.lean`: the 5D tables (rows: code root, view and Cayley splits, relaxed regions, certificates, tube citations, prunes) and their soundness.
-- `IsNotRupert.lean`: `not_rupert_of_valid_tables`, from four valid chart tables to `¬ IsRupert P.verts`.
+From the shared pipeline: the symmetry, tightening and Cayley atlas
+(`Symmetry`, `FivefoldSymmetry`, `Tightening`, `CayleyAtlas`, `AtlasPose`,
+`AtlasInterval`, `AtlasQuadratic`, `FundamentalDomain`,
+`AtlasFundamentalPrune`), projective view triangles (`AtlasProjectiveView`),
+the certificates (`Certificate`, `LocalCertificate`, `SymmetryLocal`,
+`AtlasLocalCertificate`, `AtlasEdgeCertificate`,
+`AtlasProjective{Edge,Global,MixedGlobal,Local,Annular}Certificate`,
+`AtlasProjective{Global,Local}Rigidity`) and the identity-tube tables
+(`AtlasProjectiveLocalViewTree`, `SparseLocalViewTree`,
+`PackedLocalViewTree`).
 
-Native checking:
-- `PackedLocalViewTree.lean`, `PackedSolutionTree.lean`: decoders for the packs written by the C++ tools (untrusted: the decoded tables are what is checked).
-- `NativeExecutable.lean`: the parallel native checker and `CheckedChartTables`.
-
-`Noperthedron/Atlas/` holds the polyhedron-independent pieces: Cayley poses and quadratics, projective view triangles, local rigidity, and the Bernstein, edge and local certificate arithmetic.
+`Atlas/` holds the polyhedron-independent pieces: Cayley poses and quadratics, projective view triangles, local rigidity, and the Bernstein, edge and local certificate arithmetic.
 
 ## Generated files
 
-`Vertices.lean` (the `rationalVertices` and `seedVertex` bodies), `GeneratedTangentCones.lean` and `WedgeCoverData.lean` are written by `scripts/update_vertices.py`, `scripts/emit_tangent_cones.py` and `scripts/emit_wedge_cover.py` from the C++ pipeline's `codebdd` output. The scripts find it through `--model_dir DIR` or `$MODEL_DIR` (which the C++ `rebuild.sh` sets); `scripts/model_vertices.py` loads the vertices.
+`Vertices.lean` (the `rationalVertices` and `seedVertex` bodies), `GeneratedTangentCones.lean` and `WedgeCoverData.lean` are written by `scripts/update_vertices.py`, `scripts/emit_tangent_cones.py` and `scripts/emit_wedge_cover.py` (in `search/nopert231/`) from the C++ pipeline's `codebdd` output. The scripts find it through `--model_dir DIR` or `$MODEL_DIR` (which the C++ `rebuild.sh` sets); `scripts/model_vertices.py` loads the vertices. `update_vertices.py` rewrites only the two bodies; the rest of `Vertices.lean` is written by hand.

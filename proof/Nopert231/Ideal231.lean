@@ -91,7 +91,7 @@ theorem sin144_close : |Real.sin (4 * π / 5) - (sin144H : ℝ)| ≤ (trigErrQ :
     mul_nonneg (sub_nonneg.2 hcl) (sub_nonneg.2 hsu),
     mul_nonneg (sub_nonneg.2 hcu) (sub_nonneg.2 hsl)]
 
-/-- Rotation enclosures by orbit, as `TightApproximation.tightCos/tightSin`. -/
+/-- Rotation enclosures by orbit, as `Pipeline.tightCos/tightSin`. -/
 def cosH : OrbitIndex → ℚ := ![1, cos72H, cos144H, cos144H, cos72H]
 def sinH : OrbitIndex → ℚ := ![0, sin72H, sin144H, -sin144H, -sin72H]
 
