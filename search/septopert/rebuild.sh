@@ -3,7 +3,9 @@
 # end to end:
 #
 #   model    codebdd on the committed exact model septopert_model.txt (with the
-#            two view triangles T1/T2): model_vertices.*, codebdd.json
+#            two view triangles T1/T2): model_vertices.*, codebdd.json, and
+#            the Lean view cover proof/Septopert/ViewCoverData.lean
+#            (proof/scripts/emit_septopert_view_cover.py)
 #   tube     identity tube per code (tubecode --min_r 1/100000, the cap at the
 #            mirror normal n = (1,0,-1)/sqrt2 left to the cap certificate),
 #            then tuberefine on the codes away from the cap (codes 7, 9, 11-13
@@ -93,6 +95,16 @@ echo "== build"
 run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe export_codetrees_pack.exe \
   capcert_septopert.exe search5d.exe pack5d.exe dfwhere.exe
 
+if want model; then
+  stage_begin model
+  (cd "$NOPERT" && run ./codebdd.exe --model_file=septopert_model.txt codebdd.json)
+  # The view cover (Lean: Septopert/ViewCoverData.lean) from codebdd.json.
+  run python3 "$LEAN/scripts/emit_septopert_view_cover.py" --bdd "$NOPERT/codebdd.json" \
+    "$LEAN/Septopert/ViewCoverData.lean"
+  run make -C "$NOPERT" -j "$THREADS" tubecode.exe tuberefine.exe export_codetrees_pack.exe search5d.exe pack5d.exe
+  stage_end model
+fi
+
 # The checker's Lean build (no-op if current), in the background while the
 # C++ stages run.
 if want verify; then
@@ -102,13 +114,6 @@ if want verify; then
     LEAN_CMD=(timeout 6000 lake build constructSeptopert)
   fi
   lean_build_start "$LEAN" "${LEAN_CMD[@]}"
-fi
-
-if want model; then
-  stage_begin model
-  (cd "$NOPERT" && run ./codebdd.exe --model_file=septopert_model.txt codebdd.json)
-  run make -C "$NOPERT" -j "$THREADS" tubecode.exe tuberefine.exe export_codetrees_pack.exe search5d.exe pack5d.exe
-  stage_end model
 fi
 
 # codebdd.json is written by the model stage (it is not committed).

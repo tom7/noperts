@@ -174,7 +174,7 @@ in `OrbitData.lean`, the tangent-cone generators in `TangentCones.lean`, and
 (`./get-cc-lib.sh`, see [BUILDING.md](BUILDING.md)):
 
 ```sh
-make -C search/sd -j 16
+make -C search/sd -j 16 all    # optional: rebuild.sh builds what it needs
 search/sd/rebuild.sh --from model --work DIR
 ```
 
@@ -185,8 +185,8 @@ rewrites the committed model and Lean data files in place and rebuilds
 `constructSnubDodecahedron` (the tangent-cone table alone takes about 40 min
 on 16 cores, see above); without `--from model` the run starts at the tube
 stage, which needs `search/sd/codebdd.json` from the model stage
-(`(cd search/sd && ./codebdd.exe --model_file=snub_model.txt codebdd.json)`,
-about 30 s). The verify stage runs `proof/`'s `constructSnubDodecahedron` on
+(`make -C search/sd codebdd.exe && (cd search/sd && ./codebdd.exe
+--model_file=snub_model.txt codebdd.json)`, about 30 s). The verify stage runs `proof/`'s `constructSnubDodecahedron` on
 the packs.
 
 A from-scratch run on the branch, on 64 cores (2026-10-04), took 1 h 3 min,

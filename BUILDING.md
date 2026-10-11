@@ -120,9 +120,9 @@ page with its statement, trust model and reproduction steps:
 - Linux
 - elan (the toolchain is pinned in `proof/lean-toolchain`, v4.32.0)
 - for `search/`: clang, GMP, svn, python3 (python3 regenerates Lean data
-  files: the Septopert's view cover in `proof/scripts/`, and the model
-  stages of `search/dh/`, `search/ph/`, `search/sd/` and
-  `search/nopert231/`)
+  files in the model stages: the Septopert's view cover with
+  `proof/scripts/emit_septopert_view_cover.py`, the other solids' data with
+  the scripts in their `search/<solid>/` directories)
 - optionally `systemd-run --user`, which the rebuild scripts use to cap
   each stage's memory (and, for the Septopert, report its peak). Without a
   systemd user session (e.g. in a container), they run uncapped.

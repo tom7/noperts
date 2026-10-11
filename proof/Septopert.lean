@@ -48,8 +48,9 @@ The result has two parts, and they are trusted differently.
    themselves are ordinary Lean definitions, and the kernel proves (part 1)
    that if they return true, the conclusion follows.
 
-The program that *found* the data (the C++ in `search/`) does not need to be
-trusted at all: a mistake there can only produce data that fails the checks.
+The program that *found* the data (the C++ in `search/septopert/`) does not
+need to be trusted at all: a mistake there can only produce data that fails
+the checks.
 That said, it does its own checking, and might be considered its own independent
 verification of the result.
 

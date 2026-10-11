@@ -105,12 +105,14 @@ search/septopert/rebuild.sh --from model --threads 64 --mem_gb 100
 ```
 
 This builds everything, runs `codebdd` on the exact model
-`search/septopert/septopert_model.txt`, runs the search, packs the tables
-into `work/`, and finally runs `constructSeptopert` on them. Stages:
-`model`, `tube`, `tubepack`, `cap`, `search`, `pack`, `verify`; `--from
-STAGE` restarts at a stage, `--only STAGE` runs one, `--work DIR` moves the
-output. Each stage appends its wall time and peak memory to
-`work/stages.log`.
+`search/septopert/septopert_model.txt` (and regenerates the view cover
+`proof/Septopert/ViewCoverData.lean` from its output), runs the search,
+packs the tables into `work/`, and finally runs `constructSeptopert` on
+them. Stages: `model`, `tube`, `tubepack`, `cap`, `search`, `pack`,
+`verify`; `--from STAGE` restarts at a stage, `--only STAGE` runs one,
+`--work DIR` moves the output. Each stage appends its wall time to
+`work/stages.log` (and prints its peak memory); the Lean build runs in the
+background while the C++ stages run (log `work/lean_build.log`).
 
 Measured times (the 64-core column is a from-scratch run in a fresh clone,
 4 h 22 min in total):

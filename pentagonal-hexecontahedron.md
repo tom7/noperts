@@ -165,7 +165,7 @@ solids' searches share now in [`search/common/`](search/common/). Its
 
 ```sh
 ./get-cc-lib.sh
-make -C search/ph -j 16
+make -C search/ph -j 16 all    # optional: rebuild.sh builds what it needs
 search/ph/rebuild.sh --from model --work DIR    # default DIR: work-ph/
 ```
 

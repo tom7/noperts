@@ -15,8 +15,8 @@ tool and test.
 
 - `septopert_model.txt`: the exact model (rational vertices).
 - `model_vertices.{h,json,lean}`: the model's vertices (the model stage
-  regenerates them with `codebdd`; the committed `model_vertices.h` is
-  formatted differently from `codebdd`'s output, with the same values);
+  regenerates them with `codebdd`, together with the Lean view cover
+  `../../proof/Septopert/ViewCoverData.lean`);
   `symmetry_neighbors.h`: the C3 rotations (the C3 cell prune);
   `mirror_q.h`: the mirror-tie rotations (the mirror prune).
 - `solid.h`: the Septopert's settings for the shared code (its tables, the

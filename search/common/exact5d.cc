@@ -714,7 +714,7 @@ namespace {
 Quad3 HalfTurnCoefficientQuadratic(const TriangleQ &tri, int chart, int g, int c, int d) {
   const MatrixTable &T = solid::kHalfTurnGroup;
   CHECK(g >= 0 && g < T.size && c >= 0 && c < 3 && d >= 0 && d < 3);
-  auto G = [&T, g](int i, int j) { return Q(T.num[g][3 * i + j], T.denom); };
+  auto G = [&](int i, int j) { return Q(T.num[g][3 * i + j], T.denom); };
   const VecQ &pc = tri[c], &pd = tri[d];
   VecQ gpc, gpd;
   for (int k = 0; k < 3; k++) {
@@ -770,7 +770,7 @@ namespace {
 Quad3 TieCoefficientQuadratic(const TriangleQ &tri, int chart, int n, const Q &tau, int c, int d) {
   const MatrixTable &T = solid::kTieHalfTurns;
   CHECK(n >= 0 && n < T.size && c >= 0 && c < 3 && d >= 0 && d < 3);
-  auto G = [&T, n](int i, int j) { return Q(T.num[n][3 * i + j], T.denom); };
+  auto G = [&](int i, int j) { return Q(T.num[n][3 * i + j], T.denom); };
   const VecQ &pc = tri[c], &pd = tri[d];
   VecQ gpc, gpd;
   for (int k = 0; k < 3; k++) {
