@@ -12,6 +12,13 @@
 > `proof/SnubDodecahedron/...` here; see `../../BUILDING.md`, "Former names").
 > For the statement as proved in this repository and how to run the pipeline
 > here, see [`../../snub-dodecahedron.md`](../../snub-dodecahedron.md).
+>
+> Since 2026-10-10 the C++ code that the solids' searches share is in
+> [`../common/`](../common/); the makefile builds it here, with this solid's
+> model headers (`model_vertices.h`, `symmetry_neighbors.h`) and `solid.h`
+> (its settings for the shared code). This directory keeps the model files,
+> the Lean data generators, `rebuild.sh` and the makefile. The code map
+> below names the files as in the branch.
 
 # The snub dodecahedron is a Nopert
 

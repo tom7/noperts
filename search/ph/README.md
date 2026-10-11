@@ -12,6 +12,13 @@ come from the same-named branch of Noperthedron (da2965b3; Apache-2.0 there)
 and now write this repository's module names into
 `../../proof/PentagonalHexecontahedron/`. License: GPLv3 (`../COPYING`).
 
+Since 2026-10-10 the C++ code that the solids' searches share is in
+[`../common/`](../common/); the makefile builds it here, with this solid's
+model headers (`model_vertices.h`, `symmetry_neighbors.h`) and `solid.h`
+(its settings for the shared code). This directory keeps the model files,
+the Lean data generators, `rebuild.sh` and the makefile. The code map below
+names the files as in the branch.
+
 The text below is the branch's README. Its Lean names are the branch's
 (`Noperthedron/PentagonalHexecontahedron/`); in this repository the modules
 are in `proof/PentagonalHexecontahedron/` and the statement is

@@ -74,13 +74,15 @@ page with its statement, trust model and reproduction steps:
     build rules, `common.mk`).
   - `search/septopert/`: the Septopert's search (`rebuild.sh`): its model
     files and its own tools, built with the shared code.
-  - `search/dh/`, `search/ph/`, `search/sd/`: the searches for the
-    deltoidal hexecontahedron, pentagonal hexecontahedron and snub
-    dodecahedron, each with its own `rebuild.sh` (see the result's page).
-    They are copies of the code that produced the verified data, imported
-    from the corresponding branches of the author's search repository;
-    they share much code with `search/common/` and with each other, which
-    will be deduplicated later.
+  - `search/ph/`, `search/sd/`: the searches for the pentagonal
+    hexecontahedron and the snub dodecahedron (`rebuild.sh`, see the
+    result's page): their model files and settings (`solid.h`), built with
+    the shared code.
+  - `search/dh/`: the search for the deltoidal hexecontahedron, with its
+    own `rebuild.sh` (see the result's page). It is a copy of the code that
+    produced the verified data, imported from the corresponding branch of
+    the author's search repository; it shares much code with
+    `search/common/`, which will be deduplicated later.
   - `search/nopert231/`: the search for candidate #231, with its history
     (see [nopert231.md](nopert231.md)).
   - Each writes its output to a `work*/` directory at the repository root

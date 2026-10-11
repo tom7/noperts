@@ -1,15 +1,12 @@
 #include "solve5d.h"
 
-#include "mirror_q.h"
-#include "tie_normals.h"
-
 #include <algorithm>
 #include <cmath>
 
 #include "base/logging.h"
 #include "bignum/big.h"
 #include "bignum/big-overloads.h"
-#include "symmetry_neighbors.h"
+#include "solid.h"
 
 namespace solve5d {
 
@@ -31,7 +28,7 @@ void Stats::Add(const Stats &o) {
 }
 
 Node RootNode(const tubeatlas5d::TubeAtlas &atlas, const Job &job) {
-  CHECK(job.chart >= 0 && job.chart <= 3);
+  CHECK(job.chart >= 0 && job.chart <= solid::kMaxChart);
   return Node{.path = "", .tri = atlas.Triangle(job.t), .box = geom5d::RootBox(job.chart)};
 }
 
@@ -58,26 +55,34 @@ std::vector<Node> Children(const Node &node, const Split &split) {
 std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
   const exact5d::Interval5 iv = geom5d::ToInterval(node.box);
   if (exact5d::OutsideCayleyBall(iv)) return rows5d::RadiusPruneLeaf{};
-  // (Septopert: no fivefold fundamental prune; the C3 cell prune below replaces it.)
-  // C3 cell prune: a rotation c_k of C3 that increases trace over the whole box.
+  // Fundamental prune (fivefold symmetry; the Septopert has none: its C3 cell
+  // prune below replaces it).
+  if (solid::kFivefold) {
+    for (int dir : {1, -1}) {
+      if (exact5d::FundamentalPruneValid(iv, job_.chart, dir)) return rows5d::FundamentalPruneLeaf{dir};
+    }
+  }
+  // Icosahedral prune (the Septopert's C3 cell prune): a symmetry neighbor
+  // (a rotation c_k of C3) that increases trace over the whole box.
   // The exact lower bound is at most the value at the center, so only try
   // neighbors whose advantage there (in double) is clearly positive.
   {
     const geom5d::BoxD b = geom5d::ToDouble(node.box);
     const geom5d::mat3 r = geom5d::RelativeRotation(job_.chart, b.center);
-    for (int n = 0; n < NUM_SYMMETRY_NEIGHBORS; n++) {
+    const MatrixTable &T = solid::kSymmetryNeighbors;
+    for (int n = 0; n < T.size; n++) {
       double adv = 0;
       for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
-          const double g = (double)SYMMETRY_NEIGHBOR_NUM[n][3 * j + i] / SYMMETRY_NEIGHBOR_DENOM;
+          const double g = (double)T.num[n][3 * j + i] / T.denom;
           adv += r[j][i] * (g - (i == j ? 1.0 : 0.0));  // yocto: r[col][row]
         }
       }
       if (adv > 1e-9 && exact5d::IcoPruneValid(iv, job_.chart, n)) return rows5d::IcoPruneLeaf{n};
     }
   }
-  // Mirror (half-turn) prune: some Q_g with trace(H_u R Q_g) > trace(R) over
-  // the whole box and view triangle. Screen in double at the box center and
+  // Half-turn prune (the Septopert's mirror prune): some g (Q_g) with
+  // trace(H_u R g) > trace(R) over the whole box and view triangle. Screen in double at the box center and
   // the triangle's centroid; try the best few exactly.
   if (opt_.half_turn_prune) {
     const geom5d::BoxD b = geom5d::ToDouble(node.box);
@@ -87,13 +92,14 @@ std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
     double tr = 0;
     for (int i = 0; i < 3; i++) tr += r[i][i];
     std::vector<std::pair<double, int>> cand;
-    for (int g = 0; g < MIRROR_Q_SIZE; g++) {
+    const MatrixTable &G = solid::kHalfTurnGroup;
+    for (int g = 0; g < G.size; g++) {
       // M = R G (yocto: r[col][row]); trace(H_u M) = 2 u.M u - trace M.
       double m[3][3];
       for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
           m[i][j] = 0;
-          for (int k = 0; k < 3; k++) m[i][j] += r[k][i] * (double)MIRROR_Q_NUM[g][3 * k + j] / MIRROR_Q_DENOM;
+          for (int k = 0; k < 3; k++) m[i][j] += r[k][i] * (double)G.num[g][3 * k + j] / G.denom;
         }
       }
       double umu = 0, trm = 0;
@@ -145,6 +151,7 @@ std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
     const geom5d::TriangleD td = geom5d::ToDouble(node.tri);
     const geom5d::vec3 u = yocto::normalize(td.corners[0] + td.corners[1] + td.corners[2]);
     const std::string vp = rows5d::ViewPath(node.path);
+    const MatrixTable &H = solid::kTieHalfTurns;
     for (int n = 0; n < opt_.ties->NumNormals(); n++) {
       const BigRat rho = opt_.ties->Radius(n, job_.t, vp);
       if (!(rho > BigRat(0))) continue;
@@ -154,7 +161,7 @@ std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
       for (int i = 0; i < 3; i++)
         for (int j = 0; j < 3; j++) {
           m[i][j] = 0;
-          for (int k = 0; k < 3; k++) m[i][j] += r[k][i] * (double)TIE_HALF_TURN_NUM[n][3 * k + j] / TIE_HALF_TURN_DENOM;
+          for (int k = 0; k < 3; k++) m[i][j] += r[k][i] * (double)H.num[n][3 * k + j] / H.denom;
         }
       double umu = 0, trm = 0;
       for (int i = 0; i < 3; i++) {

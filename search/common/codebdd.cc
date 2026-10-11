@@ -28,6 +28,8 @@
 #include <vector>
 
 #include "ansi.h"
+#include "color-util.h"
+#include "image.h"
 #include "threadutil.h"
 #include "base/logging.h"
 #include "base/print.h"
@@ -36,6 +38,7 @@
 #include "bignum/big-vec.h"
 #include "geom/hull-2d.h"
 #include "model.h"
+#include "solid.h"
 #include "timer.h"
 #include "util.h"
 #include "yocto-math.h"
@@ -425,10 +428,13 @@ void ExportRationalVertices(const std::vector<BigVecQ3> &verts, std::string_view
     h_out << "#include \"bignum/big.h\"\n";
     h_out << "#include \"bignum/big-vec.h\"\n\n";
     h_out << "inline constexpr int NUM_VERTICES_MODEL = " << n << ";\n\n";
-    h_out << "// Whether these rationals are the solid itself (no C5 seeds: no rounded\n";
-    h_out << "// model class around them), so the certificates need no model error terms\n";
-    h_out << "// (tightVertexErrorQ = supportError = 0) and exact support ties are allowed.\n";
-    h_out << "inline constexpr bool MODEL_EXACT = " << (num_seeds == 0 ? "true" : "false") << ";\n\n";
+    // (Only exact models: the C5 solids' solid.h say their models are not.)
+    if (num_seeds == 0) {
+      h_out << "// Whether these rationals are the solid itself (no C5 seeds: no rounded\n";
+      h_out << "// model class around them), so the certificates need no model error terms\n";
+      h_out << "// (tightVertexErrorQ = supportError = 0) and exact support ties are allowed.\n";
+      h_out << "inline constexpr bool MODEL_EXACT = true;\n\n";
+    }
     h_out << "inline constexpr double VERTICES_MODEL[NUM_VERTICES_MODEL][3] = {\n";
     for (size_t i = 0; i < verts.size(); i++) {
       h_out << std::format("  {{ {: .17e}, {: .17e}, {: .17e} }}{}\n",
@@ -985,7 +991,8 @@ struct ViewDomain {
 // Write BDD and codes to JSON. With one view triangle the format is the
 // original one ("fundamental_domain", "tree") plus the roots; with several,
 // "view_domains" lists each one's root, corners, bounding planes, code range
-// and tree instead.
+// and tree instead. With a single view triangle in root 0 (the C5 solids), no
+// roots are written (all are 0).
 void SerializeJSON(
     std::ostream &out,
     std::string_view model_name,
@@ -993,6 +1000,7 @@ void SerializeJSON(
     const std::vector<PlaneQ> &planes,
     const std::vector<FeasibleCode> &codes,
     const std::vector<ViewDomain> &domains) {
+  const bool with_roots = !(domains.size() == 1 && domains[0].root == 0);
 
   out << "{\n";
   out << "  \"polyhedron\": {\n";
@@ -1010,7 +1018,7 @@ void SerializeJSON(
   // A view triangle's root, corners and bounding planes (indented by pad).
   auto DomainFields = [&](const ViewDomain &d, const std::string &pad) {
     out << pad << "\"name\": \"viewTriangle\",\n";
-    out << pad << "\"root\": " << d.root << ",\n";
+    if (with_roots) out << pad << "\"root\": " << d.root << ",\n";
     out << pad << "\"corners\": [\n";
     for (int k = 0; k < 3; k++) {
       const BigVecQ3 &c = d.poly.vertices[k];
@@ -1056,7 +1064,7 @@ void SerializeJSON(
     const auto &c = codes[i];
     out << "    {\n";
     out << "      \"code_hex\": \"" << c.hex_id << "\",\n";
-    out << "      \"root\": " << c.root << ",\n";
+    if (with_roots) out << "      \"root\": " << c.root << ",\n";
     if (planes.size() <= 32) out << "      \"code_uint32\": " << c.code_val.to_ullong() << ",\n";
     out << "      \"bit_string\": \"" << c.bit_string << "\",\n";
     out << "      \"num_polygon_vertices\": " << c.poly.vertices.size() << ",\n";
@@ -1152,6 +1160,298 @@ void SerializeJSON(
   out << "\n}\n";
 }
 
+// ----------------------------------------------------------------------------
+// Code texture (--texture=BASE): the face-visibility code of every view
+// direction, colored by its class up to symmetry, as an equirectangular image
+// for rendering (e.g. on the solid in Blender). Not used by the proof.
+//
+// Two directions are in one class if their codes are related by a rotation or
+// reflection of the solid (found numerically from the vertices), possibly
+// composed with the antipodal map d -> -d (which mirrors the shadow and
+// complements the code). This is the equivalence of the proof's view
+// reduction, so every class meets the view triangle, and the legend lists
+// the codes there.
+//
+// Pixel (col, row) of a W x H image is the direction at azimuth
+// az = (1/2 - u) 2 pi and elevation el = (v - 1/2) pi, u = (col + 1/2) / W,
+// v = 1 - (row + 1/2) / H: Blender's equirectangular Environment Texture
+// convention (the image center faces +x, the top row is +z). In Blender, feed
+// the object's coordinates (Texture Coordinate > Object) to an Environment
+// Texture node with this image to color the solid by radial projection;
+// BASE.stl is the solid in the image's frame.
+
+static void WriteCodeTexture(const std::string &base, int width, const std::vector<BigVecQ3> &verts,
+                             const std::vector<PlaneQ> &planes,
+                             const std::vector<FeasibleCode> &feasible_codes) {
+  Timer timer;
+  const int np = planes.size();
+  // Distinct points (a point may be listed in several slots).
+  std::vector<vec3> pts;
+  for (const auto &v : verts) {
+    const vec3 p{v.x.ToDouble(), v.y.ToDouble(), v.z.ToDouble()};
+    bool dup = false;
+    for (const vec3 &q : pts) dup = dup || yocto::distance(p, q) < 1e-12;
+    if (!dup) pts.push_back(p);
+  }
+  // The orthogonal maps of the solid: those taking a frame of three points
+  // to a congruent triple and the point set onto itself.
+  std::vector<yocto::mat<double, 3>> syms;
+  {
+    const int n = pts.size();
+    int b = 1;
+    for (int j = 1; j < n; j++) if (yocto::distance(pts[j], pts[0]) < yocto::distance(pts[b], pts[0])) b = j;
+    int c = -1;
+    for (int j = 1; j < n; j++) {
+      if (j == b) continue;
+      if (std::abs(yocto::dot(pts[0], yocto::cross(pts[b], pts[j]))) < 1e-3) continue;
+      if (c < 0 || yocto::distance(pts[j], pts[0]) < yocto::distance(pts[c], pts[0])) c = j;
+    }
+    CHECK(c >= 0);
+    const yocto::mat<double, 3> X = {pts[0], pts[b], pts[c]};
+    const yocto::mat<double, 3> Xinv = yocto::inverse(X);
+    auto close = [](double x, double y) { return std::abs(x - y) < 1e-9; };
+    for (int a2 = 0; a2 < n; a2++) {
+      if (!close(yocto::length(pts[a2]), yocto::length(pts[0]))) continue;
+      for (int b2 = 0; b2 < n; b2++) {
+        if (!close(yocto::length(pts[b2]), yocto::length(pts[b])) ||
+            !close(yocto::distance(pts[a2], pts[b2]), yocto::distance(pts[0], pts[b]))) continue;
+        for (int c2 = 0; c2 < n; c2++) {
+          if (!close(yocto::length(pts[c2]), yocto::length(pts[c])) ||
+              !close(yocto::distance(pts[a2], pts[c2]), yocto::distance(pts[0], pts[c])) ||
+              !close(yocto::distance(pts[b2], pts[c2]), yocto::distance(pts[b], pts[c]))) continue;
+          const yocto::mat<double, 3> M = yocto::mat<double, 3>{pts[a2], pts[b2], pts[c2]} * Xinv;
+          bool ok = true;
+          for (int i = 0; i < n && ok; i++) {
+            const vec3 q = M * pts[i];
+            bool hit = false;
+            for (int j = 0; j < n && !hit; j++) hit = yocto::distance(q, pts[j]) < 1e-9;
+            ok = hit;
+          }
+          if (ok) syms.push_back(M);
+        }
+      }
+    }
+  }
+  int reflections = 0;
+  for (const auto &M : syms) reflections += yocto::determinant(M) < 0;
+  Print("Texture: {} distinct points, {} symmetries ({} reflections), {} planes\n",
+        pts.size(), syms.size(), reflections, np);
+
+  // Unit plane normals, and each symmetry's signed permutation of the planes.
+  // (From the facets' vertices: the exact integer normals can overflow a
+  // double.) Oriented as the exact normals.
+  std::vector<vec3> normal(np);
+  for (int i = 0; i < np; i++) {
+    const auto &fv = planes[i].face_vertices;
+    auto P = [&](int v) { return vec3{verts[v].x.ToDouble(), verts[v].y.ToDouble(), verts[v].z.ToDouble()}; };
+    vec3 best{0, 0, 0};
+    for (size_t j = 1; j < fv.size(); j++) {
+      for (size_t k = j + 1; k < fv.size(); k++) {
+        const vec3 c = yocto::cross(P(fv[j]) - P(fv[0]), P(fv[k]) - P(fv[0]));
+        if (yocto::length(c) > yocto::length(best)) best = c;
+      }
+    }
+    CHECK(yocto::length(best) > 1e-9) << "degenerate facet";
+    normal[i] = yocto::normalize(best);
+    // The exact normal's orientation: the sign of its dot with the double one.
+    const BigRat dot = planes[i].normal.x * BigRat::FromDouble(normal[i].x) +
+                       planes[i].normal.y * BigRat::FromDouble(normal[i].y) +
+                       planes[i].normal.z * BigRat::FromDouble(normal[i].z);
+    if (dot < BigRat(0)) normal[i] = -normal[i];
+  }
+  struct SignedPerm { std::vector<int> to; std::vector<bool> flip; };
+  std::vector<SignedPerm> perms;
+  // Match outward normals (opposite faces can be parallel); `inward[i]`: the
+  // exact normal of plane i points into the solid.
+  std::vector<bool> inward(np);
+  std::vector<vec3> outward(np);
+  vec3 centroid{0, 0, 0};
+  for (const vec3 &q : pts) centroid += q;
+  centroid /= (double)pts.size();
+  for (int i = 0; i < np; i++) {
+    const vec3 p0{verts[planes[i].face_vertices[0]].x.ToDouble(), verts[planes[i].face_vertices[0]].y.ToDouble(),
+                  verts[planes[i].face_vertices[0]].z.ToDouble()};
+    inward[i] = yocto::dot(normal[i], p0 - centroid) < 0;
+    outward[i] = inward[i] ? -normal[i] : normal[i];
+  }
+  for (const auto &M : syms) {
+    SignedPerm sp{std::vector<int>(np, -1), std::vector<bool>(np, false)};
+    for (int i = 0; i < np; i++) {
+      const vec3 m = M * outward[i];
+      for (int j = 0; j < np; j++) {
+        if (yocto::dot(m, outward[j]) > 1.0 - 1e-9) {
+          sp.to[i] = j;
+          sp.flip[i] = inward[i] != inward[j];
+          break;
+        }
+      }
+      CHECK(sp.to[i] >= 0) << "a symmetry does not permute the facet planes";
+    }
+    perms.push_back(std::move(sp));
+  }
+  auto less = [np](const Code &x, const Code &y) {
+    for (int i = np - 1; i >= 0; i--) {
+      if (x[i] != y[i]) return y[i];
+    }
+    return false;
+  };
+  Code mask;
+  for (int i = 0; i < np; i++) mask.set(i);
+  // The least image of a code under the symmetries and the antipode.
+  auto canonical = [&](const Code &c) {
+    Code best = c;
+    bool first = true;
+    for (const auto &sp : perms) {
+      Code t;
+      for (int i = 0; i < np; i++) {
+        if (c[i] != sp.flip[i]) t.set(sp.to[i]);
+      }
+      for (const Code &u : {t, (~t) & mask}) {
+        if (first || less(u, best)) best = u;
+        first = false;
+      }
+    }
+    return best;
+  };
+
+  // Classes in the order of codebdd's codes (the view triangle's).
+  std::map<std::string, int> class_of;  // canonical code (bit string) -> class
+  std::vector<std::vector<int>> class_codes;
+  for (size_t k = 0; k < feasible_codes.size(); k++) {
+    const std::string key = canonical(feasible_codes[k].code_val).to_string();
+    auto [it, inserted] = class_of.try_emplace(key, (int)class_codes.size());
+    if (inserted) class_codes.emplace_back();
+    class_codes[it->second].push_back(k);
+  }
+  const int num_classes = class_codes.size();
+
+  // Colors: hues spread by the golden ratio, alternating saturation/value.
+  std::vector<uint32_t> color(num_classes);
+  for (int k = 0; k < num_classes; k++) {
+    const double hue = std::fmod(0.11 + k * 0.6180339887498949, 1.0);
+    const double sat = (k % 3 == 0) ? 0.85 : (k % 3 == 1) ? 0.55 : 0.70;
+    const double val = (k % 2 == 0) ? 0.95 : 0.75;
+    color[k] = ColorUtil::HSVAToRGBA32(hue, sat, val, 1.0);
+  }
+
+  // The image. Each row is a task; codes seen are memoized per row.
+  const int W = width, H = width / 2;
+  std::vector<int> pix_class((size_t)W * H, -1);
+  std::mutex m;
+  std::map<std::string, int> extra;  // classes off the view triangle (should not happen)
+  ParallelComp(H, [&](int64_t row) {
+    std::unordered_map<Code, int> memo;
+    for (int col = 0; col < W; col++) {
+      const double u = (col + 0.5) / W, v = 1.0 - (row + 0.5) / H;
+      const double az = (0.5 - u) * 2.0 * std::numbers::pi, el = (v - 0.5) * std::numbers::pi;
+      const vec3 d{std::cos(el) * std::cos(az), std::cos(el) * std::sin(az), std::sin(el)};
+      Code c;
+      for (int i = 0; i < np; i++) if (yocto::dot(normal[i], d) >= 0.0) c.set(i);
+      auto it = memo.find(c);
+      int k;
+      if (it != memo.end()) {
+        k = it->second;
+      } else {
+        const std::string key = canonical(c).to_string();
+        auto cit = class_of.find(key);
+        if (cit != class_of.end()) {
+          k = cit->second;
+        } else {
+          MutexLock ml(&m);
+          extra.try_emplace(key, -2 - (int)extra.size());
+          k = extra[key];
+        }
+        memo[c] = k;
+      }
+      pix_class[(size_t)row * W + col] = k;
+    }
+  }, 64);
+
+  ImageRGBA img(W, H);
+  std::vector<int64_t> area(num_classes, 0);
+  for (int row = 0; row < H; row++) {
+    for (int col = 0; col < W; col++) {
+      const int k = pix_class[(size_t)row * W + col];
+      if (k < 0) {
+        img.SetPixel32(col, row, 0x000000FF);
+        continue;
+      }
+      area[k]++;
+      uint32_t rgba = color[k];
+      // Darken boundary pixels (a neighbor in another class; columns wrap).
+      const int right = pix_class[(size_t)row * W + (col + 1) % W];
+      const int down = row + 1 < H ? pix_class[(size_t)(row + 1) * W + col] : k;
+      if (right != k || down != k) {
+        const auto [r, g, b, a] = ColorUtil::Unpack32(rgba);
+        rgba = ColorUtil::Pack32(r / 2, g / 2, b / 2, a);
+      }
+      img.SetPixel32(col, row, rgba);
+    }
+  }
+  CHECK(img.Save(base + ".png")) << base << ".png";
+
+  // Legend.
+  int64_t total = 0;
+  for (int64_t a : area) total += a;
+  std::string legend = std::format(
+      "# {}.png: {}x{} equirectangular (Blender Environment Texture convention: center = +x,\n"
+      "# top = +z), view directions colored by face-visibility code up to the solid's {}\n"
+      "# symmetries and the antipode. Boundaries are darkened. {} classes; {} codes in the\n"
+      "# view triangle (codebdd.json numbering).\n"
+      "# class  color    area     codebdd codes\n",
+      base, W, H, syms.size(), num_classes, feasible_codes.size());
+  for (int k = 0; k < num_classes; k++) {
+    std::string ids;
+    for (int c : class_codes[k]) ids += std::format("{}{}", ids.empty() ? "" : " ", c);
+    legend += std::format("{:5}  #{:06X}  {:.5f}  {}\n", k, color[k] >> 8,
+                          (double)area[k] / std::max<int64_t>(total, 1), ids);
+    Print("  {}▉" ANSI_RESET " class {:3}: {:.4f} of the sphere, codes {}\n",
+          ANSI::ForegroundRGB32(color[k]), k, (double)area[k] / std::max<int64_t>(total, 1), ids);
+  }
+  Util::WriteFile(base + ".txt", legend);
+
+  // The solid in the image's frame: each facet fanned from its first vertex,
+  // in counterclockwise order seen from outside.
+  std::string stl = "solid " + base + "\n";
+  for (int i = 0; i < np; i++) {
+    std::vector<int> fv;
+    for (int v : planes[i].face_vertices) {
+      const vec3 p{verts[v].x.ToDouble(), verts[v].y.ToDouble(), verts[v].z.ToDouble()};
+      bool dup = false;
+      for (int w : fv) {
+        dup = dup || yocto::distance(p, vec3{verts[w].x.ToDouble(), verts[w].y.ToDouble(),
+                                              verts[w].z.ToDouble()}) < 1e-12;
+      }
+      if (!dup) fv.push_back(v);
+    }
+    auto P = [&](int v) { return vec3{verts[v].x.ToDouble(), verts[v].y.ToDouble(), verts[v].z.ToDouble()}; };
+    vec3 center{0, 0, 0};
+    for (int v : fv) center += P(v);
+    center /= (double)fv.size();
+    vec3 n = normal[i];
+    if (yocto::dot(n, center) < 0) n = -n;
+    const vec3 e1 = yocto::normalize(P(fv[0]) - center), e2 = yocto::cross(n, e1);
+    std::sort(fv.begin(), fv.end(), [&](int x, int y) {
+      return std::atan2(yocto::dot(P(x) - center, e2), yocto::dot(P(x) - center, e1)) <
+             std::atan2(yocto::dot(P(y) - center, e2), yocto::dot(P(y) - center, e1));
+    });
+    for (size_t t = 1; t + 1 < fv.size(); t++) {
+      stl += std::format("facet normal {} {} {}\n outer loop\n", n.x, n.y, n.z);
+      for (int v : {fv[0], fv[t], fv[t + 1]}) {
+        const vec3 p = P(v);
+        stl += std::format("  vertex {} {} {}\n", p.x, p.y, p.z);
+      }
+      stl += " endloop\nendfacet\n";
+    }
+  }
+  stl += "endsolid " + base + "\n";
+  Util::WriteFile(base + ".stl", stl);
+  Print("Wrote {}.png, {}.txt, {}.stl: {} classes{} in {}\n", base, base, base, num_classes,
+        extra.empty() ? "" : std::format(" (+{} OFF the view triangle!)", extra.size()),
+        ANSI::Time(timer.Seconds()));
+  CHECK(extra.empty()) << "a class does not meet the view triangle";
+}
+
 int main(int argc, char **argv) {
   Timer timer;
   Print(AWHITE("================================================================\n"));
@@ -1161,7 +1461,9 @@ int main(int argc, char **argv) {
   bool export_only = false;
   std::string output_path = "codebdd.json";
   std::string export_prefix = "model_vertices";
-  std::string model_file = "septopert_model.txt";
+  std::string model_file = solid::kModelFile;
+  std::string texture_base;
+  int texture_width = 8192;
   bool model_faces = false;
 
   for (int i = 1; i < argc; i++) {
@@ -1174,6 +1476,10 @@ int main(int argc, char **argv) {
       model_file = arg.substr(13);
     } else if (arg == "--model_faces") {
       model_faces = true;
+    } else if (arg.starts_with("--texture=")) {
+      texture_base = arg.substr(10);
+    } else if (arg.starts_with("--texture_width=")) {
+      texture_width = std::stoi(std::string(arg.substr(16)));
     } else if (arg.starts_with("--export_prefix=")) {
       export_prefix = arg.substr(16);
     } else if (arg.starts_with("-")) {
@@ -1316,6 +1622,10 @@ int main(int argc, char **argv) {
   CHECK(out.good()) << "Failed to open " << output_path << " for writing";
   SerializeJSON(out, model_name, verts, planes, feasible_codes, domains);
   out.close();
+
+  if (!texture_base.empty()) {
+    WriteCodeTexture(texture_base, texture_width, verts, planes, feasible_codes);
+  }
 
   Print("Finished in " AGREEN("{}\n\n"), ANSI::Time(timer.Seconds()));
   return 0;

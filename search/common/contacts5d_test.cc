@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
+#include <filesystem>
 #include <random>
 #include <set>
 #include <string>
@@ -20,9 +22,15 @@
 using namespace contacts5d;
 using exact5d::Q;
 
+// codebdd's output (not committed; `./codebdd.exe` writes it), or $CODEBDD_JSON.
+static std::string CodebddJson() {
+  const char *e = getenv("CODEBDD_JSON");
+  return e != nullptr ? e : "codebdd.json";
+}
+
 static std::vector<exact5d::TriangleQ> CodeTriangles(std::vector<int> *roots) {
   rapidjson::Document doc;
-  doc.Parse(Util::ReadFile("codebdd.json").c_str());
+  doc.Parse(Util::ReadFile(CodebddJson()).c_str());
   CHECK(!doc.HasParseError());
   std::vector<exact5d::TriangleQ> out;
   for (const auto &code : doc["codes"].GetArray()) {
@@ -190,7 +198,11 @@ static void TestPools() {
 
 int main() {
   TestEdges();
-  TestPools();
+  if (std::filesystem::exists(CodebddJson())) {
+    TestPools();
+  } else {
+    printf("  SKIPPED the contact pools: %s not present\n", CodebddJson().c_str());
+  }
   printf("contacts5d tests PASSED\n");
   return 0;
 }

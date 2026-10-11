@@ -7,6 +7,7 @@
 #include "base/logging.h"
 #include "bignum/big.h"
 #include "bignum/big-overloads.h"
+#include "solid.h"
 
 using namespace geom5d;
 
@@ -98,8 +99,15 @@ static void TestBoxes() {
     for (int a = 0; a < 5; a++) {
       CHECK(iv.min[a] == iv2.min[a] && iv.max[a] == iv2.max[a]);
     }
-    // Septopert: every chart is the full Cayley cube [-1, 1]^3 (no fivefold narrowing).
-    for (int a = 0; a < 3; a++) CHECK(root.lo[a] == Q(-1) && root.hi[a] == Q(1));
+    if (solid::kFivefold) {
+      // Charts 0..2 restrict z, y, x to [-1/3, 1/3]; chart 3 is the full root.
+      const int restricted[4] = {2, 1, 0, 2};
+      const Q w = chart == 3 ? Q(1) : Q(1, 3);
+      CHECK(root.lo[restricted[chart]] == -w && root.hi[restricted[chart]] == w);
+    } else {
+      // The Septopert: every chart is the full Cayley cube [-1, 1]^3.
+      for (int a = 0; a < 3; a++) CHECK(root.lo[a] == Q(-1) && root.hi[a] == Q(1));
+    }
 
     BoxQ b = root;
     for (int step = 0; step < 20; step++) {

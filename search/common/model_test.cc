@@ -1,7 +1,9 @@
 // model_test.cc: Tests of the rational model (model.h): double and rational
-// coordinates agree, and the vertices are strictly inside the unit sphere.
+// coordinates agree, the vertices are strictly inside the unit sphere and,
+// for the C5 models (solid::kFivefold), have the 5-fold symmetry about z.
 
 #include "model.h"
+#include "solid.h"
 
 #include <cmath>
 #include <cstdlib>
@@ -35,6 +37,31 @@ static void TestDoubleRationalAgreement() {
   Print("[PASS] TestDoubleRationalAgreement\n");
 }
 
+// The 5-fold rotation about z maps orbit k to orbit k + 1 (vertex S k + s is
+// seed s rotated by 2 pi k / 5), preserving z and the cylindrical radius (to
+// within the model's rounding).
+static void TestC5Symmetry() {
+  Print("[RUN] TestC5Symmetry\n");
+  const int seeds = NUM_VERTICES / 5;
+  CHECK_EQ(seeds * 5, NUM_VERTICES);
+  constexpr double angle = 2.0 * std::numbers::pi / 5.0;
+  const double c = std::cos(angle), s = std::sin(angle);
+  double max_rot_err = 0.0;
+  for (int k = 0; k < 5; k++) {
+    for (int seed = 0; seed < seeds; seed++) {
+      vec3 cur = Vertex(seeds * k + seed);
+      vec3 next = Vertex(seeds * ((k + 1) % 5) + seed);
+      vec3 rotated = {c * cur.x - s * cur.y, s * cur.x + c * cur.y, cur.z};
+      max_rot_err = std::max(max_rot_err, (double)yocto::length(rotated - next));
+      CHECK_LT(std::abs(cur.z - next.z), 1e-15);
+      CHECK_LT(std::abs(std::hypot(cur.x, cur.y) - std::hypot(next.x, next.y)), 1e-14);
+    }
+  }
+  Print("  Max C5 rotation error: {}\n", max_rot_err);
+  CHECK_LT(max_rot_err, 1e-14);
+  Print("[PASS] TestC5Symmetry\n");
+}
+
 // Every vertex is strictly inside the unit sphere (Lean's GoodPoly invariant).
 static void TestInsideUnitSphere() {
   Print("[RUN] TestInsideUnitSphere\n");
@@ -58,6 +85,7 @@ int main(int argc, char **argv) {
   Print("=== Model tests ({} vertices) ===\n", NUM_VERTICES);
   TestDoubleRationalAgreement();
   TestInsideUnitSphere();
+  if (solid::kFivefold) TestC5Symmetry();
   TestSingleton();
   Print("=== All model tests passed ===\n");
   return 0;

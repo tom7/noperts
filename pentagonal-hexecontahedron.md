@@ -160,8 +160,9 @@ tables. A run takes about 23 min on 64 cores.
 ## Reproducing the data
 
 The search is in [`search/ph/`](search/ph/), copied from the
-`pentagonalhexecontahedron` branch of nopert229 (04d115c). Its `README.md`
-describes it. Build the tools and run the whole pipeline with:
+`pentagonalhexecontahedron` branch of nopert229 (04d115c), with the code the
+solids' searches share now in [`search/common/`](search/common/). Its
+`README.md` describes it. Build the tools and run the whole pipeline with:
 
 ```sh
 ./get-cc-lib.sh

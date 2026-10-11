@@ -47,6 +47,7 @@
 #include "exact5d.h"
 #include "geom5d.h"
 #include "rows5d.h"
+#include "solid.h"
 #include "solve5d.h"
 #include "threadutil.h"
 #include "tubeatlas5d.h"
@@ -698,7 +699,7 @@ int main(int argc, char **argv) {
     else if (a == "--tie_nodes") LoadTieNodes(next());
     else LOG(FATAL) << "unknown argument " << a;
   }
-  CHECK(chart >= 0 && chart <= 3) << "--chart 0..3";
+  CHECK(chart >= 0 && chart <= solid::kMaxChart) << "--chart 0.." << solid::kMaxChart;
 
   const auto atlas = tubeatlas5d::TubeAtlas::Load(trees_dir, bdd);
   if (!per_code.empty()) {

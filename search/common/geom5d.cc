@@ -1,5 +1,7 @@
 #include "geom5d.h"
 
+#include "solid.h"
+
 #include <algorithm>
 #include <cmath>
 #include <optional>
@@ -122,8 +124,10 @@ static std::optional<TriangleQ> OuterDyadicTriangleBits(const TriangleQ &t, int 
       // On the root plane s0 x + s1 y + s2 z = 1.
       out[i] = {x, y, s2 * (Q(1) - s0 * x - s1 * y)};
     }
-    // Leaving the root's octant only gets worse with more growth.
-    if (!SignedTriangleValid(root, out)) return std::nullopt;
+    // Leaving the root's octant only gets worse with more growth. (The
+    // icosahedral searches did not check this: certificates over an outer
+    // triangle that leaves the octant fail, and stay over the exact one.)
+    if (solid::kOuterTriangleInRoot && !SignedTriangleValid(root, out)) return std::nullopt;
     if (TriangleContains(out, t)) return out;
   }
   return std::nullopt;

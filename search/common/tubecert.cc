@@ -35,6 +35,7 @@
 #include "bignum/big-overloads.h"
 #include "bignum/big.h"
 #include "model.h"
+#include "solid.h"
 #include "util.h"
 #include "yocto-math.h"
 #include "rapidjson/document.h"
@@ -197,10 +198,10 @@ static bool AuditAxis(const TriangleQ &tri, ContactInfo contacts[3], AxisCertifi
   }
 
   BigVecQ3 w_coeffs[3] = {coeff0, coeff1, coeff2};
-  // 6 / 10^15 (Lean's supportError); 0 for an exact model (MODEL_EXACT), where
+  // 6 / 10^15 (Lean's supportError); 0 for an exact model (solid::kModelExact), where
   // exact support ties (e.g. at a view along an edge, whose endpoints
   // coincide in projection) are allowed. Weights stay strictly positive.
-  const BigRat support_error = MODEL_EXACT ? BigRat(0) : BigRat(6, 1000000000000000LL);
+  const BigRat support_error = solid::kModelExact ? BigRat(0) : BigRat(6, 1000000000000000LL);
   BigRat weight_upper[3];
   BigRat sum_weight_upper(0);
 

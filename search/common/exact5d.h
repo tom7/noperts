@@ -14,7 +14,9 @@
 // their root's plane (sum_i s_i u_i = 1, s_i u_i >= 0), so each point is a
 // positive multiple of its view. Only Admissible depends on the root (it
 // checks SignedTriangleValid); for the Septopert the view domain uses roots 0
-// and 1.
+// and 1, for the other solids only root 0.
+//
+// The solid's tables and settings (solid::...) come from its solid.h.
 
 #ifndef _NOPERT_EXACT5D_H
 #define _NOPERT_EXACT5D_H
@@ -104,7 +106,7 @@ struct MixedBox {
 };
 
 // The constants of the Lean checker.
-Q TightVertexErrorQ();  // 6 / 10^16 (0 for an exact model, MODEL_EXACT)
+Q TightVertexErrorQ();  // 6 / 10^16 (0 for an exact model, solid::kModelExact)
 Q SupportError();       // 10 * tightVertexErrorQ
 
 // Per-box quantities (names follow the Lean Box.* definitions).
@@ -157,18 +159,24 @@ bool OutsideCayleyBall(const Interval5 &iv);
 // (Direction.positive) or -1 (Direction.negative).
 Q FundamentalLower(const Interval5 &iv, int chart, int direction);
 bool FundamentalPruneValid(const Interval5 &iv, int chart, int direction);
-// C3 cell prune (Septopert; formerly the icosahedral prune): some right
-// symmetry, c3Mat (n + 1) (neighbor n of symmetry_neighbors.h, exact),
-// strictly increases trace over the whole box, so the box is outside the C3v
-// cell.
+// Icosahedral prune (icosahedral solids) or C3 cell prune (the Septopert):
+// some right symmetry, neighbor n of solid::kSymmetryNeighbors
+// (symmetry_neighbors.h: the rotations by +-72 degrees about the six 5-fold
+// axes, rounded to 10^-12; the Septopert's c3Mat (n + 1), exact), strictly
+// increases trace over the whole box, so the box is outside the identity's
+// icosahedral Dirichlet cell (the C3v cell).
 Q IcoPruneLower(const Interval5 &iv, int chart, int n);
-// Mirror prune (Septopert; formerly the DH's half-turn prune): a pose (u, R)
-// is a passage iff (u, H_u R Q_g) is, for H_u the half-turn about the view u
-// and Q_g = -sigma_g (sigma_g a mirror of the Septopert; Lean:
-// Septopert.MirrorTie). So R may be taken in the C3v cell, and a box is
-// pruned when trace(H_u R Q_g) > trace(R) over all of it for one g (index
-// into mirror_q.h, exact: the allowance is 0). With u = p / |p|,
-// p = sum_c lambda_c P_c over
+// Half-turn prune (centrally symmetric icosahedral solids, e.g. the deltoidal
+// hexecontahedron): a pose (u, R) is a passage iff (u, H_u R g) is, for H_u
+// the half-turn about the view u and g in I (pi_u(H_u X) = -pi_u(X), K = -K,
+// gK = K). So R may be taken to maximize the trace over {R g, H_u R g}, and a
+// box is pruned when trace(H_u R g) > trace(R) over all of it for one g
+// (index into solid::kHalfTurnGroup: ico_group.h, rounded to 10^-12). The
+// Septopert's mirror prune is the same leaf with g = Q_g (mirror_q.h, exact:
+// the allowance is 0): a pose (u, R) is a passage iff (u, H_u R Q_g) is, for
+// Q_g = -sigma_g (sigma_g a mirror of the Septopert; Lean:
+// Septopert.MirrorTie), so R may be taken in the C3v cell. With
+// u = p / |p|, p = sum_c lambda_c P_c over
 // the view triangle's corners, (trace(H_p R G) - trace(R)) |p|^2 D(w) is a
 // homogeneous quadratic in lambda with degree-2 Bernstein coefficients
 // b_cd(w), quadratic in the Cayley coordinates w:
@@ -206,9 +214,10 @@ bool CapLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, const Ca
 Q IdentityMismatchRadius(const Interval5 &iv);
 bool IdentityTubeValid(const Interval5 &iv, const Q &r);
 
-// The root pose box of a chart: for the Septopert, AtlasPose.rootInterval
-// for every chart (the DH's AtlasFundamentalPrune.restrictedRootInterval narrowed one
-// coordinate to [-1/3, 1/3] in charts 0-2 by the fivefold symmetry).
+// The root pose box of a chart: with the fivefold symmetry
+// (solid::kFivefold), AtlasFundamentalPrune.restrictedRootInterval (one
+// coordinate narrowed to [-1/3, 1/3] in charts 0-2); for the Septopert,
+// AtlasPose.rootInterval for every chart.
 Interval5 RestrictedRootInterval(int chart);
 
 }  // namespace exact5d

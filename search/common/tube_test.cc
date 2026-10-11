@@ -3,7 +3,8 @@
 // Usage: tube_test.exe [TREES_DIR]
 //
 // The geometric tests are self-contained. The silhouette test uses the code
-// triangles in ./codebdd.json. The audit test re-checks leaves of the tube
+// triangles in ./codebdd.json (or $CODEBDD_JSON; skipped when it is absent).
+// The audit test re-checks leaves of the tube
 // trees in TREES_DIR (or $TREES_DIR), e.g. tuberefine's output; it is
 // skipped when no trees directory is given.
 
@@ -261,9 +262,15 @@ int main(int argc, char **argv) {
   TestNearOriginFaceCuttingPlane();
   TestCheckAnnularDominance();
 
-  const std::vector<TriangleQ> tris = LoadCodeTriangles("codebdd.json", 1);
-  CHECK(!tris.empty()) << "codebdd.json not found (run from the source directory)";
-  TestBasicSilhouette(tris[0]);
+  const char *env_bdd = getenv("CODEBDD_JSON");
+  const std::string bdd = env_bdd != nullptr ? env_bdd : "codebdd.json";
+  if (!std::filesystem::exists(bdd)) {
+    Print("SKIPPED: TestBasicSilhouette ({} not present; run ./codebdd.exe)\n", bdd);
+  } else {
+    const std::vector<TriangleQ> tris = LoadCodeTriangles(bdd, 1);
+    CHECK(!tris.empty()) << bdd << " has no code triangles";
+    TestBasicSilhouette(tris[0]);
+  }
 
   if (trees_dir.empty() || !std::filesystem::exists(trees_dir + "/tree.0.json")) {
     Print("SKIPPED: TestAuditTreeLeaves (no tube trees; pass TREES_DIR)\n");

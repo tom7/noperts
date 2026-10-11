@@ -9,7 +9,7 @@
 //
 // Usage:
 //   search5d.exe --t <triangle>[,<triangle>...] | --code <code> | --all
-//                [--charts 0,1,2] [--threads N] [--commit_depth D]
+//                [--charts 0,1,2(,3)] [--threads N] [--commit_depth D]
 //                [--subtree_budget N] [--out_dir jobs] [--trees_dir trees_r2]
 //                [--bdd codebdd.json] [--cone_samples N] [--split_kappa K]
 //                [--split_rule 0|1|2] [--min_peel 5..7]
@@ -40,7 +40,7 @@
 #include <vector>
 #include <optional>
 
-#include "tie_normals.h"
+#include "solid.h"
 
 #include "base/logging.h"
 #include "rows5d.h"
@@ -52,7 +52,12 @@ namespace {
 
 struct Args {
   std::vector<int> triangles;
-  std::vector<int> charts = {0, 1, 2, 3};
+  // Default: every chart, 0..solid::kMaxChart.
+  std::vector<int> charts = [] {
+    std::vector<int> c;
+    for (int chart = 0; chart <= solid::kMaxChart; chart++) c.push_back(chart);
+    return c;
+  }();
   int threads = 0;
   int commit_depth = 6;
   int64_t subtree_budget = 200000;
@@ -203,7 +208,7 @@ int main(int argc, char **argv) {
   // Tie tubes (deltoidal hexecontahedron; tietube.cc output).
   std::optional<tieatlas5d::TieAtlas> ties;
   if (!args.tie_dir.empty()) {
-    ties = tieatlas5d::TieAtlas::Load(args.tie_dir, NUM_TIE_NORMALS, atlas.NumTriangles());
+    ties = tieatlas5d::TieAtlas::Load(args.tie_dir, solid::kTieHalfTurns.size, atlas.NumTriangles());
     args.opt.ties = &*ties;
   }
   if (all) {
@@ -219,7 +224,7 @@ int main(int argc, char **argv) {
   std::deque<JobState> states;
   std::vector<WorkItem> items;
   for (int chart : args.charts) {
-    CHECK(chart >= 0 && chart <= 3) << "chart " << chart;
+    CHECK(chart >= 0 && chart <= solid::kMaxChart) << "chart " << chart << " (charts 0.." << solid::kMaxChart << ")";
     std::filesystem::create_directories(std::format("{}/c{}", args.out_dir, chart));
     for (int t : args.triangles) {
       JobState &s = states.emplace_back();

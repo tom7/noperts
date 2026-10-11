@@ -154,7 +154,8 @@ table (`proof/SnubDodecahedron/GeneratedTangentCones.lean`, 4 MB) took about
 ## Reproducing the data
 
 The C++ search that produced the data is in [`search/sd/`](search/sd/), from
-the `snubdodecahedron` branch of nopert229 (b8c9065); its
+the `snubdodecahedron` branch of nopert229 (b8c9065), with the code the
+solids' searches share now in [`search/common/`](search/common/); its
 [`README.md`](search/sd/README.md) describes the method and the tools. The
 generators of the Lean data are in `search/sd/lean_scripts/`; they reproduce
 the committed generated files (`RationalVertices.lean`, `TangentCones.lean`'s

@@ -48,13 +48,13 @@ int TriangleRoot(const TriangleQ &t);
 // Whether every corner of `inner` is in the closed triangle `outer` (all on
 // one root plane), i.e. Lean's InTriangle(inner) ⊆ InTriangle(outer).
 bool TriangleContains(const TriangleQ &outer, const TriangleQ &inner);
-// A triangle on t's root plane, SignedTriangleValid for that root,
-// containing t, whose coordinates are dyadic with about `rel_bits` bits
-// below t's size: t enlarged about its centroid by a relative
-// 2^-(rel_bits - 4), corners rounded to the grid; t itself if there is none
-// (e.g. t touches its root's boundary). Checking a certificate over it is
-// much cheaper than over t, whose coordinates come from facet-plane
-// intersections (~1000 bits).
+// A triangle on t's root plane containing t (with
+// solid::kOuterTriangleInRoot, also SignedTriangleValid for that root), whose
+// coordinates are dyadic with about `rel_bits` bits below t's size: t
+// enlarged about its centroid by a relative 2^-(rel_bits - 4), corners
+// rounded to the grid; t itself if there is none (e.g. t touches its root's
+// boundary). Checking a certificate over it is much cheaper than over t,
+// whose coordinates come from facet-plane intersections (~1000 bits).
 TriangleQ OuterDyadicTriangle(const TriangleQ &t, int rel_bits = 30);
 
 struct TriangleD {

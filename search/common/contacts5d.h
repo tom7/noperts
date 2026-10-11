@@ -21,6 +21,7 @@
 
 #include "exact5d.h"
 #include "geom5d.h"
+#include "solid.h"
 
 namespace contacts5d {
 
@@ -53,9 +54,10 @@ struct PoolParams {
   // along real polyhedron edges) are kept if their defect is at most this.
   double off_silhouette_max_defect = 0.002;
   // Bridge contacts across silhouette edges shorter than bridge_ratio times
-  // the longest (0: none), kept if their defect is at most bridge_max_defect.
+  // the longest (0: none; the default is the solid's), kept if their defect is
+  // at most bridge_max_defect.
   // Part of the pool definition (journals index triples in it).
-  double bridge_ratio = 0.1;
+  double bridge_ratio = solid::kBridgeRatio;
   double bridge_max_defect = 0.01;
   // Triples are indexed by 8 bits on the GPU.
   int max_contacts = 256;

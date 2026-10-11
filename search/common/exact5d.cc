@@ -1,8 +1,6 @@
 #include "exact5d.h"
 
-#include "symmetry_neighbors.h"
-#include "mirror_q.h"
-#include "tie_normals.h"
+#include "solid.h"
 
 #include <array>
 
@@ -239,8 +237,8 @@ Q BernsteinLower(const std::array<RatBall, 3> &vars, const Quad3 &q) {
   return best;
 }
 
-// (0 for an exact model, MODEL_EXACT: the solid is the rational model.)
-Q TightVertexErrorQ() { return MODEL_EXACT ? Q(0) : Q(6, 10000000000000000LL); }
+// (0 for an exact model, solid::kModelExact: the solid is the rational model.)
+Q TightVertexErrorQ() { return solid::kModelExact ? Q(0) : Q(6, 10000000000000000LL); }
 Q SupportError() { return Q(10) * TightVertexErrorQ(); }
 
 VecQ EdgeQ(const AxisCertificate &cert, int i) {
@@ -680,11 +678,12 @@ namespace {
 // trace(R G) - trace(R), times the Cayley denominator:
 // sum_ij s_i Num_ij(w) (G~_ji - delta_ij), with G~ the rounded neighbor.
 Quad3 IcoAdvantageQuadratic(int chart, int n) {
-  CHECK(n >= 0 && n < NUM_SYMMETRY_NEIGHBORS);
+  const MatrixTable &T = solid::kSymmetryNeighbors;
+  CHECK(n >= 0 && n < T.size);
   Quad3 sum;
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
-      const Q g = Q(SYMMETRY_NEIGHBOR_NUM[n][3 * j + i], SYMMETRY_NEIGHBOR_DENOM) - Q(i == j ? 1 : 0);
+      const Q g = Q(T.num[n][3 * j + i], T.denom) - Q(i == j ? 1 : 0);
       sum = QuadAdd(sum, QuadScale(g, QuadScale(ChartSign(chart, i), NumeratorQuadratic(i, j))));
     }
   }
@@ -702,7 +701,10 @@ Q IcoPruneLower(const Interval5 &iv, int chart, int n) {
 // Rounded tables (the snub/DH neighbors): |G - G~| < 10^-12 per entry and
 // |Num_ij| <= 1 + |w|^2 <= 4 on the bounded region, so the rounding changes
 // the quadratic by less than 36 * 10^-12. Exact tables (the Septopert's C3): 0.
-Q IcoPruneAllowance() { return SYMMETRY_NEIGHBOR_EXACT ? Q(0) : Q(36, SYMMETRY_NEIGHBOR_DENOM); }
+Q IcoPruneAllowance() {
+  const MatrixTable &T = solid::kSymmetryNeighbors;
+  return T.exact ? Q(0) : Q(36, T.denom);
+}
 
 bool IcoPruneValid(const Interval5 &iv, int chart, int n) {
   return IcoPruneAllowance() < IcoPruneLower(iv, chart, n);
@@ -710,8 +712,9 @@ bool IcoPruneValid(const Interval5 &iv, int chart, int n) {
 
 namespace {
 Quad3 HalfTurnCoefficientQuadratic(const TriangleQ &tri, int chart, int g, int c, int d) {
-  CHECK(g >= 0 && g < MIRROR_Q_SIZE && c >= 0 && c < 3 && d >= 0 && d < 3);
-  auto G = [g](int i, int j) { return Q(MIRROR_Q_NUM[g][3 * i + j], MIRROR_Q_DENOM); };
+  const MatrixTable &T = solid::kHalfTurnGroup;
+  CHECK(g >= 0 && g < T.size && c >= 0 && c < 3 && d >= 0 && d < 3);
+  auto G = [&T, g](int i, int j) { return Q(T.num[g][3 * i + j], T.denom); };
   const VecQ &pc = tri[c], &pd = tri[d];
   VecQ gpc, gpd;
   for (int k = 0; k < 3; k++) {
@@ -749,9 +752,9 @@ static Q RoundedTableAllowance(const TriangleQ &tri, int c, int d) {
   return Q(2, 1000000000000) * (Q(6) * l1(tri[c]) * l1(tri[d]) + Q(9) * BigRat::Abs(dot));
 }
 
-// The Septopert's Q table is exact (mirror_q.h): no allowance.
+// An exact table (the Septopert's Q_g, mirror_q.h) needs no allowance.
 Q HalfTurnPruneAllowance(const TriangleQ &tri, int c, int d) {
-  return MIRROR_Q_EXACT ? Q(0) : RoundedTableAllowance(tri, c, d);
+  return solid::kHalfTurnGroup.exact ? Q(0) : RoundedTableAllowance(tri, c, d);
 }
 
 bool HalfTurnPruneValid(const Interval5 &iv, const TriangleQ &tri, int chart, int g) {
@@ -765,8 +768,9 @@ bool HalfTurnPruneValid(const Interval5 &iv, const TriangleQ &tri, int chart, in
 
 namespace {
 Quad3 TieCoefficientQuadratic(const TriangleQ &tri, int chart, int n, const Q &tau, int c, int d) {
-  CHECK(n >= 0 && n < NUM_TIE_NORMALS && c >= 0 && c < 3 && d >= 0 && d < 3);
-  auto G = [n](int i, int j) { return Q(TIE_HALF_TURN_NUM[n][3 * i + j], TIE_HALF_TURN_DENOM); };
+  const MatrixTable &T = solid::kTieHalfTurns;
+  CHECK(n >= 0 && n < T.size && c >= 0 && c < 3 && d >= 0 && d < 3);
+  auto G = [&T, n](int i, int j) { return Q(T.num[n][3 * i + j], T.denom); };
   const VecQ &pc = tri[c], &pd = tri[d];
   VecQ gpc, gpd;
   for (int k = 0; k < 3; k++) {
@@ -858,12 +862,20 @@ bool IdentityTubeValid(const Interval5 &iv, const Q &r) {
 }
 
 Interval5 RestrictedRootInterval(int chart) {
-  // The Septopert (C3v, no fivefold narrowing): every chart is searched over
-  // the whole root interval (AtlasPose.rootInterval), the Cayley cube [-1, 1]^3.
   CHECK(chart >= 0 && chart <= 3);
+  // The root interval (AtlasPose.rootInterval): the Cayley cube [-1, 1]^3.
   Interval5 iv;
   iv.min = {Q(0), Q(0), Q(-1), Q(-1), Q(-1)};
   iv.max = {Q(8, 5), Q(4), Q(1), Q(1), Q(1)};
+  // With the fivefold symmetry (AtlasFundamentalPrune.restrictedRootInterval),
+  // charts 0-2 narrow one coordinate to [-1/3, 1/3]. (The Septopert, C3v:
+  // every chart is searched over the whole cube.)
+  if (solid::kFivefold) {
+    static constexpr int kCoordinate[4] = {4, 3, 2, 4};
+    const Q width = chart == 3 ? Q(1) : Q(1, 3);
+    iv.min[kCoordinate[chart]] = -width;
+    iv.max[kCoordinate[chart]] = width;
+  }
   return iv;
 }
 
