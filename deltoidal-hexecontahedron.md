@@ -145,7 +145,8 @@ about 30 GB.
 
 The search that produced the data is in [`search/dh/`](search/dh/) (from
 the `deltoidalhexecontahedron` branch of nopert229, c0d289a; its `README.md`
-describes it). To run the whole pipeline:
+describes it), with the code the solids' searches share now in
+[`search/common/`](search/common/). To run the whole pipeline:
 
 ```sh
 ./get-cc-lib.sh

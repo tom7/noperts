@@ -106,7 +106,8 @@ shadowanim.exe : shadowanim.o rigidity-margin.o $(OBJECTS_CORE) $(OBJECTS) $(COD
 # trees, the Lean exact5d_golden executable) skip when it is absent; see the
 # tests for the environment variables that point them at it.
 test : $(TESTS:%=%.exe)
-	@for t in $(TESTS); do echo "== $$t"; ./$$t.exe || exit 1; done
+	@failed=""; for t in $(TESTS); do echo "== $$t"; ./$$t.exe || failed="$$failed $$t"; done; \
+	  if [ -n "$$failed" ]; then echo "FAILED:$$failed"; exit 1; fi; echo "all tests passed"
 
 clean :
 	rm -f *.o *.exe

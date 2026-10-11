@@ -1,5 +1,6 @@
 // capleaf_check: re-checks every cap leaf (cl) of the 5D journals exactly
-// (exact5d::CapLeafValid, the exact frame of the caps file). The
+// (exact5d::CapLeafValid, the exact frame of the caps file: the Septopert's
+// rebuild.sh or the DH's dh_caps.py writes it). The
 // search does this when it creates a cap leaf; this covers journals written
 // by searches that screened cap leaves in double precision only.
 //

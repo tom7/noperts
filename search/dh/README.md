@@ -13,8 +13,16 @@ the Lean project at `../../proof` (executable
 `snub_ico_group.py`, `dh_statement_data.py`), changed only to write this
 repository's module names. License: GPLv3 (`../COPYING`).
 
-Build with `make` (unit tests) or `make all`; `./rebuild.sh` builds what it
-needs. `tieviz.exe` and `shadowanim.exe` (renderings, not part of the proof)
+Since 2026-10-10 the C++ code that the solids' searches share is in
+[`../common/`](../common/); the makefile builds it here, with this solid's
+model headers (`model_vertices.h`, `symmetry_neighbors.h`, `ico_group.h`,
+`tie_normals.h`) and `solid.h` (its settings for the shared code). This
+directory keeps the model files, the DH's own tools (`capcert.cc`,
+`tietube.cc`, `halfturn_check.cc`, `pool_check.cc`, `tieviz.cc`), the
+Lean data generators, `rebuild.sh` and the makefile.
+
+Build with `make` (unit tests; `make test` runs them) or `make all`;
+`./rebuild.sh` builds what it needs. `tieviz.exe` and `shadowanim.exe` (renderings, not part of the proof)
 also need tom7misc's `codec` next to `cc-lib` (`make CODEC=DIR`).
 
 The rest of this file is the branch's README. Its Lean names are the

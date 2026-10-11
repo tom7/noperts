@@ -17,11 +17,11 @@ whatever data it writes.
 
 Each solid's directory has its own README, makefile and rebuild script, and
 the result's page (in the repository root) says how to run it. The
-Septopert's, pentagonal hexecontahedron's and snub dodecahedron's
-directories hold only their model files, own tools and settings for the
-shared code (`solid.h`) and build the shared code from `common/`; the other
-directories are still copies of the code that produced each result's data,
-and share much of it with `common/` and with each other.
+directories of the Septopert, the deltoidal and pentagonal hexecontahedra
+and the snub dodecahedron hold only their model files, own tools and
+settings for the shared code (`solid.h`) and build the shared code from
+`common/`; #231's directory is still a copy of the code that produced its
+data, and shares much of it with `common/`.
 
 License: GPLv3 (`COPYING`), except the Python scripts that generate Lean data
 files, which derive from the Apache-2.0 Noperthedron project and say so in

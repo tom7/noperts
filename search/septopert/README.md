@@ -14,12 +14,13 @@ Build with `make` (after `../../get-cc-lib.sh`; see `../../BUILDING.md`):
 tool and test.
 
 - `septopert_model.txt`: the exact model (rational vertices).
-- `model_vertices.{h,json,lean}`: the model's vertices as `codebdd` writes
-  them (the model stage regenerates them); `symmetry_neighbors.h`: the C3
-  rotations (the C3 cell prune); `mirror_q.h`: the mirror-tie rotations (the
-  mirror prune); `tie_normals.h`: the tie-leaf table the shared code expects
-  (the deltoidal hexecontahedron's; the Septopert's search uses no tie
-  leaves).
+- `model_vertices.{h,json,lean}`: the model's vertices (the model stage
+  regenerates them with `codebdd`; the committed `model_vertices.h` is
+  formatted differently from `codebdd`'s output, with the same values);
+  `symmetry_neighbors.h`: the C3 rotations (the C3 cell prune);
+  `mirror_q.h`: the mirror-tie rotations (the mirror prune).
+- `solid.h`: the Septopert's settings for the shared code (its tables, the
+  four undivided charts, exact model, bridge contacts, ...).
 - `codebdd.exe`: codes and code triangles (`codebdd.json`), model vertices.
 - `tubecode.exe`, `tuberefine.exe`: identity-tube trees per code.
 - `export_codetrees_pack.exe`: tube trees to Lean packs.
