@@ -85,8 +85,8 @@ The result has two parts, and they are trusted differently.
    functions themselves are ordinary Lean definitions, and the kernel proves
    (part 1) that if they return true, the conclusion follows.
 
-The program that *found* the data (the C++ search, on the `snubdodecahedron`
-branch of nopert229) does not need to be trusted: a mistake there can only
+The program that *found* the data (the C++ search in `search/sd/`) does not
+need to be trusted: a mistake there can only
 produce data that fails the checks.
 
 See `snub-dodecahedron.md` at the top of the repository for the data, how to

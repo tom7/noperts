@@ -37,7 +37,7 @@ The poles, rotated into the 5-fold frame (`snubFrame`) and scaled
 (`phScale`), are an `IModel` (`phIModel`), which the certificates cover.
 
 The same solid is cc-lib's PentagonalHexecontahedron() (McCooey's
-coordinates), checked numerically (nopert229's ph_crosscheck.py): up to
+coordinates), checked numerically (`search/ph/ph_crosscheck.py`): up to
 similarity they agree to 4·10⁻⁴⁰, as mirror images.
 -/
 

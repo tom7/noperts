@@ -7,7 +7,7 @@ public import Pipeline.CapPoly
 /-!
 # The charts of the DH cap certificates
 
-A Lean transcription of `MakeChart` in nopert229 `capcert.cc`. The chart
+A Lean transcription of `MakeChart` in `search/dh/capcert.cc`. The chart
 variables are (μ, τ, p₀, p₁, p₂). With (A, B) the frame pair of the chart's
 side and a = A + τ B, the view is u = x + μ e a and the Cayley vector is
 

@@ -7,7 +7,7 @@ statements about flat point sets.  This file lists the headline theorems of
 the machinery behind it.  See `PLAN.md` for the proof plan and the module
 dependency table.  All names below are in the namespace `Minimality`.
 
-Formalization of `nopert229/notes/LEMMAS.md` against `IsRupert` from
+Formalization of the informal proof in `LEMMAS.md` (see `minimality.md`) against `IsRupert` from
 `MainTheorem.lean`.  `V : Finset ℝ³` is the vertex set (it may
 contain non-extreme points).  Every theorem below depends only on `propext`,
 `Classical.choice` and `Quot.sound`.  Headline theorems:

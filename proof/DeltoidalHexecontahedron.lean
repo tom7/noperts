@@ -88,8 +88,8 @@ The result has two parts, and they are trusted differently.
    themselves are ordinary Lean definitions, and the kernel proves (part 1)
    that if they return true, the conclusion follows.
 
-The program that *found* the data (the C++ search, on the
-`deltoidalhexecontahedron` branch of nopert229) does not need to be trusted: a
+The program that *found* the data (the C++ search in `search/dh/`) does not
+need to be trusted: a
 mistake there can only produce data that fails the checks.
 
 See `deltoidal-hexecontahedron.md` at the top of the repository for the data,

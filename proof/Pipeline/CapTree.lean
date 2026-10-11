@@ -7,7 +7,7 @@ public import Pipeline.CapChart
 /-!
 # Certificate trees of the DH cap charts
 
-A chart's certificate (nopert229 `capcert.cc --export`) is a binary
+A chart's certificate (`search/dh/capcert.cc --export`) is a binary
 subdivision tree of its box: splits at the midpoint of one coordinate, and
 leaves that are a witness index, a half-turn-cell prune, or (F_e charts) a box
 inside the cone charts' region. `CTree.check` evaluates the leaf tests over the

@@ -4,23 +4,27 @@ import Nopert231.PackedSolutionTree
 import Nopert231
 
 /-!
-Native executable that reads and checks the exact certificate data for
-candidate #231, then establishes `CertificatesValid` and so
-`isNopert_of_certificatesValid`: every `C5Model` (fivefold-symmetric
+Native executable that checks candidate #231's certificate data and, if it
+is all valid, establishes `CertificatesValid`, and so
+(`isNopert_of_certificatesValid`) that every `C5Model` (fivefold-symmetric
 polyhedron within 6·10⁻¹⁶ of the rational model), including the exact model
 `exactVerts` and idealized #231, is a nopert (`Nopert231.lean`).
 
-The solution tables (tube packs and chart packs) are decoded (untrusted) and
-checked natively, in parallel, as in `NativeExecutable.constructProof`. This
-is analogous to `constructValidTable`: the expensive Boolean checks run as
-parallel native code, while kernel-proved bridge theorems turn success into
-`CertificatesValid`.
-
 Usage:
   constructNopert231 <tube manifest.txt> <chart directory>
-The manifest lists the identity-tube code packs in code order; the chart
-directory holds chart0.pack through chart2.pack, or per-code packs
-c<chart>/t<t>.pack (pack5d --per_code).
+    Checks everything: every tube table and all four chart tables. On
+    success it prints
+      instantiated: IsNopert P.verts for every C5Model P, including the exact model and idealized #231 (none is Rupert)
+
+The arguments: `manifest.txt` lists the tube packs in code order, next to
+them; the chart directory holds `chart0.pack` through `chart2.pack`, or
+per-code packs `c<chart>/t<t>.pack`. How to produce or obtain the data, and
+the running time and memory needed: see `nopert231.md` and `BUILDING.md` at
+the root of the repository.
+
+The data is untrusted: it is decoded and checked natively, in parallel, as in
+`NativeExecutable.constructProof`; kernel-proved bridges turn success into
+`CertificatesValid`.
 -/
 
 open Noperts Noperts.Pipeline
@@ -44,10 +48,8 @@ def main (args : List String) : IO Unit := do
   let (manifestPath, directory) ← match args with
     | [m, d] => pure (m, d)
     | _ => throw (IO.userError (
-        "usage: constructNopert231 <code-pack manifest.txt> <chart directory>; " ++
-        "the manifest lists the identity-tube code packs in code order, and the " ++
-        "directory holds chart0.pack through chart2.pack, or per-code packs " ++
-        "c<chart>/t<t>.pack (C++ pack5d --per_code)"))
+        "usage: constructNopert231 <tube manifest.txt> <chart directory>\n" ++
+        "(checks everything; see nopert231.md)"))
   let packDir := (System.FilePath.mk manifestPath).parent.getD "."
   let mut localTables : SharedLocalTables := #[]
   for line in ← IO.FS.lines manifestPath do

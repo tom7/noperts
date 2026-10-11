@@ -10,7 +10,7 @@ public import DeltoidalHexecontahedron.TieRow
 
 `tiesHold_of_certs`: given the tie data (the solid's vertices, per pinning
 normal its L = σ_x K and witness candidates) and a certificate per leaf tie
-node (`TieCerts`, decoded from nopert229's `tietube.cc --export`) that pass
+node (`TieCerts`, decoded from `search/dh/tietube.cc --export`) that pass
 `tiesCheck`, every tie node of `dhTieNodes` has its claim for `dhIModel`'s hull
 (`TiesHold`): leaves by `tie_claim`, split nodes from their four children
 (`mem_split`). The certificates are checked natively.

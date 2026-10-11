@@ -1,6 +1,7 @@
 # Minimality: every nopert has at least 7 points (proof plan)
 
-Formalization of `nopert229/notes/LEMMAS.md` (coplanar silhouettes) against
+Formalization of the informal proof in `LEMMAS.md` (coplanar silhouettes; see
+`minimality.md`) against
 `IsRupert` from `MainTheorem.lean`. Build: `lake build Minimality`
 (the proofs import only Mathlib and `Rupert.Basic`; the entry point also
 imports the core module `Nopert`).
@@ -98,7 +99,7 @@ Entry point: `Minimality.lean` states the headline results for readers
   Lemma 8.8; the tie-break tilts are (±(p - y) + η (y' - y)) with η small,
   i.e. the paper's (±1, η) in 3D form.
 
-- L10, the classification step (LEMMAS.md L10, nopert229 `minimal`): DONE,
+- L10, the classification step (LEMMAS.md L10): DONE,
   standard axioms.  Headline `isRupert_of_card_le_six (V : Finset ℝ³)
   (hV : V.card ≤ 6) (hint : (interior (convexHull ℝ ↑V)).Nonempty) :
   IsRupert V` (SixClass.lean).  Classification-free route: minimal subset;
