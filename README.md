@@ -20,7 +20,7 @@ The results in this repository:
   * [Pentagonal Hexecontahedron](pentagonal-hexecontahedron.md) (Catalan; dual of the SD)
   * [Deltoidal Hexecontahedron](deltoidal-hexecontahedron.md) (Catalan)
 
-Elsewhere there are claimed proofs or verifications that the rhombicosidodecahedron<sup>[[1]](https://github.com/oscardssmith/Nopert.jl), [[2]](https://github.com/bence-hervay/nopert-rid)</sup> and snub cube are Nopert and we have solutions for the rest of the Platonic, Archimidean and Catalan solids. So this classifies all of the P/A/C solids at last!
+Elsewhere there are claimed proofs or verifications that the rhombicosidodecahedron<sup>[[1]](https://github.com/oscardssmith/Nopert.jl), [[2]](https://github.com/bence-hervay/nopert-rid)</sup> and snub cube are Nopert and we have solutions for the rest of the Platonic, Archimedean and Catalan solids. So this classifies all of the P/A/C solids at last!
 
 * A Lean [verification](nopert231.md) that my nopert candidate #231 is indeed a Nopert. This looks identical to the solid I showed in my video (#214) and conjectured to be Nopert, but fixes the problem that [#214 is actually Rupert](https://youtu.be/XFeKRSN9l9w)!
 * The description and [verification](septopert.md) of the <b>Septopert</b>, a new 7-vertex Nopert.
@@ -50,7 +50,7 @@ It has three-fold symmetry, so you see the same numbers over and over.
 In the proof (`proof/Septopert.lean`) we divide everything by 2^20
 (1048576) so that the radius of the solid is close to 1, which you
 might want to do too, unless you want a REALLY BIG nopert. Rupertness
-is invariant of scale and rigid transformations, of course.
+is invariant under scale and rigid transformations, of course.
 
 - All of the values fit in 32-bit floats, so the vertices in the
   [STL file](septopert.stl) are exact!
@@ -77,7 +77,7 @@ Meanwhile we learned that earlier this year, Tony Zeng [proposed](https://arxiv.
 
 This stood as the smallest proven Nopert for about one day. I had been simultaneously racing to verify a 7-vertex shape, the Septopert described above, that I found with computer search using my adversarial solvers. It is only just barely Nopert, so the proof requires a large certificate (7 gigabytes of packed data). I verified that on Oct 9, taking about 4 hours on a 64-core behemoth.
 
-The natural question is then: Can we find a six-vertex Nopert? Or maybe we could prove that every tetrahedron or pentahedron is Rupert? Starting from some ideas of Jason's from 2025 and I like to think some wise guidance from its academic advisor and taskmaster (me), Opus 5.5 was able to [prove this](minimality.md) in about a day (Lean kernel-only proof): All convex solids with six or fewer vertices are Rupert. That means that the Septopert is a minimal Nopert (by vertex count).
+The natural question is then: Can we find a six-vertex Nopert? Or maybe we could prove that every tetrahedron is Rupert? Or every five-vertex solid? Starting from some ideas of Jason's from 2025 and I like to think some wise guidance from its academic advisor and taskmaster (me), Opus 5.5 was able to [prove this](minimality.md) in about a day (Lean kernel-only proof): All convex solids with six or fewer vertices are Rupert. That means that the Septopert is a minimal Nopert (by vertex count).
 
 
 <center><img src="septopert-dry-salt-bed.jpg" width="868" height="549" alt ="The Septopert on the Dry Salt Bed"></center>

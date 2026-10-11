@@ -14,8 +14,8 @@ Lean entry point: [`proof/Minimality.lean`](proof/Minimality.lean).
 ## The statement
 
 ```lean
-/-- A nopert: points that are not all in one plane (so their convex hull is a
-genuine solid), whose convex hull is not Rupert. -/
+/-- A nopert: a finite set of points that do not all lie in one plane (so
+their convex hull is a genuine solid) and whose convex hull is not Rupert. -/
 def IsNopert (V : Finset ℝ³) : Prop := ¬ Coplanar ℝ (V : Set ℝ³) ∧ ¬ IsRupert V
 
 /-- Every nopert has at least 7 points. -/
@@ -53,17 +53,17 @@ to the identity. Historic SageMath alert:
 
 ![The twice-rotated pink square fitting inside the unrotated blue square](jcreed-sagemath.png)
 
-More generally: When the 2D hull is a convex polygon, all of whose
+Roughly: When the 2D hull is a convex polygon, all of whose
 vertices are in the same 3D plane, then such a Rupert passage exists.
 (For example, as part of the proof development I posed the challenge
-problem to the Opus 5.5 to prove that every bipyramid with its waist
+problem to Opus 5.5 to prove that every bipyramid with its waist
 sitting on the XY plane has a local passage arbitrarily close to the Z
 axis. The waist always forms such a planar hull.) Moreover this can be
 generalized (see below) to hull vertices whose depth doesn't zig-zag
 too much.
 
-For tetrahedra, we can always look directly at one of the faces such
-that the remaining point is inside the hull, and then we just use the
+For tetrahedra, we can always look directly at one of the faces from the
+remaining vertex, so that it is in the hull. Then we just use the
 lemma above. Case analysis works for 5 vertices, and some more fancy
 machinery closes 6.
 
