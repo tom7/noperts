@@ -80,7 +80,7 @@ instantiated: Wikipedia's snub dodecahedron is not Rupert
 
 `snub_model.py` regenerates the model file `snub_model.txt` (and `symmetry_neighbors.h`) from the exact solid to 80 digits.
 
-**Code texture (for rendering).** `./codebdd.exe --model_file=snub_model.txt --texture=BASE` also writes `BASE.png`, an equirectangular image (8192×4096; `--texture_width`) of all view directions colored by face-visibility code up to the solid's symmetries and the antipode; `BASE.txt`, the legend (each class's color, area and `codebdd.json` codes); and `BASE.stl`, the solid in the image's frame. `blender_code_texture.py` applies it to an object in Blender (an Environment Texture node fed with object coordinates, so each surface point takes the color of its direction).
+**Code texture (for rendering).** `./codebdd.exe --model_file=snub_model.txt --texture=BASE` also writes `BASE.png`, an equirectangular image (8192×4096; `--texture_width`) of all view directions colored by face-visibility code up to the solid's symmetries and the antipode; `BASE.txt`, the legend (each class's color, area and `codebdd.json` codes); and `BASE.stl`, the solid in the image's frame. `../common/blender_code_texture.py` applies it to an object in Blender (an Environment Texture node fed with object coordinates, so each surface point takes the color of its direction).
 
 **Proof data over the views (for rendering).** `viewmap.exe` maps a quantity over all view directions, each reduced into the view triangle by the solid's symmetries and the antipode as in the proof:
 - `--margin`: the first-order rigidity margin of the identity pose (where it is small, the search works hardest);

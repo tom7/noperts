@@ -142,7 +142,8 @@ about 2 h 46 min on 64 cores, with a peak of about 32 GB.
 
 The search that produced the data is in
 [`search/nopert231/`](search/nopert231/), with its history. It comes from the
-`nopert231` branch of nopert229 (e53dfda), and its `README.md` describes it.
+`nopert231` branch of nopert229 (e53dfda), and its `README.md` describes it;
+the code the solids' searches share is now in [`search/common/`](search/common/).
 To run the whole pipeline:
 
 ```sh

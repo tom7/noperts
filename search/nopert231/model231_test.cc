@@ -1,4 +1,5 @@
-// model_test.cc: Tests for Nopert #231 geometry,
+// model231_test.cc: Tests of candidate #231's geometry (../common/model_test.cc
+// has the generic ones),
 // verifying double vs. rational coordinate agreement and C5 rotational symmetry.
 
 #include "model.h"

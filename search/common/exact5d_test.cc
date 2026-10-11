@@ -8,7 +8,7 @@
 // not admissible, which still exercises all the quantities.
 
 #include <cstdio>
-#include <unistd.h>
+#include <cstdlib>
 #include <filesystem>
 #include <format>
 #include <fstream>
@@ -16,6 +16,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
+
+#include <unistd.h>
 
 #include "base/logging.h"
 #include "bignum/big.h"
@@ -30,7 +32,18 @@
 using namespace exact5d;
 using vec3 = yocto::vec<double, 3>;
 
-static constexpr const char *GOLDEN = "../Noperthedron/.lake/build/bin/exact5d_golden";
+// The Lean side's exact5d_golden executable (in the Noperthedron checkout
+// beside this one), or $EXACT5D_GOLDEN.
+static std::string Golden() {
+  const char *e = getenv("EXACT5D_GOLDEN");
+  return e != nullptr ? e : "../Noperthedron/.lake/build/bin/exact5d_golden";
+}
+
+// codebdd's output (not committed; `./codebdd.exe` writes it), or $CODEBDD_JSON.
+static std::string CodebddJson() {
+  const char *e = getenv("CODEBDD_JSON");
+  return e != nullptr ? e : "codebdd.json";
+}
 
 static std::string R(const Q &q) { return q.ToString(); }
 
@@ -158,8 +171,13 @@ static std::string CommonString(const Common &c) {
 static Q ParseQ(const std::string &s) { return Q(s); }
 
 int main(int argc, char **argv) {
-  if (!std::filesystem::exists(GOLDEN)) {
-    printf("SKIPPED: %s not built (cd ../Noperthedron && lake build exact5d_golden)\n", GOLDEN);
+  if (!std::filesystem::exists(Golden())) {
+    printf("SKIPPED: %s not built (cd ../Noperthedron && lake build exact5d_golden)\n",
+           Golden().c_str());
+    return 0;
+  }
+  if (!std::filesystem::exists(CodebddJson())) {
+    printf("SKIPPED: %s not present (run ./codebdd.exe)\n", CodebddJson().c_str());
     return 0;
   }
   const int num_global = argc > 1 ? atoi(argv[1]) : 150;
@@ -167,7 +185,7 @@ int main(int argc, char **argv) {
   const int num_prune = argc > 3 ? atoi(argv[3]) : 300;
 
   rapidjson::Document doc;
-  doc.Parse(Util::ReadFile("codebdd.json").c_str());
+  doc.Parse(Util::ReadFile(CodebddJson()).c_str());
   CHECK(!doc.HasParseError());
   std::vector<TriangleQ> code_tris;
   for (const auto &code : doc["codes"].GetArray()) {
@@ -263,9 +281,11 @@ int main(int argc, char **argv) {
     input << " " << R(pc.r) << "\n";
   }
 
-  const std::string in_path = std::filesystem::temp_directory_path() / std::format("exact5d_test_input.{}.txt", (int)getpid());
+  // Unique per process: concurrent runs must not share the input file.
+  const std::string in_path = std::filesystem::temp_directory_path() /
+                              std::format("exact5d_test_input.{}.txt", (int)getpid());
   { std::ofstream f(in_path); f << input.str(); }
-  const std::string cmd = std::format("{} < {}", GOLDEN, in_path);
+  const std::string cmd = std::format("{} < {}", Golden(), in_path);
   FILE *p = popen(cmd.c_str(), "r");
   CHECK(p != nullptr);
   std::vector<std::string> lines;
@@ -277,6 +297,7 @@ int main(int argc, char **argv) {
     }
   }
   CHECK(pclose(p) == 0);
+  std::filesystem::remove(in_path);
   CHECK((int)lines.size() == num_global + num_mixed + num_prune) << lines.size();
 
   int compared = 0, admissible = 0, valid = 0;

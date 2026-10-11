@@ -96,11 +96,17 @@ bool TriangleContains(const TriangleQ &outer, const TriangleQ &inner) {
 static std::optional<TriangleQ> OuterDyadicTriangleBits(const TriangleQ &t, int rel_bits) {
   // Differences are taken exactly: some code triangles (the snub's, where
   // symmetric facet planes are almost concurrent) are smaller than double
-  // resolution at their coordinates (~1e-17).
+  // resolution at their coordinates (~1e-17). (#231's search took them
+  // between the corners rounded to double: solid::kTriangleSizeInDouble.)
+  const TriangleD d = solid::kTriangleSizeInDouble ? ToDouble(t) : TriangleD{};
   double size = 0.0;
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
-      for (int k = 0; k < 3; k++) size = std::max(size, std::abs((t[i][k] - t[j][k]).ToDouble()));
+      for (int k = 0; k < 3; k++) {
+        const double diff = solid::kTriangleSizeInDouble ? d.corners[i][k] - d.corners[j][k]
+                                                         : (t[i][k] - t[j][k]).ToDouble();
+        size = std::max(size, std::abs(diff));
+      }
     }
   }
   CHECK(size > 0.0);

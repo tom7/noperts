@@ -37,6 +37,10 @@ inline constexpr double kBridgeRatio = 0.1;
 // keeps the enlarged triangle in its root's octant.
 inline constexpr bool kOuterTriangleInRoot = true;
 
+// geom5d::OuterDyadicTriangle measures the triangle by exact differences of
+// its corners (#231's search used their doubles).
+inline constexpr bool kTriangleSizeInDouble = false;
+
 // codebdd's default --model_file.
 inline constexpr const char *kModelFile = "septopert_model.txt";
 

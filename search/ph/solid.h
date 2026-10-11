@@ -35,6 +35,10 @@ inline constexpr double kBridgeRatio = 0;
 // that leaves it fail, and are kept over the exact triangle).
 inline constexpr bool kOuterTriangleInRoot = false;
 
+// geom5d::OuterDyadicTriangle measures the triangle by exact differences of
+// its corners (#231's search used their doubles).
+inline constexpr bool kTriangleSizeInDouble = false;
+
 // codebdd's default --model_file.
 inline constexpr const char *kModelFile = "snub_model.txt";
 

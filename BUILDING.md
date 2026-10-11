@@ -70,25 +70,28 @@ page with its statement, trust model and reproduction steps:
   [Noperthedron](https://github.com/jcreedcmu/Noperthedron) formalization,
   whose history it keeps.
 - `search/`: the C++ certificate searches that produced the data.
-  - `search/common/`: the code shared by the searches (and their shared
-    build rules, `common.mk`).
-  - `search/septopert/`: the Septopert's search (`rebuild.sh`): its model
-    files and its own tools, built with the shared code.
-  - `search/dh/`, `search/ph/`, `search/sd/`: the searches for the
-    deltoidal and pentagonal hexecontahedra and the snub dodecahedron
-    (`rebuild.sh`, see the result's page): their model files, own tools
-    and settings (`solid.h`), built with the shared code.
-  - `search/nopert231/`: the search for candidate #231, with its history
-    (see [nopert231.md](nopert231.md)).
+  - `search/common/`: the code the searches share (the identity tube, the
+    5D search and packing, `codebdd`, diagnostics, unit tests) and their
+    build rules, `common.mk`.
+  - `search/septopert/`, `search/dh/`, `search/ph/`, `search/sd/`,
+    `search/nopert231/`: the searches for the Septopert, the deltoidal
+    hexecontahedron, the pentagonal hexecontahedron, the snub dodecahedron
+    and candidate #231, each with its `rebuild.sh` (see the result's page),
+    model files, Lean data generators, own tools, and `solid.h` (the
+    solid's settings for the shared code). The searches of the DH, PH and
+    SD were imported from the corresponding branches of the author's search
+    repository and #231's with its history; until 2026-10-10 each solid's
+    directory had its own copy of the shared code (see
+    [search/README.md](search/README.md)).
   - Each writes its output to a `work*/` directory at the repository root
     (`work/`, `work-dh/`, `work-ph/`, `work-sd/`, `work-231/`), ignored by
     git.
 
   License: GPLv3 (`search/COPYING`). Exception: the Python scripts that
   generate Lean data files (`search/dh/scripts/`, `search/ph/scripts/`,
-  `search/sd/lean_scripts/`, `search/nopert231/scripts/`) derive from the Apache-2.0 Noperthedron
-  project and say so in a header ("THIS FILE ONLY: Uses APACHE 2.0
-  license"); the license text is `search/APACHE20.txt`.
+  `search/sd/lean_scripts/`, `search/nopert231/scripts/`) derive from the
+  Apache-2.0 Noperthedron project and say so in a header ("THIS FILE ONLY:
+  Uses APACHE 2.0 license"); the license text is `search/APACHE20.txt`.
 - `cc-lib/`: not in the repository. `./get-cc-lib.sh` checks out svn
   revision 7488 of tom7misc's `trunk/cc-lib`; the build expects it next to
   `search/`. It is GPLv3, with some files under other compatible licenses

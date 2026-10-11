@@ -80,7 +80,7 @@ constructed proof: no IModel (I-orbit within 6e-16 of the rational vertices) is 
 instantiated: no pentagonal hexecontahedron is Rupert
 ```
 
-**Code texture and proof data (for rendering).** `./codebdd.exe --model_file=ph_model.txt --texture=BASE` writes an equirectangular image of all view directions colored by face-visibility code up to symmetry, a legend, and the solid as STL in the image's frame; `blender_code_texture.py` applies it in Blender. `viewmap.exe` maps the first-order margin (`--margin`), the 5D search density (`--search5d`) or the tube radius (`--tube`) over all views, as an equirectangular image and a UDIM-textured OBJ of the solid, with the most extreme views and the object rotations that show them (`_views.txt`).
+**Code texture and proof data (for rendering).** `./codebdd.exe --model_file=ph_model.txt --texture=BASE` writes an equirectangular image of all view directions colored by face-visibility code up to symmetry, a legend, and the solid as STL in the image's frame; `../common/blender_code_texture.py` applies it in Blender. `viewmap.exe` maps the first-order margin (`--margin`), the 5D search density (`--search5d`) or the tube radius (`--tube`) over all views, as an equirectangular image and a UDIM-textured OBJ of the solid, with the most extreme views and the object rotations that show them (`_views.txt`).
 
 ## How the proof works
 
@@ -110,6 +110,6 @@ As for the snub dodecahedron (the solids share the icosahedral group and frame):
 - Model: `snub_model.py`, `snub_model.txt` (the snub dodecahedron), `ph_model.py`, `ph_model.txt` (its polar dual), `ph_crosscheck.py` (against McCooey's coordinates); `codebdd.cc` (codes; `rational_vertex` lines are used verbatim); `model.{h,cc}`.
 - Identity tube: `tube.{h,cc}`, `tubecert.cc`, `tubetree.{h,cc}`, `tubecode.cc`, `tuberefine.cc`, `export_codetrees_pack.cc`.
 - 5D search and packing: `exact5d`, `geom5d`, `contacts5d`, `bounds5d`, `cert5d`, `lp5d`, `rows5d`, `solve5d`, `tubeatlas5d`; `search5d.cc`, `pack5d.cc`, `scoreboard5d.cc`; `icoprune_check.cc`.
-- Rendering: `codebdd --texture`, `viewmap.cc`, `rigidity-margin.{h,cc}`, `blender_code_texture.py`.
+- Rendering: `codebdd --texture`, `viewmap.cc`, `rigidity-margin.{h,cc}`, `blender_code_texture.py` (all in `../common/`).
 - `rebuild.sh` runs the whole pipeline; `*_test.cc` are unit tests (`make`).
 - Lean (Noperthedron `pentagonalhexecontahedron`): `Noperthedron/PentagonalHexecontahedron/`, plus the generic `Noperthedron/Atlas/`.

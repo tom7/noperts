@@ -18,6 +18,18 @@
 > `exact5d_golden` are not in this repository (so `exact5d_test` skips its
 > comparison with Lean). For the statement as proved in this repository and
 > how to run the pipeline here, see [`../../nopert231.md`](../../nopert231.md).
+>
+> Since 2026-10-10 the C++ code that the solids' searches share is in
+> [`../common/`](../common/); the makefile builds it here, with this solid's
+> `model_vertices.h` and `solid.h` (its settings for the shared code). This
+> directory keeps the model files, #231's own `codebdd.cc` (its model comes
+> from `nopert231_root.txt` and its view triangle is the upper wedge), its own
+> tests (`model231_test.cc`, `tube231_test.cc`), the Lean data generators,
+> `rebuild.sh` and the makefile. #231's copy of `tubetree.{h,cc}` had extra
+> features that no tool used (external subtree files, an in-memory tube
+> atlas, the root wedge's path triangles); they and their tests were dropped
+> (the two path helpers moved into `tube231_test.cc`). The code map below
+> names the files as in the branch.
 
 # Candidate #231 is a Nopert
 
@@ -85,12 +97,12 @@ The build step builds the C++ tools and the Lean executables first. `codebdd.jso
 Peak memory is about 32 GB (the Lean verifier); `--mem_gb` caps every stage. `tubecode`, `tuberefine`, `codebdd` and `pack5d` are deterministic (independent of the thread count). `search5d` is not, so a fresh search gives different but equally checkable packs. To re-check existing data, point `--work` at it and start from `pack` or `verify`.
 
 **Unit tests.** `make` builds them and `make test` runs them. Tests that need generated data skip cleanly when it is absent; these environment variables point them at it:
-- `CODEBDD_JSON` (default `codebdd.json`): contacts5d, cert5d, exact5d, solve5d, tubeatlas5d;
+- `CODEBDD_JSON` (default `codebdd.json`): contacts5d, cert5d, exact5d, tube;
 - `EXACT5D_GOLDEN` (default `../Noperthedron/.lake/build/bin/exact5d_golden`, built by `lake build exact5d_golden`): exact5d, which compares every exact check with Lean;
-- `TREES_DIR` (default `trees_r2`; e.g. `work/trees_r2` after the tube stage): solve5d, tubeatlas5d;
+- `TREES_DIR` (no default; e.g. `work/trees_r2` after the tube stage, or as the first argument; solve5d and tubeatlas5d then use `./codebdd.json`): solve5d, tubeatlas5d, tube;
 - `TUBE_MANIFEST` (optional, e.g. `work/tube_packs/manifest.txt`): tubeatlas5d compares the tree radii with the exported packs.
 
-**Code texture (for rendering).** `./codebdd.exe --texture=BASE` also writes `BASE.png`, an equirectangular image (8192×4096; `--texture_width`) of all view directions colored by face-visibility code up to the solid's symmetries and the antipode; `BASE.txt`, the legend (each class's color, area and `codebdd.json` codes); and `BASE.stl`, the solid in the image's frame. `blender_code_texture.py` applies it to an object in Blender (an Environment Texture node fed with object coordinates, so each surface point takes the color of its direction).
+**Code texture (for rendering).** `./codebdd.exe --texture=BASE` also writes `BASE.png`, an equirectangular image (8192×4096; `--texture_width`) of all view directions colored by face-visibility code up to the solid's symmetries and the antipode; `BASE.txt`, the legend (each class's color, area and `codebdd.json` codes); and `BASE.stl`, the solid in the image's frame. `../common/blender_code_texture.py` applies it to an object in Blender (an Environment Texture node fed with object coordinates, so each surface point takes the color of its direction).
 
 **Proof data over the views (for rendering).** `viewmap.exe` maps a quantity over all view directions, each reduced into the view wedge by the fivefold symmetry and the antipode as in the proof:
 - `--margin`: the first-order rigidity margin of the identity pose; the canyon is dark;

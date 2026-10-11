@@ -1,3 +1,7 @@
+// Unit tests of the identity tube library (tube.h) on candidate #231 (its
+// model, view wedge and specific leaves); ../common/tube_test.cc has the
+// generic ones.
+
 #include "tube.h"
 
 #include <algorithm>
@@ -24,6 +28,29 @@ using vec3 = yocto::vec<double, 3>;
 
 static inline vec3 ToDouble(const BigVecQ3 &v) {
   return vec3{v.x.ToDouble(), v.y.ToDouble(), v.z.ToDouble()};
+}
+
+// #231's view triangle, the upper wedge (corners (1, 0, 0), (10/41, 31/41, 0),
+// (0, 0, 1)), and its subtriangle at a base-4 path ("" is the wedge). (These
+// were in #231's copy of tubetree.cc, which only the tests used.)
+static TriangleQ GetRootWedge() {
+  TriangleQ w;
+  w.corners[0] = BigVecQ3(BigRat(1), BigRat(0), BigRat(0));
+  w.corners[1] = BigVecQ3(BigRat(10, 41), BigRat(31, 41), BigRat(0));
+  w.corners[2] = BigVecQ3(BigRat(0), BigRat(0), BigRat(1));
+  return w;
+}
+
+static TriangleQ TriangleFromPath(std::string_view path) {
+  TriangleQ cur = GetRootWedge();
+  for (char c : path) {
+    if (c < '0' || c > '3') continue;
+    int idx = c - '0';
+    TriangleQ ch[4];
+    cur.Subdivide(ch);
+    cur = ch[idx];
+  }
+  return cur;
 }
 
 static void TestBasicSilhouette() {
