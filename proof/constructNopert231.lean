@@ -22,8 +22,8 @@ per-code packs `c<chart>/t<t>.pack`. How to produce or obtain the data, and
 the running time and memory needed: see `nopert231.md` and `BUILDING.md` at
 the root of the repository.
 
-The data is untrusted: it is decoded and checked natively, in parallel, as in
-`NativeExecutable.constructProof`; kernel-proved bridges turn success into
+The data is untrusted: it is decoded and checked natively, in parallel
+(`NativeExecutable`); kernel-proved bridges turn success into
 `CertificatesValid`.
 -/
 
@@ -87,8 +87,8 @@ def main (args : List String) : IO Unit := do
     intro chart; fin_cases chart <;> rfl
   have hshared : ∀ chart, (tables chart).sharedLocal = localTables := by
     intro chart; fin_cases chart <;> rfl
-  -- The checks of `NativeExecutable.constructProof`, kept here so that the
-  -- checked tables give `CertificatesValid`.
+  -- The checks (`NativeExecutable`); the checked tables give
+  -- `CertificatesValid`.
   let checkedLocal ← checkLocalAll localTaskCount localTables
   let sharedValid (chart : CayleyAtlas.ChartIndex) :
       AtlasProjectiveSolutionTree.SharedLocalValid (tables chart).sharedLocal := by

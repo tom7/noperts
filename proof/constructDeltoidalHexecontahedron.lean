@@ -114,8 +114,8 @@ def main (args : List String) : IO Unit := do
         intro chart; fin_cases chart <;> rfl
       have hshared : ∀ chart, (tables chart).sharedLocal = localTables := by
         intro chart; fin_cases chart <;> rfl
-      -- The checks of `NativeExecutable.constructProof`, kept here so that the
-      -- checked tables give `CertificatesValid`.
+      -- The checks (`NativeExecutable`); the checked tables give
+      -- `CertificatesValid`.
       let coverStart ← IO.monoNanosNow
       log "checking the view cover (code triangles cover T)"
       let cover : PLift (WedgeCover.coverValid = true) ←

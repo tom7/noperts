@@ -3,38 +3,35 @@
 > below is adapted from the README of Noperthedron's `nopert231` branch
 > (0c83e4ba), whose names differ: `Noperthedron/Nopert231/` is
 > `proof/Nopert231/` here (namespace `Nopert231`), `Noperthedron/Atlas/` is
-> `proof/Atlas/` (which also holds `QuadCoverTree` and `QuadraticBernstein`), the
-> generator scripts are in `search/nopert231/scripts/`, and the executables
-> other than `constructNopert231` are not here. No `native_decide` is used
-> here: chart 3 and the tangent cones are checked by the kernel
+> `proof/Atlas/` (which also holds `QuadCoverTree` and `QuadraticBernstein`), and
+> the generator scripts are in `search/nopert231/scripts/`. No `native_decide`
+> is used here: chart 3 and the tangent cones are checked by the kernel
 > (`table_valid_kernel`). Since 2026-10-10 most of the branch's pipeline is the
 > shared `proof/Pipeline/` (see "Files" below, which describes this
 > repository's layout); the check functions are the same.
 
-# Candidate #231 is a Nopert
+# Candidate #231 is a nopert
 
-This directory, with the generic `Noperthedron/Atlas/` library, formalizes the proof that Candidate #231 is a Nopert (not Rupert, `¬ IsRupert`). Candidate #231 is a convex polyhedron with 20 vertices and 27 faces (2 pentagons, 20 triangles, 5 planar quadrilaterals) and fivefold symmetry about the z axis. The certificate data is produced by the C++ pipeline (the `nopert231` branch of the companion C++ repository); its `README.md` explains how the proof works and how to rebuild it with `rebuild.sh`.
+This directory, with the shared `proof/Atlas/` and `proof/Pipeline/` libraries, formalizes the proof that candidate #231 is a nopert (not Rupert, `¬ IsRupert`). Candidate #231 is a convex polyhedron with 20 vertices and 27 faces (2 pentagons, 20 triangles, 5 planar quadrilaterals) and fivefold symmetry about the z axis. The certificate data is produced by the C++ pipeline in `search/nopert231/`; its `README.md` explains how the proof works and how to rebuild it with `rebuild.sh`.
 
 ## The main result
 
-The executable `constructNopert231 <tube manifest.txt> <chart directory>` (`constructNopert231.lean`) decodes and checks all certificate tables, then builds
+The executable `constructNopert231 <tube manifest.txt> <chart directory>` (`constructNopert231.lean`) decodes and checks all certificate tables (with the checkers of `NativeExecutable.lean`), which establishes `CertificatesValid`, and so (`isNopert_of_certificatesValid`, in `../Nopert231.lean`)
 
 ```lean
-CheckedChartTables.notRupert : ∀ P : C5Model, ¬ IsRupert P.verts
+∀ P : C5Model, IsNopert P.verts
 ```
 
-(`NativeExecutable.lean`) and instantiates it for
+and in particular
 
 ```lean
-¬ IsRupert exactVerts            -- exactModel_verts ▸ proof exactModel
-¬ IsRupert Ideal231.model.verts  -- idealized #231, exactly planar quads
+IsNopert exactVerts            -- isNopert_exactVerts_of_certificatesValid
+IsNopert Ideal231.model.verts  -- idealized #231, exactly planar quads
 ```
 
-- `IsRupert` is the upstream statement of the Rupert property (`Noperthedron/MainTheorem.lean`).
+- `IsRupert` is the upstream statement of the Rupert property (`proof/MainTheorem.lean`); `IsNopert` (`proof/Nopert.lean`) adds that the vertices are not coplanar.
 - `C5Model` (`SolidModel.lean`): four real seeds rotated by 2πk/5 about z, with every vertex within `modelErrorQ` = 6·10⁻¹⁶ of the rational vertices `rationalVertices`.
-- Trust: the kernel proves the bridge from valid tables to `¬ IsRupert` and every geometric lemma. The tables are checked by compiled code (`Table.Valid` decided natively, the same trust as `native_decide`), and the program carries the resulting proofs into the final value. It prints `constructed proof: no C5Model ... is Rupert` and then the instantiations.
-
-The other executables check parts of the data: `validate_code_pack` (one identity-tube table), `check_identity_tube` (the whole tube: tables matched to the code triangles), `check_global_rows` (per-code 5D packs, for development) and `exact5d_golden` (golden values for the C++ port of the checks).
+- Trust: the kernel proves the bridge from valid tables to `¬ IsRupert` and every geometric lemma. The tables are checked by compiled code (`Table.Valid` decided natively, the same trust as `native_decide`), and the program carries the resulting proofs into the final value. It prints `constructed proof: no C5Model ... is Rupert` and then `instantiated: IsNopert P.verts for every C5Model P, ...`.
 
 ## Files
 
@@ -76,10 +73,7 @@ icosahedral solids share another one in `Pipeline/`):
 - `PackedSolutionTree.lean`: the decoder for the chart packs (untrusted: the
   decoded tables are what is checked); the tube packs use
   `Pipeline/PackedLocalViewTree.lean`.
-- `NativeExecutable.lean`: the parallel native checker and
-  `CheckedChartTables`.
-- `IdentityTube.lean`: `not_translated_rupert_of_tables` for the per-triangle
-  identity-tube tables (not used by the headline).
+- `NativeExecutable.lean`: the parallel native checker.
 
 From the shared pipeline: the symmetry, tightening and Cayley atlas
 (`Symmetry`, `FivefoldSymmetry`, `Tightening`, `CayleyAtlas`, `AtlasPose`,

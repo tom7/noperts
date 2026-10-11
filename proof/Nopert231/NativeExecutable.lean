@@ -6,13 +6,12 @@ public import Nopert231.SparseViewCheck
 @[expose] public section
 
 /-!
-# Native executable proof construction for Nopert #231
+# Native checks of the certificate tables for candidate #231
 
-This module is the executable counterpart of the generated `native_decide`
-proofs. A release-mode program can check data-only local and global tables in
-parallel, then retain the kernel-proved semantic validity witnesses in
-`PLift`. The final `CheckedChartTables.notRupert` value has exactly the public
-non-Rupert proposition as its type.
+The native checkers that `constructNopert231` runs: a release-mode program
+checks the data-only local and global tables in parallel, then keeps the
+kernel-proved semantic validity witnesses in `PLift`, from which it builds
+`CertificatesValid`.
 
 Keeping the proof witnesses in `PLift` lets ordinary `IO` code sequence checks
 and report useful errors. Proof fields are erased by native code generation;
@@ -143,79 +142,6 @@ def checkGlobal (label : String) (taskCount : Nat)
     pure ⟨AtlasProjectiveSolutionTree.Table.Valid.of_withTasksB hshared h'⟩
   else
     throw (IO.userError s!"global chart table {label} is not valid")
-
-/-- The complete output of the executable checker. -/
-structure CheckedChartTables where
-  tables : CayleyAtlas.ChartIndex → AtlasProjectiveSolutionTree.Table
-  charts : ∀ chart, (tables chart).chart = chart
-  valid : ∀ chart, (tables chart).Valid
-
-/-- The proof object constructed by a successful executable run: the checked
-tables exclude every `C5Model` (fivefold-symmetric polyhedra within
-`modelErrorQ` of the rational vertices) at once. -/
-theorem CheckedChartTables.notRupert (checked : CheckedChartTables) :
-    ∀ P : C5Model, ¬ IsRupert P.verts :=
-  fun _ => not_rupert_of_valid_tables checked.tables checked.charts checked.valid
-
-/-- Check all certificate data and construct the final non-Rupert proof.
-
-Generated global data is supplied as a function of the checked shared-local
-tables. The two equations prevent an executable wrapper from accidentally
-checking the right rows under the wrong chart or shared-local environment. -/
-def constructProof (localTaskCount globalTaskCount : Nat)
-    (localTables : AtlasProjectiveSolutionTree.SharedLocalTables)
-    (globalTables : AtlasProjectiveSolutionTree.SharedLocalTables →
-      CayleyAtlas.ChartIndex → AtlasProjectiveSolutionTree.Table)
-    (hchart : ∀ shared chart, (globalTables shared chart).chart = chart)
-    (hshared : ∀ shared chart,
-      (globalTables shared chart).sharedLocal = shared) :
-    IO (PLift (∀ P : C5Model, ¬ IsRupert P.verts)) := do
-  let checkedLocal ← checkLocalAll localTaskCount localTables
-  let shared := localTables
-  have sharedValid : AtlasProjectiveSolutionTree.SharedLocalValid shared :=
-    checkedLocal.down
-  let table0 := globalTables shared 0
-  have shared0 : AtlasProjectiveSolutionTree.SharedLocalValid
-      table0.sharedLocal := by
-    rw [hshared shared 0]
-    exact sharedValid
-  let valid0 ← checkGlobal "0" globalTaskCount table0 shared0
-  let table1 := globalTables shared 1
-  have shared1 : AtlasProjectiveSolutionTree.SharedLocalValid
-      table1.sharedLocal := by
-    rw [hshared shared 1]
-    exact sharedValid
-  let valid1 ← checkGlobal "1" globalTaskCount table1 shared1
-  let table2 := globalTables shared 2
-  have shared2 : AtlasProjectiveSolutionTree.SharedLocalValid
-      table2.sharedLocal := by
-    rw [hshared shared 2]
-    exact sharedValid
-  let valid2 ← checkGlobal "2" globalTaskCount table2 shared2
-  let table3 := globalTables shared 3
-  have shared3 : AtlasProjectiveSolutionTree.SharedLocalValid
-      table3.sharedLocal := by
-    rw [hshared shared 3]
-    exact sharedValid
-  let valid3 ← checkGlobal "3" globalTaskCount table3 shared3
-  let checkedCharts : CheckedChartTables := {
-    tables := ![table0, table1, table2, table3]
-    charts := by
-      intro chart
-      fin_cases chart
-      · exact hchart shared 0
-      · exact hchart shared 1
-      · exact hchart shared 2
-      · exact hchart shared 3
-    valid := by
-      intro chart
-      fin_cases chart
-      · exact valid0.down
-      · exact valid1.down
-      · exact valid2.down
-      · exact valid3.down }
-  log "constructed proof: no C5Model (fivefold-symmetric polyhedron within 6e-16 of the rational vertices) is Rupert"
-  pure ⟨checkedCharts.notRupert⟩
 
 end Nopert231.NativeExecutable
 
