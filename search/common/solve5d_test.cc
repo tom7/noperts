@@ -11,6 +11,7 @@
 #include "bignum/big.h"
 #include "bignum/big-overloads.h"
 #include "rows5d.h"
+#include "test_data.h"
 #include "tubeatlas5d.h"
 
 using namespace solve5d;
@@ -76,7 +77,8 @@ int main(int argc, char **argv) {
     printf("SKIPPED: no tube trees (pass TREES_DIR)\n");
     return 0;
   }
-  const auto atlas = tubeatlas5d::TubeAtlas::Load(trees_dir, "codebdd.json");
+  if (!HaveCodebddJson("solve5d_test")) return 0;
+  const auto atlas = tubeatlas5d::TubeAtlas::Load(trees_dir, CodebddJson());
   Options opt;
   // The search screens in double; VerifySubtree checks every leaf exactly.
   // A few subtrees in different charts, a few levels down from the root.

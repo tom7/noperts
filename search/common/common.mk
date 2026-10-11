@@ -105,7 +105,7 @@ shadowanim.exe : shadowanim.o rigidity-margin.o $(OBJECTS_CORE) $(OBJECTS) $(COD
 # Runs every unit test. Tests that need generated data (codebdd.json, tube
 # trees, the Lean exact5d_golden executable) skip when it is absent; see the
 # tests for the environment variables that point them at it.
-test : $(TESTS:%=%.exe)
+test : default
 	@failed=""; for t in $(TESTS); do echo "== $$t"; ./$$t.exe || failed="$$failed $$t"; done; \
 	  if [ -n "$$failed" ]; then echo "FAILED:$$failed"; exit 1; fi; echo "all tests passed"
 

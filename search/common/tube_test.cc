@@ -28,6 +28,7 @@
 #include "bignum/big.h"
 #include "model.h"
 #include "rapidjson/document.h"
+#include "test_data.h"
 #include "tubetree.h"
 #include "util.h"
 #include "yocto-math.h"
@@ -262,13 +263,9 @@ int main(int argc, char **argv) {
   TestNearOriginFaceCuttingPlane();
   TestCheckAnnularDominance();
 
-  const char *env_bdd = getenv("CODEBDD_JSON");
-  const std::string bdd = env_bdd != nullptr ? env_bdd : "codebdd.json";
-  if (!std::filesystem::exists(bdd)) {
-    Print("SKIPPED: TestBasicSilhouette ({} not present; run ./codebdd.exe)\n", bdd);
-  } else {
-    const std::vector<TriangleQ> tris = LoadCodeTriangles(bdd, 1);
-    CHECK(!tris.empty()) << bdd << " has no code triangles";
+  if (HaveCodebddJson("TestBasicSilhouette")) {
+    const std::vector<TriangleQ> tris = LoadCodeTriangles(CodebddJson(), 1);
+    CHECK(!tris.empty()) << CodebddJson() << " has no code triangles";
     TestBasicSilhouette(tris[0]);
   }
 

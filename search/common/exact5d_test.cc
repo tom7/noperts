@@ -1,7 +1,11 @@
 // Tests that exact5d agrees exactly with the Lean checker it ports. Boxes
-// are generated here, evaluated by the Lean executable exact5d_golden
-// (Noperthedron: `lake build exact5d_golden`), and every intermediate
-// quantity is compared as an exact rational.
+// are generated here, evaluated by the Lean executable exact5d_golden, and
+// every intermediate quantity is compared as an exact rational.
+//
+// exact5d_golden is not in this repository's Lean project (../../proof has
+// no such executable); it was built in the searches' Noperthedron branches
+// (`lake build exact5d_golden`). Point $EXACT5D_GOLDEN at such a build to run
+// the comparison; without it the test prints SKIPPED and passes.
 //
 // Triangles are sub-triangles of real code triangles (realistic big
 // rationals); certificates are random but well-formed, so most boxes are
@@ -27,22 +31,16 @@
 #include "tube.h"
 #include "tubetree.h"
 #include "rapidjson/document.h"
+#include "test_data.h"
 #include "util.h"
 
 using namespace exact5d;
 using vec3 = yocto::vec<double, 3>;
 
-// The Lean side's exact5d_golden executable (in the Noperthedron checkout
-// beside this one), or $EXACT5D_GOLDEN.
+// The Lean side's exact5d_golden executable: $EXACT5D_GOLDEN (no default).
 static std::string Golden() {
   const char *e = getenv("EXACT5D_GOLDEN");
-  return e != nullptr ? e : "../Noperthedron/.lake/build/bin/exact5d_golden";
-}
-
-// codebdd's output (not committed; `./codebdd.exe` writes it), or $CODEBDD_JSON.
-static std::string CodebddJson() {
-  const char *e = getenv("CODEBDD_JSON");
-  return e != nullptr ? e : "codebdd.json";
+  return e != nullptr ? e : "";
 }
 
 static std::string R(const Q &q) { return q.ToString(); }
@@ -171,15 +169,13 @@ static std::string CommonString(const Common &c) {
 static Q ParseQ(const std::string &s) { return Q(s); }
 
 int main(int argc, char **argv) {
-  if (!std::filesystem::exists(Golden())) {
-    printf("SKIPPED: %s not built (cd ../Noperthedron && lake build exact5d_golden)\n",
-           Golden().c_str());
+  if (Golden().empty() || !std::filesystem::exists(Golden())) {
+    printf("SKIPPED exact5d_test: no Lean exact5d_golden executable (it is not in this "
+           "repository's ../../proof; set EXACT5D_GOLDEN to one built in Noperthedron)%s%s\n",
+           Golden().empty() ? "" : "; not found: ", Golden().c_str());
     return 0;
   }
-  if (!std::filesystem::exists(CodebddJson())) {
-    printf("SKIPPED: %s not present (run ./codebdd.exe)\n", CodebddJson().c_str());
-    return 0;
-  }
+  if (!HaveCodebddJson("exact5d_test")) return 0;
   const int num_global = argc > 1 ? atoi(argv[1]) : 150;
   const int num_mixed = argc > 2 ? atoi(argv[2]) : 40;
   const int num_prune = argc > 3 ? atoi(argv[3]) : 300;

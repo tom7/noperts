@@ -48,6 +48,11 @@
 # PHStatementData.lean, and ../../proof/Pipeline/IcoGroupData.lean,
 # by the scripts in scripts/), so it only runs when asked for (--from model
 # or --only model). The other stages need its codebdd.json.
+#
+# Each stage's wall time is appended to WORK/stages.log. The Lean build runs
+# in the background while the C++ stages run (log WORK/lean_build.log); the
+# verify stage waits for it, and the script fails if it fails. (Helpers:
+# ../common/rebuild_lib.sh.)
 set -euo pipefail
 
 STAGES=(model tube tubepack search pack verify)
@@ -80,14 +85,8 @@ run() {
   echo "+ $*"
   if [ $DRY -eq 0 ]; then "$@"; fi
 }
-# The memory caps need systemd-run --user (a systemd user session). Without
-# one (e.g. in a container whose PID 1 is not systemd), run uncapped.
-if systemd-run --user --scope -q true 2> /dev/null; then
-  HAVE_SCOPE=1
-else
-  HAVE_SCOPE=0
-  echo "== systemd-run --user is not available: running without memory caps" >&2
-fi
+# HAVE_SCOPE, want, stage_begin/stage_end, the background Lean build.
+source "$NOPERT/../common/rebuild_lib.sh"
 # Lean executables run under a memory cap (ulimit -v would stop Lean's threads).
 lean_run() {
   if [ $HAVE_SCOPE -eq 1 ]; then
@@ -96,16 +95,9 @@ lean_run() {
     run "$@"
   fi
 }
-want() {
-  local stage=$1
-  if [ -n "$ONLY" ]; then [ "$ONLY" = "$stage" ]; return; fi
-  local reached=0
-  for s in "${STAGES[@]}"; do
-    [ "$s" = "$FROM" ] && reached=1
-    [ "$s" = "$stage" ] && return $((1 - reached))
-  done
-  return 1
-}
+# The Lean build (in the background: lean_build_start), under the same cap.
+LEAN_BUILD=(lake build constructPentagonalHexecontahedron)
+[ $HAVE_SCOPE -eq 0 ] || LEAN_BUILD=(systemd-run --user --scope -q -p MemoryMax="${MEM_GB}G" "${LEAN_BUILD[@]}")
 
 echo "== resources: $THREADS threads, memory cap ${MEM_GB} GB (RAM ${RAM_GB} GB)"
 if [ "$RAM_GB" -lt 40 ]; then
@@ -123,14 +115,15 @@ run mkdir -p "$WORK"
 echo "== build"
 run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
   export_codetrees_pack.exe search5d.exe pack5d.exe scoreboard5d.exe
-# Lean is needed only by the model (generated sources) and verify stages.
-# (The model stage builds Lean after regenerating its data.)
+# Lean is needed only by the model (generated sources) and verify stages; it
+# builds in the background while the C++ stages run. (The model stage starts
+# it after regenerating its data.)
 if want verify && ! want model; then
-  (cd "$LEAN" && lean_run lake build constructPentagonalHexecontahedron)
+  lean_build_start "$LEAN" "${LEAN_BUILD[@]}"
 fi
 
 if want model; then
-  echo "== model"
+  stage_begin model
   # The snub dodecahedron's model (its frame, view triangle and symmetry
   # neighbors), then its polar dual.
   (cd "$NOPERT" && run python3 snub_model.py snub_model.txt symmetry_neighbors.h)
@@ -143,7 +136,8 @@ if want model; then
     && run python3 "$NOPERT/scripts/ph_statement_data.py")
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
     export_codetrees_pack.exe search5d.exe pack5d.exe
-  (cd "$LEAN" && lean_run lake build constructPentagonalHexecontahedron)
+  lean_build_start "$LEAN" "${LEAN_BUILD[@]}"
+  stage_end model
 fi
 
 # Tube radius goals. Code 18's code triangle is certified by a single tube
@@ -170,7 +164,8 @@ else
 fi
 
 if want tube; then
-  echo "== tube ($NCODES codes)"
+  stage_begin tube
+  echo "   $NCODES codes"
   for code in $(seq 0 $((NCODES - 1))); do
     (cd "$NOPERT" && run ./tubecode.exe --code "$code" --output_dir "$TREES1" --threads "$THREADS")
   done
@@ -178,32 +173,41 @@ if want tube; then
     (cd "$NOPERT" && run ./tuberefine.exe --code "$code" --in_dir "$TREES1" --out_dir "$TREES2" \
       --goal "$(tube_goal "$code")" --threads "$THREADS")
   done
+  stage_end tube
 fi
 
 if want tubepack; then
-  echo "== tubepack"
+  stage_begin tubepack
   (cd "$NOPERT" && run ./export_codetrees_pack.exe --trees_dir "$TREES2" --out_dir "$TUBEPACKS" \
     --bdd codebdd.json)
+  stage_end tubepack
 fi
 
 if want search; then
-  echo "== search"
+  stage_begin search
   # One run solves every job; deferred leaves are retried in the same run.
   (cd "$NOPERT" && run ./search5d.exe --all --charts 0,1,2 --threads "$THREADS" --commit_depth 12 \
     --subtree_budget 5000 --max_depth 200 --trees_dir "$TREES2" --view_scale 4 \
     --max_full_retry 1024 --retry_deferred --requeue_deferred --out_dir "$JOBS")
   (cd "$NOPERT" && run ./scoreboard5d.exe --journals "$JOBS" | tail -1)
+  stage_end search
 fi
 
 if want pack; then
-  echo "== pack"
+  stage_begin pack
   for chart in 0 1 2; do
     (cd "$NOPERT" && run ./pack5d.exe --chart "$chart" --per_code "$PACKS" --journals "$JOBS" \
       --trees_dir "$TREES2" --threads "$THREADS")
   done
+  stage_end pack
 fi
 
 if want verify; then
-  echo "== verify"
+  stage_begin verify
+  lean_build_wait
   (cd "$LEAN" && lean_run .lake/build/bin/constructPentagonalHexecontahedron "$TUBEPACKS/manifest.txt" "$PACKS")
+  stage_end verify
 fi
+
+# Wait for a background Lean build that the verify stage did not wait for.
+lean_build_wait

@@ -11,6 +11,7 @@
 #include "bignum/big.h"
 #include "bignum/big-overloads.h"
 #include "rapidjson/document.h"
+#include "test_data.h"
 #include "util.h"
 
 using namespace tubeatlas5d;
@@ -18,7 +19,7 @@ using namespace tubeatlas5d;
 // Usage: tubeatlas5d_test.exe [TREES_DIR [MANIFEST]]
 //
 // TREES_DIR (or $TREES_DIR) holds the tube trees (tree.<code>.json, e.g.
-// tuberefine's output) for the code triangles of ./codebdd.json; MANIFEST
+// tuberefine's output) for the code triangles of ./codebdd.json ($CODEBDD_JSON); MANIFEST
 // (or $TUBE_MANIFEST) is export_codetrees_pack's manifest.txt for those
 // trees. Without trees the test is skipped; without a manifest, the
 // manifest check is.
@@ -46,8 +47,9 @@ int main(int argc, char **argv) {
     printf("SKIPPED: no tube trees (pass TREES_DIR)\n");
     return 0;
   }
-  const TubeAtlas atlas = TubeAtlas::Load(trees_dir, "codebdd.json");
-  const int num_triangles = NumCodeTriangles("codebdd.json");
+  if (!HaveCodebddJson("tubeatlas5d_test")) return 0;
+  const TubeAtlas atlas = TubeAtlas::Load(trees_dir, CodebddJson());
+  const int num_triangles = NumCodeTriangles(CodebddJson());
   CHECK(atlas.NumTriangles() == num_triangles) << atlas.NumTriangles();
 
   // The root radius of each table equals the exported pack's table radius

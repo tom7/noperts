@@ -40,6 +40,11 @@
 # IcoGroupData; all but CapData and TieData with scripts/), so
 # they only run when asked for (--from model, --only caps, ...); the default
 # start is tube (with the committed data).
+#
+# Each stage's wall time is appended to WORK/stages.log. The Lean build runs
+# in the background while the C++ stages run (log WORK/lean_build.log); the
+# verify stage waits for it, and the script fails if it fails. (Helpers:
+# ../common/rebuild_lib.sh.)
 set -euo pipefail
 
 STAGES=(model tube tubepack caps ties search pack verify)
@@ -76,30 +81,14 @@ run_to() {
   echo "+ $* > $out" >&2
   if [ $DRY -eq 0 ]; then "$@" > "$out"; fi
 }
-# The memory caps need systemd-run --user (a systemd user session). Without
-# one (e.g. in a container whose PID 1 is not systemd), run uncapped.
-if systemd-run --user --scope -q true 2> /dev/null; then
-  HAVE_SCOPE=1
-else
-  HAVE_SCOPE=0
-  echo "== systemd-run --user is not available: running without memory caps" >&2
-fi
+# HAVE_SCOPE, want, stage_begin/stage_end, the background Lean build.
+source "$NOPERT/../common/rebuild_lib.sh"
 lean_run() {
   if [ $HAVE_SCOPE -eq 1 ]; then
     run systemd-run --user --scope -q -p MemoryMax="${MEM_GB}G" -p MemorySwapMax=0 "$@"
   else
     run "$@"
   fi
-}
-want() {
-  local stage=$1
-  if [ -n "$ONLY" ]; then [ "$ONLY" = "$stage" ]; return; fi
-  local reached=0
-  for s in "${STAGES[@]}"; do
-    [ "$s" = "$FROM" ] && reached=1
-    [ "$s" = "$stage" ] && return $((1 - reached))
-  done
-  return 1
 }
 
 echo "== resources: $THREADS threads, memory cap ${MEM_GB} GB (RAM ${RAM_GB} GB)"
@@ -125,12 +114,12 @@ CAP_U0W=(--cap u0 --mu0 41/1024 --strong_scale 2 --ratio_z 32 --max_depth 32 --t
 echo "== build"
 run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe export_codetrees_pack.exe capcert.exe \
   tietube.exe search5d.exe pack5d.exe scoreboard5d.exe
-build_lean() {
-  (cd "$LEAN" && lean_run lake build constructDeltoidalHexecontahedron)
-}
+# The Lean build (in the background: lean_build_start), under the same cap.
+LEAN_BUILD=(lake build constructDeltoidalHexecontahedron)
+[ $HAVE_SCOPE -eq 0 ] || LEAN_BUILD=(systemd-run --user --scope -q -p MemoryMax="${MEM_GB}G" -p MemorySwapMax=0 "${LEAN_BUILD[@]}")
 
 if want model; then
-  echo "== model"
+  stage_begin model
   (cd "$NOPERT" && run python3 dh_model.py snub_model.txt dh_model.txt)
   (cd "$NOPERT" && run ./codebdd.exe --model_file=dh_model.txt --model_faces codebdd.json)
   (cd "$NOPERT" && run python3 dh_exact.py dh_model.txt dh_exact.txt)
@@ -142,25 +131,32 @@ if want model; then
     && run python3 scripts/dh_statement_data.py)
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe export_codetrees_pack.exe capcert.exe \
     tietube.exe search5d.exe pack5d.exe
+  stage_end model
 fi
 
 if want tube; then
-  echo "== tube"
-  NCODES=$(python3 -c "import json; print(len(json.load(open('$NOPERT/codebdd.json'))['codes']))")
+  stage_begin tube
+  if [ $DRY -eq 1 ] && [ ! -f "$NOPERT/codebdd.json" ]; then
+    NCODES=20  # (dry run before the model stage has written codebdd.json)
+  else
+    NCODES=$(python3 -c "import json; print(len(json.load(open('$NOPERT/codebdd.json'))['codes']))")
+  fi
   for code in $(seq 0 $((NCODES - 1))); do
     (cd "$NOPERT" && run ./tubecode.exe --code "$code" --output_dir "$TREES" --threads "$THREADS" \
       "${TUBE_CAPS[@]}" --cap_r 1/40 --min_r 1/10000)
   done
+  stage_end tube
 fi
 
 if want tubepack; then
-  echo "== tubepack"
+  stage_begin tubepack
   (cd "$NOPERT" && run ./export_codetrees_pack.exe --trees_dir "$TREES" --out_dir "$TUBEPACKS" \
     --bdd codebdd.json)
+  stage_end tubepack
 fi
 
 if want caps; then
-  echo "== caps"
+  stage_begin caps
   (cd "$NOPERT" && run_to "$WORK/frame_u0.txt" ./capcert.exe --cap u0 --frame_only)
   (cd "$NOPERT" && run_to "$WORK/frame_ux.txt" ./capcert.exe --cap ux --aniso --frame_only)
   (cd "$NOPERT" && run ./capcert.exe "${CAP_U0[@]}" --threads "$THREADS" --export "$CERTS/u0.cert")
@@ -175,42 +171,52 @@ if want caps; then
   (cd "$NOPERT" && run python3 dh_cap_lean.py \
     "$LEAN/DeltoidalHexecontahedron/CapData.lean" \
     "$WORK/frame_u0.txt:41/4096:1/50:prune" "$WORK/frame_ux.txt:41/4096:1/80" "$WORK/frame_u0.txt:41/1024:1/320:prune")
+  stage_end caps
 fi
 
 if want ties; then
-  echo "== ties"
+  stage_begin ties
   (cd "$NOPERT" && run ./tietube.exe --threads "$THREADS" --sigma_depth 6 --max_depth 12 "${TUBE_CAPS[@]}" \
     --trees_dir "$TREES" --out_dir "$TIES" --export_dir "$TIES/cert")
   (cd "$NOPERT" && run ./tietube.exe --t 37 --threads "$THREADS" --sigma_depth 6 --max_depth 14 \
     --min_rho 1/16384 "${TUBE_CAPS[@]}" --trees_dir "$TREES" --out_dir "$TIES" --export_dir "$TIES/cert")
   (cd "$NOPERT" && run python3 dh_tie_lean.py --export "$TIES/cert")
   run cp "$NOPERT/dh_tie_data.txt" "$TIES/cert/"
+  stage_end ties
 fi
 
+# Lean (with the CapData and TieData just written) builds in the background
+# while the search and pack stages run.
 if want verify || want caps || want ties; then
-  echo "== build Lean"
-  build_lean
+  lean_build_start "$LEAN" "${LEAN_BUILD[@]}"
 fi
 
 if want search; then
-  echo "== search"
+  stage_begin search
   (cd "$NOPERT" && run ./search5d.exe --all --charts 0,1,2 --threads "$THREADS" --commit_depth 12 \
     --subtree_budget 50000 --max_depth 200 --trees_dir "$TREES" --view_scale 4 --max_full_retry 1024 \
     --half_turn_prune --tie_dir "$TIES" --caps "$CAPS_FILE" --out_dir "$JOBS" \
     --retry_deferred --requeue_deferred)
   (cd "$NOPERT" && run ./scoreboard5d.exe --journals "$JOBS" | tail -1)
+  stage_end search
 fi
 
 if want pack; then
-  echo "== pack"
+  stage_begin pack
   for chart in 0 1 2; do
     (cd "$NOPERT" && run ./pack5d.exe --chart "$chart" --per_code "$PACKS" --journals "$JOBS" \
       --trees_dir "$TREES" --bdd codebdd.json --tie_nodes "$TIES/cert/nodes.txt" --threads "$THREADS")
   done
+  stage_end pack
 fi
 
 if want verify; then
-  echo "== verify"
+  stage_begin verify
+  lean_build_wait
   (cd "$LEAN" && lean_run .lake/build/bin/constructDeltoidalHexecontahedron "$TUBEPACKS/manifest.txt" "$PACKS" \
     "$CERTS" "$TIES/cert")
+  stage_end verify
 fi
+
+# Wait for a background Lean build that the verify stage did not wait for.
+lean_build_wait

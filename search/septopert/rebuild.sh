@@ -27,6 +27,9 @@
 # Long stages run in a systemd scope with MemoryMax (and no swap); each
 # stage's wall time and the scope's peak memory are appended to
 # WORK/stages.log.
+# The Lean build runs in the background while the C++ stages run (log
+# WORK/lean_build.log); the verify stage waits for it, and the script fails
+# if it fails. (Helpers: ../common/rebuild_lib.sh.)
 set -euo pipefail
 
 STAGES=(model tube tubepack cap search pack verify)
@@ -57,16 +60,9 @@ JOBS=$WORK/jobs
 PACKS=$WORK/packs
 CAP_CERT=$WORK/cap-1_16.cert
 CAPS_FILE=$WORK/caps.txt
-STAGELOG=$WORK/stages.log
 
-# The memory caps need systemd-run --user (a systemd user session). Without
-# one (e.g. in a container whose PID 1 is not systemd), run uncapped.
-if systemd-run --user --scope -q true 2> /dev/null; then
-  HAVE_SCOPE=1
-else
-  HAVE_SCOPE=0
-  echo "== systemd-run --user is not available: running without memory caps" >&2
-fi
+# HAVE_SCOPE, want, stage_begin/stage_end, the background Lean build.
+source "$NOPERT/../common/rebuild_lib.sh"
 run() {
   echo "+ $*" >&2
   if [ $DRY -eq 0 ]; then "$@"; fi
@@ -83,23 +79,6 @@ capped() {
     bash -c '"$@"; rc=$?; f=/sys/fs/cgroup$(cut -d: -f3 /proc/self/cgroup)/memory.peak;
              [ -r "$f" ] && echo "peak memory: $(( $(cat "$f") / 1048576 )) MiB" >&2; exit $rc' _ "$@"
 }
-want() {
-  local stage=$1
-  if [ -n "$ONLY" ]; then [ "$ONLY" = "$stage" ]; return; fi
-  local reached=0
-  for s in "${STAGES[@]}"; do
-    [ "$s" = "$FROM" ] && reached=1
-    [ "$s" = "$stage" ] && return $((1 - reached))
-  done
-  return 1
-}
-STAGE_T0=0
-stage_begin() { echo "== $1 ($(date +%T))"; STAGE_T0=$(date +%s); }
-stage_end() {
-  local dt=$(( $(date +%s) - STAGE_T0 ))
-  [ $DRY -eq 1 ] || echo "$1 $(date +%F_%T) ${dt}s" >> "$STAGELOG"
-  echo "== $1 done in ${dt}s"
-}
 
 # (Also in a dry run, so that df below has a directory to look at.)
 mkdir -p "$WORK"
@@ -113,6 +92,18 @@ NTRI=22
 echo "== build"
 run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe export_codetrees_pack.exe \
   capcert_septopert.exe search5d.exe pack5d.exe dfwhere.exe
+
+# The checker's Lean build (no-op if current), in the background while the
+# C++ stages run, and never alongside another Lean build on the machine: it
+# first waits for any running lake to finish.
+if want verify; then
+  if [ $HAVE_SCOPE -eq 1 ]; then
+    LEAN_CMD=(timeout 6000 systemd-run --user --scope -q -p MemoryMax=48G -p MemorySwapMax=0 lake build constructSeptopert)
+  else
+    LEAN_CMD=(timeout 6000 lake build constructSeptopert)
+  fi
+  lean_build_start "$LEAN" bash -c 'while pgrep -x lake > /dev/null; do sleep 30; done; exec "$@"' _ "${LEAN_CMD[@]}"
+fi
 
 if want model; then
   stage_begin model
@@ -200,14 +191,7 @@ fi
 
 if want verify; then
   stage_begin verify
-  # Build the checker (no-op if current), never alongside another Lean build.
-  if [ $DRY -eq 0 ]; then while pgrep -x lake > /dev/null; do sleep 30; done; fi
-  if [ $HAVE_SCOPE -eq 1 ]; then
-    (cd "$LEAN" && run timeout 6000 systemd-run --user --scope -q -p MemoryMax=48G -p MemorySwapMax=0 \
-      lake build constructSeptopert)
-  else
-    (cd "$LEAN" && run timeout 6000 lake build constructSeptopert)
-  fi
+  lean_build_wait
   [ $DRY -eq 1 ] || [ -x "$LEAN/.lake/build/bin/constructSeptopert" ] || {
     echo "missing $LEAN/.lake/build/bin/constructSeptopert (lake build constructSeptopert)" >&2; exit 1; }
   capped "$LEAN/.lake/build/bin/constructSeptopert" "$TUBEPACKS/manifest.txt" "$PACKS" "$CAP_CERT" \

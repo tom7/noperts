@@ -17,16 +17,11 @@
 #include "geom5d.h"
 #include "model.h"
 #include "rapidjson/document.h"
+#include "test_data.h"
 #include "util.h"
 
 using namespace contacts5d;
 using exact5d::Q;
-
-// codebdd's output (not committed; `./codebdd.exe` writes it), or $CODEBDD_JSON.
-static std::string CodebddJson() {
-  const char *e = getenv("CODEBDD_JSON");
-  return e != nullptr ? e : "codebdd.json";
-}
 
 static std::vector<exact5d::TriangleQ> CodeTriangles(std::vector<int> *roots) {
   rapidjson::Document doc;
@@ -198,11 +193,7 @@ static void TestPools() {
 
 int main() {
   TestEdges();
-  if (std::filesystem::exists(CodebddJson())) {
-    TestPools();
-  } else {
-    printf("  SKIPPED the contact pools: %s not present\n", CodebddJson().c_str());
-  }
+  if (HaveCodebddJson("the contact pools")) TestPools();
   printf("contacts5d tests PASSED\n");
   return 0;
 }
