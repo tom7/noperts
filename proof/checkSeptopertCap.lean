@@ -1,11 +1,12 @@
 import Septopert.CapsNative
 
 /-!
-Native executable that decodes and checks the 7-vertex solid's cap certificate
-(`capcert_septopert.exe --export`) and instantiates the cap theorem
-(`Septopert.capHolds_of_cert`; the region form is `Septopert.cap_not_rupert`).
+Diagnostic: checks only the Septopert's cap certificate and instantiates the
+cap theorem (`Septopert.capHolds_of_cert`; the region form is
+`Septopert.cap_not_rupert`). The full verification, `constructSeptopert`,
+checks the cap certificate too.
 
-Usage: `checkSeptopertCap <cap.cert>` (add `diag` for per-chart results).
+Usage: `checkSeptopertCap <cap.cert> [diag]` (`diag`: per-chart results).
 -/
 
 open Noperts.Pipeline

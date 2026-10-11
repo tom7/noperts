@@ -5,27 +5,35 @@ import DeltoidalHexecontahedron.PackedSolutionTree
 import DeltoidalHexecontahedron
 
 /-!
-Native executable that reads and checks the exact certificate data for the
-deltoidal hexecontahedron, then establishes `CertificatesValid` and so
-`isNopert_of_certificatesValid`: every deltoidal hexecontahedron is a nopert
-(`DeltoidalHexecontahedron.lean`).
-
-Three kinds of data are decoded (untrusted) and checked natively, in parallel:
-- the solution tables (tube packs and chart packs), which exclude every
-  centrally symmetric `IModel` whose exact claims hold;
-- the three cap certificates (nopert229 `capcert --export`: u0, ux, u0 wide),
-  which give the cap claims for the exact solid (`capsHold_of_certs`);
-- the tie certificates (nopert229 `tietube --export_dir`, with `dh_tie_data.txt`
-  and `nodes.txt`), which give the tie nodes' claims (`tiesHold_of_certs`).
-The view cover, the tube tables and the four chart tables are checked as in
-`NativeExecutable.constructProof`. Kernel-proved bridges (`capsCheck_of_par`,
-`tiesCheck_of_par`, `Table.Valid.of_withTasksB`) turn success into
-`CertificatesValid`.
+Native executable that checks the deltoidal hexecontahedron's certificate
+data and, if it is all valid, establishes `CertificatesValid`, and so
+(`isNopert_of_certificatesValid`) that every deltoidal hexecontahedron is a
+nopert (`DeltoidalHexecontahedron.lean`).
 
 Usage:
   constructDeltoidalHexecontahedron <tube manifest.txt> <chart directory>
-    <cap directory: u0.cert ux.cert u0_wide.cert>
-    <tie directory: dh_tie_data.txt nodes.txt n*_t*.cert>
+      <cap directory> <tie directory>
+    Checks everything: the three cap certificates, the tie certificates, the
+    view cover, every tube table and all four chart tables. On success it
+    prints
+      instantiated: IsNopert V for every deltoidal hexecontahedron V (none is Rupert)
+
+The arguments: `manifest.txt` lists the tube packs in code order, next to
+them; the chart directory holds `chart0.pack` through `chart2.pack`, or
+per-code packs `c<chart>/t<t>.pack`; the cap directory holds `u0.cert`,
+`ux.cert` and `u0_wide.cert`; the tie directory holds `dh_tie_data.txt`,
+`nodes.txt` and the `n*_t*.cert` tie certificates. How to produce or obtain
+the data, and the running time and memory needed: see
+`deltoidal-hexecontahedron.md` and `BUILDING.md` at the root of the
+repository.
+
+The data is untrusted: it is decoded and checked natively, in parallel. The
+solution tables exclude every centrally symmetric `IModel` whose exact
+claims hold; the cap certificates give the cap claims for the exact solid
+(`capsHold_of_certs`), and the tie certificates the tie nodes' claims
+(`tiesHold_of_certs`). Kernel-proved bridges (`capsCheck_of_par`,
+`tiesCheck_of_par`, `Table.Valid.of_withTasksB`) turn success into
+`CertificatesValid`.
 -/
 
 open Noperts Noperts.Pipeline Noperts.Pipeline.Cap
@@ -47,8 +55,9 @@ def main (args : List String) : IO Unit := do
   let (manifestPath, directory, capDir, tieDir) ← match args with
     | [m, d, c, t] => pure (m, d, c, t)
     | _ => throw (IO.userError (
-        "usage: constructDeltoidalHexecontahedron <code-pack manifest.txt> <chart directory> " ++
-        "<cap directory: u0.cert ux.cert u0_wide.cert> <tie directory: dh_tie_data.txt nodes.txt n*_t*.cert>"))
+        "usage: constructDeltoidalHexecontahedron <tube manifest.txt> <chart directory> " ++
+        "<cap directory: u0.cert ux.cert u0_wide.cert> <tie directory: dh_tie_data.txt nodes.txt n*_t*.cert>\n" ++
+        "(checks everything; see deltoidal-hexecontahedron.md)"))
   -- Caps.
   let mut caps : Array CapCert := #[]
   for name in ["u0.cert", "ux.cert", "u0_wide.cert"] do
