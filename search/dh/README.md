@@ -59,7 +59,8 @@ theorem deltoidalHexecontahedron_not_rupert_of_checks
 ## Why the deltoidal hexecontahedron needs more than the earlier solids
 
 The DH lies exactly on the boundary of Rupert-ness. Folding its kites slightly (moving the twelve 5-fold vertices
-out by 0.1%) gives a Rupert polyhedron (`dh_boundary.py` checks a passage in 50-digit arithmetic); the exact DH has
+out by any η > 0) gives a Rupert polyhedron (`dh_boundary.py` checks passages of clearance about 0.0695·η in
+60-digit arithmetic, for η from 10⁻³ down to 10⁻¹⁸); the exact DH has
 clearance exactly 0 at those poses. So the earlier pipeline's statement, "every model within 6·10⁻¹⁶ of the
 rational model is a Nopert", is false here, and the proof uses the exact solid wherever such ties occur:
 

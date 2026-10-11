@@ -59,11 +59,13 @@ triangles cover the view domain.
 ## Why the exact solid
 
 The DH is only just not Rupert. It has poses with clearance exactly 0
-(*ties*), and moving its twelve 5-fold vertices outward by 0.1% gives a Rupert
-solid (checked numerically to 50 digits by `search/dh/dh_boundary.py`; this
-is not part of the Lean result). So, unlike for the Septopert, there is no
-true statement about all solids near a rational model, and the proof uses the
-exact solid near the ties:
+(*ties*), and moving its twelve 5-fold vertices outward by any amount
+η > 0 gives a Rupert solid: next to a tie there is a passage with clearance
+about 0.0695·η. `search/dh/dh_boundary.py` checks this numerically, with
+60 digits, for η from 10⁻³ down to 10⁻¹⁸; it is not part of the Lean result.
+So every neighbourhood of the DH, however small, contains Rupert solids.
+Unlike for the Septopert, there is no true statement about all solids near a
+rational model, and the proof uses the exact solid near the ties:
 
 - The solution tables exclude every centrally symmetric solid with
   icosahedral symmetry whose vertices are within 6·10⁻¹⁶ of a rational model,
