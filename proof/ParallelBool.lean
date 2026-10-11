@@ -7,9 +7,9 @@ public import Mathlib.Tactic
 /-!
 # Kernel-specified parallel Boolean loops
 
-`Task.spawn` is definitionally a pure computation, so native executables and
-`native_decide` may evaluate independent Boolean chunks concurrently while a
-small kernel proof recovers the corresponding pointwise statement.
+`Task.spawn` is definitionally a pure computation, so the native executables
+may evaluate independent Boolean chunks concurrently while a small kernel
+proof recovers the corresponding pointwise statement.
 -/
 
 namespace Noperts.ParallelBool

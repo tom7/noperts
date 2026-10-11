@@ -100,9 +100,9 @@ def QuadCoverTree.Valid (tree : QuadCoverTree) (b : QuadBasis) (flock : Array (F
 /-!
 ## Soundness of `QuadCoverTree.Valid`
 
-`covers_of_valid` was previously an *axiom* stated for an arbitrary `b : QuadBasis`.
-That statement is false: `QuadBasis` is a bare record, so nothing ties `normSqP0`, `D1`,
-`D2` to the vectors `p0`, `e1`, `e2`. For instance with
+`covers_of_valid` does not hold for an arbitrary `b : QuadBasis`: `QuadBasis` is a
+bare record, so nothing ties `normSqP0`, `D1`, `D2` to the vectors `p0`, `e1`, `e2`.
+For instance with
 `b := { u0 := ![1,0,0], p0 := 0, e1 := 0, e2 := 0, D1 := 1, D2 := 1, normSqP0 := 2 }`,
 the empty flock, `c_cone := 1/2`, `S_max = T_max = 1` and `tree := .outside`, the root
 leaf check `1 < normSqP0 + 0 + 0` passes, while the unit axis `![1,0,0]` lies in the

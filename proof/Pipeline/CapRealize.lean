@@ -11,8 +11,11 @@ public import Pipeline.CapFrame
 is, after the ratio blow-up of its strongly dominated weak coordinates, a point
 y of one of the charts in `expandChart` with the same μ, τ, the same p₀ for
 non-F_e kinds, and the same values of the substituted p variables
-(`rRatioVar st id y k = rpv y₀ k`). Together with `rES_congr` the charts of
-`expandChart b` realize every point of the base chart.
+(`rRatioVar st id y k = rpv y₀ k`). For each kind of base chart b,
+`realize_fe`, `realize_face`, `realize_tie` and `realize_cone` then give a
+chart of `expandChart b` and a point of its root box with the required value
+of `rES`: the charts of `expandChart b` realize every point of the base
+chart.
 -/
 
 namespace Noperts.Pipeline.Cap

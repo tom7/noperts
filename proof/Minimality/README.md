@@ -10,7 +10,8 @@ steps 1–5).
 This file maps that outline to the Lean files: it lists the parts L1–L10 of
 the proof, the numbered statements that comments in the Lean files cite
 (Lemma 1, Theorem 5, Lemma 7.1, Theorem 9.9, …) with the declarations that
-prove them, and the modules.  All names are in the namespace `Minimality`.
+prove them, and the modules.  The names in `Minimality/` are in the namespace
+`Minimality`; the entry point's statements are at the root.
 Everything is proved against `IsRupert` from `MainTheorem.lean`;
 `V : Finset ℝ³` is the point set (it may contain non-extreme points).  Every
 theorem depends only on `propext`, `Classical.choice` and `Quot.sound`.

@@ -17,8 +17,8 @@ namespace GlobalTheorem
 
 private abbrev E (n : ℕ) := EuclideanSpace ℝ (Fin n)
 
--- FIXME: the fact that I can't find exactly this lemma with loogle on "sum" and EuclideanSpace.single
--- makes me think there's probably some nearby lemma that uses different tools, maybe?
+-- `v` as the sum of its coordinates times the standard basis vectors
+-- (`EuclideanSpace.single`).
 lemma vector_rep {n : ℕ} (v : E n) : v = ∑ x, v.ofLp x • EuclideanSpace.single x 1 := by
   ext i; simp [Finset.sum_apply, Pi.single_apply]
 

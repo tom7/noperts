@@ -6,7 +6,7 @@ public import Pipeline.PackedLocalViewTree
 @[expose] public section
 
 /-!
-# Packed runtime data for Nopert #231 global solution trees
+# Packed runtime data for candidate #231's global solution trees
 
 The final native executable reads compact ignored artifacts instead of asking
 Lean to elaborate hundreds of thousands of generated row declarations. The

@@ -5,7 +5,7 @@ public import Nopert231.SolidModel
 @[expose] public section
 
 /-!
-# Tangent cones of Nopert #231's rational model
+# Tangent cones of candidate #231's rational model
 
 For a linear functional to be maximized at a vertex `v` of a polytope, it is
 enough that it does not increase along the edges at `v`, i.e. towards the

@@ -14,7 +14,8 @@ w = ω₀ e₁ + ω₁ e₂ + ω₂ x with |ω₀|, |ω₁| ≤ 2 μ₀, |ω₂|
 F_e chart is used only outside the cone region (which the cone charts
 cover). The frame need not be normalized (nor, here, orthogonal): the chart
 maps are written in it. (The anisotropic ux charts of the deltoidal
-hexecontahedron are no longer covered.)
+hexecontahedron are not covered here; `DeltoidalHexecontahedron/CapCoverMain.lean`
+covers them.)
 -/
 
 namespace Noperts.Pipeline.Cap

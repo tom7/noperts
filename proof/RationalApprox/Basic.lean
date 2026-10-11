@@ -240,10 +240,8 @@ def _root_.Pose.rotM₂φφℚ (p : Pose ℚ) : (Fin 3 → ℚ) →ₗ[ℚ] (Fin
   _root_.RationalApprox.rotMφφℚ p.θ₂ p.φ₂
 
 /-- `rotM₂ℚ` with the resulting 2-vector rounded down componentwise to
-multiples of `10⁻¹³` (see `round13v`). Used by the local certificate `Bεℚ` so
-that its per-vertex-pair dot products and `UpperSqrt` norms run on small
-denominators; the rounding error is absorbed into the `κ` budgets of
-`bounds_kappa4`. -/
+multiples of `10⁻¹³` (see `round13v`), so that per-vertex-pair dot products
+and norms computed from it run on small denominators. -/
 def _root_.Pose.rotM₂Rℚ (p : Pose ℚ) (v : Fin 3 → ℚ) : Fin 2 → ℚ :=
   round13v (p.rotM₂ℚ v)
 

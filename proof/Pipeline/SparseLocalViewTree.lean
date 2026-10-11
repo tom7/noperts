@@ -15,9 +15,9 @@ A certificate row's support conditions are checked by the solid's
 `CertificateViewCheck`. By default (`CertificateViewCheck.allVertices`) that
 is `Box.ViewValid` itself: the support conditions against every vertex (the
 identity tube has few rows). A solid may supply a cheaper sufficient check
-instead, as a scoped instance: the snub dodecahedron checks each support
-vertex against its tangent-cone generators only
-(`SnubDodecahedron.SparseSupport`).
+instead, as a scoped instance: the snub dodecahedron and candidate #231 check
+each support vertex against its tangent-cone generators only
+(`SnubDodecahedron.SparseSupport`, `Nopert231.SparseViewCheck`).
 -/
 
 namespace Noperts.Pipeline.SparseLocalViewTree
@@ -151,8 +151,8 @@ theorem Table.Valid.of_sparse {table : Table} (h : SparseTableValid table) :
 
 /-! ## Parallel executable checker
 
-`native_decide` and standalone executables can evaluate this Boolean checker
-with ordinary native worker threads.  `Task.spawn` is definitionally a pure
+The `construct*` executables evaluate this Boolean checker with ordinary
+native worker threads.  `Task.spawn` is definitionally a pure
 computation, so the proof below reduces the parallel implementation to the
 same sparse row predicate used above.
 -/

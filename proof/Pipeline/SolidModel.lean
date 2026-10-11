@@ -28,10 +28,10 @@ every solid. It sees a solid only through a `SolidModel` instance:
 
 The Septopert's symmetry is C3 about (1,1,1), exact over ℚ (the cyclic
 coordinate permutations), so both errors are 0. The icosahedral solids
-(deltoidal and pentagonal hexecontahedra, snub dodecahedron) use C5 about the
-z axis: `symmetryMatrixQ` holds rational Taylor values of cos and sin of
-`2πk/5`, and the published coordinates are within `6 · 10⁻¹⁶` of the rotated
-seeds.
+(deltoidal and pentagonal hexecontahedra, snub dodecahedron) and candidate #231
+use C5 about the z axis: `symmetryMatrixQ` holds rational Taylor values of
+cos and sin of `2πk/5`, and the rational vertices are within `6 · 10⁻¹⁶` of
+the rotated seeds.
 
 The certificates are checked against `rationalVertex`, and they cover every
 `CyclicModel` (below): every polyhedron whose vertex `i` is seed `seedIndex i`,

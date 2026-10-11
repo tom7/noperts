@@ -46,7 +46,7 @@ def NotExistsNonRupertPolyhedronBelowSizeSeven : Prop :=
     ¬IsRupert vs
 
 /--
-Seven vertices is the smallest Nopert
+Seven vertices is the smallest a nopert can be.
 -/
 def MinimalNopert : Prop :=
   ExistsNonRupertPolyhedronSizeSeven ∧ NotExistsNonRupertPolyhedronBelowSizeSeven

@@ -13,9 +13,9 @@ public import Mathlib.LinearAlgebra.Trace
 @[expose] public section
 
 /-!
-# The rational vertices of Nopert #231 (data)
+# The rational vertices of candidate #231 (data)
 
-Nopert #231 has fivefold symmetry about z, parallel pentagonal caps and
+Candidate #231 has fivefold symmetry about z, parallel pentagonal caps and
 exactly planar quadrilaterals (27 faces: 2 pentagons, 20 triangles and 5
 quads). Its twenty vertices rotate four seed vertices about the z axis in
 steps of 2π/5: vertex `4k + s` is seed `s` rotated by `2πk/5` (up to

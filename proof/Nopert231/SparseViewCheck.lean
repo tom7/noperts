@@ -7,7 +7,7 @@ public import Nopert231.GeneratedTangentCones
 @[expose] public section
 
 /-!
-# Sparse support checks for Nopert #231
+# Sparse support checks for candidate #231
 
 The rational model of candidate #231 has at most seven tangent-cone
 generators at each vertex (`SparseSupport.supportGenerator`), and the

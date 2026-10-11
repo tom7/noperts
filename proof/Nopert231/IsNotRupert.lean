@@ -6,7 +6,7 @@ public import Rupert.Equivalences.RupertEquivRupertSet
 @[expose] public section
 
 /-!
-# The public non-Rupert conclusion for Nopert #231
+# The public non-Rupert conclusion for candidate #231
 
 This file contains the small, certificate-independent bridge from four valid
 Cayley-chart tables to the usual vertex-set formulation of the Rupert

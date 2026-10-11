@@ -12,8 +12,8 @@ public import Septopert.SolidModel
 `solid` is the convex hull of the rational vertices (`ModelData`). Each
 coordinate permutation maps the vertex set onto itself (`c3Perm`,
 `mirrorPerm`, checked vertex by vertex), so the hull is invariant under C3
-(`c3Mat_image_hull`) and under the improper symmetries −Q_i = σ_i
-(`mirrorQ_neg_image_hull`), in the forms the reductions use
+(`c3Mat_image_solid`) and under the improper symmetries −Q_i = σ_i
+(`mirrorQ_neg_image_solid`), in the forms the reductions use
 (`RupertPose_mirrorTie_iff`, `exists_viewDomain_pose`).
 -/
 

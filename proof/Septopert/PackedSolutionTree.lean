@@ -8,8 +8,8 @@ public import Pipeline.PackedLocalViewTree
 /-!
 # Packed chart tables for the 7-vertex solid
 
-The DH's `PackedSolutionTree` decoder for the Septopert's packs (`pack5d`;
-working notes, "Formats for Lean (M3b)"): the layout is unchanged; every
+The `PackedSolutionTree` decoder of the icosahedral solids, for the
+Septopert's packs (written by `pack5d`): the layout is unchanged; every
 region's `root, triangleIndex` pair carries the job's projective root (0 or
 1); tag 13 is the C3 prune (neighbor n ∈ {0,1}: c3Mat (n+1)), tag 14 the
 mirror prune (element g: mirrorQMat g), tag 16 a cap leaf; tags 0 (viewRoot),

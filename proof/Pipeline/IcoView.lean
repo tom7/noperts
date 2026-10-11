@@ -9,9 +9,9 @@ public import Pipeline.AtlasProjectiveView
 /-!
 # Reducing the view modulo Ih into the triangle T
 
-README.md, "Symmetry reductions".  The view of a pose is the third row
-of its outer rotation. Composing both rotations on the right with g ∈ I, or
-reflecting the view (`viewAntipode`), preserves Rupert-ness for an `IModel`,
+`search/sd/README.md`, "Symmetry reductions". The view of a pose is the
+third row of its outer rotation. Composing both rotations on the right with
+g ∈ I, or reflecting the view (`viewAntipode`), preserves Rupert-ness for an `IModel`,
 and changes the view v to `±G_gᵀ v`.
 
 Let c be a rational point inside the Schwarz chamber, and choose the sign

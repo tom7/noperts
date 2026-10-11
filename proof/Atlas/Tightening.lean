@@ -44,8 +44,7 @@ private theorem matrixThirdRow_norm (M : Matrix (Fin 3) (Fin 3) ℝ)
   simp [matrixThirdRow, Fin.sum_univ_three, sq_abs, hs]
 
 /-- Every unit vector has spherical coordinates in the standard bounded
-domain.  Unlike `exists_positive_spherical_coords`, this does not assume an
-octant, so the azimuth may be negative and the polar angle may exceed `π/2`.
+domain. This does not assume an octant, so the azimuth may be negative and the polar angle may exceed `π/2`.
 -/
 theorem exists_bounded_spherical_coords (v : ℝ³) (hv : ‖v‖ = 1) :
     ∃ θ φ : ℝ, θ ∈ Set.Ioc (-π) π ∧ φ ∈ Set.Icc 0 π ∧

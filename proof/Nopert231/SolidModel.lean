@@ -6,7 +6,7 @@ public import Nopert231.Vertices
 @[expose] public section
 
 /-!
-# Nopert #231 as a fivefold solid model
+# Candidate #231 as a fivefold solid model
 
 Candidate #231's twenty vertices rotate four seeds about z in steps of 2π/5
 (vertex `4k + s` is seed `s` rotated by `2πk/5`, up to rounding). The data

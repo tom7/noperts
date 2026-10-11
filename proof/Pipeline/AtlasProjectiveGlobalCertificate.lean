@@ -560,15 +560,15 @@ def Box.dBound (box : Box) : ℚ :=
 /-!
 Displacement error bound.
 
-Why this term was tightened:
-Earlier formalizations used the looser legacy bound `RationalApprox.κℚ = 1 / 10^10`,
-giving `displacementError = 300 * box.dBound * 10^-10 ≈ 6e-8`. Some polyhedra
-exhibit "difficult" near-contact configurations where the true physical clearance
-margin between inner and outer polyhedra is extremely narrow (on the order of 10^-8 to 10^-7).
-Under the 10^-10 bound, `displacementError` alone consumed virtually all available clearance,
-causing certificates in these critical regions to fail the displacement obligation
-(`displacementError ≤ certifiedDisplacementLower - dBound * defect`) and forcing deep
-subdivision or stalling as `DIFFICULT`.
+Why this term uses the tight vertex error:
+with the generic bound `RationalApprox.κℚ = 1 / 10^10`, it would be
+`displacementError = 300 * box.dBound * 10^-10 ≈ 6e-8`. Some polyhedra have
+near-contact configurations where the true physical clearance margin between
+inner and outer polyhedra is extremely narrow (on the order of 10^-8 to 10^-7).
+Under the 10^-10 bound, `displacementError` alone would consume virtually all
+available clearance, so certificates in these regions would fail the displacement
+obligation (`displacementError ≤ certifiedDisplacementLower - dBound * defect`),
+forcing deep subdivision or stalling the search.
 
 By using the model's `tightVertexErrorQ` (`6 / 10^16` for the fivefold solids, 0 for the
 Septopert; `TightApproximation.vertex_close_tight`),

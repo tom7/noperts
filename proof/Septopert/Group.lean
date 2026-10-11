@@ -6,7 +6,7 @@ public import Septopert.C3
 @[expose] public section
 
 /-!
-# The symmetry group C3v of the 7-vertex candidate
+# The symmetry group C3v of the Septopert
 
 With the 3-fold axis along (1,1,1), C3v ≅ S3 acts on ℝ³ by permuting
 coordinates: the rotations (C3) are the cyclic permutations, the mirrors

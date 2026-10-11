@@ -14,7 +14,7 @@ public import ParallelBool
 @[expose] public section
 
 /-!
-# Mixed Cayley/projective solution trees for Nopert #231
+# Mixed Cayley/projective solution trees for candidate #231
 
 The relative Cayley box is split along any of its five stored coordinates
 (generated trees use only `x,y,z`).  Independently, the outer view is split

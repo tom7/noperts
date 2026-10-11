@@ -12,8 +12,9 @@ Large generated local certificates contain very little repeated axis data.
 Representing every integer in that data as a separate Lean declaration makes
 elaboration and code generation dominate the actual certificate check.  This
 module provides a deliberately small total decoder for comma-separated natural
-numbers.  Generated native-only modules can therefore contain one string
-literal; `native_decide` still checks the fully decoded exact rational table.
+numbers, so that a table can be stored as one string literal; the native
+checkers that the `construct*` executables run still check the fully decoded
+exact rational table.
 
 Signed rational numerators use zig-zag coding: `z >= 0` is encoded as `2*z`,
 and `z < 0` as `-2*z-1`.
