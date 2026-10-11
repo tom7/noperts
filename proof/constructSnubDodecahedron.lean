@@ -17,6 +17,10 @@ checked natively, in parallel, together with the view cover, as in
 6·10⁻¹⁶ of the rational model). Kernel-proved bridges turn success into
 `CertificatesValid`.
 
+The C++ code that finds the certificates is in `search/sd`. It does not
+need to be trusted; a bug there would just result in certificates that
+Lean rejects during the process above.
+
 Usage:
   constructSnubDodecahedron <tube manifest.txt> <chart directory>
 The manifest lists the identity-tube code packs in code order; the chart

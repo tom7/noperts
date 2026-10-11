@@ -1,12 +1,13 @@
 # Minimality: every nopert has at least 7 vertices
 
-Every convex polyhedron with at most 6 vertices is Rupert. Together with the
-[Septopert](septopert.md), which has 7 vertices and is not Rupert, this
-makes 7 the smallest possible number of vertices of a nopert.
+Every convex polyhedron with 6 or fewer vertices is Rupert, and the
+[Septopert](septopert.md) is a Nopert witness with 7 vertices. So we
+achieve a tight bound: 7 is the smallest number of vertices for any
+Nopert.
 
-This is a **Lean proof**: every step is checked by Lean's kernel, it uses no
-certificate data, and it depends only on the standard axioms (`propext`,
-`Classical.choice`, `Quot.sound`).
+This is a **Lean proof**: every step is checked by Lean's kernel and
+it depends only on the standard axioms (`propext`, `Classical.choice`,
+`Quot.sound`).
 
 Lean entry point: [`proof/Minimality.lean`](proof/Minimality.lean).
 
@@ -22,9 +23,9 @@ theorem seven_le_card_of_isNopert (V : Finset ℝ³) (h : IsNopert V) : 7 ≤ V.
 ```
 
 `IsRupert` (in `proof/MainTheorem.lean`) is the same definition used for the
-Septopert. `V` is a finite set of points; the solid is its convex hull. The
-theorem counts points, so it also bounds the number of vertices: the vertices
-of the hull form a set with the same hull, which is therefore a nopert too.
+Septopert. `V` is a finite set of points; the solid is its convex hull. (In
+this formalization, the points do not need to be the vertices. But this
+also of course bounds the number of vertices.)
 
 The same file also states sharper facts about point sets, including flat ones
 (the Rupert property only looks at shadows, so a flat polygon can pass
@@ -41,14 +42,37 @@ through a copy of itself):
 
 ## How it is proved
 
-The proof finds an explicit passage for every possible solid. Each passage is
-"near the identity": the inner copy is rotated by a tiny amount relative to
-the outer one, viewed from a carefully chosen direction.
+The proof finds an explicit passage for every possible solid. Each
+passage is "near the identity": The inner copy is rotated by a tiny
+amount relative to the outer one, viewed from a carefully chosen
+direction. The core idea comes from discussions that David and Jason
+and I had during my [2025 attempt](https://youtu.be/QH4MviUE0_s) to
+prove the snub cube Nopert. Jason noticed that when you view a
+paper-thin square face-on, there are Rupert passages arbitrarily close
+to the identity. Historic SageMath alert:
+
+![The twice-rotated pink square fitting inside the unrotated blue square](jcreed-sagemath.png)
+
+More generally: When the 2D hull is a convex polygon, all of whose
+vertices are in the same 3D plane, then such a Rupert passage exists.
+(For example, as part of the proof development I posed the challenge
+problem to the Opus 5.5 to prove that every bipyramid with its waist
+sitting on the XY plane has a local passage arbitrarily close to the Z
+axis. The waist always forms such a planar hull.) Moreover this can be
+generalized (see below) to hull vertices whose depth doesn't zig-zag
+too much.
+
+For tetrahedra, we can always look directly at one of the faces such
+that the remaining point is inside the hull, and then we just use the
+lemma above. Case analysis works for 5 vertices, and some more fancy
+machinery closes 6.
+
+A bit more detail:
 
 1. **First order suffices.** If, at some view, a small rotation and
    translation of the inner copy moves every corner of its shadow strictly
    into the outer shadow, then for a small enough rotation the inner shadow
-   lies strictly inside: a passage.
+   lies strictly inside. This is a Rupert passage.
 2. **Planar silhouettes.** If, at some oblique view, the corners of the
    shadow all come from vertices lying in one plane, such a motion exists,
    unless the view's level direction happens to be a "double normal" of the
@@ -70,7 +94,3 @@ the outer one, viewed from a carefully chosen direction.
 
 No classification of polyhedra by face structure is assumed; everything is
 derived from the coordinates.
-
-The informal notes this proof follows, with referee reports, are maintained
-separately (`LEMMAS.md` and `L7_REVIEW.md`–`L9_REVIEW.md` in the authors'
-notes) and may be added to this repository.
