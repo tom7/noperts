@@ -1,4 +1,5 @@
 # Noperts
+Tom 7, 10 Oct 2026
 
 This is a collection of formalized results about Noperts. 
 
@@ -68,7 +69,7 @@ Here is [septopert.stl](septopert.stl), a model you could 3D print.
 
 ## Credits and brief history
 
-This work builds heavily on the [Noperthedron formalization](https://github.com/jcreedcmu/Noperthedron) by Jason Reed, David Renshaw, and others. That is a formalization of Jakob Steininger and Sergey Yurkevich's paper [*A convex polyhedron without Rupert's property*](https://arxiv.org/abs/2508.18475) ("SY25") which introduces the Noperthedron and its original verification.
+This work builds heavily on the [Noperthedron formalization](https://github.com/jcreedcmu/Noperthedron) by Jason Reed, David Renshaw, and others. That is in turn a formalization of Jakob Steininger and Sergey Yurkevich's paper [*A convex polyhedron without Rupert's property*](https://arxiv.org/abs/2508.18475) ("SY25") which introduces the Noperthedron and its original verification.
 
 AI: Embarrassingly much AI is involved here. David did the initial attempt at proving my "Candidate 214" (as well as some other unsolved solids). This required extending the mathematics to deal with non–point-symmetric solids, among other things. He used Sol 5.6 and Fable 5.0 for that. But he actually ended up discovering that my #214 [is Rupert](https://youtu.be/XFeKRSN9l9w). I picked it up from there with the goal of repairing #214 to redeem myself. Using Antigravity (Gemini 3.7 and 3.8 Flash) and Claude Code (Opus 5.5) I verified a repaired, identical-looking shape #231. This proof was not easy, and does use ideas from my [original attempt at proving the snub cube the first Nopert](https://youtu.be/QH4MviUE0_s) but you can tell how much of it is actually AI by the fact that I completed it while vacationing in Greece! It was briefly the smallest proven Nopert with 20 vertices and 27 faces.
 
@@ -76,7 +77,7 @@ Meanwhile we learned that earlier this year, Tony Zeng [proposed](https://arxiv.
 
 This stood as the smallest proven Nopert for about one day. I had been simultaneously racing to verify a 7-vertex shape, the Septopert described above, that I found with computer search using my adversarial solvers. It is only just barely Nopert, so the proof requires a large certificate (7 gigabytes of packed data). I verified that on Oct 9, taking about 4 hours on a 64-core behemoth.
 
-The natural question is then: Can we find a six-vertex Nopert? Or maybe we could prove that every tetrahedron or pentahedron is Rupert? Starting from some ideas of Jason's from 2025 and I like to think some wise guidance from its academic advisor and taskmaster (me), Opus 5.5 was able to [prove this](minimality.md) in about a day (Lean kernel-only proof): All convex solids with six or fewer vertices are Rupert. That means that the Septopert is a minimal (by vertex count) Nopert.
+The natural question is then: Can we find a six-vertex Nopert? Or maybe we could prove that every tetrahedron or pentahedron is Rupert? Starting from some ideas of Jason's from 2025 and I like to think some wise guidance from its academic advisor and taskmaster (me), Opus 5.5 was able to [prove this](minimality.md) in about a day (Lean kernel-only proof): All convex solids with six or fewer vertices are Rupert. That means that the Septopert is a minimal Nopert (by vertex count).
 
 
 <center><img src="septopert-dry-salt-bed.jpg" width="868" height="549" alt ="The Septopert on the Dry Salt Bed"></center>
