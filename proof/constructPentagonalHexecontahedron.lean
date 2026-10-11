@@ -4,11 +4,11 @@ import Pipeline.PackedSolutionTree
 import PentagonalHexecontahedron
 
 /-!
-Native executable that checks the pentagonal hexecontahedron's certificate data and, if
-it is all valid, establishes `CertificatesValid`, and so
-(`isNopert_of_certificatesValid`) that every pentagonal hexecontahedron (every similar copy of the polar dual of
-Wikipedia's snub dodecahedron, either chirality) is a nopert
-(`PentagonalHexecontahedron.lean`).
+Native executable that checks the pentagonal hexecontahedron's certificate
+data and, if it is all valid, establishes `CertificatesValid`, and so
+(`isNopert_of_certificatesValid`) that every pentagonal hexecontahedron
+(every similar copy of the polar dual of Wikipedia's snub dodecahedron,
+either chirality) is a nopert (`PentagonalHexecontahedron.lean`).
 
 Usage:
   constructPentagonalHexecontahedron <tube manifest.txt> <chart directory>

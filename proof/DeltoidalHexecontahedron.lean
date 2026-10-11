@@ -32,11 +32,12 @@ and orientation. (`mcCooey` is McCooey's set itself, as a `Finset`.)
 
 ## What `IsRupert` means
 
-`IsRupert` (in `MainTheorem.lean`) says that two copies of the solid, each
-rotated arbitrarily, can be placed so that the shadow of one (projected
-straight down onto the plane, and slid sideways by any amount) lies strictly
-inside the shadow of the other. That is the same as cutting a straight hole
-through one copy that the other copy can pass through.
+`IsRupert` (in `MainTheorem.lean`) says that two copies of the solid,
+each rotated arbitrarily, can be placed so that the shadow of one
+(projected straight down onto the plane, and slid sideways by any
+amount) lies strictly inside the shadow of the other. That is the same
+as cutting a proper straight hole through one copy that the other copy
+can pass through.
 
 ## Why the proof needs the exact solid
 
@@ -88,9 +89,9 @@ The result has two parts, and they are trusted differently.
    themselves are ordinary Lean definitions, and the kernel proves (part 1)
    that if they return true, the conclusion follows.
 
-The program that *found* the data (the C++ search in `search/dh/`) does not
-need to be trusted: a
-mistake there can only produce data that fails the checks.
+The program that *found* the data (the C++ search, in `search/dh`) does
+not need to be trusted: a mistake there can only produce data that
+fails the checks.
 
 See `deltoidal-hexecontahedron.md` at the top of the repository for the data,
 how to rerun the verification, and the times it takes.

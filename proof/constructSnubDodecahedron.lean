@@ -7,8 +7,9 @@ import SnubDodecahedron
 /-!
 Native executable that checks the snub dodecahedron's certificate data and, if
 it is all valid, establishes `CertificatesValid`, and so
-(`isNopert_of_certificatesValid`) that every snub dodecahedron (Wikipedia's coordinates, any similar copy, either
-chirality) is a nopert (`SnubDodecahedron.lean`).
+(`isNopert_of_certificatesValid`) that every snub dodecahedron (Wikipedia's
+coordinates, any similar copy, either chirality) is a nopert
+(`SnubDodecahedron.lean`).
 
 Usage:
   constructSnubDodecahedron <tube manifest.txt> <chart directory>
@@ -26,6 +27,10 @@ The data is untrusted: it is decoded and checked natively, in parallel. The
 solution tables exclude every `IModel` (every I-orbit within 6·10⁻¹⁶ of the
 rational model); kernel-proved bridges (`Table.Valid.of_withTasksB`) turn
 success into `CertificatesValid`.
+
+The C++ code that finds the certificates is in `search/sd`. It does not
+need to be trusted; a bug there would just result in certificates that
+Lean rejects during the process above.
 -/
 
 open Noperts Noperts.Pipeline Noperts.Pipeline.WikipediaSnub
