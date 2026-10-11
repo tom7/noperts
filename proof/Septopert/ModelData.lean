@@ -1,6 +1,7 @@
 module
 
-public import Mathlib
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Rat.Defs
 
 @[expose] public section
 

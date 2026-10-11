@@ -1,6 +1,7 @@
 module
 
 public import Pipeline.CapFrame
+public import Mathlib.Tactic.IntervalCases
 
 @[expose] public section
 

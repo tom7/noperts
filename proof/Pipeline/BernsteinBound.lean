@@ -1,6 +1,8 @@
 module
 
-public import Mathlib
+public import Mathlib.Algebra.CharP.Defs
+public import Mathlib.Algebra.Order.Archimedean.Real.Basic
+public import Mathlib.Data.Nat.Choose.Sum
 
 @[expose] public section
 
