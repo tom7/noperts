@@ -5,9 +5,9 @@ Every convex polyhedron with 6 or fewer vertices is Rupert, and the
 achieve a tight bound: 7 is the smallest number of vertices for any
 Nopert.
 
-This is a **Lean proof**: every step is checked by Lean's kernel and
-it depends only on the standard axioms (`propext`, `Classical.choice`,
-`Quot.sound`).
+The minimality theorem is a **Lean proof**: every step is checked by
+Lean's kernel and it depends only on the standard axioms (`propext`,
+`Classical.choice`, `Quot.sound`).
 
 Lean entry point: [`proof/Minimality.lean`](proof/Minimality.lean).
 
