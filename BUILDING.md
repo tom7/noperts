@@ -70,14 +70,17 @@ page with its statement, trust model and reproduction steps:
   [Noperthedron](https://github.com/jcreedcmu/Noperthedron) formalization,
   whose history it keeps.
 - `search/`: the C++ certificate searches that produced the data.
-  - `search/` itself: the Septopert's search (`septopert_rebuild.sh`).
+  - `search/common/`: the code shared by the searches (and their shared
+    build rules, `common.mk`).
+  - `search/septopert/`: the Septopert's search (`rebuild.sh`): its model
+    files and its own tools, built with the shared code.
   - `search/dh/`, `search/ph/`, `search/sd/`: the searches for the
     deltoidal hexecontahedron, pentagonal hexecontahedron and snub
     dodecahedron, each with its own `rebuild.sh` (see the result's page).
     They are copies of the code that produced the verified data, imported
     from the corresponding branches of the author's search repository;
-    they share much code with `search/` and with each other, which will be
-    deduplicated later.
+    they share much code with `search/common/` and with each other, which
+    will be deduplicated later.
   - `search/nopert231/`: the search for candidate #231, with its history
     (see [nopert231.md](nopert231.md)).
   - Each writes its output to a `work*/` directory at the repository root
@@ -136,8 +139,13 @@ Every theorem in the repository should list only `propext`,
 
 ```sh
 ./get-cc-lib.sh
-make -C search -j 16
+make -C search/septopert -j 16 all    # likewise search/dh, search/ph, ...
 ```
+
+Each solid's directory builds its own copy of the shared code (which
+includes the solid's model headers), so `make` runs in the solid's
+directory; `make` builds the unit tests, `make test` runs them and `make
+all` builds every tool.
 
 ## Former names
 

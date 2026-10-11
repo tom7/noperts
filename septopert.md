@@ -43,8 +43,8 @@ In lowest terms (the form used in Lean, `septopert` in
   and 3 (vertex 6). Combinatorially a gyroelongated triangular pyramid: a
   triangular antiprism (vertices 0–5) with a pyramid (apex 6) on its larger
   face.
-- `search/septopert_model.txt` is the exact (rational) model the search
-  uses; `proof/Septopert/ModelData.lean` has the same vertices.
+- `search/septopert/septopert_model.txt` is the exact (rational) model the
+  search uses; `proof/Septopert/ModelData.lean` has the same vertices.
 
 ## The statement
 
@@ -81,8 +81,9 @@ This is a **Lean verification**, not a direct kernel-only Lean proof:
    correctly — the same trust as `native_decide`, though `native_decide` is
    not used.
 
-The C++ search in `search/` that produced the data does not need to be
-trusted: a mistake there can only produce data that fails the checks.
+The C++ search in `search/septopert/` (with the shared code in
+`search/common/`) that produced the data does not need to be trusted: a
+mistake there can only produce data that fails the checks.
 
 ## Reproducing
 
@@ -91,15 +92,16 @@ See [BUILDING.md](BUILDING.md) for requirements. From a fresh clone:
 ```sh
 ./get-cc-lib.sh
 (cd proof && lake exe cache get)                       # Mathlib build cache
-search/septopert_rebuild.sh --from model --threads 64 --mem_gb 100
+search/septopert/rebuild.sh --from model --threads 64 --mem_gb 100
 ```
 
 This builds everything, runs `codebdd` on the exact model
-`search/septopert_model.txt`, runs the search, packs the tables into `work/`, and
-finally runs `constructSeptopert` on them. Stages: `model`, `tube`,
-`tubepack`, `cap`, `search`, `pack`, `verify`; `--from STAGE` restarts at a
-stage, `--only STAGE` runs one, `--work DIR` moves the output. Each stage
-appends its wall time and peak memory to `work/stages.log`.
+`search/septopert/septopert_model.txt`, runs the search, packs the tables
+into `work/`, and finally runs `constructSeptopert` on them. Stages:
+`model`, `tube`, `tubepack`, `cap`, `search`, `pack`, `verify`; `--from
+STAGE` restarts at a stage, `--only STAGE` runs one, `--work DIR` moves the
+output. Each stage appends its wall time and peak memory to
+`work/stages.log`.
 
 Measured times (the 64-core column is a from-scratch run in a fresh clone,
 4 h 22 min in total):
