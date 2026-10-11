@@ -1,7 +1,7 @@
 module
 
 public import Nopert231.IsNotRupert
-public import Nopert231.SparseLocalViewTree
+public import Nopert231.SparseViewCheck
 
 @[expose] public section
 
@@ -19,7 +19,7 @@ and report useful errors. Proof fields are erased by native code generation;
 their correctness comes from the specifications of the Boolean checkers.
 -/
 
-open Noperts
+open Noperts Noperts.Pipeline
 
 namespace Nopert231.NativeExecutable
 

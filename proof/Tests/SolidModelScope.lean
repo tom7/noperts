@@ -6,6 +6,7 @@ import Pipeline.NativeExecutable
 import SnubDodecahedron.SparseSupport
 import DeltoidalHexecontahedron.NativeExecutable
 import Nopert231
+import Nopert231.NativeExecutable
 import ProofOfMainTheorem
 
 /-!
@@ -44,4 +45,14 @@ section
 open DeltoidalHexecontahedron
 example : (inferInstance : Noperts.Pipeline.SparseLocalViewTree.CertificateViewCheck) =
     Noperts.Pipeline.SparseLocalViewTree.CertificateViewCheck.allVertices := rfl
+end
+
+/-! Candidate #231 is a `FivefoldSolid` (not icosahedral) inside its namespace;
+its checker also uses the tangent-cone check. -/
+
+section
+open Nopert231
+example : (inferInstance : Noperts.Pipeline.FivefoldSolid) = Nopert231.fivefoldSolid := rfl
+example : (inferInstance : Noperts.Pipeline.SparseLocalViewTree.CertificateViewCheck) =
+    Nopert231.certificateViewCheck := rfl
 end

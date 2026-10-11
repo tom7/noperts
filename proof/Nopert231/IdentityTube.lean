@@ -1,6 +1,7 @@
 module
 
-public import Nopert231.AtlasProjectiveLocalViewTree
+public import Pipeline.AtlasProjectiveLocalViewTree
+public import Nopert231.SolidModel
 public import Nopert231.WedgeCoverData
 
 @[expose] public section
@@ -16,7 +17,7 @@ out every pose in the upper fivefold view wedge whose tube is within the
 smallest table radius.
 -/
 
-open Noperts
+open Noperts Noperts.Pipeline
 
 namespace Nopert231.IdentityTube
 
@@ -33,7 +34,7 @@ def TablesMatch (tables : ℕ → Table) (s : OrbitIndex) (r : ℚ) : Prop :=
     (tables t).root = 0 ∧ (tables t).triangle = codeTriangles[t] ∧
       (tables t).symmetryIndex = s ∧ r ≤ (tables t).r
 
-instance (tables : ℕ → Table) (s : OrbitIndex) (r : ℚ) :
+@[reducible] instance (tables : ℕ → Table) (s : OrbitIndex) (r : ℚ) :
     Decidable (TablesMatch tables s r) := by
   unfold TablesMatch
   infer_instance

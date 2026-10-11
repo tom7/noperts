@@ -13,7 +13,7 @@ positive.  The same tiny table is checked by the kernel (`table_valid_kernel`) a
 natively, by the executable, without any array-backed generated data.
 -/
 
-open Noperts
+open Noperts Noperts.Pipeline
 
 namespace Nopert231.FundamentalChart3
 

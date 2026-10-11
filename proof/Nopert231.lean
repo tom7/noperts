@@ -89,7 +89,7 @@ See `nopert231.md` at the top of the repository for the data, how to rerun the
 verification, and the times it takes.
 -/
 
-open Noperts Real
+open Noperts Noperts.Pipeline Real
 
 namespace Nopert231
 
@@ -113,14 +113,6 @@ theorem not_isRupert_of_certificatesValid (h : CertificatesValid) :
 
 /-! ### Not coplanar -/
 
-/-- Each coordinate of a `C5Model`'s vertex is within `modelErrorQ` of the
-rational vertex's. -/
-theorem C5Model.vertex_apply_close (P : C5Model) (i : VertexIndex) (j : Fin 3) :
-    |P.vertex i j - (rationalVertex i j : ℝ)| ≤ (modelErrorQ : ℝ) := by
-  have h := (PiLp.norm_apply_le (P.vertex i - toR3 (rationalVertex i)) j).trans
-    (P.vertex_close_model i)
-  simpa [toR3, Real.norm_eq_abs] using h
-
 /-- Every `C5Model` is a genuine solid: its points are not all in one plane.
 Seed 0 (the top cap) rotated by 0, 72° and −72° gives three points of one
 horizontal plane that are not on a line, and seed 3 (the bottom cap) lies
@@ -128,7 +120,7 @@ below that plane: the tetrahedron they span has volume
 (z₃ − z₀) · 2 (1 − cos 72°) sin 72° · (x₀² + y₀²) / 6 ≠ 0, where the signs
 come from the closeness to the rational vertices. -/
 theorem C5Model.not_coplanar (P : C5Model) : ¬ Coplanar ℝ (P.verts : Set ℝ³) := by
-  have hmem : ∀ i, P.vertex i ∈ P.verts := fun i => by simp [C5Model.verts]
+  have hmem : ∀ i, P.vertex i ∈ P.verts := fun i => by simp [CyclicModel.verts]
   have hc4 : cos (2 * π * 4 / 5) = cos (2 * π / 5) := by
     rw [show 2 * π * 4 / 5 = 2 * π - 2 * π / 5 by ring, Real.cos_two_pi_sub]
   have hs4 : sin (2 * π * 4 / 5) = -sin (2 * π / 5) := by
@@ -136,17 +128,20 @@ theorem C5Model.not_coplanar (P : C5Model) : ¬ Coplanar ℝ (P.verts : Set ℝ�
   -- Vertices 0, 4, 16 are seed 0 rotated by 0, 72° and 288°; vertex 3 is seed 3.
   have hdet : det3 (P.vertex 4 - P.vertex 0) (P.vertex 16 - P.vertex 0)
       (P.vertex 3 - P.vertex 0) =
-      (P.seed 3 2 - P.seed 0 2) * (2 * (1 - cos (2 * π / 5)) * sin (2 * π / 5)) *
-        (P.seed 0 0 ^ 2 + P.seed 0 1 ^ 2) := by
-    simp [det3, Matrix.det_fin_three, C5Model.vertex, RzL, orbitIndex, seedIndex,
-      Matrix.toLpLin_apply, dotProduct, Fin.sum_univ_three, hc4, hs4]
+      (P.seed (3 : Fin 4) 2 - P.seed (0 : Fin 4) 2) *
+        (2 * (1 - cos (2 * π / 5)) * sin (2 * π / 5)) *
+        (P.seed (0 : Fin 4) 0 ^ 2 + P.seed (0 : Fin 4) 1 ^ 2) := by
+    rw [P.vertex_eq (i := 4) 1 0 rfl, P.vertex_eq (i := 16) 4 0 rfl,
+      P.vertex_eq (i := 0) 0 0 rfl, P.vertex_eq (i := 3) 0 3 rfl]
+    simp [det3, Matrix.det_fin_three, RzL, Matrix.toLpLin_apply, dotProduct,
+      Fin.sum_univ_three, hc4, hs4]
     ring
   -- The seeds' coordinates, from the closeness to the rational vertices.
-  have h01 := P.vertex_apply_close 0 1
-  have h02 := P.vertex_apply_close 0 2
-  have h32 := P.vertex_apply_close 3 2
-  simp [C5Model.vertex, orbitIndex, seedIndex, RzL, Matrix.toLpLin_apply, dotProduct,
-    Fin.sum_univ_three, rationalVertex, rationalVertices, modelErrorQ] at h01 h02 h32
+  have h01 := P.seed_apply_close 0 0 0 rfl 1
+  have h02 := P.seed_apply_close 0 0 0 rfl 2
+  have h32 := P.seed_apply_close 0 3 3 rfl 2
+  simp [RzL, Matrix.toLpLin_apply, dotProduct, Fin.sum_univ_three, rationalVertices]
+    at h01 h02 h32
   have hs : 0 < sin (2 * π / 5) :=
     Real.sin_pos_of_pos_of_lt_pi (by positivity) (by linarith [pi_pos])
   have hc : cos (2 * π / 5) < 1 := by
@@ -159,8 +154,8 @@ theorem C5Model.not_coplanar (P : C5Model) : ¬ Coplanar ℝ (P.verts : Set ℝ�
   have h1 := abs_le.mp h01
   have h2 := abs_le.mp h02
   have h3 := abs_le.mp h32
-  have hz : P.seed 3 2 - P.seed 0 2 < 0 := by linarith
-  have hr : 0 < P.seed 0 0 ^ 2 + P.seed 0 1 ^ 2 := by nlinarith
+  have hz : P.seed (3 : Fin 4) 2 - P.seed (0 : Fin 4) 2 < 0 := by linarith
+  have hr : 0 < P.seed (0 : Fin 4) 0 ^ 2 + P.seed (0 : Fin 4) 1 ^ 2 := by nlinarith
   have hk : 0 < 2 * (1 - cos (2 * π / 5)) * sin (2 * π / 5) := by
     have : 0 < 1 - cos (2 * π / 5) := by linarith
     positivity

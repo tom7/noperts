@@ -13,7 +13,7 @@ Cayley-chart tables to the usual vertex-set formulation of the Rupert
 property.
 -/
 
-open Noperts
+open Noperts Noperts.Pipeline
 
 open scoped Matrix
 

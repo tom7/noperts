@@ -1,7 +1,7 @@
 module
 
 public import Nopert231.AtlasProjectiveSolutionTree
-public import Nopert231.PackedLocalViewTree
+public import Pipeline.PackedLocalViewTree
 
 @[expose] public section
 
@@ -14,7 +14,7 @@ decoder is deliberately total; the semantic parallel checker remains the
 trusted validation step for every decoded value.
 -/
 
-open Noperts
+open Noperts Noperts.Pipeline
 
 namespace Nopert231.PackedSolutionTree
 
@@ -87,7 +87,7 @@ def triangleAt (triangles : Array AtlasProjectiveSolutionTree.Triangle)
   (triangles[index]?).getD (rootTriangle 0)
 
 def vertexAt (values : Array Nat) (index : Nat) : VertexIndex :=
-  fin20 ((values[index]?).getD 0)
+  finMod ((values[index]?).getD 0)
 
 def readRegion (triangles : Array AtlasProjectiveSolutionTree.Triangle) :
     Decoder Region := do
