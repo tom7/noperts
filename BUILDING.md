@@ -22,29 +22,37 @@ page with its statement, trust model and reproduction steps:
 ## Layout
 
 - `proof/`: one Lean 4 + Mathlib project (`lakefile.toml`). Libraries:
-  - `Noperts` (the modules directly in `proof/` and its subdirectories other
-    than the six below): shared definitions and machinery. `IsRupert` is
-    defined in `proof/MainTheorem.lean`. `Pipeline/` defines the certificate
-    tables and their checks, used by all the data-backed results. It is
-    generic over the solid: a solid is a `SolidModel`
-    (`Pipeline/SolidModel.lean`: its rational vertices, cyclic symmetry and
-    error bounds); the icosahedral solids are `IcosahedralSolid`s
+  - `Noperts` (the modules directly in `proof/` and in its subdirectories,
+    other than those of the libraries below): shared definitions and
+    machinery. `IsRupert` is defined in `proof/MainTheorem.lean`.
+    `Pipeline/` defines the certificate tables and their checks, used by
+    all the data-backed results. It is generic over the solid: a solid is a
+    `SolidModel` (`Pipeline/SolidModel.lean`: its rational vertices, cyclic
+    symmetry and error bounds); the icosahedral solids are `IcosahedralSolid`s
     (`Pipeline/IcoModel.lean`, via `Pipeline/FivefoldModel.lean`); and each
     solid provides these as scoped instances, in effect only inside its own
-    namespace. The pentagonal hexecontahedron and the snub dodecahedron also
-    share the top layer (`Pipeline/AtlasProjectiveSolutionTree.lean`, the
-    decoder `PackedSolutionTree`, `IsNotRupert`, the executable checker
+    namespace. The pentagonal hexecontahedron and the snub dodecahedron
+    also share the top layer (`Pipeline/AtlasProjectiveSolutionTree.lean`,
+    the decoder `PackedSolutionTree`, `IsNotRupert`, the executable checker
     `NativeExecutable`) and Wikipedia's snub dodecahedron
     (`Pipeline/WikipediaSnub.lean`). Candidate #231 is a `FivefoldSolid` that
     is not icosahedral; it has its own top layer, over the fivefold-reduced
-    domain of `Pipeline/FivefoldReduction.lean`. The snub dodecahedron and
-    #231 check identity-tube rows against tangent-cone generators
+    domain of `Pipeline/FivefoldReduction.lean`. The snub dodecahedron
+    and #231 check identity-tube rows against tangent-cone generators
     (`Pipeline/SparseSupport.lean`).
   - `Septopert`: entry point `proof/Septopert.lean`, details in
     `proof/Septopert/` (its model, `SolidModel.lean`; its own solution tree,
     with C3 and mirror reductions and caps).
   - `Minimality`: entry point `proof/Minimality.lean`, details in
     `proof/Minimality/`.
+  - `ProofOfMainTheorem`: `proof/ProofOfMainTheorem.lean` combines the two
+    into the main theorem of `proof/MainTheorem.lean` (whose statements are
+    by Jason Reed): `minimalNopert_of_certificatesValid :
+    Septopert.CertificatesValid → MinimalNopert`, that 7 is the smallest
+    number of vertices of a nopert, and its second half,
+    `notExistsNonRupertPolyhedronBelowSizeSeven`, without hypotheses. The
+    minimality half is a Lean proof; the Septopert half is conditional on
+    `CertificatesValid`, i.e. a Lean verification.
   - `DeltoidalHexecontahedron`: entry point
     `proof/DeltoidalHexecontahedron.lean`, details in
     `proof/DeltoidalHexecontahedron/` (its model and orbit data,
@@ -68,7 +76,7 @@ page with its statement, trust model and reproduction steps:
     data), `checkSeptopertCap` (checks only its cap certificate),
     `constructDeltoidalHexecontahedron` (checks the deltoidal
     hexecontahedron's certificate data), `constructPentagonalHexecontahedron`
-    (checks the pentagonal hexecontahedron's) and `constructSnubDodecahedron`
+    (checks the pentagonal hexecontahedron's), `constructSnubDodecahedron`
     (checks the snub dodecahedron's) and `constructNopert231` (checks
     candidate #231's).
 
@@ -138,6 +146,10 @@ import Minimality
 Every theorem in the repository should list only `propext`,
 `Classical.choice` and `Quot.sound`.
 
+Optionally, `proof/git-hooks/pre-commit` (copy it to `.git/hooks/`; it needs
+`ag`, the silver searcher) blocks commits of Lean files containing `#exit`,
+`#min_imports` or a bare `import Mathlib`.
+
 ## Building the search
 
 ```sh
@@ -149,16 +161,15 @@ make -C search -j 16
 
 Until 2026-10-09 the code called the Septopert `Nopert7` (`constructNopert7`,
 `checkNopert7Cap`, `Noperthedron/Nopert7/`, `nopert7_rebuild.sh`,
-`capcert7`), K in comments, and `nopert_233` in the search database (model
-`nopert233_model.txt`, coordinates `7v-cocta-c3v-2.xyz`); the shared Lean
-library was namespaced `Noperthedron` (and its certificate pipeline
-`Noperthedron.PentagonalHexecontahedron`), and the minimality library was
-called `SmallRupert`. Archived data and logs (e.g.
-`/mnt/nopertdata/archive/septopert/README.txt` on the 64-core VM), the
-working notes and older branches (`nopert7` in Noperthedron at d7f04505 and
-in nopert229 at 5a52be2) use those names.
+`capcert7`), K in comments, and `nopert_233` in the search database
+(model `nopert233_model.txt`, coordinates `7v-cocta-c3v-2.xyz`); the
+shared Lean library was namespaced `Noperthedron` (and its certificate
+pipeline `Noperthedron.PentagonalHexecontahedron`), and the minimality
+library was called `SmallRupert`. Archived data and logs and older branches
+(`nopert7` in Noperthedron at d7f04505 and in nopert229 at 5a52be2) use
+those names.
 
-The deltoidal hexecontahedron's Lean proof (`proof/DeltoidalHexecontahedron/`)
+The deltoidal hexecontahedron's Lean code (`proof/DeltoidalHexecontahedron/`)
 comes from the `deltoidalhexecontahedron` branch of Noperthedron (b45e0b34),
 where it lived in `Noperthedron/PentagonalHexecontahedron/`: that directory
 was the shared icosahedral pipeline, edited in place for each solid (snub
@@ -168,7 +179,7 @@ ancestor of `Pipeline/`. There the modules `Statement`, `StatementData`,
 (`DHStatement`, ...). The search that produced its data is on nopert229's
 `deltoidalhexecontahedron` branch.
 
-The pentagonal hexecontahedron's Lean proof (`proof/PentagonalHexecontahedron/`)
+The pentagonal hexecontahedron's Lean code (`proof/PentagonalHexecontahedron/`)
 comes from the `pentagonalhexecontahedron` branch of Noperthedron (da2965b3),
 where it lived in the same-named `Noperthedron/PentagonalHexecontahedron/`
 (namespace `Noperthedron.PentagonalHexecontahedron`), before the DH reused
@@ -179,7 +190,7 @@ that the branch put at the root (`proj_xy_smul`, `proj_xy_add`,
 here. The search that produced its data is on nopert229's
 `pentagonalhexecontahedron` branch.
 
-The snub dodecahedron's Lean proof (`proof/SnubDodecahedron/`) comes from
+The snub dodecahedron's Lean code (`proof/SnubDodecahedron/`) comes from
 the `snubdodecahedron` branch of Noperthedron (bc31c747), where it lived in
 `Noperthedron/SnubDodecahedron/` (namespace `Noperthedron.SnubDodecahedron`);
 that branch is the first instantiation of the shared icosahedral pipeline.
@@ -207,7 +218,7 @@ committed data files byte for byte (`SolidModel` and `RationalVertices` are
 updated in place; `Pipeline/IcoGroupData.lean` is written identically by each
 solid's `snub_ico_group.py`).
 
-Candidate #231's Lean proof (`proof/Nopert231/`) comes, with its history,
+Candidate #231's Lean code (`proof/Nopert231/`) comes, with its history,
 from the `nopert231` branch of Noperthedron (0c83e4ba), where it lived in
 `Noperthedron/Nopert231/` (namespace `Noperthedron.Nopert231`). That
 pipeline started as candidate #76 and was renamed to #229 and then #231 in
@@ -218,8 +229,9 @@ in the snub dodecahedron's branch history above.
 
 Until 2026-10-10 candidate #231 also had its own copy of the certificate
 pipeline in `proof/Nopert231/` (the branch's, which predates `Pipeline/`). The
-copies were deleted and #231 became a `FivefoldSolid` (`Nopert231/SolidModel.lean`;
-`Vertices.lean` keeps only the data). Its `C5Model` is now an abbreviation of
+copies were deleted and #231 became a `FivefoldSolid`
+(`Nopert231/SolidModel.lean`; `Vertices.lean` keeps only the data). Its
+`C5Model` is now an abbreviation of
 the pipeline's `CyclicModel` for its model (same fields; vertices
 `symmetryMatrix k` applied to the seeds, which is `RzL (2πk/5)`,
 `C5Model.vertex_eq`); `exactVerts`, `exactModel`, `rationalVertex`,
