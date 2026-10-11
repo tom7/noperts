@@ -17,7 +17,7 @@ shadow; the outer shadow is symmetric, so the pose stays Rupert iff it was
 relative rotation becomes H_u R G (`relativeRotation_leftHalfTurn`), so the
 relative rotation may be reduced modulo R ↦ H_u R g, g ∈ I: the deltoidal
 hexecontahedron's mirror coincidences σ_u σ = H_u H_n are equivalent to the
-identity (notes/T.md).
+identity.
 -/
 
 open Noperts Noperts.Pipeline

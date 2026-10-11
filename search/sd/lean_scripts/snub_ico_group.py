@@ -157,7 +157,7 @@ def k_det3(m):
 
 def view_reduction_data(group, triangle):
     """Data for the view reduction modulo Ih into the triangle T
-    (S.md §2.3, reduction 2).
+    (reduction 2).
 
     The chamber's three walls are the mirrors of half-turns H_i in I (a
     mirror is -(half-turn about its normal)). With c a rational interior
@@ -576,7 +576,7 @@ def main():
     def lean_icoz(v):
         return "⟨" + ", ".join(str(x) for x in v) + "⟩"
 
-    w("/-! ### View reduction modulo Ih into the triangle T (S.md §2.3) -/\n")
+    w("/-! ### View reduction modulo Ih into the triangle T -/\n")
     w("/-- T, from the model file snub_model.txt: corners on x + y + z = 1. -/")
     w("def icoViewTriangleCorners : List (List ℚ) := [" + ", ".join(
         "[" + ", ".join(f"{q.numerator}/{q.denominator}" for q in corner) + "]"
