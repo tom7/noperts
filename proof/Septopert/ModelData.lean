@@ -1,11 +1,12 @@
 module
 
-public import Mathlib
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Rat.Defs
 
 @[expose] public section
 
 /-!
-# The rational model of the 7-vertex candidate (committed data)
+# The rational model of the Septopert (committed data)
 
 Axis (1,1,1): vertices (a,a,b) up to coordinate permutation and (t,t,t),
 denominators 1048576. `c3Perm k` and `mirrorPerm i` are the vertex permutations

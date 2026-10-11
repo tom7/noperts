@@ -32,10 +32,12 @@ axis. Vertex 4k + s is seed s rotated by k · 72°. The seeds (`seedVertex`), to
   vertices of its quadrilateral, which gives those five vertices denominators
   of about 260 bits. The rounding breaks the fivefold symmetry very slightly,
   so the theorem below is not about the rational model itself.
-- **`C5Model`** (in `Vertices.lean`): any polyhedron whose 20 vertices are four
-  real seeds rotated *exactly* by 2πk/5 about z, k = 0, …, 4, with each vertex
-  within 6·10⁻¹⁶ of the corresponding rational vertex. The theorem covers all
-  of them. Two are named:
+- **`C5Model`** (in `proof/Nopert231/SolidModel.lean`): any polyhedron whose 20
+  vertices are four real seeds rotated *exactly* by 2πk/5 about z, k = 0, …,
+  4, with each vertex within 6·10⁻¹⁶ of the corresponding rational vertex.
+  (It is the shared certificate pipeline's `CyclicModel` for this solid's
+  model, the `FivefoldSolid` instance `Nopert231.fivefoldSolid`.) The theorem
+  covers all of them. Two are named:
   - **The exact model** `exactVerts` (`exactModel`): the four rational seeds
     above, rotated exactly. Its quadrilaterals are planar only to about
     2·10⁻¹⁶.
@@ -113,16 +115,26 @@ there can only produce data that fails the checks.
     whose kernel proofs are what the proof uses) are deleted;
   - an entry point and an executable that establishes `CertificatesValid`.
 
-  No check function changed, but the code was moved, so the result must be
-  verified again here on the VM before it can be recorded against a commit of
-  this repository. That run has not been done yet.
+  No check function changed.
+- **2026-10-10, shared pipeline:** the modules that were copies of the
+  shared certificate pipeline (`proof/Pipeline/`, used by the other
+  data-backed results) were deleted, and #231 uses the pipeline through its
+  model (`SolidModel.lean`, a `FivefoldSolid`). What stays in
+  `proof/Nopert231/` is its data, its model, its tangent cones, and its own
+  top layer (the solution tree over the fivefold-reduced domain, its decoder
+  and the executable checker); see `proof/Nopert231/README.md`. The check
+  functions are the same definitions, except that the identity-tube tables
+  now also accept the pipeline's `empty` rows (tag 4, which #231's data does
+  not use) and take the table's root from its first row (0 for #231's data).
+  The statement is unchanged in meaning. The code was moved, so the result
+  must be verified again here on the VM before it can be recorded against a
+  commit of this repository. That run has not been done yet.
 
 ## Verifying existing data
 
-The data is archived at `/mnt/nopertdata/archive/nopert231/` on the 64-core
-VM, which is paused: verification needs Tom to unpause it. See the archive's
-`README.txt` for its layout and checksums. The program expects these
-directories:
+The data from the verified run is archived by the author (not in this
+repository); to check it yourself, rebuild it (see "Reproducing the data"
+below). The program expects these directories:
 
 - tube packs: `manifest.txt`, which lists one pack per code triangle (153) in
   code order;
@@ -186,6 +198,10 @@ In this repository (2026-10-10, 16 cores):
   for byte.
 - From those files, the generators in `search/nopert231/scripts/` regenerate
   `Vertices.lean`, `GeneratedTangentCones.lean` and `WedgeCoverData.lean` in
-  `proof/Nopert231/` byte for byte.
+  `proof/Nopert231/` byte for byte. After the shared-pipeline change (same
+  day) `Vertices.lean` and `GeneratedTangentCones.lean` were regenerated again
+  and are still identical (`update_vertices.py` rewrites only the two data
+  bodies of `Vertices.lean`); `WedgeCoverData.lean` is unchanged and still
+  imports `Nopert231.WedgeCover`, which now names the pipeline's checker.
 - The tube stage, the search, the packs and the check have not been rerun
   here.

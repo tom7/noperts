@@ -2,33 +2,38 @@ import Septopert.NativeExecutable
 import Septopert.PackedSolutionTree
 
 /-!
-Native executable that reads and checks the 7-vertex "Septopert"'s
-certificate data and constructs `¬ IsRupert Septopert.verts`.
-
-Data (decoded untrusted, checked natively in parallel):
-- the identity-tube packs (`export_codetrees_pack`; `manifest.txt` lists one
-  pack per code triangle, in `ViewCover.codeTriangles` order);
-- the chart packs (`pack5d --chart C --per_code DIR`: `DIR/c<C>/t<T>.pack`,
-  C = 0..3, T = 0..21), concatenated behind a `codeRoot` row
-  (`PackedSolutionTree.decodeCodeTablesLazy`: each pack is kept as bytes with
-  a row/interval offset index and rows are decoded on demand; the charts are
-  loaded, checked and dropped one at a time);
-- the cap certificate (`capcert_septopert.exe --export`, `cap-1_16.cert`).
-
-Worker threads: the runtime's default (hardware threads); set
-`LEAN_NUM_THREADS` to use fewer. Each table is checked in 256 row
-chunks.
+Native executable that checks the Septopert's certificate data and, if it is
+all valid, constructs `¬ IsRupert Septopert.verts` (from which
+`Septopert.isNopert_of_certificatesValid` gives `IsNopert septopert`).
 
 Usage:
   constructSeptopert <tube manifest.txt> <chart directory> <cap.cert>
-  constructSeptopert rows <tube manifest.txt> <chart> <job pack> [locals]
-    (smoke test: decode one job pack (row 0 = the job's root) and check every
-    row's `ValidAt` natively, reporting failures; with `locals`, also check
-    the tube tables the job's tube rows use.)
-  constructSeptopert local <tube manifest.txt> <index>   (check one tube table)
+    Checks everything: the cap certificate, every tube table and all four
+    chart tables. On success it prints
+      instantiated: ¬ IsRupert Septopert.verts (the Septopert is not Rupert)
+    This is the verification of the result; the other modes are diagnostics.
   constructSeptopert chart <tube manifest.txt> <chart directory> <chart>
-    (smoke test: load one chart's code packs and check all its rows and its
-    root, as the full run does, without checking the tube tables.)
+    Checks one chart's table (all its rows and its root), without the tube
+    tables.
+  constructSeptopert local <tube manifest.txt> <index>
+    Checks one tube table.
+  constructSeptopert rows <tube manifest.txt> <chart> <job pack> [locals]
+    Checks every row of one search job's pack (row 0 is the job's root);
+    with `locals`, also the tube tables that its rows use.
+
+The arguments: `manifest.txt` lists one tube pack per code triangle (in
+`ViewCover.codeTriangles` order), next to the packs; the chart directory holds
+`c<C>/t<T>.pack` (chart C = 0..3, code T = 0..21); `cap.cert` is the cap
+certificate. How to produce or obtain the data, and the running time and
+memory needed: see `septopert.md` and `BUILDING.md` at the root of the
+repository.
+
+The data is untrusted: it is decoded and checked natively, in parallel. Each
+chart pack is kept as bytes with an index and its rows are decoded on demand
+(`PackedSolutionTree.decodeCodeTablesLazy`); the charts are loaded, checked
+and dropped one at a time. Worker threads: the runtime's default (hardware
+threads); set `LEAN_NUM_THREADS` to use fewer. Each table is checked in 256
+row chunks.
 -/
 
 open Noperts.Pipeline
@@ -153,5 +158,8 @@ def main (args : List String) : IO Unit := do
       else throw (IO.userError "no such table")
   | ["chart", m, d, c] => chartMode m d (Fin.ofNat 4 c.toNat!)
   | [m, d, cap] => fullMode m d cap
-  | _ => throw (IO.userError
-      "usage: constructSeptopert <tube manifest.txt> <chart directory> <cap.cert>\n       constructSeptopert rows <tube manifest.txt> <chart> <job pack> [locals]")
+  | _ => throw (IO.userError <| "usage:\n" ++
+      "  constructSeptopert <tube manifest.txt> <chart directory> <cap.cert>   (checks everything)\n" ++
+      "  constructSeptopert chart <tube manifest.txt> <chart directory> <chart>\n" ++
+      "  constructSeptopert local <tube manifest.txt> <index>\n" ++
+      "  constructSeptopert rows <tube manifest.txt> <chart> <job pack> [locals]")

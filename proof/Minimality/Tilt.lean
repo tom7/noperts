@@ -7,6 +7,8 @@ public import Minimality.Prism
 /-!
 # L8 framework: tilting off a degenerate view (frame-free)
 
+Step 4 of `minimality.md`.
+
 Everything is stated with the triple product `det3 a b c = ⟪a × b, c⟫` at a
 view `w` (no rotation needed): for a rotation `R` with `R w = r e_z`, `r > 0`,
 `cross2 (P R a) (P R b) = det3 a b w / r`.
@@ -16,7 +18,7 @@ view `w` (no rotation needed): for a rotation `R` with `R w = r e_z`, `r > 0`,
   angle formed with two other points, or lies strictly inside a triangle of
   three other points.
 * `eventually_pos_affine`: `A + εB > 0` for small `ε > 0` when `A > 0`, or
-  `A = 0` and `B > 0` (the determinant form of Lemma 8.0 in L8_REVIEW §1).
+  `A = 0` and `B > 0` (each test of Lemma 8.0 is such a determinant `A + εB`).
 * `eventually_tilted_cycle` (Lemma 8.0, instance-wise): the sign facts
   `D0 ≥ 0`, `D0 = 0 ⇒ D1 > 0` for a predicted cycle give that cycle as the
   silhouette at `u0 + εv` for all small `ε > 0`, with (G1).
@@ -222,8 +224,9 @@ theorem eventually_tilted_cycle (V : Finset ℝ³) (u₀ v : ℝ³) {k : ℕ} [N
 
 /-- **Corollary 8.0′, eventual form.**  As Corollary 8.0′, but the depth
 condition `Q` is only required at the tilted views `u₀ + εv` for all small
-`ε > 0` (this covers robust unimodality of the limit depths, and also the
-lexicographic tie-breaks of Corollary 9.0). -/
+`ε > 0` (this covers robust unimodality of the limit depths, and also
+depth ties at `u₀` broken lexicographically by the tilt, as used for weak quad
+edges in `Oct9Weak.lean`). -/
 theorem isRupert_of_tilted_unimodal' (V : Finset ℝ³) (u₀ v : ℝ³) (hu₀ : u₀ ≠ 0) {k : ℕ}
     [NeZero k] (hk : 3 ≤ k) (x : ZMod k → ℝ³) (hxV : ∀ i, x i ∈ V)
     (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → TiltSign (x (i + 1) - x i) (x j - x i) u₀ v)

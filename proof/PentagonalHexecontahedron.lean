@@ -43,7 +43,7 @@ orientation, and in **both chiralities**. The polar dual of any snub
 dodecahedron (of either hand) with respect to any sphere about its center,
 for instance the midsphere of the Catalan solid, is such an image. David
 McCooey's coordinates (cc-lib's `PentagonalHexecontahedron()`) are, by a
-numerical check outside Lean (nopert229's `ph_crosscheck.py`, agreement to
+numerical check outside Lean (`search/ph/ph_crosscheck.py`, agreement to
 4·10⁻⁴⁰), the mirror image of this set; they are covered, but Lean does not
 mention them.
 
@@ -97,8 +97,8 @@ The result has two parts, and they are trusted differently.
    themselves are ordinary Lean definitions, and the kernel proves (part 1)
    that if they return true, the conclusion follows.
 
-The program that *found* the data (the C++ search, on the
-`pentagonalhexecontahedron` branch of nopert229) does not need to be trusted:
+The program that *found* the data (the C++ search in `search/ph/`) does not
+need to be trusted:
 a mistake there can only produce data that fails the checks.
 
 See `pentagonal-hexecontahedron.md` at the top of the repository for the

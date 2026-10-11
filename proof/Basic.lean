@@ -50,9 +50,8 @@ The only difference is that `proj_xyL` knows that it is continuous linear,
 and it's defined a little differently, via a matrix, which is the reason
 that it's so easy to see that it's linear.
 
-I think we ought to prefer `proj_xyL` to `proj_xy` in most places.
-but this lemma lets us push back the boundary between the newer uses
-of `proj_xyL` and the older uses of `proj_xy`.
+This lemma converts between the two, so each can be used where it is
+more convenient.
 -/
 lemma proj_xy_eq_proj_xyL :
     proj_xy = proj_xyL := by

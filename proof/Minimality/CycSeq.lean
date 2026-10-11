@@ -5,7 +5,20 @@ public import Minimality.Basic
 @[expose] public section
 
 /-!
-# Sequences for the force-polygon argument (LEMMAS.md Theorem 7.3, Steps 1–4)
+# Sequences for the force-polygon argument (Theorem 7.3, Steps 1–4)
+
+The proof of Theorem 7.3 (⇒) (`hasHorizontalDoubleNormal_of_forces`,
+`Unimodal.lean`) runs in five steps, cited here and in `Thm73.lean`:
+1. the nonzero corner forces, in cyclic order, turn monotonically through one
+   full turn, so their partial sums bound a convex *force polygon*;
+2. summation by parts turns "zero depth moment" into a weighted balance of
+   the partial sums;
+3. unimodality of the depths fixes the signs of the weights (positive on the
+   rising run, negative on the falling run);
+4. hence the force polygon has empty interior: (i) generic case, (ii) the
+   case where the two separating edges lie on one line;
+5. so all forces are parallel, and parallel forces give a horizontal double
+   normal.
 
 Pure statements about finite real and planar sequences, indexed by `ℕ`
 (only indices `< m` matter):

@@ -85,6 +85,15 @@ The C++ search in `search/septopert/` (with the shared code in
 `search/common/`) that produced the data does not need to be trusted: a
 mistake there can only produce data that fails the checks.
 
+## Status
+
+- **2026-10-09:** verified on the 64-core VM.
+- Two independent runs (a 16-core machine with restarts, and a from-scratch
+  64-core run) produced byte-identical files, and three native verifications
+  (on two machines) passed.
+- **2026-10-10:** a third, independent from-scratch rebuild (see
+  "Reproducing" below) and its verification passed too.
+
 ## Reproducing
 
 See [BUILDING.md](BUILDING.md) for requirements. From a fresh clone:
@@ -150,11 +159,7 @@ The certificate data is machine output, intended to be CC0:
 - `tube_packs/`: 382 MB, 22 identity-tube tables and `manifest.txt`;
 - `packs/`: 6.3 GB, 88 per-code solution packs (`packs/c<chart>/t<code>.pack`).
 
-Two independent runs (a 16-core machine with restarts, and a from-scratch
-64-core run) produced byte-identical files, and three native verifications
-(two machines) passed; a third from-scratch rebuild (above) and its
-verification passed too. An archive with SHA-256 sums of all files is kept at
-`/mnt/nopertdata/archive/septopert/` on the 64-core VM (and
-`septopert.7z`, 575 MB). `packs/c0/t3.pack` alone is 5.2 GB, above GitHub's
-2 GB release-asset limit, so the data is not attached to the repository;
-rebuilding reproduces it.
+The data from the verified runs is archived by the author, with SHA-256 sums
+of all files (also as `septopert.7z`, 575 MB), but not in this repository:
+`packs/c0/t3.pack` alone is 5.2 GB, above GitHub's 2 GB release-asset limit.
+To check it yourself, rebuild it (see "Reproducing" above).

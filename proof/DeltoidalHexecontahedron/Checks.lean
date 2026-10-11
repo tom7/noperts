@@ -8,7 +8,7 @@ public import ParallelBool
 /-!
 # Parallel forms of the deltoidal hexecontahedron's cap and tie checks
 
-`CapCert.checkPar` and `tiesCheckPar` evaluate the per-chart and per-node
+`capCheckPar` and `tiesCheckPar` evaluate the per-chart and per-node
 checks as native tasks (`ParallelBool.allParB`); `check_of_par` and
 `tiesCheck_of_par` recover the sequential checks, so the executable's
 parallel run proves the same statements.

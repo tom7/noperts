@@ -59,11 +59,13 @@ triangles cover the view domain.
 ## Why the exact solid
 
 The DH is only just not Rupert. It has poses with clearance exactly 0
-(*ties*), and moving its twelve 5-fold vertices outward by 0.1% gives a Rupert
-solid (checked numerically to 50 digits by `search/dh/dh_boundary.py`; this
-is not part of the Lean result). So, unlike for the Septopert, there is no
-true statement about all solids near a rational model, and the proof uses the
-exact solid near the ties:
+(*ties*), and moving its twelve 5-fold vertices outward by any amount
+η > 0 gives a Rupert solid: next to a tie there is a passage with clearance
+about 0.0695·η. `search/dh/dh_boundary.py` checks this numerically, with
+60 digits, for η from 10⁻³ down to 10⁻¹⁸; it is not part of the Lean result.
+So every neighbourhood of the DH, however small, contains Rupert solids.
+Unlike for the Septopert, there is no true statement about all solids near a
+rational model, and the proof uses the exact solid near the ties:
 
 - The solution tables exclude every centrally symmetric solid with
   icosahedral symmetry whose vertices are within 6·10⁻¹⁶ of a rational model,
@@ -105,10 +107,14 @@ there can only produce data that fails the checks.
 ## Status
 
 - **2026-10-06:** verified on the `deltoidalhexecontahedron` branch of
-  Noperthedron (b45e0b34; the Lean code there was
-  `Noperthedron/PentagonalHexecontahedron/`), on the 64-core VM. The check
+  Noperthedron, on the 64-core VM. The Lean code there was
+  `Noperthedron/PentagonalHexecontahedron/`; the branch records the result at
+  4243292d, whose code differs from the run's only in a log message. The check
   covered 3 caps, 250 tie nodes, the view cover, 39 tube tables and 36.2
   million chart-0 rows, and took 3 h 05 min with a peak of 30 GB.
+  - The branch tip, b45e0b34 (2026-10-08), replaces the inconsistent axiom
+    `QuadCoverTree.covers_of_valid` by a proof. The shared core here
+    includes that fix.
 - **In this repository:** the same modules, renamed (see
   [BUILDING.md](BUILDING.md), "Former names"), and an entry point. Since
   the deduplication of 2026-10-10, its certificate pipeline is the shared
@@ -120,14 +126,14 @@ there can only produce data that fails the checks.
 
 ## Verifying existing data
 
-The data is archived at `/mnt/nopertdata/archive/deltoidal_hexecontahedron/`
-on the 64-core VM, which is paused: verification needs Tom to unpause it. See
-the archive's `README.txt` for its layout and checksums. The directories the
-program expects:
+The data from the verified run is archived by the author (not in this
+repository); to check it yourself, rebuild it (see "Reproducing the data"
+below). The program expects these directories:
 
 - tube packs: `manifest.txt`, one pack per code triangle (39);
-- chart packs: `c<chart>/t<code>.pack` for charts 0–2 (chart 3 is a 4-row
-  table built into Lean, `FundamentalChart3`);
+- chart packs: `c<chart>/t<code>.pack` for charts 0–2, or `chart0.pack`
+  through `chart2.pack` (chart 3 is a 4-row table built into Lean,
+  `FundamentalChart3`);
 - caps: `u0.cert`, `ux.cert`, `u0_wide.cert`;
 - ties: `dh_tie_data.txt`, `nodes.txt` and the `n<node>_t<k>.cert` files.
 
@@ -153,26 +159,27 @@ describes it), with the code the solids' searches share now in
 search/dh/rebuild.sh --from model --work DIR
 ```
 
-The stages are model, tube, tubepack, caps, ties, search, pack and verify
-(`--from STAGE`, `--only STAGE`; `--dry_run` prints the commands; `--work`
-defaults to `work-dh/`). Without `--from` it starts at tube, with the
-committed model data. The model, caps and ties stages regenerate committed
-files: the model files in `search/dh/` and the Lean data in
-`proof/DeltoidalHexecontahedron/` (`SolidModel`'s vertex tables,
-`WedgeCoverData`, `OrbitData`, `StatementData`, `CapData`, `TieData`) and
-`proof/Pipeline/IcoGroupData.lean`. The verify stage
-builds and runs `constructDeltoidalHexecontahedron` in `proof/`, in a
-memory-capped `systemd-run --user` scope. Since the deduplication of 2026-10-10 (see [BUILDING.md](BUILDING.md),
-"Former names"), the vertices are in `SolidModel.lean` and the solid's orbit
-tables in `OrbitData.lean`; the rest of `IcoGroupData` is the shared
-`proof/Pipeline/IcoGroupData.lean`. The generators were adapted to this
-layout on 2026-10-10: run from the committed model files (with the
-`codebdd.json` that `codebdd.exe` writes from `dh_model.txt`, about 0.1 s),
-`scripts/update_vertices.py`, `emit_wedge_cover.py`, `snub_ico_group.py` and
-`dh_statement_data.py` reproduce `SolidModel.lean` (updated in place),
-`WedgeCoverData.lean`, `OrbitData.lean`, `StatementData.lean` and
-`Pipeline/IcoGroupData.lean` byte for byte. (`CapData` and `TieData`, from the
-caps and ties stages, are unchanged by the deduplication and were not rerun.)
+The stages are model, tube, tubepack, caps, ties, search, pack and
+verify (`--from STAGE`, `--only STAGE`; `--dry_run` prints the commands;
+`--work` defaults to `work-dh/`). Without `--from` it starts at tube,
+with the committed model data. The model, caps and ties stages regenerate
+committed files: the model files in `search/dh/` and the Lean data
+in `proof/DeltoidalHexecontahedron/` (`SolidModel`'s vertex tables,
+`WedgeCoverData`, `OrbitData`, `StatementData`, `CapData`, `TieData`)
+and `proof/Pipeline/IcoGroupData.lean`. The verify stage builds and
+runs `constructDeltoidalHexecontahedron` in `proof/`, in a memory-capped
+`systemd-run --user` scope. Since the deduplication of 2026-10-10 (see
+[BUILDING.md](BUILDING.md), "Former names"), the vertices are in
+`SolidModel.lean` and the solid's orbit tables in `OrbitData.lean`; the
+rest of `IcoGroupData` is the shared `proof/Pipeline/IcoGroupData.lean`.
+The generators were adapted to this layout on 2026-10-10: run from
+the committed model files (with the `codebdd.json` that `codebdd.exe`
+writes from `dh_model.txt`, about 0.1 s), `scripts/update_vertices.py`,
+`emit_wedge_cover.py`, `snub_ico_group.py` and `dh_statement_data.py`
+reproduce `SolidModel.lean` (updated in place), `WedgeCoverData.lean`,
+`OrbitData.lean`, `StatementData.lean` and `Pipeline/IcoGroupData.lean`
+byte for byte. (`CapData` and `TieData`, from the caps and ties stages,
+are unchanged by the deduplication and were not rerun.)
 
 A from-scratch run on 64 cores (2026-10-06, then in nopert229 and
 Noperthedron) took 8 h 10 min:
@@ -189,8 +196,9 @@ tie certificates were identical to the verified run's. Its chart tables are
 not the same as the verified run's (32.9 M against 36.2 M chart-0 rows); both
 passed.
 
-In this repository (2026-10-10, 16 cores, before the deduplication): the model stage, the cap frames
-and the tube and tie stages (about 2 min together) regenerate the model files
-in `search/dh/` and all seven generated Lean files in
-`proof/DeltoidalHexecontahedron/` byte for byte (with 250 tie nodes). The cap
-certificates, the search, the packs and the check have not been rerun here.
+In this repository (2026-10-10, 16 cores, before the deduplication):
+the model stage, the cap frames and the tube and tie stages (about
+2 min together) regenerate the model files in `search/dh/` and all seven
+generated Lean files in `proof/DeltoidalHexecontahedron/` byte for byte
+(with 250 tie nodes). The cap certificates, the search, the packs and the
+check have not been rerun here.

@@ -10,9 +10,10 @@ public import Pipeline.IcoModel
 
 For an `IModel` (whose hull every rotation of I preserves), composing the
 inner copy with g ∈ I changes neither shadow, so the relative rotation can
-be moved into the icosahedral max-trace cell (README.md, "Symmetry reductions",
-reduction 1). `IcoView.IModel.exists_ico_full_atlas_translated_pose` combines
-it with the view reduction.
+be moved into the icosahedral max-trace cell (`search/sd/README.md`,
+"Symmetry reductions", reduction 1).
+`IcoView.IModel.exists_ico_full_atlas_translated_pose` combines it with the
+view reduction.
 -/
 
 namespace Noperts.Pipeline

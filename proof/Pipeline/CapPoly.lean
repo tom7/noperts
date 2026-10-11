@@ -7,7 +7,7 @@ public import Pipeline.NPoly
 /-!
 # Witness polynomials of the DH cap certificates
 
-A chart of a cap certificate (nopert229 `capcert.cc`) is a polynomial map
+A chart of a cap certificate (`search/dh/capcert.cc`) is a polynomial map
 s ↦ (u(s), w(s)) from a box in ℝ⁵ to views u and Cayley vectors w. For a
 witness (vertex v_k, direction c) and a vertex v_j the witness polynomial is
 

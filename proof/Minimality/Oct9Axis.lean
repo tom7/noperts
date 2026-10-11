@@ -12,8 +12,9 @@ and the poles are hidden (strict determinant tests).  So any depth condition
 that eventually holds at tilted views gives a passage
 (`isRupert_axis_tilted`).  Consequences:
 * `isRupert_axis_NWS`: the diagonals' depth intervals along the axis are not
-  weakly separated (Corollary 7.8 / Lemma 8.8 at the axis ray);
-* `isRupert_planar_equator`: a planar equator (Corollary 5.4 in L9).
+  weakly separated (Corollary 7.8, proved again with the tilt tests);
+* `isRupert_planar_equator`: a planar equator (Corollary 5.4 in L9);
+* `isRupert_of_touching_pair` (Lemma 9.4): two touching quad edges.
 -/
 
 namespace Minimality
@@ -169,7 +170,7 @@ theorem isRupert_axis {t t' x x' y y' : ℝ³} (h : IsOctahedron t t' x x' y y')
     ext z; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
   · exact isRupert_axis_tilted h v hpos hQ
 
-/-- **Lemma 8.8 at the axis ray / Corollary 7.8.**  If the depth intervals of
+/-- **Corollary 7.8, via the axis view.**  If the depth intervals of
 the equator's diagonals along the axis are not weakly separated, the
 octahedron is Rupert. -/
 theorem isRupert_axis_NWS {t t' x x' y y' : ℝ³} (h : IsOctahedron t t' x x' y y')

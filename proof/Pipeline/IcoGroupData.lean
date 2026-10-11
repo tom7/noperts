@@ -300,7 +300,7 @@ def icoNeighborNum : List (List Int) := [
 /-- The inverse (transpose) of each element. -/
 def icoInverseIndex : List Nat := [0, 20, 2, 53, 12, 5, 33, 7, 59, 38, 40, 31, 4, 13, 14, 58, 16, 17, 18, 19, 1, 21, 56, 57, 52, 25, 55, 27, 54, 29, 47, 11, 51, 6, 39, 49, 37, 36, 9, 34, 10, 41, 44, 48, 42, 46, 45, 30, 43, 35, 50, 32, 24, 3, 28, 26, 22, 23, 15, 8]
 
-/-! ### View reduction modulo Ih into the triangle T (S.md §2.3) -/
+/-! ### View reduction modulo Ih into the triangle T -/
 
 /-- T, from the model file snub_model.txt: corners on x + y + z = 1. -/
 def icoViewTriangleCorners : List (List ℚ) := [[0/1, 0/1, 1/1], [500/1343, 160/1343, 683/1343], [250/1281, 115/427, 98/183]]

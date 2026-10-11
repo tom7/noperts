@@ -16,7 +16,7 @@ exact contacts, so these "ties" need the exact solid.
 
 `TieClaim S x T ρ`: no pose whose view is in the cone over the view triangle T
 and whose rotation S = H_u R H_x has trace ≥ τ(ρ) = (3 − ρ²)/(1 + ρ²) (so
-S = cayley(w), |w| ≤ ρ) is Rupert. A certificate (nopert229 `tietube.cc`)
+S = cayley(w), |w| ≤ ρ) is Rupert. A certificate (`search/dh/tietube.cc`)
 covers each face of the cube |w|∞ ≤ ρ, w = t σ (σ_f = ±1, σ = (s₁, s₂) on the
 other axes, t ∈ [0, ρ]), by a binary tree in (s₁, s₂) whose leaves are
 witnesses (L-vertex q, direction ±c): with d = P × c at each corner P of T,

@@ -1,6 +1,6 @@
 module
 
-public import Nopert231.TightApproximation
+public import Nopert231.SolidModel
 
 @[expose] public section
 
@@ -21,7 +21,7 @@ enclosures of the rotations and of `z1`; `vertexH` is compared with
 `rationalVertex` exactly by `decide +kernel`.
 -/
 
-open Real
+open Real Noperts Noperts.Pipeline
 
 namespace Nopert231.Ideal231
 
@@ -91,7 +91,7 @@ theorem sin144_close : |Real.sin (4 * π / 5) - (sin144H : ℝ)| ≤ (trigErrQ :
     mul_nonneg (sub_nonneg.2 hcl) (sub_nonneg.2 hsu),
     mul_nonneg (sub_nonneg.2 hcu) (sub_nonneg.2 hsl)]
 
-/-- Rotation enclosures by orbit, as `TightApproximation.tightCos/tightSin`. -/
+/-- Rotation enclosures by orbit, as `Pipeline.tightCos/tightSin`. -/
 def cosH : OrbitIndex → ℚ := ![1, cos72H, cos144H, cos144H, cos72H]
 def sinH : OrbitIndex → ℚ := ![0, sin72H, sin144H, -sin144H, -sin72H]
 
@@ -253,13 +253,11 @@ theorem vertexH_vertex_close (i : VertexIndex) :
     simp only [d, vertexH, vertex, seed, seedH, k, j, θ, ce, se, sx, toR3, PiLp.sub_apply,
       Matrix.cons_val_zero, RzL_apply_0']
     simp
-    push_cast
     ring
   have hd1 : d 1 = se * sx j 0 + ce * sx j 1 := by
     simp only [d, vertexH, vertex, seed, seedH, k, j, θ, ce, se, sx, toR3, PiLp.sub_apply,
       Matrix.cons_val_one, RzL_apply_1']
     simp
-    push_cast
     ring
   have hd2 : |d 2| ≤ 1 / 10^37 := by
     have h2 : d 2 = (if seedIndex i = 1 then ((z1H : ℚ) : ℝ) - z1 else 0) := by
@@ -300,12 +298,14 @@ theorem vertex_close (i : VertexIndex) :
     _ ≤ 1 / 10^36 + 41 / 10^17 := by
       exact add_le_add (by rw [norm_sub_rev]; exact vertexH_vertex_close i)
         (by rw [norm_sub_rev]; exact vertexH_close i)
-    _ ≤ (modelErrorQ : ℝ) := by norm_num [modelErrorQ]
+    _ ≤ (modelErrorQ : ℝ) := by norm_num [modelErrorQ_value]
 
 /-- Idealized #231 as a `C5Model`: the certificates cover it. -/
 noncomputable def model : C5Model where
   seed := seed
-  close := vertex_close
+  close i := by
+    rw [symmetryMatrix_apply_eq_RzL]
+    exact vertex_close i
 
 /-! ### Exactly planar quads -/
 
@@ -342,7 +342,8 @@ private lemma RzL_add_two_pi (θ : ℝ) (v : ℝ³) : RzL (θ + 2 * π) v = RzL 
 
 theorem model_vertex (k : OrbitIndex) (j : SeedIndex) :
     model.vertex (vertexIndex k j) = RzL (2 * π * (k : ℝ) / 5) (seed j) := by
-  simp [C5Model.vertex, model]
+  rw [CyclicModel.vertex_eq_RzL]
+  simp [model]
 
 /-- The quad's last vertex, `v(k-1, 2)`, is `R^k` applied to `R⁻¹ s₂ = R⁴ s₂`. -/
 theorem model_vertex_prev (k : OrbitIndex) :
@@ -386,8 +387,8 @@ theorem quadVolume_zero_eq : quadVolume 0 = -(normalXY + normalZ * (z1 - sx 2 2)
     cos_eight_pi_fifths, sin_eight_pi_fifths, seed]
   simp only [Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one,
     Matrix.cons_val_two, Matrix.head_cons, Matrix.tail_cons]
-  simp only [if_pos (rfl : (1 : SeedIndex) = 1), if_neg (show (2 : SeedIndex) ≠ 1 by decide),
-    if_neg (show (3 : SeedIndex) ≠ 1 by decide), ite_true, ↓reduceIte]
+  simp only [if_neg (show (2 : SeedIndex) ≠ 1 by decide),
+    if_neg (show (3 : SeedIndex) ≠ 1 by decide), ↓reduceIte]
   simp only [normalXY, normalZ, dx, dy, ex, ey, ez]
   ring
 

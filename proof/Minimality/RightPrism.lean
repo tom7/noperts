@@ -8,8 +8,8 @@ public import Minimality.Tilt
 # Theorem 8.1: right prisms
 
 Every right prism over a strictly convex polygon is Rupert, by an explicit
-first-order motion at the views `e_z + εv` next to the axis (LEMMAS.md 8.1;
-L7 is not used).  With Theorem 7.7 this covers every translation prism over a
+first-order motion at the views `e_z + εv` next to the axis (L7 is not
+used).  With Theorem 7.7 this covers every translation prism over a
 triangle.
 -/
 

@@ -8,8 +8,8 @@ public import Mathlib.Analysis.Convex.Radon
 /-!
 # Corollary 5.6: every convex polyhedron with at most 5 vertices is Rupert
 
-Proof (differs from LEMMAS.md, which goes through the combinatorial types and
-the cone lemma 5.5): replace `V` by a minimal subset with the same hull
+Proof, without combinatorial types (step 5 of `minimality.md`): replace `V`
+by a minimal subset with the same hull
 (`exists_hull_minimal`; every point is then outside the hull of the others).
 * If some point `E` has the others coplanar: a pyramid (`isRupert_of_pyramid`);
   this covers all `≤ 4`-point sets.

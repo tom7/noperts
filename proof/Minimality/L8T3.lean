@@ -13,7 +13,7 @@ namespace Minimality
 open scoped RealInnerProductSpace Topology
 open Finset Filter
 
-/-- **T3 (tetragonal antiwedge), combinatorial form** (LEMMAS.md 8.4): the
+/-- **T3 (tetragonal antiwedge), combinatorial form**: the
 quadrilateral facets `A C C' A'` and `B C C' B'`, and the triangles `ABC`,
 `A'B'C'`, `ABB'`, `AB'A'` (the bent quad `ABB'A'` with diagonal `AB'`). -/
 structure IsT3 (A B C A' B' C' : ℝ³) : Prop where

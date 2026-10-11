@@ -509,8 +509,7 @@ than a factor of two: `√x' < √(m+1) ≤ b + 1 ≤ 2b`. Hence `√x ≤ 2·�
 and applying this to `√⁻ (1/x)` gives the certified *upper* bound
 `√⁺ x = 1/√⁻(1/x) ≤ 2·√x`. The rational corollaries
 `le_mul_self_sqrtℚUp` and `sqrtℚUp_le_two_mul_of_le_mul_self` let a checker
-bound a `sqrtℚUp` value from above without evaluating it (see the cheap
-`Bεℚ` denominator test in `Checker/Local.lean`). -/
+bound a `sqrtℚUp` value from above without evaluating it. -/
 
 /-- Core step: if `m = ⌊numN/denN⌋ ≥ 1` and `(numN : ℝ) = xR · 100^a · denN`,
 then `√xR ≤ 2 · √m · 10^(-a)`. -/

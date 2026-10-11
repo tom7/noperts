@@ -9,7 +9,7 @@ public import Pipeline.IcoField
 
 `IcoQ` is a + b√5 + c s + d s√5 with a, b, c, d ∈ ℚ (s = sin 72°, s² = (5 + √5)/8),
 the exact arithmetic of the deltoidal hexecontahedron's certificates (the
-solid's coordinates in the model frame are in K, `nopert229/dh_exact.py`).
+solid's coordinates in the model frame are in K, `search/dh/dh_exact.py`).
 `val` is the real value; addition and multiplication are compatible with it,
 and `lo`/`hi` are rational enclosures (from `IcoZ.sqrt5_bounds`, `s72_bounds`).
 -/

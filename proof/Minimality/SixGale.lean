@@ -9,9 +9,10 @@ public import Minimality.Witnesses
 @[expose] public section
 
 /-!
-# Six points in convex position: dependencies, Gale signs, splits, prisms (LEMMAS.md L10)
+# Six points in convex position: dependencies, Gale signs, splits, prisms (L10)
 
-Setting (S) of L10 (`Six V`): six points, none in the hull of the others,
+Part of step 5 of `minimality.md`.  Setting (S) (`Six V`): six points, none in
+the hull of the others,
 not coplanar, no five coplanar.  Affine dependencies are functions
 `ℝ³ → ℝ` (`IsDepOn V l`); two of them, `l` and `m`, give the Gale vectors
 `(l t, m t)` and the determinants `galeD l m s t`.
@@ -34,7 +35,8 @@ open Finset Filter
 def IsDepOn (V : Finset ℝ³) (l : ℝ³ → ℝ) : Prop :=
   ∑ t ∈ V, l t = 0 ∧ ∑ t ∈ V, l t • t = 0
 
-/-- Setting (S) of LEMMAS.md L10. -/
+/-- Setting (S): six points, none in the hull of the others, not coplanar, no
+five coplanar. -/
 structure Six (V : Finset ℝ³) : Prop where
   card : V.card = 6
   vert : ∀ v ∈ V, v ∉ convexHull ℝ ((V.erase v : Finset ℝ³) : Set ℝ³)

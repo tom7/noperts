@@ -9,8 +9,7 @@ public import Pose
 /-!
 # `Param`: names for the five pose parameters
 
-`Param` lives in this small low-level module (rather than with the rest of the
-solution-table definitions in `SolutionTable/Defs.lean`) so that `Pose` and
+`Param` lives in this small low-level module so that `Pose` and
 `PoseInterval` lemmas can be stated generically over the parameter being
 accessed, without dependency cycles.
 -/

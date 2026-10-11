@@ -7,8 +7,7 @@ public import Pipeline.CapChartEval
 /-!
 # Covering the cap domain by the charts (real lemmas)
 
-The decompositions behind the chart covering of a cap (nopert229
-`capcert.cc`):
+The decompositions behind the chart covering of a cap (`search/dh/capcert.cc`):
 
 * `view_side`: a tangent offset (t₁, t₂) is m (A + τ B) for one of the four
   sides (A, B) ∈ {(e₁, e₂), (−e₁, e₂), (e₂, e₁), (−e₂, e₁)}, with

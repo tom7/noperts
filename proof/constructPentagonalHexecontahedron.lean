@@ -4,19 +4,28 @@ import Pipeline.PackedSolutionTree
 import PentagonalHexecontahedron
 
 /-!
-Native executable that reads and checks the exact certificate data for the
-pentagonal hexecontahedron, then establishes `CertificatesValid` and so
-`isNopert_of_certificatesValid`: every pentagonal hexecontahedron (every
-similar copy of the polar dual of Wikipedia's snub dodecahedron, either
-chirality) is a nopert (`PentagonalHexecontahedron.lean`).
-
-The solution tables (tube packs and chart packs) are decoded (untrusted) and
-checked natively, in parallel: the view cover, the tube tables and the four
-chart tables, as in `NativeExecutable.constructProof`. Kernel-proved bridges
-(`Table.Valid.of_withTasksB`) turn success into `CertificatesValid`.
+Native executable that checks the pentagonal hexecontahedron's certificate
+data and, if it is all valid, establishes `CertificatesValid`, and so
+(`isNopert_of_certificatesValid`) that every pentagonal hexecontahedron
+(every similar copy of the polar dual of Wikipedia's snub dodecahedron,
+either chirality) is a nopert (`PentagonalHexecontahedron.lean`).
 
 Usage:
   constructPentagonalHexecontahedron <tube manifest.txt> <chart directory>
+    Checks everything: the view cover, every tube table and all four chart
+    tables. On success it prints
+      instantiated: IsNopert V for every pentagonal hexecontahedron V (none is Rupert)
+
+The arguments: `manifest.txt` lists the tube packs in code order, next to
+them; the chart directory holds `chart0.pack` through `chart2.pack`, or
+per-code packs `c<chart>/t<t>.pack`. How to produce or obtain the data, and
+the running time and memory needed: see `pentagonal-hexecontahedron.md` and
+`BUILDING.md` at the root of the repository.
+
+The data is untrusted: it is decoded and checked natively, in parallel. The
+solution tables exclude every `IModel` (every I-orbit within 6·10⁻¹⁶ of the
+rational model); kernel-proved bridges (`Table.Valid.of_withTasksB`) turn
+success into `CertificatesValid`.
 -/
 
 open Noperts Noperts.Pipeline
@@ -40,10 +49,8 @@ def main (args : List String) : IO Unit := do
   let (manifestPath, directory) ← match args with
     | [m, d] => pure (m, d)
     | _ => throw (IO.userError (
-        "usage: constructPentagonalHexecontahedron <code-pack manifest.txt> <chart directory>; " ++
-        "the manifest lists the identity-tube code packs in code order, and the " ++
-        "directory holds chart0.pack through chart2.pack, or per-code packs " ++
-        "c<chart>/t<t>.pack (pack5d --per_code)"))
+        "usage: constructPentagonalHexecontahedron <tube manifest.txt> <chart directory>\n" ++
+        "(checks everything; see pentagonal-hexecontahedron.md)"))
   let packDir := (System.FilePath.mk manifestPath).parent.getD "."
   let mut localTables : SharedLocalTables := #[]
   for line in ← IO.FS.lines manifestPath do
@@ -81,8 +88,8 @@ def main (args : List String) : IO Unit := do
     intro chart; fin_cases chart <;> rfl
   have hshared : ∀ chart, (tables chart).sharedLocal = localTables := by
     intro chart; fin_cases chart <;> rfl
-  -- The checks of `NativeExecutable.constructProof`, kept here so that the
-  -- checked tables give `CertificatesValid`.
+  -- The checks (`NativeExecutable`); the checked tables give
+  -- `CertificatesValid`.
   let coverStart ← IO.monoNanosNow
   log "checking the view cover (code triangles cover T)"
   let cover : PLift (PentagonalHexecontahedron.WedgeCover.coverValid = true) ←

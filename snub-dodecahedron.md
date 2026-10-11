@@ -119,17 +119,22 @@ there can only produce data that fails the checks.
   orbit of I). The check functions are the same, except that the local-view
   tree now also accepts the deltoidal hexecontahedron's `empty` rows (pack
   tag 4), which the SD's data does not use; its identity-tube rows are still
-  checked against the tangent-cone generators (`SparseSupport.lean`). The
-  code was moved, so the result must be verified again here on the VM before
-  it can be recorded against a commit of this repository. That run has not
-  been done yet.
+  checked against the tangent-cone generators (`SparseSupport.lean`, which
+  since the same day only provides the generators and their table to the
+  check shared with candidate #231, `proof/Pipeline/SparseSupport.lean`). The
+  code was moved, so the result had to be verified again here.
+- **2026-10-10:** an independent from-scratch reproduction from a clone of
+  this repository (after the move to the shared pipeline), on the 64-core VM:
+  `search/sd/rebuild.sh --from model` regenerated every committed model and
+  Lean data file byte for byte, and `constructSnubDodecahedron` checked the
+  new packs (chart 0: 825,221 rows) and printed
+  `instantiated: IsNopert V for every snub dodecahedron V (none is Rupert)`.
 
 ## Verifying existing data
 
-The data is archived at `/mnt/nopertdata/archive/snub_dodecahedron/` on the
-64-core VM, which is paused: verification needs Tom to unpause it. See the
-archive's `README.txt` for its layout and checksums. The directories the
-program expects:
+The data from the verified run is archived by the author (not in this
+repository); to check it yourself, rebuild it (see "Reproducing the data"
+below). The program expects these directories:
 
 - tube packs: `manifest.txt`, listing one pack per code triangle in code
   order;
@@ -165,12 +170,12 @@ count in `SolidModel.lean`) byte for byte (verified on 2026-10-10, after the
 deduplication: the vertices are in `RationalVertices.lean`, the orbit tables
 in `OrbitData.lean`, the tangent-cone generators in `TangentCones.lean`, and
 `SparseSupport.lean` is now entirely hand-written, with the
-`certificateViewCheck` instance). With cc-lib in place
+`tangentCones` and `certificateViewCheck` instances). With cc-lib in place
 (`./get-cc-lib.sh`, see [BUILDING.md](BUILDING.md)):
 
 ```sh
 make -C search/sd -j 16
-search/sd/rebuild.sh --from model --model_file snub_model.txt --work DIR
+search/sd/rebuild.sh --from model --work DIR
 ```
 
 `rebuild.sh` runs the stages model, tube, tubepack, search, pack and verify;
@@ -187,15 +192,17 @@ the packs.
 A from-scratch run on the branch, on 64 cores (2026-10-04), took 1 h 3 min,
 with a peak of about 26 GB:
 
-| Stage | 64 cores |
-|---|---|
-| model (including the Lean build) | about 28 min |
-| tube | about 2.5 min |
-| tubepack | under 1 min |
-| search | about 21 min |
-| pack | about 3 min |
-| verify | about 7 min |
+| Stage | 64 cores (2026-10-04) | 64 cores, this repository (2026-10-10) |
+|---|---|---|
+| model (including the Lean build) | about 28 min | 26 min (Lean build 19 min) |
+| tube | about 2.5 min | 2 min 20 s |
+| tubepack | under 1 min | under 1 s |
+| search | about 21 min | 22 min (452,068 nodes, 0 deferred) |
+| pack | about 3 min | 3 min 43 s |
+| verify | about 7 min | 6 min 56 s |
+| total | 1 h 3 min | 1 h 1 min |
 
-The model stage regenerated every committed data file byte for byte,
-including the generated Lean files. The pipeline has not yet been run end to
-end in this repository.
+Both runs' model stages regenerated every committed data file byte for byte,
+including the generated Lean files. Most of the model stage is the Lean
+build of `GeneratedTangentCones.lean`, a single file that Lean compiles on
+one core.

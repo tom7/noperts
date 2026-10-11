@@ -10,9 +10,9 @@ public import Mathlib.Tactic.LinearCombination
 # The field K = ℚ(√5, sin 72°), in integer coordinates
 
 Every rotation of the icosahedral group, written in the snub dodecahedron's
-5-fold frame (z a 5-fold axis, x a 2-fold axis; README.md, "Frame and exact algebra"),
-has entries in K = ℚ(√5, s), where s = sin 72° and s² = (5 + √5)/8. K has
-degree 4 over ℚ with basis 1, √5, s, s√5.
+5-fold frame (z a 5-fold axis, x a 2-fold axis; `search/sd/README.md`,
+"Frame and exact algebra"), has entries in K = ℚ(√5, s), where s = sin 72°
+and s² = (5 + √5)/8. K has degree 4 over ℚ with basis 1, √5, s, s√5.
 
 In that frame every entry is an *integer* combination of the basis divided by
 20. So `IcoZ` stores four integers and `IcoZ.val` reads them as

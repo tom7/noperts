@@ -9,7 +9,8 @@ public import Pipeline.IcoGroup
 # The icosahedral Dirichlet cell and its checked prune
 
 A relative rotation R is in the icosahedral max-trace cell when no rotation
-of I increases its trace on the right (README.md, "Symmetry reductions").
+of I increases its trace on the right (`search/sd/README.md`, "Symmetry
+reductions").
 Every R has a right I-translate in the cell (`exists_mul_ico_inFundamentalDomain`),
 and the cell lies in the fivefold one (`InIcoFundamentalDomain.toFivefold`),
 so the fivefold machinery stays valid.
