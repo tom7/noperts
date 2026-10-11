@@ -99,7 +99,7 @@ if want model; then
   stage_begin model
   (cd "$NOPERT" && run ./codebdd.exe --model_file=septopert_model.txt codebdd.json)
   # The view cover (Lean: Septopert/ViewCoverData.lean) from codebdd.json.
-  run python3 "$LEAN/scripts/emit_septopert_view_cover.py" --bdd "$NOPERT/codebdd.json" \
+  run python3 -B "$LEAN/scripts/emit_septopert_view_cover.py" --bdd "$NOPERT/codebdd.json" \
     "$LEAN/Septopert/ViewCoverData.lean"
   run make -C "$NOPERT" -j "$THREADS" tubecode.exe tuberefine.exe export_codetrees_pack.exe search5d.exe pack5d.exe
   stage_end model
