@@ -89,7 +89,7 @@ page with its statement, trust model and reproduction steps:
 
   License: GPLv3 (`search/COPYING`). Exception: the Python scripts that
   generate Lean data files (`search/dh/scripts/`, `search/ph/scripts/`,
-  `search/sd/lean_scripts/`, `search/nopert231/scripts/`) derive from the
+  `search/sd/scripts/`, `search/nopert231/scripts/`) derive from the
   Apache-2.0 Noperthedron project and say so in a header ("THIS FILE ONLY:
   Uses APACHE 2.0 license"); the license text is `search/APACHE20.txt`.
 - `cc-lib/`: not in the repository. `./get-cc-lib.sh` checks out svn

@@ -169,4 +169,4 @@ The search is journaled and restartable; deferred leaves are retried in the same
 - `rebuild.sh` runs the whole pipeline; `*_test.cc` are the unit tests.
 - Lean (Noperthedron `nopert231`): `Noperthedron/Nopert231/` and the generic `Noperthedron/Atlas/`, plus the executables `constructNopert231`, `validate_code_pack`, `check_identity_tube`, `check_global_rows` and `exact5d_golden`. `Noperthedron/Nopert231/README.md` maps the files.
 
-See `notes/HISTORY.md` for how this code came to be.
+The git history of this directory records how this code came to be.

@@ -1,5 +1,5 @@
 // capcert: cap certificates for the deltoidal hexecontahedron's special views
-// (the 2-fold axis view u0 and the two-kite view ux; notes/T.md). Near such a
+// (the 2-fold axis view u0 and the two-kite view ux). Near such a
 // view x the identity's first-order cage degenerates (and at ux the pinning
 // ties M(u) = H_u H_x approach the identity), so the poses (view u = x + mu e a,
 // Cayley rotation w) are blown up in weighted coordinates:

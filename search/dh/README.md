@@ -110,5 +110,3 @@ peak ~30 GB).
 - 5D search: as for the pentagonal hexecontahedron, plus cap and tie leaves; `tufix.cc` (tube leaves at cap nodes).
 - Lean (Noperthedron `deltoidalhexecontahedron`, `Noperthedron/PentagonalHexecontahedron/`): `DHStatement`,
   `DHCaps`, `DHTies`, `DHChecks`, `DHDecode`, the cap and tie modules above, and `constructDeltoidalHexecontahedron`.
-
-The working log `notes/T.md` (not included here) records how this proof came to be.

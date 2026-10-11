@@ -1,5 +1,5 @@
 #!/bin/bash
-# Rebuilds the proof that Nopert #231 is not Rupert, end to end, with the
+# Rebuilds the proof that candidate #231 is not Rupert, end to end, with the
 # parameters that produced the verified result (see README.md):
 #
 #   model   exact rational model, codes and code triangles (codebdd), and

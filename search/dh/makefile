@@ -14,7 +14,7 @@ all: default qtube s5d codebdd.exe icoprune_check.exe halfturn_check.exe tietube
 #  codebdd: exact rational model, codes and code triangles (codebdd.json).
 #  tubecode: restartable (journaled) Tag 1 tree synthesis per code.
 #  tuberefine: refines tube leaves to larger certified radii (monotone).
-#  export_codetrees_pack: tube trees -> Lean packs (validate_code_pack).
+#  export_codetrees_pack: tube trees -> Lean tube packs (+ manifest).
 qtube: tubecode.exe tuberefine.exe export_codetrees_pack.exe
 
 # 5D search:

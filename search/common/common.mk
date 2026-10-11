@@ -25,11 +25,7 @@ TESTS := exact5d_test geom5d_test contacts5d_test cert5d_test tubeatlas5d_test r
 UNAME := $(shell uname -o)
 ifeq ($(findstring Linux,$(UNAME)),Linux)
 CC=clang
-LIBCXX :=
-CXX=clang++ $(LIBCXX)
-PDB_FLAG=
-else
-PDB_FLAG=-Wl,--pdb=nopert.pdb
+CXX=clang++
 endif
 
 # This is optional; if you want to use plain C++ code, just

@@ -1,8 +1,8 @@
-// tietube: tie tubes for the deltoidal hexecontahedron (see dh_tie_data.py
-// and notes/T.md). For a pinning normal x (the plane x^perp holds an
-// antipodal pair of 5-fold and of 2-fold vertices), L = sigma_x K, and a view
-// u, the pose R = H_u S H_x is a passage iff S L's shadow along u lies
-// strictly inside K's (both shadows are centrally symmetric). Near S = I the
+// tietube: tie tubes for the deltoidal hexecontahedron (see dh_tie_data.py).
+// For a pinning normal x (the plane x^perp holds an antipodal pair of 5-fold
+// and of 2-fold vertices), L = sigma_x K, and a view u, the pose
+// R = H_u S H_x is a passage iff S L's shadow along u lies strictly inside
+// K's (both shadows are centrally symmetric). Near S = I the
 // shadows of L and K touch at exact contacts (L-vertices equal to K-vertices
 // or inside K-edges), so no rational model can certify these poses; this
 // program uses the exact solid (coordinates in K = Q(sqrt5, sin 72)).
@@ -26,7 +26,7 @@
 // is split when it fails down to --min_rho).
 //
 // Usage: tietube.exe [--data dh_tie_data.txt] [--normals 0,1,..] [--t t1,t2,..]
-//          [--trees_dir trees_r1] [--bdd codebdd.json] [--out_dir tie]
+//          --trees_dir DIR [--bdd codebdd.json] --out_dir DIR
 //          [--max_depth 8] [--min_rho 1/1024] [--threads 60]
 
 #include <algorithm>
@@ -573,8 +573,8 @@ struct Certifier {
 int main(int argc, char **argv) {
   std::fesetround(FE_TONEAREST);
   InitConstants();
-  std::string data_file = "dh_tie_data.txt", trees_dir = "/mnt/nopertdata/work/dh/work/trees_r1",
-              bdd = "codebdd.json", out_dir = "/mnt/nopertdata/work/dh/work/tie", export_dir;
+  std::string data_file = "dh_tie_data.txt", trees_dir,
+              bdd = "codebdd.json", out_dir, export_dir;
   std::vector<int> normals, tris;
   int max_depth = 8, threads = 60, start_depth = 3;
   bool debug = false;
@@ -617,6 +617,7 @@ int main(int argc, char **argv) {
   }
   const Data data = LoadData(data_file);
   printf("loaded %zu vertices, %zu normals (exact facts re-verified)\n", data.V.size(), data.normals.size());
+  CHECK(!trees_dir.empty() && !out_dir.empty()) << "--trees_dir (the tube trees) and --out_dir are required";
   const auto atlas = tubeatlas5d::TubeAtlas::Load(trees_dir, bdd);
   if (normals.empty()) for (size_t n = 0; n < data.normals.size(); n++) normals.push_back(n);
   if (tris.empty()) for (int t = 0; t < atlas.NumTriangles(); t++) tris.push_back(t);

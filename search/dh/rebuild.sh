@@ -34,12 +34,14 @@
 # creating threads).
 #
 # The model, caps and ties stages regenerate committed source files (the model
-# files, codebdd.json, dh_exact.txt, dh_tie_data.txt, tie_normals.h, and
+# files, dh_exact.txt, dh_tie_data.txt, tie_normals.h, and
 # ../../proof/DeltoidalHexecontahedron's SolidModel (vertices), WedgeCoverData,
 # OrbitData, StatementData, CapData and TieData, and ../../proof/Pipeline/
 # IcoGroupData; all but CapData and TieData with scripts/), so
 # they only run when asked for (--from model, --only caps, ...); the default
-# start is tube (with the committed data).
+# start is tube (with the committed data). The model stage also writes
+# codebdd.json, which is not committed and which the later stages need: in a
+# fresh clone, run --from model (or first --only model).
 #
 # Each stage's wall time is appended to WORK/stages.log. The Lean build runs
 # in the background while the C++ stages run (log WORK/lean_build.log); the
@@ -133,6 +135,9 @@ if want model; then
     tietube.exe search5d.exe pack5d.exe
   stage_end model
 fi
+
+# codebdd.json is written by the model stage (it is not committed).
+require_codebdd tube tubepack ties search pack
 
 if want tube; then
   stage_begin tube

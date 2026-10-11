@@ -38,6 +38,8 @@ its own directory: `make -C search/<solid>` (`make` builds the unit tests,
 solid's directory takes precedence over one of the same name in `common/`
 (make's `vpath`); only #231's `codebdd.cc` uses this.
 
-License: GPLv3 (`COPYING`), except the Python scripts that generate Lean data
-files, which derive from the Apache-2.0 Noperthedron project and say so in
-their header (license text: `APACHE20.txt`).
+License: GPLv3 (`COPYING`), except the scripts that carry the header "THIS
+FILE ONLY: Uses APACHE 2.0 license" (Lean data generators derived from the
+Apache-2.0 Noperthedron project; license text: `APACHE20.txt`). The other
+scripts, including those that write Lean data (`dh/dh_cap_lean.py`,
+`dh/dh_tie_lean.py`, `dh/ico_group.py`, ...), are GPLv3.

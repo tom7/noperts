@@ -52,7 +52,7 @@ fold_eta0.001_passage.png
   the red shadow fits strictly inside, with gaps of about 7e-5 (the insets
   are magnified 50 times more than in the tie pictures). So this slightly
   folded DH is Rupert: a copy of it passes through a hole in itself.
-  dh_boundary.py checks this pose in 50-digit arithmetic. Pushing the
+  dh_boundary.py checks this pose in 60-digit arithmetic. Pushing the
   vertices inward instead makes the ties worse. The DH sits exactly on the
   boundary.
 

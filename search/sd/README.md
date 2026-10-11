@@ -5,7 +5,7 @@
 > script paths point into this repository (cc-lib at `../../cc-lib`, the Lean
 > project at `../../proof`, work directory `../../work-sd`), and the Lean data
 > generators, which were in Noperthedron's `scripts/` (`snubdodecahedron`
-> branch, bc31c747), are in `lean_scripts/`, emitting this repository's module
+> branch, bc31c747), are in `scripts/`, emitting this repository's module
 > names. They reproduce the committed `proof/SnubDodecahedron/` data byte for
 > byte. The text below is the branch's README: Lean names and paths in it are
 > the branch's (Noperthedron `Noperthedron/SnubDodecahedron/...` is
@@ -144,5 +144,5 @@ Every rotation of I in this frame has entries in K = ℚ(√5, s), with s = sin 
   - `search5d.cc`, `pack5d.cc`, `scoreboard5d.cc`;
   - `icoprune_check.cc` (a floating-point check of the icosahedral prune leaves).
 - `rebuild.sh` runs the whole pipeline; `*_test.cc` are unit tests (`make`).
-- Lean (Noperthedron `snubdodecahedron`): `Noperthedron/SnubDodecahedron/`, plus the generic `Noperthedron/Atlas/`. Its `README.md` maps the files. Here: `../../proof/SnubDodecahedron/` and `../../proof/Atlas/`.
-- `lean_scripts/`: the generators of the Lean data (`update_vertices.py`: `RationalVertices.lean` and the seed count in `SolidModel.lean`; `emit_tangent_cones.py`: `GeneratedTangentCones.lean` and `TangentCones.lean`'s `supportGenerator`; `emit_wedge_cover.py`: `WedgeCoverData.lean`, about 9 min; `snub_ico_group.py`: `Pipeline/IcoGroupData.lean` and `OrbitData.lean`), run by the model stage with `MODEL_DIR` set to this directory.
+- Lean (Noperthedron `snubdodecahedron`): `Noperthedron/SnubDodecahedron/`, plus the generic `Noperthedron/Atlas/`. Its `README.md` maps the files. Here: `../../proof/SnubDodecahedron/`, `../../proof/Pipeline/` and `../../proof/Atlas/`.
+- `scripts/`: the generators of the Lean data (`update_vertices.py`: `RationalVertices.lean` and the seed count in `SolidModel.lean`; `emit_tangent_cones.py`: `GeneratedTangentCones.lean` and `TangentCones.lean`'s `supportGenerator`; `emit_wedge_cover.py`: `WedgeCoverData.lean`, about 9 min; `snub_ico_group.py`: `Pipeline/IcoGroupData.lean` and `OrbitData.lean`), run by the model stage with `MODEL_DIR` set to this directory.

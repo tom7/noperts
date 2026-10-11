@@ -16,7 +16,7 @@
 // (each divided by the largest powers of mu and of the cone radius t that
 // divide it): then the inner shadow is at least as wide as the outer one in
 // the direction d, so the pose is not a passage, whatever the offset
-// (Lean: Septopert/WidthWitness.lean). Boxes outside the mirror-tie cell
+// (Lean: Pipeline/WidthWitness.lean). Boxes outside the mirror-tie cell
 // (tr(H_u R Q) > tr R) are pruned.
 //
 // Witnesses are screened in double precision; the exact mode computes over

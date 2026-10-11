@@ -42,12 +42,13 @@
 # malloc arenas); Lean runs in a systemd scope with MemoryMax (ulimit -v
 # would stop Lean from creating threads).
 #
-# The model stage regenerates committed source files (model_vertices.*,
-# codebdd.json, and the Lean data in ../../proof/PentagonalHexecontahedron/:
+# The model stage regenerates committed source files (model_vertices.* and the
+# Lean data in ../../proof/PentagonalHexecontahedron/:
 # SolidModel.lean (vertices), WedgeCoverData.lean, OrbitData.lean,
 # PHStatementData.lean, and ../../proof/Pipeline/IcoGroupData.lean,
 # by the scripts in scripts/), so it only runs when asked for (--from model
-# or --only model). The other stages need its codebdd.json.
+# or --only model). It also writes codebdd.json (not committed), which the
+# other stages need: in a fresh clone, run --from model first.
 #
 # Each stage's wall time is appended to WORK/stages.log. The Lean build runs
 # in the background while the C++ stages run (log WORK/lean_build.log); the
@@ -155,12 +156,12 @@ tube_goal() {
   echo 1/50000
 }
 
+# codebdd.json is written by the model stage (it is not committed).
+require_codebdd tube tubepack search pack
 if [ -f "$NOPERT/codebdd.json" ]; then
   NCODES=$(python3 -c "import json; print(len(json.load(open('$NOPERT/codebdd.json'))['codes']))")
-elif [ $DRY -eq 1 ]; then
-  NCODES=53  # (dry run before the model stage has written codebdd.json)
 else
-  echo "missing $NOPERT/codebdd.json: run the model stage first (--from model)" >&2; exit 1
+  NCODES=53  # (dry run before the model stage has written codebdd.json)
 fi
 
 if want tube; then

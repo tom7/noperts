@@ -35,12 +35,14 @@
 # malloc arenas); Lean runs in a systemd scope with MemoryMax (ulimit -v
 # would stop Lean from creating threads).
 #
-# The model stage regenerates committed source files (model_vertices.*,
-# codebdd.json, and ../../proof/SnubDodecahedron/'s RationalVertices (and the seed
+# The model stage regenerates committed source files (model_vertices.* and
+# ../../proof/SnubDodecahedron/'s RationalVertices (and the seed
 # count in SolidModel), TangentCones (supportGenerator), GeneratedTangentCones,
 # WedgeCoverData and OrbitData, and ../../proof/Pipeline/IcoGroupData.lean, with the
-# generators in lean_scripts/), so it only runs
-# when asked for (--from model or --only model).
+# generators in scripts/), so it only runs
+# when asked for (--from model or --only model). It also writes codebdd.json
+# (not committed), which the other stages need: in a fresh clone, run --from
+# model first.
 #
 # Each stage's wall time is appended to WORK/stages.log. The Lean build runs
 # in the background while the C++ stages run (log WORK/lean_build.log); the
@@ -119,10 +121,10 @@ if want model; then
   stage_begin model
   (cd "$NOPERT" && run python3 snub_model.py "$MODEL_FILE" symmetry_neighbors.h)
   (cd "$NOPERT" && run ./codebdd.exe --model_file="$MODEL_FILE" codebdd.json)
-  (cd "$NOPERT" && run python3 lean_scripts/update_vertices.py \
-    && run python3 lean_scripts/emit_tangent_cones.py "$LEAN/SnubDodecahedron/GeneratedTangentCones.lean" \
-    && run python3 lean_scripts/emit_wedge_cover.py "$LEAN/SnubDodecahedron/WedgeCoverData.lean" \
-    && run python3 lean_scripts/snub_ico_group.py)
+  (cd "$NOPERT" && run python3 scripts/update_vertices.py \
+    && run python3 scripts/emit_tangent_cones.py "$LEAN/SnubDodecahedron/GeneratedTangentCones.lean" \
+    && run python3 scripts/emit_wedge_cover.py "$LEAN/SnubDodecahedron/WedgeCoverData.lean" \
+    && run python3 scripts/snub_ico_group.py)
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
     export_codetrees_pack.exe search5d.exe pack5d.exe
   lean_build_start "$LEAN" "${LEAN_BUILD[@]}"
@@ -130,11 +132,11 @@ if want model; then
 fi
 
 # codebdd.json is written by the model stage (it is not committed).
-if [ $DRY -eq 1 ] && [ ! -f "$NOPERT/codebdd.json" ]; then
-  NCODES=123
-  echo "(dry run: no codebdd.json yet; assuming the model's $NCODES codes)"
-else
+require_codebdd tube tubepack search pack
+if [ -f "$NOPERT/codebdd.json" ]; then
   NCODES=$(python3 -c "import json; print(len(json.load(open('$NOPERT/codebdd.json'))['codes']))")
+else
+  NCODES=123  # (dry run before the model stage has written codebdd.json)
 fi
 
 if want tube; then

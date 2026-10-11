@@ -6,7 +6,7 @@ What it shows
 A polyhedron is Rupert if a copy of it can pass through a hole in it: seen
 from some direction, the shadow of a slightly turned copy fits strictly
 inside the shadow of the original. The animation shows the two shadows for
-this branch's solid:
+this directory's solid:
 
 - the original's shadow, filled (blue-grey);
 - the turned copy's shadow, outlined (white): the copy is rotated by a tiny

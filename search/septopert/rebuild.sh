@@ -1,6 +1,6 @@
 #!/bin/bash
 # Rebuilds the proof that the Septopert (the 7-vertex C3v solid) is a Nopert,
-# end to end (working notes, M5):
+# end to end:
 #
 #   model    codebdd on the committed exact model septopert_model.txt (with the
 #            two view triangles T1/T2): model_vertices.*, codebdd.json
@@ -94,15 +94,14 @@ run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe expo
   capcert_septopert.exe search5d.exe pack5d.exe dfwhere.exe
 
 # The checker's Lean build (no-op if current), in the background while the
-# C++ stages run, and never alongside another Lean build on the machine: it
-# first waits for any running lake to finish.
+# C++ stages run.
 if want verify; then
   if [ $HAVE_SCOPE -eq 1 ]; then
     LEAN_CMD=(timeout 6000 systemd-run --user --scope -q -p MemoryMax=48G -p MemorySwapMax=0 lake build constructSeptopert)
   else
     LEAN_CMD=(timeout 6000 lake build constructSeptopert)
   fi
-  lean_build_start "$LEAN" bash -c 'while pgrep -x lake > /dev/null; do sleep 30; done; exec "$@"' _ "${LEAN_CMD[@]}"
+  lean_build_start "$LEAN" "${LEAN_CMD[@]}"
 fi
 
 if want model; then
@@ -111,6 +110,9 @@ if want model; then
   run make -C "$NOPERT" -j "$THREADS" tubecode.exe tuberefine.exe export_codetrees_pack.exe search5d.exe pack5d.exe
   stage_end model
 fi
+
+# codebdd.json is written by the model stage (it is not committed).
+require_codebdd tube tubepack search pack
 
 # The cap at n for the tube (angular radius 0.04 < the cap cone's 0.044).
 TUBE_CAP=(--cap 0.70710678118654752,0,-0.70710678118654752,0.04 --cap_r 1/46)

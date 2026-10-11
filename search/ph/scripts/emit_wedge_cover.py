@@ -17,7 +17,7 @@ u . a >= 0 for points u on the affine plane u0 + u1 + u2 = 1:
 
 Here a_k are the path constraints: the three edge functionals of
 upperWedgeTriangle followed by the split normals (with sign) from the root.
-The Lean side (proof/PentagonalHexecontahedron/WedgeCover.lean) checks the tree and
+The Lean side (proof/Pipeline/WedgeCover.lean) checks the tree and
 proves that every point of upperWedgeTriangle lies in some code triangle.
 
 The tree is built by exact polygon clipping: the current cell is a convex

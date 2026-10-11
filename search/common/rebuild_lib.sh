@@ -69,3 +69,17 @@ lean_build_stop() {
   fi
 }
 trap lean_build_stop EXIT
+
+# Fails with a clear message when one of the given stages is to run without
+# NOPERT/codebdd.json, which the model stage writes (it is not committed).
+require_codebdd() {
+  [ -f "$NOPERT/codebdd.json" ] && return 0
+  [ "$DRY" -eq 1 ] && return 0
+  local s
+  for s in "$@"; do
+    if want "$s"; then
+      echo "error: $NOPERT/codebdd.json not found; it is written by the model stage (not committed): run --from model (or --only model) first" >&2
+      exit 1
+    fi
+  done
+}

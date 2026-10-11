@@ -1,12 +1,13 @@
 // Exact rational checks for the 5D search's certificate leaves, ported 1:1
 // from the Lean definitions that decide them:
 //
-//   projectiveGlobal       Noperthedron/Pipeline/AtlasProjectiveGlobalCertificate.lean
-//   projectiveMixedGlobal  Noperthedron/Pipeline/AtlasProjectiveMixedGlobalCertificate.lean
+//   projectiveGlobal       proof/Pipeline/AtlasProjectiveGlobalCertificate.lean
+//   projectiveMixedGlobal  proof/Pipeline/AtlasProjectiveMixedGlobalCertificate.lean
 //
 // Lean is the specification. Each function here carries the name of the Lean
-// definition it mirrors, and exact5d_test checks agreement with Lean on
-// generated boxes (via the exact5d_golden Lean executable). Use this both in
+// definition it mirrors. exact5d_test can check agreement with Lean on
+// generated boxes, given a Lean exact5d_golden executable (not in this
+// repository; see exact5d_test.cc). Use this both in
 // the search (to pre-check a leaf before writing it) and in packing, so that
 // what C++ accepts is exactly what Lean accepts.
 //

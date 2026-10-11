@@ -40,7 +40,7 @@ inline constexpr bool kOuterTriangleInRoot = false;
 inline constexpr bool kTriangleSizeInDouble = false;
 
 // codebdd's default --model_file.
-inline constexpr const char *kModelFile = "snub_model.txt";
+inline constexpr const char *kModelFile = "ph_model.txt";
 
 }  // namespace solid
 
