@@ -16,7 +16,7 @@ normal; writing both endpoints as `a + s (b - a)` and `c + t (d - c)`, the
 double normal `h` is perpendicular to `b - a`, `d - c` and to the view row of
 `R`, so either `cross (b - a) (d - c)` lies on the view circle, or `b - a` and
 `d - c` are parallel and `h` is the fixed vector `perpTo (c - a) (·)`.
-(The cases (a)–(e) of LEMMAS.md.)  No genericity is needed.
+No genericity is needed.
 -/
 
 namespace Minimality

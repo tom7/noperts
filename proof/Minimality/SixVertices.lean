@@ -14,13 +14,16 @@ All proved via `isRupert_of_crossing`:
 * T1, triangular prisms whose lateral lines meet at a point (`isRupert_frustum`),
   and prisms with parallel lateral edges not all of the same length
   (`isRupert_parallelPrism`, via `isRupert_prism_core`).  Translation prisms
-  `T + [0, w]` are not covered (LEMMAS.md L7, not formalized).
+  `T + [0, w]` are not covered here; see `Prism.lean` and `RightPrism.lean`.
 * T5, capped square pyramids, unless the base edges `S₁S₄` and `S₂S₃` next to
   the capped base edge are parallel: `isRupert_cappedSquarePyramid`
   (combinatorial, via `IsCappedSquarePyramid.exists_normalForm`) and
   `isRupert_cappedSquarePyramid_normalForm` (barycentric normal form; the
   plane `ES₁S₂` when `γ₂ < b₂`, the lateral face `ES₃S₄` when `γ₂ > b₂`).
-* T3, T4, T6: not covered in general (LEMMAS.md L6); nothing stated.
+* T3, T4, T6 (octahedra) and the remaining T5 are not covered by this theorem;
+  see `L8T3.lean`, `L8T4.lean`, `OctahedronAll.lean` and `L8Shapes.lean`.
+
+The labels T1–T7 of the seven combinatorial types are listed in `README.md`.
 -/
 
 namespace Minimality
@@ -28,7 +31,7 @@ namespace Minimality
 open scoped RealInnerProductSpace
 
 /-- **T1, concurrent lateral lines (frustum).**  A triangular prism whose
-three lateral lines meet at a point `O` (LEMMAS.md L6, first T1 case): the
+three lateral lines meet at a point `O`: the
 small end is `A' = O + α (A - O)` etc. with `α, β, γ ∈ (0, 1)`, and `OABC` is
 a nondegenerate tetrahedron.  View from `O` through the centroid of the big
 end `ABC`. -/
@@ -240,7 +243,7 @@ theorem cross_self (a : ℝ³) : cross a a = 0 := by
   ext i; fin_cases i <;> simp [cross] <;> ring
 
 /-- **T5, the lateral face `E S₃ S₄`** (case `b₂ < γ₂`): project along
-`X - S₂` with `X` close to `S₃` on the face (LEMMAS.md L6). -/
+`X - S₂` with `X` close to `S₃` on the face. -/
 theorem isRupert_cappedSquarePyramid_lateral (A B C T : ℝ³)
     (hind : AffineIndependent ℝ ![A, B, C, T])
     (a₁ β₁ c₁ t₁ b₂ γ₂ t₂ : ℝ) (ha₁ : 0 < a₁) (hβ₁ : 0 < β₁) (hc₁ : 0 < c₁) (ht₁ : 0 < t₁)
@@ -396,7 +399,7 @@ structure IsCappedSquarePyramid (E S₁ S₂ S₃ S₄ K : ℝ³) : Prop where
   facet_KS₂E : IsFacetTriangle {E, S₁, S₂, S₃, S₄, K} K S₂ E
 
 /-- The facet conditions put a capped square pyramid in normal form with
-respect to `(A, B, C, T) = (E, S₃, S₂, S₁)` (LEMMAS.md L6, T5). -/
+respect to `(A, B, C, T) = (E, S₃, S₂, S₁)`. -/
 theorem IsCappedSquarePyramid.exists_normalForm {E S₁ S₂ S₃ S₄ K : ℝ³}
     (h : IsCappedSquarePyramid E S₁ S₂ S₃ S₄ K) :
     ∃ a₁ β₁ c₁ t₁ b₂ γ₂ t₂ : ℝ, 0 < a₁ ∧ 0 < β₁ ∧ 0 < c₁ ∧ 0 < t₁ ∧

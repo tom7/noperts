@@ -12,22 +12,22 @@ public import Rupert.Basic
 /-!
 # Minimality: shared definitions
 
-Setting of `notes/LEMMAS.md` §0, in the conventions of `IsRupert`
+The setting, in the conventions of `IsRupert`
 (`MainTheorem.lean`): the screen is the xy-plane, a point
 `x : ℝ³` has screen position `proj_xy x` and depth `x 2`, and the *standard
-view* is the direction `ez = e₂` (LEMMAS.md's `e_z`).  A general view `u` is
+view* is the direction `ez = e₂`.  A general view `u` is
 reduced to the standard one by a rotation (`exists_rotation_to_ez`,
 `isRupert_of_isRupert_image_rotation`).
 
 Main definitions:
-* `rot90` — LEMMAS.md's `J`, rotation of the screen by +90°.
+* `rot90` — `J`, rotation of the screen by +90°.
 * `crossMatrix ω` — `[ω]×`, the matrix of `x ↦ ω × x`.
 * `screenVel ω τ x` — the screen velocity `ν(x) = P(ω × x + τ)` of the
   first-order motion `(ω, τ)`.
 * `IsInwardAt S p d` — `d` points strictly into `S` at `p`, i.e.
   `d ∈ int T_S(p)` for a convex polygon `S` (`isInwardAt_iff_forall_normal`).
 * `IsDoubleNormalDir F u` — `u` is the direction of a double normal of `F`
-  (LEMMAS.md L3).
+  (used in L3, `DoubleNormal.lean`).
 * `innerShadow`, `outerShadow` — the two shadows of `IsRupert`, so that
   `isRupert_iff_shadows` is `Iff.rfl`.
 -/
@@ -37,10 +37,10 @@ namespace Minimality
 open scoped RealInnerProductSpace Matrix Topology
 open Filter
 
-/-- The standard view direction `e₂` (LEMMAS.md's `e_z`): `proj_xy` forgets it. -/
+/-- The standard view direction `e_z = e₂`: `proj_xy` forgets it. -/
 noncomputable def ez : ℝ³ := EuclideanSpace.single 2 1
 
-/-- LEMMAS.md's `J`: rotation of the screen by +90°, `J (x, y) = (-y, x)`. -/
+/-- `J`, rotation of the screen by +90°: `J (x, y) = (-y, x)`. -/
 noncomputable def rot90 (p : ℝ²) : ℝ² := !₂[-p 1, p 0]
 
 /-- `[ω]×`, the skew matrix of the linear map `x ↦ ω × x`. -/
@@ -50,7 +50,7 @@ def crossMatrix (ω : ℝ³) : Matrix (Fin 3) (Fin 3) ℝ :=
      -ω 1, ω 0, 0]
 
 /-- The screen velocity `ν(x) = P(ω × x + τ)` of the first-order motion
-`(ω, τ)` at the point `x`, in the standard view (LEMMAS.md §0). -/
+`(ω, τ)` at the point `x`, in the standard view. -/
 noncomputable def screenVel (ω τ x : ℝ³) : ℝ² :=
   proj_xy ((crossMatrix ω).toEuclideanLin x + τ)
 
@@ -63,7 +63,7 @@ def IsInwardAt {E : Type*} [AddCommGroup E] [Module ℝ E] [TopologicalSpace E]
     (S : Set E) (p d : E) : Prop :=
   ∃ ε > (0 : ℝ), p + ε • d ∈ interior S
 
-/-- `u` is a *double-normal direction* of `F` (LEMMAS.md L3): there is a chord
+/-- `u` is a *double-normal direction* of `F`: there is a chord
 `[a, b]`, `a ≠ b`, parallel to `u`, with `b - a ∈ N_F(b)` and `a - b ∈ N_F(a)`
 (the lines through `a` and `b` perpendicular to `ab` both support `F`).  The
 sign of `u` is irrelevant, and `u ≠ 0` is forced. -/
@@ -327,7 +327,7 @@ theorem isInwardAt_of_forall_normal {E : Type*} [NormedAddCommGroup E]
 for a convex set with nonempty interior in a finite-dimensional space and
 `p ∈ closure S`, `d` is inward at `p` iff `⟪n, d⟫ < 0` for every nonzero
 `n ∈ N_S(p)`. (For a polygon `N_S(p)` is spanned by the outward normals of
-the one or two edges at `p`, which is LEMMAS.md's `int T_S(p)`.) -/
+the one or two edges at `p`, so this is the open tangent cone `int T_S(p)`.) -/
 theorem isInwardAt_iff_forall_normal {E : Type*} [NormedAddCommGroup E]
     [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] {S : Set E} (hS : Convex ℝ S)
     (hint : (interior S).Nonempty) {p : E} (hp : p ∈ closure S) (d : E) :

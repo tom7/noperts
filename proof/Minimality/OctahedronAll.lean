@@ -5,15 +5,18 @@ public import Minimality.Oct9Par
 @[expose] public section
 
 /-!
-# Theorem 9.9: every convex octahedron is Rupert (LEMMAS.md L9)
+# Theorem 9.9: every convex octahedron is Rupert
 
-The proof follows L9: an edge view with the antipodal vertex hidden (a *quad
-edge*) whose tilted silhouette is robustly unimodal (Lemma 9.3, Cor. 8.0′),
-or two touching edges (Lemma 9.4, an axis view), or a planar equator; the
-right pair of edges is found in the Gale diagram (Lemmas 9.6–9.8, §9.5), with
-the case of two parallel opposite faces treated separately (§9.6).
-Everything is reduced to the frame-free Lemma 8.0 / Corollary 8.0′ of
-`Tilt.lean`.
+Part L9 of the proof (octahedra are the hardest case of step 5 of
+`minimality.md`).  For every octahedron the proof finds an edge view with the
+antipodal vertex hidden (a *quad edge*) whose tilted silhouette is robustly
+unimodal (Lemma 9.3, `Oct9Quad.lean`), or two touching edges seen along an
+axis (Lemma 9.4), or a planar equator (both in `Oct9Axis.lean`).  The right
+pair of edges is found in the Gale diagram (`Oct9Gale.lean`, §9.5), with the
+case of two parallel opposite faces treated separately (`Oct9Par.lean`,
+`Oct9Weak.lean`, §9.6).  Everything is reduced to the frame-free Lemma 8.0 /
+Corollary 8.0′ of `Tilt.lean`.  The numbered statements are listed in
+`README.md`.
 -/
 
 namespace Minimality

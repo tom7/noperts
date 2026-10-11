@@ -151,7 +151,7 @@ theorem pole_signs {t t' e e' g g' : ℝ³} (F : OctFacets t t' e e' g g') {L : 
     have hee : 0 < L e * L e := mul_self_pos.mpr he
     nlinarith
 
-/-- **Not bad (Lemmas 9.5, 9.7 and Step 2, in dependency form).**  If the
+/-- **Not bad, from one affine dependency.**  If the
 dependency vanishing at the hidden vertex `x'` is negative at the tail `x`,
 nonnegative at both poles and nonpositive at `y'` and on `x + y`, then the
 edge `x → y` is not bad. -/
@@ -321,7 +321,7 @@ theorem IsOctahedron.nonempty_galeData {a a' b b' c c' : ℝ³} (h : IsOctahedro
     Nonempty (GaleData a a' b b' c c') :=
   let ⟨F⟩ := h.nonempty_octFacets; F.nonempty_galeData
 
-/-- **(G2)** If `κ_A = det(g_a, g_a') = 0`, the equator `b, c, b', c'` is planar. -/
+/-- **Planar equators.** If `κ_A = det(g_a, g_a') = 0`, the equator `b, c, b', c'` is planar. -/
 theorem GaleData.planar_of_kappa {a a' b b' c c' : ℝ³} (G : GaleData a a' b b' c c')
     (hκ : galeD G.l G.m a a' = 0) : det3 (c - b) (b' - b) (c' - b) = 0 := by
   simp only [galeD] at hκ
@@ -486,9 +486,10 @@ theorem finset_perm_c'c {a a' b b' c c' : ℝ³} :
     ({c', c, b, b', a, a'} : Finset ℝ³) = {a, a', b, b', c, c'} := by
   ext z; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
 
-/-- **Steps 1–3 of §9.5** for a normalized labeling (`κ_A, κ_B, κ_C > 0`),
-the arc-lemma pair `W = C` and `U = A`: the crossed pair `b → a`, `a' → b'`
-with poles `c'`, `c` gives a passage. -/
+/-- **The generic case (§9.5)** for a normalized labeling (`κ_A, κ_B, κ_C > 0`),
+the arc-lemma pair `W = C` and `U = A`: `b → a` and `a' → b'` are quad edges
+(Lemma 9.6) with poles `c'`, `c`, neither is bad (`not_bad_of_dep`), so one of
+them gives a passage by Lemma 9.3, or both are touching and Lemma 9.4 applies. -/
 theorem isRupert_gale_core {a a' b b' c c' : ℝ³} (h : IsOctahedron a a' b b' c c')
     (G : GaleData a a' b b' c c') (hκa : 0 < galeD G.l G.m a a')
     (hκb : 0 < galeD G.l G.m b b') (hκc : 0 < galeD G.l G.m c c')

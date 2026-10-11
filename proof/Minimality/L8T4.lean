@@ -13,7 +13,7 @@ namespace Minimality
 open scoped RealInnerProductSpace Topology
 open Finset Filter
 
-/-- **T4, combinatorial form** (LEMMAS.md L6/8.3): the quadrilateral facet
+/-- **T4, combinatorial form**: the quadrilateral facet
 `A K₁ T K₂` (`K₁`, `K₂` of degree 3) and the triangles `K₁AC`, `K₁CT`,
 `K₂AB`, `K₂BT`, `ABC`, `BCT`. -/
 structure IsT4 (A B C T K₁ K₂ : ℝ³) : Prop where
@@ -138,8 +138,9 @@ theorem t4_nws {p2 p3 s γ c l₁ l₂ : ℝ} (hs : 0 < s) (hγ : 0 < γ) (hc : 
 set_option maxHeartbeats 2000000 in
 /-- **T4, case `x < 1`**, in the frame `(B - A, C - A, T - A)`:
 `K₁ = (-y c₁, c₁, t₁)`, `K₂ = (y γ₂, -γ₂, t₂)` with `y > 1` (coplanar quad
-`A K₁ T K₂`).  The views are `X - B` for `X` on the open segment of LEMMAS.md,
-tilted across the side `AT`. -/
+`A K₁ T K₂`).  The views are `X - B` for `X` in the face `ACT` such that `K₁`
+and `K₂` project into the open side `AT` (an open segment of such `X`), tilted
+across that side. -/
 theorem isRupert_T4_core {A B C T : ℝ³} (hΔ : det3 (B - A) (C - A) (T - A) ≠ 0)
     {c₁ t₁ γ₂ t₂ y : ℝ} (hc₁ : 0 < c₁) (ht₁ : 0 < t₁) (hγ₂ : 0 < γ₂) (ht₂ : 0 < t₂)
     (hy : 1 < y) (ha₁ : 0 < 1 + y * c₁ - c₁ - t₁) (ha₂ : 0 < 1 - y * γ₂ + γ₂ - t₂) :

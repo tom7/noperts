@@ -5,7 +5,7 @@ public import Minimality.Oct9Weak
 @[expose] public section
 
 /-!
-# Theorem 9.9, the parallel case `f = 0` (LEMMAS.md §9.6)
+# Theorem 9.9, the parallel case `f = 0` (§9.6 of L9)
 
 With normalized labels (`κ_A, κ_B, κ_C > 0`), `f = g_a + g_b + g_c = 0`
 means that the opposite faces `abc` and `a'b'c'` are parallel.  Each pair `W`

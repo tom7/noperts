@@ -7,25 +7,27 @@ public import Minimality.Basic
 /-!
 # L3 (and the transfer step of L4): double normals of a convex polygon
 
-LEMMAS.md L3.  `F = convexHull ℝ W` for a finite `W ⊆ ℝ²` with nonempty
-interior, and `u ≠ 0` a screen direction.  An affine screen field
-`p ↦ M p + b` is *admissible for `u`* if `⟪u, M u⟫ = 0` (LEMMAS.md
-`ûᵀMû = 0`, the image of the realizable first-order distortions, L2).
+Part of step 2 of `minimality.md`.  `F = convexHull ℝ W` for a finite
+`W ⊆ ℝ²` with nonempty interior, and `u ≠ 0` a screen direction.  An affine
+screen field `p ↦ M p + b` is *admissible for `u`* if `⟪u, M u⟫ = 0`: by L2
+(`Coplanar.lean`), these are the screen motions that a first-order motion
+realizes on a plane whose iso-depth direction is `u`.
 
 * `exists_admissible_inward_field` (L3, construction direction): if `u` is not
   a double-normal direction of `F`, some admissible field is strictly inward
   at every point of `W`.  (The converse obstruction direction of L3 is not
   needed for any Rupert theorem and is not formalized.)
-* `isDoubleNormalDir_convexHull_cases` (L3.0 finiteness, in the form used by
-  L4), `exists_isDoubleNormalDir` (diameters).
+* `isDoubleNormalDir_convexHull_cases` (Lemma 3.0, finiteness, in the form
+  used by L4), `exists_isDoubleNormalDir` (diameters).
 * `isDoubleNormalDir_proj_iff'` (L4): for a set in a non-vertical plane, a
   horizontal direction in the plane is a double-normal direction of the set
   iff its projection is one of the shadow.
 
-Note.  LEMMAS.md Cor. 3.1 (triangles) is wrong as first written: a side whose
-two angles are both ≤ π/2 is a vertex–vertex double normal (e.g. every
-triangle's longest side).  It is not stated here; the general definition
-`IsDoubleNormalDir` covers all cases.
+Note.  For a triangle, a side whose two angles are both ≤ π/2 is itself a
+vertex–vertex double normal (e.g. every triangle's longest side), so the
+double normals of a triangle are not just its altitudes.  No triangle special
+case is stated here; the general definition `IsDoubleNormalDir` covers all
+cases.
 -/
 
 namespace Minimality
@@ -84,7 +86,7 @@ theorem exists_two_of_mem_convexHull_of_isMin (W : Finset E) (ℓ : E →ₗ[ℝ
     subst this
     exact hxW (Finset.filter_subset _ _ hz)
 
-/-- **L3.0, finiteness (form used in L4).** A double normal of the hull of a
+/-- **Lemma 3.0, finiteness (form used in L4).** A double normal of the hull of a
 finite set `W` is either parallel to `w' - w`, or perpendicular to `w' - w`,
 for two distinct points `w, w'` of `W`: if the chord's end `a` is not in `W`,
 the points of `W` carrying `a`'s convex weights all minimize `⟪u, ·⟫`. -/
@@ -246,7 +248,7 @@ direction of the polygon `F = conv W`, there is an affine field
 `p ↦ M p + b` with `⟪u, M u⟫ = 0` that points strictly into `F` at every
 point of `W` (hence, being affine, at every point of `F`).
 
-Construction (LEMMAS.md, coordinates `x = ⟪u, ·⟫`, `y = ⟪rot90 u, ·⟫`): squash
+Construction (coordinates `x = ⟪u, ·⟫`, `y = ⟪rot90 u, ·⟫`): squash
 vertically onto a chord `[a, b]` joining the two `x`-extreme faces, plus a
 small multiple of a shear `(σ(y), τ(x, y))` with `σ(y) = κ (y₀ - y)`, `y₀`
 strictly between the `y`-ranges of the two extreme faces. -/

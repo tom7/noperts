@@ -11,7 +11,8 @@ public import Mathlib.Analysis.Convex.Caratheodory
 /-!
 # L7: unimodal silhouettes
 
-LEMMAS.md L7, in the standard view (`proj_xy`, depth = coordinate 2).
+Step 3 of `minimality.md`, in the standard view (`proj_xy`, depth =
+coordinate 2).
 
 * `exists_forces_of_not_firstOrderInward` (Lemma 7.1, the direction used):
   if no first-order motion is strictly inward, there are horizontal *corner
@@ -423,7 +424,7 @@ theorem isRupert_of_unimodalView (V : Finset ℝ³) (R : Matrix (Fin 3) (Fin 3) 
 
 /-- **Lemma 7.4 (exceptional views).**  Horizontal double normals occur only
 for views `u = Rᵀ e_z` on finitely many great circles `l ⟂ u`, determined by `V`
-alone (cases (a)–(e) of LEMMAS.md).  Stated without (G1)/(G2): any closed
+alone (`badDirs V`, `BadViews.lean`).  Stated without (G1)/(G2): any closed
 cycle of points of `V` with a horizontal double normal is covered. -/
 theorem exists_badPlanes (V : Finset ℝ³) :
     ∃ Λ : Finset ℝ³, (∀ l ∈ Λ, l ≠ 0) ∧

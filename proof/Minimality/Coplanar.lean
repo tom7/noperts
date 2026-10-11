@@ -14,7 +14,7 @@ public import Minimality.DoubleNormal
   `⟪J g, M (J g)⟫ = 0` is realized (`J g` spans the iso-depth direction `û`).
   (The converse, and the face-on case `g = 0`, are not needed and not
   formalized.)
-* `admissibleViews V W` is LEMMAS.md's `U_Π` for `Π = affineSpan W`: view
+* `admissibleViews V W` (written `U_Π` for `Π = affineSpan W`): the view
   directions `u` not parallel to `Π` such that every other point of `V`
   projects along `u` into the relative interior of `F₀ = conv W`.
 * L5 (`exists_firstOrderInward_of_plane`): the coplanar-silhouette theorem in
@@ -22,7 +22,7 @@ public import Minimality.DoubleNormal
   `isRupert_of_admissibleViews_nonempty` is proved in Crossing.lean, via the
   waist lemma (Pyramid.lean); the genericity statement L4 is not needed.
 
-Formulation.  Instead of LEMMAS.md's `W = V ∩ Π` we allow any `W ⊆ V`, with
+Formulation.  Instead of `W = V ∩ Π` for a plane `Π` we allow any `W ⊆ V`, with
 `Π := affineSpan ℝ W`; points of `V \ W` that happen to lie in `Π` must then
 lie in `relint F₀`, which the definition of `admissibleViews` already says.
 No vertex or convex-position hypothesis is needed, nor nonempty interior of
@@ -35,11 +35,12 @@ namespace Minimality
 open scoped RealInnerProductSpace Matrix Topology
 open Filter
 
-/-- The vector `f = (ω₂, -ω₁)` of LEMMAS.md L2 (indices shifted to `0, 1`). -/
+/-- The vector `f = (ω₂, -ω₁)` in `M = ψ J + f gᵀ` (L2; indices shifted to `0, 1`). -/
 noncomputable def tiltVec (ω : ℝ³) : ℝ² := !₂[ω 1, -ω 0]
 
-/-- **L2(a).** On the plane `z = ⟪g, p⟫ + c` the screen velocity is affine in
-the screen position `p`: `ν(x) = ψ J p + ⟪g, p⟫ f + (c f + Pτ)`. -/
+/-- **L2, screen velocity on a plane.** On the plane `z = ⟪g, p⟫ + c` the
+screen velocity is affine in the screen position `p`:
+`ν(x) = ψ J p + ⟪g, p⟫ f + (c f + Pτ)`. -/
 theorem screenVel_of_depth_eq (ω τ x : ℝ³) (g : ℝ²) (c : ℝ)
     (hx : x 2 = ⟪g, proj_xy x⟫ + c) :
     screenVel ω τ x = ω 2 • rot90 (proj_xy x) + ⟪g, proj_xy x⟫ • tiltVec ω +
@@ -60,7 +61,9 @@ theorem linearMap_apply_coord (M : ℝ² →ₗ[ℝ] ℝ²) (p : ℝ²) (i : Fin
   conv_lhs => rw [hp]
   simp [map_add, map_smul]
 
-/-- **L2(c), realization direction** (the one used by Theorem 5). -/
+/-- **L2, realization.** For `g ≠ 0`, every affine field `M p + b` with
+`⟪J g, M (J g)⟫ = 0` is the screen velocity of some first-order motion on the
+plane `z = ⟪g, p⟫ + c` (the direction used by Theorem 5). -/
 theorem exists_motion_of_admissible (g : ℝ²) (hg : g ≠ 0) (c : ℝ) (M : ℝ² →ₗ[ℝ] ℝ²)
     (b : ℝ²) (hM : ⟪rot90 g, M (rot90 g)⟫ = 0) :
     ∃ ω τ : ℝ³, ∀ x : ℝ³, x 2 = ⟪g, proj_xy x⟫ + c →
@@ -125,7 +128,7 @@ theorem exists_motion_of_admissible (g : ℝ²) (hg : g ≠ 0) (c : ℝ) (M : �
   · simp [rot90, tiltVec, proj_xy, PiLp.inner_apply, Fin.sum_univ_two]
     linear_combination (-x 0) * eC + (-x 1) * eD
 
-/-- LEMMAS.md's `U_Π` for `Π = affineSpan ℝ W`, `F₀ = conv W`: directions `u`
+/-- The admissible views `U_Π` for `Π = affineSpan ℝ W`, `F₀ = conv W`: directions `u`
 not parallel to `Π` such that the line `v + ℝ u` meets `relint F₀` for every
 `v ∈ V \ W`. -/
 def admissibleViews (V W : Finset ℝ³) : Set ℝ³ :=

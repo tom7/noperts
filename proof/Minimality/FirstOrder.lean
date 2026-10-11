@@ -11,17 +11,17 @@ public import Mathlib.Analysis.Calculus.Deriv.Add
 /-!
 # L1: a strictly inward first-order motion gives a passage
 
-LEMMAS.md Lemma 1, in the standard view.  `K = convexHull ℝ V`,
+Lemma 1 (step 1 of `minimality.md`), in the standard view.  `K = convexHull ℝ V`,
 `S = proj_xy '' K` is the shadow.  A first-order motion `(ω, τ)` is
 *strictly inward* (`FirstOrderInward`) if its screen velocity at every point
 `v ∈ V` points strictly into `S` at `proj_xy v`.  For points projecting into
 `interior S` this is automatic (`isInwardAt_of_mem_interior`), so the
-condition only concerns LEMMAS.md's boundary vertices `V_∂`
+condition only concerns the points projecting to the boundary of `S`
 (`firstOrderInward_iff_frontier`); `V` need not consist of vertices only.
 
 The rotation curve `R_s` is arbitrary as long as `R 0 = 1` and `R' 0 = [ω]×`
-entrywise (`eventually_innerShadow_subset`).  LEMMAS.md uses
-`R_s = exp(s[ω]×)`; for the `IsRupert` corollary we use the Cayley curve
+entrywise (`eventually_innerShadow_subset`), e.g. `R_s = exp(s[ω]×)`; for the
+`IsRupert` corollary we use the Cayley curve
 `rotCurve ω s`, the rational rotation with Cayley vector `(s/2)ω`, which is in
 `SO(3)` for every `s` (same formula as `Noperts.cayleyMatrix`).
 -/
@@ -32,8 +32,7 @@ open scoped RealInnerProductSpace Matrix Topology
 open Filter
 
 /-- The first-order motion `(ω, τ)` moves every point of `V` strictly into
-the standard-view shadow `proj_xy '' conv V` (LEMMAS.md L1 hypothesis
-`ν(v) ∈ int T_S(Pv)`). -/
+the standard-view shadow `proj_xy '' conv V`. -/
 def FirstOrderInward (V : Finset ℝ³) (ω τ : ℝ³) : Prop :=
   ∀ v ∈ V, IsInwardAt (proj_xy '' convexHull ℝ (V : Set ℝ³)) (proj_xy v) (screenVel ω τ v)
 

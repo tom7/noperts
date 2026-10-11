@@ -8,8 +8,9 @@ public import Minimality.Oct9Data
 # Lemma 9.3: good quad edges
 
 For an edge `x → y` of an octahedron at which `x'` is hidden (the two face
-inequalities of Lemma 9.1(a)), view along `u = y - x`.  The shadow is the
-quadrilateral `q, P, Y', P'`; tilting gives the silhouettes `(y, p, y', p')`
+inequalities saying that `x` lies strictly farther than `y` from the planes of
+both faces at the antipodal edge `x' y'`), view along `u = y - x`.  The
+shadow is the quadrilateral `q, P, Y', P'`; tilting gives the silhouettes `(y, p, y', p')`
 (tilt `y' - x`) and `(x, p, y', p')` (tilt `x - y'`), Lemma 8.0.  Unless the
 edge is *bad* or *touching*, one of them is robustly unimodal (Cor. 8.0′).
 -/

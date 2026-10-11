@@ -5,7 +5,7 @@ public import Minimality.Oct9Gale
 @[expose] public section
 
 /-!
-# Weak quad edges (LEMMAS.md §9.6: Lemmas 9.10, 9.11, Corollary 9.0)
+# Weak quad edges (§9.6 of L9: Lemma 9.11)
 
 When `f = 0`, the edge views chosen in §9.5 are *weak* quad edges: the face
 `x' y' p'` at the antipodal edge contains the view direction `u = y - x`.

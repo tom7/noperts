@@ -11,15 +11,16 @@ public import Minimality.FewVertices
 coordinates with respect to the tetrahedron `(A, B, C, T)`,
 `K₁ = (a₁, -β₁, c₁, t₁)` and `K₂ = (a₂, b₂, -γ₂, t₂)` with all eight letters
 positive, and convexity at the edge `AT` reads `β₁ γ₂ < c₁ b₂`.  Then
-`U_ACT ≠ ∅` when `γ₂ < b₂` and `U_ABT ≠ ∅` otherwise (since `xy > 1`).
+`U_ACT ≠ ∅` when `γ₂ < b₂` and `U_ABT ≠ ∅` otherwise (by the convexity
+inequality, `γ₂ ≥ b₂` forces `β₁ < c₁`).
 
 `isRupert_bicappedTetrahedron` is the combinatorial statement: the six points
 have the eight facets `K₁AC, K₁CT, K₁TA, K₂AB, K₂BT, K₂TA, ABC, BCT`
 (`IsFacetTriangle`: a supporting plane through the three points with the
 other points strictly on one side).  It reduces to the normal form by
-reading the barycentric signs off the facet inequalities (LEMMAS.md's use of
-Lemma 5.5).  Numerically, 49/49 random normal-form samples satisfy all eight
-facet conditions, and 300 samples agree with the `U_ACT`/`U_ABT` criterion.
+reading the barycentric signs off the facet inequalities.  Numerically, 49/49
+random normal-form samples satisfy all eight facet conditions, and 300 samples
+agree with the `U_ACT`/`U_ABT` criterion.
 -/
 
 namespace Minimality
@@ -31,7 +32,7 @@ def IsFacetTriangle (V : Finset ℝ³) (P Q R : ℝ³) : Prop :=
     ∀ x ∈ V, x ≠ P → x ≠ Q → x ≠ R → f x < 0
 
 /-- The six points form a bicapped tetrahedron with caps `K₁` (over the
-face `ACT` of `ABCT`) and `K₂` (over `ABT`), LEMMAS.md's labelling. -/
+face `ACT` of `ABCT`) and `K₂` (over `ABT`). -/
 structure IsBicappedTetrahedron (A B C T K₁ K₂ : ℝ³) : Prop where
   nodup : [A, B, C, T, K₁, K₂].Nodup
   affineIndependent : AffineIndependent ℝ ![A, B, C, T]

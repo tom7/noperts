@@ -5,10 +5,10 @@ public import Minimality.SixGale
 @[expose] public section
 
 /-!
-# Every polyhedron with at most six vertices is Rupert (LEMMAS.md L10)
+# Every polyhedron with at most six vertices is Rupert (L10)
 
-After a 2+4 split (Lemma 10.1) with positive points `D, E` and the other four
-`W = {P, Q, R, S}`:
+Step 5 of `minimality.md`.  After a 2+4 split (Lemma 10.1) with positive
+points `D, E` and the other four `W = {P, Q, R, S}`:
 * if `W` is coplanar, the segment `DE` crosses `relint conv W` (Lemma 10.3,
   `isRupert_split_coplanar`);
 * otherwise `D, E` have barycentric coordinates `β = l`, `γ = m` on `W`
@@ -25,7 +25,7 @@ namespace Minimality
 open scoped RealInnerProductSpace Topology
 open Finset Filter
 
-/-- Normal form after a 2+4 split (LEMMAS.md L10.3): `l`, `m` are the
+/-- Normal form after a 2+4 split with `W` not coplanar: `l`, `m` are the
 barycentric dependencies of `D`, `E` on `W = {P, Q, R, S}`, and the split
 gives `(H)`. -/
 structure NF (V : Finset ℝ³) (D E P Q R S : ℝ³) (l m : ℝ³ → ℝ) : Prop where
