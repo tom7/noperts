@@ -5,23 +5,27 @@ import SnubDodecahedron.SparseSupport
 import SnubDodecahedron
 
 /-!
-Native executable that reads and checks the exact certificate data for the
-snub dodecahedron, then establishes `CertificatesValid` and so
-`isNopert_of_certificatesValid`: every snub dodecahedron (Wikipedia's
-coordinates, any similar copy, either chirality) is a nopert
-(`SnubDodecahedron.lean`).
-
-The solution tables (tube packs and chart packs) are decoded (untrusted) and
-checked natively, in parallel, together with the view cover, as in
-`NativeExecutable.constructProof`; they exclude every `IModel` (I-orbit within
-6·10⁻¹⁶ of the rational model). Kernel-proved bridges turn success into
-`CertificatesValid`.
+Native executable that checks the snub dodecahedron's certificate data and, if
+it is all valid, establishes `CertificatesValid`, and so
+(`isNopert_of_certificatesValid`) that every snub dodecahedron (Wikipedia's coordinates, any similar copy, either
+chirality) is a nopert (`SnubDodecahedron.lean`).
 
 Usage:
   constructSnubDodecahedron <tube manifest.txt> <chart directory>
-The manifest lists the identity-tube code packs in code order; the chart
-directory holds chart0.pack through chart2.pack, or per-code packs
-c<chart>/t<t>.pack (pack5d --per_code).
+    Checks everything: the view cover, every tube table and all four chart
+    tables. On success it prints
+      instantiated: IsNopert V for every snub dodecahedron V (none is Rupert)
+
+The arguments: `manifest.txt` lists the tube packs in code order, next to
+them; the chart directory holds `chart0.pack` through `chart2.pack`, or
+per-code packs `c<chart>/t<t>.pack`. How to produce or obtain the data, and
+the running time and memory needed: see `snub-dodecahedron.md` and
+`BUILDING.md` at the root of the repository.
+
+The data is untrusted: it is decoded and checked natively, in parallel. The
+solution tables exclude every `IModel` (every I-orbit within 6·10⁻¹⁶ of the
+rational model); kernel-proved bridges (`Table.Valid.of_withTasksB`) turn
+success into `CertificatesValid`.
 -/
 
 open Noperts Noperts.Pipeline Noperts.Pipeline.WikipediaSnub
@@ -45,10 +49,8 @@ def main (args : List String) : IO Unit := do
   let (manifestPath, directory) ← match args with
     | [m, d] => pure (m, d)
     | _ => throw (IO.userError (
-        "usage: constructSnubDodecahedron <code-pack manifest.txt> <chart directory>; " ++
-        "the manifest lists the identity-tube code packs in code order, and the " ++
-        "directory holds chart0.pack through chart2.pack, or per-code packs " ++
-        "c<chart>/t<t>.pack (pack5d --per_code)"))
+        "usage: constructSnubDodecahedron <tube manifest.txt> <chart directory>\n" ++
+        "(checks everything; see snub-dodecahedron.md)"))
   let packDir := (System.FilePath.mk manifestPath).parent.getD "."
   let mut localTables : SharedLocalTables := #[]
   for line in ← IO.FS.lines manifestPath do
