@@ -1,6 +1,9 @@
 # The Septopert
+Tom 7, 10 Oct 2026
 
-The Septopert is a convex polyhedron with 7 vertices that is not Rupert.
+The Septopert is a new convex polyhedron with 7 vertices that is not Rupert.
+Since 7 is the [fewest possible vertices](minimality.md), this is the
+smallest possible Nopert.
 This page gives the exact statement, what Lean checked and how, and how to
 reproduce the result.
 
@@ -8,19 +11,21 @@ Lean entry point: [`proof/Septopert.lean`](proof/Septopert.lean).
 
 ## The solid
 
-The convex hull of these 7 points. Each coordinate is an integer divided by
-1048576 (2^20):
+![The Septopert, spinning around with confidence](septopert.gif)
+
+The solid is the convex hull of these points (its vertices):
 
 ```
--940638   327651   327651
- 327651  -940638   327651
- 327651   327651  -940638
- 703968    47788    47788
-  47788   703968    47788
-  47788    47788   703968
--514207  -514207  -514207
+(-940638,   327651,   327651)
+( 327651,  -940638,   327651)
+( 327651,   327651,  -940638)
+( 703968,    47788,    47788)
+(  47788,   703968,    47788)
+(  47788,    47788,   703968)
+(-514207,  -514207,  -514207)
 ```
 
+The proof divides by 2^20 so that the maximum magnitude is about 1.
 In lowest terms (the form used in Lean, `septopert` in
 `proof/Septopert.lean`):
 
@@ -34,8 +39,9 @@ In lowest terms (the form used in Lean, `septopert` in
 | 5 | 11947/262144 | 11947/262144 | 21999/32768 |
 | 6 | −514207/1048576 | −514207/1048576 | −514207/1048576 |
 
-- The statement is about these points unscaled (largest |v| ≈ 0.99999935).
-  The integer form is the same solid scaled by 2^20.
+- The statement is about these points (largest |v| ≈ 0.99999935).
+  The integer form is the same solid scaled by 2^20. Any scale or
+  rigid transformation of the solid is a Nopert.
 - Symmetry C3v: a 3-fold axis along (1,1,1) and three mirror planes (each
   swapping two coordinates). Vertices 0–2 are the permutations of (a, b, b),
   vertices 3–5 those of (c, d, d), and vertex 6 is e·(1,1,1).
@@ -57,12 +63,11 @@ theorem isNopert_of_certificatesValid (h : CertificatesValid) : IsNopert septope
 `IsNopert V` (in `proof/Nopert.lean`) says that the points of `V` are not all
 in one plane, so their convex hull is a genuine solid, and that this solid is
 not Rupert. `IsRupert` (in `proof/MainTheorem.lean`) is the Rupert property:
-two copies of the solid, each rotated, can be placed so that the shadow of
+Two copies of the solid, each rotated, can be placed so that the shadow of
 one lies strictly inside the shadow of the other. `CertificatesValid` says
 that the certificate data (four solution tables and a cap certificate) passes
 Lean's validity checks. The same `IsNopert` is used by the
-[minimality](minimality.md) result, so the two together say that 7 is the
-smallest number of vertices of a nopert.
+[minimality](minimality.md) result, so the [two together](proof/ProofOfMainTheorem.lean) say that the vertex count of the smallest possible nopert is exactly 7.
 
 ## What is proved and what is verified
 
@@ -78,31 +83,78 @@ This is a **Lean verification**, not a direct kernel-only Lean proof:
    all pass does it construct `¬ IsRupert` (via part 1) and print
    `instantiated: ¬ IsRupert Septopert.verts (the Septopert is not Rupert)`.
    This step trusts Lean's compiler and runtime to evaluate the checks
-   correctly — the same trust as `native_decide`, though `native_decide` is
+   correctly. This is the same trust as `native_decide`, though `native_decide` is
    not used.
 
-The C++ search in `search/septopert/` (with the shared code in
-`search/common/`) that produced the data does not need to be trusted: a
-mistake there can only produce data that fails the checks.
+The C++ search in `search/septopert/` that produced the data does not
+need to be trusted: A mistake there can only produce data that fails
+the checks. That said, the C++ does its own independent checks of the
+certificate conditions as it searchs for them and prepares them for
+Lean. It would be very unlikely that a bug in the Lean
+compiler/runtime would also occur in the C++ search (perhaps something
+like a bug in GMP's integer multiplication routines.)
+
+Additionally, I ran my GPU solver for 60 billion iterations on the Septopert,
+which searches for Rupert passages via a completely different method.
+This is not part of the proof at all, but it provides additional comfort
+that we didn't just get hypnotized by the AI or miss something silly in the
+proof statement.
+
+We also need to trust that the proof statement itself matches the
+pre-formal idea of what we mean by "Rupert" and "Nopert". I use the
+same [definition](proof/MainTheorem.lean) from the Noperthedron
+project. It is not very mysterious:
+
+```lean
+def IsRupert (vertices : Finset (EuclideanSpace ℝ (Fin 3))) : Prop :=
+   ∃ inner_rotation ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ,
+   ∃ inner_offset : EuclideanSpace ℝ (Fin 2),
+   ∃ outer_rotation ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ,
+   let hull := convexHull ℝ vertices
+   let inner_shadow := { inner_offset + proj_xy (inner_rotation.toEuclideanLin p) | p ∈ hull }
+   let outer_shadow := { proj_xy (outer_rotation.toEuclideanLin p) | p ∈ hull }
+   inner_shadow ⊆ interior outer_shadow
+```
+
+A set of points (note: not a solid) is Rupert if there exists
+rotations for the inner and outer copies (`specialOrthogonalGroup`
+just means 3D rotation), and a 2D translation of the inner copy, such
+that the inner shadow is contained in the interior of the outer
+shadow. The shadows are just the 2D projections of the 3D convex
+hulls. This is almost identical to how I describe it to people on
+the whiteboard.
+
+That said: There is certainly subtlety to be wary of! For example,
+I could have presented you a proof like this:
+
+```lean
+noncomputable def CoolShape : Finset ℝ³ := { ... vertices ... }
+
+theorem CoolShapeIsNotRupert : ¬ IsRupert CoolShape := by ...
+```
+
+And claimed that this `CoolShape` is a Nopert (not Rupert) with some
+enormous meandering proof. But `¬ IsRupert` is also easily satisfied
+by degenerate vertices! For example, if all the vertices are
+collinear, then the convex hull is just a line, and its interior is
+empty, so we can never have `line ⊆ ∅`. Our
+[definition](proof/Nopert.lean) of `IsNopert` adds a condition that
+the point set gives a genuine solid 
+(`¬ Coplanar ℝ (V : Set ℝ³) ∧ ¬ IsRupert V`).
 
 ## Status
 
-- **2026-10-09:** verified on the 64-core VM.
-- Two independent runs (a 16-core machine with restarts, and a from-scratch
-  64-core run) produced byte-identical files, and three native verifications
-  (on two machines) passed.
-- **2026-10-10:** a third, independent from-scratch rebuild (see
-  "Reproducing" below) and its verification passed too.
-
-## Reproducing
-
-See [BUILDING.md](BUILDING.md) for requirements. From a fresh clone:
+I've verified this shape from scratch three times on two different computers (Oct 9 and Oct 10, 2026). You can reproduce it yourself, following the instructions in [BUILDING.md](BUILDING.md):
 
 ```sh
 ./get-cc-lib.sh
-(cd proof && lake exe cache get)                       # Mathlib build cache
+(cd proof && lake exe cache get)    # Mathlib build cache
 search/septopert/rebuild.sh --from model --threads 64 --mem_gb 100
 ```
+
+Note that the certificate search is not deterministic since it runs on
+multiple cores and tests a cache of recent certificates that can be reused
+for nearby cells. So you may not get the same row counts, etc. as I did below.
 
 This builds everything, runs `codebdd` on the exact model
 `search/septopert/septopert_model.txt` (and regenerates the view cover
@@ -150,8 +202,8 @@ cd work && LEAN_NUM_THREADS=64 ../proof/.lake/build/bin/constructSeptopert \
 ```
 
 It checks the cap certificate, the 22 tube tables, then the four chart
-tables one at a time (chart 0 is 83,340,081 rows; charts 1–3 have 144,165,
-124,872 and 104,577).
+tables one at a time. Expect a large chart 0 (~83 million rows);
+charts 1–3 have less than 200k rows each.
 
 ## The data
 

@@ -4,7 +4,7 @@ public import Minimality
 public import Septopert
 
 /-!
-# Seven vertices is the smallest a nopert can be
+# The vertex count of the smallest possible nopert is seven.
 
 This file brings together results from the rest of the repository,
 proving the main theorem in MainTheorem **assuming that
