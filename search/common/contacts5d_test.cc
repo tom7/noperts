@@ -104,33 +104,42 @@ static void TestEdges() {
   }
   int points = 0;
   for (int v = 0; v < NUM_VERTICES; v++) points += rep[v] == v;
-  // Euler's formula for a convex polyhedron.
-  CHECK((int)point_edges.size() == points + (int)facets.size() - 2)
-      << point_edges.size() << " edges, " << points << " points, " << facets.size() << " facets";
+  // The edge list may also triangulate a facet (the deltoidal
+  // hexecontahedron's lists the kites' diagonals): an edge lies on two
+  // facets (a hull edge) or inside one (a diagonal).
   std::vector<int> degree(NUM_VERTICES, 0);
+  int hull_edges = 0, diagonals = 0;
   for (const auto &[a, b] : point_edges) {
     degree[a]++;
     degree[b]++;
-    // Every edge lies on exactly two facets.
     int on = 0;
     for (const auto &f : facets) {
       if (std::binary_search(f.begin(), f.end(), a) && std::binary_search(f.begin(), f.end(), b)) on++;
     }
-    CHECK(on == 2) << a << "-" << b << " on " << on << " facets";
+    CHECK(on == 1 || on == 2) << a << "-" << b << " on " << on << " facets";
+    (on == 2 ? hull_edges : diagonals)++;
   }
+  // Euler's formula for the convex polyhedron.
+  CHECK(hull_edges == points + (int)facets.size() - 2)
+      << hull_edges << " hull edges, " << points << " points, " << facets.size() << " facets";
   for (int v = 0; v < NUM_VERTICES; v++) {
     if (rep[v] == v) CHECK(degree[v] >= 3);
   }
-  // A facet with k vertices has k edges.
+  // A facet with k vertices has k hull edges, plus its diagonals.
+  int facet_diagonals = 0;
   for (const auto &f : facets) {
     int fe = 0;
     for (const auto &[a, b] : point_edges) {
       if (std::binary_search(f.begin(), f.end(), a) && std::binary_search(f.begin(), f.end(), b)) fe++;
     }
-    CHECK(fe == (int)f.size()) << fe << " edges on a facet with " << f.size() << " vertices";
+    CHECK(fe >= (int)f.size()) << fe << " edges on a facet with " << f.size() << " vertices";
+    facet_diagonals += fe - (int)f.size();
   }
-  printf("  %d polyhedron edges (%d between distinct points), %d points, %d facets OK\n",
-         (int)edges.size(), (int)point_edges.size(), points, (int)facets.size());
+  CHECK(facet_diagonals == diagonals) << facet_diagonals << " vs " << diagonals;
+  printf("  %d polyhedron edges (%d between distinct points: %d hull edges, %d diagonals), "
+         "%d points, %d facets OK\n",
+         (int)edges.size(), (int)point_edges.size(), hull_edges, diagonals, points,
+         (int)facets.size());
 }
 
 static void TestPools() {
