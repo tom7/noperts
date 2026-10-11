@@ -117,9 +117,27 @@ echo "== build"
 run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
   export_codetrees_pack.exe search5d.exe pack5d.exe scoreboard5d.exe
 # Lean is needed only by the model (generated sources) and verify stages.
-# (The model stage builds Lean after regenerating its data.)
+# When search/tube stages follow, run the slow Lean build in the background
+# so it completes concurrently with the C++ pipeline.
+LEAN_PID=""
+build_lean_background() {
+  if want verify; then
+    echo "== launching Lean build (constructSnubDodecahedron) in background"
+    if [ $DRY -eq 0 ]; then
+      (cd "$LEAN" && lean_run lake build constructSnubDodecahedron) > "$WORK/lean_build.log" 2>&1 &
+      LEAN_PID=$!
+    else
+      echo "+ (cd $LEAN && lake build constructSnubDodecahedron) &"
+    fi
+  fi
+}
+
 if want verify && ! want model; then
-  (cd "$LEAN" && lean_run lake build constructSnubDodecahedron)
+  if want tube || want tubepack || want search || want pack; then
+    build_lean_background
+  else
+    (cd "$LEAN" && lean_run lake build constructSnubDodecahedron)
+  fi
 fi
 
 if want model; then
@@ -132,13 +150,24 @@ if want model; then
     && run python3 lean_scripts/snub_ico_group.py)
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
     export_codetrees_pack.exe search5d.exe pack5d.exe
-  (cd "$LEAN" && lean_run lake build constructSnubDodecahedron)
+  if want verify; then
+    build_lean_background
+  else
+    (cd "$LEAN" && lean_run lake build constructSnubDodecahedron)
+  fi
 fi
 
 # codebdd.json is written by the model stage (it is not committed).
-if [ $DRY -eq 1 ] && [ ! -f "$NOPERT/codebdd.json" ]; then
-  NCODES=123
-  echo "(dry run: no codebdd.json yet; assuming the model's $NCODES codes)"
+if [ ! -f "$NOPERT/codebdd.json" ]; then
+  if [ $DRY -eq 1 ]; then
+    NCODES=123
+    echo "(dry run: no codebdd.json yet; assuming the model's $NCODES codes)"
+  elif want tube; then
+    echo "error: $NOPERT/codebdd.json not found; run --from model first" >&2
+    exit 1
+  else
+    NCODES=0
+  fi
 else
   NCODES=$(python3 -c "import json; print(len(json.load(open('$NOPERT/codebdd.json'))['codes']))")
 fi
@@ -179,5 +208,13 @@ fi
 
 if want verify; then
   echo "== verify"
+  if [ -n "$LEAN_PID" ] || { [ $DRY -eq 1 ] && { want tube || want search; }; }; then
+    if [ -n "$LEAN_PID" ]; then
+      echo "== waiting for background Lean build (pid $LEAN_PID) =="
+      wait "$LEAN_PID"
+    else
+      echo "+ wait \$LEAN_PID"
+    fi
+  fi
   (cd "$LEAN" && lean_run .lake/build/bin/constructSnubDodecahedron "$TUBEPACKS/manifest.txt" "$PACKS")
 fi
