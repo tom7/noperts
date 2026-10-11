@@ -83,3 +83,7 @@ Meanwhile we learned that earlier this year, Tony Zeng [proposed](https://arxiv.
 This stood as the smallest proven Nopert for about one day. I had been simultaneously racing to verify a 7-vertex shape, the Septopert described above, that I found with computer search using my adversarial solvers. It is only just barely Nopert, so the proof requires a large certificate (7 gigabytes of packed data). I verified that on Oct 9, taking about 4 hours on a 64-core behemoth.
 
 The natural question is then: Can we find a six-vertex Nopert? Or maybe we could prove that every tetrahedron or pentahedron is Rupert? Starting from some ideas of Jason's from 2025 and I like to think some wise guidance from its academic advisor and taskmaster (me), Opus 5.5 was able to prove this in about a day (Lean kernel-only proof): All convex solids with six or fewer vertices are Rupert. That means that the Septopert is a minimal (by vertex count) Nopert.
+
+
+<center><img src="septopert-dry-salt-bed.jpg" width="868" height="549" alt ="The Septopert on the Dry Salt Bed"></center>
+
