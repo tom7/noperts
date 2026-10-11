@@ -101,11 +101,13 @@ page with its statement, trust model and reproduction steps:
     (`work/`, `work-dh/`, `work-ph/`, `work-sd/`, `work-231/`), ignored by
     git.
 
-  License: GPLv3 (`search/COPYING`). Exception: the Python scripts that
-  generate Lean data files (`search/dh/scripts/`, `search/ph/scripts/`,
-  `search/sd/scripts/`, `search/nopert231/scripts/`) derive from the
-  Apache-2.0 Noperthedron project and say so in a header ("THIS FILE ONLY:
-  Uses APACHE 2.0 license"); the license text is `search/APACHE20.txt`.
+  License: GPLv3 (`search/COPYING`). Exception: the scripts with the header
+  "THIS FILE ONLY: Uses APACHE 2.0 license" (the Lean data generators in
+  `search/dh/scripts/`, `search/ph/scripts/`, `search/sd/scripts/` and
+  `search/nopert231/scripts/`, derived from the Apache-2.0 Noperthedron
+  project); the license text is `search/APACHE20.txt`. The other scripts,
+  including those that also write Lean data (`search/dh/dh_cap_lean.py`,
+  `dh_tie_lean.py`, `ico_group.py`), are GPLv3.
 - `cc-lib/`: not in the repository. `./get-cc-lib.sh` checks out svn
   revision 7488 of tom7misc's `trunk/cc-lib`; the build expects it next to
   `search/`. It is GPLv3, with some files under other compatible licenses
