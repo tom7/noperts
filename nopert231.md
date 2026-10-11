@@ -115,9 +115,7 @@ there can only produce data that fails the checks.
     whose kernel proofs are what the proof uses) are deleted;
   - an entry point and an executable that establishes `CertificatesValid`.
 
-  No check function changed, but the code was moved, so the result must be
-  verified again here on the VM before it can be recorded against a commit of
-  this repository. That run has not been done yet.
+  No check function changed.
 - **2026-10-10, shared pipeline:** the modules that were copies of the
   shared certificate pipeline (`proof/Pipeline/`, used by the other
   data-backed results) were deleted, and #231 uses the pipeline through its
@@ -128,15 +126,15 @@ there can only produce data that fails the checks.
   functions are the same definitions, except that the identity-tube tables
   now also accept the pipeline's `empty` rows (tag 4, which #231's data does
   not use) and take the table's root from its first row (0 for #231's data).
-  The statement is unchanged in meaning. Re-verification on the VM is still
-  needed.
+  The statement is unchanged in meaning. The code was moved, so the result
+  must be verified again here on the VM before it can be recorded against a
+  commit of this repository. That run has not been done yet.
 
 ## Verifying existing data
 
-The data is archived at `/mnt/nopertdata/archive/nopert231/` on the 64-core
-VM, which is paused: verification needs Tom to unpause it. See the archive's
-`README.txt` for its layout and checksums. The program expects these
-directories:
+The data from the verified run is archived by the author (not in this
+repository); to check it yourself, rebuild it (see "Reproducing the data"
+below). The program expects these directories:
 
 - tube packs: `manifest.txt`, which lists one pack per code triangle (153) in
   code order;

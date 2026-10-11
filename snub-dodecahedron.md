@@ -132,10 +132,9 @@ there can only produce data that fails the checks.
 
 ## Verifying existing data
 
-The data is archived at `/mnt/nopertdata/archive/snub_dodecahedron/` on the
-64-core VM, which is paused: verification needs Tom to unpause it. See the
-archive's `README.txt` for its layout and checksums. The directories the
-program expects:
+The data from the verified run is archived by the author (not in this
+repository); to check it yourself, rebuild it (see "Reproducing the data"
+below). The program expects these directories:
 
 - tube packs: `manifest.txt`, listing one pack per code triangle in code
   order;
@@ -175,7 +174,7 @@ in `OrbitData.lean`, the tangent-cone generators in `TangentCones.lean`, and
 
 ```sh
 make -C search/sd -j 16
-search/sd/rebuild.sh --from model --model_file snub_model.txt --work DIR
+search/sd/rebuild.sh --from model --work DIR
 ```
 
 `rebuild.sh` runs the stages model, tube, tubepack, search, pack and verify;
