@@ -113,6 +113,18 @@ Measured times (the 64-core column is a from-scratch run in a fresh clone,
 | pack | 2 h 20 min | 49 min |
 | verify | 8 h 22 min, 15.7 GB peak | 3 h 1 min, 15.2 GB peak |
 
+An independent reproduction (2026-10-10) followed these steps from a fresh
+clone, in a container on the 64-core machine without network access or
+systemd: it copied in a checkout of cc-lib r7488 and the Mathlib build
+cache, and the rebuild ran its stages without memory caps. Its stages took
+about 4 h in all: model 8 s, tube 3.3 min, tubepack 17 s, cap 33 s, search
+28 min (64,840,591 nodes), pack 48 min and verify 2 h 40 min. Its tube
+tables and cap certificate were byte-identical to the archive, its chart
+tables had exactly the row counts below, and `constructSeptopert` ended with
+`instantiated: ¬ IsRupert Septopert.verts`. (Its reported peak memory,
+42.9 GB, was read from the container's cgroup, so it counts the page cache
+too; it is not comparable with the column above.)
+
 ## Verifying existing data
 
 Given the data (`tube_packs/`, `packs/`, `cap-1_16.cert`), only the last
@@ -138,7 +150,8 @@ The certificate data is machine output, intended to be CC0:
 
 Two independent runs (a 16-core machine with restarts, and a from-scratch
 64-core run) produced byte-identical files, and three native verifications
-(two machines) passed. An archive with SHA-256 sums of all files is kept at
+(two machines) passed; a third from-scratch rebuild (above) and its
+verification passed too. An archive with SHA-256 sums of all files is kept at
 `/mnt/nopertdata/archive/septopert/` on the 64-core VM (and
 `septopert.7z`, 575 MB). `packs/c0/t3.pack` alone is 5.2 GB, above GitHub's
 2 GB release-asset limit, so the data is not attached to the repository;

@@ -106,8 +106,13 @@ page with its statement, trust model and reproduction steps:
   files: the Septopert's view cover in `proof/scripts/`, and the model
   stages of `search/dh/`, `search/ph/`, `search/sd/` and
   `search/nopert231/`)
-- `systemd-run --user`, which the Septopert's rebuild uses to cap each
-  stage's memory
+- optionally `systemd-run --user`, which the rebuild scripts use to cap
+  each stage's memory (and, for the Septopert, report its peak). Without a
+  systemd user session (e.g. in a container), they run uncapped.
+- network access for `./get-cc-lib.sh` (svn) and `lake exe cache get`.
+  Offline, copy in a checkout of cc-lib at the revision in
+  `get-cc-lib.sh` and an existing `proof/.lake/packages` (with its build
+  cache) instead.
 
 ## Building the Lean project
 

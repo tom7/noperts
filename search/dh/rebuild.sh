@@ -76,8 +76,20 @@ run_to() {
   echo "+ $* > $out" >&2
   if [ $DRY -eq 0 ]; then "$@" > "$out"; fi
 }
+# The memory caps need systemd-run --user (a systemd user session). Without
+# one (e.g. in a container whose PID 1 is not systemd), run uncapped.
+if systemd-run --user --scope -q true 2> /dev/null; then
+  HAVE_SCOPE=1
+else
+  HAVE_SCOPE=0
+  echo "== systemd-run --user is not available: running without memory caps" >&2
+fi
 lean_run() {
-  run systemd-run --user --scope -q -p MemoryMax="${MEM_GB}G" -p MemorySwapMax=0 "$@"
+  if [ $HAVE_SCOPE -eq 1 ]; then
+    run systemd-run --user --scope -q -p MemoryMax="${MEM_GB}G" -p MemorySwapMax=0 "$@"
+  else
+    run "$@"
+  fi
 }
 want() {
   local stage=$1

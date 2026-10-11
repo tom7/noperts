@@ -59,20 +59,29 @@ CAP_CERT=$WORK/cap-1_16.cert
 CAPS_FILE=$WORK/caps.txt
 STAGELOG=$WORK/stages.log
 
+# The memory caps need systemd-run --user (a systemd user session). Without
+# one (e.g. in a container whose PID 1 is not systemd), run uncapped.
+if systemd-run --user --scope -q true 2> /dev/null; then
+  HAVE_SCOPE=1
+else
+  HAVE_SCOPE=0
+  echo "== systemd-run --user is not available: running without memory caps" >&2
+fi
 run() {
   echo "+ $*" >&2
   if [ $DRY -eq 0 ]; then "$@"; fi
 }
 # A command in a memory-capped scope (no swap); prints its peak memory.
+# (Without systemd-run, just the command.)
 capped() {
   # (Called in subshells: the unit name must not depend on a counter.)
   local unit="septopert-$$-$(date +%s%N)"
   echo "+ [scope ${MEM_GB}G] $*" >&2
-  if [ $DRY -eq 0 ]; then
-    systemd-run --user --scope -q --unit="$unit" -p MemoryMax="${MEM_GB}G" -p MemorySwapMax=0 \
-      bash -c '"$@"; rc=$?; f=/sys/fs/cgroup$(cut -d: -f3 /proc/self/cgroup)/memory.peak;
-               [ -r "$f" ] && echo "peak memory: $(( $(cat "$f") / 1048576 )) MiB" >&2; exit $rc' _ "$@"
-  fi
+  if [ $DRY -eq 1 ]; then return; fi
+  if [ $HAVE_SCOPE -eq 0 ]; then "$@"; return; fi
+  systemd-run --user --scope -q --unit="$unit" -p MemoryMax="${MEM_GB}G" -p MemorySwapMax=0 \
+    bash -c '"$@"; rc=$?; f=/sys/fs/cgroup$(cut -d: -f3 /proc/self/cgroup)/memory.peak;
+             [ -r "$f" ] && echo "peak memory: $(( $(cat "$f") / 1048576 )) MiB" >&2; exit $rc' _ "$@"
 }
 want() {
   local stage=$1
@@ -92,7 +101,8 @@ stage_end() {
   echo "== $1 done in ${dt}s"
 }
 
-run mkdir -p "$WORK"
+# (Also in a dry run, so that df below has a directory to look at.)
+mkdir -p "$WORK"
 # The journals and packs are large (t3 alone: ~3 GB of journal); a full disk
 # silently truncates them.
 echo "== free space: $(df -h "$WORK" | awk 'NR == 2 {print $4}')"
@@ -192,9 +202,13 @@ if want verify; then
   stage_begin verify
   # Build the checker (no-op if current), never alongside another Lean build.
   if [ $DRY -eq 0 ]; then while pgrep -x lake > /dev/null; do sleep 30; done; fi
-  (cd "$LEAN" && run timeout 6000 systemd-run --user --scope -q -p MemoryMax=48G -p MemorySwapMax=0 \
-    lake build constructSeptopert)
-  [ -x "$LEAN/.lake/build/bin/constructSeptopert" ] || {
+  if [ $HAVE_SCOPE -eq 1 ]; then
+    (cd "$LEAN" && run timeout 6000 systemd-run --user --scope -q -p MemoryMax=48G -p MemorySwapMax=0 \
+      lake build constructSeptopert)
+  else
+    (cd "$LEAN" && run timeout 6000 lake build constructSeptopert)
+  fi
+  [ $DRY -eq 1 ] || [ -x "$LEAN/.lake/build/bin/constructSeptopert" ] || {
     echo "missing $LEAN/.lake/build/bin/constructSeptopert (lake build constructSeptopert)" >&2; exit 1; }
   capped "$LEAN/.lake/build/bin/constructSeptopert" "$TUBEPACKS/manifest.txt" "$PACKS" "$CAP_CERT" \
     2>&1 | tee "$WORK/verify.log"
