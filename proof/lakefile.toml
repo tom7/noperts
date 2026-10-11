@@ -13,15 +13,6 @@ weak.linter.style.multiGoal = true
 weak.linter.style.cdot = true
 
 [[require]]
-name = "checkdecls"
-git = "https://github.com/PatrickMassot/checkdecls.git"
-
-[[require]]
-name = "tryAtEachStep"
-git = "https://github.com/dwrensha/tryAtEachStep"
-rev = "lean-v4.32.0"
-
-[[require]]
 name = "mathlib"
 git = "https://github.com/leanprover-community/mathlib4"
 rev = "v4.32.0"
