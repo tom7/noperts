@@ -6,6 +6,7 @@ public import Mathlib.Analysis.InnerProductSpace.Dual
 public import Mathlib.Analysis.LocallyConvex.Separation
 public import Mathlib.Topology.Sequences
 public import Rupert.Basic
+public import Pipeline.Similarity
 
 @[expose] public section
 
@@ -103,40 +104,6 @@ theorem transpose_mem_SO3 {Q : Matrix (Fin 3) (Fin 3) ℝ} (hQ : Q ∈ SO3) : Q�
   exact ⟨by simpa using (Matrix.mem_orthogonalGroup_iff' (Fin 3) ℝ).mp this.1,
     by simpa using this.2⟩
 
-/-- Copy of `_root_.isRupert_image_rotation`
-(`PentagonalHexecontahedron/IcoInstance.lean`). -/
-theorem isRupert_image_rotation' (Q : Matrix (Fin 3) (Fin 3) ℝ) (hQ : Q ∈ SO3)
-    (V : Finset ℝ³) (h : IsRupert V) : IsRupert (V.image Q.toEuclideanLin) := by
-  obtain ⟨R1, hR1, off, R2, hR2, hsub⟩ := h
-  have hQt : Qᵀ ∈ SO3 := transpose_mem_SO3 hQ
-  have hQtQ : Qᵀ * Q = 1 := (Matrix.mem_orthogonalGroup_iff' (Fin 3) ℝ).mp hQ.1
-  have hhull : convexHull ℝ (↑(V.image Q.toEuclideanLin) : Set ℝ³) =
-      Q.toEuclideanLin '' convexHull ℝ ↑V := by
-    rw [Finset.coe_image, LinearMap.image_convexHull]
-  have hback : ∀ (R : Matrix (Fin 3) (Fin 3) ℝ) (p : ℝ³),
-      (R * Qᵀ).toEuclideanLin (Q.toEuclideanLin p) = R.toEuclideanLin p := by
-    intro R p
-    simp [Matrix.toLpLin_apply, Matrix.mulVec_mulVec, hQtQ]
-  have hset : ∀ (R : Matrix (Fin 3) (Fin 3) ℝ) (o : ℝ²),
-      { x | ∃ p ∈ convexHull ℝ (↑(V.image Q.toEuclideanLin) : Set ℝ³),
-          o + proj_xy ((R * Qᵀ).toEuclideanLin p) = x } =
-        { x | ∃ p ∈ convexHull ℝ (↑V : Set ℝ³), o + proj_xy (R.toEuclideanLin p) = x } := by
-    intro R o
-    rw [hhull]
-    ext y
-    constructor
-    · rintro ⟨p, ⟨q, hq, rfl⟩, rfl⟩
-      exact ⟨q, hq, by rw [hback]⟩
-    · rintro ⟨q, hq, rfl⟩
-      exact ⟨Q.toEuclideanLin q, ⟨q, hq, rfl⟩, by rw [hback]⟩
-  refine ⟨R1 * Qᵀ, Submonoid.mul_mem _ hR1 hQt, off, R2 * Qᵀ,
-    Submonoid.mul_mem _ hR2 hQt, ?_⟩
-  dsimp only at hsub ⊢
-  have h2 := hset R2 0
-  simp only [zero_add] at h2
-  rw [hset R1 off, h2]
-  exact hsub
-
 /-- `proj_xy` as a linear map. -/
 noncomputable def projL : ℝ³ →ₗ[ℝ] ℝ² where
   toFun := proj_xy
@@ -169,16 +136,13 @@ theorem eq_zero_of_proj_xy_eq_zero {N z : ℝ³} (hN : N 2 ≠ 0) (hz : ⟪N, z�
     · exact absurd h hN
   ext i; fin_cases i <;> simp [h0, h1, h2]
 
-/-- Rupertness is invariant under rotating the vertex set.  (Proved as
-`_root_.isRupert_image_rotation` in
-`PentagonalHexecontahedron/IcoInstance.lean`, applied to `Qᵀ`;
-that file is too heavy to import here, so the proof is to be moved to a light
-module.) -/
+/-- Rupertness is invariant under rotating the vertex set (converse direction:
+`Noperts.Pipeline.isRupert_image_rotation` applied to `Qᵀ`). -/
 theorem isRupert_of_isRupert_image_rotation (Q : Matrix (Fin 3) (Fin 3) ℝ) (hQ : Q ∈ SO3)
     (V : Finset ℝ³) (h : IsRupert (V.image Q.toEuclideanLin)) : IsRupert V := by
   have hQt : Qᵀ ∈ SO3 := transpose_mem_SO3 hQ
   have hQtQ : Qᵀ * Q = 1 := (Matrix.mem_orthogonalGroup_iff' (Fin 3) ℝ).mp hQ.1
-  have := isRupert_image_rotation' Qᵀ hQt _ h
+  have := Noperts.Pipeline.isRupert_image_rotation Qᵀ hQt _ h
   rwa [Finset.image_image, show (Qᵀ.toEuclideanLin ∘ Q.toEuclideanLin) = id by
     funext p; simp [Matrix.toLpLin_apply, Matrix.mulVec_mulVec, hQtQ], Finset.image_id] at this
 
@@ -412,48 +376,10 @@ noncomputable def so3Isometry {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R ∈ SO3) 
 @[simp] theorem so3Isometry_apply {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R ∈ SO3) (x : ℝ³) :
     so3Isometry hR x = R.toEuclideanLin x := rfl
 
-/-- Copy of `_root_.isRupert_image_add`
-(`PentagonalHexecontahedron/IcoInstance.lean`). -/
-theorem isRupert_image_add' (c : ℝ³) (V : Finset ℝ³) (h : IsRupert V) :
-    IsRupert (V.image fun x => c + x) := by
-  obtain ⟨R1, hR1, off, R2, hR2, hsub⟩ := h
-  let d := proj_xy (R2.toEuclideanLin c)
-  refine ⟨R1, hR1, off + d - proj_xy (R1.toEuclideanLin c), R2, hR2, ?_⟩
-  dsimp only at hsub ⊢
-  have hhull : convexHull ℝ (↑(V.image fun x => c + x) : Set ℝ³) =
-      (fun x => c + x) '' convexHull ℝ ↑V := by
-    rw [Finset.coe_image]
-    have := AffineMap.image_convexHull
-      (AffineEquiv.constVAdd ℝ ℝ³ c).toAffineMap (↑V : Set ℝ³)
-    simpa [vadd_eq_add] using this.symm
-  let e : ℝ² ≃ₜ ℝ² := Homeomorph.addRight d
-  have himg : ∀ (o o' : ℝ²) (R : Matrix (Fin 3) (Fin 3) ℝ),
-      o' = o + d - proj_xy (R.toEuclideanLin c) →
-      { x | ∃ p ∈ convexHull ℝ (↑(V.image fun x => c + x) : Set ℝ³),
-          o' + proj_xy (R.toEuclideanLin p) = x } =
-        e '' { x | ∃ p ∈ convexHull ℝ (↑V : Set ℝ³), o + proj_xy (R.toEuclideanLin p) = x } := by
-    intro o o' R ho
-    rw [hhull]
-    ext y
-    constructor
-    · rintro ⟨p, ⟨q, hq, rfl⟩, rfl⟩
-      refine ⟨o + proj_xy (R.toEuclideanLin q), ⟨q, hq, rfl⟩, ?_⟩
-      simp only [e, Homeomorph.coe_addRight, ho, map_add, proj_xy_add']
-      abel
-    · rintro ⟨x, ⟨q, hq, rfl⟩, rfl⟩
-      refine ⟨c + q, ⟨q, hq, rfl⟩, ?_⟩
-      simp only [e, Homeomorph.coe_addRight, ho, map_add, proj_xy_add']
-      abel
-  have h1 := himg off _ R1 rfl
-  have h2 := himg 0 0 R2 (by simp [d])
-  simp only [zero_add] at h2
-  rw [h1, h2, ← e.image_interior]
-  exact Set.image_mono hsub
-
 /-- Rupertness is invariant under translation (converse direction). -/
 theorem isRupert_of_isRupert_image_add (c : ℝ³) (V : Finset ℝ³)
     (h : IsRupert (V.image fun x => c + x)) : IsRupert V := by
-  have := isRupert_image_add' (-c) _ h
+  have := Noperts.Pipeline.isRupert_image_add (-c) _ h
   rwa [Finset.image_image, show ((fun x => -c + x) ∘ fun x => c + x) = id by
     funext x; simp, Finset.image_id] at this
 
