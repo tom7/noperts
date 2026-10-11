@@ -13,6 +13,9 @@ Lean entry point: [`proof/Septopert.lean`](proof/Septopert.lean).
 
 ![The Septopert, spinning around with confidence](septopert.gif)
 
+Here is an exact [STL file](septopert.stl). On github, you can
+rotate it around in your browser by just clicking on that.
+
 The solid is the convex hull of these points (its vertices):
 
 ```

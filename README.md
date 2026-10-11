@@ -6,7 +6,7 @@ This is a collection of formalized results about Noperts.
 A shape is said to be Rupert if it's possible to pass an exact copy of
 the shape through itself. It's named after Prince Rupert's Cube, the
 first famous demonstration that the cube can do this. Surprisingly,
-most convex polyhedra are Rupert, and it was not known whether any
+most convex polyhedra *are* Rupert, and it was not known whether any
 counterexamples even existed until 2025. We call a polyhedron that
 is not Rupert a "Nopert," for Nope + Rupert.
 

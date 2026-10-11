@@ -1,4 +1,4 @@
-# Minimality: every nopert has at least 7 vertices
+# Minimality: Every nopert has at least 7 vertices
 
 Every convex polyhedron with 6 or fewer vertices is Rupert, and the
 [Septopert](septopert.md) is a Nopert witness with 7 vertices. So we
