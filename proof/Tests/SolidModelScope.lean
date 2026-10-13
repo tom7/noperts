@@ -6,6 +6,7 @@ import Pipeline.NativeExecutable
 import SnubDodecahedron.SparseSupport
 import DeltoidalHexecontahedron.NativeExecutable
 import Nopert231
+import SnubCube
 import Nopert231.NativeExecutable
 import ProofOfMainTheorem
 
@@ -55,4 +56,15 @@ open Nopert231
 example : (inferInstance : Noperts.Pipeline.FivefoldSolid) = Nopert231.fivefoldSolid := rfl
 example : (inferInstance : Noperts.Pipeline.SparseLocalViewTree.CertificateViewCheck) =
     Nopert231.certificateViewCheck := rfl
+end
+
+/-! The snub cube is an `OctahedralSolid` inside its namespace, with its caps;
+its checker uses the default certificate-row check. -/
+
+section
+open SnubCube
+example : (inferInstance : Noperts.Pipeline.OctahedralSolid) = SnubCube.octahedralSolid := rfl
+example : (inferInstance : Noperts.Pipeline.OctaCaps) = SnubCube.octaCaps := rfl
+example : (inferInstance : Noperts.Pipeline.SparseLocalViewTree.CertificateViewCheck) =
+    Noperts.Pipeline.SparseLocalViewTree.CertificateViewCheck.allVertices := rfl
 end
