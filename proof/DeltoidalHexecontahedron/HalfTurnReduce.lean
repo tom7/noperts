@@ -57,9 +57,9 @@ theorem exists_halfTurn_ico_reduction (u : Fin 3 → ℝ) (hu : ∑ k, u k ^ 2 �
     have hH := halfTurnMat_mul_self u hu
     have heq : halfTurnMat u * htCandidate u R b g * icoMatrix g' = htCandidate u R (!b) k := by
       cases b
-      · simp only [htCandidate, Bool.false_eq_true, if_false, Bool.not_false, if_true, Matrix.one_mul]
+      · simp only [htCandidate, Bool.false_eq_true, ite_false, Bool.not_false, ite_true, Matrix.one_mul]
         simp only [Matrix.mul_assoc, hk]
-      · simp only [htCandidate, if_true, Bool.not_true, Bool.false_eq_true, if_false, Matrix.one_mul]
+      · simp only [htCandidate, ite_true, Bool.not_true, Bool.false_eq_true, ite_false, Matrix.one_mul]
         calc halfTurnMat u * (halfTurnMat u * R * icoMatrix g) * icoMatrix g'
             = (halfTurnMat u * halfTurnMat u) * R * (icoMatrix g * icoMatrix g') := by
               simp only [Matrix.mul_assoc]

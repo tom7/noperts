@@ -312,7 +312,7 @@ theorem exists_admissible_inward_field (W : Finset ℝ²)
     ⟨_, ⟨a, ⟨haF, rfl⟩, rfl⟩⟩ ⟨_, ⟨b, ⟨hbF, rfl⟩, rfl⟩⟩ (by
       rw [Set.disjoint_left]
       rintro _ ⟨a', ⟨ha'F, ha'⟩, rfl⟩ ⟨b', ⟨hb'F, hb'⟩, hy⟩
-      simp only [innerₛₗ_apply_apply, Set.mem_setOf_eq] at hy ha' hb'
+      simp only [innerₛₗ_apply_apply, Set.mem_ofPred_eq] at hy ha' hb'
       apply hnd
       have hba : b' - a' = (L / ‖u‖ ^ 2) • u := by
         apply eq_of_inner_eq_of_inner_rot90_eq hu
@@ -563,7 +563,7 @@ theorem exists_admissible_inward_field (W : Finset ℝ²)
     set n' := (1 / ‖n‖) • n
     have hn' : n' ∈ Kp p := by
       refine ⟨by simp [n', norm_smul, hnpos.ne'], Set.mem_iInter₂.mpr fun q hq => ?_⟩
-      simp only [Set.mem_setOf_eq, n', real_inner_smul_left]
+      simp only [Set.mem_ofPred_eq, n', real_inner_smul_left]
       exact mul_nonpos_of_nonneg_of_nonpos (by positivity) (hN q hq)
     have := hδK (p, n') (Set.mem_biUnion hp ⟨rfl, hn'⟩)
     simp only [n', real_inner_smul_left] at this

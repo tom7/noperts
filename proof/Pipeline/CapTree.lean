@@ -39,8 +39,8 @@ theorem half_width_nonneg {box : Box} (hb : ∀ i, 0 ≤ (box i).2) (a : Fin 5) 
     ∀ i, 0 ≤ (half box a upper i).2 := by
   intro i
   by_cases hi : i = a
-  · simp only [half, hi, if_true]; exact div_nonneg (hb a) (by norm_num)
-  · simp only [half, hi, if_false]; exact hb i
+  · simp only [half, hi, ite_true]; exact div_nonneg (hb a) (by norm_num)
+  · simp only [half, hi, ite_false]; exact hb i
 
 theorem inBox_half {box : Box} {y : Fin 5 → ℝ} (hy : InBox box y) (a : Fin 5) :
     InBox (half box a false) y ∨ InBox (half box a true) y := by
@@ -49,18 +49,18 @@ theorem inBox_half {box : Box} {y : Fin 5 → ℝ} (hy : InBox box y) (a : Fin 5
     intro i
     by_cases hi : i = a
     · subst hi
-      simp only [half, if_true, Bool.false_eq_true, if_false, add_zero]
+      simp only [half, ite_true, Bool.false_eq_true, ite_false, add_zero]
       push_cast
       exact ⟨(hy i).1, by linarith⟩
-    · simp only [half, hi, if_false]; exact hy i
+    · simp only [half, hi, ite_false]; exact hy i
   · right
     intro i
     by_cases hi : i = a
     · subst hi
-      simp only [half, if_true]
+      simp only [half, ite_true]
       push_cast
       exact ⟨by linarith, by linarith [(hy i).2]⟩
-    · simp only [half, hi, if_false]; exact hy i
+    · simp only [half, hi, ite_false]; exact hy i
 
 /-- The tree check with the leaf tests as parameters. -/
 def CTree.check (leafOk : ℕ → Box → Bool) (pruneOk coneOk : Box → Bool) : CTree → Box → Bool
@@ -117,7 +117,7 @@ theorem witnessPoly_nonneg (ch : Chart) (id : ChartId) (V : Array KVec) (vk c : 
   rw [hm]
   apply mul_nonneg (pow_nonneg hmu m)
   by_cases hc : isCone id = true
-  · simp only [hc, if_true] at h0
+  · simp only [hc, ite_true] at h0
     obtain ⟨n, hn⟩ := eval_divOut 5 2 y 64 (NPoly.divOut 5 0 64 p)
     rw [hn]
     exact mul_nonneg (pow_nonneg (ht hc) n) h0

@@ -150,7 +150,7 @@ theorem exists_inner_ge_of_ball_subset_convexHull
     rintro x ⟨j, rfl⟩
     exact h j
   have hlt := hopen hhull
-  simp only [Set.mem_setOf_eq, real_inner_smul_right, real_inner_self_eq_norm_sq, hω,
+  simp only [Set.mem_ofPred_eq, real_inner_smul_right, real_inner_self_eq_norm_sq, hω,
     one_pow, mul_one] at hlt
   exact (lt_irrefl c) hlt
 

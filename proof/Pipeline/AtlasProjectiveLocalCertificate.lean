@@ -1031,7 +1031,7 @@ theorem Box.exactSupport_le_upper (box : Box)
     have herr := (box.certificate j).exactSupport_sub_approx_abs_le (P := P)
       box hscale i k
     rw [abs_le] at herr
-    simp only [Box.supportUpper, if_neg hk]
+    simp only [Box.supportUpper, ite_eq_right hk]
     change _ ≤ ((max3 (fun corner => box.supportAt j corner i k) +
       supportError : ℚ) : ℝ)
     push_cast

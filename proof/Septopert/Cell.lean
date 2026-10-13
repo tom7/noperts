@@ -61,19 +61,19 @@ theorem exists_c3v_reduction (u : Fin 3 → ℝ) (hu : ∑ k, u k ^ 2 ≠ 0) (R 
   refine ⟨b, j, fun k => ?_, fun i => ?_⟩
   · cases b
     · have := hmax (false, j + k) (Finset.mem_univ _)
-      simp only [c3vCandidate, Bool.false_eq_true, if_false] at this ⊢
+      simp only [c3vCandidate, Bool.false_eq_true, ite_false] at this ⊢
       rwa [Matrix.mul_assoc, c3_mul_c3]
     · have := hmax (true, j + negIdx k) (Finset.mem_univ _)
-      simp only [c3vCandidate, if_true] at this ⊢
+      simp only [c3vCandidate, ite_true] at this ⊢
       rwa [Matrix.mul_assoc, mirrorQ_mul_c3]
   · cases b
     · have := hmax (true, i + j) (Finset.mem_univ _)
-      simp only [c3vCandidate, Bool.false_eq_true, if_false, if_true] at this ⊢
+      simp only [c3vCandidate, Bool.false_eq_true, ite_false, ite_true] at this ⊢
       have heq : halfTurnMat u * (R * c3Mat j) * mirrorQMat i = halfTurnMat u * R * mirrorQMat (i + j) := by
         rw [Matrix.mul_assoc (halfTurnMat u), Matrix.mul_assoc R, c3_mul_mirrorQ, ← Matrix.mul_assoc]
       rwa [heq]
     · have := hmax (false, j + negIdx i) (Finset.mem_univ _)
-      simp only [c3vCandidate, if_true, Bool.false_eq_true, if_false] at this ⊢
+      simp only [c3vCandidate, ite_true, Bool.false_eq_true, ite_false] at this ⊢
       have heq : halfTurnMat u * (halfTurnMat u * R * mirrorQMat j) * mirrorQMat i =
           R * c3Mat (j + negIdx i) := by
         calc halfTurnMat u * (halfTurnMat u * R * mirrorQMat j) * mirrorQMat i

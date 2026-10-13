@@ -472,14 +472,14 @@ theorem pos_of_scaled {x : ℝ} {l : Int} (hl : 0 < l) (h : (l : ℝ) ≤ (2 ^ 6
   have : (0 : ℝ) < (l : ℝ) := by exact_mod_cast hl
   have hp : (0 : ℝ) < (2 ^ 64) ^ 3 := by positivity
   by_contra hx
-  push_neg at hx
+  push Not at hx
   nlinarith
 
 theorem neg_of_scaled {x : ℝ} {u : Int} (hu : u < 0) (h : (2 ^ 64) ^ 3 * x ≤ (u : ℝ)) : x < 0 := by
   have : (u : ℝ) < 0 := by exact_mod_cast hu
   have hp : (0 : ℝ) < (2 ^ 64) ^ 3 := by positivity
   by_contra hx
-  push_neg at hx
+  push Not at hx
   nlinarith
 
 /-! ### The base faces and their poles -/
@@ -558,7 +558,7 @@ theorem snubM1_axis : snubM1.toEuclideanLin m1Axis = m1Axis := by
 theorem wiki_one : wiki 1 = snubM1 := by
   have hc := wikiCheck_eq
   simp only [wikiCheck, Bool.and_eq_true, decide_eq_true_eq] at hc
-  rw [wiki, hc.1.1.1.2, wikiGen_real 0, if_pos rfl]
+  rw [wiki, hc.1.1.1.2, wikiGen_real 0, ite_eq_left rfl]
 
 theorem wikiLeft_zero {g : Nat} (hg : g < 60) :
     wikiLeft 0 g < 60 ∧ wiki (wikiLeft 0 g) = snubM1 * wiki g := by

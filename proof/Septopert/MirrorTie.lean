@@ -56,7 +56,7 @@ theorem innerShadow_mirrorTie (p : MatrixPose) (Q : SO3) (S : Set ℝ³)
     (hQ : (fun v => -(Q.val.toEuclideanLin v)) '' S = S) :
     innerShadow (p.mirrorTie Q) S = innerShadow p S := by
   ext w
-  simp only [innerShadow, Set.mem_setOf_eq]
+  simp only [innerShadow, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨v, hv, rfl⟩
     refine ⟨-(Q.val.toEuclideanLin v), ?_, (proj_inner_mirrorTie p Q v).symm⟩

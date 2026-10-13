@@ -68,13 +68,13 @@ theorem exists_halfTurn_reduced (P : IModel)
   cases b
   · refine ⟨pose.rightIcoSymmetry g, rfl, ?_, ?_, P.RupertPose_rightIcoSymmetry_iff pose g⟩
     · rw [MatrixPose.relativeRotation_rightIcoSymmetry]
-      simpa only [htCandidate, Bool.false_eq_true, if_false, Matrix.one_mul] using hfund
+      simpa only [htCandidate, Bool.false_eq_true, ite_false, Matrix.one_mul] using hfund
     · rw [MatrixPose.relativeRotation_rightIcoSymmetry]
-      simpa only [htCandidate, Bool.false_eq_true, if_false, Matrix.one_mul] using hcell
+      simpa only [htCandidate, Bool.false_eq_true, ite_false, Matrix.one_mul] using hcell
   · have hrel : (pose.leftHalfTurn (icoSO3 g)).relativeRotation =
         htCandidate pose.view pose.relativeRotation true g := by
       rw [relativeRotation_leftHalfTurn]
-      simp only [htCandidate, if_true]
+      simp only [htCandidate, ite_true]
       rfl
     refine ⟨pose.leftHalfTurn (icoSO3 g), rfl, ?_, ?_, ?_⟩
     · rw [hrel]; exact hfund

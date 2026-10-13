@@ -237,10 +237,10 @@ theorem abel_identity (g : ℕ → ℝ²) (ζ : ℕ → ℝ) (m : ℕ) (hm : 0 <
   have e3 : ∑ s ∈ range (m' + 1), (if s + 1 = m' + 1 then ζ 0 else ζ (s + 1)) * Ψ (s + 1) =
       ∑ s ∈ range (m' + 1), ζ s * Ψ s := by
     rw [sum_range_succ, sum_range_succ']
-    rw [if_pos rfl, hm']
+    rw [ite_eq_left rfl, hm']
     congr 1
     exact sum_congr rfl fun s hs => by
-      rw [if_neg (by rw [mem_range] at hs; omega)]
+      rw [ite_eq_right (by rw [mem_range] at hs; omega)]
   rw [e2, e3, sub_self]
 
 /-- Rotating the index of a sum over `range m`. -/
@@ -428,7 +428,7 @@ theorem forces_parallel (g : ℕ → ℝ²) (ζ : ℕ → ℝ) (m T : ℕ) (hT0 
   set w : ℕ → ℝ := fun n => (if n = m then ζf 0 else ζf n) - ζf (n - 1) with hw
   -- the weights: `≥ 0` before `T`, `≤ 0` after, nonzero at forced corners
   have hwval : ∀ n, 1 ≤ n → n < m → w n = ζf n - ζf (n - 1) := fun n h1 h2 => by
-    simp only [hw, if_neg (show n ≠ m by omega)]
+    simp only [hw, ite_eq_right (show n ≠ m by omega)]
   have hw_zero : ∀ n, 1 ≤ n → n < m → g n = 0 → w n = 0 := fun n h1 h2 hg => by
     rw [hwval n h1 h2]
     simp only [hζf]
@@ -454,7 +454,7 @@ theorem forces_parallel (g : ℕ → ℝ²) (ζ : ℕ → ℝ) (m T : ℕ) (hT0 
     have e0 : Nat.findGreatest P 0 = 0 := Nat.findGreatest_eq hg0
     have : w m = ζ 0 - ζ (Nat.findGreatest P (m - 1)) := by
       show (if m = m then ζf 0 else ζf m) - ζf (m - 1) = _
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       simp only [hζf, e0]
     rw [this]
     have hge := hfg_ge (m - 1) T (by omega) hgT
@@ -517,22 +517,22 @@ theorem forces_parallel (g : ℕ → ℝ²) (ζ : ℕ → ℝ) (m T : ℕ) (hT0 
           rw [show T + (n - 1) = (T - 1) + m by omega, Nat.add_mod_right,
             Nat.mod_eq_of_lt (by omega)]
         have e3 : (if T + n < m then T + n else if T + n = m then m else T + n - m) = T := by
-          rw [if_neg (by omega), if_neg (by omega)]; omega
+          rw [ite_eq_right (by omega), ite_eq_right (by omega)]; omega
         rw [e3]
         simp only [hw', hζ', hw]
-        rw [if_pos h2, if_neg (by omega), Nat.add_zero, e1, e2]
+        rw [ite_eq_left h2, ite_eq_right (by omega), Nat.add_zero, e1, e2]
       · by_cases hlt : T + n < m
         · have e1 : (T + n) % m = T + n := Nat.mod_eq_of_lt hlt
           have e2 : (T + (n - 1)) % m = T + n - 1 := by
             rw [Nat.mod_eq_of_lt (by omega)]; omega
           simp only [hw', hζ', hw]
-          rw [if_neg (by omega), if_pos hlt, if_neg (by omega), e1, e2]
+          rw [ite_eq_right (by omega), ite_eq_left hlt, ite_eq_right (by omega), e1, e2]
         · by_cases heq : T + n = m
           · have e1 : (T + n) % m = 0 := by rw [heq, Nat.mod_self]
             have e2 : (T + (n - 1)) % m = m - 1 := by
               rw [Nat.mod_eq_of_lt (by omega)]; omega
             simp only [hw', hζ', hw]
-            rw [if_neg (by omega), if_neg hlt, if_pos heq, if_pos rfl, e1, e2]
+            rw [ite_eq_right (by omega), ite_eq_right hlt, ite_eq_left heq, ite_eq_left rfl, e1, e2]
           · have e1 : (T + n) % m = T + n - m := by
               rw [show T + n = (T + n - m) + m by omega, Nat.add_mod_right,
                 Nat.mod_eq_of_lt (by omega)]; omega
@@ -540,7 +540,7 @@ theorem forces_parallel (g : ℕ → ℝ²) (ζ : ℕ → ℝ) (m T : ℕ) (hT0 
               rw [show T + (n - 1) = (T + n - m - 1) + m by omega, Nat.add_mod_right,
                 Nat.mod_eq_of_lt (by omega)]
             simp only [hw', hζ', hw]
-            rw [if_neg (by omega), if_neg hlt, if_neg heq, if_neg (by omega), e1, e2]
+            rw [ite_eq_right (by omega), ite_eq_right hlt, ite_eq_right heq, ite_eq_right (by omega), e1, e2]
     have hwr1 : ∀ n, 1 ≤ n → n ≤ m - T → w' n ≤ 0 := by
       intro n h1 h2
       rw [hw'eq n h1 (by omega)]

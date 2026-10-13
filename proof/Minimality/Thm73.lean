@@ -228,7 +228,7 @@ theorem SSlin_rotate {x : ℕ → ℝ} {k : ℕ} (hx : SSlin x k) (o : ℕ) (ho 
     intro x i j hij hjk hin hout
     by_cases hoi : o ≤ i
     · refine ⟨i - o, j - o, by omega, by omega, Or.inl ⟨fun n h1 h2 => ?_, fun n h1 h2 => ?_⟩⟩
-      · dsimp only; rw [mod_add_lt ho (by omega), if_pos (by omega)]; exact hin _ (by omega) (by omega)
+      · dsimp only; rw [mod_add_lt ho (by omega), ite_eq_left (by omega)]; exact hin _ (by omega) (by omega)
       · dsimp only; rw [mod_add_lt ho h1]
         split_ifs with h
         · exact hout _ h (by omega)
@@ -246,7 +246,7 @@ theorem SSlin_rotate {x : ℕ → ℝ} {k : ℕ} (hx : SSlin x k) (o : ℕ) (ho 
           · exact hin _ (by omega) (by omega)
       · refine ⟨i + k - o, j + k - o, by omega, by omega, Or.inl ⟨fun n h1 h2 => ?_,
           fun n h1 h2 => ?_⟩⟩
-        · dsimp only; rw [mod_add_lt ho (by omega), if_neg (by omega)]
+        · dsimp only; rw [mod_add_lt ho (by omega), ite_eq_right (by omega)]
           exact hin _ (by omega) (by omega)
         · dsimp only; rw [mod_add_lt ho h1]
           split_ifs with h

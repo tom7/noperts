@@ -208,18 +208,18 @@ theorem cap_cover (st : Setup) (pr : Params) (zOf : Kind × ℕ × ℕ × Bool �
       by_cases han : st.aniso = true
       · fin_cases i
         · show |(if st.aniso then _ else _)| ≤ _
-          rw [if_pos han]; exact hdiv _ hcc
+          rw [ite_eq_left han]; exact hdiv _ hcc
         · show |(if st.aniso then _ else _)| ≤ _
-          rw [if_pos han]; exact hdiv _ rfl
+          rw [ite_eq_left han]; exact hdiv _ rfl
         · show |(if st.aniso then _ else _)| ≤ _
-          rw [if_pos han]; exact hun _ hxx
+          rw [ite_eq_left han]; exact hun _ hxx
       · fin_cases i
         · show |(if st.aniso then _ else _)| ≤ _
-          rw [if_neg han]; exact hun _ h11
+          rw [ite_eq_right han]; exact hun _ h11
         · show |(if st.aniso then _ else _)| ≤ _
-          rw [if_neg han]; exact hun _ h22
+          rw [ite_eq_right han]; exact hun _ h22
         · show |(if st.aniso then _ else _)| ≤ _
-          rw [if_neg han]; exact hun _ hxx
+          rw [ite_eq_right han]; exact hun _ hxx
     rw [hrange i]
     split_ifs with h1
     · rw [h1, pow_one]; push_cast; linarith
@@ -242,20 +242,20 @@ theorem cap_cover (st : Setup) (pr : Params) (zOf : Kind × ℕ × ℕ × Bool �
     simp only []
     rw [hsv, h0, h1, hs]
     by_cases han : st.aniso = true
-    · rw [if_pos han]
+    · rw [ite_eq_left han]
       have hd := decomp_aniso hxx hxa hpos w
       have e0 := hωv 0; have e1 := hωv 1; have e2 := hωv 2
-      simp only [ω, wt, if_pos han] at e0 e1 e2
+      simp only [ω, wt, ite_eq_left han] at e0 e1 e2
       simp at e0 e1 e2
       conv_rhs => rw [hd]
       rw [e0, e1, e2]
       funext k
       simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
       ring
-    · rw [if_neg han]
+    · rw [ite_eq_right han]
       have hd := decomp_orthonormal ⟨h11, h22, hxx, h12, h1x, h2x⟩ w
       have e0 := hωv 0; have e1 := hωv 1; have e2 := hωv 2
-      simp only [ω, wt, if_neg han] at e0 e1 e2
+      simp only [ω, wt, ite_eq_right han] at e0 e1 e2
       simp at e0 e1 e2
       conv_rhs => rw [hd]
       rw [e0, e1, e2]
@@ -271,8 +271,8 @@ theorem cap_cover (st : Setup) (pr : Params) (zOf : Kind × ℕ × ℕ × Bool �
   have hsgn : ∀ (x : ℝ), |x| = 1 → x = (if decide (0 ≤ x) then 1 else -1) := by
     intro x hx
     by_cases h : 0 ≤ x
-    · simp only [h, decide_true, if_true]; rw [abs_of_nonneg h] at hx; exact hx
-    · simp only [h, decide_false, Bool.false_eq_true, if_false]; rw [abs_of_neg (lt_of_not_ge h)] at hx; linarith
+    · simp only [h, decide_true, ite_true]; rw [abs_of_nonneg h] at hx; exact hx
+    · simp only [h, decide_false, Bool.false_eq_true, ite_false]; rw [abs_of_neg (lt_of_not_ge h)] at hx; linarith
   have hμ1' : μ ≤ (pr.mu0 : ℝ) := hμ1
   rcases hcase with he | ⟨k, hk⟩
   · -- The F_e face (e = 1).
@@ -324,8 +324,8 @@ theorem cap_cover (st : Setup) (pr : Params) (zOf : Kind × ℕ × ℕ × Bool �
   · -- A coordinate face: |s_k| = R_k.
     have hsk : sv k = (if decide (0 ≤ sv k) then 1 else -1) * (st.range k : ℝ) := by
       by_cases h : 0 ≤ sv k
-      · simp only [h, decide_true, if_true, one_mul]; rw [abs_of_nonneg h] at hk; exact hk
-      · simp only [h, decide_false, Bool.false_eq_true, if_false]; rw [abs_of_neg (lt_of_not_ge h)] at hk; linarith
+      · simp only [h, decide_true, ite_true, one_mul]; rw [abs_of_nonneg h] at hk; exact hk
+      · simp only [h, decide_false, Bool.false_eq_true, ite_false]; rw [abs_of_neg (lt_of_not_ge h)] at hk; linarith
     obtain ⟨id, hid, hk', hsd, y, hy, hy0, hy1, hres⟩ :
         ∃ id ∈ expandChart st pr zOf (.face, side, k, decide (0 ≤ sv k)), id.kind = .face ∧ id.side = side ∧
           ∃ y, InBoxR (rootBox st pr id) y ∧ y 0 = μ ∧ y 1 = τ ∧ rES st id A B y = (e, sv) := by

@@ -52,7 +52,7 @@ theorem left_of_mem_convexHull (hp : IsCcwPolygon p) (i : ZMod k) {c : ℝ²}
     have : {w : ℝ² | 0 ≤ cross2 (p (i + 1) - p i) (w - p i)} =
         {w : ℝ² | ⟪outNormal (p i) (p (i + 1)), w⟫ ≤ ⟪outNormal (p i) (p (i + 1)), p i⟫} := by
       ext w
-      simp only [Set.mem_setOf_eq]
+      simp only [Set.mem_ofPred_eq]
       rw [show ⟪outNormal (p i) (p (i + 1)), w⟫ = ⟪outNormal (p i) (p (i + 1)), w - p i⟫ +
         ⟪outNormal (p i) (p (i + 1)), p i⟫ by rw [← inner_add_right, sub_add_cancel],
         inner_outNormal]
@@ -63,7 +63,7 @@ theorem left_of_mem_convexHull (hp : IsCcwPolygon p) (i : ZMod k) {c : ℝ²}
   by_cases h1 : j = i
   · subst h1; simp [cross2]
   by_cases h2 : j = i + 1
-  · subst h2; simp only [Set.mem_setOf_eq, cross2_self, le_refl]
+  · subst h2; simp only [Set.mem_ofPred_eq, cross2_self, le_refl]
   exact (hp.2 i j h1 h2).le
 
 theorem edge_ne_zero (hp : IsCcwPolygon p) (i : ZMod k) : p (i + 1) - p i ≠ 0 := by
@@ -131,7 +131,7 @@ theorem mem_interior_of_left [NeZero k] (hp : IsCcwPolygon p) {q : ℝ²}
     (h : ∀ i, 0 < cross2 (p (i + 1) - p i) (q - p i)) :
     q ∈ interior (convexHull ℝ (Set.range p)) := by
   have hopen : IsOpen {w : ℝ² | ∀ i, 0 < cross2 (p (i + 1) - p i) (w - p i)} := by
-    rw [Set.setOf_forall]
+    rw [Set.ofPred_forall]
     refine isOpen_iInter_of_finite fun i => isOpen_lt continuous_const ?_
     simp only [cross2]; fun_prop
   exact interior_maximal (fun w hw => hp.mem_convexHull_of_left fun i => (hw i).le) hopen h

@@ -75,7 +75,7 @@ theorem isOpen_overlap4 : IsOpen {z : ZMod 4 → ℝ | Overlap4 (z 0) (z 1) (z 2
     isOpen_lt (continuous_apply i) (continuous_apply j)
   have hne : ∀ i j : ZMod 4, IsOpen {z : ZMod 4 → ℝ | z i ≠ z j} := fun i j =>
     isOpen_ne_fun (continuous_apply i) (continuous_apply j)
-  simp only [Overlap4, Set.setOf_and, Set.setOf_or]
+  simp only [Overlap4, Set.ofPred_and, Set.ofPred_or]
   exact (((hlt 0 1).union ((hlt 0 3).union ((hlt 2 1).union (hlt 2 3)))).inter
     (((hlt 1 0).union ((hlt 3 0).union ((hlt 1 2).union (hlt 3 2)))).inter
       ((hne 0 2).inter (hne 1 3))))

@@ -155,7 +155,7 @@ theorem exists_short_shadow (W : Finset ℝ²) (hW : ¬ Collinear ℝ (W : Set �
       m ≤ c * q 0 + s * q 1 ∧ c * q 0 + s * q 1 ≤ M := by
     have hconv : Convex ℝ {q : ℝ² | m ≤ c * q 0 + s * q 1 ∧ c * q 0 + s * q 1 ≤ M} := by
       intro x hx y hy α β hα hβ hαβ
-      simp only [Set.mem_setOf_eq, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul] at hx hy ⊢
+      simp only [Set.mem_ofPred_eq, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul] at hx hy ⊢
       have e : c * (α * x 0 + β * y 0) + s * (α * x 1 + β * y 1) =
           α * (c * x 0 + s * x 1) + β * (c * y 0 + s * y 1) := by ring
       have em : α * m + β * m = m := by rw [← add_mul, hαβ, one_mul]
@@ -220,7 +220,7 @@ theorem isRupert_of_flat (V : Finset ℝ³) (hz : ∀ v ∈ V, v 2 = 0)
     intro p hp
     refine convexHull_min (fun v hv => hz v hv) (t := {p : ℝ³ | p 2 = 0}) ?_ hp
     intro x hx y hy α β _ _ _
-    simp only [Set.mem_setOf_eq, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul] at hx hy ⊢
+    simp only [Set.mem_ofPred_eq, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul] at hx hy ⊢
     rw [hx, hy]; ring
   have hP : proj_xy '' convexHull ℝ (V : Set ℝ³) =
       convexHull ℝ ((V.image proj_xy : Finset ℝ²) : Set ℝ²) := by

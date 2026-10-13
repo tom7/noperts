@@ -116,7 +116,7 @@ theorem CapClaim.image (P : IModel) {x e1 e2 : Fin 3 → ℝ} {mu0 τ : ℝ} {G 
     · simp [p₁]
   have hrup₁ : RupertPose p₁ P.toC5.polyhedron.hull ↔ RupertPose p P.toC5.polyhedron.hull := by
     cases sgn
-    · simp only [p₁, Bool.false_eq_true, if_false]; exact MatrixPose.RupertPose_viewAntipode_iff p _
+    · simp only [p₁, Bool.false_eq_true, ite_false]; exact MatrixPose.RupertPose_viewAntipode_iff p _
     · simp [p₁]
   let p₂ := p₁.bothRightIco g
   have hv₂ : p₂.view = (icoMatrix g)ᵀ.mulVec p₁.view := by
@@ -141,7 +141,7 @@ theorem CapClaim.image (P : IModel) {x e1 e2 : Fin 3 → ℝ} {mu0 τ : ℝ} {G 
       halfTurnMat_view_bothRightIco p₁ g
     have hH₁ : halfTurnMat p₁.view = halfTurnMat p.view := by
       rw [hv₁]; cases sgn
-      · simp only [Bool.false_eq_true, if_false]; rw [halfTurnMat_smul (-1) (by norm_num)]
+      · simp only [Bool.false_eq_true, ite_false]; rw [halfTurnMat_smul (-1) (by norm_num)]
       · simp
     have htrc : Matrix.trace ((icoMatrix g)ᵀ * p.relativeRotation * icoMatrix g) = Matrix.trace p.relativeRotation := by
       rw [← hR₂]; exact htr₂

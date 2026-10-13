@@ -257,7 +257,7 @@ theorem dhIModel_verts :
     (dhIModel.toC5.verts : Set ℝ³) = {v | ∃ j < 70, v = (dhScale : ℝ) • toEuc (kv (slotK j))} := by
   ext v
   simp only [CyclicModel.verts, Finset.coe_image, Finset.coe_univ, Set.image_univ, Set.mem_range,
-    Set.mem_setOf_eq, dhIModel_vertex]
+    Set.mem_ofPred_eq, dhIModel_vertex]
   constructor
   · rintro ⟨i, rfl⟩
     exact ⟨i.val, i.isLt, rfl⟩
@@ -277,7 +277,7 @@ theorem dhIModel_verts_mcCooey :
     simp [Matrix.toLpLin_apply, toEuc]
   rw [dhIModel_verts]
   ext v
-  simp only [Set.mem_setOf_eq, Set.mem_image, deltoidalHexecontahedron]
+  simp only [Set.mem_ofPred_eq, Set.mem_image, deltoidalHexecontahedron]
   constructor
   · rintro ⟨j, hj, rfl⟩
     obtain ⟨⟨g, s, k⟩, -, hk⟩ := hs j hj
@@ -297,7 +297,7 @@ theorem dhIModel_centrallySymmetric : IModel.CentrallySymmetric dhIModel := by
   have hneg : (-LinearMap.id : ℝ³ →ₗ[ℝ] ℝ³) '' (dhIModel.toC5.verts : Set ℝ³) = dhIModel.toC5.verts := by
     rw [dhIModel_verts]
     ext w
-    simp only [Set.mem_image, Set.mem_setOf_eq, LinearMap.neg_apply, LinearMap.id_apply]
+    simp only [Set.mem_image, Set.mem_ofPred_eq, LinearMap.neg_apply, LinearMap.id_apply]
     constructor
     · rintro ⟨_, ⟨j, hj, rfl⟩, rfl⟩
       obtain ⟨j', hj', hk⟩ := hc j hj
@@ -327,7 +327,7 @@ theorem dhHull_eq (L : List KVec) (hL : sameSlots L = true) :
   simp only [sameSlots, Bool.and_eq_true, List.all_eq_true, List.any_eq_true, List.mem_range] at hL
   congr 1
   ext v
-  simp only [Set.mem_setOf_eq, List.mem_map]
+  simp only [Set.mem_ofPred_eq, List.mem_map]
   constructor
   · rintro ⟨j, hj, rfl⟩
     obtain ⟨w, hw, hk⟩ := hL.2 j hj

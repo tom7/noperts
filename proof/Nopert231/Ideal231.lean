@@ -387,8 +387,8 @@ theorem quadVolume_zero_eq : quadVolume 0 = -(normalXY + normalZ * (z1 - sx 2 2)
     cos_eight_pi_fifths, sin_eight_pi_fifths, seed]
   simp only [Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one,
     Matrix.cons_val_two, Matrix.head_cons, Matrix.tail_cons]
-  simp only [if_neg (show (2 : SeedIndex) ≠ 1 by decide),
-    if_neg (show (3 : SeedIndex) ≠ 1 by decide), ↓reduceIte]
+  simp only [ite_eq_right (show (2 : SeedIndex) ≠ 1 by decide),
+    ite_eq_right (show (3 : SeedIndex) ≠ 1 by decide), ↓reduceIte]
   simp only [normalXY, normalZ, dx, dy, ex, ey, ez]
   ring
 

@@ -91,7 +91,7 @@ theorem solid_eq_hull (V : Array KVec) (hV : V = solidVerts) :
   unfold solid poly Polyhedron.hull
   congr 1
   ext v
-  simp only [Set.mem_setOf_eq, List.mem_map, Array.mem_toList_iff, solidVerts, Array.mem_ofFn]
+  simp only [Set.mem_ofPred_eq, List.mem_map, Array.mem_toList_iff, solidVerts, Array.mem_ofFn]
   constructor
   · rintro ⟨i, rfl⟩
     refine ⟨_, ⟨_, ⟨i, rfl⟩, rfl⟩, ?_⟩
@@ -197,7 +197,7 @@ theorem capHolds_of_cert (c : CapCert) (hc : certOk c = true) : CapHolds := by
     funext k
     simp only [dualVec, hfv, hx, kv_capX]
     fin_cases k <;> simp [rdot] <;> norm_num
-  rw [hd0, hd1, hx, kv_capX, hmu, if_pos hpr, hG, gMat_capGcol] at hclaim
+  rw [hd0, hd1, hx, kv_capX, hmu, ite_eq_left hpr, hG, gMat_capGcol] at hclaim
   exact hclaim
 
 end Septopert

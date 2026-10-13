@@ -98,8 +98,8 @@ theorem eval_faceS (st : Setup) (id : ChartId) (y : Fin 5 → ℝ) (i : Fin 3) :
     NPoly.eval 5 (faceS st id i) y = rFaceS st id y i := by
   unfold faceS rFaceS
   by_cases ha : (i : ℕ) = id.axis
-  · simp only [ha, if_true, eval_pint]; cases id.sign <;> simp
-  · simp only [ha, if_false]
+  · simp only [ha, ite_true, eval_pint]; cases id.sign <;> simp
+  · simp only [ha, ite_false]
     rcases h : pvarOf id i with _ | k <;> simp [eval_ratioVar, NPoly.eval_zero]
 
 /-- The real (e, s). -/
@@ -148,8 +148,8 @@ theorem eval_eAndS (st : Setup) (id : ChartId) (A B : KVec) (y : Fin 5 → ℝ) 
         obtain ⟨h1, h2⟩ := eval_tieES id.ratio id.z p.1 p.2.1 p.2.2 y
         refine ⟨h1, fun i => ?_⟩
         by_cases h0 : (i : ℕ) = 0
-        · rw [if_pos h0, if_pos h0]; exact h2
-        · rw [if_neg h0, if_neg h0]; exact eval_faceS st id y i
+        · rw [ite_eq_left h0, ite_eq_left h0]; exact h2
+        · rw [ite_eq_right h0, ite_eq_right h0]; exact eval_faceS st id y i
     · have e1 : st.tieChartES id = none := by simp [Setup.tieChartES, hr]
       have e2 : st.rTieChartES id y = none := by simp [Setup.rTieChartES, hr]
       rw [e1, e2]

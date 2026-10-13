@@ -171,7 +171,7 @@ theorem bernstein_identity (R G : Matrix (Fin 3) (Fin 3) ℝ) (P : Fin 3 → Fin
       D * (2 * ∑ i, ∑ k, ∑ j, (∑ c, lam c * P c i) * R i k * G k j * (∑ c, lam c * P c j) -
         (∑ m, (∑ c, lam c * P c m) ^ 2) * (∑ i, ∑ k, R i k * G k i + ∑ i, R i i)) := by
   simp only [Fin.sum_univ_three, Fin.isValue]
-  simp only [show (0 : Fin 3) = 0 from rfl, show (1 : Fin 3) = 1 from rfl, if_pos, if_neg,
+  simp only [show (0 : Fin 3) = 0 from rfl, show (1 : Fin 3) = 1 from rfl, ite_eq_left, ite_eq_right,
     Fin.reduceEq, ite_true, ite_false]
   ring
 
@@ -321,7 +321,7 @@ theorem quad_pos (B : Fin 3 → Fin 3 → ℝ) (hB : ∀ c d, 0 < B c d) (lam : 
     0 < ∑ c, ∑ d, lam c * lam d * B c d := by
   obtain ⟨c0, hc0⟩ : ∃ c, 0 < lam c := by
     by_contra h
-    push_neg at h
+    push Not at h
     have : ∑ c, lam c ≤ 0 := Finset.sum_nonpos fun c _ => h c
     linarith
   have hnn : ∀ c d, 0 ≤ lam c * lam d * B c d :=
@@ -387,7 +387,7 @@ theorem Box.valid_imp_not_inHalfTurnCell (box : Box) (hvalid : box.Valid) {p : A
   apply not_inHalfTurnCell_of_pos _ _ box.element
   have hD := cayleyDenom_pos p.x p.y p.z
   by_contra h
-  push_neg at h
+  push Not at h
   have := mul_le_mul_of_nonneg_left h hD.le
   linarith
 

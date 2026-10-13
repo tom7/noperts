@@ -48,7 +48,7 @@ def PentaCond (z : ZMod 5 → ℝ) : Prop := z 0 < z 1 ∧ z 3 < z 2 ∧ (z 4 < 
 theorem isOpen_pentaCond : IsOpen {z : ZMod 5 → ℝ | PentaCond z} := by
   have hlt : ∀ i j : ZMod 5, IsOpen {z : ZMod 5 → ℝ | z i < z j} := fun i j =>
     isOpen_lt (continuous_apply i) (continuous_apply j)
-  simp only [PentaCond, Set.setOf_and, Set.setOf_or]
+  simp only [PentaCond, Set.ofPred_and, Set.ofPred_or]
   exact (hlt 0 1).inter ((hlt 3 2).inter ((hlt 4 0).union (hlt 4 3)))
 
 theorem isCyclicUnimodal_five {z : ZMod 5 → ℝ} (hinj : Function.Injective z) (h : PentaCond z) :

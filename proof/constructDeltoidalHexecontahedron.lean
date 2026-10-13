@@ -71,7 +71,7 @@ def main (args : List String) : IO Unit := do
     for entry in ← System.FilePath.readDir tieDir do
       let name := entry.fileName
       if name.startsWith "n" && name.endsWith ".cert" then
-        match (((name.drop 1).dropRight 5).toString).splitOn "_t" with
+        match (((name.drop 1).dropEnd 5).toString).splitOn "_t" with
         | [n, tt] => certFiles := certFiles.push (n.toNat!, tt.toNat!, ← readLines entry.path.toString)
         | _ => pure ()
     let ties := decodeTies (← readLines s!"{tieDir}/dh_tie_data.txt") (← readLines s!"{tieDir}/nodes.txt") certFiles

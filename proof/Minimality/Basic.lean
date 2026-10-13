@@ -254,7 +254,7 @@ theorem isInwardAt_of_forall_normal {E : Type*} [NormedAddCommGroup E]
     have hcl : closure S ⊆ {a | ⟪n, a⟫ ≤ ⟪n, p + (1 / ((k : ℝ) + 1)) • d⟫} := by
       rw [← hS.closure_interior_eq_closure_of_nonempty_interior hint]
       refine closure_minimal (fun a ha => ?_) (isClosed_le (by fun_prop) (by fun_prop))
-      simp only [Set.mem_setOf_eq, hnf]
+      simp only [Set.mem_ofPred_eq, hnf]
       exact (hf a ha).le
     intro a ha
     rw [inner_smul_left, inner_smul_left]
@@ -361,7 +361,7 @@ theorem inner_toEuclideanLin_SO3 {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R ∈ SO
 /-- A rotation as a linear isometry equivalence. -/
 noncomputable def so3Isometry {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R ∈ SO3) : ℝ³ ≃ₗᵢ[ℝ] ℝ³ :=
   LinearEquiv.isometryOfInner
-    (LinearEquiv.ofLinear R.toEuclideanLin Rᵀ.toEuclideanLin
+    (LinearEquiv.ofLinearMap R.toEuclideanLin Rᵀ.toEuclideanLin
       (by
         have h : R * Rᵀ = 1 := by
           simpa using (Matrix.mem_orthogonalGroup_iff (Fin 3) ℝ).mp hR.1

@@ -209,7 +209,7 @@ theorem bernstein_identity (R G : Matrix (Fin 3) (Fin 3) ℝ) (P : Fin 3 → Fin
       D * (2 * ∑ i, ∑ k, ∑ j, (∑ c, lam c * P c i) * R i k * G k j * (∑ c, lam c * P c j) -
         (∑ m, (∑ c, lam c * P c m) ^ 2) * (∑ i, ∑ k, R i k * G k i + ∑ i, R i i)) := by
   simp only [Fin.sum_univ_three, Fin.isValue]
-  simp only [show (0 : Fin 3) = 0 from rfl, show (1 : Fin 3) = 1 from rfl, if_pos, if_neg,
+  simp only [show (0 : Fin 3) = 0 from rfl, show (1 : Fin 3) = 1 from rfl, ite_eq_left, ite_eq_right,
     Fin.reduceEq, ite_true, ite_false]
   ring
 

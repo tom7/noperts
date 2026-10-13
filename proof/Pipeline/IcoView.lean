@@ -357,7 +357,7 @@ theorem theta_mem_of_viewCone {θ φ : ℝ} (hθ : θ ∈ Set.Ioc (-Real.pi) Rea
   have hb : 50 * Real.sin θ ≤ 69 * Real.cos θ := by nlinarith
   have hc : 0 < Real.cos θ := by
     by_contra hneg
-    push_neg at hneg
+    push Not at hneg
     have hs0 : Real.sin θ = 0 ∧ Real.cos θ = 0 := by constructor <;> nlinarith
     have := Real.sin_sq_add_cos_sq θ
     rw [hs0.1, hs0.2] at this
@@ -365,7 +365,7 @@ theorem theta_mem_of_viewCone {θ φ : ℝ} (hθ : θ ∈ Set.Ioc (-Real.pi) Rea
   have hs : 0 ≤ Real.sin θ := by nlinarith
   have hθ0 : 0 ≤ θ := by
     by_contra hneg
-    push_neg at hneg
+    push Not at hneg
     have := Real.sin_neg_of_neg_of_neg_pi_lt hneg hθ.1
     linarith
   refine ⟨hθ0, ?_⟩
@@ -373,11 +373,11 @@ theorem theta_mem_of_viewCone {θ φ : ℝ} (hθ : θ ∈ Set.Ioc (-Real.pi) Rea
   have hcos2 : (1 / 2 : ℝ) < Real.cos θ := by
     have hsq := Real.sin_sq_add_cos_sq θ
     by_contra hle
-    push_neg at hle
+    push Not at hle
     have hs2 : Real.sin θ ≤ 69 / 100 := by nlinarith
     nlinarith [mul_le_mul hs2 hs2 hs (by norm_num), mul_le_mul hle hle hc.le (by norm_num)]
   by_contra hge
-  push_neg at hge
+  push Not at hge
   have hle : θ ≤ Real.pi := hθ.2
   have hmono : Real.cos θ ≤ Real.cos (2 * Real.pi / 5) :=
     Real.cos_le_cos_of_nonneg_of_le_pi (by positivity) hle hge

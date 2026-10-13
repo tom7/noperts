@@ -115,7 +115,7 @@ theorem outerShadow_mirrorScene (p : MatrixPose) (i : Fin 3)
     (hS : (fun v => -((mirrorQMat i).toEuclideanLin v)) '' S = S) :
     outerShadow (p.mirrorScene i) S = outerShadow p S := by
   ext w
-  simp only [outerShadow, Set.mem_setOf_eq]
+  simp only [outerShadow, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨v, hv, rfl⟩
     exact ⟨_, by rw [← hS]; exact ⟨v, hv, rfl⟩, (proj_outer_mirrorScene p i v).symm⟩
@@ -266,7 +266,7 @@ theorem RupertPose_candPose_iff (S : Set ℝ³) (hc : ∀ k, (c3Mat k).toEuclide
     (p : MatrixPose) (s b : Bool) (j : Fin 3) :
     RupertPose (candPose p s b j) S ↔ RupertPose p S := by
   cases s <;> cases b <;>
-    simp only [candPose, Bool.false_eq_true, if_false, if_true, MatrixPose.RupertPose_viewAntipode_iff,
+    simp only [candPose, Bool.false_eq_true, ite_false, ite_true, MatrixPose.RupertPose_viewAntipode_iff,
       RupertPose_mirrorScene_iff S _ _ (hm j), RupertPose_bothRightC3_iff S _ _ (hc j)]
 
 /-- Every pose of a C3v solid is equivalent to one whose view lies in the

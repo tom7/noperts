@@ -53,7 +53,7 @@ theorem finite_affine_zero {a b : ℝ} (h : a ≠ 0 ∨ b ≠ 0) : {t : ℝ | a 
     convert Set.finite_empty
     ext t; simp [ha, hb]
   · refine (Set.finite_singleton (-b / a)).subset fun t ht => ?_
-    simp only [Set.mem_setOf_eq] at ht
+    simp only [Set.mem_ofPred_eq] at ht
     simp only [Set.mem_singleton_iff]
     field_simp; linarith
 
@@ -77,7 +77,7 @@ theorem exists_generic_dir {ι κ : Type*} [Finite ι] [Finite κ] (E : ι → �
       · exact Or.inr (neg_ne_zero.mpr h)
     · exact (hne _ (hD i)).symm
   obtain ⟨t, ht⟩ := hfin.exists_notMem
-  simp only [Set.mem_union, Set.mem_iUnion, Set.mem_setOf_eq, not_or, not_exists] at ht
+  simp only [Set.mem_union, Set.mem_iUnion, Set.mem_ofPred_eq, not_or, not_exists] at ht
   refine ⟨!₂[1, t], fun i h => ht.1 i ?_, fun i h => ht.2 i ?_⟩
   · simp [cross2] at h; linarith
   · simp [PiLp.inner_apply, Fin.sum_univ_two] at h; linarith

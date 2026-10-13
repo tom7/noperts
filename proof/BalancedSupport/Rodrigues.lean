@@ -184,7 +184,7 @@ theorem AxisAngle.sin_mul_first_inner {Q : ℝ³ →L[ℝ] ℝ³}
   by_cases h : 0 ≤ Real.sin a.angle
   · simp [AxisAngle.signedAxis, h, abs_of_nonneg h]
   · have h' : Real.sin a.angle < 0 := lt_of_not_ge h
-    rw [AxisAngle.signedAxis, if_neg h, abs_of_neg h']
+    rw [AxisAngle.signedAxis, ite_eq_right h, abs_of_neg h']
     simp only [inner_neg_left]
     ring
 

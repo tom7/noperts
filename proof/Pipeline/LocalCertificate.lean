@@ -116,7 +116,7 @@ private theorem Box.mismatchQCLM_eq (box : Box) :
   ext v
   simp only [Box.mismatchQCLM,
     Noperts.Atlas.LocalCertificate.rotRMQCLM, symmetryQCLM,
-    ContinuousLinearMap.sub_apply, ContinuousLinearMap.comp_apply,
+    sub_apply, ContinuousLinearMap.comp_apply,
     LinearMap.coe_toContinuousLinearMap', Matrix.ofLp_toLpLin,
     Matrix.toLin'_apply, Matrix.toLpLin_apply]
   rw [hmat, Matrix.sub_mulVec, Matrix.mulVec_mulVec]
@@ -174,7 +174,7 @@ theorem symmetryQCLM_difference_norm_bounded (g : OrbitIndex) :
       LinearMap.toContinuousLinearMap (Matrix.toEuclideanLin
         (symmetryMatrix g - (symmetryMatrixQ g).map fun x => (x : ℝ))) := by
     ext v
-    simp only [Noperts.Atlas.so3CLM, symmetryQCLM, ContinuousLinearMap.sub_apply,
+    simp only [Noperts.Atlas.so3CLM, symmetryQCLM, sub_apply,
       LinearMap.coe_toContinuousLinearMap', Matrix.toLpLin_apply, Matrix.sub_mulVec]
     rfl
   rw [hclm]

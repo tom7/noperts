@@ -80,7 +80,7 @@ theorem rootTriangle_valid (root : Fin 8) :
   · intro c
     by_cases h : i = c
     · subst c
-      simp only [rootTriangle, signedBasis, if_pos]
+      simp only [rootTriangle, signedBasis, ite_eq_left]
       exact mul_self_nonneg _
     · simp [rootTriangle, signedBasis, h]
   · fin_cases i

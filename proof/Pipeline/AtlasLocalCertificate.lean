@@ -353,7 +353,7 @@ theorem Box.rationalRelativeMismatchCLM_eq (box : Box)
   simp only [Box.rationalRelativeMismatchCLM,
     Box.rationalRelativeMismatchMatrix, Box.relativeCLM,
     Box.approxSymmetryMatrix, LocalCertificate.symmetryQCLM,
-    ContinuousLinearMap.sub_apply, LinearMap.coe_toContinuousLinearMap',
+    sub_apply, LinearMap.coe_toContinuousLinearMap',
     Matrix.toLpLin_apply, Matrix.sub_mulVec]
   rfl
 

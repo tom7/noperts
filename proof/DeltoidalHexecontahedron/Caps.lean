@@ -77,7 +77,7 @@ theorem baseClaim_of_cert (c : CapCert) (b : CapBase) (h : certForBase c b = tru
     rw [hb] at hprune
     simp only [Bool.and_eq_true, List.all_eq_true, List.mem_finRange, forall_const,
       decide_eq_true_eq] at hprune
-    simp only [Option.map_some, hprune.1, if_true, Option.some.injEq]
+    simp only [Option.map_some, hprune.1, ite_true, Option.some.injEq]
     ext i j
     rw [gMat, hprune.2 i j, val_icoK]
 

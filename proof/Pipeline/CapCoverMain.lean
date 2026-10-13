@@ -164,7 +164,7 @@ theorem cap_cover (st : Setup) (pr : Params) (zOf : Kind × ℕ × ℕ × Bool �
     intro id y hs h0 h1 hsv
     rw [rChartW_eq]
     simp only []
-    rw [hsv, h0, if_neg (by rw [haniso]; decide)]
+    rw [hsv, h0, ite_eq_right (by rw [haniso]; decide)]
     rw [hωv 0, hωv 1, hωv 2, show isoWt 0 = 1 from rfl, show isoWt 1 = 1 from rfl, show isoWt 2 = 2 from rfl]
     funext k
     simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
@@ -176,8 +176,8 @@ theorem cap_cover (st : Setup) (pr : Params) (zOf : Kind × ℕ × ℕ × Bool �
   have hsgn : ∀ (x : ℝ), |x| = 1 → x = (if decide (0 ≤ x) then 1 else -1) := by
     intro x hx
     by_cases h : 0 ≤ x
-    · simp only [h, decide_true, if_true]; rw [abs_of_nonneg h] at hx; exact hx
-    · simp only [h, decide_false, Bool.false_eq_true, if_false]; rw [abs_of_neg (lt_of_not_ge h)] at hx; linarith
+    · simp only [h, decide_true, ite_true]; rw [abs_of_nonneg h] at hx; exact hx
+    · simp only [h, decide_false, Bool.false_eq_true, ite_false]; rw [abs_of_neg (lt_of_not_ge h)] at hx; linarith
   have hμ1' : μ ≤ (pr.mu0 : ℝ) := hμ1
   rcases hcase with he | ⟨k, hk⟩
   · -- The F_e face (e = 1).
@@ -208,8 +208,8 @@ theorem cap_cover (st : Setup) (pr : Params) (zOf : Kind × ℕ × ℕ × Bool �
   · -- A coordinate face: |s_k| = R_k.
     have hsk : sv k = (if decide (0 ≤ sv k) then 1 else -1) * (st.range k : ℝ) := by
       by_cases h : 0 ≤ sv k
-      · simp only [h, decide_true, if_true, one_mul]; rw [abs_of_nonneg h] at hk; exact hk
-      · simp only [h, decide_false, Bool.false_eq_true, if_false]; rw [abs_of_neg (lt_of_not_ge h)] at hk; linarith
+      · simp only [h, decide_true, ite_true, one_mul]; rw [abs_of_nonneg h] at hk; exact hk
+      · simp only [h, decide_false, Bool.false_eq_true, ite_false]; rw [abs_of_neg (lt_of_not_ge h)] at hk; linarith
     obtain ⟨id, hid, hk', hsd, y, hy, hy0, hy1, hres⟩ :
         ∃ id ∈ expandChart st pr zOf (.face, side, k, decide (0 ≤ sv k)), id.kind = .face ∧ id.side = side ∧
           ∃ y, InBoxR (rootBox st pr id) y ∧ y 0 = μ ∧ y 1 = τ ∧ rES st id A B y = (e, sv) := by

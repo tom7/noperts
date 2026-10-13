@@ -697,7 +697,7 @@ theorem not_rupertPose_of_three_way_split
   by_cases hexc : exceptional a.signedAxis
   · by_cases h_inner : ‖Noperts.Atlas.so3CLM relative - 1‖ ≤ (r_min : ℝ)
     · exact h_inner_core a h_inner hexc
-    · push_neg at h_inner
+    · push Not at h_inner
       exact h_annular_cone a h_inner.le hexc
   · exact h_complement a hexc
 

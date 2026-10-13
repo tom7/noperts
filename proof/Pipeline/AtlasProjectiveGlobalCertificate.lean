@@ -665,7 +665,7 @@ theorem Box.supportUpper_self (box : Box) (i : Fin 3) :
     box.supportUpper i (box.certificate.index i) = 0 := by
   unfold Box.supportUpper
   unfold AtlasProjectiveLocalCertificate.Box.supportUpper
-  rw [if_pos]
+  rw [ite_eq_left]
   unfold AtlasProjectiveLocalCertificate.Box.exactSupportTie
   exact Or.inl (box.localShell_supportIndex i).symm
 

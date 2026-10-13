@@ -86,14 +86,14 @@ theorem rootLoHi_two_cone (st : Setup) (pr : Params) (id : ChartId) (hk : id.kin
   rcases Nat.lt_or_ge id.ratio 3 with hr | hr
   · interval_cases hr2 : id.ratio
     · rw [rootLoHi_ratio0 st pr id hr2, hb]
-    · rw [rootLoHi_ratio1 st pr id hr2, if_neg (by simpa using hnw), hb]
-    · rw [rootLoHi_ratio2 st pr id hr2, if_neg, hb]
+    · rw [rootLoHi_ratio1 st pr id hr2, ite_eq_right (by simpa using hnw), hb]
+    · rw [rootLoHi_ratio2 st pr id hr2, ite_eq_right, hb]
       rintro ⟨-, hp⟩
       have := pvarOf_ne_zero_of_ne_fe id hnfe hp
       omega
   · rw [rootLoHi_std' st pr id 2 (tieLoHiOf_of_ne_face st id (by rcases hk with h | h <;> rw [h] <;> simp) 2)]
-    unfold rootLoHiStd; simp only [show (2 : ℕ) ≤ 2 from le_refl _, if_true]
-    rw [if_neg (by omega), if_neg (by omega), hb]
+    unfold rootLoHiStd; simp only [show (2 : ℕ) ≤ 2 from le_refl _, ite_true]
+    rw [ite_eq_right (by omega), ite_eq_right (by omega), hb]
 
 theorem y0_nonneg_of_root (st : Setup) (pr : Params) (id : ChartId) (y : Fin 5 → ℝ)
     (hy : InBoxR (rootBox st pr id) y) : 0 ≤ y 0 := by
@@ -240,20 +240,20 @@ theorem sRange_sound (st : Setup) (id : ChartId) (box : Box) (y : Fin 5 → ℝ)
   unfold sRange rRatioVar
   by_cases h1 : id.ratio = 1
   · by_cases hw : (List.range 3).any (fun j => !st.strong j && pvarOf id j = some (i : ℕ)) = true
-    · rw [if_pos ⟨h1, hw⟩, if_pos h1, if_pos hw, hv]
+    · rw [ite_eq_left ⟨h1, hw⟩, ite_eq_left h1, ite_eq_left hw, hv]
       exact mem_mulIvl h0 hvv
-    · rw [if_neg (fun h => hw h.2), if_neg (by rw [h1]; omega), if_pos h1, if_neg hw, hv]
+    · rw [ite_eq_right (fun h => hw h.2), ite_eq_right (by rw [h1]; omega), ite_eq_left h1, ite_eq_right hw, hv]
       exact hvv
-  · rw [if_neg (fun h => h1 h.1), if_neg h1]
+  · rw [ite_eq_right (fun h => h1 h.1), ite_eq_right h1]
     by_cases h2 : id.ratio = 2 ∧ pvarOf id id.ratioCoord = some (i : ℕ)
-    · rw [if_pos h2, if_pos h2]
+    · rw [ite_eq_left h2, ite_eq_left h2]
       have hz : (0 : ℝ) ≤ id.z := by positivity
       simp only
       rw [hv]
       split_ifs
       · push_cast; constructor <;> nlinarith [h0.1, h0.2, hvv.1, hvv.2]
       · push_cast; constructor <;> nlinarith [h0.1, h0.2, hvv.1, hvv.2]
-    · rw [if_neg h2, if_neg h2, hv]; exact hvv
+    · rw [ite_eq_right h2, ite_eq_right h2, hv]; exact hvv
 
 /-- |s − c| ≤ bound on the whole interval. -/
 def within (r : ℚ × ℚ) (c bound : ℚ) : Bool := decide (max |r.1 - c| |r.2 - c| ≤ bound)
@@ -457,7 +457,7 @@ theorem pruneOk_sound (st : Setup) (id : ChartId) (Gcol : Fin 3 → KVec) (box :
     apply mul_pos (pow_pos hμ m)
     unfold cellQ at hq
     by_cases hc : isCone id = true
-    · simp only [hc, if_true] at hq
+    · simp only [hc, ite_true] at hq
       obtain ⟨n, hn⟩ := eval_divOut 5 2 y 64 (NPoly.divOut 5 0 64 (cellPoly st id Gcol))
       rw [hn]
       exact mul_pos (pow_pos (ht hc) n) hq

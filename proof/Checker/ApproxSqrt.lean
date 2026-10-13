@@ -137,9 +137,9 @@ private lemma shiftUpAux_invariant (threshold : ℕ) :
     · refine ⟨0, Nat.zero_le _, ?_, ?_⟩ <;> simp [shiftUpAux, h]
     · obtain ⟨s, hs_le, hs_k, hs_num⟩ := ih (num := num * 100) (k := k + 1)
       refine ⟨s + 1, Nat.succ_le_succ hs_le, ?_, ?_⟩
-      · simp only [shiftUpAux, if_neg h]
+      · simp only [shiftUpAux, ite_eq_right h]
         rw [hs_k]; ring
-      · simp only [shiftUpAux, if_neg h]
+      · simp only [shiftUpAux, ite_eq_right h]
         rw [hs_num, pow_succ]; ring
 
 /-- Each step of `shiftDownAux` multiplies `den` by 100 and increments `k` by 1. -/
@@ -157,9 +157,9 @@ private lemma shiftDownAux_invariant (numDivHi : ℕ) :
     · refine ⟨0, Nat.zero_le _, ?_, ?_⟩ <;> simp [shiftDownAux, h]
     · obtain ⟨s, hs_le, hs_k, hs_den⟩ := ih (den := den * 100) (k := k + 1)
       refine ⟨s + 1, Nat.succ_le_succ hs_le, ?_, ?_⟩
-      · simp only [shiftDownAux, if_neg h]
+      · simp only [shiftDownAux, ite_eq_right h]
         rw [hs_k]; ring
-      · simp only [shiftDownAux, if_neg h]
+      · simp only [shiftDownAux, ite_eq_right h]
         rw [hs_den, pow_succ]; ring
 
 /-- Up-search termination: if the available fuel is enough to amplify `num` past
@@ -177,7 +177,7 @@ private lemma shiftUpAux_terminates (threshold : ℕ) :
     intro h
     by_cases hnum : num ≥ threshold
     · simp [shiftUpAux, hnum]
-    · simp only [shiftUpAux, if_neg hnum]
+    · simp only [shiftUpAux, ite_eq_right hnum]
       apply ih
       have hrw : num * 100 ^ (f + 1) = num * 100 * 100 ^ f := by
         rw [pow_succ]; ring
@@ -198,7 +198,7 @@ private lemma shiftDownAux_terminates (numDivHi : ℕ) :
     intro h
     by_cases hd : numDivHi < den
     · simp [shiftDownAux, hd]
-    · simp only [shiftDownAux, if_neg hd]
+    · simp only [shiftDownAux, ite_eq_right hd]
       apply ih
       have hrw : den * 100 ^ (f + 1) = den * 100 * 100 ^ f := by
         rw [pow_succ]; ring
@@ -218,8 +218,8 @@ private lemma shiftDownAux_le_max (numDivHi : ℕ) :
     exact le_max_left _ _
   | succ f ih =>
     by_cases h : numDivHi < den
-    · simp only [shiftDownAux, if_pos h]; exact le_max_left _ _
-    · simp only [shiftDownAux, if_neg h]
+    · simp only [shiftDownAux, ite_eq_left h]; exact le_max_left _ _
+    · simp only [shiftDownAux, ite_eq_right h]
       push Not at h
       -- h : den ≤ numDivHi
       have hih := ih (den := den * 100) (k := k + 1)
@@ -461,7 +461,7 @@ private lemma sqrtℚLowImpl_pos (p q fuel : ℕ) (hp : 0 < p) (hq : 0 < q)
 /-- For `x > 0`, `sqrtℚLow x > 0`. -/
 private lemma sqrtℚLow_pos_of_pos {y : ℚ} (hy : 0 < y) : 0 < sqrtℚLow y := by
   rw [sqrtℚLow]
-  rw [if_neg (not_le.mpr hy)]
+  rw [ite_eq_right (not_le.mpr hy)]
   apply sqrtℚLowImpl_pos
   · -- 0 < y.num.toNat
     exact Int.pos_iff_toNat_pos.mp (Rat.num_pos.mpr hy)
@@ -645,7 +645,7 @@ private lemma sqrt_le_two_mul_sqrtℚLowImpl (p q fuel : ℕ) (hp : 0 < p) (hq :
 /-- Crude lower accuracy: `√y ≤ 2·√⁻ y` for `y > 0`. -/
 theorem sqrt_le_two_mul_sqrtℚLow {y : ℚ} (hy : 0 < y) :
     Real.sqrt ((y : ℚ) : ℝ) ≤ 2 * ((sqrtℚLow y : ℚ) : ℝ) := by
-  rw [sqrtℚLow, if_neg (not_le.mpr hy)]
+  rw [sqrtℚLow, ite_eq_right (not_le.mpr hy)]
   have hp : 0 < y.num.toNat := Int.pos_iff_toNat_pos.mp (Rat.num_pos.mpr hy)
   have h := sqrt_le_two_mul_sqrtℚLowImpl y.num.toNat y.den
     (Nat.log 10 y.num.toNat + Nat.log 10 y.den + 100) hp y.pos (le_refl _)

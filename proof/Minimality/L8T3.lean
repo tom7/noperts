@@ -125,7 +125,7 @@ theorem isOpen_Q5a : IsOpen {z : ZMod 5 → ℝ | Q5a z ∨ Q5a fun i => -z i} :
     isOpen_lt (continuous_apply i) (continuous_apply j)
   have hlt' : ∀ i j : ZMod 5, IsOpen {z : ZMod 5 → ℝ | -z i < -z j} := fun i j =>
     isOpen_lt (continuous_apply i).neg (continuous_apply j).neg
-  simp only [Q5a, Set.setOf_and, Set.setOf_or]
+  simp only [Q5a, Set.ofPred_and, Set.ofPred_or]
   exact ((hlt 1 0).inter ((hlt 1 2).inter ((hlt 0 4).inter (hlt 2 3)))).union
     ((hlt' 1 0).inter ((hlt' 1 2).inter ((hlt' 0 4).inter (hlt' 2 3))))
 
@@ -134,7 +134,7 @@ theorem isOpen_Q5b : IsOpen {z : ZMod 5 → ℝ | Q5b z ∨ Q5b fun i => -z i} :
     isOpen_lt (continuous_apply i) (continuous_apply j)
   have hlt' : ∀ i j : ZMod 5, IsOpen {z : ZMod 5 → ℝ | -z i < -z j} := fun i j =>
     isOpen_lt (continuous_apply i).neg (continuous_apply j).neg
-  simp only [Q5b, Set.setOf_and, Set.setOf_or]
+  simp only [Q5b, Set.ofPred_and, Set.ofPred_or]
   exact ((hlt 0 1).inter ((hlt 2 1).inter ((hlt 4 0).inter ((hlt 3 2).union (hlt 3 4))))).union
     ((hlt' 0 1).inter ((hlt' 2 1).inter ((hlt' 4 0).inter ((hlt' 3 2).union (hlt' 3 4)))))
 

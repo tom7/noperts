@@ -85,11 +85,11 @@ theorem exists_c3v_reduced (S : Set ℝ³) (hc : ∀ k, (c3Mat k).toEuclideanLin
   cases b
   · refine ⟨pose.rightC3 j, rfl, ?_, RupertPose_rightC3_iff S pose j (hc j)⟩
     rw [relativeRotation_rightC3]
-    simpa only [c3vCandidate, Bool.false_eq_true, if_false] using hcell
+    simpa only [c3vCandidate, Bool.false_eq_true, ite_false] using hcell
   · refine ⟨pose.mirrorTie (mirrorQ j), rfl, ?_,
       RupertPose_mirrorTie_iff pose (mirrorQ j) S (hm j)⟩
     rw [relativeRotation_mirrorTie]
-    simp only [c3vCandidate, if_true] at hcell
+    simp only [c3vCandidate, ite_true] at hcell
     exact hcell
 
 /-! ### Euler angles of the outer rotation -/
@@ -267,7 +267,7 @@ theorem exactModel_hull_eq_solid : exactModel.polyhedron.hull = solid := by
   unfold solid Polyhedron.hull
   congr 1
   ext v
-  simp only [Set.mem_setOf_eq, CyclicModel.polyhedron_vertex, exactModel_vertex, exactVertex_eq,
+  simp only [Set.mem_ofPred_eq, CyclicModel.polyhedron_vertex, exactModel_vertex, exactVertex_eq,
     rationalVertex_eq_vertexQ, poly]
   constructor
   · rintro ⟨i, rfl⟩

@@ -49,7 +49,7 @@ theorem innerShadow_leftHalfTurn (p : MatrixPose) (G : SO3) (S : Set ℝ³)
     (hG : G.val.toEuclideanLin '' S = S) :
     innerShadow (p.leftHalfTurn G) S = -innerShadow p S := by
   ext w
-  simp only [innerShadow, Set.mem_setOf_eq, Set.mem_neg]
+  simp only [innerShadow, Set.mem_ofPred_eq, Set.mem_neg]
   constructor
   · rintro ⟨v, hv, rfl⟩
     refine ⟨G.val.toEuclideanLin v, ?_, ?_⟩
@@ -71,7 +71,7 @@ theorem neg_outerShadow (p : MatrixPose) (S : Set ℝ³) (hS : ∀ v ∈ S, -v �
     intro v
     simp [PoseLike.outer, map_neg]
   ext w
-  simp only [outerShadow, Set.mem_setOf_eq, Set.mem_neg]
+  simp only [outerShadow, Set.mem_ofPred_eq, Set.mem_neg]
   constructor
   · rintro ⟨v, hv, hw⟩
     exact ⟨-v, hS v hv, by rw [hproj, hw, neg_neg]⟩

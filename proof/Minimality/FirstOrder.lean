@@ -47,7 +47,7 @@ theorem firstOrderInward_iff_frontier (V : Finset ℝ³) (ω τ : ℝ³) :
   · apply isInwardAt_of_mem_interior
     have hmem : proj_xy v ∈ closure (proj_xy '' convexHull ℝ (V : Set ℝ³)) :=
       subset_closure ⟨v, subset_convexHull ℝ _ hv, rfl⟩
-    rw [frontier, Set.mem_diff] at hf
+    rw [frontier, Set.mem_sdiff] at hf
     by_contra hni
     exact hf ⟨hmem, hni⟩
 

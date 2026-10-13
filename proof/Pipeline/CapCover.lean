@@ -86,9 +86,9 @@ theorem abs_le_iff_wrad_le (wt : ℕ) (hw : wt = 1 ∨ wt = 2) {R : ℝ} (hR : 0
     |ω| ≤ R * μ ^ wt ↔ wrad wt R ω ≤ μ := by
   unfold wrad
   rcases hw with rfl | rfl
-  · simp only [if_true, pow_one]
+  · simp only [ite_true, pow_one]
     rw [div_le_iff₀ hR, mul_comm]
-  · simp only [show (2 : ℕ) ≠ 1 by norm_num, if_false]
+  · simp only [show (2 : ℕ) ≠ 1 by norm_num, ite_false]
     rw [Real.sqrt_le_left hμ, div_le_iff₀ hR, mul_comm]
 
 /-- |ω| = R (wrad)^w. -/
@@ -96,8 +96,8 @@ theorem abs_eq_wrad_pow (wt : ℕ) (hw : wt = 1 ∨ wt = 2) {R : ℝ} (hR : 0 < 
     |ω| = R * wrad wt R ω ^ wt := by
   unfold wrad
   rcases hw with rfl | rfl
-  · simp only [if_true, pow_one]; field_simp
-  · simp only [show (2 : ℕ) ≠ 1 by norm_num, if_false]
+  · simp only [ite_true, pow_one]; field_simp
+  · simp only [show (2 : ℕ) ≠ 1 by norm_num, ite_false]
     rw [Real.sq_sqrt (div_nonneg (abs_nonneg _) hR.le)]; field_simp
 
 theorem weighted_cube (wt : Fin 3 → ℕ) (hw : ∀ i, wt i = 1 ∨ wt i = 2) (R : Fin 3 → ℝ) (hR : ∀ i, 0 < R i)

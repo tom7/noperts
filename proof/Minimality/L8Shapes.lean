@@ -98,7 +98,7 @@ def NWS4 (z : ZMod 4 → ℝ) : Prop :=
 theorem isOpen_NWS4 : IsOpen {z : ZMod 4 → ℝ | NWS4 z} := by
   have hlt : ∀ i j : ZMod 4, IsOpen {z : ZMod 4 → ℝ | z i < z j} := fun i j =>
     isOpen_lt (continuous_apply i) (continuous_apply j)
-  simp only [NWS4, Set.setOf_and, Set.setOf_or]
+  simp only [NWS4, Set.ofPred_and, Set.ofPred_or]
   exact ((hlt 0 1).union ((hlt 0 3).union ((hlt 2 1).union (hlt 2 3)))).inter
     ((hlt 1 0).union ((hlt 3 0).union ((hlt 1 2).union (hlt 3 2))))
 

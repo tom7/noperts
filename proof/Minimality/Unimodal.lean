@@ -71,7 +71,7 @@ theorem isCompact_convexHull_of_isCompact {E : Type*} [NormedAddCommGroup E] [No
     let z' : Fin n → E := fun j => if h : ∃ i, e i = j then z h.choose else z i₀
     have hz' : ∀ i, z' (e i) = z i := fun i => by
       have h : ∃ i', e i' = e i := ⟨i, rfl⟩
-      simp only [z', dif_pos h]
+      simp only [z', dite_eq_left h]
       rw [e.injective h.choose_spec]
     refine ⟨(w', z'), ⟨⟨fun j => Finset.sum_nonneg fun i _ => (hw0 i).le, ?_⟩, fun j _ => ?_⟩, ?_⟩
     · rw [← hw1]; exact Finset.sum_fiberwise_of_maps_to (fun i _ => Finset.mem_univ (e i)) w

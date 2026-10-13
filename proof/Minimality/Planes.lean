@@ -70,8 +70,8 @@ theorem interior_plane_eq_empty {N : ℝ³} (hN : N ≠ 0) (c : ℝ) :
       abs_of_pos (by positivity), div_mul_cancel₀ _ hNpos.ne']
     linarith))
   have h0 : x ∈ {x : ℝ³ | ⟪N, x⟫ = c} := interior_subset hx
-  simp only [Set.mem_setOf_eq] at h0
-  simp only [Set.mem_setOf_eq, inner_add_right, real_inner_smul_right,
+  simp only [Set.mem_ofPred_eq] at h0
+  simp only [Set.mem_ofPred_eq, inner_add_right, real_inner_smul_right,
     real_inner_self_eq_norm_sq, h0] at h1
   have : 0 < r / 2 / ‖N‖ * ‖N‖ ^ 2 := by positivity
   linarith

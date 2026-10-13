@@ -135,13 +135,13 @@ def WQ5b (z : ZMod 5 → ℝ) : Prop := z 0 < z 1 ∧ z 2 < z 1 ∧ z 3 < z 2 �
 theorem isOpen_WQ5a : IsOpen {z : ZMod 5 → ℝ | WQ5a z} := by
   have hlt : ∀ i j : ZMod 5, IsOpen {z : ZMod 5 → ℝ | z i < z j} := fun i j =>
     isOpen_lt (continuous_apply i) (continuous_apply j)
-  simp only [WQ5a, Set.setOf_and, Set.setOf_or]
+  simp only [WQ5a, Set.ofPred_and, Set.ofPred_or]
   exact (hlt 1 2).inter ((hlt 4 3).inter ((hlt 0 1).union (hlt 0 4)))
 
 theorem isOpen_WQ5b : IsOpen {z : ZMod 5 → ℝ | WQ5b z} := by
   have hlt : ∀ i j : ZMod 5, IsOpen {z : ZMod 5 → ℝ | z i < z j} := fun i j =>
     isOpen_lt (continuous_apply i) (continuous_apply j)
-  simp only [WQ5b, Set.setOf_and]
+  simp only [WQ5b, Set.ofPred_and]
   exact (hlt 0 1).inter ((hlt 2 1).inter ((hlt 3 2).inter (hlt 4 3)))
 
 theorem WQ5a.mul {z : ZMod 5 → ℝ} (h : WQ5a z) {c : ℝ} (hc : 0 < c) : WQ5a fun i => c * z i := by
