@@ -19,8 +19,9 @@ The results in this repository:
   * [Snub Dodecahedron](snub-dodecahedron.md) (Archimedean solid)
   * [Pentagonal Hexecontahedron](pentagonal-hexecontahedron.md) (Catalan; dual of the SD)
   * [Deltoidal Hexecontahedron](deltoidal-hexecontahedron.md) (Catalan)
+  * [Snub Cube](snub-cube.md) (Archimedean solid)
 
-Elsewhere there are claimed proofs or verifications that the rhombicosidodecahedron<sup>[[1]](https://github.com/oscardssmith/Nopert.jl), [[2]](https://github.com/bence-hervay/nopert-rid)</sup> and snub cube are Nopert and we have solutions for the rest of the Platonic, Archimedean and Catalan solids. So this classifies all of the P/A/C solids at last!
+Elsewhere there are claimed proofs or verifications that the rhombicosidodecahedron<sup>[[1]](https://github.com/oscardssmith/Nopert.jl), [[2]](https://github.com/bence-hervay/nopert-rid)</sup> is Nopert (and a claimed proof for the snub cube, which is verified here), and we have solutions for the rest of the Platonic, Archimedean and Catalan solids. So this classifies all of the P/A/C solids at last!
 
 * A Lean [verification](nopert231.md) that my nopert candidate #231 is indeed a Nopert. This looks identical to the solid I showed in my video (#214) and conjectured to be Nopert, but fixes the problem that [#214 is actually Rupert](https://youtu.be/XFeKRSN9l9w)!
 * The description and [verification](septopert.md) of the <b>Septopert</b>, a new 7-vertex Nopert.

@@ -14,6 +14,9 @@ page with its statement, trust model and reproduction steps:
 - [snub-dodecahedron.md](snub-dodecahedron.md): the snub dodecahedron, of
   either chirality, is a nopert (a Lean verification backed by certificate
   data);
+- [snub-cube.md](snub-cube.md): the snub cube, of either chirality, is a
+  nopert (a Lean verification backed by certificate data, including an
+  exact cap certificate over ℚ(t));
 - [nopert231.md](nopert231.md): candidate #231, a 20-vertex nopert with
   fivefold symmetry (a Lean verification backed by certificate data);
 - [minimality.md](minimality.md): every nopert has at least 7 vertices (a
@@ -65,6 +68,16 @@ page with its statement, trust model and reproduction steps:
   - `SnubDodecahedron`: entry point `proof/SnubDodecahedron.lean`, details
     in `proof/SnubDodecahedron/` (likewise, plus its tangent-cone tables,
     with which its executable checks the identity-tube rows more cheaply).
+  - `SnubCube`: entry point `proof/SnubCube.lean`, details in
+    `proof/SnubCube/` (its model data and instances, `ModelData.lean`
+    (generated) and `SolidModel.lean`; the view cover; the caps,
+    `Caps.lean`; its statement). It is an `OctahedralSolid`
+    (`Pipeline/OctaModel.lean`) with its own top layer over the Oh view
+    reduction (`Pipeline/OctaView.lean`, `OctaSolutionTree.lean`,
+    `OctaPackedSolutionTree.lean`, `OctaIsNotRupert.lean`,
+    `OctaNativeExecutable.lean`), and its cap claims are proved from a cap
+    certificate checked over ℚ(t) (`Pipeline/TribQ.lean`, `KPoly.lean`,
+    `KCap*.lean`).
   - `Nopert231`: entry point `proof/Nopert231.lean`, details in
     `proof/Nopert231/` (its model, `SolidModel.lean`; its data, tangent cones
     and view cover; idealized #231, `Ideal231.lean`; and its own solution
@@ -77,8 +90,9 @@ page with its statement, trust model and reproduction steps:
     `constructDeltoidalHexecontahedron` (checks the deltoidal
     hexecontahedron's certificate data), `constructPentagonalHexecontahedron`
     (checks the pentagonal hexecontahedron's), `constructSnubDodecahedron`
-    (checks the snub dodecahedron's) and `constructNopert231` (checks
-    candidate #231's).
+    (checks the snub dodecahedron's), `constructSnubCube` (checks the snub
+    cube's, including its cap certificate), `checkSnubCubeCap` (checks only
+    the cap certificate) and `constructNopert231` (checks candidate #231's).
 
   License: Apache-2.0 (`proof/LICENSE`). Derived from the
   [Noperthedron](https://github.com/jcreedcmu/Noperthedron) formalization,
@@ -88,9 +102,9 @@ page with its statement, trust model and reproduction steps:
     5D search and packing, `codebdd`, diagnostics, unit tests) and their
     build rules, `common.mk`.
   - `search/septopert/`, `search/dh/`, `search/ph/`, `search/sd/`,
-    `search/nopert231/`: the searches for the Septopert, the deltoidal
-    hexecontahedron, the pentagonal hexecontahedron, the snub dodecahedron
-    and candidate #231, each with its `rebuild.sh` (see the result's page),
+    `search/sc/`, `search/nopert231/`: the searches for the Septopert, the
+    deltoidal hexecontahedron, the pentagonal hexecontahedron, the snub
+    dodecahedron, the snub cube and candidate #231, each with its `rebuild.sh` (see the result's page),
     model files, Lean data generators, own tools, and `solid.h` (the
     solid's settings for the shared code). The searches of the DH, PH and
     SD were imported from the corresponding branches of the author's search
