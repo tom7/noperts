@@ -77,6 +77,15 @@ struct SolverOptions {
   // triangle, which splitting reduces; a tiny radius forces the 5D search to
   // cover rotations down to it (the reached node's subtree minimum).
   BigRat min_r{0};
+  // --best_cage: at every node also search for the best cage
+  // (FindBestCageForTriangle) and keep whichever certificate has the larger
+  // net margin c, instead of the first that passes (the inherited hint).
+  // With --min_r, a hint that passes with a small radius is otherwise handed
+  // down unchanged until splitting shrinks its delta enough, which can take
+  // many levels where a fresh cage would have a much larger cover (the
+  // Septopert near (0.9285, 0.3565, 0.1040): cover 1.6e-5 inherited to depth
+  // 19-20, vs 4.3e-4 for the best cage).
+  bool best_cage = false;
 };
 
 // Signed margin of the origin inside the tetrahedron with vertices p[0..3]:
@@ -667,8 +676,18 @@ class CodeSolver {
     if (item.hint.has_value()) {
       BigRat cover(-1), delta(-1);
       if (ReauditCertificate(item.triangle, *item.hint, opt_.target_c, opt_.target_r, out, &why,
-                             &cover, &delta))
+                             &cover, &delta)) {
+        if (!opt_.best_cage) return true;
+        // Keep the larger net margin of the hint and the best cage.
+        LocalCertificate local, audited;
+        double margin = 0;
+        std::string why2;
+        if (FindBestCageForTriangle(item.triangle, seed, &local, &margin) &&
+            ReauditCertificate(item.triangle, local, opt_.target_c, opt_.target_r, &audited, &why2) &&
+            audited.c > out->c)
+          *out = audited;
         return true;
+      }
       // If the parent's cage fails only because the variation delta is a
       // bit too large, one or two more splits (which roughly halve delta)
       // will fix it; skip the (expensive) fresh search. Never skip more
@@ -920,12 +939,14 @@ int main(int argc, char **argv) {
       opt.cap_r = BigRat(std::string_view(argv[++i]));
     } else if (arg == "--min_r" && i + 1 < argc) {
       opt.min_r = BigRat(std::string_view(argv[++i]));
+    } else if (arg == "--best_cage") {
+      opt.best_cage = true;
     } else if (arg == "--axis_radius") {
       g_axis_radius_objective = true;
     } else {
       fprintf(stderr, "Unknown argument %s\n"
               "Usage: tubecode.exe [--code X [--tri T]] [--threads N] [--max_depth D] [--min_r R]\n"
-              "                       [--output_dir DIR] [--force] [--import] [--axis_radius]\n", arg.c_str());
+              "                       [--output_dir DIR] [--force] [--import] [--axis_radius] [--best_cage]\n", arg.c_str());
       return 2;
     }
   }

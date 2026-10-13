@@ -13,7 +13,7 @@
 //                [--subtree_budget N] [--out_dir jobs] [--trees_dir trees_r2]
 //                [--bdd codebdd.json] [--cone_samples N] [--split_kappa K]
 //                [--split_rule 0|1|2] [--min_peel 5..7]
-//                [--view_scale S] [--view_lookahead] [--lookahead_band B]
+//                [--view_scale S] [--view_lookahead] [--lookahead_band B] [--tube_view_depth D]
 //                [--max_full_retry N] [--half_turn_prune] [--tie_dir DIR] [--caps FILE] [--trib_caps FILE]
 //                [--exact_check] [--retry_deferred] [--requeue_deferred]
 //
@@ -121,6 +121,7 @@ void ExpandTop(const tubeatlas5d::TubeAtlas &atlas, const Args &args, JobState *
   solve5d::Options top_opt = args.opt;
   top_opt.split_rule = 0;
   top_opt.view_scale = 0.0;
+  top_opt.tube_view_depth = -1;
   top_opt.view_lookahead = false;
   solve5d::Solver solver(&atlas, state->job, top_opt);
   std::vector<solve5d::Node> stack = {solve5d::RootNode(atlas, state->job)};
@@ -168,6 +169,7 @@ int main(int argc, char **argv) {
     else if (a == "--split_rule") args.opt.split_rule = std::stoi(next());
     else if (a == "--view_scale") args.opt.view_scale = std::stod(next());
     else if (a == "--view_lookahead") args.opt.view_lookahead = true;
+    else if (a == "--tube_view_depth") args.opt.tube_view_depth = std::stoi(next());
     else if (a == "--lookahead_band") args.opt.lookahead_band = std::stod(next());
     else if (a == "--max_full_retry") args.opt.max_full_retry = std::stoi(next());
     else if (a == "--half_turn_prune") args.opt.half_turn_prune = true;

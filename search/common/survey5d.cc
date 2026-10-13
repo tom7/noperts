@@ -23,6 +23,15 @@
 //
 // Usage: survey5d.exe --packs DIR [--charts 0,1,2,3] [--view_bin 0.02] [--top 25]
 //          [--csv FILE] [--every 1] [--threads N]
+//        survey5d.exe --tubes DIR [--view_bin 0.02] [--top 25] [--csv FILE] [--threads N]
+//
+// --tubes reads the identity-tube tables instead (export_codetrees_pack:
+// DIR/manifest.txt and its packs): per table its rows, leaves, depths and
+// certified radii, and over all tables the view cells with the most tube
+// leaves (deep tube trees drag the 5D search's view triangles down with
+// them: solve5d refines the view of a box containing the identity while the
+// tube goes deeper). --csv: one line per tube leaf (table, tag, view,
+// triangle diameter, depth, r, c, delta).
 
 #include <algorithm>
 #include <array>
@@ -197,6 +206,89 @@ void ReadPack(const std::string &path, Pack *pk) {
   CHECK(read == pk->rows) << path << ": read " << read << " rows, header says " << pk->rows;
 }
 
+// A tube leaf (export_codetrees_pack: tag 1 certificate, 2 decomposed
+// certificate, 4 empty (a cap leaf)).
+struct TubeLeaf {
+  int tag, depth;
+  std::array<double, 9> tri;
+  double r = -1, c = 0, delta = 0;
+};
+
+struct TubeTable {
+  std::string name;
+  int code = 0, tri = 0;
+  int64_t rows = 0;
+  std::vector<TubeLeaf> leaves;
+};
+
+void ReadTubePack(const std::string &path, TubeTable *tt) {
+  Tokens t;
+  {
+    std::ifstream f(path, std::ios::binary);
+    CHECK(f.good()) << path;
+    f.seekg(0, std::ios::end);
+    t.data.resize(f.tellg());
+    f.seekg(0);
+    f.read(t.data.data(), t.data.size());
+  }
+  // Header: rows, symmetryIndex, table r, the base triangle's 9 corners.
+  tt->rows = t.Int();
+  t.Int();
+  t.Rat();
+  std::array<double, 9> base;
+  for (double &x : base) x = t.Rat();
+  // An axis: 21 small integers and B.
+  auto skip_axis = [&]() { t.Skip(21); t.Rat(); };
+  int64_t read = 0;
+  while (!t.Done()) {
+    const int tag = t.Int();
+    read++;
+    t.Int();  // id
+    t.Int();  // root
+    const int len = t.Int();
+    std::array<double, 9> tri = base;
+    for (int k = 0; k < len; k++) {
+      const int d = t.Int();
+      // tubetree::TriangleQ::Subdivide.
+      std::array<double, 9> m;
+      for (int c = 0; c < 3; c++) {
+        m[c] = (tri[c] + tri[3 + c]) / 2;          // m01
+        m[3 + c] = (tri[3 + c] + tri[6 + c]) / 2;  // m12
+        m[6 + c] = (tri[6 + c] + tri[c]) / 2;      // m20
+      }
+      std::array<double, 9> n;
+      auto set = [&](int i, const double *src) { for (int c = 0; c < 3; c++) n[3 * i + c] = src[c]; };
+      switch (d) {
+        case 0: set(0, &tri[0]); set(1, &m[0]); set(2, &m[6]); break;
+        case 1: set(0, &m[0]); set(1, &tri[3]); set(2, &m[3]); break;
+        case 2: set(0, &m[6]); set(1, &m[3]); set(2, &tri[6]); break;
+        default: set(0, &m[0]); set(1, &m[3]); set(2, &m[6]); break;
+      }
+      tri = n;
+    }
+    switch (tag) {
+      case 0: t.Skip(4); t.Rat(); break;  // children, rLower
+      case 4: tt->leaves.push_back({.tag = 4, .depth = len, .tri = tri}); break;
+      case 1: case 2: {
+        t.Int();  // symmetryIndex
+        for (int a = 0; a < 4; a++) skip_axis();
+        TubeLeaf l{.tag = tag, .depth = len, .tri = tri};
+        l.c = t.Rat();
+        l.delta = t.Rat();
+        l.r = t.Rat();
+        if (tag == 2) {
+          skip_axis();
+          for (int k = 0; k < 8; k++) t.Rat();
+        }
+        tt->leaves.push_back(l);
+        break;
+      }
+      default: LOG(FATAL) << path << ": unknown tube tag " << tag << " at row " << read;
+    }
+  }
+  CHECK(read == tt->rows) << path << ": read " << read << " rows, header says " << tt->rows;
+}
+
 std::array<double, 3> Centroid(const std::array<double, 9> &t) {
   std::array<double, 3> v{};
   for (int i = 0; i < 3; i++)
@@ -241,10 +333,108 @@ std::vector<int> ParseInts(const std::string &s) {
   return r;
 }
 
+// A cube-map bin of the normalized view direction v, of view_bin radians.
+int64_t ViewCell(const std::array<double, 3> &v, double view_bin) {
+  int face = 0;
+  double m = 0;
+  for (int c = 0; c < 3; c++) if (std::abs(v[c]) > m) { m = std::abs(v[c]); face = c; }
+  const int sgn = v[face] > 0 ? 0 : 1;
+  const int a = (face + 1) % 3, b = (face + 2) % 3;
+  const int64_t ia = (int64_t)std::floor(std::atan(v[a] / m) / view_bin);
+  const int64_t ib = (int64_t)std::floor(std::atan(v[b] / m) / view_bin);
+  return ((int64_t)(2 * face + sgn) << 40) ^ ((ia + 100000) << 20) ^ (ib + 100000);
+}
+
+void SurveyTubes(const std::string &dir, double view_bin, int top, FILE *out, int threads) {
+  std::vector<TubeTable> tables;
+  {
+    std::ifstream f(dir + "/manifest.txt");
+    CHECK(f.good()) << dir << "/manifest.txt";
+    std::string name, rows, r;
+    int code, tri;
+    while (f >> name >> code >> tri >> rows >> r) tables.push_back({.name = name, .code = code, .tri = tri});
+  }
+  std::atomic<int> nextk{0};
+  std::vector<std::thread> pool;
+  for (int th = 0; th < std::min<int>(threads, tables.size()); th++)
+    pool.emplace_back([&]() {
+      for (int k; (k = nextk++) < (int)tables.size();) ReadTubePack(dir + "/" + tables[k].name, &tables[k]);
+    });
+  for (auto &th : pool) th.join();
+
+  int64_t rows = 0, leaves = 0;
+  for (const TubeTable &tt : tables) { rows += tt.rows; leaves += tt.leaves.size(); }
+  printf("=== %zu tube tables, %lld rows, %lld leaves\n", tables.size(), (long long)rows, (long long)leaves);
+  printf("  %-22s %5s %9s %9s %5s %9s %9s %9s\n", "table (t = line)", "code", "rows", "leaves", "depth",
+         "min r", "median r", "min tri");
+  for (int k = 0; k < (int)tables.size(); k++) {
+    const TubeTable &tt = tables[k];
+    std::vector<double> rs;
+    int depth = 0;
+    double dmin = 1e9;
+    for (const TubeLeaf &l : tt.leaves) {
+      if (l.r >= 0) rs.push_back(l.r);
+      depth = std::max(depth, l.depth);
+      dmin = std::min(dmin, Diameter(l.tri));
+    }
+    std::sort(rs.begin(), rs.end());
+    printf("  t%-3d %-17s %5d %9lld %9zu %5d %9.2e %9.2e %9.2e\n", k, tt.name.c_str(), tt.code, (long long)tt.rows,
+           tt.leaves.size(), depth, rs.empty() ? -1.0 : rs[0], rs.empty() ? -1.0 : rs[rs.size() / 2], dmin);
+  }
+
+  struct Cell {
+    int64_t n = 0;
+    int depth = 0;
+    double rmin = 1e9, cmin = 1e9, dmin = 1e9;
+    std::array<double, 3> v{};
+    std::map<int, int64_t> tables;
+  };
+  std::unordered_map<int64_t, Cell> cells;
+  std::map<int, int64_t> rbins;
+  for (int k = 0; k < (int)tables.size(); k++) {
+    for (const TubeLeaf &l : tables[k].leaves) {
+      const auto v = Centroid(l.tri);
+      const double d = Diameter(l.tri);
+      Cell &cl = cells[ViewCell(v, view_bin)];
+      cl.n++;
+      cl.depth = std::max(cl.depth, l.depth);
+      if (l.r >= 0) cl.rmin = std::min(cl.rmin, l.r);
+      if (l.r >= 0) cl.cmin = std::min(cl.cmin, l.c);
+      cl.dmin = std::min(cl.dmin, d);
+      cl.tables[k]++;
+      for (int c = 0; c < 3; c++) cl.v[c] += v[c];
+      rbins[l.r > 0 ? (int)std::floor(std::log2(l.r)) : -99]++;
+      if (out != nullptr)
+        fprintf(out, "%d,%d,%.9f,%.9f,%.9f,%.3e,%d,%.6e,%.6e,%.6e\n", k, l.tag, v[0], v[1], v[2], d, l.depth, l.r,
+                l.c, l.delta);
+    }
+  }
+  std::vector<std::pair<int64_t, const Cell *>> top_cells;
+  for (const auto &[k, c] : cells) top_cells.push_back({c.n, &c});
+  std::sort(top_cells.begin(), top_cells.end(), [](auto &x, auto &y) { return x.first > y.first; });
+  printf("densest view cells (%.3f rad; %zu cells with tube leaves):\n", view_bin, cells.size());
+  printf("  %10s %6s  %-28s %5s %9s %9s %9s  %s\n", "leaves", "%", "view (mean)", "depth", "min r", "min c",
+         "min tri", "tables");
+  int64_t cum = 0;
+  for (int k = 0; k < std::min<int>(top, top_cells.size()); k++) {
+    const Cell &c = *top_cells[k].second;
+    cum += c.n;
+    const double n = std::sqrt(c.v[0] * c.v[0] + c.v[1] * c.v[1] + c.v[2] * c.v[2]);
+    std::string ts;
+    for (auto [t, m] : c.tables) ts += " t" + std::to_string(t) + ":" + std::to_string(m);
+    printf("  %10lld %5.1f%%  (%8.5f,%8.5f,%8.5f) %5d %9.2e %9.2e %9.2e %s\n", (long long)c.n, 100.0 * c.n / leaves,
+           c.v[0] / n, c.v[1] / n, c.v[2] / n, c.depth, c.rmin, c.cmin, c.dmin, ts.c_str());
+  }
+  printf("  (top %d cells: %.1f%% of the tube leaves)\n", std::min<int>(top, top_cells.size()),
+         100.0 * cum / std::max<int64_t>(1, leaves));
+  printf("tube leaves by certified radius r, log2 bins (-99: cap leaves):\n");
+  for (auto [b, n] : rbins) printf("  r in [2^%3d, 2^%3d)  %12lld  %5.1f%%\n", b, b + 1, (long long)n, 100.0 * n / leaves);
+}
+
 }  // namespace
 
 int main(int argc, char **argv) {
-  std::string dir, csv;
+  std::string dir, csv, tubes;
   std::vector<int> charts = {0, 1, 2, 3};
   double view_bin = 0.02;
   int top = 25, every = 1, threads = std::max(1u, std::thread::hardware_concurrency());
@@ -255,6 +445,7 @@ int main(int argc, char **argv) {
       return argv[++i];
     };
     if (a == "--packs") dir = next();
+    else if (a == "--tubes") tubes = next();
     else if (a == "--charts") charts = ParseInts(next());
     else if (a == "--view_bin") view_bin = std::stod(next());
     else if (a == "--top") top = std::stoi(next());
@@ -263,8 +454,18 @@ int main(int argc, char **argv) {
     else if (a == "--threads") threads = std::stoi(next());
     else LOG(FATAL) << "unknown argument " << a;
   }
-  CHECK(!dir.empty()) << "--packs DIR";
+  CHECK(dir.empty() != tubes.empty()) << "exactly one of --packs DIR, --tubes DIR";
   FILE *out = nullptr;
+  if (!tubes.empty()) {
+    if (!csv.empty()) {
+      out = fopen(csv.c_str(), "w");
+      CHECK(out != nullptr) << csv;
+      fprintf(out, "table,tag,vx,vy,vz,tri_diam,depth,r,c,delta\n");
+    }
+    SurveyTubes(tubes, view_bin, top, out, threads);
+    if (out != nullptr) fclose(out);
+    return 0;
+  }
   if (!csv.empty()) {
     out = fopen(csv.c_str(), "w");
     CHECK(out != nullptr) << csv;
@@ -333,15 +534,7 @@ int main(int argc, char **argv) {
         const double d = Diameter(pk.tris[l.tri]);
         const double w = CayleyNorm(l);
         const double r = std::max({(double)l.r[0], (double)l.r[1], (double)l.r[2]});
-        int face = 0;
-        double m = 0;
-        for (int c = 0; c < 3; c++) if (std::abs(v[c]) > m) { m = std::abs(v[c]); face = c; }
-        const int sgn = v[face] > 0 ? 0 : 1;
-        const int a = (face + 1) % 3, b = (face + 2) % 3;
-        const int64_t ia = (int64_t)std::floor(std::atan(v[a] / m) / view_bin);
-        const int64_t ib = (int64_t)std::floor(std::atan(v[b] / m) / view_bin);
-        const int64_t key = ((int64_t)(2 * face + sgn) << 40) ^ ((ia + 100000) << 20) ^ (ib + 100000);
-        Cell &cl = cells[key];
+        Cell &cl = cells[ViewCell(v, view_bin)];
         cl.n++;
         cl.wmin = std::min(cl.wmin, w);
         cl.wmax = std::max(cl.wmax, w);

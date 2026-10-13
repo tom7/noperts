@@ -395,6 +395,8 @@ Split Solver::ChooseSplit(const Node &node) const {
     const auto reached = atlas_->Walk(job_.t, rows5d::ViewPath(node.path));
     const BigRat mismatch = exact5d::IdentityMismatchRadius(geom5d::ToInterval(node.box));
     if (reached.leaf || reached.r_upper < mismatch) return Split{.view = false, .axis = axis};
+    if (opt_.tube_view_depth >= 0 && reached.depth >= opt_.tube_view_depth && reached.r_lower > BigRat(0))
+      return Split{.view = false, .axis = axis};
     return Split{.view = true};
   }
   double view = geom5d::AngularDiameter(geom5d::ToDouble(node.tri));

@@ -72,6 +72,12 @@ struct Options {
   // compared with the view diameter times min(1, view_scale * |center|).
   // 0 disables the scaling (the original rule).
   double view_scale = 0.0;
+  // A box containing the identity (chart 0) refines the view while the tube
+  // table goes deeper and can certify it there; this caps that at tube depth
+  // tube_view_depth (then the box shrinks to the reached node's rLower and
+  // its shell is certified on the coarser view). A deep tube tree otherwise
+  // multiplies every shell box around it. -1: no cap (the original rule).
+  int tube_view_depth = -1;
   // Decide between the box (halved on its widest axis) and the view by
   // lookahead: the best (failed) single triple's worst margin over the
   // children of each. The rule above is the fallback.

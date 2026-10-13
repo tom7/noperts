@@ -89,6 +89,8 @@ int main(int argc, char **argv) {
   };
   for (const Case &c : {Case{{0, 1}, 9, false}, Case{{40, 2}, 9, false}, Case{{100, 0}, 9, false},
                         Case{{0, 1}, 3, false}, Case{{70, 0}, 6, true}}) {
+    // (The cases assume more than 100 code triangles; skip any a solid lacks.)
+    if (c.job.t >= atlas.NumTriangles()) continue;
     Solver solver(&atlas, c.job, opt);
     Node node = RootNode(atlas, c.job);
     for (int d = 0; d < c.descend; d++) {
