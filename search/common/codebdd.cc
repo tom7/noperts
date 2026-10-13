@@ -189,6 +189,26 @@ static int TriangleRoot(const std::array<BigVecQ3, 3> &t) {
   return -1;
 }
 
+// Whether the set is invariant under the octahedral rotation group O (the 24
+// signed permutation matrices with determinant 1).
+static bool OctahedralInvariant(const std::vector<BigVecQ3> &verts) {
+  const int perm[6][3] = {{0, 1, 2}, {0, 2, 1}, {1, 0, 2}, {1, 2, 0}, {2, 0, 1}, {2, 1, 0}};
+  const int psign[6] = {1, -1, -1, 1, 1, -1};
+  for (int p = 0; p < 6; p++)
+    for (int s = 0; s < 8; s++) {
+      const int sg[3] = {s & 1 ? -1 : 1, s & 2 ? -1 : 1, s & 4 ? -1 : 1};
+      if (psign[p] * sg[0] * sg[1] * sg[2] != 1) continue;
+      for (const BigVecQ3 &v : verts) {
+        const BigRat c[3] = {v.x, v.y, v.z};
+        const BigVecQ3 w(BigRat(sg[0]) * c[perm[p][0]], BigRat(sg[1]) * c[perm[p][1]], BigRat(sg[2]) * c[perm[p][2]]);
+        bool hit = false;
+        for (const BigVecQ3 &u : verts) hit = hit || (u.x == w.x && u.y == w.y && u.z == w.z);
+        if (!hit) return false;
+      }
+    }
+  return true;
+}
+
 // A decimal string ("-0.1234") as an exact rational.
 static BigRat DecimalRat(std::string_view s) {
   bool neg = false;
@@ -1500,16 +1520,22 @@ int main(int argc, char **argv) {
   std::vector<BigVecQ3> verts;
   const BigRat target = BigRat(36, 100000000000000000LL) * BigRat(36, 100000000000000000LL);
   if (model.seeds == 0) {
-    // No C5 structure: the rational vertices are the model (exactly C3v, checked).
+    // No C5 structure: the rational vertices are the model, exactly C3v about
+    // (1,1,1) (the Septopert) or exactly octahedral (the snub cube), checked.
     verts = model.rational_vertices;
     const auto perms = C3vVertexPermutations(verts);
-    CHECK(!perms.empty()) << "the rational vertices are not invariant under the coordinate permutations";
-    static const char *kNames[5] = {"c3Mat 1", "c3Mat 2", "mirrorMat 0", "mirrorMat 1", "mirrorMat 2"};
-    Print("Rational vertices from the model file (no C5 seeds): exactly C3v about (1,1,1)\n");
-    for (int g = 0; g < 5; g++) {
-      std::string p;
-      for (int v : perms[g]) p += std::format(" {}", v);
-      Print("  {:12} permutes the vertices as [{} ]\n", kNames[g], p);
+    if (!perms.empty()) {
+      static const char *kNames[5] = {"c3Mat 1", "c3Mat 2", "mirrorMat 0", "mirrorMat 1", "mirrorMat 2"};
+      Print("Rational vertices from the model file (no C5 seeds): exactly C3v about (1,1,1)\n");
+      for (int g = 0; g < 5; g++) {
+        std::string p;
+        for (int v : perms[g]) p += std::format(" {}", v);
+        Print("  {:12} permutes the vertices as [{} ]\n", kNames[g], p);
+      }
+    } else {
+      CHECK(OctahedralInvariant(verts))
+          << "the rational vertices are invariant neither under the coordinate permutations nor under O";
+      Print("Rational vertices from the model file (no C5 seeds): exactly octahedral (O)\n");
     }
     BigRat worst(0);
     for (size_t i = 0; i < verts.size(); i++) {
