@@ -121,9 +121,12 @@ there can only produce data that fails the checks.
   (chart 0: 209,666 rows, 45 s; charts 1–3 are pruned entirely by the cell
   of O), and printed
   `instantiated: IsNopert V for every snub cube V (none is Rupert)`
-  (exit 0, 325 s wall, 366 MB peak). The data was produced by the commands
-  that `search/sc/rebuild.sh` runs; a from-scratch run of the script is
-  pending.
+  (exit 0, 325 s wall, 366 MB peak).
+- **2026-10-13:** a from-scratch reproduction, `search/sc/rebuild.sh --from
+  model` in a fresh work directory: the model stage regenerated every
+  committed model and Lean data file byte for byte, the search found the
+  same tree (141,670 nodes, 0 deferred), and `constructSnubCube` printed the
+  same line (exit 0). All stages took under 6 min, besides the Lean build.
 
 ## Verifying and reproducing
 
