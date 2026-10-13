@@ -1,0 +1,790 @@
+module
+
+public import Pipeline.AtlasProjectiveEdgeCertificate
+public import Pipeline.AtlasOctaPrune
+public import Pipeline.AtlasLocalCertificate
+public import Pipeline.AtlasProjectiveLocalCertificate
+public import Pipeline.AtlasProjectiveLocalViewTree
+public import Pipeline.AtlasProjectiveGlobalCertificate
+public import Pipeline.AtlasProjectiveMixedGlobalCertificate
+public import Pipeline.WedgeCover
+public import ParallelBool
+public import Pipeline.OctaView
+
+@[expose] public section
+
+/-!
+# Solution trees for octahedral solids
+
+The solution trees of the shared pipeline (`Pipeline.AtlasProjectiveSolutionTree`),
+for an octahedral solid (`OctahedralSolid`): the same rows and checks, over
+the octahedral reduction (`Pipeline.OctaView`): the view lies in the Oh
+chamber (`AtlasPose.InOctaView`, the code triangles cover its triangle
+`octaViewTriangle`) and the relative rotation in the O cell
+(`AtlasPose.InOctaFundamentalDomain`). Differences from the icosahedral
+trees:
+
+* the root interval is the whole atlas root (no fivefold narrowing; the O
+  cell prune `octaPrune`, pack tag 13, does the work);
+* no `viewRoot` (the fivefold wedge) and no fivefold `fundamentalPrune`;
+* `capLeaf` (pack tag 16): a chart-0 box and view triangle inside one of
+  the solid's caps (`OctaCaps`), excluded by the cap claims (`CapsHold`),
+  which the solid proves separately for the exact solid.
+
+The relative Cayley box is split along any of its five stored coordinates
+(generated trees use only `x,y,z`). The outer view starts from the code
+triangles of the chamber and is split by four-way midpoint triangle
+subdivision.
+-/
+
+open Noperts Noperts.Pipeline
+
+namespace Noperts.Pipeline
+
+open Noperts.Atlas.ProjectiveView AtlasProjectiveView
+
+/-- The code triangles of an octahedral solid and the tree that proves they
+cover its view triangle (the octahedral twin of `CodeTriangleCover`). -/
+class OctaCodeTriangleCover where
+  codeTriangles : Array WedgeCover.Tri
+  baseTriangle : WedgeCover.Tri
+  coverTree : WedgeCover.Node
+  baseTriangle_valid : WedgeCover.baseTriangleValid baseTriangle = true
+  /-- The base triangle is the Oh chamber (checked by the kernel on the
+  solid's data). -/
+  octaViewTriangle_eq : toReal octaViewTriangle = toReal baseTriangle
+
+/-- The cover check, evaluated natively by the verifier. -/
+def octaCoverValid [OctaCodeTriangleCover] : Bool :=
+  OctaCodeTriangleCover.coverTree.check OctaCodeTriangleCover.codeTriangles
+    (WedgeCover.baseConstraints OctaCodeTriangleCover.baseTriangle)
+
+theorem octaCodeTriangles_cover [OctaCodeTriangleCover] (hcover : octaCoverValid = true)
+    (u : Fin 3 → ℝ) (hu : InTriangle (toReal OctaCodeTriangleCover.baseTriangle) u) :
+    ∃ t : ℕ, ∃ tri, OctaCodeTriangleCover.codeTriangles[t]? = some tri ∧
+      InTriangle (toReal tri) u :=
+  WedgeCover.base_covered OctaCodeTriangleCover.baseTriangle
+    OctaCodeTriangleCover.baseTriangle_valid OctaCodeTriangleCover.codeTriangles
+    OctaCodeTriangleCover.coverTree hcover u hu
+
+/-- A solid's caps, for the octahedral solution trees: the check that a
+chart-0 box and view triangle lie in cap `cap`, the claims (`CapsHold S`:
+no pose of `S` in any cap is Rupert, proved separately for the exact solid),
+and the soundness of the check given the claims. -/
+class OctaCaps where
+  capLeafValidB : AtlasInterval ℚ → Fin 8 → AtlasProjectiveView.Triangle ℚ → ℕ → Bool
+  CapsHold : Set ℝ³ → Prop
+  capLeaf_sound : ∀ S : Set ℝ³, CapsHold S → ∀ (interval : AtlasInterval ℚ) (root : Fin 8)
+    (triangle : AtlasProjectiveView.Triangle ℚ) (cap : ℕ),
+    capLeafValidB interval root triangle cap = true →
+    ∀ p ∈ interval.toReal, 1 ≤ viewScale root p →
+      InTriangle (toReal triangle) (normalizedView root p) →
+      ∀ offset : ℝ², ¬ RupertPose (p.matrixPoseWithOffset 0 offset) S
+
+end Noperts.Pipeline
+
+namespace Noperts.Pipeline.OctaSolutionTree
+
+variable [OctahedralSolid] [OctaCodeTriangleCover] [OctaCaps] {P : CyclicModel}
+
+open CayleyAtlas AtlasProjectiveView
+open Noperts.Atlas.ProjectiveView
+
+abbrev Interval := AtlasInterval ℚ
+abbrev Triangle := AtlasProjectiveView.Triangle ℚ
+
+/-- The identity-tube tables, one per code triangle, in
+`WedgeCover.codeTriangles` order. -/
+abbrev SharedLocalTables := Array AtlasProjectiveLocalViewTree.Table
+
+def SharedLocalValid (shared : SharedLocalTables) : Prop :=
+  ∀ index (h : index < shared.size), shared[index].Valid
+
+@[reducible] instance (shared : SharedLocalTables) :
+    Decidable (SharedLocalValid shared) := by
+  unfold SharedLocalValid
+  infer_instance
+
+inductive Region where
+  | sphere
+  | triangle (root : Fin 8) (value : Triangle)
+deriving DecidableEq
+
+def Region.Mem : Region → AtlasPose ℝ → Prop
+  | .sphere, _ => True
+  | .triangle root value, p =>
+      1 ≤ viewScale root p ∧
+        InTriangle (toReal value) (normalizedView root p)
+
+def NoRupert (chart : ChartIndex) (interval : Interval)
+    (region : Region) : Prop :=
+  ¬ ∃ p ∈ interval.toReal, p.CayleyBounded ∧
+    p.InOctaFundamentalDomain chart ∧ p.InOctaView ∧
+    ∃ offset : ℝ²,
+    region.Mem p ∧
+      RupertPose (p.matrixPoseWithOffset chart offset)
+        P.polyhedron.hull
+
+omit [OctaCodeTriangleCover] [OctaCaps] in
+theorem noRupert_halves (chart : ChartIndex) (interval : Interval)
+    (region : Region) (coordinate : Fin 5)
+    (hlower : NoRupert (P := P) chart (interval.lowerHalf coordinate) region)
+    (hupper : NoRupert (P := P) chart (interval.upperHalf coordinate) region) :
+    NoRupert (P := P) chart interval region := by
+  rintro ⟨p, hp, hbounded, hfund, hview, offset, hregion, hrupert⟩
+  rcases AtlasInterval.mem_imp_mem_lowerHalf_or_upperHalf coordinate hp with
+    hl | hu
+  · exact hlower ⟨p, hl, hbounded, hfund, hview,
+      offset, hregion, hrupert⟩
+  · exact hupper ⟨p, hu, hbounded, hfund, hview,
+      offset, hregion, hrupert⟩
+
+omit [OctaCodeTriangleCover] [OctaCaps] in
+theorem noRupert_cut (chart : ChartIndex) (interval : Interval)
+    (region : Region) (coordinate : Fin 5) (t : ℚ)
+    (hlower : NoRupert (P := P) chart (interval.lowerAt coordinate t) region)
+    (hupper : NoRupert (P := P) chart (interval.upperAt coordinate t) region) :
+    NoRupert (P := P) chart interval region := by
+  rintro ⟨p, hp, hbounded, hfund, hview, offset, hregion, hrupert⟩
+  rcases AtlasInterval.mem_imp_mem_lowerAt_or_upperAt coordinate t hp with
+    hl | hu
+  · exact hlower ⟨p, hl, hbounded, hfund, hview,
+      offset, hregion, hrupert⟩
+  · exact hupper ⟨p, hu, hbounded, hfund, hview,
+      offset, hregion, hrupert⟩
+
+def minAbsBound (lo hi : ℚ) : ℚ :=
+  if lo ≤ 0 ∧ 0 ≤ hi then 0 else min |lo| |hi|
+
+def Interval.outsideCayleyBall (interval : Interval) : Prop :=
+  minAbsBound interval.min.x interval.max.x ^ 2 +
+    minAbsBound interval.min.y interval.max.y ^ 2 +
+    minAbsBound interval.min.z interval.max.z ^ 2 > 3
+
+@[reducible] instance (interval : Interval) : Decidable interval.outsideCayleyBall := by
+  unfold Interval.outsideCayleyBall minAbsBound
+  infer_instance
+
+omit [OctahedralSolid] [OctaCodeTriangleCover] [OctaCaps] in
+private theorem minAbsBound_le_abs {lo hi : ℚ} {x : ℝ}
+    (hx : x ∈ Set.Icc (lo : ℝ) (hi : ℝ)) :
+    (minAbsBound lo hi : ℚ) ≤ |x| := by
+  unfold minAbsBound
+  split_ifs with hcross
+  · norm_num
+  · by_cases hlo : lo ≤ 0
+    · have hhi : ¬ 0 ≤ hi := fun hhi => hcross ⟨hlo, hhi⟩
+      have hhiQ : hi < 0 := lt_of_not_ge hhi
+      have hhiR : (hi : ℝ) < 0 := by exact_mod_cast hhiQ
+      have hx0 : x < 0 := hx.2.trans_lt hhiR
+      have hmin : min |lo| |hi| ≤ |hi| := min_le_right _ _
+      have hminR : ((min |lo| |hi| : ℚ) : ℝ) ≤ ((|hi| : ℚ) : ℝ) := by
+        exact_mod_cast hmin
+      exact hminR.trans (by
+        rw [Rat.cast_abs, abs_of_neg hhiR, abs_of_neg hx0]
+        linarith [hx.2])
+    · have hloQ : 0 < lo := lt_of_not_ge hlo
+      have hloR : (0 : ℝ) < lo := by exact_mod_cast hloQ
+      have hx0 : 0 < x := hloR.trans_le hx.1
+      have hmin : min |lo| |hi| ≤ |lo| := min_le_left _ _
+      have hminR : ((min |lo| |hi| : ℚ) : ℝ) ≤ ((|lo| : ℚ) : ℝ) := by
+        exact_mod_cast hmin
+      exact hminR.trans (by
+        rw [Rat.cast_abs, abs_of_pos hloR, abs_of_pos hx0]
+        exact hx.1)
+
+omit [OctaCodeTriangleCover] [OctaCaps] in
+theorem noRupert_of_outsideCayleyBall (chart : ChartIndex)
+    (interval : Interval) (region : Region)
+    (h : interval.outsideCayleyBall) : NoRupert (P := P) chart interval region := by
+  rintro ⟨p, hp, hbounded, -, -, offset, hregion, hrupert⟩
+  have hmem := AtlasInterval.mem_toReal_iff.mp hp
+  have hx := minAbsBound_le_abs (hmem 2)
+  have hy := minAbsBound_le_abs (hmem 3)
+  have hz := minAbsBound_le_abs (hmem 4)
+  have hx0 : (0 : ℝ) ≤ (minAbsBound interval.min.x interval.max.x : ℚ) := by
+    unfold minAbsBound
+    split_ifs <;> positivity
+  have hy0 : (0 : ℝ) ≤ (minAbsBound interval.min.y interval.max.y : ℚ) := by
+    unfold minAbsBound
+    split_ifs <;> positivity
+  have hz0 : (0 : ℝ) ≤ (minAbsBound interval.min.z interval.max.z : ℚ) := by
+    unfold minAbsBound
+    split_ifs <;> positivity
+  have hxsq := (sq_le_sq₀ hx0 (abs_nonneg p.x)).2 hx
+  have hysq := (sq_le_sq₀ hy0 (abs_nonneg p.y)).2 hy
+  have hzsq := (sq_le_sq₀ hz0 (abs_nonneg p.z)).2 hz
+  simp only [sq_abs] at hxsq hysq hzsq
+  have hout : (3 : ℝ) <
+      (minAbsBound interval.min.x interval.max.x : ℚ) ^ 2 +
+      (minAbsBound interval.min.y interval.max.y : ℚ) ^ 2 +
+      (minAbsBound interval.min.z interval.max.z : ℚ) ^ 2 := by
+    exact_mod_cast h
+  unfold AtlasPose.CayleyBounded at hbounded
+  nlinarith
+
+/-! ## Relaxed view triangles
+
+The code triangles' corners are facet-plane intersections with ~1000-bit
+coordinates, and their midpoint subdivisions only grow.  Certificates are
+far cheaper to check over a slightly larger triangle with short (dyadic)
+coordinates; `Row.regionRelax` swaps one in once each corner of the exact
+triangle is checked to lie in it. -/
+
+/-- Barycentric weights `(s, u)` of `point` for corners 1 and 2 of `outer`,
+by Cramer's rule in the `(x, y)` projection.  Only a candidate: `cornerInB`
+re-checks the full 3D combination. -/
+def cornerWeights (outer : Triangle) (point : AtlasProjectiveView.Vector ℚ) : ℚ × ℚ :=
+  let ax := outer 1 0 - outer 0 0
+  let ay := outer 1 1 - outer 0 1
+  let bx := outer 2 0 - outer 0 0
+  let by_ := outer 2 1 - outer 0 1
+  let px := point 0 - outer 0 0
+  let py := point 1 - outer 0 1
+  let det := ax * by_ - ay * bx
+  ((px * by_ - py * bx) / det, (ax * py - ay * px) / det)
+
+/-- `point` is the convex combination `(1 - s - u, s, u)` of `outer`'s
+corners, with `(s, u) = cornerWeights outer point`. -/
+def cornerInWith (outer : Triangle) (point : AtlasProjectiveView.Vector ℚ)
+    (su : ℚ × ℚ) : Bool :=
+  decide (0 ≤ su.1 ∧ 0 ≤ su.2 ∧ su.1 + su.2 ≤ 1 ∧
+    ∀ c : Fin 3, point c =
+      (1 - su.1 - su.2) * outer 0 c + su.1 * outer 1 c + su.2 * outer 2 c)
+
+def cornerInB (outer : Triangle) (point : AtlasProjectiveView.Vector ℚ) : Bool :=
+  cornerInWith outer point (cornerWeights outer point)
+
+/-- Every corner of `inner` lies in `outer`. -/
+def triangleWithinB (outer inner : Triangle) : Bool :=
+  cornerInB outer (inner 0) && cornerInB outer (inner 1) && cornerInB outer (inner 2)
+
+omit [OctahedralSolid] [OctaCodeTriangleCover] [OctaCaps] in
+theorem inTriangle_of_cornerInWith {outer : Triangle}
+    {point : AtlasProjectiveView.Vector ℚ} {su : ℚ × ℚ}
+    (h : cornerInWith outer point su = true) :
+    InTriangle (toReal outer) (fun c => (point c : ℝ)) := by
+  unfold cornerInWith at h
+  rw [decide_eq_true_iff] at h
+  obtain ⟨hs, hu, hsum, heq⟩ := h
+  refine ⟨![((1 - su.1 - su.2 : ℚ) : ℝ), (su.1 : ℝ), (su.2 : ℝ)], ?_, ?_, ?_⟩
+  · intro i
+    fin_cases i <;> simp <;> norm_cast <;> linarith
+  · simp [Fin.sum_univ_three]
+    ring
+  · funext c
+    have hc := congrArg (fun q : ℚ => (q : ℝ)) (heq c)
+    simp only [affinePoint, toReal, Fin.sum_univ_three]
+    rw [hc]
+    push_cast
+    simp
+
+omit [OctahedralSolid] [OctaCodeTriangleCover] [OctaCaps] in
+theorem inTriangle_of_cornerInB {outer : Triangle}
+    {point : AtlasProjectiveView.Vector ℚ} (h : cornerInB outer point = true) :
+    InTriangle (toReal outer) (fun c => (point c : ℝ)) :=
+  inTriangle_of_cornerInWith h
+
+omit [OctahedralSolid] [OctaCodeTriangleCover] [OctaCaps] in
+/-- Triangles are convex: if every corner of `inner` lies in `outer`, so
+does every point of `inner`. -/
+theorem inTriangle_of_triangleWithinB {outer inner : Triangle}
+    (h : triangleWithinB outer inner = true) {point : AtlasProjectiveView.Vector ℝ}
+    (hmem : InTriangle (toReal inner) point) :
+    InTriangle (toReal outer) point := by
+  simp only [triangleWithinB, Bool.and_eq_true] at h
+  obtain ⟨⟨h0, h1⟩, h2⟩ := h
+  obtain ⟨v0, hv0, hs0, he0⟩ := inTriangle_of_cornerInB h0
+  obtain ⟨v1, hv1, hs1, he1⟩ := inTriangle_of_cornerInB h1
+  obtain ⟨v2, hv2, hs2, he2⟩ := inTriangle_of_cornerInB h2
+  obtain ⟨w, hw, hsum, hpoint⟩ := hmem
+  simp only [Fin.sum_univ_three] at hs0 hs1 hs2 hsum
+  refine ⟨fun i => w 0 * v0 i + w 1 * v1 i + w 2 * v2 i, ?_, ?_, ?_⟩
+  · intro i
+    have := hw 0; have := hw 1; have := hw 2
+    have := hv0 i; have := hv1 i; have := hv2 i
+    positivity
+  · simp only [Fin.sum_univ_three]
+    linear_combination w 0 * hs0 + w 1 * hs1 + w 2 * hs2 + hsum
+  · rw [hpoint]
+    funext c
+    have e0 := congrFun he0 c
+    have e1 := congrFun he1 c
+    have e2 := congrFun he2 c
+    simp only [affinePoint, toReal, Fin.sum_univ_three] at e0 e1 e2 ⊢
+    rw [e0, e1, e2]
+    ring
+
+inductive Row where
+  | cayleySplit (id lowerChild upperChild : ℕ) (coordinate : Fin 5)
+      (interval : Interval) (region : Region)
+  | viewSplit (id : ℕ) (children : Fin 4 → ℕ)
+      (interval : Interval) (root : Fin 8) (triangle : Triangle)
+  | projective (id : ℕ) (box : AtlasProjectiveEdgeCertificate.Box)
+  | projectiveGlobal (id : ℕ)
+      (box : AtlasProjectiveGlobalCertificate.Box)
+  | projectiveMixedGlobal (id : ℕ)
+      (box : AtlasProjectiveMixedGlobalCertificate.Box)
+  | symmetryLocal (id : ℕ) (box : AtlasLocalCertificate.Box)
+      (region : Region)
+  | projectiveLocal (id : ℕ) (box : AtlasProjectiveLocalCertificate.Box)
+  /-- Rigidity-tube leaf: the view region is a sub-triangle (along `path`)
+  of the identity-tube table `sharedIndex`'s base triangle, and the tube is
+  within the radius certified at the deepest table node on that path. -/
+  | symmetryTube (id : ℕ) (tube : AtlasProjectiveLocalViewTree.Tube)
+      (sharedIndex : ℕ) (path : List (Fin 4)) (region : Region)
+  /-- Split the whole upper view wedge into the code triangles
+  (`WedgeCover.codeTriangles`); child `t` gets code triangle `t`. -/
+  | codeRoot (id : ℕ) (children : Array ℕ) (interval : Interval)
+  | radiusPrune (id : ℕ) (interval : Interval) (region : Region)
+  /-- The O cell prune: a nontrivial rotation of O increases the trace over
+  the whole box (pack tag 13). -/
+  | octaPrune (id : ℕ) (box : AtlasOctaPrune.Box) (region : Region)
+  /-- Replace the view triangle by a larger `outer` one (see
+  `triangleWithinB`); the child covers the same interval over `outer`. -/
+  | regionRelax (id child : ℕ) (interval : Interval) (root : Fin 8)
+      (triangle outer : Triangle)
+  /-- Split one coordinate at an arbitrary rational point `cut` (clamped
+  into its range); `cayleySplit` is the midpoint case. -/
+  | cayleySplitAt (id lowerChild upperChild : ℕ) (coordinate : Fin 5) (cut : ℚ)
+      (interval : Interval) (region : Region)
+  /-- Cap leaf (pack tag 16): a chart-0 box and view triangle inside cap
+  `cap` of the solid (`OctaCaps`), excluded by the cap claims. -/
+  | capLeaf (id : ℕ) (interval : Interval) (root : Fin 8) (triangle : Triangle) (cap : ℕ)
+
+def Row.id : Row → ℕ
+  | .cayleySplit id .. | .viewSplit id .. |
+      .projective id .. | .projectiveGlobal id .. |
+      .projectiveMixedGlobal id .. |
+      .symmetryLocal id .. | .radiusPrune id .. |
+      .octaPrune id .. | .symmetryTube id .. | .codeRoot id ..
+      | .regionRelax id .. | .cayleySplitAt id .. | .capLeaf id .. => id
+  | .projectiveLocal id .. => id
+
+def Row.interval : Row → Interval
+  | .cayleySplit _ _ _ _ interval _ => interval
+  | .viewSplit _ _ interval _ _ => interval
+  | .projective _ box => box.interval
+  | .projectiveGlobal _ box => box.interval
+  | .projectiveMixedGlobal _ box => box.interval
+  | .symmetryLocal _ box _ => box.interval
+  | .projectiveLocal _ box => box.interval
+  | .symmetryTube _ tube .. => tube.interval
+  | .codeRoot _ _ interval => interval
+  | .radiusPrune _ interval _ => interval
+  | .octaPrune _ box _ => box.interval
+  | .regionRelax _ _ interval _ _ _ => interval
+  | .cayleySplitAt _ _ _ _ _ interval _ => interval
+  | .capLeaf _ interval _ _ _ => interval
+
+def Row.region : Row → Region
+  | .cayleySplit _ _ _ _ _ region => region
+  | .viewSplit _ _ _ root triangle => .triangle root triangle
+  | .projective _ box => .triangle box.root box.triangle
+  | .projectiveGlobal _ box => .triangle box.root box.triangle
+  | .projectiveMixedGlobal _ box => .triangle box.root box.triangle
+  | .symmetryLocal _ _ region => region
+  | .projectiveLocal _ box => .triangle box.root box.triangle
+  | .symmetryTube _ _ _ _ region => region
+  | .codeRoot .. => .sphere
+  | .radiusPrune _ _ region => region
+  | .octaPrune _ _ region => region
+  | .regionRelax _ _ _ root triangle _ => .triangle root triangle
+  | .cayleySplitAt _ _ _ _ _ _ region => region
+  | .capLeaf _ _ root triangle _ => .triangle root triangle
+
+instance : Inhabited Row where
+  default := .radiusPrune 0 (AtlasPose.rootInterval ℚ) .sphere
+
+def SymmetryTubeMatches (tube : AtlasProjectiveLocalViewTree.Tube)
+    (path : List (Fin 4)) (region : Region) : Option AtlasProjectiveLocalViewTree.Table → Prop
+  | none => False
+  | some table =>
+      tube.symmetryIndex = table.symmetryIndex ∧
+      match table.findNodePrefix path with
+      | none => False
+      | some (nodeId, rest) =>
+          nodeId < table.size ∧ tube.r ≤ (table.get nodeId).rLower ∧
+          region = .triangle (table.get nodeId).root
+            (AtlasProjectiveLocalViewTree.splitPath (table.get nodeId).triangle rest)
+
+@[reducible] instance (tube : AtlasProjectiveLocalViewTree.Tube) (path : List (Fin 4)) (region : Region)
+    (table : Option AtlasProjectiveLocalViewTree.Table) :
+    Decidable (SymmetryTubeMatches tube path region table) := by
+  cases table
+  · simp only [SymmetryTubeMatches]
+    infer_instance
+  · simp only [SymmetryTubeMatches]
+    split <;> infer_instance
+
+def Row.ValidAt (chart : ChartIndex) (get : ℕ → Row)
+    (size : ℕ) (shared : SharedLocalTables) : Row → Prop
+  | .cayleySplit id lowerChild upperChild coordinate interval region =>
+      id < lowerChild ∧ id < upperChild ∧
+      lowerChild < size ∧ upperChild < size ∧
+      (get lowerChild).interval = interval.lowerHalf coordinate ∧
+      (get upperChild).interval = interval.upperHalf coordinate ∧
+      (get lowerChild).region = region ∧
+      (get upperChild).region = region
+  | .viewSplit id children interval root triangle => ∀ child,
+      id < children child ∧ children child < size ∧
+      (get (children child)).interval = interval ∧
+      (get (children child)).region =
+        .triangle root (split triangle child)
+  | .projective _ box => box.chart = chart ∧ box.Valid
+  | .projectiveGlobal _ box => box.chart = chart ∧ box.Valid
+  | .projectiveMixedGlobal _ box => box.chart = chart ∧ box.Valid
+  | .symmetryLocal _ box _ => box.chart = chart ∧ box.Valid
+  | .projectiveLocal _ box => box.chart = chart ∧ box.Valid
+  | .symmetryTube _ tube sharedIndex path region =>
+      tube.chart = chart ∧ tube.Valid ∧
+        SymmetryTubeMatches tube path region shared[sharedIndex]?
+  | .radiusPrune _ interval _ => interval.outsideCayleyBall
+  | .octaPrune _ box _ => box.chart = chart ∧ box.Valid
+  | .capLeaf _ interval root triangle cap =>
+      chart = 0 ∧ OctaCaps.capLeafValidB interval root triangle cap = true
+  | .cayleySplitAt id lowerChild upperChild coordinate cut interval region =>
+      id < lowerChild ∧ id < upperChild ∧
+      lowerChild < size ∧ upperChild < size ∧
+      (get lowerChild).interval = interval.lowerAt coordinate cut ∧
+      (get upperChild).interval = interval.upperAt coordinate cut ∧
+      (get lowerChild).region = region ∧
+      (get upperChild).region = region
+  | .regionRelax id child interval root triangle outer =>
+      id < child ∧ child < size ∧
+      (get child).interval = interval ∧
+      (get child).region = .triangle root outer ∧
+      triangleWithinB outer triangle = true
+  | .codeRoot id children interval =>
+      children.size = OctaCodeTriangleCover.codeTriangles.size ∧
+      ∀ t (ht : t < children.size),
+        id < children[t] ∧ children[t] < size ∧
+        (get children[t]).interval = interval ∧
+        (get children[t]).region = .triangle 0 (OctaCodeTriangleCover.codeTriangles.getD t 0)
+
+@[reducible] instance (chart : ChartIndex) (get : ℕ → Row) (size : ℕ)
+    (shared : SharedLocalTables) (row : Row) :
+    Decidable (row.ValidAt chart get size shared) := by
+  cases row <;> simp only [Row.ValidAt] <;> infer_instance
+
+def RowsValidAt (chart : ChartIndex) (get : ℕ → Row)
+    (size : ℕ) (shared : SharedLocalTables) : Prop :=
+  ∀ i : Fin size,
+    (get i).id = i ∧ (get i).ValidAt chart get size shared
+
+@[reducible] instance (chart : ChartIndex) (get : ℕ → Row) (size : ℕ)
+    (shared : SharedLocalTables) :
+    Decidable (RowsValidAt chart get size shared) := by
+  unfold RowsValidAt
+  infer_instance
+
+/-- A kernel-checkable slice of `RowsValidAt`.  Generated tables prove small
+slices independently and join them with `rowsValidRange_append`, avoiding one
+enormous reduction in the kernel evaluator. -/
+def RowsValidRangeAt (chart : ChartIndex) (get : ℕ → Row) (size start count : ℕ)
+    (shared : SharedLocalTables) :
+    Prop :=
+  start + count ≤ size ∧ ∀ j : Fin count,
+    (get (start + j.val)).id = start + j.val ∧
+      (get (start + j.val)).ValidAt chart get size shared
+
+@[reducible] instance (chart : ChartIndex) (get : ℕ → Row) (size start count : ℕ)
+    (shared : SharedLocalTables) :
+    Decidable (RowsValidRangeAt chart get size start count shared) := by
+  unfold RowsValidRangeAt
+  infer_instance
+
+theorem rowsValidRange_append {chart : ChartIndex} {get : ℕ → Row}
+    {size start left right : ℕ}
+    {shared : SharedLocalTables}
+    (hleft : RowsValidRangeAt chart get size start left shared)
+    (hright : RowsValidRangeAt chart get size (start + left) right shared) :
+    RowsValidRangeAt chart get size start (left + right) shared := by
+  unfold RowsValidRangeAt at hleft hright ⊢
+  constructor
+  · omega
+  · intro j
+    by_cases hmid : j.val < left
+    · simpa using hleft.2 ⟨j.val, hmid⟩
+    · have hjright : j.val - left < right := by omega
+      have hr := hright.2 ⟨j.val - left, hjright⟩
+      have hi : start + left + (j.val - left) = start + j.val := by omega
+      simpa [hi] using hr
+
+theorem rowsValidAt_of_range {chart : ChartIndex} {get : ℕ → Row} {size : ℕ}
+    {shared : SharedLocalTables}
+    (h : RowsValidRangeAt chart get size 0 size shared) :
+    RowsValidAt chart get size shared := by
+  intro i
+  simpa using h.2 ⟨i.val, i.isLt⟩
+
+theorem valid_imp_noRupert_ix (chart : ChartIndex) (get : ℕ → Row)
+    (size : ℕ) (shared : SharedLocalTables)
+    (sharedValid : SharedLocalValid shared)
+    (hcover : octaCoverValid = true)
+    (hcaps : OctaCaps.CapsHold P.polyhedron.hull)
+    (rowsValid : RowsValidAt chart get size shared)
+    (i : ℕ) (hi : i < size) :
+    NoRupert (P := P) chart (get i).interval (get i).region := by
+  obtain ⟨hid, hvalid⟩ := rowsValid ⟨i, hi⟩
+  generalize hrow : get i = row at hid hvalid ⊢
+  cases row with
+  | projective id box =>
+      unfold NoRupert
+      rintro ⟨p, hp, hbounded, -, -, offset, hregion, hrupert⟩
+      obtain ⟨hchart, hbox⟩ := hvalid
+      subst hchart
+      exact box.valid_imp_not_translated_rupert hbox hp hbounded offset
+        hregion.1 hregion.2 hrupert
+  | projectiveGlobal id box =>
+      unfold NoRupert
+      rintro ⟨p, hp, hbounded, -, -, offset, hregion, hrupert⟩
+      obtain ⟨hchart, hbox⟩ := hvalid
+      subst hchart
+      exact box.valid_imp_not_translated_rupert hbox p hp hbounded
+        hregion.1 hregion.2 offset hrupert
+  | projectiveMixedGlobal id box =>
+      unfold NoRupert
+      rintro ⟨p, hp, hbounded, -, -, offset, hregion, hrupert⟩
+      obtain ⟨hchart, hbox⟩ := hvalid
+      subst hchart
+      exact box.valid_imp_not_translated_rupert hbox p hp hbounded
+        hregion.1 hregion.2 offset hrupert
+  | symmetryLocal id box region =>
+      unfold NoRupert
+      rintro ⟨p, hp, -, -, -, offset, -, hrupert⟩
+      obtain ⟨hchart, hbox⟩ := hvalid
+      subst hchart
+      exact box.valid_imp_not_translated_rupert hbox p hp offset hrupert
+  | projectiveLocal id box =>
+      unfold NoRupert
+      rintro ⟨p, hp, -, -, -, offset, hregion, hrupert⟩
+      obtain ⟨hchart, hbox⟩ := hvalid
+      subst hchart
+      exact box.valid_imp_not_translated_rupert hbox hp offset
+        hregion.1 hregion.2 hrupert
+  | symmetryTube id tube sharedIndex path region =>
+      unfold NoRupert
+      rintro ⟨p, hp, -, -, -, offset, hregion, hrupert⟩
+      obtain ⟨hchart, htube, hmatch⟩ := hvalid
+      subst hchart
+      cases hshared : shared[sharedIndex]? with
+      | none => simp [SymmetryTubeMatches, hshared] at hmatch
+      | some table =>
+          obtain ⟨hidx, htableEq⟩ := Array.getElem?_eq_some_iff.mp hshared
+          have htable : table.Valid := htableEq ▸ sharedValid sharedIndex hidx
+          rw [hshared] at hmatch
+          obtain ⟨hsymmetry, hfind⟩ := hmatch
+          split at hfind
+          · exact hfind.elim
+          · rename_i nodeId rest _
+            obtain ⟨hnode, hradius, hregionEq⟩ := hfind
+            rw [hregionEq] at hregion
+            exact table.valid_imp_not_translated_rupert_below_node htable nodeId hnode
+              rest tube hsymmetry hradius htube hp offset hregion.1 hregion.2 hrupert
+  | codeRoot id children interval =>
+      unfold NoRupert
+      rintro ⟨p, hp, hbounded, hfund, hview, offset, -, hrupert⟩
+      obtain ⟨hscale, hmem⟩ := octaView_mem_triangle p hview
+      rw [OctaCodeTriangleCover.octaViewTriangle_eq] at hmem
+      obtain ⟨t, tri, hget, hin⟩ := octaCodeTriangles_cover hcover _ hmem
+      obtain ⟨htlt, htri⟩ := Array.getElem?_eq_some_iff.mp hget
+      obtain ⟨hsize, hall⟩ := hvalid
+      have ht : t < children.size := hsize ▸ htlt
+      obtain ⟨hforward, hchildSize, hchildInterval, hchildRegion⟩ := hall t ht
+      have hchild := valid_imp_noRupert_ix chart get size shared sharedValid hcover hcaps rowsValid
+        children[t] hchildSize
+      rw [hchildInterval, hchildRegion] at hchild
+      have hgetD : OctaCodeTriangleCover.codeTriangles.getD t 0 = tri := by
+        simp [Array.getD, htlt, htri]
+      rw [hgetD] at hchild
+      exact hchild ⟨p, hp, hbounded, hfund, hview, offset,
+        ⟨hscale, hin⟩, hrupert⟩
+  | cayleySplit id lowerChild upperChild coordinate interval region =>
+      obtain ⟨hlower, hupper, hlowerSize, hupperSize,
+        hlowerInterval, hupperInterval, hlowerRegion, hupperRegion⟩ := hvalid
+      apply noRupert_halves chart interval region coordinate
+      · rw [← hlowerInterval, ← hlowerRegion]
+        exact valid_imp_noRupert_ix chart get size shared sharedValid hcover hcaps rowsValid
+          lowerChild hlowerSize
+      · rw [← hupperInterval, ← hupperRegion]
+        exact valid_imp_noRupert_ix chart get size shared sharedValid hcover hcaps rowsValid
+          upperChild hupperSize
+  | viewSplit id children interval root triangle =>
+      unfold NoRupert
+      rintro ⟨p, hp, hbounded, hfund, hview, offset, hregion, hrupert⟩
+      obtain ⟨child, hchildMem⟩ := mem_split hregion.2
+      obtain ⟨hforward, hchildSize, hchildInterval, hchildRegion⟩ :=
+        hvalid child
+      have hchild := valid_imp_noRupert_ix chart get size shared sharedValid hcover hcaps rowsValid
+        (children child) hchildSize
+      rw [hchildInterval, hchildRegion] at hchild
+      exact hchild ⟨p, hp, hbounded, hfund, hview, offset,
+        ⟨hregion.1, hchildMem⟩, hrupert⟩
+  | cayleySplitAt id lowerChild upperChild coordinate cut interval region =>
+      obtain ⟨hlower, hupper, hlowerSize, hupperSize,
+        hlowerInterval, hupperInterval, hlowerRegion, hupperRegion⟩ := hvalid
+      apply noRupert_cut chart interval region coordinate cut
+      · rw [← hlowerInterval, ← hlowerRegion]
+        exact valid_imp_noRupert_ix chart get size shared sharedValid hcover hcaps rowsValid
+          lowerChild hlowerSize
+      · rw [← hupperInterval, ← hupperRegion]
+        exact valid_imp_noRupert_ix chart get size shared sharedValid hcover hcaps rowsValid
+          upperChild hupperSize
+  | regionRelax id child interval root triangle outer =>
+      unfold NoRupert
+      rintro ⟨p, hp, hbounded, hfund, hview, offset, hregion, hrupert⟩
+      obtain ⟨hforward, hchildSize, hchildInterval, hchildRegion, hwithin⟩ := hvalid
+      have hchild := valid_imp_noRupert_ix chart get size shared sharedValid hcover hcaps rowsValid
+        child hchildSize
+      rw [hchildInterval, hchildRegion] at hchild
+      exact hchild ⟨p, hp, hbounded, hfund, hview, offset,
+        ⟨hregion.1, inTriangle_of_triangleWithinB hwithin hregion.2⟩, hrupert⟩
+  | radiusPrune id interval region =>
+      exact noRupert_of_outsideCayleyBall chart interval region hvalid
+  | octaPrune id box region =>
+      unfold NoRupert
+      rintro ⟨p, hp, hbounded, hfund, -, offset, -, hrupert⟩
+      obtain ⟨hchart, hbox⟩ := hvalid
+      subst hchart
+      exact box.valid_imp_not_inOctaCell hbox hp hfund
+  | capLeaf id interval root triangle cap =>
+      unfold NoRupert
+      rintro ⟨p, hp, -, -, -, offset, hregion, hrupert⟩
+      obtain ⟨hchart, hok⟩ := hvalid
+      subst hchart
+      exact OctaCaps.capLeaf_sound _ hcaps interval root triangle cap hok p hp hregion.1 hregion.2
+        offset hrupert
+termination_by size - i
+decreasing_by
+  all_goals
+    have : id = i := by simpa [Row.id, hrow] using hid
+    omega
+
+structure Table where
+  chart : ChartIndex
+  get : ℕ → Row
+  size : ℕ
+  sharedLocal : SharedLocalTables := #[]
+
+def Table.Valid (table : Table) : Prop :=
+  0 < table.size ∧
+    RowsValidAt table.chart table.get table.size table.sharedLocal ∧
+    (table.get 0).interval = AtlasPose.rootInterval ℚ ∧
+    (table.get 0).region = .sphere ∧
+    SharedLocalValid table.sharedLocal
+
+@[reducible] instance (table : Table) : Decidable table.Valid := by
+  unfold Table.Valid
+  infer_instance
+
+/-! ## Parallel executable checker -/
+
+/-- One global-tree row check as a Boolean, vacuously true past `size`. -/
+def validIxAtB (chart : ChartIndex) (get : ℕ → Row) (size : ℕ)
+    (shared : SharedLocalTables) (i : ℕ) : Bool :=
+  if i < size then
+    decide ((get i).id = i ∧ (get i).ValidAt chart get size shared)
+  else true
+
+theorem validIxAtB_eq_true_iff (chart : ChartIndex) (get : ℕ → Row)
+    (size : ℕ) (shared : SharedLocalTables) (i : ℕ) :
+    validIxAtB chart get size shared i = true ↔
+      (i < size → (get i).id = i ∧
+        (get i).ValidAt chart get size shared) := by
+  unfold validIxAtB
+  split
+  · rename_i h
+    rw [decide_eq_true_iff]
+    exact ⟨fun hv _ => hv, fun hv => hv h⟩
+  · rename_i h
+    simp only [true_iff]
+    exact fun h' => absurd h' h
+
+/-- Native parallel Boolean check of every row in a global chart table. -/
+def rowsValidAtParB (chart : ChartIndex) (get : ℕ → Row) (size : ℕ)
+    (shared : SharedLocalTables) (taskCount : ℕ) : Bool :=
+  Noperts.ParallelBool.allParB
+    (validIxAtB chart get size shared) size taskCount
+
+theorem rowsValidAt_of_parB {chart : ChartIndex} {get : ℕ → Row}
+    {size : ℕ} {shared : SharedLocalTables} {taskCount : ℕ}
+    (h : rowsValidAtParB chart get size shared taskCount = true) :
+    RowsValidAt chart get size shared := by
+  intro i
+  have hindex := Noperts.ParallelBool.all_of_parB h i.val i.isLt
+  rw [validIxAtB_eq_true_iff] at hindex
+  exact hindex i.isLt
+
+/-- Check the computational portion of `Table.Valid`.  Validity of shared
+local tables is supplied separately, so chart 0 does not recompute them. -/
+def tableCoreValidParB (table : Table) (taskCount : ℕ) : Bool :=
+  decide (0 < table.size ∧
+    (table.get 0).interval = AtlasPose.rootInterval ℚ ∧
+    (table.get 0).region = .sphere) &&
+  rowsValidAtParB table.chart table.get table.size table.sharedLocal taskCount
+
+/-- The native row tasks used by `tableCoreValidParB`, exposed for executable
+progress reporting. -/
+def tableCoreTasks (table : Table) (taskCount : ℕ) : List (Task Bool) :=
+  let chunkSize := table.size / taskCount + 1
+  Noperts.ParallelBool.chunkTasks
+    (validIxAtB table.chart table.get table.size table.sharedLocal)
+    taskCount chunkSize
+
+/-- The global table checker supplied with its already spawned task list. -/
+def tableCoreValidWithTasksB (table : Table) (taskCount : ℕ)
+    (tasks : List (Task Bool)) : Bool :=
+  let chunkSize := table.size / taskCount + 1
+  decide (0 < table.size ∧
+    (table.get 0).interval = AtlasPose.rootInterval ℚ ∧
+    (table.get 0).region = .sphere) &&
+  Noperts.ParallelBool.allWithTasksB table.size taskCount chunkSize tasks
+
+theorem Table.Valid.of_parB {table : Table} {taskCount : ℕ}
+    (hshared : SharedLocalValid table.sharedLocal)
+    (h : tableCoreValidParB table taskCount = true) : table.Valid := by
+  unfold tableCoreValidParB at h
+  rw [Bool.and_eq_true, decide_eq_true_iff] at h
+  exact ⟨h.1.1, rowsValidAt_of_parB h.2, h.1.2.1, h.1.2.2, hshared⟩
+
+theorem Table.Valid.of_withTasksB {table : Table} {taskCount : ℕ}
+    (hshared : SharedLocalValid table.sharedLocal)
+    (h : tableCoreValidWithTasksB table taskCount
+      (tableCoreTasks table taskCount) = true) : table.Valid := by
+  apply Table.Valid.of_parB hshared
+  exact h
+
+theorem Table.valid_imp_no_chart_translated_pose
+    (table : Table) (h : table.Valid) (hcover : octaCoverValid = true)
+    (hcaps : OctaCaps.CapsHold P.polyhedron.hull) :
+    ¬ ∃ p ∈ AtlasPose.rootInterval ℝ,
+      p.CayleyBounded ∧ p.InOctaFundamentalDomain table.chart ∧ p.InOctaView ∧
+      ∃ offset : ℝ², RupertPose (p.matrixPoseWithOffset table.chart offset)
+        P.polyhedron.hull := by
+  obtain ⟨hnonempty, hrows, hrootInterval, hrootRegion, hshared⟩ := h
+  have hchecked := valid_imp_noRupert_ix (P := P) table.chart table.get table.size
+    table.sharedLocal hshared hcover hcaps hrows 0 hnonempty
+  rw [hrootInterval, hrootRegion] at hchecked
+  rintro ⟨p, hp, hbounded, hfund, hview, offset, hrupert⟩
+  exact hchecked ⟨p, by rwa [AtlasInterval.rootInterval_toReal], hbounded, hfund, hview, offset,
+    trivial, hrupert⟩
+
+/-- Four valid chart tables exclude every matrix pose of an `OModel` whose
+hull satisfies the cap claims. -/
+theorem no_matrixPose_of_valid_tables (Q : OModel)
+    (table : ChartIndex → Table)
+    (hchart : ∀ chart, (table chart).chart = chart)
+    (hvalid : ∀ chart, (table chart).Valid) (hcover : octaCoverValid = true)
+    (hcaps : OctaCaps.CapsHold Q.toC4.polyhedron.hull) :
+    ¬ ∃ p : MatrixPose, RupertPose p Q.toC4.polyhedron.hull := by
+  rintro ⟨p, hrupert⟩
+  obtain ⟨chart, q, offset, hq, hbounded, hview, hfund, heq⟩ :=
+    OModel.exists_octa_full_atlas_translated_pose Q p
+  have hno := (table chart).valid_imp_no_chart_translated_pose (P := Q.toC4) (hvalid chart) hcover hcaps
+  rw [hchart chart] at hno
+  exact hno ⟨q, hq, hbounded, hfund, hview, offset, heq.mpr hrupert⟩
+
+end Noperts.Pipeline.OctaSolutionTree
+
+end
