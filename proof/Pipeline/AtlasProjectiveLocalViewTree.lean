@@ -194,7 +194,7 @@ theorem valid_imp_not_rupert_ix (symmetryIndex : OrbitIndex) (r : ℚ)
         have hsym : box.symmetryIndex = tube.symmetryIndex :=
           hboxSymmetry.trans htubeSymmetry.symm
         have hmismatchTube : actual.mismatchRadius ≤ tube.r := by
-          simpa [actual, Box.retarget, Box.mismatchRadius,
+          simp [actual, Box.retarget, Box.mismatchRadius,
             Box.mismatchShell, Tube.Valid, Tube.mismatchRadius, Tube.shell,
             AtlasLocalCertificate.Box.mismatchRadius,
             AtlasLocalCertificate.Box.identityMismatchRadius,
@@ -205,8 +205,8 @@ theorem valid_imp_not_rupert_ix (symmetryIndex : OrbitIndex) (r : ℚ)
             AtlasLocalCertificate.Box.mismatchBall,
             AtlasLocalCertificate.Box.variableBalls,
             AtlasLocalCertificate.Box.mismatchQuadratic,
-            hsym]
-            using htube
+            hsym] at htube ⊢
+          exact htube
         have hr : tube.r ≤ box.r := htubeRadius
         simpa [actual, Box.retarget] using hmismatchTube.trans hr
       have hactual : actual.Valid :=
@@ -222,7 +222,7 @@ theorem valid_imp_not_rupert_ix (symmetryIndex : OrbitIndex) (r : ℚ)
         have hsym : box.symmetryIndex = tube.symmetryIndex :=
           hboxSymmetry.trans htubeSymmetry.symm
         have hmismatchTube : actual.mismatchRadius ≤ tube.r := by
-          simpa [actual, Box.retarget, Box.mismatchRadius,
+          simp [actual, Box.retarget, Box.mismatchRadius,
             Box.mismatchShell, Tube.Valid, Tube.mismatchRadius, Tube.shell,
             AtlasLocalCertificate.Box.mismatchRadius,
             AtlasLocalCertificate.Box.identityMismatchRadius,
@@ -233,8 +233,8 @@ theorem valid_imp_not_rupert_ix (symmetryIndex : OrbitIndex) (r : ℚ)
             AtlasLocalCertificate.Box.mismatchBall,
             AtlasLocalCertificate.Box.variableBalls,
             AtlasLocalCertificate.Box.mismatchQuadratic,
-            hsym]
-            using htube
+            hsym] at htube ⊢
+          exact htube
         have hr : tube.r ≤ box.r := htubeRadius
         simpa [actual, Box.retarget] using hmismatchTube.trans hr
       exact actual.valid_imp_not_translated_rupert_of_decomposedViewValid
@@ -249,7 +249,7 @@ theorem valid_imp_not_rupert_ix (symmetryIndex : OrbitIndex) (r : ℚ)
         have hsym : box.symmetryIndex = tube.symmetryIndex :=
           hboxSymmetry.trans htubeSymmetry.symm
         have hmismatchTube : actual.mismatchRadius ≤ tube.r := by
-          simpa [actual, Box.retarget, Box.mismatchRadius,
+          simp [actual, Box.retarget, Box.mismatchRadius,
             Box.mismatchShell, Tube.Valid, Tube.mismatchRadius, Tube.shell,
             AtlasLocalCertificate.Box.mismatchRadius,
             AtlasLocalCertificate.Box.identityMismatchRadius,
@@ -260,8 +260,8 @@ theorem valid_imp_not_rupert_ix (symmetryIndex : OrbitIndex) (r : ℚ)
             AtlasLocalCertificate.Box.mismatchBall,
             AtlasLocalCertificate.Box.variableBalls,
             AtlasLocalCertificate.Box.mismatchQuadratic,
-            hsym]
-            using htube
+            hsym] at htube ⊢
+          exact htube
         have hr : tube.r ≤ box.r := htubeRadius
         simpa [actual, Box.retarget] using hmismatchTube.trans hr
       exact actual.valid_imp_not_translated_rupert_of_flockDecomposedViewValid

@@ -71,9 +71,9 @@ theorem cayleyMatrix_eq_div_numerator (x y z : ℝ) :
 theorem cayleyNumeratorMatrix_eq_denom_smul (x y z : ℝ) :
     cayleyNumeratorMatrix x y z =
       cayleyDenom x y z • cayleyMatrix x y z := by
-  rw [cayleyMatrix_eq_div_numerator]
   ext i j
   simp only [smul_eq_mul, Matrix.smul_apply]
+  rw [cayleyMatrix_eq_div_numerator]
   field_simp [cayleyDenom_ne]
 
 @[simp]

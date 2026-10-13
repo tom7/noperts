@@ -106,7 +106,7 @@ theorem wiki_inv {g : Nat} (hg : g < 60) : wikiInv g < 60 ∧ wiki (wikiInv g) =
   rw [wiki, wiki, (hc g hg).1.2, M3.toMatrix_transpose, Matrix.transpose_smul]
 
 theorem wiki_mul_transpose {g : Nat} (hg : g < 60) : wiki g * (wiki g)ᵀ = 1 :=
-  Matrix.mul_eq_one_comm.mp (wiki_transpose_mul hg)
+  mul_eq_one_comm.mp (wiki_transpose_mul hg)
 
 theorem wiki_mul_of_mul8' {a b c : Nat}
     (h : M3.mul8 (wikiEntry a) (wikiEntry b) = M3.scale 160 (wikiEntry c)) :

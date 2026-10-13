@@ -222,6 +222,6 @@ theorem ico_mul_icoInv {g : Nat} (hg : g < 60) : icoInv g < 60 ∧ ico g * ico (
   have htr : ico (icoInv g) = (ico g)ᵀ := by
     rw [ico, ico, heq, M3.toMatrix_transpose, Matrix.transpose_smul]
   rw [htr]
-  exact Matrix.mul_eq_one_comm.mp (icoMatrix_transpose_mul ⟨g, hg⟩)
+  exact mul_eq_one_comm.mp (icoMatrix_transpose_mul ⟨g, hg⟩)
 
 end Noperts.Pipeline

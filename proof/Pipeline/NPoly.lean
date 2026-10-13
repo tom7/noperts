@@ -251,8 +251,12 @@ theorem eval_divVar : ∀ (k : ℕ) (i : Fin k) (m : ℕ) (p q : NPoly k) (y : F
       · rw [List.drop_eq_nil_of_le hl.le]; simp
       · rw [List.length_take_of_le hl]
     | succ j =>
-      simp only [divVar, Fin.cases_succ, Option.map_eq_some_iff] at h
-      obtain ⟨l, hl, rfl⟩ := h
+      simp only [divVar, Fin.cases_succ] at h
+      cases hl : (p : List (NPoly k)).mapM (divVar k j m) with
+      | none => rw [hl] at h; cases h
+      | some l =>
+      rw [hl] at h
+      cases h
       show horner _ _ (p : List (NPoly k)) = y j.succ ^ m * horner _ _ (l : List (NPoly k))
       exact horner_mapM (fun q => eval k q (Fin.tail y)) (y 0) (divVar k j m) (Fin.tail y j ^ m)
         (fun a b hab => eval_divVar k j m a b (Fin.tail y) hab) _ _ hl
@@ -390,7 +394,7 @@ theorem lower_le_eval : ∀ (k : ℕ) (p : NPoly k) (box : Fin k → ℚ × ℚ)
     set q := shift k lo h (p : List (NPoly k))
     show (minList ((List.range q.length).map fun i => lower k (bern k q i) (Fin.tail box)) : ℝ) ≤
       horner (fun q => eval k q (Fin.tail y)) (y 0) (p : List (NPoly k))
-    rw [hx, horner_shift, horner_eq_sum]
+    rw [hx, horner_shift k lo h (p : List (NPoly k)), horner_eq_sum]
     rcases Nat.eq_zero_or_pos q.length with hq | hq
     · rw [hq]
       simp [minList]
@@ -462,7 +466,7 @@ theorem lowerDeg_le_eval : ∀ (k : ℕ) (deg : Fin k → ℕ) (p : NPoly k) (bo
     set q := shift k lo h (pad k (deg 0 + 1) (p : List (NPoly k)))
     show (minList ((List.range q.length).map fun i => lowerDeg k (Fin.tail deg) (bern k q i) (Fin.tail box)) : ℝ) ≤
       horner (fun q => eval k q (Fin.tail y)) (y 0) (p : List (NPoly k))
-    rw [← horner_pad k (deg 0 + 1), hx, horner_shift, horner_eq_sum]
+    rw [← horner_pad k (deg 0 + 1) (p : List (NPoly k)), hx, horner_shift, horner_eq_sum]
     rcases Nat.eq_zero_or_pos q.length with hq | hq
     · rw [hq]
       simp [minList]

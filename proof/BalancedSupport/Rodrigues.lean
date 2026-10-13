@@ -71,9 +71,9 @@ private theorem vecRows_mul_transpose
     vecRows (M *ᵥ x) (M *ᵥ y) (M *ᵥ z) =
       vecRows x y z * M.transpose := by
   ext i j
+  rw [Matrix.mul_apply]
   fin_cases i <;>
-    simp [vecRows, Matrix.mul_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_three,
-      mul_comm]
+    simp [vecRows, Matrix.mulVec, dotProduct, Fin.sum_univ_three, mul_comm]
 
 private theorem det_vecRows_map
     (M : Matrix (Fin 3) (Fin 3) ℝ)

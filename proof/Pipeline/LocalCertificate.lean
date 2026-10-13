@@ -175,7 +175,7 @@ theorem symmetryQCLM_difference_norm_bounded (g : OrbitIndex) :
         (symmetryMatrix g - (symmetryMatrixQ g).map fun x => (x : ℝ))) := by
     ext v
     simp only [Noperts.Atlas.so3CLM, symmetryQCLM, ContinuousLinearMap.sub_apply,
-      LinearMap.coe_toContinuousLinearMap', Matrix.toEuclideanLin_apply, Matrix.sub_mulVec]
+      LinearMap.coe_toContinuousLinearMap', Matrix.toLpLin_apply, Matrix.sub_mulVec]
     rfl
   rw [hclm]
   exact SolidModel.symmetryQ_close g

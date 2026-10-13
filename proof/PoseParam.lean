@@ -17,7 +17,10 @@ accessed, without dependency cycles.
 namespace Noperts.Solution
 
 inductive Param where | θ₁ | φ₁ | θ₂ | φ₂ | α
-deriving BEq, ReflBEq, LawfulBEq, Repr, Fintype, DecidableEq, Nonempty
+deriving BEq, ReflBEq, LawfulBEq, Repr, DecidableEq, Nonempty
+
+instance : Fintype Param :=
+  ⟨{.θ₁, .φ₁, .θ₂, .φ₂, .α}, fun x => by cases x <;> decide⟩
 
 /-- The canonical split order of the five pose parameters, matching the CSV
 `split` codes 1–5 and the full-split `cubeFold` order. -/

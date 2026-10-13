@@ -354,7 +354,7 @@ theorem Box.rationalRelativeMismatchCLM_eq (box : Box)
     Box.rationalRelativeMismatchMatrix, Box.relativeCLM,
     Box.approxSymmetryMatrix, LocalCertificate.symmetryQCLM,
     ContinuousLinearMap.sub_apply, LinearMap.coe_toContinuousLinearMap',
-    Matrix.toEuclideanLin_apply, Matrix.sub_mulVec]
+    Matrix.toLpLin_apply, Matrix.sub_mulVec]
   rfl
 
 theorem Box.identityMismatchRadius_norm_le (box : Box) {p : AtlasPose ℝ}
