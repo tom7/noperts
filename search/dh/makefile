@@ -8,7 +8,9 @@ default : $(TESTS:%=%.exe)
 # Every program of the pipeline (rebuild.sh runs it). tieviz.exe and
 # shadowanim.exe (renderings) also need tom7misc's codec (CODEC in
 # ../common/common.mk).
-all: default qtube s5d codebdd.exe icoprune_check.exe halfturn_check.exe tietube.exe dfwhere.exe capleaf_check.exe pool_check.exe capcert.exe viewmap.exe
+all: default qtube s5d codebdd.exe icoprune_check.exe halfturn_check.exe tietube.exe dfwhere.exe capleaf_check.exe pool_check.exe capcert.exe viewmap.exe survey5d.exe
+# survey5d: where a solid's packs spend their rows (dense spots: views,
+# rotation sizes, box sizes), to target better mathematics.
 
 # Identity tube:
 #  codebdd: exact rational model, codes and code triangles (codebdd.json).

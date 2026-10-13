@@ -6,7 +6,9 @@ include ../common/common.mk
 default : $(TESTS:%=%.exe)
 
 # Every program (rebuild.sh runs the pipeline ones).
-all: default qtube s5d codebdd.exe capcert_septopert.exe dfwhere.exe tufix.exe capleaf_check.exe
+all: default qtube s5d codebdd.exe capcert_septopert.exe dfwhere.exe tufix.exe capleaf_check.exe survey5d.exe
+# survey5d: where a solid's packs spend their rows (dense spots: views,
+# rotation sizes, box sizes), to target better mathematics.
 
 # Identity tube:
 #  codebdd: exact rational model, codes and code triangles (codebdd.json).

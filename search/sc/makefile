@@ -6,7 +6,9 @@ include ../common/common.mk
 default : $(TESTS:%=%.exe)
 
 # Every program (rebuild.sh runs the pipeline ones).
-all: default sc_model.exe qtube s5d codebdd.exe capleaf_check.exe dfwhere.exe sccapcert.exe
+all: default sc_model.exe qtube s5d codebdd.exe capleaf_check.exe dfwhere.exe sccapcert.exe survey5d.exe
+# survey5d: where a solid's packs spend their rows (dense spots: views,
+# rotation sizes, box sizes), to target better mathematics.
 
 # The model (sc_model.txt, symmetry_neighbors.h): no shared objects, since
 # the shared code needs the headers that codebdd generates from the model.
