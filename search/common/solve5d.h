@@ -61,6 +61,9 @@ struct Options {
   // Screened in double, then checked exactly (exact5d::CapLeafValid).
   struct Cap { double x[3], e1[3], e2[3]; double mu0, wmax; exact5d::CapExact exact; };
   std::vector<Cap> caps;
+  // Cap leaves over Q(t) (snub cube; exact5d::TribCapLeafValid), after the
+  // caps above in the leaf's index.
+  std::vector<exact5d::TribCap> trib_caps;
   // Split the box when its widest half-width exceeds split_kappa times the
   // view triangle's angular diameter, else split the view.
   double split_kappa = 0.5;

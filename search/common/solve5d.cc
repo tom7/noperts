@@ -10,6 +10,42 @@
 
 namespace solve5d {
 
+namespace {
+// The double-precision screen of exact5d::TribCapLeafValid (same
+// constraints, at the triangle corners and the box corners).
+bool TribCapScreen(const exact5d::TribCap &cap, const geom5d::TriangleD &td, const geom5d::BoxD &b) {
+  double fr[6][3];
+  for (int f = 0; f < 6; f++)
+    for (int a = 0; a < 3; a++) fr[f][a] = exact5d::TDouble(cap.frame[f][a]);
+  auto dot = [](const double *u, const double *v) { return u[0] * v[0] + u[1] * v[1] + u[2] * v[2]; };
+  const double mu0 = cap.mu0.ToDouble(), R = cap.R.ToDouble(), t0 = cap.t0.ToDouble(), s0 = cap.s0.ToDouble();
+  for (int m = 0; m < 8; m++) {
+    double w[3];
+    for (int a = 0; a < 3; a++) w[a] = b.center[a] + ((m >> a) & 1 ? b.radius[a] : -b.radius[a]);
+    double wf[3];
+    for (int f = 0; f < 3; f++) wf[f] = dot(w, fr[3 + f]) / dot(fr[3 + f], fr[3 + f]);
+    if (cap.kind == 0) {
+      for (int f = 0; f < 3; f++) if (std::abs(wf[f]) > R * mu0) return false;
+    }
+    for (int k = 0; k < 3; k++) {
+      const double P[3] = {td.corners[k][0], td.corners[k][1], td.corners[k][2]};
+      const double a = dot(P, fr[0]) / dot(fr[0], fr[0]);
+      const double c1 = dot(P, fr[1]) / dot(fr[1], fr[1]), c2 = dot(P, fr[2]) / dot(fr[2], fr[2]);
+      if (!(a > 0)) return false;
+      if (cap.kind == 0) {
+        if (std::abs(c1) > mu0 * a || std::abs(c2) > mu0 * a) return false;
+      } else {
+        const double mm = -c1;
+        if (mm < 0 || mm > mu0 * a || std::abs(c2) > t0 * mm) return false;
+        if (std::abs(wf[0] * a - s0 * mm) > t0 * mm) return false;
+        if (std::abs(wf[1] * a) > t0 * mm || std::abs(wf[2] * a) > t0 * mm) return false;
+      }
+    }
+  }
+  return true;
+}
+}  // namespace
+
 // The lookahead and peel splits only cut axes at least this fraction of the
 // widest half-width.
 static constexpr double kMinAspect = 0.25;
@@ -141,6 +177,15 @@ std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
         in = px > 0 && std::abs(p1) <= cap.mu0 * px * (1 - 1e-9) && std::abs(p2) <= cap.mu0 * px * (1 - 1e-9);
       }
       if (in && exact5d::CapLeafValid(iv, node.tri, job_.chart, cap.exact)) return rows5d::CapLeaf{(int)ci};
+    }
+  }
+  if (job_.chart == 0 && !opt_.trib_caps.empty()) {
+    const geom5d::TriangleD td = geom5d::ToDouble(node.tri);
+    const geom5d::BoxD b = geom5d::ToDouble(node.box);
+    for (size_t ci = 0; ci < opt_.trib_caps.size(); ci++) {
+      if (!TribCapScreen(opt_.trib_caps[ci], td, b)) continue;
+      if (exact5d::TribCapLeafValid(iv, node.tri, job_.chart, opt_.trib_caps[ci]))
+        return rows5d::CapLeaf{(int)(opt_.caps.size() + ci)};
     }
   }
   // Tie leaves: the box lies within the tie tube about H_u H_x (deltoidal

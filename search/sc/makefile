@@ -6,7 +6,7 @@ include ../common/common.mk
 default : $(TESTS:%=%.exe)
 
 # Every program (rebuild.sh runs the pipeline ones).
-all: default sc_model.exe qtube s5d codebdd.exe capleaf_check.exe dfwhere.exe
+all: default sc_model.exe qtube s5d codebdd.exe capleaf_check.exe dfwhere.exe sccapcert.exe
 
 # The model (sc_model.txt, symmetry_neighbors.h): no shared objects, since
 # the shared code needs the headers that codebdd generates from the model.
@@ -26,5 +26,9 @@ qtube: tubecode.exe tuberefine.exe export_codetrees_pack.exe
 #  pack5d: journals -> Lean packs, one per code.
 #  scoreboard5d: per-job status from the journals and packs.
 s5d: search5d.exe pack5d.exe scoreboard5d.exe
+
+# Caps:
+#  sccapcert: exact cap certificates at u* and the tie tube (the caps stage),
+#  and the main search's cap domains (--caps, for search5d --trib_caps).
 
 .PHONY : qtube s5d

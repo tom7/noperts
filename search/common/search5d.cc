@@ -14,7 +14,7 @@
 //                [--bdd codebdd.json] [--cone_samples N] [--split_kappa K]
 //                [--split_rule 0|1|2] [--min_peel 5..7]
 //                [--view_scale S] [--view_lookahead] [--lookahead_band B]
-//                [--max_full_retry N] [--half_turn_prune] [--tie_dir DIR] [--caps FILE]
+//                [--max_full_retry N] [--half_turn_prune] [--tie_dir DIR] [--caps FILE] [--trib_caps FILE]
 //                [--exact_check] [--retry_deferred] [--requeue_deferred]
 //
 // --retry_deferred also solves every deferred (df) leaf in the journals again
@@ -192,6 +192,31 @@ int main(int argc, char **argv) {
         c.exact.mu0 = BigRat(std::string_view(t[36]));
         c.exact.wmax2 = BigRat(std::string_view(t[37]));
         args.opt.caps.push_back(c);
+      }
+    }
+    else if (a == "--trib_caps") {
+      // Per line: kind mu0 R t0 s0, then x e1 e2 Z E1 X (each 3 coordinates
+      // a b c = a + b t + c t^2). Rationals (sccapcert --caps).
+      std::ifstream in(next());
+      std::string line;
+      while (std::getline(in, line)) {
+        if (line.empty() || line[0] == '#') continue;
+        std::istringstream ss(line);
+        exact5d::TribCap c;
+        std::string tok[5];
+        CHECK(ss >> c.kind >> tok[0] >> tok[1] >> tok[2] >> tok[3]) << line;
+        c.mu0 = BigRat(std::string_view(tok[0]));
+        c.R = BigRat(std::string_view(tok[1]));
+        c.t0 = BigRat(std::string_view(tok[2]));
+        c.s0 = BigRat(std::string_view(tok[3]));
+        for (int f = 0; f < 6; f++)
+          for (int i = 0; i < 3; i++) {
+            std::string q[3];
+            CHECK(ss >> q[0] >> q[1] >> q[2]) << line;
+            c.frame[f][i] = {BigRat(std::string_view(q[0])), BigRat(std::string_view(q[1])),
+                             BigRat(std::string_view(q[2]))};
+          }
+        args.opt.trib_caps.push_back(c);
       }
     }
     else if (a == "--min_peel") args.opt.min_peel_eighths = std::stoi(next());

@@ -838,6 +838,124 @@ bool CapLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, const Ca
   return true;
 }
 
+TQ TAdd(const TQ &x, const TQ &y) { return {x.a + y.a, x.b + y.b, x.c + y.c}; }
+TQ TSub(const TQ &x, const TQ &y) { return {x.a - y.a, x.b - y.b, x.c - y.c}; }
+TQ TScale(const Q &k, const TQ &x) { return {k * x.a, k * x.b, k * x.c}; }
+TQ TMul(const TQ &x, const TQ &y) {
+  // TribQ.mul: t^3 = t^2 + t + 1, t^4 = 2 t^2 + 2 t + 1.
+  const Q p3 = x.b * y.c + x.c * y.b, p4 = x.c * y.c;
+  return {x.a * y.a + p3 + p4, x.a * y.b + x.b * y.a + p3 + Q(2) * p4,
+          x.a * y.c + x.b * y.b + x.c * y.a + p3 + Q(2) * p4};
+}
+namespace {
+const Q &TribLo() {
+  static const Q q(std::string_view("18392867552141611325518525646532/10000000000000000000000000000000"));
+  return q;
+}
+const Q &TribHi() {
+  static const Q q(std::string_view("18392867552141611325518525646533/10000000000000000000000000000000"));
+  return q;
+}
+}  // namespace
+Q TLower(const TQ &x) {
+  // TribQ.lo.
+  auto lomul = [](const Q &k, const Q &l, const Q &u) { return Q::Sign(k) >= 0 ? k * l : k * u; };
+  return x.a + lomul(x.b, TribLo(), TribHi()) + lomul(x.c, TribLo() * TribLo(), TribHi() * TribHi());
+}
+Q TUpper(const TQ &x) {
+  // TribQ.hi.
+  auto himul = [](const Q &k, const Q &l, const Q &u) { return Q::Sign(k) >= 0 ? k * u : k * l; };
+  return x.a + himul(x.b, TribLo(), TribHi()) + himul(x.c, TribLo() * TribLo(), TribHi() * TribHi());
+}
+double TDouble(const TQ &x) {
+  const double t = 1.839286755214161132551852564653286600424178746097592246778758639404203222081966425738435419428307014141979826859240974164178450746507436943831545820499513796249655539644613666121540277972678118941041;
+  return x.a.ToDouble() + x.b.ToDouble() * t + x.c.ToDouble() * t * t;
+}
+
+namespace {
+TQ TDot(const VecQ &p, const std::array<TQ, 3> &v) {
+  TQ r{Q(0), Q(0), Q(0)};
+  for (int a = 0; a < 3; a++) r = TAdd(r, TScale(p[a], v[a]));
+  return r;
+}
+TQ TDotT(const std::array<TQ, 3> &u, const std::array<TQ, 3> &v) {
+  TQ r{Q(0), Q(0), Q(0)};
+  for (int a = 0; a < 3; a++) r = TAdd(r, TMul(u[a], v[a]));
+  return r;
+}
+// Lower bound of k w over w in [lo, hi] for k in [kl, kh] (TribQ enclosure).
+Q MulIvlLower(const Q &kl, const Q &kh, const Q &lo, const Q &hi) {
+  Q m = kl * lo;
+  for (const Q &c : {kl * hi, kh * lo, kh * hi}) if (c < m) m = c;
+  return m;
+}
+}  // namespace
+
+// Lean: KCapClaim.tribCapLeafOk (the same constraints, in the same order).
+bool TribCapLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, const TribCap &cap) {
+  if (chart != 0) return false;
+  const auto &x = cap.frame[0], &e1 = cap.frame[1], &e2 = cap.frame[2];
+  const TQ xx = TDotT(x, x), n1 = TDotT(e1, e1), n2 = TDotT(e2, e2);
+  // f = alpha + sum_i w_i beta_i at a corner: its lower bound over the box.
+  auto lower = [&](const TQ &alpha, const std::array<TQ, 3> &beta) {
+    Q l = TLower(alpha);
+    for (int i = 0; i < 3; i++)
+      l = l + MulIvlLower(TLower(beta[i]), TUpper(beta[i]), iv.min[2 + i], iv.max[2 + i]);
+    return l;
+  };
+  const std::array<TQ, 3> zero3{TQ{Q(0), Q(0), Q(0)}, TQ{Q(0), Q(0), Q(0)}, TQ{Q(0), Q(0), Q(0)}};
+  auto scaled = [](const TQ &k, const std::array<TQ, 3> &v) {
+    return std::array<TQ, 3>{TMul(k, v[0]), TMul(k, v[1]), TMul(k, v[2])};
+  };
+  auto neg = [](const std::array<TQ, 3> &v) {
+    std::array<TQ, 3> r;
+    for (int i = 0; i < 3; i++) r[i] = TScale(Q(-1), v[i]);
+    return r;
+  };
+  for (const VecQ &P : tri) {
+    // A = P.x / |x|^2, C_i = P.e_i / |e_i|^2, all times |x|^2 |e1|^2 |e2|^2 > 0:
+    // a' = (P.x) |e1|^2 |e2|^2, c1' = (P.e1) |x|^2 |e2|^2, c2' = (P.e2) |x|^2 |e1|^2.
+    const TQ px = TDot(P, x), p1 = TDot(P, e1), p2 = TDot(P, e2);
+    const TQ A = TMul(px, TMul(n1, n2)), C1 = TMul(p1, TMul(xx, n2)), C2 = TMul(p2, TMul(xx, n1));
+    if (!(Q(0) < TLower(A))) return false;
+    if (cap.kind == 0) {
+      // |c_i| <= mu0 a.
+      for (const TQ &C : {C1, C2}) {
+        if (Q::Sign(lower(TSub(TScale(cap.mu0, A), C), zero3)) < 0) return false;
+        if (Q::Sign(lower(TAdd(TScale(cap.mu0, A), C), zero3)) < 0) return false;
+      }
+    } else {
+      const TQ M = TScale(Q(-1), C1);
+      // 0 <= m <= mu0 a; |c2| <= t0 m.
+      if (Q::Sign(lower(M, zero3)) < 0) return false;
+      if (Q::Sign(lower(TSub(TScale(cap.mu0, A), M), zero3)) < 0) return false;
+      if (Q::Sign(lower(TSub(TScale(cap.t0, M), C2), zero3)) < 0) return false;
+      if (Q::Sign(lower(TAdd(TScale(cap.t0, M), C2), zero3)) < 0) return false;
+      // |(w.F / |F|^2) a - s_F m| <= t0 m, times |F|^2: |(w.F) a - s_F |F|^2 m| <= t0 |F|^2 m.
+      for (int f = 0; f < 3; f++) {
+        const auto &F = cap.frame[3 + f];
+        const TQ FF = TDotT(F, F);
+        const Q sF = f == 0 ? cap.s0 : Q(0);
+        const TQ base = TMul(FF, M);
+        const std::array<TQ, 3> beta = scaled(A, F);
+        // t0 |F|^2 m - (w.F) a + s_F |F|^2 m >= 0 and t0 |F|^2 m + (w.F) a - s_F |F|^2 m >= 0.
+        if (Q::Sign(lower(TAdd(TScale(cap.t0, base), TScale(sF, base)), neg(beta))) < 0) return false;
+        if (Q::Sign(lower(TSub(TScale(cap.t0, base), TScale(sF, base)), beta)) < 0) return false;
+      }
+    }
+  }
+  if (cap.kind == 0) {
+    // |w.F| <= R mu0 |F|^2 on the box.
+    for (int f = 0; f < 3; f++) {
+      const auto &F = cap.frame[3 + f];
+      const TQ bound = TScale(cap.R * cap.mu0, TDotT(F, F));
+      if (Q::Sign(lower(bound, neg(F))) < 0) return false;
+      if (Q::Sign(lower(bound, F)) < 0) return false;
+    }
+  }
+  return true;
+}
+
 bool TieLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, int n, const Q &rho) {
   for (int c = 0; c < 3; c++) {
     for (int d = c; d < 3; d++) {

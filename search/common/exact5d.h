@@ -209,6 +209,36 @@ struct CapExact {
 Q KLower(const KQ &x);
 bool CapLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, const CapExact &cap);
 
+// Cap leaves over Q(t), t the tribonacci constant (snub cube; the caps of
+// nopert229/sccap.cc, Lean Pipeline/KCap*). TQ is a + b t + c t^2; signs are
+// decided by the rational enclosure of Lean's TribQ.lo (t to 1e-31). With the
+// orthogonal view frame (x, e1, e2) and rotation frame (Z, E1, X), the
+// coordinates a = u.x/|x|^2, c_i = u.e_i/|e_i|^2 of a view u and the frame
+// coordinates of the Cayley vector w (chart 0) are constrained:
+//   kind 0 (the cap box):  a > 0, |c_i| <= mu0 a, |w.F/|F|^2| <= R mu0;
+//   kind 1 (the tie tube): a > 0, with m = -c_1 (= a mu): 0 <= m <= mu0 a,
+//     |c_2| <= t0 m, |(w.Z/|Z|^2) a - s0 m| <= t0 m, |(w.F/|F|^2) a| <= t0 m
+//     (F = E1, X).
+// Each constraint is f(u, w) = u.alpha + sum_i w_i (u.beta_i) >= 0 (times
+// positive constants); it holds on the cone over the triangle times the box
+// if it does at each corner P, where the lower bound over the box is taken
+// by rational interval arithmetic (TribQ enclosures of P.alpha and P.beta_i).
+struct TQ { Q a, b, c; };
+TQ TAdd(const TQ &x, const TQ &y);
+TQ TSub(const TQ &x, const TQ &y);
+TQ TMul(const TQ &x, const TQ &y);
+TQ TScale(const Q &k, const TQ &x);
+Q TLower(const TQ &x);
+Q TUpper(const TQ &x);
+double TDouble(const TQ &x);
+struct TribCap {
+  int kind = 0;
+  // x, e1, e2, Z, E1, X.
+  std::array<std::array<TQ, 3>, 6> frame;
+  Q mu0, R, t0, s0;
+};
+bool TribCapLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, const TribCap &cap);
+
 
 // symmetryTube: AtlasProjectiveLocalViewTree.Tube.Valid for chart 0 and
 // symmetry index 0 (the identity tube), i.e. identityMismatchRadius <= r.
