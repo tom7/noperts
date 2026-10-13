@@ -90,6 +90,11 @@ root = "checkSeptopertCap"
 buildType = "release"
 
 [[lean_exe]]
+name = "constructSnubCube"
+root = "constructSnubCube"
+buildType = "release"
+
+[[lean_exe]]
 name = "checkSnubCubeCap"
 root = "checkSnubCubeCap"
 buildType = "release"
