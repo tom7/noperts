@@ -155,6 +155,31 @@ theorem kval_sideVecs [ExactScalarVal K] (fr : Frame K) (side : ℕ) :
   · simp [sideVecs, rSideVecs, sideA, sideB]
   · simp [sideVecs, rSideVecs, sideA, sideB, kval_scale]
 
+/-- The real values of a chart's (e, τ, s). -/
+noncomputable def rE [ExactScalarVal K] (pr : Params) (id : ChartId) (y : Fin 5 → ℝ) : ℝ :=
+  KPoly.eval 5 (chartParams (K := K) pr id).e y
+noncomputable def rTau [ExactScalarVal K] (pr : Params) (id : ChartId) (y : Fin 5 → ℝ) : ℝ :=
+  KPoly.eval 5 (chartParams (K := K) pr id).tau y
+noncomputable def rS [ExactScalarVal K] (pr : Params) (id : ChartId) (y : Fin 5 → ℝ) (i : Fin 3) : ℝ :=
+  KPoly.eval 5 ((chartParams (K := K) pr id).s i) y
+
+theorem eval_chartU [ExactScalarVal K] (fr : Frame K) (pr : Params) (id : ChartId) (y : Fin 5 → ℝ) :
+    (chartU fr pr id).eval y = kval fr.x +
+      (y 0 * rE (K := K) pr id y) • ((rSideVecs fr id.side).1 + rTau (K := K) pr id y • (rSideVecs fr id.side).2) := by
+  rw [← kval_sideVecs]
+  simp only [chartU, PVec.eval_add, PVec.eval_smul, PVec.eval_const, KPoly.eval_mul, eval_pvar, rE, rTau]
+
+theorem eval_chartW [ExactScalarVal K] (fr : Frame K) (pr : Params) (id : ChartId) (y : Fin 5 → ℝ) :
+    (chartW fr pr id).eval y = y 0 • (rS (K := K) pr id y 0 • kval fr.Z +
+      (rS (K := K) pr id y 1 • kval fr.E1 + rS (K := K) pr id y 2 • kval fr.X)) := by
+  simp only [chartW, PVec.eval_add, PVec.eval_smul, PVec.eval_const, eval_pvar, rS]
+
+theorem eval_faceCoord [ExactScalarVal K] (first axis : ℕ) (sign : Bool) (c : ℚ) (i : ℕ) (y : Fin 5 → ℝ) :
+    KPoly.eval 5 (faceCoord (K := K) first axis sign c i) y =
+      if i = axis then ((signQ sign * c : ℚ) : ℝ) else y (freeVar first axis i) := by
+  unfold faceCoord
+  split_ifs <;> simp [eval_pconst, eval_pvar]
+
 end KCap
 
 end Noperts.Pipeline
