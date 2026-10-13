@@ -203,41 +203,6 @@ theorem eval_var [ExactScalarVal K] : ∀ (k : ℕ) (i : Fin k) (y : Fin k → �
       show horner _ _ [var k j] = _
       simp [eval_var k j, Fin.tail]
 
-def mulL {α : Type} (addf mulf : α → α → α) (z : α) : List α → List α → List α
-  | [], _ => []
-  | x :: xs, b => ladd addf (b.map (mulf x)) (z :: mulL addf mulf z xs b)
-
-def mul : (k : ℕ) → KPoly K k → KPoly K k → KPoly K k
-  | 0, a, b => @ExactScalarOps.mul K _ a b
-  | k + 1, a, b => mulL (add k) (mul k) (zero k) (a : List (KPoly K k)) b
-
-theorem horner_map {α : Type} (v : α → ℝ) (x : ℝ) (f : α → α) (c : ℝ) (hf : ∀ a, v (f a) = c * v a)
-    (l : List α) : horner v x (l.map f) = c * horner v x l := by
-  induction l with
-  | nil => simp
-  | cons a as ih => simp only [List.map_cons, horner_cons, hf, ih]; ring
-
-theorem horner_mulL {α : Type} (v : α → ℝ) (x : ℝ) (addf mulf : α → α → α) (z : α)
-    (ha : ∀ a b, v (addf a b) = v a + v b) (hm : ∀ a b, v (mulf a b) = v a * v b) (hz : v z = 0) :
-    ∀ a b : List α, horner v x (mulL addf mulf z a b) = horner v x a * horner v x b
-  | [], b => by simp [mulL]
-  | p :: ps, b => by
-    rw [mulL, horner_ladd v x addf ha, horner_map v x (mulf p) (v p) (fun a => hm p a), horner_cons, hz,
-      horner_mulL v x addf mulf z ha hm hz ps b, horner_cons]
-    ring
-
-theorem eval_mul [ExactScalarVal K] : ∀ (k : ℕ) (a b : KPoly K k) (y : Fin k → ℝ), eval k (mul k a b) y = eval k a y * eval k b y
-  | 0, a, b, _ => @ExactScalarVal.val_mul K _ _ a b
-  | k + 1, a, b, y =>
-    horner_mulL _ _ _ _ _ (fun p q => eval_add k p q _) (fun p q => eval_mul k p q _) (eval_zero k _) _ _
-
-def sub (k : ℕ) (a b : KPoly K k) : KPoly K k := add k a (scale k (-1) b)
-
-theorem eval_sub [ExactScalarVal K] (k : ℕ) (a b : KPoly K k) (y : Fin k → ℝ) : eval k (sub k a b) y = eval k a y - eval k b y := by
-  simp [sub, eval_add, eval_scale]; ring
-
-/-! ### Exact division by a variable -/
-
 def isZero : (k : ℕ) → KPoly K k → Bool
   | 0, c => @ExactScalarOps.isZero K _ c
   | k + 1, p => (p : List (KPoly K k)).all (isZero k)
@@ -253,6 +218,50 @@ theorem horner_zero_of_all {α : Type} (v : α → ℝ) (x : ℝ) (Z : α → Bo
 theorem eval_of_isZero [ExactScalarVal K] : ∀ (k : ℕ) (p : KPoly K k) (y : Fin k → ℝ), isZero k p = true → eval k p y = 0
   | 0, c, _, h => @ExactScalarVal.val_of_isZero K _ _ c h
   | k + 1, p, y, h => horner_zero_of_all _ _ (isZero k) (fun a ha => eval_of_isZero k a _ ha) _ h
+
+/-- The product of coefficient lists; a zero coefficient (`isz`) contributes only the shift. -/
+def mulL {α : Type} (addf mulf : α → α → α) (z : α) (isz : α → Bool) : List α → List α → List α
+  | [], _ => []
+  | x :: xs, b =>
+    if isz x then z :: mulL addf mulf z isz xs b
+    else ladd addf (b.map (mulf x)) (z :: mulL addf mulf z isz xs b)
+
+def mul : (k : ℕ) → KPoly K k → KPoly K k → KPoly K k
+  | 0, a, b => @ExactScalarOps.mul K _ a b
+  | k + 1, a, b => mulL (add k) (mul k) (zero k) (isZero k) (a : List (KPoly K k)) b
+
+theorem horner_map {α : Type} (v : α → ℝ) (x : ℝ) (f : α → α) (c : ℝ) (hf : ∀ a, v (f a) = c * v a)
+    (l : List α) : horner v x (l.map f) = c * horner v x l := by
+  induction l with
+  | nil => simp
+  | cons a as ih => simp only [List.map_cons, horner_cons, hf, ih]; ring
+
+theorem horner_mulL {α : Type} (v : α → ℝ) (x : ℝ) (addf mulf : α → α → α) (z : α) (isz : α → Bool)
+    (ha : ∀ a b, v (addf a b) = v a + v b) (hm : ∀ a b, v (mulf a b) = v a * v b) (hz : v z = 0)
+    (hisz : ∀ a, isz a = true → v a = 0) :
+    ∀ a b : List α, horner v x (mulL addf mulf z isz a b) = horner v x a * horner v x b
+  | [], b => by simp [mulL]
+  | p :: ps, b => by
+    unfold mulL
+    split_ifs with hp
+    · rw [horner_cons, hz, horner_mulL v x addf mulf z isz ha hm hz hisz ps b, horner_cons, hisz p hp]
+      ring
+    · rw [horner_ladd v x addf ha, horner_map v x (mulf p) (v p) (fun a => hm p a), horner_cons, hz,
+        horner_mulL v x addf mulf z isz ha hm hz hisz ps b, horner_cons]
+      ring
+
+theorem eval_mul [ExactScalarVal K] : ∀ (k : ℕ) (a b : KPoly K k) (y : Fin k → ℝ), eval k (mul k a b) y = eval k a y * eval k b y
+  | 0, a, b, _ => @ExactScalarVal.val_mul K _ _ a b
+  | k + 1, a, b, y =>
+    horner_mulL _ _ _ _ _ _ (fun p q => eval_add k p q _) (fun p q => eval_mul k p q _) (eval_zero k _)
+      (fun p hp => eval_of_isZero k p _ hp) _ _
+
+def sub (k : ℕ) (a b : KPoly K k) : KPoly K k := add k a (scale k (-1) b)
+
+theorem eval_sub [ExactScalarVal K] (k : ℕ) (a b : KPoly K k) (y : Fin k → ℝ) : eval k (sub k a b) y = eval k a y - eval k b y := by
+  simp [sub, eval_add, eval_scale]; ring
+
+/-! ### Exact division by a variable -/
 
 theorem horner_append {α : Type} (v : α → ℝ) (x : ℝ) (l₁ l₂ : List α) :
     horner v x (l₁ ++ l₂) = horner v x l₁ + x ^ l₁.length * horner v x l₂ := by

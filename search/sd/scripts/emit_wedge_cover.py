@@ -279,6 +279,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--bdd", type=Path, default=None,
                         help="codebdd.json (default: $MODEL_DIR/codebdd.json)")
+    parser.add_argument("--namespace", default="SnubDodecahedron.WedgeCover",
+                        help="the Lean namespace of the generated definitions")
     parser.add_argument("output", type=Path)
     args = parser.parse_args()
     if args.bdd is None:
@@ -316,7 +318,7 @@ def main():
         "",
         "open Noperts Noperts.Pipeline Noperts.Pipeline.WedgeCover",
         "",
-        "namespace SnubDodecahedron.WedgeCover",
+        f"namespace {args.namespace}",
         "",
         "open Noperts.Atlas.ProjectiveView",
         "",
@@ -355,7 +357,7 @@ def main():
     lines.append("    ∃ t : ℕ, ∃ tri, codeTriangles[t]? = some tri ∧ InTriangle (toReal tri) u :=")
     lines.append("  base_covered baseTriangle baseTriangle_valid codeTriangles coverTree hcover u hu")
     lines.append("")
-    lines.append("end SnubDodecahedron.WedgeCover")
+    lines.append(f"end {args.namespace}")
     lines.append("")
     args.output.write_text("\n".join(lines), encoding="utf-8")
     print(f"wrote {args.output} ({args.output.stat().st_size} bytes)")

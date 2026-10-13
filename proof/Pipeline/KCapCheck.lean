@@ -75,6 +75,15 @@ structure ChartData (K : Type) where
   D : KPoly K 5
   N : Array (PVec K)
 
+/-- The vector with its three polynomials computed once (a `PVec` is a function: without this
+every access recomputes the whole expression). -/
+@[noinline] def PVec.ofArray (arr : Array (KPoly K 5)) : PVec K := fun i => arr.getD i.val (KPoly.zero 5)
+
+def PVec.force (p : PVec K) : PVec K := PVec.ofArray #[p 0, p 1, p 2]
+
+theorem PVec.force_eq (p : PVec K) : PVec.force p = p := by
+  funext i; fin_cases i <;> rfl
+
 def chartData (fr : Frame K) (pr : Params) (id : ChartId) (V : Array (KVec K)) : ChartData K :=
   let w := chartW fr pr id
   ⟨chartU fr pr id, w, cayleyDen w, V.map (cayleyNum w)⟩
@@ -122,13 +131,6 @@ def Leaf.L (cd : ChartData K) (k : ℕ) : PVec K := PVec.smul (l.lam V cd k) (l.
 
 def numAt (cd : ChartData K) (i : ℕ) : PVec K := cd.N.getD i (fun _ => KPoly.zero 5)
 
-/-- The tuple's polynomial for outer choices j and inner choices i. -/
-def Leaf.tuplePoly (cd : ChartData K) (Ls : List (PVec K)) (j i : ℕ → ℕ) : KPoly K 5 :=
-  (List.range l.n).foldr (fun k acc =>
-    KPoly.add 5 (KPoly.sub 5 (PVec.dot (numAt cd (i k)) (Ls.getD k (fun _ => KPoly.zero 5)))
-      (KPoly.mul 5 cd.D (PVec.dot (PVec.const (vertex V (j k))) (Ls.getD k (fun _ => KPoly.zero 5))))) acc)
-    (KPoly.zero 5)
-
 def degs (q : KPoly K 5) : Fin 5 → ℕ := fun i => KPoly.degIn 5 i q
 
 def nonnegOn (q : KPoly K 5) (box : Box) : Bool := decide (0 ≤ KPoly.lowerDeg 5 (degs q) q box)
@@ -152,9 +154,36 @@ def Leaf.indicesOk : Bool :=
     l.outer.all (fun S => !S.isEmpty && S.all (· < V.size)) &&
     l.inner.all (fun it => it.length = l.n && it.all (· < V.size))
 
+/-- The cached tuple terms: per contact k, the pairs (i, N(w) v_i · λ_k d_k) for the inner choices
+used and (j, D(w) v_j · λ_k d_k) for the outer set. -/
+def termA (cd : ChartData K) (Ls : List (PVec K)) (k i : ℕ) : KPoly K 5 :=
+  PVec.dot (numAt cd i) (Ls.getD k (fun _ => KPoly.zero 5))
+
+def termB (cd : ChartData K) (Ls : List (PVec K)) (k j : ℕ) : KPoly K 5 :=
+  KPoly.mul 5 cd.D (PVec.dot (PVec.const (vertex V j)) (Ls.getD k (fun _ => KPoly.zero 5)))
+
+/-- The tuple's polynomial for outer choices j and inner choices i. -/
+def Leaf.tuplePoly (cd : ChartData K) (Ls : List (PVec K)) (j i : ℕ → ℕ) : KPoly K 5 :=
+  (List.range l.n).foldr (fun k acc =>
+    KPoly.add 5 (KPoly.sub 5 (termA cd Ls k (i k)) (termB V cd Ls k (j k))) acc) (KPoly.zero 5)
+
+def lookupD (L : List (ℕ × KPoly K 5)) (i : ℕ) (dflt : KPoly K 5) : KPoly K 5 :=
+  match L.lookup i with
+  | some p => p
+  | none => dflt
+
+/-- The tuple polynomial from the caches (`tuplePolyC_eq`: the same polynomial). -/
+def tuplePolyC (n : ℕ) (cA cB : List (List (ℕ × KPoly K 5))) (fA fB : ℕ → ℕ → KPoly K 5)
+    (j i : ℕ → ℕ) : KPoly K 5 :=
+  (List.range n).foldr (fun k acc =>
+    KPoly.add 5 (KPoly.sub 5 (lookupD (cA.getD k []) (i k) (fA k (i k))) (lookupD (cB.getD k []) (j k) (fB k (j k))))
+      acc) (KPoly.zero 5)
+
 def Leaf.check (cd : ChartData K) (id : ChartId) (box : Box) : Bool :=
   let n := l.n
   let Ls := (List.range n).map (l.L V cd)
+  let cA := (List.range n).map fun k => ((l.inner.map (·.getD k 0)).eraseDups).map fun i => (i, termA cd Ls k i)
+  let cB := (List.range n).map fun k => (l.S k).map fun j => (j, termB V cd Ls k j)
   l.shapeOk && l.indicesOk V &&
   (n = 2 || (List.range 3).all fun k => nonnegOn (l.lam V cd k) box) &&
   posOn ((List.range n).foldr (fun k acc => KPoly.add 5 (PVec.dot (Ls.getD k (fun _ => KPoly.zero 5)) (l.d V cd k)) acc)
@@ -164,7 +193,47 @@ def Leaf.check (cd : ChartData K) (id : ChartId) (box : Box) : Bool :=
   let T := tuples n (fun k => l.S k)
   T.length = l.inner.length &&
   (T.zip l.inner).all fun (jt, it) =>
-    nonnegOn (reduce id (l.tuplePoly V cd Ls (fun k => if h : k < n then jt ⟨k, h⟩ else 0) (fun k => it.getD k 0))) box
+    nonnegOn (reduce id (tuplePolyC n cA cB (termA cd Ls) (termB V cd Ls)
+      (fun k => if h : k < n then jt ⟨k, h⟩ else 0) (fun k => it.getD k 0))) box
+
+theorem lookupD_eq (L : List (ℕ × KPoly K 5)) (f : ℕ → KPoly K 5) (hL : ∀ p ∈ L, p.2 = f p.1) (i : ℕ) :
+    lookupD L i (f i) = f i := by
+  induction L with
+  | nil => simp [lookupD, List.lookup]
+  | cons q L ih =>
+    obtain ⟨a, b⟩ := q
+    unfold lookupD at ih ⊢
+    simp only [List.lookup]
+    by_cases h : i = a
+    · subst h
+      simp only [beq_self_eq_true]
+      exact (hL (i, b) (by simp)).symm ▸ rfl
+    · have : (i == a) = false := by simpa using h
+      simp only [this]
+      exact ih (fun p hp => hL p (by simp [hp]))
+
+theorem cache_getD (n : ℕ) (g : ℕ → List ℕ) (f : ℕ → ℕ → KPoly K 5) (k : ℕ) :
+    ∀ p ∈ ((List.range n).map fun k => (g k).map fun i => (i, f k i)).getD k [], p.2 = f k p.1 := by
+  intro p hp
+  rw [List.getD_eq_getElem?_getD] at hp
+  by_cases hk : k < n
+  · simp only [List.getElem?_map, List.getElem?_range hk, Option.map_some, Option.getD_some, List.mem_map] at hp
+    obtain ⟨i, -, rfl⟩ := hp
+    rfl
+  · have : ((List.range n).map fun k => (g k).map fun i => (i, f k i))[k]? = none := by
+      simp [List.getElem?_eq_none, hk]
+    rw [this] at hp
+    simp at hp
+
+theorem tuplePolyC_eq (cd : ChartData K) (Ls : List (PVec K)) (gA gB : ℕ → List ℕ) (j i : ℕ → ℕ) :
+    tuplePolyC l.n ((List.range l.n).map fun k => (gA k).map fun i => (i, termA cd Ls k i))
+      ((List.range l.n).map fun k => (gB k).map fun j => (j, termB V cd Ls k j)) (termA cd Ls) (termB V cd Ls) j i =
+    l.tuplePoly V cd Ls j i := by
+  unfold tuplePolyC Leaf.tuplePoly
+  congr 1
+  funext k acc
+  rw [lookupD_eq _ (termA cd Ls k) (cache_getD l.n gA (termA cd Ls) k) (i k),
+    lookupD_eq _ (termB V cd Ls k) (cache_getD l.n gB (termB V cd Ls) k) (j k)]
 
 end KCap
 
@@ -264,7 +333,7 @@ theorem eval_tuplePoly (fr : Frame K) (pr : Params) (id : ChartId) (V : Array (K
           (1 + rdot ((chartW fr pr id).eval y) ((chartW fr pr id).eval y)) *
             rdot (kval (vertex V (j k))) (rcross ((chartU fr pr id).eval y) (kval (l.dir V k)))) := by
   intro cd
-  unfold Leaf.tuplePoly
+  unfold Leaf.tuplePoly termA termB
   rw [eval_foldr_add]
   apply Finset.sum_congr rfl
   intro k _
@@ -371,6 +440,7 @@ theorem Leaf.check_sound (fr : Frame K) (pr : Params) (id : ChartId) (V : Array 
     have : k < it.length := by rw [hitv.1]; exact hk
     simp only [this, List.getElem?_eq_getElem, Option.getD_some]
     exact hitv.2 _ (List.getElem_mem this)
+  rw [tuplePolyC_eq] at htk
   have hP0 := eval_reduce_nonneg id _ y h0 h1 h2 (eval_lowerDeg_nonneg htk hw hy)
   rw [eval_tuplePoly fr pr id V l _ _ hiv y] at hP0
   -- The weights.

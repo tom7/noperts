@@ -73,6 +73,10 @@ name = "PentagonalHexecontahedron"
 globs = ["PentagonalHexecontahedron", "PentagonalHexecontahedron.+"]
 
 [[lean_lib]]
+name = "SnubCube"
+globs = ["SnubCube", "SnubCube.+"]
+
+[[lean_lib]]
 name = "SnubDodecahedron"
 globs = ["SnubDodecahedron", "SnubDodecahedron.+"]
 
@@ -83,6 +87,11 @@ globs = ["Nopert231", "Nopert231.+"]
 [[lean_exe]]
 name = "checkSeptopertCap"
 root = "checkSeptopertCap"
+buildType = "release"
+
+[[lean_exe]]
+name = "checkSnubCubeCap"
+root = "checkSnubCubeCap"
 buildType = "release"
 
 [[lean_exe]]
