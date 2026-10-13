@@ -1,8 +1,9 @@
 name = "noperts"
 defaultTargets = ["Noperts", "Septopert", "Minimality", "ProofOfMainTheorem",
-  "DeltoidalHexecontahedron", "PentagonalHexecontahedron", "SnubDodecahedron", "Nopert231",
+  "DeltoidalHexecontahedron", "PentagonalHexecontahedron", "SnubDodecahedron", "SnubCube", "Nopert231",
   "constructSeptopert", "checkSeptopertCap", "constructDeltoidalHexecontahedron",
-  "constructPentagonalHexecontahedron", "constructSnubDodecahedron", "constructNopert231",
+  "constructPentagonalHexecontahedron", "constructSnubDodecahedron", "constructSnubCube",
+  "checkSnubCubeCap", "constructNopert231",
   "Tests"]
 
 [leanOptions]

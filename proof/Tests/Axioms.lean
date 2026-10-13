@@ -2,6 +2,7 @@ import Septopert
 import DeltoidalHexecontahedron
 import PentagonalHexecontahedron
 import SnubDodecahedron
+import SnubCube
 import Nopert231
 import Minimality
 import ProofOfMainTheorem
@@ -26,6 +27,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms DeltoidalHexecontahedron.isNopert_of_certificatesValid
 #assert_standard_axioms PentagonalHexecontahedron.isNopert_of_certificatesValid
 #assert_standard_axioms SnubDodecahedron.isNopert_of_certificatesValid
+#assert_standard_axioms SnubCube.isNopert_of_certificatesValid
 #assert_standard_axioms Nopert231.isNopert_of_certificatesValid
 #assert_standard_axioms seven_le_card_of_isNopert
 #assert_standard_axioms minimalNopert_of_certificatesValid
