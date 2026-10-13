@@ -120,7 +120,7 @@ page with its statement, trust model and reproduction steps:
 ## Requirements
 
 - Linux
-- elan (the toolchain is pinned in `proof/lean-toolchain`, v4.32.0)
+- elan (the toolchain is pinned in `proof/lean-toolchain`, v4.34.1, with Mathlib v4.34.1)
 - for `search/`: clang, GMP, svn, python3 (python3 regenerates Lean data
   files in the model stages: the Septopert's view cover with
   `proof/scripts/emit_septopert_view_cover.py`, the other solids' data with
