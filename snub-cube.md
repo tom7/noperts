@@ -1,7 +1,7 @@
 # The snub cube
 
 The snub cube is the Archimedean solid with 38 faces (6 squares and 32
-triangles), 60 edges and 24 vertices. It is not Rupert. This page gives the
+triangles), 60 edges and 24 vertices. It is a Nopert. This page gives the
 exact statement, what Lean checked and how, and how to verify the result.
 
 Lean entry point: [`proof/SnubCube.lean`](proof/SnubCube.lean).
@@ -101,14 +101,15 @@ This is a **Lean verification**, not a plain Lean proof:
 1. **Lean proof.** `isNopert_of_certificatesValid` is checked by Lean's
    kernel and depends only on the standard axioms (`propext`,
    `Classical.choice`, `Quot.sound`; `proof/Tests/Axioms.lean`).
-2. **Verification of the data.** The data is too large for the kernel. The
-   program `constructSnubCube` runs the same Lean validity checks as compiled
-   code on every row and on the cap certificate, and only if all pass does it
-   construct `CertificatesValid`, and from it (via part 1)
-   `∀ V, IsSnubCube V → IsNopert V`. It then prints
-   `instantiated: IsNopert V for every snub cube V (none is Rupert)`. This
-   trusts Lean's compiler and runtime to evaluate the checks correctly (the
-   trust `native_decide` asks for; `native_decide` is not used).
+2. **Verification of the data.** The data is probably too large for
+   the kernel. The program `constructSnubCube` runs the same Lean
+   validity checks as compiled code on every row and on the cap
+   certificate, and only if all pass does it construct
+   `CertificatesValid`, and from it (via part 1) `∀ V, IsSnubCube V →
+   IsNopert V`. It then prints `instantiated: IsNopert V for every
+   snub cube V (none is Rupert)`. This trusts Lean's compiler and
+   runtime to evaluate the checks correctly (the trust `native_decide`
+   asks for; `native_decide` is not used).
 
 The C++ code that produced the data does not need to be trusted: a mistake
 there can only produce data that fails the checks.
@@ -158,7 +159,3 @@ The stages on 64 cores (2026-10-13; the data of the verified run):
 
 The cap certificate can also be checked alone:
 `proof/.lake/build/bin/checkSnubCubeCap CAPS/sc.cert`.
-
-The research notes behind the method (the zero-margin view, the exact tie,
-the cap design and what failed on the way) are in the author's private
-repository (nopert229, `notes/SNUB-CUBE.md`).
