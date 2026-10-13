@@ -37,7 +37,7 @@ namespace Noperts.Pipeline
 
 namespace KCap
 
-open PVec
+open Noperts.Pipeline.KCap.PVec
 open Noperts.Pipeline.Cap (sideA sideB view_side weighted_cube)
 
 variable {K : Type} [ExactScalarOps K]
