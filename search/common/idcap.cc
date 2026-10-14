@@ -110,6 +110,7 @@ bool g_blend = false;
 int g_blend_contacts = 0;
 // --mu_guard: no mu split where every candidate fails at the box's lowest mu.
 bool g_mu_guard = false;
+int g_mu_guard_bits = 6;
 bool g_skip_cap_nodes = false;
 int g_affine_gap = 4;
 
@@ -1050,7 +1051,14 @@ struct Certifier {
     // split the other variables. (Otherwise each mu split may improve the
     // score a little, toward a negative limit, down to max_depth.)
     bool mu_futile = false;
-    if (g_mu_guard && !sc.empty()) {
+    // (Only where mu is already much thinner, relative to the chart's box,
+    // than the other variables: on large boxes a mu split still lets the
+    // upper half certify and gives the lower half new candidates.)
+    double max_rel = 0;
+    for (int i = 1; i < NV; i++)
+      max_rel = std::max(max_rel, (box[i].second - box[i].first) / (chart_box[i].second - chart_box[i].first));
+    const double mu_rel = (box[0].second - box[0].first) / (chart_box[0].second - chart_box[0].first);
+    if (g_mu_guard && !sc.empty() && mu_rel < std::ldexp(max_rel, -g_mu_guard_bits)) {
       auto h0 = box;
       h0[0].second = h0[0].first;
       mu_futile = true;
@@ -1329,6 +1337,7 @@ int main(int argc, char **argv) {
     else if (a == "--blend_contacts") g_blend_contacts = std::stoi(next());
     else if (a == "--code_jobs") code_jobs = std::stoi(next());
     else if (a == "--mu_guard") g_mu_guard = true;
+    else if (a == "--mu_guard_bits") g_mu_guard_bits = std::stoi(next());
     else if (a == "--skip_cap_nodes") g_skip_cap_nodes = true;
     else if (a == "--affine_gap") g_affine_gap = std::stoi(next());
     else if (a == "--max_leaves") max_leaves = std::stoll(next());
