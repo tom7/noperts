@@ -30,6 +30,9 @@ structure Component where
   certificate : AxisCertificate
   innerIndex : Fin 3 → VertexIndex
   ballMultiplier : ℚ
+  /-- Blended inner points, as `AtlasProjectiveGlobalCertificate.Box` (default: none). -/
+  innerOther : Fin 3 → VertexIndex := innerIndex
+  innerT : Fin 3 → ℚ := fun _ => 0
 deriving DecidableEq
 
 structure Box where
@@ -50,6 +53,8 @@ def Box.componentBox (box : Box) (k : Fin 4) :
   certificate := (box.component k).certificate
   innerIndex := (box.component k).innerIndex
   ballMultiplier := (box.component k).ballMultiplier
+  innerOther := (box.component k).innerOther
+  innerT := (box.component k).innerT
 
 def Box.relativeBalls (box : Box) : Fin 3 → RatBall :=
   (box.componentBox 0).relativeBalls
@@ -446,11 +451,11 @@ theorem Box.valid_imp_not_translated_rupert (box : Box) (h : box.Valid) :
   have hscaleNe : viewScale component.root p ≠ 0 :=
     (lt_of_lt_of_le (by norm_num : (0 : ℝ) < 1) hscale').ne'
   rw [component.actualClearedDisplacement_eq_pose offset hscaleNe] at hactual
-  apply AtlasProjectiveGlobalRigidity.not_rupertPose_of_projective_global_certificate_with_defect
+  apply AtlasProjectiveGlobalRigidity.not_rupertPose_of_projective_global_certificate_with_defect_points
     component.root p component.chart offset
     (fun i => component.certificate.exactEdge (P := P) i)
-    component.innerIndex component.certificate.index
-    (component.actualDefect p) hscaleNe
+    (fun i => component.innerPt (P := P) i) component.certificate.index
+    (component.actualDefect p) (fun i => component.innerPt_mem_hull (P := P) i) hscaleNe
   · exact component.valid_direction_nonzero (P := P) hadmissible offset hscale' hmem'
   · intro i
     simpa [AxisCertificate.exactWeight,

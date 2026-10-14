@@ -105,6 +105,50 @@ theorem not_rupertPose_of_projective_global_certificate_with_defect
   · simpa [pose, outerProjectionLinear,
       ContinuousLinearMap.comp_apply] using hdisplacement
 
+/-- `not_rupertPose_of_projective_global_certificate_with_defect` with inner
+points anywhere in the hull (e.g. blends of two vertices) instead of vertices. -/
+theorem not_rupertPose_of_projective_global_certificate_with_defect_points
+    (root : Fin 8) (p : AtlasPose ℝ) (chart : CayleyAtlas.ChartIndex)
+    (offset : ℝ²) (edge : EdgeTriple)
+    (innerPt : Fin 3 → ℝ³) (outerIndex : Fin 3 → VertexIndex) (defect : Fin 3 → ℝ)
+    (hin : ∀ i, innerPt i ∈ P.polyhedron.hull)
+    (hscale : viewScale root p ≠ 0)
+    (hdirection : ∀ i, direction root p (edge i) ≠ 0)
+    (hweight : ∀ i, 0 ≤ weight root p edge i)
+    (hweight_pos : ∃ i, 0 < weight root p edge i)
+    (hsupport : ∀ i k,
+      ⟪direction root p (edge i),
+          outerProjectionLinear (p.matrixPoseWithOffset chart offset)
+            (P.vertex k)⟫ ≤
+        ⟪direction root p (edge i),
+          outerProjectionLinear (p.matrixPoseWithOffset chart offset)
+            (P.vertex (outerIndex i))⟫ + defect i)
+    (hdisplacement : ∑ i, weight root p edge i * defect i ≤
+      ∑ i, weight root p edge i *
+        ⟪direction root p (edge i),
+          proj_xyL
+              ((p.matrixPoseWithOffset chart offset).innerRot.val.toEuclideanLin
+                (innerPt i)) -
+            outerProjectionLinear (p.matrixPoseWithOffset chart offset)
+              (P.vertex (outerIndex i))⟫) :
+    ¬ RupertPose (p.matrixPoseWithOffset chart offset)
+      P.polyhedron.hull := by
+  let pose := p.matrixPoseWithOffset chart offset
+  apply not_rupertPose_of_balanced_support_with_defect_points P.polyhedron pose
+    innerPt outerIndex (weight root p edge)
+    (fun i => direction root p (edge i)) defect hin
+  · exact hdirection
+  · exact hweight
+  · exact hweight_pos
+  · exact weight_balance root p edge hscale
+  · intro i y hy
+    obtain ⟨v, ⟨k, rfl⟩, rfl⟩ := hy
+    simpa [pose, outerProjectionLinear, outerProj, PoseLike.outer,
+      LinearMap.coe_toAffineMap, ContinuousLinearMap.comp_apply] using
+      hsupport i k
+  · simpa [pose, outerProjectionLinear,
+      ContinuousLinearMap.comp_apply] using hdisplacement
+
 end Noperts.Pipeline.AtlasProjectiveGlobalRigidity
 
 end

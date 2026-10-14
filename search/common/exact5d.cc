@@ -7,6 +7,7 @@
 #include "base/logging.h"
 #include "bignum/big.h"
 #include "bignum/big-overloads.h"
+#include "bounds5d.h"
 #include "model.h"
 
 namespace exact5d {
@@ -115,7 +116,12 @@ Q ChartSign(int chart, int c) {
 
 // AtlasQuadratic.displacementQuadratic
 Quad3 DisplacementQuadratic(int chart, int inner, int outer, int c) {
-  const VecQ vin = Vertex(inner), vout = Vertex(outer);
+  // (A blend code, bounds5d::BlendCode: the exact blended point.)
+  int ba, bc, tn;
+  const VecQ vin = bounds5d::DecodeBlend(inner, &ba, &bc, &tn)
+                       ? Add(Scale(Q(4 - tn, 4), Vertex(ba)), Scale(Q(tn, 4), Vertex(bc)))
+                       : Vertex(inner);
+  const VecQ vout = Vertex(outer);
   Quad3 sum;
   for (int j = 0; j < 3; j++) {
     sum = QuadAdd(sum, QuadScale(vin[j], QuadScale(ChartSign(chart, c), NumeratorQuadratic(c, j))));

@@ -113,6 +113,36 @@ theorem eval_displacementQuadratic_eq_apply (chart : ChartIndex)
     dotProduct, Fin.sum_univ_three, toR3]
   ring
 
+/-- `displacementQuadratic` with the inner vertex replaced by any rational point
+(e.g. a blend of two vertices, a point of the hull). -/
+def displacementQuadraticAt (chart : ChartIndex)
+    (vin : Fin 3 → ℚ) (outer : VertexIndex) (c : Fin 3) : RatQuadratic3 :=
+  (sum3Q fun j => RatQuadratic3.scale (vin j)
+      (numeratorQuadratic chart c j)) -
+    RatQuadratic3.scale (rationalVertex outer c) denomQuadratic
+
+theorem displacementQuadraticAt_rationalVertex (chart : ChartIndex)
+    (inner outer : VertexIndex) (c : Fin 3) :
+    displacementQuadraticAt chart (rationalVertex inner) outer c =
+      displacementQuadratic chart inner outer c := rfl
+
+noncomputable def approxDisplacementVectorAt (chart : ChartIndex)
+    (vin : Fin 3 → ℚ) (outer : VertexIndex) (x y z : ℝ) : ℝ³ :=
+  (chartMatrix chart * cayleyNumeratorMatrix x y z).toEuclideanLin (toR3 vin) -
+    cayleyDenom x y z • toR3 (rationalVertex outer)
+
+theorem eval_displacementQuadraticAt_eq_apply (chart : ChartIndex)
+    (vin : Fin 3 → ℚ) (outer : VertexIndex) (c : Fin 3) (x y z : ℝ) :
+    (displacementQuadraticAt chart vin outer c).evalReal x y z =
+      approxDisplacementVectorAt chart vin outer x y z c := by
+  simp only [displacementQuadraticAt, sum3Q,
+    RatQuadratic3.evalReal_sub, RatQuadratic3.evalReal_add,
+    RatQuadratic3.evalReal_scale, eval_numeratorQuadratic,
+    Noperts.Atlas.CayleyEdgeCertificate.eval_denomQuadratic]
+  simp [approxDisplacementVectorAt, Matrix.toLpLin_apply, Matrix.mulVec,
+    dotProduct, Fin.sum_univ_three, toR3]
+  ring
+
 theorem eval_contactQuadratic (chart : ChartIndex)
     (start finish inner : VertexIndex) (c : Fin 3) (x y z : ℝ) :
     (contactQuadratic chart start finish inner c).evalReal x y z =

@@ -137,25 +137,61 @@ def readGlobalRow (chart : CayleyAtlas.ChartIndex) (triangles : Array SolutionTr
     innerIndex
     ballMultiplier })
 
+/-- Blended inner points (tags 17, 18): per contact the other vertex, then per
+contact t (the inner point (1 − t) v_inner + t v_other). -/
+def readBlend : Decoder ((Fin 3 → VertexIndex) × (Fin 3 → ℚ)) := do
+  let other ← readVertices
+  let t0 ← readRat
+  let t1 ← readRat
+  let t2 ← readRat
+  pure (other, ![t0, t1, t2])
+
+def readGlobalRowBlended (chart : CayleyAtlas.ChartIndex) (triangles : Array SolutionTree.Triangle)
+    (id : Nat) (interval : SolutionTree.Interval) : Decoder Row := do
+  let root ← readNat
+  let triangleIndex ← readNat
+  let certificate ← readAxis
+  let innerIndex ← readVertices
+  let ballMultiplier ← readRat
+  let (innerOther, innerT) ← readBlend
+  pure (.projectiveGlobal id {
+    interval
+    root := fin8 root
+    triangle := triangleAt triangles triangleIndex
+    chart
+    certificate
+    innerIndex
+    ballMultiplier
+    innerOther
+    innerT })
+
 def readMixedComponent : Decoder AtlasProjectiveMixedGlobalCertificate.Component := do
   let certificate ← readAxis
   let innerIndex ← readVertices
   let ballMultiplier ← readRat
   pure { certificate, innerIndex, ballMultiplier }
 
+def readMixedComponentBlended : Decoder AtlasProjectiveMixedGlobalCertificate.Component := do
+  let certificate ← readAxis
+  let innerIndex ← readVertices
+  let ballMultiplier ← readRat
+  let (innerOther, innerT) ← readBlend
+  pure { certificate, innerIndex, ballMultiplier, innerOther, innerT }
+
 def readMixedGlobalRow (chart : CayleyAtlas.ChartIndex)
     (triangles : Array SolutionTree.Triangle)
-    (id : Nat) (interval : SolutionTree.Interval) : Decoder Row := do
+    (id : Nat) (interval : SolutionTree.Interval) (blended : Bool := false) : Decoder Row := do
   let root ← readNat
   let triangleIndex ← readNat
   let w0 ← readRat
   let w1 ← readRat
   let w2 ← readRat
   let w3 ← readRat
-  let c0 ← readMixedComponent
-  let c1 ← readMixedComponent
-  let c2 ← readMixedComponent
-  let c3 ← readMixedComponent
+  let comp := if blended then readMixedComponentBlended else readMixedComponent
+  let c0 ← comp
+  let c1 ← comp
+  let c2 ← comp
+  let c3 ← comp
   pure (.projectiveMixedGlobal id {
     interval
     root := fin8 root
@@ -281,6 +317,10 @@ def readRow (chart : CayleyAtlas.ChartIndex) (intervalOf : Nat → SolutionTree.
     let outerIndex ← readNat
     pure (.regionRelax id child interval (fin8 root)
       (triangleAt triangles triangleIndex) (triangleAt triangles outerIndex))
+  else if tag = 17 then
+    readGlobalRowBlended chart triangles id interval
+  else if tag = 18 then
+    readMixedGlobalRow chart triangles id interval (blended := true)
   else
     readMixedGlobalRow chart triangles id interval
 

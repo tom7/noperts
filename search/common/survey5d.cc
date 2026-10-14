@@ -133,6 +133,8 @@ const char *TagName(int tag) {
     case 7: return "radiusPrune";
     case 8: return "fundamentalPrune";
     case 9: return "mixedCertificate";
+    case 17: return "blendedCertificate";
+    case 18: return "blendedMixedCertificate";
     case 10: return "codeRoot";
     case 11: return "regionRelax";
     case 12: return "cayleySplitAt";
@@ -179,6 +181,9 @@ void ReadPack(const std::string &path, Pack *pk) {
       case 12: t.Skip(5); t.Int(); region = t.Int(); break;          // k0 k1 axis cut(2) root region
       case 4: t.Int(); region = t.Int(); t.Skip(28); break;          // root region body
       case 9: t.Int(); region = t.Int(); t.Skip(120); break;
+      // (With blended inner points: per contact the other vertex and t.)
+      case 17: t.Int(); region = t.Int(); t.Skip(28 + 9); break;
+      case 18: t.Int(); region = t.Int(); t.Skip(8 + 4 * (28 + 9)); break;
       case 6: {                                                      // 0 r(2) t len digits root region
         t.Skip(4);
         const int len = t.Int();

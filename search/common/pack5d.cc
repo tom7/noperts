@@ -42,6 +42,7 @@
 #include "base/logging.h"
 #include "bignum/big.h"
 #include "bignum/big-overloads.h"
+#include "bounds5d.h"
 #include "cert5d.h"
 #include "contacts5d.h"
 #include "exact5d.h"
@@ -454,7 +455,9 @@ class Packer {
         } else if (IsCertificate(node.leaf->leaf)) {
           // Each certificate is used over the triangle it was built for.
           CHECK(relaxed[n] == outer_ok[n]) << node.Path();
-          const char *tag = std::holds_alternative<rows5d::CertLeaf>(node.leaf->leaf) ? "4" : "9";
+          // (Tags 17 / 18: with blended inner points, search5d --blend5d.)
+          const bool single = std::holds_alternative<rows5d::CertLeaf>(node.leaf->leaf);
+          const char *tag = HasBlend(node.leaf->leaf) ? (single ? "17" : "18") : (single ? "4" : "9");
           const BodyRef &b = body_ref[n];
           row += std::format(",{},{},{},{},{}", tag, id, iv, view_root, region);
           row.append(body_buf[b.chunk], b.offset, b.length);
@@ -499,6 +502,43 @@ class Packer {
            std::holds_alternative<rows5d::MixedLeaf>(leaf);
   }
 
+  // Whether a certificate leaf uses a blended inner point (bounds5d::BlendCode).
+  static bool HasBlend(const rows5d::Leaf &leaf) {
+    int a, c, tn;
+    if (const auto *l = std::get_if<rows5d::CertLeaf>(&leaf)) {
+      for (int code : l->inner) if (bounds5d::DecodeBlend(code, &a, &c, &tn)) return true;
+      return false;
+    }
+    for (const auto &comp : std::get<rows5d::MixedLeaf>(leaf).components)
+      for (int code : comp.inner) if (bounds5d::DecodeBlend(code, &a, &c, &tn)) return true;
+    return false;
+  }
+
+  // The inner vertices of a blended row, then (after the ball multiplier)
+  // per contact the other vertex and t (Lean readBlend).
+  static std::string InnerTokens(const std::array<int, 3> &inner) {
+    std::string r;
+    for (int m = 0; m < 3; m++) {
+      int a, c, tn;
+      r += std::format(",{}", bounds5d::DecodeBlend(inner[m], &a, &c, &tn) ? a : inner[m]);
+    }
+    return r;
+  }
+  static std::string BlendTokens(const std::array<int, 3> &inner) {
+    std::string others, ts;
+    for (int m = 0; m < 3; m++) {
+      int a, c, tn;
+      if (bounds5d::DecodeBlend(inner[m], &a, &c, &tn)) {
+        others += std::format(",{}", c);
+        ts += "," + Zigzag(BigRat(tn, 4));
+      } else {
+        others += std::format(",{}", inner[m]);
+        ts += "," + Zigzag(BigRat(0));
+      }
+    }
+    return others + ts;
+  }
+
   // The part of a certificate leaf's row after its triangle index, built
   // over `tri`. With `check`, *ok says whether it holds exactly (exact5d);
   // otherwise *ok is true.
@@ -519,8 +559,11 @@ class Packer {
         for (int m = 0; m < 3; m++) r += std::format(",{}", (*arr)[m]);
       }
       r += "," + Zigzag(c.B);
-      for (int m = 0; m < 3; m++) r += std::format(",{}", g.inner_index[m]);
+      const bool blended = HasBlend(leaf);
+      r += blended ? InnerTokens(g.inner_index) : "";
+      if (!blended) for (int m = 0; m < 3; m++) r += std::format(",{}", g.inner_index[m]);
       r += "," + Zigzag(g.ball_multiplier);
+      if (blended) r += BlendTokens(g.inner_index);
       return r;
     }
     const auto &l = std::get<rows5d::MixedLeaf>(leaf);
@@ -546,8 +589,11 @@ class Packer {
         for (int i = 0; i < 3; i++) r += std::format(",{}", (*arr)[i]);
       }
       r += "," + Zigzag(c.B);
-      for (int i = 0; i < 3; i++) r += std::format(",{}", m.component[k].inner_index[i]);
+      const bool blended = HasBlend(leaf);
+      if (blended) r += InnerTokens(m.component[k].inner_index);
+      else for (int i = 0; i < 3; i++) r += std::format(",{}", m.component[k].inner_index[i]);
       r += "," + Zigzag(m.component[k].ball_multiplier);
+      if (blended) r += BlendTokens(m.component[k].inner_index);
     }
     return r;
   }

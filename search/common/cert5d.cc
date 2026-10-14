@@ -45,6 +45,8 @@ Quad ViewDisplacement(const ContactPool &pool, const Triple &t,
 
 }  // namespace
 
+int g_blend5d = 0;
+
 std::vector<int> BestInner(const ContactPool &pool, const geom5d::TriangleD &tri,
                            const geom5d::BoxD &box, int chart) {
   const vec3 view = geom5d::Centroid(tri);
@@ -52,12 +54,32 @@ std::vector<int> BestInner(const ContactPool &pool, const geom5d::TriangleD &tri
   for (size_t c = 0; c < pool.contacts.size(); c++) {
     const auto &ct = pool.contacts[c];
     double best_v = -1e300;
+    std::vector<std::pair<double, int>> by;
     for (int k = 0; k < NUM_VERTICES; k++) {
       const auto d = bounds5d::Displacement(chart, k, ct.vertex);
       const double v = bounds5d::Eval(bounds5d::ContactTerm(d, view, ct.edge), box.center);
+      by.push_back({v, k});
       if (v > best_v) {
         best_v = v;
         best[c] = k;
+      }
+    }
+    if (g_blend5d <= 0) continue;
+    std::sort(by.rbegin(), by.rend());
+    std::vector<int> cands;
+    const int top = std::min<int>(3, by.size());
+    for (int r = 0; r < top; r++) cands.push_back(by[r].second);
+    if (g_blend5d >= 2)
+      for (int r = 0; r < top; r++)
+        for (int s = r + 1; s < top; s++)
+          for (int tn = 1; tn <= 3; tn++) cands.push_back(bounds5d::BlendCode(by[r].second, by[s].second, tn));
+    double bl = -1e300;
+    for (int code : cands) {
+      const double v = bounds5d::BernsteinLower(
+          bounds5d::ContactTerm(bounds5d::Displacement(chart, code, ct.vertex), view, ct.edge), box);
+      if (v > bl) {
+        bl = v;
+        best[c] = code;
       }
     }
   }

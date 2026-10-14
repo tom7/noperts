@@ -108,6 +108,47 @@ theorem not_rupertPose_of_balanced_support_with_defect
     exact inner_vertex_mem_outer_interior p poly (Pi i) hrupert
   · simpa [innerPoint, outerPoint] using hdisplacement
 
+/-- A point of the hull (e.g. on a segment between two vertices) of the inner
+copy belongs to the interior of the outer shadow at any Rupert pose. -/
+theorem inner_point_mem_outer_interior {ι : Type} [Fintype ι]
+    (p : MatrixPose) (poly : Polyhedron ι ℝ³) (x : ℝ³) (hx : x ∈ poly.hull)
+    (hrupert : RupertPose p poly.hull) :
+    proj_xyL (PoseLike.inner p x) ∈ interior (outerShadow p poly.hull) := by
+  apply hrupert
+  apply subset_closure
+  exact ⟨x, hx, rfl⟩
+
+/-- `not_rupertPose_of_balanced_support_with_defect` with inner points anywhere
+in the hull instead of vertices. -/
+theorem not_rupertPose_of_balanced_support_with_defect_points
+    {ι κ : Type} [Fintype ι] [Fintype κ] [Nonempty κ]
+    (poly : Polyhedron ι ℝ³) (p : MatrixPose)
+    (innerPt : κ → ℝ³) (Qi : κ → ι) (μ : κ → ℝ) (u : κ → ℝ²) (defect : κ → ℝ)
+    (hin : ∀ i, innerPt i ∈ poly.hull)
+    (hu : ∀ i, u i ≠ 0)
+    (hμ : ∀ i, 0 ≤ μ i) (hμpos : ∃ i, 0 < μ i)
+    (hbalance : ∑ i, μ i • u i = 0)
+    (hsupport : ∀ i y, y ∈ outerVertexSet p poly →
+      ⟪u i, y⟫ ≤
+        ⟪u i, proj_xyL (p.outerRot.val.toEuclideanLin (poly.v (Qi i)))⟫ + defect i)
+    (hdisplacement : ∑ i, μ i * defect i ≤ ∑ i, μ i *
+      ⟪u i, proj_xyL (p.innerRot.val.toEuclideanLin (innerPt i)) -
+        proj_xyL (p.outerRot.val.toEuclideanLin (poly.v (Qi i)))⟫) :
+    ¬ RupertPose p poly.hull := by
+  intro hrupert
+  let innerPoint : κ → ℝ² := fun i =>
+    proj_xyL (p.innerRot.val.toEuclideanLin (innerPt i))
+  let outerPoint : κ → ℝ² := fun i =>
+    proj_xyL (p.outerRot.val.toEuclideanLin (poly.v (Qi i)))
+  refine not_strictly_contained_of_balanced_support_with_defect
+    (outerVertexSet p poly) μ u innerPoint outerPoint defect p.innerOffset
+    hu hμ hμpos hbalance ?_ ?_ ?_
+  · simpa [outerPoint] using hsupport
+  · intro i
+    rw [← project_inner_apply, ← outerShadow_poly_hull_eq]
+    exact inner_point_mem_outer_interior p poly (innerPt i) (hin i) hrupert
+  · simpa [innerPoint, outerPoint] using hdisplacement
+
 end Noperts.BalancedSupport
 
 end

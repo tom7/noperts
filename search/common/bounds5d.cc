@@ -41,7 +41,27 @@ double NumCoeff(int row, int col, int m) {
 constexpr double kDenom[10] = {1, 0, 0, 0, 1, 0, 0, 1, 0, 1};
 }  // namespace
 
+int BlendCode(int a, int c, int tn) { return NUM_VERTICES + (a * NUM_VERTICES + c) * 4 + tn; }
+
+bool DecodeBlend(int code, int *a, int *c, int *tn) {
+  if (code < NUM_VERTICES) return false;
+  const int r = code - NUM_VERTICES;
+  *tn = r % 4;
+  *c = (r / 4) % NUM_VERTICES;
+  *a = r / 4 / NUM_VERTICES;
+  return true;
+}
+
 std::array<Quad, 3> Displacement(int chart, int inner, int outer) {
+  int ba, bc, tn;
+  if (DecodeBlend(inner, &ba, &bc, &tn)) {
+    // Linear in the inner point.
+    const double t = tn / 4.0;
+    const auto da = Displacement(chart, ba, outer), dc = Displacement(chart, bc, outer);
+    std::array<Quad, 3> d;
+    for (int c = 0; c < 3; c++) d[c] = Add(Scale(1 - t, da[c]), Scale(t, dc[c]));
+    return d;
+  }
   const vec3 vin = Vertex(inner), vout = Vertex(outer);
   std::array<Quad, 3> d;
   for (int c = 0; c < 3; c++) {

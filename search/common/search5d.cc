@@ -224,6 +224,7 @@ int main(int argc, char **argv) {
     else if (a == "--min_peel") args.opt.min_peel_eighths = std::stoi(next());
     else if (a == "--max_depth") args.opt.max_depth = std::stoi(next());
     else if (a == "--exact_check") args.opt.exact_check = true;
+    else if (a == "--blend5d") cert5d::g_blend5d = std::stoi(next());
     else if (a == "--max_mix") args.opt.max_mix_components = std::stoi(next());
     else if (a == "--retry_deferred") args.retry_deferred = true;
     else if (a == "--requeue_deferred") args.requeue_deferred = true;

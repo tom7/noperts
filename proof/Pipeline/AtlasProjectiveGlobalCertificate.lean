@@ -38,7 +38,21 @@ structure Box where
   certificate : AxisCertificate
   innerIndex : Fin 3 → VertexIndex
   ballMultiplier : ℚ
+  /-- Blended inner points (default: none). Contact i's inner point is
+  (1 − t) v_{innerIndex i} + t v_{innerOther i} with t = `innerT i` clamped to
+  [0, 1] (`blendT`): a point of the hull, which is all the witness needs. -/
+  innerOther : Fin 3 → VertexIndex := innerIndex
+  innerT : Fin 3 → ℚ := fun _ => 0
 deriving DecidableEq
+
+/-- The blend weight of contact i, clamped to [0, 1]. -/
+def Box.blendT (box : Box) (i : Fin 3) : ℚ := max 0 (min 1 (box.innerT i))
+
+/-- Contact i's inner point (rational model coordinates). -/
+def Box.innerQ (box : Box) (i : Fin 3) : Fin 3 → ℚ :=
+  if box.blendT i = 0 then rationalVertex (box.innerIndex i)
+  else (1 - box.blendT i) • rationalVertex (box.innerIndex i) +
+    box.blendT i • rationalVertex (box.innerOther i)
 
 /-- A local-checker shell lets the global checker reuse the already proved
 support, weight, and rational-approximation bounds.  The local-only fields
@@ -187,8 +201,8 @@ def Box.weightedDefectUpper (box : Box) : ℚ :=
 
 def Box.contactQuadratic (box : Box) (i c : Fin 3) : RatQuadratic3 :=
   let edge := box.certificate.edgeQ i
-  let d := AtlasQuadratic.displacementQuadratic box.chart
-    (box.innerIndex i) (box.certificate.index i)
+  let d := AtlasQuadratic.displacementQuadraticAt box.chart
+    (box.innerQ i) (box.certificate.index i)
   match c with
   | 0 => RatQuadratic3.scale (edge 1) (d 2) -
       RatQuadratic3.scale (edge 2) (d 1)
@@ -815,16 +829,82 @@ theorem Box.valid_direction_nonzero (box : Box) (h : box.Admissible)
   rw [← heq] at hexact
   linarith
 
+/-- Contact i's inner point (the exact model): `innerQ` with the model's vertices. -/
+noncomputable def Box.innerPt (box : Box) (i : Fin 3) : ℝ³ :=
+  if box.blendT i = 0 then P.vertex (box.innerIndex i)
+  else (1 - (box.blendT i : ℝ)) • P.vertex (box.innerIndex i) +
+    (box.blendT i : ℝ) • P.vertex (box.innerOther i)
+
+theorem Box.blendT_nonneg (box : Box) (i : Fin 3) : 0 ≤ box.blendT i := le_max_left _ _
+
+theorem Box.blendT_le_one (box : Box) (i : Fin 3) : box.blendT i ≤ 1 :=
+  max_le zero_le_one (min_le_left _ _)
+
+theorem toR3_blend (a b : Fin 3 → ℚ) (t : ℚ) :
+    toR3 ((1 - t) • a + t • b) = (1 - (t : ℝ)) • toR3 a + (t : ℝ) • toR3 b := by
+  ext j
+  simp [toR3]
+
+theorem norm_blend_le {x y : ℝ³} {t e : ℝ} (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hx : ‖x‖ ≤ e) (hy : ‖y‖ ≤ e) : ‖(1 - t) • x + t • y‖ ≤ e := by
+  calc ‖(1 - t) • x + t • y‖ ≤ ‖(1 - t) • x‖ + ‖t • y‖ := norm_add_le _ _
+    _ = (1 - t) * ‖x‖ + t * ‖y‖ := by
+      rw [norm_smul, norm_smul, Real.norm_of_nonneg (by linarith), Real.norm_of_nonneg ht0]
+    _ ≤ (1 - t) * e + t * e := add_le_add (mul_le_mul_of_nonneg_left hx (by linarith))
+      (mul_le_mul_of_nonneg_left hy ht0)
+    _ = e := by ring
+
+theorem Box.innerPt_close (box : Box) (i : Fin 3) :
+    ‖box.innerPt (P := P) i - toR3 (box.innerQ i)‖ ≤ (tightVertexErrorQ : ℝ) := by
+  unfold Box.innerPt Box.innerQ
+  by_cases h : box.blendT i = 0
+  · simp only [h, if_true]
+    exact P.vertex_close_tight _
+  · simp only [h, if_false]
+    rw [toR3_blend]
+    have e : (1 - (box.blendT i : ℝ)) • P.vertex (box.innerIndex i) +
+          (box.blendT i : ℝ) • P.vertex (box.innerOther i) -
+        ((1 - (box.blendT i : ℝ)) • toR3 (rationalVertex (box.innerIndex i)) +
+          (box.blendT i : ℝ) • toR3 (rationalVertex (box.innerOther i))) =
+        (1 - (box.blendT i : ℝ)) • (P.vertex (box.innerIndex i) - toR3 (rationalVertex (box.innerIndex i))) +
+          (box.blendT i : ℝ) • (P.vertex (box.innerOther i) - toR3 (rationalVertex (box.innerOther i))) := by
+      module
+    rw [e]
+    exact norm_blend_le (by exact_mod_cast box.blendT_nonneg i) (by exact_mod_cast box.blendT_le_one i)
+      (P.vertex_close_tight _) (P.vertex_close_tight _)
+
+theorem Box.innerPt_norm_le_one (box : Box) (i : Fin 3) : ‖box.innerPt (P := P) i‖ ≤ 1 := by
+  unfold Box.innerPt
+  by_cases h : box.blendT i = 0
+  · simp only [h, if_true]
+    exact P.vertex_norm_le_one _
+  · simp only [h, if_false]
+    exact norm_blend_le (by exact_mod_cast box.blendT_nonneg i) (by exact_mod_cast box.blendT_le_one i)
+      (P.vertex_norm_le_one _) (P.vertex_norm_le_one _)
+
+theorem Box.innerPt_mem_hull (box : Box) (i : Fin 3) :
+    box.innerPt (P := P) i ∈ P.polyhedron.hull := by
+  have hv : ∀ k, P.vertex k ∈ P.polyhedron.hull := fun k =>
+    subset_convexHull ℝ _ ⟨k, rfl⟩
+  unfold Box.innerPt
+  by_cases h : box.blendT i = 0
+  · simp only [h, if_true]
+    exact hv _
+  · simp only [h, if_false]
+    have h0 : (0 : ℝ) ≤ box.blendT i := by exact_mod_cast box.blendT_nonneg i
+    have h1 : (box.blendT i : ℝ) ≤ 1 := by exact_mod_cast box.blendT_le_one i
+    exact (convex_convexHull ℝ _) (hv _) (hv _) (by linarith) h0 (by ring)
+
 noncomputable def Box.approxDisplacementVector (box : Box)
     (p : AtlasPose ℝ) (i : Fin 3) : ℝ³ :=
-  AtlasQuadratic.approxDisplacementVector box.chart
-    (box.innerIndex i) (box.certificate.index i) p.x p.y p.z
+  AtlasQuadratic.approxDisplacementVectorAt box.chart
+    (box.innerQ i) (box.certificate.index i) p.x p.y p.z
 
 noncomputable def Box.exactDisplacementVector (box : Box)
     (p : AtlasPose ℝ) (i : Fin 3) : ℝ³ :=
   (CayleyAtlas.chartMatrix box.chart *
       cayleyNumeratorMatrix p.x p.y p.z).toEuclideanLin
-        (P.vertex (box.innerIndex i)) -
+        (box.innerPt (P := P) i) -
     cayleyDenom p.x p.y p.z • P.vertex (box.certificate.index i)
 
 noncomputable def Box.approxContactVector (box : Box)
@@ -858,7 +938,7 @@ theorem Box.eval_contactQuadratic (box : Box) (p : AtlasPose ℝ)
       toR3,
       RatQuadratic3.evalReal_sub,
       RatQuadratic3.evalReal_scale,
-      AtlasQuadratic.eval_displacementQuadratic_eq_apply,
+      AtlasQuadratic.eval_displacementQuadraticAt_eq_apply,
       cross3, cross_apply]
 
 theorem Box.eval_viewCoefficientQuadratic (box : Box)
@@ -1581,21 +1661,21 @@ theorem Box.exactDisplacement_sub_approx_norm_le (box : Box)
       box.exactDisplacementVector (P := P) p i - box.approxDisplacementVector p i =
         (CayleyAtlas.chartMatrix box.chart *
             cayleyNumeratorMatrix p.x p.y p.z).toEuclideanLin
-          (P.vertex (box.innerIndex i) -
-            toR3 (rationalVertex (box.innerIndex i))) -
+          (box.innerPt (P := P) i -
+            toR3 (box.innerQ i)) -
         cayleyDenom p.x p.y p.z •
           (P.vertex (box.certificate.index i) -
             toR3 (rationalVertex (box.certificate.index i))) := by
     unfold Box.exactDisplacementVector Box.approxDisplacementVector
-    unfold AtlasQuadratic.approxDisplacementVector
+    unfold AtlasQuadratic.approxDisplacementVectorAt
     rw [map_sub]
     module
   rw [hrearrange]
   calc
     _ ≤ ‖(CayleyAtlas.chartMatrix box.chart *
           cayleyNumeratorMatrix p.x p.y p.z).toEuclideanLin
-          (P.vertex (box.innerIndex i) -
-            toR3 (rationalVertex (box.innerIndex i)))‖ +
+          (box.innerPt (P := P) i -
+            toR3 (box.innerQ i))‖ +
         ‖cayleyDenom p.x p.y p.z •
           (P.vertex (box.certificate.index i) -
             toR3 (rationalVertex (box.certificate.index i)))‖ :=
@@ -1606,7 +1686,7 @@ theorem Box.exactDisplacement_sub_approx_norm_le (box : Box)
       · exact (AtlasEdgeCertificate.norm_chartNumerator_apply_le
           box.chart p.x p.y p.z _).trans
           (mul_le_mul_of_nonneg_left
-            (P.vertex_close_tight (box.innerIndex i))
+            (box.innerPt_close (P := P) i)
             (cayleyDenom_pos p.x p.y p.z).le)
       · rw [norm_smul, Real.norm_eq_abs,
           abs_of_pos (cayleyDenom_pos p.x p.y p.z)]
@@ -1623,7 +1703,7 @@ theorem Box.exactDisplacementVector_norm_le (box : Box)
   calc
     _ ≤ ‖(CayleyAtlas.chartMatrix box.chart *
           cayleyNumeratorMatrix p.x p.y p.z).toEuclideanLin
-          (P.vertex (box.innerIndex i))‖ +
+          (box.innerPt (P := P) i)‖ +
         ‖cayleyDenom p.x p.y p.z •
           P.vertex (box.certificate.index i)‖ := norm_sub_le _ _
     _ ≤ cayleyDenom p.x p.y p.z + cayleyDenom p.x p.y p.z := by
@@ -1631,7 +1711,7 @@ theorem Box.exactDisplacementVector_norm_le (box : Box)
       · exact (AtlasEdgeCertificate.norm_chartNumerator_apply_le
           box.chart p.x p.y p.z _).trans
           ((mul_le_mul_of_nonneg_left
-            (P.vertex_norm_le_one (box.innerIndex i))
+            (box.innerPt_norm_le_one (P := P) i)
             (cayleyDenom_pos p.x p.y p.z).le).trans_eq (mul_one _))
       · rw [norm_smul, Real.norm_eq_abs,
           abs_of_pos (cayleyDenom_pos p.x p.y p.z)]
@@ -1832,7 +1912,7 @@ noncomputable def Box.actualDisplacementVector (box : Box)
     (p : AtlasPose ℝ) (i : Fin 3) : ℝ³ :=
   (CayleyAtlas.chartMatrix box.chart *
       cayleyMatrix p.x p.y p.z).toEuclideanLin
-        (P.vertex (box.innerIndex i)) -
+        (box.innerPt (P := P) i) -
     P.vertex (box.certificate.index i)
 
 noncomputable def Box.actualClearedDisplacement (box : Box)
@@ -1879,7 +1959,7 @@ theorem Box.actualContactValue_eq_pose (box : Box)
       inner ℝ (direction box.root p (box.certificate.exactEdge (P := P) i))
         (proj_xyL
             ((p.matrixPoseWithOffset box.chart offset).innerRot.val.toEuclideanLin
-              (P.vertex (box.innerIndex i))) -
+              (box.innerPt (P := P) i)) -
           outerProjectionLinear (p.matrixPoseWithOffset box.chart offset)
             (P.vertex (box.certificate.index i))) := by
   rw [← inner_direction_outerProjection_eq_support box.root p box.chart offset
@@ -1891,19 +1971,19 @@ theorem Box.actualContactValue_eq_pose (box : Box)
       outerProjectionLinear (p.matrixPoseWithOffset box.chart offset)
           ((CayleyAtlas.chartMatrix box.chart *
               cayleyMatrix p.x p.y p.z).toEuclideanLin
-            (P.vertex (box.innerIndex i))) =
+            (box.innerPt (P := P) i)) =
         rotM p.θ p.φ
           ((CayleyAtlas.chartMatrix box.chart *
               cayleyMatrix p.x p.y p.z).toEuclideanLin
-            (P.vertex (box.innerIndex i))) := by
+            (box.innerPt (P := P) i)) := by
     simpa [outerProjectionLinear, ContinuousLinearMap.comp_apply] using
       p.matrixPoseWithOffset_outer_rotation_project box.chart offset
         ((CayleyAtlas.chartMatrix box.chart *
             cayleyMatrix p.x p.y p.z).toEuclideanLin
-          (P.vertex (box.innerIndex i)))
+          (box.innerPt (P := P) i))
   rw [hrelative,
     ← p.matrixPoseWithOffset_inner_rotation_project box.chart offset
-      (P.vertex (box.innerIndex i))]
+      (box.innerPt (P := P) i)]
 
 theorem Box.actualClearedDisplacement_eq_pose (box : Box)
     {p : AtlasPose ℝ} (offset : ℝ²)
@@ -1913,7 +1993,7 @@ theorem Box.actualClearedDisplacement_eq_pose (box : Box)
         inner ℝ (direction box.root p (box.certificate.exactEdge (P := P) i))
           (proj_xyL
               ((p.matrixPoseWithOffset box.chart offset).innerRot.val.toEuclideanLin
-                (P.vertex (box.innerIndex i))) -
+                (box.innerPt (P := P) i)) -
             outerProjectionLinear (p.matrixPoseWithOffset box.chart offset)
               (P.vertex (box.certificate.index i))) := by
   unfold Box.actualClearedDisplacement
@@ -1994,9 +2074,10 @@ theorem Box.valid_imp_not_translated_rupert (box : Box) (h : box.Valid) :
   intro p hp hbounded hscale hmem offset
   have hscaleNe : viewScale box.root p ≠ 0 :=
     (lt_of_lt_of_le (by norm_num : (0 : ℝ) < 1) hscale).ne'
-  apply AtlasProjectiveGlobalRigidity.not_rupertPose_of_projective_global_certificate_with_defect
+  apply AtlasProjectiveGlobalRigidity.not_rupertPose_of_projective_global_certificate_with_defect_points
     box.root p box.chart offset (fun i => box.certificate.exactEdge (P := P) i)
-    box.innerIndex box.certificate.index (box.actualDefect p)
+    (fun i => box.innerPt (P := P) i) box.certificate.index (box.actualDefect p)
+    (fun i => box.innerPt_mem_hull (P := P) i)
     hscaleNe
   · exact box.valid_direction_nonzero (P := P) h offset hscale hmem
   · intro i

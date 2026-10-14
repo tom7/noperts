@@ -28,8 +28,14 @@ Quad Add(const Quad &a, const Quad &b);
 Quad Scale(double s, const Quad &a);
 double Eval(const Quad &q, const vec3 &w);
 
-// The three components of the displacement of inner vertex `inner` from
-// outer vertex `outer` (denominator cleared), as quadratics in w.
+// Inner codes: k < NUM_VERTICES is vertex k; BlendCode(a, c, tn) (tn = 1..3)
+// is the blended point (1 - tn/4) v_a + (tn/4) v_c, a point of the hull (an
+// experiment: nopert229 SEPTOPERT-IMPROVEMENTS to-do 11; no Lean row yet).
+int BlendCode(int a, int c, int tn);
+bool DecodeBlend(int code, int *a, int *c, int *tn);
+
+// The three components of the displacement of inner vertex (or blend code)
+// `inner` from outer vertex `outer` (denominator cleared), as quadratics in w.
 std::array<Quad, 3> Displacement(int chart, int inner, int outer);
 
 // One contact's term n . (e x d(w)) = d(w) . (n x e), for view n.
