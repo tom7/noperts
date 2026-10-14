@@ -204,7 +204,7 @@ where no single vertex certifies a box (both by default).
 ## Status
 
 Verified on 2026-10-14 on a 64-core machine: `constructSeptopert` checked
-the cap certificate, the 22 tube tables (234 rows, 164 of them identity
+the cap certificate, the 22 tube tables (250 rows, 176 of them identity
 blow-up rows) and the four chart tables (522,764, 143,985, 124,171 and
 104,460 rows) and printed `instantiated: ¬ IsRupert Septopert.verts (the
 Septopert is not Rupert)`. You can reproduce it yourself, following the
@@ -232,17 +232,17 @@ them. Stages: `model`, `tube`, `idcap`, `tubepack`, `cap`, `search`, `pack`,
 background while the C++ stages run (log `work/lean_build.log`).
 
 Measured times of a from-scratch run on 64 cores with 64 threads
-(2026-10-14), about 70 min in all:
+(2026-10-14), about 20 min in all:
 
 | Stage | Time |
 |---|---|
 | model | 9 s |
 | tube + tubepack | 3.3 min |
-| idcap | 57 min |
-| cap | 34 s |
+| idcap | 10.5 min |
+| cap | 33 s |
 | search | 1.4 min (387,855 nodes) |
 | pack | 49 s |
-| verify | 7.2 min, 694 MiB peak (3.6 min, 656 MiB with today's later Lean, which checks the tube tables in parallel) |
+| verify | 3.2 min, 751 MiB peak |
 
 ### History
 
