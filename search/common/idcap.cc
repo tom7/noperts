@@ -52,6 +52,8 @@
 // where several contacts switch independently: L = 1 in the leaf checks,
 // 2 also in the split lookahead.
 // --code_jobs N: the pass runs N codes at once (largest trees first).
+// --mu_guard: no mu split where every candidate fails at the box's lowest mu.
+// --skip_cap_nodes: the pass does not attempt subtrees with a cap leaf.
 // --probe N: the candidate witnesses' first-order margin at the triangle's
 // center over an N x N grid of directions per cube face (no certificate).
 // --view_depth D (with --code): a view tree as the identity tube's: each
@@ -108,6 +110,7 @@ bool g_blend = false;
 int g_blend_contacts = 0;
 // --mu_guard: no mu split where every candidate fails at the box's lowest mu.
 bool g_mu_guard = false;
+bool g_skip_cap_nodes = false;
 int g_affine_gap = 4;
 
 // ----- Exact bounds over Q (Lean KPoly.lowerDeg with ExactScalarOps Q: lo = the value) -----
@@ -1211,12 +1214,21 @@ int64_t CountLeaves(const tubetree::TreeNode &n) {
   return c;
 }
 
+bool HasCapLeaf(const tubetree::TreeNode &n) {
+  if (n.children.empty()) return n.cap.has_value();
+  for (const auto &ch : n.children) if (HasCapLeaf(*ch)) return true;
+  return false;
+}
+
 void Pass(Setup st, tubetree::TreeNode *node, const tubetree::TriangleQ &t, int pass_depth,
           const std::vector<ChartId> &charts, int max_depth, int64_t budget, PassStats *ps) {
   const int depth = node->depth();
   if (depth > pass_depth) return;
   const tubetree::EffectiveBounds eb = tubetree::ComputeEffectiveBounds(*node);
-  if (!(eb.r_lower >= st.rho)) {
+  // --skip_cap_nodes: a subtree with a cap leaf (views where the tube was
+  // left to a cap certificate: the first-order margin vanishes there) does
+  // not certify; attempting it only spends the budget.
+  if (!(eb.r_lower >= st.rho) && !(g_skip_cap_nodes && HasCapLeaf(*node))) {
     for (int k = 0; k < 3; k++) st.c[k] = {t.corners[k].x, t.corners[k].y, t.corners[k].z};
     int64_t leaves = 0;
     std::string pack;
@@ -1317,6 +1329,7 @@ int main(int argc, char **argv) {
     else if (a == "--blend_contacts") g_blend_contacts = std::stoi(next());
     else if (a == "--code_jobs") code_jobs = std::stoi(next());
     else if (a == "--mu_guard") g_mu_guard = true;
+    else if (a == "--skip_cap_nodes") g_skip_cap_nodes = true;
     else if (a == "--affine_gap") g_affine_gap = std::stoi(next());
     else if (a == "--max_leaves") max_leaves = std::stoll(next());
     else if (a == "--bdd") bdd = next();
