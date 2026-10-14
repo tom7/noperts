@@ -155,7 +155,7 @@ fi
 if want idcap; then
   stage_begin idcap
   (cd "$NOPERT" && capped ./idcap.exe --trees_in "$TREES" --trees_out "$TREES_ID" --pass_depth 6 \
-    --max_leaves 20000 --rho 1/64 --threads "$THREADS" --max_depth 40)
+    --max_leaves 2000 --rho 1/64 --threads "$THREADS" --max_depth 40)
   stage_end idcap
 fi
 
