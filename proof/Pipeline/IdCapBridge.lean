@@ -32,7 +32,7 @@ variable [SolidModel]
 
 /-- The certificate of an identity-tube row: its vertices, the row's triangle. -/
 def rowIdCert (V : Array (KCap.KVec ℚ)) (triangle : Triangle ℚ) (rho : ℚ)
-    (faces : List ((ℕ × Bool) × KCap.KTree)) : KCap.IdCert ℚ :=
+    (faces : List ((ℕ × Bool) × KCap.ATree)) : KCap.IdCert ℚ :=
   ⟨V, fun k c => triangle k c, rho, faces⟩
 
 /-- The row's vertices are the model's (as sets: the model may repeat a vertex in several
@@ -47,7 +47,7 @@ theorem kval_rat (v : KCap.KVec ℚ) : KCap.PVec.kval v = fun i => (v i : ℝ) :
 /-- With an exact model and the model's vertices, the hull of any model is the certificate's. -/
 theorem polyhedron_hull_eq_idCert_hull (P : CyclicModel) (hmodel : SolidModel.modelErrorQ = 0)
     (V : Array (KCap.KVec ℚ)) (hV : vertsMatchModel V = true)
-    (triangle : Triangle ℚ) (rho : ℚ) (faces : List ((ℕ × Bool) × KCap.KTree)) :
+    (triangle : Triangle ℚ) (rho : ℚ) (faces : List ((ℕ × Bool) × KCap.ATree)) :
     P.polyhedron.hull = (rowIdCert V triangle rho faces).hull := by
   have hv : ∀ i, P.vertex i = toR3 (rationalVertex i) := by
     intro i
@@ -87,7 +87,7 @@ rules out every tube of the identity (symmetry 0) up to mismatch radius ρ whose
 view lies in the triangle. -/
 theorem idCert_not_rupert (P : CyclicModel) (hmodel : SolidModel.modelErrorQ = 0)
     (V : Array (KCap.KVec ℚ)) (hV : vertsMatchModel V = true)
-    (triangle : Triangle ℚ) (rho : ℚ) (faces : List ((ℕ × Bool) × KCap.KTree))
+    (triangle : Triangle ℚ) (rho : ℚ) (faces : List ((ℕ × Bool) × KCap.ATree))
     (hcheck : (rowIdCert V triangle rho faces).check = true) (hρ1 : rho ≤ 1)
     (box : AtlasLocalCertificate.Box) (hsym : box.symmetryIndex = 0)
     (hmis : box.mismatchRadius ≤ rho)

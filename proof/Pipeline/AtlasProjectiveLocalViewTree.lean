@@ -71,7 +71,7 @@ inductive Row where
   /-- An identity blow-up leaf (`KCap.IdCert` over the node's triangle, exact models): it
   rules out every tube of radius up to `rho` (`idCert_not_rupert`). -/
   | idcap (id : ℕ) (root : Fin 8) (triangle : AtlasProjectiveView.Triangle ℚ) (rho : ℚ)
-      (V : Array (KCap.KVec ℚ)) (faces : List ((ℕ × Bool) × KCap.KTree))
+      (V : Array (KCap.KVec ℚ)) (faces : List ((ℕ × Bool) × KCap.ATree))
 deriving DecidableEq
 
 def Row.id : Row → ℕ

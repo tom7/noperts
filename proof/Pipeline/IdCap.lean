@@ -1,6 +1,7 @@
 module
 
 public import Pipeline.KCapTree
+public import Pipeline.ATree
 
 @[expose] public section
 
@@ -83,14 +84,38 @@ structure IdCert (K : Type) where
   V : Array (KVec K)
   c : Fin 3 → KVec K
   rho : ℚ
-  faces : List ((ℕ × Bool) × KTree)
+  faces : List ((ℕ × Bool) × ATree)
 
 def idFaces : List (ℕ × Bool) := [(0, true), (0, false), (1, true), (1, false), (2, true), (2, false)]
 
-def IdCert.faceCheck (cert : IdCert K) (axis : ℕ) (sign : Bool) (t : KTree) : Bool :=
-  -- (The chart data once per face, not per leaf.)
+/-- The chart variables of an affine map, as polynomials: y_i = Σ_j A i j z_j + c i. -/
+def AffMap.vars (m : AffMap) (i : Fin 5) : KPoly K 5 :=
+  KPoly.add 5 (KPoly.scale 5 (m.A i 0) (pvar 0)) (KPoly.add 5 (KPoly.scale 5 (m.A i 1) (pvar 1))
+    (KPoly.add 5 (KPoly.scale 5 (m.A i 2) (pvar 2)) (KPoly.add 5 (KPoly.scale 5 (m.A i 3) (pvar 3))
+      (KPoly.add 5 (KPoly.scale 5 (m.A i 4) (pvar 4)) (pconst (m.c i))))))
+
+/-- `idU` in given variables v (polynomials in the tree's coordinates). -/
+def idUv (c : Fin 3 → KVec K) (v : Fin 5 → KPoly K 5) : PVec K :=
+  PVec.add (PVec.const (c 0))
+    (PVec.add (PVec.smul (v 1) (PVec.const (vsub (c 1) (c 0))))
+      (PVec.smul (KPoly.mul 5 (v 1) (v 2)) (PVec.const (vsub (c 2) (c 1)))))
+
+def faceCoordV (axis : ℕ) (sign : Bool) (v : Fin 5 → KPoly K 5) (i : ℕ) : KPoly K 5 :=
+  if i = axis then pconst (signQ sign * 1) else v (freeVar 3 axis i)
+
+/-- `idW` in given variables v. -/
+def idWv (axis : ℕ) (sign : Bool) (v : Fin 5 → KPoly K 5) : PVec K :=
+  PVec.smul (v 0) (fun i => faceCoordV axis sign v i.val)
+
+/-- The chart data of a face over an affine map's coordinates. -/
+def idChartOf (cert : IdCert K) (axis : ℕ) (sign : Bool) (m : AffMap) : ChartData K :=
+  chartDataOf (idUv cert.c m.vars) (idWv axis sign m.vars) cert.V
+
+def IdCert.faceCheck (cert : IdCert K) (axis : ℕ) (sign : Bool) (t : ATree) : Bool :=
+  -- (The chart data once per face and per affine node, not per leaf.)
   let cd := chartDataOf (idU cert.c) (idW axis sign) cert.V
-  t.check (fun l box => l.check cert.V cd idChartId box) (fun _ => false) (idBox cert.rho)
+  t.check (fun cd l box => l.check cert.V cd idChartId box) (idChartOf cert axis sign) cd AffMap.idm
+    (idBox cert.rho)
 
 def IdCert.hasFace (cert : IdCert K) (f : ℕ × Bool) : Bool :=
   cert.faces.any fun e => decide (e.1 = f) && cert.faceCheck f.1 f.2 e.2
@@ -115,6 +140,27 @@ theorem eval_idW (axis : ℕ) (sign : Bool) (y : Fin 5 → ℝ) :
   show KPoly.eval 5 (KPoly.mul 5 (pvar 0) (faceCoord 3 axis sign 1 i.val)) y = _
   rw [KPoly.eval_mul, eval_pvar, eval_faceCoord]
   by_cases h : i.val = axis <;> simp [h]
+
+theorem eval_vars (m : AffMap) (i : Fin 5) (z : Fin 5 → ℝ) :
+    KPoly.eval 5 (m.vars (K := K) i) z = m.apply z i := by
+  simp [AffMap.vars, AffMap.apply, KPoly.eval_add, KPoly.eval_scale, eval_pvar, eval_pconst,
+    Fin.sum_univ_five]
+  ring
+
+theorem eval_idUv (c : Fin 3 → KVec K) (v : Fin 5 → KPoly K 5) (z : Fin 5 → ℝ) :
+    (idUv c v).eval z = (idU c).eval (fun i => KPoly.eval 5 (v i) z) := by
+  rw [eval_idU]
+  simp [idUv, PVec.eval_add, PVec.eval_smul, PVec.eval_const, kval_vsub, KPoly.eval_mul]
+
+theorem eval_idWv (axis : ℕ) (sign : Bool) (v : Fin 5 → KPoly K 5) (z : Fin 5 → ℝ) :
+    (idWv axis sign v).eval z = (idW (K := K) axis sign).eval (fun i => KPoly.eval 5 (v i) z) := by
+  rw [eval_idW]
+  funext i
+  show KPoly.eval 5 (KPoly.mul 5 (v 0) (faceCoordV axis sign v i.val)) z = _
+  rw [KPoly.eval_mul]
+  by_cases h : i.val = axis
+  · simp [faceCoordV, h, eval_pconst]
+  · simp [faceCoordV, h, freeVar]
 
 /-- The chart point of a Cayley vector μ σ (σ on the face (axis, sign)) over the view
 parameters α, β. -/
@@ -150,7 +196,7 @@ theorem idBox_width {rho : ℚ} (h : 0 ≤ rho) : ∀ i, 0 ≤ (idBox rho i).2 :
 
 omit [ExactScalarVal K] in
 theorem hasFace_sound {cert : IdCert K} {f : ℕ × Bool} (h : cert.hasFace f = true) :
-    ∃ t : KTree, cert.faceCheck f.1 f.2 t = true := by
+    ∃ t : ATree, cert.faceCheck f.1 f.2 t = true := by
   unfold IdCert.hasFace at h
   obtain ⟨e, -, he⟩ := List.any_eq_true.mp h
   simp only [Bool.and_eq_true, decide_eq_true_eq] at he
@@ -158,26 +204,41 @@ theorem hasFace_sound {cert : IdCert K} {f : ℕ × Bool} (h : cert.hasFace f = 
   exact ⟨e.2, hc⟩
 
 /-- A checked face tree: no pose over a point of the chart box is Rupert. -/
-theorem face_good (cert : IdCert K) (hrho : 0 ≤ cert.rho) (axis : ℕ) (sign : Bool) (t : KTree)
+theorem face_good (cert : IdCert K) (hrho : 0 ≤ cert.rho) (axis : ℕ) (sign : Bool) (t : ATree)
     (ht : cert.faceCheck axis sign t = true) (y : Fin 5 → ℝ) (hy : KPoly.InBox (idBox cert.rho) y)
     (p : MatrixPose) (ξ : ℝ) (hview : p.view = ξ • (idU cert.c).eval y)
     (hR : p.relativeRotation = cayleyMatrix ((idW (K := K) axis sign).eval y 0)
       ((idW (K := K) axis sign).eval y 1) ((idW (K := K) axis sign).eval y 2)) :
     ¬ RupertPose p cert.hull := by
-  refine KTree.check_sound
-    (fun l box => l.check cert.V (chartDataOf (idU cert.c) (idW axis sign) cert.V) idChartId box)
-    (fun _ => false)
-    (fun y => KPoly.InBox (idBox cert.rho) y → ∀ (p : MatrixPose) (ξ : ℝ),
+  -- The chart data of a node agrees with the face chart at the map's image.
+  let Inv : ChartData K → AffMap → Prop := fun cd m => ∃ uP wP : PVec K,
+    cd = chartDataOf uP wP cert.V ∧ ∀ z, uP.eval z = (idU cert.c).eval (m.apply z) ∧
+      wP.eval z = (idW (K := K) axis sign).eval (m.apply z)
+  let Good : (Fin 5 → ℝ) → Prop := fun y => KPoly.InBox (idBox cert.rho) y → ∀ (p : MatrixPose) (ξ : ℝ),
       p.view = ξ • (idU cert.c).eval y →
       p.relativeRotation = cayleyMatrix ((idW (K := K) axis sign).eval y 0)
         ((idW (K := K) axis sign).eval y 1) ((idW (K := K) axis sign).eval y 2) →
-      ¬ RupertPose p cert.hull) ?_ ?_ t (idBox cert.rho) (idBox_width hrho) ht y hy hy p ξ hview hR
-  · intro l box hb hl y hyb hyr p ξ hview hR
-    have h0 : 0 ≤ y 0 := by simpa [idBox] using (hyr 0).1
-    exact Leaf.check_soundOf _ _ idChartId cert.V l box hl hb y hyb h0 (by simp [idChartId])
-      (by simp [idChartId]) cert.hull rfl p ξ hview hR
-  · intro box _ hc
-    simp at hc
+      ¬ RupertPose p cert.hull
+  have hroot : Inv (chartDataOf (idU cert.c) (idW axis sign) cert.V) AffMap.idm :=
+    ⟨_, _, rfl, fun z => by simp [AffMap.idm_apply]⟩
+  have key := ATree.check_sound (fun cd l box => l.check cert.V cd idChartId box)
+    (idChartOf cert axis sign) Good Inv ?_ ?_ t _ AffMap.idm (idBox cert.rho) hroot
+    (fun z => by rw [AffMap.idm_apply]) (idBox_width hrho) ht y hy
+  · rw [AffMap.idm_apply] at key
+    exact key hy p ξ hview hR
+  · intro cd m l box hinv h0m hb hl z hz hy' p ξ hview hR
+    obtain ⟨uP, wP, rfl, hev⟩ := hinv
+    have h0 : 0 ≤ z 0 := by
+      have := (hy' 0).1
+      rw [h0m z] at this
+      simpa [idBox] using this
+    exact Leaf.check_soundOf uP wP idChartId cert.V l box hl hb z hz h0 (by simp [idChartId])
+      (by simp [idChartId]) cert.hull rfl p ξ (by rw [(hev z).1]; exact hview)
+      (by rw [(hev z).2]; exact hR)
+  · intro m _
+    refine ⟨_, _, rfl, fun z => ⟨?_, ?_⟩⟩
+    · rw [eval_idUv]; congr 1; funext i; exact eval_vars m i z
+    · rw [eval_idWv]; congr 1; funext i; exact eval_vars m i z
 
 /-- **The identity blow-up claim**: if the certificate checks, no pose whose view is a
 multiple of a point of the corners' parallelogram and whose relative rotation is the

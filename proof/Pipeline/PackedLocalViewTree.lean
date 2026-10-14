@@ -217,19 +217,46 @@ def readKLeaf : Decoder KCap.Leaf := do
     inner := inner.push it.toList
   pure ⟨s, edges.toList, outer.toList, inner.toList⟩
 
-/-- A blow-up face tree in preorder: 0 axis (a split), 1 leaf, 2 (a failed leaf). The fuel
-bounds the depth. -/
-def readKTree : ℕ → Decoder KCap.KTree
+/-- Five rationals. -/
+def readQ5 : Decoder (Fin 5 → ℚ) := do
+  let a ← readRat
+  let b ← readRat
+  let c ← readRat
+  let d ← readRat
+  let e ← readRat
+  pure ![a, b, c, d, e]
+
+/-- A 5 × 5 rational matrix, row by row. -/
+def readM5 : Decoder (Fin 5 → Fin 5 → ℚ) := do
+  let r0 ← readQ5
+  let r1 ← readQ5
+  let r2 ← readQ5
+  let r3 ← readQ5
+  let r4 ← readQ5
+  pure ![r0, r1, r2, r3, r4]
+
+/-- A blow-up face tree in preorder: 0 axis (a split), 1 leaf, 3 an affine node (A, c, B as
+rationals, row by row, then the new box as five (lower end, width) pairs), 2 (a failed leaf).
+The fuel bounds the depth. -/
+def readATree : ℕ → Decoder KCap.ATree
   | 0 => pure .fail
   | fuel + 1 => do
     let tag ← readNat
     if tag = 0 then
       let a ← readNat
-      let l ← readKTree fuel
-      let r ← readKTree fuel
+      let l ← readATree fuel
+      let r ← readATree fuel
       pure (.split (fin5 a) l r)
     else if tag = 1 then
       pure (.leaf (← readKLeaf))
+    else if tag = 3 then
+      let A ← readM5
+      let c ← readQ5
+      let B ← readM5
+      let lo ← readQ5
+      let w ← readQ5
+      let t ← readATree fuel
+      pure (.affine ⟨A, c, B⟩ (fun i => (lo i, w i)) t)
     else
       pure .fail
 
@@ -254,11 +281,11 @@ def readRow (base : AtlasProjectiveView.Triangle Rat) : Decoder Row := do
     let nverts ← readNat
     let V : Array (KCap.KVec ℚ) := Array.ofFn fun n : Fin nverts => rationalVertex (vertexSlot n.val)
     let nfaces ← readNat
-    let mut faces : Array ((ℕ × Bool) × KCap.KTree) := #[]
+    let mut faces : Array ((ℕ × Bool) × KCap.ATree) := #[]
     for _ in [0:nfaces] do
       let axis ← readNat
       let sign ← readNat
-      let tree ← readKTree 200
+      let tree ← readATree 200
       faces := faces.push ((axis, sign = 1), tree)
     pure (.idcap id (fin8 root) triangle rho V faces.toList)
   else if tag = 2 then
