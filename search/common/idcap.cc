@@ -48,8 +48,9 @@
 // pack tag 4): where the best inner vertex switches inside a box (a
 // codimension-2 view), the blend has no switch to subdivide toward.
 // (Blends in the split lookahead too: leaf checks only was worse.)
-// --blend_contacts: also a separate blend per contact (coordinate ascent),
-// where several contacts switch independently.
+// --blend_contacts L: also a separate blend per contact (coordinate ascent),
+// where several contacts switch independently: L = 1 in the leaf checks,
+// 2 also in the split lookahead.
 // --code_jobs N: the pass runs N codes at once (largest trees first).
 // --probe N: the candidate witnesses' first-order margin at the triangle's
 // center over an N x N grid of directions per cube face (no certificate).
@@ -102,8 +103,11 @@ bool g_exact = true;
 // slanted; at least this many levels apart on a path.
 bool g_affine = false;
 bool g_blend = false;
-// --blend_contacts: also per-contact blends (coordinate ascent).
-bool g_blend_contacts = false;
+// --blend_contacts L: also per-contact blends (coordinate ascent): 1 in the
+// leaf checks, 2 also in the split lookahead.
+int g_blend_contacts = 0;
+// --mu_guard: no mu split where every candidate fails at the box's lowest mu.
+bool g_mu_guard = false;
 int g_affine_gap = 4;
 
 // ----- Exact bounds over Q (Lean KPoly.lowerDeg with ExactScalarOps Q: lo = the value) -----
@@ -612,7 +616,7 @@ struct Certifier {
         // --blend_contacts: each contact its own blend (P is a sum over the
         // contacts, so p_k may differ per k): coordinate ascent from the
         // best so far, two rounds over the contacts.
-        if (g_blend_contacts && best < 0) {
+        if ((g_blend_contacts >= 2 || (g_blend_contacts == 1 && leaf != nullptr)) && best < 0) {
           if (bchoice.empty()) {
             bchoice.resize(K);
             for (int k = 0; k < K; k++) bchoice[k] = {best_it[k], best_it[k], 0};
@@ -1038,9 +1042,21 @@ struct Certifier {
     int best = -1;
     double bw = -1e301;
     const double cur = sc.empty() ? -1e300 : Score(cands[sc[0].second], box);
+    // --mu_guard: when every candidate fails on the box's lowest mu (the
+    // face mu = lo; at lo = 0 the first-order term), no mu split can help:
+    // split the other variables. (Otherwise each mu split may improve the
+    // score a little, toward a negative limit, down to max_depth.)
+    bool mu_futile = false;
+    if (g_mu_guard && !sc.empty()) {
+      auto h0 = box;
+      h0[0].second = h0[0].first;
+      mu_futile = true;
+      for (int r = 0; r < std::min<int>(3, sc.size()) && mu_futile; r++)
+        if (Score(cands[sc[r].second], h0) >= -1e-13) mu_futile = false;
+    }
     for (int r = 0; r < std::min<int>(3, sc.size()); r++) {
       const Witness &W = cands[sc[r].second];
-      for (int i = 0; i < NV; i++) {
+      for (int i = mu_futile ? 1 : 0; i < NV; i++) {
         const double mid = 0.5 * (box[i].first + box[i].second);
         auto h1 = box, h2 = box;
         h1[i].second = mid;
@@ -1055,9 +1071,9 @@ struct Certifier {
     // to the chart's box, the direction (p1, p2) weighted 4 times mu and the
     // view.
     if (best < 0 || bw <= -1e299 || (cur < 0 && bw < cur + 0.1 * -cur)) {
-      best = 0;
+      best = mu_futile ? 1 : 0;
       bw = -1;
-      for (int i = 0; i < NV; i++) {
+      for (int i = mu_futile ? 1 : 0; i < NV; i++) {
         const double rel = (box[i].second - box[i].first) / (chart_box[i].second - chart_box[i].first) * (i >= 3 ? 4 : 1);
         if (rel > bw) { bw = rel; best = i; }
       }
@@ -1298,8 +1314,9 @@ int main(int argc, char **argv) {
     else if (a == "--double") g_exact = false;
     else if (a == "--affine") g_affine = true;
     else if (a == "--blend") g_blend = true;
-    else if (a == "--blend_contacts") g_blend_contacts = true;
+    else if (a == "--blend_contacts") g_blend_contacts = std::stoi(next());
     else if (a == "--code_jobs") code_jobs = std::stoi(next());
+    else if (a == "--mu_guard") g_mu_guard = true;
     else if (a == "--affine_gap") g_affine_gap = std::stoi(next());
     else if (a == "--max_leaves") max_leaves = std::stoll(next());
     else if (a == "--bdd") bdd = next();
