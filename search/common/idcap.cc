@@ -479,6 +479,46 @@ struct Certifier {
           *why = "tuple (outer";
           for (int j : jt) *why += " " + std::to_string(j);
           *why += ") best bound " + std::to_string(best);
+          // The best inner choice's polynomial on a 7^5 grid of the box:
+          // negative means no box splitting helps this inner choice.
+          PolyT<double> Pp;
+          for (int k = 0; k < K; k++) Pp = Pp + (Aof(k, best_it[k]) - Bof(k, jt[k]));
+          const PolyT<double> R = Reduce(Pp);
+          double gmin = 1e300;
+          for (int g = 0; g < 16807; g++) {
+            double y[NV];
+            int r = g;
+            for (int i = 0; i < NV; i++) {
+              y[i] = box[i].first + (r % 7) / 6.0 * (box[i].second - box[i].first);
+              r /= 7;
+            }
+            gmin = std::min(gmin, Eval(R, y));
+          }
+          *why += ", its grid min " + std::to_string(gmin) + " (inner";
+          for (int i : best_it) *why += " " + std::to_string(i);
+          *why += ")";
+          // Every inner choice: its bound and grid min.
+          for (int64_t ci = 0; ci < ninner; ci++) {
+            int64_t q = ci;
+            std::vector<int> it(K);
+            for (int k = 0; k < K; k++) { it[k] = I[k][q % I[k].size()]; q /= I[k].size(); }
+            PolyT<double> P2;
+            for (int k = 0; k < K; k++) P2 = P2 + (Aof(k, it[k]) - Bof(k, jt[k]));
+            const PolyT<double> R2 = Reduce(P2);
+            double gm = 1e300;
+            for (int g = 0; g < 16807; g++) {
+              double y[NV];
+              int r = g;
+              for (int i = 0; i < NV; i++) {
+                y[i] = box[i].first + (r % 7) / 6.0 * (box[i].second - box[i].first);
+                r /= 7;
+              }
+              gm = std::min(gm, Eval(R2, y));
+            }
+            *why += "\n        inner";
+            for (int i : it) *why += " " + std::to_string(i);
+            *why += ": bound " + std::to_string(BernsteinLowerD(R2, box)) + " grid min " + std::to_string(gm);
+          }
         }
         if (!leaf) continue;
         return score;
