@@ -127,7 +127,8 @@ theorem idCert_not_rupert (P : CyclicModel) (hmodel : SolidModel.modelErrorQ = 0
     ring
   have hα : 0 ≤ wt 1 ∧ wt 1 ≤ 1 := ⟨hwt0 1, by simp [Fin.sum_univ_three] at hwt1; linarith [hwt0 0, hwt0 2]⟩
   have hβ : 0 ≤ wt 2 ∧ wt 2 ≤ 1 := ⟨hwt0 2, by simp [Fin.sum_univ_three] at hwt1; linarith [hwt0 0, hwt0 1]⟩
-  apply cert.claim hcheck _ _ (wt 1) (wt 2) hα hβ hview ![x, y, z] hw
+  have hαβ : wt 1 + wt 2 ≤ 1 := by simp [Fin.sum_univ_three] at hwt1; linarith [hwt0 0]
+  apply cert.claim hcheck _ _ (wt 1) (wt 2) hα.1 hβ.1 hαβ hview ![x, y, z] hw
   rw [AtlasPose.matrixPoseWithOffset_relativeRotation]
   simpa using hRxyz
 

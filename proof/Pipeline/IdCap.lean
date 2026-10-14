@@ -19,13 +19,13 @@ For corners c₀, c₁, c₂ (projective view points) and a radius ρ, the chart
 of the cube face (a, σ) has variables y = (μ, α, β, p₁, p₂) in
 [0, ρ] × [0, 1]² × [−1, 1]² and
 
-  view      u = c₀ + α (c₁ − c₀) + β (c₂ − c₀),
+  view      u = c₀ + α (c₁ − c₀) + α β (c₂ − c₁)  (the triangle as a collapsed square),
   rotation  Cayley vector w = μ σ̂, σ̂_a = ±1, the other two (p₁, p₂).
 
-Every view ξ (c₀ + α (c₁ − c₀) + β (c₂ − c₀)) with α, β ∈ [0, 1] and every
+Every view ξ (c₀ + w₁ (c₁ − c₀) + w₂ (c₂ − c₀)) with w₁, w₂ ≥ 0, w₁ + w₂ ≤ 1 and every
 Cayley vector with |w|∞ ≤ ρ is a point of one of the six charts (`maxface`;
-w = 0 at μ = 0). `IdCert.claim`: if each face's tree checks, no such pose is
-Rupert.
+w = 0 at μ = 0; α = w₁ + w₂, β = w₂ / α). `IdCert.claim`: if each face's
+tree checks, no such pose is Rupert.
 -/
 
 namespace Noperts.Pipeline
@@ -58,11 +58,13 @@ open Noperts.Pipeline.KCap.PVec
 
 variable {K : Type} [ExactScalarOps K]
 
-/-- The view u = c₀ + α (c₁ − c₀) + β (c₂ − c₀), (α, β) = (y 1, y 2). -/
+/-- The view u = c₀ + α (c₁ − c₀) + α β (c₂ − c₁), (α, β) = (y 1, y 2) ∈ [0, 1]²: the
+triangle as a collapsed square (the points with α ∈ [0, 1] at β = 0 and β = 1 are its sides
+c₀c₁ and c₀c₂). -/
 def idU (c : Fin 3 → KVec K) : PVec K :=
   PVec.add (PVec.const (c 0))
     (PVec.add (PVec.smul (pvar 1) (PVec.const (vsub (c 1) (c 0))))
-      (PVec.smul (pvar 2) (PVec.const (vsub (c 2) (c 0)))))
+      (PVec.smul (KPoly.mul 5 (pvar 1) (pvar 2)) (PVec.const (vsub (c 2) (c 1)))))
 
 /-- The Cayley vector μ σ̂, σ̂ on the face (axis, sign) of [−1, 1]³ with free coordinates
 y 3, y 4. -/
@@ -102,8 +104,8 @@ section points
 variable [ExactScalarVal K]
 
 theorem eval_idU (c : Fin 3 → KVec K) (y : Fin 5 → ℝ) :
-    (idU c).eval y = kval (c 0) + (y 1 • (kval (c 1) - kval (c 0)) + y 2 • (kval (c 2) - kval (c 0))) := by
-  simp [idU, PVec.eval_add, PVec.eval_smul, PVec.eval_const, eval_pvar, kval_vsub]
+    (idU c).eval y = kval (c 0) + (y 1 • (kval (c 1) - kval (c 0)) + (y 1 * y 2) • (kval (c 2) - kval (c 1))) := by
+  simp [idU, PVec.eval_add, PVec.eval_smul, PVec.eval_const, eval_pvar, kval_vsub, KPoly.eval_mul]
 
 theorem eval_idW (axis : ℕ) (sign : Bool) (y : Fin 5 → ℝ) :
     (idW (K := K) axis sign).eval y = y 0 • fun i =>
@@ -118,7 +120,7 @@ parameters α, β. -/
 theorem id_point (axis : ℕ) (sign : Bool) (ha : axis < 3) (μ α β : ℝ) (σ : Fin 3 → ℝ)
     (hσ : σ ⟨axis, ha⟩ = ((signQ sign : ℚ) : ℝ)) (c : Fin 3 → KVec K) :
     let y : Fin 5 → ℝ := ![μ, α, β, (other3 axis σ).1, (other3 axis σ).2]
-    (idU c).eval y = kval (c 0) + (α • (kval (c 1) - kval (c 0)) + β • (kval (c 2) - kval (c 0))) ∧
+    (idU c).eval y = kval (c 0) + (α • (kval (c 1) - kval (c 0)) + (α * β) • (kval (c 2) - kval (c 1))) ∧
       (idW (K := K) axis sign).eval y = μ • σ := by
   intro y
   constructor
@@ -180,9 +182,9 @@ theorem face_good (cert : IdCert K) (hrho : 0 ≤ cert.rho) (axis : ℕ) (sign :
 multiple of a point of the corners' parallelogram and whose relative rotation is the
 Cayley rotation of a vector with |w|∞ ≤ ρ is Rupert. -/
 theorem IdCert.claim (cert : IdCert K) (h : cert.check = true)
-    (p : MatrixPose) (ξ α β : ℝ) (hα : 0 ≤ α ∧ α ≤ 1) (hβ : 0 ≤ β ∧ β ≤ 1)
-    (hview : p.view = ξ • (kval (cert.c 0) + (α • (kval (cert.c 1) - kval (cert.c 0)) +
-      β • (kval (cert.c 2) - kval (cert.c 0)))))
+    (p : MatrixPose) (ξ w₁ w₂ : ℝ) (h₁ : 0 ≤ w₁) (h₂ : 0 ≤ w₂) (h₁₂ : w₁ + w₂ ≤ 1)
+    (hview : p.view = ξ • (kval (cert.c 0) + (w₁ • (kval (cert.c 1) - kval (cert.c 0)) +
+      w₂ • (kval (cert.c 2) - kval (cert.c 0)))))
     (w : Fin 3 → ℝ) (hw : ∀ i, |w i| ≤ cert.rho)
     (hR : p.relativeRotation = cayleyMatrix (w 0) (w 1) (w 2)) :
     ¬ RupertPose p cert.hull := by
@@ -192,6 +194,21 @@ theorem IdCert.claim (cert : IdCert K) (h : cert.check = true)
   have hmem : ((a.val, sign) : ℕ × Bool) ∈ idFaces := by
     fin_cases a <;> cases sign <;> simp [idFaces]
   obtain ⟨t, ht⟩ := hasFace_sound (hfaces _ hmem)
+  -- The collapsed-square coordinates of the view: α = w₁ + w₂, β = w₂ / α.
+  set α := w₁ + w₂ with hαdef
+  set β := if α = 0 then 0 else w₂ / α with hβdef
+  have hα : 0 ≤ α ∧ α ≤ 1 := ⟨by linarith, h₁₂⟩
+  have hβ : 0 ≤ β ∧ β ≤ 1 := by
+    simp only [hβdef]
+    split_ifs with h0
+    · exact ⟨le_refl _, zero_le_one⟩
+    · have hpos : 0 < α := lt_of_le_of_ne hα.1 (Ne.symm h0)
+      exact ⟨div_nonneg h₂ hpos.le, (div_le_one hpos).mpr (by linarith)⟩
+  have hαβ : α * β = w₂ := by
+    simp only [hβdef]
+    split_ifs with h0
+    · linarith
+    · field_simp
   have hpt := id_point (K := K) a.val sign a.isLt μ α β σ hσa cert.c
   set y : Fin 5 → ℝ := ![μ, α, β, (other3 a.val σ).1, (other3 a.val σ).2] with hy_def
   have hμρ : μ ≤ cert.rho := by rw [← hi0]; exact hw i0
@@ -209,7 +226,11 @@ theorem IdCert.claim (cert : IdCert K) (h : cert.check = true)
   have hwy : (idW (K := K) a.val sign).eval y = w := by
     rw [hpt.2]; funext i; simp [hwσ i]
   apply face_good cert hrho a.val sign t ht y hy p ξ
-  · rw [hpt.1]; exact hview
+  · rw [hpt.1, hview, hαβ]
+    congr 1
+    funext i
+    simp only [Pi.add_apply, Pi.smul_apply, Pi.sub_apply, smul_eq_mul, hαdef]
+    ring
   · rw [hwy]; exact hR
 
 end claim

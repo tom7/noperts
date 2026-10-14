@@ -10,9 +10,9 @@
 // For the view triangle T = (c0, c1, c2) (projective chart points) and a
 // radius rho, the six charts (axis a, sign s) have variables
 // y = (mu, alpha, beta, p1, p2) in [0, rho] x [0, 1]^2 x [-1, 1]^2:
-//   view      u = c0 + alpha (c1 - c0) + beta (c2 - c0)  (a parallelogram
-//             containing T; d_k = u x c_k is perpendicular to u whatever its
-//             scale)
+//   view      u = c0 + alpha (c1 - c0) + alpha beta (c2 - c1)  (T as a
+//             collapsed square; d_k = u x c_k is perpendicular to u whatever
+//             its scale)
 //   rotation  Cayley vector w = mu sigma, sigma_a = s, the other two (p1, p2)
 // so the six cover every view of T and every Cayley vector with
 // |w|_inf <= rho (the ball |w|_2 <= rho, tube radius 2 rho), the identity
@@ -36,6 +36,11 @@
 // --view: an equilateral triangle of the given angular diameter around the
 // view (as tubeprobe); --code/--tri: code C's triangle T of codebdd.json,
 // subdivided along the digits of --path (tubetree::TriangleQ::Subdivide).
+// --probe N: the candidate witnesses' first-order margin at the triangle's
+// center over an N x N grid of directions per cube face (no certificate).
+// --view_depth D (with --code): a view tree as the identity tube's: each
+// node is certified if every face takes at most --max_leaves nodes, else
+// split in four, down to D levels below the start.
 
 #include <algorithm>
 #include <array>
@@ -103,7 +108,7 @@ template <class T> Chart<T> MakeChart(const Setup &st, const ChartId &id) {
   using P = PolyT<T>;
   const V3<T> c0 = ToTV<T>(st.c[0]), c1 = ToTV<T>(st.c[1]), c2 = ToTV<T>(st.c[2]);
   Chart<T> ch;
-  ch.u = PConst(c0) + (P::Var(1) * PConst(VSub(c1, c0)) + P::Var(2) * PConst(VSub(c2, c0)));
+  ch.u = PConst(c0) + (P::Var(1) * PConst(VSub(c1, c0)) + (P::Var(1) * P::Var(2)) * PConst(VSub(c2, c1)));
   PV<T> sigma;
   int free = 3;
   for (int i = 0; i < 3; i++)
@@ -274,7 +279,12 @@ struct Leaf {
   std::vector<std::vector<int>> inner;  // per tuple, K inner indices
 };
 
-struct Stats { std::atomic<int64_t> ok{0}, failed{0}; std::atomic<int> max_depth{0}; };
+struct Stats {
+  std::atomic<int64_t> ok{0}, failed{0}, visited{0};
+  std::atomic<int> max_depth{0};
+  // Nodes allowed per chart (0: unlimited); past it the chart fails.
+  int64_t budget = 0;
+};
 
 std::atomic<int> g_active{0};
 int g_max_active = 128;
@@ -430,6 +440,10 @@ struct Certifier {
 
   // Returns the number of leaves of the subtree (0: failed).
   int64_t Rec(Box box, int depth, bool *ok) {
+    if (stats->budget > 0 && stats->visited.fetch_add(1) >= stats->budget) {
+      *ok = false;
+      return 0;
+    }
     {
       int m = stats->max_depth.load();
       while (depth > m && !stats->max_depth.compare_exchange_weak(m, depth)) {}
@@ -444,8 +458,11 @@ struct Certifier {
       pts.push_back(lo);
       pts.push_back(hi);
     }
-    // (At mu = 0 every witness has value 0: sample at the box's top mu.)
-    for (auto &x : pts) if (x[0] == 0) x[0] = box[0].second;
+    // (At mu = 0 every witness has value 0: sample just above it, and rank
+    // by value / mu, so that a witness whose first-order term is negative
+    // somewhere is not preferred for its value farther out.)
+    for (auto &x : pts) if (x[0] == 0) x[0] = 1e-3 * box[0].second;
+
     std::vector<Witness> cands;
     for (int pi : {0, 3, 5, 7, 9}) {
       const Pose q = PoseAt(ch, pts[pi].data());
@@ -454,7 +471,7 @@ struct Certifier {
     std::vector<std::pair<double, int>> sc;
     for (int wi = 0; wi < (int)cands.size(); wi++) {
       double worst = 1e300;
-      for (const auto &x : pts) worst = std::min(worst, Value(st, cands[wi], PoseAt(ch, x.data())));
+      for (const auto &x : pts) worst = std::min(worst, Value(st, cands[wi], PoseAt(ch, x.data())) / x[0]);
       sc.push_back({worst, wi});
     }
     std::sort(sc.begin(), sc.end(), [](auto &a, auto &b) { return a.first > b.first; });
@@ -553,6 +570,93 @@ struct Certifier {
   }
 };
 
+// Certifies the six (or given) charts over st's triangle; false as soon as a
+// chart fails. *leaves gets the total.
+bool CertifyTriangle(const Setup &st, const std::vector<ChartId> &charts, int max_depth, int64_t budget,
+                     int64_t *leaves, bool verbose) {
+  *leaves = 0;
+  for (const ChartId &id : charts) {
+    Stats stats;
+    stats.budget = budget;
+    Certifier cert(st, id, max_depth, &stats);
+    bool ok = false;
+    const auto t1 = std::chrono::steady_clock::now();
+    const int64_t n = cert.Rec(ChartBox(st), 0, &ok);
+    if (verbose) {
+      const double sec = std::chrono::duration<double>(std::chrono::steady_clock::now() - t1).count();
+      printf("  face %-5s %s  leaves %lld  failed %lld  depth %d  (%.1f s)\n", id.Name().c_str(), ok ? "OK  " : "FAIL",
+             (long long)n, (long long)stats.failed.load(), stats.max_depth.load(), sec);
+      for (const std::string &f : cert.fail_boxes) printf("    failed box %s\n", f.c_str());
+    }
+    *leaves += n;
+    if (!ok) return false;
+  }
+  return true;
+}
+
+struct TreeStats { int64_t view_leaves = 0, cert_leaves = 0, failed = 0; int max_depth = 0; };
+
+// The view tree below triangle t (path digits so far).
+void ViewTree(Setup st, const tubetree::TriangleQ &t, const std::string &path, int depth, int view_depth,
+              const std::vector<ChartId> &charts, int max_depth, int64_t budget, TreeStats *ts) {
+  for (int k = 0; k < 3; k++) st.c[k] = {t.corners[k].x, t.corners[k].y, t.corners[k].z};
+  int64_t leaves = 0;
+  const auto t0 = std::chrono::steady_clock::now();
+  const bool ok = CertifyTriangle(st, charts, max_depth, budget, &leaves, false);
+  const double sec = std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count();
+  if (ok) {
+    ts->view_leaves++;
+    ts->cert_leaves += leaves;
+    ts->max_depth = std::max(ts->max_depth, depth);
+    printf("  view %-12s OK    %7lld leaves (%.1f s)\n", path.empty() ? "(root)" : path.c_str(), (long long)leaves, sec);
+    return;
+  }
+  if (depth >= view_depth) {
+    ts->failed++;
+    printf("  view %-12s FAIL  (%.1f s)\n", path.empty() ? "(root)" : path.c_str(), sec);
+    return;
+  }
+  tubetree::TriangleQ ch4[4];
+  t.Subdivide(ch4);
+  for (int c = 0; c < 4; c++)
+    ViewTree(st, ch4[c], path + (char)('0' + c), depth + 1, view_depth, charts, max_depth, budget, ts);
+}
+
+// The first-order margin of the candidate witnesses at the triangle's center:
+// for every direction sigma on a grid of the six cube faces, the best value / mu
+// at mu = 1e-7 over the witnesses from the contact pool there; prints the
+// worst directions.
+void Probe(const Setup &st, int n) {
+  V3<double> u{0, 0, 0};
+  for (int k = 0; k < 3; k++) u = Add(u, ToD(st.c[k]));
+  u = Scale(1 / Norm(u), u);
+  const double mu = 1e-7;
+  Pose q0{u, {0, 0, mu}};
+  const std::vector<Contact> pool = ContactPool(st, q0);
+  printf("probe at (%.6f, %.6f, %.6f): %zu hull edges:", u[0], u[1], u[2], pool.size());
+  for (const Contact &c : pool) printf(" %d-%d", c.a, c.b);
+  printf("\n");
+  std::vector<std::pair<double, V3<double>>> worst;
+  for (int ax = 0; ax < 3; ax++)
+    for (int sg : {-1, 1})
+      for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++) {
+          V3<double> s{0, 0, 0};
+          s[ax] = sg;
+          int o = 0;
+          for (int k = 0; k < 3; k++)
+            if (k != ax) s[k] = (o++ == 0 ? -1 + 2.0 * i / (n - 1) : -1 + 2.0 * j / (n - 1));
+          const Pose q{u, Scale(mu, s)};
+          double best = -1e300;
+          for (const Witness &W : Combine(st, ContactPool(st, q), q, 1000)) best = std::max(best, Value(st, W, q) / mu);
+          worst.push_back({best, s});
+        }
+  std::sort(worst.begin(), worst.end(), [](auto &a, auto &b) { return a.first < b.first; });
+  for (int k = 0; k < 5 && k < (int)worst.size(); k++)
+    printf("  sigma (%+.3f, %+.3f, %+.3f): best first-order value %+.4e\n", worst[k].second[0], worst[k].second[1],
+           worst[k].second[2], worst[k].first);
+}
+
 std::vector<double> ParseDoubles(const std::string &s) {
   std::vector<double> r;
   size_t p = 0;
@@ -571,7 +675,8 @@ int main(int argc, char **argv) {
   setvbuf(stdout, nullptr, _IOLBF, 0);
   std::vector<double> view;
   double size = 1e-3;
-  int code = -1, tri = 0;
+  int code = -1, tri = 0, view_depth = -1, probe = 0;
+  int64_t max_leaves = 0;
   std::string path, bdd = "codebdd.json";
   Q rho(1, 64);
   int max_depth = 40;
@@ -587,6 +692,9 @@ int main(int argc, char **argv) {
     else if (a == "--code") code = std::stoi(next());
     else if (a == "--tri") tri = std::stoi(next());
     else if (a == "--path") path = next();
+    else if (a == "--view_depth") view_depth = std::stoi(next());
+    else if (a == "--probe") probe = std::stoi(next());
+    else if (a == "--max_leaves") max_leaves = std::stoll(next());
     else if (a == "--bdd") bdd = next();
     else if (a == "--rho") rho = Q(std::string_view(next()));
     else if (a == "--max_depth") max_depth = std::stoi(next());
@@ -617,6 +725,7 @@ int main(int argc, char **argv) {
     st.VQ.push_back({q.x, q.y, q.z});
     st.V.push_back(ToD(st.VQ.back()));
   }
+  tubetree::TriangleQ start;
   if (code >= 0) {
     // Code C's triangle T, subdivided along the path.
     rapidjson::Document doc;
@@ -640,6 +749,7 @@ int main(int argc, char **argv) {
       t = ch4[d - '0'];
     }
     for (int k = 0; k < 3; k++) st.c[k] = {t.corners[k].x, t.corners[k].y, t.corners[k].z};
+    start = t;
     V3<double> m{0, 0, 0};
     for (int k = 0; k < 3; k++) m = Add(m, ToD(st.c[k]));
     view = {m[0], m[1], m[2]};
@@ -670,22 +780,22 @@ int main(int argc, char **argv) {
   }
   printf("view (%.6f, %.6f, %.6f), triangle size %.1e, rho %s, %zu charts\n", view[0], view[1], view[2], size,
          rho.ToString().c_str(), charts.size());
-  int64_t total = 0;
-  bool all_ok = true;
-  const auto t0 = std::chrono::steady_clock::now();
-  for (const ChartId &id : charts) {
-    Stats stats;
-    Certifier cert(st, id, max_depth, &stats);
-    bool ok = false;
-    const auto t1 = std::chrono::steady_clock::now();
-    const int64_t n = cert.Rec(ChartBox(st), 0, &ok);
-    const double sec = std::chrono::duration<double>(std::chrono::steady_clock::now() - t1).count();
-    printf("  face %-5s %s  leaves %lld  failed %lld  depth %d  (%.1f s)\n", id.Name().c_str(), ok ? "OK  " : "FAIL",
-           (long long)n, (long long)stats.failed.load(), stats.max_depth.load(), sec);
-    for (const std::string &f : cert.fail_boxes) printf("    failed box %s\n", f.c_str());
-    total += n;
-    all_ok = all_ok && ok;
+  if (probe > 0) {
+    Probe(st, probe);
+    return 0;
   }
+  const auto t0 = std::chrono::steady_clock::now();
+  if (view_depth >= 0) {
+    CHECK(code >= 0) << "--view_depth needs --code";
+    TreeStats ts;
+    ViewTree(st, start, path, 0, view_depth, charts, max_depth, max_leaves, &ts);
+    printf("%s: %lld view leaves (depth <= %d), %lld certificate leaves, %lld failed, %.1f s\n",
+           ts.failed == 0 ? "OK" : "FAILED", (long long)ts.view_leaves, ts.max_depth, (long long)ts.cert_leaves,
+           (long long)ts.failed, std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count());
+    return ts.failed == 0 ? 0 : 1;
+  }
+  int64_t total = 0;
+  const bool all_ok = CertifyTriangle(st, charts, max_depth, max_leaves, &total, true);
   printf("%s: %lld leaves in %.1f s\n", all_ok ? "OK" : "FAILED", (long long)total,
          std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count());
   return all_ok ? 0 : 1;
