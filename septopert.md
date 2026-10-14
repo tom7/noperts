@@ -211,18 +211,18 @@ them. Stages: `model`, `tube`, `idcap`, `tubepack`, `cap`, `search`, `pack`,
 `work/stages.log` (and prints its peak memory); the Lean build runs in the
 background while the C++ stages run (log `work/lean_build.log`).
 
-Measured times on 64 cores with 64 threads (2026-10-14), about 1 h 20 min
-in all:
+Measured times of a from-scratch run on 64 cores with 64 threads
+(2026-10-14), about 1 h 25 min in all:
 
 | Stage | Time |
 |---|---|
 | model | 7 s |
-| tube + tubepack | 3.3 min |
-| idcap | 47 min |
+| tube + tubepack | 3.4 min |
+| idcap | 52 min (47 min when it had the machine to itself) |
 | cap | 32 s |
 | search | 5.8 min (1,165,777 nodes) |
-| pack | 1.8 min |
-| verify | 19 min, 789 MiB peak |
+| pack | 1.9 min |
+| verify | 20 min, 801 MiB peak |
 
 ### History
 
