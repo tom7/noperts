@@ -29,7 +29,7 @@ inductive KTree where
   | leaf (w : Leaf)
   | cone
   | fail
-deriving Inhabited
+deriving Inhabited, DecidableEq
 
 /-- The lower (upper = false) or upper half of the box in coordinate a. -/
 def half (box : Box) (a : Fin 5) (upper : Bool) : Box := fun i =>

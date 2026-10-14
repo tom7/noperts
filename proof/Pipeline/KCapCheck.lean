@@ -98,7 +98,7 @@ structure Leaf where
   edges : List (ℕ × ℕ)
   outer : List (List ℕ)
   inner : List (List ℕ)
-deriving Inhabited
+deriving Inhabited, DecidableEq
 
 def Leaf.n (l : Leaf) : ℕ := l.edges.length
 

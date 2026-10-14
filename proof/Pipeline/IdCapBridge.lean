@@ -30,38 +30,47 @@ open Noperts.Atlas.ProjectiveView
 
 variable [SolidModel]
 
-/-- The rational model's vertices, as an exact certificate's vertex array. -/
-def modelVertsQ : Array (KCap.KVec ℚ) :=
-  Array.ofFn fun i : VertexIndex => rationalVertex i
+/-- The certificate of an identity-tube row: its vertices, the row's triangle. -/
+def rowIdCert (V : Array (KCap.KVec ℚ)) (triangle : Triangle ℚ) (rho : ℚ)
+    (faces : List ((ℕ × Bool) × KCap.KTree)) : KCap.IdCert ℚ :=
+  ⟨V, fun k c => triangle k c, rho, faces⟩
 
-/-- The certificate of an identity-tube row: the model's vertices, the row's triangle. -/
-def rowIdCert (triangle : Triangle ℚ) (rho : ℚ) (faces : List ((ℕ × Bool) × KCap.KTree)) :
-    KCap.IdCert ℚ :=
-  ⟨modelVertsQ, fun k c => triangle k c, rho, faces⟩
+/-- The row's vertices are the model's (as sets: the model may repeat a vertex in several
+slots). -/
+def vertsMatchModel (V : Array (KCap.KVec ℚ)) : Bool :=
+  V.all (fun v => (List.finRange _).any fun i : VertexIndex => decide (rationalVertex i = v)) &&
+    (List.finRange _).all fun i : VertexIndex => V.any fun v => decide (v = rationalVertex i)
 
 omit [SolidModel] in
 theorem kval_rat (v : KCap.KVec ℚ) : KCap.PVec.kval v = fun i => (v i : ℝ) := rfl
 
-/-- With an exact model, the hull of any model is the hull of the rational vertices. -/
+/-- With an exact model and the model's vertices, the hull of any model is the certificate's. -/
 theorem polyhedron_hull_eq_idCert_hull (P : CyclicModel) (hmodel : SolidModel.modelErrorQ = 0)
+    (V : Array (KCap.KVec ℚ)) (hV : vertsMatchModel V = true)
     (triangle : Triangle ℚ) (rho : ℚ) (faces : List ((ℕ × Bool) × KCap.KTree)) :
-    P.polyhedron.hull = (rowIdCert triangle rho faces).hull := by
+    P.polyhedron.hull = (rowIdCert V triangle rho faces).hull := by
   have hv : ∀ i, P.vertex i = toR3 (rationalVertex i) := by
     intro i
     have h := P.close i
     rw [show modelErrorQ = 0 from hmodel] at h
     push_cast at h
     exact sub_eq_zero.mp (norm_le_zero_iff.mp h)
+  simp only [vertsMatchModel, Bool.and_eq_true, Array.all_eq_true, List.all_eq_true, List.any_eq_true,
+    Array.any_eq_true, decide_eq_true_eq, List.mem_finRange, true_and] at hV
+  obtain ⟨hV1, hV2⟩ := hV
   rw [P.polyhedron_hull, KCap.IdCert.hull]
   congr 1
   ext v
   simp only [CyclicModel.verts, Finset.coe_image, Finset.coe_univ, Set.image_univ, Set.mem_range,
-    Set.mem_ofPred_eq, rowIdCert, modelVertsQ, List.mem_map, Array.toList_ofFn, List.mem_ofFn]
+    Set.mem_ofPred_eq, rowIdCert, List.mem_map, Array.mem_toList_iff]
   constructor
   · rintro ⟨i, rfl⟩
-    exact ⟨_, ⟨rationalVertex i, ⟨i, rfl⟩, rfl⟩, by rw [hv i]; rfl⟩
-  · rintro ⟨_, ⟨w, ⟨i, rfl⟩, rfl⟩, rfl⟩
-    exact ⟨i, by rw [hv i]; rfl⟩
+    obtain ⟨j, hj, hji⟩ := hV2 i trivial
+    exact ⟨_, ⟨V[j], Array.getElem_mem hj, rfl⟩, by rw [hv i, hji]; rfl⟩
+  · rintro ⟨_, ⟨w, hw, rfl⟩, rfl⟩
+    obtain ⟨j, hj⟩ := Array.getElem_of_mem hw
+    obtain ⟨i, hi⟩ := hV1 j hj.1
+    exact ⟨i, by rw [hv i, hi, hj.2]; rfl⟩
 
 omit [SolidModel] in
 /-- The view of an atlas pose is its view vector. -/
@@ -77,16 +86,17 @@ theorem matrixPoseWithOffset_view (chart : ChartIndex) (p : AtlasPose ℝ) (offs
 rules out every tube of the identity (symmetry 0) up to mismatch radius ρ whose normalized
 view lies in the triangle. -/
 theorem idCert_not_rupert (P : CyclicModel) (hmodel : SolidModel.modelErrorQ = 0)
+    (V : Array (KCap.KVec ℚ)) (hV : vertsMatchModel V = true)
     (triangle : Triangle ℚ) (rho : ℚ) (faces : List ((ℕ × Bool) × KCap.KTree))
-    (hcheck : (rowIdCert triangle rho faces).check = true) (hρ1 : rho ≤ 1)
+    (hcheck : (rowIdCert V triangle rho faces).check = true) (hρ1 : rho ≤ 1)
     (box : AtlasLocalCertificate.Box) (hsym : box.symmetryIndex = 0)
     (hmis : box.mismatchRadius ≤ rho)
     {p : AtlasPose ℝ} (hp : p ∈ box.interval.toReal) (offset : ℝ²) (root : Fin 8)
     (hscale : 1 ≤ AtlasProjectiveView.viewScale root p)
     (hmem : InTriangle (Noperts.Atlas.ProjectiveView.toReal triangle) (AtlasProjectiveView.normalizedView root p)) :
     ¬ RupertPose (p.matrixPoseWithOffset box.chart offset) P.polyhedron.hull := by
-  rw [polyhedron_hull_eq_idCert_hull P hmodel triangle rho faces]
-  set cert := rowIdCert triangle rho faces with hcert
+  rw [polyhedron_hull_eq_idCert_hull P hmodel V hV triangle rho faces]
+  set cert := rowIdCert V triangle rho faces with hcert
   have hrho0 : (0 : ℚ) ≤ rho := by
     simp only [KCap.IdCert.check, Bool.and_eq_true, decide_eq_true_eq] at hcheck
     exact hcheck.1

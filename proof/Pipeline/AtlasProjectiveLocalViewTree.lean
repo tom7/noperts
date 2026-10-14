@@ -2,6 +2,7 @@ module
 
 public import Pipeline.AtlasProjectiveLocalCertificate
 public import Pipeline.AtlasProjectiveAnnularCertificate
+public import Pipeline.IdCapBridge
 
 @[expose] public section
 
@@ -67,18 +68,23 @@ inductive Row where
   /-- A node with no tube certificate (a tube-tree cap leaf: the cap theorems cover it).
   Its radius bound is −1, so no valid tube can cite it. -/
   | empty (id : ℕ) (root : Fin 8) (triangle : AtlasProjectiveView.Triangle ℚ)
+  /-- An identity blow-up leaf (`KCap.IdCert` over the node's triangle, exact models): it
+  rules out every tube of radius up to `rho` (`idCert_not_rupert`). -/
+  | idcap (id : ℕ) (root : Fin 8) (triangle : AtlasProjectiveView.Triangle ℚ) (rho : ℚ)
+      (V : Array (KCap.KVec ℚ)) (faces : List ((ℕ × Bool) × KCap.KTree))
 deriving DecidableEq
 
 def Row.id : Row → ℕ
-  | .split id .. | .certificate id .. | .decomposed id .. | .flockDecomposed id .. | .empty id .. => id
+  | .split id .. | .certificate id .. | .decomposed id .. | .flockDecomposed id .. | .empty id ..
+    | .idcap id .. => id
 
 def Row.root : Row → Fin 8
   | .split _ _ root _ _ | .certificate _ { root, .. } | .decomposed _ { root, .. } .. | .flockDecomposed _ { root, .. } ..
-    | .empty _ root _ => root
+    | .empty _ root _ | .idcap _ root .. => root
 
 def Row.triangle : Row → AtlasProjectiveView.Triangle ℚ
   | .split _ _ _ triangle _ | .certificate _ { triangle, .. } | .decomposed _ { triangle, .. } .. | .flockDecomposed _ { triangle, .. } ..
-    | .empty _ _ triangle => triangle
+    | .empty _ _ triangle | .idcap _ _ triangle .. => triangle
 
 /-- The certified tube radius lower bound of a node: stored on interior nodes,
 the certificate's own radius on leaves. -/
@@ -86,6 +92,7 @@ def Row.rLower : Row → ℚ
   | .split _ _ _ _ rLower => rLower
   | .certificate _ box | .decomposed _ box .. | .flockDecomposed _ box .. => box.r
   | .empty .. => -1
+  | .idcap _ _ _ rho _ _ => rho
 
 @[reducible] instance : Inhabited Row where
   default := .split 0 (fun _ => 0) 0 upperWedgeTriangle 0
@@ -107,6 +114,9 @@ def Row.ValidAt (symmetryIndex : OrbitIndex) (r : ℚ)
       box.symmetryIndex = symmetryIndex ∧ r ≤ box.r ∧
       box.FlockDecomposedViewValid flockAxes defect0 D0 r_min c_cone c_core S_max T_max tree
   | .empty .. => r ≤ -1
+  | .idcap _ _ triangle rho V faces =>
+      r ≤ rho ∧ symmetryIndex = 0 ∧ modelErrorQ = 0 ∧ rho ≤ 1 ∧ vertsMatchModel V = true ∧
+        (rowIdCert V triangle rho faces).check = true
 
 @[reducible] instance (symmetryIndex : OrbitIndex) (r : ℚ) (get : ℕ → Row)
     (size : ℕ) (row : Row) :
@@ -267,6 +277,14 @@ theorem valid_imp_not_rupert_ix (symmetryIndex : OrbitIndex) (r : ℚ)
       exact actual.valid_imp_not_translated_rupert_of_flockDecomposedViewValid
         flockAxes defect0 D0 r_min c_cone c_core S_max T_max tree
         hactualView hmismatch hp offset hscale hmem
+  | idcap id root triangle rho V faces =>
+      obtain ⟨-, hsym0, hmodel, hρ1, hV, hcheck⟩ := hvalid
+      have hts : tube.shell.symmetryIndex = 0 := by
+        show tube.symmetryIndex = 0
+        rw [htubeSymmetry, hsym0]
+      have hmis : tube.shell.mismatchRadius ≤ rho := (show tube.mismatchRadius ≤ tube.r from htube).trans htubeRadius
+      exact idCert_not_rupert P hmodel V hV triangle rho faces hcheck hρ1 tube.shell hts hmis hp offset root
+        hscale hmem
   | empty id root triangle =>
       exfalso
       have hm : (0 : ℚ) ≤ tube.mismatchRadius := by
@@ -323,7 +341,7 @@ def Table.findNode (table : Table) (path : List (Fin 4)) : Option ℕ :=
     | c :: cs =>
         if currId < table.size then
           match table.get currId with
-          | .certificate .. | .decomposed .. | .flockDecomposed .. | .empty .. => none
+          | .certificate .. | .decomposed .. | .flockDecomposed .. | .empty .. | .idcap .. => none
           | .split _ children .. => loop (children c) cs
         else
           none

@@ -64,6 +64,9 @@ def SparseRowValidAt (symmetryIndex : OrbitIndex) (r : ℚ)
       box.symmetryIndex = symmetryIndex ∧ r ≤ box.r ∧
       box.FlockDecomposedViewValid flockAxes defect0 D0 r_min c_cone c_core S_max T_max tree
   | .empty .. => r ≤ -1
+  | .idcap _ _ triangle rho V faces =>
+      r ≤ rho ∧ symmetryIndex = 0 ∧ modelErrorQ = 0 ∧ rho ≤ 1 ∧ vertsMatchModel V = true ∧
+        (rowIdCert V triangle rho faces).check = true
 
 @[reducible] instance (symmetryIndex : OrbitIndex) (r : ℚ) (get : ℕ → Row)
     (size : ℕ) (row : Row) :
@@ -127,6 +130,7 @@ theorem Row.ValidAt.of_sparse {symmetryIndex : OrbitIndex} {r : ℚ}
   | decomposed => exact h
   | flockDecomposed => exact h
   | empty => exact h
+  | idcap => exact h
 
 theorem rowsValidAt_of_sparse {symmetryIndex : OrbitIndex} {r : ℚ}
     {get : ℕ → Row} {size : ℕ}

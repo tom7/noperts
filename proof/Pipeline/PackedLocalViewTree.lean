@@ -191,6 +191,48 @@ def readTriangle (base : AtlasProjectiveView.Triangle Rat) :
   let pt ← readTrianglePath length (PrecomputedTriangle.ofTriangle base)
   pure pt.toTriangle
 
+/-- A blow-up certificate leaf (`KCap.Leaf`): K, the Cramer sign, per contact the edge
+(a, b) and its outer set (n, then n vertices), the tuple count, and per tuple K inner
+vertices; vertices as indices of the row's vertex array (C++ vertex numbers). -/
+def readKLeaf : Decoder KCap.Leaf := do
+  let K ← readNat
+  let s ← readRat
+  let mut edges : Array (ℕ × ℕ) := #[]
+  let mut outer : Array (List ℕ) := #[]
+  for _ in [0:K] do
+    let a ← readNat
+    let b ← readNat
+    let n ← readNat
+    let mut S : Array ℕ := #[]
+    for _ in [0:n] do
+      S := S.push (← readNat)
+    edges := edges.push (a, b)
+    outer := outer.push S.toList
+  let nt ← readNat
+  let mut inner : Array (List ℕ) := #[]
+  for _ in [0:nt] do
+    let mut it : Array ℕ := #[]
+    for _ in [0:K] do
+      it := it.push (← readNat)
+    inner := inner.push it.toList
+  pure ⟨s, edges.toList, outer.toList, inner.toList⟩
+
+/-- A blow-up face tree in preorder: 0 axis (a split), 1 leaf, 2 (a failed leaf). The fuel
+bounds the depth. -/
+def readKTree : ℕ → Decoder KCap.KTree
+  | 0 => pure .fail
+  | fuel + 1 => do
+    let tag ← readNat
+    if tag = 0 then
+      let a ← readNat
+      let l ← readKTree fuel
+      let r ← readKTree fuel
+      pure (.split (fin5 a) l r)
+    else if tag = 1 then
+      pure (.leaf (← readKLeaf))
+    else
+      pure .fail
+
 def readRow (base : AtlasProjectiveView.Triangle Rat) : Decoder Row := do
   let tag ← readNat
   let id ← readNat
@@ -205,6 +247,20 @@ def readRow (base : AtlasProjectiveView.Triangle Rat) : Decoder Row := do
     pure (.split id ![a, b, c, d] (fin8 root) triangle rLower)
   else if tag = 4 then
     pure (.empty id (fin8 root) triangle)
+  else if tag = 5 then
+    let rho ← readRat
+    -- The vertex array in C++ order: the model vertex of each C++ vertex number (the
+    -- row's validity checks that they are the model's vertices).
+    let nverts ← readNat
+    let V : Array (KCap.KVec ℚ) := Array.ofFn fun n : Fin nverts => rationalVertex (vertexSlot n.val)
+    let nfaces ← readNat
+    let mut faces : Array ((ℕ × Bool) × KCap.KTree) := #[]
+    for _ in [0:nfaces] do
+      let axis ← readNat
+      let sign ← readNat
+      let tree ← readKTree 200
+      faces := faces.push ((axis, sign = 1), tree)
+    pure (.idcap id (fin8 root) triangle rho V faces.toList)
   else if tag = 2 then
     let symmetryIndex ← readNat
     let certificate ← readCertificate
