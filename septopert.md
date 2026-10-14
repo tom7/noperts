@@ -80,8 +80,9 @@ This is a **Lean verification**, not a direct kernel-only Lean proof:
    kernel and depends only on the standard axioms (`propext`,
    `Classical.choice`, `Quot.sound`). Its "genuine solid" half needs no data
    at all.
-2. **Verification of the data.** The data is about 85 million table rows
-   (6.7 GB), too much for the kernel. The program `constructSeptopert` runs
+2. **Verification of the data.** The data is about 2.2 million table rows
+   (135 MB; about 85 million rows and 6.7 GB before the identity blow-up
+   certificates, below), too much for the kernel. The program `constructSeptopert` runs
    the same Lean validity checks as compiled code on every row, and only if
    all pass does it construct `¬ IsRupert` (via part 1) and print
    `instantiated: ¬ IsRupert Septopert.verts (the Septopert is not Rupert)`.
@@ -145,6 +146,46 @@ empty, so we can never have `line ⊆ ∅`. Our
 the point set gives a genuine solid 
 (`¬ Coplanar ℝ (V : Set ℝ³) ∧ ¬ IsRupert V`).
 
+## Identity blow-up certificates
+
+The proof checks, for every pose, that the inner shadow cannot fit inside
+the outer one, by a *balanced witness*: directions perpendicular to the
+view, weights that balance them (so the inner shadow's offset cancels), and
+an inequality between the outer shadow's support and the rotated inner
+vertices. At the identity rotation this inequality holds with equality, so
+near the identity the slack is only proportional to the rotation, and boxes
+of rotations have to shrink toward it. The original pipeline handled that
+with an *identity tube*: a first-order rigidity argument with a crude bound
+on the second-order terms, certifying rotations up to a radius r of about
+twice the first-order margin. The Septopert is only just barely Nopert: in
+one strip of views its first-order margin is about 3·10⁻⁴, so the tube was
+tiny there (r ≈ 5·10⁻⁴), and about three quarters of the old data was the
+search crawling around it.
+
+Since 2026-10-14 the tube tables are mostly *identity blow-up rows*. Write
+the relative rotation's Cayley vector as w = μσ̂, with μ ≥ 0 and σ̂ on a face
+of the cube [−1, 1]³. With the denominators cleared, the witness inequality
+is a polynomial in (view, μ, σ̂) whose μ⁰ term vanishes identically; divided
+by μ, it is the first-order term plus the exact higher-order terms, and
+those turn out to be favorable. A blow-up row is one row of a tube table
+that holds a whole certificate for its view triangle: per cube face, a
+binary subdivision of the chart box (μ, two view parameters, two direction
+parameters), whose leaves are balanced witnesses checked exactly over ℚ by
+Bernstein bounds. It rules out every rotation within radius ρ = 1/64 of the
+identity over its triangle, instead of the cage's ~5·10⁻⁴ in the thin
+strip, so the 5D search needs far fewer boxes there.
+
+In Lean: `Pipeline/IdCap.lean` (the certificates, their check, and
+`IdCert.claim`), `Pipeline/CayleyNear.lean` (a rotation within ρ ≤ 1 of the
+identity is a Cayley rotation of a vector of length at most ρ),
+`Pipeline/IdCapBridge.lean` (`idCert_not_rupert`: the identity-tube claim
+from a checked certificate, for exact models such as the Septopert), and
+`Row.idcap` in the tube tables (`Pipeline/AtlasProjectiveLocalViewTree.lean`).
+The leaves are checked as in the snub cube's caps
+(`Pipeline/KCapCheck.lean`, here over ℚ). The certificates are found by
+`search/common/idcap.cc`, which also checks them exactly before writing
+them.
+
 ## Status
 
 I've verified this shape from scratch three times on two different computers (Oct 9 and Oct 10, 2026). You can reproduce it yourself, following the instructions in [BUILDING.md](BUILDING.md):
@@ -161,27 +202,39 @@ for nearby cells. So you may not get the same row counts, etc. as I did below.
 
 This builds everything, runs `codebdd` on the exact model
 `search/septopert/septopert_model.txt` (and regenerates the view cover
-`proof/Septopert/ViewCoverData.lean` from its output), runs the search,
+`proof/Septopert/ViewCoverData.lean` from its output), builds the identity
+tube and replaces most of it by identity blow-up rows, runs the search,
 packs the tables into `work/`, and finally runs `constructSeptopert` on
-them. Stages: `model`, `tube`, `tubepack`, `cap`, `search`, `pack`,
+them. Stages: `model`, `tube`, `idcap`, `tubepack`, `cap`, `search`, `pack`,
 `verify`; `--from STAGE` restarts at a stage, `--only STAGE` runs one,
 `--work DIR` moves the output. Each stage appends its wall time to
 `work/stages.log` (and prints its peak memory); the Lean build runs in the
 background while the C++ stages run (log `work/lean_build.log`).
 
-Measured times (the 64-core column is a from-scratch run in a fresh clone,
-4 h 22 min in total):
+Measured times. The first two columns are the original pipeline, without
+the `idcap` stage (the 64-core column is a from-scratch run in a fresh
+clone, 4 h 22 min in total). The last column is the current pipeline on the
+same machine (2026-10-14); its stages were run separately, not yet as one
+from-scratch run, about 1 h 20 min in all:
 
-| Stage | 16 cores, 12 threads | 64 cores, 64 threads |
-|---|---|---|
-| model | | 7 s |
-| tube + tubepack | 11 min | 3.6 min |
-| cap | 2 min | 33 s |
-| search | about 2 h | 28 min |
-| pack | 2 h 20 min | 49 min |
-| verify | 8 h 22 min, 15.7 GB peak | 3 h 1 min, 15.2 GB peak |
+| Stage | 16 cores, 12 threads | 64 cores, 64 threads | 64 cores, with `idcap` |
+|---|---|---|---|
+| model | | 7 s | 7 s |
+| tube + tubepack | 11 min | 3.6 min | 3.3 min |
+| idcap | | | 47 min |
+| cap | 2 min | 33 s | 32 s |
+| search | about 2 h | 28 min | 5.8 min (1,165,777 nodes) |
+| pack | 2 h 20 min | 49 min | 1.8 min |
+| verify | 8 h 22 min, 15.7 GB peak | 3 h 1 min, 15.2 GB peak | 19 min, 789 MiB peak |
 
-An independent reproduction (2026-10-10) followed these steps from a fresh
+On 2026-10-14 the Septopert was verified again with identity blow-up rows:
+`constructSeptopert` checked the cap certificate (75 s), the 22 tube
+tables (566 rows, of which 358 blow-up rows with 94,731 certificate
+leaves; 754 s) and the four chart tables (1,786,150, 144,165, 124,872 and
+104,577 rows; 257 s for chart 0) and printed `instantiated: ¬ IsRupert
+Septopert.verts (the Septopert is not Rupert)`.
+
+An independent reproduction of the original pipeline (2026-10-10) followed these steps from a fresh
 clone, in a container on the 64-core machine without network access or
 systemd: it copied in a checkout of cc-lib r7488 and the Mathlib build
 cache, and the rebuild ran its stages without memory caps. Its stages took
@@ -205,18 +258,22 @@ cd work && LEAN_NUM_THREADS=64 ../proof/.lake/build/bin/constructSeptopert \
 ```
 
 It checks the cap certificate, the 22 tube tables, then the four chart
-tables one at a time. Expect a large chart 0 (~83 million rows);
-charts 1–3 have less than 200k rows each.
+tables one at a time. Chart 0 has about 1.8 million rows; charts 1–3 have
+less than 200k rows each. (With the original pipeline's data, chart 0 has
+about 83 million rows.)
 
 ## The data
 
 The certificate data is machine output, intended to be CC0:
 
 - `cap-1_16.cert`: 540 KB, the cap certificate around the mirror directions;
-- `tube_packs/`: 382 MB, 22 identity-tube tables and `manifest.txt`;
-- `packs/`: 6.3 GB, 88 per-code solution packs (`packs/c<chart>/t<code>.pack`).
+- `tube_packs/`: 6.4 MB, 22 identity-tube tables and `manifest.txt`;
+- `packs/`: 128 MB, 88 per-code solution packs (`packs/c<chart>/t<code>.pack`;
+  the largest, `packs/c0/t9.pack`, is 77 MB).
 
-The data from the verified runs is archived by the author, with SHA-256 sums
-of all files (also as `septopert.7z`, 575 MB), but not in this repository:
-`packs/c0/t3.pack` alone is 5.2 GB, above GitHub's 2 GB release-asset limit.
-To check it yourself, rebuild it (see "Reproducing" above).
+With the original pipeline (before 2026-10-14) the tube packs were 382 MB
+and the solution packs 6.3 GB (`packs/c0/t3.pack` alone 5.2 GB, above
+GitHub's 2 GB release-asset limit). The data from those verified runs is
+archived by the author, with SHA-256 sums of all files (also as
+`septopert.7z`, 575 MB), but not in this repository. To check it yourself,
+rebuild it (see "Reproducing" above).

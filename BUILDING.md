@@ -45,7 +45,11 @@ page with its statement, trust model and reproduction steps:
     (`Pipeline/SparseSupport.lean`).
   - `Septopert`: entry point `proof/Septopert.lean`, details in
     `proof/Septopert/` (its model, `SolidModel.lean`; its own solution tree,
-    with C3 and mirror reductions and caps).
+    with C3 and mirror reductions and caps). Its identity-tube tables are
+    mostly identity blow-up rows (`Row.idcap`: `Pipeline/IdCap.lean`, the
+    certificates and their claim; `Pipeline/CayleyNear.lean`;
+    `Pipeline/IdCapBridge.lean`, the tube claim for exact models), whose
+    leaves are checked as in `Pipeline/KCapCheck.lean`.
   - `Minimality`: entry point `proof/Minimality.lean`, details in
     `proof/Minimality/`.
   - `ProofOfMainTheorem`: `proof/ProofOfMainTheorem.lean` combines the two
@@ -99,8 +103,9 @@ page with its statement, trust model and reproduction steps:
   whose history it keeps.
 - `search/`: the C++ certificate searches that produced the data.
   - `search/common/`: the code the searches share (the identity tube, the
-    5D search and packing, `codebdd`, diagnostics, unit tests) and their
-    build rules, `common.mk`.
+    identity blow-up certificates `idcap.cc` with `kpoly.h`, the 5D search
+    and packing, `codebdd`, diagnostics such as `survey5d` and `tubeprobe`,
+    unit tests) and their build rules, `common.mk`.
   - `search/septopert/`, `search/dh/`, `search/ph/`, `search/sd/`,
     `search/sc/`, `search/nopert231/`: the searches for the Septopert, the
     deltoidal hexecontahedron, the pentagonal hexecontahedron, the snub
