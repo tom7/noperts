@@ -41,6 +41,12 @@
 // --pass_depth replaced by blow-up leaves (Lean Row.idcap; radius rho) where
 // they certify and the existing subtree's radius is smaller.
 // --double: the double screen only (no exact check).
+// --affine [--affine_gap 4]: affine nodes (Lean ATree.affine) where a failing
+// tuple's bad region is slanted (an experiment; see SEPTOPERT-IMPROVEMENTS).
+// --blend: where no single inner choice certifies a tuple, try points on
+// the segment between two inner choices' vertices (Lean KCap.Leaf.blends;
+// pack tag 4): where the best inner vertex switches inside a box (a
+// codimension-2 view), the blend has no switch to subdivide toward.
 // --probe N: the candidate witnesses' first-order margin at the triangle's
 // center over an N x N grid of directions per cube face (no certificate).
 // --view_depth D (with --code): a view tree as the identity tube's: each
@@ -52,11 +58,17 @@
 #include <atomic>
 #include <chrono>
 #include <cmath>
+#include <csignal>
 #include <cstdio>
+#include <cstring>
+#include <execinfo.h>
 #include <filesystem>
+#include <unistd.h>
+#include <functional>
 #include <future>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -80,6 +92,11 @@ using namespace kpoly;
 
 int g_try = 16;
 bool g_exact = true;
+// Affine nodes (Lean ATree.affine) where a failing tuple's bad region is
+// slanted; at least this many levels apart on a path.
+bool g_affine = false;
+bool g_blend = false;
+int g_affine_gap = 4;
 
 // ----- Exact bounds over Q (Lean KPoly.lowerDeg with ExactScalarOps Q: lo = the value) -----
 struct QOps {
@@ -147,16 +164,72 @@ template <class T> V3<T> ToTV(const V3<Q> &v) { return {ToT<T>(v[0]), ToT<T>(v[1
 
 template <class T> struct Chart { PV<T> u, w; PolyT<T> D; std::vector<PV<T>> NV_; };
 
-template <class T> Chart<T> MakeChart(const Setup &st, const ChartId &id) {
+// An affine change of the chart variables y = A z + c (Lean KCap.AffMap),
+// B = A^-1 exactly; it fixes variable 0 (mu). `ident`: the identity, whose
+// chart is built from the variables themselves (the polynomials of a tree
+// without affine nodes are exactly as before).
+struct AffMapQ {
+  bool ident = true;
+  std::array<std::array<Q, NV>, NV> A, B;
+  std::array<Q, NV> c;
+  static AffMapQ Identity() {
+    AffMapQ m;
+    for (int i = 0; i < NV; i++) {
+      for (int j = 0; j < NV; j++) m.A[i][j] = m.B[i][j] = Q(i == j ? 1 : 0);
+      m.c[i] = Q(0);
+    }
+    return m;
+  }
+};
+
+// The exact inverse of a matrix (Gauss-Jordan); false if singular.
+bool Invert(const std::array<std::array<Q, NV>, NV> &M, std::array<std::array<Q, NV>, NV> *out) {
+  std::array<std::array<Q, 2 * NV>, NV> a;
+  for (int i = 0; i < NV; i++)
+    for (int j = 0; j < 2 * NV; j++) a[i][j] = j < NV ? M[i][j] : Q(j - NV == i ? 1 : 0);
+  for (int col = 0; col < NV; col++) {
+    int piv = -1;
+    for (int r = col; r < NV; r++) if (!(a[r][col] == Q(0))) { piv = r; break; }
+    if (piv < 0) return false;
+    std::swap(a[col], a[piv]);
+    const Q inv = Q(1) / a[col][col];
+    for (int j = 0; j < 2 * NV; j++) a[col][j] = a[col][j] * inv;
+    for (int r = 0; r < NV; r++) {
+      if (r == col || a[r][col] == Q(0)) continue;
+      const Q f = a[r][col];
+      for (int j = 0; j < 2 * NV; j++) a[r][j] = a[r][j] - f * a[col][j];
+    }
+  }
+  for (int i = 0; i < NV; i++)
+    for (int j = 0; j < NV; j++) (*out)[i][j] = a[i][NV + j];
+  return true;
+}
+
+// A double rounded to a multiple of 2^-bits (exactly representable).
+double RoundDyadic(double x, int bits) { return std::ldexp(std::round(std::ldexp(x, bits)), -bits); }
+double FloorDyadic(double x, int bits) { return std::ldexp(std::floor(std::ldexp(x, bits)), -bits); }
+double CeilDyadic(double x, int bits) { return std::ldexp(std::ceil(std::ldexp(x, bits)), -bits); }
+
+template <class T> Chart<T> MakeChart(const Setup &st, const ChartId &id,
+                                        const AffMapQ &map = AffMapQ::Identity()) {
   using P = PolyT<T>;
+  // The chart variables as polynomials in the tree's coordinates (Lean AffMap.vars).
+  std::array<P, NV> v;
+  for (int i = 0; i < NV; i++) {
+    if (map.ident) { v[i] = P::Var(i); continue; }
+    P s = P::Const(FromQ<T>(map.c[i]));
+    for (int j = 0; j < NV; j++)
+      if (!(map.A[i][j] == Q(0))) s = s + FromQ<T>(map.A[i][j]) * P::Var(j);
+    v[i] = s;
+  }
   const V3<T> c0 = ToTV<T>(st.c[0]), c1 = ToTV<T>(st.c[1]), c2 = ToTV<T>(st.c[2]);
   Chart<T> ch;
-  ch.u = PConst(c0) + (P::Var(1) * PConst(VSub(c1, c0)) + (P::Var(1) * P::Var(2)) * PConst(VSub(c2, c1)));
+  ch.u = PConst(c0) + (v[1] * PConst(VSub(c1, c0)) + (v[1] * v[2]) * PConst(VSub(c2, c1)));
   PV<T> sigma;
   int free = 3;
   for (int i = 0; i < 3; i++)
-    sigma[i] = i == id.axis ? P::Const(FromQ<T>(Q(id.sign ? 1 : -1))) : P::Var(free++);
-  ch.w = P::Var(0) * sigma;
+    sigma[i] = i == id.axis ? P::Const(FromQ<T>(Q(id.sign ? 1 : -1))) : v[free++];
+  ch.w = v[0] * sigma;
   const P ww = PDot(ch.w, ch.w);
   ch.D = P::Const(One<T>()) + ww;
   for (const V3<Q> &vq : st.VQ) {
@@ -320,6 +393,10 @@ struct Leaf {
   std::vector<std::pair<int, int>> edges;
   std::vector<std::vector<int>> S;
   std::vector<std::vector<int>> inner;  // per tuple, K inner indices
+  // Blended inner points (Lean KCap.Leaf.blends): inner index V.size() + b
+  // is the point (1 - t) v_a + t v_b of blends[b] = (a, b, t = tn / 4).
+  struct Blend { int a = 0, b = 0, tn = 0; };
+  std::vector<Blend> blends;
 };
 
 // A leaf's pack tokens (Lean PackedLocalViewTree.readKLeaf).
@@ -336,8 +413,18 @@ std::string LeafTokens(const Leaf &l) {
   return r;
 }
 
+// A leaf with its tag (Lean PackedLocalViewTree.readATree): 1, or 4 with
+// the blends first (count, then per blend a, b, t).
+std::string LeafTokensTagged(const Leaf &l) {
+  if (l.blends.empty()) return "1," + LeafTokens(l);
+  std::string r = "4," + std::to_string(l.blends.size());
+  for (const Leaf::Blend &b : l.blends)
+    r += "," + std::to_string(b.a) + "," + std::to_string(b.b) + "," + ZigzagRat(Q(b.tn, 4));
+  return r + "," + LeafTokens(l);
+}
+
 struct Stats {
-  std::atomic<int64_t> ok{0}, failed{0}, visited{0}, exact_fail{0};
+  std::atomic<int64_t> ok{0}, failed{0}, visited{0}, exact_fail{0}, affine{0}, blended{0};
   std::atomic<int> max_depth{0};
   // Nodes allowed per chart (0: unlimited); past it the chart fails.
   int64_t budget = 0;
@@ -357,10 +444,16 @@ struct Certifier {
   std::vector<std::string> fail_boxes;
 
   Chart<Q> chq;
+  // This certifier's coordinates: y = map(z), over boxes in z; affine nodes
+  // start a child certifier with the new map.
+  AffMapQ map;
+  int depth0 = 0;  // the depth of this certifier's root (an affine node)
 
-  Certifier(const Setup &s, const ChartId &i, int md, Stats *stt)
-      : st(s), id(i), chart_box(ChartBox(s)), max_depth(md), stats(stt), ch(MakeChart<double>(s, i)) {
-    if (g_exact) chq = MakeChart<Q>(s, i);
+  Certifier(const Setup &s, const ChartId &i, int md, Stats *stt, const AffMapQ &m = AffMapQ::Identity(),
+            const Box *root = nullptr, int d0 = 0)
+      : st(s), id(i), chart_box(root ? *root : ChartBox(s)), max_depth(md), stats(stt),
+        ch(MakeChart<double>(s, i, m)), map(m), depth0(d0) {
+    if (g_exact) chq = MakeChart<Q>(s, i, m);
   }
 
   template <class T> PolyT<T> Reduce(PolyT<T> P) const { return DivideVar(P, 0); }
@@ -391,7 +484,8 @@ struct Certifier {
   // vertices of its outer set (where they tie with the outer choice at
   // mu = 0, the mu^0 term vanishes). Fills the leaf when given and the
   // score is >= -1e-13; `why` gets the failing part.
-  double Score(const Witness &W, const Box &box, Leaf *leaf = nullptr, std::string *why = nullptr) {
+  double Score(const Witness &W, const Box &box, Leaf *leaf = nullptr, std::string *why = nullptr,
+               PolyT<double> *worst_poly = nullptr) {
     const double kFail = -1e300;
     const int K = W.k.size();
     std::vector<V3<double>> dirs;
@@ -440,7 +534,15 @@ struct Certifier {
       }
     }
     int64_t ntup = 1, ninner = 1;
-    for (int k = 0; k < K; k++) { ntup *= S[k].size(); ninner *= I[k].size(); }
+    for (int k = 0; k < K; k++) {
+      // (An empty outer set: a degenerate pose, e.g. non-finite.)
+      if (S[k].empty()) {
+        if (why) *why = "empty outer set";
+        return kFail;
+      }
+      ntup *= S[k].size();
+      ninner *= I[k].size();
+    }
     if (ntup > 512) {
       if (why) *why = "tuples";
       return kFail;
@@ -456,7 +558,7 @@ struct Certifier {
       if (it != B[k].end()) return it->second;
       return B[k][j] = ch.D * PDot(P.L[k], st.V[j]);
     };
-    if (leaf) leaf->inner.clear();
+    if (leaf) { leaf->inner.clear(); leaf->blends.clear(); }
     double score = 1e300;
     for (int64_t tix = 0; tix < ntup; tix++) {
       int64_t r = tix;
@@ -464,6 +566,11 @@ struct Certifier {
       for (int k = 0; k < K; k++) { jt[k] = S[k][r % S[k].size()]; r /= S[k].size(); }
       double best = kFail;
       std::vector<int> best_it;
+      struct Cand { double bnd; PolyT<double> P; std::vector<int> it; };
+      std::vector<Cand> polys;
+      // The winning blend: inner choices a, b at t = tn / 4 (tn = 0: none).
+      std::vector<int> blend_a, blend_b;
+      int blend_tn = 0;
       for (int64_t ci = 0; ci < ninner; ci++) {
         int64_t q = ci;
         std::vector<int> it(K);
@@ -472,6 +579,33 @@ struct Certifier {
         for (int k = 0; k < K; k++) Pp = Pp + (Aof(k, it[k]) - Bof(k, jt[k]));
         const double bnd = BernsteinLowerD(Reduce(Pp), box);
         if (bnd > best) { best = bnd; best_it = it; }
+        if (g_blend) polys.push_back({bnd, std::move(Pp), it});
+      }
+      // (Experiment, --blend: inner points on the segment between two inner
+      // choices' vertices, p_k = (1 - t) v_{a_k} + t v_{b_k}; sound because
+      // R p . d <= max(R v_a . d, R v_b . d). Double screen only so far.)
+      if (g_blend && best < 0 && polys.size() > 1) {
+        std::sort(polys.begin(), polys.end(), [](auto &a, auto &b) { return a.bnd > b.bnd; });
+        const int m = std::min<int>(6, polys.size());
+        for (int a = 0; a < m; a++)
+          for (int b = a + 1; b < m; b++)
+            for (int tn : {1, 2, 3}) {
+              const double t = tn / 4.0;
+              const PolyT<double> Bl = (1 - t) * polys[a].P + t * polys[b].P;
+              const double bnd = BernsteinLowerD(Reduce(Bl), box);
+              if (bnd > best) {
+                best = bnd;
+                blend_a = polys[a].it;
+                blend_b = polys[b].it;
+                blend_tn = tn;
+              }
+            }
+        if (blend_tn > 0) stats->blended++;
+      }
+      if (worst_poly != nullptr && best < score) {
+        PolyT<double> Pp;
+        for (int k = 0; k < K; k++) Pp = Pp + (Aof(k, best_it[k]) - Bof(k, jt[k]));
+        *worst_poly = Reduce(Pp);
       }
       score = std::min(score, best);
       if (best < -1e-13) {
@@ -523,7 +657,22 @@ struct Certifier {
         if (!leaf) continue;
         return score;
       }
-      if (leaf) leaf->inner.push_back(best_it);
+      if (leaf && blend_tn > 0) {
+        std::vector<int> it(K);
+        for (int k = 0; k < K; k++) {
+          if (blend_a[k] == blend_b[k]) { it[k] = blend_a[k]; continue; }
+          const Leaf::Blend bl{blend_a[k], blend_b[k], blend_tn};
+          int bi = 0;
+          while (bi < (int)leaf->blends.size() && !(leaf->blends[bi].a == bl.a && leaf->blends[bi].b == bl.b &&
+                                                     leaf->blends[bi].tn == bl.tn))
+            bi++;
+          if (bi == (int)leaf->blends.size()) leaf->blends.push_back(bl);
+          it[k] = (int)st.V.size() + bi;
+        }
+        leaf->inner.push_back(it);
+      } else if (leaf) {
+        leaf->inner.push_back(best_it);
+      }
     }
     if (leaf) {
       leaf->K = K;
@@ -547,6 +696,21 @@ struct Certifier {
     std::vector<V3<Q>> dirs;
     for (const auto &[a, b] : leaf.edges) dirs.push_back(VSub(st.VQ[b], st.VQ[a]));
     const Parts<Q> P = MakeParts(chq, dirs, leaf.s);
+    if (g_affine) {
+      // (Debugging the affine mode: every operand must be a valid rational.)
+      auto Valid = [&](const PolyT<Q> &poly, const std::string &what) {
+        for (const auto &[e, q] : poly.t)
+          CHECK(!(q.Denominator() == BigInt(0))) << "zero denominator in " << what << " (map ident "
+                                                  << map.ident << ")";
+      };
+      for (size_t i = 0; i < chq.NV_.size(); i++)
+        for (int a = 0; a < 3; a++) Valid(chq.NV_[i][a], "NV_" + std::to_string(i));
+      Valid(chq.D, "D");
+      for (int k = 0; k < K; k++) {
+        Valid(P.lam[k], "lam" + std::to_string(k));
+        for (int a = 0; a < 3; a++) { Valid(P.d[k][a], "d"); Valid(P.L[k][a], "L"); }
+      }
+    }
     if (K == 3)
       for (int k = 0; k < 3; k++) if (!ExactLowerOk(P.lam[k], bq, false)) return false;
     {
@@ -562,9 +726,17 @@ struct Certifier {
       }
     }
     std::vector<std::map<int, PolyT<Q>>> A(K), B(K);
-    auto Aof = [&](int k, int i) -> const PolyT<Q> & {
+    const int nv = st.VQ.size();
+    std::function<const PolyT<Q> &(int, int)> Aof = [&](int k, int i) -> const PolyT<Q> & {
       auto it = A[k].find(i);
       if (it != A[k].end()) return it->second;
+      if (i >= nv) {
+        // A blended inner point (Lean Leaf.innerNum): (1 - t) N v_a + t N v_b.
+        const Leaf::Blend &bl = leaf.blends[i - nv];
+        const Q t(bl.tn, 4);
+        PolyT<Q> r = (Q(1) - t) * Aof(k, bl.a) + t * Aof(k, bl.b);
+        return A[k][i] = std::move(r);
+      }
       return A[k][i] = PDot(chq.NV_[i], P.L[k]);
     };
     auto Bof = [&](int k, int j) -> const PolyT<Q> & {
@@ -589,6 +761,117 @@ struct Certifier {
   }
 
   // Returns the number of leaves of the subtree (0: failed).
+  int64_t last_affine_leaves_ = 0;
+
+  // An affine node at box (center c): in box-scaled coordinates of variables
+  // i1, i2, a rotation taking the first new axis along (g1, g2); the map to
+  // the original variables is this certifier's composed with it, rounded to
+  // short dyadics and inverted exactly; the child box is the exact interval
+  // image of this box, rounded outward (so it covers by construction).
+  // Returns the subtree's tokens.
+  std::optional<std::string> AffineNode(const Box &box, int depth, const std::array<double, NV> &c, int i1,
+                                        int i2, double g1, double g2, bool *ok) {
+    const double w1 = box[i1].second - box[i1].first, w2 = box[i2].second - box[i2].first;
+    if (!(w1 > 0 && w2 > 0) || !std::isfinite(g1) || !std::isfinite(g2)) return std::nullopt;
+    const double th = std::atan2(g2, g1);
+    // z_old = c + Arel (z_new - c), Arel = D R D^-1 in the (i1, i2) plane.
+    double R[2][2] = {{std::cos(th), -std::sin(th)}, {std::sin(th), std::cos(th)}};
+    double Arel[NV][NV];
+    for (int i = 0; i < NV; i++) for (int j = 0; j < NV; j++) Arel[i][j] = i == j ? 1 : 0;
+    const int ix[2] = {i1, i2};
+    const double w[2] = {w1, w2};
+    for (int a = 0; a < 2; a++)
+      for (int b = 0; b < 2; b++) Arel[ix[a]][ix[b]] = w[a] * R[a][b] / w[b];
+    // The new absolute map: A' = A Arel, c' = A (c - Arel c) + cA, rounded.
+    AffMapQ m;
+    m.ident = false;
+    double cz[NV];
+    for (int i = 0; i < NV; i++) {
+      cz[i] = c[i];
+      for (int j = 0; j < NV; j++) cz[i] -= Arel[i][j] * c[j];
+    }
+    for (int i = 0; i < NV; i++) {
+      double ci = map.c[i].ToDouble();
+      for (int k = 0; k < NV; k++) ci += map.A[i][k].ToDouble() * cz[k];
+      m.c[i] = i == 0 ? Q(0) : DyadicRat(RoundDyadic(ci, 24));
+      for (int j = 0; j < NV; j++) {
+        double a = 0;
+        for (int k = 0; k < NV; k++) a += map.A[i][k].ToDouble() * Arel[k][j];
+        m.A[i][j] = (i == 0 || j == 0) ? Q(i == j ? 1 : 0) : DyadicRat(RoundDyadic(a, 16));
+      }
+    }
+    if (!Invert(m.A, &m.B)) return std::nullopt;
+    // (Every rational of the map must be a valid one: a zero denominator
+    // would be a bug here, and GMP reports it only later, as SIGFPE.)
+    auto ValidQ = [&](const Q &q, const char *what, int i, int j) {
+      CHECK(!(q.Denominator() == BigInt(0))) << "zero denominator in " << what << "[" << i << "][" << j
+                                              << "] at depth " << depth;
+    };
+    for (int i = 0; i < NV; i++) {
+      ValidQ(m.c[i], "c", i, 0);
+      for (int j = 0; j < NV; j++) { ValidQ(m.A[i][j], "A", i, j); ValidQ(m.B[i][j], "B", i, j); }
+    }
+    // The child box: the image of this box under z -> B'(A z + cA - c'), exactly.
+    const auto bq = BoxQ(box);
+    Box child;
+    for (int i = 0; i < NV; i++) {
+      Q lo(0), hi(0);
+      for (int k = 0; k < NV; k++) {
+        const Q d = map.c[k] - m.c[k];
+        lo = lo + m.B[i][k] * d;
+      }
+      hi = lo;
+      for (int j = 0; j < NV; j++) {
+        Q M(0);
+        for (int k = 0; k < NV; k++) M = M + m.B[i][k] * map.A[k][j];
+        if (M == Q(0)) continue;
+        const Q a = M * bq[j].first, b = M * bq[j].second;
+        if (Q::Sign(M) > 0) { lo = lo + a; hi = hi + b; } else { lo = lo + b; hi = hi + a; }
+      }
+      // Outward to 2^-30 (doubles exactly).
+      child[i] = {FloorDyadic(lo.ToDouble(), 30) - std::ldexp(1, -30), CeilDyadic(hi.ToDouble(), 30) + std::ldexp(1, -30)};
+      if (i == 0) child[i].first = std::max(0.0, std::min(child[i].first, box[0].first));
+      if (!std::isfinite(child[i].first) || !std::isfinite(child[i].second)) return std::nullopt;
+    }
+    // A well-conditioned map: the child box (in the rotated variables, in
+    // units of the parent's widths) at most 3 times the parent's area (a
+    // rotated box's bounding box is at most twice it).
+    {
+      double ratio = 1;
+      for (int a = 0; a < 2; a++) {
+        const int i = ix[a];
+        ratio *= (child[i].second - child[i].first) / w[a];
+      }
+      // (The rotated variables keep their scale: the new axes are in units of
+      // the old widths.)
+      if (!(ratio > 0 && ratio <= 3)) return std::nullopt;
+    }
+    stats->affine++;
+    for (int i = 0; i < NV; i++) {
+      ValidQ(DyadicRat(child[i].first), "child lo", i, 0);
+      ValidQ(DyadicRat(child[i].second - child[i].first), "child width", i, 0);
+    }
+    Certifier sub(st, id, max_depth, stats, m, &child, depth + 1);
+    if (g_exact) {
+      for (const auto &pv : {sub.chq.u, sub.chq.w})
+        for (const auto &poly : pv)
+          for (const auto &[e, q] : poly.t) ValidQ(q, "chart coefficient", e[0], e[1]);
+    }
+    std::string t;
+    last_affine_leaves_ = sub.Rec(child, depth + 1, ok, &t);
+    {
+      std::lock_guard<std::mutex> l(mu);
+      for (const auto &f : sub.fail_boxes) if (fail_boxes.size() < 6u) fail_boxes.push_back(f);
+    }
+    std::string r = "3";
+    for (int i = 0; i < NV; i++) for (int j = 0; j < NV; j++) r += "," + ZigzagRat(m.A[i][j]);
+    for (int i = 0; i < NV; i++) r += "," + ZigzagRat(m.c[i]);
+    for (int i = 0; i < NV; i++) for (int j = 0; j < NV; j++) r += "," + ZigzagRat(m.B[i][j]);
+    for (int i = 0; i < NV; i++) r += "," + ZigzagRat(DyadicRat(child[i].first));
+    for (int i = 0; i < NV; i++) r += "," + ZigzagRat(DyadicRat(child[i].second - child[i].first));
+    return r + "," + t;
+  }
+
   // Certifies the box; *tokens gets its subtree in preorder (Lean
   // PackedLocalViewTree.readKTree: 0 axis left right, 1 leaf, 2 failed).
   // Returns the number of leaves.
@@ -640,7 +923,7 @@ struct Certifier {
       }
       stats->ok++;
       *ok = true;
-      *tokens = "1," + LeafTokens(leaf);
+      *tokens = LeafTokensTagged(leaf);
       return 1;
     }
     if (depth >= max_depth) {
@@ -677,6 +960,37 @@ struct Certifier {
       *ok = false;
       *tokens = "2";
       return 0;
+    }
+    // An affine node: where the best candidate's worst tuple fails and its
+    // polynomial's gradient (in the box-scaled view and direction
+    // variables) is far from every axis, rotate the plane of its two largest
+    // components so that one new axis follows it.
+    // (At most one affine node per path: a rotated box's bounding box is
+    // larger, so repeated rotations can outgrow the splits.)
+    if (g_affine && map.ident && !sc.empty() && depth - depth0 >= g_affine_gap) {
+      PolyT<double> wp;
+      const double sco = Score(cands[sc[0].second], box, nullptr, nullptr, &wp);
+      if (sco < 0 && !wp.t.empty()) {
+        double g[NV] = {0, 0, 0, 0, 0};
+        for (int i = 1; i < NV; i++) {
+          const double h = 0.25 * (box[i].second - box[i].first);
+          std::array<double, NV> a = c, b = c;
+          a[i] -= h;
+          b[i] += h;
+          g[i] = (Eval(wp, b.data()) - Eval(wp, a.data())) * 2;  // per box width
+        }
+        int i1 = 1, i2 = 2;
+        for (int i = 1; i < NV; i++) if (std::abs(g[i]) > std::abs(g[i1])) i1 = i;
+        i2 = i1 == 1 ? 2 : 1;
+        for (int i = 1; i < NV; i++) if (i != i1 && std::abs(g[i]) > std::abs(g[i2])) i2 = i;
+        const double gn = std::hypot(g[i1], g[i2]);
+        if (gn > 0 && std::abs(g[i1]) < 0.9 * gn) {
+          if (auto t = AffineNode(box, depth, c, i1, i2, g[i1], g[i2], ok)) {
+            *tokens = *t;
+            return last_affine_leaves_;
+          }
+        }
+      }
     }
     // Split the variable whose halves have the best worse-half score for the
     // best few candidates (the score: Score above, the quantity the leaf
@@ -751,8 +1065,9 @@ bool CertifyTriangle(const Setup &st, const std::vector<ChartId> &charts, int ma
     out += "," + std::to_string(id.axis) + "," + (id.sign ? "1" : "0") + "," + tokens;
     if (verbose) {
       const double sec = std::chrono::duration<double>(std::chrono::steady_clock::now() - t1).count();
-      printf("  face %-5s %s  leaves %lld  failed %lld  exact-rejected %lld  depth %d  (%.1f s)\n", id.Name().c_str(),
-             ok ? "OK  " : "FAIL", (long long)n, (long long)stats.failed.load(), (long long)stats.exact_fail.load(),
+      printf("  face %-5s %s  leaves %lld  failed %lld  exact-rejected %lld  affine %lld  blended %lld  depth %d  (%.1f s)\n",
+             id.Name().c_str(), ok ? "OK  " : "FAIL", (long long)n, (long long)stats.failed.load(),
+             (long long)stats.exact_fail.load(), (long long)stats.affine.load(), (long long)stats.blended.load(),
              stats.max_depth.load(), sec);
       for (const std::string &f : cert.fail_boxes) printf("    failed box %s\n", f.c_str());
     }
@@ -874,6 +1189,25 @@ void Pass(Setup st, tubetree::TreeNode *node, const tubetree::TriangleQ &t, int 
   for (int c = 0; c < 4; c++) Pass(st, node->children[c].get(), ch4[c], pass_depth, charts, max_depth, budget, ps);
 }
 
+// On a crash, the stack (raw addresses and the executable's load address,
+// for addr2line -e idcap.exe <address - base>).
+void CrashHandler(int sig) {
+  void *frames[64];
+  const int n = backtrace(frames, 64);
+  char buf[128];
+  const int len = snprintf(buf, sizeof(buf), "\nsignal %d; stack:\n", sig);
+  write(2, buf, len);
+  backtrace_symbols_fd(frames, n, 2);
+  FILE *maps = fopen("/proc/self/maps", "r");
+  if (maps != nullptr) {
+    char line[512];
+    if (fgets(line, sizeof(line), maps)) write(2, line, strlen(line));
+    fclose(maps);
+  }
+  signal(sig, SIG_DFL);
+  raise(sig);
+}
+
 std::vector<double> ParseDoubles(const std::string &s) {
   std::vector<double> r;
   size_t p = 0;
@@ -890,6 +1224,8 @@ std::vector<double> ParseDoubles(const std::string &s) {
 
 int main(int argc, char **argv) {
   setvbuf(stdout, nullptr, _IOLBF, 0);
+  signal(SIGFPE, CrashHandler);
+  signal(SIGSEGV, CrashHandler);
   std::vector<double> view;
   double size = 1e-3;
   int code = -1, tri = 0, view_depth = -1, probe = 0, pass_depth = 6;
@@ -917,6 +1253,9 @@ int main(int argc, char **argv) {
     else if (a == "--codes") codes_arg = next();
     else if (a == "--pass_depth") pass_depth = std::stoi(next());
     else if (a == "--double") g_exact = false;
+    else if (a == "--affine") g_affine = true;
+    else if (a == "--blend") g_blend = true;
+    else if (a == "--affine_gap") g_affine_gap = std::stoi(next());
     else if (a == "--max_leaves") max_leaves = std::stoll(next());
     else if (a == "--bdd") bdd = next();
     else if (a == "--rho") rho = Q(std::string_view(next()));

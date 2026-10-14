@@ -136,7 +136,7 @@ def parseLeaf (t : Array String) : Leaf := Id.run do
   for _ in [0:nt] do
     inner := inner.push ((List.range K).map fun k => t[i+k]!.toNat!)
     i := i + K
-  return ⟨s, edges.toList, outer.toList, inner.toList⟩
+  return ⟨s, edges.toList, outer.toList, inner.toList, []⟩
 
 /-- A preorder tree, one node per line from `i`: `s <axis>`, `l …`, `c` (cone), `f` (fail). -/
 partial def parseTree (lines : Array (Array String)) (i : ℕ) : KTree × ℕ :=

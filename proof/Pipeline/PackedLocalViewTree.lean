@@ -215,7 +215,7 @@ def readKLeaf : Decoder KCap.Leaf := do
     for _ in [0:K] do
       it := it.push (← readNat)
     inner := inner.push it.toList
-  pure ⟨s, edges.toList, outer.toList, inner.toList⟩
+  pure ⟨s, edges.toList, outer.toList, inner.toList, []⟩
 
 /-- Five rationals. -/
 def readQ5 : Decoder (Fin 5 → ℚ) := do
@@ -236,8 +236,9 @@ def readM5 : Decoder (Fin 5 → Fin 5 → ℚ) := do
   pure ![r0, r1, r2, r3, r4]
 
 /-- A blow-up face tree in preorder: 0 axis (a split), 1 leaf, 3 an affine node (A, c, B as
-rationals, row by row, then the new box as five (lower end, width) pairs), 2 (a failed leaf).
-The fuel bounds the depth. -/
+rationals, row by row, then the new box as five (lower end, width) pairs), 4 a leaf with
+blended inner points (their count, then per blend a, c, t; then the leaf as for 1), 2 (a
+failed leaf). The fuel bounds the depth. -/
 def readATree : ℕ → Decoder KCap.ATree
   | 0 => pure .fail
   | fuel + 1 => do
@@ -257,6 +258,16 @@ def readATree : ℕ → Decoder KCap.ATree
       let w ← readQ5
       let t ← readATree fuel
       pure (.affine ⟨A, c, B⟩ (fun i => (lo i, w i)) t)
+    else if tag = 4 then
+      let nb ← readNat
+      let mut bl : Array (ℕ × ℕ × ℚ) := #[]
+      for _ in [0:nb] do
+        let a ← readNat
+        let c ← readNat
+        let t ← readRat
+        bl := bl.push (a, c, t)
+      let leaf ← readKLeaf
+      pure (.leaf { leaf with blends := bl.toList })
     else
       pure .fail
 

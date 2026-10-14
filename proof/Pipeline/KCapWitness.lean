@@ -42,14 +42,16 @@ theorem rcayleyNum_eq' (w v : Fin 3 → ℝ) :
   have h := Cap.cayley_mulVec w v
   exact h.symm
 
-theorem balanced_pose_not_rupert {ι : Type} [Fintype ι] (V : List (Fin 3 → ℝ)) (S : Set ℝ³)
+/-- `balanced_pose_not_rupert` with inner points anywhere in the hull S (e.g. on a segment
+between two vertices). -/
+theorem balanced_pose_not_rupert_hull {ι : Type} [Fintype ι] (V : List (Fin 3 → ℝ)) (S : Set ℝ³)
     (hS : S = convexHull ℝ {v | ∃ vj ∈ V, v = Cap.toEuc vj})
     (p : MatrixPose) (u : Fin 3 → ℝ) (ξ : ℝ) (hview : p.view = ξ • u)
     (w : Fin 3 → ℝ) (hR : p.relativeRotation = cayleyMatrix (w 0) (w 1) (w 2))
     (c : ι → Fin 3 → ℝ) (lam : ι → ℝ) (i j : ι → Fin 3 → ℝ)
     (hlam : ∀ k, 0 ≤ lam k) (hbal : ∑ k, lam k • rcross u (c k) = 0)
     (hpos : ∃ k, 0 < lam k ∧ rcross u (c k) ≠ 0)
-    (hi : ∀ k, i k ∈ V)
+    (hi : ∀ k, Cap.toEuc (i k) ∈ S)
     (hmax : ∀ k, ∀ v ∈ V, rdot v (rcross u (c k)) ≤ rdot (j k) (rcross u (c k)))
     (hP : 0 ≤ ∑ k, lam k * (rdot (rcayleyNum w (i k)) (rcross u (c k)) -
       (1 + rdot w w) * rdot (j k) (rcross u (c k)))) :
@@ -91,9 +93,7 @@ theorem balanced_pose_not_rupert {ι : Type} [Fintype ι] (V : List (Fin 3 → �
     rintro v ⟨vj, hvj, rfl⟩
     rw [toEuc_inner, rdot_comm']
     exact hmax k vj hvj
-  · intro k
-    rw [hS]
-    exact subset_convexHull ℝ _ ⟨i k, hi k, rfl⟩
+  · exact hi
   · -- Σ λ M ≤ Σ λ ⟪d, R v_i⟫: hP divided by D.
     rw [hR]
     simp only [hmulE, toEuc_inner]
@@ -115,6 +115,21 @@ theorem balanced_pose_not_rupert {ι : Type} [Fintype ι] (V : List (Fin 3 → �
         have := (mul_nonneg_iff_of_pos_left hD).mp this; exact this
     rw [Finset.sum_sub_distrib] at hP'
     linarith
+
+theorem balanced_pose_not_rupert {ι : Type} [Fintype ι] (V : List (Fin 3 → ℝ)) (S : Set ℝ³)
+    (hS : S = convexHull ℝ {v | ∃ vj ∈ V, v = Cap.toEuc vj})
+    (p : MatrixPose) (u : Fin 3 → ℝ) (ξ : ℝ) (hview : p.view = ξ • u)
+    (w : Fin 3 → ℝ) (hR : p.relativeRotation = cayleyMatrix (w 0) (w 1) (w 2))
+    (c : ι → Fin 3 → ℝ) (lam : ι → ℝ) (i j : ι → Fin 3 → ℝ)
+    (hlam : ∀ k, 0 ≤ lam k) (hbal : ∑ k, lam k • rcross u (c k) = 0)
+    (hpos : ∃ k, 0 < lam k ∧ rcross u (c k) ≠ 0)
+    (hi : ∀ k, i k ∈ V)
+    (hmax : ∀ k, ∀ v ∈ V, rdot v (rcross u (c k)) ≤ rdot (j k) (rcross u (c k)))
+    (hP : 0 ≤ ∑ k, lam k * (rdot (rcayleyNum w (i k)) (rcross u (c k)) -
+      (1 + rdot w w) * rdot (j k) (rcross u (c k)))) :
+    ¬ RupertPose p S :=
+  balanced_pose_not_rupert_hull V S hS p u ξ hview w hR c lam i j hlam hbal hpos
+    (fun k => by rw [hS]; exact subset_convexHull ℝ _ ⟨i k, hi k, rfl⟩) hmax hP
 
 end KCap
 
