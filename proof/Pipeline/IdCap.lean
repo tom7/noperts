@@ -88,8 +88,9 @@ structure IdCert (K : Type) where
 def idFaces : List (ℕ × Bool) := [(0, true), (0, false), (1, true), (1, false), (2, true), (2, false)]
 
 def IdCert.faceCheck (cert : IdCert K) (axis : ℕ) (sign : Bool) (t : KTree) : Bool :=
-  t.check (fun l box => l.check cert.V (chartDataOf (idU cert.c) (idW axis sign) cert.V) idChartId box)
-    (fun _ => false) (idBox cert.rho)
+  -- (The chart data once per face, not per leaf.)
+  let cd := chartDataOf (idU cert.c) (idW axis sign) cert.V
+  t.check (fun l box => l.check cert.V cd idChartId box) (fun _ => false) (idBox cert.rho)
 
 def IdCert.hasFace (cert : IdCert K) (f : ℕ × Bool) : Bool :=
   cert.faces.any fun e => decide (e.1 = f) && cert.faceCheck f.1 f.2 e.2

@@ -10,6 +10,9 @@
 #            mirror normal n = (1,0,-1)/sqrt2 left to the cap certificate),
 #            then tuberefine on the codes away from the cap (codes 7, 9, 11-13
 #            touch n and are not refined: it only multiplies their leaves)
+#   idcap    identity blow-up certificates (idcap --trees_in/--trees_out,
+#            rho 1/64): tube subtrees replaced by blow-up rows (Lean
+#            Row.idcap) where they certify; the later stages use these trees
 #   tubepack tube trees -> Lean tube packs + manifest (export_codetrees_pack)
 #   cap      the cap certificate at n (capcert_septopert --mu0 1/16 --max_depth 38)
 #            and the search's caps file (frame x = (1,0,-1), e1 = (0,2,0),
@@ -34,7 +37,7 @@
 # if it fails. (Helpers: ../common/rebuild_lib.sh.)
 set -euo pipefail
 
-STAGES=(model tube tubepack cap search pack verify)
+STAGES=(model tube idcap tubepack cap search pack verify)
 FROM=tube
 ONLY=""
 DRY=0
@@ -57,6 +60,7 @@ done
 [ -n "$WORK" ] || WORK=$NOPERT/../../work
 TREES_RAW=$WORK/trees_raw
 TREES=$WORK/trees
+TREES_ID=$WORK/trees_id
 TUBEPACKS=$WORK/tube_packs
 JOBS=$WORK/jobs
 PACKS=$WORK/packs
@@ -92,7 +96,7 @@ NCODES=15
 NTRI=22
 
 echo "== build"
-run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe export_codetrees_pack.exe \
+run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe idcap.exe export_codetrees_pack.exe \
   capcert_septopert.exe search5d.exe pack5d.exe dfwhere.exe
 
 if want model; then
@@ -101,7 +105,7 @@ if want model; then
   # The view cover (Lean: Septopert/ViewCoverData.lean) from codebdd.json.
   run python3 -B "$LEAN/scripts/emit_septopert_view_cover.py" --bdd "$NOPERT/codebdd.json" \
     "$LEAN/Septopert/ViewCoverData.lean"
-  run make -C "$NOPERT" -j "$THREADS" tubecode.exe tuberefine.exe export_codetrees_pack.exe search5d.exe pack5d.exe
+  run make -C "$NOPERT" -j "$THREADS" tubecode.exe tuberefine.exe idcap.exe export_codetrees_pack.exe search5d.exe pack5d.exe
   stage_end model
 fi
 
@@ -117,7 +121,7 @@ if want verify; then
 fi
 
 # codebdd.json is written by the model stage (it is not committed).
-require_codebdd tube tubepack search pack
+require_codebdd tube idcap tubepack search pack
 
 # The cap at n for the tube (angular radius 0.04 < the cap cone's 0.044).
 TUBE_CAP=(--cap 0.70710678118654752,0,-0.70710678118654752,0.04 --cap_r 1/46)
@@ -145,9 +149,16 @@ if want tube; then
   stage_end tube
 fi
 
+if want idcap; then
+  stage_begin idcap
+  (cd "$NOPERT" && capped ./idcap.exe --trees_in "$TREES" --trees_out "$TREES_ID" --pass_depth 6 \
+    --max_leaves 20000 --rho 1/64 --threads "$THREADS" --max_depth 40)
+  stage_end idcap
+fi
+
 if want tubepack; then
   stage_begin tubepack
-  (cd "$NOPERT" && capped ./export_codetrees_pack.exe --trees_dir "$TREES" --out_dir "$TUBEPACKS" \
+  (cd "$NOPERT" && capped ./export_codetrees_pack.exe --trees_dir "$TREES_ID" --out_dir "$TUBEPACKS" \
     --bdd codebdd.json)
   stage_end tubepack
 fi
@@ -166,7 +177,7 @@ if want cap; then
 fi
 
 SEARCH=(--all --charts 0,1,2,3 --threads "$THREADS" --commit_depth 12 --subtree_budget 200000
-        --max_depth 200 --trees_dir "$TREES" --view_scale 4 --max_full_retry 1024 --half_turn_prune
+        --max_depth 200 --trees_dir "$TREES_ID" --view_scale 4 --max_full_retry 1024 --half_turn_prune
         --caps "$CAPS_FILE" --out_dir "$JOBS" --requeue_deferred)
 if want search; then
   stage_begin search
@@ -191,7 +202,7 @@ if want pack; then
   stage_begin pack
   for chart in 0 1 2 3; do
     (cd "$NOPERT" && capped ./pack5d.exe --chart "$chart" --per_code "$PACKS" --journals "$JOBS" \
-      --trees_dir "$TREES" --bdd codebdd.json --threads "$THREADS")
+      --trees_dir "$TREES_ID" --bdd codebdd.json --threads "$THREADS")
   done
   stage_end pack
 fi

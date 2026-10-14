@@ -17,7 +17,9 @@ all: default qtube s5d codebdd.exe capcert_septopert.exe dfwhere.exe tufix.exe c
 #  tubecode: restartable (journaled) Tag 1 tree synthesis per code.
 #  tuberefine: refines tube leaves to larger certified radii (monotone).
 #  export_codetrees_pack: tube trees -> Lean tube packs (+ manifest).
-qtube: tubecode.exe tuberefine.exe export_codetrees_pack.exe
+#  idcap: identity blow-up certificates; replaces tube subtrees by blow-up
+#    rows (Lean Row.idcap) where they certify (rebuild.sh stage idcap).
+qtube: tubecode.exe tuberefine.exe idcap.exe export_codetrees_pack.exe
 
 # 5D search:
 #  search5d: parallel journaled search per (code triangle, chart) job.
