@@ -181,12 +181,32 @@ The leaves are checked as in the snub cube's caps
 `search/common/idcap.cc`, which also checks them exactly before writing
 them.
 
+## Blended inner points
+
+A witness needs, for each of its directions, only *some* point of the
+solid that sticks out far enough along that direction after the rotation;
+it need not be a vertex. Where the best vertex switches from one to another
+inside a box (near a view where two faces are edge-on at once, the
+Septopert has such a corner), every single vertex fails somewhere in the
+box, and boxes would have to shrink toward the switching line. A point on
+the segment between the two vertices, (1 − t)·v_a + t·v_c with
+0 ≤ t ≤ 1, is still in the solid, and its inequality is the same blend of
+the two vertices' inequalities, which can stay positive across the switch.
+
+Both the blow-up rows and the 5D rows may use such *blended* inner points:
+in Lean, `KCap.Leaf.blends` (`Pipeline/KCapCheck.lean`) and the
+`innerOther` / `innerT` fields of the 5D certificate rows
+(`Pipeline/AtlasProjectiveGlobalCertificate.lean`, pack tags 17 and 18).
+Their soundness rests only on the blended point lying in the convex hull
+(`innerPt_mem`, `Box.innerPt_mem_hull`). `idcap` and `search5d` use blends
+where no single vertex certifies a box (both by default).
+
 ## Status
 
 Verified on 2026-10-14 on a 64-core machine: `constructSeptopert` checked
-the cap certificate, the 22 tube tables (566 rows, 358 of them identity
-blow-up rows) and the four chart tables (1,786,150, 144,165, 124,872 and
-104,577 rows) and printed `instantiated: ¬ IsRupert Septopert.verts (the
+the cap certificate, the 22 tube tables (234 rows, 164 of them identity
+blow-up rows) and the four chart tables (522,764, 143,985, 124,171 and
+104,460 rows) and printed `instantiated: ¬ IsRupert Septopert.verts (the
 Septopert is not Rupert)`. You can reproduce it yourself, following the
 instructions in [BUILDING.md](BUILDING.md):
 
@@ -203,7 +223,7 @@ for nearby cells. So you may not get the same row counts, etc. as I did.
 This builds everything, runs `codebdd` on the exact model
 `search/septopert/septopert_model.txt` (and regenerates the view cover
 `proof/Septopert/ViewCoverData.lean` from its output), builds the identity
-tube and replaces most of it by identity blow-up rows, runs the search,
+tube and replaces nearly all of it by identity blow-up rows, runs the search,
 packs the tables into `work/`, and finally runs `constructSeptopert` on
 them. Stages: `model`, `tube`, `idcap`, `tubepack`, `cap`, `search`, `pack`,
 `verify`; `--from STAGE` restarts at a stage, `--only STAGE` runs one,
@@ -212,17 +232,17 @@ them. Stages: `model`, `tube`, `idcap`, `tubepack`, `cap`, `search`, `pack`,
 background while the C++ stages run (log `work/lean_build.log`).
 
 Measured times of a from-scratch run on 64 cores with 64 threads
-(2026-10-14), about 1 h 25 min in all:
+(2026-10-14), about 70 min in all:
 
 | Stage | Time |
 |---|---|
-| model | 7 s |
-| tube + tubepack | 3.4 min |
-| idcap | 52 min (47 min when it had the machine to itself) |
-| cap | 32 s |
-| search | 5.8 min (1,165,777 nodes) |
-| pack | 1.9 min |
-| verify | 20 min, 801 MiB peak |
+| model | 9 s |
+| tube + tubepack | 3.3 min |
+| idcap | 57 min |
+| cap | 34 s |
+| search | 1.4 min (387,855 nodes) |
+| pack | 49 s |
+| verify | 7.2 min, 694 MiB peak |
 
 ### History
 
@@ -250,16 +270,18 @@ cd work && LEAN_NUM_THREADS=64 ../proof/.lake/build/bin/constructSeptopert \
 ```
 
 It checks the cap certificate, the 22 tube tables, then the four chart
-tables one at a time. Chart 0 has about 1.8 million rows; charts 1–3 have
-less than 200k rows each.
+tables one at a time. Chart 0 has about 520,000 rows; charts 1–3 have
+less than 150,000 rows each.
 
 ## The data
 
 The certificate data is machine output, intended to be CC0:
 
-- `cap-1_16.cert`: 540 KB, the cap certificate around the mirror directions;
-- `tube_packs/`: 6.4 MB, 22 identity-tube tables and `manifest.txt`;
-- `packs/`: 128 MB, 88 per-code solution packs (`packs/c<chart>/t<code>.pack`;
-  the largest, `packs/c0/t9.pack`, is 77 MB).
+- `cap-1_16.cert`: 550 KB, the cap certificate around the mirror directions;
+- `tube_packs/`: 1.4 MB, 22 identity-tube tables and `manifest.txt`;
+- `packs/`: 51 MB, 88 per-code solution packs (`packs/c<chart>/t<code>.pack`;
+  the largest, `packs/c0/t2.pack`, is 3.8 MB).
+
+All three together compress to about 9 MB (`tar czf`).
 
 To check it yourself, rebuild it (see "Status" above).
