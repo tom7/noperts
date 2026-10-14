@@ -66,7 +66,8 @@ int main(int argc, char **argv) {
       int code, tri, rows;
       ss >> file >> code >> tri >> rows >> r;
       CHECK(atlas.CodeAndTriangle(t) == std::make_pair(code, tri)) << line;
-      CHECK(atlas.Walk(t, "").r_lower == BigRat(std::string_view(r))) << line;
+      // (-1: a table with a cap leaf, export_codetrees_pack's convention.)
+      if (r != "-1") CHECK(atlas.Walk(t, "").r_lower == BigRat(std::string_view(r))) << line;
       t++;
     }
     CHECK(t == num_triangles);
