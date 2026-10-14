@@ -28,7 +28,7 @@
 #
 # Usage: ./rebuild.sh [--from STAGE] [--only STAGE] [--dry_run]
 #        [--threads N] [--mem_gb G] [--work DIR]
-#        (default: from tube, 12 threads, 40 GB, ../../work)
+#        (default: from tube, one thread per core, 40 GB, ../../work)
 # Long stages run in a systemd scope with MemoryMax (and no swap); each
 # stage's wall time and the scope's peak memory are appended to
 # WORK/stages.log.
@@ -41,7 +41,7 @@ STAGES=(model tube idcap tubepack cap search pack verify)
 FROM=tube
 ONLY=""
 DRY=0
-THREADS=12
+THREADS=$(nproc)
 MEM_GB=40
 WORK=""
 NOPERT=$(cd "$(dirname "$0")" && pwd)
@@ -88,8 +88,8 @@ capped() {
 
 # (Also in a dry run, so that df below has a directory to look at.)
 mkdir -p "$WORK"
-# The journals and packs are large (t3 alone: ~3 GB of journal); a full disk
-# silently truncates them.
+# The work directory needs a few GB (the refined tube trees ~2 GB; journals
+# and packs under 200 MB); a full disk silently truncates them.
 echo "== free space: $(df -h "$WORK" | awk 'NR == 2 {print $4}')"
 echo "== $THREADS threads, memory cap ${MEM_GB} GB, work $WORK"
 NCODES=15
