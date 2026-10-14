@@ -11,9 +11,10 @@
 #            then tuberefine on the codes away from the cap (codes 7, 9, 11-13
 #            touch n and are not refined: it only multiplies their leaves)
 #   idcap    identity blow-up certificates (idcap --trees_in/--trees_out,
-#            rho 1/64, --blend: blended inner points, 4 codes at once):
-#            tube subtrees replaced by blow-up rows (Lean Row.idcap) where
-#            they certify; the later stages use these trees
+#            rho 1/64; idcap's defaults: blended inner points, a retry
+#            with per-contact blends where the pass cannot descend, 4 codes
+#            at once): tube subtrees replaced by blow-up rows (Lean
+#            Row.idcap) where they certify; the later stages use these trees
 #   tubepack tube trees -> Lean tube packs + manifest (export_codetrees_pack)
 #   cap      the cap certificate at n (capcert_septopert --mu0 1/16 --max_depth 38)
 #            and the search's caps file (frame x = (1,0,-1), e1 = (0,2,0),
@@ -153,7 +154,7 @@ fi
 if want idcap; then
   stage_begin idcap
   (cd "$NOPERT" && capped ./idcap.exe --trees_in "$TREES" --trees_out "$TREES_ID" --pass_depth 6 \
-    --max_leaves 20000 --rho 1/64 --threads "$THREADS" --max_depth 40 --blend --code_jobs 4)
+    --max_leaves 20000 --rho 1/64 --threads "$THREADS" --max_depth 40)
   stage_end idcap
 fi
 

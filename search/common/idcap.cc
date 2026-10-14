@@ -43,7 +43,10 @@
 // --double: the double screen only (no exact check).
 // --affine [--affine_gap 4]: affine nodes (Lean ATree.affine) where a failing
 // tuple's bad region is slanted (an experiment; see SEPTOPERT-IMPROVEMENTS).
-// --blend: where no single inner choice certifies a tuple, try points on
+// Defaults: validated end to end (Lean, SERVER OK on the Septopert) are on;
+// --no_blend, --no_retry_leaf_contacts and --code_jobs 1 give the earlier
+// behavior.
+// --blend (default on): where no single inner choice certifies a tuple, try points on
 // the segment between two inner choices' vertices (Lean KCap.Leaf.blends;
 // pack tag 4): where the best inner vertex switches inside a box (a
 // codimension-2 view), the blend has no switch to subdivide toward.
@@ -51,12 +54,10 @@
 // --blend_contacts L: also a separate blend per contact (coordinate ascent),
 // where several contacts switch independently: L = 1 in the leaf checks,
 // 2 also in the split lookahead.
-// --code_jobs N: the pass runs N codes at once (largest trees first).
+// --code_jobs N (default 4): the pass runs N codes at once (largest trees first).
 // --mu_guard: no mu split where every candidate fails at the box's lowest mu.
-// --skip_cap_nodes: the pass does not attempt subtrees with a cap leaf (a
-// bad idea with blends: many such subtrees certify).
-// --retry_leaf_contacts: a failing node the pass cannot descend from is
-// retried with --blend_contacts 2.
+// --retry_leaf_contacts (default on): a failing node the pass cannot
+// descend from is retried with --blend_contacts 2.
 // --probe N: the candidate witnesses' first-order margin at the triangle's
 // center over an N x N grid of directions per cube face (no certificate).
 // --view_depth D (with --code): a view tree as the identity tube's: each
@@ -107,15 +108,14 @@ bool g_exact = true;
 // Affine nodes (Lean ATree.affine) where a failing tuple's bad region is
 // slanted; at least this many levels apart on a path.
 bool g_affine = false;
-bool g_blend = false;
+bool g_blend = true;
 // --blend_contacts L: also per-contact blends (coordinate ascent): 1 in the
 // leaf checks, 2 also in the split lookahead.
 int g_blend_contacts = 0;
 // --mu_guard: no mu split where every candidate fails at the box's lowest mu.
 bool g_mu_guard = false;
 int g_mu_guard_bits = 6;
-bool g_skip_cap_nodes = false;
-bool g_retry_leaf_contacts = false;
+bool g_retry_leaf_contacts = true;
 int g_affine_gap = 4;
 
 // ----- Exact bounds over Q (Lean KPoly.lowerDeg with ExactScalarOps Q: lo = the value) -----
@@ -1227,21 +1227,12 @@ int64_t CountLeaves(const tubetree::TreeNode &n) {
   return c;
 }
 
-bool HasCapLeaf(const tubetree::TreeNode &n) {
-  if (n.children.empty()) return n.cap.has_value();
-  for (const auto &ch : n.children) if (HasCapLeaf(*ch)) return true;
-  return false;
-}
-
 void Pass(Setup st, tubetree::TreeNode *node, const tubetree::TriangleQ &t, int pass_depth,
           const std::vector<ChartId> &charts, int max_depth, int64_t budget, PassStats *ps) {
   const int depth = node->depth();
   if (depth > pass_depth) return;
   const tubetree::EffectiveBounds eb = tubetree::ComputeEffectiveBounds(*node);
-  // --skip_cap_nodes: a subtree with a cap leaf (views where the tube was
-  // left to a cap certificate: the first-order margin vanishes there) does
-  // not certify; attempting it only spends the budget.
-  if (!(eb.r_lower >= st.rho) && !(g_skip_cap_nodes && HasCapLeaf(*node))) {
+  if (!(eb.r_lower >= st.rho)) {
     for (int k = 0; k < 3; k++) st.c[k] = {t.corners[k].x, t.corners[k].y, t.corners[k].z};
     int64_t leaves = 0;
     std::string pack;
@@ -1326,7 +1317,7 @@ int main(int argc, char **argv) {
   int code = -1, tri = 0, view_depth = -1, probe = 0, pass_depth = 6;
   std::string trees_in, trees_out, codes_arg;
   int64_t max_leaves = 0;
-  int code_jobs = 1;
+  int code_jobs = 4;
   std::string path, bdd = "codebdd.json";
   Q rho(1, 64);
   int max_depth = 40;
@@ -1351,12 +1342,13 @@ int main(int argc, char **argv) {
     else if (a == "--double") g_exact = false;
     else if (a == "--affine") g_affine = true;
     else if (a == "--blend") g_blend = true;
+    else if (a == "--no_blend") g_blend = false;
     else if (a == "--blend_contacts") g_blend_contacts = std::stoi(next());
     else if (a == "--code_jobs") code_jobs = std::stoi(next());
     else if (a == "--mu_guard") g_mu_guard = true;
     else if (a == "--mu_guard_bits") g_mu_guard_bits = std::stoi(next());
-    else if (a == "--skip_cap_nodes") g_skip_cap_nodes = true;
     else if (a == "--retry_leaf_contacts") g_retry_leaf_contacts = true;
+    else if (a == "--no_retry_leaf_contacts") g_retry_leaf_contacts = false;
     else if (a == "--affine_gap") g_affine_gap = std::stoi(next());
     else if (a == "--max_leaves") max_leaves = std::stoll(next());
     else if (a == "--bdd") bdd = next();
