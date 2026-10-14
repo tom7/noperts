@@ -57,7 +57,8 @@
 // --code_jobs N (default 4): the pass runs N codes at once (largest trees first).
 // --mu_guard: no mu split where every candidate fails at the box's lowest mu.
 // --retry_leaf_contacts (default on): a failing node the pass cannot
-// descend from is retried with --blend_contacts 2.
+// descend from is retried with --blend_contacts 2 and the budget
+// max(--max_leaves, --retry_budget) (default 20000).
 // --probe N: the candidate witnesses' first-order margin at the triangle's
 // center over an N x N grid of directions per cube face (no certificate).
 // --view_depth D (with --code): a view tree as the identity tube's: each
@@ -116,6 +117,7 @@ int g_blend_contacts = 0;
 bool g_mu_guard = false;
 int g_mu_guard_bits = 6;
 bool g_retry_leaf_contacts = true;
+int64_t g_retry_budget = 20000;
 int g_affine_gap = 4;
 
 // ----- Exact bounds over Q (Lean KPoly.lowerDeg with ExactScalarOps Q: lo = the value) -----
@@ -1247,7 +1249,10 @@ void Pass(Setup st, tubetree::TreeNode *node, const tubetree::TriangleQ &t, int 
       Setup st2 = st;
       st2.blend_contacts = 2;
       ps->tried++;
-      ok = CertifyTriangle(st2, charts, max_depth, budget, &leaves, false, &pack);
+      // (With the larger --retry_budget: a small first budget makes failing
+      // attempts cheap, but here no smaller triangles follow.)
+      ok = CertifyTriangle(st2, charts, max_depth, std::max<int64_t>(budget, g_retry_budget), &leaves, false,
+                           &pack);
       if (ok) ps->log += "  (retried with per-contact blends)\n";
     }
     if (ok) {
@@ -1349,6 +1354,7 @@ int main(int argc, char **argv) {
     else if (a == "--mu_guard_bits") g_mu_guard_bits = std::stoi(next());
     else if (a == "--retry_leaf_contacts") g_retry_leaf_contacts = true;
     else if (a == "--no_retry_leaf_contacts") g_retry_leaf_contacts = false;
+    else if (a == "--retry_budget") g_retry_budget = std::stoll(next());
     else if (a == "--affine_gap") g_affine_gap = std::stoi(next());
     else if (a == "--max_leaves") max_leaves = std::stoll(next());
     else if (a == "--bdd") bdd = next();
