@@ -226,16 +226,17 @@ in all:
 
 ### History
 
-I first verified the Septopert on October 9, 2026: from scratch three
-times on two different computers (October 9 and 10), and it was also
-reproduced independently from a fresh clone, in a container without network
-access (October 10). That
-version of the proof had no identity blow-up rows: its data was about 85
-million rows (6.7 GB) and its verification took about 3 hours and 15 GB of
-memory on 64 cores; see [septopert.md at that
-revision](https://github.com/tom7/noperts/blob/8a8ea2ab/septopert.md).
-The identity blow-up certificates (October 14) made it about 50 times
-smaller.
+I first verified the Septopert on October 9, 2026. I reproduced it two
+times on two different computers (October 9 and 10), and indepenently
+from a fresh clone in a sandbox. This first version of the proof used
+the "identity tube" to rule out local passages. Its data was enormous
+at about 85 million rows (6.7 GB), taking 3 hours and 15 GB of RAM on
+64 cores; see the [historic revision](https://github.com/tom7/noperts/blob/8a8ea2ab/septopert.md).
+
+A new version developed a few days later uses "blow-up" certificates,
+which cuts the size by about 50x, although each certificate is more
+expensive to verify. An end-to-end reproduction takes about 80 minutes
+on a 64-core beefcake.
 
 ## Verifying existing data
 
