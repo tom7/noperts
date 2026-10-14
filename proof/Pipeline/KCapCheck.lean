@@ -84,9 +84,12 @@ def PVec.force (p : PVec K) : PVec K := PVec.ofArray #[p 0, p 1, p 2]
 theorem PVec.force_eq (p : PVec K) : PVec.force p = p := by
   funext i; fin_cases i <;> rfl
 
+/-- The chart data of any view and Cayley vector (polynomial in the chart variables). -/
+def chartDataOf (u w : PVec K) (V : Array (KVec K)) : ChartData K :=
+  ⟨u, w, cayleyDen w, V.map (cayleyNum w)⟩
+
 def chartData (fr : Frame K) (pr : Params) (id : ChartId) (V : Array (KVec K)) : ChartData K :=
-  let w := chartW fr pr id
-  ⟨chartU fr pr id, w, cayleyDen w, V.map (cayleyNum w)⟩
+  chartDataOf (chartU fr pr id) (chartW fr pr id) V
 
 /-- A leaf: the Cramer sign, the contact edges (a, b), the outer sets, and per tuple (in
 `tuples` order) the inner choices. -/
@@ -311,27 +314,32 @@ theorem eval_L (V : Array (KVec K)) (l : Leaf) (cd : ChartData K) (k : ℕ) (y :
     (l.L V cd k).eval y = KPoly.eval 5 (l.lam V cd k) y • (l.d V cd k).eval y := by
   simp [Leaf.L, PVec.eval_smul]
 
+theorem eval_numAtOf (u w : PVec K) (V : Array (KVec K)) (i : ℕ) (h : i < V.size)
+    (y : Fin 5 → ℝ) :
+    (numAt (chartDataOf u w V) i).eval y = rcayleyNum (w.eval y) (kval (vertex V i)) := by
+  have : numAt (chartDataOf u w V) i = cayleyNum w (vertex V i) := by
+    simp [numAt, chartDataOf, vertex, Array.getD, h]
+  rw [this, eval_cayleyNum]
+
 theorem eval_numAt (fr : Frame K) (pr : Params) (id : ChartId) (V : Array (KVec K)) (i : ℕ) (h : i < V.size)
     (y : Fin 5 → ℝ) :
     (numAt (chartData fr pr id V) i).eval y =
-      rcayleyNum ((chartW fr pr id).eval y) (kval (vertex V i)) := by
-  have : numAt (chartData fr pr id V) i = cayleyNum (chartW fr pr id) (vertex V i) := by
-    simp [numAt, chartData, vertex, Array.getD, h]
-  rw [this, eval_cayleyNum]
+      rcayleyNum ((chartW fr pr id).eval y) (kval (vertex V i)) :=
+  eval_numAtOf _ _ V i h y
 
 theorem Ls_getD (V : Array (KVec K)) (l : Leaf) (cd : ChartData K) (n k : ℕ) (hk : k < n) :
     ((List.range n).map (l.L V cd)).getD k (fun _ => KPoly.zero 5) = l.L V cd k := by
   rw [List.getD_eq_getElem?_getD]
   simp [hk]
 
-theorem eval_tuplePoly (fr : Frame K) (pr : Params) (id : ChartId) (V : Array (KVec K)) (l : Leaf)
+theorem eval_tuplePolyOf (u w : PVec K) (V : Array (KVec K)) (l : Leaf)
     (j i : ℕ → ℕ) (hi : ∀ k < l.n, i k < V.size) (y : Fin 5 → ℝ) :
-    let cd := chartData fr pr id V
+    let cd := chartDataOf u w V
     KPoly.eval 5 (l.tuplePoly V cd ((List.range l.n).map (l.L V cd)) j i) y =
       ∑ k : Fin l.n, KPoly.eval 5 (l.lam V cd k) y *
-        (rdot (rcayleyNum ((chartW fr pr id).eval y) (kval (vertex V (i k)))) (rcross ((chartU fr pr id).eval y) (kval (l.dir V k))) -
-          (1 + rdot ((chartW fr pr id).eval y) ((chartW fr pr id).eval y)) *
-            rdot (kval (vertex V (j k))) (rcross ((chartU fr pr id).eval y) (kval (l.dir V k)))) := by
+        (rdot (rcayleyNum (w.eval y) (kval (vertex V (i k)))) (rcross (u.eval y) (kval (l.dir V k))) -
+          (1 + rdot (w.eval y) (w.eval y)) *
+            rdot (kval (vertex V (j k))) (rcross (u.eval y) (kval (l.dir V k)))) := by
   intro cd
   unfold Leaf.tuplePoly termA termB
   rw [eval_foldr_add]
@@ -340,12 +348,22 @@ theorem eval_tuplePoly (fr : Frame K) (pr : Params) (id : ChartId) (V : Array (K
   rw [Ls_getD V l cd l.n k k.isLt]
   simp only [KPoly.eval_sub, KPoly.eval_mul, PVec.eval_dot, PVec.eval_const, eval_L, eval_d,
     rdot_smul_right]
-  rw [eval_numAt fr pr id V (i k) (hi k k.isLt)]
-  have hD : KPoly.eval 5 cd.D y = 1 + rdot ((chartW fr pr id).eval y) ((chartW fr pr id).eval y) := by
-    simp [cd, chartData, eval_cayleyDen]
-  have hu : cd.u = chartU fr pr id := rfl
+  rw [eval_numAtOf u w V (i k) (hi k k.isLt)]
+  have hD : KPoly.eval 5 cd.D y = 1 + rdot (w.eval y) (w.eval y) := by
+    simp [cd, chartDataOf, eval_cayleyDen]
+  have hu : cd.u = u := rfl
   rw [hD, hu]
   ring
+
+theorem eval_tuplePoly (fr : Frame K) (pr : Params) (id : ChartId) (V : Array (KVec K)) (l : Leaf)
+    (j i : ℕ → ℕ) (hi : ∀ k < l.n, i k < V.size) (y : Fin 5 → ℝ) :
+    let cd := chartData fr pr id V
+    KPoly.eval 5 (l.tuplePoly V cd ((List.range l.n).map (l.L V cd)) j i) y =
+      ∑ k : Fin l.n, KPoly.eval 5 (l.lam V cd k) y *
+        (rdot (rcayleyNum ((chartW fr pr id).eval y) (kval (vertex V (i k)))) (rcross ((chartU fr pr id).eval y) (kval (l.dir V k))) -
+          (1 + rdot ((chartW fr pr id).eval y) ((chartW fr pr id).eval y)) *
+            rdot (kval (vertex V (j k))) (rcross ((chartU fr pr id).eval y) (kval (l.dir V k)))) :=
+  eval_tuplePolyOf _ _ V l j i hi y
 
 /-- The Cramer weights balance any three directions: Σ_k s ((c_{k+1} × c_{k+2}) · u) (u × c_k) = 0. -/
 theorem cramer_balance (s : ℝ) (u : Fin 3 → ℝ) (c : Fin 3 → Fin 3 → ℝ) :
@@ -364,22 +382,21 @@ theorem cramer3 (s : ℝ) (u c0 c1 c2 : Fin 3 → ℝ) :
   funext i
   fin_cases i <;> simp [rcross, rdot] <;> ring
 
-theorem Leaf.check_sound (fr : Frame K) (pr : Params) (id : ChartId) (V : Array (KVec K)) (l : Leaf)
-    (box : Box) (h : l.check V (chartData fr pr id V) id box = true) (hw : ∀ i, 0 ≤ (box i).2)
+theorem Leaf.check_soundOf (uP wP : PVec K) (id : ChartId) (V : Array (KVec K)) (l : Leaf)
+    (box : Box) (h : l.check V (chartDataOf uP wP V) id box = true) (hw : ∀ i, 0 ≤ (box i).2)
     (y : Fin 5 → ℝ) (hy : KPoly.InBox box y) (h0 : 0 ≤ y 0)
     (h1 : id.kind = .tcone → 0 ≤ y 1) (h2 : id.kind = .cone → 0 ≤ y 2)
     (S : Set ℝ³) (hS : S = convexHull ℝ {v | ∃ vj ∈ V.toList.map kval, v = Cap.toEuc vj})
-    (p : MatrixPose) (ξ : ℝ) (hview : p.view = ξ • (chartU fr pr id).eval y)
-    (hR : p.relativeRotation = cayleyMatrix ((chartW fr pr id).eval y 0) ((chartW fr pr id).eval y 1)
-      ((chartW fr pr id).eval y 2)) :
+    (p : MatrixPose) (ξ : ℝ) (hview : p.view = ξ • uP.eval y)
+    (hR : p.relativeRotation = cayleyMatrix (wP.eval y 0) (wP.eval y 1) (wP.eval y 2)) :
     ¬ RupertPose p S := by
-  set cd := chartData fr pr id V with hcd
+  set cd := chartDataOf uP wP V with hcd
   unfold Leaf.check at h
   simp only [Bool.and_eq_true, Bool.or_eq_true, decide_eq_true_eq, List.all_eq_true] at h
   obtain ⟨⟨⟨⟨⟨hshape, hind⟩, hlamck⟩, hposck⟩, hdom⟩, hlen, htup⟩ := h
   set n := l.n with hn
-  set u := (chartU fr pr id).eval y with hu
-  set w := (chartW fr pr id).eval y with hw'
+  set u := uP.eval y with hu
+  set w := wP.eval y with hw'
   -- Index facts.
   unfold Leaf.indicesOk at hind
   simp only [Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true, Bool.not_eq_true',
@@ -442,7 +459,7 @@ theorem Leaf.check_sound (fr : Frame K) (pr : Params) (id : ChartId) (V : Array 
     exact hitv.2 _ (List.getElem_mem this)
   rw [tuplePolyC_eq] at htk
   have hP0 := eval_reduce_nonneg id _ y h0 h1 h2 (eval_lowerDeg_nonneg htk hw hy)
-  rw [eval_tuplePoly fr pr id V l _ _ hiv y] at hP0
+  rw [eval_tuplePolyOf uP wP V l _ _ hiv y] at hP0
   -- The weights.
   have hlam : ∀ k : Fin n, 0 ≤ lamR k := by
     intro k
@@ -509,6 +526,17 @@ theorem Leaf.check_sound (fr : Frame K) (pr : Params) (id : ChartId) (V : Array 
       rw [dif_pos k.isLt]
     simp only [e] at hP0
     exact hP0
+
+theorem Leaf.check_sound (fr : Frame K) (pr : Params) (id : ChartId) (V : Array (KVec K)) (l : Leaf)
+    (box : Box) (h : l.check V (chartData fr pr id V) id box = true) (hw : ∀ i, 0 ≤ (box i).2)
+    (y : Fin 5 → ℝ) (hy : KPoly.InBox box y) (h0 : 0 ≤ y 0)
+    (h1 : id.kind = .tcone → 0 ≤ y 1) (h2 : id.kind = .cone → 0 ≤ y 2)
+    (S : Set ℝ³) (hS : S = convexHull ℝ {v | ∃ vj ∈ V.toList.map kval, v = Cap.toEuc vj})
+    (p : MatrixPose) (ξ : ℝ) (hview : p.view = ξ • (chartU fr pr id).eval y)
+    (hR : p.relativeRotation = cayleyMatrix ((chartW fr pr id).eval y 0) ((chartW fr pr id).eval y 1)
+      ((chartW fr pr id).eval y 2)) :
+    ¬ RupertPose p S :=
+  Leaf.check_soundOf _ _ id V l box h hw y hy h0 h1 h2 S hS p ξ hview hR
 
 end KCap
 
