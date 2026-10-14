@@ -81,9 +81,41 @@ partial def checkLocalFrom (taskCount : Nat) (tables : SharedLocalTables) (k : N
   else
     pure ⟨fun i h => hk i h (by omega)⟩
 
+/-- `checkLocal` with the table's row tasks already spawned. -/
+def checkLocalSpawned (label : String) (taskCount : Nat)
+    (table : AtlasProjectiveLocalViewTree.Table) (tasks : List (Task Bool))
+    (htasks : tasks = sparseTableTasks table taskCount) : IO (PLift table.Valid) := do
+  log s!"checking local {label}: {table.size} rows (root {table.root})"
+  waitChunks s!"local {label}" table.size taskCount tasks
+  if h : sparseTableValidWithTasksB table taskCount tasks = true then
+    pure ⟨Table.Valid.of_sparseWithTasksB (htasks ▸ h)⟩
+  else
+    throw (IO.userError s!"local table {label} is not valid")
+
+/-- `checkLocalFrom` over row tasks spawned for every table up front, so the
+tables are checked concurrently (most have few rows: one at a time, the
+cores sat idle). -/
+partial def checkLocalSpawnedFrom (taskCount : Nat) (tables : SharedLocalTables)
+    (spawned : Array (List (Task Bool)))
+    (hsp : spawned = tables.map fun t => sparseTableTasks t taskCount) (k : Nat)
+    (hk : ∀ i (h : i < tables.size), i < k → tables[i].Valid) :
+    IO (PLift (SharedLocalValid tables)) := do
+  if hlt : k < tables.size then
+    have hk' : k < spawned.size := by simp [hsp, hlt]
+    let checked ← checkLocalSpawned s!"{k}" taskCount tables[k] spawned[k]
+      (by simp [hsp])
+    checkLocalSpawnedFrom taskCount tables spawned hsp (k + 1) (fun i h hik => by
+      rcases Nat.lt_succ_iff_lt_or_eq.mp hik with h' | h'
+      · exact hk i h h'
+      · subst h'
+        exact checked.down)
+  else
+    pure ⟨fun i h => hk i h (by omega)⟩
+
 def checkLocalAll (taskCount : Nat) (tables : SharedLocalTables) :
     IO (PLift (SharedLocalValid tables)) :=
-  checkLocalFrom taskCount tables 0 (fun _ _ h => absurd h (Nat.not_lt_zero _))
+  checkLocalSpawnedFrom taskCount tables (tables.map fun t => sparseTableTasks t taskCount) rfl 0
+    (fun _ _ h => absurd h (Nat.not_lt_zero _))
 
 /-- Check one chart table (with the already checked shared-local tables). -/
 def checkGlobal (label : String) (taskCount : Nat) (table : SolutionTree.Table)
