@@ -242,7 +242,7 @@ Measured times of a from-scratch run on 64 cores with 64 threads
 | cap | 34 s |
 | search | 1.4 min (387,855 nodes) |
 | pack | 49 s |
-| verify | 7.2 min, 694 MiB peak |
+| verify | 7.2 min, 694 MiB peak (3.6 min, 656 MiB with today's later Lean, which checks the tube tables in parallel) |
 
 ### History
 
