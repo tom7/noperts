@@ -118,7 +118,8 @@ static bool ExportCodeTriangle(int code_id, int tri_idx, const TriangleQ &base_t
     } else {
       rows[curr_idx].is_leaf = true;
       // Cap leaves become Lean `empty` rows (rLower -1: no tube may cite them).
-      if (!n->cap.has_value() && !n->direct_cert.has_value() && !n->decomposed_cert.has_value()) {
+      if (!n->cap.has_value() && !n->idcap.has_value() && !n->direct_cert.has_value() &&
+          !n->decomposed_cert.has_value()) {
         std::cerr << "Error: Leaf at path \"" << n->path << "\" lacks any certificate!\n";
         return false;
       }
@@ -136,6 +137,7 @@ static bool ExportCodeTriangle(int code_id, int tri_idx, const TriangleQ &base_t
     const auto &r = rows[i];
     if (r.is_leaf) {
       r_lower[i] = r.node->cap.has_value() ? BigRat(-1)
+                   : r.node->idcap.has_value() ? r.node->idcap->rho
                    : r.node->direct_cert.has_value() ? r.node->direct_cert->r
                                                      : r.node->decomposed_cert->r;
     } else {
@@ -182,6 +184,12 @@ static bool ExportCodeTriangle(int code_id, int tri_idx, const TriangleQ &base_t
           << "," << r.child_ids[2]
           << "," << r.child_ids[3]
           << "," << ZigzagRatString(r_lower[i]);
+    } else if (r.node->idcap.has_value()) {
+      // Identity blow-up row (tag 5): tag, id, root, path_len, [path_digits], rho, then the
+      // certificate's tokens (vertex count, faces; Lean PackedLocalViewTree.readRow).
+      out << ",5," << r.id << "," << root << "," << r.rel_path.size();
+      for (char ch : r.rel_path) out << "," << (ch - '0');
+      out << "," << ZigzagRatString(r.node->idcap->rho) << "," << r.node->idcap->pack;
     } else if (r.node->cap.has_value()) {
       // Empty row (tag 4; a cap leaf): tag, id, root, path_len, [path_digits]
       out << ",4," << r.id << "," << root << "," << r.rel_path.size();

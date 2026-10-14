@@ -131,6 +131,14 @@ struct CapLeaf {
   BigRat r{0};
 };
 
+// An identity blow-up leaf (search/common/idcap.cc; Lean Row.idcap): the
+// triangle's certificate with radius rho, as the tube pack row's tokens after
+// rho (vertex count, faces and their trees; comma-separated).
+struct IdCapLeaf {
+  BigRat rho{0};
+  std::string pack;
+};
+
 struct NodeBounds {
   BigRat direct_r_lower{0};
   BigRat direct_r_upper{0};
@@ -158,6 +166,8 @@ struct TreeNode {
   std::optional<DecomposedCertificate> decomposed_cert;
   // Or a cap leaf (no certificate here; see CapLeaf).
   std::optional<CapLeaf> cap;
+  // Or an identity blow-up leaf.
+  std::optional<IdCapLeaf> idcap;
 
   // Direct bounds computed directly on this triangle.
   NodeBounds direct_bounds;
@@ -169,9 +179,10 @@ struct TreeNode {
   bool is_leaf() const { return children.empty(); }
   bool is_split() const { return !children.empty(); }
   bool has_certificate() const {
-    return direct_cert.has_value() || decomposed_cert.has_value() || cap.has_value();
+    return direct_cert.has_value() || decomposed_cert.has_value() || cap.has_value() || idcap.has_value();
   }
   BigRat GetCertifiedRadius() const {
+    if (idcap.has_value()) return idcap->rho;
     if (direct_cert.has_value()) return direct_cert->r;
     if (decomposed_cert.has_value()) return decomposed_cert->r;
     if (cap.has_value()) return cap->r;

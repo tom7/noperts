@@ -42,6 +42,7 @@
 #include <cstring>
 #include <filesystem>
 #include <fstream>
+#include <functional>
 #include <map>
 #include <mutex>
 #include <string>
@@ -269,6 +270,40 @@ void ReadTubePack(const std::string &path, TubeTable *tt) {
     switch (tag) {
       case 0: t.Skip(4); t.Rat(); break;  // children, rLower
       case 4: tt->leaves.push_back({.tag = 4, .depth = len, .tri = tri}); break;
+      case 5: {  // an identity blow-up row: rho, the vertex count, per face axis, sign, tree
+        TubeLeaf l{.tag = 5, .depth = len, .tri = tri};
+        l.r = t.Rat();
+        t.Int();
+        const int nfaces = t.Int();
+        // A KCap leaf: K, s, per contact a b n S..., tuple count, K inner per tuple.
+        auto skip_leaf = [&]() {
+          const int K = t.Int();
+          t.Rat();
+          for (int k = 0; k < K; k++) {
+            t.Skip(2);
+            t.Skip(t.Int());
+          }
+          t.Skip(t.Int() * K);
+        };
+        // The preorder tree; counts its leaves in l.c (blow-up leaves).
+        std::function<void()> skip_tree = [&]() {
+          const int tag5 = t.Int();
+          if (tag5 == 0) {
+            t.Int();
+            skip_tree();
+            skip_tree();
+          } else if (tag5 == 1) {
+            skip_leaf();
+            l.c += 1;
+          }
+        };
+        for (int f = 0; f < nfaces; f++) {
+          t.Skip(2);
+          skip_tree();
+        }
+        tt->leaves.push_back(l);
+        break;
+      }
       case 1: case 2: {
         t.Int();  // symmetryIndex
         for (int a = 0; a < 4; a++) skip_axis();

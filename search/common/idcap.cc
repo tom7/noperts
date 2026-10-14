@@ -36,6 +36,11 @@
 // --view: an equilateral triangle of the given angular diameter around the
 // view (as tubeprobe); --code/--tri: code C's triangle T of codebdd.json,
 // subdivided along the digits of --path (tubetree::TriangleQ::Subdivide).
+// --trees_in DIR --trees_out DIR [--codes C,...] [--pass_depth 6]: the tree
+// pass: every code's tube tree (tubecode/tuberefine) with its nodes down to
+// --pass_depth replaced by blow-up leaves (Lean Row.idcap; radius rho) where
+// they certify and the existing subtree's radius is smaller.
+// --double: the double screen only (no exact check).
 // --probe N: the candidate witnesses' first-order margin at the triangle's
 // center over an N x N grid of directions per cube face (no certificate).
 // --view_depth D (with --code): a view tree as the identity tube's: each
@@ -48,6 +53,7 @@
 #include <chrono>
 #include <cmath>
 #include <cstdio>
+#include <filesystem>
 #include <future>
 #include <memory>
 #include <mutex>
@@ -73,6 +79,43 @@ namespace {
 using namespace kpoly;
 
 int g_try = 16;
+bool g_exact = true;
+
+// ----- Exact bounds over Q (Lean KPoly.lowerDeg with ExactScalarOps Q: lo = the value) -----
+struct QOps {
+  Q zero() const { return Q(0); }
+  Q add(const Q &a, const Q &b) const { return a + b; }
+  bool is_zero(const Q &a) const { return a == Q(0); }
+  Q scale(const Q &q, const Q &a) const { return q * a; }
+};
+
+// The minimum Bernstein coefficient of p on the box is >= 0 (> 0 when
+// strict); outward-rounded interval coefficients decide first.
+bool ExactLowerOk(const PolyT<Q> &p, const std::array<std::pair<Q, Q>, NV> &box, bool strict) {
+  const std::array<int, NV> deg = Degrees(p);
+  std::map<Exp, Iv> ti;
+  bool any = false;
+  for (const auto &[e, c] : p.t) if (!(c == Q(0))) { ti[e] = IvOfQ(c); any = true; }
+  if (!any) return !strict;  // the zero polynomial: lowerDeg = 0
+  const std::vector<Iv> iv = Bernstein(ti, deg, box, IvOps());
+  double m = INFINITY;
+  for (const Iv &x : iv) m = std::min(m, x.lo);
+  if (strict ? m > 0 : m >= 0) return true;
+  std::map<Exp, Q> tq;
+  for (const auto &[e, c] : p.t) if (!(c == Q(0))) tq[e] = c;
+  for (const Q &x : Bernstein(tq, deg, box, QOps())) {
+    const int sg = Q::Sign(x);
+    if (strict ? sg <= 0 : sg < 0) return false;
+  }
+  return true;
+}
+
+// Pack tokens (Lean PackedLocalViewTree): a rational as zigzag numerator, denominator.
+std::string ZigzagRat(const Q &r) {
+  const BigInt num = r.Numerator(), den = r.Denominator();
+  const BigInt zz = (num >= 0) ? (num * 2) : ((BigInt(0) - num) * 2 - 1);
+  return zz.ToString() + "," + den.ToString();
+}
 
 // ----- The solid -----
 struct Setup {
@@ -279,8 +322,22 @@ struct Leaf {
   std::vector<std::vector<int>> inner;  // per tuple, K inner indices
 };
 
+// A leaf's pack tokens (Lean PackedLocalViewTree.readKLeaf).
+std::string LeafTokens(const Leaf &l) {
+  std::string r = std::to_string(l.K) + "," + ZigzagRat(Q(l.s));
+  for (int k = 0; k < l.K; k++) {
+    r += "," + std::to_string(l.edges[k].first) + "," + std::to_string(l.edges[k].second) + "," +
+         std::to_string(l.S[k].size());
+    for (int j : l.S[k]) r += "," + std::to_string(j);
+  }
+  r += "," + std::to_string(l.inner.size());
+  for (const auto &it : l.inner)
+    for (int i : it) r += "," + std::to_string(i);
+  return r;
+}
+
 struct Stats {
-  std::atomic<int64_t> ok{0}, failed{0}, visited{0};
+  std::atomic<int64_t> ok{0}, failed{0}, visited{0}, exact_fail{0};
   std::atomic<int> max_depth{0};
   // Nodes allowed per chart (0: unlimited); past it the chart fails.
   int64_t budget = 0;
@@ -299,8 +356,12 @@ struct Certifier {
   std::mutex mu;
   std::vector<std::string> fail_boxes;
 
+  Chart<Q> chq;
+
   Certifier(const Setup &s, const ChartId &i, int md, Stats *stt)
-      : st(s), id(i), chart_box(ChartBox(s)), max_depth(md), stats(stt), ch(MakeChart<double>(s, i)) {}
+      : st(s), id(i), chart_box(ChartBox(s)), max_depth(md), stats(stt), ch(MakeChart<double>(s, i)) {
+    if (g_exact) chq = MakeChart<Q>(s, i);
+  }
 
   template <class T> PolyT<T> Reduce(PolyT<T> P) const { return DivideVar(P, 0); }
 
@@ -438,10 +499,63 @@ struct Certifier {
     return Score(W, box, leaf, why) >= -1e-13;
   }
 
+  // The exact check of a screened leaf: Lean's KCap.Leaf.check (idChartId:
+  // the tuple polynomials divided by mu).
+  bool Exact(const Leaf &leaf, const Box &box) {
+    const auto bq = BoxQ(box);
+    const int K = leaf.K;
+    std::vector<V3<Q>> dirs;
+    for (const auto &[a, b] : leaf.edges) dirs.push_back(VSub(st.VQ[b], st.VQ[a]));
+    const Parts<Q> P = MakeParts(chq, dirs, leaf.s);
+    if (K == 3)
+      for (int k = 0; k < 3; k++) if (!ExactLowerOk(P.lam[k], bq, false)) return false;
+    {
+      PolyT<Q> sl;
+      for (int k = 0; k < K; k++) sl = sl + PDot(P.L[k], P.d[k]);
+      if (!ExactLowerOk(sl, bq, true)) return false;
+    }
+    for (int k = 0; k < K; k++) {
+      const auto &S = leaf.S[k];
+      for (int j = 0; j < (int)st.VQ.size(); j++) {
+        if (std::find(S.begin(), S.end(), j) != S.end()) continue;
+        if (!ExactLowerOk(PDot(P.d[k], VSub(st.VQ[S[0]], st.VQ[j])), bq, false)) return false;
+      }
+    }
+    std::vector<std::map<int, PolyT<Q>>> A(K), B(K);
+    auto Aof = [&](int k, int i) -> const PolyT<Q> & {
+      auto it = A[k].find(i);
+      if (it != A[k].end()) return it->second;
+      return A[k][i] = PDot(chq.NV_[i], P.L[k]);
+    };
+    auto Bof = [&](int k, int j) -> const PolyT<Q> & {
+      auto it = B[k].find(j);
+      if (it != B[k].end()) return it->second;
+      return B[k][j] = chq.D * PDot(P.L[k], st.VQ[j]);
+    };
+    int64_t ntup = 1;
+    for (int k = 0; k < K; k++) ntup *= leaf.S[k].size();
+    CHECK((int64_t)leaf.inner.size() == ntup);
+    for (int64_t tix = 0; tix < ntup; tix++) {
+      int64_t r = tix;
+      PolyT<Q> Pp;
+      for (int k = 0; k < K; k++) {
+        const int j = leaf.S[k][r % leaf.S[k].size()];
+        r /= leaf.S[k].size();
+        Pp = Pp + (Aof(k, leaf.inner[tix][k]) - Bof(k, j));
+      }
+      if (!ExactLowerOk(DivideVar(Pp, 0), bq, false)) return false;
+    }
+    return true;
+  }
+
   // Returns the number of leaves of the subtree (0: failed).
-  int64_t Rec(Box box, int depth, bool *ok) {
+  // Certifies the box; *tokens gets its subtree in preorder (Lean
+  // PackedLocalViewTree.readKTree: 0 axis left right, 1 leaf, 2 failed).
+  // Returns the number of leaves.
+  int64_t Rec(Box box, int depth, bool *ok, std::string *tokens) {
     if (stats->budget > 0 && stats->visited.fetch_add(1) >= stats->budget) {
       *ok = false;
+      *tokens = "2";
       return 0;
     }
     {
@@ -480,8 +594,13 @@ struct Certifier {
       if (sc[r].first <= 0) break;
       Leaf leaf;
       if (!Check(cands[sc[r].second], box, &leaf)) continue;
+      if (g_exact && !Exact(leaf, box)) {
+        stats->exact_fail++;
+        continue;
+      }
       stats->ok++;
       *ok = true;
+      *tokens = "1," + LeafTokens(leaf);
       return 1;
     }
     if (depth >= max_depth) {
@@ -516,6 +635,7 @@ struct Certifier {
         fail_boxes.push_back(s);
       }
       *ok = false;
+      *tokens = "2";
       return 0;
     }
     // Split the variable whose halves have the best worse-half score for the
@@ -555,17 +675,19 @@ struct Certifier {
     b2[best].first = m;
     bool ok1 = false, ok2 = false;
     int64_t n1 = 0, n2 = 0;
+    std::string t1, t2;
     if (g_active.load() < g_max_active) {
       g_active++;
-      auto fut = std::async(std::launch::async, [&]() { return Rec(b2, depth + 1, &ok2); });
-      n1 = Rec(b1, depth + 1, &ok1);
+      auto fut = std::async(std::launch::async, [&]() { return Rec(b2, depth + 1, &ok2, &t2); });
+      n1 = Rec(b1, depth + 1, &ok1, &t1);
       n2 = fut.get();
       g_active--;
     } else {
-      n1 = Rec(b1, depth + 1, &ok1);
-      n2 = Rec(b2, depth + 1, &ok2);
+      n1 = Rec(b1, depth + 1, &ok1, &t1);
+      n2 = Rec(b2, depth + 1, &ok2, &t2);
     }
     *ok = ok1 && ok2;
+    *tokens = "0," + std::to_string(best) + "," + t1 + "," + t2;
     return n1 + n2;
   }
 };
@@ -573,24 +695,31 @@ struct Certifier {
 // Certifies the six (or given) charts over st's triangle; false as soon as a
 // chart fails. *leaves gets the total.
 bool CertifyTriangle(const Setup &st, const std::vector<ChartId> &charts, int max_depth, int64_t budget,
-                     int64_t *leaves, bool verbose) {
+                     int64_t *leaves, bool verbose, std::string *pack = nullptr) {
   *leaves = 0;
+  // The row's tokens after rho: the vertex count, the faces, per face its
+  // axis, sign (1: +) and tree.
+  std::string out = std::to_string(st.VQ.size()) + "," + std::to_string(charts.size());
   for (const ChartId &id : charts) {
     Stats stats;
     stats.budget = budget;
     Certifier cert(st, id, max_depth, &stats);
     bool ok = false;
     const auto t1 = std::chrono::steady_clock::now();
-    const int64_t n = cert.Rec(ChartBox(st), 0, &ok);
+    std::string tokens;
+    const int64_t n = cert.Rec(ChartBox(st), 0, &ok, &tokens);
+    out += "," + std::to_string(id.axis) + "," + (id.sign ? "1" : "0") + "," + tokens;
     if (verbose) {
       const double sec = std::chrono::duration<double>(std::chrono::steady_clock::now() - t1).count();
-      printf("  face %-5s %s  leaves %lld  failed %lld  depth %d  (%.1f s)\n", id.Name().c_str(), ok ? "OK  " : "FAIL",
-             (long long)n, (long long)stats.failed.load(), stats.max_depth.load(), sec);
+      printf("  face %-5s %s  leaves %lld  failed %lld  exact-rejected %lld  depth %d  (%.1f s)\n", id.Name().c_str(),
+             ok ? "OK  " : "FAIL", (long long)n, (long long)stats.failed.load(), (long long)stats.exact_fail.load(),
+             stats.max_depth.load(), sec);
       for (const std::string &f : cert.fail_boxes) printf("    failed box %s\n", f.c_str());
     }
     *leaves += n;
     if (!ok) return false;
   }
+  if (pack != nullptr) *pack = out;
   return true;
 }
 
@@ -657,6 +786,54 @@ void Probe(const Setup &st, int n) {
            worst[k].second[2], worst[k].first);
 }
 
+// The tree pass: replaces subtrees of a tube tree by blow-up leaves where
+// they certify (down to pass_depth, under the leaf budget) and the existing
+// subtree certifies a smaller radius than rho; elsewhere the tree is kept.
+struct PassStats { int64_t tried = 0, replaced = 0, cert_leaves = 0, removed_leaves = 0; };
+
+int64_t CountLeaves(const tubetree::TreeNode &n) {
+  if (n.children.empty()) return 1;
+  int64_t c = 0;
+  for (const auto &ch : n.children) c += CountLeaves(*ch);
+  return c;
+}
+
+void Pass(Setup st, tubetree::TreeNode *node, const tubetree::TriangleQ &t, int pass_depth,
+          const std::vector<ChartId> &charts, int max_depth, int64_t budget, PassStats *ps) {
+  const int depth = node->depth();
+  if (depth > pass_depth) return;
+  const tubetree::EffectiveBounds eb = tubetree::ComputeEffectiveBounds(*node);
+  if (!(eb.r_lower >= st.rho)) {
+    for (int k = 0; k < 3; k++) st.c[k] = {t.corners[k].x, t.corners[k].y, t.corners[k].z};
+    int64_t leaves = 0;
+    std::string pack;
+    ps->tried++;
+    const auto t0 = std::chrono::steady_clock::now();
+    if (CertifyTriangle(st, charts, max_depth, budget, &leaves, false, &pack)) {
+      const int64_t removed = CountLeaves(*node);
+      printf("  node %-10s idcap: %6lld leaves replace %lld tube leaves (r_lower %.2e) (%.1f s)\n",
+             node->path.empty() ? "(root)" : node->path.c_str(), (long long)leaves, (long long)removed,
+             eb.r_lower.ToDouble(), std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count());
+      node->children.clear();
+      node->direct_cert.reset();
+      node->decomposed_cert.reset();
+      node->cap.reset();
+      node->idcap = tubetree::IdCapLeaf{st.rho, pack};
+      node->direct_bounds = tubetree::NodeBounds{};
+      node->direct_bounds.direct_r_lower = st.rho;
+      node->direct_bounds.direct_r_upper = st.rho;
+      ps->replaced++;
+      ps->cert_leaves += leaves;
+      ps->removed_leaves += removed;
+      return;
+    }
+  }
+  if (node->children.size() != 4) return;
+  tubetree::TriangleQ ch4[4];
+  t.Subdivide(ch4);
+  for (int c = 0; c < 4; c++) Pass(st, node->children[c].get(), ch4[c], pass_depth, charts, max_depth, budget, ps);
+}
+
 std::vector<double> ParseDoubles(const std::string &s) {
   std::vector<double> r;
   size_t p = 0;
@@ -675,7 +852,8 @@ int main(int argc, char **argv) {
   setvbuf(stdout, nullptr, _IOLBF, 0);
   std::vector<double> view;
   double size = 1e-3;
-  int code = -1, tri = 0, view_depth = -1, probe = 0;
+  int code = -1, tri = 0, view_depth = -1, probe = 0, pass_depth = 6;
+  std::string trees_in, trees_out, codes_arg;
   int64_t max_leaves = 0;
   std::string path, bdd = "codebdd.json";
   Q rho(1, 64);
@@ -694,6 +872,11 @@ int main(int argc, char **argv) {
     else if (a == "--path") path = next();
     else if (a == "--view_depth") view_depth = std::stoi(next());
     else if (a == "--probe") probe = std::stoi(next());
+    else if (a == "--trees_in") trees_in = next();
+    else if (a == "--trees_out") trees_out = next();
+    else if (a == "--codes") codes_arg = next();
+    else if (a == "--pass_depth") pass_depth = std::stoi(next());
+    else if (a == "--double") g_exact = false;
     else if (a == "--max_leaves") max_leaves = std::stoll(next());
     else if (a == "--bdd") bdd = next();
     else if (a == "--rho") rho = Q(std::string_view(next()));
@@ -714,7 +897,7 @@ int main(int argc, char **argv) {
       }
     } else LOG(FATAL) << "unknown argument " << a;
   }
-  CHECK(view.size() == 3 || code >= 0) << "--view x,y,z or --code C --tri T";
+  CHECK(view.size() == 3 || code >= 0 || !trees_in.empty()) << "--view x,y,z, --code C --tri T or --trees_in DIR";
   if (charts.empty())
     for (int ax = 0; ax < 3; ax++) for (bool s : {true, false}) charts.push_back({ax, s});
 
@@ -724,6 +907,41 @@ int main(int argc, char **argv) {
     const BigVecQ3 &q = VertexQ(v);
     st.VQ.push_back({q.x, q.y, q.z});
     st.V.push_back(ToD(st.VQ.back()));
+  }
+  if (!trees_in.empty()) {
+    // The tree pass over every code's tube tree (or --codes).
+    CHECK(!trees_out.empty() && trees_out != trees_in) << "--trees_out DIR (not --trees_in)";
+    std::filesystem::create_directories(trees_out);
+    rapidjson::Document doc;
+    const std::string content = Util::ReadFile(bdd);
+    doc.Parse(content.c_str());
+    CHECK(!doc.HasParseError() && doc.HasMember("codes")) << bdd;
+    const int ncodes = doc["codes"].GetArray().Size();
+    std::vector<bool> want(ncodes, codes_arg.empty());
+    for (double c : ParseDoubles(codes_arg)) want[(int)c] = true;
+    PassStats total;
+    const auto t0 = std::chrono::steady_clock::now();
+    for (int c = 0; c < ncodes; c++) {
+      const std::string in = trees_in + "/tree." + std::to_string(c) + ".json";
+      std::unique_ptr<tubetree::CodeTree> tree = tubetree::LoadCodeTreeJson(in);
+      CHECK(tree != nullptr) << in;
+      if (want[c]) {
+        printf("code %d:\n", c);
+        PassStats ps;
+        for (auto &ct : tree->triangles) Pass(st, ct.root.get(), ct.triangle, pass_depth, charts, max_depth, max_leaves, &ps);
+        printf("code %d: %lld nodes tried, %lld replaced (%lld certificate leaves for %lld tube leaves)\n", c,
+               (long long)ps.tried, (long long)ps.replaced, (long long)ps.cert_leaves, (long long)ps.removed_leaves);
+        total.tried += ps.tried;
+        total.replaced += ps.replaced;
+        total.cert_leaves += ps.cert_leaves;
+        total.removed_leaves += ps.removed_leaves;
+      }
+      CHECK(tubetree::SaveCodeTreeJson(*tree, trees_out + "/tree." + std::to_string(c) + ".json"));
+    }
+    printf("pass: %lld nodes replaced (%lld certificate leaves for %lld tube leaves), %.1f s\n",
+           (long long)total.replaced, (long long)total.cert_leaves, (long long)total.removed_leaves,
+           std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count());
+    return 0;
   }
   tubetree::TriangleQ start;
   if (code >= 0) {

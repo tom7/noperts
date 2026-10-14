@@ -241,6 +241,12 @@ static void SerializeNode(const TreeNode &node, std::string &out) {
     SerializeDecomposedCertificate(*node.decomposed_cert, out);
   }
 
+  // Identity blow-up leaf
+  if (node.idcap.has_value()) {
+    out += ",\n\"idcap\": {\"rho\": \"" + node.idcap->rho.ToString() + "\", \"pack\": \"" + node.idcap->pack +
+           "\"}";
+  }
+
   // Cap leaf
   if (node.cap.has_value()) {
     out += ",\n\"cap\": {\"index\": " + std::to_string(node.cap->index) + ", \"r\": \"" +
@@ -343,6 +349,13 @@ static std::unique_ptr<TreeNode> DeserializeNode(const rapidjson::Value &val) {
   }
 
   // Decomposed certificate
+  if (val.HasMember("idcap") && val["idcap"].IsObject()) {
+    const auto &iobj = val["idcap"];
+    IdCapLeaf leaf;
+    leaf.rho = BigRat(iobj["rho"].GetString());
+    leaf.pack = iobj["pack"].GetString();
+    node->idcap = leaf;
+  }
   if (val.HasMember("cap") && val["cap"].IsObject()) {
     const auto &cobj = val["cap"];
     CapLeaf cap;
