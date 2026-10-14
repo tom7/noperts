@@ -193,6 +193,43 @@ def ATree.check (leafOk : ChartData K → Leaf → Box → Bool) (chartOf : AffM
       t.check leafOk chartOf (chartOf m') m' box'
   | _, _, .fail, _ => false
 
+theorem task_get_spawn {α : Type} (f : Unit → α) (prio : Task.Priority) :
+    (Task.spawn f prio).get = f () := rfl
+
+/-- The number of leaves (and failed leaves) of a tree. -/
+def ATree.leafCount : ATree → ℕ
+  | .split _ l r => l.leafCount + r.leafCount
+  | .affine _ _ t => t.leafCount
+  | _ => 1
+
+/-- `ATree.check` with both sides of every split node whose subtree has more than
+`grain` leaves checked as native tasks (`ATree.checkPar_eq`: the same value). The
+trees are very unbalanced (refinement toward a corner), so a cut by size, not by
+depth. -/
+def ATree.checkPar (leafOk : ChartData K → Leaf → Box → Bool) (chartOf : AffMap → ChartData K)
+    (grain : ℕ) : ChartData K → AffMap → ATree → Box → Bool
+  | cd, m, .split a l r, box =>
+      if grain < l.leafCount + r.leafCount then
+        let tl := Task.spawn fun _ => l.checkPar leafOk chartOf grain cd m (half box a false)
+        let tr := Task.spawn fun _ => r.checkPar leafOk chartOf grain cd m (half box a true)
+        tl.get && tr.get
+      else (ATree.split a l r).check leafOk chartOf cd m box
+  | cd, m, t, box => t.check leafOk chartOf cd m box
+
+theorem ATree.checkPar_eq (leafOk : ChartData K → Leaf → Box → Bool) (chartOf : AffMap → ChartData K)
+    (grain : ℕ) : ∀ (t : ATree) (cd : ChartData K) (m : AffMap) (box : Box),
+      t.checkPar leafOk chartOf grain cd m box = t.check leafOk chartOf cd m box
+  | .split a l r, cd, m, box => by
+    unfold ATree.checkPar
+    split
+    · simp only [task_get_spawn]
+      rw [ATree.checkPar_eq leafOk chartOf grain l, ATree.checkPar_eq leafOk chartOf grain r]
+      rfl
+    · rfl
+  | .leaf w, cd, m, box => rfl
+  | .affine m' b t, cd, m, box => rfl
+  | .fail, cd, m, box => rfl
+
 theorem ATree.check_sound (leafOk : ChartData K → Leaf → Box → Bool) (chartOf : AffMap → ChartData K)
     (Good : (Fin 5 → ℝ) → Prop) (Inv : ChartData K → AffMap → Prop)
     (hleaf : ∀ cd m l box, Inv cd m → (∀ z, m.apply z 0 = z 0) → (∀ i, 0 ≤ (box i).2) →

@@ -213,6 +213,32 @@ def Leaf.check (cd : ChartData K) (id : ChartId) (box : Box) : Bool :=
     nonnegOn (reduce id (tuplePolyC n cA cB (l.termA V cd Ls) (termB V cd Ls)
       (fun k => if h : k < n then jt ⟨k, h⟩ else 0) (fun k => it.getD k 0))) box
 
+/-- `Leaf.check` with the tuples checked as native tasks (`Leaf.checkPar_eq`: the
+same value): a leaf near a codimension-2 view can have hundreds of tuples, each
+an exact Bernstein bound. -/
+def Leaf.checkPar (cd : ChartData K) (id : ChartId) (box : Box) : Bool :=
+  let n := l.n
+  let Ls := (List.range n).map (l.L V cd)
+  let cA := (List.range n).map fun k => ((l.inner.map (·.getD k 0)).eraseDups).map fun i => (i, l.termA V cd Ls k i)
+  let cB := (List.range n).map fun k => (l.S k).map fun j => (j, termB V cd Ls k j)
+  l.shapeOk && l.indicesOk V &&
+  (n = 2 || (List.range 3).all fun k => nonnegOn (l.lam V cd k) box) &&
+  posOn ((List.range n).foldr (fun k acc => KPoly.add 5 (PVec.dot (Ls.getD k (fun _ => KPoly.zero 5)) (l.d V cd k)) acc)
+    (KPoly.zero 5)) box &&
+  (List.range n).all (fun k => (List.range V.size).all fun j =>
+    (l.S k).contains j || nonnegOn (PVec.dot (l.d V cd k) (PVec.const (vsub (vertex V ((l.S k).headD 0)) (vertex V j)))) box) &&
+  let T := tuples n (fun k => l.S k)
+  T.length = l.inner.length &&
+  (((T.zip l.inner).map fun (jt, it) => Task.spawn fun _ =>
+    nonnegOn (reduce id (tuplePolyC n cA cB (l.termA V cd Ls) (termB V cd Ls)
+      (fun k => if h : k < n then jt ⟨k, h⟩ else 0) (fun k => it.getD k 0))) box).all fun t => t.get)
+
+theorem Leaf.checkPar_eq (cd : ChartData K) (id : ChartId) (box : Box) :
+    l.checkPar V cd id box = l.check V cd id box := by
+  unfold Leaf.checkPar Leaf.check
+  simp only [List.all_map, Function.comp_def]
+  rfl
+
 theorem lookupD_eq (L : List (ℕ × KPoly K 5)) (f : ℕ → KPoly K 5) (hL : ∀ p ∈ L, p.2 = f p.1) (i : ℕ) :
     lookupD L i (f i) = f i := by
   induction L with

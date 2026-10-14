@@ -66,7 +66,7 @@ def SparseRowValidAt (symmetryIndex : OrbitIndex) (r : ℚ)
   | .empty .. => r ≤ -1
   | .idcap _ _ triangle rho V faces =>
       r ≤ rho ∧ symmetryIndex = 0 ∧ modelErrorQ = 0 ∧ rho ≤ 1 ∧ vertsMatchModel V = true ∧
-        (rowIdCert V triangle rho faces).check = true
+        (rowIdCert V triangle rho faces).checkPar = true
 
 @[reducible] instance (symmetryIndex : OrbitIndex) (r : ℚ) (get : ℕ → Row)
     (size : ℕ) (row : Row) :
@@ -130,7 +130,9 @@ theorem Row.ValidAt.of_sparse {symmetryIndex : OrbitIndex} {r : ℚ}
   | decomposed => exact h
   | flockDecomposed => exact h
   | empty => exact h
-  | idcap => exact h
+  | idcap =>
+      obtain ⟨h1, h2, h3, h4, h5, h6⟩ := h
+      exact ⟨h1, h2, h3, h4, h5, by rwa [KCap.IdCert.checkPar_eq] at h6⟩
 
 theorem rowsValidAt_of_sparse {symmetryIndex : OrbitIndex} {r : ℚ}
     {get : ℕ → Row} {size : ℕ}

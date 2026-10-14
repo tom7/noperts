@@ -123,6 +123,29 @@ def IdCert.hasFace (cert : IdCert K) (f : ℕ × Bool) : Bool :=
 def IdCert.check (cert : IdCert K) : Bool :=
   decide (0 ≤ cert.rho) && idFaces.all cert.hasFace
 
+/-- `IdCert.faceCheck` with the tree's split nodes of more than `grain` leaves as
+native tasks. -/
+def IdCert.faceCheckPar (cert : IdCert K) (grain : ℕ) (axis : ℕ) (sign : Bool) (t : ATree) : Bool :=
+  let cd := chartDataOf (idU cert.c) (idW axis sign) cert.V
+  t.checkPar (fun cd l box => l.checkPar cert.V cd idChartId box) (idChartOf cert axis sign) grain cd AffMap.idm
+    (idBox cert.rho)
+
+def IdCert.hasFacePar (cert : IdCert K) (grain : ℕ) (f : ℕ × Bool) : Bool :=
+  cert.faces.any fun e => decide (e.1 = f) && cert.faceCheckPar grain f.1 f.2 e.2
+
+/-- `IdCert.check` with the faces, and split nodes of more than 8 leaves, as native
+tasks (`IdCert.checkPar_eq`: the same value). -/
+def IdCert.checkPar (cert : IdCert K) : Bool :=
+  decide (0 ≤ cert.rho) &&
+    ((idFaces.map fun f => Task.spawn fun _ => cert.hasFacePar 8 f).all fun t => t.get)
+
+theorem IdCert.checkPar_eq (cert : IdCert K) : cert.checkPar = cert.check := by
+  have hface : ∀ f, cert.hasFacePar 8 f = cert.hasFace f := by
+    intro f
+    simp only [IdCert.hasFacePar, IdCert.hasFace, IdCert.faceCheckPar, IdCert.faceCheck, ATree.checkPar_eq,
+      Leaf.checkPar_eq]
+  simp only [IdCert.checkPar, IdCert.check, List.all_map, Function.comp_def, task_get_spawn, hface]
+
 /-! ### Chart points -/
 
 section points
