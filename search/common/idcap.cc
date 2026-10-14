@@ -53,7 +53,10 @@
 // 2 also in the split lookahead.
 // --code_jobs N: the pass runs N codes at once (largest trees first).
 // --mu_guard: no mu split where every candidate fails at the box's lowest mu.
-// --skip_cap_nodes: the pass does not attempt subtrees with a cap leaf.
+// --skip_cap_nodes: the pass does not attempt subtrees with a cap leaf (a
+// bad idea with blends: many such subtrees certify).
+// --retry_leaf_contacts: a failing node the pass cannot descend from is
+// retried with --blend_contacts 2.
 // --probe N: the candidate witnesses' first-order margin at the triangle's
 // center over an N x N grid of directions per cube face (no certificate).
 // --view_depth D (with --code): a view tree as the identity tube's: each
@@ -112,6 +115,7 @@ int g_blend_contacts = 0;
 bool g_mu_guard = false;
 int g_mu_guard_bits = 6;
 bool g_skip_cap_nodes = false;
+bool g_retry_leaf_contacts = false;
 int g_affine_gap = 4;
 
 // ----- Exact bounds over Q (Lean KPoly.lowerDeg with ExactScalarOps Q: lo = the value) -----
@@ -156,6 +160,7 @@ struct Setup {
   std::vector<V3<double>> V;
   V3<Q> c[3];  // the view triangle (projective chart points)
   Q rho;
+  int blend_contacts = 0;  // --blend_contacts (raised by --retry_leaf_contacts)
 };
 
 double Dot(const V3<double> &a, const V3<double> &b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
@@ -620,7 +625,7 @@ struct Certifier {
         // --blend_contacts: each contact its own blend (P is a sum over the
         // contacts, so p_k may differ per k): coordinate ascent from the
         // best so far, two rounds over the contacts.
-        if ((g_blend_contacts >= 2 || (g_blend_contacts == 1 && leaf != nullptr)) && best < 0) {
+        if ((st.blend_contacts >= 2 || (st.blend_contacts == 1 && leaf != nullptr)) && best < 0) {
           if (bchoice.empty()) {
             bchoice.resize(K);
             for (int k = 0; k < K; k++) bchoice[k] = {best_it[k], best_it[k], 0};
@@ -1242,7 +1247,19 @@ void Pass(Setup st, tubetree::TreeNode *node, const tubetree::TriangleQ &t, int 
     std::string pack;
     ps->tried++;
     const auto t0 = std::chrono::steady_clock::now();
-    if (CertifyTriangle(st, charts, max_depth, budget, &leaves, false, &pack)) {
+    bool ok = CertifyTriangle(st, charts, max_depth, budget, &leaves, false, &pack);
+    // --retry_leaf_contacts: a failing node the pass cannot descend from (a
+    // leaf, or at pass_depth) would keep its cages: retry it once with
+    // per-contact blends in the lookahead too (slower, but stronger at
+    // codimension-2 views).
+    if (!ok && g_retry_leaf_contacts && st.blend_contacts < 2 && (node->children.size() != 4 || depth == pass_depth)) {
+      Setup st2 = st;
+      st2.blend_contacts = 2;
+      ps->tried++;
+      ok = CertifyTriangle(st2, charts, max_depth, budget, &leaves, false, &pack);
+      if (ok) ps->log += "  (retried with per-contact blends)\n";
+    }
+    if (ok) {
       const int64_t removed = CountLeaves(*node);
       ps->log += StringPrintf("  node %-10s idcap: %6lld leaves replace %lld tube leaves (r_lower %.2e) (%.1f s)\n",
              node->path.empty() ? "(root)" : node->path.c_str(), (long long)leaves, (long long)removed,
@@ -1339,6 +1356,7 @@ int main(int argc, char **argv) {
     else if (a == "--mu_guard") g_mu_guard = true;
     else if (a == "--mu_guard_bits") g_mu_guard_bits = std::stoi(next());
     else if (a == "--skip_cap_nodes") g_skip_cap_nodes = true;
+    else if (a == "--retry_leaf_contacts") g_retry_leaf_contacts = true;
     else if (a == "--affine_gap") g_affine_gap = std::stoi(next());
     else if (a == "--max_leaves") max_leaves = std::stoll(next());
     else if (a == "--bdd") bdd = next();
@@ -1366,6 +1384,7 @@ int main(int argc, char **argv) {
 
   Setup st;
   st.rho = rho;
+  st.blend_contacts = g_blend_contacts;
   for (int v = 0; v < NUM_VERTICES; v++) {
     const BigVecQ3 &q = VertexQ(v);
     st.VQ.push_back({q.x, q.y, q.z});
