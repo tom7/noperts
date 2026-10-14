@@ -81,6 +81,15 @@ def readVertices : Decoder (Fin 3 → VertexIndex) := do
   let c ← readNat
   pure ![vertexSlot a, vertexSlot b, vertexSlot c]
 
+/-- Blended inner points of a 5D certificate row (pack tags 17, 18): per contact
+the other vertex, then per contact t (the inner point (1 − t) v_inner + t v_other). -/
+def readBlend : Decoder ((Fin 3 → VertexIndex) × (Fin 3 → ℚ)) := do
+  let other ← readVertices
+  let t0 ← readRat
+  let t1 ← readRat
+  let t2 ← readRat
+  pure (other, ![t0, t1, t2])
+
 def readMix : Decoder (Fin 3 → Fin 1001) := do
   let a ← readNat
   let b ← readNat

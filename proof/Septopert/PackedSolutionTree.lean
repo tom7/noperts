@@ -137,15 +137,6 @@ def readGlobalRow (chart : CayleyAtlas.ChartIndex) (triangles : Array SolutionTr
     innerIndex
     ballMultiplier })
 
-/-- Blended inner points (tags 17, 18): per contact the other vertex, then per
-contact t (the inner point (1 − t) v_inner + t v_other). -/
-def readBlend : Decoder ((Fin 3 → VertexIndex) × (Fin 3 → ℚ)) := do
-  let other ← readVertices
-  let t0 ← readRat
-  let t1 ← readRat
-  let t2 ← readRat
-  pure (other, ![t0, t1, t2])
-
 def readGlobalRowBlended (chart : CayleyAtlas.ChartIndex) (triangles : Array SolutionTree.Triangle)
     (id : Nat) (interval : SolutionTree.Interval) : Decoder Row := do
   let root ← readNat
