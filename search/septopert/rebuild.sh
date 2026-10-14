@@ -20,7 +20,8 @@
 #            and the search's caps file (frame x = (1,0,-1), e1 = (0,2,0),
 #            e2 = (1,0,1), mu0 = 1/16, |w| <= 1/91)
 #   search   5D search, 22 code triangles x charts 0-3, rounds until nothing
-#            is deferred (search5d --retry_deferred --requeue_deferred)
+#            is deferred (search5d --retry_deferred --requeue_deferred; its
+#            default blended inner points: pack tags 17 / 18)
 #   pack     per-code 5D packs c<C>/t<T>.pack (pack5d --per_code)
 #   verify   Lean: constructSeptopert <tube manifest> <packs> <cap.cert>
 #

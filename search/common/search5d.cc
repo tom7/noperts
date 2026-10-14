@@ -15,7 +15,12 @@
 //                [--split_rule 0|1|2] [--min_peel 5..7]
 //                [--view_scale S] [--view_lookahead] [--lookahead_band B] [--tube_view_depth D]
 //                [--max_full_retry N] [--half_turn_prune] [--tie_dir DIR] [--caps FILE] [--trib_caps FILE]
-//                [--exact_check] [--retry_deferred] [--requeue_deferred]
+//                [--exact_check] [--retry_deferred] [--requeue_deferred] [--blend5d L]
+//
+// --blend5d L (default 2, validated on the Septopert): 0 the inner vertex per
+// contact at the box centre (the earlier behavior); 1 box-aware; 2 box-aware
+// with blended inner points (pack tags 17 / 18; a solid's Lean decoder must
+// read them).
 //
 // --retry_deferred also solves every deferred (df) leaf in the journals again
 // (typically with a larger --subtree_budget); its new records replace it.
@@ -146,6 +151,7 @@ void ExpandTop(const tubeatlas5d::TubeAtlas &atlas, const Args &args, JobState *
 
 int main(int argc, char **argv) {
   Args args;
+  cert5d::g_blend5d = 2;
   bool all = false;
   int code = -1;
   for (int i = 1; i < argc; i++) {
