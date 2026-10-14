@@ -47,6 +47,10 @@
 // the segment between two inner choices' vertices (Lean KCap.Leaf.blends;
 // pack tag 4): where the best inner vertex switches inside a box (a
 // codimension-2 view), the blend has no switch to subdivide toward.
+// (Blends in the split lookahead too: leaf checks only was worse.)
+// --blend_contacts: also a separate blend per contact (coordinate ascent),
+// where several contacts switch independently.
+// --code_jobs N: the pass runs N codes at once (largest trees first).
 // --probe N: the candidate witnesses' first-order margin at the triangle's
 // center over an N x N grid of directions per cube face (no certificate).
 // --view_depth D (with --code): a view tree as the identity tube's: each
@@ -70,9 +74,11 @@
 #include <mutex>
 #include <optional>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include "base/logging.h"
+#include "base/stringprintf.h"
 #include "bignum/big.h"
 #include "bignum/big-overloads.h"
 #include "kpoly.h"
@@ -96,6 +102,8 @@ bool g_exact = true;
 // slanted; at least this many levels apart on a path.
 bool g_affine = false;
 bool g_blend = false;
+// --blend_contacts: also per-contact blends (coordinate ascent).
+bool g_blend_contacts = false;
 int g_affine_gap = 4;
 
 // ----- Exact bounds over Q (Lean KPoly.lowerDeg with ExactScalarOps Q: lo = the value) -----
@@ -486,6 +494,7 @@ struct Certifier {
   // score is >= -1e-13; `why` gets the failing part.
   double Score(const Witness &W, const Box &box, Leaf *leaf = nullptr, std::string *why = nullptr,
                PolyT<double> *worst_poly = nullptr) {
+    const bool blend = g_blend;
     const double kFail = -1e300;
     const int K = W.k.size();
     std::vector<V3<double>> dirs;
@@ -568,9 +577,9 @@ struct Certifier {
       std::vector<int> best_it;
       struct Cand { double bnd; PolyT<double> P; std::vector<int> it; };
       std::vector<Cand> polys;
-      // The winning blend: inner choices a, b at t = tn / 4 (tn = 0: none).
-      std::vector<int> blend_a, blend_b;
-      int blend_tn = 0;
+      // The winning blend, per contact: vertices a, b at t = tn / 4 (tn = 0:
+      // the vertex a); empty: none.
+      std::vector<Leaf::Blend> bchoice;
       for (int64_t ci = 0; ci < ninner; ci++) {
         int64_t q = ci;
         std::vector<int> it(K);
@@ -579,12 +588,12 @@ struct Certifier {
         for (int k = 0; k < K; k++) Pp = Pp + (Aof(k, it[k]) - Bof(k, jt[k]));
         const double bnd = BernsteinLowerD(Reduce(Pp), box);
         if (bnd > best) { best = bnd; best_it = it; }
-        if (g_blend) polys.push_back({bnd, std::move(Pp), it});
+        if (blend) polys.push_back({bnd, std::move(Pp), it});
       }
       // (Experiment, --blend: inner points on the segment between two inner
       // choices' vertices, p_k = (1 - t) v_{a_k} + t v_{b_k}; sound because
       // R p . d <= max(R v_a . d, R v_b . d). Double screen only so far.)
-      if (g_blend && best < 0 && polys.size() > 1) {
+      if (blend && best < 0 && polys.size() > 1) {
         std::sort(polys.begin(), polys.end(), [](auto &a, auto &b) { return a.bnd > b.bnd; });
         const int m = std::min<int>(6, polys.size());
         for (int a = 0; a < m; a++)
@@ -595,12 +604,42 @@ struct Certifier {
               const double bnd = BernsteinLowerD(Reduce(Bl), box);
               if (bnd > best) {
                 best = bnd;
-                blend_a = polys[a].it;
-                blend_b = polys[b].it;
-                blend_tn = tn;
+                bchoice.resize(K);
+                for (int k = 0; k < K; k++)
+                  bchoice[k] = {polys[a].it[k], polys[b].it[k], polys[a].it[k] == polys[b].it[k] ? 0 : tn};
               }
             }
-        if (blend_tn > 0) stats->blended++;
+        // --blend_contacts: each contact its own blend (P is a sum over the
+        // contacts, so p_k may differ per k): coordinate ascent from the
+        // best so far, two rounds over the contacts.
+        if (g_blend_contacts && best < 0) {
+          if (bchoice.empty()) {
+            bchoice.resize(K);
+            for (int k = 0; k < K; k++) bchoice[k] = {best_it[k], best_it[k], 0};
+          }
+          auto Term = [&](int k, const Leaf::Blend &c) -> PolyT<double> {
+            if (c.tn == 0) return Aof(k, c.a);
+            const double t = c.tn / 4.0;
+            return (1 - t) * Aof(k, c.a) + t * Aof(k, c.b);
+          };
+          for (int round = 0; round < 2 && best < 0; round++)
+            for (int k = 0; k < K && best < 0; k++) {
+              PolyT<double> rest;
+              for (int k2 = 0; k2 < K; k2++)
+                rest = rest + ((k2 == k ? PolyT<double>() : Term(k2, bchoice[k2])) - Bof(k2, jt[k2]));
+              for (int ia = 0; ia < (int)I[k].size(); ia++)
+                for (int ib = ia; ib < (int)I[k].size(); ib++)
+                  for (int tn : {0, 1, 2, 3}) {
+                    if ((ia == ib) != (tn == 0)) continue;
+                    const Leaf::Blend c{I[k][ia], I[k][ib], tn};
+                    const double bnd = BernsteinLowerD(Reduce(rest + Term(k, c)), box);
+                    if (bnd > best) { best = bnd; bchoice[k] = c; }
+                  }
+            }
+        }
+        bool any = false;
+        for (const Leaf::Blend &c : bchoice) any = any || c.tn > 0;
+        if (any) stats->blended++; else bchoice.clear();
       }
       if (worst_poly != nullptr && best < score) {
         PolyT<double> Pp;
@@ -657,11 +696,11 @@ struct Certifier {
         if (!leaf) continue;
         return score;
       }
-      if (leaf && blend_tn > 0) {
+      if (leaf && !bchoice.empty()) {
         std::vector<int> it(K);
         for (int k = 0; k < K; k++) {
-          if (blend_a[k] == blend_b[k]) { it[k] = blend_a[k]; continue; }
-          const Leaf::Blend bl{blend_a[k], blend_b[k], blend_tn};
+          if (bchoice[k].tn == 0) { it[k] = bchoice[k].a; continue; }
+          const Leaf::Blend bl = bchoice[k];
           int bi = 0;
           while (bi < (int)leaf->blends.size() && !(leaf->blends[bi].a == bl.a && leaf->blends[bi].b == bl.b &&
                                                      leaf->blends[bi].tn == bl.tn))
@@ -1144,7 +1183,10 @@ void Probe(const Setup &st, int n) {
 // The tree pass: replaces subtrees of a tube tree by blow-up leaves where
 // they certify (down to pass_depth, under the leaf budget) and the existing
 // subtree certifies a smaller radius than rho; elsewhere the tree is kept.
-struct PassStats { int64_t tried = 0, replaced = 0, cert_leaves = 0, removed_leaves = 0; };
+struct PassStats {
+  int64_t tried = 0, replaced = 0, cert_leaves = 0, removed_leaves = 0;
+  std::string log;  // (printed per code: codes may run concurrently)
+};
 
 int64_t CountLeaves(const tubetree::TreeNode &n) {
   if (n.children.empty()) return 1;
@@ -1166,7 +1208,7 @@ void Pass(Setup st, tubetree::TreeNode *node, const tubetree::TriangleQ &t, int 
     const auto t0 = std::chrono::steady_clock::now();
     if (CertifyTriangle(st, charts, max_depth, budget, &leaves, false, &pack)) {
       const int64_t removed = CountLeaves(*node);
-      printf("  node %-10s idcap: %6lld leaves replace %lld tube leaves (r_lower %.2e) (%.1f s)\n",
+      ps->log += StringPrintf("  node %-10s idcap: %6lld leaves replace %lld tube leaves (r_lower %.2e) (%.1f s)\n",
              node->path.empty() ? "(root)" : node->path.c_str(), (long long)leaves, (long long)removed,
              eb.r_lower.ToDouble(), std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count());
       node->children.clear();
@@ -1231,6 +1273,7 @@ int main(int argc, char **argv) {
   int code = -1, tri = 0, view_depth = -1, probe = 0, pass_depth = 6;
   std::string trees_in, trees_out, codes_arg;
   int64_t max_leaves = 0;
+  int code_jobs = 1;
   std::string path, bdd = "codebdd.json";
   Q rho(1, 64);
   int max_depth = 40;
@@ -1255,6 +1298,8 @@ int main(int argc, char **argv) {
     else if (a == "--double") g_exact = false;
     else if (a == "--affine") g_affine = true;
     else if (a == "--blend") g_blend = true;
+    else if (a == "--blend_contacts") g_blend_contacts = true;
+    else if (a == "--code_jobs") code_jobs = std::stoi(next());
     else if (a == "--affine_gap") g_affine_gap = std::stoi(next());
     else if (a == "--max_leaves") max_leaves = std::stoll(next());
     else if (a == "--bdd") bdd = next();
@@ -1300,23 +1345,44 @@ int main(int argc, char **argv) {
     for (double c : ParseDoubles(codes_arg)) want[(int)c] = true;
     PassStats total;
     const auto t0 = std::chrono::steady_clock::now();
-    for (int c = 0; c < ncodes; c++) {
-      const std::string in = trees_in + "/tree." + std::to_string(c) + ".json";
-      std::unique_ptr<tubetree::CodeTree> tree = tubetree::LoadCodeTreeJson(in);
-      CHECK(tree != nullptr) << in;
-      if (want[c]) {
-        printf("code %d:\n", c);
-        PassStats ps;
-        for (auto &ct : tree->triangles) Pass(st, ct.root.get(), ct.triangle, pass_depth, charts, max_depth, max_leaves, &ps);
-        printf("code %d: %lld nodes tried, %lld replaced (%lld certificate leaves for %lld tube leaves)\n", c,
-               (long long)ps.tried, (long long)ps.replaced, (long long)ps.cert_leaves, (long long)ps.removed_leaves);
-        total.tried += ps.tried;
-        total.replaced += ps.replaced;
-        total.cert_leaves += ps.cert_leaves;
-        total.removed_leaves += ps.removed_leaves;
-      }
-      CHECK(tubetree::SaveCodeTreeJson(*tree, trees_out + "/tree." + std::to_string(c) + ".json"));
+    // Codes are independent (one tree file each): --code_jobs of them at
+    // once, the slowest (most tube leaves) first; each code's log is
+    // printed when it is done.
+    std::mutex out_mu;
+    std::atomic<int> next{0};
+    std::vector<int> order(ncodes);
+    for (int c = 0; c < ncodes; c++) order[c] = c;
+    if (code_jobs > 1) {
+      std::vector<int64_t> size(ncodes, 0);
+      for (int c = 0; c < ncodes; c++)
+        if (want[c]) size[c] = std::filesystem::file_size(trees_in + "/tree." + std::to_string(c) + ".json");
+      std::stable_sort(order.begin(), order.end(), [&](int a, int b) { return size[a] > size[b]; });
     }
+    auto Worker = [&]() {
+      for (int i; (i = next++) < ncodes;) {
+        const int c = order[i];
+        const std::string in = trees_in + "/tree." + std::to_string(c) + ".json";
+        std::unique_ptr<tubetree::CodeTree> tree = tubetree::LoadCodeTreeJson(in);
+        CHECK(tree != nullptr) << in;
+        if (want[c]) {
+          PassStats ps;
+          for (auto &ct : tree->triangles)
+            Pass(st, ct.root.get(), ct.triangle, pass_depth, charts, max_depth, max_leaves, &ps);
+          std::lock_guard<std::mutex> l(out_mu);
+          printf("code %d:\n%scode %d: %lld nodes tried, %lld replaced (%lld certificate leaves for %lld tube leaves)\n",
+                 c, ps.log.c_str(), c, (long long)ps.tried, (long long)ps.replaced, (long long)ps.cert_leaves,
+                 (long long)ps.removed_leaves);
+          total.tried += ps.tried;
+          total.replaced += ps.replaced;
+          total.cert_leaves += ps.cert_leaves;
+          total.removed_leaves += ps.removed_leaves;
+        }
+        CHECK(tubetree::SaveCodeTreeJson(*tree, trees_out + "/tree." + std::to_string(c) + ".json"));
+      }
+    };
+    std::vector<std::thread> workers;
+    for (int j = 0; j < std::max(1, code_jobs); j++) workers.emplace_back(Worker);
+    for (std::thread &w : workers) w.join();
     printf("pass: %lld nodes replaced (%lld certificate leaves for %lld tube leaves), %.1f s\n",
            (long long)total.replaced, (long long)total.cert_leaves, (long long)total.removed_leaves,
            std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count());
