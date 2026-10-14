@@ -256,6 +256,9 @@ inline double BernsteinLowerD(const PolyT<double> &p, const Box &box) {
   const int n = stride[0] * sz[0];
   std::vector<double> c(n, 0.0);
   for (const auto &[e, v] : p.t) {
+    // (A zero coefficient may have a larger exponent than deg: skip it, as
+    // the degrees do; indexing it wrote past c, racing other threads' heap.)
+    if (v == 0) continue;
     int idx = 0;
     for (int i = 0; i < NV; i++) idx += e[i] * stride[i];
     c[idx] += v;
