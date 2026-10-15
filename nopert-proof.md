@@ -152,5 +152,4 @@ theorems that turn valid tables into `¬ IsRupert`.
 | [Candidate #231](nopert231.md) | `C5Model` | yes | | | | fivefold |
 
 All use codes, the view cover, balanced witnesses, the 5D search and the
-native check. Blended inner points are in the data of every solid except
-the snub cube (whose search has not been rerun with them).
+native check. Blended inner points are in the data of every solid.
