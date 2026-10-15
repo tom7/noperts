@@ -2,41 +2,35 @@
 
 This directory is the C++ search that produced the certificate data for the
 pentagonal hexecontahedron ([../../pentagonal-hexecontahedron.md](../../pentagonal-hexecontahedron.md)).
-It comes from the `pentagonalhexecontahedron` branch of nopert229 at 04d115c,
-without its working notes (`notes/`). Changes: paths (cc-lib at `../../cc-lib`,
-the Lean project at `../../proof`, work directory `../../work-ph`), the
-makefile (cc-lib only), and the
-Lean data generators (`update_vertices.py` and `emit_wedge_cover.py`, now
-shared in `../common/`; `scripts/snub_ico_group.py`, `ph_statement_data.py`), which
-come from the same-named branch of Noperthedron (da2965b3; Apache-2.0 there)
-and now write this repository's module names into
-`../../proof/PentagonalHexecontahedron/`. License: GPLv3 (`../COPYING`).
+It came from the `pentagonalhexecontahedron` branch of nopert229 at 04d115c,
+without its working notes, and its Lean data generators from the same-named
+branch of Noperthedron (da2965b3; Apache-2.0 there); the Lean formalization
+is now in this repository's `../../proof/PentagonalHexecontahedron/` (former
+names: `../../BUILDING.md`), and the top-level result is
+`isNopert_of_certificatesValid` (see the page above). License: GPLv3
+(`../COPYING`).
 
-Since 2026-10-10 the C++ code that the solids' searches share is in
-[`../common/`](../common/); the makefile builds it here, with this solid's
-model headers (`model_vertices.h`, `symmetry_neighbors.h`) and `solid.h`
-(its settings for the shared code). This directory keeps the model files,
-the Lean data generators, `rebuild.sh` and the makefile. The code map below
-names the files as in the branch.
-
-The text below is the branch's README. Its Lean names are the branch's
-(`Noperthedron/PentagonalHexecontahedron/`); in this repository the modules
-are in `proof/PentagonalHexecontahedron/` and the statement is
-`isNopert_of_certificatesValid` (see the page above).
+The C++ code that the solids' searches share is in
+[`../common/`](../common/) (including the shared Lean data generators
+`update_vertices.py` and `emit_wedge_cover.py`); the makefile builds it here,
+with this solid's model headers (`model_vertices.h`,
+`symmetry_neighbors.h`) and `solid.h` (its settings for the shared code).
+This directory keeps the model files, the solid's own Lean data generators
+(`scripts/`), `rebuild.sh` and the makefile.
 
 ## The pentagonal hexecontahedron is a Nopert
 
-A polyhedron is *Rupert* if a hole can be cut through it through which a congruent copy can pass, and a *Nopert* if it is not Rupert (Lean: `¬ IsRupert`). This repository, together with the Lean formalization on the `pentagonalhexecontahedron` branch of [Noperthedron](https://github.com/jcreedcmu/Noperthedron), proves that **every pentagonal hexecontahedron is a Nopert**:
+A polyhedron is *Rupert* if a hole can be cut through it through which a congruent copy can pass, and a *Nopert* if it is not Rupert (Lean: `¬ IsRupert`). This search, together with the Lean formalization in `../../proof/`, proves that **every pentagonal hexecontahedron is a Nopert**:
 
 ```lean
--- Noperthedron/PentagonalHexecontahedron/Statement.lean
+-- proof/PentagonalHexecontahedron/Statement.lean
 theorem polarDualSnubDodecahedron_not_rupert (h : ∀ P : IModel, ¬ IsRupert P.toC5.verts) :
     ∀ V : Finset ℝ³, (V : Set ℝ³) = pentagonalHexecontahedron → ¬ IsRupert V
 theorem pentagonalHexecontahedron_not_rupert (h : ∀ P : IModel, ¬ IsRupert P.toC5.verts) :
     ∀ V : Finset ℝ³, IsPentagonalHexecontahedron V → ¬ IsRupert V
 ```
 
-- `IsRupert` is the Noperthedron project's statement of the Rupert property (`Noperthedron/MainTheorem.lean`, Mathlib only).
+- `IsRupert` is the Noperthedron project's statement of the Rupert property (`../../proof/MainTheorem.lean`, Mathlib only).
 - `pentagonalHexecontahedron` is the polar dual of Wikipedia's snub dodecahedron: the set of poles of the facet planes of its convex hull (`facetPoles`), i.e. the points y with ⟨x, y⟩ ≤ 1 for every vertex x, with equality at three affinely independent vertices.
   - The snub dodecahedron is Wikipedia's definition, literally: ξ ≈ 0.94315 is the real zero of x³ + 2x² − φ², and the 60 vertices are the images of p = (φ² − φ²ξ, −φ³ + φξ + 2φξ², ξ) under repeated multiplication by M₁ (the rotation by 2π/5 about (0, 1, φ)) and M₂ (the cyclic shift of coordinates) (`WikipediaSnub.lean`).
   - Lean proves that this set has exactly the 92 expected points (`pentagonalHexecontahedron_eq`), so the theorem's hypothesis on `V` is satisfiable (`pentagonalHexecontahedron_finite`).
@@ -115,9 +109,11 @@ As for the snub dodecahedron (the solids share the icosahedral group and frame):
 
 ## Code map
 
+The shared files are in `../common/`; the solid's own are here.
+
 - Model: `snub_model.txt` (the snub dodecahedron, from `../common/snub_model.py`), `ph_model.py`, `ph_model.txt` (its polar dual), `ph_crosscheck.py` (against McCooey's coordinates); `codebdd.cc` (codes; `rational_vertex` lines are used verbatim); `model.{h,cc}`.
 - Identity tube: `tube.{h,cc}`, `tubecert.cc`, `tubetree.{h,cc}`, `tubecode.cc`, `tuberefine.cc`, `export_codetrees_pack.cc`.
 - 5D search and packing: `exact5d`, `geom5d`, `contacts5d`, `bounds5d`, `cert5d`, `lp5d`, `rows5d`, `solve5d`, `tubeatlas5d`; `search5d.cc`, `pack5d.cc`, `scoreboard5d.cc`; `icoprune_check.cc`.
 - Rendering: `codebdd --texture`.
 - `rebuild.sh` runs the whole pipeline; `*_test.cc` are unit tests (`make`).
-- Lean (Noperthedron `pentagonalhexecontahedron`): `Noperthedron/PentagonalHexecontahedron/`, plus the generic `Noperthedron/Atlas/`.
+- Lean: `../../proof/PentagonalHexecontahedron/`, `../../proof/Pipeline/` and `../../proof/Atlas/`.

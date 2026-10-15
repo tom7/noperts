@@ -1,42 +1,33 @@
 > **Provenance.** This directory is the C++ certificate search that produced
-> candidate #231's certificate data. It comes, with its history, from the
+> candidate #231's certificate data. It came, with its history, from the
 > `nopert231` branch of nopert229 at commit e53dfda (2026-10-04), minus the
-> branch's private working notes (`notes/`). GPLv3 (`../COPYING`). Changes:
-> build and script paths point into this repository (cc-lib at `../../cc-lib`,
-> the Lean project at `../../proof`, work directory `../../work-231`),
-> and the Lean data generators, which were in
-> Noperthedron's `scripts/` (`nopert231` branch, 0c83e4ba; also imported with
-> their history), are in `scripts/`, emitting this repository's module names.
-> They reproduce the committed `proof/Nopert231/` data byte for byte. The text
-> below is the branch's README: Lean names and paths in it are the branch's
-> (Noperthedron `Noperthedron/Nopert231/...` is `proof/Nopert231/...` here,
-> namespace `Nopert231`; `Noperthedron/Atlas/...` is `proof/Atlas/...`). Two
-> differences: here no `native_decide` is used anywhere (chart 3 and the tangent
-> cones are checked by the kernel, `table_valid_kernel`), and the executables
-> `validate_code_pack`, `check_identity_tube`, `check_global_rows` and
-> `exact5d_golden` are not in this repository (so `exact5d_test` skips its
-> comparison with Lean). For the statement as proved in this repository and
-> how to run the pipeline here, see [`../../nopert231.md`](../../nopert231.md).
+> branch's private working notes, and its Lean data generators from
+> Noperthedron's `nopert231` branch (0c83e4ba, also with their history). The
+> Lean formalization is now in this repository's `../../proof/Nopert231/`
+> (former names: `../../BUILDING.md`). Unlike the branch, it uses no
+> `native_decide` (chart 3 and the tangent cones are checked by the kernel,
+> `table_valid_kernel`), and it does not have the branch's development
+> executables `validate_code_pack`, `check_identity_tube`,
+> `check_global_rows` and `exact5d_golden` (so `exact5d_test` skips its
+> comparison with Lean). GPLv3 (`../COPYING`). For the statement as proved
+> and how to run the pipeline, see [`../../nopert231.md`](../../nopert231.md).
 >
-> Since 2026-10-10 the C++ code that the solids' searches share is in
-> [`../common/`](../common/); the makefile builds it here, with this solid's
+> The C++ code that the solids' searches share is in
+> [`../common/`](../common/) (including the shared Lean data generator
+> `update_vertices.py`); the makefile builds it here, with this solid's
 > `model_vertices.h` and `solid.h` (its settings for the shared code). This
 > directory keeps the model files, #231's own `codebdd.cc` (its model comes
 > from `nopert231_root.txt` and its view triangle is the upper wedge), its own
-> tests (`model231_test.cc`, `tube231_test.cc`), the Lean data generators,
-> `rebuild.sh` and the makefile. #231's copy of `tubetree.{h,cc}` had extra
-> features that no tool used (external subtree files, an in-memory tube
-> atlas, the root wedge's path triangles); they and their tests were dropped
-> (the two path helpers moved into `tube231_test.cc`). The code map below
-> names the files as in the branch.
+> tests (`model231_test.cc`, `tube231_test.cc`), its own Lean data
+> generators (`scripts/`), `rebuild.sh` and the makefile.
 
 # Candidate #231 is a Nopert
 
-A convex polyhedron is *Rupert* if a hole can be cut through it through which a congruent copy can pass, and a *Nopert* if it is not Rupert (Lean: `¬ IsRupert`). Candidate #231 is a convex polyhedron with 20 vertices and 27 faces (2 pentagons, 20 triangles and 5 planar quadrilaterals) and fivefold rotational symmetry about the z axis. This repository, together with the Lean formalization on the `nopert231` branch of [Noperthedron](https://github.com/jcreedcmu/Noperthedron), proves that it is a Nopert.
+A convex polyhedron is *Rupert* if a hole can be cut through it through which a congruent copy can pass, and a *Nopert* if it is not Rupert (Lean: `¬ IsRupert`). Candidate #231 is a convex polyhedron with 20 vertices and 27 faces (2 pentagons, 20 triangles and 5 planar quadrilaterals) and fivefold rotational symmetry about the z axis. This search, together with the Lean formalization in `../../proof/`, proves that it is a Nopert.
 
 ## What is proved
 
-The executable `constructNopert231` (Noperthedron, `constructNopert231.lean`) checks the certificate data and constructs a value of type
+The executable `constructNopert231` (`../../proof/constructNopert231.lean`) checks the certificate data and constructs a value of type
 
 ```lean
 ∀ P : C5Model, ¬ IsRupert P.verts
@@ -49,8 +40,8 @@ and instantiates it:
 ¬ IsRupert Ideal231.model.verts  -- idealized #231
 ```
 
-- `IsRupert` is the Noperthedron project's statement of the Rupert property (`Noperthedron/MainTheorem.lean`, Mathlib only).
-- `C5Model` (`Noperthedron/Nopert231/Vertices.lean`) is any polyhedron made of four real seed vertices rotated by 2πk/5 about z (k = 0..4), with every vertex within `modelErrorQ` = 6·10⁻¹⁶ of the fixed rational vertices `rationalVertices`.
+- `IsRupert` is the Noperthedron project's statement of the Rupert property (`../../proof/MainTheorem.lean`, Mathlib only).
+- `C5Model` (`../../proof/Nopert231/Vertices.lean`) is any polyhedron made of four real seed vertices rotated by 2πk/5 about z (k = 0..4), with every vertex within `modelErrorQ` = 6·10⁻¹⁶ of the fixed rational vertices `rationalVertices`.
 - `exactVerts` rotates the rational seeds exactly (`exactModel`, `TightApproximation.lean`). Its quads are planar only to about 2·10⁻¹⁶.
 - `Ideal231.model` is idealized #231: exact fivefold symmetry and exactly planar quads (`Ideal231.quad_planar`). Its closeness to the rational vertices (about 4.1·10⁻¹⁶) is decided by the kernel.
 
@@ -58,7 +49,7 @@ and instantiates it:
 - the kernel proves the bridge `not_rupert_of_valid_tables` (valid certificate tables ⇒ ¬ IsRupert), the wedge cover (`codeTriangles_cover`, by `decide +kernel`), the closeness of the models and the symmetry reductions;
 - the certificate tables themselves are checked by compiled Lean code (`Table.Valid` evaluated natively, as `native_decide` does), and the program carries the resulting proofs into the final proposition.
 
-So the trusted base is Lean's kernel plus the compiled evaluation of the checkers: the same trust as `native_decide` (`Lean.ofReduceBool`). A few small fixed tables (chart 3, the tangent cones) use `native_decide` directly.
+So the trusted base is Lean's kernel plus the compiled evaluation of the checkers: the same trust as `native_decide` (`Lean.ofReduceBool`). The small fixed tables (chart 3, the tangent cones) are checked by the kernel.
 
 The verifier ends with:
 
@@ -70,9 +61,9 @@ instantiated: the exact model (exactVerts) and idealized #231 are not Rupert
 ## Reproducing the proof
 
 Prerequisites:
-- this repository, with `../cc-lib`, `../ruperts` and `../sqlite` beside it (as for the other tom7 projects);
+- cc-lib at `../../cc-lib` (`../../get-cc-lib.sh`);
 - clang with C++23, and GMP;
-- a checkout of Noperthedron's `nopert231` branch at `../Noperthedron`, with its Lean toolchain (elan/lake).
+- the Lean project at `../../proof`, with its Lean toolchain (elan/lake).
 
 ```
 ./rebuild.sh --work /path/to/work
@@ -97,7 +88,7 @@ Peak memory is about 32 GB (the Lean verifier); `--mem_gb` caps every stage. `tu
 
 **Unit tests.** `make` builds them and `make test` runs them. Tests that need generated data print SKIPPED and pass when it is absent (codebdd.json: run the model stage first); these environment variables point them at it:
 - `CODEBDD_JSON` (default `codebdd.json`): contacts5d, cert5d, exact5d, tube;
-- `EXACT5D_GOLDEN` (no default: the executable is not in this repository; `lake build exact5d_golden` in Noperthedron's `nopert231` branch): exact5d, which compares every exact check with Lean;
+- `EXACT5D_GOLDEN` (no default; the executable is not in this repository, see above): exact5d, which compares every exact check with Lean;
 - `TREES_DIR` (no default; e.g. `work/trees_r2` after the tube stage, or as the first argument; solve5d and tubeatlas5d then use `./codebdd.json`): solve5d, tubeatlas5d, tube;
 - `TUBE_MANIFEST` (optional, e.g. `work/tube_packs/manifest.txt`): tubeatlas5d compares the tree radii with the exported packs.
 
@@ -142,9 +133,11 @@ The search is journaled and restartable; deferred leaves are retried in the same
 
 ### Packs and checking
 
-`pack5d --per_code` turns the journals into Lean packs, one per code triangle and chart (chart 0 has about 25M rows). `constructNopert231` decodes them behind a `codeRoot` row (decoding is untrusted: the decoded table is what gets checked), checks every row of every chart and every tube table in parallel native code, and applies the kernel-proved soundness theorems (`AtlasProjectiveSolutionTree`, `IdentityTube.not_translated_rupert_of_tables`, `IsNotRupert.not_rupert_of_valid_tables`). `check_global_rows` checks individual per-code packs (bookkeeping for `scoreboard5d`), and `validate_code_pack` / `check_identity_tube` check the tube packs on their own.
+`pack5d --per_code` turns the journals into Lean packs, one per code triangle and chart (chart 0 has about 25M rows). `constructNopert231` decodes them behind a `codeRoot` row (decoding is untrusted: the decoded table is what gets checked), checks every row of every chart and every tube table in parallel native code, and applies the kernel-proved soundness theorems (`AtlasProjectiveSolutionTree`, `IdentityTube.not_translated_rupert_of_tables`, `IsNotRupert.not_rupert_of_valid_tables`).
 
 ## Code map
+
+The shared files are in `../common/`; #231's own are here.
 
 - `nopert231_root.txt`: the polyhedron's seed vertices.
 - Model and codes:
@@ -159,6 +152,6 @@ The search is journaled and restartable; deferred leaves are retried in the same
   - `exact5d` (the exact checks, mirroring Lean), `geom5d` (view triangles and Cayley boxes), `contacts5d`, `bounds5d`, `cert5d`, `lp5d`, `rows5d`, `solve5d`, `tubeatlas5d` (the tube as seen by the search);
   - `search5d.cc`, `pack5d.cc`, `scoreboard5d.cc` (per-job status from the journals and packs).
 - `rebuild.sh` runs the whole pipeline; `*_test.cc` are the unit tests.
-- Lean (Noperthedron `nopert231`): `Noperthedron/Nopert231/` and the generic `Noperthedron/Atlas/`, plus the executables `constructNopert231`, `validate_code_pack`, `check_identity_tube`, `check_global_rows` and `exact5d_golden`. `Noperthedron/Nopert231/README.md` maps the files.
+- Lean: `../../proof/Nopert231/` and the generic `../../proof/Atlas/`, plus the executable `constructNopert231`. `../../proof/Nopert231/README.md` maps the files.
 
 The git history of this directory records how this code came to be.

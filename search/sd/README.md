@@ -1,38 +1,33 @@
 > **Provenance.** This directory is the C++ certificate search that produced
-> the snub dodecahedron's certificate data. It comes from the
-> `snubdodecahedron` branch of nopert229 at commit b8c9065 (2026-10-04), minus
-> the branch's private working notes. GPLv3 (`../COPYING`). Changes: build and
-> script paths point into this repository (cc-lib at `../../cc-lib`, the Lean
-> project at `../../proof`, work directory `../../work-sd`), and the Lean data
-> generators, which were in Noperthedron's `scripts/` (`snubdodecahedron`
-> branch, bc31c747), are in `scripts/`, emitting this repository's module
-> names. They reproduce the committed `proof/SnubDodecahedron/` data byte for
-> byte. The text below is the branch's README: Lean names and paths in it are
-> the branch's (Noperthedron `Noperthedron/SnubDodecahedron/...` is
-> `proof/SnubDodecahedron/...` here; see `../../BUILDING.md`, "Former names").
-> For the statement as proved in this repository and how to run the pipeline
-> here, see [`../../snub-dodecahedron.md`](../../snub-dodecahedron.md).
+> the snub dodecahedron's certificate data. It came from the
+> `snubdodecahedron` branch of nopert229 at commit b8c9065 (2026-10-04),
+> minus the branch's private working notes, and its Lean data generators from
+> the `snubdodecahedron` branch of Noperthedron (bc31c747); the Lean
+> formalization is now in this repository's `../../proof/` (former names:
+> `../../BUILDING.md`). GPLv3 (`../COPYING`). For the statement as proved and
+> how to run the pipeline, see
+> [`../../snub-dodecahedron.md`](../../snub-dodecahedron.md).
 >
-> Since 2026-10-10 the C++ code that the solids' searches share is in
+> The C++ code that the solids' searches share is in
 > [`../common/`](../common/); the makefile builds it here, with this solid's
 > model headers (`model_vertices.h`, `symmetry_neighbors.h`) and `solid.h`
 > (its settings for the shared code). This directory keeps the model files,
-> the Lean data generators, `rebuild.sh` and the makefile. The code map
-> below names the files as in the branch.
+> the solid's own Lean data generators (`scripts/`), `rebuild.sh` and the
+> makefile.
 
 # The snub dodecahedron is a Nopert
 
-A polyhedron is *Rupert* if a hole can be cut through it through which a congruent copy can pass, and a *Nopert* if it is not Rupert (Lean: `¬ IsRupert`). This repository, together with the Lean formalization on the `snubdodecahedron` branch of [Noperthedron](https://github.com/jcreedcmu/Noperthedron), proves that **every snub dodecahedron is a Nopert**:
+A polyhedron is *Rupert* if a hole can be cut through it through which a congruent copy can pass, and a *Nopert* if it is not Rupert (Lean: `¬ IsRupert`). This search, together with the Lean formalization in `../../proof/`, proves that **every snub dodecahedron is a Nopert**:
 
 ```lean
--- Noperthedron/SnubDodecahedron/Statement.lean
+-- proof/SnubDodecahedron/Statement.lean
 theorem wikipediaSnubDodecahedron_not_rupert (h : ∀ P : IModel, ¬ IsRupert P.toC5.verts) :
     ¬ IsRupert snubDodecahedron
 theorem snubDodecahedron_not_rupert (h : ∀ P : IModel, ¬ IsRupert P.toC5.verts) :
     ∀ V : Finset ℝ³, IsSnubDodecahedron V → ¬ IsRupert V
 ```
 
-- `IsRupert` is the Noperthedron project's statement of the Rupert property (`Noperthedron/MainTheorem.lean`, Mathlib only).
+- `IsRupert` is the Noperthedron project's statement of the Rupert property (`../../proof/MainTheorem.lean`, Mathlib only).
 - `snubDodecahedron` is Wikipedia's definition, literally:
   - ξ ≈ 0.94315 is the real zero of x³ + 2x² − φ² (`snubXiW_unique`);
   - the 60 vertices are the images of p = (φ² − φ²ξ, −φ³ + φξ + 2φξ², ξ) under repeated multiplication by M₁ (the rotation by 2π/5 about (0, 1, φ)) and M₂ (the cyclic shift of coordinates). See `SnubOrbit` and `mem_snubDodecahedron_iff`.
@@ -136,6 +131,8 @@ Every rotation of I in this frame has entries in K = ℚ(√5, s), with s = sin 
 
 ## Code map
 
+The shared files are in `../common/`; the solid's own are here.
+
 - Model, codes, the C++ checkers and search:
   - `snub_model.txt`: the exact model (from `../common/snub_model.py`).
   - `codebdd.cc`: the rational model and the code database (`codebdd.json`, `model_vertices.*`).
@@ -146,5 +143,5 @@ Every rotation of I in this frame has entries in K = ℚ(√5, s), with s = sin 
   - `search5d.cc`, `pack5d.cc`, `scoreboard5d.cc`;
   - `icoprune_check.cc` (a floating-point check of the icosahedral prune leaves).
 - `rebuild.sh` runs the whole pipeline; `*_test.cc` are unit tests (`make`).
-- Lean (Noperthedron `snubdodecahedron`): `Noperthedron/SnubDodecahedron/`, plus the generic `Noperthedron/Atlas/`. Its `README.md` maps the files. Here: `../../proof/SnubDodecahedron/`, `../../proof/Pipeline/` and `../../proof/Atlas/`.
+- Lean: `../../proof/SnubDodecahedron/`, `../../proof/Pipeline/` and `../../proof/Atlas/`.
 - `scripts/` and `../common/`: the generators of the Lean data (`../common/update_vertices.py`: `RationalVertices.lean` and the seed count in `SolidModel.lean`; `emit_tangent_cones.py`: `GeneratedTangentCones.lean` and `TangentCones.lean`'s `supportGenerator`; `../common/emit_wedge_cover.py`: `WedgeCoverData.lean`, about 9 min; `snub_ico_group.py`: `Pipeline/IcoGroupData.lean` and `OrbitData.lean`), run by the model stage with `MODEL_DIR` set to this directory.

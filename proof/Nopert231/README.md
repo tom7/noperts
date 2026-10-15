@@ -1,14 +1,11 @@
 > **In this repository** the entry point is `../Nopert231.lean` (headline
-> `Nopert231.isNopert_of_certificatesValid`; see `../../nopert231.md`). The text
-> below is adapted from the README of Noperthedron's `nopert231` branch
-> (0c83e4ba), whose names differ: `Noperthedron/Nopert231/` is
-> `proof/Nopert231/` here (namespace `Nopert231`), `Noperthedron/Atlas/` is
-> `proof/Atlas/` (which also holds `QuadCoverTree` and `QuadraticBernstein`), and
-> the generator scripts are in `search/nopert231/scripts/`. No `native_decide`
-> is used here: chart 3 and the tangent cones are checked by the kernel
-> (`table_valid_kernel`). Since 2026-10-10 most of the branch's pipeline is the
-> shared `proof/Pipeline/` (see "Files" below, which describes this
-> repository's layout); the check functions are the same.
+> `Nopert231.isNopert_of_certificatesValid`; see `../../nopert231.md`). This
+> README is adapted from that of Noperthedron's `nopert231` branch
+> (0c83e4ba), where the formalization was developed (former names:
+> `../../BUILDING.md`). No `native_decide` is used here: chart 3 and the
+> tangent cones are checked by the kernel (`table_valid_kernel`). Most of the
+> branch's pipeline is now the shared `proof/Pipeline/`; the check functions
+> are the same.
 
 # Candidate #231 is a nopert
 
@@ -90,4 +87,4 @@ the certificates (`Certificate`, `LocalCertificate`, `SymmetryLocal`,
 
 ## Generated files
 
-`Vertices.lean` (the `rationalVertices` and `seedVertex` bodies), `GeneratedTangentCones.lean` and `WedgeCoverData.lean` are written by `scripts/update_vertices.py`, `scripts/emit_tangent_cones.py` and `scripts/emit_wedge_cover.py` (in `search/nopert231/`) from the C++ pipeline's `codebdd` output. The scripts find it through `--model_dir DIR` or `$MODEL_DIR` (which the C++ `rebuild.sh` sets); `scripts/model_vertices.py` loads the vertices. `update_vertices.py` rewrites only the two bodies; the rest of `Vertices.lean` is written by hand.
+`Vertices.lean` (the `rationalVertices` and `seedVertex` bodies), `GeneratedTangentCones.lean` and `WedgeCoverData.lean` are written by `search/common/update_vertices.py`, and `scripts/emit_tangent_cones.py` and `scripts/emit_wedge_cover.py` in `search/nopert231/` from the C++ pipeline's `codebdd` output. The scripts find it through `--model_dir DIR` or `$MODEL_DIR` (which the C++ `rebuild.sh` sets); `scripts/model_vertices.py` loads the vertices. `update_vertices.py` rewrites only the two bodies; the rest of `Vertices.lean` is written by hand.

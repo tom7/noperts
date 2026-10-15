@@ -2,34 +2,24 @@
 
 The C++ certificate search for the deltoidal hexecontahedron
 ([../../deltoidal-hexecontahedron.md](../../deltoidal-hexecontahedron.md)).
-It comes from nopert229's `deltoidalhexecontahedron` branch at c0d289a (the
-tree of that commit, without its private working notes `notes/`), with paths
-fixed for this repository: cc-lib at `../../cc-lib` (`../../get-cc-lib.sh`),
-the Lean project at `../../proof` (executable
-`constructDeltoidalHexecontahedron`, generated Lean data in
-`proof/DeltoidalHexecontahedron/`), and the work directory `../../work-dh`.
-The Lean-data generators were in Noperthedron's `scripts/` (b45e0b34:
-`update_vertices.py`, `emit_wedge_cover.py`, `snub_ico_group.py`,
-`dh_statement_data.py`), changed only to write this repository's module
-names; `update_vertices.py` and `emit_wedge_cover.py` are now shared, in
-`../common/` (the solid's files passed as arguments). License: GPLv3 (`../COPYING`).
+It came from nopert229's `deltoidalhexecontahedron` branch at c0d289a
+(without its private working notes), and its Lean data generators from
+Noperthedron's `scripts/` (b45e0b34); the Lean formalization is now in this
+repository's `../../proof/DeltoidalHexecontahedron/` (executable
+`constructDeltoidalHexecontahedron`; former names: `../../BUILDING.md`). The
+work directory is `../../work-dh`. License: GPLv3 (`../COPYING`).
 
-Since 2026-10-10 the C++ code that the solids' searches share is in
-[`../common/`](../common/); the makefile builds it here, with this solid's
+The C++ code that the solids' searches share is in [`../common/`](../common/)
+(including the shared Lean data generators `update_vertices.py` and
+`emit_wedge_cover.py`); the makefile builds it here, with this solid's
 model headers (`model_vertices.h`, `symmetry_neighbors.h`, `ico_group.h`,
 `tie_normals.h`) and `solid.h` (its settings for the shared code). This
 directory keeps the model files, the DH's own tools (`capcert.cc`,
-`tietube.cc`, `halfturn_check.cc`), the
-Lean data generators, `rebuild.sh` and the makefile.
+`tietube.cc`, `halfturn_check.cc`), its own Lean data generators,
+`rebuild.sh` and the makefile.
 
 Build with `make` (unit tests; `make test` runs them) or `make all`;
 `./rebuild.sh` builds what it needs.
-
-The rest of this file is the branch's README. Its Lean names are the
-former ones (`DHTies` is now `DeltoidalHexecontahedron/Ties.lean`, and so on;
-see `../../BUILDING.md`, "Former names").
-
----
 
 ## The deltoidal hexecontahedron is a Nopert
 
@@ -39,21 +29,20 @@ printed `instantiated: no deltoidal hexecontahedron is Rupert`. A from-scratch r
 (`./rebuild.sh --from model`) reran the whole pipeline unattended in 8 h 10 min on 64 cores and ended the same way.
 
 A polyhedron is *Rupert* if a hole can be cut through it through which a congruent copy can pass, and a *Nopert*
-if it is not Rupert (Lean: `¬ IsRupert`). This repository, together with the Lean formalization on the
-`deltoidalhexecontahedron` branch of [Noperthedron](https://github.com/jcreedcmu/Noperthedron), proves that
+if it is not Rupert (Lean: `¬ IsRupert`). This search, together with the Lean formalization in `../../proof/`, proves that
 **every deltoidal hexecontahedron is a Nopert**:
 
 ```lean
--- Noperthedron/PentagonalHexecontahedron/DHTies.lean
+-- proof/DeltoidalHexecontahedron/Ties.lean
 theorem deltoidalHexecontahedron_not_rupert_of_checks
-    (htables : ∀ P : IModel, P.CentrallySymmetric →
+    (htables : ∀ P : IModel, IModel.CentrallySymmetric P →
       AtlasProjectiveSolutionTree.ExactClaims P.toC5.polyhedron.hull → ¬ IsRupert P.toC5.verts)
     (caps : Array CapCert) (hcaps : capsCheck caps = true)
     (ties : TieCerts) (hties : tiesCheck ties = true) :
     ∀ V : Finset ℝ³, IsDeltoidalHexecontahedron V → ¬ IsRupert V
 ```
 
-- `IsDeltoidalHexecontahedron V` (`DHStatement.lean`): V is the image, under a similarity (an orthogonal map,
+- `IsDeltoidalHexecontahedron V` (`Statement.lean`): V is the image, under a similarity (an orthogonal map,
   possibly a reflection, a positive scale and a translation), of David McCooey's 62 vertices: the cyclic
   permutations with all sign changes of (0, 0, √5), (0, C₁, C₇), (C₃, 0, C₆), (C₀, C₂, C₅), (C₄, C₄, C₄), with
   C₀ = (5 − √5)/4, C₁ = (15 + √5)/22, C₂ = √5/2, C₃ = (5 + √5)/6, C₄ = (5 + 4√5)/11, C₅ = (5 + √5)/4,
@@ -105,9 +94,9 @@ peak ~30 GB).
 
 - Model and exact solid: `dh_model.py` (`dh_model.txt`), `dh_exact.py` (`dh_exact.txt`, over K), `kfield.py`.
 - Half-turn prune: `exact5d::HalfTurnPruneValid`, `ico_group.py`, `halfturn_check.cc`.
-- Caps: `capcert.cc`, `dh_caps.py`, `dh_cap_lean.py` (Lean `DHCapData`), `capleaf_check.cc`.
+- Caps: `capcert.cc`, `dh_caps.py`, `dh_cap_lean.py` (Lean `CapData`), `capleaf_check.cc`.
 - Ties: `dh_tie_data.py` (`dh_tie_data.txt`, `tie_normals.h`), `tietube.cc`, `tieatlas5d`, `dh_tie_lean.py`
-  (Lean `DHTieData`).
+  (Lean `TieData`).
 - 5D search: as for the pentagonal hexecontahedron, plus cap and tie leaves.
-- Lean (Noperthedron `deltoidalhexecontahedron`, `Noperthedron/PentagonalHexecontahedron/`): `DHStatement`,
-  `DHCaps`, `DHTies`, `DHChecks`, `DHDecode`, the cap and tie modules above, and `constructDeltoidalHexecontahedron`.
+- Lean (`../../proof/DeltoidalHexecontahedron/`): `Statement`, `Caps`, `Ties`, `Checks`, `Decode`, the cap and
+  tie modules above, and `constructDeltoidalHexecontahedron`.
