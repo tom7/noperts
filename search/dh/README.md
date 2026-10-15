@@ -8,10 +8,11 @@ fixed for this repository: cc-lib at `../../cc-lib` (`../../get-cc-lib.sh`),
 the Lean project at `../../proof` (executable
 `constructDeltoidalHexecontahedron`, generated Lean data in
 `proof/DeltoidalHexecontahedron/`), and the work directory `../../work-dh`.
-`scripts/` holds the four Lean-data generators that were in Noperthedron's
-`scripts/` (b45e0b34: `update_vertices.py`, `emit_wedge_cover.py`,
-`snub_ico_group.py`, `dh_statement_data.py`), changed only to write this
-repository's module names. License: GPLv3 (`../COPYING`).
+The Lean-data generators were in Noperthedron's `scripts/` (b45e0b34:
+`update_vertices.py`, `emit_wedge_cover.py`, `snub_ico_group.py`,
+`dh_statement_data.py`), changed only to write this repository's module
+names; `update_vertices.py` and `emit_wedge_cover.py` are now shared, in
+`../common/` (the solid's files passed as arguments). License: GPLv3 (`../COPYING`).
 
 Since 2026-10-10 the C++ code that the solids' searches share is in
 [`../common/`](../common/); the makefile builds it here, with this solid's

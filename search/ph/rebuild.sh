@@ -131,7 +131,7 @@ if want model; then
   (cd "$NOPERT" && run python3 ph_model.py snub_model.txt "$MODEL_FILE")
   (cd "$NOPERT" && run python3 ph_crosscheck.py "$MODEL_FILE")
   (cd "$NOPERT" && run ./codebdd.exe --model_file="$MODEL_FILE" codebdd.json)
-  (cd "$LEAN" && run python3 "$NOPERT/scripts/update_vertices.py" \
+  (cd "$LEAN" && run python3 "$NOPERT/../common/update_vertices.py" PentagonalHexecontahedron/SolidModel.lean \
     && run python3 "$NOPERT/../common/emit_wedge_cover.py" --namespace PentagonalHexecontahedron.WedgeCover \
          PentagonalHexecontahedron/WedgeCoverData.lean \
     && run python3 "$NOPERT/scripts/snub_ico_group.py" \

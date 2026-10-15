@@ -121,7 +121,8 @@ if want model; then
   stage_begin model
   (cd "$NOPERT" && run python3 ../common/snub_model.py "$MODEL_FILE" symmetry_neighbors.h)
   (cd "$NOPERT" && run ./codebdd.exe --model_file="$MODEL_FILE" codebdd.json)
-  (cd "$NOPERT" && run python3 scripts/update_vertices.py \
+  (cd "$NOPERT" && run python3 ../common/update_vertices.py \
+         --solid_model "$LEAN/SnubDodecahedron/SolidModel.lean" "$LEAN/SnubDodecahedron/RationalVertices.lean" \
     && run python3 scripts/emit_tangent_cones.py "$LEAN/SnubDodecahedron/GeneratedTangentCones.lean" \
     && run python3 ../common/emit_wedge_cover.py --namespace SnubDodecahedron.WedgeCover \
          "$LEAN/SnubDodecahedron/WedgeCoverData.lean" \

@@ -121,7 +121,7 @@ fi
 if want model; then
   stage_begin model
   (cd "$NOPERT" && run ./codebdd.exe --root_file=nopert231_root.txt)
-  (cd "$NOPERT" && run python3 scripts/update_vertices.py \
+  (cd "$NOPERT" && run python3 ../common/update_vertices.py "$LEAN/Nopert231/Vertices.lean" \
     && run python3 scripts/emit_tangent_cones.py "$LEAN/Nopert231/GeneratedTangentCones.lean" \
     && run python3 scripts/emit_wedge_cover.py "$LEAN/Nopert231/WedgeCoverData.lean")
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \

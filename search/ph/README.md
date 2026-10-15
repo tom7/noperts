@@ -6,8 +6,8 @@ It comes from the `pentagonalhexecontahedron` branch of nopert229 at 04d115c,
 without its working notes (`notes/`). Changes: paths (cc-lib at `../../cc-lib`,
 the Lean project at `../../proof`, work directory `../../work-ph`), the
 makefile (cc-lib only), and the
-Lean data generators in `scripts/` (`update_vertices.py`,
-`emit_wedge_cover.py`, `snub_ico_group.py`, `ph_statement_data.py`), which
+Lean data generators (`update_vertices.py` and `emit_wedge_cover.py`, now
+shared in `../common/`; `scripts/snub_ico_group.py`, `ph_statement_data.py`), which
 come from the same-named branch of Noperthedron (da2965b3; Apache-2.0 there)
 and now write this repository's module names into
 `../../proof/PentagonalHexecontahedron/`. License: GPLv3 (`../COPYING`).
