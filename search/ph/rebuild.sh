@@ -134,7 +134,9 @@ if want model; then
   (cd "$LEAN" && run python3 "$NOPERT/../common/update-vertices.py" PentagonalHexecontahedron/SolidModel.lean \
     && run python3 "$NOPERT/../common/emit-wedge-cover.py" --namespace PentagonalHexecontahedron.WedgeCover \
          PentagonalHexecontahedron/WedgeCoverData.lean \
-    && run python3 "$NOPERT/scripts/snub-ico-group.py" \
+    && run python3 "$NOPERT/../common/snub-ico-group.py" --model_file ph-model.txt \
+         --solid "pentagonal hexecontahedron" --namespace PentagonalHexecontahedron \
+         --orbit_out PentagonalHexecontahedron/OrbitData.lean \
     && run python3 "$NOPERT/scripts/ph-statement-data.py")
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
     export-codetrees-pack.exe search5d.exe pack5d.exe

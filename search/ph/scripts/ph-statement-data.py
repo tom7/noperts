@@ -61,7 +61,7 @@ getcontext().prec = 80
 HERE = Path(__file__).resolve().parent
 # The Lean project: proof/ of this repository (this script is in search/ph/scripts).
 REPO = HERE.parents[2] / "proof"
-spec = importlib.util.spec_from_file_location("sig", HERE / "snub-ico-group.py")
+spec = importlib.util.spec_from_file_location("sig", HERE.parents[1] / "common" / "snub-ico-group.py")
 sig = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(sig)
 

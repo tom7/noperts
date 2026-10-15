@@ -10,8 +10,8 @@ repository's `../../proof/DeltoidalHexecontahedron/` (executable
 work directory is `../../work-dh`. License: GPLv3 (`../COPYING`).
 
 The C++ code that the solids' searches share is in [`../common/`](../common/)
-(including the shared Lean data generators `update-vertices.py` and
-`emit-wedge-cover.py`); the makefile builds it here, with this solid's
+(including the shared Lean data generators `update-vertices.py`,
+`emit-wedge-cover.py` and `snub-ico-group.py`); the makefile builds it here, with this solid's
 model headers (`model-vertices.h`, `symmetry-neighbors.h`, `ico-group.h`,
 `tie-normals.h`) and `solid.h` (its settings for the shared code). This
 directory keeps the model files, the DH's own tools (`capcert.cc`,

@@ -251,8 +251,8 @@ of the snub dodecahedron's statement) is now `Pipeline/WikipediaSnub.lean`.
 The generators of the solids' Lean data in `search/` were adapted to the new
 layout on 2026-10-10: run from the committed model inputs they reproduce the
 committed data files byte for byte (`SolidModel` and `RationalVertices` are
-updated in place; `Pipeline/IcoGroupData.lean` is written identically by each
-solid's `snub-ico-group.py`).
+updated in place; `Pipeline/IcoGroupData.lean` is written identically for
+each icosahedral solid by `search/common/snub-ico-group.py`).
 
 Candidate #231's Lean code (`proof/Nopert231/`) comes, with its history,
 from the `nopert231` branch of Noperthedron (0c83e4ba), where it lived in

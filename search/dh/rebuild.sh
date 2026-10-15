@@ -129,7 +129,9 @@ if want model; then
   (cd "$NOPERT" && run python3 ../common/update-vertices.py "$LEAN/DeltoidalHexecontahedron/SolidModel.lean" \
     && run python3 ../common/emit-wedge-cover.py --bdd codebdd.json \
          --namespace DeltoidalHexecontahedron.WedgeCover "$LEAN/DeltoidalHexecontahedron/WedgeCoverData.lean" \
-    && run python3 scripts/snub-ico-group.py --model_file dh-model.txt \
+    && run python3 ../common/snub-ico-group.py --model_file dh-model.txt \
+         --solid "deltoidal hexecontahedron" --namespace DeltoidalHexecontahedron \
+         --orbit_out "$LEAN/DeltoidalHexecontahedron/OrbitData.lean" \
     && run python3 scripts/dh-statement-data.py)
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe export-codetrees-pack.exe capcert.exe \
     tietube.exe search5d.exe pack5d.exe

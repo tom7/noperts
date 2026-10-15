@@ -126,7 +126,8 @@ if want model; then
     && run python3 scripts/emit-tangent-cones.py "$LEAN/SnubDodecahedron/GeneratedTangentCones.lean" \
     && run python3 ../common/emit-wedge-cover.py --namespace SnubDodecahedron.WedgeCover \
          "$LEAN/SnubDodecahedron/WedgeCoverData.lean" \
-    && run python3 scripts/snub-ico-group.py)
+    && run python3 ../common/snub-ico-group.py --model_file snub-model.txt --solid "snub dodecahedron" \
+         --namespace SnubDodecahedron --orbit_out "$LEAN/SnubDodecahedron/OrbitData.lean")
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
     export-codetrees-pack.exe search5d.exe pack5d.exe
   lean_build_start "$LEAN" "${LEAN_BUILD[@]}"
