@@ -98,21 +98,22 @@ namespace Nopert231
 
 /-- The certificate data is valid: there are four solution tables, one for
 each of the four charts that together cover every rotation, each passing
-Lean's validity check (which includes the shared identity-tube tables). This
-is the statement that `constructNopert231` establishes by computation. (That
-the code triangles cover the view domain, `WedgeCover.codeTriangles_cover`, is
-decided by the kernel, so it is not part of this hypothesis.) -/
+Lean's validity check (which includes the shared identity-tube tables), and
+the code triangles cover the view domain (`WedgeCover.coverValid`, checked
+natively like the other solids'). This is the statement that
+`constructNopert231` establishes by computation. -/
 def CertificatesValid : Prop :=
-  ∃ table : CayleyAtlas.ChartIndex → AtlasProjectiveSolutionTree.Table,
-    (∀ chart, (table chart).chart = chart) ∧ (∀ chart, (table chart).Valid)
+  (∃ table : CayleyAtlas.ChartIndex → AtlasProjectiveSolutionTree.Table,
+    (∀ chart, (table chart).chart = chart) ∧ (∀ chart, (table chart).Valid)) ∧
+  WedgeCover.coverValid = true
 
 /-- If the certificate data is valid, no `C5Model` is Rupert: no polyhedron
 made of four seeds rotated exactly by multiples of 2π/5 about z, with every
 vertex within 6·10⁻¹⁶ of the rational model. -/
 theorem not_isRupert_of_certificatesValid (h : CertificatesValid) :
     ∀ P : C5Model, ¬ IsRupert P.verts := by
-  obtain ⟨table, hchart, hvalid⟩ := h
-  exact fun _ => not_rupert_of_valid_tables table hchart hvalid
+  obtain ⟨⟨table, hchart, hvalid⟩, hcover⟩ := h
+  exact fun _ => not_rupert_of_valid_tables table hchart hvalid hcover
 
 /-! ### Not coplanar -/
 

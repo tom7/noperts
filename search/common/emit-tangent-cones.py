@@ -15,6 +15,9 @@ The emitted Lean theorem is then checked again by exact rational reduction.
 
 from __future__ import annotations
 
+# Usage: emit-tangent-cones.py --namespace NS --tangent_cones FILE OUTPUT
+# (as the snub dodecahedron's and Nopert231's rebuild.sh run it).
+
 import argparse
 import itertools
 from fractions import Fraction
@@ -41,6 +44,7 @@ def hull_adjacency():
 
 ADJACENCY = hull_adjacency()
 NUM_VERTICES = len(VERTICES_Q)
+NAMESPACE = None  # set by main (--namespace)
 # SparseSupport.supportGenerator (defined in TangentCones.lean) has rows of this width (padded with the vertex).
 GENERATOR_WIDTH = 7
 assert max(len(row) for row in ADJACENCY) <= GENERATOR_WIDTH
@@ -151,10 +155,10 @@ def emit(destination: Path):
 
     lines = [
         "module", "",
-        "public import SnubDodecahedron.TangentCones",
-        "public meta import SnubDodecahedron.TangentCones", "",
+        f"public import {NAMESPACE}.TangentCones",
+        f"public meta import {NAMESPACE}.TangentCones", "",
         "@[expose] public section", "",
-        "namespace SnubDodecahedron.GeneratedTangentCones", "",
+        f"namespace {NAMESPACE}.GeneratedTangentCones", "",
         "set_option linter.unusedTactic false",
         "set_option linter.unreachableTactic false",
         "set_option linter.unnecessarySeqFocus false",
@@ -228,7 +232,7 @@ def emit(destination: Path):
     for base in range(NUM_VERTICES):
         lines.append(f"  · exact row_valid_{base} target htarget")
     lines.extend(["",
-        "end SnubDodecahedron.GeneratedTangentCones", "", "end", "",
+        f"end {NAMESPACE}.GeneratedTangentCones", "", "end", "",
     ])
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text("\n".join(lines), encoding="utf-8")
@@ -257,10 +261,13 @@ def write_support_generator(tangent_cones: Path):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("output", type=Path)
-    parser.add_argument("--tangent_cones", type=Path,
-                        default=Path(__file__).resolve().parents[3] / "proof" /
-                        "SnubDodecahedron" / "TangentCones.lean")
+    parser.add_argument("--namespace", required=True,
+                        help="the solid's Lean namespace (its NS.TangentCones module)")
+    parser.add_argument("--tangent_cones", type=Path, required=True,
+                        help="the solid's TangentCones.lean (supportGenerator is rewritten)")
     args = parser.parse_args()
+    global NAMESPACE
+    NAMESPACE = args.namespace
     write_support_generator(args.tangent_cones)
     emit(args.output)
 

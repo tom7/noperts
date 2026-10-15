@@ -122,8 +122,10 @@ if want model; then
   stage_begin model
   (cd "$NOPERT" && run ./codebdd.exe --root_file=nopert231-root.txt)
   (cd "$NOPERT" && run python3 ../common/update-vertices.py "$LEAN/Nopert231/Vertices.lean" \
-    && run python3 scripts/emit-tangent-cones.py "$LEAN/Nopert231/GeneratedTangentCones.lean" \
-    && run python3 scripts/emit-wedge-cover.py "$LEAN/Nopert231/WedgeCoverData.lean")
+    && run python3 ../common/emit-tangent-cones.py --namespace Nopert231 \
+         --tangent_cones "$LEAN/Nopert231/TangentCones.lean" "$LEAN/Nopert231/GeneratedTangentCones.lean" \
+    && run python3 ../common/emit-wedge-cover.py --namespace Nopert231.WedgeCover \
+         "$LEAN/Nopert231/WedgeCoverData.lean")
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
     export-codetrees-pack.exe search5d.exe pack5d.exe
   lean_build_start "$LEAN" "${LEAN_BUILD[@]}"

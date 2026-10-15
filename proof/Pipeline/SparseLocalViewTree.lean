@@ -17,7 +17,7 @@ is `Box.ViewValid` itself: the support conditions against every vertex (the
 identity tube has few rows). A solid may supply a cheaper sufficient check
 instead, as a scoped instance: the snub dodecahedron and candidate #231 check
 each support vertex against its tangent-cone generators only
-(`SnubDodecahedron.SparseSupport`, `Nopert231.SparseViewCheck`).
+(`SnubDodecahedron.SparseSupport`, `Nopert231.SparseSupport`).
 -/
 
 namespace Noperts.Pipeline.SparseLocalViewTree

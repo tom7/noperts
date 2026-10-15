@@ -89,6 +89,12 @@ def main (args : List String) : IO Unit := do
     intro chart; fin_cases chart <;> rfl
   -- The checks (`NativeExecutable`); the checked tables give
   -- `CertificatesValid`.
+  let coverStart ← IO.monoNanosNow
+  log "checking the view cover (code triangles cover the wedge)"
+  let cover : PLift (Nopert231.WedgeCover.coverValid = true) ←
+    if h : Nopert231.WedgeCover.coverValid = true then pure ⟨h⟩
+    else throw (IO.userError "the view cover is invalid")
+  log s!"view cover valid ({(← IO.monoNanosNow) - coverStart} ns)"
   let checkedLocal ← checkLocalAll localTaskCount localTables
   let sharedValid (chart : CayleyAtlas.ChartIndex) :
       AtlasProjectiveSolutionTree.SharedLocalValid (tables chart).sharedLocal := by
@@ -104,7 +110,7 @@ def main (args : List String) : IO Unit := do
     · exact valid1.down
     · exact valid2.down
     · exact valid3.down
-  have hcv : CertificatesValid := ⟨tables, hchart, hvalid⟩
+  have hcv : CertificatesValid := ⟨⟨tables, hchart, hvalid⟩, cover.down⟩
   log "constructed proof: no C5Model (fivefold-symmetric polyhedron within 6e-16 of the rational vertices) is Rupert"
   let _all : ∀ P : C5Model, IsNopert P.verts := isNopert_of_certificatesValid hcv
   -- The verified model (exact rotations of the rational seeds) and idealized

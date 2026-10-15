@@ -42,13 +42,13 @@ Rupert. -/
 theorem not_rupert_of_valid_tables
     (table : ChartIndex → AtlasProjectiveSolutionTree.Table)
     (hchart : ∀ chart, (table chart).chart = chart)
-    (hvalid : ∀ chart, (table chart).Valid) :
+    (hvalid : ∀ chart, (table chart).Valid) (hcover : WedgeCover.coverValid = true) :
     ¬ IsRupert P.verts := by
   intro hrupert
   have hset : IsRupertSet (convexHull ℝ P.verts) :=
     (rupert_iff_rupert_set P.verts).mp hrupert
   rw [← P.polyhedron_hull] at hset
-  exact no_matrixPose_of_valid_tables table hchart hvalid
+  exact no_matrixPose_of_valid_tables table hchart hvalid hcover
     (rupert_set_implies_matrix_pose hset)
 
 end Nopert231

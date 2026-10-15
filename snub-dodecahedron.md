@@ -169,7 +169,7 @@ The C++ search that produced the data is in [`search/sd/`](search/sd/), from
 the `snubdodecahedron` branch of nopert229 (b8c9065), with the code the
 solids' searches share now in [`search/common/`](search/common/); its
 [`README.md`](search/sd/README.md) describes the method and the tools. The
-generators of the Lean data are in `search/sd/scripts/`; they reproduce
+generators of the Lean data are in `search/common/`; they reproduce
 the committed generated files (`RationalVertices.lean`, `TangentCones.lean`'s
 `supportGenerator`, `GeneratedTangentCones.lean`, `WedgeCoverData.lean`,
 `OrbitData.lean`, the shared `proof/Pipeline/IcoGroupData.lean`, and the seed

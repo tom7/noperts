@@ -1,32 +1,29 @@
 module
 
-public import Pipeline.WedgeCover
+public import Nopert231.WedgeCoverData
+public import Pipeline.AtlasProjectiveView
 
 @[expose] public section
 
 /-!
-# Covering the upper view wedge by triangles (names for the generated data)
+# Candidate #231's view cover
 
-The decision-tree certificate that a list of triangles covers
-`upperWedgeTriangle` is `Pipeline/WedgeCover.lean`. Candidate #231's
-generated tree (`WedgeCoverData`, written by
-`search/nopert231/scripts/emit-wedge-cover.py`) imports this module and is
-written in `namespace Nopert231.WedgeCover`, naming `Node`, `Tri`,
-`wedgeConstraints`, `wedge_covered` and `AtlasProjectiveView.upperWedgeTriangle`
-unqualified. This module makes those names refer to the pipeline's, so that
-the generated file stays as the generator writes it.
+`WedgeCoverData` (written by `search/common/emit-wedge-cover.py`, as for the
+other solids) lists the code triangles, the triangle they cover
+(`baseTriangle`, codebdd.json's fundamental domain) and the tree whose
+natively checked `coverValid` proves the cover. The base triangle is the
+upper view wedge of the fivefold pipeline (checked by the kernel).
 -/
 
 namespace Nopert231.WedgeCover
 
-export Noperts.Pipeline.WedgeCover (V Tri Node wedgeConstraints wedge_covered)
+open Noperts.Pipeline Noperts.Pipeline.WedgeCover Noperts.Atlas.ProjectiveView
+
+/-- The base triangle is the upper view wedge. -/
+theorem baseTriangle_eq :
+    toReal AtlasProjectiveView.upperWedgeTriangle = toReal baseTriangle := by
+  congr 1
 
 end Nopert231.WedgeCover
-
-namespace Nopert231.AtlasProjectiveView
-
-export Noperts.Pipeline.AtlasProjectiveView (upperWedgeTriangle)
-
-end Nopert231.AtlasProjectiveView
 
 end

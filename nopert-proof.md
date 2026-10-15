@@ -59,8 +59,8 @@ theorem is about the exact solid near the ties; see [Caps](#caps) and
 `codebdd` splits the view domain into cells where the silhouette's
 combinatorics (the *face-visibility code*) is constant, and triangulates
 them into **code triangles**. That the code triangles cover the view domain
-is a separate check (`WedgeCover`, `ViewCover`), decided by the kernel or
-checked natively with the tables.
+is a separate check (`WedgeCover`, `ViewCover`): decided by the kernel for
+the Septopert, checked natively with the tables for the others.
 
 ## Balanced witnesses
 

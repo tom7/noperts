@@ -8,7 +8,7 @@ public import Pipeline.AtlasProjectiveLocalViewTree
 public import Pipeline.AtlasProjectiveGlobalCertificate
 public import Pipeline.AtlasProjectiveMixedGlobalCertificate
 public import Nopert231.SolidModel
-public import Nopert231.WedgeCoverData
+public import Nopert231.WedgeCover
 public import ParallelBool
 
 @[expose] public section
@@ -455,6 +455,7 @@ theorem rowsValidAt_of_range {chart : ChartIndex} {get : ℕ → Row} {size : �
 theorem valid_imp_noRupert_ix (chart : ChartIndex) (get : ℕ → Row)
     (size : ℕ) (shared : SharedLocalTables)
     (sharedValid : SharedLocalValid shared)
+    (hcover : WedgeCover.coverValid = true)
     (rowsValid : RowsValidAt chart get size shared)
     (i : ℕ) (hi : i < size) :
     NoRupert (P := P) chart (get i).interval (get i).region := by
@@ -518,12 +519,13 @@ theorem valid_imp_noRupert_ix (chart : ChartIndex) (get : ℕ → Row)
       unfold NoRupert
       rintro ⟨p, hp, hbounded, hfund, hview, hupper, offset, -, hrupert⟩
       obtain ⟨hscale, hmem⟩ := upperView_mem_wedgeTriangle p hview hupper
-      obtain ⟨t, tri, hget, hin⟩ := WedgeCover.codeTriangles_cover _ hmem
+      obtain ⟨t, tri, hget, hin⟩ :=
+        WedgeCover.codeTriangles_cover hcover _ (WedgeCover.baseTriangle_eq ▸ hmem)
       obtain ⟨htlt, htri⟩ := Array.getElem?_eq_some_iff.mp hget
       obtain ⟨hsize, hall⟩ := hvalid
       have ht : t < children.size := hsize ▸ htlt
       obtain ⟨hforward, hchildSize, hchildInterval, hchildRegion⟩ := hall t ht
-      have hchild := valid_imp_noRupert_ix chart get size shared sharedValid rowsValid
+      have hchild := valid_imp_noRupert_ix chart get size shared sharedValid hcover rowsValid
         children[t] hchildSize
       rw [hchildInterval, hchildRegion] at hchild
       have hgetD : WedgeCover.codeTriangles.getD t 0 = tri := by
@@ -536,17 +538,17 @@ theorem valid_imp_noRupert_ix (chart : ChartIndex) (get : ℕ → Row)
         hlowerInterval, hupperInterval, hlowerRegion, hupperRegion⟩ := hvalid
       apply noRupert_halves chart interval region coordinate
       · rw [← hlowerInterval, ← hlowerRegion]
-        exact valid_imp_noRupert_ix chart get size shared sharedValid rowsValid
+        exact valid_imp_noRupert_ix chart get size shared sharedValid hcover rowsValid
           lowerChild hlowerSize
       · rw [← hupperInterval, ← hupperRegion]
-        exact valid_imp_noRupert_ix chart get size shared sharedValid rowsValid
+        exact valid_imp_noRupert_ix chart get size shared sharedValid hcover rowsValid
           upperChild hupperSize
   | viewRoot id child interval =>
       unfold NoRupert
       rintro ⟨p, hp, hbounded, hfund, hview, hupper, offset, -, hrupert⟩
       obtain ⟨hscale, hmem⟩ := upperView_mem_wedgeTriangle p hview hupper
       obtain ⟨hforward, hchildSize, hchildInterval, hchildRegion⟩ := hvalid
-      have hchild := valid_imp_noRupert_ix chart get size shared sharedValid rowsValid
+      have hchild := valid_imp_noRupert_ix chart get size shared sharedValid hcover rowsValid
         child hchildSize
       rw [hchildInterval, hchildRegion] at hchild
       exact hchild ⟨p, hp, hbounded, hfund, hview, hupper, offset,
@@ -557,7 +559,7 @@ theorem valid_imp_noRupert_ix (chart : ChartIndex) (get : ℕ → Row)
       obtain ⟨child, hchildMem⟩ := mem_split hregion.2
       obtain ⟨hforward, hchildSize, hchildInterval, hchildRegion⟩ :=
         hvalid child
-      have hchild := valid_imp_noRupert_ix chart get size shared sharedValid rowsValid
+      have hchild := valid_imp_noRupert_ix chart get size shared sharedValid hcover rowsValid
         (children child) hchildSize
       rw [hchildInterval, hchildRegion] at hchild
       exact hchild ⟨p, hp, hbounded, hfund, hview, hupper, offset,
@@ -567,16 +569,16 @@ theorem valid_imp_noRupert_ix (chart : ChartIndex) (get : ℕ → Row)
         hlowerInterval, hupperInterval, hlowerRegion, hupperRegion⟩ := hvalid
       apply noRupert_cut chart interval region coordinate cut
       · rw [← hlowerInterval, ← hlowerRegion]
-        exact valid_imp_noRupert_ix chart get size shared sharedValid rowsValid
+        exact valid_imp_noRupert_ix chart get size shared sharedValid hcover rowsValid
           lowerChild hlowerSize
       · rw [← hupperInterval, ← hupperRegion]
-        exact valid_imp_noRupert_ix chart get size shared sharedValid rowsValid
+        exact valid_imp_noRupert_ix chart get size shared sharedValid hcover rowsValid
           upperChild hupperSize
   | regionRelax id child interval root triangle outer =>
       unfold NoRupert
       rintro ⟨p, hp, hbounded, hfund, hview, hupper, offset, hregion, hrupert⟩
       obtain ⟨hforward, hchildSize, hchildInterval, hchildRegion, hwithin⟩ := hvalid
-      have hchild := valid_imp_noRupert_ix chart get size shared sharedValid rowsValid
+      have hchild := valid_imp_noRupert_ix chart get size shared sharedValid hcover rowsValid
         child hchildSize
       rw [hchildInterval, hchildRegion] at hchild
       exact hchild ⟨p, hp, hbounded, hfund, hview, hupper, offset,
@@ -693,7 +695,7 @@ theorem Table.Valid.of_withTasksB {table : Table} {taskCount : ℕ}
   exact h
 
 theorem Table.valid_imp_no_chart_translated_pose
-    (table : Table) (h : table.Valid) :
+    (table : Table) (h : table.Valid) (hcover : WedgeCover.coverValid = true) :
     ¬ ∃ p ∈ AtlasPose.rootInterval ℝ,
       p.CayleyBounded ∧ p.InFivefoldFundamentalDomain table.chart ∧
       p.InViewWedge ∧ p.InUpperView ∧ ∃ offset : ℝ²,
@@ -701,7 +703,7 @@ theorem Table.valid_imp_no_chart_translated_pose
         P.polyhedron.hull := by
   obtain ⟨hnonempty, hrows, hrootInterval, hrootRegion, hshared⟩ := h
   have hchecked := valid_imp_noRupert_ix (P := P) table.chart table.get table.size
-    table.sharedLocal hshared hrows 0 hnonempty
+    table.sharedLocal hshared hcover hrows 0 hnonempty
   rw [hrootInterval, hrootRegion] at hchecked
   rintro ⟨p, hp, hbounded, hfund, hview, hupper, offset, hrupert⟩
   exact hchecked ⟨p,
@@ -713,12 +715,12 @@ theorem Table.valid_imp_no_chart_translated_pose
 theorem no_matrixPose_of_valid_tables
     (table : ChartIndex → Table)
     (hchart : ∀ chart, (table chart).chart = chart)
-    (hvalid : ∀ chart, (table chart).Valid) :
+    (hvalid : ∀ chart, (table chart).Valid) (hcover : WedgeCover.coverValid = true) :
     ¬ ∃ p : MatrixPose, RupertPose p P.polyhedron.hull := by
   rintro ⟨p, hrupert⟩
   obtain ⟨chart, q, offset, hq, hbounded, hview, hupper, hfund, heq⟩ :=
     exists_fundamental_atlas_translated_pose p
-  have hno := (table chart).valid_imp_no_chart_translated_pose (P := P) (hvalid chart)
+  have hno := (table chart).valid_imp_no_chart_translated_pose (P := P) (hvalid chart) hcover
   rw [hchart chart] at hno
   exact hno ⟨q, hq, hbounded, hfund, hview, hupper, offset,
     heq.mpr hrupert⟩

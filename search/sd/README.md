@@ -12,8 +12,8 @@
 > [`../common/`](../common/); the makefile builds it here, with this solid's
 > model headers (`model-vertices.h`, `symmetry-neighbors.h`) and `solid.h`
 > (its settings for the shared code). This directory keeps the model files,
-> the solid's own Lean data generators (`scripts/`), `rebuild.sh` and the
-> makefile.
+> `rebuild.sh` and the makefile; its Lean data generators are the shared ones
+> in `../common/`.
 
 # The snub dodecahedron is a Nopert
 
@@ -144,4 +144,4 @@ The shared files are in `../common/`; the solid's own are here.
   - `icoprune-check.cc` (a floating-point check of the icosahedral prune leaves).
 - `rebuild.sh` runs the whole pipeline; `*_test.cc` are unit tests (`make`).
 - Lean: `../../proof/SnubDodecahedron/`, `../../proof/Pipeline/` and `../../proof/Atlas/`.
-- `scripts/` and `../common/`: the generators of the Lean data (`../common/update-vertices.py`: `RationalVertices.lean` and the seed count in `SolidModel.lean`; `emit-tangent-cones.py`: `GeneratedTangentCones.lean` and `TangentCones.lean`'s `supportGenerator`; `../common/emit-wedge-cover.py`: `WedgeCoverData.lean`, about 9 min; `../common/snub-ico-group.py`: `Pipeline/IcoGroupData.lean` and `OrbitData.lean`), run by the model stage with `MODEL_DIR` set to this directory.
+- `../common/`: the generators of the Lean data (`update-vertices.py`: `RationalVertices.lean` and the seed count in `SolidModel.lean`; `emit-tangent-cones.py`: `GeneratedTangentCones.lean` and `TangentCones.lean`'s `supportGenerator`; `emit-wedge-cover.py`: `WedgeCoverData.lean`, about 9 min; `snub-ico-group.py`: `Pipeline/IcoGroupData.lean` and `OrbitData.lean`), run by the model stage with `MODEL_DIR` set to this directory.

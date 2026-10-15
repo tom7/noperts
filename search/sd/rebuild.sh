@@ -123,7 +123,8 @@ if want model; then
   (cd "$NOPERT" && run ./codebdd.exe --model_file="$MODEL_FILE" codebdd.json)
   (cd "$NOPERT" && run python3 ../common/update-vertices.py \
          --solid_model "$LEAN/SnubDodecahedron/SolidModel.lean" "$LEAN/SnubDodecahedron/RationalVertices.lean" \
-    && run python3 scripts/emit-tangent-cones.py "$LEAN/SnubDodecahedron/GeneratedTangentCones.lean" \
+    && run python3 ../common/emit-tangent-cones.py --namespace SnubDodecahedron \
+         --tangent_cones "$LEAN/SnubDodecahedron/TangentCones.lean" "$LEAN/SnubDodecahedron/GeneratedTangentCones.lean" \
     && run python3 ../common/emit-wedge-cover.py --namespace SnubDodecahedron.WedgeCover \
          "$LEAN/SnubDodecahedron/WedgeCoverData.lean" \
     && run python3 ../common/snub-ico-group.py --model_file snub-model.txt --solid "snub dodecahedron" \

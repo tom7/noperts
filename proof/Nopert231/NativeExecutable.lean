@@ -1,7 +1,7 @@
 module
 
 public import Nopert231.IsNotRupert
-public import Nopert231.SparseViewCheck
+public import Nopert231.SparseSupport
 
 @[expose] public section
 

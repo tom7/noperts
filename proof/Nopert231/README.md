@@ -48,14 +48,16 @@ Model and approximation:
 - `Ideal231.lean`: idealized #231 (seed 1's height chosen so that the quads
   are exactly planar, `quad_planar`) as a `C5Model`, with its closeness decided
   by the kernel.
-- `SparseSupport.lean` and `GeneratedTangentCones.lean` (generated): the
-  tangent-cone generators of each vertex and the kernel-checked table showing
-  that every other vertex lies in their cone; `SparseViewCheck.lean` gives them
-  to the shared sparse support check (`Pipeline/SparseSupport.lean`), which
+- `TangentCones.lean` and `GeneratedTangentCones.lean` (generated, as for the
+  snub dodecahedron): the tangent-cone generators of each vertex and the
+  kernel-checked table showing that every other vertex lies in their cone;
+  `SparseSupport.lean` gives them to the shared sparse support check (`Pipeline/SparseSupport.lean`), which
   checks support against at most seven vertices.
-- `WedgeCover.lean`, `WedgeCoverData.lean` (generated): `codeTriangles_cover`,
-  the code triangles cover the upper wedge (decision tree checked by
-  `decide +kernel`; the checker is `Pipeline/WedgeCover.lean`).
+- `WedgeCoverData.lean` (generated, as for the other solids): the code
+  triangles, the base triangle and the decision tree whose check
+  `coverValid` (natively evaluated, part of `CertificatesValid`) proves that
+  they cover it; `WedgeCover.lean`: the base triangle is the upper wedge. The
+  checker is `Pipeline/WedgeCover.lean`.
 
 The top layer, which is particular to #231's fivefold reduction (the
 icosahedral solids share another one in `Pipeline/`):
@@ -87,4 +89,4 @@ the certificates (`Certificate`, `LocalCertificate`, `SymmetryLocal`,
 
 ## Generated files
 
-`Vertices.lean` (the `rationalVertices` and `seedVertex` bodies), `GeneratedTangentCones.lean` and `WedgeCoverData.lean` are written by `search/common/update-vertices.py`, and `scripts/emit-tangent-cones.py` and `scripts/emit-wedge-cover.py` in `search/nopert231/` from the C++ pipeline's `codebdd` output. The scripts find it through `--model_dir DIR` or `$MODEL_DIR` (which the C++ `rebuild.sh` sets); `scripts/model_vertices.py` loads the vertices. `update-vertices.py` rewrites only the two bodies; the rest of `Vertices.lean` is written by hand.
+`Vertices.lean` (the `rationalVertices` and `seedVertex` bodies), `GeneratedTangentCones.lean` and `WedgeCoverData.lean` are written by `search/common/update-vertices.py`, `search/common/emit-tangent-cones.py` and `search/common/emit-wedge-cover.py` from the C++ pipeline's `codebdd` output. The scripts find it through `--model_dir DIR` or `$MODEL_DIR` (which the C++ `rebuild.sh` sets); `scripts/model_vertices.py` loads the vertices. `update-vertices.py` rewrites only the two bodies; the rest of `Vertices.lean` is written by hand.

@@ -70,9 +70,9 @@ two copies of the solid, each rotated, can be placed so that the shadow of
 one lies strictly inside the shadow of the other. `CertificatesValid` says
 that the certificate data passes Lean's validity checks. The data is four
 solution tables, one per Cayley chart of the rotations, which share the
-identity-tube tables. That the code triangles cover the view domain
-(`WedgeCover.codeTriangles_cover`) is decided by the kernel, so it is not part
-of the hypothesis.
+identity-tube tables, and that the code triangles cover the view domain
+(`WedgeCover.coverValid`, checked natively like the other solids'; until
+2026-10-15 this was decided by the kernel).
 
 ## How the proof works
 
@@ -89,7 +89,7 @@ for #231:
   antipode, and relative rotations by the fivefold
   [prune](nopert-proof.md#poses-and-symmetry-reductions); the
   [code triangles](nopert-proof.md#codes-and-the-view-cover) cover the wedge
-  (decided by the kernel).
+  (checked natively with the tables).
 - The [identity tube](nopert-proof.md#the-identity-tube) and the
   [5D search](nopert-proof.md#the-5d-search) (four Cayley charts, with
   [blended inner points](nopert-proof.md#balanced-witnesses)) cover every
@@ -192,7 +192,7 @@ with the committed model data.
 The model stage regenerates committed files:
 
 - the model files in `search/nopert231/`;
-- with `search/nopert231/scripts/`, the Lean data in `proof/Nopert231/`:
+- with the generators in `search/common/`, the Lean data in `proof/Nopert231/`:
   `Vertices`, `GeneratedTangentCones` and `WedgeCoverData`.
 
 The verify stage builds and runs `constructNopert231` in `proof/`, in a
@@ -228,7 +228,7 @@ In this repository (2026-10-10, 16 cores):
 
 - `codebdd` regenerates the model files `model-vertices.{h,json,lean}` byte
   for byte.
-- From those files, the generators in `search/nopert231/scripts/` regenerate
+- From those files, the generators in `search/common/` regenerate
   `Vertices.lean`, `GeneratedTangentCones.lean` and `WedgeCoverData.lean` in
   `proof/Nopert231/` byte for byte. After the shared-pipeline change (same
   day) `Vertices.lean` and `GeneratedTangentCones.lean` were regenerated again
