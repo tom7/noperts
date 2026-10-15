@@ -75,7 +75,11 @@ memory 9.7 GB (one process), and every regenerated committed file came out byte-
 
 With blended inner points in the 5D rows (search5d's default since 2026-10-14), a from-scratch run on 64 cores
 (2026-10-15, with the Lean build already up to date) took 1 h 08 min: model 8.1 min, tube 7.4 min, search 2.0 min (360,698 nodes), pack 30 min (chart 0:
-591,252 rows; 66 MB of packs), verify 20 min.
+591,252 rows; 66 MB of packs), verify 20 min. The time saved is mostly later search5d speedups, not the blends: from
+the same tube trees, the search takes 2.0 min with or without them, and the packs are 64.6 MB without them (chart 0:
+595,097 rows). search5d's later default, `--blend5d 4` ("escalate": a blended inner point only where the plain choice
+fails), gives 63.9 MB (354,066 nodes; chart 0: 582,771 rows; search 2.0 min, pack 28 min, verify 18.5 min) and
+verifies (2026-10-15); `rebuild.sh` uses it.
 
 The verifier takes about 23 minutes on 64 cores (chart 0: 595,098 rows) and ends with:
 

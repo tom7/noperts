@@ -187,11 +187,11 @@ fi
 if want search; then
   stage_begin search
   # One run solves every job; deferred leaves are retried in the same run.
-  # TODO: validate search5d's default --blend5d 4 (escalate: blends only
-  # where the plain inner choice fails) for this solid; verified with 2.
+  # search5d's default --blend5d 4 (escalate; validated here 2026-10-15):
+  # packs 63.9 MB, vs 64.6 MB with --blend5d 0 and 66.3 MB with 2.
   (cd "$NOPERT" && run ./search5d.exe --all --charts 0,1,2 --threads "$THREADS" --commit_depth 12 \
     --subtree_budget 5000 --max_depth 200 --trees_dir "$TREES2" --view_scale 4 \
-    --max_full_retry 1024 --retry_deferred --requeue_deferred --blend5d 2 --out_dir "$JOBS")
+    --max_full_retry 1024 --retry_deferred --requeue_deferred --out_dir "$JOBS")
   (cd "$NOPERT" && run ./scoreboard5d.exe --journals "$JOBS" | tail -1)
   stage_end search
 fi
