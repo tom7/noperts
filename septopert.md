@@ -203,10 +203,10 @@ where no single vertex certifies a box (both by default).
 
 ## Status
 
-Verified on 2026-10-14 on a 64-core machine: `constructSeptopert` checked
+Verified on 2026-10-15 on a 64-core machine: `constructSeptopert` checked
 the cap certificate, the 22 tube tables (250 rows, 176 of them identity
-blow-up rows) and the four chart tables (522,764, 143,985, 124,171 and
-104,460 rows) and printed `instantiated: ¬ IsRupert Septopert.verts (the
+blow-up rows) and the four chart tables (476,073, 143,787, 123,839 and
+104,243 rows) and printed `instantiated: ¬ IsRupert Septopert.verts (the
 Septopert is not Rupert)`. You can reproduce it yourself, following the
 instructions in [BUILDING.md](BUILDING.md):
 
@@ -232,17 +232,17 @@ them. Stages: `model`, `tube`, `idcap`, `tubepack`, `cap`, `search`, `pack`,
 background while the C++ stages run (log `work/lean_build.log`).
 
 Measured times of a from-scratch run on 64 cores with 64 threads
-(2026-10-14), about 20 min in all:
+(2026-10-15; the model stage on 2026-10-14), about 21 min in all:
 
 | Stage | Time |
 |---|---|
 | model | 9 s |
-| tube + tubepack | 3.3 min |
-| idcap | 10.5 min |
-| cap | 33 s |
-| search | 1.4 min (387,855 nodes) |
-| pack | 49 s |
-| verify | 3.2 min, 751 MiB peak |
+| tube + tubepack | 3.5 min |
+| idcap | 11.4 min |
+| cap | 36 s |
+| search | 1.5 min (354,845 nodes) |
+| pack | 45 s |
+| verify | 3.4 min, 744 MiB peak |
 
 ### History
 
@@ -270,7 +270,7 @@ cd work && LEAN_NUM_THREADS=64 ../proof/.lake/build/bin/constructSeptopert \
 ```
 
 It checks the cap certificate, the 22 tube tables, then the four chart
-tables one at a time. Chart 0 has about 520,000 rows; charts 1–3 have
+tables one at a time. Chart 0 has about 480,000 rows; charts 1–3 have
 less than 150,000 rows each.
 
 ## The data
@@ -279,9 +279,9 @@ The certificate data is machine output, intended to be CC0:
 
 - `cap-1_16.cert`: 550 KB, the cap certificate around the mirror directions;
 - `tube_packs/`: 1.4 MB, 22 identity-tube tables and `manifest.txt`;
-- `packs/`: 51 MB, 88 per-code solution packs (`packs/c<chart>/t<code>.pack`;
-  the largest, `packs/c0/t2.pack`, is 3.8 MB).
+- `packs/`: 45 MB, 92 per-code solution packs (`packs/c<chart>/t<code>.pack`;
+  the largest, `packs/c0/t2.pack`, is 2.9 MB).
 
-All three together compress to about 9 MB (`tar czf`).
+All three together compress to about 8 MB (`tar czf`).
 
 To check it yourself, rebuild it (see "Status" above).
