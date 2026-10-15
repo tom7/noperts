@@ -127,7 +127,7 @@ if want model; then
   stage_begin model
   # The snub dodecahedron's model (its frame, view triangle and symmetry
   # neighbors), then its polar dual.
-  (cd "$NOPERT" && run python3 snub_model.py snub_model.txt symmetry_neighbors.h)
+  (cd "$NOPERT" && run python3 ../common/scripts/snub_model.py snub_model.txt symmetry_neighbors.h)
   (cd "$NOPERT" && run python3 ph_model.py snub_model.txt "$MODEL_FILE")
   (cd "$NOPERT" && run python3 ph_crosscheck.py "$MODEL_FILE")
   (cd "$NOPERT" && run ./codebdd.exe --model_file="$MODEL_FILE" codebdd.json)
