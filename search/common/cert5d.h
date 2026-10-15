@@ -22,6 +22,9 @@ using vec3 = geom5d::vec3;
 // The inner vertex used for each contact of the pool: the one sticking out
 // furthest past the contact's support line at the box center and the
 // triangle's centroid view.
+// With g_blend5d = 3 (the portfolio), BestSingle and BestMixture try both
+// the centre choice (level 0) and the blended one (level 2), keeping the
+// better: never worse than level 0.
 // With g_blend5d >= 1 (search5d --blend5d): box-aware, the candidate (of the
 // three best vertices at the center, and with g_blend5d >= 2 their blends,
 // bounds5d::BlendCode) with the best Bernstein lower bound over the box at

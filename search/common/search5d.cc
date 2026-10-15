@@ -20,7 +20,10 @@
 // --blend5d L (default 2, validated on the Septopert): 0 the inner vertex per
 // contact at the box centre (the earlier behavior); 1 box-aware; 2 box-aware
 // with blended inner points (pack tags 17 / 18; a solid's Lean decoder must
-// read them).
+// read them); 3 the portfolio (both 0 and 2 per box, the better kept).
+// (On the deltoidal hexecontahedron, 2 did not pay overall: per triangle
+// the nodes drop a little, t22 34.4k / 32.4k / 31.3k for 0 / 2 / 3, but its
+// huge contact pools make the box-aware choice costly per node.)
 //
 // --retry_deferred also solves every deferred (df) leaf in the journals again
 // (typically with a larger --subtree_budget); its new records replace it.

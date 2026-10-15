@@ -47,8 +47,22 @@ Quad ViewDisplacement(const ContactPool &pool, const Triple &t,
 
 int g_blend5d = 0;
 
+namespace {
+std::vector<int> BestInnerAt(const ContactPool &pool, const geom5d::TriangleD &tri, const geom5d::BoxD &box,
+                             int chart, int level);
+// The inner-choice levels BestSingle / BestMixture try: one, or with
+// g_blend5d = 3 (the portfolio) both the centre choice and the blended one.
+std::vector<int> Levels() { return g_blend5d >= 3 ? std::vector<int>{0, 2} : std::vector<int>{g_blend5d}; }
+}  // namespace
+
 std::vector<int> BestInner(const ContactPool &pool, const geom5d::TriangleD &tri,
                            const geom5d::BoxD &box, int chart) {
+  return BestInnerAt(pool, tri, box, chart, std::min(g_blend5d, 2));
+}
+
+namespace {
+std::vector<int> BestInnerAt(const ContactPool &pool, const geom5d::TriangleD &tri, const geom5d::BoxD &box,
+                             int chart, int level) {
   const vec3 view = geom5d::Centroid(tri);
   std::vector<int> best(pool.contacts.size(), 0);
   for (size_t c = 0; c < pool.contacts.size(); c++) {
@@ -64,12 +78,12 @@ std::vector<int> BestInner(const ContactPool &pool, const geom5d::TriangleD &tri
         best[c] = k;
       }
     }
-    if (g_blend5d <= 0) continue;
+    if (level <= 0) continue;
     std::sort(by.rbegin(), by.rend());
     std::vector<int> cands;
     const int top = std::min<int>(3, by.size());
     for (int r = 0; r < top; r++) cands.push_back(by[r].second);
-    if (g_blend5d >= 2)
+    if (level >= 2)
       for (int r = 0; r < top; r++)
         for (int s = r + 1; s < top; s++)
           for (int tn = 1; tn <= 3; tn++) cands.push_back(bounds5d::BlendCode(by[r].second, by[s].second, tn));
@@ -85,6 +99,7 @@ std::vector<int> BestInner(const ContactPool &pool, const geom5d::TriangleD &tri
   }
   return best;
 }
+}  // namespace
 
 namespace {
 // The distinct view-control quadratics: corners 0, 1, 2, then the
@@ -168,12 +183,14 @@ Single BestSingle(const ContactPool &pool, const geom5d::TriangleD &tri,
                   const geom5d::BoxD &box, int chart, int max_full) {
   Single best;
   if (pool.triples.empty()) return best;
-  const std::vector<int> inner_of = BestInner(pool, tri, box, chart);
-  for (const auto &[score, t] : ScreenTriples(pool, tri, box, chart, inner_of, max_full)) {
-    const Triple &tr = pool.triples[t];
-    const std::array<int, 3> inner = InnerOf(inner_of, tr);
-    const double m = Margin(pool, tr, inner, tri, box, chart);
-    if (m > best.margin) best = Single{.triple = t, .inner = inner, .margin = m};
+  for (int level : Levels()) {
+    const std::vector<int> inner_of = BestInnerAt(pool, tri, box, chart, level);
+    for (const auto &[score, t] : ScreenTriples(pool, tri, box, chart, inner_of, max_full)) {
+      const Triple &tr = pool.triples[t];
+      const std::array<int, 3> inner = InnerOf(inner_of, tr);
+      const double m = Margin(pool, tr, inner, tri, box, chart);
+      if (m > best.margin) best = Single{.triple = t, .inner = inner, .margin = m};
+    }
   }
   return best;
 }
@@ -209,11 +226,17 @@ Mixture BestMixture(const ContactPool &pool, const geom5d::TriangleD &tri,
                     const geom5d::BoxD &box, int chart, int max_components, int candidates) {
   Mixture best;
   if (pool.triples.empty()) return best;
-  const std::vector<int> inner_of = BestInner(pool, tri, box, chart);
-  const auto screened = ScreenTriples(pool, tri, box, chart, inner_of, candidates);
+  // Columns: (triple, inner choices), from each level's screening.
+  std::vector<std::pair<int, std::array<int, 3>>> colsrc;
   std::vector<std::vector<double>> cols;
-  for (const auto &[score, t] : screened) {
-    cols.push_back(MixtureColumn(pool, pool.triples[t], InnerOf(inner_of, pool.triples[t]), tri, box, chart));
+  for (int level : Levels()) {
+    const std::vector<int> inner_of = BestInnerAt(pool, tri, box, chart, level);
+    for (const auto &[score, t] : ScreenTriples(pool, tri, box, chart, inner_of, candidates)) {
+      const std::array<int, 3> inner = InnerOf(inner_of, pool.triples[t]);
+      if (std::find(colsrc.begin(), colsrc.end(), std::make_pair(t, inner)) != colsrc.end()) continue;
+      colsrc.push_back({t, inner});
+      cols.push_back(MixtureColumn(pool, pool.triples[t], inner, tri, box, chart));
+    }
   }
   const double err = bounds5d::DisplacementError(box);
   // Start from the best single column.
@@ -266,9 +289,8 @@ Mixture BestMixture(const ContactPool &pool, const geom5d::TriangleD &tri,
     mm = tmm;
   }
   for (size_t k = 0; k < chosen.size(); k++) {
-    const int t = screened[chosen[k]].second;
-    best.triples.push_back(t);
-    best.inner.push_back(InnerOf(inner_of, pool.triples[t]));
+    best.triples.push_back(colsrc[chosen[k]].first);
+    best.inner.push_back(colsrc[chosen[k]].second);
     best.w.push_back(mm.w[k]);
   }
   best.margin = mm.value - err;
