@@ -18,12 +18,11 @@ Since 2026-10-10 the C++ code that the solids' searches share is in
 model headers (`model_vertices.h`, `symmetry_neighbors.h`, `ico_group.h`,
 `tie_normals.h`) and `solid.h` (its settings for the shared code). This
 directory keeps the model files, the DH's own tools (`capcert.cc`,
-`tietube.cc`, `halfturn_check.cc`, `pool_check.cc`, `tieviz.cc`), the
+`tietube.cc`, `halfturn_check.cc`, `pool_check.cc`), the
 Lean data generators, `rebuild.sh` and the makefile.
 
 Build with `make` (unit tests; `make test` runs them) or `make all`;
-`./rebuild.sh` builds what it needs. `tieviz.exe` and `shadowanim.exe` (renderings, not part of the proof)
-also need tom7misc's `codec` next to `cc-lib` (`make CODEC=DIR`).
+`./rebuild.sh` builds what it needs.
 
 The rest of this file is the branch's README. Its Lean names are the
 former ones (`DHTies` is now `DeltoidalHexecontahedron/Ties.lean`, and so on;
@@ -107,7 +106,7 @@ peak ~30 GB).
 - Half-turn prune: `exact5d::HalfTurnPruneValid`, `ico_group.py`, `halfturn_check.cc`.
 - Caps: `capcert.cc`, `dh_caps.py`, `dh_cap_lean.py` (Lean `DHCapData`), `merge_caps_cert.py`, `capleaf_check.cc`.
 - Ties: `dh_tie_data.py` (`dh_tie_data.txt`, `tie_normals.h`), `tietube.cc`, `tieatlas5d`, `dh_tie_lean.py`
-  (Lean `DHTieData`), `tieviz.cc` (renderings).
-- 5D search: as for the pentagonal hexecontahedron, plus cap and tie leaves; `tufix.cc` (tube leaves at cap nodes).
+  (Lean `DHTieData`).
+- 5D search: as for the pentagonal hexecontahedron, plus cap and tie leaves.
 - Lean (Noperthedron `deltoidalhexecontahedron`, `Noperthedron/PentagonalHexecontahedron/`): `DHStatement`,
   `DHCaps`, `DHTies`, `DHChecks`, `DHDecode`, the cap and tie modules above, and `constructDeltoidalHexecontahedron`.

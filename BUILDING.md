@@ -104,8 +104,7 @@ page with its statement, trust model and reproduction steps:
 - `search/`: the C++ certificate searches that produced the data.
   - `search/common/`: the code the searches share (the identity tube, the
     identity blow-up certificates `idcap.cc` with `kpoly.h`, the 5D search
-    and packing, `codebdd`, diagnostics such as `survey5d` and `tubeprobe`,
-    unit tests) and their build rules, `common.mk`.
+    and packing, `codebdd`, unit tests) and their build rules, `common.mk`.
   - `search/septopert/`, `search/dh/`, `search/ph/`, `search/sd/`,
     `search/sc/`, `search/nopert231/`: the searches for the Septopert, the
     deltoidal hexecontahedron, the pentagonal hexecontahedron, the snub

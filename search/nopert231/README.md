@@ -3,9 +3,8 @@
 > `nopert231` branch of nopert229 at commit e53dfda (2026-10-04), minus the
 > branch's private working notes (`notes/`). GPLv3 (`../COPYING`). Changes:
 > build and script paths point into this repository (cc-lib at `../../cc-lib`,
-> the Lean project at `../../proof`, work directory `../../work-231`;
-> `shadowanim.exe`, a rendering, also needs tom7misc's codec at `../../codec`
-> and is not in `make all`), and the Lean data generators, which were in
+> the Lean project at `../../proof`, work directory `../../work-231`),
+> and the Lean data generators, which were in
 > Noperthedron's `scripts/` (`nopert231` branch, 0c83e4ba; also imported with
 > their history), are in `scripts/`, emitting this repository's module names.
 > They reproduce the committed `proof/Nopert231/` data byte for byte. The text
@@ -71,7 +70,7 @@ instantiated: the exact model (exactVerts) and idealized #231 are not Rupert
 ## Reproducing the proof
 
 Prerequisites:
-- this repository, with `../cc-lib`, `../ruperts`, `../codec` and `../sqlite` beside it (as for the other tom7 projects);
+- this repository, with `../cc-lib`, `../ruperts` and `../sqlite` beside it (as for the other tom7 projects);
 - clang with C++23, and GMP;
 - a checkout of Noperthedron's `nopert231` branch at `../Noperthedron`, with its Lean toolchain (elan/lake).
 
@@ -102,14 +101,7 @@ Peak memory is about 32 GB (the Lean verifier); `--mem_gb` caps every stage. `tu
 - `TREES_DIR` (no default; e.g. `work/trees_r2` after the tube stage, or as the first argument; solve5d and tubeatlas5d then use `./codebdd.json`): solve5d, tubeatlas5d, tube;
 - `TUBE_MANIFEST` (optional, e.g. `work/tube_packs/manifest.txt`): tubeatlas5d compares the tree radii with the exported packs.
 
-**Code texture (for rendering).** `./codebdd.exe --texture=BASE` also writes `BASE.png`, an equirectangular image (8192×4096; `--texture_width`) of all view directions colored by face-visibility code up to the solid's symmetries and the antipode; `BASE.txt`, the legend (each class's color, area and `codebdd.json` codes); and `BASE.stl`, the solid in the image's frame. `../common/blender_code_texture.py` applies it to an object in Blender (an Environment Texture node fed with object coordinates, so each surface point takes the color of its direction).
-
-**Proof data over the views (for rendering).** `viewmap.exe` maps a quantity over all view directions, each reduced into the view wedge by the fivefold symmetry and the antipode as in the proof:
-- `--margin`: the first-order rigidity margin of the identity pose; the canyon is dark;
-- `--search5d`: the 5D search's leaves per unit view area, from the journals (`--journals WORK/jobs`, one `--chart` or all);
-- `--tube`: the identity tube's certified radius (`--trees_dir WORK/trees_r2`).
-
-It writes an equirectangular image (`--equirect W`, as above), a UDIM-textured OBJ of the solid (`--udim S`: one S×S tile per triangle; import the OBJ in Blender and set the image to UDIM tiles), a color bar, and `_views.txt`: the most extreme views (for `--margin`, the canyon first), each with the object rotation (quaternion and XYZ Euler angles) that turns it toward a camera on the +z axis. For example, `./viewmap.exe --margin --trees_dir WORK/trees_r2 --grid 8192 --equirect 32768 --udim 8192 --out margin` needs about 3.5 GB; `--grid` sets the resolution of the data, the image sizes that of the textures. The solid's frame is that of `ruperts/nopert_231.stl` (up to scale).
+**Code texture (for rendering).** `./codebdd.exe --texture=BASE` also writes `BASE.png`, an equirectangular image (8192×4096; `--texture_width`) of all view directions colored by face-visibility code up to the solid's symmetries and the antipode; `BASE.txt`, the legend (each class's color, area and `codebdd.json` codes); and `BASE.stl`, the solid in the image's frame.
 
 ## How the proof works
 

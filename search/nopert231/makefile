@@ -7,11 +7,7 @@ TESTS += model231_test tube231_test
 default : $(TESTS:%=%.exe)
 
 # Every program of the pipeline (rebuild.sh runs it; see README.md).
-# shadowanim.exe (a rendering) also needs tom7misc's codec (CODEC in
-# ../common/common.mk).
-all: default qtube s5d codebdd.exe viewmap.exe survey5d.exe
-# survey5d: where a solid's packs spend their rows (dense spots: views,
-# rotation sizes, box sizes), to target better mathematics.
+all: default qtube s5d codebdd.exe
 
 # Rational model and identity tube:
 #  codebdd (codebdd.cc here, #231's own): exact rational model

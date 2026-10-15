@@ -47,7 +47,7 @@ The same solid is cc-lib's `SnubDodecahedron()` (`geom/polyhedra.cc`). Checked n
 ## Reproducing the proof
 
 Prerequisites:
-- cc-lib at `../../cc-lib` (`../../get-cc-lib.sh`); `../../codec` only for `shadowanim.exe` (rendering), which is not part of the pipeline;
+- cc-lib at `../../cc-lib` (`../../get-cc-lib.sh`);
 - clang with C++23, and GMP;
 - the Lean project at `../../proof`, with its Lean toolchain (elan/lake).
 
@@ -89,14 +89,7 @@ instantiated: Wikipedia's snub dodecahedron is not Rupert
 
 `../common/snub_model.py` regenerates the model file `snub_model.txt` (and `symmetry_neighbors.h`) from the exact solid to 80 digits.
 
-**Code texture (for rendering).** `./codebdd.exe --model_file=snub_model.txt --texture=BASE` also writes `BASE.png`, an equirectangular image (8192×4096; `--texture_width`) of all view directions colored by face-visibility code up to the solid's symmetries and the antipode; `BASE.txt`, the legend (each class's color, area and `codebdd.json` codes); and `BASE.stl`, the solid in the image's frame. `../common/blender_code_texture.py` applies it to an object in Blender (an Environment Texture node fed with object coordinates, so each surface point takes the color of its direction).
-
-**Proof data over the views (for rendering).** `viewmap.exe` maps a quantity over all view directions, each reduced into the view triangle by the solid's symmetries and the antipode as in the proof:
-- `--margin`: the first-order rigidity margin of the identity pose (where it is small, the search works hardest);
-- `--search5d`: the 5D search's leaves per unit view area, from the journals (`--journals WORK/jobs`, one `--chart` or all);
-- `--tube`: the identity tube's certified radius (`--trees_dir WORK/trees_r2`).
-
-It writes an equirectangular image (`--equirect W`, as above), a UDIM-textured OBJ of the solid (`--udim S`: one S×S tile per triangle; import the OBJ in Blender and set the image to UDIM tiles), a color bar, and `_views.txt`: the most extreme views, each with the object rotation (quaternion and XYZ Euler angles) that turns it toward a camera on the +z axis. For example, `./viewmap.exe --margin --trees_dir WORK/trees_r2 --grid 8192 --equirect 32768 --udim 8192 --out margin` needs about 3.5 GB; the grid (`--grid`) sets the resolution of the data, the image sizes that of the textures.
+**Code texture (for rendering).** `./codebdd.exe --model_file=snub_model.txt --texture=BASE` also writes `BASE.png`, an equirectangular image (8192×4096; `--texture_width`) of all view directions colored by face-visibility code up to the solid's symmetries and the antipode; `BASE.txt`, the legend (each class's color, area and `codebdd.json` codes); and `BASE.stl`, the solid in the image's frame.
 
 ## How the proof works
 

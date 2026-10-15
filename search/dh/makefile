@@ -5,12 +5,8 @@ include ../common/common.mk
 # Unit tests.
 default : $(TESTS:%=%.exe)
 
-# Every program of the pipeline (rebuild.sh runs it). tieviz.exe and
-# shadowanim.exe (renderings) also need tom7misc's codec (CODEC in
-# ../common/common.mk).
-all: default qtube s5d codebdd.exe icoprune_check.exe halfturn_check.exe tietube.exe dfwhere.exe capleaf_check.exe pool_check.exe capcert.exe viewmap.exe survey5d.exe
-# survey5d: where a solid's packs spend their rows (dense spots: views,
-# rotation sizes, box sizes), to target better mathematics.
+# Every program of the pipeline (rebuild.sh runs it).
+all: default qtube s5d codebdd.exe icoprune_check.exe halfturn_check.exe tietube.exe dfwhere.exe capleaf_check.exe pool_check.exe capcert.exe
 
 # Identity tube:
 #  codebdd: exact rational model, codes and code triangles (codebdd.json).
@@ -35,14 +31,6 @@ s5d: search5d.exe pack5d.exe scoreboard5d.exe
 #  tietube: exact tie tubes (the ties stage; dh_tie_data.py).
 #  pool_check: the pools' weighted defect bounds (Pareto frontiers) equal
 #    the direct maximum.
-#  tieviz: 4K pictures/animations of the ties (video; see tieviz.txt).
-# and the shared diagnostics dfwhere, tufix and capleaf_check.
-halfturn_check.exe : halfturn_check.o rigidity-margin.o $(OBJECTS_CORE) $(OBJECTS)
-	@$(CXX) $^ -o $@ $(LFLAGS)
-	@echo -n "!"
-
-tieviz.exe : tieviz.o $(OBJECTS_CORE) $(OBJECTS) $(CODEC_OBJECTS)
-	@$(CXX) $^ -o $@ $(LFLAGS)
-	@echo -n "!"
+# and the shared diagnostics dfwhere and capleaf_check.
 
 .PHONY : qtube s5d

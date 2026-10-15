@@ -9,9 +9,6 @@
 
 COMMON := ../common
 CC_LIB := ../../cc-lib
-# Only for renderings (shadowanim.exe, tieviz.exe): tom7misc's codec, next to
-# cc-lib (or make ... CODEC=/path/to/codec).
-CODEC := ../../codec
 
 # Sources not in the solid's directory are taken from COMMON.
 vpath %.cc $(COMMON)
@@ -57,9 +54,6 @@ CC_LIB_OBJECTS=$(CC_LIB)/util.o $(CC_LIB)/arcfour.o $(CC_LIB)/factorization.o $(
 
 OBJECTS=$(CC_LIB_OBJECTS)
 
-# Only for renderings (animations of polyhedra).
-CODEC_OBJECTS=$(CODEC)/mov.o $(CODEC)/mov-recorder.o
-
 # Library objects shared by the tools. No OpenCL.
 OBJECTS_CORE=model.o tube.o tubetree.o tieatlas5d.o exact5d.o geom5d.o contacts5d.o bounds5d.o cert5d.o tubeatlas5d.o rows5d.o solve5d.o lp5d.o
 
@@ -70,31 +64,12 @@ $(CC_LIB)/%.o : $(CC_LIB)/%.cc
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 	@echo -n "."
 
-$(CODEC)/%.o : $(CODEC)/%.cc
-	@$(CXX) $(CXXFLAGS) -I$(CODEC) -c $< -o $@
-	@echo -n "."
-
-shadowanim.o tieviz.o : CXXFLAGS += -I$(CODEC)
-
 %.o : %.cc $(HEADERS) makefile $(COMMON)/common.mk
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 	@echo -n "."
 
 # Generic pattern rule for executables.
 %.exe : %.o $(OBJECTS_CORE) $(OBJECTS)
-	@$(CXX) $^ -o $@ $(LFLAGS)
-	@echo -n "!"
-
-# Renderings (not part of the proofs):
-#  viewmap: the first-order margin, search density or tube radius over all
-#    views, as an equirectangular image and a UDIM-textured OBJ of the solid.
-#  shadowanim: an animation of first-order rigidity (shadowanim.txt); also
-#    needs tom7misc's codec (CODEC above).
-viewmap.exe : viewmap.o rigidity-margin.o $(OBJECTS_CORE) $(OBJECTS)
-	@$(CXX) $^ -o $@ $(LFLAGS)
-	@echo -n "!"
-
-shadowanim.exe : shadowanim.o rigidity-margin.o $(OBJECTS_CORE) $(OBJECTS) $(CODEC_OBJECTS)
 	@$(CXX) $^ -o $@ $(LFLAGS)
 	@echo -n "!"
 

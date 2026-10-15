@@ -28,7 +28,7 @@ tool and test.
   cap certificate at the mirror normal.
 - `search5d.exe`: parallel journaled 5D search.
 - `pack5d.exe`: 5D journals to per-code Lean packs.
-- `scoreboard5d.exe`, `dfwhere.exe`, `tufix.exe`, `capleaf_check.exe`:
+- `scoreboard5d.exe`, `dfwhere.exe`, `capleaf_check.exe`:
   status and diagnostic tools for the 5D journals.
 - `*_test.cc` (in `../common/`): unit tests; some need `codebdd.json` in the
   current directory or a tube trees directory.
