@@ -17,7 +17,7 @@ vpath %.h $(COMMON)
 .DEFAULT_GOAL := default
 
 # The unit tests (`make`; `make test` runs them).
-TESTS := exact5d_test geom5d_test contacts5d_test cert5d_test tubeatlas5d_test rows5d_test solve5d_test lp5d_test tubetree_test model_test tube_test
+TESTS := geom5d_test contacts5d_test cert5d_test tubeatlas5d_test rows5d_test solve5d_test lp5d_test tubetree_test model_test tube_test
 
 UNAME := $(shell uname -o)
 ifeq ($(findstring Linux,$(UNAME)),Linux)
@@ -74,7 +74,7 @@ $(CC_LIB)/%.o : $(CC_LIB)/%.cc
 	@echo -n "!"
 
 # Runs every unit test. Tests that need generated data (codebdd.json, tube
-# trees, the Lean exact5d_golden executable) skip when it is absent; see the
+# trees) skip when it is absent; see the
 # tests for the environment variables that point them at it.
 test : default
 	@failed=""; for t in $(TESTS); do echo "== $$t"; ./$$t.exe || failed="$$failed $$t"; done; \

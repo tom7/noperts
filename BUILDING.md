@@ -186,9 +186,7 @@ includes the solid's model headers), so `make` runs in the solid's
 directory; `make` builds the unit tests, `make test` runs them and `make
 all` builds every tool. The tests that need `codebdd.json` (written by the
 solid's model stage, `rebuild.sh --only model`) or tube trees print SKIPPED
-without them; `exact5d_test` compares with a Lean executable
-(`exact5d_golden`) that is not in this repository, and skips unless
-`EXACT5D_GOLDEN` points at one.
+without them.
 
 The rebuild scripts append each stage's wall time to `WORK/stages.log` and
 build the Lean checker in the background while the C++ stages run (log

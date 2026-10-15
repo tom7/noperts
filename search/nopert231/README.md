@@ -8,8 +8,7 @@
 > `native_decide` (chart 3 and the tangent cones are checked by the kernel,
 > `table_valid_kernel`), and it does not have the branch's development
 > executables `validate_code_pack`, `check_identity_tube`,
-> `check_global_rows` and `exact5d_golden` (so `exact5d_test` skips its
-> comparison with Lean). GPLv3 (`../COPYING`). For the statement as proved
+> `check_global_rows` and `exact5d_golden`. GPLv3 (`../COPYING`). For the statement as proved
 > and how to run the pipeline, see [`../../nopert231.md`](../../nopert231.md).
 >
 > The C++ code that the solids' searches share is in
@@ -88,8 +87,7 @@ The build step builds the C++ tools and the Lean executables first. `codebdd.jso
 Peak memory is about 32 GB (the Lean verifier); `--mem_gb` caps every stage. `tubecode`, `tuberefine`, `codebdd` and `pack5d` are deterministic (independent of the thread count). `search5d` is not, so a fresh search gives different but equally checkable packs. To re-check existing data, point `--work` at it and start from `pack` or `verify`.
 
 **Unit tests.** `make` builds them and `make test` runs them. Tests that need generated data print SKIPPED and pass when it is absent (codebdd.json: run the model stage first); these environment variables point them at it:
-- `CODEBDD_JSON` (default `codebdd.json`): contacts5d, cert5d, exact5d, tube;
-- `EXACT5D_GOLDEN` (no default; the executable is not in this repository, see above): exact5d, which compares every exact check with Lean;
+- `CODEBDD_JSON` (default `codebdd.json`): contacts5d, cert5d, tube;
 - `TREES_DIR` (no default; e.g. `work/trees_r2` after the tube stage, or as the first argument; solve5d and tubeatlas5d then use `./codebdd.json`): solve5d, tubeatlas5d, tube;
 - `TUBE_MANIFEST` (optional, e.g. `work/tube_packs/manifest.txt`): tubeatlas5d compares the tree radii with the exported packs.
 

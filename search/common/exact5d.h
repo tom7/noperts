@@ -5,9 +5,7 @@
 //   projectiveMixedGlobal  proof/Pipeline/AtlasProjectiveMixedGlobalCertificate.lean
 //
 // Lean is the specification. Each function here carries the name of the Lean
-// definition it mirrors. exact5d_test can check agreement with Lean on
-// generated boxes, given a Lean exact5d_golden executable (not in this
-// repository; see exact5d_test.cc). Use this both in
+// definition it mirrors. Use this both in
 // the search (to pre-check a leaf before writing it) and in packing, so that
 // what C++ accepts is exactly what Lean accepts.
 //
