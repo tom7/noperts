@@ -189,6 +189,12 @@ Noperthedron) took 4 h 49 min:
 | pack | about 52 min |
 | verify | about 2 h 46 min, peak about 32 GB |
 
+With blended inner points in the 5D rows (search5d's default since
+2026-10-14), a from-scratch run on 64 cores (2026-10-14) took 2 h 33 min:
+model 2.3 min, tube 8 min, search 17.5 min (9.3 M nodes), pack 31.5 min
+(1.85 GB of packs; chart 0 has 10.6 M rows), verify 1 h 33 min (about
+13 GB resident while checking chart 0).
+
 The search is not deterministic, so a new run gives different but equally
 checkable packs.
 
