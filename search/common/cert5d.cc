@@ -51,8 +51,11 @@ namespace {
 std::vector<int> BestInnerAt(const ContactPool &pool, const geom5d::TriangleD &tri, const geom5d::BoxD &box,
                              int chart, int level);
 // The inner-choice levels BestSingle / BestMixture try: one, or with
-// g_blend5d = 3 (the portfolio) both the centre choice and the blended one.
+// g_blend5d = 3 (the portfolio) or 4 (escalate) both the centre choice and
+// the blended one. With 4, the blended level is tried only if the centre
+// choice fails (blended rows cost more bytes).
 std::vector<int> Levels() { return g_blend5d >= 3 ? std::vector<int>{0, 2} : std::vector<int>{g_blend5d}; }
+bool Escalate() { return g_blend5d == 4; }
 }  // namespace
 
 std::vector<int> BestInner(const ContactPool &pool, const geom5d::TriangleD &tri,
@@ -191,6 +194,7 @@ Single BestSingle(const ContactPool &pool, const geom5d::TriangleD &tri,
       const double m = Margin(pool, tr, inner, tri, box, chart);
       if (m > best.margin) best = Single{.triple = t, .inner = inner, .margin = m};
     }
+    if (Escalate() && best.margin > 0) break;
   }
   return best;
 }
@@ -222,14 +226,16 @@ std::vector<double> MixtureColumn(const ContactPool &pool, const Triple &triple,
   return col;
 }
 
-Mixture BestMixture(const ContactPool &pool, const geom5d::TriangleD &tri,
-                    const geom5d::BoxD &box, int chart, int max_components, int candidates) {
+namespace {
+Mixture BestMixtureAt(const ContactPool &pool, const geom5d::TriangleD &tri,
+                      const geom5d::BoxD &box, int chart, int max_components, int candidates,
+                      const std::vector<int> &levels) {
   Mixture best;
   if (pool.triples.empty()) return best;
   // Columns: (triple, inner choices), from each level's screening.
   std::vector<std::pair<int, std::array<int, 3>>> colsrc;
   std::vector<std::vector<double>> cols;
-  for (int level : Levels()) {
+  for (int level : levels) {
     const std::vector<int> inner_of = BestInnerAt(pool, tri, box, chart, level);
     for (const auto &[score, t] : ScreenTriples(pool, tri, box, chart, inner_of, candidates)) {
       const std::array<int, 3> inner = InnerOf(inner_of, pool.triples[t]);
@@ -295,6 +301,16 @@ Mixture BestMixture(const ContactPool &pool, const geom5d::TriangleD &tri,
   }
   best.margin = mm.value - err;
   return best;
+}
+}  // namespace
+
+Mixture BestMixture(const ContactPool &pool, const geom5d::TriangleD &tri,
+                    const geom5d::BoxD &box, int chart, int max_components, int candidates) {
+  if (!Escalate()) return BestMixtureAt(pool, tri, box, chart, max_components, candidates, Levels());
+  Mixture plain = BestMixtureAt(pool, tri, box, chart, max_components, candidates, {0});
+  if (plain.triples.size() >= 2 && plain.margin > 0) return plain;
+  Mixture both = BestMixtureAt(pool, tri, box, chart, max_components, candidates, {0, 2});
+  return both.margin > plain.margin ? both : plain;
 }
 
 std::vector<BigRat> RationalWeights(const std::vector<double> &w) {

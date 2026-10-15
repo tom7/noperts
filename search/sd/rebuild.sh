@@ -162,13 +162,11 @@ fi
 if want search; then
   stage_begin search
   # One run solves every job; deferred leaves are retried in the same run.
-  # Blended inner points (search5d's default --blend5d 2) verify (2026-10-15)
-  # but do not pay here: packs 99.7 MB vs 96.6 MB without, the search no
-  # faster (2:16 vs 2:14); the portfolio --blend5d 3 has the fewest rows but
-  # 97.8 MB.
+  # search5d's default --blend5d 4 (escalate; validated here 2026-10-15):
+  # packs 96.4 MB, vs 96.6 MB with --blend5d 0 and 99.7 MB with 2.
   (cd "$NOPERT" && run ./search5d.exe --all --charts 0,1,2 --threads "$THREADS" --commit_depth 12 \
     --subtree_budget 5000 --max_depth 200 --trees_dir "$TREES2" --view_scale 4 \
-    --max_full_retry 1024 --retry_deferred --requeue_deferred --blend5d 0 --out_dir "$JOBS")
+    --max_full_retry 1024 --retry_deferred --requeue_deferred --out_dir "$JOBS")
   (cd "$NOPERT" && run ./scoreboard5d.exe --journals "$JOBS" | tail -1)
   stage_end search
 fi

@@ -75,7 +75,8 @@ With blended inner points in the 5D rows (search5d's default since 2026-10-14), 
 (454,496 nodes), pack 3.2 min (chart 0: 828,055 rows; 97 MB of packs), verify 7.9 min. For this solid the blends
 do not pay: on an idle machine the search takes 2:16 with them and 2:14 without (452,068 nodes, as on 2026-10-04; the
 earlier 22 min predates later search5d speedups), and the packs are 99.7 MB with them and 96.6 MB without (chart 0:
-825,220 rows). `rebuild.sh` therefore keeps `--blend5d 0`.
+825,220 rows). search5d's later default, `--blend5d 4` ("escalate": a blended inner point only where the plain choice
+fails), gives 96.4 MB (449,374 nodes; chart 0: 822,041 rows) and verifies (2026-10-15); `rebuild.sh` uses it.
 
 Peak memory is about 26 GB. The verifier ends with:
 
