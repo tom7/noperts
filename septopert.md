@@ -80,11 +80,11 @@ This is a **Lean verification**, not a direct kernel-only Lean proof:
    kernel and depends only on the standard axioms (`propext`,
    `Classical.choice`, `Quot.sound`). Its "genuine solid" half needs no data
    at all.
-2. **Verification of the data.** The data is about 2.2 million table rows
-   (135 MB), too much for the kernel. The program `constructSeptopert` runs
+2. **Verification of the data.** The data is about 850,000 table rows
+   (45 MB), too much for the kernel. The program `constructSeptopert` runs
    the same Lean validity checks as compiled code on every row, and only if
-   all pass does it construct `¬ IsRupert` (via part 1) and print
-   `instantiated: ¬ IsRupert Septopert.verts (the Septopert is not Rupert)`.
+   all pass does it construct `IsNopert septopert` (via part 1) and print
+   `instantiated: IsNopert septopert (the Septopert is a Nopert: not Rupert)`.
    This step trusts Lean's compiler and runtime to evaluate the checks
    correctly. This is the same trust as `native_decide`, though `native_decide` is
    not used.
@@ -206,8 +206,8 @@ where no single vertex certifies a box (both by default).
 Verified on 2026-10-15 on a 64-core machine: `constructSeptopert` checked
 the cap certificate, the 22 tube tables (250 rows, 176 of them identity
 blow-up rows) and the four chart tables (476,073, 143,787, 123,839 and
-104,243 rows) and printed `instantiated: ¬ IsRupert Septopert.verts (the
-Septopert is not Rupert)`. You can reproduce it yourself, following the
+104,243 rows) and printed `instantiated: IsNopert septopert (the Septopert
+is a Nopert: not Rupert)`. You can reproduce it yourself, following the
 instructions in [BUILDING.md](BUILDING.md):
 
 ```sh

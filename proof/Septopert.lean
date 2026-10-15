@@ -38,9 +38,9 @@ The result has two parts, and they are trusted differently.
    Instead, the program `constructSeptopert` (in `constructSeptopert.lean`)
    reads the data, runs Lean's own validity checks on every row as compiled
    code, and, only if every check passes, uses part 1 to build a value of type
-   `¬ IsRupert septopert` (hence `IsNopert septopert`) and prints
+   `IsNopert septopert` and prints
 
-       instantiated: ¬ IsRupert Septopert.verts (the Septopert is not Rupert)
+       instantiated: IsNopert septopert (the Septopert is a Nopert: not Rupert)
 
    Trusting this part means trusting that Lean's compiler and runtime evaluate
    the check functions correctly. That is the same trust that `native_decide`

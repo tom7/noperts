@@ -1,16 +1,18 @@
+import Septopert
 import Septopert.NativeExecutable
 import Septopert.PackedSolutionTree
 
 /-!
 Native executable that checks the Septopert's certificate data and, if it is
-all valid, constructs `¬ IsRupert Septopert.verts` (from which
-`Septopert.isNopert_of_certificatesValid` gives `IsNopert septopert`).
+all valid, constructs `IsNopert septopert`: not coplanar (a Lean proof) and
+not Rupert (`¬ IsRupert Septopert.verts`, from the checked data), as in
+`Septopert.isNopert_of_certificatesValid`.
 
 Usage:
   constructSeptopert <tube manifest.txt> <chart directory> <cap.cert>
     Checks everything: the cap certificate, every tube table and all four
     chart tables. On success it prints
-      instantiated: ¬ IsRupert Septopert.verts (the Septopert is not Rupert)
+      instantiated: IsNopert septopert (the Septopert is a Nopert: not Rupert)
     This is the verification of the result; the other modes are diagnostics.
   constructSeptopert chart <tube manifest.txt> <chart directory> <chart>
     Checks one chart's table (all its rows and its root), without the tube
@@ -142,8 +144,9 @@ def fullMode (manifestPath directory capPath : String) : IO Unit := do
     throw (IO.userError s!"{localTables.size} tube tables for {ViewCover.codeTriangles.size} code triangles")
   let checked ← constructProof chunks chunks localTables
     (loadChart directory localTables.size)
-  let _k : ¬ IsRupert verts := checked.down capOk.down
-  IO.println "instantiated: ¬ IsRupert Septopert.verts (the Septopert is not Rupert)"
+  let notRupert : ¬ IsRupert verts := checked.down capOk.down
+  let _nopert : IsNopert septopert := ⟨not_coplanar_septopert, septopert_eq_verts ▸ notRupert⟩
+  IO.println "instantiated: IsNopert septopert (the Septopert is a Nopert: not Rupert)"
 
 def main (args : List String) : IO Unit := do
   match args with
