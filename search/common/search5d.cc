@@ -18,15 +18,11 @@
 //                [--exact_check] [--retry_deferred] [--requeue_deferred] [--blend5d L]
 //
 // --blend5d L (default 4, validated on the Septopert): 0 the inner vertex
-// per contact at the box centre (the earlier behavior); 1 box-aware; 2
-// box-aware with blended inner points (pack tags 17 / 18; a solid's Lean
-// decoder must read them); 3 the portfolio (both 0 and 2 per box, the
-// better kept); 4 escalate (0 first; 2 only where 0 fails, since blended
-// rows cost more bytes, and only on the triples whose inner choice 2
-// changes). Septopert packs: 51.4 MB with 2, 44.9 MB with 4.
-// (On the deltoidal hexecontahedron, 2 did not pay overall: per triangle
-// the nodes drop a little, t22 34.4k / 32.4k / 31.3k for 0 / 2 / 3, but its
-// huge contact pools make the box-aware choice costly per node.)
+// per contact at the box centre (the earlier behavior); 2 box-aware with
+// blended inner points (pack tags 17 / 18; a solid's Lean decoder must read
+// them); 4 escalate (0 first; 2 only where 0 fails, since blended rows cost
+// more bytes, and only on the triples whose inner choice 2 changes).
+// Septopert packs: 51.4 MB with 2, 44.9 MB with 4.
 //
 // --retry_deferred also solves every deferred (df) leaf in the journals again
 // (typically with a larger --subtree_budget); its new records replace it.
@@ -236,7 +232,11 @@ int main(int argc, char **argv) {
     else if (a == "--min_peel") args.opt.min_peel_eighths = std::stoi(next());
     else if (a == "--max_depth") args.opt.max_depth = std::stoi(next());
     else if (a == "--exact_check") args.opt.exact_check = true;
-    else if (a == "--blend5d") cert5d::g_blend5d = std::stoi(next());
+    else if (a == "--blend5d") {
+      cert5d::g_blend5d = std::stoi(next());
+      CHECK(cert5d::g_blend5d == 0 || cert5d::g_blend5d == 2 || cert5d::g_blend5d == 4)
+          << "--blend5d is 0, 2 or 4";
+    }
     else if (a == "--max_mix") args.opt.max_mix_components = std::stoi(next());
     else if (a == "--retry_deferred") args.retry_deferred = true;
     else if (a == "--requeue_deferred") args.requeue_deferred = true;

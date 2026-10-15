@@ -6,7 +6,7 @@ include ../common/common.mk
 default : $(TESTS:%=%.exe)
 
 # Every program (rebuild.sh runs the pipeline ones).
-all: default qtube s5d codebdd.exe capcert_septopert.exe dfwhere.exe tufix.exe capleaf_check.exe survey5d.exe tubeprobe.exe kcapq.exe
+all: default qtube s5d codebdd.exe capcert_septopert.exe dfwhere.exe tufix.exe capleaf_check.exe survey5d.exe tubeprobe.exe
 # survey5d: where a solid's packs spend their rows (dense spots: views,
 # rotation sizes, box sizes; --tubes: the identity-tube tables), to target
 # better mathematics. tubeprobe: tubecode's cage searches on triangles of
@@ -30,8 +30,5 @@ s5d: search5d.exe pack5d.exe scoreboard5d.exe
 # Diagnostics: dfwhere (where a 5D job's deferred leaves are), tufix and
 # capleaf_check (exact re-checks of the 5D journals' tube and cap leaves).
 # capcert_septopert: the Septopert's cap certificate at its mirror normal.
-# kcapq: a KCap cap certificate (view and rotation blown up together) at a
-# codimension-2 view of an exact model (sccapcert over Q); an experiment for
-# the t9 corner (nopert229 SEPTOPERT-IMPROVEMENTS (A): too many leaves there).
 
 .PHONY : qtube s5d

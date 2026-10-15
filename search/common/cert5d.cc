@@ -51,11 +51,10 @@ namespace {
 std::vector<int> BestInnerAt(const ContactPool &pool, const geom5d::TriangleD &tri, const geom5d::BoxD &box,
                              int chart, int level);
 // The inner-choice levels BestSingle / BestMixture try: one, or with
-// g_blend5d = 3 (the portfolio) or 4 (escalate) both the centre choice and
-// the blended one. With 4, the blended level is tried only if the centre
-// choice fails (blended rows cost more bytes), and only on the triples
-// whose inner choice it changes (see Candidates).
-std::vector<int> Levels() { return g_blend5d >= 3 ? std::vector<int>{0, 2} : std::vector<int>{g_blend5d}; }
+// g_blend5d = 4 (escalate) the centre choice, then (only if it fails, since
+// blended rows cost more bytes) the blended one, on the triples whose inner
+// choice it changes (see Candidates).
+std::vector<int> Levels() { return g_blend5d == 4 ? std::vector<int>{0, 2} : std::vector<int>{g_blend5d}; }
 bool Escalate() { return g_blend5d == 4; }
 
 }  // namespace

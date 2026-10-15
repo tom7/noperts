@@ -21,16 +21,12 @@ using vec3 = geom5d::vec3;
 
 // The inner vertex used for each contact of the pool: the one sticking out
 // furthest past the contact's support line at the box center and the
-// triangle's centroid view.
-// With g_blend5d = 3 (the portfolio), BestSingle and BestMixture try both
-// the centre choice (level 0) and the blended one (level 2), keeping the
-// better: never worse than level 0. With g_blend5d = 4 (escalate), the
-// blended level only where level 0 fails, and only on the triples whose
-// inner choice it changes (search5d's default).
-// With g_blend5d >= 1 (search5d --blend5d): box-aware, the candidate (of the
-// three best vertices at the center, and with g_blend5d >= 2 their blends,
+// triangle's centroid view (g_blend5d = 0). With g_blend5d = 2: box-aware,
+// the candidate (of the three best vertices at the center and their blends,
 // bounds5d::BlendCode) with the best Bernstein lower bound over the box at
-// the centroid view (an experiment; no Lean row for blends yet).
+// the centroid view. With g_blend5d = 4 (escalate, search5d's default),
+// BestSingle and BestMixture try level 0 first and level 2 only where it
+// fails, and then only on the triples whose inner choice it changes.
 extern int g_blend5d;
 std::vector<int> BestInner(const contacts5d::ContactPool &pool, const geom5d::TriangleD &tri,
                            const geom5d::BoxD &box, int chart);
