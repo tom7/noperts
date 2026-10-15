@@ -133,11 +133,11 @@ fi
 
 if want search; then
   stage_begin search
-  # TODO: validate blended inner points (search5d's default --blend5d 2) for
-  # this solid; its Lean decoder does not read pack tags 17 / 18 yet.
+  # search5d's default --blend5d 4 (escalate: blended inner points only
+  # where the plain choice fails).
   (cd "$NOPERT" && run ./search5d.exe --all --charts 0,1,2,3 --threads "$THREADS" --commit_depth 12 \
     --subtree_budget 200000 --max_depth 200 --trees_dir "$TREES" --view_scale 4 \
-    --max_full_retry 1024 --trib_caps "$CAPS/trib_caps.txt" --requeue_deferred --blend5d 0 --out_dir "$JOBS")
+    --max_full_retry 1024 --trib_caps "$CAPS/trib_caps.txt" --requeue_deferred --out_dir "$JOBS")
   (cd "$NOPERT" && run ./scoreboard5d.exe --journals "$JOBS" | tail -1)
   stage_end search
 fi

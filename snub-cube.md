@@ -130,6 +130,12 @@ there can only produce data that fails the checks.
   committed model and Lean data file byte for byte, the search found the
   same tree (141,670 nodes, 0 deferred), and `constructSnubCube` printed the
   same line (exit 0). All stages took under 6 min, besides the Lean build.
+- **2026-10-15:** with the 5D search's shared default, blended inner points
+  only where the plain choice fails (`search5d --blend5d 4`, as for the
+  other solids), a from-scratch run: 138,516 nodes (was 141,670), chart 0
+  205,334 rows (was 209,666), 17.7 MB of packs (18.0 MB with the earlier
+  setting); `constructSnubCube` printed the same line (verify 338 s). All
+  stages took 6.6 min.
 
 ## Verifying and reproducing
 
