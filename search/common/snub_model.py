@@ -24,7 +24,7 @@
 #                            x + y + z = 1 (3 corners, 9 fractions) containing
 #                            the Schwarz chamber of Ih at the z pole
 #
-# Usage: python3 ../common/scripts/snub_model.py [out=snub_model.txt] [header=symmetry_neighbors.h]
+# Usage: python3 ../common/snub_model.py [out=snub_model.txt] [header=symmetry_neighbors.h]
 
 import itertools
 import sys

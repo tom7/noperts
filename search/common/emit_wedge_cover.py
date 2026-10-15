@@ -36,7 +36,7 @@ from fractions import Fraction as F
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-REPO = HERE.parents[2] / "proof"  # the Lean project
+REPO = HERE.parents[1] / "proof"  # the Lean project
 
 S = (F(1), F(1), F(1))
 
@@ -279,8 +279,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--bdd", type=Path, default=None,
                         help="codebdd.json (default: $MODEL_DIR/codebdd.json)")
-    parser.add_argument("--namespace", default="SnubDodecahedron.WedgeCover",
-                        help="the Lean namespace of the generated definitions")
+    parser.add_argument("--namespace", required=True,
+                        help="the Lean namespace of the generated definitions, e.g. SnubDodecahedron.WedgeCover")
     parser.add_argument("output", type=Path)
     args = parser.parse_args()
     if args.bdd is None:
@@ -346,7 +346,7 @@ def main():
     # numbers up to 1,371 digits; a whole-tree `decide +kernel` got stuck, and
     # per-node theorems exceeded 100 GB). It is a hypothesis of the solution-
     # tree soundness theorems instead, evaluated natively by
-    # constructSnubDodecahedron like the pack tables.
+    # the solid's construct executable like the pack tables.
     lines.append("/-- The cover check, evaluated natively by the verifier. -/")
     lines.append("def coverValid : Bool := coverTree.check codeTriangles (baseConstraints baseTriangle)")
     lines.append("")

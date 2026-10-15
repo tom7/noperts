@@ -127,8 +127,8 @@ if want model; then
   (cd "$NOPERT" && run python3 dh_exact.py dh_model.txt dh_exact.txt)
   (cd "$NOPERT" && run python3 dh_tie_data.py dh_exact.txt dh_tie_data.txt)
   (cd "$NOPERT" && run python3 scripts/update_vertices.py \
-    && run python3 scripts/emit_wedge_cover.py --bdd codebdd.json \
-         "$LEAN/DeltoidalHexecontahedron/WedgeCoverData.lean" \
+    && run python3 ../common/emit_wedge_cover.py --bdd codebdd.json \
+         --namespace DeltoidalHexecontahedron.WedgeCover "$LEAN/DeltoidalHexecontahedron/WedgeCoverData.lean" \
     && run python3 scripts/snub_ico_group.py --model_file dh_model.txt \
     && run python3 scripts/dh_statement_data.py)
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe export_codetrees_pack.exe capcert.exe \

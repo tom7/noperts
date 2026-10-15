@@ -92,7 +92,7 @@ if want model; then
   stage_begin model
   (cd "$NOPERT" && run ./sc_model.exe sc_model.txt symmetry_neighbors.h "$LEAN/SnubCube/ModelData.lean")
   (cd "$NOPERT" && run ./codebdd.exe --model_file=sc_model.txt codebdd.json)
-  (cd "$NOPERT" && run python3 ../sd/scripts/emit_wedge_cover.py --bdd codebdd.json \
+  (cd "$NOPERT" && run python3 ../common/emit_wedge_cover.py --bdd codebdd.json \
     --namespace SnubCube.WedgeCover "$LEAN/SnubCube/WedgeCoverData.lean")
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe export_codetrees_pack.exe \
     sccapcert.exe search5d.exe pack5d.exe

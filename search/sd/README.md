@@ -87,7 +87,7 @@ instantiated: no snub dodecahedron is Rupert
 instantiated: Wikipedia's snub dodecahedron is not Rupert
 ```
 
-`../common/scripts/snub_model.py` regenerates the model file `snub_model.txt` (and `symmetry_neighbors.h`) from the exact solid to 80 digits.
+`../common/snub_model.py` regenerates the model file `snub_model.txt` (and `symmetry_neighbors.h`) from the exact solid to 80 digits.
 
 **Code texture (for rendering).** `./codebdd.exe --model_file=snub_model.txt --texture=BASE` also writes `BASE.png`, an equirectangular image (8192×4096; `--texture_width`) of all view directions colored by face-visibility code up to the solid's symmetries and the antipode; `BASE.txt`, the legend (each class's color, area and `codebdd.json` codes); and `BASE.stl`, the solid in the image's frame. `../common/blender_code_texture.py` applies it to an object in Blender (an Environment Texture node fed with object coordinates, so each surface point takes the color of its direction).
 
@@ -144,7 +144,7 @@ Every rotation of I in this frame has entries in K = ℚ(√5, s), with s = sin 
 ## Code map
 
 - Model, codes, the C++ checkers and search:
-  - `snub_model.txt`: the exact model (from `../common/scripts/snub_model.py`).
+  - `snub_model.txt`: the exact model (from `../common/snub_model.py`).
   - `codebdd.cc`: the rational model and the code database (`codebdd.json`, `model_vertices.*`).
   - `model.{h,cc}`: the rational vertices.
 - Identity tube: `tube.{h,cc}`, `tubecert.cc`, `tubetree.{h,cc}`, `tubecode.cc`, `tuberefine.cc`, `export_codetrees_pack.cc`.

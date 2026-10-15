@@ -127,12 +127,13 @@ if want model; then
   stage_begin model
   # The snub dodecahedron's model (its frame, view triangle and symmetry
   # neighbors), then its polar dual.
-  (cd "$NOPERT" && run python3 ../common/scripts/snub_model.py snub_model.txt symmetry_neighbors.h)
+  (cd "$NOPERT" && run python3 ../common/snub_model.py snub_model.txt symmetry_neighbors.h)
   (cd "$NOPERT" && run python3 ph_model.py snub_model.txt "$MODEL_FILE")
   (cd "$NOPERT" && run python3 ph_crosscheck.py "$MODEL_FILE")
   (cd "$NOPERT" && run ./codebdd.exe --model_file="$MODEL_FILE" codebdd.json)
   (cd "$LEAN" && run python3 "$NOPERT/scripts/update_vertices.py" \
-    && run python3 "$NOPERT/scripts/emit_wedge_cover.py" PentagonalHexecontahedron/WedgeCoverData.lean \
+    && run python3 "$NOPERT/../common/emit_wedge_cover.py" --namespace PentagonalHexecontahedron.WedgeCover \
+         PentagonalHexecontahedron/WedgeCoverData.lean \
     && run python3 "$NOPERT/scripts/snub_ico_group.py" \
     && run python3 "$NOPERT/scripts/ph_statement_data.py")
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \

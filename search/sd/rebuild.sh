@@ -119,11 +119,12 @@ fi
 
 if want model; then
   stage_begin model
-  (cd "$NOPERT" && run python3 ../common/scripts/snub_model.py "$MODEL_FILE" symmetry_neighbors.h)
+  (cd "$NOPERT" && run python3 ../common/snub_model.py "$MODEL_FILE" symmetry_neighbors.h)
   (cd "$NOPERT" && run ./codebdd.exe --model_file="$MODEL_FILE" codebdd.json)
   (cd "$NOPERT" && run python3 scripts/update_vertices.py \
     && run python3 scripts/emit_tangent_cones.py "$LEAN/SnubDodecahedron/GeneratedTangentCones.lean" \
-    && run python3 scripts/emit_wedge_cover.py "$LEAN/SnubDodecahedron/WedgeCoverData.lean" \
+    && run python3 ../common/emit_wedge_cover.py --namespace SnubDodecahedron.WedgeCover \
+         "$LEAN/SnubDodecahedron/WedgeCoverData.lean" \
     && run python3 scripts/snub_ico_group.py)
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
     export_codetrees_pack.exe search5d.exe pack5d.exe
