@@ -200,14 +200,12 @@ fi
 
 if want search; then
   stage_begin search
-  # Blended inner points (search5d's default --blend5d 2) do not pay here:
-  # a blended run (2026-10-15) was stopped after 5 h 24 min at 22.1 M nodes,
-  # past the unblended run's 22.06 M in all. (The decoder reads them.)
-  # TODO: try --blend5d 4 (escalate), which computes blends only where the
-  # plain choice fails, so it costs much less per node than 2.
+  # search5d's default --blend5d 4 (escalate: blended inner points only
+  # where the plain choice fails). (Always-blends, 2, did not pay here: a
+  # run was stopped after 5 h 24 min at 22.1 M nodes, past 0's 22.06 M.)
   (cd "$NOPERT" && run ./search5d.exe --all --charts 0,1,2 --threads "$THREADS" --commit_depth 12 \
     --subtree_budget 50000 --max_depth 200 --trees_dir "$TREES" --view_scale 4 --max_full_retry 1024 \
-    --half_turn_prune --tie_dir "$TIES" --caps "$CAPS_FILE" --blend5d 0 --out_dir "$JOBS" \
+    --half_turn_prune --tie_dir "$TIES" --caps "$CAPS_FILE" --out_dir "$JOBS" \
     --retry_deferred --requeue_deferred)
   (cd "$NOPERT" && run ./scoreboard5d.exe --journals "$JOBS" | tail -1)
   stage_end search
