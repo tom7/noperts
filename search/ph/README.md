@@ -74,7 +74,7 @@ Measured on a from-scratch run (2026-10-05; 64 cores, 125 GB; Mathlib already bu
 memory 9.7 GB (one process), and every regenerated committed file came out byte-identical.
 
 With blended inner points in the 5D rows (search5d's default since 2026-10-14), a from-scratch run on 64 cores
-(2026-10-15) took 1 h 08 min: model 8.1 min, tube 7.4 min, search 2.0 min (360,698 nodes), pack 30 min (chart 0:
+(2026-10-15, with the Lean build already up to date) took 1 h 08 min: model 8.1 min, tube 7.4 min, search 2.0 min (360,698 nodes), pack 30 min (chart 0:
 591,252 rows; 66 MB of packs), verify 20 min.
 
 The verifier takes about 23 minutes on 64 cores (chart 0: 595,098 rows) and ends with:
