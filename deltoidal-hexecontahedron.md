@@ -65,7 +65,8 @@ about 0.0695·η. `search/dh/dh-boundary.py` checks this numerically, with
 60 digits, for η from 10⁻³ down to 10⁻¹⁸; it is not part of the Lean result.
 So every neighbourhood of the DH, however small, contains Rupert solids.
 Unlike for the Septopert, there is no true statement about all solids near a
-rational model, and the proof uses the exact solid near the ties:
+rational model, and the proof uses the exact solid near the ties (the
+techniques are described in [How the Nopert proofs work](nopert-proof.md)):
 
 - The solution tables exclude every centrally symmetric solid with
   icosahedral symmetry whose vertices are within 6·10⁻¹⁶ of a rational model,
@@ -74,10 +75,10 @@ rational model, and the proof uses the exact solid near the ties:
   K = ℚ(√5, sin 72°) that it is such a solid (frame, 70 vertex slots, orbits,
   central symmetry, closeness to the rational model), and the cap and tie
   certificates, checked exactly over K, prove the exact claims.
-- Near the 2-fold view and the view where the ties meet the identity, *caps*
+- Near the 2-fold view and the view where the ties meet the identity, [*caps*](nopert-proof.md#caps)
   (blow-up charts with exact Bernstein bounds) cover the remaining rotations.
-  Along each pinning tie, *tie tubes* prove that no rotation close to the
-  tie is a passage. The mirror ties are handled by a *half-turn reduction*,
+  Along each pinning tie, [*tie tubes*](nopert-proof.md#ties-and-tie-tubes) prove that no rotation close to the
+  tie is a passage. The mirror ties are handled by a [*half-turn reduction*](nopert-proof.md#poses-and-symmetry-reductions),
   which uses the central symmetry: the relative rotation R may be replaced
   by H_u R g (H_u the half-turn about the view u, g a rotation of the
   solid).

@@ -74,6 +74,27 @@ identity-tube tables. That the code triangles cover the view domain
 (`WedgeCover.codeTriangles_cover`) is decided by the kernel, so it is not part
 of the hypothesis.
 
+## How the proof works
+
+The techniques are described in [How the Nopert proofs work](nopert-proof.md);
+for #231:
+
+- The tables exclude every `C5Model`, a
+  [neighborhood](nopert-proof.md#rational-models-and-neighborhoods) of the
+  rational model: four seed vertices rotated by 2πk/5 about z, each vertex
+  within 6·10⁻¹⁶ of the rational vertices. The exact model (whose quads are
+  planar only to about 2·10⁻¹⁶) and idealized #231 (exactly planar quads)
+  are both such models.
+- Views are reduced into the upper wedge by the fivefold symmetry and the
+  antipode, and relative rotations by the fivefold
+  [prune](nopert-proof.md#poses-and-symmetry-reductions); the
+  [code triangles](nopert-proof.md#codes-and-the-view-cover) cover the wedge
+  (decided by the kernel).
+- The [identity tube](nopert-proof.md#the-identity-tube) and the
+  [5D search](nopert-proof.md#the-5d-search) (four Cayley charts, with
+  [blended inner points](nopert-proof.md#balanced-witnesses)) cover every
+  pose; #231 needs no caps or ties.
+
 ## What is proved and what is verified
 
 This is a **Lean verification**, not a plain Lean proof:

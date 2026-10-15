@@ -62,6 +62,13 @@ view domain.
 
 ## A neighborhood of a rational model
 
+The techniques are described in [How the Nopert proofs work](nopert-proof.md);
+the snub dodecahedron uses the plainest form of the method: a
+[neighborhood of a rational model](nopert-proof.md#rational-models-and-neighborhoods),
+the icosahedral and fivefold [reductions](nopert-proof.md#poses-and-symmetry-reductions),
+the [identity tube](nopert-proof.md#the-identity-tube) and the
+[5D search](nopert-proof.md#the-5d-search).
+
 The certificates are checked against fixed rational vertices
 (`proof/SnubDodecahedron/RationalVertices.lean`), not the irrational solid:
 

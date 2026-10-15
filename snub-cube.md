@@ -45,8 +45,10 @@ certificate with the snub cube's data passes `KCert.check`.
 
 ## How the proof goes
 
+The techniques are described in [How the Nopert proofs work](nopert-proof.md).
 Like the other solids, the search excludes every pose of a whole
-neighborhood of solids around a rational model; unlike the snub
+[neighborhood](nopert-proof.md#rational-models-and-neighborhoods) of solids
+around a rational model; unlike the snub
 dodecahedron, the snub cube is **on the edge**, so the neighborhood argument
 alone cannot work:
 
@@ -54,16 +56,16 @@ alone cannot work:
   vertex whose coordinate along a 4-fold axis has the middle magnitude),
   the first-order margin vanishes: rotations about the 4-fold axis keep the
   extent along it exactly, and the width across it is critical.
-- **An exact tie.** From u*, a one-parameter family of poses (outer view on
+- **An exact [tie](nopert-proof.md#ties-and-tie-tubes).** From u*, a one-parameter family of poses (outer view on
   the wall at angle ε past u*, relative rotation R_y(2ε) = H_u H_x) has
   clearance exactly 0 for ε up to about 0.165 rad: both widths of the two
   shadows are exactly equal, and no other constraint binds. No search over
   boxes can certify a neighborhood of such poses.
-- **Caps over ℚ(t).** The poses near u* are blown up: view
+- **[Caps](nopert-proof.md#caps) over ℚ(t).** The poses near u* are blown up: view
   u = x + μ e (A + τ B), Cayley rotation w = μ (s₀ Z + s₁ E₁ + s₂ X), with
   charts on the faces of a cube (F_e, faces, cones at the identity) and
   cones around the tie (dividing by the distance to it). Each box of a chart
-  is certified by a **balanced witness**: contacts whose directions are
+  is certified by a [**balanced witness**](nopert-proof.md#balanced-witnesses): contacts whose directions are
   edge vectors v_b − v_a (exact, and exactly aligned on the tie), weighted
   pairs or Cramer-weighted triples (the translation cancels), outer support
   sets with dominance, and one polynomial inequality per tuple of outer
@@ -76,7 +78,7 @@ alone cannot work:
   `proof/Pipeline/KCapTree.lean`), and the 5D search's cap leaves cite them
   (`SnubCube.capLeaf_sound`: the leaf's views and Cayley box lie in the
   domains, checked exactly over ℚ(t)).
-- **The search** (`search/sc`): the views are reduced into the Oh chamber
+- **The [search](nopert-proof.md#the-5d-search)** (`search/sc`): the views are reduced into the Oh chamber
   0 ≤ u₁ ≤ u₀ ≤ u₂ (`proof/Pipeline/OctaView.lean`), the relative rotation
   into the cell of O (`AtlasOctaPrune.lean`); with the cap domains, every
   remaining box is certified, with nothing deferred.

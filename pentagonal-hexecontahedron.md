@@ -77,7 +77,10 @@ coplanar.
 
 ## How the proof works
 
-- The solution tables exclude every `IModel` (`IcoModel.lean`). An `IModel`
+The techniques are described in [How the Nopert proofs work](nopert-proof.md).
+
+- The solution tables exclude every `IModel` (`IcoModel.lean`; see
+  [rational models](nopert-proof.md#rational-models-and-neighborhoods)). An `IModel`
   is any solid whose vertices are the orbits, under I, of three points (one on
   a 5-fold axis, one on a 3-fold axis and one generic, each fixed by its
   stabilizer), within 6·10⁻¹⁶ of a fixed rational model.
@@ -86,10 +89,10 @@ coplanar.
   is such a model after a fixed rotation and scaling (`phIModel`).
   Similarities preserve Rupert-ness, which gives
   `pentagonalHexecontahedron_not_rupert`.
-- The symmetry reductions are those of the snub dodecahedron, which shares the
+- The [symmetry reductions](nopert-proof.md#poses-and-symmetry-reductions) are those of the snub dodecahedron, which shares the
   icosahedral group and frame. The view is reduced into a triangle T, and the
   relative rotation into the Dirichlet cell of I around the identity.
-- Unlike the deltoidal hexecontahedron, the PH needs no caps or ties. Because
+- Unlike the deltoidal hexecontahedron, the PH needs no [caps](nopert-proof.md#caps) or [ties](nopert-proof.md#ties-and-tie-tubes). Because
   it is not centrally symmetric, it uses no half-turn reduction.
 
 ## What is proved and what is verified

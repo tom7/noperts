@@ -145,61 +145,30 @@ empty, so we can never have `line ⊆ ∅`. Our
 the point set gives a genuine solid 
 (`¬ Coplanar ℝ (V : Set ℝ³) ∧ ¬ IsRupert V`).
 
-## Identity blow-up certificates
+## How the proof works
 
-The proof checks, for every pose, that the inner shadow cannot fit inside
-the outer one, by a *balanced witness*: directions perpendicular to the
-view, weights that balance them (so the inner shadow's offset cancels), and
-an inequality between the outer shadow's support and the rotated inner
-vertices. At the identity rotation this inequality holds with equality, so
-near the identity the slack is only proportional to the rotation, and boxes
-of rotations would have to shrink toward it without end. The Septopert is
-only just barely Nopert: in one strip of views its first-order margin is
-about 3·10⁻⁴.
+The techniques are described in [How the Nopert proofs work](nopert-proof.md);
+for the Septopert:
 
-So the rotations near the identity are *blown up*. Write the relative
-rotation's Cayley vector as w = μσ̂, with μ ≥ 0 and σ̂ on a face of the cube
-[−1, 1]³. With the denominators cleared, the witness inequality is a
-polynomial in (view, μ, σ̂) whose μ⁰ term vanishes identically; divided by
-μ, it is the first-order term plus the exact higher-order terms, which no
-longer shrink with the rotation. Most rows of the identity-tube tables are
-*identity blow-up rows*: each holds a whole certificate for its view
-triangle, per cube face a binary subdivision of the chart box (μ, two view
-parameters, two direction parameters) whose leaves are balanced witnesses,
-checked exactly over ℚ by Bernstein bounds. A blow-up row rules out every
-rotation within radius 1/64 of the identity over its triangle, so the 5D
-search only has to cover rotations beyond that.
-
-In Lean: `Pipeline/IdCap.lean` (the certificates, their check, and
-`IdCert.claim`), `Pipeline/CayleyNear.lean` (a rotation within ρ ≤ 1 of the
-identity is a Cayley rotation of a vector of length at most ρ),
-`Pipeline/IdCapBridge.lean` (`idCert_not_rupert`: the identity-tube claim
-from a checked certificate, for exact models such as this one), and
-`Row.idcap` in the tube tables (`Pipeline/AtlasProjectiveLocalViewTree.lean`).
-The leaves are checked as in the snub cube's caps
-(`Pipeline/KCapCheck.lean`, here over ℚ). The certificates are found by
-`search/common/idcap.cc`, which also checks them exactly before writing
-them.
-
-## Blended inner points
-
-A witness needs, for each of its directions, only *some* point of the
-solid that sticks out far enough along that direction after the rotation;
-it need not be a vertex. Where the best vertex switches from one to another
-inside a box (near a view where two faces are edge-on at once, the
-Septopert has such a corner), every single vertex fails somewhere in the
-box, and boxes would have to shrink toward the switching line. A point on
-the segment between the two vertices, (1 − t)·v_a + t·v_c with
-0 ≤ t ≤ 1, is still in the solid, and its inequality is the same blend of
-the two vertices' inequalities, which can stay positive across the switch.
-
-Both the blow-up rows and the 5D rows may use such *blended* inner points:
-in Lean, `KCap.Leaf.blends` (`Pipeline/KCapCheck.lean`) and the
-`innerOther` / `innerT` fields of the 5D certificate rows
-(`Pipeline/AtlasProjectiveGlobalCertificate.lean`, pack tags 17 and 18).
-Their soundness rests only on the blended point lying in the convex hull
-(`innerPt_mem`, `Box.innerPt_mem_hull`). `idcap` and `search5d` use blends
-where no single vertex certifies a box (both by default).
+- The vertices are rational, so the tables are checked against the exact
+  solid ([rational models](nopert-proof.md#rational-models-and-neighborhoods)).
+- Views are reduced into the C3v view domain (two triangles, covered by the
+  [code triangles](nopert-proof.md#codes-and-the-view-cover)), relative
+  rotations into the C3v cell, using the C3 prune and the
+  [mirror-tie reduction](nopert-proof.md#poses-and-symmetry-reductions)
+  (`Septopert/CellPrune.lean`, `Septopert/MirrorTie.lean`).
+- Near its mirror normal x = (1, 0, −1) a mirror tie approaches the identity,
+  so a [cap](nopert-proof.md#caps) covers those poses
+  (`capcert-septopert`, `Septopert/Caps.lean`).
+- The Septopert is only just barely Nopert: in one strip of views its
+  first-order margin is about 3·10⁻⁴. So nearly all of its
+  [identity tube](nopert-proof.md#the-identity-tube) is replaced by
+  [identity blow-up rows](nopert-proof.md#identity-blow-up-certificates),
+  each ruling out every rotation within 1/64 of the identity over its view
+  triangle; the [5D search](nopert-proof.md#the-5d-search) covers the rest.
+- Near a view where two faces are edge-on at once, the best inner vertex
+  switches inside boxes; [blended inner points](nopert-proof.md#balanced-witnesses)
+  certify them.
 
 ## Status
 
