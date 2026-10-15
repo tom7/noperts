@@ -247,7 +247,7 @@ Measured times of a from-scratch run on 64 cores with 64 threads
 ### History
 
 I first verified the Septopert on October 9, 2026. I reproduced it two
-times on two different computers (October 9 and 10), and indepenently
+times on two different computers (October 9 and 10), and independently
 from a fresh clone in a sandbox. This first version of the proof used
 the "identity tube" to rule out local passages. Its data was enormous
 at about 85 million rows (6.7 GB), taking 3 hours and 15 GB of RAM on
