@@ -19,7 +19,7 @@ Since 2026-10-10 the C++ code that the solids' searches share is in
 model headers (`model_vertices.h`, `symmetry_neighbors.h`, `ico_group.h`,
 `tie_normals.h`) and `solid.h` (its settings for the shared code). This
 directory keeps the model files, the DH's own tools (`capcert.cc`,
-`tietube.cc`, `halfturn_check.cc`, `pool_check.cc`), the
+`tietube.cc`, `halfturn_check.cc`), the
 Lean data generators, `rebuild.sh` and the makefile.
 
 Build with `make` (unit tests; `make test` runs them) or `make all`;
@@ -105,7 +105,7 @@ peak ~30 GB).
 
 - Model and exact solid: `dh_model.py` (`dh_model.txt`), `dh_exact.py` (`dh_exact.txt`, over K), `kfield.py`.
 - Half-turn prune: `exact5d::HalfTurnPruneValid`, `ico_group.py`, `halfturn_check.cc`.
-- Caps: `capcert.cc`, `dh_caps.py`, `dh_cap_lean.py` (Lean `DHCapData`), `merge_caps_cert.py`, `capleaf_check.cc`.
+- Caps: `capcert.cc`, `dh_caps.py`, `dh_cap_lean.py` (Lean `DHCapData`), `capleaf_check.cc`.
 - Ties: `dh_tie_data.py` (`dh_tie_data.txt`, `tie_normals.h`), `tietube.cc`, `tieatlas5d`, `dh_tie_lean.py`
   (Lean `DHTieData`).
 - 5D search: as for the pentagonal hexecontahedron, plus cap and tie leaves.

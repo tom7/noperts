@@ -6,7 +6,7 @@ include ../common/common.mk
 default : $(TESTS:%=%.exe)
 
 # Every program of the pipeline (rebuild.sh runs it).
-all: default qtube s5d codebdd.exe icoprune_check.exe halfturn_check.exe tietube.exe dfwhere.exe capleaf_check.exe pool_check.exe capcert.exe
+all: default qtube s5d codebdd.exe icoprune_check.exe halfturn_check.exe tietube.exe dfwhere.exe capleaf_check.exe capcert.exe
 
 # Identity tube:
 #  codebdd: exact rational model, codes and code triangles (codebdd.json).
@@ -29,8 +29,6 @@ s5d: search5d.exe pack5d.exe scoreboard5d.exe
 # This solid's own tools:
 #  capcert: cap certificates for the special views (the caps stage).
 #  tietube: exact tie tubes (the ties stage; dh_tie_data.py).
-#  pool_check: the pools' weighted defect bounds (Pareto frontiers) equal
-#    the direct maximum.
 # and the shared diagnostics dfwhere and capleaf_check.
 
 .PHONY : qtube s5d
