@@ -11,7 +11,7 @@
 #include "bignum/big.h"
 #include "bignum/big-overloads.h"
 #include "rows5d.h"
-#include "test_data.h"
+#include "test-data.h"
 #include "tubeatlas5d.h"
 
 using namespace solve5d;

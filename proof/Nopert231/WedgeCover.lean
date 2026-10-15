@@ -10,7 +10,7 @@ public import Pipeline.WedgeCover
 The decision-tree certificate that a list of triangles covers
 `upperWedgeTriangle` is `Pipeline/WedgeCover.lean`. Candidate #231's
 generated tree (`WedgeCoverData`, written by
-`search/nopert231/scripts/emit_wedge_cover.py`) imports this module and is
+`search/nopert231/scripts/emit-wedge-cover.py`) imports this module and is
 written in `namespace Nopert231.WedgeCover`, naming `Node`, `Tri`,
 `wedgeConstraints`, `wedge_covered` and `AtlasProjectiveView.upperWedgeTriangle`
 unqualified. This module makes those names refer to the pipeline's, so that

@@ -186,7 +186,7 @@ rewrites the committed model and Lean data files in place and rebuilds
 on 16 cores, see above); without `--from model` the run starts at the tube
 stage, which needs `search/sd/codebdd.json` from the model stage
 (`make -C search/sd codebdd.exe && (cd search/sd && ./codebdd.exe
---model_file=snub_model.txt codebdd.json)`, about 30 s). The verify stage runs `proof/`'s `constructSnubDodecahedron` on
+--model_file=snub-model.txt codebdd.json)`, about 30 s). The verify stage runs `proof/`'s `constructSnubDodecahedron` on
 the packs.
 
 A from-scratch run on the branch, on 64 cores (2026-10-04), took 1 h 3 min,

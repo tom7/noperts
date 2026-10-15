@@ -43,7 +43,7 @@ orientation, and in **both chiralities**. The polar dual of any snub
 dodecahedron (of either hand) with respect to any sphere about its center,
 for instance the midsphere of the Catalan solid, is such an image. David
 McCooey's coordinates (cc-lib's `PentagonalHexecontahedron()`) are, by a
-numerical check outside Lean (`search/ph/ph_crosscheck.py`, agreement to
+numerical check outside Lean (`search/ph/ph-crosscheck.py`, agreement to
 4·10⁻⁴⁰), the mirror image of this set; they are covered, but Lean does not
 mention them.
 

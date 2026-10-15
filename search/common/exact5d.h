@@ -162,7 +162,7 @@ Q FundamentalLower(const Interval5 &iv, int chart, int direction);
 bool FundamentalPruneValid(const Interval5 &iv, int chart, int direction);
 // Icosahedral prune (icosahedral solids) or C3 cell prune (the Septopert):
 // some right symmetry, neighbor n of solid::kSymmetryNeighbors
-// (symmetry_neighbors.h: the rotations by +-72 degrees about the six 5-fold
+// (symmetry-neighbors.h: the rotations by +-72 degrees about the six 5-fold
 // axes, rounded to 10^-12; the Septopert's c3Mat (n + 1), exact), strictly
 // increases trace over the whole box, so the box is outside the identity's
 // icosahedral Dirichlet cell (the C3v cell).
@@ -172,8 +172,8 @@ Q IcoPruneLower(const Interval5 &iv, int chart, int n);
 // the half-turn about the view u and g in I (pi_u(H_u X) = -pi_u(X), K = -K,
 // gK = K). So R may be taken to maximize the trace over {R g, H_u R g}, and a
 // box is pruned when trace(H_u R g) > trace(R) over all of it for one g
-// (index into solid::kHalfTurnGroup: ico_group.h, rounded to 10^-12). The
-// Septopert's mirror prune is the same leaf with g = Q_g (mirror_q.h, exact:
+// (index into solid::kHalfTurnGroup: ico-group.h, rounded to 10^-12). The
+// Septopert's mirror prune is the same leaf with g = Q_g (mirror-q.h, exact:
 // the allowance is 0): a pose (u, R) is a passage iff (u, H_u R Q_g) is, for
 // Q_g = -sigma_g (sigma_g a mirror of the Septopert; Lean:
 // Septopert.MirrorTie), so R may be taken in the C3v cell. With
@@ -191,7 +191,7 @@ bool HalfTurnPruneValid(const Interval5 &iv, const TriangleQ &tri, int chart, in
 // trace(H_u R H_x) >= tau = (3 - rho^2) / (1 + rho^2), i.e. the Cayley vector
 // of S = H_u R H_x has norm <= rho, which the tie tube (tietube.cc) of
 // pinning normal n certifies for the view. Same Bernstein form as the
-// half-turn prune, with G = H_x (tie_normals.h) and -tau (P_c.P_d) D(w) in
+// half-turn prune, with G = H_x (tie-normals.h) and -tau (P_c.P_d) D(w) in
 // place of -(P_c.P_d) trace(N).
 Q TieLeafLower(const Interval5 &iv, const TriangleQ &tri, int chart, int n, const Q &rho, int c, int d);
 bool TieLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, int n, const Q &rho);

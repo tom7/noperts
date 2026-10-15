@@ -91,7 +91,7 @@ def matvec(m, v):
 
 
 def ico_group():
-    """The 60 rotations in ico_group.py's (and Lean's icoEntry) order."""
+    """The 60 rotations in ico-group.py's (and Lean's icoEntry) order."""
     I = tuple(tuple(ONE if i == j else ZERO for j in range(3)) for i in range(3))
     RZ = ((C72, -S, ZERO), (S, C72, ZERO), (ZERO, ZERO, ONE))
     RX = ((ONE, ZERO, ZERO), (ZERO, -ONE, ZERO), (ZERO, ZERO, -ONE))

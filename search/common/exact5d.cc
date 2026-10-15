@@ -758,7 +758,7 @@ static Q RoundedTableAllowance(const TriangleQ &tri, int c, int d) {
   return Q(2, 1000000000000) * (Q(6) * l1(tri[c]) * l1(tri[d]) + Q(9) * BigRat::Abs(dot));
 }
 
-// An exact table (the Septopert's Q_g, mirror_q.h) needs no allowance.
+// An exact table (the Septopert's Q_g, mirror-q.h) needs no allowance.
 Q HalfTurnPruneAllowance(const TriangleQ &tri, int c, int d) {
   return solid::kHalfTurnGroup.exact ? Q(0) : RoundedTableAllowance(tri, c, d);
 }

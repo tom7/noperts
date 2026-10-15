@@ -106,7 +106,7 @@ def decodeCert (lines : Array String) : CapCert := Id.run do
            pr := ⟨mu0, t0, t0m, tie, true⟩, zList := zl, verts := V, wits := W, usePrune := halfTurn, Gcol := G,
            charts := charts.toList }
 
-/-- Decodes the tie data (`dh_tie_data.txt`), the node index (`nodes.txt`) and the certificates
+/-- Decodes the tie data (`dh-tie-data.txt`), the node index (`nodes.txt`) and the certificates
 (`n<n>_t<t>.cert`) into `TieCerts` with leaves in `dhTieNodes` order. -/
 def decodeTies (dataLines nodeLines : Array String) (certFiles : Array (ℕ × ℕ × Array String)) : TieCerts :=
   Id.run do

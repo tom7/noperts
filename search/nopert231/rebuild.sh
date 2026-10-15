@@ -6,7 +6,7 @@
 #           the Lean data generated from them
 #   tube    identity tube: one quadtree of Tag 1 cages per code (tubecode),
 #           refined to radius 2e-5 (tuberefine)
-#   tubepack  tube trees -> Lean packs + manifest (export_codetrees_pack)
+#   tubepack  tube trees -> Lean packs + manifest (export-codetrees-pack)
 #   search  5D search, charts 0-2 (search5d), until nothing is deferred
 #   pack    per-code 5D packs (pack5d --per_code)
 #   verify  Lean: check every table and build the proof (constructNopert231
@@ -38,7 +38,7 @@
 # malloc arenas); Lean runs in a systemd scope with MemoryMax (ulimit -v
 # would stop Lean from creating threads).
 #
-# The model stage regenerates committed source files (model_vertices.*,
+# The model stage regenerates committed source files (model-vertices.*,
 # and ../../proof/Nopert231's Vertices.lean, GeneratedTangentCones.lean and
 # WedgeCoverData.lean, with scripts/), so it only runs when asked for (--from model or
 # --only model). codebdd.json is not committed: when it is missing, the
@@ -48,7 +48,7 @@
 # Each stage's wall time is appended to WORK/stages.log. The Lean build runs
 # in the background while the C++ stages run (log WORK/lean_build.log); the
 # verify stage waits for it, and the script fails if it fails. (Helpers:
-# ../common/rebuild_lib.sh.)
+# ../common/rebuild-lib.sh.)
 set -euo pipefail
 
 STAGES=(model tube tubepack search pack verify)
@@ -83,7 +83,7 @@ run() {
   if [ $DRY -eq 0 ]; then "$@"; fi
 }
 # HAVE_SCOPE, want, stage_begin/stage_end, the background Lean build.
-source "$NOPERT/../common/rebuild_lib.sh"
+source "$NOPERT/../common/rebuild-lib.sh"
 # Lean executables run under a memory cap (ulimit -v would stop Lean's threads).
 lean_run() {
   if [ $HAVE_SCOPE -eq 1 ]; then
@@ -110,7 +110,7 @@ run mkdir -p "$WORK"
 
 echo "== build"
 run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
-  export_codetrees_pack.exe search5d.exe pack5d.exe scoreboard5d.exe
+  export-codetrees-pack.exe search5d.exe pack5d.exe scoreboard5d.exe
 # Lean is needed only by the model (generated sources) and verify stages; it
 # builds in the background while the C++ stages run. (The model stage starts
 # it after regenerating its data.)
@@ -120,20 +120,20 @@ fi
 
 if want model; then
   stage_begin model
-  (cd "$NOPERT" && run ./codebdd.exe --root_file=nopert231_root.txt)
-  (cd "$NOPERT" && run python3 ../common/update_vertices.py "$LEAN/Nopert231/Vertices.lean" \
-    && run python3 scripts/emit_tangent_cones.py "$LEAN/Nopert231/GeneratedTangentCones.lean" \
-    && run python3 scripts/emit_wedge_cover.py "$LEAN/Nopert231/WedgeCoverData.lean")
+  (cd "$NOPERT" && run ./codebdd.exe --root_file=nopert231-root.txt)
+  (cd "$NOPERT" && run python3 ../common/update-vertices.py "$LEAN/Nopert231/Vertices.lean" \
+    && run python3 scripts/emit-tangent-cones.py "$LEAN/Nopert231/GeneratedTangentCones.lean" \
+    && run python3 scripts/emit-wedge-cover.py "$LEAN/Nopert231/WedgeCoverData.lean")
   run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe \
-    export_codetrees_pack.exe search5d.exe pack5d.exe
+    export-codetrees-pack.exe search5d.exe pack5d.exe
   lean_build_start "$LEAN" "${LEAN_BUILD[@]}"
   stage_end model
 elif [ ! -f "$NOPERT/codebdd.json" ]; then
   echo "== codebdd.json (not committed; regenerating it)"
-  (cd "$NOPERT" && run ./codebdd.exe --root_file=nopert231_root.txt \
-    --export_prefix="$WORK/model_vertices")
+  (cd "$NOPERT" && run ./codebdd.exe --root_file=nopert231-root.txt \
+    --export_prefix="$WORK/model-vertices")
   for ext in h json lean; do
-    run cmp "$WORK/model_vertices.$ext" "$NOPERT/model_vertices.$ext"
+    run cmp "$WORK/model-vertices.$ext" "$NOPERT/model-vertices.$ext"
   done
 fi
 
@@ -158,7 +158,7 @@ fi
 
 if want tubepack; then
   stage_begin tubepack
-  (cd "$NOPERT" && run ./export_codetrees_pack.exe --trees_dir "$TREES2" --out_dir "$TUBEPACKS" \
+  (cd "$NOPERT" && run ./export-codetrees-pack.exe --trees_dir "$TREES2" --out_dir "$TUBEPACKS" \
     --bdd codebdd.json)
   stage_end tubepack
 fi

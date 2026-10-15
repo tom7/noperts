@@ -3,7 +3,7 @@
 # (Derived from the Noperthedron formalization project, which is Apache-2.0.)
 """Exact vertices of the model.
 
-The vertices come from the generated `model_vertices.json` in the C++
+The vertices come from the generated `model-vertices.json` in the C++
 pipeline directory ($MODEL_DIR; written by codebdd from the model file):
 multiples of 2^-52, non-triangular faces exactly planar, strictly inside the
 unit sphere. Vertex S k + s is seed s rotated by 2*pi*k/5 (rationally
@@ -34,7 +34,7 @@ def model_dir() -> Path:
 
 
 def load_model_vertices() -> Tuple[Tuple[Q, Q, Q], ...]:
-    with open(model_dir() / "model_vertices.json") as f:
+    with open(model_dir() / "model-vertices.json") as f:
         data = json.load(f)
     return tuple((Q(item["x"]), Q(item["y"]), Q(item["z"])) for item in data["vertices"])
 
@@ -66,7 +66,7 @@ def quad_determinant(table=VERTICES_Q):
     return det3(v1, v2, v3)
 
 if __name__ == "__main__":
-    print("Model vertices (model_vertices.json):")
+    print("Model vertices (model-vertices.json):")
     print("Seeds:")
     for i, seed in enumerate(SEEDS):
         norm = math.sqrt(sum(x**2 for x in seed))

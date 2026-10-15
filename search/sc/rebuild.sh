@@ -1,12 +1,12 @@
 #!/bin/bash
 # Rebuilds the proof that the snub cube is not Rupert, end to end:
 #
-#   model   the exact model and its rational model (sc_model), codes and code
+#   model   the exact model and its rational model (sc-model), codes and code
 #           triangles (codebdd), and the Lean data generated from them
 #           (proof/SnubCube/ModelData.lean, WedgeCoverData.lean)
 #   tube    identity tube: one quadtree of Tag 1 cages per code (tubecode),
 #           with the views near u* left to the caps (--cap, --cap_r)
-#   tubepack  tube trees -> Lean packs + manifest (export_codetrees_pack)
+#   tubepack  tube trees -> Lean packs + manifest (export-codetrees-pack)
 #   caps    the cap and tie-tube certificate over Q(t) (sccapcert --export)
 #           and the search's exact cap domains (--caps)
 #   search  5D search, charts 0-3 (search5d --trib_caps), until nothing is
@@ -24,7 +24,7 @@
 # Resources: --threads defaults to every core (nproc). --mem_gb caps every
 # stage (default: the larger of 90% of RAM and 40 GB). C++ tools get it as
 # ulimit -v plus 16 GB for virtual-only reservations; Lean runs in a systemd
-# scope with MemoryMax. (Helpers: ../common/rebuild_lib.sh.)
+# scope with MemoryMax. (Helpers: ../common/rebuild-lib.sh.)
 set -euo pipefail
 
 STAGES=(model tube tubepack caps search pack verify)
@@ -54,7 +54,7 @@ run() {
   echo "+ $*"
   if [ $DRY -eq 0 ]; then "$@"; fi
 }
-source "$NOPERT/../common/rebuild_lib.sh"
+source "$NOPERT/../common/rebuild-lib.sh"
 lean_run() {
   if [ $HAVE_SCOPE -eq 1 ]; then
     run systemd-run --user --scope -q -p MemoryMax="${MEM_GB}G" "$@"
@@ -75,14 +75,14 @@ JOBS=$WORK/jobs
 PACKS=$WORK/packs
 run mkdir -p "$WORK" "$CAPS"
 
-# The degenerate view u* (sc_model.txt's ustar) and the tube's cap there: the
+# The degenerate view u* (sc-model.txt's ustar) and the tube's cap there: the
 # angular radius 0.055 is inside the cap box (mu0 = 1/8: atan(1/8) = 0.124),
 # and so is the tube radius 1/10 (|w| <= 1/10 in a box of half-width
 # R mu0 = 1/4 in frame coordinates; the frame vectors have length >= 0.88).
 TUBE_CAP=(--cap 0.2834724367428329596,0,0.9589803843703376638,0.055 --cap_r 1/10)
 
 echo "== build"
-run make -C "$NOPERT" -j "$THREADS" sc_model.exe codebdd.exe tubecode.exe export_codetrees_pack.exe \
+run make -C "$NOPERT" -j "$THREADS" sc-model.exe codebdd.exe tubecode.exe export-codetrees-pack.exe \
   sccapcert.exe search5d.exe pack5d.exe scoreboard5d.exe
 if want verify && ! want model; then
   lean_build_start "$LEAN" "${LEAN_BUILD[@]}"
@@ -90,11 +90,11 @@ fi
 
 if want model; then
   stage_begin model
-  (cd "$NOPERT" && run ./sc_model.exe sc_model.txt symmetry_neighbors.h "$LEAN/SnubCube/ModelData.lean")
-  (cd "$NOPERT" && run ./codebdd.exe --model_file=sc_model.txt codebdd.json)
-  (cd "$NOPERT" && run python3 ../common/emit_wedge_cover.py --bdd codebdd.json \
+  (cd "$NOPERT" && run ./sc-model.exe sc-model.txt symmetry-neighbors.h "$LEAN/SnubCube/ModelData.lean")
+  (cd "$NOPERT" && run ./codebdd.exe --model_file=sc-model.txt codebdd.json)
+  (cd "$NOPERT" && run python3 ../common/emit-wedge-cover.py --bdd codebdd.json \
     --namespace SnubCube.WedgeCover "$LEAN/SnubCube/WedgeCoverData.lean")
-  run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe export_codetrees_pack.exe \
+  run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe export-codetrees-pack.exe \
     sccapcert.exe search5d.exe pack5d.exe
   lean_build_start "$LEAN" "${LEAN_BUILD[@]}"
   stage_end model
@@ -119,7 +119,7 @@ fi
 
 if want tubepack; then
   stage_begin tubepack
-  (cd "$NOPERT" && run ./export_codetrees_pack.exe --trees_dir "$TREES" --out_dir "$TUBEPACKS" \
+  (cd "$NOPERT" && run ./export-codetrees-pack.exe --trees_dir "$TREES" --out_dir "$TUBEPACKS" \
     --bdd codebdd.json)
   stage_end tubepack
 fi

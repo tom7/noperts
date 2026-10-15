@@ -290,7 +290,7 @@ std::vector<BigVecQ3> GenerateBestPossibleRationalVertices(
   return verts;
 }
 
-// Reads a root file such as nopert231_root.txt (lines "rootK x y z",
+// Reads a root file such as nopert231-root.txt (lines "rootK x y z",
 // K = 0..3 from the bottom cap to the top cap, in the ruperts database
 // frame) and converts it to the Lean-frame seeds used above: reverse the
 // order (seed 0 = top cap) and scale so that every vertex has norm
@@ -1353,9 +1353,9 @@ int main(int argc, char **argv) {
   bool use_stl = false;
   bool export_only = false;
   std::string output_path = "codebdd.json";
-  std::string export_prefix = "model_vertices";
+  std::string export_prefix = "model-vertices";
   // Root seeds of the polyhedron (DB frame; see LoadRootFileAsLeanSeeds).
-  std::string root_file = "nopert231_root.txt";
+  std::string root_file = "nopert231-root.txt";
   // Round code-triangle corners to 2^-triangle_bits (0 = keep exact:
   // the committed data; rounded corners would need a new wedge cover and
   // new certificates).

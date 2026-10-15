@@ -10,7 +10,7 @@
 >
 > The C++ code that the solids' searches share is in
 > [`../common/`](../common/); the makefile builds it here, with this solid's
-> model headers (`model_vertices.h`, `symmetry_neighbors.h`) and `solid.h`
+> model headers (`model-vertices.h`, `symmetry-neighbors.h`) and `solid.h`
 > (its settings for the shared code). This directory keeps the model files,
 > the solid's own Lean data generators (`scripts/`), `rebuild.sh` and the
 > makefile.
@@ -49,21 +49,21 @@ Prerequisites:
 From this directory (the work directory defaults to `../../work-sd`):
 
 ```
-./rebuild.sh --from model --model_file snub_model.txt --work /tmp/snub
+./rebuild.sh --from model --model_file snub-model.txt --work /tmp/snub
 ```
 
 `rebuild.sh` runs these stages. Each is restartable (`--from STAGE`, `--only STAGE`).
 
 | stage | what | time (64 cores) |
 |---|---|---|
-| model | `snub_model.py` writes the exact model; `codebdd` computes the rational model, the face-visibility codes and their triangles; the Lean data (vertices, tangent cones, the view-triangle cover, the icosahedral group) is regenerated and Lean is built | ~28 min (mostly the Lean build; the 60-vertex tangent-cone file alone takes ~18 min) |
+| model | `snub-model.py` writes the exact model; `codebdd` computes the rational model, the face-visibility codes and their triangles; the Lean data (vertices, tangent cones, the view-triangle cover, the icosahedral group) is regenerated and Lean is built | ~28 min (mostly the Lean build; the 60-vertex tangent-cone file alone takes ~18 min) |
 | tube | `tubecode` and `tuberefine` build the identity tube, one tree per code | ~2.5 min |
 | tubepack | the tube trees become Lean packs | <1 min |
 | search | `search5d`: the 5D search over (view, relative rotation) | ~21 min |
 | pack | `pack5d`: per-code certificate packs | ~3 min |
 | verify | `constructSnubDodecahedron` on the packs | ~7 min |
 
-Measured on 2026-10-04 from a clean checkout: 1 h 3 min in all, exit 0. The model stage regenerates every committed data file byte for byte (`snub_model.txt`, `symmetry_neighbors.h`, `model_vertices.*`, and the generated Lean files).
+Measured on 2026-10-04 from a clean checkout: 1 h 3 min in all, exit 0. The model stage regenerates every committed data file byte for byte (`snub-model.txt`, `symmetry-neighbors.h`, `model-vertices.*`, and the generated Lean files).
 
 With blended inner points in the 5D rows (search5d's default since 2026-10-14), a from-scratch run on 64 cores
 (2026-10-15, with the Lean build already up to date) took 24 min: model 7.5 min, tube 2.4 min, search 3.0 min
@@ -82,9 +82,9 @@ instantiated: no snub dodecahedron is Rupert
 instantiated: Wikipedia's snub dodecahedron is not Rupert
 ```
 
-`../common/snub_model.py` regenerates the model file `snub_model.txt` (and `symmetry_neighbors.h`) from the exact solid to 80 digits.
+`../common/snub-model.py` regenerates the model file `snub-model.txt` (and `symmetry-neighbors.h`) from the exact solid to 80 digits.
 
-**Code texture (for rendering).** `./codebdd.exe --model_file=snub_model.txt --texture=BASE` also writes `BASE.png`, an equirectangular image (8192×4096; `--texture_width`) of all view directions colored by face-visibility code up to the solid's symmetries and the antipode; `BASE.txt`, the legend (each class's color, area and `codebdd.json` codes); and `BASE.stl`, the solid in the image's frame.
+**Code texture (for rendering).** `./codebdd.exe --model_file=snub-model.txt --texture=BASE` also writes `BASE.png`, an equirectangular image (8192×4096; `--texture_width`) of all view directions colored by face-visibility code up to the solid's symmetries and the antipode; `BASE.txt`, the legend (each class's color, area and `codebdd.json` codes); and `BASE.stl`, the solid in the image's frame.
 
 ## How the proof works
 
@@ -134,14 +134,14 @@ Every rotation of I in this frame has entries in K = ℚ(√5, s), with s = sin 
 The shared files are in `../common/`; the solid's own are here.
 
 - Model, codes, the C++ checkers and search:
-  - `snub_model.txt`: the exact model (from `../common/snub_model.py`).
-  - `codebdd.cc`: the rational model and the code database (`codebdd.json`, `model_vertices.*`).
+  - `snub-model.txt`: the exact model (from `../common/snub-model.py`).
+  - `codebdd.cc`: the rational model and the code database (`codebdd.json`, `model-vertices.*`).
   - `model.{h,cc}`: the rational vertices.
-- Identity tube: `tube.{h,cc}`, `tubecert.cc`, `tubetree.{h,cc}`, `tubecode.cc`, `tuberefine.cc`, `export_codetrees_pack.cc`.
+- Identity tube: `tube.{h,cc}`, `tubecert.cc`, `tubetree.{h,cc}`, `tubecode.cc`, `tuberefine.cc`, `export-codetrees-pack.cc`.
 - 5D search and packing:
   - `exact5d` (the exact Lean-mirroring checks), `geom5d`, `contacts5d`, `bounds5d`, `cert5d`, `lp5d`, `rows5d`, `solve5d`, `tubeatlas5d`;
   - `search5d.cc`, `pack5d.cc`, `scoreboard5d.cc`;
-  - `icoprune_check.cc` (a floating-point check of the icosahedral prune leaves).
+  - `icoprune-check.cc` (a floating-point check of the icosahedral prune leaves).
 - `rebuild.sh` runs the whole pipeline; `*_test.cc` are unit tests (`make`).
 - Lean: `../../proof/SnubDodecahedron/`, `../../proof/Pipeline/` and `../../proof/Atlas/`.
-- `scripts/` and `../common/`: the generators of the Lean data (`../common/update_vertices.py`: `RationalVertices.lean` and the seed count in `SolidModel.lean`; `emit_tangent_cones.py`: `GeneratedTangentCones.lean` and `TangentCones.lean`'s `supportGenerator`; `../common/emit_wedge_cover.py`: `WedgeCoverData.lean`, about 9 min; `snub_ico_group.py`: `Pipeline/IcoGroupData.lean` and `OrbitData.lean`), run by the model stage with `MODEL_DIR` set to this directory.
+- `scripts/` and `../common/`: the generators of the Lean data (`../common/update-vertices.py`: `RationalVertices.lean` and the seed count in `SolidModel.lean`; `emit-tangent-cones.py`: `GeneratedTangentCones.lean` and `TangentCones.lean`'s `supportGenerator`; `../common/emit-wedge-cover.py`: `WedgeCoverData.lean`, about 9 min; `snub-ico-group.py`: `Pipeline/IcoGroupData.lean` and `OrbitData.lean`), run by the model stage with `MODEL_DIR` set to this directory.

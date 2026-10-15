@@ -3,9 +3,9 @@
 #ifndef _NOPERT_SOLID_H
 #define _NOPERT_SOLID_H
 
-#include "matrix_table.h"
-#include "model_vertices.h"
-#include "symmetry_neighbors.h"
+#include "matrix-table.h"
+#include "model-vertices.h"
+#include "symmetry-neighbors.h"
 
 namespace solid {
 
@@ -40,7 +40,7 @@ inline constexpr bool kOuterTriangleInRoot = false;
 inline constexpr bool kTriangleSizeInDouble = false;
 
 // codebdd's default --model_file.
-inline constexpr const char *kModelFile = "ph_model.txt";
+inline constexpr const char *kModelFile = "ph-model.txt";
 
 }  // namespace solid
 

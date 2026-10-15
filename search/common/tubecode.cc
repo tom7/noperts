@@ -10,7 +10,7 @@
 // worked on. Leaves are re-audited on replay, so a journal can never
 // inject an unchecked certificate. When every triangle of a code is
 // complete, the tree is written to trees/tree.<X>.json (the format read
-// by export_codetrees_pack).
+// by export-codetrees-pack).
 //
 // With --import, a code with no journal is seeded from its existing
 // tree.<X>.json: split nodes and Tag 1 leaves are kept (and re-audited);

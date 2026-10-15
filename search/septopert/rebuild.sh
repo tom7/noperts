@@ -2,8 +2,8 @@
 # Rebuilds the proof that the Septopert (the 7-vertex C3v solid) is a Nopert,
 # end to end:
 #
-#   model    codebdd on the committed exact model septopert_model.txt (with the
-#            two view triangles T1/T2): model_vertices.*, codebdd.json, and
+#   model    codebdd on the committed exact model septopert-model.txt (with the
+#            two view triangles T1/T2): model-vertices.*, codebdd.json, and
 #            the Lean view cover proof/Septopert/ViewCoverData.lean
 #            (proof/scripts/emit_septopert_view_cover.py)
 #   tube     identity tube per code (tubecode --min_r 1/100000, the cap at the
@@ -15,8 +15,8 @@
 #            with per-contact blends where the pass cannot descend, 4 codes
 #            at once): tube subtrees replaced by blow-up rows (Lean
 #            Row.idcap) where they certify; the later stages use these trees
-#   tubepack tube trees -> Lean tube packs + manifest (export_codetrees_pack)
-#   cap      the cap certificate at n (capcert_septopert --mu0 1/16 --max_depth 38)
+#   tubepack tube trees -> Lean tube packs + manifest (export-codetrees-pack)
+#   cap      the cap certificate at n (capcert-septopert --mu0 1/16 --max_depth 38)
 #            and the search's caps file (frame x = (1,0,-1), e1 = (0,2,0),
 #            e2 = (1,0,1), mu0 = 1/16, |w| <= 1/91)
 #   search   5D search, 22 code triangles x charts 0-3, rounds until nothing
@@ -37,7 +37,7 @@
 # WORK/stages.log.
 # The Lean build runs in the background while the C++ stages run (log
 # WORK/lean_build.log); the verify stage waits for it, and the script fails
-# if it fails. (Helpers: ../common/rebuild_lib.sh.)
+# if it fails. (Helpers: ../common/rebuild-lib.sh.)
 set -euo pipefail
 
 STAGES=(model tube idcap tubepack cap search pack verify)
@@ -71,7 +71,7 @@ CAP_CERT=$WORK/cap-1_16.cert
 CAPS_FILE=$WORK/caps.txt
 
 # HAVE_SCOPE, want, stage_begin/stage_end, the background Lean build.
-source "$NOPERT/../common/rebuild_lib.sh"
+source "$NOPERT/../common/rebuild-lib.sh"
 run() {
   echo "+ $*" >&2
   if [ $DRY -eq 0 ]; then "$@"; fi
@@ -99,16 +99,16 @@ NCODES=15
 NTRI=22
 
 echo "== build"
-run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe idcap.exe export_codetrees_pack.exe \
-  capcert_septopert.exe search5d.exe pack5d.exe dfwhere.exe
+run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe idcap.exe export-codetrees-pack.exe \
+  capcert-septopert.exe search5d.exe pack5d.exe dfwhere.exe
 
 if want model; then
   stage_begin model
-  (cd "$NOPERT" && run ./codebdd.exe --model_file=septopert_model.txt codebdd.json)
+  (cd "$NOPERT" && run ./codebdd.exe --model_file=septopert-model.txt codebdd.json)
   # The view cover (Lean: Septopert/ViewCoverData.lean) from codebdd.json.
   run python3 -B "$LEAN/scripts/emit_septopert_view_cover.py" --bdd "$NOPERT/codebdd.json" \
     "$LEAN/Septopert/ViewCoverData.lean"
-  run make -C "$NOPERT" -j "$THREADS" tubecode.exe tuberefine.exe idcap.exe export_codetrees_pack.exe search5d.exe pack5d.exe
+  run make -C "$NOPERT" -j "$THREADS" tubecode.exe tuberefine.exe idcap.exe export-codetrees-pack.exe search5d.exe pack5d.exe
   stage_end model
 fi
 
@@ -161,14 +161,14 @@ fi
 
 if want tubepack; then
   stage_begin tubepack
-  (cd "$NOPERT" && capped ./export_codetrees_pack.exe --trees_dir "$TREES_ID" --out_dir "$TUBEPACKS" \
+  (cd "$NOPERT" && capped ./export-codetrees-pack.exe --trees_dir "$TREES_ID" --out_dir "$TUBEPACKS" \
     --bdd codebdd.json)
   stage_end tubepack
 fi
 
 if want cap; then
   stage_begin cap
-  (cd "$NOPERT" && capped ./capcert_septopert.exe --model septopert_model.txt --mu0 1/16 --max_depth 38 \
+  (cd "$NOPERT" && capped ./capcert-septopert.exe --model septopert-model.txt --mu0 1/16 --max_depth 38 \
     --threads "$THREADS" --export "$CAP_CERT")
   # The search's caps file (search5d --caps): x e1 e2 mu0 wmax (doubles),
   # the exact frame (a b c d per coordinate, here rational: b = c = d = 0),

@@ -38,7 +38,7 @@ Lean entry point:
   are the three orbits above. `phPoles` is the same set as a `Finset`.
 - David McCooey's coordinates (cc-lib's `PentagonalHexecontahedron()`) are the
   mirror image of this set, up to similarity. This was checked numerically to
-  4·10⁻⁴⁰ by `search/ph/ph_crosscheck.py`, not by Lean. Since the statement
+  4·10⁻⁴⁰ by `search/ph/ph-crosscheck.py`, not by Lean. Since the statement
   includes reflections, McCooey's solid is covered.
 
 ## The statement
@@ -182,7 +182,7 @@ Since the deduplication of 2026-10-10 (see [BUILDING.md](BUILDING.md),
 orbit tables in `OrbitData.lean`; the rest of `IcoGroupData` is the
 shared `proof/Pipeline/IcoGroupData.lean`. The generators were adapted
 to this layout on 2026-10-10: run from the committed model files (with
-the `codebdd.json` that `codebdd.exe` writes from `ph_model.txt`), the
+the `codebdd.json` that `codebdd.exe` writes from `ph-model.txt`), the
 scripts in `search/ph/scripts/` reproduce `SolidModel.lean` (updated in
 place), `WedgeCoverData.lean`, `OrbitData.lean`, `PHStatementData.lean`
 and `Pipeline/IcoGroupData.lean` byte for byte.

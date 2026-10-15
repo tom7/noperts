@@ -31,7 +31,7 @@
 #include "tube.h"
 #include "tubetree.h"
 #include "rapidjson/document.h"
-#include "test_data.h"
+#include "test-data.h"
 #include "util.h"
 
 using namespace exact5d;

@@ -3,8 +3,8 @@
 #ifndef _NOPERT_SOLID_H
 #define _NOPERT_SOLID_H
 
-#include "matrix_table.h"
-#include "model_vertices.h"
+#include "matrix-table.h"
+#include "model-vertices.h"
 
 namespace solid {
 

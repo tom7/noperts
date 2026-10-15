@@ -151,7 +151,7 @@ static BigRat RoundDyadic(const BigRat &v, int bits) {
   return BigRat(BigInt::DivFloor(num, den), scale);
 }
 
-// A model file (e.g. septopert_model.txt): the vertices to high precision in C5
+// A model file (e.g. septopert-model.txt): the vertices to high precision in C5
 // order (vertex S k + s is seed s rotated by 2 pi k / 5), and the faces that
 // are not triangles. Lines: "name N", "seeds S", "vertex i x y z",
 // "face i j k ...", and others (ignored).
@@ -421,7 +421,7 @@ void ExportRationalVertices(const std::vector<BigVecQ3> &verts, std::string_view
     } else {
       lean_out << "The model file's exact rational vertices (strictly inside the unit sphere).\n";
     }
-    lean_out << "scripts/update_vertices.py installs these rows into Vertices.lean.\n";
+    lean_out << "scripts/update-vertices.py installs these rows into Vertices.lean.\n";
     lean_out << "-/\n\n";
     lean_out << "namespace Model\n\n";
     lean_out << "def rationalVertices : VertexIndex → Fin 3 → ℚ := ![\n";
@@ -1480,7 +1480,7 @@ int main(int argc, char **argv) {
 
   bool export_only = false;
   std::string output_path = "codebdd.json";
-  std::string export_prefix = "model_vertices";
+  std::string export_prefix = "model-vertices";
   std::string model_file = solid::kModelFile;
   std::string texture_base;
   int texture_width = 8192;

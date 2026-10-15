@@ -11,7 +11,7 @@
 #include "bignum/big.h"
 #include "bignum/big-overloads.h"
 #include "rapidjson/document.h"
-#include "test_data.h"
+#include "test-data.h"
 #include "util.h"
 
 using namespace tubeatlas5d;
@@ -20,7 +20,7 @@ using namespace tubeatlas5d;
 //
 // TREES_DIR (or $TREES_DIR) holds the tube trees (tree.<code>.json, e.g.
 // tuberefine's output) for the code triangles of ./codebdd.json ($CODEBDD_JSON); MANIFEST
-// (or $TUBE_MANIFEST) is export_codetrees_pack's manifest.txt for those
+// (or $TUBE_MANIFEST) is export-codetrees-pack's manifest.txt for those
 // trees. Without trees the test is skipped; without a manifest, the
 // manifest check is.
 
@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
       int code, tri, rows;
       ss >> file >> code >> tri >> rows >> r;
       CHECK(atlas.CodeAndTriangle(t) == std::make_pair(code, tri)) << line;
-      // (-1: a table with a cap leaf, export_codetrees_pack's convention.)
+      // (-1: a table with a cap leaf, export-codetrees-pack's convention.)
       if (r != "-1") CHECK(atlas.Walk(t, "").r_lower == BigRat(std::string_view(r))) << line;
       t++;
     }

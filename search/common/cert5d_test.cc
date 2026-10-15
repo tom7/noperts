@@ -15,7 +15,7 @@
 #include "exact5d.h"
 #include "geom5d.h"
 #include "rapidjson/document.h"
-#include "test_data.h"
+#include "test-data.h"
 #include "util.h"
 
 using exact5d::Q;

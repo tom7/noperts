@@ -3,10 +3,10 @@
 #ifndef _NOPERT_SOLID_H
 #define _NOPERT_SOLID_H
 
-#include "matrix_table.h"
-#include "mirror_q.h"
-#include "model_vertices.h"
-#include "symmetry_neighbors.h"
+#include "matrix-table.h"
+#include "mirror-q.h"
+#include "model-vertices.h"
+#include "symmetry-neighbors.h"
 
 namespace solid {
 
@@ -42,7 +42,7 @@ inline constexpr bool kOuterTriangleInRoot = true;
 inline constexpr bool kTriangleSizeInDouble = false;
 
 // codebdd's default --model_file.
-inline constexpr const char *kModelFile = "septopert_model.txt";
+inline constexpr const char *kModelFile = "septopert-model.txt";
 
 }  // namespace solid
 

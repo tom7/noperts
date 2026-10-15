@@ -7,7 +7,7 @@
 #include "bignum/big-vec.h"
 #include "bignum/big.h"
 #include "yocto-math.h"
-#include "model_vertices.h"
+#include "model-vertices.h"
 
 // The polyhedron the proof is about, as the exact rational model the
 // certificates use.
@@ -23,10 +23,10 @@
 // the solid itself (solid::kModelExact).
 //
 // codebdd generates the model from the solid's model file (e.g.
-// septopert_model.txt; #231: nopert231_root.txt) into
-//   model_vertices.h     (C++: the doubles and exact rationals below)
-//   model_vertices.lean  (installed into the Lean model)
-//   model_vertices.json
+// septopert-model.txt; #231: nopert231-root.txt) into
+//   model-vertices.h     (C++: the doubles and exact rationals below)
+//   model-vertices.lean  (installed into the Lean model)
+//   model-vertices.json
 // VERTICES are the IEEE doubles nearest the exact rationals (VertexQ).
 
 inline constexpr int NUM_VERTICES = NUM_VERTICES_MODEL;

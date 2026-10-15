@@ -14,10 +14,10 @@
 >
 > The C++ code that the solids' searches share is in
 > [`../common/`](../common/) (including the shared Lean data generator
-> `update_vertices.py`); the makefile builds it here, with this solid's
-> `model_vertices.h` and `solid.h` (its settings for the shared code). This
+> `update-vertices.py`); the makefile builds it here, with this solid's
+> `model-vertices.h` and `solid.h` (its settings for the shared code). This
 > directory keeps the model files, #231's own `codebdd.cc` (its model comes
-> from `nopert231_root.txt` and its view triangle is the upper wedge), its own
+> from `nopert231-root.txt` and its view triangle is the upper wedge), its own
 > tests (`model231_test.cc`, `tube231_test.cc`), its own Lean data
 > generators (`scripts/`), `rebuild.sh` and the makefile.
 
@@ -75,12 +75,12 @@ Prerequisites:
 |---|---|---|
 | model | `codebdd` computes the rational model, the face-visibility codes and their triangles; the Lean data (vertices, tangent cones, the wedge cover) is regenerated from them and Lean is rebuilt. Only on request (`--from model`), since it rewrites committed files. | ~7 min, including the Lean build (with Mathlib already built; `codebdd` itself takes under a second) |
 | tube | `tubecode` and `tuberefine` build the identity tube, one tree per code | ~8 min |
-| tubepack | `export_codetrees_pack`: the tube trees become Lean packs and a manifest | <1 min |
+| tubepack | `export-codetrees-pack`: the tube trees become Lean packs and a manifest | <1 min |
 | search | `search5d`: the 5D search over (view, relative rotation), charts 0-2 | ~56 min (the last ~45 min on a few hard triangles) |
 | pack | `pack5d --per_code`: per-code certificate packs | ~52 min |
 | verify | `constructNopert231` on the tube packs and the per-code packs | ~2 h 46 min |
 
-The build step builds the C++ tools and the Lean executables first. `codebdd.json` (the code database, 0.4 s to compute) is not committed; when it is missing, `rebuild.sh` regenerates it and checks that the vertex files it writes equal the committed `model_vertices.*` byte for byte.
+The build step builds the C++ tools and the Lean executables first. `codebdd.json` (the code database, 0.4 s to compute) is not committed; when it is missing, `rebuild.sh` regenerates it and checks that the vertex files it writes equal the committed `model-vertices.*` byte for byte.
 
 `./rebuild.sh --from model --work DIR` took 4 h 49 min in all and exited 0. The model stage regenerated every committed file byte for byte.
 
@@ -98,7 +98,7 @@ Peak memory is about 32 GB (the Lean verifier); `--mem_gb` caps every stage. `tu
 
 ### The polyhedron and its rational model
 
-`nopert231_root.txt` gives the four seed vertices (the `rootK` lines; the `params` line and comments record how the optimizer that produced it was called). Numerically (dense sampling of the views), its first-order rigidity margin is positive everywhere: no small rotation from the identity moves the inner shadow strictly inside the outer one to first order. The smallest margin, about 1.8·10⁻⁴, is at the *canyon*: views near the plane of a quad, on the side where two of its vertices are eclipsed. This is where the proof works hardest.
+`nopert231-root.txt` gives the four seed vertices (the `rootK` lines; the `params` line and comments record how the optimizer that produced it was called). Numerically (dense sampling of the views), its first-order rigidity margin is positive everywhere: no small rotation from the identity moves the inner shadow strictly inside the outer one to first order. The smallest margin, about 1.8·10⁻⁴, is at the *canyon*: views near the plane of a quad, on the side where two of its vertices are eclipsed. This is where the proof works hardest.
 
 The certificates are checked against fixed rational vertices, not the irrational solid (`codebdd`, `GenerateBestPossibleRationalVertices`):
 - The seeds are reordered to the Lean frame (seed 0 = top cap) and scaled so that every vertex has norm slightly below 1.
@@ -106,7 +106,7 @@ The certificates are checked against fixed rational vertices, not the irrational
 - The five quads are made exactly planar in ℚ: the seed-1 vertex of each quad is projected onto the plane of the other three (these five vertices have ~260-bit denominators).
 - `codebdd` tries slightly different overall scales and keeps the first whose rational vertices are within 3.6·10⁻¹⁶ of the exact rotations of the rational seeds (Lean needs 4·10⁻¹⁶).
 
-The outputs are `model_vertices.{h,json,lean}` (committed; the C++ tools compile in `model_vertices.h`) and `codebdd.json`.
+The outputs are `model-vertices.{h,json,lean}` (committed; the C++ tools compile in `model-vertices.h`) and `codebdd.json`.
 
 ### Symmetry reductions
 
@@ -116,11 +116,11 @@ A pose is an outer view direction plus a relative rotation R between the two cop
 
 ### Codes
 
-`codebdd` splits the view triangle into cells where the silhouette's combinatorics (which faces are visible: the face-visibility *code*) is constant: 27 facet planes, 77 codes, 153 projective triangles. Lean checks that the code triangles cover the view triangle with a decision tree over half-planes, generated by `emit_wedge_cover.py` and decided by the kernel (`WedgeCover.lean`, `WedgeCoverData.lean`; 2,143 nodes).
+`codebdd` splits the view triangle into cells where the silhouette's combinatorics (which faces are visible: the face-visibility *code*) is constant: 27 facet planes, 77 codes, 153 projective triangles. Lean checks that the code triangles cover the view triangle with a decision tree over half-planes, generated by `emit-wedge-cover.py` and decided by the kernel (`WedgeCover.lean`, `WedgeCoverData.lean`; 2,143 nodes).
 
 ### The identity tube
 
-Near R = identity no finite subdivision can work, since the two shadows coincide there. Instead, for each code triangle `tubecode` builds a quadtree of view sub-triangles. Each leaf carries a *Tag 1 cage*: four axis certificates, each a balanced triple of silhouette contacts, whose normalized centers span a tetrahedron containing the octahedron ±(7/4)(c + δ)eₖ, where δ bounds how far the centers move over the leaf triangle. The cage proves that no relative rotation within the tube radius r of the identity (r²(1 + c²) ≤ 4c²) gives a translated Rupert pose for any view in the leaf. Every certificate is audited in exact arithmetic with the same conditions as Lean's `Box.ViewValid`. `tuberefine` then subdivides leaves until every radius is at least the goal 1/50000 (2·10⁻⁵), so that the 5D search can stop there. `export_codetrees_pack` writes one Lean pack per code triangle, with each node's certified radius.
+Near R = identity no finite subdivision can work, since the two shadows coincide there. Instead, for each code triangle `tubecode` builds a quadtree of view sub-triangles. Each leaf carries a *Tag 1 cage*: four axis certificates, each a balanced triple of silhouette contacts, whose normalized centers span a tetrahedron containing the octahedron ±(7/4)(c + δ)eₖ, where δ bounds how far the centers move over the leaf triangle. The cage proves that no relative rotation within the tube radius r of the identity (r²(1 + c²) ≤ 4c²) gives a translated Rupert pose for any view in the leaf. Every certificate is audited in exact arithmetic with the same conditions as Lean's `Box.ViewValid`. `tuberefine` then subdivides leaves until every radius is at least the goal 1/50000 (2·10⁻⁵), so that the 5D search can stop there. `export-codetrees-pack` writes one Lean pack per code triangle, with each node's certified radius.
 
 ### The 5D search
 
@@ -139,15 +139,15 @@ The search is journaled and restartable; deferred leaves are retried in the same
 
 The shared files are in `../common/`; #231's own are here.
 
-- `nopert231_root.txt`: the polyhedron's seed vertices.
+- `nopert231-root.txt`: the polyhedron's seed vertices.
 - Model and codes:
-  - `codebdd.cc`: the rational model (`model_vertices.*`) and the code database (`codebdd.json`);
+  - `codebdd.cc`: the rational model (`model-vertices.*`) and the code database (`codebdd.json`);
   - `model.{h,cc}`: the vertices (double and exact) for the other tools.
 - Identity tube:
   - `tube.{h,cc}`: silhouette contacts, axis certificates and cage synthesis;
   - `tubecert.cc` (included by `tubecode.cc`): candidate generation and exact audits for one view triangle;
   - `tubetree.{h,cc}`: tube trees and their JSON format;
-  - `tubecode.cc`, `tuberefine.cc`, `export_codetrees_pack.cc`.
+  - `tubecode.cc`, `tuberefine.cc`, `export-codetrees-pack.cc`.
 - 5D search and packing:
   - `exact5d` (the exact checks, mirroring Lean), `geom5d` (view triangles and Cayley boxes), `contacts5d`, `bounds5d`, `cert5d`, `lp5d`, `rows5d`, `solve5d`, `tubeatlas5d` (the tube as seen by the search);
   - `search5d.cc`, `pack5d.cc`, `scoreboard5d.cc` (per-job status from the journals and packs).

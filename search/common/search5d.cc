@@ -183,7 +183,7 @@ int main(int argc, char **argv) {
     else if (a == "--half_turn_prune") args.opt.half_turn_prune = true;
     else if (a == "--tie_dir") args.tie_dir = next();
     else if (a == "--caps") {
-      // dh_caps.py: 9 + 2 doubles, then the exact frame (36 rationals), mu0, wmax^2.
+      // dh-caps.py: 9 + 2 doubles, then the exact frame (36 rationals), mu0, wmax^2.
       std::ifstream in(next());
       std::string line;
       while (std::getline(in, line)) {

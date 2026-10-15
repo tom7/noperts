@@ -24,7 +24,7 @@ axis. Vertex 4k + s is seed s rotated by k · 72°. The seeds (`seedVertex`), to
 | 3 | 0.057446211266240 | 0.601378495420756 | −0.762954469906766 | bottom pentagon |
 
 - **Rational model.** The search's `codebdd` computes it from
-  [`search/nopert231/nopert231_root.txt`](search/nopert231/nopert231_root.txt),
+  [`search/nopert231/nopert231-root.txt`](search/nopert231/nopert231-root.txt),
   the seeds that Tom's optimizer produced. The seeds are rotated in floating
   point and rounded to multiples of 2⁻⁵², scaled so that every vertex lies
   inside the unit sphere. Then the five quadrilaterals are made exactly
@@ -200,13 +200,13 @@ checkable packs.
 
 In this repository (2026-10-10, 16 cores):
 
-- `codebdd` regenerates the model files `model_vertices.{h,json,lean}` byte
+- `codebdd` regenerates the model files `model-vertices.{h,json,lean}` byte
   for byte.
 - From those files, the generators in `search/nopert231/scripts/` regenerate
   `Vertices.lean`, `GeneratedTangentCones.lean` and `WedgeCoverData.lean` in
   `proof/Nopert231/` byte for byte. After the shared-pipeline change (same
   day) `Vertices.lean` and `GeneratedTangentCones.lean` were regenerated again
-  and are still identical (`update_vertices.py` rewrites only the two data
+  and are still identical (`update-vertices.py` rewrites only the two data
   bodies of `Vertices.lean`); `WedgeCoverData.lean` is unchanged and still
   imports `Nopert231.WedgeCover`, which now names the pipeline's checker.
 - The tube stage, the search, the packs and the check have not been rerun

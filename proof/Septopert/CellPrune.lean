@@ -16,11 +16,11 @@ allowance: a box is pruned when a Bernstein/ball lower bound of the
 (denominator-cleared) violation is strictly positive.
 
 - `C3Prune.Box` (journal row `pi n`, `exact5d::IcoPruneValid` with
-  `symmetry_neighbors.h`): with R = chart · cayley(w), the trace advantage
+  `symmetry-neighbors.h`): with R = chart · cayley(w), the trace advantage
   tr(R c) − tr R of c = c3Mat (n + 1), times the Cayley denominator, is the
   quadratic Σ_ij (c_ji − δ_ij) Num_ij(w) (re-indexed `AtlasIcoPrune`).
 - `MirrorPrune.Box` (journal row `ph g`, `exact5d::HalfTurnPruneValid` with
-  `mirror_q.h`): over a view triangle (corners P_c, views Σ λ_c P_c, λ ≥ 0)
+  `mirror-q.h`): over a view triangle (corners P_c, views Σ λ_c P_c, λ ≥ 0)
   the degree-2 Bernstein coefficients in λ of
   (tr(H_p R Q) − tr R) |p|² D(w), Q = mirrorQMat g, are the quadratics
     b_cd = Σ_ik N_ik [P_c,i (Q P_d)_k + P_d,i (Q P_c)_k − (P_c·P_d)(Q_ki + δ_ik)]
@@ -43,7 +43,7 @@ open CayleyAtlas
 /-! ### Exact rational tables -/
 
 /-- The C3 neighbor n (n = 0, 1) is c3Mat (n + 1), row-major as in
-`symmetry_neighbors.h`. -/
+`symmetry-neighbors.h`. -/
 def c3NeighborIdx : Fin 2 → Fin 3
   | 0 => 1
   | 1 => 2
@@ -56,7 +56,7 @@ theorem c3NeighborQ_cast (n : Fin 2) (i j : Fin 3) :
     (c3NeighborQ n i j : ℝ) = c3Mat (c3NeighborIdx n) i j := by
   fin_cases n <;> fin_cases i <;> fin_cases j <;> simp [c3NeighborQ, c3NeighborIdx, c3Mat]
 
-/-- Q_g = mirrorQMat g, row-major as in `mirror_q.h`. -/
+/-- Q_g = mirrorQMat g, row-major as in `mirror-q.h`. -/
 def mirrorQQ : Fin 3 → Fin 3 → Fin 3 → ℚ :=
   ![![![-1, 0, 0], ![0, 0, -1], ![0, -1, 0]],
     ![![0, 0, -1], ![0, -1, 0], ![-1, 0, 0]],

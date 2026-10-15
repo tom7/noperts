@@ -28,7 +28,7 @@
 #include "bignum/big.h"
 #include "model.h"
 #include "rapidjson/document.h"
-#include "test_data.h"
+#include "test-data.h"
 #include "tubetree.h"
 #include "util.h"
 #include "yocto-math.h"

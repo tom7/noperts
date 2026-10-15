@@ -13,7 +13,7 @@ native tasks (`ParallelBool.allParB`); `check_of_par` recovers the sequential
 check, so a native run proves `certOk` (`certOk_of_par`) and hence the cap
 (`capHolds_of_cert`, `cap_not_rupert`).
 
-`decodeCert` reads a `capcert_septopert --export` file. Nothing in the decoding is
+`decodeCert` reads a `capcert-septopert --export` file. Nothing in the decoding is
 trusted: the decoded certificate is checked before it is used (its chart list
 against Lean's `chartList`, its frame, μ₀, vertices and half-turn element
 against `certOk`'s constants, every tree with Lean's own Bernstein bounds).
@@ -162,8 +162,8 @@ partial def parseTree (s : Array Char) (i : ℕ) : CTree × ℕ :=
 
 def kindOf (s : String) : Kind := match s with | "Fe" => .fe | "cone" => .cone | "Mcone" => .mcone | _ => .face
 
-/-- Decodes a `capcert_septopert --export` file (`witness i k k' c`). Without ratio blow-ups
-capcert_septopert exports z = 0, which no polynomial or box uses (ratio 0); it is read as 1
+/-- Decodes a `capcert-septopert --export` file (`witness i k k' c`). Without ratio blow-ups
+capcert-septopert exports z = 0, which no polynomial or box uses (ratio 0); it is read as 1
 (`CapCert.check` wants z > 0). -/
 def decodeCert (lines : Array String) : CapCert := Id.run do
   let mut V : Array KVec := #[]

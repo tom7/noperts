@@ -17,7 +17,7 @@
 #include "geom5d.h"
 #include "model.h"
 #include "rapidjson/document.h"
-#include "test_data.h"
+#include "test-data.h"
 #include "util.h"
 
 using namespace contacts5d;

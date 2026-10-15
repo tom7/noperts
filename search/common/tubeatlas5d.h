@@ -8,7 +8,7 @@
 // (AtlasProjectiveLocalViewTree.Table.findNodePrefix): the walk follows
 // children while it can and stops at a leaf or at the end of P. rLower is the
 // minimum certificate radius r over the node's subtree, computed exactly as
-// export_codetrees_pack writes it, so this matches the packed tables.
+// export-codetrees-pack writes it, so this matches the packed tables.
 
 #ifndef _NOPERT_TUBEATLAS5D_H
 #define _NOPERT_TUBEATLAS5D_H

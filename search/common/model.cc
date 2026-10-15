@@ -1,6 +1,6 @@
 
 #include "model.h"
-#include "model_vertices.h"
+#include "model-vertices.h"
 
 #include <array>
 

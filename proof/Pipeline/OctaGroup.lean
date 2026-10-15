@@ -9,7 +9,7 @@ public import Basic
 
 The 24 rotations of the cube: the signed permutation matrices with
 determinant 1. `octaEntries` lists them (row-major integer entries) in the
-order of the C++ search's table (`search/sc/sc_model.cc`): permutations in
+order of the C++ search's table (`search/sc/sc-model.cc`): permutations in
 lexicographic order of their images of (0, 1, 2), and for each the sign
 patterns `s = 0, …, 7` (bit `r`: row `r` negated) with determinant 1. Element
 0 is the identity.

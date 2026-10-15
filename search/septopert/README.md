@@ -13,22 +13,22 @@ Build with `make` (after `../../get-cc-lib.sh`; see `../../BUILDING.md`):
 `make` builds the unit tests, `make test` runs them, `make all` builds every
 tool and test.
 
-- `septopert_model.txt`: the exact model (rational vertices).
-- `model_vertices.{h,json,lean}`: the model's vertices (the model stage
+- `septopert-model.txt`: the exact model (rational vertices).
+- `model-vertices.{h,json,lean}`: the model's vertices (the model stage
   regenerates them with `codebdd`, together with the Lean view cover
   `../../proof/Septopert/ViewCoverData.lean`);
-  `symmetry_neighbors.h`: the C3 rotations (the C3 cell prune);
-  `mirror_q.h`: the mirror-tie rotations (the mirror prune).
+  `symmetry-neighbors.h`: the C3 rotations (the C3 cell prune);
+  `mirror-q.h`: the mirror-tie rotations (the mirror prune).
 - `solid.h`: the Septopert's settings for the shared code (its tables, the
   four undivided charts, exact model, bridge contacts, ...).
 - `codebdd.exe`: codes and code triangles (`codebdd.json`), model vertices.
 - `tubecode.exe`, `tuberefine.exe`: identity-tube trees per code.
-- `export_codetrees_pack.exe`: tube trees to Lean packs.
-- `capcert_septopert.exe` (`capcert_septopert.cc`, the Septopert's own):
+- `export-codetrees-pack.exe`: tube trees to Lean packs.
+- `capcert-septopert.exe` (`capcert-septopert.cc`, the Septopert's own):
   cap certificate at the mirror normal.
 - `search5d.exe`: parallel journaled 5D search.
 - `pack5d.exe`: 5D journals to per-code Lean packs.
-- `scoreboard5d.exe`, `dfwhere.exe`, `capleaf_check.exe`:
+- `scoreboard5d.exe`, `dfwhere.exe`, `capleaf-check.exe`:
   status and diagnostic tools for the 5D journals.
 - `*_test.cc` (in `../common/`): unit tests; some need `codebdd.json` in the
   current directory or a tube trees directory.

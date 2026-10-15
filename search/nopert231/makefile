@@ -11,11 +11,11 @@ all: default qtube s5d codebdd.exe
 
 # Rational model and identity tube:
 #  codebdd (codebdd.cc here, #231's own): exact rational model
-#    (model_vertices.*), codes and code triangles (codebdd.json).
+#    (model-vertices.*), codes and code triangles (codebdd.json).
 #  tubecode: restartable (journaled) Tag 1 tree synthesis per code.
 #  tuberefine: refines tube leaves to larger certified radii (monotone).
-#  export_codetrees_pack: tube trees -> Lean packs (constructNopert231).
-qtube: tubecode.exe tuberefine.exe export_codetrees_pack.exe
+#  export-codetrees-pack: tube trees -> Lean packs (constructNopert231).
+qtube: tubecode.exe tuberefine.exe export-codetrees-pack.exe
 
 # 5D search:
 #  search5d: parallel journaled search per (code triangle, chart) job.

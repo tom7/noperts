@@ -21,7 +21,7 @@ Usage:
 The arguments: `manifest.txt` lists the tube packs in code order, next to
 them; the chart directory holds `chart0.pack` through `chart2.pack`, or
 per-code packs `c<chart>/t<t>.pack`; the cap directory holds `u0.cert`,
-`ux.cert` and `u0_wide.cert`; the tie directory holds `dh_tie_data.txt`,
+`ux.cert` and `u0_wide.cert`; the tie directory holds `dh-tie-data.txt`,
 `nodes.txt` and the `n*_t*.cert` tie certificates. How to produce or obtain
 the data, and the running time and memory needed: see
 `deltoidal-hexecontahedron.md` and `BUILDING.md` at the root of the
@@ -56,7 +56,7 @@ def main (args : List String) : IO Unit := do
     | [m, d, c, t] => pure (m, d, c, t)
     | _ => throw (IO.userError (
         "usage: constructDeltoidalHexecontahedron <tube manifest.txt> <chart directory> " ++
-        "<cap directory: u0.cert ux.cert u0_wide.cert> <tie directory: dh_tie_data.txt nodes.txt n*_t*.cert>\n" ++
+        "<cap directory: u0.cert ux.cert u0_wide.cert> <tie directory: dh-tie-data.txt nodes.txt n*_t*.cert>\n" ++
         "(checks everything; see deltoidal-hexecontahedron.md)"))
   -- Caps.
   let mut caps : Array CapCert := #[]
@@ -74,7 +74,7 @@ def main (args : List String) : IO Unit := do
         match (((name.drop 1).dropEnd 5).toString).splitOn "_t" with
         | [n, tt] => certFiles := certFiles.push (n.toNat!, tt.toNat!, ← readLines entry.path.toString)
         | _ => pure ()
-    let ties := decodeTies (← readLines s!"{tieDir}/dh_tie_data.txt") (← readLines s!"{tieDir}/nodes.txt") certFiles
+    let ties := decodeTies (← readLines s!"{tieDir}/dh-tie-data.txt") (← readLines s!"{tieDir}/nodes.txt") certFiles
     IO.println s!"ties: {ties.normals.size} normals, {certFiles.size} certificate files"
     let tiesStart ← IO.monoMsNow
     if hties : tiesCheckPar ties = true then

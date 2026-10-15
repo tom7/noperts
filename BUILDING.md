@@ -124,8 +124,8 @@ page with its statement, trust model and reproduction steps:
   `search/dh/scripts/`, `search/ph/scripts/`, `search/sd/scripts/` and
   `search/nopert231/scripts/`, derived from the Apache-2.0 Noperthedron
   project); the license text is `search/APACHE20.txt`. The other scripts,
-  including those that also write Lean data (`search/dh/dh_cap_lean.py`,
-  `dh_tie_lean.py`, `ico_group.py`), are GPLv3.
+  including those that also write Lean data (`search/dh/dh-cap-lean.py`,
+  `dh-tie-lean.py`, `ico-group.py`), are GPLv3.
 - `cc-lib/`: not in the repository. `./get-cc-lib.sh` checks out svn
   revision 7488 of tom7misc's `trunk/cc-lib`; the build expects it next to
   `search/`. It is GPLv3, with some files under other compatible licenses
@@ -252,7 +252,7 @@ The generators of the solids' Lean data in `search/` were adapted to the new
 layout on 2026-10-10: run from the committed model inputs they reproduce the
 committed data files byte for byte (`SolidModel` and `RationalVertices` are
 updated in place; `Pipeline/IcoGroupData.lean` is written identically by each
-solid's `snub_ico_group.py`).
+solid's `snub-ico-group.py`).
 
 Candidate #231's Lean code (`proof/Nopert231/`) comes, with its history,
 from the `nopert231` branch of Noperthedron (0c83e4ba), where it lived in

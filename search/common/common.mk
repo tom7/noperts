@@ -2,7 +2,7 @@
 # include this file and then list their targets).
 #
 # The shared sources are in this directory. A solid's directory holds its own
-# sources and its model headers (model_vertices.h, symmetry_neighbors.h,
+# sources and its model headers (model-vertices.h, symmetry-neighbors.h,
 # solid.h, ...), which the shared code includes by name, so each solid
 # compiles the shared code itself: the objects and executables are built in
 # the solid's directory (make -C search/<solid>).

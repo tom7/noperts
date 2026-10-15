@@ -3,8 +3,8 @@
 // Lean checker Pipeline/KCapCheck.lean. The design and the findings behind it
 // are in nopert229/notes/SNUB-CUBE.md (prototype: nopert229/sccap.cc).
 //
-// The snub cube (model frame of sc_model.cc): the O-orbit of (t, 1, -t^2), t
-// the tribonacci constant, in sc_model's slot order. At u* = x/|x|,
+// The snub cube (model frame of sc-model.cc): the O-orbit of (t, 1, -t^2), t
+// the tribonacci constant, in sc-model's slot order. At u* = x/|x|,
 // x = (1, 0, t^2) = e_y x p for the vertex p = (-t^2, t, 1), the first-order
 // margin vanishes. With the orthogonal frames
 //   x = (1, 0, t^2), e1 = (-t^2, 0, 1), e2 = L2 e_y (L2 = twice the slope of
@@ -221,7 +221,7 @@ V3<TQ> Apply(const M3 &m, const V3<TQ> &v) {
 }
 
 void MakeSolid(Setup *st) {
-  // sc_model.cc's slot order: vertex 6 k + s = Rz(pi/2)^k seed_s, the seeds
+  // sc-model.cc's slot order: vertex 6 k + s = Rz(pi/2)^k seed_s, the seeds
   // the images of (t, 1, -t^2) under the coset representatives of O / C4,
   // sorted by decreasing z, then y.
   const TQ t{Q(0), Q(1), Q(0)}, t2{Q(0), Q(0), Q(1)};

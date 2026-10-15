@@ -61,7 +61,7 @@ triangles cover the view domain.
 The DH is only just not Rupert. It has poses with clearance exactly 0
 (*ties*), and moving its twelve 5-fold vertices outward by any amount
 η > 0 gives a Rupert solid: next to a tie there is a passage with clearance
-about 0.0695·η. `search/dh/dh_boundary.py` checks this numerically, with
+about 0.0695·η. `search/dh/dh-boundary.py` checks this numerically, with
 60 digits, for η from 10⁻³ down to 10⁻¹⁸; it is not part of the Lean result.
 So every neighbourhood of the DH, however small, contains Rupert solids.
 Unlike for the Septopert, there is no true statement about all solids near a
@@ -135,7 +135,7 @@ below). The program expects these directories:
   through `chart2.pack` (chart 3 is a 4-row table built into Lean,
   `FundamentalChart3`);
 - caps: `u0.cert`, `ux.cert`, `u0_wide.cert`;
-- ties: `dh_tie_data.txt`, `nodes.txt` and the `n<node>_t<k>.cert` files.
+- ties: `dh-tie-data.txt`, `nodes.txt` and the `n<node>_t<k>.cert` files.
 
 ```sh
 (cd proof && lake build constructDeltoidalHexecontahedron)
@@ -174,8 +174,8 @@ runs `constructDeltoidalHexecontahedron` in `proof/`, in a memory-capped
 rest of `IcoGroupData` is the shared `proof/Pipeline/IcoGroupData.lean`.
 The generators were adapted to this layout on 2026-10-10: run from
 the committed model files (with the `codebdd.json` that `codebdd.exe`
-writes from `dh_model.txt`, about 0.1 s), `scripts/update_vertices.py`,
-`emit_wedge_cover.py`, `snub_ico_group.py` and `dh_statement_data.py`
+writes from `dh-model.txt`, about 0.1 s), `scripts/update-vertices.py`,
+`emit-wedge-cover.py`, `snub-ico-group.py` and `dh-statement-data.py`
 reproduce `SolidModel.lean` (updated in place), `WedgeCoverData.lean`,
 `OrbitData.lean`, `StatementData.lean` and `Pipeline/IcoGroupData.lean`
 byte for byte. (`CapData` and `TieData`, from the caps and ties stages,

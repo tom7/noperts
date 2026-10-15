@@ -1,4 +1,4 @@
-// tietube: tie tubes for the deltoidal hexecontahedron (see dh_tie_data.py).
+// tietube: tie tubes for the deltoidal hexecontahedron (see dh-tie-data.py).
 // For a pinning normal x (the plane x^perp holds an antipodal pair of 5-fold
 // and of 2-fold vertices), L = sigma_x K, and a view u, the pose
 // R = H_u S H_x is a passage iff S L's shadow along u lies strictly inside
@@ -25,7 +25,7 @@
 // certified rho (the largest of a ladder 1/8, 1/16, ... that works; a node
 // is split when it fails down to --min_rho).
 //
-// Usage: tietube.exe [--data dh_tie_data.txt] [--normals 0,1,..] [--t t1,t2,..]
+// Usage: tietube.exe [--data dh-tie-data.txt] [--normals 0,1,..] [--t t1,t2,..]
 //          --trees_dir DIR [--bdd codebdd.json] --out_dir DIR
 //          [--max_depth 8] [--min_rho 1/1024] [--threads 60]
 
@@ -573,7 +573,7 @@ struct Certifier {
 int main(int argc, char **argv) {
   std::fesetround(FE_TONEAREST);
   InitConstants();
-  std::string data_file = "dh_tie_data.txt", trees_dir,
+  std::string data_file = "dh-tie-data.txt", trees_dir,
               bdd = "codebdd.json", out_dir, export_dir;
   std::vector<int> normals, tris;
   int max_depth = 8, threads = 60, start_depth = 3;

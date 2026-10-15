@@ -3,8 +3,8 @@
 # (Derived from the Noperthedron formalization project, which is Apache-2.0.)
 """Exact rational vertices of the model (Nopert #231).
 
-The vertices come from `model_vertices.json` in the C++ pipeline directory
-(written by `codebdd --root_file=nopert231_root.txt`): 2^52 denominators,
+The vertices come from `model-vertices.json` in the C++ pipeline directory
+(written by `codebdd --root_file=nopert231-root.txt`): 2^52 denominators,
 exactly planar quads, strictly inside the unit sphere. Vertices 0..3 are the
 Lean seeds (top cap, ring at z ~ 0.3, ring at z ~ -0.04, bottom cap); vertex
 4k+s is seed s rotated by 2*pi*k/5 (rationally approximated).
@@ -45,7 +45,7 @@ def add_model_dir_argument(parser: argparse.ArgumentParser) -> None:
 
 
 def load_model_vertices(directory: Optional[Path] = None) -> Tuple[Tuple[Q, Q, Q], ...]:
-    with open(model_dir(directory) / "model_vertices.json") as f:
+    with open(model_dir(directory) / "model-vertices.json") as f:
         data = json.load(f)
     return tuple((Q(item["x"]), Q(item["y"]), Q(item["z"])) for item in data["vertices"])
 
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     vertices_q = load_model_vertices(args.model_dir)
     seeds = [tuple(map(float, v)) for v in vertices_q[:4]]
-    print("Exact model vertices (model_vertices.json):")
+    print("Exact model vertices (model-vertices.json):")
     print("Seeds:")
     for i, seed in enumerate(seeds):
         norm = math.sqrt(sum(x**2 for x in seed))

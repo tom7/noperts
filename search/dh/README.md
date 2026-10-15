@@ -10,12 +10,12 @@ repository's `../../proof/DeltoidalHexecontahedron/` (executable
 work directory is `../../work-dh`. License: GPLv3 (`../COPYING`).
 
 The C++ code that the solids' searches share is in [`../common/`](../common/)
-(including the shared Lean data generators `update_vertices.py` and
-`emit_wedge_cover.py`); the makefile builds it here, with this solid's
-model headers (`model_vertices.h`, `symmetry_neighbors.h`, `ico_group.h`,
-`tie_normals.h`) and `solid.h` (its settings for the shared code). This
+(including the shared Lean data generators `update-vertices.py` and
+`emit-wedge-cover.py`); the makefile builds it here, with this solid's
+model headers (`model-vertices.h`, `symmetry-neighbors.h`, `ico-group.h`,
+`tie-normals.h`) and `solid.h` (its settings for the shared code). This
 directory keeps the model files, the DH's own tools (`capcert.cc`,
-`tietube.cc`, `halfturn_check.cc`), its own Lean data generators,
+`tietube.cc`, `halfturn-check.cc`), its own Lean data generators,
 `rebuild.sh` and the makefile.
 
 Build with `make` (unit tests; `make test` runs them) or `make all`;
@@ -56,7 +56,7 @@ theorem deltoidalHexecontahedron_not_rupert_of_checks
 ## Why the deltoidal hexecontahedron needs more than the earlier solids
 
 The DH lies exactly on the boundary of Rupert-ness. Folding its kites slightly (moving the twelve 5-fold vertices
-out by any η > 0) gives a Rupert polyhedron (`dh_boundary.py` checks passages of clearance about 0.0695·η in
+out by any η > 0) gives a Rupert polyhedron (`dh-boundary.py` checks passages of clearance about 0.0695·η in
 60-digit arithmetic, for η from 10⁻³ down to 10⁻¹⁸); the exact DH has
 clearance exactly 0 at those poses. So the earlier pipeline's statement, "every model within 6·10⁻¹⁶ of the
 rational model is a Nopert", is false here, and the proof uses the exact solid wherever such ties occur:
@@ -76,7 +76,7 @@ rational model is a Nopert", is false here, and the proof uses the exact solid w
 ## Data and reproduction
 
 The certificate data lives outside the repository (about 20 GB): cap certificates (`capcert --export`),
-tie certificates (`tietube --export_dir`, `dh_tie_lean.py`), tube packs (`export_codetrees_pack`) and 5D packs
+tie certificates (`tietube --export_dir`, `dh-tie-lean.py`), tube packs (`export-codetrees-pack`) and 5D packs
 (`pack5d --per_code --tie_nodes`). Then
 
 ```
@@ -92,10 +92,10 @@ peak ~30 GB).
 
 ## Code map (DH-specific)
 
-- Model and exact solid: `dh_model.py` (`dh_model.txt`), `dh_exact.py` (`dh_exact.txt`, over K), `kfield.py`.
-- Half-turn prune: `exact5d::HalfTurnPruneValid`, `ico_group.py`, `halfturn_check.cc`.
-- Caps: `capcert.cc`, `dh_caps.py`, `dh_cap_lean.py` (Lean `CapData`), `capleaf_check.cc`.
-- Ties: `dh_tie_data.py` (`dh_tie_data.txt`, `tie_normals.h`), `tietube.cc`, `tieatlas5d`, `dh_tie_lean.py`
+- Model and exact solid: `dh-model.py` (`dh-model.txt`), `dh-exact.py` (`dh-exact.txt`, over K), `kfield.py`.
+- Half-turn prune: `exact5d::HalfTurnPruneValid`, `ico-group.py`, `halfturn-check.cc`.
+- Caps: `capcert.cc`, `dh-caps.py`, `dh-cap-lean.py` (Lean `CapData`), `capleaf-check.cc`.
+- Ties: `dh-tie-data.py` (`dh-tie-data.txt`, `tie-normals.h`), `tietube.cc`, `tieatlas5d`, `dh-tie-lean.py`
   (Lean `TieData`).
 - 5D search: as for the pentagonal hexecontahedron, plus cap and tie leaves.
 - Lean (`../../proof/DeltoidalHexecontahedron/`): `Statement`, `Caps`, `Ties`, `Checks`, `Decode`, the cap and

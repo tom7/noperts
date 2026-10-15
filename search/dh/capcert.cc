@@ -20,7 +20,7 @@
 //
 // Witnesses are screened in double precision. By default the certificate is
 // exact: the polynomials are built over K = Q(sqrt5, sin 72) from the exact
-// solid (dh_exact.txt), the divisions are checked exactly (the vanishing
+// solid (dh-exact.txt), the divisions are checked exactly (the vanishing
 // coefficients must be exactly 0), and the boxes are bounded by tensor
 // Bernstein coefficients in outward-rounded interval arithmetic (exact zeros
 // stay exactly 0). --double runs the floating-point version (feasibility).
@@ -447,11 +447,11 @@ KNum ParseKTok(std::istringstream &ss) {
 }
 
 void LoadSolid(Setup *s) {
-  // Exact vertices (distinct) from dh_exact.txt; faces from dh_model.txt.
+  // Exact vertices (distinct) from dh-exact.txt; faces from dh-model.txt.
   std::vector<V3<KNum>> slots;
   {
-    std::ifstream in("dh_exact.txt");
-    CHECK(in.good()) << "dh_exact.txt (python3 dh_exact.py)";
+    std::ifstream in("dh-exact.txt");
+    CHECK(in.good()) << "dh-exact.txt (python3 dh-exact.py)";
     std::string line;
     while (std::getline(in, line)) {
       std::istringstream ss(line);
@@ -475,7 +475,7 @@ void LoadSolid(Setup *s) {
     sv.push_back(found);
   }
   for (const auto &v : s->pk.V) s->pd.V.push_back({ToDouble(v[0]), ToDouble(v[1]), ToDouble(v[2])});
-  std::ifstream in("dh_model.txt");
+  std::ifstream in("dh-model.txt");
   std::string line;
   while (std::getline(in, line)) {
     std::istringstream ss(line);
@@ -1053,7 +1053,7 @@ int main(int argc, char **argv) {
   printf("frame %.17g %.17g %.17g  %.17g %.17g %.17g  %.17g %.17g %.17g\n", st.pd.x[0], st.pd.x[1], st.pd.x[2],
          st.pd.e1[0], st.pd.e1[1], st.pd.e1[2], st.pd.e2[0], st.pd.e2[1], st.pd.e2[2]);
   {
-    // The exact frame (each coordinate a + b sqrt5 + c s + d s sqrt5, s = sin 72): dh_caps.py.
+    // The exact frame (each coordinate a + b sqrt5 + c s + d s sqrt5, s = sin 72): dh-caps.py.
     std::string kf = "kframe";
     for (const V3<KNum> *v : {&st.pk.x, &st.pk.e1, &st.pk.e2})
       for (int a = 0; a < 3; a++)

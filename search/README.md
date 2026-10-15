@@ -6,7 +6,7 @@ whatever data it writes.
 
 - [`common/`](common/): the code the solids' searches share: the identity
   tube (`tube`, `tubetree`, `tubecode`, `tuberefine`,
-  `export_codetrees_pack`), the 5D search and packing (`exact5d`, `geom5d`,
+  `export-codetrees-pack`), the 5D search and packing (`exact5d`, `geom5d`,
   `contacts5d`, `cert5d`, `rows5d`, `solve5d`, `search5d`, `pack5d`, ...),
   `codebdd` (all but #231's), the diagnostics and renderings, the unit tests,
   and the build rules (`common.mk`).
@@ -26,8 +26,8 @@ write to `work/`, `work-dh/`, `work-ph/`, `work-sd/` and `work-231/` at the
 repository root.
 
 The shared code includes the solid's model headers by name
-(`model_vertices.h`, written by `codebdd`; `symmetry_neighbors.h`,
-`mirror_q.h`, `ico_group.h`, `tie_normals.h` where the solid has them) and
+(`model-vertices.h`, written by `codebdd`; `symmetry-neighbors.h`,
+`mirror-q.h`, `ico-group.h`, `tie-normals.h` where the solid has them) and
 `solid.h`, the solid's settings: its exact or rounded model, its charts and
 whether the fivefold symmetry narrows them, its symmetry tables (the
 icosahedral or C3 cell prune, the half-turn or mirror prune, the tie
@@ -41,5 +41,5 @@ solid's directory takes precedence over one of the same name in `common/`
 License: GPLv3 (`COPYING`), except the scripts that carry the header "THIS
 FILE ONLY: Uses APACHE 2.0 license" (Lean data generators derived from the
 Apache-2.0 Noperthedron project; license text: `APACHE20.txt`). The other
-scripts, including those that write Lean data (`dh/dh_cap_lean.py`,
-`dh/dh_tie_lean.py`, `dh/ico_group.py`, ...), are GPLv3.
+scripts, including those that write Lean data (`dh/dh-cap-lean.py`,
+`dh/dh-tie-lean.py`, `dh/ico-group.py`, ...), are GPLv3.

@@ -12,9 +12,9 @@ names: `../../BUILDING.md`), and the top-level result is
 
 The C++ code that the solids' searches share is in
 [`../common/`](../common/) (including the shared Lean data generators
-`update_vertices.py` and `emit_wedge_cover.py`); the makefile builds it here,
-with this solid's model headers (`model_vertices.h`,
-`symmetry_neighbors.h`) and `solid.h` (its settings for the shared code).
+`update-vertices.py` and `emit-wedge-cover.py`); the makefile builds it here,
+with this solid's model headers (`model-vertices.h`,
+`symmetry-neighbors.h`) and `solid.h` (its settings for the shared code).
 This directory keeps the model files, the solid's own Lean data generators
 (`scripts/`), `rebuild.sh` and the makefile.
 
@@ -40,7 +40,7 @@ theorem pentagonalHexecontahedron_not_rupert (h : ∀ P : IModel, ¬ IsRupert P.
   - The executable checks the certificate data natively, combines it with kernel-proved soundness theorems, and constructs this proposition.
   - The trust model is the same as for `native_decide`: Lean's kernel plus the compiled evaluation of the checkers. The statement's own facts (the 92 poles, their coordinates) are decided by the kernel.
 
-The same solid is cc-lib's `PentagonalHexecontahedron()` (`geom/polyhedra.cc`, David McCooey's coordinates): `ph_crosscheck.py` recomputes McCooey's closed form to 60 digits and finds an orthogonal map taking one vertex set onto the other with mismatch 4·10⁻⁴⁰. The map is a reflection: McCooey's "laevo" form is the mirror image of the dual of Wikipedia's (and cc-lib's) snub dodecahedron. Both chiralities are covered.
+The same solid is cc-lib's `PentagonalHexecontahedron()` (`geom/polyhedra.cc`, David McCooey's coordinates): `ph-crosscheck.py` recomputes McCooey's closed form to 60 digits and finds an orthogonal map taking one vertex set onto the other with mismatch 4·10⁻⁴⁰. The map is a reflection: McCooey's "laevo" form is the mirror image of the dual of Wikipedia's (and cc-lib's) snub dodecahedron. Both chiralities are covered.
 
 ## Reproducing the proof
 
@@ -57,7 +57,7 @@ Prerequisites:
 
 | stage | what | time |
 |---|---|---|
-| build, model | `snub_model.py` writes the snub dodecahedron's exact model; `ph_model.py` its polar dual (`ph_model.txt`), which `ph_crosscheck.py` compares with McCooey's coordinates; `codebdd` computes the face-visibility codes and their triangles; the Lean data (vertices, the view-triangle cover, the icosahedral group and the orbits, the statement's certificates) is regenerated and Lean is built | 13 min |
+| build, model | `snub-model.py` writes the snub dodecahedron's exact model; `ph-model.py` its polar dual (`ph-model.txt`), which `ph-crosscheck.py` compares with McCooey's coordinates; `codebdd` computes the face-visibility codes and their triangles; the Lean data (vertices, the view-triangle cover, the icosahedral group and the orbits, the statement's certificates) is regenerated and Lean is built | 13 min |
 | tube | `tubecode` and `tuberefine` build the identity tube, one tree per code | 11 min |
 | tubepack | the tube trees become Lean packs | 1 min |
 | search | `search5d`: the 5D search over (view, relative rotation) | 66 min |
@@ -82,14 +82,14 @@ constructed proof: no IModel (I-orbit within 6e-16 of the rational vertices) is 
 instantiated: no pentagonal hexecontahedron is Rupert
 ```
 
-**Code texture (for rendering).** `./codebdd.exe --model_file=ph_model.txt --texture=BASE` writes an equirectangular image of all view directions colored by face-visibility code up to symmetry, a legend, and the solid as STL in the image's frame.
+**Code texture (for rendering).** `./codebdd.exe --model_file=ph-model.txt --texture=BASE` writes an equirectangular image of all view directions colored by face-visibility code up to symmetry, a legend, and the solid as STL in the image's frame.
 
 ## How the proof works
 
 ### The model
 
 The pentagonal hexecontahedron is the polar dual of the snub dodecahedron: its 92 vertices are the poles of the snub's 92 faces (12 pentagons, 80 triangles), and its 60 pentagonal faces are dual to the snub's vertices.
-- `ph_model.py` takes the snub's exact model (`snub_model.txt`, 80 digits), rounds it to multiples of 2⁻⁶⁴, makes its pentagons exactly planar, and takes the poles in exact arithmetic. Each face of the dual (the plane v·x = 1 for a snub vertex v) is then *exactly* planar, which no independent rounding of the 92 vertices could achieve. The price: coordinates of up to 935 bits.
+- `ph-model.py` takes the snub's exact model (`snub-model.txt`, 80 digits), rounds it to multiples of 2⁻⁶⁴, makes its pentagons exactly planar, and takes the poles in exact arithmetic. Each face of the dual (the plane v·x = 1 for a snub vertex v) is then *exactly* planar, which no independent rounding of the 92 vertices could achieve. The price: coordinates of up to 935 bits.
 - The result is within 1.9·10⁻¹⁹ of the exact solid, scaled to circumradius just below 1.
 - Frame: the snub's (z a 5-fold axis, x a 2-fold axis). Two vertices lie on the z axis; each is listed 5 times (exact copies) so that the fivefold indexing (vertex 20k + s is seed s rotated by 2πk/5) still applies: 100 vertex slots, 20 seeds. Certificates never use a copy of an axis vertex as a support vertex (it would fail against its own copies), and Lean's checks are unchanged.
 
@@ -105,15 +105,15 @@ As for the snub dodecahedron (the solids share the icosahedral group and frame):
 
 - `IModel` (`IcoModel.lean`) is three base points with the I-orbits of the model: on a 5-fold axis (stabilizer C₅, 12 points), on a 3-fold axis (C₃, 20 points), generic (60 points); each base point is fixed by its stabilizer (a hypothesis), and the decided tables `orbitSlot`/`orbitStab` give the I-invariance of the hull.
 - The identity tube's rows are checked against every vertex (`Box.ViewValid`); the snub's tangent-cone shortcut is not used.
-- The statement (`Statement.lean`, `PolarDual.lean`): every facet pole has a vertex at level 1, which a rotation of the snub moves to p; for each pair of other vertices (S_j p, S_k p), either two vertices lie strictly on both sides of the plane through the three (Cramer's rule: no pole can exist), or the three lie on a known face and the pole is a rotated base pole. Conversely each base pole is a facet pole: the other vertices are strictly below its plane, and the pentagon's five vertices are exactly coplanar (an orbit of M₁, perpendicular to its axis). The facts are decided by the kernel with interval arithmetic (ξ to 10⁻²⁴), from `scripts/ph_statement_data.py`'s certificates.
+- The statement (`Statement.lean`, `PolarDual.lean`): every facet pole has a vertex at level 1, which a rotation of the snub moves to p; for each pair of other vertices (S_j p, S_k p), either two vertices lie strictly on both sides of the plane through the three (Cramer's rule: no pole can exist), or the three lie on a known face and the pole is a rotated base pole. Conversely each base pole is a facet pole: the other vertices are strictly below its plane, and the pentagon's five vertices are exactly coplanar (an orbit of M₁, perpendicular to its axis). The facts are decided by the kernel with interval arithmetic (ξ to 10⁻²⁴), from `scripts/ph-statement-data.py`'s certificates.
 
 ## Code map
 
 The shared files are in `../common/`; the solid's own are here.
 
-- Model: `snub_model.txt` (the snub dodecahedron, from `../common/snub_model.py`), `ph_model.py`, `ph_model.txt` (its polar dual), `ph_crosscheck.py` (against McCooey's coordinates); `codebdd.cc` (codes; `rational_vertex` lines are used verbatim); `model.{h,cc}`.
-- Identity tube: `tube.{h,cc}`, `tubecert.cc`, `tubetree.{h,cc}`, `tubecode.cc`, `tuberefine.cc`, `export_codetrees_pack.cc`.
-- 5D search and packing: `exact5d`, `geom5d`, `contacts5d`, `bounds5d`, `cert5d`, `lp5d`, `rows5d`, `solve5d`, `tubeatlas5d`; `search5d.cc`, `pack5d.cc`, `scoreboard5d.cc`; `icoprune_check.cc`.
+- Model: `snub-model.txt` (the snub dodecahedron, from `../common/snub-model.py`), `ph-model.py`, `ph-model.txt` (its polar dual), `ph-crosscheck.py` (against McCooey's coordinates); `codebdd.cc` (codes; `rational_vertex` lines are used verbatim); `model.{h,cc}`.
+- Identity tube: `tube.{h,cc}`, `tubecert.cc`, `tubetree.{h,cc}`, `tubecode.cc`, `tuberefine.cc`, `export-codetrees-pack.cc`.
+- 5D search and packing: `exact5d`, `geom5d`, `contacts5d`, `bounds5d`, `cert5d`, `lp5d`, `rows5d`, `solve5d`, `tubeatlas5d`; `search5d.cc`, `pack5d.cc`, `scoreboard5d.cc`; `icoprune-check.cc`.
 - Rendering: `codebdd --texture`.
 - `rebuild.sh` runs the whole pipeline; `*_test.cc` are unit tests (`make`).
 - Lean: `../../proof/PentagonalHexecontahedron/`, `../../proof/Pipeline/` and `../../proof/Atlas/`.

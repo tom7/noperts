@@ -17,7 +17,7 @@ then no pose of the box lies in the O cell (`InOctaCell`). With
 Cayley coordinates with exact (integer) coefficients, bounded below by
 Bernstein or tight-ball bounds. The neighbors are the 23 nontrivial
 rotations: neighbor `n` is element `n + 1` of O, the order of the C++
-search's table (`search/sc/symmetry_neighbors.h`, `exact5d::IcoPruneValid`).
+search's table (`search/sc/symmetry-neighbors.h`, `exact5d::IcoPruneValid`).
 -/
 
 namespace Noperts.Pipeline

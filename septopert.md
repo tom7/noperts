@@ -52,7 +52,7 @@ In lowest terms (the form used in Lean, `septopert` in
   and 3 (vertex 6). Combinatorially a gyroelongated triangular pyramid: a
   triangular antiprism (vertices 0–5) with a pyramid (apex 6) on its larger
   face.
-- `search/septopert/septopert_model.txt` is the exact (rational) model the
+- `search/septopert/septopert-model.txt` is the exact (rational) model the
   search uses; `proof/Septopert/ModelData.lean` has the same vertices.
 
 ## The statement
@@ -221,7 +221,7 @@ multiple cores and tests a cache of recent certificates that can be reused
 for nearby cells. So you may not get the same row counts, etc. as I did.
 
 This builds everything, runs `codebdd` on the exact model
-`search/septopert/septopert_model.txt` (and regenerates the view cover
+`search/septopert/septopert-model.txt` (and regenerates the view cover
 `proof/Septopert/ViewCoverData.lean` from its output), builds the identity
 tube and replaces nearly all of it by identity blow-up rows, runs the search,
 packs the tables into `work/`, and finally runs `constructSeptopert` on

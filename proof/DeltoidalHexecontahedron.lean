@@ -44,7 +44,7 @@ can pass through.
 The deltoidal hexecontahedron is only just not Rupert: it has poses whose
 clearance is exactly 0 (*ties*), and moving its twelve 5-fold vertices outward
 by 0.1% gives a Rupert solid (a passage checked numerically to 50 digits by
-`dh_boundary.py` in the search's repository, not by Lean). So, unlike for the
+`dh-boundary.py` in the search's repository, not by Lean). So, unlike for the
 Septopert, no statement about all solids near a rational model can be true.
 The proof therefore splits in two:
 

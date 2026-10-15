@@ -2,17 +2,17 @@
 # Rebuilds the proof that the deltoidal hexecontahedron is a Nopert (not
 # Rupert), end to end:
 #
-#   model    the exact model (dh_model.py: McCooey's coordinates in the snub's
+#   model    the exact model (dh-model.py: McCooey's coordinates in the snub's
 #            frame), codes and code triangles (codebdd --model_faces), the
-#            exact solid over K = Q(sqrt5, sin 72) (dh_exact.py), the tie data
-#            (dh_tie_data.py), and the Lean data generated from them
+#            exact solid over K = Q(sqrt5, sin 72) (dh-exact.py), the tie data
+#            (dh-tie-data.py), and the Lean data generated from them
 #   tube     identity tube, one quadtree per code (tubecode), with the two
 #            caps (u0, ux) left to the cap theorems
-#   tubepack tube trees -> Lean packs + manifest (export_codetrees_pack)
+#   tubepack tube trees -> Lean packs + manifest (export-codetrees-pack)
 #   caps     the three cap certificates (capcert --export: u0, ux, u0 wide),
-#            the search's caps file (dh_caps.py) and Lean's CapData
+#            the search's caps file (dh-caps.py) and Lean's CapData
 #   ties     the tie tubes with their certificates (tietube --export_dir) and
-#            Lean's TieData (dh_tie_lean.py)
+#            Lean's TieData (dh-tie-lean.py)
 #   search   5D search, charts 0-2 (search5d), until nothing is deferred
 #   pack     per-code 5D packs (pack5d --per_code --tie_nodes)
 #   verify   Lean: check caps, ties and every table and build the proof
@@ -34,7 +34,7 @@
 # creating threads).
 #
 # The model, caps and ties stages regenerate committed source files (the model
-# files, dh_exact.txt, dh_tie_data.txt, tie_normals.h, and
+# files, dh-exact.txt, dh-tie-data.txt, tie-normals.h, and
 # ../../proof/DeltoidalHexecontahedron's SolidModel (vertices), WedgeCoverData,
 # OrbitData, StatementData, CapData and TieData, and ../../proof/Pipeline/
 # IcoGroupData; all but CapData and TieData with scripts/), so
@@ -46,7 +46,7 @@
 # Each stage's wall time is appended to WORK/stages.log. The Lean build runs
 # in the background while the C++ stages run (log WORK/lean_build.log); the
 # verify stage waits for it, and the script fails if it fails. (Helpers:
-# ../common/rebuild_lib.sh.)
+# ../common/rebuild-lib.sh.)
 set -euo pipefail
 
 STAGES=(model tube tubepack caps ties search pack verify)
@@ -84,7 +84,7 @@ run_to() {
   if [ $DRY -eq 0 ]; then "$@" > "$out"; fi
 }
 # HAVE_SCOPE, want, stage_begin/stage_end, the background Lean build.
-source "$NOPERT/../common/rebuild_lib.sh"
+source "$NOPERT/../common/rebuild-lib.sh"
 lean_run() {
   if [ $HAVE_SCOPE -eq 1 ]; then
     run systemd-run --user --scope -q -p MemoryMax="${MEM_GB}G" -p MemorySwapMax=0 "$@"
@@ -114,7 +114,7 @@ CAP_UX=(--cap ux --aniso --mu0 41/4096 --strong_scale 128 --ratio_z 64
 CAP_U0W=(--cap u0 --mu0 41/1024 --strong_scale 2 --ratio_z 32 --max_depth 32 --try 24)
 
 echo "== build"
-run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe export_codetrees_pack.exe capcert.exe \
+run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe export-codetrees-pack.exe capcert.exe \
   tietube.exe search5d.exe pack5d.exe scoreboard5d.exe
 # The Lean build (in the background: lean_build_start), under the same cap.
 LEAN_BUILD=(lake build constructDeltoidalHexecontahedron)
@@ -122,16 +122,16 @@ LEAN_BUILD=(lake build constructDeltoidalHexecontahedron)
 
 if want model; then
   stage_begin model
-  (cd "$NOPERT" && run python3 dh_model.py snub_model.txt dh_model.txt)
-  (cd "$NOPERT" && run ./codebdd.exe --model_file=dh_model.txt --model_faces codebdd.json)
-  (cd "$NOPERT" && run python3 dh_exact.py dh_model.txt dh_exact.txt)
-  (cd "$NOPERT" && run python3 dh_tie_data.py dh_exact.txt dh_tie_data.txt)
-  (cd "$NOPERT" && run python3 ../common/update_vertices.py "$LEAN/DeltoidalHexecontahedron/SolidModel.lean" \
-    && run python3 ../common/emit_wedge_cover.py --bdd codebdd.json \
+  (cd "$NOPERT" && run python3 dh-model.py snub-model.txt dh-model.txt)
+  (cd "$NOPERT" && run ./codebdd.exe --model_file=dh-model.txt --model_faces codebdd.json)
+  (cd "$NOPERT" && run python3 dh-exact.py dh-model.txt dh-exact.txt)
+  (cd "$NOPERT" && run python3 dh-tie-data.py dh-exact.txt dh-tie-data.txt)
+  (cd "$NOPERT" && run python3 ../common/update-vertices.py "$LEAN/DeltoidalHexecontahedron/SolidModel.lean" \
+    && run python3 ../common/emit-wedge-cover.py --bdd codebdd.json \
          --namespace DeltoidalHexecontahedron.WedgeCover "$LEAN/DeltoidalHexecontahedron/WedgeCoverData.lean" \
-    && run python3 scripts/snub_ico_group.py --model_file dh_model.txt \
-    && run python3 scripts/dh_statement_data.py)
-  run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe export_codetrees_pack.exe capcert.exe \
+    && run python3 scripts/snub-ico-group.py --model_file dh-model.txt \
+    && run python3 scripts/dh-statement-data.py)
+  run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe export-codetrees-pack.exe capcert.exe \
     tietube.exe search5d.exe pack5d.exe
   stage_end model
 fi
@@ -155,7 +155,7 @@ fi
 
 if want tubepack; then
   stage_begin tubepack
-  (cd "$NOPERT" && run ./export_codetrees_pack.exe --trees_dir "$TREES" --out_dir "$TUBEPACKS" \
+  (cd "$NOPERT" && run ./export-codetrees-pack.exe --trees_dir "$TREES" --out_dir "$TUBEPACKS" \
     --bdd codebdd.json)
   stage_end tubepack
 fi
@@ -169,11 +169,11 @@ if want caps; then
   (cd "$NOPERT" && run ./capcert.exe "${CAP_U0W[@]}" --threads "$THREADS" --export "$CERTS/u0_wide.cert")
   # The search's caps file: each base cap's 120 images (the order is Lean's dhCapImgs).
   if [ $DRY -eq 0 ]; then
-    (cd "$NOPERT" && python3 dh_caps.py 41/4096 1/50 "$WORK/frame_u0.txt" \
-      && python3 dh_caps.py 41/4096 1/80 "$WORK/frame_ux.txt" \
-      && python3 dh_caps.py 41/1024 1/320 "$WORK/frame_u0.txt") > "$CAPS_FILE"
+    (cd "$NOPERT" && python3 dh-caps.py 41/4096 1/50 "$WORK/frame_u0.txt" \
+      && python3 dh-caps.py 41/4096 1/80 "$WORK/frame_ux.txt" \
+      && python3 dh-caps.py 41/1024 1/320 "$WORK/frame_u0.txt") > "$CAPS_FILE"
   fi
-  (cd "$NOPERT" && run python3 dh_cap_lean.py \
+  (cd "$NOPERT" && run python3 dh-cap-lean.py \
     "$LEAN/DeltoidalHexecontahedron/CapData.lean" \
     "$WORK/frame_u0.txt:41/4096:1/50:prune" "$WORK/frame_ux.txt:41/4096:1/80" "$WORK/frame_u0.txt:41/1024:1/320:prune")
   stage_end caps
@@ -185,8 +185,8 @@ if want ties; then
     --trees_dir "$TREES" --out_dir "$TIES" --export_dir "$TIES/cert")
   (cd "$NOPERT" && run ./tietube.exe --t 37 --threads "$THREADS" --sigma_depth 6 --max_depth 14 \
     --min_rho 1/16384 "${TUBE_CAPS[@]}" --trees_dir "$TREES" --out_dir "$TIES" --export_dir "$TIES/cert")
-  (cd "$NOPERT" && run python3 dh_tie_lean.py --export "$TIES/cert")
-  run cp "$NOPERT/dh_tie_data.txt" "$TIES/cert/"
+  (cd "$NOPERT" && run python3 dh-tie-lean.py --export "$TIES/cert")
+  run cp "$NOPERT/dh-tie-data.txt" "$TIES/cert/"
   stage_end ties
 fi
 

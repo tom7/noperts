@@ -76,7 +76,7 @@ std::string Zigzag(const BigRat &r) {
   return zz.ToString() + "," + den.ToString();
 }
 
-// Tie nodes (dh_tie_lean.py's nodes.txt: "<normal> <t> <path> <index>"): a tie
+// Tie nodes (dh-tie-lean.py's nodes.txt: "<normal> <t> <path> <index>"): a tie
 // leaf row cites the deepest listed node on its view path (Lean Row.tieLeaf).
 std::map<std::string, int> g_tie_nodes;
 void LoadTieNodes(const std::string &file) {

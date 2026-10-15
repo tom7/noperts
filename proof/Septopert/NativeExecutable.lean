@@ -193,7 +193,7 @@ def constructProof (localTaskCount globalTaskCount : Nat)
   log "constructed: CapOk → ¬ IsRupert verts"
   pure ⟨notRupert⟩
 
-/-- Check a cap certificate (`capcert_septopert.exe --export`) natively and return `CapOk`. -/
+/-- Check a cap certificate (`capcert-septopert.exe --export`) natively and return `CapOk`. -/
 def checkCap (c : Cap.CapCert) : IO (PLift CapOk) := do
   let t0 ← IO.monoMsNow
   if h : certOkPar c = true then

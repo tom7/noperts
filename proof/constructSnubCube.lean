@@ -18,7 +18,7 @@ Usage:
       instantiated: IsNopert V for every snub cube V (none is Rupert)
 
 The arguments: `manifest.txt` lists the tube packs in code order, next to
-them (`export_codetrees_pack`); the chart directory holds the per-code packs
+them (`export-codetrees-pack`); the chart directory holds the per-code packs
 `c<chart>/t<t>.pack` (`pack5d --per_code`); the cap certificate is
 `sccapcert --export`'s output. How to produce or obtain the data, and the
 running time and memory needed: see `snub-cube.md` and `BUILDING.md` at the

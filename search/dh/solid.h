@@ -3,11 +3,11 @@
 #ifndef _NOPERT_SOLID_H
 #define _NOPERT_SOLID_H
 
-#include "ico_group.h"
-#include "matrix_table.h"
-#include "model_vertices.h"
-#include "symmetry_neighbors.h"
-#include "tie_normals.h"
+#include "ico-group.h"
+#include "matrix-table.h"
+#include "model-vertices.h"
+#include "symmetry-neighbors.h"
+#include "tie-normals.h"
 
 namespace solid {
 
@@ -45,7 +45,7 @@ inline constexpr bool kOuterTriangleInRoot = false;
 inline constexpr bool kTriangleSizeInDouble = false;
 
 // codebdd's default --model_file.
-inline constexpr const char *kModelFile = "dh_model.txt";
+inline constexpr const char *kModelFile = "dh-model.txt";
 
 }  // namespace solid
 

@@ -19,14 +19,14 @@
 //   tu <path> <r>                 symmetryTube with radius r (exact rational)
 //   pr <path>                     radiusPrune
 //   pf <path> <+|->               fundamentalPrune (direction positive/negative; fivefold solids)
-//   pi <path> <n>                 icosahedral prune by symmetry neighbor n (symmetry_neighbors.h;
+//   pi <path> <n>                 icosahedral prune by symmetry neighbor n (symmetry-neighbors.h;
 //                                 exact5d::IcoPruneValid); for the Septopert, the C3 cell prune
 //                                 by c3Mat (n + 1)
-//   ph <path> <g>                 half-turn prune by group element g (ico_group.h;
+//   ph <path> <g>                 half-turn prune by group element g (ico-group.h;
 //                                 exact5d::HalfTurnPruneValid; centrally symmetric solids); for
-//                                 the Septopert, the mirror prune by Q_g = mirrorQMat g (mirror_q.h)
+//                                 the Septopert, the mirror prune by Q_g = mirrorQMat g (mirror-q.h)
 //   cl <path> <c>                 cap leaf: the box lies in cap c's certified domain (capcert.cc)
-//   tl <path> <n> <rho>           tie leaf: pinning normal n (tie_normals.h), tie tube radius rho
+//   tl <path> <n> <rho>           tie leaf: pinning normal n (tie-normals.h), tie tube radius rho
 //                                 (exact5d::TieLeafValid; tietube.cc certifies the tube)
 //   df <path>                     deferred: an unresolved subtree (not packable)
 //   done <path>                   the subtree at <path> is complete: every leaf
