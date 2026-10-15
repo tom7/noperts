@@ -53,9 +53,11 @@ std::vector<int> BestInnerAt(const ContactPool &pool, const geom5d::TriangleD &t
 // The inner-choice levels BestSingle / BestMixture try: one, or with
 // g_blend5d = 3 (the portfolio) or 4 (escalate) both the centre choice and
 // the blended one. With 4, the blended level is tried only if the centre
-// choice fails (blended rows cost more bytes).
+// choice fails (blended rows cost more bytes), and only on the triples
+// whose inner choice it changes (see Candidates).
 std::vector<int> Levels() { return g_blend5d >= 3 ? std::vector<int>{0, 2} : std::vector<int>{g_blend5d}; }
 bool Escalate() { return g_blend5d == 4; }
+
 }  // namespace
 
 std::vector<int> BestInner(const ContactPool &pool, const geom5d::TriangleD &tri,
@@ -133,7 +135,8 @@ std::array<Quad, 6> ViewControls(const ContactPool &pool, const Triple &triple,
 std::vector<std::pair<double, int>> ScreenTriples(const ContactPool &pool,
                                                   const geom5d::TriangleD &tri,
                                                   const geom5d::BoxD &box, int chart,
-                                                  const std::vector<int> &inner_of, int keep) {
+                                                  const std::vector<int> &inner_of, int keep,
+                                                  const std::vector<int> *subset = nullptr) {
   const vec3 view = geom5d::Centroid(tri);
   std::vector<double> term(pool.contacts.size());
   for (size_t c = 0; c < pool.contacts.size(); c++) {
@@ -144,8 +147,10 @@ std::vector<std::pair<double, int>> ScreenTriples(const ContactPool &pool,
   }
   const double dbound = bounds5d::DBound(box);
   std::vector<std::pair<double, int>> screened;
-  screened.reserve(pool.triples.size());
-  for (size_t t = 0; t < pool.triples.size(); t++) {
+  const size_t n = subset != nullptr ? subset->size() : pool.triples.size();
+  screened.reserve(n);
+  for (size_t k = 0; k < n; k++) {
+    const size_t t = subset != nullptr ? (*subset)[k] : k;
     const Triple &tr = pool.triples[t];
     const auto w = WeightCoefficients(pool, tr);
     double v = 0.0;
@@ -161,6 +166,39 @@ std::vector<std::pair<double, int>> ScreenTriples(const ContactPool &pool,
 
 std::array<int, 3> InnerOf(const std::vector<int> &inner_of, const Triple &tr) {
   return {inner_of[tr.c[0]], inner_of[tr.c[1]], inner_of[tr.c[2]]};
+}
+
+// The (triple, inner) candidates of one level, best-screened first (at most
+// keep). With g_blend5d = 4 (escalate), the blended level rescreens only the
+// triples whose inner choice differs from level 0's: the others were
+// already screened (and failed) at level 0, so the candidate slots go to
+// new ones. (Rescreening every triple instead: Septopert packs 46.4 MB vs
+// 44.9 MB, and 5x the time on the deltoidal hexecontahedron's t22.)
+std::vector<std::pair<int, std::array<int, 3>>> Candidates(const ContactPool &pool,
+                                                           const geom5d::TriangleD &tri,
+                                                           const geom5d::BoxD &box, int chart,
+                                                           int level, int keep,
+                                                           std::vector<int> *inner0) {
+  std::vector<std::pair<int, std::array<int, 3>>> out;
+  const std::vector<int> inner_of = BestInnerAt(pool, tri, box, chart, level);
+  std::vector<int> subset;
+  const bool focused = Escalate() && level >= 2 && !inner0->empty();
+  if (focused) {
+    for (size_t t = 0; t < pool.triples.size(); t++) {
+      const Triple &tr = pool.triples[t];
+      for (int i = 0; i < 3; i++) {
+        if (inner_of[tr.c[i]] != (*inner0)[tr.c[i]]) {
+          subset.push_back(t);
+          break;
+        }
+      }
+    }
+  }
+  for (const auto &[score, t] :
+       ScreenTriples(pool, tri, box, chart, inner_of, keep, focused ? &subset : nullptr))
+    out.push_back({t, InnerOf(inner_of, pool.triples[t])});
+  if (level == 0) *inner0 = inner_of;
+  return out;
 }
 }  // namespace
 
@@ -186,11 +224,10 @@ Single BestSingle(const ContactPool &pool, const geom5d::TriangleD &tri,
                   const geom5d::BoxD &box, int chart, int max_full) {
   Single best;
   if (pool.triples.empty()) return best;
+  std::vector<int> inner0;
   for (int level : Levels()) {
-    const std::vector<int> inner_of = BestInnerAt(pool, tri, box, chart, level);
-    for (const auto &[score, t] : ScreenTriples(pool, tri, box, chart, inner_of, max_full)) {
+    for (const auto &[t, inner] : Candidates(pool, tri, box, chart, level, max_full, &inner0)) {
       const Triple &tr = pool.triples[t];
-      const std::array<int, 3> inner = InnerOf(inner_of, tr);
       const double m = Margin(pool, tr, inner, tri, box, chart);
       if (m > best.margin) best = Single{.triple = t, .inner = inner, .margin = m};
     }
@@ -235,10 +272,9 @@ Mixture BestMixtureAt(const ContactPool &pool, const geom5d::TriangleD &tri,
   // Columns: (triple, inner choices), from each level's screening.
   std::vector<std::pair<int, std::array<int, 3>>> colsrc;
   std::vector<std::vector<double>> cols;
+  std::vector<int> inner0;
   for (int level : levels) {
-    const std::vector<int> inner_of = BestInnerAt(pool, tri, box, chart, level);
-    for (const auto &[score, t] : ScreenTriples(pool, tri, box, chart, inner_of, candidates)) {
-      const std::array<int, 3> inner = InnerOf(inner_of, pool.triples[t]);
+    for (const auto &[t, inner] : Candidates(pool, tri, box, chart, level, candidates, &inner0)) {
       if (std::find(colsrc.begin(), colsrc.end(), std::make_pair(t, inner)) != colsrc.end()) continue;
       colsrc.push_back({t, inner});
       cols.push_back(MixtureColumn(pool, pool.triples[t], inner, tri, box, chart));

@@ -25,7 +25,8 @@ using vec3 = geom5d::vec3;
 // With g_blend5d = 3 (the portfolio), BestSingle and BestMixture try both
 // the centre choice (level 0) and the blended one (level 2), keeping the
 // better: never worse than level 0. With g_blend5d = 4 (escalate), the
-// blended level only where level 0 fails (search5d's default).
+// blended level only where level 0 fails, and only on the triples whose
+// inner choice it changes (search5d's default).
 // With g_blend5d >= 1 (search5d --blend5d): box-aware, the candidate (of the
 // three best vertices at the center, and with g_blend5d >= 2 their blends,
 // bounds5d::BlendCode) with the best Bernstein lower bound over the box at

@@ -17,14 +17,13 @@
 //                [--max_full_retry N] [--half_turn_prune] [--tie_dir DIR] [--caps FILE] [--trib_caps FILE]
 //                [--exact_check] [--retry_deferred] [--requeue_deferred] [--blend5d L]
 //
-// --blend5d L (default 4, validated on the Septopert and the snub
-// dodecahedron): 0 the inner vertex per contact at the box centre (the
-// earlier behavior); 1 box-aware; 2 box-aware with blended inner points
-// (pack tags 17 / 18; a solid's Lean decoder must read them); 3 the
-// portfolio (both 0 and 2 per box, the better kept); 4 escalate (0 first,
-// 2 only where 0 fails, since blended rows cost more bytes). Septopert
-// packs: 51.4 MB with 2, 46.4 MB with 4; snub dodecahedron: 96.6 / 99.7 /
-// 97.8 / 96.4 MB for 0 / 2 / 3 / 4.
+// --blend5d L (default 4, validated on the Septopert): 0 the inner vertex
+// per contact at the box centre (the earlier behavior); 1 box-aware; 2
+// box-aware with blended inner points (pack tags 17 / 18; a solid's Lean
+// decoder must read them); 3 the portfolio (both 0 and 2 per box, the
+// better kept); 4 escalate (0 first; 2 only where 0 fails, since blended
+// rows cost more bytes, and only on the triples whose inner choice 2
+// changes). Septopert packs: 51.4 MB with 2, 44.9 MB with 4.
 // (On the deltoidal hexecontahedron, 2 did not pay overall: per triangle
 // the nodes drop a little, t22 34.4k / 32.4k / 31.3k for 0 / 2 / 3, but its
 // huge contact pools make the box-aware choice costly per node.)
