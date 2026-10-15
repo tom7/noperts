@@ -73,7 +73,9 @@ Measured on 2026-10-04 from a clean checkout: 1 h 3 min in all, exit 0. The mode
 With blended inner points in the 5D rows (search5d's default since 2026-10-14), a from-scratch run on 64 cores
 (2026-10-15, with the Lean build already up to date) took 24 min: model 7.5 min, tube 2.4 min, search 3.0 min
 (454,496 nodes), pack 3.2 min (chart 0: 828,055 rows; 97 MB of packs), verify 7.9 min. For this solid the blends
-do not shrink the data (the 2026-10-04 run: 452,068 nodes, chart 0 825,221 rows); the search is faster per node.
+do not pay: on an idle machine the search takes 2:16 with them and 2:14 without (452,068 nodes, as on 2026-10-04; the
+earlier 22 min predates later search5d speedups), and the packs are 99.7 MB with them and 96.6 MB without (chart 0:
+825,220 rows). `rebuild.sh` therefore keeps `--blend5d 0`.
 
 Peak memory is about 26 GB. The verifier ends with:
 
