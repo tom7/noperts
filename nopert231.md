@@ -216,6 +216,11 @@ model 2.3 min, tube 8 min, search 17.5 min (9.3 M nodes), pack 31.5 min
 (1.85 GB of packs; chart 0 has 10.6 M rows), verify 1 h 33 min (about
 13 GB resident while checking chart 0).
 
+With search5d's later default `--blend5d 4` ("escalate": a blended inner
+point only where the plain choice fails), a from-scratch run (2026-10-15)
+took 2 h 20 min: search 17.3 min (7.58 M nodes), pack 28.5 min (1.67 GB of
+packs; chart 0 has 8.75 M rows), verify 1 h 24 min.
+
 The search is not deterministic, so a new run gives different but equally
 checkable packs.
 
