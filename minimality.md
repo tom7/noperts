@@ -38,7 +38,10 @@ through a copy of itself):
 - a nonempty set of points on a line is never Rupert
   (`not_isRupert_of_collinear`);
 - so for 6 or fewer points: Rupert ⟺ empty, or not all on one line
-  (`isRupert_iff_of_card_le_six`).
+  (`isRupert_iff_of_card_le_six`);
+- a nopert with exactly 7 points has no face containing 5 or more of them,
+  so its faces are triangles and quadrilaterals
+  (`facet_card_le_four_of_isNopert`, from `isRupert_of_card_seven_of_facet`).
 
 ## How it is proved
 
@@ -91,6 +94,15 @@ A bit more detail:
    seven combinatorial types of 6-vertex polyhedra (octahedra, bicapped
    tetrahedra, triangular prisms, pentagonal pyramids, and three others) has
    its own argument built from 1–4. Octahedra are the hardest case.
+6. **Seven points with a large face.** If 6 of the 7 points lie on a face,
+   the solid is a pyramid. If 5 do, look along the face's plane, so that the
+   face is seen edge-on, and tilt (4). When the other two points are at
+   different heights below the face, a view in the face's plane hides the
+   higher one, and the tilted outline (the face's lower boundary, then the
+   lower point) is unimodal from one of the two opposite sides. At equal
+   heights, look along the segment joining them: tilting hides one behind
+   the other, and if the outline is still not unimodal from either end, a
+   planar silhouette (2) exists with the face as the plane.
 
 No classification of polyhedra by face structure is assumed; everything is
 derived from the coordinates.

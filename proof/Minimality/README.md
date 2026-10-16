@@ -2,12 +2,13 @@
 
 The entry point is [`../Minimality.lean`](../Minimality.lean): it states, for
 non-expert readers, that every nopert (`IsNopert`, in
-[`../Nopert.lean`](../Nopert.lean)) has at least 7 points, and the sharp
-statements about flat point sets.  The idea of the proof is explained in
+[`../Nopert.lean`](../Nopert.lean)) has at least 7 points, that a nopert with
+exactly 7 points has no face with 5 or more of them, and the sharp statements
+about flat point sets.  The idea of the proof is explained in
 [`minimality.md`](../../minimality.md) (section "A bit more detail",
-steps 1–5).
+steps 1–6).
 
-This file maps that outline to the Lean files: it lists the parts L1–L10 of
+This file maps that outline to the Lean files: it lists the parts L1–L11 of
 the proof, the numbered statements that comments in the Lean files cite
 (Lemma 1, Theorem 5, Lemma 7.1, Theorem 9.9, …) with the declarations that
 prove them, and the modules.  The names in `Minimality/` are in the namespace
@@ -127,6 +128,24 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
 * Theorem 10.4 — `NF.isRupert`: the case table (T3–T7) of a split in normal
   form `NF`.
 
+**L11. Seven points with a face of five or six** (`FaceChain.lean`,
+`FaceFive.lean`; Theorem A of the notes `FEWER-FACES-PROOFS.md`)
+* Theorem A — `isRupert_of_card_seven_of_facet`: seven points with a solid
+  hull, at least five (not all) on a facet (`IsFacet`), are Rupert.  At the
+  entry point, `facet_card_le_four_of_isNopert`.
+* The lower chain of a face seen edge-on — `exists_lowerChain'`,
+  `cross2_pos_of_consecutive'` (`FaceChain.lean`; `ConvPos`: strict convex
+  position).
+* The edge-on lemma — `isRupert_edgeOn`, `isRupert_edgeOn_dir`: the face's
+  lower chain followed by the deepest point below, at the views `u + ε ez`.
+* The cycle lemma — `isRupert_cycle_edgeOn`: the same with a general tilt,
+  lexicographic depth ties, and vertical end edges.
+* Case I (the two points below at different heights) — `isRupert_caseI`: a
+  view in the face's plane hides the higher one.
+* Case II (equal heights) — `isRupert_caseII_view` (the view along the two
+  points, one hidden behind the other), `isRupert_caseII_fallback` (Theorem 5
+  through the waist lemma, with an explicit witness `fallback_witness`).
+
 **Flat point sets** (`Planar.lean`)
 * `isRupert_of_coplanar_of_not_collinear` — points in a plane, not all on a
   line, are Rupert.
@@ -181,6 +200,8 @@ In import order.
 | `Witnesses` | non-vacuity | `witness_*`, `affineIndependent_of_det3` |
 | `SixGale` | §10.1, Lemma 10.1, Prop. 10.2 | `IsDepOn`, `Six`, `GaleFrame`, `isFacetTriangle_of_gale`, `exists_split_of_no_partner`, `isRupert_of_all_partners` |
 | `SixClass` | Lemma 10.3, Theorems 10.4, 10.0 | `NF`, `NF.isRupert`, `isRupert_split_coplanar`, `isRupert_of_card_le_six` |
+| `FaceChain` | L11, the lower chain | `mem_convexHull_of_between`, `ConvPos`, `cross2_pos_of_consecutive'`, `exists_lowerChain'` |
+| `FaceFive` | L11, Theorem A | `isRupert_edgeOn_dir`, `isRupert_cycle_edgeOn`, `isRupert_caseI`, `isRupert_caseII`, `isRupert_of_card_seven_of_facet` |
 
 ## Formalization choices
 

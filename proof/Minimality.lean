@@ -3,6 +3,7 @@ module
 public import Nopert
 public import Minimality.SixClass
 public import Minimality.Planar
+public import Minimality.FaceFive
 
 /-!
 # Every nopert has at least 7 points
@@ -20,6 +21,11 @@ modules (see `Minimality/README.md` for an overview).
 * `seven_le_card_of_isNopert`: every nopert has at least 7 points.  This
   follows from `isRupert_of_card_le_six`: every solid convex polyhedron
   given by at most 6 points is Rupert.
+* `facet_card_le_four_of_isNopert`: a nopert with exactly 7 points has no
+  facet containing 5 or more of them, so its faces are triangles and
+  quadrilaterals.  This follows from `isRupert_of_card_seven_of_facet`: seven
+  points with a solid hull, at least five (but not all) of them on a facet, are
+  Rupert (Theorem A of the notes; `Minimality/FaceFive.lean`).
 * For flat point sets the answer is known for any number of points: points in
   a plane, not all on one line, are Rupert
   (`isRupert_of_coplanar_of_not_collinear`), while points on one line are not
@@ -46,6 +52,24 @@ vertex set has the same convex hull, so is a nopert too). -/
 theorem seven_le_card_of_isNopert (V : Finset ℝ³) (h : IsNopert V) : 7 ≤ V.card := by
   by_contra hlt
   exact h.2 (isRupert_of_card_le_six V (by omega) h.1)
+
+/-- **Seven points with a large facet are Rupert.**  Seven points of `ℝ³`, not
+all in one plane, of which at least five but not all lie on a facet of their
+convex hull, are Rupert.  (`Minimality.IsFacet V F`: some affine function
+vanishes on `F` and is negative at the other points of `V`.) -/
+theorem isRupert_of_card_seven_of_facet (V F : Finset ℝ³) (hV : V.card = 7)
+    (hsolid : ¬ Coplanar ℝ (V : Set ℝ³)) (hFV : F ⊂ V) (hF : 5 ≤ F.card)
+    (hfacet : Minimality.IsFacet V F) : IsRupert V :=
+  Minimality.isRupert_of_card_seven_of_facet V F hV
+    ((not_coplanar_iff_interior_convexHull_nonempty _).mp hsolid) hFV hF hfacet
+
+/-- **A nopert with 7 points has only triangles and quadrilaterals as faces**: no
+facet of its hull contains 5 or more of its points. -/
+theorem facet_card_le_four_of_isNopert (V F : Finset ℝ³) (h : IsNopert V) (hV : V.card = 7)
+    (hFV : F ⊂ V) (hfacet : Minimality.IsFacet V F) : F.card ≤ 4 := by
+  by_contra hlt
+  push Not at hlt
+  exact h.2 (isRupert_of_card_seven_of_facet V F hV h.1 hFV hlt hfacet)
 
 /-- **Flat polygons are Rupert.**  Points in a plane, not all on one line, are
 Rupert, whatever their number: hold one copy face-on and pass the other
