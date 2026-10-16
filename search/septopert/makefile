@@ -26,5 +26,6 @@ s5d: search5d.exe pack5d.exe scoreboard5d.exe
 # Diagnostics: dfwhere (where a 5D job's deferred leaves are) and
 # capleaf-check (an exact re-check of the 5D journals' cap leaves).
 # capcert-septopert: the Septopert's cap certificate at its mirror normal.
+dfwhere.exe : dfwhere.o rigidity-margin.o $(OBJECTS_CORE) $(OBJECTS)
 
 .PHONY : qtube s5d

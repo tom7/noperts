@@ -29,6 +29,9 @@ tool and test.
 - `search5d.exe`: parallel journaled 5D search.
 - `pack5d.exe`: 5D journals to per-code Lean packs.
 - `scoreboard5d.exe`, `dfwhere.exe`, `capleaf-check.exe`:
-  status and diagnostic tools for the 5D journals.
+  status and diagnostic tools for the 5D journals. dfwhere also prints the
+  first-order margin at each deferred leaf's view: leaves with m(u) ≈ 0 are
+  cap candidates (e.g. without `--caps`, t18 chart 0 defers 530 leaves at the
+  mirror normal with m(u) = 3.8e-8).
 - `*_test.cc` (in `../common/`): unit tests; some need `codebdd.json` in the
   current directory or a tube trees directory.
