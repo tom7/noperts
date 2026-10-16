@@ -9,6 +9,7 @@
 //
 // Usage: dfwhere.exe --chart C --t T [--every K] [--jobs DIR] [--trees_dir DIR] [--bdd codebdd.json]
 #include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <limits>
 #include <vector>
@@ -41,6 +42,7 @@ int main(int argc, char **argv) {
   for (size_t v = 0; v < (size_t)NUM_VERTICES; v++) verts.push_back(Vertex(v));
   int n = 0;
   double min_m = std::numeric_limits<double>::infinity();
+  yocto::vec<double, 3> min_u{0, 0, 0};
   int near_zero = 0;
   for (const auto &r : j.leaves) {
     if (!std::holds_alternative<rows5d::DeferredLeaf>(r.leaf)) continue;
@@ -52,7 +54,7 @@ int main(int argc, char **argv) {
     const auto u = yocto::normalize(td.corners[0] + td.corners[1] + td.corners[2]);
     const auto reached = atlas.Walk(t, rows5d::ViewPath(r.path));
     const double m = rigidity::FirstOrderMargin(verts, u, false).m;
-    min_m = std::min(min_m, m);
+    if (m < min_m) { min_m = m; min_u = u; }
     if (m < 1e-6) near_zero++;
     printf("u (%.6f %.6f %.6f) diam %.2e  w (%.5f %.5f %.5f) +- (%.1e %.1e %.1e) |w| %.4f  tube r %.3g  m(u) %.3g\n",
            u.x, u.y, u.z, geom5d::AngularDiameter(td), bd.center.x, bd.center.y, bd.center.z,
@@ -60,4 +62,32 @@ int main(int argc, char **argv) {
   }
   printf("%d deferred; least first-order margin m(u) %.3g; %d with m(u) < 1e-6 (cap candidates)\n",
          n, min_m, near_zero);
+  if (near_zero > 0) {
+    // The rotation axes w (unit) with f_u(w) ~ 0 at the least-margin view: the
+    // directions in which the first-order cage is degenerate, i.e. the
+    // weight-1 directions of a cap's blow-up (the others get weight 2).
+    const auto cons = rigidity::SilhouetteConstraints(verts, min_u, false);
+    const int N = 20000;
+    double fmax = 0;
+    std::vector<double> fs;
+    std::vector<yocto::vec<double, 3>> ws, zero;
+    for (int i = 0; i < N; i++) {
+      const double zc = 1 - (i + 0.5) * 2.0 / N, rr = std::sqrt(1 - zc * zc), ph = i * 2.399963229728653;
+      const yocto::vec<double, 3> w{rr * std::cos(ph), rr * std::sin(ph), zc};
+      const double f = rigidity::EvalF(cons, w);
+      fmax = std::max(fmax, f);
+      fs.push_back(f);
+      ws.push_back(w);
+    }
+    for (size_t i = 0; i < ws.size(); i++) if (fs[i] < 0.02 * fmax) zero.push_back(ws[i]);
+    const auto mg = rigidity::FirstOrderMargin(verts, min_u, false);
+    printf("worst axis (%.4f %.4f %.4f)\n", mg.axis.x, mg.axis.y, mg.axis.z);
+    // principal axes of the near-zero set (f < 2% of max; second moments)
+    double M[3][3] = {};
+    for (const auto &w : zero)
+      for (int a = 0; a < 3; a++) for (int b = 0; b < 3; b++) M[a][b] += w[a] * w[b] / zero.size();
+    printf("cap candidate view u (%.6f %.6f %.6f): %zu of %d axes with f_u(w) < 2%% of max (max f_u %.3g);"
+           " second moments of those axes:\n", min_u.x, min_u.y, min_u.z, zero.size(), N, fmax);
+    for (int a = 0; a < 3; a++) printf("  %8.4f %8.4f %8.4f\n", M[a][0], M[a][1], M[a][2]);
+  }
 }
