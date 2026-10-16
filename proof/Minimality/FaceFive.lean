@@ -3,6 +3,7 @@ module
 public import Minimality.FaceChain
 public import Minimality.L8T3
 public import Minimality.SixClass
+public import Nopert
 
 @[expose] public section
 
@@ -2395,6 +2396,55 @@ theorem isRupert_of_card_seven_of_facet (V F : Finset ℝ³) (hcard : V.card = 7
         intro y hy; simp only [coe_erase, Set.mem_sdiff, mem_coe, Set.mem_singleton_iff] at hy ⊢
         exact ⟨hFV.1 hy.1, hy.2⟩) hzmem
   · rw [hfilt, card_image_of_injective _ hginj, hF5]
+
+/-- **Non-vacuity of Theorem A**: a pentagon in `z = 0` and two points below
+satisfy the hypotheses of `isRupert_of_card_seven_of_facet`. -/
+example : IsRupert ({!₂[2, 0, 0], !₂[1, 2, 0], !₂[-1, 2, 0], !₂[-2, 0, 0], !₂[0, -2, 0],
+    !₂[0, 0, -1], !₂[1, 0, -2]} : Finset ℝ³) := by
+  have hnd : [!₂[2, 0, 0], !₂[1, 2, 0], !₂[-1, 2, 0], !₂[-2, 0, 0], !₂[0, -2, 0],
+      !₂[0, 0, -1], (!₂[1, 0, -2] : ℝ³)].Nodup := by
+    apply List.Nodup.of_map (fun v : ℝ³ => (v 0, v 1, v 2))
+    simp [List.nodup_cons, Matrix.cons_val] <;> norm_num
+  have hV : ({!₂[2, 0, 0], !₂[1, 2, 0], !₂[-1, 2, 0], !₂[-2, 0, 0], !₂[0, -2, 0],
+      !₂[0, 0, -1], !₂[1, 0, -2]} : Finset ℝ³) = [!₂[2, 0, 0], !₂[1, 2, 0], !₂[-1, 2, 0],
+      !₂[-2, 0, 0], !₂[0, -2, 0], !₂[0, 0, -1], (!₂[1, 0, -2] : ℝ³)].toFinset := by simp
+  have hF : ({!₂[2, 0, 0], !₂[1, 2, 0], !₂[-1, 2, 0], !₂[-2, 0, 0], !₂[0, -2, 0]} : Finset ℝ³) =
+      [!₂[2, 0, 0], !₂[1, 2, 0], !₂[-1, 2, 0], !₂[-2, 0, 0], (!₂[0, -2, 0] : ℝ³)].toFinset := by
+    simp
+  apply isRupert_of_card_seven_of_facet _
+    {!₂[2, 0, 0], !₂[1, 2, 0], !₂[-1, 2, 0], !₂[-2, 0, 0], !₂[0, -2, 0]}
+  · rw [hV, List.toFinset_card_of_nodup hnd]; rfl
+  · -- a non-degenerate tetrahedron inside
+    have hind := affineIndependent_of_det3 (a := !₂[2, 0, 0]) (b := !₂[1, 2, 0])
+      (c := !₂[-2, 0, 0]) (d := !₂[0, 0, -1]) (by
+        simp only [det3, cross, PiLp.inner_apply, Fin.sum_univ_three, PiLp.sub_apply,
+          RCLike.inner_apply, conj_trivial]
+        simp [Matrix.cons_val] <;> norm_num)
+    have hsub : ({!₂[2, 0, 0], !₂[1, 2, 0], !₂[-2, 0, 0], !₂[0, 0, -1]} : Set ℝ³) ⊆
+        ((({!₂[2, 0, 0], !₂[1, 2, 0], !₂[-1, 2, 0], !₂[-2, 0, 0], !₂[0, -2, 0],
+          !₂[0, 0, -1], !₂[1, 0, -2]} : Finset ℝ³) : Set ℝ³)) := by
+      intro x hx; simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
+      rcases hx with rfl | rfl | rfl | rfl <;> simp
+    have hint := (not_coplanar_iff_interior_convexHull_nonempty _).mp
+      (fun hc => not_coplanar_of_affineIndependent hind (hc.subset hsub))
+    exact hint
+  · refine ⟨fun x hx => ?_, fun h => ?_⟩
+    · simp only [Finset.mem_insert, Finset.mem_singleton] at hx ⊢
+      rcases hx with rfl | rfl | rfl | rfl | rfl <;> simp
+    · have hp := h (show (!₂[0, 0, -1] : ℝ³) ∈ ({!₂[2, 0, 0], !₂[1, 2, 0], !₂[-1, 2, 0],
+        !₂[-2, 0, 0], !₂[0, -2, 0], !₂[0, 0, -1], !₂[1, 0, -2]} : Finset ℝ³) by simp)
+      rw [hF, List.mem_toFinset] at hp
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
+      rcases hp with h1 | h1 | h1 | h1 | h1 <;>
+        · have := congrArg (fun v : ℝ³ => v 2) h1; simp at this
+  · rw [hF, List.toFinset_card_of_nodup (by
+      apply List.Nodup.of_map (fun v : ℝ³ => (v 0, v 1, v 2))
+      simp [List.nodup_cons, Matrix.cons_val] <;> norm_num)]; simp
+  · refine ⟨affOf ez 0, fun x hx => ?_, fun x hx hxF => ?_⟩
+    · simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+      rcases hx with rfl | rfl | rfl | rfl | rfl <;> simp [ez]
+    · simp only [Finset.mem_insert, Finset.mem_singleton] at hx hxF
+      rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> simp_all [ez]
 
 end Minimality
 
