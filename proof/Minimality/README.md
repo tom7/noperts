@@ -147,8 +147,8 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   through the waist lemma, with an explicit witness `fallback_witness`).
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`;
-Theorem B of `FEWER-FACES-PROOFS.md` §4, generic case; not yet linked to the
-top-level statement)
+Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general position; not yet
+linked to the top-level statement)
 * Theorem B — `isRupert_type02`: seven points labelled as type 02, with the
   quadrilaterals 0134, 3456, 0235, 1246 as facets (supporting affine
   functions), 2 not in the hull of 0, 1, 5, 6, the edges 01 and 56 not
@@ -165,6 +165,12 @@ top-level statement)
   `rupert02_W_A?B?`, `rupert02_M_A?B?`.
 * The chord — `sheets_on_chord`: the lower plane of 0235 and the upper plane of
   1246 both pass through 2, so 2 lies beyond the chord of the far vertices.
+* Theorem B′ (type 05, the view along edge 12) — `isRupert_type05`: seven
+  points labelled as type 05, with the quadrilaterals 1032, 6512, 0145 and the
+  triangles 234, 246 as facets, 4 not in the hull of 0, 3, 5, 6, (G′), (Z′),
+  are Rupert. The cycle core `cycles05_A?B?` replaces the second plane by the
+  upper sheet (`sheet_up`, `sheet_contra`, `plane_both`); the eight frame
+  lemmas of type 02 are reused unchanged (`isRupert_type05_frame`).
 
 **Flat point sets** (`Planar.lean`)
 * `isRupert_of_coplanar_of_not_collinear` — points in a plane, not all on a
@@ -222,7 +228,7 @@ In import order.
 | `SixClass` | Lemma 10.3, Theorems 10.4, 10.0 | `NF`, `NF.isRupert`, `isRupert_split_coplanar`, `isRupert_of_card_le_six` |
 | `FaceChain` | L11, the lower chain | `mem_convexHull_of_between`, `ConvPos`, `cross2_pos_of_consecutive'`, `exists_lowerChain'` |
 | `FaceFive` | L11, Theorem A | `isRupert_edgeOn_dir`, `isRupert_cycle_edgeOn`, `isRupert_caseI`, `isRupert_caseII`, `isRupert_of_card_seven_of_facet` |
-| `EdgeView` | L12, Theorem B (type 02, generic) | `cycles02_A1B6`, `tiltSign_obl`, `isRupert_type02_frame`, `sheets_on_chord`, `isRupert_type02` |
+| `EdgeView` | L12, Theorems B, B′ (types 02, 05, general position) | `cycles02_A1B6`, `tiltSign_obl`, `isRupert_type02_frame`, `sheets_on_chord`, `isRupert_type02`, `cycles05_A3B6`, `isRupert_type05` |
 
 ## Formalization choices
 

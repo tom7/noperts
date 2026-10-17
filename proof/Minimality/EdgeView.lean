@@ -1817,7 +1817,7 @@ theorem sheet_up {T1 T2 S U z2 z4 zy1 zy2 : ℝ} (hT : 0 < T1 * T2) (hS : 0 < S)
 
 /-- (C) on a chord beyond which 4 lies: 4 cannot be strictly between the top
 vertex and both chord ends. -/
-theorem sheet_contra {T1 T2 S U z2 z4 zy1 zy2 : ℝ} (hT : 0 < T1 * T2) (hS : 0 < S) (hU : 0 < U)
+theorem sheet_contra {T1 T2 S U z2 z4 zy1 zy2 : ℝ} (_hT : 0 < T1 * T2) (hS : 0 < S) (hU : 0 < U)
     (hD : T1 * T2 < S + U)
     (hC : (S + U - T1 * T2) * z2 + T1 * T2 * z4 ≥ S * zy1 + U * zy2)
     (h24 : z2 < z4) (h1 : z4 < zy1) (h2 : z4 < zy2) : False := by
@@ -1831,7 +1831,7 @@ plane through `b`, `x` (at `(T0, 0)`) and `y` (at `(0, T5)`), convex lower
 chains `b, x, w` (`w` at `(T3, 0)`, `T0 < T3`) and `b, y, w'` (`w'` at
 `(0, T6)`, `T5 < T6`), and `c` beyond the chord `w w'`: `c` is not above both. -/
 theorem plane_both {T0 T3 T5 T6 S U zb x y w w' c : ℝ} (hT0 : 0 < T0) (hT5 : 0 < T5)
-    (hS : 0 < S) (hU : 0 < U) (hT03 : T0 < T3) (hT56 : T5 < T6)
+    (hS : 0 < S) (hU : 0 < U) (_hT03 : T0 < T3) (_hT56 : T5 < T6)
     (hpl : T0 * T5 * (c - zb) = S * T5 * (x - zb) + U * T0 * (y - zb))
     (hconv : (x - zb) * (T3 - T0) < (w - x) * T0) (hconv' : (y - zb) * (T6 - T5) < (w' - y) * T5)
     (hch : T3 * T6 < S * T6 + U * T3) (hx : x < zb) (hy : y < zb) (hcw : w < c) (hcw' : w' < c) :
@@ -1931,7 +1931,7 @@ theorem cycles05_A0B6 {z0 z1 z2 z3 z4 z5 z6 t0 t3 t5 t6 s4 u4 : ℝ} (h12 : z1 <
     (hC36 : (s4 * t6 + u4 * t3 - t3 * t6) * z2 + t3 * t6 * z4 ≥ s4 * t6 * z3 + u4 * t3 * z6)
     (hCAB : (s4 * t6 + u4 * t0 - t0 * t6) * z2 + t0 * t6 * z4 ≥ s4 * t6 * z0 + u4 * t0 * z6)
     (ht01 : t3 < t0) (ht56 : t5 < t6) (hch1 : (z0 - z3) * t3 < (z3 - z2) * (t0 - t3)) (hch2 : (z5 - z1) * (t6 - t5) < (z6 - z5) * t5)
-    (hch : t0 * t6 < s4 * t6 + u4 * t0) (hch36 : t3 * t6 < s4 * t6 + u4 * t3) :
+    (hch : t0 * t6 < s4 * t6 + u4 * t0) (_hch36 : t3 * t6 < s4 * t6 + u4 * t3) :
     (∀ a b : Fin 5, (![z6, z2, z3, z0, z4] : Fin 5 → ℝ) a < (![z6, z2, z3, z0, z4] : Fin 5 → ℝ) (a - 1) → (![z6, z2, z3, z0, z4] : Fin 5 → ℝ) a < (![z6, z2, z3, z0, z4] : Fin 5 → ℝ) (a + 1) →
       (![z6, z2, z3, z0, z4] : Fin 5 → ℝ) b < (![z6, z2, z3, z0, z4] : Fin 5 → ℝ) (b - 1) → (![z6, z2, z3, z0, z4] : Fin 5 → ℝ) b < (![z6, z2, z3, z0, z4] : Fin 5 → ℝ) (b + 1) → a = b) ∨
     (∀ c d : Fin 5, (![z6, z5, z1, z0, z4] : Fin 5 → ℝ) (c - 1) < (![z6, z5, z1, z0, z4] : Fin 5 → ℝ) c → (![z6, z5, z1, z0, z4] : Fin 5 → ℝ) (c + 1) < (![z6, z5, z1, z0, z4] : Fin 5 → ℝ) c →
@@ -1959,7 +1959,7 @@ theorem cycles05_A0B6 {z0 z1 z2 z3 z4 z5 z6 t0 t3 t5 t6 s4 u4 : ℝ} (h12 : z1 <
     have : 0 < (z5 - z1) * (t6 - t5) := mul_pos (by linarith) (by linarith)
     have : (z6 - z5) * t5 ≤ 0 := mul_nonpos_of_nonpos_of_nonneg (by linarith) ht5.le
     linarith
-  clear hP hC36 hCAB hch1 hch2 hch hch36 ht0 ht3 ht5 ht6 hs4 hu4 ht01 ht56 hT36 hTAB
+  clear hP hC36 hCAB hch1 hch2 hch _hch36 ht0 ht3 ht5 ht6 hs4 hu4 ht01 ht56 hT36 hTAB
   by_contra hcon
   rw [not_or] at hcon
   obtain ⟨hW, hM⟩ := hcon
@@ -1985,7 +1985,7 @@ theorem cycles05_A3B5 {z0 z1 z2 z3 z4 z5 z6 t0 t3 t5 t6 s4 u4 : ℝ} (h12 : z1 <
     (hC36 : (s4 * t6 + u4 * t3 - t3 * t6) * z2 + t3 * t6 * z4 ≥ s4 * t6 * z3 + u4 * t3 * z6)
     (hCAB : (s4 * t5 + u4 * t3 - t3 * t5) * z2 + t3 * t5 * z4 ≥ s4 * t5 * z3 + u4 * t3 * z5)
     (ht01 : t0 < t3) (ht56 : t6 < t5) (hch1 : (z0 - z1) * (t3 - t0) < (z3 - z0) * t0) (hch2 : (z5 - z6) * t6 < (z6 - z2) * (t5 - t6))
-    (hch : t3 * t5 < s4 * t5 + u4 * t3) (hch36 : t3 * t6 < s4 * t6 + u4 * t3) :
+    (hch : t3 * t5 < s4 * t5 + u4 * t3) (_hch36 : t3 * t6 < s4 * t6 + u4 * t3) :
     (∀ a b : Fin 5, (![z5, z6, z2, z3, z4] : Fin 5 → ℝ) a < (![z5, z6, z2, z3, z4] : Fin 5 → ℝ) (a - 1) → (![z5, z6, z2, z3, z4] : Fin 5 → ℝ) a < (![z5, z6, z2, z3, z4] : Fin 5 → ℝ) (a + 1) →
       (![z5, z6, z2, z3, z4] : Fin 5 → ℝ) b < (![z5, z6, z2, z3, z4] : Fin 5 → ℝ) (b - 1) → (![z5, z6, z2, z3, z4] : Fin 5 → ℝ) b < (![z5, z6, z2, z3, z4] : Fin 5 → ℝ) (b + 1) → a = b) ∨
     (∀ c d : Fin 5, (![z5, z1, z0, z3, z4] : Fin 5 → ℝ) (c - 1) < (![z5, z1, z0, z3, z4] : Fin 5 → ℝ) c → (![z5, z1, z0, z3, z4] : Fin 5 → ℝ) (c + 1) < (![z5, z1, z0, z3, z4] : Fin 5 → ℝ) c →
@@ -2011,7 +2011,7 @@ theorem cycles05_A3B5 {z0 z1 z2 z3 z4 z5 z6 t0 t3 t5 t6 s4 u4 : ℝ} (h12 : z1 <
     have : (z6 - z2) * (t5 - t6) < 0 := mul_neg_of_neg_of_pos (by linarith) (by linarith)
     have : 0 ≤ (z5 - z6) * t6 := mul_nonneg (by linarith) ht6.le
     linarith
-  clear hP hC36 hCAB hch1 hch2 hch hch36 ht0 ht3 ht5 ht6 hs4 hu4 ht01 ht56 hT36 hTAB
+  clear hP hC36 hCAB hch1 hch2 hch _hch36 ht0 ht3 ht5 ht6 hs4 hu4 ht01 ht56 hT36 hTAB
   by_contra hcon
   rw [not_or] at hcon
   obtain ⟨hW, hM⟩ := hcon
@@ -2037,7 +2037,7 @@ theorem cycles05_A0B5 {z0 z1 z2 z3 z4 z5 z6 t0 t3 t5 t6 s4 u4 : ℝ} (h12 : z1 <
     (hC36 : (s4 * t6 + u4 * t3 - t3 * t6) * z2 + t3 * t6 * z4 ≥ s4 * t6 * z3 + u4 * t3 * z6)
     (hCAB : (s4 * t5 + u4 * t0 - t0 * t5) * z2 + t0 * t5 * z4 ≥ s4 * t5 * z0 + u4 * t0 * z5)
     (ht01 : t3 < t0) (ht56 : t6 < t5) (hch1 : (z0 - z3) * t3 < (z3 - z2) * (t0 - t3)) (hch2 : (z5 - z6) * t6 < (z6 - z2) * (t5 - t6))
-    (hch : t0 * t5 < s4 * t5 + u4 * t0) (hch36 : t3 * t6 < s4 * t6 + u4 * t3) :
+    (hch : t0 * t5 < s4 * t5 + u4 * t0) (_hch36 : t3 * t6 < s4 * t6 + u4 * t3) :
     (∀ a b : Fin 6, (![z5, z6, z2, z3, z0, z4] : Fin 6 → ℝ) a < (![z5, z6, z2, z3, z0, z4] : Fin 6 → ℝ) (a - 1) → (![z5, z6, z2, z3, z0, z4] : Fin 6 → ℝ) a < (![z5, z6, z2, z3, z0, z4] : Fin 6 → ℝ) (a + 1) →
       (![z5, z6, z2, z3, z0, z4] : Fin 6 → ℝ) b < (![z5, z6, z2, z3, z0, z4] : Fin 6 → ℝ) (b - 1) → (![z5, z6, z2, z3, z0, z4] : Fin 6 → ℝ) b < (![z5, z6, z2, z3, z0, z4] : Fin 6 → ℝ) (b + 1) → a = b) ∨
     (∀ c d : Fin 4, (![z5, z1, z0, z4] : Fin 4 → ℝ) (c - 1) < (![z5, z1, z0, z4] : Fin 4 → ℝ) c → (![z5, z1, z0, z4] : Fin 4 → ℝ) (c + 1) < (![z5, z1, z0, z4] : Fin 4 → ℝ) c →
@@ -2063,7 +2063,7 @@ theorem cycles05_A0B5 {z0 z1 z2 z3 z4 z5 z6 t0 t3 t5 t6 s4 u4 : ℝ} (h12 : z1 <
     have : (z6 - z2) * (t5 - t6) < 0 := mul_neg_of_neg_of_pos (by linarith) (by linarith)
     have : 0 ≤ (z5 - z6) * t6 := mul_nonneg (by linarith) ht6.le
     linarith
-  clear hP hC36 hCAB hch1 hch2 hch hch36 ht0 ht3 ht5 ht6 hs4 hu4 ht01 ht56 hT36 hTAB
+  clear hP hC36 hCAB hch1 hch2 hch _hch36 ht0 ht3 ht5 ht6 hs4 hu4 ht01 ht56 hT36 hTAB
   by_contra hcon
   rw [not_or] at hcon
   obtain ⟨hW, hM⟩ := hcon
@@ -2080,5 +2080,656 @@ theorem cycles05_A0B5 {z0 z1 z2 z3 z4 z5 z6 t0 t3 t5 t6 s4 u4 : ℝ} (h12 : z1 <
     | linarith [Fc1 (by linarith)]
     | linarith [Fc2 (by linarith)]
     | linarith [Fc1 (by linarith), Fc2 (by linarith)]
+
+/-- The upper sheet bound (C) on a chord, from one upper plane through 2 and 4
+lying on or above the chord's ends. -/
+theorem sheet_of_plane {T1 T2 s4 u4 z2 z4 zy1 zy2 α β : ℝ} (hs4 : 0 < s4) (hu4 : 0 < u4)
+    (hT1 : 0 < T1) (hT2 : 0 < T2) (h4 : z4 = z2 + α * s4 + β * u4)
+    (h1 : zy1 ≤ z2 + α * T1) (h2 : zy2 ≤ z2 + β * T2) :
+    (s4 * T2 + u4 * T1 - T1 * T2) * z2 + T1 * T2 * z4 ≥ s4 * T2 * zy1 + u4 * T1 * zy2 := by
+  have a := mul_le_mul_of_nonneg_left h1 (mul_pos hs4 hT2).le
+  have b := mul_le_mul_of_nonneg_left h2 (mul_pos hu4 hT1).le
+  rw [h4]; nlinarith
+
+/-- **Theorem B′, frame form** (FEWER-FACES-PROOFS.md §5, under (G′), (Z′)):
+the edge 12 vertical (`z1 < z2`), the quads 1032 and 6512 convex in their
+planes, the plane of 0145 through 4 ((P)), an upper plane through 2 and 4 on
+or above 0, 3, 5, 6 (the triangles 234, 246), 4 beyond the chords. -/
+theorem isRupert_type05_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
+    {t0 t3 t5 t6 s4 u4 z0 z1 z2 z3 z4 z5 z6 α β : ℝ} (ht0 : 0 < t0) (ht3 : 0 < t3) (ht5 : 0 < t5)
+    (ht6 : 0 < t6) (hs4 : 0 < s4) (hu4 : 0 < u4) (h12 : z1 < z2)
+    (hQ1 : ConvQuad 0 z1 t0 z0 t3 z3 0 z2) (hQ3 : ConvQuad 0 z1 t5 z5 t6 z6 0 z2)
+    (hP : t0 * t5 * (z4 - z1) = s4 * t5 * (z0 - z1) + u4 * t0 * (z5 - z1))
+    (hU4 : z4 = z2 + α * s4 + β * u4) (hU0 : z0 ≤ z2 + α * t0) (hU3 : z3 ≤ z2 + α * t3)
+    (hU5 : z5 ≤ z2 + β * t5) (hU6 : z6 ≤ z2 + β * t6)
+    (ht03 : t0 ≠ t3) (ht56 : t5 ≠ t6)
+    (hch : max t0 t3 * max t5 t6 < s4 * max t5 t6 + u4 * max t0 t3)
+    (hch36 : t3 * t6 < s4 * t6 + u4 * t3)
+    (hzinj : Function.Injective (![z0, z1, z2, z3, z4, z5, z6] : Fin 7 → ℝ)) :
+    IsRupert ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t3 0 z3, oblPt O r1 r2 s4 u4 z4, oblPt O r1 r2 0 0 z1, oblPt O r1 r2 0 0 z2, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³) := by
+  have hC36 := sheet_of_plane (zy1 := z3) (zy2 := z6) hs4 hu4 ht3 ht6 hU4 hU3 hU6
+  have q1 := hQ1
+  have q3 := hQ3
+  obtain ⟨⟨q1a, q1b⟩, ⟨q1c, q1d⟩, ⟨q1e, q1f⟩, ⟨q1g, q1h⟩⟩ := q1
+  obtain ⟨⟨q3a, q3b⟩, ⟨q3c, q3d⟩, ⟨q3e, q3f⟩, ⟨q3g, q3h⟩⟩ := q3
+  rcases lt_or_gt_of_ne ht03 with h03 | h03 <;> rcases lt_or_gt_of_ne ht56 with h56 | h56
+  · rw [max_eq_right h03.le, max_eq_right h56.le] at hch
+    have hCAB := sheet_of_plane (zy1 := z3) (zy2 := z6) hs4 hu4 ht3 ht6 hU4 hU3 hU6
+    rcases cycles05_A3B6 h12 ht0 ht3 ht5 ht6 hs4 hu4 hP hC36 hCAB h03 h56 (by linarith)
+        (by linarith) hch hch36 with hW | hM
+    · exact rupert02_W_A1B6 O r1 r2 hρ ht0 ht3 ht5 ht6 hs4 hu4 hQ1 hQ3 h03 h56 hch
+        (by
+          have e : (![z6, z2, z3, z4] : Fin 4 → ℝ) = (![z0, z1, z2, z3, z4, z5, z6] : Fin 7 → ℝ) ∘
+              (![6, 2, 3, 4] : Fin 4 → Fin 7) := by funext i; fin_cases i <;> rfl
+          rw [e]; exact hzinj.comp (by decide)) hW
+    · exact rupert02_M_A1B6 O r1 r2 hρ ht0 ht3 ht5 ht6 hs4 hu4 hQ1 hQ3 h03 h56 hch
+        (by
+          have e : (![z6, z5, z1, z0, z3, z4] : Fin 6 → ℝ) = (![z0, z1, z2, z3, z4, z5, z6] : Fin 7 → ℝ) ∘
+              (![6, 5, 1, 0, 3, 4] : Fin 6 → Fin 7) := by funext i; fin_cases i <;> rfl
+          rw [e]; exact hzinj.comp (by decide)) hM
+  · rw [max_eq_right h03.le, max_eq_left h56.le] at hch
+    have hCAB := sheet_of_plane (zy1 := z3) (zy2 := z5) hs4 hu4 ht3 ht5 hU4 hU3 hU5
+    rcases cycles05_A3B5 h12 ht0 ht3 ht5 ht6 hs4 hu4 hP hC36 hCAB h03 h56 (by linarith)
+        (by linarith) hch hch36 with hW | hM
+    · exact rupert02_W_A1B5 O r1 r2 hρ ht0 ht3 ht5 ht6 hs4 hu4 hQ1 hQ3 h03 h56 hch
+        (by
+          have e : (![z5, z6, z2, z3, z4] : Fin 5 → ℝ) = (![z0, z1, z2, z3, z4, z5, z6] : Fin 7 → ℝ) ∘
+              (![5, 6, 2, 3, 4] : Fin 5 → Fin 7) := by funext i; fin_cases i <;> rfl
+          rw [e]; exact hzinj.comp (by decide)) hW
+    · exact rupert02_M_A1B5 O r1 r2 hρ ht0 ht3 ht5 ht6 hs4 hu4 hQ1 hQ3 h03 h56 hch
+        (by
+          have e : (![z5, z1, z0, z3, z4] : Fin 5 → ℝ) = (![z0, z1, z2, z3, z4, z5, z6] : Fin 7 → ℝ) ∘
+              (![5, 1, 0, 3, 4] : Fin 5 → Fin 7) := by funext i; fin_cases i <;> rfl
+          rw [e]; exact hzinj.comp (by decide)) hM
+  · rw [max_eq_left h03.le, max_eq_right h56.le] at hch
+    have hCAB := sheet_of_plane (zy1 := z0) (zy2 := z6) hs4 hu4 ht0 ht6 hU4 hU0 hU6
+    rcases cycles05_A0B6 h12 ht0 ht3 ht5 ht6 hs4 hu4 hP hC36 hCAB h03 h56 (by linarith)
+        (by linarith) hch hch36 with hW | hM
+    · exact rupert02_W_A0B6 O r1 r2 hρ ht0 ht3 ht5 ht6 hs4 hu4 hQ1 hQ3 h03 h56 hch
+        (by
+          have e : (![z6, z2, z3, z0, z4] : Fin 5 → ℝ) = (![z0, z1, z2, z3, z4, z5, z6] : Fin 7 → ℝ) ∘
+              (![6, 2, 3, 0, 4] : Fin 5 → Fin 7) := by funext i; fin_cases i <;> rfl
+          rw [e]; exact hzinj.comp (by decide)) hW
+    · exact rupert02_M_A0B6 O r1 r2 hρ ht0 ht3 ht5 ht6 hs4 hu4 hQ1 hQ3 h03 h56 hch
+        (by
+          have e : (![z6, z5, z1, z0, z4] : Fin 5 → ℝ) = (![z0, z1, z2, z3, z4, z5, z6] : Fin 7 → ℝ) ∘
+              (![6, 5, 1, 0, 4] : Fin 5 → Fin 7) := by funext i; fin_cases i <;> rfl
+          rw [e]; exact hzinj.comp (by decide)) hM
+  · rw [max_eq_left h03.le, max_eq_left h56.le] at hch
+    have hCAB := sheet_of_plane (zy1 := z0) (zy2 := z5) hs4 hu4 ht0 ht5 hU4 hU0 hU5
+    rcases cycles05_A0B5 h12 ht0 ht3 ht5 ht6 hs4 hu4 hP hC36 hCAB h03 h56 (by linarith)
+        (by linarith) hch hch36 with hW | hM
+    · exact rupert02_W_A0B5 O r1 r2 hρ ht0 ht3 ht5 ht6 hs4 hu4 hQ1 hQ3 h03 h56 hch
+        (by
+          have e : (![z5, z6, z2, z3, z0, z4] : Fin 6 → ℝ) = (![z0, z1, z2, z3, z4, z5, z6] : Fin 7 → ℝ) ∘
+              (![5, 6, 2, 3, 0, 4] : Fin 6 → Fin 7) := by funext i; fin_cases i <;> rfl
+          rw [e]; exact hzinj.comp (by decide)) hW
+    · exact rupert02_M_A0B5 O r1 r2 hρ ht0 ht3 ht5 ht6 hs4 hu4 hQ1 hQ3 h03 h56 hch
+        (by
+          have e : (![z5, z1, z0, z4] : Fin 4 → ℝ) = (![z0, z1, z2, z3, z4, z5, z6] : Fin 7 → ℝ) ∘
+              (![5, 1, 0, 4] : Fin 4 → Fin 7) := by funext i; fin_cases i <;> rfl
+          rw [e]; exact hzinj.comp (by decide)) hM
+
+/-- **Theorem B′ from its facets** (oblique frame, positive orientation): the
+shadows of 0 and 5 span the frame, 1 and 2 are vertical over `O`, and 1032,
+6512, 0145, 234, 246 are facets. With 4 not in the hull of 0, 3, 5, 6, (G′)
+and (Z′), the seven points are Rupert. -/
+theorem isRupert_type05_obl (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
+    {a3 b3 a4 b4 a6 b6 Z0 Z1 Z2 Z3 Z4 Z5 Z6 : ℝ} (h12 : Z1 < Z2)
+    (hF1 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (oblPt O r1 r2 0 0 Z1) = 0 ∧
+      f (oblPt O r1 r2 1 0 Z0) = 0 ∧
+      f (oblPt O r1 r2 a3 b3 Z3) = 0 ∧
+      f (oblPt O r1 r2 0 0 Z2) = 0 ∧
+      f (oblPt O r1 r2 a4 b4 Z4) < 0 ∧
+      f (oblPt O r1 r2 0 1 Z5) < 0 ∧
+      f (oblPt O r1 r2 a6 b6 Z6) < 0)
+    (hF3 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (oblPt O r1 r2 a6 b6 Z6) = 0 ∧
+      f (oblPt O r1 r2 0 1 Z5) = 0 ∧
+      f (oblPt O r1 r2 0 0 Z1) = 0 ∧
+      f (oblPt O r1 r2 0 0 Z2) = 0 ∧
+      f (oblPt O r1 r2 1 0 Z0) < 0 ∧
+      f (oblPt O r1 r2 a3 b3 Z3) < 0 ∧
+      f (oblPt O r1 r2 a4 b4 Z4) < 0)
+    (hF2 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (oblPt O r1 r2 a4 b4 Z4) = 0 ∧
+      f (oblPt O r1 r2 1 0 Z0) = 0 ∧
+      f (oblPt O r1 r2 0 0 Z1) = 0 ∧
+      f (oblPt O r1 r2 0 1 Z5) = 0 ∧
+      f (oblPt O r1 r2 0 0 Z2) < 0 ∧
+      f (oblPt O r1 r2 a3 b3 Z3) < 0 ∧
+      f (oblPt O r1 r2 a6 b6 Z6) < 0)
+    (hT234 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (oblPt O r1 r2 0 0 Z2) = 0 ∧
+      f (oblPt O r1 r2 a3 b3 Z3) = 0 ∧
+      f (oblPt O r1 r2 a4 b4 Z4) = 0 ∧
+      f (oblPt O r1 r2 1 0 Z0) < 0 ∧
+      f (oblPt O r1 r2 0 0 Z1) < 0 ∧
+      f (oblPt O r1 r2 0 1 Z5) < 0 ∧
+      f (oblPt O r1 r2 a6 b6 Z6) < 0)
+    (hT246 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (oblPt O r1 r2 0 0 Z2) = 0 ∧
+      f (oblPt O r1 r2 a4 b4 Z4) = 0 ∧
+      f (oblPt O r1 r2 a6 b6 Z6) = 0 ∧
+      f (oblPt O r1 r2 1 0 Z0) < 0 ∧
+      f (oblPt O r1 r2 0 0 Z1) < 0 ∧
+      f (oblPt O r1 r2 a3 b3 Z3) < 0 ∧
+      f (oblPt O r1 r2 0 1 Z5) < 0)
+    (hext : oblPt O r1 r2 a4 b4 Z4 ∉ convexHull ℝ ({oblPt O r1 r2 1 0 Z0, oblPt O r1 r2 a3 b3 Z3, oblPt O r1 r2 0 1 Z5, oblPt O r1 r2 a6 b6 Z6} : Set ℝ³))
+    (hG1 : a3 ≠ 1 ∨ b3 ≠ 0) (hG2 : a6 ≠ 0 ∨ b6 ≠ 1)
+    (hZ : Function.Injective (![Z0, Z1, Z2, Z3, Z4, Z5, Z6] : Fin 7 → ℝ)) :
+    IsRupert ({oblPt O r1 r2 1 0 Z0, oblPt O r1 r2 0 0 Z1, oblPt O r1 r2 0 0 Z2, oblPt O r1 r2 a3 b3 Z3, oblPt O r1 r2 a4 b4 Z4, oblPt O r1 r2 0 1 Z5, oblPt O r1 r2 a6 b6 Z6} : Finset ℝ³) := by
+  have hZ12 : 0 < Z2 - Z1 := by linarith
+  -- 1032: vertical, `f = β b`
+  obtain ⟨f1, e11, e10, e13, e12, n14, n15, n16⟩ := hF1
+  obtain ⟨K1, α1, β1, γ1, hf1⟩ := affine_obl f1 O r1 r2
+  simp only [hf1] at e11 e10 e13 e12 n14 n15 n16
+  have hγ1 : γ1 = 0 :=
+    (mul_eq_zero.mp (by linear_combination e12 - e11 : γ1 * (Z2 - Z1) = 0)).resolve_right hZ12.ne'
+  subst hγ1
+  have hK1 : K1 = 0 := by linarith
+  subst hK1
+  have hα1 : α1 = 0 := by linarith
+  subst hα1
+  have hβ1 : β1 < 0 := by linarith
+  have hb3 : b3 = 0 :=
+    (mul_eq_zero.mp (by linarith : β1 * b3 = 0)).resolve_left hβ1.ne
+  subst hb3
+  have hb4 : 0 < b4 := pos_of_neg_mul hβ1 (by linarith)
+  have hb6 : 0 < b6 := pos_of_neg_mul hβ1 (by linarith)
+  -- 6512: vertical, `f = α a`
+  obtain ⟨f2, e26, e25, e21, e22, n20, n23, n24⟩ := hF3
+  obtain ⟨K2, α2, β2, γ2, hf2⟩ := affine_obl f2 O r1 r2
+  simp only [hf2] at e26 e25 e21 e22 n20 n23 n24
+  have hγ2 : γ2 = 0 :=
+    (mul_eq_zero.mp (by linear_combination e22 - e21 : γ2 * (Z2 - Z1) = 0)).resolve_right hZ12.ne'
+  subst hγ2
+  have hK2 : K2 = 0 := by linarith
+  subst hK2
+  have hβ2 : β2 = 0 := by linarith
+  subst hβ2
+  have hα2 : α2 < 0 := by linarith
+  have ha6 : a6 = 0 :=
+    (mul_eq_zero.mp (by linarith : α2 * a6 = 0)).resolve_left hα2.ne
+  subst ha6
+  have ha3 : 0 < a3 := pos_of_neg_mul hα2 (by linarith)
+  have ha4 : 0 < a4 := pos_of_neg_mul hα2 (by linarith)
+  have hG1' : a3 ≠ 1 := hG1.resolve_right (fun h => h rfl)
+  have hG2' : b6 ≠ 1 := hG2.resolve_left (fun h => h rfl)
+  -- 0145: the lower plane through 1
+  obtain ⟨f3, e34, e30, e31, e35, n32, n33, n36⟩ := hF2
+  obtain ⟨K3, α3, β3, γ3, hf3⟩ := affine_obl f3 O r1 r2
+  simp only [hf3] at e34 e30 e31 e35 n32 n33 n36
+  have hγ3 : γ3 < 0 := neg_of_mul_neg_pos (by linarith : γ3 * (Z2 - Z1) < 0) hZ12
+  have hα3 : α3 = -(γ3 * (Z0 - Z1)) := by linarith
+  have hβ3 : β3 = -(γ3 * (Z5 - Z1)) := by linarith
+  have hP : 1 * 1 * (Z4 - Z1) = a4 * 1 * (Z0 - Z1) + b4 * 1 * (Z5 - Z1) := by
+    have : γ3 * ((Z4 - Z1) - a4 * (Z0 - Z1) - b4 * (Z5 - Z1)) = 0 := by
+      linear_combination e34 - e31 - a4 * hα3 - b4 * hβ3
+    rcases mul_eq_zero.mp this with h | h
+    · linarith
+    · linarith
+  have T103 : 0 < (Z3 - Z1) - a3 * (Z0 - Z1) :=
+    pos_of_neg_mul hγ3 (by linear_combination n33 - e31 - a3 * hα3)
+  have T156 : 0 < (Z6 - Z1) - b6 * (Z5 - Z1) :=
+    pos_of_neg_mul hγ3 (by linear_combination n36 - e31 - b6 * hβ3)
+  -- 246: the upper plane through 2 and 4
+  obtain ⟨f4, e42, e44, e46, n40, n41, n43, n45⟩ := hT246
+  obtain ⟨K4, α4, β4, γ4, hf4⟩ := affine_obl f4 O r1 r2
+  simp only [hf4] at e42 e44 e46 n40 n41 n43 n45
+  have hγ4 : 0 < γ4 := pos_of_neg_mul (by linarith : Z1 - Z2 < 0)
+    (by linarith : (Z1 - Z2) * γ4 < 0)
+  set α' := -α4 / γ4 with hα'
+  set β' := -β4 / γ4 with hβ'
+  have gα : γ4 * α' = -α4 := by rw [hα']; field_simp
+  have gβ : γ4 * β' = -β4 := by rw [hβ']; field_simp
+  have hU4 : Z4 = Z2 + α' * a4 + β' * b4 := by
+    have : γ4 * (Z4 - Z2 - α' * a4 - β' * b4) = 0 := by
+      linear_combination e44 - e42 - a4 * gα - b4 * gβ
+    have := (mul_eq_zero.mp this).resolve_left hγ4.ne'; linarith
+  have up : ∀ {a b z : ℝ}, K4 + α4 * a + β4 * b + γ4 * z < 0 → z < Z2 + α' * a + β' * b := by
+    intro a b z h
+    have : γ4 * (z - Z2 - α' * a - β' * b) < 0 := by
+      linear_combination h - e42 - a * gα - b * gβ
+    have := neg_of_pos_mul hγ4 this; linarith
+  have hU0 : Z0 ≤ Z2 + α' * 1 := by have := up n40; linarith
+  have hU3 : Z3 ≤ Z2 + α' * a3 := by have := up n43; linarith
+  have hU5 : Z5 ≤ Z2 + β' * 1 := by have := up n45; linarith
+  have hU6 : Z6 ≤ Z2 + β' * b6 := by
+    have : γ4 * (Z6 - Z2 - β' * b6) = 0 := by linear_combination e46 - e42 - b6 * gβ
+    have := (mul_eq_zero.mp this).resolve_left hγ4.ne'; linarith
+  have T562 : b6 * (Z5 - Z2) - (Z6 - Z2) < 0 := by
+    have h5 := up n45
+    have h6 : γ4 * (Z6 - Z2 - β' * b6) = 0 := by linear_combination e46 - e42 - b6 * gβ
+    have h6' := (mul_eq_zero.mp h6).resolve_left hγ4.ne'
+    have := mul_lt_mul_of_pos_left (show Z5 - Z2 < β' by linarith) hb6
+    linarith
+  -- 234: the other upper face, for the orientation of (0, 3, 2)
+  obtain ⟨f5, e52, e53, e54, n50, n51, n55, n56⟩ := hT234
+  obtain ⟨K5, α5, β5, γ5, hf5⟩ := affine_obl f5 O r1 r2
+  simp only [hf5] at e52 e53 e54 n50 n51 n55 n56
+  have hγ5 : 0 < γ5 := pos_of_neg_mul (by linarith : Z1 - Z2 < 0)
+    (by linarith : (Z1 - Z2) * γ5 < 0)
+  have T032 : a3 * (Z0 - Z2) - (Z3 - Z2) < 0 := by
+    have h := mul_lt_mul_of_pos_left n50 ha3
+    exact neg_of_pos_mul hγ5 (by linear_combination h - a3 * e52 - e53 + e52)
+  have P1 : 0 < a3 * (Z2 - Z1) := mul_pos ha3 hZ12
+  have P2 : 0 < b6 * (Z2 - Z1) := mul_pos hb6 hZ12
+  have hQ1 : ConvQuad 0 Z1 1 Z0 a3 Z3 0 Z2 := by
+    unfold ConvQuad
+    refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> linarith
+  have hQ3 : ConvQuad 0 Z1 1 Z5 b6 Z6 0 Z2 := by
+    unfold ConvQuad
+    refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> linarith
+  -- 4 lies beyond the chord of the far vertices
+  have hch : max 1 a3 * max 1 b6 < a4 * max 1 b6 + b4 * max 1 a3 := by
+    by_contra hle
+    push Not at hle
+    obtain ⟨tA, ZA, htA, hmA, f3A, f4A, hyA⟩ : ∃ tA ZA : ℝ, 0 < tA ∧ max 1 a3 = tA ∧
+        K3 + α3 * tA + γ3 * ZA ≤ 0 ∧ K4 + α4 * tA + γ4 * ZA ≤ 0 ∧
+        (oblPt O r1 r2 tA 0 ZA = oblPt O r1 r2 1 0 Z0 ∨ oblPt O r1 r2 tA 0 ZA = oblPt O r1 r2 a3 0 Z3) := by
+      rcases lt_or_gt_of_ne hG1' with h | h
+      · exact ⟨1, Z0, one_pos, max_eq_left h.le, by linarith, by linarith, Or.inl rfl⟩
+      · exact ⟨a3, Z3, ha3, max_eq_right h.le, by linarith, by linarith, Or.inr rfl⟩
+    obtain ⟨tB, ZB, htB, hmB, f3B, f4B, hyB⟩ : ∃ tB ZB : ℝ, 0 < tB ∧ max 1 b6 = tB ∧
+        K3 + β3 * tB + γ3 * ZB ≤ 0 ∧ K4 + β4 * tB + γ4 * ZB ≤ 0 ∧
+        (oblPt O r1 r2 0 tB ZB = oblPt O r1 r2 0 1 Z5 ∨ oblPt O r1 r2 0 tB ZB = oblPt O r1 r2 0 b6 Z6) := by
+      rcases lt_or_gt_of_ne hG2' with h | h
+      · exact ⟨1, Z5, one_pos, max_eq_left h.le, by linarith, by linarith, Or.inl rfl⟩
+      · exact ⟨b6, Z6, hb6, max_eq_right h.le, by linarith, by linarith, Or.inr rfl⟩
+    rw [hmA, hmB] at hle
+    set μ := a4 / tA with hμ
+    set ν := b4 / tB with hν
+    have hμt : μ * tA = a4 := by rw [hμ]; field_simp
+    have hνt : ν * tB = b4 := by rw [hν]; field_simp
+    have hμ0 : 0 ≤ μ := div_nonneg ha4.le htA.le
+    have hν0 : 0 ≤ ν := div_nonneg hb4.le htB.le
+    have hμν : μ + ν ≤ 1 := by
+      have e : μ + ν = (a4 * tB + b4 * tA) / (tA * tB) := by rw [hμ, hν]; field_simp
+      rw [e, div_le_one (mul_pos htA htB)]; linarith
+    obtain ⟨hsum, hZ4⟩ := sheets_on_chord (Z2 := Z4) hμ0 hν0 hμν h12 hγ3 hγ4 (by linarith) f3A f3B
+      (by rw [hμt, hνt]; linarith) (by linarith) f4A f4B (by rw [hμt, hνt]; linarith)
+    apply hext
+    have hseg : oblPt O r1 r2 a4 b4 Z4 ∈ segment ℝ (oblPt O r1 r2 tA 0 ZA) (oblPt O r1 r2 0 tB ZB) := by
+      refine ⟨μ, ν, hμ0, hν0, hsum, ?_⟩
+      rw [← hμt, ← hνt, hZ4]
+      ext i; fin_cases i <;> simp [oblPt]
+      · linear_combination (O 0) * hsum
+      · linear_combination (O 1) * hsum
+    refine segment_subset_convexHull ?_ ?_ hseg
+    · rcases hyA with h | h <;> rw [h] <;> simp
+    · rcases hyB with h | h <;> rw [h] <;> simp
+  -- the chord 3-6 is no farther out than the chord A-B
+  have hch36 : a3 * b6 < a4 * b6 + b4 * a3 := by
+    have hA : a3 ≤ max 1 a3 := le_max_right _ _
+    have hB : b6 ≤ max 1 b6 := le_max_right _ _
+    have hmA : 0 < max 1 a3 := lt_of_lt_of_le one_pos (le_max_left _ _)
+    have hmB : 0 < max 1 b6 := lt_of_lt_of_le one_pos (le_max_left _ _)
+    have k1 : 1 < a4 / max 1 a3 + b4 / max 1 b6 := by
+      rw [div_add_div _ _ hmA.ne' hmB.ne', lt_div_iff₀ (mul_pos hmA hmB)]; linarith
+    have k2 : a4 / max 1 a3 ≤ a4 / a3 := div_le_div_of_nonneg_left ha4.le ha3 hA
+    have k3 : b4 / max 1 b6 ≤ b4 / b6 := div_le_div_of_nonneg_left hb4.le hb6 hB
+    have k4 : 1 < a4 / a3 + b4 / b6 := by linarith
+    rw [div_add_div _ _ ha3.ne' hb6.ne', lt_div_iff₀ (mul_pos ha3 hb6)] at k4
+    linarith
+  have key := isRupert_type05_frame O r1 r2 hρ (t0 := 1) (t3 := a3) (t5 := 1) (t6 := b6)
+    (s4 := a4) (u4 := b4) (α := α') (β := β') one_pos ha3 one_pos hb6 ha4 hb4 h12 hQ1 hQ3 hP
+    hU4 hU0 hU3 hU5 hU6 (Ne.symm hG1') (Ne.symm hG2') hch hch36 hZ
+  have hs : ({oblPt O r1 r2 1 0 Z0, oblPt O r1 r2 0 0 Z1, oblPt O r1 r2 0 0 Z2, oblPt O r1 r2 a3 0 Z3, oblPt O r1 r2 a4 b4 Z4, oblPt O r1 r2 0 1 Z5, oblPt O r1 r2 0 b6 Z6} : Finset ℝ³) = ({oblPt O r1 r2 1 0 Z0, oblPt O r1 r2 a3 0 Z3, oblPt O r1 r2 a4 b4 Z4, oblPt O r1 r2 0 0 Z1, oblPt O r1 r2 0 0 Z2, oblPt O r1 r2 0 1 Z5, oblPt O r1 r2 0 b6 Z6} : Finset ℝ³) := by
+    ext p; simp only [Finset.mem_insert, Finset.mem_singleton]
+    constructor <;> intro h <;> rcases h with h | h | h | h | h | h | h <;>
+      simp only [h, true_or, or_true]
+  rw [hs]; exact key
+
+set_option maxHeartbeats 1000000 in
+/-- **Theorem B′ with the edge 12 vertical.** -/
+theorem isRupert_type05_vertical (y : Fin 7 → ℝ³)
+    (h120 : y 1 0 = y 2 0) (h121 : y 1 1 = y 2 1) (h12 : y 1 2 < y 2 2)
+    (hQ1 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (y 1) = 0 ∧
+      f (y 0) = 0 ∧
+      f (y 3) = 0 ∧
+      f (y 2) = 0 ∧
+      f (y 4) < 0 ∧
+      f (y 5) < 0 ∧
+      f (y 6) < 0)
+    (hQ3 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (y 6) = 0 ∧
+      f (y 5) = 0 ∧
+      f (y 1) = 0 ∧
+      f (y 2) = 0 ∧
+      f (y 0) < 0 ∧
+      f (y 3) < 0 ∧
+      f (y 4) < 0)
+    (hQ2 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (y 4) = 0 ∧
+      f (y 0) = 0 ∧
+      f (y 1) = 0 ∧
+      f (y 5) = 0 ∧
+      f (y 2) < 0 ∧
+      f (y 3) < 0 ∧
+      f (y 6) < 0)
+    (hT234 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (y 2) = 0 ∧
+      f (y 3) = 0 ∧
+      f (y 4) = 0 ∧
+      f (y 0) < 0 ∧
+      f (y 1) < 0 ∧
+      f (y 5) < 0 ∧
+      f (y 6) < 0)
+    (hT246 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (y 2) = 0 ∧
+      f (y 4) = 0 ∧
+      f (y 6) = 0 ∧
+      f (y 0) < 0 ∧
+      f (y 1) < 0 ∧
+      f (y 3) < 0 ∧
+      f (y 5) < 0)
+    (hext : y 4 ∉ convexHull ℝ ({y 0, y 3, y 5, y 6} : Set ℝ³))
+    (hG1 : y 3 0 ≠ y 0 0 ∨ y 3 1 ≠ y 0 1) (hG2 : y 6 0 ≠ y 5 0 ∨ y 6 1 ≠ y 5 1)
+    (hZ : Function.Injective fun i => y i 2) : IsRupert (Finset.univ.image y) := by
+  set O : ℝ² := !₂[y 1 0, y 1 1] with hO
+  set r1 : ℝ² := !₂[y 0 0 - y 1 0, y 0 1 - y 1 1] with hr1
+  set r2 : ℝ² := !₂[y 5 0 - y 1 0, y 5 1 - y 1 1] with hr2
+  have hρ : cross2 r1 r2 ≠ 0 := by
+    obtain ⟨f1, e11, e10, -, e12, -, n15, -⟩ := hQ1
+    obtain ⟨f2, -, e25, e21, e22, n20, -, -⟩ := hQ3
+    obtain ⟨K1, α1, β1, γ1, h1⟩ := affine_xyz f1
+    obtain ⟨K2, α2, β2, γ2, h2⟩ := affine_xyz f2
+    rw [h1] at e11 e10 e12 n15
+    rw [h2] at e25 e21 e22 n20
+    have hZ12 : 0 < y 2 2 - y 1 2 := by linarith
+    have hγ1 : γ1 = 0 := by
+      have : γ1 * (y 2 2 - y 1 2) = 0 := by
+        linear_combination e12 - e11 + α1 * h120 + β1 * h121
+      exact (mul_eq_zero.mp this).resolve_right hZ12.ne'
+    have hγ2 : γ2 = 0 := by
+      have : γ2 * (y 2 2 - y 1 2) = 0 := by
+        linear_combination e22 - e21 + α2 * h120 + β2 * h121
+      exact (mul_eq_zero.mp this).resolve_right hZ12.ne'
+    subst hγ1 hγ2
+    intro hρ0
+    simp only [hr1, hr2, cross2] at hρ0
+    simp at hρ0
+    have g1 : α1 * (y 0 0 - y 1 0) + β1 * (y 0 1 - y 1 1) = 0 := by linear_combination e10 - e11
+    have g2 : α1 * (y 5 0 - y 1 0) + β1 * (y 5 1 - y 1 1) < 0 := by linarith
+    have g3 : α2 * (y 0 0 - y 1 0) + β2 * (y 0 1 - y 1 1) < 0 := by linarith
+    have k0 : (α1 * (y 5 0 - y 1 0) + β1 * (y 5 1 - y 1 1)) * (y 0 0 - y 1 0) = 0 := by
+      linear_combination (y 5 0 - y 1 0) * g1 + β1 * hρ0
+    have k1 : (α1 * (y 5 0 - y 1 0) + β1 * (y 5 1 - y 1 1)) * (y 0 1 - y 1 1) = 0 := by
+      linear_combination (y 5 1 - y 1 1) * g1 - α1 * hρ0
+    have r10 : y 0 0 - y 1 0 = 0 := (mul_eq_zero.mp k0).resolve_left g2.ne
+    have r11 : y 0 1 - y 1 1 = 0 := (mul_eq_zero.mp k1).resolve_left g2.ne
+    rw [r10, r11] at g3; linarith
+  set ρ := cross2 r1 r2 with hρdef
+  set a : Fin 7 → ℝ := fun i => cross2 !₂[y i 0 - y 1 0, y i 1 - y 1 1] r2 / ρ with ha
+  set b : Fin 7 → ℝ := fun i => cross2 r1 !₂[y i 0 - y 1 0, y i 1 - y 1 1] / ρ with hb
+  have hy : ∀ i, y i = oblPt O r1 r2 (a i) (b i) (y i 2) := by
+    intro i
+    obtain ⟨c0, c1⟩ := cramer2 !₂[y i 0 - y 1 0, y i 1 - y 1 1] r1 r2 hρ
+    ext j; fin_cases j
+    · simp only [oblPt, ha, hb]; simp only [hO]; simp at c0 ⊢; linarith
+    · simp only [oblPt, ha, hb]; simp only [hO]; simp at c1 ⊢; linarith
+    · simp [oblPt]
+  have ha0 : a 0 = 1 := by simp only [ha, hr1, hρdef]; exact div_self hρ
+  have hb0 : b 0 = 0 := by
+    simp only [hb]; exact div_eq_zero_iff.mpr (Or.inl (by simp only [hr1, cross2]; simp; ring))
+  have ha5 : a 5 = 0 := by
+    simp only [ha]; exact div_eq_zero_iff.mpr (Or.inl (by simp only [hr2, cross2]; simp; ring))
+  have hb5 : b 5 = 1 := by simp only [hb, hr2, hρdef]; exact div_self hρ
+  have ha1 : a 1 = 0 := by simp [ha, cross2]
+  have hb1 : b 1 = 0 := by simp [hb, cross2]
+  have ha2 : a 2 = 0 := by simp [ha, cross2, ← h120, ← h121]
+  have hb2 : b 2 = 0 := by simp [hb, cross2, ← h120, ← h121]
+  have E : ∀ i, oblPt O r1 r2 (a i) (b i) (y i 2) = y i := fun i => (hy i).symm
+  have E0 : oblPt O r1 r2 1 0 (y 0 2) = y 0 := by
+    have := E 0; rwa [ha0, hb0] at this
+  have E1 : oblPt O r1 r2 0 0 (y 1 2) = y 1 := by
+    have := E 1; rwa [ha1, hb1] at this
+  have E2 : oblPt O r1 r2 0 0 (y 2 2) = y 2 := by
+    have := E 2; rwa [ha2, hb2] at this
+  have E5 : oblPt O r1 r2 0 1 (y 5 2) = y 5 := by
+    have := E 5; rwa [ha5, hb5] at this
+  have swap : ∀ p q z, oblPt O r2 r1 q p z = oblPt O r1 r2 p q z := by
+    intro p q z; ext j; fin_cases j <;> simp [oblPt] <;> ring
+  have hG1' : a 3 ≠ 1 ∨ b 3 ≠ 0 := by
+    by_contra h; push Not at h
+    have c0 := congrArg (fun p : ℝ³ => p 0) (E 3)
+    have c1 := congrArg (fun p : ℝ³ => p 1) (E 3)
+    have d0 := congrArg (fun p : ℝ³ => p 0) E0
+    have d1 := congrArg (fun p : ℝ³ => p 1) E0
+    simp only [oblPt, h.1, h.2] at c0 c1 d0 d1
+    simp at c0 c1 d0 d1
+    rcases hG1 with h' | h' <;> apply h' <;> linarith
+  have hG2' : a 6 ≠ 0 ∨ b 6 ≠ 1 := by
+    by_contra h; push Not at h
+    have c0 := congrArg (fun p : ℝ³ => p 0) (E 6)
+    have c1 := congrArg (fun p : ℝ³ => p 1) (E 6)
+    have d0 := congrArg (fun p : ℝ³ => p 0) E5
+    have d1 := congrArg (fun p : ℝ³ => p 1) E5
+    simp only [oblPt, h.1, h.2] at c0 c1 d0 d1
+    simp at c0 c1 d0 d1
+    rcases hG2 with h' | h' <;> apply h' <;> linarith
+  have hZ7 : ∀ σ : Fin 7 → Fin 7, Function.Injective σ →
+      Function.Injective (fun i => y (σ i) 2) := fun σ hσ => hZ.comp hσ
+  rcases lt_or_gt_of_ne hρ with hneg | hpos
+  · -- negative orientation: swap the two quads (0 5)(3 6) and the two rays
+    have hpos' : 0 < cross2 r2 r1 := by
+      have : cross2 r2 r1 = -cross2 r1 r2 := by unfold cross2; ring
+      rw [this]; linarith
+    obtain ⟨fQ1, eQ1_1, eQ1_0, eQ1_3, eQ1_2, nQ1_4, nQ1_5, nQ1_6⟩ := hQ1
+    obtain ⟨fQ3, eQ3_6, eQ3_5, eQ3_1, eQ3_2, nQ3_0, nQ3_3, nQ3_4⟩ := hQ3
+    obtain ⟨fQ2, eQ2_4, eQ2_0, eQ2_1, eQ2_5, nQ2_2, nQ2_3, nQ2_6⟩ := hQ2
+    obtain ⟨fT234, eT234_2, eT234_3, eT234_4, nT234_0, nT234_1, nT234_5, nT234_6⟩ := hT234
+    obtain ⟨fT246, eT246_2, eT246_4, eT246_6, nT246_0, nT246_1, nT246_3, nT246_5⟩ := hT246
+    have key := isRupert_type05_obl O r2 r1 hpos' (a3 := b 6) (b3 := a 6) (a4 := b 4) (b4 := a 4)
+      (a6 := b 3) (b6 := a 3) (Z0 := y 5 2) (Z1 := y 1 2) (Z2 := y 2 2) (Z3 := y 6 2) (Z4 := y 4 2)
+      (Z5 := y 0 2) (Z6 := y 3 2) h12
+      ⟨fQ3, by rw [← E1, ← swap] at eQ3_1; exact eQ3_1,
+        by rw [← E5, ← swap] at eQ3_5; exact eQ3_5,
+        by rw [← E 6, ← swap] at eQ3_6; exact eQ3_6,
+        by rw [← E2, ← swap] at eQ3_2; exact eQ3_2,
+        by rw [← E 4, ← swap] at nQ3_4; exact nQ3_4,
+        by rw [← E0, ← swap] at nQ3_0; exact nQ3_0,
+        by rw [← E 3, ← swap] at nQ3_3; exact nQ3_3⟩
+      ⟨fQ1, by rw [← E 3, ← swap] at eQ1_3; exact eQ1_3,
+        by rw [← E0, ← swap] at eQ1_0; exact eQ1_0,
+        by rw [← E1, ← swap] at eQ1_1; exact eQ1_1,
+        by rw [← E2, ← swap] at eQ1_2; exact eQ1_2,
+        by rw [← E5, ← swap] at nQ1_5; exact nQ1_5,
+        by rw [← E 6, ← swap] at nQ1_6; exact nQ1_6,
+        by rw [← E 4, ← swap] at nQ1_4; exact nQ1_4⟩
+      ⟨fQ2, by rw [← E 4, ← swap] at eQ2_4; exact eQ2_4,
+        by rw [← E5, ← swap] at eQ2_5; exact eQ2_5,
+        by rw [← E1, ← swap] at eQ2_1; exact eQ2_1,
+        by rw [← E0, ← swap] at eQ2_0; exact eQ2_0,
+        by rw [← E2, ← swap] at nQ2_2; exact nQ2_2,
+        by rw [← E 6, ← swap] at nQ2_6; exact nQ2_6,
+        by rw [← E 3, ← swap] at nQ2_3; exact nQ2_3⟩
+      ⟨fT246, by rw [← E2, ← swap] at eT246_2; exact eT246_2,
+        by rw [← E 6, ← swap] at eT246_6; exact eT246_6,
+        by rw [← E 4, ← swap] at eT246_4; exact eT246_4,
+        by rw [← E5, ← swap] at nT246_5; exact nT246_5,
+        by rw [← E1, ← swap] at nT246_1; exact nT246_1,
+        by rw [← E0, ← swap] at nT246_0; exact nT246_0,
+        by rw [← E 3, ← swap] at nT246_3; exact nT246_3⟩
+      ⟨fT234, by rw [← E2, ← swap] at eT234_2; exact eT234_2,
+        by rw [← E 4, ← swap] at eT234_4; exact eT234_4,
+        by rw [← E 3, ← swap] at eT234_3; exact eT234_3,
+        by rw [← E5, ← swap] at nT234_5; exact nT234_5,
+        by rw [← E1, ← swap] at nT234_1; exact nT234_1,
+        by rw [← E 6, ← swap] at nT234_6; exact nT234_6,
+        by rw [← E0, ← swap] at nT234_0; exact nT234_0⟩
+      (by
+        rw [swap, swap, swap, swap, swap, E 4, E5, E 6, E0, E 3]
+        have hs : ({y 5, y 6, y 0, y 3} : Set ℝ³) = {y 0, y 3, y 5, y 6} := by
+          ext p; simp only [Set.mem_insert_iff, Set.mem_singleton_iff]; tauto
+        rw [hs]; exact hext)
+      hG2'.symm hG1'.symm
+      (by
+        have := hZ7 ![5, 1, 2, 6, 4, 0, 3] (by decide)
+        convert this using 1; funext i; fin_cases i <;> rfl)
+    rw [swap, swap, swap, swap, swap, swap, swap, E5, E1, E2, E 6, E 4, E0, E 3] at key
+    have hs : ({y 0, y 1, y 2, y 3, y 4, y 5, y 6} : Finset ℝ³) =
+        {y 5, y 1, y 2, y 6, y 4, y 0, y 3} := by
+      ext p; simp only [Finset.mem_insert, Finset.mem_singleton]
+      constructor <;> intro h <;> rcases h with h | h | h | h | h | h | h <;>
+        simp only [h, true_or, or_true]
+    rw [univ_image_fin7, hs]; exact key
+  · obtain ⟨fQ1, eQ1_1, eQ1_0, eQ1_3, eQ1_2, nQ1_4, nQ1_5, nQ1_6⟩ := hQ1
+    obtain ⟨fQ3, eQ3_6, eQ3_5, eQ3_1, eQ3_2, nQ3_0, nQ3_3, nQ3_4⟩ := hQ3
+    obtain ⟨fQ2, eQ2_4, eQ2_0, eQ2_1, eQ2_5, nQ2_2, nQ2_3, nQ2_6⟩ := hQ2
+    obtain ⟨fT234, eT234_2, eT234_3, eT234_4, nT234_0, nT234_1, nT234_5, nT234_6⟩ := hT234
+    obtain ⟨fT246, eT246_2, eT246_4, eT246_6, nT246_0, nT246_1, nT246_3, nT246_5⟩ := hT246
+    have key := isRupert_type05_obl O r1 r2 hpos (a3 := a 3) (b3 := b 3) (a4 := a 4) (b4 := b 4)
+      (a6 := a 6) (b6 := b 6) (Z0 := y 0 2) (Z1 := y 1 2) (Z2 := y 2 2) (Z3 := y 3 2) (Z4 := y 4 2)
+      (Z5 := y 5 2) (Z6 := y 6 2) h12
+      ⟨fQ1, by rw [E1]; exact eQ1_1,
+        by rw [E0]; exact eQ1_0,
+        by rw [E 3]; exact eQ1_3,
+        by rw [E2]; exact eQ1_2,
+        by rw [E 4]; exact nQ1_4,
+        by rw [E5]; exact nQ1_5,
+        by rw [E 6]; exact nQ1_6⟩
+      ⟨fQ3, by rw [E 6]; exact eQ3_6,
+        by rw [E5]; exact eQ3_5,
+        by rw [E1]; exact eQ3_1,
+        by rw [E2]; exact eQ3_2,
+        by rw [E0]; exact nQ3_0,
+        by rw [E 3]; exact nQ3_3,
+        by rw [E 4]; exact nQ3_4⟩
+      ⟨fQ2, by rw [E 4]; exact eQ2_4,
+        by rw [E0]; exact eQ2_0,
+        by rw [E1]; exact eQ2_1,
+        by rw [E5]; exact eQ2_5,
+        by rw [E2]; exact nQ2_2,
+        by rw [E 3]; exact nQ2_3,
+        by rw [E 6]; exact nQ2_6⟩
+      ⟨fT234, by rw [E2]; exact eT234_2,
+        by rw [E 3]; exact eT234_3,
+        by rw [E 4]; exact eT234_4,
+        by rw [E0]; exact nT234_0,
+        by rw [E1]; exact nT234_1,
+        by rw [E5]; exact nT234_5,
+        by rw [E 6]; exact nT234_6⟩
+      ⟨fT246, by rw [E2]; exact eT246_2,
+        by rw [E 4]; exact eT246_4,
+        by rw [E 6]; exact eT246_6,
+        by rw [E0]; exact nT246_0,
+        by rw [E1]; exact nT246_1,
+        by rw [E 3]; exact nT246_3,
+        by rw [E5]; exact nT246_5⟩
+      (by rw [E 4, E0, E 3, E5, E 6]; exact hext) hG1' hG2'
+      (by
+        have := hZ7 id Function.injective_id
+        convert this using 1; funext i; fin_cases i <;> rfl)
+    rw [E0, E1, E2, E 3, E 4, E5, E 6] at key
+    rw [univ_image_fin7]; exact key
+
+/-- **Theorem B′** (FEWER-FACES-PROOFS.md §5, general position): seven points
+labelled as type 05, with the quadrilaterals 1032, 6512, 0145 and the
+triangles 234, 246 as facets (given by their supporting affine functions), 4
+not in the hull of 0, 3, 5, 6, the edges 03 and 56 not parallel to 12 (G′),
+and distinct depths along 12 (Z′), are Rupert. -/
+theorem isRupert_type05 (x : Fin 7 → ℝ³) (h12 : x 1 ≠ x 2)
+    (hQ1 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (x 1) = 0 ∧
+      f (x 0) = 0 ∧
+      f (x 3) = 0 ∧
+      f (x 2) = 0 ∧
+      f (x 4) < 0 ∧
+      f (x 5) < 0 ∧
+      f (x 6) < 0)
+    (hQ3 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (x 6) = 0 ∧
+      f (x 5) = 0 ∧
+      f (x 1) = 0 ∧
+      f (x 2) = 0 ∧
+      f (x 0) < 0 ∧
+      f (x 3) < 0 ∧
+      f (x 4) < 0)
+    (hQ2 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (x 4) = 0 ∧
+      f (x 0) = 0 ∧
+      f (x 1) = 0 ∧
+      f (x 5) = 0 ∧
+      f (x 2) < 0 ∧
+      f (x 3) < 0 ∧
+      f (x 6) < 0)
+    (hT234 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (x 2) = 0 ∧
+      f (x 3) = 0 ∧
+      f (x 4) = 0 ∧
+      f (x 0) < 0 ∧
+      f (x 1) < 0 ∧
+      f (x 5) < 0 ∧
+      f (x 6) < 0)
+    (hT246 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (x 2) = 0 ∧
+      f (x 4) = 0 ∧
+      f (x 6) = 0 ∧
+      f (x 0) < 0 ∧
+      f (x 1) < 0 ∧
+      f (x 3) < 0 ∧
+      f (x 5) < 0)
+    (hext : x 4 ∉ convexHull ℝ ({x 0, x 3, x 5, x 6} : Set ℝ³))
+    (hG1 : ∀ c : ℝ, x 3 - x 0 ≠ c • (x 2 - x 1)) (hG2 : ∀ c : ℝ, x 6 - x 5 ≠ c • (x 2 - x 1))
+    (hZ : Function.Injective fun i => ⟪x i, x 2 - x 1⟫) :
+    IsRupert (Finset.univ.image x) := by
+  classical
+  set e := x 2 - x 1 with he
+  have he0 : e ≠ 0 := sub_ne_zero.mpr h12.symm
+  obtain ⟨R, hR, r, hr, hRe⟩ := exists_rotation_to_ez_pos e he0
+  apply isRupert_of_isRupert_image_rotation R hR
+  set g := R.toEuclideanLin with hg
+  set I := so3Isometry hR with hI
+  have hgI : ∀ p, g p = I p := fun p => rfl
+  have hginj : Function.Injective g := I.injective
+  rw [Finset.image_image]
+  have hge : g (x 2) - g (x 1) = r • ez := by rw [← map_sub]; exact hRe
+  have hgz : ∀ p, g p 2 = ⟪p, e⟫ / r := fun p => by
+    have := inner_toEuclideanLin_SO3 hR p e
+    rw [hRe, real_inner_smul_right, inner_ez] at this
+    field_simp; linarith
+  have tr : ∀ {f : ℝ³ →ᵃ[ℝ] ℝ}, ∃ f' : ℝ³ →ᵃ[ℝ] ℝ, ∀ i, f' (g (x i)) = f (x i) := by
+    intro f
+    refine ⟨f.comp I.symm.toLinearEquiv.toLinearMap.toAffineMap, fun i => ?_⟩
+    simp [hgI]
+  refine isRupert_type05_vertical (fun i => g (x i)) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+  · have := congrArg (fun p : ℝ³ => p 0) hge; simp [ez] at this; linarith
+  · have := congrArg (fun p : ℝ³ => p 1) hge; simp [ez] at this; linarith
+  · have := congrArg (fun p : ℝ³ => p 2) hge; simp [ez] at this; linarith
+  · obtain ⟨f, h⟩ := hQ1
+    obtain ⟨f', hf'⟩ := tr (f := f)
+    exact ⟨f', by simp only [hf']; exact h⟩
+  · obtain ⟨f, h⟩ := hQ3
+    obtain ⟨f', hf'⟩ := tr (f := f)
+    exact ⟨f', by simp only [hf']; exact h⟩
+  · obtain ⟨f, h⟩ := hQ2
+    obtain ⟨f', hf'⟩ := tr (f := f)
+    exact ⟨f', by simp only [hf']; exact h⟩
+  · obtain ⟨f, h⟩ := hT234
+    obtain ⟨f', hf'⟩ := tr (f := f)
+    exact ⟨f', by simp only [hf']; exact h⟩
+  · obtain ⟨f, h⟩ := hT246
+    obtain ⟨f', hf'⟩ := tr (f := f)
+    exact ⟨f', by simp only [hf']; exact h⟩
+  · intro hmem
+    apply hext
+    have himg : ({g (x 0), g (x 3), g (x 5), g (x 6)} : Set ℝ³) =
+        g '' ({x 0, x 3, x 5, x 6} : Set ℝ³) := by
+      simp [Set.image_insert_eq]
+    rw [himg, ← LinearMap.image_convexHull] at hmem
+    obtain ⟨p, hp, hpe⟩ := hmem
+    rwa [← hginj hpe]
+  · -- (G′): equal shadows would make 03 parallel to 12
+    by_contra h; push Not at h
+    obtain ⟨h0, h1⟩ := h
+    apply hG1 ((g (x 3 - x 0)) 2 / r)
+    apply hginj
+    rw [map_smul, map_sub g (x 2), hge]
+    ext j; fin_cases j
+    · simp [ez, map_sub]; linarith
+    · simp [ez, map_sub]; linarith
+    · simp [ez]; field_simp
+  · by_contra h; push Not at h
+    obtain ⟨h0, h1⟩ := h
+    apply hG2 ((g (x 6 - x 5)) 2 / r)
+    apply hginj
+    rw [map_smul, map_sub g (x 2), hge]
+    ext j; fin_cases j
+    · simp [ez, map_sub]; linarith
+    · simp [ez, map_sub]; linarith
+    · simp [ez]; field_simp
+  · intro i j hij
+    apply hZ
+    simp only [hgz] at hij
+    simpa [hr.ne'] using hij
 
 end Minimality
