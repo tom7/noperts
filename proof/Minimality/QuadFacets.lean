@@ -330,4 +330,49 @@ theorem mem_triangle_of_three_sides {f g1 g2 g3 : ℝ³ →ᵃ[ℝ] ℝ} {x0 x1 
   convert mx using 1
   rw [hx3]; ext i; simp; field_simp; ring
 
+/-! ### The classification (kernel-decided)
+
+Four 4-subsets of `Fin 7` (the first one `{0, 1, 2, 3}`, by choosing the
+enumeration), distinct, pairwise sharing at most two points, with no three
+distinct shared pairs of one of them meeting at a point or forming a triangle,
+are the type-02 pattern in some order. -/
+
+/-- The three shared pairs of `X` (with `Y`, `Z`, `W`), when all have two
+points and are distinct, neither meet at a point nor form a triangle. -/
+def QuadSidesOK (X Y Z W : Finset (Fin 7)) : Prop :=
+  ¬ ((X ∩ Y).card = 2 ∧ (X ∩ Z).card = 2 ∧ (X ∩ W).card = 2 ∧
+    X ∩ Y ≠ X ∩ Z ∧ X ∩ Y ≠ X ∩ W ∧ X ∩ Z ≠ X ∩ W ∧
+    ((X ∩ Y ∩ Z ∩ W).Nonempty ∨ ((X ∩ Y) ∪ (X ∩ Z) ∪ (X ∩ W)).card = 3))
+
+instance (X Y Z W : Finset (Fin 7)) : Decidable (QuadSidesOK X Y Z W) := by
+  unfold QuadSidesOK; infer_instance
+
+/-- The type-02 pattern: the sets are 3014, 3564, 3025, 4126 for distinct
+labels `v0, …, v6`. -/
+def IsType02Pattern (P1 P2 P3 P4 : Finset (Fin 7)) : Prop :=
+  ∃ v3 ∈ P1 ∩ P2 ∩ P3, ∃ v4 ∈ P1 ∩ P2 ∩ P4, ∃ v2 ∈ P3 ∩ P4, ∃ v0 ∈ P1 ∩ P3, ∃ v1 ∈ P1 ∩ P4,
+    ∃ v5 ∈ P2 ∩ P3, ∃ v6 ∈ P2 ∩ P4,
+    [v0, v1, v2, v3, v4, v5, v6].Nodup ∧ P1 = {v3, v0, v1, v4} ∧ P2 = {v3, v5, v6, v4} ∧
+      P3 = {v3, v0, v2, v5} ∧ P4 = {v4, v1, v2, v6}
+
+instance (P1 P2 P3 P4 : Finset (Fin 7)) : Decidable (IsType02Pattern P1 P2 P3 P4) := by
+  unfold IsType02Pattern; infer_instance
+
+set_option maxRecDepth 100000 in
+set_option synthInstance.maxHeartbeats 2000000 in
+set_option synthInstance.maxSize 4096 in
+/-- **The classification**, decided by the kernel (about 15 s). -/
+theorem quad_facets_classify : ∀ B ∈ (Finset.univ : Finset (Fin 7)).powersetCard 4,
+    ({0, 1, 2, 3} ∩ B).card ≤ 2 →
+    ∀ C ∈ (Finset.univ : Finset (Fin 7)).powersetCard 4,
+    ({0, 1, 2, 3} ∩ C).card ≤ 2 → (B ∩ C).card ≤ 2 → B ≠ C →
+    ∀ D ∈ (Finset.univ : Finset (Fin 7)).powersetCard 4,
+    ({0, 1, 2, 3} ∩ D).card ≤ 2 → (B ∩ D).card ≤ 2 → (C ∩ D).card ≤ 2 → B ≠ D → C ≠ D →
+    QuadSidesOK {0, 1, 2, 3} B C D → QuadSidesOK B {0, 1, 2, 3} C D →
+    QuadSidesOK C {0, 1, 2, 3} B D → QuadSidesOK D {0, 1, 2, 3} B C →
+    (IsType02Pattern {0, 1, 2, 3} B C D ∨ IsType02Pattern {0, 1, 2, 3} C B D ∨
+     IsType02Pattern {0, 1, 2, 3} D B C ∨ IsType02Pattern B C {0, 1, 2, 3} D ∨
+     IsType02Pattern B D {0, 1, 2, 3} C ∨ IsType02Pattern C D {0, 1, 2, 3} B) := by
+  decide +kernel
+
 end Minimality
