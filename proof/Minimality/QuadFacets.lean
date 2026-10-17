@@ -686,4 +686,122 @@ theorem quadSidesOK_of_facets (e : Fin 7 → ℝ³) (he : Function.Injective e)
     · exact ⟨⟨y, rfl⟩, he.ne hdy.symm⟩
     · exact ⟨⟨c, rfl⟩, he.ne hdc.symm⟩
 
+/-! ### Four quadrilateral facets -/
+
+/-- An enumeration of seven points listing a given four of them first. -/
+theorem exists_enum_four_first (V Q : Finset ℝ³) (hV : V.card = 7) (hQV : Q ⊆ V)
+    (hQ : Q.card = 4) : ∃ e : Fin 7 → ℝ³, Function.Injective e ∧ Finset.univ.image e = V ∧
+      ∀ i : Fin 7, e i ∈ Q ↔ i.val < 4 := by
+  classical
+  have h3 : (V \ Q).card = 3 := by rw [Finset.card_sdiff_of_subset hQV, hV, hQ]
+  set a : Fin 4 → ℝ³ := fun i => ((Q.equivFinOfCardEq hQ).symm i : ℝ³) with ha
+  set b : Fin 3 → ℝ³ := fun j => (((V \ Q).equivFinOfCardEq h3).symm j : ℝ³) with hb
+  have aQ : ∀ i, a i ∈ Q := fun i => ((Q.equivFinOfCardEq hQ).symm i).2
+  have bV : ∀ j, b j ∈ V \ Q := fun j => (((V \ Q).equivFinOfCardEq h3).symm j).2
+  have ainj : Function.Injective a := fun i i' h =>
+    (Q.equivFinOfCardEq hQ).symm.injective (Subtype.ext h)
+  have binj : Function.Injective b := fun j j' h =>
+    ((V \ Q).equivFinOfCardEq h3).symm.injective (Subtype.ext h)
+  have split : ∀ x : Fin 7, (∃ i : Fin 4, x = Fin.castAdd 3 i) ∨ ∃ j : Fin 3, x = Fin.natAdd 4 j := by
+    decide
+  refine ⟨fun i => Fin.append a b i, ?_, ?_, ?_⟩
+  · intro i i' h
+    rcases split i with ⟨i, rfl⟩ | ⟨j, rfl⟩ <;> rcases split i' with ⟨i', rfl⟩ | ⟨j', rfl⟩
+    · simp only [Fin.append_left] at h; rw [ainj h]
+    · simp only [Fin.append_left, Fin.append_right] at h
+      exact absurd (h ▸ aQ i) (Finset.mem_sdiff.mp (bV j')).2
+    · simp only [Fin.append_left, Fin.append_right] at h
+      exact absurd (h ▸ aQ i') (Finset.mem_sdiff.mp (bV j)).2
+    · simp only [Fin.append_right] at h; rw [binj h]
+  · ext y
+    simp only [Finset.mem_image, Finset.mem_univ, true_and]
+    constructor
+    · rintro ⟨i, rfl⟩
+      rcases split i with ⟨i, rfl⟩ | ⟨j, rfl⟩
+      · simp only [Fin.append_left]; exact hQV (aQ i)
+      · simp only [Fin.append_right]; exact (Finset.mem_sdiff.mp (bV j)).1
+    · intro hy
+      by_cases hyQ : y ∈ Q
+      · refine ⟨Fin.castAdd 3 (Q.equivFinOfCardEq hQ ⟨y, hyQ⟩), ?_⟩
+        simp only [Fin.append_left, ha, Equiv.symm_apply_apply]
+      · refine ⟨Fin.natAdd 4 ((V \ Q).equivFinOfCardEq h3 ⟨y, Finset.mem_sdiff.mpr ⟨hy, hyQ⟩⟩), ?_⟩
+        simp only [Fin.append_right, hb, Equiv.symm_apply_apply]
+  · intro i
+    rcases split i with ⟨i, rfl⟩ | ⟨j, rfl⟩
+    · simp only [Fin.append_left, Fin.val_castAdd]; exact ⟨fun _ => i.2, fun _ => aQ i⟩
+    · simp only [Fin.append_right, Fin.val_natAdd]
+      exact ⟨fun h => absurd h (Finset.mem_sdiff.mp (bV j)).2, fun h => by omega⟩
+
+/-- **Four quadrilateral facets** (Theorem B, general position): seven extreme
+points in general position with four distinct quadrilateral facets are Rupert. -/
+theorem isRupert_of_four_quad_facets (V : Finset ℝ³) (hV : V.card = 7)
+    (hext : ∀ y ∈ V, y ∉ convexHull ℝ ((V.erase y : Finset ℝ³) : Set ℝ³)) (hgen : GenPos V)
+    (Q : Fin 4 → Finset ℝ³) (hQV : ∀ k, Q k ⊆ V) (hQc : ∀ k, (Q k).card = 4)
+    (hQf : ∀ k, IsFacet V (Q k)) (hQi : Function.Injective Q) : IsRupert V := by
+  classical
+  obtain ⟨e, he, himg, hQ0⟩ := exists_enum_four_first V (Q 0) hV (hQV 0) (hQc 0)
+  have heV : ∀ i, e i ∈ V := fun i => himg ▸ Finset.mem_image_of_mem _ (Finset.mem_univ _)
+  have hext' : ∀ i, e i ∉ convexHull ℝ ((Finset.univ.image e).erase (e i) : Set ℝ³) := by
+    rw [himg]; exact fun i => hext _ (heV i)
+  have hgen' : GenPos (Finset.univ.image e) := himg ▸ hgen
+  set I : Fin 4 → Finset (Fin 7) := fun k => Finset.univ.filter (fun i => e i ∈ Q k) with hIdef
+  have memI : ∀ k i, i ∈ I k ↔ e i ∈ Q k := fun k i => by simp [hIdef]
+  -- images under e
+  have imgS : ∀ S : Finset ℝ³, S ⊆ V → (Finset.univ.filter (fun i => e i ∈ S)).image e = S := by
+    intro S hS; ext y; simp only [Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
+    constructor
+    · rintro ⟨i, hi, rfl⟩; exact hi
+    · intro hy
+      have : y ∈ Finset.univ.image e := himg ▸ hS hy
+      obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp this
+      exact ⟨i, hy, rfl⟩
+  have cardS : ∀ S : Finset ℝ³, S ⊆ V → (Finset.univ.filter (fun i => e i ∈ S)).card = S.card := by
+    intro S hS; rw [← Finset.card_image_of_injective _ he, imgS S hS]
+  have hIc : ∀ k, (I k).card = 4 := fun k => (cardS (Q k) (hQV k)).trans (hQc k)
+  have hImem : ∀ k, I k ∈ (Finset.univ : Finset (Fin 7)).powersetCard 4 := fun k =>
+    Finset.mem_powersetCard.mpr ⟨Finset.subset_univ _, hIc k⟩
+  have hQne : ∀ k, Q k ≠ V := fun k h => by have := hQc k; rw [h, hV] at this; omega
+  have hle2 : ∀ j k, j ≠ k → (I j ∩ I k).card ≤ 2 := by
+    intro j k hjk
+    have e1 : I j ∩ I k = Finset.univ.filter (fun i => e i ∈ Q j ∩ Q k) := by
+      ext i; simp [memI]
+    rw [e1, cardS _ (Finset.inter_subset_left.trans (hQV j))]
+    exact card_inter_le_two_of_facets hext (hQf j) (hQf k) (hQV j) (hQV k) (hQne j) (hQne k)
+      (hQi.ne hjk)
+  have hIne : ∀ j k, j ≠ k → I j ≠ I k := by
+    intro j k hjk h
+    apply hQi.ne hjk
+    rw [← imgS (Q j) (hQV j), ← imgS (Q k) (hQV k)]
+    exact congrArg (Finset.image e) h
+  have hF : ∀ k, ∃ f : ℝ³ →ᵃ[ℝ] ℝ, ∀ i, (i ∈ I k → f (e i) = 0) ∧ (i ∉ I k → f (e i) < 0) := by
+    intro k
+    obtain ⟨f, h0, hn⟩ := hQf k
+    exact ⟨f, fun i => ⟨fun h => h0 _ ((memI k i).mp h),
+      fun h => hn _ (heV i) (fun h' => h ((memI k i).mpr h'))⟩⟩
+  choose F hFk using hF
+  have hI0 : I 0 = {0, 1, 2, 3} := by
+    ext i; rw [memI, hQ0]; fin_cases i <;> simp
+  have sides : ∀ a b c d : Fin 4, QuadSidesOK (I a) (I b) (I c) (I d) := fun a b c d =>
+    quadSidesOK_of_facets e he hext' (hIc a) (hFk a) (hFk b) (hFk c) (hFk d)
+  have s0 := sides 0 1 2 3
+  have s1 := sides 1 0 2 3
+  have s2 := sides 2 0 1 3
+  have s3 := sides 3 0 1 2
+  have l01 := hle2 0 1 (by decide)
+  have l02 := hle2 0 2 (by decide)
+  have l03 := hle2 0 3 (by decide)
+  have F0 := hFk 0
+  rw [hI0] at s0 s1 s2 s3 l01 l02 l03 F0
+  have cls := quad_facets_classify (I 1) (hImem 1) l01 (I 2) (hImem 2) l02 (hle2 1 2 (by decide))
+    (hIne 1 2 (by decide)) (I 3) (hImem 3) l03 (hle2 1 3 (by decide)) (hle2 2 3 (by decide))
+    (hIne 1 3 (by decide)) (hIne 2 3 (by decide)) s0 s1 s2 s3
+  rw [← himg]
+  rcases cls with h | h | h | h | h | h
+  · exact isRupert_of_type02Pattern e he hext' hgen' _ _ _ _ _ _ _ _ F0 (hFk 1) (hFk 2) (hFk 3) h
+  · exact isRupert_of_type02Pattern e he hext' hgen' _ _ _ _ _ _ _ _ F0 (hFk 2) (hFk 1) (hFk 3) h
+  · exact isRupert_of_type02Pattern e he hext' hgen' _ _ _ _ _ _ _ _ F0 (hFk 3) (hFk 1) (hFk 2) h
+  · exact isRupert_of_type02Pattern e he hext' hgen' _ _ _ _ _ _ _ _ (hFk 1) (hFk 2) F0 (hFk 3) h
+  · exact isRupert_of_type02Pattern e he hext' hgen' _ _ _ _ _ _ _ _ (hFk 1) (hFk 3) F0 (hFk 2) h
+  · exact isRupert_of_type02Pattern e he hext' hgen' _ _ _ _ _ _ _ _ (hFk 2) (hFk 3) F0 (hFk 1) h
+
 end Minimality
