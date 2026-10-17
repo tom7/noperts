@@ -1,6 +1,7 @@
 module
 
 public import Minimality.Thm73
+public import Minimality.FaceFive
 
 @[expose] public section
 
@@ -20,7 +21,8 @@ in `-W`, and this converts the first bound into unimodality.
 
 namespace Minimality
 
-open Finset
+open Finset Filter Topology
+open scoped RealInnerProductSpace
 
 /-- A window whose ends descend into it contains a strict local minimum. -/
 theorem exists_localMin_window {k : ℕ} (z : ZMod k → ℝ) (hz : Function.Injective z)
@@ -417,5 +419,815 @@ theorem cycles02_A0B5 {z0 z1 z2 z3 z4 z5 z6 t0 t1 t5 t6 s2 u2 : ℝ} (h34 : z3 <
     | linarith [Fc1 (by linarith)]
     | linarith [Fc2 (by linarith)]
     | linarith [Fc1 (by linarith), Fc2 (by linarith)]
+
+/-! ### The frame: the edge vertical, oblique coordinates in the shadow
+
+The view is `ez`; the shadow of a point is `O + a r1 + b r2` in oblique
+coordinates on the two rays `r1`, `r2` (with `cross2 r1 r2 > 0`), and its depth
+is `z`. The tilt is `v = α r1 + β r2` (horizontal). Then the determinant tests
+of Lemma 8.0 are explicit polynomials in `(a, b, z)`. -/
+
+/-- The point with oblique shadow coordinates `(a, b)` and depth `z`. -/
+noncomputable def oblPt (O r1 r2 : ℝ²) (a b z : ℝ) : ℝ³ :=
+  !₂[O 0 + a * r1 0 + b * r2 0, O 1 + a * r1 1 + b * r2 1, z]
+
+/-- **The determinant tests in oblique coordinates.** -/
+theorem tiltSign_obl (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (α β : ℝ)
+    {ap bp zp aq bq zq ay by' zy : ℝ}
+    (h : 0 < (aq - ap) * (by' - bp) - (bq - bp) * (ay - ap) ∨
+      ((aq - ap) * (by' - bp) - (bq - bp) * (ay - ap) = 0 ∧
+        0 < (zq - zp) * ((ay - ap) * β - (by' - bp) * α) -
+          (zy - zp) * ((aq - ap) * β - (bq - bp) * α))) :
+    TiltSign (oblPt O r1 r2 aq bq zq - oblPt O r1 r2 ap bp zp)
+      (oblPt O r1 r2 ay by' zy - oblPt O r1 r2 ap bp zp) ez (oblPt 0 r1 r2 α β 0) := by
+  have e0 : det3 (oblPt O r1 r2 aq bq zq - oblPt O r1 r2 ap bp zp)
+      (oblPt O r1 r2 ay by' zy - oblPt O r1 r2 ap bp zp) ez =
+      ((aq - ap) * (by' - bp) - (bq - bp) * (ay - ap)) * cross2 r1 r2 := by
+    rw [det3_ez]; simp [oblPt, cross2]; ring
+  have e1 : det3 (oblPt O r1 r2 aq bq zq - oblPt O r1 r2 ap bp zp)
+      (oblPt O r1 r2 ay by' zy - oblPt O r1 r2 ap bp zp) (oblPt 0 r1 r2 α β 0) =
+      ((zq - zp) * ((ay - ap) * β - (by' - bp) * α) -
+          (zy - zp) * ((aq - ap) * β - (bq - bp) * α)) * cross2 r1 r2 := by
+    rw [det3_gen]; simp [oblPt, cross2]; ring
+  unfold TiltSign
+  rw [e0, e1]
+  rcases h with h | ⟨h0, h1⟩
+  · exact Or.inl (mul_pos h hρ)
+  · exact Or.inr ⟨by rw [h0, zero_mul], mul_pos h1 hρ⟩
+
+/-! The six kinds of determinant test along the cycles of Theorem B. `D` below
+is the hypothesis of `tiltSign_obl`. -/
+
+/-- The disjunction of `tiltSign_obl`. -/
+def TiltOK (ap bp zp aq bq zq ay by' zy α β : ℝ) : Prop :=
+  0 < (aq - ap) * (by' - bp) - (bq - bp) * (ay - ap) ∨
+    ((aq - ap) * (by' - bp) - (bq - bp) * (ay - ap) = 0 ∧
+      0 < (zq - zp) * ((ay - ap) * β - (by' - bp) * α) -
+        (zy - zp) * ((aq - ap) * β - (bq - bp) * α))
+
+/-- Side 1 (`b = 0`), outward, the test point off the quad's plane. -/
+theorem tiltOK_side1_off {ap aq zp zq ay by' zy α β : ℝ} (hpq : ap < aq) (hy : 0 < by') :
+    TiltOK ap 0 zp aq 0 zq ay by' zy α β :=
+  Or.inl (by nlinarith [mul_pos (sub_pos.mpr hpq) hy])
+
+/-- Side 1, the test point on the quad (`b = 0`): the sign of `β` and the
+orientation of `(p, q, y)` in the `(a, z)`-plane. -/
+theorem tiltOK_side1_on {ap aq zp zq ay zy α β : ℝ}
+    (h : (0 < β ∧ (aq - ap) * (zy - zp) - (zq - zp) * (ay - ap) < 0) ∨
+      (β < 0 ∧ 0 < (aq - ap) * (zy - zp) - (zq - zp) * (ay - ap))) :
+    TiltOK ap 0 zp aq 0 zq ay 0 zy α β := by
+  right; refine ⟨by ring, ?_⟩
+  rcases h with ⟨hb, hc⟩ | ⟨hb, hc⟩
+  · nlinarith [mul_pos hb (neg_pos.mpr hc)]
+  · nlinarith [mul_pos (neg_pos.mpr hb) hc]
+
+/-- Side 2 (`a = 0`), inward (`b` decreasing), the test point off the quad. -/
+theorem tiltOK_side2_off {bp bq zp zq ay by' zy α β : ℝ} (hpq : bq < bp) (hy : 0 < ay) :
+    TiltOK 0 bp zp 0 bq zq ay by' zy α β :=
+  Or.inl (by nlinarith [mul_pos (sub_pos.mpr hpq) hy])
+
+/-- Side 2, the test point on the quad (`a = 0`). -/
+theorem tiltOK_side2_on {bp bq zp zq by' zy α β : ℝ}
+    (h : (0 < α ∧ 0 < (bq - bp) * (zy - zp) - (zq - zp) * (by' - bp)) ∨
+      (α < 0 ∧ (bq - bp) * (zy - zp) - (zq - zp) * (by' - bp) < 0)) :
+    TiltOK 0 bp zp 0 bq zq 0 by' zy α β := by
+  right; refine ⟨by ring, ?_⟩
+  rcases h with ⟨ha, hc⟩ | ⟨ha, hc⟩
+  · nlinarith [mul_pos ha hc]
+  · nlinarith [mul_pos (neg_pos.mpr ha) (neg_pos.mpr hc)]
+
+/-- The far edge from `A = (tA, 0)` to `2 = (s2, u2)`, beyond the chord to
+`B = (0, tB)`. -/
+theorem tiltOK_farA {tA tB s2 u2 zp zq ay by' zy α β : ℝ} (hA : 0 < tA)
+    (hu2 : 0 < u2) (hch : tA * tB < s2 * tB + u2 * tA)
+    (hy : (by' = 0 ∧ ay < tA) ∨ (ay = 0 ∧ 0 ≤ by' ∧ by' ≤ tB)) :
+    TiltOK tA 0 zp s2 u2 zq ay by' zy α β := by
+  left
+  rcases hy with ⟨h0, h1⟩ | ⟨h0, h1, h2⟩
+  · subst h0; nlinarith [mul_pos hu2 (sub_pos.mpr h1)]
+  · subst h0
+    rcases le_or_gt tA s2 with hs | hs
+    · nlinarith [mul_nonneg (sub_nonneg.mpr hs) h1, mul_pos hu2 hA]
+    · nlinarith [mul_nonneg (sub_nonneg.mpr h2) (sub_pos.mpr hs).le]
+
+/-- The far edge from `2 = (s2, u2)` to `B = (0, tB)`. -/
+theorem tiltOK_farB {tA tB s2 u2 zp zq ay by' zy α β : ℝ} (hB : 0 < tB)
+    (hs2 : 0 < s2) (hch : tA * tB < s2 * tB + u2 * tA)
+    (hy : (ay = 0 ∧ by' < tB) ∨ (by' = 0 ∧ 0 ≤ ay ∧ ay ≤ tA)) :
+    TiltOK s2 u2 zp 0 tB zq ay by' zy α β := by
+  left
+  rcases hy with ⟨h0, h1⟩ | ⟨h0, h1, h2⟩
+  · subst h0; nlinarith [mul_pos hs2 (sub_pos.mpr h1)]
+  · subst h0
+    rcases le_or_gt tB u2 with hu | hu
+    · nlinarith [mul_nonneg (sub_nonneg.mpr hu) h1, mul_pos hs2 hB]
+    · nlinarith [mul_nonneg (sub_nonneg.mpr h2) (sub_pos.mpr hu).le]
+
+/-- A cyclic sequence of distinct reals (at least two terms) with at most one
+local maximum is unimodal. -/
+theorem isCyclicUnimodal_of_localMax_unique {k : ℕ} [NeZero k] (hk : 2 ≤ k) (z : ZMod k → ℝ)
+    (hz : Function.Injective z)
+    (hmax : ∀ a b : ZMod k, z (a - 1) < z a → z (a + 1) < z a →
+      z (b - 1) < z b → z (b + 1) < z b → a = b) : IsCyclicUnimodal z := by
+  have h := isCyclicUnimodal_of_localMin_unique hk (fun i => -z i)
+    (fun a b e => hz (neg_injective e))
+    (fun a b h1 h2 h3 h4 => hmax a b (by linarith) (by linarith) (by linarith) (by linarith))
+  refine ⟨hz, ?_⟩
+  -- the local maxima of `z` are the local minima of `-z`
+  obtain ⟨-, hc⟩ := h
+  classical
+  have hmin : (Finset.univ.filter fun i : ZMod k => -z i < -z (i - 1) ∧ -z i < -z (i + 1)).card
+      = 1 := by
+    -- `-z` has a unique local minimum as well (alternation, applied to `z`)
+    refine Finset.card_eq_one.mpr ?_
+    obtain ⟨m, -, hm⟩ := (Finset.univ : Finset (ZMod k)).exists_max_image z ⟨0, Finset.mem_univ _⟩
+    have h1 : (1 : ZMod k) ≠ 0 := by
+      have : Fact (1 < k) := ⟨by omega⟩
+      exact one_ne_zero
+    have hne : ∀ c : ZMod k, c ≠ 0 → m + c ≠ m := fun c hc h => hc (by simpa using h)
+    have hmax1 : z (m - 1) < z m := lt_of_le_of_ne (hm _ (Finset.mem_univ _)) fun h =>
+      (hne (-1) (neg_ne_zero.mpr h1)) (by rw [← sub_eq_add_neg]; exact hz h)
+    have hmax2 : z (m + 1) < z m := lt_of_le_of_ne (hm _ (Finset.mem_univ _)) fun h =>
+      (hne 1 h1) (hz h)
+    refine ⟨m, Finset.eq_singleton_iff_unique_mem.mpr ⟨by simp [hmax1, hmax2], fun b hb => ?_⟩⟩
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, neg_lt_neg_iff] at hb
+    exact hmax b m hb.1 hb.2 hmax1 hmax2
+  simpa only [neg_lt_neg_iff] using hmin
+
+/-- Unimodal limit depths stay unimodal under small tilts. -/
+theorem eventually_unimodal_tilt {k : ℕ} [NeZero k] (x : ZMod k → ℝ³) (u₀ v : ℝ³)
+    (hu : IsCyclicUnimodal fun i => ⟪x i, u₀⟫) :
+    ∀ᶠ ε in 𝓝[>] (0 : ℝ), IsCyclicUnimodal fun i => ⟪x i, u₀ + ε • v⟫ := by
+  have hc : Continuous fun ε : ℝ => fun i => ⟪x i, u₀ + ε • v⟫ := by fun_prop
+  have := hc.continuousAt (x := 0) |>.preimage_mem_nhds (isOpen_isCyclicUnimodal.mem_nhds
+    (by simpa using hu))
+  exact nhdsWithin_le_nhds this
+
+/-- A convex quadrilateral `p0 p1 p2 p3`, counterclockwise in the `(a, z)`-plane:
+every vertex is strictly left of every edge it is not on. -/
+def ConvQuad (a0 z0 a1 z1 a2 z2 a3 z3 : ℝ) : Prop :=
+  (0 < (a1 - a0) * (z2 - z0) - (z1 - z0) * (a2 - a0) ∧
+    0 < (a1 - a0) * (z3 - z0) - (z1 - z0) * (a3 - a0)) ∧
+  (0 < (a2 - a1) * (z3 - z1) - (z2 - z1) * (a3 - a1) ∧
+    0 < (a2 - a1) * (z0 - z1) - (z2 - z1) * (a0 - a1)) ∧
+  (0 < (a3 - a2) * (z0 - z2) - (z3 - z2) * (a0 - a2) ∧
+    0 < (a3 - a2) * (z1 - z2) - (z3 - z2) * (a1 - a2)) ∧
+  (0 < (a0 - a3) * (z1 - z3) - (z0 - z3) * (a1 - a3) ∧
+    0 < (a0 - a3) * (z2 - z3) - (z0 - z3) * (a2 - a3))
+
+/-! ### The frame theorem for type 02, one shape and wedge at a time
+
+The cycle is listed counterclockwise (`cross2 r1 r2 > 0`); in `W` the tilt is
+`r1 + r2`, in `-W` it is `-(r1 + r2)`. Each test of Lemma 8.0 is one of the six
+kinds above. -/
+
+set_option maxHeartbeats 4000000 in
+set_option linter.unreachableTactic false in
+set_option linter.unusedTactic false in
+theorem rupert02_W_A1B6 (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
+    {t0 t1 t5 t6 s2 u2 z0 z1 z2 z3 z4 z5 z6 : ℝ} (ht0 : 0 < t0) (ht1 : 0 < t1) (ht5 : 0 < t5)
+    (ht6 : 0 < t6) (hs2 : 0 < s2) (hu2 : 0 < u2)
+    (hQ1 : ConvQuad 0 z3 t0 z0 t1 z1 0 z4) (hQ2 : ConvQuad 0 z3 t5 z5 t6 z6 0 z4)
+    (ht01 : t0 < t1) (ht56 : t5 < t6) (hch : t1 * t6 < s2 * t6 + u2 * t1)
+    (hinj : Function.Injective (![z6, z4, z1, z2] : Fin 4 → ℝ))
+    (hext : ∀ a b : Fin 4, (![z6, z4, z1, z2] : Fin 4 → ℝ) a < (![z6, z4, z1, z2] : Fin 4 → ℝ) (a - 1) →
+      (![z6, z4, z1, z2] : Fin 4 → ℝ) a < (![z6, z4, z1, z2] : Fin 4 → ℝ) (a + 1) →
+      (![z6, z4, z1, z2] : Fin 4 → ℝ) b < (![z6, z4, z1, z2] : Fin 4 → ℝ) (b - 1) →
+      (![z6, z4, z1, z2] : Fin 4 → ℝ) b < (![z6, z4, z1, z2] : Fin 4 → ℝ) (b + 1) → a = b) :
+    IsRupert ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³) := by
+  obtain ⟨⟨q1a, q1b⟩, ⟨q1c, q1d⟩, ⟨q1e, q1f⟩, ⟨q1g, q1h⟩⟩ := hQ1
+  obtain ⟨⟨q2a, q2b⟩, ⟨q2c, q2d⟩, ⟨q2e, q2f⟩, ⟨q2g, q2h⟩⟩ := hQ2
+  have key : ∀ {ap bp zp aq bq zq ay by' zy : ℝ}, TiltOK ap bp zp aq bq zq ay by' zy (1) (1) →
+      TiltSign (oblPt O r1 r2 aq bq zq - oblPt O r1 r2 ap bp zp)
+        (oblPt O r1 r2 ay by' zy - oblPt O r1 r2 ap bp zp) ez (oblPt 0 r1 r2 (1) (1) 0) :=
+    fun h => tiltSign_obl O r1 r2 hρ (1) (1) h
+  have hez : (ez : ℝ³) ≠ 0 := by
+    intro h; have := congrArg (fun x : ℝ³ => x 2) h; simp [ez] at this
+  set x : Fin 4 → ℝ³ := ![oblPt O r1 r2 0 t6 z6, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2] with hx
+  have hxV : ∀ i : Fin 4, x i ∈ ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³) := by
+    intro i; fin_cases i <;> simp [hx]
+  have hcyc : ∀ i j : Fin 4, j ≠ i → j ≠ i + 1 →
+      TiltSign (x (i + 1) - x i) (x j - x i) ez (oblPt 0 r1 r2 (1) (1) 0) := by
+    intro i j hji hji1
+    fin_cases i <;> fin_cases j <;> simp [hx] at hji hji1 ⊢ <;> apply key
+    all_goals first
+      | (refine tiltOK_side1_off ?_ ?_ <;> linarith)
+      | (refine tiltOK_side2_off ?_ ?_ <;> linarith)
+      | (refine tiltOK_side1_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side1_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side2_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side2_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_farA ht1 hu2 hch ?_
+         first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+      | (refine tiltOK_farB ht6 hs2 hch ?_
+         first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+  have hrest : ∀ y ∈ ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³), (∀ j : Fin 4, y ≠ x j) → ∀ i : Fin 4,
+      TiltSign (x (i + 1) - x i) (y - x i) ez (oblPt 0 r1 r2 (1) (1) 0) := by
+    intro y hy hyx i
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hy
+    rcases hy with rfl | rfl | rfl | rfl | rfl | rfl | rfl
+    all_goals first
+      | (exfalso; apply hyx 0; simp [hx]; done)
+      | (exfalso; apply hyx 1; simp [hx]; done)
+      | (exfalso; apply hyx 2; simp [hx]; done)
+      | (exfalso; apply hyx 3; simp [hx]; done)
+      | (fin_cases i <;> simp [hx] <;> apply key <;> first
+          | (refine tiltOK_side1_off ?_ ?_ <;> linarith)
+          | (refine tiltOK_side2_off ?_ ?_ <;> linarith)
+          | (refine tiltOK_side1_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side1_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side2_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side2_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_farA ht1 hu2 hch ?_
+             first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+          | (refine tiltOK_farB ht6 hs2 hch ?_
+             first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith)))
+  have hz : (fun i : Fin 4 => ⟪x i, ez⟫) = ![z6, z4, z1, z2] := by
+    funext i; fin_cases i <;> simp [hx, oblPt, inner_ez]
+  have hu0 : IsCyclicUnimodal (k := 4) fun i => ⟪x i, ez⟫ := by
+    have := isCyclicUnimodal_of_localMin_unique (k := 4) (by norm_num) ![z6, z4, z1, z2] hinj hext
+    rw [show (fun i : ZMod 4 => ⟪x i, ez⟫) = ![z6, z4, z1, z2] from hz]; exact this
+  exact isRupert_of_tilted_unimodal' _ ez (oblPt 0 r1 r2 (1) (1) 0) hez (k := 4) (by norm_num)
+    x hxV hcyc hrest IsCyclicUnimodal isOpen_isCyclicUnimodal
+    (fun z c hc hz => isCyclicUnimodal_smul hc hz)
+    (eventually_unimodal_tilt (k := 4) x ez (oblPt 0 r1 r2 (1) (1) 0) hu0) (fun z _ h => h)
+
+set_option maxHeartbeats 4000000 in
+set_option linter.unreachableTactic false in
+set_option linter.unusedTactic false in
+theorem rupert02_W_A0B6 (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
+    {t0 t1 t5 t6 s2 u2 z0 z1 z2 z3 z4 z5 z6 : ℝ} (ht0 : 0 < t0) (ht1 : 0 < t1) (ht5 : 0 < t5)
+    (ht6 : 0 < t6) (hs2 : 0 < s2) (hu2 : 0 < u2)
+    (hQ1 : ConvQuad 0 z3 t0 z0 t1 z1 0 z4) (hQ2 : ConvQuad 0 z3 t5 z5 t6 z6 0 z4)
+    (ht01 : t1 < t0) (ht56 : t5 < t6) (hch : t0 * t6 < s2 * t6 + u2 * t0)
+    (hinj : Function.Injective (![z6, z4, z1, z0, z2] : Fin 5 → ℝ))
+    (hext : ∀ a b : Fin 5, (![z6, z4, z1, z0, z2] : Fin 5 → ℝ) a < (![z6, z4, z1, z0, z2] : Fin 5 → ℝ) (a - 1) →
+      (![z6, z4, z1, z0, z2] : Fin 5 → ℝ) a < (![z6, z4, z1, z0, z2] : Fin 5 → ℝ) (a + 1) →
+      (![z6, z4, z1, z0, z2] : Fin 5 → ℝ) b < (![z6, z4, z1, z0, z2] : Fin 5 → ℝ) (b - 1) →
+      (![z6, z4, z1, z0, z2] : Fin 5 → ℝ) b < (![z6, z4, z1, z0, z2] : Fin 5 → ℝ) (b + 1) → a = b) :
+    IsRupert ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³) := by
+  obtain ⟨⟨q1a, q1b⟩, ⟨q1c, q1d⟩, ⟨q1e, q1f⟩, ⟨q1g, q1h⟩⟩ := hQ1
+  obtain ⟨⟨q2a, q2b⟩, ⟨q2c, q2d⟩, ⟨q2e, q2f⟩, ⟨q2g, q2h⟩⟩ := hQ2
+  have key : ∀ {ap bp zp aq bq zq ay by' zy : ℝ}, TiltOK ap bp zp aq bq zq ay by' zy (1) (1) →
+      TiltSign (oblPt O r1 r2 aq bq zq - oblPt O r1 r2 ap bp zp)
+        (oblPt O r1 r2 ay by' zy - oblPt O r1 r2 ap bp zp) ez (oblPt 0 r1 r2 (1) (1) 0) :=
+    fun h => tiltSign_obl O r1 r2 hρ (1) (1) h
+  have hez : (ez : ℝ³) ≠ 0 := by
+    intro h; have := congrArg (fun x : ℝ³ => x 2) h; simp [ez] at this
+  set x : Fin 5 → ℝ³ := ![oblPt O r1 r2 0 t6 z6, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 s2 u2 z2] with hx
+  have hxV : ∀ i : Fin 5, x i ∈ ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³) := by
+    intro i; fin_cases i <;> simp [hx]
+  have hcyc : ∀ i j : Fin 5, j ≠ i → j ≠ i + 1 →
+      TiltSign (x (i + 1) - x i) (x j - x i) ez (oblPt 0 r1 r2 (1) (1) 0) := by
+    intro i j hji hji1
+    fin_cases i <;> fin_cases j <;> simp [hx] at hji hji1 ⊢ <;> apply key
+    all_goals first
+      | (refine tiltOK_side1_off ?_ ?_ <;> linarith)
+      | (refine tiltOK_side2_off ?_ ?_ <;> linarith)
+      | (refine tiltOK_side1_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side1_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side2_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side2_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_farA ht0 hu2 hch ?_
+         first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+      | (refine tiltOK_farB ht6 hs2 hch ?_
+         first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+  have hrest : ∀ y ∈ ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³), (∀ j : Fin 5, y ≠ x j) → ∀ i : Fin 5,
+      TiltSign (x (i + 1) - x i) (y - x i) ez (oblPt 0 r1 r2 (1) (1) 0) := by
+    intro y hy hyx i
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hy
+    rcases hy with rfl | rfl | rfl | rfl | rfl | rfl | rfl
+    all_goals first
+      | (exfalso; apply hyx 0; simp [hx]; done)
+      | (exfalso; apply hyx 1; simp [hx]; done)
+      | (exfalso; apply hyx 2; simp [hx]; done)
+      | (exfalso; apply hyx 3; simp [hx]; done)
+      | (exfalso; apply hyx 4; simp [hx]; done)
+      | (fin_cases i <;> simp [hx] <;> apply key <;> first
+          | (refine tiltOK_side1_off ?_ ?_ <;> linarith)
+          | (refine tiltOK_side2_off ?_ ?_ <;> linarith)
+          | (refine tiltOK_side1_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side1_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side2_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side2_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_farA ht0 hu2 hch ?_
+             first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+          | (refine tiltOK_farB ht6 hs2 hch ?_
+             first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith)))
+  have hz : (fun i : Fin 5 => ⟪x i, ez⟫) = ![z6, z4, z1, z0, z2] := by
+    funext i; fin_cases i <;> simp [hx, oblPt, inner_ez]
+  have hu0 : IsCyclicUnimodal (k := 5) fun i => ⟪x i, ez⟫ := by
+    have := isCyclicUnimodal_of_localMin_unique (k := 5) (by norm_num) ![z6, z4, z1, z0, z2] hinj hext
+    rw [show (fun i : ZMod 5 => ⟪x i, ez⟫) = ![z6, z4, z1, z0, z2] from hz]; exact this
+  exact isRupert_of_tilted_unimodal' _ ez (oblPt 0 r1 r2 (1) (1) 0) hez (k := 5) (by norm_num)
+    x hxV hcyc hrest IsCyclicUnimodal isOpen_isCyclicUnimodal
+    (fun z c hc hz => isCyclicUnimodal_smul hc hz)
+    (eventually_unimodal_tilt (k := 5) x ez (oblPt 0 r1 r2 (1) (1) 0) hu0) (fun z _ h => h)
+
+set_option maxHeartbeats 4000000 in
+set_option linter.unreachableTactic false in
+set_option linter.unusedTactic false in
+theorem rupert02_W_A1B5 (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
+    {t0 t1 t5 t6 s2 u2 z0 z1 z2 z3 z4 z5 z6 : ℝ} (ht0 : 0 < t0) (ht1 : 0 < t1) (ht5 : 0 < t5)
+    (ht6 : 0 < t6) (hs2 : 0 < s2) (hu2 : 0 < u2)
+    (hQ1 : ConvQuad 0 z3 t0 z0 t1 z1 0 z4) (hQ2 : ConvQuad 0 z3 t5 z5 t6 z6 0 z4)
+    (ht01 : t0 < t1) (ht56 : t6 < t5) (hch : t1 * t5 < s2 * t5 + u2 * t1)
+    (hinj : Function.Injective (![z5, z6, z4, z1, z2] : Fin 5 → ℝ))
+    (hext : ∀ a b : Fin 5, (![z5, z6, z4, z1, z2] : Fin 5 → ℝ) a < (![z5, z6, z4, z1, z2] : Fin 5 → ℝ) (a - 1) →
+      (![z5, z6, z4, z1, z2] : Fin 5 → ℝ) a < (![z5, z6, z4, z1, z2] : Fin 5 → ℝ) (a + 1) →
+      (![z5, z6, z4, z1, z2] : Fin 5 → ℝ) b < (![z5, z6, z4, z1, z2] : Fin 5 → ℝ) (b - 1) →
+      (![z5, z6, z4, z1, z2] : Fin 5 → ℝ) b < (![z5, z6, z4, z1, z2] : Fin 5 → ℝ) (b + 1) → a = b) :
+    IsRupert ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³) := by
+  obtain ⟨⟨q1a, q1b⟩, ⟨q1c, q1d⟩, ⟨q1e, q1f⟩, ⟨q1g, q1h⟩⟩ := hQ1
+  obtain ⟨⟨q2a, q2b⟩, ⟨q2c, q2d⟩, ⟨q2e, q2f⟩, ⟨q2g, q2h⟩⟩ := hQ2
+  have key : ∀ {ap bp zp aq bq zq ay by' zy : ℝ}, TiltOK ap bp zp aq bq zq ay by' zy (1) (1) →
+      TiltSign (oblPt O r1 r2 aq bq zq - oblPt O r1 r2 ap bp zp)
+        (oblPt O r1 r2 ay by' zy - oblPt O r1 r2 ap bp zp) ez (oblPt 0 r1 r2 (1) (1) 0) :=
+    fun h => tiltSign_obl O r1 r2 hρ (1) (1) h
+  have hez : (ez : ℝ³) ≠ 0 := by
+    intro h; have := congrArg (fun x : ℝ³ => x 2) h; simp [ez] at this
+  set x : Fin 5 → ℝ³ := ![oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2] with hx
+  have hxV : ∀ i : Fin 5, x i ∈ ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³) := by
+    intro i; fin_cases i <;> simp [hx]
+  have hcyc : ∀ i j : Fin 5, j ≠ i → j ≠ i + 1 →
+      TiltSign (x (i + 1) - x i) (x j - x i) ez (oblPt 0 r1 r2 (1) (1) 0) := by
+    intro i j hji hji1
+    fin_cases i <;> fin_cases j <;> simp [hx] at hji hji1 ⊢ <;> apply key
+    all_goals first
+      | (refine tiltOK_side1_off ?_ ?_ <;> linarith)
+      | (refine tiltOK_side2_off ?_ ?_ <;> linarith)
+      | (refine tiltOK_side1_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side1_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side2_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side2_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_farA ht1 hu2 hch ?_
+         first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+      | (refine tiltOK_farB ht5 hs2 hch ?_
+         first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+  have hrest : ∀ y ∈ ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³), (∀ j : Fin 5, y ≠ x j) → ∀ i : Fin 5,
+      TiltSign (x (i + 1) - x i) (y - x i) ez (oblPt 0 r1 r2 (1) (1) 0) := by
+    intro y hy hyx i
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hy
+    rcases hy with rfl | rfl | rfl | rfl | rfl | rfl | rfl
+    all_goals first
+      | (exfalso; apply hyx 0; simp [hx]; done)
+      | (exfalso; apply hyx 1; simp [hx]; done)
+      | (exfalso; apply hyx 2; simp [hx]; done)
+      | (exfalso; apply hyx 3; simp [hx]; done)
+      | (exfalso; apply hyx 4; simp [hx]; done)
+      | (fin_cases i <;> simp [hx] <;> apply key <;> first
+          | (refine tiltOK_side1_off ?_ ?_ <;> linarith)
+          | (refine tiltOK_side2_off ?_ ?_ <;> linarith)
+          | (refine tiltOK_side1_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side1_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side2_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side2_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_farA ht1 hu2 hch ?_
+             first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+          | (refine tiltOK_farB ht5 hs2 hch ?_
+             first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith)))
+  have hz : (fun i : Fin 5 => ⟪x i, ez⟫) = ![z5, z6, z4, z1, z2] := by
+    funext i; fin_cases i <;> simp [hx, oblPt, inner_ez]
+  have hu0 : IsCyclicUnimodal (k := 5) fun i => ⟪x i, ez⟫ := by
+    have := isCyclicUnimodal_of_localMin_unique (k := 5) (by norm_num) ![z5, z6, z4, z1, z2] hinj hext
+    rw [show (fun i : ZMod 5 => ⟪x i, ez⟫) = ![z5, z6, z4, z1, z2] from hz]; exact this
+  exact isRupert_of_tilted_unimodal' _ ez (oblPt 0 r1 r2 (1) (1) 0) hez (k := 5) (by norm_num)
+    x hxV hcyc hrest IsCyclicUnimodal isOpen_isCyclicUnimodal
+    (fun z c hc hz => isCyclicUnimodal_smul hc hz)
+    (eventually_unimodal_tilt (k := 5) x ez (oblPt 0 r1 r2 (1) (1) 0) hu0) (fun z _ h => h)
+
+set_option maxHeartbeats 4000000 in
+set_option linter.unreachableTactic false in
+set_option linter.unusedTactic false in
+theorem rupert02_W_A0B5 (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
+    {t0 t1 t5 t6 s2 u2 z0 z1 z2 z3 z4 z5 z6 : ℝ} (ht0 : 0 < t0) (ht1 : 0 < t1) (ht5 : 0 < t5)
+    (ht6 : 0 < t6) (hs2 : 0 < s2) (hu2 : 0 < u2)
+    (hQ1 : ConvQuad 0 z3 t0 z0 t1 z1 0 z4) (hQ2 : ConvQuad 0 z3 t5 z5 t6 z6 0 z4)
+    (ht01 : t1 < t0) (ht56 : t6 < t5) (hch : t0 * t5 < s2 * t5 + u2 * t0)
+    (hinj : Function.Injective (![z5, z6, z4, z1, z0, z2] : Fin 6 → ℝ))
+    (hext : ∀ a b : Fin 6, (![z5, z6, z4, z1, z0, z2] : Fin 6 → ℝ) a < (![z5, z6, z4, z1, z0, z2] : Fin 6 → ℝ) (a - 1) →
+      (![z5, z6, z4, z1, z0, z2] : Fin 6 → ℝ) a < (![z5, z6, z4, z1, z0, z2] : Fin 6 → ℝ) (a + 1) →
+      (![z5, z6, z4, z1, z0, z2] : Fin 6 → ℝ) b < (![z5, z6, z4, z1, z0, z2] : Fin 6 → ℝ) (b - 1) →
+      (![z5, z6, z4, z1, z0, z2] : Fin 6 → ℝ) b < (![z5, z6, z4, z1, z0, z2] : Fin 6 → ℝ) (b + 1) → a = b) :
+    IsRupert ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³) := by
+  obtain ⟨⟨q1a, q1b⟩, ⟨q1c, q1d⟩, ⟨q1e, q1f⟩, ⟨q1g, q1h⟩⟩ := hQ1
+  obtain ⟨⟨q2a, q2b⟩, ⟨q2c, q2d⟩, ⟨q2e, q2f⟩, ⟨q2g, q2h⟩⟩ := hQ2
+  have key : ∀ {ap bp zp aq bq zq ay by' zy : ℝ}, TiltOK ap bp zp aq bq zq ay by' zy (1) (1) →
+      TiltSign (oblPt O r1 r2 aq bq zq - oblPt O r1 r2 ap bp zp)
+        (oblPt O r1 r2 ay by' zy - oblPt O r1 r2 ap bp zp) ez (oblPt 0 r1 r2 (1) (1) 0) :=
+    fun h => tiltSign_obl O r1 r2 hρ (1) (1) h
+  have hez : (ez : ℝ³) ≠ 0 := by
+    intro h; have := congrArg (fun x : ℝ³ => x 2) h; simp [ez] at this
+  set x : Fin 6 → ℝ³ := ![oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 s2 u2 z2] with hx
+  have hxV : ∀ i : Fin 6, x i ∈ ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³) := by
+    intro i; fin_cases i <;> simp [hx]
+  have hcyc : ∀ i j : Fin 6, j ≠ i → j ≠ i + 1 →
+      TiltSign (x (i + 1) - x i) (x j - x i) ez (oblPt 0 r1 r2 (1) (1) 0) := by
+    intro i j hji hji1
+    fin_cases i <;> fin_cases j <;> simp [hx] at hji hji1 ⊢ <;> apply key
+    all_goals first
+      | (refine tiltOK_side1_off ?_ ?_ <;> linarith)
+      | (refine tiltOK_side2_off ?_ ?_ <;> linarith)
+      | (refine tiltOK_side1_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side1_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side2_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side2_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_farA ht0 hu2 hch ?_
+         first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+      | (refine tiltOK_farB ht5 hs2 hch ?_
+         first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+  have hrest : ∀ y ∈ ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³), (∀ j : Fin 6, y ≠ x j) → ∀ i : Fin 6,
+      TiltSign (x (i + 1) - x i) (y - x i) ez (oblPt 0 r1 r2 (1) (1) 0) := by
+    intro y hy hyx i
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hy
+    rcases hy with rfl | rfl | rfl | rfl | rfl | rfl | rfl
+    all_goals first
+      | (exfalso; apply hyx 0; simp [hx]; done)
+      | (exfalso; apply hyx 1; simp [hx]; done)
+      | (exfalso; apply hyx 2; simp [hx]; done)
+      | (exfalso; apply hyx 3; simp [hx]; done)
+      | (exfalso; apply hyx 4; simp [hx]; done)
+      | (exfalso; apply hyx 5; simp [hx]; done)
+      | (fin_cases i <;> simp [hx] <;> apply key <;> first
+          | (refine tiltOK_side1_off ?_ ?_ <;> linarith)
+          | (refine tiltOK_side2_off ?_ ?_ <;> linarith)
+          | (refine tiltOK_side1_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side1_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side2_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side2_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_farA ht0 hu2 hch ?_
+             first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+          | (refine tiltOK_farB ht5 hs2 hch ?_
+             first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith)))
+  have hz : (fun i : Fin 6 => ⟪x i, ez⟫) = ![z5, z6, z4, z1, z0, z2] := by
+    funext i; fin_cases i <;> simp [hx, oblPt, inner_ez]
+  have hu0 : IsCyclicUnimodal (k := 6) fun i => ⟪x i, ez⟫ := by
+    have := isCyclicUnimodal_of_localMin_unique (k := 6) (by norm_num) ![z5, z6, z4, z1, z0, z2] hinj hext
+    rw [show (fun i : ZMod 6 => ⟪x i, ez⟫) = ![z5, z6, z4, z1, z0, z2] from hz]; exact this
+  exact isRupert_of_tilted_unimodal' _ ez (oblPt 0 r1 r2 (1) (1) 0) hez (k := 6) (by norm_num)
+    x hxV hcyc hrest IsCyclicUnimodal isOpen_isCyclicUnimodal
+    (fun z c hc hz => isCyclicUnimodal_smul hc hz)
+    (eventually_unimodal_tilt (k := 6) x ez (oblPt 0 r1 r2 (1) (1) 0) hu0) (fun z _ h => h)
+
+set_option maxHeartbeats 4000000 in
+set_option linter.unreachableTactic false in
+set_option linter.unusedTactic false in
+theorem rupert02_M_A1B6 (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
+    {t0 t1 t5 t6 s2 u2 z0 z1 z2 z3 z4 z5 z6 : ℝ} (ht0 : 0 < t0) (ht1 : 0 < t1) (ht5 : 0 < t5)
+    (ht6 : 0 < t6) (hs2 : 0 < s2) (hu2 : 0 < u2)
+    (hQ1 : ConvQuad 0 z3 t0 z0 t1 z1 0 z4) (hQ2 : ConvQuad 0 z3 t5 z5 t6 z6 0 z4)
+    (ht01 : t0 < t1) (ht56 : t5 < t6) (hch : t1 * t6 < s2 * t6 + u2 * t1)
+    (hinj : Function.Injective (![z6, z5, z3, z0, z1, z2] : Fin 6 → ℝ))
+    (hext : ∀ a b : Fin 6, (![z6, z5, z3, z0, z1, z2] : Fin 6 → ℝ) (a - 1) < (![z6, z5, z3, z0, z1, z2] : Fin 6 → ℝ) a →
+      (![z6, z5, z3, z0, z1, z2] : Fin 6 → ℝ) (a + 1) < (![z6, z5, z3, z0, z1, z2] : Fin 6 → ℝ) a →
+      (![z6, z5, z3, z0, z1, z2] : Fin 6 → ℝ) (b - 1) < (![z6, z5, z3, z0, z1, z2] : Fin 6 → ℝ) b →
+      (![z6, z5, z3, z0, z1, z2] : Fin 6 → ℝ) (b + 1) < (![z6, z5, z3, z0, z1, z2] : Fin 6 → ℝ) b → a = b) :
+    IsRupert ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³) := by
+  obtain ⟨⟨q1a, q1b⟩, ⟨q1c, q1d⟩, ⟨q1e, q1f⟩, ⟨q1g, q1h⟩⟩ := hQ1
+  obtain ⟨⟨q2a, q2b⟩, ⟨q2c, q2d⟩, ⟨q2e, q2f⟩, ⟨q2g, q2h⟩⟩ := hQ2
+  have key : ∀ {ap bp zp aq bq zq ay by' zy : ℝ}, TiltOK ap bp zp aq bq zq ay by' zy (-1) (-1) →
+      TiltSign (oblPt O r1 r2 aq bq zq - oblPt O r1 r2 ap bp zp)
+        (oblPt O r1 r2 ay by' zy - oblPt O r1 r2 ap bp zp) ez (oblPt 0 r1 r2 (-1) (-1) 0) :=
+    fun h => tiltSign_obl O r1 r2 hρ (-1) (-1) h
+  have hez : (ez : ℝ³) ≠ 0 := by
+    intro h; have := congrArg (fun x : ℝ³ => x 2) h; simp [ez] at this
+  set x : Fin 6 → ℝ³ := ![oblPt O r1 r2 0 t6 z6, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2] with hx
+  have hxV : ∀ i : Fin 6, x i ∈ ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³) := by
+    intro i; fin_cases i <;> simp [hx]
+  have hcyc : ∀ i j : Fin 6, j ≠ i → j ≠ i + 1 →
+      TiltSign (x (i + 1) - x i) (x j - x i) ez (oblPt 0 r1 r2 (-1) (-1) 0) := by
+    intro i j hji hji1
+    fin_cases i <;> fin_cases j <;> simp [hx] at hji hji1 ⊢ <;> apply key
+    all_goals first
+      | (refine tiltOK_side1_off ?_ ?_ <;> linarith)
+      | (refine tiltOK_side2_off ?_ ?_ <;> linarith)
+      | (refine tiltOK_side1_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side1_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side2_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side2_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_farA ht1 hu2 hch ?_
+         first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+      | (refine tiltOK_farB ht6 hs2 hch ?_
+         first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+  have hrest : ∀ y ∈ ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³), (∀ j : Fin 6, y ≠ x j) → ∀ i : Fin 6,
+      TiltSign (x (i + 1) - x i) (y - x i) ez (oblPt 0 r1 r2 (-1) (-1) 0) := by
+    intro y hy hyx i
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hy
+    rcases hy with rfl | rfl | rfl | rfl | rfl | rfl | rfl
+    all_goals first
+      | (exfalso; apply hyx 0; simp [hx]; done)
+      | (exfalso; apply hyx 1; simp [hx]; done)
+      | (exfalso; apply hyx 2; simp [hx]; done)
+      | (exfalso; apply hyx 3; simp [hx]; done)
+      | (exfalso; apply hyx 4; simp [hx]; done)
+      | (exfalso; apply hyx 5; simp [hx]; done)
+      | (fin_cases i <;> simp [hx] <;> apply key <;> first
+          | (refine tiltOK_side1_off ?_ ?_ <;> linarith)
+          | (refine tiltOK_side2_off ?_ ?_ <;> linarith)
+          | (refine tiltOK_side1_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side1_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side2_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side2_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_farA ht1 hu2 hch ?_
+             first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+          | (refine tiltOK_farB ht6 hs2 hch ?_
+             first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith)))
+  have hz : (fun i : Fin 6 => ⟪x i, ez⟫) = ![z6, z5, z3, z0, z1, z2] := by
+    funext i; fin_cases i <;> simp [hx, oblPt, inner_ez]
+  have hu0 : IsCyclicUnimodal (k := 6) fun i => ⟪x i, ez⟫ := by
+    have := isCyclicUnimodal_of_localMax_unique (k := 6) (by norm_num) ![z6, z5, z3, z0, z1, z2] hinj hext
+    rw [show (fun i : ZMod 6 => ⟪x i, ez⟫) = ![z6, z5, z3, z0, z1, z2] from hz]; exact this
+  exact isRupert_of_tilted_unimodal' _ ez (oblPt 0 r1 r2 (-1) (-1) 0) hez (k := 6) (by norm_num)
+    x hxV hcyc hrest IsCyclicUnimodal isOpen_isCyclicUnimodal
+    (fun z c hc hz => isCyclicUnimodal_smul hc hz)
+    (eventually_unimodal_tilt (k := 6) x ez (oblPt 0 r1 r2 (-1) (-1) 0) hu0) (fun z _ h => h)
+
+set_option maxHeartbeats 4000000 in
+set_option linter.unreachableTactic false in
+set_option linter.unusedTactic false in
+theorem rupert02_M_A0B6 (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
+    {t0 t1 t5 t6 s2 u2 z0 z1 z2 z3 z4 z5 z6 : ℝ} (ht0 : 0 < t0) (ht1 : 0 < t1) (ht5 : 0 < t5)
+    (ht6 : 0 < t6) (hs2 : 0 < s2) (hu2 : 0 < u2)
+    (hQ1 : ConvQuad 0 z3 t0 z0 t1 z1 0 z4) (hQ2 : ConvQuad 0 z3 t5 z5 t6 z6 0 z4)
+    (ht01 : t1 < t0) (ht56 : t5 < t6) (hch : t0 * t6 < s2 * t6 + u2 * t0)
+    (hinj : Function.Injective (![z6, z5, z3, z0, z2] : Fin 5 → ℝ))
+    (hext : ∀ a b : Fin 5, (![z6, z5, z3, z0, z2] : Fin 5 → ℝ) (a - 1) < (![z6, z5, z3, z0, z2] : Fin 5 → ℝ) a →
+      (![z6, z5, z3, z0, z2] : Fin 5 → ℝ) (a + 1) < (![z6, z5, z3, z0, z2] : Fin 5 → ℝ) a →
+      (![z6, z5, z3, z0, z2] : Fin 5 → ℝ) (b - 1) < (![z6, z5, z3, z0, z2] : Fin 5 → ℝ) b →
+      (![z6, z5, z3, z0, z2] : Fin 5 → ℝ) (b + 1) < (![z6, z5, z3, z0, z2] : Fin 5 → ℝ) b → a = b) :
+    IsRupert ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³) := by
+  obtain ⟨⟨q1a, q1b⟩, ⟨q1c, q1d⟩, ⟨q1e, q1f⟩, ⟨q1g, q1h⟩⟩ := hQ1
+  obtain ⟨⟨q2a, q2b⟩, ⟨q2c, q2d⟩, ⟨q2e, q2f⟩, ⟨q2g, q2h⟩⟩ := hQ2
+  have key : ∀ {ap bp zp aq bq zq ay by' zy : ℝ}, TiltOK ap bp zp aq bq zq ay by' zy (-1) (-1) →
+      TiltSign (oblPt O r1 r2 aq bq zq - oblPt O r1 r2 ap bp zp)
+        (oblPt O r1 r2 ay by' zy - oblPt O r1 r2 ap bp zp) ez (oblPt 0 r1 r2 (-1) (-1) 0) :=
+    fun h => tiltSign_obl O r1 r2 hρ (-1) (-1) h
+  have hez : (ez : ℝ³) ≠ 0 := by
+    intro h; have := congrArg (fun x : ℝ³ => x 2) h; simp [ez] at this
+  set x : Fin 5 → ℝ³ := ![oblPt O r1 r2 0 t6 z6, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 s2 u2 z2] with hx
+  have hxV : ∀ i : Fin 5, x i ∈ ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³) := by
+    intro i; fin_cases i <;> simp [hx]
+  have hcyc : ∀ i j : Fin 5, j ≠ i → j ≠ i + 1 →
+      TiltSign (x (i + 1) - x i) (x j - x i) ez (oblPt 0 r1 r2 (-1) (-1) 0) := by
+    intro i j hji hji1
+    fin_cases i <;> fin_cases j <;> simp [hx] at hji hji1 ⊢ <;> apply key
+    all_goals first
+      | (refine tiltOK_side1_off ?_ ?_ <;> linarith)
+      | (refine tiltOK_side2_off ?_ ?_ <;> linarith)
+      | (refine tiltOK_side1_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side1_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side2_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side2_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_farA ht0 hu2 hch ?_
+         first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+      | (refine tiltOK_farB ht6 hs2 hch ?_
+         first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+  have hrest : ∀ y ∈ ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³), (∀ j : Fin 5, y ≠ x j) → ∀ i : Fin 5,
+      TiltSign (x (i + 1) - x i) (y - x i) ez (oblPt 0 r1 r2 (-1) (-1) 0) := by
+    intro y hy hyx i
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hy
+    rcases hy with rfl | rfl | rfl | rfl | rfl | rfl | rfl
+    all_goals first
+      | (exfalso; apply hyx 0; simp [hx]; done)
+      | (exfalso; apply hyx 1; simp [hx]; done)
+      | (exfalso; apply hyx 2; simp [hx]; done)
+      | (exfalso; apply hyx 3; simp [hx]; done)
+      | (exfalso; apply hyx 4; simp [hx]; done)
+      | (fin_cases i <;> simp [hx] <;> apply key <;> first
+          | (refine tiltOK_side1_off ?_ ?_ <;> linarith)
+          | (refine tiltOK_side2_off ?_ ?_ <;> linarith)
+          | (refine tiltOK_side1_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side1_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side2_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side2_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_farA ht0 hu2 hch ?_
+             first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+          | (refine tiltOK_farB ht6 hs2 hch ?_
+             first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith)))
+  have hz : (fun i : Fin 5 => ⟪x i, ez⟫) = ![z6, z5, z3, z0, z2] := by
+    funext i; fin_cases i <;> simp [hx, oblPt, inner_ez]
+  have hu0 : IsCyclicUnimodal (k := 5) fun i => ⟪x i, ez⟫ := by
+    have := isCyclicUnimodal_of_localMax_unique (k := 5) (by norm_num) ![z6, z5, z3, z0, z2] hinj hext
+    rw [show (fun i : ZMod 5 => ⟪x i, ez⟫) = ![z6, z5, z3, z0, z2] from hz]; exact this
+  exact isRupert_of_tilted_unimodal' _ ez (oblPt 0 r1 r2 (-1) (-1) 0) hez (k := 5) (by norm_num)
+    x hxV hcyc hrest IsCyclicUnimodal isOpen_isCyclicUnimodal
+    (fun z c hc hz => isCyclicUnimodal_smul hc hz)
+    (eventually_unimodal_tilt (k := 5) x ez (oblPt 0 r1 r2 (-1) (-1) 0) hu0) (fun z _ h => h)
+
+set_option maxHeartbeats 4000000 in
+set_option linter.unreachableTactic false in
+set_option linter.unusedTactic false in
+theorem rupert02_M_A1B5 (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
+    {t0 t1 t5 t6 s2 u2 z0 z1 z2 z3 z4 z5 z6 : ℝ} (ht0 : 0 < t0) (ht1 : 0 < t1) (ht5 : 0 < t5)
+    (ht6 : 0 < t6) (hs2 : 0 < s2) (hu2 : 0 < u2)
+    (hQ1 : ConvQuad 0 z3 t0 z0 t1 z1 0 z4) (hQ2 : ConvQuad 0 z3 t5 z5 t6 z6 0 z4)
+    (ht01 : t0 < t1) (ht56 : t6 < t5) (hch : t1 * t5 < s2 * t5 + u2 * t1)
+    (hinj : Function.Injective (![z5, z3, z0, z1, z2] : Fin 5 → ℝ))
+    (hext : ∀ a b : Fin 5, (![z5, z3, z0, z1, z2] : Fin 5 → ℝ) (a - 1) < (![z5, z3, z0, z1, z2] : Fin 5 → ℝ) a →
+      (![z5, z3, z0, z1, z2] : Fin 5 → ℝ) (a + 1) < (![z5, z3, z0, z1, z2] : Fin 5 → ℝ) a →
+      (![z5, z3, z0, z1, z2] : Fin 5 → ℝ) (b - 1) < (![z5, z3, z0, z1, z2] : Fin 5 → ℝ) b →
+      (![z5, z3, z0, z1, z2] : Fin 5 → ℝ) (b + 1) < (![z5, z3, z0, z1, z2] : Fin 5 → ℝ) b → a = b) :
+    IsRupert ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³) := by
+  obtain ⟨⟨q1a, q1b⟩, ⟨q1c, q1d⟩, ⟨q1e, q1f⟩, ⟨q1g, q1h⟩⟩ := hQ1
+  obtain ⟨⟨q2a, q2b⟩, ⟨q2c, q2d⟩, ⟨q2e, q2f⟩, ⟨q2g, q2h⟩⟩ := hQ2
+  have key : ∀ {ap bp zp aq bq zq ay by' zy : ℝ}, TiltOK ap bp zp aq bq zq ay by' zy (-1) (-1) →
+      TiltSign (oblPt O r1 r2 aq bq zq - oblPt O r1 r2 ap bp zp)
+        (oblPt O r1 r2 ay by' zy - oblPt O r1 r2 ap bp zp) ez (oblPt 0 r1 r2 (-1) (-1) 0) :=
+    fun h => tiltSign_obl O r1 r2 hρ (-1) (-1) h
+  have hez : (ez : ℝ³) ≠ 0 := by
+    intro h; have := congrArg (fun x : ℝ³ => x 2) h; simp [ez] at this
+  set x : Fin 5 → ℝ³ := ![oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2] with hx
+  have hxV : ∀ i : Fin 5, x i ∈ ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³) := by
+    intro i; fin_cases i <;> simp [hx]
+  have hcyc : ∀ i j : Fin 5, j ≠ i → j ≠ i + 1 →
+      TiltSign (x (i + 1) - x i) (x j - x i) ez (oblPt 0 r1 r2 (-1) (-1) 0) := by
+    intro i j hji hji1
+    fin_cases i <;> fin_cases j <;> simp [hx] at hji hji1 ⊢ <;> apply key
+    all_goals first
+      | (refine tiltOK_side1_off ?_ ?_ <;> linarith)
+      | (refine tiltOK_side2_off ?_ ?_ <;> linarith)
+      | (refine tiltOK_side1_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side1_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side2_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side2_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_farA ht1 hu2 hch ?_
+         first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+      | (refine tiltOK_farB ht5 hs2 hch ?_
+         first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+  have hrest : ∀ y ∈ ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³), (∀ j : Fin 5, y ≠ x j) → ∀ i : Fin 5,
+      TiltSign (x (i + 1) - x i) (y - x i) ez (oblPt 0 r1 r2 (-1) (-1) 0) := by
+    intro y hy hyx i
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hy
+    rcases hy with rfl | rfl | rfl | rfl | rfl | rfl | rfl
+    all_goals first
+      | (exfalso; apply hyx 0; simp [hx]; done)
+      | (exfalso; apply hyx 1; simp [hx]; done)
+      | (exfalso; apply hyx 2; simp [hx]; done)
+      | (exfalso; apply hyx 3; simp [hx]; done)
+      | (exfalso; apply hyx 4; simp [hx]; done)
+      | (fin_cases i <;> simp [hx] <;> apply key <;> first
+          | (refine tiltOK_side1_off ?_ ?_ <;> linarith)
+          | (refine tiltOK_side2_off ?_ ?_ <;> linarith)
+          | (refine tiltOK_side1_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side1_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side2_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side2_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_farA ht1 hu2 hch ?_
+             first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+          | (refine tiltOK_farB ht5 hs2 hch ?_
+             first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith)))
+  have hz : (fun i : Fin 5 => ⟪x i, ez⟫) = ![z5, z3, z0, z1, z2] := by
+    funext i; fin_cases i <;> simp [hx, oblPt, inner_ez]
+  have hu0 : IsCyclicUnimodal (k := 5) fun i => ⟪x i, ez⟫ := by
+    have := isCyclicUnimodal_of_localMax_unique (k := 5) (by norm_num) ![z5, z3, z0, z1, z2] hinj hext
+    rw [show (fun i : ZMod 5 => ⟪x i, ez⟫) = ![z5, z3, z0, z1, z2] from hz]; exact this
+  exact isRupert_of_tilted_unimodal' _ ez (oblPt 0 r1 r2 (-1) (-1) 0) hez (k := 5) (by norm_num)
+    x hxV hcyc hrest IsCyclicUnimodal isOpen_isCyclicUnimodal
+    (fun z c hc hz => isCyclicUnimodal_smul hc hz)
+    (eventually_unimodal_tilt (k := 5) x ez (oblPt 0 r1 r2 (-1) (-1) 0) hu0) (fun z _ h => h)
+
+set_option maxHeartbeats 4000000 in
+set_option linter.unreachableTactic false in
+set_option linter.unusedTactic false in
+theorem rupert02_M_A0B5 (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
+    {t0 t1 t5 t6 s2 u2 z0 z1 z2 z3 z4 z5 z6 : ℝ} (ht0 : 0 < t0) (ht1 : 0 < t1) (ht5 : 0 < t5)
+    (ht6 : 0 < t6) (hs2 : 0 < s2) (hu2 : 0 < u2)
+    (hQ1 : ConvQuad 0 z3 t0 z0 t1 z1 0 z4) (hQ2 : ConvQuad 0 z3 t5 z5 t6 z6 0 z4)
+    (ht01 : t1 < t0) (ht56 : t6 < t5) (hch : t0 * t5 < s2 * t5 + u2 * t0)
+    (hinj : Function.Injective (![z5, z3, z0, z2] : Fin 4 → ℝ))
+    (hext : ∀ a b : Fin 4, (![z5, z3, z0, z2] : Fin 4 → ℝ) (a - 1) < (![z5, z3, z0, z2] : Fin 4 → ℝ) a →
+      (![z5, z3, z0, z2] : Fin 4 → ℝ) (a + 1) < (![z5, z3, z0, z2] : Fin 4 → ℝ) a →
+      (![z5, z3, z0, z2] : Fin 4 → ℝ) (b - 1) < (![z5, z3, z0, z2] : Fin 4 → ℝ) b →
+      (![z5, z3, z0, z2] : Fin 4 → ℝ) (b + 1) < (![z5, z3, z0, z2] : Fin 4 → ℝ) b → a = b) :
+    IsRupert ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³) := by
+  obtain ⟨⟨q1a, q1b⟩, ⟨q1c, q1d⟩, ⟨q1e, q1f⟩, ⟨q1g, q1h⟩⟩ := hQ1
+  obtain ⟨⟨q2a, q2b⟩, ⟨q2c, q2d⟩, ⟨q2e, q2f⟩, ⟨q2g, q2h⟩⟩ := hQ2
+  have key : ∀ {ap bp zp aq bq zq ay by' zy : ℝ}, TiltOK ap bp zp aq bq zq ay by' zy (-1) (-1) →
+      TiltSign (oblPt O r1 r2 aq bq zq - oblPt O r1 r2 ap bp zp)
+        (oblPt O r1 r2 ay by' zy - oblPt O r1 r2 ap bp zp) ez (oblPt 0 r1 r2 (-1) (-1) 0) :=
+    fun h => tiltSign_obl O r1 r2 hρ (-1) (-1) h
+  have hez : (ez : ℝ³) ≠ 0 := by
+    intro h; have := congrArg (fun x : ℝ³ => x 2) h; simp [ez] at this
+  set x : Fin 4 → ℝ³ := ![oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 s2 u2 z2] with hx
+  have hxV : ∀ i : Fin 4, x i ∈ ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³) := by
+    intro i; fin_cases i <;> simp [hx]
+  have hcyc : ∀ i j : Fin 4, j ≠ i → j ≠ i + 1 →
+      TiltSign (x (i + 1) - x i) (x j - x i) ez (oblPt 0 r1 r2 (-1) (-1) 0) := by
+    intro i j hji hji1
+    fin_cases i <;> fin_cases j <;> simp [hx] at hji hji1 ⊢ <;> apply key
+    all_goals first
+      | (refine tiltOK_side1_off ?_ ?_ <;> linarith)
+      | (refine tiltOK_side2_off ?_ ?_ <;> linarith)
+      | (refine tiltOK_side1_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side1_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side2_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_side2_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+      | (refine tiltOK_farA ht0 hu2 hch ?_
+         first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+      | (refine tiltOK_farB ht5 hs2 hch ?_
+         first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+  have hrest : ∀ y ∈ ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³), (∀ j : Fin 4, y ≠ x j) → ∀ i : Fin 4,
+      TiltSign (x (i + 1) - x i) (y - x i) ez (oblPt 0 r1 r2 (-1) (-1) 0) := by
+    intro y hy hyx i
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hy
+    rcases hy with rfl | rfl | rfl | rfl | rfl | rfl | rfl
+    all_goals first
+      | (exfalso; apply hyx 0; simp [hx]; done)
+      | (exfalso; apply hyx 1; simp [hx]; done)
+      | (exfalso; apply hyx 2; simp [hx]; done)
+      | (exfalso; apply hyx 3; simp [hx]; done)
+      | (fin_cases i <;> simp [hx] <;> apply key <;> first
+          | (refine tiltOK_side1_off ?_ ?_ <;> linarith)
+          | (refine tiltOK_side2_off ?_ ?_ <;> linarith)
+          | (refine tiltOK_side1_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side1_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side2_on (Or.inl ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_side2_on (Or.inr ⟨?_, ?_⟩) <;> linarith)
+          | (refine tiltOK_farA ht0 hu2 hch ?_
+             first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith))
+          | (refine tiltOK_farB ht5 hs2 hch ?_
+             first | (left; constructor <;> linarith) | (right; refine ⟨?_, ?_, ?_⟩ <;> linarith)))
+  have hz : (fun i : Fin 4 => ⟪x i, ez⟫) = ![z5, z3, z0, z2] := by
+    funext i; fin_cases i <;> simp [hx, oblPt, inner_ez]
+  have hu0 : IsCyclicUnimodal (k := 4) fun i => ⟪x i, ez⟫ := by
+    have := isCyclicUnimodal_of_localMax_unique (k := 4) (by norm_num) ![z5, z3, z0, z2] hinj hext
+    rw [show (fun i : ZMod 4 => ⟪x i, ez⟫) = ![z5, z3, z0, z2] from hz]; exact this
+  exact isRupert_of_tilted_unimodal' _ ez (oblPt 0 r1 r2 (-1) (-1) 0) hez (k := 4) (by norm_num)
+    x hxV hcyc hrest IsCyclicUnimodal isOpen_isCyclicUnimodal
+    (fun z c hc hz => isCyclicUnimodal_smul hc hz)
+    (eventually_unimodal_tilt (k := 4) x ez (oblPt 0 r1 r2 (-1) (-1) 0) hu0) (fun z _ h => h)
+
+/-- **Theorem B, frame form** (FEWER-FACES-PROOFS.md §4, under (G) and (Z)):
+seven points in the frame of the edge 34 (vertical, `z3 < z4`), with the quads
+0134 and 3456 convex in their planes, the planes of 0235 and 1246 through 2
+((Q3), (Q4)), 2 beyond the chord of the far vertices, the edges 01 and 56 not
+parallel to 34, and distinct depths, are Rupert. -/
+theorem isRupert_type02_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
+    {t0 t1 t5 t6 s2 u2 z0 z1 z2 z3 z4 z5 z6 : ℝ} (ht0 : 0 < t0) (ht1 : 0 < t1) (ht5 : 0 < t5)
+    (ht6 : 0 < t6) (hs2 : 0 < s2) (hu2 : 0 < u2) (h34 : z3 < z4)
+    (hQ1 : ConvQuad 0 z3 t0 z0 t1 z1 0 z4) (hQ2 : ConvQuad 0 z3 t5 z5 t6 z6 0 z4)
+    (hQ3 : t0 * t5 * (z2 - z3) = s2 * t5 * (z0 - z3) + u2 * t0 * (z5 - z3))
+    (hQ4 : t1 * t6 * (z2 - z4) = s2 * t6 * (z1 - z4) + u2 * t1 * (z6 - z4))
+    (ht01 : t0 ≠ t1) (ht56 : t5 ≠ t6)
+    (hch : max t0 t1 * max t5 t6 < s2 * max t5 t6 + u2 * max t0 t1)
+    (hzinj : Function.Injective (![z0, z1, z2, z3, z4, z5, z6] : Fin 7 → ℝ)) :
+    IsRupert ({oblPt O r1 r2 t0 0 z0, oblPt O r1 r2 t1 0 z1, oblPt O r1 r2 s2 u2 z2, oblPt O r1 r2 0 0 z3, oblPt O r1 r2 0 0 z4, oblPt O r1 r2 0 t5 z5, oblPt O r1 r2 0 t6 z6} : Finset ℝ³) := by
+  have q1 := hQ1
+  have q2 := hQ2
+  obtain ⟨⟨q1a, q1b⟩, ⟨q1c, q1d⟩, ⟨q1e, q1f⟩, ⟨q1g, q1h⟩⟩ := q1
+  obtain ⟨⟨q2a, q2b⟩, ⟨q2c, q2d⟩, ⟨q2e, q2f⟩, ⟨q2g, q2h⟩⟩ := q2
+  rcases lt_or_gt_of_ne ht01 with h01 | h01 <;> rcases lt_or_gt_of_ne ht56 with h56 | h56
+  · rw [max_eq_right h01.le, max_eq_right h56.le] at hch
+    rcases cycles02_A1B6 h34 ht0 ht1 ht5 ht6 hs2 hu2 hQ3 hQ4 h01 h56 (by linarith) (by linarith)
+        hch with hW | hM
+    · exact rupert02_W_A1B6 O r1 r2 hρ ht0 ht1 ht5 ht6 hs2 hu2 hQ1 hQ2 h01 h56 hch
+        (by
+          have e : (![z6, z4, z1, z2] : Fin 4 → ℝ) = (![z0, z1, z2, z3, z4, z5, z6] : Fin 7 → ℝ) ∘
+              (![6, 4, 1, 2] : Fin 4 → Fin 7) := by funext i; fin_cases i <;> rfl
+          rw [e]; exact hzinj.comp (by decide)) hW
+    · exact rupert02_M_A1B6 O r1 r2 hρ ht0 ht1 ht5 ht6 hs2 hu2 hQ1 hQ2 h01 h56 hch
+        (by
+          have e : (![z6, z5, z3, z0, z1, z2] : Fin 6 → ℝ) = (![z0, z1, z2, z3, z4, z5, z6] : Fin 7 → ℝ) ∘
+              (![6, 5, 3, 0, 1, 2] : Fin 6 → Fin 7) := by funext i; fin_cases i <;> rfl
+          rw [e]; exact hzinj.comp (by decide)) hM
+  · rw [max_eq_right h01.le, max_eq_left h56.le] at hch
+    rcases cycles02_A1B5 h34 ht0 ht1 ht5 ht6 hs2 hu2 hQ3 hQ4 h01 h56 (by linarith) (by linarith)
+        hch with hW | hM
+    · exact rupert02_W_A1B5 O r1 r2 hρ ht0 ht1 ht5 ht6 hs2 hu2 hQ1 hQ2 h01 h56 hch
+        (by
+          have e : (![z5, z6, z4, z1, z2] : Fin 5 → ℝ) = (![z0, z1, z2, z3, z4, z5, z6] : Fin 7 → ℝ) ∘
+              (![5, 6, 4, 1, 2] : Fin 5 → Fin 7) := by funext i; fin_cases i <;> rfl
+          rw [e]; exact hzinj.comp (by decide)) hW
+    · exact rupert02_M_A1B5 O r1 r2 hρ ht0 ht1 ht5 ht6 hs2 hu2 hQ1 hQ2 h01 h56 hch
+        (by
+          have e : (![z5, z3, z0, z1, z2] : Fin 5 → ℝ) = (![z0, z1, z2, z3, z4, z5, z6] : Fin 7 → ℝ) ∘
+              (![5, 3, 0, 1, 2] : Fin 5 → Fin 7) := by funext i; fin_cases i <;> rfl
+          rw [e]; exact hzinj.comp (by decide)) hM
+  · rw [max_eq_left h01.le, max_eq_right h56.le] at hch
+    rcases cycles02_A0B6 h34 ht0 ht1 ht5 ht6 hs2 hu2 hQ3 hQ4 h01 h56 (by linarith) (by linarith)
+        hch with hW | hM
+    · exact rupert02_W_A0B6 O r1 r2 hρ ht0 ht1 ht5 ht6 hs2 hu2 hQ1 hQ2 h01 h56 hch
+        (by
+          have e : (![z6, z4, z1, z0, z2] : Fin 5 → ℝ) = (![z0, z1, z2, z3, z4, z5, z6] : Fin 7 → ℝ) ∘
+              (![6, 4, 1, 0, 2] : Fin 5 → Fin 7) := by funext i; fin_cases i <;> rfl
+          rw [e]; exact hzinj.comp (by decide)) hW
+    · exact rupert02_M_A0B6 O r1 r2 hρ ht0 ht1 ht5 ht6 hs2 hu2 hQ1 hQ2 h01 h56 hch
+        (by
+          have e : (![z6, z5, z3, z0, z2] : Fin 5 → ℝ) = (![z0, z1, z2, z3, z4, z5, z6] : Fin 7 → ℝ) ∘
+              (![6, 5, 3, 0, 2] : Fin 5 → Fin 7) := by funext i; fin_cases i <;> rfl
+          rw [e]; exact hzinj.comp (by decide)) hM
+  · rw [max_eq_left h01.le, max_eq_left h56.le] at hch
+    rcases cycles02_A0B5 h34 ht0 ht1 ht5 ht6 hs2 hu2 hQ3 hQ4 h01 h56 (by linarith) (by linarith)
+        hch with hW | hM
+    · exact rupert02_W_A0B5 O r1 r2 hρ ht0 ht1 ht5 ht6 hs2 hu2 hQ1 hQ2 h01 h56 hch
+        (by
+          have e : (![z5, z6, z4, z1, z0, z2] : Fin 6 → ℝ) = (![z0, z1, z2, z3, z4, z5, z6] : Fin 7 → ℝ) ∘
+              (![5, 6, 4, 1, 0, 2] : Fin 6 → Fin 7) := by funext i; fin_cases i <;> rfl
+          rw [e]; exact hzinj.comp (by decide)) hW
+    · exact rupert02_M_A0B5 O r1 r2 hρ ht0 ht1 ht5 ht6 hs2 hu2 hQ1 hQ2 h01 h56 hch
+        (by
+          have e : (![z5, z3, z0, z2] : Fin 4 → ℝ) = (![z0, z1, z2, z3, z4, z5, z6] : Fin 7 → ℝ) ∘
+              (![5, 3, 0, 2] : Fin 4 → Fin 7) := by funext i; fin_cases i <;> rfl
+          rw [e]; exact hzinj.comp (by decide)) hM
 
 end Minimality
