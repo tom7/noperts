@@ -452,4 +452,238 @@ theorem three_pairs_cases {α : Type*} [DecidableEq α] {S1 S2 S3 : Finset α}
     · exact ⟨y, x, c, by simp [hxy.symm, hc1.symm, hc2.symm], Finset.pair_comm _ _, e2, e3⟩
     · exact absurd (e2.trans e3.symm) n23
 
+/-! ### From the type-02 pattern to Rupertness -/
+
+/-- **General position** of a point set, as used by Theorem B: no two segments
+between its points are parallel or orthogonal (for distinct pairs). -/
+def GenPos (V : Finset ℝ³) : Prop :=
+  ∀ a ∈ V, ∀ b ∈ V, ∀ c ∈ V, ∀ d ∈ V, a ≠ b → c ≠ d → ({a, b} : Finset ℝ³) ≠ {c, d} →
+    (∀ t : ℝ, b - a ≠ t • (d - c)) ∧ ⟪b - a, d - c⟫ ≠ 0
+
+set_option linter.unusedSimpArgs false in
+/-- Seven points labelled by an injective `e`, with four facets whose index sets
+form the type-02 pattern, in general position, are Rupert (Theorem B). -/
+theorem isRupert_of_type02Pattern (e : Fin 7 → ℝ³) (he : Function.Injective e)
+    (hext : ∀ i, e i ∉ convexHull ℝ ((Finset.univ.image e).erase (e i) : Set ℝ³))
+    (hgen : GenPos (Finset.univ.image e))
+    (P1 P2 P3 P4 : Finset (Fin 7)) (f1 f2 f3 f4 : ℝ³ →ᵃ[ℝ] ℝ)
+    (h1 : ∀ i, (i ∈ P1 → f1 (e i) = 0) ∧ (i ∉ P1 → f1 (e i) < 0))
+    (h2 : ∀ i, (i ∈ P2 → f2 (e i) = 0) ∧ (i ∉ P2 → f2 (e i) < 0))
+    (h3 : ∀ i, (i ∈ P3 → f3 (e i) = 0) ∧ (i ∉ P3 → f3 (e i) < 0))
+    (h4 : ∀ i, (i ∈ P4 → f4 (e i) = 0) ∧ (i ∉ P4 → f4 (e i) < 0))
+    (hpat : IsType02Pattern P1 P2 P3 P4) : IsRupert (Finset.univ.image e) := by
+  obtain ⟨v3, -, v4, -, v2, -, v0, -, v1, -, v5, -, v6, -, hnd, e1, e2, e3, e4⟩ := hpat
+  set lab : Fin 7 → Fin 7 := [v0, v1, v2, v3, v4, v5, v6].get with hlab
+  have hlabi : Function.Injective lab := List.nodup_iff_injective_get.mp hnd
+  have hlabs : Function.Surjective lab := Finite.surjective_of_injective hlabi
+  set x : Fin 7 → ℝ³ := fun k => e (lab k) with hx
+  have himg : Finset.univ.image x = Finset.univ.image e := by
+    ext y; simp only [Finset.mem_image, Finset.mem_univ, true_and, hx]
+    constructor
+    · rintro ⟨k, rfl⟩; exact ⟨_, rfl⟩
+    · rintro ⟨i, rfl⟩; obtain ⟨k, rfl⟩ := hlabs i; exact ⟨k, rfl⟩
+  rw [← himg]
+  have xi : ∀ k, x k = e (lab k) := fun k => rfl
+  have l0 : lab 0 = v0 := rfl
+  have l1 : lab 1 = v1 := rfl
+  have l2 : lab 2 = v2 := rfl
+  have l3 : lab 3 = v3 := rfl
+  have l4 : lab 4 = v4 := rfl
+  have l5 : lab 5 = v5 := rfl
+  have l6 : lab 6 = v6 := rfl
+  have d01 : v0 ≠ v1 := hlabi.ne (by decide : (0 : Fin 7) ≠ 1)
+  have d02 : v0 ≠ v2 := hlabi.ne (by decide : (0 : Fin 7) ≠ 2)
+  have d03 : v0 ≠ v3 := hlabi.ne (by decide : (0 : Fin 7) ≠ 3)
+  have d04 : v0 ≠ v4 := hlabi.ne (by decide : (0 : Fin 7) ≠ 4)
+  have d05 : v0 ≠ v5 := hlabi.ne (by decide : (0 : Fin 7) ≠ 5)
+  have d06 : v0 ≠ v6 := hlabi.ne (by decide : (0 : Fin 7) ≠ 6)
+  have d10 : v1 ≠ v0 := hlabi.ne (by decide : (1 : Fin 7) ≠ 0)
+  have d12 : v1 ≠ v2 := hlabi.ne (by decide : (1 : Fin 7) ≠ 2)
+  have d13 : v1 ≠ v3 := hlabi.ne (by decide : (1 : Fin 7) ≠ 3)
+  have d14 : v1 ≠ v4 := hlabi.ne (by decide : (1 : Fin 7) ≠ 4)
+  have d15 : v1 ≠ v5 := hlabi.ne (by decide : (1 : Fin 7) ≠ 5)
+  have d16 : v1 ≠ v6 := hlabi.ne (by decide : (1 : Fin 7) ≠ 6)
+  have d20 : v2 ≠ v0 := hlabi.ne (by decide : (2 : Fin 7) ≠ 0)
+  have d21 : v2 ≠ v1 := hlabi.ne (by decide : (2 : Fin 7) ≠ 1)
+  have d23 : v2 ≠ v3 := hlabi.ne (by decide : (2 : Fin 7) ≠ 3)
+  have d24 : v2 ≠ v4 := hlabi.ne (by decide : (2 : Fin 7) ≠ 4)
+  have d25 : v2 ≠ v5 := hlabi.ne (by decide : (2 : Fin 7) ≠ 5)
+  have d26 : v2 ≠ v6 := hlabi.ne (by decide : (2 : Fin 7) ≠ 6)
+  have d30 : v3 ≠ v0 := hlabi.ne (by decide : (3 : Fin 7) ≠ 0)
+  have d31 : v3 ≠ v1 := hlabi.ne (by decide : (3 : Fin 7) ≠ 1)
+  have d32 : v3 ≠ v2 := hlabi.ne (by decide : (3 : Fin 7) ≠ 2)
+  have d34 : v3 ≠ v4 := hlabi.ne (by decide : (3 : Fin 7) ≠ 4)
+  have d35 : v3 ≠ v5 := hlabi.ne (by decide : (3 : Fin 7) ≠ 5)
+  have d36 : v3 ≠ v6 := hlabi.ne (by decide : (3 : Fin 7) ≠ 6)
+  have d40 : v4 ≠ v0 := hlabi.ne (by decide : (4 : Fin 7) ≠ 0)
+  have d41 : v4 ≠ v1 := hlabi.ne (by decide : (4 : Fin 7) ≠ 1)
+  have d42 : v4 ≠ v2 := hlabi.ne (by decide : (4 : Fin 7) ≠ 2)
+  have d43 : v4 ≠ v3 := hlabi.ne (by decide : (4 : Fin 7) ≠ 3)
+  have d45 : v4 ≠ v5 := hlabi.ne (by decide : (4 : Fin 7) ≠ 5)
+  have d46 : v4 ≠ v6 := hlabi.ne (by decide : (4 : Fin 7) ≠ 6)
+  have d50 : v5 ≠ v0 := hlabi.ne (by decide : (5 : Fin 7) ≠ 0)
+  have d51 : v5 ≠ v1 := hlabi.ne (by decide : (5 : Fin 7) ≠ 1)
+  have d52 : v5 ≠ v2 := hlabi.ne (by decide : (5 : Fin 7) ≠ 2)
+  have d53 : v5 ≠ v3 := hlabi.ne (by decide : (5 : Fin 7) ≠ 3)
+  have d54 : v5 ≠ v4 := hlabi.ne (by decide : (5 : Fin 7) ≠ 4)
+  have d56 : v5 ≠ v6 := hlabi.ne (by decide : (5 : Fin 7) ≠ 6)
+  have d60 : v6 ≠ v0 := hlabi.ne (by decide : (6 : Fin 7) ≠ 0)
+  have d61 : v6 ≠ v1 := hlabi.ne (by decide : (6 : Fin 7) ≠ 1)
+  have d62 : v6 ≠ v2 := hlabi.ne (by decide : (6 : Fin 7) ≠ 2)
+  have d63 : v6 ≠ v3 := hlabi.ne (by decide : (6 : Fin 7) ≠ 3)
+  have d64 : v6 ≠ v4 := hlabi.ne (by decide : (6 : Fin 7) ≠ 4)
+  have d65 : v6 ≠ v5 := hlabi.ne (by decide : (6 : Fin 7) ≠ 5)
+  have l0 : lab 0 = v0 := rfl
+  have l1 : lab 1 = v1 := rfl
+  have l2 : lab 2 = v2 := rfl
+  have l3 : lab 3 = v3 := rfl
+  have l4 : lab 4 = v4 := rfl
+  have l5 : lab 5 = v5 := rfl
+  have l6 : lab 6 = v6 := rfl
+  have mem : ∀ k, x k ∈ Finset.univ.image e := fun k => Finset.mem_image_of_mem _ (Finset.mem_univ _)
+  have xne : ∀ k l : Fin 7, k ≠ l → x k ≠ x l := fun k l h => he.ne (hlabi.ne h)
+  have pairne : ∀ a b c d : Fin 7, a ≠ c → a ≠ d → ({x a, x b} : Finset ℝ³) ≠ {x c, x d} := by
+    intro a b c d hac had h
+    have : x a ∈ ({x c, x d} : Finset ℝ³) := h ▸ (by simp)
+    simp only [Finset.mem_insert, Finset.mem_singleton] at this
+    rcases this with h' | h'
+    · exact xne _ _ hac h'
+    · exact xne _ _ had h'
+  refine isRupert_type02 x (xne 3 4 (by decide)) ⟨f1, ?_⟩ ⟨f2, ?_⟩ ⟨f3, ?_⟩ ⟨f4, ?_⟩ ?_ ?_ ?_ ?_
+  · -- 0134: P1 = {v3, v0, v1, v4}
+    refine ⟨(h1 _).1 (by rw [e1]; simp [l0, l1, l2, l3, l4, l5, l6]), (h1 _).1 (by rw [e1]; simp [l0, l1, l2, l3, l4, l5, l6]), (h1 _).1 (by rw [e1]; simp [l0, l1, l2, l3, l4, l5, l6]),
+      (h1 _).1 (by rw [e1]; simp [l0, l1, l2, l3, l4, l5, l6]), (h1 _).2 (by rw [e1]; simp [l0, l1, l2, l3, l4, l5, l6, d01, d02, d03, d04, d05, d06, d10, d12, d13, d14, d15, d16, d20, d21, d23, d24, d25, d26, d30, d31, d32, d34, d35, d36, d40, d41, d42, d43, d45, d46, d50, d51, d52, d53, d54, d56, d60, d61, d62, d63, d64, d65]),
+      (h1 _).2 (by rw [e1]; simp [l0, l1, l2, l3, l4, l5, l6, d01, d02, d03, d04, d05, d06, d10, d12, d13, d14, d15, d16, d20, d21, d23, d24, d25, d26, d30, d31, d32, d34, d35, d36, d40, d41, d42, d43, d45, d46, d50, d51, d52, d53, d54, d56, d60, d61, d62, d63, d64, d65]), (h1 _).2 (by rw [e1]; simp [l0, l1, l2, l3, l4, l5, l6, d01, d02, d03, d04, d05, d06, d10, d12, d13, d14, d15, d16, d20, d21, d23, d24, d25, d26, d30, d31, d32, d34, d35, d36, d40, d41, d42, d43, d45, d46, d50, d51, d52, d53, d54, d56, d60, d61, d62, d63, d64, d65])⟩
+  · -- 3564: P2 = {v3, v5, v6, v4}
+    refine ⟨(h2 _).1 (by rw [e2]; simp [l0, l1, l2, l3, l4, l5, l6]), (h2 _).1 (by rw [e2]; simp [l0, l1, l2, l3, l4, l5, l6]), (h2 _).1 (by rw [e2]; simp [l0, l1, l2, l3, l4, l5, l6]),
+      (h2 _).1 (by rw [e2]; simp [l0, l1, l2, l3, l4, l5, l6]), (h2 _).2 (by rw [e2]; simp [l0, l1, l2, l3, l4, l5, l6, d01, d02, d03, d04, d05, d06, d10, d12, d13, d14, d15, d16, d20, d21, d23, d24, d25, d26, d30, d31, d32, d34, d35, d36, d40, d41, d42, d43, d45, d46, d50, d51, d52, d53, d54, d56, d60, d61, d62, d63, d64, d65]),
+      (h2 _).2 (by rw [e2]; simp [l0, l1, l2, l3, l4, l5, l6, d01, d02, d03, d04, d05, d06, d10, d12, d13, d14, d15, d16, d20, d21, d23, d24, d25, d26, d30, d31, d32, d34, d35, d36, d40, d41, d42, d43, d45, d46, d50, d51, d52, d53, d54, d56, d60, d61, d62, d63, d64, d65]), (h2 _).2 (by rw [e2]; simp [l0, l1, l2, l3, l4, l5, l6, d01, d02, d03, d04, d05, d06, d10, d12, d13, d14, d15, d16, d20, d21, d23, d24, d25, d26, d30, d31, d32, d34, d35, d36, d40, d41, d42, d43, d45, d46, d50, d51, d52, d53, d54, d56, d60, d61, d62, d63, d64, d65])⟩
+  · -- 3025: P3 = {v3, v0, v2, v5}
+    refine ⟨(h3 _).1 (by rw [e3]; simp [l0, l1, l2, l3, l4, l5, l6]), (h3 _).1 (by rw [e3]; simp [l0, l1, l2, l3, l4, l5, l6]), (h3 _).1 (by rw [e3]; simp [l0, l1, l2, l3, l4, l5, l6]),
+      (h3 _).1 (by rw [e3]; simp [l0, l1, l2, l3, l4, l5, l6]), (h3 _).2 (by rw [e3]; simp [l0, l1, l2, l3, l4, l5, l6, d01, d02, d03, d04, d05, d06, d10, d12, d13, d14, d15, d16, d20, d21, d23, d24, d25, d26, d30, d31, d32, d34, d35, d36, d40, d41, d42, d43, d45, d46, d50, d51, d52, d53, d54, d56, d60, d61, d62, d63, d64, d65]),
+      (h3 _).2 (by rw [e3]; simp [l0, l1, l2, l3, l4, l5, l6, d01, d02, d03, d04, d05, d06, d10, d12, d13, d14, d15, d16, d20, d21, d23, d24, d25, d26, d30, d31, d32, d34, d35, d36, d40, d41, d42, d43, d45, d46, d50, d51, d52, d53, d54, d56, d60, d61, d62, d63, d64, d65]), (h3 _).2 (by rw [e3]; simp [l0, l1, l2, l3, l4, l5, l6, d01, d02, d03, d04, d05, d06, d10, d12, d13, d14, d15, d16, d20, d21, d23, d24, d25, d26, d30, d31, d32, d34, d35, d36, d40, d41, d42, d43, d45, d46, d50, d51, d52, d53, d54, d56, d60, d61, d62, d63, d64, d65])⟩
+  · -- 4126: P4 = {v4, v1, v2, v6}
+    refine ⟨(h4 _).1 (by rw [e4]; simp [l0, l1, l2, l3, l4, l5, l6]), (h4 _).1 (by rw [e4]; simp [l0, l1, l2, l3, l4, l5, l6]), (h4 _).1 (by rw [e4]; simp [l0, l1, l2, l3, l4, l5, l6]),
+      (h4 _).1 (by rw [e4]; simp [l0, l1, l2, l3, l4, l5, l6]), (h4 _).2 (by rw [e4]; simp [l0, l1, l2, l3, l4, l5, l6, d01, d02, d03, d04, d05, d06, d10, d12, d13, d14, d15, d16, d20, d21, d23, d24, d25, d26, d30, d31, d32, d34, d35, d36, d40, d41, d42, d43, d45, d46, d50, d51, d52, d53, d54, d56, d60, d61, d62, d63, d64, d65]),
+      (h4 _).2 (by rw [e4]; simp [l0, l1, l2, l3, l4, l5, l6, d01, d02, d03, d04, d05, d06, d10, d12, d13, d14, d15, d16, d20, d21, d23, d24, d25, d26, d30, d31, d32, d34, d35, d36, d40, d41, d42, d43, d45, d46, d50, d51, d52, d53, d54, d56, d60, d61, d62, d63, d64, d65]), (h4 _).2 (by rw [e4]; simp [l0, l1, l2, l3, l4, l5, l6, d01, d02, d03, d04, d05, d06, d10, d12, d13, d14, d15, d16, d20, d21, d23, d24, d25, d26, d30, d31, d32, d34, d35, d36, d40, d41, d42, d43, d45, d46, d50, d51, d52, d53, d54, d56, d60, d61, d62, d63, d64, d65])⟩
+  · -- 2 is not in the hull of 0, 1, 5, 6
+    intro hmem
+    apply hext (lab 2)
+    refine convexHull_mono ?_ hmem
+    intro y hy
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hy
+    simp only [Finset.coe_erase, Set.mem_sdiff, Finset.mem_coe, Set.mem_singleton_iff]
+    rcases hy with rfl | rfl | rfl | rfl
+    · exact ⟨mem 0, xne 0 2 (by decide)⟩
+    · exact ⟨mem 1, xne 1 2 (by decide)⟩
+    · exact ⟨mem 5, xne 5 2 (by decide)⟩
+    · exact ⟨mem 6, xne 6 2 (by decide)⟩
+  · exact (hgen _ (mem 0) _ (mem 1) _ (mem 3) _ (mem 4) (xne 0 1 (by decide)) (xne 3 4 (by decide))
+      (pairne 0 1 3 4 (by decide) (by decide))).1
+  · exact (hgen _ (mem 5) _ (mem 6) _ (mem 3) _ (mem 4) (xne 5 6 (by decide)) (xne 3 4 (by decide))
+      (pairne 5 6 3 4 (by decide) (by decide))).1
+  · -- distinct depths along 34
+    intro i j hij
+    by_contra hne
+    have h0 : ⟪x i - x j, x 4 - x 3⟫ = 0 := by
+      simp only at hij; rw [inner_sub_left, hij, sub_self]
+    have h34 : x 3 ≠ x 4 := xne 3 4 (by decide)
+    by_cases hp : ({x j, x i} : Finset ℝ³) = {x 3, x 4}
+    · have hi : x i ∈ ({x 3, x 4} : Finset ℝ³) := hp ▸ (by simp)
+      have hj : x j ∈ ({x 3, x 4} : Finset ℝ³) := hp ▸ (by simp)
+      simp only [Finset.mem_insert, Finset.mem_singleton] at hi hj
+      have hij' : x i ≠ x j := xne i j hne
+      have hn : 0 < ⟪x 4 - x 3, x 4 - x 3⟫ := by
+        rw [real_inner_self_eq_norm_sq]; exact pow_pos (norm_pos_iff.mpr (sub_ne_zero.mpr h34.symm)) 2
+      rcases hi with hi | hi <;> rcases hj with hj | hj
+      · exact hij' (hi.trans hj.symm)
+      · rw [hi, hj] at h0
+        have : ⟪x 3 - x 4, x 4 - x 3⟫ = -⟪x 4 - x 3, x 4 - x 3⟫ := by
+          rw [← inner_neg_left, neg_sub]
+        linarith
+      · rw [hi, hj] at h0; linarith
+      · exact hij' (hi.trans hj.symm)
+    · exact (hgen _ (mem j) _ (mem i) _ (mem 3) _ (mem 4) (xne j i (Ne.symm hne))
+        (xne 3 4 (by decide)) hp).2 h0
+
+/-- **The side conditions from the facets.** For index sets of four facets of
+seven extreme points (labelled by `e`), `QuadSidesOK` holds. -/
+theorem quadSidesOK_of_facets (e : Fin 7 → ℝ³) (he : Function.Injective e)
+    (hext : ∀ i, e i ∉ convexHull ℝ ((Finset.univ.image e).erase (e i) : Set ℝ³))
+    {X Y Z W : Finset (Fin 7)} (hXc : X.card = 4) {fX fY fZ fW : ℝ³ →ᵃ[ℝ] ℝ}
+    (hX : ∀ i, (i ∈ X → fX (e i) = 0) ∧ (i ∉ X → fX (e i) < 0))
+    (hY : ∀ i, (i ∈ Y → fY (e i) = 0) ∧ (i ∉ Y → fY (e i) < 0))
+    (hZ : ∀ i, (i ∈ Z → fZ (e i) = 0) ∧ (i ∉ Z → fZ (e i) < 0))
+    (hW : ∀ i, (i ∈ W → fW (e i) = 0) ∧ (i ∉ W → fW (e i) < 0)) :
+    QuadSidesOK X Y Z W := by
+  rintro ⟨cY, cZ, cW, nYZ, nYW, nZW, hcase⟩
+  -- a point off X, where fX ≠ 0
+  obtain ⟨k, hk⟩ : ∃ k, k ∉ X := by
+    by_contra h; push Not at h
+    have : X = Finset.univ := Finset.eq_univ_of_forall h
+    rw [this, Finset.card_univ, Fintype.card_fin] at hXc; omega
+  have fz : fX (e k) ≠ 0 := ((hX k).2 hk).ne
+  -- membership from `X ∩ S = {a, b}`
+  have memI : ∀ {S : Finset (Fin 7)} {a b : Fin 7}, X ∩ S = {a, b} → (a ∈ X ∧ a ∈ S) ∧ (b ∈ X ∧ b ∈ S) := by
+    intro S a b h
+    have ha : a ∈ X ∩ S := h ▸ (by simp)
+    have hb : b ∈ X ∩ S := h ▸ (by simp)
+    exact ⟨Finset.mem_inter.mp ha, Finset.mem_inter.mp hb⟩
+  have notI : ∀ {S : Finset (Fin 7)} {a b q : Fin 7}, X ∩ S = {a, b} → q ∈ X → q ≠ a → q ≠ b → q ∉ S := by
+    intro S a b q h hq hqa hqb hqS
+    have : q ∈ X ∩ S := Finset.mem_inter.mpr ⟨hq, hqS⟩
+    rw [h] at this; simp at this; tauto
+  have hcase' : (X ∩ Y ∩ (X ∩ Z) ∩ (X ∩ W)).Nonempty ∨ (X ∩ Y ∪ X ∩ Z ∪ X ∩ W).card = 3 := by
+    rcases hcase with ⟨v, hv⟩ | h
+    · left; exact ⟨v, by simp only [Finset.mem_inter] at hv ⊢; tauto⟩
+    · exact Or.inr h
+  rcases three_pairs_cases cY cZ cW nYZ nYW nZW hcase' with
+    ⟨v, p, q, r, hnd, eY, eZ, eW⟩ | ⟨x, y, c, hnd, eY, eZ, eW⟩
+  · simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, not_or] at hnd
+    obtain ⟨⟨hvp, hvq, hvr, -⟩, ⟨hpq, hpr, -⟩, ⟨hqr, -⟩, -, -⟩ := hnd
+    obtain ⟨⟨vX, vY⟩, ⟨pX, pY⟩⟩ := memI eY
+    obtain ⟨⟨-, vZ⟩, ⟨qX, qZ⟩⟩ := memI eZ
+    obtain ⟨⟨-, vW⟩, ⟨rX, rW⟩⟩ := memI eW
+    exact not_three_sides_at_vertex (z := e k) ((hX _).1 vX) ((hX _).1 pX) ((hX _).1 qX)
+      ((hX _).1 rX) fz ((hY _).1 vY) ((hY _).1 pY)
+      ((hY _).2 (notI eY qX (Ne.symm hvq) (Ne.symm hpq)))
+      ((hY _).2 (notI eY rX (Ne.symm hvr) (Ne.symm hpr))) ((hZ _).1 vZ) ((hZ _).1 qZ)
+      ((hZ _).2 (notI eZ pX (Ne.symm hvp) hpq)) ((hZ _).2 (notI eZ rX (Ne.symm hvr) (Ne.symm hqr)))
+      ((hW _).1 vW) ((hW _).1 rW) ((hW _).2 (notI eW pX (Ne.symm hvp) hpr))
+      ((hW _).2 (notI eW qX (Ne.symm hvq) hqr))
+  · simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, not_or] at hnd
+    obtain ⟨⟨hxy, hxc, -⟩, ⟨hyc, -⟩, -, -⟩ := hnd
+    have hcx : c ≠ x := fun h => hxc h.symm
+    have hcy : c ≠ y := fun h => hyc h.symm
+    have hyx : y ≠ x := fun h => hxy h.symm
+    obtain ⟨⟨xX, xY⟩, ⟨yX, yY⟩⟩ := memI eY
+    obtain ⟨⟨cX, cZ'⟩, ⟨-, xZ⟩⟩ := memI eZ
+    obtain ⟨⟨-, cW'⟩, ⟨-, yW⟩⟩ := memI eW
+    -- the fourth point d of X
+    obtain ⟨d, dX, hdx, hdy, hdc⟩ : ∃ d ∈ X, d ≠ x ∧ d ≠ y ∧ d ≠ c := by
+      by_contra h; push Not at h
+      have : X ⊆ {x, y, c} := fun d hd => by
+        by_cases h1 : d = x; · simp [h1]
+        by_cases h2 : d = y; · simp [h2]
+        simp [h d hd h1 h2]
+      have := Finset.card_le_card this
+      rw [hXc] at this
+      have := Finset.card_le_three (a := x) (b := y) (c := c); omega
+    have hmem := mem_triangle_of_three_sides (z := e k) ((hX _).1 xX) ((hX _).1 yX) ((hX _).1 cX)
+      ((hX _).1 dX) fz ((hY _).1 xY) ((hY _).1 yY) ((hY _).2 (notI eY cX hcx hcy))
+      ((hY _).2 (notI eY dX hdx hdy)) ((hZ _).1 xZ) ((hZ _).1 cZ')
+      ((hZ _).2 (notI eZ yX hyc hyx)) ((hZ _).2 (notI eZ dX hdc hdx))
+      ((hW _).1 yW) ((hW _).1 cW') ((hW _).2 (notI eW xX hxc hxy))
+      ((hW _).2 (notI eW dX hdc hdy))
+    apply hext d
+    refine convexHull_mono ?_ hmem
+    intro w hw
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hw
+    simp only [Finset.coe_erase, Set.mem_sdiff, Finset.mem_coe, Set.mem_singleton_iff,
+      Finset.mem_image, Finset.mem_univ, true_and]
+    rcases hw with rfl | rfl | rfl
+    · exact ⟨⟨x, rfl⟩, he.ne hdx.symm⟩
+    · exact ⟨⟨y, rfl⟩, he.ne hdy.symm⟩
+    · exact ⟨⟨c, rfl⟩, he.ne hdc.symm⟩
+
 end Minimality
