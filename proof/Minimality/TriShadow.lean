@@ -375,6 +375,73 @@ theorem isRupert_triShadow (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n : ℕ
     (fun z c hc hz => isCyclicUnimodal_smul hc hz)
     (eventually_unimodal_tilt x ez v hu0) (fun z _ h => h)
 
+/-- `isRupert_triShadow` with distinct depths on all of `V` in place of distinct
+depths along the cycle. -/
+theorem isRupert_triShadow_injOn (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n : ℕ}
+    (hm : 1 ≤ m) (hn : 1 ≤ n) (s : ℝ) (hs : s = 1 ∨ s = -1) (ca cz cb dz : ℕ → ℝ)
+    (hca0 : ca 0 = 0) (hcb0 : cb 0 = 0) (hdz0 : dz 0 = cz 0)
+    (hca : ∀ l, l < m → ca l < ca (l + 1)) (hcb : ∀ l, l < n → cb l < cb (l + 1))
+    (V : Finset ℝ³)
+    (hC1V : ∀ l, l ≤ m → oblPt O r1 r2 (ca l) 0 (cz l) ∈ V)
+    (hC2V : ∀ l, l ≤ n → oblPt O r1 r2 0 (cb l) (dz l) ∈ V)
+    (hVc : ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧ 0 ≤ a ∧ 0 ≤ b ∧
+      (a * cb n + b * ca m < ca m * cb n ∨ y = oblPt O r1 r2 (ca m) 0 (cz m) ∨
+        y = oblPt O r1 r2 0 (cb n) (dz n)) ∧
+      (b = 0 → ∀ l, l < m → y ≠ oblPt O r1 r2 (ca l) 0 (cz l) →
+        y ≠ oblPt O r1 r2 (ca (l + 1)) 0 (cz (l + 1)) →
+        s * ((ca (l + 1) - ca l) * (z - cz l) - (cz (l + 1) - cz l) * (a - ca l)) < 0) ∧
+      (a = 0 → ∀ l, l < n → y ≠ oblPt O r1 r2 0 (cb (l + 1)) (dz (l + 1)) →
+        y ≠ oblPt O r1 r2 0 (cb l) (dz l) →
+        s * ((cb l - cb (l + 1)) * (z - dz (l + 1)) - (dz l - dz (l + 1)) * (b - cb (l + 1))) < 0))
+    (hzV : Set.InjOn (fun y : ℝ³ => ⟪y, ez⟫) (V : Set ℝ³))
+    (hAB : s * dz n < s * cz m) : IsRupert V := by
+  have hNZ : NeZero (m + n + 1) := ⟨by omega⟩
+  have mono : ∀ (f : ℕ → ℝ) (k : ℕ), (∀ l, l < k → f l < f (l + 1)) →
+      ∀ i j, i < j → j ≤ k → f i < f j := by
+    intro f k hf i j hij hj
+    induction j with
+    | zero => omega
+    | succ j ih =>
+      rcases Nat.lt_succ_iff_lt_or_eq.mp hij with h | h
+      · exact lt_trans (ih h (by omega)) (hf j (by omega))
+      · subst h; exact hf i (by omega)
+  -- distinct positions carry distinct points
+  have hpt : ∀ v, v < m + n + 1 → triPt O r1 r2 m n ca cz cb dz v ∈ V := by
+    intro v hv; simp only [triPt]; split_ifs with h
+    · exact hC1V v h
+    · exact hC2V _ (by omega)
+  have hdist : ∀ v w, v < m + n + 1 → w < m + n + 1 → v ≠ w →
+      triPt O r1 r2 m n ca cz cb dz v ≠ triPt O r1 r2 m n ca cz cb dz w := by
+    intro v w hv hw hvw he
+    simp only [triPt] at he
+    split_ifs at he with h1 h2 h2
+    · have := (oblPt_inj hρ he).1
+      rcases Nat.lt_or_gt_of_ne hvw with h | h
+      · exact absurd this (mono ca m hca v w h h2).ne
+      · exact absurd this (mono ca m hca w v h h1).ne'
+    · have := (oblPt_inj hρ he).2.1
+      have := mono cb n hcb 0 (m + n + 1 - w) (by omega) (by omega)
+      rw [hcb0] at this; linarith
+    · have := (oblPt_inj hρ he).2.1
+      have := mono cb n hcb 0 (m + n + 1 - v) (by omega) (by omega)
+      rw [hcb0] at this; linarith
+    · have := (oblPt_inj hρ he).2.1
+      rcases Nat.lt_or_gt_of_ne hvw with h | h
+      · exact absurd this (mono cb n hcb _ _ (by omega) (by omega)).ne'
+      · exact absurd this (mono cb n hcb _ _ (by omega) (by omega)).ne
+  refine isRupert_triShadow O r1 r2 hρ hm hn s hs ca cz cb dz hca0 hcb0 hdz0 hca hcb V hC1V hC2V
+    hVc ?_ hAB
+  intro i j hij
+  have hdi : ⟪triPt O r1 r2 m n ca cz cb dz i.val, ez⟫ = triZ m n cz dz i.val := by
+    simp only [triPt, triZ]; split_ifs <;> exact inner_oblPt_ez _ _ _ _ _ _
+  have hdj : ⟪triPt O r1 r2 m n ca cz cb dz j.val, ez⟫ = triZ m n cz dz j.val := by
+    simp only [triPt, triZ]; split_ifs <;> exact inner_oblPt_ez _ _ _ _ _ _
+  simp only at hij
+  by_contra hne
+  have hv : i.val ≠ j.val := fun h => hne (ZMod.val_injective _ h)
+  exact hdist _ _ (ZMod.val_lt i) (ZMod.val_lt j) hv
+    (hzV (hpt _ (ZMod.val_lt i)) (hpt _ (ZMod.val_lt j)) (by simp only; rw [hdi, hdj, hij]))
+
 end Minimality
 
 end
