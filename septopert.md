@@ -55,6 +55,17 @@ In lowest terms (the form used in Lean, `septopert` in
 - `search/septopert/septopert-model.txt` is the exact (rational) model the
   search uses; `proof/Septopert/ModelData.lean` has the same vertices.
 
+### Edge info
+
+![Line drawing of two views of the septopert, with colored edges](septopert-edges.svg)
+
+| color | description | dihedral angle | relative edge length
+|-------|-------------|----------------|-----------------------------
+|![blue](swatch-apex.svg)| apex of pyramid | 90.333818° | 1.206047
+|![yellow](swatch-base.svg)| base of pyramid | 146.145261° | 1.710540
+|![green](swatch-triforce-exterior.svg)| triforce exterior | 107.080553° | 1.043358
+|![red](swatch-triforce-center.svg)| triforce center | 140.788349° |0.884989
+
 ## The statement
 
 In [`proof/Septopert.lean`](proof/Septopert.lean):
