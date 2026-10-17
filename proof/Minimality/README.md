@@ -155,9 +155,16 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   on the `s`-side of each segment of that ray's chain, distinct depths along
   the cycle, and `s z_A > s z_B`: the tilt `-s r1 + s r2` is unimodal, so `V`
   is Rupert. Unimodality is `tri_localMax_unique` (every local maximum of
-  `s z` lies on the concave chain). Next: the chains of a quadrilateral from
-  its apex, and the bridge from two quadrilateral facets sharing one vertex
-  (types 02, 07, 09, 14, 18, 20 by Corollary T1).
+  `s z` lies on the concave chain).
+* `isRupert_twoQuads_frame` (`TriQuad.lean`): two quadrilaterals sharing the
+  apex, one on each ray, each convex in its `(t, z)`-plane (either
+  orientation), distinct positive `t` on each, seven distinct depths: Rupert.
+  `quad_chain` gives the upper and lower chains of a convex quadrilateral seen
+  from a vertex (six cases plus relabelling). Next: the bridge from two
+  quadrilateral facets of a 7-point set sharing one vertex (types 02, 07, 09,
+  14, 18, 20 by Corollary T1): rotation of the view `n1 × n2` to `ez`,
+  oblique coordinates, and the convex cyclic order of each quadrilateral from
+  extremality.
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
@@ -252,7 +259,8 @@ In import order.
 | `FaceFive` | L11, Theorem A | `isRupert_edgeOn_dir`, `isRupert_cycle_edgeOn`, `isRupert_caseI`, `isRupert_caseII`, `isRupert_of_card_seven_of_facet` |
 | `EdgeView` | L12, Theorems B, B′ (types 02, 05, general position) | `cycles02_A1B6`, `tiltSign_obl`, `isRupert_type02_frame`, `sheets_on_chord`, `isRupert_type02`, `cycles05_A3B6`, `isRupert_type05` |
 | `QuadFacets` | L12, four quadrilateral facets | `card_inter_le_two_of_facets`, `quad_facets_classify`, `quadSidesOK_of_facets`, `isRupert_of_four_quad_facets` |
-| `TriShadow` | L13, Lemma T (triangle shadow), oblique frame | `tri_localMax_unique`, `oblPt_inj`, `isRupert_triShadow` |
+| `TriShadow` | L13, Lemma T (triangle shadow), oblique frame | `tri_localMax_unique`, `oblPt_inj`, `isRupert_triShadow`, `isRupert_triShadow_injOn` |
+| `TriQuad` | L13, two quadrilaterals sharing a vertex (Corollary T1), oblique frame | `quad_chain`, `ChainOK.far_eq`, `isRupert_twoQuads_frame` |
 
 ## Formalization choices
 
