@@ -1796,4 +1796,289 @@ theorem isRupert_type02 (x : Fin 7 → ℝ³) (h34 : x 3 ≠ x 4)
     simp only [hgz] at hij
     simpa [hr.ne'] using hij
 
+/-! ### The cycle core of Theorem B′ (type 05, view along edge 12)
+
+Labels as in §5: the edge 12 (`z1 < z2`), the quads 1032 and 6512 seen edge-on
+(`t0, t3` on the first ray, `t5, t6` on the second), vertex 4 at `(s4, u4)`.
+(P) is the plane of 0145 through 1; at the top vertex 2 there is no second
+plane, only the concave upper sheet over the triangles 234 and 246 (C), used
+on a chord from `(T1, 0)` to `(0, T2)` beyond which 4 lies, in cleared form:
+`(s4 T2 + u4 T1 - T1 T2) z2 + T1 T2 z4 ≥ s4 T2 zy1 + u4 T1 zy2`. -/
+
+/-- (C) with both chord ends above the top vertex: 4 is above it too. -/
+theorem sheet_up {T1 T2 S U z2 z4 zy1 zy2 : ℝ} (hT : 0 < T1 * T2) (hS : 0 < S) (hU : 0 < U)
+    (hC : (S + U - T1 * T2) * z2 + T1 * T2 * z4 ≥ S * zy1 + U * zy2)
+    (h1 : z2 < zy1) (h2 : z2 < zy2) : z2 < z4 := by
+  have : S * z2 + U * z2 < S * zy1 + U * zy2 := by
+    have := mul_lt_mul_of_pos_left h1 hS; have := mul_lt_mul_of_pos_left h2 hU; linarith
+  by_contra h; push Not at h
+  have := mul_le_mul_of_nonneg_left h hT.le
+  nlinarith
+
+/-- (C) on a chord beyond which 4 lies: 4 cannot be strictly between the top
+vertex and both chord ends. -/
+theorem sheet_contra {T1 T2 S U z2 z4 zy1 zy2 : ℝ} (hT : 0 < T1 * T2) (hS : 0 < S) (hU : 0 < U)
+    (hD : T1 * T2 < S + U)
+    (hC : (S + U - T1 * T2) * z2 + T1 * T2 * z4 ≥ S * zy1 + U * zy2)
+    (h24 : z2 < z4) (h1 : z4 < zy1) (h2 : z4 < zy2) : False := by
+  have a1 := mul_lt_mul_of_pos_left h24 (by linarith : 0 < S + U - T1 * T2)
+  have a2 := mul_lt_mul_of_pos_left h1 hS
+  have a3 := mul_lt_mul_of_pos_left h2 hU
+  nlinarith
+
+/-- Case (i), both far vertices next to the top ((A, B) = (3, 6) in §5): the
+plane through `b`, `x` (at `(T0, 0)`) and `y` (at `(0, T5)`), convex lower
+chains `b, x, w` (`w` at `(T3, 0)`, `T0 < T3`) and `b, y, w'` (`w'` at
+`(0, T6)`, `T5 < T6`), and `c` beyond the chord `w w'`: `c` is not above both. -/
+theorem plane_both {T0 T3 T5 T6 S U zb x y w w' c : ℝ} (hT0 : 0 < T0) (hT5 : 0 < T5)
+    (hS : 0 < S) (hU : 0 < U) (hT03 : T0 < T3) (hT56 : T5 < T6)
+    (hpl : T0 * T5 * (c - zb) = S * T5 * (x - zb) + U * T0 * (y - zb))
+    (hconv : (x - zb) * (T3 - T0) < (w - x) * T0) (hconv' : (y - zb) * (T6 - T5) < (w' - y) * T5)
+    (hch : T3 * T6 < S * T6 + U * T3) (hx : x < zb) (hy : y < zb) (hcw : w < c) (hcw' : w' < c) :
+    False := by
+  obtain ⟨p, rfl⟩ : ∃ p, x = zb - p := ⟨zb - x, by ring⟩
+  obtain ⟨q, rfl⟩ : ∃ q, y = zb - q := ⟨zb - y, by ring⟩
+  have hp0 : 0 < p := by linarith
+  have hq0 : 0 < q := by linarith
+  have hpl' : T0 * T5 * (c - zb) = -(S * T5 * p) - U * T0 * q := by linear_combination hpl
+  have hw : -(T3 * p) < T0 * (w - zb) := by linear_combination hconv
+  have hw' : -(T6 * q) < T5 * (w' - zb) := by linear_combination hconv'
+  have hTT : 0 < T0 * T5 := mul_pos hT0 hT5
+  -- c > w: U T0 q < (T3 - S) T5 p;  c > w': S T5 p < (T6 - U) T0 q
+  have e1 : T0 * T5 * (w - zb) < T0 * T5 * (c - zb) := mul_lt_mul_of_pos_left (by linarith) hTT
+  have e1' : T5 * -(T3 * p) < T5 * (T0 * (w - zb)) := mul_lt_mul_of_pos_left hw hT5
+  have A1 : U * T0 * q < (T3 - S) * T5 * p := by linear_combination e1 + e1' + hpl'
+  have e2 : T0 * T5 * (w' - zb) < T0 * T5 * (c - zb) := mul_lt_mul_of_pos_left (by linarith) hTT
+  have e2' : T0 * -(T6 * q) < T0 * (T5 * (w' - zb)) := mul_lt_mul_of_pos_left hw' hT0
+  have A2 : S * T5 * p < (T6 - U) * T0 * q := by linear_combination e2 + e2' + hpl'
+  have hUq : 0 < U * T0 * q := mul_pos (mul_pos hU hT0) hq0
+  have hSp : 0 < S * T5 * p := mul_pos (mul_pos hS hT5) hp0
+  by_cases h3 : T3 ≤ S
+  · have : (T3 - S) * T5 * p ≤ 0 :=
+      mul_nonpos_of_nonpos_of_nonneg (mul_nonpos_of_nonpos_of_nonneg (by linarith) hT5.le) hp0.le
+    linarith
+  rw [not_le] at h3
+  by_cases h6 : T6 ≤ U
+  · have : (T6 - U) * T0 * q ≤ 0 :=
+      mul_nonpos_of_nonpos_of_nonneg (mul_nonpos_of_nonpos_of_nonneg (by linarith) hT0.le) hq0.le
+    linarith
+  rw [not_le] at h6
+  -- multiply the two: S U (T5 p)(T0 q) < (T3 - S)(T6 - U) (T5 p)(T0 q)
+  have m := mul_lt_mul'' A1 A2 hUq.le hSp.le
+  have hPQ : 0 < (T5 * p) * (T0 * q) := mul_pos (mul_pos hT5 hp0) (mul_pos hT0 hq0)
+  have key : (U * S) * ((T5 * p) * (T0 * q)) < ((T3 - S) * (T6 - U)) * ((T5 * p) * (T0 * q)) := by
+    linear_combination m
+  have := lt_of_mul_lt_mul_right key hPQ.le
+  nlinarith
+
+set_option linter.unreachableTactic false in
+set_option linter.unusedTactic false in
+theorem cycles05_A3B6 {z0 z1 z2 z3 z4 z5 z6 t0 t3 t5 t6 s4 u4 : ℝ} (h12 : z1 < z2)
+    (ht0 : 0 < t0) (ht3 : 0 < t3) (ht5 : 0 < t5) (ht6 : 0 < t6) (hs4 : 0 < s4) (hu4 : 0 < u4)
+    (hP : t0 * t5 * (z4 - z1) = s4 * t5 * (z0 - z1) + u4 * t0 * (z5 - z1))
+    (hC36 : (s4 * t6 + u4 * t3 - t3 * t6) * z2 + t3 * t6 * z4 ≥ s4 * t6 * z3 + u4 * t3 * z6)
+    (hCAB : (s4 * t6 + u4 * t3 - t3 * t6) * z2 + t3 * t6 * z4 ≥ s4 * t6 * z3 + u4 * t3 * z6)
+    (ht01 : t0 < t3) (ht56 : t5 < t6) (hch1 : (z0 - z1) * (t3 - t0) < (z3 - z0) * t0) (hch2 : (z5 - z1) * (t6 - t5) < (z6 - z5) * t5)
+    (hch : t3 * t6 < s4 * t6 + u4 * t3) (hch36 : t3 * t6 < s4 * t6 + u4 * t3) :
+    (∀ a b : Fin 4, (![z6, z2, z3, z4] : Fin 4 → ℝ) a < (![z6, z2, z3, z4] : Fin 4 → ℝ) (a - 1) → (![z6, z2, z3, z4] : Fin 4 → ℝ) a < (![z6, z2, z3, z4] : Fin 4 → ℝ) (a + 1) →
+      (![z6, z2, z3, z4] : Fin 4 → ℝ) b < (![z6, z2, z3, z4] : Fin 4 → ℝ) (b - 1) → (![z6, z2, z3, z4] : Fin 4 → ℝ) b < (![z6, z2, z3, z4] : Fin 4 → ℝ) (b + 1) → a = b) ∨
+    (∀ c d : Fin 6, (![z6, z5, z1, z0, z3, z4] : Fin 6 → ℝ) (c - 1) < (![z6, z5, z1, z0, z3, z4] : Fin 6 → ℝ) c → (![z6, z5, z1, z0, z3, z4] : Fin 6 → ℝ) (c + 1) < (![z6, z5, z1, z0, z3, z4] : Fin 6 → ℝ) c →
+      (![z6, z5, z1, z0, z3, z4] : Fin 6 → ℝ) (d - 1) < (![z6, z5, z1, z0, z3, z4] : Fin 6 → ℝ) d → (![z6, z5, z1, z0, z3, z4] : Fin 6 → ℝ) (d + 1) < (![z6, z5, z1, z0, z3, z4] : Fin 6 → ℝ) d → c = d) := by
+  have hT36 : 0 < t3 * t6 := mul_pos ht3 ht6
+  have hTAB : 0 < t3 * t6 := mul_pos ht3 ht6
+  have Fclaim : z2 < z3 → z2 < z6 → z0 < z1 → z5 < z1 → False := fun h3 h6 h0 h5 => by
+    have := plane_below ht0 ht5 hs4 hu4 hP h0 h5
+    have := sheet_up hT36 (mul_pos hs4 ht6) (mul_pos hu4 ht3) hC36 h3 h6
+    linarith
+  have Fi : z3 < z4 → z6 < z4 → z0 < z1 → z5 < z1 → False := fun ha hb h0 h5 =>
+    plane_both ht0 ht5 hs4 hu4 ht01 ht56 hP hch1 hch2 hch36 h0 h5 ha hb
+  have Fii : z4 < z3 → z4 < z6 → z2 < z3 → z2 < z6 → False := fun ha hb h3 h6 =>
+    sheet_contra hTAB (mul_pos hs4 ht6) (mul_pos hu4 ht3) hch hCAB
+      (sheet_up hT36 (mul_pos hs4 ht6) (mul_pos hu4 ht3) hC36 h3 h6) ha hb
+  have Fc1 : z1 < z0 → z0 < z3 := fun h => by
+    by_contra h'
+    have : 0 < (z0 - z1) * (t3 - t0) := mul_pos (by linarith) (by linarith)
+    have : (z3 - z0) * t0 ≤ 0 := mul_nonpos_of_nonpos_of_nonneg (by linarith) ht0.le
+    linarith
+  have Fc2 : z1 < z5 → z5 < z6 := fun h => by
+    by_contra h'
+    have : 0 < (z5 - z1) * (t6 - t5) := mul_pos (by linarith) (by linarith)
+    have : (z6 - z5) * t5 ≤ 0 := mul_nonpos_of_nonpos_of_nonneg (by linarith) ht5.le
+    linarith
+  clear hP hC36 hCAB hch1 hch2 hch hch36 ht0 ht3 ht5 ht6 hs4 hu4 ht01 ht56 hT36 hTAB
+  by_contra hcon
+  rw [not_or] at hcon
+  obtain ⟨hW, hM⟩ := hcon
+  push Not at hW hM
+  obtain ⟨a, b, ha1, ha2, hb1, hb2, hab⟩ := hW
+  obtain ⟨c, d, hc1, hc2, hd1, hd2, hcd⟩ := hM
+  fin_cases a <;> fin_cases b <;> simp at ha1 ha2 hb1 hb2 hab <;>
+    fin_cases c <;> fin_cases d <;> simp at hc1 hc2 hd1 hd2 hcd <;>
+    first
+    | linarith
+    | exact Fclaim (by linarith) (by linarith) (by linarith) (by linarith)
+    | exact Fi (by linarith) (by linarith) (by linarith) (by linarith)
+    | exact Fii (by linarith) (by linarith) (by linarith) (by linarith)
+    | linarith [Fc1 (by linarith)]
+    | linarith [Fc2 (by linarith)]
+    | linarith [Fc1 (by linarith), Fc2 (by linarith)]
+
+set_option linter.unreachableTactic false in
+set_option linter.unusedTactic false in
+theorem cycles05_A0B6 {z0 z1 z2 z3 z4 z5 z6 t0 t3 t5 t6 s4 u4 : ℝ} (h12 : z1 < z2)
+    (ht0 : 0 < t0) (ht3 : 0 < t3) (ht5 : 0 < t5) (ht6 : 0 < t6) (hs4 : 0 < s4) (hu4 : 0 < u4)
+    (hP : t0 * t5 * (z4 - z1) = s4 * t5 * (z0 - z1) + u4 * t0 * (z5 - z1))
+    (hC36 : (s4 * t6 + u4 * t3 - t3 * t6) * z2 + t3 * t6 * z4 ≥ s4 * t6 * z3 + u4 * t3 * z6)
+    (hCAB : (s4 * t6 + u4 * t0 - t0 * t6) * z2 + t0 * t6 * z4 ≥ s4 * t6 * z0 + u4 * t0 * z6)
+    (ht01 : t3 < t0) (ht56 : t5 < t6) (hch1 : (z0 - z3) * t3 < (z3 - z2) * (t0 - t3)) (hch2 : (z5 - z1) * (t6 - t5) < (z6 - z5) * t5)
+    (hch : t0 * t6 < s4 * t6 + u4 * t0) (hch36 : t3 * t6 < s4 * t6 + u4 * t3) :
+    (∀ a b : Fin 5, (![z6, z2, z3, z0, z4] : Fin 5 → ℝ) a < (![z6, z2, z3, z0, z4] : Fin 5 → ℝ) (a - 1) → (![z6, z2, z3, z0, z4] : Fin 5 → ℝ) a < (![z6, z2, z3, z0, z4] : Fin 5 → ℝ) (a + 1) →
+      (![z6, z2, z3, z0, z4] : Fin 5 → ℝ) b < (![z6, z2, z3, z0, z4] : Fin 5 → ℝ) (b - 1) → (![z6, z2, z3, z0, z4] : Fin 5 → ℝ) b < (![z6, z2, z3, z0, z4] : Fin 5 → ℝ) (b + 1) → a = b) ∨
+    (∀ c d : Fin 5, (![z6, z5, z1, z0, z4] : Fin 5 → ℝ) (c - 1) < (![z6, z5, z1, z0, z4] : Fin 5 → ℝ) c → (![z6, z5, z1, z0, z4] : Fin 5 → ℝ) (c + 1) < (![z6, z5, z1, z0, z4] : Fin 5 → ℝ) c →
+      (![z6, z5, z1, z0, z4] : Fin 5 → ℝ) (d - 1) < (![z6, z5, z1, z0, z4] : Fin 5 → ℝ) d → (![z6, z5, z1, z0, z4] : Fin 5 → ℝ) (d + 1) < (![z6, z5, z1, z0, z4] : Fin 5 → ℝ) d → c = d) := by
+  have hT36 : 0 < t3 * t6 := mul_pos ht3 ht6
+  have hTAB : 0 < t0 * t6 := mul_pos ht0 ht6
+  have Fclaim : z2 < z3 → z2 < z6 → z0 < z1 → z5 < z1 → False := fun h3 h6 h0 h5 => by
+    have := plane_below ht0 ht5 hs4 hu4 hP h0 h5
+    have := sheet_up hT36 (mul_pos hs4 ht6) (mul_pos hu4 ht3) hC36 h3 h6
+    linarith
+  have Fi : z6 < z4 → z0 < z4 → z0 < z1 → z5 < z1 → False := fun ha hb h0 h5 =>
+    plane_mixed (T0 := t5) (T1 := t6) (T5 := t0) (S := u4) (U := s4) (zb := z1) (x := z5)
+      (y := z0) (w := z6) (c := z4) ht5 ht0 hu4 hs4 ht56 (by linear_combination hP) hch2
+      (by linarith) h5 h0 ha hb
+  have Fii : z4 < z0 → z4 < z6 → z2 < z3 → z2 < z6 → False := fun ha hb h3 h6 =>
+    sheet_contra hTAB (mul_pos hs4 ht6) (mul_pos hu4 ht0) hch hCAB
+      (sheet_up hT36 (mul_pos hs4 ht6) (mul_pos hu4 ht3) hC36 h3 h6) ha hb
+  have Fc1 : z3 < z2 → z0 < z3 := fun h => by
+    by_contra h'
+    have : (z3 - z2) * (t0 - t3) < 0 := mul_neg_of_neg_of_pos (by linarith) (by linarith)
+    have : 0 ≤ (z0 - z3) * t3 := mul_nonneg (by linarith) ht3.le
+    linarith
+  have Fc2 : z1 < z5 → z5 < z6 := fun h => by
+    by_contra h'
+    have : 0 < (z5 - z1) * (t6 - t5) := mul_pos (by linarith) (by linarith)
+    have : (z6 - z5) * t5 ≤ 0 := mul_nonpos_of_nonpos_of_nonneg (by linarith) ht5.le
+    linarith
+  clear hP hC36 hCAB hch1 hch2 hch hch36 ht0 ht3 ht5 ht6 hs4 hu4 ht01 ht56 hT36 hTAB
+  by_contra hcon
+  rw [not_or] at hcon
+  obtain ⟨hW, hM⟩ := hcon
+  push Not at hW hM
+  obtain ⟨a, b, ha1, ha2, hb1, hb2, hab⟩ := hW
+  obtain ⟨c, d, hc1, hc2, hd1, hd2, hcd⟩ := hM
+  fin_cases a <;> fin_cases b <;> simp at ha1 ha2 hb1 hb2 hab <;>
+    fin_cases c <;> fin_cases d <;> simp at hc1 hc2 hd1 hd2 hcd <;>
+    first
+    | linarith
+    | exact Fclaim (by linarith) (by linarith) (by linarith) (by linarith)
+    | exact Fi (by linarith) (by linarith) (by linarith) (by linarith)
+    | exact Fii (by linarith) (by linarith) (by linarith) (by linarith)
+    | linarith [Fc1 (by linarith)]
+    | linarith [Fc2 (by linarith)]
+    | linarith [Fc1 (by linarith), Fc2 (by linarith)]
+
+set_option linter.unreachableTactic false in
+set_option linter.unusedTactic false in
+theorem cycles05_A3B5 {z0 z1 z2 z3 z4 z5 z6 t0 t3 t5 t6 s4 u4 : ℝ} (h12 : z1 < z2)
+    (ht0 : 0 < t0) (ht3 : 0 < t3) (ht5 : 0 < t5) (ht6 : 0 < t6) (hs4 : 0 < s4) (hu4 : 0 < u4)
+    (hP : t0 * t5 * (z4 - z1) = s4 * t5 * (z0 - z1) + u4 * t0 * (z5 - z1))
+    (hC36 : (s4 * t6 + u4 * t3 - t3 * t6) * z2 + t3 * t6 * z4 ≥ s4 * t6 * z3 + u4 * t3 * z6)
+    (hCAB : (s4 * t5 + u4 * t3 - t3 * t5) * z2 + t3 * t5 * z4 ≥ s4 * t5 * z3 + u4 * t3 * z5)
+    (ht01 : t0 < t3) (ht56 : t6 < t5) (hch1 : (z0 - z1) * (t3 - t0) < (z3 - z0) * t0) (hch2 : (z5 - z6) * t6 < (z6 - z2) * (t5 - t6))
+    (hch : t3 * t5 < s4 * t5 + u4 * t3) (hch36 : t3 * t6 < s4 * t6 + u4 * t3) :
+    (∀ a b : Fin 5, (![z5, z6, z2, z3, z4] : Fin 5 → ℝ) a < (![z5, z6, z2, z3, z4] : Fin 5 → ℝ) (a - 1) → (![z5, z6, z2, z3, z4] : Fin 5 → ℝ) a < (![z5, z6, z2, z3, z4] : Fin 5 → ℝ) (a + 1) →
+      (![z5, z6, z2, z3, z4] : Fin 5 → ℝ) b < (![z5, z6, z2, z3, z4] : Fin 5 → ℝ) (b - 1) → (![z5, z6, z2, z3, z4] : Fin 5 → ℝ) b < (![z5, z6, z2, z3, z4] : Fin 5 → ℝ) (b + 1) → a = b) ∨
+    (∀ c d : Fin 5, (![z5, z1, z0, z3, z4] : Fin 5 → ℝ) (c - 1) < (![z5, z1, z0, z3, z4] : Fin 5 → ℝ) c → (![z5, z1, z0, z3, z4] : Fin 5 → ℝ) (c + 1) < (![z5, z1, z0, z3, z4] : Fin 5 → ℝ) c →
+      (![z5, z1, z0, z3, z4] : Fin 5 → ℝ) (d - 1) < (![z5, z1, z0, z3, z4] : Fin 5 → ℝ) d → (![z5, z1, z0, z3, z4] : Fin 5 → ℝ) (d + 1) < (![z5, z1, z0, z3, z4] : Fin 5 → ℝ) d → c = d) := by
+  have hT36 : 0 < t3 * t6 := mul_pos ht3 ht6
+  have hTAB : 0 < t3 * t5 := mul_pos ht3 ht5
+  have Fclaim : z2 < z3 → z2 < z6 → z0 < z1 → z5 < z1 → False := fun h3 h6 h0 h5 => by
+    have := plane_below ht0 ht5 hs4 hu4 hP h0 h5
+    have := sheet_up hT36 (mul_pos hs4 ht6) (mul_pos hu4 ht3) hC36 h3 h6
+    linarith
+  have Fi : z3 < z4 → z5 < z4 → z0 < z1 → z5 < z1 → False := fun ha hb h0 h5 =>
+    plane_mixed ht0 ht5 hs4 hu4 ht01 hP hch1 hch h0 h5 ha hb
+  have Fii : z4 < z3 → z4 < z5 → z2 < z3 → z2 < z6 → False := fun ha hb h3 h6 =>
+    sheet_contra hTAB (mul_pos hs4 ht5) (mul_pos hu4 ht3) hch hCAB
+      (sheet_up hT36 (mul_pos hs4 ht6) (mul_pos hu4 ht3) hC36 h3 h6) ha hb
+  have Fc1 : z1 < z0 → z0 < z3 := fun h => by
+    by_contra h'
+    have : 0 < (z0 - z1) * (t3 - t0) := mul_pos (by linarith) (by linarith)
+    have : (z3 - z0) * t0 ≤ 0 := mul_nonpos_of_nonpos_of_nonneg (by linarith) ht0.le
+    linarith
+  have Fc2 : z6 < z2 → z5 < z6 := fun h => by
+    by_contra h'
+    have : (z6 - z2) * (t5 - t6) < 0 := mul_neg_of_neg_of_pos (by linarith) (by linarith)
+    have : 0 ≤ (z5 - z6) * t6 := mul_nonneg (by linarith) ht6.le
+    linarith
+  clear hP hC36 hCAB hch1 hch2 hch hch36 ht0 ht3 ht5 ht6 hs4 hu4 ht01 ht56 hT36 hTAB
+  by_contra hcon
+  rw [not_or] at hcon
+  obtain ⟨hW, hM⟩ := hcon
+  push Not at hW hM
+  obtain ⟨a, b, ha1, ha2, hb1, hb2, hab⟩ := hW
+  obtain ⟨c, d, hc1, hc2, hd1, hd2, hcd⟩ := hM
+  fin_cases a <;> fin_cases b <;> simp at ha1 ha2 hb1 hb2 hab <;>
+    fin_cases c <;> fin_cases d <;> simp at hc1 hc2 hd1 hd2 hcd <;>
+    first
+    | linarith
+    | exact Fclaim (by linarith) (by linarith) (by linarith) (by linarith)
+    | exact Fi (by linarith) (by linarith) (by linarith) (by linarith)
+    | exact Fii (by linarith) (by linarith) (by linarith) (by linarith)
+    | linarith [Fc1 (by linarith)]
+    | linarith [Fc2 (by linarith)]
+    | linarith [Fc1 (by linarith), Fc2 (by linarith)]
+
+set_option linter.unreachableTactic false in
+set_option linter.unusedTactic false in
+theorem cycles05_A0B5 {z0 z1 z2 z3 z4 z5 z6 t0 t3 t5 t6 s4 u4 : ℝ} (h12 : z1 < z2)
+    (ht0 : 0 < t0) (ht3 : 0 < t3) (ht5 : 0 < t5) (ht6 : 0 < t6) (hs4 : 0 < s4) (hu4 : 0 < u4)
+    (hP : t0 * t5 * (z4 - z1) = s4 * t5 * (z0 - z1) + u4 * t0 * (z5 - z1))
+    (hC36 : (s4 * t6 + u4 * t3 - t3 * t6) * z2 + t3 * t6 * z4 ≥ s4 * t6 * z3 + u4 * t3 * z6)
+    (hCAB : (s4 * t5 + u4 * t0 - t0 * t5) * z2 + t0 * t5 * z4 ≥ s4 * t5 * z0 + u4 * t0 * z5)
+    (ht01 : t3 < t0) (ht56 : t6 < t5) (hch1 : (z0 - z3) * t3 < (z3 - z2) * (t0 - t3)) (hch2 : (z5 - z6) * t6 < (z6 - z2) * (t5 - t6))
+    (hch : t0 * t5 < s4 * t5 + u4 * t0) (hch36 : t3 * t6 < s4 * t6 + u4 * t3) :
+    (∀ a b : Fin 6, (![z5, z6, z2, z3, z0, z4] : Fin 6 → ℝ) a < (![z5, z6, z2, z3, z0, z4] : Fin 6 → ℝ) (a - 1) → (![z5, z6, z2, z3, z0, z4] : Fin 6 → ℝ) a < (![z5, z6, z2, z3, z0, z4] : Fin 6 → ℝ) (a + 1) →
+      (![z5, z6, z2, z3, z0, z4] : Fin 6 → ℝ) b < (![z5, z6, z2, z3, z0, z4] : Fin 6 → ℝ) (b - 1) → (![z5, z6, z2, z3, z0, z4] : Fin 6 → ℝ) b < (![z5, z6, z2, z3, z0, z4] : Fin 6 → ℝ) (b + 1) → a = b) ∨
+    (∀ c d : Fin 4, (![z5, z1, z0, z4] : Fin 4 → ℝ) (c - 1) < (![z5, z1, z0, z4] : Fin 4 → ℝ) c → (![z5, z1, z0, z4] : Fin 4 → ℝ) (c + 1) < (![z5, z1, z0, z4] : Fin 4 → ℝ) c →
+      (![z5, z1, z0, z4] : Fin 4 → ℝ) (d - 1) < (![z5, z1, z0, z4] : Fin 4 → ℝ) d → (![z5, z1, z0, z4] : Fin 4 → ℝ) (d + 1) < (![z5, z1, z0, z4] : Fin 4 → ℝ) d → c = d) := by
+  have hT36 : 0 < t3 * t6 := mul_pos ht3 ht6
+  have hTAB : 0 < t0 * t5 := mul_pos ht0 ht5
+  have Fclaim : z2 < z3 → z2 < z6 → z0 < z1 → z5 < z1 → False := fun h3 h6 h0 h5 => by
+    have := plane_below ht0 ht5 hs4 hu4 hP h0 h5
+    have := sheet_up hT36 (mul_pos hs4 ht6) (mul_pos hu4 ht3) hC36 h3 h6
+    linarith
+  have Fi : z0 < z4 → z5 < z4 → z0 < z1 → z5 < z1 → False := fun ha hb h0 h5 =>
+    plane_far ht0 ht5 hs4 hu4 hP hch h0 h5 ha hb
+  have Fii : z4 < z0 → z4 < z5 → z2 < z3 → z2 < z6 → False := fun ha hb h3 h6 =>
+    sheet_contra hTAB (mul_pos hs4 ht5) (mul_pos hu4 ht0) hch hCAB
+      (sheet_up hT36 (mul_pos hs4 ht6) (mul_pos hu4 ht3) hC36 h3 h6) ha hb
+  have Fc1 : z3 < z2 → z0 < z3 := fun h => by
+    by_contra h'
+    have : (z3 - z2) * (t0 - t3) < 0 := mul_neg_of_neg_of_pos (by linarith) (by linarith)
+    have : 0 ≤ (z0 - z3) * t3 := mul_nonneg (by linarith) ht3.le
+    linarith
+  have Fc2 : z6 < z2 → z5 < z6 := fun h => by
+    by_contra h'
+    have : (z6 - z2) * (t5 - t6) < 0 := mul_neg_of_neg_of_pos (by linarith) (by linarith)
+    have : 0 ≤ (z5 - z6) * t6 := mul_nonneg (by linarith) ht6.le
+    linarith
+  clear hP hC36 hCAB hch1 hch2 hch hch36 ht0 ht3 ht5 ht6 hs4 hu4 ht01 ht56 hT36 hTAB
+  by_contra hcon
+  rw [not_or] at hcon
+  obtain ⟨hW, hM⟩ := hcon
+  push Not at hW hM
+  obtain ⟨a, b, ha1, ha2, hb1, hb2, hab⟩ := hW
+  obtain ⟨c, d, hc1, hc2, hd1, hd2, hcd⟩ := hM
+  fin_cases a <;> fin_cases b <;> simp at ha1 ha2 hb1 hb2 hab <;>
+    fin_cases c <;> fin_cases d <;> simp at hc1 hc2 hd1 hd2 hcd <;>
+    first
+    | linarith
+    | exact Fclaim (by linarith) (by linarith) (by linarith) (by linarith)
+    | exact Fi (by linarith) (by linarith) (by linarith) (by linarith)
+    | exact Fii (by linarith) (by linarith) (by linarith) (by linarith)
+    | linarith [Fc1 (by linarith)]
+    | linarith [Fc2 (by linarith)]
+    | linarith [Fc1 (by linarith), Fc2 (by linarith)]
+
 end Minimality
