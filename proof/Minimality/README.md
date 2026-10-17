@@ -146,9 +146,18 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   points, one hidden behind the other), `isRupert_caseII_fallback` (Theorem 5
   through the waist lemma, with an explicit witness `fallback_witness`).
 
-**L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`;
-Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general position; not yet
-linked to the top-level statement)
+**L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
+`QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
+position)
+* At the entry point, `not_four_quad_facets_of_isNopert`: a 7-point nopert in
+  general position (`GenPos`: no two segments parallel or orthogonal) has no
+  four quadrilateral facets. Via `isRupert_of_four_quad_facets`: two distinct
+  facets share at most two points (`card_inter_le_two_of_facets`); a shared
+  pair is a side, so no three sides meet at a vertex
+  (`not_three_sides_at_vertex`) or form a triangle
+  (`mem_triangle_of_three_sides`); a kernel-decided classification
+  (`quad_facets_classify`) then gives the type-02 pattern, and Theorem B
+  applies (`isRupert_of_type02Pattern`).
 * Theorem B — `isRupert_type02`: seven points labelled as type 02, with the
   quadrilaterals 0134, 3456, 0235, 1246 as facets (supporting affine
   functions), 2 not in the hull of 0, 1, 5, 6, the edges 01 and 56 not
@@ -229,6 +238,7 @@ In import order.
 | `FaceChain` | L11, the lower chain | `mem_convexHull_of_between`, `ConvPos`, `cross2_pos_of_consecutive'`, `exists_lowerChain'` |
 | `FaceFive` | L11, Theorem A | `isRupert_edgeOn_dir`, `isRupert_cycle_edgeOn`, `isRupert_caseI`, `isRupert_caseII`, `isRupert_of_card_seven_of_facet` |
 | `EdgeView` | L12, Theorems B, B′ (types 02, 05, general position) | `cycles02_A1B6`, `tiltSign_obl`, `isRupert_type02_frame`, `sheets_on_chord`, `isRupert_type02`, `cycles05_A3B6`, `isRupert_type05` |
+| `QuadFacets` | L12, four quadrilateral facets | `card_inter_le_two_of_facets`, `quad_facets_classify`, `quadSidesOK_of_facets`, `isRupert_of_four_quad_facets` |
 
 ## Formalization choices
 

@@ -4,6 +4,7 @@ public import Nopert
 public import Minimality.SixClass
 public import Minimality.Planar
 public import Minimality.FaceFive
+public import Minimality.QuadFacets
 
 /-!
 # Every nopert has at least 7 points
@@ -70,6 +71,20 @@ theorem facet_card_le_four_of_isNopert (V F : Finset ℝ³) (h : IsNopert V) (hV
   by_contra hlt
   push Not at hlt
   exact h.2 (isRupert_of_card_seven_of_facet V F hV h.1 hFV hlt hfacet)
+
+/-- **A nopert with 7 points in general position has at most three quadrilateral
+faces** (Theorem B of the notes: four quadrilateral facets force the face
+structure called type 02, which is Rupert by a slightly tilted view along the
+edge where two of the quadrilaterals meet). General position
+(`Minimality.GenPos`): no two segments between the points are parallel or
+orthogonal. The special positions are proved on paper (FEWER-FACES-PROOFS.md
+§4) except several simultaneous depth ties, and not yet formalized. -/
+theorem not_four_quad_facets_of_isNopert (V : Finset ℝ³) (h : IsNopert V) (hV : V.card = 7)
+    (hgen : Minimality.GenPos V) (Q : Fin 4 → Finset ℝ³) (hQV : ∀ k, Q k ⊆ V)
+    (hQc : ∀ k, (Q k).card = 4) (hQf : ∀ k, Minimality.IsFacet V (Q k))
+    (hQi : Function.Injective Q) : False :=
+  h.2 (Minimality.isRupert_of_four_quad_facets_solid V hV
+    ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1) hgen Q hQV hQc hQf hQi)
 
 /-- **Flat polygons are Rupert.**  Points in a plane, not all on one line, are
 Rupert, whatever their number: hold one copy face-on and pass the other

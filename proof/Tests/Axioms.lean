@@ -30,4 +30,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms SnubCube.isNopert_of_certificatesValid
 #assert_standard_axioms Nopert231.isNopert_of_certificatesValid
 #assert_standard_axioms seven_le_card_of_isNopert
+#assert_standard_axioms facet_card_le_four_of_isNopert
+#assert_standard_axioms not_four_quad_facets_of_isNopert
 #assert_standard_axioms minimalNopert_of_certificatesValid

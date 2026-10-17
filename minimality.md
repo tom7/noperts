@@ -42,6 +42,11 @@ through a copy of itself):
 - a nopert with exactly 7 points has no face containing 5 or more of them,
   so its faces are triangles and quadrilaterals
   (`facet_card_le_four_of_isNopert`, from `isRupert_of_card_seven_of_facet`).
+- a nopert with exactly 7 points in general position (no two segments
+  between its points parallel or orthogonal) has at most three
+  quadrilateral faces (`not_four_quad_facets_of_isNopert`): four
+  quadrilateral faces force one face structure, which is Rupert by a
+  slightly tilted view along the edge where two of the quadrilaterals meet.
 
 ## How it is proved
 

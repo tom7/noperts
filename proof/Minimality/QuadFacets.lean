@@ -804,4 +804,26 @@ theorem isRupert_of_four_quad_facets (V : Finset ℝ³) (hV : V.card = 7)
   · exact isRupert_of_type02Pattern e he hext' hgen' _ _ _ _ _ _ _ _ (hFk 1) (hFk 3) F0 (hFk 2) h
   · exact isRupert_of_type02Pattern e he hext' hgen' _ _ _ _ _ _ _ _ (hFk 2) (hFk 3) F0 (hFk 1) h
 
+/-- `isRupert_of_four_quad_facets` for a solid hull, without assuming that all
+seven points are extreme: if one is in the hull of the others, there are at most
+six vertices. -/
+theorem isRupert_of_four_quad_facets_solid (V : Finset ℝ³) (hV : V.card = 7)
+    (hint : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) (hgen : GenPos V)
+    (Q : Fin 4 → Finset ℝ³) (hQV : ∀ k, Q k ⊆ V) (hQc : ∀ k, (Q k).card = 4)
+    (hQf : ∀ k, IsFacet V (Q k)) (hQi : Function.Injective Q) : IsRupert V := by
+  classical
+  by_cases hext : ∃ x ∈ V, x ∈ convexHull ℝ ((V.erase x : Finset ℝ³) : Set ℝ³)
+  · obtain ⟨x, hx, hxh⟩ := hext
+    have hhull : convexHull ℝ ((V.erase x : Finset ℝ³) : Set ℝ³) = convexHull ℝ (V : Set ℝ³) := by
+      apply le_antisymm (convexHull_mono (by simp))
+      refine convexHull_min (fun y hy => ?_) (convex_convexHull ℝ _)
+      by_cases hyx : y = x
+      · rw [hyx]; exact hxh
+      · exact subset_convexHull ℝ _ (by simpa [hyx] using hy)
+    refine isRupert_of_convexHull_eq hhull (isRupert_of_card_le_six _ ?_ ?_)
+    · rw [Finset.card_erase_of_mem hx]; omega
+    · rw [hhull]; exact hint
+  push Not at hext
+  exact isRupert_of_four_quad_facets V hV hext hgen Q hQV hQc hQf hQi
+
 end Minimality
