@@ -353,6 +353,95 @@ theorem isRupert_twoQuads_vertical (y : Fin 7 → ℝ³)
       (dB 4 5 (by decide) a4 a5) (dB 4 6 (by decide) a4 a6) (dB 5 6 (by decide) a5 a6) hz7
 
 
+/-- An affine function vanishing at `p` and `p + e` vanishes on the line. -/
+theorem affine_zero_line (f : ℝ³ →ᵃ[ℝ] ℝ) {p e : ℝ³} (h0 : f p = 0) (h1 : f (p + e) = 0) (c : ℝ) :
+    f (p + c • e) = 0 := by
+  have k1 : f (p + e) = f.linear e + f p := by
+    rw [show p + e = e +ᵥ p by rw [vadd_eq_add, add_comm]]; exact f.map_vadd p e
+  have kc : f (p + c • e) = f.linear (c • e) + f p := by
+    rw [show p + c • e = c • e +ᵥ p by rw [vadd_eq_add, add_comm]]; exact f.map_vadd p (c • e)
+  rw [kc, map_smul, smul_eq_mul]
+  rw [h0, h1] at k1
+  rw [h0]
+  have : f.linear e = 0 := by linarith
+  rw [this]; ring
+
+set_option maxHeartbeats 4000000 in
+/-- **Corollary T1 for two quadrilateral facets sharing a vertex.**  `0123` and
+`0456` are facets of the seven extreme points `x`, `e ≠ 0` spans the line of
+their planes, no three points are collinear, no segment is parallel to `e`, and
+the depths along `e` are distinct: Rupert. -/
+theorem isRupert_twoQuads (x : Fin 7 → ℝ³) (e : ℝ³) (he : e ≠ 0)
+    (hF1 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (x 0) = 0 ∧ f (x 0 + e) = 0 ∧ f (x 1) = 0 ∧ f (x 2) = 0 ∧
+      f (x 3) = 0 ∧ f (x 4) < 0 ∧ f (x 5) < 0 ∧ f (x 6) < 0)
+    (hF2 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (x 0) = 0 ∧ f (x 0 + e) = 0 ∧ f (x 4) = 0 ∧ f (x 5) = 0 ∧
+      f (x 6) = 0 ∧ f (x 1) < 0 ∧ f (x 2) < 0 ∧ f (x 3) < 0)
+    (hext : ∀ i, x i ∉ convexHull ℝ (x '' {j | j ≠ i}))
+    (hcol : ∀ i j k : Fin 7, i ≠ j → i ≠ k → j ≠ k → ∀ c : ℝ, x k - x i ≠ c • (x j - x i))
+    (hpar : ∀ i j : Fin 7, i ≠ j → ∀ c : ℝ, x j - x i ≠ c • e)
+    (hZ : Function.Injective fun i => ⟪x i, e⟫) : IsRupert (Finset.univ.image x) := by
+  classical
+  obtain ⟨R, hR, r, hr, hRe⟩ := exists_rotation_to_ez_pos e he
+  apply isRupert_of_isRupert_image_rotation R hR
+  set g := R.toEuclideanLin with hg
+  set I := so3Isometry hR with hI
+  have hgI : ∀ p, g p = I p := fun p => rfl
+  have hginj : Function.Injective g := I.injective
+  rw [Finset.image_image]
+  have hgz : ∀ p, g p 2 = ⟪p, e⟫ / r := fun p => by
+    have := inner_toEuclideanLin_SO3 hR p e
+    rw [hRe, real_inner_smul_right, inner_ez] at this
+    field_simp; linarith
+  have hIe : I.symm ez = r⁻¹ • e := by
+    apply I.injective
+    rw [LinearIsometryEquiv.apply_symm_apply, map_smul, ← hgI, hRe, smul_smul,
+      inv_mul_cancel₀ hr.ne', one_smul]
+  -- facets transported by the inverse rotation
+  have tr : ∀ f : ℝ³ →ᵃ[ℝ] ℝ, f (x 0) = 0 → f (x 0 + e) = 0 →
+      ∃ f' : ℝ³ →ᵃ[ℝ] ℝ, (∀ i, f' (g (x i)) = f (x i)) ∧ f' (g (x 0) + ez) = 0 := by
+    intro f h0 h1
+    refine ⟨f.comp I.symm.toLinearEquiv.toLinearMap.toAffineMap, fun i => by simp [hgI], ?_⟩
+    have : (f.comp I.symm.toLinearEquiv.toLinearMap.toAffineMap) (g (x 0) + ez) =
+        f (x 0 + r⁻¹ • e) := by
+      simp [hgI, map_add, hIe]
+    rw [this]; exact affine_zero_line f h0 h1 _
+  obtain ⟨f1, e10, e1e, e11, e12, e13, n14, n15, n16⟩ := hF1
+  obtain ⟨f2, e20, e2e, e24, e25, e26, n21, n22, n23⟩ := hF2
+  obtain ⟨f1', hf1', hz1⟩ := tr f1 e10 e1e
+  obtain ⟨f2', hf2', hz2⟩ := tr f2 e20 e2e
+  refine isRupert_twoQuads_vertical (fun i => g (x i)) ?_ ?_ ?_ ?_ ?_ ?_
+  · exact ⟨f1', by rw [hf1']; exact e10, hz1, by rw [hf1']; exact e11, by rw [hf1']; exact e12,
+      by rw [hf1']; exact e13, by rw [hf1']; exact n14, by rw [hf1']; exact n15,
+      by rw [hf1']; exact n16⟩
+  · exact ⟨f2', by rw [hf2']; exact e20, hz2, by rw [hf2']; exact e24, by rw [hf2']; exact e25,
+      by rw [hf2']; exact e26, by rw [hf2']; exact n21, by rw [hf2']; exact n22,
+      by rw [hf2']; exact n23⟩
+  · intro i hmem
+    apply hext i
+    have himg : ((fun j => g (x j)) '' {j | j ≠ i}) = g '' (x '' {j | j ≠ i}) := by
+      rw [Set.image_image]
+    rw [himg, ← LinearMap.image_convexHull] at hmem
+    obtain ⟨p, hp, hpe⟩ := hmem
+    rwa [← hginj hpe]
+  · intro i j k hij hik hjk c h
+    apply hcol i j k hij hik hjk c
+    apply hginj
+    simp only [map_sub, map_smul] at h ⊢; exact h
+  · intro i j hij
+    by_contra h; push Not at h
+    obtain ⟨h0, h1⟩ := h
+    apply hpar i j hij ((g (x j - x i)) 2 / r)
+    apply hginj
+    rw [map_smul, hRe]
+    ext k; fin_cases k
+    · simp [ez, map_sub]; linarith
+    · simp [ez, map_sub]; linarith
+    · simp [ez]; field_simp
+  · intro i j hij
+    apply hZ
+    simp only [hgz] at hij
+    simpa [hr.ne'] using hij
+
 end Minimality
 
 end
