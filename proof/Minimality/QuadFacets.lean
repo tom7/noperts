@@ -375,4 +375,81 @@ theorem quad_facets_classify : ∀ B ∈ (Finset.univ : Finset (Fin 7)).powerset
      IsType02Pattern B D {0, 1, 2, 3} C ∨ IsType02Pattern C D {0, 1, 2, 3} B) := by
   decide +kernel
 
+/-! ### From the geometry to `QuadSidesOK` -/
+
+/-- A two-element set containing `v` is `{v, p}` for some `p ≠ v`. -/
+theorem exists_pair_of_mem {α : Type*} [DecidableEq α] {S : Finset α} {v : α}
+    (h2 : S.card = 2) (hv : v ∈ S) : ∃ p, p ≠ v ∧ S = {v, p} := by
+  obtain ⟨x, y, hxy, rfl⟩ := Finset.card_eq_two.mp h2
+  rcases Finset.mem_insert.mp hv with rfl | hv
+  · exact ⟨y, hxy.symm, rfl⟩
+  · rw [Finset.mem_singleton] at hv; subst hv
+    exact ⟨x, hxy, Finset.pair_comm _ _⟩
+
+/-- **Three sides at a vertex or in a triangle.** If three distinct two-element
+subsets `S1, S2, S3` of a set have a common point, they are `{v,p}, {v,q}, {v,r}`
+with `v, p, q, r` distinct; if their union has three points, they are
+`{x,y}, {c,x}, {c,y}` with `x, y, c` distinct. -/
+theorem three_pairs_cases {α : Type*} [DecidableEq α] {S1 S2 S3 : Finset α}
+    (h1 : S1.card = 2) (h2 : S2.card = 2) (h3 : S3.card = 2)
+    (n12 : S1 ≠ S2) (n13 : S1 ≠ S3) (n23 : S2 ≠ S3)
+    (h : (S1 ∩ S2 ∩ S3).Nonempty ∨ (S1 ∪ S2 ∪ S3).card = 3) :
+    (∃ v p q r, [v, p, q, r].Nodup ∧ S1 = {v, p} ∧ S2 = {v, q} ∧ S3 = {v, r}) ∨
+    (∃ x y c, [x, y, c].Nodup ∧ S1 = {x, y} ∧ S2 = {c, x} ∧ S3 = {c, y}) := by
+  rcases h with ⟨v, hv⟩ | hU
+  · left
+    simp only [Finset.mem_inter] at hv
+    obtain ⟨p, hp, rfl⟩ := exists_pair_of_mem h1 hv.1.1
+    obtain ⟨q, hq, rfl⟩ := exists_pair_of_mem h2 hv.1.2
+    obtain ⟨r, hr, rfl⟩ := exists_pair_of_mem h3 hv.2
+    have hpq : p ≠ q := fun e => n12 (by rw [e])
+    have hpr : p ≠ r := fun e => n13 (by rw [e])
+    have hqr : q ≠ r := fun e => n23 (by rw [e])
+    exact ⟨v, p, q, r, by simp [hp.symm, hq.symm, hr.symm, hpq, hpr, hqr], rfl, rfl, rfl⟩
+  · right
+    obtain ⟨x, y, hxy, rfl⟩ := Finset.card_eq_two.mp h1
+    -- the third point c of the union
+    obtain ⟨c, hcU, hcS1⟩ : ∃ c ∈ ({x, y} : Finset α) ∪ S2 ∪ S3, c ∉ ({x, y} : Finset α) := by
+      by_contra hc; push Not at hc
+      have : ({x, y} : Finset α) ∪ S2 ∪ S3 ⊆ {x, y} := hc
+      have := Finset.card_le_card this
+      rw [hU, Finset.card_pair hxy] at this; omega
+    have hU' : ({x, y} : Finset α) ∪ S2 ∪ S3 = {c, x, y} := by
+      apply (Finset.eq_of_subset_of_card_le ?_ ?_).symm
+      · intro w hw
+        simp only [Finset.mem_insert, Finset.mem_singleton] at hw
+        rcases hw with rfl | rfl | rfl
+        · exact hcU
+        · simp
+        · simp
+      · rw [hU, Finset.card_insert_of_notMem hcS1, Finset.card_pair hxy]
+    simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hcS1
+    -- S2, S3 are 2-subsets of {c, x, y} other than {x, y}: each contains c
+    have sub2 : S2 ⊆ {c, x, y} := hU' ▸ (Finset.subset_union_right.trans Finset.subset_union_left)
+    have sub3 : S3 ⊆ {c, x, y} := hU' ▸ Finset.subset_union_right
+    have pick : ∀ S : Finset α, S.card = 2 → S ⊆ {c, x, y} → S ≠ {x, y} →
+        S = {c, x} ∨ S = {c, y} := by
+      intro S hS hsub hne
+      obtain ⟨a, b, hab, rfl⟩ := Finset.card_eq_two.mp hS
+      have ha := hsub (by simp : a ∈ ({a, b} : Finset α))
+      have hb := hsub (by simp : b ∈ ({a, b} : Finset α))
+      simp only [Finset.mem_insert, Finset.mem_singleton] at ha hb
+      rcases ha with rfl | rfl | rfl <;> rcases hb with rfl | rfl | rfl <;>
+        first
+        | exact absurd rfl hab
+        | exact Or.inl rfl
+        | exact Or.inr rfl
+        | exact Or.inl (Finset.pair_comm _ _)
+        | exact Or.inr (Finset.pair_comm _ _)
+        | exact absurd rfl hne
+        | exact absurd (Finset.pair_comm _ _) hne
+    have hc1 : c ≠ x := hcS1.1
+    have hc2 : c ≠ y := hcS1.2
+    rcases pick S2 h2 sub2 (Ne.symm n12) with e2 | e2 <;>
+      rcases pick S3 h3 sub3 (Ne.symm n13) with e3 | e3
+    · exact absurd (e2.trans e3.symm) n23
+    · exact ⟨x, y, c, by simp [hxy, hc1.symm, hc2.symm], rfl, e2, e3⟩
+    · exact ⟨y, x, c, by simp [hxy.symm, hc1.symm, hc2.symm], Finset.pair_comm _ _, e2, e3⟩
+    · exact absurd (e2.trans e3.symm) n23
+
 end Minimality
