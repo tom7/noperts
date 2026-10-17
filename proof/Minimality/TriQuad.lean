@@ -185,6 +185,34 @@ theorem quad_chain {z0 a1 z1 a2 z2 a3 z3 : ℝ} (h1 : 0 < a1) (h2 : 0 < a2) (h3 
   · exact ccw h1 h3 h12 h13 h23 hq
   · rw [← quadPt_swap13]; exact ccw h3 h1 h23.symm h13.symm h12.symm hq
 
+theorem quadPt_swap12 (z0 a1 z1 a2 z2 a3 z3 : ℝ) :
+    QuadPt z0 a2 z2 a1 z1 a3 z3 = QuadPt z0 a1 z1 a2 z2 a3 z3 := by
+  funext a z; simp only [QuadPt, eq_iff_iff]; tauto
+
+theorem quadPt_swap23 (z0 a1 z1 a2 z2 a3 z3 : ℝ) :
+    QuadPt z0 a1 z1 a3 z3 a2 z2 = QuadPt z0 a1 z1 a2 z2 a3 z3 := by
+  funext a z; simp only [QuadPt, eq_iff_iff]; tauto
+
+/-- The convex labellings of a quadrilateral with first vertex `0`: six cyclic
+orders (three choices of the vertex opposite `0`, two orientations). -/
+def ConvQuad6 (z0 a1 z1 a2 z2 a3 z3 : ℝ) : Prop :=
+  ConvQuad 0 z0 a1 z1 a2 z2 a3 z3 ∨ ConvQuad 0 z0 a3 z3 a2 z2 a1 z1 ∨
+  ConvQuad 0 z0 a2 z2 a1 z1 a3 z3 ∨ ConvQuad 0 z0 a3 z3 a1 z1 a2 z2 ∨
+  ConvQuad 0 z0 a1 z1 a3 z3 a2 z2 ∨ ConvQuad 0 z0 a2 z2 a3 z3 a1 z1
+
+/-- `quad_chain` for any convex labelling. -/
+theorem quad_chain6 {z0 a1 z1 a2 z2 a3 z3 : ℝ} (h1 : 0 < a1) (h2 : 0 < a2) (h3 : 0 < a3)
+    (hQ : ConvQuad6 z0 a1 z1 a2 z2 a3 z3)
+    (h12 : a1 ≠ a2) (h13 : a1 ≠ a3) (h23 : a2 ≠ a3) (s : ℝ) (hs : s = 1 ∨ s = -1) :
+    ∃ m ca cz, ChainOK (QuadPt z0 a1 z1 a2 z2 a3 z3) z0 s m ca cz := by
+  rcases hQ with hq | hq | hq | hq | hq | hq
+  · exact quad_chain h1 h2 h3 (Or.inl hq) h12 h13 h23 s hs
+  · exact quad_chain h1 h2 h3 (Or.inr hq) h12 h13 h23 s hs
+  · rw [← quadPt_swap12]; exact quad_chain h2 h1 h3 (Or.inl hq) h12.symm h23 h13 s hs
+  · rw [← quadPt_swap12]; exact quad_chain h2 h1 h3 (Or.inr hq) h12.symm h23 h13 s hs
+  · rw [← quadPt_swap23]; exact quad_chain h1 h3 h2 (Or.inl hq) h13 h12 h23.symm s hs
+  · rw [← quadPt_swap23]; exact quad_chain h1 h3 h2 (Or.inr hq) h13 h12 h23.symm s hs
+
 /-- All chains of one point set end at the same far point. -/
 theorem ChainOK.far_eq {Q : ℝ → ℝ → Prop} {z0 s s' : ℝ} {m m' : ℕ} {ca cz ca' cz' : ℕ → ℝ}
     (h : ChainOK Q z0 s m ca cz) (h' : ChainOK Q z0 s' m' ca' cz') :
@@ -213,13 +241,12 @@ set_option maxHeartbeats 4000000 in
 /-- **Two quadrilaterals sharing the apex, in the oblique frame.**  The apex
 `(0, 0, z0)`, the quadrilateral `0, 1, 2, 3` on the first ray (oblique
 coordinates `(a_i, 0, z_i)`) and `0, 1′, 2′, 3′` on the second (`(0, b_j, w_j)`),
-each convex in its plane (either orientation) with distinct positive `t`, and
+each convex in its plane (any labelling) with distinct positive `t`, and
 seven distinct depths: Rupert (Corollary T1 of `FEWER-FACES-PROOFS.md` §7). -/
 theorem isRupert_twoQuads_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
     {z0 a1 z1 a2 z2 a3 z3 b1 w1 b2 w2 b3 w3 : ℝ}
     (ha1 : 0 < a1) (ha2 : 0 < a2) (ha3 : 0 < a3) (hb1 : 0 < b1) (hb2 : 0 < b2) (hb3 : 0 < b3)
-    (hQ1 : ConvQuad 0 z0 a1 z1 a2 z2 a3 z3 ∨ ConvQuad 0 z0 a3 z3 a2 z2 a1 z1)
-    (hQ2 : ConvQuad 0 z0 b1 w1 b2 w2 b3 w3 ∨ ConvQuad 0 z0 b3 w3 b2 w2 b1 w1)
+    (hQ1 : ConvQuad6 z0 a1 z1 a2 z2 a3 z3) (hQ2 : ConvQuad6 z0 b1 w1 b2 w2 b3 w3)
     (ha12 : a1 ≠ a2) (ha13 : a1 ≠ a3) (ha23 : a2 ≠ a3)
     (hb12 : b1 ≠ b2) (hb13 : b1 ≠ b3) (hb23 : b2 ≠ b3)
     (hz : Function.Injective ![z0, z1, z2, z3, w1, w2, w3]) :
@@ -232,8 +259,8 @@ theorem isRupert_twoQuads_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
   have zne : ∀ i j : Fin 7, i ≠ j → ![z0, z1, z2, z3, w1, w2, w3] i ≠ ![z0, z1, z2, z3, w1, w2, w3] j :=
     fun i j h e => h (hz e)
   -- the far points (from the upper chains)
-  obtain ⟨m0, ca0, cz0, C10⟩ := quad_chain ha1 ha2 ha3 hQ1 ha12 ha13 ha23 1 (Or.inl rfl)
-  obtain ⟨n0, cb0, dz0, C20⟩ := quad_chain hb1 hb2 hb3 hQ2 hb12 hb13 hb23 1 (Or.inl rfl)
+  obtain ⟨m0, ca0, cz0, C10⟩ := quad_chain6 ha1 ha2 ha3 hQ1 ha12 ha13 ha23 1 (Or.inl rfl)
+  obtain ⟨n0, cb0, dz0, C20⟩ := quad_chain6 hb1 hb2 hb3 hQ2 hb12 hb13 hb23 1 (Or.inl rfl)
   -- distinct depths between the two rays
   have n14 : z1 ≠ w1 := fun h => absurd (hz (a₁ := 1) (a₂ := 4) (by simp [h])) (by decide)
   have n15 : z1 ≠ w2 := fun h => absurd (hz (a₁ := 1) (a₂ := 5) (by simp [h])) (by decide)
@@ -260,8 +287,8 @@ theorem isRupert_twoQuads_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
   set s : ℝ := if dz0 n0 < cz0 m0 then 1 else -1 with hsdef
   have hs : s = 1 ∨ s = -1 := by rw [hsdef]; split_ifs <;> simp
   have hs' : -s = 1 ∨ -s = -1 := by rcases hs with h | h <;> rw [h] <;> simp
-  obtain ⟨m, ca, cz, C1⟩ := quad_chain ha1 ha2 ha3 hQ1 ha12 ha13 ha23 s hs
-  obtain ⟨n, cb, dz, C2⟩ := quad_chain hb1 hb2 hb3 hQ2 hb12 hb13 hb23 (-s) hs'
+  obtain ⟨m, ca, cz, C1⟩ := quad_chain6 ha1 ha2 ha3 hQ1 ha12 ha13 ha23 s hs
+  obtain ⟨n, cb, dz, C2⟩ := quad_chain6 hb1 hb2 hb3 hQ2 hb12 hb13 hb23 (-s) hs'
   have eA := C1.far_eq C10
   have eB := C2.far_eq C20
   have hAB : s * dz n < s * cz m := by

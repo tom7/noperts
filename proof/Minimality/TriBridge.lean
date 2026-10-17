@@ -94,6 +94,265 @@ theorem convex_four {x0 y0 x1 y1 x2 y2 x3 y3 : ℝ}
     | exact absurd hn0 (inTri_of_orient hD (by rw [p230]; (first | exact div_nonneg (by linarith) (by linarith) | exact div_nonneg_of_nonpos (by linarith) (by linarith))) (by rw [p130]; (first | exact div_nonneg (by linarith) (by linarith) | exact div_nonneg_of_nonpos (by linarith) (by linarith)))
         (by rw [p120]; (first | exact div_nonneg (by linarith) (by linarith) | exact div_nonneg_of_nonpos (by linarith) (by linarith))))
 
+/-! ### Lifting planar facts to `ℝ³` -/
+
+theorem oblPt_comb (O r1 r2 : ℝ²) {t0 t1 t2 : ℝ} (hs : t0 + t1 + t2 = 1)
+    (a0 b0 z0 a1 b1 z1 a2 b2 z2 : ℝ) :
+    oblPt O r1 r2 (t0 * a0 + t1 * a1 + t2 * a2) (t0 * b0 + t1 * b1 + t2 * b2)
+      (t0 * z0 + t1 * z1 + t2 * z2) =
+    t0 • oblPt O r1 r2 a0 b0 z0 + t1 • oblPt O r1 r2 a1 b1 z1 + t2 • oblPt O r1 r2 a2 b2 z2 := by
+  ext j; fin_cases j <;> simp [oblPt]
+  · linear_combination (-(O 0)) * hs
+  · linear_combination (-(O 1)) * hs
+
+theorem comb_mem_convexHull {S : Set ℝ³} {p0 p1 p2 : ℝ³} (h0 : p0 ∈ S) (h1 : p1 ∈ S) (h2 : p2 ∈ S)
+    {t0 t1 t2 : ℝ} (ht0 : 0 ≤ t0) (ht1 : 0 ≤ t1) (ht2 : 0 ≤ t2) (hs : t0 + t1 + t2 = 1) :
+    t0 • p0 + t1 • p1 + t2 • p2 ∈ convexHull ℝ S := by
+  have hc := convex_convexHull ℝ S
+  by_cases h : t0 + t1 = 0
+  · have e0 : t0 = 0 := by linarith
+    have e1 : t1 = 0 := by linarith
+    have e2 : t2 = 1 := by linarith
+    subst e0 e1 e2; simpa using subset_convexHull ℝ S h2
+  · have hpos : 0 < t0 + t1 := lt_of_le_of_ne (by linarith) (Ne.symm h)
+    have hq : (t0 / (t0 + t1)) • p0 + (t1 / (t0 + t1)) • p1 ∈ convexHull ℝ S :=
+      hc (subset_convexHull ℝ S h0) (subset_convexHull ℝ S h1) (div_nonneg ht0 hpos.le)
+        (div_nonneg ht1 hpos.le) (by field_simp)
+    have := hc hq (subset_convexHull ℝ S h2) hpos.le ht2 hs
+    convert this using 1
+    simp only [smul_add, smul_smul]
+    congr 2 <;> field_simp
+
+/-- Three points of the first ray's plane with zero orientation are collinear. -/
+theorem orient_ne_of_frame1 {O r1 r2 : ℝ²} {ai zi aj zj ak zk : ℝ} (hij : ai ≠ aj)
+    (h : ∀ c : ℝ, oblPt O r1 r2 ak 0 zk - oblPt O r1 r2 ai 0 zi ≠
+      c • (oblPt O r1 r2 aj 0 zj - oblPt O r1 r2 ai 0 zi)) :
+    orient2 ai zi aj zj ak zk ≠ 0 := by
+  intro h0
+  have hd : aj - ai ≠ 0 := sub_ne_zero.mpr hij.symm
+  apply h ((ak - ai) / (aj - ai))
+  unfold orient2 at h0
+  ext j; fin_cases j <;> simp [oblPt] <;> field_simp
+  linear_combination h0
+
+/-- The same on the second ray's plane. -/
+theorem orient_ne_of_frame2 {O r1 r2 : ℝ²} {bi zi bj zj bk zk : ℝ} (hij : bi ≠ bj)
+    (h : ∀ c : ℝ, oblPt O r1 r2 0 bk zk - oblPt O r1 r2 0 bi zi ≠
+      c • (oblPt O r1 r2 0 bj zj - oblPt O r1 r2 0 bi zi)) :
+    orient2 bi zi bj zj bk zk ≠ 0 := by
+  intro h0
+  have hd : bj - bi ≠ 0 := sub_ne_zero.mpr hij.symm
+  apply h ((bk - bi) / (bj - bi))
+  unfold orient2 at h0
+  ext j; fin_cases j <;> simp [oblPt] <;> field_simp
+  linear_combination h0
+
+/-- A point of the first ray's plane inside the triangle of three others lies
+in their convex hull in `ℝ³`. -/
+theorem notInTri_of_frame1 {O r1 r2 : ℝ²} {S : Set ℝ³} {a0 z0 a1 z1 a2 z2 a3 z3 : ℝ}
+    (hnot : oblPt O r1 r2 a3 0 z3 ∉ convexHull ℝ S) (h0 : oblPt O r1 r2 a0 0 z0 ∈ S)
+    (h1 : oblPt O r1 r2 a1 0 z1 ∈ S) (h2 : oblPt O r1 r2 a2 0 z2 ∈ S) :
+    NotInTri a0 z0 a1 z1 a2 z2 a3 z3 := by
+  rintro ⟨t0, t1, t2, ht0, ht1, ht2, hs, ea, ez'⟩
+  apply hnot
+  have e := oblPt_comb O r1 r2 hs a0 0 z0 a1 0 z1 a2 0 z2
+  simp only [mul_zero, add_zero] at e
+  rw [ea, ez', e]
+  exact comb_mem_convexHull h0 h1 h2 ht0 ht1 ht2 hs
+
+theorem notInTri_of_frame2 {O r1 r2 : ℝ²} {S : Set ℝ³} {b0 z0 b1 z1 b2 z2 b3 z3 : ℝ}
+    (hnot : oblPt O r1 r2 0 b3 z3 ∉ convexHull ℝ S) (h0 : oblPt O r1 r2 0 b0 z0 ∈ S)
+    (h1 : oblPt O r1 r2 0 b1 z1 ∈ S) (h2 : oblPt O r1 r2 0 b2 z2 ∈ S) :
+    NotInTri b0 z0 b1 z1 b2 z2 b3 z3 := by
+  rintro ⟨t0, t1, t2, ht0, ht1, ht2, hs, eb, ez'⟩
+  apply hnot
+  have e := oblPt_comb O r1 r2 hs 0 b0 z0 0 b1 z1 0 b2 z2
+  simp only [mul_zero, add_zero] at e
+  rw [eb, ez', e]
+  exact comb_mem_convexHull h0 h1 h2 ht0 ht1 ht2 hs
+
+set_option maxHeartbeats 4000000 in
+/-- **Two quadrilateral facets sharing the vertex `0`, the line of their planes
+vertical.**  `0123` and `0456` are facets whose planes contain the vertical line
+through `y 0`; the points are extreme, no three collinear, no two vertically
+aligned, with distinct heights: Rupert. -/
+theorem isRupert_twoQuads_vertical (y : Fin 7 → ℝ³)
+    (hF1 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (y 0) = 0 ∧ f (y 0 + ez) = 0 ∧ f (y 1) = 0 ∧ f (y 2) = 0 ∧
+      f (y 3) = 0 ∧ f (y 4) < 0 ∧ f (y 5) < 0 ∧ f (y 6) < 0)
+    (hF2 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (y 0) = 0 ∧ f (y 0 + ez) = 0 ∧ f (y 4) = 0 ∧ f (y 5) = 0 ∧
+      f (y 6) = 0 ∧ f (y 1) < 0 ∧ f (y 2) < 0 ∧ f (y 3) < 0)
+    (hext : ∀ i, y i ∉ convexHull ℝ (y '' {j | j ≠ i}))
+    (hcol : ∀ i j k : Fin 7, i ≠ j → i ≠ k → j ≠ k → ∀ c : ℝ, y k - y i ≠ c • (y j - y i))
+    (hpar : ∀ i j : Fin 7, i ≠ j → y i 0 ≠ y j 0 ∨ y i 1 ≠ y j 1)
+    (hZ : Function.Injective fun i => y i 2) : IsRupert (Finset.univ.image y) := by
+  obtain ⟨f1, e10, e1z, e11, e12, e13, n14, n15, n16⟩ := hF1
+  obtain ⟨f2, e20, e2z, e24, e25, e26, n21, n22, n23⟩ := hF2
+  obtain ⟨K1, α1, β1, γ1, h1⟩ := affine_xyz f1
+  obtain ⟨K2, α2, β2, γ2, h2⟩ := affine_xyz f2
+  -- the planes are vertical
+  have hγ1 : γ1 = 0 := by
+    rw [h1] at e1z e10; simp [ez] at e1z; linarith
+  have hγ2 : γ2 = 0 := by
+    rw [h2] at e2z e20; simp [ez] at e2z; linarith
+  have g1 : ∀ i, f1 (y i) = α1 * (y i 0 - y 0 0) + β1 * (y i 1 - y 0 1) := by
+    intro i; have := e10; rw [h1, hγ1] at this ⊢; linarith
+  have g2 : ∀ i, f2 (y i) = α2 * (y i 0 - y 0 0) + β2 * (y i 1 - y 0 1) := by
+    intro i; have := e20; rw [h2, hγ2] at this ⊢; linarith
+  -- the frame
+  set O : ℝ² := !₂[y 0 0, y 0 1] with hO
+  set r1 : ℝ² := !₂[y 1 0 - y 0 0, y 1 1 - y 0 1] with hr1
+  set r2 : ℝ² := !₂[y 4 0 - y 0 0, y 4 1 - y 0 1] with hr2
+  have q11 := g1 1; have q14 := g1 4; have q21 := g2 1; have q24 := g2 4
+  rw [e11] at q11; rw [e24] at q24
+  replace q11 := q11.symm
+  replace q24 := q24.symm
+  have hρ : cross2 r1 r2 ≠ 0 := by
+    intro hρ0
+    simp only [hr1, hr2, cross2] at hρ0
+    simp at hρ0
+    have k0 : (α1 * (y 4 0 - y 0 0) + β1 * (y 4 1 - y 0 1)) * (y 1 0 - y 0 0) = 0 := by
+      linear_combination (y 4 0 - y 0 0) * q11 + β1 * hρ0
+    have k1 : (α1 * (y 4 0 - y 0 0) + β1 * (y 4 1 - y 0 1)) * (y 1 1 - y 0 1) = 0 := by
+      linear_combination (y 4 1 - y 0 1) * q11 - α1 * hρ0
+    have hn : α1 * (y 4 0 - y 0 0) + β1 * (y 4 1 - y 0 1) ≠ 0 := by rw [← q14]; exact n14.ne
+    have r10 := (mul_eq_zero.mp k0).resolve_left hn
+    have r11 := (mul_eq_zero.mp k1).resolve_left hn
+    rw [r10, r11] at q21; linarith
+  set ρ := cross2 r1 r2 with hρdef
+  set a : Fin 7 → ℝ := fun i => cross2 !₂[y i 0 - y 0 0, y i 1 - y 0 1] r2 / ρ with ha
+  set b : Fin 7 → ℝ := fun i => cross2 r1 !₂[y i 0 - y 0 0, y i 1 - y 0 1] / ρ with hb
+  have hxy : ∀ i, y i 0 - y 0 0 = a i * r1 0 + b i * r2 0 ∧ y i 1 - y 0 1 = a i * r1 1 + b i * r2 1 := by
+    intro i
+    obtain ⟨c0, c1⟩ := cramer2 !₂[y i 0 - y 0 0, y i 1 - y 0 1] r1 r2 hρ
+    simp at c0 c1; exact ⟨c0, c1⟩
+  have hy : ∀ i, y i = oblPt O r1 r2 (a i) (b i) (y i 2) := by
+    intro i; obtain ⟨c0, c1⟩ := hxy i
+    ext j; fin_cases j
+    · simp only [oblPt, hO]; simp; linarith
+    · simp only [oblPt, hO]; simp; linarith
+    · simp [oblPt]
+  -- the facet functionals in the frame
+  have G1 : ∀ i, f1 (y i) = b i * (α1 * r2 0 + β1 * r2 1) := by
+    intro i; rw [g1 i, (hxy i).1, (hxy i).2]
+    have : α1 * r1 0 + β1 * r1 1 = 0 := by simp only [hr1]; simp; linarith
+    linear_combination a i * this
+  have G2 : ∀ i, f2 (y i) = a i * (α2 * r1 0 + β2 * r1 1) := by
+    intro i; rw [g2 i, (hxy i).1, (hxy i).2]
+    have : α2 * r2 0 + β2 * r2 1 = 0 := by simp only [hr2]; simp; linarith
+    linear_combination b i * this
+  have hd1 : α1 * r2 0 + β1 * r2 1 < 0 := by simp only [hr2]; simp; linarith
+  have hd2 : α2 * r1 0 + β2 * r1 1 < 0 := by simp only [hr1]; simp; linarith
+  have hb0 : ∀ i, f1 (y i) = 0 → b i = 0 := fun i h => by
+    rw [G1] at h; exact (mul_eq_zero.mp h).resolve_right hd1.ne
+  have ha0 : ∀ i, f2 (y i) = 0 → a i = 0 := fun i h => by
+    rw [G2] at h; exact (mul_eq_zero.mp h).resolve_right hd2.ne
+  have hapos : ∀ i, f2 (y i) < 0 → 0 < a i := fun i h => by
+    rw [G2] at h; nlinarith
+  have hbpos : ∀ i, f1 (y i) < 0 → 0 < b i := fun i h => by
+    rw [G1] at h; nlinarith
+  have ha00 : a 0 = 0 := by simp [ha, cross2]
+  have hb00 : b 0 = 0 := by simp [hb, cross2]
+  have b1 := hb0 1 e11; have b2 := hb0 2 e12; have b3 := hb0 3 e13
+  have a4 := ha0 4 e24; have a5 := ha0 5 e25; have a6 := ha0 6 e26
+  have pa1 := hapos 1 n21; have pa2 := hapos 2 n22; have pa3 := hapos 3 n23
+  have pb4 := hbpos 4 n14; have pb5 := hbpos 5 n15; have pb6 := hbpos 6 n16
+  -- the points in the frame
+  have E0 : y 0 = oblPt O r1 r2 0 0 (y 0 2) := by conv_lhs => rw [hy 0, ha00, hb00]
+  have E1 : ∀ i, b i = 0 → y i = oblPt O r1 r2 (a i) 0 (y i 2) := fun i h => by
+    conv_lhs => rw [hy i, h]
+  have E2 : ∀ i, a i = 0 → y i = oblPt O r1 r2 0 (b i) (y i 2) := fun i h => by
+    conv_lhs => rw [hy i, h]
+  -- distinct coordinates along each ray
+  have dA : ∀ i j, i ≠ j → b i = 0 → b j = 0 → a i ≠ a j := by
+    intro i j hij hbi hbj e
+    obtain ⟨c0, c1⟩ := hxy i; obtain ⟨d0, d1⟩ := hxy j
+    rw [hbi, e] at c0 c1; rw [hbj] at d0 d1
+    rcases hpar i j hij with h | h <;> apply h <;> linarith
+  have dB : ∀ i j, i ≠ j → a i = 0 → a j = 0 → b i ≠ b j := by
+    intro i j hij hai haj e
+    obtain ⟨c0, c1⟩ := hxy i; obtain ⟨d0, d1⟩ := hxy j
+    rw [hai, e] at c0 c1; rw [haj] at d0 d1
+    rcases hpar i j hij with h | h <;> apply h <;> linarith
+  -- the two quadrilaterals are convex in their planes
+  have hQ1 : ConvQuad6 (y 0 2) (a 1) (y 1 2) (a 2) (y 2 2) (a 3) (y 3 2) := by
+    have col : ∀ i j k : Fin 7, i ≠ j → i ≠ k → j ≠ k → b i = 0 → b j = 0 → b k = 0 →
+        a i ≠ a j → orient2 (a i) (y i 2) (a j) (y j 2) (a k) (y k 2) ≠ 0 := by
+      intro i j k hij hik hjk hbi hbj hbk hne
+      apply orient_ne_of_frame1 hne
+      intro c; rw [← E1 i hbi, ← E1 j hbj, ← E1 k hbk]; exact hcol i j k hij hik hjk c
+    have nt : ∀ i j k l : Fin 7, j ≠ i → k ≠ i → l ≠ i → b i = 0 → b j = 0 → b k = 0 →
+        b l = 0 → NotInTri (a j) (y j 2) (a k) (y k 2) (a l) (y l 2) (a i) (y i 2) := by
+      intro i j k l hj hk hl hbi hbj hbk hbl
+      apply notInTri_of_frame1 (S := y '' {m | m ≠ i})
+      · rw [← E1 i hbi]; exact hext i
+      · rw [← E1 j hbj]; exact ⟨j, hj, rfl⟩
+      · rw [← E1 k hbk]; exact ⟨k, hk, rfl⟩
+      · rw [← E1 l hbl]; exact ⟨l, hl, rfl⟩
+    have := convex_four (col 0 1 2 (by decide) (by decide) (by decide) hb00 b1 b2 (by rw [ha00]; exact pa1.ne))
+      (col 0 1 3 (by decide) (by decide) (by decide) hb00 b1 b3 (by rw [ha00]; exact pa1.ne))
+      (col 0 2 3 (by decide) (by decide) (by decide) hb00 b2 b3 (by rw [ha00]; exact pa2.ne))
+      (col 1 2 3 (by decide) (by decide) (by decide) b1 b2 b3 (dA 1 2 (by decide) b1 b2))
+      (nt 3 0 1 2 (by decide) (by decide) (by decide) b3 hb00 b1 b2)
+      (nt 2 0 1 3 (by decide) (by decide) (by decide) b2 hb00 b1 b3)
+      (nt 1 0 2 3 (by decide) (by decide) (by decide) b1 hb00 b2 b3)
+      (nt 0 1 2 3 (by decide) (by decide) (by decide) hb00 b1 b2 b3)
+    rw [ha00] at this; exact this
+  have hQ2 : ConvQuad6 (y 0 2) (b 4) (y 4 2) (b 5) (y 5 2) (b 6) (y 6 2) := by
+    have col : ∀ i j k : Fin 7, i ≠ j → i ≠ k → j ≠ k → a i = 0 → a j = 0 → a k = 0 →
+        b i ≠ b j → orient2 (b i) (y i 2) (b j) (y j 2) (b k) (y k 2) ≠ 0 := by
+      intro i j k hij hik hjk hai haj hak hne
+      apply orient_ne_of_frame2 hne
+      intro c; rw [← E2 i hai, ← E2 j haj, ← E2 k hak]; exact hcol i j k hij hik hjk c
+    have nt : ∀ i j k l : Fin 7, j ≠ i → k ≠ i → l ≠ i → a i = 0 → a j = 0 → a k = 0 →
+        a l = 0 → NotInTri (b j) (y j 2) (b k) (y k 2) (b l) (y l 2) (b i) (y i 2) := by
+      intro i j k l hj hk hl hai haj hak hal
+      apply notInTri_of_frame2 (S := y '' {m | m ≠ i})
+      · rw [← E2 i hai]; exact hext i
+      · rw [← E2 j haj]; exact ⟨j, hj, rfl⟩
+      · rw [← E2 k hak]; exact ⟨k, hk, rfl⟩
+      · rw [← E2 l hal]; exact ⟨l, hl, rfl⟩
+    have := convex_four (col 0 4 5 (by decide) (by decide) (by decide) ha00 a4 a5 (by rw [hb00]; exact pb4.ne))
+      (col 0 4 6 (by decide) (by decide) (by decide) ha00 a4 a6 (by rw [hb00]; exact pb4.ne))
+      (col 0 5 6 (by decide) (by decide) (by decide) ha00 a5 a6 (by rw [hb00]; exact pb5.ne))
+      (col 4 5 6 (by decide) (by decide) (by decide) a4 a5 a6 (dB 4 5 (by decide) a4 a5))
+      (nt 6 0 4 5 (by decide) (by decide) (by decide) a6 ha00 a4 a5)
+      (nt 5 0 4 6 (by decide) (by decide) (by decide) a5 ha00 a4 a6)
+      (nt 4 0 5 6 (by decide) (by decide) (by decide) a4 ha00 a5 a6)
+      (nt 0 4 5 6 (by decide) (by decide) (by decide) ha00 a4 a5 a6)
+    rw [hb00] at this; exact this
+  -- the point set in the frame
+  have himg : Finset.univ.image y = {y 0, y 1, y 2, y 3, y 4, y 5, y 6} := by
+    ext p; simp [Fin.exists_fin_succ, eq_comm]
+  rw [himg]
+  nth_rewrite 1 [E0]
+  rw [E1 1 b1, E1 2 b2, E1 3 b3, E2 4 a4, E2 5 a5, E2 6 a6]
+  have hz7 : Function.Injective ![y 0 2, y 1 2, y 2 2, y 3 2, y 4 2, y 5 2, y 6 2] := by
+    have : ![y 0 2, y 1 2, y 2 2, y 3 2, y 4 2, y 5 2, y 6 2] = fun i => y i 2 := by
+      funext i; fin_cases i <;> rfl
+    rw [this]; exact hZ
+  rcases lt_or_gt_of_ne hρ with hneg | hpos
+  · -- negative orientation: exchange the two rays
+    have hpos' : 0 < cross2 r2 r1 := by
+      have : cross2 r2 r1 = -cross2 r1 r2 := by unfold cross2; ring
+      rw [this]; linarith
+    have swap : ∀ p q z, oblPt O r2 r1 q p z = oblPt O r1 r2 p q z := by
+      intro p q z; ext j; fin_cases j <;> simp [oblPt] <;> ring
+    have hz7' : Function.Injective ![y 0 2, y 4 2, y 5 2, y 6 2, y 1 2, y 2 2, y 3 2] := by
+      have : ![y 0 2, y 4 2, y 5 2, y 6 2, y 1 2, y 2 2, y 3 2] =
+          (fun i => y i 2) ∘ ![0, 4, 5, 6, 1, 2, 3] := by
+        funext i; fin_cases i <;> rfl
+      rw [this]; exact hZ.comp (by decide)
+    have key := isRupert_twoQuads_frame O r2 r1 hpos' pb4 pb5 pb6 pa1 pa2 pa3 hQ2 hQ1
+      (dB 4 5 (by decide) a4 a5) (dB 4 6 (by decide) a4 a6) (dB 5 6 (by decide) a5 a6)
+      (dA 1 2 (by decide) b1 b2) (dA 1 3 (by decide) b1 b3) (dA 2 3 (by decide) b2 b3) hz7'
+    simp only [swap] at key
+    convert key using 1
+    ext p; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
+  · exact isRupert_twoQuads_frame O r1 r2 hpos pa1 pa2 pa3 pb4 pb5 pb6 hQ1 hQ2
+      (dA 1 2 (by decide) b1 b2) (dA 1 3 (by decide) b1 b3) (dA 2 3 (by decide) b2 b3)
+      (dB 4 5 (by decide) a4 a5) (dB 4 6 (by decide) a4 a6) (dB 5 6 (by decide) a5 a6) hz7
+
+
 end Minimality
 
 end
