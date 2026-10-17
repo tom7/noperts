@@ -146,6 +146,19 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   points, one hidden behind the other), `isRupert_caseII_fallback` (Theorem 5
   through the waist lemma, with an explicit witness `fallback_witness`).
 
+**L13. The triangle-shadow lemma** (`TriShadow.lean`; Lemma T of
+`FEWER-FACES-PROOFS.md` §7)
+* `isRupert_triShadow`: in the oblique frame of L12 (view `ez`, apex at
+  oblique coordinates `(0, 0)`), chains `C1` on the first ray and `C2` on the
+  second (coordinate sequences), every point of `V` in the triangle and
+  strictly inside its far side unless it is `A` or `B`, the points of each ray
+  on the `s`-side of each segment of that ray's chain, distinct depths along
+  the cycle, and `s z_A > s z_B`: the tilt `-s r1 + s r2` is unimodal, so `V`
+  is Rupert. Unimodality is `tri_localMax_unique` (every local maximum of
+  `s z` lies on the concave chain). Next: the chains of a quadrilateral from
+  its apex, and the bridge from two quadrilateral facets sharing one vertex
+  (types 02, 07, 09, 14, 18, 20 by Corollary T1).
+
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
 position)
@@ -239,6 +252,7 @@ In import order.
 | `FaceFive` | L11, Theorem A | `isRupert_edgeOn_dir`, `isRupert_cycle_edgeOn`, `isRupert_caseI`, `isRupert_caseII`, `isRupert_of_card_seven_of_facet` |
 | `EdgeView` | L12, Theorems B, B′ (types 02, 05, general position) | `cycles02_A1B6`, `tiltSign_obl`, `isRupert_type02_frame`, `sheets_on_chord`, `isRupert_type02`, `cycles05_A3B6`, `isRupert_type05` |
 | `QuadFacets` | L12, four quadrilateral facets | `card_inter_le_two_of_facets`, `quad_facets_classify`, `quadSidesOK_of_facets`, `isRupert_of_four_quad_facets` |
+| `TriShadow` | L13, Lemma T (triangle shadow), oblique frame | `tri_localMax_unique`, `oblPt_inj`, `isRupert_triShadow` |
 
 ## Formalization choices
 
