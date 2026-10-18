@@ -221,6 +221,10 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   `Type23.lean`): three views (edge `04`; planes of `014`, `156`; planes of
   `0345`, `125`); failure of the edge view at `6` gives the second view in the
   frame `x1; x4, x5, x6`, failure at `2` the third in the frame `x5; x1, x2, x4`.
+* At the entry point, `not_type25_of_isNopert` (Theorem K, type 25;
+  `Type25.lean`): edge `13`, planes of `013` with `0246`, and with `056`; in
+  the frame `x1; x0, x3, x6` the edge view at `y` is `α_y + γ_y < 1`; failure
+  at `2` or `4` gives the second view, failure at `5` the third.
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
@@ -328,6 +332,7 @@ In import order.
 | `Type17` | L13, Theorem H (type 17), same method | `isRupert_type17` |
 | `Type27` | L13, Theorem I (type 27), same method, three views | `isRupert_type27` |
 | `Type23` | L13, Theorem J (type 23), same method, three views | `isRupert_type23` |
+| `Type25` | L13, Theorem K (type 25), same method, three views | `isRupert_type25` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices
