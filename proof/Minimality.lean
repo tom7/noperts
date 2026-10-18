@@ -101,18 +101,18 @@ theorem not_four_quad_facets_of_isNopert (V : Finset ℝ³) (h : IsNopert V) (hV
 
 /-- **No two quadrilateral facets sharing one vertex** (Corollary T1 of the
 triangle-shadow lemma, `FEWER-FACES-PROOFS.md` §7; types 02, 07, 09, 14, 18, 20):
-a 7-point nopert with no three points collinear has no two quadrilateral facets
-meeting in a single vertex, given general position at the line of their planes
-(`Minimality.TriGenFar`: no segment parallel to it, distinct depths along it at
-the two far vertices). -/
+a 7-point nopert has no two quadrilateral facets meeting in a single vertex,
+given general position at the line of their planes (`Minimality.TriGenFar`: no
+segment parallel to it, distinct depths along it at the two far vertices). -/
 theorem not_two_quad_facets_vertex_of_isNopert (V : Finset ℝ³) (h : IsNopert V)
-    (hV : V.card = 7) (hgen : Minimality.NoThreeCollinear V) (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V)
+    (hV : V.card = 7) (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V)
     (h2V : Q2 ⊆ V) (h1c : Q1.card = 4) (h2c : Q2.card = 4) (h1f : Minimality.IsFacet V Q1)
     (h2f : Minimality.IsFacet V Q2) (v : ℝ³) (hint : Q1 ∩ Q2 = {v})
     (hT : Minimality.TriGenFar V Q1 Q2 v) : False :=
-  h.2 (Minimality.isRupert_of_two_quad_facets_vertex_solid V hV
-    ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1) hgen Q1 Q2 h1V h2V h1c h2c h1f h2f
-    v hint hT)
+  have hsol := (not_coplanar_iff_interior_convexHull_nonempty _).mp h.1
+  h.2 (Minimality.isRupert_of_two_quad_facets_vertex_solid V hV hsol
+    (Minimality.noThreeCollinear_of_not_isRupert hV hsol h.2) Q1 Q2 h1V h2V h1c h2c h1f h2f v
+    hint hT)
 
 /-- **Lemma T at a vertex** (`FEWER-FACES-PROOFS.md` §7): in a nopert with no three
 points collinear, two facets meeting in a single vertex `v`, with general
@@ -153,14 +153,20 @@ theorem not_facets_edge_triShadow_of_isNopert (V : Finset ℝ³) (h : IsNopert V
   exact h.2 (Minimality.isRupert_of_facets_edge V hgen Q1 Q2 h1V h2V h1f h2f v w hvw hint
     ⟨xa, hxa, hxa2⟩ ⟨xb, hxb, hxb1⟩ hZ ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩)
 
+/-- Seven labelled points of a nopert: no three are collinear (else the middle
+one is in the hull of the other six, which is Rupert). -/
+theorem noThreeCollinear_seven (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
+    (hx : Function.Injective x) : Minimality.NoThreeCollinear (Finset.univ.image x) :=
+  Minimality.noThreeCollinear_of_not_isRupert (by rw [Finset.card_image_of_injective _ hx]; simp)
+    ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1) h.2
+
 /-- **Type 10, the capped frustum** (Theorem E of `FEWER-FACES-PROOFS.md` §7): a
-nopert with no three points collinear does not have seven points labelled so
-that `1245`, `1346`, `2356` (side quadrilaterals) and `023` (a cap triangle) are
-facets (given by functionals negative off them); general position here is
-`Minimality.EdgeFar` along `14` and `Minimality.TriGenFar` at the line of the
-planes of `023` and `1245`. -/
+nopert does not have seven points labelled so that `1245`, `1346`, `2356` (side
+quadrilaterals) and `023` (a cap triangle) are facets (given by functionals
+negative off them); general position here is `Minimality.EdgeFar` along `14` and
+`Minimality.TriGenFar` at the line of the planes of `023` and `1245`. -/
 theorem not_type10_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
-    (hx : Function.Injective x) (hgen : Minimality.NoThreeCollinear (Finset.univ.image x))
+    (hx : Function.Injective x)
     (fA fB fC fD : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({1, 2, 4, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({1, 2, 4, 5} : Finset (Fin 7)) → fA (x i) < 0))
@@ -175,15 +181,16 @@ theorem not_type10_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (({1, 3, 4, 6} : Finset (Fin 7)).image x) (x 1) (x 4))
     (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
       (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2)) : False :=
-  h.2 (Minimality.isRupert_type10 x hx hgen fA fB fC fD hA hB hC hD hZ1 hT2)
+  h.2 (Minimality.isRupert_type10 x hx (noThreeCollinear_seven x h hx)
+    fA fB fC fD hA hB hC hD hZ1 hT2)
 
-/-- **Type 19** (Theorem F of `FEWER-FACES-PROOFS.md` §7): a nopert with no three
-points collinear does not have seven points labelled so that `0235`, `1356`
-(quadrilaterals), `046` and `346` are facets (given by functionals negative off
-them); general position here is `Minimality.EdgeFar` along `35` and
-`Minimality.TriGenFar` at the line of the planes of `0235` and `046`. -/
+/-- **Type 19** (Theorem F of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
+seven points labelled so that `0235`, `1356` (quadrilaterals), `046` and `346`
+are facets (given by functionals negative off them); general position here is
+`Minimality.EdgeFar` along `35` and `Minimality.TriGenFar` at the line of the
+planes of `0235` and `046`. -/
 theorem not_type19_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
-    (hx : Function.Injective x) (hgen : Minimality.NoThreeCollinear (Finset.univ.image x))
+    (hx : Function.Injective x)
     (fA fB fD fG : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 2, 3, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 2, 3, 5} : Finset (Fin 7)) → fA (x i) < 0))
@@ -198,15 +205,16 @@ theorem not_type19_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (({1, 3, 5, 6} : Finset (Fin 7)).image x) (x 3) (x 5))
     (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
       (({0, 4, 6} : Finset (Fin 7)).image x) (x 0)) : False :=
-  h.2 (Minimality.isRupert_type19 x hx hgen fA fB fD fG hA hB hD hG hZ1 hT2)
+  h.2 (Minimality.isRupert_type19 x hx (noThreeCollinear_seven x h hx)
+    fA fB fD fG hA hB hD hG hZ1 hT2)
 
-/-- **Type 13** (Theorem G of `FEWER-FACES-PROOFS.md` §7): a nopert with no three
-points collinear does not have seven points labelled so that `0145`, `2456`
-(quadrilaterals), `123` and `126` are facets (given by functionals negative off
-them); general position here is `Minimality.EdgeFar` along `45` and
-`Minimality.TriGenFar` at the line of the planes of `0145` and `123`. -/
+/-- **Type 13** (Theorem G of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
+seven points labelled so that `0145`, `2456` (quadrilaterals), `123` and `126`
+are facets (given by functionals negative off them); general position here is
+`Minimality.EdgeFar` along `45` and `Minimality.TriGenFar` at the line of the
+planes of `0145` and `123`. -/
 theorem not_type13_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
-    (hx : Function.Injective x) (hgen : Minimality.NoThreeCollinear (Finset.univ.image x))
+    (hx : Function.Injective x)
     (fA fB fD fG : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 1, 4, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 1, 4, 5} : Finset (Fin 7)) → fA (x i) < 0))
@@ -221,15 +229,16 @@ theorem not_type13_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (({2, 4, 5, 6} : Finset (Fin 7)).image x) (x 4) (x 5))
     (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
       (({1, 2, 3} : Finset (Fin 7)).image x) (x 1)) : False :=
-  h.2 (Minimality.isRupert_type13 x hx hgen fA fB fD fG hA hB hD hG hZ1 hT2)
+  h.2 (Minimality.isRupert_type13 x hx (noThreeCollinear_seven x h hx)
+    fA fB fD fG hA hB hD hG hZ1 hT2)
 
-/-- **Type 17** (Theorem H of `FEWER-FACES-PROOFS.md` §7): a nopert with no three
-points collinear does not have seven points labelled so that `0246`, `2345`
-(quadrilaterals), `136` and `034` are facets (given by functionals negative off
-them); general position here is `Minimality.TriGenFar` at the lines of the
-planes of `136` and `2345` and of `0246` and `136`. -/
+/-- **Type 17** (Theorem H of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
+seven points labelled so that `0246`, `2345` (quadrilaterals), `136` and `034`
+are facets (given by functionals negative off them); general position here is
+`Minimality.TriGenFar` at the lines of the planes of `136` and `2345` and of
+`0246` and `136`. -/
 theorem not_type17_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
-    (hx : Function.Injective x) (hgen : Minimality.NoThreeCollinear (Finset.univ.image x))
+    (hx : Function.Injective x)
     (fA fB fD fE : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) < 0))
@@ -243,16 +252,17 @@ theorem not_type17_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (({2, 3, 4, 5} : Finset (Fin 7)).image x) (x 3))
     (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6)) : False :=
-  h.2 (Minimality.isRupert_type17 x hx hgen fA fB fD fE hA hB hD hE hT1 hT2)
+  h.2 (Minimality.isRupert_type17 x hx (noThreeCollinear_seven x h hx)
+    fA fB fD fE hA hB hD hE hT1 hT2)
 
-/-- **Type 27** (Theorem I of `FEWER-FACES-PROOFS.md` §7): a nopert with no three
-points collinear does not have seven points labelled so that `2356` (a
-quadrilateral), `025`, `016`, `046`, `045`, `012` and `456` are facets (given by
-functionals negative off them); general position here is `Minimality.EdgeFar`
-along `25` and `Minimality.TriGenFar` at the lines of the planes of `016` and
-`2356` and of `025` and `046`. -/
+/-- **Type 27** (Theorem I of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
+seven points labelled so that `2356` (a quadrilateral), `025`, `016`, `046`,
+`045`, `012` and `456` are facets (given by functionals negative off them);
+general position here is `Minimality.EdgeFar` along `25` and
+`Minimality.TriGenFar` at the lines of the planes of `016` and `2356` and of
+`025` and `046`. -/
 theorem not_type27_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
-    (hx : Function.Injective x) (hgen : Minimality.NoThreeCollinear (Finset.univ.image x))
+    (hx : Function.Injective x)
     (fB fD fE fG fH fI fJ : ℝ³ →ᵃ[ℝ] ℝ)
     (hB : ∀ i, (i ∈ ({2, 3, 5, 6} : Finset (Fin 7)) → fB (x i) = 0) ∧
       (i ∉ ({2, 3, 5, 6} : Finset (Fin 7)) → fB (x i) < 0))
@@ -274,17 +284,16 @@ theorem not_type27_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 6))
     (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
       (({0, 4, 6} : Finset (Fin 7)).image x) (x 0)) : False :=
-  h.2 (Minimality.isRupert_type27 x hx hgen fB fD fE fG fH fI fJ hB hD hE hG hH hI hJ hZ1
-    hT1 hT2)
+  h.2 (Minimality.isRupert_type27 x hx (noThreeCollinear_seven x h hx)
+    fB fD fE fG fH fI fJ hB hD hE hG hH hI hJ hZ1 hT1 hT2)
 
-/-- **Type 23** (Theorem J of `FEWER-FACES-PROOFS.md` §7): a nopert with no three
-points collinear does not have seven points labelled so that `0345` (a
-quadrilateral), `014`, `125`, `156` and `456` are facets (given by functionals
-negative off them); general position here is `Minimality.EdgeFar` along `04` and
-`Minimality.TriGenFar` at the lines of the planes of `014` and `156` and of
-`0345` and `125`. -/
+/-- **Type 23** (Theorem J of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
+seven points labelled so that `0345` (a quadrilateral), `014`, `125`, `156` and
+`456` are facets (given by functionals negative off them); general position here
+is `Minimality.EdgeFar` along `04` and `Minimality.TriGenFar` at the lines of
+the planes of `014` and `156` and of `0345` and `125`. -/
 theorem not_type23_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
-    (hx : Function.Injective x) (hgen : Minimality.NoThreeCollinear (Finset.univ.image x))
+    (hx : Function.Injective x)
     (fA fD fE fH fK : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 3, 4, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 3, 4, 5} : Finset (Fin 7)) → fA (x i) < 0))
@@ -302,16 +311,17 @@ theorem not_type23_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (({1, 5, 6} : Finset (Fin 7)).image x) (x 1))
     (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x)
       (({1, 2, 5} : Finset (Fin 7)).image x) (x 5)) : False :=
-  h.2 (Minimality.isRupert_type23 x hx hgen fA fD fE fH fK hA hD hE hH hK hZ1 hT1 hT2)
+  h.2 (Minimality.isRupert_type23 x hx (noThreeCollinear_seven x h hx)
+    fA fD fE fH fK hA hD hE hH hK hZ1 hT1 hT2)
 
-/-- **Type 25** (Theorem K of `FEWER-FACES-PROOFS.md` §7): a nopert with no three
-points collinear does not have seven points labelled so that `0246` (a
-quadrilateral), `013`, `136`, `056`, `035`, `014` and `126` are facets (given by
-functionals negative off them); general position here is `Minimality.EdgeFar`
-along `13` and `Minimality.TriGenFar` at the lines of the planes of `013` and
-`0246` and of `013` and `056`. -/
+/-- **Type 25** (Theorem K of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
+seven points labelled so that `0246` (a quadrilateral), `013`, `136`, `056`,
+`035`, `014` and `126` are facets (given by functionals negative off them);
+general position here is `Minimality.EdgeFar` along `13` and
+`Minimality.TriGenFar` at the lines of the planes of `013` and `0246` and of
+`013` and `056`. -/
 theorem not_type25_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
-    (hx : Function.Injective x) (hgen : Minimality.NoThreeCollinear (Finset.univ.image x))
+    (hx : Function.Injective x)
     (fA fD fF fG fH fE fI : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) < 0))
@@ -333,17 +343,17 @@ theorem not_type25_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (({0, 2, 4, 6} : Finset (Fin 7)).image x) (x 0))
     (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
       (({0, 5, 6} : Finset (Fin 7)).image x) (x 0)) : False :=
-  h.2 (Minimality.isRupert_type25 x hx hgen fA fD fF fG fH fE fI hA hD hF hG hH hE hI hZ1
-    hT1 hT2)
+  h.2 (Minimality.isRupert_type25 x hx (noThreeCollinear_seven x h hx)
+    fA fD fF fG fH fE fI hA hD hF hG hH hE hI hZ1 hT1 hT2)
 
-/-- **Type 26** (Theorem L of `FEWER-FACES-PROOFS.md` §7): a nopert with no three
-points collinear does not have seven points labelled so that `0246` (a
-quadrilateral), `034`, `235`, `136`, `013`, `016`, `245` and `345` are facets
-(given by functionals negative off them); general position here is
-`Minimality.EdgeFar` along `04` and `Minimality.TriGenFar` at the lines of the
-planes of `0246` and `235` and of `0246` and `136`. -/
+/-- **Type 26** (Theorem L of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
+seven points labelled so that `0246` (a quadrilateral), `034`, `235`, `136`,
+`013`, `016`, `245` and `345` are facets (given by functionals negative off
+them); general position here is `Minimality.EdgeFar` along `04` and
+`Minimality.TriGenFar` at the lines of the planes of `0246` and `235` and of
+`0246` and `136`. -/
 theorem not_type26_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
-    (hx : Function.Injective x) (hgen : Minimality.NoThreeCollinear (Finset.univ.image x))
+    (hx : Function.Injective x)
     (fA fT fG fH fU fW fY fZ : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) < 0))
@@ -367,16 +377,16 @@ theorem not_type26_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2))
     (hT6 : Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6)) : False :=
-  h.2 (Minimality.isRupert_type26 x hx hgen fA fT fG fH fU fW fY fZ hA hT hG hH hU hW hY hZ hZ1
-    hT2 hT6)
+  h.2 (Minimality.isRupert_type26 x hx (noThreeCollinear_seven x h hx)
+    fA fT fG fH fU fW fY fZ hA hT hG hH hU hW hY hZ hZ1 hT2 hT6)
 
-/-- **Type 12** (Theorem M of `FEWER-FACES-PROOFS.md` §7): a nopert with no three
-points collinear does not have seven points labelled so that `0135`, `0346`
-(quadrilaterals), `024`, `236` and `246` are facets (given by functionals
-negative off them); general position here is `Minimality.TriGenFar` at the lines
-of the planes of `0135` and `024` and of `024` and `236`. -/
+/-- **Type 12** (Theorem M of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
+seven points labelled so that `0135`, `0346` (quadrilaterals), `024`, `236` and
+`246` are facets (given by functionals negative off them); general position here
+is `Minimality.TriGenFar` at the lines of the planes of `0135` and `024` and of
+`024` and `236`. -/
 theorem not_type12_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
-    (hx : Function.Injective x) (hgen : Minimality.NoThreeCollinear (Finset.univ.image x))
+    (hx : Function.Injective x)
     (fA fB fD fG fJ : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 1, 3, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 1, 3, 5} : Finset (Fin 7)) → fA (x i) < 0))
@@ -392,15 +402,16 @@ theorem not_type12_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (({0, 2, 4} : Finset (Fin 7)).image x) (x 0))
     (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 4} : Finset (Fin 7)).image x)
       (({2, 3, 6} : Finset (Fin 7)).image x) (x 2)) : False :=
-  h.2 (Minimality.isRupert_type12 x hx hgen fA fB fD fG fJ hA hB hD hG hJ hT1 hT2)
+  h.2 (Minimality.isRupert_type12 x hx (noThreeCollinear_seven x h hx)
+    fA fB fD fG fJ hA hB hD hG hJ hT1 hT2)
 
-/-- **Type 22** (Theorem N of `FEWER-FACES-PROOFS.md` §7): a nopert with no three
-points collinear does not have seven points labelled so that `0134` (a
-quadrilateral), `125`, `246`, `146` and `256` are facets (given by functionals
-negative off them); general position here is `Minimality.TriGenFar` at the lines
-of the planes of `125` and `246` and of `0134` and `246`. -/
+/-- **Type 22** (Theorem N of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
+seven points labelled so that `0134` (a quadrilateral), `125`, `246`, `146` and
+`256` are facets (given by functionals negative off them); general position here
+is `Minimality.TriGenFar` at the lines of the planes of `125` and `246` and of
+`0134` and `246`. -/
 theorem not_type22_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
-    (hx : Function.Injective x) (hgen : Minimality.NoThreeCollinear (Finset.univ.image x))
+    (hx : Function.Injective x)
     (fA fD fG fN fI : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 1, 3, 4} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 1, 3, 4} : Finset (Fin 7)) → fA (x i) < 0))
@@ -416,15 +427,16 @@ theorem not_type22_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 2))
     (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 1, 3, 4} : Finset (Fin 7)).image x)
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 4)) : False :=
-  h.2 (Minimality.isRupert_type22 x hx hgen fA fD fG fN fI hA hD hG hN hI hT1 hT2)
+  h.2 (Minimality.isRupert_type22 x hx (noThreeCollinear_seven x h hx)
+    fA fD fG fN fI hA hD hG hN hI hT1 hT2)
 
-/-- **Type 28** (Theorem O of `FEWER-FACES-PROOFS.md` §7): a nopert with no three
-points collinear does not have seven points labelled so that `0245` (a
-quadrilateral), `036`, `146`, `023`, `015` and `145` are facets (given by
-functionals negative off them); general position here is `Minimality.TriGenFar`
-at the lines of the planes of `0245` and `146` and of `0245` and `036`. -/
+/-- **Type 28** (Theorem O of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
+seven points labelled so that `0245` (a quadrilateral), `036`, `146`, `023`,
+`015` and `145` are facets (given by functionals negative off them); general
+position here is `Minimality.TriGenFar` at the lines of the planes of `0245` and
+`146` and of `0245` and `036`. -/
 theorem not_type28_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
-    (hx : Function.Injective x) (hgen : Minimality.NoThreeCollinear (Finset.univ.image x))
+    (hx : Function.Injective x)
     (fA fD fG fH fF fM : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 2, 4, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 2, 4, 5} : Finset (Fin 7)) → fA (x i) < 0))
@@ -442,15 +454,16 @@ theorem not_type28_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (({1, 4, 6} : Finset (Fin 7)).image x) (x 4))
     (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
       (({0, 3, 6} : Finset (Fin 7)).image x) (x 0)) : False :=
-  h.2 (Minimality.isRupert_type28 x hx hgen fA fD fG fH fF fM hA hD hG hH hF hM hT1 hT2)
+  h.2 (Minimality.isRupert_type28 x hx (noThreeCollinear_seven x h hx)
+    fA fD fG fH fF fM hA hD hG hH hF hM hT1 hT2)
 
 /-- **Type 05** (Theorem B′ of `FEWER-FACES-PROOFS.md`, here by Lemma T): a nopert
-with no three points collinear does not have seven points labelled so that
-`0123`, `0145` (quadrilaterals), `246`, `456` and `234` are facets (given by
-functionals negative off them); general position here is `Minimality.TriGenFar`
-at the lines of the planes of `0123` and `246` and of `0145` and `246`. -/
+does not have seven points labelled so that `0123`, `0145` (quadrilaterals),
+`246`, `456` and `234` are facets (given by functionals negative off them);
+general position here is `Minimality.TriGenFar` at the lines of the planes of
+`0123` and `246` and of `0145` and `246`. -/
 theorem not_type05_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
-    (hx : Function.Injective x) (hgen : Minimality.NoThreeCollinear (Finset.univ.image x))
+    (hx : Function.Injective x)
     (fA fB fG fK fH : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 1, 2, 3} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 1, 2, 3} : Finset (Fin 7)) → fA (x i) < 0))
@@ -466,7 +479,8 @@ theorem not_type05_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 2))
     (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 4)) : False :=
-  h.2 (Minimality.isRupert_type05_facets x hx hgen fA fB fG fK fH hA hB hG hK hH hT1 hT2)
+  h.2 (Minimality.isRupert_type05_facets x hx (noThreeCollinear_seven x h hx)
+    fA fB fG fK fH hA hB hG hK hH hT1 hT2)
 
 /-- **Flat polygons are Rupert.**  Points in a plane, not all on one line, are
 Rupert, whatever their number: hold one copy face-on and pass the other

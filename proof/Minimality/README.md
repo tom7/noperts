@@ -165,8 +165,9 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   `quad_chain` gives the upper and lower chains of a convex quadrilateral seen
   from a vertex (six cases plus relabelling).
 * At the entry point, `not_two_quad_facets_vertex_of_isNopert`: a 7-point
-  nopert with no three points collinear (`NoThreeCollinear`) has no two
-  quadrilateral facets meeting in a single vertex, given `TriGenFar` (no
+  nopert has no two quadrilateral facets meeting in a single vertex (no three
+  of its points are collinear: `noThreeCollinear_of_not_isRupert`, the middle
+  one would lie in the hull of the other six), given `TriGenFar` (no
   segment parallel to the line of the two planes, distinct depths along it at
   the two far vertices). This excludes types 02, 07, 09, 14, 18, 20
   in general position. Via `isRupert_of_two_quad_facets_vertex` (enumeration,

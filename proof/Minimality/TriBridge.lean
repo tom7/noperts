@@ -484,6 +484,64 @@ theorem GenPos.noThreeCollinear {V : Finset ℝ³} (h : GenPos V) : NoThreeColli
     · exact hpr h'.symm
     · exact hqr h'.symm)).1 c
 
+/-- Seven points with a solid hull, one of them in the hull of the others: Rupert
+(the hull is that of six points). -/
+theorem isRupert_of_mem_convexHull_erase {V : Finset ℝ³} (hV : V.card = 7)
+    (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) {x : ℝ³} (hx : x ∈ V)
+    (hxh : x ∈ convexHull ℝ ((V.erase x : Finset ℝ³) : Set ℝ³)) : IsRupert V := by
+  have hhull : convexHull ℝ ((V.erase x : Finset ℝ³) : Set ℝ³) = convexHull ℝ (V : Set ℝ³) := by
+    apply le_antisymm (convexHull_mono (by simp))
+    refine convexHull_min (fun y hy => ?_) (convex_convexHull ℝ _)
+    by_cases hyx : y = x
+    · rw [hyx]; exact hxh
+    · exact subset_convexHull ℝ _ (by simpa [hyx] using hy)
+  refine isRupert_of_convexHull_eq hhull (isRupert_of_card_le_six _ ?_ ?_)
+  · rw [Finset.card_erase_of_mem hx]; omega
+  · rw [hhull]; exact hsol
+
+/-- Of three distinct collinear points of `V`, the middle one lies in the hull of
+the others. -/
+theorem exists_mem_convexHull_erase_of_collinear {V : Finset ℝ³} {p q r : ℝ³} (hp : p ∈ V)
+    (hq : q ∈ V) (hr : r ∈ V) (hpq : p ≠ q) (hpr : p ≠ r) (hqr : q ≠ r) {c : ℝ}
+    (h : r - p = c • (q - p)) : ∃ y ∈ V, y ∈ convexHull ℝ ((V.erase y : Finset ℝ³) : Set ℝ³) := by
+  have hr' : r = p + c • (q - p) := by rw [← h]; abel
+  have mem : ∀ {y u w : ℝ³}, u ∈ V → w ∈ V → u ≠ y → w ≠ y → ∀ a b : ℝ, 0 ≤ a → 0 ≤ b →
+      a + b = 1 → a • u + b • w = y → y ∈ convexHull ℝ ((V.erase y : Finset ℝ³) : Set ℝ³) := by
+    intro y u w hu hw huy hwy a b ha hb hab e
+    exact segment_subset_convexHull (by simp [huy, hu]) (by simp [hwy, hw]) ⟨a, b, ha, hb, hab, e⟩
+  rcases lt_trichotomy c 0 with hc | hc | hc
+  · -- `p` lies between `q` and `r`
+    refine ⟨p, hp, mem hq hr (Ne.symm hpq) (Ne.symm hpr) (-c / (1 - c)) (1 / (1 - c))
+      (div_nonneg (by linarith) (by linarith)) (div_nonneg (by norm_num) (by linarith))
+      (by rw [← add_div, neg_add_eq_sub, div_self (by linarith)]) ?_⟩
+    rw [hr']
+    have h1 : (1 - c) ≠ 0 := by linarith
+    ext i; simp only [PiLp.add_apply, PiLp.smul_apply, PiLp.sub_apply, smul_eq_mul]
+    field_simp; ring
+  · subst hc; rw [zero_smul, sub_eq_zero] at h; exact absurd h.symm hpr
+  rcases lt_trichotomy c 1 with hc1 | hc1 | hc1
+  · -- `r` lies between `p` and `q`
+    refine ⟨r, hr, mem hp hq hpr hqr (1 - c) c (by linarith) hc.le (by ring) ?_⟩
+    rw [hr']; module
+  · subst hc1; rw [one_smul, sub_left_inj] at h; exact absurd h.symm hqr
+  · -- `q` lies between `p` and `r`
+    refine ⟨q, hq, mem hp hr hpq (Ne.symm hqr) (1 - 1 / c) (1 / c)
+      (by rw [sub_nonneg, div_le_one (by linarith)]; linarith) (div_nonneg (by norm_num) (by linarith))
+      (by ring) ?_⟩
+    rw [hr']
+    have h1 : c ≠ 0 := by linarith
+    ext i; simp only [PiLp.add_apply, PiLp.smul_apply, PiLp.sub_apply, smul_eq_mul]
+    field_simp; ring
+
+/-- In seven points with a solid hull that are not Rupert, no three are
+collinear. -/
+theorem noThreeCollinear_of_not_isRupert {V : Finset ℝ³} (hV : V.card = 7)
+    (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) (hR : ¬ IsRupert V) :
+    NoThreeCollinear V := by
+  intro p hp q hq r hr hpq hpr hqr c h
+  obtain ⟨y, hy, hyh⟩ := exists_mem_convexHull_erase_of_collinear hp hq hr hpq hpr hqr h
+  exact hR (isRupert_of_mem_convexHull_erase hV hsol hy hyh)
+
 /-- Strong general position at two facets `Q1`, `Q2` meeting in `v` (all depths
 distinct; the theorems use the weaker `TriGenFar`, see `TriGen.far`):
 for the line of their planes (any direction `e ≠ 0` along which supporting
@@ -679,15 +737,7 @@ theorem isRupert_of_two_quad_facets_vertex_solid (V : Finset ℝ³) (hV : V.card
   classical
   by_cases hext : ∃ x ∈ V, x ∈ convexHull ℝ ((V.erase x : Finset ℝ³) : Set ℝ³)
   · obtain ⟨x, hx, hxh⟩ := hext
-    have hhull : convexHull ℝ ((V.erase x : Finset ℝ³) : Set ℝ³) = convexHull ℝ (V : Set ℝ³) := by
-      apply le_antisymm (convexHull_mono (by simp))
-      refine convexHull_min (fun y hy => ?_) (convex_convexHull ℝ _)
-      by_cases hyx : y = x
-      · rw [hyx]; exact hxh
-      · exact subset_convexHull ℝ _ (by simpa [hyx] using hy)
-    refine isRupert_of_convexHull_eq hhull (isRupert_of_card_le_six _ ?_ ?_)
-    · rw [Finset.card_erase_of_mem hx]; omega
-    · rw [hhull]; exact hsol
+    exact isRupert_of_mem_convexHull_erase hV hsol hx hxh
   push Not at hext
   exact isRupert_of_two_quad_facets_vertex V hV hext hgen Q1 Q2 h1V h2V h1c h2c h1f h2f v hint hT
 
