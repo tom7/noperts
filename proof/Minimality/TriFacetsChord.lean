@@ -491,7 +491,7 @@ set_option maxHeartbeats 4000000 in
 as `isRupert_of_facets_vertex`, except that one point `yc` off both facets may
 lie on the far side `xa xb` of the shadow triangle (barycentric value `≤ 1`);
 every other such point is strictly inside. -/
-theorem isRupert_of_facets_vertex_chord (V : Finset ℝ³) (hgen : GenPos V)
+theorem isRupert_of_facets_vertex_chord (V : Finset ℝ³) (hgen : NoThreeCollinear V)
     (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (h1f : IsFacet V Q1) (h2f : IsFacet V Q2)
     (v : ℝ³) (hint : Q1 ∩ Q2 = {v}) (hne1 : ∃ p ∈ Q1, p ≠ v) (hne2 : ∃ p ∈ Q2, p ≠ v)
     (hT : TriGenFar V Q1 Q2 v)
@@ -551,14 +551,7 @@ theorem isRupert_of_facets_vertex_chord (V : Finset ℝ³) (hgen : GenPos V)
   obtain ⟨hin', hyc⟩ := hin f1 f2 z1 n1 z2 n2
   refine isRupert_facets_vertex_chord V Q1 Q2 v h1V h2V hint f1 f2 z1 n1 z2 n2 e hne e1 e2
     ⟨p1, hp1, hp1v⟩ ⟨p2, hp2, hp2v⟩ ?_ hpar hfarZ xa xb hxa hxb hxav hxbv yc hycV hyc1 hyc2 hin' hyc
-  intro p hp q hq r hr hpq hpr hqr c
-  exact (hgen p hp r hr p hp q hq hpr hpq (by
-    intro h
-    have : r ∈ ({p, q} : Finset ℝ³) := h ▸ Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
-    simp only [Finset.mem_insert, Finset.mem_singleton] at this
-    rcases this with h' | h'
-    · exact hpr h'.symm
-    · exact hqr h'.symm)).1 c
+  exact hgen
 
 end Minimality
 

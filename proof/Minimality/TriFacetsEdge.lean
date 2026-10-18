@@ -564,26 +564,30 @@ theorem isRupert_facets_edge (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : v ≠
     exact h y hy (fun h => hy1 ((memg Q1 y).mpr h)) (fun h => hy2 ((memg Q2 y).mpr h))
 
 /-- General position for Lemma T along an edge `v w` shared by two facets `Q1`,
-`Q2`: the far ends of the two faces in the shadow (the point of `Q1` where `f2`
-is least, that of `Q2` where `f1` is least) have distinct depths along the edge.
-Weaker than distinct depths on all of `V` (`EdgeFar.of_injOn`). -/
+`Q2`: no other segment of `V` is parallel to the edge, and the far ends of the
+two faces in the shadow (the point of `Q1` where `f2` is least, that of `Q2`
+where `f1` is least) have distinct depths along it. Weaker than `GenPos` with
+distinct depths on all of `V` (`EdgeFar.of_genPos`). -/
 def EdgeFar (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) : Prop :=
+  (∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → ∀ c : ℝ, q - p ≠ c • (w - v)) ∧
   ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
     (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
     ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
       ⟪p, w - v⟫ ≠ ⟪q, w - v⟫
 
-theorem EdgeFar.of_injOn {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
+theorem EdgeFar.of_genPos {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
+    (hvV : v ∈ V) (hwV : w ∈ V) (hvw : v ≠ w) (hgen : GenPos V)
     (h : Set.InjOn (fun p : ℝ³ => ⟪p, w - v⟫) (V : Set ℝ³)) : EdgeFar V Q1 Q2 v w :=
-  fun _ _ _ _ _ _ _ hp _ hq hpq _ _ hd => hpq (h (h1V hp) (h2V hq) hd)
+  ⟨fun p hp q hq hpq hpair c => (hgen p hp q hq v hvV w hwV hpq hvw hpair).1 c,
+    fun _ _ _ _ _ _ _ hp _ hq hpq _ _ hd => hpq (h (h1V hp) (h2V hq) hd)⟩
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over an edge, facet form** (`FEWER-FACES-PROOFS.md` §7): two
-facets `Q1`, `Q2` of `V` in general position sharing exactly the edge `v w`,
-distinct depths along it at the far ends (`EdgeFar`), and every point off both
+facets `Q1`, `Q2` of `V` (no three points collinear) sharing exactly the edge
+`v w`, general position along it (`EdgeFar`), and every point off both
 facets inside the shadow triangle of the edge and some `xa ∈ Q1 \ Q2`,
 `xb ∈ Q2 \ Q1` (stated with any facet functionals `f1`, `f2`): Rupert. -/
-theorem isRupert_of_facets_edge (V : Finset ℝ³) (hgen : GenPos V)
+theorem isRupert_of_facets_edge (V : Finset ℝ³) (hgen : NoThreeCollinear V)
     (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (h1f : IsFacet V Q1) (h2f : IsFacet V Q2)
     (v w : ℝ³) (hvw : v ≠ w) (hint : Q1 ∩ Q2 = {v, w})
     (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
@@ -601,18 +605,10 @@ theorem isRupert_of_facets_edge (V : Finset ℝ³) (hgen : GenPos V)
   obtain ⟨f2, z2, n2⟩ := h2f
   obtain ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩ := hin
   refine isRupert_facets_edge V Q1 Q2 v w hvw h1V h2V hint f1 f2 z1 n1 z2 n2 hne1 hne2 ?_ ?_
-    (hfarZ f1 f2 z1 n1 z2 n2)
+    (hfarZ.2 f1 f2 z1 n1 z2 n2)
     ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin' f1 f2 z1 n1 z2 n2⟩
-  · intro p hp q hq r hr hpq hpr hqr c
-    exact (hgen p hp r hr p hp q hq hpr hpq (by
-      intro h
-      have : r ∈ ({p, q} : Finset ℝ³) := h ▸ Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
-      simp only [Finset.mem_insert, Finset.mem_singleton] at this
-      rcases this with h' | h'
-      · exact hpr h'.symm
-      · exact hqr h'.symm)).1 c
-  · intro p hp q hq hpq hpair c
-    exact (hgen p hp q hq v hvV w hwV hpq hvw hpair).1 c
+  · exact hgen
+  · exact hfarZ.1
 
 end Minimality
 

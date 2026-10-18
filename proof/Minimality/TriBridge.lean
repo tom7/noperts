@@ -469,6 +469,21 @@ theorem isRupert_twoQuads (x : Fin 7 → ℝ³) (e : ℝ³) (he : e ≠ 0) (f1 f
 
 /-! ### Facet-level statement -/
 
+/-- No three of the points of `V` are collinear (the part of `GenPos` that
+Lemma T and Corollary T1 use). -/
+def NoThreeCollinear (V : Finset ℝ³) : Prop :=
+  ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p)
+
+theorem GenPos.noThreeCollinear {V : Finset ℝ³} (h : GenPos V) : NoThreeCollinear V := by
+  intro p hp q hq r hr hpq hpr hqr c
+  exact (h p hp r hr p hp q hq hpr hpq (by
+    intro e
+    have : r ∈ ({p, q} : Finset ℝ³) := e ▸ Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
+    simp only [Finset.mem_insert, Finset.mem_singleton] at this
+    rcases this with h' | h'
+    · exact hpr h'.symm
+    · exact hqr h'.symm)).1 c
+
 /-- Strong general position at two facets `Q1`, `Q2` meeting in `v` (all depths
 distinct; the theorems use the weaker `TriGenFar`, see `TriGen.far`):
 for the line of their planes (any direction `e ≠ 0` along which supporting
@@ -502,11 +517,11 @@ theorem TriGen.far {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h1V : Q1 ⊆ V) (h2V : 
 
 set_option maxHeartbeats 4000000 in
 /-- **Two quadrilateral facets sharing one vertex** (Corollary T1 of
-`FEWER-FACES-PROOFS.md` §7): seven extreme points in general position with two
+`FEWER-FACES-PROOFS.md` §7): seven extreme points, no three collinear, with two
 quadrilateral facets meeting in a single vertex (so covering all seven points)
 are Rupert, given `TriGenFar` at the line of the two planes. -/
 theorem isRupert_of_two_quad_facets_vertex (V : Finset ℝ³) (hV : V.card = 7)
-    (hext : ∀ y ∈ V, y ∉ convexHull ℝ ((V.erase y : Finset ℝ³) : Set ℝ³)) (hgen : GenPos V)
+    (hext : ∀ y ∈ V, y ∉ convexHull ℝ ((V.erase y : Finset ℝ³) : Set ℝ³)) (hgen : NoThreeCollinear V)
     (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (h1c : Q1.card = 4) (h2c : Q2.card = 4)
     (h1f : IsFacet V Q1) (h2f : IsFacet V Q2) (v : ℝ³) (hint : Q1 ∩ Q2 = {v})
     (hT : TriGenFar V Q1 Q2 v) : IsRupert V := by
@@ -620,14 +635,8 @@ theorem isRupert_of_two_quad_facets_vertex (V : Finset ℝ³) (hV : V.card = 7)
         exact ⟨j, fun h => hpi (h ▸ rfl), rfl⟩
     rwa [this] at hmem
   · intro i j k hij hik hjk c
-    exact ((hgen (x i) (hxV i) (x k) (hxV k) (x i) (hxV i) (x j) (hxV j)
-      (fun h => hik (hxinj h)) (fun h => hij (hxinj h)) (by
-        intro h
-        have : x k ∈ ({x i, x j} : Finset ℝ³) := h ▸ Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
-        simp only [Finset.mem_insert, Finset.mem_singleton] at this
-        rcases this with h' | h'
-        · exact hik (hxinj h').symm
-        · exact hjk (hxinj h').symm)).1 c)
+    exact hgen (x i) (hxV i) (x j) (hxV j) (x k) (hxV k) (fun h => hij (hxinj h))
+      (fun h => hik (hxinj h)) (fun h => hjk (hxinj h)) c
   · intro i j hij c
     exact hpar (x i) (hxV i) (x j) (hxV j) (fun h => hij (hxinj h)) c
   · intro i j hi hj h
@@ -663,7 +672,7 @@ theorem isRupert_of_two_quad_facets_vertex (V : Finset ℝ³) (hV : V.card = 7)
 /-- `isRupert_of_two_quad_facets_vertex` for a solid hull, without assuming
 that all seven points are extreme. -/
 theorem isRupert_of_two_quad_facets_vertex_solid (V : Finset ℝ³) (hV : V.card = 7)
-    (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) (hgen : GenPos V)
+    (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) (hgen : NoThreeCollinear V)
     (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (h1c : Q1.card = 4) (h2c : Q2.card = 4)
     (h1f : IsFacet V Q1) (h2f : IsFacet V Q2) (v : ℝ³) (hint : Q1 ∩ Q2 = {v})
     (hT : TriGenFar V Q1 Q2 v) : IsRupert V := by

@@ -6,7 +6,7 @@ public import Minimality.TriFacetsChord
 @[expose] public section
 
 /-!
-# Type 10 (the capped frustum) is Rupert in general position
+# Type 10 (the capped frustum) is Rupert
 
 Theorem E of `FEWER-FACES-PROOFS.md` §7, by its algebraic proof: with the
 facet functionals `fA, fB, fC, fD` of `1245, 1346, 2356, 023` and
@@ -135,7 +135,7 @@ position with facets `1245, 1346, 2356` (the side quadrilaterals) and `023`
 distinct far depths along `14` (`EdgeFar`) and `TriGenFar` at the line of the
 planes of `023` and `1245`. -/
 theorem isRupert_type10 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
-    (hgen : GenPos (univ.image x)) (fA fB fC fD : ℝ³ →ᵃ[ℝ] ℝ)
+    (hgen : NoThreeCollinear (univ.image x)) (fA fB fC fD : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({1, 2, 4, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({1, 2, 4, 5} : Finset (Fin 7)) → fA (x i) < 0))
     (hB : ∀ i, (i ∈ ({1, 3, 4, 6} : Finset (Fin 7)) → fB (x i) = 0) ∧
@@ -158,14 +158,8 @@ theorem isRupert_type10 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
   -- three distinct points are not collinear
   have ncol : ∀ i j k : Fin 7, i ≠ j → i ≠ k → j ≠ k → ∀ c : ℝ, x k - x i ≠ c • (x j - x i) := by
     intro i j k hij hik hjk c
-    exact (hgen (x i) (hxV i) (x k) (hxV k) (x i) (hxV i) (x j) (hxV j)
-      (fun h => hik (hx h)) (fun h => hij (hx h)) (by
-        intro h
-        have : x k ∈ ({x i, x j} : Finset ℝ³) := h ▸ Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
-        simp only [Finset.mem_insert, Finset.mem_singleton] at this
-        rcases this with h' | h'
-        · exact hik (hx h').symm
-        · exact hjk (hx h').symm)).1 c
+    exact hgen (x i) (hxV i) (x j) (hxV j) (x k) (hxV k) (fun h => hij (hx h))
+      (fun h => hik (hx h)) (fun h => hjk (hx h)) c
   -- the ratio of a facet functional equals that of the given one
   have ratio : ∀ (f g : ℝ³ →ᵃ[ℝ] ℝ) (i j k : Fin 7), i ≠ j → i ≠ k → j ≠ k →
       f (x i) = 0 → f (x j) = 0 → f (x k) = 0 → g (x i) = 0 → g (x j) = 0 → g (x k) = 0 →

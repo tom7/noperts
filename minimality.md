@@ -81,11 +81,16 @@ through a copy of itself):
   type 28 (`not_type28_of_isNopert`), and type 05 (three quadrilaterals;
   `not_type05_of_isNopert`). So every face structure on seven points that
   the notes prove Rupert (24 of the 29 non-simplicial ones) is now excluded
-  in Lean, in general position. The proofs also cover the special
-  position where the deciding number is zero: Then either another view
-  still works, or one point lies on the far side of the triangle shadow,
-  and a view tilted to match that side still gives a passage
-  (`isRupert_of_facets_vertex_chord`).
+  in Lean, in general position. Except in
+  `not_four_quad_facets_of_isNopert` (type 02 also follows from the
+  two-quadrilateral theorem), general position means only: no three points
+  collinear, and at each view used, no segment parallel to the view line
+  and the two far corners of the triangle at different depths (other
+  segments may be parallel or orthogonal, other depths may tie). The
+  proofs also cover the special position where the deciding number is
+  zero: Then either another view still works, or one point lies on the far
+  side of the triangle shadow, and a view tilted to match that side still
+  gives a passage (`isRupert_of_facets_vertex_chord`).
 
 ## How it is proved
 

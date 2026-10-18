@@ -337,12 +337,12 @@ theorem isRupert_facets_vertex_vertical (V Q1 Q2 : Finset ℝ³) (v : ℝ³)
       hb1 hb1' ha2 ha2' ⟨p1, hp1, hp1v⟩ ⟨p2, hp2, hp2v⟩ hcol hinj hfar' hin'
 
 set_option maxHeartbeats 4000000 in
-/-- **Lemma T over a vertex** for two facets `Q1`, `Q2` (functionals `f1`,
-`f2`) meeting in `v`, viewed along the line `v + ℝ e` of their planes: no three
-points collinear, no segment parallel to `e`, distinct depths along `e` at the
-far ends (the point of `Q1` where `f2` is least, that of `Q2` where `f1` is least),
-and every point off both facets inside the shadow triangle of `v` and some
-`xa ∈ Q1`, `xb ∈ Q2`. -/
+/-- **Lemma T over a vertex** for two facets `Q1`, `Q2` (functionals `f1`, `f2`)
+meeting in `v`, viewed along the line `v + ℝ e` of their planes: no three points
+collinear, no segment parallel to `e`, distinct depths along `e` at the far ends
+(the point of `Q1` where `f2` is least, that of `Q2` where `f1` is least), and
+every point off both facets inside the shadow triangle of `v` and some `xa ∈
+Q1`, `xb ∈ Q2`. -/
 theorem isRupert_facets_vertex (V Q1 Q2 : Finset ℝ³) (v : ℝ³)
     (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hint : Q1 ∩ Q2 = {v}) (f1 f2 : ℝ³ →ᵃ[ℝ] ℝ)
     (z1 : ∀ p ∈ Q1, f1 p = 0) (n1 : ∀ p ∈ V, p ∉ Q1 → f1 p < 0)
@@ -430,12 +430,12 @@ theorem isRupert_facets_vertex (V Q1 Q2 : Finset ℝ³) (v : ℝ³)
     exact h y hy (fun h => hy1 ((memg Q1 y).mpr h)) (fun h => hy2 ((memg Q2 y).mpr h))
 
 set_option maxHeartbeats 4000000 in
-/-- **Lemma T over a vertex, facet form** (`FEWER-FACES-PROOFS.md` §7): two
-facets `Q1`, `Q2` of `V` in general position meeting in the single vertex `v`,
+/-- **Lemma T over a vertex, facet form** (`FEWER-FACES-PROOFS.md` §7): two facets
+`Q1`, `Q2` of `V` (no three points collinear) meeting in the single vertex `v`,
 with `TriGenFar` at the line of their planes, and every point off both facets
 inside the shadow triangle of `v`, `xa ∈ Q1`, `xb ∈ Q2` (stated with any facet
 functionals `f1`, `f2`): Rupert. -/
-theorem isRupert_of_facets_vertex (V : Finset ℝ³) (hgen : GenPos V)
+theorem isRupert_of_facets_vertex (V : Finset ℝ³) (hgen : NoThreeCollinear V)
     (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (h1f : IsFacet V Q1) (h2f : IsFacet V Q2)
     (v : ℝ³) (hint : Q1 ∩ Q2 = {v}) (hne1 : ∃ p ∈ Q1, p ≠ v) (hne2 : ∃ p ∈ Q2, p ≠ v)
     (hT : TriGenFar V Q1 Q2 v)
@@ -493,14 +493,7 @@ theorem isRupert_of_facets_vertex (V : Finset ℝ³) (hgen : GenPos V)
   refine isRupert_facets_vertex V Q1 Q2 v h1V h2V hint f1 f2 z1 n1 z2 n2 e hne e1 e2
     ⟨p1, hp1, hp1v⟩ ⟨p2, hp2, hp2v⟩ ?_ hpar hfarZ
     ⟨xa, hxa, xb, hxb, hxav, hxbv, hin' f1 f2 z1 n1 z2 n2⟩
-  intro p hp q hq r hr hpq hpr hqr c
-  exact (hgen p hp r hr p hp q hq hpr hpq (by
-    intro h
-    have : r ∈ ({p, q} : Finset ℝ³) := h ▸ Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
-    simp only [Finset.mem_insert, Finset.mem_singleton] at this
-    rcases this with h' | h'
-    · exact hpr h'.symm
-    · exact hqr h'.symm)).1 c
+  exact hgen
 
 end Minimality
 

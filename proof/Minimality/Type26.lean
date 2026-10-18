@@ -5,7 +5,7 @@ public import Minimality.Type10
 @[expose] public section
 
 /-!
-# Type 26 is Rupert in general position
+# Type 26 is Rupert
 
 Theorem L of `FEWER-FACES-PROOFS.md` §7, by the algebraic method of
 `Type10.lean`. Faces `A = 0246` (a quadrilateral) and the triangles `013, 016,
@@ -28,7 +28,7 @@ set_option maxHeartbeats 8000000 in
 /-- Theorem L in the case where the far end of `0246` in the view along `04` is
 `2` (`fT x6 / fT x2 ≤ 1`). -/
 theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
-    (hgen : GenPos (univ.image x)) (fA fT fG fH fU fW fY : ℝ³ →ᵃ[ℝ] ℝ)
+    (hgen : NoThreeCollinear (univ.image x)) (fA fT fG fH fU fW fY : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) < 0))
     (hT : ∀ i, (i ∈ ({0, 3, 4} : Finset (Fin 7)) → fT (x i) = 0) ∧
@@ -57,14 +57,8 @@ theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     fun P R => (Finset.image_inter P R hx).symm
   have ncol : ∀ i j k : Fin 7, i ≠ j → i ≠ k → j ≠ k → ∀ c : ℝ, x k - x i ≠ c • (x j - x i) := by
     intro i j k hij hik hjk c
-    exact (hgen (x i) (hxV i) (x k) (hxV k) (x i) (hxV i) (x j) (hxV j)
-      (fun h => hik (hx h)) (fun h => hij (hx h)) (by
-        intro h
-        have : x k ∈ ({x i, x j} : Finset ℝ³) := h ▸ Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
-        simp only [Finset.mem_insert, Finset.mem_singleton] at this
-        rcases this with h' | h'
-        · exact hik (hx h').symm
-        · exact hjk (hx h').symm)).1 c
+    exact hgen (x i) (hxV i) (x j) (hxV j) (x k) (hxV k) (fun h => hij (hx h))
+      (fun h => hik (hx h)) (fun h => hjk (hx h)) c
   have ratio : ∀ (f g : ℝ³ →ᵃ[ℝ] ℝ) (i j k : Fin 7), i ≠ j → i ≠ k → j ≠ k →
       f (x i) = 0 → f (x j) = 0 → f (x k) = 0 → g (x i) = 0 → g (x j) = 0 → g (x k) = 0 →
       ∀ y w, f w ≠ 0 → g w ≠ 0 → f y / f w = g y / g w := by
@@ -244,13 +238,13 @@ theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     linarith
 
 set_option maxHeartbeats 8000000 in
-/-- **Theorem L (type 26).** Seven labelled points in general position with
-facets `0246` (a quadrilateral), `034`, `235`, `136`, `013`, `016`, `245`, `345`,
-given by functionals negative off them, are Rupert, given
-distinct far depths along `04` (`EdgeFar`) and `TriGenFar` at the lines of the planes of `0246`
-and `235` and of `0246` and `136`. -/
+/-- **Theorem L (type 26).** Seven labelled points, no three collinear, with facets
+`0246` (a quadrilateral), `034`, `235`, `136`, `013`, `016`, `245`, `345`, given
+by functionals negative off them, are Rupert, given distinct far depths along
+`04` (`EdgeFar`) and `TriGenFar` at the lines of the planes of `0246` and `235`
+and of `0246` and `136`. -/
 theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
-    (hgen : GenPos (univ.image x)) (fA fT fG fH fU fW fY fZ : ℝ³ →ᵃ[ℝ] ℝ)
+    (hgen : NoThreeCollinear (univ.image x)) (fA fT fG fH fU fW fY fZ : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) < 0))
     (hT : ∀ i, (i ∈ ({0, 3, 4} : Finset (Fin 7)) → fT (x i) = 0) ∧
@@ -309,8 +303,10 @@ theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     exact ((one_lt_div_of_neg t2).mp hc).le
   · rw [hV, imgσ _ ({0, 2, 4, 6} : Finset (Fin 7)) (by decide),
       imgσ _ ({0, 3, 4} : Finset (Fin 7)) (by decide), y4, y0]
-    intro f1 f2 a1 a2 a3 a4 p hp q hq hpq h1 h2 h
-    apply hZ1 f1 f2 a1 a2 a3 a4 p hp q hq hpq h1 h2
+    refine ⟨fun p hp q hq hpq hpair c h => hZ1.1 p hp q hq hpq
+      (by rw [Finset.pair_comm (x 0) (x 4)]; exact hpair) (-c) (by rw [h, neg_smul, ← smul_neg, neg_sub]),
+      fun f1 f2 a1 a2 a3 a4 p hp q hq hpq h1 h2 h => ?_⟩
+    apply hZ1.2 f1 f2 a1 a2 a3 a4 p hp q hq hpq h1 h2
     have e : ∀ r : ℝ³, ⟪r, x 0 - x 4⟫ = -⟪r, x 4 - x 0⟫ := fun r => by
       rw [← inner_neg_right, neg_sub]
     rw [e, e] at h; linarith

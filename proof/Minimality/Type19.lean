@@ -6,7 +6,7 @@ public import Minimality.TriFacetsChord
 @[expose] public section
 
 /-!
-# Type 19 is Rupert in general position
+# Type 19 is Rupert
 
 Theorem F of `FEWER-FACES-PROOFS.md` §7, by the algebraic method of
 `Type10.lean`: faces `A = 0235`, `B = 1356` (quadrilaterals), `D = 046`,
@@ -25,12 +25,12 @@ open Finset
 open scoped RealInnerProductSpace
 
 set_option maxHeartbeats 4000000 in
-/-- **Theorem F (type 19).** Seven labelled points in general position with
-facets `0235`, `1356` (quadrilaterals), `046`, `346`, given by functionals
-negative off them, are Rupert, given distinct far depths
-along `35` (`EdgeFar`) and `TriGenFar` at the line of the planes of `0235` and `046`. -/
+/-- **Theorem F (type 19).** Seven labelled points, no three collinear, with facets
+`0235`, `1356` (quadrilaterals), `046`, `346`, given by functionals negative off
+them, are Rupert, given distinct far depths along `35` (`EdgeFar`) and
+`TriGenFar` at the line of the planes of `0235` and `046`. -/
 theorem isRupert_type19 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
-    (hgen : GenPos (univ.image x)) (fA fB fD fG : ℝ³ →ᵃ[ℝ] ℝ)
+    (hgen : NoThreeCollinear (univ.image x)) (fA fB fD fG : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 2, 3, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 2, 3, 5} : Finset (Fin 7)) → fA (x i) < 0))
     (hB : ∀ i, (i ∈ ({1, 3, 5, 6} : Finset (Fin 7)) → fB (x i) = 0) ∧
@@ -52,14 +52,8 @@ theorem isRupert_type19 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     fun P R => (Finset.image_inter P R hx).symm
   have ncol : ∀ i j k : Fin 7, i ≠ j → i ≠ k → j ≠ k → ∀ c : ℝ, x k - x i ≠ c • (x j - x i) := by
     intro i j k hij hik hjk c
-    exact (hgen (x i) (hxV i) (x k) (hxV k) (x i) (hxV i) (x j) (hxV j)
-      (fun h => hik (hx h)) (fun h => hij (hx h)) (by
-        intro h
-        have : x k ∈ ({x i, x j} : Finset ℝ³) := h ▸ Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
-        simp only [Finset.mem_insert, Finset.mem_singleton] at this
-        rcases this with h' | h'
-        · exact hik (hx h').symm
-        · exact hjk (hx h').symm)).1 c
+    exact hgen (x i) (hxV i) (x j) (hxV j) (x k) (hxV k) (fun h => hij (hx h))
+      (fun h => hik (hx h)) (fun h => hjk (hx h)) c
   have ratio : ∀ (f g : ℝ³ →ᵃ[ℝ] ℝ) (i j k : Fin 7), i ≠ j → i ≠ k → j ≠ k →
       f (x i) = 0 → f (x j) = 0 → f (x k) = 0 → g (x i) = 0 → g (x j) = 0 → g (x k) = 0 →
       ∀ y w, f w ≠ 0 → g w ≠ 0 → f y / f w = g y / g w := by

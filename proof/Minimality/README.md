@@ -165,9 +165,10 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   `quad_chain` gives the upper and lower chains of a convex quadrilateral seen
   from a vertex (six cases plus relabelling).
 * At the entry point, `not_two_quad_facets_vertex_of_isNopert`: a 7-point
-  nopert in general position (`GenPos`) has no two quadrilateral facets meeting
-  in a single vertex, given `TriGenFar` (no segment parallel to the line of the
-  two planes, distinct depths along it at the two far vertices). This excludes types 02, 07, 09, 14, 18, 20
+  nopert with no three points collinear (`NoThreeCollinear`) has no two
+  quadrilateral facets meeting in a single vertex, given `TriGenFar` (no
+  segment parallel to the line of the two planes, distinct depths along it at
+  the two far vertices). This excludes types 02, 07, 09, 14, 18, 20
   in general position. Via `isRupert_of_two_quad_facets_vertex` (enumeration,
   the line `e = n1 × n2`), `isRupert_twoQuads` (rotation of `e` to `ez`),
   `isRupert_twoQuads_vertical` (oblique frame by Cramer, each quadrilateral's
@@ -184,9 +185,9 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   `isRupert_vertex_coords` (each face's chains by gift wrapping,
   `exists_chainOK` in `HullChain.lean`), and `isRupert_vertex_frame`.
 * At the entry point, `not_facets_edge_triShadow_of_isNopert`: the same for two
-  facets sharing exactly an edge `v w`, viewed along it (distinct depths along
-  `w - v` at the two far ends, `EdgeFar`; no other segment parallel to it, from
-  `GenPos`). Via
+  facets sharing exactly an edge `v w`, viewed along it (`EdgeFar`: no other
+  segment parallel to it, distinct depths along `w - v` at the two far ends).
+  Via
   `isRupert_of_facets_edge`, `isRupert_facets_edge` (rotation of `w - v` to
   `ez`), `isRupert_facets_edge_vertical`, `isRupert_edge_coords` (chains from
   the upper and lower edge points, `exists_chainOK_edge`), and
