@@ -160,11 +160,15 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   apex, one on each ray, each convex in its `(t, z)`-plane (either
   orientation), distinct positive `t` on each, seven distinct depths: Rupert.
   `quad_chain` gives the upper and lower chains of a convex quadrilateral seen
-  from a vertex (six cases plus relabelling). Next: the bridge from two
-  quadrilateral facets of a 7-point set sharing one vertex (types 02, 07, 09,
-  14, 18, 20 by Corollary T1): rotation of the view `n1 × n2` to `ez`,
-  oblique coordinates, and the convex cyclic order of each quadrilateral from
-  extremality.
+  from a vertex (six cases plus relabelling).
+* At the entry point, `not_two_quad_facets_vertex_of_isNopert`: a 7-point
+  nopert in general position (`GenPos`) has no two quadrilateral facets meeting
+  in a single vertex, given `TriGen` (no segment parallel to the line of the two
+  planes, distinct depths along it). This excludes types 02, 07, 09, 14, 18, 20
+  in general position. Via `isRupert_of_two_quad_facets_vertex` (enumeration,
+  the line `e = n1 × n2`), `isRupert_twoQuads` (rotation of `e` to `ez`),
+  `isRupert_twoQuads_vertical` (oblique frame by Cramer, each quadrilateral's
+  convex labelling by `convex_four` from extremality), and the frame theorem.
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
@@ -261,6 +265,7 @@ In import order.
 | `QuadFacets` | L12, four quadrilateral facets | `card_inter_le_two_of_facets`, `quad_facets_classify`, `quadSidesOK_of_facets`, `isRupert_of_four_quad_facets` |
 | `TriShadow` | L13, Lemma T (triangle shadow), oblique frame | `tri_localMax_unique`, `oblPt_inj`, `isRupert_triShadow`, `isRupert_triShadow_injOn` |
 | `TriQuad` | L13, two quadrilaterals sharing a vertex (Corollary T1), oblique frame | `quad_chain`, `ChainOK.far_eq`, `isRupert_twoQuads_frame` |
+| `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices
 

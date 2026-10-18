@@ -1,6 +1,7 @@
 module
 
 public import Minimality.TriQuad
+public import Minimality.QuadFacets
 
 @[expose] public section
 
@@ -441,6 +442,174 @@ theorem isRupert_twoQuads (x : Fin 7 → ℝ³) (e : ℝ³) (he : e ≠ 0)
     apply hZ
     simp only [hgz] at hij
     simpa [hr.ne'] using hij
+
+/-! ### Facet-level statement -/
+
+/-- General position for Corollary T1 at two facets `Q1`, `Q2` meeting in `v`:
+for the line of their planes (any direction `e ≠ 0` along which supporting
+functionals of both vanish from `v`), no segment of `V` is parallel to it and the
+depths along it are distinct. -/
+def TriGen (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
+  ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+    (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+    ∀ e : ℝ³, e ≠ 0 → f1 (v + e) = 0 → f2 (v + e) = 0 →
+      (∀ p ∈ V, ∀ q ∈ V, p ≠ q → ∀ c : ℝ, q - p ≠ c • e) ∧
+      Set.InjOn (fun p : ℝ³ => ⟪p, e⟫) (V : Set ℝ³)
+
+set_option maxHeartbeats 4000000 in
+/-- **Two quadrilateral facets sharing one vertex** (Corollary T1 of
+`FEWER-FACES-PROOFS.md` §7): seven extreme points in general position with two
+quadrilateral facets meeting in a single vertex (so covering all seven points)
+are Rupert, given `TriGen` at the line of the two planes. -/
+theorem isRupert_of_two_quad_facets_vertex (V : Finset ℝ³) (hV : V.card = 7)
+    (hext : ∀ y ∈ V, y ∉ convexHull ℝ ((V.erase y : Finset ℝ³) : Set ℝ³)) (hgen : GenPos V)
+    (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (h1c : Q1.card = 4) (h2c : Q2.card = 4)
+    (h1f : IsFacet V Q1) (h2f : IsFacet V Q2) (v : ℝ³) (hint : Q1 ∩ Q2 = {v})
+    (hT : TriGen V Q1 Q2 v) : IsRupert V := by
+  classical
+  -- the two quadrilaterals cover `V`
+  have hcov : Q1 ∪ Q2 = V := by
+    apply Finset.eq_of_subset_of_card_le (Finset.union_subset h1V h2V)
+    have := Finset.card_union_add_card_inter Q1 Q2
+    rw [hint, Finset.card_singleton, h1c, h2c] at this
+    rw [hV]; omega
+  have hv1 : v ∈ Q1 := (Finset.mem_inter.mp (hint ▸ Finset.mem_singleton_self v)).1
+  have hv2 : v ∈ Q2 := (Finset.mem_inter.mp (hint ▸ Finset.mem_singleton_self v)).2
+  -- an enumeration with `v` first
+  obtain ⟨e0, he0, himg0, hQ0⟩ := exists_enum_four_first V Q1 hV h1V h1c
+  obtain ⟨k, hk⟩ : ∃ k : Fin 7, e0 k = v := by
+    have : v ∈ Finset.univ.image e0 := himg0 ▸ h1V hv1
+    simpa using this
+  have hk4 : k.val < 4 := (hQ0 k).mp (hk ▸ hv1)
+  set σ : Equiv.Perm (Fin 7) := Equiv.swap 0 k with hσ
+  set x : Fin 7 → ℝ³ := e0 ∘ σ with hx
+  have hxinj : Function.Injective x := he0.comp σ.injective
+  have himg : Finset.univ.image x = V := by
+    rw [← himg0]; ext p; simp only [Finset.mem_image, Finset.mem_univ, true_and, hx,
+      Function.comp_apply]
+    exact ⟨fun ⟨i, h⟩ => ⟨σ i, h⟩, fun ⟨i, h⟩ => ⟨σ.symm i, by simp [h]⟩⟩
+  have hx0 : x 0 = v := by simp [hx, hσ, hk]
+  have hσ4 : ∀ i : Fin 7, (σ i).val < 4 ↔ i.val < 4 := by
+    intro i
+    rcases eq_or_ne i 0 with rfl | h0
+    · rw [hσ, Equiv.swap_apply_left]; constructor <;> intro <;> omega
+    rcases eq_or_ne i k with rfl | hik
+    · rw [hσ, Equiv.swap_apply_right]; constructor <;> intro <;> omega
+    · rw [hσ, Equiv.swap_apply_of_ne_of_ne h0 hik]
+  have hxQ1 : ∀ i : Fin 7, x i ∈ Q1 ↔ i.val < 4 := by
+    intro i; rw [hx, Function.comp_apply, hQ0, hσ4]
+  have hxV : ∀ i, x i ∈ V := fun i => himg ▸ Finset.mem_image_of_mem _ (Finset.mem_univ _)
+  have hxQ2 : ∀ i : Fin 7, i.val ≥ 4 → x i ∈ Q2 := by
+    intro i hi
+    have h := hxV i; rw [← hcov] at h
+    rcases Finset.mem_union.mp h with h | h
+    · exact absurd ((hxQ1 i).mp h) (by omega)
+    · exact h
+  have hxnQ2 : ∀ i : Fin 7, i ≠ 0 → i.val < 4 → x i ∉ Q2 := by
+    intro i hi0 hi4 h
+    have : x i ∈ Q1 ∩ Q2 := Finset.mem_inter.mpr ⟨(hxQ1 i).mpr hi4, h⟩
+    rw [hint, Finset.mem_singleton, ← hx0] at this
+    exact hi0 (hxinj this)
+  -- the facet functionals and the line of the planes
+  obtain ⟨f1, z1, n1⟩ := h1f
+  obtain ⟨f2, z2, n2⟩ := h2f
+  obtain ⟨K1, α1, β1, γ1, hf1⟩ := affine_xyz f1
+  obtain ⟨K2, α2, β2, γ2, hf2⟩ := affine_xyz f2
+  set e : ℝ³ := !₂[β1 * γ2 - γ1 * β2, γ1 * α2 - α1 * γ2, α1 * β2 - β1 * α2] with he
+  have dif : ∀ (f : ℝ³ →ᵃ[ℝ] ℝ) (K α β γ : ℝ), (∀ p, f p = K + α * p 0 + β * p 1 + γ * p 2) →
+      ∀ p q, f q - f p = α * (q 0 - p 0) + β * (q 1 - p 1) + γ * (q 2 - p 2) := by
+    intro f K α β γ h p q; rw [h, h]; ring
+  have e1 : f1 (v + e) = 0 := by
+    have := dif f1 K1 α1 β1 γ1 hf1 v (v + e)
+    rw [z1 v hv1] at this; rw [sub_zero] at this; rw [this]; simp [he]; ring
+  have e2 : f2 (v + e) = 0 := by
+    have := dif f2 K2 α2 β2 γ2 hf2 v (v + e)
+    rw [z2 v hv2] at this; rw [sub_zero] at this; rw [this]; simp [he]; ring
+  have hne : e ≠ 0 := by
+    intro h0
+    have c0 := congrArg (fun p : ℝ³ => p 0) h0
+    have c1 := congrArg (fun p : ℝ³ => p 1) h0
+    have c2 := congrArg (fun p : ℝ³ => p 2) h0
+    simp [he] at c0 c1 c2
+    -- `f1` is negative at `x 4`, `f2` vanishes at `x 1` too: the gradients would be parallel
+    have d14 := dif f1 K1 α1 β1 γ1 hf1 v (x 4)
+    have d21 := dif f2 K2 α2 β2 γ2 hf2 v (x 1)
+    have d11 := dif f1 K1 α1 β1 γ1 hf1 v (x 1)
+    rw [z1 v hv1, sub_zero] at d14
+    rw [z1 v hv1, z1 (x 1) ((hxQ1 1).mpr (by decide)), sub_zero] at d11
+    have hn2 : f2 (x 1) < 0 := n2 (x 1) (hxV 1) (hxnQ2 1 (by decide) (by decide))
+    rw [z2 v hv2, sub_zero] at d21
+    -- (n1 · d4) (n2 · d1) = (n1 · d1)(n2 · d4) + (cross terms) = 0
+    have key : (f1 (x 4)) * (f2 (x 1)) = 0 := by
+      rw [d14, d21]
+      have := d11
+      linear_combination (α2 * ((x 4) 0 - v 0) + β2 * ((x 4) 1 - v 1) + γ2 * ((x 4) 2 - v 2)) * this.symm +
+        ((x 1 1 - v 1) * (x 4 0 - v 0) - (x 1 0 - v 0) * (x 4 1 - v 1)) * c2 +
+        ((x 1 2 - v 2) * (x 4 1 - v 1) - (x 1 1 - v 1) * (x 4 2 - v 2)) * c0 +
+        ((x 1 0 - v 0) * (x 4 2 - v 2) - (x 1 2 - v 2) * (x 4 0 - v 0)) * c1
+    have hn1 : f1 (x 4) < 0 := n1 (x 4) (hxV 4) (by rw [hxQ1]; decide)
+    nlinarith
+  obtain ⟨hpar, hZ⟩ := hT f1 f2 z1 n1 z2 n2 e hne e1 e2
+  rw [← himg]
+  refine isRupert_twoQuads x e hne ?_ ?_ ?_ ?_ ?_ ?_
+  · refine ⟨f1, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    · rw [hx0]; exact z1 v hv1
+    · rw [hx0]; exact e1
+    all_goals first
+      | exact z1 _ ((hxQ1 _).mpr (by decide))
+      | exact n1 _ (hxV _) (by rw [hxQ1]; decide)
+  · refine ⟨f2, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    · rw [hx0]; exact z2 v hv2
+    · rw [hx0]; exact e2
+    all_goals first
+      | exact z2 _ (hxQ2 _ (by decide))
+      | exact n2 _ (hxV _) (hxnQ2 _ (by decide) (by decide))
+  · intro i hmem
+    apply hext (x i) (hxV i)
+    have : x '' {j | j ≠ i} = ((V.erase (x i) : Finset ℝ³) : Set ℝ³) := by
+      ext p; simp only [Set.mem_image, Set.mem_ofPred_eq, Finset.coe_erase, Set.mem_sdiff,
+        Finset.mem_coe, Set.mem_singleton_iff]
+      constructor
+      · rintro ⟨j, hj, rfl⟩; exact ⟨hxV j, fun h => hj (hxinj h)⟩
+      · rintro ⟨hp, hpi⟩
+        rw [← himg] at hp; obtain ⟨j, -, rfl⟩ := Finset.mem_image.mp hp
+        exact ⟨j, fun h => hpi (h ▸ rfl), rfl⟩
+    rwa [this] at hmem
+  · intro i j k hij hik hjk c
+    exact ((hgen (x i) (hxV i) (x k) (hxV k) (x i) (hxV i) (x j) (hxV j)
+      (fun h => hik (hxinj h)) (fun h => hij (hxinj h)) (by
+        intro h
+        have : x k ∈ ({x i, x j} : Finset ℝ³) := h ▸ Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
+        simp only [Finset.mem_insert, Finset.mem_singleton] at this
+        rcases this with h' | h'
+        · exact hik (hxinj h').symm
+        · exact hjk (hxinj h').symm)).1 c)
+  · intro i j hij c
+    exact hpar (x i) (hxV i) (x j) (hxV j) (fun h => hij (hxinj h)) c
+  · intro i j h
+    exact hxinj (hZ (hxV i) (hxV j) h)
+
+/-- `isRupert_of_two_quad_facets_vertex` for a solid hull, without assuming
+that all seven points are extreme. -/
+theorem isRupert_of_two_quad_facets_vertex_solid (V : Finset ℝ³) (hV : V.card = 7)
+    (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) (hgen : GenPos V)
+    (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (h1c : Q1.card = 4) (h2c : Q2.card = 4)
+    (h1f : IsFacet V Q1) (h2f : IsFacet V Q2) (v : ℝ³) (hint : Q1 ∩ Q2 = {v})
+    (hT : TriGen V Q1 Q2 v) : IsRupert V := by
+  classical
+  by_cases hext : ∃ x ∈ V, x ∈ convexHull ℝ ((V.erase x : Finset ℝ³) : Set ℝ³)
+  · obtain ⟨x, hx, hxh⟩ := hext
+    have hhull : convexHull ℝ ((V.erase x : Finset ℝ³) : Set ℝ³) = convexHull ℝ (V : Set ℝ³) := by
+      apply le_antisymm (convexHull_mono (by simp))
+      refine convexHull_min (fun y hy => ?_) (convex_convexHull ℝ _)
+      by_cases hyx : y = x
+      · rw [hyx]; exact hxh
+      · exact subset_convexHull ℝ _ (by simpa [hyx] using hy)
+    refine isRupert_of_convexHull_eq hhull (isRupert_of_card_le_six _ ?_ ?_)
+    · rw [Finset.card_erase_of_mem hx]; omega
+    · rw [hhull]; exact hsol
+  push Not at hext
+  exact isRupert_of_two_quad_facets_vertex V hV hext hgen Q1 Q2 h1V h2V h1c h2c h1f h2f v hint hT
 
 end Minimality
 

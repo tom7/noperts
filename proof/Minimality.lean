@@ -5,6 +5,7 @@ public import Minimality.SixClass
 public import Minimality.Planar
 public import Minimality.FaceFive
 public import Minimality.QuadFacets
+public import Minimality.TriBridge
 
 /-!
 # Every nopert has at least 7 points
@@ -85,6 +86,20 @@ theorem not_four_quad_facets_of_isNopert (V : Finset ℝ³) (h : IsNopert V) (hV
     (hQi : Function.Injective Q) : False :=
   h.2 (Minimality.isRupert_of_four_quad_facets_solid V hV
     ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1) hgen Q hQV hQc hQf hQi)
+
+/-- **No two quadrilateral facets sharing one vertex** (Corollary T1 of the
+triangle-shadow lemma, `FEWER-FACES-PROOFS.md` §7; types 02, 07, 09, 14, 18, 20):
+a 7-point nopert in general position has no two quadrilateral facets meeting in a
+single vertex, given general position at the line of their planes
+(`Minimality.TriGen`: no segment parallel to it, distinct depths along it). -/
+theorem not_two_quad_facets_vertex_of_isNopert (V : Finset ℝ³) (h : IsNopert V)
+    (hV : V.card = 7) (hgen : Minimality.GenPos V) (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V)
+    (h2V : Q2 ⊆ V) (h1c : Q1.card = 4) (h2c : Q2.card = 4) (h1f : Minimality.IsFacet V Q1)
+    (h2f : Minimality.IsFacet V Q2) (v : ℝ³) (hint : Q1 ∩ Q2 = {v})
+    (hT : Minimality.TriGen V Q1 Q2 v) : False :=
+  h.2 (Minimality.isRupert_of_two_quad_facets_vertex_solid V hV
+    ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1) hgen Q1 Q2 h1V h2V h1c h2c h1f h2f
+    v hint hT)
 
 /-- **Flat polygons are Rupert.**  Points in a plane, not all on one line, are
 Rupert, whatever their number: hold one copy face-on and pass the other
