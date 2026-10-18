@@ -55,6 +55,12 @@ through a copy of itself):
   shallowest point, which gives a passage. (This also needs general
   position at that line: no segment parallel to it, distinct depths along
   it.)
+- more generally, in a nopert in general position, two faces of any size
+  that meet in a single point never leave all the other points strictly
+  inside the triangle shadow of that view
+  (`not_facets_vertex_triShadow_of_isNopert`): The triangle has a corner at
+  the shared point and one at the far end of each face, and the same tilted
+  view gives a passage.
 
 ## How it is proved
 

@@ -169,6 +169,17 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   the line `e = n1 × n2`), `isRupert_twoQuads` (rotation of `e` to `ez`),
   `isRupert_twoQuads_vertical` (oblique frame by Cramer, each quadrilateral's
   convex labelling by `convex_four` from extremality), and the frame theorem.
+* At the entry point, `not_facets_vertex_triShadow_of_isNopert`: Lemma T at a
+  vertex for any two facets (any number of points each) meeting in a single
+  vertex `v`, with `TriGen`: a nopert in general position never has every point
+  off both facets strictly inside the shadow triangle of `v` and points `xa`,
+  `xb` of the facets (barycentric form `f2 y / f2 xa + f1 y / f1 xb < 1` with the
+  facet functionals). Extreme points are not needed. Via
+  `isRupert_of_facets_vertex` (`TriFacets.lean`; the line `e = n1 × n2`),
+  `isRupert_facets_vertex` (rotation), `isRupert_facets_vertex_vertical`
+  (oblique frame by Cramer, coordinates `a = f2 / f2 p1`, `b = f1 / f1 p2`),
+  `isRupert_vertex_coords` (each face's chains by gift wrapping,
+  `exists_chainOK` in `HullChain.lean`), and `isRupert_vertex_frame`.
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
@@ -267,6 +278,8 @@ In import order.
 | `TriShadow2` | L13, Lemma T over an edge (two vertices over the apex), oblique frame | `vert_tiltOK`, `isRupert_triShadow2` |
 | `TriFaces` | L13, Lemma T over an edge or a vertex from the faces' chains, with interior points | `edge_core`, `isRupert_edge_frame`, `isRupert_vertex_frame` |
 | `TriQuad` | L13, chains of quadrilaterals and triangles from a vertex or along an edge; two quadrilaterals sharing a vertex (Corollary T1), oblique frame | `quad_chain`, `chainOK_edge_p_up`, `tri_chain`, `triE_chain`, `ChainOK.far_eq`, `isRupert_twoQuads_frame` |
+| `HullChain` | L13, upper and lower chains of any finite point set with distinct `t` and no three collinear (gift wrapping) | `ChainFrom`, `exists_chainFrom`, `exists_chainOK` |
+| `TriFacets` | L13, Lemma T at a vertex for any two facets, with interior points: frame, vertical, rotated, facet form | `isRupert_vertex_coords`, `isRupert_facets_vertex_vertical`, `isRupert_facets_vertex`, `isRupert_of_facets_vertex` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices
