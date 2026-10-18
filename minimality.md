@@ -70,7 +70,8 @@ through a copy of itself):
   triangles; `not_type19_of_isNopert`) and type 13 (another such
   arrangement; `not_type13_of_isNopert`) and type 17
   (`not_type17_of_isNopert`), and type 27 (one quadrilateral, eight
-  triangles; three views; `not_type27_of_isNopert`).
+  triangles; three views; `not_type27_of_isNopert`) and type 23
+  (`not_type23_of_isNopert`).
 
 ## How it is proved
 
