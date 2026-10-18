@@ -1242,6 +1242,99 @@ theorem isRupert_of_facets_vertex_tie (V : Finset ℝ³) (hgen : NoThreeCollinea
   exact hgen
 
 
+/-- Three heights, the first two different: one of the first two is the strict
+top or bottom of the three. -/
+theorem three_heights {hv hp hw : ℝ} (h : hv ≠ hp) :
+    ∃ s : ℝ, (s = 1 ∨ s = -1) ∧
+      ((s * hv < s * hp ∧ s * hw < s * hp) ∨ (s * hp < s * hv ∧ s * hw < s * hv)) := by
+  rcases lt_or_gt_of_ne h with h1 | h1
+  · rcases lt_or_ge hw hp with h2 | h2
+    · exact ⟨1, Or.inl rfl, Or.inl ⟨by linarith, by linarith⟩⟩
+    · exact ⟨-1, Or.inr rfl, Or.inr ⟨by linarith, by linarith⟩⟩
+  · rcases lt_or_ge hw hv with h2 | h2
+    · exact ⟨1, Or.inl rfl, Or.inr ⟨by linarith, by linarith⟩⟩
+    · exact ⟨-1, Or.inr rfl, Or.inl ⟨by linarith, by linarith⟩⟩
+
+/-- General position for Lemma T when one face is a triangle: no segment
+parallel to the line of the planes, and the far ends do not tie with each other
+and with the shared vertex at once (a coincidence of codimension 2). With a
+triangle face this gives `TriGenTie` (`TriGenTri.tie`). -/
+def TriGenTri (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
+  ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+    (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+    ∀ e : ℝ³, e ≠ 0 → f1 (v + e) = 0 → f2 (v + e) = 0 →
+      (∀ p ∈ V, ∀ q ∈ V, p ≠ q → ∀ c : ℝ, q - p ≠ c • e) ∧
+      ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
+        ⟪p, e⟫ ≠ ⟪q, e⟫ ∨ ⟪p, e⟫ ≠ ⟪v, e⟫
+
+/-- A triangle `{v, p, w}` (`v`, `p` given, distinct): its points are `v`, `p` and
+one more. -/
+theorem exists_third_of_card_three {Q : Finset ℝ³} (hQ : Q.card = 3) {v p : ℝ³} (hv : v ∈ Q)
+    (hp : p ∈ Q) (hvp : v ≠ p) : ∃ w, ∀ x ∈ Q, x = v ∨ x = p ∨ x = w := by
+  classical
+  have h1 : ((Q.erase v).erase p).card = 1 := by
+    rw [Finset.card_erase_of_mem (Finset.mem_erase.mpr ⟨Ne.symm hvp, hp⟩), Finset.card_erase_of_mem hv, hQ]
+  obtain ⟨w, hw⟩ := Finset.card_eq_one.mp h1
+  refine ⟨w, fun x hx => ?_⟩
+  by_cases e1 : x = v
+  · exact Or.inl e1
+  by_cases e2 : x = p
+  · exact Or.inr (Or.inl e2)
+  have : x ∈ (Q.erase v).erase p := Finset.mem_erase.mpr ⟨e2, Finset.mem_erase.mpr ⟨e1, hx⟩⟩
+  rw [hw, Finset.mem_singleton] at this
+  exact Or.inr (Or.inr this)
+
+theorem TriGenTri.tie {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
+    (hint : Q1 ∩ Q2 = {v}) (hcard : Q1.card = 3 ∨ Q2.card = 3) (h : TriGenTri V Q1 Q2 v) :
+    TriGenTie V Q1 Q2 v := by
+  intro f1 f2 z1 n1 z2 n2 e he e1 e2
+  obtain ⟨hpar, hfar⟩ := h f1 f2 z1 n1 z2 n2 e he e1 e2
+  refine ⟨hpar, fun p hp q hq hpq hpm hqm => ?_⟩
+  have hv1 : v ∈ Q1 := (Finset.mem_inter.mp (hint ▸ Finset.mem_singleton_self v)).1
+  have hv2 : v ∈ Q2 := (Finset.mem_inter.mp (hint ▸ Finset.mem_singleton_self v)).2
+  have only : ∀ x ∈ Q1, x ∈ Q2 → x = v := by
+    intro x h1 h2
+    have : x ∈ Q1 ∩ Q2 := Finset.mem_inter.mpr ⟨h1, h2⟩
+    rwa [hint, Finset.mem_singleton] at this
+  rcases hfar p hp q hq hpq hpm hqm with hne | hpv
+  · exact Or.inl hne
+  by_cases ht : ⟪p, e⟫ = ⟪q, e⟫
+  swap
+  · exact Or.inl ht
+  right
+  rcases hcard with hc | hc
+  · -- `Q1` is a triangle: `p` or `v` is its strict top or bottom
+    have hpv' : v ≠ p := fun e' => hpv (by rw [e'])
+    obtain ⟨w, hw⟩ := exists_third_of_card_three hc hv1 hp hpv'
+    obtain ⟨s, hs, hst | hst⟩ := three_heights (hv := ⟪v, e⟫) (hp := ⟪p, e⟫) (hw := ⟪w, e⟫)
+      (fun e' => hpv e'.symm)
+    · refine ⟨s, hs, Or.inl fun x hx hxp => ?_⟩
+      rcases hw x hx with rfl | rfl | rfl
+      · exact hst.1
+      · exact absurd rfl hxp
+      · exact hst.2
+    · refine ⟨s, hs, Or.inr (Or.inr (Or.inl fun x hx hxv => ?_))⟩
+      rcases hw x hx with rfl | rfl | rfl
+      · exact absurd rfl hxv
+      · exact hst.1
+      · exact hst.2
+  · -- `Q2` is a triangle: `q` or `v` is its strict top or bottom
+    have hqv : ⟪q, e⟫ ≠ ⟪v, e⟫ := by rw [← ht]; exact hpv
+    have hvq : v ≠ q := fun e' => hqv (by rw [e'])
+    obtain ⟨w, hw⟩ := exists_third_of_card_three hc hv2 hq hvq
+    obtain ⟨s, hs, hst | hst⟩ := three_heights (hv := ⟪v, e⟫) (hp := ⟪q, e⟫) (hw := ⟪w, e⟫)
+      (fun e' => hqv e'.symm)
+    · refine ⟨-s, by rcases hs with rfl | rfl <;> norm_num, Or.inr (Or.inl fun x hx hxq => ?_)⟩
+      rcases hw x hx with rfl | rfl | rfl
+      · linarith [hst.1]
+      · exact absurd rfl hxq
+      · linarith [hst.2]
+    · refine ⟨s, hs, Or.inr (Or.inr (Or.inr fun x hx hxv => ?_))⟩
+      rcases hw x hx with rfl | rfl | rfl
+      · exact absurd rfl hxv
+      · exact hst.1
+      · exact hst.2
+
 end Minimality
 
 end
