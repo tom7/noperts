@@ -152,8 +152,7 @@ theorem not_facets_edge_triShadow_of_isNopert (V : Finset ℝ³) (h : IsNopert V
 /-- **Type 10, the capped frustum** (Theorem E of `FEWER-FACES-PROOFS.md` §7):
 a nopert in general position does not have seven points labelled so that
 `1245`, `1346`, `2356` (side quadrilaterals) and `023` (a cap triangle) are
-facets (given by functionals negative off them), unless `x0` lies over the
-chord `23` in the view along `14`; general position includes distinct depths
+facets (given by functionals negative off them); general position includes distinct depths
 along `14` and `Minimality.TriGen` at the line of the planes of `023` and
 `1245`. -/
 theorem not_type10_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
@@ -167,16 +166,15 @@ theorem not_type10_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({2, 3, 5, 6} : Finset (Fin 7)) → fC (x i) < 0))
     (hD : ∀ i, (i ∈ ({0, 2, 3} : Finset (Fin 7)) → fD (x i) = 0) ∧
       (i ∉ ({0, 2, 3} : Finset (Fin 7)) → fD (x i) < 0))
-    (hs : fB (x 0) / fB (x 2) + fA (x 0) / fA (x 3) ≠ 1)
     (hZ1 : Set.InjOn (fun p : ℝ³ => inner ℝ p (x 4 - x 1)) (Finset.univ.image x : Set ℝ³))
     (hT2 : Minimality.TriGen (Finset.univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
       (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2)) : False :=
-  h.2 (Minimality.isRupert_type10 x hx hgen fA fB fC fD hA hB hC hD hs hZ1 hT2)
+  h.2 (Minimality.isRupert_type10 x hx hgen fA fB fC fD hA hB hC hD hZ1 hT2)
 
 /-- **Type 19** (Theorem F of `FEWER-FACES-PROOFS.md` §7): a nopert in general
 position does not have seven points labelled so that `0235`, `1356`
 (quadrilaterals), `046` and `346` are facets (given by functionals negative
-off them), unless `x4` lies over the chord `06` in the view along `35`;
+off them);
 general position includes distinct depths along `35` and `Minimality.TriGen`
 at the line of the planes of `0235` and `046`. -/
 theorem not_type19_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
@@ -190,16 +188,15 @@ theorem not_type19_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) < 0))
     (hG : ∀ i, (i ∈ ({3, 4, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
       (i ∉ ({3, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
-    (hs : fB (x 4) / fB (x 0) + fA (x 4) / fA (x 6) ≠ 1)
     (hZ1 : Set.InjOn (fun p : ℝ³ => inner ℝ p (x 5 - x 3)) (Finset.univ.image x : Set ℝ³))
     (hT2 : Minimality.TriGen (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
       (({0, 4, 6} : Finset (Fin 7)).image x) (x 0)) : False :=
-  h.2 (Minimality.isRupert_type19 x hx hgen fA fB fD fG hA hB hD hG hs hZ1 hT2)
+  h.2 (Minimality.isRupert_type19 x hx hgen fA fB fD fG hA hB hD hG hZ1 hT2)
 
 /-- **Type 13** (Theorem G of `FEWER-FACES-PROOFS.md` §7): a nopert in general
 position does not have seven points labelled so that `0145`, `2456`
 (quadrilaterals), `123` and `126` are facets (given by functionals negative
-off them), unless `x3` lies over the chord `12` in the view along `45`;
+off them);
 general position includes distinct depths along `45` and `Minimality.TriGen`
 at the line of the planes of `0145` and `123`. -/
 theorem not_type13_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
@@ -213,11 +210,10 @@ theorem not_type13_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({1, 2, 3} : Finset (Fin 7)) → fD (x i) < 0))
     (hG : ∀ i, (i ∈ ({1, 2, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
       (i ∉ ({1, 2, 6} : Finset (Fin 7)) → fG (x i) < 0))
-    (hs : fB (x 3) / fB (x 1) + fA (x 3) / fA (x 2) ≠ 1)
     (hZ1 : Set.InjOn (fun p : ℝ³ => inner ℝ p (x 5 - x 4)) (Finset.univ.image x : Set ℝ³))
     (hT2 : Minimality.TriGen (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
       (({1, 2, 3} : Finset (Fin 7)).image x) (x 1)) : False :=
-  h.2 (Minimality.isRupert_type13 x hx hgen fA fB fD fG hA hB hD hG hs hZ1 hT2)
+  h.2 (Minimality.isRupert_type13 x hx hgen fA fB fD fG hA hB hD hG hZ1 hT2)
 
 /-- **Type 17** (Theorem H of `FEWER-FACES-PROOFS.md` §7): a nopert in general
 position does not have seven points labelled so that `0246`, `2345`

@@ -1,6 +1,7 @@
 module
 
 public import Minimality.Type10
+public import Minimality.TriFacetsChord
 
 @[expose] public section
 
@@ -11,9 +12,11 @@ Theorem F of `FEWER-FACES-PROOFS.md` §7, by the algebraic method of
 `Type10.lean`: faces `A = 0235`, `B = 1356` (quadrilaterals), `D = 046`,
 `G = 346`; with `s = fB x4 / fB x0 + fA x4 / fA x6`, the view along the edge
 `35` has a triangle shadow if `s < 1`, and the view along the line of the
-planes of `A` and `D` (through `x0`) has one if `s > 1`: Cramer for `x1` in
+planes of `A` and `D` (through `x0`) has one if `s ≥ 1`: Cramer for `x1` in
 the frame `x3; x0, x4, x6` gives
 `fD x1 / fD x3 + fA x1 / fA x6 = 1 + ρ (s - 1)` with `ρ < 0` (from `B`, `G`).
+At `s = 1` the only point `x1` off both planes of the second view is on the far
+side, and that view works by Lemma T′ (`isRupert_of_facets_vertex_chord`).
 -/
 
 namespace Minimality
@@ -24,8 +27,7 @@ open scoped RealInnerProductSpace
 set_option maxHeartbeats 4000000 in
 /-- **Theorem F (type 19).** Seven labelled points in general position with
 facets `0235`, `1356` (quadrilaterals), `046`, `346`, given by functionals
-negative off them, are Rupert, unless `x4` lies over the chord `06` in the
-view along `35` (`fB x4 / fB x0 + fA x4 / fA x6 = 1`), given distinct depths
+negative off them, are Rupert, given distinct depths
 along `35` and `TriGen` at the line of the planes of `0235` and `046`. -/
 theorem isRupert_type19 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hgen : GenPos (univ.image x)) (fA fB fD fG : ℝ³ →ᵃ[ℝ] ℝ)
@@ -37,7 +39,6 @@ theorem isRupert_type19 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) < 0))
     (hG : ∀ i, (i ∈ ({3, 4, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
       (i ∉ ({3, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
-    (hs : fB (x 4) / fB (x 0) + fA (x 4) / fA (x 6) ≠ 1)
     (hZ1 : Set.InjOn (fun p : ℝ³ => ⟪p, x 5 - x 3⟫) (univ.image x : Set ℝ³))
     (hT2 : TriGen (univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
       (({0, 4, 6} : Finset (Fin 7)).image x) (x 0)) :
@@ -69,7 +70,7 @@ theorem isRupert_type19 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
   set QB := ({1, 3, 5, 6} : Finset (Fin 7)).image x
   set QD := ({0, 4, 6} : Finset (Fin 7)).image x
   have sub : ∀ P : Finset (Fin 7), P.image x ⊆ V := fun P => Finset.image_subset_image (Finset.subset_univ P)
-  rcases lt_or_gt_of_ne hs with hlt | hgt
+  rcases lt_or_ge (fB (x 4) / fB (x 0) + fA (x 4) / fA (x 6)) 1 with hlt | hgt
   · -- the view along the edge `35`
     refine isRupert_of_facets_edge V hgen QA QB (sub _) (sub _) (isFacet_of_index x _ fA hA)
       (isFacet_of_index x _ fB hB) (x 3) (x 5) (fun h => by have := hx h; omega) ?_
@@ -98,19 +99,21 @@ theorem isRupert_type19 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
         ((hA 6).2 (by decide)).ne
     rw [e1, e2]; exact hlt
   · -- the view along the line of the planes of `0235` and `046`
-    refine isRupert_of_facets_vertex V hgen QA QD (sub _) (sub _) (isFacet_of_index x _ fA hA)
-      (isFacet_of_index x _ fD hD) (x 0) ?_
+    refine isRupert_of_facets_vertex_chord V hgen QA QD (sub _) (sub _)
+      (isFacet_of_index x _ fA hA) (isFacet_of_index x _ fD hD) (x 0) ?_
       ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩
-      ⟨x 6, (memQ _ 6).mpr (by decide), fun h => by have := hx h; omega⟩ hT2 ?_
+      ⟨x 6, (memQ _ 6).mpr (by decide), fun h => by have := hx h; omega⟩ hT2 (x 3) (x 6)
+      ((memQ _ 3).mpr (by decide)) ((memQ _ 6).mpr (by decide))
+      (fun h => by have := hx h; omega) (fun h => by have := hx h; omega) (x 1) (hxV 1)
+      (by rw [memQ]; decide) (by rw [memQ]; decide) ?_
     · rw [inter, show ({0, 2, 3, 5} ∩ {0, 4, 6} : Finset (Fin 7)) = {0} by decide]
       simp
-    refine ⟨x 3, (memQ _ 3).mpr (by decide), x 6, (memQ _ 6).mpr (by decide),
-      fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩
-    intro f1 f2 z1 n1 z2 n2 y hy hy1 hy2
-    obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
-    rw [memQ] at hy1 hy2
-    have hi : i = 1 := by fin_cases i <;> simp_all
-    subst hi
+    intro f1 f2 z1 n1 z2 n2
+    refine ⟨fun y hy hy1 hy2 hne => ?_, ?_⟩
+    · obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
+      rw [memQ] at hy1 hy2
+      have hi : i = 1 := by clear * - hy1 hy2; fin_cases i <;> simp_all
+      exact absurd (by rw [hi]) hne
     have e2 : f2 (x 1) / f2 (x 3) = fD (x 1) / fD (x 3) :=
       ratio f2 fD 0 4 6 (by decide) (by decide) (by decide)
         (z2 _ ((memQ _ 0).mpr (by decide))) (z2 _ ((memQ _ 4).mpr (by decide)))
