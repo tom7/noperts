@@ -398,6 +398,157 @@ theorem isRupert_twoQuads_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
     simp only [hpz] at h
     rw [hz h]
 
+/-! ### Chains of a quadrilateral seen along an edge, and of triangles -/
+
+/-- The four vertices of a quadrilateral seen along its edge `x x′` (both at
+`t = 0`, `x` below `x′`), with `p` next to `x′` and `q` next to `x`. -/
+def QuadEPt (zx zx' tp zp tq zq : ℝ) (a z : ℝ) : Prop :=
+  (a = 0 ∧ z = zx) ∨ (a = 0 ∧ z = zx') ∨ (a = tp ∧ z = zp) ∨ (a = tq ∧ z = zq)
+
+set_option linter.unnecessarySeqFocus false in
+set_option maxHeartbeats 2000000 in
+/-- Upper chain `x′, p` (far vertex `p`). -/
+theorem chainOK_edge_p_up {zx zx' tp zp tq zq : ℝ} (hxx : zx < zx') (hp : 0 < tp) (hq : 0 < tq)
+    (hQ : ConvQuad 0 zx tq zq tp zp 0 zx') (hpq : tq < tp) :
+    ChainOK (QuadEPt zx zx' tp zp tq zq) zx' 1 1 (chain1 0 tp) (chain1 zx' zp) := by
+  obtain ⟨⟨q1a, q1b⟩, ⟨q2a, q2b⟩, ⟨q3a, q3b⟩, ⟨q4a, q4b⟩⟩ := hQ
+  refine ⟨le_rfl, by simp [chain1], ?_, ?_, ?_, ?_⟩
+  · intro l hl; interval_cases l; simp [chain1]; linarith
+  · intro l hl; interval_cases l <;> simp [chain1, QuadEPt]
+  · intro a z hq hne
+    rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [chain1] at hne ⊢ <;>
+      linarith
+  · intro a z hq l hl hn1 hn2
+    interval_cases l
+    rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
+    simp [chain1] at hn1 hn2 ⊢ <;> nlinarith
+
+set_option linter.unnecessarySeqFocus false in
+set_option maxHeartbeats 2000000 in
+/-- Lower chain `x, q, p` (far vertex `p`). -/
+theorem chainOK_edge_p_lo {zx zx' tp zp tq zq : ℝ} (hxx : zx < zx') (hp : 0 < tp) (hq : 0 < tq)
+    (hQ : ConvQuad 0 zx tq zq tp zp 0 zx') (hpq : tq < tp) :
+    ChainOK (QuadEPt zx zx' tp zp tq zq) zx (-1) 2 (chain2 0 tq tp) (chain2 zx zq zp) := by
+  obtain ⟨⟨q1a, q1b⟩, ⟨q2a, q2b⟩, ⟨q3a, q3b⟩, ⟨q4a, q4b⟩⟩ := hQ
+  refine ⟨by norm_num, by simp [chain2], ?_, ?_, ?_, ?_⟩
+  · intro l hl; interval_cases l <;> simp [chain2] <;> linarith
+  · intro l hl; interval_cases l <;> simp [chain2, QuadEPt]
+  · intro a z hq hne
+    rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [chain2] at hne ⊢ <;>
+      linarith
+  · intro a z hq l hl hn1 hn2
+    interval_cases l <;>
+    rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
+    simp [chain2] at hn1 hn2 ⊢ <;> nlinarith
+
+set_option linter.unnecessarySeqFocus false in
+set_option maxHeartbeats 2000000 in
+/-- Upper chain `x′, p, q` (far vertex `q`). -/
+theorem chainOK_edge_q_up {zx zx' tp zp tq zq : ℝ} (hxx : zx < zx') (hp : 0 < tp) (hq : 0 < tq)
+    (hQ : ConvQuad 0 zx tq zq tp zp 0 zx') (hpq : tp < tq) :
+    ChainOK (QuadEPt zx zx' tp zp tq zq) zx' 1 2 (chain2 0 tp tq) (chain2 zx' zp zq) := by
+  obtain ⟨⟨q1a, q1b⟩, ⟨q2a, q2b⟩, ⟨q3a, q3b⟩, ⟨q4a, q4b⟩⟩ := hQ
+  refine ⟨by norm_num, by simp [chain2], ?_, ?_, ?_, ?_⟩
+  · intro l hl; interval_cases l <;> simp [chain2] <;> linarith
+  · intro l hl; interval_cases l <;> simp [chain2, QuadEPt]
+  · intro a z hq hne
+    rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [chain2] at hne ⊢ <;>
+      linarith
+  · intro a z hq l hl hn1 hn2
+    interval_cases l <;>
+    rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
+    simp [chain2] at hn1 hn2 ⊢ <;> nlinarith
+
+set_option linter.unnecessarySeqFocus false in
+set_option maxHeartbeats 2000000 in
+/-- Lower chain `x, q` (far vertex `q`). -/
+theorem chainOK_edge_q_lo {zx zx' tp zp tq zq : ℝ} (hxx : zx < zx') (hp : 0 < tp) (hq : 0 < tq)
+    (hQ : ConvQuad 0 zx tq zq tp zp 0 zx') (hpq : tp < tq) :
+    ChainOK (QuadEPt zx zx' tp zp tq zq) zx (-1) 1 (chain1 0 tq) (chain1 zx zq) := by
+  obtain ⟨⟨q1a, q1b⟩, ⟨q2a, q2b⟩, ⟨q3a, q3b⟩, ⟨q4a, q4b⟩⟩ := hQ
+  refine ⟨le_rfl, by simp [chain1], ?_, ?_, ?_, ?_⟩
+  · intro l hl; interval_cases l; simp [chain1]; linarith
+  · intro l hl; interval_cases l <;> simp [chain1, QuadEPt]
+  · intro a z hq hne
+    rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [chain1] at hne ⊢ <;>
+      linarith
+  · intro a z hq l hl hn1 hn2
+    interval_cases l
+    rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
+    simp [chain1] at hn1 hn2 ⊢ <;> nlinarith
+
+/-- The vertices of a triangle seen from a vertex (`t = 0`). -/
+def TriPt (z0 a1 z1 a2 z2 : ℝ) (a z : ℝ) : Prop :=
+  (a = 0 ∧ z = z0) ∨ (a = a1 ∧ z = z1) ∨ (a = a2 ∧ z = z2)
+
+set_option linter.unnecessarySeqFocus false in
+set_option maxHeartbeats 4000000 in
+/-- The chains of a triangle seen from a vertex (`t = 0`; the others at
+distinct `t > 0`, not collinear). -/
+theorem tri_chain {z0 a1 z1 a2 z2 : ℝ} (h1 : 0 < a1) (h2 : 0 < a2) (h12 : a1 ≠ a2)
+    (hcol : (a1 - 0) * (z2 - z0) - (z1 - z0) * (a2 - 0) ≠ 0) (s : ℝ) (hs : s = 1 ∨ s = -1) :
+    ∃ m ca cz, ChainOK (TriPt z0 a1 z1 a2 z2) z0 s m ca cz := by
+  rcases lt_or_gt_of_ne h12 with c | c <;> rcases lt_or_gt_of_ne hcol with o | o <;>
+    rcases hs with rfl | rfl
+  all_goals first
+    | (refine ⟨1, chain1 0 a2, chain1 z0 z2, le_rfl, by simp [chain1], ?_, ?_, ?_, ?_⟩
+       · intro l hl; interval_cases l; simp [chain1]; linarith
+       · intro l hl; interval_cases l <;> simp [chain1, TriPt]
+       · intro a z hq hne
+         rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [chain1] at hne ⊢ <;> linarith
+       · intro a z hq l hl hn1 hn2
+         interval_cases l
+         rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
+         simp [chain1] at hn1 hn2 ⊢ <;> nlinarith)
+    | (refine ⟨2, chain2 0 a1 a2, chain2 z0 z1 z2, by norm_num, by simp [chain2], ?_, ?_, ?_, ?_⟩
+       · intro l hl; interval_cases l <;> simp [chain2] <;> linarith
+       · intro l hl; interval_cases l <;> simp [chain2, TriPt]
+       · intro a z hq hne
+         rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [chain2] at hne ⊢ <;> linarith
+       · intro a z hq l hl hn1 hn2
+         interval_cases l <;>
+         rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
+         simp [chain2] at hn1 hn2 ⊢ <;> nlinarith)
+    | (refine ⟨1, chain1 0 a1, chain1 z0 z1, le_rfl, by simp [chain1], ?_, ?_, ?_, ?_⟩
+       · intro l hl; interval_cases l; simp [chain1]; linarith
+       · intro l hl; interval_cases l <;> simp [chain1, TriPt]
+       · intro a z hq hne
+         rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [chain1] at hne ⊢ <;> linarith
+       · intro a z hq l hl hn1 hn2
+         interval_cases l
+         rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
+         simp [chain1] at hn1 hn2 ⊢ <;> nlinarith)
+    | (refine ⟨2, chain2 0 a2 a1, chain2 z0 z2 z1, by norm_num, by simp [chain2], ?_, ?_, ?_, ?_⟩
+       · intro l hl; interval_cases l <;> simp [chain2] <;> linarith
+       · intro l hl; interval_cases l <;> simp [chain2, TriPt]
+       · intro a z hq hne
+         rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [chain2] at hne ⊢ <;> linarith
+       · intro a z hq l hl hn1 hn2
+         interval_cases l <;>
+         rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
+         simp [chain2] at hn1 hn2 ⊢ <;> nlinarith)
+
+/-- The vertices of a triangle seen along its edge `x x′` (`t = 0`). -/
+def TriEPt (zx zx' tr zr : ℝ) (a z : ℝ) : Prop :=
+  (a = 0 ∧ z = zx) ∨ (a = 0 ∧ z = zx') ∨ (a = tr ∧ z = zr)
+
+set_option linter.unnecessarySeqFocus false in
+/-- The chains of a triangle seen along an edge: `x′, r` above, `x, r` below. -/
+theorem triE_chain {zx zx' tr zr : ℝ} (hxx : zx < zx') (hr : 0 < tr) :
+    ChainOK (TriEPt zx zx' tr zr) zx' 1 1 (chain1 0 tr) (chain1 zx' zr) ∧
+    ChainOK (TriEPt zx zx' tr zr) zx (-1) 1 (chain1 0 tr) (chain1 zx zr) := by
+  constructor
+  all_goals refine ⟨le_rfl, by simp [chain1], ?_, ?_, ?_, ?_⟩
+  all_goals first
+    | (intro l hl; interval_cases l; simp [chain1]; linarith)
+    | (intro l hl; interval_cases l <;> simp [chain1, TriEPt])
+    | (intro a z hq hne
+       rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [chain1] at hne ⊢ <;> linarith)
+    | (intro a z hq l hl hn1 hn2
+       interval_cases l
+       rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
+       simp [chain1] at hn1 hn2 ⊢ <;> nlinarith)
+
 end Minimality
 
 end
