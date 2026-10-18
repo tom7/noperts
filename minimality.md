@@ -47,6 +47,14 @@ through a copy of itself):
   quadrilateral faces (`not_four_quad_facets_of_isNopert`): four
   quadrilateral faces force one face structure, which is Rupert by a
   slightly tilted view along the edge where two of the quadrilaterals meet.
+- a nopert with exactly 7 points in general position has no two
+  quadrilateral faces that meet in a single point
+  (`not_two_quad_facets_vertex_of_isNopert`): Viewed along the line where
+  the planes of the two faces cross, the shadow is a triangle, and a
+  slightly tilted view has a silhouette with one deepest and one
+  shallowest point, which gives a passage. (This also needs general
+  position at that line: no segment parallel to it, distinct depths along
+  it.)
 
 ## How it is proved
 
