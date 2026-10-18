@@ -265,7 +265,8 @@ In import order.
 | `QuadFacets` | L12, four quadrilateral facets | `card_inter_le_two_of_facets`, `quad_facets_classify`, `quadSidesOK_of_facets`, `isRupert_of_four_quad_facets` |
 | `TriShadow` | L13, Lemma T (triangle shadow), oblique frame | `tri_localMax_unique`, `oblPt_inj`, `isRupert_triShadow`, `isRupert_triShadow_injOn` |
 | `TriShadow2` | L13, Lemma T over an edge (two vertices over the apex), oblique frame | `vert_tiltOK`, `isRupert_triShadow2` |
-| `TriQuad` | L13, two quadrilaterals sharing a vertex (Corollary T1), oblique frame | `quad_chain`, `ChainOK.far_eq`, `isRupert_twoQuads_frame` |
+| `TriFaces` | L13, Lemma T over an edge from the faces' chains, with interior points | `edge_core`, `isRupert_edge_frame` |
+| `TriQuad` | L13, chains of quadrilaterals and triangles from a vertex or along an edge; two quadrilaterals sharing a vertex (Corollary T1), oblique frame | `quad_chain`, `chainOK_edge_p_up`, `tri_chain`, `triE_chain`, `ChainOK.far_eq`, `isRupert_twoQuads_frame` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices
