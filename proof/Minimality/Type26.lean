@@ -14,7 +14,8 @@ automorphism. View `P` along the edge `04` (faces `A`, `T = 034`) with the far
 end `a ∈ {2, 6}` of `A`. If `a = 2` (`fT x6 / fT x2 ≤ 1`), `P` holds at `1`
 (vertex `1` has degree 3: Cramer for `x2` in the frame `x1; x0, x3, x6`), and if
 it fails at `5`, the view along the planes of `A` and `235` (through `x2`)
-holds (frame `x0; x4, x2, x3`). The case `a = 6` is the image under the
+holds (frame `x0; x4, x2, x3`).
+It still holds at the tie (`x5` on the far side in `P`). The case `a = 6` is the image under the
 automorphism (`type26_core` applied to the relabelled points).
 -/
 
@@ -43,7 +44,6 @@ theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hY : ∀ i, (i ∈ ({2, 4, 5} : Finset (Fin 7)) → fY (x i) = 0) ∧
       (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fY (x i) < 0))
     (hcase : fT (x 6) / fT (x 2) ≤ 1)
-    (hs : fT (x 5) / fT (x 2) + fA (x 5) / fA (x 3) ≠ 1)
     (hZ1 : Set.InjOn (fun p : ℝ³ => ⟪p, x 4 - x 0⟫) (univ.image x : Set ℝ³))
     (hT2 : TriGen (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2)) :
@@ -133,7 +133,7 @@ theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     by_contra hle; push Not at hle
     have := mul_nonpos_of_nonpos_of_nonneg (sub_nonpos.mpr hle) hΛ.le
     linarith
-  rcases lt_or_gt_of_ne hs with h5lt | h5gt
+  rcases lt_or_ge (fT (x 5) / fT (x 2) + fA (x 5) / fA (x 3)) 1 with h5lt | h5gt
   · -- the view `P` along the edge `04`
     refine isRupert_of_facets_edge V hgen QA QT (sub _) (sub _) (isFacet_of_index x _ fA hA)
       (isFacet_of_index x _ fT hT) (x 0) (x 4) (fun h => by have := hx h; omega) ?_
@@ -245,8 +245,7 @@ theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
 set_option maxHeartbeats 8000000 in
 /-- **Theorem L (type 26).** Seven labelled points in general position with
 facets `0246` (a quadrilateral), `034`, `235`, `136`, `013`, `016`, `245`, `345`,
-given by functionals negative off them, are Rupert, unless
-`fT x5 / fT x2 + fA x5 / fA x3 = 1` or `fT x1 / fT x6 + fA x1 / fA x3 = 1`, given
+given by functionals negative off them, are Rupert, given
 distinct depths along `04` and `TriGen` at the lines of the planes of `0246`
 and `235` and of `0246` and `136`. -/
 theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
@@ -267,8 +266,6 @@ theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fY (x i) < 0))
     (hZ : ∀ i, (i ∈ ({3, 4, 5} : Finset (Fin 7)) → fZ (x i) = 0) ∧
       (i ∉ ({3, 4, 5} : Finset (Fin 7)) → fZ (x i) < 0))
-    (hs2 : fT (x 5) / fT (x 2) + fA (x 5) / fA (x 3) ≠ 1)
-    (hs6 : fT (x 1) / fT (x 6) + fA (x 1) / fA (x 3) ≠ 1)
     (hZ1 : Set.InjOn (fun p : ℝ³ => ⟪p, x 4 - x 0⟫) (univ.image x : Set ℝ³))
     (hT2 : TriGen (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2))
@@ -277,7 +274,7 @@ theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     IsRupert (univ.image x) := by
   classical
   by_cases hc : fT (x 6) / fT (x 2) ≤ 1
-  · exact type26_core x hx hgen fA fT fG fH fU fW fY hA hT hG hH hU hW hY hc hs2 hZ1 hT2
+  · exact type26_core x hx hgen fA fT fG fH fU fW fY hA hT hG hH hU hW hY hc hZ1 hT2
   -- the automorphism `0 ↔ 4, 1 ↔ 5, 2 ↔ 6`
   set σ : Fin 7 → Fin 7 := ![4, 5, 6, 3, 0, 1, 2] with hσ
   have σσ : ∀ i, σ (σ i) = i := by decide
@@ -304,11 +301,10 @@ theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
   refine type26_core y (hx.comp σinj) (hV ▸ hgen) fA fT fH fG fZ fY fW
     (tr fA _ _ (by decide) hA) (tr fT _ _ (by decide) hT) (tr fH _ _ (by decide) hH)
     (tr fG _ _ (by decide) hG) (tr fZ _ _ (by decide) hZ) (tr fY _ _ (by decide) hY)
-    (tr fW _ _ (by decide) hW) ?_ ?_ ?_ ?_
+    (tr fW _ _ (by decide) hW) ?_ ?_ ?_
   · rw [y6, y2, div_le_one_of_neg t6]
     push Not at hc
     exact ((one_lt_div_of_neg t2).mp hc).le
-  · rw [y5, y2, y3]; exact hs6
   · rw [hV, y4, y0]
     intro p hp q hq h
     apply hZ1 hp hq

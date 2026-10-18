@@ -14,6 +14,8 @@ Theorem K of `FEWER-FACES-PROOFS.md` §7, by the algebraic method of
 holds at `y` iff `α_y + γ_y < 1`; failing at `2` or `4` forces
 `fA x1 / fA x3 ≥ 1`, which gives `Q1`; failing at `5` forces
 `fG x1 / fG x3 < 1`, which gives `Q2`.
+At the tie (`x5` on the far side in `P`), `fG x1 / fG x3 = 1` and `Q2` still
+works.
 -/
 
 namespace Minimality
@@ -24,8 +26,7 @@ open scoped RealInnerProductSpace
 set_option maxHeartbeats 8000000 in
 /-- **Theorem K (type 25).** Seven labelled points in general position with
 facets `0246` (a quadrilateral), `013`, `136`, `056`, `035`, `014`, `126`, given
-by functionals negative off them, are Rupert, unless
-`fF x5 / fF x0 + fD x5 / fD x6 = 1`, given distinct depths along `13` and
+by functionals negative off them, are Rupert, given distinct depths along `13` and
 `TriGen` at the lines of the planes of `013` and `0246` and of `013` and
 `056`. -/
 theorem isRupert_type25 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
@@ -44,7 +45,6 @@ theorem isRupert_type25 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({0, 1, 4} : Finset (Fin 7)) → fE (x i) < 0))
     (hI : ∀ i, (i ∈ ({1, 2, 6} : Finset (Fin 7)) → fI (x i) = 0) ∧
       (i ∉ ({1, 2, 6} : Finset (Fin 7)) → fI (x i) < 0))
-    (hs : fF (x 5) / fF (x 0) + fD (x 5) / fD (x 6) ≠ 1)
     (hZ1 : Set.InjOn (fun p : ℝ³ => ⟪p, x 3 - x 1⟫) (univ.image x : Set ℝ³))
     (hT1 : TriGen (univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
       (({0, 2, 4, 6} : Finset (Fin 7)).image x) (x 0))
@@ -148,7 +148,7 @@ theorem isRupert_type25 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
   have hσ2 : 0 < 1 - (α2 + β2 + γ2) := by nlinarith
   have hσ4 : 0 < 1 - (α4 + β4 + γ4) := by nlinarith
   have hσ5 : 1 - (α5 + β5 + γ5) < 0 := by nlinarith
-  rcases lt_or_gt_of_ne hs with h5lt | h5gt
+  rcases lt_or_ge (fF (x 5) / fF (x 0) + fD (x 5) / fD (x 6)) 1 with h5lt | h5gt
   · by_cases h24 : fF (x 2) / fF (x 0) + fD (x 2) / fD (x 6) < 1 ∧
         fF (x 4) / fF (x 0) + fD (x 4) / fD (x 6) < 1
     · -- the view `P` along the edge `13`
@@ -229,12 +229,12 @@ theorem isRupert_type25 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       have := mul_le_mul_of_nonpos_right hr hσ5.le
       linarith
   · -- `P` fails at `5`: the view `Q2` along the planes of `013` and `056`
-    have hq : fG (x 1) / fG (x 3) < 1 := by
+    have hq : fG (x 1) / fG (x 3) ≤ 1 := by
       rw [P5] at h5gt
       have k : fG (x 1) / fG (x 3) * (1 - (α5 + β5 + γ5)) = -β5 := by
         field_simp; linear_combination -cG5
       by_contra hle; push Not at hle
-      have := mul_le_mul_of_nonpos_right hle hσ5.le
+      have := mul_lt_mul_of_neg_right hle hσ5
       linarith
     have hq0 : 0 < fG (x 1) / fG (x 3) := div_pos_of_neg_of_neg g1 g3
     refine isRupert_of_facets_vertex V hgen QD QG (sub _) (sub _) (isFacet_of_index x _ fD hD)
@@ -267,14 +267,14 @@ theorem isRupert_type25 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
           fG (x 1) / fG (x 3) * (1 - (α2 + β2 + γ2)) + β2 + γ2 := by
         field_simp; linear_combination fD (x 6) * cG2 + fG (x 3) * cD2
       rw [k]
-      have := mul_lt_mul_of_pos_right hq hσ2
+      have := mul_le_mul_of_nonneg_right hq hσ2.le
       linarith
     · rw [e2' 4, e1' 4]
       have k : fG (x 4) / fG (x 3) + fD (x 4) / fD (x 6) =
           fG (x 1) / fG (x 3) * (1 - (α4 + β4 + γ4)) + β4 + γ4 := by
         field_simp; linear_combination fD (x 6) * cG4 + fG (x 3) * cD4
       rw [k]
-      have := mul_lt_mul_of_pos_right hq hσ4
+      have := mul_le_mul_of_nonneg_right hq hσ4.le
       linarith
 
 end Minimality

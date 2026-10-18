@@ -1,6 +1,7 @@
 module
 
 public import Minimality.Type10
+public import Minimality.TriFacetsChord
 
 @[expose] public section
 
@@ -13,6 +14,8 @@ Theorem J of `FEWER-FACES-PROOFS.md` §7, by the algebraic method of
 `x1`), `Q2` along the line of the planes of `A` and `125` (through `x5`). If `P`
 fails at `6`, the frame `x1; x4, x5, x6` and `fA ≤ 0` at `x2, x3` give `Q1`; if it
 fails at `2`, the frame `x5; x1, x2, x4` and `fD x6 < 0` give `Q2`.
+At the tie (`x6` on the far side in `P`), `x3` is on the far side in `Q1`, which
+then works by Lemma T′ (`isRupert_of_facets_vertex_chord`).
 -/
 
 namespace Minimality
@@ -23,8 +26,7 @@ open scoped RealInnerProductSpace
 set_option maxHeartbeats 8000000 in
 /-- **Theorem J (type 23).** Seven labelled points in general position with
 facets `0345` (a quadrilateral), `014`, `125`, `156`, `456`, given by
-functionals negative off them, are Rupert, unless
-`fA x6 / fA x1 + fD x6 / fD x5 = 1`, given distinct depths along `04` and
+functionals negative off them, are Rupert, given distinct depths along `04` and
 `TriGen` at the lines of the planes of `014` and `156` and of `0345` and
 `125`. -/
 theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
@@ -39,7 +41,6 @@ theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({1, 5, 6} : Finset (Fin 7)) → fH (x i) < 0))
     (hK : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) = 0) ∧
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) < 0))
-    (hs : fA (x 6) / fA (x 1) + fD (x 6) / fD (x 5) ≠ 1)
     (hZ1 : Set.InjOn (fun p : ℝ³ => ⟪p, x 4 - x 0⟫) (univ.image x : Set ℝ³))
     (hT1 : TriGen (univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
       (({1, 5, 6} : Finset (Fin 7)).image x) (x 1))
@@ -87,7 +88,7 @@ theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
   have k4 := (hK 4).1 (by decide); have k5 := (hK 5).1 (by decide); have k6 := (hK 6).1 (by decide)
   have k1 := (hK 1).2 (by decide); have k3 := (hK 3).2 (by decide)
   have na1 := a1.ne; have nd5 := d5.ne; have ne4 := e4.ne; have nh4 := h4.ne
-  rcases lt_or_gt_of_ne hs with h6lt | h6gt
+  rcases lt_or_ge (fA (x 6) / fA (x 1) + fD (x 6) / fD (x 5)) 1 with h6lt | h6gt
   · by_cases h2lt : fA (x 2) / fA (x 1) + fD (x 2) / fD (x 5) < 1
     · -- the view `P` along the edge `04`
       refine isRupert_of_facets_edge V hgen QD QA (sub _) (sub _) (isFacet_of_index x _ fD hD)
@@ -219,18 +220,16 @@ theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       have : γ3 * (fA (x 6) / fA (x 1)) < 0 := by linarith
       have : 0 < fA (x 6) / fA (x 1) := div_pos_of_neg_of_neg a6 a1
       nlinarith
-    refine isRupert_of_facets_vertex V hgen QD QH (sub _) (sub _) (isFacet_of_index x _ fD hD)
-      (isFacet_of_index x _ fH hH) (x 1) ?_
+    refine isRupert_of_facets_vertex_chord V hgen QD QH (sub _) (sub _)
+      (isFacet_of_index x _ fD hD) (isFacet_of_index x _ fH hH) (x 1) ?_
       ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩
-      ⟨x 5, (memQ _ 5).mpr (by decide), fun h => by have := hx h; omega⟩ hT1 ?_
+      ⟨x 5, (memQ _ 5).mpr (by decide), fun h => by have := hx h; omega⟩ hT1 (x 4) (x 5)
+      ((memQ _ 4).mpr (by decide)) ((memQ _ 5).mpr (by decide))
+      (fun h => by have := hx h; omega) (fun h => by have := hx h; omega) (x 3) (hxV 3)
+      (by rw [memQ]; decide) (by rw [memQ]; decide) ?_
     · rw [inter, show ({0, 1, 4} ∩ {1, 5, 6} : Finset (Fin 7)) = {1} by decide]
       simp
-    refine ⟨x 4, (memQ _ 4).mpr (by decide), x 5, (memQ _ 5).mpr (by decide),
-      fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩
-    intro f1 f2 z1 n1 z2 n2 y hy hy1 hy2
-    obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
-    rw [memQ] at hy1 hy2
-    have hi : i = 2 ∨ i = 3 := by clear * - hy1 hy2; fin_cases i <;> simp_all
+    intro f1 f2 z1 n1 z2 n2
     have e2' : ∀ k : Fin 7, f2 (x k) / f2 (x 4) = fH (x k) / fH (x 4) :=
       fun k => ratio f2 fH 1 5 6 (by decide) (by decide) (by decide)
         (z2 _ ((memQ _ 1).mpr (by decide))) (z2 _ ((memQ _ 5).mpr (by decide)))
@@ -243,23 +242,30 @@ theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
         (z1 _ ((memQ _ 4).mpr (by decide))) ((hD 0).1 (by decide)) ((hD 1).1 (by decide))
         ((hD 4).1 (by decide)) _ _ (n1 _ (hxV 5) (by rw [memQ]; decide)).ne
         ((hD 5).2 (by decide)).ne
-    rcases hi with rfl | rfl
-    · rw [e2' 2, e1' 2]
-      have k : fH (x 2) / fH (x 4) + fD (x 2) / fD (x 5) =
-          (α2 + β2 + γ2) - γ2 * (1 - fD (x 6) / fD (x 5)) := by
-        field_simp; linear_combination fD (x 5) * cH2 + fH (x 4) * cD2
-      rw [k]
-      have : -γ2 * (1 - fD (x 6) / fD (x 5)) < -γ2 * (fA (x 6) / fA (x 1)) := by
-        apply mul_lt_mul_of_pos_left _ (by linarith); linarith
-      nlinarith
-    · rw [e2' 3, e1' 3]
+    have vyc : f2 (x 3) / f2 (x 4) + f1 (x 3) / f1 (x 5) ≤ 1 := by
+      rw [e2' 3, e1' 3]
       have k : fH (x 3) / fH (x 4) + fD (x 3) / fD (x 5) =
           (α3 + β3 + γ3) - γ3 * (1 - fD (x 6) / fD (x 5)) := by
         field_simp; linear_combination fD (x 5) * cH3 + fH (x 4) * cD3
       rw [k]
-      have : -γ3 * (1 - fD (x 6) / fD (x 5)) < -γ3 * (fA (x 6) / fA (x 1)) := by
-        apply mul_lt_mul_of_pos_left _ (by linarith); linarith
+      have : -γ3 * (1 - fD (x 6) / fD (x 5)) ≤ -γ3 * (fA (x 6) / fA (x 1)) := by
+        apply mul_le_mul_of_nonneg_left _ (by linarith); linarith
       nlinarith
+    refine ⟨fun y hy hy1 hy2 hne => ?_, vyc⟩
+    obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
+    rw [memQ] at hy1 hy2
+    have hi : i = 2 := by
+      have : i ≠ 3 := fun h => hne (by rw [h])
+      clear * - hy1 hy2 this; fin_cases i <;> simp_all
+    subst hi
+    rw [e2' 2, e1' 2]
+    have k : fH (x 2) / fH (x 4) + fD (x 2) / fD (x 5) =
+        (α2 + β2 + γ2) - γ2 * (1 - fD (x 6) / fD (x 5)) := by
+      field_simp; linear_combination fD (x 5) * cH2 + fH (x 4) * cD2
+    rw [k]
+    have : -γ2 * (1 - fD (x 6) / fD (x 5)) ≤ -γ2 * (fA (x 6) / fA (x 1)) := by
+      apply mul_le_mul_of_nonneg_left _ (by linarith); linarith
+    nlinarith
 
 end Minimality
 
