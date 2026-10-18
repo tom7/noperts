@@ -211,6 +211,12 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   `136`, `2345` through `x3`; of `0246`, `136` through `x6`);
   `s = fB x0 / fB x6 + fD x0 / fD x4` and, by Cramer for `x5` in the frame
   `x4; x0, x3, x6`, `t = 1 + α (s - 1)` with `α < 0`.
+* At the entry point, `not_type27_of_isNopert` (Theorem I, type 27;
+  `Type27.lean`): three views (edge `25`; planes of `016`, `2356`; planes of
+  `025`, `046`). In the affine frame `x0; x2, x5, x6` (`affine_coord`) the edge
+  view holds at `y` iff `α_y + β_y > 0`; failing at `1` forces
+  `fE x2 / fE x5 ≥ 1`, which gives the second view, failing at `4` forces
+  `fG x2 / fG x5 < 1`, which gives the third.
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
@@ -316,6 +322,7 @@ In import order.
 | `Type19` | L13, Theorem F (type 19), same method | `isRupert_type19` |
 | `Type13` | L13, Theorem G (type 13), same method | `isRupert_type13` |
 | `Type17` | L13, Theorem H (type 17), same method | `isRupert_type17` |
+| `Type27` | L13, Theorem I (type 27), same method, three views | `isRupert_type27` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices

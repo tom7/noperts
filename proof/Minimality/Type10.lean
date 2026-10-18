@@ -42,6 +42,16 @@ theorem affine_cramer (f : ℝ³ →ᵃ[ℝ] ℝ) (o a b c w : ℝ³) :
   simp only [h, vol3, PiLp.sub_apply]
   ring
 
+/-- `affine_cramer` in coordinates: the affine coordinates of `w` in the frame
+`o; a, b, c` applied to `f`. -/
+theorem affine_coord (f : ℝ³ →ᵃ[ℝ] ℝ) (o a b c w : ℝ³) (hΔ : vol3 (a - o) (b - o) (c - o) ≠ 0) :
+    f w - f o = vol3 (w - o) (b - o) (c - o) / vol3 (a - o) (b - o) (c - o) * (f a - f o) +
+      vol3 (a - o) (w - o) (c - o) / vol3 (a - o) (b - o) (c - o) * (f b - f o) +
+      vol3 (a - o) (b - o) (w - o) / vol3 (a - o) (b - o) (c - o) * (f c - f o) := by
+  have := affine_cramer f o a b c w
+  field_simp
+  linear_combination this
+
 /-- An affine functional vanishing at `p, q, r` is proportional to the
 determinant with `q - p, r - p`. -/
 theorem affine_vanish3 (f : ℝ³ →ᵃ[ℝ] ℝ) {p q r : ℝ³} (hp : f p = 0) (hq : f q = 0) (hr : f r = 0)
