@@ -218,7 +218,7 @@ theorem not_type13_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 /-- **Type 17** (Theorem H of `FEWER-FACES-PROOFS.md` §7): a nopert in general
 position does not have seven points labelled so that `0246`, `2345`
 (quadrilaterals), `136` and `034` are facets (given by functionals negative
-off them), unless `fB x0 / fB x6 + fD x0 / fD x4 = 1`; general position
+off them); general position
 includes `Minimality.TriGen` at the lines of the planes of `136` and `2345`
 and of `0246` and `136`. -/
 theorem not_type17_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
@@ -232,12 +232,11 @@ theorem not_type17_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({1, 3, 6} : Finset (Fin 7)) → fD (x i) < 0))
     (hE : ∀ i, (i ∈ ({0, 3, 4} : Finset (Fin 7)) → fE (x i) = 0) ∧
       (i ∉ ({0, 3, 4} : Finset (Fin 7)) → fE (x i) < 0))
-    (hs : fB (x 0) / fB (x 6) + fD (x 0) / fD (x 4) ≠ 1)
     (hT1 : Minimality.TriGen (Finset.univ.image x) (({1, 3, 6} : Finset (Fin 7)).image x)
       (({2, 3, 4, 5} : Finset (Fin 7)).image x) (x 3))
     (hT2 : Minimality.TriGen (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6)) : False :=
-  h.2 (Minimality.isRupert_type17 x hx hgen fA fB fD fE hA hB hD hE hs hT1 hT2)
+  h.2 (Minimality.isRupert_type17 x hx hgen fA fB fD fE hA hB hD hE hT1 hT2)
 
 /-- **Type 27** (Theorem I of `FEWER-FACES-PROOFS.md` §7): a nopert in general
 position does not have seven points labelled so that `2356` (a
@@ -440,7 +439,7 @@ theorem not_type28_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 /-- **Type 05** (Theorem B′ of `FEWER-FACES-PROOFS.md`, here by Lemma T): a
 nopert in general position does not have seven points labelled so that
 `0123`, `0145` (quadrilaterals), `246`, `456` and `234` are facets (given by
-functionals negative off them), unless `fG x5 / fG x0 + fA x5 / fA x4 = 1`;
+functionals negative off them);
 general position includes `Minimality.TriGen` at the lines of the planes of
 `0123` and `246` and of `0145` and `246`. -/
 theorem not_type05_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
@@ -456,12 +455,11 @@ theorem not_type05_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) < 0))
     (hH : ∀ i, (i ∈ ({2, 3, 4} : Finset (Fin 7)) → fH (x i) = 0) ∧
       (i ∉ ({2, 3, 4} : Finset (Fin 7)) → fH (x i) < 0))
-    (hs : fG (x 5) / fG (x 0) + fA (x 5) / fA (x 4) ≠ 1)
     (hT1 : Minimality.TriGen (Finset.univ.image x) (({0, 1, 2, 3} : Finset (Fin 7)).image x)
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 2))
     (hT2 : Minimality.TriGen (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 4)) : False :=
-  h.2 (Minimality.isRupert_type05_facets x hx hgen fA fB fG fK fH hA hB hG hK hH hs hT1 hT2)
+  h.2 (Minimality.isRupert_type05_facets x hx hgen fA fB fG fK fH hA hB hG hK hH hT1 hT2)
 
 /-- **Flat polygons are Rupert.**  Points in a plane, not all on one line, are
 Rupert, whatever their number: hold one copy face-on and pass the other

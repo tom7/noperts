@@ -1,6 +1,7 @@
 module
 
 public import Minimality.Type10
+public import Minimality.TriFacetsChord
 
 @[expose] public section
 
@@ -10,9 +11,9 @@ public import Minimality.Type10
 Theorem H of `FEWER-FACES-PROOFS.md` §7, by the algebraic method of
 `Type10.lean`: faces `A = 0246`, `B = 2345` (quadrilaterals), `D = 136`,
 `E = 034`; with `s = fB x0 / fB x6 + fD x0 / fD x4`, the view along the line
-of the planes of `D` and `B` (through `x3`) has a triangle shadow if `s < 1`,
-and the view along the line of the planes of `A` and `D` (through `x6`) has
-one if `s > 1`: Cramer for `x5` in the frame `x4; x0, x3, x6` gives
+of the planes of `D` and `B` (through `x3`) has a triangle shadow if `s < 1`
+(and `x0` is on its far side if `s = 1`, Lemma T′), and the view along the line
+of the planes of `A` and `D` (through `x6`) has one if `s > 1`: Cramer for `x5` in the frame `x4; x0, x3, x6` gives
 `fD x5 / fD x4 + fA x5 / fA x3 = 1 + α (s - 1)` with `α < 0` (from `B`, `E`).
 -/
 
@@ -24,9 +25,8 @@ open scoped RealInnerProductSpace
 set_option maxHeartbeats 4000000 in
 /-- **Theorem H (type 17).** Seven labelled points in general position with
 facets `0246`, `2345` (quadrilaterals), `136`, `034`, given by functionals
-negative off them, are Rupert, unless `fB x0 / fB x6 + fD x0 / fD x4 = 1`, given
-`TriGen` at the lines of the planes of `136` and `2345` and of `0246` and
-`136`. -/
+negative off them, are Rupert, given `TriGen` at the lines of the planes of
+`136` and `2345` and of `0246` and `136`. -/
 theorem isRupert_type17 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hgen : GenPos (univ.image x)) (fA fB fD fE : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) = 0) ∧
@@ -37,7 +37,6 @@ theorem isRupert_type17 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({1, 3, 6} : Finset (Fin 7)) → fD (x i) < 0))
     (hE : ∀ i, (i ∈ ({0, 3, 4} : Finset (Fin 7)) → fE (x i) = 0) ∧
       (i ∉ ({0, 3, 4} : Finset (Fin 7)) → fE (x i) < 0))
-    (hs : fB (x 0) / fB (x 6) + fD (x 0) / fD (x 4) ≠ 1)
     (hT1 : TriGen (univ.image x) (({1, 3, 6} : Finset (Fin 7)).image x)
       (({2, 3, 4, 5} : Finset (Fin 7)).image x) (x 3))
     (hT2 : TriGen (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
@@ -70,21 +69,23 @@ theorem isRupert_type17 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
   set QB := ({2, 3, 4, 5} : Finset (Fin 7)).image x
   set QD := ({1, 3, 6} : Finset (Fin 7)).image x
   have sub : ∀ P : Finset (Fin 7), P.image x ⊆ V := fun P => Finset.image_subset_image (Finset.subset_univ P)
-  rcases lt_or_gt_of_ne hs with hlt | hgt
+  rcases le_or_gt (fB (x 0) / fB (x 6) + fD (x 0) / fD (x 4)) 1 with hlt | hgt
   · -- the view along the line of the planes of `136` and `2345`
-    refine isRupert_of_facets_vertex V hgen QD QB (sub _) (sub _) (isFacet_of_index x _ fD hD)
-      (isFacet_of_index x _ fB hB) (x 3) ?_
+    refine isRupert_of_facets_vertex_chord V hgen QD QB (sub _) (sub _)
+      (isFacet_of_index x _ fD hD) (isFacet_of_index x _ fB hB) (x 3) ?_
       ⟨x 6, (memQ _ 6).mpr (by decide), fun h => by have := hx h; omega⟩
-      ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩ hT1 ?_
+      ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩ hT1 (x 6) (x 4)
+      ((memQ _ 6).mpr (by decide)) ((memQ _ 4).mpr (by decide))
+      (fun h => by have := hx h; omega) (fun h => by have := hx h; omega) (x 0) (hxV 0)
+      (by rw [memQ]; decide) (by rw [memQ]; decide) ?_
     · rw [inter, show ({1, 3, 6} ∩ {2, 3, 4, 5} : Finset (Fin 7)) = {3} by decide]
       simp
-    refine ⟨x 6, (memQ _ 6).mpr (by decide), x 4, (memQ _ 4).mpr (by decide),
-      fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩
-    intro f1 f2 z1 n1 z2 n2 y hy hy1 hy2
-    obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
-    rw [memQ] at hy1 hy2
-    have hi : i = 0 := by fin_cases i <;> simp_all
-    subst hi
+    intro f1 f2 z1 n1 z2 n2
+    refine ⟨fun y hy hy1 hy2 hne => ?_, ?_⟩
+    · obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
+      rw [memQ] at hy1 hy2
+      have hi : i = 0 := by clear * - hy1 hy2; fin_cases i <;> simp_all
+      exact absurd (by rw [hi]) hne
     have e2 : f2 (x 0) / f2 (x 6) = fB (x 0) / fB (x 6) :=
       ratio f2 fB 2 3 4 (by decide) (by decide) (by decide)
         (z2 _ ((memQ _ 2).mpr (by decide))) (z2 _ ((memQ _ 3).mpr (by decide)))
