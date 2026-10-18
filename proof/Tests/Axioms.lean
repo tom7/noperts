@@ -42,4 +42,5 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms not_type27_of_isNopert
 #assert_standard_axioms not_type23_of_isNopert
 #assert_standard_axioms not_type25_of_isNopert
+#assert_standard_axioms not_type26_of_isNopert
 #assert_standard_axioms minimalNopert_of_certificatesValid

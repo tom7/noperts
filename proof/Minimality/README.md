@@ -225,6 +225,12 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   `Type25.lean`): edge `13`, planes of `013` with `0246`, and with `056`; in
   the frame `x1; x0, x3, x6` the edge view at `y` is `α_y + γ_y < 1`; failure
   at `2` or `4` gives the second view, failure at `5` the third.
+* At the entry point, `not_type26_of_isNopert` (Theorem L, type 26;
+  `Type26.lean`): `type26_core` treats the case where the far end of `0246`
+  in the view along `04` is `2` (then that view holds at `1`, as vertex `1` has
+  degree 3, and failure at `5` gives the view along the planes of `0246`,
+  `235`); the other case is the core applied to the points relabelled by the
+  automorphism `0 ↔ 4, 1 ↔ 5, 2 ↔ 6`.
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
@@ -333,6 +339,7 @@ In import order.
 | `Type27` | L13, Theorem I (type 27), same method, three views | `isRupert_type27` |
 | `Type23` | L13, Theorem J (type 23), same method, three views | `isRupert_type23` |
 | `Type25` | L13, Theorem K (type 25), same method, three views | `isRupert_type25` |
+| `Type26` | L13, Theorem L (type 26), same method, with an automorphism | `type26_core`, `isRupert_type26` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices
