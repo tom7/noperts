@@ -206,6 +206,11 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   `s < 1` gives Lemma T along the edge `45`, `s > 1` Lemma T at `x1` (planes of
   `0145`, `123`): with `x3 - x6` in the frame `x1 - x6, x2 - x6, x5 - x6` and
   `σ` its coefficient sum, `(t - 1)(σ - 1) = 1 - s` and `σ > 1`.
+* At the entry point, `not_type17_of_isNopert` (Theorem H, type 17;
+  `Type17.lean`): faces `0246, 2345, 136, 034`; two vertex views (planes of
+  `136`, `2345` through `x3`; of `0246`, `136` through `x6`);
+  `s = fB x0 / fB x6 + fD x0 / fD x4` and, by Cramer for `x5` in the frame
+  `x4; x0, x3, x6`, `t = 1 + α (s - 1)` with `α < 0`.
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
@@ -310,6 +315,7 @@ In import order.
 | `Type10` | L13, Theorem E (type 10) from Lemma T by facet-functional coordinates; Cramer for affine functionals, proportional functionals | `affine_cramer`, `affine_vanish3`, `vanish3_ratio`, `isFacet_of_index`, `isRupert_type10` |
 | `Type19` | L13, Theorem F (type 19), same method | `isRupert_type19` |
 | `Type13` | L13, Theorem G (type 13), same method | `isRupert_type13` |
+| `Type17` | L13, Theorem H (type 17), same method | `isRupert_type17` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices

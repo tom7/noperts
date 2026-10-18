@@ -68,7 +68,8 @@ through a copy of itself):
   a single number built from the face planes says which. The same
   argument excludes type 19 (two quadrilaterals sharing an edge, six
   triangles; `not_type19_of_isNopert`) and type 13 (another such
-  arrangement; `not_type13_of_isNopert`).
+  arrangement; `not_type13_of_isNopert`) and type 17
+  (`not_type17_of_isNopert`).
 
 ## How it is proved
 
