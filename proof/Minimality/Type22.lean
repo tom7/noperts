@@ -2,6 +2,7 @@ module
 
 public import Minimality.Type10
 public import Minimality.TriFacetsChord
+public import Minimality.TriTie
 
 @[expose] public section
 
@@ -40,7 +41,7 @@ theorem isRupert_type22 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({1, 4, 6} : Finset (Fin 7)) → fN (x i) < 0))
     (hI : ∀ i, (i ∈ ({2, 5, 6} : Finset (Fin 7)) → fI (x i) = 0) ∧
       (i ∉ ({2, 5, 6} : Finset (Fin 7)) → fI (x i) < 0))
-    (hT1 : TriGenFar (univ.image x) (({1, 2, 5} : Finset (Fin 7)).image x)
+    (hT1 : TriGenTri (univ.image x) (({1, 2, 5} : Finset (Fin 7)).image x)
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 2))
     (hT2 : TriGenFar (univ.image x) (({0, 1, 3, 4} : Finset (Fin 7)).image x)
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 4)) :
@@ -176,12 +177,15 @@ theorem isRupert_type22 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     nlinarith
 
   · -- the view `P` along the planes of `125` and `246`
-    refine isRupert_of_facets_vertex V hgen QD QG (sub _) (sub _) (isFacet_of_index x _ fD hD)
-      (isFacet_of_index x _ fG hG) (x 2) ?_
-      ⟨x 1, (memQ _ 1).mpr (by decide), fun h => by have := hx h; omega⟩
-      ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩ hT1 ?_
-    · rw [inter, show ({1, 2, 5} ∩ {2, 4, 6} : Finset (Fin 7)) = {2} by decide]
+    have hivhT1 : QD ∩ QG = {x 2} := by
+      rw [inter, show ({1, 2, 5} ∩ {2, 4, 6} : Finset (Fin 7)) = {2} by decide]
       simp
+    refine isRupert_of_facets_vertex_tie V hgen QD QG (sub _) (sub _) (isFacet_of_index x _ fD hD)
+      (isFacet_of_index x _ fG hG) (x 2) hivhT1
+      ⟨x 1, (memQ _ 1).mpr (by decide), fun h => by have := hx h; omega⟩
+      ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩
+      (hT1.tie (sub _) (sub _) hivhT1
+        (Or.inl (by show (({1, 2, 5} : Finset (Fin 7)).image x).card = 3; rw [Finset.card_image_of_injective _ hx]; decide))) ?_
     refine ⟨x 1, (memQ _ 1).mpr (by decide), x 4, (memQ _ 4).mpr (by decide),
       fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩
     intro f1 f2 z1 n1' z2 n2' y hy hy1 hy2

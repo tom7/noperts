@@ -1,6 +1,7 @@
 module
 
 public import Minimality.Type10
+public import Minimality.TriTie
 
 @[expose] public section
 
@@ -47,9 +48,9 @@ theorem isRupert_type25 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({1, 2, 6} : Finset (Fin 7)) → fI (x i) < 0))
     (hZ1 : EdgeFar (univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 1) (x 3))
-    (hT1 : TriGenFar (univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
+    (hT1 : TriGenTri (univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
       (({0, 2, 4, 6} : Finset (Fin 7)).image x) (x 0))
-    (hT2 : TriGenFar (univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
+    (hT2 : TriGenTri (univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
       (({0, 5, 6} : Finset (Fin 7)).image x) (x 0)) :
     IsRupert (univ.image x) := by
   classical
@@ -191,12 +192,15 @@ theorem isRupert_type25 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
           by_contra hlt; push Not at hlt
           have := mul_lt_mul_of_pos_right hlt hσ4
           linarith
-      refine isRupert_of_facets_vertex V hgen QD QA (sub _) (sub _) (isFacet_of_index x _ fD hD)
-        (isFacet_of_index x _ fA hA) (x 0) ?_
-        ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩
-        ⟨x 6, (memQ _ 6).mpr (by decide), fun h => by have := hx h; omega⟩ hT1 ?_
-      · rw [inter, show ({0, 1, 3} ∩ {0, 2, 4, 6} : Finset (Fin 7)) = {0} by decide]
+      have hivhT1 : QD ∩ QA = {x 0} := by
+        rw [inter, show ({0, 1, 3} ∩ {0, 2, 4, 6} : Finset (Fin 7)) = {0} by decide]
         simp
+      refine isRupert_of_facets_vertex_tie V hgen QD QA (sub _) (sub _) (isFacet_of_index x _ fD hD)
+        (isFacet_of_index x _ fA hA) (x 0) hivhT1
+        ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩
+        ⟨x 6, (memQ _ 6).mpr (by decide), fun h => by have := hx h; omega⟩
+        (hT1.tie (sub _) (sub _) hivhT1
+          (Or.inl (by show (({0, 1, 3} : Finset (Fin 7)).image x).card = 3; rw [Finset.card_image_of_injective _ hx]; decide))) ?_
       refine ⟨x 3, (memQ _ 3).mpr (by decide), x 6, (memQ _ 6).mpr (by decide),
         fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩
       intro f1' f2' z1 n1 z2 n2 y hy hy1 hy2
@@ -232,12 +236,15 @@ theorem isRupert_type25 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       have := mul_lt_mul_of_neg_right hle hσ5
       linarith
     have hq0 : 0 < fG (x 1) / fG (x 3) := div_pos_of_neg_of_neg g1 g3
-    refine isRupert_of_facets_vertex V hgen QD QG (sub _) (sub _) (isFacet_of_index x _ fD hD)
-      (isFacet_of_index x _ fG hG) (x 0) ?_
-      ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩
-      ⟨x 6, (memQ _ 6).mpr (by decide), fun h => by have := hx h; omega⟩ hT2 ?_
-    · rw [inter, show ({0, 1, 3} ∩ {0, 5, 6} : Finset (Fin 7)) = {0} by decide]
+    have hivhT2 : QD ∩ QG = {x 0} := by
+      rw [inter, show ({0, 1, 3} ∩ {0, 5, 6} : Finset (Fin 7)) = {0} by decide]
       simp
+    refine isRupert_of_facets_vertex_tie V hgen QD QG (sub _) (sub _) (isFacet_of_index x _ fD hD)
+      (isFacet_of_index x _ fG hG) (x 0) hivhT2
+      ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩
+      ⟨x 6, (memQ _ 6).mpr (by decide), fun h => by have := hx h; omega⟩
+      (hT2.tie (sub _) (sub _) hivhT2
+        (Or.inl (by show (({0, 1, 3} : Finset (Fin 7)).image x).card = 3; rw [Finset.card_image_of_injective _ hx]; decide))) ?_
     refine ⟨x 3, (memQ _ 3).mpr (by decide), x 6, (memQ _ 6).mpr (by decide),
       fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩
     intro f1' f2' z1 n1 z2 n2 y hy hy1 hy2

@@ -1,6 +1,7 @@
 module
 
 public import Minimality.Type10
+public import Minimality.TriTie
 
 @[expose] public section
 
@@ -46,7 +47,7 @@ theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hcase : fT (x 6) / fT (x 2) ≤ 1)
     (hZ1 : EdgeFar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4))
-    (hT2 : TriGenFar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+    (hT2 : TriGenTri (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2)) :
     IsRupert (univ.image x) := by
   classical
@@ -204,12 +205,15 @@ theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       by_contra hle; push Not at hle
       have := mul_lt_mul_of_neg_right hle hσ5
       linarith
-    refine isRupert_of_facets_vertex V hgen QA QG (sub _) (sub _) (isFacet_of_index x _ fA hA)
-      (isFacet_of_index x _ fG hG) (x 2) ?_
-      ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩
-      ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩ hT2 ?_
-    · rw [inter, show ({0, 2, 4, 6} ∩ {2, 3, 5} : Finset (Fin 7)) = {2} by decide]
+    have hivhT2 : QA ∩ QG = {x 2} := by
+      rw [inter, show ({0, 2, 4, 6} ∩ {2, 3, 5} : Finset (Fin 7)) = {2} by decide]
       simp
+    refine isRupert_of_facets_vertex_tie V hgen QA QG (sub _) (sub _) (isFacet_of_index x _ fA hA)
+      (isFacet_of_index x _ fG hG) (x 2) hivhT2
+      ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩
+      ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩
+      (hT2.tie (sub _) (sub _) hivhT2
+        (Or.inr (by show (({2, 3, 5} : Finset (Fin 7)).image x).card = 3; rw [Finset.card_image_of_injective _ hx]; decide))) ?_
     refine ⟨x 4, (memQ _ 4).mpr (by decide), x 3, (memQ _ 3).mpr (by decide),
       fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩
     intro f1 f2 z1 n1 z2 n2 y hy hy1 hy2
@@ -263,9 +267,9 @@ theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({3, 4, 5} : Finset (Fin 7)) → fZ (x i) < 0))
     (hZ1 : EdgeFar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4))
-    (hT2 : TriGenFar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+    (hT2 : TriGenTri (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2))
-    (hT6 : TriGenFar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+    (hT6 : TriGenTri (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6)) :
     IsRupert (univ.image x) := by
   classical

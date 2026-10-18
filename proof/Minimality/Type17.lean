@@ -2,6 +2,7 @@ module
 
 public import Minimality.Type10
 public import Minimality.TriFacetsChord
+public import Minimality.TriTie
 
 @[expose] public section
 
@@ -39,7 +40,7 @@ theorem isRupert_type17 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({0, 3, 4} : Finset (Fin 7)) → fE (x i) < 0))
     (hT1 : TriGenFar (univ.image x) (({1, 3, 6} : Finset (Fin 7)).image x)
       (({2, 3, 4, 5} : Finset (Fin 7)).image x) (x 3))
-    (hT2 : TriGenFar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+    (hT2 : TriGenTri (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6)) :
     IsRupert (univ.image x) := by
   classical
@@ -94,12 +95,15 @@ theorem isRupert_type17 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
         ((hD 4).2 (by decide)).ne
     rw [e1, e2]; exact hlt
   · -- the view along the line of the planes of `0246` and `136`
-    refine isRupert_of_facets_vertex V hgen QA QD (sub _) (sub _) (isFacet_of_index x _ fA hA)
-      (isFacet_of_index x _ fD hD) (x 6) ?_
-      ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩
-      ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩ hT2 ?_
-    · rw [inter, show ({0, 2, 4, 6} ∩ {1, 3, 6} : Finset (Fin 7)) = {6} by decide]
+    have hivhT2 : QA ∩ QD = {x 6} := by
+      rw [inter, show ({0, 2, 4, 6} ∩ {1, 3, 6} : Finset (Fin 7)) = {6} by decide]
       simp
+    refine isRupert_of_facets_vertex_tie V hgen QA QD (sub _) (sub _) (isFacet_of_index x _ fA hA)
+      (isFacet_of_index x _ fD hD) (x 6) hivhT2
+      ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩
+      ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩
+      (hT2.tie (sub _) (sub _) hivhT2
+        (Or.inr (by show (({1, 3, 6} : Finset (Fin 7)).image x).card = 3; rw [Finset.card_image_of_injective _ hx]; decide))) ?_
     refine ⟨x 4, (memQ _ 4).mpr (by decide), x 3, (memQ _ 3).mpr (by decide),
       fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩
     intro f1 f2 z1 n1 z2 n2 y hy hy1 hy2

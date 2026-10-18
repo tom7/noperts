@@ -2,6 +2,7 @@ module
 
 public import Minimality.Type10
 public import Minimality.TriFacetsChord
+public import Minimality.TriTie
 
 @[expose] public section
 
@@ -45,7 +46,7 @@ theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (({0, 3, 4, 5} : Finset (Fin 7)).image x) (x 0) (x 4))
     (hT1 : TriGenFar (univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
       (({1, 5, 6} : Finset (Fin 7)).image x) (x 1))
-    (hT2 : TriGenFar (univ.image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x)
+    (hT2 : TriGenTri (univ.image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x)
       (({1, 2, 5} : Finset (Fin 7)).image x) (x 5)) :
     IsRupert (univ.image x) := by
   classical
@@ -141,12 +142,15 @@ theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
         have k : (1 - (α + β + γ)) + β * (fD (x 2) / fD (x 5)) = fD (x 6) / fD (x 5) := by
           field_simp; linear_combination -cD
         rw [k]; exact div_pos_of_neg_of_neg d6 d5
-      refine isRupert_of_facets_vertex V hgen QA QE (sub _) (sub _) (isFacet_of_index x _ fA hA)
-        (isFacet_of_index x _ fE hE) (x 5) ?_
-        ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩
-        ⟨x 1, (memQ _ 1).mpr (by decide), fun h => by have := hx h; omega⟩ hT2 ?_
-      · rw [inter, show ({0, 3, 4, 5} ∩ {1, 2, 5} : Finset (Fin 7)) = {5} by decide]
+      have hivhT2 : QA ∩ QE = {x 5} := by
+        rw [inter, show ({0, 3, 4, 5} ∩ {1, 2, 5} : Finset (Fin 7)) = {5} by decide]
         simp
+      refine isRupert_of_facets_vertex_tie V hgen QA QE (sub _) (sub _) (isFacet_of_index x _ fA hA)
+        (isFacet_of_index x _ fE hE) (x 5) hivhT2
+        ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩
+        ⟨x 1, (memQ _ 1).mpr (by decide), fun h => by have := hx h; omega⟩
+        (hT2.tie (sub _) (sub _) hivhT2
+          (Or.inr (by show (({1, 2, 5} : Finset (Fin 7)).image x).card = 3; rw [Finset.card_image_of_injective _ hx]; decide))) ?_
       refine ⟨x 4, (memQ _ 4).mpr (by decide), x 1, (memQ _ 1).mpr (by decide),
         fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩
       intro f1 f2 z1 n1 z2 n2 y hy hy1 hy2
