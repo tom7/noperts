@@ -65,7 +65,9 @@ through a copy of itself):
 - a nopert in general position is not a capped triangular frustum (three
   quadrilateral sides, a triangular base, a three-sided cap; type 10 of the
   notes) (`not_type10_of_isNopert`): One of two such views always works, and
-  a single number built from the face planes says which.
+  a single number built from the face planes says which. The same
+  argument excludes type 19 (two quadrilaterals sharing an edge, six
+  triangles; `not_type19_of_isNopert`).
 
 ## How it is proved
 
