@@ -29,7 +29,8 @@ theorem isRupert_vertex_coords_chord (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) 
     (hne1 : ∃ p ∈ Q1, p ≠ v) (hne2 : ∃ p ∈ Q2, p ≠ v)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
     (hinj : Set.InjOn (fun p => (a p, b p)) (V : Set ℝ³))
-    (hZ : Set.InjOn (fun p : ℝ³ => p 2) (V : Set ℝ³))
+    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, a p' ≤ a p) → (∀ q' ∈ Q2, b q' ≤ b q) →
+      p 2 ≠ q 2)
     (xa xb : ℝ³) (hxa : xa ∈ Q1) (hxb : xb ∈ Q2) (hxav : xa ≠ v) (hxbv : xb ≠ v)
     (yc : ℝ³) (hycV : yc ∈ V) (hyc1 : yc ∉ Q1) (hyc2 : yc ∉ Q2)
     (hin' : ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → y ≠ yc → a y / a xa + b y / b xb < 1)
@@ -185,7 +186,7 @@ theorem isRupert_vertex_coords_chord (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) 
       exact key
   refine isRupert_vertex_frame_chord O r1 r2 hρ (fun x z => (x, z) ∈ S1) (fun x z => (x, z) ∈ S2)
     (z0 := v 2) ⟨m0, ca0, cz0, U1⟩ (chains1 (-1) (Or.inr rfl)) ⟨n0, cb0, dz0, U2⟩
-    (chains2 (-1) (Or.inr rfl)) ?_ ?_ ?_ ?_ ac bc zc hac hbc ?_ V ?_ ?_ ?_ ?_ ?_
+    (chains2 (-1) (Or.inr rfl)) ?_ ?_ ?_ ?_ ac bc zc hac hbc ?_ V ?_ ?_ ?_ ?_
   · intro z h
     obtain ⟨p, hp, e1, e2⟩ := ofS1 0 z h
     by_cases hpv : p = v
@@ -250,9 +251,6 @@ theorem isRupert_vertex_coords_chord (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) 
     have : a y / ca m + b y / cb n < 1 := by linarith
     rw [div_add_div _ _ hA.ne' hB.ne', div_lt_one (mul_pos hA hB)] at this
     linarith
-  · intro p hp q hq h
-    simp only [inner_ez] at h
-    exact hZ hp hq h
   · intro m ca cz n cb dz C1 C2 h
     obtain ⟨p, hp, e1, e2⟩ := ofS1 _ _ (C1.mem m le_rfl)
     obtain ⟨q, hq, f1, f2⟩ := ofS2 _ _ (C2.mem n le_rfl)
@@ -260,7 +258,15 @@ theorem isRupert_vertex_coords_chord (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) 
       intro e; subst e
       have := only p hp hq; subst this
       linarith [C1.far_pos]
-    exact hpq (hZ (h1V hp) (h2V hq) (by simp only; rw [e2, f2, h]))
+    refine hfarZ p hp q hq hpq (fun p' hp' => ?_) (fun q' hq' => ?_) (by rw [e2, f2, h])
+    · rw [e1]
+      by_cases e : a p' = ca m ∧ p' 2 = cz m
+      · exact e.1.le
+      · exact (C1.far _ _ (Finset.mem_image_of_mem _ hp') e).le
+    · rw [f1]
+      by_cases e : b q' = cb n ∧ q' 2 = dz n
+      · exact e.1.le
+      · exact (C2.far _ _ (Finset.mem_image_of_mem (fun p => (b p, p 2)) hq') e).le
 
 
 set_option maxHeartbeats 4000000 in
@@ -273,7 +279,8 @@ theorem isRupert_facets_vertex_vertical_chord (V Q1 Q2 : Finset ℝ³) (v : ℝ�
     (hne1 : ∃ p ∈ Q1, p ≠ v) (hne2 : ∃ p ∈ Q2, p ≠ v)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
     (hpar : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → p 0 ≠ q 0 ∨ p 1 ≠ q 1)
-    (hZ : Set.InjOn (fun p : ℝ³ => p 2) (V : Set ℝ³))
+    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
+      p 2 ≠ q 2)
     (xa xb : ℝ³) (hxa : xa ∈ Q1) (hxb : xb ∈ Q2) (hxav : xa ≠ v) (hxbv : xb ≠ v)
     (yc : ℝ³) (hycV : yc ∈ V) (hyc1 : yc ∉ Q1) (hyc2 : yc ∉ Q2)
     (hin : ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → y ≠ yc → f2 y / f2 xa + f1 y / f1 xb < 1)
@@ -357,6 +364,11 @@ theorem isRupert_facets_vertex_vertical_chord (V Q1 Q2 : Finset ℝ³) (v : ℝ�
     obtain ⟨c0, c1⟩ := hxy p; obtain ⟨d0, d1⟩ := hxy q
     rw [e.1, e.2] at c0 c1
     rcases hpar p hp q hq hpq with h | h <;> apply h <;> linarith
+  have hfar' : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, a p' ≤ a p) → (∀ q' ∈ Q2, b q' ≤ b q) →
+      p 2 ≠ q 2 := fun p hp q hq hpq h1 h2 =>
+    hfarZ p hp q hq hpq (fun p' hp' => by
+        rw [G2 p, G2 p']; exact mul_le_mul_of_nonpos_right (h1 p' hp') m21.le)
+      (fun q' hq' => by rw [G1 q, G1 q']; exact mul_le_mul_of_nonpos_right (h2 q' hq') m12.le)
   have conv : ∀ y, f2 y / f2 xa + f1 y / f1 xb = a y / a xa + b y / b xb := fun y => by
     rw [G1 y, G1 xb, G2 y, G2 xa, mul_div_mul_right _ _ m21.ne, mul_div_mul_right _ _ m12.ne]
   rcases lt_or_gt_of_ne hρ with hneg | hpos
@@ -369,14 +381,15 @@ theorem isRupert_facets_vertex_vertical_chord (V Q1 Q2 : Finset ℝ³) (v : ℝ�
     refine isRupert_vertex_coords_chord O r2 r1 hpos' V Q2 Q1 v b a
       (fun p _ => by rw [swap]; exact hy p)
       h2V h1V (by rw [Finset.inter_comm]; exact hint) ha2 ha2' hb1 hb1' ⟨p2, hp2, hp2v⟩
-      ⟨p1, hp1, hp1v⟩ hcol ?_ hZ xb xa hxb hxa hxbv hxav yc hycV hyc2 hyc1
+      ⟨p1, hp1, hp1v⟩ hcol ?_
+      (fun p hp q hq hpq h1 h2 => (hfar' q hq p hp (Ne.symm hpq) h2 h1).symm) xb xa hxb hxa hxbv hxav yc hycV hyc2 hyc1
       (fun y hy h2 h1 hne => by rw [add_comm, ← conv]; exact hin y hy h1 h2 hne)
       (by rw [add_comm, ← conv]; exact hyc)
     intro p hp q hq e
     simp only [Prod.mk.injEq] at e
     exact hinj hp hq (by simp only [Prod.mk.injEq]; exact ⟨e.2, e.1⟩)
   · exact isRupert_vertex_coords_chord O r1 r2 hpos V Q1 Q2 v a b (fun p _ => hy p) h1V h2V hint
-      hb1 hb1' ha2 ha2' ⟨p1, hp1, hp1v⟩ ⟨p2, hp2, hp2v⟩ hcol hinj hZ xa xb hxa hxb hxav hxbv
+      hb1 hb1' ha2 ha2' ⟨p1, hp1, hp1v⟩ ⟨p2, hp2, hp2v⟩ hcol hinj hfar' xa xb hxa hxb hxav hxbv
       yc hycV hyc1 hyc2 (fun y hy h1 h2 hne => by rw [← conv]; exact hin y hy h1 h2 hne)
       (by rw [← conv]; exact hyc)
 
@@ -390,7 +403,8 @@ theorem isRupert_facets_vertex_chord (V Q1 Q2 : Finset ℝ³) (v : ℝ³)
     (hne1 : ∃ p ∈ Q1, p ≠ v) (hne2 : ∃ p ∈ Q2, p ≠ v)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
     (hpar : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ∀ c : ℝ, q - p ≠ c • e)
-    (hZ : Set.InjOn (fun p : ℝ³ => ⟪p, e⟫) (V : Set ℝ³))
+    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
+      ⟪p, e⟫ ≠ ⟪q, e⟫)
     (xa xb : ℝ³) (hxa : xa ∈ Q1) (hxb : xb ∈ Q2) (hxav : xa ≠ v) (hxbv : xb ≠ v)
     (yc : ℝ³) (hycV : yc ∈ V) (hyc1 : yc ∉ Q1) (hyc2 : yc ∉ Q2)
     (hin : ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → y ≠ yc → f2 y / f2 xa + f1 y / f1 xb < 1)
@@ -460,10 +474,13 @@ theorem isRupert_facets_vertex_chord (V Q1 Q2 : Finset ℝ³) (v : ℝ³)
     · simp [ez, map_sub]; linarith
     · simp [ez, map_sub]; linarith
     · simp [ez]; field_simp
-  · refine allg V _ (fun p hp => allg V _ (fun q hq => ?_))
-    intro h
+  · refine allg Q1 _ (fun p hp => allg Q2 _ (fun q hq => ?_))
+    intro hpq h1 h2 h
     simp only [hgz] at h
-    rw [hZ hp hq (by simpa [hr.ne'] using h)]
+    refine hfarZ p hp q hq (fun e => hpq (by rw [e])) (fun p' hp' => ?_) (fun q' hq' => ?_)
+      (by simpa [hr.ne'] using h)
+    · have := h1 (g p') (Finset.mem_image_of_mem g hp'); rwa [tF2, tF2] at this
+    · have := h2 (g q') (Finset.mem_image_of_mem g hq'); rwa [tF1, tF1] at this
   · refine allg V _ (fun y hy hy1 hy2 hne => ?_)
     rw [tF1, tF1, tF2, tF2]
     exact hin y hy (fun h => hy1 ((memg Q1 y).mpr h)) (fun h => hy2 ((memg Q2 y).mpr h))
@@ -477,7 +494,7 @@ every other such point is strictly inside. -/
 theorem isRupert_of_facets_vertex_chord (V : Finset ℝ³) (hgen : GenPos V)
     (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (h1f : IsFacet V Q1) (h2f : IsFacet V Q2)
     (v : ℝ³) (hint : Q1 ∩ Q2 = {v}) (hne1 : ∃ p ∈ Q1, p ≠ v) (hne2 : ∃ p ∈ Q2, p ≠ v)
-    (hT : TriGen V Q1 Q2 v)
+    (hT : TriGenFar V Q1 Q2 v)
     (xa xb : ℝ³) (hxa : xa ∈ Q1) (hxb : xb ∈ Q2) (hxav : xa ≠ v) (hxbv : xb ≠ v)
     (yc : ℝ³) (hycV : yc ∈ V) (hyc1 : yc ∉ Q1) (hyc2 : yc ∉ Q2)
     (hin : ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ,
@@ -530,10 +547,10 @@ theorem isRupert_of_facets_vertex_chord (V : Finset ℝ³) (hgen : GenPos V)
         ((p1 2 - v 2) * (p2 1 - v 1) - (p1 1 - v 1) * (p2 2 - v 2)) * c0 +
         ((p1 0 - v 0) * (p2 2 - v 2) - (p1 2 - v 2) * (p2 0 - v 0)) * c1
     nlinarith
-  obtain ⟨hpar, hZ⟩ := hT f1 f2 z1 n1 z2 n2 e hne e1 e2
+  obtain ⟨hpar, hfarZ⟩ := hT f1 f2 z1 n1 z2 n2 e hne e1 e2
   obtain ⟨hin', hyc⟩ := hin f1 f2 z1 n1 z2 n2
   refine isRupert_facets_vertex_chord V Q1 Q2 v h1V h2V hint f1 f2 z1 n1 z2 n2 e hne e1 e2
-    ⟨p1, hp1, hp1v⟩ ⟨p2, hp2, hp2v⟩ ?_ hpar hZ xa xb hxa hxb hxav hxbv yc hycV hyc1 hyc2 hin' hyc
+    ⟨p1, hp1, hp1v⟩ ⟨p2, hp2, hp2v⟩ ?_ hpar hfarZ xa xb hxa hxb hxav hxbv yc hycV hyc1 hyc2 hin' hyc
   intro p hp q hq r hr hpq hpr hqr c
   exact (hgen p hp r hr p hp q hq hpr hpq (by
     intro h

@@ -338,9 +338,9 @@ theorem isRupert_twoQuads_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
     by_cases h : b = cb n ∧ z = dz n
     · exact Or.inr h
     · left; exact mul_lt_mul_of_pos_right (C2.far b z hq h) hA0
-  refine isRupert_triShadow_injOn O r1 r2 hρ C1.one_le C2.one_le s hs ca cz cb dz C1.start.1
+  refine isRupert_triShadow O r1 r2 hρ C1.one_le C2.one_le s hs ca cz cb dz C1.start.1
     C2.start.1 (by rw [C2.start.2, C1.start.2]) C1.inc C2.inc _
-    (fun l hl => mem1 _ _ (C1.mem l hl)) (fun l hl => mem2 _ _ (C2.mem l hl)) ?_ ?_ hAB
+    (fun l hl => mem1 _ _ (C1.mem l hl)) (fun l hl => mem2 _ _ (C2.mem l hl)) ?_ hAB
   · -- every point: coordinates and side conditions
     have q10 : Q1 0 z0 := Or.inl ⟨rfl, rfl⟩
     have q20 : Q2 0 z0 := Or.inl ⟨rfl, rfl⟩
@@ -379,24 +379,6 @@ theorem isRupert_twoQuads_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
           fun _ => side2 b3 w3 (Or.inr (Or.inr (Or.inr ⟨rfl, rfl⟩)))⟩
       · exact ⟨0, b3, w3, rfl, le_rfl, hb3.le, Or.inr (Or.inr (by rw [e1, e2])),
           fun h => absurd h hb3.ne', fun _ => side2 b3 w3 (Or.inr (Or.inr (Or.inr ⟨rfl, rfl⟩)))⟩
-  · -- distinct depths on `V`
-    set p : Fin 7 → ℝ³ := ![oblPt O r1 r2 0 0 z0, oblPt O r1 r2 a1 0 z1, oblPt O r1 r2 a2 0 z2,
-      oblPt O r1 r2 a3 0 z3, oblPt O r1 r2 0 b1 w1, oblPt O r1 r2 0 b2 w2,
-      oblPt O r1 r2 0 b3 w3] with hp
-    have hpz : ∀ k, ⟪p k, ez⟫ = ![z0, z1, z2, z3, w1, w2, w3] k := by
-      intro k; fin_cases k <;> simp [hp, inner_oblPt_ez]
-    have hpV : ∀ y, y ∈ ({oblPt O r1 r2 0 0 z0, oblPt O r1 r2 a1 0 z1, oblPt O r1 r2 a2 0 z2,
-        oblPt O r1 r2 a3 0 z3, oblPt O r1 r2 0 b1 w1, oblPt O r1 r2 0 b2 w2,
-        oblPt O r1 r2 0 b3 w3} : Finset ℝ³) → ∃ k, p k = y := by
-      intro y hy
-      simp only [Finset.mem_insert, Finset.mem_singleton] at hy
-      rcases hy with rfl | rfl | rfl | rfl | rfl | rfl | rfl
-      exacts [⟨0, rfl⟩, ⟨1, rfl⟩, ⟨2, rfl⟩, ⟨3, rfl⟩, ⟨4, rfl⟩, ⟨5, rfl⟩, ⟨6, rfl⟩]
-    intro y hy y' hy' h
-    obtain ⟨i, rfl⟩ := hpV y hy
-    obtain ⟨j, rfl⟩ := hpV y' hy'
-    simp only [hpz] at h
-    rw [hz h]
 
 /-! ### Chains of a quadrilateral seen along an edge, and of triangles -/
 

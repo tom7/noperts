@@ -38,7 +38,6 @@ theorem isRupert_vertex_frame_chord (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (
       ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧
         ∀ m ca cz n cb dz, ChainOK Q1 z0 1 m ca cz → ChainOK Q2 z0 1 n cb dz →
           a * cb n + b * ca m < ca m * cb n) ∨ (a = ac ∧ b = bc ∧ z = zc)))
-    (hzV : Set.InjOn (fun y : ℝ³ => ⟪y, ez⟫) (V : Set ℝ³))
     (hfar : ∀ m ca cz n cb dz, ChainOK Q1 z0 1 m ca cz → ChainOK Q2 z0 1 n cb dz → cz m ≠ dz n) :
     IsRupert V := by
   obtain ⟨m0, ca0, cz0, U1⟩ := hU1
@@ -101,9 +100,9 @@ theorem isRupert_vertex_frame_chord (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (
             cb n * (s * (cb n * (zc - cz m) - bc * (dz n - cz m))) := by
           field_simp; ring
         rw [e]; nlinarith
-    refine isRupert_triShadow_injOn_tilt O r1 r2 hρ C1.one_le C2.one_le s hs hα hβ ca cz cb dz c10.1 c20.1
+    refine isRupert_triShadow_tilt O r1 r2 hρ C1.one_le C2.one_le s hs hα hβ ca cz cb dz c10.1 c20.1
       (by rw [c10.2, c20.2]) C1.inc C2.inc V (fun l hl => hV1 _ _ (C1.mem l hl))
-      (fun l hl => hV2 _ _ (C2.mem l hl)) ?_ hzV hAB
+      (fun l hl => hV2 _ _ (C2.mem l hl)) ?_ hAB
     intro y hy
     obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
     rcases hc with ⟨rfl, hq⟩ | ⟨rfl, hq⟩ | ⟨ha, hb, hin⟩ | ⟨ea', eb', ez'⟩
@@ -146,8 +145,7 @@ theorem edge_core_chord (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ 
     (hV1 : ∀ a z, Q1 a z → oblPt O r1 r2 a 0 z ∈ V) (hV2 : ∀ b z, Q2 b z → oblPt O r1 r2 0 b z ∈ V)
     (hVc : ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧
       ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧ a * cb n + b * ca m < ca m * cb n) ∨
-        (a = ac ∧ b = bc ∧ z = zc)))
-    (hzV : Set.InjOn (fun y : ℝ³ => ⟪y, ez⟫) (V : Set ℝ³)) : IsRupert V := by
+        (a = ac ∧ b = bc ∧ z = zc))) : IsRupert V := by
   have hA0 := C1.far_pos
   have hB0 := C2.far_pos
   have c10 := C1.start; have c20 := C2.start
@@ -211,7 +209,7 @@ theorem edge_core_chord (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ 
       rw [e]; nlinarith
   refine isRupert_triShadow2_tilt O r1 r2 hρ C1.one_le C2.one_le s hs hα hβ ca cz cb dz c10.1 c20.1
     (by rw [c10.2, c20.2]; exact hap) C1.inc C2.inc V (fun l hl => hV1 _ _ (C1.mem l hl))
-    (fun l hl => hV2 _ _ (C2.mem l hl)) ?_ hzV hAB
+    (fun l hl => hV2 _ _ (C2.mem l hl)) ?_ hAB
   intro y hy
   obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
   rcases hc with ⟨rfl, hq⟩ | ⟨rfl, hq⟩ | ⟨ha, hb, hin⟩ | ⟨ea', eb', ez'⟩
@@ -252,7 +250,6 @@ theorem isRupert_edge_frame_chord (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1
       ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧
         ∀ m ca cz n cb dz, ChainOK Q1 zx' 1 m ca cz → ChainOK Q2 zx' 1 n cb dz →
           a * cb n + b * ca m < ca m * cb n) ∨ (a = ac ∧ b = bc ∧ z = zc)))
-    (hzV : Set.InjOn (fun y : ℝ³ => ⟪y, ez⟫) (V : Set ℝ³))
     (hfar : ∀ m ca cz n cb dz, ChainOK Q1 zx' 1 m ca cz → ChainOK Q2 zx' 1 n cb dz → cz m ≠ dz n) :
     IsRupert V := by
   obtain ⟨m0, ca0, cz0, U1⟩ := hU1
@@ -268,7 +265,7 @@ theorem isRupert_edge_frame_chord (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1
     refine edge_core_chord O r1 r2 hρ Q1 Q2 (-1) (Or.inr rfl) (z1s := zx) (z2s := zx') (by linarith)
       L1 (by simpa using U2) (by rw [eU1.2]; linarith) hap1 (fun z h => (hap2 z h)) hQ1x' hQ2x
       hpos1 hpos2 ac bc zc hac hbc (hch _ _ _ _ _ _ _ _ _ _ L1 U2).1 (hch _ _ _ _ _ _ _ _ _ _ L1 U2).2
-      V hV1 hV2 ?_ hzV
+      V hV1 hV2 ?_
     intro y hy
     obtain ⟨a, b, z, e, hc⟩ := hVc y hy
     refine ⟨a, b, z, e, ?_⟩
@@ -282,7 +279,7 @@ theorem isRupert_edge_frame_chord (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1
     refine edge_core_chord O r1 r2 hρ Q1 Q2 1 (Or.inl rfl) (z1s := zx') (z2s := zx) (by linarith)
       U1 (by simpa using L2) (by rw [eU2.2]; linarith) (fun z h => (hap1 z h).symm)
       (fun z h => (hap2 z h).symm) hQ1x hQ2x' hpos1 hpos2 ac bc zc hac hbc
-      (hch _ _ _ _ _ _ _ _ _ _ U1 L2).1 (hch _ _ _ _ _ _ _ _ _ _ U1 L2).2 V hV1 hV2 ?_ hzV
+      (hch _ _ _ _ _ _ _ _ _ _ U1 L2).1 (hch _ _ _ _ _ _ _ _ _ _ U1 L2).2 V hV1 hV2 ?_
     intro y hy
     obtain ⟨a, b, z, e, hc⟩ := hVc y hy
     refine ⟨a, b, z, e, ?_⟩

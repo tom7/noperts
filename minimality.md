@@ -61,7 +61,10 @@ through a copy of itself):
   (`not_facets_vertex_triShadow_of_isNopert`): The triangle has a corner at
   the shared point and one at the far end of each face, and the same tilted
   view gives a passage. The same holds for two faces that share an edge,
-  viewed along that edge (`not_facets_edge_triShadow_of_isNopert`).
+  viewed along that edge (`not_facets_edge_triShadow_of_isNopert`). Here
+  general position at the line only asks that no segment be parallel to it
+  and that the far corners of the triangle lie at different depths; other
+  points may share depths.
 - a nopert in general position is not a capped triangular frustum (three
   quadrilateral sides, a triangular base, a three-sided cap; type 10 of the
   notes) (`not_type10_of_isNopert`): One of two such views always works, and

@@ -39,11 +39,26 @@ theorem isRupert_triShadow_tilt (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n 
       (a = 0 → ∀ l, l < n → y ≠ oblPt O r1 r2 0 (cb (l + 1)) (dz (l + 1)) →
         y ≠ oblPt O r1 r2 0 (cb l) (dz l) →
         s * ((cb l - cb (l + 1)) * (z - dz (l + 1)) - (dz l - dz (l + 1)) * (b - cb (l + 1))) < 0))
-    (hinj : Function.Injective fun i : ZMod (m + n + 1) => triZ m n cz dz i.val)
     (hAB : s * dz n < s * cz m) : IsRupert V := by
   have hNZ : NeZero (m + n + 1) := ⟨by omega⟩
   have hval : ∀ v : ℕ, v < m + n + 1 → ((v : ZMod (m + n + 1))).val = v := fun v hv => by
     rw [ZMod.val_natCast, Nat.mod_eq_of_lt hv]
+  have hcam : ∀ i j, i < j → j ≤ m → ca i < ca j := by
+    intro i j hij hj
+    induction j with
+    | zero => omega
+    | succ j ih =>
+      rcases Nat.lt_succ_iff_lt_or_eq.mp hij with h | h
+      · exact lt_trans (ih h (by omega)) (hca j (by omega))
+      · subst h; exact hca i (by omega)
+  have hcbm : ∀ i j, i < j → j ≤ n → cb i < cb j := by
+    intro i j hij hj
+    induction j with
+    | zero => omega
+    | succ j ih =>
+      rcases Nat.lt_succ_iff_lt_or_eq.mp hij with h | h
+      · exact lt_trans (ih h (by omega)) (hcb j (by omega))
+      · subst h; exact hcb i (by omega)
   set x : ZMod (m + n + 1) → ℝ³ := fun i => triPt O r1 r2 m n ca cz cb dz i.val with hx
   -- positions
   have hxC1 : ∀ v, v ≤ m → x (v : ZMod (m + n + 1)) = oblPt O r1 r2 (ca v) 0 (cz v) := by
@@ -58,7 +73,33 @@ theorem isRupert_triShadow_tilt (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n 
   have hdepth : ∀ i : ZMod (m + n + 1), ⟪x i, ez⟫ = triZ m n cz dz i.val := by
     intro i; simp only [hx, triPt, triZ]; split_ifs <;> exact inner_oblPt_ez _ _ _ _ _ _
   have hxinj : Function.Injective x := by
-    intro i j h; apply hinj; simp only; rw [← hdepth, ← hdepth, h]
+    have pos : ∀ w, w < m + n + 1 → (w ≤ m ∧ x w = oblPt O r1 r2 (ca w) 0 (cz w)) ∨
+        (m < w ∧ x w = oblPt O r1 r2 0 (cb (m + n + 1 - w)) (dz (m + n + 1 - w))) := by
+      intro w hw
+      by_cases h : w ≤ m
+      · exact Or.inl ⟨h, hxC1 w h⟩
+      · refine Or.inr ⟨by omega, ?_⟩
+        have := hxC2 (m + n - w) (by omega)
+        rwa [show m + n - (m + n - w) = w by omega, show m + n - w + 1 = m + n + 1 - w by omega]
+          at this
+    intro i j h
+    obtain ⟨wi, hwi, rfl⟩ : ∃ w, w < m + n + 1 ∧ (w : ZMod (m + n + 1)) = i :=
+      ⟨i.val, ZMod.val_lt i, ZMod.natCast_zmod_val i⟩
+    obtain ⟨wj, hwj, rfl⟩ : ∃ w, w < m + n + 1 ∧ (w : ZMod (m + n + 1)) = j :=
+      ⟨j.val, ZMod.val_lt j, ZMod.natCast_zmod_val j⟩
+    suffices wi = wj by rw [this]
+    rcases pos wi hwi with ⟨h1, e1⟩ | ⟨h1, e1⟩ <;> rcases pos wj hwj with ⟨h2, e2⟩ | ⟨h2, e2⟩ <;>
+      rw [e1, e2] at h <;> have c := oblPt_inj hρ h
+    · rcases lt_trichotomy wi wj with l | l | l
+      · exact absurd c.1 (hcam _ _ l h2).ne
+      · exact l
+      · exact absurd c.1 (hcam _ _ l h1).ne'
+    · have := hcbm 0 (m + n + 1 - wj) (by omega) (by omega); rw [hcb0] at this; linarith [c.2.1]
+    · have := hcbm 0 (m + n + 1 - wi) (by omega) (by omega); rw [hcb0] at this; linarith [c.2.1]
+    · rcases lt_trichotomy (m + n + 1 - wi) (m + n + 1 - wj) with l | l | l
+      · exact absurd c.2.1 (hcbm _ _ l (by omega)).ne
+      · omega
+      · exact absurd c.2.1 (hcbm _ _ l (by omega)).ne'
   -- the tilt
   set v : ℝ³ := oblPt 0 r1 r2 (-s * α) (s * β) 0 with hv
   have key : ∀ {ap bp zp aq bq zq ay by' zy : ℝ},
@@ -172,22 +213,6 @@ theorem isRupert_triShadow_tilt (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n 
     obtain ⟨ea, eb, ez'⟩ := oblPt_inj hρ he
     subst eb ez'
     exact hr2 ea.symm j hj (he ▸ h1) (he ▸ h2)
-  have hcam : ∀ i j, i < j → j ≤ m → ca i < ca j := by
-    intro i j hij hj
-    induction j with
-    | zero => omega
-    | succ j ih =>
-      rcases Nat.lt_succ_iff_lt_or_eq.mp hij with h | h
-      · exact lt_trans (ih h (by omega)) (hca j (by omega))
-      · subst h; exact hca i (by omega)
-  have hcbm : ∀ i j, i < j → j ≤ n → cb i < cb j := by
-    intro i j hij hj
-    induction j with
-    | zero => omega
-    | succ j ih =>
-      rcases Nat.lt_succ_iff_lt_or_eq.mp hij with h | h
-      · exact lt_trans (ih h (by omega)) (hcb j (by omega))
-      · subst h; exact hcb i (by omega)
   have ne1 : ∀ i j, i ≤ m → j ≤ m → i ≠ j →
       oblPt O r1 r2 (ca i) 0 (cz i) ≠ oblPt O r1 r2 (ca j) 0 (cz j) := by
     intro i j hi hj hij he
@@ -203,60 +228,59 @@ theorem isRupert_triShadow_tilt (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n 
     · exact absurd this (hcbm i j h hj).ne
     · exact absurd this (hcbm j i h hi).ne'
   -- the sequence lemma for `s Z`
-  have hmax := tri_localMax_unique hm hn (fun i => s * Z i)
-    (by
-      intro l h1 h2
-      rw [hZ1 _ (by omega), hZ1 _ (by omega), hZ1 _ (by omega)]
-      have hc := coords1 (l + 1) (by omega) (l - 1) (by omega)
-        (ne1 _ _ (by omega) (by omega) (by omega))
-        (by rw [show l - 1 + 1 = l by omega]; exact ne1 _ _ (by omega) (by omega) (by omega))
-      rw [show l - 1 + 1 = l by omega] at hc
-      have d1 := hcam (l - 1) l (by omega) (by omega)
-      have d2 := hcam l (l + 1) (by omega) (by omega)
-      by_contra hcon
-      push Not at hcon
-      rw [le_min_iff] at hcon
-      nlinarith [mul_nonneg (sub_nonneg.mpr d1.le) (sub_nonneg.mpr (hcon.2)),
-        mul_nonneg_of_nonpos_of_nonpos (sub_nonpos.mpr hcon.1) (sub_nonpos.mpr d2.le)])
-    (by
-      intro l h1 h2
-      set j := m + n + 1 - l with hj
-      have hj1 : 1 ≤ j := by omega
-      have hjn : j < n := by omega
-      rw [hZ2 l (by omega) h2, hZ2 (l - 1) (by omega) (by omega),
-        show m + n + 1 - (l - 1) = j + 1 by omega]
-      have hnext : Z ((l + 1 : ℕ) : ZMod (m + n + 1)) = dz (j - 1) := by
-        rcases Nat.lt_or_ge l (m + n) with hl | hl
-        · rw [hZ2 (l + 1) (by omega) (by omega), show m + n + 1 - (l + 1) = j - 1 by omega]
-        · rw [show l + 1 = m + n + 1 by omega, hZk, show j - 1 = 0 by omega]
-      rw [hnext]
-      have hc := coords2 (j - 1) (by omega) j hjn
-        (ne2 _ _ (by omega) (by omega) (by omega)) (ne2 _ _ (by omega) (by omega) (by omega))
-      have e1 := hcbm j (j + 1) (by omega) (by omega)
-      have e2 := hcbm (j - 1) j (by omega) (by omega)
-      by_contra hcon
-      push Not at hcon
-      rw [max_le_iff] at hcon
-      nlinarith [mul_nonneg_of_nonpos_of_nonpos (sub_nonpos.mpr e1.le) (sub_nonpos.mpr hcon.2),
-        mul_nonneg (sub_nonneg.mpr hcon.1) (sub_nonneg.mpr e2.le)])
-    (by
-      rw [hZ2 (m + 1) (by omega) (by omega), hZ1 m le_rfl, show m + n + 1 - (m + 1) = n by omega]
-      exact hAB)
-  have hZu : IsCyclicUnimodal Z := by
-    rcases hs with rfl | rfl
-    · exact isCyclicUnimodal_of_localMax_unique (by omega) Z hinj
-        (fun a b h1 h2 h3 h4 => hmax a b (by linarith) (by linarith) (by linarith) (by linarith))
-    · exact isCyclicUnimodal_of_localMin_unique (by omega) Z hinj
-        (fun a b h1 h2 h3 h4 => hmax a b (by linarith) (by linarith) (by linarith) (by linarith))
-  have hu0 : IsCyclicUnimodal fun i => ⟪x i, ez⟫ := by
-    have : (fun i => ⟪x i, ez⟫) = Z := funext hdepth
-    rw [this]; exact hZu
+  -- the sequence lemma's hypotheses for `s Z` (strict, so they survive the tilt)
+  have hconcZ : ∀ l : ℕ, 1 ≤ l → l < m → min (s * Z ((l - 1 : ℕ) : ZMod (m + n + 1)))
+      (s * Z ((l + 1 : ℕ) : ZMod (m + n + 1))) < s * Z (l : ZMod (m + n + 1)) := by
+    intro l h1 h2
+    rw [hZ1 _ (by omega), hZ1 _ (by omega), hZ1 _ (by omega)]
+    have hc := coords1 (l + 1) (by omega) (l - 1) (by omega)
+      (ne1 _ _ (by omega) (by omega) (by omega))
+      (by rw [show l - 1 + 1 = l by omega]; exact ne1 _ _ (by omega) (by omega) (by omega))
+    rw [show l - 1 + 1 = l by omega] at hc
+    have d1 := hcam (l - 1) l (by omega) (by omega)
+    have d2 := hcam l (l + 1) (by omega) (by omega)
+    by_contra hcon
+    push Not at hcon
+    rw [le_min_iff] at hcon
+    nlinarith [mul_nonneg (sub_nonneg.mpr d1.le) (sub_nonneg.mpr (hcon.2)),
+      mul_nonneg_of_nonpos_of_nonpos (sub_nonpos.mpr hcon.1) (sub_nonpos.mpr d2.le)]
+  have hconvZ : ∀ l : ℕ, m + 2 ≤ l → l ≤ m + (n) → s * Z (l : ZMod (m + n + 1)) <
+      max (s * Z ((l - 1 : ℕ) : ZMod (m + n + 1))) (s * Z ((l + 1 : ℕ) : ZMod (m + n + 1))) := by
+    intro l h1 h2
+    set j := m + n + 1 - l with hj
+    have hj1 : 1 ≤ j := by omega
+    have hjn : j < n := by omega
+    rw [hZ2 l (by omega) h2, hZ2 (l - 1) (by omega) (by omega),
+      show m + n + 1 - (l - 1) = j + 1 by omega]
+    have hnext : Z ((l + 1 : ℕ) : ZMod (m + n + 1)) = dz (j - 1) := by
+      rcases Nat.lt_or_ge l (m + n) with hl | hl
+      · rw [hZ2 (l + 1) (by omega) (by omega), show m + n + 1 - (l + 1) = j - 1 by omega]
+      · rw [show l + 1 = m + n + 1 by omega, hZk, show j - 1 = 0 by omega]
+    rw [hnext]
+    have hc := coords2 (j - 1) (by omega) j hjn
+      (ne2 _ _ (by omega) (by omega) (by omega)) (ne2 _ _ (by omega) (by omega) (by omega))
+    have e1 := hcbm j (j + 1) (by omega) (by omega)
+    have e2 := hcbm (j - 1) j (by omega) (by omega)
+    by_contra hcon
+    push Not at hcon
+    rw [max_le_iff] at hcon
+    nlinarith [mul_nonneg_of_nonpos_of_nonpos (sub_nonpos.mpr e1.le) (sub_nonpos.mpr hcon.2),
+      mul_nonneg (sub_nonneg.mpr hcon.1) (sub_nonneg.mpr e2.le)]
+  have hABZ : s * Z ((m + 1 : ℕ) : ZMod (m + n + 1)) < s * Z (m : ZMod (m + n + 1)) := by
+    rw [hZ2 (m + 1) (by omega) (by omega), hZ1 m le_rfl, show m + n + 1 - (m + 1) = n by omega]
+    exact hAB
+  have hT : TriSeq m (n) s Z := by
+    refine ⟨fun l hl => ?_, fun l hl => ?_, hABZ⟩
+    · obtain ⟨h1, h2⟩ := Finset.mem_Ioo.mp hl
+      exact min_lt_iff.mp (hconcZ l (by omega) h2)
+    · obtain ⟨h1, h2⟩ := Finset.mem_Icc.mp hl
+      exact lt_max_iff.mp (hconvZ l h1 h2)
   have hez : (ez : ℝ³) ≠ 0 := by
     intro h; have := congrArg (fun x : ℝ³ => x 2) h; simp [ez] at this
-  exact isRupert_of_tilted_unimodal' V ez v hez (k := m + n + 1) (by omega)
-    x hxV hcyc hrest IsCyclicUnimodal isOpen_isCyclicUnimodal
-    (fun z c hc hz => isCyclicUnimodal_smul hc hz)
-    (eventually_unimodal_tilt x ez v hu0) (fun z _ h => h)
+  exact isRupert_of_tilted_localMax V ez v hez (k := m + n + 1) (by omega) x hxV hcyc hrest s hs
+    (TriSeq m (n) s) (isOpen_triSeq m (n) s) (fun z c hc hz => triSeq_smul hc hz)
+    (by rw [show (fun i => ⟪x i, ez⟫) = Z from funext hdepth]; exact hT)
+    (fun z hz => triSeq_localMax hm (by omega) hz)
 
 
 /-- **A point on the chord, hidden by the tilt.**  For `y = (a, b, z)` on the
@@ -275,71 +299,6 @@ theorem chord_tiltOK {A B a b z zA zB s α β : ℝ} (hB : 0 < B) (hch : a * B +
     linear_combination (s * β * (zB - zA)) * hch
   have := e ▸ h
   exact pos_of_mul_pos_right (by linarith) hB.le
-
-theorem isRupert_triShadow_injOn_tilt (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n : ℕ}
-    (hm : 1 ≤ m) (hn : 1 ≤ n) (s : ℝ) (hs : s = 1 ∨ s = -1) {α β : ℝ} (hα : 0 < α) (hβ : 0 < β) (ca cz cb dz : ℕ → ℝ)
-    (hca0 : ca 0 = 0) (hcb0 : cb 0 = 0) (hdz0 : dz 0 = cz 0)
-    (hca : ∀ l, l < m → ca l < ca (l + 1)) (hcb : ∀ l, l < n → cb l < cb (l + 1))
-    (V : Finset ℝ³)
-    (hC1V : ∀ l, l ≤ m → oblPt O r1 r2 (ca l) 0 (cz l) ∈ V)
-    (hC2V : ∀ l, l ≤ n → oblPt O r1 r2 0 (cb l) (dz l) ∈ V)
-    (hVc : ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧ 0 ≤ a ∧ 0 ≤ b ∧
-      (TiltOK (ca m) 0 (cz m) 0 (cb n) (dz n) a b z (-s * α) (s * β) ∨
-        y = oblPt O r1 r2 (ca m) 0 (cz m) ∨ y = oblPt O r1 r2 0 (cb n) (dz n)) ∧
-      (b = 0 → ∀ l, l < m → y ≠ oblPt O r1 r2 (ca l) 0 (cz l) →
-        y ≠ oblPt O r1 r2 (ca (l + 1)) 0 (cz (l + 1)) →
-        s * ((ca (l + 1) - ca l) * (z - cz l) - (cz (l + 1) - cz l) * (a - ca l)) < 0) ∧
-      (a = 0 → ∀ l, l < n → y ≠ oblPt O r1 r2 0 (cb (l + 1)) (dz (l + 1)) →
-        y ≠ oblPt O r1 r2 0 (cb l) (dz l) →
-        s * ((cb l - cb (l + 1)) * (z - dz (l + 1)) - (dz l - dz (l + 1)) * (b - cb (l + 1))) < 0))
-    (hzV : Set.InjOn (fun y : ℝ³ => ⟪y, ez⟫) (V : Set ℝ³))
-    (hAB : s * dz n < s * cz m) : IsRupert V := by
-  have hNZ : NeZero (m + n + 1) := ⟨by omega⟩
-  have mono : ∀ (f : ℕ → ℝ) (k : ℕ), (∀ l, l < k → f l < f (l + 1)) →
-      ∀ i j, i < j → j ≤ k → f i < f j := by
-    intro f k hf i j hij hj
-    induction j with
-    | zero => omega
-    | succ j ih =>
-      rcases Nat.lt_succ_iff_lt_or_eq.mp hij with h | h
-      · exact lt_trans (ih h (by omega)) (hf j (by omega))
-      · subst h; exact hf i (by omega)
-  -- distinct positions carry distinct points
-  have hpt : ∀ v, v < m + n + 1 → triPt O r1 r2 m n ca cz cb dz v ∈ V := by
-    intro v hv; simp only [triPt]; split_ifs with h
-    · exact hC1V v h
-    · exact hC2V _ (by omega)
-  have hdist : ∀ v w, v < m + n + 1 → w < m + n + 1 → v ≠ w →
-      triPt O r1 r2 m n ca cz cb dz v ≠ triPt O r1 r2 m n ca cz cb dz w := by
-    intro v w hv hw hvw he
-    simp only [triPt] at he
-    split_ifs at he with h1 h2 h2
-    · have := (oblPt_inj hρ he).1
-      rcases Nat.lt_or_gt_of_ne hvw with h | h
-      · exact absurd this (mono ca m hca v w h h2).ne
-      · exact absurd this (mono ca m hca w v h h1).ne'
-    · have := (oblPt_inj hρ he).2.1
-      have := mono cb n hcb 0 (m + n + 1 - w) (by omega) (by omega)
-      rw [hcb0] at this; linarith
-    · have := (oblPt_inj hρ he).2.1
-      have := mono cb n hcb 0 (m + n + 1 - v) (by omega) (by omega)
-      rw [hcb0] at this; linarith
-    · have := (oblPt_inj hρ he).2.1
-      rcases Nat.lt_or_gt_of_ne hvw with h | h
-      · exact absurd this (mono cb n hcb _ _ (by omega) (by omega)).ne'
-      · exact absurd this (mono cb n hcb _ _ (by omega) (by omega)).ne
-  refine isRupert_triShadow_tilt O r1 r2 hρ hm hn s hs hα hβ ca cz cb dz hca0 hcb0 hdz0 hca hcb V hC1V hC2V
-    hVc ?_ hAB
-  intro i j hij
-  have hdi : ⟪triPt O r1 r2 m n ca cz cb dz i.val, ez⟫ = triZ m n cz dz i.val := by
-    simp only [triPt, triZ]; split_ifs <;> exact inner_oblPt_ez _ _ _ _ _ _
-  have hdj : ⟪triPt O r1 r2 m n ca cz cb dz j.val, ez⟫ = triZ m n cz dz j.val := by
-    simp only [triPt, triZ]; split_ifs <;> exact inner_oblPt_ez _ _ _ _ _ _
-  simp only at hij
-  by_contra hne
-  have hv : i.val ≠ j.val := fun h => hne (ZMod.val_injective _ h)
-  exact hdist _ _ (ZMod.val_lt i) (ZMod.val_lt j) hv
-    (hzV (hpt _ (ZMod.val_lt i)) (hpt _ (ZMod.val_lt j)) (by simp only; rw [hdi, hdj, hij]))
 
 end Minimality
 

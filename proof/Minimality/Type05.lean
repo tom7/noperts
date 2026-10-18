@@ -41,9 +41,9 @@ theorem isRupert_type05_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) < 0))
     (hH : ∀ i, (i ∈ ({2, 3, 4} : Finset (Fin 7)) → fH (x i) = 0) ∧
       (i ∉ ({2, 3, 4} : Finset (Fin 7)) → fH (x i) < 0))
-    (hT1 : TriGen (univ.image x) (({0, 1, 2, 3} : Finset (Fin 7)).image x)
+    (hT1 : TriGenFar (univ.image x) (({0, 1, 2, 3} : Finset (Fin 7)).image x)
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 2))
-    (hT2 : TriGen (univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
+    (hT2 : TriGenFar (univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 4)) :
     IsRupert (univ.image x) := by
   classical

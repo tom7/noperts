@@ -40,8 +40,9 @@ theorem isRupert_type13 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({1, 2, 3} : Finset (Fin 7)) → fD (x i) < 0))
     (hG : ∀ i, (i ∈ ({1, 2, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
       (i ∉ ({1, 2, 6} : Finset (Fin 7)) → fG (x i) < 0))
-    (hZ1 : Set.InjOn (fun p : ℝ³ => ⟪p, x 5 - x 4⟫) (univ.image x : Set ℝ³))
-    (hT2 : TriGen (univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
+    (hZ1 : EdgeFar (univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
+      (({2, 4, 5, 6} : Finset (Fin 7)).image x) (x 4) (x 5))
+    (hT2 : TriGenFar (univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
       (({1, 2, 3} : Finset (Fin 7)).image x) (x 1)) :
     IsRupert (univ.image x) := by
   classical

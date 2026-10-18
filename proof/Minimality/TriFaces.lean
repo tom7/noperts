@@ -34,8 +34,7 @@ theorem edge_core (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ → �
     (V : Finset ℝ³)
     (hV1 : ∀ a z, Q1 a z → oblPt O r1 r2 a 0 z ∈ V) (hV2 : ∀ b z, Q2 b z → oblPt O r1 r2 0 b z ∈ V)
     (hVc : ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧
-      ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧ a * cb n + b * ca m < ca m * cb n)))
-    (hzV : Set.InjOn (fun y : ℝ³ => ⟪y, ez⟫) (V : Set ℝ³)) : IsRupert V := by
+      ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧ a * cb n + b * ca m < ca m * cb n))) : IsRupert V := by
   have hA0 := C1.far_pos
   have hB0 := C2.far_pos
   have c10 := C1.start; have c20 := C2.start
@@ -81,7 +80,7 @@ theorem edge_core (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ → �
     · exact (by rw [← c20.2, ← c20.1]; exact C2.mem 0 (Nat.zero_le _))
   refine isRupert_triShadow2 O r1 r2 hρ C1.one_le C2.one_le s hs ca cz cb dz c10.1 c20.1
     (by rw [c10.2, c20.2]; exact hap) C1.inc C2.inc V (fun l hl => hV1 _ _ (C1.mem l hl))
-    (fun l hl => hV2 _ _ (C2.mem l hl)) ?_ hzV hAB
+    (fun l hl => hV2 _ _ (C2.mem l hl)) ?_ hAB
   intro y hy
   obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
   rcases hc with ⟨rfl, hq⟩ | ⟨rfl, hq⟩ | ⟨ha, hb, hin⟩
@@ -115,7 +114,6 @@ theorem isRupert_edge_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : 
       ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧
         ∀ m ca cz n cb dz, ChainOK Q1 zx' 1 m ca cz → ChainOK Q2 zx' 1 n cb dz →
           a * cb n + b * ca m < ca m * cb n)))
-    (hzV : Set.InjOn (fun y : ℝ³ => ⟪y, ez⟫) (V : Set ℝ³))
     (hfar : ∀ m ca cz n cb dz, ChainOK Q1 zx' 1 m ca cz → ChainOK Q2 zx' 1 n cb dz → cz m ≠ dz n) :
     IsRupert V := by
   obtain ⟨m0, ca0, cz0, U1⟩ := hU1
@@ -130,7 +128,7 @@ theorem isRupert_edge_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : 
   · -- far depth of `Q2` larger: the lower chain of `Q1`, the upper chain of `Q2`
     refine edge_core O r1 r2 hρ Q1 Q2 (-1) (Or.inr rfl) (z1s := zx) (z2s := zx') (by linarith)
       L1 (by simpa using U2) (by rw [eU1.2]; linarith) hap1 (fun z h => (hap2 z h)) hQ1x' hQ2x
-      hpos1 hpos2 V hV1 hV2 ?_ hzV
+      hpos1 hpos2 V hV1 hV2 ?_
     intro y hy
     obtain ⟨a, b, z, e, hc⟩ := hVc y hy
     refine ⟨a, b, z, e, ?_⟩
@@ -142,7 +140,7 @@ theorem isRupert_edge_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : 
   · -- far depth of `Q1` larger: the upper chain of `Q1`, the lower chain of `Q2`
     refine edge_core O r1 r2 hρ Q1 Q2 1 (Or.inl rfl) (z1s := zx') (z2s := zx) (by linarith)
       U1 (by simpa using L2) (by rw [eU2.2]; linarith) (fun z h => (hap1 z h).symm)
-      (fun z h => (hap2 z h).symm) hQ1x hQ2x' hpos1 hpos2 V hV1 hV2 ?_ hzV
+      (fun z h => (hap2 z h).symm) hQ1x hQ2x' hpos1 hpos2 V hV1 hV2 ?_
     intro y hy
     obtain ⟨a, b, z, e, hc⟩ := hVc y hy
     refine ⟨a, b, z, e, ?_⟩
@@ -155,8 +153,8 @@ theorem isRupert_edge_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over a vertex, from chains**, with interior points: two faces meet
 in the apex vertex `(0, 0, z0)`, each given by its upper and lower chains from
-it, every other point of `V` strictly inside the shadow triangle, distinct
-depths on `V`, distinct far depths: Rupert. -/
+it, every other point of `V` strictly inside the shadow triangle, and distinct
+far depths: Rupert. -/
 theorem isRupert_vertex_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ → ℝ → Prop)
     {z0 : ℝ}
     (hU1 : ∃ m ca cz, ChainOK Q1 z0 1 m ca cz) (hL1 : ∃ m ca cz, ChainOK Q1 z0 (-1) m ca cz)
@@ -169,7 +167,6 @@ theorem isRupert_vertex_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 
       ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧
         ∀ m ca cz n cb dz, ChainOK Q1 z0 1 m ca cz → ChainOK Q2 z0 1 n cb dz →
           a * cb n + b * ca m < ca m * cb n)))
-    (hzV : Set.InjOn (fun y : ℝ³ => ⟪y, ez⟫) (V : Set ℝ³))
     (hfar : ∀ m ca cz n cb dz, ChainOK Q1 z0 1 m ca cz → ChainOK Q2 z0 1 n cb dz → cz m ≠ dz n) :
     IsRupert V := by
   obtain ⟨m0, ca0, cz0, U1⟩ := hU1
@@ -213,9 +210,9 @@ theorem isRupert_vertex_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 
       rw [e]; exact this
     have q20 : Q2 0 z0 := by rw [← c20.2, ← c20.1]; exact C2.mem 0 (Nat.zero_le _)
     have q10 : Q1 0 z0 := by rw [← c10.2, ← c10.1]; exact C1.mem 0 (Nat.zero_le _)
-    refine isRupert_triShadow_injOn O r1 r2 hρ C1.one_le C2.one_le s hs ca cz cb dz c10.1 c20.1
+    refine isRupert_triShadow O r1 r2 hρ C1.one_le C2.one_le s hs ca cz cb dz c10.1 c20.1
       (by rw [c10.2, c20.2]) C1.inc C2.inc V (fun l hl => hV1 _ _ (C1.mem l hl))
-      (fun l hl => hV2 _ _ (C2.mem l hl)) ?_ hzV hAB
+      (fun l hl => hV2 _ _ (C2.mem l hl)) ?_ hAB
     intro y hy
     obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
     rcases hc with ⟨rfl, hq⟩ | ⟨rfl, hq⟩ | ⟨ha, hb, hin⟩

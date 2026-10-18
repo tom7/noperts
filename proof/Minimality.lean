@@ -115,7 +115,8 @@ theorem not_two_quad_facets_vertex_of_isNopert (V : Finset ℝ³) (h : IsNopert 
 
 /-- **Lemma T at a vertex** (`FEWER-FACES-PROOFS.md` §7): in a nopert in general
 position, two facets meeting in a single vertex `v`, with general position at
-the line of their planes (`Minimality.TriGen`), never have every other point
+the line of their planes (`Minimality.TriGenFar`: no segment parallel to it,
+distinct depths along it at the two far ends), never have every other point
 strictly inside the shadow triangle of `v` and two further points `xa`, `xb` of
 the facets.  The interior condition is barycentric, stated with any facet
 functionals `f1`, `f2` (it does not depend on their scaling). -/
@@ -123,7 +124,7 @@ theorem not_facets_vertex_triShadow_of_isNopert (V : Finset ℝ³) (h : IsNopert
     (hgen : Minimality.GenPos V) (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
     (h1c : 1 < Q1.card) (h2c : 1 < Q2.card) (h1f : Minimality.IsFacet V Q1)
     (h2f : Minimality.IsFacet V Q2) (v : ℝ³) (hint : Q1 ∩ Q2 = {v})
-    (hT : Minimality.TriGen V Q1 Q2 v)
+    (hT : Minimality.TriGenFar V Q1 Q2 v)
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧ ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ,
       (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
       (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
@@ -131,16 +132,17 @@ theorem not_facets_vertex_triShadow_of_isNopert (V : Finset ℝ³) (h : IsNopert
   h.2 (Minimality.isRupert_of_facets_vertex V hgen Q1 Q2 h1V h2V h1f h2f v hint
     (Finset.exists_mem_ne h1c v) (Finset.exists_mem_ne h2c v) hT hin)
 
-/-- **Lemma T over an edge** (`FEWER-FACES-PROOFS.md` §7): in a nopert in
-general position, two facets sharing exactly the edge `v w`, with distinct
-depths along it, never have every other point strictly inside the shadow
-triangle of the edge and two further points `xa ∈ Q1 \ Q2`, `xb ∈ Q2 \ Q1`
-(barycentric form with any facet functionals `f1`, `f2`). -/
+/-- **Lemma T over an edge** (`FEWER-FACES-PROOFS.md` §7): in a nopert in general
+position, two facets sharing exactly the edge `v w`, with distinct depths along
+it at the two far ends (`Minimality.EdgeFar`), never have every other point
+strictly inside the shadow triangle of the edge and two further points
+`xa ∈ Q1 \ Q2`, `xb ∈ Q2 \ Q1` (barycentric form with any facet functionals
+`f1`, `f2`). -/
 theorem not_facets_edge_triShadow_of_isNopert (V : Finset ℝ³) (h : IsNopert V)
     (hgen : Minimality.GenPos V) (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
     (h1f : Minimality.IsFacet V Q1) (h2f : Minimality.IsFacet V Q2) (v w : ℝ³) (hvw : v ≠ w)
     (hint : Q1 ∩ Q2 = {v, w})
-    (hZ : Set.InjOn (fun p : ℝ³ => inner ℝ p (w - v)) (V : Set ℝ³))
+    (hZ : Minimality.EdgeFar V Q1 Q2 v w)
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧ ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ,
       (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
       (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
@@ -149,12 +151,12 @@ theorem not_facets_edge_triShadow_of_isNopert (V : Finset ℝ³) (h : IsNopert V
   exact h.2 (Minimality.isRupert_of_facets_edge V hgen Q1 Q2 h1V h2V h1f h2f v w hvw hint
     ⟨xa, hxa, hxa2⟩ ⟨xb, hxb, hxb1⟩ hZ ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩)
 
-/-- **Type 10, the capped frustum** (Theorem E of `FEWER-FACES-PROOFS.md` §7):
-a nopert in general position does not have seven points labelled so that
-`1245`, `1346`, `2356` (side quadrilaterals) and `023` (a cap triangle) are
-facets (given by functionals negative off them); general position includes distinct depths
-along `14` and `Minimality.TriGen` at the line of the planes of `023` and
-`1245`. -/
+/-- **Type 10, the capped frustum** (Theorem E of `FEWER-FACES-PROOFS.md` §7): a
+nopert in general position does not have seven points labelled so that `1245`,
+`1346`, `2356` (side quadrilaterals) and `023` (a cap triangle) are facets
+(given by functionals negative off them); general position includes distinct far
+depths along `14` (`Minimality.EdgeFar`) and `Minimality.TriGenFar` at the line
+of the planes of `023` and `1245`. -/
 theorem not_type10_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x) (hgen : Minimality.GenPos (Finset.univ.image x))
     (fA fB fC fD : ℝ³ →ᵃ[ℝ] ℝ)
@@ -166,17 +168,19 @@ theorem not_type10_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({2, 3, 5, 6} : Finset (Fin 7)) → fC (x i) < 0))
     (hD : ∀ i, (i ∈ ({0, 2, 3} : Finset (Fin 7)) → fD (x i) = 0) ∧
       (i ∉ ({0, 2, 3} : Finset (Fin 7)) → fD (x i) < 0))
-    (hZ1 : Set.InjOn (fun p : ℝ³ => inner ℝ p (x 4 - x 1)) (Finset.univ.image x : Set ℝ³))
-    (hT2 : Minimality.TriGen (Finset.univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
+    (hZ1 : Minimality.EdgeFar (Finset.univ.image x)
+      (({1, 2, 4, 5} : Finset (Fin 7)).image x)
+      (({1, 3, 4, 6} : Finset (Fin 7)).image x) (x 1) (x 4))
+    (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
       (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2)) : False :=
   h.2 (Minimality.isRupert_type10 x hx hgen fA fB fC fD hA hB hC hD hZ1 hT2)
 
 /-- **Type 19** (Theorem F of `FEWER-FACES-PROOFS.md` §7): a nopert in general
 position does not have seven points labelled so that `0235`, `1356`
-(quadrilaterals), `046` and `346` are facets (given by functionals negative
-off them);
-general position includes distinct depths along `35` and `Minimality.TriGen`
-at the line of the planes of `0235` and `046`. -/
+(quadrilaterals), `046` and `346` are facets (given by functionals negative off
+them); general position includes distinct far depths along `35`
+(`Minimality.EdgeFar`) and `Minimality.TriGenFar` at the line of the planes of
+`0235` and `046`. -/
 theorem not_type19_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x) (hgen : Minimality.GenPos (Finset.univ.image x))
     (fA fB fD fG : ℝ³ →ᵃ[ℝ] ℝ)
@@ -188,17 +192,19 @@ theorem not_type19_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) < 0))
     (hG : ∀ i, (i ∈ ({3, 4, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
       (i ∉ ({3, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
-    (hZ1 : Set.InjOn (fun p : ℝ³ => inner ℝ p (x 5 - x 3)) (Finset.univ.image x : Set ℝ³))
-    (hT2 : Minimality.TriGen (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
+    (hZ1 : Minimality.EdgeFar (Finset.univ.image x)
+      (({0, 2, 3, 5} : Finset (Fin 7)).image x)
+      (({1, 3, 5, 6} : Finset (Fin 7)).image x) (x 3) (x 5))
+    (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
       (({0, 4, 6} : Finset (Fin 7)).image x) (x 0)) : False :=
   h.2 (Minimality.isRupert_type19 x hx hgen fA fB fD fG hA hB hD hG hZ1 hT2)
 
 /-- **Type 13** (Theorem G of `FEWER-FACES-PROOFS.md` §7): a nopert in general
 position does not have seven points labelled so that `0145`, `2456`
-(quadrilaterals), `123` and `126` are facets (given by functionals negative
-off them);
-general position includes distinct depths along `45` and `Minimality.TriGen`
-at the line of the planes of `0145` and `123`. -/
+(quadrilaterals), `123` and `126` are facets (given by functionals negative off
+them); general position includes distinct far depths along `45`
+(`Minimality.EdgeFar`) and `Minimality.TriGenFar` at the line of the planes of
+`0145` and `123`. -/
 theorem not_type13_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x) (hgen : Minimality.GenPos (Finset.univ.image x))
     (fA fB fD fG : ℝ³ →ᵃ[ℝ] ℝ)
@@ -210,8 +216,10 @@ theorem not_type13_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({1, 2, 3} : Finset (Fin 7)) → fD (x i) < 0))
     (hG : ∀ i, (i ∈ ({1, 2, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
       (i ∉ ({1, 2, 6} : Finset (Fin 7)) → fG (x i) < 0))
-    (hZ1 : Set.InjOn (fun p : ℝ³ => inner ℝ p (x 5 - x 4)) (Finset.univ.image x : Set ℝ³))
-    (hT2 : Minimality.TriGen (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
+    (hZ1 : Minimality.EdgeFar (Finset.univ.image x)
+      (({0, 1, 4, 5} : Finset (Fin 7)).image x)
+      (({2, 4, 5, 6} : Finset (Fin 7)).image x) (x 4) (x 5))
+    (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
       (({1, 2, 3} : Finset (Fin 7)).image x) (x 1)) : False :=
   h.2 (Minimality.isRupert_type13 x hx hgen fA fB fD fG hA hB hD hG hZ1 hT2)
 
@@ -219,7 +227,7 @@ theorem not_type13_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 position does not have seven points labelled so that `0246`, `2345`
 (quadrilaterals), `136` and `034` are facets (given by functionals negative
 off them); general position
-includes `Minimality.TriGen` at the lines of the planes of `136` and `2345`
+includes `Minimality.TriGenFar` at the lines of the planes of `136` and `2345`
 and of `0246` and `136`. -/
 theorem not_type17_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x) (hgen : Minimality.GenPos (Finset.univ.image x))
@@ -232,18 +240,18 @@ theorem not_type17_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({1, 3, 6} : Finset (Fin 7)) → fD (x i) < 0))
     (hE : ∀ i, (i ∈ ({0, 3, 4} : Finset (Fin 7)) → fE (x i) = 0) ∧
       (i ∉ ({0, 3, 4} : Finset (Fin 7)) → fE (x i) < 0))
-    (hT1 : Minimality.TriGen (Finset.univ.image x) (({1, 3, 6} : Finset (Fin 7)).image x)
+    (hT1 : Minimality.TriGenFar (Finset.univ.image x) (({1, 3, 6} : Finset (Fin 7)).image x)
       (({2, 3, 4, 5} : Finset (Fin 7)).image x) (x 3))
-    (hT2 : Minimality.TriGen (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+    (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6)) : False :=
   h.2 (Minimality.isRupert_type17 x hx hgen fA fB fD fE hA hB hD hE hT1 hT2)
 
 /-- **Type 27** (Theorem I of `FEWER-FACES-PROOFS.md` §7): a nopert in general
-position does not have seven points labelled so that `2356` (a
-quadrilateral), `025`, `016`, `046`, `045`, `012` and `456` are facets (given
-by functionals negative off them);
-general position includes distinct depths along `25` and `Minimality.TriGen`
-at the lines of the planes of `016` and `2356` and of `025` and `046`. -/
+position does not have seven points labelled so that `2356` (a quadrilateral),
+`025`, `016`, `046`, `045`, `012` and `456` are facets (given by functionals
+negative off them); general position includes distinct far depths along `25`
+(`Minimality.EdgeFar`) and `Minimality.TriGenFar` at the lines of the planes of
+`016` and `2356` and of `025` and `046`. -/
 theorem not_type27_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x) (hgen : Minimality.GenPos (Finset.univ.image x))
     (fB fD fE fG fH fI fJ : ℝ³ →ᵃ[ℝ] ℝ)
@@ -261,20 +269,21 @@ theorem not_type27_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({0, 1, 2} : Finset (Fin 7)) → fI (x i) < 0))
     (hJ : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fJ (x i) = 0) ∧
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fJ (x i) < 0))
-    (hZ1 : Set.InjOn (fun p : ℝ³ => inner ℝ p (x 5 - x 2)) (Finset.univ.image x : Set ℝ³))
-    (hT1 : Minimality.TriGen (Finset.univ.image x) (({0, 1, 6} : Finset (Fin 7)).image x)
+    (hZ1 : Minimality.EdgeFar (Finset.univ.image x)
+      (({0, 2, 5} : Finset (Fin 7)).image x) (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 2) (x 5))
+    (hT1 : Minimality.TriGenFar (Finset.univ.image x) (({0, 1, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 6))
-    (hT2 : Minimality.TriGen (Finset.univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
+    (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
       (({0, 4, 6} : Finset (Fin 7)).image x) (x 0)) : False :=
   h.2 (Minimality.isRupert_type27 x hx hgen fB fD fE fG fH fI fJ hB hD hE hG hH hI hJ hZ1
     hT1 hT2)
 
 /-- **Type 23** (Theorem J of `FEWER-FACES-PROOFS.md` §7): a nopert in general
-position does not have seven points labelled so that `0345` (a
-quadrilateral), `014`, `125`, `156` and `456` are facets (given by functionals
-negative off them); general
-position includes distinct depths along `04` and `Minimality.TriGen` at the
-lines of the planes of `014` and `156` and of `0345` and `125`. -/
+position does not have seven points labelled so that `0345` (a quadrilateral),
+`014`, `125`, `156` and `456` are facets (given by functionals negative off
+them); general position includes distinct far depths along `04`
+(`Minimality.EdgeFar`) and `Minimality.TriGenFar` at the lines of the planes of
+`014` and `156` and of `0345` and `125`. -/
 theorem not_type23_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x) (hgen : Minimality.GenPos (Finset.univ.image x))
     (fA fD fE fH fK : ℝ³ →ᵃ[ℝ] ℝ)
@@ -288,19 +297,20 @@ theorem not_type23_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({1, 5, 6} : Finset (Fin 7)) → fH (x i) < 0))
     (hK : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) = 0) ∧
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) < 0))
-    (hZ1 : Set.InjOn (fun p : ℝ³ => inner ℝ p (x 4 - x 0)) (Finset.univ.image x : Set ℝ³))
-    (hT1 : Minimality.TriGen (Finset.univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
+    (hZ1 : Minimality.EdgeFar (Finset.univ.image x)
+      (({0, 1, 4} : Finset (Fin 7)).image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x) (x 0) (x 4))
+    (hT1 : Minimality.TriGenFar (Finset.univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
       (({1, 5, 6} : Finset (Fin 7)).image x) (x 1))
-    (hT2 : Minimality.TriGen (Finset.univ.image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x)
+    (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x)
       (({1, 2, 5} : Finset (Fin 7)).image x) (x 5)) : False :=
   h.2 (Minimality.isRupert_type23 x hx hgen fA fD fE fH fK hA hD hE hH hK hZ1 hT1 hT2)
 
 /-- **Type 25** (Theorem K of `FEWER-FACES-PROOFS.md` §7): a nopert in general
-position does not have seven points labelled so that `0246` (a
-quadrilateral), `013`, `136`, `056`, `035`, `014` and `126` are facets (given by
-functionals negative off them);
-general position includes distinct depths along `13` and `Minimality.TriGen`
-at the lines of the planes of `013` and `0246` and of `013` and `056`. -/
+position does not have seven points labelled so that `0246` (a quadrilateral),
+`013`, `136`, `056`, `035`, `014` and `126` are facets (given by functionals
+negative off them); general position includes distinct far depths along `13`
+(`Minimality.EdgeFar`) and `Minimality.TriGenFar` at the lines of the planes of
+`013` and `0246` and of `013` and `056`. -/
 theorem not_type25_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x) (hgen : Minimality.GenPos (Finset.univ.image x))
     (fA fD fF fG fH fE fI : ℝ³ →ᵃ[ℝ] ℝ)
@@ -318,20 +328,21 @@ theorem not_type25_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({0, 1, 4} : Finset (Fin 7)) → fE (x i) < 0))
     (hI : ∀ i, (i ∈ ({1, 2, 6} : Finset (Fin 7)) → fI (x i) = 0) ∧
       (i ∉ ({1, 2, 6} : Finset (Fin 7)) → fI (x i) < 0))
-    (hZ1 : Set.InjOn (fun p : ℝ³ => inner ℝ p (x 3 - x 1)) (Finset.univ.image x : Set ℝ³))
-    (hT1 : Minimality.TriGen (Finset.univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
+    (hZ1 : Minimality.EdgeFar (Finset.univ.image x)
+      (({0, 1, 3} : Finset (Fin 7)).image x) (({1, 3, 6} : Finset (Fin 7)).image x) (x 1) (x 3))
+    (hT1 : Minimality.TriGenFar (Finset.univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
       (({0, 2, 4, 6} : Finset (Fin 7)).image x) (x 0))
-    (hT2 : Minimality.TriGen (Finset.univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
+    (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
       (({0, 5, 6} : Finset (Fin 7)).image x) (x 0)) : False :=
   h.2 (Minimality.isRupert_type25 x hx hgen fA fD fF fG fH fE fI hA hD hF hG hH hE hI hZ1
     hT1 hT2)
 
 /-- **Type 26** (Theorem L of `FEWER-FACES-PROOFS.md` §7): a nopert in general
-position does not have seven points labelled so that `0246` (a
-quadrilateral), `034`, `235`, `136`, `013`, `016`, `245` and `345` are facets
-(given by functionals negative off them);
-general position includes distinct depths along `04` and `Minimality.TriGen`
-at the lines of the planes of `0246` and `235` and of `0246` and `136`. -/
+position does not have seven points labelled so that `0246` (a quadrilateral),
+`034`, `235`, `136`, `013`, `016`, `245` and `345` are facets (given by
+functionals negative off them); general position includes distinct far depths
+along `04` (`Minimality.EdgeFar`) and `Minimality.TriGenFar` at the lines of the
+planes of `0246` and `235` and of `0246` and `136`. -/
 theorem not_type26_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x) (hgen : Minimality.GenPos (Finset.univ.image x))
     (fA fT fG fH fU fW fY fZ : ℝ³ →ᵃ[ℝ] ℝ)
@@ -351,10 +362,11 @@ theorem not_type26_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fY (x i) < 0))
     (hZ : ∀ i, (i ∈ ({3, 4, 5} : Finset (Fin 7)) → fZ (x i) = 0) ∧
       (i ∉ ({3, 4, 5} : Finset (Fin 7)) → fZ (x i) < 0))
-    (hZ1 : Set.InjOn (fun p : ℝ³ => inner ℝ p (x 4 - x 0)) (Finset.univ.image x : Set ℝ³))
-    (hT2 : Minimality.TriGen (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+    (hZ1 : Minimality.EdgeFar (Finset.univ.image x)
+      (({0, 2, 4, 6} : Finset (Fin 7)).image x) (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4))
+    (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2))
-    (hT6 : Minimality.TriGen (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+    (hT6 : Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6)) : False :=
   h.2 (Minimality.isRupert_type26 x hx hgen fA fT fG fH fU fW fY fZ hA hT hG hH hU hW hY hZ hZ1
     hT2 hT6)
@@ -363,7 +375,7 @@ theorem not_type26_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 position does not have seven points labelled so that `0135`, `0346`
 (quadrilaterals), `024`, `236` and `246` are facets (given by functionals
 negative off them); general position
-includes `Minimality.TriGen` at the lines of the planes of `0135` and `024`
+includes `Minimality.TriGenFar` at the lines of the planes of `0135` and `024`
 and of `024` and `236`. -/
 theorem not_type12_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x) (hgen : Minimality.GenPos (Finset.univ.image x))
@@ -378,9 +390,9 @@ theorem not_type12_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({2, 3, 6} : Finset (Fin 7)) → fG (x i) < 0))
     (hJ : ∀ i, (i ∈ ({2, 4, 6} : Finset (Fin 7)) → fJ (x i) = 0) ∧
       (i ∉ ({2, 4, 6} : Finset (Fin 7)) → fJ (x i) < 0))
-    (hT1 : Minimality.TriGen (Finset.univ.image x) (({0, 1, 3, 5} : Finset (Fin 7)).image x)
+    (hT1 : Minimality.TriGenFar (Finset.univ.image x) (({0, 1, 3, 5} : Finset (Fin 7)).image x)
       (({0, 2, 4} : Finset (Fin 7)).image x) (x 0))
-    (hT2 : Minimality.TriGen (Finset.univ.image x) (({0, 2, 4} : Finset (Fin 7)).image x)
+    (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 4} : Finset (Fin 7)).image x)
       (({2, 3, 6} : Finset (Fin 7)).image x) (x 2)) : False :=
   h.2 (Minimality.isRupert_type12 x hx hgen fA fB fD fG fJ hA hB hD hG hJ hT1 hT2)
 
@@ -388,7 +400,7 @@ theorem not_type12_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 position does not have seven points labelled so that `0134` (a
 quadrilateral), `125`, `246`, `146` and `256` are facets (given by functionals
 negative off them); general position
-includes `Minimality.TriGen` at the lines of the planes of `125` and `246` and
+includes `Minimality.TriGenFar` at the lines of the planes of `125` and `246` and
 of `0134` and `246`. -/
 theorem not_type22_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x) (hgen : Minimality.GenPos (Finset.univ.image x))
@@ -403,9 +415,9 @@ theorem not_type22_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({1, 4, 6} : Finset (Fin 7)) → fN (x i) < 0))
     (hI : ∀ i, (i ∈ ({2, 5, 6} : Finset (Fin 7)) → fI (x i) = 0) ∧
       (i ∉ ({2, 5, 6} : Finset (Fin 7)) → fI (x i) < 0))
-    (hT1 : Minimality.TriGen (Finset.univ.image x) (({1, 2, 5} : Finset (Fin 7)).image x)
+    (hT1 : Minimality.TriGenFar (Finset.univ.image x) (({1, 2, 5} : Finset (Fin 7)).image x)
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 2))
-    (hT2 : Minimality.TriGen (Finset.univ.image x) (({0, 1, 3, 4} : Finset (Fin 7)).image x)
+    (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 1, 3, 4} : Finset (Fin 7)).image x)
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 4)) : False :=
   h.2 (Minimality.isRupert_type22 x hx hgen fA fD fG fN fI hA hD hG hN hI hT1 hT2)
 
@@ -413,7 +425,7 @@ theorem not_type22_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 position does not have seven points labelled so that `0245` (a
 quadrilateral), `036`, `146`, `023`, `015` and `145` are facets (given by
 functionals negative off them);
-general position includes `Minimality.TriGen` at the lines of the planes of
+general position includes `Minimality.TriGenFar` at the lines of the planes of
 `0245` and `146` and of `0245` and `036`. -/
 theorem not_type28_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x) (hgen : Minimality.GenPos (Finset.univ.image x))
@@ -430,9 +442,9 @@ theorem not_type28_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({0, 1, 5} : Finset (Fin 7)) → fF (x i) < 0))
     (hM : ∀ i, (i ∈ ({1, 4, 5} : Finset (Fin 7)) → fM (x i) = 0) ∧
       (i ∉ ({1, 4, 5} : Finset (Fin 7)) → fM (x i) < 0))
-    (hT1 : Minimality.TriGen (Finset.univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
+    (hT1 : Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
       (({1, 4, 6} : Finset (Fin 7)).image x) (x 4))
-    (hT2 : Minimality.TriGen (Finset.univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
+    (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
       (({0, 3, 6} : Finset (Fin 7)).image x) (x 0)) : False :=
   h.2 (Minimality.isRupert_type28 x hx hgen fA fD fG fH fF fM hA hD hG hH hF hM hT1 hT2)
 
@@ -440,7 +452,7 @@ theorem not_type28_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 nopert in general position does not have seven points labelled so that
 `0123`, `0145` (quadrilaterals), `246`, `456` and `234` are facets (given by
 functionals negative off them);
-general position includes `Minimality.TriGen` at the lines of the planes of
+general position includes `Minimality.TriGenFar` at the lines of the planes of
 `0123` and `246` and of `0145` and `246`. -/
 theorem not_type05_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x) (hgen : Minimality.GenPos (Finset.univ.image x))
@@ -455,9 +467,9 @@ theorem not_type05_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) < 0))
     (hH : ∀ i, (i ∈ ({2, 3, 4} : Finset (Fin 7)) → fH (x i) = 0) ∧
       (i ∉ ({2, 3, 4} : Finset (Fin 7)) → fH (x i) < 0))
-    (hT1 : Minimality.TriGen (Finset.univ.image x) (({0, 1, 2, 3} : Finset (Fin 7)).image x)
+    (hT1 : Minimality.TriGenFar (Finset.univ.image x) (({0, 1, 2, 3} : Finset (Fin 7)).image x)
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 2))
-    (hT2 : Minimality.TriGen (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
+    (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 4)) : False :=
   h.2 (Minimality.isRupert_type05_facets x hx hgen fA fB fG fK fH hA hB hG hK hH hT1 hT2)
 

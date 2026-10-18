@@ -37,9 +37,9 @@ theorem isRupert_type17 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({1, 3, 6} : Finset (Fin 7)) → fD (x i) < 0))
     (hE : ∀ i, (i ∈ ({0, 3, 4} : Finset (Fin 7)) → fE (x i) = 0) ∧
       (i ∉ ({0, 3, 4} : Finset (Fin 7)) → fE (x i) < 0))
-    (hT1 : TriGen (univ.image x) (({1, 3, 6} : Finset (Fin 7)).image x)
+    (hT1 : TriGenFar (univ.image x) (({1, 3, 6} : Finset (Fin 7)).image x)
       (({2, 3, 4, 5} : Finset (Fin 7)).image x) (x 3))
-    (hT2 : TriGen (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+    (hT2 : TriGenFar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6)) :
     IsRupert (univ.image x) := by
   classical

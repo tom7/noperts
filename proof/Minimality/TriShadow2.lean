@@ -38,7 +38,7 @@ set_option maxHeartbeats 4000000 in
 /-- **Lemma T over an edge, in the oblique frame.**  As `isRupert_triShadow`,
 but the apex carries two vertices `C1 0 = (0, 0, cz 0)` (where `C1` starts) and
 `C2 0 = (0, 0, dz 0)` (where `C2` starts), with `s dz 0 < s cz 0`; every point of
-`V` over the apex is one of them, and depths are distinct on `V`. -/
+`V` over the apex is one of them. -/
 theorem isRupert_triShadow2 (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n : ℕ}
     (hm : 1 ≤ m) (hn : 1 ≤ n) (s : ℝ) (hs : s = 1 ∨ s = -1) (ca cz cb dz : ℕ → ℝ)
     (hca0 : ca 0 = 0) (hcb0 : cb 0 = 0) (hap : s * dz 0 < s * cz 0)
@@ -56,7 +56,6 @@ theorem isRupert_triShadow2 (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n : �
       (a = 0 → ∀ l, l < n → y ≠ oblPt O r1 r2 0 (cb (l + 1)) (dz (l + 1)) →
         y ≠ oblPt O r1 r2 0 (cb l) (dz l) →
         s * ((cb l - cb (l + 1)) * (z - dz (l + 1)) - (dz l - dz (l + 1)) * (b - cb (l + 1))) < 0))
-    (hzV : Set.InjOn (fun y : ℝ³ => ⟪y, ez⟫) (V : Set ℝ³))
     (hAB : s * dz n < s * cz m) : IsRupert V := by
   have hNZ : NeZero (m + n + 2) := ⟨by omega⟩
   have hval : ∀ v : ℕ, v < m + n + 2 → ((v : ZMod (m + n + 2))).val = v := fun v hv => by
@@ -241,67 +240,61 @@ theorem isRupert_triShadow2 (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n : �
     rcases Nat.lt_or_gt_of_ne hij with h | h
     · exact absurd this (mono cb n hcb i j h hj).ne
     · exact absurd this (mono cb n hcb j i h hi).ne'
-  have hmax := tri_localMax_unique (n := n + 1) hm (by omega) (fun i => s * Z i)
-    (by
-      intro l h1 h2
-      rw [hZ1 _ (by omega), hZ1 _ (by omega), hZ1 _ (by omega)]
-      have hc := coords1 (l + 1) (by omega) (l - 1) (by omega)
-        (ne1 _ _ (by omega) (by omega) (by omega))
-        (by rw [show l - 1 + 1 = l by omega]; exact ne1 _ _ (by omega) (by omega) (by omega))
-      rw [show l - 1 + 1 = l by omega] at hc
-      have d1 := mono ca m hca (l - 1) l (by omega) (by omega)
-      have d2 := mono ca m hca l (l + 1) (by omega) (by omega)
+  -- the sequence lemma's hypotheses for `s Z` (strict, so they survive the tilt)
+  have hconcZ : ∀ l : ℕ, 1 ≤ l → l < m → min (s * Z ((l - 1 : ℕ) : ZMod (m + n + 2)))
+      (s * Z ((l + 1 : ℕ) : ZMod (m + n + 2))) < s * Z (l : ZMod (m + n + 2)) := by
+    intro l h1 h2
+    rw [hZ1 _ (by omega), hZ1 _ (by omega), hZ1 _ (by omega)]
+    have hc := coords1 (l + 1) (by omega) (l - 1) (by omega)
+      (ne1 _ _ (by omega) (by omega) (by omega))
+      (by rw [show l - 1 + 1 = l by omega]; exact ne1 _ _ (by omega) (by omega) (by omega))
+    rw [show l - 1 + 1 = l by omega] at hc
+    have d1 := mono ca m hca (l - 1) l (by omega) (by omega)
+    have d2 := mono ca m hca l (l + 1) (by omega) (by omega)
+    by_contra hcon
+    push Not at hcon
+    rw [le_min_iff] at hcon
+    nlinarith [mul_nonneg (sub_nonneg.mpr d1.le) (sub_nonneg.mpr (hcon.2)),
+      mul_nonneg_of_nonpos_of_nonpos (sub_nonpos.mpr hcon.1) (sub_nonpos.mpr d2.le)]
+  have hconvZ : ∀ l : ℕ, m + 2 ≤ l → l ≤ m + (n + 1) → s * Z (l : ZMod (m + n + 2)) <
+      max (s * Z ((l - 1 : ℕ) : ZMod (m + n + 2))) (s * Z ((l + 1 : ℕ) : ZMod (m + n + 2))) := by
+    intro l h1 h2
+    rcases Nat.lt_or_ge l (m + n + 1) with hl | hl
+    · set j := m + n + 1 - l with hj
+      have hj1 : 1 ≤ j := by omega
+      have hjn : j < n := by omega
+      rw [hZ2 l (by omega) (by omega), hZ2 (l - 1) (by omega) (by omega),
+        hZ2 (l + 1) (by omega) (by omega), show m + n + 1 - (l - 1) = j + 1 by omega,
+        show m + n + 1 - (l + 1) = j - 1 by omega]
+      have hc := coords2 (j - 1) (by omega) j hjn
+        (ne2 _ _ (by omega) (by omega) (by omega)) (ne2 _ _ (by omega) (by omega) (by omega))
+      have e1 := mono cb n hcb j (j + 1) (by omega) (by omega)
+      have e2 := mono cb n hcb (j - 1) j (by omega) (by omega)
       by_contra hcon
       push Not at hcon
-      rw [le_min_iff] at hcon
-      nlinarith [mul_nonneg (sub_nonneg.mpr d1.le) (sub_nonneg.mpr (hcon.2)),
-        mul_nonneg_of_nonpos_of_nonpos (sub_nonpos.mpr hcon.1) (sub_nonpos.mpr d2.le)])
-    (by
-      intro l h1 h2
-      rcases Nat.lt_or_ge l (m + n + 1) with hl | hl
-      · set j := m + n + 1 - l with hj
-        have hj1 : 1 ≤ j := by omega
-        have hjn : j < n := by omega
-        rw [hZ2 l (by omega) (by omega), hZ2 (l - 1) (by omega) (by omega),
-          hZ2 (l + 1) (by omega) (by omega), show m + n + 1 - (l - 1) = j + 1 by omega,
-          show m + n + 1 - (l + 1) = j - 1 by omega]
-        have hc := coords2 (j - 1) (by omega) j hjn
-          (ne2 _ _ (by omega) (by omega) (by omega)) (ne2 _ _ (by omega) (by omega) (by omega))
-        have e1 := mono cb n hcb j (j + 1) (by omega) (by omega)
-        have e2 := mono cb n hcb (j - 1) j (by omega) (by omega)
-        by_contra hcon
-        push Not at hcon
-        rw [max_le_iff] at hcon
-        nlinarith [mul_nonneg_of_nonpos_of_nonpos (sub_nonpos.mpr e1.le) (sub_nonpos.mpr hcon.2),
-          mul_nonneg (sub_nonneg.mpr hcon.1) (sub_nonneg.mpr e2.le)]
-      · have hl' : l = m + n + 1 := by omega
-        subst hl'
-        rw [hZ2 (m + n + 1) (by omega) le_rfl, show m + n + 1 - (m + n + 1) = 0 by omega,
-          show m + n + 1 + 1 = m + n + 2 by omega, hZk]
-        exact lt_max_of_lt_right hap)
-    (by
-      rw [hZ2 (m + 1) (by omega) (by omega), hZ1 m le_rfl, show m + n + 1 - (m + 1) = n by omega]
-      exact hAB)
-  have hzinj : Function.Injective Z := by
-    intro i j h
-    apply hxinj
-    apply hzV (hxV i) (hxV j)
-    simp only; rw [hdepth, hdepth]; exact h
-  have hZu : IsCyclicUnimodal Z := by
-    rcases hs with rfl | rfl
-    · exact isCyclicUnimodal_of_localMax_unique (by omega) Z hzinj
-        (fun a b h1 h2 h3 h4 => hmax a b (by linarith) (by linarith) (by linarith) (by linarith))
-    · exact isCyclicUnimodal_of_localMin_unique (by omega) Z hzinj
-        (fun a b h1 h2 h3 h4 => hmax a b (by linarith) (by linarith) (by linarith) (by linarith))
-  have hu0 : IsCyclicUnimodal fun i => ⟪x i, ez⟫ := by
-    have : (fun i => ⟪x i, ez⟫) = Z := funext hdepth
-    rw [this]; exact hZu
+      rw [max_le_iff] at hcon
+      nlinarith [mul_nonneg_of_nonpos_of_nonpos (sub_nonpos.mpr e1.le) (sub_nonpos.mpr hcon.2),
+        mul_nonneg (sub_nonneg.mpr hcon.1) (sub_nonneg.mpr e2.le)]
+    · have hl' : l = m + n + 1 := by omega
+      subst hl'
+      have e : ((m + n + 1 + 1 : ℕ) : ZMod (m + n + 2)) = ((m + n + 2 : ℕ) : ZMod (m + n + 2)) := rfl
+      rw [hZ2 (m + n + 1) (by omega) le_rfl, show m + n + 1 - (m + n + 1) = 0 by omega, e, hZk]
+      exact lt_max_of_lt_right hap
+  have hABZ : s * Z ((m + 1 : ℕ) : ZMod (m + n + 2)) < s * Z (m : ZMod (m + n + 2)) := by
+    rw [hZ2 (m + 1) (by omega) (by omega), hZ1 m le_rfl, show m + n + 1 - (m + 1) = n by omega]
+    exact hAB
+  have hT : TriSeq m (n + 1) s Z := by
+    refine ⟨fun l hl => ?_, fun l hl => ?_, hABZ⟩
+    · obtain ⟨h1, h2⟩ := Finset.mem_Ioo.mp hl
+      exact min_lt_iff.mp (hconcZ l (by omega) h2)
+    · obtain ⟨h1, h2⟩ := Finset.mem_Icc.mp hl
+      exact lt_max_iff.mp (hconvZ l h1 h2)
   have hez : (ez : ℝ³) ≠ 0 := by
     intro h; have := congrArg (fun x : ℝ³ => x 2) h; simp [ez] at this
-  exact isRupert_of_tilted_unimodal' V ez v hez (k := m + n + 2) (by omega)
-    x hxV hcyc hrest IsCyclicUnimodal isOpen_isCyclicUnimodal
-    (fun z c hc hz => isCyclicUnimodal_smul hc hz)
-    (eventually_unimodal_tilt x ez v hu0) (fun z _ h => h)
+  exact isRupert_of_tilted_localMax V ez v hez (k := m + n + 2) (by omega) x hxV hcyc hrest s hs
+    (TriSeq m (n + 1) s) (isOpen_triSeq m (n + 1) s) (fun z c hc hz => triSeq_smul hc hz)
+    (by rw [show (fun i => ⟪x i, ez⟫) = Z from funext hdepth]; exact hT)
+    (fun z hz => triSeq_localMax hm (by omega) hz)
 
 end Minimality
 

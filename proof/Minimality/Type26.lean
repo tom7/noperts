@@ -44,8 +44,9 @@ theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hY : ∀ i, (i ∈ ({2, 4, 5} : Finset (Fin 7)) → fY (x i) = 0) ∧
       (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fY (x i) < 0))
     (hcase : fT (x 6) / fT (x 2) ≤ 1)
-    (hZ1 : Set.InjOn (fun p : ℝ³ => ⟪p, x 4 - x 0⟫) (univ.image x : Set ℝ³))
-    (hT2 : TriGen (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+    (hZ1 : EdgeFar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+      (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4))
+    (hT2 : TriGenFar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2)) :
     IsRupert (univ.image x) := by
   classical
@@ -266,10 +267,11 @@ theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fY (x i) < 0))
     (hZ : ∀ i, (i ∈ ({3, 4, 5} : Finset (Fin 7)) → fZ (x i) = 0) ∧
       (i ∉ ({3, 4, 5} : Finset (Fin 7)) → fZ (x i) < 0))
-    (hZ1 : Set.InjOn (fun p : ℝ³ => ⟪p, x 4 - x 0⟫) (univ.image x : Set ℝ³))
-    (hT2 : TriGen (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+    (hZ1 : EdgeFar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+      (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4))
+    (hT2 : TriGenFar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2))
-    (hT6 : TriGen (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+    (hT6 : TriGenFar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6)) :
     IsRupert (univ.image x) := by
   classical
@@ -305,10 +307,10 @@ theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
   · rw [y6, y2, div_le_one_of_neg t6]
     push Not at hc
     exact ((one_lt_div_of_neg t2).mp hc).le
-  · rw [hV, y4, y0]
-    intro p hp q hq h
-    apply hZ1 hp hq
-    simp only at h ⊢
+  · rw [hV, imgσ _ ({0, 2, 4, 6} : Finset (Fin 7)) (by decide),
+      imgσ _ ({0, 3, 4} : Finset (Fin 7)) (by decide), y4, y0]
+    intro f1 f2 a1 a2 a3 a4 p hp q hq hpq h1 h2 h
+    apply hZ1 f1 f2 a1 a2 a3 a4 p hp q hq hpq h1 h2
     have e : ∀ r : ℝ³, ⟪r, x 0 - x 4⟫ = -⟪r, x 4 - x 0⟫ := fun r => by
       rw [← inner_neg_right, neg_sub]
     rw [e, e] at h; linarith

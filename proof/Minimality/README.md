@@ -152,10 +152,12 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   oblique coordinates `(0, 0)`), chains `C1` on the first ray and `C2` on the
   second (coordinate sequences), every point of `V` in the triangle and
   strictly inside its far side unless it is `A` or `B`, the points of each ray
-  on the `s`-side of each segment of that ray's chain, distinct depths along
-  the cycle, and `s z_A > s z_B`: the tilt `-s r1 + s r2` is unimodal, so `V`
-  is Rupert. Unimodality is `tri_localMax_unique` (every local maximum of
-  `s z` lies on the concave chain).
+  on the `s`-side of each segment of that ray's chain, and `s z_A > s z_B`:
+  the tilt `-s r1 + s r2` is unimodal, so `V` is Rupert. Unimodality is
+  `tri_localMax_unique` (every local maximum of `s z` lies on the concave
+  chain). Its hypotheses are strict inequalities between depths (`TriSeq`),
+  an open condition that survives the tilt, so depths along the cycle may tie
+  (`isRupert_of_tilted_localMax`); only the far ends must differ.
 * `isRupert_twoQuads_frame` (`TriQuad.lean`): two quadrilaterals sharing the
   apex, one on each ray, each convex in its `(t, z)`-plane (either
   orientation), distinct positive `t` on each, seven distinct depths: Rupert.
@@ -171,7 +173,9 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   convex labelling by `convex_four` from extremality), and the frame theorem.
 * At the entry point, `not_facets_vertex_triShadow_of_isNopert`: Lemma T at a
   vertex for any two facets (any number of points each) meeting in a single
-  vertex `v`, with `TriGen`: a nopert in general position never has every point
+  vertex `v`, with `TriGenFar` (no segment parallel to the line of the two
+  planes, and distinct depths along it at the two far ends; weaker than
+  `TriGen`, `TriGen.far`): a nopert in general position never has every point
   off both facets strictly inside the shadow triangle of `v` and points `xa`,
   `xb` of the facets (barycentric form `f2 y / f2 xa + f1 y / f1 xb < 1` with the
   facet functionals). Extreme points are not needed. Via
@@ -182,7 +186,8 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   `exists_chainOK` in `HullChain.lean`), and `isRupert_vertex_frame`.
 * At the entry point, `not_facets_edge_triShadow_of_isNopert`: the same for two
   facets sharing exactly an edge `v w`, viewed along it (distinct depths along
-  `w - v`; no other segment parallel to it, from `GenPos`). Via
+  `w - v` at the two far ends, `EdgeFar`; no other segment parallel to it, from
+  `GenPos`). Via
   `isRupert_of_facets_edge`, `isRupert_facets_edge` (rotation of `w - v` to
   `ez`), `isRupert_facets_edge_vertical`, `isRupert_edge_coords` (chains from
   the upper and lower edge points, `exists_chainOK_edge`), and
@@ -342,13 +347,17 @@ In import order.
 | `FaceFive` | L11, Theorem A | `isRupert_edgeOn_dir`, `isRupert_cycle_edgeOn`, `isRupert_caseI`, `isRupert_caseII`, `isRupert_of_card_seven_of_facet` |
 | `EdgeView` | L12, Theorems B, B′ (types 02, 05, general position) | `cycles02_A1B6`, `tiltSign_obl`, `isRupert_type02_frame`, `sheets_on_chord`, `isRupert_type02`, `cycles05_A3B6`, `isRupert_type05` |
 | `QuadFacets` | L12, four quadrilateral facets | `card_inter_le_two_of_facets`, `quad_facets_classify`, `quadSidesOK_of_facets`, `isRupert_of_four_quad_facets` |
-| `TriShadow` | L13, Lemma T (triangle shadow), oblique frame | `tri_localMax_unique`, `oblPt_inj`, `isRupert_triShadow`, `isRupert_triShadow_injOn` |
+| `TriShadow` | L13, Lemma T (triangle shadow), oblique frame | `tri_localMax_unique`, `oblPt_inj`, `isRupert_triShadow` (no distinct depths needed: `isRupert_of_tilted_localMax`, `TriSeq`) |
 | `TriShadow2` | L13, Lemma T over an edge (two vertices over the apex), oblique frame | `vert_tiltOK`, `isRupert_triShadow2` |
+| `TriShadowChord` | L13, Lemma T′: `isRupert_triShadow` with a mixed tilt and the far-side test as `TiltOK`; a point on the far side hidden by the tilt | `isRupert_triShadow_tilt`, `chord_tiltOK` |
+| `TriShadow2Chord` | L13, the same over an edge | `vert_tiltOK_tilt`, `isRupert_triShadow2_tilt` |
 | `TriFaces` | L13, Lemma T over an edge or a vertex from the faces' chains, with interior points | `edge_core`, `isRupert_edge_frame`, `isRupert_vertex_frame` |
+| `TriFacesChord` | L13, Lemma T′ from the faces' chains: one point on the far side | `isRupert_vertex_frame_chord`, `edge_core_chord`, `isRupert_edge_frame_chord` |
 | `TriQuad` | L13, chains of quadrilaterals and triangles from a vertex or along an edge; two quadrilaterals sharing a vertex (Corollary T1), oblique frame | `quad_chain`, `chainOK_edge_p_up`, `tri_chain`, `triE_chain`, `ChainOK.far_eq`, `isRupert_twoQuads_frame` |
 | `HullChain` | L13, upper and lower chains of any finite point set with distinct `t` and no three collinear (gift wrapping), also with two points over the apex | `ChainFrom`, `exists_chainFrom`, `exists_chainOK`, `exists_chainOK_edge` |
-| `TriFacets` | L13, Lemma T at a vertex for any two facets, with interior points: frame, vertical, rotated, facet form | `isRupert_vertex_coords`, `isRupert_facets_vertex_vertical`, `isRupert_facets_vertex`, `isRupert_of_facets_vertex` |
-| `TriFacetsEdge` | L13, Lemma T over an edge for any two facets, with interior points: frame, vertical, rotated, facet form | `orient_ne_of_frame1'`, `isRupert_edge_coords`, `isRupert_facets_edge_vertical`, `isRupert_facets_edge`, `isRupert_of_facets_edge` |
+| `TriFacets` | L13, Lemma T at a vertex for any two facets, with interior points: frame, vertical, rotated, facet form | `isRupert_vertex_coords`, `isRupert_facets_vertex_vertical`, `isRupert_facets_vertex`, `TriGenFar`, `TriGen.far`, `isRupert_of_facets_vertex` |
+| `TriFacetsChord` | L13, Lemma T′ at a vertex for any two facets (one off point on the far side): frame, vertical, rotated, facet form | `isRupert_vertex_coords_chord`, `isRupert_facets_vertex_vertical_chord`, `isRupert_facets_vertex_chord`, `isRupert_of_facets_vertex_chord` |
+| `TriFacetsEdge` | L13, Lemma T over an edge for any two facets, with interior points: frame, vertical, rotated, facet form | `orient_ne_of_frame1'`, `isRupert_edge_coords`, `isRupert_facets_edge_vertical`, `isRupert_facets_edge`, `EdgeFar`, `EdgeFar.of_injOn`, `isRupert_of_facets_edge` |
 | `Type10` | L13, Theorem E (type 10) from Lemma T by facet-functional coordinates; Cramer for affine functionals, proportional functionals | `affine_cramer`, `affine_vanish3`, `vanish3_ratio`, `isFacet_of_index`, `isRupert_type10` |
 | `Type19` | L13, Theorem F (type 19), same method | `isRupert_type19` |
 | `Type13` | L13, Theorem G (type 13), same method | `isRupert_type13` |

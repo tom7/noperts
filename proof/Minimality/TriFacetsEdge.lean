@@ -69,7 +69,8 @@ theorem isRupert_edge_coords (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V Q1 Q2
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
     (hinjv : Set.InjOn (fun p => (a p, b p)) ((V.erase v : Finset ℝ³) : Set ℝ³))
     (hinjw : Set.InjOn (fun p => (a p, b p)) ((V.erase w : Finset ℝ³) : Set ℝ³))
-    (hZ : Set.InjOn (fun p : ℝ³ => p 2) (V : Set ℝ³))
+    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, a p' ≤ a p) → (∀ q' ∈ Q2, b q' ≤ b q) →
+      p 2 ≠ q 2)
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → a y / a xa + b y / b xb < 1) : IsRupert V := by
   classical
@@ -213,7 +214,7 @@ theorem isRupert_edge_coords (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V Q1 Q2
     (chains2 (-1) v w (Or.inr rfl) (Or.inl ⟨rfl, rfl⟩) lo) ?_ ?_
     (Finset.mem_image.mpr ⟨v, hv1, by rw [hav]⟩) (Finset.mem_image.mpr ⟨w, hw1, by rw [haw]⟩)
     (Finset.mem_image.mpr ⟨v, hv2, by rw [hbv]⟩) (Finset.mem_image.mpr ⟨w, hw2, by rw [hbw]⟩)
-    ?_ ?_ V ?_ ?_ ?_ ?_ ?_
+    ?_ ?_ V ?_ ?_ ?_ ?_
   · intro z h
     obtain ⟨p, hp, e1, e2⟩ := ofS1 0 z h
     by_cases hp2 : p ∈ Q2
@@ -272,9 +273,6 @@ theorem isRupert_edge_coords (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V Q1 Q2
     have : a y / ca m + b y / cb n < 1 := by linarith
     rw [div_add_div _ _ hA.ne' hB.ne', div_lt_one (mul_pos hA hB)] at this
     linarith
-  · intro p hp q hq h
-    simp only [inner_ez] at h
-    exact hZ hp hq h
   · intro m ca cz n cb dz C1 C2 h
     obtain ⟨p, hp, e1, e2⟩ := ofS1 _ _ (C1.mem m le_rfl)
     obtain ⟨q, hq, f1, f2⟩ := ofS2 _ _ (C2.mem n le_rfl)
@@ -282,7 +280,15 @@ theorem isRupert_edge_coords (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V Q1 Q2
       intro e; subst e
       have := C1.far_pos
       rw [← e1, ha2 p hq] at this; exact lt_irrefl _ this
-    exact hpq (hZ (h1V hp) (h2V hq) (by simp only; rw [e2, f2, h]))
+    refine hfarZ p hp q hq hpq (fun p' hp' => ?_) (fun q' hq' => ?_) (by rw [e2, f2, h])
+    · rw [e1]
+      by_cases e : a p' = ca m ∧ p' 2 = cz m
+      · exact e.1.le
+      · exact (C1.far _ _ (Finset.mem_image_of_mem _ hp') e).le
+    · rw [f1]
+      by_cases e : b q' = cb n ∧ q' 2 = dz n
+      · exact e.1.le
+      · exact (C2.far _ _ (Finset.mem_image_of_mem (fun p => (b p, p 2)) hq') e).le
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over an edge, the edge vertical**, with `v` below `w`. -/
@@ -294,7 +300,8 @@ theorem isRupert_facets_edge_vertical_lt (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) 
     (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
     (hpar : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → p 0 ≠ q 0 ∨ p 1 ≠ q 1)
-    (hZ : Set.InjOn (fun p : ℝ³ => p 2) (V : Set ℝ³))
+    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
+      p 2 ≠ q 2)
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V := by
   classical
@@ -381,6 +388,11 @@ theorem isRupert_facets_edge_vertical_lt (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) 
     rw [e.1, e.2] at c0 c1
     rcases hpar p hp'.2 q hq'.2 hpq hne with h | h <;> apply h <;> linarith
   have hinjv := hinj v (by simp)
+  have hfar' : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, a p' ≤ a p) → (∀ q' ∈ Q2, b q' ≤ b q) →
+      p 2 ≠ q 2 := fun p hp q hq hpq h1 h2 =>
+    hfarZ p hp q hq hpq (fun p' hp' => by
+        rw [G2 p, G2 p']; exact mul_le_mul_of_nonpos_right (h1 p' hp') m21.le)
+      (fun q' hq' => by rw [G1 q, G1 q']; exact mul_le_mul_of_nonpos_right (h2 q' hq') m12.le)
   have hinjw := hinj w (by simp)
   have hin' : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → a y / a xa + b y / b xb < 1 := by
@@ -397,7 +409,8 @@ theorem isRupert_facets_edge_vertical_lt (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) 
       intro p q z; ext j; fin_cases j <;> simp [oblPt] <;> ring
     refine isRupert_edge_coords O r2 r1 hpos' V Q2 Q1 v w hvw b a
       (fun p _ => by rw [swap]; exact hy p) h2V h1V (by rw [Finset.inter_comm]; exact hint)
-      ha2 ha2' hb1 hb1' ⟨p2, hp2, hp21⟩ ⟨p1, hp1, hp12⟩ hcol ?_ ?_ hZ ?_
+      ha2 ha2' hb1 hb1' ⟨p2, hp2, hp21⟩ ⟨p1, hp1, hp12⟩ hcol ?_ ?_
+      (fun p hp q hq hpq h1 h2 => (hfar' q hq p hp (Ne.symm hpq) h2 h1).symm) ?_
     · intro p hp q hq e
       simp only [Prod.mk.injEq] at e
       exact hinjv hp hq (by simp only [Prod.mk.injEq]; exact ⟨e.2, e.1⟩)
@@ -408,7 +421,7 @@ theorem isRupert_facets_edge_vertical_lt (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) 
       exact ⟨xb, hxb, xa, hxa, hxb1, hxa2, fun y hy hy2 hy1 => by
         rw [add_comm]; exact h y hy hy1 hy2⟩
   · exact isRupert_edge_coords O r1 r2 hpos V Q1 Q2 v w hvw a b (fun p _ => hy p) h1V h2V hint
-      hb1 hb1' ha2 ha2' ⟨p1, hp1, hp12⟩ ⟨p2, hp2, hp21⟩ hcol hinjv hinjw hZ hin'
+      hb1 hb1' ha2 ha2' ⟨p1, hp1, hp12⟩ ⟨p2, hp2, hp21⟩ hcol hinjv hinjw hfar' hin'
 
 /-- **Lemma T over an edge, the edge vertical.** -/
 theorem isRupert_facets_edge_vertical (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : v ≠ w)
@@ -419,16 +432,18 @@ theorem isRupert_facets_edge_vertical (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hv
     (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
     (hpar : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → p 0 ≠ q 0 ∨ p 1 ≠ q 1)
-    (hZ : Set.InjOn (fun p : ℝ³ => p 2) (V : Set ℝ³))
+    (hvw2 : v 2 ≠ w 2)
+    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
+      p 2 ≠ q 2)
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V := by
   have hvi : v ∈ Q1 ∩ Q2 := by rw [hint]; simp
   have hwi : w ∈ Q1 ∩ Q2 := by rw [hint]; simp
   have hvV : v ∈ V := h1V (Finset.mem_inter.mp hvi).1
   have hwV : w ∈ V := h1V (Finset.mem_inter.mp hwi).1
-  rcases lt_or_gt_of_ne (fun h => hvw (hZ hvV hwV h)) with hlt | hgt
+  rcases lt_or_gt_of_ne hvw2 with hlt | hgt
   · exact isRupert_facets_edge_vertical_lt V Q1 Q2 v w hlt h1V h2V hint f1 f2 z1 n1 z2 n2 e1 e2
-      hne1 hne2 hcol hpar hZ hin
+      hne1 hne2 hcol hpar hfarZ hin
   · -- the line through `w` is the same vertical line
     have hw : ∀ (f : ℝ³ →ᵃ[ℝ] ℝ), f v = 0 → f (v + ez) = 0 → f w = 0 → f (w + ez) = 0 := by
       intro f h0 h1 hw0
@@ -442,12 +457,12 @@ theorem isRupert_facets_edge_vertical (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hv
     refine isRupert_facets_edge_vertical_lt V Q1 Q2 w v hgt h1V h2V
       (by rw [Finset.pair_comm]; exact hint) f1 f2 z1 n1 z2 n2
       (hw f1 (z1 v hv1) e1 (z1 w hw1)) (hw f2 (z2 v hv2) e2 (z2 w hw2)) hne1 hne2 hcol
-      (fun p hp q hq hpq h => hpar p hp q hq hpq (by rw [Finset.pair_comm v w]; exact h)) hZ hin
+      (fun p hp q hq hpq h => hpar p hp q hq hpq (by rw [Finset.pair_comm v w]; exact h)) hfarZ hin
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over an edge** for two facets `Q1`, `Q2` (functionals `f1`, `f2`)
 sharing the edge `v w`, viewed along it: no three points collinear, no other
-segment parallel to it, distinct depths along it, and every point off both
+segment parallel to it, distinct far depths along it, and every point off both
 facets inside the shadow triangle of the edge and some `xa ∈ Q1 \ Q2`,
 `xb ∈ Q2 \ Q1`. -/
 theorem isRupert_facets_edge (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : v ≠ w)
@@ -457,7 +472,8 @@ theorem isRupert_facets_edge (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : v ≠
     (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
     (hpar : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → ∀ c : ℝ, q - p ≠ c • (w - v))
-    (hZ : Set.InjOn (fun p : ℝ³ => ⟪p, w - v⟫) (V : Set ℝ³))
+    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
+      ⟪p, w - v⟫ ≠ ⟪q, w - v⟫)
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V := by
   classical
@@ -503,7 +519,7 @@ theorem isRupert_facets_edge (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : v ≠
     (allg V _ (fun p hp hq => by rw [tF1]; exact n1 p hp (fun h => hq ((memg Q1 p).mpr h))))
     (allg Q2 _ (fun p hp => by rw [tF2]; exact z2 p hp))
     (allg V _ (fun p hp hq => by rw [tF2]; exact n2 p hp (fun h => hq ((memg Q2 p).mpr h))))
-    (tz f1 (z1 v hv1) (z1 w hw1)) (tz f2 (z2 v hv2) (z2 w hw2)) ?_ ?_ ?_ ?_ ?_ ?_
+    (tz f1 (z1 v hv1) (z1 w hw1)) (tz f2 (z2 v hv2) (z2 w hw2)) ?_ ?_ ?_ ?_ ?_ ?_ ?_
   · obtain ⟨p, hp, hp2⟩ := hne1
     exact ⟨g p, Finset.mem_image_of_mem g hp, fun h => hp2 ((memg Q2 p).mp h)⟩
   · obtain ⟨p, hp, hp1⟩ := hne2
@@ -528,10 +544,18 @@ theorem isRupert_facets_edge (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : v ≠
     · simp [ez, map_sub]; linarith
     · simp [ez, map_sub]; linarith
     · simp [ez]; field_simp
-  · refine allg V _ (fun p hp => allg V _ (fun q hq => ?_))
+  · rw [hgz, hgz]
     intro h
+    have k : ⟪v, w - v⟫ = ⟪w, w - v⟫ := by simpa [hr.ne'] using h
+    have : ⟪w - v, w - v⟫ = 0 := by rw [inner_sub_left]; linarith
+    exact hvw (sub_eq_zero.mp (inner_self_eq_zero.mp this)).symm
+  · refine allg Q1 _ (fun p hp => allg Q2 _ (fun q hq => ?_))
+    intro hpq h1 h2 h
     simp only [hgz] at h
-    rw [hZ hp hq (by simpa [hr.ne'] using h)]
+    refine hfarZ p hp q hq (fun e => hpq (by rw [e])) (fun p' hp' => ?_) (fun q' hq' => ?_)
+      (by simpa [hr.ne'] using h)
+    · have := h1 (g p') (Finset.mem_image_of_mem g hp'); rwa [tF2, tF2] at this
+    · have := h2 (g q') (Finset.mem_image_of_mem g hq'); rwa [tF1, tF1] at this
   · obtain ⟨xa, hxa, xb, hxb, hxa2, hxb1, h⟩ := hin
     refine ⟨g xa, Finset.mem_image_of_mem g hxa, g xb, Finset.mem_image_of_mem g hxb,
       fun e => hxa2 ((memg Q2 xa).mp e), fun e => hxb1 ((memg Q1 xb).mp e),
@@ -539,17 +563,31 @@ theorem isRupert_facets_edge (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : v ≠
     rw [tF1, tF1, tF2, tF2]
     exact h y hy (fun h => hy1 ((memg Q1 y).mpr h)) (fun h => hy2 ((memg Q2 y).mpr h))
 
+/-- General position for Lemma T along an edge `v w` shared by two facets `Q1`,
+`Q2`: the far ends of the two faces in the shadow (the point of `Q1` where `f2`
+is least, that of `Q2` where `f1` is least) have distinct depths along the edge.
+Weaker than distinct depths on all of `V` (`EdgeFar.of_injOn`). -/
+def EdgeFar (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) : Prop :=
+  ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+    (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+    ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
+      ⟪p, w - v⟫ ≠ ⟪q, w - v⟫
+
+theorem EdgeFar.of_injOn {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
+    (h : Set.InjOn (fun p : ℝ³ => ⟪p, w - v⟫) (V : Set ℝ³)) : EdgeFar V Q1 Q2 v w :=
+  fun _ _ _ _ _ _ _ hp _ hq hpq _ _ hd => hpq (h (h1V hp) (h2V hq) hd)
+
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over an edge, facet form** (`FEWER-FACES-PROOFS.md` §7): two
 facets `Q1`, `Q2` of `V` in general position sharing exactly the edge `v w`,
-distinct depths along it, and every point off both facets inside the shadow
-triangle of the edge and some `xa ∈ Q1 \ Q2`, `xb ∈ Q2 \ Q1` (stated with any
-facet functionals `f1`, `f2`): Rupert. -/
+distinct depths along it at the far ends (`EdgeFar`), and every point off both
+facets inside the shadow triangle of the edge and some `xa ∈ Q1 \ Q2`,
+`xb ∈ Q2 \ Q1` (stated with any facet functionals `f1`, `f2`): Rupert. -/
 theorem isRupert_of_facets_edge (V : Finset ℝ³) (hgen : GenPos V)
     (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (h1f : IsFacet V Q1) (h2f : IsFacet V Q2)
     (v w : ℝ³) (hvw : v ≠ w) (hint : Q1 ∩ Q2 = {v, w})
     (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
-    (hZ : Set.InjOn (fun p : ℝ³ => ⟪p, w - v⟫) (V : Set ℝ³))
+    (hfarZ : EdgeFar V Q1 Q2 v w)
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧ ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ,
       (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
       (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
@@ -562,7 +600,8 @@ theorem isRupert_of_facets_edge (V : Finset ℝ³) (hgen : GenPos V)
   obtain ⟨f1, z1, n1⟩ := h1f
   obtain ⟨f2, z2, n2⟩ := h2f
   obtain ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩ := hin
-  refine isRupert_facets_edge V Q1 Q2 v w hvw h1V h2V hint f1 f2 z1 n1 z2 n2 hne1 hne2 ?_ ?_ hZ
+  refine isRupert_facets_edge V Q1 Q2 v w hvw h1V h2V hint f1 f2 z1 n1 z2 n2 hne1 hne2 ?_ ?_
+    (hfarZ f1 f2 z1 n1 z2 n2)
     ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin' f1 f2 z1 n1 z2 n2⟩
   · intro p hp q hq r hr hpq hpr hqr c
     exact (hgen p hp r hr p hp q hq hpr hpq (by
