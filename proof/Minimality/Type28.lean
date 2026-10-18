@@ -26,7 +26,7 @@ open scoped RealInnerProductSpace
 set_option maxHeartbeats 8000000 in
 /-- **Theorem O (type 28).** Seven labelled points in general position with
 facets `0245` (a quadrilateral), `036`, `146`, `023`, `015`, `145`, given by
-functionals negative off them, are Rupert, given `TriGen` at the lines of the planes
+functionals negative off them, are Rupert, given `TriGenFar` at the lines of the planes
 of `0245` and `146` and of `0245` and `036`. -/
 theorem isRupert_type28 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hgen : GenPos (univ.image x)) (fA fD fG fH fF fM : ℝ³ →ᵃ[ℝ] ℝ)

@@ -176,18 +176,23 @@ set_option maxHeartbeats 4000000 in
 /-- **Two quadrilateral facets sharing the vertex `0`, the line of their planes
 vertical.**  `0123` and `0456` are facets whose planes contain the vertical line
 through `y 0`; the points are extreme, no three collinear, no two vertically
-aligned, with distinct heights: Rupert. -/
-theorem isRupert_twoQuads_vertical (y : Fin 7 → ℝ³)
-    (hF1 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (y 0) = 0 ∧ f (y 0 + ez) = 0 ∧ f (y 1) = 0 ∧ f (y 2) = 0 ∧
-      f (y 3) = 0 ∧ f (y 4) < 0 ∧ f (y 5) < 0 ∧ f (y 6) < 0)
-    (hF2 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (y 0) = 0 ∧ f (y 0 + ez) = 0 ∧ f (y 4) = 0 ∧ f (y 5) = 0 ∧
-      f (y 6) = 0 ∧ f (y 1) < 0 ∧ f (y 2) < 0 ∧ f (y 3) < 0)
+aligned, with the far vertices (where `f2`, resp. `f1`, is least) at distinct
+heights: Rupert. -/
+theorem isRupert_twoQuads_vertical (y : Fin 7 → ℝ³) (f1 f2 : ℝ³ →ᵃ[ℝ] ℝ)
+    (hF1 : f1 (y 0) = 0 ∧ f1 (y 0 + ez) = 0 ∧ f1 (y 1) = 0 ∧ f1 (y 2) = 0 ∧
+      f1 (y 3) = 0 ∧ f1 (y 4) < 0 ∧ f1 (y 5) < 0 ∧ f1 (y 6) < 0)
+    (hF2 : f2 (y 0) = 0 ∧ f2 (y 0 + ez) = 0 ∧ f2 (y 4) = 0 ∧ f2 (y 5) = 0 ∧
+      f2 (y 6) = 0 ∧ f2 (y 1) < 0 ∧ f2 (y 2) < 0 ∧ f2 (y 3) < 0)
     (hext : ∀ i, y i ∉ convexHull ℝ (y '' {j | j ≠ i}))
     (hcol : ∀ i j k : Fin 7, i ≠ j → i ≠ k → j ≠ k → ∀ c : ℝ, y k - y i ≠ c • (y j - y i))
     (hpar : ∀ i j : Fin 7, i ≠ j → y i 0 ≠ y j 0 ∨ y i 1 ≠ y j 1)
-    (hZ : Function.Injective fun i => y i 2) : IsRupert (Finset.univ.image y) := by
-  obtain ⟨f1, e10, e1z, e11, e12, e13, n14, n15, n16⟩ := hF1
-  obtain ⟨f2, e20, e2z, e24, e25, e26, n21, n22, n23⟩ := hF2
+    (hfz : ∀ i j : Fin 3,
+      (∀ k, f2 (y ((![1, 2, 3] : Fin 3 → Fin 7) i)) ≤ f2 (y ((![1, 2, 3] : Fin 3 → Fin 7) k))) →
+      (∀ k, f1 (y ((![4, 5, 6] : Fin 3 → Fin 7) j)) ≤ f1 (y ((![4, 5, 6] : Fin 3 → Fin 7) k))) →
+      y ((![1, 2, 3] : Fin 3 → Fin 7) i) 2 ≠ y ((![4, 5, 6] : Fin 3 → Fin 7) j) 2) :
+    IsRupert (Finset.univ.image y) := by
+  obtain ⟨e10, e1z, e11, e12, e13, n14, n15, n16⟩ := hF1
+  obtain ⟨e20, e2z, e24, e25, e26, n21, n22, n23⟩ := hF2
   obtain ⟨K1, α1, β1, γ1, h1⟩ := affine_xyz f1
   obtain ⟨K2, α2, β2, γ2, h2⟩ := affine_xyz f2
   -- the planes are vertical
@@ -327,10 +332,24 @@ theorem isRupert_twoQuads_vertical (y : Fin 7 → ℝ³)
   rw [himg]
   nth_rewrite 1 [E0]
   rw [E1 1 b1, E1 2 b2, E1 3 b3, E2 4 a4, E2 5 a5, E2 6 a6]
-  have hz7 : Function.Injective ![y 0 2, y 1 2, y 2 2, y 3 2, y 4 2, y 5 2, y 6 2] := by
-    have : ![y 0 2, y 1 2, y 2 2, y 3 2, y 4 2, y 5 2, y 6 2] = fun i => y i 2 := by
-      funext i; fin_cases i <;> rfl
-    rw [this]; exact hZ
+  have hz7 : ∀ i j : Fin 3, (∀ k, ![a 1, a 2, a 3] k ≤ ![a 1, a 2, a 3] i) →
+      (∀ k, ![b 4, b 5, b 6] k ≤ ![b 4, b 5, b 6] j) →
+      ![y 1 2, y 2 2, y 3 2] i ≠ ![y 4 2, y 5 2, y 6 2] j := by
+    intro i j hi hj
+    have vA : ∀ k : Fin 3, ![a 1, a 2, a 3] k = a ((![1, 2, 3] : Fin 3 → Fin 7) k) := by
+      intro k; fin_cases k <;> rfl
+    have vB : ∀ k : Fin 3, ![b 4, b 5, b 6] k = b ((![4, 5, 6] : Fin 3 → Fin 7) k) := by
+      intro k; fin_cases k <;> rfl
+    have vZ : ∀ k : Fin 3, ![y 1 2, y 2 2, y 3 2] k = y ((![1, 2, 3] : Fin 3 → Fin 7) k) 2 := by
+      intro k; fin_cases k <;> rfl
+    have vW : ∀ k : Fin 3, ![y 4 2, y 5 2, y 6 2] k = y ((![4, 5, 6] : Fin 3 → Fin 7) k) 2 := by
+      intro k; fin_cases k <;> rfl
+    rw [vZ, vW]
+    refine hfz i j (fun k => ?_) (fun k => ?_)
+    · have := hi k; rw [vA, vA] at this
+      rw [G2, G2]; exact mul_le_mul_of_nonpos_right this hd2.le
+    · have := hj k; rw [vB, vB] at this
+      rw [G1, G1]; exact mul_le_mul_of_nonpos_right this hd1.le
   rcases lt_or_gt_of_ne hρ with hneg | hpos
   · -- negative orientation: exchange the two rays
     have hpos' : 0 < cross2 r2 r1 := by
@@ -338,11 +357,10 @@ theorem isRupert_twoQuads_vertical (y : Fin 7 → ℝ³)
       rw [this]; linarith
     have swap : ∀ p q z, oblPt O r2 r1 q p z = oblPt O r1 r2 p q z := by
       intro p q z; ext j; fin_cases j <;> simp [oblPt] <;> ring
-    have hz7' : Function.Injective ![y 0 2, y 4 2, y 5 2, y 6 2, y 1 2, y 2 2, y 3 2] := by
-      have : ![y 0 2, y 4 2, y 5 2, y 6 2, y 1 2, y 2 2, y 3 2] =
-          (fun i => y i 2) ∘ ![0, 4, 5, 6, 1, 2, 3] := by
-        funext i; fin_cases i <;> rfl
-      rw [this]; exact hZ.comp (by decide)
+    have hz7' : ∀ i j : Fin 3, (∀ k, ![b 4, b 5, b 6] k ≤ ![b 4, b 5, b 6] i) →
+        (∀ k, ![a 1, a 2, a 3] k ≤ ![a 1, a 2, a 3] j) →
+        ![y 4 2, y 5 2, y 6 2] i ≠ ![y 1 2, y 2 2, y 3 2] j :=
+      fun i j hi hj => (hz7 j i hj hi).symm
     have key := isRupert_twoQuads_frame O r2 r1 hpos' pb4 pb5 pb6 pa1 pa2 pa3 hQ2 hQ1
       (dB 4 5 (by decide) a4 a5) (dB 4 6 (by decide) a4 a6) (dB 5 6 (by decide) a5 a6)
       (dA 1 2 (by decide) b1 b2) (dA 1 3 (by decide) b1 b3) (dA 2 3 (by decide) b2 b3) hz7'
@@ -371,16 +389,21 @@ set_option maxHeartbeats 4000000 in
 /-- **Corollary T1 for two quadrilateral facets sharing a vertex.**  `0123` and
 `0456` are facets of the seven extreme points `x`, `e ≠ 0` spans the line of
 their planes, no three points are collinear, no segment is parallel to `e`, and
-the depths along `e` are distinct: Rupert. -/
-theorem isRupert_twoQuads (x : Fin 7 → ℝ³) (e : ℝ³) (he : e ≠ 0)
-    (hF1 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (x 0) = 0 ∧ f (x 0 + e) = 0 ∧ f (x 1) = 0 ∧ f (x 2) = 0 ∧
-      f (x 3) = 0 ∧ f (x 4) < 0 ∧ f (x 5) < 0 ∧ f (x 6) < 0)
-    (hF2 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (x 0) = 0 ∧ f (x 0 + e) = 0 ∧ f (x 4) = 0 ∧ f (x 5) = 0 ∧
-      f (x 6) = 0 ∧ f (x 1) < 0 ∧ f (x 2) < 0 ∧ f (x 3) < 0)
+the far vertices (where `f2`, resp. `f1`, is least) have distinct depths along
+`e`: Rupert. -/
+theorem isRupert_twoQuads (x : Fin 7 → ℝ³) (e : ℝ³) (he : e ≠ 0) (f1 f2 : ℝ³ →ᵃ[ℝ] ℝ)
+    (hF1 : f1 (x 0) = 0 ∧ f1 (x 0 + e) = 0 ∧ f1 (x 1) = 0 ∧ f1 (x 2) = 0 ∧
+      f1 (x 3) = 0 ∧ f1 (x 4) < 0 ∧ f1 (x 5) < 0 ∧ f1 (x 6) < 0)
+    (hF2 : f2 (x 0) = 0 ∧ f2 (x 0 + e) = 0 ∧ f2 (x 4) = 0 ∧ f2 (x 5) = 0 ∧
+      f2 (x 6) = 0 ∧ f2 (x 1) < 0 ∧ f2 (x 2) < 0 ∧ f2 (x 3) < 0)
     (hext : ∀ i, x i ∉ convexHull ℝ (x '' {j | j ≠ i}))
     (hcol : ∀ i j k : Fin 7, i ≠ j → i ≠ k → j ≠ k → ∀ c : ℝ, x k - x i ≠ c • (x j - x i))
     (hpar : ∀ i j : Fin 7, i ≠ j → ∀ c : ℝ, x j - x i ≠ c • e)
-    (hZ : Function.Injective fun i => ⟪x i, e⟫) : IsRupert (Finset.univ.image x) := by
+    (hfz : ∀ i j : Fin 3,
+      (∀ k, f2 (x ((![1, 2, 3] : Fin 3 → Fin 7) i)) ≤ f2 (x ((![1, 2, 3] : Fin 3 → Fin 7) k))) →
+      (∀ k, f1 (x ((![4, 5, 6] : Fin 3 → Fin 7) j)) ≤ f1 (x ((![4, 5, 6] : Fin 3 → Fin 7) k))) →
+      ⟪x ((![1, 2, 3] : Fin 3 → Fin 7) i), e⟫ ≠ ⟪x ((![4, 5, 6] : Fin 3 → Fin 7) j), e⟫) :
+    IsRupert (Finset.univ.image x) := by
   classical
   obtain ⟨R, hR, r, hr, hRe⟩ := exists_rotation_to_ez_pos e he
   apply isRupert_of_isRupert_image_rotation R hR
@@ -406,15 +429,15 @@ theorem isRupert_twoQuads (x : Fin 7 → ℝ³) (e : ℝ³) (he : e ≠ 0)
         f (x 0 + r⁻¹ • e) := by
       simp [hgI, map_add, hIe]
     rw [this]; exact affine_zero_line f h0 h1 _
-  obtain ⟨f1, e10, e1e, e11, e12, e13, n14, n15, n16⟩ := hF1
-  obtain ⟨f2, e20, e2e, e24, e25, e26, n21, n22, n23⟩ := hF2
+  obtain ⟨e10, e1e, e11, e12, e13, n14, n15, n16⟩ := hF1
+  obtain ⟨e20, e2e, e24, e25, e26, n21, n22, n23⟩ := hF2
   obtain ⟨f1', hf1', hz1⟩ := tr f1 e10 e1e
   obtain ⟨f2', hf2', hz2⟩ := tr f2 e20 e2e
-  refine isRupert_twoQuads_vertical (fun i => g (x i)) ?_ ?_ ?_ ?_ ?_ ?_
-  · exact ⟨f1', by rw [hf1']; exact e10, hz1, by rw [hf1']; exact e11, by rw [hf1']; exact e12,
+  refine isRupert_twoQuads_vertical (fun i => g (x i)) f1' f2' ?_ ?_ ?_ ?_ ?_ ?_
+  · exact ⟨by rw [hf1']; exact e10, hz1, by rw [hf1']; exact e11, by rw [hf1']; exact e12,
       by rw [hf1']; exact e13, by rw [hf1']; exact n14, by rw [hf1']; exact n15,
       by rw [hf1']; exact n16⟩
-  · exact ⟨f2', by rw [hf2']; exact e20, hz2, by rw [hf2']; exact e24, by rw [hf2']; exact e25,
+  · exact ⟨by rw [hf2']; exact e20, hz2, by rw [hf2']; exact e24, by rw [hf2']; exact e25,
       by rw [hf2']; exact e26, by rw [hf2']; exact n21, by rw [hf2']; exact n22,
       by rw [hf2']; exact n23⟩
   · intro i hmem
@@ -438,14 +461,16 @@ theorem isRupert_twoQuads (x : Fin 7 → ℝ³) (e : ℝ³) (he : e ≠ 0)
     · simp [ez, map_sub]; linarith
     · simp [ez, map_sub]; linarith
     · simp [ez]; field_simp
-  · intro i j hij
-    apply hZ
-    simp only [hgz] at hij
-    simpa [hr.ne'] using hij
+  · intro i j hi hj h
+    refine hfz i j (fun k => ?_) (fun k => ?_) ?_
+    · simpa only [hf2'] using hi k
+    · simpa only [hf1'] using hj k
+    · simp only [hgz] at h; simpa [hr.ne'] using h
 
 /-! ### Facet-level statement -/
 
-/-- General position for Corollary T1 at two facets `Q1`, `Q2` meeting in `v`:
+/-- Strong general position at two facets `Q1`, `Q2` meeting in `v` (all depths
+distinct; the theorems use the weaker `TriGenFar`, see `TriGen.far`):
 for the line of their planes (any direction `e ≠ 0` along which supporting
 functionals of both vanish from `v`), no segment of `V` is parallel to it and the
 depths along it are distinct. -/
@@ -456,16 +481,35 @@ def TriGen (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
       (∀ p ∈ V, ∀ q ∈ V, p ≠ q → ∀ c : ℝ, q - p ≠ c • e) ∧
       Set.InjOn (fun p : ℝ³ => ⟪p, e⟫) (V : Set ℝ³)
 
+/-- General position for Lemma T at the line of the planes of two facets `Q1`,
+`Q2` (through `v`): no segment between points of `V` is parallel to the line,
+and the far ends of the two faces in the shadow (the point of `Q1` where `f2`
+is least, the point of `Q2` where `f1` is least) have distinct depths along it.
+Weaker than `TriGen` (`TriGen.far`). -/
+def TriGenFar (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
+  ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+    (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+    ∀ e : ℝ³, e ≠ 0 → f1 (v + e) = 0 → f2 (v + e) = 0 →
+      (∀ p ∈ V, ∀ q ∈ V, p ≠ q → ∀ c : ℝ, q - p ≠ c • e) ∧
+      ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
+        ⟪p, e⟫ ≠ ⟪q, e⟫
+
+theorem TriGen.far {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
+    (h : TriGen V Q1 Q2 v) : TriGenFar V Q1 Q2 v := by
+  intro f1 f2 z1 n1 z2 n2 e he e1 e2
+  obtain ⟨hpar, hZ⟩ := h f1 f2 z1 n1 z2 n2 e he e1 e2
+  exact ⟨hpar, fun p hp q hq hpq _ _ hd => hpq (hZ (h1V hp) (h2V hq) hd)⟩
+
 set_option maxHeartbeats 4000000 in
 /-- **Two quadrilateral facets sharing one vertex** (Corollary T1 of
 `FEWER-FACES-PROOFS.md` §7): seven extreme points in general position with two
 quadrilateral facets meeting in a single vertex (so covering all seven points)
-are Rupert, given `TriGen` at the line of the two planes. -/
+are Rupert, given `TriGenFar` at the line of the two planes. -/
 theorem isRupert_of_two_quad_facets_vertex (V : Finset ℝ³) (hV : V.card = 7)
     (hext : ∀ y ∈ V, y ∉ convexHull ℝ ((V.erase y : Finset ℝ³) : Set ℝ³)) (hgen : GenPos V)
     (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (h1c : Q1.card = 4) (h2c : Q2.card = 4)
     (h1f : IsFacet V Q1) (h2f : IsFacet V Q2) (v : ℝ³) (hint : Q1 ∩ Q2 = {v})
-    (hT : TriGen V Q1 Q2 v) : IsRupert V := by
+    (hT : TriGenFar V Q1 Q2 v) : IsRupert V := by
   classical
   -- the two quadrilaterals cover `V`
   have hcov : Q1 ∪ Q2 = V := by
@@ -549,16 +593,16 @@ theorem isRupert_of_two_quad_facets_vertex (V : Finset ℝ³) (hV : V.card = 7)
         ((x 1 0 - v 0) * (x 4 2 - v 2) - (x 1 2 - v 2) * (x 4 0 - v 0)) * c1
     have hn1 : f1 (x 4) < 0 := n1 (x 4) (hxV 4) (by rw [hxQ1]; decide)
     nlinarith
-  obtain ⟨hpar, hZ⟩ := hT f1 f2 z1 n1 z2 n2 e hne e1 e2
+  obtain ⟨hpar, hfarZ⟩ := hT f1 f2 z1 n1 z2 n2 e hne e1 e2
   rw [← himg]
-  refine isRupert_twoQuads x e hne ?_ ?_ ?_ ?_ ?_ ?_
-  · refine ⟨f1, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine isRupert_twoQuads x e hne f1 f2 ?_ ?_ ?_ ?_ ?_ ?_
+  · refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
     · rw [hx0]; exact z1 v hv1
     · rw [hx0]; exact e1
     all_goals first
       | exact z1 _ ((hxQ1 _).mpr (by decide))
       | exact n1 _ (hxV _) (by rw [hxQ1]; decide)
-  · refine ⟨f2, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
     · rw [hx0]; exact z2 v hv2
     · rw [hx0]; exact e2
     all_goals first
@@ -586,8 +630,35 @@ theorem isRupert_of_two_quad_facets_vertex (V : Finset ℝ³) (hV : V.card = 7)
         · exact hjk (hxinj h').symm)).1 c)
   · intro i j hij c
     exact hpar (x i) (hxV i) (x j) (hxV j) (fun h => hij (hxinj h)) c
-  · intro i j h
-    exact hxinj (hZ (hxV i) (hxV j) h)
+  · intro i j hi hj h
+    have hIQ1 : ∀ i : Fin 3, x ((![1, 2, 3] : Fin 3 → Fin 7) i) ∈ Q1 := by
+      intro i; fin_cases i <;> exact (hxQ1 _).mpr (by decide)
+    have hJQ2 : ∀ j : Fin 3, x ((![4, 5, 6] : Fin 3 → Fin 7) j) ∈ Q2 := by
+      intro j; fin_cases j <;> exact hxQ2 _ (by decide)
+    have ofV : ∀ p ∈ V, ∃ m, x m = p := by
+      intro p hp; rw [← himg] at hp; obtain ⟨m, -, hm⟩ := Finset.mem_image.mp hp; exact ⟨m, hm⟩
+    have f20 : f2 (x 0) = 0 := by rw [hx0]; exact z2 v hv2
+    have f10 : f1 (x 0) = 0 := by rw [hx0]; exact z1 v hv1
+    refine hfarZ _ (hIQ1 i) _ (hJQ2 j) ?_ ?_ ?_ h
+    · intro e'
+      apply hxnQ2 ((![1, 2, 3] : Fin 3 → Fin 7) i) (by fin_cases i <;> decide) (by fin_cases i <;> decide)
+      rw [e']; exact hJQ2 j
+    · intro p' hp'
+      obtain ⟨m, rfl⟩ := ofV p' (h1V hp')
+      have hm4 : m.val < 4 := (hxQ1 m).mp hp'
+      have hc : ∀ m : Fin 7, m.val < 4 → m = 0 ∨ ∃ k : Fin 3, m = (![1, 2, 3] : Fin 3 → Fin 7) k := by decide
+      rcases hc m hm4 with rfl | ⟨k, rfl⟩
+      · rw [f20]
+        exact (n2 _ (hxV _) (hxnQ2 _ (by fin_cases i <;> decide) (by fin_cases i <;> decide))).le
+      · exact hi k
+    · intro q' hq'
+      obtain ⟨m, rfl⟩ := ofV q' (h2V hq')
+      have hc : ∀ m : Fin 7, m = 0 ∨ (m ≠ 0 ∧ m.val < 4) ∨ ∃ k : Fin 3, m = (![4, 5, 6] : Fin 3 → Fin 7) k := by decide
+      rcases hc m with rfl | ⟨h0, h4⟩ | ⟨k, rfl⟩
+      · rw [f10]
+        exact (n1 _ (hxV _) (by rw [hxQ1]; fin_cases j <;> decide)).le
+      · exact absurd hq' (hxnQ2 m h0 h4)
+      · exact hj k
 
 /-- `isRupert_of_two_quad_facets_vertex` for a solid hull, without assuming
 that all seven points are extreme. -/
@@ -595,7 +666,7 @@ theorem isRupert_of_two_quad_facets_vertex_solid (V : Finset ℝ³) (hV : V.card
     (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) (hgen : GenPos V)
     (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (h1c : Q1.card = 4) (h2c : Q2.card = 4)
     (h1f : IsFacet V Q1) (h2f : IsFacet V Q2) (v : ℝ³) (hint : Q1 ∩ Q2 = {v})
-    (hT : TriGen V Q1 Q2 v) : IsRupert V := by
+    (hT : TriGenFar V Q1 Q2 v) : IsRupert V := by
   classical
   by_cases hext : ∃ x ∈ V, x ∈ convexHull ℝ ((V.erase x : Finset ℝ³) : Set ℝ³)
   · obtain ⟨x, hx, hxh⟩ := hext

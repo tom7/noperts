@@ -131,8 +131,9 @@ theorem isFacet_of_index (x : Fin 7 → ℝ³) (P : Finset (Fin 7)) (f : ℝ³ �
 set_option maxHeartbeats 4000000 in
 /-- **Theorem E (type 10, the capped frustum).** Seven labelled points in general
 position with facets `1245, 1346, 2356` (the side quadrilaterals) and `023`
-(a cap triangle), given by functionals negative off them, are Rupert, given distinct depths along `14` and
-`TriGen` at the line of the planes of `023` and `1245`. -/
+(a cap triangle), given by functionals negative off them, are Rupert, given
+distinct far depths along `14` (`EdgeFar`) and `TriGenFar` at the line of the
+planes of `023` and `1245`. -/
 theorem isRupert_type10 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hgen : GenPos (univ.image x)) (fA fB fC fD : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({1, 2, 4, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧

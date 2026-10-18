@@ -241,49 +241,61 @@ set_option maxHeartbeats 4000000 in
 /-- **Two quadrilaterals sharing the apex, in the oblique frame.**  The apex
 `(0, 0, z0)`, the quadrilateral `0, 1, 2, 3` on the first ray (oblique
 coordinates `(a_i, 0, z_i)`) and `0, 1′, 2′, 3′` on the second (`(0, b_j, w_j)`),
-each convex in its plane (any labelling) with distinct positive `t`, and
-seven distinct depths: Rupert (Corollary T1 of `FEWER-FACES-PROOFS.md` §7). -/
+each convex in its plane (any labelling) with distinct positive `t`, and the far
+vertices (largest `a`, largest `b`) at distinct depths: Rupert (Corollary T1 of
+`FEWER-FACES-PROOFS.md` §7). -/
 theorem isRupert_twoQuads_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
     {z0 a1 z1 a2 z2 a3 z3 b1 w1 b2 w2 b3 w3 : ℝ}
     (ha1 : 0 < a1) (ha2 : 0 < a2) (ha3 : 0 < a3) (hb1 : 0 < b1) (hb2 : 0 < b2) (hb3 : 0 < b3)
     (hQ1 : ConvQuad6 z0 a1 z1 a2 z2 a3 z3) (hQ2 : ConvQuad6 z0 b1 w1 b2 w2 b3 w3)
     (ha12 : a1 ≠ a2) (ha13 : a1 ≠ a3) (ha23 : a2 ≠ a3)
     (hb12 : b1 ≠ b2) (hb13 : b1 ≠ b3) (hb23 : b2 ≠ b3)
-    (hz : Function.Injective ![z0, z1, z2, z3, w1, w2, w3]) :
+    (hfz : ∀ i j : Fin 3, (∀ k, ![a1, a2, a3] k ≤ ![a1, a2, a3] i) →
+      (∀ k, ![b1, b2, b3] k ≤ ![b1, b2, b3] j) → ![z1, z2, z3] i ≠ ![w1, w2, w3] j) :
     IsRupert ({oblPt O r1 r2 0 0 z0, oblPt O r1 r2 a1 0 z1, oblPt O r1 r2 a2 0 z2,
       oblPt O r1 r2 a3 0 z3, oblPt O r1 r2 0 b1 w1, oblPt O r1 r2 0 b2 w2,
       oblPt O r1 r2 0 b3 w3} : Finset ℝ³) := by
   set Q1 := QuadPt z0 a1 z1 a2 z2 a3 z3 with hQ1def
   set Q2 := QuadPt z0 b1 w1 b2 w2 b3 w3 with hQ2def
-  -- distinct depths, as equalities between entries
-  have zne : ∀ i j : Fin 7, i ≠ j → ![z0, z1, z2, z3, w1, w2, w3] i ≠ ![z0, z1, z2, z3, w1, w2, w3] j :=
-    fun i j h e => h (hz e)
   -- the far points (from the upper chains)
   obtain ⟨m0, ca0, cz0, C10⟩ := quad_chain6 ha1 ha2 ha3 hQ1 ha12 ha13 ha23 1 (Or.inl rfl)
   obtain ⟨n0, cb0, dz0, C20⟩ := quad_chain6 hb1 hb2 hb3 hQ2 hb12 hb13 hb23 1 (Or.inl rfl)
-  -- distinct depths between the two rays
-  have n14 : z1 ≠ w1 := fun h => absurd (hz (a₁ := 1) (a₂ := 4) (by simp [h])) (by decide)
-  have n15 : z1 ≠ w2 := fun h => absurd (hz (a₁ := 1) (a₂ := 5) (by simp [h])) (by decide)
-  have n16 : z1 ≠ w3 := fun h => absurd (hz (a₁ := 1) (a₂ := 6) (by simp [h])) (by decide)
-  have n24 : z2 ≠ w1 := fun h => absurd (hz (a₁ := 2) (a₂ := 4) (by simp [h])) (by decide)
-  have n25 : z2 ≠ w2 := fun h => absurd (hz (a₁ := 2) (a₂ := 5) (by simp [h])) (by decide)
-  have n26 : z2 ≠ w3 := fun h => absurd (hz (a₁ := 2) (a₂ := 6) (by simp [h])) (by decide)
-  have n34 : z3 ≠ w1 := fun h => absurd (hz (a₁ := 3) (a₂ := 4) (by simp [h])) (by decide)
-  have n35 : z3 ≠ w2 := fun h => absurd (hz (a₁ := 3) (a₂ := 5) (by simp [h])) (by decide)
-  have n36 : z3 ≠ w3 := fun h => absurd (hz (a₁ := 3) (a₂ := 6) (by simp [h])) (by decide)
   -- the far depths differ
+  have maxA : ∀ k : Fin 3, ![a1, a2, a3] k ≤ ca0 m0 := by
+    intro k
+    have hk : Q1 (![a1, a2, a3] k) (![z1, z2, z3] k) := by
+      fin_cases k <;> simp [hQ1def, QuadPt]
+    by_cases e : ![a1, a2, a3] k = ca0 m0 ∧ ![z1, z2, z3] k = cz0 m0
+    · exact e.1.le
+    · exact (C10.far _ _ hk e).le
+  have maxB : ∀ k : Fin 3, ![b1, b2, b3] k ≤ cb0 n0 := by
+    intro k
+    have hk : Q2 (![b1, b2, b3] k) (![w1, w2, w3] k) := by
+      fin_cases k <;> simp [hQ2def, QuadPt]
+    by_cases e : ![b1, b2, b3] k = cb0 n0 ∧ ![w1, w2, w3] k = dz0 n0
+    · exact e.1.le
+    · exact (C20.far _ _ hk e).le
   have hfar : cz0 m0 ≠ dz0 n0 := by
     have hA := C10.mem m0 le_rfl
     have hB := C20.mem n0 le_rfl
     have hA0 := C10.far_pos
     have hB0 := C20.far_pos
-    simp only [QuadPt] at hA hB
-    rcases hA with ⟨e, -⟩ | ⟨-, e1⟩ | ⟨-, e1⟩ | ⟨-, e1⟩
-    · linarith
-    all_goals rcases hB with ⟨e, -⟩ | ⟨-, e2⟩ | ⟨-, e2⟩ | ⟨-, e2⟩
-    all_goals first
-      | linarith
-      | (rwa [e1, e2])
+    obtain ⟨i, ei1, ei2⟩ : ∃ i : Fin 3, ca0 m0 = ![a1, a2, a3] i ∧ cz0 m0 = ![z1, z2, z3] i := by
+      simp only [hQ1def, QuadPt] at hA
+      rcases hA with ⟨e, -⟩ | ⟨e1, e2⟩ | ⟨e1, e2⟩ | ⟨e1, e2⟩
+      · linarith
+      · exact ⟨0, e1, e2⟩
+      · exact ⟨1, e1, e2⟩
+      · exact ⟨2, e1, e2⟩
+    obtain ⟨j, ej1, ej2⟩ : ∃ j : Fin 3, cb0 n0 = ![b1, b2, b3] j ∧ dz0 n0 = ![w1, w2, w3] j := by
+      simp only [hQ2def, QuadPt] at hB
+      rcases hB with ⟨e, -⟩ | ⟨e1, e2⟩ | ⟨e1, e2⟩ | ⟨e1, e2⟩
+      · linarith
+      · exact ⟨0, e1, e2⟩
+      · exact ⟨1, e1, e2⟩
+      · exact ⟨2, e1, e2⟩
+    rw [ei2, ej2]
+    exact hfz i j (fun k => ei1 ▸ maxA k) (fun k => ej1 ▸ maxB k)
   set s : ℝ := if dz0 n0 < cz0 m0 then 1 else -1 with hsdef
   have hs : s = 1 ∨ s = -1 := by rw [hsdef]; split_ifs <;> simp
   have hs' : -s = 1 ∨ -s = -1 := by rcases hs with h | h <;> rw [h] <;> simp

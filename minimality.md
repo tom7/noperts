@@ -53,8 +53,8 @@ through a copy of itself):
   the planes of the two faces cross, the shadow is a triangle, and a
   slightly tilted view has a silhouette with one deepest and one
   shallowest point, which gives a passage. (This also needs general
-  position at that line: no segment parallel to it, distinct depths along
-  it.)
+  position at that line: no segment parallel to it, and the two far
+  corners of the triangle at different depths.)
 - more generally, in a nopert in general position, two faces of any size
   that meet in a single point never leave all the other points strictly
   inside the triangle shadow of that view

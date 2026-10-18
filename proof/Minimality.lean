@@ -103,12 +103,13 @@ theorem not_four_quad_facets_of_isNopert (V : Finset ℝ³) (h : IsNopert V) (hV
 triangle-shadow lemma, `FEWER-FACES-PROOFS.md` §7; types 02, 07, 09, 14, 18, 20):
 a 7-point nopert in general position has no two quadrilateral facets meeting in a
 single vertex, given general position at the line of their planes
-(`Minimality.TriGen`: no segment parallel to it, distinct depths along it). -/
+(`Minimality.TriGenFar`: no segment parallel to it, distinct depths along it at
+the two far vertices). -/
 theorem not_two_quad_facets_vertex_of_isNopert (V : Finset ℝ³) (h : IsNopert V)
     (hV : V.card = 7) (hgen : Minimality.GenPos V) (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V)
     (h2V : Q2 ⊆ V) (h1c : Q1.card = 4) (h2c : Q2.card = 4) (h1f : Minimality.IsFacet V Q1)
     (h2f : Minimality.IsFacet V Q2) (v : ℝ³) (hint : Q1 ∩ Q2 = {v})
-    (hT : Minimality.TriGen V Q1 Q2 v) : False :=
+    (hT : Minimality.TriGenFar V Q1 Q2 v) : False :=
   h.2 (Minimality.isRupert_of_two_quad_facets_vertex_solid V hV
     ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1) hgen Q1 Q2 h1V h2V h1c h2c h1f h2f
     v hint hT)

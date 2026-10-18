@@ -247,7 +247,7 @@ set_option maxHeartbeats 8000000 in
 /-- **Theorem L (type 26).** Seven labelled points in general position with
 facets `0246` (a quadrilateral), `034`, `235`, `136`, `013`, `016`, `245`, `345`,
 given by functionals negative off them, are Rupert, given
-distinct depths along `04` and `TriGen` at the lines of the planes of `0246`
+distinct far depths along `04` (`EdgeFar`) and `TriGenFar` at the lines of the planes of `0246`
 and `235` and of `0246` and `136`. -/
 theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hgen : GenPos (univ.image x)) (fA fT fG fH fU fW fY fZ : ℝ³ →ᵃ[ℝ] ℝ)

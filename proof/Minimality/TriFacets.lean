@@ -429,25 +429,6 @@ theorem isRupert_facets_vertex (V Q1 Q2 : Finset ℝ³) (v : ℝ³)
     rw [tF1, tF1, tF2, tF2]
     exact h y hy (fun h => hy1 ((memg Q1 y).mpr h)) (fun h => hy2 ((memg Q2 y).mpr h))
 
-/-- General position for Lemma T at the line of the planes of two facets `Q1`,
-`Q2` (through `v`): no segment between points of `V` is parallel to the line,
-and the far ends of the two faces in the shadow (the point of `Q1` where `f2`
-is least, the point of `Q2` where `f1` is least) have distinct depths along it.
-Weaker than `TriGen` (`TriGen.far`). -/
-def TriGenFar (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
-  ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
-    (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
-    ∀ e : ℝ³, e ≠ 0 → f1 (v + e) = 0 → f2 (v + e) = 0 →
-      (∀ p ∈ V, ∀ q ∈ V, p ≠ q → ∀ c : ℝ, q - p ≠ c • e) ∧
-      ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
-        ⟪p, e⟫ ≠ ⟪q, e⟫
-
-theorem TriGen.far {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
-    (h : TriGen V Q1 Q2 v) : TriGenFar V Q1 Q2 v := by
-  intro f1 f2 z1 n1 z2 n2 e he e1 e2
-  obtain ⟨hpar, hZ⟩ := h f1 f2 z1 n1 z2 n2 e he e1 e2
-  exact ⟨hpar, fun p hp q hq hpq _ _ hd => hpq (hZ (h1V hp) (h2V hq) hd)⟩
-
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over a vertex, facet form** (`FEWER-FACES-PROOFS.md` §7): two
 facets `Q1`, `Q2` of `V` in general position meeting in the single vertex `v`,

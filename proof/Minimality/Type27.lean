@@ -27,8 +27,8 @@ open scoped RealInnerProductSpace
 set_option maxHeartbeats 8000000 in
 /-- **Theorem I (type 27).** Seven labelled points in general position with
 facets `2356` (a quadrilateral), `025`, `016`, `046`, `045`, `012`, `456`, given
-by functionals negative off them, are Rupert, given distinct depths along `25` and
-`TriGen` at the lines of the planes of `016` and `2356` and of `025` and
+by functionals negative off them, are Rupert, given distinct far depths along `25` (`EdgeFar`) and
+`TriGenFar` at the lines of the planes of `016` and `2356` and of `025` and
 `046`. -/
 theorem isRupert_type27 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hgen : GenPos (univ.image x)) (fB fD fE fG fH fI fJ : ℝ³ →ᵃ[ℝ] ℝ)

@@ -160,22 +160,21 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   (`isRupert_of_tilted_localMax`); only the far ends must differ.
 * `isRupert_twoQuads_frame` (`TriQuad.lean`): two quadrilaterals sharing the
   apex, one on each ray, each convex in its `(t, z)`-plane (either
-  orientation), distinct positive `t` on each, seven distinct depths: Rupert.
+  orientation), distinct positive `t` on each, the far vertices (largest `t`
+  on each ray) at distinct depths: Rupert.
   `quad_chain` gives the upper and lower chains of a convex quadrilateral seen
   from a vertex (six cases plus relabelling).
 * At the entry point, `not_two_quad_facets_vertex_of_isNopert`: a 7-point
   nopert in general position (`GenPos`) has no two quadrilateral facets meeting
-  in a single vertex, given `TriGen` (no segment parallel to the line of the two
-  planes, distinct depths along it). This excludes types 02, 07, 09, 14, 18, 20
+  in a single vertex, given `TriGenFar` (no segment parallel to the line of the
+  two planes, distinct depths along it at the two far vertices). This excludes types 02, 07, 09, 14, 18, 20
   in general position. Via `isRupert_of_two_quad_facets_vertex` (enumeration,
   the line `e = n1 × n2`), `isRupert_twoQuads` (rotation of `e` to `ez`),
   `isRupert_twoQuads_vertical` (oblique frame by Cramer, each quadrilateral's
   convex labelling by `convex_four` from extremality), and the frame theorem.
 * At the entry point, `not_facets_vertex_triShadow_of_isNopert`: Lemma T at a
   vertex for any two facets (any number of points each) meeting in a single
-  vertex `v`, with `TriGenFar` (no segment parallel to the line of the two
-  planes, and distinct depths along it at the two far ends; weaker than
-  `TriGen`, `TriGen.far`): a nopert in general position never has every point
+  vertex `v`, with `TriGenFar` (as above): a nopert in general position never has every point
   off both facets strictly inside the shadow triangle of `v` and points `xa`,
   `xb` of the facets (barycentric form `f2 y / f2 xa + f1 y / f1 xb < 1` with the
   facet functionals). Extreme points are not needed. Via
@@ -355,7 +354,7 @@ In import order.
 | `TriFacesChord` | L13, Lemma T′ from the faces' chains: one point on the far side | `isRupert_vertex_frame_chord`, `edge_core_chord`, `isRupert_edge_frame_chord` |
 | `TriQuad` | L13, chains of quadrilaterals and triangles from a vertex or along an edge; two quadrilaterals sharing a vertex (Corollary T1), oblique frame | `quad_chain`, `chainOK_edge_p_up`, `tri_chain`, `triE_chain`, `ChainOK.far_eq`, `isRupert_twoQuads_frame` |
 | `HullChain` | L13, upper and lower chains of any finite point set with distinct `t` and no three collinear (gift wrapping), also with two points over the apex | `ChainFrom`, `exists_chainFrom`, `exists_chainOK`, `exists_chainOK_edge` |
-| `TriFacets` | L13, Lemma T at a vertex for any two facets, with interior points: frame, vertical, rotated, facet form | `isRupert_vertex_coords`, `isRupert_facets_vertex_vertical`, `isRupert_facets_vertex`, `TriGenFar`, `TriGen.far`, `isRupert_of_facets_vertex` |
+| `TriFacets` | L13, Lemma T at a vertex for any two facets, with interior points: frame, vertical, rotated, facet form | `isRupert_vertex_coords`, `isRupert_facets_vertex_vertical`, `isRupert_facets_vertex`, `isRupert_of_facets_vertex` |
 | `TriFacetsChord` | L13, Lemma T′ at a vertex for any two facets (one off point on the far side): frame, vertical, rotated, facet form | `isRupert_vertex_coords_chord`, `isRupert_facets_vertex_vertical_chord`, `isRupert_facets_vertex_chord`, `isRupert_of_facets_vertex_chord` |
 | `TriFacetsEdge` | L13, Lemma T over an edge for any two facets, with interior points: frame, vertical, rotated, facet form | `orient_ne_of_frame1'`, `isRupert_edge_coords`, `isRupert_facets_edge_vertical`, `isRupert_facets_edge`, `EdgeFar`, `EdgeFar.of_injOn`, `isRupert_of_facets_edge` |
 | `Type10` | L13, Theorem E (type 10) from Lemma T by facet-functional coordinates; Cramer for affine functionals, proportional functionals | `affine_cramer`, `affine_vanish3`, `vanish3_ratio`, `isFacet_of_index`, `isRupert_type10` |
@@ -370,7 +369,7 @@ In import order.
 | `Type22` | L13, Theorem N (type 22), same method | `isRupert_type22` |
 | `Type28` | L13, Theorem O (type 28), same method | `isRupert_type28` |
 | `Type05` | L13, type 05 by Lemma T (facet level), same method | `isRupert_type05_facets` |
-| `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `isRupert_of_two_quad_facets_vertex` |
+| `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `TriGenFar`, `TriGen.far`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices
 

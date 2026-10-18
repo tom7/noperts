@@ -26,7 +26,7 @@ open scoped RealInnerProductSpace
 set_option maxHeartbeats 8000000 in
 /-- **Theorem N (type 22).** Seven labelled points in general position with
 facets `0134` (a quadrilateral), `125`, `246`, `146`, `256`, given by
-functionals negative off them, are Rupert, given `TriGen` at the lines of the planes
+functionals negative off them, are Rupert, given `TriGenFar` at the lines of the planes
 of `125` and `246` and of `0134` and `246`. -/
 theorem isRupert_type22 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hgen : GenPos (univ.image x)) (fA fD fG fN fI : ℝ³ →ᵃ[ℝ] ℝ)
