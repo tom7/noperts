@@ -14,6 +14,7 @@ public import Minimality.Type27
 public import Minimality.Type23
 public import Minimality.Type25
 public import Minimality.Type26
+public import Minimality.Type12
 
 /-!
 # Every nopert has at least 7 points
@@ -365,6 +366,32 @@ theorem not_type26_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6)) : False :=
   h.2 (Minimality.isRupert_type26 x hx hgen fA fT fG fH fU fW fY fZ hA hT hG hH hU hW hY hZ hs2
     hs6 hZ1 hT2 hT6)
+
+/-- **Type 12** (Theorem M of `FEWER-FACES-PROOFS.md` §7): a nopert in general
+position does not have seven points labelled so that `0135`, `0346`
+(quadrilaterals), `024`, `236` and `246` are facets (given by functionals
+negative off them), unless `fD x6 / fD x3 + fA x6 / fA x2 = 1`; general position
+includes `Minimality.TriGen` at the lines of the planes of `0135` and `024`
+and of `024` and `236`. -/
+theorem not_type12_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
+    (hx : Function.Injective x) (hgen : Minimality.GenPos (Finset.univ.image x))
+    (fA fB fD fG fJ : ℝ³ →ᵃ[ℝ] ℝ)
+    (hA : ∀ i, (i ∈ ({0, 1, 3, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
+      (i ∉ ({0, 1, 3, 5} : Finset (Fin 7)) → fA (x i) < 0))
+    (hB : ∀ i, (i ∈ ({0, 3, 4, 6} : Finset (Fin 7)) → fB (x i) = 0) ∧
+      (i ∉ ({0, 3, 4, 6} : Finset (Fin 7)) → fB (x i) < 0))
+    (hD : ∀ i, (i ∈ ({0, 2, 4} : Finset (Fin 7)) → fD (x i) = 0) ∧
+      (i ∉ ({0, 2, 4} : Finset (Fin 7)) → fD (x i) < 0))
+    (hG : ∀ i, (i ∈ ({2, 3, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
+      (i ∉ ({2, 3, 6} : Finset (Fin 7)) → fG (x i) < 0))
+    (hJ : ∀ i, (i ∈ ({2, 4, 6} : Finset (Fin 7)) → fJ (x i) = 0) ∧
+      (i ∉ ({2, 4, 6} : Finset (Fin 7)) → fJ (x i) < 0))
+    (hs : fD (x 6) / fD (x 3) + fA (x 6) / fA (x 2) ≠ 1)
+    (hT1 : Minimality.TriGen (Finset.univ.image x) (({0, 1, 3, 5} : Finset (Fin 7)).image x)
+      (({0, 2, 4} : Finset (Fin 7)).image x) (x 0))
+    (hT2 : Minimality.TriGen (Finset.univ.image x) (({0, 2, 4} : Finset (Fin 7)).image x)
+      (({2, 3, 6} : Finset (Fin 7)).image x) (x 2)) : False :=
+  h.2 (Minimality.isRupert_type12 x hx hgen fA fB fD fG fJ hA hB hD hG hJ hs hT1 hT2)
 
 /-- **Flat polygons are Rupert.**  Points in a plane, not all on one line, are
 Rupert, whatever their number: hold one copy face-on and pass the other

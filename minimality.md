@@ -72,7 +72,9 @@ through a copy of itself):
   (`not_type17_of_isNopert`), and type 27 (one quadrilateral, eight
   triangles; three views; `not_type27_of_isNopert`) and type 23
   (`not_type23_of_isNopert`), type 25 (`not_type25_of_isNopert`) and
-  type 26 (`not_type26_of_isNopert`).
+  type 26 (`not_type26_of_isNopert`), and type 12 (two quadrilaterals
+  sharing an edge, a cone from one vertex over them;
+  `not_type12_of_isNopert`).
 
 ## How it is proved
 
