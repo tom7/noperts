@@ -1635,6 +1635,290 @@ theorem isRupert_triShadow2_gen (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n 
     (by rw [show (fun i => ⟪x i, ez⟫) = Z from funext hdepth]; exact hR)
     (fun z hz => runSeq_localMax hLK hz)
 
+set_option maxHeartbeats 4000000 in
+/-- The core of `isRupert_edge_frame_tie` in the mixed sectors, for given chains and a
+mode of `isRupert_triShadow2_gen`. -/
+theorem edge_core_gen (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ → ℝ → Prop)
+    (s : ℝ) (hs : s = 1 ∨ s = -1) {z1s z2s : ℝ} (hap : s * z2s < s * z1s)
+    {m n : ℕ} {ca cz cb dz : ℕ → ℝ}
+    (C1 : ChainOK Q1 z1s s m ca cz) (C2 : ChainOK Q2 z2s (-s) n cb dz)
+    (hmode : s * dz n < s * cz m ∨ (∀ l, l < m → s * cz l < s * cz (l + 1)) ∨
+      (∀ j, j < n → s * dz (j + 1) < s * dz j))
+    (hap1 : ∀ z, Q1 0 z → z = z1s ∨ z = z2s) (hap2 : ∀ z, Q2 0 z → z = z1s ∨ z = z2s)
+    (hQ1z2 : Q1 0 z2s) (hQ2z1 : Q2 0 z1s)
+    (hpos1 : ∀ a z, Q1 a z → 0 ≤ a) (hpos2 : ∀ b z, Q2 b z → 0 ≤ b)
+    (V : Finset ℝ³)
+    (hV1 : ∀ a z, Q1 a z → oblPt O r1 r2 a 0 z ∈ V) (hV2 : ∀ b z, Q2 b z → oblPt O r1 r2 0 b z ∈ V)
+    (hVc : ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧
+      ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧ a * cb n + b * ca m < ca m * cb n))) : IsRupert V := by
+  have hA0 := C1.far_pos
+  have hB0 := C2.far_pos
+  have c10 := C1.start; have c20 := C2.start
+  have far1 : ∀ a z, Q1 a z → a * cb n < ca m * cb n ∨ (a = ca m ∧ z = cz m) := by
+    intro a z hq
+    by_cases h : a = ca m ∧ z = cz m
+    · exact Or.inr h
+    · left; exact mul_lt_mul_of_pos_right (C1.far a z hq h) hB0
+  have far2 : ∀ b z, Q2 b z → b * ca m < cb n * ca m ∨ (b = cb n ∧ z = dz n) := by
+    intro b z hq
+    by_cases h : b = cb n ∧ z = dz n
+    · exact Or.inr h
+    · left; exact mul_lt_mul_of_pos_right (C2.far b z hq h) hA0
+  have side1 : ∀ a z, Q1 a z → ∀ l, l < m → oblPt O r1 r2 a 0 z ≠ oblPt O r1 r2 (ca l) 0 (cz l) →
+      oblPt O r1 r2 a 0 z ≠ oblPt O r1 r2 (ca (l + 1)) 0 (cz (l + 1)) →
+      s * ((ca (l + 1) - ca l) * (z - cz l) - (cz (l + 1) - cz l) * (a - ca l)) < 0 := by
+    intro a z hq l hl h1 h2
+    exact C1.side a z hq l hl (fun ⟨e1, e2⟩ => h1 (by rw [e1, e2]))
+      (fun ⟨e1, e2⟩ => h2 (by rw [e1, e2]))
+  have side2 : ∀ b z, Q2 b z → ∀ l, l < n →
+      oblPt O r1 r2 0 b z ≠ oblPt O r1 r2 0 (cb (l + 1)) (dz (l + 1)) →
+      oblPt O r1 r2 0 b z ≠ oblPt O r1 r2 0 (cb l) (dz l) →
+      s * ((cb l - cb (l + 1)) * (z - dz (l + 1)) - (dz l - dz (l + 1)) * (b - cb (l + 1))) < 0 := by
+    intro b z hq l hl h1 h2
+    have := C2.side b z hq l hl (fun ⟨e1, e2⟩ => h2 (by rw [e1, e2]))
+      (fun ⟨e1, e2⟩ => h1 (by rw [e1, e2]))
+    have e : s * ((cb l - cb (l + 1)) * (z - dz (l + 1)) - (dz l - dz (l + 1)) * (b - cb (l + 1))) =
+      -s * ((cb (l + 1) - cb l) * (z - dz l) - (dz (l + 1) - dz l) * (b - cb l)) := by ring
+    rw [e]; exact this
+  -- the apex points
+  have apx : ∀ z, z = z1s ∨ z = z2s → oblPt O r1 r2 0 0 z = oblPt O r1 r2 (ca 0) 0 (cz 0) ∨
+      oblPt O r1 r2 0 0 z = oblPt O r1 r2 0 (cb 0) (dz 0) := by
+    rintro z (rfl | rfl)
+    · left; rw [c10.1, c10.2]
+    · right; rw [c20.1, c20.2]
+  have q1of : ∀ z, Q2 0 z → Q1 0 z := by
+    intro z h; rcases hap2 z h with rfl | rfl
+    · exact (by rw [← c10.2, ← c10.1]; exact C1.mem 0 (Nat.zero_le _))
+    · exact hQ1z2
+  have q2of : ∀ z, Q1 0 z → Q2 0 z := by
+    intro z h; rcases hap1 z h with rfl | rfl
+    · exact hQ2z1
+    · exact (by rw [← c20.2, ← c20.1]; exact C2.mem 0 (Nat.zero_le _))
+  refine isRupert_triShadow2_gen O r1 r2 hρ C1.one_le C2.one_le s hs ca cz cb dz c10.1 c20.1
+    (by rw [c10.2, c20.2]; exact hap) C1.inc C2.inc V (fun l hl => hV1 _ _ (C1.mem l hl))
+    (fun l hl => hV2 _ _ (C2.mem l hl)) ?_ hmode
+  intro y hy
+  obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
+  rcases hc with ⟨rfl, hq⟩ | ⟨rfl, hq⟩ | ⟨ha, hb, hin⟩
+  · refine ⟨a, 0, z, rfl, hpos1 a z hq, le_rfl, ?_, ?_, fun _ => side1 a z hq, ?_⟩
+    · rcases far1 a z hq with h | ⟨e1, e2⟩
+      · left; linarith
+      · right; left; rw [e1, e2]
+    · intro ha _; subst ha; exact apx z (hap1 z hq)
+    · intro ha; subst ha; exact side2 0 z (q2of z hq)
+  · refine ⟨0, b, z, rfl, le_rfl, hpos2 b z hq, ?_, ?_, ?_, fun _ => side2 b z hq⟩
+    · rcases far2 b z hq with h | ⟨e1, e2⟩
+      · left; linarith
+      · right; right; rw [e1, e2]
+    · intro _ hb; subst hb; exact apx z (hap2 z hq)
+    · intro hb; subst hb; exact side1 0 z (q1of z hq)
+  · exact ⟨a, b, z, rfl, ha.le, hb.le, Or.inl hin, fun h => absurd h ha.ne',
+      fun h => absurd h hb.ne', fun h => absurd h ha.ne'⟩
+
+set_option maxHeartbeats 4000000 in
+/-- The core of `isRupert_edge_frame_tie` in the same-sign sectors: both chains
+start at the apex vertex `z1s` that is higher in `s z`, and the other apex vertex
+`z2s` is an ordinary point of both faces (hidden inside the cycle). Modes: `C1`
+falls strictly from the apex, or `C2` does (`isRupert_triShadow_gen`, `t = -s`). -/
+theorem edge_same_core (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ → ℝ → Prop)
+    (s : ℝ) (hs : s = 1 ∨ s = -1) {z1s z2s : ℝ} (hap : s * z2s < s * z1s)
+    {m n : ℕ} {ca cz cb dz : ℕ → ℝ}
+    (C1 : ChainOK Q1 z1s s m ca cz) (C2 : ChainOK Q2 z1s s n cb dz)
+    (hmode : (∀ l, l < m → s * cz (l + 1) < s * cz l) ∨ (∀ j, j < n → s * dz (j + 1) < s * dz j))
+    (hap1 : ∀ z, Q1 0 z → z = z1s ∨ z = z2s) (hap2 : ∀ z, Q2 0 z → z = z1s ∨ z = z2s)
+    (hQ1z2 : Q1 0 z2s) (hQ2z2 : Q2 0 z2s)
+    (hpos1 : ∀ a z, Q1 a z → 0 ≤ a) (hpos2 : ∀ b z, Q2 b z → 0 ≤ b)
+    (V : Finset ℝ³)
+    (hV1 : ∀ a z, Q1 a z → oblPt O r1 r2 a 0 z ∈ V) (hV2 : ∀ b z, Q2 b z → oblPt O r1 r2 0 b z ∈ V)
+    (hVc : ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧
+      ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧ a * cb n + b * ca m < ca m * cb n))) :
+    IsRupert V := by
+  have hA0 := C1.far_pos
+  have hB0 := C2.far_pos
+  have c10 := C1.start; have c20 := C2.start
+  have hns : -s = 1 ∨ -s = -1 := by rcases hs with rfl | rfl <;> norm_num
+  have far1 : ∀ a z, Q1 a z → a * cb n < ca m * cb n ∨ (a = ca m ∧ z = cz m) := by
+    intro a z hq
+    by_cases h : a = ca m ∧ z = cz m
+    · exact Or.inr h
+    · left; exact mul_lt_mul_of_pos_right (C1.far a z hq h) hB0
+  have far2 : ∀ b z, Q2 b z → b * ca m < cb n * ca m ∨ (b = cb n ∧ z = dz n) := by
+    intro b z hq
+    by_cases h : b = cb n ∧ z = dz n
+    · exact Or.inr h
+    · left; exact mul_lt_mul_of_pos_right (C2.far b z hq h) hA0
+  have side1 : ∀ a z, Q1 a z → ∀ l, l < m → oblPt O r1 r2 a 0 z ≠ oblPt O r1 r2 (ca l) 0 (cz l) →
+      oblPt O r1 r2 a 0 z ≠ oblPt O r1 r2 (ca (l + 1)) 0 (cz (l + 1)) →
+      s * ((ca (l + 1) - ca l) * (z - cz l) - (cz (l + 1) - cz l) * (a - ca l)) < 0 := by
+    intro a z hq l hl h1 h2
+    exact C1.side a z hq l hl (fun ⟨e1, e2⟩ => h1 (by rw [e1, e2]))
+      (fun ⟨e1, e2⟩ => h2 (by rw [e1, e2]))
+  have side2 : ∀ b z, Q2 b z → ∀ l, l < n →
+      oblPt O r1 r2 0 b z ≠ oblPt O r1 r2 0 (cb (l + 1)) (dz (l + 1)) →
+      oblPt O r1 r2 0 b z ≠ oblPt O r1 r2 0 (cb l) (dz l) →
+      -s * ((cb l - cb (l + 1)) * (z - dz (l + 1)) - (dz l - dz (l + 1)) * (b - cb (l + 1))) < 0 := by
+    intro b z hq l hl h1 h2
+    have := C2.side b z hq l hl (fun ⟨e1, e2⟩ => h2 (by rw [e1, e2]))
+      (fun ⟨e1, e2⟩ => h1 (by rw [e1, e2]))
+    have e : -s * ((cb l - cb (l + 1)) * (z - dz (l + 1)) - (dz l - dz (l + 1)) * (b - cb (l + 1))) =
+      s * ((cb (l + 1) - cb l) * (z - dz l) - (dz (l + 1) - dz l) * (b - cb l)) := by ring
+    rw [e]; exact this
+  have q10 : Q1 0 z1s := by rw [← c10.2, ← c10.1]; exact C1.mem 0 (Nat.zero_le _)
+  have q20 : Q2 0 z1s := by rw [← c20.2, ← c20.1]; exact C2.mem 0 (Nat.zero_le _)
+  have q2of : ∀ z, Q1 0 z → Q2 0 z := by
+    intro z h; rcases hap1 z h with rfl | rfl
+    · exact q20
+    · exact hQ2z2
+  have q1of : ∀ z, Q2 0 z → Q1 0 z := by
+    intro z h; rcases hap2 z h with rfl | rfl
+    · exact q10
+    · exact hQ1z2
+  refine isRupert_triShadow_gen O r1 r2 hρ C1.one_le C2.one_le s hs (-s) hns one_pos one_pos ca cz
+    cb dz c10.1 c20.1 (by rw [c10.2, c20.2]) C1.inc C2.inc V (fun l hl => hV1 _ _ (C1.mem l hl))
+    (fun l hl => hV2 _ _ (C2.mem l hl)) ?_ ?_
+  · intro y hy
+    obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
+    rcases hc with ⟨rfl, hq⟩ | ⟨rfl, hq⟩ | ⟨ha, hb, hin⟩
+    · refine ⟨a, 0, z, rfl, hpos1 a z hq, le_rfl, ?_, fun _ => side1 a z hq, ?_⟩
+      · rcases far1 a z hq with h | ⟨e1, e2⟩
+        · left; exact far_tiltOK (by linarith)
+        · right; left; rw [e1, e2]
+      · intro ha; subst ha; exact side2 0 z (q2of z hq)
+    · refine ⟨0, b, z, rfl, le_rfl, hpos2 b z hq, ?_, ?_, fun _ => side2 b z hq⟩
+      · rcases far2 b z hq with h | ⟨e1, e2⟩
+        · left; exact far_tiltOK (by linarith)
+        · right; right; rw [e1, e2]
+      · intro hb; subst hb; exact side1 0 z (q1of z hq)
+    · exact ⟨a, b, z, rfl, ha.le, hb.le, Or.inl (far_tiltOK hin), fun h => absurd h hb.ne',
+        fun h => absurd h ha.ne'⟩
+  · rcases hmode with hdec | hfb
+    · exact Or.inr (Or.inr (Or.inr ⟨rfl, hdec⟩))
+    · exact Or.inr (Or.inr (Or.inl hfb))
+
+/-- The tie cases of Lemma T over an edge: as `VTie`, the apex now carrying two
+vertices `zx < zx'`, either of which may be the strict top in `s z`. -/
+def ETie (Q1 Q2 : ℝ → ℝ → Prop) (zx zx' A zA B zB : ℝ) : Prop :=
+  ∃ s : ℝ, (s = 1 ∨ s = -1) ∧
+    ((∀ a z, Q1 a z → ¬ (a = A ∧ z = zA) → s * z < s * zA) ∨
+      (∀ b z, Q2 b z → ¬ (b = B ∧ z = zB) → s * zB < s * z) ∨
+      (∃ zt, (zt = zx ∨ zt = zx') ∧ ∀ a z, Q1 a z → ¬ (a = 0 ∧ z = zt) → s * z < s * zt) ∨
+      (∃ zt, (zt = zx ∨ zt = zx') ∧ ∀ b z, Q2 b z → ¬ (b = 0 ∧ z = zt) → s * z < s * zt))
+
+set_option maxHeartbeats 8000000 in
+/-- **Lemma T over an edge, from chains, at the tie.** As `isRupert_edge_frame`,
+with "far depths distinct" weakened to "far depths distinct or `ETie`". -/
+theorem isRupert_edge_frame_tie (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ → ℝ → Prop)
+    {zx zx' : ℝ} (hxx : zx < zx')
+    (hU1 : ∃ m ca cz, ChainOK Q1 zx' 1 m ca cz) (hL1 : ∃ m ca cz, ChainOK Q1 zx (-1) m ca cz)
+    (hU2 : ∃ m ca cz, ChainOK Q2 zx' 1 m ca cz) (hL2 : ∃ m ca cz, ChainOK Q2 zx (-1) m ca cz)
+    (hap1 : ∀ z, Q1 0 z → z = zx ∨ z = zx') (hap2 : ∀ z, Q2 0 z → z = zx ∨ z = zx')
+    (hQ1x : Q1 0 zx) (hQ1x' : Q1 0 zx') (hQ2x : Q2 0 zx) (hQ2x' : Q2 0 zx')
+    (hpos1 : ∀ a z, Q1 a z → 0 ≤ a) (hpos2 : ∀ b z, Q2 b z → 0 ≤ b)
+    (V : Finset ℝ³)
+    (hV1 : ∀ a z, Q1 a z → oblPt O r1 r2 a 0 z ∈ V) (hV2 : ∀ b z, Q2 b z → oblPt O r1 r2 0 b z ∈ V)
+    (hVc : ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧
+      ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧
+        ∀ m ca cz n cb dz, ChainOK Q1 zx' 1 m ca cz → ChainOK Q2 zx' 1 n cb dz →
+          a * cb n + b * ca m < ca m * cb n)))
+    (hfarT : ∀ m ca cz n cb dz, ChainOK Q1 zx' 1 m ca cz → ChainOK Q2 zx' 1 n cb dz →
+      cz m ≠ dz n ∨ ETie Q1 Q2 zx zx' (ca m) (cz m) (cb n) (dz n)) :
+    IsRupert V := by
+  obtain ⟨m0, ca0, cz0, U1⟩ := hU1
+  obtain ⟨n0, cb0, dz0, U2⟩ := hU2
+  obtain ⟨m1, ca1, cz1, L1⟩ := hL1
+  obtain ⟨n1, cb1, dz1, L2⟩ := hL2
+  have conv : ∀ {m n : ℕ} {ca cb : ℕ → ℝ}, ca m = ca0 m0 → cb n = cb0 n0 →
+      ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧
+        ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧ a * cb n + b * ca m < ca m * cb n)) := by
+    intro m n ca cb e1 e2 y hy
+    obtain ⟨a, b, z, e, hc⟩ := hVc y hy
+    refine ⟨a, b, z, e, ?_⟩
+    rcases hc with h | h | ⟨ha, hb, hin⟩
+    · exact Or.inl h
+    · exact Or.inr (Or.inl h)
+    · right; right; refine ⟨ha, hb, ?_⟩
+      rw [e1, e2]; exact hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
+  have eU1 := L1.far_eq U1
+  have eU2 := L2.far_eq U2
+  have eU1' := U1.far_eq U1
+  have eU2' := U2.far_eq U2
+  have eL2 := U2.far_eq L2
+  -- the two mixed cores (`s = 1`: `U1`, `L2`; `s = -1`: `L1`, `U2`) and the same-sign ones
+  have mix1 : (1 * dz1 n1 < 1 * cz0 m0 ∨ (∀ l, l < m0 → 1 * cz0 l < 1 * cz0 (l + 1)) ∨
+      (∀ j, j < n1 → 1 * dz1 (j + 1) < 1 * dz1 j)) → IsRupert V := fun hmode =>
+    edge_core_gen O r1 r2 hρ Q1 Q2 1 (Or.inl rfl) (z1s := zx') (z2s := zx) (by linarith)
+      U1 (by simpa using L2) hmode (fun z h => (hap1 z h).symm) (fun z h => (hap2 z h).symm)
+      hQ1x hQ2x' hpos1 hpos2 V hV1 hV2 (conv eU1'.1 eU2.1)
+  have mixm : (-1 * dz0 n0 < -1 * cz1 m1 ∨ (∀ l, l < m1 → -1 * cz1 l < -1 * cz1 (l + 1)) ∨
+      (∀ j, j < n0 → -1 * dz0 (j + 1) < -1 * dz0 j)) → IsRupert V := fun hmode =>
+    edge_core_gen O r1 r2 hρ Q1 Q2 (-1) (Or.inr rfl) (z1s := zx) (z2s := zx') (by linarith)
+      L1 (by simpa using U2) hmode hap1 (fun z h => hap2 z h) hQ1x' hQ2x hpos1 hpos2 V hV1 hV2
+      (conv eU1.1 eU2'.1)
+  have same1 : ((∀ l, l < m0 → 1 * cz0 (l + 1) < 1 * cz0 l) ∨
+      (∀ j, j < n0 → 1 * dz0 (j + 1) < 1 * dz0 j)) → IsRupert V := fun hmode =>
+    edge_same_core O r1 r2 hρ Q1 Q2 1 (Or.inl rfl) (z1s := zx') (z2s := zx) (by linarith)
+      U1 U2 hmode (fun z h => (hap1 z h).symm) (fun z h => (hap2 z h).symm) hQ1x hQ2x
+      hpos1 hpos2 V hV1 hV2 (conv eU1'.1 eU2'.1)
+  have samem : ((∀ l, l < m1 → -1 * cz1 (l + 1) < -1 * cz1 l) ∨
+      (∀ j, j < n1 → -1 * dz1 (j + 1) < -1 * dz1 j)) → IsRupert V := fun hmode =>
+    edge_same_core O r1 r2 hρ Q1 Q2 (-1) (Or.inr rfl) (z1s := zx) (z2s := zx') (by linarith)
+      L1 L2 hmode hap1 hap2 hQ1x' hQ2x' hpos1 hpos2 V hV1 hV2 (conv eU1.1 eU2.1)
+  -- the apex vertex that is a strict top in `s z` is the upper one for `s = 1`
+  have top1 : ∀ zt, (zt = zx ∨ zt = zx') → (∀ a z, Q1 a z → ¬ (a = 0 ∧ z = zt) → 1 * z < 1 * zt) →
+      zt = zx' := by
+    rintro zt (rfl | rfl) h
+    · have := h 0 zx' hQ1x' (fun e => by linarith [e.2]); linarith
+    · rfl
+  have topm : ∀ zt, (zt = zx ∨ zt = zx') → (∀ a z, Q1 a z → ¬ (a = 0 ∧ z = zt) → -1 * z < -1 * zt) →
+      zt = zx := by
+    rintro zt (rfl | rfl) h
+    · rfl
+    · have := h 0 zx hQ1x (fun e => by linarith [e.2]); linarith
+  have top2 : ∀ zt, (zt = zx ∨ zt = zx') → (∀ b z, Q2 b z → ¬ (b = 0 ∧ z = zt) → 1 * z < 1 * zt) →
+      zt = zx' := by
+    rintro zt (rfl | rfl) h
+    · have := h 0 zx' hQ2x' (fun e => by linarith [e.2]); linarith
+    · rfl
+  have topm2 : ∀ zt, (zt = zx ∨ zt = zx') → (∀ b z, Q2 b z → ¬ (b = 0 ∧ z = zt) → -1 * z < -1 * zt) →
+      zt = zx := by
+    rintro zt (rfl | rfl) h
+    · rfl
+    · have := h 0 zx hQ2x (fun e => by linarith [e.2]); linarith
+  rcases hfarT m0 ca0 cz0 n0 cb0 dz0 U1 U2 with hne | ⟨s, hs, hv | hv | ⟨zt, hzt, hv⟩ | ⟨zt, hzt, hv⟩⟩
+  · rcases lt_or_gt_of_ne hne with hlt | hgt
+    · exact mixm (Or.inl (by rw [eU1.2]; linarith))
+    · exact mix1 (Or.inl (by rw [eU2.2]; linarith))
+  · -- `A` the top of `Q1`: `C1` rises to it
+    rcases hs with rfl | rfl
+    · exact mix1 (Or.inr (Or.inl (U1.rise_of_far_top fun a z hq hn => by
+        rw [eU1'.2]; exact hv a z hq (fun h => hn ⟨by rw [eU1'.1]; exact h.1, by rw [eU1'.2]; exact h.2⟩))))
+    · exact mixm (Or.inr (Or.inl (L1.rise_of_far_top fun a z hq hn => by
+        rw [eU1.2]; exact hv a z hq (fun h => hn ⟨by rw [eU1.1]; exact h.1, by rw [eU1.2]; exact h.2⟩))))
+  · -- `B` the bottom of `Q2`: `C2` reversed rises from it
+    rcases hs with rfl | rfl
+    · have hr := L2.rise_of_far_top (fun b z hq hn => by
+        rw [eU2.2]
+        have := hv b z hq (fun h => hn ⟨by rw [eU2.1]; exact h.1, by rw [eU2.2]; exact h.2⟩)
+        linarith)
+      exact mix1 (Or.inr (Or.inr fun j hj => by have := hr j hj; linarith))
+    · have hr := U2.rise_of_far_top (fun b z hq hn => by
+        rw [eU2'.2]
+        have := hv b z hq (fun h => hn ⟨by rw [eU2'.1]; exact h.1, by rw [eU2'.2]; exact h.2⟩)
+        linarith)
+      exact mixm (Or.inr (Or.inr fun j hj => by have := hr j hj; linarith))
+  · -- an apex vertex the top of `Q1`: the same-sign sector, `C1` falls from it
+    rcases hs with rfl | rfl
+    · obtain rfl := top1 zt hzt hv
+      exact same1 (Or.inl (U1.fall_of_apex_top hv))
+    · obtain rfl := topm zt hzt hv
+      exact samem (Or.inl (L1.fall_of_apex_top hv))
+  · -- an apex vertex the top of `Q2`: the same-sign sector, `C2` falls from it
+    rcases hs with rfl | rfl
+    · obtain rfl := top2 zt hzt hv
+      exact same1 (Or.inr (U2.fall_of_apex_top hv))
+    · obtain rfl := topm2 zt hzt hv
+      exact samem (Or.inr (L2.fall_of_apex_top hv))
+
 end Minimality
 
 end
