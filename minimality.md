@@ -75,7 +75,10 @@ through a copy of itself):
   type 26 (`not_type26_of_isNopert`), and type 12 (two quadrilaterals
   sharing an edge, a cone from one vertex over them;
   `not_type12_of_isNopert`), type 22 (`not_type22_of_isNopert`) and
-  type 28 (`not_type28_of_isNopert`).
+  type 28 (`not_type28_of_isNopert`), and type 05 (three quadrilaterals;
+  `not_type05_of_isNopert`). So every face structure on seven points that
+  the notes prove Rupert (24 of the 29 non-simplicial ones) is now excluded
+  in Lean, in general position.
 
 ## How it is proved
 

@@ -243,6 +243,11 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   `Type28.lean`): the same structure in the frame `x0; x4, x6, x2` (views along
   the planes of `0245`, `146` and of `0245`, `036`); `γ1 < 0` by eliminating
   `1 - σ1` between the faces `145` and `146`.
+* At the entry point, `not_type05_of_isNopert` (`Type05.lean`): type 05 by
+  Lemma T instead of Theorem B′, with the same structure (frame
+  `x0; x2, x4, x6`; views along the planes of `0123`, `246` and of `0145`,
+  `246`). With this, every type proved on paper (24 of 29) is excluded at the
+  facet level in general position.
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
@@ -355,6 +360,7 @@ In import order.
 | `Type12` | L13, Theorem M (type 12), same method | `isRupert_type12` |
 | `Type22` | L13, Theorem N (type 22), same method | `isRupert_type22` |
 | `Type28` | L13, Theorem O (type 28), same method | `isRupert_type28` |
+| `Type05` | L13, type 05 by Lemma T (facet level), same method | `isRupert_type05_facets` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices
