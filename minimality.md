@@ -88,8 +88,11 @@ through a copy of itself):
   triangle at different depths (other segments may be parallel or
   orthogonal, other depths may tie; no three of the seven points are
   collinear anyway, since the middle one would lie in the hull of the other
-  six, `noThreeCollinear_of_not_isRupert`). The
-  proofs also cover the special position where the deciding number is
+  six, `noThreeCollinear_of_not_isRupert`). At most views that have a
+  triangle face even the far corners may tie, unless they also tie with
+  the shared corner (`TriGenTri`; Lemma T at the tie,
+  `Minimality/TriTie.lean`). The proofs also cover the special position
+  where the deciding number is
   zero: Then either another view still works, or one point lies on the far
   side of the triangle shadow, and a view tilted to match that side still
   gives a passage (`isRupert_of_facets_vertex_chord`).
