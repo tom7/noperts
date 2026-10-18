@@ -41,8 +41,11 @@ theorem isRupert_type12 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({2, 3, 6} : Finset (Fin 7)) → fG (x i) < 0))
     (hJ : ∀ i, (i ∈ ({2, 4, 6} : Finset (Fin 7)) → fJ (x i) = 0) ∧
       (i ∉ ({2, 4, 6} : Finset (Fin 7)) → fJ (x i) < 0))
-    (hT1 : TriGenFar (univ.image x) (({0, 1, 3, 5} : Finset (Fin 7)).image x)
-      (({0, 2, 4} : Finset (Fin 7)).image x) (x 0))
+    (hT1 : TriGenTri (univ.image x) (({0, 1, 3, 5} : Finset (Fin 7)).image x)
+        (({0, 2, 4} : Finset (Fin 7)).image x) (x 0) ∧
+      (fD (x 6) / fD (x 3) + fA (x 6) / fA (x 2) = 1 →
+        TriGenFar (univ.image x) (({0, 1, 3, 5} : Finset (Fin 7)).image x)
+          (({0, 2, 4} : Finset (Fin 7)).image x) (x 0)))
     (hT2 : TriGenTri (univ.image x) (({0, 2, 4} : Finset (Fin 7)).image x)
       (({2, 3, 6} : Finset (Fin 7)).image x) (x 2)) :
     IsRupert (univ.image x) := by
@@ -145,37 +148,69 @@ theorem isRupert_type12 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     nlinarith
   have hγ1 := hγy _ _ _ _ b1 cB1 cA1
   have hγ5 := hγy _ _ _ _ b5 cB5 cA5
+  have hiP : QA ∩ QD = {x 0} := by
+    rw [inter, show ({0, 1, 3, 5} ∩ {0, 2, 4} : Finset (Fin 7)) = {0} by decide]
+    simp
   rcases le_or_gt c 0 with hcl | hcg
-  · -- the view `P` along the planes of `0135` and `024` (Lemma T′ at `c = 0`)
-    refine isRupert_of_facets_vertex_chord V hgen QA QD (sub _) (sub _)
-      (isFacet_of_index x _ fA hA) (isFacet_of_index x _ fD hD) (x 0) ?_
-      ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩
-      ⟨x 2, (memQ _ 2).mpr (by decide), fun h => by have := hx h; omega⟩ hT1 (x 3) (x 2)
-      ((memQ _ 3).mpr (by decide)) ((memQ _ 2).mpr (by decide))
-      (fun h => by have := hx h; omega) (fun h => by have := hx h; omega) (x 6) (hxV 6)
-      (by rw [memQ]; decide) (by rw [memQ]; decide) ?_
-    · rw [inter, show ({0, 1, 3, 5} ∩ {0, 2, 4} : Finset (Fin 7)) = {0} by decide]
-      simp
-    intro f1 f2 z1 n1 z2 n2
-    refine ⟨fun y hy hy1 hy2 hne => ?_, ?_⟩
-    · obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
+  · rcases hcl.lt_or_eq with hlt | heq
+    · -- the view `P` along the planes of `0135` and `024`, `c < 0` (the tie allowed)
+      refine isRupert_of_facets_vertex_tie V hgen QA QD (sub _) (sub _)
+        (isFacet_of_index x _ fA hA) (isFacet_of_index x _ fD hD) (x 0) hiP
+        ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩
+        ⟨x 2, (memQ _ 2).mpr (by decide), fun h => by have := hx h; omega⟩
+        (hT1.1.tie (sub _) (sub _) hiP
+          (Or.inr (by show (({0, 2, 4} : Finset (Fin 7)).image x).card = 3
+                      rw [Finset.card_image_of_injective _ hx]; decide)))
+        ⟨x 3, (memQ _ 3).mpr (by decide), x 2, (memQ _ 2).mpr (by decide),
+          fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩
+      intro f1 f2 z1 n1 z2 n2 y hy hy1 hy2
+      obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
       rw [memQ] at hy1 hy2
       have hi : i = 6 := by clear * - hy1 hy2; fin_cases i <;> simp_all
-      exact absurd (by rw [hi]) hne
-    have e2' : f2 (x 6) / f2 (x 3) = fD (x 6) / fD (x 3) :=
-      ratio f2 fD 0 2 4 (by decide) (by decide) (by decide)
-        (z2 _ ((memQ _ 0).mpr (by decide))) (z2 _ ((memQ _ 2).mpr (by decide)))
-        (z2 _ ((memQ _ 4).mpr (by decide))) ((hD 0).1 (by decide)) ((hD 2).1 (by decide))
-        ((hD 4).1 (by decide)) _ _ (n2 _ (hxV 3) (by rw [memQ]; decide)).ne
-        ((hD 3).2 (by decide)).ne
-    have e1' : f1 (x 6) / f1 (x 2) = fA (x 6) / fA (x 2) :=
-      ratio f1 fA 0 1 3 (by decide) (by decide) (by decide)
-        (z1 _ ((memQ _ 0).mpr (by decide))) (z1 _ ((memQ _ 1).mpr (by decide)))
-        (z1 _ ((memQ _ 3).mpr (by decide))) ((hA 0).1 (by decide)) ((hA 1).1 (by decide))
-        ((hA 3).1 (by decide)) _ _ (n1 _ (hxV 2) (by rw [memQ]; decide)).ne
-        ((hA 2).2 (by decide)).ne
-    rw [e1', e2', hP]
-    nlinarith
+      subst hi
+      have e2' : f2 (x 6) / f2 (x 3) = fD (x 6) / fD (x 3) :=
+        ratio f2 fD 0 2 4 (by decide) (by decide) (by decide)
+          (z2 _ ((memQ _ 0).mpr (by decide))) (z2 _ ((memQ _ 2).mpr (by decide)))
+          (z2 _ ((memQ _ 4).mpr (by decide))) ((hD 0).1 (by decide)) ((hD 2).1 (by decide))
+          ((hD 4).1 (by decide)) _ _ (n2 _ (hxV 3) (by rw [memQ]; decide)).ne
+          ((hD 3).2 (by decide)).ne
+      have e1' : f1 (x 6) / f1 (x 2) = fA (x 6) / fA (x 2) :=
+        ratio f1 fA 0 1 3 (by decide) (by decide) (by decide)
+          (z1 _ ((memQ _ 0).mpr (by decide))) (z1 _ ((memQ _ 1).mpr (by decide)))
+          (z1 _ ((memQ _ 3).mpr (by decide))) ((hA 0).1 (by decide)) ((hA 1).1 (by decide))
+          ((hA 3).1 (by decide)) _ _ (n1 _ (hxV 2) (by rw [memQ]; decide)).ne
+          ((hA 2).2 (by decide)).ne
+      rw [e1', e2', hP]
+      nlinarith
+    · -- `c = 0`: the view `P` by Lemma T′ (`x6` on the far side)
+      refine isRupert_of_facets_vertex_chord V hgen QA QD (sub _) (sub _)
+        (isFacet_of_index x _ fA hA) (isFacet_of_index x _ fD hD) (x 0) hiP
+        ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩
+        ⟨x 2, (memQ _ 2).mpr (by decide), fun h => by have := hx h; omega⟩
+        (hT1.2 (by rw [hP, heq]; ring)) (x 3) (x 2)
+        ((memQ _ 3).mpr (by decide)) ((memQ _ 2).mpr (by decide))
+        (fun h => by have := hx h; omega) (fun h => by have := hx h; omega) (x 6) (hxV 6)
+        (by rw [memQ]; decide) (by rw [memQ]; decide) ?_
+      intro f1 f2 z1 n1 z2 n2
+      refine ⟨fun y hy hy1 hy2 hne => ?_, ?_⟩
+      · obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
+        rw [memQ] at hy1 hy2
+        have hi : i = 6 := by clear * - hy1 hy2; fin_cases i <;> simp_all
+        exact absurd (by rw [hi]) hne
+      have e2' : f2 (x 6) / f2 (x 3) = fD (x 6) / fD (x 3) :=
+        ratio f2 fD 0 2 4 (by decide) (by decide) (by decide)
+          (z2 _ ((memQ _ 0).mpr (by decide))) (z2 _ ((memQ _ 2).mpr (by decide)))
+          (z2 _ ((memQ _ 4).mpr (by decide))) ((hD 0).1 (by decide)) ((hD 2).1 (by decide))
+          ((hD 4).1 (by decide)) _ _ (n2 _ (hxV 3) (by rw [memQ]; decide)).ne
+          ((hD 3).2 (by decide)).ne
+      have e1' : f1 (x 6) / f1 (x 2) = fA (x 6) / fA (x 2) :=
+        ratio f1 fA 0 1 3 (by decide) (by decide) (by decide)
+          (z1 _ ((memQ _ 0).mpr (by decide))) (z1 _ ((memQ _ 1).mpr (by decide)))
+          (z1 _ ((memQ _ 3).mpr (by decide))) ((hA 0).1 (by decide)) ((hA 1).1 (by decide))
+          ((hA 3).1 (by decide)) _ _ (n1 _ (hxV 2) (by rw [memQ]; decide)).ne
+          ((hA 2).2 (by decide)).ne
+      rw [e1', e2', hP]
+      nlinarith
   · -- the view `Q` along the planes of `024` and `236`
     have hivhT2 : QD ∩ QG = {x 2} := by
       rw [inter, show ({0, 2, 4} ∩ {2, 3, 6} : Finset (Fin 7)) = {2} by decide]
