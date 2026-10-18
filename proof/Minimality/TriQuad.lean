@@ -214,8 +214,8 @@ theorem quad_chain6 {z0 a1 z1 a2 z2 a3 z3 : ℝ} (h1 : 0 < a1) (h2 : 0 < a2) (h3
   · rw [← quadPt_swap23]; exact quad_chain h1 h3 h2 (Or.inr hq) h13 h12 h23.symm s hs
 
 /-- All chains of one point set end at the same far point. -/
-theorem ChainOK.far_eq {Q : ℝ → ℝ → Prop} {z0 s s' : ℝ} {m m' : ℕ} {ca cz ca' cz' : ℕ → ℝ}
-    (h : ChainOK Q z0 s m ca cz) (h' : ChainOK Q z0 s' m' ca' cz') :
+theorem ChainOK.far_eq {Q : ℝ → ℝ → Prop} {z0 z0' s s' : ℝ} {m m' : ℕ} {ca cz ca' cz' : ℕ → ℝ}
+    (h : ChainOK Q z0 s m ca cz) (h' : ChainOK Q z0' s' m' ca' cz') :
     ca m = ca' m' ∧ cz m = cz' m' := by
   by_contra hne
   have h1 := h.far _ _ (h'.mem m' le_rfl) (fun e => hne ⟨e.1.symm, e.2.symm⟩)
