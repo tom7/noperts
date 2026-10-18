@@ -201,6 +201,11 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   `35`, `s > 1` Lemma T at `x0` (planes of `0235`, `046`), since Cramer for `x1`
   in the frame `x3; x0, x4, x6` gives `fD x1 / fD x3 + fA x1 / fA x6 = 1 + ρ (s - 1)`
   with `ρ < 0`.
+* At the entry point, `not_type13_of_isNopert` (Theorem G, type 13;
+  `Type13.lean`): faces `0145, 2456, 123, 126`; `s = fB x3 / fB x1 + fA x3 / fA x2`;
+  `s < 1` gives Lemma T along the edge `45`, `s > 1` Lemma T at `x1` (planes of
+  `0145`, `123`): with `x3 - x6` in the frame `x1 - x6, x2 - x6, x5 - x6` and
+  `σ` its coefficient sum, `(t - 1)(σ - 1) = 1 - s` and `σ > 1`.
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
@@ -304,6 +309,7 @@ In import order.
 | `TriFacetsEdge` | L13, Lemma T over an edge for any two facets, with interior points: frame, vertical, rotated, facet form | `orient_ne_of_frame1'`, `isRupert_edge_coords`, `isRupert_facets_edge_vertical`, `isRupert_facets_edge`, `isRupert_of_facets_edge` |
 | `Type10` | L13, Theorem E (type 10) from Lemma T by facet-functional coordinates; Cramer for affine functionals, proportional functionals | `affine_cramer`, `affine_vanish3`, `vanish3_ratio`, `isFacet_of_index`, `isRupert_type10` |
 | `Type19` | L13, Theorem F (type 19), same method | `isRupert_type19` |
+| `Type13` | L13, Theorem G (type 13), same method | `isRupert_type13` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices
