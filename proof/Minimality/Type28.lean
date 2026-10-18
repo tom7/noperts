@@ -1,6 +1,7 @@
 module
 
 public import Minimality.Type10
+public import Minimality.TriFacetsChord
 
 @[expose] public section
 
@@ -13,6 +14,8 @@ Theorem O of `FEWER-FACES-PROOFS.md` §7, by the algebraic method of
 planes of `A` and `G` (through `x4`), view `Q` along that of `A` and `D` (through
 `x0`). In the frame `x0; x4, x6, x2`, with `c = fD x2 / fD x4 + fG x2 / fG x0 - 1`,
 the values are `1 + γ3 c` (`P`) and `1 + γ1 c` (`Q`), with `γ1 < 0 < γ3`.
+At `c = 0` the only point `x3` off both planes of `P` is on the far side, and
+`P` works by Lemma T′ (`isRupert_of_facets_vertex_chord`).
 -/
 
 namespace Minimality
@@ -23,8 +26,7 @@ open scoped RealInnerProductSpace
 set_option maxHeartbeats 8000000 in
 /-- **Theorem O (type 28).** Seven labelled points in general position with
 facets `0245` (a quadrilateral), `036`, `146`, `023`, `015`, `145`, given by
-functionals negative off them, are Rupert, unless
-`fG x3 / fG x0 + fA x3 / fA x6 = 1`, given `TriGen` at the lines of the planes
+functionals negative off them, are Rupert, given `TriGen` at the lines of the planes
 of `0245` and `146` and of `0245` and `036`. -/
 theorem isRupert_type28 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hgen : GenPos (univ.image x)) (fA fD fG fH fF fM : ℝ³ →ᵃ[ℝ] ℝ)
@@ -40,7 +42,6 @@ theorem isRupert_type28 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({0, 1, 5} : Finset (Fin 7)) → fF (x i) < 0))
     (hM : ∀ i, (i ∈ ({1, 4, 5} : Finset (Fin 7)) → fM (x i) = 0) ∧
       (i ∉ ({1, 4, 5} : Finset (Fin 7)) → fM (x i) < 0))
-    (hs : fG (x 3) / fG (x 0) + fA (x 3) / fA (x 6) ≠ 1)
     (hT1 : TriGen (univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
       (({1, 4, 6} : Finset (Fin 7)).image x) (x 4))
     (hT2 : TriGen (univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
@@ -164,21 +165,23 @@ theorem isRupert_type28 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       linear_combination -fG (x 0) * cM1 + fM (x 0) * cG1
     have : 0 < fG (x 0) * fM (x 6) := mul_pos_of_neg_of_neg g0 m6
     nlinarith
-  rcases lt_or_gt_of_ne (show c ≠ 0 from fun h => hs (by rw [hP, h, mul_zero, add_zero])) with hcl | hcg
+  rcases le_or_gt c 0 with hcl | hcg
   · -- the view `P` along the planes of `0245` and `146`
-    refine isRupert_of_facets_vertex V hgen QA QG (sub _) (sub _) (isFacet_of_index x _ fA hA)
-      (isFacet_of_index x _ fG hG) (x 4) ?_
+    refine isRupert_of_facets_vertex_chord V hgen QA QG (sub _) (sub _)
+      (isFacet_of_index x _ fA hA) (isFacet_of_index x _ fG hG) (x 4) ?_
       ⟨x 0, (memQ _ 0).mpr (by decide), fun h => by have := hx h; omega⟩
-      ⟨x 6, (memQ _ 6).mpr (by decide), fun h => by have := hx h; omega⟩ hT1 ?_
+      ⟨x 6, (memQ _ 6).mpr (by decide), fun h => by have := hx h; omega⟩ hT1 (x 0) (x 6)
+      ((memQ _ 0).mpr (by decide)) ((memQ _ 6).mpr (by decide))
+      (fun h => by have := hx h; omega) (fun h => by have := hx h; omega) (x 3) (hxV 3)
+      (by rw [memQ]; decide) (by rw [memQ]; decide) ?_
     · rw [inter, show ({0, 2, 4, 5} ∩ {1, 4, 6} : Finset (Fin 7)) = {4} by decide]
       simp
-    refine ⟨x 0, (memQ _ 0).mpr (by decide), x 6, (memQ _ 6).mpr (by decide),
-      fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩
-    intro f1' f2' z1 n1' z2 n2' y hy hy1 hy2
-    obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
-    rw [memQ] at hy1 hy2
-    have hi : i = 3 := by clear * - hy1 hy2; fin_cases i <;> simp_all
-    subst hi
+    intro f1' f2' z1 n1' z2 n2'
+    refine ⟨fun y hy hy1 hy2 hne => ?_, ?_⟩
+    · obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
+      rw [memQ] at hy1 hy2
+      have hi : i = 3 := by clear * - hy1 hy2; fin_cases i <;> simp_all
+      exact absurd (by rw [hi]) hne
     have e2' : f2' (x 3) / f2' (x 0) = fG (x 3) / fG (x 0) :=
       ratio f2' fG 1 4 6 (by decide) (by decide) (by decide)
         (z2 _ ((memQ _ 1).mpr (by decide))) (z2 _ ((memQ _ 4).mpr (by decide)))
@@ -192,8 +195,8 @@ theorem isRupert_type28 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
         ((hA 4).1 (by decide)) _ _ (n1' _ (hxV 6) (by rw [memQ]; decide)).ne
         ((hA 6).2 (by decide)).ne
     rw [e1', e2', hP]
-    have := mul_neg_of_pos_of_neg hγ3 hcl
-    linarith
+    nlinarith
+
   · -- the view `Q` along the planes of `0245` and `036`
     refine isRupert_of_facets_vertex V hgen QA QD (sub _) (sub _) (isFacet_of_index x _ fA hA)
       (isFacet_of_index x _ fD hD) (x 0) ?_

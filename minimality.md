@@ -78,7 +78,10 @@ through a copy of itself):
   type 28 (`not_type28_of_isNopert`), and type 05 (three quadrilaterals;
   `not_type05_of_isNopert`). So every face structure on seven points that
   the notes prove Rupert (24 of the 29 non-simplicial ones) is now excluded
-  in Lean, in general position.
+  in Lean, in general position. For types 12, 22 and 28 the proof also covers the
+  special position where the deciding number is zero: Then one point lies
+  on the far side of the triangle shadow, and a view tilted to match that
+  side still gives a passage (`isRupert_of_facets_vertex_chord`).
 
 ## How it is proved
 
