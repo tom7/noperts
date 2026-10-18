@@ -60,7 +60,8 @@ through a copy of itself):
   inside the triangle shadow of that view
   (`not_facets_vertex_triShadow_of_isNopert`): The triangle has a corner at
   the shared point and one at the far end of each face, and the same tilted
-  view gives a passage.
+  view gives a passage. The same holds for two faces that share an edge,
+  viewed along that edge (`not_facets_edge_triShadow_of_isNopert`).
 
 ## How it is proved
 

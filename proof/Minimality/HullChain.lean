@@ -268,6 +268,72 @@ theorem exists_chainOK (S : Finset (ℝ × ℝ)) (z0 : ℝ) (h0 : (0, z0) ∈ S)
       linear_combination (-((ca (l + 1) - ca l) * cz l + (cz (l + 1) - cz l) * (a - ca l))) * hss
     rw [e]; exact this
 
+/-- Every chain point after the start has `t > 0`. -/
+theorem ChainOK.pos {Q : ℝ → ℝ → Prop} {z0 s : ℝ} {m : ℕ} {ca cz : ℕ → ℝ}
+    (h : ChainOK Q z0 s m ca cz) : ∀ l, 1 ≤ l → l ≤ m → 0 < ca l := by
+  intro l
+  induction l with
+  | zero => intro h1; omega
+  | succ l ih =>
+    intro _ hl
+    rcases Nat.eq_zero_or_pos l with rfl | hl0
+    · have := h.inc 0 (by omega); rw [h.start.1] at this; exact this
+    · exact lt_trans (ih hl0 (by omega)) (h.inc l (by omega))
+
+/-- **Chains over an edge.**  The point set has two points over `t = 0`, the
+start `(0, zs)` and possibly `(0, zo)` on its `-s`-side; the chain from
+`(0, zs)`. -/
+theorem exists_chainOK_edge (S : Finset (ℝ × ℝ)) (zs zo s : ℝ) (hs : s = 1 ∨ s = -1)
+    (hso : s * zo < s * zs) (h0 : (0, zs) ∈ S)
+    (hpos : ∀ q ∈ S, q ≠ (0, zs) → q ≠ (0, zo) → 0 < q.1) (hne : ∃ q ∈ S, 0 < q.1)
+    (hinj : Set.InjOn Prod.fst ((S.erase (0, zo) : Finset (ℝ × ℝ)) : Set (ℝ × ℝ)))
+    (hcol : ∀ p ∈ S, ∀ q ∈ S, ∀ r ∈ S, p ≠ q → p ≠ r → q ≠ r →
+      (q.1 - p.1) * (r.2 - p.2) - (q.2 - p.2) * (r.1 - p.1) ≠ 0) :
+    ∃ m ca cz, ChainOK (fun a z => (a, z) ∈ S) zs s m ca cz := by
+  classical
+  have hzz : zs ≠ zo := fun h => by rw [h] at hso; exact lt_irrefl _ hso
+  have hne0 : ((0 : ℝ), zs) ≠ (0, zo) := fun h => hzz (congrArg Prod.snd h)
+  obtain ⟨m, ca, cz, C⟩ := exists_chainOK (S.erase (0, zo)) zs
+    (Finset.mem_erase.mpr ⟨hne0, h0⟩)
+    (fun q hq hq0 => hpos q (Finset.mem_of_mem_erase hq) hq0 (Finset.ne_of_mem_erase hq))
+    (by
+      obtain ⟨q, hq, hq0⟩ := hne
+      refine ⟨q, Finset.mem_erase.mpr ⟨fun h => ?_, hq⟩, fun h => ?_⟩
+      · rw [h] at hq0; exact lt_irrefl _ hq0
+      · rw [h] at hq0; exact lt_irrefl _ hq0)
+    hinj
+    (fun p hp q hq r hr => hcol p (Finset.mem_of_mem_erase hp) q (Finset.mem_of_mem_erase hq)
+      r (Finset.mem_of_mem_erase hr))
+    s hs
+  refine ⟨m, ca, cz, C.one_le, C.start, C.inc, fun l hl => Finset.mem_of_mem_erase (C.mem l hl),
+    fun a z hq hn => ?_, fun a z hq l hl h1' h2' => ?_⟩
+  · by_cases e : (a, z) = (0, zo)
+    · have := C.far_pos; rw [show a = 0 from congrArg Prod.fst e]; exact this
+    · exact C.far a z (Finset.mem_erase.mpr ⟨e, hq⟩) hn
+  · by_cases e : (a, z) = (0, zo)
+    · have ea : a = 0 := congrArg Prod.fst e
+      have ez' : z = zo := congrArg Prod.snd e
+      rw [ea, ez']
+      have hd := C.inc l hl
+      rcases Nat.eq_zero_or_pos l with rfl | hl0
+      · rw [C.start.1, C.start.2]
+        have : 0 < ca 1 := by have := C.inc 0 (by omega); rw [C.start.1] at this; exact this
+        have k : s * ((ca (0 + 1) - 0) * (zo - zs) - (cz (0 + 1) - zs) * (0 - 0)) =
+            (ca 1) * (s * zo - s * zs) := by ring
+        rw [k]; exact mul_neg_of_pos_of_neg this (by linarith)
+      · have hl1 : 0 < ca l := C.pos l hl0 (by omega)
+        have hs0 := C.side 0 zs (C.mem 0 (by omega) |> fun h => by
+          rw [C.start.1, C.start.2] at h; exact h) l hl
+          (fun h => by linarith [h.1]) (fun h => by linarith [h.1, C.pos (l + 1) (by omega) (by omega)])
+        have k : s * ((ca (l + 1) - ca l) * (zo - cz l) - (cz (l + 1) - cz l) * (0 - ca l)) =
+            s * ((ca (l + 1) - ca l) * (zs - cz l) - (cz (l + 1) - cz l) * (0 - ca l)) +
+            (ca (l + 1) - ca l) * (s * zo - s * zs) := by ring
+        rw [k]
+        have : (ca (l + 1) - ca l) * (s * zo - s * zs) < 0 :=
+          mul_neg_of_pos_of_neg (by linarith) (by linarith)
+        linarith
+    · exact C.side a z (Finset.mem_erase.mpr ⟨e, hq⟩) l hl h1' h2'
+
 end Minimality
 
 end
