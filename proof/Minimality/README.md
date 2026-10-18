@@ -236,6 +236,9 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   `236`; in the frame `x2; x0, x3, x4` their values are `1 + γ6 c` and
   `1 + γ_y c` (`y = 1, 5`) with `γ6 > 0 > γ_y`, so exactly one works unless
   `c = 0`.
+* At the entry point, `not_type22_of_isNopert` (Theorem N, type 22;
+  `Type22.lean`): the same structure in the frame `x4; x1, x2, x6` (views along
+  the planes of `125`, `246` and of `0134`, `246`).
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
@@ -346,6 +349,7 @@ In import order.
 | `Type25` | L13, Theorem K (type 25), same method, three views | `isRupert_type25` |
 | `Type26` | L13, Theorem L (type 26), same method, with an automorphism | `type26_core`, `isRupert_type26` |
 | `Type12` | L13, Theorem M (type 12), same method | `isRupert_type12` |
+| `Type22` | L13, Theorem N (type 22), same method | `isRupert_type22` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices
