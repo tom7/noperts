@@ -62,6 +62,10 @@ through a copy of itself):
   the shared point and one at the far end of each face, and the same tilted
   view gives a passage. The same holds for two faces that share an edge,
   viewed along that edge (`not_facets_edge_triShadow_of_isNopert`).
+- a nopert in general position is not a capped triangular frustum (three
+  quadrilateral sides, a triangular base, a three-sided cap; type 10 of the
+  notes) (`not_type10_of_isNopert`): One of two such views always works, and
+  a single number built from the face planes says which.
 
 ## How it is proved
 

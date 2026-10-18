@@ -35,4 +35,5 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms not_two_quad_facets_vertex_of_isNopert
 #assert_standard_axioms not_facets_vertex_triShadow_of_isNopert
 #assert_standard_axioms not_facets_edge_triShadow_of_isNopert
+#assert_standard_axioms not_type10_of_isNopert
 #assert_standard_axioms minimalNopert_of_certificatesValid

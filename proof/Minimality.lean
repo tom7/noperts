@@ -7,6 +7,7 @@ public import Minimality.FaceFive
 public import Minimality.QuadFacets
 public import Minimality.TriBridge
 public import Minimality.TriFacetsEdge
+public import Minimality.Type10
 
 /-!
 # Every nopert has at least 7 points
@@ -137,6 +138,30 @@ theorem not_facets_edge_triShadow_of_isNopert (V : Finset ℝ³) (h : IsNopert V
   obtain ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩ := hin
   exact h.2 (Minimality.isRupert_of_facets_edge V hgen Q1 Q2 h1V h2V h1f h2f v w hvw hint
     ⟨xa, hxa, hxa2⟩ ⟨xb, hxb, hxb1⟩ hZ ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩)
+
+/-- **Type 10, the capped frustum** (Theorem E of `FEWER-FACES-PROOFS.md` §7):
+a nopert in general position does not have seven points labelled so that
+`1245`, `1346`, `2356` (side quadrilaterals) and `023` (a cap triangle) are
+facets (given by functionals negative off them), unless `x0` lies over the
+chord `23` in the view along `14`; general position includes distinct depths
+along `14` and `Minimality.TriGen` at the line of the planes of `023` and
+`1245`. -/
+theorem not_type10_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
+    (hx : Function.Injective x) (hgen : Minimality.GenPos (Finset.univ.image x))
+    (fA fB fC fD : ℝ³ →ᵃ[ℝ] ℝ)
+    (hA : ∀ i, (i ∈ ({1, 2, 4, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
+      (i ∉ ({1, 2, 4, 5} : Finset (Fin 7)) → fA (x i) < 0))
+    (hB : ∀ i, (i ∈ ({1, 3, 4, 6} : Finset (Fin 7)) → fB (x i) = 0) ∧
+      (i ∉ ({1, 3, 4, 6} : Finset (Fin 7)) → fB (x i) < 0))
+    (hC : ∀ i, (i ∈ ({2, 3, 5, 6} : Finset (Fin 7)) → fC (x i) = 0) ∧
+      (i ∉ ({2, 3, 5, 6} : Finset (Fin 7)) → fC (x i) < 0))
+    (hD : ∀ i, (i ∈ ({0, 2, 3} : Finset (Fin 7)) → fD (x i) = 0) ∧
+      (i ∉ ({0, 2, 3} : Finset (Fin 7)) → fD (x i) < 0))
+    (hs : fB (x 0) / fB (x 2) + fA (x 0) / fA (x 3) ≠ 1)
+    (hZ1 : Set.InjOn (fun p : ℝ³ => inner ℝ p (x 4 - x 1)) (Finset.univ.image x : Set ℝ³))
+    (hT2 : Minimality.TriGen (Finset.univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
+      (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2)) : False :=
+  h.2 (Minimality.isRupert_type10 x hx hgen fA fB fC fD hA hB hC hD hs hZ1 hT2)
 
 /-- **Flat polygons are Rupert.**  Points in a plane, not all on one line, are
 Rupert, whatever their number: hold one copy face-on and pass the other

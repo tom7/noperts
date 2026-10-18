@@ -187,6 +187,14 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   `ez`), `isRupert_facets_edge_vertical`, `isRupert_edge_coords` (chains from
   the upper and lower edge points, `exists_chainOK_edge`), and
   `isRupert_edge_frame` (`TriFacetsEdge.lean`).
+* At the entry point, `not_type10_of_isNopert` (Theorem E, type 10, the capped
+  frustum; `Type10.lean`): with the functionals of `1245, 1346, 2356, 023` and
+  `s = fB x0 / fB x2 + fA x0 / fA x3`, `s < 1` gives Lemma T along the edge
+  `14` and `s > 1` gives Lemma T at the vertex `2` (planes of `023`, `1245`),
+  by a Cramer identity for `x6` in the frame `x4; x0, x2, x3`
+  (`affine_cramer`): `fA x6 / fA x3 + fD x6 / fD x4 = 1 + r (s - 1)` with
+  `r < 0`. Any facet functional's ratios equal the given ones
+  (`vanish3_ratio`).
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
@@ -288,6 +296,7 @@ In import order.
 | `HullChain` | L13, upper and lower chains of any finite point set with distinct `t` and no three collinear (gift wrapping), also with two points over the apex | `ChainFrom`, `exists_chainFrom`, `exists_chainOK`, `exists_chainOK_edge` |
 | `TriFacets` | L13, Lemma T at a vertex for any two facets, with interior points: frame, vertical, rotated, facet form | `isRupert_vertex_coords`, `isRupert_facets_vertex_vertical`, `isRupert_facets_vertex`, `isRupert_of_facets_vertex` |
 | `TriFacetsEdge` | L13, Lemma T over an edge for any two facets, with interior points: frame, vertical, rotated, facet form | `orient_ne_of_frame1'`, `isRupert_edge_coords`, `isRupert_facets_edge_vertical`, `isRupert_facets_edge`, `isRupert_of_facets_edge` |
+| `Type10` | L13, Theorem E (type 10) from Lemma T by facet-functional coordinates; Cramer for affine functionals, proportional functionals | `affine_cramer`, `affine_vanish3`, `vanish3_ratio`, `isFacet_of_index`, `isRupert_type10` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices
