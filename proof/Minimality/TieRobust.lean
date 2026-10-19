@@ -532,6 +532,34 @@ theorem tie_no_forces (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb1 : 
     exact mul_le_mul_of_nonneg_left this hε0.le
   · rw [hδε]; nlinarith
 
+theorem tw_ne_zero (v : ℝ³) (ε : ℝ) (h : v 2 = 0) : tw v ε ≠ 0 := by
+  intro e
+  have := congrArg (fun x : ℝ³ => x 2) e
+  simp [tw, ez, h] at this
+
+/-- **Lemma T at the tie, robust form (Rupert).** Under the hypotheses of
+`tie_no_forces`, with a horizontal tilt `v` and `V` a solid, `V` is Rupert. -/
+theorem isRupert_of_tie (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb1 : ℝ³ → ℝ³)
+    (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) (hv : v 2 = 0)
+    (hXV : X ⊆ V) (ha : a ∈ V) (hb : b ∈ V) (hab : a ≠ b) (haX : a ∉ X) (hbX : b ∉ X)
+    (ha0 : a0 ∈ V) (hb1 : b1 ∈ V) (hnb0 : ∀ y ∈ X, nb0 y ∈ V) (hnb1 : ∀ y ∈ X, nb1 y ∈ V)
+    (htie : a 2 = b 2) (hD : 0 < ⟪b - a, v⟫) (hXz : ∀ y ∈ X, a 2 < y 2)
+    (hconvX : ∀ y ∈ X, ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (nb1 y - y) (nb0 y - y) (tw v ε))
+    (hconva : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (b - a) (a0 - a) (tw v ε))
+    (hconvb : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (b1 - b) (a - b) (tw v ε))
+    (hin : ∀ y ∈ V, y ∉ X → y ≠ a → y ≠ b → ∃ q1 ∈ V, ∃ q2 ∈ V, ∃ q3 ∈ V,
+      ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (q2 - y) (q3 - y) (tw v ε) ∧
+        0 < det3 (q3 - y) (q1 - y) (tw v ε) ∧ 0 < det3 (q1 - y) (q2 - y) (tw v ε))
+    (hm : ∀ j ∈ X ×ˢ (univ : Finset Bool), 0 < ⟪tgen nb0 nb1 ez j, m⟫)
+    (hp : ∀ j ∈ X ×ˢ (univ : Finset Bool), 0 ≤ ⟪tgen nb0 nb1 ez j, p⟫)
+    (hpa : ⟪cross ez (a0 - a), p⟫ = 0) (hp3 : ⟪cross (b - a) ez, p⟫ < 0)
+    (hdet : farDet (cross ez (a0 - a)) (cross (b - a) ez) (cross (b1 - b) ez) a b ez ≠ 0) :
+    IsRupert V := by
+  obtain ⟨ε, hε⟩ := (tie_no_forces V X v a b a0 b1 m p nb0 nb1 hXV ha hb hab haX hbX ha0 hb1
+    hnb0 hnb1 htie hD hXz hconvX hconva hconvb hin hm hp hpa hp3 hdet).exists
+  exact isRupert_of_no_forces V hsol (tw v ε) (tw_ne_zero v ε hv)
+    fun F h1 h2 h3 h4 h5 => hε F ⟨h1, h2, h3, h4, h5⟩
+
 end Minimality
 
 end
