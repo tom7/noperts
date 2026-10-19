@@ -1275,6 +1275,93 @@ theorem edge_robust_core (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ
   · exact ⟨a, b, z, rfl, ha.le, hb.le, Or.inl (far_tiltOK hin), fun h => absurd h hb.ne',
       fun h => absurd h ha.ne'⟩
 
+set_option maxHeartbeats 4000000 in
+/-- **Lemma T at the tie over an edge, robust form, from chains.** The setting of
+`isRupert_edge_frame_tie` with the far depths tied and no right angle at the far
+ends: the apex vertex strictly beyond the tied depth (one of the two always is)
+starts both chains (`edge_robust_core`); `V` a solid. -/
+theorem isRupert_edge_frame_robust (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ → ℝ → Prop)
+    {zx zx' : ℝ} (hxx : zx < zx')
+    (hU1 : ∃ m ca cz, ChainOK Q1 zx' 1 m ca cz) (hL1 : ∃ m ca cz, ChainOK Q1 zx (-1) m ca cz)
+    (hU2 : ∃ m ca cz, ChainOK Q2 zx' 1 m ca cz) (hL2 : ∃ m ca cz, ChainOK Q2 zx (-1) m ca cz)
+    (hap1 : ∀ z, Q1 0 z → z = zx ∨ z = zx') (hap2 : ∀ z, Q2 0 z → z = zx ∨ z = zx')
+    (hQ1x : Q1 0 zx) (hQ1x' : Q1 0 zx') (hQ2x : Q2 0 zx) (hQ2x' : Q2 0 zx')
+    (hpos1 : ∀ a z, Q1 a z → 0 ≤ a) (hpos2 : ∀ b z, Q2 b z → 0 ≤ b)
+    (V : Finset ℝ³)
+    (hV1 : ∀ a z, Q1 a z → oblPt O r1 r2 a 0 z ∈ V) (hV2 : ∀ b z, Q2 b z → oblPt O r1 r2 0 b z ∈ V)
+    (hVc : ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧
+      ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧
+        ∀ m ca cz n cb dz, ChainOK Q1 zx' 1 m ca cz → ChainOK Q2 zx' 1 n cb dz →
+          a * cb n + b * ca m < ca m * cb n)))
+    (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty)
+    (hrob : ∀ m ca cz n cb dz, ChainOK Q1 zx' 1 m ca cz → ChainOK Q2 zx' 1 n cb dz →
+      cz m = dz n ∧
+      r1 0 * (cb n * r2 0 - ca m * r1 0) + r1 1 * (cb n * r2 1 - ca m * r1 1) ≠ 0 ∧
+      r2 0 * (ca m * r1 0 - cb n * r2 0) + r2 1 * (ca m * r1 1 - cb n * r2 1) ≠ 0) :
+    IsRupert V := by
+  obtain ⟨m0, ca0, cz0, U1⟩ := hU1
+  obtain ⟨n0, cb0, dz0, U2⟩ := hU2
+  obtain ⟨m1, ca1, cz1, L1⟩ := hL1
+  obtain ⟨n1, cb1, dz1, L2⟩ := hL2
+  have conv : ∀ {m n : ℕ} {ca cb : ℕ → ℝ}, ca m = ca0 m0 → cb n = cb0 n0 →
+      ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧
+        ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧ a * cb n + b * ca m < ca m * cb n)) := by
+    intro m n ca cb e1 e2 y hy
+    obtain ⟨a, b, z, e, hc⟩ := hVc y hy
+    refine ⟨a, b, z, e, ?_⟩
+    rcases hc with h | h | ⟨ha, hb, hin⟩
+    · exact Or.inl h
+    · exact Or.inr (Or.inl h)
+    · right; right; refine ⟨ha, hb, ?_⟩
+      rw [e1, e2]; exact hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
+  obtain ⟨htie, hangA, hangB⟩ := hrob m0 ca0 cz0 n0 cb0 dz0 U1 U2
+  have eU1 := L1.far_eq U1
+  have eU2 := L2.far_eq U2
+  have eU1' := U1.far_eq U1
+  have eU2' := U2.far_eq U2
+  rcases lt_or_ge (cz0 m0) zx' with hc | hc
+  · exact edge_robust_core O r1 r2 hρ Q1 Q2 1 (Or.inl rfl) (z1s := zx') (z2s := zx) (by linarith)
+      U1 U2 htie (by linarith) hangA hangB (fun z h => (hap1 z h).symm) (fun z h => (hap2 z h).symm)
+      hQ1x hQ2x hpos1 hpos2 V hV1 hV2 (conv eU1'.1 eU2'.1) hsol
+  · refine edge_robust_core O r1 r2 hρ Q1 Q2 (-1) (Or.inr rfl) (z1s := zx) (z2s := zx') (by linarith)
+      L1 L2 (by rw [eU1.2, eU2.2]; exact htie) (by rw [eU1.2]; linarith) (by rw [eU1.1, eU2.1]; exact hangA)
+      (by rw [eU1.1, eU2.1]; exact hangB) hap1 hap2 hQ1x' hQ2x' hpos1 hpos2 V hV1 hV2
+      (conv eU1.1 eU2.1) hsol
+
+/-- **Lemma T over an edge from chains, the tie allowed, robust.** -/
+theorem isRupert_edge_frame_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ → ℝ → Prop)
+    {zx zx' : ℝ} (hxx : zx < zx')
+    (hU1 : ∃ m ca cz, ChainOK Q1 zx' 1 m ca cz) (hL1 : ∃ m ca cz, ChainOK Q1 zx (-1) m ca cz)
+    (hU2 : ∃ m ca cz, ChainOK Q2 zx' 1 m ca cz) (hL2 : ∃ m ca cz, ChainOK Q2 zx (-1) m ca cz)
+    (hap1 : ∀ z, Q1 0 z → z = zx ∨ z = zx') (hap2 : ∀ z, Q2 0 z → z = zx ∨ z = zx')
+    (hQ1x : Q1 0 zx) (hQ1x' : Q1 0 zx') (hQ2x : Q2 0 zx) (hQ2x' : Q2 0 zx')
+    (hpos1 : ∀ a z, Q1 a z → 0 ≤ a) (hpos2 : ∀ b z, Q2 b z → 0 ≤ b)
+    (V : Finset ℝ³)
+    (hV1 : ∀ a z, Q1 a z → oblPt O r1 r2 a 0 z ∈ V) (hV2 : ∀ b z, Q2 b z → oblPt O r1 r2 0 b z ∈ V)
+    (hVc : ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧
+      ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧
+        ∀ m ca cz n cb dz, ChainOK Q1 zx' 1 m ca cz → ChainOK Q2 zx' 1 n cb dz →
+          a * cb n + b * ca m < ca m * cb n)))
+    (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty)
+    (hfarT : ∀ m ca cz n cb dz, ChainOK Q1 zx' 1 m ca cz → ChainOK Q2 zx' 1 n cb dz →
+      cz m ≠ dz n ∨ ETie Q1 Q2 zx zx' (ca m) (cz m) (cb n) (dz n) ∨
+      (cz m = dz n ∧
+        r1 0 * (cb n * r2 0 - ca m * r1 0) + r1 1 * (cb n * r2 1 - ca m * r1 1) ≠ 0 ∧
+        r2 0 * (ca m * r1 0 - cb n * r2 0) + r2 1 * (ca m * r1 1 - cb n * r2 1) ≠ 0)) :
+    IsRupert V := by
+  obtain ⟨m0, ca0, cz0, U1⟩ := hU1
+  obtain ⟨n0, cb0, dz0, U2⟩ := hU2
+  rcases hfarT m0 ca0 cz0 n0 cb0 dz0 U1 U2 with h | h | h
+  · refine isRupert_edge_frame_tie O r1 r2 hρ Q1 Q2 hxx ⟨m0, ca0, cz0, U1⟩ hL1 ⟨n0, cb0, dz0, U2⟩ hL2
+      hap1 hap2 hQ1x hQ1x' hQ2x hQ2x' hpos1 hpos2 V hV1 hV2 hVc fun m ca cz n cb dz C1 C2 => Or.inl ?_
+    rw [(C1.far_eq U1).2, (C2.far_eq U2).2]; exact h
+  · refine isRupert_edge_frame_tie O r1 r2 hρ Q1 Q2 hxx ⟨m0, ca0, cz0, U1⟩ hL1 ⟨n0, cb0, dz0, U2⟩ hL2
+      hap1 hap2 hQ1x hQ1x' hQ2x hQ2x' hpos1 hpos2 V hV1 hV2 hVc fun m ca cz n cb dz C1 C2 => Or.inr ?_
+    rw [(C1.far_eq U1).1, (C1.far_eq U1).2, (C2.far_eq U2).1, (C2.far_eq U2).2]; exact h
+  · refine isRupert_edge_frame_robust O r1 r2 hρ Q1 Q2 hxx ⟨m0, ca0, cz0, U1⟩ hL1 ⟨n0, cb0, dz0, U2⟩ hL2
+      hap1 hap2 hQ1x hQ1x' hQ2x hQ2x' hpos1 hpos2 V hV1 hV2 hVc hsol fun m ca cz n cb dz C1 C2 => ?_
+    rw [(C1.far_eq U1).1, (C1.far_eq U1).2, (C2.far_eq U2).1, (C2.far_eq U2).2]; exact h
+
 end Minimality
 
 end
