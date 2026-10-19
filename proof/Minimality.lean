@@ -21,6 +21,7 @@ public import Minimality.Type05
 public import Minimality.Forces
 public import Minimality.TieForces
 public import Minimality.TieRobust
+public import Minimality.TieFrame
 
 /-!
 # Every nopert has at least 7 points
