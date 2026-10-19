@@ -373,6 +373,78 @@ theorem isRupert_triShadow_robust (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m 
     · rw [xa0, xa, xb, xb1, hdetB]
       exact mul_ne_zero (mul_ne_zero (mul_ne_zero (mul_ne_zero hA0.ne' hB0.ne') hρ'.ne') hBn.ne') hang
 
+/-- A finite sequence with no interior local minimum (`ChainOK.conc`) exceeds
+the smaller of its end values at every interior index. -/
+theorem gt_min_ends_of_conc {f : ℕ → ℝ} {m : ℕ}
+    (hc : ∀ l, 1 ≤ l → l < m → min (f (l - 1)) (f (l + 1)) < f l) :
+    ∀ l, 0 < l → l < m → min (f 0) (f m) < f l := by
+  intro l hl0 hlm
+  obtain ⟨g, hg, hgmin⟩ := (range (m + 1)).exists_min_image f ⟨0, by simp⟩
+  have hgm : g ≤ m := Nat.lt_succ_iff.mp (mem_range.mp hg)
+  -- the minimum is not interior
+  have hend : g = 0 ∨ g = m := by
+    by_contra h
+    push Not at h
+    have := hc g (by omega) (by omega)
+    have h1 := hgmin (g - 1) (mem_range.mpr (by omega))
+    have h2 := hgmin (g + 1) (mem_range.mpr (by omega))
+    rw [min_lt_iff] at this
+    rcases this with h3 | h3 <;> linarith
+  have hfl : f g ≤ f l := hgmin l (mem_range.mpr (by omega))
+  have hstrict : f g < f l := by
+    rcases hfl.lt_or_eq with h | h
+    · exact h
+    · -- `l` would be an interior minimum
+      have := hc l hl0 hlm
+      have h1 := hgmin (l - 1) (mem_range.mpr (by omega))
+      have h2 := hgmin (l + 1) (mem_range.mpr (by omega))
+      rw [min_lt_iff] at this
+      rcases this with h3 | h3 <;> linarith
+  rcases hend with rfl | rfl
+  · exact lt_of_le_of_lt (min_le_left _ _) hstrict
+  · exact lt_of_le_of_lt (min_le_right _ _) hstrict
+
+/-- A tilt `(α, β)` for the robust tie exists unless the far triangle has a
+right angle at `a` or at `b`. -/
+theorem exists_tie_tilt (O r1 r2 : ℝ²) (A B : ℝ)
+    (ha : r1 0 * (B * r2 0 - A * r1 0) + r1 1 * (B * r2 1 - A * r1 1) ≠ 0)
+    (hb : r2 0 * (A * r1 0 - B * r2 0) + r2 1 * (A * r1 1 - B * r2 1) ≠ 0) :
+    ∃ α β : ℝ, 0 < α ∧ 0 < β ∧
+      ((0 < ⟪oblPt 0 r1 r2 (-A) B 0, oblPt 0 r1 r2 α β 0⟫ ∧
+        r1 0 * (B * r2 0 - A * r1 0) + r1 1 * (B * r2 1 - A * r1 1) ≠ 0) ∨
+      (⟪oblPt 0 r1 r2 (-A) B 0, oblPt 0 r1 r2 α β 0⟫ < 0 ∧
+        r2 0 * (A * r1 0 - B * r2 0) + r2 1 * (A * r1 1 - B * r2 1) ≠ 0)) := by
+  set p1 := r1 0 * (B * r2 0 - A * r1 0) + r1 1 * (B * r2 1 - A * r1 1)
+  set p2 := r2 0 * (B * r2 0 - A * r1 0) + r2 1 * (B * r2 1 - A * r1 1)
+  have hp2 : p2 ≠ 0 := by
+    intro h; apply hb
+    have : r2 0 * (A * r1 0 - B * r2 0) + r2 1 * (A * r1 1 - B * r2 1) = -p2 := by
+      simp only [p2]; ring
+    rw [this, h, neg_zero]
+  have key : ∀ α β, ⟪oblPt 0 r1 r2 (-A) B 0, oblPt 0 r1 r2 α β 0⟫ = α * p1 + β * p2 := by
+    intro α β
+    simp [oblPt, PiLp.inner_apply, Fin.sum_univ_three, p1, p2]; ring
+  -- a tiny `β` keeps the sign of `p1`
+  set β := |p1| / (2 * (|p2| + 1))
+  have hβ : 0 < β := by
+    have := abs_pos.mpr ha; positivity
+  have hsmall : |β * p2| < |p1| := by
+    rw [abs_mul, abs_of_pos hβ]
+    have h1 : 0 < |p1| := abs_pos.mpr ha
+    have : |p1| / (2 * (|p2| + 1)) * |p2| ≤ |p1| / 2 := by
+      rw [div_mul_eq_mul_div, div_le_div_iff₀ (by positivity) (by norm_num)]
+      nlinarith [abs_nonneg p2]
+    linarith
+  refine ⟨1, β, one_pos, hβ, ?_⟩
+  rw [key]
+  rcases lt_or_gt_of_ne ha with h | h
+  · right
+    refine ⟨?_, hb⟩
+    have := (abs_lt.mp hsmall).2; rw [abs_of_neg h] at this; linarith
+  · left
+    refine ⟨?_, ha⟩
+    have := (abs_lt.mp hsmall).1; rw [abs_of_pos h] at this; linarith
+
 end Minimality
 
 end
