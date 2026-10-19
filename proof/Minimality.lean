@@ -102,22 +102,37 @@ theorem not_four_quad_facets_of_isNopert (V : Finset ℝ³) (h : IsNopert V) (hV
 /-- **No two quadrilateral facets sharing one vertex** (Corollary T1 of the
 triangle-shadow lemma, `FEWER-FACES-PROOFS.md` §7; types 02, 07, 09, 14, 18, 20):
 a 7-point nopert has no two quadrilateral facets meeting in a single vertex,
-given general position at the line of their planes (`Minimality.TriGenFar`: no
-segment parallel to it, distinct depths along it at the two far vertices). -/
+given general position at the line of their planes (`Minimality.TriGenTie`: no
+segment parallel to it, and the two far vertices at different depths along it
+or their tie settled by a top or bottom vertex, Lemma T at the tie; weaker than
+`Minimality.TriGenFar`, see `Minimality.TriGenFar.tie`). -/
 theorem not_two_quad_facets_vertex_of_isNopert (V : Finset ℝ³) (h : IsNopert V)
     (hV : V.card = 7) (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V)
     (h2V : Q2 ⊆ V) (h1c : Q1.card = 4) (h2c : Q2.card = 4) (h1f : Minimality.IsFacet V Q1)
     (h2f : Minimality.IsFacet V Q2) (v : ℝ³) (hint : Q1 ∩ Q2 = {v})
-    (hT : Minimality.TriGenFar V Q1 Q2 v) : False :=
+    (hT : Minimality.TriGenTie V Q1 Q2 v) : False := by
+  classical
   have hsol := (not_coplanar_iff_interior_convexHull_nonempty _).mp h.1
-  h.2 (Minimality.isRupert_of_two_quad_facets_vertex_solid V hV hsol
-    (Minimality.noThreeCollinear_of_not_isRupert hV hsol h.2) Q1 Q2 h1V h2V h1c h2c h1f h2f v
-    hint hT)
+  -- the two quadrilaterals cover all seven points
+  have hcov : Q1 ∪ Q2 = V := by
+    refine Finset.eq_of_subset_of_card_le (Finset.union_subset h1V h2V) ?_
+    rw [hV, Finset.card_union, hint, h1c, h2c, Finset.card_singleton]
+  have hv1 : v ∈ Q1 := (Finset.mem_inter.mp (hint ▸ Finset.mem_singleton_self v)).1
+  have hv2 : v ∈ Q2 := (Finset.mem_inter.mp (hint ▸ Finset.mem_singleton_self v)).2
+  obtain ⟨xa, hxa, hxav⟩ := Finset.exists_mem_ne (by omega : 1 < Q1.card) v
+  obtain ⟨xb, hxb, hxbv⟩ := Finset.exists_mem_ne (by omega : 1 < Q2.card) v
+  exact h.2 (Minimality.isRupert_of_facets_vertex_tie V
+    (Minimality.noThreeCollinear_of_not_isRupert hV hsol h.2) Q1 Q2 h1V h2V h1f h2f v hint
+    ⟨xa, hxa, hxav⟩ ⟨xb, hxb, hxbv⟩ hT
+    ⟨xa, hxa, xb, hxb, hxav, hxbv, fun _ _ _ _ _ _ y hy hy1 hy2 => by
+      rw [← hcov, Finset.mem_union] at hy
+      exact absurd hy (by tauto)⟩)
 
 /-- **Lemma T at a vertex** (`FEWER-FACES-PROOFS.md` §7): in a nopert with no three
 points collinear, two facets meeting in a single vertex `v`, with general
-position at the line of their planes (`Minimality.TriGenFar`: no segment
-parallel to it, distinct depths along it at the two far ends), never have every
+position at the line of their planes (`Minimality.TriGenTie`: no segment
+parallel to it, distinct depths along it at the two far ends or a tie settled
+by a top or bottom vertex; weaker than `Minimality.TriGenFar`), never have every
 other point strictly inside the shadow triangle of `v` and two further points
 `xa`, `xb` of the facets. The interior condition is barycentric, stated with any
 facet functionals `f1`, `f2` (it does not depend on their scaling). -/
@@ -125,18 +140,19 @@ theorem not_facets_vertex_triShadow_of_isNopert (V : Finset ℝ³) (h : IsNopert
     (hgen : Minimality.NoThreeCollinear V) (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
     (h1c : 1 < Q1.card) (h2c : 1 < Q2.card) (h1f : Minimality.IsFacet V Q1)
     (h2f : Minimality.IsFacet V Q2) (v : ℝ³) (hint : Q1 ∩ Q2 = {v})
-    (hT : Minimality.TriGenFar V Q1 Q2 v)
+    (hT : Minimality.TriGenTie V Q1 Q2 v)
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧ ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ,
       (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
       (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : False :=
-  h.2 (Minimality.isRupert_of_facets_vertex V hgen Q1 Q2 h1V h2V h1f h2f v hint
+  h.2 (Minimality.isRupert_of_facets_vertex_tie V hgen Q1 Q2 h1V h2V h1f h2f v hint
     (Finset.exists_mem_ne h1c v) (Finset.exists_mem_ne h2c v) hT hin)
 
 /-- **Lemma T over an edge** (`FEWER-FACES-PROOFS.md` §7): in a nopert with no three
 points collinear, two facets sharing exactly the edge `v w`, with general
-position along it (`Minimality.EdgeFar`: no other segment parallel to it,
-distinct depths along it at the two far ends), never have every
+position along it (`Minimality.EdgeTie`: no other segment parallel to it,
+distinct depths along it at the two far ends or a tie settled by a top or bottom
+vertex; weaker than `Minimality.EdgeFar`), never have every
 other point strictly inside the shadow triangle of the edge and two further
 points `xa ∈ Q1 \ Q2`, `xb ∈ Q2 \ Q1` (barycentric form with any facet
 functionals `f1`, `f2`). -/
@@ -144,13 +160,13 @@ theorem not_facets_edge_triShadow_of_isNopert (V : Finset ℝ³) (h : IsNopert V
     (hgen : Minimality.NoThreeCollinear V) (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
     (h1f : Minimality.IsFacet V Q1) (h2f : Minimality.IsFacet V Q2) (v w : ℝ³) (hvw : v ≠ w)
     (hint : Q1 ∩ Q2 = {v, w})
-    (hZ : Minimality.EdgeFar V Q1 Q2 v w)
+    (hZ : Minimality.EdgeTie V Q1 Q2 v w)
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧ ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ,
       (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
       (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : False := by
   obtain ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩ := hin
-  exact h.2 (Minimality.isRupert_of_facets_edge V hgen Q1 Q2 h1V h2V h1f h2f v w hvw hint
+  exact h.2 (Minimality.isRupert_of_facets_edge_tie V hgen Q1 Q2 h1V h2V h1f h2f v w hvw hint
     ⟨xa, hxa, hxa2⟩ ⟨xb, hxb, hxb1⟩ hZ ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩)
 
 /-- **Lemma T over an edge with a triangle face** (Lemma T at the tie): as
