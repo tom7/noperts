@@ -18,6 +18,7 @@ public import Minimality.Type12
 public import Minimality.Type22
 public import Minimality.Type28
 public import Minimality.Type05
+public import Minimality.Forces
 
 /-!
 # Every nopert has at least 7 points
