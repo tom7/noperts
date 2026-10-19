@@ -1,6 +1,7 @@
 module
 
 public import Minimality.TriFacetsEdge
+public import Minimality.TriTie
 public import Minimality.TriFacetsChord
 
 @[expose] public section
@@ -130,10 +131,11 @@ theorem isFacet_of_index (x : Fin 7 → ℝ³) (P : Finset (Fin 7)) (f : ℝ³ �
 
 set_option maxHeartbeats 4000000 in
 /-- **Theorem E (type 10, the capped frustum).** Seven labelled points in general
-position with facets `1245, 1346, 2356` (the side quadrilaterals) and `023`
-(a cap triangle), given by functionals negative off them, are Rupert, given
-distinct far depths along `14` (`EdgeFar`) and `TriGenFar` at the line of the
-planes of `023` and `1245`. -/
+position with facets `1245, 1346, 2356` (the side quadrilaterals) and `023` (a
+cap triangle), given by functionals negative off them, are Rupert, given no
+other segment parallel to `14` and a settled tie of the far depths there
+(`EdgeTie`) and `TriGenTri` at the line of the planes of `023` and `1245`
+(`TriGenFar` there only where the deciding number is 1, at Lemma T′). -/
 theorem isRupert_type10 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hgen : NoThreeCollinear (univ.image x)) (fA fB fC fD : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({1, 2, 4, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
@@ -144,10 +146,13 @@ theorem isRupert_type10 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({2, 3, 5, 6} : Finset (Fin 7)) → fC (x i) < 0))
     (hD : ∀ i, (i ∈ ({0, 2, 3} : Finset (Fin 7)) → fD (x i) = 0) ∧
       (i ∉ ({0, 2, 3} : Finset (Fin 7)) → fD (x i) < 0))
-    (hZ1 : EdgeFar (univ.image x) (({1, 2, 4, 5} : Finset (Fin 7)).image x)
+    (hZ1 : EdgeTie (univ.image x) (({1, 2, 4, 5} : Finset (Fin 7)).image x)
       (({1, 3, 4, 6} : Finset (Fin 7)).image x) (x 1) (x 4))
-    (hT2 : TriGenFar (univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
-      (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2)) :
+    (hT2 : TriGenTri (univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
+        (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2) ∧
+      (fB (x 0) / fB (x 2) + fA (x 0) / fA (x 3) = 1 →
+        TriGenFar (univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
+          (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2))) :
     IsRupert (univ.image x) := by
   classical
   set V := univ.image x with hV
@@ -174,7 +179,7 @@ theorem isRupert_type10 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
   have sub : ∀ P : Finset (Fin 7), P.image x ⊆ V := fun P => Finset.image_subset_image (Finset.subset_univ P)
   rcases lt_or_ge (fB (x 0) / fB (x 2) + fA (x 0) / fA (x 3)) 1 with hlt | hgt
   · -- the view along the edge `14`
-    refine isRupert_of_facets_edge V hgen QA QB (sub _) (sub _) (isFacet_of_index x _ fA hA)
+    refine isRupert_of_facets_edge_tie V hgen QA QB (sub _) (sub _) (isFacet_of_index x _ fA hA)
       (isFacet_of_index x _ fB hB) (x 1) (x 4) (fun h => by have := hx h; omega) ?_
       ⟨x 2, (memQ _ 2).mpr (by decide), by rw [memQ]; decide⟩
       ⟨x 3, (memQ _ 3).mpr (by decide), by rw [memQ]; decide⟩ hZ1 ?_
@@ -201,34 +206,6 @@ theorem isRupert_type10 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
         ((hA 3).2 (by decide)).ne
     rw [e1, e2]; exact hlt
   · -- the view along the line of the planes of `023` and `1245`
-    refine isRupert_of_facets_vertex_chord V hgen QD QA (sub _) (sub _)
-      (isFacet_of_index x _ fD hD) (isFacet_of_index x _ fA hA) (x 2) ?_
-      ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩
-      ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩ hT2 (x 3) (x 4)
-      ((memQ _ 3).mpr (by decide)) ((memQ _ 4).mpr (by decide))
-      (fun h => by have := hx h; omega) (fun h => by have := hx h; omega) (x 6) (hxV 6)
-      (by rw [memQ]; decide) (by rw [memQ]; decide) ?_
-    · rw [inter, show ({0, 2, 3} ∩ {1, 2, 4, 5} : Finset (Fin 7)) = {2} by decide]
-      simp
-    intro f1 f2 z1 n1 z2 n2
-    refine ⟨fun y hy hy1 hy2 hne => ?_, ?_⟩
-    · obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
-      rw [memQ] at hy1 hy2
-      have hi : i = 6 := by clear * - hy1 hy2; fin_cases i <;> simp_all
-      exact absurd (by rw [hi]) hne
-    have e2 : f2 (x 6) / f2 (x 3) = fA (x 6) / fA (x 3) :=
-      ratio f2 fA 1 2 4 (by decide) (by decide) (by decide)
-        (z2 _ ((memQ _ 1).mpr (by decide))) (z2 _ ((memQ _ 2).mpr (by decide)))
-        (z2 _ ((memQ _ 4).mpr (by decide))) ((hA 1).1 (by decide)) ((hA 2).1 (by decide))
-        ((hA 4).1 (by decide)) _ _ (n2 _ (hxV 3) (by rw [memQ]; decide)).ne
-        ((hA 3).2 (by decide)).ne
-    have e1 : f1 (x 6) / f1 (x 4) = fD (x 6) / fD (x 4) :=
-      ratio f1 fD 0 2 3 (by decide) (by decide) (by decide)
-        (z1 _ ((memQ _ 0).mpr (by decide))) (z1 _ ((memQ _ 2).mpr (by decide)))
-        (z1 _ ((memQ _ 3).mpr (by decide))) ((hD 0).1 (by decide)) ((hD 2).1 (by decide))
-        ((hD 3).1 (by decide)) _ _ (n1 _ (hxV 4) (by rw [memQ]; decide)).ne
-        ((hD 4).2 (by decide)).ne
-    rw [e1, e2]
     -- Cramer for `x6` in the frame `x4; x0, x2, x3`
     have EA := affine_cramer fA (x 4) (x 0) (x 2) (x 3) (x 6)
     have EB := affine_cramer fB (x 4) (x 0) (x 2) (x 3) (x 6)
@@ -279,7 +256,68 @@ theorem isRupert_type10 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       by_contra h; push Not at h
       have : -r * (fC (x 0) / fC (x 4)) ≤ 0 := by nlinarith
       linarith
-    rw [hk]; nlinarith
+    have hiv : QD ∩ QA = {x 2} := by
+      rw [inter, show ({0, 2, 3} ∩ {1, 2, 4, 5} : Finset (Fin 7)) = {2} by decide]
+      simp
+    rcases hgt.lt_or_eq with hgt' | hgeq
+    · -- `s > 1`: the point off both planes strictly inside; Lemma T (the tie allowed)
+      refine isRupert_of_facets_vertex_tie V hgen QD QA (sub _) (sub _)
+        (isFacet_of_index x _ fD hD) (isFacet_of_index x _ fA hA) (x 2) hiv
+        ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩
+        ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩
+        (hT2.1.tie (sub _) (sub _) hiv
+          (Or.inl (by show (({0, 2, 3} : Finset (Fin 7)).image x).card = 3
+                      rw [Finset.card_image_of_injective _ hx]; decide)))
+        ⟨x 3, (memQ _ 3).mpr (by decide), x 4, (memQ _ 4).mpr (by decide),
+          fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩
+      intro f1 f2 z1 n1 z2 n2 y hy hy1 hy2
+      obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
+      rw [memQ] at hy1 hy2
+      have hi : i = 6 := by clear * - hy1 hy2; fin_cases i <;> simp_all
+      subst hi
+      have e2 : f2 (x 6) / f2 (x 3) = fA (x 6) / fA (x 3) :=
+        ratio f2 fA 1 2 4 (by decide) (by decide) (by decide)
+          (z2 _ ((memQ _ 1).mpr (by decide))) (z2 _ ((memQ _ 2).mpr (by decide)))
+          (z2 _ ((memQ _ 4).mpr (by decide))) ((hA 1).1 (by decide)) ((hA 2).1 (by decide))
+          ((hA 4).1 (by decide)) _ _ (n2 _ (hxV 3) (by rw [memQ]; decide)).ne
+          ((hA 3).2 (by decide)).ne
+      have e1 : f1 (x 6) / f1 (x 4) = fD (x 6) / fD (x 4) :=
+        ratio f1 fD 0 2 3 (by decide) (by decide) (by decide)
+          (z1 _ ((memQ _ 0).mpr (by decide))) (z1 _ ((memQ _ 2).mpr (by decide)))
+          (z1 _ ((memQ _ 3).mpr (by decide))) ((hD 0).1 (by decide)) ((hD 2).1 (by decide))
+          ((hD 3).1 (by decide)) _ _ (n1 _ (hxV 4) (by rw [memQ]; decide)).ne
+          ((hD 4).2 (by decide)).ne
+      rw [e1, e2]
+      rw [hk]; nlinarith
+    · -- `s = 1`: that point on the far side; Lemma T′
+      refine isRupert_of_facets_vertex_chord V hgen QD QA (sub _) (sub _)
+        (isFacet_of_index x _ fD hD) (isFacet_of_index x _ fA hA) (x 2) hiv
+        ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩
+        ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩
+        (hT2.2 hgeq.symm) (x 3) (x 4)
+        ((memQ _ 3).mpr (by decide)) ((memQ _ 4).mpr (by decide))
+        (fun h => by have := hx h; omega) (fun h => by have := hx h; omega) (x 6) (hxV 6)
+        (by rw [memQ]; decide) (by rw [memQ]; decide) ?_
+      intro f1 f2 z1 n1 z2 n2
+      refine ⟨fun y hy hy1 hy2 hne => ?_, ?_⟩
+      · obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
+        rw [memQ] at hy1 hy2
+        have hi : i = 6 := by clear * - hy1 hy2; fin_cases i <;> simp_all
+        exact absurd (by rw [hi]) hne
+      have e2 : f2 (x 6) / f2 (x 3) = fA (x 6) / fA (x 3) :=
+        ratio f2 fA 1 2 4 (by decide) (by decide) (by decide)
+          (z2 _ ((memQ _ 1).mpr (by decide))) (z2 _ ((memQ _ 2).mpr (by decide)))
+          (z2 _ ((memQ _ 4).mpr (by decide))) ((hA 1).1 (by decide)) ((hA 2).1 (by decide))
+          ((hA 4).1 (by decide)) _ _ (n2 _ (hxV 3) (by rw [memQ]; decide)).ne
+          ((hA 3).2 (by decide)).ne
+      have e1 : f1 (x 6) / f1 (x 4) = fD (x 6) / fD (x 4) :=
+        ratio f1 fD 0 2 3 (by decide) (by decide) (by decide)
+          (z1 _ ((memQ _ 0).mpr (by decide))) (z1 _ ((memQ _ 2).mpr (by decide)))
+          (z1 _ ((memQ _ 3).mpr (by decide))) ((hD 0).1 (by decide)) ((hD 2).1 (by decide))
+          ((hD 3).1 (by decide)) _ _ (n1 _ (hxV 4) (by rw [memQ]; decide)).ne
+          ((hD 4).2 (by decide)).ne
+      rw [e1, e2]
+      rw [hk]; nlinarith
 
 end Minimality
 

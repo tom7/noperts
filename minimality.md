@@ -94,7 +94,10 @@ through a copy of itself):
   `Minimality/TriTie.lean`). At a view along an edge with a triangle face
   through it, no far-depth condition is needed at all (`EdgePar`). For
   types 05, 12, 17, 22, 23, 25, 26, 27 and 28 this leaves only coincidences
-  of codimension 2: every hypothesis fails only when two
+  of codimension 2 (types 10, 13 and 19 keep one condition of codimension 1,
+  at their view along an edge between two quadrilaterals, where a tie of
+  the far corners is settled only if one of the four corners involved is the
+  top or bottom of its face, `EdgeTie`): every hypothesis fails only when two
   independent equalities hold at once. The proofs also cover the special position
   where the deciding number is
   zero: Then either another view still works, or one point lies on the far

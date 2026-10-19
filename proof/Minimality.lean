@@ -180,8 +180,11 @@ theorem noThreeCollinear_seven (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 /-- **Type 10, the capped frustum** (Theorem E of `FEWER-FACES-PROOFS.md` §7): a
 nopert does not have seven points labelled so that `1245`, `1346`, `2356` (side
 quadrilaterals) and `023` (a cap triangle) are facets (given by functionals
-negative off them); general position here is `Minimality.EdgeFar` along `14` and
-`Minimality.TriGenFar` at the line of the planes of `023` and `1245`. -/
+negative off them); general position here is `Minimality.EdgeTie` along `14` (no
+other segment parallel to it; at the far ends distinct depths or a settled tie)
+and `Minimality.TriGenTri` at the line of the planes of `023` and `1245`, with
+`Minimality.TriGenFar` there only in the special position where the deciding
+number is 1 (Lemma T′). -/
 theorem not_type10_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fA fB fC fD : ℝ³ →ᵃ[ℝ] ℝ)
@@ -193,19 +196,24 @@ theorem not_type10_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({2, 3, 5, 6} : Finset (Fin 7)) → fC (x i) < 0))
     (hD : ∀ i, (i ∈ ({0, 2, 3} : Finset (Fin 7)) → fD (x i) = 0) ∧
       (i ∉ ({0, 2, 3} : Finset (Fin 7)) → fD (x i) < 0))
-    (hZ1 : Minimality.EdgeFar (Finset.univ.image x)
+    (hZ1 : Minimality.EdgeTie (Finset.univ.image x)
       (({1, 2, 4, 5} : Finset (Fin 7)).image x)
       (({1, 3, 4, 6} : Finset (Fin 7)).image x) (x 1) (x 4))
-    (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
-      (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2)) : False :=
+    (hT2 : Minimality.TriGenTri (Finset.univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
+        (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2) ∧
+      (fB (x 0) / fB (x 2) + fA (x 0) / fA (x 3) = 1 →
+        Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
+          (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2))) : False :=
   h.2 (Minimality.isRupert_type10 x hx (noThreeCollinear_seven x h hx)
     fA fB fC fD hA hB hC hD hZ1 hT2)
 
 /-- **Type 19** (Theorem F of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
 seven points labelled so that `0235`, `1356` (quadrilaterals), `046` and `346`
 are facets (given by functionals negative off them); general position here is
-`Minimality.EdgeFar` along `35` and `Minimality.TriGenFar` at the line of the
-planes of `0235` and `046`. -/
+`Minimality.EdgeTie` along `35` (no other segment parallel to it; at the far
+ends distinct depths or a settled tie) and `Minimality.TriGenTri` at the line of
+the planes of `0235` and `046`, with `Minimality.TriGenFar` there only in the
+special position where the deciding number is 1 (Lemma T′). -/
 theorem not_type19_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fA fB fD fG : ℝ³ →ᵃ[ℝ] ℝ)
@@ -217,19 +225,24 @@ theorem not_type19_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) < 0))
     (hG : ∀ i, (i ∈ ({3, 4, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
       (i ∉ ({3, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
-    (hZ1 : Minimality.EdgeFar (Finset.univ.image x)
+    (hZ1 : Minimality.EdgeTie (Finset.univ.image x)
       (({0, 2, 3, 5} : Finset (Fin 7)).image x)
       (({1, 3, 5, 6} : Finset (Fin 7)).image x) (x 3) (x 5))
-    (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
-      (({0, 4, 6} : Finset (Fin 7)).image x) (x 0)) : False :=
+    (hT2 : Minimality.TriGenTri (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
+        (({0, 4, 6} : Finset (Fin 7)).image x) (x 0) ∧
+      (fB (x 4) / fB (x 0) + fA (x 4) / fA (x 6) = 1 →
+        Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
+          (({0, 4, 6} : Finset (Fin 7)).image x) (x 0))) : False :=
   h.2 (Minimality.isRupert_type19 x hx (noThreeCollinear_seven x h hx)
     fA fB fD fG hA hB hD hG hZ1 hT2)
 
 /-- **Type 13** (Theorem G of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
 seven points labelled so that `0145`, `2456` (quadrilaterals), `123` and `126`
 are facets (given by functionals negative off them); general position here is
-`Minimality.EdgeFar` along `45` and `Minimality.TriGenFar` at the line of the
-planes of `0145` and `123`. -/
+`Minimality.EdgeTie` along `45` (no other segment parallel to it; at the far
+ends distinct depths or a settled tie) and `Minimality.TriGenTri` at the line of
+the planes of `0145` and `123`, with `Minimality.TriGenFar` there only in the
+special position where the deciding number is 1 (Lemma T′). -/
 theorem not_type13_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fA fB fD fG : ℝ³ →ᵃ[ℝ] ℝ)
@@ -241,11 +254,14 @@ theorem not_type13_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({1, 2, 3} : Finset (Fin 7)) → fD (x i) < 0))
     (hG : ∀ i, (i ∈ ({1, 2, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
       (i ∉ ({1, 2, 6} : Finset (Fin 7)) → fG (x i) < 0))
-    (hZ1 : Minimality.EdgeFar (Finset.univ.image x)
+    (hZ1 : Minimality.EdgeTie (Finset.univ.image x)
       (({0, 1, 4, 5} : Finset (Fin 7)).image x)
       (({2, 4, 5, 6} : Finset (Fin 7)).image x) (x 4) (x 5))
-    (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
-      (({1, 2, 3} : Finset (Fin 7)).image x) (x 1)) : False :=
+    (hT2 : Minimality.TriGenTri (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
+        (({1, 2, 3} : Finset (Fin 7)).image x) (x 1) ∧
+      (fB (x 3) / fB (x 1) + fA (x 3) / fA (x 2) = 1 →
+        Minimality.TriGenFar (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
+          (({1, 2, 3} : Finset (Fin 7)).image x) (x 1))) : False :=
   h.2 (Minimality.isRupert_type13 x hx (noThreeCollinear_seven x h hx)
     fA fB fD fG hA hB hD hG hZ1 hT2)
 
