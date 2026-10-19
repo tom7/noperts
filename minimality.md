@@ -93,8 +93,8 @@ through a copy of itself):
   the shared corner (`TriGenTri`; Lemma T at the tie,
   `Minimality/TriTie.lean`). At a view along an edge with a triangle face
   through it, no far-depth condition is needed at all (`EdgePar`). For
-  types 05, 12, 17, 22, 25, 26 and 28 this leaves only coincidences of
-  codimension 2: every hypothesis fails only when two
+  types 05, 12, 17, 22, 23, 25, 26, 27 and 28 this leaves only coincidences
+  of codimension 2: every hypothesis fails only when two
   independent equalities hold at once. The proofs also cover the special position
   where the deciding number is
   zero: Then either another view still works, or one point lies on the far
