@@ -30,11 +30,13 @@ set_option maxHeartbeats 4000000 in
 /-- **Theorem G (type 13).** Seven labelled points, no three collinear, with facets
 `0145`, `2456` (quadrilaterals), `123`, `126`, given by functionals negative off
 them, are Rupert, given no other segment parallel to `45` and a settled tie of
-the far depths there (`EdgeTie`) and `TriGenTri` at the line of the planes of
-`0145` and `123` (`TriGenFar` there only where the deciding number is 1, at
-Lemma T′). -/
+the far depths there, or at a tie no right angle at the far ends (`EdgeTieR`)
+and `TriGenTri` at the line of the planes of `0145` and `123` (`TriGenFar` there
+only where the deciding number is 1, at Lemma T′). -/
 theorem isRupert_type13 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
-    (hgen : NoThreeCollinear (univ.image x)) (fA fB fD fG : ℝ³ →ᵃ[ℝ] ℝ)
+    (hgen : NoThreeCollinear (univ.image x))
+    (hsol : (interior (convexHull ℝ ((univ.image x : Finset ℝ³) : Set ℝ³))).Nonempty)
+    (fA fB fD fG : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 1, 4, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 1, 4, 5} : Finset (Fin 7)) → fA (x i) < 0))
     (hB : ∀ i, (i ∈ ({2, 4, 5, 6} : Finset (Fin 7)) → fB (x i) = 0) ∧
@@ -43,7 +45,7 @@ theorem isRupert_type13 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({1, 2, 3} : Finset (Fin 7)) → fD (x i) < 0))
     (hG : ∀ i, (i ∈ ({1, 2, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
       (i ∉ ({1, 2, 6} : Finset (Fin 7)) → fG (x i) < 0))
-    (hZ1 : EdgeTie (univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
+    (hZ1 : EdgeTieR (univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
       (({2, 4, 5, 6} : Finset (Fin 7)).image x) (x 4) (x 5))
     (hT2 : TriGenTri (univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
         (({1, 2, 3} : Finset (Fin 7)).image x) (x 1) ∧
@@ -74,10 +76,10 @@ theorem isRupert_type13 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
   have sub : ∀ P : Finset (Fin 7), P.image x ⊆ V := fun P => Finset.image_subset_image (Finset.subset_univ P)
   rcases lt_or_ge (fB (x 3) / fB (x 1) + fA (x 3) / fA (x 2)) 1 with hlt | hgt
   · -- the view along the edge `45`
-    refine isRupert_of_facets_edge_tie V hgen QA QB (sub _) (sub _) (isFacet_of_index x _ fA hA)
+    refine isRupert_of_facets_edge_tieR V hgen QA QB (sub _) (sub _) (isFacet_of_index x _ fA hA)
       (isFacet_of_index x _ fB hB) (x 4) (x 5) (fun h => by have := hx h; omega) ?_
       ⟨x 1, (memQ _ 1).mpr (by decide), by rw [memQ]; decide⟩
-      ⟨x 2, (memQ _ 2).mpr (by decide), by rw [memQ]; decide⟩ hZ1 ?_
+      ⟨x 2, (memQ _ 2).mpr (by decide), by rw [memQ]; decide⟩ hZ1 ?_ hsol
     · rw [inter, show ({0, 1, 4, 5} ∩ {2, 4, 5, 6} : Finset (Fin 7)) = {4, 5} by decide]
       simp [Finset.image_insert]
     refine ⟨x 1, (memQ _ 1).mpr (by decide), x 2, (memQ _ 2).mpr (by decide),

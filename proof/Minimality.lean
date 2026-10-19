@@ -157,9 +157,10 @@ theorem not_facets_vertex_triShadow_of_isNopert (V : Finset ℝ³) (h : IsNopert
 
 /-- **Lemma T over an edge** (`FEWER-FACES-PROOFS.md` §7): in a nopert with no three
 points collinear, two facets sharing exactly the edge `v w`, with general
-position along it (`Minimality.EdgeTie`: no other segment parallel to it,
-distinct depths along it at the two far ends or a tie settled by a top or bottom
-vertex; weaker than `Minimality.EdgeFar`), never have every
+position along it (`Minimality.EdgeTieR`: no other segment parallel to it,
+distinct depths along it at the two far ends, or a tie settled by a top or
+bottom vertex or with no right angle at the far ends (Lemma T at the tie, robust
+form); weaker than `Minimality.EdgeFar`), never have every
 other point strictly inside the shadow triangle of the edge and two further
 points `xa ∈ Q1 \ Q2`, `xb ∈ Q2 \ Q1` (barycentric form with any facet
 functionals `f1`, `f2`). -/
@@ -167,14 +168,15 @@ theorem not_facets_edge_triShadow_of_isNopert (V : Finset ℝ³) (h : IsNopert V
     (hgen : Minimality.NoThreeCollinear V) (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
     (h1f : Minimality.IsFacet V Q1) (h2f : Minimality.IsFacet V Q2) (v w : ℝ³) (hvw : v ≠ w)
     (hint : Q1 ∩ Q2 = {v, w})
-    (hZ : Minimality.EdgeTie V Q1 Q2 v w)
+    (hZ : Minimality.EdgeTieR V Q1 Q2 v w)
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧ ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ,
       (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
       (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : False := by
   obtain ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩ := hin
-  exact h.2 (Minimality.isRupert_of_facets_edge_tie V hgen Q1 Q2 h1V h2V h1f h2f v w hvw hint
-    ⟨xa, hxa, hxa2⟩ ⟨xb, hxb, hxb1⟩ hZ ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩)
+  exact h.2 (Minimality.isRupert_of_facets_edge_tieR V hgen Q1 Q2 h1V h2V h1f h2f v w hvw hint
+    ⟨xa, hxa, hxa2⟩ ⟨xb, hxb, hxb1⟩ hZ ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩
+    ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1))
 
 /-- **Lemma T over an edge with a triangle face** (Lemma T at the tie): as
 `not_facets_edge_triShadow_of_isNopert`, but when `Q1` or `Q2` is a triangle
@@ -203,8 +205,8 @@ theorem noThreeCollinear_seven (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 /-- **Type 10, the capped frustum** (Theorem E of `FEWER-FACES-PROOFS.md` §7): a
 nopert does not have seven points labelled so that `1245`, `1346`, `2356` (side
 quadrilaterals) and `023` (a cap triangle) are facets (given by functionals
-negative off them); general position here is `Minimality.EdgeTie` along `14` (no
-other segment parallel to it; at the far ends distinct depths or a settled tie)
+negative off them); general position here is `Minimality.EdgeTieR` along `14` (no
+other segment parallel to it; at the far ends distinct depths, a settled tie, or no right angle)
 and `Minimality.TriGenTri` at the line of the planes of `023` and `1245`, with
 `Minimality.TriGenFar` there only in the special position where the deciding
 number is 1 (Lemma T′). -/
@@ -219,7 +221,7 @@ theorem not_type10_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({2, 3, 5, 6} : Finset (Fin 7)) → fC (x i) < 0))
     (hD : ∀ i, (i ∈ ({0, 2, 3} : Finset (Fin 7)) → fD (x i) = 0) ∧
       (i ∉ ({0, 2, 3} : Finset (Fin 7)) → fD (x i) < 0))
-    (hZ1 : Minimality.EdgeTie (Finset.univ.image x)
+    (hZ1 : Minimality.EdgeTieR (Finset.univ.image x)
       (({1, 2, 4, 5} : Finset (Fin 7)).image x)
       (({1, 3, 4, 6} : Finset (Fin 7)).image x) (x 1) (x 4))
     (hT2 : Minimality.TriGenTri (Finset.univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
@@ -228,6 +230,7 @@ theorem not_type10_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
         Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
           (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2))) : False :=
   h.2 (Minimality.isRupert_type10 x hx (noThreeCollinear_seven x h hx)
+    ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1)
     fA fB fC fD hA hB hC hD hZ1 hT2)
 
 /-- **Type 19** (Theorem F of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
@@ -248,7 +251,7 @@ theorem not_type19_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) < 0))
     (hG : ∀ i, (i ∈ ({3, 4, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
       (i ∉ ({3, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
-    (hZ1 : Minimality.EdgeTie (Finset.univ.image x)
+    (hZ1 : Minimality.EdgeTieR (Finset.univ.image x)
       (({0, 2, 3, 5} : Finset (Fin 7)).image x)
       (({1, 3, 5, 6} : Finset (Fin 7)).image x) (x 3) (x 5))
     (hT2 : Minimality.TriGenTri (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
@@ -257,6 +260,7 @@ theorem not_type19_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
         Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
           (({0, 4, 6} : Finset (Fin 7)).image x) (x 0))) : False :=
   h.2 (Minimality.isRupert_type19 x hx (noThreeCollinear_seven x h hx)
+    ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1)
     fA fB fD fG hA hB hD hG hZ1 hT2)
 
 /-- **Type 13** (Theorem G of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
@@ -277,7 +281,7 @@ theorem not_type13_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({1, 2, 3} : Finset (Fin 7)) → fD (x i) < 0))
     (hG : ∀ i, (i ∈ ({1, 2, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
       (i ∉ ({1, 2, 6} : Finset (Fin 7)) → fG (x i) < 0))
-    (hZ1 : Minimality.EdgeTie (Finset.univ.image x)
+    (hZ1 : Minimality.EdgeTieR (Finset.univ.image x)
       (({0, 1, 4, 5} : Finset (Fin 7)).image x)
       (({2, 4, 5, 6} : Finset (Fin 7)).image x) (x 4) (x 5))
     (hT2 : Minimality.TriGenTri (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
@@ -286,6 +290,7 @@ theorem not_type13_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
         Minimality.TriGenFar (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
           (({1, 2, 3} : Finset (Fin 7)).image x) (x 1))) : False :=
   h.2 (Minimality.isRupert_type13 x hx (noThreeCollinear_seven x h hx)
+    ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1)
     fA fB fD fG hA hB hD hG hZ1 hT2)
 
 /-- **Type 17** (Theorem H of `FEWER-FACES-PROOFS.md` §7): a nopert does not have

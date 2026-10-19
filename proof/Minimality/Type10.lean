@@ -1,7 +1,7 @@
 module
 
 public import Minimality.TriFacetsEdge
-public import Minimality.TriTie
+public import Minimality.TieFrame
 public import Minimality.TriFacetsChord
 
 @[expose] public section
@@ -134,10 +134,12 @@ set_option maxHeartbeats 4000000 in
 position with facets `1245, 1346, 2356` (the side quadrilaterals) and `023` (a
 cap triangle), given by functionals negative off them, are Rupert, given no
 other segment parallel to `14` and a settled tie of the far depths there
-(`EdgeTie`) and `TriGenTri` at the line of the planes of `023` and `1245`
+(`EdgeTieR`) and `TriGenTri` at the line of the planes of `023` and `1245`
 (`TriGenFar` there only where the deciding number is 1, at Lemma T′). -/
 theorem isRupert_type10 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
-    (hgen : NoThreeCollinear (univ.image x)) (fA fB fC fD : ℝ³ →ᵃ[ℝ] ℝ)
+    (hgen : NoThreeCollinear (univ.image x))
+    (hsol : (interior (convexHull ℝ ((univ.image x : Finset ℝ³) : Set ℝ³))).Nonempty)
+    (fA fB fC fD : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({1, 2, 4, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({1, 2, 4, 5} : Finset (Fin 7)) → fA (x i) < 0))
     (hB : ∀ i, (i ∈ ({1, 3, 4, 6} : Finset (Fin 7)) → fB (x i) = 0) ∧
@@ -146,7 +148,7 @@ theorem isRupert_type10 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({2, 3, 5, 6} : Finset (Fin 7)) → fC (x i) < 0))
     (hD : ∀ i, (i ∈ ({0, 2, 3} : Finset (Fin 7)) → fD (x i) = 0) ∧
       (i ∉ ({0, 2, 3} : Finset (Fin 7)) → fD (x i) < 0))
-    (hZ1 : EdgeTie (univ.image x) (({1, 2, 4, 5} : Finset (Fin 7)).image x)
+    (hZ1 : EdgeTieR (univ.image x) (({1, 2, 4, 5} : Finset (Fin 7)).image x)
       (({1, 3, 4, 6} : Finset (Fin 7)).image x) (x 1) (x 4))
     (hT2 : TriGenTri (univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
         (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2) ∧
@@ -179,10 +181,10 @@ theorem isRupert_type10 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
   have sub : ∀ P : Finset (Fin 7), P.image x ⊆ V := fun P => Finset.image_subset_image (Finset.subset_univ P)
   rcases lt_or_ge (fB (x 0) / fB (x 2) + fA (x 0) / fA (x 3)) 1 with hlt | hgt
   · -- the view along the edge `14`
-    refine isRupert_of_facets_edge_tie V hgen QA QB (sub _) (sub _) (isFacet_of_index x _ fA hA)
+    refine isRupert_of_facets_edge_tieR V hgen QA QB (sub _) (sub _) (isFacet_of_index x _ fA hA)
       (isFacet_of_index x _ fB hB) (x 1) (x 4) (fun h => by have := hx h; omega) ?_
       ⟨x 2, (memQ _ 2).mpr (by decide), by rw [memQ]; decide⟩
-      ⟨x 3, (memQ _ 3).mpr (by decide), by rw [memQ]; decide⟩ hZ1 ?_
+      ⟨x 3, (memQ _ 3).mpr (by decide), by rw [memQ]; decide⟩ hZ1 ?_ hsol
     · rw [inter, show ({1, 2, 4, 5} ∩ {1, 3, 4, 6} : Finset (Fin 7)) = {1, 4} by decide]
       simp [Finset.image_insert]
     refine ⟨x 2, (memQ _ 2).mpr (by decide), x 3, (memQ _ 3).mpr (by decide),
