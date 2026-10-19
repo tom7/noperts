@@ -62,6 +62,70 @@ theorem interior_proj_convexHull_nonempty (V : Finset ℝ³) {R : Matrix (Fin 3)
   · rw [hx]
     ext i; fin_cases i <;> simp [proj_xy, liftH]
 
+/-- Cramer's identity in `ℝ³`: four vectors are linearly dependent. -/
+theorem det3_cramer (a b c w : ℝ³) :
+    det3 b c w • a - det3 a c w • b + det3 a b w • c = det3 a b c • w := by
+  ext i; fin_cases i <;>
+    simp [det3, cross, PiLp.inner_apply, Fin.sum_univ_three] <;> ring
+
+theorem det3_swap (x y w : ℝ³) : det3 x y w = -det3 y x w := by
+  simp only [det3, cross, PiLp.inner_apply, Fin.sum_univ_three]
+  simp; ring
+
+/-- A vector is determined by its inner products with a basis `a, b, w`. -/
+theorem det3_smul_eq (a b w F : ℝ³) :
+    det3 a b w • F = ⟪F, a⟫ • cross b w + ⟪F, b⟫ • cross w a + ⟪F, w⟫ • cross a b := by
+  ext i; fin_cases i <;>
+    simp [det3, cross, PiLp.inner_apply, Fin.sum_univ_three] <;> ring
+
+/-- **A point inside the shadow carries no force.** If `v` projects (along
+`w`) strictly inside the triangle `a b c` (counterclockwise), a force `F ⊥ w`
+with `⟪F, y - v⟫ ≤ 0` at the three test points `y = a, b, c` is zero. -/
+theorem force_eq_zero_of_inside {a b c v w F : ℝ³} (ha : 0 < det3 (b - v) (c - v) w)
+    (hb : 0 < det3 (c - v) (a - v) w) (hc : 0 < det3 (a - v) (b - v) w)
+    (hw : ⟪F, w⟫ = 0) (fa : ⟪F, a - v⟫ ≤ 0) (fb : ⟪F, b - v⟫ ≤ 0) (fc : ⟪F, c - v⟫ ≤ 0) :
+    F = 0 := by
+  have key := congrArg (fun z => ⟪F, z⟫) (det3_cramer (a - v) (b - v) (c - v) w)
+  simp only [inner_add_right, inner_sub_right, real_inner_smul_right, hw, mul_zero] at key
+  have hb' : det3 (a - v) (c - v) w = -det3 (c - v) (a - v) w := det3_swap _ _ _
+  rw [hb'] at key
+  rw [inner_sub_right] at fa fb fc
+  have p1 : det3 (b - v) (c - v) w * (⟪F, a⟫ - ⟪F, v⟫) ≤ 0 := mul_nonpos_of_nonneg_of_nonpos ha.le fa
+  have p2 : det3 (c - v) (a - v) w * (⟪F, b⟫ - ⟪F, v⟫) ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hb.le fb
+  have p3 : det3 (a - v) (b - v) w * (⟪F, c⟫ - ⟪F, v⟫) ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hc.le fc
+  have q1 : det3 (b - v) (c - v) w * (⟪F, a⟫ - ⟪F, v⟫) = 0 := by linarith
+  have q2 : det3 (c - v) (a - v) w * (⟪F, b⟫ - ⟪F, v⟫) = 0 := by linarith
+  have e1 : ⟪F, a - v⟫ = 0 := by
+    rw [inner_sub_right]; exact (mul_eq_zero.mp q1).resolve_left ha.ne'
+  have e2 : ⟪F, b - v⟫ = 0 := by
+    rw [inner_sub_right]; exact (mul_eq_zero.mp q2).resolve_left hb.ne'
+  have h := det3_smul_eq (a - v) (b - v) w F
+  rw [e1, e2, hw, zero_smul, zero_smul, zero_smul, add_zero, add_zero] at h
+  exact (smul_eq_zero.mp h).resolve_left hc.ne'
+
+/-- **A force at a corner lies in its normal cone.** At a convex corner `v`
+with neighbours `y₀` (before) and `y₁` (after) in the projection along `w`
+(`0 < det3 (y₁ - v) (y₀ - v) w`), a force `F ⊥ w` with `⟪F, y - v⟫ ≤ 0` at
+the two test points is a nonnegative combination of the outward edge normals
+`w × (y₀ - v)` and `(y₁ - v) × w`. -/
+theorem force_mem_cone {v y₀ y₁ w F : ℝ³} (hD : 0 < det3 (y₁ - v) (y₀ - v) w)
+    (hw : ⟪F, w⟫ = 0) (f1 : ⟪F, y₁ - v⟫ ≤ 0) (f0 : ⟪F, y₀ - v⟫ ≤ 0) :
+    ∃ s t : ℝ, 0 ≤ s ∧ 0 ≤ t ∧ F = s • cross w (y₀ - v) + t • cross (y₁ - v) w := by
+  set D := det3 (y₁ - v) (y₀ - v) w
+  have h := det3_smul_eq (y₁ - v) (y₀ - v) w F
+  rw [hw, zero_smul, add_zero] at h
+  refine ⟨-⟪F, y₁ - v⟫ / D, -⟪F, y₀ - v⟫ / D, div_nonneg (by linarith) hD.le,
+    div_nonneg (by linarith) hD.le, ?_⟩
+  have hc1 : cross (y₀ - v) w = -cross w (y₀ - v) := by
+    ext i; fin_cases i <;> simp [cross] <;> ring
+  have hc2 : cross w (y₁ - v) = -cross (y₁ - v) w := by
+    ext i; fin_cases i <;> simp [cross] <;> ring
+  rw [hc1, hc2] at h
+  apply smul_right_injective ℝ³ hD.ne'
+  simp only [smul_add, smul_smul]
+  rw [h, mul_div_cancel₀ _ hD.ne', mul_div_cancel₀ _ hD.ne']
+  simp only [smul_neg, neg_smul, neg_neg]
+
 /-- **Lemma 7.1 at a view, frame-free.** If every force system at the view `w`
 (see the module docstring) vanishes, `V` is Rupert. -/
 theorem isRupert_of_no_forces (V : Finset ℝ³) (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty)
