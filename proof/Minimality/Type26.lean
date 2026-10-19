@@ -45,8 +45,7 @@ theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hY : ∀ i, (i ∈ ({2, 4, 5} : Finset (Fin 7)) → fY (x i) = 0) ∧
       (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fY (x i) < 0))
     (hcase : fT (x 6) / fT (x 2) ≤ 1)
-    (hZ1 : EdgeFar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
-      (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4))
+    (hZ1 : EdgePar (univ.image x) (x 0) (x 4))
     (hT2 : TriGenTri (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2)) :
     IsRupert (univ.image x) := by
@@ -131,10 +130,11 @@ theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     linarith
   rcases lt_or_ge (fT (x 5) / fT (x 2) + fA (x 5) / fA (x 3)) 1 with h5lt | h5gt
   · -- the view `P` along the edge `04`
-    refine isRupert_of_facets_edge V hgen QA QT (sub _) (sub _) (isFacet_of_index x _ fA hA)
+    refine isRupert_of_facets_edge_tri V hgen QA QT (sub _) (sub _) (isFacet_of_index x _ fA hA)
       (isFacet_of_index x _ fT hT) (x 0) (x 4) (fun h => by have := hx h; omega) ?_
       ⟨x 2, (memQ _ 2).mpr (by decide), by rw [memQ]; decide⟩
-      ⟨x 3, (memQ _ 3).mpr (by decide), by rw [memQ]; decide⟩ hZ1 ?_
+      ⟨x 3, (memQ _ 3).mpr (by decide), by rw [memQ]; decide⟩
+        (Or.inr (by rw [Finset.card_image_of_injective _ hx]; rfl)) hZ1 ?_
     · rw [inter, show ({0, 2, 4, 6} ∩ {0, 3, 4} : Finset (Fin 7)) = {0, 4} by decide]
       simp [Finset.image_insert]
     refine ⟨x 2, (memQ _ 2).mpr (by decide), x 3, (memQ _ 3).mpr (by decide),
@@ -244,8 +244,8 @@ theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
 set_option maxHeartbeats 8000000 in
 /-- **Theorem L (type 26).** Seven labelled points, no three collinear, with facets
 `0246` (a quadrilateral), `034`, `235`, `136`, `013`, `016`, `245`, `345`, given
-by functionals negative off them, are Rupert, given distinct far depths along
-`04` (`EdgeFar`) and `TriGenFar` at the lines of the planes of `0246` and `235`
+by functionals negative off them, are Rupert, given no other segment parallel to
+`04` (`EdgePar`) and `TriGenTri` at the lines of the planes of `0246` and `235`
 and of `0246` and `136`. -/
 theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hgen : NoThreeCollinear (univ.image x)) (fA fT fG fH fU fW fY fZ : ℝ³ →ᵃ[ℝ] ℝ)
@@ -265,8 +265,7 @@ theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fY (x i) < 0))
     (hZ : ∀ i, (i ∈ ({3, 4, 5} : Finset (Fin 7)) → fZ (x i) = 0) ∧
       (i ∉ ({3, 4, 5} : Finset (Fin 7)) → fZ (x i) < 0))
-    (hZ1 : EdgeFar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
-      (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4))
+    (hZ1 : EdgePar (univ.image x) (x 0) (x 4))
     (hT2 : TriGenTri (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2))
     (hT6 : TriGenTri (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
@@ -305,15 +304,9 @@ theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
   · rw [y6, y2, div_le_one_of_neg t6]
     push Not at hc
     exact ((one_lt_div_of_neg t2).mp hc).le
-  · rw [hV, imgσ _ ({0, 2, 4, 6} : Finset (Fin 7)) (by decide),
-      imgσ _ ({0, 3, 4} : Finset (Fin 7)) (by decide), y4, y0]
-    refine ⟨fun p hp q hq hpq hpair c h => hZ1.1 p hp q hq hpq
-      (by rw [Finset.pair_comm (x 0) (x 4)]; exact hpair) (-c) (by rw [h, neg_smul, ← smul_neg, neg_sub]),
-      fun f1 f2 a1 a2 a3 a4 p hp q hq hpq h1 h2 h => ?_⟩
-    apply hZ1.2 f1 f2 a1 a2 a3 a4 p hp q hq hpq h1 h2
-    have e : ∀ r : ℝ³, ⟪r, x 0 - x 4⟫ = -⟪r, x 4 - x 0⟫ := fun r => by
-      rw [← inner_neg_right, neg_sub]
-    rw [e, e] at h; linarith
+  · rw [hV, y4, y0]
+    exact fun p hp q hq hpq hpair c h => hZ1 p hp q hq hpq
+      (by rw [Finset.pair_comm (x 0) (x 4)]; exact hpair) (-c) (by rw [h, neg_smul, ← smul_neg, neg_sub])
   · rw [hV, imgσ _ ({0, 2, 4, 6} : Finset (Fin 7)) (by decide),
       imgσ _ ({1, 3, 6} : Finset (Fin 7)) (by decide), y2]
     exact hT6

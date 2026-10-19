@@ -91,8 +91,10 @@ through a copy of itself):
   six, `noThreeCollinear_of_not_isRupert`). At most views that have a
   triangle face even the far corners may tie, unless they also tie with
   the shared corner (`TriGenTri`; Lemma T at the tie,
-  `Minimality/TriTie.lean`). For types 05, 12, 17, 22 and 28 this leaves
-  only coincidences of codimension 2: every hypothesis fails only when two
+  `Minimality/TriTie.lean`). At a view along an edge with a triangle face
+  through it, no far-depth condition is needed at all (`EdgePar`). For
+  types 05, 12, 17, 22, 25, 26 and 28 this leaves only coincidences of
+  codimension 2: every hypothesis fails only when two
   independent equalities hold at once. The proofs also cover the special position
   where the deciding number is
   zero: Then either another view still works, or one point lies on the far

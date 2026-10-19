@@ -2605,6 +2605,29 @@ theorem isRupert_of_facets_edge_tie (V : Finset ℝ³) (hgen : NoThreeCollinear 
   · exact hgen
   · exact hfarZ.1
 
+/-- No segment of `V` other than `v w` is parallel to `v w`: the part of
+`EdgeFar` left when a face through the edge is a triangle (`edgeTie_of_tri`). -/
+def EdgePar (V : Finset ℝ³) (v w : ℝ³) : Prop :=
+  ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → ∀ c : ℝ, q - p ≠ c • (w - v)
+
+/-- **Lemma T over an edge with a triangle face, facet form**: as
+`isRupert_of_facets_edge`, with `EdgeFar` weakened to `EdgePar` (no far-depth
+condition) when `Q1` or `Q2` is a triangle. -/
+theorem isRupert_of_facets_edge_tri (V : Finset ℝ³) (hgen : NoThreeCollinear V)
+    (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (h1f : IsFacet V Q1) (h2f : IsFacet V Q2)
+    (v w : ℝ³) (hvw : v ≠ w) (hint : Q1 ∩ Q2 = {v, w})
+    (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
+    (hcard : Q1.card = 3 ∨ Q2.card = 3) (hpar : EdgePar V v w)
+    (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧ ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ,
+      (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+      (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+      ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V := by
+  have hvi : v ∈ Q1 ∩ Q2 := by rw [hint]; simp
+  have hwi : w ∈ Q1 ∩ Q2 := by rw [hint]; simp
+  exact isRupert_of_facets_edge_tie V hgen Q1 Q2 h1V h2V h1f h2f v w hvw hint hne1 hne2
+    (edgeTie_of_tri h1V h2V (Finset.mem_inter.mp hvi).1 (Finset.mem_inter.mp hwi).1
+      (Finset.mem_inter.mp hvi).2 (Finset.mem_inter.mp hwi).2 hvw hne1 hne2 hcard hpar) hin
+
 end Minimality
 
 end

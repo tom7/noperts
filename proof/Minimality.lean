@@ -153,6 +153,23 @@ theorem not_facets_edge_triShadow_of_isNopert (V : Finset ℝ³) (h : IsNopert V
   exact h.2 (Minimality.isRupert_of_facets_edge V hgen Q1 Q2 h1V h2V h1f h2f v w hvw hint
     ⟨xa, hxa, hxa2⟩ ⟨xb, hxb, hxb1⟩ hZ ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩)
 
+/-- **Lemma T over an edge with a triangle face** (Lemma T at the tie): as
+`not_facets_edge_triShadow_of_isNopert`, but when `Q1` or `Q2` is a triangle
+the only general position needed is `Minimality.EdgePar` (no other segment
+parallel to the edge): the triangle settles any tie of the far ends. -/
+theorem not_facets_edge_tri_triShadow_of_isNopert (V : Finset ℝ³) (h : IsNopert V)
+    (hgen : Minimality.NoThreeCollinear V) (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
+    (h1f : Minimality.IsFacet V Q1) (h2f : Minimality.IsFacet V Q2) (v w : ℝ³) (hvw : v ≠ w)
+    (hint : Q1 ∩ Q2 = {v, w}) (hcard : Q1.card = 3 ∨ Q2.card = 3)
+    (hZ : Minimality.EdgePar V v w)
+    (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧ ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ,
+      (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+      (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+      ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : False := by
+  obtain ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩ := hin
+  exact h.2 (Minimality.isRupert_of_facets_edge_tri V hgen Q1 Q2 h1V h2V h1f h2f v w hvw hint
+    ⟨xa, hxa, hxa2⟩ ⟨xb, hxb, hxb1⟩ hcard hZ ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩)
+
 /-- Seven labelled points of a nopert: no three are collinear (else the middle
 one is in the hull of the other six, which is Rupert). -/
 theorem noThreeCollinear_seven (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
@@ -263,10 +280,11 @@ theorem not_type17_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 /-- **Type 27** (Theorem I of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
 seven points labelled so that `2356` (a quadrilateral), `025`, `016`, `046`,
 `045`, `012` and `456` are facets (given by functionals negative off them);
-general position here is `Minimality.EdgeFar` along `25` and
-`Minimality.TriGenFar` at the lines of the planes of `016` and `2356` and of
-`025` and `046`. A view whose hypothesis is
-`Minimality.TriGenTri` (it has a triangle face) allows the far ends to tie, unless
+general position here is `Minimality.EdgePar` along `25` (no other segment
+parallel to it), `Minimality.TriGenTri` at the line of the planes of `016` and
+`2356` and `Minimality.TriGenFar` at that of `025` and `046`. At the edge view
+a triangle face settles any tie of the far ends, and at a view whose hypothesis
+is `Minimality.TriGenTri` (it has a triangle face) the far ends may tie unless
 they also tie with the shared vertex (Lemma T at the tie). -/
 theorem not_type27_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
@@ -285,8 +303,7 @@ theorem not_type27_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({0, 1, 2} : Finset (Fin 7)) → fI (x i) < 0))
     (hJ : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fJ (x i) = 0) ∧
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fJ (x i) < 0))
-    (hZ1 : Minimality.EdgeFar (Finset.univ.image x)
-      (({0, 2, 5} : Finset (Fin 7)).image x) (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 2) (x 5))
+    (hZ1 : Minimality.EdgePar (Finset.univ.image x) (x 2) (x 5))
     (hT1 : Minimality.TriGenTri (Finset.univ.image x) (({0, 1, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 6))
     (hT2 : Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
@@ -297,9 +314,11 @@ theorem not_type27_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 /-- **Type 23** (Theorem J of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
 seven points labelled so that `0345` (a quadrilateral), `014`, `125`, `156` and
 `456` are facets (given by functionals negative off them); general position here
-is `Minimality.EdgeFar` along `04` and `Minimality.TriGenFar` at the lines of
-the planes of `014` and `156` and of `0345` and `125`. A view whose hypothesis is
-`Minimality.TriGenTri` (it has a triangle face) allows the far ends to tie, unless
+is `Minimality.EdgePar` along `04` (no other segment parallel to it),
+`Minimality.TriGenFar` at the line of the planes of `014` and `156` and
+`Minimality.TriGenTri` at that of `0345` and `125`. At the edge view
+a triangle face settles any tie of the far ends, and at a view whose hypothesis
+is `Minimality.TriGenTri` (it has a triangle face) the far ends may tie unless
 they also tie with the shared vertex (Lemma T at the tie). -/
 theorem not_type23_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
@@ -314,8 +333,7 @@ theorem not_type23_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({1, 5, 6} : Finset (Fin 7)) → fH (x i) < 0))
     (hK : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) = 0) ∧
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) < 0))
-    (hZ1 : Minimality.EdgeFar (Finset.univ.image x)
-      (({0, 1, 4} : Finset (Fin 7)).image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x) (x 0) (x 4))
+    (hZ1 : Minimality.EdgePar (Finset.univ.image x) (x 0) (x 4))
     (hT1 : Minimality.TriGenFar (Finset.univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
       (({1, 5, 6} : Finset (Fin 7)).image x) (x 1))
     (hT2 : Minimality.TriGenTri (Finset.univ.image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x)
@@ -326,10 +344,11 @@ theorem not_type23_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 /-- **Type 25** (Theorem K of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
 seven points labelled so that `0246` (a quadrilateral), `013`, `136`, `056`,
 `035`, `014` and `126` are facets (given by functionals negative off them);
-general position here is `Minimality.EdgeFar` along `13` and
-`Minimality.TriGenFar` at the lines of the planes of `013` and `0246` and of
-`013` and `056`. A view whose hypothesis is
-`Minimality.TriGenTri` (it has a triangle face) allows the far ends to tie, unless
+general position here is `Minimality.EdgePar` along `13` (no other segment
+parallel to it) and `Minimality.TriGenTri` at the lines of the planes of `013`
+and `0246` and of `013` and `056`. At the edge view
+a triangle face settles any tie of the far ends, and at a view whose hypothesis
+is `Minimality.TriGenTri` (it has a triangle face) the far ends may tie unless
 they also tie with the shared vertex (Lemma T at the tie). -/
 theorem not_type25_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
@@ -348,8 +367,7 @@ theorem not_type25_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({0, 1, 4} : Finset (Fin 7)) → fE (x i) < 0))
     (hI : ∀ i, (i ∈ ({1, 2, 6} : Finset (Fin 7)) → fI (x i) = 0) ∧
       (i ∉ ({1, 2, 6} : Finset (Fin 7)) → fI (x i) < 0))
-    (hZ1 : Minimality.EdgeFar (Finset.univ.image x)
-      (({0, 1, 3} : Finset (Fin 7)).image x) (({1, 3, 6} : Finset (Fin 7)).image x) (x 1) (x 3))
+    (hZ1 : Minimality.EdgePar (Finset.univ.image x) (x 1) (x 3))
     (hT1 : Minimality.TriGenTri (Finset.univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
       (({0, 2, 4, 6} : Finset (Fin 7)).image x) (x 0))
     (hT2 : Minimality.TriGenTri (Finset.univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
@@ -360,10 +378,11 @@ theorem not_type25_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 /-- **Type 26** (Theorem L of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
 seven points labelled so that `0246` (a quadrilateral), `034`, `235`, `136`,
 `013`, `016`, `245` and `345` are facets (given by functionals negative off
-them); general position here is `Minimality.EdgeFar` along `04` and
-`Minimality.TriGenFar` at the lines of the planes of `0246` and `235` and of
-`0246` and `136`. A view whose hypothesis is
-`Minimality.TriGenTri` (it has a triangle face) allows the far ends to tie, unless
+them); general position here is `Minimality.EdgePar` along `04` (no other
+segment parallel to it) and `Minimality.TriGenTri` at the lines of the planes of
+`0246` and `235` and of `0246` and `136`. At the edge view
+a triangle face settles any tie of the far ends, and at a view whose hypothesis
+is `Minimality.TriGenTri` (it has a triangle face) the far ends may tie unless
 they also tie with the shared vertex (Lemma T at the tie). -/
 theorem not_type26_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
@@ -384,8 +403,7 @@ theorem not_type26_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fY (x i) < 0))
     (hZ : ∀ i, (i ∈ ({3, 4, 5} : Finset (Fin 7)) → fZ (x i) = 0) ∧
       (i ∉ ({3, 4, 5} : Finset (Fin 7)) → fZ (x i) < 0))
-    (hZ1 : Minimality.EdgeFar (Finset.univ.image x)
-      (({0, 2, 4, 6} : Finset (Fin 7)).image x) (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4))
+    (hZ1 : Minimality.EdgePar (Finset.univ.image x) (x 0) (x 4))
     (hT2 : Minimality.TriGenTri (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2))
     (hT6 : Minimality.TriGenTri (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)

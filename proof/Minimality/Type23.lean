@@ -27,9 +27,9 @@ open scoped RealInnerProductSpace
 set_option maxHeartbeats 8000000 in
 /-- **Theorem J (type 23).** Seven labelled points, no three collinear, with facets
 `0345` (a quadrilateral), `014`, `125`, `156`, `456`, given by functionals
-negative off them, are Rupert, given distinct far depths along `04` (`EdgeFar`)
-and `TriGenFar` at the lines of the planes of `014` and `156` and of `0345` and
-`125`. -/
+negative off them, are Rupert, given no other segment parallel to `04` (`EdgePar`)
+and `TriGenFar` at the line of the planes of `014` and `156` and `TriGenTri` at
+that of `0345` and `125`. -/
 theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hgen : NoThreeCollinear (univ.image x)) (fA fD fE fH fK : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 3, 4, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
@@ -42,8 +42,7 @@ theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({1, 5, 6} : Finset (Fin 7)) → fH (x i) < 0))
     (hK : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) = 0) ∧
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) < 0))
-    (hZ1 : EdgeFar (univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
-      (({0, 3, 4, 5} : Finset (Fin 7)).image x) (x 0) (x 4))
+    (hZ1 : EdgePar (univ.image x) (x 0) (x 4))
     (hT1 : TriGenFar (univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
       (({1, 5, 6} : Finset (Fin 7)).image x) (x 1))
     (hT2 : TriGenTri (univ.image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x)
@@ -87,10 +86,11 @@ theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
   rcases lt_or_ge (fA (x 6) / fA (x 1) + fD (x 6) / fD (x 5)) 1 with h6lt | h6gt
   · by_cases h2lt : fA (x 2) / fA (x 1) + fD (x 2) / fD (x 5) < 1
     · -- the view `P` along the edge `04`
-      refine isRupert_of_facets_edge V hgen QD QA (sub _) (sub _) (isFacet_of_index x _ fD hD)
+      refine isRupert_of_facets_edge_tri V hgen QD QA (sub _) (sub _) (isFacet_of_index x _ fD hD)
         (isFacet_of_index x _ fA hA) (x 0) (x 4) (fun h => by have := hx h; omega) ?_
         ⟨x 1, (memQ _ 1).mpr (by decide), by rw [memQ]; decide⟩
-        ⟨x 5, (memQ _ 5).mpr (by decide), by rw [memQ]; decide⟩ hZ1 ?_
+        ⟨x 5, (memQ _ 5).mpr (by decide), by rw [memQ]; decide⟩
+        (Or.inl (by rw [Finset.card_image_of_injective _ hx]; rfl)) hZ1 ?_
       · rw [inter, show ({0, 1, 4} ∩ {0, 3, 4, 5} : Finset (Fin 7)) = {0, 4} by decide]
         simp [Finset.image_insert]
       refine ⟨x 1, (memQ _ 1).mpr (by decide), x 5, (memQ _ 5).mpr (by decide),
