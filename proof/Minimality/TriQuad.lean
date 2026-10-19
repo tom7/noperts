@@ -305,8 +305,7 @@ theorem isRupert_twoQuads_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
     {z0 a1 z1 a2 z2 a3 z3 b1 w1 b2 w2 b3 w3 : ℝ}
     (ha1 : 0 < a1) (ha2 : 0 < a2) (ha3 : 0 < a3) (hb1 : 0 < b1) (hb2 : 0 < b2) (hb3 : 0 < b3)
     (hQ1 : ConvQuad6 z0 a1 z1 a2 z2 a3 z3) (hQ2 : ConvQuad6 z0 b1 w1 b2 w2 b3 w3)
-    (ha12 : a1 ≠ a2) (ha13 : a1 ≠ a3) (ha23 : a2 ≠ a3)
-    (hb12 : b1 ≠ b2) (hb13 : b1 ≠ b3) (hb23 : b2 ≠ b3)
+    (hua : UniqMax3 a1 a2 a3) (hub : UniqMax3 b1 b2 b3)
     (hfz : ∀ i j : Fin 3, (∀ k, ![a1, a2, a3] k ≤ ![a1, a2, a3] i) →
       (∀ k, ![b1, b2, b3] k ≤ ![b1, b2, b3] j) → ![z1, z2, z3] i ≠ ![w1, w2, w3] j) :
     IsRupert ({oblPt O r1 r2 0 0 z0, oblPt O r1 r2 a1 0 z1, oblPt O r1 r2 a2 0 z2,
@@ -315,8 +314,8 @@ theorem isRupert_twoQuads_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
   set Q1 := QuadPt z0 a1 z1 a2 z2 a3 z3 with hQ1def
   set Q2 := QuadPt z0 b1 w1 b2 w2 b3 w3 with hQ2def
   -- the far points (from the upper chains)
-  obtain ⟨m0, ca0, cz0, C10⟩ := quad_chain6 ha1 ha2 ha3 hQ1 ha12 ha13 ha23 1 (Or.inl rfl)
-  obtain ⟨n0, cb0, dz0, C20⟩ := quad_chain6 hb1 hb2 hb3 hQ2 hb12 hb13 hb23 1 (Or.inl rfl)
+  obtain ⟨m0, ca0, cz0, C10⟩ := quad_chain6_um ha1 ha2 ha3 hQ1 hua 1 (Or.inl rfl)
+  obtain ⟨n0, cb0, dz0, C20⟩ := quad_chain6_um hb1 hb2 hb3 hQ2 hub 1 (Or.inl rfl)
   -- the far depths differ
   have maxA : ∀ k : Fin 3, ![a1, a2, a3] k ≤ ca0 m0 := by
     intro k
@@ -356,8 +355,8 @@ theorem isRupert_twoQuads_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
   set s : ℝ := if dz0 n0 < cz0 m0 then 1 else -1 with hsdef
   have hs : s = 1 ∨ s = -1 := by rw [hsdef]; split_ifs <;> simp
   have hs' : -s = 1 ∨ -s = -1 := by rcases hs with h | h <;> rw [h] <;> simp
-  obtain ⟨m, ca, cz, C1⟩ := quad_chain6 ha1 ha2 ha3 hQ1 ha12 ha13 ha23 s hs
-  obtain ⟨n, cb, dz, C2⟩ := quad_chain6 hb1 hb2 hb3 hQ2 hb12 hb13 hb23 (-s) hs'
+  obtain ⟨m, ca, cz, C1⟩ := quad_chain6_um ha1 ha2 ha3 hQ1 hua s hs
+  obtain ⟨n, cb, dz, C2⟩ := quad_chain6_um hb1 hb2 hb3 hQ2 hub (-s) hs'
   have eA := C1.far_eq C10
   have eB := C2.far_eq C20
   have hAB : s * dz n < s * cz m := by

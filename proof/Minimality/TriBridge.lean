@@ -362,14 +362,14 @@ theorem isRupert_twoQuads_vertical (y : Fin 7 → ℝ³) (f1 f2 : ℝ³ →ᵃ[�
         ![y 4 2, y 5 2, y 6 2] i ≠ ![y 1 2, y 2 2, y 3 2] j :=
       fun i j hi hj => (hz7 j i hj hi).symm
     have key := isRupert_twoQuads_frame O r2 r1 hpos' pb4 pb5 pb6 pa1 pa2 pa3 hQ2 hQ1
-      (dB 4 5 (by decide) a4 a5) (dB 4 6 (by decide) a4 a6) (dB 5 6 (by decide) a5 a6)
-      (dA 1 2 (by decide) b1 b2) (dA 1 3 (by decide) b1 b3) (dA 2 3 (by decide) b2 b3) hz7'
+      (uniqMax3_of_ne (dB 4 5 (by decide) a4 a5) (dB 4 6 (by decide) a4 a6) (dB 5 6 (by decide) a5 a6))
+      (uniqMax3_of_ne (dA 1 2 (by decide) b1 b2) (dA 1 3 (by decide) b1 b3) (dA 2 3 (by decide) b2 b3)) hz7'
     simp only [swap] at key
     convert key using 1
     ext p; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
   · exact isRupert_twoQuads_frame O r1 r2 hpos pa1 pa2 pa3 pb4 pb5 pb6 hQ1 hQ2
-      (dA 1 2 (by decide) b1 b2) (dA 1 3 (by decide) b1 b3) (dA 2 3 (by decide) b2 b3)
-      (dB 4 5 (by decide) a4 a5) (dB 4 6 (by decide) a4 a6) (dB 5 6 (by decide) a5 a6) hz7
+      (uniqMax3_of_ne (dA 1 2 (by decide) b1 b2) (dA 1 3 (by decide) b1 b3) (dA 2 3 (by decide) b2 b3))
+      (uniqMax3_of_ne (dB 4 5 (by decide) a4 a5) (dB 4 6 (by decide) a4 a6) (dB 5 6 (by decide) a5 a6)) hz7
 
 
 /-- An affine function vanishing at `p` and `p + e` vanishes on the line. -/
