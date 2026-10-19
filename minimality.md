@@ -98,7 +98,13 @@ through a copy of itself):
   at their view along an edge between two quadrilaterals, where a tie of
   the far corners is settled only if one of the four corners involved is the
   top or bottom of its face, `EdgeTie`): every hypothesis fails only when two
-  independent equalities hold at once. The proofs also cover the special position
+  independent equalities hold at once. Two faces meeting in a vertex
+  (Corollary T1, for any faces, including two quadrilaterals) need only
+  this too: at a tie of the far corners, if the shared corner is not at the
+  same depth and the shadow triangle has no right angle at the far corners,
+  a slightly tilted view is first-order free though not unimodal ("Lemma T at
+  the tie, robust form", `TriGenTieR`, `Minimality/TieForces.lean`,
+  `TieRobust.lean`, `TieFrame.lean`). The proofs also cover the special position
   where the deciding number is
   zero: Then either another view still works, or one point lies on the far
   side of the triangle shadow, and a view tilted to match that side still
