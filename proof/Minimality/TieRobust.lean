@@ -812,6 +812,28 @@ theorem isRupert_of_tie (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb1 
   exact isRupert_of_no_forces V hsol (tw v ε) (tw_ne_zero v ε hv)
     fun F h1 h2 h3 h4 h5 => hε F ⟨h1, h2, h3, h4, h5⟩
 
+/-- **Lemma T at the tie, robust form (Rupert), mirrored.** Under the hypotheses of
+`tie_no_forces_neg`, with a horizontal tilt `v` and `V` a solid, `V` is Rupert. -/
+theorem isRupert_of_tie_neg (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb1 : ℝ³ → ℝ³)
+    (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) (hv : v 2 = 0)
+    (hXV : X ⊆ V) (ha : a ∈ V) (hb : b ∈ V) (hab : a ≠ b) (haX : a ∉ X) (hbX : b ∉ X)
+    (ha0 : a0 ∈ V) (hb1 : b1 ∈ V) (hnb0 : ∀ y ∈ X, nb0 y ∈ V) (hnb1 : ∀ y ∈ X, nb1 y ∈ V)
+    (htie : a 2 = b 2) (hD : 0 < ⟪a - b, v⟫) (hXz : ∀ y ∈ X, b 2 < y 2)
+    (hconvX : ∀ y ∈ X, ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (nb1 y - y) (nb0 y - y) (tw v ε))
+    (hconva : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (b - a) (a0 - a) (tw v ε))
+    (hconvb : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (b1 - b) (a - b) (tw v ε))
+    (hin : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ y ∈ V, y ∉ X → y ≠ a → y ≠ b → ∀ G : ℝ³,
+      ⟪G, tw v ε⟫ = 0 → (∀ q ∈ V, ⟪G, q - y⟫ ≤ 0) → G = 0)
+    (hm : ∀ j ∈ X ×ˢ (univ : Finset Bool), 0 < ⟪tgen nb0 nb1 ez j, m⟫)
+    (hp : ∀ j ∈ X ×ˢ (univ : Finset Bool), 0 ≤ ⟪tgen nb0 nb1 ez j, p⟫)
+    (hpb : ⟪cross (b1 - b) ez, p⟫ = 0) (hp3 : ⟪cross (b - a) ez, p⟫ < 0)
+    (hdet : farDet (cross (b1 - b) ez) (cross (b - a) ez) (cross ez (a0 - a)) b a ez ≠ 0) :
+    IsRupert V := by
+  obtain ⟨ε, hε⟩ := (tie_no_forces_neg V X v a b a0 b1 m p nb0 nb1 hXV ha hb hab haX hbX ha0 hb1
+    hnb0 hnb1 htie hD hXz hconvX hconva hconvb hin hm hp hpb hp3 hdet).exists
+  exact isRupert_of_no_forces V hsol (tw v ε) (tw_ne_zero v ε hv)
+    fun F h1 h2 h3 h4 h5 => hε F ⟨h1, h2, h3, h4, h5⟩
+
 /-- **A point inside a polygon carries no force.** If `y` projects (along
 `w`) strictly left of every edge of a counterclockwise convex polygon `x`, a
 force `F ⊥ w` with `⟪F, x i - y⟫ ≤ 0` at all vertices is zero. -/
@@ -928,6 +950,112 @@ theorem isRupert_of_tilted_tie (V : Finset ℝ³) (hsol : (interior (convexHull 
   refine isRupert_of_tie V X v (x ia) (x (ia + 1)) (x (ia - 1)) (x (ia + 1 + 1)) m p nb0 nb1 hsol hv
     ?_ (hxV _) (hxV _) (fun h => hne3 ia (hx h).symm) ?_ ?_ (hxV _) (hxV _)
     (fun y _ => hxV _) (fun y _ => hxV _) htie hD ?_ ?_ ?_ ?_ ?_ ?_ ?_ hpa hp3 hdet
+  · intro y hy; obtain ⟨i, -, -, rfl⟩ := (memX y).mp hy; exact hxV i
+  · intro h; obtain ⟨i, h1, -, e⟩ := (memX _).mp h; exact h1 (hx e)
+  · intro h; obtain ⟨i, -, h2, e⟩ := (memX _).mp h; exact h2 (hx e)
+  · intro y hy; obtain ⟨i, h1, h2, rfl⟩ := (memX y).mp hy; exact hXz i h1 h2
+  · intro y hy
+    obtain ⟨i, -, -, rfl⟩ := (memX y).mp hy
+    simp only [nb0, nb1, hidx]
+    exact hev i (i - 1) (hne1 i) (hne2 i)
+  · simpa using hev ia (ia - 1) (hne1 ia) (hne2 ia)
+  · have := hev (ia + 1) ia (fun h => hne3 ia h.symm) (fun h => by
+      have := congrArg (fun t => t - ia) h; ring_nf at this; exact hk2 (by simpa using this.symm))
+    simpa [add_sub_cancel_right] using this
+  · filter_upwards [hevAll, hrestEv] with ε hc hr
+    intro y hy hyX hya hyb G hGw hGq
+    have hyc : ∀ j, y ≠ x j := by
+      intro j hj
+      subst hj
+      by_cases h1 : j = ia
+      · exact hya (by rw [h1])
+      by_cases h2 : j = ia + 1
+      · exact hyb (by rw [h2])
+      exact hyX ((memX _).mpr ⟨j, h1, h2, rfl⟩)
+    exact force_eq_zero_of_left hk x (tw_ne_zero v ε hv) hc (hr y hy hyc) hGw
+      (fun i => hGq _ (hxV i))
+  · rintro ⟨y, c⟩ hj
+    obtain ⟨hy, -⟩ := mem_product.mp hj
+    obtain ⟨i, h1, h2, rfl⟩ := (memX y).mp hy
+    cases c <;> simp [tgen, nb0, nb1, hidx, hm i h1 h2]
+  · rintro ⟨y, c⟩ hj
+    obtain ⟨hy, -⟩ := mem_product.mp hj
+    obtain ⟨i, h1, h2, rfl⟩ := (memX y).mp hy
+    cases c <;> simp [tgen, nb0, nb1, hidx, hp i h1 h2]
+
+set_option maxHeartbeats 4000000 in
+/-- **Lemma T at the tie, robust form, from a tilted cycle, mirrored**
+(`⟪x ia - x (ia + 1), v⟫ > 0`). The predicted
+silhouette `x` at the tilts `e_z + ε v` (the tests of Lemma 8.0, as in
+`isRupert_of_tilted_localMax`), with the tied far ends `x ia`, `x (ia + 1)` and
+every other cycle vertex above the tie; the limit conditions on the cycle's
+edge normals at `ε = 0`. Then `V` is Rupert. -/
+theorem isRupert_of_tilted_tie_neg (V : Finset ℝ³) (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty)
+    (v : ℝ³) (hv : v 2 = 0) {k : ℕ} [NeZero k] (hk : 3 ≤ k) (x : ZMod k → ℝ³)
+    (hx : Function.Injective x) (hxV : ∀ i, x i ∈ V)
+    (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → TiltSign (x (i + 1) - x i) (x j - x i) ez v)
+    (hrest : ∀ y ∈ V, (∀ j, y ≠ x j) → ∀ i, TiltSign (x (i + 1) - x i) (y - x i) ez v)
+    (ia : ZMod k) (m p : ℝ³)
+    (htie : x ia 2 = x (ia + 1) 2) (hD : 0 < ⟪x ia - x (ia + 1), v⟫)
+    (hXz : ∀ i, i ≠ ia → i ≠ ia + 1 → x (ia + 1) 2 < x i 2)
+    (hm : ∀ i, i ≠ ia → i ≠ ia + 1 →
+      0 < ⟪cross ez (x (i - 1) - x i), m⟫ ∧ 0 < ⟪cross (x (i + 1) - x i) ez, m⟫)
+    (hp : ∀ i, i ≠ ia → i ≠ ia + 1 →
+      0 ≤ ⟪cross ez (x (i - 1) - x i), p⟫ ∧ 0 ≤ ⟪cross (x (i + 1) - x i) ez, p⟫)
+    (hpb : ⟪cross (x (ia + 1 + 1) - x (ia + 1)) ez, p⟫ = 0)
+    (hp3 : ⟪cross (x (ia + 1) - x ia) ez, p⟫ < 0)
+    (hdet : farDet (cross (x (ia + 1 + 1) - x (ia + 1)) ez) (cross (x (ia + 1) - x ia) ez)
+      (cross ez (x (ia - 1) - x ia)) (x (ia + 1)) (x ia) ez ≠ 0) :
+    IsRupert V := by
+  classical
+  have hk1 : (1 : ZMod k) ≠ 0 := by
+    intro h; have := congrArg ZMod.val h
+    rw [ZMod.val_one'' (by omega), ZMod.val_zero] at this; exact one_ne_zero this
+  have hk2 : (2 : ZMod k) ≠ 0 := by
+    intro h; have := congrArg ZMod.val h
+    rw [show (2 : ZMod k) = ((2 : ℕ) : ZMod k) by norm_num, ZMod.val_natCast,
+      Nat.mod_eq_of_lt (by omega), ZMod.val_zero] at this
+    exact two_ne_zero this
+  have hne1 : ∀ i : ZMod k, i - 1 ≠ i := fun i h => hk1 (by
+    have := congrArg (fun t => i - t) h; simpa using this)
+  have hne2 : ∀ i : ZMod k, i - 1 ≠ i + 1 := fun i h => hk2 (by
+    have := congrArg (fun t => t - (i - 1)) h; ring_nf at this ⊢; simpa using this.symm)
+  have hne3 : ∀ i : ZMod k, i + 1 ≠ i := fun i h => hk1 (by
+    have := congrArg (fun t => t - i) h; simpa using this)
+  set I := (univ : Finset (ZMod k)).filter (fun i => i ≠ ia ∧ i ≠ ia + 1) with hI
+  set X := I.image x with hXdef
+  set idx : ℝ³ → ZMod k := Function.invFun x
+  have hidx : ∀ i, idx (x i) = i := fun i => Function.leftInverse_invFun hx i
+  set nb0 : ℝ³ → ℝ³ := fun y => x (idx y - 1)
+  set nb1 : ℝ³ → ℝ³ := fun y => x (idx y + 1)
+  have memX : ∀ y, y ∈ X ↔ ∃ i, i ≠ ia ∧ i ≠ ia + 1 ∧ x i = y := by
+    intro y
+    rw [hXdef, Finset.mem_image]
+    constructor
+    · rintro ⟨i, hi, rfl⟩
+      rw [hI, Finset.mem_filter] at hi
+      exact ⟨i, hi.2.1, hi.2.2, rfl⟩
+    · rintro ⟨i, h1, h2, rfl⟩
+      exact ⟨i, by rw [hI, Finset.mem_filter]; exact ⟨mem_univ _, h1, h2⟩, rfl⟩
+  have hev : ∀ i j, j ≠ i → j ≠ i + 1 →
+      ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (x (i + 1) - x i) (x j - x i) (tw v ε) := fun i j h1 h2 =>
+    (hcyc i j h1 h2).eventually.mono fun ε h => by simpa [tw] using h
+  have hevAll : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ i j : ZMod k, j ≠ i → j ≠ i + 1 →
+      0 < det3 (x (i + 1) - x i) (x j - x i) (tw v ε) := by
+    refine eventually_all.2 fun i => eventually_all.2 fun j => ?_
+    by_cases h : j ≠ i ∧ j ≠ i + 1
+    · exact (hev i j h.1 h.2).mono fun ε h' _ _ => h'
+    · exact Eventually.of_forall fun ε h1 h2 => absurd ⟨h1, h2⟩ h
+  have hrestEv : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ y ∈ V, (∀ j, y ≠ x j) → ∀ i,
+      0 < det3 (x (i + 1) - x i) (y - x i) (tw v ε) := by
+    refine (eventually_all_finset V).2 fun y hy => ?_
+    by_cases hc : ∀ j, y ≠ x j
+    · exact (eventually_all.2 fun i => (hrest y hy hc i).eventually).mono fun ε h _ i => by
+        simpa [tw] using h i
+    · exact Eventually.of_forall fun ε h => absurd h hc
+  refine isRupert_of_tie_neg V X v (x ia) (x (ia + 1)) (x (ia - 1)) (x (ia + 1 + 1)) m p nb0 nb1 hsol hv
+    ?_ (hxV _) (hxV _) (fun h => hne3 ia (hx h).symm) ?_ ?_ (hxV _) (hxV _)
+    (fun y _ => hxV _) (fun y _ => hxV _) htie hD ?_ ?_ ?_ ?_ ?_ ?_ ?_ hpb hp3 hdet
   · intro y hy; obtain ⟨i, -, -, rfl⟩ := (memX y).mp hy; exact hxV i
   · intro h; obtain ⟨i, h1, -, e⟩ := (memX _).mp h; exact h1 (hx e)
   · intro h; obtain ⟨i, -, h2, e⟩ := (memX _).mp h; exact h2 (hx e)
