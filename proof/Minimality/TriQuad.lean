@@ -213,6 +213,63 @@ theorem quad_chain6 {z0 a1 z1 a2 z2 a3 z3 : ℝ} (h1 : 0 < a1) (h2 : 0 < a2) (h3
   · rw [← quadPt_swap23]; exact quad_chain h1 h3 h2 (Or.inl hq) h13 h12 h23.symm s hs
   · rw [← quadPt_swap23]; exact quad_chain h1 h3 h2 (Or.inr hq) h13 h12 h23.symm s hs
 
+/-- The largest of three numbers is attained once. Weaker than pairwise
+distinct: the two smaller may coincide (two points of a face on one line
+parallel to the view, away from the far end). -/
+def UniqMax3 (a1 a2 a3 : ℝ) : Prop :=
+  (a1 < a2 ∧ a3 < a2) ∨ (a2 < a1 ∧ a3 < a1) ∨ (a1 < a3 ∧ a2 < a3)
+
+theorem UniqMax3.swap12 {a1 a2 a3 : ℝ} (h : UniqMax3 a1 a2 a3) : UniqMax3 a2 a1 a3 := by
+  unfold UniqMax3 at *; tauto
+
+theorem UniqMax3.swap13 {a1 a2 a3 : ℝ} (h : UniqMax3 a1 a2 a3) : UniqMax3 a3 a2 a1 := by
+  unfold UniqMax3 at *; tauto
+
+theorem UniqMax3.swap23 {a1 a2 a3 : ℝ} (h : UniqMax3 a1 a2 a3) : UniqMax3 a1 a3 a2 := by
+  unfold UniqMax3 at *; tauto
+
+theorem uniqMax3_of_ne {a1 a2 a3 : ℝ} (h12 : a1 ≠ a2) (h13 : a1 ≠ a3) (h23 : a2 ≠ a3) :
+    UniqMax3 a1 a2 a3 := by
+  unfold UniqMax3
+  rcases lt_or_gt_of_ne h12 with c12 | c12 <;> rcases lt_or_gt_of_ne h13 with c13 | c13 <;>
+    rcases lt_or_gt_of_ne h23 with c23 | c23
+  all_goals first
+    | exact Or.inl ⟨by linarith, by linarith⟩
+    | exact Or.inr (Or.inl ⟨by linarith, by linarith⟩)
+    | exact Or.inr (Or.inr ⟨by linarith, by linarith⟩)
+
+/-- `quad_chain` when only the far end (largest `a`) is unique: the other two
+points may share their `a` (the chain passes through one of them). -/
+theorem quad_chain_um {z0 a1 z1 a2 z2 a3 z3 : ℝ} (h1 : 0 < a1) (h2 : 0 < a2) (h3 : 0 < a3)
+    (hQ : ConvQuad 0 z0 a1 z1 a2 z2 a3 z3 ∨ ConvQuad 0 z0 a3 z3 a2 z2 a1 z1)
+    (hu : UniqMax3 a1 a2 a3) (s : ℝ) (hs : s = 1 ∨ s = -1) :
+    ∃ m ca cz, ChainOK (QuadPt z0 a1 z1 a2 z2 a3 z3) z0 s m ca cz := by
+  have ccw : ∀ {b1 w1 b3 w3 : ℝ}, 0 < b1 → 0 < b3 → UniqMax3 b1 a2 b3 →
+      ConvQuad 0 z0 b1 w1 a2 z2 b3 w3 → ∃ m ca cz, ChainOK (QuadPt z0 b1 w1 a2 z2 b3 w3) z0 s m ca cz := by
+    intro b1 w1 b3 w3 hb1 hb3 hu hq
+    rcases hs with rfl | rfl <;> rcases hu with ⟨c1, c2⟩ | ⟨c1, c2⟩ | ⟨c1, c2⟩
+    · exact ⟨_, _, _, chainOK_ccw2_up hb1 h2 hb3 hq c1 c2⟩
+    · exact ⟨_, _, _, chainOK_ccw1_up hb1 h2 hb3 hq c1 c2⟩
+    · exact ⟨_, _, _, chainOK_ccw3_up hb1 h2 hb3 hq c1 c2⟩
+    · exact ⟨_, _, _, chainOK_ccw2_lo hb1 h2 hb3 hq c1 c2⟩
+    · exact ⟨_, _, _, chainOK_ccw1_lo hb1 h2 hb3 hq c1 c2⟩
+    · exact ⟨_, _, _, chainOK_ccw3_lo hb1 h2 hb3 hq c1 c2⟩
+  rcases hQ with hq | hq
+  · exact ccw h1 h3 hu hq
+  · rw [← quadPt_swap13]; exact ccw h3 h1 hu.swap13 hq
+
+/-- `quad_chain6` when only the far end is unique. -/
+theorem quad_chain6_um {z0 a1 z1 a2 z2 a3 z3 : ℝ} (h1 : 0 < a1) (h2 : 0 < a2) (h3 : 0 < a3)
+    (hQ : ConvQuad6 z0 a1 z1 a2 z2 a3 z3) (hu : UniqMax3 a1 a2 a3) (s : ℝ) (hs : s = 1 ∨ s = -1) :
+    ∃ m ca cz, ChainOK (QuadPt z0 a1 z1 a2 z2 a3 z3) z0 s m ca cz := by
+  rcases hQ with hq | hq | hq | hq | hq | hq
+  · exact quad_chain_um h1 h2 h3 (Or.inl hq) hu s hs
+  · exact quad_chain_um h1 h2 h3 (Or.inr hq) hu s hs
+  · rw [← quadPt_swap12]; exact quad_chain_um h2 h1 h3 (Or.inl hq) hu.swap12 s hs
+  · rw [← quadPt_swap12]; exact quad_chain_um h2 h1 h3 (Or.inr hq) hu.swap12 s hs
+  · rw [← quadPt_swap23]; exact quad_chain_um h1 h3 h2 (Or.inl hq) hu.swap23 s hs
+  · rw [← quadPt_swap23]; exact quad_chain_um h1 h3 h2 (Or.inr hq) hu.swap23 s hs
+
 /-- All chains of one point set end at the same far point. -/
 theorem ChainOK.far_eq {Q : ℝ → ℝ → Prop} {z0 z0' s s' : ℝ} {m m' : ℕ} {ca cz ca' cz' : ℕ → ℝ}
     (h : ChainOK Q z0 s m ca cz) (h' : ChainOK Q z0' s' m' ca' cz') :
