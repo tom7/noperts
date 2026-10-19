@@ -563,6 +563,42 @@ theorem isRupert_vertex_frame_robust (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) 
       fun h => absurd h ha.ne'⟩
     rw [e1.1, e2.1]; exact hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
 
+/-- **Lemma T at a vertex from chains, the tie allowed, robust.** As
+`isRupert_vertex_frame_tie`, with a third way out at the tie: the apex off the
+tie depth and no right angle at the far ends (`isRupert_vertex_frame_robust`;
+`V` a solid). -/
+theorem isRupert_vertex_frame_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ → ℝ → Prop)
+    {z0 : ℝ}
+    (hU1 : ∃ m ca cz, ChainOK Q1 z0 1 m ca cz) (hL1 : ∃ m ca cz, ChainOK Q1 z0 (-1) m ca cz)
+    (hU2 : ∃ m ca cz, ChainOK Q2 z0 1 m ca cz) (hL2 : ∃ m ca cz, ChainOK Q2 z0 (-1) m ca cz)
+    (hap1 : ∀ z, Q1 0 z → z = z0) (hap2 : ∀ z, Q2 0 z → z = z0)
+    (hpos1 : ∀ a z, Q1 a z → 0 ≤ a) (hpos2 : ∀ b z, Q2 b z → 0 ≤ b)
+    (V : Finset ℝ³)
+    (hV1 : ∀ a z, Q1 a z → oblPt O r1 r2 a 0 z ∈ V) (hV2 : ∀ b z, Q2 b z → oblPt O r1 r2 0 b z ∈ V)
+    (hVc : ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧
+      ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧
+        ∀ m ca cz n cb dz, ChainOK Q1 z0 1 m ca cz → ChainOK Q2 z0 1 n cb dz →
+          a * cb n + b * ca m < ca m * cb n)))
+    (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty)
+    (hfarT : ∀ m ca cz n cb dz, ChainOK Q1 z0 1 m ca cz → ChainOK Q2 z0 1 n cb dz →
+      cz m ≠ dz n ∨ VTie Q1 Q2 z0 (ca m) (cz m) (cb n) (dz n) ∨
+      (cz m = dz n ∧ z0 ≠ cz m ∧
+        r1 0 * (cb n * r2 0 - ca m * r1 0) + r1 1 * (cb n * r2 1 - ca m * r1 1) ≠ 0 ∧
+        r2 0 * (ca m * r1 0 - cb n * r2 0) + r2 1 * (ca m * r1 1 - cb n * r2 1) ≠ 0)) :
+    IsRupert V := by
+  obtain ⟨m0, ca0, cz0, U1⟩ := hU1
+  obtain ⟨n0, cb0, dz0, U2⟩ := hU2
+  rcases hfarT m0 ca0 cz0 n0 cb0 dz0 U1 U2 with h | h | h
+  · refine isRupert_vertex_frame_tie O r1 r2 hρ Q1 Q2 ⟨m0, ca0, cz0, U1⟩ hL1 ⟨n0, cb0, dz0, U2⟩ hL2
+      hap1 hap2 hpos1 hpos2 V hV1 hV2 hVc fun m ca cz n cb dz C1 C2 => Or.inl ?_
+    rw [(C1.far_eq U1).2, (C2.far_eq U2).2]; exact h
+  · refine isRupert_vertex_frame_tie O r1 r2 hρ Q1 Q2 ⟨m0, ca0, cz0, U1⟩ hL1 ⟨n0, cb0, dz0, U2⟩ hL2
+      hap1 hap2 hpos1 hpos2 V hV1 hV2 hVc fun m ca cz n cb dz C1 C2 => Or.inr ?_
+    rw [(C1.far_eq U1).1, (C1.far_eq U1).2, (C2.far_eq U2).1, (C2.far_eq U2).2]; exact h
+  · refine isRupert_vertex_frame_robust O r1 r2 hρ Q1 Q2 ⟨m0, ca0, cz0, U1⟩ hL1 ⟨n0, cb0, dz0, U2⟩ hL2
+      hap1 hap2 hpos1 hpos2 V hV1 hV2 hVc hsol fun m ca cz n cb dz C1 C2 => ?_
+    rw [(C1.far_eq U1).1, (C1.far_eq U1).2, (C2.far_eq U2).1, (C2.far_eq U2).2]; exact h
+
 end Minimality
 
 end
