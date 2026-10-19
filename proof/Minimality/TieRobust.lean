@@ -349,6 +349,68 @@ theorem continuous_torque' (y d v : ℝ³) :
     Continuous fun ε : ℝ => ⟪cross y (cross (tw v ε) d), tw v ε⟫ := by
   simp only [cross, tw, PiLp.inner_apply, Fin.sum_univ_three]; fun_prop
 
+
+/-- Eventual bounds for the far quantities, with an opaque constant. -/
+theorem ev_far_bounds (v a b a0 b1 m : ℝ³) : ∃ K0 : ℝ, 0 ≤ K0 ∧ ∀ᶠ ε in 𝓝[>] (0 : ℝ),
+      |⟪cross (b - a) (tw v ε), m⟫| ≤ K0 ∧ |⟪cross (b1 - b) (tw v ε), m⟫| ≤ K0 ∧
+      |cross (b - a) (tw v ε) 0| ≤ K0 ∧ |cross (b - a) (tw v ε) 1| ≤ K0 ∧
+      |⟪cross a (cross (b - a) (tw v ε)), tw v ε⟫| ≤ K0 ∧
+      |cross (tw v ε) (a0 - a) 0| ≤ K0 ∧ |cross (tw v ε) (a0 - a) 1| ≤ K0 ∧
+      |⟪cross a (cross (tw v ε) (a0 - a)), tw v ε⟫| ≤ K0 ∧
+      |⟪cross b (cross (b - a) (tw v ε)), tw v ε⟫| ≤ K0 ∧
+      |cross (b1 - b) (tw v ε) 0| ≤ K0 ∧ |cross (b1 - b) (tw v ε) 1| ≤ K0 ∧
+      |⟪cross b (cross (b1 - b) (tw v ε)), tw v ε⟫| ≤ K0 := by
+  -- one bound per quantity, then their sum
+  have bnd : ∀ f : ℝ → ℝ, Continuous f → ∃ k : ℝ, 0 ≤ k ∧ ∀ᶠ ε in 𝓝[>] (0 : ℝ), |f ε| ≤ k :=
+    fun f hf => ⟨|f 0| + 1, by positivity, ev_abs_le hf⟩
+  obtain ⟨k1, p1, e1⟩ := bnd _ (continuous_cross_inner (b - a) m v)
+  obtain ⟨k2, p2, e2⟩ := bnd _ (continuous_cross_inner (b1 - b) m v)
+  obtain ⟨k3, p3, e3⟩ := bnd _ (continuous_cross_comp (b - a) v 0)
+  obtain ⟨k4, p4, e4⟩ := bnd _ (continuous_cross_comp (b - a) v 1)
+  obtain ⟨k5, p5, e5⟩ := bnd _ (continuous_torque a (b - a) v)
+  obtain ⟨k6, p6, e6⟩ := bnd _ (continuous_cross_comp' (a0 - a) v 0)
+  obtain ⟨k7, p7, e7⟩ := bnd _ (continuous_cross_comp' (a0 - a) v 1)
+  obtain ⟨k8, p8, e8⟩ := bnd _ (continuous_torque' a (a0 - a) v)
+  obtain ⟨k9, p9, e9⟩ := bnd _ (continuous_torque b (b - a) v)
+  obtain ⟨k10, p10, e10⟩ := bnd _ (continuous_cross_comp (b1 - b) v 0)
+  obtain ⟨k11, p11, e11⟩ := bnd _ (continuous_cross_comp (b1 - b) v 1)
+  obtain ⟨k12, p12, e12⟩ := bnd _ (continuous_torque b (b1 - b) v)
+  refine ⟨k1 + k2 + k3 + k4 + k5 + k6 + k7 + k8 + k9 + k10 + k11 + k12, by positivity, ?_⟩
+  filter_upwards [e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12] with ε f1 f2 f3 f4 f5 f6 f7 f8
+    f9 f10 f11 f12
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> linarith
+
+/-- Eventual bounds for the corner generators' quantities, with an opaque constant. -/
+theorem ev_gen_bounds (J : Finset (ℝ³ × Bool)) (nb0 nb1 : ℝ³ → ℝ³) (v p : ℝ³) :
+    ∃ K0 : ℝ, 0 ≤ K0 ∧ ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ j ∈ J,
+      |⟪tgen nb0 nb1 (tw v ε) j, p⟫| ≤ K0 ∧ |tgen nb0 nb1 (tw v ε) j 0| ≤ K0 ∧
+        |tgen nb0 nb1 (tw v ε) j 1| ≤ K0 ∧ |⟪cross j.1 (tgen nb0 nb1 (tw v ε) j), tw v ε⟫| ≤ K0 := by
+  classical
+  have one : ∀ j : ℝ³ × Bool, ∃ k : ℝ, 0 ≤ k ∧ ∀ᶠ ε in 𝓝[>] (0 : ℝ),
+      |⟪tgen nb0 nb1 (tw v ε) j, p⟫| ≤ k ∧ |tgen nb0 nb1 (tw v ε) j 0| ≤ k ∧
+        |tgen nb0 nb1 (tw v ε) j 1| ≤ k ∧ |⟪cross j.1 (tgen nb0 nb1 (tw v ε) j), tw v ε⟫| ≤ k := by
+    intro j
+    obtain e1 := ev_abs_le (continuous_tgen_inner nb0 nb1 v p j)
+    obtain e2 := ev_abs_le (continuous_tgen_comp nb0 nb1 v j 0)
+    obtain e3 := ev_abs_le (continuous_tgen_comp nb0 nb1 v j 1)
+    obtain e4 := ev_abs_le (continuous_tgen_torque nb0 nb1 v j)
+    set A1 := |⟪tgen nb0 nb1 (tw v 0) j, p⟫| + 1
+    set A2 := |tgen nb0 nb1 (tw v 0) j 0| + 1
+    set A3 := |tgen nb0 nb1 (tw v 0) j 1| + 1
+    set A4 := |⟪cross j.1 (tgen nb0 nb1 (tw v 0) j), tw v 0⟫| + 1
+    have q1 : 0 ≤ A1 := by positivity
+    have q2 : 0 ≤ A2 := by positivity
+    have q3 : 0 ≤ A3 := by positivity
+    have q4 : 0 ≤ A4 := by positivity
+    refine ⟨A1 + A2 + A3 + A4, by positivity, ?_⟩
+    filter_upwards [e1, e2, e3, e4] with ε f1 f2 f3 f4
+    exact ⟨by linarith, by linarith, by linarith, by linarith⟩
+  choose k hk0 hk using one
+  refine ⟨∑ j ∈ J, k j, sum_nonneg fun j _ => hk0 j, ?_⟩
+  refine (eventually_all_finset J).2 fun j hj => (hk j).mono fun ε h => ?_
+  have hle : k j ≤ ∑ i ∈ J, k i := single_le_sum (fun i _ => hk0 i) hj
+  exact ⟨h.1.trans hle, h.2.1.trans hle, h.2.2.1.trans hle, h.2.2.2.trans hle⟩
+
 set_option maxHeartbeats 16000000 in
 /-- **Lemma T at the tie, robust form, forces.** At the views `e_z + ε v`, the
 corners `X` above the tie (`a 2 < y 2`), the tied far ends `a`, `b`
@@ -389,24 +451,9 @@ theorem tie_no_forces (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb1 : 
     (fun y hy => by have := hXz y hy; linarith)
   set Z := ∑ y ∈ X, (|y 2 - a 2| + |⟪y - a, v⟫|) with hZdef
   have hZ : 0 ≤ Z := sum_nonneg fun _ _ => by positivity
-  set kj : ℝ³ × Bool → ℝ := fun j =>
-    (|⟪tgen nb0 nb1 (tw v 0) j, p⟫| + 1) + (|tgen nb0 nb1 (tw v 0) j 0| + 1) +
-      (|tgen nb0 nb1 (tw v 0) j 1| + 1) + (|⟪cross j.1 (tgen nb0 nb1 (tw v 0) j), tw v 0⟫| + 1)
-  set kfar : ℝ :=
-    (|⟪cross (b - a) (tw v 0), m⟫| + 1) + (|⟪cross (b1 - b) (tw v 0), m⟫| + 1) +
-    (|cross (b - a) (tw v 0) 0| + 1) + (|cross (b - a) (tw v 0) 1| + 1) +
-    (|⟪cross a (cross (b - a) (tw v 0)), tw v 0⟫| + 1) +
-    (|cross (tw v 0) (a0 - a) 0| + 1) + (|cross (tw v 0) (a0 - a) 1| + 1) +
-    (|⟪cross a (cross (tw v 0) (a0 - a)), tw v 0⟫| + 1) +
-    (|⟪cross b (cross (b - a) (tw v 0)), tw v 0⟫| + 1) +
-    (|cross (b1 - b) (tw v 0) 0| + 1) + (|cross (b1 - b) (tw v 0) 1| + 1) +
-    (|⟪cross b (cross (b1 - b) (tw v 0)), tw v 0⟫| + 1)
-  have hkj : ∀ j, 0 ≤ kj j := fun j => by positivity
-  have hkfar : 0 ≤ kfar := by positivity
-  set K := ∑ j ∈ J, kj j + kfar with hKdef
-  have hkjK : ∀ j ∈ J, kj j ≤ K := fun j hj => by
-    have := single_le_sum (fun i _ => hkj i) hj; linarith
-  have hkfarK : kfar ≤ K := by have := sum_nonneg fun i (_ : i ∈ J) => hkj i; linarith
+  obtain ⟨K1, hK1, evJ⟩ := ev_gen_bounds J nb0 nb1 v p
+  obtain ⟨K2, hK2, evFar⟩ := ev_far_bounds v a b a0 b1 m
+  set K := K1 + K2 with hKdef
   set sp := ∑ j ∈ J, |⟪tgen' nb0 nb1 v j, p⟫| + |⟪cross v (a0 - a), p⟫| with hsp
   have hsp0 : 0 ≤ sp := by positivity
   set L := sp / D with hLdef
@@ -441,47 +488,6 @@ theorem tie_no_forces (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb1 : 
           single_le_sum (f := fun y => |y 2 - a 2| + |⟪y - a, v⟫|) (fun _ _ => by positivity) hy
         simp only [mul_zero, add_zero, abs_zero] at h2
         exact (le_abs_self _).trans (h2.trans hsum)
-  have evJ : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ j ∈ J,
-      |⟪tgen nb0 nb1 (tw v ε) j, p⟫| ≤ K ∧ |tgen nb0 nb1 (tw v ε) j 0| ≤ K ∧
-        |tgen nb0 nb1 (tw v ε) j 1| ≤ K ∧ |⟪cross j.1 (tgen nb0 nb1 (tw v ε) j), tw v ε⟫| ≤ K :=
-    (eventually_all_finset J).2 fun j hj =>
-      (((ev_abs_le (continuous_tgen_inner nb0 nb1 v p j)).and
-        (ev_abs_le (continuous_tgen_comp nb0 nb1 v j 0))).and
-        ((ev_abs_le (continuous_tgen_comp nb0 nb1 v j 1)).and
-          (ev_abs_le (continuous_tgen_torque nb0 nb1 v j)))).mono fun ε ⟨⟨e1, e2⟩, e3, e4⟩ => by
-        have hk := hkjK j hj
-        simp only [kj] at hk
-        refine ⟨?_, ?_, ?_, ?_⟩ <;> linarith [abs_nonneg ⟪tgen nb0 nb1 (tw v 0) j, p⟫,
-          abs_nonneg (tgen nb0 nb1 (tw v 0) j 0), abs_nonneg (tgen nb0 nb1 (tw v 0) j 1),
-          abs_nonneg ⟪cross j.1 (tgen nb0 nb1 (tw v 0) j), tw v 0⟫]
-  have evFar : ∀ᶠ ε in 𝓝[>] (0 : ℝ),
-      |⟪cross (b - a) (tw v ε), m⟫| ≤ K ∧ |⟪cross (b1 - b) (tw v ε), m⟫| ≤ K ∧
-      |cross (b - a) (tw v ε) 0| ≤ K ∧ |cross (b - a) (tw v ε) 1| ≤ K ∧
-      |⟪cross a (cross (b - a) (tw v ε)), tw v ε⟫| ≤ K ∧
-      |cross (tw v ε) (a0 - a) 0| ≤ K ∧ |cross (tw v ε) (a0 - a) 1| ≤ K ∧
-      |⟪cross a (cross (tw v ε) (a0 - a)), tw v ε⟫| ≤ K ∧
-      |⟪cross b (cross (b - a) (tw v ε)), tw v ε⟫| ≤ K ∧
-      |cross (b1 - b) (tw v ε) 0| ≤ K ∧ |cross (b1 - b) (tw v ε) 1| ≤ K ∧
-      |⟪cross b (cross (b1 - b) (tw v ε)), tw v ε⟫| ≤ K := by
-    filter_upwards [ev_abs_le (continuous_cross_inner (b - a) m v),
-      ev_abs_le (continuous_cross_inner (b1 - b) m v),
-      ev_abs_le (continuous_cross_comp (b - a) v 0), ev_abs_le (continuous_cross_comp (b - a) v 1),
-      ev_abs_le (continuous_torque a (b - a) v),
-      ev_abs_le (continuous_cross_comp' (a0 - a) v 0), ev_abs_le (continuous_cross_comp' (a0 - a) v 1),
-      ev_abs_le (continuous_torque' a (a0 - a) v), ev_abs_le (continuous_torque b (b - a) v),
-      ev_abs_le (continuous_cross_comp (b1 - b) v 0), ev_abs_le (continuous_cross_comp (b1 - b) v 1),
-      ev_abs_le (continuous_torque b (b1 - b) v)] with ε e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12
-    have hk := hkfarK
-    simp only [kfar] at hk
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
-      linarith [abs_nonneg ⟪cross (b - a) (tw v 0), m⟫, abs_nonneg ⟪cross (b1 - b) (tw v 0), m⟫,
-        abs_nonneg (cross (b - a) (tw v 0) 0), abs_nonneg (cross (b - a) (tw v 0) 1),
-        abs_nonneg ⟪cross a (cross (b - a) (tw v 0)), tw v 0⟫,
-        abs_nonneg (cross (tw v 0) (a0 - a) 0), abs_nonneg (cross (tw v 0) (a0 - a) 1),
-        abs_nonneg ⟪cross a (cross (tw v 0) (a0 - a)), tw v 0⟫,
-        abs_nonneg ⟪cross b (cross (b - a) (tw v 0)), tw v 0⟫,
-        abs_nonneg (cross (b1 - b) (tw v 0) 0), abs_nonneg (cross (b1 - b) (tw v 0) 1),
-        abs_nonneg ⟪cross b (cross (b1 - b) (tw v 0)), tw v 0⟫]
   have evP3 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ⟪cross (b - a) (tw v ε), p⟫ ≤ -c3 :=
     (ev_half (B := -⟪cross (b - a) v, p⟫) (show 0 < -⟪cross (b - a) ez, p⟫ by linarith)).mono
       fun ε h => by
@@ -499,12 +505,16 @@ theorem tie_no_forces (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb1 : 
     hfar hP3ε hdetε hsmallε
   obtain ⟨hε0, -⟩ := hε01
   obtain ⟨f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12⟩ := hfar
+  have wK2 : ∀ {x : ℝ}, x ≤ K2 → x ≤ K := fun h => by rw [hKdef]; linarith
+  have wK1 : ∀ {x : ℝ}, x ≤ K1 → x ≤ K := fun h => by rw [hKdef]; linarith
   intro F hF
   refine tie_no_forces_at V X (tw v ε) a b a0 b1 m p nb0 nb1 hXV ha hb hab haX hbX ha0 hb1 hnb0 hnb1
     hcX hca hcb hIn κ η Z K L c3 c hκ hη hc3 hc hL hZ (by rw [hδε]; positivity) hMε
-    (fun y hy => (hζε' y hy).1) (fun y hy => (hζε' y hy).2) ?_ (fun j hj => (hJε j hj).1)
-    (fun j hj => (hJε j hj).2.1) (fun j hj => (hJε j hj).2.2.1) (fun j hj => (hJε j hj).2.2.2)
-    f1 f2 ?_ hP3ε f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 hdetε ?_ F hF
+    (fun y hy => (hζε' y hy).1) (fun y hy => (hζε' y hy).2) ?_ (fun j hj => wK1 (hJε j hj).1)
+    (fun j hj => wK1 (hJε j hj).2.1) (fun j hj => wK1 (hJε j hj).2.2.1)
+    (fun j hj => wK1 (hJε j hj).2.2.2)
+    (wK2 f1) (wK2 f2) ?_ hP3ε (wK2 f3) (wK2 f4) (wK2 f5) (wK2 f6) (wK2 f7) (wK2 f8) (wK2 f9)
+    (wK2 f10) (wK2 f11) (wK2 f12) hdetε ?_ F hF
   · intro j hj
     rw [hgenε, hδε, hLδ]
     have h0 := hp j hj
