@@ -168,18 +168,18 @@ theorem tie_no_forces_at (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (nb0 nb1
     (hconva : 0 < det3 (b - a) (a0 - a) w) (hconvb : 0 < det3 (b1 - b) (a - b) w)
     (hin : ∀ y ∈ V, y ∉ X → y ≠ a → y ≠ b → ∀ G : ℝ³, ⟪G, w⟫ = 0 →
       (∀ q ∈ V, ⟪G, q - y⟫ ≤ 0) → G = 0)
-    (κ η Z K L c3 c : ℝ)
+    (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (κ η Z K L c3 c : ℝ)
     (hκ : 0 < κ) (hη : 0 < η) (hc3 : 0 < c3) (hc : 0 < c) (hL : 0 ≤ L) (hZ : 0 ≤ Z)
-    (hδ : 0 < ⟪b - a, w⟫)
+    (hδ : 0 < σ * ⟪b - a, w⟫)
     (hM : ∀ j ∈ X ×ˢ (univ : Finset Bool), κ ≤ ⟪tgen nb0 nb1 w j, m⟫)
-    (hζ : ∀ y ∈ X, η ≤ ⟪y - a, w⟫) (hζZ : ∀ y ∈ X, ⟪y - a, w⟫ ≤ Z)
-    (hP : ∀ j ∈ X ×ˢ (univ : Finset Bool), -(L * ⟪b - a, w⟫) ≤ ⟪tgen nb0 nb1 w j, p⟫)
+    (hζ : ∀ y ∈ X, η ≤ σ * ⟪y - a, w⟫) (hζZ : ∀ y ∈ X, σ * ⟪y - a, w⟫ ≤ Z)
+    (hP : ∀ j ∈ X ×ˢ (univ : Finset Bool), -(L * (σ * ⟪b - a, w⟫)) ≤ ⟪tgen nb0 nb1 w j, p⟫)
     (hPK : ∀ j ∈ X ×ˢ (univ : Finset Bool), |⟪tgen nb0 nb1 w j, p⟫| ≤ K)
     (hX1 : ∀ j ∈ X ×ˢ (univ : Finset Bool), |tgen nb0 nb1 w j 0| ≤ K)
     (hX2 : ∀ j ∈ X ×ˢ (univ : Finset Bool), |tgen nb0 nb1 w j 1| ≤ K)
     (hT : ∀ j ∈ X ×ˢ (univ : Finset Bool), |⟪cross j.1 (tgen nb0 nb1 w j), w⟫| ≤ K)
     (hM3 : |⟪cross (b - a) w, m⟫| ≤ K) (hMb : |⟪cross (b1 - b) w, m⟫| ≤ K)
-    (hPa : |⟪cross w (a0 - a), p⟫| ≤ L * ⟪b - a, w⟫) (hP3 : ⟪cross (b - a) w, p⟫ ≤ -c3)
+    (hPa : |⟪cross w (a0 - a), p⟫| ≤ L * (σ * ⟪b - a, w⟫)) (hP3 : ⟪cross (b - a) w, p⟫ ≤ -c3)
     (hX13 : |cross (b - a) w 0| ≤ K) (hX23 : |cross (b - a) w 1| ≤ K)
     (hT3a : |⟪cross a (cross (b - a) w), w⟫| ≤ K)
     (hX1a : |cross w (a0 - a) 0| ≤ K) (hX2a : |cross w (a0 - a) 1| ≤ K)
@@ -187,7 +187,7 @@ theorem tie_no_forces_at (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (nb0 nb1
     (hX1b : |cross (b1 - b) w 0| ≤ K) (hX2b : |cross (b1 - b) w 1| ≤ K)
     (hTb : |⟪cross b (cross (b1 - b) w), w⟫| ≤ K)
     (hdet : c ≤ |farDet (cross w (a0 - a)) (cross (b - a) w) (cross (b1 - b) w) a b w|)
-    (hsmall : ⟪b - a, w⟫ * (18 * K ^ 3 * (K / (η * κ) + ((K + L * Z) * K / (η * κ) + L) / c3) / c +
+    (hsmall : σ * ⟪b - a, w⟫ * (18 * K ^ 3 * (K / (η * κ) + ((K + L * Z) * K / (η * κ) + L) / c3) / c +
       ((K + L * Z) * K / (η * κ) + L) / c3) < 1)
     (F : ℝ³ → ℝ³) (hF : IsForceSys V w F) : ∀ y ∈ V, F y = 0 := by
   classical
@@ -209,7 +209,7 @@ theorem tie_no_forces_at (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (nb0 nb1
   obtain ⟨κ3, κ2, k3, k2, hFb⟩ := force_mem_cone hconvb (hFw b hb) (hFn b hb b1 hb1) (hFn b hb a ha)
   rw [cross_neg_sub] at hFb
   set Ga := cross w (a0 - a); set G3 := cross (b - a) w; set Gb := cross (b1 - b) w
-  set δ := ⟪b - a, w⟫
+  set δ := σ * ⟪b - a, w⟫ with hδdef
   let l : ℝ³ × Bool → ℝ := fun j => if j.2 then t j.1 else s j.1
   have hFX : ∀ y ∈ X, F y = l (y, false) • G (y, false) + l (y, true) • G (y, true) := by
     intro y hy; simp only [l, ite_false, ite_true]; exact hst y hy
@@ -236,7 +236,7 @@ theorem tie_no_forces_at (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (nb0 nb1
       rw [smul_sum, ← sum_sub_distrib]
       exact sum_congr rfl fun y _ => by rw [inner_sub_left, sub_smul]
     rw [this, hE2, hE1, smul_zero, sub_zero]
-  have E2d : ∀ x : ℝ³, ∑ j ∈ J, l j * ⟪j.1 - a, w⟫ * ⟪G j, x⟫ + δ * (κ3 * ⟪G3, x⟫ + κ2 * ⟪Gb, x⟫) = 0 := by
+  have E2d0 : ∀ x : ℝ³, ∑ j ∈ J, l j * ⟪j.1 - a, w⟫ * ⟪G j, x⟫ + ⟪b - a, w⟫ * (κ3 * ⟪G3, x⟫ + κ2 * ⟪Gb, x⟫) = 0 := by
     intro x
     have h := congrArg (fun z => ⟪z, x⟫) E2r
     simp only [sum_inner, inner_zero_left, real_inner_smul_left] at h
@@ -248,6 +248,14 @@ theorem tie_no_forces_at (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (nb0 nb1
       rw [hFX y hy, inner_add_left, real_inner_smul_left, real_inner_smul_left]; ring
     rw [hX] at h
     simp only [inner_add_left, real_inner_smul_left] at h
+    linarith
+  have E2d : ∀ x : ℝ³, ∑ j ∈ J, l j * (σ * ⟪j.1 - a, w⟫) * ⟪G j, x⟫ + δ * (κ3 * ⟪G3, x⟫ + κ2 * ⟪Gb, x⟫) = 0 := by
+    intro x
+    have h := E2d0 x
+    have e : ∑ j ∈ J, l j * (σ * ⟪j.1 - a, w⟫) * ⟪G j, x⟫ = σ * ∑ j ∈ J, l j * ⟪j.1 - a, w⟫ * ⟪G j, x⟫ := by
+      rw [mul_sum]; exact sum_congr rfl fun j _ => by ring
+    rw [e, hδdef]
+    have : σ * (∑ j ∈ J, l j * ⟪j.1 - a, w⟫ * ⟪G j, x⟫ + ⟪b - a, w⟫ * (κ3 * ⟪G3, x⟫ + κ2 * ⟪Gb, x⟫)) = 0 := by rw [h, mul_zero]
     linarith
   have E3d : ∑ j ∈ J, l j * ⟪cross j.1 (G j), w⟫ + π1 * ⟪cross a Ga, w⟫ + π3 * ⟪cross a G3, w⟫ +
       κ3 * ⟪cross b G3, w⟫ + κ2 * ⟪cross b Gb, w⟫ = 0 := by
@@ -267,7 +275,7 @@ theorem tie_no_forces_at (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (nb0 nb1
     obtain ⟨hy, -⟩ := mem_product.mp hj
     simp only [l]; split_ifs
     exacts [ht j.1 hy, hs j.1 hy]
-  have core := tie_core J l (fun j => ⟪j.1 - a, w⟫) (fun j => ⟪G j, m⟫) (fun j => ⟪G j, p⟫)
+  have core := tie_core J l (fun j => σ * ⟪j.1 - a, w⟫) (fun j => ⟪G j, m⟫) (fun j => ⟪G j, p⟫)
     (fun j => G j 0) (fun j => G j 1) (fun j => ⟪cross j.1 (G j), w⟫) π1 π3 κ3 κ2 δ
     ⟪G3, m⟫ ⟪Gb, m⟫ ⟪Ga, p⟫ ⟪G3, p⟫ ⟪Gb, p⟫ (Ga 0) (G3 0) (Gb 0) (Ga 1) (G3 1) (Gb 1)
     ⟪cross a Ga, w⟫ ⟪cross a G3, w⟫ ⟪cross b G3, w⟫ ⟪cross b Gb, w⟫ κ η Z K L c3 c
@@ -303,18 +311,18 @@ theorem tie_no_forces_at_neg (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (nb0
     (hconva : 0 < det3 (b - a) (a0 - a) w) (hconvb : 0 < det3 (b1 - b) (a - b) w)
     (hin : ∀ y ∈ V, y ∉ X → y ≠ a → y ≠ b → ∀ G : ℝ³, ⟪G, w⟫ = 0 →
       (∀ q ∈ V, ⟪G, q - y⟫ ≤ 0) → G = 0)
-    (κ η Z K L c3 c : ℝ)
+    (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (κ η Z K L c3 c : ℝ)
     (hκ : 0 < κ) (hη : 0 < η) (hc3 : 0 < c3) (hc : 0 < c) (hL : 0 ≤ L) (hZ : 0 ≤ Z)
-    (hδ : 0 < ⟪a - b, w⟫)
+    (hδ : 0 < σ * ⟪a - b, w⟫)
     (hM : ∀ j ∈ X ×ˢ (univ : Finset Bool), κ ≤ ⟪tgen nb0 nb1 w j, m⟫)
-    (hζ : ∀ y ∈ X, η ≤ ⟪y - b, w⟫) (hζZ : ∀ y ∈ X, ⟪y - b, w⟫ ≤ Z)
-    (hP : ∀ j ∈ X ×ˢ (univ : Finset Bool), -(L * ⟪a - b, w⟫) ≤ ⟪tgen nb0 nb1 w j, p⟫)
+    (hζ : ∀ y ∈ X, η ≤ σ * ⟪y - b, w⟫) (hζZ : ∀ y ∈ X, σ * ⟪y - b, w⟫ ≤ Z)
+    (hP : ∀ j ∈ X ×ˢ (univ : Finset Bool), -(L * (σ * ⟪a - b, w⟫)) ≤ ⟪tgen nb0 nb1 w j, p⟫)
     (hPK : ∀ j ∈ X ×ˢ (univ : Finset Bool), |⟪tgen nb0 nb1 w j, p⟫| ≤ K)
     (hX1 : ∀ j ∈ X ×ˢ (univ : Finset Bool), |tgen nb0 nb1 w j 0| ≤ K)
     (hX2 : ∀ j ∈ X ×ˢ (univ : Finset Bool), |tgen nb0 nb1 w j 1| ≤ K)
     (hT : ∀ j ∈ X ×ˢ (univ : Finset Bool), |⟪cross j.1 (tgen nb0 nb1 w j), w⟫| ≤ K)
     (hM3 : |⟪cross (b - a) w, m⟫| ≤ K) (hMa : |⟪cross w (a0 - a), m⟫| ≤ K)
-    (hPb : |⟪cross (b1 - b) w, p⟫| ≤ L * ⟪a - b, w⟫) (hP3 : ⟪cross (b - a) w, p⟫ ≤ -c3)
+    (hPb : |⟪cross (b1 - b) w, p⟫| ≤ L * (σ * ⟪a - b, w⟫)) (hP3 : ⟪cross (b - a) w, p⟫ ≤ -c3)
     (hX13 : |cross (b - a) w 0| ≤ K) (hX23 : |cross (b - a) w 1| ≤ K)
     (hT3b' : |⟪cross b (cross (b - a) w), w⟫| ≤ K)
     (hX1a : |cross w (a0 - a) 0| ≤ K) (hX2a : |cross w (a0 - a) 1| ≤ K)
@@ -322,7 +330,7 @@ theorem tie_no_forces_at_neg (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (nb0
     (hX1b : |cross (b1 - b) w 0| ≤ K) (hX2b : |cross (b1 - b) w 1| ≤ K)
     (hTb : |⟪cross b (cross (b1 - b) w), w⟫| ≤ K)
     (hdet : c ≤ |farDet (cross (b1 - b) w) (cross (b - a) w) (cross w (a0 - a)) b a w|)
-    (hsmall : ⟪a - b, w⟫ * (18 * K ^ 3 * (K / (η * κ) + ((K + L * Z) * K / (η * κ) + L) / c3) / c +
+    (hsmall : σ * ⟪a - b, w⟫ * (18 * K ^ 3 * (K / (η * κ) + ((K + L * Z) * K / (η * κ) + L) / c3) / c +
       ((K + L * Z) * K / (η * κ) + L) / c3) < 1)
     (F : ℝ³ → ℝ³) (hF : IsForceSys V w F) : ∀ y ∈ V, F y = 0 := by
   classical
@@ -344,7 +352,7 @@ theorem tie_no_forces_at_neg (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (nb0
   obtain ⟨κ3, κ2, k3, k2, hFb⟩ := force_mem_cone hconvb (hFw b hb) (hFn b hb b1 hb1) (hFn b hb a ha)
   rw [cross_neg_sub] at hFb
   set Ga := cross w (a0 - a); set G3 := cross (b - a) w; set Gb := cross (b1 - b) w
-  set δ := ⟪a - b, w⟫
+  set δ := σ * ⟪a - b, w⟫ with hδdef
   let l : ℝ³ × Bool → ℝ := fun j => if j.2 then t j.1 else s j.1
   have hFX : ∀ y ∈ X, F y = l (y, false) • G (y, false) + l (y, true) • G (y, true) := by
     intro y hy; simp only [l, ite_false, ite_true]; exact hst y hy
@@ -371,7 +379,7 @@ theorem tie_no_forces_at_neg (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (nb0
       rw [smul_sum, ← sum_sub_distrib]
       exact sum_congr rfl fun y _ => by rw [inner_sub_left, sub_smul]
     rw [this, hE2, hE1, smul_zero, sub_zero]
-  have E2d : ∀ x : ℝ³, ∑ j ∈ J, l j * ⟪j.1 - b, w⟫ * ⟪G j, x⟫ + δ * (π3 * ⟪G3, x⟫ + π1 * ⟪Ga, x⟫) = 0 := by
+  have E2d0 : ∀ x : ℝ³, ∑ j ∈ J, l j * ⟪j.1 - b, w⟫ * ⟪G j, x⟫ + ⟪a - b, w⟫ * (π3 * ⟪G3, x⟫ + π1 * ⟪Ga, x⟫) = 0 := by
     intro x
     have h := congrArg (fun z => ⟪z, x⟫) E2r
     simp only [sum_inner, inner_zero_left, real_inner_smul_left] at h
@@ -383,6 +391,14 @@ theorem tie_no_forces_at_neg (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (nb0
       rw [hFX y hy, inner_add_left, real_inner_smul_left, real_inner_smul_left]; ring
     rw [hX] at h
     simp only [inner_add_left, real_inner_smul_left] at h
+    linarith
+  have E2d : ∀ x : ℝ³, ∑ j ∈ J, l j * (σ * ⟪j.1 - b, w⟫) * ⟪G j, x⟫ + δ * (π3 * ⟪G3, x⟫ + π1 * ⟪Ga, x⟫) = 0 := by
+    intro x
+    have h := E2d0 x
+    have e : ∑ j ∈ J, l j * (σ * ⟪j.1 - b, w⟫) * ⟪G j, x⟫ = σ * ∑ j ∈ J, l j * ⟪j.1 - b, w⟫ * ⟪G j, x⟫ := by
+      rw [mul_sum]; exact sum_congr rfl fun j _ => by ring
+    rw [e, hδdef]
+    have : σ * (∑ j ∈ J, l j * ⟪j.1 - b, w⟫ * ⟪G j, x⟫ + ⟪a - b, w⟫ * (π3 * ⟪G3, x⟫ + π1 * ⟪Ga, x⟫)) = 0 := by rw [h, mul_zero]
     linarith
   have E3d : ∑ j ∈ J, l j * ⟪cross j.1 (G j), w⟫ + π1 * ⟪cross a Ga, w⟫ + π3 * ⟪cross a G3, w⟫ +
       κ3 * ⟪cross b G3, w⟫ + κ2 * ⟪cross b Gb, w⟫ = 0 := by
@@ -402,7 +418,7 @@ theorem tie_no_forces_at_neg (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (nb0
     obtain ⟨hy, -⟩ := mem_product.mp hj
     simp only [l]; split_ifs
     exacts [ht j.1 hy, hs j.1 hy]
-  have core := tie_core J l (fun j => ⟪j.1 - b, w⟫) (fun j => ⟪G j, m⟫) (fun j => ⟪G j, p⟫)
+  have core := tie_core J l (fun j => σ * ⟪j.1 - b, w⟫) (fun j => ⟪G j, m⟫) (fun j => ⟪G j, p⟫)
     (fun j => G j 0) (fun j => G j 1) (fun j => ⟪cross j.1 (G j), w⟫) κ2 κ3 π3 π1 δ
     ⟪G3, m⟫ ⟪Ga, m⟫ ⟪Gb, p⟫ ⟪G3, p⟫ ⟪Ga, p⟫ (Gb 0) (G3 0) (Ga 0) (Gb 1) (G3 1) (Ga 1)
     ⟪cross b Gb, w⟫ ⟪cross b G3, w⟫ ⟪cross a G3, w⟫ ⟪cross a Ga, w⟫ κ η Z K L c3 c
@@ -569,7 +585,8 @@ small `ε > 0` every force system vanishes. -/
 theorem tie_no_forces (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb1 : ℝ³ → ℝ³)
     (hXV : X ⊆ V) (ha : a ∈ V) (hb : b ∈ V) (hab : a ≠ b) (haX : a ∉ X) (hbX : b ∉ X)
     (ha0 : a0 ∈ V) (hb1 : b1 ∈ V) (hnb0 : ∀ y ∈ X, nb0 y ∈ V) (hnb1 : ∀ y ∈ X, nb1 y ∈ V)
-    (htie : a 2 = b 2) (hD : 0 < ⟪b - a, v⟫) (hXz : ∀ y ∈ X, a 2 < y 2)
+    (htie : a 2 = b 2) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (hD : 0 < σ * ⟪b - a, v⟫)
+    (hXz : ∀ y ∈ X, 0 < σ * (y 2 - a 2))
     (hconvX : ∀ y ∈ X, ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (nb1 y - y) (nb0 y - y) (tw v ε))
     (hconva : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (b - a) (a0 - a) (tw v ε))
     (hconvb : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (b1 - b) (a - b) (tw v ε))
@@ -582,20 +599,20 @@ theorem tie_no_forces (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb1 : 
     ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ F : ℝ³ → ℝ³, IsForceSys V (tw v ε) F → ∀ y ∈ V, F y = 0 := by
   classical
   set J := X ×ˢ (univ : Finset Bool) with hJ
-  set D := ⟪b - a, v⟫ with hDdef
-  have hδε : ∀ ε, ⟪b - a, tw v ε⟫ = ε * D := fun ε => by
-    rw [inner_tw, PiLp.sub_apply, htie, sub_self, zero_add]
-  have hζε : ∀ y ε, ⟪y - a, tw v ε⟫ = (y 2 - a 2) + ε * ⟪y - a, v⟫ := fun y ε => by
-    rw [inner_tw, PiLp.sub_apply]
+  set D := σ * ⟪b - a, v⟫ with hDdef
+  have hδε : ∀ ε, σ * ⟪b - a, tw v ε⟫ = ε * D := fun ε => by
+    rw [inner_tw, PiLp.sub_apply, htie, sub_self, zero_add, hDdef]; ring
+  have hζε : ∀ y ε, σ * ⟪y - a, tw v ε⟫ = σ * (y 2 - a 2) + ε * (σ * ⟪y - a, v⟫) :=
+    fun y ε => by rw [inner_tw, PiLp.sub_apply]; ring
   have hgenε : ∀ (j : ℝ³ × Bool) (x : ℝ³) (ε : ℝ), ⟪tgen nb0 nb1 (tw v ε) j, x⟫ =
       ⟪tgen nb0 nb1 ez j, x⟫ + ε * ⟪tgen' nb0 nb1 v j, x⟫ := fun j x ε => by
     rw [tgen_tw, inner_add_left, real_inner_smul_left]
   -- constants
   obtain ⟨κ, hκ, hκle⟩ := exists_pos_lower J (fun j => ⟪tgen nb0 nb1 ez j, m⟫ / 2)
     (fun j hj => by have := hm j hj; positivity)
-  obtain ⟨η, hη, hηle⟩ := exists_pos_lower X (fun y => (y 2 - a 2) / 2)
+  obtain ⟨η, hη, hηle⟩ := exists_pos_lower X (fun y => σ * (y 2 - a 2) / 2)
     (fun y hy => by have := hXz y hy; linarith)
-  set Z := ∑ y ∈ X, (|y 2 - a 2| + |⟪y - a, v⟫|) with hZdef
+  set Z := ∑ y ∈ X, (|σ * (y 2 - a 2)| + |σ * ⟪y - a, v⟫|) with hZdef
   have hZ : 0 ≤ Z := sum_nonneg fun _ _ => by positivity
   obtain ⟨K1, hK1, evJ⟩ := ev_gen_bounds J nb0 nb1 v p
   obtain ⟨K2, hK2, evFar⟩ := ev_far_bounds v a b a0 b1 m
@@ -617,14 +634,16 @@ theorem tie_no_forces (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb1 : 
     (eventually_all_finset J).2 fun j hj =>
       (ev_half (B := ⟪tgen' nb0 nb1 v j, m⟫) (hm j hj)).mono fun ε h => by
         rw [hgenε]; exact (hκle j hj).trans h
-  have evζ : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ y ∈ X, η ≤ ⟪y - a, tw v ε⟫ ∧ ⟪y - a, tw v ε⟫ ≤ Z :=
+  have evζ : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ y ∈ X, η ≤ σ * ⟪y - a, tw v ε⟫ ∧
+      σ * ⟪y - a, tw v ε⟫ ≤ Z :=
     (eventually_all_finset X).2 fun y hy =>
-      ((ev_half (B := ⟪y - a, v⟫) (show 0 < y 2 - a 2 by linarith [hXz y hy])).and
-        (ev_abs_quad (y 2 - a 2) ⟪y - a, v⟫ 0)).mono fun ε ⟨h1, h2⟩ => by
+      ((ev_half (B := σ * ⟪y - a, v⟫) (hXz y hy)).and
+        (ev_abs_quad (σ * (y 2 - a 2)) (σ * ⟪y - a, v⟫) 0)).mono fun ε ⟨h1, h2⟩ => by
         rw [hζε]
         refine ⟨(hηle y hy).trans h1, ?_⟩
-        have hsum : |y 2 - a 2| + |⟪y - a, v⟫| ≤ Z :=
-          single_le_sum (f := fun y => |y 2 - a 2| + |⟪y - a, v⟫|) (fun _ _ => by positivity) hy
+        have hsum : |σ * (y 2 - a 2)| + |σ * ⟪y - a, v⟫| ≤ Z :=
+          single_le_sum (f := fun y => |σ * (y 2 - a 2)| + |σ * ⟪y - a, v⟫|)
+            (fun _ _ => by positivity) hy
         simp only [mul_zero, add_zero, abs_zero] at h2
         exact (le_abs_self _).trans (h2.trans hsum)
   have evP3 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ⟪cross (b - a) (tw v ε), p⟫ ≤ -c3 :=
@@ -648,7 +667,7 @@ theorem tie_no_forces (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb1 : 
   have wK1 : ∀ {x : ℝ}, x ≤ K1 → x ≤ K := fun h => by rw [hKdef]; linarith
   intro F hF
   refine tie_no_forces_at V X (tw v ε) a b a0 b1 m p nb0 nb1 hXV ha hb hab haX hbX ha0 hb1 hnb0 hnb1
-    hcX hca hcb hIn κ η Z K L c3 c hκ hη hc3 hc hL hZ (by rw [hδε]; positivity) hMε
+    hcX hca hcb hIn σ hσ κ η Z K L c3 c hκ hη hc3 hc hL hZ (by rw [hδε]; positivity) hMε
     (fun y hy => (hζε' y hy).1) (fun y hy => (hζε' y hy).2) ?_ (fun j hj => wK1 (hJε j hj).1)
     (fun j hj => wK1 (hJε j hj).2.1) (fun j hj => wK1 (hJε j hj).2.2.1)
     (fun j hj => wK1 (hJε j hj).2.2.2)
@@ -683,7 +702,8 @@ small `ε > 0` every force system vanishes. -/
 theorem tie_no_forces_neg (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb1 : ℝ³ → ℝ³)
     (hXV : X ⊆ V) (ha : a ∈ V) (hb : b ∈ V) (hab : a ≠ b) (haX : a ∉ X) (hbX : b ∉ X)
     (ha0 : a0 ∈ V) (hb1 : b1 ∈ V) (hnb0 : ∀ y ∈ X, nb0 y ∈ V) (hnb1 : ∀ y ∈ X, nb1 y ∈ V)
-    (htie : a 2 = b 2) (hD : 0 < ⟪a - b, v⟫) (hXz : ∀ y ∈ X, b 2 < y 2)
+    (htie : a 2 = b 2) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (hD : 0 < σ * ⟪a - b, v⟫)
+    (hXz : ∀ y ∈ X, 0 < σ * (y 2 - b 2))
     (hconvX : ∀ y ∈ X, ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (nb1 y - y) (nb0 y - y) (tw v ε))
     (hconva : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (b - a) (a0 - a) (tw v ε))
     (hconvb : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (b1 - b) (a - b) (tw v ε))
@@ -696,20 +716,20 @@ theorem tie_no_forces_neg (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb
     ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ F : ℝ³ → ℝ³, IsForceSys V (tw v ε) F → ∀ y ∈ V, F y = 0 := by
   classical
   set J := X ×ˢ (univ : Finset Bool) with hJ
-  set D := ⟪a - b, v⟫ with hDdef
-  have hδε : ∀ ε, ⟪a - b, tw v ε⟫ = ε * D := fun ε => by
-    rw [inner_tw, PiLp.sub_apply, htie, sub_self, zero_add]
-  have hζε : ∀ y ε, ⟪y - b, tw v ε⟫ = (y 2 - b 2) + ε * ⟪y - b, v⟫ := fun y ε => by
-    rw [inner_tw, PiLp.sub_apply]
+  set D := σ * ⟪a - b, v⟫ with hDdef
+  have hδε : ∀ ε, σ * ⟪a - b, tw v ε⟫ = ε * D := fun ε => by
+    rw [inner_tw, PiLp.sub_apply, htie, sub_self, zero_add, hDdef]; ring
+  have hζε : ∀ y ε, σ * ⟪y - b, tw v ε⟫ = σ * (y 2 - b 2) + ε * (σ * ⟪y - b, v⟫) :=
+    fun y ε => by rw [inner_tw, PiLp.sub_apply]; ring
   have hgenε : ∀ (j : ℝ³ × Bool) (x : ℝ³) (ε : ℝ), ⟪tgen nb0 nb1 (tw v ε) j, x⟫ =
       ⟪tgen nb0 nb1 ez j, x⟫ + ε * ⟪tgen' nb0 nb1 v j, x⟫ := fun j x ε => by
     rw [tgen_tw, inner_add_left, real_inner_smul_left]
   -- constants
   obtain ⟨κ, hκ, hκle⟩ := exists_pos_lower J (fun j => ⟪tgen nb0 nb1 ez j, m⟫ / 2)
     (fun j hj => by have := hm j hj; positivity)
-  obtain ⟨η, hη, hηle⟩ := exists_pos_lower X (fun y => (y 2 - b 2) / 2)
+  obtain ⟨η, hη, hηle⟩ := exists_pos_lower X (fun y => σ * (y 2 - b 2) / 2)
     (fun y hy => by have := hXz y hy; linarith)
-  set Z := ∑ y ∈ X, (|y 2 - b 2| + |⟪y - b, v⟫|) with hZdef
+  set Z := ∑ y ∈ X, (|σ * (y 2 - b 2)| + |σ * ⟪y - b, v⟫|) with hZdef
   have hZ : 0 ≤ Z := sum_nonneg fun _ _ => by positivity
   obtain ⟨K1, hK1, evJ⟩ := ev_gen_bounds J nb0 nb1 v p
   obtain ⟨K2, hK2, evFar⟩ := ev_far_bounds v a b a0 b1 m
@@ -731,14 +751,16 @@ theorem tie_no_forces_neg (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb
     (eventually_all_finset J).2 fun j hj =>
       (ev_half (B := ⟪tgen' nb0 nb1 v j, m⟫) (hm j hj)).mono fun ε h => by
         rw [hgenε]; exact (hκle j hj).trans h
-  have evζ : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ y ∈ X, η ≤ ⟪y - b, tw v ε⟫ ∧ ⟪y - b, tw v ε⟫ ≤ Z :=
+  have evζ : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ y ∈ X, η ≤ σ * ⟪y - b, tw v ε⟫ ∧
+      σ * ⟪y - b, tw v ε⟫ ≤ Z :=
     (eventually_all_finset X).2 fun y hy =>
-      ((ev_half (B := ⟪y - b, v⟫) (show 0 < y 2 - b 2 by linarith [hXz y hy])).and
-        (ev_abs_quad (y 2 - b 2) ⟪y - b, v⟫ 0)).mono fun ε ⟨h1, h2⟩ => by
+      ((ev_half (B := σ * ⟪y - b, v⟫) (hXz y hy)).and
+        (ev_abs_quad (σ * (y 2 - b 2)) (σ * ⟪y - b, v⟫) 0)).mono fun ε ⟨h1, h2⟩ => by
         rw [hζε]
         refine ⟨(hηle y hy).trans h1, ?_⟩
-        have hsum : |y 2 - b 2| + |⟪y - b, v⟫| ≤ Z :=
-          single_le_sum (f := fun y => |y 2 - b 2| + |⟪y - b, v⟫|) (fun _ _ => by positivity) hy
+        have hsum : |σ * (y 2 - b 2)| + |σ * ⟪y - b, v⟫| ≤ Z :=
+          single_le_sum (f := fun y => |σ * (y 2 - b 2)| + |σ * ⟪y - b, v⟫|)
+            (fun _ _ => by positivity) hy
         simp only [mul_zero, add_zero, abs_zero] at h2
         exact (le_abs_self _).trans (h2.trans hsum)
   have evP3 : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ⟪cross (b - a) (tw v ε), p⟫ ≤ -c3 :=
@@ -762,7 +784,7 @@ theorem tie_no_forces_neg (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb
   have wK1 : ∀ {x : ℝ}, x ≤ K1 → x ≤ K := fun h => by rw [hKdef]; linarith
   intro F hF
   refine tie_no_forces_at_neg V X (tw v ε) a b a0 b1 m p nb0 nb1 hXV ha hb hab haX hbX ha0 hb1 hnb0
-    hnb1 hcX hca hcb hIn κ η Z K L c3 c hκ hη hc3 hc hL hZ (by rw [hδε]; positivity) hMε
+    hnb1 hcX hca hcb hIn σ hσ κ η Z K L c3 c hκ hη hc3 hc hL hZ (by rw [hδε]; positivity) hMε
     (fun y hy => (hζε' y hy).1) (fun y hy => (hζε' y hy).2) ?_ (fun j hj => wK1 (hJε j hj).1)
     (fun j hj => wK1 (hJε j hj).2.1) (fun j hj => wK1 (hJε j hj).2.2.1)
     (fun j hj => wK1 (hJε j hj).2.2.2)
@@ -796,7 +818,8 @@ theorem isRupert_of_tie (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb1 
     (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) (hv : v 2 = 0)
     (hXV : X ⊆ V) (ha : a ∈ V) (hb : b ∈ V) (hab : a ≠ b) (haX : a ∉ X) (hbX : b ∉ X)
     (ha0 : a0 ∈ V) (hb1 : b1 ∈ V) (hnb0 : ∀ y ∈ X, nb0 y ∈ V) (hnb1 : ∀ y ∈ X, nb1 y ∈ V)
-    (htie : a 2 = b 2) (hD : 0 < ⟪b - a, v⟫) (hXz : ∀ y ∈ X, a 2 < y 2)
+    (htie : a 2 = b 2) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (hD : 0 < σ * ⟪b - a, v⟫)
+    (hXz : ∀ y ∈ X, 0 < σ * (y 2 - a 2))
     (hconvX : ∀ y ∈ X, ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (nb1 y - y) (nb0 y - y) (tw v ε))
     (hconva : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (b - a) (a0 - a) (tw v ε))
     (hconvb : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (b1 - b) (a - b) (tw v ε))
@@ -808,7 +831,7 @@ theorem isRupert_of_tie (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb1 
     (hdet : farDet (cross ez (a0 - a)) (cross (b - a) ez) (cross (b1 - b) ez) a b ez ≠ 0) :
     IsRupert V := by
   obtain ⟨ε, hε⟩ := (tie_no_forces V X v a b a0 b1 m p nb0 nb1 hXV ha hb hab haX hbX ha0 hb1
-    hnb0 hnb1 htie hD hXz hconvX hconva hconvb hin hm hp hpa hp3 hdet).exists
+    hnb0 hnb1 htie σ hσ hD hXz hconvX hconva hconvb hin hm hp hpa hp3 hdet).exists
   exact isRupert_of_no_forces V hsol (tw v ε) (tw_ne_zero v ε hv)
     fun F h1 h2 h3 h4 h5 => hε F ⟨h1, h2, h3, h4, h5⟩
 
@@ -818,7 +841,8 @@ theorem isRupert_of_tie_neg (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 
     (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) (hv : v 2 = 0)
     (hXV : X ⊆ V) (ha : a ∈ V) (hb : b ∈ V) (hab : a ≠ b) (haX : a ∉ X) (hbX : b ∉ X)
     (ha0 : a0 ∈ V) (hb1 : b1 ∈ V) (hnb0 : ∀ y ∈ X, nb0 y ∈ V) (hnb1 : ∀ y ∈ X, nb1 y ∈ V)
-    (htie : a 2 = b 2) (hD : 0 < ⟪a - b, v⟫) (hXz : ∀ y ∈ X, b 2 < y 2)
+    (htie : a 2 = b 2) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (hD : 0 < σ * ⟪a - b, v⟫)
+    (hXz : ∀ y ∈ X, 0 < σ * (y 2 - b 2))
     (hconvX : ∀ y ∈ X, ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (nb1 y - y) (nb0 y - y) (tw v ε))
     (hconva : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (b - a) (a0 - a) (tw v ε))
     (hconvb : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 (b1 - b) (a - b) (tw v ε))
@@ -830,7 +854,7 @@ theorem isRupert_of_tie_neg (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 
     (hdet : farDet (cross (b1 - b) ez) (cross (b - a) ez) (cross ez (a0 - a)) b a ez ≠ 0) :
     IsRupert V := by
   obtain ⟨ε, hε⟩ := (tie_no_forces_neg V X v a b a0 b1 m p nb0 nb1 hXV ha hb hab haX hbX ha0 hb1
-    hnb0 hnb1 htie hD hXz hconvX hconva hconvb hin hm hp hpb hp3 hdet).exists
+    hnb0 hnb1 htie σ hσ hD hXz hconvX hconva hconvb hin hm hp hpb hp3 hdet).exists
   exact isRupert_of_no_forces V hsol (tw v ε) (tw_ne_zero v ε hv)
     fun F h1 h2 h3 h4 h5 => hε F ⟨h1, h2, h3, h4, h5⟩
 
@@ -890,8 +914,9 @@ theorem isRupert_of_tilted_tie (V : Finset ℝ³) (hsol : (interior (convexHull 
     (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → TiltSign (x (i + 1) - x i) (x j - x i) ez v)
     (hrest : ∀ y ∈ V, (∀ j, y ≠ x j) → ∀ i, TiltSign (x (i + 1) - x i) (y - x i) ez v)
     (ia : ZMod k) (m p : ℝ³)
-    (htie : x ia 2 = x (ia + 1) 2) (hD : 0 < ⟪x (ia + 1) - x ia, v⟫)
-    (hXz : ∀ i, i ≠ ia → i ≠ ia + 1 → x ia 2 < x i 2)
+    (htie : x ia 2 = x (ia + 1) 2) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1)
+    (hD : 0 < σ * ⟪x (ia + 1) - x ia, v⟫)
+    (hXz : ∀ i, i ≠ ia → i ≠ ia + 1 → 0 < σ * (x i 2 - x ia 2))
     (hm : ∀ i, i ≠ ia → i ≠ ia + 1 →
       0 < ⟪cross ez (x (i - 1) - x i), m⟫ ∧ 0 < ⟪cross (x (i + 1) - x i) ez, m⟫)
     (hp : ∀ i, i ≠ ia → i ≠ ia + 1 →
@@ -949,7 +974,7 @@ theorem isRupert_of_tilted_tie (V : Finset ℝ³) (hsol : (interior (convexHull 
     · exact Eventually.of_forall fun ε h => absurd h hc
   refine isRupert_of_tie V X v (x ia) (x (ia + 1)) (x (ia - 1)) (x (ia + 1 + 1)) m p nb0 nb1 hsol hv
     ?_ (hxV _) (hxV _) (fun h => hne3 ia (hx h).symm) ?_ ?_ (hxV _) (hxV _)
-    (fun y _ => hxV _) (fun y _ => hxV _) htie hD ?_ ?_ ?_ ?_ ?_ ?_ ?_ hpa hp3 hdet
+    (fun y _ => hxV _) (fun y _ => hxV _) htie σ hσ hD ?_ ?_ ?_ ?_ ?_ ?_ ?_ hpa hp3 hdet
   · intro y hy; obtain ⟨i, -, -, rfl⟩ := (memX y).mp hy; exact hxV i
   · intro h; obtain ⟨i, h1, -, e⟩ := (memX _).mp h; exact h1 (hx e)
   · intro h; obtain ⟨i, -, h2, e⟩ := (memX _).mp h; exact h2 (hx e)
@@ -996,8 +1021,9 @@ theorem isRupert_of_tilted_tie_neg (V : Finset ℝ³) (hsol : (interior (convexH
     (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → TiltSign (x (i + 1) - x i) (x j - x i) ez v)
     (hrest : ∀ y ∈ V, (∀ j, y ≠ x j) → ∀ i, TiltSign (x (i + 1) - x i) (y - x i) ez v)
     (ia : ZMod k) (m p : ℝ³)
-    (htie : x ia 2 = x (ia + 1) 2) (hD : 0 < ⟪x ia - x (ia + 1), v⟫)
-    (hXz : ∀ i, i ≠ ia → i ≠ ia + 1 → x (ia + 1) 2 < x i 2)
+    (htie : x ia 2 = x (ia + 1) 2) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1)
+    (hD : 0 < σ * ⟪x ia - x (ia + 1), v⟫)
+    (hXz : ∀ i, i ≠ ia → i ≠ ia + 1 → 0 < σ * (x i 2 - x (ia + 1) 2))
     (hm : ∀ i, i ≠ ia → i ≠ ia + 1 →
       0 < ⟪cross ez (x (i - 1) - x i), m⟫ ∧ 0 < ⟪cross (x (i + 1) - x i) ez, m⟫)
     (hp : ∀ i, i ≠ ia → i ≠ ia + 1 →
@@ -1055,7 +1081,7 @@ theorem isRupert_of_tilted_tie_neg (V : Finset ℝ³) (hsol : (interior (convexH
     · exact Eventually.of_forall fun ε h => absurd h hc
   refine isRupert_of_tie_neg V X v (x ia) (x (ia + 1)) (x (ia - 1)) (x (ia + 1 + 1)) m p nb0 nb1 hsol hv
     ?_ (hxV _) (hxV _) (fun h => hne3 ia (hx h).symm) ?_ ?_ (hxV _) (hxV _)
-    (fun y _ => hxV _) (fun y _ => hxV _) htie hD ?_ ?_ ?_ ?_ ?_ ?_ ?_ hpb hp3 hdet
+    (fun y _ => hxV _) (fun y _ => hxV _) htie σ hσ hD ?_ ?_ ?_ ?_ ?_ ?_ ?_ hpb hp3 hdet
   · intro y hy; obtain ⟨i, -, -, rfl⟩ := (memX y).mp hy; exact hxV i
   · intro h; obtain ⟨i, h1, -, e⟩ := (memX _).mp h; exact h1 (hx e)
   · intro h; obtain ⟨i, -, h2, e⟩ := (memX _).mp h; exact h2 (hx e)
