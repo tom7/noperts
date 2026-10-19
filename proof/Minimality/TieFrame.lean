@@ -1181,6 +1181,100 @@ theorem isRupert_of_facets_vertex_tieR (V : Finset ℝ³) (hgen : NoThreeColline
   exact hgen
 
 
+set_option maxHeartbeats 4000000 in
+/-- The robust tie over an edge, same-sign sector: both chains start at the apex
+vertex `z1s` (strictly beyond the tied far depth in `s z`), the other apex
+vertex `z2s` hidden; no right angle at the far ends (`isRupert_triShadow_robust`). -/
+theorem edge_robust_core (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ → ℝ → Prop)
+    (s : ℝ) (hs : s = 1 ∨ s = -1) {z1s z2s : ℝ} (hap : s * z2s < s * z1s)
+    {m n : ℕ} {ca cz cb dz : ℕ → ℝ}
+    (C1 : ChainOK Q1 z1s s m ca cz) (C2 : ChainOK Q2 z1s s n cb dz)
+    (htie : cz m = dz n) (hz : 0 < s * (z1s - cz m))
+    (hangA : r1 0 * (cb n * r2 0 - ca m * r1 0) + r1 1 * (cb n * r2 1 - ca m * r1 1) ≠ 0)
+    (hangB : r2 0 * (ca m * r1 0 - cb n * r2 0) + r2 1 * (ca m * r1 1 - cb n * r2 1) ≠ 0)
+    (hap1 : ∀ z, Q1 0 z → z = z1s ∨ z = z2s) (hap2 : ∀ z, Q2 0 z → z = z1s ∨ z = z2s)
+    (hQ1z2 : Q1 0 z2s) (hQ2z2 : Q2 0 z2s)
+    (hpos1 : ∀ a z, Q1 a z → 0 ≤ a) (hpos2 : ∀ b z, Q2 b z → 0 ≤ b)
+    (V : Finset ℝ³)
+    (hV1 : ∀ a z, Q1 a z → oblPt O r1 r2 a 0 z ∈ V) (hV2 : ∀ b z, Q2 b z → oblPt O r1 r2 0 b z ∈ V)
+    (hVc : ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧
+      ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧ a * cb n + b * ca m < ca m * cb n)))
+    (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) :
+    IsRupert V := by
+  have hA0 := C1.far_pos
+  have hB0 := C2.far_pos
+  have c10 := C1.start; have c20 := C2.start
+  have hns : -s = 1 ∨ -s = -1 := by rcases hs with rfl | rfl <;> norm_num
+  have far1 : ∀ a z, Q1 a z → a * cb n < ca m * cb n ∨ (a = ca m ∧ z = cz m) := by
+    intro a z hq
+    by_cases h : a = ca m ∧ z = cz m
+    · exact Or.inr h
+    · left; exact mul_lt_mul_of_pos_right (C1.far a z hq h) hB0
+  have far2 : ∀ b z, Q2 b z → b * ca m < cb n * ca m ∨ (b = cb n ∧ z = dz n) := by
+    intro b z hq
+    by_cases h : b = cb n ∧ z = dz n
+    · exact Or.inr h
+    · left; exact mul_lt_mul_of_pos_right (C2.far b z hq h) hA0
+  have side1 : ∀ a z, Q1 a z → ∀ l, l < m → oblPt O r1 r2 a 0 z ≠ oblPt O r1 r2 (ca l) 0 (cz l) →
+      oblPt O r1 r2 a 0 z ≠ oblPt O r1 r2 (ca (l + 1)) 0 (cz (l + 1)) →
+      s * ((ca (l + 1) - ca l) * (z - cz l) - (cz (l + 1) - cz l) * (a - ca l)) < 0 := by
+    intro a z hq l hl h1 h2
+    exact C1.side a z hq l hl (fun ⟨e1, e2⟩ => h1 (by rw [e1, e2]))
+      (fun ⟨e1, e2⟩ => h2 (by rw [e1, e2]))
+  have side2 : ∀ b z, Q2 b z → ∀ l, l < n →
+      oblPt O r1 r2 0 b z ≠ oblPt O r1 r2 0 (cb (l + 1)) (dz (l + 1)) →
+      oblPt O r1 r2 0 b z ≠ oblPt O r1 r2 0 (cb l) (dz l) →
+      -s * ((cb l - cb (l + 1)) * (z - dz (l + 1)) - (dz l - dz (l + 1)) * (b - cb (l + 1))) < 0 := by
+    intro b z hq l hl h1 h2
+    have := C2.side b z hq l hl (fun ⟨e1, e2⟩ => h2 (by rw [e1, e2]))
+      (fun ⟨e1, e2⟩ => h1 (by rw [e1, e2]))
+    have e : -s * ((cb l - cb (l + 1)) * (z - dz (l + 1)) - (dz l - dz (l + 1)) * (b - cb (l + 1))) =
+      s * ((cb (l + 1) - cb l) * (z - dz l) - (dz (l + 1) - dz l) * (b - cb l)) := by ring
+    rw [e]; exact this
+  have q10 : Q1 0 z1s := by rw [← c10.2, ← c10.1]; exact C1.mem 0 (Nat.zero_le _)
+  have q20 : Q2 0 z1s := by rw [← c20.2, ← c20.1]; exact C2.mem 0 (Nat.zero_le _)
+  have q2of : ∀ z, Q1 0 z → Q2 0 z := by
+    intro z h; rcases hap1 z h with rfl | rfl
+    · exact q20
+    · exact hQ2z2
+  have q1of : ∀ z, Q2 0 z → Q1 0 z := by
+    intro z h; rcases hap2 z h with rfl | rfl
+    · exact q10
+    · exact hQ1z2
+  have hz1 : ∀ l, l < m → 0 < s * (cz l - cz m) := by
+    intro l hl
+    rcases Nat.eq_zero_or_pos l with rfl | hl0
+    · rw [c10.2]; exact hz
+    · have hc := gt_min_ends_of_conc (f := fun l => s * cz l) (m := m) C1.conc l hl0 hl
+      have h0 : s * cz m < s * cz 0 := by rw [c10.2]; linarith
+      simp only [min_eq_right h0.le] at hc
+      linarith
+  have hz2 : ∀ k, 0 < k → k < n → 0 < s * (dz k - cz m) := by
+    intro k hk0 hk
+    have hc := gt_min_ends_of_conc (f := fun l => s * dz l) (m := n) C2.conc k hk0 hk
+    have h0 : s * dz n < s * dz 0 := by rw [c20.2, ← htie]; linarith
+    simp only [min_eq_right h0.le] at hc
+    rw [htie]; linarith
+  obtain ⟨α, β, hα, hβ, hcase⟩ := exists_tie_tilt O r1 r2 (ca m) (cb n) hangA hangB
+  refine isRupert_triShadow_robust O r1 r2 hρ C1.one_le C2.one_le s hs (-s) hns hα hβ ca cz
+    cb dz c10.1 c20.1 (by rw [c10.2, c20.2]) C1.inc C2.inc V (fun l hl => hV1 _ _ (C1.mem l hl))
+    (fun l hl => hV2 _ _ (C2.mem l hl)) ?_ rfl hsol htie hz1 hz2 hcase
+  intro y hy
+  obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
+  rcases hc with ⟨rfl, hq⟩ | ⟨rfl, hq⟩ | ⟨ha, hb, hin⟩
+  · refine ⟨a, 0, z, rfl, hpos1 a z hq, le_rfl, ?_, fun _ => side1 a z hq, ?_⟩
+    · rcases far1 a z hq with h | ⟨e1, e2⟩
+      · left; exact far_tiltOK (by linarith)
+      · right; left; rw [e1, e2]
+    · intro ha; subst ha; exact side2 0 z (q2of z hq)
+  · refine ⟨0, b, z, rfl, le_rfl, hpos2 b z hq, ?_, ?_, fun _ => side2 b z hq⟩
+    · rcases far2 b z hq with h | ⟨e1, e2⟩
+      · left; exact far_tiltOK (by linarith)
+      · right; right; rw [e1, e2]
+    · intro hb; subst hb; exact side1 0 z (q1of z hq)
+  · exact ⟨a, b, z, rfl, ha.le, hb.le, Or.inl (far_tiltOK hin), fun h => absurd h hb.ne',
+      fun h => absurd h ha.ne'⟩
+
 end Minimality
 
 end
