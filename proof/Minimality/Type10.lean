@@ -2,6 +2,7 @@ module
 
 public import Minimality.TriFacetsEdge
 public import Minimality.TieFrame
+public import Minimality.ParallelOr
 public import Minimality.TriFacetsChord
 
 @[expose] public section
@@ -149,9 +150,13 @@ theorem isRupert_type10 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hD : ∀ i, (i ∈ ({0, 2, 3} : Finset (Fin 7)) → fD (x i) = 0) ∧
       (i ∉ ({0, 2, 3} : Finset (Fin 7)) → fD (x i) < 0))
     (hZ1 : EdgeTieR (univ.image x) (({1, 2, 4, 5} : Finset (Fin 7)).image x)
+      (({1, 3, 4, 6} : Finset (Fin 7)).image x) (x 1) (x 4) ∨
+      EdgeFarP (univ.image x) (({1, 2, 4, 5} : Finset (Fin 7)).image x)
       (({1, 3, 4, 6} : Finset (Fin 7)).image x) (x 1) (x 4))
-    (hT2 : TriGenTri (univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
-        (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2) ∧
+    (hT2 : (TriGenTri (univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
+        (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2) ∨
+        TriGenFarP (univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
+        (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2)) ∧
       (fB (x 0) / fB (x 2) + fA (x 0) / fA (x 3) = 1 →
         TriGenFar (univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
           (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2))) :
@@ -181,7 +186,7 @@ theorem isRupert_type10 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
   have sub : ∀ P : Finset (Fin 7), P.image x ⊆ V := fun P => Finset.image_subset_image (Finset.subset_univ P)
   rcases lt_or_ge (fB (x 0) / fB (x 2) + fA (x 0) / fA (x 3)) 1 with hlt | hgt
   · -- the view along the edge `14`
-    refine isRupert_of_facets_edge_tieR V hgen QA QB (sub _) (sub _) (isFacet_of_index x _ fA hA)
+    refine isRupert_of_facets_edge_tieR_or V hgen QA QB (sub _) (sub _) (isFacet_of_index x _ fA hA)
       (isFacet_of_index x _ fB hB) (x 1) (x 4) (fun h => by have := hx h; omega) ?_
       ⟨x 2, (memQ _ 2).mpr (by decide), by rw [memQ]; decide⟩
       ⟨x 3, (memQ _ 3).mpr (by decide), by rw [memQ]; decide⟩ hZ1 ?_ hsol
@@ -263,13 +268,13 @@ theorem isRupert_type10 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       simp
     rcases hgt.lt_or_eq with hgt' | hgeq
     · -- `s > 1`: the point off both planes strictly inside; Lemma T (the tie allowed)
-      refine isRupert_of_facets_vertex_tie V hgen QD QA (sub _) (sub _)
+      refine isRupert_of_facets_vertex_tie_or V hgen QD QA (sub _) (sub _)
         (isFacet_of_index x _ fD hD) (isFacet_of_index x _ fA hA) (x 2) hiv
         ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩
         ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩
-        (hT2.1.tie (sub _) (sub _) hiv
+        (hT2.1.imp (fun h => h.tie (sub _) (sub _) hiv
           (Or.inl (by show (({0, 2, 3} : Finset (Fin 7)).image x).card = 3
-                      rw [Finset.card_image_of_injective _ hx]; decide)))
+                      rw [Finset.card_image_of_injective _ hx]; decide))) id)
         ⟨x 3, (memQ _ 3).mpr (by decide), x 4, (memQ _ 4).mpr (by decide),
           fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩
       intro f1 f2 z1 n1 z2 n2 y hy hy1 hy2
