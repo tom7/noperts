@@ -1,6 +1,6 @@
 module
 
-public import Minimality.TieRobust
+public import Minimality.TieRight
 public import Minimality.TriTie
 
 @[expose] public section
@@ -13,7 +13,8 @@ The robust tie (`isRupert_of_tilted_tie`) in the oblique frame of
 `ρ = cross2 r1 r2 > 0`. Corner generators are positive multiples of `-J r1`
 (side 1) or `J r2` (side 2); the test vectors are `m = -(r1 + r2)` and
 `p = -r1` (`-r2` mirrored); the far determinant is `λ μ ρ A (r1 · (b - a))`
-(mirrored `λ μ ρ B (r2 · (a - b))`), zero exactly at a right angle.
+(mirrored `λ μ ρ B (r2 · (a - b))`), zero exactly at a right angle, where
+`isRupert_of_tilted_tie_right` (torques about the other far end) takes over.
 -/
 
 namespace Minimality
@@ -53,13 +54,56 @@ theorem farDet_obl_neg (O r1 r2 : ℝ²) (A A0 B B1 c z0 z1 : ℝ) :
         (r2 0 * (A * r1 0 - B * r2 0) + r2 1 * (A * r1 1 - B * r2 1)) := by
   simp [farDet, cross, ez, oblPt, cross2, PiLp.inner_apply, Fin.sum_univ_three]; ring
 
+/-- The right angle at `a` in the oblique frame. -/
+theorem inner_obl_right_a (O r1 r2 : ℝ²) (A B c A0 z0 : ℝ) :
+    ⟪oblPt O r1 r2 A 0 c - oblPt O r1 r2 0 B c, oblPt O r1 r2 A0 0 z0 - oblPt O r1 r2 A 0 c⟫ =
+      (A - A0) * (r1 0 * (B * r2 0 - A * r1 0) + r1 1 * (B * r2 1 - A * r1 1)) := by
+  simp [oblPt, PiLp.inner_apply, Fin.sum_univ_three]; ring
+
+/-- The right angle at `b` in the oblique frame. -/
+theorem inner_obl_right_b (O r1 r2 : ℝ²) (A B c B1 z1 : ℝ) :
+    ⟪oblPt O r1 r2 A 0 c - oblPt O r1 r2 0 B c, oblPt O r1 r2 0 B1 z1 - oblPt O r1 r2 0 B c⟫ =
+      (B1 - B) * (r2 0 * (A * r1 0 - B * r2 0) + r2 1 * (A * r1 1 - B * r2 1)) := by
+  simp [oblPt, PiLp.inner_apply, Fin.sum_univ_three]; ring
+
+/-- Torques about a far end of the generators, in the oblique frame. -/
+theorem torque_obl_left (O r1 r2 : ℝ²) (a b z a' b' z' a2 b2 z2 a3 b3 z3 : ℝ) :
+    ⟪cross (oblPt O r1 r2 a b z - oblPt O r1 r2 a' b' z')
+      (cross ez (oblPt O r1 r2 a2 b2 z2 - oblPt O r1 r2 a3 b3 z3)), ez⟫ =
+      ((a - a') * r1 0 + (b - b') * r2 0) * ((a2 - a3) * r1 0 + (b2 - b3) * r2 0) +
+      ((a - a') * r1 1 + (b - b') * r2 1) * ((a2 - a3) * r1 1 + (b2 - b3) * r2 1) := by
+  simp [cross, ez, oblPt, PiLp.inner_apply]; ring
+
+theorem torque_obl_right (O r1 r2 : ℝ²) (a b z a' b' z' a2 b2 z2 a3 b3 z3 : ℝ) :
+    ⟪cross (oblPt O r1 r2 a b z - oblPt O r1 r2 a' b' z')
+      (cross (oblPt O r1 r2 a2 b2 z2 - oblPt O r1 r2 a3 b3 z3) ez), ez⟫ =
+      -(((a - a') * r1 0 + (b - b') * r2 0) * ((a2 - a3) * r1 0 + (b2 - b3) * r2 0) +
+      ((a - a') * r1 1 + (b - b') * r2 1) * ((a2 - a3) * r1 1 + (b2 - b3) * r2 1)) := by
+  simp [cross, ez, oblPt, PiLp.inner_apply]; ring
+
+/-- The `2 × 2` determinants of `tie_core_right`, in the oblique frame. -/
+theorem det2_obl (O r1 r2 : ℝ²) (A B B1 c z1 : ℝ) :
+    cross (oblPt O r1 r2 0 B c - oblPt O r1 r2 A 0 c) ez 0 *
+        cross (oblPt O r1 r2 0 B1 z1 - oblPt O r1 r2 0 B c) ez 1 -
+      cross (oblPt O r1 r2 0 B c - oblPt O r1 r2 A 0 c) ez 1 *
+        cross (oblPt O r1 r2 0 B1 z1 - oblPt O r1 r2 0 B c) ez 0 = A * (B - B1) * cross2 r1 r2 := by
+  simp [cross, ez, oblPt, cross2]; ring
+
+theorem det2_obl_neg (O r1 r2 : ℝ²) (A A0 B c z0 : ℝ) :
+    cross (oblPt O r1 r2 0 B c - oblPt O r1 r2 A 0 c) ez 0 *
+        cross ez (oblPt O r1 r2 A0 0 z0 - oblPt O r1 r2 A 0 c) 1 -
+      cross (oblPt O r1 r2 0 B c - oblPt O r1 r2 A 0 c) ez 1 *
+        cross ez (oblPt O r1 r2 A0 0 z0 - oblPt O r1 r2 A 0 c) 0 = (A0 - A) * B * cross2 r1 r2 := by
+  simp [cross, ez, oblPt, cross2]; ring
+
 set_option maxHeartbeats 16000000 in
 /-- **Lemma T at the tie, robust form, in the oblique frame.** The setting of
 `isRupert_triShadow_gen` in a same-sign sector (`t = -s`), at a tie of the far
 depths (`cz m = dz n`), with every other corner strictly on the `s` side of
-the tie, and a tilt `(α, β)` with `⟪b - a, α r1 + β r2⟫ ≠ 0` whose matching
-angle (at `a` if positive, at `b` if negative) is not right: `V` is Rupert
-(first-order free, though not unimodal). -/
+the tie, and a tilt `(α, β)` with `⟪b - a, α r1 + β r2⟫ ≠ 0`: `V` is Rupert
+(first-order free, though not unimodal). If the matching angle (at `a` if
+positive, at `b` if negative) is right, the far determinant vanishes and
+`isRupert_of_tilted_tie_right` takes over. -/
 theorem isRupert_triShadow_robust (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n : ℕ}
     (hm : 1 ≤ m) (hn : 1 ≤ n) (s : ℝ) (hs : s = 1 ∨ s = -1) (t : ℝ) (ht : t = 1 ∨ t = -1) {α β : ℝ} (hα : 0 < α) (hβ : 0 < β) (ca cz cb dz : ℕ → ℝ)
     (hca0 : ca 0 = 0) (hcb0 : cb 0 = 0) (hdz0 : dz 0 = cz 0)
@@ -79,10 +123,8 @@ theorem isRupert_triShadow_robust (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m 
     (htS : t = -s) (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty)
     (htie : cz m = dz n) (hz1 : ∀ l, l < m → 0 < s * (cz l - cz m))
     (hz2 : ∀ k, 0 < k → k < n → 0 < s * (dz k - cz m))
-    (hcase : (0 < ⟪oblPt 0 r1 r2 (-ca m) (cb n) 0, oblPt 0 r1 r2 α β 0⟫ ∧
-        r1 0 * (cb n * r2 0 - ca m * r1 0) + r1 1 * (cb n * r2 1 - ca m * r1 1) ≠ 0) ∨
-      (⟪oblPt 0 r1 r2 (-ca m) (cb n) 0, oblPt 0 r1 r2 α β 0⟫ < 0 ∧
-        r2 0 * (ca m * r1 0 - cb n * r2 0) + r2 1 * (ca m * r1 1 - cb n * r2 1) ≠ 0)) :
+    (hcase : 0 < ⟪oblPt 0 r1 r2 (-ca m) (cb n) 0, oblPt 0 r1 r2 α β 0⟫ ∨
+      ⟪oblPt 0 r1 r2 (-ca m) (cb n) 0, oblPt 0 r1 r2 α β 0⟫ < 0) :
     IsRupert V := by
   have hNZ : NeZero (m + n + 1) := ⟨by omega⟩
   have hval : ∀ v : ℕ, v < m + n + 1 → ((v : ZMod (m + n + 1))).val = v := fun v hv => by
@@ -327,10 +369,31 @@ theorem isRupert_triShadow_robust (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m 
   have hB0 : 0 < cb n - cb (n - 1) := by have := hcb (n - 1) (by omega); rw [show n - 1 + 1 = n by omega] at this; linarith
   have hAm := hcam0 m hm le_rfl
   have hBn := hcbm0 n hn le_rfl
-  rcases hcase with ⟨hDp, hang⟩ | ⟨hDn, hang⟩
-  · refine isRupert_of_tilted_tie V hsol v hv0 (by omega) x hxinj hxV hcyc hrest (m : ZMod (m + n + 1))
-      mv (oblPt 0 r1 r2 (-1) 0 0) (by rw [xa, xb]; simp [oblPt]) s hs (by rw [hD' s rfl]; exact hDp)
-      hXz' hmC ?_ ?_ ?_ ?_
+  rcases hcase with hDp | hDn
+  · by_cases hang : r1 0 * (cb n * r2 0 - ca m * r1 0) + r1 1 * (cb n * r2 1 - ca m * r1 1) ≠ 0
+    · refine isRupert_of_tilted_tie V hsol v hv0 (by omega) x hxinj hxV hcyc hrest (m : ZMod (m + n + 1))
+        mv (oblPt 0 r1 r2 (-1) 0 0) (by rw [xa, xb]; simp [oblPt]) s hs (by rw [hD' s rfl]; exact hDp)
+        hXz' hmC ?_ ?_ ?_ ?_
+      · intro i h1 h2
+        rcases classify i h1 h2 with ⟨w, hw, rfl⟩ | ⟨k, hk0, hk, rfl⟩
+        · rw [hxC1 w hw.le, nbC1 w hw, inner_cross_obl_ez]
+          refine ⟨?_, by simp⟩
+          rcases Nat.eq_zero_or_pos w with rfl | hw0
+          · rw [nbApex, inner_cross_ez_obl, hca0]; have := hcbm0 1 (by omega) hn; nlinarith
+          · rw [nbC1' w hw0 hw, inner_cross_ez_obl]; simp
+        · rw [hC2pos k hk0 hk, nbC2 k hk0 hk, nbC2' k hk0 hk, inner_cross_ez_obl, inner_cross_obl_ez]
+          have e1 := hcb k hk
+          have e2 := hcb (k - 1) (by omega); rw [show k - 1 + 1 = k by omega] at e2
+          exact ⟨by nlinarith, by nlinarith⟩
+      · rw [xa0, xa, inner_cross_ez_obl]; simp
+      · rw [xb, xa, inner_cross_obl_ez]; nlinarith
+      · rw [xa0, xa, xb, xb1, hdetA]
+        exact mul_ne_zero (mul_ne_zero (mul_ne_zero (mul_ne_zero hA0.ne' hB0.ne') hρ'.ne') hAm.ne') hang
+    -- a right angle at `a`
+    push Not at hang
+    refine isRupert_of_tilted_tie_right V hsol v hv0 (by omega) x hxinj hxV hcyc hrest
+      (m : ZMod (m + n + 1)) mv (oblPt 0 r1 r2 (-1) 0 0) (by rw [xa, xb]; simp [oblPt]) s hs
+      (by rw [hD' s rfl]; exact hDp) hXz' hmC ?_ ?_ ?_ ?_ ?_ ?_
     · intro i h1 h2
       rcases classify i h1 h2 with ⟨w, hw, rfl⟩ | ⟨k, hk0, hk, rfl⟩
       · rw [hxC1 w hw.le, nbC1 w hw, inner_cross_obl_ez]
@@ -344,10 +407,67 @@ theorem isRupert_triShadow_robust (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m 
         exact ⟨by nlinarith, by nlinarith⟩
     · rw [xa0, xa, inner_cross_ez_obl]; simp
     · rw [xb, xa, inner_cross_obl_ez]; nlinarith
-    · rw [xa0, xa, xb, xb1, hdetA]
-      exact mul_ne_zero (mul_ne_zero (mul_ne_zero (mul_ne_zero hA0.ne' hB0.ne') hρ'.ne') hAm.ne') hang
-  · refine isRupert_of_tilted_tie_neg V hsol v hv0 (by omega) x hxinj hxV hcyc hrest (m : ZMod (m + n + 1))
-      mv (oblPt 0 r1 r2 0 (-1) 0) (by rw [xa, xb]; simp [oblPt]) s hs ?_ ?_ hmC ?_ ?_ ?_ ?_
+    · rw [xa, xb, xa0, inner_obl_right_a, hang, mul_zero]
+    · have hr1 : 0 < r1 0 ^ 2 + r1 1 ^ 2 := by
+        rcases (show r1 0 ≠ 0 ∨ r1 1 ≠ 0 by
+          by_contra h; push Not at h; simp [cross2, h.1, h.2] at hρ') with h | h
+        · have := pow_pos (abs_pos.mpr h) 2; rw [sq_abs] at this; nlinarith [sq_nonneg (r1 1)]
+        · have := pow_pos (abs_pos.mpr h) 2; rw [sq_abs] at this; nlinarith [sq_nonneg (r1 0)]
+      intro i h1 h2
+      rcases classify i h1 h2 with ⟨w, hw, rfl⟩ | ⟨k, hk0, hk, rfl⟩
+      · have hAw : 0 < ca m - ca w := by have := hcam w m hw le_rfl; linarith
+        rw [hxC1 w hw.le, nbC1 w hw, xb]
+        refine ⟨?_, Or.inr ?_⟩
+        · rcases Nat.eq_zero_or_pos w with rfl | hw0
+          · left; rw [nbApex, inner_cross_ez_obl, hca0]; have := hcbm0 1 (by omega) hn; nlinarith
+          · right
+            rw [nbC1' w hw0 hw, torque_obl_left]
+            have hd : 0 < ca w - ca (w - 1) := by
+              have := hca (w - 1) (by omega); rw [show w - 1 + 1 = w by omega] at this; linarith
+            have hpos := mul_pos (mul_pos hd hAw) hr1
+            linear_combination hpos - (ca w - ca (w - 1)) * hang
+        · rw [torque_obl_right]
+          have hd : 0 < ca (w + 1) - ca w := by have := hca w hw; linarith
+          have hpos := mul_pos (mul_pos hd hAw) hr1
+          linear_combination hpos - (ca (w + 1) - ca w) * hang
+      · rw [hC2pos k hk0 hk, nbC2 k hk0 hk, nbC2' k hk0 hk, inner_cross_ez_obl, inner_cross_obl_ez]
+        have e1 := hcb k hk
+        have e2 := hcb (k - 1) (by omega); rw [show k - 1 + 1 = k by omega] at e2
+        exact ⟨Or.inl (by nlinarith), Or.inl (by nlinarith)⟩
+    · rw [xa, xb, xb1, det2_obl]
+      exact mul_ne_zero (mul_ne_zero hAm.ne' hB0.ne') hρ'.ne'
+  · by_cases hang : r2 0 * (ca m * r1 0 - cb n * r2 0) + r2 1 * (ca m * r1 1 - cb n * r2 1) ≠ 0
+    · refine isRupert_of_tilted_tie_neg V hsol v hv0 (by omega) x hxinj hxV hcyc hrest (m : ZMod (m + n + 1))
+        mv (oblPt 0 r1 r2 0 (-1) 0) (by rw [xa, xb]; simp [oblPt]) s hs ?_ ?_ hmC ?_ ?_ ?_ ?_
+      · have := hD' s rfl
+        have e : s * ⟪x (m : ZMod (m + n + 1)) - x ((m : ZMod (m + n + 1)) + 1), v⟫ =
+            -(s * ⟪x ((m : ZMod (m + n + 1)) + 1) - x (m : ZMod (m + n + 1)), v⟫) := by
+          rw [← neg_sub, inner_neg_left]; ring
+        rw [e, this]; linarith
+      · intro i h1 h2
+        have := hXz' i h1 h2
+        rwa [xb, show (oblPt O r1 r2 0 (cb n) (cz m)) 2 = cz m by simp [oblPt], ← show
+          (oblPt O r1 r2 (ca m) 0 (cz m)) 2 = cz m by simp [oblPt], ← xa]
+      · intro i h1 h2
+        rcases classify i h1 h2 with ⟨w, hw, rfl⟩ | ⟨k, hk0, hk, rfl⟩
+        · rw [hxC1 w hw.le, nbC1 w hw, inner_cross_obl_ez]
+          have hinc := hca w hw
+          refine ⟨?_, by nlinarith⟩
+          rcases Nat.eq_zero_or_pos w with rfl | hw0
+          · rw [nbApex, inner_cross_ez_obl, hca0]; simp
+          · rw [nbC1' w hw0 hw, inner_cross_ez_obl]
+            have := hca (w - 1) (by omega); rw [show w - 1 + 1 = w by omega] at this; nlinarith
+        · rw [hC2pos k hk0 hk, nbC2 k hk0 hk, nbC2' k hk0 hk, inner_cross_ez_obl, inner_cross_obl_ez]
+          exact ⟨by simp, by simp⟩
+      · rw [xb1, xb, inner_cross_obl_ez]; simp
+      · rw [xb, xa, inner_cross_obl_ez]; nlinarith
+      · rw [xa0, xa, xb, xb1, hdetB]
+        exact mul_ne_zero (mul_ne_zero (mul_ne_zero (mul_ne_zero hA0.ne' hB0.ne') hρ'.ne') hBn.ne') hang
+    -- a right angle at `b`
+    push Not at hang
+    refine isRupert_of_tilted_tie_right_neg V hsol v hv0 (by omega) x hxinj hxV hcyc hrest
+      (m : ZMod (m + n + 1)) mv (oblPt 0 r1 r2 0 (-1) 0) (by rw [xa, xb]; simp [oblPt]) s hs ?_ ?_
+      hmC ?_ ?_ ?_ ?_ ?_ ?_
     · have := hD' s rfl
       have e : s * ⟪x (m : ZMod (m + n + 1)) - x ((m : ZMod (m + n + 1)) + 1), v⟫ =
           -(s * ⟪x ((m : ZMod (m + n + 1)) + 1) - x (m : ZMod (m + n + 1)), v⟫) := by
@@ -370,8 +490,40 @@ theorem isRupert_triShadow_robust (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m 
         exact ⟨by simp, by simp⟩
     · rw [xb1, xb, inner_cross_obl_ez]; simp
     · rw [xb, xa, inner_cross_obl_ez]; nlinarith
-    · rw [xa0, xa, xb, xb1, hdetB]
-      exact mul_ne_zero (mul_ne_zero (mul_ne_zero (mul_ne_zero hA0.ne' hB0.ne') hρ'.ne') hBn.ne') hang
+    · rw [xa, xb, xb1, inner_obl_right_b, hang, mul_zero]
+    · have hr2 : 0 < r2 0 ^ 2 + r2 1 ^ 2 := by
+        rcases (show r2 0 ≠ 0 ∨ r2 1 ≠ 0 by
+          by_contra h; push Not at h; simp [cross2, h.1, h.2] at hρ') with h | h
+        · have := pow_pos (abs_pos.mpr h) 2; rw [sq_abs] at this; nlinarith [sq_nonneg (r2 1)]
+        · have := pow_pos (abs_pos.mpr h) 2; rw [sq_abs] at this; nlinarith [sq_nonneg (r2 0)]
+      intro i h1 h2
+      rcases classify i h1 h2 with ⟨w, hw, rfl⟩ | ⟨k, hk0, hk, rfl⟩
+      · rw [hxC1 w hw.le, nbC1 w hw, xa]
+        have hinc := hca w hw
+        refine ⟨?_, Or.inl ?_⟩
+        · rcases Nat.eq_zero_or_pos w with rfl | hw0
+          · right
+            rw [nbApex, torque_obl_left, hca0]
+            have hpos := mul_pos (mul_pos (hcbm0 1 (by omega) hn) hBn) hr2
+            linear_combination hpos - cb 1 * hang
+          · left
+            rw [nbC1' w hw0 hw, inner_cross_ez_obl]
+            have := hca (w - 1) (by omega); rw [show w - 1 + 1 = w by omega] at this; nlinarith
+        · rw [inner_cross_obl_ez]; nlinarith
+      · have hBk : 0 < cb n - cb k := by have := hcbm k n hk le_rfl; linarith
+        rw [hC2pos k hk0 hk, nbC2 k hk0 hk, nbC2' k hk0 hk, xa]
+        refine ⟨Or.inr ?_, Or.inr ?_⟩
+        · rw [torque_obl_left]
+          have hd : 0 < cb (k + 1) - cb k := by have := hcb k hk; linarith
+          have hpos := mul_pos (mul_pos hd hBk) hr2
+          linear_combination hpos - (cb (k + 1) - cb k) * hang
+        · rw [torque_obl_right]
+          have hd : 0 < cb k - cb (k - 1) := by
+            have := hcb (k - 1) (by omega); rw [show k - 1 + 1 = k by omega] at this; linarith
+          have hpos := mul_pos (mul_pos hd hBk) hr2
+          linear_combination hpos - (cb k - cb (k - 1)) * hang
+    · rw [xa, xb, xa0, det2_obl_neg]
+      exact mul_ne_zero (mul_ne_zero (by linarith) hBn.ne') hρ'.ne'
 
 /-- A finite sequence with no interior local minimum (`ChainOK.conc`) exceeds
 the smaller of its end values at every interior index. -/
@@ -445,10 +597,38 @@ theorem exists_tie_tilt (O r1 r2 : ℝ²) (A B : ℝ)
     refine ⟨?_, ha⟩
     have := (abs_lt.mp hsmall).1; rw [abs_of_pos h] at this; linarith
 
+/-- A tilt `(α, β)` for the robust tie always exists: `⟪b - a, α r1 + β r2⟫ ≠ 0`
+for `(1, 1)` or `(1, 2)`, since `b - a` is not orthogonal to both `r1` and `r2`. -/
+theorem exists_tie_tilt' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (A B : ℝ) (hB : 0 < B) :
+    ∃ α β : ℝ, 0 < α ∧ 0 < β ∧ (0 < ⟪oblPt 0 r1 r2 (-A) B 0, oblPt 0 r1 r2 α β 0⟫ ∨
+      ⟪oblPt 0 r1 r2 (-A) B 0, oblPt 0 r1 r2 α β 0⟫ < 0) := by
+  set p1 := r1 0 * (B * r2 0 - A * r1 0) + r1 1 * (B * r2 1 - A * r1 1)
+  set p2 := r2 0 * (B * r2 0 - A * r1 0) + r2 1 * (B * r2 1 - A * r1 1)
+  have key : ∀ α β, ⟪oblPt 0 r1 r2 (-A) B 0, oblPt 0 r1 r2 α β 0⟫ = α * p1 + β * p2 := by
+    intro α β
+    simp [oblPt, PiLp.inner_apply, Fin.sum_univ_three, p1, p2]; ring
+  have hne : ¬ (p1 = 0 ∧ p2 = 0) := by
+    rintro ⟨h1, h2⟩
+    have hu : (B * r2 0 - A * r1 0) ^ 2 + (B * r2 1 - A * r1 1) ^ 2 = 0 := by
+      linear_combination B * h2 - A * h1
+    have u0 : B * r2 0 - A * r1 0 = 0 := by
+      nlinarith [sq_nonneg (B * r2 0 - A * r1 0), sq_nonneg (B * r2 1 - A * r1 1)]
+    have u1 : B * r2 1 - A * r1 1 = 0 := by
+      nlinarith [sq_nonneg (B * r2 0 - A * r1 0), sq_nonneg (B * r2 1 - A * r1 1)]
+    have : B * cross2 r1 r2 = 0 := by
+      simp only [cross2]; linear_combination r1 0 * u1 - r1 1 * u0
+    have := mul_pos hB hρ; linarith
+  have ne : ∀ d : ℝ, d ≠ 0 → 0 < d ∨ d < 0 := fun d hd => (lt_or_gt_of_ne hd).symm
+  by_cases h : p1 + p2 = 0
+  · refine ⟨1, 2, one_pos, two_pos, ne _ ?_⟩
+    rw [key]; intro h'
+    exact hne ⟨by linarith, by linarith⟩
+  · exact ⟨1, 1, one_pos, one_pos, ne _ (by rw [key]; intro h'; exact h (by linarith))⟩
+
 set_option maxHeartbeats 8000000 in
 /-- **Lemma T at the tie, robust form, from chains.** The setting of
-`isRupert_vertex_frame_tie` with the far depths tied, the apex off the tie
-depth, and no right angle at the far ends: `V` (a solid) is Rupert. -/
+`isRupert_vertex_frame_tie` with the far depths tied and the apex off the tie
+depth: `V` (a solid) is Rupert. -/
 theorem isRupert_vertex_frame_robust (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ → ℝ → Prop)
     {z0 : ℝ}
     (hU1 : ∃ m ca cz, ChainOK Q1 z0 1 m ca cz) (hL1 : ∃ m ca cz, ChainOK Q1 z0 (-1) m ca cz)
@@ -463,15 +643,13 @@ theorem isRupert_vertex_frame_robust (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) 
           a * cb n + b * ca m < ca m * cb n)))
     (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty)
     (hrob : ∀ m ca cz n cb dz, ChainOK Q1 z0 1 m ca cz → ChainOK Q2 z0 1 n cb dz →
-      cz m = dz n ∧ z0 ≠ cz m ∧
-      r1 0 * (cb n * r2 0 - ca m * r1 0) + r1 1 * (cb n * r2 1 - ca m * r1 1) ≠ 0 ∧
-      r2 0 * (ca m * r1 0 - cb n * r2 0) + r2 1 * (ca m * r1 1 - cb n * r2 1) ≠ 0) :
+      cz m = dz n ∧ z0 ≠ cz m) :
     IsRupert V := by
   obtain ⟨m0, ca0, cz0, U1⟩ := hU1
   obtain ⟨n0, cb0, dz0, U2⟩ := hU2
   obtain ⟨m1, ca1, cz1, L1⟩ := hL1
   obtain ⟨n1, cb1, dz1, L2⟩ := hL2
-  obtain ⟨htie0, hz0, hangA, hangB⟩ := hrob m0 ca0 cz0 n0 cb0 dz0 U1 U2
+  obtain ⟨htie0, hz0⟩ := hrob m0 ca0 cz0 n0 cb0 dz0 U1 U2
   have ch1 : ∀ σ : ℝ, (σ = 1 ∨ σ = -1) → ∃ m ca cz, ChainOK Q1 z0 σ m ca cz := by
     rintro σ (rfl | rfl)
     exacts [⟨m0, ca0, cz0, U1⟩, ⟨m1, ca1, cz1, L1⟩]
@@ -541,8 +719,7 @@ theorem isRupert_vertex_frame_robust (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) 
       rw [C2'.start.2, ← htie, e1.2]; linarith
     simp only [min_eq_right h0.le] at hc
     rw [htie]; linarith
-  obtain ⟨α, β, hα, hβ, hcase⟩ := exists_tie_tilt O r1 r2 (ca m) (cb n)
-    (by rw [e1.1, e2.1]; exact hangA) (by rw [e1.1, e2.1]; exact hangB)
+  obtain ⟨α, β, hα, hβ, hcase⟩ := exists_tie_tilt' O r1 r2 hρ (ca m) (cb n) hB0
   refine isRupert_triShadow_robust O r1 r2 hρ C1.one_le C2.one_le s hs t ht hα hβ ca cz cb dz
     c10.1 c20.1 (by rw [c10.2, c20.2]) C1.inc C2.inc V (fun l hl => hV1 _ _ (C1.mem l hl))
     (fun l hl => hV2 _ _ (C2.mem l hl)) ?_ rfl hsol htie hz1 hz2 hcase
@@ -565,8 +742,7 @@ theorem isRupert_vertex_frame_robust (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) 
 
 /-- **Lemma T at a vertex from chains, the tie allowed, robust.** As
 `isRupert_vertex_frame_tie`, with a third way out at the tie: the apex off the
-tie depth and no right angle at the far ends (`isRupert_vertex_frame_robust`;
-`V` a solid). -/
+tie depth (`isRupert_vertex_frame_robust`; `V` a solid). -/
 theorem isRupert_vertex_frame_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ → ℝ → Prop)
     {z0 : ℝ}
     (hU1 : ∃ m ca cz, ChainOK Q1 z0 1 m ca cz) (hL1 : ∃ m ca cz, ChainOK Q1 z0 (-1) m ca cz)
@@ -582,9 +758,7 @@ theorem isRupert_vertex_frame_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q
     (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty)
     (hfarT : ∀ m ca cz n cb dz, ChainOK Q1 z0 1 m ca cz → ChainOK Q2 z0 1 n cb dz →
       cz m ≠ dz n ∨ VTie Q1 Q2 z0 (ca m) (cz m) (cb n) (dz n) ∨
-      (cz m = dz n ∧ z0 ≠ cz m ∧
-        r1 0 * (cb n * r2 0 - ca m * r1 0) + r1 1 * (cb n * r2 1 - ca m * r1 1) ≠ 0 ∧
-        r2 0 * (ca m * r1 0 - cb n * r2 0) + r2 1 * (ca m * r1 1 - cb n * r2 1) ≠ 0)) :
+      (cz m = dz n ∧ z0 ≠ cz m)) :
     IsRupert V := by
   obtain ⟨m0, ca0, cz0, U1⟩ := hU1
   obtain ⟨n0, cb0, dz0, U2⟩ := hU2
@@ -597,15 +771,14 @@ theorem isRupert_vertex_frame_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q
     rw [(C1.far_eq U1).1, (C1.far_eq U1).2, (C2.far_eq U2).1, (C2.far_eq U2).2]; exact h
   · refine isRupert_vertex_frame_robust O r1 r2 hρ Q1 Q2 ⟨m0, ca0, cz0, U1⟩ hL1 ⟨n0, cb0, dz0, U2⟩ hL2
       hap1 hap2 hpos1 hpos2 V hV1 hV2 hVc hsol fun m ca cz n cb dz C1 C2 => ?_
-    rw [(C1.far_eq U1).1, (C1.far_eq U1).2, (C2.far_eq U2).1, (C2.far_eq U2).2]; exact h
+    rw [(C1.far_eq U1).2, (C2.far_eq U2).2]; exact h
 
 
 /-- The tie condition with the robust way out: `TieH`, or the far ends tied
-with the shared vertex off their height and no right angle at the far ends
-(`⟪q - p, p - v⟫ ≠ 0`, `⟪q - p, q - v⟫ ≠ 0`; at the tie `q - p` is orthogonal to
-the view, so these are the angles of the shadow triangle). -/
+with the shared vertex off their height (a right angle of the shadow triangle
+at a far end is allowed: `isRupert_of_tilted_tie_right`). -/
 def TieHR (Q1 Q2 : Finset ℝ³) (v p q : ℝ³) (h : ℝ³ → ℝ) : Prop :=
-  TieH Q1 Q2 v p q h ∨ (h p = h q ∧ h v ≠ h p ∧ ⟪q - p, p - v⟫ ≠ 0 ∧ ⟪q - p, q - v⟫ ≠ 0)
+  TieH Q1 Q2 v p q h ∨ (h p = h q ∧ h v ≠ h p)
 
 theorem inner_obl_angle1 (O r1 r2 : ℝ²) (A B c z0 : ℝ) :
     ⟪oblPt O r1 r2 0 B c - oblPt O r1 r2 A 0 c, oblPt O r1 r2 A 0 c - oblPt O r1 r2 0 0 z0⟫ =
@@ -802,7 +975,7 @@ theorem isRupert_vertex_coords_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (
       by_cases e : b q' = cb n ∧ q' 2 = dz n
       · exact e.1.le
       · exact (C2.far _ _ (Finset.mem_image_of_mem (fun p => (b p, p 2)) hq') e).le
-    rcases hfarZ p hp q hq hpq pmax qmax with hT | ⟨hpq2, hvp, hang1, hang2⟩
+    rcases hfarZ p hp q hq hpq pmax qmax with hT | ⟨hpq2, hvp⟩
     · have old : cz m ≠ dz n ∨ VTie (fun x z => (x, z) ∈ S1) (fun x z => (x, z) ∈ S2) (v 2)
           (ca m) (cz m) (cb n) (dz n) := by
         rcases hT with hne | ⟨s, hs, hv | hv | hv | hv⟩
@@ -828,39 +1001,25 @@ theorem isRupert_vertex_coords_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (
       · exact Or.inr (Or.inl h)
     · right; right
       simp only at hpq2 hvp
-      have pe : p = oblPt O r1 r2 (ca m) 0 (cz m) := by rw [← e1, ← e2]; exact pt1 p hp
-      have qe : q = oblPt O r1 r2 0 (cb n) (cz m) := by rw [← f1, ← e2, hpq2]; exact pt2 q hq
-      have ve : v = oblPt O r1 r2 0 0 (v 2) := by
-        conv_lhs => rw [hy v (h1V hv1), hav, hbv]
-      refine ⟨by rw [← e2, ← f2]; exact hpq2, by rw [← e2]; exact hvp, ?_, ?_⟩
-      · have h1 := hang1
-        rw [pe, qe, ve, inner_obl_angle1] at h1
-        exact right_ne_zero_of_mul h1
-      · have h2 := hang2
-        rw [pe, qe, ve, inner_obl_angle2] at h2
-        exact right_ne_zero_of_mul (neg_ne_zero.mp h2)
+      exact ⟨by rw [← e2, ← f2]; exact hpq2, by rw [← e2]; exact hvp⟩
 
 
 theorem TieHR.swap {Q1 Q2 : Finset ℝ³} {v p q : ℝ³} {h : ℝ³ → ℝ} (H : TieHR Q1 Q2 v p q h) :
     TieHR Q2 Q1 v q p h := by
-  rcases H with H | ⟨e, hv, h1, h2⟩
+  rcases H with H | ⟨e, hv⟩
   · exact Or.inl H.swap
-  · refine Or.inr ⟨e.symm, by rw [← e]; exact hv, ?_, ?_⟩
-    · rw [show p - q = -(q - p) by abel, inner_neg_left, neg_ne_zero]; exact h2
-    · rw [show p - q = -(q - p) by abel, inner_neg_left, neg_ne_zero]; exact h1
+  · exact Or.inr ⟨e.symm, by rw [← e]; exact hv⟩
 
 theorem TieHR.map {Q1 Q2 : Finset ℝ³} {v p q : ℝ³} {h h' : ℝ³ → ℝ} (g : ℝ³ → ℝ³)
     (hg : Function.Injective g) {r : ℝ} (hr : 0 < r) (hh : ∀ x, h' (g x) = h x / r)
-    (H : TieHR Q1 Q2 v p q h) [DecidableEq ℝ³] (hlin : ∀ x y, g (x - y) = g x - g y)
-    (hip : ∀ x y, ⟪g x, g y⟫ = ⟪x, y⟫) :
+    (H : TieHR Q1 Q2 v p q h) [DecidableEq ℝ³] (_hlin : ∀ x y, g (x - y) = g x - g y)
+    (_hip : ∀ x y, ⟪g x, g y⟫ = ⟪x, y⟫) :
     TieHR (Q1.image g) (Q2.image g) (g v) (g p) (g q) h' := by
-  rcases H with H | ⟨e, hv, h1, h2⟩
+  rcases H with H | ⟨e, hv⟩
   · exact Or.inl (H.map g hg hr hh)
-  · refine Or.inr ⟨by rw [hh, hh, e], fun e' => hv ?_, ?_, ?_⟩
-    · rw [hh, hh] at e'
-      have := congrArg (· * r) e'; simp only [div_mul_cancel₀ _ hr.ne'] at this; exact this
-    · rw [← hlin, ← hlin, hip]; exact h1
-    · rw [← hlin, ← hlin, hip]; exact h2
+  · refine Or.inr ⟨by rw [hh, hh, e], fun e' => hv ?_⟩
+    rw [hh, hh] at e'
+    have := congrArg (· * r) e'; simp only [div_mul_cancel₀ _ hr.ne'] at this; exact this
 
 theorem interior_convexHull_image_rot {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R ∈ SO3) {V : Finset ℝ³}
     (h : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) :
@@ -876,8 +1035,8 @@ theorem interior_convexHull_image_rot {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R �
 
 /-- General position for Lemma T at the line of the planes of two facets, with
 the robust tie: as `TriGenTie`, with `TieHR` at the far ends (at a tie of the
-far ends, the shared vertex off their height and no right angle at the far
-ends suffice). Codimension 2 for any two faces. -/
+far ends, the shared vertex off their height suffices). Codimension 2 for any
+two faces. -/
 def TriGenTieR (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
   ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
     (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
@@ -1184,14 +1343,12 @@ theorem isRupert_of_facets_vertex_tieR (V : Finset ℝ³) (hgen : NoThreeColline
 set_option maxHeartbeats 4000000 in
 /-- The robust tie over an edge, same-sign sector: both chains start at the apex
 vertex `z1s` (strictly beyond the tied far depth in `s z`), the other apex
-vertex `z2s` hidden; no right angle at the far ends (`isRupert_triShadow_robust`). -/
+vertex `z2s` hidden (`isRupert_triShadow_robust`). -/
 theorem edge_robust_core (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ → ℝ → Prop)
     (s : ℝ) (hs : s = 1 ∨ s = -1) {z1s z2s : ℝ} (hap : s * z2s < s * z1s)
     {m n : ℕ} {ca cz cb dz : ℕ → ℝ}
     (C1 : ChainOK Q1 z1s s m ca cz) (C2 : ChainOK Q2 z1s s n cb dz)
     (htie : cz m = dz n) (hz : 0 < s * (z1s - cz m))
-    (hangA : r1 0 * (cb n * r2 0 - ca m * r1 0) + r1 1 * (cb n * r2 1 - ca m * r1 1) ≠ 0)
-    (hangB : r2 0 * (ca m * r1 0 - cb n * r2 0) + r2 1 * (ca m * r1 1 - cb n * r2 1) ≠ 0)
     (hap1 : ∀ z, Q1 0 z → z = z1s ∨ z = z2s) (hap2 : ∀ z, Q2 0 z → z = z1s ∨ z = z2s)
     (hQ1z2 : Q1 0 z2s) (hQ2z2 : Q2 0 z2s)
     (hpos1 : ∀ a z, Q1 a z → 0 ≤ a) (hpos2 : ∀ b z, Q2 b z → 0 ≤ b)
@@ -1255,7 +1412,7 @@ theorem edge_robust_core (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ
     have h0 : s * dz n < s * dz 0 := by rw [c20.2, ← htie]; linarith
     simp only [min_eq_right h0.le] at hc
     rw [htie]; linarith
-  obtain ⟨α, β, hα, hβ, hcase⟩ := exists_tie_tilt O r1 r2 (ca m) (cb n) hangA hangB
+  obtain ⟨α, β, hα, hβ, hcase⟩ := exists_tie_tilt' O r1 r2 hρ (ca m) (cb n) C2.far_pos
   refine isRupert_triShadow_robust O r1 r2 hρ C1.one_le C2.one_le s hs (-s) hns hα hβ ca cz
     cb dz c10.1 c20.1 (by rw [c10.2, c20.2]) C1.inc C2.inc V (fun l hl => hV1 _ _ (C1.mem l hl))
     (fun l hl => hV2 _ _ (C2.mem l hl)) ?_ rfl hsol htie hz1 hz2 hcase
@@ -1277,9 +1434,8 @@ theorem edge_robust_core (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T at the tie over an edge, robust form, from chains.** The setting of
-`isRupert_edge_frame_tie` with the far depths tied and no right angle at the far
-ends: the apex vertex strictly beyond the tied depth (one of the two always is)
-starts both chains (`edge_robust_core`); `V` a solid. -/
+`isRupert_edge_frame_tie` with the far depths tied: the apex vertex strictly
+beyond the tied depth (one of the two always is) starts both chains (`edge_robust_core`); `V` a solid. -/
 theorem isRupert_edge_frame_robust (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ → ℝ → Prop)
     {zx zx' : ℝ} (hxx : zx < zx')
     (hU1 : ∃ m ca cz, ChainOK Q1 zx' 1 m ca cz) (hL1 : ∃ m ca cz, ChainOK Q1 zx (-1) m ca cz)
@@ -1295,9 +1451,7 @@ theorem isRupert_edge_frame_robust (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q
           a * cb n + b * ca m < ca m * cb n)))
     (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty)
     (hrob : ∀ m ca cz n cb dz, ChainOK Q1 zx' 1 m ca cz → ChainOK Q2 zx' 1 n cb dz →
-      cz m = dz n ∧
-      r1 0 * (cb n * r2 0 - ca m * r1 0) + r1 1 * (cb n * r2 1 - ca m * r1 1) ≠ 0 ∧
-      r2 0 * (ca m * r1 0 - cb n * r2 0) + r2 1 * (ca m * r1 1 - cb n * r2 1) ≠ 0) :
+      cz m = dz n) :
     IsRupert V := by
   obtain ⟨m0, ca0, cz0, U1⟩ := hU1
   obtain ⟨n0, cb0, dz0, U2⟩ := hU2
@@ -1314,18 +1468,17 @@ theorem isRupert_edge_frame_robust (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q
     · exact Or.inr (Or.inl h)
     · right; right; refine ⟨ha, hb, ?_⟩
       rw [e1, e2]; exact hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
-  obtain ⟨htie, hangA, hangB⟩ := hrob m0 ca0 cz0 n0 cb0 dz0 U1 U2
+  have htie := hrob m0 ca0 cz0 n0 cb0 dz0 U1 U2
   have eU1 := L1.far_eq U1
   have eU2 := L2.far_eq U2
   have eU1' := U1.far_eq U1
   have eU2' := U2.far_eq U2
   rcases lt_or_ge (cz0 m0) zx' with hc | hc
   · exact edge_robust_core O r1 r2 hρ Q1 Q2 1 (Or.inl rfl) (z1s := zx') (z2s := zx) (by linarith)
-      U1 U2 htie (by linarith) hangA hangB (fun z h => (hap1 z h).symm) (fun z h => (hap2 z h).symm)
+      U1 U2 htie (by linarith) (fun z h => (hap1 z h).symm) (fun z h => (hap2 z h).symm)
       hQ1x hQ2x hpos1 hpos2 V hV1 hV2 (conv eU1'.1 eU2'.1) hsol
   · refine edge_robust_core O r1 r2 hρ Q1 Q2 (-1) (Or.inr rfl) (z1s := zx) (z2s := zx') (by linarith)
-      L1 L2 (by rw [eU1.2, eU2.2]; exact htie) (by rw [eU1.2]; linarith) (by rw [eU1.1, eU2.1]; exact hangA)
-      (by rw [eU1.1, eU2.1]; exact hangB) hap1 hap2 hQ1x' hQ2x' hpos1 hpos2 V hV1 hV2
+      L1 L2 (by rw [eU1.2, eU2.2]; exact htie) (by rw [eU1.2]; linarith) hap1 hap2 hQ1x' hQ2x' hpos1 hpos2 V hV1 hV2
       (conv eU1.1 eU2.1) hsol
 
 /-- **Lemma T over an edge from chains, the tie allowed, robust.** -/
@@ -1345,9 +1498,7 @@ theorem isRupert_edge_frame_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 
     (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty)
     (hfarT : ∀ m ca cz n cb dz, ChainOK Q1 zx' 1 m ca cz → ChainOK Q2 zx' 1 n cb dz →
       cz m ≠ dz n ∨ ETie Q1 Q2 zx zx' (ca m) (cz m) (cb n) (dz n) ∨
-      (cz m = dz n ∧
-        r1 0 * (cb n * r2 0 - ca m * r1 0) + r1 1 * (cb n * r2 1 - ca m * r1 1) ≠ 0 ∧
-        r2 0 * (ca m * r1 0 - cb n * r2 0) + r2 1 * (ca m * r1 1 - cb n * r2 1) ≠ 0)) :
+      cz m = dz n) :
     IsRupert V := by
   obtain ⟨m0, ca0, cz0, U1⟩ := hU1
   obtain ⟨n0, cb0, dz0, U2⟩ := hU2
@@ -1360,41 +1511,38 @@ theorem isRupert_edge_frame_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 
     rw [(C1.far_eq U1).1, (C1.far_eq U1).2, (C2.far_eq U2).1, (C2.far_eq U2).2]; exact h
   · refine isRupert_edge_frame_robust O r1 r2 hρ Q1 Q2 hxx ⟨m0, ca0, cz0, U1⟩ hL1 ⟨n0, cb0, dz0, U2⟩ hL2
       hap1 hap2 hQ1x hQ1x' hQ2x hQ2x' hpos1 hpos2 V hV1 hV2 hVc hsol fun m ca cz n cb dz C1 C2 => ?_
-    rw [(C1.far_eq U1).1, (C1.far_eq U1).2, (C2.far_eq U2).1, (C2.far_eq U2).2]; exact h
+    rw [(C1.far_eq U1).2, (C2.far_eq U2).2]; exact h
 
 
 /-- The edge tie condition with the robust way out: `TieHE`, or the far ends
-tied with no right angle at the far ends (stated for both edge vertices). -/
+tied (a right angle at a far end is allowed: `isRupert_of_tilted_tie_right`). -/
 def TieHER (Q1 Q2 : Finset ℝ³) (v w p q : ℝ³) (h : ℝ³ → ℝ) : Prop :=
-  TieHE Q1 Q2 v w p q h ∨ (h p = h q ∧ ⟪q - p, p - v⟫ ≠ 0 ∧ ⟪q - p, q - v⟫ ≠ 0 ∧
-    ⟪q - p, p - w⟫ ≠ 0 ∧ ⟪q - p, q - w⟫ ≠ 0)
+  TieHE Q1 Q2 v w p q h ∨ h p = h q
 
 theorem TieHER.swap {Q1 Q2 : Finset ℝ³} {v w p q : ℝ³} {h : ℝ³ → ℝ} (H : TieHER Q1 Q2 v w p q h) :
     TieHER Q2 Q1 v w q p h := by
-  rcases H with H | ⟨e, h1, h2, h3, h4⟩
+  rcases H with H | e
   · exact Or.inl H.swap
-  · have n : ∀ x : ℝ³, ⟪p - q, x⟫ = -⟪q - p, x⟫ := fun x => by
-      rw [show p - q = -(q - p) by abel, inner_neg_left]
-    refine Or.inr ⟨e.symm, ?_, ?_, ?_, ?_⟩ <;> rw [n, neg_ne_zero] <;> assumption
+  · exact Or.inr e.symm
 
 theorem TieHER.comm {Q1 Q2 : Finset ℝ³} {v w p q : ℝ³} {h : ℝ³ → ℝ} (H : TieHER Q1 Q2 v w p q h) :
     TieHER Q1 Q2 w v p q h := by
-  rcases H with H | ⟨e, h1, h2, h3, h4⟩
+  rcases H with H | e
   · exact Or.inl H.comm
-  · exact Or.inr ⟨e, h3, h4, h1, h2⟩
+  · exact Or.inr e
 
 theorem TieHER.map {Q1 Q2 : Finset ℝ³} {v w p q : ℝ³} {h h' : ℝ³ → ℝ} (g : ℝ³ → ℝ³)
     {r : ℝ} (hr : 0 < r) (hh : ∀ x, h' (g x) = h x / r)
-    (H : TieHER Q1 Q2 v w p q h) [DecidableEq ℝ³] (hlin : ∀ x y, g (x - y) = g x - g y)
-    (hip : ∀ x y, ⟪g x, g y⟫ = ⟪x, y⟫) :
+    (H : TieHER Q1 Q2 v w p q h) [DecidableEq ℝ³] (_hlin : ∀ x y, g (x - y) = g x - g y)
+    (_hip : ∀ x y, ⟪g x, g y⟫ = ⟪x, y⟫) :
     TieHER (Q1.image g) (Q2.image g) (g v) (g w) (g p) (g q) h' := by
-  rcases H with H | ⟨e, h1, h2, h3, h4⟩
+  rcases H with H | e
   · exact Or.inl (H.map g hr hh)
-  · refine Or.inr ⟨by rw [hh, hh, e], ?_, ?_, ?_, ?_⟩ <;> rw [← hlin, ← hlin, hip] <;> assumption
+  · exact Or.inr (by rw [hh, hh, e])
 
 /-- General position for Lemma T along an edge with the robust tie: as
-`EdgeTie`, with `TieHER` at the far ends (at a tie, no right angle at the far
-ends suffices). Codimension 2 for any two faces. -/
+`EdgeTie`, with `TieHER` at the far ends (a tie of the far ends suffices).
+Codimension 2 for any two faces. -/
 def EdgeTieR (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) : Prop :=
   (∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → ∀ c : ℝ, q - p ≠ c • (w - v)) ∧
   ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
@@ -1641,7 +1789,7 @@ theorem isRupert_edge_coords_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V 
       by_cases e : b q' = cb n ∧ q' 2 = dz n
       · exact e.1.le
       · exact (C2.far _ _ (Finset.mem_image_of_mem (fun p => (b p, p 2)) hq') e).le
-    rcases hfarZ p hp q hq hpq pmax qmax with hT | ⟨hpq2, hang1, hang2, -, -⟩
+    rcases hfarZ p hp q hq hpq pmax qmax with hT | hpq2
     · have old : cz m ≠ dz n ∨ ETie (fun x z => (x, z) ∈ S1) (fun x z => (x, z) ∈ S2) (v 2) (w 2)
           (ca m) (cz m) (cb n) (dz n) := by
         rcases hT with hne | ⟨s, hs, hv | hv | ⟨u, hu, hv⟩ | ⟨u, hu, hv⟩⟩
@@ -1671,17 +1819,7 @@ theorem isRupert_edge_coords_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V 
       · exact Or.inr (Or.inl h)
     · right; right
       simp only at hpq2
-      have pe : p = oblPt O r1 r2 (ca m) 0 (cz m) := by rw [← e1, ← e2]; exact pt1 p hp
-      have qe : q = oblPt O r1 r2 0 (cb n) (cz m) := by rw [← f1, ← e2, hpq2]; exact pt2 q hq
-      have ve : v = oblPt O r1 r2 0 0 (v 2) := by
-        conv_lhs => rw [hy v (h1V hv1), hav, hbv]
-      refine ⟨by rw [← e2, ← f2]; exact hpq2, ?_, ?_⟩
-      · have h1 := hang1
-        rw [pe, qe, ve, inner_obl_angle1] at h1
-        exact right_ne_zero_of_mul h1
-      · have h2 := hang2
-        rw [pe, qe, ve, inner_obl_angle2] at h2
-        exact right_ne_zero_of_mul (neg_ne_zero.mp h2)
+      rw [← e2, ← f2]; exact hpq2
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over an edge, the edge vertical**, with `v` below `w`. -/

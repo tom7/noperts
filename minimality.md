@@ -95,10 +95,11 @@ through a copy of itself):
   through it, no far-depth condition is needed at all (`EdgePar`). In fact
   any tie of the far corners is harmless unless something else coincides
   too: if the shared corner is not at the same depth (over an edge this is
-  automatic) and the shadow triangle has no right angle at the far corners,
-  a slightly tilted view is first-order free, though not unimodal ("Lemma T
-  at the tie, robust form", `TriGenTieR`, `EdgeTieR`;
-  `Minimality/TieForces.lean`, `TieRobust.lean`, `TieFrame.lean`). So for
+  automatic), a slightly tilted view is first-order free, though not
+  unimodal ("Lemma T at the tie, robust form", `TriGenTieR`, `EdgeTieR`;
+  `Minimality/TieForces.lean`, `TieRobust.lean`, `TieFrame.lean`, and
+  `TieRight.lean` when the shadow triangle has a right angle at a far
+  corner). So for
   all 24 types the hypotheses fail only on coincidences of codimension 2:
   two independent equalities at once. The proofs also cover the special position
   where the deciding number is
