@@ -15,8 +15,9 @@ inside), a strictly inward first-order motion.  Propositions 8.8 and 8.9
 (`isRupert_of_chords`, `isRupert_of_edgeChords`) ask instead for *local
 certificates* `TiltCert` at the view, plus strict inward motion of the
 polygon's corners across their edges.  This file bridges the two
-(`exists_tiltCert_of_unimodal`), frame-free at the view `u₀` with
-`R u₀ = r e_z`, `r > 0`:
+(`exists_tiltCert_of_firstOrderInward`, for any strictly inward first-order
+motion at a view with a strictly convex silhouette; `exists_tiltCert_of_unimodal`
+with Theorem 7.3), frame-free at the view `u₀` with `R u₀ = r e_z`, `r > 0`:
 
 * a corner `x i` gets the certificate with neighbours `x (i − 1)`, `x (i + 1)`:
   `x i + ε ν` is interior, hence strictly left of both edges at `x i`
@@ -30,11 +31,14 @@ polygon's corners across their edges.  This file bridges the two
   direction `t` that achieves this (`exists_inner_ne_zero`); the corners' tests
   are strict and survive.
 
-Corollaries: `isRupert_of_chords_unimodal` (Proposition 8.8 with "`K′` is
-first-order free" replaced by "`K′` has a unimodal silhouette at `u₀` without
-horizontal double normal", the middles lying over silhouette edges of `K′`)
-and `isRupert_of_edgeChords_unimodal` (Theorem 8.9 likewise, for `K_v` with
-`v` a silhouette corner and `A`, `B` its neighbours).
+Corollaries: `isRupert_of_chords_of_firstOrderInward` (Proposition 8.8 with a
+strictly convex silhouette of `K′` at `u₀` and a strictly inward first-order
+motion of `K′`, the middles lying over silhouette edges of `K′`) and
+`isRupert_of_edgeChords_of_firstOrderInward` (Theorem 8.9 likewise, for `K_v`
+with `v` a silhouette corner and `A`, `B` its neighbours); their unimodal forms
+`isRupert_of_chords_unimodal`, `isRupert_of_edgeChords_unimodal` ("`K′` has a
+unimodal silhouette at `u₀` without horizontal double normal").  The
+depth-separated forms (Theorem 8.10) are in `DepthSeparated.lean`.
 -/
 
 namespace Minimality
@@ -147,14 +151,9 @@ theorem ne_zero_of_rot_eq (hr : 0 < r) (hRu : R.toEuclideanLin u₀ = r • ez) 
 
 end Polygon
 
-/-- **Theorem 7.3, certificate form.**  At a view `u₀` (`R u₀ = r e_z`,
-`r > 0`) where the silhouette of `V` is the strictly convex counterclockwise
-polygon `x`, every other point projecting strictly inside, with cyclically
-unimodal depths and no horizontal double normal, some first-order motion
-`(ω, τ)` has a local certificate at every point of `V`, and moves each corner
-strictly to the inner side of both of its edges. -/
-theorem exists_tiltCert_of_unimodal (V : Finset ℝ³) (R : Matrix (Fin 3) (Fin 3) ℝ)
-    (hR : R ∈ SO3) {u₀ : ℝ³} {r : ℝ} (hr : 0 < r) (hRu : R.toEuclideanLin u₀ = r • ez)
+/-- **Theorem 7.3 at a rotated view.**  The rotated form of
+`exists_firstOrderInward_of_unimodal`: the points are given before rotating. -/
+theorem exists_firstOrderInward_image_of_unimodal (V : Finset ℝ³) (R : Matrix (Fin 3) (Fin 3) ℝ)
     {k : ℕ} [NeZero k] (x : ZMod k → ℝ³) (hxV : ∀ i, x i ∈ V)
     (hp : IsCcwPolygon (fun i => proj_xy (R.toEuclideanLin (x i))))
     (hin : ∀ v ∈ V, (∀ i, v ≠ x i) → proj_xy (R.toEuclideanLin v) ∈
@@ -162,6 +161,29 @@ theorem exists_tiltCert_of_unimodal (V : Finset ℝ³) (R : Matrix (Fin 3) (Fin 
     (hz : IsCyclicUnimodal (fun i => (R.toEuclideanLin (x i)) 2))
     (hnd : ¬ HasHorizontalDoubleNormal (fun i => proj_xy (R.toEuclideanLin (x i)))
       (fun i => (R.toEuclideanLin (x i)) 2)) :
+    ∃ ω τ : ℝ³, FirstOrderInward (V.image R.toEuclideanLin) ω τ := by
+  classical
+  exact exists_firstOrderInward_of_unimodal (V.image R.toEuclideanLin)
+    (fun i => R.toEuclideanLin (x i)) (fun i => mem_image_of_mem _ (hxV i)) hp
+    (by
+      intro w hw hc
+      obtain ⟨v, hv, rfl⟩ := mem_image.mp hw
+      exact hin v hv fun i h => hc i (by rw [h]))
+    hz hnd
+
+/-- **First-order freedom, certificate form.**  At a view `u₀`
+(`R u₀ = r e_z`, `r > 0`) where the silhouette of `V` is the strictly convex
+counterclockwise polygon `x`, every other point projecting strictly inside, if
+some first-order motion of the rotated points is strictly inward, then some
+first-order motion `(ω, τ)` has a local certificate at every point of `V`, and
+moves each corner strictly to the inner side of both of its edges. -/
+theorem exists_tiltCert_of_firstOrderInward (V : Finset ℝ³) (R : Matrix (Fin 3) (Fin 3) ℝ)
+    (hR : R ∈ SO3) {u₀ : ℝ³} {r : ℝ} (hr : 0 < r) (hRu : R.toEuclideanLin u₀ = r • ez)
+    {k : ℕ} [NeZero k] (x : ZMod k → ℝ³) (hxV : ∀ i, x i ∈ V)
+    (hp : IsCcwPolygon (fun i => proj_xy (R.toEuclideanLin (x i))))
+    (hin : ∀ v ∈ V, (∀ i, v ≠ x i) → proj_xy (R.toEuclideanLin v) ∈
+      interior (convexHull ℝ (Set.range fun i => proj_xy (R.toEuclideanLin (x i)))))
+    (hFO : ∃ ω τ : ℝ³, FirstOrderInward (V.image R.toEuclideanLin) ω τ) :
     ∃ ω τ : ℝ³, (∀ y ∈ V, TiltCert V u₀ ω τ y) ∧
       ∀ i, 0 < det3 (x (i + 1) - x i) (cross ω (x i) + τ) u₀ ∧
         0 < det3 (x (i + 1) - x i) (cross ω (x (i + 1)) + τ) u₀ := by
@@ -171,14 +193,7 @@ theorem exists_tiltCert_of_unimodal (V : Finset ℝ³) (R : Matrix (Fin 3) (Fin 
   have hdet : ∀ a b : ℝ³, det3 a b u₀ = r * cross2 (P a) (P b) := fun a b =>
     (cross2_proj_rot hR hRu a b).symm
   have hsub : ∀ a b : ℝ³, P (a - b) = P a - P b := fun a b => (proj_rot_sub R a b).symm
-  -- Theorem 7.3: a strictly inward first-order motion
-  obtain ⟨ω', τ', hFO⟩ := exists_firstOrderInward_of_unimodal (V.image R.toEuclideanLin)
-    (fun i => R.toEuclideanLin (x i)) (fun i => mem_image_of_mem _ (hxV i)) hp
-    (by
-      intro w hw hc
-      obtain ⟨v, hv, rfl⟩ := mem_image.mp hw
-      exact hin v hv fun i h => hc i (by rw [h]))
-    hz hnd
+  obtain ⟨ω', τ', hFO⟩ := hFO
   obtain ⟨ω, rfl⟩ := (so3Isometry hR).surjective ω'
   obtain ⟨τ₀, rfl⟩ := (so3Isometry hR).surjective τ'
   rw [so3Isometry_apply, so3Isometry_apply] at hFO
@@ -279,13 +294,108 @@ theorem exists_tiltCert_of_unimodal (V : Finset ℝ³) (R : Matrix (Fin 3) (Fin 
     refine Or.inl ⟨x (l + 1), hxV _, x l, hxV _, hint y hy hc l, hl1, ?_⟩
     rw [det3_sub_comm_left]; linarith
 
-/-- **Proposition 8.8 with a unimodal `K′`.**  Let `M ⊆ V` be the middles at
-the view `u₀` (`R u₀ = r e_z`, `r > 0`), each over a silhouette edge
+/-- **Theorem 7.3, certificate form.**  At a view `u₀` (`R u₀ = r e_z`,
+`r > 0`) where the silhouette of `V` is the strictly convex counterclockwise
+polygon `x`, every other point projecting strictly inside, with cyclically
+unimodal depths and no horizontal double normal, some first-order motion
+`(ω, τ)` has a local certificate at every point of `V`, and moves each corner
+strictly to the inner side of both of its edges. -/
+theorem exists_tiltCert_of_unimodal (V : Finset ℝ³) (R : Matrix (Fin 3) (Fin 3) ℝ)
+    (hR : R ∈ SO3) {u₀ : ℝ³} {r : ℝ} (hr : 0 < r) (hRu : R.toEuclideanLin u₀ = r • ez)
+    {k : ℕ} [NeZero k] (x : ZMod k → ℝ³) (hxV : ∀ i, x i ∈ V)
+    (hp : IsCcwPolygon (fun i => proj_xy (R.toEuclideanLin (x i))))
+    (hin : ∀ v ∈ V, (∀ i, v ≠ x i) → proj_xy (R.toEuclideanLin v) ∈
+      interior (convexHull ℝ (Set.range fun i => proj_xy (R.toEuclideanLin (x i)))))
+    (hz : IsCyclicUnimodal (fun i => (R.toEuclideanLin (x i)) 2))
+    (hnd : ¬ HasHorizontalDoubleNormal (fun i => proj_xy (R.toEuclideanLin (x i)))
+      (fun i => (R.toEuclideanLin (x i)) 2)) :
+    ∃ ω τ : ℝ³, (∀ y ∈ V, TiltCert V u₀ ω τ y) ∧
+      ∀ i, 0 < det3 (x (i + 1) - x i) (cross ω (x i) + τ) u₀ ∧
+        0 < det3 (x (i + 1) - x i) (cross ω (x (i + 1)) + τ) u₀ :=
+  exists_tiltCert_of_firstOrderInward V R hR hr hRu x hxV hp hin
+    (exists_firstOrderInward_image_of_unimodal V R x hxV hp hin hz hnd)
+
+/-- **Proposition 8.8 with a first-order free `K′`.**  Let `M ⊆ V` be the
+middles at the view `u₀` (`R u₀ = r e_z`, `r > 0`), each over a silhouette edge
 `[x i, x (i + 1)]` of the rest `K′`: `m = x i + s (x (i + 1) − x i) + δ u₀`,
 `0 < s < 1`, `δ ≠ 0`.  If the silhouette of `K′` at `u₀` is the strictly
-convex counterclockwise polygon `x` (every other point of `K′` strictly inside),
-with cyclically unimodal depths and no horizontal double normal, then `V` is
+convex counterclockwise polygon `x` (every other point of `K′` strictly inside)
+and some first-order motion of the rotated `K′` is strictly inward, then `V` is
 Rupert. -/
+theorem isRupert_of_chords_of_firstOrderInward (V M : Finset ℝ³) (R : Matrix (Fin 3) (Fin 3) ℝ)
+    (hR : R ∈ SO3) {u₀ : ℝ³} {r : ℝ} (hr : 0 < r) (hRu : R.toEuclideanLin u₀ = r • ez)
+    {k : ℕ} [NeZero k] (x : ZMod k → ℝ³) (hxV : ∀ i, x i ∈ V) (hxM : ∀ i, x i ∉ M)
+    (hp : IsCcwPolygon (fun i => proj_xy (R.toEuclideanLin (x i))))
+    (hin : ∀ v ∈ V, v ∉ M → (∀ i, v ≠ x i) → proj_xy (R.toEuclideanLin v) ∈
+      interior (convexHull ℝ (Set.range fun i => proj_xy (R.toEuclideanLin (x i)))))
+    (hFO : ∃ ω τ : ℝ³, FirstOrderInward ((V \ M).image R.toEuclideanLin) ω τ)
+    (hM : ∀ m ∈ M, ∃ i : ZMod k, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
+      m = x i + s • (x (i + 1) - x i) + δ • u₀) : IsRupert V := by
+  classical
+  obtain ⟨ω, τ, hcert, hedge⟩ := exists_tiltCert_of_firstOrderInward (V \ M) R hR hr hRu x
+    (fun i => mem_sdiff.mpr ⟨hxV i, hxM i⟩) hp
+    (fun v hv hvx => hin v (mem_sdiff.mp hv).1 (mem_sdiff.mp hv).2 hvx) hFO
+  refine isRupert_of_chords V M u₀ ω τ (ne_zero_of_rot_eq hr hRu)
+    (fun y hy hyM => (hcert y (mem_sdiff.mpr ⟨hy, hyM⟩)).mono sdiff_subset) fun m hm => ?_
+  obtain ⟨i, s, δ, hs0, hs1, hδ, rfl⟩ := hM m hm
+  exact ⟨x i, hxV i, x (i + 1), hxV _, x (i - 1), hxV _, s, δ, hs0, hs1, hδ, rfl,
+    det3_corner_pos hR hr hRu hp i, (hedge i).1, (hedge i).2⟩
+
+/-- The lower end `w = v − h u₀` of the edge along the view is not a
+silhouette corner: it projects onto the corner `v = x i₀`. -/
+theorem corner_ne_axle {R : Matrix (Fin 3) (Fin 3) ℝ} {u₀ : ℝ³} {r : ℝ} (hr : 0 < r)
+    (hRu : R.toEuclideanLin u₀ = r • ez) {k : ℕ} {x : ZMod k → ℝ³}
+    (hp : IsCcwPolygon (fun i => proj_xy (R.toEuclideanLin (x i)))) {i₀ : ZMod k} {w : ℝ³}
+    {h : ℝ} (hw : w = x i₀ - h • u₀) (hh : h ≠ 0) (i : ZMod k) : x i ≠ w := by
+  have hu₀ := ne_zero_of_rot_eq hr hRu
+  intro hi
+  have hPw : proj_xy (R.toEuclideanLin w) = proj_xy (R.toEuclideanLin (x i₀)) := by
+    rw [hw, map_sub, map_smul, hRu, proj_xy_sub', proj_xy_smul', proj_xy_smul']
+    have : proj_xy ez = 0 := by ext j; fin_cases j <;> simp [proj_xy, ez]
+    rw [this]; simp
+  have hii : i = i₀ := hp.injective (by simp only [hi, hPw])
+  subst hii
+  have : h • u₀ = 0 := by
+    have := congrArg (fun z => x i - z) hi
+    simp only [sub_self, hw, sub_sub_cancel] at this
+    exact this.symm
+  rcases smul_eq_zero.mp this with h0 | h0
+  exacts [hh h0, hu₀ h0]
+
+/-- **Theorem 8.9 with a first-order free `K_v`.**  Two faces share the edge
+`vw`, `w = v − h u₀` (`h ≠ 0`), at the view `u₀` (`R u₀ = r e_z`, `r > 0`),
+with middles `M` (`EdgeMiddle`).  If the silhouette of `K_v` (the hull without
+the middles and `w`) at `u₀` is the strictly convex counterclockwise polygon `x`
+(every other point of `K_v` strictly inside), some first-order motion of the
+rotated `K_v` is strictly inward, `v = x i₀`, and the far ends are its
+neighbours `A = x (i₀ + 1)`, `B = x (i₀ − 1)`, then `V` is Rupert. -/
+theorem isRupert_of_edgeChords_of_firstOrderInward (V M : Finset ℝ³) (R : Matrix (Fin 3) (Fin 3) ℝ)
+    (hR : R ∈ SO3) {u₀ : ℝ³} {r : ℝ} (hr : 0 < r) (hRu : R.toEuclideanLin u₀ = r • ez)
+    {k : ℕ} [NeZero k] (x : ZMod k → ℝ³) (i₀ : ZMod k) (w : ℝ³) (h : ℝ) (hwV : w ∈ V)
+    (hw : w = x i₀ - h • u₀) (hh : h ≠ 0) (hxV : ∀ i, x i ∈ V) (hxM : ∀ i, x i ∉ M)
+    (hp : IsCcwPolygon (fun i => proj_xy (R.toEuclideanLin (x i))))
+    (hin : ∀ v ∈ V, v ∉ M → v ≠ w → (∀ i, v ≠ x i) → proj_xy (R.toEuclideanLin v) ∈
+      interior (convexHull ℝ (Set.range fun i => proj_xy (R.toEuclideanLin (x i)))))
+    (hFO : ∃ ω τ : ℝ³, FirstOrderInward (((V \ M).erase w).image R.toEuclideanLin) ω τ)
+    (hM : ∀ m ∈ M, EdgeMiddle u₀ (x i₀) w (x (i₀ + 1)) (x (i₀ - 1)) h m) : IsRupert V := by
+  classical
+  have hu₀ := ne_zero_of_rot_eq hr hRu
+  have hxw : ∀ i, x i ≠ w := corner_ne_axle hr hRu hp hw hh
+  obtain ⟨ω, τ, hcert, hedge⟩ := exists_tiltCert_of_firstOrderInward ((V \ M).erase w) R hR hr
+    hRu x (fun i => mem_erase.mpr ⟨hxw i, mem_sdiff.mpr ⟨hxV i, hxM i⟩⟩) hp
+    (fun v hv hvx => by
+      obtain ⟨hvw, hv'⟩ := mem_erase.mp hv
+      exact hin v (mem_sdiff.mp hv').1 (mem_sdiff.mp hv').2 hvw hvx) hFO
+  have hB := hedge (i₀ - 1)
+  rw [sub_add_cancel] at hB
+  refine isRupert_of_edgeChords V M u₀ ω τ (x i₀) w (x (i₀ + 1)) (x (i₀ - 1)) h hu₀ (hxV _) hwV
+    (hxV _) (hxV _) hw hh (det3_corner_pos hR hr hRu hp i₀) (hedge i₀).1 hB.2 (hedge i₀).2 hB.1
+    (fun y hy hyM _ hyw => (hcert y (mem_erase.mpr ⟨hyw, mem_sdiff.mpr ⟨hy, hyM⟩⟩)).mono
+      ((erase_subset _ _).trans sdiff_subset)) hM
+
+/-- **Proposition 8.8 with a unimodal `K′`.**  As
+`isRupert_of_chords_of_firstOrderInward`, with `K′` unimodal at `u₀` and
+without horizontal double normal (Theorem 7.3). -/
 theorem isRupert_of_chords_unimodal (V M : Finset ℝ³) (R : Matrix (Fin 3) (Fin 3) ℝ)
     (hR : R ∈ SO3) {u₀ : ℝ³} {r : ℝ} (hr : 0 < r) (hRu : R.toEuclideanLin u₀ = r • ez)
     {k : ℕ} [NeZero k] (x : ZMod k → ℝ³) (hxV : ∀ i, x i ∈ V) (hxM : ∀ i, x i ∉ M)
@@ -298,22 +408,14 @@ theorem isRupert_of_chords_unimodal (V M : Finset ℝ³) (R : Matrix (Fin 3) (Fi
     (hM : ∀ m ∈ M, ∃ i : ZMod k, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
       m = x i + s • (x (i + 1) - x i) + δ • u₀) : IsRupert V := by
   classical
-  obtain ⟨ω, τ, hcert, hedge⟩ := exists_tiltCert_of_unimodal (V \ M) R hR hr hRu x
-    (fun i => mem_sdiff.mpr ⟨hxV i, hxM i⟩) hp
-    (fun v hv hvx => hin v (mem_sdiff.mp hv).1 (mem_sdiff.mp hv).2 hvx) hz hnd
-  refine isRupert_of_chords V M u₀ ω τ (ne_zero_of_rot_eq hr hRu)
-    (fun y hy hyM => (hcert y (mem_sdiff.mpr ⟨hy, hyM⟩)).mono sdiff_subset) fun m hm => ?_
-  obtain ⟨i, s, δ, hs0, hs1, hδ, rfl⟩ := hM m hm
-  exact ⟨x i, hxV i, x (i + 1), hxV _, x (i - 1), hxV _, s, δ, hs0, hs1, hδ, rfl,
-    det3_corner_pos hR hr hRu hp i, (hedge i).1, (hedge i).2⟩
+  exact isRupert_of_chords_of_firstOrderInward V M R hR hr hRu x hxV hxM hp hin
+    (exists_firstOrderInward_image_of_unimodal (V \ M) R x
+      (fun i => mem_sdiff.mpr ⟨hxV i, hxM i⟩) hp
+      (fun v hv hvx => hin v (mem_sdiff.mp hv).1 (mem_sdiff.mp hv).2 hvx) hz hnd) hM
 
-/-- **Theorem 8.9 with a unimodal `K_v`.**  Two faces share the edge `vw`,
-`w = v − h u₀` (`h ≠ 0`), at the view `u₀` (`R u₀ = r e_z`, `r > 0`), with
-middles `M` (`EdgeMiddle`).  If the silhouette of `K_v` (the hull without the
-middles and `w`) at `u₀` is the strictly convex counterclockwise polygon `x`
-(every other point of `K_v` strictly inside), with cyclically unimodal depths
-and no horizontal double normal, `v = x i₀`, and the far ends are its
-neighbours `A = x (i₀ + 1)`, `B = x (i₀ − 1)`, then `V` is Rupert. -/
+/-- **Theorem 8.9 with a unimodal `K_v`.**  As
+`isRupert_of_edgeChords_of_firstOrderInward`, with `K_v` unimodal at `u₀` and
+without horizontal double normal (Theorem 7.3). -/
 theorem isRupert_of_edgeChords_unimodal (V M : Finset ℝ³) (R : Matrix (Fin 3) (Fin 3) ℝ)
     (hR : R ∈ SO3) {u₀ : ℝ³} {r : ℝ} (hr : 0 < r) (hRu : R.toEuclideanLin u₀ = r • ez)
     {k : ℕ} [NeZero k] (x : ZMod k → ℝ³) (i₀ : ZMod k) (w : ℝ³) (h : ℝ) (hwV : w ∈ V)
@@ -326,33 +428,12 @@ theorem isRupert_of_edgeChords_unimodal (V M : Finset ℝ³) (R : Matrix (Fin 3)
       (fun i => (R.toEuclideanLin (x i)) 2))
     (hM : ∀ m ∈ M, EdgeMiddle u₀ (x i₀) w (x (i₀ + 1)) (x (i₀ - 1)) h m) : IsRupert V := by
   classical
-  have hu₀ := ne_zero_of_rot_eq hr hRu
-  -- `w` is not a corner: it projects onto `v`, and `v ≠ w`
-  have hxw : ∀ i, x i ≠ w := by
-    intro i hi
-    have hPw : proj_xy (R.toEuclideanLin w) = proj_xy (R.toEuclideanLin (x i₀)) := by
-      rw [hw, map_sub, map_smul, hRu, proj_xy_sub', proj_xy_smul', proj_xy_smul']
-      have : proj_xy ez = 0 := by ext j; fin_cases j <;> simp [proj_xy, ez]
-      rw [this]; simp
-    have hii : i = i₀ := hp.injective (by simp only [hi, hPw])
-    subst hii
-    have : h • u₀ = 0 := by
-      have := congrArg (fun z => x i - z) hi
-      simp only [sub_self, hw, sub_sub_cancel] at this
-      exact this.symm
-    rcases smul_eq_zero.mp this with h0 | h0
-    exacts [hh h0, hu₀ h0]
-  obtain ⟨ω, τ, hcert, hedge⟩ := exists_tiltCert_of_unimodal ((V \ M).erase w) R hR hr hRu x
-    (fun i => mem_erase.mpr ⟨hxw i, mem_sdiff.mpr ⟨hxV i, hxM i⟩⟩) hp
-    (fun v hv hvx => by
-      obtain ⟨hvw, hv'⟩ := mem_erase.mp hv
-      exact hin v (mem_sdiff.mp hv').1 (mem_sdiff.mp hv').2 hvw hvx) hz hnd
-  have hB := hedge (i₀ - 1)
-  rw [sub_add_cancel] at hB
-  refine isRupert_of_edgeChords V M u₀ ω τ (x i₀) w (x (i₀ + 1)) (x (i₀ - 1)) h hu₀ (hxV _) hwV
-    (hxV _) (hxV _) hw hh (det3_corner_pos hR hr hRu hp i₀) (hedge i₀).1 hB.2 (hedge i₀).2 hB.1
-    (fun y hy hyM _ hyw => (hcert y (mem_erase.mpr ⟨hyw, mem_sdiff.mpr ⟨hy, hyM⟩⟩)).mono
-      ((erase_subset _ _).trans sdiff_subset)) hM
+  exact isRupert_of_edgeChords_of_firstOrderInward V M R hR hr hRu x i₀ w h hwV hw hh hxV hxM hp
+    hin (exists_firstOrderInward_image_of_unimodal ((V \ M).erase w) R x
+      (fun i => mem_erase.mpr ⟨corner_ne_axle hr hRu hp hw hh i, mem_sdiff.mpr ⟨hxV i, hxM i⟩⟩) hp
+      (fun v hv hvx => by
+        obtain ⟨hvw, hv'⟩ := mem_erase.mp hv
+        exact hin v (mem_sdiff.mp hv').1 (mem_sdiff.mp hv').2 hvw hvx) hz hnd) hM
 
 end Minimality
 

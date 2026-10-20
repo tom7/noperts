@@ -28,6 +28,7 @@ public import Minimality.Parity
 public import Minimality.Chords
 public import Minimality.EdgeChords
 public import Minimality.UnimodalCert
+public import Minimality.DepthSeparated
 public import Minimality.Global
 public import Minimality.Shear
 public import Minimality.ParallelFar
