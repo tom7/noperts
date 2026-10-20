@@ -2,6 +2,7 @@ module
 
 public import Minimality.TriShadow2Chord
 public import Minimality.HullChain
+public import Minimality.TriShadowChord
 
 @[expose] public section
 
@@ -153,6 +154,102 @@ theorem exists_chainOKc (S : Finset (ℝ × ℝ)) (z0 : ℝ) (h0 : (0, z0) ∈ S
           s * ((ca (l + 1) - ca l) * (q'.2 - cz l) - (cz (l + 1) - cz l) * (q'.1 - ca l)) +
           (ca (l + 1) - ca l) * (s * z - s * q'.2) := by rw [e]; ring
       rw [e2]; nlinarith [mul_pos hd (sub_pos.mpr hlt)]
+
+theorem ChainOKc.far_pos {Q : ℝ → ℝ → Prop} {z0 s : ℝ} {m : ℕ} {ca cz : ℕ → ℝ}
+    (h : ChainOKc Q z0 s m ca cz) : 0 < ca m := by
+  have : ∀ j, j ≤ m → ca 0 < ca j ∨ j = 0 := by
+    intro j hj
+    induction j with
+    | zero => right; rfl
+    | succ j ih =>
+      left
+      rcases ih (by omega) with h' | h'
+      · exact lt_trans h' (h.inc j (by omega))
+      · subst h'; exact h.inc 0 (by omega)
+  rcases this m le_rfl with h' | h'
+  · rw [h.start.1] at h'; exact h'
+  · have := h.one_le; omega
+
+set_option maxHeartbeats 4000000 in
+/-- **Lemma T over a vertex with vertical companions at the far ends.** As
+the core of `isRupert_vertex_frame`, for chains `C1` (sign `s`) and `C2`
+(sign `-s`) that may have vertical companions at their far ends, and a tilt
+ratio `α / β` leaning toward the face without companions. -/
+theorem vertex_core_par (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ → ℝ → Prop)
+    {z0 : ℝ} (s : ℝ) (hs : s = 1 ∨ s = -1) {m n : ℕ} {ca cz cb dz : ℕ → ℝ}
+    (C1 : ChainOKc Q1 z0 s m ca cz) (C2 : ChainOKc Q2 z0 (-s) n cb dz)
+    (hAB : s * dz n < s * cz m) {α β : ℝ} (hα : 0 < α) (hβ : 0 < β)
+    (hr1 : ∀ z, Q1 (ca m) z → z ≠ cz m → ca m * β < cb n * α)
+    (hr2 : ∀ z, Q2 (cb n) z → z ≠ dz n → cb n * α < ca m * β)
+    (hap1 : ∀ z, Q1 0 z → z = z0) (hap2 : ∀ z, Q2 0 z → z = z0)
+    (hpos1 : ∀ a z, Q1 a z → 0 ≤ a) (hpos2 : ∀ b z, Q2 b z → 0 ≤ b)
+    (V : Finset ℝ³)
+    (hV1 : ∀ a z, Q1 a z → oblPt O r1 r2 a 0 z ∈ V) (hV2 : ∀ b z, Q2 b z → oblPt O r1 r2 0 b z ∈ V)
+    (hVc : ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧
+      ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧ a * cb n + b * ca m < ca m * cb n))) :
+    IsRupert V := by
+  have hA0 := C1.far_pos
+  have hB0 := C2.far_pos
+  have c10 := C1.start; have c20 := C2.start
+  have side1 : ∀ a z, Q1 a z → ∀ l, l < m → oblPt O r1 r2 a 0 z ≠ oblPt O r1 r2 (ca l) 0 (cz l) →
+      oblPt O r1 r2 a 0 z ≠ oblPt O r1 r2 (ca (l + 1)) 0 (cz (l + 1)) →
+      s * ((ca (l + 1) - ca l) * (z - cz l) - (cz (l + 1) - cz l) * (a - ca l)) < 0 := by
+    intro a z hq l hl h1 h2
+    exact C1.side a z hq l hl (fun ⟨e1, e2⟩ => h1 (by rw [e1, e2]))
+      (fun ⟨e1, e2⟩ => h2 (by rw [e1, e2]))
+  have side2 : ∀ b z, Q2 b z → ∀ l, l < n →
+      oblPt O r1 r2 0 b z ≠ oblPt O r1 r2 0 (cb (l + 1)) (dz (l + 1)) →
+      oblPt O r1 r2 0 b z ≠ oblPt O r1 r2 0 (cb l) (dz l) →
+      s * ((cb l - cb (l + 1)) * (z - dz (l + 1)) - (dz l - dz (l + 1)) * (b - cb (l + 1))) < 0 := by
+    intro b z hq l hl h1 h2
+    have := C2.side b z hq l hl (fun ⟨e1, e2⟩ => h2 (by rw [e1, e2]))
+      (fun ⟨e1, e2⟩ => h1 (by rw [e1, e2]))
+    have e : s * ((cb l - cb (l + 1)) * (z - dz (l + 1)) - (dz l - dz (l + 1)) * (b - cb (l + 1))) =
+      -s * ((cb (l + 1) - cb l) * (z - dz l) - (dz (l + 1) - dz l) * (b - cb l)) := by ring
+    rw [e]; exact this
+  have q20 : Q2 0 z0 := by rw [← c20.2, ← c20.1]; exact C2.mem 0 (Nat.zero_le _)
+  have q10 : Q1 0 z0 := by rw [← c10.2, ← c10.1]; exact C1.mem 0 (Nat.zero_le _)
+  -- the far tests, with the companions
+  have far1 : ∀ a z, Q1 a z →
+      TiltOK (ca m) 0 (cz m) 0 (cb n) (dz n) a 0 z (-s * α) (s * β) ∨
+        oblPt O r1 r2 a 0 z = oblPt O r1 r2 (ca m) 0 (cz m) := by
+    intro a z hq
+    by_cases h : a = ca m ∧ z = cz m
+    · right; rw [h.1, h.2]
+    rcases C1.far a z hq h with hlt | ⟨ea, hc⟩
+    · left; exact far_tiltOK (by nlinarith)
+    · left; subst ea
+      have hz : z ≠ cz m := fun e => by rw [e] at hc; simp at hc
+      exact tiltOK_farComp1 hc (hr1 z hq hz)
+  have far2 : ∀ b z, Q2 b z →
+      TiltOK (ca m) 0 (cz m) 0 (cb n) (dz n) 0 b z (-s * α) (s * β) ∨
+        oblPt O r1 r2 0 b z = oblPt O r1 r2 0 (cb n) (dz n) := by
+    intro b z hq
+    by_cases h : b = cb n ∧ z = dz n
+    · right; rw [h.1, h.2]
+    rcases C2.far b z hq h with hlt | ⟨eb, hc⟩
+    · left; exact far_tiltOK (by nlinarith)
+    · left; subst eb
+      have hz : z ≠ dz n := fun e => by rw [e] at hc; simp at hc
+      exact tiltOK_farComp2 (by linarith) (hr2 z hq hz)
+  refine isRupert_triShadow_tilt O r1 r2 hρ C1.one_le C2.one_le s hs hα hβ ca cz cb dz c10.1 c20.1
+    (by rw [c10.2, c20.2]) C1.inc C2.inc V (fun l hl => hV1 _ _ (C1.mem l hl))
+    (fun l hl => hV2 _ _ (C2.mem l hl)) ?_ hAB
+  intro y hy
+  obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
+  rcases hc with ⟨rfl, hq⟩ | ⟨rfl, hq⟩ | ⟨ha, hb, hin⟩
+  · refine ⟨a, 0, z, rfl, hpos1 a z hq, le_rfl, ?_, fun _ => side1 a z hq, ?_⟩
+    · rcases far1 a z hq with h | h
+      · exact Or.inl h
+      · right; left; exact h
+    · intro ha; subst ha; rw [hap1 z hq]; exact side2 0 z0 q20
+  · refine ⟨0, b, z, rfl, le_rfl, hpos2 b z hq, ?_, ?_, fun _ => side2 b z hq⟩
+    · rcases far2 b z hq with h | h
+      · exact Or.inl h
+      · right; right; exact h
+    · intro hb; subst hb; rw [hap2 z hq]; exact side1 0 z0 q10
+  · exact ⟨a, b, z, rfl, ha.le, hb.le, Or.inl (far_tiltOK hin), fun h => absurd h hb.ne',
+      fun h => absurd h ha.ne'⟩
 
 end Minimality
 
