@@ -38,6 +38,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms not_facets_edge_tri_triShadow_of_isNopert
 #assert_standard_axioms Minimality.isRupert_of_pos_combinations
 #assert_standard_axioms Minimality.sum_cross2_shear
+#assert_standard_axioms Minimality.three_level_resultants
+#assert_standard_axioms Minimality.three_level_torque
 #assert_standard_axioms Minimality.tie_core_right
 #assert_standard_axioms Minimality.isRupert_of_tie_right
 #assert_standard_axioms Minimality.isRupert_of_tie_right_neg

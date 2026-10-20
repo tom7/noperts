@@ -53,6 +53,40 @@ theorem sum_cross2_collapse {ι : Type*} (s : Finset ι) (p f : ι → ℝ²) (z
     rw [sub_smul]; abel
   rw [this, smul_neg, smul_smul, mul_inv_cancel₀ hd, one_smul, add_neg_cancel]
 
+/-- **Three-level rule** (FEWER-FACES-PROOFS.md, Proposition 8.3). Group
+resultants `R k` at three depths `d k`, balanced in force (E1) and in moment
+about horizontal axes (E2): they are parallel, `R₁ = (d₂ - d₀) • w`,
+`R₂ = (d₀ - d₁) • w` with `w = (d₁ - d₂)⁻¹ • R₀`, and the torque of the
+groups (resultants on lines through `q k`) is `(Σ (d_{k+1} - d_{k+2}) q k) × w`,
+twice the signed area of the triangle of the points (depth, offset) up to the
+factor `|w|²`. -/
+theorem three_level_resultants (R₀ R₁ R₂ : ℝ²) (d₀ d₁ d₂ : ℝ) (hd : d₁ ≠ d₂)
+    (h1 : R₀ + R₁ + R₂ = 0) (h2 : d₀ • R₀ + d₁ • R₁ + d₂ • R₂ = 0) :
+    R₁ = (d₂ - d₀) • ((d₁ - d₂)⁻¹ • R₀) ∧ R₂ = (d₀ - d₁) • ((d₁ - d₂)⁻¹ • R₀) := by
+  have hd' : d₁ - d₂ ≠ 0 := sub_ne_zero.mpr hd
+  have c : ∀ k : Fin 2, R₀ k + R₁ k + R₂ k = 0 := fun k => by
+    have := congrArg (fun v : ℝ² => v k) h1; simpa using this
+  have e : ∀ k : Fin 2, d₀ * R₀ k + d₁ * R₁ k + d₂ * R₂ k = 0 := fun k => by
+    have := congrArg (fun v : ℝ² => v k) h2; simpa using this
+  constructor <;> ext k <;> simp only [PiLp.smul_apply, smul_eq_mul]
+  · rw [show (d₂ - d₀) * ((d₁ - d₂)⁻¹ * R₀ k) = (d₂ - d₀) * R₀ k / (d₁ - d₂) by ring,
+      eq_div_iff hd']
+    linear_combination (-d₂) * c k + e k
+  · rw [show (d₀ - d₁) * ((d₁ - d₂)⁻¹ * R₀ k) = (d₀ - d₁) * R₀ k / (d₁ - d₂) by ring,
+      eq_div_iff hd']
+    linear_combination d₁ * c k - e k
+
+theorem three_level_torque (R₀ R₁ R₂ q₀ q₁ q₂ : ℝ²) (d₀ d₁ d₂ : ℝ) (hd : d₁ ≠ d₂)
+    (h1 : R₀ + R₁ + R₂ = 0) (h2 : d₀ • R₀ + d₁ • R₁ + d₂ • R₂ = 0) :
+    cross2 q₀ R₀ + cross2 q₁ R₁ + cross2 q₂ R₂ =
+      cross2 ((d₁ - d₂) • q₀ + (d₂ - d₀) • q₁ + (d₀ - d₁) • q₂) ((d₁ - d₂)⁻¹ • R₀) := by
+  obtain ⟨e1, e2⟩ := three_level_resultants R₀ R₁ R₂ d₀ d₁ d₂ hd h1 h2
+  have hd' : d₁ - d₂ ≠ 0 := sub_ne_zero.mpr hd
+  rw [e1, e2]
+  simp only [cross2, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]
+  field_simp
+  ring
+
 end Minimality
 
 end
