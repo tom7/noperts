@@ -18,6 +18,7 @@ public import Minimality.Type12
 public import Minimality.Type22
 public import Minimality.Type28
 public import Minimality.Type05
+public import Minimality.Type08
 public import Minimality.Forces
 public import Minimality.TieForces
 public import Minimality.TieRobust
@@ -673,6 +674,43 @@ theorem not_type05_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 4)) : False :=
   h.2 (Minimality.isRupert_type05_facets x hx (noThreeCollinear_seven x h hx)
     fA fB fG fK fH hA hB hG hK hH hT1 hT2)
+
+/-- **Type 08** (Theorem J of `FEWER-FACES-PROOFS.md` §10, via the octahedron
+`K − 2`): a nopert does not have seven points labelled so that `0123`, `0245`,
+`2356` (quadrilaterals), `014`, `136`, `146` and `456` are facets (given by
+functionals negative off them); then `x 2` caps the octahedron of the other six
+(opposite pairs `(0, 6)`, `(3, 4)`, `(5, 1)`).  General position here: that
+octahedron has no planar equator (no four of `1, 3, 4, 5`, of `0, 1, 5, 6`, of
+`0, 3, 4, 6` coplanar), `Minimality.GenPos` (no two segments parallel or
+orthogonal), `Minimality.NoPlaneParallel` (no plane through three of the points
+parallel to the segment of two others), and `Minimality.NoHDNAt` (no horizontal
+double normal at the view along any segment, the exclusion of Theorem J). -/
+theorem not_type08_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
+    (hx : Function.Injective x)
+    (fA fB fC fD fE fF fG : ℝ³ →ᵃ[ℝ] ℝ)
+    (hA : ∀ i, (i ∈ ({0, 1, 2, 3} : Finset (Fin 7)) → fA (x i) = 0) ∧
+      (i ∉ ({0, 1, 2, 3} : Finset (Fin 7)) → fA (x i) < 0))
+    (hB : ∀ i, (i ∈ ({0, 2, 4, 5} : Finset (Fin 7)) → fB (x i) = 0) ∧
+      (i ∉ ({0, 2, 4, 5} : Finset (Fin 7)) → fB (x i) < 0))
+    (hC : ∀ i, (i ∈ ({2, 3, 5, 6} : Finset (Fin 7)) → fC (x i) = 0) ∧
+      (i ∉ ({2, 3, 5, 6} : Finset (Fin 7)) → fC (x i) < 0))
+    (hD : ∀ i, (i ∈ ({0, 1, 4} : Finset (Fin 7)) → fD (x i) = 0) ∧
+      (i ∉ ({0, 1, 4} : Finset (Fin 7)) → fD (x i) < 0))
+    (hE : ∀ i, (i ∈ ({1, 3, 6} : Finset (Fin 7)) → fE (x i) = 0) ∧
+      (i ∉ ({1, 3, 6} : Finset (Fin 7)) → fE (x i) < 0))
+    (hF : ∀ i, (i ∈ ({1, 4, 6} : Finset (Fin 7)) → fF (x i) = 0) ∧
+      (i ∉ ({1, 4, 6} : Finset (Fin 7)) → fF (x i) < 0))
+    (hG : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
+      (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fG (x i) < 0))
+    (heq₁ : Minimality.det3 (x 5 - x 3) (x 4 - x 3) (x 1 - x 3) ≠ 0)
+    (heq₂ : Minimality.det3 (x 5 - x 0) (x 6 - x 0) (x 1 - x 0) ≠ 0)
+    (heq₃ : Minimality.det3 (x 3 - x 0) (x 6 - x 0) (x 4 - x 0) ≠ 0)
+    (hgen : Minimality.GenPos (Finset.univ.image x))
+    (hpar : Minimality.NoPlaneParallel (Finset.univ.image x))
+    (hnd : ∀ v ∈ Finset.univ.image x, ∀ w ∈ Finset.univ.image x, v ≠ w →
+      Minimality.NoHDNAt ((Finset.univ.image x).erase w) (w - v)) : False :=
+  h.2 (Minimality.isRupert_type08_facets x hx fA fB fC fD fE fF fG hA hB hC hD hE hF hG
+    heq₁ heq₂ heq₃ hgen hpar hnd)
 
 /-- **Flat polygons are Rupert.**  Points in a plane, not all on one line, are
 Rupert, whatever their number: hold one copy face-on and pass the other

@@ -252,8 +252,31 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
 * At the entry point, `not_type05_of_isNopert` (`Type05.lean`): type 05 by
   Lemma T instead of Theorem B′, with the same structure (frame
   `x0; x2, x4, x6`; views along the planes of `0123`, `246` and of `0145`,
-  `246`). With this, every type proved on paper (24 of 29) is excluded at the
-  facet level in general position.
+  `246`). With this, every type proved on paper (now 25 of 29, with type 08) is excluded
+  at the facet level in general position.
+* At the entry point, `not_type08_of_isNopert` (Theorem 10.1 of
+  `FEWER-FACES-PROOFS.md` §10, type 08; `Type08Lemmas.lean`, `Type08Cases.lean`,
+  `Type08T4.lean`, `Type08.lean`): not by Lemma T but by edge crossings (Theorem
+  8.9 with Theorem 7.3, `isRupert_of_edgeChords_unimodal`) and the octahedron
+  `K − 2`. The seven points are the octahedron of `x 0, …, x 6` without `x 2`
+  (opposite pairs `(0, 6)`, `(3, 4)`, `(5, 1)`) with the cap `x 2` (`IsCap`; the
+  octahedron's face `035` is built from the three quadrilaterals,
+  `isRupert_type08_facets`). In the labelling of Lemma 6 (`type08_lemma6`, Gale
+  signs) the proof views along the QQ edge `d b` (`isRupert_type08_normalized`):
+  if the far end of `Q_bc` is `a'` (Lemma 1 (a), `far_end_Qbc_iff`), Lemma 7
+  (`type08_lemma7`, the Gale chain) makes `a' → c` a quad edge of the octahedron
+  that is not bad and Lemma 2 (`IsCap.middle_Qbc`) makes the cap a middle, so
+  Lemma 9.3 with a middle applies (`isRupert_quad_edge_middle`); if the far ends
+  are `a`, `c`, `K_d` is the face `Q_ac` (Lemma 1 (c), `IsCap.Qac_nws4`,
+  `isRupert_type08_Q`); if they are `c'`, `c`, the T4 `K − a` at `d b` (Lemma 5,
+  `isRupert_type08_T4`) is not bad by Lemma 9.7 (`inTri_of_dep`), Lemma 4
+  (`inTri_cap_BD`, `inTri_cap_AB`, with the facts (i)–(iii) in
+  `IsCap.axis_facts`) and Lemma 3 (`not_bad_of_crossing`, `not_bad_of_inTri`).
+  General position: no planar equator of the octahedron, `GenPos`,
+  `NoPlaneParallel` (no plane through three of the points parallel to the
+  segment of two others), and `NoHDNAt` (no horizontal double normal at the
+  views along the segments, the exclusion of Theorem 10.1). The same in octahedron
+  form: `isRupert_type08`.
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
@@ -387,6 +410,10 @@ In import order.
 | `Type22` | L13, Theorem N (type 22), same method | `isRupert_type22` |
 | `Type28` | L13, Theorem O (type 28), same method | `isRupert_type28` |
 | `Type05` | L13, type 05 by Lemma T (facet level), same method | `isRupert_type05_facets` |
+| `Type08Lemmas` | Type 08 (`FEWER-FACES-PROOFS.md` §10), the lemmas: the cap `d` over the octahedron `K − 2`; coordinates in a plane from affine functions; Lemma 3 (single-plane form of Lemma 9.5); Lemma 4 (the cap in the axis view) with its facts (i)–(iii); Lemma 9.7 as a dependency; Lemma 9.6 as an equivalence and Lemma 1 (a), (b); Lemma 1 (c); Lemma 2; Lemma 6; Lemma 7; the T4 edge not bad | `IsCap`, `coords_of_affine3`, `not_bad_of_crossing`, `not_bad_of_inTri`, `inTri_cap_BD`, `inTri_cap_AB`, `IsCap.axis_facts`, `inTri_of_dep`, `facet_lt_iff_of_dep`, `far_end_Qbc_iff`, `far_end_Qab_iff`, `nws4_of_planar_quad`, `IsCap.Qac_coords'`, `IsCap.Qac_nws4`, `IsCap.middle_Qbc`, `type08_signs`, `type08_lemma6`, `type08_lemma7`, `type08_t4_not_bad` |
+| `Type08Cases` | Theorem 8.9 with a unimodal `K_v` from determinant tests at an edge view (no rotation in the statement); type 08, cases N2 (Lemma 9.3 with a middle) and Q (`K_d` the face `Q_ac`) | `NoHDNAt`, `isRupert_of_edgeView`, `isRupert_quad_edge_middle`, `isRupert_type08_Q` |
+| `Type08T4` | Type 08, case T4 (Lemma 5): the claim of Lemma 9.3 from one face, the closing by `x`, the T4 rim in coordinates | `quad_lower_of_face`, `nws4_closing_x`, `t4_dets`, `isRupert_type08_T4` |
+| `Type08` | Theorem 10.1 (type 08): the normalized case analysis, the relabelling by Lemma 6 (`S3` and mirrored Gale vectors), the facet form | `NoPlaneParallel`, `OctFacets.isOctahedron`, `isRupert_type08_normalized`, `isRupert_type08`, `isRupert_type08_facets` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `TriGenFar`, `TriGen.far`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices
