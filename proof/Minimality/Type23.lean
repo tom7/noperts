@@ -3,6 +3,7 @@ module
 public import Minimality.Type10
 public import Minimality.TriFacetsChord
 public import Minimality.TriTie
+public import Minimality.ParallelOr
 
 @[expose] public section
 
@@ -43,13 +44,19 @@ theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({1, 5, 6} : Finset (Fin 7)) → fH (x i) < 0))
     (hK : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) = 0) ∧
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) < 0))
-    (hZ1 : EdgePar (univ.image x) (x 0) (x 4))
-    (hT1 : TriGenTri (univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
-        (({1, 5, 6} : Finset (Fin 7)).image x) (x 1) ∧
+    (hZ1 : EdgePar (univ.image x) (x 0) (x 4) ∨
+      EdgeFarP (univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
+      (({0, 3, 4, 5} : Finset (Fin 7)).image x) (x 0) (x 4))
+    (hT1 : (TriGenTri (univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
+        (({1, 5, 6} : Finset (Fin 7)).image x) (x 1) ∨
+      TriGenFarP (univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
+        (({1, 5, 6} : Finset (Fin 7)).image x) (x 1)) ∧
       (fA (x 6) / fA (x 1) + fD (x 6) / fD (x 5) = 1 →
         TriGenFar (univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
           (({1, 5, 6} : Finset (Fin 7)).image x) (x 1)))
     (hT2 : TriGenTri (univ.image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x)
+      (({1, 2, 5} : Finset (Fin 7)).image x) (x 5) ∨
+      TriGenFarP (univ.image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x)
       (({1, 2, 5} : Finset (Fin 7)).image x) (x 5)) :
     IsRupert (univ.image x) := by
   classical
@@ -90,7 +97,7 @@ theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
   rcases lt_or_ge (fA (x 6) / fA (x 1) + fD (x 6) / fD (x 5)) 1 with h6lt | h6gt
   · by_cases h2lt : fA (x 2) / fA (x 1) + fD (x 2) / fD (x 5) < 1
     · -- the view `P` along the edge `04`
-      refine isRupert_of_facets_edge_tri V hgen QD QA (sub _) (sub _) (isFacet_of_index x _ fD hD)
+      refine isRupert_of_facets_edge_tri_or V hgen QD QA (sub _) (sub _) (isFacet_of_index x _ fD hD)
         (isFacet_of_index x _ fA hA) (x 0) (x 4) (fun h => by have := hx h; omega) ?_
         ⟨x 1, (memQ _ 1).mpr (by decide), by rw [memQ]; decide⟩
         ⟨x 5, (memQ _ 5).mpr (by decide), by rw [memQ]; decide⟩
@@ -149,12 +156,12 @@ theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       have hivhT2 : QA ∩ QE = {x 5} := by
         rw [inter, show ({0, 3, 4, 5} ∩ {1, 2, 5} : Finset (Fin 7)) = {5} by decide]
         simp
-      refine isRupert_of_facets_vertex_tie V hgen QA QE (sub _) (sub _) (isFacet_of_index x _ fA hA)
+      refine isRupert_of_facets_vertex_tie_or V hgen QA QE (sub _) (sub _) (isFacet_of_index x _ fA hA)
         (isFacet_of_index x _ fE hE) (x 5) hivhT2
         ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩
         ⟨x 1, (memQ _ 1).mpr (by decide), fun h => by have := hx h; omega⟩
-        (hT2.tie (sub _) (sub _) hivhT2
-          (Or.inr (by show (({1, 2, 5} : Finset (Fin 7)).image x).card = 3; rw [Finset.card_image_of_injective _ hx]; decide))) ?_
+        (hT2.imp (fun h => h.tie (sub _) (sub _) hivhT2
+          (Or.inr (by show (({1, 2, 5} : Finset (Fin 7)).image x).card = 3; rw [Finset.card_image_of_injective _ hx]; decide))) id) ?_
       refine ⟨x 4, (memQ _ 4).mpr (by decide), x 1, (memQ _ 1).mpr (by decide),
         fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩
       intro f1 f2 z1 n1 z2 n2 y hy hy1 hy2
@@ -228,13 +235,13 @@ theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       simp
     rcases h6gt.lt_or_eq with h6lt' | h6eq
     · -- `P_6 > 1`: `x3` strictly inside, the view `Q1` by Lemma T (the tie allowed)
-      refine isRupert_of_facets_vertex_tie V hgen QD QH (sub _) (sub _)
+      refine isRupert_of_facets_vertex_tie_or V hgen QD QH (sub _) (sub _)
         (isFacet_of_index x _ fD hD) (isFacet_of_index x _ fH hH) (x 1) hiv
         ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩
         ⟨x 5, (memQ _ 5).mpr (by decide), fun h => by have := hx h; omega⟩
-        (hT1.1.tie (sub _) (sub _) hiv
+        (hT1.1.imp (fun h => h.tie (sub _) (sub _) hiv
           (Or.inl (by show (({0, 1, 4} : Finset (Fin 7)).image x).card = 3
-                      rw [Finset.card_image_of_injective _ hx]; decide)))
+                      rw [Finset.card_image_of_injective _ hx]; decide))) id)
         ⟨x 4, (memQ _ 4).mpr (by decide), x 5, (memQ _ 5).mpr (by decide),
           fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩
       intro f1 f2 z1 n1 z2 n2 y hy hy1 hy2
