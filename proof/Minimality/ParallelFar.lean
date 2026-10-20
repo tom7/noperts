@@ -251,6 +251,102 @@ theorem vertex_core_par (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ 
   · exact ⟨a, b, z, rfl, ha.le, hb.le, Or.inl (far_tiltOK hin), fun h => absurd h hb.ne',
       fun h => absurd h ha.ne'⟩
 
+/-- All chains of one point set end at the same `a` (the largest). -/
+theorem ChainOKc.far_a_eq {Q : ℝ → ℝ → Prop} {z0 z0' s s' : ℝ} {m m' : ℕ} {ca cz ca' cz' : ℕ → ℝ}
+    (h : ChainOKc Q z0 s m ca cz) (h' : ChainOKc Q z0' s' m' ca' cz') : ca m = ca' m' := by
+  have le1 : ca' m' ≤ ca m := by
+    by_cases e : ca' m' = ca m ∧ cz' m' = cz m
+    · exact e.1.le
+    rcases h.far _ _ (h'.mem m' le_rfl) e with hl | ⟨hl, -⟩
+    · exact hl.le
+    · exact hl.le
+  have le2 : ca m ≤ ca' m' := by
+    by_cases e : ca m = ca' m' ∧ cz m = cz' m'
+    · exact e.1.le
+    rcases h'.far _ _ (h.mem m le_rfl) e with hl | ⟨hl, -⟩
+    · exact hl.le
+    · exact hl.le
+  linarith
+
+/-- If only one point of `Q` has the largest `a`, every chain ends there. -/
+theorem ChainOKc.far_z_of_unique {Q : ℝ → ℝ → Prop} {z0 z0' s s' : ℝ} {m m' : ℕ}
+    {ca cz ca' cz' : ℕ → ℝ} (h : ChainOKc Q z0 s m ca cz) (h' : ChainOKc Q z0' s' m' ca' cz')
+    (hu : ∀ z, Q (ca m) z → z = cz m) : ∀ z, Q (ca' m') z → z = cz' m' := by
+  have ea := h.far_a_eq h'
+  intro z hz
+  rw [← ea] at hz
+  have e1 := hu z hz
+  have e2 := hu (cz' m') (by rw [ea]; exact h'.mem m' le_rfl)
+  rw [e1, e2]
+
+set_option maxHeartbeats 4000000 in
+/-- **Lemma T over a vertex, far companions allowed, from chains.** As
+`isRupert_vertex_frame`, for chains that may have vertical companions at
+their far ends (`ChainOKc`), provided one of the two faces has a single
+point of largest `a` (else the rectangle exception) and the far depths are
+not all tied (`hfar`: the top of one face's far vertical is above the
+bottom of the other's, in one of the two orders). -/
+theorem isRupert_vertex_frame_par (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ → ℝ → Prop)
+    {z0 : ℝ}
+    (hU1 : ∃ m ca cz, ChainOKc Q1 z0 1 m ca cz) (hL1 : ∃ m ca cz, ChainOKc Q1 z0 (-1) m ca cz)
+    (hU2 : ∃ m ca cz, ChainOKc Q2 z0 1 m ca cz) (hL2 : ∃ m ca cz, ChainOKc Q2 z0 (-1) m ca cz)
+    (hap1 : ∀ z, Q1 0 z → z = z0) (hap2 : ∀ z, Q2 0 z → z = z0)
+    (hpos1 : ∀ a z, Q1 a z → 0 ≤ a) (hpos2 : ∀ b z, Q2 b z → 0 ≤ b)
+    (hone : (∀ m ca cz, ChainOKc Q1 z0 1 m ca cz → ∀ z, Q1 (ca m) z → z = cz m) ∨
+      (∀ n cb dz, ChainOKc Q2 z0 1 n cb dz → ∀ z, Q2 (cb n) z → z = dz n))
+    (hfar : ∀ m ca cz m' ca' cz' n cb dz n' cb' dz', ChainOKc Q1 z0 1 m ca cz →
+      ChainOKc Q1 z0 (-1) m' ca' cz' → ChainOKc Q2 z0 1 n cb dz → ChainOKc Q2 z0 (-1) n' cb' dz' →
+      dz' n' < cz m ∨ cz' m' < dz n)
+    (V : Finset ℝ³)
+    (hV1 : ∀ a z, Q1 a z → oblPt O r1 r2 a 0 z ∈ V) (hV2 : ∀ b z, Q2 b z → oblPt O r1 r2 0 b z ∈ V)
+    (hVc : ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧
+      ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧
+        ∀ m ca cz n cb dz, ChainOKc Q1 z0 1 m ca cz → ChainOKc Q2 z0 1 n cb dz →
+          a * cb n + b * ca m < ca m * cb n))) :
+    IsRupert V := by
+  obtain ⟨m0, ca0, cz0, U1⟩ := hU1
+  obtain ⟨n0, cb0, dz0, U2⟩ := hU2
+  obtain ⟨m1, ca1, cz1, L1⟩ := hL1
+  obtain ⟨n1, cb1, dz1, L2⟩ := hL2
+  -- the core for chains `C1` (sign `s`), `C2` (sign `-s`)
+  have core : ∀ (s : ℝ), (s = 1 ∨ s = -1) → ∀ {m n : ℕ} {ca cz cb dz : ℕ → ℝ},
+      ChainOKc Q1 z0 s m ca cz → ChainOKc Q2 z0 (-s) n cb dz → s * dz n < s * cz m →
+      IsRupert V := by
+    intro s hs m n ca cz cb dz C1 C2 hAB
+    have ea := C1.far_a_eq U1
+    have eb := C2.far_a_eq U2
+    have hA0 := C1.far_pos
+    have hB0 := C2.far_pos
+    -- the tilt ratio: lean toward the face without companions
+    obtain ⟨α, β, hα, hβ, hr1, hr2⟩ : ∃ α β : ℝ, 0 < α ∧ 0 < β ∧
+        (∀ z, Q1 (ca m) z → z ≠ cz m → ca m * β < cb n * α) ∧
+        (∀ z, Q2 (cb n) z → z ≠ dz n → cb n * α < ca m * β) := by
+      rcases hone with h1 | h2
+      · have hu := U1.far_z_of_unique C1 (h1 m0 ca0 cz0 U1)
+        refine ⟨1, 2 * cb n / ca m, one_pos, by positivity, fun z hz hne => absurd (hu z hz) hne,
+          fun z _ _ => ?_⟩
+        rw [mul_div_assoc', mul_comm (ca m) (2 * cb n), mul_div_assoc, div_self hA0.ne']
+        linarith
+      · have hu := U2.far_z_of_unique C2 (h2 n0 cb0 dz0 U2)
+        refine ⟨2 * ca m / cb n, 1, by positivity, one_pos, fun z _ _ => ?_,
+          fun z hz hne => absurd (hu z hz) hne⟩
+        rw [mul_div_assoc', mul_comm (cb n) (2 * ca m), mul_div_assoc, div_self hB0.ne']
+        linarith
+    refine vertex_core_par O r1 r2 hρ Q1 Q2 s hs C1 C2 hAB hα hβ hr1 hr2 hap1 hap2 hpos1 hpos2 V
+      hV1 hV2 ?_
+    intro y hy
+    obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
+    refine ⟨a, b, z, rfl, ?_⟩
+    rcases hc with h | h | ⟨ha, hb, hin⟩
+    · exact Or.inl h
+    · exact Or.inr (Or.inl h)
+    · right; right; refine ⟨ha, hb, ?_⟩
+      have := hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
+      rw [ea, eb]; exact this
+  rcases hfar m0 ca0 cz0 m1 ca1 cz1 n0 cb0 dz0 n1 cb1 dz1 U1 L1 U2 L2 with h | h
+  · exact core 1 (Or.inl rfl) U1 (by simpa using L2) (by linarith)
+  · exact core (-1) (Or.inr rfl) L1 (by simpa using U2) (by linarith)
+
 end Minimality
 
 end
