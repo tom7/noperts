@@ -465,6 +465,84 @@ theorem isRupert_facets_vertex_par (V Q1 Q2 : Finset ℝ³) (v : ℝ³)
     rw [tF1, tF1, tF2, tF2]
     exact h y hy (fun h => hy1 ((memg Q1 y).mpr h)) (fun h => hy2 ((memg Q2 y).mpr h))
 
+
+/-- General position for Lemma T at the line of the planes of two facets,
+**segments parallel to the line allowed**: distinct depths at the far ends
+(as `TriGenFar`) and one facet with a single point where the other's
+functional is least (else Corollary T1's rectangle exception). -/
+def TriGenFarP (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
+  ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+    (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+    ∀ e : ℝ³, e ≠ 0 → f1 (v + e) = 0 → f2 (v + e) = 0 →
+      (∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
+        ⟪p, e⟫ ≠ ⟪q, e⟫) ∧
+      ((∀ p ∈ Q1, ∀ p' ∈ Q1, (∀ p'' ∈ Q1, f2 p ≤ f2 p'') → f2 p' = f2 p → p' = p) ∨
+        (∀ q ∈ Q2, ∀ q' ∈ Q2, (∀ q'' ∈ Q2, f1 q ≤ f1 q'') → f1 q' = f1 q → q' = q))
+
+set_option maxHeartbeats 4000000 in
+/-- **Lemma T over a vertex, facet form, segments parallel to the view line
+allowed** (`TriGenFarP` in place of `TriGenFar`). -/
+theorem isRupert_of_facets_vertex_par (V : Finset ℝ³) (hgen : NoThreeCollinear V)
+    (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (h1f : IsFacet V Q1) (h2f : IsFacet V Q2)
+    (v : ℝ³) (hint : Q1 ∩ Q2 = {v}) (hne1 : ∃ p ∈ Q1, p ≠ v) (hne2 : ∃ p ∈ Q2, p ≠ v)
+    (hT : TriGenFarP V Q1 Q2 v)
+    (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧ ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ,
+      (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+      (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+      ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V := by
+  classical
+  have hv1 : v ∈ Q1 := (Finset.mem_inter.mp (hint ▸ Finset.mem_singleton_self v)).1
+  have hv2 : v ∈ Q2 := (Finset.mem_inter.mp (hint ▸ Finset.mem_singleton_self v)).2
+  have only : ∀ p ∈ Q1, p ∈ Q2 → p = v := by
+    intro p h1 h2
+    have : p ∈ Q1 ∩ Q2 := Finset.mem_inter.mpr ⟨h1, h2⟩
+    rwa [hint, Finset.mem_singleton] at this
+  obtain ⟨p1, hp1, hp1v⟩ := hne1
+  obtain ⟨p2, hp2, hp2v⟩ := hne2
+  obtain ⟨f1, z1, n1⟩ := h1f
+  obtain ⟨f2, z2, n2⟩ := h2f
+  obtain ⟨K1, α1, β1, γ1, hf1⟩ := affine_xyz f1
+  obtain ⟨K2, α2, β2, γ2, hf2⟩ := affine_xyz f2
+  set e : ℝ³ := !₂[β1 * γ2 - γ1 * β2, γ1 * α2 - α1 * γ2, α1 * β2 - β1 * α2] with he
+  have dif : ∀ (f : ℝ³ →ᵃ[ℝ] ℝ) (K α β γ : ℝ), (∀ p, f p = K + α * p 0 + β * p 1 + γ * p 2) →
+      ∀ p q, f q - f p = α * (q 0 - p 0) + β * (q 1 - p 1) + γ * (q 2 - p 2) := by
+    intro f K α β γ h p q; rw [h, h]; ring
+  have e1 : f1 (v + e) = 0 := by
+    have := dif f1 K1 α1 β1 γ1 hf1 v (v + e)
+    rw [z1 v hv1] at this; rw [sub_zero] at this; rw [this]; simp [he]; ring
+  have e2 : f2 (v + e) = 0 := by
+    have := dif f2 K2 α2 β2 γ2 hf2 v (v + e)
+    rw [z2 v hv2] at this; rw [sub_zero] at this; rw [this]; simp [he]; ring
+  have hn1 : f1 p2 < 0 := n1 p2 (h2V hp2) (fun h => hp2v (only p2 h hp2))
+  have hn2 : f2 p1 < 0 := n2 p1 (h1V hp1) (fun h => hp1v (only p1 hp1 h))
+  have hne : e ≠ 0 := by
+    intro h0
+    have c0 := congrArg (fun p : ℝ³ => p 0) h0
+    have c1 := congrArg (fun p : ℝ³ => p 1) h0
+    have c2 := congrArg (fun p : ℝ³ => p 2) h0
+    simp [he] at c0 c1 c2
+    have d14 := dif f1 K1 α1 β1 γ1 hf1 v p2
+    have d21 := dif f2 K2 α2 β2 γ2 hf2 v p1
+    have d11 := dif f1 K1 α1 β1 γ1 hf1 v p1
+    rw [z1 v hv1, sub_zero] at d14
+    rw [z1 v hv1, z1 p1 hp1, sub_zero] at d11
+    rw [z2 v hv2, sub_zero] at d21
+    have key : (f1 p2) * (f2 p1) = 0 := by
+      rw [d14, d21]
+      have := d11
+      linear_combination (α2 * (p2 0 - v 0) + β2 * (p2 1 - v 1) + γ2 * (p2 2 - v 2)) * this.symm +
+        ((p1 1 - v 1) * (p2 0 - v 0) - (p1 0 - v 0) * (p2 1 - v 1)) * c2 +
+        ((p1 2 - v 2) * (p2 1 - v 1) - (p1 1 - v 1) * (p2 2 - v 2)) * c0 +
+        ((p1 0 - v 0) * (p2 2 - v 2) - (p1 2 - v 2) * (p2 0 - v 0)) * c1
+    nlinarith
+  obtain ⟨hfarZ, hone⟩ := hT f1 f2 z1 n1 z2 n2 e hne e1 e2
+  obtain ⟨xa, hxa, xb, hxb, hxav, hxbv, hin'⟩ := hin
+  refine isRupert_facets_vertex_par V Q1 Q2 v h1V h2V hint f1 f2 z1 n1 z2 n2 e hne e1 e2
+    ⟨p1, hp1, hp1v⟩ ⟨p2, hp2, hp2v⟩ ?_ hfarZ hone
+    ⟨xa, hxa, xb, hxb, hxav, hxbv, hin' f1 f2 z1 n1 z2 n2⟩
+  exact hgen
+
+
 end Minimality
 
 end
