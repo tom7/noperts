@@ -26,6 +26,7 @@ public import Minimality.TieRight
 public import Minimality.Transversal
 public import Minimality.Parity
 public import Minimality.Chords
+public import Minimality.EdgeChords
 public import Minimality.Global
 public import Minimality.Shear
 public import Minimality.ParallelFar

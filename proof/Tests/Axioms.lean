@@ -47,6 +47,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.isRupert_of_axis_helly
 #assert_standard_axioms Minimality.odd_card_sign_changes
 #assert_standard_axioms Minimality.isRupert_of_chords
+#assert_standard_axioms Minimality.exists_tilt_edgeChords
+#assert_standard_axioms Minimality.isRupert_of_edgeChords
 #assert_standard_axioms Minimality.tie_core_right
 #assert_standard_axioms Minimality.isRupert_of_tie_right
 #assert_standard_axioms Minimality.isRupert_of_tie_right_neg
