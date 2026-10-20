@@ -24,6 +24,7 @@ public import Minimality.TieRobust
 public import Minimality.TieFrame
 public import Minimality.Global
 public import Minimality.Shear
+public import Minimality.ParallelFar
 
 /-!
 # Every nopert has at least 7 points
