@@ -543,6 +543,257 @@ theorem isRupert_of_facets_vertex_par (V : Finset ℝ³) (hgen : NoThreeCollinea
   exact hgen
 
 
+set_option maxHeartbeats 4000000 in
+/-- **Lemma T over an edge in coordinates, segments parallel to the view line
+allowed** (as `isRupert_edge_coords` without the injectivity hypotheses; one
+face with a single vertex of largest `a`, resp. `b`). -/
+theorem isRupert_edge_coords_par (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V Q1 Q2 : Finset ℝ³)
+    (v w : ℝ³) (hvw : v 2 < w 2) (a b : ℝ³ → ℝ)
+    (hy : ∀ p ∈ V, p = oblPt O r1 r2 (a p) (b p) (p 2))
+    (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hint : Q1 ∩ Q2 = {v, w})
+    (hb1 : ∀ p ∈ Q1, b p = 0) (hb1' : ∀ p ∈ V, p ∉ Q1 → 0 < b p)
+    (ha2 : ∀ p ∈ Q2, a p = 0) (ha2' : ∀ p ∈ V, p ∉ Q2 → 0 < a p)
+    (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
+    (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
+    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, a p' ≤ a p) → (∀ q' ∈ Q2, b q' ≤ b q) →
+      p 2 ≠ q 2)
+    (hone : (∀ p ∈ Q1, ∀ p' ∈ Q1, (∀ p'' ∈ Q1, a p'' ≤ a p) → a p' = a p → p' = p) ∨
+      (∀ q ∈ Q2, ∀ q' ∈ Q2, (∀ q'' ∈ Q2, b q'' ≤ b q) → b q' = b q → q' = q))
+    (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
+      ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → a y / a xa + b y / b xb < 1) : IsRupert V := by
+  classical
+  have mem12 : ∀ p, p ∈ Q1 → p ∈ Q2 → p = v ∨ p = w := by
+    intro p h1 h2
+    have : p ∈ Q1 ∩ Q2 := Finset.mem_inter.mpr ⟨h1, h2⟩
+    rw [hint] at this; simpa using this
+  have hvi : v ∈ Q1 ∩ Q2 := by rw [hint]; simp
+  have hwi : w ∈ Q1 ∩ Q2 := by rw [hint]; simp
+  have hv1 := (Finset.mem_inter.mp hvi).1; have hv2 := (Finset.mem_inter.mp hvi).2
+  have hw1 := (Finset.mem_inter.mp hwi).1; have hw2 := (Finset.mem_inter.mp hwi).2
+  have hav := ha2 v hv2; have haw := ha2 w hw2
+  have hbv := hb1 v hv1; have hbw := hb1 w hw1
+  have hvw' : v ≠ w := fun e => by rw [e] at hvw; exact lt_irrefl _ hvw
+  -- the faces in their planes
+  set S1 := Q1.image (fun p => (a p, p 2)) with hS1
+  set S2 := Q2.image (fun p => (b p, p 2)) with hS2
+  have ofS1 : ∀ x z, (x, z) ∈ S1 → ∃ p ∈ Q1, a p = x ∧ p 2 = z := by
+    intro x z h; rw [hS1, Finset.mem_image] at h
+    obtain ⟨p, hp, e⟩ := h; simp only [Prod.mk.injEq] at e; exact ⟨p, hp, e.1, e.2⟩
+  have ofS2 : ∀ x z, (x, z) ∈ S2 → ∃ p ∈ Q2, b p = x ∧ p 2 = z := by
+    intro x z h; rw [hS2, Finset.mem_image] at h
+    obtain ⟨p, hp, e⟩ := h; simp only [Prod.mk.injEq] at e; exact ⟨p, hp, e.1, e.2⟩
+  have pt1 : ∀ p ∈ Q1, p = oblPt O r1 r2 (a p) 0 (p 2) := fun p hp => by
+    conv_lhs => rw [hy p (h1V hp), hb1 p hp]
+  have pt2 : ∀ p ∈ Q2, p = oblPt O r1 r2 0 (b p) (p 2) := fun p hp => by
+    conv_lhs => rw [hy p (h2V hp), ha2 p hp]
+  have d1 : ∀ {r r' : ℝ × ℝ} {u u' : ℝ³}, r ≠ r' → a u = r.1 → u 2 = r.2 → a u' = r'.1 →
+      u' 2 = r'.2 → u ≠ u' := by
+    intro r r' u u' h h1 h2 h1' h2' hu; apply h
+    exact Prod.ext (by rw [← h1, ← h1', hu]) (by rw [← h2, ← h2', hu])
+  have d2 : ∀ {r r' : ℝ × ℝ} {u u' : ℝ³}, r ≠ r' → b u = r.1 → u 2 = r.2 → b u' = r'.1 →
+      u' 2 = r'.2 → u ≠ u' := by
+    intro r r' u u' h h1 h2 h1' h2' hu; apply h
+    exact Prod.ext (by rw [← h1, ← h1', hu]) (by rw [← h2, ← h2', hu])
+  -- chains of the first face
+  have chains1 : ∀ (s : ℝ) (u u' : ℝ³), (s = 1 ∨ s = -1) → (u = v ∧ u' = w ∨ u = w ∧ u' = v) →
+      s * u' 2 < s * u 2 → ∃ m ca cz, ChainOKc (fun x z => (x, z) ∈ S1) (u 2) s m ca cz := by
+    intro s u u' hs huu hso
+    have hu1 : u ∈ Q1 := by rcases huu with ⟨rfl, -⟩ | ⟨rfl, -⟩ <;> assumption
+    have hau : a u = 0 := by rcases huu with ⟨rfl, -⟩ | ⟨rfl, -⟩ <;> assumption
+    apply exists_chainOKc_edge S1 (u 2) (u' 2) s hs hso
+      (by rw [hS1, Finset.mem_image]; exact ⟨u, hu1, by rw [hau]⟩)
+    · intro q hq h0 h1
+      obtain ⟨p, hp, e1, e2⟩ := ofS1 q.1 q.2 hq
+      by_cases hp2 : p ∈ Q2
+      · exfalso
+        have hpe : p = u ∨ p = u' := by
+          rcases mem12 p hp hp2 with rfl | rfl <;> rcases huu with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp
+        rcases hpe with rfl | rfl
+        · exact h0 (Prod.ext (by rw [← e1, hau]) (by rw [← e2]))
+        · apply h1; refine Prod.ext ?_ (by rw [← e2])
+          show q.1 = 0; rw [← e1]; exact ha2 p hp2
+      · rw [← e1]; exact ha2' p (h1V hp) hp2
+    · obtain ⟨p, hp, hp2⟩ := hne1
+      exact ⟨(a p, p 2), Finset.mem_image_of_mem _ hp, ha2' p (h1V hp) hp2⟩
+    · intro q hq q' hq' q'' hq'' n1 n2 n3
+      obtain ⟨p, hp, e1, e2⟩ := ofS1 q.1 q.2 hq
+      obtain ⟨p', hp', e1', e2'⟩ := ofS1 q'.1 q'.2 hq'
+      obtain ⟨p'', hp'', e1'', e2''⟩ := ofS1 q''.1 q''.2 hq''
+      have := orient_ne_of_frame1' (O := O) (r1 := r1) (r2 := r2) (ai := a p) (zi := p 2)
+        (aj := a p') (zj := p' 2) (zk := p'' 2) (ak := a p'')
+        (by rw [e1, e2, e1', e2']; exact n1) (by
+          intro c; rw [← pt1 p hp, ← pt1 p' hp', ← pt1 p'' hp'']
+          exact hcol p (h1V hp) p' (h1V hp') p'' (h1V hp'') (d1 n1 e1 e2 e1' e2')
+            (d1 n2 e1 e2 e1'' e2'') (d1 n3 e1' e2' e1'' e2'') c)
+      unfold orient2 at this; rwa [e1, e2, e1', e2', e1'', e2''] at this
+  have chains2 : ∀ (s : ℝ) (u u' : ℝ³), (s = 1 ∨ s = -1) → (u = v ∧ u' = w ∨ u = w ∧ u' = v) →
+      s * u' 2 < s * u 2 → ∃ m ca cz, ChainOKc (fun x z => (x, z) ∈ S2) (u 2) s m ca cz := by
+    intro s u u' hs huu hso
+    have hu2 : u ∈ Q2 := by rcases huu with ⟨rfl, -⟩ | ⟨rfl, -⟩ <;> assumption
+    have hbu : b u = 0 := by rcases huu with ⟨rfl, -⟩ | ⟨rfl, -⟩ <;> assumption
+    apply exists_chainOKc_edge S2 (u 2) (u' 2) s hs hso
+      (by rw [hS2, Finset.mem_image]; exact ⟨u, hu2, by rw [hbu]⟩)
+    · intro q hq h0 h1
+      obtain ⟨p, hp, e1, e2⟩ := ofS2 q.1 q.2 hq
+      by_cases hp1 : p ∈ Q1
+      · exfalso
+        have hpe : p = u ∨ p = u' := by
+          rcases mem12 p hp1 hp with rfl | rfl <;> rcases huu with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp
+        rcases hpe with rfl | rfl
+        · exact h0 (Prod.ext (by rw [← e1, hbu]) (by rw [← e2]))
+        · apply h1; refine Prod.ext ?_ (by rw [← e2])
+          show q.1 = 0; rw [← e1]; exact hb1 p hp1
+      · rw [← e1]; exact hb1' p (h2V hp) hp1
+    · obtain ⟨p, hp, hp1⟩ := hne2
+      exact ⟨(b p, p 2), Finset.mem_image_of_mem _ hp, hb1' p (h2V hp) hp1⟩
+    · intro q hq q' hq' q'' hq'' n1 n2 n3
+      obtain ⟨p, hp, e1, e2⟩ := ofS2 q.1 q.2 hq
+      obtain ⟨p', hp', e1', e2'⟩ := ofS2 q'.1 q'.2 hq'
+      obtain ⟨p'', hp'', e1'', e2''⟩ := ofS2 q''.1 q''.2 hq''
+      have := orient_ne_of_frame2' (O := O) (r1 := r1) (r2 := r2) (bi := b p) (zi := p 2)
+        (bj := b p') (zj := p' 2) (zk := p'' 2) (bk := b p'')
+        (by rw [e1, e2, e1', e2']; exact n1) (by
+          intro c; rw [← pt2 p hp, ← pt2 p' hp', ← pt2 p'' hp'']
+          exact hcol p (h2V hp) p' (h2V hp') p'' (h2V hp'') (d2 n1 e1 e2 e1' e2')
+            (d2 n2 e1 e2 e1'' e2'') (d2 n3 e1' e2' e1'' e2'') c)
+      unfold orient2 at this; rwa [e1, e2, e1', e2', e1'', e2''] at this
+  have up : (1 : ℝ) * v 2 < 1 * w 2 := by linarith
+  have lo : (-1 : ℝ) * w 2 < -1 * v 2 := by linarith
+  -- far points of the chains, and tops above bottoms
+  have far1 : ∀ {s z0 : ℝ} {m : ℕ} {ca cz : ℕ → ℝ}, ChainOKc (fun x z => (x, z) ∈ S1) z0 s m ca cz →
+      ∃ p ∈ Q1, a p = ca m ∧ p 2 = cz m ∧ ∀ p'' ∈ Q1, a p'' ≤ a p := by
+    intro s z0 m ca cz C
+    obtain ⟨p, hp, e1, e2⟩ := ofS1 _ _ (C.mem m le_rfl)
+    refine ⟨p, hp, e1, e2, fun p'' hp'' => ?_⟩
+    rw [e1]
+    by_cases e : a p'' = ca m ∧ p'' 2 = cz m
+    · exact e.1.le
+    rcases C.far _ _ (Finset.mem_image_of_mem _ hp'') e with h | ⟨h, -⟩
+    · exact h.le
+    · exact h.le
+  have far2 : ∀ {s z0 : ℝ} {n : ℕ} {cb dz : ℕ → ℝ}, ChainOKc (fun x z => (x, z) ∈ S2) z0 s n cb dz →
+      ∃ q ∈ Q2, b q = cb n ∧ q 2 = dz n ∧ ∀ q'' ∈ Q2, b q'' ≤ b q := by
+    intro s z0 n cb dz C
+    obtain ⟨q, hq, e1, e2⟩ := ofS2 _ _ (C.mem n le_rfl)
+    refine ⟨q, hq, e1, e2, fun q'' hq'' => ?_⟩
+    rw [e1]
+    by_cases e : b q'' = cb n ∧ q'' 2 = dz n
+    · exact e.1.le
+    rcases C.far _ _ (Finset.mem_image_of_mem (fun p => (b p, p 2)) hq'') e with h | ⟨h, -⟩
+    · exact h.le
+    · exact h.le
+  have topbot : ∀ {Q : ℝ → ℝ → Prop} {z0 z0' : ℝ} {m m' : ℕ} {ca cz ca' cz' : ℕ → ℝ},
+      ChainOKc Q z0 1 m ca cz → ChainOKc Q z0' (-1) m' ca' cz' → cz' m' ≤ cz m := by
+    intro Q z0 z0' m m' ca cz ca' cz' U L
+    have ea := U.far_a_eq L
+    by_cases e : ca' m' = ca m ∧ cz' m' = cz m
+    · exact e.2.le
+    rcases U.far _ _ (L.mem m' le_rfl) e with h | ⟨-, h⟩
+    · exact absurd ea (by linarith)
+    · linarith
+  have pq : ∀ p ∈ Q1, ∀ q ∈ Q2, (∀ p'' ∈ Q1, a p'' ≤ a p) → p ≠ q := by
+    intro p hp q hq hmax e; subst e
+    obtain ⟨p', hp', hp'2⟩ := hne1
+    have := hmax p' hp'; rw [ha2 p hq] at this
+    linarith [ha2' p' (h1V hp') hp'2]
+  obtain ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩ := hin
+  refine isRupert_edge_frame_par O r1 r2 hρ (fun x z => (x, z) ∈ S1) (fun x z => (x, z) ∈ S2)
+    (zx := v 2) (zx' := w 2) hvw
+    (chains1 1 w v (Or.inl rfl) (Or.inr ⟨rfl, rfl⟩) up)
+    (chains1 (-1) v w (Or.inr rfl) (Or.inl ⟨rfl, rfl⟩) lo)
+    (chains2 1 w v (Or.inl rfl) (Or.inr ⟨rfl, rfl⟩) up)
+    (chains2 (-1) v w (Or.inr rfl) (Or.inl ⟨rfl, rfl⟩) lo) ?_ ?_
+    (Finset.mem_image.mpr ⟨v, hv1, by rw [hav]⟩) (Finset.mem_image.mpr ⟨w, hw1, by rw [haw]⟩)
+    (Finset.mem_image.mpr ⟨v, hv2, by rw [hbv]⟩) (Finset.mem_image.mpr ⟨w, hw2, by rw [hbw]⟩)
+    ?_ ?_ ?_ ?_ V ?_ ?_ ?_
+  · intro z h
+    obtain ⟨p, hp, e1, e2⟩ := ofS1 0 z h
+    by_cases hp2 : p ∈ Q2
+    · rcases mem12 p hp hp2 with rfl | rfl
+      · exact Or.inl e2.symm
+      · exact Or.inr e2.symm
+    · linarith [ha2' p (h1V hp) hp2]
+  · intro z h
+    obtain ⟨p, hp, e1, e2⟩ := ofS2 0 z h
+    by_cases hp1 : p ∈ Q1
+    · rcases mem12 p hp1 hp with rfl | rfl
+      · exact Or.inl e2.symm
+      · exact Or.inr e2.symm
+    · linarith [hb1' p (h2V hp) hp1]
+  · intro x z h
+    obtain ⟨p, hp, e1, e2⟩ := ofS1 x z h
+    by_cases hp2 : p ∈ Q2
+    · rw [← e1, ha2 p hp2]
+    · rw [← e1]; exact (ha2' p (h1V hp) hp2).le
+  · intro x z h
+    obtain ⟨p, hp, e1, e2⟩ := ofS2 x z h
+    by_cases hp1 : p ∈ Q1
+    · rw [← e1, hb1 p hp1]
+    · rw [← e1]; exact (hb1' p (h2V hp) hp1).le
+  · rcases hone with h1 | h2
+    · left; intro m ca cz C z hz
+      obtain ⟨p, hp, e1, e2, hmax⟩ := far1 C
+      obtain ⟨p', hp', e1', e2'⟩ := ofS1 _ _ hz
+      have := h1 p hp p' hp' hmax (by rw [e1, e1'])
+      rw [← e2', this, e2]
+    · right; intro n cb dz C z hz
+      obtain ⟨q, hq, e1, e2, hmax⟩ := far2 C
+      obtain ⟨q', hq', e1', e2'⟩ := ofS2 _ _ hz
+      have := h2 q hq q' hq' hmax (by rw [e1, e1'])
+      rw [← e2', this, e2]
+  · intro m ca cz m' ca' cz' n cb dz n' cb' dz' U1 L1 U2 L2
+    obtain ⟨pU, hpU, aU, zU, mU⟩ := far1 U1
+    obtain ⟨pL, hpL, aL, zL, mL⟩ := far1 L1
+    obtain ⟨qU, hqU, bU, wU, nU⟩ := far2 U2
+    obtain ⟨qL, hqL, bL, wL, nL⟩ := far2 L2
+    have tb1 := topbot U1 L1
+    have tb2 := topbot U2 L2
+    rcases hone with h1 | h2
+    · have e : pL = pU := h1 pU hpU pL hpL mU (by rw [aU, aL]; exact (U1.far_a_eq L1).symm)
+      have hz : cz' m' = cz m := by rw [← zL, ← zU, e]
+      have hne := hfarZ pU hpU qL hqL (pq pU hpU qL hqL mU) mU nL
+      rw [zU, wL] at hne
+      rcases lt_or_gt_of_ne hne with h | h
+      · right; rw [hz]; linarith
+      · left; exact h
+    · have e : qL = qU := h2 qU hqU qL hqL nU (by rw [bU, bL]; exact (U2.far_a_eq L2).symm)
+      have hw : dz' n' = dz n := by rw [← wL, ← wU, e]
+      have hne := hfarZ pU hpU qL hqL (pq pU hpU qL hqL mU) mU nL
+      rw [zU, wL] at hne
+      rcases lt_or_gt_of_ne hne with h | h
+      · right; rw [← hw]; linarith
+      · left; exact h
+  · intro x z h
+    obtain ⟨p, hp, e1, e2⟩ := ofS1 x z h
+    rw [← e1, ← e2, ← pt1 p hp]; exact h1V hp
+  · intro x z h
+    obtain ⟨p, hp, e1, e2⟩ := ofS2 x z h
+    rw [← e1, ← e2, ← pt2 p hp]; exact h2V hp
+  · intro y hy'
+    refine ⟨a y, b y, y 2, hy y hy', ?_⟩
+    by_cases h1 : y ∈ Q1
+    · exact Or.inl ⟨hb1 y h1, Finset.mem_image_of_mem _ h1⟩
+    by_cases h2 : y ∈ Q2
+    · exact Or.inr (Or.inl ⟨ha2 y h2, Finset.mem_image_of_mem (fun p => (b p, p 2)) h2⟩)
+    refine Or.inr (Or.inr ⟨ha2' y hy' h2, hb1' y hy' h1, ?_⟩)
+    intro m ca cz n cb dz C1 C2
+    have hA := C1.far_pos
+    have hB := C2.far_pos
+    have hxa0 := ha2' xa (h1V hxa) hxa2
+    have hxb0 := hb1' xb (h2V hxb) hxb1
+    obtain ⟨p, hp, e1, -, hmax1⟩ := far1 C1
+    obtain ⟨q, hq, f1, -, hmax2⟩ := far2 C2
+    have le1 : a xa ≤ ca m := by rw [← e1]; exact hmax1 xa hxa
+    have le2 : b xb ≤ cb n := by rw [← f1]; exact hmax2 xb hxb
+    have k := hin' y hy' h1 h2
+    have ha := ha2' y hy' h2
+    have hb := hb1' y hy' h1
+    have t1 : a y / ca m ≤ a y / a xa := div_le_div_of_nonneg_left ha.le hxa0 le1
+    have t2 : b y / cb n ≤ b y / b xb := div_le_div_of_nonneg_left hb.le hxb0 le2
+    have : a y / ca m + b y / cb n < 1 := by linarith
+    rw [div_add_div _ _ hA.ne' hB.ne', div_lt_one (mul_pos hA hB)] at this
+    linarith
+
 end Minimality
 
 end
