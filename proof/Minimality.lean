@@ -178,7 +178,9 @@ points collinear, two facets sharing exactly the edge `v w`, with general
 position along it (`Minimality.EdgeTieR`: no other segment parallel to it,
 distinct depths along it at the two far ends, or a tie settled by a top or
 bottom vertex or with no right angle at the far ends (Lemma T at the tie, robust
-form); weaker than `Minimality.EdgeFar`), never have every
+form); weaker than `Minimality.EdgeFar`; or `Minimality.EdgeFarP`: segments
+parallel to it allowed, distinct far depths, one far end a single vertex),
+never have every
 other point strictly inside the shadow triangle of the edge and two further
 points `xa ∈ Q1 \ Q2`, `xb ∈ Q2 \ Q1` (barycentric form with any facet
 functionals `f1`, `f2`). -/
@@ -186,15 +188,18 @@ theorem not_facets_edge_triShadow_of_isNopert (V : Finset ℝ³) (h : IsNopert V
     (hgen : Minimality.NoThreeCollinear V) (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
     (h1f : Minimality.IsFacet V Q1) (h2f : Minimality.IsFacet V Q2) (v w : ℝ³) (hvw : v ≠ w)
     (hint : Q1 ∩ Q2 = {v, w})
-    (hZ : Minimality.EdgeTieR V Q1 Q2 v w)
+    (hZ : Minimality.EdgeTieR V Q1 Q2 v w ∨ Minimality.EdgeFarP V Q1 Q2 v w)
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧ ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ,
       (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
       (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : False := by
   obtain ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩ := hin
-  exact h.2 (Minimality.isRupert_of_facets_edge_tieR V hgen Q1 Q2 h1V h2V h1f h2f v w hvw hint
-    ⟨xa, hxa, hxa2⟩ ⟨xb, hxb, hxb1⟩ hZ ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩
-    ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1))
+  rcases hZ with hZ | hZ
+  · exact h.2 (Minimality.isRupert_of_facets_edge_tieR V hgen Q1 Q2 h1V h2V h1f h2f v w hvw hint
+      ⟨xa, hxa, hxa2⟩ ⟨xb, hxb, hxb1⟩ hZ ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩
+      ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1))
+  · exact h.2 (Minimality.isRupert_of_facets_edge_par V hgen Q1 Q2 h1V h2V h1f h2f v w hvw hint
+      ⟨xa, hxa, hxa2⟩ ⟨xb, hxb, hxb1⟩ hZ ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩)
 
 /-- **Lemma T over an edge with a triangle face** (Lemma T at the tie): as
 `not_facets_edge_triShadow_of_isNopert`, but when `Q1` or `Q2` is a triangle
