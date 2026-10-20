@@ -2,6 +2,7 @@ module
 
 public import Minimality.Type10
 public import Minimality.TriTie
+public import Minimality.ParallelOr
 
 @[expose] public section
 
@@ -45,8 +46,12 @@ theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hY : ∀ i, (i ∈ ({2, 4, 5} : Finset (Fin 7)) → fY (x i) = 0) ∧
       (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fY (x i) < 0))
     (hcase : fT (x 6) / fT (x 2) ≤ 1)
-    (hZ1 : EdgePar (univ.image x) (x 0) (x 4))
+    (hZ1 : EdgePar (univ.image x) (x 0) (x 4) ∨
+      EdgeFarP (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+      (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4))
     (hT2 : TriGenTri (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+      (({2, 3, 5} : Finset (Fin 7)).image x) (x 2) ∨
+      TriGenFarP (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2)) :
     IsRupert (univ.image x) := by
   classical
@@ -130,7 +135,7 @@ theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     linarith
   rcases lt_or_ge (fT (x 5) / fT (x 2) + fA (x 5) / fA (x 3)) 1 with h5lt | h5gt
   · -- the view `P` along the edge `04`
-    refine isRupert_of_facets_edge_tri V hgen QA QT (sub _) (sub _) (isFacet_of_index x _ fA hA)
+    refine isRupert_of_facets_edge_tri_or V hgen QA QT (sub _) (sub _) (isFacet_of_index x _ fA hA)
       (isFacet_of_index x _ fT hT) (x 0) (x 4) (fun h => by have := hx h; omega) ?_
       ⟨x 2, (memQ _ 2).mpr (by decide), by rw [memQ]; decide⟩
       ⟨x 3, (memQ _ 3).mpr (by decide), by rw [memQ]; decide⟩
@@ -208,12 +213,12 @@ theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     have hivhT2 : QA ∩ QG = {x 2} := by
       rw [inter, show ({0, 2, 4, 6} ∩ {2, 3, 5} : Finset (Fin 7)) = {2} by decide]
       simp
-    refine isRupert_of_facets_vertex_tie V hgen QA QG (sub _) (sub _) (isFacet_of_index x _ fA hA)
+    refine isRupert_of_facets_vertex_tie_or V hgen QA QG (sub _) (sub _) (isFacet_of_index x _ fA hA)
       (isFacet_of_index x _ fG hG) (x 2) hivhT2
       ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩
       ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩
-      (hT2.tie (sub _) (sub _) hivhT2
-        (Or.inr (by show (({2, 3, 5} : Finset (Fin 7)).image x).card = 3; rw [Finset.card_image_of_injective _ hx]; decide))) ?_
+      (hT2.imp (fun h => h.tie (sub _) (sub _) hivhT2
+        (Or.inr (by show (({2, 3, 5} : Finset (Fin 7)).image x).card = 3; rw [Finset.card_image_of_injective _ hx]; decide))) id) ?_
     refine ⟨x 4, (memQ _ 4).mpr (by decide), x 3, (memQ _ 3).mpr (by decide),
       fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩
     intro f1 f2 z1 n1 z2 n2 y hy hy1 hy2
@@ -265,10 +270,16 @@ theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fY (x i) < 0))
     (hZ : ∀ i, (i ∈ ({3, 4, 5} : Finset (Fin 7)) → fZ (x i) = 0) ∧
       (i ∉ ({3, 4, 5} : Finset (Fin 7)) → fZ (x i) < 0))
-    (hZ1 : EdgePar (univ.image x) (x 0) (x 4))
+    (hZ1 : EdgePar (univ.image x) (x 0) (x 4) ∨
+      EdgeFarP (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+      (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4))
     (hT2 : TriGenTri (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+      (({2, 3, 5} : Finset (Fin 7)).image x) (x 2) ∨
+      TriGenFarP (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2))
     (hT6 : TriGenTri (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+      (({1, 3, 6} : Finset (Fin 7)).image x) (x 6) ∨
+      TriGenFarP (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6)) :
     IsRupert (univ.image x) := by
   classical
@@ -304,9 +315,13 @@ theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
   · rw [y6, y2, div_le_one_of_neg t6]
     push Not at hc
     exact ((one_lt_div_of_neg t2).mp hc).le
-  · rw [hV, y4, y0]
-    exact fun p hp q hq hpq hpair c h => hZ1 p hp q hq hpq
-      (by rw [Finset.pair_comm (x 0) (x 4)]; exact hpair) (-c) (by rw [h, neg_smul, ← smul_neg, neg_sub])
+  · rw [hV, y4, y0, imgσ _ ({0, 2, 4, 6} : Finset (Fin 7)) (by decide),
+      imgσ _ ({0, 3, 4} : Finset (Fin 7)) (by decide)]
+    rcases hZ1 with hZ1 | hZ1
+    · left
+      exact fun p hp q hq hpq hpair c h => hZ1 p hp q hq hpq
+        (by rw [Finset.pair_comm (x 0) (x 4)]; exact hpair) (-c) (by rw [h, neg_smul, ← smul_neg, neg_sub])
+    · right; exact hZ1.swap
   · rw [hV, imgσ _ ({0, 2, 4, 6} : Finset (Fin 7)) (by decide),
       imgσ _ ({1, 3, 6} : Finset (Fin 7)) (by decide), y2]
     exact hT6

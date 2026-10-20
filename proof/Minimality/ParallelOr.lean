@@ -60,6 +60,17 @@ theorem isRupert_of_facets_edge_tri_or (V : Finset ℝ³) (hgen : NoThreeColline
   · exact isRupert_of_facets_edge_tri V hgen Q1 Q2 h1V h2V h1f h2f v w hvw hint hne1 hne2 hcard h hin
   · exact isRupert_of_facets_edge_par V hgen Q1 Q2 h1V h2V h1f h2f v w hvw hint hne1 hne2 h hin
 
+open scoped RealInnerProductSpace in
+/-- `EdgeFarP` does not depend on the orientation of the edge. -/
+theorem EdgeFarP.swap {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h : EdgeFarP V Q1 Q2 v w) :
+    EdgeFarP V Q1 Q2 w v := by
+  intro f1 f2 z1 n1 z2 n2
+  obtain ⟨hfar, hone⟩ := h f1 f2 z1 n1 z2 n2
+  refine ⟨fun p hp q hq hpq h1 h2 e => hfar p hp q hq hpq h1 h2 ?_, hone⟩
+  have k : ∀ x : ℝ³, ⟪x, v - w⟫ = -⟪x, w - v⟫ := fun x => by
+    rw [show v - w = -(w - v) by abel, inner_neg_right]
+  rw [k, k] at e; linarith
+
 end Minimality
 
 end

@@ -515,10 +515,16 @@ theorem not_type26_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fY (x i) < 0))
     (hZ : ∀ i, (i ∈ ({3, 4, 5} : Finset (Fin 7)) → fZ (x i) = 0) ∧
       (i ∉ ({3, 4, 5} : Finset (Fin 7)) → fZ (x i) < 0))
-    (hZ1 : Minimality.EdgePar (Finset.univ.image x) (x 0) (x 4))
+    (hZ1 : Minimality.EdgePar (Finset.univ.image x) (x 0) (x 4) ∨
+      Minimality.EdgeFarP (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+      (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4))
     (hT2 : Minimality.TriGenTri (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+      (({2, 3, 5} : Finset (Fin 7)).image x) (x 2) ∨
+      Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2))
     (hT6 : Minimality.TriGenTri (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+      (({1, 3, 6} : Finset (Fin 7)).image x) (x 6) ∨
+      Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6)) : False :=
   h.2 (Minimality.isRupert_type26 x hx (noThreeCollinear_seven x h hx)
     fA fT fG fH fU fW fY fZ hA hT hG hH hU hW hY hZ hZ1 hT2 hT6)
