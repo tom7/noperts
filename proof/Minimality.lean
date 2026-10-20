@@ -22,6 +22,7 @@ public import Minimality.Forces
 public import Minimality.TieForces
 public import Minimality.TieRobust
 public import Minimality.TieFrame
+public import Minimality.TieRight
 public import Minimality.Global
 public import Minimality.Shear
 public import Minimality.ParallelFar
