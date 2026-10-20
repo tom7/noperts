@@ -24,6 +24,7 @@ public import Minimality.TieRobust
 public import Minimality.TieFrame
 public import Minimality.TieRight
 public import Minimality.Transversal
+public import Minimality.Parity
 public import Minimality.Global
 public import Minimality.Shear
 public import Minimality.ParallelFar
