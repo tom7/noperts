@@ -43,6 +43,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.screenVel_axis
 #assert_standard_axioms Minimality.isRupert_of_axis
 #assert_standard_axioms Minimality.isRupert_of_axis_image
+#assert_standard_axioms Minimality.convex_setOf_isInwardAt
+#assert_standard_axioms Minimality.isRupert_of_axis_helly
 #assert_standard_axioms Minimality.tie_core_right
 #assert_standard_axioms Minimality.isRupert_of_tie_right
 #assert_standard_axioms Minimality.isRupert_of_tie_right_neg
