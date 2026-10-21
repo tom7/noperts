@@ -252,7 +252,7 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
 * At the entry point, `not_type05_of_isNopert` (`Type05.lean`): type 05 by
   Lemma T instead of Theorem B′, with the same structure (frame
   `x0; x2, x4, x6`; views along the planes of `0123`, `246` and of `0145`,
-  `246`). With this, every type proved on paper (now 25 of 29, with type 08) is excluded
+  `246`). With this, every type proved on paper (now 26 of 29, with types 08 and 21) is excluded
   at the facet level in general position.
 * At the entry point, `not_type08_of_isNopert` (Theorem 10.1 of
   `FEWER-FACES-PROOFS.md` §10, type 08; `Type08Lemmas.lean`, `Type08Cases.lean`,
