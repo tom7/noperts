@@ -80,7 +80,7 @@ through a copy of itself):
   `not_type12_of_isNopert`), type 22 (`not_type22_of_isNopert`) and
   type 28 (`not_type28_of_isNopert`), and type 05 (three quadrilaterals;
   `not_type05_of_isNopert`). So every face structure on seven points that
-  the notes prove Rupert (26 of the 29 non-simplicial ones, with types 08 and 21) is now excluded
+  the notes prove Rupert (27 of the 29 non-simplicial ones, with types 08, 16 and 21) is now excluded
   in Lean, in general position. Except in
   `not_four_quad_facets_of_isNopert` (type 02 also follows from the
   two-quadrilateral theorem), general position means only: at each view
