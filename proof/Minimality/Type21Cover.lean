@@ -117,6 +117,25 @@ theorem CapNorm.signs {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c')
     0 < galeD G.l G.m c a :=
   type21_cross_signs F hN.h35
 
+/-- The cross-bracket normalization (`ε = sign [3 5] = +1`, `[3 0] > 0`, `[6 1] > 0`), shared by
+the cap-face class and the pattern `(+, −, +)` of the other classes (§16 addendum). -/
+structure CrossNorm {a a' b b' c c' : ℝ³} (G : GaleData a a' b b' c c') : Prop where
+  h30 : 0 < galeD G.l G.m a' a
+  h61 : 0 < galeD G.l G.m c' c
+  h35 : 0 < galeD G.l G.m a' b'
+
+theorem CapNorm.toCross {a a' b b' c c' : ℝ³} {G : GaleData a a' b b' c c'} (hN : CapNorm G) :
+    CrossNorm G := ⟨hN.h30, hN.h61, hN.h35⟩
+
+theorem CrossNorm.signs {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c')
+    {G : GaleData a a' b b' c c'} (hN : CrossNorm G) :
+    0 < galeD G.l G.m a' b ∧ 0 < galeD G.l G.m a b' ∧ 0 < galeD G.l G.m a b ∧
+    0 < galeD G.l G.m b' c' ∧ 0 < galeD G.l G.m b' c ∧ 0 < galeD G.l G.m b c' ∧
+    0 < galeD G.l G.m b c ∧
+    0 < galeD G.l G.m c' a' ∧ 0 < galeD G.l G.m c' a ∧ 0 < galeD G.l G.m c a' ∧
+    0 < galeD G.l G.m c a :=
+  type21_cross_signs F hN.h35
+
 /-! ### The cap in brackets -/
 
 /-- **The cap relation** (§16.0): with `2 = 0 + α (5 − 0) + β (6 − 0)` (`IsCap21.coords`),
@@ -302,18 +321,24 @@ theorem type21_id_A1end {a a' b b' c c' : ℝ³} {l m : ℝ³ → ℝ}
 
 /-- **The cap parameter** (§16.0): `2 = 0 + α (5 − 0) + β (6 − 0)` with `α, β > 0`,
 `α + β > 1`, and `τ > 0` (the paper's `t̂`) with `α = τ [5 1]`, `α + β − 1 = τ [1 0]`. -/
-theorem IsCap21.tau {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c'} (hd : IsCap21 F d)
-    {G : GaleData a a' b b' c c'} (hN : CapNorm G) :
+theorem IsCap21.tau' {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c'} (hd : IsCap21 F d)
+    {G : GaleData a a' b b' c c'} (h35 : 0 < galeD G.l G.m a' b') :
     ∃ α β τ : ℝ, 0 < α ∧ 0 < β ∧ 1 < α + β ∧ 0 < τ ∧ d = a + α • (b' - a) + β • (c' - a) ∧
       α = τ * galeD G.l G.m b' c ∧ α + β - 1 = τ * galeD G.l G.m c a := by
   obtain ⟨hα, hβ, hαβ, hco⟩ := hd.coords
   have hrel := hd.gale_rel G
-  obtain ⟨-, -, -, -, h51, -, -, -, -, -, h10⟩ := hN.signs F
+  obtain ⟨-, -, -, -, h51, -, -, -, -, -, h10⟩ := type21_cross_signs F h35
   generalize F.abc'.f d / F.abc'.f b' = α at *
   generalize F.ab'c.f d / F.ab'c.f c' = β at *
   refine ⟨α, β, α / galeD G.l G.m b' c, hα, hβ, hαβ, div_pos hα h51, hco, by field_simp, ?_⟩
   rw [div_mul_eq_mul_div, eq_div_iff h51.ne']
   linarith
+
+theorem IsCap21.tau {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c'} (hd : IsCap21 F d)
+    {G : GaleData a a' b b' c c'} (hN : CrossNorm G) :
+    ∃ α β τ : ℝ, 0 < α ∧ 0 < β ∧ 1 < α + β ∧ 0 < τ ∧ d = a + α • (b' - a) + β • (c' - a) ∧
+      α = τ * galeD G.l G.m b' c ∧ α + β - 1 = τ * galeD G.l G.m c a :=
+  hd.tau' hN.h35
 
 /-- The face `014` (`F.abc`) in brackets: `[6 3] f(3) = [5 6] f(5)`, `[3 5] f(5) = [6 3] f(6)`,
 and `f(2) = α f(5) + β f(6)`. -/
@@ -455,8 +480,8 @@ theorem type21_depO2_a {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c'}
 
 /-- `r = β + τ [1 6] = δ_134(2) / δ_134(6) > 0` and `r [0 5] = (1 − α − β) [5 6] + α [6 0] + β [0 5]`
 (the face `134`), in the normalized class. -/
-theorem type21_r_pos {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c'} (hd : IsCap21 F d)
-    {G : GaleData a a' b b' c c'} (hN : CapNorm G) {α β τ : ℝ}
+theorem type21_r_pos' {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c'} (hd : IsCap21 F d)
+    {G : GaleData a a' b b' c c'} (h35 : 0 < galeD G.l G.m a' b') {α β τ : ℝ}
     (hco : d = a + α • (b' - a) + β • (c' - a)) (hα : α = τ * galeD G.l G.m b' c)
     (ht : α + β - 1 = τ * galeD G.l G.m c a) :
     0 < β + τ * galeD G.l G.m c c' ∧
@@ -467,7 +492,7 @@ theorem type21_r_pos {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c'} (
     not_or, List.nodup_nil, and_true] at hnd
   obtain ⟨⟨haa', hab, hab', hac, hac'⟩, ⟨ha'b, ha'b', ha'c, ha'c'⟩, ⟨hbb', hbc, hbc'⟩,
     ⟨hb'c, hb'c'⟩, hcc', -⟩ := hnd
-  obtain ⟨-, s05, -, -, -, -, -, -, -, -, -⟩ := hN.signs F
+  obtain ⟨-, s05, -, -, -, -, -, -, -, -, -⟩ := type21_cross_signs F h35
   obtain ⟨e1, e2, e3⟩ := type21_f134 F G hco
   have P1 := type21_id_P1 G.hl G.hm
   have φn := F.a'bc.neg c' (by simp) (Ne.symm ha'c') (Ne.symm hbc') (Ne.symm hcc')
@@ -485,12 +510,21 @@ theorem type21_r_pos {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c'} (
   rw [hfd] at this
   exact pos_of_mul_neg_left this φn.le
 
+theorem type21_r_pos {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c'} (hd : IsCap21 F d)
+    {G : GaleData a a' b b' c c'} (hN : CrossNorm G) {α β τ : ℝ}
+    (hco : d = a + α • (b' - a) + β • (c' - a)) (hα : α = τ * galeD G.l G.m b' c)
+    (ht : α + β - 1 = τ * galeD G.l G.m c a) :
+    0 < β + τ * galeD G.l G.m c c' ∧
+    F.a'bc.f d = (β + τ * galeD G.l G.m c c') * F.a'bc.f c' ∧
+    galeD G.l G.m a b' * F.a'bc.f b' = galeD G.l G.m c' a * F.a'bc.f c' :=
+  type21_r_pos' hd hN.h35 hco hα ht
+
 /-- **Lemma 16.11 (A1)** in the normalized class with `[6 0] < [0 5]` (F3) and
 `[3 4] < [4 1]` (F4): the cap `2` is strictly farther than `5` beneath `134`.  The inequality
 `r [0 5] > [6 0]` is affine in `τ`; it holds at `τ = 0` and, if `r` decreases, at the value of
 `τ` where `2` would reach the plane `135` (which it does not: `2` is beneath `135`). -/
 theorem type21_A1 {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c'} (hd : IsCap21 F d)
-    {G : GaleData a a' b b' c c'} (hN : CapNorm G) {α β τ : ℝ} (hτ : 0 < τ)
+    {G : GaleData a a' b b' c c'} (hN : CrossNorm G) {α β τ : ℝ} (hτ : 0 < τ)
     (hco : d = a + α • (b' - a) + β • (c' - a)) (hα : α = τ * galeD G.l G.m b' c)
     (ht : α + β - 1 = τ * galeD G.l G.m c a)
     (hF3 : galeD G.l G.m c' a < galeD G.l G.m a b')
@@ -568,21 +602,17 @@ theorem type21_A1 {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c'} (hd 
     rw [e1]; nlinarith
   exact lt_of_mul_lt_mul_left this s05.le
 
-/-- **Step 3 of Theorem 16.13** (`Q` at `25` of `K − 6`): in the normalized class with
-(F3), (F4), if `δ_014(2) > δ_014(5)` then `2 → 5` is a quad edge of `K − 6` (`1` hidden: the
-face `014` by the case, the face `134` by Lemma 16.11), E-good (`{1 2} {1 5} = r [1 6] [1 5] > 0`,
-the dependency `{1 ·}`), so `K` is Rupert (Lemma 3 of §9 for `K − 6`). -/
-theorem isRupert_type21_step3 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
-    (hd : IsCap21 F d) (G : GaleData a a' b b' c c') (hN : CapNorm G)
-    (hF3 : galeD G.l G.m c' a < galeD G.l G.m a b')
-    (hF4 : galeD G.l G.m a' b < galeD G.l G.m b c)
-    (h3 : F.abc.f d < F.abc.f b')
+/-- **`Q` at `25` of `K − 6`**: if `1` is hidden along `2 → 5` in `K − 6` (`δ_014(2) > δ_014(5)`
+and A1, `δ_134(2) > δ_134(5)`), then `2 → 5` is E-good (`{1 2} {1 5} = r [1 6] [1 5] > 0`, the
+dependency `{1 ·}`), and `K` is Rupert (Lemma 3 of §9 for `K − 6`). -/
+theorem isRupert_type21_Q25 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
+    (hd : IsCap21 F d) (G : GaleData a a' b b' c c') (hN : CrossNorm G)
+    (hA1 : F.a'bc.f d < F.a'bc.f b') (h3 : F.abc.f d < F.abc.f b')
     (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   obtain ⟨s34, s05, s04, s56, s51, s46, s41, s63, s60, s13, s10⟩ := hN.signs F
   obtain ⟨α, β, τ, hα0, hβ, hαβ, hτ, hco, hα, ht⟩ := hd.tau hN
-  have hA1 := type21_A1 hd hN hτ hco hα ht hF3 hF4
   obtain ⟨hr, -, -⟩ := type21_r_pos hd hN hco hα ht
   obtain ⟨L, hL, Ld, Lc, Lb', Lb, La', La⟩ := type21_depO2_c hd G hco hα ht
   have anti := galeD_anti G.l G.m
@@ -596,6 +626,20 @@ theorem isRupert_type21_step3 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b
   rw [← type21_set_O2] at hgen hnd ⊢
   exact isRupert_type21_60 hd.O2 hd.sigma2 hA1 h3 hgood hgen hnd
 
+/-- **Step 3 of Theorem 16.13** (`Q` at `25` of `K − 6`): in the normalized class with
+(F3), (F4), if `δ_014(2) > δ_014(5)` then `1` is hidden along `2 → 5` of `K − 6` (the face `134`
+by Lemma 16.11), so `Q` at `25` applies. -/
+theorem isRupert_type21_step3 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
+    (hd : IsCap21 F d) (G : GaleData a a' b b' c c') (hN : CrossNorm G)
+    (hF3 : galeD G.l G.m c' a < galeD G.l G.m a b')
+    (hF4 : galeD G.l G.m a' b < galeD G.l G.m b c)
+    (h3 : F.abc.f d < F.abc.f b')
+    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
+    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
+  obtain ⟨α, β, τ, hα0, hβ, hαβ, hτ, hco, hα, ht⟩ := hd.tau hN
+  exact isRupert_type21_Q25 F hd G hN (type21_A1 hd hN hτ hco hα ht hF3 hF4) h3 hgen hnd
+
 /-! ### Step 5 of Theorem 16.13: `Q` at `23` of `K − 6` -/
 
 /-- **`Q` at `23` of `K − 6`** (the conclusion of Lemma 16.12), in the normalized class: if
@@ -604,7 +648,7 @@ hold, then `3 → 2` is a quad edge of `K − 6` (`0` hidden: the faces `015`, `
 (`{0 3} {0 2} > 0`, the dependency `{0 ·}`; the sign of `{0 4}` by Lemma 13.4 for `K − 6`), and
 `K` is Rupert (Lemma 3 of §9 for `K − 6` at `3 → 2`). -/
 theorem isRupert_type21_step5 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
-    (hd : IsCap21 F d) (G : GaleData a a' b b' c c') (hN : CapNorm G) {α β τ : ℝ}
+    (hd : IsCap21 F d) (G : GaleData a a' b b' c c') (hN : CrossNorm G) {α β τ : ℝ}
     (hco : d = a + α • (b' - a) + β • (c' - a)) (hα : α = τ * galeD G.l G.m b' c)
     (ht : α + β - 1 = τ * galeD G.l G.m c a)
     (hH1 : β * galeD G.l G.m a' b < galeD G.l G.m b c')

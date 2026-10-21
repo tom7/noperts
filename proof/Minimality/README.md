@@ -346,7 +346,8 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   formalized: Lemma 1 in general, Lemma 4 (insertion), Theorem S.
 * §16 of `FEWER-FACES-PROOFS.md` (type 21, the tier cover; `Type21Tier.lean`,
   `Type21Cover.lean`, `Type21F1.lean`, `Type21F2.lean`, `Type21R.lean`, `Type21Cap.lean`,
-  `Type21Entry.lean`).  The tiers as Rupert lemmas: Lemma 16.1 (`EGoodQuad`: a quad edge in
+  `Type21Entry.lean`, `Type21O2.lean`, `Type21Other.lean`, `Type21F2Case.lean`,
+  `Type21Pattern.lean`, `Type21Facets.lean`).  The tiers as Rupert lemmas: Lemma 16.1 (`EGoodQuad`: a quad edge in
   Gale form that is E-good, `[x' x] [x' y] > 0`; `EGoodQuad.tests`, `not_bad_of_egood`), tier Q
   (`Type21Q`, `isRupert_type21_Q` for `K − 2`, `isRupert_type21_Q2` for `K − 6`), tier H
   (`Type21H`, `isRupert_type21_H`, `_H2`: the cap is hidden by `quadHidden_of_beneath`, which
@@ -364,12 +365,26 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   normalization by `GaleData.flip`, `σ1`, `σ2`), off `NoPlaneParallel` (every tie of a Gale
   comparison, `facet_tie_det`), `GenPos`, `NoHDNEdges`, `T1Gen` at the four vertex crossings
   and the switch-surface half `H⁻` (`Type21CapGen`).  From the facets: `exists_type21_cap`
-  (the octahedron `K − 2` with its face `356`) and `isRupert_type21_facets`.  At the entry
-  point, `not_type21_of_isNopert`: the cap-face class unconditionally (off the special
-  positions); for the other Gale classes the hypothesis `hother` asks for tier Q or H of
-  `K − 2` or `K − 6`, or R.  Not formalized: the coverage of the other Gale classes (§16
-  addendum, Lemmas 16.14–16.25, Theorem 16.26), Lemma 16.4's silhouette argument (replaced),
-  Lemma 16.8 (b), AX.
+  (the octahedron `K − 2` with its face `356`).  **The §16 addendum** (the other Gale
+  classes): Lemma 16.16 (`arc_step1`, `type21_O_quad36` for `K − 2`, `type21_O2_quad04` for
+  `K − 6`), the Gale data of `K − 6` (`type21_galeO2`, its pair brackets
+  `type21_galeO2_kappa`), Theorem 16.18 (class (a), `isRupert_type21_classA`), Theorem 16.20
+  (class (b), `isRupert_type21_classB`, with R at the ridge `26`), Lemma 16.21
+  (`type21_near_or_A1`), Theorem 16.23 (class (c), `isRupert_type21_classC`) with Lemma 16.24
+  (F2 on the rest of class (c): `isRupert_type21_F2case` for the Gale facts and
+  `isRupert_type21_F2_frame` for the geometry in the frame `4; 3, 5, 6`, every determinant a
+  bracket polynomial times `det(3 − 4, 5 − 4, 6 − 4)`), the normal form `(+, −, +)`
+  (`isRupert_type21_pattern`), and Lemma 16.15 with Theorem 16.26 (`type21_O2_signs`,
+  `isRupert_type21_all`: the cap-face class by 16.13, the other patterns by `σ1`, `σ2`, `σ2σ1`
+  and the Gale reflection).  The planar equators of `K − 2` and `K − 6` are explicit exclusions
+  (five planes) in place of 16.25's continuity argument; `f = 0` and every tie are in
+  `NoPlaneParallel`.  From the facets, `isRupert_type21_facets`; at the entry point,
+  `not_type21_of_isNopert`, unconditional off the special positions: `NoPlaneParallel`,
+  `GenPos`, no horizontal double normal at the edge views, the five planar equators, `T1View`
+  at the four vertex crossings, `F2Views` (the two vertex tests of F2) in the four labellings,
+  and the four images of each switch-surface half `H⁻`, `H⁻_c`.  Not formalized: Lemma 16.4's
+  silhouette argument (replaced), Lemma 16.8 (b), Lemma 16.25 (replaced by the exclusion),
+  AX.
 * Theorem M′ of `FEWER-FACES-PROOFS.md` §11 and its addendum (type 16, partial;
   `Type16.lean`, `Type16M.lean`): `Type16` gives the facets `0235`, `1356` (quadrilaterals
   meeting in the edge `ℓ = 35`) and `024`, `036`, `046`, `145`, `146`, `245`.
@@ -606,7 +621,12 @@ In import order.
 | `Type21F2` | Lemma 16.8 (a) (vertex separation, every octahedron) and Lemma 16.9 (F2: two vertex tests at `4` sharing the diagonal `[4, 5]`) | `vertex_sep`, `isRupert_type21_F2` |
 | `Type21R` | Lemma 16.5 (R): a ridge view between two vertical faces (triangle rim with the last point hidden, or Lemma E), the type-21 ridge `26` in its four quadrants | `EdgeMid.swap_ab`, `isRupert_ridge`, `ridge_mid_far`, `ridge_mid_near`, `RidgeOK`, `Type21RQ`, `Type21R`, `isRupert_type21_ridge_quad`, `isRupert_type21_R` |
 | `Type21Cap` | Theorem 16.13 (the cap-face class): ties from `NoPlaneParallel`, the R1 region, steps 1–5, the normalization by the Gale reflection, `σ1`, `σ2` | `facet_tie_det`, `T1Gen`, `isRupert_type21_capFace_norm`, `CapFace`, `Type21CapGen`, `isRupert_type21_capFace_O`, `isRupert_type21_capFace` |
-| `Type21Entry` | Type 21 from its facets: the octahedron `K − 2` with its face `356`, Theorem 16.13 and (as a hypothesis) a tier Q, H or R outside the cap-face class | `image_seven21`, `exists_type21_cap`, `affine_linear_eq`, `T1View`, `isRupert_type21_facets` |
+| `Type21Entry` | Type 21 from its facets: the octahedron `K − 2` with its face `356`, the special positions of `T1` along a line of two faces | `image_seven21`, `exists_type21_cap`, `affine_linear_eq`, `T1View` |
+| `Type21O2` | §16 addendum: Lemma 16.16 (the Step-1 pairs are E-good), the Gale data of `K − 6` with its values (Lemma 16.2) | `GaleQuad`, `step1_gale`, `arc_step1`, `type21_galeO2` |
+| `Type21Other` | §16 addendum: Lemma 16.16 for `K − 2`, Theorem 16.18 (class (a)), Theorem 16.20 (class (b), R at the ridge `26` via the plane `145`), Lemma 16.21 (near or A1), `f ≠ 0`, the pair brackets of `K − 6`, Lemma 16.22, F1 in facet form | `type21_O_quad36`, `isRupert_type21_classA`, `IsCap21.rep2`, `isRupert_type21_classB`, `type21_plane145`, `type21_near_or_A1`, `gale_f_ne`, `type21_galeO2_kappa`, `type21_O2_quad04`, `isRupert_type21_F1'` |
+| `Type21F2Case` | Lemma 16.24 (F2 on the rest of class (c)): the frame computations (`det3_scaled_combo`), a hidden point from a degenerate combination, the geometry of the two vertex tests, the Gale facts of step 1; Theorem 16.23 (class (c)) | `det3_scaled_combo`, `axisHidden_of_rel`, `F2Gen`, `isRupert_type21_F2_frame`, `isRupert_type21_F2case`, `isRupert_type21_classC` |
+| `Type21Pattern` | The normal form `(+, −, +)` (classes (a), (b), (c) by the signs of `{5 4}`, `{0 3}`; the ties from `NoPlaneParallel`), the signs of `K − 6` (Lemmas 16.3, 16.14), Lemma 16.15 and Theorem 16.26 | `galeD_pair_ne_zero`, `isRupert_type21_pattern`, `type21_O2_signs`, `F2Views`, `Type21OtherGen`, `isRupert_type21_all` |
+| `Type21Facets` | Type 21 from its facets (Theorem 16.26), the entry of `not_type21_of_isNopert` | `isRupert_type21_facets` |
 | `Type24` | `FEWER-FACES-PROOFS.md` §15 (type 24 outside `C̄ ∪ Σ_B`): oblique coordinates at the cap `1` by Cramer's rule, the side coefficients `ω` and `Δ`, the window triangle (Theorem 15.4, Theorem 5 at a view in the tangent cone), the side crossings as triangle tests (Lemma 15.5, Theorem 15.7), Corollary 15.8 | `cramer_vec`, `isRupert_vertexTri`, `isRupert_window_frame`, `isRupert_sideCrossing_frame`, `Type24`, `omega3`, `Delta24`, `omega_identity`, `isRupert_type24_window`, `isRupert_type24_B`, `isRupert_type24_outside_Cbar` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `TriGenFar`, `TriGen.far`, `isRupert_of_two_quad_facets_vertex` |
 

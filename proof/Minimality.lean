@@ -43,6 +43,7 @@ public import Minimality.ParallelFar
 public import Minimality.ParallelFacets
 public import Minimality.Type24
 public import Minimality.Type21Entry
+public import Minimality.Type21Facets
 
 /-!
 # Every nopert has at least 7 points
@@ -793,19 +794,20 @@ theorem not_type24_outside_Cbar_of_isNopert (x : Fin 7 → ℝ³)
   h.2 (Minimality.isRupert_type24_outside_Cbar
     (Minimality.Type24.ofAffine x fA fB fC fD fE fF hA hB hC hD hE hF) hCbar hSigma)
 
-/-- **Type 21** (Theorem 16.13 of `FEWER-FACES-PROOFS.md` §16, the tier cover): a nopert does
+/-- **Type 21** (Theorem 16.26 of `FEWER-FACES-PROOFS.md` §16, the tier cover): a nopert does
 not have seven points labelled so that `014`, `015`, `0256`, `046`, `134`, `135`, `2346`, `235`
 are facets (given by functionals negative off them), off the special positions:
 `Minimality.NoPlaneParallel` (no plane through three of the points parallel to the segment of
 two others; this contains every tie of a Gale comparison used), `Minimality.GenPos`, no
-horizontal double normal at the view along any segment, at the four vertex crossings
-`0: 014/0256`, `4: 014/2346`, `5: 135/0256`, `3: 135/2346` the special positions of the test
-`T1` (`Minimality.T1View`: the antipode off the far side, distinct depths, no horizontal double
-normal), and the four images of the switch-surface half `H⁻`.  If `K − 2` (the octahedron of
-`x 0, x 3, x 4, x 5, x 1, x 6`) or `K − 6` is in its cap-face class, this is Theorem 16.13 (tiers
-Q, H, F1); for the other Gale classes (§16 addendum) the hypothesis `hother` asks for tier Q or
-H of `K − 2` or `K − 6`, or the ridge tier R (`Minimality.Type21RQ`, with the ratios
-`δ_015(2)/δ_015(6)` and `δ_134(2)/δ_134(6)`). -/
+horizontal double normal at the view along any segment, the five planar equators
+`{4, 5, 1, 6}`, `{0, 3, 1, 6}`, `{0, 3, 4, 5}`, `{0, 3, 1, 2}`, `{4, 5, 1, 2}` of `K − 2` and
+`K − 6` (`hEq`), at the four vertex crossings `0: 014/0256`, `4: 014/2346`, `5: 135/0256`,
+`3: 135/2346` the special positions of the test `T1` (`Minimality.T1View`: the antipode off the
+far side, distinct depths, no horizontal double normal), in the four labellings those of the
+two vertex tests of F2 (`Minimality.F2Views`), and the four images of each half `H⁻`, `H⁻_c` of
+the switch surface.  Every type-21 shape has one of the tiers Q, H, R, F1, F2 (Theorem 16.13 for
+the cap-face class, Theorems 16.18, 16.20, 16.23 with Lemma 16.24 for the normal form
+`(+, −, +)` reached by `σ1`, `σ2` and the reflection of the Gale diagram). -/
 theorem not_type21_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
@@ -829,27 +831,29 @@ theorem not_type21_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
     (hgen : Minimality.GenPos (Finset.univ.image x))
     (hnd : ∀ v ∈ Finset.univ.image x, ∀ w ∈ Finset.univ.image x, v ≠ w →
       Minimality.NoHDNAt ((Finset.univ.image x).erase w) (w - v))
+    (hEq : Minimality.det3 (x 5 - x 4) (x 1 - x 4) (x 6 - x 4) ≠ 0 ∧
+      Minimality.det3 (x 3 - x 0) (x 1 - x 0) (x 6 - x 0) ≠ 0 ∧
+      Minimality.det3 (x 3 - x 0) (x 4 - x 0) (x 5 - x 0) ≠ 0 ∧
+      Minimality.det3 (x 0 - x 3) (x 1 - x 3) (x 2 - x 3) ≠ 0 ∧
+      Minimality.det3 (x 4 - x 5) (x 1 - x 5) (x 2 - x 5) ≠ 0)
     (hT1 : Minimality.T1View (Finset.univ.image x) fA fC (x 0) (x 3) (x 4) (x 5) ∧
       Minimality.T1View (Finset.univ.image x) fA fG (x 4) (x 5) (x 0) (x 3) ∧
       Minimality.T1View (Finset.univ.image x) fF fC (x 5) (x 4) (x 3) (x 0) ∧
       Minimality.T1View (Finset.univ.image x) fF fG (x 3) (x 0) (x 5) (x 4))
+    (hF2 : Minimality.F2Views (Finset.univ.image x) (x 0) (x 3) (x 4) (x 5) (x 1) (x 6) (x 2) ∧
+      Minimality.F2Views (Finset.univ.image x) (x 4) (x 5) (x 0) (x 3) (x 1) (x 6) (x 2) ∧
+      Minimality.F2Views (Finset.univ.image x) (x 5) (x 4) (x 3) (x 0) (x 1) (x 2) (x 6) ∧
+      Minimality.F2Views (Finset.univ.image x) (x 3) (x 0) (x 5) (x 4) (x 1) (x 2) (x 6))
     (hHm : ¬ (fA (x 2) = fA (x 5) ∧ fA (x 5) < fA (x 3)) ∧
       ¬ (fA (x 2) = fA (x 3) ∧ fA (x 3) < fA (x 5)) ∧
       ¬ (fF (x 6) = fF (x 0) ∧ fF (x 0) < fF (x 4)) ∧
       ¬ (fF (x 6) = fF (x 4) ∧ fF (x 4) < fF (x 0)))
-    (hother : ¬ (∃ G : Minimality.GaleData (x 0) (x 3) (x 4) (x 5) (x 1) (x 6),
-        Minimality.CapFace G) →
-      ¬ (∃ G : Minimality.GaleData (x 5) (x 4) (x 3) (x 0) (x 1) (x 2), Minimality.CapFace G) →
-      (∃ G : Minimality.GaleData (x 0) (x 3) (x 4) (x 5) (x 1) (x 6),
-        Minimality.Type21Q G.l G.m (x 0) (x 3) (x 4) (x 5) (x 1) (x 6) ∨
-        Minimality.Type21H G.l G.m (x 0) (x 3) (x 4) (x 5) (x 1) (x 6)) ∨
-      (∃ G : Minimality.GaleData (x 5) (x 4) (x 3) (x 0) (x 1) (x 2),
-        Minimality.Type21Q G.l G.m (x 5) (x 4) (x 3) (x 0) (x 1) (x 2) ∨
-        Minimality.Type21H G.l G.m (x 5) (x 4) (x 3) (x 0) (x 1) (x 2)) ∨
-      Minimality.Type21RQ (fB (x 2) / fB (x 6)) (fE (x 2) / fE (x 6)) (x 0) (x 3) (x 4) (x 5)
-        (x 1) (x 6) (x 2)) : False :=
+    (hHc : ¬ (fA (x 2) = fA (x 5) ∧ fC (x 4) < fC (x 1)) ∧
+      ¬ (fA (x 2) = fA (x 3) ∧ fG (x 0) < fG (x 1)) ∧
+      ¬ (fF (x 6) = fF (x 0) ∧ fC (x 3) < fC (x 1)) ∧
+      ¬ (fF (x 6) = fF (x 4) ∧ fG (x 5) < fG (x 1))) : False :=
   h.2 (Minimality.isRupert_type21_facets x hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG hH
-    hpp hgen hnd hT1 hHm hother)
+    hpp hgen hnd hEq hT1 hF2 hHm hHc)
 
 /-- **Flat polygons are Rupert.**  Points in a plane, not all on one line, are
 Rupert, whatever their number: hold one copy face-on and pass the other

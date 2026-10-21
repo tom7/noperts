@@ -245,10 +245,10 @@ theorem isRupert_type21_capFace_norm {a a' b b' c c' d : ℝ³} (F : OctFacets a
         (mul_pos s46 (by linarith [hF5.1]))) (mul_pos s46 (by linarith [hF2.2]))
     linarith [pos_of_mul_pos_right this hD.le]
   -- the cap parameter
-  obtain ⟨α, β, τ, hα0, hβ, hαβ, hτ, hco, hα, ht⟩ := hd.tau hN
+  obtain ⟨α, β, τ, hα0, hβ, hαβ, hτ, hco, hα, ht⟩ := hd.tau hN.toCross
   -- Step 3: `δ_014(2) > δ_014(5)`: `Q` at `25` of `K − 6`
   by_cases h3 : F.abc.f d < F.abc.f b'
-  · exact isRupert_type21_step3 F hd G hN hF3 hF4 h3 hgen hnd
+  · exact isRupert_type21_step3 F hd G hN.toCross hF3 hF4 h3 hgen hnd
   push Not at h3
   obtain ⟨e1, e2, e3⟩ := type21_f014 F G hco
   have f5 := F.abc.neg b' (by simp) (Ne.symm hab') (Ne.symm hbb') hb'c
@@ -266,11 +266,11 @@ theorem isRupert_type21_capFace_norm {a a' b b' c c' d : ℝ³} (F : OctFacets a
   rcases lt_or_gt_of_ne T_g with h63 | h63
   · -- `[5 6] > [6 3]`: `Q` at `23`
     obtain ⟨hH1, hH2⟩ := hcase1 h63
-    exact isRupert_type21_step5 F hd G hN hco hα ht hH1 hH2 hE hgen hnd
+    exact isRupert_type21_step5 F hd G hN.toCross hco hα ht hH1 hH2 hE hgen hnd
   · obtain ⟨hB, hA⟩ := hcase2 h63
     by_cases hH12 : β * galeD G.l G.m a' b < galeD G.l G.m b c' ∧
         α * galeD G.l G.m c' a' + β * galeD G.l G.m a' b' < galeD G.l G.m b' c'
-    · exact isRupert_type21_step5 F hd G hN hco hα ht hH12.1 hH12.2 hE hgen hnd
+    · exact isRupert_type21_step5 F hd G hN.toCross hco hα ht hH12.1 hH12.2 hE hgen hnd
     have hA' := hA hH12
     -- (iii) in facet form: `135` and `235` face up along `4 − 0`
     have hiii : F.a'b'c.f a < F.a'b'c.f b ∧ hd.f235.f a < hd.f235.f b := by
@@ -283,7 +283,7 @@ theorem isRupert_type21_capFace_norm {a a' b b' c c' d : ℝ³} (F : OctFacets a
             linear_combination -g2
           rw [k]; exact mul_pos_of_neg_of_neg (by linarith) fa
         linarith [pos_of_mul_pos_right this s46.le]
-      · obtain ⟨hr, -, -⟩ := type21_r_pos hd hN hco hα ht
+      · obtain ⟨hr, -, -⟩ := type21_r_pos hd hN.toCross hco hα ht
         obtain ⟨L, hL, Ld, Lc, Lb', Lb, La', La⟩ := type21_depO2_c hd G hco hα ht
         refine facet_lt_of_dep hL.perm₁₂.perm₂₃.perm₁₂.swap₁.swap₂ hd.f235.p12 (by simp)
           (by simp) ?_ Lc ?_
