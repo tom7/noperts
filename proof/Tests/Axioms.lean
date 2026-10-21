@@ -343,4 +343,16 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.type21_near_or_A1
 #assert_standard_axioms Minimality.type21_galeO2
 #assert_standard_axioms Minimality.isRupert_type21_Q25
+#assert_standard_axioms Minimality.isRupert_of_edgeChords_uniform
+#assert_standard_axioms Minimality.isRupert_of_edgeChords_uniform_unimodal
+#assert_standard_axioms Minimality.isRupert_of_uniform_doubles
+#assert_standard_axioms Minimality.isRupert_of_uniform_doubles_unimodal
+#assert_standard_axioms Minimality.isRupert_of_edgeView_uniform
+#assert_standard_axioms Minimality.isRupert_quad_uniform
+#assert_standard_axioms Minimality.isRupert_edgePair_uniform
+#assert_standard_axioms Minimality.type21_switch_view
+#assert_standard_axioms Minimality.type21_switch_mid1
+#assert_standard_axioms Minimality.type21_switch_mid6
+#assert_standard_axioms Minimality.type21_switch_sep
+#assert_standard_axioms Minimality.isRupert_type21_switch
 #assert_standard_axioms minimalNopert_of_certificatesValid

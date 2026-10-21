@@ -23,10 +23,10 @@ open Finset Filter
 horizontal double normal at the edge views, the five planar equators `{4, 5, 1, 6}`,
 `{0, 3, 1, 6}`, `{0, 3, 4, 5}` (of `K − 2`), `{0, 3, 1, 2}`, `{4, 5, 1, 2}` (of `K − 6`), the
 special positions of `T1` at the four vertex crossings `0: 014/0256`, `4: 014/2346`,
-`5: 135/0256`, `3: 135/2346` (`T1View`), the special positions of the vertex tests of F2 in the
-four labellings `id, σ1, σ2, σ2σ1` (`F2Views`: at `4: 014/2346, 046/134`, `0: 014/0256,
-046/015`, `3: 135/2346, 235/134`, `5: 135/0256, 235/015`), and the four images of each half
-`H⁻`, `H⁻_c` of the switch surface — the points are Rupert. -/
+`5: 135/0256`, `3: 135/2346` (`T1View`), and the special positions of the vertex tests of F2 in
+the four labellings `id, σ1, σ2, σ2σ1` (`F2Views`: at `4: 014/2346, 046/134`, `0: 014/0256,
+046/015`, `3: 135/2346, 235/134`, `5: 135/0256, 235/015`) — the points are Rupert.  The switch
+surface (`H⁻`, `H⁻_c`) is no special position: Theorem 16.30. -/
 theorem isRupert_type21_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 1, 4} : Finset (Fin 7)) → fA (x i) = 0) ∧
@@ -60,15 +60,7 @@ theorem isRupert_type21_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hF2 : F2Views (univ.image x) (x 0) (x 3) (x 4) (x 5) (x 1) (x 6) (x 2) ∧
       F2Views (univ.image x) (x 4) (x 5) (x 0) (x 3) (x 1) (x 6) (x 2) ∧
       F2Views (univ.image x) (x 5) (x 4) (x 3) (x 0) (x 1) (x 2) (x 6) ∧
-      F2Views (univ.image x) (x 3) (x 0) (x 5) (x 4) (x 1) (x 2) (x 6))
-    (hHm : ¬ (fA (x 2) = fA (x 5) ∧ fA (x 5) < fA (x 3)) ∧
-      ¬ (fA (x 2) = fA (x 3) ∧ fA (x 3) < fA (x 5)) ∧
-      ¬ (fF (x 6) = fF (x 0) ∧ fF (x 0) < fF (x 4)) ∧
-      ¬ (fF (x 6) = fF (x 4) ∧ fF (x 4) < fF (x 0)))
-    (hHc : ¬ (fA (x 2) = fA (x 5) ∧ fC (x 4) < fC (x 1)) ∧
-      ¬ (fA (x 2) = fA (x 3) ∧ fG (x 0) < fG (x 1)) ∧
-      ¬ (fF (x 6) = fF (x 0) ∧ fC (x 3) < fC (x 1)) ∧
-      ¬ (fF (x 6) = fF (x 4) ∧ fG (x 5) < fG (x 1))) :
+      F2Views (univ.image x) (x 3) (x 0) (x 5) (x 4) (x 1) (x 2) (x 6)) :
     IsRupert (univ.image x) := by
   classical
   obtain ⟨-, eV⟩ := image_seven21 x
@@ -83,41 +75,23 @@ theorem isRupert_type21_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
   rw [eV] at t1 t2 t3 t4
   obtain ⟨f1, f2, f3, f4⟩ := hF2
   rw [eV] at f1 f2 f3 f4
-  obtain ⟨m1, m2, m3, m4⟩ := hHm
-  obtain ⟨n1, n2, n3, n4⟩ := hHc
-  refine isRupert_type21_all F hcap hpp hgen hnd' hEq ⟨⟨fun u hu h1 h2 => ?_, ?_⟩,
-      ⟨fun u hu h1 h2 => ?_, ?_⟩, ⟨fun u hu h1 h2 => ?_, ?_⟩, ⟨fun u hu h1 h2 => ?_, ?_⟩⟩
-    ⟨⟨f1, ?_⟩, ⟨?_, ?_⟩, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩
+  refine isRupert_type21_all F hcap hpp hgen hnd' hEq ⟨fun u hu h1 h2 => ?_,
+      fun u hu h1 h2 => ?_, fun u hu h1 h2 => ?_, fun u hu h1 h2 => ?_⟩
+    ⟨f1, ?_, ?_, ?_⟩
   · exact t1 u hu (by rw [affine_linear_eq fA eA F.abc.hN]; exact h1)
       (by rw [affine_linear_eq fC eC F.ab'c'.hN]; exact h2)
-  · show ¬ (F.abc.f (x 2) = F.abc.f (x 5) ∧ F.abc.f (x 5) < F.abc.f (x 3))
-    rw [eA]; exact m1
   · rw [e5]
     exact t2 u hu (by rw [affine_linear_eq fA eA F.abc.hN]; exact h1)
       (by rw [affine_linear_eq fG eG F.a'bc'.hN]; exact h2)
-  · show ¬ (F.abc.f (x 2) = F.abc.f (x 3) ∧ F.abc.f (x 3) < F.abc.f (x 5))
-    rw [eA]; exact m2
   · rw [eO2]
     exact t3 u hu (by rw [affine_linear_eq fF eF F.a'b'c.hN]; exact h1)
       (by rw [affine_linear_eq fC eC F.ab'c'.hN]; exact h2)
-  · show ¬ (F.a'b'c.f (x 6) = F.a'b'c.f (x 0) ∧ F.a'b'c.f (x 0) < F.a'b'c.f (x 4))
-    rw [eF]; exact m3
   · rw [e21]
     exact t4 u hu (by rw [affine_linear_eq fF eF F.a'b'c.hN]; exact h1)
       (by rw [affine_linear_eq fG eG F.a'bc'.hN]; exact h2)
-  · show ¬ (F.a'b'c.f (x 6) = F.a'b'c.f (x 4) ∧ F.a'b'c.f (x 4) < F.a'b'c.f (x 0))
-    rw [eF]; exact m4
-  · show ¬ (F.abc.f (x 2) = F.abc.f (x 5) ∧ F.ab'c'.f (x 4) < F.ab'c'.f (x 1))
-    rw [eA, eC]; exact n1
-  · rw [e5]; exact f2
-  · show ¬ (F.abc.f (x 2) = F.abc.f (x 3) ∧ F.a'bc'.f (x 0) < F.a'bc'.f (x 1))
-    rw [eA, eG]; exact n2
-  · rw [eO2]; exact f3
-  · show ¬ (F.a'b'c.f (x 6) = F.a'b'c.f (x 0) ∧ F.ab'c'.f (x 3) < F.ab'c'.f (x 1))
-    rw [eF, eC]; exact n3
-  · rw [e21]; exact f4
-  · show ¬ (F.a'b'c.f (x 6) = F.a'b'c.f (x 4) ∧ F.a'bc'.f (x 5) < F.a'bc'.f (x 1))
-    rw [eF, eG]; exact n4
+  · unfold Type21OtherGen; rw [e5]; exact f2
+  · unfold Type21OtherGen; rw [eO2]; exact f3
+  · unfold Type21OtherGen; rw [e21]; exact f4
 
 end Minimality
 

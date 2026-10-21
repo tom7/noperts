@@ -34,6 +34,7 @@ public import Minimality.Transversal
 public import Minimality.Parity
 public import Minimality.Chords
 public import Minimality.EdgeChords
+public import Minimality.UniformTilt
 public import Minimality.UnimodalCert
 public import Minimality.DepthSeparated
 public import Minimality.ExtremeRays
@@ -804,10 +805,12 @@ horizontal double normal at the view along any segment, the five planar equators
 `K − 6` (`hEq`), at the four vertex crossings `0: 014/0256`, `4: 014/2346`, `5: 135/0256`,
 `3: 135/2346` the special positions of the test `T1` (`Minimality.T1View`: the antipode off the
 far side, distinct depths, no horizontal double normal), in the four labellings those of the
-two vertex tests of F2 (`Minimality.F2Views`), and the four images of each half `H⁻`, `H⁻_c` of
-the switch surface.  Every type-21 shape has one of the tiers Q, H, R, F1, F2 (Theorem 16.13 for
-the cap-face class, Theorems 16.18, 16.20, 16.23 with Lemma 16.24 for the normal form
-`(+, −, +)` reached by `σ1`, `σ2` and the reflection of the Gale diagram). -/
+two vertex tests of F2 (`Minimality.F2Views`).  Every type-21 shape has one of the tiers Q, H, R,
+F1, F2 (Theorem 16.13 for the cap-face class, Theorems 16.18, 16.20, 16.23 with Lemma 16.24 for
+the normal form `(+, −, +)` reached by `σ1`, `σ2` and the reflection of the Gale diagram), or
+lies on the switch surface `δ_014(2) = δ_014(5)` and has the certificate of Theorem 16.30 at the
+edge `25` (Lemma E with the uniform tilt of Lemma 16.27; its depth ties and horizontal double
+normals are in `GenPos` and the edge-view exclusion). -/
 theorem not_type21_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
@@ -843,17 +846,10 @@ theorem not_type21_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
     (hF2 : Minimality.F2Views (Finset.univ.image x) (x 0) (x 3) (x 4) (x 5) (x 1) (x 6) (x 2) ∧
       Minimality.F2Views (Finset.univ.image x) (x 4) (x 5) (x 0) (x 3) (x 1) (x 6) (x 2) ∧
       Minimality.F2Views (Finset.univ.image x) (x 5) (x 4) (x 3) (x 0) (x 1) (x 2) (x 6) ∧
-      Minimality.F2Views (Finset.univ.image x) (x 3) (x 0) (x 5) (x 4) (x 1) (x 2) (x 6))
-    (hHm : ¬ (fA (x 2) = fA (x 5) ∧ fA (x 5) < fA (x 3)) ∧
-      ¬ (fA (x 2) = fA (x 3) ∧ fA (x 3) < fA (x 5)) ∧
-      ¬ (fF (x 6) = fF (x 0) ∧ fF (x 0) < fF (x 4)) ∧
-      ¬ (fF (x 6) = fF (x 4) ∧ fF (x 4) < fF (x 0)))
-    (hHc : ¬ (fA (x 2) = fA (x 5) ∧ fC (x 4) < fC (x 1)) ∧
-      ¬ (fA (x 2) = fA (x 3) ∧ fG (x 0) < fG (x 1)) ∧
-      ¬ (fF (x 6) = fF (x 0) ∧ fC (x 3) < fC (x 1)) ∧
-      ¬ (fF (x 6) = fF (x 4) ∧ fG (x 5) < fG (x 1))) : False :=
+      Minimality.F2Views (Finset.univ.image x) (x 3) (x 0) (x 5) (x 4) (x 1) (x 2) (x 6)) :
+    False :=
   h.2 (Minimality.isRupert_type21_facets x hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG hH
-    hpp hgen hnd hEq hT1 hF2 hHm hHc)
+    hpp hgen hnd hEq hT1 hF2)
 
 /-- **Flat polygons are Rupert.**  Points in a plane, not all on one line, are
 Rupert, whatever their number: hold one copy face-on and pass the other
