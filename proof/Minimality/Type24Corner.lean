@@ -43,9 +43,10 @@ depths is unimodal (`QuadTest.isRupert`).
   `isRupert_m3_corner6`, `isRupert_m3prime_corner`, `isRupert_m1_corner` (with Lemma W as a
   hypothesis), `isRupert_tpair_corner` and `isRupert_type24_Q` are the lemmas in Rupert form.
 
-Not formalized: WP as a Rupert item (Lemma W and the face conditions of 17.6: `lo_f` is a
-parameter here), the radii of 17.1′, 17.8′, 17.11, 17.12, 17.20, the arc criterion 17.16′ in
-general, L7, and the exact-corner lemmas off the corner (only M3 is stated at every metric).
+Not formalized here: WP as a Rupert item, Lemma W, L7, the arc criterion 17.16′ in general and
+the radii 17.1′, 17.8′, 17.11, 17.12 (see `Type24WP.lean`); the face conditions of 17.6 (`lo_f`
+is a parameter), the radius 17.20, and the exact-corner lemmas off the corner (only M3 is
+stated at every metric here).
 -/
 
 namespace Minimality

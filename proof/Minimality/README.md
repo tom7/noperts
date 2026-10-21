@@ -553,10 +553,24 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   WP_2 as its depth chain at a view in `(lo_f, ω3)`), the T′ pair (17.17 (d) with the pair
   rule, `tpair_corner`), M3′ (17.18, `m3prime_corner`), with Rupert forms through `QuadTest'`
   (`isRupert_of_two_tests`, `isRupert_m3_corner`, `isRupert_m1_corner` with Lemma W as a
-  hypothesis, `isRupert_tpair_corner`, `isRupert_m3prime_corner`). Not formalized: the
-  geometric half of 17.9 (the rim of `K_1`, "3 in the middle": hypotheses), WP as a Rupert item
-  and 17.6's face conditions, the radii (17.1′, 17.8′, 17.11, 17.12, 17.20), the arc criterion
-  17.16′ in general, L7, the exact-corner lemmas off the corner (except M3).
+  hypothesis, `isRupert_tpair_corner`, `isRupert_m3prime_corner`). `Type24WP.lean`: Lemma W
+  (`isRupert_lemmaW`: a point hidden strictly inside, or over an open side of, a certified rim
+  of `V ∖ {p}` costs nothing), WP as a Rupert item (`isRupert_wp2`, `isRupert_wp6`: on the arc
+  the cap `1` is a middle over the side `0 b`, and the 5-cycle `(c, q, 0, b, 3)` with four
+  monotone corners is unimodal), M1 with `hWP` discharged (`m1_corner_Ioo`,
+  `isRupert_m1_corner_wp`: the rim of `B` on `(lo, ω3)` and exclusions off a finite set of arc
+  views), L7 (15.15) at the corner and with the radius 17.8′ (`l7_frame_corner`,
+  `l7_frame_radius`, `isRupert_l7_t26`, `_t62`, `_t06`, `isRupert_l7_t26_radius`), the arc
+  criterion 17.16′ on circle 2 ("if", with WP: `arc_criterion2`, `arc_criterion2_wp`,
+  `isRupert_arc_criterion2`) and its pair form (`pair_rule`, `circle2_pair`,
+  `isRupert_circle2_pair`), the radii 17.1 / 17.1′ (`inner_frame_diff`, `radius_pos`,
+  `radius_pos_octant`), WP near the corner and on the obtuse octant (17.11,
+  `wpChain2_radius`, `wpChain2_octant`) and 17.12 with WP_2 as the item
+  (`isRupert_type24_near_wp2`). Not formalized: the geometric half of 17.9 (the rim of `K_1`,
+  "3 in the middle": hypotheses), 17.6's face conditions (WP's rim is a hypothesis), the
+  finiteness of the exclusions on the arc, the "only if" of 17.16′, the radii of the other
+  items (`S_0`, `δ_M3`, 17.20) and 17.12 beyond WP_2, the exact-corner lemmas off the corner
+  (except M3, L7 and WP_2).
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
@@ -734,6 +748,7 @@ In import order.
 | `Type24` | `FEWER-FACES-PROOFS.md` §15 (type 24 outside `C̄ ∪ Σ_B`): oblique coordinates at the cap `1` by Cramer's rule, the side coefficients `ω` and `Δ`, the window triangle (Theorem 15.4, Theorem 5 at a view in the tangent cone), the side crossings as triangle tests (Lemma 15.5, Theorem 15.7), Corollary 15.8 | `cramer_vec`, `isRupert_vertexTri`, `isRupert_window_frame`, `isRupert_sideCrossing_frame`, `Type24`, `omega3`, `Delta24`, `omega_identity`, `isRupert_type24_window`, `isRupert_type24_B`, `isRupert_type24_outside_Cbar` |
 | `Type24Cap` | `FEWER-FACES-PROOFS.md` §17 at every metric: Lemma C (Theorem 17.10, the cap-edge crossings with explicit `δ`, the arch of the far path, `(H-cap)` from 17.9), Lemma Q / Q′ (17.4, 17.19, the planar quad), Lemma 17.15 (8.8 for disjoint faces) | `exists_arch`, `isCyclicUnimodal_of_arch`, `capStep_of_cos`, `capEdge_unimodal`, `isRupert_capEdge`, `CapRim`, `isRupert_capEdge_frame`, `isRupert_type24_E2`, `isRupert_type24_E6`, `isRupert_type24_capEdge`, `noInteriorMin_of_mid3`, `Fails4`, `planarQuad_fails4`, `planarQuad_unimodal`, `isRupert_quadView`, `isRupert_planarQuad`, `isRupert_disjointFaces` |
 | `Type24Corner` | `FEWER-FACES-PROOFS.md` §17 on the circle of `236` and at exact corners: the circle identity (17.3 (c)), M3 at every metric (BB) and at the corner (17.7), one ratio on circle 2 (17.14 (a)), the closed forms (17.5, 17.17 (b)–(d)), M1 (17.8), the T′ pair, M3′ (17.18), Rupert forms | `circle_depth`, `m3_not_both`, `ExactCorner`, `Type24.depth_corner`, `Type24.m3_corner`, `Type24.fails4_circle2_iff`, `Type24.pencil_0264`, `Type24.m1_corner`, `Type24.tpair_corner`, `Type24.m3prime_corner`, `QuadTest'`, `isRupert_of_two_tests`, `isRupert_m3`, `isRupert_m3_corner`, `isRupert_m1_corner`, `isRupert_tpair_corner`, `isRupert_m3prime_corner`, `isRupert_type24_Q` |
+| `Type24WP` | `FEWER-FACES-PROOFS.md` §17 (rest): Lemma W, WP as a Rupert item and M1 with WP discharged, L7 (15.15, 17.8′), the arc criterion 17.16′ on circle 2 and its pair form, the radii 17.1, 17.1′, 17.11 and 17.12 with WP_2 | `isRupert_lemmaW`, `isRupert_wp`, `isRupert_wp2`, `isRupert_wp6`, `Type24.m1_corner_Ioo`, `isRupert_m1_corner_wp`, `l7_frame_corner`, `l7_frame_radius`, `isRupert_l7_t26`, `isRupert_l7_t26_radius`, `Type24.arc_criterion2`, `Type24.arc_criterion2_wp`, `pair_rule`, `Type24.circle2_pair`, `isRupert_circle2_pair`, `radius_pos`, `radius_pos_octant`, `Type24.wpChain2_octant`, `isRupert_type24_near_wp2` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `TriGenFar`, `TriGen.far`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices
