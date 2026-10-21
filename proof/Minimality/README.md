@@ -392,6 +392,29 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   are strictly inside the shadow (`isRupert_type16_06`; `5` hidden too:
   `isRupert_type16_06_tri`). Not formalized: Lemma E′, Proposition 14.2, the metric part of
   the converse, Lemma V, Corollary V1, Observation 14.4.
+* §15 of `FEWER-FACES-PROOFS.md` (type 24 outside `C̄ ∪ Σ_B`; `Type24.lean`). `Type24` gives the
+  cap faces `012`, `016`, `126` at the vertex `1` and the side faces `236`, `046`, `025`; the
+  oblique coordinates at `1` (`oblX0`, `oblX2`, `oblX6`, Cramer's rule; `Type24.rep`, the frame
+  is nondegenerate by Cauchy–Binet, `Type24.det_ne`), the side coefficients
+  `ω_xc = (X_x(g) + X_c(g) − 1) / X_y(g)` (`omega3`, `omega4`, `omega5`), every point beneath
+  each side plane (`Type24.side236`: the face functional is `f(x 1)(1 − (X2 + X6 − ω3 X0))`),
+  `Delta24`, the identity `(ω_g ω_h − 1)(ω_g ω_k − 1) − (1 + ω_g)² = ω_g Δ`
+  (`omega_identity`, by `ring`) and `omega_prod_gt_one`. Theorem 15.4, the window triangle
+  (`isRupert_type24_window`): if some `ω ≤ 0` or some `ω_g ω_h < 1`, `K` is Rupert with no
+  exclusion, by Theorem 5 at a view `e_a + t e_b + ε e_c` in the open tangent cone at `1`
+  (frame form `isRupert_window_frame`, `ε = 1 / (1 + |ω_ab|)` explicit). Lemma 15.5 with
+  Theorem 15.7, case B (`isRupert_type24_S6`, `_S2`, `_S0`, `isRupert_type24_B`; frame form
+  `isRupert_sideCrossing_frame`): at the side crossing `046/236` (view `view6`, oblique
+  `(1 + ω4, 1 + ω3, ω3 ω4 − 1)`) the reduced polygon is the triangle `(0, 2, 6)`, `4` and `3`
+  are middles over its sides, `1` and `5` are strictly inside (`L(5) = −c₅ Δ`); likewise
+  `025/236` and `025/046`; a triangle test (`isRupert_vertexTri`: Proposition 8.8 with
+  Theorem 7.3, the double-normal exclusion for the triangle only) with the exclusions
+  explicit (`S6Free`, `S2Free`, `S0Free`: product `> 1`, distinct depths of `0, 2, 6`, no
+  horizontal double normal). Corollary 15.8 (`isRupert_type24_outside_Cbar`; at the entry
+  point `not_type24_outside_Cbar_of_isNopert`): outside `C̄ = {ω > 0, Δ ≥ 0}`, `K` is Rupert
+  unless it is in region B (`RegionB24`) with no free side crossing (`Σ_B`). Not formalized:
+  Lemma 15.2 at ties (an obtuse tie is free; distinct depths are assumed), the codimension
+  of `Σ_B` (Lemmas 15.6, 15.7′), §§15.4–15.5 and region `C̄`.
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
@@ -541,6 +564,7 @@ In import order.
 | `Type16M` | Type 16, Theorem M′ (conditional): the octahedral region `Oct16`, Lemma 11.1 (`5*`, `K*` type 08), S1 at `ℓ` (third quadrilateral, T4 case in `K*`, N2), S2's N2 branch (Lemma 11.5), Proposition 11.V (R1, R2, Lemma 11.8 at `24`), Gale-form wrappers, `Type16Clause` and the theorem; no `not_type16_of_isNopert` | `Oct16`, `Oct16.five_beyond`, `Oct16.star`, `Oct16.facets`, `Oct16.isCap`, `middle_Qbc_of`, `isRupert_type16_N2`, `type16_not_bad35_thirdQuad`, `t4_not_bad'`, `type16_not_bad35_T4`, `type16_lemma5_mid`, `isRupert_type16_S2N2`, `isRupert_quad_rim_coords`, `isRupert_type16_24`, `type16_R1`, `type16_R2`, `isRupert_type16_V`, `Type16Clause`, `isRupert_type16_M` |
 | `OctAxis` | `FEWER-FACES-PROOFS.md` §13 (two-test certificates), Euclidean form: the angle lemma for 4-corner rims (Lemma 13.2, Corollary 13.3: depth-separated diagonals whose projections meet along both views force the sign of `⟪u₁, u₂⟫`; shared-diagonal form), the cluster signs of every octahedron (Lemma 13.4), the views and middles (Lemma 13.5), the sign identity (Lemma 13.6, by the dependencies `[a ·]`, `[b ·]` and Plücker, no continuity step), Proposition 8.8 with Theorem 7.3 at a vertex view from determinant tests, the test at `a'` (triangle or quadrilateral rim; extra points hidden or middles at the apex), Theorem 13.7 (the octahedral axis lemma) and the lift 13.8 (i), (ii) to `K = O ∪ {m}` | `dep_eq_zero_of_two`, `galeD_ne_zero`, `pole_signs'`, `cluster_signs`, `axisView`, `axisView_eq_neg`, `axis_sign`, `axis_sign_two`, `SegMeet`, `DepthSep`, `depthSep_meet_sign`, `depthSep_det_sign`, `not_both_depthSep`, `axis_test_facts`, `isRupert_of_vertexView`, `AxisHidden`, `ApexMid`, `AxisExtra`, `overlap4_of_not_depthSep`, `isRupert_axisTest_core`, `segMeet_of_sides`, `axisTest_meets`, `isRupert_axisTest`, `isRupert_octAxis_gen`, `isRupert_octAxis`, `isRupert_octAxis_lift` |
 | `EdgePair` | `FEWER-FACES-PROOFS.md` §14 (edge pairs), Euclidean form: Lemma E (two 4-corner closings at an edge crossing along `vw`, view `u = w − v`; `[a b c v] [a b c w] ≤ 0` excludes both rims being depth-separated, so one closing is unimodal), the parameter form, (ii) ⟺ (iii), the converse for depth functionals, Corollary 14.1 (Theorem 8.9 with Theorem 7.3 for either closing, middles and hidden points allowed; triangle closings), the wedge argument and Proposition 14.3 (E06: `[3450] [3456] < 0` on every type 16; the pair at `06` certifies `K` when `1`, `2` are hidden) | `edgePair_param`, `edgePair_not_both`, `edgePair_unimodal`, `SegMeetsTri`, `edgePair_tri_iff`, `edgePair_converse`, `EdgeHidden`, `EdgeMid`, `isRupert_edgePair_closing`, `isRupert_edgePair`, `wedge_sep`, `type16_sep06`, `isRupert_type16_06`, `TriHidden`, `isRupert_edgeTri`, `isRupert_type16_06_tri` |
+| `Type24` | `FEWER-FACES-PROOFS.md` §15 (type 24 outside `C̄ ∪ Σ_B`): oblique coordinates at the cap `1` by Cramer's rule, the side coefficients `ω` and `Δ`, the window triangle (Theorem 15.4, Theorem 5 at a view in the tangent cone), the side crossings as triangle tests (Lemma 15.5, Theorem 15.7), Corollary 15.8 | `cramer_vec`, `isRupert_vertexTri`, `isRupert_window_frame`, `isRupert_sideCrossing_frame`, `Type24`, `omega3`, `Delta24`, `omega_identity`, `isRupert_type24_window`, `isRupert_type24_B`, `isRupert_type24_outside_Cbar` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `TriGenFar`, `TriGen.far`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices

@@ -40,6 +40,7 @@ public import Minimality.Global
 public import Minimality.Shear
 public import Minimality.ParallelFar
 public import Minimality.ParallelFacets
+public import Minimality.Type24
 
 /-!
 # Every nopert has at least 7 points
@@ -755,6 +756,39 @@ theorem not_type08_of_isNopert' (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ
     (hgen : Minimality.Type08GenAll (x 0) (x 6) (x 3) (x 4) (x 5) (x 1) (x 2)) : False :=
   h.2 (Minimality.isRupert_type08_flat_facets x hx fA fB fC fD fE fF fG hA hB hC hD hE hF hG
     hflat hgen)
+
+/-- **Type 24 outside `C̄ ∪ Σ_B`** (Corollary 15.8 of `FEWER-FACES-PROOFS.md` §15): a nopert
+does not have seven points labelled so that `012`, `016`, `126` (the cap at `1`) and `236`,
+`046`, `025` (the side faces) are facets (given by functionals negative off them), unless
+it lies in `C̄ = {ω3, ω4, ω5 > 0, Δ ≥ 0}` or in `Σ_B`.  The coefficients
+`ω3 = Minimality.omega3 x`, `ω4`, `ω5` of the side faces and `Δ = Minimality.Delta24 x` are
+read off the oblique coordinates at `1` (frame `x 0 − x 1`, `x 2 − x 1`, `x 6 − x 1`).  Outside
+`C̄` either some `ω ≤ 0` or some product `ω_g ω_h < 1` (region W: Rupert with no exclusion,
+the window triangle), or `Minimality.RegionB24 x` holds; there the hypothesis is that one of
+the three side crossings is available and free (`Minimality.S6Free`, `S2Free`, `S0Free`:
+product `> 1`, distinct depths of `0, 2, 6` at its view, no horizontal double normal of
+their triangle there). -/
+theorem not_type24_outside_Cbar_of_isNopert (x : Fin 7 → ℝ³)
+    (h : IsNopert (Finset.univ.image x))
+    (fA fB fC fD fE fF : ℝ³ →ᵃ[ℝ] ℝ)
+    (hA : ∀ i, (i ∈ ({0, 1, 2} : Finset (Fin 7)) → fA (x i) = 0) ∧
+      (i ∉ ({0, 1, 2} : Finset (Fin 7)) → fA (x i) < 0))
+    (hB : ∀ i, (i ∈ ({0, 1, 6} : Finset (Fin 7)) → fB (x i) = 0) ∧
+      (i ∉ ({0, 1, 6} : Finset (Fin 7)) → fB (x i) < 0))
+    (hC : ∀ i, (i ∈ ({1, 2, 6} : Finset (Fin 7)) → fC (x i) = 0) ∧
+      (i ∉ ({1, 2, 6} : Finset (Fin 7)) → fC (x i) < 0))
+    (hD : ∀ i, (i ∈ ({2, 3, 6} : Finset (Fin 7)) → fD (x i) = 0) ∧
+      (i ∉ ({2, 3, 6} : Finset (Fin 7)) → fD (x i) < 0))
+    (hE : ∀ i, (i ∈ ({0, 4, 6} : Finset (Fin 7)) → fE (x i) = 0) ∧
+      (i ∉ ({0, 4, 6} : Finset (Fin 7)) → fE (x i) < 0))
+    (hF : ∀ i, (i ∈ ({0, 2, 5} : Finset (Fin 7)) → fF (x i) = 0) ∧
+      (i ∉ ({0, 2, 5} : Finset (Fin 7)) → fF (x i) < 0))
+    (hCbar : ¬ (0 < Minimality.omega3 x ∧ 0 < Minimality.omega4 x ∧ 0 < Minimality.omega5 x ∧
+      0 ≤ Minimality.Delta24 x))
+    (hSigma : Minimality.RegionB24 x →
+      Minimality.S6Free x ∨ Minimality.S2Free x ∨ Minimality.S0Free x) : False :=
+  h.2 (Minimality.isRupert_type24_outside_Cbar
+    (Minimality.Type24.ofAffine x fA fB fC fD fE fF hA hB hC hD hE hF) hCbar hSigma)
 
 /-- **Flat polygons are Rupert.**  Points in a plane, not all on one line, are
 Rupert, whatever their number: hold one copy face-on and pass the other
