@@ -43,6 +43,7 @@ public import Minimality.Shear
 public import Minimality.ParallelFar
 public import Minimality.ParallelFacets
 public import Minimality.Type24
+public import Minimality.Type24Corner
 public import Minimality.Type21Entry
 public import Minimality.Type21Facets
 public import Minimality.Type16Main

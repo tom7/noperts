@@ -530,6 +530,33 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   unless it is in region B (`RegionB24`) with no free side crossing (`Σ_B`). Not formalized:
   Lemma 15.2 at ties (an obtuse tie is free; distinct depths are assumed), the codimension
   of `Σ_B` (Lemmas 15.6, 15.7′), §§15.4–15.5 and region `C̄`.
+* §17 of `FEWER-FACES-PROOFS.md` and its addendum (type 24 in `C̄` near the cube corner;
+  `Type24Cap.lean`, `Type24Corner.lean`), at `K`'s own metric (depth `⟪·, d⟫`). Lemma C
+  (Theorem 17.10, the cap-edge dichotomy): along a cap edge `1x` the rim of `K_1` is
+  `(1, y, R, w)`; each far-path step keeps the sign of `ΔX_x` while
+  `|ΔX_y ⟪e_y, e_x⟫ + ΔX_w ⟪e_w, e_x⟫| < ‖e_x‖² |ΔX_x|`, which follows from `|c| < δ` with
+  `δ (L_y |ΔX_y| + L_w |ΔX_w|) ≤ L_x |ΔX_x|` on every step (`capStep_of_cos`; `δ ≤ δ_x`), so
+  with `(H-cap)` the depths rise and fall along `R` (`exists_arch`) and the rim is unimodal
+  unless `1` is a local maximum (`capEdge_unimodal`); Rupert form with `x` a double over `1`
+  (`isRupert_capEdge`, `isRupert_capEdge_frame`, rim data `CapRim`), for type 24
+  `isRupert_type24_E2`, `_E6` and the dichotomy `isRupert_type24_capEdge` (Rupert for
+  `|c|∞ < δ` unless all three inner products at `1` are `≤ 0`); `(H-cap)` from "3 is the
+  middle" and the planar quad (`noInteriorMin_of_mid3`, `Type24.hcap2`, `Type24.hcap6`).
+  Lemma Q / Q′ (17.4, 17.19): a rim that is the planar quad never fails, at every metric
+  (`planarQuad_fails4`, `planarQuad_unimodal`, `isRupert_planarQuad`, `isRupert_type24_Q`).
+  Lemma 17.15 (8.8 for faces without a common vertex) is `isRupert_of_chords` /
+  `isRupert_disjointFaces`. The circle identity 17.3 (c) (`circle_depth`, `circle_depth6`) and
+  M3 (17.7) in BB's every-metric form (`m3_not_both`, `isRupert_m3`). At an exact corner
+  (`ExactCorner`: orthogonal axes at `1`): M3 and its mirror (`m3_corner`, `m3_corner6`), one
+  ratio on circle 2 (17.14 (a), `fails4_circle2_iff`) and the closed forms 17.5, 17.17 (b), (c)
+  (`pencil_0264`, `pencil_02x6`, `t26_fails_corner`, `s0_fails_corner`), M1 (17.8, `m1_corner`;
+  WP_2 as its depth chain at a view in `(lo_f, ω3)`), the T′ pair (17.17 (d) with the pair
+  rule, `tpair_corner`), M3′ (17.18, `m3prime_corner`), with Rupert forms through `QuadTest'`
+  (`isRupert_of_two_tests`, `isRupert_m3_corner`, `isRupert_m1_corner` with Lemma W as a
+  hypothesis, `isRupert_tpair_corner`, `isRupert_m3prime_corner`). Not formalized: the
+  geometric half of 17.9 (the rim of `K_1`, "3 in the middle": hypotheses), WP as a Rupert item
+  and 17.6's face conditions, the radii (17.1′, 17.8′, 17.11, 17.12, 17.20), the arc criterion
+  17.16′ in general, L7, the exact-corner lemmas off the corner (except M3).
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
@@ -705,6 +732,8 @@ In import order.
 | `Type21Pattern` | The normal form `(+, −, +)` (classes (a), (b), (c) by the signs of `{5 4}`, `{0 3}`; the ties from `NoPlaneParallel`), the signs of `K − 6` (Lemmas 16.3, 16.14), Lemma 16.15 and Theorem 16.26 | `galeD_pair_ne_zero`, `isRupert_type21_pattern`, `type21_O2_signs`, `F2Views`, `Type21OtherGen`, `isRupert_type21_all` |
 | `Type21Facets` | Type 21 from its facets (Theorem 16.26), the entry of `not_type21_of_isNopert` | `isRupert_type21_facets` |
 | `Type24` | `FEWER-FACES-PROOFS.md` §15 (type 24 outside `C̄ ∪ Σ_B`): oblique coordinates at the cap `1` by Cramer's rule, the side coefficients `ω` and `Δ`, the window triangle (Theorem 15.4, Theorem 5 at a view in the tangent cone), the side crossings as triangle tests (Lemma 15.5, Theorem 15.7), Corollary 15.8 | `cramer_vec`, `isRupert_vertexTri`, `isRupert_window_frame`, `isRupert_sideCrossing_frame`, `Type24`, `omega3`, `Delta24`, `omega_identity`, `isRupert_type24_window`, `isRupert_type24_B`, `isRupert_type24_outside_Cbar` |
+| `Type24Cap` | `FEWER-FACES-PROOFS.md` §17 at every metric: Lemma C (Theorem 17.10, the cap-edge crossings with explicit `δ`, the arch of the far path, `(H-cap)` from 17.9), Lemma Q / Q′ (17.4, 17.19, the planar quad), Lemma 17.15 (8.8 for disjoint faces) | `exists_arch`, `isCyclicUnimodal_of_arch`, `capStep_of_cos`, `capEdge_unimodal`, `isRupert_capEdge`, `CapRim`, `isRupert_capEdge_frame`, `isRupert_type24_E2`, `isRupert_type24_E6`, `isRupert_type24_capEdge`, `noInteriorMin_of_mid3`, `Fails4`, `planarQuad_fails4`, `planarQuad_unimodal`, `isRupert_quadView`, `isRupert_planarQuad`, `isRupert_disjointFaces` |
+| `Type24Corner` | `FEWER-FACES-PROOFS.md` §17 on the circle of `236` and at exact corners: the circle identity (17.3 (c)), M3 at every metric (BB) and at the corner (17.7), one ratio on circle 2 (17.14 (a)), the closed forms (17.5, 17.17 (b)–(d)), M1 (17.8), the T′ pair, M3′ (17.18), Rupert forms | `circle_depth`, `m3_not_both`, `ExactCorner`, `Type24.depth_corner`, `Type24.m3_corner`, `Type24.fails4_circle2_iff`, `Type24.pencil_0264`, `Type24.m1_corner`, `Type24.tpair_corner`, `Type24.m3prime_corner`, `QuadTest'`, `isRupert_of_two_tests`, `isRupert_m3`, `isRupert_m3_corner`, `isRupert_m1_corner`, `isRupert_tpair_corner`, `isRupert_m3prime_corner`, `isRupert_type24_Q` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `TriGenFar`, `TriGen.far`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices
