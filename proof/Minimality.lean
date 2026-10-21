@@ -19,9 +19,11 @@ public import Minimality.Type22
 public import Minimality.Type28
 public import Minimality.Type05
 public import Minimality.Type08
+public import Minimality.Type08Flat
 public import Minimality.Type29
 public import Minimality.Type16M
 public import Minimality.OctAxis
+public import Minimality.EdgePair
 public import Minimality.Type21
 public import Minimality.Forces
 public import Minimality.TieForces
@@ -715,6 +717,44 @@ theorem not_type08_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       Minimality.NoHDNAt ((Finset.univ.image x).erase w) (w - v)) : False :=
   h.2 (Minimality.isRupert_type08_facets x hx fA fB fC fD fE fF fG hA hB hC hD hE hF hG
     heq₁ heq₂ heq₃ hgen hpar hnd)
+
+/-- **Type 08, codimension 2** (Theorem 10.1′ of `FEWER-FACES-PROOFS.md` §10 addendum,
+Lemmas C, H, K, X in Lean form): as `not_type08_of_isNopert`, without general position
+and without excluding horizontal double normals at the edge views.  The octahedron
+`x 0, …, x 6` without `x 2` (pairs `(0, 6)`, `(3, 4)`, `(5, 1)`) may have one planar
+equator, and `Minimality.Type08GenAll` holds: in each of the six labellings `(a, b, c)` of
+its pairs, not both far-end ties at the view along `x 2 b`, at each tie one of the routes
+of Lemma X, no touching (a triple or, at a planar equator, a quadruple depth tie at a
+named view; codimension 2), and along the face circles of the named crossings (or, for
+the closings with one circle, the five-corner rim along the other face, Lemma H) depth
+ties and horizontal double normals occur only at isolated views
+(`Minimality.NoBadNormal`). -/
+theorem not_type08_of_isNopert' (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
+    (hx : Function.Injective x)
+    (fA fB fC fD fE fF fG : ℝ³ →ᵃ[ℝ] ℝ)
+    (hA : ∀ i, (i ∈ ({0, 1, 2, 3} : Finset (Fin 7)) → fA (x i) = 0) ∧
+      (i ∉ ({0, 1, 2, 3} : Finset (Fin 7)) → fA (x i) < 0))
+    (hB : ∀ i, (i ∈ ({0, 2, 4, 5} : Finset (Fin 7)) → fB (x i) = 0) ∧
+      (i ∉ ({0, 2, 4, 5} : Finset (Fin 7)) → fB (x i) < 0))
+    (hC : ∀ i, (i ∈ ({2, 3, 5, 6} : Finset (Fin 7)) → fC (x i) = 0) ∧
+      (i ∉ ({2, 3, 5, 6} : Finset (Fin 7)) → fC (x i) < 0))
+    (hD : ∀ i, (i ∈ ({0, 1, 4} : Finset (Fin 7)) → fD (x i) = 0) ∧
+      (i ∉ ({0, 1, 4} : Finset (Fin 7)) → fD (x i) < 0))
+    (hE : ∀ i, (i ∈ ({1, 3, 6} : Finset (Fin 7)) → fE (x i) = 0) ∧
+      (i ∉ ({1, 3, 6} : Finset (Fin 7)) → fE (x i) < 0))
+    (hF : ∀ i, (i ∈ ({1, 4, 6} : Finset (Fin 7)) → fF (x i) = 0) ∧
+      (i ∉ ({1, 4, 6} : Finset (Fin 7)) → fF (x i) < 0))
+    (hG : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
+      (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fG (x i) < 0))
+    (hflat : ¬ (Minimality.det3 (x 5 - x 3) (x 4 - x 3) (x 1 - x 3) = 0 ∧
+        Minimality.det3 (x 5 - x 0) (x 6 - x 0) (x 1 - x 0) = 0) ∧
+      ¬ (Minimality.det3 (x 5 - x 3) (x 4 - x 3) (x 1 - x 3) = 0 ∧
+        Minimality.det3 (x 3 - x 0) (x 6 - x 0) (x 4 - x 0) = 0) ∧
+      ¬ (Minimality.det3 (x 5 - x 0) (x 6 - x 0) (x 1 - x 0) = 0 ∧
+        Minimality.det3 (x 3 - x 0) (x 6 - x 0) (x 4 - x 0) = 0))
+    (hgen : Minimality.Type08GenAll (x 0) (x 6) (x 3) (x 4) (x 5) (x 1) (x 2)) : False :=
+  h.2 (Minimality.isRupert_type08_flat_facets x hx fA fB fC fD fE fF fG hA hB hC hD hE hF hG
+    hflat hgen)
 
 /-- **Flat polygons are Rupert.**  Points in a plane, not all on one line, are
 Rupert, whatever their number: hold one copy face-on and pass the other

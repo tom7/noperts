@@ -305,15 +305,10 @@ theorem image_seven (x : Fin 7 → ℝ³) :
       exacts [⟨2, rfl⟩, ⟨0, rfl⟩, ⟨6, rfl⟩, ⟨3, rfl⟩, ⟨4, rfl⟩, ⟨5, rfl⟩, ⟨1, rfl⟩]
 
 set_option maxHeartbeats 400000 in
-/-- **Theorem 10.1, facet form (type 08).**  Seven points labelled as type 08
-(`typeb_lib.load('08-7f')`): the quadrilaterals `0123`, `0245`, `2356` and the
-triangles `014`, `136`, `146`, `456` are facets (given by affine functions negative
-off them).  Then `x 2` is the cap over the octahedron `x 0, …, x 6` without `x 2`
-(opposite pairs `(0, 6)`, `(3, 4)`, `(5, 1)`; its eighth face `035` is constructed),
-and with no planar equator (no four of `1, 3, 4, 5`, of `0, 1, 5, 6`, of `0, 3, 4, 6`
-coplanar), general position and no horizontal double normals, the points are
-Rupert. -/
-theorem isRupert_type08_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
+/-- The facet data of type 08 (`typeb_lib.load('08-7f')`) make `x 2` a cap (`IsCap`) over the
+octahedron of the other six points (opposite pairs `(0, 6)`, `(3, 4)`, `(5, 1)`; its eighth
+face `035` is constructed). -/
+theorem exists_type08_cap (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (fA fB fC fD fE fF fG : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 1, 2, 3} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 1, 2, 3} : Finset (Fin 7)) → fA (x i) < 0))
@@ -328,17 +323,10 @@ theorem isRupert_type08_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hF : ∀ i, (i ∈ ({1, 4, 6} : Finset (Fin 7)) → fF (x i) = 0) ∧
       (i ∉ ({1, 4, 6} : Finset (Fin 7)) → fF (x i) < 0))
     (hG : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
-      (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fG (x i) < 0))
-    (heq₁ : det3 (x 5 - x 3) (x 4 - x 3) (x 1 - x 3) ≠ 0)
-    (heq₂ : det3 (x 5 - x 0) (x 6 - x 0) (x 1 - x 0) ≠ 0)
-    (heq₃ : det3 (x 3 - x 0) (x 6 - x 0) (x 4 - x 0) ≠ 0)
-    (hgen : GenPos (univ.image x)) (hpar : NoPlaneParallel (univ.image x))
-    (hnd : ∀ v ∈ univ.image x, ∀ w ∈ univ.image x, v ≠ w →
-      NoHDNAt ((univ.image x).erase w) (w - v)) :
-    IsRupert (univ.image x) := by
+      (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fG (x i) < 0)) :
+    ∃ F : OctFacets (x 0) (x 6) (x 3) (x 4) (x 5) (x 1), IsCap F (x 2) := by
   classical
-  obtain ⟨eI, eV⟩ := image_seven x
-  rw [eV] at hgen hpar hnd ⊢
+  obtain ⟨eI, -⟩ := image_seven x
   obtain ⟨NA, hNA⟩ := exists_normal_of_affine fA
   obtain ⟨NB, hNB⟩ := exists_normal_of_affine fB
   obtain ⟨NC, hNC⟩ := exists_normal_of_affine fC
@@ -477,6 +465,43 @@ theorem isRupert_type08_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
         (by decide) (by decide) (by decide) (by decide)).congr eI⟩
   have hcap : IsCap F (x 2) :=
     ⟨A2, B2, C2, sq, D2, E2, G2, (hF 2).2 (by decide)⟩
+  exact ⟨F, hcap⟩
+
+/-- **Theorem 10.1, facet form (type 08).**  Seven points labelled as type 08
+(`typeb_lib.load('08-7f')`): the quadrilaterals `0123`, `0245`, `2356` and the
+triangles `014`, `136`, `146`, `456` are facets (given by affine functions negative
+off them).  Then `x 2` is the cap over the octahedron `x 0, …, x 6` without `x 2`
+(opposite pairs `(0, 6)`, `(3, 4)`, `(5, 1)`; its eighth face `035` is constructed),
+and with no planar equator (no four of `1, 3, 4, 5`, of `0, 1, 5, 6`, of `0, 3, 4, 6`
+coplanar), general position and no horizontal double normals, the points are
+Rupert. -/
+theorem isRupert_type08_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
+    (fA fB fC fD fE fF fG : ℝ³ →ᵃ[ℝ] ℝ)
+    (hA : ∀ i, (i ∈ ({0, 1, 2, 3} : Finset (Fin 7)) → fA (x i) = 0) ∧
+      (i ∉ ({0, 1, 2, 3} : Finset (Fin 7)) → fA (x i) < 0))
+    (hB : ∀ i, (i ∈ ({0, 2, 4, 5} : Finset (Fin 7)) → fB (x i) = 0) ∧
+      (i ∉ ({0, 2, 4, 5} : Finset (Fin 7)) → fB (x i) < 0))
+    (hC : ∀ i, (i ∈ ({2, 3, 5, 6} : Finset (Fin 7)) → fC (x i) = 0) ∧
+      (i ∉ ({2, 3, 5, 6} : Finset (Fin 7)) → fC (x i) < 0))
+    (hD : ∀ i, (i ∈ ({0, 1, 4} : Finset (Fin 7)) → fD (x i) = 0) ∧
+      (i ∉ ({0, 1, 4} : Finset (Fin 7)) → fD (x i) < 0))
+    (hE : ∀ i, (i ∈ ({1, 3, 6} : Finset (Fin 7)) → fE (x i) = 0) ∧
+      (i ∉ ({1, 3, 6} : Finset (Fin 7)) → fE (x i) < 0))
+    (hF : ∀ i, (i ∈ ({1, 4, 6} : Finset (Fin 7)) → fF (x i) = 0) ∧
+      (i ∉ ({1, 4, 6} : Finset (Fin 7)) → fF (x i) < 0))
+    (hG : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
+      (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fG (x i) < 0))
+    (heq₁ : det3 (x 5 - x 3) (x 4 - x 3) (x 1 - x 3) ≠ 0)
+    (heq₂ : det3 (x 5 - x 0) (x 6 - x 0) (x 1 - x 0) ≠ 0)
+    (heq₃ : det3 (x 3 - x 0) (x 6 - x 0) (x 4 - x 0) ≠ 0)
+    (hgen : GenPos (univ.image x)) (hpar : NoPlaneParallel (univ.image x))
+    (hnd : ∀ v ∈ univ.image x, ∀ w ∈ univ.image x, v ≠ w →
+      NoHDNAt ((univ.image x).erase w) (w - v)) :
+    IsRupert (univ.image x) := by
+  classical
+  obtain ⟨-, eV⟩ := image_seven x
+  rw [eV] at hgen hpar hnd ⊢
+  obtain ⟨F, hcap⟩ := exists_type08_cap x hx fA fB fC fD fE fF fG hA hB hC hD hE hF hG
   exact isRupert_type08 F hcap heq₁ heq₂ heq₃ hgen hpar hnd
 
 end Minimality
