@@ -49,11 +49,11 @@ Lemma R0 read: `t_m, t₁ > 0 > t_f, t₂` (H1); `σ_mf < σ_g` (H2); `D(v) > 0 
 * The two type-08 closings of A.10's table: `isRupert_quad_edge_middle_rd` (N2–`K_c`,
   rim `c 2 b c' b'`, circle `a'b'c`; the hidden `a` lies strictly inside a triangle of the
   rim, `rdHidden_quad_edge`) and `isRupert_t4b_rd` (T4–`K_b`, rim `b a' c b' c'`, circle
-  `Q_ab` with the middles `2`, `a`).  `Type08Gen.slideN2c`, `slideT4b` accept `RdRim` as a
-  third alternative.
+  `Q_ab` with the middles `2`, `a`).  `Type08Gen.slideN2c`, `slideT4b` accept `R_d` as a
+  third alternative (`RdCond`, via Lemma R0).
 
-(H1)–(H4) are hypotheses here (`RdRim`); Lemma R0 (that they hold on `R_d` off `Σ`) is
-not formalized.
+(H1)–(H4) are hypotheses here (`RdRim`); Lemma R0, that they hold on `R_d` off `Σ`, is
+`Type08R0.lean` (`rdRim_of_R0`).
 -/
 
 namespace Minimality

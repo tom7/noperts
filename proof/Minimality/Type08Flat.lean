@@ -222,9 +222,12 @@ theorem isRupert_type08_flatA {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   obtain ⟨lam, mu, hlam0, hlam1, hmu0, hmu1, hm⟩ := flat_cross F G hκa
   have hpl := G.planar_of_kappa hκa
+  have e : det3 (b - c) (c' - c) (b' - c) = det3 (c - b) (b' - b) (c' - b) := by
+    simp only [det3_expand, PiLp.sub_apply]; ring
   refine isRupert_type08_slide_core F hd (fun hfar => ⟨type08_quad_edge F G hκb hκc hU hfar,
     not_bad_of_cross hlam0 hlam1 hmu0 hmu1 hm _ (hgen.flatN2 hpl)⟩) (fun _ _ => ?_)
-    (type08_T_far F G hκb hκc hU) (type08_T'_far F G hκb hκc hU) hgen
+    (type08_T_far F G hκb hκc hU) (type08_T'_far F G hκb hκc hU)
+    (by rw [e, hpl, zero_mul]) (by rw [hpl, mul_zero]) hgen
   exact not_bad_of_cross hmu0 hmu1 hlam0 hlam1 hm.symm _
     (fun h => hgen.flatT4 hpl ⟨h.2, h.1⟩)
 
@@ -316,10 +319,12 @@ theorem isRupert_type08_flatB {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b
   obtain ⟨hba, hba', -, hb'a, hb'a', hb'c, hb'c', hac, hac'⟩ := flatB_signs F G hκa hκc hU
   obtain ⟨e1, e2, e3⟩ := type08_tie_sums F G hb'a'.ne' hb'c'.ne
   rw [hκb] at e3
+  have hsides := type08_rd_sides F.isOctahedron G hκa (by rw [anti]; linarith)
+    (by rw [anti]; linarith) hac hac'
   refine isRupert_type08_slide_core F hd (fun hfar => ?_) (fun hfc hfc' => ?_)
     (fun hT => absurd ⟨hd.tieT_geom hT, hd.tieT'_geom (e2.mpr (by linarith [e1.mp hT]))⟩
       hgen.tieTT')
-    (fun hT' hT => absurd (e1.mpr (by linarith [e2.mp hT'])) hT) hgen
+    (fun hT' hT => absurd (e1.mpr (by linarith [e2.mp hT'])) hT) hsides.1.le hsides.2.le hgen
   · -- case N2: Lemma 7 with `[b a'] [b' c] = [b c] [b' a']`
     have hs : galeD G.l G.m b' a' + galeD G.l G.m b' c < 0 :=
       neg_of_mul_neg_pos (by rw [mul_comm]; exact (far_end_Qbc_iff' F G hb'a'.ne').mp hfar) hb'a'

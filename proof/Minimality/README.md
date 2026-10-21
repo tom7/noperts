@@ -307,7 +307,7 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   form: `isRupert_type08`.
 * At the entry point, `not_type08_of_isNopert'` (Theorem 10.1′ of the §10 addendum of
   `FEWER-FACES-PROOFS.md`, Lemmas C, H, K, X in Lean form; `Slide.lean`,
-  `Type08Slide.lean`, `Type08Tie.lean`, `Type08Rd.lean`, `Type08Codim.lean`,
+  `Type08Slide.lean`, `Type08Tie.lean`, `Type08Rd.lean`, `Type08R0.lean`, `Type08Codim.lean`,
   `Type08Flat.lean`): type 08 without `GenPos`, `NoPlaneParallel` and `NoHDNAt`.  The
   hypotheses, per labelling of Lemma 6, are collected in `Type08Gen` (`Type08GenAll`:
   all six labellings); `O` may have one planar equator.  Lemma C (`isRupert_of_slide`):
@@ -327,7 +327,14 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   term), with `F_k`'s middles over its side (`isRupert_of_chords`); in coordinates
   `isRupert_rd_std`, for any orthonormal frame `isRupert_rd`, and for N2–`K_c` and
   T4–`K_b` `isRupert_quad_edge_middle_rd`, `isRupert_t4b_rd`, with (H1)–(H4) as the
-  hypothesis `RdRim` (a third alternative in `Type08Gen.slideN2c`, `slideT4b`).
+  hypothesis `RdRim`.  Lemma R0 (`Type08R0.lean`) derives `RdRim` on `R_d` (`RdCond`: `g`
+  parallel to the face and not to the chord `[v, f]`, a horizontal double normal
+  perpendicular to the face, five distinct depths, not strictly unimodal; the third
+  alternative in `Type08Gen.slideN2c`, `slideT4b`): (H1) from the two peaks, the unimodal
+  `K_v`, the weak saddle of `K_w` and the claim of Lemma 9.3/5 (`rd_depths`), (H2) from the
+  face `Φ` (`rd_coords`), (H4) from Lemma 9.7 / (T2) with `κ_a > 0` (`type08_rd_sides`), in
+  the frame of A.10 (`exists_rdFrame`); `rdRim_of_R0`, `isRupert_quad_edge_middle_rdCond`,
+  `isRupert_t4b_rdCond`.
   Lemma X at the far-end ties `T` (`β₂ = 1`) and `T'` (`α₁ = 1`): the far end of the
   other face from the identity `α + β = κ_b` (`type08_T_far`, `type08_T'_far`), and the
   routes R1/R4′ (`isRupert_kb_four`), R2′/R3 (`isRupert_kd_four`), R2″ (`isRupert_r2pp`),
@@ -710,9 +717,10 @@ In import order.
 | `Type08T4` | Type 08, case T4 (Lemma 5): the claim of Lemma 9.3 from one face, the closing by `x`, the T4 rim in coordinates | `quad_lower_of_face`, `nws4_closing_x`, `t4_dets`, `isRupert_type08_T4` |
 | `Type08` | Theorem 10.1 (type 08): the normalized case analysis, the relabelling by Lemma 6 (`S3` and mirrored Gale vectors), the facet form (the cap from the facets, `exists_type08_cap`) | `NoPlaneParallel`, `OctFacets.isOctahedron`, `isRupert_type08_normalized`, `isRupert_type08`, `exists_type08_cap`, `isRupert_type08_facets` |
 | `Slide` | §10 addendum (T1), Lemma C: Proposition 8.8 with one face at a view from determinant tests, either orientation; Lemma 7.4 by edges (a horizontal double normal joins two rim edges with meeting depth intervals and lies on the circle of a direction of the pair); the slide along a face circle `u₀ + t e`, `t → 0⁺`, with `NoBadNormal` in place of strict depths and of the double-normal exclusion; unimodality along the slide | `pairDirs`, `EdgesApart`, `exists_pairDir_of_hdn`, `NoBadNormal`, `isRupert_of_chordView_or`, `isRupert_of_slide`, `isRupert_of_slide''`, `SlideTest`, `StrictUnimodal`, `eventually_unimodal_of_strict` |
-| `Type08Slide` | Type 08, the cases of Theorem 10.1 by slides (Lemma C) and Lemma H's five-corner rims: N2 in an octahedron with one more point (tests in either orientation, the closing by `x` with the triple-tie exclusion), T4 and Q in the frame `d; a, c, b` | `quad_edge_tests_or`, `nws4_closing_oct`, `isRupert_quad_edge_middle_slide`, `isRupert_quad_edge_middle_five`, `isRupert_t4_slide`, `isRupert_t4b_five`, `isRupert_t4d_five`, `isRupert_q_slide` |
+| `Type08Slide` | Type 08, the cases of Theorem 10.1 by slides (Lemma C) and Lemma H's five-corner rims: N2 in an octahedron with one more point (tests in either orientation, the closing by `x` with the triple-tie exclusion), T4 and Q in the frame `d; a, c, b` | `quad_edge_tests_or`, `nws4_closing_oct`, `isRupert_quad_edge_middle_sel`, `isRupert_quad_edge_middle_slide`, `isRupert_quad_edge_middle_five`, `t4_closing`, `isRupert_t4_sel`, `isRupert_t4_slide`, `isRupert_t4b_five`, `isRupert_t4d_five`, `isRupert_q_slide` |
 | `Type08Tie` | Type 08, Lemma X: the routes at the far-end ties `T`, `T'` (four-corner slides with a middle next to a far end, five-corner rims with a poked-out vertex) | `isRupert_kb_four`, `isRupert_kd_four`, `isRupert_r2pp`, `isRupert_r2p`, `isRupert_r4pp`, `isRupert_r4p` |
 | `Type08Rd` | Type 08, A.10 (`R_d` is Rupert): Lemma R2's certificate, slot tests along a tilt, Theorem R in coordinates and in any orthonormal frame (the isometry to coordinates), the `R_d` conditions along an edge view, the closings N2–`K_c` (the hidden `a` inside a triangle of the rim) and T4–`K_b` | `rd_limit_cert`, `eventually_det3_lin`, `eventually_slot`, `isRupert_rd_std`, `IsFrame`, `isRupert_of_frame_image`, `isRupert_rd`, `RdRim`, `isRupert_of_rdRim`, `rdHidden_quad_edge`, `isRupert_quad_edge_middle_rd`, `isRupert_t4b_rd` |
+| `Type08R0` | Type 08, Lemma R0 of A.10 ((H1)–(H4) on `R_d`): orthonormal frames, the depths (two peaks, the weak saddle of `K_w`, the claim), (H2) and (H4) in coordinates, the abstract lemma, the two closings, (H4) from the Gale diagram | `exists_rdFrame`, `two_peaks`, `rd_depths`, `rd_coords`, `RdCond`, `rdRim_of_R0`, `quad_edge_claim`, `t4_claim`, `isRupert_quad_edge_middle_rdCond`, `isRupert_t4b_rdCond`, `type08_rd_sides` |
 | `Type08Codim` | Type 08, Theorem 10.1′ (Lean form) without planar equators: the far-end identity at the ties (Gale), `b'` a corner in the T4 case, the hypotheses per labelling, the case analysis, the relabelling, the facet form | `type08_T_far`, `type08_T'_far`, `t4_kappa_pos`, `Type08Gen`, `Type08GenAll`, `isRupert_type08_slide_core`, `isRupert_type08_slide`, `isRupert_type08_slide_facets` |
 | `Type08Flat` | Type 08, Lemma K (one planar equator): the crossing diagonals of a planar equator, Lemma 7's quad edge from `(G4)`, the signs when `κ_b = 0`, the relabelling, the facet form | `flat_cross`, `not_bad_of_cross`, `type08_quad_edge`, `flatB_signs`, `isRupert_type08_flatA`, `isRupert_type08_flatB`, `isRupert_type08_flat`, `isRupert_type08_flat_facets` |
 | `Type29Lemmas` | Type 29 (`FEWER-FACES-PROOFS.md` §12, Theorem P), the reusable lemmas for an octahedron with one more point: Lemma 1 (certification without a crossed pair: a quad edge whose tail is an inner vertex of its third pair, `[p x] [x x'] < 0`, is not bad; Lemma 9.7 via `inTri_of_dep` and §10's Lemma 3), Lemma 2 (exact lift: a middle or hidden extra point leaves the reduced polygons, and Lemma 9.3's unimodal closing, unchanged; through `isRupert_of_edgeView`, i.e. `isRupert_of_edgeChords_unimodal`), a hidden point from the facets, both together | `quad_edge_sep`, `inner_dep_signs`, `not_bad_of_inner`, `QuadMiddle`, `QuadHidden`, `isRupert_quad_edge_lift`, `quadHidden_of_beneath`, `isRupert_inner_quad_edge_lift` |

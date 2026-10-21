@@ -45,11 +45,13 @@ contains the open piece `R_d` of the addendum.
 * `nws4_closing_x'`, `nws4_closing_oct`: the closing by `x` of Lemma 9.3 with the
   touching exclusion weakened to the triple tie `z p = z p' = z y'` (codimension 2).
 * `isRupert_quad_edge_middle_slide` (case N2: Lemma 9.3 with a middle, by slides, in an
-  octahedron with one more point).
+  octahedron with one more point); `isRupert_quad_edge_middle_sel`: its slides, given the
+  closing with no weak saddle.
 * In the frame `d; a, c, b` (`b' = d + α (a − d) + β (c − d)`, `c' = d + α₁ (a − d) +
   β₁ (b − d)`, `a' = d + α₂ (b − d) + β₂ (c − d)`; every test is a multiple of
   `E = det3 (a − d) (c − d) (b − d)`, `t4_slide_dets`, `q_slide_dets`, `t4b5_dets`,
-  `t4d5_dets`): `isRupert_t4_slide` (case T4), `isRupert_q_slide` (case Q, with the planar
+  `t4d5_dets`): `isRupert_t4_slide` (case T4; its closing `t4_closing` and slides
+  `isRupert_t4_sel`), `isRupert_q_slide` (case Q, with the planar
   quadrilateral `Q_ac` allowed level edges: `nws4_of_planar_quad'`).
 -/
 
@@ -305,29 +307,21 @@ theorem isRupert_quad_edge_middle_five {x x' y y' p p' m : ℝ³} (F : OctFacets
     refine ⟨4, 1 - t, -1, by linarith, by linarith, by norm_num, ?_⟩
     simp only [b4, quint_4, quint_0, u]; module
 
-/-- **Case N2 of Theorem 10.1 by slides (Lemma 9.3 with a middle).**  At a quad edge
-`x → y` of an octahedron (`x'` hidden) that is not bad, with one more point `m` over
-the chord from `y` to `p` (in the face `x y p`): if `K_y`'s rim `y p y' p'` has no weak
-saddle, slide it along the face `x y p`; otherwise `K_x`'s rim `x p y' p'` has none
-(unless the far ends tie with `y'`), and slide it along `x y p` or `x y p'`.  No
-distinct depths and no exclusion of horizontal double normals at the edge view are
-needed, only `NoBadNormal` for the circles used. -/
-theorem isRupert_quad_edge_middle_slide {x x' y y' p p' m : ℝ³} (F : OctFacets x x' y y' p p')
+/-- **Case N2 of Theorem 10.1 by slides, given the closing.**  At a quad edge `x → y` of an
+octahedron (`x'` hidden) with one more point `m` over the chord from `y` to `p` (in the face
+`x y p`): if `K_y`'s rim `y p y' p'` has no weak saddle, slide it along the face `x y p`; if
+`K_x`'s rim `x p y' p'` has none, slide it along `x y p` or `x y p'`. -/
+theorem isRupert_quad_edge_middle_sel {x x' y y' p p' m : ℝ³} (F : OctFacets x x' y y' p p')
     (hq₁ : F.a'b'c.f x < F.a'b'c.f y) (hq₂ : F.a'b'c'.f x < F.a'b'c'.f y)
-    (hgood : ¬ max ⟪y, y - x⟫ ⟪y', y - x⟫ ≤ min ⟪p, y - x⟫ ⟪p', y - x⟫)
     (hmid : ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ 0 < δ ∧ m = y + s • (p - y) + δ • (y - x))
     (hmO : m ≠ x ∧ m ≠ x' ∧ m ≠ y ∧ m ≠ y' ∧ m ≠ p ∧ m ≠ p')
-    (htouch : ¬ (⟪p, y - x⟫ = ⟪y', y - x⟫ ∧ ⟪p', y - x⟫ = ⟪y', y - x⟫))
-    (hsy : NoBadNormal (quad y p y' p') (y - x) (p - y) ∨
-      (StrictUnimodal (fun i => ⟪quint y m p y' p' i, y - x⟫) ∧
-        NoBadNormal (quint y m p y' p') (y - x) (p' - y)))
-    (hsx : NoBadNormal (quad x p y' p') (y - x) (p - x) ∨
-      NoBadNormal (quad x p y' p') (y - x) (p' - x)) :
+    (hsel : (NWS4 (quad ⟪y, y - x⟫ ⟪p, y - x⟫ ⟪y', y - x⟫ ⟪p', y - x⟫) ∧
+        NoBadNormal (quad y p y' p') (y - x) (p - y)) ∨
+      (NWS4 (quad ⟪x, y - x⟫ ⟪p, y - x⟫ ⟪y', y - x⟫ ⟪p', y - x⟫) ∧
+        (NoBadNormal (quad x p y' p') (y - x) (p - x) ∨
+          NoBadNormal (quad x p y' p') (y - x) (p' - x)))) :
     IsRupert (insert m {x, x', y, y', p, p'}) := by
   classical
-  rcases hsy with hsy | ⟨hu5, hs5⟩
-  swap
-  · exact isRupert_quad_edge_middle_five F hq₁ hq₂ hmid hmO hu5 hs5
   obtain ⟨E1, E2, E3, E4⟩ := quad_edge_tests_or F hq₁ hq₂
   set ρ := det3 (p - y) (p' - y) (y - x) with hρ_def
   have hρ : ρ ≠ 0 := quad_orient_ne F
@@ -417,7 +411,7 @@ theorem isRupert_quad_edge_middle_slide {x x' y y' p p' m : ℝ³} (F : OctFacet
     · exact absurd h h3
   -- `m − x` in the face `x y p`
   have hmx' : m - x = (1 + δ - s) • u + s • (p - x) := by rw [hm]; simp only [u]; module
-  by_cases hN : NWS4 (quad ⟪y, u⟫ ⟪p, u⟫ ⟪y', u⟫ ⟪p', u⟫)
+  rcases hsel with ⟨hN, hsy⟩ | ⟨hN', hsx⟩
   · -- `K_y`, sliding along the face `x y p` (`e = p − y`)
     refine isRupert_of_slide' V {x, m} u (p - y) hu (quad y p y' p') (hxVq y (Or.inl rfl)) ?_
       (hinjq y (Or.inl rfl)) (by norm_num) ρ hρ (hcyc y (Or.inl rfl)) ?_ ?_
@@ -442,10 +436,7 @@ theorem isRupert_quad_edge_middle_slide {x x' y y' p p' m : ℝ³} (F : OctFacet
         refine ⟨0, s + t * -δ, δ, hts, by nlinarith [mul_pos (show (0:ℝ) < t from ht0) hδ],
           hδ.ne', ?_⟩
         simp only [quad_0, zero_add, quad_1, hm]; module
-  · -- `K_x`, by the closing of Lemma 9.3
-    have hN' := nws4_closing_oct F hq₁ hq₂ hN hgood htouch
-    have hMx : ∀ v, v ∈ ({y} : Finset ℝ³) ∨ v ∈ ({y, m} : Finset ℝ³) → True := fun _ _ => trivial
-    clear hMx
+  · -- `K_x`
     rcases hsx with hsx | hsx
     · -- along the face `x y p` (`e = x − p`): `y` and `m` are middles
       refine isRupert_of_slide' V {y, m} u (x - p) hu (quad x p y' p') (hxVq x (Or.inr rfl)) ?_
@@ -526,6 +517,33 @@ theorem isRupert_quad_edge_middle_slide {x x' y y' p p' m : ℝ³} (F : OctFacet
         simp only [quad_3, a3, quad_0, u]; module
       · exact hsx.of_span 0 (-1) (by module)
 
+
+/-- **Case N2 of Theorem 10.1 by slides (Lemma 9.3 with a middle).**  At a quad edge
+`x → y` of an octahedron (`x'` hidden) that is not bad, with one more point `m` over
+the chord from `y` to `p` (in the face `x y p`): if `K_y`'s rim `y p y' p'` has no weak
+saddle, slide it along the face `x y p`; otherwise `K_x`'s rim `x p y' p'` has none
+(unless the far ends tie with `y'`), and slide it along `x y p` or `x y p'`.  No
+distinct depths and no exclusion of horizontal double normals at the edge view are
+needed, only `NoBadNormal` for the circles used. -/
+theorem isRupert_quad_edge_middle_slide {x x' y y' p p' m : ℝ³} (F : OctFacets x x' y y' p p')
+    (hq₁ : F.a'b'c.f x < F.a'b'c.f y) (hq₂ : F.a'b'c'.f x < F.a'b'c'.f y)
+    (hgood : ¬ max ⟪y, y - x⟫ ⟪y', y - x⟫ ≤ min ⟪p, y - x⟫ ⟪p', y - x⟫)
+    (hmid : ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ 0 < δ ∧ m = y + s • (p - y) + δ • (y - x))
+    (hmO : m ≠ x ∧ m ≠ x' ∧ m ≠ y ∧ m ≠ y' ∧ m ≠ p ∧ m ≠ p')
+    (htouch : ¬ (⟪p, y - x⟫ = ⟪y', y - x⟫ ∧ ⟪p', y - x⟫ = ⟪y', y - x⟫))
+    (hsy : NoBadNormal (quad y p y' p') (y - x) (p - y) ∨
+      (StrictUnimodal (fun i => ⟪quint y m p y' p' i, y - x⟫) ∧
+        NoBadNormal (quint y m p y' p') (y - x) (p' - y)))
+    (hsx : NoBadNormal (quad x p y' p') (y - x) (p - x) ∨
+      NoBadNormal (quad x p y' p') (y - x) (p' - x)) :
+    IsRupert (insert m {x, x', y, y', p, p'}) := by
+  rcases hsy with hsy | ⟨hu5, hs5⟩
+  swap
+  · exact isRupert_quad_edge_middle_five F hq₁ hq₂ hmid hmO hu5 hs5
+  by_cases hN : NWS4 (quad ⟪y, y - x⟫ ⟪p, y - x⟫ ⟪y', y - x⟫ ⟪p', y - x⟫)
+  · exact isRupert_quad_edge_middle_sel F hq₁ hq₂ hmid hmO (Or.inl ⟨hN, hsy⟩)
+  · exact isRupert_quad_edge_middle_sel F hq₁ hq₂ hmid hmO
+      (Or.inr ⟨nws4_closing_oct F hq₁ hq₂ hN hgood htouch, hsx⟩)
 
 /-! ### The T4 and Q cases in the frame `d; a, c, b` -/
 
@@ -833,36 +851,86 @@ theorem isRupert_t4d_five {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ β
       simp only [b4, quint_4, quint_0]; rw [ha']; module
 
 
+/-- **The closing of Lemma 5** (T4): in the frame `d; a, c, b`, if `K_b`'s rim `b c' b' c`
+has a weak saddle, the edge `d → b` is not bad and there is no triple tie
+`z c = z c' = z b'`, then `K_d`'s rim `d c' b' c` has none. -/
+theorem t4_closing {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ β₂ : ℝ}
+    (hb' : b' = d + α • (a - d) + β • (c - d)) (hc' : c' = d + α₁ • (a - d) + β₁ • (b - d))
+    (ha' : a' = d + α₂ • (b - d) + β₂ • (c - d)) (hdb : d ≠ b)
+    (hE : det3 (a - d) (c - d) (b - d) ≠ 0)
+    (hα : 0 < α) (hβ : 0 < β) (hα₁ : 1 < α₁) (hβ₁ : 0 < β₁) (hκ : 0 < α + α₁ * (β - 1))
+    (hgood : ¬ max ⟪b, b - d⟫ ⟪b', b - d⟫ ≤ min ⟪c, b - d⟫ ⟪c', b - d⟫)
+    (htouch : ¬ (⟪c, b - d⟫ = ⟪b', b - d⟫ ∧ ⟪c', b - d⟫ = ⟪b', b - d⟫))
+    (hN : ¬ NWS4 (quad ⟪b, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫)) :
+    NWS4 (quad ⟪d, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫) := by
+  obtain ⟨K0, K1, K2, K3, K4, K5, K6, K7, K8, K9, K10, K11, K12, K13, K14, K15, K16, K17, K18,
+    K19, K20, K21, K22, K23, K24, K25, K26, D3, D21, D2, D1⟩ := t4_slide_dets hb' hc' ha'
+  have hα₁p : 0 < α₁ := by linarith
+  have hκ' : 0 < α + β * α₁ - α₁ := by
+    rw [show α + β * α₁ - α₁ = α + α₁ * (β - 1) by ring]; exact hκ
+  have pβα₁ : 0 < β * α₁ := mul_pos hβ hα₁p
+  have hlowG : ∀ s t : ℝ³, (fun X => -(det3 (a - d) (c - d) (b - d) * det3 (a - d) (c - d) (X - d))) s -
+      (fun X => -(det3 (a - d) (c - d) (b - d) * det3 (a - d) (c - d) (X - d))) t =
+      ⟪-(det3 (a - d) (c - d) (b - d)) • cross (a - d) (c - d), s - t⟫ := by
+    intro s t
+    simp only [det3, real_inner_smul_left]
+    have e : ⟪cross (a - d) (c - d), s - t⟫ =
+        ⟪cross (a - d) (c - d), s - d⟫ - ⟪cross (a - d) (c - d), t - d⟫ := by
+      rw [← inner_sub_right]; congr 1; abel
+    rw [e]; ring
+  have hEE := mul_self_pos.mpr hE
+  have Gd : (fun X => -(det3 (a - d) (c - d) (b - d) * det3 (a - d) (c - d) (X - d))) d = 0 := by
+    simp only [sub_self]; simp [det3_expand]
+  have Gb' : (fun X => -(det3 (a - d) (c - d) (b - d) * det3 (a - d) (c - d) (X - d))) b' = 0 := by
+    simp only [K25, mul_zero, neg_zero]
+  have Gb : (fun X => -(det3 (a - d) (c - d) (b - d) * det3 (a - d) (c - d) (X - d))) b < 0 := by
+    simp only; linarith
+  have Gc : (fun X => -(det3 (a - d) (c - d) (b - d) * det3 (a - d) (c - d) (X - d))) c = 0 := by
+    simp only; rw [show det3 (a - d) (c - d) (c - d) = 0 by simp [det3_expand]; ring]; ring
+  have Gc' : (fun X => -(det3 (a - d) (c - d) (b - d) * det3 (a - d) (c - d) (X - d))) c' < 0 := by
+    simp only; rw [K26]
+    have := mul_pos hβ₁ hEE
+    linarith [show det3 (a - d) (c - d) (b - d) * (β₁ * det3 (a - d) (c - d) (b - d)) =
+      β₁ * (det3 (a - d) (c - d) (b - d) * det3 (a - d) (c - d) (b - d)) by ring]
+  rcases lt_or_gt_of_ne hE with hEn | hEp
+  · have S₁ : 0 < det3 (b' - c) (c' - c) (b - d) := by
+      rw [D3]; exact neg_pos.mpr (mul_neg_of_pos_of_neg hκ' hEn)
+    have S₂ : 0 < det3 (b' - d) (c' - d) (b - d) := by
+      rw [D21]; exact neg_pos.mpr (mul_neg_of_pos_of_neg pβα₁ hEn)
+    have S₃ : 0 < det3 (c - d) (c' - d) (b - d) := by
+      rw [D2]; exact neg_pos.mpr (mul_neg_of_pos_of_neg hα₁p hEn)
+    have S₄ : 0 < det3 (c - d) (b' - d) (b - d) := by
+      rw [D1]; exact neg_pos.mpr (mul_neg_of_pos_of_neg hα hEn)
+    have hlow := quad_lower_of_face hlowG hdb Gd Gb' Gb S₂ S₄ (Or.inl ⟨Gc, Gc'⟩)
+    exact NWS4_quad_swap (nws4_closing_x' S₁ S₂ S₃ S₄ hlow
+      (fun h => hN (NWS4_quad_swap h)) hgood htouch)
+  · have S₁ : 0 < det3 (b' - c') (c - c') (b - d) := by rw [K2]; exact mul_pos hκ' hEp
+    have S₂ : 0 < det3 (b' - d) (c - d) (b - d) := by rw [K24]; exact mul_pos hα hEp
+    have S₃ : 0 < det3 (c' - d) (c - d) (b - d) := by rw [K14]; exact mul_pos hα₁p hEp
+    have S₄ : 0 < det3 (c' - d) (b' - d) (b - d) := by rw [K13]; exact mul_pos pβα₁ hEp
+    have hlow := quad_lower_of_face hlowG hdb Gd Gb' Gb S₂ S₄ (Or.inr ⟨Gc, Gc'⟩)
+    exact nws4_closing_x' S₁ S₂ S₃ S₄ hlow hN (by rwa [min_comm])
+      (fun h => htouch ⟨h.2, h.1⟩)
+
 set_option maxHeartbeats 1000000 in
-/-- **The T4 case of Theorem 10.1 by slides (Lemma 5 with Lemma C).**  In the frame
+/-- **The T4 case of Theorem 10.1 by slides, given the closing.**  In the frame
 `d; a, c, b` (`b' = d + α (a − d) + β (c − d)`, `c' = d + α₁ (a − d) + β₁ (b − d)`,
 `a' = d + α₂ (b − d) + β₂ (c − d)`), with far ends `c'` (`α₁ > 1`) and `c` (`β₂ < 1`) at
 the view along `d b` and `b'` a corner (`κ' > 0`): if `K_b`'s rim `b c' b' c` has no weak
-saddle, slide it along `Q_bc`; otherwise (the edge `d → b` not bad, no triple tie
-`z c = z c' = z b'`) `K_d`'s rim `d c' b' c` has none, and slide it along `Q_ab`. -/
-theorem isRupert_t4_slide {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ β₂ : ℝ}
+saddle, slide it along `Q_bc`; if `K_d`'s rim `d c' b' c` has none, slide it along `Q_ab`. -/
+theorem isRupert_t4_sel {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ β₂ : ℝ}
     (hb' : b' = d + α • (a - d) + β • (c - d)) (hc' : c' = d + α₁ • (a - d) + β₁ • (b - d))
     (ha' : a' = d + α₂ • (b - d) + β₂ • (c - d))
     (hnd : [d, a, a', b, b', c, c'].Nodup) (hE : det3 (a - d) (c - d) (b - d) ≠ 0)
     (hα : 0 < α) (hβ : 0 < β) (hαβ : 1 < α + β) (hα₁ : 1 < α₁) (hβ₁ : 0 < β₁)
     (hα₂ : 0 < α₂) (hβ₂ : 0 < β₂) (hβ₂1 : β₂ < 1) (hαβ₂ : 1 < α₂ + β₂)
     (hκ : 0 < α + α₁ * (β - 1))
-    (hgood : ¬ max ⟪b, b - d⟫ ⟪b', b - d⟫ ≤ min ⟪c, b - d⟫ ⟪c', b - d⟫)
-    (htouch : ¬ (⟪c, b - d⟫ = ⟪b', b - d⟫ ∧ ⟪c', b - d⟫ = ⟪b', b - d⟫))
-    (hsb : NoBadNormal (quad b c' b' c) (b - d) (c - d) ∨
-      (StrictUnimodal (fun i => ⟪quint b c' b' c a' i, b - d⟫) ∧
-        NoBadNormal (quint b c' b' c a') (b - d) (a - d)))
-    (hsd : NoBadNormal (quad d c' b' c) (b - d) (a - d) ∨
-      (StrictUnimodal (fun i => ⟪quint d a c' b' c i, b - d⟫) ∧
-        NoBadNormal (quint d a c' b' c) (b - d) (c - d))) :
+    (hsel : (NWS4 (quad ⟪b, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫) ∧
+        NoBadNormal (quad b c' b' c) (b - d) (c - d)) ∨
+      (NWS4 (quad ⟪d, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫) ∧
+        NoBadNormal (quad d c' b' c) (b - d) (a - d))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   classical
-  rcases hsb with hsb | ⟨hu5, hs5⟩
-  swap
-  · exact isRupert_t4b_five hb' hc' ha' hnd hE hα hβ hα₁ hβ₁ hβ₂ hβ₂1 hαβ₂ hκ hu5 hs5
-  rcases hsd with hsd | ⟨hu5, hs5⟩
-  swap
-  · exact isRupert_t4d_five hb' hc' ha' hnd hE hα hβ hαβ hα₁ hβ₁ hα₂ hβ₂ hβ₂1 hκ hu5 hs5
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
     List.nodup_nil, and_true] at hnd
   obtain ⟨⟨hda, hda', hdb, hdb', hdc, hdc'⟩, ⟨haa', hab, hab', hac, hac'⟩,
@@ -885,7 +953,7 @@ theorem isRupert_t4_slide {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ β
   have pK10 : 0 < β * α₁ - β := by
     rw [show β * α₁ - β = β * (α₁ - 1) by ring]; exact mul_pos hβ (by linarith)
   have pβα₁ : 0 < β * α₁ := mul_pos hβ hα₁p
-  by_cases hN : NWS4 (quad ⟪b, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫)
+  rcases hsel with ⟨hN, hsb⟩ | ⟨hN', hsd⟩
   · -- `K_b`, sliding along `Q_bc` (`e = c − d`): `d` and `a'` are middles, `a` goes inside
     refine isRupert_of_slide' V {d, a'} (b - d) (c - d) hu (quad b c' b' c) ?_ ?_
       (quad_injective hbc' hbb' hbc (Ne.symm hb'c') (Ne.symm hcc') hb'c) (by norm_num)
@@ -937,50 +1005,7 @@ theorem isRupert_t4_slide {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ β
         · rw [div_lt_one (by positivity)]; linarith
         · exact div_ne_zero (by linarith) h1
         · simp only [a3, quad_3, quad_0]; rw [ha']; match_scalars <;> field_simp <;> ring
-  · -- `K_d`, by the closing of Lemma 5, sliding along `Q_ab` (`e = d − a`)
-    have hlowG : ∀ s t : ℝ³, (fun X => -(det3 (a - d) (c - d) (b - d) * det3 (a - d) (c - d) (X - d))) s -
-        (fun X => -(det3 (a - d) (c - d) (b - d) * det3 (a - d) (c - d) (X - d))) t =
-        ⟪-(det3 (a - d) (c - d) (b - d)) • cross (a - d) (c - d), s - t⟫ := by
-      intro s t
-      simp only [det3, real_inner_smul_left]
-      have e : ⟪cross (a - d) (c - d), s - t⟫ =
-          ⟪cross (a - d) (c - d), s - d⟫ - ⟪cross (a - d) (c - d), t - d⟫ := by
-        rw [← inner_sub_right]; congr 1; abel
-      rw [e]; ring
-    have hEE := mul_self_pos.mpr hE
-    have Gd : (fun X => -(det3 (a - d) (c - d) (b - d) * det3 (a - d) (c - d) (X - d))) d = 0 := by
-      simp only [sub_self]; simp [det3_expand]
-    have Gb' : (fun X => -(det3 (a - d) (c - d) (b - d) * det3 (a - d) (c - d) (X - d))) b' = 0 := by
-      simp only [K25, mul_zero, neg_zero]
-    have Gb : (fun X => -(det3 (a - d) (c - d) (b - d) * det3 (a - d) (c - d) (X - d))) b < 0 := by
-      simp only; linarith
-    have Gc : (fun X => -(det3 (a - d) (c - d) (b - d) * det3 (a - d) (c - d) (X - d))) c = 0 := by
-      simp only; rw [show det3 (a - d) (c - d) (c - d) = 0 by simp [det3_expand]; ring]; ring
-    have Gc' : (fun X => -(det3 (a - d) (c - d) (b - d) * det3 (a - d) (c - d) (X - d))) c' < 0 := by
-      simp only; rw [K26]
-      have := mul_pos hβ₁ hEE
-      linarith [show det3 (a - d) (c - d) (b - d) * (β₁ * det3 (a - d) (c - d) (b - d)) =
-        β₁ * (det3 (a - d) (c - d) (b - d) * det3 (a - d) (c - d) (b - d)) by ring]
-    have hN' : NWS4 (quad ⟪d, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫) := by
-      rcases lt_or_gt_of_ne hE with hEn | hEp
-      · have S₁ : 0 < det3 (b' - c) (c' - c) (b - d) := by
-          rw [D3]; exact neg_pos.mpr (mul_neg_of_pos_of_neg hκ' hEn)
-        have S₂ : 0 < det3 (b' - d) (c' - d) (b - d) := by
-          rw [D21]; exact neg_pos.mpr (mul_neg_of_pos_of_neg pβα₁ hEn)
-        have S₃ : 0 < det3 (c - d) (c' - d) (b - d) := by
-          rw [D2]; exact neg_pos.mpr (mul_neg_of_pos_of_neg hα₁p hEn)
-        have S₄ : 0 < det3 (c - d) (b' - d) (b - d) := by
-          rw [D1]; exact neg_pos.mpr (mul_neg_of_pos_of_neg hα hEn)
-        have hlow := quad_lower_of_face hlowG hdb Gd Gb' Gb S₂ S₄ (Or.inl ⟨Gc, Gc'⟩)
-        exact NWS4_quad_swap (nws4_closing_x' S₁ S₂ S₃ S₄ hlow
-          (fun h => hN (NWS4_quad_swap h)) hgood htouch)
-      · have S₁ : 0 < det3 (b' - c') (c - c') (b - d) := by rw [K2]; exact mul_pos hκ' hEp
-        have S₂ : 0 < det3 (b' - d) (c - d) (b - d) := by rw [K24]; exact mul_pos hα hEp
-        have S₃ : 0 < det3 (c' - d) (c - d) (b - d) := by rw [K14]; exact mul_pos hα₁p hEp
-        have S₄ : 0 < det3 (c' - d) (b' - d) (b - d) := by rw [K13]; exact mul_pos pβα₁ hEp
-        have hlow := quad_lower_of_face hlowG hdb Gd Gb' Gb S₂ S₄ (Or.inr ⟨Gc, Gc'⟩)
-        exact nws4_closing_x' S₁ S₂ S₃ S₄ hlow hN (by rwa [min_comm])
-          (fun h => htouch ⟨h.2, h.1⟩)
+  · -- `K_d`, sliding along `Q_ab` (`e = d − a`)
     refine isRupert_of_slide' V {b, a} (b - d) (d - a) hu (quad d c' b' c) ?_ ?_
       (quad_injective hdc' hdb' hdc (Ne.symm hb'c') (Ne.symm hcc') hb'c) (by norm_num)
       (det3 (a - d) (c - d) (b - d)) hE ?_ ?_ ?_ (eventually_unimodal_quad_slide hN') ?_
@@ -1033,6 +1058,46 @@ theorem isRupert_t4_slide {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ β
           match_scalars <;> field_simp <;> ring
     · exact hsd.of_span 0 (-1) (by module)
 
+
+
+/-- **The T4 case of Theorem 10.1 by slides (Lemma 5 with Lemma C).**  In the frame
+`d; a, c, b` (`b' = d + α (a − d) + β (c − d)`, `c' = d + α₁ (a − d) + β₁ (b − d)`,
+`a' = d + α₂ (b − d) + β₂ (c − d)`), with far ends `c'` (`α₁ > 1`) and `c` (`β₂ < 1`) at
+the view along `d b` and `b'` a corner (`κ' > 0`): if `K_b`'s rim `b c' b' c` has no weak
+saddle, slide it along `Q_bc`; otherwise (the edge `d → b` not bad, no triple tie
+`z c = z c' = z b'`) `K_d`'s rim `d c' b' c` has none, and slide it along `Q_ab`. -/
+theorem isRupert_t4_slide {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ β₂ : ℝ}
+    (hb' : b' = d + α • (a - d) + β • (c - d)) (hc' : c' = d + α₁ • (a - d) + β₁ • (b - d))
+    (ha' : a' = d + α₂ • (b - d) + β₂ • (c - d))
+    (hnd : [d, a, a', b, b', c, c'].Nodup) (hE : det3 (a - d) (c - d) (b - d) ≠ 0)
+    (hα : 0 < α) (hβ : 0 < β) (hαβ : 1 < α + β) (hα₁ : 1 < α₁) (hβ₁ : 0 < β₁)
+    (hα₂ : 0 < α₂) (hβ₂ : 0 < β₂) (hβ₂1 : β₂ < 1) (hαβ₂ : 1 < α₂ + β₂)
+    (hκ : 0 < α + α₁ * (β - 1))
+    (hgood : ¬ max ⟪b, b - d⟫ ⟪b', b - d⟫ ≤ min ⟪c, b - d⟫ ⟪c', b - d⟫)
+    (htouch : ¬ (⟪c, b - d⟫ = ⟪b', b - d⟫ ∧ ⟪c', b - d⟫ = ⟪b', b - d⟫))
+    (hsb : NoBadNormal (quad b c' b' c) (b - d) (c - d) ∨
+      (StrictUnimodal (fun i => ⟪quint b c' b' c a' i, b - d⟫) ∧
+        NoBadNormal (quint b c' b' c a') (b - d) (a - d)))
+    (hsd : NoBadNormal (quad d c' b' c) (b - d) (a - d) ∨
+      (StrictUnimodal (fun i => ⟪quint d a c' b' c i, b - d⟫) ∧
+        NoBadNormal (quint d a c' b' c) (b - d) (c - d))) :
+    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
+  classical
+  rcases hsb with hsb | ⟨hu5, hs5⟩
+  swap
+  · exact isRupert_t4b_five hb' hc' ha' hnd hE hα hβ hα₁ hβ₁ hβ₂ hβ₂1 hαβ₂ hκ hu5 hs5
+  rcases hsd with hsd | ⟨hu5, hs5⟩
+  swap
+  · exact isRupert_t4d_five hb' hc' ha' hnd hE hα hβ hαβ hα₁ hβ₁ hα₂ hβ₂ hβ₂1 hκ hu5 hs5
+  by_cases hN : NWS4 (quad ⟪b, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫)
+  · exact isRupert_t4_sel hb' hc' ha' hnd hE hα hβ hαβ hα₁ hβ₁ hα₂ hβ₂ hβ₂1 hαβ₂ hκ
+      (Or.inl ⟨hN, hsb⟩)
+  · have hdb : d ≠ b := by
+      simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+        List.nodup_nil, and_true] at hnd
+      exact hnd.1.2.2.1
+    exact isRupert_t4_sel hb' hc' ha' hnd hE hα hβ hαβ hα₁ hβ₁ hα₂ hβ₂ hβ₂1 hαβ₂ hκ
+      (Or.inr ⟨t4_closing hb' hc' ha' hdb hE hα hβ hα₁ hβ₁ hκ hgood htouch hN, hsd⟩)
 
 set_option maxHeartbeats 1000000 in
 /-- **Case Q of Theorem 10.1 by slides (Lemma 1 (c) with Lemma C).**  In the frame

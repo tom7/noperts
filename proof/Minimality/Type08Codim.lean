@@ -1,7 +1,7 @@
 module
 
 public import Minimality.Type08Tie
-public import Minimality.Type08Rd
+public import Minimality.Type08R0
 
 @[expose] public section
 
@@ -14,12 +14,13 @@ five-corner rims of Lemma H, and the far-end ties `T`, `T'` of Lemma X
 in all six.
 
 For the one-circle closings `K_c` (N2) and `K_b` (T4), `Type08Gen` also accepts the
-two-peaked five-corner rim of `R_d` (Theorem R of A.10, `Type08Rd.lean`).
+two-peaked five-corner rim of `R_d` (`RdCond`; Lemma R0 and Theorem R of A.10,
+`Type08R0.lean`, `Type08Rd.lean`).
 
 * `t4_kappa_pos`: in the T4 case `b'` is a corner of the view along `d b` (part of
   Lemma G: no (G1) failure there).
-* `isRupert_type08_slide_core`: the case analysis, given the Gale inputs of Lemma 7 and
-  of the T4 "not bad", and the far ends at the ties.
+* `isRupert_type08_slide_core`: the case analysis, given the Gale inputs of Lemma 7, of the
+  T4 "not bad" and of (H4) in Lemma R0 (weakly), and the far ends at the ties.
 * `isRupert_type08_slide_normalized`, `isRupert_type08_slide_gale`,
   `isRupert_type08_slide`, `isRupert_type08_slide_facets`: Theorem 10.1′ without planar
   equators (Lemma K is `Type08Flat.lean`).
@@ -249,12 +250,13 @@ uses at the views along `d b` and `a' c` when `(a, b, c)` is the labelling of Le
   (T4) along `Q_bc`, for `K_d` (T4) along `Q_ab`; for the three closings with one circle,
   alternatively Lemma H's five-corner rim along the other face (strictly unimodal and
   `NoBadNormal`), and for `K_c` (N2) and `K_b` (T4) also the two-peaked five-corner rim
-  of `R_d` (`RdRim`: the far edge parallel to the realizing face and (H1)–(H4) of A.10;
-  Theorem R, `Type08Rd.lean`).  The two-circle alternatives fail in codimension 2; the
-  one-circle ones on the class H1 of the addendum where also the five-corner rim is
-  neither strictly unimodal nor in `R_d` (type (c) of Lemma H with a two-peaked rim, the
-  depth-separated case not formalized; `R_d` for `K_d` (T4) is empty on paper), and in
-  codimension 2;
+  of `R_d` (`RdCond`: the far edge parallel to the realizing face, a horizontal double
+  normal perpendicular to it crossing transversally, distinct depths, not unimodal;
+  Lemma R0 and Theorem R, `Type08R0.lean`).  The two-circle alternatives fail in
+  codimension 2; the one-circle ones on the class H1 of the addendum where also the
+  five-corner rim is neither strictly unimodal nor in `R_d` (type (c) of Lemma H with a
+  two-peaked rim, the depth-separated case not formalized; `R_d` for `K_d` (T4) is empty on
+  paper), and in codimension 2;
 * `flatN2`, `flatT4` (Lemma K): if the equator `b c b' c'` of `A` is planar, no
   quadruple tie `z b = z b'`, `z c = z c'` at the views along `a' c` and `d b`. -/
 structure Type08Gen (a a' b b' c c' d : ℝ³) : Prop where
@@ -287,7 +289,7 @@ structure Type08Gen (a a' b b' c c' d : ℝ³) : Prop where
   slideN2c : NoBadNormal (quad c b c' b') (c - a') (b - c) ∨
     (StrictUnimodal (fun i => ⟪quint c d b c' b' i, c - a'⟫) ∧
       NoBadNormal (quint c d b c' b') (c - a') (b' - c)) ∨
-    RdRim c d b c' b' (c - a')
+    RdCond c d b c' b' a'
   slideN2a' : NoBadNormal (quad a' b c' b') (c - a') (b - a') ∨
     NoBadNormal (quad a' b c' b') (c - a') (b' - a')
   slideQ : NoBadNormal (quad d a b' c) (b - d) (a - d) ∨
@@ -295,7 +297,7 @@ structure Type08Gen (a a' b b' c c' d : ℝ³) : Prop where
   slideT4b : NoBadNormal (quad b c' b' c) (b - d) (c - d) ∨
     (StrictUnimodal (fun i => ⟪quint b c' b' c a' i, b - d⟫) ∧
       NoBadNormal (quint b c' b' c a') (b - d) (a - d)) ∨
-    RdRim b a' c b' c' (b - d)
+    RdCond b a' c b' c' d
   slideT4d : NoBadNormal (quad d c' b' c) (b - d) (a - d) ∨
     (StrictUnimodal (fun i => ⟪quint d a c' b' c i, b - d⟫) ∧
       NoBadNormal (quint d a c' b' c) (b - d) (c - d))
@@ -313,7 +315,9 @@ def Type08GenAll (a a' b b' c c' d : ℝ³) : Prop :=
 10.1 takes from the Gale diagram (in the labelling of Lemma 6): in case N2 (the far end
 of `Q_bc` along `d b` is `a'`) the edge `a' → c` of `O` is a quad edge (`a` hidden) that
 is not bad (Lemma 7), and in case T4 (far ends `c'`, `c`) the edge `d → b` is not bad
-(Lemmas 9.7, 4, 3), a type-08 point set satisfying `Type08Gen` is Rupert. -/
+(Lemmas 9.7, 4, 3), and the sides of (H4) in Lemma R0 (weakly: `b'`, `a'` on one side of
+the plane `c b c'`; `a'`, `c'` on opposite sides of the plane `b c b'`), a type-08 point set
+satisfying `Type08Gen` is Rupert. -/
 theorem isRupert_type08_slide_core {a a' b b' c c' d : ℝ³}
     (F : OctFacets a a' b b' c c') (hd : IsCap F d)
     (hN2 : F.abc'.f a' < F.abc'.f c → F.ab'c'.f a' < F.ab'c'.f c ∧
@@ -322,6 +326,8 @@ theorem isRupert_type08_slide_core {a a' b b' c c' d : ℝ³}
       ¬ max ⟪b, b - d⟫ ⟪b', b - d⟫ ≤ min ⟪c, b - d⟫ ⟪c', b - d⟫)
     (hT_far : F.abc'.f a' = F.abc'.f c → F.a'bc.f c' < F.a'bc.f a)
     (hT'_far : F.a'bc.f c' = F.a'bc.f a → F.abc'.f a' ≠ F.abc'.f c → F.abc'.f c < F.abc'.f a')
+    (hsideN2 : 0 ≤ det3 (b - c) (c' - c) (b' - c) * det3 (b - c) (c' - c) (a' - c))
+    (hsideT4 : det3 (c - b) (b' - b) (a' - b) * det3 (c - b) (b' - b) (c' - b) ≤ 0)
     (hgen : Type08Gen a a' b b' c c' d) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   classical
@@ -398,8 +404,20 @@ theorem isRupert_type08_slide_core {a a' b b' c c' d : ℝ³}
     · exact isRupert_quad_edge_middle_slide (m := d) F.swap₁.perm₂₃ hfar hq₂ hgood
         ⟨s, δ, hs0, hs1, hδ, hdmid⟩ ⟨hda', hda, hdc, hdc', hdb, hdb'⟩ hgen.touchN2 (Or.inr hs)
         hgen.slideN2a'
-    · -- `R_d` (A.10): the two-peaked five-corner rim along `a'b'c`
-      exact isRupert_quad_edge_middle_rd F.swap₁.perm₂₃ hfar hq₂ ⟨s, δ, hs0, hs1, hdmid⟩ hR
+    · -- `R_d` (A.10): if `K_{a'}` has no weak saddle, slide it; otherwise Lemma R0 and the
+      -- two-peaked five-corner rim along `a'b'c`
+      by_cases hNx : NWS4 (quad ⟪a', c - a'⟫ ⟪b, c - a'⟫ ⟪c', c - a'⟫ ⟪b', c - a'⟫)
+      · exact isRupert_quad_edge_middle_sel (m := d) F.swap₁.perm₂₃ hfar hq₂
+          ⟨s, δ, hs0, hs1, hδ, hdmid⟩ ⟨hda', hda, hdc, hdc', hdb, hdb'⟩
+          (Or.inr ⟨hNx, hgen.slideN2a'⟩)
+      have hNy : NWS4 (quad ⟪c, c - a'⟫ ⟪b, c - a'⟫ ⟪c', c - a'⟫ ⟪b', c - a'⟫) := by
+        by_contra hN
+        exact hNx (nws4_closing_oct F.swap₁.perm₂₃ hfar hq₂ hN hgood hgen.touchN2)
+      exact isRupert_quad_edge_middle_rdCond F.swap₁.perm₂₃ hfar hq₂ ⟨s, δ, hs0, hs1, hδ, hdmid⟩
+        ⟨F.abc'.f, F.abc'.N, F.abc'.hN, hd.abc', F.abc'.hQ, F.abc'.hR,
+          F.abc'.neg c (by simp) (Ne.symm hac) (Ne.symm hbc) hcc',
+          F.abc'.neg b' (by simp) (Ne.symm hab') (Ne.symm hbb') hb'c'⟩
+        hsideN2 hNy hNx hR
   · have hβ₂1 : F.abc'.f a' / F.abc'.f c < 1 := (div_lt_one_of_neg hFc).mpr hfc
     by_cases hfa : F.a'bc.f a < F.a'bc.f c'
     · -- case Q: the far ends are `a` and `c`
@@ -416,8 +434,23 @@ theorem isRupert_type08_slide_core {a a' b b' c c' d : ℝ³}
           hαβ₂ hκ hgood hgen.touchT4 (Or.inl hs) hgen.slideT4d
       · exact isRupert_t4_slide hb' hc' ha' hnd7 hd.det_Qac_ne hα hβ hαβ hα₁1 hβ₁ hα₂ hβ₂ hβ₂1
           hαβ₂ hκ hgood hgen.touchT4 (Or.inr hs) hgen.slideT4d
-      · -- `R_d` (A.10): the two-peaked five-corner rim along `Q_ab`
-        exact isRupert_t4b_rd hc' hα₁1 hβ₁ (Ne.symm hdb) hR
+      · -- `R_d` (A.10): if `K_d` has no weak saddle, slide it; otherwise Lemma R0 and the
+        -- two-peaked five-corner rim along `Q_ab`
+        by_cases hNd : NWS4 (quad ⟪d, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫)
+        · rcases hgen.slideT4d with hs | ⟨hu5, hs5⟩
+          · exact isRupert_t4_sel hb' hc' ha' hnd7 hd.det_Qac_ne hα hβ hαβ hα₁1 hβ₁ hα₂ hβ₂
+              hβ₂1 hαβ₂ hκ (Or.inr ⟨hNd, hs⟩)
+          · exact isRupert_t4d_five hb' hc' ha' hnd7 hd.det_Qac_ne hα hβ hαβ hα₁1 hβ₁ hα₂ hβ₂
+              hβ₂1 hκ hu5 hs5
+        have hNb : NWS4 (quad ⟪b, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫) := by
+          by_contra hN
+          exact hNd (t4_closing hb' hc' ha' hdb hd.det_Qac_ne hα hβ hα₁1 hβ₁ hκ hgood
+            hgen.touchT4 hN)
+        exact isRupert_t4b_rdCond hb' hc' ha' hdb hd.det_Qac_ne hα hβ hα₁1 hβ₁ hβ₂ hβ₂1 hαβ₂ hκ
+          ⟨F.a'b'c.f, F.a'b'c.N, F.a'b'c.hN, F.a'b'c.hP, F.a'b'c.hR, F.a'b'c.hQ,
+            F.a'b'c.neg b (by simp) (Ne.symm ha'b) hbb' hbc,
+            F.a'b'c.neg c' (by simp) (Ne.symm ha'c') (Ne.symm hb'c') (Ne.symm hcc')⟩
+          hsideT4 hNb hNd hR
 
 /-- The planes `d b b'` separate `c` from `c'` (`b'` is a corner of the T4 view). -/
 theorem IsCap.t4_opp {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c'} (hd : IsCap F d) :
@@ -443,10 +476,13 @@ theorem isRupert_type08_slide_normalized {a a' b b' c c' d : ℝ³} (h : IsOctah
     (hκa : 0 < galeD G.l G.m a a') (hκb : 0 < galeD G.l G.m b b')
     (hκc : galeD G.l G.m c c' ≠ 0) (hU : galeD G.l G.m b c < 0)
     (hgen : Type08Gen a a' b b' c c' d) :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) :=
-  isRupert_type08_slide_core F hd (fun hfar => type08_lemma7 F G hκa hκb hκc hU hfar)
+    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
+  obtain ⟨-, -, -, -, -, -, -, ha'b, ha'b', -, -, -, -, hac, hac'⟩ :=
+    type08_signs F G hκa hκb hκc hU
+  have hsides := type08_rd_sides h G hκa ha'b ha'b' hac hac'
+  exact isRupert_type08_slide_core F hd (fun hfar => type08_lemma7 F G hκa hκb hκc hU hfar)
     (fun _ _ => type08_t4_not_bad h F hd G hκa hκb hκc hU hd.t4_opp)
-    (type08_T_far F G hκb hκc hU) (type08_T'_far F G hκb hκc hU) hgen
+    (type08_T_far F G hκb hκc hU) (type08_T'_far F G hκb hκc hU) hsides.1.le hsides.2.le hgen
 
 /-- **Theorem 10.1′ (type 08), Gale form**: as `isRupert_type08_slide`, with `κ ≠ 0` for the
 three pairs of `O` in place of the planar-equator determinants. -/
