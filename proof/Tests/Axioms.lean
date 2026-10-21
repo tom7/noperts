@@ -133,6 +133,12 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.isRupert_r4p
 #assert_standard_axioms Minimality.isRupert_quad_edge_middle_slide
 #assert_standard_axioms Minimality.isRupert_quad_edge_middle_five
+#assert_standard_axioms Minimality.rd_limit_cert
+#assert_standard_axioms Minimality.isRupert_rd_std
+#assert_standard_axioms Minimality.isRupert_rd
+#assert_standard_axioms Minimality.isRupert_of_rdRim
+#assert_standard_axioms Minimality.isRupert_quad_edge_middle_rd
+#assert_standard_axioms Minimality.isRupert_t4b_rd
 #assert_standard_axioms Minimality.isRupert_t4_slide
 #assert_standard_axioms Minimality.isRupert_t4b_five
 #assert_standard_axioms Minimality.isRupert_t4d_five

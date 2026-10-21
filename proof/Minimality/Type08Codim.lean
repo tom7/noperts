@@ -1,6 +1,7 @@
 module
 
 public import Minimality.Type08Tie
+public import Minimality.Type08Rd
 
 @[expose] public section
 
@@ -11,6 +12,9 @@ The case analysis of Theorem 10.1 with the slides of Lemma C (`Type08Slide.lean`
 five-corner rims of Lemma H, and the far-end ties `T`, `T'` of Lemma X
 (`Type08Tie.lean`): `Type08Gen` collects what is used in one labelling, `Type08GenAll`
 in all six.
+
+For the one-circle closings `K_c` (N2) and `K_b` (T4), `Type08Gen` also accepts the
+two-peaked five-corner rim of `R_d` (Theorem R of A.10, `Type08Rd.lean`).
 
 * `t4_kappa_pos`: in the T4 case `b'` is a corner of the view along `d b` (part of
   Lemma G: no (G1) failure there).
@@ -244,9 +248,13 @@ uses at the views along `d b` and `a' c` when `(a, b, c)` is the labelling of Le
   for `K_{a'}` (N2) along `Q_bc` or `a'b'c`, for `K_d` (Q) along `Q_ab` or `Q_bc`, for `K_b`
   (T4) along `Q_bc`, for `K_d` (T4) along `Q_ab`; for the three closings with one circle,
   alternatively Lemma H's five-corner rim along the other face (strictly unimodal and
-  `NoBadNormal`).  The two-circle alternatives fail in codimension 2; the one-circle
-  ones on the class H1 of the addendum where also the five-corner rim is not strictly
-  unimodal (this contains `R_d`), and in codimension 2;
+  `NoBadNormal`), and for `K_c` (N2) and `K_b` (T4) also the two-peaked five-corner rim
+  of `R_d` (`RdRim`: the far edge parallel to the realizing face and (H1)–(H4) of A.10;
+  Theorem R, `Type08Rd.lean`).  The two-circle alternatives fail in codimension 2; the
+  one-circle ones on the class H1 of the addendum where also the five-corner rim is
+  neither strictly unimodal nor in `R_d` (type (c) of Lemma H with a two-peaked rim, the
+  depth-separated case not formalized; `R_d` for `K_d` (T4) is empty on paper), and in
+  codimension 2;
 * `flatN2`, `flatT4` (Lemma K): if the equator `b c b' c'` of `A` is planar, no
   quadruple tie `z b = z b'`, `z c = z c'` at the views along `a' c` and `d b`. -/
 structure Type08Gen (a a' b b' c c' d : ℝ³) : Prop where
@@ -278,14 +286,16 @@ structure Type08Gen (a a' b b' c c' d : ℝ³) : Prop where
   levelQ : ⟪a - d, b - d⟫ ≠ 0 ∨ ⟪c - d, b - d⟫ ≠ 0
   slideN2c : NoBadNormal (quad c b c' b') (c - a') (b - c) ∨
     (StrictUnimodal (fun i => ⟪quint c d b c' b' i, c - a'⟫) ∧
-      NoBadNormal (quint c d b c' b') (c - a') (b' - c))
+      NoBadNormal (quint c d b c' b') (c - a') (b' - c)) ∨
+    RdRim c d b c' b' (c - a')
   slideN2a' : NoBadNormal (quad a' b c' b') (c - a') (b - a') ∨
     NoBadNormal (quad a' b c' b') (c - a') (b' - a')
   slideQ : NoBadNormal (quad d a b' c) (b - d) (a - d) ∨
     NoBadNormal (quad d a b' c) (b - d) (c - d)
   slideT4b : NoBadNormal (quad b c' b' c) (b - d) (c - d) ∨
     (StrictUnimodal (fun i => ⟪quint b c' b' c a' i, b - d⟫) ∧
-      NoBadNormal (quint b c' b' c a') (b - d) (a - d))
+      NoBadNormal (quint b c' b' c a') (b - d) (a - d)) ∨
+    RdRim b a' c b' c' (b - d)
   slideT4d : NoBadNormal (quad d c' b' c) (b - d) (a - d) ∨
     (StrictUnimodal (fun i => ⟪quint d a c' b' c i, b - d⟫) ∧
       NoBadNormal (quint d a c' b' c) (b - d) (c - d))
@@ -381,9 +391,15 @@ theorem isRupert_type08_slide_core {a a' b b' c c' d : ℝ³}
     have e : (insert d ({a', a, c, c', b, b'} : Finset ℝ³)) = insert d {a, a', b, b', c, c'} :=
       (type08_set_perm a a' b b' c c' d).1
     rw [← e]
-    exact isRupert_quad_edge_middle_slide (m := d) F.swap₁.perm₂₃ hfar hq₂ hgood
-      ⟨s, δ, hs0, hs1, hδ, hdmid⟩ ⟨hda', hda, hdc, hdc', hdb, hdb'⟩ hgen.touchN2 hgen.slideN2c
-      hgen.slideN2a'
+    rcases hgen.slideN2c with hs | hs | hR
+    · exact isRupert_quad_edge_middle_slide (m := d) F.swap₁.perm₂₃ hfar hq₂ hgood
+        ⟨s, δ, hs0, hs1, hδ, hdmid⟩ ⟨hda', hda, hdc, hdc', hdb, hdb'⟩ hgen.touchN2 (Or.inl hs)
+        hgen.slideN2a'
+    · exact isRupert_quad_edge_middle_slide (m := d) F.swap₁.perm₂₃ hfar hq₂ hgood
+        ⟨s, δ, hs0, hs1, hδ, hdmid⟩ ⟨hda', hda, hdc, hdc', hdb, hdb'⟩ hgen.touchN2 (Or.inr hs)
+        hgen.slideN2a'
+    · -- `R_d` (A.10): the two-peaked five-corner rim along `a'b'c`
+      exact isRupert_quad_edge_middle_rd F.swap₁.perm₂₃ hfar hq₂ ⟨s, δ, hs0, hs1, hdmid⟩ hR
   · have hβ₂1 : F.abc'.f a' / F.abc'.f c < 1 := (div_lt_one_of_neg hFc).mpr hfc
     by_cases hfa : F.a'bc.f a < F.a'bc.f c'
     · -- case Q: the far ends are `a` and `c`
@@ -395,8 +411,13 @@ theorem isRupert_type08_slide_core {a a' b b' c c' d : ℝ³}
       have hα₁1 : 1 < F.a'bc.f c' / F.a'bc.f a := (one_lt_div_of_neg hFa).mpr hfc'
       have hκ := t4_kappa_pos hd hb' hc' ha' hα hβ₁ hα₂ hβ₂1.le
       have hgood := hT4 hfc hfc'
-      exact isRupert_t4_slide hb' hc' ha' hnd7 hd.det_Qac_ne hα hβ hαβ hα₁1 hβ₁ hα₂ hβ₂ hβ₂1
-        hαβ₂ hκ hgood hgen.touchT4 hgen.slideT4b hgen.slideT4d
+      rcases hgen.slideT4b with hs | hs | hR
+      · exact isRupert_t4_slide hb' hc' ha' hnd7 hd.det_Qac_ne hα hβ hαβ hα₁1 hβ₁ hα₂ hβ₂ hβ₂1
+          hαβ₂ hκ hgood hgen.touchT4 (Or.inl hs) hgen.slideT4d
+      · exact isRupert_t4_slide hb' hc' ha' hnd7 hd.det_Qac_ne hα hβ hαβ hα₁1 hβ₁ hα₂ hβ₂ hβ₂1
+          hαβ₂ hκ hgood hgen.touchT4 (Or.inr hs) hgen.slideT4d
+      · -- `R_d` (A.10): the two-peaked five-corner rim along `Q_ab`
+        exact isRupert_t4b_rd hc' hα₁1 hβ₁ (Ne.symm hdb) hR
 
 /-- The planes `d b b'` separate `c` from `c'` (`b'` is a corner of the T4 view). -/
 theorem IsCap.t4_opp {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c'} (hd : IsCap F d) :

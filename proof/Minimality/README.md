@@ -279,11 +279,11 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   form: `isRupert_type08`.
 * At the entry point, `not_type08_of_isNopert'` (Theorem 10.1′ of the §10 addendum of
   `FEWER-FACES-PROOFS.md`, Lemmas C, H, K, X in Lean form; `Slide.lean`,
-  `Type08Slide.lean`, `Type08Tie.lean`, `Type08Codim.lean`, `Type08Flat.lean`): type 08
-  without `GenPos`, `NoPlaneParallel` and `NoHDNAt`.  The hypotheses, per labelling of
-  Lemma 6, are collected in `Type08Gen` (`Type08GenAll`: all six labellings); `O` may
-  have one planar equator.  Lemma C (`isRupert_of_slide`): slide the view along the great
-  circle of a face through the named crossing; the face's middles lie over its side
+  `Type08Slide.lean`, `Type08Tie.lean`, `Type08Rd.lean`, `Type08Codim.lean`,
+  `Type08Flat.lean`): type 08 without `GenPos`, `NoPlaneParallel` and `NoHDNAt`.  The
+  hypotheses, per labelling of Lemma 6, are collected in `Type08Gen` (`Type08GenAll`:
+  all six labellings); `O` may have one planar equator.  Lemma C (`isRupert_of_slide`):
+  slide the view along the great circle of a face through the named crossing; the face's middles lie over its side
   (Proposition 8.8 with one face), the rim is `K_v`'s, depth ties and horizontal double
   normals occur at isolated views unless a direction of a pair of rim edges with
   meeting depth intervals (Lemma 7.4 by edges, `exists_pairDir_of_hdn`, `pairDirs`) is
@@ -291,7 +291,15 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   T4 `isRupert_t4_slide`, Q `isRupert_q_slide` (in the frame `d; a, c, b`, all tests
   multiples of `E = det3 (a − d) (c − d) (b − d)`).  Lemma H for the closings with one
   circle: the five-corner rim along the other face (`isRupert_quad_edge_middle_five`,
-  `isRupert_t4b_five`, `isRupert_t4d_five`; strictly unimodal, `StrictUnimodal`).
+  `isRupert_t4b_five`, `isRupert_t4d_five`; strictly unimodal, `StrictUnimodal`), and
+  Theorem R of A.10 for its two-peaked piece `R_d` (`Type08Rd.lean`): Lemma R2's
+  slot-weight certificate of the limit system (`rd_limit_cert`) becomes a motion that is
+  strictly inward at all ten slots (`TiltCert`) at the views `u₀ + κ e_k` in `F_k`'s plane
+  for all small `κ > 0` (`eventually_slot`: zero at `κ = 0` with a positive first-order
+  term), with `F_k`'s middles over its side (`isRupert_of_chords`); in coordinates
+  `isRupert_rd_std`, for any orthonormal frame `isRupert_rd`, and for N2–`K_c` and
+  T4–`K_b` `isRupert_quad_edge_middle_rd`, `isRupert_t4b_rd`, with (H1)–(H4) as the
+  hypothesis `RdRim` (a third alternative in `Type08Gen.slideN2c`, `slideT4b`).
   Lemma X at the far-end ties `T` (`β₂ = 1`) and `T'` (`α₁ = 1`): the far end of the
   other face from the identity `α + β = κ_b` (`type08_T_far`, `type08_T'_far`), and the
   routes R1/R4′ (`isRupert_kb_four`), R2′/R3 (`isRupert_kd_four`), R2″ (`isRupert_r2pp`),
@@ -303,8 +311,9 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   "not bad" from the crossing diagonals of the planar equator, `flat_cross`,
   `not_bad_of_cross`) or `b` (`isRupert_type08_flatB`: signs from `(G4)`, `flatB_signs`;
   the T4 case empty).  Not formalized: Lemma H (c) (depth-separated type (c) double
-  normals with a non-unimodal five-corner rim), the open piece `R_d`, and the case
-  analysis that one route of Lemma X applies at `T`, `T'`.
+  normals with a non-unimodal five-corner rim), Lemma R0 (that (H1)–(H4) hold on `R_d`
+  off `Σ`, so `RdRim` is a hypothesis), and the case analysis that one route of Lemma X
+  applies at `T`, `T'`.
 * Theorem P of `FEWER-FACES-PROOFS.md` §12 (type 29, partial; `Type29Lemmas.lean`,
   `Type29Lift.lean`, `Type29.lean`): `K` is the octahedron `O = K − 6` (opposite
   pairs `(0, 4)`, `(1, 3)`, `(2, 5)`) with the cap `6` on the plane `145`, beyond
@@ -556,6 +565,7 @@ In import order.
 | `Slide` | §10 addendum (T1), Lemma C: Proposition 8.8 with one face at a view from determinant tests, either orientation; Lemma 7.4 by edges (a horizontal double normal joins two rim edges with meeting depth intervals and lies on the circle of a direction of the pair); the slide along a face circle `u₀ + t e`, `t → 0⁺`, with `NoBadNormal` in place of strict depths and of the double-normal exclusion; unimodality along the slide | `pairDirs`, `EdgesApart`, `exists_pairDir_of_hdn`, `NoBadNormal`, `isRupert_of_chordView_or`, `isRupert_of_slide`, `isRupert_of_slide''`, `SlideTest`, `StrictUnimodal`, `eventually_unimodal_of_strict` |
 | `Type08Slide` | Type 08, the cases of Theorem 10.1 by slides (Lemma C) and Lemma H's five-corner rims: N2 in an octahedron with one more point (tests in either orientation, the closing by `x` with the triple-tie exclusion), T4 and Q in the frame `d; a, c, b` | `quad_edge_tests_or`, `nws4_closing_oct`, `isRupert_quad_edge_middle_slide`, `isRupert_quad_edge_middle_five`, `isRupert_t4_slide`, `isRupert_t4b_five`, `isRupert_t4d_five`, `isRupert_q_slide` |
 | `Type08Tie` | Type 08, Lemma X: the routes at the far-end ties `T`, `T'` (four-corner slides with a middle next to a far end, five-corner rims with a poked-out vertex) | `isRupert_kb_four`, `isRupert_kd_four`, `isRupert_r2pp`, `isRupert_r2p`, `isRupert_r4pp`, `isRupert_r4p` |
+| `Type08Rd` | Type 08, A.10 (`R_d` is Rupert): Lemma R2's certificate, slot tests along a tilt, Theorem R in coordinates and in any orthonormal frame (the isometry to coordinates), the `R_d` conditions along an edge view, the closings N2–`K_c` (the hidden `a` inside a triangle of the rim) and T4–`K_b` | `rd_limit_cert`, `eventually_det3_lin`, `eventually_slot`, `isRupert_rd_std`, `IsFrame`, `isRupert_of_frame_image`, `isRupert_rd`, `RdRim`, `isRupert_of_rdRim`, `rdHidden_quad_edge`, `isRupert_quad_edge_middle_rd`, `isRupert_t4b_rd` |
 | `Type08Codim` | Type 08, Theorem 10.1′ (Lean form) without planar equators: the far-end identity at the ties (Gale), `b'` a corner in the T4 case, the hypotheses per labelling, the case analysis, the relabelling, the facet form | `type08_T_far`, `type08_T'_far`, `t4_kappa_pos`, `Type08Gen`, `Type08GenAll`, `isRupert_type08_slide_core`, `isRupert_type08_slide`, `isRupert_type08_slide_facets` |
 | `Type08Flat` | Type 08, Lemma K (one planar equator): the crossing diagonals of a planar equator, Lemma 7's quad edge from `(G4)`, the signs when `κ_b = 0`, the relabelling, the facet form | `flat_cross`, `not_bad_of_cross`, `type08_quad_edge`, `flatB_signs`, `isRupert_type08_flatA`, `isRupert_type08_flatB`, `isRupert_type08_flat`, `isRupert_type08_flat_facets` |
 | `Type29Lemmas` | Type 29 (`FEWER-FACES-PROOFS.md` §12, Theorem P), the reusable lemmas for an octahedron with one more point: Lemma 1 (certification without a crossed pair: a quad edge whose tail is an inner vertex of its third pair, `[p x] [x x'] < 0`, is not bad; Lemma 9.7 via `inTri_of_dep` and §10's Lemma 3), Lemma 2 (exact lift: a middle or hidden extra point leaves the reduced polygons, and Lemma 9.3's unimodal closing, unchanged; through `isRupert_of_edgeView`, i.e. `isRupert_of_edgeChords_unimodal`), a hidden point from the facets, both together | `quad_edge_sep`, `inner_dep_signs`, `not_bad_of_inner`, `QuadMiddle`, `QuadHidden`, `isRupert_quad_edge_lift`, `quadHidden_of_beneath`, `isRupert_inner_quad_edge_lift` |
@@ -564,7 +574,7 @@ In import order.
 | `Type16` | Type 16, Lemma 11.U and Corollary 11.Ua of `FEWER-FACES-PROOFS.md` §11 addendum: screen coordinates of an edge view from two face functionals, the rim tests by `det3_frame`, part (b) in reals, the closing decision, the core in coordinates and from facets; `Type16` (facets), `σ = (0 6)(1 2)`, `MidOf`, "35 is bad", the far ends of `0235`, `1356` | `affine_frame3`, `det3_frame`, `frame_coords`, `isRupert_quad_rim`, `lemmaU_b_real`, `lemmaU_nws4`, `lemmaU_coords`, `lemmaU_facets`, `Type16`, `Type16.sigma`, `MidOf`, `Type16Bad35`, `plane_quad_coords`, `quad_middle`, `isRupert_type16_35`, `type16_not_bad35_of_far`, `type16_not_bad35_of_acute` |
 | `Type16M` | Type 16, Theorem M′ (conditional): the octahedral region `Oct16`, Lemma 11.1 (`5*`, `K*` type 08), S1 at `ℓ` (third quadrilateral, T4 case in `K*`, N2), S2's N2 branch (Lemma 11.5), Proposition 11.V (R1, R2, Lemma 11.8 at `24`), Gale-form wrappers, `Type16Clause` and the theorem; no `not_type16_of_isNopert` | `Oct16`, `Oct16.five_beyond`, `Oct16.star`, `Oct16.facets`, `Oct16.isCap`, `middle_Qbc_of`, `isRupert_type16_N2`, `type16_not_bad35_thirdQuad`, `t4_not_bad'`, `type16_not_bad35_T4`, `type16_lemma5_mid`, `isRupert_type16_S2N2`, `isRupert_quad_rim_coords`, `isRupert_type16_24`, `type16_R1`, `type16_R2`, `isRupert_type16_V`, `Type16Clause`, `isRupert_type16_M` |
 | `OctAxis` | `FEWER-FACES-PROOFS.md` §13 (two-test certificates), Euclidean form: the angle lemma for 4-corner rims (Lemma 13.2, Corollary 13.3: depth-separated diagonals whose projections meet along both views force the sign of `⟪u₁, u₂⟫`; shared-diagonal form), the cluster signs of every octahedron (Lemma 13.4), the views and middles (Lemma 13.5), the sign identity (Lemma 13.6, by the dependencies `[a ·]`, `[b ·]` and Plücker, no continuity step), Proposition 8.8 with Theorem 7.3 at a vertex view from determinant tests, the test at `a'` (triangle or quadrilateral rim; extra points hidden or middles at the apex), Theorem 13.7 (the octahedral axis lemma) and the lift 13.8 (i), (ii) to `K = O ∪ {m}` | `dep_eq_zero_of_two`, `galeD_ne_zero`, `pole_signs'`, `cluster_signs`, `axisView`, `axisView_eq_neg`, `axis_sign`, `axis_sign_two`, `SegMeet`, `DepthSep`, `depthSep_meet_sign`, `depthSep_det_sign`, `not_both_depthSep`, `axis_test_facts`, `isRupert_of_vertexView`, `AxisHidden`, `ApexMid`, `AxisExtra`, `overlap4_of_not_depthSep`, `isRupert_axisTest_core`, `segMeet_of_sides`, `axisTest_meets`, `isRupert_axisTest`, `isRupert_octAxis_gen`, `isRupert_octAxis`, `isRupert_octAxis_lift` |
-| `EdgePair` | `FEWER-FACES-PROOFS.md` §14 (edge pairs), Euclidean form: Lemma E (two 4-corner closings at an edge crossing along `vw`, view `u = w − v`; `[a b c v] [a b c w] ≤ 0` excludes both rims being depth-separated, so one closing is unimodal), the parameter form, (ii) ⟺ (iii), the converse for depth functionals, Corollary 14.1 (Theorem 8.9 with Theorem 7.3 for either closing, middles and hidden points allowed; triangle closings), the wedge argument and Proposition 14.3 (E06: `[3450] [3456] < 0` on every type 16; the pair at `06` certifies `K` when `1`, `2` are hidden) | `edgePair_param`, `edgePair_not_both`, `edgePair_unimodal`, `SegMeetsTri`, `edgePair_tri_iff`, `edgePair_converse`, `EdgeHidden`, `EdgeMid`, `isRupert_edgePair_closing`, `isRupert_edgePair`, `wedge_sep`, `type16_sep06`, `isRupert_type16_06`, `TriHidden`, `isRupert_edgeTri`, `isRupert_type16_06_tri` |
+| `EdgePair` | `FEWER-FACES-PROOFS.md` §14 (edge pairs), Euclidean form: Lemma E (two 4-corner closings at an edge crossing along `vw`, view `u = w − v`; `[a b c v] [a b c w] ≤ 0` excludes both rims being depth-separated, so one closing is unimodal), the parameter form, (ii) ⟺ (iii), the converse for depth functionals, Corollary 14.1 (Theorem 8.9 with Theorem 7.3 for either closing, middles and hidden points allowed; triangle closings), the wedge argument and Proposition 14.3 (E06: `[3450] [3456] < 0` on every type 16; the pair at `06` certifies `K` when `1`, `2` are hidden) | `edgePair_param`, `edgePair_not_both`, `edgePair_unimodal`, `SegMeetsTri`, `edgePair_tri_iff`, `edgePair_converse`, `EdgeHidden`, `EdgeMid`, `isRupert_edgePair_closing`, `isRupert_edgePair`, `wedge_sep`, `type16_sep06`, `isRupert_type16_06`, `RdHidden`, `isRupert_edgeTri`, `isRupert_type16_06_tri` |
 | `Type24` | `FEWER-FACES-PROOFS.md` §15 (type 24 outside `C̄ ∪ Σ_B`): oblique coordinates at the cap `1` by Cramer's rule, the side coefficients `ω` and `Δ`, the window triangle (Theorem 15.4, Theorem 5 at a view in the tangent cone), the side crossings as triangle tests (Lemma 15.5, Theorem 15.7), Corollary 15.8 | `cramer_vec`, `isRupert_vertexTri`, `isRupert_window_frame`, `isRupert_sideCrossing_frame`, `Type24`, `omega3`, `Delta24`, `omega_identity`, `isRupert_type24_window`, `isRupert_type24_B`, `isRupert_type24_outside_Cbar` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `TriGenFar`, `TriGen.far`, `isRupert_of_two_quad_facets_vertex` |
 

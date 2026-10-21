@@ -730,7 +730,8 @@ of Lemma X, no touching (a triple or, at a planar equator, a quadruple depth tie
 named view; codimension 2), and along the face circles of the named crossings (or, for
 the closings with one circle, the five-corner rim along the other face, Lemma H) depth
 ties and horizontal double normals occur only at isolated views
-(`Minimality.NoBadNormal`). -/
+(`Minimality.NoBadNormal`); for the closings `K_c` (N2) and `K_b` (T4) the two-peaked
+five-corner rim of `R_d` (`Minimality.RdRim`, Theorem R of A.10) is a further alternative. -/
 theorem not_type08_of_isNopert' (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fA fB fC fD fE fF fG : ℝ³ →ᵃ[ℝ] ℝ)
