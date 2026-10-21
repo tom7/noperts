@@ -292,6 +292,24 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   `isRupert_lift_far`), Lemma 4 (`type29_hidden_03`, `type29_hidden_05`, by
   `quadHidden_of_beneath`). That some clause always holds is not proved, so there is
   no `not_type29_of_isNopert`.
+* §13 of `FEWER-FACES-PROOFS.md` (two-test certificates; `OctAxis.lean`), in Euclidean
+  form (the metric of `ℝ³`). Theorem 13.7, the octahedral axis lemma
+  (`isRupert_octAxis`): for an octahedron with an ordered axis `(a, a')`, a labelling
+  `(b, b')`, `(c, c')` and the four Gale far-end inequalities
+  `|[a b]| < |[a c]|`, `|[a b']| < |[a c']|`, `|[a' c']| < |[a' b]|`, `|[a' c]| < |[a' b']|`,
+  the vertex crossing at `a'` (`a'bc`/`a'b'c'`, view `u₁ = axisView`, Lemma 13.5) or the
+  one at `a` (`ab'c`/`abc'`) has a unimodal reduced polygon, so the octahedron is Rupert
+  (Proposition 8.8 with Theorem 7.3, `isRupert_of_vertexView`), outside the special
+  positions and without horizontal double normals at the two views. Each rim is a
+  triangle (always unimodal) or a quadrilateral, unimodal unless its diagonals are
+  depth-separated (`isRupert_axisTest_core`); both quadrilaterals failing is excluded by
+  the angle lemma in shared-diagonal form (Lemma 13.2, Corollary 13.3:
+  `depthSep_meet_sign`, `depthSep_det_sign`, `not_both_depthSep`) with the sign identity
+  (Lemma 13.6, `axis_sign`, `axis_sign_two`, proved without the continuity step) and the
+  cluster signs (Lemma 13.4, `cluster_signs`, every octahedron). The lift
+  (Lemma 13.8 (i), (ii), clause AX): `isRupert_octAxis_lift` for `K = O ∪ {m}` with `m`
+  hidden or a middle at the apex for both tests (`AxisExtra`). Not formalized:
+  Observation 13.1, the general two-test remark, Lemma 13.8 (iii).
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
@@ -432,6 +450,7 @@ In import order.
 | `Type29Lemmas` | Type 29 (`FEWER-FACES-PROOFS.md` §12, Theorem P), the reusable lemmas for an octahedron with one more point: Lemma 1 (certification without a crossed pair: a quad edge whose tail is an inner vertex of its third pair, `[p x] [x x'] < 0`, is not bad; Lemma 9.7 via `inTri_of_dep` and §10's Lemma 3), Lemma 2 (exact lift: a middle or hidden extra point leaves the reduced polygons, and Lemma 9.3's unimodal closing, unchanged; through `isRupert_of_edgeView`, i.e. `isRupert_of_edgeChords_unimodal`), a hidden point from the facets, both together | `quad_edge_sep`, `inner_dep_signs`, `not_bad_of_inner`, `QuadMiddle`, `QuadHidden`, `isRupert_quad_edge_lift`, `quadHidden_of_beneath`, `isRupert_inner_quad_edge_lift` |
 | `Type29Lift` | Type 29, Lemma 3 (b) with `t > 1` (the cap is the far end, `5` the middle): the octahedron's shadow tests in either orientation, the tests at the cap, a point inside a quadrilateral is on the positive side of a line through a vertex (barycentric identity), the closing of Lemma 9.3 for any 4-cycle or a triangle (either orientation), step 3 (the up face `356` rules out `K`-badness), the lift | `quad_edge_testsσ`, `cap_testsσ`, `det3_bary`, `inside_line_pos`, `isRupert_closing_quad`, `isRupert_closing_quadσ`, `isRupert_tri_viewσ`, `lift_far_not_bad_core`, `isRupert_lift_far` |
 | `Type29` | Type 29, Theorem P of §12 (partial): the cap `IsCap29` over `O = K − 6` and `σ = (0 2)(4 5)`, Lemma 0 (b) (coordinates `s, t`), Lemma 3 (quad edges at `1` lift: `14`, `41`, `15`, `51`), Lemma 4 (the cap is hidden at `0→3`, `0→5`, `2→3`, `2→4`), clauses C1, C2 (`K − 5`; `K − 4` by `σ`), C3, and Theorem P; no `not_type29_of_isNopert` (that some clause holds is open) | `IsCap29`, `IsCap29.coords`, `isRupert_type29_14`, `isRupert_type29_41`, `type29_hidden_03`, `type29_hidden_05`, `Type29C1`, `Type29C2`, `Type29C3`, `isRupert_type29_C1`, `isRupert_type29_C2`, `isRupert_type29_C3`, `isRupert_type29_P` |
+| `OctAxis` | `FEWER-FACES-PROOFS.md` §13 (two-test certificates), Euclidean form: the angle lemma for 4-corner rims (Lemma 13.2, Corollary 13.3: depth-separated diagonals whose projections meet along both views force the sign of `⟪u₁, u₂⟫`; shared-diagonal form), the cluster signs of every octahedron (Lemma 13.4), the views and middles (Lemma 13.5), the sign identity (Lemma 13.6, by the dependencies `[a ·]`, `[b ·]` and Plücker, no continuity step), Proposition 8.8 with Theorem 7.3 at a vertex view from determinant tests, the test at `a'` (triangle or quadrilateral rim; extra points hidden or middles at the apex), Theorem 13.7 (the octahedral axis lemma) and the lift 13.8 (i), (ii) to `K = O ∪ {m}` | `dep_eq_zero_of_two`, `galeD_ne_zero`, `pole_signs'`, `cluster_signs`, `axisView`, `axisView_eq_neg`, `axis_sign`, `axis_sign_two`, `SegMeet`, `DepthSep`, `depthSep_meet_sign`, `depthSep_det_sign`, `not_both_depthSep`, `axis_test_facts`, `isRupert_of_vertexView`, `AxisHidden`, `ApexMid`, `AxisExtra`, `overlap4_of_not_depthSep`, `isRupert_axisTest_core`, `segMeet_of_sides`, `axisTest_meets`, `isRupert_axisTest`, `isRupert_octAxis_gen`, `isRupert_octAxis`, `isRupert_octAxis_lift` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `TriGenFar`, `TriGen.far`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices
