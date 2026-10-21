@@ -147,9 +147,10 @@ theorem axisHidden_of_rel {P P' Q Q' u m : ℝ³} {p q γ x y z : ℝ} (hp : 0 <
     linear_combination (norm := module) (-ε) • hrel
 
 /-- The special positions of a vertex test of F2 at a view `u` (rim `b, p, b', q`): `P(q)` off
-the line `P(p) P(b')`, distinct depths on the rim, no horizontal double normal. -/
+the line `P(p) P(b')`, only the ties of `QuadTie` on the rim (implied by distinct depths;
+Theorem 18.3), no horizontal double normal. -/
 def F2Gen (K : Finset ℝ³) (b b' p q u : ℝ³) : Prop :=
-  det3 (q - p) (b' - p) u ≠ 0 ∧ [⟪b, u⟫, ⟪p, u⟫, ⟪b', u⟫, ⟪q, u⟫].Nodup ∧ NoHDNAt K u
+  det3 (q - p) (b' - p) u ≠ 0 ∧ QuadTie ⟪b, u⟫ ⟪p, u⟫ ⟪b', u⟫ ⟪q, u⟫ ∧ NoHDNAt K u
 
 /-- **Lemma 16.24, steps 2–4, in the frame `4; 3, 5, 6`.**  The bracket values are parameters
 (`g05 = [0 5]`, `g10 = [1 0]`, …, all positive in the pattern `(+, −, +)`); `VA`, `VC` are the

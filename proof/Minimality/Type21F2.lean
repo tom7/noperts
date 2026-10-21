@@ -160,7 +160,8 @@ vertex crossings at `4`: `V = 014/2346` at `u_V = [5 0] (0 − 4) + [5 1] (1 −
 middle or hidden; `V' = 046/134` at `u_V' = [5 0] (0 − 4) + [5 6] (6 − 4)` with the rim
 `(4, 3, 5, 0)` (or the triangle), `1` a middle over `4 → 3`, `6` over `4 → 0`, `2` hidden or a
 middle.  If the projections of `[2, 1]` and `[4, 5]` meet along `u_V'` and
-`det(u_V, 5 − 4, 1 − 2) det(u_V', 5 − 4, 1 − 2) > 0`, then with distinct depths on both rims and
+`det(u_V, 5 − 4, 1 − 2) det(u_V', 5 − 4, 1 − 2) > 0`, then with the ties of `QuadTie` at most
+(e.g. distinct depths) on both rims (Theorem 18.3, `isRupert_axisTest_core_robust`) and
 no horizontal double normals at `u_V`, `u_V'`, `K` is Rupert: the two tests share the diagonal
 `[4, 5]`, and by Lemma 16.8 (a) the four-determinant product of Corollary 13.3 is negative. -/
 theorem isRupert_type21_F2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
@@ -173,8 +174,8 @@ theorem isRupert_type21_F2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c
     (hm₁ : 0 < s₁ ∧ s₁ < 1 ∧ δ₁ ≠ 0 ∧ a' = b + s₁ • (d - b) + δ₁ • axisView G.l G.m b' b a c)
     (hm₁' : 0 < s₁' ∧ s₁' < 1 ∧ δ₁' ≠ 0 ∧ a = b + s₁' • (c - b) + δ₁' • axisView G.l G.m b' b a c)
     (hX₁ : AxisExtra b' b d c (axisView G.l G.m b' b a c) c')
-    (hz₁ : [⟪b, axisView G.l G.m b' b a c⟫, ⟪d, axisView G.l G.m b' b a c⟫,
-      ⟪b', axisView G.l G.m b' b a c⟫, ⟪c, axisView G.l G.m b' b a c⟫].Nodup)
+    (hz₁ : QuadTie ⟪b, axisView G.l G.m b' b a c⟫ ⟪d, axisView G.l G.m b' b a c⟫
+      ⟪b', axisView G.l G.m b' b a c⟫ ⟪c, axisView G.l G.m b' b a c⟫)
     (hσ₂ : σ₂ = 1 ∨ σ₂ = -1)
     (hT₂ : 0 < σ₂ * det3 (a' - b) (a - b) (axisView G.l G.m b' b a c'))
     (hΓ₂ : 0 < σ₂ * det3 (a' - b) (b' - b) (axisView G.l G.m b' b a c'))
@@ -183,8 +184,8 @@ theorem isRupert_type21_F2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c
     (hm₂ : 0 < s₂ ∧ s₂ < 1 ∧ δ₂ ≠ 0 ∧ c = b + s₂ • (a' - b) + δ₂ • axisView G.l G.m b' b a c')
     (hm₂' : 0 < s₂' ∧ s₂' < 1 ∧ δ₂' ≠ 0 ∧ c' = b + s₂' • (a - b) + δ₂' • axisView G.l G.m b' b a c')
     (hX₂ : AxisExtra b' b a' a (axisView G.l G.m b' b a c') d)
-    (hz₂ : [⟪b, axisView G.l G.m b' b a c'⟫, ⟪a', axisView G.l G.m b' b a c'⟫,
-      ⟪b', axisView G.l G.m b' b a c'⟫, ⟪a, axisView G.l G.m b' b a c'⟫].Nodup)
+    (hz₂ : QuadTie ⟪b, axisView G.l G.m b' b a c'⟫ ⟪a', axisView G.l G.m b' b a c'⟫
+      ⟪b', axisView G.l G.m b' b a c'⟫ ⟪a, axisView G.l G.m b' b a c'⟫)
     (hmeet : SegMeet b b' d c (axisView G.l G.m b' b a c'))
     (hsign : 0 < det3 (axisView G.l G.m b' b a c) (b' - b) (c - d) *
       det3 (axisView G.l G.m b' b a c') (b' - b) (c - d))
@@ -195,16 +196,12 @@ theorem isRupert_type21_F2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c
   set u := axisView G.l G.m b' b a c with hu
   set v := axisView G.l G.m b' b a c' with hv
   set K := insert d ({a, a', b, b', c, c'} : Finset ℝ³) with hK
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true] at hz₁ hz₂
-  obtain ⟨⟨z1, z2, z3⟩, ⟨z4, z5⟩, z6, -⟩ := hz₁
-  obtain ⟨⟨w1, w2, w3⟩, ⟨w4, w5⟩, w6, -⟩ := hz₂
   obtain ⟨hs₁0, hs₁1, hδ₁, hm₁⟩ := hm₁
   obtain ⟨hs₁0', hs₁1', hδ₁', hm₁'⟩ := hm₁'
   obtain ⟨hs₂0, hs₂1, hδ₂, hm₂⟩ := hm₂
   obtain ⟨hs₂0', hs₂1', hδ₂', hm₂'⟩ := hm₂'
   -- the test `V` at `u` (core labels `(b', b, d, c)`)
-  obtain ⟨K1, K2⟩ := isRupert_axisTest_core hσ₁ hT₁ hΓ₁ hB₁ ⟨z1, z3, z5⟩ K (by simp [hK])
+  obtain ⟨K1, K2⟩ := isRupert_axisTest_core_robust hσ₁ hT₁ hΓ₁ hB₁ hz₁ K (by simp [hK])
     (by simp [hK]) (by simp [hK]) (by simp [hK]) (fun x hx => by
       simp only [hK, Finset.mem_insert, Finset.mem_singleton] at hx
       rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -216,7 +213,7 @@ theorem isRupert_type21_F2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c
       · exact Or.inr (Or.inr (Or.inr (Or.inl rfl)))
       · exact Or.inr (Or.inr (Or.inr (Or.inr hX₁)))) hnd₁
   -- the test `V'` at `v` (core labels `(b', b, a', a)`)
-  obtain ⟨L1, L2⟩ := isRupert_axisTest_core hσ₂ hT₂ hΓ₂ hB₂ ⟨w1, w3, w5⟩ K (by simp [hK])
+  obtain ⟨L1, L2⟩ := isRupert_axisTest_core_robust hσ₂ hT₂ hΓ₂ hB₂ hz₂ K (by simp [hK])
     (by simp [hK]) (by simp [hK]) (by simp [hK]) (fun x hx => by
       simp only [hK, Finset.mem_insert, Finset.mem_singleton] at hx
       rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -235,9 +232,9 @@ theorem isRupert_type21_F2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c
   rcases lt_or_gt_of_ne (mul_ne_zero hσσ₂ hP₂) with hα₂ | hα₂
   swap; · exact L1 hα₂
   by_cases hs1 : DepthSep b b' d c u
-  swap; · exact K2 hα₁ z2 z4 z6 hs1
+  swap; · exact K2 hα₁ hs1
   by_cases hs2 : DepthSep b b' a' a v
-  swap; · exact L2 hα₂ w2 w4 w6 hs2
+  swap; · exact L2 hα₂ hs2
   exfalso
   obtain ⟨m1u, m2u⟩ := axisTest_meets hσ₁ hs₁0 hs₁1 hm₁ hs₁0' hs₁1' hm₁' hT₁ hΓ₁ hB₁ hα₁
   obtain ⟨m2v, -⟩ := axisTest_meets hσ₂ hs₂0 hs₂1 hm₂ hs₂0' hs₂1' hm₂' hT₂ hΓ₂ hB₂ hα₂

@@ -188,7 +188,8 @@ theorem affine_linear_eq (f : ℝ³ →ᵃ[ℝ] ℝ) {g : ℝ³ → ℝ} {N : �
 
 /-- **The special positions of `T1` along a vertex crossing** given by two faces `fP`, `fQ`
 through the apex: at every direction `u ≠ 0` of their line, `T1Gen` (the antipode off the far
-side, distinct depths of the rim corners, no horizontal double normal). -/
+side, only the ties of `QuadTie` among the depths of the rim corners, no horizontal double
+normal). -/
 def T1View (V : Finset ℝ³) (fP fQ : ℝ³ →ᵃ[ℝ] ℝ) (a a' b b' : ℝ³) : Prop :=
   ∀ u : ℝ³, u ≠ 0 → fP.linear u = 0 → fQ.linear u = 0 → T1Gen V a a' b b' u
 

@@ -46,6 +46,7 @@ public import Minimality.Type24
 public import Minimality.Type21Entry
 public import Minimality.Type21Facets
 public import Minimality.Type16Main
+public import Minimality.LimitCert
 
 /-!
 # Every nopert has at least 7 points
@@ -805,8 +806,10 @@ horizontal double normal at the view along any segment, the five planar equators
 `{4, 5, 1, 6}`, `{0, 3, 1, 6}`, `{0, 3, 4, 5}`, `{0, 3, 1, 2}`, `{4, 5, 1, 2}` of `K − 2` and
 `K − 6` (`hEq`), at the four vertex crossings `0: 014/0256`, `4: 014/2346`, `5: 135/0256`,
 `3: 135/2346` the special positions of the test `T1` (`Minimality.T1View`: the antipode off the
-far side, distinct depths, no horizontal double normal), in the four labellings those of the
-two vertex tests of F2 (`Minimality.F2Views`).  Every type-21 shape has one of the tiers Q, H, R,
+far side, no depth ties on its rim other than those allowed by Theorem 18.3 (`Minimality.QuadTie`:
+no three equal depths, no level rim edge inside a monotone run), no horizontal double normal),
+in the four labellings those of the two vertex tests of F2 (`Minimality.F2Views`, with the same
+ties allowed).  Every type-21 shape has one of the tiers Q, H, R,
 F1, F2 (Theorem 16.13 for the cap-face class, Theorems 16.18, 16.20, 16.23 with Lemma 16.24 for
 the normal form `(+, −, +)` reached by `σ1`, `σ2` and the reflection of the Gale diagram), or
 lies on the switch surface `δ_014(2) = δ_014(5)` and has the certificate of Theorem 16.30 at the

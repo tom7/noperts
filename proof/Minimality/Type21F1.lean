@@ -1,6 +1,7 @@
 module
 
 public import Minimality.Type21Cover
+public import Minimality.RobustAxis
 
 @[expose] public section
 
@@ -459,7 +460,8 @@ theorem isRupert_type21_Y {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c 
 `{3 5} < [6 3]` (`δ_014(2) < δ_014(5)`), (iii) `0 → 4` a quad edge of `K − 6` (the faces
 `135`, `235` face up along `4 − 0`), and (iv) hO2 `[3 4] < [1 3]` (the far end of `014` along
 `u₁` is `4`).  Outside the special positions of `T1` (`P(3)` on the line `P(5) P(4)` along
-`u₁`, equal depths among `0, 5, 3, 4`, a horizontal double normal at `u₁`) and those of the edge
+`u₁`, ties among the depths of `0, 5, 3, 4` other than those of `QuadTie`, a horizontal double
+normal at `u₁`) and those of the edge
 views (`GenPos`, `NoHDNEdges`), `K` is Rupert: `T1` (the vertex crossing at `0` of `014`,
 `0256`, with the middle `2`) or `Y` (the edge crossing along `04`) is unimodal. -/
 theorem isRupert_type21_F1 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
@@ -470,8 +472,8 @@ theorem isRupert_type21_F1 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c
     (hiii : F.a'b'c.f a < F.a'b'c.f b ∧ hd.f235.f a < hd.f235.f b)
     (hO2 : galeD G.l G.m a' b < galeD G.l G.m c a')
     (hP : det3 (b - b') (a' - b') (axisView G.l G.m a' a b' c') ≠ 0)
-    (hz : [⟪a, axisView G.l G.m a' a b' c'⟫, ⟪b', axisView G.l G.m a' a b' c'⟫,
-      ⟪a', axisView G.l G.m a' a b' c'⟫, ⟪b, axisView G.l G.m a' a b' c'⟫].Nodup)
+    (hz : QuadTie ⟪a, axisView G.l G.m a' a b' c'⟫ ⟪b', axisView G.l G.m a' a b' c'⟫
+      ⟪a', axisView G.l G.m a' a b' c'⟫ ⟪b, axisView G.l G.m a' a b' c'⟫)
     (hnd₁ : NoHDNAt (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) (axisView G.l G.m a' a b' c'))
     (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
@@ -509,7 +511,7 @@ theorem isRupert_type21_F1 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c
     rw [abs_of_pos s35, h36, abs_neg, abs_of_pos s63]; exact h63
   have hfar₂ : |galeD G.l G.m a' b| < |galeD G.l G.m a' c| := by
     rw [abs_of_pos s34, anti c a', abs_neg, abs_of_pos s13]; exact hO2
-  have hT := isRupert_axisTest F.swap₁.swap₂.swap₃ G.swap₁.swap₂.swap₃ hfar₁ hfar₂ hP hz
+  have hT := isRupert_axisTest_robust F.swap₁.swap₂.swap₃ G.swap₁.swap₂.swap₃ hfar₁ hfar₂ hP hz
     (insert d ({a, a', b, b', c, c'} : Finset ℝ³))
     (by intro x hx; simp only [Finset.mem_insert, Finset.mem_singleton] at hx ⊢; tauto)
     (fun v hv => by

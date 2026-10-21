@@ -49,10 +49,11 @@ theorem facet_tie_det {V : Finset ℝ³} {P Q R : ℝ³} (Fc : FacetFn V P Q R) 
   rw [det3_swap23]; rw [this, neg_zero]
 
 /-- **The special positions of `T1`** at a view `u` (the vertex crossing at `0` of `014`,
-`0256`): `P(3)` is off the line `P(5) P(4)`, the depths of `0, 5, 3, 4` are distinct, and there
-is no horizontal double normal of `K`. -/
+`0256`): `P(3)` is off the line `P(5) P(4)`, the depths of `0, 5, 3, 4` have only the ties of
+`QuadTie` (no three equal, no level edge of the 4-cycle `0 5 3 4` inside a run; implied by
+distinct depths, Theorem 18.3), and there is no horizontal double normal of `K`. -/
 def T1Gen (K : Finset ℝ³) (a a' b b' u : ℝ³) : Prop :=
-  det3 (b - b') (a' - b') u ≠ 0 ∧ [⟪a, u⟫, ⟪b', u⟫, ⟪a', u⟫, ⟪b, u⟫].Nodup ∧ NoHDNAt K u
+  det3 (b - b') (a' - b') u ≠ 0 ∧ QuadTie ⟪a, u⟫ ⟪b', u⟫ ⟪a', u⟫ ⟪b, u⟫ ∧ NoHDNAt K u
 
 /-- **Theorem 16.13 (the cap-face class), normalized.**  `K = O ∪ {2}` of type 21
 (`IsCap21`), Gale data `G` of `O = K − 2` in the normalized cap-face class (`CapNorm`).  Off

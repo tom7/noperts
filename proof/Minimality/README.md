@@ -81,6 +81,34 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
 * Cor. 7.8 (Condition A) — `isRupert_octahedron_conditionA`
   (`Octahedron.lean`): octahedra in which the projections of two diagonals
   onto the third overlap in more than a point.
+* Theorem 18.3 (Theorem 7.3 with ties, `FEWER-FACES-PROOFS.md` §18.3;
+  `RobustUnimodal.lean`) — `hasHorizontalDoubleNormal_of_forces_robust`,
+  `exists_firstOrderInward_of_robustUnimodal`, `isRupert_of_robustUnimodalView`: the depths
+  need only be *robustly unimodal* (`IsRobustUnimodal`: (R1) no two weak peaks, (R2) no three
+  equal, (R3) no level pair inside a monotone run, stated for any four positions in cyclic
+  order).  The core is `forces_parallel_weak` (Steps 2–4 with weakly monotone runs; a
+  weightless stretch of the force polygon is excluded by (R2), (R3), `deg_lemma_weak`).
+  Sources: `IsCyclicUnimodal.isRobustUnimodal`, `isRobustUnimodal_three` (triangles not all
+  level), `IsCcwPolygon.isRobustUnimodal_affine` (planar rims: a nonconstant affine depth on a
+  strictly convex polygon), `isRobustUnimodal_of_single_tie` (Lemma 18.4 (α): unimodal on both
+  sides of one tie), `isRobustUnimodal_quad` (4-cycles, `QuadTie`, `RobustAxis.lean`).
+  Cyclic subsequences: `IsRobustUnimodal.comp` (`CycBetween`), with
+  `IsCcwPolygon.cross2_fan_pos` (corners in cyclic order are counterclockwise).
+  Certificate forms (`RobustCert.lean`): `exists_tiltCert_of_robustUnimodal`,
+  `isRupert_of_chords_robustUnimodal`, `isRupert_of_edgeChords_robustUnimodal`,
+  `isRupert_of_uniform_doubles_robustUnimodal` (Theorem 18.1 in its tie form),
+  `isRupert_of_edgeView_robust`, `isRupert_of_vertexView_robust`,
+  `isRupert_of_edgeView_uniform_robust`.
+* Lemma 18.2 (the limit lemma, at the shape's own metric; `LimitCert.lean`) —
+  `cycBetween_of_tendsto` (18.2 (a): the corner labels of the limit are a cyclic subsequence
+  of the labelled rim), `isRobustUnimodal_cornerRim_of_tendsto` (18.2 (b) with distinct
+  depths), `isRobustUnimodal_cornerRim_of_tendsto_single_tie` (18.4 (α)),
+  `isRobustUnimodal_cornerRim_or_of_tendsto` (pairs, 19.7 (a)); Rupert forms
+  `isRupert_of_limitCertificate` and `isRupert_of_limitCertificate_tie` (with 18.1 and 18.3:
+  shapes `K_n → K` certified by one labelled test, `K`'s corner rim with distinct depths, or
+  one tie approached from both sides, and no horizontal double normal).  Not formalized:
+  metric-freeness across metrics, the existence of limit certificates for a type (18.6
+  step 2) and the codimension count.
 
 **L8. Tilting off degenerate views** (step 4; `Tilt.lean`)
 * Lemma 8.0 — `eventually_tilted_cycle`: the silhouette at the views
@@ -389,7 +417,8 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   `not_type21_of_isNopert`, unconditional off the special positions: `NoPlaneParallel`,
   `GenPos`, no horizontal double normal at the edge views, the five planar equators, `T1View`
   at the four vertex crossings, and `F2Views` (the two vertex tests of F2) in the four
-  labellings; the depth ties and horizontal double normals at `25` that remain on the switch
+  labellings (both allow the depth ties of `QuadTie` on their rims: Theorem 18.3 through
+  `isRupert_axisTest_core_robust`, `RobustAxis.lean`); the depth ties and horizontal double normals at `25` that remain on the switch
   surface are in `GenPos` and the edge-view exclusion.  Not formalized: Lemma 16.4's
   silhouette argument (replaced; tier H hides the cap by strict facet inequalities, so 16.4's
   special position "P(2) on ∂S_O", which Lemma 16.31 closes on paper, never arises in Lean),
@@ -658,6 +687,10 @@ In import order.
 | `Type16Pairs` | Type 16 on `Ω`: Lemma 19.3 (pair `T1`, `T2`), Lemma 19.4 (pair `A`, `B`), Lemma 19.5 (triple `T_a`, `A`, `T_c`); the views `vT2`, `vA`, `uA`; the four-corner rule and the depth patterns of the pentagons | `depthSep_of_meet`, `depthSep_sign`, `cone_inner3`, `NF16.vT2`, `NF16.vA`, `NF16.uA`, `NF16.isRupert_F3`, `NF16.isRupert_F1s`, `NF16.isRupert_T6`, `quint_B_unimodal`, `quint_Tc_unimodal`, `quint_A_unimodal` |
 | `Type16Main` | Type 16, Theorem 19.6 (the cover) and its special positions from the points and facets | `NF16.isRupert_omega`, `NF16.isRupert_R1`, `NF16.isRupert_nf`, `NF16.Gen.of`, `NF16.Views.of`, `NF16.isRupert_type16`, `ViewAff16`, `LineAff16`, `isRupert_type16_facets` |
 | `UniformTilt` | `FEWER-FACES-PROOFS.md` §16 part K: Lemma 16.27 (the uniform tilt: Theorems 8.8 and 8.9 with the single tilt `ω × u₀ + η v′`; a middle over any certified chord is exposed only when its depth offset helps it, and the axle gets a certificate in each of the four sectors of Lemma F, the mixed ones by the screen Plücker identity) and Lemma 16.27′ (doubles: any finite set of vertices over certified corners), each with Theorem 7.3; determinant-test forms, a 4-corner closing, and Corollary 14.1 with middles over any side of the shadow (Lemma E picks the closing) | `det3_plucker_screen`, `det3_apex_tilt`, `eventually_chord_choice`, `eventually_axle_uniform`, `isRupert_of_edgeChords_uniform`, `isRupert_of_edgeChords_uniform_unimodal`, `isRupert_of_uniform_doubles`, `isRupert_of_uniform_doubles_unimodal`, `isRupert_of_edgeView_uniform`, `isRupert_quad_uniform`, `isRupert_edgePair_uniform` |
+| `RobustUnimodal` | `FEWER-FACES-PROOFS.md` §18.0, 18.3, 18.4: robust unimodality (R1)–(R3), cyclic subsequences, triangles, planar rims, one tie, limits; Steps 2–4 of Theorem 7.3 with weakly monotone runs; Theorem 18.3 | `IsRobustUnimodal`, `IsRobustUnimodal.comp`, `isRobustUnimodal_three`, `IsCcwPolygon.isRobustUnimodal_affine`, `isRobustUnimodal_of_single_tie`, `isRobustUnimodal_of_tendsto`, `deg_lemma_weak`, `forces_parallel_weak`, `hasHorizontalDoubleNormal_of_forces_robust`, `isRupert_of_robustUnimodalView` |
+| `RobustCert` | Theorem 18.3 in the certificate forms (Propositions 8.8, 8.9, Lemma 16.27, Theorem 18.1 in its tie form, determinant-test views) | `exists_tiltCert_of_robustUnimodal`, `isRupert_of_uniform_doubles_robustUnimodal`, `isRupert_of_edgeView_robust`, `isRupert_of_vertexView_robust` |
+| `RobustAxis` | The vertex test of Theorem 13.7 with ties: triangle and 4-corner rims (`QuadTie`) | `QuadTie`, `isRobustUnimodal_quad`, `isRupert_axisTest_core_robust`, `isRupert_axisTest_robust` |
+| `LimitCert` | Lemma 18.2 (limit certificates) at the limit shape's own metric, with 18.4 (α) and pairs; Rupert forms with 18.1 and 18.3 | `cycBetween_of_tendsto`, `isRobustUnimodal_cornerRim_of_tendsto`, `isRupert_of_limitCertificate`, `isRupert_of_limitCertificate_tie` |
 | `Type21Tier` | `FEWER-FACES-PROOFS.md` §16, tiers Q and H: Lemma 16.1 in Gale form (E-good quad edges: the two facet inequalities and "not bad"), Q at the eight directed K-quad edges of `K − 2` and of `K − 6`, H at `1 → 3`, `1 → 5` (the cap hidden from the facets) | `EGoodQuad`, `not_bad_of_egood`, `EGoodQuad.tests`, `Type21Q`, `isRupert_type21_Q`, `isRupert_type21_Q2`, `Type21H`, `isRupert_type21_H`, `isRupert_type21_H2` |
 | `Type21Cover` | §16.0–16.3, 16.11, 16.12: dependencies from values, the normalized cap-face class and its cross brackets, the cap parameter `τ`, two dependencies of `K − 6` (Lemma 16.2), the facet values in brackets, the bracket identities, Lemma 16.11 (A1), Lemma 16.12, `Q` at `25` and at `23` of `K − 6` | `isDep_of_values`, `GaleData.flip`, `CapNorm`, `type21_cross_signs`, `IsCap21.gale_rel`, `IsCap21.tau`, `type21_depO2_c`, `type21_depO2_a`, `type21_f014`, `type21_r_pos`, `type21_A1`, `isRupert_type21_step3`, `isRupert_type21_step5`, `type21_lemma1612` |
 | `Type21F1` | Lemma 16.7 (F1): the depth analysis of the pentagon `(0, 6, 2, 5, 1)` (16.7 (d)), a five-corner edge view in either orientation, the edge crossing `Y` along `04` (twenty determinant tests from the faces), `T1` and the sign argument | `type21_Y_unimodal`, `isRupert_quint_rim`, `isRupert_type21_Y`, `isRupert_type21_F1` |
