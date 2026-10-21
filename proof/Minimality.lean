@@ -45,6 +45,7 @@ public import Minimality.ParallelFacets
 public import Minimality.Type24
 public import Minimality.Type21Entry
 public import Minimality.Type21Facets
+public import Minimality.Type16Main
 
 /-!
 # Every nopert has at least 7 points
@@ -850,6 +851,55 @@ theorem not_type21_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
     False :=
   h.2 (Minimality.isRupert_type21_facets x hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG hH
     hpp hgen hnd hEq hT1 hF2)
+
+/-- **Type 16** (Theorem 19.6 of `FEWER-FACES-PROOFS.md` §19, the cover): a nopert does not
+have seven points labelled so that `0235`, `1356` (quadrilaterals), `024`, `036`, `046`, `145`,
+`146`, `245` are facets (given by functionals negative off them), off the special positions:
+`Minimality.GenPos`, `Minimality.NoPlaneParallel` (no plane through three of the points parallel
+to the segment of two others; this contains the equalities in the sign conditions of the
+route), no horizontal double normal at the view along any segment, the coplanarities of
+`0, 1, 3, 4` and of `2, 3, 4, 6`, the lines `036 ∩ 146` and `036 ∩ 024` not parallel to the
+planes `245`, `145` (`Minimality.LineAff16`), and at the six vertex views `046/145`, `036/146`,
+`0235/046`, `046/245`, `036/024`, `1356/046` no depth tie and no horizontal double normal
+(`Minimality.ViewAff16`).  Off `R1 ∪ R2` the pair at `06` certifies it (Proposition 14.3); in
+`R1` a Lemma E edge pair or a triangle or planar closing (Theorem 19.2), or on its residual `Ω`
+the pairs of Lemmas 19.3 and 19.4 or the triple of Lemma 19.5; in `R2` the same after
+`σ = (06)(12)`. -/
+theorem not_type16_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
+    (hx : Function.Injective x)
+    (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
+    (hA : ∀ i, (i ∈ ({0, 2, 3, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
+      (i ∉ ({0, 2, 3, 5} : Finset (Fin 7)) → fA (x i) < 0))
+    (hB : ∀ i, (i ∈ ({1, 3, 5, 6} : Finset (Fin 7)) → fB (x i) = 0) ∧
+      (i ∉ ({1, 3, 5, 6} : Finset (Fin 7)) → fB (x i) < 0))
+    (hC : ∀ i, (i ∈ ({0, 2, 4} : Finset (Fin 7)) → fC (x i) = 0) ∧
+      (i ∉ ({0, 2, 4} : Finset (Fin 7)) → fC (x i) < 0))
+    (hD : ∀ i, (i ∈ ({0, 3, 6} : Finset (Fin 7)) → fD (x i) = 0) ∧
+      (i ∉ ({0, 3, 6} : Finset (Fin 7)) → fD (x i) < 0))
+    (hE : ∀ i, (i ∈ ({0, 4, 6} : Finset (Fin 7)) → fE (x i) = 0) ∧
+      (i ∉ ({0, 4, 6} : Finset (Fin 7)) → fE (x i) < 0))
+    (hF : ∀ i, (i ∈ ({1, 4, 5} : Finset (Fin 7)) → fF (x i) = 0) ∧
+      (i ∉ ({1, 4, 5} : Finset (Fin 7)) → fF (x i) < 0))
+    (hG : ∀ i, (i ∈ ({1, 4, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
+      (i ∉ ({1, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
+    (hH : ∀ i, (i ∈ ({2, 4, 5} : Finset (Fin 7)) → fH (x i) = 0) ∧
+      (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fH (x i) < 0))
+    (hgen : Minimality.GenPos (Finset.univ.image x))
+    (hpp : Minimality.NoPlaneParallel (Finset.univ.image x))
+    (hnd : ∀ v ∈ Finset.univ.image x, ∀ w ∈ Finset.univ.image x, v ≠ w →
+      Minimality.NoHDNAt ((Finset.univ.image x).erase w) (w - v))
+    (hcop : Minimality.det3 (x 0 - x 3) (x 1 - x 3) (x 4 - x 3) ≠ 0 ∧
+      Minimality.det3 (x 2 - x 3) (x 4 - x 3) (x 6 - x 3) ≠ 0)
+    (hL : Minimality.LineAff16 fD fG (x 2) (x 4) (x 5) ∧
+      Minimality.LineAff16 fD fC (x 1) (x 4) (x 5))
+    (hV : Minimality.ViewAff16 (Finset.univ.image x) fE fF ∧
+      Minimality.ViewAff16 (Finset.univ.image x) fD fG ∧
+      Minimality.ViewAff16 (Finset.univ.image x) fA fE ∧
+      Minimality.ViewAff16 (Finset.univ.image x) fE fH ∧
+      Minimality.ViewAff16 (Finset.univ.image x) fD fC ∧
+      Minimality.ViewAff16 (Finset.univ.image x) fB fE) : False :=
+  h.2 (Minimality.isRupert_type16_facets x hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG hH
+    hgen hpp hnd hcop.1 hcop.2 hL hV)
 
 /-- **Flat polygons are Rupert.**  Points in a plane, not all on one line, are
 Rupert, whatever their number: hold one copy face-on and pass the other

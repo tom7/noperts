@@ -355,4 +355,14 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.type21_switch_mid6
 #assert_standard_axioms Minimality.type21_switch_sep
 #assert_standard_axioms Minimality.isRupert_type21_switch
+#assert_standard_axioms not_type16_of_isNopert
+#assert_standard_axioms Minimality.isRupert_type16_facets
+#assert_standard_axioms Minimality.NF16.isRupert_type16
+#assert_standard_axioms Minimality.NF16.isRupert_nf
+#assert_standard_axioms Minimality.NF16.isRupert_E06
+#assert_standard_axioms Minimality.NF16.isRupert_R1_or_omega
+#assert_standard_axioms Minimality.NF16.isRupert_omega
+#assert_standard_axioms Minimality.NF16.isRupert_F3
+#assert_standard_axioms Minimality.NF16.isRupert_F1s
+#assert_standard_axioms Minimality.NF16.isRupert_T6
 #assert_standard_axioms minimalNopert_of_certificatesValid
