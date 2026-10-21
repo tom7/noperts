@@ -19,6 +19,7 @@ public import Minimality.Type22
 public import Minimality.Type28
 public import Minimality.Type05
 public import Minimality.Type08
+public import Minimality.Type29
 public import Minimality.Forces
 public import Minimality.TieForces
 public import Minimality.TieRobust

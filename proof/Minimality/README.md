@@ -277,6 +277,21 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   segment of two others), and `NoHDNAt` (no horizontal double normal at the
   views along the segments, the exclusion of Theorem 10.1). The same in octahedron
   form: `isRupert_type08`.
+* Theorem P of `FEWER-FACES-PROOFS.md` §12 (type 29, partial; `Type29Lemmas.lean`,
+  `Type29Lift.lean`, `Type29.lean`): `K` is the octahedron `O = K − 6` (opposite
+  pairs `(0, 4)`, `(1, 3)`, `(2, 5)`) with the cap `6` on the plane `145`, beyond
+  `345`, beneath the other faces (`IsCap29`). `isRupert_type29_P`: if clause C1 (an
+  inner-tailed quad edge of `O` in `G = {1→4, 4→1, 1→5, 5→1, 0→3, 0→5, 2→3, 2→4}`,
+  `Type29C1`), C2 (`K − 5` or `K − 4` an octahedron with an inner-tailed quad edge along
+  `14`/`46` resp. `15`/`56` at which the removed vertex is a middle, `Type29C2`) or C3
+  (an inner-tailed quad edge of an octahedron `K − m` with `m` hidden, `Type29C3`)
+  holds, then, without planar equators, in general position (`GenPos`,
+  `NoPlaneParallel`) and without horizontal double normals (`NoHDNAt`), `K` is Rupert.
+  Lemma 1 (`not_bad_of_inner`), Lemma 2 (`isRupert_quad_edge_lift`), Lemma 3
+  (`isRupert_type29_14`, `isRupert_type29_41` with the far-end lift
+  `isRupert_lift_far`), Lemma 4 (`type29_hidden_03`, `type29_hidden_05`, by
+  `quadHidden_of_beneath`). That some clause always holds is not proved, so there is
+  no `not_type29_of_isNopert`.
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
@@ -414,6 +429,9 @@ In import order.
 | `Type08Cases` | Theorem 8.9 with a unimodal `K_v` from determinant tests at an edge view (no rotation in the statement); type 08, cases N2 (Lemma 9.3 with a middle) and Q (`K_d` the face `Q_ac`) | `NoHDNAt`, `isRupert_of_edgeView`, `isRupert_quad_edge_middle`, `isRupert_type08_Q` |
 | `Type08T4` | Type 08, case T4 (Lemma 5): the claim of Lemma 9.3 from one face, the closing by `x`, the T4 rim in coordinates | `quad_lower_of_face`, `nws4_closing_x`, `t4_dets`, `isRupert_type08_T4` |
 | `Type08` | Theorem 10.1 (type 08): the normalized case analysis, the relabelling by Lemma 6 (`S3` and mirrored Gale vectors), the facet form | `NoPlaneParallel`, `OctFacets.isOctahedron`, `isRupert_type08_normalized`, `isRupert_type08`, `isRupert_type08_facets` |
+| `Type29Lemmas` | Type 29 (`FEWER-FACES-PROOFS.md` §12, Theorem P), the reusable lemmas for an octahedron with one more point: Lemma 1 (certification without a crossed pair: a quad edge whose tail is an inner vertex of its third pair, `[p x] [x x'] < 0`, is not bad; Lemma 9.7 via `inTri_of_dep` and §10's Lemma 3), Lemma 2 (exact lift: a middle or hidden extra point leaves the reduced polygons, and Lemma 9.3's unimodal closing, unchanged; through `isRupert_of_edgeView`, i.e. `isRupert_of_edgeChords_unimodal`), a hidden point from the facets, both together | `quad_edge_sep`, `inner_dep_signs`, `not_bad_of_inner`, `QuadMiddle`, `QuadHidden`, `isRupert_quad_edge_lift`, `quadHidden_of_beneath`, `isRupert_inner_quad_edge_lift` |
+| `Type29Lift` | Type 29, Lemma 3 (b) with `t > 1` (the cap is the far end, `5` the middle): the octahedron's shadow tests in either orientation, the tests at the cap, a point inside a quadrilateral is on the positive side of a line through a vertex (barycentric identity), the closing of Lemma 9.3 for any 4-cycle or a triangle (either orientation), step 3 (the up face `356` rules out `K`-badness), the lift | `quad_edge_testsσ`, `cap_testsσ`, `det3_bary`, `inside_line_pos`, `isRupert_closing_quad`, `isRupert_closing_quadσ`, `isRupert_tri_viewσ`, `lift_far_not_bad_core`, `isRupert_lift_far` |
+| `Type29` | Type 29, Theorem P of §12 (partial): the cap `IsCap29` over `O = K − 6` and `σ = (0 2)(4 5)`, Lemma 0 (b) (coordinates `s, t`), Lemma 3 (quad edges at `1` lift: `14`, `41`, `15`, `51`), Lemma 4 (the cap is hidden at `0→3`, `0→5`, `2→3`, `2→4`), clauses C1, C2 (`K − 5`; `K − 4` by `σ`), C3, and Theorem P; no `not_type29_of_isNopert` (that some clause holds is open) | `IsCap29`, `IsCap29.coords`, `isRupert_type29_14`, `isRupert_type29_41`, `type29_hidden_03`, `type29_hidden_05`, `Type29C1`, `Type29C2`, `Type29C3`, `isRupert_type29_C1`, `isRupert_type29_C2`, `isRupert_type29_C3`, `isRupert_type29_P` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `TriGenFar`, `TriGen.far`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices
