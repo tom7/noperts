@@ -58,6 +58,16 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.exists_tiltCert_of_depthSeparated
 #assert_standard_axioms Minimality.isRupert_of_chords_depthSeparated
 #assert_standard_axioms Minimality.isRupert_of_edgeChords_depthSeparated
+#assert_standard_axioms Minimality.pos_of_extremeSlots
+#assert_standard_axioms Minimality.pos_of_cramer
+#assert_standard_axioms Minimality.torque_pos_of_extremeRays
+#assert_standard_axioms Minimality.raysFree_of_five_slots
+#assert_standard_axioms Minimality.cramerCert_raysFree
+#assert_standard_axioms Minimality.det_slotCols
+#assert_standard_axioms Minimality.isRupert_of_raysFreeView
+#assert_standard_axioms Minimality.exists_tiltCert_of_raysFree
+#assert_standard_axioms Minimality.isRupert_of_chords_raysFree
+#assert_standard_axioms Minimality.isRupert_of_edgeChords_raysFree
 #assert_standard_axioms Minimality.tie_core_right
 #assert_standard_axioms Minimality.isRupert_of_tie_right
 #assert_standard_axioms Minimality.isRupert_of_tie_right_neg
