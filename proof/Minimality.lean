@@ -42,6 +42,7 @@ public import Minimality.Shear
 public import Minimality.ParallelFar
 public import Minimality.ParallelFacets
 public import Minimality.Type24
+public import Minimality.Type21Entry
 
 /-!
 # Every nopert has at least 7 points
@@ -791,6 +792,64 @@ theorem not_type24_outside_Cbar_of_isNopert (x : Fin 7 → ℝ³)
       Minimality.S6Free x ∨ Minimality.S2Free x ∨ Minimality.S0Free x) : False :=
   h.2 (Minimality.isRupert_type24_outside_Cbar
     (Minimality.Type24.ofAffine x fA fB fC fD fE fF hA hB hC hD hE hF) hCbar hSigma)
+
+/-- **Type 21** (Theorem 16.13 of `FEWER-FACES-PROOFS.md` §16, the tier cover): a nopert does
+not have seven points labelled so that `014`, `015`, `0256`, `046`, `134`, `135`, `2346`, `235`
+are facets (given by functionals negative off them), off the special positions:
+`Minimality.NoPlaneParallel` (no plane through three of the points parallel to the segment of
+two others; this contains every tie of a Gale comparison used), `Minimality.GenPos`, no
+horizontal double normal at the view along any segment, at the four vertex crossings
+`0: 014/0256`, `4: 014/2346`, `5: 135/0256`, `3: 135/2346` the special positions of the test
+`T1` (`Minimality.T1View`: the antipode off the far side, distinct depths, no horizontal double
+normal), and the four images of the switch-surface half `H⁻`.  If `K − 2` (the octahedron of
+`x 0, x 3, x 4, x 5, x 1, x 6`) or `K − 6` is in its cap-face class, this is Theorem 16.13 (tiers
+Q, H, F1); for the other Gale classes (§16 addendum) the hypothesis `hother` asks for tier Q or
+H of `K − 2` or `K − 6`, or the ridge tier R (`Minimality.Type21RQ`, with the ratios
+`δ_015(2)/δ_015(6)` and `δ_134(2)/δ_134(6)`). -/
+theorem not_type21_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
+    (hx : Function.Injective x)
+    (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
+    (hA : ∀ i, (i ∈ ({0, 1, 4} : Finset (Fin 7)) → fA (x i) = 0) ∧
+      (i ∉ ({0, 1, 4} : Finset (Fin 7)) → fA (x i) < 0))
+    (hB : ∀ i, (i ∈ ({0, 1, 5} : Finset (Fin 7)) → fB (x i) = 0) ∧
+      (i ∉ ({0, 1, 5} : Finset (Fin 7)) → fB (x i) < 0))
+    (hC : ∀ i, (i ∈ ({0, 2, 5, 6} : Finset (Fin 7)) → fC (x i) = 0) ∧
+      (i ∉ ({0, 2, 5, 6} : Finset (Fin 7)) → fC (x i) < 0))
+    (hD : ∀ i, (i ∈ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) = 0) ∧
+      (i ∉ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) < 0))
+    (hE : ∀ i, (i ∈ ({1, 3, 4} : Finset (Fin 7)) → fE (x i) = 0) ∧
+      (i ∉ ({1, 3, 4} : Finset (Fin 7)) → fE (x i) < 0))
+    (hF : ∀ i, (i ∈ ({1, 3, 5} : Finset (Fin 7)) → fF (x i) = 0) ∧
+      (i ∉ ({1, 3, 5} : Finset (Fin 7)) → fF (x i) < 0))
+    (hG : ∀ i, (i ∈ ({2, 3, 4, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
+      (i ∉ ({2, 3, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
+    (hH : ∀ i, (i ∈ ({2, 3, 5} : Finset (Fin 7)) → fH (x i) = 0) ∧
+      (i ∉ ({2, 3, 5} : Finset (Fin 7)) → fH (x i) < 0))
+    (hpp : Minimality.NoPlaneParallel (Finset.univ.image x))
+    (hgen : Minimality.GenPos (Finset.univ.image x))
+    (hnd : ∀ v ∈ Finset.univ.image x, ∀ w ∈ Finset.univ.image x, v ≠ w →
+      Minimality.NoHDNAt ((Finset.univ.image x).erase w) (w - v))
+    (hT1 : Minimality.T1View (Finset.univ.image x) fA fC (x 0) (x 3) (x 4) (x 5) ∧
+      Minimality.T1View (Finset.univ.image x) fA fG (x 4) (x 5) (x 0) (x 3) ∧
+      Minimality.T1View (Finset.univ.image x) fF fC (x 5) (x 4) (x 3) (x 0) ∧
+      Minimality.T1View (Finset.univ.image x) fF fG (x 3) (x 0) (x 5) (x 4))
+    (hHm : ¬ (fA (x 2) = fA (x 5) ∧ fA (x 5) < fA (x 3)) ∧
+      ¬ (fA (x 2) = fA (x 3) ∧ fA (x 3) < fA (x 5)) ∧
+      ¬ (fF (x 6) = fF (x 0) ∧ fF (x 0) < fF (x 4)) ∧
+      ¬ (fF (x 6) = fF (x 4) ∧ fF (x 4) < fF (x 0)))
+    (hother : ¬ (∃ G : Minimality.GaleData (x 0) (x 3) (x 4) (x 5) (x 1) (x 6),
+        Minimality.CapFace G) →
+      ¬ (∃ G : Minimality.GaleData (x 5) (x 4) (x 3) (x 0) (x 1) (x 2), Minimality.CapFace G) →
+      (∃ G : Minimality.GaleData (x 0) (x 3) (x 4) (x 5) (x 1) (x 6),
+        Minimality.Type21Q G.l G.m (x 0) (x 3) (x 4) (x 5) (x 1) (x 6) ∨
+        Minimality.Type21H G.l G.m (x 0) (x 3) (x 4) (x 5) (x 1) (x 6)) ∨
+      (∃ G : Minimality.GaleData (x 5) (x 4) (x 3) (x 0) (x 1) (x 2),
+        Minimality.Type21Q G.l G.m (x 5) (x 4) (x 3) (x 0) (x 1) (x 2) ∨
+        Minimality.Type21H G.l G.m (x 5) (x 4) (x 3) (x 0) (x 1) (x 2)) ∨
+      Minimality.Type21RQ (fB (x 2) / fB (x 6)) (fE (x 2) / fE (x 6)) (x 0) (x 3) (x 4) (x 5)
+        (x 1) (x 6) (x 2)) : False :=
+  h.2 (Minimality.isRupert_type21_facets x hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG hH
+    hpp hgen hnd hT1 hHm hother)
 
 /-- **Flat polygons are Rupert.**  Points in a plane, not all on one line, are
 Rupert, whatever their number: hold one copy face-on and pass the other
