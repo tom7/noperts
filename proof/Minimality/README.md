@@ -292,6 +292,45 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   `isRupert_lift_far`), Lemma 4 (`type29_hidden_03`, `type29_hidden_05`, by
   `quadHidden_of_beneath`). That some clause always holds is not proved, so there is
   no `not_type29_of_isNopert`.
+* Theorem 5 of `FEWER-FACES-PROOFS.md` §9 (type 21, the octahedron route, conditional;
+  `Type21Lemmas.lean`, `Type21Lift.lean`, `Type21.lean`): `K` is the octahedron
+  `O6 = K − 2` (opposite pairs `(0, 3)`, `(4, 5)`, `(1, 6)`) with the cap `2` on the planes
+  `056`, `346`, beyond `356`, beneath the other faces (`IsCap21`).  `isRupert_type21`: if
+  the Gale data of `K − 2` or of `K − 6` satisfy `Type21Gale` (no planar equator, and an
+  admissible `W` whose crossed pair contains a K-quad edge, or a TT edge at which the cap
+  is hidden, `HiddenAt`), then, in general position (`GenPos`) and without horizontal
+  double normals (`NoHDNEdges`), `K` is Rupert.  `K − 6` is the octahedron `IsCap21.O2`
+  with the cap `6` (`IsCap21.sigma2`, the symmetry `σ2`).  Steps 1–2 of Theorem 9.9 as
+  crossed pairs of good quad edges: `gale_crossed`, `gale_edge`.  Lemma 1 (a)
+  (`IsCap21.not_hidden_04`), Lemma 2 (a) (`isRupert_type21_hidden`), Lemma 3 at the eight
+  directed K-quad edges (`isRupert_type21_05`, `_50`, `_06`, `_60`, and `σ1`: `_43`,
+  `_34`, `_46`, `_64`; the far ends: `isRupert_type21_50` through `O2` with
+  `type21_far_not_bad_core`, `isRupert_type21_60_far` with the planar rim `2346`).  Not
+  formalized: Lemma 1 in general, Lemma 4 (insertion), Theorem S.  That the hypothesis
+  always holds is not proved, so there is no `not_type21_of_isNopert`.
+* Theorem M′ of `FEWER-FACES-PROOFS.md` §11 and its addendum (type 16, partial;
+  `Type16.lean`, `Type16M.lean`): `Type16` gives the facets `0235`, `1356` (quadrilaterals
+  meeting in the edge `ℓ = 35`) and `024`, `036`, `046`, `145`, `146`, `245`.
+  `isRupert_type16_M`: if one of the proved clauses holds (`Type16Clause`), then in
+  general position (`GenPos`, `NoPlaneParallel`) and without horizontal double normals
+  (`NoHDNAt`) `K` is Rupert.  Lemma 11.U (`isRupert_type16_35`): at the view along `35`,
+  with far ends `A ∈ {0, 2}`, `B ∈ {1, 6}` (the other vertex a middle, `MidOf`), a closing
+  is unimodal unless *35 is bad* (`Type16Bad35`: `4` a corner and
+  `min (z 3, z 4) > max (z A, z B)`); part (b) `lemmaU_b_real` (strict, from the face
+  `245` alone), in screen coordinates `frame_coords`, `det3_frame`, `lemmaU_coords`.
+  Corollary 11.Ua: `type16_not_bad35_of_far`, `type16_not_bad35_of_acute`.  The
+  octahedral region (`Oct16`: `123`, `124` faces of `O = K − 5`): Lemma 11.1
+  (`Oct16.five_beyond`, the virtual cap `Oct16.star` on `ℓ` with `IsCap` over
+  `Oct16.facets`, so `O ∪ {5*}` is type 08); S1 at `ℓ`: third quadrilateral
+  (`type16_not_bad35_thirdQuad`), J's T4 case in `K*` (`type16_not_bad35_T4`, `…T4σ`, via
+  `t4_not_bad'`, §10's T4 lemma with `κ_b` only nonzero), the case N2 (§10's Lemma 7 with
+  `5` a middle, `middle_Qbc_of`: `isRupert_type16_N2`, `…N2σ`); S2's N2 branch
+  (Lemma 11.5, `isRupert_type16_S2N2`); Proposition 11.V (`isRupert_type16_V`, `…Vσ`) from
+  R1 (`type16_R1`), R2 (ii) (`type16_R2`) and Lemma 11.8 for `2 → 4`
+  (`isRupert_type16_24`: the rim is the face `0235`).  Gale-form (mirror-invariant)
+  wrappers end in `'`.  Not formalized: S2's T4 branch and S3 (Lemmas 11.7, 11.9, 11.10,
+  T4 weak edges); that some clause always holds is open, so there is no
+  `not_type16_of_isNopert`.
 * §13 of `FEWER-FACES-PROOFS.md` (two-test certificates; `OctAxis.lean`), in Euclidean
   form (the metric of `ℝ³`). Theorem 13.7, the octahedral axis lemma
   (`isRupert_octAxis`): for an octahedron with an ordered axis `(a, a')`, a labelling
@@ -450,6 +489,8 @@ In import order.
 | `Type29Lemmas` | Type 29 (`FEWER-FACES-PROOFS.md` §12, Theorem P), the reusable lemmas for an octahedron with one more point: Lemma 1 (certification without a crossed pair: a quad edge whose tail is an inner vertex of its third pair, `[p x] [x x'] < 0`, is not bad; Lemma 9.7 via `inTri_of_dep` and §10's Lemma 3), Lemma 2 (exact lift: a middle or hidden extra point leaves the reduced polygons, and Lemma 9.3's unimodal closing, unchanged; through `isRupert_of_edgeView`, i.e. `isRupert_of_edgeChords_unimodal`), a hidden point from the facets, both together | `quad_edge_sep`, `inner_dep_signs`, `not_bad_of_inner`, `QuadMiddle`, `QuadHidden`, `isRupert_quad_edge_lift`, `quadHidden_of_beneath`, `isRupert_inner_quad_edge_lift` |
 | `Type29Lift` | Type 29, Lemma 3 (b) with `t > 1` (the cap is the far end, `5` the middle): the octahedron's shadow tests in either orientation, the tests at the cap, a point inside a quadrilateral is on the positive side of a line through a vertex (barycentric identity), the closing of Lemma 9.3 for any 4-cycle or a triangle (either orientation), step 3 (the up face `356` rules out `K`-badness), the lift | `quad_edge_testsσ`, `cap_testsσ`, `det3_bary`, `inside_line_pos`, `isRupert_closing_quad`, `isRupert_closing_quadσ`, `isRupert_tri_viewσ`, `lift_far_not_bad_core`, `isRupert_lift_far` |
 | `Type29` | Type 29, Theorem P of §12 (partial): the cap `IsCap29` over `O = K − 6` and `σ = (0 2)(4 5)`, Lemma 0 (b) (coordinates `s, t`), Lemma 3 (quad edges at `1` lift: `14`, `41`, `15`, `51`), Lemma 4 (the cap is hidden at `0→3`, `0→5`, `2→3`, `2→4`), clauses C1, C2 (`K − 5`; `K − 4` by `σ`), C3, and Theorem P; no `not_type29_of_isNopert` (that some clause holds is open) | `IsCap29`, `IsCap29.coords`, `isRupert_type29_14`, `isRupert_type29_41`, `type29_hidden_03`, `type29_hidden_05`, `Type29C1`, `Type29C2`, `Type29C3`, `isRupert_type29_C1`, `isRupert_type29_C2`, `isRupert_type29_C3`, `isRupert_type29_P` |
+| `Type16` | Type 16, Lemma 11.U and Corollary 11.Ua of `FEWER-FACES-PROOFS.md` §11 addendum: screen coordinates of an edge view from two face functionals, the rim tests by `det3_frame`, part (b) in reals, the closing decision, the core in coordinates and from facets; `Type16` (facets), `σ = (0 6)(1 2)`, `MidOf`, "35 is bad", the far ends of `0235`, `1356` | `affine_frame3`, `det3_frame`, `frame_coords`, `isRupert_quad_rim`, `lemmaU_b_real`, `lemmaU_nws4`, `lemmaU_coords`, `lemmaU_facets`, `Type16`, `Type16.sigma`, `MidOf`, `Type16Bad35`, `plane_quad_coords`, `quad_middle`, `isRupert_type16_35`, `type16_not_bad35_of_far`, `type16_not_bad35_of_acute` |
+| `Type16M` | Type 16, Theorem M′ (conditional): the octahedral region `Oct16`, Lemma 11.1 (`5*`, `K*` type 08), S1 at `ℓ` (third quadrilateral, T4 case in `K*`, N2), S2's N2 branch (Lemma 11.5), Proposition 11.V (R1, R2, Lemma 11.8 at `24`), Gale-form wrappers, `Type16Clause` and the theorem; no `not_type16_of_isNopert` | `Oct16`, `Oct16.five_beyond`, `Oct16.star`, `Oct16.facets`, `Oct16.isCap`, `middle_Qbc_of`, `isRupert_type16_N2`, `type16_not_bad35_thirdQuad`, `t4_not_bad'`, `type16_not_bad35_T4`, `type16_lemma5_mid`, `isRupert_type16_S2N2`, `isRupert_quad_rim_coords`, `isRupert_type16_24`, `type16_R1`, `type16_R2`, `isRupert_type16_V`, `Type16Clause`, `isRupert_type16_M` |
 | `OctAxis` | `FEWER-FACES-PROOFS.md` §13 (two-test certificates), Euclidean form: the angle lemma for 4-corner rims (Lemma 13.2, Corollary 13.3: depth-separated diagonals whose projections meet along both views force the sign of `⟪u₁, u₂⟫`; shared-diagonal form), the cluster signs of every octahedron (Lemma 13.4), the views and middles (Lemma 13.5), the sign identity (Lemma 13.6, by the dependencies `[a ·]`, `[b ·]` and Plücker, no continuity step), Proposition 8.8 with Theorem 7.3 at a vertex view from determinant tests, the test at `a'` (triangle or quadrilateral rim; extra points hidden or middles at the apex), Theorem 13.7 (the octahedral axis lemma) and the lift 13.8 (i), (ii) to `K = O ∪ {m}` | `dep_eq_zero_of_two`, `galeD_ne_zero`, `pole_signs'`, `cluster_signs`, `axisView`, `axisView_eq_neg`, `axis_sign`, `axis_sign_two`, `SegMeet`, `DepthSep`, `depthSep_meet_sign`, `depthSep_det_sign`, `not_both_depthSep`, `axis_test_facts`, `isRupert_of_vertexView`, `AxisHidden`, `ApexMid`, `AxisExtra`, `overlap4_of_not_depthSep`, `isRupert_axisTest_core`, `segMeet_of_sides`, `axisTest_meets`, `isRupert_axisTest`, `isRupert_octAxis_gen`, `isRupert_octAxis`, `isRupert_octAxis_lift` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `TriGenFar`, `TriGen.far`, `isRupert_of_two_quad_facets_vertex` |
 
