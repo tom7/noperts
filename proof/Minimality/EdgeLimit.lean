@@ -500,7 +500,8 @@ theorem isRupert_ePair_limit {n : ℕ} (x : Fin n → ℝ³) (hx : Function.Inje
       refine nws4_of_tendsto (fun i => ?_) hinj hNv
       rcases zmod4_cases i with rfl | rfl | rfl | rfl
       exacts [(hK v).inner hus, (hK a).inner hus, (hK c).inner hus, (hK b).inner hus]
-    refine E.isRupert_edgeClosing hMa1 hMb1 ?_ hgen.dist hgen.one (fA v hvA) (fB v hvB) hEa hEb
+    refine E.isRupert_edgeClosing hMa1 hMb1 ?_ hgen.dist hgen.one (fA v hvA) (fB v hvB)
+      (fun h _ => hEa h) (fun h _ => hEb h)
     rw [quad_inner']
     exact hz.isRobustUnimodal
   · have hz : NWS4 (quad ⟪x w, u⟫ ⟪x a, u⟫ ⟪x c, u⟫ ⟪x b, u⟫) := by
@@ -510,7 +511,7 @@ theorem isRupert_ePair_limit {n : ℕ} (x : Fin n → ℝ³) (hx : Function.Inje
       rcases zmod4_cases i with rfl | rfl | rfl | rfl
       exacts [(hK w).inner hus, (hK a).inner hus, (hK c).inner hus, (hK b).inner hus]
     refine E.swap.isRupert_edgeClosing hMa1 hMb1 ?_ hgen.dist hgen.one (fA w hwA) (fB w hwB)
-      (fun h => by rw [mul_comm]; exact hEa h) (fun h => by rw [mul_comm]; exact hEb h)
+      (fun h _ => by rw [mul_comm]; exact hEa h) (fun h _ => by rw [mul_comm]; exact hEb h)
     rw [quad_inner']
     exact hz.isRobustUnimodal
 

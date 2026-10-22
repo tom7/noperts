@@ -998,10 +998,29 @@ def pQuintLabels16 :
   {(.inl (3, 6), (6, 0, 2, 4, 1)), (.inr 1, (6, 3, 5, 2, 4)), (.inl (1, 5), (1, 4, 2, 0, 6)),
     (.inl (3, 0), (0, 6, 1, 4, 2)), (.inr 4, (0, 3, 5, 1, 4)), (.inl (2, 5), (2, 4, 1, 6, 0))}
 
+/-- **Lemma 19.3's region** (`Ω ∩ {d > 1}` with `f15 < 0`, in the normal form): the hypotheses
+under which the vertex crossing `T2 = 046/145` has its rim `(4, 6, 3, 5)` (`cert_F3_T2`). -/
+def Reg193 (x : Fin 7 → ℝ³) : Prop :=
+  ∃ N : NF16 x, 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1) ∧
+    0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r) ∧ 0 < N.q * N.d - N.r * N.g ∧
+    0 < N.q - N.g ∧ 0 < N.g - 1 ∧ 0 < N.q - N.b ∧ 0 < N.q * (N.a - 1) - N.b * (N.p - 1) ∧
+    0 < N.d - 1 ∧ 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1)
+
+/-- **The extra data of a four-corner pair certificate**: at the view along `35` (Lemma 19.3's
+`T1`, rims `(3, 1, 4, x)` and their `σ`-images `(3, 2, 4, x)`) the shape lies in Lemma 19.3's
+region, or its `σ`-image does.  §22.12 uses it at the limit: there `T2` takes over. -/
+def PX16 (x : Fin 7 → ℝ³) (v : (Fin 7 × Fin 7) ⊕ Fin 6) (l : Fin 7 × Fin 7 × Fin 7 × Fin 7) :
+    Prop :=
+  (v = .inl (3, 5) → l.2.1 = 1 → Reg193 x) ∧ (v = .inl (3, 5) → l.2.1 = 2 → Reg193 (x ∘ sigma16))
+
+theorem PX16.of_ne {x : Fin 7 → ℝ³} {v : (Fin 7 × Fin 7) ⊕ Fin 6}
+    {l : Fin 7 × Fin 7 × Fin 7 × Fin 7} (h : v ≠ .inl (3, 5)) : PX16 x v l :=
+  ⟨fun e => absurd e h, fun e => absurd e h⟩
+
 /-- A pair certificate of Lemmas 19.3–19.5: a labelled rim certificate (four or five corners) at
-one of their views. -/
+one of their views (with `PX16` at four corners). -/
 def CertP16 (x : Fin 7 → ℝ³) : Prop :=
-  (∃ v l, (v, l) ∈ pQuadLabels16 ∧ ∃ c : ℝ, c ≠ 0 ∧ RimCertPts (univ.image x)
+  (∃ v l, (v, l) ∈ pQuadLabels16 ∧ PX16 x v l ∧ ∃ c : ℝ, c ≠ 0 ∧ RimCertPts (univ.image x)
     (c • view16 x v) (quad (x l.1) (x l.2.1) (x l.2.2.1) (x l.2.2.2))) ∨
   (∃ v l, (v, l) ∈ pQuintLabels16 ∧ ∃ c : ℝ, c ≠ 0 ∧ RimCertPts (univ.image x)
     (c • view16 x v) (quint (x l.1) (x l.2.1) (x l.2.2.1) (x l.2.2.2.1) (x l.2.2.2.2)))
@@ -1033,11 +1052,11 @@ theorem cert16_eTri {x : Fin 7 → ℝ³} (v w a b : Fin 7) (ht : (v, w, a, b) �
   Or.inr (Or.inl ⟨v, w, a, b, ht, σ, hσ, hT, hz, hV⟩)
 
 theorem Cert16.mkPQ {x : Fin 7 → ℝ³} (v : (Fin 7 × Fin 7) ⊕ Fin 6) (i₀ i₁ i₂ i₃ : Fin 7)
-    (hm : (v, (i₀, i₁, i₂, i₃)) ∈ pQuadLabels16) {u : ℝ³}
+    (hm : (v, (i₀, i₁, i₂, i₃)) ∈ pQuadLabels16) (hx : PX16 x v (i₀, i₁, i₂, i₃)) {u : ℝ³}
     (hn : ∃ c : ℝ, c ≠ 0 ∧ u = c • view16 x v)
     (h : RimCertPts (univ.image x) u (quad (x i₀) (x i₁) (x i₂) (x i₃))) : Cert16 x := by
   obtain ⟨c, hc, rfl⟩ := hn
-  exact Or.inr (Or.inr (Or.inl ⟨v, (i₀, i₁, i₂, i₃), hm, c, hc, h⟩))
+  exact Or.inr (Or.inr (Or.inl ⟨v, (i₀, i₁, i₂, i₃), hm, hx, c, hc, h⟩))
 
 theorem Cert16.mkPQ5 {x : Fin 7 → ℝ³} (v : (Fin 7 × Fin 7) ⊕ Fin 6) (i₀ i₁ i₂ i₃ i₄ : Fin 7)
     (hm : (v, (i₀, i₁, i₂, i₃, i₄)) ∈ pQuintLabels16) {u : ℝ³}
@@ -1056,7 +1075,7 @@ theorem mem_image7 {x : Fin 7 → ℝ³} (i : Fin 7) : x i ∈ univ.image x :=
 /-- Every type-16 certificate is a rim certificate at a named view. -/
 theorem Cert16.toN {x : Fin 7 → ℝ³} (h : Cert16 x) : CertN16 x := by
   rcases h with ⟨v, w, a, b, c, -, σ, hσ, q₁, q₂, q₃, q₄, hE, h3, hV⟩ |
-    ⟨v, w, a, b, -, σ, hσ, hT, hz, hV⟩ | ⟨v, l, -, c, hc, hr⟩ | ⟨v, l, -, c, hc, hr⟩
+    ⟨v, w, a, b, -, σ, hσ, hT, hz, hV⟩ | ⟨v, l, -, -, c, hc, hr⟩ | ⟨v, l, -, c, hc, hr⟩
   · exact ⟨_, named16_seg v w, rimCert_edgePairσ_robust _ hσ (mem_image7 v) (mem_image7 w)
       (mem_image7 a) (mem_image7 b) (mem_image7 c) q₁ q₂ q₃ q₄ hE h3 hV⟩
   · exact ⟨_, named16_seg v w, rimCert_edgeTriσ_robust _ hσ (mem_image7 v) (mem_image7 w)
@@ -1098,15 +1117,41 @@ theorem pQuintLabels16_sigma : ∀ q ∈ pQuintLabels16, (sigmaView16 q.1, (sigm
     simp only [sigmaView16, sigma16, Prod.mk.injEq, Sum.inl.injEq, reduceCtorEq, and_false,
       false_or, or_false] <;> decide
 
+theorem comp_sigma16_sigma16 (x : Fin 7 → ℝ³) : (x ∘ sigma16) ∘ sigma16 = x := by
+  funext i; fin_cases i <;> rfl
+
+theorem sigmaView16_eq35 {v : (Fin 7 × Fin 7) ⊕ Fin 6} (h : sigmaView16 v = .inl (3, 5)) :
+    v = .inl (3, 5) := by
+  rcases v with ⟨i, j⟩ | t
+  · simp only [sigmaView16, Sum.inl.injEq, Prod.mk.injEq] at h
+    obtain ⟨h1, h2⟩ := h
+    have hi : i = 3 := by revert h1; revert i; decide
+    have hj : j = 5 := by revert h2; revert j; decide
+    rw [hi, hj]
+  · simp [sigmaView16] at h
+
+/-- `PX16` under `σ`. -/
+theorem PX16.sigma {x : Fin 7 → ℝ³} {v : (Fin 7 × Fin 7) ⊕ Fin 6}
+    {l : Fin 7 × Fin 7 × Fin 7 × Fin 7} (h : PX16 (x ∘ sigma16) v l) :
+    PX16 x (sigmaView16 v) (sigma16 l.1, sigma16 l.2.1, sigma16 l.2.2.1, sigma16 l.2.2.2) := by
+  refine ⟨fun hv h1 => ?_, fun hv h2 => ?_⟩
+  · have key : ∀ i : Fin 7, sigma16 i = 1 → i = 2 := by decide
+    have h1' : l.2.1 = 2 := key _ h1
+    have := h.2 (sigmaView16_eq35 hv) h1'
+    rwa [comp_sigma16_sigma16] at this
+  · have key : ∀ i : Fin 7, sigma16 i = 2 → i = 1 := by decide
+    have h2' : l.2.1 = 1 := key _ h2
+    exact h.1 (sigmaView16_eq35 hv) h2'
+
 theorem Cert16.sigma {x : Fin 7 → ℝ³} (h : Cert16 (x ∘ sigma16)) : Cert16 x := by
   rcases h with ⟨v, w, a, b, c, ht, σ, hd⟩ | ⟨v, w, a, b, ht, σ, hd⟩ |
-    ⟨v, l, hl, c, hc, hr⟩ | ⟨v, l, hl, c, hc, hr⟩
+    ⟨v, l, hl, hx, c, hc, hr⟩ | ⟨v, l, hl, c, hc, hr⟩
   · rw [image_sigma16] at hd
     exact Or.inl ⟨_, _, _, _, _, ePairList16_sigma _ ht, σ, hd⟩
   · rw [image_sigma16] at hd
     exact Or.inr (Or.inl ⟨_, _, _, _, eTriList16_sigma _ ht, σ, hd⟩)
   · rw [image_sigma16, view16_sigma] at hr
-    exact Or.inr (Or.inr (Or.inl ⟨_, _, pQuadLabels16_sigma (v, l) hl, c, hc, hr⟩))
+    exact Or.inr (Or.inr (Or.inl ⟨_, _, pQuadLabels16_sigma (v, l) hl, hx.sigma, c, hc, hr⟩))
   · rw [image_sigma16, view16_sigma] at hr
     exact Or.inr (Or.inr (Or.inr ⟨_, _, pQuintLabels16_sigma (v, l) hl, c, hc, hr⟩))
 

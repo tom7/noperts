@@ -588,6 +588,15 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.isRupert_twoFace_limit
 #assert_standard_axioms Minimality.isRupert_type16_limit_edge
 #assert_standard_axioms Minimality.isRupert_type16_limit_facets_edge
+#assert_standard_axioms Minimality.VtxConf.isRupert_vtxClosing
+#assert_standard_axioms Minimality.isRupert_vtx_limit
+#assert_standard_axioms Minimality.isRupert_rdG
+#assert_standard_axioms Minimality.rdRimG0_of_H
+#assert_standard_axioms Minimality.isRupert_kv_limit
+#assert_standard_axioms Minimality.isRupert_pVtx2
+#assert_standard_axioms Minimality.isRupert_pT1
+#assert_standard_axioms Minimality.isRupert_ePair35
+#assert_standard_axioms Minimality.isRupert_T2_at
 #assert_standard_axioms Minimality.isRupert_type21_limit_sec
 #assert_standard_axioms Minimality.isRupert_type21_limit_facets_sec
 #assert_standard_axioms Minimality.isRupert_type21_limit

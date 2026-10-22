@@ -229,7 +229,8 @@ theorem isRupert_partner (E : EdgeConf V u v w a b c h Na Nb κa κb Ma Mb) {m :
 /-- **Theorem 22.8 (class `d` at an edge crossing).**  `F_a` has the single middle `m` on the far
 side of its chord (`OppA`), all depths at `u` are distinct, `K_v` has no weak saddle, at most one
 direction of horizontal double normals at `u`, and Lemma E holds strictly (`v`, `w` on opposite
-sides of the plane `a c b`).  A horizontal double normal `F − Z ∥ N_a` from the open side
+sides of the plane `a c b`) where the partner `K_w` has a weak saddle.  A horizontal double
+normal `F − Z ∥ N_a` from the open side
 `(v, a)` to the far edge `[c, b] ∥ F_a` makes the set Rupert: by the partner closing (Lemma 22.5),
 by the slide rim on `F_b`'s circle (Lemma 22.6 (a)), or by A.10's Theorem R. -/
 theorem isRupert_classD (E : EdgeConf V u v w a b c h Na Nb κa κb Ma Mb) {m : ℝ³}
@@ -239,7 +240,8 @@ theorem isRupert_classD (E : EdgeConf V u v w a b c h Na Nb κa κb Ma Mb) {m : 
     {Z F : ℝ³} (hZ : Z ∈ segment ℝ v a) (hZv : Z ≠ v) (hZa : Z ≠ a) (hF : F ∈ segment ℝ c b)
     (hpar : ⟪Na, c⟫ = ⟪Na, b⟫) {r : ℝ} (hFZ : F - Z = r • Na) {ℓ₀ : ℝ³}
     (hdir : HDNDir V u ℓ₀) (hℓa : cross ℓ₀ Na = 0)
-    (hE : det3 (c - a) (b - a) (v - a) * det3 (c - a) (b - a) (w - a) < 0) : IsRupert V := by
+    (hE : ¬ NWS4 (quad ⟪w, u⟫ ⟪a, u⟫ ⟪c, u⟫ ⟪b, u⟫) →
+      det3 (c - a) (b - a) (v - a) * det3 (c - a) (b - a) (w - a) < 0) : IsRupert V := by
   classical
   have hm : m ∈ Ma := by rw [hMa]; exact mem_singleton_self m
   obtain ⟨s, δ, hs0, hs1, hδh, hmeq⟩ := E.opp_coords hm hopp
@@ -352,7 +354,7 @@ theorem isRupert_classD (E : EdgeConf V u v w a b c h Na Nb κa κb Ma Mb) {m : 
     · rw [hdiff, inner_neg_left, real_inner_smul_left, hvw, real_inner_smul_right, E.Na_u]
       ring
     · rw [hdiff, inner_neg_left, real_inner_smul_left, E.Na_av]; ring
-  have hR := rdRim_of_H hm' hs0 hs1 hδ' hoff horient hpar' hE hH1' hfeet
+  have hR := rdRim_of_H hm' hs0 hs1 hδ' hoff horient hpar' (hE hKw) hH1' hfeet
   have hne : v - w ≠ 0 := by rw [hvw]; exact smul_ne_zero (neg_ne_zero.mpr hh) E.hu
   refine isRupert_of_rdRim V (insert w Mb) hR hne E.hv (E.hMa hm) E.ha E.hc E.hb ?_ ?_
   · intro x hx

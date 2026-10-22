@@ -599,9 +599,8 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   with no horizontal double normal at the six vertex views (`ViewAff16`).
 * §18.6 step 2 and Theorem 19.8 for type 16 (`Type16Limit.lean`, with `LimitRim.lean` and
   `RimCert.lean`): **type 16 outside the HDN set and codimension 2**,
-  `isRupert_type16_limit` / `isRupert_type16_limit_facets` and the entry point
-  `not_type16_of_isNopert_codim2` (the entry point with §22.2's weakening at the two-triangle
-  views, see §22 below).  Hypotheses: the facets, no horizontal double normal at the
+  `isRupert_type16_limit` / `isRupert_type16_limit_facets` (the entry point
+  `not_type16_of_isNopert_codim2` adds §22, see below: no HDN hypothesis is left).  Hypotheses: the facets, no horizontal double normal at the
   views along the segments and the lines of the six facet pairs (`NoHDNAff`), and at most one
   tie at these named views (`OneTie16`, with `TieInst16`, `SameTie16`: the tie of `s, t` along
   `ij` and the tie of `i, j` along `st` count once).  No general position, no sign condition of
@@ -616,40 +615,61 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   and `isRupert_of_tendsto_rimCert` concludes.  Not formalized: 19.7 (b) / 18.4 (β) across
   certificates (two ties on different certificates' rims are excluded together with every
   other pair of ties), the codimension count itself (stated, not proved).
-* §22 of `FEWER-FACES-PROOFS.md` (HDN exceptions of types 16 and 21; partial: Proposition 22.2 at
-  the two-triangle views; `Sector.lean`, `Type16Sector.lean`, `Type21Sector.lean`).
-  **Proposition 22.2, general form** (`isRupert_of_tiltHides`): at a view `u`, a cycle `X` of
-  points of `V`, every point weakly left of every side, robustly unimodal depths, and a tilt `d`
-  that hides every point over a side line (`TiltHides`: `[X (i+1) − X i, z − X i, d] > 0`) make
-  `V` Rupert, with no condition on horizontal double normals or ties: along `u + εd` the
-  silhouette is `X`, and robust unimodality is open in the order of the depths
-  (`IsRobustUnimodal.isCyclicUnimodal_of_order`, from `IsRobustUnimodal.not_weak_peaks`), so
-  Corollary 8.0′ (`isRupert_of_tilted_unimodal'`, Theorem 7.5) applies.  The cone of tilts
-  (`exists_tiltHides_of_normals`): if every side constraint is a positive multiple of one of two
-  non-parallel face normals (the closing is realized on both face circles), one tilt hides all;
-  for two triangles this holds for every rim (`exists_tiltHides_tri`, with (G1) as `G1Tri`: every
-  point over a support line lies with the line's ends on one of the triangles; one constraint per
-  triangle, `cross_tri_sides`).  The limit lemma with the tilt alternative
-  (`isRupert_of_tendsto_rimCert_or`): no horizontal double normal at the limit view, or a hiding
-  tilt for the labelled rim at the limit.  At the limit, (G1) at an edge view is `G1Edge`
-  (`ParOnly`: the axle is the only pair over one point, which a certificate never takes as
-  consecutive labels, `RimCertAt.not_axle`; with `G1Tri`), at a vertex view `G1Vtx`
-  (`NoParAt`); `exists_tiltHides_limit`.  Types 16 and 21 (`Sec16`, `Sec21`;
-  `isRupert_type16_limit_sec`, `isRupert_type21_limit_sec` from the extracted sequences
-  `exists_certSeq16`, `exists_certSeq21`; facets forms `isRupert_type16_limit_facets_sec`,
-  `isRupert_type21_limit_facets_sec`): at the two-triangle edges (type 16: `04`, `06`, `14`,
-  `24`, `45`, `46`; type 21: `01`, `04`, `14`, `15`, `13`, `35`) and two-triangle vertex
-  crossings (type 16: `046/145`, `036/146`, `046/245`, `036/024`; type 21: `046/134`, `046/015`,
-  `235/134`, `235/015`) the hypothesis is "no horizontal double normal, or (G1)"
-  (`HDNOrG1Edge`, `HDNOrG1Aff`): codimension 2.  The entry points
-  `not_type16_of_isNopert_codim2`, `not_type21_of_isNopert_codim2` use these.  Not formalized:
-  22.2 at quadrilateral faces (two-circle closings such as `K_0` at `02`; they share their view
-  with a one-circle closing, so the view's hypothesis would not change without 22.3–22.10),
-  22.3–22.10 (one realizing circle: classes H_j, c_j via 22.4, d_j via A.10's Theorem R,
-  Lemma 22.7, the partner closing, 22.13, 22.14), and the codimension count of §22.4.  So
-  horizontal double normals remain excluded at the views with a quadrilateral face: type 16 at
-  the other fifteen segments and the lines of `0235/046`, `1356/046`; type 21 at the other
-  fifteen segments and the lines of `014/0256`, `014/2346`, `135/0256`, `135/2346`.
+* §22 of `FEWER-FACES-PROOFS.md` (HDN exceptions of types 16 and 21; complete for type 16,
+  partial for type 21).
+  **Proposition 22.2, general form** (`Sector.lean`, `isRupert_of_tiltHides`): at a view `u`, a
+  cycle `X` of points of `V`, every point weakly left of every side, robustly unimodal depths, and
+  a tilt `d` that hides every point over a side line (`TiltHides`) make `V` Rupert, with no
+  condition on horizontal double normals or ties.  The cone of tilts from two face normals
+  (`exists_tiltHides_of_normals`), two triangles (`exists_tiltHides_tri`, (G1) as `G1Tri`), the
+  limit lemma with the tilt alternative (`isRupert_of_tendsto_rimCert_or`, `G1Edge`, `G1Vtx`),
+  any labelled rim with two faces realized on both circles (`isRupert_twoFace`,
+  `isRupert_twoFace_limit`).
+  **Edge crossings** (`EdgeConf.lean` … `EdgeMain.lean`): `EdgeConf` (an edge view, two faces
+  with at most one middle each, the closing `K_v`); Proposition 22.2 (`isRupert_twoCircle`);
+  the slide on a realizing circle (Lemma 22.3, `isRupert_slideA`, with the persistent double
+  normal `NoPersistHDN`, `isRupert_of_slideP`); class `c` (Lemma 22.4, `isRupert_classC`: the
+  five-corner slide rim has a depth-separated pair); class `d` (Theorem 22.8, `isRupert_classD`:
+  the slide rim strictly unimodal, the partner `K_w` (Lemma 22.5), or (H1) by `h1_core` and
+  A.10's Theorem R with (H4) from Lemma E, `rdRim_of_H`); no realizing circle (Lemma 22.7,
+  `isRupert_caseC`); together `EdgeConf.isRupert_edgeClosing` under §22.4's conditions (distinct
+  depths, `OneHDNDir`, `FootA`, and Lemma E only where the far edge is parallel to a face **and**
+  `K_w` has a weak saddle).  At the limit: `isRupert_ePair_limit` (Lemma E edge pairs, with
+  `EdgeGen`), `isRupert_eTri_limit` (triangle closings), `isRupert_kv_limit` (a closing `K_v`
+  without Lemma E; the residual where `K_w` has a weak saddle is left to the caller).
+  **Vertex crossings with a quadrilateral and a triangle** (Lemmas 22.9, 22.10; `VtxConf.lean` …
+  `VtxLimit.lean`, `RdGen.lean`): `VtxConf` (the quadrilateral `F_a` with its apex and far end
+  opposite, middles `p` above and `q` below the chord; the triangle `F_b`); the slide on
+  `F_a`'s circle (Lemma 22.3, `VtxConf.isRupert_slideA`); the five-corner slides on `F_b`'s
+  circle (`isRupert_slide5`, `p` or `q` poked out, the other hidden at first order); class `c`
+  (Lemma 22.4, `VtxConf.isRupert_classC`); class `d`: Lemma 22.9 (`peak_half`, `h1_vtx`: both
+  slide rims two-peaked puts the maximum and minimum at `b`, `c`), Theorem 22.8 with (H4) in the
+  sense of the shown middle (`rdRimG_vtx` through `rdRim_of_H` with a virtual axle end) or Lemma
+  22.10 (`rd_limit_cert0`, `rdRimG0_of_H`: `m, a, c, b` coplanar, so (H4) fails and `D(f) > 0`),
+  and Theorem R from a slot certificate with points hidden at first order
+  (`isRupert_rdG`, `RdSlideHidden`, `isRupert_of_rdRimG`); one middle in the plane `a c b` gives
+  (H4) or the coplanarity in both senses (`VtxConf.hD_of_copl`); together
+  `VtxConf.isRupert_vtxClosing`, and at the limit `isRupert_vtx_limit` (with `VtxGen`).
+  **Type 16** (`Type16Sector`, `Type16Edge`, `Type16Edge2`, `Type16Vtx`, `Type16T2`,
+  `Type16Seg35`): the certificates carry family and labels (`Cert16 = CertE16 ∨ CertT16 ∨
+  CertP16`; at Lemma 19.3's `T1` the approximant also carries Lemma 19.3's region, `PX16`,
+  `Reg193`).  Every named view: the eleven segments `01`, `04`, `05`, `12`, `13`, `23`, `26`,
+  `34`, `45`, `46`, `56` carry no certificate (`usedViews16`); the two-triangle edges `06`, `14`,
+  `24` and lines `046/145`, `036/146`, `046/245`, `036/024` take "no HDN or (G1)"; the six
+  quadrilateral-triangle edges take "no HDN or `EdgeGenAff`" (edge pairs by
+  `isRupert_ePair_limit`, the other certificates by Proposition 22.2); the lines `0235/046`,
+  `1356/046` take "no HDN or `VtxGen`" (Lemma 19.5's `T_a` by `isRupert_vtx_limit`, (H4) for the
+  middle `2` from `3` on the facet `1356`, Lemma 22.10 for the middle `3`); the segment `35`
+  takes "no HDN or `Gen35Aff`" (edge pairs, D7's triangle closings, and Lemma 19.3's `T1` by
+  `isRupert_kv_limit`, whose residual (`K_5` two-peaked) is closed by `T2`: `1` above `4` and
+  `5` along `3 − 5`, Lemma 19.3 (ii) (`T2_nws4`), `T2`'s rim from the region at the limit
+  (`reg193_of_limit`: the normal-form parameters are continuous, `prm16`; strict off `Off193`),
+  and `T2` at its own view, `isRupert_T2_at`).  The entry point `not_type16_of_isNopert_codim2`
+  has no plain horizontal-double-normal hypothesis.  **Type 21** (`Type21Sector`): only the
+  two-triangle views (Proposition 22.2); its certificates are not yet labelled by family, so the
+  fifteen segments other than `01`, `04`, `14`, `15`, `13`, `35` and the lines of `014/0256`,
+  `014/2346`, `135/0256`, `135/2346` still exclude horizontal double normals (tiers Q, R, F1, F2
+  need the labels; 22.13, 22.14 not formalized).  Not formalized: the codimension count of §22.4.
 * §13 of `FEWER-FACES-PROOFS.md` (two-test certificates; `OctAxis.lean`), in Euclidean
   form (the metric of `ℝ³`). Theorem 13.7, the octahedral axis lemma
   (`isRupert_octAxis`): for an octahedron with an ordered axis `(a, a')`, a labelling
@@ -970,6 +990,21 @@ In import order.
 | `Type16Main` | Type 16, Theorem 19.6 (the cover, certificate form) and its special positions from the points and facets; from a certificate to Rupertness | `NF16.cert_omega`, `NF16.cert_R1`, `NF16.cert_nf`, `NF16.Gen.of`, `NF16.Views.of`, `Type16.noSeg`, `Cert16.isRupert`, `Type16.noHDN_views`, `NF16.isRupert_type16`, `ViewAff16`, `LineAff16`, `isRupert_type16_facets` |
 | `Type16Limit` | Type 16, §18.6 step 2 and Theorem 19.8: normal-form shapes from parameters, the special positions of the cover as one nonzero polynomial and the density of its nonvanishing set, the tie-restoring shear, ties at the named views (`OneTie16`), the limit certificate; type 16 outside the HDN set and codimension 2 | `nfShape`, `NF16.ofParams`, `genPoly16`, `genPoly16_ne_zero`, `exists_seq_eval_ne_zero`, `restore`, `det3_restore`, `TieInst16`, `SameTie16`, `OneTie16`, `oneTieAt_of_ties`, `eventually_ties`, `Cert16.exists_certL`, `isRupert_of_cert_seq`, `exists_certSeq16`, `isRupert_type16_limit`, `isRupert_type16_limit_facets` |
 | `Type16Sector` | Type 16, §22.2 at the two-triangle views: the views, (G1) there, the hiding tilt of the limit rim, the limit lemma with the tilt alternative, the facets form | `triEdge16`, `TriVtx16`, `Sec16`, `Sec16.tiltHides`, `Face16.det3_ne`, `isRupert_of_cert_seq_sec`, `isRupert_type16_limit_sec`, `HDNOrG1Edge`, `HDNOrG1Aff`, `isRupert_type16_limit_facets_sec` |
+| `Type16Edge` | Type 16, §22 at the segments `02`, `16`: Lemma 18.2 at one view with the alternatives, `EdgeGen` symmetries, the edge pairs and triangle closings there | `isRupert_of_certL_seq_at`, `isRupert_of_rimCert_seq_at`, `Gen02`, `Gen16`, `isRupert_ePair02`, `isRupert_eTri20` |
+| `Type16Edge2` | Type 16, §22 at `15`, `25`, `03`, `36` and the dispatch over all certificates: the used views, the alternatives `EdgeOK16`, the limit theorem and the facets form | `usedViews16`, `EdgeOK16`, `isRupert_of_cert_seq_edge`, `isRupert_type16_limit_edge`, `EdgeGenAff`, `Gen35Aff`, `isRupert_type16_limit_facets_edge` |
+| `Type16Vtx` | Type 16, §22.9–22.10 at `0235/046`, `1356/046`: `T_a`'s middles along `u_a`, `3` on the facet `1356`, `T_a` at the limit | `freq_sign`, `VtxOK2`, `VtxOK5`, `HDNOrVtxGenAff`, `NF16.coords_uA`, `NF16.copl3`, `isRupert_pVtx2`, `isRupert_pVtx5` |
+| `Type16T2` | Type 16, §22.12: the normal-form parameters as continuous functions of the points, Lemma 19.3's region at the limit, Lemma 19.3 (ii), `T2` at the limit shape | `prm16`, `NF16.prm_eq`, `tendsto_prm16`, `Off193`, `reg193_of_limit`, `T2_nws4`, `isRupert_T2_at` |
+| `Type16Seg35` | Type 16, §22 at `35`: the edge pairs, D7, Lemma 19.3's `T1` (and its `σ`-image) with `T2` in the residual | `Gen35`, `EdgeGen.negU`, `isRupert_ePair35`, `isRupert_eTri35`, `below_of_kw`, `isRupert_pT1`, `isRupert_pT1σ` |
+| `SlideE` | §22.3, §22.6 (a): the slide with only the persistent double normal excluded | `exists_pairDir_of_hdnE`, `NoPersistHDN`, `isRupert_of_slideP` |
+| `EdgeConf` | §22.0–22.2 at an edge view: `EdgeConf`, the screen tests, the middles' coordinates, Proposition 22.2 for a four-corner closing, the mirror and the swap | `G1At`, `EdgeConf`, `EdgeConf.det_a_pos`, `EdgeConf.midA_coords`, `EdgeConf.isRupert_twoCircle`, `EdgeConf.mirror`, `EdgeConf.swap` |
+| `EdgeSlide`, `EdgeFive` | Lemma 22.3 (the slide of `K_v` on `F_a`'s circle) and the five-corner slide rim on `F_b`'s circle | `EdgeConf.isRupert_slideA`, `OppA`, `EdgeConf.isRupert_slide5` |
+| `EdgeHDN` | Horizontal double normals in space: `HDNDir`, `OneHDNDir`, the rim double normal is a shadow double normal, the classification of a double normal perpendicular to a face | `HDNDir`, `OneHDNDir`, `hdnDir_of_rim`, `classify_face` |
+| `EdgeClassC`, `EdgeClassD`, `EdgeRd` | Lemma 22.4 (class `c`), Lemma 22.5 and Theorem 22.8 (class `d`), (H1) and A.10's conditions from (H4) | `EdgeConf.isRupert_classC`, `EdgeConf.isRupert_partner`, `EdgeConf.isRupert_classD`, `h1_core`, `rdRim_of_H` |
+| `EdgeMain` | The horizontal-double-normal item of a four-corner edge closing (one or no realizing circle, Lemma 22.7) | `FootA`, `nws4_mirror`, `EdgeConf.isRupert_persistA`, `EdgeConf.isRupert_caseB`, `EdgeConf.isRupert_caseC`, `EdgeConf.isRupert_edgeClosing` |
+| `EdgeLimit`, `EdgeTwoFace`, `EdgeKv` | Edge closings at the limit: Lemma E edge pairs, triangle closings, two-face rims, a closing without Lemma E with a residual | `EdgeGen`, `NormalFootGen`, `isRupert_ePair_limit`, `isRupert_eTri_limit`, `isRupert_twoFace_limit`, `isRupert_kv_limit` |
+| `VtxConf`, `VtxSlide` | §22 at a vertex view with a quadrilateral (apex and far end opposite) and a triangle: the configuration, its tests, the slides on both circles | `VtxConf`, `VtxConf.p_coords`, `VtxConf.isRupert_slideA`, `VtxConf.isRupert_slide5` |
+| `VtxClassC`, `VtxClassD`, `VtxMain`, `VtxLimit` | Lemma 22.4, Lemma 22.9, Theorem 22.8 and Lemma 22.10 at a vertex view; the closing and its limit form | `VtxConf.isRupert_classC`, `peak_half`, `h1_vtx`, `VtxConf.isRupert_rdUp`, `VtxConf.rdRimG_vtx`, `VtxConf.hD_of_copl`, `VtxConf.isRupert_vtxClosing`, `VtxGen`, `isRupert_vtx_limit` |
+| `RdGen` | A.10's Theorem R from a slot certificate, with points hidden at first order along the tilt; Lemma 22.10's certificate | `RdSlideHidden`, `rd_limit_cert0`, `isRupert_rdG_std`, `isRupert_rdG`, `RdRimG`, `RdRim.toG`, `isRupert_of_rdRimG`, `rdRimG0_of_H` |
 | `UniformTilt` | `FEWER-FACES-PROOFS.md` §16 part K: Lemma 16.27 (the uniform tilt: Theorems 8.8 and 8.9 with the single tilt `ω × u₀ + η v′`; a middle over any certified chord is exposed only when its depth offset helps it, and the axle gets a certificate in each of the four sectors of Lemma F, the mixed ones by the screen Plücker identity) and Lemma 16.27′ (doubles: any finite set of vertices over certified corners), each with Theorem 7.3; determinant-test forms, a 4-corner closing, and Corollary 14.1 with middles over any side of the shadow (Lemma E picks the closing) | `det3_plucker_screen`, `det3_apex_tilt`, `eventually_chord_choice`, `eventually_axle_uniform`, `isRupert_of_edgeChords_uniform`, `isRupert_of_edgeChords_uniform_unimodal`, `isRupert_of_uniform_doubles`, `isRupert_of_uniform_doubles_unimodal`, `isRupert_of_edgeView_uniform`, `isRupert_quad_uniform`, `isRupert_edgePair_uniform` |
 | `RobustUnimodal` | `FEWER-FACES-PROOFS.md` §18.0, 18.3, 18.4: robust unimodality (R1)–(R3), cyclic subsequences, triangles, planar rims, one tie, limits; Steps 2–4 of Theorem 7.3 with weakly monotone runs; Theorem 18.3 | `IsRobustUnimodal`, `IsRobustUnimodal.comp`, `isRobustUnimodal_three`, `IsCcwPolygon.isRobustUnimodal_affine`, `isRobustUnimodal_of_single_tie`, `isRobustUnimodal_of_tendsto`, `deg_lemma_weak`, `forces_parallel_weak`, `hasHorizontalDoubleNormal_of_forces_robust`, `isRupert_of_robustUnimodalView` |
 | `RobustCert` | Theorem 18.3 in the certificate forms (Propositions 8.8, 8.9, Lemma 16.27, Theorem 18.1 in its tie form, determinant-test views) | `exists_tiltCert_of_robustUnimodal`, `isRupert_of_uniform_doubles_robustUnimodal`, `isRupert_of_edgeView_robust`, `isRupert_of_vertexView_robust` |

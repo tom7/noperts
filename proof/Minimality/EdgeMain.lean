@@ -33,6 +33,17 @@ def FootA (v a c b Na : ℝ³) : Prop :=
   ∀ F ∈ segment ℝ c b, ⟪Na, F⟫ = min ⟪Na, c⟫ ⟪Na, b⟫ → ∀ r : ℝ, r ≠ 0 →
     F - v ≠ r • Na ∧ F - a ≠ r • Na
 
+/-- No weak saddle of `p a c b` at `u` is no weak saddle of the mirror `p b c a` at `−u`. -/
+theorem nws4_mirror {p a c b u : ℝ³} (h : NWS4 (quad ⟪p, u⟫ ⟪a, u⟫ ⟪c, u⟫ ⟪b, u⟫)) :
+    NWS4 (quad ⟪p, -u⟫ ⟪b, -u⟫ ⟪c, -u⟫ ⟪a, -u⟫) := by
+  simp only [NWS4, quad_0, quad_1, quad_2, quad_3, inner_neg_right, neg_lt_neg_iff] at h ⊢
+  obtain ⟨h1, h2⟩ := h
+  refine ⟨?_, ?_⟩
+  · rcases h2 with h | h | h | h
+    exacts [Or.inr (Or.inl h), Or.inl h, Or.inr (Or.inr (Or.inr h)), Or.inr (Or.inr (Or.inl h))]
+  · rcases h1 with h | h | h | h
+    exacts [Or.inr (Or.inl h), Or.inl h, Or.inr (Or.inr (Or.inr h)), Or.inr (Or.inr (Or.inl h))]
+
 namespace EdgeConf
 
 variable {V : Finset ℝ³} {u v w a b c : ℝ³} {h : ℝ} {Na Nb : ℝ³} {κa κb : ℝ}
@@ -140,7 +151,8 @@ theorem isRupert_persistA (E : EdgeConf V u v w a b c h Na Nb κa κb Ma Mb) {m 
     (hz : NWS4 (quad ⟪v, u⟫ ⟪a, u⟫ ⟪c, u⟫ ⟪b, u⟫))
     (hdist : ∀ y ∈ V, ∀ y' ∈ V, y ≠ y' → ⟪y, u⟫ ≠ ⟪y', u⟫) (hone : OneHDNDir V u)
     (hfoot : FootA v a c b Na)
-    (hE : ⟪Na, c⟫ = ⟪Na, b⟫ → det3 (c - a) (b - a) (v - a) * det3 (c - a) (b - a) (w - a) < 0)
+    (hE : ⟪Na, c⟫ = ⟪Na, b⟫ → ¬ NWS4 (quad ⟪w, u⟫ ⟪a, u⟫ ⟪c, u⟫ ⟪b, u⟫) →
+      det3 (c - a) (b - a) (v - a) * det3 (c - a) (b - a) (w - a) < 0)
     {k : ℕ} (hk : 2 ≤ k) (R : ZMod k → ℝ³) (hRinj : Function.Injective R) (hRV : ∀ i, R i ∈ V)
     (hsupp : ∀ z ∈ V, SuppIn u R z) (hvR : ∃ i, R i = v)
     (htop : ∀ i, ⟪Na, R i⟫ = κa → R i = v ∨ R i = a) (hcR : ∃ i, R i = c) (hbR : ∃ i, R i = b)
@@ -210,7 +222,8 @@ theorem isRupert_caseB (E : EdgeConf V u v w a b c h Na Nb κa κb Ma Mb) {m : �
     (hz : NWS4 (quad ⟪v, u⟫ ⟪a, u⟫ ⟪c, u⟫ ⟪b, u⟫))
     (hdist : ∀ y ∈ V, ∀ y' ∈ V, y ≠ y' → ⟪y, u⟫ ≠ ⟪y', u⟫) (hone : OneHDNDir V u)
     (hfoot : FootA v a c b Na)
-    (hE : ⟪Na, c⟫ = ⟪Na, b⟫ → det3 (c - a) (b - a) (v - a) * det3 (c - a) (b - a) (w - a) < 0) :
+    (hE : ⟪Na, c⟫ = ⟪Na, b⟫ → ¬ NWS4 (quad ⟪w, u⟫ ⟪a, u⟫ ⟪c, u⟫ ⟪b, u⟫) →
+      det3 (c - a) (b - a) (v - a) * det3 (c - a) (b - a) (w - a) < 0) :
     IsRupert V := by
   classical
   have hinj : Function.Injective (fun i => ⟪quad v a c b i, u⟫) := by
@@ -250,8 +263,10 @@ theorem isRupert_caseC (E : EdgeConf V u v w a b c h Na Nb κa κb Ma Mb) {m m' 
     (hz : NWS4 (quad ⟪v, u⟫ ⟪a, u⟫ ⟪c, u⟫ ⟪b, u⟫))
     (hdist : ∀ y ∈ V, ∀ y' ∈ V, y ≠ y' → ⟪y, u⟫ ≠ ⟪y', u⟫) (hone : OneHDNDir V u)
     (hfootA : FootA v a c b Na) (hfootB : FootA v b c a Nb)
-    (hEa : ⟪Na, c⟫ = ⟪Na, b⟫ → det3 (c - a) (b - a) (v - a) * det3 (c - a) (b - a) (w - a) < 0)
-    (hEb : ⟪Nb, c⟫ = ⟪Nb, a⟫ → det3 (c - b) (a - b) (v - b) * det3 (c - b) (a - b) (w - b) < 0) :
+    (hEa : ⟪Na, c⟫ = ⟪Na, b⟫ → ¬ NWS4 (quad ⟪w, u⟫ ⟪a, u⟫ ⟪c, u⟫ ⟪b, u⟫) →
+      det3 (c - a) (b - a) (v - a) * det3 (c - a) (b - a) (w - a) < 0)
+    (hEb : ⟪Nb, c⟫ = ⟪Nb, a⟫ → ¬ NWS4 (quad ⟪w, u⟫ ⟪a, u⟫ ⟪c, u⟫ ⟪b, u⟫) →
+      det3 (c - b) (a - b) (v - b) * det3 (c - b) (a - b) (w - b) < 0) :
     IsRupert V := by
   classical
   have hm : m ∈ Ma := by rw [hMa]; exact mem_singleton_self m
@@ -352,7 +367,8 @@ theorem isRupert_caseC (E : EdgeConf V u v w a b c h Na Nb κa κb Ma Mb) {m m' 
     obtain ⟨i, j, Y, hY, Y', hY', hne, hu, he, hext⟩ := exists_of_not_noPersist hbad
     have hinjR : Function.Injective (quint v m a c b) := fun i j e =>
       E.quint_inj_of_dist hm hdist (by simp only [e])
-    refine E'.isRupert_persistA hMb hoppB hz' hdist' hone' hfootB hEb (by norm_num)
+    refine E'.isRupert_persistA hMb hoppB hz' hdist' hone' hfootB
+      (fun h hk => hEb h fun hk' => hk (nws4_mirror hk')) (by norm_num)
       (quint v m a c b) hinjR (E.quint_mem hm) suppB ⟨0, rfl⟩ ?_ ⟨3, rfl⟩ ⟨2, rfl⟩ ?_ hY hY'
       hne (by rw [inner_neg_right, hu, neg_zero]) (inner_chord_of_slide hh he) hext
     · intro k hk
@@ -445,8 +461,10 @@ theorem isRupert_edgeClosing (E : EdgeConf V u v w a b c h Na Nb κa κb Ma Mb)
     (hrob : IsRobustUnimodal (fun i => ⟪quad v a c b i, u⟫))
     (hdist : ∀ y ∈ V, ∀ y' ∈ V, y ≠ y' → ⟪y, u⟫ ≠ ⟪y', u⟫) (hone : OneHDNDir V u)
     (hfootA : FootA v a c b Na) (hfootB : FootA v b c a Nb)
-    (hEa : ⟪Na, c⟫ = ⟪Na, b⟫ → det3 (c - a) (b - a) (v - a) * det3 (c - a) (b - a) (w - a) < 0)
-    (hEb : ⟪Nb, c⟫ = ⟪Nb, a⟫ → det3 (c - b) (a - b) (v - b) * det3 (c - b) (a - b) (w - b) < 0) :
+    (hEa : ⟪Na, c⟫ = ⟪Na, b⟫ → ¬ NWS4 (quad ⟪w, u⟫ ⟪a, u⟫ ⟪c, u⟫ ⟪b, u⟫) →
+      det3 (c - a) (b - a) (v - a) * det3 (c - a) (b - a) (w - a) < 0)
+    (hEb : ⟪Nb, c⟫ = ⟪Nb, a⟫ → ¬ NWS4 (quad ⟪w, u⟫ ⟪a, u⟫ ⟪c, u⟫ ⟪b, u⟫) →
+      det3 (c - b) (a - b) (v - b) * det3 (c - b) (a - b) (w - b) < 0) :
     IsRupert V := by
   classical
   have hinj : Function.Injective (fun i => ⟪quad v a c b i, u⟫) := by
@@ -534,7 +552,8 @@ theorem isRupert_edgeClosing (E : EdgeConf V u v w a b c h Na Nb κa κb Ma Mb)
   · by_cases hRB : RealB v w b Mb
     · exact E.isRupert_twoCircle hRA hRB hrob
     · obtain ⟨m, hMb, hopp⟩ := oppB hRB
-      exact E.mirror.isRupert_caseB hMb hopp (realB_mirror hRA) hz' hdist' hone.neg_u hfootB hEb
+      exact E.mirror.isRupert_caseB hMb hopp (realB_mirror hRA) hz' hdist' hone.neg_u hfootB
+        (fun h hk => hEb h fun hk' => hk (nws4_mirror hk'))
   · obtain ⟨m, hMa, hopp⟩ := oppA hRA
     by_cases hRB : RealB v w b Mb
     · exact E.isRupert_caseB hMa hopp hRB hz hdist hone hfootA hEa

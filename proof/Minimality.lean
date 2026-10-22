@@ -1019,17 +1019,20 @@ theorem not_type16_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
   h.2 (Minimality.isRupert_type16_facets x hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG hH
     hgen hpp hnd hcop.1 hcop.2 hL hV)
 
-/-- **Type 16 outside codimension 2, except horizontal double normals at its one-circle views**
-(Theorem 19.8 with §18.6 step 2 and §22.2 of `FEWER-FACES-PROOFS.md`): a nopert does not have
+/-- **Type 16 outside codimension 2** (Theorem 19.8 with §18.6 step 2 and §22 of
+`FEWER-FACES-PROOFS.md`): a nopert does not have
 seven points labelled so that `0235`, `1356` (quadrilaterals), `024`, `036`, `046`, `145`,
 `146`, `245` are facets (given by functionals negative off them), unless one of the following
 holds.
-* A horizontal double normal of a closing at the view along a segment other than the six edges
-  `04`, `06`, `14`, `24`, `45`, `46` between two triangles and the six edges `02`, `16`, `15`,
-  `25`, `03`, `36` between a quadrilateral and a triangle (`hnd`; of these only `35`, between the
-  two quadrilaterals, carries certificates of the cover), or along the line of `0235/046` or
-  `1356/046` (`Minimality.NoHDNAff`): views whose closings may be realized on one face circle
-  only (§22.9–22.10 for these, not formalized).
+* A horizontal double normal at the view along `35`, the edge of the two quadrilaterals,
+  together with a failure of the codimension-2 conditions there (`Minimality.Gen35Aff`:
+  `Minimality.EdgeGen` for `1356`, `0235`; `3`, `5` off the planes `124`, `014`, `246` of
+  Lemma E; the shape and its `σ`-image off the boundary of Lemma 19.3's region,
+  `Minimality.Off193`).  Its edge pairs are closed by §22.3–22.8, its triangle closings by
+  Proposition 22.2, and Lemma 19.3's `T1` (no Lemma E) by §22.12: in its residual `T2` is
+  unimodal and is closed at its own view (below).
+  Nothing is asked at the eleven segments `01`, `04`, `05`, `12`, `13`, `23`, `26`, `34`, `45`,
+  `46`, `56`: no certificate of the cover uses their views.
 * A horizontal double normal at the view along one of the six quadrilateral-triangle edges
   together with a failure of the codimension-2 conditions of §22.4 there
   (`Minimality.EdgeGenAff`: only the axle seen end-on, (G1), distinct depths, at most one
@@ -1037,8 +1040,16 @@ holds.
   vertex, the axle off the plane of Lemma E).  Edge pairs are closed by §22.3–22.8
   (`Minimality.isRupert_edgeClosing`: slides along the face circles, classes c and d, Theorem R),
   the other certificates there are realized on both face circles (Proposition 22.2).
-* A horizontal double normal at the view along one of the six two-triangle edges, or along the
-  line of `046/145`, `036/146`, `046/245`, `036/024`, together with a failure of (G1) there
+* A horizontal double normal at the view along the line of `0235/046` or `1356/046` together with
+  a failure of the codimension-2 conditions of §22.4 there (`Minimality.HDNOrVtxGenAff`,
+  `Minimality.VtxGen`: no two points over one point, (G1), distinct depths, at most one direction
+  of horizontal double normals, no double normal perpendicular to the quadrilateral from one of
+  its vertices).  The certificate there, Lemma 19.5's `T_a`, is realized on the quadrilateral's
+  circle only; it is closed by Lemma 22.3, Lemma 22.4 (class `c`), and Lemma 22.9 with
+  Theorem 22.8 or Lemma 22.10 (class `d`; `Minimality.isRupert_vtx_limit`).
+* A horizontal double normal at the view along one of the two-triangle edges `06`, `14`, `24`, or
+  along the line of `046/145`, `036/146`, `046/245`, `036/024`, together with a failure of (G1)
+  there
   (`Minimality.HDNOrG1Edge`, `Minimality.HDNOrG1Aff`: `Minimality.G1Edge`, `Minimality.G1Vtx`, a
   second pair of points over one point, or a point over a support line off the two triangles):
   codimension 2.  Every closing at two triangles is realized on both face circles, so
@@ -1069,16 +1080,10 @@ theorem not_type16_of_isNopert_codim2 (x : Fin 7 → ℝ³) (h : IsNopert (Finse
       (i ∉ ({1, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
     (hH : ∀ i, (i ∈ ({2, 4, 5} : Finset (Fin 7)) → fH (x i) = 0) ∧
       (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fH (x i) < 0))
-    (hnd : ∀ i j : Fin 7, i ≠ j →
-      ({i, j} : Finset (Fin 7)) ∉ ({{0, 4}, {0, 6}, {1, 4}, {2, 4}, {4, 5}, {4, 6},
-        {0, 2}, {1, 6}, {1, 5}, {2, 5}, {0, 3}, {3, 6}} : Finset (Finset (Fin 7))) →
-      Minimality.NoHDNAt ((Finset.univ.image x).erase (x j)) (x j - x i))
-    (hEd : Minimality.HDNOrG1Edge (Finset.univ.image x) (x 0) (x 4) (x 2) (x 6) ∧
-      Minimality.HDNOrG1Edge (Finset.univ.image x) (x 0) (x 6) (x 3) (x 4) ∧
+    (h35 : Minimality.NoHDNAt (Finset.univ.image x) (x 5 - x 3) ∨ Minimality.Gen35Aff x fA fB)
+    (hEd : Minimality.HDNOrG1Edge (Finset.univ.image x) (x 0) (x 6) (x 3) (x 4) ∧
       Minimality.HDNOrG1Edge (Finset.univ.image x) (x 1) (x 4) (x 5) (x 6) ∧
-      Minimality.HDNOrG1Edge (Finset.univ.image x) (x 2) (x 4) (x 0) (x 5) ∧
-      Minimality.HDNOrG1Edge (Finset.univ.image x) (x 4) (x 5) (x 1) (x 2) ∧
-      Minimality.HDNOrG1Edge (Finset.univ.image x) (x 4) (x 6) (x 0) (x 1))
+      Minimality.HDNOrG1Edge (Finset.univ.image x) (x 2) (x 4) (x 0) (x 5))
     (hQ : (Minimality.NoHDNAt (Finset.univ.image x) (x 2 - x 0) ∨
         Minimality.EdgeGenAff x fA fC 0 2 {0, 2, 3, 5} {0, 2, 4} 3 4 6) ∧
       (Minimality.NoHDNAt (Finset.univ.image x) (x 1 - x 6) ∨
@@ -1093,13 +1098,15 @@ theorem not_type16_of_isNopert_codim2 (x : Fin 7 → ℝ³) (h : IsNopert (Finse
         Minimality.EdgeGenAff x fD fB 3 6 {0, 3, 6} {1, 3, 5, 6} 0 1 4))
     (hV : Minimality.HDNOrG1Aff (Finset.univ.image x) fE fF (x 0) (x 4) (x 6) (x 1) (x 4) (x 5) ∧
       Minimality.HDNOrG1Aff (Finset.univ.image x) fD fG (x 0) (x 3) (x 6) (x 1) (x 4) (x 6) ∧
-      Minimality.NoHDNAff (Finset.univ.image x) fA fE ∧
+      Minimality.HDNOrVtxGenAff (Finset.univ.image x) fA fE
+        (({0, 2, 3, 5} : Finset (Fin 7)).image x) (({0, 4, 6} : Finset (Fin 7)).image x) ∧
       Minimality.HDNOrG1Aff (Finset.univ.image x) fE fH (x 6) (x 4) (x 0) (x 2) (x 4) (x 5) ∧
       Minimality.HDNOrG1Aff (Finset.univ.image x) fD fC (x 6) (x 3) (x 0) (x 2) (x 4) (x 0) ∧
-      Minimality.NoHDNAff (Finset.univ.image x) fB fE)
+      Minimality.HDNOrVtxGenAff (Finset.univ.image x) fB fE
+        (({1, 3, 5, 6} : Finset (Fin 7)).image x) (({0, 4, 6} : Finset (Fin 7)).image x))
     (htie : Minimality.OneTie16 x) : False :=
   h.2 (Minimality.isRupert_type16_limit_facets_edge x hx fA fB fC fD fE fF fG fH hA hB hC hD hE
-    hF hG hH hnd hEd hQ hV htie)
+    hF hG hH h35 hEd hQ hV htie)
 
 /-- **Flat polygons are Rupert.**  Points in a plane, not all on one line, are
 Rupert, whatever their number: hold one copy face-on and pass the other

@@ -139,7 +139,9 @@ theorem cert_F3_T1a (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q
     (hz : IsRobustUnimodal
           (quad ⟪x 3, (x 5 - x 3)⟫ ⟪x 1, (x 5 - x 3)⟫ ⟪x 4, (x 5 - x 3)⟫ ⟪x 2, (x 5 - x 3)⟫)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine Cert16.mkPQ (.inl (3, 5)) 3 1 4 2 (by decide) (namedAt16_seg 3 5 hσ) (rimCertPts_equadσ (univ.image x) ({x 0, x 6} : Finset ℝ³) (u := (x 5 - x 3))
+  refine Cert16.mkPQ (.inl (3, 5)) 3 1 4 2 (by decide)
+    ⟨fun _ _ => ⟨N, hR1, hR2, hD, hqg, hg1, hqb, hc, hd1, hf15⟩, fun _ h => absurd h (by decide)⟩
+    (namedAt16_seg 3 5 hσ) (rimCertPts_equadσ (univ.image x) ({x 0, x 6} : Finset ℝ³) (u := (x 5 - x 3))
       (sub_ne_zero.mpr (N.inj.ne (by decide))) hσ (h := (-1 : ℝ)) (by norm_num) (by module)
       (mem_image 5)
     (mem_image 3) (mem_image 1) (mem_image 4) (mem_image 2)
@@ -211,7 +213,9 @@ theorem cert_F3_T1b (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q
     (hz : IsRobustUnimodal
           (quad ⟪x 3, (x 5 - x 3)⟫ ⟪x 1, (x 5 - x 3)⟫ ⟪x 4, (x 5 - x 3)⟫ ⟪x 0, (x 5 - x 3)⟫)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine Cert16.mkPQ (.inl (3, 5)) 3 1 4 0 (by decide) (namedAt16_seg 3 5 hσ) (rimCertPts_equadσ (univ.image x) ({x 2, x 6} : Finset ℝ³) (u := (x 5 - x 3))
+  refine Cert16.mkPQ (.inl (3, 5)) 3 1 4 0 (by decide)
+    ⟨fun _ _ => ⟨N, hR1, hR2, hD, hqg, hg1, hqb, hc, hd1, hf15⟩, fun _ h => absurd h (by decide)⟩
+    (namedAt16_seg 3 5 hσ) (rimCertPts_equadσ (univ.image x) ({x 2, x 6} : Finset ℝ³) (u := (x 5 - x 3))
       (sub_ne_zero.mpr (N.inj.ne (by decide))) hσ (h := (-1 : ℝ)) (by norm_num) (by module)
       (mem_image 5)
     (mem_image 3) (mem_image 1) (mem_image 4) (mem_image 0)
@@ -290,18 +294,21 @@ theorem vT2_ne (N : NF16 x) (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1))
   refine nfV_ne_zero N.hD (Or.inl (ne_of_gt ?_))
   simp only [f15]; nlinarith [mul_pos hf15 N.hp]
 
-/-- **Lemma 19.3, `T2`**: the vertex crossing `046/145` at `4`, rim `(4, 5, 3, 6)`. -/
-theorem cert_F3_T2 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+/-- **Lemma 19.3, `T2`, the rim**: at the vertex crossing `046/145` at `4` (view `±vT2`) the
+rim `(4, 6, 3, 5)` is certified on Lemma 19.3's region. -/
+theorem rim_F3_T2 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hD : 0 < N.q * N.d - N.r * N.g)
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (hd1 : 0 < N.d - 1)
     (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1))
-    (hz : IsRobustUnimodal (quad ⟪x 4, N.vT2⟫ ⟪x 6, N.vT2⟫ ⟪x 3, N.vT2⟫ ⟪x 5, N.vT2⟫)) : Cert16 x := by
+    (hz : IsRobustUnimodal (quad ⟪x 4, N.vT2⟫ ⟪x 6, N.vT2⟫ ⟪x 3, N.vT2⟫ ⟪x 5, N.vT2⟫)) :
+    ∃ σ : ℝ, (σ = 1 ∨ σ = -1) ∧
+      RimCertPts (univ.image x) (σ • N.vT2) (quad (x 4) (x 6) (x 3) (x 5)) := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine Cert16.mkPQ (.inr 0) 4 6 3 5 (by decide) (N.namedAt_vT2 hσ) (rimCertPts_vquadσ (univ.image x) ({x 0, x 1} : Finset ℝ³) (u := N.vT2) (N.vT2_ne hf15) hσ
+  refine ⟨σ, hσ, rimCertPts_vquadσ (univ.image x) ({x 0, x 1} : Finset ℝ³) (u := N.vT2) (N.vT2_ne hf15) hσ
     (mem_image 4) (mem_image 6) (mem_image 3) (mem_image 5)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz ?_)
+        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz ?_⟩
   · simp only [NF16.vT2, NF16.f15, NF16.t0146v]; nf_test N hσD
         (by
           show 0 < N.d * N.p * N.q + N.g * N.p * N.q - N.p * N.q
@@ -459,6 +466,17 @@ theorem cert_F3_T2 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q 
       simp only
           [nfP, nfV, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply, PiLp.neg_apply, smul_eq_mul]
       ring
+
+/-- **Lemma 19.3, `T2`**: the vertex crossing `046/145` at `4`, rim `(4, 6, 3, 5)`. -/
+theorem cert_F3_T2 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+    (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hD : 0 < N.q * N.d - N.r * N.g)
+    (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
+    (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (hd1 : 0 < N.d - 1)
+    (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1))
+    (hz : IsRobustUnimodal (quad ⟪x 4, N.vT2⟫ ⟪x 6, N.vT2⟫ ⟪x 3, N.vT2⟫ ⟪x 5, N.vT2⟫)) : Cert16 x := by
+  obtain ⟨σ, hσ, h⟩ := rim_F3_T2 N hR1 hR2 hD hqg hg1 hqb hc hd1 hf15 hz
+  exact Cert16.mkPQ (.inr 0) 4 6 3 5 (by decide) (PX16.of_ne (by decide)) (N.namedAt_vT2 hσ) h
+
 -- order: [4, 6, 3, 5]
 
 
@@ -691,7 +709,7 @@ theorem cert_F1s_A (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q 
         (N.a * (N.q - 1) - (N.b - 1) * N.p)))
     (hz : IsRobustUnimodal (quad ⟪x 6, N.vA⟫ ⟪x 3, N.vA⟫ ⟪x 5, N.vA⟫ ⟪x 4, N.vA⟫)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine Cert16.mkPQ (.inr 1) 6 3 5 4 (by decide) (N.namedAt_vA hσ) (rimCertPts_vquadσ (univ.image x) ({x 0, x 1} : Finset ℝ³) (u := N.vA)
+  refine Cert16.mkPQ (.inr 1) 6 3 5 4 (by decide) (PX16.of_ne (by decide)) (N.namedAt_vA hσ) (rimCertPts_vquadσ (univ.image x) ({x 0, x 1} : Finset ℝ³) (u := N.vA)
       (by
         simp only [NF16.vA, NF16.f03]
         exact nfV_ne_zero N.hD (Or.inl (ne_of_gt
@@ -801,7 +819,8 @@ theorem cert_T6_Tc4 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q
     (hz : IsRobustUnimodal
           (quad ⟪x 1, (x 5 - x 1)⟫ ⟪x 4, (x 5 - x 1)⟫ ⟪x 0, (x 5 - x 1)⟫ ⟪x 6, (x 5 - x 1)⟫)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine Cert16.mkPQ (.inl (1, 5)) 1 4 0 6 (by decide) (namedAt16_seg 1 5 hσ) (rimCertPts_equadσ (univ.image x) ({x 3} : Finset ℝ³) (u := (x 5 - x 1))
+  refine Cert16.mkPQ (.inl (1, 5)) 1 4 0 6 (by decide) (PX16.of_ne (by decide))
+    (namedAt16_seg 1 5 hσ) (rimCertPts_equadσ (univ.image x) ({x 3} : Finset ℝ³) (u := (x 5 - x 1))
       (sub_ne_zero.mpr (N.inj.ne (by decide))) hσ (h := (-1 : ℝ)) (by norm_num) (by module)
       (mem_image 5)
     (mem_image 1) (mem_image 4) (mem_image 0) (mem_image 6)
@@ -1091,7 +1110,7 @@ theorem cert_T6_Ta (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q 
   have hr1 : 0 < -N.r + 1 := by
     by_contra hc; push Not at hc
     nlinarith [mul_pos N.hq hd1, mul_nonpos_of_nonneg_of_nonpos N.hg.le hc]
-  refine Cert16.mkPQ (.inr 2) 0 5 1 6 (by decide) (N.namedAt_uA hσ) (rimCertPts_vquadσ (univ.image x) ({x 2, x 3, x 4} : Finset ℝ³) (u := N.uA)
+  refine Cert16.mkPQ (.inr 2) 0 5 1 6 (by decide) (PX16.of_ne (by decide)) (N.namedAt_uA hσ) (rimCertPts_vquadσ (univ.image x) ({x 2, x 3, x 4} : Finset ℝ³) (u := N.uA)
       (by
         simp only [NF16.uA]
         exact nfV_ne_zero N.hD

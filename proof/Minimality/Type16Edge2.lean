@@ -1,6 +1,6 @@
 module
 
-public import Minimality.Type16Edge
+public import Minimality.Type16Seg35
 
 @[expose] public section
 
@@ -94,30 +94,6 @@ theorem rimCertAt_quint {y : Fin 7 → ℝ³} {u : ℝ³} {a b c d f : Fin 7}
   · rw [e, e, e]; exact h.cyc i j hi hj
   · rw [e, e]; exact h.left _ (mem_image_of_mem y (mem_univ m)) i
   · simp only [e]; exact h.robust
-
-/-- Normalize the multiple of the view to a sign. -/
-theorem freq_sign {ι : Type*} {l : Filter ι} {P : ℝ → ι → Prop}
-    (hP : ∀ t c, c ≠ 0 → P c t → P (|c|⁻¹ * c) t)
-    (h : ∃ᶠ t in l, ∃ c : ℝ, c ≠ 0 ∧ P c t) :
-    ∃ ε : ℝ, (ε = 1 ∨ ε = -1) ∧ ∃ᶠ t in l, P ε t := by
-  have h' : ∃ᶠ t in l, ∃ s : Bool, P (if s then 1 else -1) t := h.mono fun t ⟨c, hc, hct⟩ => by
-    have := hP t c hc hct
-    rcases lt_or_gt_of_ne hc with hneg | hpos
-    · refine ⟨false, ?_⟩
-      have e : |c|⁻¹ * c = -1 := by rw [abs_of_neg hneg]; field_simp
-      rw [e] at this; simpa using this
-    · refine ⟨true, ?_⟩
-      have e : |c|⁻¹ * c = 1 := by rw [abs_of_pos hpos]; field_simp
-      rw [e] at this; simpa using this
-  obtain ⟨s, hs⟩ := frequently_exists_of_finite h'
-  cases s
-  · exact ⟨-1, Or.inr rfl, by simpa using hs⟩
-  · exact ⟨1, Or.inl rfl, by simpa using hs⟩
-
-theorem rimCertPts_normalize {V : Finset ℝ³} {u : ℝ³} {k : ℕ} {y : ZMod k → ℝ³} {c : ℝ}
-    (hc : c ≠ 0) (h : RimCertPts V (c • u) y) : RimCertPts V ((|c|⁻¹ * c) • u) y := by
-  have := h.smul (inv_pos.mpr (abs_pos.mpr hc))
-  rwa [smul_smul] at this
 
 /-! ### The conditions at `15`, `25`, `03`, `36` -/
 
@@ -559,16 +535,54 @@ theorem pQuint_noDiag : ∀ q ∈ pQuintLabels16, ∀ i : Fin 7, q.1 ≠ .inl (i
     simp only [ne_eq, Sum.inl.injEq, Prod.mk.injEq, reduceCtorEq, not_false_eq_true,
       not_and] <;> intro h <;> subst h <;> decide
 
-/-- **The alternative at the segment views `02`, `16`, `15`, `25`, `03`, `36`** (either
-orientation): the codimension-2 conditions at that view. -/
+/-- **The alternative at the segment views `02`, `16`, `15`, `25`, `03`, `36`, `35`** (either
+orientation) and at the vertex views `0235/046`, `1356/046`: the codimension-2 conditions at that
+view. -/
 def EdgeOK16 {x : Fin 7 → ℝ³} (T : Type16 x) : (Fin 7 × Fin 7) ⊕ Fin 6 → Prop
   | .inl (i, j) => (({i, j} : Finset (Fin 7)) = {0, 2} ∧ Gen02 T) ∨
       (({i, j} : Finset (Fin 7)) = {1, 6} ∧ Gen16 T) ∨
       (({i, j} : Finset (Fin 7)) = {1, 5} ∧ Gen15 T) ∨
       (({i, j} : Finset (Fin 7)) = {2, 5} ∧ Gen25 T) ∨
       (({i, j} : Finset (Fin 7)) = {0, 3} ∧ Gen03 T) ∨
-      (({i, j} : Finset (Fin 7)) = {3, 6} ∧ Gen36 T)
-  | .inr _ => False
+      (({i, j} : Finset (Fin 7)) = {3, 6} ∧ Gen36 T) ∨
+      (({i, j} : Finset (Fin 7)) = {3, 5} ∧ Gen35 T)
+  | .inr t => (t = 2 ∧ VtxOK2 T) ∨ (t = 5 ∧ VtxOK5 T)
+
+/-- **The named views that carry certificates of the cover**: the ten segments `02`, `03`, `06`,
+`14`, `15`, `16`, `24`, `25`, `35`, `36` (either orientation) and the six vertex crossings.  The
+other eleven segments (`01`, `04`, `05`, `12`, `13`, `23`, `26`, `34`, `45`, `46`, `56`) carry no
+certificate, so nothing is asked there. -/
+def usedViews16 : Finset ((Fin 7 × Fin 7) ⊕ Fin 6) :=
+  {.inl (0, 2), .inl (2, 0), .inl (0, 3), .inl (3, 0), .inl (0, 6), .inl (6, 0), .inl (1, 4),
+    .inl (4, 1), .inl (1, 5), .inl (5, 1), .inl (1, 6), .inl (6, 1), .inl (2, 4), .inl (4, 2),
+    .inl (2, 5), .inl (5, 2), .inl (3, 5), .inl (5, 3), .inl (3, 6), .inl (6, 3), .inr 0, .inr 1,
+    .inr 2, .inr 3, .inr 4, .inr 5}
+
+set_option maxRecDepth 40000 in
+theorem ePair_used : ∀ t ∈ ePairList16, (.inl (t.1, t.2.1) : (Fin 7 × Fin 7) ⊕ Fin 6) ∈
+    usedViews16 := by
+  intro t ht
+  simp only [ePairList16, Finset.mem_insert, Finset.mem_singleton] at ht
+  rcases ht with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> decide
+
+set_option maxRecDepth 40000 in
+theorem eTri_used : ∀ t ∈ eTriList16, (.inl (t.1, t.2.1) : (Fin 7 × Fin 7) ⊕ Fin 6) ∈
+    usedViews16 := by
+  intro t ht
+  simp only [eTriList16, Finset.mem_insert, Finset.mem_singleton] at ht
+  rcases ht with rfl | rfl | rfl | rfl | rfl | rfl <;> decide
+
+set_option maxRecDepth 40000 in
+theorem pQuad_used : ∀ q ∈ pQuadLabels16, q.1 ∈ usedViews16 := by
+  intro q hq
+  simp only [pQuadLabels16, Finset.mem_insert, Finset.mem_singleton] at hq
+  rcases hq with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> decide
+
+set_option maxRecDepth 40000 in
+theorem pQuint_used : ∀ q ∈ pQuintLabels16, q.1 ∈ usedViews16 := by
+  intro q hq
+  simp only [pQuintLabels16, Finset.mem_insert, Finset.mem_singleton] at hq
+  rcases hq with rfl | rfl | rfl | rfl | rfl | rfl <;> decide
 
 set_option maxRecDepth 40000 in
 theorem ePair_cls : ∀ t ∈ ePairList16,
@@ -619,6 +633,52 @@ theorem pQuint_cls : ∀ q ∈ pQuintLabels16, ∀ i j : Fin 7, q.1 = .inl (i, j
     (try obtain ⟨rfl, rfl⟩ := h) <;> refine ⟨by decide, by decide, ?_, ?_, ?_, ?_⟩ <;>
     intro h' <;> first | rfl | exact absurd h' (by decide)
 
+theorem pQuad_vtx : ∀ q ∈ pQuadLabels16, (q.1 = .inr 2 → q.2 = (0, 5, 1, 6)) ∧
+    (q.1 = .inr 5 → q.2 = (6, 5, 2, 0)) := by
+  intro q hq
+  simp only [pQuadLabels16, Finset.mem_insert, Finset.mem_singleton] at hq
+  rcases hq with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    refine ⟨fun h => ?_, fun h => ?_⟩ <;> first | rfl | exact absurd h (by decide)
+
+theorem pQuint_vtx : ∀ q ∈ pQuintLabels16, q.1 ≠ .inr 2 ∧ q.1 ≠ .inr 5 := by
+  intro q hq
+  simp only [pQuintLabels16, Finset.mem_insert, Finset.mem_singleton] at hq
+  rcases hq with rfl | rfl | rfl | rfl | rfl | rfl <;> exact ⟨by decide, by decide⟩
+
+set_option maxRecDepth 40000 in
+theorem ePair_cls35 : ∀ t ∈ ePairList16, ({t.1, t.2.1} : Finset (Fin 7)) = {3, 5} →
+    t.1 = 3 ∧ t.2.1 = 5 ∧ t.2.2.2.2 = 4 := by
+  intro t ht
+  simp only [ePairList16, Finset.mem_insert, Finset.mem_singleton] at ht
+  rcases ht with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
+    rfl | rfl | rfl | rfl | rfl <;> decide
+
+set_option maxRecDepth 40000 in
+theorem eTri_cls35 : ∀ t ∈ eTriList16, ({t.1, t.2.1} : Finset (Fin 7)) = {3, 5} →
+    t.1 = 3 ∧ t.2.1 = 5 := by
+  intro t ht
+  simp only [eTriList16, Finset.mem_insert, Finset.mem_singleton] at ht
+  rcases ht with rfl | rfl | rfl | rfl | rfl | rfl <;> decide
+
+set_option maxRecDepth 40000 in
+theorem pQuad_cls35 : ∀ q ∈ pQuadLabels16, ∀ i j : Fin 7, q.1 = .inl (i, j) →
+    ({i, j} : Finset (Fin 7)) = {3, 5} → i = 3 ∧ j = 5 ∧
+      (q.2 = (3, 1, 4, 2) ∨ q.2 = (3, 1, 4, 0) ∨ q.2 = (3, 2, 4, 1) ∨ q.2 = (3, 2, 4, 6)) := by
+  intro q hq
+  simp only [pQuadLabels16, Finset.mem_insert, Finset.mem_singleton] at hq
+  rcases hq with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    intro i j h <;> simp only [Sum.inl.injEq, Prod.mk.injEq, reduceCtorEq] at h <;>
+    (try obtain ⟨rfl, rfl⟩ := h) <;> decide
+
+set_option maxRecDepth 40000 in
+theorem pQuint_cls35 : ∀ q ∈ pQuintLabels16, ∀ i j : Fin 7, q.1 = .inl (i, j) →
+    ({i, j} : Finset (Fin 7)) ≠ {3, 5} := by
+  intro q hq
+  simp only [pQuintLabels16, Finset.mem_insert, Finset.mem_singleton] at hq
+  rcases hq with rfl | rfl | rfl | rfl | rfl | rfl <;>
+    intro i j h <;> simp only [Sum.inl.injEq, Prod.mk.injEq, reduceCtorEq] at h <;>
+    (try obtain ⟨rfl, rfl⟩ := h) <;> decide
+
 theorem exists_sgnB {σ : ℝ} (h : σ = 1 ∨ σ = -1) : ∃ s : Bool, σ = sgnB s := by
   rcases h with rfl | rfl
   exacts [⟨true, rfl⟩, ⟨false, rfl⟩]
@@ -628,7 +688,8 @@ certificate, no horizontal double normal, or `Sec16` (two triangles, Proposition
 codimension-2 conditions at the six quadrilateral segments `02`, `16`, `15`, `25`, `03`, `36`
 (`EdgeOK16`). -/
 theorem isRupert_of_cert_seq_edge {x : Fin 7 → ℝ³} (T : Type16 x)
-    (hnd : ∀ v, view16 x v ≠ 0 → NoHDNAt (univ.image x) (view16 x v) ∨ Sec16 x v ∨ EdgeOK16 T v)
+    (hnd : ∀ v ∈ usedViews16, view16 x v ≠ 0 →
+      NoHDNAt (univ.image x) (view16 x v) ∨ Sec16 x v ∨ EdgeOK16 T v)
     (K : ℕ → Fin 7 → ℝ³) (hK : ∀ m, Tendsto (fun n => K n m) atTop (𝓝 (x m)))
     (hc : ∃ᶠ n in atTop, Cert16 (K n) ∧
       ∀ w a b, TieInst16 x w a b → ⟪K n a - K n b, view16 (K n) w⟫ = 0) :
@@ -665,10 +726,11 @@ theorem isRupert_of_cert_seq_edge {x : Fin 7 → ℝ³} (T : Type16 x)
           hd.2.2.2.2.2.2.1 hd.2.2.2.2.2.2.2
     have hd' := hq'.mono fun n hn => hn.2.1
     have cls := ePair_cls _ ht
-    rcases hnd (.inl (v, w)) (sub_ne_zero.mpr (T.inj.ne hvw.symm)) with h | h | h
+    rcases hnd (.inl (v, w)) (ePair_used _ ht) (sub_ne_zero.mpr (T.inj.ne hvw.symm)) with
+      h | h | h
     · exact isRupert_of_rimCert_seq_at T K hK (.inl (v, w)) (fun _ => Or.inl h) hrc
     · exact isRupert_of_rimCert_seq_at T K hK (.inl (v, w)) (fun _ => Or.inr h) hrc
-    · rcases h with ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩
+    · rcases h with ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩
       · have := cls.1 h1
         simp only [Prod.mk.injEq] at this
         obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := this
@@ -693,6 +755,8 @@ theorem isRupert_of_cert_seq_edge {x : Fin 7 → ℝ³} (T : Type16 x)
           obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := this
         · exact isRupert_ePair36 T K hK s hd' hg
         · exact isRupert_ePair63 T K hK s hd' hg
+      · obtain ⟨rfl, rfl, rfl⟩ := ePair_cls35 _ ht h1
+        exact isRupert_ePair35 T K hK ht s hd' hg
   rcases frequently_or_distrib.mp h3' with hT' | hP
   · -- triangle closings
     have hq : ∃ᶠ n in atTop, ∃ q : (Fin 7 × Fin 7 × Fin 7 × Fin 7) × Bool,
@@ -719,10 +783,11 @@ theorem isRupert_of_cert_seq_edge {x : Fin 7 → ℝ³} (T : Type16 x)
           (mem_image7 b) hd.2.1 hd.2.2.1 hd.2.2.2
     have hd' := hq'.mono fun n hn => hn.2.1
     have cls := eTri_cls _ ht
-    rcases hnd (.inl (v, w)) (sub_ne_zero.mpr (T.inj.ne hvw.symm)) with h | h | h
+    rcases hnd (.inl (v, w)) (eTri_used _ ht) (sub_ne_zero.mpr (T.inj.ne hvw.symm)) with
+      h | h | h
     · exact isRupert_of_rimCert_seq_at T K hK (.inl (v, w)) (fun _ => Or.inl h) hrc
     · exact isRupert_of_rimCert_seq_at T K hK (.inl (v, w)) (fun _ => Or.inr h) hrc
-    · rcases h with ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩
+    · rcases h with ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩
       · have := cls.1 h1
         simp only [Prod.mk.injEq] at this
         obtain ⟨rfl, rfl, rfl, rfl⟩ := this
@@ -741,6 +806,8 @@ theorem isRupert_of_cert_seq_edge {x : Fin 7 → ℝ³} (T : Type16 x)
         exact isRupert_eTri25 T K hK s hd' hg
       · exact absurd h1 cls.2.2.2.2.1
       · exact absurd h1 cls.2.2.2.2.2
+      · obtain ⟨rfl, rfl⟩ := eTri_cls35 _ ht h1
+        exact isRupert_eTri35 T K hK ht s hd' hg
   · -- the pair certificates of Lemmas 19.3–19.5
     have hP' := hP.mono fun n hn => (show (_ ∧ _) ∨ (_ ∧ _) by
       rcases hn.1 with h | h
@@ -750,26 +817,28 @@ theorem isRupert_of_cert_seq_edge {x : Fin 7 → ℝ³} (T : Type16 x)
           q ∈ pQuadLabels16 ∧ (∃ c : ℝ, c ≠ 0 ∧ RimCertPts (univ.image (K n))
             (c • view16 (K n) q.1) (quad (K n q.2.1) (K n q.2.2.1) (K n q.2.2.2.1)
               (K n q.2.2.2.2))) ∧
-          ∀ w a b, TieInst16 x w a b → ⟪K n a - K n b, view16 (K n) w⟫ = 0 :=
+          (∀ w a b, TieInst16 x w a b → ⟪K n a - K n b, view16 (K n) w⟫ = 0) ∧
+          PX16 (K n) q.1 q.2 :=
         hQ.mono fun n hn => by
-          obtain ⟨⟨v, l, hl, c, hc, hr⟩, hti⟩ := hn
-          exact ⟨(v, l), hl, ⟨c, hc, hr⟩, hti⟩
+          obtain ⟨⟨v, l, hl, hx, c, hc, hr⟩, hti⟩ := hn
+          exact ⟨(v, l), hl, ⟨c, hc, hr⟩, hti, hx⟩
       obtain ⟨⟨v, ⟨l₀, l₁, l₂, l₃⟩⟩, hq'⟩ := frequently_exists_of_finite hq
       obtain ⟨n₀, hl, -⟩ := hq'.exists
       have hrc : ∃ᶠ n in atTop, (∃ c : ℝ, c ≠ 0 ∧
           RimCert (univ.image (K n)) (c • view16 (K n) v)) ∧
           ∀ w a b, TieInst16 x w a b → ⟪K n a - K n b, view16 (K n) w⟫ = 0 :=
         hq'.mono fun n hn => by
-          obtain ⟨-, ⟨c, hc, hr⟩, hti⟩ := hn
+          obtain ⟨-, ⟨c, hc, hr⟩, hti, -⟩ := hn
           exact ⟨⟨c, hc, hr.rimCert (Or.inr (Or.inl rfl))⟩, hti⟩
       have hvv : ∀ i, v ≠ .inl (i, i) := fun i h => pQuad_noDiag _ hl i h
-      rcases hnd v (T.view16_ne_zero v hvv) with h | h | h
+      rcases hnd v (pQuad_used _ hl) (T.view16_ne_zero v hvv) with h | h | h
       · exact isRupert_of_rimCert_seq_at T K hK v (fun _ => Or.inl h) hrc
       · exact isRupert_of_rimCert_seq_at T K hK v (fun _ => Or.inr h) hrc
       · rcases v with ⟨i, j⟩ | t
         · have cls := pQuad_cls _ hl i j rfl
           have hd' := hq'.mono fun n hn => hn.2.1
-          rcases h with ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩
+          rcases h with ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ |
+            ⟨h1, hg⟩
           · exact absurd h1 cls.1
           · exact absurd h1 cls.2.1
           · have := cls.2.2.1 h1
@@ -782,7 +851,43 @@ theorem isRupert_of_cert_seq_edge {x : Fin 7 → ℝ³} (T : Type16 x)
             exact isRupert_pQ25 T K hK hd' hg
           · exact absurd h1 cls.2.2.2.2.1
           · exact absurd h1 cls.2.2.2.2.2
-        · exact h.elim
+          · -- Lemma 19.3's `T1`: `T2` (or its `σ`-image) at its own view in the residual
+            obtain ⟨rfl, rfl, hl2⟩ := pQuad_cls35 _ hl i j rfl h1
+            have hV0 : NoHDNAt (univ.image x) (view16 x (.inr 0)) ∨ Sec16 x (.inr 0) := by
+              rcases hnd (.inr 0) (by decide) (T.view16_ne_zero _ (fun i h => by cases h)) with
+                h | h | h
+              · exact Or.inl h
+              · exact Or.inr h
+              · rcases h with ⟨h, -⟩ | ⟨h, -⟩ <;> exact absurd h (by decide)
+            have hV3 : NoHDNAt (univ.image x) (vtxView16 x 3) ∨
+                G1Vtx (univ.image x) (vtxView16 x 3) (x 6) (x 4) (x 0) (x 2) (x 4) (x 5) := by
+              rcases hnd (.inr 3) (by decide) (T.view16_ne_zero _ (fun i h => by cases h)) with
+                h | h | h
+              · exact Or.inl h
+              · exact Or.inr h.2
+              · rcases h with ⟨h, -⟩ | ⟨h, -⟩ <;> exact absurd h (by decide)
+            simp only [Prod.mk.injEq] at hl2
+            rcases hl2 with ⟨rfl, rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl, rfl⟩ |
+              ⟨rfl, rfl, rfl, rfl⟩
+            · exact isRupert_pT1 T K hK (b := 2) (Or.inl rfl)
+                (hq'.mono fun n hn => ⟨hn.2.1, hn.2.2.2.1 rfl rfl⟩) hg.1 hg.2.2.2.2.1 hV0
+            · exact isRupert_pT1 T K hK (b := 0) (Or.inr rfl)
+                (hq'.mono fun n hn => ⟨hn.2.1, hn.2.2.2.1 rfl rfl⟩) hg.1 hg.2.2.2.2.1 hV0
+            · exact isRupert_pT1σ T K hK (b := 1) (Or.inl rfl)
+                (hq'.mono fun n hn => ⟨hn.2.1, hn.2.2.2.2 rfl rfl⟩) hg.1 hg.2.2.2.2.2 hV3
+            · exact isRupert_pT1σ T K hK (b := 6) (Or.inr rfl)
+                (hq'.mono fun n hn => ⟨hn.2.1, hn.2.2.2.2 rfl rfl⟩) hg.1 hg.2.2.2.2.2 hV3
+        · have cls := pQuad_vtx _ hl
+          have hd' := hq'.mono fun n hn => hn.2.1
+          rcases h with ⟨rfl, hg⟩ | ⟨rfl, hg⟩
+          · have := cls.1 rfl
+            simp only [Prod.mk.injEq] at this
+            obtain ⟨rfl, rfl, rfl, rfl⟩ := this
+            exact isRupert_pVtx2 T K hK hd' hg
+          · have := cls.2 rfl
+            simp only [Prod.mk.injEq] at this
+            obtain ⟨rfl, rfl, rfl, rfl⟩ := this
+            exact isRupert_pVtx5 T K hK hd' hg
     · have hq : ∃ᶠ n in atTop, ∃ q : ((Fin 7 × Fin 7) ⊕ Fin 6) ×
           (Fin 7 × Fin 7 × Fin 7 × Fin 7 × Fin 7), q ∈ pQuintLabels16 ∧
           (∃ c : ℝ, c ≠ 0 ∧ RimCertPts (univ.image (K n)) (c • view16 (K n) q.1)
@@ -801,13 +906,14 @@ theorem isRupert_of_cert_seq_edge {x : Fin 7 → ℝ³} (T : Type16 x)
           obtain ⟨-, ⟨c, hc, hr⟩, hti⟩ := hn
           exact ⟨⟨c, hc, hr.rimCert (Or.inr (Or.inr rfl))⟩, hti⟩
       have hvv : ∀ i, v ≠ .inl (i, i) := fun i h => pQuint_noDiag _ hl i h
-      rcases hnd v (T.view16_ne_zero v hvv) with h | h | h
+      rcases hnd v (pQuint_used _ hl) (T.view16_ne_zero v hvv) with h | h | h
       · exact isRupert_of_rimCert_seq_at T K hK v (fun _ => Or.inl h) hrc
       · exact isRupert_of_rimCert_seq_at T K hK v (fun _ => Or.inr h) hrc
       · rcases v with ⟨i, j⟩ | t
         · have cls := pQuint_cls _ hl i j rfl
           have hd' := hq'.mono fun n hn => hn.2.1
-          rcases h with ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩
+          rcases h with ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ | ⟨h1, hg⟩ |
+            ⟨h1, hg⟩
           · exact absurd h1 cls.1
           · exact absurd h1 cls.2.1
           · have := cls.2.2.1 h1
@@ -826,13 +932,17 @@ theorem isRupert_of_cert_seq_edge {x : Fin 7 → ℝ³} (T : Type16 x)
             simp only [Prod.mk.injEq, Sum.inl.injEq] at this
             obtain ⟨⟨rfl, rfl⟩, rfl, rfl, rfl, rfl, rfl⟩ := this
             exact isRupert_pP36 T K hK hd' hg
-        · exact h.elim
+          · exact absurd h1 (pQuint_cls35 _ hl i j rfl)
+        · rcases h with ⟨rfl, -⟩ | ⟨rfl, -⟩
+          · exact absurd rfl (pQuint_vtx _ hl).1
+          · exact absurd rfl (pQuint_vtx _ hl).2
 
 /-- **Theorem 19.8 with §22 at the six quadrilateral segments**: a type-16 shape with at most one
 tie at its named views is Rupert if at each named view there is no horizontal double normal, or
 `Sec16` (a two-triangle view with (G1)), or the codimension-2 conditions `EdgeOK16`. -/
 theorem isRupert_type16_limit_edge {x : Fin 7 → ℝ³} (T : Type16 x)
-    (hnd : ∀ v, view16 x v ≠ 0 → NoHDNAt (univ.image x) (view16 x v) ∨ Sec16 x v ∨ EdgeOK16 T v)
+    (hnd : ∀ v ∈ usedViews16, view16 x v ≠ 0 →
+      NoHDNAt (univ.image x) (view16 x v) ∨ Sec16 x v ∨ EdgeOK16 T v)
     (htie : OneTie16 x) : IsRupert (univ.image x) := by
   obtain ⟨K, hK, hc⟩ := exists_certSeq16 T htie
   exact isRupert_of_cert_seq_edge T hnd K hK hc
@@ -847,6 +957,19 @@ def EdgeGenAff (x : Fin 7 → ℝ³) (fA fB : ℝ³ →ᵃ[ℝ] ℝ) (i j : Fin 
   (∀ NA NB : ℝ³, (∀ y, fA.linear y = ⟪NA, y⟫) → (∀ y, fB.linear y = ⟪NB, y⟫) →
     EdgeGen (univ.image x) (x j - x i) (x i) (x j) (SA.image x) (SB.image x) NA NB) ∧
   det3 (x q - x p) (x r - x p) (x i - x p) ≠ 0 ∧ det3 (x q - x p) (x r - x p) (x j - x p) ≠ 0
+
+/-- **The codimension-2 conditions at the segment `35`** from the facet functions `fA` (`0235`),
+`fB` (`1356`): `EdgeGen` at `5 − 3` for the normals of `1356`, `0235`; `3`, `5` off the planes
+`124`, `014`, `246` of Lemma E; the shape and its `σ`-image off the boundary of Lemma 19.3's
+region (`Off193`). -/
+def Gen35Aff (x : Fin 7 → ℝ³) (fA fB : ℝ³ →ᵃ[ℝ] ℝ) : Prop :=
+  (∀ NA NB : ℝ³, (∀ y, fB.linear y = ⟪NA, y⟫) → (∀ y, fA.linear y = ⟪NB, y⟫) →
+    EdgeGen (univ.image x) (x 5 - x 3) (x 3) (x 5) (({1, 3, 5, 6} : Finset (Fin 7)).image x)
+      (({0, 2, 3, 5} : Finset (Fin 7)).image x) NA NB) ∧
+  (det3 (x 2 - x 1) (x 4 - x 1) (x 3 - x 1) ≠ 0 ∧ det3 (x 2 - x 1) (x 4 - x 1) (x 5 - x 1) ≠ 0) ∧
+  (det3 (x 0 - x 1) (x 4 - x 1) (x 3 - x 1) ≠ 0 ∧ det3 (x 0 - x 1) (x 4 - x 1) (x 5 - x 1) ≠ 0) ∧
+  (det3 (x 2 - x 6) (x 4 - x 6) (x 3 - x 6) ≠ 0 ∧ det3 (x 2 - x 6) (x 4 - x 6) (x 5 - x 6) ≠ 0) ∧
+  Off193 x ∧ Off193 (x ∘ sigma16)
 
 theorem pair_eq_pair16 {a b i j : Fin 7} (h : ({i, j} : Finset (Fin 7)) = {a, b}) :
     (i = a ∧ j = b) ∨ (i = b ∧ j = a) := by
@@ -867,15 +990,37 @@ theorem quad_alt16 {x : Fin 7 → ℝ³} (T : Type16 x) {a b i j : Fin 7}
     · rw [h1, h2, ← neg_sub]; exact h.neg
   · exact Or.inr (Or.inr (hG h))
 
-/-- The two-triangle edges and the six quadrilateral segments `02`, `16`, `15`, `25`, `03`,
-`36`. -/
-def edgeSet16 : Finset (Finset (Fin 7)) :=
-  {{0, 4}, {0, 6}, {1, 4}, {2, 4}, {4, 5}, {4, 6}, {0, 2}, {1, 6}, {1, 5}, {2, 5}, {0, 3}, {3, 6}}
+/-- At a two-triangle edge `e`: "no horizontal double normal, or (G1)" gives the alternative of
+`isRupert_type16_limit_edge` at the segment views `i j` of either orientation. -/
+theorem tri_alt16 {x : Fin 7 → ℝ³} (T : Type16 x) {i j : Fin 7} (e : Fin 6)
+    (hp : ({i, j} : Finset (Fin 7)) = {(triEdge16 e).1, (triEdge16 e).2.1})
+    (h : HDNOrG1Edge (univ.image x) (x (triEdge16 e).1) (x (triEdge16 e).2.1)
+      (x (triEdge16 e).2.2.1) (x (triEdge16 e).2.2.2)) :
+    NoHDNAt (univ.image x) (view16 x (.inl (i, j))) ∨ Sec16 x (.inl (i, j)) ∨
+      EdgeOK16 T (.inl (i, j)) := by
+  rcases pair_eq_pair16 hp with ⟨h1, h2⟩ | ⟨h1, h2⟩
+  · rcases h with h | h
+    · left; show NoHDNAt _ (x j - x i); rw [h1, h2]; exact h
+    · exact Or.inr (Or.inl ⟨e, Or.inl ⟨h1.symm, h2.symm⟩, h⟩)
+  · rcases h with h | h
+    · left; show NoHDNAt _ (x j - x i); rw [h1, h2, ← neg_sub]; exact h.neg
+    · exact Or.inr (Or.inl ⟨e, Or.inr ⟨h2.symm, h1.symm⟩, h⟩)
+
+set_option maxRecDepth 40000 in
+theorem usedSeg16_cases : ∀ i j : Fin 7, (.inl (i, j) : (Fin 7 × Fin 7) ⊕ Fin 6) ∈ usedViews16 →
+    ({i, j} : Finset (Fin 7)) = {0, 6} ∨ ({i, j} : Finset (Fin 7)) = {1, 4} ∨
+    ({i, j} : Finset (Fin 7)) = {2, 4} ∨ ({i, j} : Finset (Fin 7)) = {0, 2} ∨
+    ({i, j} : Finset (Fin 7)) = {6, 1} ∨ ({i, j} : Finset (Fin 7)) = {1, 5} ∨
+    ({i, j} : Finset (Fin 7)) = {2, 5} ∨ ({i, j} : Finset (Fin 7)) = {0, 3} ∨
+    ({i, j} : Finset (Fin 7)) = {3, 6} ∨ ({i, j} : Finset (Fin 7)) = {3, 5} := by
+  decide
 
 /-- **Theorem 19.8 with Proposition 22.2 and §22, from the facets**: as
-`isRupert_type16_limit_facets_sec`, with each of the segments `02`, `16`, `15`, `25`, `03`, `36`
-(each an edge of a quadrilateral and a triangle) asking
-only "no horizontal double normal, or the codimension-2 conditions of §22" (`hQ`). -/
+`isRupert_type16_limit_facets_sec`, asking nothing at the eleven segments that carry no
+certificate of the cover (`usedViews16`), "no horizontal double normal, or (G1)" at the
+two-triangle edges `06`, `14`, `24` (`hEd`), and at each of the segments `02`, `16`, `15`, `25`,
+`03`, `36` (each an edge of a quadrilateral and a triangle) only "no horizontal double normal, or
+the codimension-2 conditions of §22" (`hQ`). -/
 theorem isRupert_type16_limit_facets_edge (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 2, 3, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
@@ -894,14 +1039,10 @@ theorem isRupert_type16_limit_facets_edge (x : Fin 7 → ℝ³) (hx : Function.I
       (i ∉ ({1, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
     (hH : ∀ i, (i ∈ ({2, 4, 5} : Finset (Fin 7)) → fH (x i) = 0) ∧
       (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fH (x i) < 0))
-    (hnd : ∀ i j : Fin 7, i ≠ j → ({i, j} : Finset (Fin 7)) ∉ edgeSet16 →
-      NoHDNAt ((univ.image x).erase (x j)) (x j - x i))
-    (hEd : HDNOrG1Edge (univ.image x) (x 0) (x 4) (x 2) (x 6) ∧
-      HDNOrG1Edge (univ.image x) (x 0) (x 6) (x 3) (x 4) ∧
+    (q35 : NoHDNAt (univ.image x) (x 5 - x 3) ∨ Gen35Aff x fA fB)
+    (hEd : HDNOrG1Edge (univ.image x) (x 0) (x 6) (x 3) (x 4) ∧
       HDNOrG1Edge (univ.image x) (x 1) (x 4) (x 5) (x 6) ∧
-      HDNOrG1Edge (univ.image x) (x 2) (x 4) (x 0) (x 5) ∧
-      HDNOrG1Edge (univ.image x) (x 4) (x 5) (x 1) (x 2) ∧
-      HDNOrG1Edge (univ.image x) (x 4) (x 6) (x 0) (x 1))
+      HDNOrG1Edge (univ.image x) (x 2) (x 4) (x 0) (x 5))
     (hQ : (NoHDNAt (univ.image x) (x 2 - x 0) ∨
         EdgeGenAff x fA fC 0 2 {0, 2, 3, 5} {0, 2, 4} 3 4 6) ∧
       (NoHDNAt (univ.image x) (x 1 - x 6) ∨
@@ -916,10 +1057,12 @@ theorem isRupert_type16_limit_facets_edge (x : Fin 7 → ℝ³) (hx : Function.I
         EdgeGenAff x fD fB 3 6 {0, 3, 6} {1, 3, 5, 6} 0 1 4))
     (hV : HDNOrG1Aff (univ.image x) fE fF (x 0) (x 4) (x 6) (x 1) (x 4) (x 5) ∧
       HDNOrG1Aff (univ.image x) fD fG (x 0) (x 3) (x 6) (x 1) (x 4) (x 6) ∧
-      NoHDNAff (univ.image x) fA fE ∧
+      HDNOrVtxGenAff (univ.image x) fA fE (({0, 2, 3, 5} : Finset (Fin 7)).image x)
+        (({0, 4, 6} : Finset (Fin 7)).image x) ∧
       HDNOrG1Aff (univ.image x) fE fH (x 6) (x 4) (x 0) (x 2) (x 4) (x 5) ∧
       HDNOrG1Aff (univ.image x) fD fC (x 6) (x 3) (x 0) (x 2) (x 4) (x 0) ∧
-      NoHDNAff (univ.image x) fB fE)
+      HDNOrVtxGenAff (univ.image x) fB fE (({1, 3, 5, 6} : Finset (Fin 7)).image x)
+        (({0, 4, 6} : Finset (Fin 7)).image x))
     (htie : OneTie16 x) : IsRupert (univ.image x) := by
   let T : Type16 x := ⟨hx, Face16.ofAffine fA hA, Face16.ofAffine fB hB, Face16.ofAffine fC hC,
     Face16.ofAffine fD hD, Face16.ofAffine fE hE, Face16.ofAffine fF hF, Face16.ofAffine fG hG,
@@ -943,51 +1086,26 @@ theorem isRupert_type16_limit_facets_edge (x : Fin 7 → ℝ³) (hx : Function.I
   have g36 : EdgeGenAff x fD fB 3 6 {0, 3, 6} {1, 3, 5, 6} 0 1 4 → Gen36 T := fun h =>
     ⟨h.1 _ _ (fun y => (Face16.ofAffine_inner fD hD y).symm)
       (fun y => (Face16.ofAffine_inner fB hB y).symm), h.2⟩
-  have hE' : ∀ e : Fin 6, HDNOrG1Edge (univ.image x) (x (triEdge16 e).1) (x (triEdge16 e).2.1)
-      (x (triEdge16 e).2.2.1) (x (triEdge16 e).2.2.2) := by
-    obtain ⟨e0, e1, e2, e3, e4, e5⟩ := hEd
-    intro e; fin_cases e
-    exacts [e0, e1, e2, e3, e4, e5]
-  refine isRupert_type16_limit_edge T (fun v hv => ?_) htie
+  have g35 : Gen35Aff x fA fB → Gen35 T := fun h =>
+    ⟨h.1 _ _ (fun y => (Face16.ofAffine_inner fB hB y).symm)
+      (fun y => (Face16.ofAffine_inner fA hA y).symm), h.2⟩
+  refine isRupert_type16_limit_edge T (fun v hused hv => ?_) htie
   rcases v with ⟨i, j⟩ | t
-  · have hij : i ≠ j := fun h => hv (by simp [view16, h])
-    by_cases hmem : ({i, j} : Finset (Fin 7)) ∈ triEdgeSet16
-    · obtain ⟨e, he⟩ := triEdgeSet16_mem i j hmem
-      rcases hE' e with h | h
-      · left
-        rcases he with ⟨e1, e2⟩ | ⟨e1, e2⟩
-        · show NoHDNAt _ (x j - x i)
-          rw [← e1, ← e2]; exact h
-        · show NoHDNAt _ (x j - x i)
-          rw [← e1, ← e2, ← neg_sub]; exact h.neg
-      · exact Or.inr (Or.inl ⟨e, he, h⟩)
-    by_cases p02 : ({i, j} : Finset (Fin 7)) = {0, 2}
-    · exact quad_alt16 T p02 q02 fun h => Or.inl ⟨p02, g02 h⟩
-    by_cases p16 : ({i, j} : Finset (Fin 7)) = {6, 1}
-    · exact quad_alt16 T p16 q16 fun h =>
-        Or.inr (Or.inl ⟨p16.trans (Finset.pair_comm _ _), g16 h⟩)
-    by_cases p15 : ({i, j} : Finset (Fin 7)) = {1, 5}
-    · exact quad_alt16 T p15 q15 fun h => Or.inr (Or.inr (Or.inl ⟨p15, g15 h⟩))
-    by_cases p25 : ({i, j} : Finset (Fin 7)) = {2, 5}
-    · exact quad_alt16 T p25 q25 fun h => Or.inr (Or.inr (Or.inr (Or.inl ⟨p25, g25 h⟩)))
-    by_cases p03 : ({i, j} : Finset (Fin 7)) = {0, 3}
-    · exact quad_alt16 T p03 q03 fun h =>
-        Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨p03, g03 h⟩))))
-    by_cases p36 : ({i, j} : Finset (Fin 7)) = {3, 6}
-    · exact quad_alt16 T p36 q36 fun h =>
-        Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨p36, g36 h⟩))))
-    left
-    have hmem' : ({i, j} : Finset (Fin 7)) ∉ edgeSet16 := by
-      intro hc
-      have p16' : ({i, j} : Finset (Fin 7)) ≠ {1, 6} := by rwa [Finset.pair_comm 1 6]
-      simp only [edgeSet16, mem_insert, mem_singleton] at hc
-      rcases hc with h | h | h | h | h | h | h | h | h | h | h | h
-      all_goals first
-        | exact hmem (by rw [h]; decide) | exact p02 h | exact p16' h | exact p15 h
-        | exact p25 h | exact p03 h | exact p36 h
-    have hji : ({j, i} : Finset (Fin 7)) ∉ edgeSet16 := by rwa [Finset.pair_comm]
-    exact noHDNAt_of_erase (hx.ne hij) (hnd i j hij hmem')
-      (by simpa only [neg_sub] using (hnd j i (Ne.symm hij) hji).neg)
+  · rcases usedSeg16_cases i j hused with p | p | p | p | p | p | p | p | p | p
+    · exact tri_alt16 T 1 p hEd.1
+    · exact tri_alt16 T 2 p hEd.2.1
+    · exact tri_alt16 T 3 p hEd.2.2
+    · exact quad_alt16 T p q02 fun h => Or.inl ⟨p, g02 h⟩
+    · exact quad_alt16 T p q16 fun h =>
+        Or.inr (Or.inl ⟨p.trans (Finset.pair_comm _ _), g16 h⟩)
+    · exact quad_alt16 T p q15 fun h => Or.inr (Or.inr (Or.inl ⟨p, g15 h⟩))
+    · exact quad_alt16 T p q25 fun h => Or.inr (Or.inr (Or.inr (Or.inl ⟨p, g25 h⟩)))
+    · exact quad_alt16 T p q03 fun h =>
+        Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨p, g03 h⟩))))
+    · exact quad_alt16 T p q36 fun h =>
+        Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨p, g36 h⟩)))))
+    · exact quad_alt16 T p q35 fun h =>
+        Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨p, g35 h⟩)))))
   · obtain ⟨V1, V2, V3, V4, V5, V6⟩ := hV
     fin_cases t
     · rcases V1 _ hv (affine_planeLine_perp fE hE (by decide) (by decide) (by decide))
@@ -1000,9 +1118,10 @@ theorem isRupert_type16_limit_facets_edge (x : Fin 7 → ℝ³) (hx : Function.I
         (by decide) (by decide)) with h | h
       · exact Or.inl h
       · exact Or.inr (Or.inl ⟨Or.inr (Or.inl rfl), h⟩)
-    · exact Or.inl (V3 _ hv (affine_planeLine_perp fA hA (by decide) (by decide) (by decide))
-        (affine_planeLine_perp' fE hE (by decide)
-        (by decide) (by decide)))
+    · rcases V3 _ hv (affine_planeLine_perp fA hA (by decide) (by decide) (by decide))
+        (affine_planeLine_perp' fE hE (by decide) (by decide) (by decide)) with h | h
+      · exact Or.inl h
+      · exact Or.inr (Or.inr (Or.inl ⟨rfl, h _ (fun y => (Face16.ofAffine_inner fA hA y).symm)⟩))
     · rcases V4 _ hv (affine_planeLine_perp fE hE (by decide) (by decide) (by decide))
         (affine_planeLine_perp' fH hH (by decide)
         (by decide) (by decide)) with h | h
@@ -1013,9 +1132,10 @@ theorem isRupert_type16_limit_facets_edge (x : Fin 7 → ℝ³) (hx : Function.I
         (by decide) (by decide)) with h | h
       · exact Or.inl h
       · exact Or.inr (Or.inl ⟨Or.inr (Or.inr (Or.inr rfl)), h⟩)
-    · exact Or.inl (V6 _ hv (affine_planeLine_perp fB hB (by decide) (by decide) (by decide))
-        (affine_planeLine_perp' fE hE (by decide)
-        (by decide) (by decide)))
+    · rcases V6 _ hv (affine_planeLine_perp fB hB (by decide) (by decide) (by decide))
+        (affine_planeLine_perp' fE hE (by decide) (by decide) (by decide)) with h | h
+      · exact Or.inl h
+      · exact Or.inr (Or.inr (Or.inr ⟨rfl, h _ (fun y => (Face16.ofAffine_inner fB hB y).symm)⟩))
 
 end Minimality
 
