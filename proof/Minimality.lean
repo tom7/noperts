@@ -29,6 +29,7 @@ public import Minimality.Forces
 public import Minimality.TieForces
 public import Minimality.TieRobust
 public import Minimality.TieFrame
+public import Minimality.TripleTie
 public import Minimality.TieRight
 public import Minimality.Transversal
 public import Minimality.Parity
@@ -147,19 +148,22 @@ theorem not_four_quad_facets_of_isNopert (V : Finset ℝ³) (h : IsNopert V) (hV
 /-- **No two quadrilateral facets sharing one vertex** (Corollary T1 of the
 triangle-shadow lemma, `FEWER-FACES-PROOFS.md` §7; types 02, 07, 09, 14, 18, 20):
 a 7-point nopert has no two quadrilateral facets meeting in a single vertex,
-given general position at the line of their planes: `Minimality.TriGenTieR` (no
+given general position at the line of their planes: `Minimality.TriGenTieT` (no
 segment parallel to it, and the two far vertices at different depths along it,
-or their tie settled by a top or bottom vertex, or, at the tie, the shared vertex
-off the tied depth and no right angle at the far vertices: Lemma T at the tie,
-robust form, codimension 2; weaker than `Minimality.TriGenFar`), or
+or their tie settled by a top or bottom vertex, or by the robust form (the shared
+vertex off the tied depth), or, at the triple tie with the shared vertex, settled
+by Theorem 24.5 of `FEWER-FACES-PROOFS.md` §24: a face one-sided (its other
+vertices all on one side of the tied depth) or the shadow triangle obtuse at a far
+vertex; weaker than `Minimality.TriGenTieR` and `Minimality.TriGenFar`), or
 `Minimality.TriGenFarP` (segments parallel to it allowed, the far vertices at
-different depths, one far end a single vertex). A parallel segment fails both
-only together with a far tie (codimension 3). -/
+different depths, one far end a single vertex). Besides a parallel segment, the
+only position excluded is the triple tie with both faces two-sided and both far
+angles of the shadow triangle acute or right (case (c) of Theorem 24.5). -/
 theorem not_two_quad_facets_vertex_of_isNopert (V : Finset ℝ³) (h : IsNopert V)
     (hV : V.card = 7) (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V)
     (h2V : Q2 ⊆ V) (h1c : Q1.card = 4) (h2c : Q2.card = 4) (h1f : Minimality.IsFacet V Q1)
     (h2f : Minimality.IsFacet V Q2) (v : ℝ³) (hint : Q1 ∩ Q2 = {v})
-    (hT : Minimality.TriGenTieR V Q1 Q2 v ∨ Minimality.TriGenFarP V Q1 Q2 v) : False := by
+    (hT : Minimality.TriGenTieT V Q1 Q2 v ∨ Minimality.TriGenFarP V Q1 Q2 v) : False := by
   classical
   have hsol := (not_coplanar_iff_interior_convexHull_nonempty _).mp h.1
   -- the two quadrilaterals cover all seven points
@@ -179,17 +183,18 @@ theorem not_two_quad_facets_vertex_of_isNopert (V : Finset ℝ³) (h : IsNopert 
       exact absurd hy (by tauto)⟩
   have hgen := Minimality.noThreeCollinear_of_not_isRupert hV hsol h.2
   rcases hT with hT | hT
-  · exact h.2 (Minimality.isRupert_of_facets_vertex_tieR V hgen Q1 Q2 h1V h2V h1f h2f v hint
+  · exact h.2 (Minimality.isRupert_of_facets_vertex_tieT V hgen Q1 Q2 h1V h2V h1f h2f v hint
       ⟨xa, hxa, hxav⟩ ⟨xb, hxb, hxbv⟩ hT hin hsol)
   · exact h.2 (Minimality.isRupert_of_facets_vertex_par V hgen Q1 Q2 h1V h2V h1f h2f v hint
       ⟨xa, hxa, hxav⟩ ⟨xb, hxb, hxbv⟩ hT hin)
 
 /-- **Lemma T at a vertex** (`FEWER-FACES-PROOFS.md` §7): in a nopert with no three
 points collinear, two facets meeting in a single vertex `v`, with general
-position at the line of their planes (`Minimality.TriGenTieR`: no segment
+position at the line of their planes (`Minimality.TriGenTieT`: no segment
 parallel to it, distinct depths along it at the two far ends, or a tie settled
-by a top or bottom vertex or by the robust form; weaker than
-`Minimality.TriGenFar`; or `Minimality.TriGenFarP`: parallel segments allowed,
+by a top or bottom vertex or by the robust form, or the triple tie with the
+shared vertex settled by Theorem 24.5 (a face one-sided or a far angle obtuse);
+weaker than `Minimality.TriGenTieR` and `Minimality.TriGenFar`; or `Minimality.TriGenFarP`: parallel segments allowed,
 distinct far depths, one far end a single vertex), never have every
 other point strictly inside the shadow triangle of `v` and two further points
 `xa`, `xb` of the facets. The interior condition is barycentric, stated with any
@@ -198,13 +203,13 @@ theorem not_facets_vertex_triShadow_of_isNopert (V : Finset ℝ³) (h : IsNopert
     (hgen : Minimality.NoThreeCollinear V) (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
     (h1c : 1 < Q1.card) (h2c : 1 < Q2.card) (h1f : Minimality.IsFacet V Q1)
     (h2f : Minimality.IsFacet V Q2) (v : ℝ³) (hint : Q1 ∩ Q2 = {v})
-    (hT : Minimality.TriGenTieR V Q1 Q2 v ∨ Minimality.TriGenFarP V Q1 Q2 v)
+    (hT : Minimality.TriGenTieT V Q1 Q2 v ∨ Minimality.TriGenFarP V Q1 Q2 v)
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧ ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ,
       (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
       (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : False := by
   rcases hT with hT | hT
-  · exact h.2 (Minimality.isRupert_of_facets_vertex_tieR V hgen Q1 Q2 h1V h2V h1f h2f v hint
+  · exact h.2 (Minimality.isRupert_of_facets_vertex_tieT V hgen Q1 Q2 h1V h2V h1f h2f v hint
       (Finset.exists_mem_ne h1c v) (Finset.exists_mem_ne h2c v) hT hin
       ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1))
   · exact h.2 (Minimality.isRupert_of_facets_vertex_par V hgen Q1 Q2 h1V h2V h1f h2f v hint
@@ -267,7 +272,7 @@ nopert does not have seven points labelled so that `1245`, `1346`, `2356` (side
 quadrilaterals) and `023` (a cap triangle) are facets (given by functionals
 negative off them); general position here is `Minimality.EdgeTieR` along `14` (no
 other segment parallel to it; at the far ends distinct depths, a settled tie, or no right angle)
-and `Minimality.TriGenTri` at the line of the planes of `023` and `1245`; where the
+and `Minimality.TriGenPar` at the line of the planes of `023` and `1245`; where the
 deciding number `fB x0 / fB x2 + fA x0 / fA x3` is 1, `Minimality.EdgeFar` along `14`. At the special value
 the edge `14` is parallel to the line of that view (`Minimality.type10_special_parallel`),
 so `Minimality.TriGenFar` cannot hold there; instead `Minimality.EdgeFar` along `14` is asked
@@ -290,7 +295,7 @@ theorem not_type10_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       Minimality.EdgeFarP (Finset.univ.image x)
       (({1, 2, 4, 5} : Finset (Fin 7)).image x)
       (({1, 3, 4, 6} : Finset (Fin 7)).image x) (x 1) (x 4))
-    (hT2 : (Minimality.TriGenTri (Finset.univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
+    (hT2 : (Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
         (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2) ∨
         Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
         (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2)) ∧
@@ -305,7 +310,7 @@ theorem not_type10_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 seven points labelled so that `0235`, `1356` (quadrilaterals), `046` and `346`
 are facets (given by functionals negative off them); general position here is
 `Minimality.EdgeTie` along `35` (no other segment parallel to it; at the far
-ends distinct depths or a settled tie) and `Minimality.TriGenTri` at the line of
+ends distinct depths or a settled tie) and `Minimality.TriGenPar` at the line of
 the planes of `0235` and `046`; where the deciding number `fB x4 / fB x0 + fA x4 / fA x6`
 is 1, `Minimality.EdgeFar` along `35`. At the special value
 the edge `35` is parallel to the line of that view (`Minimality.type19_special_parallel`),
@@ -329,7 +334,7 @@ theorem not_type19_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       Minimality.EdgeFarP (Finset.univ.image x)
       (({0, 2, 3, 5} : Finset (Fin 7)).image x)
       (({1, 3, 5, 6} : Finset (Fin 7)).image x) (x 3) (x 5))
-    (hT2 : (Minimality.TriGenTri (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
+    (hT2 : (Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
         (({0, 4, 6} : Finset (Fin 7)).image x) (x 0) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
         (({0, 4, 6} : Finset (Fin 7)).image x) (x 0)) ∧
@@ -344,7 +349,7 @@ theorem not_type19_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 seven points labelled so that `0145`, `2456` (quadrilaterals), `123` and `126`
 are facets (given by functionals negative off them); general position here is
 `Minimality.EdgeTie` along `45` (no other segment parallel to it; at the far
-ends distinct depths or a settled tie) and `Minimality.TriGenTri` at the line of
+ends distinct depths or a settled tie) and `Minimality.TriGenPar` at the line of
 the planes of `0145` and `123`; where the deciding number `fB x3 / fB x1 + fA x3 / fA x2`
 is 1, `Minimality.EdgeFar` along `45`. At the special value
 the edge `45` is parallel to the line of that view (`Minimality.type13_special_parallel`),
@@ -368,7 +373,7 @@ theorem not_type13_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       Minimality.EdgeFarP (Finset.univ.image x)
       (({0, 1, 4, 5} : Finset (Fin 7)).image x)
       (({2, 4, 5, 6} : Finset (Fin 7)).image x) (x 4) (x 5))
-    (hT2 : (Minimality.TriGenTri (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
+    (hT2 : (Minimality.TriGenPar (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
         (({1, 2, 3} : Finset (Fin 7)).image x) (x 1) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
         (({1, 2, 3} : Finset (Fin 7)).image x) (x 1)) ∧
@@ -382,11 +387,12 @@ theorem not_type13_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 /-- **Type 17** (Theorem H of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
 seven points labelled so that `0246`, `2345` (quadrilaterals), `136` and `034`
 are facets (given by functionals negative off them); general position here is
-`Minimality.TriGenTri` (or `Minimality.TriGenFarP`) at the lines of the planes of
+`Minimality.TriGenPar` (or `Minimality.TriGenFarP`) at the lines of the planes of
 `136` and `2345` and of `0246` and `136`, and where the deciding number
 `fB x0 / fB x6 + fD x0 / fD x4` of the first is 1, `Minimality.EdgeFar` along `24`.
-A view whose hypothesis is `Minimality.TriGenTri` (it has a triangle face) allows the
-far ends to tie, unless they also tie with the shared vertex (Lemma T at the tie). At the special value
+A view whose hypothesis is `Minimality.TriGenPar` (it has a triangle face) allows any tie of the
+far ends, the triple tie with the shared vertex included (Lemma T at the tie and
+Theorem 24.5 (a), (b): the triangle face is one-sided). At the special value
 the edge `24` is parallel to the line of the first view (`Minimality.type17_special_parallel`),
 so `Minimality.TriGenFar` cannot hold there; instead `Minimality.EdgeFar` along `24` is asked
 (Lemma T′ over that edge, `FEWER-FACES-PROOFS.md` §23 item (ii)), which fails at the special
@@ -402,14 +408,14 @@ theorem not_type17_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({1, 3, 6} : Finset (Fin 7)) → fD (x i) < 0))
     (hE : ∀ i, (i ∈ ({0, 3, 4} : Finset (Fin 7)) → fE (x i) = 0) ∧
       (i ∉ ({0, 3, 4} : Finset (Fin 7)) → fE (x i) < 0))
-    (hT1 : (Minimality.TriGenTri (Finset.univ.image x) (({1, 3, 6} : Finset (Fin 7)).image x)
+    (hT1 : (Minimality.TriGenPar (Finset.univ.image x) (({1, 3, 6} : Finset (Fin 7)).image x)
         (({2, 3, 4, 5} : Finset (Fin 7)).image x) (x 3) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({1, 3, 6} : Finset (Fin 7)).image x)
         (({2, 3, 4, 5} : Finset (Fin 7)).image x) (x 3)) ∧
       (fB (x 0) / fB (x 6) + fD (x 0) / fD (x 4) = 1 →
         Minimality.EdgeFar (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
           (({2, 3, 4, 5} : Finset (Fin 7)).image x) (x 2) (x 4)))
-    (hT2 : Minimality.TriGenTri (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+    (hT2 : Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6)) : False :=
@@ -420,7 +426,7 @@ theorem not_type17_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 seven points labelled so that `2356` (a quadrilateral), `025`, `016`, `046`,
 `045`, `012` and `456` are facets (given by functionals negative off them);
 general position here is `Minimality.EdgePar` along `25` (no other segment
-parallel to it) and `Minimality.TriGenTri` at the lines of the planes of `016`
+parallel to it) and `Minimality.TriGenPar` at the lines of the planes of `016`
 and `2356` and of `025` and `046`, and `Minimality.EdgeFar` along `25` where
 `fG x2 / fG x5 = 1`. At the special value
 the edge `25` is parallel to the line of the second view (`Minimality.type27_special_parallel`),
@@ -428,8 +434,9 @@ so `Minimality.TriGenFar` cannot hold there; instead `Minimality.EdgeFar` along 
 (Lemma T′ over that edge, `FEWER-FACES-PROOFS.md` §23 item (ii)), which fails at the special
 value only on a set of codimension 2. At the edge view
 a triangle face settles any tie of the far ends, and at a view whose hypothesis
-is `Minimality.TriGenTri` (it has a triangle face) the far ends may tie unless
-they also tie with the shared vertex (Lemma T at the tie). -/
+is `Minimality.TriGenPar` (it has a triangle face) any tie of the far ends is
+allowed, the triple tie with the shared vertex included (Lemma T at the tie and
+Theorem 24.5 (a), (b): the triangle face is one-sided). -/
 theorem not_type27_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fB fD fE fG fH fI fJ : ℝ³ →ᵃ[ℝ] ℝ)
@@ -450,11 +457,11 @@ theorem not_type27_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
     (hZ1 : Minimality.EdgePar (Finset.univ.image x) (x 2) (x 5) ∨
       Minimality.EdgeFarP (Finset.univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
       (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 2) (x 5))
-    (hT1 : Minimality.TriGenTri (Finset.univ.image x) (({0, 1, 6} : Finset (Fin 7)).image x)
+    (hT1 : Minimality.TriGenPar (Finset.univ.image x) (({0, 1, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 6) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 1, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 6))
-    (hT2 : (Minimality.TriGenTri (Finset.univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
+    (hT2 : (Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
         (({0, 4, 6} : Finset (Fin 7)).image x) (x 0) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
         (({0, 4, 6} : Finset (Fin 7)).image x) (x 0)) ∧
@@ -468,7 +475,7 @@ theorem not_type27_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 seven points labelled so that `0345` (a quadrilateral), `014`, `125`, `156` and
 `456` are facets (given by functionals negative off them); general position here
 is `Minimality.EdgePar` along `04` (no other segment parallel to it),
-`Minimality.TriGenTri` at the lines of the planes of `014` and `156` and of
+`Minimality.TriGenPar` at the lines of the planes of `014` and `156` and of
 `0345` and `125`, and `Minimality.EdgeFar` along `04` where
 `fA x6 / fA x1 + fD x6 / fD x5 = 1`. At the special value
 the edge `04` is parallel to the line of the first view (`Minimality.type23_special_parallel`),
@@ -476,8 +483,9 @@ so `Minimality.TriGenFar` cannot hold there; instead `Minimality.EdgeFar` along 
 (Lemma T′ over that edge, `FEWER-FACES-PROOFS.md` §23 item (ii)), which fails at the special
 value only on a set of codimension 2. At the edge view
 a triangle face settles any tie of the far ends, and at a view whose hypothesis
-is `Minimality.TriGenTri` (it has a triangle face) the far ends may tie unless
-they also tie with the shared vertex (Lemma T at the tie). -/
+is `Minimality.TriGenPar` (it has a triangle face) any tie of the far ends is
+allowed, the triple tie with the shared vertex included (Lemma T at the tie and
+Theorem 24.5 (a), (b): the triangle face is one-sided). -/
 theorem not_type23_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fA fD fE fH fK : ℝ³ →ᵃ[ℝ] ℝ)
@@ -494,14 +502,14 @@ theorem not_type23_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
     (hZ1 : Minimality.EdgePar (Finset.univ.image x) (x 0) (x 4) ∨
       Minimality.EdgeFarP (Finset.univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
       (({0, 3, 4, 5} : Finset (Fin 7)).image x) (x 0) (x 4))
-    (hT1 : (Minimality.TriGenTri (Finset.univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
+    (hT1 : (Minimality.TriGenPar (Finset.univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
         (({1, 5, 6} : Finset (Fin 7)).image x) (x 1) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
         (({1, 5, 6} : Finset (Fin 7)).image x) (x 1)) ∧
       (fA (x 6) / fA (x 1) + fD (x 6) / fD (x 5) = 1 →
         Minimality.EdgeFar (Finset.univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
           (({0, 3, 4, 5} : Finset (Fin 7)).image x) (x 0) (x 4)))
-    (hT2 : Minimality.TriGenTri (Finset.univ.image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x)
+    (hT2 : Minimality.TriGenPar (Finset.univ.image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x)
       (({1, 2, 5} : Finset (Fin 7)).image x) (x 5) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x)
       (({1, 2, 5} : Finset (Fin 7)).image x) (x 5)) : False :=
@@ -512,11 +520,12 @@ theorem not_type23_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 seven points labelled so that `0246` (a quadrilateral), `013`, `136`, `056`,
 `035`, `014` and `126` are facets (given by functionals negative off them);
 general position here is `Minimality.EdgePar` along `13` (no other segment
-parallel to it) and `Minimality.TriGenTri` at the lines of the planes of `013`
+parallel to it) and `Minimality.TriGenPar` at the lines of the planes of `013`
 and `0246` and of `013` and `056`. At the edge view
 a triangle face settles any tie of the far ends, and at a view whose hypothesis
-is `Minimality.TriGenTri` (it has a triangle face) the far ends may tie unless
-they also tie with the shared vertex (Lemma T at the tie). -/
+is `Minimality.TriGenPar` (it has a triangle face) any tie of the far ends is
+allowed, the triple tie with the shared vertex included (Lemma T at the tie and
+Theorem 24.5 (a), (b): the triangle face is one-sided). -/
 theorem not_type25_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fA fD fF fG fH fE fI : ℝ³ →ᵃ[ℝ] ℝ)
@@ -537,11 +546,11 @@ theorem not_type25_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
     (hZ1 : Minimality.EdgePar (Finset.univ.image x) (x 1) (x 3) ∨
       Minimality.EdgeFarP (Finset.univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 1) (x 3))
-    (hT1 : Minimality.TriGenTri (Finset.univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
+    (hT1 : Minimality.TriGenPar (Finset.univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
       (({0, 2, 4, 6} : Finset (Fin 7)).image x) (x 0) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
       (({0, 2, 4, 6} : Finset (Fin 7)).image x) (x 0))
-    (hT2 : Minimality.TriGenTri (Finset.univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
+    (hT2 : Minimality.TriGenPar (Finset.univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
       (({0, 5, 6} : Finset (Fin 7)).image x) (x 0) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
       (({0, 5, 6} : Finset (Fin 7)).image x) (x 0)) : False :=
@@ -552,11 +561,12 @@ theorem not_type25_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 seven points labelled so that `0246` (a quadrilateral), `034`, `235`, `136`,
 `013`, `016`, `245` and `345` are facets (given by functionals negative off
 them); general position here is `Minimality.EdgePar` along `04` (no other
-segment parallel to it) and `Minimality.TriGenTri` at the lines of the planes of
+segment parallel to it) and `Minimality.TriGenPar` at the lines of the planes of
 `0246` and `235` and of `0246` and `136`. At the edge view
 a triangle face settles any tie of the far ends, and at a view whose hypothesis
-is `Minimality.TriGenTri` (it has a triangle face) the far ends may tie unless
-they also tie with the shared vertex (Lemma T at the tie). -/
+is `Minimality.TriGenPar` (it has a triangle face) any tie of the far ends is
+allowed, the triple tie with the shared vertex included (Lemma T at the tie and
+Theorem 24.5 (a), (b): the triangle face is one-sided). -/
 theorem not_type26_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fA fT fG fH fU fW fY fZ : ℝ³ →ᵃ[ℝ] ℝ)
@@ -579,11 +589,11 @@ theorem not_type26_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
     (hZ1 : Minimality.EdgePar (Finset.univ.image x) (x 0) (x 4) ∨
       Minimality.EdgeFarP (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4))
-    (hT2 : Minimality.TriGenTri (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+    (hT2 : Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2))
-    (hT6 : Minimality.TriGenTri (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+    (hT6 : Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6)) : False :=
@@ -595,8 +605,9 @@ seven points labelled so that `0135`, `0346` (quadrilaterals), `024`, `236` and
 `246` are facets (given by functionals negative off them); general position here
 is `Minimality.TriGenFar` at the lines of the planes of `0135` and `024` and of
 `024` and `236`. A view whose hypothesis is
-`Minimality.TriGenTri` (it has a triangle face) allows the far ends to tie, unless
-they also tie with the shared vertex (Lemma T at the tie). -/
+`Minimality.TriGenPar` (it has a triangle face) allows any tie of the far
+ends, the triple tie with the shared vertex included (Lemma T at the tie and
+Theorem 24.5 (a), (b): the triangle face is one-sided). -/
 theorem not_type12_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fA fB fD fG fJ : ℝ³ →ᵃ[ℝ] ℝ)
@@ -610,14 +621,14 @@ theorem not_type12_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({2, 3, 6} : Finset (Fin 7)) → fG (x i) < 0))
     (hJ : ∀ i, (i ∈ ({2, 4, 6} : Finset (Fin 7)) → fJ (x i) = 0) ∧
       (i ∉ ({2, 4, 6} : Finset (Fin 7)) → fJ (x i) < 0))
-    (hT1 : (Minimality.TriGenTri (Finset.univ.image x) (({0, 1, 3, 5} : Finset (Fin 7)).image x)
+    (hT1 : (Minimality.TriGenPar (Finset.univ.image x) (({0, 1, 3, 5} : Finset (Fin 7)).image x)
         (({0, 2, 4} : Finset (Fin 7)).image x) (x 0) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 1, 3, 5} : Finset (Fin 7)).image x)
         (({0, 2, 4} : Finset (Fin 7)).image x) (x 0)) ∧
       (fD (x 6) / fD (x 3) + fA (x 6) / fA (x 2) = 1 →
         Minimality.TriGenFar (Finset.univ.image x) (({0, 1, 3, 5} : Finset (Fin 7)).image x)
           (({0, 2, 4} : Finset (Fin 7)).image x) (x 0)))
-    (hT2 : Minimality.TriGenTri (Finset.univ.image x) (({0, 2, 4} : Finset (Fin 7)).image x)
+    (hT2 : Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 4} : Finset (Fin 7)).image x)
       (({2, 3, 6} : Finset (Fin 7)).image x) (x 2) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 4} : Finset (Fin 7)).image x)
       (({2, 3, 6} : Finset (Fin 7)).image x) (x 2)) : False :=
@@ -629,8 +640,9 @@ seven points labelled so that `0134` (a quadrilateral), `125`, `246`, `146` and
 `256` are facets (given by functionals negative off them); general position here
 is `Minimality.TriGenFar` at the lines of the planes of `125` and `246` and of
 `0134` and `246`. A view whose hypothesis is
-`Minimality.TriGenTri` (it has a triangle face) allows the far ends to tie, unless
-they also tie with the shared vertex (Lemma T at the tie). -/
+`Minimality.TriGenPar` (it has a triangle face) allows any tie of the far
+ends, the triple tie with the shared vertex included (Lemma T at the tie and
+Theorem 24.5 (a), (b): the triangle face is one-sided). -/
 theorem not_type22_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fA fD fG fN fI : ℝ³ →ᵃ[ℝ] ℝ)
@@ -644,11 +656,11 @@ theorem not_type22_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({1, 4, 6} : Finset (Fin 7)) → fN (x i) < 0))
     (hI : ∀ i, (i ∈ ({2, 5, 6} : Finset (Fin 7)) → fI (x i) = 0) ∧
       (i ∉ ({2, 5, 6} : Finset (Fin 7)) → fI (x i) < 0))
-    (hT1 : Minimality.TriGenTri (Finset.univ.image x) (({1, 2, 5} : Finset (Fin 7)).image x)
+    (hT1 : Minimality.TriGenPar (Finset.univ.image x) (({1, 2, 5} : Finset (Fin 7)).image x)
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 2) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({1, 2, 5} : Finset (Fin 7)).image x)
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 2))
-    (hT2 : (Minimality.TriGenTri (Finset.univ.image x) (({0, 1, 3, 4} : Finset (Fin 7)).image x)
+    (hT2 : (Minimality.TriGenPar (Finset.univ.image x) (({0, 1, 3, 4} : Finset (Fin 7)).image x)
         (({2, 4, 6} : Finset (Fin 7)).image x) (x 4) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 1, 3, 4} : Finset (Fin 7)).image x)
         (({2, 4, 6} : Finset (Fin 7)).image x) (x 4)) ∧
@@ -663,8 +675,9 @@ seven points labelled so that `0245` (a quadrilateral), `036`, `146`, `023`,
 `015` and `145` are facets (given by functionals negative off them); general
 position here is `Minimality.TriGenFar` at the lines of the planes of `0245` and
 `146` and of `0245` and `036`. A view whose hypothesis is
-`Minimality.TriGenTri` (it has a triangle face) allows the far ends to tie, unless
-they also tie with the shared vertex (Lemma T at the tie). -/
+`Minimality.TriGenPar` (it has a triangle face) allows any tie of the far
+ends, the triple tie with the shared vertex included (Lemma T at the tie and
+Theorem 24.5 (a), (b): the triangle face is one-sided). -/
 theorem not_type28_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fA fD fG fH fF fM : ℝ³ →ᵃ[ℝ] ℝ)
@@ -680,14 +693,14 @@ theorem not_type28_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({0, 1, 5} : Finset (Fin 7)) → fF (x i) < 0))
     (hM : ∀ i, (i ∈ ({1, 4, 5} : Finset (Fin 7)) → fM (x i) = 0) ∧
       (i ∉ ({1, 4, 5} : Finset (Fin 7)) → fM (x i) < 0))
-    (hT1 : (Minimality.TriGenTri (Finset.univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
+    (hT1 : (Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
         (({1, 4, 6} : Finset (Fin 7)).image x) (x 4) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
         (({1, 4, 6} : Finset (Fin 7)).image x) (x 4)) ∧
       (fG (x 3) / fG (x 0) + fA (x 3) / fA (x 6) = 1 →
         Minimality.TriGenFar (Finset.univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
           (({1, 4, 6} : Finset (Fin 7)).image x) (x 4)))
-    (hT2 : Minimality.TriGenTri (Finset.univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
+    (hT2 : Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
       (({0, 3, 6} : Finset (Fin 7)).image x) (x 0) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
       (({0, 3, 6} : Finset (Fin 7)).image x) (x 0)) : False :=
@@ -697,11 +710,12 @@ theorem not_type28_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
 /-- **Type 05** (Theorem B′ of `FEWER-FACES-PROOFS.md`, here by Lemma T): a nopert
 does not have seven points labelled so that `0123`, `0145` (quadrilaterals),
 `246`, `456` and `234` are facets (given by functionals negative off them);
-general position here is `Minimality.TriGenTri` (or `Minimality.TriGenFarP`) at the
+general position here is `Minimality.TriGenPar` (or `Minimality.TriGenFarP`) at the
 lines of the planes of `0123` and `246` and of `0145` and `246`, and where the deciding
 number `fG x5 / fG x0 + fA x5 / fA x4` of the first is 1, `Minimality.EdgeFar` along `01`.
-A view whose hypothesis is `Minimality.TriGenTri` (it has a triangle face) allows the
-far ends to tie, unless they also tie with the shared vertex (Lemma T at the tie). At the special value
+A view whose hypothesis is `Minimality.TriGenPar` (it has a triangle face) allows any tie of the
+far ends, the triple tie with the shared vertex included (Lemma T at the tie and
+Theorem 24.5 (a), (b): the triangle face is one-sided). At the special value
 the edge `01` is parallel to the line of the first view (`Minimality.type05_special_parallel`),
 so `Minimality.TriGenFar` cannot hold there; instead `Minimality.EdgeFar` along `01` is asked
 (Lemma T′ over that edge, `FEWER-FACES-PROOFS.md` §23 item (ii)), which fails at the special
@@ -719,14 +733,14 @@ theorem not_type05_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) < 0))
     (hH : ∀ i, (i ∈ ({2, 3, 4} : Finset (Fin 7)) → fH (x i) = 0) ∧
       (i ∉ ({2, 3, 4} : Finset (Fin 7)) → fH (x i) < 0))
-    (hT1 : (Minimality.TriGenTri (Finset.univ.image x) (({0, 1, 2, 3} : Finset (Fin 7)).image x)
+    (hT1 : (Minimality.TriGenPar (Finset.univ.image x) (({0, 1, 2, 3} : Finset (Fin 7)).image x)
         (({2, 4, 6} : Finset (Fin 7)).image x) (x 2) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 1, 2, 3} : Finset (Fin 7)).image x)
         (({2, 4, 6} : Finset (Fin 7)).image x) (x 2)) ∧
       (fG (x 5) / fG (x 0) + fA (x 5) / fA (x 4) = 1 →
         Minimality.EdgeFar (Finset.univ.image x) (({0, 1, 2, 3} : Finset (Fin 7)).image x)
           (({0, 1, 4, 5} : Finset (Fin 7)).image x) (x 0) (x 1)))
-    (hT2 : Minimality.TriGenTri (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
+    (hT2 : Minimality.TriGenPar (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 4) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 4)) : False :=

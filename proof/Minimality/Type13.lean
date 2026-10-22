@@ -3,6 +3,7 @@ module
 public import Minimality.Type10
 public import Minimality.TriTie
 public import Minimality.ParallelOr
+public import Minimality.TripleTie
 public import Minimality.TriFacetsChord
 public import Minimality.EdgeChord
 
@@ -35,7 +36,7 @@ set_option maxHeartbeats 4000000 in
 `0145`, `2456` (quadrilaterals), `123`, `126`, given by functionals negative off
 them, are Rupert, given no other segment parallel to `45` and a settled tie of
 the far depths there, or at a tie no right angle at the far ends (`EdgeTieR`)
-and `TriGenTri` at the line of the planes of `0145` and `123` (at the special
+and `TriGenPar` at the line of the planes of `0145` and `123` (at the special
 value where the deciding number is 1, `EdgeFar` along `45` instead, for Lemma T′
 over that edge). -/
 theorem isRupert_type13 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
@@ -54,7 +55,7 @@ theorem isRupert_type13 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (({2, 4, 5, 6} : Finset (Fin 7)).image x) (x 4) (x 5) ∨
       EdgeFarP (univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
       (({2, 4, 5, 6} : Finset (Fin 7)).image x) (x 4) (x 5))
-    (hT2 : (TriGenTri (univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
+    (hT2 : (TriGenPar (univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
         (({1, 2, 3} : Finset (Fin 7)).image x) (x 1) ∨
       TriGenFarP (univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
         (({1, 2, 3} : Finset (Fin 7)).image x) (x 1)) ∧
@@ -162,11 +163,11 @@ theorem isRupert_type13 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       simp
     rcases hgt.lt_or_eq with hgt' | hgeq
     · -- `s > 1`: the point off both planes strictly inside; Lemma T (the tie allowed)
-      refine isRupert_of_facets_vertex_tie_or V hgen QA QD (sub _) (sub _)
+      refine isRupert_of_facets_vertex_tieS_or V hgen QA QD (sub _) (sub _)
         (isFacet_of_index x _ fA hA) (isFacet_of_index x _ fD hD) (x 1) hiv
         ⟨x 5, (memQ _ 5).mpr (by decide), fun h => by have := hx h; omega⟩
         ⟨x 2, (memQ _ 2).mpr (by decide), fun h => by have := hx h; omega⟩
-        (hT2.1.imp (fun h => h.tie (sub _) (sub _) hiv
+        (hT2.1.imp (fun h => h.tieS hgen (sub _) (sub _) hiv
           (Or.inr (by show (({1, 2, 3} : Finset (Fin 7)).image x).card = 3
                       rw [Finset.card_image_of_injective _ hx]; decide))) id)
         ⟨x 5, (memQ _ 5).mpr (by decide), x 2, (memQ _ 2).mpr (by decide),

@@ -5,6 +5,7 @@ public import Minimality.TriFacetsChord
 public import Minimality.EdgeChord
 public import Minimality.TriTie
 public import Minimality.ParallelOr
+public import Minimality.TripleTie
 
 @[expose] public section
 
@@ -33,7 +34,7 @@ open scoped RealInnerProductSpace
 set_option maxHeartbeats 8000000 in
 /-- **Type 05 by Lemma T.** Seven labelled points, no three collinear, with
 facets `0123`, `0145` (quadrilaterals), `246`, `456`, `234`, given by
-functionals negative off them, are Rupert, given `TriGenTri` (or `TriGenFarP`) at
+functionals negative off them, are Rupert, given `TriGenPar` (or `TriGenFarP`) at
 the lines of the planes of `0123` and `246` and of `0145` and `246`, and at the
 special value where the deciding number of the first is 1, `EdgeFar` along `01`
 (for Lemma T′ over that edge). -/
@@ -49,14 +50,14 @@ theorem isRupert_type05_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) < 0))
     (hH : ∀ i, (i ∈ ({2, 3, 4} : Finset (Fin 7)) → fH (x i) = 0) ∧
       (i ∉ ({2, 3, 4} : Finset (Fin 7)) → fH (x i) < 0))
-    (hT1 : (TriGenTri (univ.image x) (({0, 1, 2, 3} : Finset (Fin 7)).image x)
+    (hT1 : (TriGenPar (univ.image x) (({0, 1, 2, 3} : Finset (Fin 7)).image x)
         (({2, 4, 6} : Finset (Fin 7)).image x) (x 2) ∨
       TriGenFarP (univ.image x) (({0, 1, 2, 3} : Finset (Fin 7)).image x)
         (({2, 4, 6} : Finset (Fin 7)).image x) (x 2)) ∧
       (fG (x 5) / fG (x 0) + fA (x 5) / fA (x 4) = 1 →
         EdgeFar (univ.image x) (({0, 1, 2, 3} : Finset (Fin 7)).image x)
           (({0, 1, 4, 5} : Finset (Fin 7)).image x) (x 0) (x 1)))
-    (hT2 : TriGenTri (univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
+    (hT2 : TriGenPar (univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 4) ∨
       TriGenFarP (univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
       (({2, 4, 6} : Finset (Fin 7)).image x) (x 4)) :
@@ -146,11 +147,11 @@ theorem isRupert_type05_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
   rcases le_or_gt c 0 with hcl | hcg
   · rcases hcl.lt_or_eq with hlt | heq
     · -- `c < 0`: the plain view, the tie allowed
-      refine isRupert_of_facets_vertex_tie_or V hgen QA QG (sub _) (sub _)
+      refine isRupert_of_facets_vertex_tieS_or V hgen QA QG (sub _) (sub _)
         (isFacet_of_index x _ fA hA) (isFacet_of_index x _ fG hG) (x 2) hiP
         ⟨x 0, (memQ _ 0).mpr (by decide), fun h => by have := hx h; omega⟩
         ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩
-        (hT1.1.imp (fun h => h.tie (sub _) (sub _) hiP
+        (hT1.1.imp (fun h => h.tieS hgen (sub _) (sub _) hiP
           (Or.inr (by show (({2, 4, 6} : Finset (Fin 7)).image x).card = 3
                       rw [Finset.card_image_of_injective _ hx]; decide))) id)
         ⟨x 0, (memQ _ 0).mpr (by decide), x 4, (memQ _ 4).mpr (by decide),
@@ -204,11 +205,11 @@ theorem isRupert_type05_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     have hivhT2 : QB ∩ QG = {x 4} := by
       rw [inter, show ({0, 1, 4, 5} ∩ {2, 4, 6} : Finset (Fin 7)) = {4} by decide]
       simp
-    refine isRupert_of_facets_vertex_tie_or V hgen QB QG (sub _) (sub _) (isFacet_of_index x _ fB hB)
+    refine isRupert_of_facets_vertex_tieS_or V hgen QB QG (sub _) (sub _) (isFacet_of_index x _ fB hB)
       (isFacet_of_index x _ fG hG) (x 4) hivhT2
       ⟨x 0, (memQ _ 0).mpr (by decide), fun h => by have := hx h; omega⟩
       ⟨x 2, (memQ _ 2).mpr (by decide), fun h => by have := hx h; omega⟩
-      (hT2.imp (fun h => h.tie (sub _) (sub _) hivhT2
+      (hT2.imp (fun h => h.tieS hgen (sub _) (sub _) hivhT2
         (Or.inr (by show (({2, 4, 6} : Finset (Fin 7)).image x).card = 3; rw [Finset.card_image_of_injective _ hx]; decide))) id) ?_
     refine ⟨x 0, (memQ _ 0).mpr (by decide), x 2, (memQ _ 2).mpr (by decide),
       fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩

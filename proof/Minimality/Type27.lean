@@ -5,6 +5,7 @@ public import Minimality.TriFacetsChord
 public import Minimality.EdgeChord
 public import Minimality.TriTie
 public import Minimality.ParallelOr
+public import Minimality.TripleTie
 
 @[expose] public section
 
@@ -33,7 +34,7 @@ set_option maxHeartbeats 8000000 in
 /-- **Theorem I (type 27).** Seven labelled points, no three collinear, with facets
 `2356` (a quadrilateral), `025`, `016`, `046`, `045`, `012`, `456`, given by
 functionals negative off them, are Rupert, given no other segment parallel to `25`
-(`EdgePar`) and `TriGenTri` at the lines of the planes of `016` and `2356` and
+(`EdgePar`) and `TriGenPar` at the lines of the planes of `016` and `2356` and
 of `025` and `046`, and `EdgeFar` along `25` when `fG x2 / fG x5 = 1` (the
 special value, where Lemma T′ over that edge is used). -/
 theorem isRupert_type27 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
@@ -55,11 +56,11 @@ theorem isRupert_type27 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hZ1 : EdgePar (univ.image x) (x 2) (x 5) ∨
       EdgeFarP (univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
       (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 2) (x 5))
-    (hT1 : TriGenTri (univ.image x) (({0, 1, 6} : Finset (Fin 7)).image x)
+    (hT1 : TriGenPar (univ.image x) (({0, 1, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 6) ∨
       TriGenFarP (univ.image x) (({0, 1, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 6))
-    (hT2 : (TriGenTri (univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
+    (hT2 : (TriGenPar (univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
         (({0, 4, 6} : Finset (Fin 7)).image x) (x 0) ∨
       TriGenFarP (univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
         (({0, 4, 6} : Finset (Fin 7)).image x) (x 0)) ∧
@@ -204,11 +205,11 @@ theorem isRupert_type27 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       have hivhT1 : QE ∩ QB = {x 6} := by
         rw [inter, show ({0, 1, 6} ∩ {2, 3, 5, 6} : Finset (Fin 7)) = {6} by decide]
         simp
-      refine isRupert_of_facets_vertex_tie_or V hgen QE QB (sub _) (sub _) (isFacet_of_index x _ fE hE)
+      refine isRupert_of_facets_vertex_tieS_or V hgen QE QB (sub _) (sub _) (isFacet_of_index x _ fE hE)
         (isFacet_of_index x _ fB hB) (x 6) hivhT1
         ⟨x 0, (memQ _ 0).mpr (by decide), fun h => by have := hx h; omega⟩
         ⟨x 5, (memQ _ 5).mpr (by decide), fun h => by have := hx h; omega⟩
-        (hT1.imp (fun h => h.tie (sub _) (sub _) hivhT1
+        (hT1.imp (fun h => h.tieS hgen (sub _) (sub _) hivhT1
           (Or.inl (by show (({0, 1, 6} : Finset (Fin 7)).image x).card = 3; rw [Finset.card_image_of_injective _ hx]; decide))) id) ?_
       refine ⟨x 0, (memQ _ 0).mpr (by decide), x 5, (memQ _ 5).mpr (by decide),
         fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩
@@ -251,11 +252,11 @@ theorem isRupert_type27 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       nlinarith
     rcases hq.lt_or_eq with hqlt | hqeq
     · -- `fG x2 < fG x5` in ratio: `x3` strictly inside, the view `Q2` by Lemma T (the tie allowed)
-      refine isRupert_of_facets_vertex_tie_or V hgen QD QG (sub _) (sub _)
+      refine isRupert_of_facets_vertex_tieS_or V hgen QD QG (sub _) (sub _)
         (isFacet_of_index x _ fD hD) (isFacet_of_index x _ fG hG) (x 0) hiv
         ⟨x 5, (memQ _ 5).mpr (by decide), fun h => by have := hx h; omega⟩
         ⟨x 6, (memQ _ 6).mpr (by decide), fun h => by have := hx h; omega⟩
-        (hT2.1.imp (fun h => h.tie (sub _) (sub _) hiv
+        (hT2.1.imp (fun h => h.tieS hgen (sub _) (sub _) hiv
           (Or.inl (by show (({0, 2, 5} : Finset (Fin 7)).image x).card = 3
                       rw [Finset.card_image_of_injective _ hx]; decide))) id)
         ⟨x 5, (memQ _ 5).mpr (by decide), x 6, (memQ _ 6).mpr (by decide),

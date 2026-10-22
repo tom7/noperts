@@ -3,6 +3,7 @@ module
 public import Minimality.Type10
 public import Minimality.TriTie
 public import Minimality.ParallelOr
+public import Minimality.TripleTie
 
 @[expose] public section
 
@@ -49,7 +50,7 @@ theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hZ1 : EdgePar (univ.image x) (x 0) (x 4) ∨
       EdgeFarP (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4))
-    (hT2 : TriGenTri (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+    (hT2 : TriGenPar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2) ∨
       TriGenFarP (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2)) :
@@ -213,11 +214,11 @@ theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     have hivhT2 : QA ∩ QG = {x 2} := by
       rw [inter, show ({0, 2, 4, 6} ∩ {2, 3, 5} : Finset (Fin 7)) = {2} by decide]
       simp
-    refine isRupert_of_facets_vertex_tie_or V hgen QA QG (sub _) (sub _) (isFacet_of_index x _ fA hA)
+    refine isRupert_of_facets_vertex_tieS_or V hgen QA QG (sub _) (sub _) (isFacet_of_index x _ fA hA)
       (isFacet_of_index x _ fG hG) (x 2) hivhT2
       ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩
       ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩
-      (hT2.imp (fun h => h.tie (sub _) (sub _) hivhT2
+      (hT2.imp (fun h => h.tieS hgen (sub _) (sub _) hivhT2
         (Or.inr (by show (({2, 3, 5} : Finset (Fin 7)).image x).card = 3; rw [Finset.card_image_of_injective _ hx]; decide))) id) ?_
     refine ⟨x 4, (memQ _ 4).mpr (by decide), x 3, (memQ _ 3).mpr (by decide),
       fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩
@@ -250,7 +251,7 @@ set_option maxHeartbeats 8000000 in
 /-- **Theorem L (type 26).** Seven labelled points, no three collinear, with facets
 `0246` (a quadrilateral), `034`, `235`, `136`, `013`, `016`, `245`, `345`, given
 by functionals negative off them, are Rupert, given no other segment parallel to
-`04` (`EdgePar`) and `TriGenTri` at the lines of the planes of `0246` and `235`
+`04` (`EdgePar`) and `TriGenPar` at the lines of the planes of `0246` and `235`
 and of `0246` and `136`. -/
 theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hgen : NoThreeCollinear (univ.image x)) (fA fT fG fH fU fW fY fZ : ℝ³ →ᵃ[ℝ] ℝ)
@@ -273,11 +274,11 @@ theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hZ1 : EdgePar (univ.image x) (x 0) (x 4) ∨
       EdgeFarP (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4))
-    (hT2 : TriGenTri (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+    (hT2 : TriGenPar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2) ∨
       TriGenFarP (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({2, 3, 5} : Finset (Fin 7)).image x) (x 2))
-    (hT6 : TriGenTri (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+    (hT6 : TriGenPar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6) ∨
       TriGenFarP (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6)) :

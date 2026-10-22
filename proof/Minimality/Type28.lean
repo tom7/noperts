@@ -4,6 +4,7 @@ public import Minimality.Type10
 public import Minimality.TriFacetsChord
 public import Minimality.TriTie
 public import Minimality.ParallelOr
+public import Minimality.TripleTie
 
 @[expose] public section
 
@@ -44,14 +45,14 @@ theorem isRupert_type28 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({0, 1, 5} : Finset (Fin 7)) → fF (x i) < 0))
     (hM : ∀ i, (i ∈ ({1, 4, 5} : Finset (Fin 7)) → fM (x i) = 0) ∧
       (i ∉ ({1, 4, 5} : Finset (Fin 7)) → fM (x i) < 0))
-    (hT1 : (TriGenTri (univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
+    (hT1 : (TriGenPar (univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
         (({1, 4, 6} : Finset (Fin 7)).image x) (x 4) ∨
       TriGenFarP (univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
         (({1, 4, 6} : Finset (Fin 7)).image x) (x 4)) ∧
       (fG (x 3) / fG (x 0) + fA (x 3) / fA (x 6) = 1 →
         TriGenFar (univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
           (({1, 4, 6} : Finset (Fin 7)).image x) (x 4)))
-    (hT2 : TriGenTri (univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
+    (hT2 : TriGenPar (univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
       (({0, 3, 6} : Finset (Fin 7)).image x) (x 0) ∨
       TriGenFarP (univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
       (({0, 3, 6} : Finset (Fin 7)).image x) (x 0)) :
@@ -174,11 +175,11 @@ theorem isRupert_type28 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
   rcases le_or_gt c 0 with hcl | hcg
   · rcases hcl.lt_or_eq with hlt | heq
     · -- `c < 0`: the plain view, the tie allowed
-      refine isRupert_of_facets_vertex_tie_or V hgen QA QG (sub _) (sub _)
+      refine isRupert_of_facets_vertex_tieS_or V hgen QA QG (sub _) (sub _)
         (isFacet_of_index x _ fA hA) (isFacet_of_index x _ fG hG) (x 4) hiP
         ⟨x 0, (memQ _ 0).mpr (by decide), fun h => by have := hx h; omega⟩
         ⟨x 6, (memQ _ 6).mpr (by decide), fun h => by have := hx h; omega⟩
-        (hT1.1.imp (fun h => h.tie (sub _) (sub _) hiP
+        (hT1.1.imp (fun h => h.tieS hgen (sub _) (sub _) hiP
           (Or.inr (by show (({1, 4, 6} : Finset (Fin 7)).image x).card = 3
                       rw [Finset.card_image_of_injective _ hx]; decide))) id)
         ⟨x 0, (memQ _ 0).mpr (by decide), x 6, (memQ _ 6).mpr (by decide),
@@ -234,11 +235,11 @@ theorem isRupert_type28 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     have hivhT2 : QA ∩ QD = {x 0} := by
       rw [inter, show ({0, 2, 4, 5} ∩ {0, 3, 6} : Finset (Fin 7)) = {0} by decide]
       simp
-    refine isRupert_of_facets_vertex_tie_or V hgen QA QD (sub _) (sub _) (isFacet_of_index x _ fA hA)
+    refine isRupert_of_facets_vertex_tieS_or V hgen QA QD (sub _) (sub _) (isFacet_of_index x _ fA hA)
       (isFacet_of_index x _ fD hD) (x 0) hivhT2
       ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩
       ⟨x 6, (memQ _ 6).mpr (by decide), fun h => by have := hx h; omega⟩
-      (hT2.imp (fun h => h.tie (sub _) (sub _) hivhT2
+      (hT2.imp (fun h => h.tieS hgen (sub _) (sub _) hivhT2
         (Or.inr (by show (({0, 3, 6} : Finset (Fin 7)).image x).card = 3; rw [Finset.card_image_of_injective _ hx]; decide))) id) ?_
     refine ⟨x 4, (memQ _ 4).mpr (by decide), x 6, (memQ _ 6).mpr (by decide),
       fun h => by have := hx h; omega, fun h => by have := hx h; omega, ?_⟩
