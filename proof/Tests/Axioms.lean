@@ -558,3 +558,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.NF16.isRupert_F1s
 #assert_standard_axioms Minimality.NF16.isRupert_T6
 #assert_standard_axioms minimalNopert_of_certificatesValid
+#assert_standard_axioms Cu13.S1
+#assert_standard_axioms Cu13.S2
+#assert_standard_axioms Cu13.S4
+#assert_standard_axioms Cu13.S5
