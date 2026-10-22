@@ -616,7 +616,8 @@ theorem cert_type21_Q25 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c'
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c') (hN : CrossNorm G)
     (hA1 : F.a'bc.f d < F.a'bc.f b') (h3 : F.abc.f d < F.abc.f b')
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   obtain ⟨s34, s05, s04, s56, s51, s46, s41, s63, s60, s13, s10⟩ := hN.signs F
   obtain ⟨α, β, τ, hα0, hβ, hαβ, hτ, hco, hα, ht⟩ := hd.tau hN
   obtain ⟨hr, -, -⟩ := type21_r_pos hd hN hco hα ht
@@ -630,7 +631,10 @@ theorem cert_type21_Q25 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c'
     · rw [La']; positivity
     · rw [La]; positivity
   rw [← type21_set_O2] at hgen ⊢
-  exact cert_type21_60 hd.O2 hd.sigma2 hA1 h3 hgood hgen
+  have hLd : L d < 0 := by rw [Ld, anti c' c]; linarith [hN.h61]
+  have hLb' : L b' < 0 := by rw [Lb', anti b' c]; nlinarith [mul_pos hr s51]
+  exact (cert_type21_60 hd.O2 hd.sigma2 hA1 h3 hgood
+    (lemmaE_of_dep hL Lc (mul_pos_of_neg_of_neg hLd hLb')) hgen).monoE fun _ _ h => h.sigma2
 
 /-- **Step 3 of Theorem 16.13** (`Q` at `25` of `K − 6`): in the normalized class with
 (F3), (F4), if `δ_014(2) > δ_014(5)` then `1` is hidden along `2 → 5` of `K − 6` (the face `134`
@@ -641,7 +645,8 @@ theorem cert_type21_step3 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c 
     (hF4 : galeD G.l G.m a' b < galeD G.l G.m b c)
     (h3 : F.abc.f d < F.abc.f b')
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   obtain ⟨α, β, τ, hα0, hβ, hαβ, hτ, hco, hα, ht⟩ := hd.tau hN
   exact cert_type21_Q25 F hd G hN (type21_A1 hd hN hτ hco hα ht hF3 hF4) h3 hgen
 
@@ -661,7 +666,8 @@ theorem cert_type21_step5 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c 
     (hE : τ * galeD G.l G.m c a' * galeD G.l G.m c' a <
       (β + τ * galeD G.l G.m c c') * galeD G.l G.m a' a)
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   have hnd' := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd'
@@ -699,7 +705,10 @@ theorem cert_type21_step5 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c 
     · rw [Ld, anti c' a]; linarith
     · rw [Lc, anti c a]; nlinarith
   rw [← type21_set_O2] at hgen ⊢
-  exact cert_type21_46 hd.O2 hd.sigma2 hq₁ hq₂ hgood hgen
+  have hLd : L d < 0 := by rw [Ld, anti c' a]; linarith
+  exact (cert_type21_46 hd.O2 hd.sigma2 hq₁ hq₂ hgood
+    (lemmaE_of_dep hL.swap₁.perm₂₃.swap₂ La (mul_pos_of_neg_of_neg hLa' hLd)) hgen).monoE
+    fun _ _ h => h.sigma2
 
 /-! ### Lemma 16.12: the sliver `Σ` is covered by `Q` at `23` -/
 

@@ -285,7 +285,8 @@ theorem cert_type21_F2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hties : F2Tie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) b b' d c a' a
       (axisView G.l G.m b' b a c) (axisView G.l G.m b' b a c'))
     (hL₁ : L (σ₁ • axisView G.l G.m b' b a c)) (hL₂ : L (σ₂ • axisView G.l G.m b' b a c')) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   set u := axisView G.l G.m b' b a c with hu
   set v := axisView G.l G.m b' b a c' with hv
   set K := insert d ({a, a', b, b', c, c'} : Finset ℝ³) with hK

@@ -193,7 +193,8 @@ theorem cert_type21_F2_frame {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b'
     (hab : 0 < g56 - τ * g51 * g56 - (r * g05 - τ * g51 * g60))
     (hP5 : 0 < g35 * g60 - g35 * g56 + g13 * g56)
     (hF2 : F2ViewsL (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L a a' b b' c c' d) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   have hnd' := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd'
@@ -469,7 +470,8 @@ theorem cert_type21_F2case {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c
     (t23 : F.abc.f a' ≠ F.abc.f d)
     (hF2 : F2ViewsL (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L a a' b b' c c' d)
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   obtain ⟨s34, s05, s04, s56, s51, s46, s41, s63, s60, s13, s10⟩ := hN.signs F
   have s35 := hN.h35
   have s30 := hN.h30
@@ -719,7 +721,8 @@ theorem cert_type21_classC {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c
       T1Gen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L a a' b b' u)
     (hF2 : F2ViewsL (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L a a' b b' c c' d)
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   obtain ⟨-, -, -, -, -, -, -, -, -, -, s10⟩ := hN.signs F
   obtain ⟨hr, -, -⟩ := type21_r_pos hd hN hco hα ht
   obtain ⟨G2, l5, l4, l3, l0, l1, l2, m5, m4, m3, m0, m1, m2⟩ :=
@@ -732,7 +735,9 @@ theorem cert_type21_classC {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c
     obtain ⟨t1, t2, -⟩ := h04.tests hd.O2.perm₁₂.swap₁.swap₂.swap₃ G2.perm₁₂.swap₁.swap₂.swap₃
     exact ⟨t2, t1⟩
   have hF2 : galeD G.l G.m c a' < galeD G.l G.m a' b →
-      CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := fun h =>
+      CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+        (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) :=
+    fun h =>
     cert_type21_F2case F hd G hN h45 hβ hτ hco hα ht hc013 hn145 hq10 h t10 t51 t56 t23 hF2 hgen
   rcases type21_near_or_A1 F hd G hN hco hα ht hn145 with hS | hA1
   · rcases lt_or_gt_of_ne t34 with h | h

@@ -115,24 +115,30 @@ theorem cert_type21_Q {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c')
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hQ : Type21Q G.l G.m a a' b b' c c') :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   rcases hQ with h | h | h | h | h | h | h | h
   · obtain ⟨h1, h2, h3⟩ := h.tests F.swap₂ G.swap₂
     exact cert_type21_05 F hd h1 h2 h3 hgen
   · obtain ⟨h1, h2, h3⟩ := h.tests F.perm₁₂.swap₁ G.perm₁₂.swap₁
     exact cert_type21_50 F hd h1 h2 h3 hgen
   · obtain ⟨h1, h2, h3⟩ := h.tests F.perm₂₃.swap₂ G.perm₂₃.swap₂
-    exact cert_type21_06 F hd h1 h2 h3 hgen
+    exact cert_type21_06 F hd h1 h2 h3
+      (lemmaE_of_dep (G.hl.galeD G.hm a').perm₂₃.swap₂ (galeD_self _ _ _) h.2.2) hgen
   · obtain ⟨h1, h2, h3⟩ := h.tests F.perm₂₃.swap₂.perm₁₂ G.perm₂₃.swap₂.perm₁₂
-    exact cert_type21_60 F hd h1 h2 h3 hgen
+    exact cert_type21_60 F hd h1 h2 h3
+      (lemmaE_of_dep (G.hl.galeD G.hm c).perm₂₃.perm₁₂.swap₁ (galeD_self _ _ _) h.2.2) hgen
   · obtain ⟨h1, h2, h3⟩ := h.tests F.perm₁₂.swap₂ G.perm₁₂.swap₂
     exact cert_type21_43 F hd h1 h2 h3 hgen
   · obtain ⟨h1, h2, h3⟩ := h.tests F.swap₁ G.swap₁
     exact cert_type21_34 F hd h1 h2 h3 hgen
   · obtain ⟨h1, h2, h3⟩ := h.tests F.perm₁₂.perm₂₃.swap₂ G.perm₁₂.perm₂₃.swap₂
-    exact cert_type21_46 F hd h1 h2 h3 hgen
+    exact cert_type21_46 F hd h1 h2 h3
+      (lemmaE_of_dep (G.hl.galeD G.hm b').perm₁₂.perm₂₃.swap₂ (galeD_self _ _ _) h.2.2) hgen
   · obtain ⟨h1, h2, h3⟩ := h.tests F.perm₁₂.perm₂₃.swap₂.perm₁₂ G.perm₁₂.perm₂₃.swap₂.perm₁₂
-    exact cert_type21_64 F hd h1 h2 h3 hgen
+    exact cert_type21_64 F hd h1 h2 h3
+      (lemmaE_of_dep (G.hl.galeD G.hm c).perm₁₂.perm₂₃.perm₁₂.swap₁ (galeD_self _ _ _) h.2.2)
+      hgen
 
 /-- **Tier Q for `O2 = K − 6`** (labelled `5, 4, 3, 0, 1, 2` by `σ2`; its K-quad edges are
 `50, 43, 52, 32`): Gale data `G2` of `O2` with an E-good K-quad edge give a passage of `K`. -/
@@ -140,9 +146,10 @@ theorem cert_type21_Q2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G2 : GaleData b' b a' a c d)
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hQ : Type21Q G2.l G2.m b' b a' a c d) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   rw [← type21_set_O2] at hgen ⊢
-  exact cert_type21_Q hd.O2 hd.sigma2 G2 hgen hQ
+  exact (cert_type21_Q hd.O2 hd.sigma2 G2 hgen hQ).monoE fun _ _ h => h.sigma2
 
 /-! ### Tier H -/
 
@@ -160,7 +167,8 @@ theorem cert_type21_H {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c')
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hH : Type21H G.l G.m a a' b b' c c') :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   have hnd' := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd'
@@ -177,6 +185,8 @@ theorem cert_type21_H {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
       ext z; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
     rw [← e] at hgen ⊢
     exact CertV.seg (by simp) (by simp) (Ne.symm ha'c)
+      (SegOK21.of_edge (by simp [Edge21, SPair]) (by spair_ne) (by spair_ne) (by spair_ne)
+        (by spair_ne))
       (rimCert_quad_edge_lift_tie F' h1 h2 h3 (Or.inr hhid)
       ⟨hdc, hdc', hda', hda, hdb, hdb'⟩
       (hgen.touch_oct F'))
@@ -189,6 +199,8 @@ theorem cert_type21_H {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
       ext z; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
     rw [← e] at hgen ⊢
     exact CertV.seg (by simp) (by simp) (Ne.symm hb'c)
+      (SegOK21.of_edge (by simp [Edge21, SPair]) (by spair_ne) (by spair_ne) (by spair_ne)
+        (by spair_ne))
       (rimCert_quad_edge_lift_tie F' h1 h2 h3 (Or.inr hhid)
       ⟨hdc, hdc', hdb', hdb, hda, hda'⟩
       (hgen.touch_oct F'))
@@ -199,9 +211,10 @@ theorem cert_type21_H2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G2 : GaleData b' b a' a c d)
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hH : Type21H G2.l G2.m b' b a' a c d) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   rw [← type21_set_O2] at hgen ⊢
-  exact cert_type21_H hd.O2 hd.sigma2 G2 hgen hH
+  exact (cert_type21_H hd.O2 hd.sigma2 G2 hgen hH).monoE fun _ _ h => h.sigma2
 
 end Minimality
 

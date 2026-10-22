@@ -131,9 +131,11 @@ theorem Sec21.tiltHides {x : Fin 7 → ℝ³} (T : Facets21 x) {v : (Fin 7 × Fi
 /-- **Lemma 18.2 for one labelled certificate, with Proposition 22.2**: as
 `isRupert_of_certL_seq21`, with "no horizontal double normal at the named view, or `Sec21`". -/
 theorem isRupert_of_certL_seq21_sec {x : Fin 7 → ℝ³} (T : Facets21 x)
-    (hnd : ∀ v, view21 x v ≠ 0 → NoHDNAt (univ.image x) (view21 x v) ∨ Sec21 x v)
+    {P : (Fin 7 × Fin 7) ⊕ Fin 8 → Prop}
+    (hnd : ∀ v, P v → view21 x v ≠ 0 → NoHDNAt (univ.image x) (view21 x v) ∨ Sec21 x v)
     (K : ℕ → Fin 7 → ℝ³) (hK : ∀ m, Tendsto (fun n => K n m) atTop (𝓝 (x m)))
-    {k : ℕ} [NeZero k] (v : (Fin 7 × Fin 7) ⊕ Fin 8) (ε : Bool) (lab : ZMod k → Fin 7)
+    {k : ℕ} [NeZero k] (v : (Fin 7 × Fin 7) ⊕ Fin 8) (hu : P v) (ε : Bool)
+    (lab : ZMod k → Fin 7)
     (hc : ∃ᶠ n in atTop, RimCertAt (K n) (sgnB ε • view21 (K n) v) lab ∧
       ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0) :
     IsRupert (univ.image x) := by
@@ -147,7 +149,7 @@ theorem isRupert_of_certL_seq21_sec {x : Fin 7 → ℝ³} (T : Facets21 x)
   refine isRupert_of_tendsto_rimCert_or x T.inj T.noSeg ⟨2, 0, 3, 6, T.det_ne⟩ lab
     (smul_ne_zero hs hv0) ?_ K (fun n => sgnB ε • view21 (K n) v) hK
     ((tendsto_view21 hK v).const_smul _) (hc.mono fun n hn => ⟨hn.1, fun i j e => ?_⟩)
-  · rcases hnd v hv0 with h | h
+  · rcases hnd v hu hv0 with h | h
     · exact Or.inl (h.smul_view hs)
     · exact Or.inr fun hleft => h.tiltHides T hv0 ε hn₀ hleft
   · by_cases hij : lab i = lab j
@@ -160,23 +162,27 @@ theorem isRupert_of_certL_seq21_sec {x : Fin 7 → ℝ³} (T : Facets21 x)
 
 /-- **A frequent certificate along a sequence of type-21 shapes, with Proposition 22.2.** -/
 theorem isRupert_of_cert_seq21_sec {x : Fin 7 → ℝ³} (T : Facets21 x)
-    (hnd : ∀ v, view21 x v ≠ 0 → NoHDNAt (univ.image x) (view21 x v) ∨ Sec21 x v)
+    {P : (Fin 7 × Fin 7) ⊕ Fin 8 → Prop}
+    (hnd : ∀ v, P v → view21 x v ≠ 0 → NoHDNAt (univ.image x) (view21 x v) ∨ Sec21 x v)
     (K : ℕ → Fin 7 → ℝ³) (hK : ∀ m, Tendsto (fun n => K n m) atTop (𝓝 (x m)))
-    (hc : ∃ᶠ n in atTop, Cert21 (K n) ∧
+    (hc : ∃ᶠ n in atTop, CertP21 P (K n) ∧
       ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0) :
     IsRupert (univ.image x) := by
   have h : ∃ᶠ n in atTop, ∃ q : ((Fin 7 × Fin 7) ⊕ Fin 8) × Bool ×
       ((ZMod 3 → Fin 7) ⊕ (ZMod 4 → Fin 7) ⊕ (ZMod 5 → Fin 7)),
-      CertL21 (K n) q.1 q.2.1 q.2.2 ∧
+      P q.1 ∧ CertL21 (K n) q.1 q.2.1 q.2.2 ∧
         ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0 :=
     hc.mono fun n hn => by
-      obtain ⟨v, ε, L, hL⟩ := hn.1.exists_certL
-      exact ⟨(v, ε, L), hL, hn.2⟩
+      obtain ⟨v, ε, L, hv, hL⟩ := CertP21.exists_certL hn.1
+      exact ⟨(v, ε, L), hv, hL, hn.2⟩
   obtain ⟨⟨v, ε, L⟩, hq⟩ := frequently_exists_of_finite h
+  obtain ⟨n₀, hn₀⟩ := hq.exists
+  have hu := hn₀.1
+  replace hq := hq.mono fun n hn => hn.2
   rcases L with lab | lab | lab
-  · exact isRupert_of_certL_seq21_sec T hnd K hK v ε lab hq
-  · exact isRupert_of_certL_seq21_sec T hnd K hK v ε lab hq
-  · exact isRupert_of_certL_seq21_sec T hnd K hK v ε lab hq
+  · exact isRupert_of_certL_seq21_sec T hnd K hK v hu ε lab hq
+  · exact isRupert_of_certL_seq21_sec T hnd K hK v hu ε lab hq
+  · exact isRupert_of_certL_seq21_sec T hnd K hK v hu ε lab hq
 
 
 /-! ### Type 21 outside the HDN set at its one-circle views and codimension 2 -/
@@ -185,13 +191,24 @@ theorem isRupert_of_cert_seq21_sec {x : Fin 7 → ℝ³} (T : Facets21 x)
 its named views is Rupert if at each named view there is no horizontal double normal or `Sec21`
 holds (a two-triangle view with (G1)). -/
 theorem isRupert_type21_limit_sec {x : Fin 7 → ℝ³} (T : Facets21 x)
-    (hnd : ∀ v, view21 x v ≠ 0 → NoHDNAt (univ.image x) (view21 x v) ∨ Sec21 x v)
+    (hnd : ∀ v, UsedV21 v → view21 x v ≠ 0 → NoHDNAt (univ.image x) (view21 x v) ∨ Sec21 x v)
     (htie : OneTie21 x) : IsRupert (univ.image x) := by
   obtain ⟨K, hK, hc⟩ := exists_certSeq21 T htie
-  exact isRupert_of_cert_seq21_sec T hnd K hK hc
+  exact isRupert_of_cert_seq21_sec T hnd K hK (hc.mono fun n hn => ⟨hn.1.toCert21, hn.2⟩)
 
 /-- The two-triangle edges of type 21 as pairs. -/
 def triEdgeSet21 : Finset (Finset (Fin 7)) := {{0, 1}, {0, 4}, {1, 4}, {1, 5}, {1, 3}, {3, 5}}
+
+/-- The seven edges of type 21 at a quadrilateral: `05`, `06`, `25`, `26` (the ridge), `46`,
+`34`, `23`. -/
+def quadEdgeSet21 : Finset (Finset (Fin 7)) := {{0, 5}, {0, 6}, {2, 5}, {2, 6}, {4, 6}, {3, 4},
+  {2, 3}}
+
+theorem edgeSet21_cases (s : Finset (Fin 7)) (h : s ∈ edgeSet21) :
+    s ∈ triEdgeSet21 ∨ s ∈ quadEdgeSet21 := by
+  simp only [edgeSet21, Finset.mem_insert, Finset.mem_singleton] at h
+  rcases h with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    decide
 
 theorem triEdgeSet21_mem : ∀ i j : Fin 7, ({i, j} : Finset (Fin 7)) ∈ triEdgeSet21 →
     ∃ e : Fin 6, ((triEdge21 e).1 = i ∧ (triEdge21 e).2.1 = j) ∨
@@ -225,7 +242,7 @@ theorem isRupert_type21_limit_facets_sec (x : Fin 7 → ℝ³) (hx : Function.In
       (i ∉ ({2, 3, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
     (hH : ∀ i, (i ∈ ({2, 3, 5} : Finset (Fin 7)) → fH (x i) = 0) ∧
       (i ∉ ({2, 3, 5} : Finset (Fin 7)) → fH (x i) < 0))
-    (hnd : ∀ i j : Fin 7, i ≠ j → ({i, j} : Finset (Fin 7)) ∉ triEdgeSet21 →
+    (hnd : ∀ i j : Fin 7, i ≠ j → ({i, j} : Finset (Fin 7)) ∈ quadEdgeSet21 →
       NoHDNAt ((univ.image x).erase (x j)) (x j - x i))
     (hEd : HDNOrG1Edge (univ.image x) (x 0) (x 1) (x 4) (x 5) ∧
       HDNOrG1Edge (univ.image x) (x 0) (x 4) (x 1) (x 6) ∧
@@ -246,7 +263,7 @@ theorem isRupert_type21_limit_facets_sec (x : Fin 7 → ℝ³) (hx : Function.In
     obtain ⟨e0, e1, e2, e3, e4, e5⟩ := hEd
     intro e; fin_cases e
     exacts [e0, e1, e2, e3, e4, e5]
-  refine isRupert_type21_limit_sec T (fun v hv => ?_) htie
+  refine isRupert_type21_limit_sec T (fun v hu hv => ?_) htie
   rcases v with ⟨i, j⟩ | t
   · have hij : i ≠ j := fun h => hv (by simp [view21, h])
     by_cases hmem : ({i, j} : Finset (Fin 7)) ∈ triEdgeSet21
@@ -260,8 +277,10 @@ theorem isRupert_type21_limit_facets_sec (x : Fin 7 → ℝ³) (hx : Function.In
           rw [← e1, ← e2, ← neg_sub]; exact h.neg
       · exact Or.inr ⟨e, he, h⟩
     · left
-      have hji : ({j, i} : Finset (Fin 7)) ∉ triEdgeSet21 := by rwa [Finset.pair_comm]
-      exact noHDNAt_of_erase (hx.ne hij) (hnd i j hij hmem)
+      have hq : ({i, j} : Finset (Fin 7)) ∈ quadEdgeSet21 :=
+        (edgeSet21_cases _ hu).resolve_left hmem
+      have hji : ({j, i} : Finset (Fin 7)) ∈ quadEdgeSet21 := by rwa [Finset.pair_comm]
+      exact noHDNAt_of_erase (hx.ne hij) (hnd i j hij hq)
         (by simpa only [neg_sub] using (hnd j i (Ne.symm hij) hji).neg)
   · obtain ⟨V1, V2, V3, V4, V5, V6, V7, V8⟩ := hV
     fin_cases t

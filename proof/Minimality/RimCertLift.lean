@@ -14,8 +14,8 @@ determinant tests (`rimCertPts_of_edgeView_robust`, `rimCertPts_of_vertexView_ro
 (`rimCert_quad_edge_lift_tie`), and Corollary 14.1 with the uniform tilt and ties
 (`rimCert_edgePair_uniform_robust`).
 
-`CertV K L`: a rim certificate of `K` at a segment view `w − v` or at a view satisfying `L` (the
-named vertex crossings of the type).
+`CertV K L E`: a rim certificate of `K` at a segment view `w − v` with `E v w` (an edge of the
+type) or at a view satisfying `L` (the named vertex crossings of the type).
 -/
 
 namespace Minimality
@@ -24,35 +24,43 @@ open scoped RealInnerProductSpace
 open Finset
 
 /-- **A certificate at a named view**: a rim certificate (3, 4 or 5 corners) of `K` at the view
-along a segment of `K` or at a view satisfying `L`. -/
-def CertV (K : Finset ℝ³) (L : ℝ³ → Prop) : Prop :=
-  ∃ u, (L u ∨ ∃ v ∈ K, ∃ w ∈ K, v ≠ w ∧ u = w - v) ∧ RimCert K u
+along a segment `w − v` of `K` with `E v w` (the edges of the type), or at a view satisfying `L`. -/
+def CertV (K : Finset ℝ³) (L : ℝ³ → Prop) (E : ℝ³ → ℝ³ → Prop) : Prop :=
+  ∃ u, (L u ∨ ∃ v ∈ K, ∃ w ∈ K, v ≠ w ∧ E v w ∧ u = w - v) ∧ RimCert K u
 
-theorem CertV.seg {K : Finset ℝ³} {L : ℝ³ → Prop} {v w : ℝ³} (hv : v ∈ K) (hw : w ∈ K)
-    (hvw : v ≠ w) (h : RimCert K (w - v)) : CertV K L :=
-  ⟨w - v, Or.inr ⟨v, hv, w, hw, hvw, rfl⟩, h⟩
+theorem CertV.seg {K : Finset ℝ³} {L : ℝ³ → Prop} {E : ℝ³ → ℝ³ → Prop} {v w : ℝ³} (hv : v ∈ K)
+    (hw : w ∈ K) (hvw : v ≠ w) (hE : E v w) (h : RimCert K (w - v)) : CertV K L E :=
+  ⟨w - v, Or.inr ⟨v, hv, w, hw, hvw, hE, rfl⟩, h⟩
 
-theorem CertV.line {K : Finset ℝ³} {L : ℝ³ → Prop} {u : ℝ³} (hL : L u) (h : RimCert K u) :
-    CertV K L :=
+theorem CertV.line {K : Finset ℝ³} {L : ℝ³ → Prop} {E : ℝ³ → ℝ³ → Prop} {u : ℝ³} (hL : L u)
+    (h : RimCert K u) : CertV K L E :=
   ⟨u, Or.inl hL, h⟩
 
-theorem CertV.mono {K : Finset ℝ³} {L L' : ℝ³ → Prop} (h : CertV K L) (hL : ∀ u, L u → L' u) :
-    CertV K L' := by
+theorem CertV.mono {K : Finset ℝ³} {L L' : ℝ³ → Prop} {E : ℝ³ → ℝ³ → Prop} (h : CertV K L E)
+    (hL : ∀ u, L u → L' u) : CertV K L' E := by
   obtain ⟨u, hu, hc⟩ := h
   exact ⟨u, hu.imp_left (hL u), hc⟩
 
+/-- Changing the edge predicate. -/
+theorem CertV.monoE {K : Finset ℝ³} {L : ℝ³ → Prop} {E E' : ℝ³ → ℝ³ → Prop} (h : CertV K L E)
+    (hE : ∀ v w, E v w → E' v w) : CertV K L E' := by
+  obtain ⟨u, hu, hc⟩ := h
+  refine ⟨u, hu.imp_right ?_, hc⟩
+  rintro ⟨v, hv, w, hw, hvw, he, rfl⟩
+  exact ⟨v, hv, w, hw, hvw, hE v w he, rfl⟩
+
 /-- A rim certificate at the reversed segment view. -/
-theorem CertV.seg' {K : Finset ℝ³} {L : ℝ³ → Prop} {v w : ℝ³} (hv : v ∈ K) (hw : w ∈ K)
-    (hvw : v ≠ w) (h : RimCert K (v - w)) : CertV K L :=
-  CertV.seg hw hv (Ne.symm hvw) h
+theorem CertV.seg' {K : Finset ℝ³} {L : ℝ³ → Prop} {E : ℝ³ → ℝ³ → Prop} {v w : ℝ³} (hv : v ∈ K)
+    (hw : w ∈ K) (hvw : v ≠ w) (hE : E w v) (h : RimCert K (v - w)) : CertV K L E :=
+  CertV.seg hw hv (Ne.symm hvw) hE h
 
 /-- A rim certificate at `±(w − v)`. -/
-theorem CertV.seg_sigma {K : Finset ℝ³} {L : ℝ³ → Prop} {v w : ℝ³} {σ : ℝ}
-    (hσ : σ = 1 ∨ σ = -1) (hv : v ∈ K) (hw : w ∈ K) (hvw : v ≠ w) (h : RimCert K (σ • (w - v))) :
-    CertV K L := by
+theorem CertV.seg_sigma {K : Finset ℝ³} {L : ℝ³ → Prop} {E : ℝ³ → ℝ³ → Prop} {v w : ℝ³} {σ : ℝ}
+    (hσ : σ = 1 ∨ σ = -1) (hv : v ∈ K) (hw : w ∈ K) (hvw : v ≠ w) (hE : E v w ∧ E w v)
+    (h : RimCert K (σ • (w - v))) : CertV K L E := by
   rcases hσ with rfl | rfl
-  · rw [one_smul] at h; exact CertV.seg hv hw hvw h
-  · rw [neg_one_smul, neg_sub] at h; exact CertV.seg hw hv (Ne.symm hvw) h
+  · rw [one_smul] at h; exact CertV.seg hv hw hvw hE.1 h
+  · rw [neg_one_smul, neg_sub] at h; exact CertV.seg hw hv (Ne.symm hvw) hE.2 h
 
 /-! ### Theorem 8.9 and Proposition 8.8 at views given by determinant tests -/
 
@@ -144,7 +152,7 @@ theorem RimCertPts.rimCert5 {V : Finset ℝ³} {u : ℝ³} {y : ZMod 5 → ℝ³
 /-! ### The quad lift and the uniform edge pair -/
 
 /-- **Lemma 9.3 with ties, oriented core, certificate form**. -/
-theorem rimCert_quad_edge_lift_core_tie {x x' y y' p p' m : ℝ³} (F : OctFacets x x' y y' p p')
+theorem rimCertPts_quad_edge_lift_core_tie {x x' y y' p p' m : ℝ³} (F : OctFacets x x' y y' p p')
     (hq₁ : F.a'b'c.f x < F.a'b'c.f y) (hq₂ : F.a'b'c'.f x < F.a'b'c'.f y)
     (hor : 0 < det3 (p - y) (p' - y) (y - x))
     (hgood : ¬ max ⟪y, y - x⟫ ⟪y', y - x⟫ ≤ min ⟪p, y - x⟫ ⟪p', y - x⟫)
@@ -152,7 +160,10 @@ theorem rimCert_quad_edge_lift_core_tie {x x' y y' p p' m : ℝ³} (F : OctFacet
     (hhid : m ∉ M → QuadHidden x y y' p p' m)
     (hmO : m ≠ x ∧ m ≠ x' ∧ m ≠ y ∧ m ≠ y' ∧ m ≠ p ∧ m ≠ p')
     (htouch : ¬ (⟪p, y - x⟫ = ⟪y', y - x⟫ ∧ ⟪p', y - x⟫ = ⟪y', y - x⟫)) :
-    RimCert (insert m {x, x', y, y', p, p'}) (y - x) := by
+    (NWS4 (quad ⟪y, y - x⟫ ⟪p, y - x⟫ ⟪y', y - x⟫ ⟪p', y - x⟫) ∧
+        RimCertPts (insert m {x, x', y, y', p, p'}) (y - x) (quad y p y' p')) ∨
+      (NWS4 (quad ⟪x, y - x⟫ ⟪p, y - x⟫ ⟪y', y - x⟫ ⟪p', y - x⟫) ∧
+        RimCertPts (insert m {x, x', y, y', p, p'}) (y - x) (quad x p y' p')) := by
   classical
   obtain ⟨E1, E2, E3, E4⟩ := quad_edge_tests F hq₁ hq₂ hor
   have hnd' := F.nodup
@@ -201,9 +212,9 @@ theorem rimCert_quad_edge_lift_core_tie {x x' y y' p p' m : ℝ³} (F : OctFacet
       pos_of_mul_pos_pos (by rwa [mul_comm] at h4) hor⟩
   by_cases hN : NWS4 (quad ⟪y, y - x⟫ ⟪p, y - x⟫ ⟪y', y - x⟫ ⟪p', y - x⟫)
   · -- `K_y` is unimodal
-    refine (rimCertPts_of_edgeView_robust V M (y - x) hu (k := 4) (by norm_num) (quad y p y' p') 0
-      x 1 (by simp [V]) (by simp only [quad_0, one_smul]; abel) one_ne_zero ?_ ?_ ?_ ?_ ?_
-      ?_).rimCert4
+    refine Or.inl ⟨hN, rimCertPts_of_edgeView_robust V M (y - x) hu (k := 4) (by norm_num)
+      (quad y p y' p') 0 x 1 (by simp [V]) (by simp only [quad_0, one_smul]; abel) one_ne_zero ?_
+      ?_ ?_ ?_ ?_ ?_⟩
     · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
         simp [V, quad_0, quad_1, quad_2, quad_3]
     · intro i
@@ -256,9 +267,10 @@ theorem rimCert_quad_edge_lift_core_tie {x x' y y' p p' m : ℝ³} (F : OctFacet
       rw [det3_shift_xy]; exact E1 y' my' (Ne.symm hyy') hy'p (Ne.symm hxy')
     have hN' := nws4_closing_x_tie hS₁ hS₂ hS₃ hS₄ (quad_edge_lower F hS₁ hS₂ hS₃ hS₄) hN hgood
       htouch
-    refine (rimCertPts_of_edgeView_robust V M (y - x) hu (k := 4) (by norm_num) (quad x p y' p') 0
-      y (-1) (by simp [V]) (by simp only [quad_0, neg_smul, one_smul, sub_neg_eq_add]; abel)
-      (by norm_num) ?_ ?_ ?_ ?_ ?_ ?_).rimCert4
+    refine Or.inr ⟨hN', rimCertPts_of_edgeView_robust V M (y - x) hu (k := 4) (by norm_num)
+      (quad x p y' p') 0 y (-1) (by simp [V])
+      (by simp only [quad_0, neg_smul, one_smul, sub_neg_eq_add]; abel) (by norm_num) ?_ ?_ ?_ ?_
+      ?_ ?_⟩
     · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
         simp [V, quad_0, quad_1, quad_2, quad_3]
     · intro i
@@ -306,15 +318,33 @@ theorem rimCert_quad_edge_lift_core_tie {x x' y y' p p' m : ℝ³} (F : OctFacet
     · rw [zmod4_zero_add_one, zmod4_zero_sub_one]
       exact hEM x y (-1) (Or.inr ⟨rfl, rfl, rfl⟩)
 
-/-- **Lemma 2 of §12 with ties, certificate form** (`isRupert_quad_edge_lift_tie` without the
-horizontal double normal): a rim certificate at the view along `x y`. -/
-theorem rimCert_quad_edge_lift_tie {x x' y y' p p' m : ℝ³} (F : OctFacets x x' y y' p p')
+theorem rimCert_quad_edge_lift_core_tie {x x' y y' p p' m : ℝ³} (F : OctFacets x x' y y' p p')
+    (hq₁ : F.a'b'c.f x < F.a'b'c.f y) (hq₂ : F.a'b'c'.f x < F.a'b'c'.f y)
+    (hor : 0 < det3 (p - y) (p' - y) (y - x))
+    (hgood : ¬ max ⟪y, y - x⟫ ⟪y', y - x⟫ ≤ min ⟪p, y - x⟫ ⟪p', y - x⟫)
+    (M : Finset ℝ³) (hMm : M ⊆ {m}) (hmid : m ∈ M → QuadMiddle x y p p' m)
+    (hhid : m ∉ M → QuadHidden x y y' p p' m)
+    (hmO : m ≠ x ∧ m ≠ x' ∧ m ≠ y ∧ m ≠ y' ∧ m ≠ p ∧ m ≠ p')
+    (htouch : ¬ (⟪p, y - x⟫ = ⟪y', y - x⟫ ∧ ⟪p', y - x⟫ = ⟪y', y - x⟫)) :
+    RimCert (insert m {x, x', y, y', p, p'}) (y - x) := by
+  rcases rimCertPts_quad_edge_lift_core_tie F hq₁ hq₂ hor hgood M hMm hmid hhid hmO htouch with
+    ⟨-, h⟩ | ⟨-, h⟩
+  exacts [h.rimCert4, h.rimCert4]
+
+/-- **Lemma 2 of §12 with ties, labelled certificate form**: the rim at the view along `x y` is
+`(y, q, y', q')` (`K_y`, without weak saddle) or `(x, q, y', q')` (`K_x`), with `{q, q'} = {p, p'}`
+in the counterclockwise order. -/
+theorem rimCertPts_quad_edge_lift_tie {x x' y y' p p' m : ℝ³} (F : OctFacets x x' y y' p p')
     (hq₁ : F.a'b'c.f x < F.a'b'c.f y) (hq₂ : F.a'b'c'.f x < F.a'b'c'.f y)
     (hgood : ¬ max ⟪y, y - x⟫ ⟪y', y - x⟫ ≤ min ⟪p, y - x⟫ ⟪p', y - x⟫)
     (hm : QuadMiddle x y p p' m ∨ QuadHidden x y y' p p' m)
     (hmO : m ≠ x ∧ m ≠ x' ∧ m ≠ y ∧ m ≠ y' ∧ m ≠ p ∧ m ≠ p')
     (htouch : ¬ (⟪p, y - x⟫ = ⟪y', y - x⟫ ∧ ⟪p', y - x⟫ = ⟪y', y - x⟫)) :
-    RimCert (insert m {x, x', y, y', p, p'}) (y - x) := by
+    ∃ q q' : ℝ³, ((q = p ∧ q' = p') ∨ (q = p' ∧ q' = p)) ∧
+      ((NWS4 (quad ⟪y, y - x⟫ ⟪q, y - x⟫ ⟪y', y - x⟫ ⟪q', y - x⟫) ∧
+          RimCertPts (insert m {x, x', y, y', p, p'}) (y - x) (quad y q y' q')) ∨
+        (NWS4 (quad ⟪x, y - x⟫ ⟪q, y - x⟫ ⟪y', y - x⟫ ⟪q', y - x⟫) ∧
+          RimCertPts (insert m {x, x', y, y', p, p'}) (y - x) (quad x q y' q'))) := by
   classical
   -- the set `M` of middles
   obtain ⟨M, hMm, hmid, hhid⟩ : ∃ M : Finset ℝ³, M ⊆ {m} ∧ (m ∈ M → QuadMiddle x y p p' m) ∧
@@ -325,12 +355,26 @@ theorem rimCert_quad_edge_lift_tie {x x' y y' p p' m : ℝ³} (F : OctFacets x x
   have e : (insert m {x, x', y, y', p', p} : Finset ℝ³) = insert m {x, x', y, y', p, p'} := by
     rw [Finset.pair_comm p' p]
   rcases lt_or_gt_of_ne (quad_orient_ne F) with hneg | hpos
-  · have := rimCert_quad_edge_lift_core_tie F.swap₃ hq₂ hq₁ (by rw [det3_swap12]; linarith)
+  · have := rimCertPts_quad_edge_lift_core_tie F.swap₃ hq₂ hq₁ (by rw [det3_swap12]; linarith)
       (by rwa [min_comm]) M hMm (fun h => (hmid h).swap) (fun h => (hhid h).swap)
       ⟨hmO.1, hmO.2.1, hmO.2.2.1, hmO.2.2.2.1, hmO.2.2.2.2.2, hmO.2.2.2.2.1⟩
       (fun h => htouch ⟨h.2, h.1⟩)
-    rwa [e] at this
-  · exact rimCert_quad_edge_lift_core_tie F hq₁ hq₂ hpos hgood M hMm hmid hhid hmO htouch
+    rw [e] at this
+    exact ⟨p', p, Or.inr ⟨rfl, rfl⟩, this⟩
+  · exact ⟨p, p', Or.inl ⟨rfl, rfl⟩,
+      rimCertPts_quad_edge_lift_core_tie F hq₁ hq₂ hpos hgood M hMm hmid hhid hmO htouch⟩
+
+/-- **Lemma 2 of §12 with ties, certificate form** (`isRupert_quad_edge_lift_tie` without the
+horizontal double normal): a rim certificate at the view along `x y`. -/
+theorem rimCert_quad_edge_lift_tie {x x' y y' p p' m : ℝ³} (F : OctFacets x x' y y' p p')
+    (hq₁ : F.a'b'c.f x < F.a'b'c.f y) (hq₂ : F.a'b'c'.f x < F.a'b'c'.f y)
+    (hgood : ¬ max ⟪y, y - x⟫ ⟪y', y - x⟫ ≤ min ⟪p, y - x⟫ ⟪p', y - x⟫)
+    (hm : QuadMiddle x y p p' m ∨ QuadHidden x y y' p p' m)
+    (hmO : m ≠ x ∧ m ≠ x' ∧ m ≠ y ∧ m ≠ y' ∧ m ≠ p ∧ m ≠ p')
+    (htouch : ¬ (⟪p, y - x⟫ = ⟪y', y - x⟫ ∧ ⟪p', y - x⟫ = ⟪y', y - x⟫)) :
+    RimCert (insert m {x, x', y, y', p, p'}) (y - x) := by
+  obtain ⟨q, q', -, h | h⟩ := rimCertPts_quad_edge_lift_tie F hq₁ hq₂ hgood hm hmO htouch
+  exacts [h.2.rimCert4, h.2.rimCert4]
 
 /-- **`isRupert_quad_uniform_nws` in certificate form.** -/
 theorem rimCert_quad_uniform_nws (V M : Finset ℝ³) {u y o a b c : ℝ³} {h : ℝ} (hh : h ≠ 0)

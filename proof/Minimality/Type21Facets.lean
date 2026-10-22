@@ -32,8 +32,9 @@ variable {L : ℝ³ → Prop}
 crossings `0: 014/0256`, `4: 014/2346`, `5: 135/0256`, `3: 135/2346` (`T1ViewL`), and those of
 the vertex tests of F2 in the four labellings `id, σ1, σ2, σ2σ1` (`F2ViewsL`: at
 `4: 014/2346, 046/134`, `0: 014/0256, 046/015`, `3: 135/2346, 235/134`, `5: 135/0256, 235/015`)
-— the points have a rim certificate (`CertV`) at the view along a segment or at a view of these
-vertex crossings satisfying `L`.  No horizontal double normal is assumed. -/
+— the points have a rim certificate (`CertV`) at the view along an edge (`Edge21`: the thirteen
+edges; no certificate of the cover is at a non-edge segment), with the data of tier Q at `06`,
+`46`, `25`, `23` (`SegOK21`), or at a view of these vertex crossings satisfying `L`.  No horizontal double normal is assumed. -/
 theorem cert_type21_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 1, 4} : Finset (Fin 7)) → fA (x i) = 0) ∧
@@ -66,7 +67,8 @@ theorem cert_type21_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       F2ViewsL (univ.image x) L (x 4) (x 5) (x 0) (x 3) (x 1) (x 6) (x 2) ∧
       F2ViewsL (univ.image x) L (x 5) (x 4) (x 3) (x 0) (x 1) (x 2) (x 6) ∧
       F2ViewsL (univ.image x) L (x 3) (x 0) (x 5) (x 4) (x 1) (x 2) (x 6)) :
-    CertV (univ.image x) L := by
+    CertV (univ.image x) L
+      (SegOK21 (univ.image x) (x 0) (x 3) (x 4) (x 5) (x 1) (x 6) (x 2)) := by
   classical
   obtain ⟨-, eV⟩ := image_seven21 x
   obtain ⟨F, hcap, eA, eD, eB, eC, eE, eG, eF⟩ :=

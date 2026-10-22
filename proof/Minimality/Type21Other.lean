@@ -99,7 +99,8 @@ theorem cert_type21_classA {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c
     (hn145 : τ * galeD G.l G.m c a' * galeD G.l G.m c' a <
       (β + τ * galeD G.l G.m c c') * galeD G.l G.m a' a)
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   obtain ⟨s34, s05, s04, s56, s51, s46, s41, s63, s60, s13, s10⟩ := hN.signs F
   have anti := galeD_anti G.l G.m
   have a1 := type21_id_a1 G.hl G.hm
@@ -230,7 +231,8 @@ theorem cert_type21_classB {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c
     (t13 : galeD G.l G.m b c ≠ galeD G.l G.m c a')
     (hRid : det3 (b - b') (c - b') (d - c') ≠ 0)
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   have hnd' := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd'
@@ -349,7 +351,7 @@ theorem cert_type21_classB {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c
       · rw [Lc, anti c a]; have := mul_pos hrpos s10; linarith
       · rw [Ld, anti c' a]; linarith
     rw [← type21_set_O2] at hgen ⊢
-    exact cert_type21_43 hd.O2 hd.sigma2 hq₁ hq₂ hgood hgen
+    exact (cert_type21_43 hd.O2 hd.sigma2 hq₁ hq₂ hgood hgen).monoE fun _ _ h => h.sigma2
 
 /-! ### Class (c): one crossing (Theorem 16.23) -/
 
@@ -578,7 +580,8 @@ theorem cert_type21_F1' {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c'
     (hT1 : ∀ u : ℝ³, u ≠ 0 → ⟪F.abc.N, u⟫ = 0 → ⟪F.ab'c'.N, u⟫ = 0 →
       T1Gen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L a a' b b' u)
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   have hnd' := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd'

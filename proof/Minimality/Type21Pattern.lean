@@ -17,8 +17,8 @@ Labels as in `Type21Lemmas.lean`: `a, a', b, b', c, c', d = 0, 3, 4, 5, 1, 6, 2`
   the signs of `{5 4}` and `{0 3}`, the pair brackets of `K − 6` (`2` beyond `013`, `145`); they
   vanish exactly on the planar equators `{0, 1, 2, 3}`, `{1, 2, 4, 5}` of `K − 6`, which are
   excluded.  Class (b) (`{0 3} > 0`): 16.20; class (a) (`{5 4}, {0 3} < 0`): 16.18; class (c):
-  16.23 with 16.24; on the switch surface `H⁻_c` (`δ_014(2) = δ_014(5)`, `δ_056(4) < δ_056(1)`)
-  Theorem 16.30 (`cert_type21_switch`).  Every tie of a Gale comparison used is a segment
+  16.23 with 16.24; the switch surface `H⁻_c` (`δ_014(2) = δ_014(5)`, `δ_056(4) < δ_056(1)`)
+  is a `NoPlaneParallel` position (`IsCap21.not_switch`).  Every tie of a Gale comparison used is a segment
   parallel to a face plane (`NoPlaneParallel`), as is `f ≠ 0` for `K − 2` and `K − 6`.
 
 **Certificate form** (§18.2, §18.6 step 2): every theorem of the tier cover concludes a rim
@@ -66,9 +66,8 @@ segment of `K` parallel to a plane through three other points (`NoPlaneParallel`
 contains every tie of a Gale comparison used and `f ≠ 0`), `GenPosTie`, no horizontal double
 normal at the edge views (`NoHDNEdges`), `2` off the planes `013` and `145` (the planar
 equators of `K − 6`), and the special positions of `T1` and of the two vertex tests of F2 — `K`
-has a rim certificate: one of the tiers Q (of `K − 2` or `K − 6`), H, R, F1, F2 holds, or `K` is on the
-switch surface `H⁻_c` (`δ_014(2) = δ_014(5)` with `|[3 1]| > |[3 4]|`, here
-`δ_056(4) < δ_056(1)`) and Theorem 16.30 applies. -/
+has a rim certificate: one of the tiers Q (of `K − 2` or `K − 6`), H, R, F1, F2 holds (the
+switch surface `H⁻_c`, `δ_014(2) = δ_014(5)`, is a `NoPlaneParallel` position). -/
 theorem cert_type21_pattern {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c') (hN : CrossNorm G)
     (h45 : 0 < galeD G.l G.m b b')
@@ -78,10 +77,11 @@ theorem cert_type21_pattern {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' 
     (hT1 : ∀ u : ℝ³, u ≠ 0 → ⟪F.abc.N, u⟫ = 0 → ⟪F.ab'c'.N, u⟫ = 0 →
       T1Gen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L a a' b b' u)
     (hF2 : F2ViewsL (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L a a' b b' c c' d) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
-  -- the switch surface `H⁻_c`: Theorem 16.30
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
+  -- the switch surface `H⁻_c` is a `NoPlaneParallel` position
   by_cases hHc : F.abc.f d = F.abc.f b' ∧ F.ab'c'.f b < F.ab'c'.f c
-  · exact cert_type21_switch F hd G hN hHc.1 hHc.2 hpp hgen
+  · exact absurd hHc.1 (hd.not_switch hpp)
   have hnd' := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd'
@@ -307,7 +307,7 @@ theorem F2Views.toL {V : Finset ℝ³} {a a' b b' c c' d : ℝ³} (h : F2Views V
 
 /-- The special positions of the other classes for one labelling `F` of `K − 2` with the cap
 `d`: those of the two vertex tests of F2 (`F2Views`).  (The switch surface `H⁻_c` of class (c) is
-no longer excluded: Theorem 16.30.) -/
+a `NoPlaneParallel` position.) -/
 def Type21OtherGen (K : Finset ℝ³) (L : ℝ³ → Prop) {a a' b b' c c' : ℝ³}
     (_F : OctFacets a a' b b' c c') (d : ℝ³) : Prop :=
   F2ViewsL K L a a' b b' c c' d
@@ -317,9 +317,9 @@ positions — `NoPlaneParallel` (every tie of a Gale comparison used, and `f ≠
 `K − 6`), `GenPosTie`, no horizontal double normal at the edge views (`NoHDNEdges`), the five planar
 equators of `K − 2` and `K − 6` (`{4, 5, 1, 6}`, `{0, 3, 1, 6}`, `{0, 3, 4, 5}`, `{0, 3, 1, 2}`,
 `{4, 5, 1, 2}`), and, for each of the four labellings `id, σ1, σ2, σ2σ1`, the special positions
-of `T1` (`Type21CapGen`) and of F2 (`Type21OtherGen`) — `K` has a rim certificate (`CertV`): one of the tiers Q (of
-`K − 2` or `K − 6`), H, R, F1, F2 holds, or, on the switch surface, the certificate of
-Theorem 16.30 at the edge `25`.
+of `T1` (`Type21CapGen`) and of F2 (`Type21OtherGen`) — `K` has a rim certificate (`CertV`): one
+of the tiers Q (of `K − 2` or `K − 6`), H, R, F1, F2 holds, at an edge of type 21 (`SegOK21`, with
+the data of tier Q at `06`, `46`, `25`, `23`) or at a vertex crossing satisfying `L`.
 *Proof.* The cap-face class is Theorem 16.13.  Otherwise reflect the Gale diagram so that
 `[3 5] > 0`; the pattern `(s_A, s_B, s_C)` of `K − 2` is not `±(+, +, +)`.  `(+, −, +)` is the
 normal form; `(+, −, −)` is mapped to it by `σ1`.  For the others `K − 6` is used
@@ -341,7 +341,8 @@ theorem cert_type21_all {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c'
       Type21OtherGen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L F.perm₁₂ d ∧
       Type21OtherGen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L hd.O2 c' ∧
       Type21OtherGen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L hd.O2.perm₁₂ c') :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   by_cases hcl : (∃ G : GaleData a a' b b' c c', CapFace G) ∨
       (∃ G : GaleData b' b a' a c d, CapFace G)
   · exact cert_type21_capFace F hd hpp hgen hG hcl
@@ -368,14 +369,17 @@ theorem cert_type21_all {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c'
   have e1 := (type21_set a a' b b' c c' d).2.2.2.2
   -- the core for each labelling
   have coreO : 0 < galeD G.l G.m a' a → 0 < galeD G.l G.m c' c → 0 < galeD G.l G.m b b' →
-      CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := fun s30 s61 s45 =>
+      CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+        (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) :=
+    fun s30 s61 s45 =>
     cert_type21_pattern F hd G ⟨s30, s61, h35⟩ s45 hpp hgen hE4 hE5 g1 v1
   have coreS1 : galeD G.l G.m b' b < 0 → galeD G.l G.m c' c < 0 → galeD G.l G.m a a' < 0 →
-      CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+      CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+        (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
     intro s54 s61 s03
     rw [← e1] at hpp hgen g2 v2 ⊢
-    refine cert_type21_pattern F.perm₁₂ hd.sigma1 G.perm₁₂.flip ⟨?_, ?_, ?_⟩ ?_ hpp hgen
-      hE5 hE4 g2 v2
+    refine (cert_type21_pattern F.perm₁₂ hd.sigma1 G.perm₁₂.flip ⟨?_, ?_, ?_⟩ ?_ hpp hgen
+      hE5 hE4 g2 v2).monoE fun _ _ h => h.sigma1
     · show 0 < galeD G.flip.l G.flip.m b' b
       rw [galeD_flip]; linarith
     · show 0 < galeD G.flip.l G.flip.m c' c
@@ -389,11 +393,13 @@ theorem cert_type21_all {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c'
   have m54 : galeD G2.l G2.m b' b ≠ 0 := galeD_pair_ne_zero hd.O2 G2 hE4
   have m30 : galeD G2.l G2.m a' a ≠ 0 := galeD_pair_ne_zero hd.O2.perm₁₂ G2.perm₁₂ hE5
   have coreS2 : 0 < galeD G2.l G2.m b' b → galeD G2.l G2.m d c < 0 →
-      galeD G2.l G2.m a' a < 0 → CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+      galeD G2.l G2.m a' a < 0 →
+      CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+        (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
     intro t54 t21 t30
     rw [← eO2] at hpp hgen g3 v3 ⊢
-    refine cert_type21_pattern hd.O2 hd.sigma2 G2.flip ⟨?_, ?_, ?_⟩ ?_ hpp hgen
-      hE1 hE2 g3 v3
+    refine (cert_type21_pattern hd.O2 hd.sigma2 G2.flip ⟨?_, ?_, ?_⟩ ?_ hpp hgen
+      hE1 hE2 g3 v3).monoE fun _ _ h => h.sigma2
     · show 0 < galeD G2.flip.l G2.flip.m b b'
       rw [galeD_flip, anti2]; linarith
     · show 0 < galeD G2.flip.l G2.flip.m d c
@@ -403,11 +409,13 @@ theorem cert_type21_all {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c'
     · show 0 < galeD G2.flip.l G2.flip.m a' a
       rw [galeD_flip]; linarith
   have coreS21 : 0 < galeD G2.l G2.m b' b → 0 < galeD G2.l G2.m d c →
-      galeD G2.l G2.m a' a < 0 → CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+      galeD G2.l G2.m a' a < 0 →
+      CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+        (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
     intro t54 t21 t30
     rw [← eO21] at hpp hgen g4 v4 ⊢
-    refine cert_type21_pattern hd.O2.perm₁₂ hd.sigma2.sigma1 G2.perm₁₂ ⟨?_, ?_, ?_⟩ ?_ hpp
-      hgen hE2 hE1 g4 v4
+    refine (cert_type21_pattern hd.O2.perm₁₂ hd.sigma2.sigma1 G2.perm₁₂ ⟨?_, ?_, ?_⟩ ?_ hpp
+      hgen hE2 hE1 g4 v4).monoE fun _ _ h => h.sigma21
     · show 0 < galeD G2.l G2.m a a'
       rw [anti2]; linarith
     · exact t21

@@ -21,8 +21,9 @@ Labels as in `Type21Lemmas.lean`: `a, a', b, b', c, c', d = 0, 3, 4, 5, 1, 6, 2`
      (`cert_type21_F1`);
   5. else `Q` at `23` of `K − 6` (Lemma 16.12, `cert_type21_step5`), on `Σ` and on the
      half `H⁺` of the switch surface;
-  6. on the half `H⁻` of the switch surface (`f₀₁₄(2) = f₀₁₄(5) < f₀₁₄(3)`): Theorem 16.30
-     (`cert_type21_switch`, `Type21Switch.lean`).
+  6. the half `H⁻` of the switch surface (`f₀₁₄(2) = f₀₁₄(5) < f₀₁₄(3)`) is a
+     `NoPlaneParallel` position (`IsCap21.not_switch`: `25` parallel to the plane `014`), so
+     Theorem 16.30 (`cert_type21_switch`, `Type21Switch.lean`) is not needed.
   Special positions: `NoPlaneParallel` (it contains every tie `|[s x]| = |[s y]|` of a Gale
   comparison used: a tie is a segment parallel to a face plane, `facet_tie_det`), `GenPosTie`,
   `NoHDNEdges` (the edge views), and the special positions of `T1` at every direction of the
@@ -55,6 +56,26 @@ theorem facet_tie_det {V : Finset ℝ³} {P Q R : ℝ³} (Fc : FacetFn V P Q R) 
     · exact absurd (hxy ▸ h) hx
   rw [det3_swap23]; rw [this, neg_zero]
 
+/-- **The switch surface is a special position**: `δ_014(2) = δ_014(5)` says that `25` is
+parallel to the plane `014` (`NoPlaneParallel`).  So Theorem 16.30 is not needed by the cover. -/
+theorem IsCap21.not_switch {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c'}
+    (hd : IsCap21 F d) (hpp : NoPlaneParallel (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
+    F.abc.f d ≠ F.abc.f b' := by
+  intro h
+  have hnd := F.nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨haa', hab, hab', hac, hac'⟩, ⟨ha'b, ha'b', ha'c, ha'c'⟩, ⟨hbb', hbc, hbc'⟩,
+    ⟨hb'c, hb'c'⟩, hcc', -⟩ := hnd
+  obtain ⟨hda, hda', hdb, hdb', hdc, hdc'⟩ := hd.ne
+  have hf : F.abc.f b' ≠ 0 := (F.abc.neg b' (by simp) (Ne.symm hab') (Ne.symm hbb') hb'c).ne
+  refine hpp a (by simp) b (by simp) c (by simp) b' (by simp) d (by simp) ?_
+    (facet_tie_det F.abc hf h.symm)
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+    List.nodup_nil, and_true]
+  exact ⟨⟨hab, hac, hab', Ne.symm hda⟩, ⟨hbc, hbb', Ne.symm hdb⟩,
+    ⟨Ne.symm hb'c, Ne.symm hdc⟩, Ne.symm hdb', not_false⟩
+
 /-- **The special positions of `T1`** at a view `u` (the vertex crossing at `0` of `014`,
 `0256`): `P(3)` is off the line `P(5) P(4)`, the ties of the rim `0, 5, 3, 4` are allowed ones
 (`T1Tie`: those of `QuadTie`, or at most one tie and none along `0 − 4` if `0, 4` tie), and the
@@ -67,15 +88,16 @@ def T1Gen (K : Finset ℝ³) (L : ℝ³ → Prop) (a a' b b' u : ℝ³) : Prop :
 the special positions — no segment of `K` parallel to a plane through three other points
 (`NoPlaneParallel`), `GenPosTie`, and the special positions of `T1` at the views along the line
 `014 ∩ 0256` (`T1Gen`: the far side, the ties of `T1Tie`, the views in `L`) — `K` has a rim
-certificate (`CertV`): one of the tiers Q (of `K − 2` or `K − 6`), H, F1 holds, or `K` is on the
-half `H⁻` of the switch surface and Theorem 16.30 applies. -/
+certificate (`CertV`): one of the tiers Q (of `K − 2` or `K − 6`), H, F1 holds (the half `H⁻`
+of the switch surface is excluded by `NoPlaneParallel`). -/
 theorem cert_type21_capFace_norm {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c') (hN : CapNorm G)
     (hpp : NoPlaneParallel (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hT1 : ∀ u : ℝ³, u ≠ 0 → ⟪F.abc.N, u⟫ = 0 → ⟪F.ab'c'.N, u⟫ = 0 →
       T1Gen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L a a' b b' u) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   have hnd' := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd'
@@ -338,7 +360,7 @@ theorem cert_type21_capFace_norm {a a' b b' c c' d : ℝ³} (F : OctFacets a a' 
         (fun σ hσ => (hT1 (σ • u₁) (smul_ne_zero (by rcases hσ with rfl | rfl <;> norm_num) hu0)
           (by rw [real_inner_smul_right, hN014, mul_zero])
           (by rw [real_inner_smul_right, hN056, mul_zero])).2.2) hgen
-    · -- the switch surface `H⁻`: Theorem 16.30
+    · -- the switch surface `H⁻` is a `NoPlaneParallel` position
       have hsw : F.abc.f d = F.abc.f b' := le_antisymm (by push Not at hstrict; exact hstrict) h3
       -- (F1) in facet form: `δ_056(4) < δ_056(1)`
       have r3 := (G.hl.galeD G.hm a').apply F.ab'c'.hN
@@ -350,7 +372,7 @@ theorem cert_type21_capFace_norm {a a' b b' c c' d : ℝ³} (F : OctFacets a a' 
         have e2 : galeD G.l G.m a' b * F.ab'c'.f b < galeD G.l G.m a' b * F.ab'c'.f c := by
           linarith
         exact lt_of_mul_lt_mul_left e2 s34.le
-      exact cert_type21_switch F hd G hN.toCross hsw hF1' hpp hgen
+      exact absurd hsw (hd.not_switch hpp)
 
 /-! ### Theorem 16.13 in general: normalization by `σ1`, `σ2` and the reflection of the Gale
 diagram -/
@@ -362,7 +384,7 @@ def CapFace {a a' b b' c c' : ℝ³} (G : GaleData a a' b b' c c') : Prop :=
 
 /-- The special positions of Theorem 16.13 for one labelling `F` of `K − 2` with the cap `d`:
 those of `T1` at every direction of the line `014 ∩ 0256` (`T1Gen`).  (The half `H⁻` of the
-switch surface is no longer excluded: Theorem 16.30.) -/
+switch surface is a `NoPlaneParallel` position.) -/
 def Type21CapGen (K : Finset ℝ³) (L : ℝ³ → Prop) {a a' b b' c c' : ℝ³}
     (F : OctFacets a a' b b' c c') (_d : ℝ³) : Prop :=
   ∀ u : ℝ³, u ≠ 0 → ⟪F.abc.N, u⟫ = 0 → ⟪F.ab'c'.N, u⟫ = 0 → T1Gen K L a a' b b' u
@@ -375,7 +397,8 @@ theorem cert_type21_capFace_O {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hG₁ : Type21CapGen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L F d)
     (hG₂ : Type21CapGen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L F.perm₁₂ d) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   wlog hpos : 0 < galeD G.l G.m a' a generalizing G with H
   · refine H G.flip ?_ ?_
     · simp only [CapFace, galeD_flip] at hcf ⊢; constructor <;> nlinarith [hcf.1, hcf.2]
@@ -388,8 +411,8 @@ theorem cert_type21_capFace_O {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b
   have hε : galeD G.l G.m a' b' ≠ 0 := galeD_ne_zero F.swap₁.swap₂ G.swap₁.swap₂
   rcases lt_or_gt_of_ne hε with hε | hε
   · rw [← (type21_set a a' b b' c c' d).2.2.2.2] at hpp hgen hG₂ ⊢
-    refine cert_type21_capFace_norm F.perm₁₂ hd.sigma1 G.perm₁₂ ⟨hb, hpos, hc, ?_⟩ hpp hgen
-      hG₂
+    refine (cert_type21_capFace_norm F.perm₁₂ hd.sigma1 G.perm₁₂ ⟨hb, hpos, hc, ?_⟩ hpp hgen
+      hG₂).monoE fun _ _ h => h.sigma1
     show 0 < galeD G.l G.m b' a'
     rw [galeD_anti]; linarith
   · exact cert_type21_capFace_norm F hd G ⟨hpos, hb, hc, hε⟩ hpp hgen hG₁
@@ -398,8 +421,8 @@ theorem cert_type21_capFace_O {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b
 `K − 2` or `K − 6` in its cap-face class.  Off the special positions — `NoPlaneParallel`
 (every tie of a Gale comparison used), `GenPosTie`, no horizontal double normal at the edge views
 (`NoHDNEdges`), and, for each of the four labellings `id, σ1, σ2, σ2σ1`, the special positions
-of `T1` (`Type21CapGen`) — `K` has a rim certificate (`CertV`): one of the tiers Q (`K − 2` or `K − 6`), H, F1 holds,
-or Theorem 16.30 on the switch surface. -/
+of `T1` (`Type21CapGen`) — `K` has a rim certificate (`CertV`): one of the tiers Q (`K − 2` or
+`K − 6`), H, F1 holds. -/
 theorem cert_type21_capFace {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d)
     (hpp : NoPlaneParallel (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
@@ -410,12 +433,13 @@ theorem cert_type21_capFace {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' 
       Type21CapGen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L hd.O2.perm₁₂ c')
     (hclass : (∃ G : GaleData a a' b b' c c', CapFace G) ∨
       (∃ G : GaleData b' b a' a c d, CapFace G)) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   obtain ⟨h1, h2, h3, h4⟩ := hG
   rcases hclass with ⟨G, hcf⟩ | ⟨G, hcf⟩
   · exact cert_type21_capFace_O F hd G hcf hpp hgen h1 h2
   · rw [← type21_set_O2] at hpp hgen h3 h4 ⊢
-    exact cert_type21_capFace_O hd.O2 hd.sigma2 G hcf hpp hgen h3 h4
+    exact (cert_type21_capFace_O hd.O2 hd.sigma2 G hcf hpp hgen h3 h4).monoE fun _ _ h => h.sigma2
 
 end Minimality
 

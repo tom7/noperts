@@ -244,13 +244,21 @@ theorem det3_lemmaE_swap (a b c X : ℝ³) :
     det3 (c - a) (b - a) (X - a) = -det3 (b - a) (c - a) (X - a) := by
   simp only [det3_expand, PiLp.sub_apply]; ring
 
+/-- **The approximants' facts of an edge pair** (`ePair_facts` with Lemma E): every point weakly
+left of the four sides of `v a c b` at `w − v`, in the cylinder over it, one of `K_v`, `K_w`
+without a weak saddle, and Lemma E (weakly). -/
+abbrev EPairFacts (V : Finset ℝ³) (v w a b c : ℝ³) : Prop :=
+  ((∀ z ∈ V, 0 ≤ det3 (a - v) (z - v) (w - v) ∧ 0 ≤ det3 (c - a) (z - a) (w - v) ∧
+      0 ≤ det3 (b - c) (z - c) (w - v) ∧ 0 ≤ det3 (v - b) (z - b) (w - v)) ∧
+    (∀ z ∈ V, SuppIn (w - v) (quad v a c b) z) ∧
+    (NWS4 (quad ⟪v, w - v⟫ ⟪a, w - v⟫ ⟪c, w - v⟫ ⟪b, w - v⟫) ∨
+      NWS4 (quad ⟪w, w - v⟫ ⟪a, w - v⟫ ⟪c, w - v⟫ ⟪b, w - v⟫))) ∧
+  det3 (b - a) (c - a) (v - a) * det3 (b - a) (c - a) (w - a) ≤ 0
+
 set_option maxHeartbeats 1000000 in
-/-- **An edge pair at the limit** (Lemma 18.2 with §22).  The shapes `K_k → x` carry one
-labelled edge pair of Lemma E (counterclockwise at `w − v`); the faces of `x` at the axle are
-`S_a ∋ v, w, a` and `S_b ∋ v, w, b` (facets, at most one middle each); at the view `w − v` the
-conditions of §22.4 hold (`EdgeGen`), and `v`, `w` lie off the plane of `a b c`.  Then `x` is
-Rupert. -/
-theorem isRupert_ePair_limit {n : ℕ} (x : Fin n → ℝ³) (hx : Function.Injective x)
+/-- **An edge pair at the limit, from the approximants' facts** (`isRupert_ePair_limit` with
+`EPairFacts` in place of `EPairData`). -/
+theorem isRupert_ePair_limit_facts {n : ℕ} (x : Fin n → ℝ³) (hx : Function.Injective x)
     (hseg : ∀ i j m : Fin n, x m ≠ x i → x m ≠ x j → ∀ s : ℝ, 0 < s → s < 1 →
       x m ≠ x i + s • (x j - x i))
     {v w a b c : Fin n} (hvw : v ≠ w) {Sa Sb : Finset (Fin n)} {Na Nb : ℝ³} {κa κb : ℝ}
@@ -261,8 +269,8 @@ theorem isRupert_ePair_limit {n : ℕ} (x : Fin n → ℝ³) (hx : Function.Inje
     (hSb : v ∈ Sb ∧ w ∈ Sb ∧ b ∈ Sb ∧ a ∉ Sb ∧ c ∉ Sb ∧ ∀ i ∈ Sb, ∀ j ∈ Sb,
       i ≠ v → i ≠ w → i ≠ b → j ≠ v → j ≠ w → j ≠ b → i = j)
     (K : ℕ → Fin n → ℝ³) (hK : ∀ m, Tendsto (fun k => K k m) atTop (𝓝 (x m)))
-    (hfreq : ∃ᶠ k in atTop,
-      EPairData (univ.image (K k)) 1 (K k v) (K k w) (K k a) (K k b) (K k c))
+    (hfacts : ∃ᶠ k in atTop,
+      EPairFacts (univ.image (K k)) (K k v) (K k w) (K k a) (K k b) (K k c))
     (hgen : EdgeGen (univ.image x) (x w - x v) (x v) (x w) (Sa.image x) (Sb.image x) Na Nb)
     (hcop : det3 (x b - x a) (x c - x a) (x v - x a) ≠ 0 ∧
       det3 (x b - x a) (x c - x a) (x w - x a) ≠ 0) :
@@ -276,20 +284,6 @@ theorem isRupert_ePair_limit {n : ℕ} (x : Fin n → ℝ³) (hx : Function.Inje
   set u := x w - x v with hudef
   have hu : u ≠ 0 := sub_ne_zero.mpr (hx.ne hvw.symm)
   -- the approximants' facts and their limits
-  have hfacts : ∃ᶠ k in atTop,
-      ((∀ z ∈ univ.image (K k), 0 ≤ det3 (K k a - K k v) (z - K k v) (K k w - K k v) ∧
-        0 ≤ det3 (K k c - K k a) (z - K k a) (K k w - K k v) ∧
-        0 ≤ det3 (K k b - K k c) (z - K k c) (K k w - K k v) ∧
-        0 ≤ det3 (K k v - K k b) (z - K k b) (K k w - K k v)) ∧
-      (∀ z ∈ univ.image (K k), SuppIn (K k w - K k v) (quad (K k v) (K k a) (K k c) (K k b)) z) ∧
-      (NWS4 (quad ⟪K k v, K k w - K k v⟫ ⟪K k a, K k w - K k v⟫ ⟪K k c, K k w - K k v⟫
-          ⟪K k b, K k w - K k v⟫) ∨
-        NWS4 (quad ⟪K k w, K k w - K k v⟫ ⟪K k a, K k w - K k v⟫ ⟪K k c, K k w - K k v⟫
-          ⟪K k b, K k w - K k v⟫))) ∧
-      det3 (K k b - K k a) (K k c - K k a) (K k v - K k a) *
-        det3 (K k b - K k a) (K k c - K k a) (K k w - K k a) ≤ 0 :=
-    hfreq.mono fun k hk => ⟨ePair_facts hk (memK k v) (memK k w) (memK k a)
-      (memK k b) (memK k c), hk.2.2.2.2.2.1⟩
   have hus : Tendsto (fun k => K k w - K k v) atTop (𝓝 u) := (hK w).sub (hK v)
   have lim0 : ∀ {f : ℕ → ℝ} {L : ℝ}, Tendsto f atTop (𝓝 L) → (∃ᶠ k in atTop, 0 ≤ f k) →
       0 ≤ L := fun hf hfr => le_of_tendsto_frequently tendsto_const_nhds hf hfr
@@ -515,8 +509,34 @@ theorem isRupert_ePair_limit {n : ℕ} (x : Fin n → ℝ³) (hx : Function.Inje
     rw [quad_inner']
     exact hz.isRobustUnimodal
 
-/-! ### Triangle closings (two realizing circles) -/
+/-- **An edge pair at the limit** (Lemma 18.2 with §22).  The shapes `K_k → x` carry one
+labelled edge pair of Lemma E (counterclockwise at `w − v`); the faces of `x` at the axle are
+`S_a ∋ v, w, a` and `S_b ∋ v, w, b` (facets, at most one middle each); at the view `w − v` the
+conditions of §22.4 hold (`EdgeGen`), and `v`, `w` lie off the plane of `a b c`.  Then `x` is
+Rupert. -/
+theorem isRupert_ePair_limit {n : ℕ} (x : Fin n → ℝ³) (hx : Function.Injective x)
+    (hseg : ∀ i j m : Fin n, x m ≠ x i → x m ≠ x j → ∀ s : ℝ, 0 < s → s < 1 →
+      x m ≠ x i + s • (x j - x i))
+    {v w a b c : Fin n} (hvw : v ≠ w) {Sa Sb : Finset (Fin n)} {Na Nb : ℝ³} {κa κb : ℝ}
+    (hfa : ∀ i, (i ∈ Sa → ⟪Na, x i⟫ = κa) ∧ (i ∉ Sa → ⟪Na, x i⟫ < κa))
+    (hfb : ∀ i, (i ∈ Sb → ⟪Nb, x i⟫ = κb) ∧ (i ∉ Sb → ⟪Nb, x i⟫ < κb))
+    (hSa : v ∈ Sa ∧ w ∈ Sa ∧ a ∈ Sa ∧ b ∉ Sa ∧ c ∉ Sa ∧ ∀ i ∈ Sa, ∀ j ∈ Sa,
+      i ≠ v → i ≠ w → i ≠ a → j ≠ v → j ≠ w → j ≠ a → i = j)
+    (hSb : v ∈ Sb ∧ w ∈ Sb ∧ b ∈ Sb ∧ a ∉ Sb ∧ c ∉ Sb ∧ ∀ i ∈ Sb, ∀ j ∈ Sb,
+      i ≠ v → i ≠ w → i ≠ b → j ≠ v → j ≠ w → j ≠ b → i = j)
+    (K : ℕ → Fin n → ℝ³) (hK : ∀ m, Tendsto (fun k => K k m) atTop (𝓝 (x m)))
+    (hfreq : ∃ᶠ k in atTop,
+      EPairData (univ.image (K k)) 1 (K k v) (K k w) (K k a) (K k b) (K k c))
+    (hgen : EdgeGen (univ.image x) (x w - x v) (x v) (x w) (Sa.image x) (Sb.image x) Na Nb)
+    (hcop : det3 (x b - x a) (x c - x a) (x v - x a) ≠ 0 ∧
+      det3 (x b - x a) (x c - x a) (x w - x a) ≠ 0) :
+    IsRupert (univ.image x) := by
+  have memK : ∀ k i, K k i ∈ univ.image (K k) := fun k i => mem_image_of_mem _ (mem_univ i)
+  exact isRupert_ePair_limit_facts x hx hseg hvw hfa hfb hSa hSb K hK
+    (hfreq.mono fun k hk => ⟨ePair_facts hk (memK k v) (memK k w) (memK k a) (memK k b)
+      (memK k c), hk.2.2.2.2.2.1⟩) hgen hcop
 
+/-! ### Triangle closings (two realizing circles) -/
 /-- A triangle closing in the clockwise orientation is the closing with `a`, `b` exchanged. -/
 theorem ETriData.flip {V : Finset ℝ³} {v w a b : ℝ³} (h : ETriData V (-1) v w a b) :
     ETriData V 1 v w b a := by

@@ -204,7 +204,8 @@ theorem cert_type21_ridge_quad {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b 
     (hcase : 0 < det3 (B - A) (c - A) (d - c') * det3 (B - A) (c' - A) (d - c') ∨
       (det3 (B - A) (c - A) (d - c') * det3 (B - A) (c' - A) (d - c') < 0 ∧
         det3 (B - A) (c - A) (c' - A) * det3 (B - A) (c - A) (d - A) ≤ 0)) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   have hnd' := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd'
@@ -254,7 +255,10 @@ theorem cert_type21_ridge_quad {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b 
     exacts [Ne.symm ha'b', Ne.symm hbb', haa', hab]
   have htri := hgen.noTriple hKc' hKd hKc' hAK hBK (Ne.symm hdc') (Ne.symm Ac') AB (Ne.symm Bc')
   have h3 := hgen.noTriple hKc' hKd hAK hKc hBK (Ne.symm hdc') Ac (Ne.symm Bc) AB
-  refine CertV.seg hKc' hKd (Ne.symm hdc') (rimCert_ridge K F.ab'c'.hN F.a'bc'.hN F.ab'c'.hR
+  refine CertV.seg hKc' hKd (Ne.symm hdc')
+    (SegOK21.of_edge (by simp [Edge21, SPair]) (by spair_ne) (by spair_ne) (by spair_ne)
+      (by spair_ne))
+    (rimCert_ridge K F.ab'c'.hN F.a'bc'.hN F.ab'c'.hR
     hd.ab'c' fAA fAB fAC F.a'bc'.hR hd.a'bc' fBB fBA fBC hT hKc' hKd hAK hBK hKc (fun z hz => ?_)
     hcase htri h3)
   simp only [hK, Finset.mem_insert, Finset.mem_singleton] at hz
@@ -323,7 +327,8 @@ theorem cert_type21_R {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d)
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hR : Type21R F d) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   obtain ⟨hα, hβ, hαβ, hco⟩ := hd.coords
   obtain ⟨hα', hβ', hαβ', hco'⟩ := hd.sigma1.coords
   change 0 < F.abc'.f d / F.abc'.f a' at hα'

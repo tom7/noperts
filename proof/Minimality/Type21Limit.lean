@@ -28,7 +28,9 @@ double normal.
 * The named views (`view21`: the segments and the eight vertex crossings `vtx21`, nonzero for every
   type-21 shape: `Facets21.vtxView21_ne_zero`), ties at them (`TieInst21`, `SameTie21`,
   `OneTie21`); ties across views (`noTieAt_seg_of_tie`, `noTieAt_or`).
-* `cert21_of_generic`: the cover at a generic normal-form shape whose ties are those of `K`.
+* `cert21_of_generic`: the cover at a generic normal-form shape whose ties are those of `K`, with
+  the views of its certificates (`UsedV21`: the thirteen edges and the vertex crossings) and the
+  data of tier Q at `06`, `46`, `25`, `23` (`CertX21`, `CertQ21`, `QE21`).
 * **`isRupert_type21_limit`**, `isRupert_type21_limit_facets`: a type-21 shape with at most one
   tie at its named views and no horizontal double normal at them is Rupert.
 -/
@@ -173,7 +175,7 @@ theorem isRupert_type21_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     ⟨hT1.1.toL, hT1.2.1.toL, hT1.2.2.1.toL, hT1.2.2.2.toL⟩
     ⟨hF2.1.toL, hF2.2.1.toL, hF2.2.2.1.toL, hF2.2.2.2.toL⟩
   refine isRupert_of_rimCert x T.noSeg ⟨2, 0, 3, 6, T.det_ne⟩ ?_ hcert
-  rcases hu with h | ⟨v, hv, w, hw, hvw, rfl⟩
+  rcases hu with h | ⟨v, hv, w, hw, hvw, -, rfl⟩
   · exact h
   · exact noHDNAt_of_erase hvw (hnd v hv w hw hvw)
       (by simpa only [neg_sub] using (hnd w hw v hv (Ne.symm hvw)).neg)
@@ -858,14 +860,45 @@ end Generic
 
 /-! ### Certificates at named views and their limits -/
 
-/-- `u` is a nonzero multiple of a named view. -/
-def Named21 (x : Fin 7 → ℝ³) (u : ℝ³) : Prop :=
-  ∃ v : (Fin 7 × Fin 7) ⊕ Fin 8, ∃ c : ℝ, c ≠ 0 ∧ u = c • view21 x v
+/-- **The thirteen edges of type 21** as label pairs: `01, 04, 14, 05, 15, 26, 06, 25, 46, 13, 34,
+35, 23` (`Edge21` in the labels of the cap). -/
+def edgeSet21 : Finset (Finset (Fin 7)) :=
+  {{0, 1}, {0, 4}, {1, 4}, {0, 5}, {1, 5}, {2, 6}, {0, 6}, {2, 5}, {4, 6}, {1, 3}, {3, 4}, {3, 5},
+    {2, 3}}
+
+/-- **The views used by the certificates of the cover**: the segments along the thirteen edges and
+the eight vertex crossings.  The non-edge segments `02, 03, 12, 16, 24, 36, 45, 56` are not used. -/
+def UsedV21 : (Fin 7 × Fin 7) ⊕ Fin 8 → Prop
+  | .inl (i, j) => ({i, j} : Finset (Fin 7)) ∈ edgeSet21
+  | .inr _ => True
+
+/-- `u` is a nonzero multiple of a named view satisfying `P`. -/
+def NamedP21 (P : (Fin 7 × Fin 7) ⊕ Fin 8 → Prop) (x : Fin 7 → ℝ³) (u : ℝ³) : Prop :=
+  ∃ v : (Fin 7 × Fin 7) ⊕ Fin 8, P v ∧ ∃ c : ℝ, c ≠ 0 ∧ u = c • view21 x v
+
+/-- `u` is a nonzero multiple of a named view used by the cover. -/
+abbrev Named21 (x : Fin 7 → ℝ³) (u : ℝ³) : Prop := NamedP21 UsedV21 x u
+
+/-- **The edges of the cap labelling are the thirteen edges.** -/
+theorem edge21_labels {x : Fin 7 → ℝ³} (hx : Function.Injective x) {i j : Fin 7}
+    (h : Edge21 (x 0) (x 3) (x 4) (x 5) (x 1) (x 6) (x 2) (x i) (x j)) :
+    ({i, j} : Finset (Fin 7)) ∈ edgeSet21 := by
+  unfold Edge21 SPair at h
+  rcases h with (⟨h1, h2⟩ | ⟨h1, h2⟩) | (⟨h1, h2⟩ | ⟨h1, h2⟩) | (⟨h1, h2⟩ | ⟨h1, h2⟩) |
+      (⟨h1, h2⟩ | ⟨h1, h2⟩) | (⟨h1, h2⟩ | ⟨h1, h2⟩) | (⟨h1, h2⟩ | ⟨h1, h2⟩) |
+      (⟨h1, h2⟩ | ⟨h1, h2⟩) | (⟨h1, h2⟩ | ⟨h1, h2⟩) | (⟨h1, h2⟩ | ⟨h1, h2⟩) |
+      (⟨h1, h2⟩ | ⟨h1, h2⟩) | (⟨h1, h2⟩ | ⟨h1, h2⟩) | (⟨h1, h2⟩ | ⟨h1, h2⟩) |
+      (⟨h1, h2⟩ | ⟨h1, h2⟩) <;>
+    · rw [hx h1, hx h2]; decide
+
+/-- A rim certificate (3, 4 or 5 corners) at a named view satisfying `P`. -/
+def CertP21 (P : (Fin 7 × Fin 7) ⊕ Fin 8 → Prop) (x : Fin 7 → ℝ³) : Prop :=
+  ∃ u, NamedP21 P x u ∧ RimCert (univ.image x) u
 
 /-- **A type-21 certificate**: a rim certificate (3, 4 or 5 corners) at a named view.  The tier
 cover ends in one; with no horizontal double normal at its view it
 makes the shape Rupert, and it passes to limits (`isRupert_of_tendsto_rimCert`). -/
-def Cert21 (x : Fin 7 → ℝ³) : Prop := ∃ u, Named21 x u ∧ RimCert (univ.image x) u
+abbrev Cert21 (x : Fin 7 → ℝ³) : Prop := CertP21 UsedV21 x
 
 /-- A labelled certificate at a named view, with 3, 4 or 5 corners. -/
 def CertL21 (y : Fin 7 → ℝ³) (v : (Fin 7 × Fin 7) ⊕ Fin 8) (ε : Bool) :
@@ -875,9 +908,9 @@ def CertL21 (y : Fin 7 → ℝ³) (v : (Fin 7 × Fin 7) ⊕ Fin 8) (ε : Bool) :
       (fun lab => RimCertAt y (sgnB ε • view21 y v) lab))
 
 /-- **Normalizing a certificate**: labels, a named view and a sign. -/
-theorem Cert21.exists_certL {y : Fin 7 → ℝ³} (h : Cert21 y) :
-    ∃ v ε L, CertL21 y v ε L := by
-  obtain ⟨u, ⟨v, c, hc0, rfl⟩, k, hk, z, hz⟩ := h
+theorem CertP21.exists_certL {P : (Fin 7 × Fin 7) ⊕ Fin 8 → Prop} {y : Fin 7 → ℝ³}
+    (h : CertP21 P y) : ∃ v ε L, P v ∧ CertL21 y v ε L := by
+  obtain ⟨u, ⟨v, hv, c, hc0, rfl⟩, k, hk, z, hz⟩ := h
   have hpos : 0 < |c|⁻¹ := inv_pos.mpr (abs_pos.mpr hc0)
   have hz' := hz.smul hpos
   rw [smul_smul] at hz'
@@ -890,15 +923,17 @@ theorem Cert21.exists_certL {y : Fin 7 → ℝ³} (h : Cert21 y) :
   obtain ⟨lab, -, hat⟩ := hz'.toAt
   refine ⟨v, decide (0 < c), ?_⟩
   rcases hk with rfl | rfl | rfl
-  · exact ⟨Sum.inl lab, hat⟩
-  · exact ⟨Sum.inr (Sum.inl lab), hat⟩
-  · exact ⟨Sum.inr (Sum.inr lab), hat⟩
+  · exact ⟨Sum.inl lab, hv, hat⟩
+  · exact ⟨Sum.inr (Sum.inl lab), hv, hat⟩
+  · exact ⟨Sum.inr (Sum.inr lab), hv, hat⟩
 
 /-- **Lemma 18.2 for one labelled certificate along a sequence of type-21 shapes.** -/
 theorem isRupert_of_certL_seq21 {x : Fin 7 → ℝ³} (T : Facets21 x)
-    (hnd : ∀ v, view21 x v ≠ 0 → NoHDNAt (univ.image x) (view21 x v))
+    {P : (Fin 7 × Fin 7) ⊕ Fin 8 → Prop}
+    (hnd : ∀ v, P v → view21 x v ≠ 0 → NoHDNAt (univ.image x) (view21 x v))
     (K : ℕ → Fin 7 → ℝ³) (hK : ∀ m, Tendsto (fun n => K n m) atTop (𝓝 (x m)))
-    {k : ℕ} [NeZero k] (v : (Fin 7 × Fin 7) ⊕ Fin 8) (ε : Bool) (lab : ZMod k → Fin 7)
+    {k : ℕ} [NeZero k] (v : (Fin 7 × Fin 7) ⊕ Fin 8) (hu : P v) (ε : Bool)
+    (lab : ZMod k → Fin 7)
     (hc : ∃ᶠ n in atTop, RimCertAt (K n) (sgnB ε • view21 (K n) v) lab ∧
       ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0) :
     IsRupert (univ.image x) := by
@@ -910,7 +945,7 @@ theorem isRupert_of_certL_seq21 {x : Fin 7 → ℝ³} (T : Facets21 x)
   have hv0 := T.view21_ne_zero v hv
   have hs := sgnB_ne_zero ε
   refine isRupert_of_tendsto_rimCert x T.noSeg ⟨2, 0, 3, 6, T.det_ne⟩ lab (smul_ne_zero hs hv0)
-    ((hnd v hv0).smul_view hs) K (fun n => sgnB ε • view21 (K n) v) hK
+    ((hnd v hu hv0).smul_view hs) K (fun n => sgnB ε • view21 (K n) v) hK
     ((tendsto_view21 hK v).const_smul _) (hc.mono fun n hn => ⟨hn.1, fun i j e => ?_⟩)
   by_cases hij : lab i = lab j
   · rw [hij]
@@ -923,23 +958,27 @@ theorem isRupert_of_certL_seq21 {x : Fin 7 → ℝ³} (T : Facets21 x)
 /-- **A frequent certificate along a sequence of type-21 shapes** (Lemma 18.2 with the finitely
 many labelled certificates): a subsequence carries one labelled certificate. -/
 theorem isRupert_of_cert_seq21 {x : Fin 7 → ℝ³} (T : Facets21 x)
-    (hnd : ∀ v, view21 x v ≠ 0 → NoHDNAt (univ.image x) (view21 x v))
+    {P : (Fin 7 × Fin 7) ⊕ Fin 8 → Prop}
+    (hnd : ∀ v, P v → view21 x v ≠ 0 → NoHDNAt (univ.image x) (view21 x v))
     (K : ℕ → Fin 7 → ℝ³) (hK : ∀ m, Tendsto (fun n => K n m) atTop (𝓝 (x m)))
-    (hc : ∃ᶠ n in atTop, Cert21 (K n) ∧
+    (hc : ∃ᶠ n in atTop, CertP21 P (K n) ∧
       ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0) :
     IsRupert (univ.image x) := by
   have h : ∃ᶠ n in atTop, ∃ q : ((Fin 7 × Fin 7) ⊕ Fin 8) × Bool ×
       ((ZMod 3 → Fin 7) ⊕ (ZMod 4 → Fin 7) ⊕ (ZMod 5 → Fin 7)),
-      CertL21 (K n) q.1 q.2.1 q.2.2 ∧
+      P q.1 ∧ CertL21 (K n) q.1 q.2.1 q.2.2 ∧
         ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0 :=
     hc.mono fun n hn => by
-      obtain ⟨v, ε, L, hL⟩ := hn.1.exists_certL
-      exact ⟨(v, ε, L), hL, hn.2⟩
+      obtain ⟨v, ε, L, hv, hL⟩ := CertP21.exists_certL hn.1
+      exact ⟨(v, ε, L), hv, hL, hn.2⟩
   obtain ⟨⟨v, ε, L⟩, hq⟩ := frequently_exists_of_finite h
+  obtain ⟨n₀, hn₀⟩ := hq.exists
+  have hu := hn₀.1
+  replace hq := hq.mono fun n hn => hn.2
   rcases L with lab | lab | lab
-  · exact isRupert_of_certL_seq21 T hnd K hK v ε lab hq
-  · exact isRupert_of_certL_seq21 T hnd K hK v ε lab hq
-  · exact isRupert_of_certL_seq21 T hnd K hK v ε lab hq
+  · exact isRupert_of_certL_seq21 T hnd K hK v hu ε lab hq
+  · exact isRupert_of_certL_seq21 T hnd K hK v hu ε lab hq
+  · exact isRupert_of_certL_seq21 T hnd K hK v hu ε lab hq
 
 /-! ### The cover at a generic normal-form shape -/
 
@@ -947,15 +986,101 @@ theorem isRupert_of_cert_seq21 {x : Fin 7 → ℝ³} (T : Facets21 x)
 def NamedVtx21 (y : Fin 7 → ℝ³) (u : ℝ³) : Prop :=
   ∃ t : Fin 8, ∃ c : ℝ, c ≠ 0 ∧ u = c • vtxView21 y t
 
-theorem Cert21.of_certV {y : Fin 7 → ℝ³} (h : CertV (univ.image y) (NamedVtx21 y)) :
-    Cert21 y := by
+theorem pair_eq_pair21 {a b i j : Fin 7} (h : ({i, j} : Finset (Fin 7)) = {a, b}) :
+    (i = a ∧ j = b) ∨ (i = b ∧ j = a) := by
+  have h' := congrArg (fun s : Finset (Fin 7) => (s : Set (Fin 7))) h
+  simp only [Finset.coe_insert, Finset.coe_singleton] at h'
+  exact Set.pair_eq_pair_iff.mp h'
+
+/-- The four edges of tier Q's data (`06` and its images `46`, `25`, `23` under `σ1`, `σ2`,
+`σ2σ1`). -/
+def qEdgeSet21 : Finset (Finset (Fin 7)) := {{0, 6}, {4, 6}, {2, 5}, {2, 3}}
+
+/-- **The views of the certificates without data**: the edges other than the four of
+`qEdgeSet21`, and the eight vertex crossings. -/
+def UsedX21 : (Fin 7 × Fin 7) ⊕ Fin 8 → Prop
+  | .inl (i, j) => ({i, j} : Finset (Fin 7)) ∈ edgeSet21 ∧ ({i, j} : Finset (Fin 7)) ∉ qEdgeSet21
+  | .inr _ => True
+
+theorem UsedX21.used {v : (Fin 7 × Fin 7) ⊕ Fin 8} (h : UsedX21 v) : UsedV21 v := by
+  rcases v with ⟨i, j⟩ | t
+  · exact h.1
+  · trivial
+
+/-- **Tier Q's data at the edge `P C'`** in labels (`QEdge21` in both directions). -/
+def QE21 (y : Fin 7 → ℝ³) (P P' R R' D C' : Fin 7) : Prop :=
+  QEdge21 (univ.image y) (y P) (y P') (y R) (y R') (y 1) (y D) (y C') (y P) (y C') ∨
+    QEdge21 (univ.image y) (y P) (y P') (y R) (y R') (y 1) (y D) (y C') (y C') (y P)
+
+/-- **The certificates of tier Q at `06`, `46`, `25`, `23`, with their data.** -/
+def CertQ21 (y : Fin 7 → ℝ³) : Prop :=
+  QE21 y 0 3 4 5 2 6 ∨ QE21 y 4 5 0 3 2 6 ∨ QE21 y 5 4 3 0 6 2 ∨ QE21 y 3 0 5 4 6 2
+
+/-- **A type-21 certificate with data**: a rim certificate at a view of `UsedX21`, or a
+certificate of tier Q at `06`, `46`, `25`, `23` with its data (`CertQ21`). -/
+def CertX21 (y : Fin 7 → ℝ³) : Prop := CertP21 UsedX21 y ∨ CertQ21 y
+
+theorem QEdge21.rimCert {K : Finset ℝ³} {P P' R R' c D C' v w : ℝ³}
+    (h : QEdge21 K P P' R R' c D C' v w) : RimCert K (w - v) := by
+  have qa : ∀ {a b c' : ℝ³}, QAData K v w a b c' → RimCert K (w - v) := fun h' => by
+    rcases h'.1 with h'' | h''
+    exacts [h''.2.rimCert4, h''.2.rimCert4]
+  rcases h with ⟨-, -, h | h⟩ | ⟨-, -, h | h | h | h⟩
+  exacts [qa h, qa h, qa h, qa h, h.rimCert4, h.rimCert4]
+
+theorem QE21.cert21 {y : Fin 7 → ℝ³} {P P' R R' D C' : Fin 7} (h : QE21 y P P' R R' D C')
+    (he : ({P, C'} : Finset (Fin 7)) ∈ edgeSet21) : Cert21 y := by
+  rcases h with h | h
+  · exact ⟨_, ⟨.inl (P, C'), he, 1, one_ne_zero, (one_smul _ _).symm⟩, h.rimCert⟩
+  · refine ⟨_, ⟨.inl (C', P), ?_, 1, one_ne_zero, (one_smul _ _).symm⟩, h.rimCert⟩
+    show ({C', P} : Finset (Fin 7)) ∈ edgeSet21
+    rwa [Finset.pair_comm]
+
+/-- Every certificate with data is a certificate at a named view. -/
+theorem CertX21.toCert21 {y : Fin 7 → ℝ³} (h : CertX21 y) : Cert21 y := by
+  rcases h with ⟨u, ⟨v, hv, c, hc, rfl⟩, hr⟩ | h
+  · exact ⟨_, ⟨v, hv.used, c, hc, rfl⟩, hr⟩
+  · rcases h with h | h | h | h
+    exacts [h.cert21 (by decide), h.cert21 (by decide), h.cert21 (by decide),
+      h.cert21 (by decide)]
+
+theorem Cert21.of_certV {y : Fin 7 → ℝ³} (hy : Function.Injective y)
+    (h : CertV (univ.image y) (NamedVtx21 y)
+      (SegOK21 (univ.image y) (y 0) (y 3) (y 4) (y 5) (y 1) (y 6) (y 2))) :
+    CertX21 y := by
   obtain ⟨u, hu, hc⟩ := h
-  refine ⟨u, ?_, hc⟩
-  rcases hu with ⟨t, c, hc0, rfl⟩ | ⟨v, hv, w, hw, -, rfl⟩
-  · exact ⟨.inr t, c, hc0, rfl⟩
-  · obtain ⟨i, -, rfl⟩ := mem_image.mp hv
-    obtain ⟨j, -, rfl⟩ := mem_image.mp hw
-    exact ⟨.inl (i, j), 1, one_ne_zero, (one_smul _ _).symm⟩
+  rcases hu with ⟨t, c, hc0, rfl⟩ | ⟨v, hv, w, hw, -, he, rfl⟩
+  · exact Or.inl ⟨_, ⟨.inr t, trivial, c, hc0, rfl⟩, hc⟩
+  obtain ⟨i, -, rfl⟩ := mem_image.mp hv
+  obtain ⟨j, -, rfl⟩ := mem_image.mp hw
+  have hE := edge21_labels hy he.1
+  by_cases hq : ({i, j} : Finset (Fin 7)) ∈ qEdgeSet21
+  · right
+    have sp : ∀ {p q : Fin 7}, ((i = p ∧ j = q) ∨ (i = q ∧ j = p)) →
+        SPair (y i) (y j) (y p) (y q) := by
+      rintro p q (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
+      exacts [Or.inl ⟨rfl, rfl⟩, Or.inr ⟨rfl, rfl⟩]
+    have hij : ∀ {p q : Fin 7}, ((i = p ∧ j = q) ∨ (i = q ∧ j = p)) → ∀ {Q : Fin 7 → Fin 7 → Prop},
+        Q p q → Q q p → Q i j := by
+      rintro p q (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩) Q h1 h2
+      exacts [h1, h2]
+    simp only [qEdgeSet21, Finset.mem_insert, Finset.mem_singleton] at hq
+    rcases hq with hq | hq | hq | hq <;> have hp := pair_eq_pair21 hq
+    · have := he.2.1 (sp hp)
+      exact Or.inl (hij hp (Q := fun i j => QEdge21 (univ.image y) (y 0) (y 3) (y 4) (y 5) (y 1)
+        (y 2) (y 6) (y i) (y j) → QE21 y 0 3 4 5 2 6) Or.inl Or.inr this)
+    · have := he.2.2.1 (sp hp)
+      exact Or.inr (Or.inl (hij hp (Q := fun i j => QEdge21 (univ.image y) (y 4) (y 5) (y 0) (y 3)
+        (y 1) (y 2) (y 6) (y i) (y j) → QE21 y 4 5 0 3 2 6) Or.inl Or.inr this))
+    · have := he.2.2.2.1 (sp hp.symm)
+      exact Or.inr (Or.inr (Or.inl (hij hp.symm
+        (Q := fun i j => QEdge21 (univ.image y) (y 5) (y 4) (y 3) (y 0) (y 1) (y 6) (y 2) (y i)
+          (y j) → QE21 y 5 4 3 0 6 2) Or.inl Or.inr this)))
+    · have := he.2.2.2.2 (sp hp.symm)
+      exact Or.inr (Or.inr (Or.inr (hij hp.symm
+        (Q := fun i j => QEdge21 (univ.image y) (y 3) (y 0) (y 5) (y 4) (y 1) (y 6) (y 2) (y i)
+          (y j) → QE21 y 3 0 5 4 6 2) Or.inl Or.inr this)))
+  · exact Or.inl ⟨_, ⟨.inl (i, j), ⟨hE, hq⟩, 1, one_ne_zero, (one_smul _ _).symm⟩, hc⟩
 
 /-- **One vertex test at a generic shape**: a direction of the test's line (given by the two
 planes in the labels of `vtx21`) is a nonzero multiple of the named view, and the far-side test
@@ -1080,7 +1205,7 @@ theorem cert21_of_generic {o E₁ E₂ E₃ : ℝ³} {θ : Fin 7 → ℝ} {y : F
       (NoTieAt (univ.image y) (vtxView21 y 0) ∨ NoTieAt (univ.image y) (vtxView21 y 5)) ∧
       (NoTieAt (univ.image y) (vtxView21 y 3) ∨ NoTieAt (univ.image y) (vtxView21 y 6)) ∧
       (NoTieAt (univ.image y) (vtxView21 y 2) ∨ NoTieAt (univ.image y) (vtxView21 y 7))) :
-    Cert21 y := by
+    CertX21 y := by
   subst hy
   have hfac : ∀ f i, (i ∈ facS f → fac21 κ (nfShape21 o E₁ E₂ E₃ θ) f (nfShape21 o E₁ E₂ E₃ θ i) =
       0) ∧
@@ -1112,7 +1237,8 @@ theorem cert21_of_generic {o E₁ E₂ E₃ : ℝ³} {θ : Fin 7 → ℝ} {y : F
       nfShape21_eq hD hg 4
   have sgn : ∀ {A B : ℝ}, A = -B → B ≠ 0 → A ≠ 0 := fun h hB => by rw [h]; exact neg_ne_zero.mpr hB
   have sgn' : ∀ {A B : ℝ}, A = B → B ≠ 0 → A ≠ 0 := fun h hB => by rw [h]; exact hB
-  refine Cert21.of_certV (cert_type21_facets (L := NamedVtx21 (nfShape21 o E₁ E₂ E₃ θ)) (nfShape21
+  refine Cert21.of_certV (nfShape21_inj hD hg)
+    (cert_type21_facets (L := NamedVtx21 (nfShape21 o E₁ E₂ E₃ θ)) (nfShape21
       o E₁ E₂ E₃ θ) (nfShape21_inj hD hg)
     (fac21 κ _ 0) (fac21 κ _ 1) (fac21 κ _ 2) (fac21 κ _ 3) (fac21 κ _ 4) (fac21 κ _ 5)
     (fac21 κ _ 6) (fac21 κ _ 7) (hfac 0) (hfac 1) (hfac 2) (hfac 3) (hfac 4) (hfac 5) (hfac 6)
@@ -1360,7 +1486,7 @@ with the tie of `x`.  No general position, no sign condition or Gale equality of
 (G1), no planar equator, no switch surface. -/
 theorem exists_certSeq21 {x : Fin 7 → ℝ³} (T : Facets21 x) (htie : OneTie21 x) :
     ∃ K : ℕ → Fin 7 → ℝ³, (∀ m, Tendsto (fun n => K n m) atTop (𝓝 (x m))) ∧
-      ∃ᶠ n in atTop, Cert21 (K n) ∧
+      ∃ᶠ n in atTop, CertX21 (K n) ∧
         ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0 := by
   classical
   set θ₀ := theta21 x with hθ₀
@@ -1504,10 +1630,10 @@ the same tie as `x` (restored by a unimodular shear), each `K_n` has a certifica
 view of `T1`, a tie at no more than one view of F2), a subsequence carries one labelled
 certificate, and the limit lemma applies. -/
 theorem isRupert_type21_limit {x : Fin 7 → ℝ³} (T : Facets21 x)
-    (hnd : ∀ v, view21 x v ≠ 0 → NoHDNAt (univ.image x) (view21 x v))
+    (hnd : ∀ v, UsedV21 v → view21 x v ≠ 0 → NoHDNAt (univ.image x) (view21 x v))
     (htie : OneTie21 x) : IsRupert (univ.image x) := by
   obtain ⟨K, hK, hc⟩ := exists_certSeq21 T htie
-  exact isRupert_of_cert_seq21 T hnd K hK hc
+  exact isRupert_of_cert_seq21 T hnd K hK (hc.mono fun n hn => ⟨hn.1.toCert21, hn.2⟩)
 
 /-- The two facet normals at a vertex crossing are orthogonal to its view. -/
 theorem vtxView21_perp {x : Fin 7 → ℝ³} {SP SQ : Finset (Fin 7)} (FP : Face16 x SP)
@@ -1549,7 +1675,7 @@ theorem isRupert_type21_limit_facets (x : Fin 7 → ℝ³) (hx : Function.Inject
       NoHDNAff (univ.image x) fH fE ∧ NoHDNAff (univ.image x) fH fB)
     (htie : OneTie21 x) : IsRupert (univ.image x) := by
   let T := Facets21.ofAffine x hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG hH
-  refine isRupert_type21_limit T (fun v hv => ?_) htie
+  refine isRupert_type21_limit T (fun v _ hv => ?_) htie
   rcases v with ⟨i, j⟩ | t
   · have hij : x i ≠ x j := fun h => hv (by simp [view21, h])
     have mi := mem_image_of_mem x (mem_univ i)

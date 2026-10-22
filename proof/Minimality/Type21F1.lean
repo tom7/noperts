@@ -306,7 +306,8 @@ theorem cert_type21_Y {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hnt : ⟪a - b, axisView G.l G.m a' a b' c'⟫ = 0 →
       NoTieAt (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) (a - b))
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   have hnd' := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd'
@@ -555,7 +556,10 @@ theorem cert_type21_Y {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
           (hn _ hKd _ hKb' hdb') (hn _ hKd _ hKc hdc) (hn _ hKb' _ hKc hb'c)))
   -- the edge view
   obtain ⟨a0, a1, a2, a3, a4⟩ := zmod5_add_one
-  refine CertV.seg_sigma hσ hKb hKa (Ne.symm hab) (rimCert_quint_rim_robust K u hu hσ (h := 1)
+  refine CertV.seg_sigma hσ hKb hKa (Ne.symm hab)
+    ⟨SegOK21.of_edge (by simp [Edge21, SPair]) (by spair_ne) (by spair_ne) (by spair_ne)
+      (by spair_ne), SegOK21.of_edge (by simp [Edge21, SPair]) (by spair_ne) (by spair_ne)
+      (by spair_ne) (by spair_ne)⟩ (rimCert_quint_rim_robust K u hu hσ (h := 1)
     one_ne_zero (by rw [hu_def]; module) hKb
     (fun i => by rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> assumption)
     (fun i j hi hj => ?_) (fun y hy hyb hyx i => ?_) hz)
@@ -609,7 +613,8 @@ theorem cert_type21_F1 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
       (axisView G.l G.m a' a b' c'))
     (hL₁ : ∀ σ : ℝ, (σ = 1 ∨ σ = -1) → L (σ • axisView G.l G.m a' a b' c'))
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   have hnd' := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd'

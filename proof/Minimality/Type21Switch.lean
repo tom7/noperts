@@ -247,7 +247,7 @@ theorem cert_type21_switch (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
     (hsw : F.abc.f d = F.abc.f b') (hF1 : F.ab'c'.f b < F.ab'c'.f c)
     (hpp : NoPlaneParallel (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L (Edge21 a a' b b' c c' d) := by
   have hnd' := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd'
@@ -312,7 +312,8 @@ theorem cert_type21_switch (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
   obtain ⟨a0, a1, a2, a3⟩ := zmod4_add_one
   rcases lt_or_gt_of_ne hT3 with hneg | hpos
   · -- clockwise: the rim `(v, 3, 4, 0)`
-    refine CertV.seg hKd hKb' hdb' (rimCert_edgePair_uniform_robust (v := d) (w := b') (a := a')
+    refine CertV.seg hKd hKb' hdb' (by simp [Edge21, SPair])
+      (rimCert_edgePair_uniform_robust (v := d) (w := b') (a := a')
       (c := b) (b := a) K
       {c', c} hKd hKb' hKa' hKa hKb (nM d hdc' hdc) (nM b' hb'c' hb'c)
       (nM a' ha'c' ha'c) (nM a hac' hac) (nM b hbc' hbc) ?_ ?_ ?_ ?_ ?_ hnt
@@ -349,7 +350,8 @@ theorem cert_type21_switch (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
         simp only [a2, quad_2, quad_3]
         rw [hc]; module
   · -- counterclockwise: the rim `(v, 0, 4, 3)`
-    refine CertV.seg hKd hKb' hdb' (rimCert_edgePair_uniform_robust (v := d) (w := b') (a := a)
+    refine CertV.seg hKd hKb' hdb' (by simp [Edge21, SPair])
+      (rimCert_edgePair_uniform_robust (v := d) (w := b') (a := a)
       (c := b) (b := a') K
       {c', c} hKd hKb' hKa hKa' hKb (nM d hdc' hdc) (nM b' hb'c' hb'c)
       (nM a hac' hac) (nM a' ha'c' ha'c) (nM b hbc' hbc) ?_ hpos ?_ ?_ hE
