@@ -633,6 +633,23 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   cap edges and the chain give Rupert at every metric). Not formalized: 20.1 (c), (d), the LPs
   deciding acute-safety and (H) for given classes, Proposition 20.7's certificates, 20.6's
   radius.
+* §20, continued, of `FEWER-FACES-PROOFS.md` (side-safety, (L), Conjecture B; `Type24Side.lean`,
+  `Type24Lambda.lean`). The sink lemma 20.2 (d) (`capRim0_sink`, `Type24.sinkE2`, `_E6`, `_E0`;
+  from the converse dip lemma `exists_dip_of_not_unimodal` and the rim facts `CapRim0.ne_ax`,
+  `CapRim0.path`) and its `m = 2` corollary (`capRim0_five_fails_iff`), the common sink
+  (`common_sink`); side-safety (`SideSafe`, X-only, `Type24.SideCovered`) and Theorem 20.8′
+  (`isRupert_type24_side_safe`, `Type24.obtuse_of_side_safe`: Conjecture A when each cosine is
+  seen on a safe side; 20.8 is the case `Type24.sideCovered_of_twoSafe`); Theorem 8.10 as a
+  cap-edge item (`isRupert_capRim0_depthSeparated`, `isRupert_capRim0_uos`, general edge views
+  `isRupert_of_edgeView_depthSeparated`), useless for 4-corner rims
+  (`not_fails4_of_depthSepAt`). Lemma 20.10 (OO's identity `Lambda.identity`, both clauses
+  `Lambda.lemma_20_10`, `Lambda.lemma_20_10_strict`, at `K`'s metric `lemma_20_10_wp`); the
+  window chain in general form (`windowChain_gen`: `r4 > 1` or (L2), Theorem 20.4″; (L) from
+  `c' ≤ 1`, (L), (H⁺) or (Λ), Corollary 20.11), its data `ChainData` and Rupert forms
+  (`isRupert_chainData2`, `_6`, `isRupert_chainData2_L2`, `_6_L2`, `WindowChainΛ`,
+  `isRupert_windowChainΛ2`, `_6`, `isRupert_windowChainΛ_octant`) and Theorem 20.9′
+  (`isRupert_type24_uniform_side`). Not formalized: the LPs deciding side-safety, (H) and (H⁺),
+  the third item `012/0345`, Conjecture B_DS, the per-class certificates.
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
@@ -817,6 +834,8 @@ In import order.
 | `Type24WP` | `FEWER-FACES-PROOFS.md` §17 (rest): Lemma W, WP as a Rupert item and M1 with WP discharged, L7 (15.15, 17.8′), the arc criterion 17.16′ on circle 2 and its pair form, the radii 17.1, 17.1′, 17.11 and 17.12 with WP_2 | `isRupert_lemmaW`, `isRupert_wp`, `isRupert_wp2`, `isRupert_wp6`, `Type24.m1_corner_Ioo`, `isRupert_m1_corner_wp`, `l7_frame_corner`, `l7_frame_radius`, `isRupert_l7_t26`, `isRupert_l7_t26_radius`, `Type24.arc_criterion2`, `Type24.arc_criterion2_wp`, `pair_rule`, `Type24.circle2_pair`, `isRupert_circle2_pair`, `radius_pos`, `radius_pos_octant`, `Type24.wpChain2_octant`, `isRupert_type24_near_wp2` |
 | `Type24Metric` | `FEWER-FACES-PROOFS.md` §20.1, 20.2, 20.6, 20.8: depth covectors, Lemma C without a radius (the dip mechanism), acute-safe cap edges, `S_0` with `E_05` at the exact corner, Conjecture A for two acute-safe cap edges | `fails4_iff_covFails`, `isCyclicUnimodal_of_noDip`, `CapRim0`, `isRupert_capEdge_noDip`, `isRupert_capEdge_mid3`, `AcuteSafe`, `acuteSafe_four`, `Type24.safeE2_of_four`, `isRupert_type24_two_safe`, `Type24.obtuse_of_two_safe`, `Type24.s0_e05_corner`, `isRupert_s0_e05_corner` |
 | `Type24Chain` | `FEWER-FACES-PROOFS.md` §20.3–20.5, 20.9: WP at the view `t3`, the window chain at every metric, the closed obtuse octant, the uniform statement | `wpChain_after`, `wpView_t3`, `isRupert_wp2_after`, `windowChain`, `WindowChain`, `isRupert_windowChain2`, `isRupert_windowChain6`, `isRupert_windowChain_octant`, `isRupert_type24_uniform` |
+| `Type24Side` | `FEWER-FACES-PROOFS.md` §20, continued (11, 12): the sink lemma 20.2 (d) and its `m = 2` corollary, the common sink, side-safety and Theorem 20.8′ (Conjecture A when each cosine is seen on a safe side), Theorem 8.10 as a cap-edge item | `exists_dip_of_not_unimodal`, `CapRim0.path`, `capRim0_sink`, `Type24.sinkE2`, `Type24.sinkE0`, `capRim0_five_fails_iff`, `common_sink`, `SideSafe`, `Type24.SideCovered`, `isRupert_type24_side_safe`, `Type24.obtuse_of_side_safe`, `not_fails4_of_depthSepAt`, `isRupert_capRim0_uos` |
+| `Type24Lambda` | `FEWER-FACES-PROOFS.md` §20, continued (13, 14): Lemma 20.10 (OO's identity, both clauses), Corollary 20.11, Theorem 20.4″ (the chain without `r4 > 1`), the window chain in general form, Theorem 20.9′ | `Lambda.lemma_20_10`, `Lambda.lemma_20_10_strict`, `lemma_20_10_wp`, `windowChain_gen`, `wpL2_of_poly`, `ChainData`, `isRupert_chainData2_L2`, `WindowChainΛ`, `isRupert_windowChainΛ_octant`, `isRupert_type24_uniform_side` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `TriGenFar`, `TriGen.far`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices

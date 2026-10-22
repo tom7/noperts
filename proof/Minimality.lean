@@ -46,6 +46,7 @@ public import Minimality.Type24
 public import Minimality.Type24Corner
 public import Minimality.Type24WP
 public import Minimality.Type24Chain
+public import Minimality.Type24Lambda
 public import Minimality.Type21Entry
 public import Minimality.Type21Facets
 public import Minimality.Type16Main
