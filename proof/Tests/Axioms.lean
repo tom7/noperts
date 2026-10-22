@@ -630,3 +630,15 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.isRupert_type24_uniform_circle
 #assert_standard_axioms Minimality.isRupert_type24_uniform_ds
 #assert_standard_axioms Minimality.isRupert_type24_uniform_acute
+#assert_standard_axioms Minimality.FrontDiag.not_back
+#assert_standard_axioms Minimality.fails4_eq_of_meet
+#assert_standard_axioms Minimality.frontDiag_of_rim
+#assert_standard_axioms Minimality.QuadTestR'.isRupert
+#assert_standard_axioms Minimality.QuadTestR'.frontDiag
+#assert_standard_axioms Minimality.isRupert_frontDiag
+#assert_standard_axioms Minimality.isRupert_sameView_robust
+#assert_standard_axioms Minimality.isRupert_sameView
+#assert_standard_axioms Minimality.isRupert_pierce
+#assert_standard_axioms Minimality.isRupert_pierce'
+#assert_standard_axioms Minimality.isRupert_type24_pierce36
+#assert_standard_axioms Minimality.isRupert_type24_pierce23

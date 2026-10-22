@@ -60,6 +60,7 @@ public import Minimality.Type21Sector
 public import Minimality.Type29Facets
 public import Minimality.ParallelEdge
 public import Minimality.Type16Edge2
+public import Minimality.SameView
 
 /-!
 # Every nopert has at least 7 points
