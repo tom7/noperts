@@ -314,22 +314,33 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   `x0; x2, x4, x6`; views along the planes of `0123`, `246` and of `0145`,
   `246`). With this, every type proved on paper (now 27 of 29, with types 08, 16 and 21) is excluded
   at the facet level in general position.
-* The special value of the dichotomy (`FEWER-FACES-PROOFS.md` §23, item (ii)) in
-  types 05, 10, 13, 17, 19, 23, 27: at deciding number 1 an edge (`01`, `14`, `45`,
-  `24`, `35`, `04`, `25`) is parallel to the line of the vertex view used there, so
-  `TriGenFar` at that view is false (`typeNN_special_parallel`, `ParallelEdge.lean`,
-  the referee's two-line argument: a face plane through three points of barycentric
-  value 1 contains the view line). The statements' clause is now "deciding number 1
-  → `EdgeFar` along that edge" (codimension 2 together with the special value): the
-  view along the edge has the off point on its far side (and any other off point
-  strictly inside), and Lemma T′ over an edge applies (`isRupert_of_facets_edge_chord`,
-  `EdgeChord.lean`; for 05, 17 by Cramer in the frames `x0; x2, x4, x6`, resp.
-  `x6; x3, x4, x0`; for 23, 27 the second off point by the frames of the third view).
-  This is the reading of Theorem 23.18 at the corner that carries the parallel edge;
-  the readings at the other two corners (Lemma T′ with a vertical edge at a far corner,
-  four sectors) are not formalized, so two ties at the special value are not the only
-  exception yet: the exception is the special value together with a tie of the two
-  other corners along the edge.
+* The special value of the dichotomy (`FEWER-FACES-PROOFS.md` §23 item (ii), Theorems
+  23.18 and 24.13) in types 05, 10, 13, 17, 19, 23, 27: at deciding number 1 an edge (`01`,
+  `14`, `45`, `24`, `35`, `04`, `25`) is parallel to the line of the vertex view used there,
+  so `TriGenFar` at that view is false (`typeNN_special_parallel`, `ParallelEdge.lean`, the
+  referee's two-line argument: a face plane through three points of barycentric value 1
+  contains the view line). The statements `isRupert_typeNN` above ask "deciding number 1
+  → `EdgeFar` along that edge" (Lemma T′ over the edge, `isRupert_of_facets_edge_chord`,
+  `EdgeChord.lean`), together with `TriGenPar` or `TriGenFarP` at the coinciding vertex
+  views; so they exclude the special value together with any tie of two corners of the
+  shadow triangle. The stronger statements `isRupert_typeNN_sv` (`SpecialTypes.lean`;
+  entry points `not_typeNN_of_isNopert_sv`) ask the general position only off the special
+  value, and there only that the two far corners and an end of the edge are not at one
+  depth (`SpecTriple`, codimension 3): `isRupert_special` (`SpecialValue.lean`) reads
+  Lemma T′ at each corner of the triangle (over the edge, the far ends tied or not, with
+  the far face's third vertex hidden by the tilt ratio, `isRupert_edge_coords_mode_chord`;
+  at each far corner with the vertical edge over a far corner, the Extension of §7 as
+  corrected in §23, in the mixed sectors where one end of the edge is hidden,
+  `isRupert_vertex_coords_parc`), and a case analysis on the depths of the edge's ends
+  and on the side of each face's one middle shows that one reading works unless the
+  triple tie. No condition on parallel segments is left at the special value: three
+  faces through or parallel to the edge separate every other pair of points
+  (`edgePar_of_cover`). Types 12, 22, 28 likewise (`isRupert_special3`: three single
+  corners, readings at two of them; the exception is the triple tie `ViewTriple`, where
+  the statements `isRupert_typeNN` asked `TriGenFar`). The triple tie itself
+  (`FEWER-FACES-PROOFS.md` 26.8 and 24.15) is not formalized: when both quadrilaterals'
+  middles lie beyond the tied end it needs the lexicographic level triangle and the
+  argument that the tied corners do not span a face.
 * At the entry point, `not_type08_of_isNopert` (Theorem 10.1 of
   `FEWER-FACES-PROOFS.md` §10, type 08; `Type08Lemmas.lean`, `Type08Cases.lean`,
   `Type08T4.lean`, `Type08.lean`): not by Lemma T but by edge crossings (Theorem
@@ -1096,6 +1107,9 @@ In import order.
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `TriGenFar`, `TriGen.far`, `isRupert_of_two_quad_facets_vertex` |
 | `SameView` | `FEWER-FACES-PROOFS.md` §20, continued (4): Lemma 20.26 (the front diagonal: failure only by the front diagonal above, no exclusion; the coplanar case; Cramer form), 4-corner tests with ties, Lemma 20.27 (the same-view pair, every metric: only `z_p = z_q` excluded, nothing with distinct rim depths), Corollary 20.27′ as Lemma E with the piercing hypothesis, the type-24 pairs along `36` ("`42` pierces `360`") and `23` | `FrontDiag`, `FrontDiag.not_back`, `FrontDiag.fails4`, `fails4_eq_of_meet`, `frontDiag_of_rim`, `QuadTestR`, `QuadTestR'`, `QuadTestR'.isRupert`, `QuadTestR'.frontDiag`, `isRupert_frontDiag`, `isRupert_sameView_robust`, `isRupert_sameView`, `det_le_of_pierce`, `isRupert_pierce`, `isRupert_pierce'`, `isRupert_type24_pierce36`, `isRupert_type24_pierce23` |
 | `TripleTie` | `FEWER-FACES-PROOFS.md` §24, Theorem 24.5: the triple tie at a vertex view (the far ends tied with the shared vertex), decided by sector tilts with the ties broken lexicographically (`LexS`, `isRupert_triShadow_lex`: `isRupert_triShadow_gen` with lexicographic runs); a one-sided face is hidden (cases (a), (b), any angle), an obtuse far angle makes the mixed sector unimodal (case (c)); lifted through the coords, vertical, rotated and facet layers (`TieHW`: the robust way out only under a flag, so the triangle-face route needs no solid); a triangle face is always one-sided at the triple tie (`oneSided_tri`), so `TriGenPar` (no parallel segment) suffices | `isRupert_vertex_frame_triple`, `TripleF`, `OneSidedF`, `isRupert_vertex_frame_tieW`, `TieHT`, `TieHW`, `OneSided`, `TriGenTieT`, `TriGenTieR.toT`, `isRupert_of_facets_vertex_tieT`, `TriGenPar`, `TriGenPar.tieS`, `isRupert_of_facets_vertex_tieS_or` |
+| `SpecialFrame` | `FEWER-FACES-PROOFS.md` §23 (Theorem 23.18) and §24 (24.13), the frames of the readings of Lemma T′ at the special value: Lemma T over an edge with a general mixed tilt and the tie modes (`isRupert_triShadow2_gen` with points on the far side hidden by the tilt ratio); Lemma T′ over an edge in coordinates with the far ends tied, the far end of the first face its strict top or bottom; Lemma T′ at a vertex with a vertical edge over a far corner (the Extension of §7, as corrected in §23, in its mixed sectors with one end hidden), any number of points on the far side on the side the tilt hides | `isRupert_triShadow2_gen_tilt`, `exists_tilt_sign`, `chord_sign`, `edge_core_gen_chord`, `isRupert_edge_coords_mode_chord`, `vertex_core_parc`, `isRupert_vertex_coords_parc` |
+| `SpecialValue` | Theorems 23.18 and 24.13: at the special value (three faces edge-on in one view, a vertical edge over one corner) a reading at some corner works unless the triple tie; the oblique frames at the other two corners (`oblPt_R2`, `oblPt_R3`); coordinates, vertical, rotated and facet layers; no parallel segment other than the edge when the three faces separate every other pair (`edgePar_of_cover`); index forms for labelled points; the same with three single corners (types 12, 22, 28) | `isRupert_special_coords`, `isRupert_special_vertical`, `SpecTriple`, `isRupert_special`, `edgePar_of_cover`, `isRupert_special_index`, `isRupert_special3_coords`, `isRupert_special3_vertical`, `ViewTriple`, `isRupert_special3`, `isRupert_special3_index` |
+| `SpecialTypes` | Types 05, 10, 12, 13, 17, 19, 22, 23, 27, 28 with the special value settled: the statements of `Type*.lean` with their general position asked only off the special value, and there only no triple tie | `isRupert_type05_sv`, `isRupert_type10_sv`, `isRupert_type12_sv`, `isRupert_type13_sv`, `isRupert_type17_sv`, `isRupert_type19_sv`, `isRupert_type22_sv`, `isRupert_type23_sv`, `isRupert_type27_sv`, `isRupert_type28_sv` |
 
 ## Formalization choices
 

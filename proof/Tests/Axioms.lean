@@ -671,3 +671,15 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.isRupert_ePair_limit_facts
 #assert_standard_axioms Minimality.lemmaE_of_dep
 #assert_standard_axioms Minimality.IsCap21.not_switch
+#assert_standard_axioms not_type05_of_isNopert_sv
+#assert_standard_axioms not_type10_of_isNopert_sv
+#assert_standard_axioms not_type12_of_isNopert_sv
+#assert_standard_axioms not_type13_of_isNopert_sv
+#assert_standard_axioms not_type17_of_isNopert_sv
+#assert_standard_axioms not_type19_of_isNopert_sv
+#assert_standard_axioms not_type22_of_isNopert_sv
+#assert_standard_axioms not_type23_of_isNopert_sv
+#assert_standard_axioms not_type27_of_isNopert_sv
+#assert_standard_axioms not_type28_of_isNopert_sv
+#assert_standard_axioms Minimality.isRupert_special
+#assert_standard_axioms Minimality.isRupert_special3
