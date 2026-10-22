@@ -558,8 +558,9 @@ theorem cert_type21_Y {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
   obtain ⟨a0, a1, a2, a3, a4⟩ := zmod5_add_one
   refine CertV.seg_sigma hσ hKb hKa (Ne.symm hab)
     ⟨SegOK21.of_edge (by simp [Edge21, SPair]) (by spair_ne) (by spair_ne) (by spair_ne)
-      (by spair_ne), SegOK21.of_edge (by simp [Edge21, SPair]) (by spair_ne) (by spair_ne)
-      (by spair_ne) (by spair_ne)⟩ (rimCert_quint_rim_robust K u hu hσ (h := 1)
+      (by spair_ne) (by spair_ne) (by spair_ne) (by spair_ne),
+      SegOK21.of_edge (by simp [Edge21, SPair]) (by spair_ne) (by spair_ne)
+      (by spair_ne) (by spair_ne) (by spair_ne) (by spair_ne) (by spair_ne)⟩ (rimCert_quint_rim_robust K u hu hσ (h := 1)
     one_ne_zero (by rw [hu_def]; module) hKb
     (fun i => by rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> assumption)
     (fun i j hi hj => ?_) (fun y hy hyb hyx i => ?_) hz)

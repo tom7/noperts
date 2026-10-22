@@ -99,6 +99,78 @@ theorem EGoodQuad.tests {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
 
 /-! ### Tier Q -/
 
+/-- **Lemma E at `05` in case (b) of Lemma 3** (Proposition 14.2, by a direct dependency
+argument): if the dependency `[4 ·]` of `O` has `[4 5] [4 0] > 0` (the edge `5 → 0` is E-good
+in `O`), then `5` and `0` lie weakly on opposite sides of the plane `1 3 2` (the far corners of
+the closings at `05` when the cap `2` is the far end of `0256`).  The dependency of `O2` at `4`
+is `[4 ·]` with `6` replaced by `2`; its values at `0` and `5` keep their sign because `2` is
+beneath `135`. -/
+theorem lemmaE_far21 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
+    {L : ℝ³ → ℝ} (hL : IsDep a a' b b' c c' L) (h0 : L b = 0) (hE : 0 < L b' * L a) :
+    det3 (d - c) (a' - c) (b' - c) * det3 (d - c) (a' - c) (a - c) ≤ 0 := by
+  have hnd := F.nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨haa', hab, hab', hac, hac'⟩, ⟨ha'b, ha'b', ha'c, ha'c'⟩, ⟨hbb', hbc, hbc'⟩,
+    ⟨hb'c, hb'c'⟩, hcc', -⟩ := hnd
+  have hLa : L a ≠ 0 := fun h => by rw [h, mul_zero] at hE; exact lt_irrefl _ hE
+  obtain ⟨-, s2, s3⟩ := pole_signs' F.perm₁₂ hL.perm₁₂ h0 hLa
+  obtain ⟨α, β, hα, hβ, -, hco⟩ := hd.coords'
+  -- the plane `c a' d`
+  set f : ℝ³ → ℝ := fun t => det3 (d - c) (a' - c) (t - c) with hfdef
+  have hf : ∀ s t, f s - f t = ⟪cross (d - c) (a' - c), s - t⟫ := by
+    intro s t; simp only [hfdef, det3, ← inner_sub_right]; congr 1; abel
+  have fc : f c = 0 := by simp [hfdef, det3_expand]
+  have fa' : f a' = 0 := by simp only [hfdef, det3_expand, PiLp.sub_apply]; ring
+  have fd : f d = 0 := by simp only [hfdef, det3_expand, PiLp.sub_apply]; ring
+  have r1 := hL.apply hf
+  rw [fc, fa', h0] at r1
+  have r2 := affine_frame hf a b' c' α β
+  rw [← hco, fd] at r2
+  -- the face `a' b' c` (`135`), beneath which `a`, `c'`, `d` lie
+  have m1 := hL.apply F.a'b'c.hN
+  rw [F.a'b'c.hP, F.a'b'c.hQ, F.a'b'c.hR, h0] at m1
+  have ma := F.a'b'c.neg a (by simp) haa' hab' hac
+  have mc' := F.a'b'c.neg c' (by simp) (Ne.symm ha'c') (Ne.symm hb'c') (Ne.symm hcc')
+  have md := hd.a'b'c
+  have m2 := affine_frame F.a'b'c.hN a b' c' α β
+  rw [← hco, F.a'b'c.hQ] at m2
+  -- `f a · A = −f b' · B` with `A B > 0`
+  set A := (1 - α - β) * L c' - β * L a with hA
+  set B := α * L c' - β * L b' with hB
+  have key : f a * A + f b' * B = 0 := by
+    simp only [hA, hB]; linear_combination (-β) * r1 - L c' * r2
+  have hAm : A * F.a'b'c.f c' = -(L a * F.a'b'c.f d) := by
+    simp only [hA]; rw [m2]; linear_combination (1 - α - β) * m1
+  have hAB : 0 < A * B := by
+    have hmd : F.a'b'c.f d < 0 := md
+    rcases lt_or_gt_of_ne hLa with h | h
+    · have hc : 0 < L c := pos_of_mul_neg_right s3 h.le
+      have hc' : 0 < L c' := (pos_iff_pos_of_mul_pos s2).mp hc
+      have hb' : L b' < 0 := neg_of_mul_pos_left hE h.le
+      have hBp : 0 < B := by
+        simp only [hB]; linarith [mul_pos hα hc', mul_pos hβ (neg_pos.mpr hb')]
+      have h1 : A * F.a'b'c.f c' < 0 := by rw [hAm]; linarith [mul_pos_of_neg_of_neg h hmd]
+      exact mul_pos (pos_of_mul_neg_left h1 mc'.le) hBp
+    · have hc : L c < 0 := neg_of_mul_neg_right s3 h.le
+      have hc' : L c' < 0 := (neg_iff_neg_of_mul_pos s2).mp hc
+      have hb' : 0 < L b' := pos_of_mul_pos_left hE h.le
+      have hBn : B < 0 := by
+        simp only [hB]; linarith [mul_pos hα (neg_pos.mpr hc'), mul_pos hβ hb']
+      have h1 : 0 < A * F.a'b'c.f c' := by rw [hAm]; linarith [mul_neg_of_pos_of_neg h hmd]
+      exact mul_pos_of_neg_of_neg (neg_of_mul_pos_left h1 mc'.le) hBn
+  have e : f a * A = -(f b' * B) := by linarith
+  have h2 : f b' * f a * (A * B) ≤ 0 := by
+    have : f b' * f a * (A * B) = -(f b' * B) ^ 2 := by
+      calc f b' * f a * (A * B) = f b' * B * (f a * A) := by ring
+        _ = _ := by rw [e]; ring
+    rw [this]; exact neg_nonpos.mpr (sq_nonneg _)
+  change f b' * f a ≤ 0
+  by_contra hc
+  push Not at hc
+  linarith [mul_pos hc hAB]
+
+
 /-- **Tier Q of §16** for an octahedron labelled like `O = K − 2` (pairs `(a, a') = (0, 3)`,
 `(b, b') = (4, 5)`, `(c, c') = (1, 6)`): one of the eight directed K-quad edges
 `0→5, 5→0, 0→6, 6→0, 4→3, 3→4, 4→6, 6→4` is an E-good quad edge (`EGoodQuad`). -/
@@ -119,9 +191,11 @@ theorem cert_type21_Q {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
       (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   rcases hQ with h | h | h | h | h | h | h | h
   · obtain ⟨h1, h2, h3⟩ := h.tests F.swap₂ G.swap₂
-    exact cert_type21_05 F hd h1 h2 h3 hgen
+    exact cert_type21_05 F hd h1 h2 h3
+      (lemmaE_of_dep (G.hl.galeD G.hm a').swap₂ (galeD_self _ _ _) h.2.2) hgen
   · obtain ⟨h1, h2, h3⟩ := h.tests F.perm₁₂.swap₁ G.perm₁₂.swap₁
-    exact cert_type21_50 F hd h1 h2 h3 hgen
+    exact cert_type21_50 F hd h1 h2 h3
+      (lemmaE_far21 F hd (G.hl.galeD G.hm b) (galeD_self _ _ _) h.2.2) hgen
   · obtain ⟨h1, h2, h3⟩ := h.tests F.perm₂₃.swap₂ G.perm₂₃.swap₂
     exact cert_type21_06 F hd h1 h2 h3
       (lemmaE_of_dep (G.hl.galeD G.hm a').perm₂₃.swap₂ (galeD_self _ _ _) h.2.2) hgen
@@ -129,9 +203,11 @@ theorem cert_type21_Q {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     exact cert_type21_60 F hd h1 h2 h3
       (lemmaE_of_dep (G.hl.galeD G.hm c).perm₂₃.perm₁₂.swap₁ (galeD_self _ _ _) h.2.2) hgen
   · obtain ⟨h1, h2, h3⟩ := h.tests F.perm₁₂.swap₂ G.perm₁₂.swap₂
-    exact cert_type21_43 F hd h1 h2 h3 hgen
+    exact cert_type21_43 F hd h1 h2 h3
+      (lemmaE_of_dep (G.hl.galeD G.hm b').perm₁₂.swap₂ (galeD_self _ _ _) h.2.2) hgen
   · obtain ⟨h1, h2, h3⟩ := h.tests F.swap₁ G.swap₁
-    exact cert_type21_34 F hd h1 h2 h3 hgen
+    exact cert_type21_34 F hd h1 h2 h3
+      (lemmaE_far21 F.perm₁₂ hd.sigma1 (G.hl.galeD G.hm a).perm₁₂ (galeD_self _ _ _) h.2.2) hgen
   · obtain ⟨h1, h2, h3⟩ := h.tests F.perm₁₂.perm₂₃.swap₂ G.perm₁₂.perm₂₃.swap₂
     exact cert_type21_46 F hd h1 h2 h3
       (lemmaE_of_dep (G.hl.galeD G.hm b').perm₁₂.perm₂₃.swap₂ (galeD_self _ _ _) h.2.2) hgen
@@ -186,7 +262,7 @@ theorem cert_type21_H {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     rw [← e] at hgen ⊢
     exact CertV.seg (by simp) (by simp) (Ne.symm ha'c)
       (SegOK21.of_edge (by simp [Edge21, SPair]) (by spair_ne) (by spair_ne) (by spair_ne)
-        (by spair_ne))
+        (by spair_ne) (by spair_ne) (by spair_ne) (by spair_ne))
       (rimCert_quad_edge_lift_tie F' h1 h2 h3 (Or.inr hhid)
       ⟨hdc, hdc', hda', hda, hdb, hdb'⟩
       (hgen.touch_oct F'))
@@ -200,7 +276,7 @@ theorem cert_type21_H {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     rw [← e] at hgen ⊢
     exact CertV.seg (by simp) (by simp) (Ne.symm hb'c)
       (SegOK21.of_edge (by simp [Edge21, SPair]) (by spair_ne) (by spair_ne) (by spair_ne)
-        (by spair_ne))
+        (by spair_ne) (by spair_ne) (by spair_ne) (by spair_ne))
       (rimCert_quad_edge_lift_tie F' h1 h2 h3 (Or.inr hhid)
       ⟨hdc, hdc', hdb', hdb, hda, hda'⟩
       (hgen.touch_oct F'))

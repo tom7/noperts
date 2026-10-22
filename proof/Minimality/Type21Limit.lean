@@ -996,10 +996,15 @@ theorem pair_eq_pair21 {a b i j : Fin 7} (h : ({i, j} : Finset (Fin 7)) = {a, b}
 `σ2σ1`). -/
 def qEdgeSet21 : Finset (Finset (Fin 7)) := {{0, 6}, {4, 6}, {2, 5}, {2, 3}}
 
+/-- The edges `05`, `34` (edge pairs with Lemma E, `QEdge5`) and the ridge `26` (tier R's data,
+`REdge21`). -/
+def wEdgeSet21 : Finset (Finset (Fin 7)) := {{0, 5}, {3, 4}, {2, 6}}
+
 /-- **The views of the certificates without data**: the edges other than the four of
 `qEdgeSet21`, and the eight vertex crossings. -/
 def UsedX21 : (Fin 7 × Fin 7) ⊕ Fin 8 → Prop
-  | .inl (i, j) => ({i, j} : Finset (Fin 7)) ∈ edgeSet21 ∧ ({i, j} : Finset (Fin 7)) ∉ qEdgeSet21
+  | .inl (i, j) => ({i, j} : Finset (Fin 7)) ∈ edgeSet21 ∧ ({i, j} : Finset (Fin 7)) ∉ qEdgeSet21 ∧
+      ({i, j} : Finset (Fin 7)) ∉ wEdgeSet21
   | .inr _ => True
 
 theorem UsedX21.used {v : (Fin 7 × Fin 7) ⊕ Fin 8} (h : UsedX21 v) : UsedV21 v := by
@@ -1016,9 +1021,53 @@ def QE21 (y : Fin 7 → ℝ³) (P P' R R' D C' : Fin 7) : Prop :=
 def CertQ21 (y : Fin 7 → ℝ³) : Prop :=
   QE21 y 0 3 4 5 2 6 ∨ QE21 y 4 5 0 3 2 6 ∨ QE21 y 5 4 3 0 6 2 ∨ QE21 y 3 0 5 4 6 2
 
-/-- **A type-21 certificate with data**: a rim certificate at a view of `UsedX21`, or a
-certificate of tier Q at `06`, `46`, `25`, `23` with its data (`CertQ21`). -/
-def CertX21 (y : Fin 7 → ℝ³) : Prop := CertP21 UsedX21 y ∨ CertQ21 y
+/-- **The data at `05` (`A, A', B, B' = 0, 3, 4, 5`) or `34` (`4, 5, 0, 3`)**, in either
+direction (`QEdge5`). -/
+def Q5E21 (y : Fin 7 → ℝ³) (A A' B B' : Fin 7) : Prop :=
+  QEdge5 (univ.image y) (y A) (y A') (y B) (y B') (y 1) (y 6) (y 2) (y A) (y B') ∨
+    QEdge5 (univ.image y) (y A) (y A') (y B) (y B') (y 1) (y 6) (y 2) (y B') (y A)
+
+/-- **The data at the ridge `26`**, in either direction (`REdge21`). -/
+def R26E21 (y : Fin 7 → ℝ³) : Prop :=
+  REdge21 (univ.image y) (y 0) (y 3) (y 4) (y 5) (y 1) (y 6) (y 2) ∨
+    REdge21 (univ.image y) (y 0) (y 3) (y 4) (y 5) (y 1) (y 2) (y 6)
+
+/-- **The certificates at `05`, `34`, `26` with their data.** -/
+def CertW21 (y : Fin 7 → ℝ³) : Prop := Q5E21 y 0 3 4 5 ∨ Q5E21 y 4 5 0 3 ∨ R26E21 y
+
+/-- **A type-21 certificate with data**: a rim certificate at a view of `UsedX21`, a
+certificate of tier Q at `06`, `46`, `25`, `23` with its data (`CertQ21`), or one at `05`,
+`34`, `26` with its data (`CertW21`). -/
+def CertX21 (y : Fin 7 → ℝ³) : Prop := CertP21 UsedX21 y ∨ CertQ21 y ∨ CertW21 y
+
+theorem QAData.rimCert {K : Finset ℝ³} {v w a b c : ℝ³} (h : QAData K v w a b c) :
+    RimCert K (w - v) := by
+  rcases h.1 with h | h
+  exacts [h.2.rimCert4, h.2.rimCert4]
+
+theorem QEdge5.rimCert {K : Finset ℝ³} {a a' b b' c c' d v w : ℝ³}
+    (h : QEdge5 K a a' b b' c c' d v w) : RimCert K (w - v) := by
+  rcases h with h | h | h | h
+  exacts [h.rimCert, h.rimCert, h.rimCert, h.rimCert]
+
+theorem REdge21.rimCert {K : Finset ℝ³} {a a' b b' c v w : ℝ³} (h : REdge21 K a a' b b' c v w) :
+    RimCert K (w - v) := by
+  obtain ⟨A, B, -, -, h | h | h | h⟩ := h
+  exacts [h.rimCert, h.rimCert, h.rimCert3, h.rimCert3]
+
+/-- A rim certificate at a segment view of an edge. -/
+theorem cert21_seg {y : Fin 7 → ℝ³} {i j : Fin 7} (he : ({i, j} : Finset (Fin 7)) ∈ edgeSet21)
+    (h : RimCert (univ.image y) (y j - y i)) : Cert21 y :=
+  ⟨_, ⟨.inl (i, j), he, 1, one_ne_zero, (one_smul _ _).symm⟩, h⟩
+
+theorem CertW21.cert21 {y : Fin 7 → ℝ³} (h : CertW21 y) : Cert21 y := by
+  rcases h with (h | h) | (h | h) | (h | h)
+  · exact cert21_seg (by decide) h.rimCert
+  · exact cert21_seg (i := 5) (j := 0) (by decide) h.rimCert
+  · exact cert21_seg (i := 4) (j := 3) (by decide) h.rimCert
+  · exact cert21_seg (i := 3) (j := 4) (by decide) h.rimCert
+  · exact cert21_seg (i := 6) (j := 2) (by decide) h.rimCert
+  · exact cert21_seg (i := 2) (j := 6) (by decide) h.rimCert
 
 theorem QEdge21.rimCert {K : Finset ℝ³} {P P' R R' c D C' v w : ℝ³}
     (h : QEdge21 K P P' R R' c D C' v w) : RimCert K (w - v) := by
@@ -1038,11 +1087,12 @@ theorem QE21.cert21 {y : Fin 7 → ℝ³} {P P' R R' D C' : Fin 7} (h : QE21 y P
 
 /-- Every certificate with data is a certificate at a named view. -/
 theorem CertX21.toCert21 {y : Fin 7 → ℝ³} (h : CertX21 y) : Cert21 y := by
-  rcases h with ⟨u, ⟨v, hv, c, hc, rfl⟩, hr⟩ | h
+  rcases h with ⟨u, ⟨v, hv, c, hc, rfl⟩, hr⟩ | h | h
   · exact ⟨_, ⟨v, hv.used, c, hc, rfl⟩, hr⟩
   · rcases h with h | h | h | h
     exacts [h.cert21 (by decide), h.cert21 (by decide), h.cert21 (by decide),
       h.cert21 (by decide)]
+  · exact h.cert21
 
 theorem Cert21.of_certV {y : Fin 7 → ℝ³} (hy : Function.Injective y)
     (h : CertV (univ.image y) (NamedVtx21 y)
@@ -1054,8 +1104,22 @@ theorem Cert21.of_certV {y : Fin 7 → ℝ³} (hy : Function.Injective y)
   obtain ⟨i, -, rfl⟩ := mem_image.mp hv
   obtain ⟨j, -, rfl⟩ := mem_image.mp hw
   have hE := edge21_labels hy he.1
+  have sp0 : ∀ {p q : Fin 7}, ((i = p ∧ j = q) ∨ (i = q ∧ j = p)) →
+      SPair (y i) (y j) (y p) (y q) := by
+    rintro p q (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
+    exacts [Or.inl ⟨rfl, rfl⟩, Or.inr ⟨rfl, rfl⟩]
+  by_cases hw : ({i, j} : Finset (Fin 7)) ∈ wEdgeSet21
+  · right; right
+    simp only [wEdgeSet21, Finset.mem_insert, Finset.mem_singleton] at hw
+    rcases hw with hw | hw | hw <;> obtain ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ := pair_eq_pair21 hw
+    · exact Or.inl (Or.inl (he.2.2.2.2.2.1 (sp0 (Or.inl ⟨rfl, rfl⟩))))
+    · exact Or.inl (Or.inr (he.2.2.2.2.2.1 (sp0 (Or.inr ⟨rfl, rfl⟩))))
+    · exact Or.inr (Or.inl (Or.inr (he.2.2.2.2.2.2.1 (sp0 (Or.inr ⟨rfl, rfl⟩)))))
+    · exact Or.inr (Or.inl (Or.inl (he.2.2.2.2.2.2.1 (sp0 (Or.inl ⟨rfl, rfl⟩)))))
+    · exact Or.inr (Or.inr (Or.inr (he.2.2.2.2.2.2.2 (sp0 (Or.inr ⟨rfl, rfl⟩)))))
+    · exact Or.inr (Or.inr (Or.inl (he.2.2.2.2.2.2.2 (sp0 (Or.inl ⟨rfl, rfl⟩)))))
   by_cases hq : ({i, j} : Finset (Fin 7)) ∈ qEdgeSet21
-  · right
+  · right; left
     have sp : ∀ {p q : Fin 7}, ((i = p ∧ j = q) ∨ (i = q ∧ j = p)) →
         SPair (y i) (y j) (y p) (y q) := by
       rintro p q (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
@@ -1076,11 +1140,11 @@ theorem Cert21.of_certV {y : Fin 7 → ℝ³} (hy : Function.Injective y)
       exact Or.inr (Or.inr (Or.inl (hij hp.symm
         (Q := fun i j => QEdge21 (univ.image y) (y 5) (y 4) (y 3) (y 0) (y 1) (y 6) (y 2) (y i)
           (y j) → QE21 y 5 4 3 0 6 2) Or.inl Or.inr this)))
-    · have := he.2.2.2.2 (sp hp.symm)
+    · have := he.2.2.2.2.1 (sp hp.symm)
       exact Or.inr (Or.inr (Or.inr (hij hp.symm
         (Q := fun i j => QEdge21 (univ.image y) (y 3) (y 0) (y 5) (y 4) (y 1) (y 6) (y 2) (y i)
           (y j) → QE21 y 3 0 5 4 6 2) Or.inl Or.inr this)))
-  · exact Or.inl ⟨_, ⟨.inl (i, j), ⟨hE, hq⟩, 1, one_ne_zero, (one_smul _ _).symm⟩, hc⟩
+  · exact Or.inl ⟨_, ⟨.inl (i, j), ⟨hE, hq, hw⟩, 1, one_ne_zero, (one_smul _ _).symm⟩, hc⟩
 
 /-- **One vertex test at a generic shape**: a direction of the test's line (given by the two
 planes in the labels of `vtx21`) is a nonzero multiple of the named view, and the far-side test

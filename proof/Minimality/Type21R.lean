@@ -44,6 +44,92 @@ theorem EdgeMid.swap_ab {v w a b m : ℝ³} (h : EdgeMid v w a b m) : EdgeMid v 
   · exact ⟨1 - s, δ, by linarith, by linarith, hδ, Or.inr (Or.inr (Or.inr (by rw [h]; module)))⟩
   · exact ⟨1 - s, δ, by linarith, by linarith, hδ, Or.inr (Or.inr (Or.inl (by rw [h]; module)))⟩
 
+/-- **Lemma E with ties, data form** (`rimCert_edgePair_robust` keeping the closing): the pair
+of closings `(v, a, c, b)`, `(w, a, c, b)` at `u = w − v` with its certified closing and Lemma E
+(`QAData`). -/
+theorem qaData_edgePair_robust {v w a b c : ℝ³} (V : Finset ℝ³)
+    (hvV : v ∈ V) (hwV : w ∈ V) (haV : a ∈ V) (hbV : b ∈ V) (hcV : c ∈ V)
+    (q₁ : 0 < det3 (a - v) (c - v) (w - v)) (q₂ : 0 < det3 (c - a) (b - a) (w - v))
+    (q₃ : 0 < det3 (b - c) (v - c) (w - v)) (q₄ : 0 < det3 (v - b) (a - b) (w - v))
+    (hE : det3 (b - a) (c - a) (v - a) * det3 (b - a) (c - a) (w - a) ≤ 0)
+    (h3 : ¬ (⟪a, w - v⟫ = ⟪c, w - v⟫ ∧ ⟪c, w - v⟫ = ⟪b, w - v⟫))
+    (hV : ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ z = c ∨ EdgeMid v w a b z ∨
+      EdgeHidden (w - v) v a c b z) :
+    QAData V v w a b c := by
+  have mid : ∀ z, EdgeMid v w a b z → ∃ e : ℝ³, ∃ s δ : ℝ, (e = v ∨ e = w) ∧ 0 < s ∧ s < 1 ∧
+      (z = e + s • (a - e) + δ • (w - v) ∨ z = b + s • (e - b) + δ • (w - v)) := by
+    rintro z ⟨s, δ, hs0, hs1, -, h⟩
+    rcases h with h | h | h | h
+    · exact ⟨v, s, -δ, Or.inl rfl, hs0, hs1, Or.inl (by rw [h]; module)⟩
+    · exact ⟨v, s, -δ, Or.inl rfl, hs0, hs1, Or.inr (by rw [h]; module)⟩
+    · exact ⟨w, s, δ, Or.inr rfl, hs0, hs1, Or.inl h⟩
+    · exact ⟨w, s, δ, Or.inr rfl, hs0, hs1, Or.inr h⟩
+  refine ⟨?_, hE⟩
+  rcases edgePair_nws q₁ q₂ q₃ q₄ hE h3 with hN | hN
+  · refine Or.inl ⟨hN, rimCertPts_closing V (o := w) (t := 1) (by module) hvV haV hbV hcV q₁ q₂ q₃
+      q₄ (fun z hz => ?_) hN⟩
+    rcases hV z hz with h | h | h | h | h | h | h
+    · exact Or.inl h
+    · exact Or.inr (Or.inl h)
+    · exact Or.inr (Or.inr (Or.inl h))
+    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (mid z h))))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr h)))))
+  · refine Or.inr ⟨hN, rimCertPts_closing V (o := v) (t := -1) (by module) hwV haV hbV hcV
+      (by rw [det3_vw_both]; exact q₁) q₂ (by rw [det3_vw_right]; exact q₃)
+      (by rw [det3_vw_left]; exact q₄) (fun z hz => ?_) hN⟩
+    rcases hV z hz with h | h | h | h | h | h | h
+    · exact Or.inr (Or.inl h)
+    · exact Or.inl h
+    · exact Or.inr (Or.inr (Or.inl h))
+    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
+    · obtain ⟨e, s, δ, he, hs0, hs1, hm⟩ := mid z h
+      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨e, s, δ, he.symm, hs0, hs1,
+        hm⟩)))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr h.shift)))))
+
+/-- **A triangle closing, data form** (`rimCert_edgeTri_robust` keeping the rim). -/
+theorem rimCertPts_edgeTri_robust {v w a b : ℝ³} (V : Finset ℝ³)
+    (hvV : v ∈ V) (hwV : w ∈ V) (haV : a ∈ V) (hbV : b ∈ V)
+    (hT : 0 < det3 (a - v) (b - v) (w - v))
+    (hz : ¬ (⟪v, w - v⟫ = ⟪a, w - v⟫ ∧ ⟪a, w - v⟫ = ⟪b, w - v⟫))
+    (hV : ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ EdgeMid v w a b z ∨
+      TriHidden (w - v) v a b z) :
+    RimCertPts V (w - v) (tri v a b) := by
+  refine rimCertPts_tri V hvV haV hbV hT (fun z hz' => ?_) hz
+  rcases hV z hz' with h | h | h | h | ⟨s, δ, hs0, hs1, -, hm⟩ | ⟨r1, r2, r3⟩
+  · exact Or.inl ⟨0, 0, 0, 0, le_rfl, zero_le_one, by rw [h]; simp [tri_0]⟩
+  · exact Or.inl (class_double (y := tri v a b) 0 1 (by rw [h, tri_0]; module))
+  · exact Or.inl ⟨1, 1, 0, 0, le_rfl, zero_le_one, by rw [h]; simp [tri_1]⟩
+  · exact Or.inl ⟨2, 2, 0, 0, le_rfl, zero_le_one, by rw [h]; simp [tri_2]⟩
+  · left
+    rcases hm with h | h | h | h
+    · exact class_middle (y := tri v a b) 0 1 0 0 s (-δ) hs0.le hs1.le
+        (by simp only [tri_0, tri_1, zero_smul, add_zero]; rw [h]; module)
+    · exact class_middle (y := tri v a b) 2 0 0 0 s (-δ) hs0.le hs1.le
+        (by simp only [tri_0, tri_2, zero_smul, add_zero]; rw [h]; module)
+    · exact class_middle (y := tri v a b) 0 1 1 0 s δ hs0.le hs1.le
+        (by simp only [tri_0, tri_1, zero_smul, add_zero, one_smul]; rw [h]; module)
+    · exact class_middle (y := tri v a b) 2 0 0 1 s δ hs0.le hs1.le
+        (by simp only [tri_0, tri_2, zero_smul, add_zero, one_smul]; rw [h]; module)
+  · exact Or.inr ⟨r1, r2, r3⟩
+
+/-- The data of a ridge view: an edge pair `(v, A, C, B)` with Lemma E or a triangle closing
+`(v, A, B)`, in either orientation. -/
+def RidgeData (K : Finset ℝ³) (v w A B C : ℝ³) : Prop :=
+  QAData K v w A B C ∨ QAData K v w B A C ∨ RimCertPts K (w - v) (tri v A B) ∨
+    RimCertPts K (w - v) (tri v B A)
+
+theorem RidgeData.rimCert {K : Finset ℝ³} {v w A B C : ℝ³} (h : RidgeData K v w A B C) :
+    RimCert K (w - v) := by
+  rcases h with h | h | h | h
+  · rcases h.1 with h | h; exacts [h.2.rimCert4, h.2.rimCert4]
+  · rcases h.1 with h | h; exacts [h.2.rimCert4, h.2.rimCert4]
+  · exact h.rimCert3
+  · exact h.rimCert3
+
 /-- **A ridge view.**  `v w` lies on two faces `f_A` (through `v, w, A`) and `f_B` (through
 `v, w, B`), both containing the view `u = w − v`; `C` is strictly beneath both, `A` beneath
 `f_B` and `B` beneath `f_A`; every point of `K` is `v, w, A, B, C` or a middle (`EdgeMid`).
@@ -52,7 +138,7 @@ corner with `v`, `w` weakly on opposite sides of the plane `A C B` (Lemma E), th
 allowed (`v, A, B` and `A, C, B` not each at one depth: Lemma E with ties,
 `rimCert_edgePair_robust`, and `rimCert_edgeTri_robust`), one closing at `u` is a rim
 certificate (no horizontal double normal assumed). -/
-theorem rimCert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ → ℝ} {NA NB : ℝ³}
+theorem ridgeData (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ → ℝ} {NA NB : ℝ³}
     (hfA : ∀ y z, fA y - fA z = ⟪NA, y - z⟫) (hfB : ∀ y z, fB y - fB z = ⟪NB, y - z⟫)
     (hAv : fA v = 0) (hAw : fA w = 0) (hAA : fA A = 0) (hAB : fA B < 0) (hAC : fA C < 0)
     (hBv : fB v = 0) (hBw : fB w = 0) (hBB : fB B = 0) (hBA : fB A < 0) (hBC : fB C < 0)
@@ -64,7 +150,7 @@ theorem rimCert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ → 
         det3 (B - A) (C - A) (v - A) * det3 (B - A) (C - A) (w - A) ≤ 0))
     (htri : ¬ (⟪v, w - v⟫ = ⟪A, w - v⟫ ∧ ⟪A, w - v⟫ = ⟪B, w - v⟫))
     (h3 : ¬ (⟪A, w - v⟫ = ⟪C, w - v⟫ ∧ ⟪C, w - v⟫ = ⟪B, w - v⟫)) :
-    RimCert K (w - v) := by
+    RidgeData K v w A B C := by
   set u := w - v with hu
   set T := det3 (A - v) (B - v) u with hT_def
   have hNAu : ⟪NA, u⟫ = 0 := by rw [hu, ← hfA, hAw, hAv, sub_self]
@@ -106,8 +192,8 @@ theorem rimCert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ → 
   · -- clockwise: use `(v, B, A)`
     rcases hcase with hh | ⟨hc, hE⟩
     · have hℓn : ℓ < 0 := neg_of_mul_pos_left hh hTn.le
-      refine rimCert_edgeTri_robust K hvK hwK hBK hAK ?_
-        (fun h => htri ⟨h.1.trans h.2, h.2.symm⟩) (fun z hz => ?_)
+      refine Or.inr (Or.inr (Or.inr (rimCertPts_edgeTri_robust K hvK hwK hBK hAK ?_
+        (fun h => htri ⟨h.1.trans h.2, h.2.symm⟩) (fun z hz => ?_))))
       · have : det3 (B - v) (A - v) u = -T := by
           simp only [hT_def, det3_expand, PiLp.sub_apply]; ring
         rw [this]; linarith
@@ -129,8 +215,8 @@ theorem rimCert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ → 
             rw [this, d1]; nlinarith
         · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
     · have hℓp : 0 < ℓ := pos_of_mul_neg_left hc hTn.le
-      refine rimCert_edgePair_robust (v := v) (w := w) (a := B) (b := A) (c := C) K hvK hwK
-        hBK hAK hCK ?_ ?_ ?_ ?_ ?_ (fun h => h3 ⟨h.2.symm, h.1.symm⟩) (fun z hz => ?_)
+      refine Or.inr (Or.inl (qaData_edgePair_robust (v := v) (w := w) (a := B) (b := A) (c := C) K hvK hwK
+        hBK hAK hCK ?_ ?_ ?_ ?_ ?_ (fun h => h3 ⟨h.2.symm, h.1.symm⟩) (fun z hz => ?_)))
       · have : det3 (B - v) (C - v) u = -det3 (C - v) (B - v) u := by
           simp only [det3_expand, PiLp.sub_apply]; ring
         rw [this, d2]; nlinarith
@@ -158,7 +244,8 @@ theorem rimCert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ → 
   · -- counterclockwise: `(v, A, B)`
     rcases hcase with hh | ⟨hc, hE⟩
     · have hℓp : 0 < ℓ := pos_of_mul_pos_left hh hTp.le
-      refine rimCert_edgeTri_robust K hvK hwK hAK hBK hTp htri (fun z hz => ?_)
+      refine Or.inr (Or.inr (Or.inl (rimCertPts_edgeTri_robust K hvK hwK hAK hBK hTp htri
+        (fun z hz => ?_))))
       rcases hK z hz with h | h | h | h | h | h
       · exact Or.inl h
       · exact Or.inr (Or.inl h)
@@ -172,8 +259,8 @@ theorem rimCert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ → 
           rw [this, d2]; exact mul_pos rB hTp
       · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
     · have hℓn : ℓ < 0 := neg_of_mul_neg_left hc hTp.le
-      refine rimCert_edgePair_robust (v := v) (w := w) (a := A) (b := B) (c := C) K hvK hwK
-        hAK hBK hCK ?_ ?_ ?_ ?_ hE h3 (fun z hz => ?_)
+      refine Or.inl (qaData_edgePair_robust (v := v) (w := w) (a := A) (b := B) (c := C) K hvK hwK
+        hAK hBK hCK ?_ ?_ ?_ ?_ hE h3 (fun z hz => ?_))
       · rw [d1]; exact mul_pos rA hTp
       · have : det3 (C - A) (B - A) u = -ℓ := by
           simp only [hℓ, det3_expand, PiLp.sub_apply]; ring
@@ -191,6 +278,23 @@ theorem rimCert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ → 
         · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
         · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
         · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))
+
+/-- **A ridge view, certificate form** (`ridgeData`). -/
+theorem rimCert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ → ℝ} {NA NB : ℝ³}
+    (hfA : ∀ y z, fA y - fA z = ⟪NA, y - z⟫) (hfB : ∀ y z, fB y - fB z = ⟪NB, y - z⟫)
+    (hAv : fA v = 0) (hAw : fA w = 0) (hAA : fA A = 0) (hAB : fA B < 0) (hAC : fA C < 0)
+    (hBv : fB v = 0) (hBw : fB w = 0) (hBB : fB B = 0) (hBA : fB A < 0) (hBC : fB C < 0)
+    (hT : det3 (A - v) (B - v) (w - v) ≠ 0)
+    (hvK : v ∈ K) (hwK : w ∈ K) (hAK : A ∈ K) (hBK : B ∈ K) (hCK : C ∈ K)
+    (hK : ∀ z ∈ K, z = v ∨ z = w ∨ z = A ∨ z = B ∨ z = C ∨ EdgeMid v w A B z)
+    (hcase : 0 < det3 (B - A) (C - A) (w - v) * det3 (B - A) (v - A) (w - v) ∨
+      (det3 (B - A) (C - A) (w - v) * det3 (B - A) (v - A) (w - v) < 0 ∧
+        det3 (B - A) (C - A) (v - A) * det3 (B - A) (C - A) (w - A) ≤ 0))
+    (htri : ¬ (⟪v, w - v⟫ = ⟪A, w - v⟫ ∧ ⟪A, w - v⟫ = ⟪B, w - v⟫))
+    (h3 : ¬ (⟪A, w - v⟫ = ⟪C, w - v⟫ ∧ ⟪C, w - v⟫ = ⟪B, w - v⟫)) :
+    RimCert K (w - v) :=
+  (ridgeData K hfA hfB hAv hAw hAA hAB hAC hBv hBw hBB hBA hBC hT hvK hwK hAK hBK hCK hK hcase htri
+    h3).rimCert
 
 /-! ### Lemma 16.5 for type 21 -/
 
@@ -255,12 +359,15 @@ theorem cert_type21_ridge_quad {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b 
     exacts [Ne.symm ha'b', Ne.symm hbb', haa', hab]
   have htri := hgen.noTriple hKc' hKd hKc' hAK hBK (Ne.symm hdc') (Ne.symm Ac') AB (Ne.symm Bc')
   have h3 := hgen.noTriple hKc' hKd hAK hKc hBK (Ne.symm hdc') Ac (Ne.symm Bc) AB
-  refine CertV.seg hKc' hKd (Ne.symm hdc')
-    (SegOK21.of_edge (by simp [Edge21, SPair]) (by spair_ne) (by spair_ne) (by spair_ne)
-      (by spair_ne))
-    (rimCert_ridge K F.ab'c'.hN F.a'bc'.hN F.ab'c'.hR
+  suffices hD : RidgeData K c' d A B c from CertV.seg hKc' hKd (Ne.symm hdc')
+    ⟨by simp [Edge21, SPair], (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne)),
+      (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne)),
+      (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne)),
+      fun _ => ⟨A, B, hA.elim (fun h => Or.inr h.1) (fun h => Or.inl h.1),
+        hB.elim (fun h => Or.inl h.1) (fun h => Or.inr h.1), hD⟩⟩ hD.rimCert
+  refine ridgeData K F.ab'c'.hN F.a'bc'.hN F.ab'c'.hR
     hd.ab'c' fAA fAB fAC F.a'bc'.hR hd.a'bc' fBB fBA fBC hT hKc' hKd hAK hBK hKc (fun z hz => ?_)
-    hcase htri h3)
+    hcase htri h3
   simp only [hK, Finset.mem_insert, Finset.mem_singleton] at hz
   rcases hz with rfl | rfl | rfl | rfl | rfl | rfl | rfl
   · exact Or.inr (Or.inl rfl)

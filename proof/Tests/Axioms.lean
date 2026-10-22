@@ -651,7 +651,12 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.isRupert_pierce'
 #assert_standard_axioms Minimality.isRupert_type24_pierce36
 #assert_standard_axioms Minimality.isRupert_type24_pierce23
-#assert_standard_axioms Minimality.isRupert_type21_limit_facets_q
+#assert_standard_axioms Minimality.isRupert_type21_limit_facets_codim2
+#assert_standard_axioms Minimality.lemmaE_far21
+#assert_standard_axioms Minimality.isRupert_q5Edge21
+#assert_standard_axioms Minimality.triSlide_or
+#assert_standard_axioms Minimality.isRupert_ridgeTri
+#assert_standard_axioms Minimality.isRupert_ridge21
 #assert_standard_axioms Minimality.isRupert_qEdge21
 #assert_standard_axioms Minimality.isRupert_ePair_limit_facts
 #assert_standard_axioms Minimality.lemmaE_of_dep

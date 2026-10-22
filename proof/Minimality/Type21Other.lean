@@ -351,7 +351,8 @@ theorem cert_type21_classB {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c
       · rw [Lc, anti c a]; have := mul_pos hrpos s10; linarith
       · rw [Ld, anti c' a]; linarith
     rw [← type21_set_O2] at hgen ⊢
-    exact (cert_type21_43 hd.O2 hd.sigma2 hq₁ hq₂ hgood hgen).monoE fun _ _ h => h.sigma2
+    exact (cert_type21_43 hd.O2 hd.sigma2 hq₁ hq₂ hgood
+      (lemmaE_of_dep hL.swap₁.swap₂ La (mul_pos hLa' hLb)) hgen).monoE fun _ _ h => h.sigma2
 
 /-! ### Class (c): one crossing (Theorem 16.23) -/
 

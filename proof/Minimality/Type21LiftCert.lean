@@ -18,6 +18,8 @@ double normal is assumed.
 * `QAData`, `QEdge21`, `SegOK21`: the data of tier Q at `06` and its images `46`, `25`, `23` (an
   edge pair with its rim and Lemma E, or the planar closing of Lemma 3 (c)); `lemmaE_of_dep`
   (Lemma 16.1 (ii): Lemma E from the dependency `[x' ·]`), `qaData_of_lift`.
+* `QEdge5`, `REdge21`: the data at `05`, `34` (edge pairs of Lemma 3 (a), (b) with Lemma E) and
+  at the ridge `26` (tier R: an edge pair with Lemma E or a triangle closing).
 -/
 
 namespace Minimality
@@ -188,33 +190,83 @@ def QEdge21 (K : Finset ℝ³) (P P' R R' c D C' v w : ℝ³) : Prop :=
   (v = C' ∧ w = P ∧ (QAData K v w R R' P' ∨ QAData K v w R' R P' ∨
     RimCertPts K (w - v) (quad R C' D P') ∨ RimCertPts K (w - v) (quad R P' D C')))
 
+/-- **The certificates at the edge `a b'` (`05`) of type 21**, between the triangle `a b' c`
+(`015`) and the quadrilateral `a b' d c'` (`0256`): an edge pair with Lemma E, with the far
+corners `c, b, c'` (`1, 4, 6`: Lemma 3 (a) of §9 at `0 → 5` in `O`, or (b) at `0 → 5` in `O2`) or
+`c, a', d` (`1, 3, 2`: Lemma 3 (b) at `5 → 0` in `O`, or (a) at `5 → 0` in `O2`). -/
+def QEdge5 (K : Finset ℝ³) (a a' b b' c c' d v w : ℝ³) : Prop :=
+  QAData K v w c c' b ∨ QAData K v w c' c b ∨ QAData K v w c d a' ∨ QAData K v w d c a'
+
+/-- `QEdge5` under `σ2` (the octahedron `K − 6`): the same four alternatives. -/
+theorem QEdge5.sigma2 {K : Finset ℝ³} {a a' b b' c c' d v w : ℝ³}
+    (h : QEdge5 K b' b a' a c d c' v w) : QEdge5 K a a' b b' c c' d v w := by
+  rcases h with h | h | h | h
+  · exact Or.inr (Or.inr (Or.inl h))
+  · exact Or.inr (Or.inr (Or.inr h))
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+
+/-- **The certificates at the ridge `c' d` (`26`) of type 21** (tier R, Lemma 16.5): the far ends
+`A ∈ {a, b'}` of `0256` and `B ∈ {a', b}` of `2346`; an edge pair `(v, A, c, B)` with Lemma E
+(`1` a corner), or the triangle closing `(v, A, B)` (`1` hidden; then `(w, A, B)` is one too). -/
+def REdge21 (K : Finset ℝ³) (a a' b b' c v w : ℝ³) : Prop :=
+  ∃ A B : ℝ³, (A = a ∨ A = b') ∧ (B = a' ∨ B = b) ∧
+    (QAData K v w A B c ∨ QAData K v w B A c ∨ RimCertPts K (w - v) (tri v A B) ∨
+      RimCertPts K (w - v) (tri v B A))
+
+theorem REdge21.sigma1 {K : Finset ℝ³} {a a' b b' c v w : ℝ³} (h : REdge21 K b b' a a' c v w) :
+    REdge21 K a a' b b' c v w := by
+  obtain ⟨A, B, hA, hB, h⟩ := h
+  refine ⟨B, A, hB.symm, hA.symm, ?_⟩
+  rcases h with h | h | h | h
+  · exact Or.inr (Or.inl h)
+  · exact Or.inl h
+  · exact Or.inr (Or.inr (Or.inr h))
+  · exact Or.inr (Or.inr (Or.inl h))
+
+theorem REdge21.sigma2 {K : Finset ℝ³} {a a' b b' c v w : ℝ³} (h : REdge21 K b' b a' a c v w) :
+    REdge21 K a a' b b' c v w := by
+  obtain ⟨A, B, hA, hB, h⟩ := h
+  exact ⟨A, B, hA.symm, hB.symm, h⟩
+
 /-- **The segment certificates of the tier cover**: an edge of type 21 (`Edge21`), with the data
 of tier Q at the four edges `06`, `46`, `25`, `23` (`QEdge21`; the images of `06` under `σ1`,
-`σ2`, `σ2σ1`). -/
+`σ2`, `σ2σ1`), at `05` and `34` (`QEdge5`; `34` is the image of `05` under `σ1`), and at the
+ridge `26` (`REdge21`). -/
 def SegOK21 (K : Finset ℝ³) (a a' b b' c c' d v w : ℝ³) : Prop :=
   Edge21 a a' b b' c c' d v w ∧
   (SPair v w a c' → QEdge21 K a a' b b' c d c' v w) ∧
   (SPair v w b c' → QEdge21 K b b' a a' c d c' v w) ∧
   (SPair v w b' d → QEdge21 K b' b a' a c c' d v w) ∧
-  (SPair v w a' d → QEdge21 K a' a b' b c c' d v w)
+  (SPair v w a' d → QEdge21 K a' a b' b c c' d v w) ∧
+  (SPair v w a b' → QEdge5 K a a' b b' c c' d v w) ∧
+  (SPair v w b a' → QEdge5 K b b' a a' c c' d v w) ∧
+  (SPair v w c' d → REdge21 K a a' b b' c v w)
 
 theorem SegOK21.sigma1 {K : Finset ℝ³} {a a' b b' c c' d v w : ℝ³}
     (h : SegOK21 K b b' a a' c c' d v w) : SegOK21 K a a' b b' c c' d v w :=
-  ⟨h.1.sigma1, h.2.2.1, h.2.1, h.2.2.2.2, h.2.2.2.1⟩
+  ⟨h.1.sigma1, h.2.2.1, h.2.1, h.2.2.2.2.1, h.2.2.2.1, h.2.2.2.2.2.2.1, h.2.2.2.2.2.1,
+    fun hs => (h.2.2.2.2.2.2.2 hs).sigma1⟩
 
 theorem SegOK21.sigma2 {K : Finset ℝ³} {a a' b b' c c' d v w : ℝ³}
     (h : SegOK21 K b' b a' a c d c' v w) : SegOK21 K a a' b b' c c' d v w :=
-  ⟨h.1.sigma2, h.2.2.2.1, h.2.2.2.2, h.2.1, h.2.2.1⟩
+  ⟨h.1.sigma2, h.2.2.2.1, h.2.2.2.2.1, h.2.1, h.2.2.1,
+    fun hs => (h.2.2.2.2.2.1 hs.swap).sigma2, fun hs => (h.2.2.2.2.2.2.1 hs.swap).sigma2,
+    fun hs => (h.2.2.2.2.2.2.2 hs.swap).sigma2⟩
 
 theorem SegOK21.sigma21 {K : Finset ℝ³} {a a' b b' c c' d v w : ℝ³}
     (h : SegOK21 K a' a b' b c d c' v w) : SegOK21 K a a' b b' c c' d v w :=
-  ⟨h.1.sigma21, h.2.2.2.2, h.2.2.2.1, h.2.2.1, h.2.1⟩
+  ⟨h.1.sigma21, h.2.2.2.2.1, h.2.2.2.1, h.2.2.1, h.2.1,
+    fun hs => (h.2.2.2.2.2.2.1 hs.swap).sigma2, fun hs => (h.2.2.2.2.2.1 hs.swap).sigma2,
+    fun hs => (h.2.2.2.2.2.2.2 hs.swap).sigma2.sigma1⟩
 
-/-- A segment off the four edges of tier Q. -/
+/-- A segment off the seven edges with data. -/
 theorem SegOK21.of_edge {K : Finset ℝ³} {a a' b b' c c' d v w : ℝ³}
     (hE : Edge21 a a' b b' c c' d v w) (h1 : ¬ SPair v w a c') (h2 : ¬ SPair v w b c')
-    (h3 : ¬ SPair v w b' d) (h4 : ¬ SPair v w a' d) : SegOK21 K a a' b b' c c' d v w :=
-  ⟨hE, fun h => absurd h h1, fun h => absurd h h2, fun h => absurd h h3, fun h => absurd h h4⟩
+    (h3 : ¬ SPair v w b' d) (h4 : ¬ SPair v w a' d) (h5 : ¬ SPair v w a b')
+    (h6 : ¬ SPair v w b a') (h7 : ¬ SPair v w c' d) : SegOK21 K a a' b b' c c' d v w :=
+  ⟨hE, fun h => absurd h h1, fun h => absurd h h2, fun h => absurd h h3, fun h => absurd h h4,
+    fun h => absurd h h5, fun h => absurd h h6, fun h => absurd h h7⟩
 
 /-- `¬ SPair v w p q` from the distinctness hypotheses in context. -/
 macro "spair_ne" : tactic =>
@@ -280,6 +332,7 @@ is Rupert. -/
 theorem cert_type21_05 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
     (hq₁ : F.a'bc.f a < F.a'bc.f b') (hq₂ : F.a'bc'.f a < F.a'bc'.f b')
     (hgood : ¬ max ⟪b', b' - a⟫ ⟪b, b' - a⟫ ≤ min ⟪c, b' - a⟫ ⟪c', b' - a⟫)
+    (hLE : det3 (c' - c) (b - c) (a - c) * det3 (c' - c) (b - c) (b' - c) ≤ 0)
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
       (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
@@ -298,12 +351,13 @@ theorem cert_type21_05 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
   have hmid : QuadMiddle a b' c c' d :=
     ⟨β, α + β - 1, hβ, hβ1, by linarith, by linarith, Or.inr (by rw [hco]; module)⟩
   rw [← (type21_set a a' b b' c c' d).1] at hgen ⊢
+  obtain ⟨hqa, hrc⟩ := qaData_of_lift (rimCertPts_quad_edge_lift_tie F.swap₂ hq₁ hq₂ hgood
+    (Or.inl hmid) ⟨hda, hda', hdb', hdb, hdc, hdc'⟩ (hgen.touch_oct F.swap₂)) hLE
   exact CertV.seg (by simp) (by simp) hab'
-    (SegOK21.of_edge (by simp [Edge21, SPair]) (by spair_ne) (by spair_ne) (by spair_ne)
-      (by spair_ne))
-    (rimCert_quad_edge_lift_tie F.swap₂ hq₁ hq₂ hgood (Or.inl hmid)
-    ⟨hda, hda', hdb', hdb, hdc, hdc'⟩
-    (hgen.touch_oct F.swap₂))
+    ⟨by simp [Edge21, SPair], (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne)),
+      (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne)),
+      fun _ => hqa.elim Or.inl (Or.inr ∘ Or.inl), (fun h => absurd h (by spair_ne)),
+      (fun h => absurd h (by spair_ne))⟩ hrc
 
 /-- **Lemma 3 of §9 at `0 → 6`.**  If `0 → 6` is a quad edge of `O6` (`3` hidden: the facet
 inequalities at `134`, `135`) that is not bad, then `α < 1` (the inequality at `135` with
@@ -334,7 +388,9 @@ theorem cert_type21_06 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
   obtain ⟨hqa, hrc⟩ := qaData_of_lift (rimCertPts_quad_edge_lift_tie F.perm₂₃.swap₂ hq₁ hq₂ hgood
     (Or.inl hmid) ⟨hda, hda', hdc', hdc, hdb, hdb'⟩ (hgen.touch_oct F.perm₂₃.swap₂)) hLE
   exact CertV.seg (by simp) (by simp) hac'
-    ⟨by simp [Edge21, SPair], fun _ => Or.inl ⟨rfl, rfl, hqa⟩, (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne))⟩ hrc
+    ⟨by simp [Edge21, SPair], fun _ => Or.inl ⟨rfl, rfl, hqa⟩, (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne)),
+        (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne)),
+        (fun h => absurd h (by spair_ne))⟩ hrc
 
 /-- **Lemma 3 (c) of §9.**  Let `6 → 0` be a quad edge of `O6` (`1` hidden: the facet
 inequalities at `134`, `135`) with `α > 1`: at the view along `06` the far end of `0256`
@@ -441,7 +497,9 @@ theorem cert_type21_60_far (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
     suffices hR : RimCertPts V (a - c') (quad b c' d a') from
       CertV.seg' (v := a) (w := c') (by simp [V]) (by simp [V]) hac'
         ⟨by simp [Edge21, SPair], fun _ => Or.inr ⟨rfl, rfl, Or.inr (Or.inr (Or.inl hR))⟩, (fun h => absurd h (by spair_ne)),
-          (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne))⟩ hR.rimCert4
+          (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne)),
+        (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne)),
+        (fun h => absurd h (by spair_ne))⟩ hR.rimCert4
     refine rimCertPts_of_edgeView_robust V {b'} (a - c') hu (k := 4) (by norm_num)
       (quad b c' d a') 1 a (-1)
       (by simp [V]) (by simp only [quad_1, neg_smul, one_smul, sub_neg_eq_add]; abel)
@@ -500,7 +558,9 @@ theorem cert_type21_60_far (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
     suffices hR : RimCertPts V (a - c') (quad b a' d c') from
       CertV.seg' (v := a) (w := c') (by simp [V]) (by simp [V]) hac'
         ⟨by simp [Edge21, SPair], fun _ => Or.inr ⟨rfl, rfl, Or.inr (Or.inr (Or.inr hR))⟩, (fun h => absurd h (by spair_ne)),
-          (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne))⟩ hR.rimCert4
+          (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne)),
+        (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne)),
+        (fun h => absurd h (by spair_ne))⟩ hR.rimCert4
     refine rimCertPts_of_edgeView_robust V {b'} (a - c') hu (k := 4) (by norm_num)
       (quad b a' d c') 3 a (-1)
       (by simp [V]) (by simp only [quad_3, neg_smul, one_smul, sub_neg_eq_add]; abel)
@@ -576,7 +636,9 @@ theorem cert_type21_60 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
       (hgen.touch_oct F.perm₂₃.swap₂.perm₁₂)) hLE
     exact CertV.seg (by simp) (by simp) (Ne.symm hac')
       ⟨by simp [Edge21, SPair], fun _ => Or.inr ⟨rfl, rfl, hqa.elim Or.inl (Or.inr ∘ Or.inl)⟩, (fun h => absurd h (by spair_ne)),
-        (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne))⟩ hrc
+        (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne)),
+        (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne)),
+        (fun h => absurd h (by spair_ne))⟩ hrc
   · exfalso
     refine hgen.ne_smul (s := b') (t := d) (x := a) (y := c') (by simp) (by simp) (by simp)
       (by simp) (Ne.symm hdb') hac' ⟨hda, hdc'⟩ β ?_
@@ -592,6 +654,7 @@ and `234` lies in the plane of `346`), with `6` a middle; that edge is not bad i
 theorem cert_type21_50 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
     (hq₁ : F.a'bc.f b' < F.a'bc.f a) (hq₂ : F.a'bc'.f b' < F.a'bc'.f a)
     (hgood : ¬ max ⟪a, a - b'⟫ ⟪a', a - b'⟫ ≤ min ⟪c, a - b'⟫ ⟪c', a - b'⟫)
+    (hLE : det3 (d - c) (a' - c) (b' - c) * det3 (d - c) (a' - c) (a - c) ≤ 0)
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
       (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
@@ -702,32 +765,37 @@ theorem cert_type21_50 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
         _ = a + β⁻¹ • (d - a) + (α * β⁻¹) • (a - b') := by
             rw [show β • (c' - a) = d - a - α • (b' - a) by rw [hco]; abel]; module
   rw [← (type21_set a a' b b' c c' d).2.1] at hgen ⊢
-  exact CertV.seg (by simp) (by simp) (Ne.symm hab')
-    (SegOK21.of_edge (by simp [Edge21, SPair]) (by spair_ne) (by spair_ne) (by spair_ne)
-      (by spair_ne))
-    (rimCert_quad_edge_lift_tie hd.O2.swap₂ hq₁ hq₂ hgood2 (Or.inl hmid)
+  obtain ⟨hqa, hrc⟩ := qaData_of_lift (rimCertPts_quad_edge_lift_tie hd.O2.swap₂ hq₁ hq₂ hgood2
+    (Or.inl hmid)
     ⟨Ne.symm hb'c', Ne.symm hbc', Ne.symm hac', Ne.symm ha'c', Ne.symm hcc', Ne.symm hdc'⟩
-    (hgen.touch_oct hd.O2.swap₂))
+    (hgen.touch_oct hd.O2.swap₂)) hLE
+  exact CertV.seg (by simp) (by simp) (Ne.symm hab')
+    ⟨by simp [Edge21, SPair], (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne)),
+      (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne)),
+      fun _ => hqa.elim (Or.inr ∘ Or.inr ∘ Or.inl) (Or.inr ∘ Or.inr ∘ Or.inr),
+      (fun h => absurd h (by spair_ne)), (fun h => absurd h (by spair_ne))⟩ hrc
 
 /-- **Lemma 3 of §9 at `4 → 3`** (`σ1` of `0 → 5`). -/
 theorem cert_type21_43 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
     (hq₁ : F.ab'c.f b < F.ab'c.f a') (hq₂ : F.ab'c'.f b < F.ab'c'.f a')
     (hgood : ¬ max ⟪a', a' - b⟫ ⟪a, a' - b⟫ ≤ min ⟪c, a' - b⟫ ⟪c', a' - b⟫)
+    (hLE : det3 (c' - c) (a - c) (b - c) * det3 (c' - c) (a - c) (a' - c) ≤ 0)
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
       (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   rw [← (type21_set a a' b b' c c' d).2.2.2.2] at hgen ⊢
-  exact (cert_type21_05 F.perm₁₂ hd.sigma1 hq₁ hq₂ hgood hgen).monoE fun _ _ h => h.sigma1
+  exact (cert_type21_05 F.perm₁₂ hd.sigma1 hq₁ hq₂ hgood hLE hgen).monoE fun _ _ h => h.sigma1
 
 /-- **Lemma 3 of §9 at `3 → 4`** (`σ1` of `5 → 0`). -/
 theorem cert_type21_34 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
     (hq₁ : F.ab'c.f a' < F.ab'c.f b) (hq₂ : F.ab'c'.f a' < F.ab'c'.f b)
     (hgood : ¬ max ⟪b, b - a'⟫ ⟪b', b - a'⟫ ≤ min ⟪c, b - a'⟫ ⟪c', b - a'⟫)
+    (hLE : det3 (d - c) (b' - c) (a' - c) * det3 (d - c) (b' - c) (b - c) ≤ 0)
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
       (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   rw [← (type21_set a a' b b' c c' d).2.2.2.2] at hgen ⊢
-  exact (cert_type21_50 F.perm₁₂ hd.sigma1 hq₁ hq₂ hgood hgen).monoE fun _ _ h => h.sigma1
+  exact (cert_type21_50 F.perm₁₂ hd.sigma1 hq₁ hq₂ hgood hLE hgen).monoE fun _ _ h => h.sigma1
 
 /-- **Lemma 3 of §9 at `4 → 6`** (`σ1` of `0 → 6`). -/
 theorem cert_type21_46 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
