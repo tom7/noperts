@@ -529,16 +529,14 @@ theorem isRupert_of_cert_seq {x : Fin 7 → ℝ³} (T : Type16 x)
   · exact isRupert_of_certL_seq T hnd K hK v ε lab hq
   · exact isRupert_of_certL_seq T hnd K hK v ε lab hq
 
-/-- **Theorem 19.8 (type 16 outside the HDN set and codimension 2).**  A type-16 shape `x`
-(facets `T`) with at most one tie at its named views (`OneTie16`: the segments and the six vertex
-crossings of the cover) and no horizontal double normal at them is Rupert.  No (G1), no sign
-condition of the route, no general position: `x` is a limit of shapes `K_n` off the special
-positions of the cover (`genPoly16`) with the same tie as `x` (restored by a unimodular shear),
-each `K_n` has a certificate (`NF16.cert_nf`), a subsequence carries one labelled certificate,
-and the limit lemma applies. -/
-theorem isRupert_type16_limit {x : Fin 7 → ℝ³} (T : Type16 x)
-    (hnd : ∀ v, view16 x v ≠ 0 → NoHDNAt (univ.image x) (view16 x v))
-    (htie : OneTie16 x) : IsRupert (univ.image x) := by
+/-- **The approximating sequence of Theorem 19.8**: a type-16 shape `x` with at most one tie at
+its named views is a limit of shapes `K_n`, each with a certificate (`Cert16`) and with the tie
+of `x` (restored by a unimodular shear).  No (G1), no sign condition of the route, no general
+position: the `K_n` are off the special positions of the cover (`genPoly16`). -/
+theorem exists_certSeq16 {x : Fin 7 → ℝ³} (T : Type16 x) (htie : OneTie16 x) :
+    ∃ K : ℕ → Fin 7 → ℝ³, (∀ m, Tendsto (fun n => K n m) atTop (𝓝 (x m))) ∧
+      ∃ᶠ n in atTop, Cert16 (K n) ∧
+        ∀ w a b, TieInst16 x w a b → ⟪K n a - K n b, view16 (K n) w⟫ = 0 := by
   classical
   set N := T.toNF with hNdef
   set θ₀ : Fin 7 → ℝ := ![N.a, N.b, N.g, N.d, N.p, N.q, N.r] with hθ₀
@@ -622,7 +620,7 @@ theorem isRupert_type16_limit {x : Fin 7 → ℝ³} (T : Type16 x)
   have hineq : ∀ᶠ n in atTop, ∀ k, 0 < ineq16 (θs n) k :=
     eventually_all.mpr fun k =>
       (((continuous_ineq16 k).tendsto θ₀).comp hθs).eventually (lt_mem_nhds (N.ineq k))
-  refine isRupert_of_cert_seq T hnd K hK (Eventually.frequently ?_)
+  refine ⟨K, hK, Eventually.frequently ?_⟩
   filter_upwards [hineq, eventually_ties hK, hrest] with n hn hs hr
   refine ⟨?_, fun w a b hw => by rw [hKY n]; exact hr w a b hw⟩
   have hD : det3 (R n N.E₁) (R n N.E₂) (R n N.E₃) ≠ 0 := by
@@ -673,6 +671,20 @@ theorem isRupert_type16_limit {x : Fin 7 → ℝ³} (T : Type16 x)
     exact (oneTieAt_of_ties htie hsubK (.inr 4) hv4).smul (inv_ne_zero hD')
   exact NF16.cert_nf Nn G Gσ W Wσ hR.1 hR.2 hgt
 
+
+
+/-- **Theorem 19.8 (type 16 outside the HDN set and codimension 2).**  A type-16 shape `x`
+(facets `T`) with at most one tie at its named views (`OneTie16`: the segments and the six vertex
+crossings of the cover) and no horizontal double normal at them is Rupert.  No (G1), no sign
+condition of the route, no general position: `x` is a limit of shapes `K_n` off the special
+positions of the cover (`genPoly16`) with the same tie as `x` (restored by a unimodular shear),
+each `K_n` has a certificate (`NF16.cert_nf`), a subsequence carries one labelled certificate,
+and the limit lemma applies. -/
+theorem isRupert_type16_limit {x : Fin 7 → ℝ³} (T : Type16 x)
+    (hnd : ∀ v, view16 x v ≠ 0 → NoHDNAt (univ.image x) (view16 x v))
+    (htie : OneTie16 x) : IsRupert (univ.image x) := by
+  obtain ⟨K, hK, hc⟩ := exists_certSeq16 T htie
+  exact isRupert_of_cert_seq T hnd K hK hc
 
 /-- No horizontal double normal at the views along the line of two planes given by affine face
 functions. -/

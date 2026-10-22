@@ -1354,18 +1354,14 @@ theorem Facets21.exists_kappa {x : Fin 7 → ℝ³} (T : Facets21 x) :
     · show k7 * det3 (x 3 - x 2) (x 5 - x 2) (x i - x 2) < 0
       rw [← h7]; exact T.f235.neg i hi
 
-/-- **Type 21 outside the HDN set and codimension 2** (§18.6 step 2).  A type-21 shape `x`
-(facets `T`) with at most one tie at its named views (`OneTie21`: the segments and the eight
-vertex crossings of the cover) and no horizontal double normal at them is Rupert.  No general
-position, no sign condition or Gale equality of the cover, no (G1), no planar equator, no switch
-surface: `x` is a limit of shapes `K_n` off the special positions of the cover (`genPoly21`) with
-the same tie as `x` (restored by a unimodular shear), each `K_n` has a certificate
-(`cert21_of_generic`: at most one tie at each named view, no tie along `a − b` if `a, b` tie at a
-view of `T1`, a tie at no more than one view of F2), a subsequence carries one labelled
-certificate, and the limit lemma applies. -/
-theorem isRupert_type21_limit {x : Fin 7 → ℝ³} (T : Facets21 x)
-    (hnd : ∀ v, view21 x v ≠ 0 → NoHDNAt (univ.image x) (view21 x v))
-    (htie : OneTie21 x) : IsRupert (univ.image x) := by
+/-- **The approximating sequence of §18.6 step 2 for type 21**: a type-21 shape `x` with at most
+one tie at its named views is a limit of shapes `K_n`, each with a certificate (`Cert21`) and
+with the tie of `x`.  No general position, no sign condition or Gale equality of the cover, no
+(G1), no planar equator, no switch surface. -/
+theorem exists_certSeq21 {x : Fin 7 → ℝ³} (T : Facets21 x) (htie : OneTie21 x) :
+    ∃ K : ℕ → Fin 7 → ℝ³, (∀ m, Tendsto (fun n => K n m) atTop (𝓝 (x m))) ∧
+      ∃ᶠ n in atTop, Cert21 (K n) ∧
+        ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0 := by
   classical
   set θ₀ := theta21 x with hθ₀
   have hx : x = nfShape21 (x 2) (x 0 - x 2) (x 3 - x 2) (x 6 - x 2) θ₀ := T.eq_nfShape
@@ -1468,7 +1464,7 @@ theorem isRupert_type21_limit {x : Fin 7 → ℝ³} (T : Facets21 x)
       · exact Eventually.of_forall fun _ h => absurd hij h
       · exact (((hK i).sub (hK j)).eventually_ne (sub_ne_zero.mpr (T.inj.ne hij))).mono
           fun n hn _ => hn
-  refine isRupert_of_cert_seq21 T hnd K hK (Eventually.frequently ?_)
+  refine ⟨K, hK, Eventually.frequently ?_⟩
   filter_upwards [eventually_ties21 hK, hrest, hfac, hvtx, hsegs] with n hs hr hf hv hw
   refine ⟨?_, fun w a b hw => by rw [hKY n]; exact hr w a b hw⟩
   have hD : det3 (R n E₁) (R n E₂) (R n E₃) ≠ 0 := by
@@ -1496,6 +1492,22 @@ theorem isRupert_type21_limit {x : Fin 7 → ℝ³} (T : Facets21 x)
       noTieAt_or htie hsubK (by decide) (hv 0) (hv 5),
       noTieAt_or htie hsubK (by decide) (hv 3) (hv 6),
       noTieAt_or htie hsubK (by decide) (hv 2) (hv 7)⟩
+
+
+/-- **Type 21 outside the HDN set and codimension 2** (§18.6 step 2).  A type-21 shape `x`
+(facets `T`) with at most one tie at its named views (`OneTie21`: the segments and the eight
+vertex crossings of the cover) and no horizontal double normal at them is Rupert.  No general
+position, no sign condition or Gale equality of the cover, no (G1), no planar equator, no switch
+surface: `x` is a limit of shapes `K_n` off the special positions of the cover (`genPoly21`) with
+the same tie as `x` (restored by a unimodular shear), each `K_n` has a certificate
+(`cert21_of_generic`: at most one tie at each named view, no tie along `a − b` if `a, b` tie at a
+view of `T1`, a tie at no more than one view of F2), a subsequence carries one labelled
+certificate, and the limit lemma applies. -/
+theorem isRupert_type21_limit {x : Fin 7 → ℝ³} (T : Facets21 x)
+    (hnd : ∀ v, view21 x v ≠ 0 → NoHDNAt (univ.image x) (view21 x v))
+    (htie : OneTie21 x) : IsRupert (univ.image x) := by
+  obtain ⟨K, hK, hc⟩ := exists_certSeq21 T htie
+  exact isRupert_of_cert_seq21 T hnd K hK hc
 
 /-- The two facet normals at a vertex crossing are orthogonal to its view. -/
 theorem vtxView21_perp {x : Fin 7 → ℝ³} {SP SQ : Finset (Fin 7)} (FP : Face16 x SP)
