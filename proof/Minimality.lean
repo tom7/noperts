@@ -53,6 +53,7 @@ public import Minimality.Type21Facets
 public import Minimality.Type16Main
 public import Minimality.LimitCert
 public import Minimality.RobustEdge
+public import Minimality.Type16Limit
 public import Minimality.Type29Facets
 
 /-!
@@ -919,6 +920,49 @@ theorem not_type16_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       Minimality.ViewAff16 (Finset.univ.image x) fB fE) : False :=
   h.2 (Minimality.isRupert_type16_facets x hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG hH
     hgen hpp hnd hcop.1 hcop.2 hL hV)
+
+/-- **Type 16 outside the HDN set and codimension 2** (Theorem 19.8 of `FEWER-FACES-PROOFS.md`,
+with §18.6 step 2): a nopert does not have seven points labelled so that `0235`, `1356`
+(quadrilaterals), `024`, `036`, `046`, `145`, `146`, `245` are facets (given by functionals
+negative off them), unless it has a horizontal double normal at the view along some segment
+or along the line of one of the six facet pairs `046/145`, `036/146`, `0235/046`, `046/245`,
+`036/024`, `1356/046` (`Minimality.NoHDNAff`), or two ties at these named views that are not
+one equation (`Minimality.OneTie16` fails; the tie of `s, t` along `ij` and the tie of `i, j`
+along `st` count once): a set of codimension 2.  No general position, no sign condition of the
+route, no (G1).  Every type-16 shape is a limit of shapes off the special positions of the
+cover with the same tie; each of these has a rim certificate at a named view (Theorem 19.6), a
+subsequence carries one labelled certificate, and it passes to the limit (Lemma 18.2: the rim
+only loses corners; Theorems 18.1, 18.3). -/
+theorem not_type16_of_isNopert_codim2 (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
+    (hx : Function.Injective x)
+    (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
+    (hA : ∀ i, (i ∈ ({0, 2, 3, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
+      (i ∉ ({0, 2, 3, 5} : Finset (Fin 7)) → fA (x i) < 0))
+    (hB : ∀ i, (i ∈ ({1, 3, 5, 6} : Finset (Fin 7)) → fB (x i) = 0) ∧
+      (i ∉ ({1, 3, 5, 6} : Finset (Fin 7)) → fB (x i) < 0))
+    (hC : ∀ i, (i ∈ ({0, 2, 4} : Finset (Fin 7)) → fC (x i) = 0) ∧
+      (i ∉ ({0, 2, 4} : Finset (Fin 7)) → fC (x i) < 0))
+    (hD : ∀ i, (i ∈ ({0, 3, 6} : Finset (Fin 7)) → fD (x i) = 0) ∧
+      (i ∉ ({0, 3, 6} : Finset (Fin 7)) → fD (x i) < 0))
+    (hE : ∀ i, (i ∈ ({0, 4, 6} : Finset (Fin 7)) → fE (x i) = 0) ∧
+      (i ∉ ({0, 4, 6} : Finset (Fin 7)) → fE (x i) < 0))
+    (hF : ∀ i, (i ∈ ({1, 4, 5} : Finset (Fin 7)) → fF (x i) = 0) ∧
+      (i ∉ ({1, 4, 5} : Finset (Fin 7)) → fF (x i) < 0))
+    (hG : ∀ i, (i ∈ ({1, 4, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
+      (i ∉ ({1, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
+    (hH : ∀ i, (i ∈ ({2, 4, 5} : Finset (Fin 7)) → fH (x i) = 0) ∧
+      (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fH (x i) < 0))
+    (hnd : ∀ v ∈ Finset.univ.image x, ∀ w ∈ Finset.univ.image x, v ≠ w →
+      Minimality.NoHDNAt ((Finset.univ.image x).erase w) (w - v))
+    (hV : Minimality.NoHDNAff (Finset.univ.image x) fE fF ∧
+      Minimality.NoHDNAff (Finset.univ.image x) fD fG ∧
+      Minimality.NoHDNAff (Finset.univ.image x) fA fE ∧
+      Minimality.NoHDNAff (Finset.univ.image x) fE fH ∧
+      Minimality.NoHDNAff (Finset.univ.image x) fD fC ∧
+      Minimality.NoHDNAff (Finset.univ.image x) fB fE)
+    (htie : Minimality.OneTie16 x) : False :=
+  h.2 (Minimality.isRupert_type16_limit_facets x hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG
+    hH hnd hV htie)
 
 /-- **Flat polygons are Rupert.**  Points in a plane, not all on one line, are
 Rupert, whatever their number: hold one copy face-on and pass the other

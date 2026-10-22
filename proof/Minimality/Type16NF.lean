@@ -2,6 +2,7 @@ module
 
 public import Minimality.EdgePair
 public import Minimality.RobustEdge
+public import Minimality.RimCert
 
 @[expose] public section
 
@@ -779,7 +780,7 @@ theorem depth_nodup3 {x : Fin 7 → ℝ³} (hx : Function.Injective x) (hg : Gen
 
 /-- The far depths of an edge pair at an edge `v w` (far path `a, c, b`) are not all equal
 (`GenPosTie`: two ties at one edge view). -/
-theorem depth_far3 {x : Fin 7 → ℝ³} (hx : Function.Injective x) (hg : GenPosTie (univ.image x))
+theorem depth_far3 {x : Fin 7 → ℝ³} (hx : Function.Injective x) (hg : TieSeg (univ.image x))
     {v w a b c : Fin 7} (h : [v, w, a, b, c].Nodup) :
     ¬ (⟪x a, x w - x v⟫ = ⟪x c, x w - x v⟫ ∧ ⟪x c, x w - x v⟫ = ⟪x b, x w - x v⟫) := by
   have hm : ∀ k, x k ∈ univ.image x := fun k => mem_image_of_mem x (mem_univ k)
@@ -790,7 +791,7 @@ theorem depth_far3 {x : Fin 7 → ℝ³} (hx : Function.Injective x) (hg : GenPo
     (hx.ne h8)
 
 /-- The depths of a triangle closing `v, a, b` at an edge `v w` are not all equal. -/
-theorem depth_tri3 {x : Fin 7 → ℝ³} (hx : Function.Injective x) (hg : GenPosTie (univ.image x))
+theorem depth_tri3 {x : Fin 7 → ℝ³} (hx : Function.Injective x) (hg : TieSeg (univ.image x))
     {v w a b : Fin 7} (h : [v, w, a, b].Nodup) :
     ¬ (⟪x v, x w - x v⟫ = ⟪x a, x w - x v⟫ ∧ ⟪x a, x w - x v⟫ = ⟪x b, x w - x v⟫) := by
   have hm : ∀ k, x k ∈ univ.image x := fun k => mem_image_of_mem x (mem_univ k)
@@ -798,6 +799,146 @@ theorem depth_tri3 {x : Fin 7 → ℝ³} (hx : Function.Injective x) (hg : GenPo
     List.nodup_nil, and_true] at h
   obtain ⟨⟨h1, h2, h3⟩, ⟨h5, h6⟩, h8, -⟩ := h
   exact hg.noTriple (hm v) (hm w) (hm v) (hm a) (hm b) (hx.ne h1) (hx.ne h2) (hx.ne h8) (hx.ne h3)
+
+
+/-! ### Certificates (§18.2): named views and rim certificates -/
+
+/-- The direction of the line of two planes, through `p₀ p₁ p₂` and through `q₀ q₁ q₂`: the
+cross product of the normals, `[A B D] C − [A B C] D` (`A = p₁ − p₀`, `B = p₂ − p₀`,
+`C = q₁ − q₀`, `D = q₂ − q₀`). -/
+noncomputable def planeLine (p₀ p₁ p₂ q₀ q₁ q₂ : ℝ³) : ℝ³ :=
+  det3 (p₁ - p₀) (p₂ - p₀) (q₂ - q₀) • (q₁ - q₀) - det3 (p₁ - p₀) (p₂ - p₀) (q₁ - q₀) • (q₂ - q₀)
+
+/-- The six vertex crossings of the cover (§19.3–19.5), each by three labels on either plane:
+`046/145`, `036/146`, `0235/046`, and their `σ`-images `046/245`, `036/024`, `1356/046`. -/
+def vtx16 : Fin 6 → (Fin 7 × Fin 7 × Fin 7) × (Fin 7 × Fin 7 × Fin 7) :=
+  ![((0, 4, 6), (1, 4, 5)), ((0, 3, 6), (1, 4, 6)), ((0, 3, 5), (0, 4, 6)),
+    ((6, 4, 0), (2, 4, 5)), ((6, 3, 0), (2, 4, 0)), ((6, 3, 5), (6, 4, 0))]
+
+/-- The view along the `t`-th vertex crossing. -/
+noncomputable def vtxView16 (x : Fin 7 → ℝ³) (t : Fin 6) : ℝ³ :=
+  planeLine (x (vtx16 t).1.1) (x (vtx16 t).1.2.1) (x (vtx16 t).1.2.2) (x (vtx16 t).2.1)
+    (x (vtx16 t).2.2.1) (x (vtx16 t).2.2.2)
+
+/-- **The named views of type 16**: the segments and the six vertex crossings. -/
+noncomputable def view16 (x : Fin 7 → ℝ³) : (Fin 7 × Fin 7) ⊕ Fin 6 → ℝ³
+  | .inl ij => x ij.2 - x ij.1
+  | .inr t => vtxView16 x t
+
+/-- `u` is a nonzero multiple of a named view. -/
+def Named16 (x : Fin 7 → ℝ³) (u : ℝ³) : Prop :=
+  ∃ v : (Fin 7 × Fin 7) ⊕ Fin 6, ∃ c : ℝ, c ≠ 0 ∧ u = c • view16 x v
+
+/-- **A type-16 certificate**: a rim certificate (3, 4 or 5 corners) at a named view.  Every
+step of the cover (§19.2–19.5) ends in one; with no horizontal double normal at its view it
+makes the shape Rupert, and it passes to limits (`isRupert_of_tendsto_rimCert`). -/
+def Cert16 (x : Fin 7 → ℝ³) : Prop := ∃ u, Named16 x u ∧ RimCert (univ.image x) u
+
+theorem Cert16.mk {x : Fin 7 → ℝ³} {u : ℝ³} (hn : Named16 x u) (h : RimCert (univ.image x) u) :
+    Cert16 x := ⟨u, hn, h⟩
+
+theorem named16_seg {x : Fin 7 → ℝ³} (i j : Fin 7) : Named16 x (x j - x i) :=
+  ⟨.inl (i, j), 1, one_ne_zero, (one_smul _ _).symm⟩
+
+theorem Named16.smul {x : Fin 7 → ℝ³} {u : ℝ³} (h : Named16 x u) {c : ℝ} (hc : c ≠ 0) :
+    Named16 x (c • u) := by
+  obtain ⟨v, d, hd, rfl⟩ := h
+  exact ⟨v, c * d, mul_ne_zero hc hd, by rw [smul_smul]⟩
+
+theorem vtxView16_sigma (x : Fin 7 → ℝ³) (t : Fin 6) :
+    vtxView16 (x ∘ sigma16) t = vtxView16 x (t + 3) := by
+  fin_cases t <;> rfl
+
+theorem Named16.sigma {x : Fin 7 → ℝ³} {u : ℝ³} (h : Named16 (x ∘ sigma16) u) : Named16 x u := by
+  obtain ⟨v, c, hc, rfl⟩ := h
+  rcases v with ⟨i, j⟩ | t
+  · exact ⟨.inl (sigma16 i, sigma16 j), c, hc, rfl⟩
+  · exact ⟨.inr (t + 3), c, hc, by simp only [view16, vtxView16_sigma]⟩
+
+theorem Cert16.sigma {x : Fin 7 → ℝ³} (h : Cert16 (x ∘ sigma16)) : Cert16 x := by
+  obtain ⟨u, hn, hc⟩ := h
+  rw [image_sigma16] at hc
+  exact ⟨u, hn.sigma, hc⟩
+
+/-- **`rimCert_edgePair_robust` in either orientation** (as `isRupert_edgePairσ_robust`). -/
+theorem rimCert_edgePairσ_robust {v w a b c : ℝ³} (V : Finset ℝ³) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
+    (hvV : v ∈ V) (hwV : w ∈ V) (haV : a ∈ V) (hbV : b ∈ V) (hcV : c ∈ V)
+    (q₁ : 0 < σ * det3 (a - v) (c - v) (w - v)) (q₂ : 0 < σ * det3 (c - a) (b - a) (w - v))
+    (q₃ : 0 < σ * det3 (b - c) (v - c) (w - v)) (q₄ : 0 < σ * det3 (v - b) (a - b) (w - v))
+    (hE : det3 (b - a) (c - a) (v - a) * det3 (b - a) (c - a) (w - a) ≤ 0)
+    (h3 : ¬ (⟪a, w - v⟫ = ⟪c, w - v⟫ ∧ ⟪c, w - v⟫ = ⟪b, w - v⟫))
+    (hV : ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ z = c ∨ EdgeMid v w a b z ∨
+      EdgeHiddenσ σ (w - v) v a c b z) : RimCert V (w - v) := by
+  rcases hσ with rfl | rfl
+  · simp only [one_mul] at q₁ q₂ q₃ q₄
+    refine rimCert_edgePair_robust V hvV hwV haV hbV hcV q₁ q₂ q₃ q₄ hE h3 (fun z hz => ?_)
+    rcases hV z hz with h | h | h | h | h | h | ⟨h1, h2, h3, h4⟩
+    · exact Or.inl h
+    · exact Or.inr (Or.inl h)
+    · exact Or.inr (Or.inr (Or.inl h))
+    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))
+    · simp only [one_mul] at h1 h2 h3 h4
+      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨h1, h2, h3, h4⟩)))))
+  · have e1 : det3 (b - v) (c - v) (w - v) = -det3 (b - c) (v - c) (w - v) := by
+      simp only [det3_expand, PiLp.sub_apply]; ring
+    have e2 : det3 (c - b) (a - b) (w - v) = -det3 (c - a) (b - a) (w - v) := by
+      simp only [det3_expand, PiLp.sub_apply]; ring
+    have e3 : det3 (a - c) (v - c) (w - v) = -det3 (a - v) (c - v) (w - v) := by
+      simp only [det3_expand, PiLp.sub_apply]; ring
+    have e4 : det3 (v - a) (b - a) (w - v) = -det3 (v - b) (a - b) (w - v) := by
+      simp only [det3_expand, PiLp.sub_apply]; ring
+    have eE : ∀ y, det3 (a - b) (c - b) (y - b) = -det3 (b - a) (c - a) (y - a) := by
+      intro y; simp only [det3_expand, PiLp.sub_apply]; ring
+    refine rimCert_edgePair_robust (a := b) (b := a) V hvV hwV hbV haV hcV (by rw [e1]; linarith)
+      (by rw [e2]; linarith) (by rw [e3]; linarith) (by rw [e4]; linarith)
+      (by rw [eE, eE]; linarith) (fun h => h3 ⟨h.2.symm, h.1.symm⟩) (fun z hz => ?_)
+    rcases hV z hz with h | h | h | h | h | h | ⟨h1, h2, h3, h4⟩
+    · exact Or.inl h
+    · exact Or.inr (Or.inl h)
+    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
+    · exact Or.inr (Or.inr (Or.inl h))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h.swap)))))
+    · refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨?_, ?_, ?_, ?_⟩)))))
+      · rw [det3_rev]; linarith
+      · rw [det3_rev]; linarith
+      · rw [det3_rev]; linarith
+      · rw [det3_rev]; linarith
+
+/-- **`rimCert_edgeTri_robust` in either orientation**. -/
+theorem rimCert_edgeTriσ_robust {v w a b : ℝ³} (V : Finset ℝ³) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
+    (hvV : v ∈ V) (hwV : w ∈ V) (haV : a ∈ V) (hbV : b ∈ V)
+    (hT : 0 < σ * det3 (a - v) (b - v) (w - v))
+    (hz : ¬ (⟪v, w - v⟫ = ⟪a, w - v⟫ ∧ ⟪a, w - v⟫ = ⟪b, w - v⟫))
+    (hV : ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ EdgeMid v w a b z ∨
+      TriHiddenσ σ (w - v) v a b z) : RimCert V (w - v) := by
+  rcases hσ with rfl | rfl
+  · simp only [one_mul] at hT
+    refine rimCert_edgeTri_robust V hvV hwV haV hbV hT hz (fun z hz' => ?_)
+    rcases hV z hz' with h | h | h | h | h | ⟨h1, h2, h3⟩
+    · exact Or.inl h
+    · exact Or.inr (Or.inl h)
+    · exact Or.inr (Or.inr (Or.inl h))
+    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
+    · simp only [one_mul] at h1 h2 h3
+      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨h1, h2, h3⟩))))
+  · have e : det3 (b - v) (a - v) (w - v) = -det3 (a - v) (b - v) (w - v) := by
+      simp only [det3_expand, PiLp.sub_apply]; ring
+    refine rimCert_edgeTri_robust (a := b) (b := a) V hvV hwV hbV haV (by rw [e]; linarith)
+      (fun h => hz ⟨h.1.trans h.2, h.2.symm⟩) (fun z hz' => ?_)
+    rcases hV z hz' with h | h | h | h | h | ⟨h1, h2, h3⟩
+    · exact Or.inl h
+    · exact Or.inr (Or.inl h)
+    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
+    · exact Or.inr (Or.inr (Or.inl h))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h.swap))))
+    · refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨?_, ?_, ?_⟩))))
+      · rw [det3_rev]; linarith
+      · rw [det3_rev]; linarith
+      · rw [det3_rev]; linarith
 
 /-- Rewrite the points of a normal form and the frame determinants: every test becomes
 `σ * (det3c … * D)`. -/

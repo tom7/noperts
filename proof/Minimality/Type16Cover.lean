@@ -8,23 +8,25 @@ public import Minimality.Type16NF
 # Type 16: the Lemma E cover (`FEWER-FACES-PROOFS.md` §19.0–19.2)
 
 In the normal form `NF16` (§19.0), each step of Theorem 19.2 names an edge crossing whose
-two closings satisfy Lemma E (`isRupert_edgePairσ_robust`: Lemma E with ties), or a triangle
-closing (`isRupert_edgeTriσ_robust`).  Depth ties are allowed: only three far corners (or the
-three triangle corners) at one depth are excluded, which `GenPosTie` (at most one tie at each
+two closings satisfy Lemma E (`rimCert_edgePairσ_robust`: Lemma E with ties), or a triangle
+closing (`rimCert_edgeTriσ_robust`); each step ends in a certificate `Cert16` (a rim
+certificate at a named view, §18.2), with no horizontal double normal assumed.  Depth ties are
+allowed: only three far corners (or the
+three triangle corners) at one depth are excluded, which `TieSeg` (at most one tie at each
 edge view) rules out (`depth_far3`, `depth_tri3`).  Every orientation test is a polynomial in `(a, b, g, d, p, q, r)`
 times the frame determinant `D` (`nf_test`); the sign of each polynomial on its region is
 a type inequality, a defining inequality of the region, or a short identity (given in the
 proofs, found with an exact LP over products of the hypotheses).
 
-* `NF16.isRupert_E06`: off `R1 ∪ R2`, the pair at `06` (Proposition 14.3; `5` is always a
+* `NF16.cert_E06`: off `R1 ∪ R2`, the pair at `06` (Proposition 14.3; `5` is always a
   corner, `1` hidden iff not `R1`, `2` hidden iff not `R2`).
-* Theorem 19.2 in `R1`: step 1 (A, the planar closing `1356` at `14`, `isRupert_stepA`), step 2
-  (U, `d > 1`: E35, `isRupert_stepU1a`, `_U1b`), step 3 (U, `d < 1`: E35, E02, E25, E03,
-  `isRupert_stepU2`–`_U5`), step 4 (D, `c36 < 0`: E36, `isRupert_stepD1`), step 5 (D2–D4:
+* Theorem 19.2 in `R1`: step 1 (A, the planar closing `1356` at `14`, `cert_stepA`), step 2
+  (U, `d > 1`: E35, `cert_stepU1a`, `_U1b`), step 3 (U, `d < 1`: E35, E02, E25, E03,
+  `cert_stepU2`–`_U5`), step 4 (D, `c36 < 0`: E36, `cert_stepD1`), step 5 (D2–D4:
   E35, E25, E03; D5, D6: triangle closings at `16`, `15`; D7: `4` hidden at `35`;
-  `isRupert_stepD2`–`_D7`).
+  `cert_stepD2`–`_D7`).
 * Lemma 19.1 (b), (c) (`g_gt_one`, `q_gt_b`), the special positions of the route (`Gen`), the
-  residual `Omega` and the dispatch `isRupert_R1_or_omega`.
+  residual `Omega` and the dispatch `cert_R1_or_omega`.
 -/
 
 set_option linter.unusedSimpArgs false
@@ -56,18 +58,17 @@ theorem NoHDNEdges16.bwd (N : NF16 x) (h : NoHDNEdges16 x) {v w : Fin 7} (hvw : 
 
 /-- **Proposition 14.3 off `R1 ∪ R2`** (§19.0): at the view along `06` the far path is
 `4, 5, 3` with `1`, `2` hidden, and `0`, `6` lie on opposite sides of the plane `345`. -/
-theorem isRupert_E06 (N : NF16 x) (hR1 : N.R1 < 0) (hR2 : N.R2 < 0)
-    (hg : GenPosTie (univ.image x))
-    (hnd : NoHDNEdges16 x) : IsRupert (univ.image x) := by
+theorem cert_E06 (N : NF16 x) (hR1 : N.R1 < 0) (hR2 : N.R2 < 0)
+    (hg : TieSeg (univ.image x)) : Cert16 x := by
   have hx := N.inj
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_far3 (v := 0) (w := 6) (a := 4) (b := 3) (c := 5) hx hg (by decide)
   have N1 : 0 < -N.R1 := by linarith
   have N2 : 0 < -N.R2 := by linarith
   simp only [R1, R2] at N1 N2
-  refine isRupert_edgePairσ_robust (v := x 0) (w := x 6) (a := x 4) (b := x 3) (c := x 5) _ hσ
+  refine Cert16.mk (named16_seg 0 6) (rimCert_edgePairσ_robust (v := x 0) (w := x 6) (a := x 4) (b := x 3) (c := x 5) _ hσ
     (mem_image 0) (mem_image 6) (mem_image 4) (mem_image 3) (mem_image 5) ?_ ?_ ?_ ?_ ?_
-    hz ?_ (hnd.fwd N (by decide)) (hnd.bwd N (by decide))
+    hz ?_)
   · nf_test N hσD N.t046_5
   · nf_test N hσD (add_pos N.hp N.hr)
   · nf_test N hσD one_pos
@@ -95,14 +96,14 @@ theorem isRupert_E06 (N : NF16 x) (hR1 : N.R1 < 0) (hR2 : N.R2 < 0)
     · exact Or.inr (Or.inl rfl)
 
 /-- step 1 (A) -/
-theorem isRupert_stepA (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_stepA (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hqg : 0 < N.g - N.q) (hrd : 0 < N.d - N.r)
-    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x) : IsRupert (univ.image x) := by
+    (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_far3 (v := 1) (w := 4) (a := 6) (b := 5) (c := 3) N.inj hg (by decide)
-  refine isRupert_edgePairσ_robust (v := x 1) (w := x 4) (a := x 6) (b := x 5) (c := x 3) _ hσ
+  refine Cert16.mk (named16_seg 1 4) (rimCert_edgePairσ_robust (v := x 1) (w := x 4) (a := x 6) (b := x 5) (c := x 3) _ hσ
     (mem_image 1) (mem_image 4) (mem_image 6) (mem_image 5) (mem_image 3) ?_ ?_ ?_ ?_ ?_
-    hz ?_ (hnd.fwd N (by decide)) (hnd.bwd N (by decide))
+    hz ?_)
   · nf_test N hσD (by show 0 < N.g * N.p; linarith [mul_pos (N.hg) N.hp])
   · nf_test N hσD N.hp
   · nf_test N hσD (by show 0 < N.d * N.p; linarith [mul_pos (N.hd) N.hp])
@@ -134,15 +135,15 @@ theorem isRupert_stepA (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (
 
 
 /-- **Step 2, `a > 1`**: E35 with far path `2, 4, 1`. -/
-theorem isRupert_stepU1a (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_stepU1a (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hU : 0 < N.r * N.g - N.q * N.d)
     (hrd : 0 < N.r - N.d) (hd1 : 0 < N.d - 1) (ha1 : 0 < N.a - 1)
-    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x) : IsRupert (univ.image x) := by
+    (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_far3 (v := 3) (w := 5) (a := 1) (b := 2) (c := 4) N.inj hg (by decide)
-  refine isRupert_edgePairσ_robust (v := x 3) (w := x 5) (a := x 1) (b := x 2) (c := x 4) _ hσ
+  refine Cert16.mk (named16_seg 3 5) (rimCert_edgePairσ_robust (v := x 3) (w := x 5) (a := x 1) (b := x 2) (c := x 4) _ hσ
     (mem_image 3) (mem_image 5) (mem_image 1) (mem_image 2) (mem_image 4) ?_ ?_ ?_ ?_ ?_
-    hz ?_ (hnd.fwd N (by decide)) (hnd.bwd N (by decide))
+    hz ?_)
   · nf_test N hσD (by show 0 < N.d * N.p; linarith [mul_pos (N.hd) N.hp])
   · nf_test N hσD (by
           show 0 < -N.a * N.d + N.a * N.r + N.d * N.p
@@ -200,15 +201,15 @@ theorem isRupert_stepU1a (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d *
     ring
 
 /-- **Step 2, `a < 1`**: E35 with far path `0, 4, 1`. -/
-theorem isRupert_stepU1b (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_stepU1b (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hU : 0 < N.r * N.g - N.q * N.d)
     (hrd : 0 < N.r - N.d) (hd1 : 0 < N.d - 1) (ha1 : 0 < 1 - N.a)
-    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x) : IsRupert (univ.image x) := by
+    (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_far3 (v := 3) (w := 5) (a := 1) (b := 0) (c := 4) N.inj hg (by decide)
-  refine isRupert_edgePairσ_robust (v := x 3) (w := x 5) (a := x 1) (b := x 0) (c := x 4) _ hσ
+  refine Cert16.mk (named16_seg 3 5) (rimCert_edgePairσ_robust (v := x 3) (w := x 5) (a := x 1) (b := x 0) (c := x 4) _ hσ
     (mem_image 3) (mem_image 5) (mem_image 1) (mem_image 0) (mem_image 4) ?_ ?_ ?_ ?_ ?_
-    hz ?_ (hnd.fwd N (by decide)) (hnd.bwd N (by decide))
+    hz ?_)
   · nf_test N hσD (by show 0 < N.d * N.p; linarith [mul_pos (N.hd) N.hp])
   · nf_test N hσD (by show 0 < N.d * N.p - N.d + N.r; linarith [N.t145_0, hU])
   · nf_test N hσD (by show 0 < N.r; linarith [N.hr])
@@ -259,15 +260,15 @@ theorem isRupert_stepU1b (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d *
     ring
 
 /-- **Step 3, `Z2 < 0`, `a > 1`**: E35 with far path `2, 4, 6`. -/
-theorem isRupert_stepU2 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_stepU2 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hU : 0 < N.r * N.g - N.q * N.d)
     (hrd : 0 < N.r - N.d) (hd1 : 0 < 1 - N.d) (hZ : 0 < N.b * N.p - N.a * N.q) (ha1 : 0 < N.a - 1)
-    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x) : IsRupert (univ.image x) := by
+    (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_far3 (v := 3) (w := 5) (a := 6) (b := 2) (c := 4) N.inj hg (by decide)
-  refine isRupert_edgePairσ_robust (v := x 3) (w := x 5) (a := x 6) (b := x 2) (c := x 4) _ hσ
+  refine Cert16.mk (named16_seg 3 5) (rimCert_edgePairσ_robust (v := x 3) (w := x 5) (a := x 6) (b := x 2) (c := x 4) _ hσ
     (mem_image 3) (mem_image 5) (mem_image 6) (mem_image 2) (mem_image 4) ?_ ?_ ?_ ?_ ?_
-    hz ?_ (hnd.fwd N (by decide)) (hnd.bwd N (by decide))
+    hz ?_)
   · nf_test N hσD (by show 0 < N.p; linarith [N.hp])
   · nf_test N hσD (by show 0 < N.a * N.r - N.a + N.p; linarith [hZ, N.t245_6])
   · nf_test N hσD (by show 0 < N.a * N.r; linarith [mul_pos (N.ha) N.hr])
@@ -319,10 +320,10 @@ theorem isRupert_stepU2 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
   · exact Or.inr (Or.inr (Or.inl rfl))
 
 /-- **Step 3, `Z2 < 0`, `a < 1`**: E02 with far path `4, 6, 3`. -/
-theorem isRupert_stepU3 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_stepU3 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hU : 0 < N.r * N.g - N.q * N.d)
     (hrd : 0 < N.r - N.d) (hd1 : 0 < 1 - N.d) (hZ : 0 < N.b * N.p - N.a * N.q) (ha1 : 0 < 1 - N.a)
-    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x) : IsRupert (univ.image x) := by
+    (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hD02 : 0 < N.a * N.d * N.q - N.a * N.g * N.r - N.b * N.d * N.p + N.a * N.g - N.a * N.q + N.b
       * N.p - N.d * N.q + N.g * N.r - N.g + N.q := pos_of_mul_pos_r N.hd
@@ -330,9 +331,9 @@ theorem isRupert_stepU3 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
         linarith [mul_pos (mul_pos ha1 N.hgd) hrd, mul_pos (mul_pos ha1 hd1) N.t145_0, mul_pos
             (mul_pos (mul_pos N.hd hd1) N.hab) N.hp])
   have hz := depth_far3 (v := 0) (w := 2) (a := 3) (b := 4) (c := 6) N.inj hg (by decide)
-  refine isRupert_edgePairσ_robust (v := x 0) (w := x 2) (a := x 3) (b := x 4) (c := x 6) _ hσ
+  refine Cert16.mk (named16_seg 0 2) (rimCert_edgePairσ_robust (v := x 0) (w := x 2) (a := x 3) (b := x 4) (c := x 6) _ hσ
     (mem_image 0) (mem_image 2) (mem_image 3) (mem_image 4) (mem_image 6) ?_ ?_ ?_ ?_ ?_
-    hz ?_ (hnd.fwd N (by decide)) (hnd.bwd N (by decide))
+    hz ?_)
   · nf_test N hσD (by show 0 < N.b; linarith [N.hb])
   · nf_test N hσD (by show 0 < -N.a * N.q + N.b * N.p + N.q; linarith [N.hq, hZ])
   · nf_test N hσD (by show 0 < -N.a * N.q + N.b * N.p + N.b * N.r - N.b + N.q; linarith [N.t0246])
@@ -378,18 +379,18 @@ theorem isRupert_stepU3 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
   · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl))))
 
 /-- **Step 3, `Z2 > 0`, `b < 1`**: E25 with far path `4, 6, 3`. -/
-theorem isRupert_stepU4 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_stepU4 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hU : 0 < N.r * N.g - N.q * N.d)
     (hrd : 0 < N.r - N.d) (hd1 : 0 < 1 - N.d) (hZ : 0 < N.a * N.q - N.b * N.p) (hb1 : 0 < 1 - N.b)
-    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x) : IsRupert (univ.image x) := by
+    (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hf25 : 0 < -N.a * N.d * N.q + N.a * N.g * N.r + N.b * N.d * N.p - N.a * N.g + N.a * N.q - N.b
       * N.p - N.d * N.p + N.p := pos_of_mul_pos_r N.hd
       (by linarith [mul_pos hd1 N.tB125, mul_pos (mul_pos N.ha N.hgd) hrd])
   have hz := depth_far3 (v := 2) (w := 5) (a := 3) (b := 4) (c := 6) N.inj hg (by decide)
-  refine isRupert_edgePairσ_robust (v := x 2) (w := x 5) (a := x 3) (b := x 4) (c := x 6) _ hσ
+  refine Cert16.mk (named16_seg 2 5) (rimCert_edgePairσ_robust (v := x 2) (w := x 5) (a := x 3) (b := x 4) (c := x 6) _ hσ
     (mem_image 2) (mem_image 5) (mem_image 3) (mem_image 4) (mem_image 6) ?_ ?_ ?_ ?_ ?_
-    hz ?_ (hnd.fwd N (by decide)) (hnd.bwd N (by decide))
+    hz ?_)
   · nf_test N hσD (by show 0 < N.a; linarith [N.ha])
   · nf_test N hσD (by show 0 < N.a * N.q - N.b * N.p + N.p; linarith [N.hp, hZ])
   · nf_test N hσD (by show 0 < N.a * N.q + N.a * N.r - N.b * N.p - N.a + N.p; linarith [N.t245_6])
@@ -436,10 +437,10 @@ theorem isRupert_stepU4 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
 
 
 /-- **Step 3, `Z2 > 0`, `b > 1`**: E03 with far path `2, 4, 6`. -/
-theorem isRupert_stepU5 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_stepU5 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hU : 0 < N.r * N.g - N.q * N.d)
     (hrd : 0 < N.r - N.d) (hd1 : 0 < 1 - N.d) (hZ : 0 < N.a * N.q - N.b * N.p) (hb1 : 0 < N.b - 1)
-    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x) : IsRupert (univ.image x) := by
+    (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hqg : 0 < -N.g + N.q := by
     have hqb : 0 < N.q - N.b := by
@@ -457,9 +458,9 @@ theorem isRupert_stepU5 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
                 (mul_pos N.ha (sub_pos.mpr hg1)) hrd])
   have hf03 : 0 < -N.d * N.q + N.g * N.r - N.g + N.q := by linarith [hqg, hU]
   have hz := depth_far3 (v := 0) (w := 3) (a := 6) (b := 2) (c := 4) N.inj hg (by decide)
-  refine isRupert_edgePairσ_robust (v := x 0) (w := x 3) (a := x 6) (b := x 2) (c := x 4) _ hσ
+  refine Cert16.mk (named16_seg 0 3) (rimCert_edgePairσ_robust (v := x 0) (w := x 3) (a := x 6) (b := x 2) (c := x 4) _ hσ
     (mem_image 0) (mem_image 3) (mem_image 6) (mem_image 2) (mem_image 4) ?_ ?_ ?_ ?_ ?_
-    hz ?_ (hnd.fwd N (by decide)) (hnd.bwd N (by decide))
+    hz ?_)
   · nf_test N hσD (by show 0 < N.q; linarith [N.hq])
   · nf_test N hσD (by show 0 < N.b * N.r - N.b + N.q; linarith [N.t0246, hZ])
   · nf_test N hσD (by show 0 < N.b * N.r; linarith [mul_pos (N.hb) N.hr])
@@ -503,17 +504,17 @@ theorem isRupert_stepU5 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
   · exact Or.inr (Or.inr (Or.inl rfl))
 
 /-- **Step 5, D2**: E35 with far path `2, 4, 1`. -/
-theorem isRupert_stepD2 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_stepD2 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hD : 0 < N.q * N.d - N.r * N.g)
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (ha1 : 0 < N.a - 1) (hd1 : 0 < N.d - 1)
     (hpl : 0 < N.p * N.b * N.d + N.r * N.g * N.a - N.q * N.a * N.d)
-    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x) : IsRupert (univ.image x) := by
+    (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_far3 (v := 3) (w := 5) (a := 1) (b := 2) (c := 4) N.inj hg (by decide)
-  refine isRupert_edgePairσ_robust (v := x 3) (w := x 5) (a := x 1) (b := x 2) (c := x 4) _ hσ
+  refine Cert16.mk (named16_seg 3 5) (rimCert_edgePairσ_robust (v := x 3) (w := x 5) (a := x 1) (b := x 2) (c := x 4) _ hσ
     (mem_image 3) (mem_image 5) (mem_image 1) (mem_image 2) (mem_image 4) ?_ ?_ ?_ ?_ ?_
-    hz ?_ (hnd.fwd N (by decide)) (hnd.bwd N (by decide))
+    hz ?_)
   · nf_test N hσD (by show 0 < N.d * N.p; linarith [mul_pos (N.hd) N.hp])
   · nf_test N hσD (pos_of_mul_pos_r (N.hq)
           (by
@@ -570,17 +571,17 @@ theorem isRupert_stepD2 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
     ring
 
 /-- **Step 5, D3**: E25 with far path `4, 6, 3`. -/
-theorem isRupert_stepD3 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_stepD3 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hD : 0 < N.q * N.d - N.r * N.g)
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (hb1 : 0 < 1 - N.b)
     (hf : 0 < (1 - N.d) * (N.a * N.q + (1 - N.b) * N.p) + N.a * N.g * (N.r - 1))
-    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x) : IsRupert (univ.image x) := by
+    (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_far3 (v := 2) (w := 5) (a := 3) (b := 4) (c := 6) N.inj hg (by decide)
-  refine isRupert_edgePairσ_robust (v := x 2) (w := x 5) (a := x 3) (b := x 4) (c := x 6) _ hσ
+  refine Cert16.mk (named16_seg 2 5) (rimCert_edgePairσ_robust (v := x 2) (w := x 5) (a := x 3) (b := x 4) (c := x 6) _ hσ
     (mem_image 2) (mem_image 5) (mem_image 3) (mem_image 4) (mem_image 6) ?_ ?_ ?_ ?_ ?_
-    hz ?_ (hnd.fwd N (by decide)) (hnd.bwd N (by decide))
+    hz ?_)
   · nf_test N hσD (by show 0 < N.a; linarith [N.ha])
   · nf_test N hσD (by
           show 0 < N.a * N.q - N.b * N.p + N.p
@@ -630,17 +631,17 @@ theorem isRupert_stepD3 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
 
 
 /-- **Step 5, D5**: the triangle `1, 4, 5` at `16`. -/
-theorem isRupert_stepD5 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_stepD5 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hD : 0 < N.q * N.d - N.r * N.g)
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (hd1 : 0 < N.d - 1)
     (hf : 0 < N.a * N.d * N.q - N.a * N.g * N.r - N.b * N.d * N.p - N.a * N.d - N.a * N.q + N.b *
       N.p + N.d * N.p + N.a - N.p)
-    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x) : IsRupert (univ.image x) := by
+    (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_tri3 (v := 1) (w := 6) (a := 5) (b := 4) N.inj hg (by decide)
-  refine isRupert_edgeTriσ_robust (v := x 1) (w := x 6) (a := x 5) (b := x 4) _ hσ
-    (mem_image 1) (mem_image 6) (mem_image 5) (mem_image 4) ?_ hz ?_ (hnd.fwd N (by decide))
+  refine Cert16.mk (named16_seg 1 6) (rimCert_edgeTriσ_robust (v := x 1) (w := x 6) (a := x 5) (b := x 4) _ hσ
+    (mem_image 1) (mem_image 6) (mem_image 5) (mem_image 4) ?_ hz ?_)
   · nf_test N hσD (by show 0 < N.d * N.p + N.g * N.p - N.p; linarith [mul_pos (N.hgd) (N.hp)])
   intro z hz
   obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hz
@@ -682,16 +683,16 @@ theorem isRupert_stepD5 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
   · exact Or.inr (Or.inl rfl)
 
 /-- **Step 5, D7**: `4` hidden at `35`, the triangle `3, 0, 6`. -/
-theorem isRupert_stepD7 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_stepD7 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hD : 0 < N.q * N.d - N.r * N.g)
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (ha1 : 0 < 1 - N.a) (hd1 : 0 < 1 - N.d)
     (hpr : 0 < 1 - N.p - N.r)
-    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x) : IsRupert (univ.image x) := by
+    (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_tri3 (v := 3) (w := 5) (a := 6) (b := 0) N.inj hg (by decide)
-  refine isRupert_edgeTriσ_robust (v := x 3) (w := x 5) (a := x 6) (b := x 0) _ hσ
-    (mem_image 3) (mem_image 5) (mem_image 6) (mem_image 0) ?_ hz ?_ (hnd.fwd N (by decide))
+  refine Cert16.mk (named16_seg 3 5) (rimCert_edgeTriσ_robust (v := x 3) (w := x 5) (a := x 6) (b := x 0) _ hσ
+    (mem_image 3) (mem_image 5) (mem_image 6) (mem_image 0) ?_ hz ?_)
   · nf_test N hσD (by norm_num : (0 : ℝ) < 1)
   intro z hz
   obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hz
@@ -734,16 +735,16 @@ theorem isRupert_stepD7 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
 
 
 /-- **Step 4, `c36 < 0`**: E36 with far path `0, 4, 1`. -/
-theorem isRupert_stepD1 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_stepD1 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hD : 0 < N.q * N.d - N.r * N.g)
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.b * (N.p - 1) - N.q * (N.a - 1))
-    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x) : IsRupert (univ.image x) := by
+    (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_far3 (v := 3) (w := 6) (a := 0) (b := 1) (c := 4) N.inj hg (by decide)
-  refine isRupert_edgePairσ_robust (v := x 3) (w := x 6) (a := x 0) (b := x 1) (c := x 4) _ hσ
+  refine Cert16.mk (named16_seg 3 6) (rimCert_edgePairσ_robust (v := x 3) (w := x 6) (a := x 0) (b := x 1) (c := x 4) _ hσ
     (mem_image 3) (mem_image 6) (mem_image 0) (mem_image 1) (mem_image 4) ?_ ?_ ?_ ?_ ?_
-    hz ?_ (hnd.fwd N (by decide)) (hnd.bwd N (by decide))
+    hz ?_)
   · nf_test N hσD (by show 0 < N.q; linarith [N.hq])
   · nf_test N hσD (by show 0 < N.g * N.p - N.g + N.q; linarith [N.t0146, hD])
   · nf_test N hσD (by show 0 < N.g * N.p; linarith [mul_pos (N.hg) N.hp])
@@ -793,17 +794,17 @@ theorem isRupert_stepD1 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
   · exact Or.inr (Or.inl rfl)
 
 /-- **Step 5, D4**: E03 with far path `2, 4, 6`. -/
-theorem isRupert_stepD4 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_stepD4 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hD : 0 < N.q * N.d - N.r * N.g)
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (hb1 : 0 < N.b - 1)
     (hf : 0 < N.q * (1 - N.d) + N.g * (N.r - 1))
-    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x) : IsRupert (univ.image x) := by
+    (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_far3 (v := 0) (w := 3) (a := 6) (b := 2) (c := 4) N.inj hg (by decide)
-  refine isRupert_edgePairσ_robust (v := x 0) (w := x 3) (a := x 6) (b := x 2) (c := x 4) _ hσ
+  refine Cert16.mk (named16_seg 0 3) (rimCert_edgePairσ_robust (v := x 0) (w := x 3) (a := x 6) (b := x 2) (c := x 4) _ hσ
     (mem_image 0) (mem_image 3) (mem_image 6) (mem_image 2) (mem_image 4) ?_ ?_ ?_ ?_ ?_
-    hz ?_ (hnd.fwd N (by decide)) (hnd.bwd N (by decide))
+    hz ?_)
   · nf_test N hσD (by show 0 < N.q; linarith [N.hq])
   · nf_test N hσD (by show 0 < N.b * N.r - N.b + N.q; linarith [hqb, mul_pos (N.hb) N.hr])
   · nf_test N hσD (by show 0 < N.b * N.r; linarith [mul_pos (N.hb) N.hr])
@@ -846,18 +847,18 @@ theorem isRupert_stepD4 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
   · exact Or.inr (Or.inr (Or.inl rfl))
 
 /-- **Step 5, D6**: the triangle `1, 6, 4` at `15`. -/
-theorem isRupert_stepD6 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_stepD6 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hD : 0 < N.q * N.d - N.r * N.g)
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (hf : 0 < (N.g - 1) * (N.p + N.r - 1) - N.d * N.q)
-    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x) : IsRupert (univ.image x) := by
+    (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have h46 : 0 < -N.a * N.d * N.q + N.a * N.g * N.r + N.b * N.d * N.p - N.a * N.g - N.a * N.r + N.g
       * N.p + N.a - N.p := pos_of_mul_pos_r N.t0146
       (by linarith [mul_pos (mul_pos N.hp N.hgd) N.t0246, mul_pos hf N.t146_2])
   have hz := depth_tri3 (v := 1) (w := 5) (a := 4) (b := 6) N.inj hg (by decide)
-  refine isRupert_edgeTriσ_robust (v := x 1) (w := x 5) (a := x 4) (b := x 6) _ hσ
-    (mem_image 1) (mem_image 5) (mem_image 4) (mem_image 6) ?_ hz ?_ (hnd.fwd N (by decide))
+  refine Cert16.mk (named16_seg 1 5) (rimCert_edgeTriσ_robust (v := x 1) (w := x 5) (a := x 4) (b := x 6) _ hσ
+    (mem_image 1) (mem_image 5) (mem_image 4) (mem_image 6) ?_ hz ?_)
   · nf_test N hσD (by show 0 < N.d * N.p + N.g * N.p - N.p; linarith [mul_pos (N.hgd) (N.hp)])
   intro z hz
   obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hz
@@ -961,15 +962,15 @@ structure Omega (N : NF16 x) : Prop where
 
 /-- **Theorem 19.2 (the Lemma E cover)**: in `R1`, off the special positions `Gen`, `K` is Rupert
 by one of the steps A, U (E35, E02, E25, E03), D1 (E36), D2–D7, or it lies in `Ω`. -/
-theorem isRupert_R1_or_omega (N : NF16 x) (hR1 : 0 < N.R1) (G : Gen N)
-    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x)
-    (hΩ : Omega N → IsRupert (univ.image x)) : IsRupert (univ.image x) := by
+theorem cert_R1_or_omega (N : NF16 x) (hR1 : 0 < N.R1) (G : Gen N)
+    (hg : TieSeg (univ.image x))
+    (hΩ : Omega N → Cert16 x) : Cert16 x := by
   have hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r) := by
     have := N.R2_neg_of_R1 hR1.le; simp only [R2] at this; linarith
   simp only [R1] at hR1
   have sgn : ∀ {t : ℝ}, t ≠ 0 → t < 0 ∨ 0 < t := fun h => lt_or_gt_of_ne h
   by_cases hA : N.q < N.g ∧ N.r < N.d
-  · exact isRupert_stepA N hR1 (by linarith [hA.1]) (by linarith [hA.2]) hg hnd
+  · exact cert_stepA N hR1 (by linarith [hA.1]) (by linarith [hA.2]) hg
   rcases lt_or_gt_of_ne G.p013 with hD | hU
   · -- region D
     have hqg : 0 < N.q - N.g := by
@@ -985,23 +986,23 @@ theorem isRupert_R1_or_omega (N : NF16 x) (hR1 : 0 < N.R1) (G : Gen N)
       · exact q_gt_b N hR2 (by linarith)
     have hDp : 0 < N.q * N.d - N.r * N.g := by linarith
     rcases lt_or_gt_of_ne G.c36 with hc | hc
-    · exact isRupert_stepD1 N hR1 hR2 hDp hqg hg1 hqb (by linarith) hg hnd
+    · exact cert_stepD1 N hR1 hR2 hDp hqg hg1 hqb (by linarith) hg
     have hc' : 0 < N.q * (N.a - 1) - N.b * (N.p - 1) := by linarith
     by_cases hD2 : 0 < N.a - 1 ∧ 0 < N.d - 1 ∧
         0 < N.p * N.b * N.d + N.r * N.g * N.a - N.q * N.a * N.d
-    · exact isRupert_stepD2 N hR1 hR2 hDp hqg hg1 hqb hc' hD2.1 hD2.2.1 hD2.2.2 hg hnd
+    · exact cert_stepD2 N hR1 hR2 hDp hqg hg1 hqb hc' hD2.1 hD2.2.1 hD2.2.2 hg
     by_cases hD3 : 0 < 1 - N.b ∧
         0 < (1 - N.d) * (N.a * N.q + (1 - N.b) * N.p) + N.a * N.g * (N.r - 1)
-    · exact isRupert_stepD3 N hR1 hR2 hDp hqg hg1 hqb hc' hD3.1 hD3.2 hg hnd
+    · exact cert_stepD3 N hR1 hR2 hDp hqg hg1 hqb hc' hD3.1 hD3.2 hg
     by_cases hD4 : 0 < N.b - 1 ∧ 0 < N.q * (1 - N.d) + N.g * (N.r - 1)
-    · exact isRupert_stepD4 N hR1 hR2 hDp hqg hg1 hqb hc' hD4.1 hD4.2 hg hnd
+    · exact cert_stepD4 N hR1 hR2 hDp hqg hg1 hqb hc' hD4.1 hD4.2 hg
     by_cases hD5 : 0 < N.d - 1 ∧ 0 < N.a * N.d * N.q - N.a * N.g * N.r - N.b * N.d * N.p -
         N.a * N.d - N.a * N.q + N.b * N.p + N.d * N.p + N.a - N.p
-    · exact isRupert_stepD5 N hR1 hR2 hDp hqg hg1 hqb hc' hD5.1 hD5.2 hg hnd
+    · exact cert_stepD5 N hR1 hR2 hDp hqg hg1 hqb hc' hD5.1 hD5.2 hg
     by_cases hD6 : 0 < (N.g - 1) * (N.p + N.r - 1) - N.d * N.q
-    · exact isRupert_stepD6 N hR1 hR2 hDp hqg hg1 hqb hc' hD6 hg hnd
+    · exact cert_stepD6 N hR1 hR2 hDp hqg hg1 hqb hc' hD6 hg
     by_cases hD7 : 0 < 1 - N.a ∧ 0 < 1 - N.d ∧ 0 < 1 - N.p - N.r
-    · exact isRupert_stepD7 N hR1 hR2 hDp hqg hg1 hqb hc' hD7.1 hD7.2.1 hD7.2.2 hg hnd
+    · exact cert_stepD7 N hR1 hR2 hDp hqg hg1 hqb hc' hD7.1 hD7.2.1 hD7.2.2 hg
     refine hΩ ⟨hR1, hR2, hDp, hqg, hg1, hqb, hc', fun h1 h2 => ?_, fun h1 => ?_, fun h1 => ?_,
       not_lt.mp hD6, fun h1 h2 => ?_⟩
     · exact not_lt.mp fun h3 => hD2 ⟨h1, h2, h3⟩
@@ -1020,14 +1021,14 @@ theorem isRupert_R1_or_omega (N : NF16 x) (hR1 : 0 < N.R1) (G : Gen N)
     rcases lt_or_gt_of_ne G.d1 with hd1 | hd1
     · rcases lt_or_gt_of_ne G.Z2 with hZ | hZ
       · rcases lt_or_gt_of_ne G.a1 with ha1 | ha1
-        · exact isRupert_stepU3 N hR1 hR2 hUp hrd (by linarith) (by linarith) (by linarith) hg hnd
-        · exact isRupert_stepU2 N hR1 hR2 hUp hrd (by linarith) (by linarith) (by linarith) hg hnd
+        · exact cert_stepU3 N hR1 hR2 hUp hrd (by linarith) (by linarith) (by linarith) hg
+        · exact cert_stepU2 N hR1 hR2 hUp hrd (by linarith) (by linarith) (by linarith) hg
       · rcases lt_or_gt_of_ne G.b1 with hb1 | hb1
-        · exact isRupert_stepU4 N hR1 hR2 hUp hrd (by linarith) (by linarith) (by linarith) hg hnd
-        · exact isRupert_stepU5 N hR1 hR2 hUp hrd (by linarith) (by linarith) (by linarith) hg hnd
+        · exact cert_stepU4 N hR1 hR2 hUp hrd (by linarith) (by linarith) (by linarith) hg
+        · exact cert_stepU5 N hR1 hR2 hUp hrd (by linarith) (by linarith) (by linarith) hg
     · rcases lt_or_gt_of_ne G.a1 with ha1 | ha1
-      · exact isRupert_stepU1b N hR1 hR2 hUp hrd (by linarith) (by linarith) hg hnd
-      · exact isRupert_stepU1a N hR1 hR2 hUp hrd (by linarith) (by linarith) hg hnd
+      · exact cert_stepU1b N hR1 hR2 hUp hrd (by linarith) (by linarith) hg
+      · exact cert_stepU1a N hR1 hR2 hUp hrd (by linarith) (by linarith) hg
 
 end NF16
 

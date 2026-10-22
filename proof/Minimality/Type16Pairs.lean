@@ -14,7 +14,7 @@ of their views (Lemma V, in the form of the angle lemma 13.2: a failing quadrila
 its diagonals depth-separated, and the direction of the separation is fixed by the crossing of
 the diagonals, `depthSep_of_meet`).
 
-* **Lemma 19.3** (`isRupert_F3`): `Ω ∩ {d > 1}`: the closing `K_3` at `35` (rim `(3, x, 4, 1)`)
+* **Lemma 19.3** (`cert_F3`): `Ω ∩ {d > 1}`: the closing `K_3` at `35` (rim `(3, x, 4, 1)`)
   and the vertex crossing `046/145` at `4` (view `vT2`, rim `(4, 5, 3, 6)`).
 -/
 
@@ -107,22 +107,37 @@ theorem vT2_eq (N : NF16 x) : N.vT2 = (-N.f15) • (x 4 - x 1) + N.t0146v • (x
   simp only [vT2, nfV]
   module
 
+/-- `vT2` is the named view along the vertex crossing `046/145` (`vtxView16 x 0 = −D vT2`). -/
+theorem vtxView16_vT2 (N : NF16 x) : vtxView16 x 0 = (-N.D) • N.vT2 := by
+  show planeLine (x 0) (x 4) (x 6) (x 1) (x 4) (x 5) = _
+  simp only [planeLine, vT2, f15, t0146v, D]
+  nf_simp N
+  ext k
+  simp only [nfV, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply, PiLp.neg_apply, smul_eq_mul,
+    det3c]
+  ring
+
+theorem named_vT2 (N : NF16 x) : Named16 x N.vT2 := by
+  have hD : -N.D ≠ 0 := neg_ne_zero.mpr N.hD
+  refine ⟨.inr 0, (-N.D)⁻¹, inv_ne_zero hD, ?_⟩
+  show N.vT2 = (-N.D)⁻¹ • vtxView16 x 0
+  rw [vtxView16_vT2, smul_smul, inv_mul_cancel₀ hD, one_smul]
+
 /-- **Lemma 19.3, `T1` for `a > 1`**: the closing `K_3` at `35`, rim `(3, 2, 4, 1)`. -/
-theorem isRupert_F3_T1a (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_F3_T1a (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hD : 0 < N.q * N.d - N.r * N.g)
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (hd1 : 0 < N.d - 1)
     (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1)) (ha1 : 0 < N.a - 1)
     (hz : IsRobustUnimodal
-          (quad ⟪x 3, (x 5 - x 3)⟫ ⟪x 1, (x 5 - x 3)⟫ ⟪x 4, (x 5 - x 3)⟫ ⟪x 2, (x 5 - x 3)⟫))
-    (hnd : NoHDNAt ((univ.image x).erase (x 5)) (x 5 - x 3)) : IsRupert (univ.image x) := by
+          (quad ⟪x 3, (x 5 - x 3)⟫ ⟪x 1, (x 5 - x 3)⟫ ⟪x 4, (x 5 - x 3)⟫ ⟪x 2, (x 5 - x 3)⟫)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_equadσ (univ.image x) ({x 0, x 6} : Finset ℝ³) (u := (x 5 - x 3))
+  refine Cert16.mk ((named16_seg 3 5).smul (sigma_ne_zero hσ)) (rimCert_equadσ (univ.image x) ({x 0, x 6} : Finset ℝ³) (u := (x 5 - x 3))
       (sub_ne_zero.mpr (N.inj.ne (by decide))) hσ (h := (-1 : ℝ)) (by norm_num) (by module)
       (mem_image 5)
     (mem_image 3) (mem_image 1) (mem_image 4) (mem_image 2)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz ?_)
   · nf_test N hσD (by show 0 < N.d * N.p; linarith [mul_pos (N.hd) N.hp])
   · nf_test N hσD (by show 0 < N.a * N.d; linarith [mul_pos (N.ha) N.hd])
   · nf_test N hσD (pos_of_mul_pos_r
@@ -181,21 +196,20 @@ theorem isRupert_F3_T1a (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
 
 
 /-- **Lemma 19.3, `T1` for `a < 1`**: the closing `K_3` at `35`, rim `(3, 0, 4, 1)`. -/
-theorem isRupert_F3_T1b (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_F3_T1b (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hD : 0 < N.q * N.d - N.r * N.g)
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (hd1 : 0 < N.d - 1)
     (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1)) (ha1 : 0 < 1 - N.a)
     (hz : IsRobustUnimodal
-          (quad ⟪x 3, (x 5 - x 3)⟫ ⟪x 1, (x 5 - x 3)⟫ ⟪x 4, (x 5 - x 3)⟫ ⟪x 0, (x 5 - x 3)⟫))
-    (hnd : NoHDNAt ((univ.image x).erase (x 5)) (x 5 - x 3)) : IsRupert (univ.image x) := by
+          (quad ⟪x 3, (x 5 - x 3)⟫ ⟪x 1, (x 5 - x 3)⟫ ⟪x 4, (x 5 - x 3)⟫ ⟪x 0, (x 5 - x 3)⟫)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_equadσ (univ.image x) ({x 2, x 6} : Finset ℝ³) (u := (x 5 - x 3))
+  refine Cert16.mk ((named16_seg 3 5).smul (sigma_ne_zero hσ)) (rimCert_equadσ (univ.image x) ({x 2, x 6} : Finset ℝ³) (u := (x 5 - x 3))
       (sub_ne_zero.mpr (N.inj.ne (by decide))) hσ (h := (-1 : ℝ)) (by norm_num) (by module)
       (mem_image 5)
     (mem_image 3) (mem_image 1) (mem_image 4) (mem_image 0)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz ?_)
   · nf_test N hσD (by show 0 < N.d * N.p; linarith [mul_pos (N.hd) N.hp])
   · nf_test N hσD (by show 0 < N.d; linarith [N.hd])
   · nf_test N hσD (pos_of_mul_pos_r (by
@@ -270,18 +284,17 @@ theorem vT2_ne (N : NF16 x) (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1))
   simp only [f15]; nlinarith [mul_pos hf15 N.hp]
 
 /-- **Lemma 19.3, `T2`**: the vertex crossing `046/145` at `4`, rim `(4, 5, 3, 6)`. -/
-theorem isRupert_F3_T2 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_F3_T2 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hD : 0 < N.q * N.d - N.r * N.g)
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (hd1 : 0 < N.d - 1)
     (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1))
-    (hz : IsRobustUnimodal (quad ⟪x 4, N.vT2⟫ ⟪x 6, N.vT2⟫ ⟪x 3, N.vT2⟫ ⟪x 5, N.vT2⟫))
-    (hnd : NoHDNAt (univ.image x) N.vT2) : IsRupert (univ.image x) := by
+    (hz : IsRobustUnimodal (quad ⟪x 4, N.vT2⟫ ⟪x 6, N.vT2⟫ ⟪x 3, N.vT2⟫ ⟪x 5, N.vT2⟫)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_vquadσ (univ.image x) ({x 0, x 1} : Finset ℝ³) (u := N.vT2) (N.vT2_ne hf15) hσ
+  refine Cert16.mk (N.named_vT2.smul (sigma_ne_zero hσ)) (rimCert_vquadσ (univ.image x) ({x 0, x 1} : Finset ℝ³) (u := N.vT2) (N.vT2_ne hf15) hσ
     (mem_image 4) (mem_image 6) (mem_image 3) (mem_image 5)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz ?_)
   · simp only [NF16.vT2, NF16.f15, NF16.t0146v]; nf_test N hσD
         (by
           show 0 < N.d * N.p * N.q + N.g * N.p * N.q - N.p * N.q
@@ -449,18 +462,17 @@ rim `(4, 6, 3, 5)`) has diagonals that are not weakly separated, hence is robust
 `T2` can fail only with `{4, 3}` weakly above `{6, 5}` (its diagonals cross with
 `λ = −1/K < 0`, `not_weakSep_of_meet`), and then `⟪5 − 3, vT2⟫ ≤ 0`.  `T1` can fail only with
 `{3, 4}` weakly above `{1, x}` (the other way the crossing along `5 − 3` with `l ≤ 0` at interior
-points would put `1, x, 3, 4` at one depth, two ties at the edge view `35`, against `GenPosTie`),
+points would put `1, x, 3, 4` at one depth, two ties at the edge view `35`, against `TieSeg`),
 and then `⟪vT2, 5 − 3⟫ > 0`. -/
-theorem isRupert_F3 (N : NF16 x) (O : Omega N) (hd1 : 0 < N.d - 1) (ha1 : N.a ≠ 1)
+theorem cert_F3 (N : NF16 x) (O : Omega N) (hd1 : 0 < N.d - 1) (ha1 : N.a ≠ 1)
     (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1))
-    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x)
-    (hndv : NoHDNAt (univ.image x) N.vT2) : IsRupert (univ.image x) := by
+    (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨hR1, hR2, hD, hqg, hg1, hqb, hc, nD2, -, -, -, -⟩ := O
   have huu : 0 < ⟪(x 5 - x 3), (x 5 - x 3)⟫ := real_inner_self_pos.mpr
       (sub_ne_zero.mpr (N.inj.ne (by decide)))
   -- `T2` is `NWS4`, or `⟪5 − 3, vT2⟫ ≤ 0`
   by_cases hN2 : NWS4 (quad ⟪x 4, N.vT2⟫ ⟪x 6, N.vT2⟫ ⟪x 3, N.vT2⟫ ⟪x 5, N.vT2⟫)
-  · exact isRupert_F3_T2 N hR1 hR2 hD hqg hg1 hqb hc hd1 hf15 hN2.isRobustUnimodal hndv
+  · exact cert_F3_T2 N hR1 hR2 hD hqg hg1 hqb hc hd1 hf15 hN2.isRobustUnimodal
   have h53 : ⟪x 5, N.vT2⟫ ≤ ⟪x 3, N.vT2⟫ := by
     simp only [NWS4, quad_0, quad_1, quad_2, quad_3, not_and_or, not_or, not_lt] at hN2
     rcases hN2 with ⟨k1, k2, k3, k4⟩ | ⟨k1, k2, k3, k4⟩
@@ -510,8 +522,7 @@ theorem isRupert_F3 (N : NF16 x) (O : Omega N) (hd1 : 0 < N.d - 1) (ha1 : N.a �
   · have ha' : 0 < 1 - N.a := by linarith
     by_cases hN1 : NWS4 (quad ⟪x 3, (x 5 - x 3)⟫ ⟪x 1, (x 5 - x 3)⟫ ⟪x 4, (x 5 - x 3)⟫
         ⟪x 0, (x 5 - x 3)⟫)
-    · exact isRupert_F3_T1b N hR1 hR2 hD hqg hg1 hqb hc hd1 hf15 ha' hN1.isRobustUnimodal
-        (hnd.fwd N (by decide))
+    · exact cert_F3_T1b N hR1 hR2 hD hqg hg1 hqb hc hd1 hf15 ha' hN1.isRobustUnimodal
     exfalso
     have hc4 : 0 < N.d * N.p - N.d + N.r :=
         (pos_of_mul_pos_r (by
@@ -547,8 +558,7 @@ theorem isRupert_F3 (N : NF16 x) (O : Omega N) (hd1 : 0 < N.d - 1) (ha1 : N.a �
   · have ha' : 0 < N.a - 1 := by linarith
     by_cases hN1 : NWS4 (quad ⟪x 3, (x 5 - x 3)⟫ ⟪x 1, (x 5 - x 3)⟫ ⟪x 4, (x 5 - x 3)⟫
         ⟪x 2, (x 5 - x 3)⟫)
-    · exact isRupert_F3_T1a N hR1 hR2 hD hqg hg1 hqb hc hd1 hf15 ha' hN1.isRobustUnimodal
-        (hnd.fwd N (by decide))
+    · exact cert_F3_T1a N hR1 hR2 hD hqg hg1 hqb hc hd1 hf15 ha' hN1.isRobustUnimodal
     exfalso
     have hc4 : 0 < -N.a * N.d + N.a * N.r + N.d * N.p :=
         (pos_of_mul_pos_r
@@ -617,26 +627,57 @@ theorem uA_eq (N : NF16 x) : N.uA = (x 4 - x 0) + N.r • (x 0 - x 6) := by
   simp only [uA, nfV]
   module
 
+/-- `vA` is the named view along the vertex crossing `036/146` (`vtxView16 x 1 = −D vA`). -/
+theorem vtxView16_vA (N : NF16 x) : vtxView16 x 1 = (-N.D) • N.vA := by
+  show planeLine (x 0) (x 3) (x 6) (x 1) (x 4) (x 6) = _
+  simp only [planeLine, vA, f03, D]
+  nf_simp N
+  ext k
+  simp only [nfV, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply, PiLp.neg_apply, smul_eq_mul,
+    det3c]
+  ring
+
+/-- `uA` is the named view along the vertex crossing `0235/046` (`vtxView16 x 2 = −D uA`). -/
+theorem vtxView16_uA (N : NF16 x) : vtxView16 x 2 = (-N.D) • N.uA := by
+  show planeLine (x 0) (x 3) (x 5) (x 0) (x 4) (x 6) = _
+  simp only [planeLine, uA, D]
+  nf_simp N
+  ext k
+  simp only [nfV, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply, PiLp.neg_apply, smul_eq_mul,
+    det3c]
+  ring
+
+theorem named_vA (N : NF16 x) : Named16 x N.vA := by
+  have hD : -N.D ≠ 0 := neg_ne_zero.mpr N.hD
+  refine ⟨.inr 1, (-N.D)⁻¹, inv_ne_zero hD, ?_⟩
+  show N.vA = (-N.D)⁻¹ • vtxView16 x 1
+  rw [vtxView16_vA, smul_smul, inv_mul_cancel₀ hD, one_smul]
+
+theorem named_uA (N : NF16 x) : Named16 x N.uA := by
+  have hD : -N.D ≠ 0 := neg_ne_zero.mpr N.hD
+  refine ⟨.inr 2, (-N.D)⁻¹, inv_ne_zero hD, ?_⟩
+  show N.uA = (-N.D)⁻¹ • vtxView16 x 2
+  rw [vtxView16_uA, smul_smul, inv_mul_cancel₀ hD, one_smul]
+
 /-- **Lemma 19.4, `A`**: the vertex crossing `036/146` at `6` (view `vA`), rim `(6, 4, 5, 3)`
 (`H_A < 0`: `2` hidden). -/
-theorem isRupert_F1s_A (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_F1s_A (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hD : 0 < N.q * N.d - N.r * N.g)
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (hd1 : 0 < 1 - N.d)
     (hf03 : 0 < -(N.q * (1 - N.d) + N.g * (N.r - 1)))
     (hHA : 0 < -((N.b - 1) * N.g * N.p * N.r + (N.q * (1 - N.d) + N.g * (N.r - 1)) *
         (N.a * (N.q - 1) - (N.b - 1) * N.p)))
-    (hz : IsRobustUnimodal (quad ⟪x 6, N.vA⟫ ⟪x 3, N.vA⟫ ⟪x 5, N.vA⟫ ⟪x 4, N.vA⟫))
-    (hnd : NoHDNAt (univ.image x) N.vA) : IsRupert (univ.image x) := by
+    (hz : IsRobustUnimodal (quad ⟪x 6, N.vA⟫ ⟪x 3, N.vA⟫ ⟪x 5, N.vA⟫ ⟪x 4, N.vA⟫)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_vquadσ (univ.image x) ({x 0, x 1} : Finset ℝ³) (u := N.vA)
+  refine Cert16.mk (N.named_vA.smul (sigma_ne_zero hσ)) (rimCert_vquadσ (univ.image x) ({x 0, x 1} : Finset ℝ³) (u := N.vA)
       (by
         simp only [NF16.vA, NF16.f03]
         exact nfV_ne_zero N.hD (Or.inl (ne_of_gt
               (by have := (by show 0 < N.g * N.p; linarith [mul_pos (N.hg) N.hp]); linarith)))) hσ
     (mem_image 6) (mem_image 3) (mem_image 5) (mem_image 4)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz ?_)
   · simp only [NF16.vA, NF16.f03]; nf_test N hσD
         (by show 0 < N.g * N.p; linarith [mul_pos (N.hg) N.hp])
   · simp only [NF16.vA, NF16.f03]; nf_test N hσD
@@ -727,7 +768,7 @@ theorem isRupert_F1s_A (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (
 
 
 /-- **Lemma 19.5, `T_c`, `T5 < 0`**: the closing `K_1` at `15`, rim `(1, 4, 0, 6)`. -/
-theorem isRupert_T6_Tc4 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_T6_Tc4 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hD : 0 < N.q * N.d - N.r * N.g)
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (hd1 : 0 < 1 - N.d)
@@ -737,15 +778,14 @@ theorem isRupert_T6_Tc4 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
     (hpr : 0 < N.p + N.r - 1)
     (hT5 : 0 < (N.g - 1) * (N.a - 1) * N.r - N.d * (N.q * (N.a - 1) - N.b * (N.p - 1)))
     (hz : IsRobustUnimodal
-          (quad ⟪x 1, (x 5 - x 1)⟫ ⟪x 4, (x 5 - x 1)⟫ ⟪x 0, (x 5 - x 1)⟫ ⟪x 6, (x 5 - x 1)⟫))
-    (hnd : NoHDNAt ((univ.image x).erase (x 5)) (x 5 - x 1)) : IsRupert (univ.image x) := by
+          (quad ⟪x 1, (x 5 - x 1)⟫ ⟪x 4, (x 5 - x 1)⟫ ⟪x 0, (x 5 - x 1)⟫ ⟪x 6, (x 5 - x 1)⟫)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_equadσ (univ.image x) ({x 3} : Finset ℝ³) (u := (x 5 - x 1))
+  refine Cert16.mk ((named16_seg 1 5).smul (sigma_ne_zero hσ)) (rimCert_equadσ (univ.image x) ({x 3} : Finset ℝ³) (u := (x 5 - x 1))
       (sub_ne_zero.mpr (N.inj.ne (by decide))) hσ (h := (-1 : ℝ)) (by norm_num) (by module)
       (mem_image 5)
     (mem_image 1) (mem_image 4) (mem_image 0) (mem_image 6)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz ?_)
   · nf_test N hσD (by show 0 < N.d * N.p + N.d * N.q - N.g * N.r - N.d + N.r; linarith [N.t145_0])
   · nf_test N hσD (by show 0 < N.d * N.p + N.g * N.p - N.p; linarith [mul_pos (N.hgd) (N.hp)])
   · nf_test N hσD
@@ -802,7 +842,7 @@ theorem isRupert_T6_Tc4 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
 
 
 /-- **Lemma 19.4, `B`**: the closing `K_6` at `36`, rim `(6, 0, 2, 4, 1)`. -/
-theorem isRupert_F1s_B (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_F1s_B (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hD : 0 < N.q * N.d - N.r * N.g)
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (hd1 : 0 < 1 - N.d)
@@ -810,19 +850,18 @@ theorem isRupert_F1s_B (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (
     (hHA : 0 < -((N.b - 1) * N.g * N.p * N.r + (N.q * (1 - N.d) + N.g * (N.r - 1)) *
         (N.a * (N.q - 1) - (N.b - 1) * N.p)))
     (hz : IsRobustUnimodal (quint ⟪x 6, (x 6 - x 3)⟫ ⟪x 0, (x 6 - x 3)⟫ ⟪x 2, (x 6 - x 3)⟫ ⟪x 4,
-            (x 6 - x 3)⟫ ⟪x 1, (x 6 - x 3)⟫))
-    (hnd : NoHDNAt ((univ.image x).erase (x 3)) (x 6 - x 3)) : IsRupert (univ.image x) := by
+            (x 6 - x 3)⟫ ⟪x 1, (x 6 - x 3)⟫)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have h02 : 0 < N.a * N.g + N.b - N.g := by
     rcases le_or_gt N.a 1 with h | h
     · linarith [hc, mul_nonneg hqg.le (sub_nonneg.mpr h), mul_pos N.hb N.hp]
     · linarith [mul_pos N.hg (sub_pos.mpr h), N.hb]
-  refine isRupert_equintσ (univ.image x) ({x 5} : Finset ℝ³) (u := (x 6 - x 3))
+  refine Cert16.mk ((named16_seg 3 6).smul (sigma_ne_zero hσ)) (rimCert_equintσ (univ.image x) ({x 5} : Finset ℝ³) (u := (x 6 - x 3))
       (sub_ne_zero.mpr (N.inj.ne (by decide))) hσ (h := (1 : ℝ)) (by norm_num) (by module)
       (mem_image 3)
     (mem_image 6) (mem_image 0) (mem_image 2) (mem_image 4) (mem_image 1)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) ?_ ?_ hz ?_)
   · refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
     · nf_test N hσD (by show 0 < N.b; linarith [N.hb])
     · nf_test N hσD (by show 0 < N.q; linarith [N.hq])
@@ -929,13 +968,12 @@ weakly separated: `{6, 5}` weakly above `{4, 3}` contradicts the crossing with `
 (`not_weakSep_of_meet`), and `{4, 3}` weakly above `{6, 5}` gives `⟪v_A, 6 − 3⟫ ≤ 0`.  If
 `⟪v_A, 6 − 3⟫ ≤ 0`, then `z0 < z6`, `1` is not a weak local minimum and the identity of (iii)
 leaves `2` no weak local maximum over `0, 4`, so `B` is robustly unimodal with at most one tie
-(`quint_B_robust`, `GenPosTie` at the edge view `36`). -/
-theorem isRupert_F1s (N : NF16 x) (O : Omega N) (hd1 : 0 < 1 - N.d)
+(`quint_B_robust`, `TieSeg` at the edge view `36`). -/
+theorem cert_F1s (N : NF16 x) (O : Omega N) (hd1 : 0 < 1 - N.d)
     (hf03 : 0 < -(N.q * (1 - N.d) + N.g * (N.r - 1)))
     (hHA : 0 < -((N.b - 1) * N.g * N.p * N.r + (N.q * (1 - N.d) + N.g * (N.r - 1)) *
       (N.a * (N.q - 1) - (N.b - 1) * N.p)))
-    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x)
-    (hndv : NoHDNAt (univ.image x) N.vA) : IsRupert (univ.image x) := by
+    (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨hR1, hR2, hD, hqg, hg1, hqb, hc, -, -, -, -, -⟩ := O
   have he3 : 0 < ⟪x 6 - x 3, x 6 - x 3⟫ :=
     real_inner_self_pos.mpr (sub_ne_zero.mpr (N.inj.ne (by decide)))
@@ -966,8 +1004,8 @@ theorem isRupert_F1s (N : NF16 x) (O : Omega N) (hd1 : 0 < 1 - N.d)
         (N.inj.ne (by decide)) (N.inj.ne (by decide)) (N.inj.ne (by decide))
         (N.inj.ne (by decide)) (N.inj.ne (by decide)))
     have h60 : ⟪x 0, x 6 - x 3⟫ < ⟪x 6, x 6 - x 3⟫ := by nlinarith [mul_pos ht he3']
-    refine isRupert_F1s_B N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hHA
-      (quint_B_robust hone h60 ?_ ?_) (hnd.bwd N (by decide))
+    refine cert_F1s_B N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hHA
+      (quint_B_robust hone h60 ?_ ?_)
     · by_contra hc'
       simp only [not_or, not_lt] at hc'
       obtain ⟨h14, h16⟩ := hc'
@@ -991,7 +1029,7 @@ theorem isRupert_F1s (N : NF16 x) (O : Omega N) (hd1 : 0 < 1 - N.d)
     push Not at hs
     have K0 : 0 < N.q * (N.g + N.d - 1) + N.g := by nlinarith [mul_pos N.hq N.hgd]
     by_cases hN : NWS4 (quad ⟪x 6, N.vA⟫ ⟪x 3, N.vA⟫ ⟪x 5, N.vA⟫ ⟪x 4, N.vA⟫)
-    · exact isRupert_F1s_A N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hHA hN.isRobustUnimodal hndv
+    · exact cert_F1s_A N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hHA hN.isRobustUnimodal
     exfalso
     have hmeet : (x 6 + (N.g * N.q / (N.q * (N.g + N.d - 1) + N.g)) • (x 5 - x 6)) -
         (x 4 + (N.q * (N.g + N.d - 1) / (N.q * (N.g + N.d - 1) + N.g)) • (x 3 - x 4)) =
@@ -1019,7 +1057,7 @@ theorem isRupert_F1s (N : NF16 x) (O : Omega N) (hd1 : 0 < 1 - N.d)
       linarith
 
 /-- **Lemma 19.5, `T_a`**: the vertex crossing `0235/046` at `0` (view `uA`), rim `(0, 6, 1, 5)`. -/
-theorem isRupert_T6_Ta (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_T6_Ta (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hD : 0 < N.q * N.d - N.r * N.g)
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (hd1 : 0 < 1 - N.d)
@@ -1027,20 +1065,19 @@ theorem isRupert_T6_Ta (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (
     (hHA : 0 < (N.b - 1) * N.g * N.p * N.r + (N.q * (1 - N.d) + N.g * (N.r - 1)) *
       (N.a * (N.q - 1) - (N.b - 1) * N.p)) (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1))
     (hpr : 0 < N.p + N.r - 1)
-    (hz : IsRobustUnimodal (quad ⟪x 0, N.uA⟫ ⟪x 5, N.uA⟫ ⟪x 1, N.uA⟫ ⟪x 6, N.uA⟫))
-    (hnd : NoHDNAt (univ.image x) N.uA) : IsRupert (univ.image x) := by
+    (hz : IsRobustUnimodal (quad ⟪x 0, N.uA⟫ ⟪x 5, N.uA⟫ ⟪x 1, N.uA⟫ ⟪x 6, N.uA⟫)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hr1 : 0 < -N.r + 1 := by
     by_contra hc; push Not at hc
     nlinarith [mul_pos N.hq hd1, mul_nonpos_of_nonneg_of_nonpos N.hg.le hc]
-  refine isRupert_vquadσ (univ.image x) ({x 2, x 3, x 4} : Finset ℝ³) (u := N.uA)
+  refine Cert16.mk (N.named_uA.smul (sigma_ne_zero hσ)) (rimCert_vquadσ (univ.image x) ({x 2, x 3, x 4} : Finset ℝ³) (u := N.uA)
       (by
         simp only [NF16.uA]
         exact nfV_ne_zero N.hD
           (Or.inl (ne_of_gt (by have := (by show 0 < N.p + N.r - 1; linarith [hpr]); linarith)))) hσ
     (mem_image 0) (mem_image 5) (mem_image 1) (mem_image 6)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz ?_)
   · simp only [NF16.uA]; nf_test N hσD
         (by show 0 < N.d * N.p + N.d * N.q + N.d * N.r - N.d; linarith [mul_pos (N.t046_5) (N.hd)])
   · simp only [NF16.uA]; nf_test N hσD (by show 0 < N.p + N.q + N.r - 1; linarith [N.t046_5])
@@ -1117,7 +1154,7 @@ theorem isRupert_T6_Ta (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (
 
 /-- **Lemma 19.5, `A`**: the vertex crossing `036/146` at `6` (view `vA`), rim `(6, 4, 2, 5, 3)`
 (`H_A > 0`). -/
-theorem isRupert_T6_A (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_T6_A (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hD : 0 < N.q * N.d - N.r * N.g)
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (hd1 : 0 < 1 - N.d)
@@ -1125,8 +1162,7 @@ theorem isRupert_T6_A (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N
     (hHA : 0 < (N.b - 1) * N.g * N.p * N.r + (N.q * (1 - N.d) + N.g * (N.r - 1)) *
       (N.a * (N.q - 1) - (N.b - 1) * N.p)) (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1))
     (hpr : 0 < N.p + N.r - 1)
-    (hz : IsRobustUnimodal (quint ⟪x 6, N.vA⟫ ⟪x 3, N.vA⟫ ⟪x 5, N.vA⟫ ⟪x 2, N.vA⟫ ⟪x 4, N.vA⟫))
-    (hnd : NoHDNAt (univ.image x) N.vA) : IsRupert (univ.image x) := by
+    (hz : IsRobustUnimodal (quint ⟪x 6, N.vA⟫ ⟪x 3, N.vA⟫ ⟪x 5, N.vA⟫ ⟪x 2, N.vA⟫ ⟪x 4, N.vA⟫)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hga : 0 < -N.a * N.d * N.q ^ 2 + N.a * N.g * N.q * N.r + N.b * N.d * N.p * N.q - N.a * N.g *
       N.q + N.a * N.q ^ 2 - N.b * N.d * N.q + N.b * N.g * N.p + N.b * N.g * N.r - N.b * N.p * N.q +
@@ -1135,14 +1171,14 @@ theorem isRupert_T6_A (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N
   have h243 : 0 < -N.a * N.d * N.q ^ 2 + N.a * N.g * N.q * N.r + N.b * N.d * N.p * N.q - N.a * N.g *
       N.q + N.a * N.q ^ 2 + N.b * N.g * N.p - N.b * N.p * N.q := pos_of_mul_pos_r N.hab
       (by linarith [mul_pos N.hb hHA, mul_pos N.ha hga])
-  refine isRupert_vquintσ (univ.image x) ({x 0, x 1} : Finset ℝ³) (u := N.vA)
+  refine Cert16.mk (N.named_vA.smul (sigma_ne_zero hσ)) (rimCert_vquintσ (univ.image x) ({x 0, x 1} : Finset ℝ³) (u := N.vA)
       (by
         simp only [NF16.vA, NF16.f03]
         exact nfV_ne_zero N.hD (Or.inl (ne_of_gt
               (by have := (by show 0 < N.g * N.p; linarith [mul_pos (N.hg) N.hp]); linarith)))) hσ
     (mem_image 6) (mem_image 3) (mem_image 5) (mem_image 2) (mem_image 4)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) ?_ ?_ hz ?_)
   · refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
     · simp only [NF16.vA, NF16.f03]; nf_test N hσD
           (by show 0 < N.g * N.p; linarith [mul_pos (N.hg) N.hp])
@@ -1253,7 +1289,7 @@ theorem isRupert_T6_A (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N
 
 
 /-- **Lemma 19.5, `T_c`, `T5 > 0`**: the closing `K_1` at `15`, rim `(1, 4, 2, 0, 6)`. -/
-theorem isRupert_T6_Tc5 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
+theorem cert_T6_Tc5 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
     (hR2 : 0 < N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) (hD : 0 < N.q * N.d - N.r * N.g)
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (hd1 : 0 < 1 - N.d)
@@ -1263,18 +1299,17 @@ theorem isRupert_T6_Tc5 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
     (hpr : 0 < N.p + N.r - 1)
     (hT5 : 0 < N.d * (N.q * (N.a - 1) - N.b * (N.p - 1)) - (N.g - 1) * (N.a - 1) * N.r)
     (hz : IsRobustUnimodal (quint ⟪x 1, (x 5 - x 1)⟫ ⟪x 4, (x 5 - x 1)⟫ ⟪x 2, (x 5 - x 1)⟫ ⟪x 0,
-            (x 5 - x 1)⟫ ⟪x 6, (x 5 - x 1)⟫))
-    (hnd : NoHDNAt ((univ.image x).erase (x 5)) (x 5 - x 1)) : IsRupert (univ.image x) := by
+            (x 5 - x 1)⟫ ⟪x 6, (x 5 - x 1)⟫)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have h426 : 0 < N.a * N.d * N.q - N.a * N.g * N.r - N.b * N.d * N.p + N.a * N.g + N.a * N.r - N.g
       * N.p - N.a + N.p := pos_of_mul_pos_r (mul_pos N.hr N.hab)
       (by linarith [mul_pos N.tB125 N.t0246, mul_pos hT5 N.t245_6])
-  refine isRupert_equintσ (univ.image x) ({x 3} : Finset ℝ³) (u := (x 5 - x 1))
+  refine Cert16.mk ((named16_seg 1 5).smul (sigma_ne_zero hσ)) (rimCert_equintσ (univ.image x) ({x 3} : Finset ℝ³) (u := (x 5 - x 1))
       (sub_ne_zero.mpr (N.inj.ne (by decide))) hσ (h := (-1 : ℝ)) (by norm_num) (by module)
       (mem_image 5)
     (mem_image 1) (mem_image 4) (mem_image 2) (mem_image 0) (mem_image 6)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) ?_ ?_ hz ?_)
   · refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
     · nf_test N hσD (by
             show 0 < N.a * N.d * N.q - N.a * N.g * N.r - N.b * N.d * N.p - N.a * N.d + N.a * N.r +
@@ -1498,20 +1533,18 @@ of `T_a = 0235/046` at `0` (view `u_a`), `A = 036/146` at `6` (view `v_A`) and `
 `15` (view `u_c = 5 − 1`) is robustly unimodal.  If `⟪u_a, v_A⟫ < 0`, `T_a`'s diagonals are not
 weakly separated (the two weak separations give `⟪u_a, v_A⟫ ≥ 0` or contradict the crossing,
 `weakSep_sign`, `not_weakSep_of_meet`).  Otherwise, if `⟪u_c, v_A⟫ ≥ 0`, the open forms of
-(C1)–(C3) hold (a weak (C1) would put `1, 4, 6` at one depth along `15`, against `GenPosTie`)
+(C1)–(C3) hold (a weak (C1) would put `1, 4, 6` at one depth along `15`, against `TieSeg`)
 and `T_c` is robustly unimodal with at most one tie; if `⟪u_c, v_A⟫ < 0`, the open forms of
 (A1), (A2′), (A3) hold and `A` is robustly unimodal with at most one tie at `v_A`. -/
-theorem isRupert_T6 (N : NF16 x) (O : Omega N) (hd1 : 0 < 1 - N.d) (hb1 : 0 < N.b - 1)
+theorem cert_T6 (N : NF16 x) (O : Omega N) (hd1 : 0 < 1 - N.d) (hb1 : 0 < N.b - 1)
     (ha1 : N.a ≠ 1)
     (hf03 : 0 < -(N.q * (1 - N.d) + N.g * (N.r - 1)))
     (hHA : 0 < (N.b - 1) * N.g * N.p * N.r + (N.q * (1 - N.d) + N.g * (N.r - 1)) *
       (N.a * (N.q - 1) - (N.b - 1) * N.p))
     (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1)) (hpr : 0 < N.p + N.r - 1)
     (hT5 : N.d * (N.q * (N.a - 1) - N.b * (N.p - 1)) - (N.g - 1) * (N.a - 1) * N.r ≠ 0)
-    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x)
-    (hnduA : NoHDNAt (univ.image x) N.uA)
-    (hvA : OneTieAt (univ.image x) N.vA)
-    (hndvA : NoHDNAt (univ.image x) N.vA) : IsRupert (univ.image x) := by
+    (hg : TieSeg (univ.image x))
+    (hvA : OneTieAt (univ.image x) N.vA) : Cert16 x := by
   obtain ⟨hR1, hR2, hD, hqg, hg1, hqb, hc, -, -, -, -, -⟩ := O
   have hr1 : 0 < 1 - N.r := by
     by_contra hc'; push Not at hc'
@@ -1601,8 +1634,7 @@ theorem isRupert_T6 (N : NF16 x) (O : Omega N) (hd1 : 0 < 1 - N.d) (hb1 : 0 < N.
   by_cases h1 : ⟪N.uA, N.vA⟫ < 0
   · -- `T_a` is robustly unimodal
     by_cases hN : NWS4 (quad ⟪x 0, N.uA⟫ ⟪x 5, N.uA⟫ ⟪x 1, N.uA⟫ ⟪x 6, N.uA⟫)
-    · exact isRupert_T6_Ta N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hb1 hHA hf15 hpr
-        hN.isRobustUnimodal hnduA
+    · exact cert_T6_Ta N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hb1 hHA hf15 hpr hN.isRobustUnimodal
     exfalso
     have hKa : 0 < (N.g + N.d) * (N.p + N.r - 1) + N.q :=
         by linarith [mul_pos (add_pos N.hg N.hd) hpr, N.hq]
@@ -1647,8 +1679,8 @@ theorem isRupert_T6 (N : NF16 x) (O : Omega N) (hd1 : 0 < 1 - N.d) (hb1 : 0 < N.
     rcases lt_or_gt_of_ne hT5 with h5 | h5
     · by_cases hN : NWS4 (quad ⟪x 1, (x 5 - x 1)⟫ ⟪x 4, (x 5 - x 1)⟫ ⟪x 0, (x 5 - x 1)⟫
           ⟪x 6, (x 5 - x 1)⟫)
-      · exact isRupert_T6_Tc4 N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hb1 hHA hf15 hpr
-          (by linarith) hN.isRobustUnimodal (hnd.fwd N (by decide))
+      · exact cert_T6_Tc4 N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hb1 hHA hf15 hpr
+          (by linarith) hN.isRobustUnimodal
       exfalso
       simp only [NWS4, quad_0, quad_1, quad_2, quad_3, not_and_or, not_or, not_lt] at hN
       rcases hN with ⟨k1, k2, k3, k4⟩ | ⟨k1, k2, k3, k4⟩
@@ -1662,8 +1694,8 @@ theorem isRupert_T6 (N : NF16 x) (O : Omega N) (hd1 : 0 < 1 - N.d) (hb1 : 0 < N.
           (N.inj.ne (by decide)) (N.inj.ne (by decide)) (N.inj.ne (by decide))
           (N.inj.ne (by decide)) (N.inj.ne (by decide)) (N.inj.ne (by decide))
           (N.inj.ne (by decide)) (N.inj.ne (by decide)))
-      refine isRupert_T6_Tc5 N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hb1 hHA hf15 hpr h5
-        (quint_Tc_robust hone ?_ ?_ ?_) (hnd.fwd N (by decide))
+      refine cert_T6_Tc5 N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hb1 hHA hf15 hpr h5
+        (quint_Tc_robust hone ?_ ?_ ?_)
       · by_contra hc0
         simp only [not_or, not_lt] at hc0
         exact C1w hc0.1 hc0.2 h2
@@ -1697,8 +1729,8 @@ theorem isRupert_T6 (N : NF16 x) (O : Omega N) (hd1 : 0 < 1 - N.d) (hb1 : 0 < N.
         (N.inj.ne (by decide)) (N.inj.ne (by decide)) (N.inj.ne (by decide))
         (N.inj.ne (by decide)) (N.inj.ne (by decide)) (N.inj.ne (by decide))
         (N.inj.ne (by decide)))
-    refine isRupert_T6_A N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hb1 hHA hf15 hpr
-      (quint_A_robust hone ?_ ?_ ?_) hndvA
+    refine cert_T6_A N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hb1 hHA hf15 hpr
+      (quint_A_robust hone ?_ ?_ ?_)
     · by_contra hc0
       simp only [not_or, not_lt] at hc0
       obtain ⟨h53, h63⟩ := hc0
