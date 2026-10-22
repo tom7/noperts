@@ -258,7 +258,7 @@ theorem quad_class_mid {y₀ y₁ y₂ y₃ u m : ℝ³}
   · exact ⟨3, 0, s, δ, hs0.le, hs1.le, h⟩
 
 /-- **`isRupert_vquadσ`, certificate form.** -/
-theorem rimCert_vquadσ (V M : Finset ℝ³) {u : ℝ³} (_hu : u ≠ 0) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
+theorem rimCertPts_vquadσ (V M : Finset ℝ³) {u : ℝ³} (_hu : u ≠ 0) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
     {y₀ y₁ y₂ y₃ : ℝ³} (h₀ : y₀ ∈ V) (h₁ : y₁ ∈ V) (h₂ : y₂ ∈ V) (h₃ : y₃ ∈ V)
     (_n₀ : y₀ ∉ M) (_n₁ : y₁ ∉ M) (_n₂ : y₂ ∉ M) (_n₃ : y₃ ∉ M)
     (c₁ : 0 < σ * det3 (y₁ - y₀) (y₂ - y₀) u) (c₂ : 0 < σ * det3 (y₁ - y₀) (y₃ - y₀) u)
@@ -272,10 +272,9 @@ theorem rimCert_vquadσ (V M : Finset ℝ³) {u : ℝ³} (_hu : u ≠ 0) {σ : �
     (hM : ∀ m ∈ M, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
       (m = y₀ + s • (y₁ - y₀) + δ • u ∨ m = y₁ + s • (y₂ - y₁) + δ • u ∨
         m = y₂ + s • (y₃ - y₂) + δ • u ∨ m = y₃ + s • (y₀ - y₃) + δ • u)) :
-    RimCert V (σ • u) := by
+    RimCertPts V (σ • u) (quad y₀ y₁ y₂ y₃) := by
   classical
-  refine (rimCertPts_quadσ V hσ h₀ h₁ h₂ h₃ c₁ c₂ c₃ c₄ c₅ c₆ c₇ c₈ (fun z hz => ?_)
-    hz).rimCert (by norm_num)
+  refine rimCertPts_quadσ V hσ h₀ h₁ h₂ h₃ c₁ c₂ c₃ c₄ c₅ c₆ c₇ c₈ (fun z hz => ?_) hz
   by_cases hzM : z ∈ M
   · exact Or.inl (quad_class_mid (hM z hzM))
   by_cases e0 : z = y₀
@@ -305,7 +304,7 @@ theorem quad_class_edgeMid {y₀ y₁ y₂ y₃ u w m : ℝ³} {h : ℝ} (hw : w
       (by simp only [quad_0, quad_3, zero_smul, add_zero]; rw [hct])
 
 /-- **`isRupert_equadσ`, certificate form.** -/
-theorem rimCert_equadσ (V M : Finset ℝ³) {u : ℝ³} (_hu : u ≠ 0) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
+theorem rimCertPts_equadσ (V M : Finset ℝ³) {u : ℝ³} (_hu : u ≠ 0) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
     {y₀ y₁ y₂ y₃ w : ℝ³} {h : ℝ} (_hh : h ≠ 0) (hw : w = y₀ - h • u) (_hwV : w ∈ V)
     (h₀ : y₀ ∈ V) (h₁ : y₁ ∈ V) (h₂ : y₂ ∈ V) (h₃ : y₃ ∈ V)
     (_n₀ : y₀ ∉ M) (_n₁ : y₁ ∉ M) (_n₂ : y₂ ∉ M) (_n₃ : y₃ ∉ M)
@@ -317,10 +316,9 @@ theorem rimCert_equadσ (V M : Finset ℝ³) {u : ℝ³} (_hu : u ≠ 0) {σ : �
       0 < σ * det3 (y₁ - y₀) (z - y₀) u ∧ 0 < σ * det3 (y₂ - y₁) (z - y₁) u ∧
         0 < σ * det3 (y₃ - y₂) (z - y₂) u ∧ 0 < σ * det3 (y₀ - y₃) (z - y₃) u)
     (hz : IsRobustUnimodal (quad ⟪y₀, u⟫ ⟪y₁, u⟫ ⟪y₂, u⟫ ⟪y₃, u⟫))
-    (hM : ∀ m ∈ M, EdgeMiddle u y₀ w y₁ y₃ h m) : RimCert V (σ • u) := by
+    (hM : ∀ m ∈ M, EdgeMiddle u y₀ w y₁ y₃ h m) : RimCertPts V (σ • u) (quad y₀ y₁ y₂ y₃) := by
   classical
-  refine (rimCertPts_quadσ V hσ h₀ h₁ h₂ h₃ c₁ c₂ c₃ c₄ c₅ c₆ c₇ c₈ (fun z hz => ?_)
-    hz).rimCert (by norm_num)
+  refine rimCertPts_quadσ V hσ h₀ h₁ h₂ h₃ c₁ c₂ c₃ c₄ c₅ c₆ c₇ c₈ (fun z hz => ?_) hz
   by_cases hzM : z ∈ M
   · exact Or.inl (quad_class_edgeMid hw (hM z hzM))
   by_cases ew : z = w
@@ -372,7 +370,7 @@ theorem quint_class_mid {y₀ y₁ y₂ y₃ y₄ u m : ℝ³}
   · exact ⟨4, 0, s, δ, hs0.le, hs1.le, h⟩
 
 /-- **`isRupert_vquintσ`, certificate form.** -/
-theorem rimCert_vquintσ (V M : Finset ℝ³) {u : ℝ³} (_hu : u ≠ 0) {σ : ℝ}
+theorem rimCertPts_vquintσ (V M : Finset ℝ³) {u : ℝ³} (_hu : u ≠ 0) {σ : ℝ}
     (hσ : σ = 1 ∨ σ = -1)
     {y₀ y₁ y₂ y₃ y₄ : ℝ³} (h₀ : y₀ ∈ V) (h₁ : y₁ ∈ V) (h₂ : y₂ ∈ V) (h₃ : y₃ ∈ V) (h₄ : y₄ ∈ V)
     (_n₀ : y₀ ∉ M) (_n₁ : y₁ ∉ M) (_n₂ : y₂ ∉ M) (_n₃ : y₃ ∉ M) (_n₄ : y₄ ∉ M)
@@ -383,9 +381,9 @@ theorem rimCert_vquintσ (V M : Finset ℝ³) {u : ℝ³} (_hu : u ≠ 0) {σ : 
     (hM : ∀ m ∈ M, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
       (m = y₀ + s • (y₁ - y₀) + δ • u ∨ m = y₁ + s • (y₂ - y₁) + δ • u ∨
         m = y₂ + s • (y₃ - y₂) + δ • u ∨ m = y₃ + s • (y₄ - y₃) + δ • u ∨
-        m = y₄ + s • (y₀ - y₄) + δ • u)) : RimCert V (σ • u) := by
+        m = y₄ + s • (y₀ - y₄) + δ • u)) : RimCertPts V (σ • u) (quint y₀ y₁ y₂ y₃ y₄) := by
   classical
-  refine (rimCertPts_quintσ V hσ h₀ h₁ h₂ h₃ h₄ hc (fun z hz => ?_) hz).rimCert (by norm_num)
+  refine rimCertPts_quintσ V hσ h₀ h₁ h₂ h₃ h₄ hc (fun z hz => ?_) hz
   by_cases hzM : z ∈ M
   · exact Or.inl (quint_class_mid (hM z hzM))
   by_cases e0 : z = y₀
@@ -418,7 +416,7 @@ theorem quint_class_edgeMid {y₀ y₁ y₂ y₃ y₄ u w m : ℝ³} {h : ℝ} (
       (by simp only [quint_0, quint_4, zero_smul, add_zero]; rw [hct])
 
 /-- **`isRupert_equintσ`, certificate form.** -/
-theorem rimCert_equintσ (V M : Finset ℝ³) {u : ℝ³} (_hu : u ≠ 0) {σ : ℝ}
+theorem rimCertPts_equintσ (V M : Finset ℝ³) {u : ℝ³} (_hu : u ≠ 0) {σ : ℝ}
     (hσ : σ = 1 ∨ σ = -1)
     {y₀ y₁ y₂ y₃ y₄ w : ℝ³} {h : ℝ} (_hh : h ≠ 0) (hw : w = y₀ - h • u) (_hwV : w ∈ V)
     (h₀ : y₀ ∈ V) (h₁ : y₁ ∈ V) (h₂ : y₂ ∈ V) (h₃ : y₃ ∈ V) (h₄ : y₄ ∈ V)
@@ -427,9 +425,10 @@ theorem rimCert_equintσ (V M : Finset ℝ³) {u : ℝ³} (_hu : u ≠ 0) {σ : 
     (hrest : ∀ z ∈ V, z ∉ M → z ≠ w → z ≠ y₀ → z ≠ y₁ → z ≠ y₂ → z ≠ y₃ → z ≠ y₄ →
       PentIn σ y₀ y₁ y₂ y₃ y₄ u z)
     (hz : IsRobustUnimodal (quint ⟪y₀, u⟫ ⟪y₁, u⟫ ⟪y₂, u⟫ ⟪y₃, u⟫ ⟪y₄, u⟫))
-    (hM : ∀ m ∈ M, EdgeMiddle u y₀ w y₁ y₄ h m) : RimCert V (σ • u) := by
+    (hM : ∀ m ∈ M, EdgeMiddle u y₀ w y₁ y₄ h m) :
+    RimCertPts V (σ • u) (quint y₀ y₁ y₂ y₃ y₄) := by
   classical
-  refine (rimCertPts_quintσ V hσ h₀ h₁ h₂ h₃ h₄ hc (fun z hz => ?_) hz).rimCert (by norm_num)
+  refine rimCertPts_quintσ V hσ h₀ h₁ h₂ h₃ h₄ hc (fun z hz => ?_) hz
   by_cases hzM : z ∈ M
   · exact Or.inl (quint_class_edgeMid hw (hM z hzM))
   by_cases ew : z = w

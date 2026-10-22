@@ -136,7 +136,7 @@ theorem Cert16.isRupert {x : Fin 7 → ℝ³} (hc : Cert16 x)
     (hsp : ∃ i j l m : Fin 7, det3 (x j - x i) (x l - x i) (x m - x i) ≠ 0)
     (hnd : ∀ v, view16 x v ≠ 0 → NoHDNAt (univ.image x) (view16 x v)) :
     IsRupert (univ.image x) := by
-  obtain ⟨u, ⟨v, c, hc0, rfl⟩, k, hk, y, hy⟩ := hc
+  obtain ⟨u, ⟨v, c, hc0, rfl⟩, k, hk, y, hy⟩ := hc.toN
   obtain ⟨lab, -, hat⟩ := hy.toAt
   have hk0 : NeZero k := ⟨by rcases hk with rfl | rfl | rfl <;> norm_num⟩
   have hu := hat.ne_zero

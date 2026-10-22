@@ -829,13 +829,10 @@ noncomputable def view16 (x : Fin 7 → ℝ³) : (Fin 7 × Fin 7) ⊕ Fin 6 → 
 def Named16 (x : Fin 7 → ℝ³) (u : ℝ³) : Prop :=
   ∃ v : (Fin 7 × Fin 7) ⊕ Fin 6, ∃ c : ℝ, c ≠ 0 ∧ u = c • view16 x v
 
-/-- **A type-16 certificate**: a rim certificate (3, 4 or 5 corners) at a named view.  Every
-step of the cover (§19.2–19.5) ends in one; with no horizontal double normal at its view it
-makes the shape Rupert, and it passes to limits (`isRupert_of_tendsto_rimCert`). -/
-def Cert16 (x : Fin 7 → ℝ³) : Prop := ∃ u, Named16 x u ∧ RimCert (univ.image x) u
-
-theorem Cert16.mk {x : Fin 7 → ℝ³} {u : ℝ³} (hn : Named16 x u) (h : RimCert (univ.image x) u) :
-    Cert16 x := ⟨u, hn, h⟩
+/-- **A rim certificate at a named view** (3, 4 or 5 corners); every type-16 certificate
+(`Cert16`) gives one (`Cert16.toN`).  With no horizontal double normal at its view it makes the
+shape Rupert, and it passes to limits (`isRupert_of_tendsto_rimCert`). -/
+def CertN16 (x : Fin 7 → ℝ³) : Prop := ∃ u, Named16 x u ∧ RimCert (univ.image x) u
 
 theorem named16_seg {x : Fin 7 → ℝ³} (i j : Fin 7) : Named16 x (x j - x i) :=
   ⟨.inl (i, j), 1, one_ne_zero, (one_smul _ _).symm⟩
@@ -855,7 +852,7 @@ theorem Named16.sigma {x : Fin 7 → ℝ³} {u : ℝ³} (h : Named16 (x ∘ sigm
   · exact ⟨.inl (sigma16 i, sigma16 j), c, hc, rfl⟩
   · exact ⟨.inr (t + 3), c, hc, by simp only [view16, vtxView16_sigma]⟩
 
-theorem Cert16.sigma {x : Fin 7 → ℝ³} (h : Cert16 (x ∘ sigma16)) : Cert16 x := by
+theorem CertN16.sigma {x : Fin 7 → ℝ³} (h : CertN16 (x ∘ sigma16)) : CertN16 x := by
   obtain ⟨u, hn, hc⟩ := h
   rw [image_sigma16] at hc
   exact ⟨u, hn.sigma, hc⟩
@@ -939,6 +936,179 @@ theorem rimCert_edgeTriσ_robust {v w a b : ℝ³} (V : Finset ℝ³) {σ : ℝ}
       · rw [det3_rev]; linarith
       · rw [det3_rev]; linarith
       · rw [det3_rev]; linarith
+
+/-! ### The certificates of the cover, by family -/
+
+/-- The labelled edge pairs `(v, w, a, b, c)` of the cover (Theorem 19.2: `06`, `14`, `35`,
+`02`, `25`, `03`, `36`) and their images under `σ = (06)(12)`. -/
+def ePairList16 : Finset (Fin 7 × Fin 7 × Fin 7 × Fin 7 × Fin 7) :=
+  {(0, 6, 4, 3, 5), (1, 4, 6, 5, 3), (3, 5, 1, 2, 4), (3, 5, 1, 0, 4), (3, 5, 6, 2, 4),
+    (0, 2, 3, 4, 6), (2, 5, 3, 4, 6), (0, 3, 6, 2, 4), (3, 6, 0, 1, 4),
+    (6, 0, 4, 3, 5), (2, 4, 0, 5, 3), (3, 5, 2, 1, 4), (3, 5, 2, 6, 4), (3, 5, 0, 1, 4),
+    (6, 1, 3, 4, 0), (1, 5, 3, 4, 0), (6, 3, 0, 1, 4), (3, 0, 6, 2, 4)}
+
+/-- The labelled triangle closings `(v, w, a, b)` of the cover (D5 at `16`, D6 at `15`, D7 at
+`35`) and their images under `σ`. -/
+def eTriList16 : Finset (Fin 7 × Fin 7 × Fin 7 × Fin 7) :=
+  {(1, 6, 5, 4), (3, 5, 6, 0), (1, 5, 4, 6), (2, 0, 5, 4), (3, 5, 0, 6), (2, 5, 4, 0)}
+
+/-- The named views of the pair certificates of Lemmas 19.3–19.5 (`35`, `15`, `36`, the three
+vertex crossings) and their images under `σ`. -/
+def pairsViews16 : Finset ((Fin 7 × Fin 7) ⊕ Fin 6) :=
+  {.inl (3, 5), .inl (1, 5), .inl (2, 5), .inl (3, 6), .inl (3, 0), .inr 0, .inr 1, .inr 2,
+    .inr 3, .inr 4, .inr 5}
+
+/-- The hypotheses of `rimCert_edgePairσ_robust` (an edge pair of Lemma E). -/
+def EPairData (V : Finset ℝ³) (σ : ℝ) (v w a b c : ℝ³) : Prop :=
+  (σ = 1 ∨ σ = -1) ∧ 0 < σ * det3 (a - v) (c - v) (w - v) ∧
+    0 < σ * det3 (c - a) (b - a) (w - v) ∧ 0 < σ * det3 (b - c) (v - c) (w - v) ∧
+    0 < σ * det3 (v - b) (a - b) (w - v) ∧
+    det3 (b - a) (c - a) (v - a) * det3 (b - a) (c - a) (w - a) ≤ 0 ∧
+    ¬ (⟪a, w - v⟫ = ⟪c, w - v⟫ ∧ ⟪c, w - v⟫ = ⟪b, w - v⟫) ∧
+    ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ z = c ∨ EdgeMid v w a b z ∨
+      EdgeHiddenσ σ (w - v) v a c b z
+
+/-- The hypotheses of `rimCert_edgeTriσ_robust` (a triangle closing). -/
+def ETriData (V : Finset ℝ³) (σ : ℝ) (v w a b : ℝ³) : Prop :=
+  (σ = 1 ∨ σ = -1) ∧ 0 < σ * det3 (a - v) (b - v) (w - v) ∧
+    ¬ (⟪v, w - v⟫ = ⟪a, w - v⟫ ∧ ⟪a, w - v⟫ = ⟪b, w - v⟫) ∧
+    ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ EdgeMid v w a b z ∨ TriHiddenσ σ (w - v) v a b z
+
+/-- An edge-pair certificate of the cover. -/
+def CertE16 (x : Fin 7 → ℝ³) : Prop :=
+  ∃ v w a b c : Fin 7, (v, w, a, b, c) ∈ ePairList16 ∧
+    ∃ σ : ℝ, EPairData (univ.image x) σ (x v) (x w) (x a) (x b) (x c)
+
+/-- A triangle-closing certificate of the cover. -/
+def CertT16 (x : Fin 7 → ℝ³) : Prop :=
+  ∃ v w a b : Fin 7, (v, w, a, b) ∈ eTriList16 ∧
+    ∃ σ : ℝ, ETriData (univ.image x) σ (x v) (x w) (x a) (x b)
+
+/-- The labelled four-corner pair certificates of Lemmas 19.3–19.5 (view, rim) and their images
+under `σ`. -/
+def pQuadLabels16 : Finset (((Fin 7 × Fin 7) ⊕ Fin 6) × (Fin 7 × Fin 7 × Fin 7 × Fin 7)) :=
+  {(.inl (3, 5), (3, 1, 4, 2)), (.inl (3, 5), (3, 1, 4, 0)), (.inr 0, (4, 6, 3, 5)),
+    (.inr 1, (6, 3, 5, 4)), (.inl (1, 5), (1, 4, 0, 6)), (.inr 2, (0, 5, 1, 6)),
+    (.inl (3, 5), (3, 2, 4, 1)), (.inl (3, 5), (3, 2, 4, 6)), (.inr 3, (4, 0, 3, 5)),
+    (.inr 4, (0, 3, 5, 4)), (.inl (2, 5), (2, 4, 6, 0)), (.inr 5, (6, 5, 2, 0))}
+
+/-- The labelled five-corner pair certificates of Lemmas 19.4, 19.5 and their images. -/
+def pQuintLabels16 :
+    Finset (((Fin 7 × Fin 7) ⊕ Fin 6) × (Fin 7 × Fin 7 × Fin 7 × Fin 7 × Fin 7)) :=
+  {(.inl (3, 6), (6, 0, 2, 4, 1)), (.inr 1, (6, 3, 5, 2, 4)), (.inl (1, 5), (1, 4, 2, 0, 6)),
+    (.inl (3, 0), (0, 6, 1, 4, 2)), (.inr 4, (0, 3, 5, 1, 4)), (.inl (2, 5), (2, 4, 1, 6, 0))}
+
+/-- A pair certificate of Lemmas 19.3–19.5: a labelled rim certificate (four or five corners) at
+one of their views. -/
+def CertP16 (x : Fin 7 → ℝ³) : Prop :=
+  (∃ v l, (v, l) ∈ pQuadLabels16 ∧ ∃ c : ℝ, c ≠ 0 ∧ RimCertPts (univ.image x)
+    (c • view16 x v) (quad (x l.1) (x l.2.1) (x l.2.2.1) (x l.2.2.2))) ∨
+  (∃ v l, (v, l) ∈ pQuintLabels16 ∧ ∃ c : ℝ, c ≠ 0 ∧ RimCertPts (univ.image x)
+    (c • view16 x v) (quint (x l.1) (x l.2.1) (x l.2.2.1) (x l.2.2.2.1) (x l.2.2.2.2)))
+
+/-- **A type-16 certificate**: an edge pair (Lemma E), a triangle closing, or a pair certificate
+of Lemmas 19.3–19.5.  Every step of the cover (§19.2–19.5) ends in one; each is a rim certificate
+at a named view (`Cert16.toN`), and the families record the data that §22 uses at the limit. -/
+def Cert16 (x : Fin 7 → ℝ³) : Prop := CertE16 x ∨ CertT16 x ∨ CertP16 x
+
+theorem cert16_ePair {x : Fin 7 → ℝ³} (v w a b c : Fin 7) (ht : (v, w, a, b, c) ∈ ePairList16)
+    {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
+    (q₁ : 0 < σ * det3 (x a - x v) (x c - x v) (x w - x v))
+    (q₂ : 0 < σ * det3 (x c - x a) (x b - x a) (x w - x v))
+    (q₃ : 0 < σ * det3 (x b - x c) (x v - x c) (x w - x v))
+    (q₄ : 0 < σ * det3 (x v - x b) (x a - x b) (x w - x v))
+    (hE : det3 (x b - x a) (x c - x a) (x v - x a) * det3 (x b - x a) (x c - x a) (x w - x a) ≤ 0)
+    (h3 : ¬ (⟪x a, x w - x v⟫ = ⟪x c, x w - x v⟫ ∧ ⟪x c, x w - x v⟫ = ⟪x b, x w - x v⟫))
+    (hV : ∀ z ∈ univ.image x, z = x v ∨ z = x w ∨ z = x a ∨ z = x b ∨ z = x c ∨
+      EdgeMid (x v) (x w) (x a) (x b) z ∨ EdgeHiddenσ σ (x w - x v) (x v) (x a) (x c) (x b) z) :
+    Cert16 x :=
+  Or.inl ⟨v, w, a, b, c, ht, σ, hσ, q₁, q₂, q₃, q₄, hE, h3, hV⟩
+
+theorem cert16_eTri {x : Fin 7 → ℝ³} (v w a b : Fin 7) (ht : (v, w, a, b) ∈ eTriList16)
+    {σ : ℝ} (hσ : σ = 1 ∨ σ = -1) (hT : 0 < σ * det3 (x a - x v) (x b - x v) (x w - x v))
+    (hz : ¬ (⟪x v, x w - x v⟫ = ⟪x a, x w - x v⟫ ∧ ⟪x a, x w - x v⟫ = ⟪x b, x w - x v⟫))
+    (hV : ∀ z ∈ univ.image x, z = x v ∨ z = x w ∨ z = x a ∨ z = x b ∨
+      EdgeMid (x v) (x w) (x a) (x b) z ∨ TriHiddenσ σ (x w - x v) (x v) (x a) (x b) z) :
+    Cert16 x :=
+  Or.inr (Or.inl ⟨v, w, a, b, ht, σ, hσ, hT, hz, hV⟩)
+
+theorem Cert16.mkPQ {x : Fin 7 → ℝ³} (v : (Fin 7 × Fin 7) ⊕ Fin 6) (i₀ i₁ i₂ i₃ : Fin 7)
+    (hm : (v, (i₀, i₁, i₂, i₃)) ∈ pQuadLabels16) {u : ℝ³}
+    (hn : ∃ c : ℝ, c ≠ 0 ∧ u = c • view16 x v)
+    (h : RimCertPts (univ.image x) u (quad (x i₀) (x i₁) (x i₂) (x i₃))) : Cert16 x := by
+  obtain ⟨c, hc, rfl⟩ := hn
+  exact Or.inr (Or.inr (Or.inl ⟨v, (i₀, i₁, i₂, i₃), hm, c, hc, h⟩))
+
+theorem Cert16.mkPQ5 {x : Fin 7 → ℝ³} (v : (Fin 7 × Fin 7) ⊕ Fin 6) (i₀ i₁ i₂ i₃ i₄ : Fin 7)
+    (hm : (v, (i₀, i₁, i₂, i₃, i₄)) ∈ pQuintLabels16) {u : ℝ³}
+    (hn : ∃ c : ℝ, c ≠ 0 ∧ u = c • view16 x v)
+    (h : RimCertPts (univ.image x) u (quint (x i₀) (x i₁) (x i₂) (x i₃) (x i₄))) : Cert16 x := by
+  obtain ⟨c, hc, rfl⟩ := hn
+  exact Or.inr (Or.inr (Or.inr ⟨v, (i₀, i₁, i₂, i₃, i₄), hm, c, hc, h⟩))
+
+theorem namedAt16_seg {x : Fin 7 → ℝ³} (i j : Fin 7) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1) :
+    ∃ c : ℝ, c ≠ 0 ∧ σ • (x j - x i) = c • view16 x (.inl (i, j)) :=
+  ⟨σ, by rcases hσ with rfl | rfl <;> norm_num, rfl⟩
+
+theorem mem_image7 {x : Fin 7 → ℝ³} (i : Fin 7) : x i ∈ univ.image x :=
+  Finset.mem_image_of_mem x (mem_univ i)
+
+/-- Every type-16 certificate is a rim certificate at a named view. -/
+theorem Cert16.toN {x : Fin 7 → ℝ³} (h : Cert16 x) : CertN16 x := by
+  rcases h with ⟨v, w, a, b, c, -, σ, hσ, q₁, q₂, q₃, q₄, hE, h3, hV⟩ |
+    ⟨v, w, a, b, -, σ, hσ, hT, hz, hV⟩ | ⟨v, l, -, c, hc, hr⟩ | ⟨v, l, -, c, hc, hr⟩
+  · exact ⟨_, named16_seg v w, rimCert_edgePairσ_robust _ hσ (mem_image7 v) (mem_image7 w)
+      (mem_image7 a) (mem_image7 b) (mem_image7 c) q₁ q₂ q₃ q₄ hE h3 hV⟩
+  · exact ⟨_, named16_seg v w, rimCert_edgeTriσ_robust _ hσ (mem_image7 v) (mem_image7 w)
+      (mem_image7 a) (mem_image7 b) hT hz hV⟩
+  · exact ⟨_, ⟨v, c, hc, rfl⟩, hr.rimCert (Or.inr (Or.inl rfl))⟩
+  · exact ⟨_, ⟨v, c, hc, rfl⟩, hr.rimCert (Or.inr (Or.inr rfl))⟩
+
+set_option maxRecDepth 20000 in
+theorem ePairList16_sigma : ∀ t ∈ ePairList16,
+    (sigma16 t.1, sigma16 t.2.1, sigma16 t.2.2.1, sigma16 t.2.2.2.1, sigma16 t.2.2.2.2) ∈
+      ePairList16 := by decide
+
+set_option maxRecDepth 20000 in
+theorem eTriList16_sigma : ∀ t ∈ eTriList16,
+    (sigma16 t.1, sigma16 t.2.1, sigma16 t.2.2.1, sigma16 t.2.2.2) ∈ eTriList16 := by decide
+
+/-- The views under `σ`. -/
+def sigmaView16 : (Fin 7 × Fin 7) ⊕ Fin 6 → (Fin 7 × Fin 7) ⊕ Fin 6
+  | .inl (i, j) => .inl (sigma16 i, sigma16 j)
+  | .inr t => .inr (t + 3)
+
+theorem view16_sigma (x : Fin 7 → ℝ³) (v : (Fin 7 × Fin 7) ⊕ Fin 6) :
+    view16 (x ∘ sigma16) v = view16 x (sigmaView16 v) := by
+  rcases v with ⟨i, j⟩ | t
+  · rfl
+  · simp only [view16, sigmaView16, vtxView16_sigma]
+
+set_option maxRecDepth 20000 in
+theorem pQuadLabels16_sigma : ∀ q ∈ pQuadLabels16, (sigmaView16 q.1, (sigma16 q.2.1,
+    sigma16 q.2.2.1, sigma16 q.2.2.2.1, sigma16 q.2.2.2.2)) ∈ pQuadLabels16 := by decide
+
+set_option maxRecDepth 20000 in
+theorem pQuintLabels16_sigma : ∀ q ∈ pQuintLabels16, (sigmaView16 q.1, (sigma16 q.2.1,
+    sigma16 q.2.2.1, sigma16 q.2.2.2.1, sigma16 q.2.2.2.2.1, sigma16 q.2.2.2.2.2)) ∈
+      pQuintLabels16 := by
+  intro q hq
+  simp only [pQuintLabels16, Finset.mem_insert, Finset.mem_singleton] at hq ⊢
+  rcases hq with rfl | rfl | rfl | rfl | rfl | rfl <;>
+    simp only [sigmaView16, sigma16, Prod.mk.injEq, Sum.inl.injEq, reduceCtorEq, and_false,
+      false_or, or_false] <;> decide
+
+theorem Cert16.sigma {x : Fin 7 → ℝ³} (h : Cert16 (x ∘ sigma16)) : Cert16 x := by
+  rcases h with ⟨v, w, a, b, c, ht, σ, hd⟩ | ⟨v, w, a, b, ht, σ, hd⟩ |
+    ⟨v, l, hl, c, hc, hr⟩ | ⟨v, l, hl, c, hc, hr⟩
+  · rw [image_sigma16] at hd
+    exact Or.inl ⟨_, _, _, _, _, ePairList16_sigma _ ht, σ, hd⟩
+  · rw [image_sigma16] at hd
+    exact Or.inr (Or.inl ⟨_, _, _, _, eTriList16_sigma _ ht, σ, hd⟩)
+  · rw [image_sigma16, view16_sigma] at hr
+    exact Or.inr (Or.inr (Or.inl ⟨_, _, pQuadLabels16_sigma (v, l) hl, c, hc, hr⟩))
+  · rw [image_sigma16, view16_sigma] at hr
+    exact Or.inr (Or.inr (Or.inr ⟨_, _, pQuintLabels16_sigma (v, l) hl, c, hc, hr⟩))
 
 /-- Rewrite the points of a normal form and the frame determinants: every test becomes
 `σ * (det3c … * D)`. -/

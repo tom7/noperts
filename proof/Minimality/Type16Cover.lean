@@ -66,9 +66,8 @@ theorem cert_E06 (N : NF16 x) (hR1 : N.R1 < 0) (hR2 : N.R2 < 0)
   have N1 : 0 < -N.R1 := by linarith
   have N2 : 0 < -N.R2 := by linarith
   simp only [R1, R2] at N1 N2
-  refine Cert16.mk (named16_seg 0 6) (rimCert_edgePairσ_robust (v := x 0) (w := x 6) (a := x 4) (b := x 3) (c := x 5) _ hσ
-    (mem_image 0) (mem_image 6) (mem_image 4) (mem_image 3) (mem_image 5) ?_ ?_ ?_ ?_ ?_
-    hz ?_)
+  refine cert16_ePair 0 6 4 3 5 (by decide) hσ ?_ ?_ ?_ ?_ ?_
+    hz ?_
   · nf_test N hσD N.t046_5
   · nf_test N hσD (add_pos N.hp N.hr)
   · nf_test N hσD one_pos
@@ -101,9 +100,8 @@ theorem cert_stepA (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q 
     (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_far3 (v := 1) (w := 4) (a := 6) (b := 5) (c := 3) N.inj hg (by decide)
-  refine Cert16.mk (named16_seg 1 4) (rimCert_edgePairσ_robust (v := x 1) (w := x 4) (a := x 6) (b := x 5) (c := x 3) _ hσ
-    (mem_image 1) (mem_image 4) (mem_image 6) (mem_image 5) (mem_image 3) ?_ ?_ ?_ ?_ ?_
-    hz ?_)
+  refine cert16_ePair 1 4 6 5 3 (by decide) hσ ?_ ?_ ?_ ?_ ?_
+    hz ?_
   · nf_test N hσD (by show 0 < N.g * N.p; linarith [mul_pos (N.hg) N.hp])
   · nf_test N hσD N.hp
   · nf_test N hσD (by show 0 < N.d * N.p; linarith [mul_pos (N.hd) N.hp])
@@ -141,9 +139,8 @@ theorem cert_stepU1a (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.
     (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_far3 (v := 3) (w := 5) (a := 1) (b := 2) (c := 4) N.inj hg (by decide)
-  refine Cert16.mk (named16_seg 3 5) (rimCert_edgePairσ_robust (v := x 3) (w := x 5) (a := x 1) (b := x 2) (c := x 4) _ hσ
-    (mem_image 3) (mem_image 5) (mem_image 1) (mem_image 2) (mem_image 4) ?_ ?_ ?_ ?_ ?_
-    hz ?_)
+  refine cert16_ePair 3 5 1 2 4 (by decide) hσ ?_ ?_ ?_ ?_ ?_
+    hz ?_
   · nf_test N hσD (by show 0 < N.d * N.p; linarith [mul_pos (N.hd) N.hp])
   · nf_test N hσD (by
           show 0 < -N.a * N.d + N.a * N.r + N.d * N.p
@@ -207,9 +204,8 @@ theorem cert_stepU1b (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.
     (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_far3 (v := 3) (w := 5) (a := 1) (b := 0) (c := 4) N.inj hg (by decide)
-  refine Cert16.mk (named16_seg 3 5) (rimCert_edgePairσ_robust (v := x 3) (w := x 5) (a := x 1) (b := x 0) (c := x 4) _ hσ
-    (mem_image 3) (mem_image 5) (mem_image 1) (mem_image 0) (mem_image 4) ?_ ?_ ?_ ?_ ?_
-    hz ?_)
+  refine cert16_ePair 3 5 1 0 4 (by decide) hσ ?_ ?_ ?_ ?_ ?_
+    hz ?_
   · nf_test N hσD (by show 0 < N.d * N.p; linarith [mul_pos (N.hd) N.hp])
   · nf_test N hσD (by show 0 < N.d * N.p - N.d + N.r; linarith [N.t145_0, hU])
   · nf_test N hσD (by show 0 < N.r; linarith [N.hr])
@@ -266,9 +262,8 @@ theorem cert_stepU2 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q
     (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_far3 (v := 3) (w := 5) (a := 6) (b := 2) (c := 4) N.inj hg (by decide)
-  refine Cert16.mk (named16_seg 3 5) (rimCert_edgePairσ_robust (v := x 3) (w := x 5) (a := x 6) (b := x 2) (c := x 4) _ hσ
-    (mem_image 3) (mem_image 5) (mem_image 6) (mem_image 2) (mem_image 4) ?_ ?_ ?_ ?_ ?_
-    hz ?_)
+  refine cert16_ePair 3 5 6 2 4 (by decide) hσ ?_ ?_ ?_ ?_ ?_
+    hz ?_
   · nf_test N hσD (by show 0 < N.p; linarith [N.hp])
   · nf_test N hσD (by show 0 < N.a * N.r - N.a + N.p; linarith [hZ, N.t245_6])
   · nf_test N hσD (by show 0 < N.a * N.r; linarith [mul_pos (N.ha) N.hr])
@@ -331,9 +326,8 @@ theorem cert_stepU3 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q
         linarith [mul_pos (mul_pos ha1 N.hgd) hrd, mul_pos (mul_pos ha1 hd1) N.t145_0, mul_pos
             (mul_pos (mul_pos N.hd hd1) N.hab) N.hp])
   have hz := depth_far3 (v := 0) (w := 2) (a := 3) (b := 4) (c := 6) N.inj hg (by decide)
-  refine Cert16.mk (named16_seg 0 2) (rimCert_edgePairσ_robust (v := x 0) (w := x 2) (a := x 3) (b := x 4) (c := x 6) _ hσ
-    (mem_image 0) (mem_image 2) (mem_image 3) (mem_image 4) (mem_image 6) ?_ ?_ ?_ ?_ ?_
-    hz ?_)
+  refine cert16_ePair 0 2 3 4 6 (by decide) hσ ?_ ?_ ?_ ?_ ?_
+    hz ?_
   · nf_test N hσD (by show 0 < N.b; linarith [N.hb])
   · nf_test N hσD (by show 0 < -N.a * N.q + N.b * N.p + N.q; linarith [N.hq, hZ])
   · nf_test N hσD (by show 0 < -N.a * N.q + N.b * N.p + N.b * N.r - N.b + N.q; linarith [N.t0246])
@@ -388,9 +382,8 @@ theorem cert_stepU4 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q
       * N.p - N.d * N.p + N.p := pos_of_mul_pos_r N.hd
       (by linarith [mul_pos hd1 N.tB125, mul_pos (mul_pos N.ha N.hgd) hrd])
   have hz := depth_far3 (v := 2) (w := 5) (a := 3) (b := 4) (c := 6) N.inj hg (by decide)
-  refine Cert16.mk (named16_seg 2 5) (rimCert_edgePairσ_robust (v := x 2) (w := x 5) (a := x 3) (b := x 4) (c := x 6) _ hσ
-    (mem_image 2) (mem_image 5) (mem_image 3) (mem_image 4) (mem_image 6) ?_ ?_ ?_ ?_ ?_
-    hz ?_)
+  refine cert16_ePair 2 5 3 4 6 (by decide) hσ ?_ ?_ ?_ ?_ ?_
+    hz ?_
   · nf_test N hσD (by show 0 < N.a; linarith [N.ha])
   · nf_test N hσD (by show 0 < N.a * N.q - N.b * N.p + N.p; linarith [N.hp, hZ])
   · nf_test N hσD (by show 0 < N.a * N.q + N.a * N.r - N.b * N.p - N.a + N.p; linarith [N.t245_6])
@@ -458,9 +451,8 @@ theorem cert_stepU5 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q
                 (mul_pos N.ha (sub_pos.mpr hg1)) hrd])
   have hf03 : 0 < -N.d * N.q + N.g * N.r - N.g + N.q := by linarith [hqg, hU]
   have hz := depth_far3 (v := 0) (w := 3) (a := 6) (b := 2) (c := 4) N.inj hg (by decide)
-  refine Cert16.mk (named16_seg 0 3) (rimCert_edgePairσ_robust (v := x 0) (w := x 3) (a := x 6) (b := x 2) (c := x 4) _ hσ
-    (mem_image 0) (mem_image 3) (mem_image 6) (mem_image 2) (mem_image 4) ?_ ?_ ?_ ?_ ?_
-    hz ?_)
+  refine cert16_ePair 0 3 6 2 4 (by decide) hσ ?_ ?_ ?_ ?_ ?_
+    hz ?_
   · nf_test N hσD (by show 0 < N.q; linarith [N.hq])
   · nf_test N hσD (by show 0 < N.b * N.r - N.b + N.q; linarith [N.t0246, hZ])
   · nf_test N hσD (by show 0 < N.b * N.r; linarith [mul_pos (N.hb) N.hr])
@@ -512,9 +504,8 @@ theorem cert_stepD2 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q
     (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_far3 (v := 3) (w := 5) (a := 1) (b := 2) (c := 4) N.inj hg (by decide)
-  refine Cert16.mk (named16_seg 3 5) (rimCert_edgePairσ_robust (v := x 3) (w := x 5) (a := x 1) (b := x 2) (c := x 4) _ hσ
-    (mem_image 3) (mem_image 5) (mem_image 1) (mem_image 2) (mem_image 4) ?_ ?_ ?_ ?_ ?_
-    hz ?_)
+  refine cert16_ePair 3 5 1 2 4 (by decide) hσ ?_ ?_ ?_ ?_ ?_
+    hz ?_
   · nf_test N hσD (by show 0 < N.d * N.p; linarith [mul_pos (N.hd) N.hp])
   · nf_test N hσD (pos_of_mul_pos_r (N.hq)
           (by
@@ -579,9 +570,8 @@ theorem cert_stepD3 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q
     (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_far3 (v := 2) (w := 5) (a := 3) (b := 4) (c := 6) N.inj hg (by decide)
-  refine Cert16.mk (named16_seg 2 5) (rimCert_edgePairσ_robust (v := x 2) (w := x 5) (a := x 3) (b := x 4) (c := x 6) _ hσ
-    (mem_image 2) (mem_image 5) (mem_image 3) (mem_image 4) (mem_image 6) ?_ ?_ ?_ ?_ ?_
-    hz ?_)
+  refine cert16_ePair 2 5 3 4 6 (by decide) hσ ?_ ?_ ?_ ?_ ?_
+    hz ?_
   · nf_test N hσD (by show 0 < N.a; linarith [N.ha])
   · nf_test N hσD (by
           show 0 < N.a * N.q - N.b * N.p + N.p
@@ -640,8 +630,7 @@ theorem cert_stepD5 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q
     (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_tri3 (v := 1) (w := 6) (a := 5) (b := 4) N.inj hg (by decide)
-  refine Cert16.mk (named16_seg 1 6) (rimCert_edgeTriσ_robust (v := x 1) (w := x 6) (a := x 5) (b := x 4) _ hσ
-    (mem_image 1) (mem_image 6) (mem_image 5) (mem_image 4) ?_ hz ?_)
+  refine cert16_eTri 1 6 5 4 (by decide) hσ ?_ hz ?_
   · nf_test N hσD (by show 0 < N.d * N.p + N.g * N.p - N.p; linarith [mul_pos (N.hgd) (N.hp)])
   intro z hz
   obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hz
@@ -691,8 +680,7 @@ theorem cert_stepD7 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q
     (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_tri3 (v := 3) (w := 5) (a := 6) (b := 0) N.inj hg (by decide)
-  refine Cert16.mk (named16_seg 3 5) (rimCert_edgeTriσ_robust (v := x 3) (w := x 5) (a := x 6) (b := x 0) _ hσ
-    (mem_image 3) (mem_image 5) (mem_image 6) (mem_image 0) ?_ hz ?_)
+  refine cert16_eTri 3 5 6 0 (by decide) hσ ?_ hz ?_
   · nf_test N hσD (by norm_num : (0 : ℝ) < 1)
   intro z hz
   obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hz
@@ -742,9 +730,8 @@ theorem cert_stepD1 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q
     (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_far3 (v := 3) (w := 6) (a := 0) (b := 1) (c := 4) N.inj hg (by decide)
-  refine Cert16.mk (named16_seg 3 6) (rimCert_edgePairσ_robust (v := x 3) (w := x 6) (a := x 0) (b := x 1) (c := x 4) _ hσ
-    (mem_image 3) (mem_image 6) (mem_image 0) (mem_image 1) (mem_image 4) ?_ ?_ ?_ ?_ ?_
-    hz ?_)
+  refine cert16_ePair 3 6 0 1 4 (by decide) hσ ?_ ?_ ?_ ?_ ?_
+    hz ?_
   · nf_test N hσD (by show 0 < N.q; linarith [N.hq])
   · nf_test N hσD (by show 0 < N.g * N.p - N.g + N.q; linarith [N.t0146, hD])
   · nf_test N hσD (by show 0 < N.g * N.p; linarith [mul_pos (N.hg) N.hp])
@@ -802,9 +789,8 @@ theorem cert_stepD4 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q
     (hg : TieSeg (univ.image x)) : Cert16 x := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hz := depth_far3 (v := 0) (w := 3) (a := 6) (b := 2) (c := 4) N.inj hg (by decide)
-  refine Cert16.mk (named16_seg 0 3) (rimCert_edgePairσ_robust (v := x 0) (w := x 3) (a := x 6) (b := x 2) (c := x 4) _ hσ
-    (mem_image 0) (mem_image 3) (mem_image 6) (mem_image 2) (mem_image 4) ?_ ?_ ?_ ?_ ?_
-    hz ?_)
+  refine cert16_ePair 0 3 6 2 4 (by decide) hσ ?_ ?_ ?_ ?_ ?_
+    hz ?_
   · nf_test N hσD (by show 0 < N.q; linarith [N.hq])
   · nf_test N hσD (by show 0 < N.b * N.r - N.b + N.q; linarith [hqb, mul_pos (N.hb) N.hr])
   · nf_test N hσD (by show 0 < N.b * N.r; linarith [mul_pos (N.hb) N.hr])
@@ -857,8 +843,7 @@ theorem cert_stepD6 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q
       * N.p + N.a - N.p := pos_of_mul_pos_r N.t0146
       (by linarith [mul_pos (mul_pos N.hp N.hgd) N.t0246, mul_pos hf N.t146_2])
   have hz := depth_tri3 (v := 1) (w := 5) (a := 4) (b := 6) N.inj hg (by decide)
-  refine Cert16.mk (named16_seg 1 5) (rimCert_edgeTriσ_robust (v := x 1) (w := x 5) (a := x 4) (b := x 6) _ hσ
-    (mem_image 1) (mem_image 5) (mem_image 4) (mem_image 6) ?_ hz ?_)
+  refine cert16_eTri 1 5 4 6 (by decide) hσ ?_ hz ?_
   · nf_test N hσD (by show 0 < N.d * N.p + N.g * N.p - N.p; linarith [mul_pos (N.hgd) (N.hp)])
   intro z hz
   obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hz

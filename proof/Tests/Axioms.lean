@@ -582,6 +582,12 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.IsRobustUnimodal.isCyclicUnimodal_of_order
 #assert_standard_axioms Minimality.isRupert_type16_limit_sec
 #assert_standard_axioms Minimality.isRupert_type16_limit_facets_sec
+#assert_standard_axioms Minimality.EdgeConf.isRupert_edgeClosing
+#assert_standard_axioms Minimality.isRupert_ePair_limit
+#assert_standard_axioms Minimality.isRupert_eTri_limit
+#assert_standard_axioms Minimality.isRupert_twoFace_limit
+#assert_standard_axioms Minimality.isRupert_type16_limit_edge
+#assert_standard_axioms Minimality.isRupert_type16_limit_facets_edge
 #assert_standard_axioms Minimality.isRupert_type21_limit_sec
 #assert_standard_axioms Minimality.isRupert_type21_limit_facets_sec
 #assert_standard_axioms Minimality.isRupert_type21_limit

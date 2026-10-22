@@ -465,7 +465,7 @@ def CertL16 (y : Fin 7 → ℝ³) (v : (Fin 7 × Fin 7) ⊕ Fin 6) (ε : Bool) :
 /-- **Normalizing a certificate**: labels, a named view and a sign. -/
 theorem Cert16.exists_certL {y : Fin 7 → ℝ³} (h : Cert16 y) :
     ∃ v ε L, CertL16 y v ε L := by
-  obtain ⟨u, ⟨v, c, hc0, rfl⟩, k, hk, z, hz⟩ := h
+  obtain ⟨u, ⟨v, c, hc0, rfl⟩, k, hk, z, hz⟩ := h.toN
   have hpos : 0 < |c|⁻¹ := inv_pos.mpr (abs_pos.mpr hc0)
   have hz' := hz.smul hpos
   rw [smul_smul] at hz'
