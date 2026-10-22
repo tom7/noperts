@@ -19,7 +19,7 @@ open scoped RealInnerProductSpace Topology
 open Finset Filter
 
 /-- **Type 21 from its facets (Theorem 16.26).**  Seven points whose facets are `014, 015, 0256,
-046, 134, 135, 2346, 235`.  Off the special positions — `NoPlaneParallel`, `GenPos`, no
+046, 134, 135, 2346, 235`.  Off the special positions — `NoPlaneParallel`, `GenPosTie`, no
 horizontal double normal at the edge views, the five planar equators `{4, 5, 1, 6}`,
 `{0, 3, 1, 6}`, `{0, 3, 4, 5}` (of `K − 2`), `{0, 3, 1, 2}`, `{4, 5, 1, 2}` (of `K − 6`), the
 special positions of `T1` at the four vertex crossings `0: 014/0256`, `4: 014/2346`,
@@ -45,7 +45,7 @@ theorem isRupert_type21_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({2, 3, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
     (hH : ∀ i, (i ∈ ({2, 3, 5} : Finset (Fin 7)) → fH (x i) = 0) ∧
       (i ∉ ({2, 3, 5} : Finset (Fin 7)) → fH (x i) < 0))
-    (hpp : NoPlaneParallel (univ.image x)) (hgen : GenPos (univ.image x))
+    (hpp : NoPlaneParallel (univ.image x)) (hgen : GenPosTie (univ.image x))
     (hnd : ∀ v ∈ univ.image x, ∀ w ∈ univ.image x, v ≠ w →
       NoHDNAt ((univ.image x).erase w) (w - v))
     (hEq : det3 (x 5 - x 4) (x 1 - x 4) (x 6 - x 4) ≠ 0 ∧

@@ -46,7 +46,7 @@ theorem isRupert_vquadσ (V M : Finset ℝ³) {u : ℝ³} (hu : u ≠ 0) {σ : �
     (hrest : ∀ z ∈ V, z ∉ M → z ≠ y₀ → z ≠ y₁ → z ≠ y₂ → z ≠ y₃ →
       0 < σ * det3 (y₁ - y₀) (z - y₀) u ∧ 0 < σ * det3 (y₂ - y₁) (z - y₁) u ∧
         0 < σ * det3 (y₃ - y₂) (z - y₂) u ∧ 0 < σ * det3 (y₀ - y₃) (z - y₃) u)
-    (hz : IsCyclicUnimodal (quad ⟪y₀, u⟫ ⟪y₁, u⟫ ⟪y₂, u⟫ ⟪y₃, u⟫)) (hnd : NoHDNAt V u)
+    (hz : IsRobustUnimodal (quad ⟪y₀, u⟫ ⟪y₁, u⟫ ⟪y₂, u⟫ ⟪y₃, u⟫)) (hnd : NoHDNAt V u)
     (hM : ∀ m ∈ M, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
       (m = y₀ + s • (y₁ - y₀) + δ • u ∨ m = y₁ + s • (y₂ - y₁) + δ • u ∨
         m = y₂ + s • (y₃ - y₂) + δ • u ∨ m = y₃ + s • (y₀ - y₃) + δ • u)) : IsRupert V := by
@@ -124,7 +124,7 @@ theorem isRupert_vquintσ (V M : Finset ℝ³) {u : ℝ³} (hu : u ≠ 0) {σ : 
     (hc : Pent15 σ y₀ y₁ y₂ y₃ y₄ u)
     (hrest : ∀ z ∈ V, z ∉ M → z ≠ y₀ → z ≠ y₁ → z ≠ y₂ → z ≠ y₃ → z ≠ y₄ →
       PentIn σ y₀ y₁ y₂ y₃ y₄ u z)
-    (hz : IsCyclicUnimodal (quint ⟪y₀, u⟫ ⟪y₁, u⟫ ⟪y₂, u⟫ ⟪y₃, u⟫ ⟪y₄, u⟫)) (hnd : NoHDNAt V u)
+    (hz : IsRobustUnimodal (quint ⟪y₀, u⟫ ⟪y₁, u⟫ ⟪y₂, u⟫ ⟪y₃, u⟫ ⟪y₄, u⟫)) (hnd : NoHDNAt V u)
     (hM : ∀ m ∈ M, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
       (m = y₀ + s • (y₁ - y₀) + δ • u ∨ m = y₁ + s • (y₂ - y₁) + δ • u ∨
         m = y₂ + s • (y₃ - y₂) + δ • u ∨ m = y₃ + s • (y₄ - y₃) + δ • u ∨
@@ -159,7 +159,7 @@ theorem isRupert_equadσ (V M : Finset ℝ³) {u : ℝ³} (hu : u ≠ 0) {σ : �
     (hrest : ∀ z ∈ V, z ∉ M → z ≠ w → z ≠ y₀ → z ≠ y₁ → z ≠ y₂ → z ≠ y₃ →
       0 < σ * det3 (y₁ - y₀) (z - y₀) u ∧ 0 < σ * det3 (y₂ - y₁) (z - y₁) u ∧
         0 < σ * det3 (y₃ - y₂) (z - y₂) u ∧ 0 < σ * det3 (y₀ - y₃) (z - y₃) u)
-    (hz : IsCyclicUnimodal (quad ⟪y₀, u⟫ ⟪y₁, u⟫ ⟪y₂, u⟫ ⟪y₃, u⟫)) (hnd : NoHDNAt (V.erase w) u)
+    (hz : IsRobustUnimodal (quad ⟪y₀, u⟫ ⟪y₁, u⟫ ⟪y₂, u⟫ ⟪y₃, u⟫)) (hnd : NoHDNAt (V.erase w) u)
     (hM : ∀ m ∈ M, EdgeMiddle u y₀ w y₁ y₃ h m) : IsRupert V := by
   obtain ⟨a0, a1, a2, a3⟩ := zmod4_add_one
   refine isRupert_of_edgeViewσ V M u hu hσ (k := 4) (by norm_num) (quad y₀ y₁ y₂ y₃) 0 w h hwV
@@ -191,7 +191,7 @@ theorem isRupert_equintσ (V M : Finset ℝ³) {u : ℝ³} (hu : u ≠ 0) {σ : 
     (hc : Pent15 σ y₀ y₁ y₂ y₃ y₄ u)
     (hrest : ∀ z ∈ V, z ∉ M → z ≠ w → z ≠ y₀ → z ≠ y₁ → z ≠ y₂ → z ≠ y₃ → z ≠ y₄ →
       PentIn σ y₀ y₁ y₂ y₃ y₄ u z)
-    (hz : IsCyclicUnimodal (quint ⟪y₀, u⟫ ⟪y₁, u⟫ ⟪y₂, u⟫ ⟪y₃, u⟫ ⟪y₄, u⟫))
+    (hz : IsRobustUnimodal (quint ⟪y₀, u⟫ ⟪y₁, u⟫ ⟪y₂, u⟫ ⟪y₃, u⟫ ⟪y₄, u⟫))
     (hnd : NoHDNAt (V.erase w) u) (hM : ∀ m ∈ M, EdgeMiddle u y₀ w y₁ y₄ h m) : IsRupert V := by
   obtain ⟨a0, a1, a2, a3, a4⟩ := zmod5_add_one
   refine isRupert_of_edgeViewσ V M u hu hσ (k := 5) (by norm_num) (quint y₀ y₁ y₂ y₃ y₄) 0 w h

@@ -1,6 +1,6 @@
 module
 
-public import Minimality.Slide
+public import Minimality.SlideDS
 public import Minimality.Type08
 
 @[expose] public section
@@ -30,9 +30,10 @@ of the rim is normal to `F_j` (`NoBadNormal`).  The table of Lemma C (c):
 For the three closings with one circle, Lemma H uses the other face `F_k` instead: along
 `F_k`'s circle the middle `m` of `F_j` next to `v` pokes out, and the rim is `K_v` with
 `m` inserted (five corners).  If that rim is strictly unimodal at `u₀`
-(`StrictUnimodal`) and `NoBadNormal` holds along `F_k`, `K` is Rupert; the remaining case
-(a horizontal double normal perpendicular to `F_j` with a two-peaked five-corner rim)
-contains the open piece `R_d` of the addendum.
+(`StrictUnimodal`, Theorem 7.3) or has a depth-separated pair there (Lemma H (c), Theorem
+8.10; both `UniOrSep`, `SlideDS.lean`) and `NoBadNormal` holds along `F_k`, `K` is Rupert;
+the remaining case (a horizontal double normal perpendicular to `F_j` of type (d) with a
+two-peaked five-corner rim) is the open piece `R_d` of the addendum.
 
 | closing | five-corner rim | circle |
 |---|---|---|
@@ -181,13 +182,13 @@ set_option maxHeartbeats 1000000 in
 octahedron (`x'` hidden) with one more point `m` over the chord from `y` to `p`, slide
 along the other face `x y p'` (`e = p' − y`): `x` lies over its side `p' y`, and `m`
 pokes out between `y` and `p`; the rim is `y m p y' p'`.  If its depths at the view
-along `y − x` are strictly unimodal and no bad direction of it is normal to `x y p'`,
-the seven points are Rupert. -/
+along `y − x` are strictly unimodal or have a depth-separated pair (`UniOrSep`, Lemma H
+(c)) and no bad direction of it is normal to `x y p'`, the seven points are Rupert. -/
 theorem isRupert_quad_edge_middle_five {x x' y y' p p' m : ℝ³} (F : OctFacets x x' y y' p p')
     (hq₁ : F.a'b'c.f x < F.a'b'c.f y) (hq₂ : F.a'b'c'.f x < F.a'b'c'.f y)
     (hmid : ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ 0 < δ ∧ m = y + s • (p - y) + δ • (y - x))
     (hmO : m ≠ x ∧ m ≠ x' ∧ m ≠ y ∧ m ≠ y' ∧ m ≠ p ∧ m ≠ p')
-    (hu5 : StrictUnimodal (fun i => ⟪quint y m p y' p' i, y - x⟫))
+    (hu5 : UniOrSep (quint y m p y' p') (y - x))
     (hs5 : NoBadNormal (quint y m p y' p') (y - x) (p' - y)) :
     IsRupert (insert m {x, x', y, y', p, p'}) := by
   classical
@@ -256,9 +257,9 @@ theorem isRupert_quad_edge_middle_five {x x' y y' p p' m : ℝ³} (F : OctFacets
   have e4y' := E4 y' my' hy'p' (Ne.symm hyy') (Ne.symm hxy')
   have e4x' := E4 x' mx' hx'p' hx'y (Ne.symm hxx')
   have hs1' : 0 < 1 - s := by linarith
-  refine isRupert_of_slide'' V {x} u (p' - y) hu (quint y m p y' p') ?_ ?_
+  refine isRupert_of_slide_uos V {x} u (p' - y) hu (quint y m p y' p') ?_ ?_
     (quint_injective (Ne.symm hmy) hyp hyy' hyp' hmp hmy' hmp' (Ne.symm hy'p) hpp' hy'p')
-    (by norm_num) ρ hρ ?_ ?_ ?_ (eventually_unimodal_of_strict _ _ _ hu5) hs5
+    (by norm_num) ρ hρ ?_ ?_ ?_ hu5 hs5.toR
   · intro i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       simp [V, quint_0, quint_1, quint_2, quint_3, quint_4]
   · intro i
@@ -532,7 +533,7 @@ theorem isRupert_quad_edge_middle_slide {x x' y y' p p' m : ℝ³} (F : OctFacet
     (hmO : m ≠ x ∧ m ≠ x' ∧ m ≠ y ∧ m ≠ y' ∧ m ≠ p ∧ m ≠ p')
     (htouch : ¬ (⟪p, y - x⟫ = ⟪y', y - x⟫ ∧ ⟪p', y - x⟫ = ⟪y', y - x⟫))
     (hsy : NoBadNormal (quad y p y' p') (y - x) (p - y) ∨
-      (StrictUnimodal (fun i => ⟪quint y m p y' p' i, y - x⟫) ∧
+      (UniOrSep (quint y m p y' p') (y - x) ∧
         NoBadNormal (quint y m p y' p') (y - x) (p' - y)))
     (hsx : NoBadNormal (quad x p y' p') (y - x) (p - x) ∨
       NoBadNormal (quad x p y' p') (y - x) (p' - x)) :
@@ -689,8 +690,8 @@ set_option maxHeartbeats 1000000 in
 /-- **Lemma H for `K_b` (T4), the five-corner rim.**  Slide along the other face `Q_ab`
 (`e = a − d`): the middles of `Q_ab` (`d`, `a`) lie over its side `b c'`, and the middle
 `a'` of `Q_bc` pokes out between `c` and `b`; the rim is `b c' b' c a'`.  If its depths at
-the view along `d b` are strictly unimodal and no bad direction of it is normal to
-`Q_ab`, `K` is Rupert. -/
+the view along `d b` are strictly unimodal or have a depth-separated pair (`UniOrSep`) and
+no bad direction of it is normal to `Q_ab`, `K` is Rupert. -/
 theorem isRupert_t4b_five {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ β₂ : ℝ}
     (hb' : b' = d + α • (a - d) + β • (c - d)) (hc' : c' = d + α₁ • (a - d) + β₁ • (b - d))
     (ha' : a' = d + α₂ • (b - d) + β₂ • (c - d))
@@ -698,7 +699,7 @@ theorem isRupert_t4b_five {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ β
     (hα : 0 < α) (hβ : 0 < β) (hα₁ : 1 < α₁) (hβ₁ : 0 < β₁)
     (hβ₂ : 0 < β₂) (hβ₂1 : β₂ < 1) (hαβ₂ : 1 < α₂ + β₂)
     (hκ : 0 < α + α₁ * (β - 1))
-    (hu5 : StrictUnimodal (fun i => ⟪quint b c' b' c a' i, b - d⟫))
+    (hu5 : UniOrSep (quint b c' b' c a') (b - d))
     (hs5 : NoBadNormal (quint b c' b' c a') (b - d) (a - d)) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   classical
@@ -727,10 +728,10 @@ theorem isRupert_t4b_five {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ β
     intro z hz; simpa [V] using hz
   have hu : b - d ≠ 0 := sub_ne_zero.mpr (Ne.symm hdb)
   obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
-  refine isRupert_of_slide'' V {d, a} (b - d) (a - d) hu (quint b c' b' c a') ?_ ?_
+  refine isRupert_of_slide_uos V {d, a} (b - d) (a - d) hu (quint b c' b' c a') ?_ ?_
     (quint_injective hbc' hbb' hbc (Ne.symm ha'b) (Ne.symm hb'c') (Ne.symm hcc') (Ne.symm ha'c')
       hb'c (Ne.symm ha'b') (Ne.symm ha'c)) (by norm_num) (det3 (a - d) (c - d) (b - d)) hE
-    ?_ ?_ ?_ (eventually_unimodal_of_strict _ _ _ hu5) hs5
+    ?_ ?_ ?_ hu5 hs5.toR
   · intro i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       simp [V, quint_0, quint_1, quint_2, quint_3, quint_4]
   · intro i
@@ -785,7 +786,7 @@ theorem isRupert_t4d_five {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ β
     (hnd : [d, a, a', b, b', c, c'].Nodup) (hE : det3 (a - d) (c - d) (b - d) ≠ 0)
     (hα : 0 < α) (hβ : 0 < β) (hαβ : 1 < α + β) (hα₁ : 1 < α₁) (hβ₁ : 0 < β₁)
     (hα₂ : 0 < α₂) (hβ₂ : 0 < β₂) (hβ₂1 : β₂ < 1) (hκ : 0 < α + α₁ * (β - 1))
-    (hu5 : StrictUnimodal (fun i => ⟪quint d a c' b' c i, b - d⟫))
+    (hu5 : UniOrSep (quint d a c' b' c) (b - d))
     (hs5 : NoBadNormal (quint d a c' b' c) (b - d) (c - d)) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   classical
@@ -808,11 +809,11 @@ theorem isRupert_t4d_five {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ β
     intro z hz; simpa [V] using hz
   have hu : b - d ≠ 0 := sub_ne_zero.mpr (Ne.symm hdb)
   obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
-  refine isRupert_of_slide'' V {b, a'} (b - d) (d - c) hu (quint d a c' b' c) ?_ ?_
+  refine isRupert_of_slide_uos V {b, a'} (b - d) (d - c) hu (quint d a c' b' c) ?_ ?_
     (quint_injective hda hdc' hdb' hdc hac' hab' hac (Ne.symm hb'c') (Ne.symm hcc') hb'c)
     (by norm_num) (det3 (a - d) (c - d) (b - d)) hE
-    ?_ ?_ ?_ (eventually_unimodal_of_strict _ _ _ hu5)
-    (hs5.of_span 0 (-1) (by module))
+    ?_ ?_ ?_ hu5
+    (hs5.of_span 0 (-1) (by module)).toR
   · intro i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       simp [V, quint_0, quint_1, quint_2, quint_3, quint_4]
   · intro i
@@ -858,14 +859,14 @@ theorem t4_closing {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ β₂ : �
     (hb' : b' = d + α • (a - d) + β • (c - d)) (hc' : c' = d + α₁ • (a - d) + β₁ • (b - d))
     (ha' : a' = d + α₂ • (b - d) + β₂ • (c - d)) (hdb : d ≠ b)
     (hE : det3 (a - d) (c - d) (b - d) ≠ 0)
-    (hα : 0 < α) (hβ : 0 < β) (hα₁ : 1 < α₁) (hβ₁ : 0 < β₁) (hκ : 0 < α + α₁ * (β - 1))
+    (hα : 0 < α) (hβ : 0 < β) (hα₁ : 0 < α₁) (hβ₁ : 0 < β₁) (hκ : 0 < α + α₁ * (β - 1))
     (hgood : ¬ max ⟪b, b - d⟫ ⟪b', b - d⟫ ≤ min ⟪c, b - d⟫ ⟪c', b - d⟫)
     (htouch : ¬ (⟪c, b - d⟫ = ⟪b', b - d⟫ ∧ ⟪c', b - d⟫ = ⟪b', b - d⟫))
     (hN : ¬ NWS4 (quad ⟪b, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫)) :
     NWS4 (quad ⟪d, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫) := by
   obtain ⟨K0, K1, K2, K3, K4, K5, K6, K7, K8, K9, K10, K11, K12, K13, K14, K15, K16, K17, K18,
     K19, K20, K21, K22, K23, K24, K25, K26, D3, D21, D2, D1⟩ := t4_slide_dets hb' hc' ha'
-  have hα₁p : 0 < α₁ := by linarith
+  have hα₁p : 0 < α₁ := hα₁
   have hκ' : 0 < α + β * α₁ - α₁ := by
     rw [show α + β * α₁ - α₁ = α + α₁ * (β - 1) by ring]; exact hκ
   have pβα₁ : 0 < β * α₁ := mul_pos hβ hα₁p
@@ -1076,10 +1077,10 @@ theorem isRupert_t4_slide {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ β
     (hgood : ¬ max ⟪b, b - d⟫ ⟪b', b - d⟫ ≤ min ⟪c, b - d⟫ ⟪c', b - d⟫)
     (htouch : ¬ (⟪c, b - d⟫ = ⟪b', b - d⟫ ∧ ⟪c', b - d⟫ = ⟪b', b - d⟫))
     (hsb : NoBadNormal (quad b c' b' c) (b - d) (c - d) ∨
-      (StrictUnimodal (fun i => ⟪quint b c' b' c a' i, b - d⟫) ∧
+      (UniOrSep (quint b c' b' c a') (b - d) ∧
         NoBadNormal (quint b c' b' c a') (b - d) (a - d)))
     (hsd : NoBadNormal (quad d c' b' c) (b - d) (a - d) ∨
-      (StrictUnimodal (fun i => ⟪quint d a c' b' c i, b - d⟫) ∧
+      (UniOrSep (quint d a c' b' c) (b - d) ∧
         NoBadNormal (quint d a c' b' c) (b - d) (c - d))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   classical
@@ -1097,7 +1098,7 @@ theorem isRupert_t4_slide {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ β
         List.nodup_nil, and_true] at hnd
       exact hnd.1.2.2.1
     exact isRupert_t4_sel hb' hc' ha' hnd hE hα hβ hαβ hα₁ hβ₁ hα₂ hβ₂ hβ₂1 hαβ₂ hκ
-      (Or.inr ⟨t4_closing hb' hc' ha' hdb hE hα hβ hα₁ hβ₁ hκ hgood htouch hN, hsd⟩)
+      (Or.inr ⟨t4_closing hb' hc' ha' hdb hE hα hβ (by linarith) hβ₁ hκ hgood htouch hN, hsd⟩)
 
 set_option maxHeartbeats 1000000 in
 /-- **Case Q of Theorem 10.1 by slides (Lemma 1 (c) with Lemma C).**  In the frame

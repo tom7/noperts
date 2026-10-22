@@ -23,8 +23,8 @@ set_option linter.unusedVariables false
 
 namespace Minimality
 
-open scoped RealInnerProductSpace
-open Finset
+open scoped RealInnerProductSpace Topology
+open Finset Filter
 
 /-- **The direction of a depth separation** (the four-corner rule, §13.1): if the diagonals
 `[d₀, d₁]`, `[e₀, e₁]` of a 4-corner rim cross along `w` with `e − d = l w`, `l ≤ 0`, and are
@@ -40,6 +40,49 @@ theorem depthSep_of_meet {d₀ d₁ e₀ e₁ w : ℝ³} {s t l : ℝ} (hs0 : 0 
   rcases h with h | h
   · exfalso; nlinarith [mul_nonpos_of_nonpos_of_nonneg hl hww]
   · exact h
+
+/-- **The four-corner rule with ties, strict crossing**: if the diagonals `[d₀, d₁]`, `[e₀, e₁]`
+of a 4-corner rim cross along `w ≠ 0` with `e − d = l w`, `l < 0`, then `{e₀, e₁}` is not
+weakly above `{d₀, d₁}`. -/
+theorem not_weakSep_of_meet {d₀ d₁ e₀ e₁ w : ℝ³} {s t l : ℝ} (hs0 : 0 ≤ s) (hs1 : s ≤ 1)
+    (ht0 : 0 ≤ t) (ht1 : t ≤ 1) (hm : (e₀ + t • (e₁ - e₀)) - (d₀ + s • (d₁ - d₀)) = l • w)
+    (hl : l < 0) (hw : w ≠ 0) (h1 : ⟪d₀, w⟫ ≤ ⟪e₀, w⟫) (h2 : ⟪d₀, w⟫ ≤ ⟪e₁, w⟫)
+    (h3 : ⟪d₁, w⟫ ≤ ⟪e₀, w⟫) (h4 : ⟪d₁, w⟫ ≤ ⟪e₁, w⟫) : False := by
+  have i1 := congrArg (fun z => ⟪z, w⟫) hm
+  simp only [inner_sub_left, inner_seg, real_inner_smul_left] at i1
+  have hww : 0 < ⟪w, w⟫ := real_inner_self_pos.mpr hw
+  nlinarith [mul_nonneg (mul_nonneg (sub_nonneg.mpr ht1) (sub_nonneg.mpr hs1))
+      (sub_nonneg.mpr h1), mul_nonneg (mul_nonneg (sub_nonneg.mpr ht1) hs0) (sub_nonneg.mpr h3),
+    mul_nonneg (mul_nonneg ht0 (sub_nonneg.mpr hs1)) (sub_nonneg.mpr h2),
+    mul_nonneg (mul_nonneg ht0 hs0) (sub_nonneg.mpr h4), mul_pos_of_neg_of_neg hl (neg_neg_of_pos hww)]
+
+/-- **The four-corner rule with ties, interior crossing**: if the diagonals cross at interior
+points (`0 < s, t < 1`) along `w` with `e − d = l w`, `l ≤ 0`, and `{e₀, e₁}` is weakly above
+`{d₀, d₁}`, all four depths are equal. -/
+theorem eq_of_weakSep_meet {d₀ d₁ e₀ e₁ w : ℝ³} {s t l : ℝ} (hs0 : 0 < s) (hs1 : s < 1)
+    (ht0 : 0 < t) (ht1 : t < 1) (hm : (e₀ + t • (e₁ - e₀)) - (d₀ + s • (d₁ - d₀)) = l • w)
+    (hl : l ≤ 0) (h1 : ⟪d₀, w⟫ ≤ ⟪e₀, w⟫) (h2 : ⟪d₀, w⟫ ≤ ⟪e₁, w⟫)
+    (h3 : ⟪d₁, w⟫ ≤ ⟪e₀, w⟫) (h4 : ⟪d₁, w⟫ ≤ ⟪e₁, w⟫) :
+    ⟪d₀, w⟫ = ⟪e₀, w⟫ ∧ ⟪d₁, w⟫ = ⟪e₀, w⟫ ∧ ⟪e₁, w⟫ = ⟪e₀, w⟫ := by
+  have i1 := congrArg (fun z => ⟪z, w⟫) hm
+  simp only [inner_sub_left, inner_seg, real_inner_smul_left] at i1
+  have hww := real_inner_self_nonneg (x := w)
+  have p1 := mul_nonneg (mul_nonneg (sub_nonneg.mpr ht1.le) (sub_nonneg.mpr hs1.le))
+    (sub_nonneg.mpr h1)
+  have p2 := mul_nonneg (mul_nonneg (sub_nonneg.mpr ht1.le) hs0.le) (sub_nonneg.mpr h3)
+  have p3 := mul_nonneg (mul_nonneg ht0.le (sub_nonneg.mpr hs1.le)) (sub_nonneg.mpr h2)
+  have p4 := mul_nonneg (mul_nonneg ht0.le hs0.le) (sub_nonneg.mpr h4)
+  have p5 := mul_nonpos_of_nonpos_of_nonneg hl hww
+  have k1 : (1 - t) * (1 - s) * (⟪e₀, w⟫ - ⟪d₀, w⟫) = 0 := by nlinarith
+  have k2 : (1 - t) * s * (⟪e₀, w⟫ - ⟪d₁, w⟫) = 0 := by nlinarith
+  have k3 : t * (1 - s) * (⟪e₁, w⟫ - ⟪d₀, w⟫) = 0 := by nlinarith
+  have c1 : (1 - t) * (1 - s) ≠ 0 := mul_ne_zero (by linarith) (by linarith)
+  have c2 : (1 - t) * s ≠ 0 := mul_ne_zero (by linarith) hs0.ne'
+  have c3 : t * (1 - s) ≠ 0 := mul_ne_zero ht0.ne' (by linarith)
+  have e1 := (mul_eq_zero.mp k1).resolve_left c1
+  have e2 := (mul_eq_zero.mp k2).resolve_left c2
+  have e3 := (mul_eq_zero.mp k3).resolve_left c3
+  refine ⟨by linarith, by linarith, by linarith⟩
 
 namespace NF16
 
@@ -70,7 +113,7 @@ theorem isRupert_F3_T1a (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (hd1 : 0 < N.d - 1)
     (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1)) (ha1 : 0 < N.a - 1)
-    (hz : IsCyclicUnimodal
+    (hz : IsRobustUnimodal
           (quad ⟪x 3, (x 5 - x 3)⟫ ⟪x 1, (x 5 - x 3)⟫ ⟪x 4, (x 5 - x 3)⟫ ⟪x 2, (x 5 - x 3)⟫))
     (hnd : NoHDNAt ((univ.image x).erase (x 5)) (x 5 - x 3)) : IsRupert (univ.image x) := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
@@ -143,7 +186,7 @@ theorem isRupert_F3_T1b (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (hd1 : 0 < N.d - 1)
     (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1)) (ha1 : 0 < 1 - N.a)
-    (hz : IsCyclicUnimodal
+    (hz : IsRobustUnimodal
           (quad ⟪x 3, (x 5 - x 3)⟫ ⟪x 1, (x 5 - x 3)⟫ ⟪x 4, (x 5 - x 3)⟫ ⟪x 0, (x 5 - x 3)⟫))
     (hnd : NoHDNAt ((univ.image x).erase (x 5)) (x 5 - x 3)) : IsRupert (univ.image x) := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
@@ -232,7 +275,7 @@ theorem isRupert_F3_T2 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (
     (hqg : 0 < N.q - N.g) (hg1 : 0 < N.g - 1) (hqb : 0 < N.q - N.b)
     (hc : 0 < N.q * (N.a - 1) - N.b * (N.p - 1)) (hd1 : 0 < N.d - 1)
     (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1))
-    (hz : IsCyclicUnimodal (quad ⟪x 4, N.vT2⟫ ⟪x 6, N.vT2⟫ ⟪x 3, N.vT2⟫ ⟪x 5, N.vT2⟫))
+    (hz : IsRobustUnimodal (quad ⟪x 4, N.vT2⟫ ⟪x 6, N.vT2⟫ ⟪x 3, N.vT2⟫ ⟪x 5, N.vT2⟫))
     (hnd : NoHDNAt (univ.image x) N.vT2) : IsRupert (univ.image x) := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   refine isRupert_vquadσ (univ.image x) ({x 0, x 1} : Finset ℝ³) (u := N.vT2) (N.vT2_ne hf15) hσ
@@ -400,34 +443,40 @@ theorem isRupert_F3_T2 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (
 
 
 
-/-- **Lemma 19.3** (`Ω ∩ {d > 1}`): the closing `T1 = K_3` at `35` (rim `(3, x, 4, 1)`,
-`x = 2` iff `a > 1`) or the vertex crossing `T2 = 046/145` at `4` (view `vT2`, rim
-`(4, 6, 3, 5)`) is unimodal.  `T1` fails only with `{3, 4}` above `{x, 1}` (its diagonals cross
-along `5 − 3` with `l ≤ 0`, as `E35` fails), and then `⟪vT2, 5 − 3⟫ > 0`; `T2` fails only with
-`{4, 3}` above `{5, 6}` (crossing with `λ = −1/K < 0`), and then `⟪5 − 3, vT2⟫ < 0`. -/
+/-- **Lemma 19.3** (`Ω ∩ {d > 1}`), with ties: the closing `T1 = K_3` at `35` (rim
+`(3, 1, 4, x)`, `x = 2` iff `a > 1`) or the vertex crossing `T2 = 046/145` at `4` (view `vT2`,
+rim `(4, 6, 3, 5)`) has diagonals that are not weakly separated, hence is robustly unimodal.
+`T2` can fail only with `{4, 3}` weakly above `{6, 5}` (its diagonals cross with
+`λ = −1/K < 0`, `not_weakSep_of_meet`), and then `⟪5 − 3, vT2⟫ ≤ 0`.  `T1` can fail only with
+`{3, 4}` weakly above `{1, x}` (the other way the crossing along `5 − 3` with `l ≤ 0` at interior
+points would put `1, x, 3, 4` at one depth, two ties at the edge view `35`, against `GenPosTie`),
+and then `⟪vT2, 5 − 3⟫ > 0`. -/
 theorem isRupert_F3 (N : NF16 x) (O : Omega N) (hd1 : 0 < N.d - 1) (ha1 : N.a ≠ 1)
     (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1))
-    (hg : GenPos (univ.image x)) (hnd : NoHDNEdges16 x)
-    (hv : [⟪x 4, N.vT2⟫, ⟪x 6, N.vT2⟫, ⟪x 3, N.vT2⟫, ⟪x 5, N.vT2⟫].Nodup)
+    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x)
     (hndv : NoHDNAt (univ.image x) N.vT2) : IsRupert (univ.image x) := by
   obtain ⟨hR1, hR2, hD, hqg, hg1, hqb, hc, nD2, -, -, -, -⟩ := O
   have huu : 0 < ⟪(x 5 - x 3), (x 5 - x 3)⟫ := real_inner_self_pos.mpr
       (sub_ne_zero.mpr (N.inj.ne (by decide)))
-  -- `T2` fails only one way, giving `⟪5 − 3, vT2⟫ < 0`
-  have hT2 : DepthSep (x 4) (x 3) (x 6) (x 5) N.vT2 → ⟪x 5, N.vT2⟫ < ⟪x 3, N.vT2⟫ := by
-    intro h
-    set K := N.q * (N.g + N.d - 1) + N.d * (N.p + N.q + N.r - 1) with hK
-    have hK0 : 0 < K := by nlinarith [mul_pos N.hq N.hgd, mul_pos N.hd N.t046_5]
-    have hs := depthSep_of_meet (d₀ := x 4) (d₁ := x 3) (e₀ := x 6) (e₁ := x 5) (w := N.vT2)
-      (s := (N.g + N.d - 1) * (N.p + N.q + N.r - 1) / K)
-      (t := (N.q * (N.g + N.d - 1) + N.d * (N.p + N.q + N.r - 1) - N.d * (N.p + N.q + N.r - 1)) / K)
-      (l := -1 / K) (div_pos (mul_pos N.hgd N.t046_5) hK0).le
-      ((div_le_one hK0).mpr (by nlinarith [hf15]))
-      (div_pos (by nlinarith [mul_pos N.hq N.hgd]) hK0).le
-      ((div_le_one hK0).mpr (by nlinarith [mul_pos N.hd N.t046_5])) ?_
-      (div_nonpos_of_nonpos_of_nonneg (by norm_num) hK0.le) h
-    · have := max_lt_iff.mp hs; have := lt_min_iff.mp this.2; linarith
-    · have hK0' := hK0.ne'
+  -- `T2` is `NWS4`, or `⟪5 − 3, vT2⟫ ≤ 0`
+  by_cases hN2 : NWS4 (quad ⟪x 4, N.vT2⟫ ⟪x 6, N.vT2⟫ ⟪x 3, N.vT2⟫ ⟪x 5, N.vT2⟫)
+  · exact isRupert_F3_T2 N hR1 hR2 hD hqg hg1 hqb hc hd1 hf15 hN2.isRobustUnimodal hndv
+  have h53 : ⟪x 5, N.vT2⟫ ≤ ⟪x 3, N.vT2⟫ := by
+    simp only [NWS4, quad_0, quad_1, quad_2, quad_3, not_and_or, not_or, not_lt] at hN2
+    rcases hN2 with ⟨k1, k2, k3, k4⟩ | ⟨k1, k2, k3, k4⟩
+    · exact k4
+    · exfalso
+      set K := N.q * (N.g + N.d - 1) + N.d * (N.p + N.q + N.r - 1) with hK
+      have hK0 : 0 < K := by nlinarith [mul_pos N.hq N.hgd, mul_pos N.hd N.t046_5]
+      refine not_weakSep_of_meet (d₀ := x 4) (d₁ := x 3) (e₀ := x 6) (e₁ := x 5) (w := N.vT2)
+        (s := (N.g + N.d - 1) * (N.p + N.q + N.r - 1) / K)
+        (t := (N.q * (N.g + N.d - 1) + N.d * (N.p + N.q + N.r - 1) - N.d * (N.p + N.q + N.r - 1)) / K)
+        (l := -1 / K) (div_pos (mul_pos N.hgd N.t046_5) hK0).le
+        ((div_le_one hK0).mpr (by nlinarith [hf15]))
+        (div_pos (by nlinarith [mul_pos N.hq N.hgd]) hK0).le
+        ((div_le_one hK0).mpr (by nlinarith [mul_pos N.hd N.t046_5])) ?_
+        (div_neg_of_neg_of_pos (by norm_num) hK0) (N.vT2_ne hf15) k1 k2 k3 k4
+      have hK0' := hK0.ne'
       simp only [vT2, f15, t0146v]
       nf_simp N
       ext k
@@ -435,57 +484,51 @@ theorem isRupert_F3 (N : NF16 x) (O : Omega N) (hd1 : 0 < N.d - 1) (ha1 : N.a �
         smul_eq_mul]
       field_simp
       ring
-  -- the two tests at `35`
-  have hz35 := fun X (hX : [3, 5, 1, X, 4].Nodup) =>
-    depth_nodup4 (v := 3) (w := 5) (a := 1) (b := X) (c := 4) N.inj hg hX
-  have key : ∀ X : Fin 7, ∀ {s t l : ℝ}, 0 ≤ s → s ≤ 1 → 0 ≤ t → t ≤ 1 → l ≤ 0 →
-      (x 1 + t • (x X - x 1)) - (x 3 + s • (x 4 - x 3)) = l • (x 5 - x 3) →
-      DepthSep (x 3) (x 4) (x 1) (x X) (x 5 - x 3) →
-      ¬ DepthSep (x 4) (x 3) (x 6) (x 5) N.vT2 := by
-    intro X s t l hs0 hs1 ht0 ht1 hl hm h1 h2
-    have hs := depthSep_of_meet hs0 hs1 ht0 ht1 hm hl h1
-    have k1 := max_lt_iff.mp hs
-    have k2 := lt_min_iff.mp k1.1
-    have k3 := lt_min_iff.mp k1.2
-    have h5 := hT2 h2
-    have e1 : ⟪x 5, N.vT2⟫ - ⟪x 3, N.vT2⟫ = ⟪N.vT2, (x 5 - x 3)⟫ := by
-      rw [inner_sub_right, real_inner_comm, real_inner_comm (x 3)]
-    have e2 : ⟪N.vT2, (x 5 - x 3)⟫ = -N.f15 * (⟪x 4, (x 5 - x 3)⟫ - ⟪x 1, (x 5 - x 3)⟫) +
-        N.t0146v *
-            ((⟪x 5, (x 5 - x 3)⟫ - ⟪x 3, (x 5 - x 3)⟫) + (⟪x 3, (x 5 - x 3)⟫ - ⟪x 1, (x 5 - x 3)⟫))
-            := by
-      rw [vT2_eq]; simp only [inner_add_left, real_inner_smul_left, inner_sub_left]; ring
-    have e3 : ⟪x 5, (x 5 - x 3)⟫ - ⟪x 3, (x 5 - x 3)⟫ = ⟪(x 5 - x 3), (x 5 - x 3)⟫ :=
-        by rw [inner_sub_left]
-    have hf : 0 < -N.f15 := by simp only [f15]; linarith
-    have ht : 0 < N.t0146v := N.t0146
-    nlinarith [mul_pos hf (show 0 < ⟪x 4, (x 5 - x 3)⟫ - ⟪x 1, (x 5 - x 3)⟫ by linarith),
+  -- `{3, 4}` weakly above `{1, X}` contradicts `h53`
+  have e1 : ⟪x 5, N.vT2⟫ - ⟪x 3, N.vT2⟫ = ⟪N.vT2, (x 5 - x 3)⟫ := by
+    rw [inner_sub_right, real_inner_comm, real_inner_comm (x 3)]
+  have e2 : ⟪N.vT2, (x 5 - x 3)⟫ = -N.f15 * (⟪x 4, (x 5 - x 3)⟫ - ⟪x 1, (x 5 - x 3)⟫) +
+      N.t0146v *
+          ((⟪x 5, (x 5 - x 3)⟫ - ⟪x 3, (x 5 - x 3)⟫) + (⟪x 3, (x 5 - x 3)⟫ - ⟪x 1, (x 5 - x 3)⟫))
+          := by
+    rw [vT2_eq]; simp only [inner_add_left, real_inner_smul_left, inner_sub_left]; ring
+  have e3 : ⟪x 5, (x 5 - x 3)⟫ - ⟪x 3, (x 5 - x 3)⟫ = ⟪(x 5 - x 3), (x 5 - x 3)⟫ :=
+      by rw [inner_sub_left]
+  have hf : 0 < -N.f15 := by simp only [f15]; linarith
+  have ht : 0 < N.t0146v := N.t0146
+  have up : ⟪x 1, (x 5 - x 3)⟫ ≤ ⟪x 4, (x 5 - x 3)⟫ → ⟪x 1, (x 5 - x 3)⟫ ≤ ⟪x 3, (x 5 - x 3)⟫ →
+      False := fun h4 h3 => by
+    nlinarith [mul_nonneg hf.le (show 0 ≤ ⟪x 4, (x 5 - x 3)⟫ - ⟪x 1, (x 5 - x 3)⟫ by linarith),
       mul_pos ht (show 0 < ⟪(x 5 - x 3), (x 5 - x 3)⟫ + (⟪x 3, (x 5 - x 3)⟫ - ⟪x 1, (x 5 - x 3)⟫)
             by linarith)]
-  have T2ok : ¬ DepthSep (x 4) (x 3) (x 6) (x 5) N.vT2 → IsRupert (univ.image x) := fun h =>
-    isRupert_F3_T2 N hR1 hR2 hD hqg hg1 hqb hc hd1 hf15 (quad_unimodal h hv) hndv
+  -- no three of the points at one depth along `35`
+  have hm : ∀ i, x i ∈ univ.image x := fun i => mem_image_of_mem x (mem_univ i)
+  have nt := fun {i j k : Fin 7} (hij : i ≠ j) (hjk : j ≠ k) (hik : i ≠ k) =>
+    hg.noTriple (hm 3) (hm 5) (hm i) (hm j) (hm k) (N.inj.ne (by decide)) (N.inj.ne hij)
+      (N.inj.ne hjk) (N.inj.ne hik)
   rcases lt_or_gt_of_ne ha1 with ha | ha
-  · have hz := hz35 0 (by decide)
-    have ha' : 0 < 1 - N.a := by linarith
-    by_cases h1 : DepthSep (x 3) (x 4) (x 1) (x 0) (x 5 - x 3)
-    · have hc4 : 0 < N.d * N.p - N.d + N.r :=
-          (pos_of_mul_pos_r (by
-              show 0 < -(1 / 4 : ℝ) * N.d * N.q + (1 / 4 : ℝ) * N.g * N.p + (1 / 4 : ℝ) * N.g * N.r
-                + (1 / 4 : ℝ) * N.d + (1 / 4 : ℝ) * N.q - (1 / 4 : ℝ)
-              linarith [hR1, N.t0246, N.hab, hR2])
-            (by
-              show 0 < (N.d * N.p - N.d + N.r) *
-                (-(1 / 4 : ℝ) * N.d * N.q + (1 / 4 : ℝ) * N.g * N.p + (1 / 4 : ℝ) * N.g * N.r +
-                  (1 / 4 : ℝ) * N.d + (1 / 4 : ℝ) * N.q - (1 / 4 : ℝ))
-              linarith [mul_pos (N.t0146) (mul_pos (N.hd) N.hp), mul_pos (N.t0146)
-                  (mul_pos (N.ha) N.hr), mul_pos (mul_pos (N.t0146) (ha')) (N.hr), mul_pos
-                  (N.t145_0) (hd1)]))
-      have hK : 0 < N.d * N.p + N.r := by nlinarith [mul_pos N.hd N.hp, N.hr]
-      refine T2ok (key 0 (s := N.d / (N.d * N.p + N.r)) (t := N.d * N.p / (N.d * N.p + N.r))
-        (l := (N.g * N.r - N.d * N.q) / (N.d * N.p + N.r)) (div_pos N.hd hK).le
-        ((div_le_one hK).mpr (by linarith)) (div_pos (mul_pos N.hd N.hp) hK).le
-        ((div_le_one hK).mpr (by linarith [N.hr]))
-        (div_nonpos_of_nonpos_of_nonneg (by linarith) hK.le) ?_ h1)
+  · have ha' : 0 < 1 - N.a := by linarith
+    by_cases hN1 : NWS4 (quad ⟪x 3, (x 5 - x 3)⟫ ⟪x 1, (x 5 - x 3)⟫ ⟪x 4, (x 5 - x 3)⟫
+        ⟪x 0, (x 5 - x 3)⟫)
+    · exact isRupert_F3_T1b N hR1 hR2 hD hqg hg1 hqb hc hd1 hf15 ha' hN1.isRobustUnimodal
+        (hnd.fwd N (by decide))
+    exfalso
+    have hc4 : 0 < N.d * N.p - N.d + N.r :=
+        (pos_of_mul_pos_r (by
+            show 0 < -(1 / 4 : ℝ) * N.d * N.q + (1 / 4 : ℝ) * N.g * N.p + (1 / 4 : ℝ) * N.g * N.r
+              + (1 / 4 : ℝ) * N.d + (1 / 4 : ℝ) * N.q - (1 / 4 : ℝ)
+            linarith [hR1, N.t0246, N.hab, hR2])
+          (by
+            show 0 < (N.d * N.p - N.d + N.r) *
+              (-(1 / 4 : ℝ) * N.d * N.q + (1 / 4 : ℝ) * N.g * N.p + (1 / 4 : ℝ) * N.g * N.r +
+                (1 / 4 : ℝ) * N.d + (1 / 4 : ℝ) * N.q - (1 / 4 : ℝ))
+            linarith [mul_pos (N.t0146) (mul_pos (N.hd) N.hp), mul_pos (N.t0146)
+                (mul_pos (N.ha) N.hr), mul_pos (mul_pos (N.t0146) (ha')) (N.hr), mul_pos
+                (N.t145_0) (hd1)]))
+    have hK : 0 < N.d * N.p + N.r := by nlinarith [mul_pos N.hd N.hp, N.hr]
+    have hmeet : (x 1 + (N.d * N.p / (N.d * N.p + N.r)) • (x 0 - x 1)) -
+        (x 3 + (N.d / (N.d * N.p + N.r)) • (x 4 - x 3)) =
+        ((N.g * N.r - N.d * N.q) / (N.d * N.p + N.r)) • (x 5 - x 3) := by
       have hK' := hK.ne'
       nf_simp N
       ext k
@@ -493,26 +536,32 @@ theorem isRupert_F3 (N : NF16 x) (O : Omega N) (hd1 : 0 < N.d - 1) (ha1 : N.a �
         smul_eq_mul]
       field_simp
       ring
-    · exact isRupert_F3_T1b N hR1 hR2 hD hqg hg1 hqb hc hd1 hf15 ha'
-        (quad_unimodal h1 hz.1) (hnd.fwd N (by decide))
-  · have hz := hz35 2 (by decide)
-    have ha' : 0 < N.a - 1 := by linarith
-    by_cases h1 : DepthSep (x 3) (x 4) (x 1) (x 2) (x 5 - x 3)
-    · have hc4 : 0 < -N.a * N.d + N.a * N.r + N.d * N.p :=
-          (pos_of_mul_pos_r
-            (by show 0 < (1 / 2 : ℝ) * N.d + (1 / 2 : ℝ) * N.g - (1 / 2 : ℝ); linarith [hR1, hf15])
-            (by
-              show 0 < (-N.a * N.d + N.a * N.r + N.d * N.p) *
-                ((1 / 2 : ℝ) * N.d + (1 / 2 : ℝ) * N.g - (1 / 2 : ℝ))
-              linarith [mul_pos (N.t146_2) (N.hd), mul_pos (N.tB125) (hd1)]))
-      have hK : 0 < N.a * N.r + N.d * N.p := by nlinarith [mul_pos N.hd N.hp, mul_pos N.ha N.hr]
-      refine T2ok (key 2 (s := N.a * N.d / (N.a * N.r + N.d * N.p))
-        (t := N.d * N.p / (N.a * N.r + N.d * N.p))
-        (l := (N.p * N.b * N.d + N.r * N.g * N.a - N.q * N.a * N.d) / (N.a * N.r + N.d * N.p))
-        (div_pos (mul_pos N.ha N.hd) hK).le ((div_le_one hK).mpr (by linarith))
-        (div_pos (mul_pos N.hd N.hp) hK).le
-        ((div_le_one hK).mpr (by linarith [mul_pos N.ha N.hr]))
-        (div_nonpos_of_nonpos_of_nonneg (nD2 ha' hd1) hK.le) ?_ h1)
+    simp only [NWS4, quad_0, quad_1, quad_2, quad_3, not_and_or, not_or, not_lt] at hN1
+    rcases hN1 with ⟨k1, k2, k3, k4⟩ | ⟨k1, k2, k3, k4⟩
+    · exact up k3 k1
+    · obtain ⟨q1, q2, q3⟩ := eq_of_weakSep_meet (div_pos N.hd hK) ((div_lt_one hK).mpr (by linarith))
+        (div_pos (mul_pos N.hd N.hp) hK) ((div_lt_one hK).mpr (by linarith [N.hr])) hmeet
+        (div_nonpos_of_nonpos_of_nonneg (by linarith) hK.le) k1 k2 k3 k4
+      exact nt (i := 3) (j := 1) (k := 4) (by decide) (by decide) (by decide)
+        ⟨q1, q2.symm⟩
+  · have ha' : 0 < N.a - 1 := by linarith
+    by_cases hN1 : NWS4 (quad ⟪x 3, (x 5 - x 3)⟫ ⟪x 1, (x 5 - x 3)⟫ ⟪x 4, (x 5 - x 3)⟫
+        ⟪x 2, (x 5 - x 3)⟫)
+    · exact isRupert_F3_T1a N hR1 hR2 hD hqg hg1 hqb hc hd1 hf15 ha' hN1.isRobustUnimodal
+        (hnd.fwd N (by decide))
+    exfalso
+    have hc4 : 0 < -N.a * N.d + N.a * N.r + N.d * N.p :=
+        (pos_of_mul_pos_r
+          (by show 0 < (1 / 2 : ℝ) * N.d + (1 / 2 : ℝ) * N.g - (1 / 2 : ℝ); linarith [hR1, hf15])
+          (by
+            show 0 < (-N.a * N.d + N.a * N.r + N.d * N.p) *
+              ((1 / 2 : ℝ) * N.d + (1 / 2 : ℝ) * N.g - (1 / 2 : ℝ))
+            linarith [mul_pos (N.t146_2) (N.hd), mul_pos (N.tB125) (hd1)]))
+    have hK : 0 < N.a * N.r + N.d * N.p := by nlinarith [mul_pos N.hd N.hp, mul_pos N.ha N.hr]
+    have hmeet : (x 1 + (N.d * N.p / (N.a * N.r + N.d * N.p)) • (x 2 - x 1)) -
+        (x 3 + (N.a * N.d / (N.a * N.r + N.d * N.p)) • (x 4 - x 3)) =
+        ((N.p * N.b * N.d + N.r * N.g * N.a - N.q * N.a * N.d) / (N.a * N.r + N.d * N.p)) •
+          (x 5 - x 3) := by
       have hK' := hK.ne'
       nf_simp N
       ext k
@@ -520,8 +569,15 @@ theorem isRupert_F3 (N : NF16 x) (O : Omega N) (hd1 : 0 < N.d - 1) (ha1 : N.a �
         smul_eq_mul]
       field_simp
       ring
-    · exact isRupert_F3_T1a N hR1 hR2 hD hqg hg1 hqb hc hd1 hf15 ha'
-        (quad_unimodal h1 hz.1) (hnd.fwd N (by decide))
+    simp only [NWS4, quad_0, quad_1, quad_2, quad_3, not_and_or, not_or, not_lt] at hN1
+    rcases hN1 with ⟨k1, k2, k3, k4⟩ | ⟨k1, k2, k3, k4⟩
+    · exact up k3 k1
+    · obtain ⟨q1, q2, q3⟩ := eq_of_weakSep_meet (div_pos (mul_pos N.ha N.hd) hK)
+        ((div_lt_one hK).mpr (by linarith)) (div_pos (mul_pos N.hd N.hp) hK)
+        ((div_lt_one hK).mpr (by linarith [mul_pos N.ha N.hr])) hmeet
+        (div_nonpos_of_nonpos_of_nonneg (nD2 ha' hd1) hK.le) k1 k2 k3 k4
+      exact nt (i := 3) (j := 1) (k := 4) (by decide) (by decide) (by decide)
+        ⟨q1, q2.symm⟩
 
 
 /-! ### Lemma 19.4 and Lemma 19.5: the views -/
@@ -570,7 +626,7 @@ theorem isRupert_F1s_A (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (
     (hf03 : 0 < -(N.q * (1 - N.d) + N.g * (N.r - 1)))
     (hHA : 0 < -((N.b - 1) * N.g * N.p * N.r + (N.q * (1 - N.d) + N.g * (N.r - 1)) *
         (N.a * (N.q - 1) - (N.b - 1) * N.p)))
-    (hz : IsCyclicUnimodal (quad ⟪x 6, N.vA⟫ ⟪x 3, N.vA⟫ ⟪x 5, N.vA⟫ ⟪x 4, N.vA⟫))
+    (hz : IsRobustUnimodal (quad ⟪x 6, N.vA⟫ ⟪x 3, N.vA⟫ ⟪x 5, N.vA⟫ ⟪x 4, N.vA⟫))
     (hnd : NoHDNAt (univ.image x) N.vA) : IsRupert (univ.image x) := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   refine isRupert_vquadσ (univ.image x) ({x 0, x 1} : Finset ℝ³) (u := N.vA)
@@ -680,7 +736,7 @@ theorem isRupert_T6_Tc4 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
       (N.a * (N.q - 1) - (N.b - 1) * N.p)) (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1))
     (hpr : 0 < N.p + N.r - 1)
     (hT5 : 0 < (N.g - 1) * (N.a - 1) * N.r - N.d * (N.q * (N.a - 1) - N.b * (N.p - 1)))
-    (hz : IsCyclicUnimodal
+    (hz : IsRobustUnimodal
           (quad ⟪x 1, (x 5 - x 1)⟫ ⟪x 4, (x 5 - x 1)⟫ ⟪x 0, (x 5 - x 1)⟫ ⟪x 6, (x 5 - x 1)⟫))
     (hnd : NoHDNAt ((univ.image x).erase (x 5)) (x 5 - x 1)) : IsRupert (univ.image x) := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
@@ -753,7 +809,7 @@ theorem isRupert_F1s_B (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (
     (hf03 : 0 < -(N.q * (1 - N.d) + N.g * (N.r - 1)))
     (hHA : 0 < -((N.b - 1) * N.g * N.p * N.r + (N.q * (1 - N.d) + N.g * (N.r - 1)) *
         (N.a * (N.q - 1) - (N.b - 1) * N.p)))
-    (hz : IsCyclicUnimodal (quint ⟪x 6, (x 6 - x 3)⟫ ⟪x 0, (x 6 - x 3)⟫ ⟪x 2, (x 6 - x 3)⟫ ⟪x 4,
+    (hz : IsRobustUnimodal (quint ⟪x 6, (x 6 - x 3)⟫ ⟪x 0, (x 6 - x 3)⟫ ⟪x 2, (x 6 - x 3)⟫ ⟪x 4,
             (x 6 - x 3)⟫ ⟪x 1, (x 6 - x 3)⟫))
     (hnd : NoHDNAt ((univ.image x).erase (x 3)) (x 6 - x 3)) : IsRupert (univ.image x) := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
@@ -839,24 +895,53 @@ theorem quint_B_unimodal {z6 z0 z2 z4 z1 : ℝ} (hinj : Function.Injective (quin
   | (exfalso; exact P (by linarith [hi.1, hi.2, hj.1, hj.2]) (by linarith [hi.1, hi.2, hj.1, hj.2]))
   | (exfalso; exact h1 ⟨by linarith [hi.1, hi.2, hj.1, hj.2], by linarith [hi.1, hi.2, hj.1, hj.2]⟩)
 
-/-- **Lemma 19.4** (`Ω ∩ {d < 1}` with `H_A < 0`): the vertex crossing `A = 036/146` at `6`
-(view `v_A`, rim `(6, 3, 5, 4)`) or the closing `B = K_6` at `36` (rim `(6, 0, 2, 4, 1)`) is
-unimodal.  `A` fails only with `{4, 3}` above `{6, 5}` (crossing with `λ_A < 0`), so then
-`⟪v_A, 6 − 3⟫ < 0`; if `⟪v_A, 6 − 3⟫ ≤ 0`, then `z0 < z6`, `1` is not a strict local minimum, and
-the identity of (iii) leaves no two-peaked pattern for `B`. -/
+/-- **The pentagon `B` with one tie**: the criterion of `quint_B_unimodal` in its open form
+(`z₁` above `z₄` or `z₆`, `z₂` below `z₀` or `z₄`) with at most one tied pair gives a robustly
+unimodal rim. -/
+theorem quint_B_robust {z6 z0 z2 z4 z1 : ℝ}
+    (hone : ∀ a b a' b', a ≠ b → a' ≠ b' → quint z6 z0 z2 z4 z1 a = quint z6 z0 z2 z4 z1 b →
+      quint z6 z0 z2 z4 z1 a' = quint z6 z0 z2 z4 z1 b' → (a = a' ∧ b = b') ∨ (a = b' ∧ b = a'))
+    (h60 : z0 < z6) (h1 : z4 < z1 ∨ z6 < z1) (P : z2 < z0 ∨ z2 < z4) :
+    IsRobustUnimodal (quint z6 z0 z2 z4 z1) := by
+  refine isRobustUnimodal_of_nhds hone
+    (fun y => y 1 < y 0 ∧ (y 3 < y 4 ∨ y 0 < y 4) ∧ (y 2 < y 1 ∨ y 2 < y 3)) ?_ ?_
+  · refine (eventually_entry_lt (i := 1) (j := 0) h60).and ((?_ : ∀ᶠ y in 𝓝 _, _).and ?_)
+    · rcases h1 with h | h
+      · exact (eventually_entry_lt (i := 3) (j := 4) h).mono fun y hy => Or.inl hy
+      · exact (eventually_entry_lt (i := 0) (j := 4) h).mono fun y hy => Or.inr hy
+    · rcases P with h | h
+      · exact (eventually_entry_lt (i := 2) (j := 1) h).mono fun y hy => Or.inl hy
+      · exact (eventually_entry_lt (i := 2) (j := 3) h).mono fun y hy => Or.inr hy
+  · intro y hy hinj
+    have e : y = quint (y 0) (y 1) (y 2) (y 3) (y 4) := by
+      funext i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> rfl
+    rw [e] at hinj ⊢
+    obtain ⟨k1, k2, k3⟩ := hy
+    refine quint_B_unimodal hinj k1 (fun ⟨c1, c2⟩ => ?_) (fun c1 c2 => ?_)
+    · rcases k2 with k | k <;> linarith
+    · rcases k3 with k | k <;> linarith
+
+set_option maxHeartbeats 800000 in
+/-- **Lemma 19.4** (`Ω ∩ {d < 1}` with `H_A < 0`), with ties: the vertex crossing
+`A = 036/146` at `6` (view `v_A`, rim `(6, 3, 5, 4)`) or the closing `B = K_6` at `36` (rim
+`(6, 0, 2, 4, 1)`) is robustly unimodal.  If `⟪v_A, 6 − 3⟫ > 0`, `A`'s diagonals are not
+weakly separated: `{6, 5}` weakly above `{4, 3}` contradicts the crossing with `λ_A < 0`
+(`not_weakSep_of_meet`), and `{4, 3}` weakly above `{6, 5}` gives `⟪v_A, 6 − 3⟫ ≤ 0`.  If
+`⟪v_A, 6 − 3⟫ ≤ 0`, then `z0 < z6`, `1` is not a weak local minimum and the identity of (iii)
+leaves `2` no weak local maximum over `0, 4`, so `B` is robustly unimodal with at most one tie
+(`quint_B_robust`, `GenPosTie` at the edge view `36`). -/
 theorem isRupert_F1s (N : NF16 x) (O : Omega N) (hd1 : 0 < 1 - N.d)
     (hf03 : 0 < -(N.q * (1 - N.d) + N.g * (N.r - 1)))
     (hHA : 0 < -((N.b - 1) * N.g * N.p * N.r + (N.q * (1 - N.d) + N.g * (N.r - 1)) *
       (N.a * (N.q - 1) - (N.b - 1) * N.p)))
-    (hg : GenPos (univ.image x)) (hnd : NoHDNEdges16 x)
-    (hv : [⟪x 6, N.vA⟫, ⟪x 3, N.vA⟫, ⟪x 5, N.vA⟫, ⟪x 4, N.vA⟫].Nodup)
+    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x)
     (hndv : NoHDNAt (univ.image x) N.vA) : IsRupert (univ.image x) := by
   obtain ⟨hR1, hR2, hD, hqg, hg1, hqb, hc, -, -, -, -, -⟩ := O
   have he3 : 0 < ⟪x 6 - x 3, x 6 - x 3⟫ :=
     real_inner_self_pos.mpr (sub_ne_zero.mpr (N.inj.ne (by decide)))
   have he3' : 0 < ⟪x 6, x 6 - x 3⟫ - ⟪x 3, x 6 - x 3⟫ := by rw [← inner_sub_left]; exact he3
   by_cases hs : ⟪x 6 - x 3, N.vA⟫ ≤ 0
-  · -- `B` is unimodal
+  · -- `B` is robustly unimodal
     have e1 := congrArg (fun w => ⟪w, x 6 - x 3⟫) N.vA_eq
     have e2 := congrArg (fun w => ⟪w, x 6 - x 3⟫) N.vA_eq'
     have iden : N.c36v • (x 6 - x 0) + (N.q - N.b) • (x 2 - x 0) + N.b • (x 2 - x 4) =
@@ -874,42 +959,44 @@ theorem isRupert_F1s (N : NF16 x) (O : Omega N) (hd1 : 0 < 1 - N.d)
     have ht := N.t0146
     have ht2 := N.t0246
     simp only [t0146v, t0246v, c36v] at e1 e2 e3
-    have hz := fun i j (hij : i ≠ j) (hh : (j ≠ 3 ∧ j ≠ 6) ∨ (i ≠ 6 ∧ j ≠ 6)) =>
-      depth_ne (v := 3) (w := 6) N.inj hg hij (by decide) hh
+    have hm : ∀ i, x i ∈ univ.image x := fun i => mem_image_of_mem x (mem_univ i)
+    have hone := (hg.tie (x 3) (hm 3) (x 6) (hm 6) (N.inj.ne (by decide))).rim5 (hm 6) (hm 0)
+      (hm 2) (hm 4) (hm 1) (quint_injective (N.inj.ne (by decide)) (N.inj.ne (by decide))
+        (N.inj.ne (by decide)) (N.inj.ne (by decide)) (N.inj.ne (by decide))
+        (N.inj.ne (by decide)) (N.inj.ne (by decide)) (N.inj.ne (by decide))
+        (N.inj.ne (by decide)) (N.inj.ne (by decide)))
+    have h60 : ⟪x 0, x 6 - x 3⟫ < ⟪x 6, x 6 - x 3⟫ := by nlinarith [mul_pos ht he3']
     refine isRupert_F1s_B N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hHA
-      (quint_B_unimodal (quint_injective (hz 6 0 (by decide) (by decide))
-        (hz 6 2 (by decide) (by decide)) (hz 6 4 (by decide) (by decide))
-        (hz 6 1 (by decide) (by decide)) (hz 0 2 (by decide) (by decide))
-        (hz 0 4 (by decide) (by decide)) (hz 0 1 (by decide) (by decide))
-        (hz 2 4 (by decide) (by decide)) (hz 2 1 (by decide) (by decide))
-        (hz 4 1 (by decide) (by decide))) ?_ ?_ ?_) (hnd.bwd N (by decide))
-    · nlinarith [mul_pos ht he3']
-    · rintro ⟨h14, h16⟩
-      nlinarith [mul_pos hqg (sub_pos.mpr h16), mul_pos N.hg (sub_pos.mpr h14)]
-    · intro h02 h42
-      have h60 : ⟪x 0, x 6 - x 3⟫ < ⟪x 6, x 6 - x 3⟫ := by nlinarith [mul_pos ht he3']
-      nlinarith [mul_pos hc (sub_pos.mpr h60), mul_pos hqb (sub_pos.mpr h02),
-        mul_pos N.hb (sub_pos.mpr h42), mul_pos ht2 he3']
-  · -- `A` is unimodal
+      (quint_B_robust hone h60 ?_ ?_) (hnd.bwd N (by decide))
+    · by_contra hc'
+      simp only [not_or, not_lt] at hc'
+      obtain ⟨h14, h16⟩ := hc'
+      -- `q (z₆ − z₁) + g (z₄ − z₆) ≤ 0` with both parts `≥ 0` puts `1, 4, 6` at one depth
+      have k1 : (N.q - N.g) * (⟪x 6, x 6 - x 3⟫ - ⟪x 1, x 6 - x 3⟫) = 0 := by
+        nlinarith [mul_nonneg hqg.le (sub_nonneg.mpr h16), mul_nonneg N.hg.le (sub_nonneg.mpr h14)]
+      have k2 : N.g * (⟪x 4, x 6 - x 3⟫ - ⟪x 1, x 6 - x 3⟫) = 0 := by
+        nlinarith [mul_nonneg hqg.le (sub_nonneg.mpr h16), mul_nonneg N.hg.le (sub_nonneg.mpr h14)]
+      have q1 := (mul_eq_zero.mp k1).resolve_left hqg.ne'
+      have q2 := (mul_eq_zero.mp k2).resolve_left N.hg.ne'
+      exact hg.noTriple (hm 3) (hm 6) (hm 1) (hm 4) (hm 6) (N.inj.ne (by decide))
+        (N.inj.ne (by decide)) (N.inj.ne (by decide)) (N.inj.ne (by decide))
+        ⟨by linarith, by linarith⟩
+    · by_contra hc'
+      simp only [not_or, not_lt] at hc'
+      obtain ⟨h02, h42⟩ := hc'
+      have ht2' : 0 < N.b * (N.p + N.r - 1) - N.q * (N.a - 1) := ht2
+      linarith [mul_pos hc (sub_pos.mpr h60), mul_nonneg hqb.le (sub_nonneg.mpr h02),
+        mul_nonneg N.hb.le (sub_nonneg.mpr h42), mul_pos ht2' he3']
+  · -- `A` is robustly unimodal
     push Not at hs
     have K0 : 0 < N.q * (N.g + N.d - 1) + N.g := by nlinarith [mul_pos N.hq N.hgd]
-    refine isRupert_F1s_A N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hHA (quad_unimodal ?_ hv) hndv
-    intro hA
-    have hA' : DepthSep (x 4) (x 3) (x 6) (x 5) N.vA := by
-      simp only [DepthSep, max_comm, min_comm] at hA ⊢; tauto
-    have hs2 := depthSep_of_meet (d₀ := x 4) (d₁ := x 3) (e₀ := x 6) (e₁ := x 5) (w := N.vA)
-      (s := N.q * (N.g + N.d - 1) / (N.q * (N.g + N.d - 1) + N.g))
-      (t := N.g * N.q / (N.q * (N.g + N.d - 1) + N.g))
-      (l := -1 / (N.q * (N.g + N.d - 1) + N.g))
-      (div_pos (mul_pos N.hq N.hgd) K0).le ((div_le_one K0).mpr (by linarith [N.hg]))
-      (div_pos (mul_pos N.hg N.hq) K0).le
-          ((div_le_one K0).mpr (by nlinarith [hf03, mul_pos N.hg N.hr]))
-      ?_ (div_nonpos_of_nonpos_of_nonneg (by norm_num) K0.le) hA'
-    · have k1 := max_lt_iff.mp hs2
-      have k2 := lt_min_iff.mp k1.1
-      rw [inner_sub_left] at hs
-      linarith [k2.2]
-    · have K0' := K0.ne'
+    by_cases hN : NWS4 (quad ⟪x 6, N.vA⟫ ⟪x 3, N.vA⟫ ⟪x 5, N.vA⟫ ⟪x 4, N.vA⟫)
+    · exact isRupert_F1s_A N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hHA hN.isRobustUnimodal hndv
+    exfalso
+    have hmeet : (x 6 + (N.g * N.q / (N.q * (N.g + N.d - 1) + N.g)) • (x 5 - x 6)) -
+        (x 4 + (N.q * (N.g + N.d - 1) / (N.q * (N.g + N.d - 1) + N.g)) • (x 3 - x 4)) =
+        (-1 / (N.q * (N.g + N.d - 1) + N.g)) • N.vA := by
+      have K0' := K0.ne'
       simp only [vA, f03]
       nf_simp N
       ext k
@@ -917,7 +1004,19 @@ theorem isRupert_F1s (N : NF16 x) (O : Omega N) (hd1 : 0 < 1 - N.d)
         smul_eq_mul]
       field_simp
       ring
-
+    simp only [NWS4, quad_0, quad_1, quad_2, quad_3, not_and_or, not_or, not_lt] at hN
+    rw [inner_sub_left] at hs
+    rcases hN with ⟨k1, k2, k3, k4⟩ | ⟨k1, k2, k3, k4⟩
+    · -- `{6, 5}` weakly above `{3, 4}`
+      exact not_weakSep_of_meet (d₀ := x 4) (d₁ := x 3) (e₀ := x 6) (e₁ := x 5) (w := N.vA)
+        (div_pos (mul_pos N.hq N.hgd) K0).le ((div_le_one K0).mpr (by linarith [N.hg]))
+        (div_pos (mul_pos N.hg N.hq) K0).le
+        ((div_le_one K0).mpr (by nlinarith [hf03, mul_pos N.hg N.hr])) hmeet
+        (div_neg_of_neg_of_pos (by norm_num) K0)
+        (by simp only [vA]; exact nfV_ne_zero N.hD (Or.inl (ne_of_gt (mul_pos N.hg N.hp))))
+        k2 k4 k1 k3
+    · -- `{3, 4}` weakly above `{6, 5}`: `z6 ≤ z3`
+      linarith
 
 /-- **Lemma 19.5, `T_a`**: the vertex crossing `0235/046` at `0` (view `uA`), rim `(0, 6, 1, 5)`. -/
 theorem isRupert_T6_Ta (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1))
@@ -928,7 +1027,7 @@ theorem isRupert_T6_Ta (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (
     (hHA : 0 < (N.b - 1) * N.g * N.p * N.r + (N.q * (1 - N.d) + N.g * (N.r - 1)) *
       (N.a * (N.q - 1) - (N.b - 1) * N.p)) (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1))
     (hpr : 0 < N.p + N.r - 1)
-    (hz : IsCyclicUnimodal (quad ⟪x 0, N.uA⟫ ⟪x 5, N.uA⟫ ⟪x 1, N.uA⟫ ⟪x 6, N.uA⟫))
+    (hz : IsRobustUnimodal (quad ⟪x 0, N.uA⟫ ⟪x 5, N.uA⟫ ⟪x 1, N.uA⟫ ⟪x 6, N.uA⟫))
     (hnd : NoHDNAt (univ.image x) N.uA) : IsRupert (univ.image x) := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hr1 : 0 < -N.r + 1 := by
@@ -1026,7 +1125,7 @@ theorem isRupert_T6_A (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * (N
     (hHA : 0 < (N.b - 1) * N.g * N.p * N.r + (N.q * (1 - N.d) + N.g * (N.r - 1)) *
       (N.a * (N.q - 1) - (N.b - 1) * N.p)) (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1))
     (hpr : 0 < N.p + N.r - 1)
-    (hz : IsCyclicUnimodal (quint ⟪x 6, N.vA⟫ ⟪x 3, N.vA⟫ ⟪x 5, N.vA⟫ ⟪x 2, N.vA⟫ ⟪x 4, N.vA⟫))
+    (hz : IsRobustUnimodal (quint ⟪x 6, N.vA⟫ ⟪x 3, N.vA⟫ ⟪x 5, N.vA⟫ ⟪x 2, N.vA⟫ ⟪x 4, N.vA⟫))
     (hnd : NoHDNAt (univ.image x) N.vA) : IsRupert (univ.image x) := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
   have hga : 0 < -N.a * N.d * N.q ^ 2 + N.a * N.g * N.q * N.r + N.b * N.d * N.p * N.q - N.a * N.g *
@@ -1163,7 +1262,7 @@ theorem isRupert_T6_Tc5 (N : NF16 x) (hR1 : 0 < (N.g - 1) * (N.p + N.r) - N.d * 
       (N.a * (N.q - 1) - (N.b - 1) * N.p)) (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1))
     (hpr : 0 < N.p + N.r - 1)
     (hT5 : 0 < N.d * (N.q * (N.a - 1) - N.b * (N.p - 1)) - (N.g - 1) * (N.a - 1) * N.r)
-    (hz : IsCyclicUnimodal (quint ⟪x 1, (x 5 - x 1)⟫ ⟪x 4, (x 5 - x 1)⟫ ⟪x 2, (x 5 - x 1)⟫ ⟪x 0,
+    (hz : IsRobustUnimodal (quint ⟪x 1, (x 5 - x 1)⟫ ⟪x 4, (x 5 - x 1)⟫ ⟪x 2, (x 5 - x 1)⟫ ⟪x 0,
             (x 5 - x 1)⟫ ⟪x 6, (x 5 - x 1)⟫))
     (hnd : NoHDNAt ((univ.image x).erase (x 5)) (x 5 - x 1)) : IsRupert (univ.image x) := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
@@ -1263,6 +1362,16 @@ theorem depthSep_sign {d₀ d₁ e₀ e₁ w v : ℝ³} {s t l : ℝ} (hs0 : 0 �
   obtain ⟨d1, d2⟩ := seg_bounds (x := ⟪d₀, w⟫) (y := ⟪d₁, w⟫) hs0 hs1
   linarith
 
+/-- `depthSep_sign` with weak separation: `l ⟪v, w⟫ ≤ 0`. -/
+theorem weakSep_sign {d₀ d₁ e₀ e₁ w v : ℝ³} {s t l : ℝ} (hs0 : 0 ≤ s) (hs1 : s ≤ 1)
+    (ht0 : 0 ≤ t) (ht1 : t ≤ 1) (hm : (e₀ + t • (e₁ - e₀)) - (d₀ + s • (d₁ - d₀)) = l • v)
+    (h : max ⟪e₀, w⟫ ⟪e₁, w⟫ ≤ min ⟪d₀, w⟫ ⟪d₁, w⟫) : l * ⟪v, w⟫ ≤ 0 := by
+  have i1 := congrArg (fun z => ⟪z, w⟫) hm
+  simp only [inner_sub_left, inner_seg, real_inner_smul_left] at i1
+  obtain ⟨e1, e2⟩ := seg_bounds (x := ⟪e₀, w⟫) (y := ⟪e₁, w⟫) ht0 ht1
+  obtain ⟨d1, d2⟩ := seg_bounds (x := ⟪d₀, w⟫) (y := ⟪d₁, w⟫) hs0 hs1
+  linarith
+
 theorem cone_inner3 {T v₁ v₂ v₃ w : ℝ³} {D n₁ n₂ n₃ : ℝ}
     (h : D • T = n₁ • v₁ + n₂ • v₂ + n₃ • v₃) :
     D * ⟪T, w⟫ = n₁ * ⟪v₁, w⟫ + n₂ * ⟪v₂, w⟫ + n₃ * ⟪v₃, w⟫ := by
@@ -1323,11 +1432,75 @@ theorem quint_A_unimodal {z6 z3 z5 z2 z4 : ℝ} (hinj : Function.Injective (quin
   | (exfalso; exact G2 ⟨by linarith [hi.1, hi.2, hj.1, hj.2], by linarith [hi.1, hi.2, hj.1, hj.2]⟩)
   | (exfalso; exact G3 ⟨by linarith [hi.1, hi.2, hj.1, hj.2], by linarith [hi.1, hi.2, hj.1, hj.2]⟩)
 
+/-- **The pentagon `T_c` with one tie**: the open forms of (C1)–(C3) with at most one tied pair. -/
+theorem quint_Tc_robust {z1 z4 z2 z0 z6 : ℝ}
+    (hone : ∀ a b a' b', a ≠ b → a' ≠ b' → quint z1 z4 z2 z0 z6 a = quint z1 z4 z2 z0 z6 b →
+      quint z1 z4 z2 z0 z6 a' = quint z1 z4 z2 z0 z6 b' → (a = a' ∧ b = b') ∨ (a = b' ∧ b = a'))
+    (F1 : z1 < z4 ∨ z1 < z6) (F2 : z2 < z0 ∨ z6 < z0) (F3 : z4 < z1 ∨ z4 < z2 ∨ z0 < z2) :
+    IsRobustUnimodal (quint z1 z4 z2 z0 z6) := by
+  refine isRobustUnimodal_of_nhds hone
+    (fun y => (y 0 < y 1 ∨ y 0 < y 4) ∧ (y 2 < y 3 ∨ y 4 < y 3) ∧
+      (y 1 < y 0 ∨ y 1 < y 2 ∨ y 3 < y 2)) ?_ ?_
+  · refine (?_ : ∀ᶠ y in 𝓝 _, _).and ((?_ : ∀ᶠ y in 𝓝 _, _).and ?_)
+    · rcases F1 with h | h
+      · exact (eventually_entry_lt (i := 0) (j := 1) h).mono fun y hy => Or.inl hy
+      · exact (eventually_entry_lt (i := 0) (j := 4) h).mono fun y hy => Or.inr hy
+    · rcases F2 with h | h
+      · exact (eventually_entry_lt (i := 2) (j := 3) h).mono fun y hy => Or.inl hy
+      · exact (eventually_entry_lt (i := 4) (j := 3) h).mono fun y hy => Or.inr hy
+    · rcases F3 with h | h | h
+      · exact (eventually_entry_lt (i := 1) (j := 0) h).mono fun y hy => Or.inl hy
+      · exact (eventually_entry_lt (i := 1) (j := 2) h).mono fun y hy => Or.inr (Or.inl hy)
+      · exact (eventually_entry_lt (i := 3) (j := 2) h).mono fun y hy => Or.inr (Or.inr hy)
+  · intro y hy hinj
+    have e : y = quint (y 0) (y 1) (y 2) (y 3) (y 4) := by
+      funext i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> rfl
+    rw [e] at hinj ⊢
+    obtain ⟨k1, k2, k3⟩ := hy
+    refine quint_Tc_unimodal hinj (fun ⟨c1, c2⟩ => ?_) (fun ⟨c1, c2⟩ => ?_)
+      (fun ⟨c1, c2, c3⟩ => ?_)
+    · rcases k1 with k | k <;> linarith
+    · rcases k2 with k | k <;> linarith
+    · rcases k3 with k | k | k <;> linarith
+
+/-- **The pentagon `A` with one tie**: the open forms of (A1), (A2′), (A3) with at most one tied
+pair. -/
+theorem quint_A_robust {z6 z3 z5 z2 z4 : ℝ}
+    (hone : ∀ a b a' b', a ≠ b → a' ≠ b' → quint z6 z3 z5 z2 z4 a = quint z6 z3 z5 z2 z4 b →
+      quint z6 z3 z5 z2 z4 a' = quint z6 z3 z5 z2 z4 b' → (a = a' ∧ b = b') ∨ (a = b' ∧ b = a'))
+    (G1 : z3 < z5 ∨ z3 < z6) (G2 : z4 < z2 ∨ z5 < z2) (G3 : z6 < z4 ∨ z2 < z4) :
+    IsRobustUnimodal (quint z6 z3 z5 z2 z4) := by
+  refine isRobustUnimodal_of_nhds hone
+    (fun y => (y 1 < y 2 ∨ y 1 < y 0) ∧ (y 4 < y 3 ∨ y 2 < y 3) ∧ (y 0 < y 4 ∨ y 3 < y 4)) ?_ ?_
+  · refine (?_ : ∀ᶠ y in 𝓝 _, _).and ((?_ : ∀ᶠ y in 𝓝 _, _).and ?_)
+    · rcases G1 with h | h
+      · exact (eventually_entry_lt (i := 1) (j := 2) h).mono fun y hy => Or.inl hy
+      · exact (eventually_entry_lt (i := 1) (j := 0) h).mono fun y hy => Or.inr hy
+    · rcases G2 with h | h
+      · exact (eventually_entry_lt (i := 4) (j := 3) h).mono fun y hy => Or.inl hy
+      · exact (eventually_entry_lt (i := 2) (j := 3) h).mono fun y hy => Or.inr hy
+    · rcases G3 with h | h
+      · exact (eventually_entry_lt (i := 0) (j := 4) h).mono fun y hy => Or.inl hy
+      · exact (eventually_entry_lt (i := 3) (j := 4) h).mono fun y hy => Or.inr hy
+  · intro y hy hinj
+    have e : y = quint (y 0) (y 1) (y 2) (y 3) (y 4) := by
+      funext i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> rfl
+    rw [e] at hinj ⊢
+    obtain ⟨k1, k2, k3⟩ := hy
+    refine quint_A_unimodal hinj (fun ⟨c1, c2⟩ => ?_) (fun ⟨c1, c2⟩ => ?_) (fun ⟨c1, c2⟩ => ?_)
+    · rcases k1 with k | k <;> linarith
+    · rcases k2 with k | k <;> linarith
+    · rcases k3 with k | k <;> linarith
+
 set_option maxHeartbeats 4000000 in
-/-- **Lemma 19.5 (the triple `T6`)** on `Ω_open` (`Ω ∩ {d < 1, b > 1, H_A > 0}`): one of
-`T_a = 0235/046` at `0` (view `u_a`), `A = 036/146` at `6` (view `v_A`) and `T_c = K_1` at `15`
-(view `u_c = 5 − 1`) is unimodal.  If `T_a` fails, `⟪u_a, v_A⟫ > 0`; if `T_c` fails,
-`⟪u_c, v_A⟫ < 0`; if `A` fails, `⟪v_A, u_c⟫ > 0` or `⟪v_A, u_a⟫ < 0`. -/
+/-- **Lemma 19.5 (the triple `T6`)** on `Ω_open` (`Ω ∩ {d < 1, b > 1, H_A > 0}`), with ties: one
+of `T_a = 0235/046` at `0` (view `u_a`), `A = 036/146` at `6` (view `v_A`) and `T_c = K_1` at
+`15` (view `u_c = 5 − 1`) is robustly unimodal.  If `⟪u_a, v_A⟫ < 0`, `T_a`'s diagonals are not
+weakly separated (the two weak separations give `⟪u_a, v_A⟫ ≥ 0` or contradict the crossing,
+`weakSep_sign`, `not_weakSep_of_meet`).  Otherwise, if `⟪u_c, v_A⟫ ≥ 0`, the open forms of
+(C1)–(C3) hold (a weak (C1) would put `1, 4, 6` at one depth along `15`, against `GenPosTie`)
+and `T_c` is robustly unimodal with at most one tie; if `⟪u_c, v_A⟫ < 0`, the open forms of
+(A1), (A2′), (A3) hold and `A` is robustly unimodal with at most one tie at `v_A`. -/
 theorem isRupert_T6 (N : NF16 x) (O : Omega N) (hd1 : 0 < 1 - N.d) (hb1 : 0 < N.b - 1)
     (ha1 : N.a ≠ 1)
     (hf03 : 0 < -(N.q * (1 - N.d) + N.g * (N.r - 1)))
@@ -1335,10 +1508,9 @@ theorem isRupert_T6 (N : NF16 x) (O : Omega N) (hd1 : 0 < 1 - N.d) (hb1 : 0 < N.
       (N.a * (N.q - 1) - (N.b - 1) * N.p))
     (hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1)) (hpr : 0 < N.p + N.r - 1)
     (hT5 : N.d * (N.q * (N.a - 1) - N.b * (N.p - 1)) - (N.g - 1) * (N.a - 1) * N.r ≠ 0)
-    (hg : GenPos (univ.image x)) (hnd : NoHDNEdges16 x)
-    (huA : [⟪x 0, N.uA⟫, ⟪x 5, N.uA⟫, ⟪x 1, N.uA⟫, ⟪x 6, N.uA⟫].Nodup)
+    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x)
     (hnduA : NoHDNAt (univ.image x) N.uA)
-    (hvA : [⟪x 6, N.vA⟫, ⟪x 3, N.vA⟫, ⟪x 5, N.vA⟫, ⟪x 2, N.vA⟫, ⟪x 4, N.vA⟫].Nodup)
+    (hvA : OneTieAt (univ.image x) N.vA)
     (hndvA : NoHDNAt (univ.image x) N.vA) : IsRupert (univ.image x) := by
   obtain ⟨hR1, hR2, hD, hqg, hg1, hqb, hc, -, -, -, -, -⟩ := O
   have hr1 : 0 < 1 - N.r := by
@@ -1409,77 +1581,95 @@ theorem isRupert_T6 (N : NF16 x) (O : Omega N) (hd1 : 0 < 1 - N.d) (hb1 : 0 < N.
     rw [real_inner_comm, iC1]
     simp only [inner_neg_left, inner_sub_left, real_inner_smul_left]
     linarith [mul_pos hqg (sub_pos.mpr h6), mul_pos N.hg (sub_pos.mpr h4)]
-  by_cases h1 : ⟪N.uA, N.vA⟫ ≤ 0
-  · -- `T_a` is unimodal
-    refine isRupert_T6_Ta N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hb1 hHA hf15 hpr
-      (quad_unimodal ?_ huA) hnduA
-    intro hsep
-    have hsep' : DepthSep (x 0) (x 1) (x 6) (x 5) N.uA := by
-      simp only [DepthSep, max_comm, min_comm] at hsep ⊢; tauto
+  have hm : ∀ i, x i ∈ univ.image x := fun i => mem_image_of_mem x (mem_univ i)
+  -- weak (C1): `1` weakly above `4` and `6` along `u_c` with `⟪u_c, v_A⟫ ≥ 0` puts `1, 4, 6` at
+  -- one depth
+  have C1w : ⟪x 4, x 5 - x 1⟫ ≤ ⟪x 1, x 5 - x 1⟫ → ⟪x 6, x 5 - x 1⟫ ≤ ⟪x 1, x 5 - x 1⟫ →
+      0 ≤ ⟪x 5 - x 1, N.vA⟫ → False := by
+    intro h4 h6 h0
+    rw [real_inner_comm, iC1] at h0
+    simp only [inner_neg_left, inner_sub_left, real_inner_smul_left] at h0
+    have k1 : (N.q - N.g) * (⟪x 1, x 5 - x 1⟫ - ⟪x 6, x 5 - x 1⟫) = 0 := by
+      nlinarith [mul_nonneg hqg.le (sub_nonneg.mpr h6), mul_nonneg N.hg.le (sub_nonneg.mpr h4)]
+    have k2 : N.g * (⟪x 1, x 5 - x 1⟫ - ⟪x 4, x 5 - x 1⟫) = 0 := by
+      nlinarith [mul_nonneg hqg.le (sub_nonneg.mpr h6), mul_nonneg N.hg.le (sub_nonneg.mpr h4)]
+    have q1 := (mul_eq_zero.mp k1).resolve_left hqg.ne'
+    have q2 := (mul_eq_zero.mp k2).resolve_left N.hg.ne'
+    exact hg.noTriple (hm 1) (hm 5) (hm 1) (hm 4) (hm 6) (N.inj.ne (by decide))
+      (N.inj.ne (by decide)) (N.inj.ne (by decide)) (N.inj.ne (by decide))
+      ⟨by linarith, by linarith⟩
+  by_cases h1 : ⟪N.uA, N.vA⟫ < 0
+  · -- `T_a` is robustly unimodal
+    by_cases hN : NWS4 (quad ⟪x 0, N.uA⟫ ⟪x 5, N.uA⟫ ⟪x 1, N.uA⟫ ⟪x 6, N.uA⟫)
+    · exact isRupert_T6_Ta N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hb1 hHA hf15 hpr
+        hN.isRobustUnimodal hnduA
+    exfalso
     have hKa : 0 < (N.g + N.d) * (N.p + N.r - 1) + N.q :=
         by linarith [mul_pos (add_pos N.hg N.hd) hpr, N.hq]
     have hKv : 0 < N.g * N.p * (N.g + N.d - 1) + N.t0146v := by linarith [mul_pos hgp N.hgd, ht']
-    have hs := depthSep_of_meet (d₀ := x 0) (d₁ := x 1) (e₀ := x 6) (e₁ := x 5) (w := N.uA)
-      (s := (N.p + N.q + N.r - 1) / ((N.g + N.d) * (N.p + N.r - 1) + N.q))
-      (t := N.t0146v / ((N.g + N.d) * (N.p + N.r - 1) + N.q))
-      (l := -(N.g + N.d - 1) / ((N.g + N.d) * (N.p + N.r - 1) + N.q))
-      (div_pos N.t046_5 hKa).le ((div_le_one hKa).mpr (by linarith [mul_pos N.hgd hpr]))
-      (div_pos ht' hKa).le
-      ((div_le_one hKa).mpr (by simp only [t0146v]; linarith [mul_pos N.hd N.t046_5]))
-      ?_ (div_nonpos_of_nonpos_of_nonneg (by linarith [N.hgd]) hKa.le) hsep'
-    · have hl := depthSep_sign (d₀ := x 0) (d₁ := x 1) (e₀ := x 6) (e₁ := x 5) (v := N.vA)
-        (s := N.t0146v / (N.g * N.p * (N.g + N.d - 1) + N.t0146v))
-        (t := N.g * N.t0146v / (N.g * N.p * (N.g + N.d - 1) + N.t0146v))
-        (l := -(N.g + N.d - 1) / (N.g * N.p * (N.g + N.d - 1) + N.t0146v))
-        (div_pos ht' hKv).le ((div_le_one hKv).mpr (by linarith [mul_pos hgp N.hgd]))
+    have hmA : (x 6 + (N.t0146v / ((N.g + N.d) * (N.p + N.r - 1) + N.q)) • (x 5 - x 6)) -
+        (x 0 + ((N.p + N.q + N.r - 1) / ((N.g + N.d) * (N.p + N.r - 1) + N.q)) • (x 1 - x 0)) =
+        (-(N.g + N.d - 1) / ((N.g + N.d) * (N.p + N.r - 1) + N.q)) • N.uA := by
+      refine meet_of_smul hKa.ne' ?_
+      simp only [t0146v, uA]
+      nf_vec N
+    have hmV : (x 6 + (N.g * N.t0146v / (N.g * N.p * (N.g + N.d - 1) + N.t0146v)) • (x 5 - x 6)) -
+        (x 0 + (N.t0146v / (N.g * N.p * (N.g + N.d - 1) + N.t0146v)) • (x 1 - x 0)) =
+        (-(N.g + N.d - 1) / (N.g * N.p * (N.g + N.d - 1) + N.t0146v)) • N.vA := by
+      refine meet_of_smul hKv.ne' ?_
+      simp only [t0146v, vA, f03]
+      nf_vec N
+    have huA0 : N.uA ≠ 0 := by
+      simp only [uA]; exact nfV_ne_zero N.hD (Or.inl (ne_of_gt hpr))
+    simp only [NWS4, quad_0, quad_1, quad_2, quad_3, not_and_or, not_or, not_lt] at hN
+    rcases hN with ⟨k1, k2, k3, k4⟩ | ⟨k1, k2, k3, k4⟩
+    · -- `{0, 1}` weakly above `{5, 6}`: `⟪v_A, u_a⟫ ≥ 0`
+      have hl := weakSep_sign (d₀ := x 0) (d₁ := x 1) (e₀ := x 6) (e₁ := x 5) (v := N.vA)
+        (w := N.uA) (div_pos ht' hKv).le ((div_le_one hKv).mpr (by linarith [mul_pos hgp N.hgd]))
         (div_pos (mul_pos N.hg ht') hKv).le
         ((div_le_one hKv).mpr (by
           have e : N.t0146v = N.g * N.p + N.f03 := by simp only [t0146v, f03]; ring
           rw [e]; linarith [mul_pos (mul_pos N.hg N.hp) N.hd, mul_pos hg1 hfv]))
-        ?_ hs
-      · have hl' : -(N.g + N.d - 1) / (N.g * N.p * (N.g + N.d - 1) + N.t0146v) < 0 :=
-          div_neg_of_neg_of_pos (by linarith [N.hgd]) hKv
-        rw [real_inner_comm] at h1
-        nlinarith [mul_neg_of_neg_of_pos hl' (show 0 < ⟪N.vA, N.uA⟫ by
-          by_contra hc0; push Not at hc0
-          nlinarith [mul_nonneg_of_nonpos_of_nonpos hl'.le hc0])]
-      · refine meet_of_smul hKv.ne' ?_
-        simp only [t0146v, vA, f03]
-        nf_vec N
-    · refine meet_of_smul hKa.ne' ?_
-      simp only [t0146v, uA]
-      nf_vec N
+        hmV (max_le (le_min k2 k4) (le_min k1 k3))
+      have hl' : -(N.g + N.d - 1) / (N.g * N.p * (N.g + N.d - 1) + N.t0146v) < 0 :=
+        div_neg_of_neg_of_pos (by linarith [N.hgd]) hKv
+      rw [real_inner_comm] at h1
+      nlinarith [mul_pos_of_neg_of_neg hl' h1]
+    · -- `{5, 6}` weakly above `{0, 1}`: against the crossing
+      exact not_weakSep_of_meet (d₀ := x 0) (d₁ := x 1) (e₀ := x 6) (e₁ := x 5) (w := N.uA)
+        (div_pos N.t046_5 hKa).le ((div_le_one hKa).mpr (by linarith [mul_pos N.hgd hpr]))
+        (div_pos ht' hKa).le
+        ((div_le_one hKa).mpr (by simp only [t0146v]; linarith [mul_pos N.hd N.t046_5]))
+        hmA (div_neg_of_neg_of_pos (by linarith [N.hgd]) hKa) huA0 k2 k1 k4 k3
   push Not at h1
-  have hzc := fun i j (hij : i ≠ j) (hh : (j ≠ 1 ∧ j ≠ 5) ∨ (i ≠ 5 ∧ j ≠ 5)) =>
-    depth_ne (v := 1) (w := 5) N.inj hg hij (by decide) hh
   by_cases h2 : 0 ≤ ⟪x 5 - x 1, N.vA⟫
-  · -- `T_c` is unimodal
+  · -- `T_c` is robustly unimodal
     rcases lt_or_gt_of_ne hT5 with h5 | h5
-    · have hz4 := depth_nodup4 (v := 1) (w := 5) (a := 4) (b := 6) (c := 0) N.inj hg (by decide)
-      refine isRupert_T6_Tc4 N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hb1 hHA hf15 hpr (by linarith)
-        (quad_unimodal ?_ hz4.1) (hnd.fwd N (by decide))
-      intro hsep
-      rcases hsep with h | h
-      · have k1 := max_lt_iff.mp h
-        have k2 := lt_min_iff.mp k1.1
-        have k3 := lt_min_iff.mp k1.2
-        have e := cone_inner3 (w := x 5 - x 1) iTc4
+    · by_cases hN : NWS4 (quad ⟪x 1, (x 5 - x 1)⟫ ⟪x 4, (x 5 - x 1)⟫ ⟪x 0, (x 5 - x 1)⟫
+          ⟪x 6, (x 5 - x 1)⟫)
+      · exact isRupert_T6_Tc4 N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hb1 hHA hf15 hpr
+          (by linarith) hN.isRobustUnimodal (hnd.fwd N (by decide))
+      exfalso
+      simp only [NWS4, quad_0, quad_1, quad_2, quad_3, not_and_or, not_or, not_lt] at hN
+      rcases hN with ⟨k1, k2, k3, k4⟩ | ⟨k1, k2, k3, k4⟩
+      · exact C1w k1 k2 h2
+      · have e := cone_inner3 (w := x 5 - x 1) iTc4
         simp only [inner_sub_left] at e
-        linarith [mul_pos ht' huc', mul_pos hR1 (sub_pos.mpr k3.1), mul_pos N.t145_0
-              (sub_pos.mpr k3.2), mul_pos hf15 (sub_pos.mpr k2.1)]
-      · have k1 := max_lt_iff.mp h
-        have k2 := lt_min_iff.mp k1.1
-        have k3 := lt_min_iff.mp k1.2
-        linarith [C1 k2.1 k3.1]
-    · refine isRupert_T6_Tc5 N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hb1 hHA hf15 hpr h5
-        (quint_Tc_unimodal (quint_injective (hzc 1 4 (by decide) (by decide))
-          (hzc 1 2 (by decide) (by decide)) (hzc 1 0 (by decide) (by decide))
-          (hzc 1 6 (by decide) (by decide)) (hzc 4 2 (by decide) (by decide))
-          (hzc 4 0 (by decide) (by decide)) (hzc 4 6 (by decide) (by decide))
-          (hzc 2 0 (by decide) (by decide)) (hzc 2 6 (by decide) (by decide))
-          (hzc 0 6 (by decide) (by decide))) ?_ ?_ ?_) (hnd.fwd N (by decide))
-      · rintro ⟨h4, h6⟩; linarith [C1 h4 h6]
-      · rintro ⟨h02, h06⟩
+        linarith [mul_pos ht' huc', mul_nonneg hR1.le (sub_nonneg.mpr k3), mul_nonneg N.t145_0.le
+              (sub_nonneg.mpr k4), mul_nonneg hf15.le (sub_nonneg.mpr k1)]
+    · have hone := (hg.tie (x 1) (hm 1) (x 5) (hm 5) (N.inj.ne (by decide))).rim5 (hm 1) (hm 4)
+        (hm 2) (hm 0) (hm 6) (quint_injective (N.inj.ne (by decide)) (N.inj.ne (by decide))
+          (N.inj.ne (by decide)) (N.inj.ne (by decide)) (N.inj.ne (by decide))
+          (N.inj.ne (by decide)) (N.inj.ne (by decide)) (N.inj.ne (by decide))
+          (N.inj.ne (by decide)) (N.inj.ne (by decide)))
+      refine isRupert_T6_Tc5 N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hb1 hHA hf15 hpr h5
+        (quint_Tc_robust hone ?_ ?_ ?_) (hnd.fwd N (by decide))
+      · by_contra hc0
+        simp only [not_or, not_lt] at hc0
+        exact C1w hc0.1 hc0.2 h2
+      · by_contra hc0
+        simp only [not_or, not_lt] at hc0
+        obtain ⟨h02, h06⟩ := hc0
         have e := cone_inner3 (w := x 5 - x 1) iC2
         simp only [inner_sub_left, inner_neg_left] at e
         have hn2 : 0 < N.b * N.d * N.g * N.p - (N.a - 1) * (N.g - 1) * (-N.f03) := by
@@ -1490,37 +1680,52 @@ theorem isRupert_T6 (N : NF16 x) (O : Omega N) (hd1 : 0 < 1 - N.d) (hb1 : 0 < N.
               linarith
             nlinarith [mul_lt_mul'' hS2 hf' (mul_pos (sub_pos.mpr ha) hg1).le hfv.le]
         rw [real_inner_comm] at h2
-        linarith [mul_nonneg (sub_pos.mpr hS2).le h2, mul_pos (mul_pos hg1 ht') (sub_pos.mpr h02),
-          mul_pos hn2 (sub_pos.mpr h06), mul_pos (mul_pos N.hb ht') huc']
-      · rintro ⟨h14, h24, h20⟩
+        linarith [mul_nonneg (sub_pos.mpr hS2).le h2,
+          mul_nonneg (mul_pos hg1 ht').le (sub_nonneg.mpr h02),
+          mul_nonneg hn2.le (sub_nonneg.mpr h06), mul_pos (mul_pos N.hb ht') huc']
+      · by_contra hc0
+        simp only [not_or, not_lt] at hc0
+        obtain ⟨h14, h24, h20⟩ := hc0
         have e := cone_inner3 (w := x 5 - x 1) iC3
         simp only [inner_sub_left, inner_neg_left] at e
-        linarith [mul_pos N.t024_1 huc', mul_pos h5 (sub_pos.mpr h14), mul_pos hc3
-              (sub_pos.mpr h24), mul_pos N.tB125 (sub_pos.mpr h20)]
-  · -- `A` is unimodal
+        linarith [mul_pos N.t024_1 huc', mul_nonneg h5.le (sub_nonneg.mpr h14),
+          mul_nonneg hc3.le (sub_nonneg.mpr h24), mul_nonneg N.tB125.le (sub_nonneg.mpr h20)]
+  · -- `A` is robustly unimodal
     push Not at h2
+    have hone := hvA.rim5 (hm 6) (hm 3) (hm 5) (hm 2) (hm 4)
+      (quint_injective (N.inj.ne (by decide)) (N.inj.ne (by decide)) (N.inj.ne (by decide))
+        (N.inj.ne (by decide)) (N.inj.ne (by decide)) (N.inj.ne (by decide))
+        (N.inj.ne (by decide)) (N.inj.ne (by decide)) (N.inj.ne (by decide))
+        (N.inj.ne (by decide)))
     refine isRupert_T6_A N hR1 hR2 hD hqg hg1 hqb hc hd1 hf03 hb1 hHA hf15 hpr
-      (quint_A_unimodal (quint_inj_of_nodup hvA) ?_ ?_ ?_) hndvA
-    · rintro ⟨h53, h63⟩
+      (quint_A_robust hone ?_ ?_ ?_) hndvA
+    · by_contra hc0
+      simp only [not_or, not_lt] at hc0
+      obtain ⟨h53, h63⟩ := hc0
       have e := congrArg (fun w => ⟪w, N.vA⟫) iA1
       simp only [inner_add_left, inner_sub_left, real_inner_smul_left] at e
       rw [inner_sub_left] at h2
-      linarith [mul_pos hg1 (sub_pos.mpr h53), mul_pos N.hd (sub_pos.mpr h63)]
-    · rintro ⟨h24, h25⟩
+      linarith [mul_nonneg hg1.le (sub_nonneg.mpr h53), mul_nonneg N.hd.le (sub_nonneg.mpr h63)]
+    · by_contra hc0
+      simp only [not_or, not_lt] at hc0
+      obtain ⟨h24, h25⟩ := hc0
       have e := cone_inner3 (w := N.vA) iA2
       simp only [inner_sub_left, inner_neg_left] at e
       have hM : 0 < N.a * N.q - (N.b - 1) * (N.p + N.r - 1) := by linarith [N.hab]
-      linarith [mul_pos hHA h1, mul_pos (mul_pos hM hfv) (sub_pos.mpr h24),
-        mul_pos hX1 (sub_pos.mpr h25), mul_pos (mul_pos N.hr (show 0 < N.a + N.b - 1 +
+      linarith [mul_nonneg hHA.le h1, mul_nonneg (mul_pos hM hfv).le (sub_nonneg.mpr h24),
+        mul_nonneg hX1.le (sub_nonneg.mpr h25), mul_pos (mul_pos N.hr (show 0 < N.a + N.b - 1 +
           (N.a * (N.q - 1) - (N.b - 1) * (N.p + N.r)) by linarith [N.hab])) hvv]
-    · rintro ⟨h46, h42⟩
+    · by_contra hc0
+      simp only [not_or, not_lt] at hc0
+      obtain ⟨h46, h42⟩ := hc0
       have e := cone_inner3 (w := N.vA) iA3
       simp only [inner_sub_left, inner_neg_left] at e
       have hZ : 0 < N.g * N.p * N.t0246v + N.t0146v * (N.a * N.q - N.b * N.p) := by
         have : N.a * N.q - N.b * N.p = N.c36v + (N.q - N.b) := by simp only [c36v]; ring
         rw [this]; linarith [mul_pos hgp ht2', mul_pos ht' hc', mul_pos ht' hqb]
-      linarith [mul_pos hZ h1, mul_pos (mul_pos (mul_pos N.hq hr1) ht') (sub_pos.mpr h42),
-        mul_pos hX1 (sub_pos.mpr h46), mul_pos (mul_pos hr1 ht2') hvv]
+      linarith [mul_nonneg hZ.le h1,
+        mul_nonneg (mul_pos (mul_pos N.hq hr1) ht').le (sub_nonneg.mpr h42),
+        mul_nonneg hX1.le (sub_nonneg.mpr h46), mul_pos (mul_pos hr1 ht2') hvv]
 
 end NF16
 

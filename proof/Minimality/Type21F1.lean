@@ -143,6 +143,59 @@ theorem type21_Y_unimodal {z0 z6 z2 z5 z1 α β p q A B : ℝ} (hα : 0 < α) (h
       (by linarith [hj.2]))
   | (exfalso; exact P05 (by linarith [hi.2]) (by linarith [hj.1]))
 
+/-- The perturbations of `Y`'s depths that keep `2` on the plane of `0256` (`e₂` as `z₂`)
+satisfy the hypotheses of `type21_Y_unimodal` for small `ε`. -/
+theorem type21_Y_perturb {z0 z6 z2 z5 z1 α β p q A B : ℝ} (hα : 0 < α) (hβ : 0 < β)
+    (hα1 : α < 1) (hαβ : 1 < α + β) (hp : 0 < p) (hq : q < 0)
+    (hconv : (p - 1) * β + q * (1 - α) < 0)
+    (h2 : z2 = z0 + α * (z5 - z0) + β * (z6 - z0)) (h1 : z1 < z0 + p * (z5 - z0) + q * (z6 - z0))
+    (hA : 0 < A) (hB : 0 < B) (hT1 : B * (z5 - z2) + A * (z0 - z6) < 0)
+    {e0 e6 e2 e5 e1 : ℝ} (he : e2 = e0 + α * (e5 - e0) + β * (e6 - e0)) :
+    ∀ᶠ ε in 𝓝[≠] (0 : ℝ),
+      Function.Injective (fun i => quint z0 z6 z2 z5 z1 i + ε * quint e0 e6 e2 e5 e1 i) →
+      IsCyclicUnimodal (fun i => quint z0 z6 z2 z5 z1 i + ε * quint e0 e6 e2 e5 e1 i) := by
+  have k1 := eventually_lt_near (f := fun ε => z1 + ε * e1)
+    (g := fun ε => (z0 + ε * e0) + p * ((z5 + ε * e5) - (z0 + ε * e0)) +
+      q * ((z6 + ε * e6) - (z0 + ε * e0))) (by fun_prop) (by fun_prop) (by simpa using h1)
+  have k2 := eventually_lt_near (f := fun ε => B * ((z5 + ε * e5) - (z2 + ε * e2)) +
+      A * ((z0 + ε * e0) - (z6 + ε * e6))) (g := fun _ => 0) (by fun_prop) (by fun_prop)
+    (by simpa using hT1)
+  filter_upwards [k1, k2] with ε k1 k2 hinj
+  have e : (fun i => quint z0 z6 z2 z5 z1 i + ε * quint e0 e6 e2 e5 e1 i) =
+      quint (z0 + ε * e0) (z6 + ε * e6) (z2 + ε * e2) (z5 + ε * e5) (z1 + ε * e1) := by
+    funext i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> rfl
+  rw [e] at hinj ⊢
+  exact type21_Y_unimodal hα hβ hα1 hαβ hp hq hconv (by rw [h2, he]; ring) k1 hA hB k2 hinj
+
+/-- **The pentagon of `Y` with one tie** (`type21_Y_unimodal` with Lemma 18.4 (α)): with at most
+one tied pair among the five depths, the rim is robustly unimodal.  A tie involving `1` is
+broken by moving `z₁`, the tie `6 – 5` by moving `z₅` (and `z₂` with it, on the plane of `0256`),
+every other tie by moving `z₀` (and `z₂`). -/
+theorem type21_Y_robust {z0 z6 z2 z5 z1 α β p q A B : ℝ} (hα : 0 < α) (hβ : 0 < β)
+    (hα1 : α < 1) (hαβ : 1 < α + β) (hp : 0 < p) (hq : q < 0)
+    (hconv : (p - 1) * β + q * (1 - α) < 0)
+    (h2 : z2 = z0 + α * (z5 - z0) + β * (z6 - z0)) (h1 : z1 < z0 + p * (z5 - z0) + q * (z6 - z0))
+    (hA : 0 < A) (hB : 0 < B) (hT1 : B * (z5 - z2) + A * (z0 - z6) < 0)
+    (hone : ∀ a b a' b', a ≠ b → a' ≠ b' → quint z0 z6 z2 z5 z1 a = quint z0 z6 z2 z5 z1 b →
+      quint z0 z6 z2 z5 z1 a' = quint z0 z6 z2 z5 z1 b' → (a = a' ∧ b = b') ∨ (a = b' ∧ b = a')) :
+    IsRobustUnimodal (quint z0 z6 z2 z5 z1) := by
+  refine isRobustUnimodal_of_perturb hone
+    (fun hinj => type21_Y_unimodal hα hβ hα1 hαβ hp hq hconv h2 h1 hA hB hT1 hinj) ?_
+  intro a b hab _
+  have D1 := type21_Y_perturb hα hβ hα1 hαβ hp hq hconv h2 h1 hA hB hT1
+    (e0 := 0) (e6 := 0) (e2 := 0) (e5 := 0) (e1 := 1) (by ring)
+  have D0 := type21_Y_perturb hα hβ hα1 hαβ hp hq hconv h2 h1 hA hB hT1
+    (e0 := 1) (e6 := 0) (e2 := 1 - α - β) (e5 := 0) (e1 := 0) (by ring)
+  have D5 := type21_Y_perturb hα hβ hα1 hαβ hp hq hconv h2 h1 hA hB hT1
+    (e0 := 0) (e6 := 0) (e2 := α) (e5 := 1) (e1 := 0) (by ring)
+  rcases zmod5_cases a with rfl | rfl | rfl | rfl | rfl <;>
+  rcases zmod5_cases b with rfl | rfl | rfl | rfl | rfl <;>
+  first
+    | exact absurd rfl hab
+    | exact ⟨_, by simp only [quint_0, quint_1, quint_2, quint_3, quint_4]; intro h; linarith, D1⟩
+    | exact ⟨_, by simp only [quint_0, quint_1, quint_2, quint_3, quint_4]; intro h; linarith, D5⟩
+    | exact ⟨_, by simp only [quint_0, quint_1, quint_2, quint_3, quint_4]; intro h; linarith, D0⟩
+
 /-! ### A five-corner edge view -/
 
 /-- **Theorem 8.9 with Theorem 7.3 for a five-corner rim, in either orientation**: the rim
@@ -177,20 +230,46 @@ theorem isRupert_quint_rim (V : Finset ℝ³) (u : ℝ³) (hu : u ≠ 0) {σ : �
       exact hc a (by simp only [Finset.mem_filter, Finset.mem_univ, true_and]; constructor <;> linarith)
         b (by simp only [Finset.mem_filter, Finset.mem_univ, true_and]; constructor <;> linarith)
 
+/-- **`isRupert_quint_rim` with ties** (Theorem 18.3): a robustly unimodal five-corner rim. -/
+theorem isRupert_quint_rim_robust (V : Finset ℝ³) (u : ℝ³) (hu : u ≠ 0) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
+    {x₀ x₁ x₂ x₃ x₄ w : ℝ³} {h : ℝ} (hh : h ≠ 0) (hw : w = x₀ - h • u) (hwV : w ∈ V)
+    (hxV : ∀ i, quint x₀ x₁ x₂ x₃ x₄ i ∈ V)
+    (hcyc : ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 → 0 < σ * det3
+      (quint x₀ x₁ x₂ x₃ x₄ (i + 1) - quint x₀ x₁ x₂ x₃ x₄ i)
+      (quint x₀ x₁ x₂ x₃ x₄ j - quint x₀ x₁ x₂ x₃ x₄ i) u)
+    (hrest : ∀ y ∈ V, y ≠ w → (∀ j, y ≠ quint x₀ x₁ x₂ x₃ x₄ j) → ∀ i, 0 < σ * det3
+      (quint x₀ x₁ x₂ x₃ x₄ (i + 1) - quint x₀ x₁ x₂ x₃ x₄ i) (y - quint x₀ x₁ x₂ x₃ x₄ i) u)
+    (hz : IsRobustUnimodal fun i => ⟪quint x₀ x₁ x₂ x₃ x₄ i, u⟫) (hnd : NoHDNAt (V.erase w) u) :
+    IsRupert V := by
+  rcases hσ with rfl | rfl
+  · simp only [one_mul] at hcyc hrest
+    exact isRupert_of_edgeView_robust V ∅ u hu (k := 5) (by norm_num) (quint x₀ x₁ x₂ x₃ x₄) 0 w h hwV
+      hw hh hxV (fun _ => notMem_empty _) hcyc (fun y hy _ hyw hyx => hrest y hy hyw hyx) hz hnd
+      (fun m hm => absurd hm (notMem_empty m))
+  · refine isRupert_of_edgeView_robust V ∅ (-u) (neg_ne_zero.mpr hu) (k := 5) (by norm_num)
+      (quint x₀ x₁ x₂ x₃ x₄) 0 w (-h) hwV (by rw [hw, neg_smul_neg]; rfl) (neg_ne_zero.mpr hh)
+      hxV (fun _ => notMem_empty _) (fun i j hi hj => ?_) (fun y hy _ hyw hyx i => ?_) ?_
+      hnd.neg (fun m hm => absurd hm (notMem_empty m))
+    · have := hcyc i j hi hj; rw [det3_neg_right]; linarith
+    · have := hrest y hy hyw hyx i; rw [det3_neg_right]; linarith
+    · simp only [inner_neg_right]
+      exact hz.neg
+
 /-! ### `Y`: the edge crossing along `04` (Lemma 16.7 (c), (d)) -/
 
 /-- **`Y` (Lemma 16.7 (c), (d))**, in the normalized class.  Let (ii) `{3 5} < [6 3]`
 (`δ_014(2) < δ_014(5)`) and (iii) `0 → 4` a quad edge of `K − 6` (`f₁₃₅(0) < f₁₃₅(4)`,
 `f₂₃₅(0) < f₂₃₅(4)`).  At the view `u = 0 − 4` the rim of `K − 4` is the pentagon
-`(0, 6, 2, 5, 1)` with `3` hidden; if `⟪0 − 4, u₁⟫ < 0` (`T1` failed), its depths are unimodal
-and `K` is Rupert, off `GenPos` and horizontal double normals at the edge views. -/
+`(0, 6, 2, 5, 1)` with `3` hidden; if `⟪0 − 4, u₁⟫ < 0` (`T1` failed), its depths are robustly
+unimodal with at most one tie (`type21_Y_robust`), and `K` is Rupert, off `GenPosTie` and
+horizontal double normals at the edge views. -/
 theorem isRupert_type21_Y {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c') (h35 : 0 < galeD G.l G.m a' b') {α β : ℝ}
     (hα0 : 0 < α) (hβ : 0 < β) (hαβ : 1 < α + β) (hco : d = a + α • (b' - a) + β • (c' - a))
     (hS : α * galeD G.l G.m c' a' + β * galeD G.l G.m a' b' < galeD G.l G.m c' a')
     (hiii : F.a'b'c.f a < F.a'b'c.f b ∧ hd.f235.f a < hd.f235.f b)
     (hT1 : ⟪a - b, axisView G.l G.m a' a b' c'⟫ < 0)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   have hnd' := F.nodup
@@ -406,32 +485,30 @@ theorem isRupert_type21_Y {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c 
       ring
     rw [e]
     exact mul_neg_of_pos_of_neg (by linarith) hT1
-  -- distinct depths (`GenPos`)
+  -- at most one tie along `04` (`GenPosTie`)
   have hKa : a ∈ K := by simp [hK]
   have hKb : b ∈ K := by simp [hK]
-  have hdep : ∀ s t, s ∈ K → t ∈ K → s ≠ t → t ≠ b → t ≠ a → ⟪s, u⟫ ≠ ⟪t, u⟫ :=
-    fun s t hs ht hst htb hta => hgen.inner_ne_of_ne hs ht hKb hKa hst (Ne.symm hab)
-      (Or.inl ⟨htb, hta⟩)
   have hKc' : c' ∈ K := by simp [hK]
   have hKd : d ∈ K := by simp [hK]
   have hKb' : b' ∈ K := by simp [hK]
   have hKc : c ∈ K := by simp [hK]
-  have hinj := quint_injective (hdep a c' hKa hKc' hac' (Ne.symm hbc') (Ne.symm hac'))
-    (hdep a d hKa hKd (Ne.symm hda) hdb hda) (hdep a b' hKa hKb' hab' (Ne.symm hbb') (Ne.symm hab'))
-    (hdep a c hKa hKc hac (Ne.symm hbc) (Ne.symm hac))
-    (hdep c' d hKc' hKd (Ne.symm hdc') hdb hda) (hdep c' b' hKc' hKb' (Ne.symm hb'c')
-      (Ne.symm hbb') (Ne.symm hab')) (hdep c' c hKc' hKc (Ne.symm hcc') (Ne.symm hbc) (Ne.symm hac))
-    (hdep d b' hKd hKb' hdb' (Ne.symm hbb') (Ne.symm hab')) (hdep d c hKd hKc hdc (Ne.symm hbc)
-      (Ne.symm hac)) (hdep b' c hKb' hKc hb'c (Ne.symm hbc) (Ne.symm hac))
-  have hz : IsCyclicUnimodal fun i => ⟪quint a c' d b' c i, u⟫ := by
-    have e : (fun i => ⟪quint a c' d b' c i, u⟫) =
-        quint ⟪a, u⟫ ⟪c', u⟫ ⟪d, u⟫ ⟪b', u⟫ ⟪c, u⟫ := by
-      funext i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> rfl
+  have hxinj : Function.Injective (quint a c' d b' c) :=
+    quint_injective hac' (Ne.symm hda) hab' hac (Ne.symm hdc') (Ne.symm hb'c') (Ne.symm hcc')
+      hdb' hdc hb'c
+  have e : (fun i => ⟪quint a c' d b' c i, u⟫) =
+      quint ⟪a, u⟫ ⟪c', u⟫ ⟪d, u⟫ ⟪b', u⟫ ⟪c, u⟫ := by
+    funext i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> rfl
+  have hone := (hgen.tie b hKb a hKa (Ne.symm hab)).rim (x := quint a c' d b' c)
+    (fun i => by rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> assumption) hxinj
+  have hz : IsRobustUnimodal fun i => ⟪quint a c' d b' c i, u⟫ := by
     rw [e]
-    exact type21_Y_unimodal hα0 hβ hα1 hαβ hp hq hconv hz2 hz1 hA s35 hT1' hinj
+    refine type21_Y_robust hα0 hβ hα1 hαβ hp hq hconv hz2 hz1 hA s35 hT1' ?_
+    intro i j i' j' hij hi'j' h h'
+    exact hone i j i' j' hij hi'j' (by rw [← congrFun e i, ← congrFun e j] at h; exact h)
+      (by rw [← congrFun e i', ← congrFun e j'] at h'; exact h')
   -- the edge view
   obtain ⟨a0, a1, a2, a3, a4⟩ := zmod5_add_one
-  refine isRupert_quint_rim K u hu hσ (h := 1) one_ne_zero (by rw [hu_def]; module) hKb
+  refine isRupert_quint_rim_robust K u hu hσ (h := 1) one_ne_zero (by rw [hu_def]; module) hKb
     (fun i => by rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> assumption)
     (fun i j hi hj => ?_) (fun y hy hyb hyx i => ?_) hz (noHDN_pair hnd hKb hKa (Ne.symm hab)).1
   · rcases zmod5_pairs i j hi hj with ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ |
@@ -462,7 +539,7 @@ theorem isRupert_type21_Y {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c 
 `u₁` is `4`).  Outside the special positions of `T1` (`P(3)` on the line `P(5) P(4)` along
 `u₁`, ties among the depths of `0, 5, 3, 4` other than those of `QuadTie`, a horizontal double
 normal at `u₁`) and those of the edge
-views (`GenPos`, `NoHDNEdges`), `K` is Rupert: `T1` (the vertex crossing at `0` of `014`,
+views (`GenPosTie`, `NoHDNEdges`), `K` is Rupert: `T1` (the vertex crossing at `0` of `014`,
 `0256`, with the middle `2`) or `Y` (the edge crossing along `04`) is unimodal. -/
 theorem isRupert_type21_F1 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c') (h35 : 0 < galeD G.l G.m a' b')
@@ -475,7 +552,7 @@ theorem isRupert_type21_F1 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c
     (hz : QuadTie ⟪a, axisView G.l G.m a' a b' c'⟫ ⟪b', axisView G.l G.m a' a b' c'⟫
       ⟪a', axisView G.l G.m a' a b' c'⟫ ⟪b, axisView G.l G.m a' a b' c'⟫)
     (hnd₁ : NoHDNAt (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) (axisView G.l G.m a' a b' c'))
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   have hnd' := F.nodup

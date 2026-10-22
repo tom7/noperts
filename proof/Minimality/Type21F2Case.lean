@@ -454,7 +454,7 @@ theorem isRupert_type21_F2case {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b 
       F2Gen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) b b' d c u)
     (hV' : ∀ u : ℝ³, u ≠ 0 → det3 (a - b) (c' - b) u = 0 → det3 (a' - b) (c - b) u = 0 →
       F2Gen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) b b' a' a u)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   obtain ⟨s34, s05, s04, s56, s51, s46, s41, s63, s60, s13, s10⟩ := hN.signs F
@@ -708,7 +708,7 @@ theorem isRupert_type21_classC {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b 
       F2Gen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) b b' d c u)
     (hV' : ∀ u : ℝ³, u ≠ 0 → det3 (a - b) (c' - b) u = 0 → det3 (a' - b) (c - b) u = 0 →
       F2Gen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) b b' a' a u)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   obtain ⟨-, -, -, -, -, -, -, -, -, -, s10⟩ := hN.signs F

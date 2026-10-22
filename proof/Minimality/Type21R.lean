@@ -13,9 +13,10 @@ public import Minimality.Type21F2
   (the other vertex of each face, `m_A`, `m_B`, a middle, `EdgeMid`) and the last point `C`
   (strictly beneath both faces).  If `C` is hidden (strictly on `q`'s side of the line
   `P(A) P(B)`), the rims are the triangles `(v, A, B)`, `(w, A, B)` and `K_v` is unimodal
-  (`isRupert_edgeTri`); if `C` is a corner and `v`, `w` lie weakly on opposite sides of the
-  plane `A C B` (Lemma E), one of the closings `(v, A, C, B)`, `(w, A, C, B)` is unimodal
-  (`isRupert_edgePair`).  Either orientation of the screen.
+  (`isRupert_edgeTri_robust`); if `C` is a corner and `v`, `w` lie weakly on opposite sides of
+  the plane `A C B` (Lemma E), one of the closings `(v, A, C, B)`, `(w, A, C, B)` is robustly
+  unimodal (`isRupert_edgePair_robust`).  Either orientation of the screen; depth ties allowed
+  except three equal depths on a rim.
 * **Lemma 16.5 (R)** — `isRupert_type21_R`: the ridge `26` of type 21 (faces `0256`, `2346`,
   view `u = 2 − 6`).  With `2 = 0 + α (5 − 0) + β (6 − 0)` and `2 = 4 + α' (3 − 4) + β' (6 − 4)`
   (`β = r' = δ_015(2)/δ_015(6)`, `β' = r = δ_134(2)/δ_134(6)`): the far end of `0256` is `5` if
@@ -40,8 +41,10 @@ theorem EdgeMid.swap_ab {v w a b m : ℝ³} (h : EdgeMid v w a b m) : EdgeMid v 
 `v, w, B`), both containing the view `u = w − v`; `C` is strictly beneath both, `A` beneath
 `f_B` and `B` beneath `f_A`; every point of `K` is `v, w, A, B, C` or a middle (`EdgeMid`).
 If `C` is hidden (`hid`: `C` and `v` on one side of the vertical plane through `A B`), or a
-corner with `v`, `w` weakly on opposite sides of the plane `A C B` (Lemma E), then with distinct
-depths and no horizontal double normals at `u`, `K` is Rupert. -/
+corner with `v`, `w` weakly on opposite sides of the plane `A C B` (Lemma E), then, with ties
+allowed (`v, A, B` and `A, C, B` not each at one depth: Lemma E with ties,
+`isRupert_edgePair_robust`, and `isRupert_edgeTri_robust`) and no horizontal double normals at
+`u`, `K` is Rupert. -/
 theorem isRupert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ → ℝ} {NA NB : ℝ³}
     (hfA : ∀ y z, fA y - fA z = ⟪NA, y - z⟫) (hfB : ∀ y z, fB y - fB z = ⟪NB, y - z⟫)
     (hAv : fA v = 0) (hAw : fA w = 0) (hAA : fA A = 0) (hAB : fA B < 0) (hAC : fA C < 0)
@@ -52,8 +55,8 @@ theorem isRupert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ →
     (hcase : 0 < det3 (B - A) (C - A) (w - v) * det3 (B - A) (v - A) (w - v) ∨
       (det3 (B - A) (C - A) (w - v) * det3 (B - A) (v - A) (w - v) < 0 ∧
         det3 (B - A) (C - A) (v - A) * det3 (B - A) (C - A) (w - A) ≤ 0))
-    (hz₁ : [⟪v, w - v⟫, ⟪A, w - v⟫, ⟪C, w - v⟫, ⟪B, w - v⟫].Nodup)
-    (hz₂ : [⟪w, w - v⟫, ⟪A, w - v⟫, ⟪C, w - v⟫, ⟪B, w - v⟫].Nodup)
+    (htri : ¬ (⟪v, w - v⟫ = ⟪A, w - v⟫ ∧ ⟪A, w - v⟫ = ⟪B, w - v⟫))
+    (h3 : ¬ (⟪A, w - v⟫ = ⟪C, w - v⟫ ∧ ⟪C, w - v⟫ = ⟪B, w - v⟫))
     (hnd₁ : NoHDNAt (K.erase w) (w - v)) (hnd₂ : NoHDNAt (K.erase v) (w - v)) :
     IsRupert K := by
   set u := w - v with hu
@@ -86,10 +89,6 @@ theorem isRupert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ →
     exacts [Or.inl h, Or.inr (Or.inl h), Or.inr (Or.inr (Or.inl h)),
       Or.inr (Or.inr (Or.inr (Or.inl h))), Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))),
       Or.inr (Or.inr (Or.inr (Or.inr (Or.inr h.swap_ab))))]
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true] at hz₁ hz₂
-  obtain ⟨⟨z1, z2, z3⟩, ⟨z4, z5⟩, z6, -⟩ := hz₁
-  obtain ⟨⟨y1, y2, y3⟩, -, -, -⟩ := hz₂
   -- the orientation-free facts
   have rA : 0 < fA C / fA B := div_pos_of_neg_of_neg hAC hAB
   have rB : 0 < fB C / fB A := div_pos_of_neg_of_neg hBC hBA
@@ -101,10 +100,8 @@ theorem isRupert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ →
   · -- clockwise: use `(v, B, A)`
     rcases hcase with hh | ⟨hc, hE⟩
     · have hℓn : ℓ < 0 := neg_of_mul_pos_left hh hTn.le
-      refine isRupert_edgeTri K hvK hwK hBK hAK ?_ (by
-          simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-            List.nodup_nil, and_true]
-          exact ⟨⟨z3, z1⟩, Ne.symm z5, not_false⟩) (fun z hz => ?_) hnd₁
+      refine isRupert_edgeTri_robust K hvK hwK hBK hAK ?_
+        (fun h => htri ⟨h.1.trans h.2, h.2.symm⟩) (fun z hz => ?_) hnd₁
       · have : det3 (B - v) (A - v) u = -T := by
           simp only [hT_def, det3_expand, PiLp.sub_apply]; ring
         rw [this]; linarith
@@ -126,15 +123,8 @@ theorem isRupert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ →
             rw [this, d1]; nlinarith
         · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
     · have hℓp : 0 < ℓ := pos_of_mul_neg_left hc hTn.le
-      refine isRupert_edgePair (v := v) (w := w) (a := B) (b := A) (c := C) K hvK hwK hBK hAK hCK
-        ?_ ?_ ?_ ?_ ?_ (by
-          simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-            List.nodup_nil, and_true]
-          exact ⟨⟨z3, z2, z1⟩, ⟨Ne.symm z6, Ne.symm z5⟩, Ne.symm z4, not_false⟩) (by
-          simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-            List.nodup_nil, and_true]
-          exact ⟨⟨y3, y2, y1⟩, ⟨Ne.symm z6, Ne.symm z5⟩, Ne.symm z4, not_false⟩)
-        (fun z hz => ?_) hnd₁ hnd₂
+      refine isRupert_edgePair_robust (v := v) (w := w) (a := B) (b := A) (c := C) K hvK hwK
+        hBK hAK hCK ?_ ?_ ?_ ?_ ?_ (fun h => h3 ⟨h.2.symm, h.1.symm⟩) (fun z hz => ?_) hnd₁ hnd₂
       · have : det3 (B - v) (C - v) u = -det3 (C - v) (B - v) u := by
           simp only [det3_expand, PiLp.sub_apply]; ring
         rw [this, d2]; nlinarith
@@ -162,10 +152,7 @@ theorem isRupert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ →
   · -- counterclockwise: `(v, A, B)`
     rcases hcase with hh | ⟨hc, hE⟩
     · have hℓp : 0 < ℓ := pos_of_mul_pos_left hh hTp.le
-      refine isRupert_edgeTri K hvK hwK hAK hBK hTp (by
-          simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-            List.nodup_nil, and_true]
-          exact ⟨⟨z1, z3⟩, z5, not_false⟩) (fun z hz => ?_) hnd₁
+      refine isRupert_edgeTri_robust K hvK hwK hAK hBK hTp htri (fun z hz => ?_) hnd₁
       rcases hK z hz with h | h | h | h | h | h
       · exact Or.inl h
       · exact Or.inr (Or.inl h)
@@ -179,15 +166,8 @@ theorem isRupert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ →
           rw [this, d2]; exact mul_pos rB hTp
       · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
     · have hℓn : ℓ < 0 := neg_of_mul_neg_left hc hTp.le
-      refine isRupert_edgePair (v := v) (w := w) (a := A) (b := B) (c := C) K hvK hwK hAK hBK hCK
-        ?_ ?_ ?_ ?_ hE (by
-          simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-            List.nodup_nil, and_true]
-          exact ⟨⟨z1, z2, z3⟩, ⟨z4, z5⟩, z6, not_false⟩) (by
-          simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-            List.nodup_nil, and_true]
-          exact ⟨⟨y1, y2, y3⟩, ⟨z4, z5⟩, z6, not_false⟩)
-        (fun z hz => ?_) hnd₁ hnd₂
+      refine isRupert_edgePair_robust (v := v) (w := w) (a := A) (b := B) (c := C) K hvK hwK
+        hAK hBK hCK ?_ ?_ ?_ ?_ hE h3 (fun z hz => ?_) hnd₁ hnd₂
       · rw [d1]; exact mul_pos rA hTp
       · have : det3 (C - A) (B - A) u = -ℓ := by
           simp only [hℓ, det3_expand, PiLp.sub_apply]; ring
@@ -214,7 +194,7 @@ theorem isRupert_type21_ridge_quad {a a' b b' c c' d : ℝ³} (F : OctFacets a a
     (hd : IsCap21 F d) {A mA B mB : ℝ³} (hA : (A = b' ∧ mA = a) ∨ (A = a ∧ mA = b'))
     (hB : (B = a' ∧ mB = b) ∨ (B = b ∧ mB = a'))
     (hmA : EdgeMid c' d A B mA) (hmB : EdgeMid c' d A B mB)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hcase : 0 < det3 (B - A) (c - A) (d - c') * det3 (B - A) (c' - A) (d - c') ∨
       (det3 (B - A) (c - A) (d - c') * det3 (B - A) (c' - A) (d - c') < 0 ∧
@@ -256,42 +236,22 @@ theorem isRupert_type21_ridge_quad {a a' b b' c c' d : ℝ³} (F : OctFacets a a
         simp only [det3_expand, PiLp.sub_apply]; ring
       rw [e, h0, neg_zero])
     linarith
-  -- distinct depths (`GenPos`, along the segment `6 2`)
+  -- no three of the rim corners at one depth (`GenPosTie`, along the segment `6 2`)
   have hKc' : c' ∈ K := by simp [hK]
   have hKd : d ∈ K := by simp [hK]
   have hKc : c ∈ K := by simp [hK]
-  have dep : ∀ s t, s ∈ K → t ∈ K → s ≠ t → t ≠ c' → t ≠ d → ⟪s, d - c'⟫ ≠ ⟪t, d - c'⟫ :=
-    fun s t hs ht hst h1 h2 => hgen.inner_ne_of_ne hs ht hKc' hKd hst (Ne.symm hdc')
-      (Or.inl ⟨h1, h2⟩)
   have Ac' : A ≠ c' := by rcases hA with ⟨rfl, -⟩ | ⟨rfl, -⟩; exacts [hb'c', hac']
-  have Ad : A ≠ d := by rcases hA with ⟨rfl, -⟩ | ⟨rfl, -⟩; exacts [Ne.symm hdb', Ne.symm hda]
   have Bc' : B ≠ c' := by rcases hB with ⟨rfl, -⟩ | ⟨rfl, -⟩; exacts [ha'c', hbc']
-  have Bd : B ≠ d := by rcases hB with ⟨rfl, -⟩ | ⟨rfl, -⟩; exacts [Ne.symm hda', Ne.symm hdb]
   have Ac : A ≠ c := by rcases hA with ⟨rfl, -⟩ | ⟨rfl, -⟩; exacts [hb'c, hac]
   have Bc : B ≠ c := by rcases hB with ⟨rfl, -⟩ | ⟨rfl, -⟩; exacts [ha'c, hbc]
   have AB : A ≠ B := by
     rcases hA with ⟨rfl, -⟩ | ⟨rfl, -⟩ <;> rcases hB with ⟨rfl, -⟩ | ⟨rfl, -⟩
     exacts [Ne.symm ha'b', Ne.symm hbb', haa', hab]
-  have e1 := dep c' A hKc' hAK (Ne.symm Ac') Ac' Ad
-  have e2 := dep c' c hKc' hKc (Ne.symm hcc') hcc' (Ne.symm hdc)
-  have e3 := dep c' B hKc' hBK (Ne.symm Bc') Bc' Bd
-  have e4 := dep A c hAK hKc Ac hcc' (Ne.symm hdc)
-  have e5 := dep A B hAK hBK AB Bc' Bd
-  have e6 := dep c B hKc hBK (Ne.symm Bc) Bc' Bd
-  have e7 := dep d A hKd hAK (Ne.symm Ad) Ac' Ad
-  have e8 := dep d c hKd hKc hdc hcc' (Ne.symm hdc)
-  have e9 := dep d B hKd hBK (Ne.symm Bd) Bc' Bd
-  have hz₁ : [⟪c', d - c'⟫, ⟪A, d - c'⟫, ⟪c, d - c'⟫, ⟪B, d - c'⟫].Nodup := by
-    simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-      List.nodup_nil, and_true]
-    exact ⟨⟨e1, e2, e3⟩, ⟨e4, e5⟩, e6, not_false⟩
-  have hz₂ : [⟪d, d - c'⟫, ⟪A, d - c'⟫, ⟪c, d - c'⟫, ⟪B, d - c'⟫].Nodup := by
-    simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-      List.nodup_nil, and_true]
-    exact ⟨⟨e7, e8, e9⟩, ⟨e4, e5⟩, e6, not_false⟩
+  have htri := hgen.noTriple hKc' hKd hKc' hAK hBK (Ne.symm hdc') (Ne.symm Ac') AB (Ne.symm Bc')
+  have h3 := hgen.noTriple hKc' hKd hAK hKc hBK (Ne.symm hdc') Ac (Ne.symm Bc) AB
   obtain ⟨n1, n2⟩ := noHDN_pair hnd hKc' hKd (Ne.symm hdc')
   refine isRupert_ridge K F.ab'c'.hN F.a'bc'.hN F.ab'c'.hR hd.ab'c' fAA fAB fAC F.a'bc'.hR
-    hd.a'bc' fBB fBA fBC hT hKc' hKd hAK hBK hKc (fun z hz => ?_) hcase hz₁ hz₂ n2 n1
+    hd.a'bc' fBB fBA fBC hT hKc' hKd hAK hBK hKc (fun z hz => ?_) hcase htri h3 n2 n1
   simp only [hK, Finset.mem_insert, Finset.mem_singleton] at hz
   rcases hz with rfl | rfl | rfl | rfl | rfl | rfl | rfl
   · exact Or.inr (Or.inl rfl)
@@ -352,11 +312,11 @@ def Type21R {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c') (d : ℝ³) 
 /-- **Lemma 16.5 (the tier R)**: at the view along the ridge `26` the faces `0256`, `2346` are
 vertical; their far ends `f0 ∈ {0, 5}`, `f3 ∈ {3, 4}` and `1` are the corners of the shadow
 (the other vertices are middles).  If `1` is hidden, or the closings `(6, f0, 1, f3)`,
-`(2, f0, 1, f3)` satisfy Lemma E, `K` is Rupert (off `GenPos` and horizontal double normals at
+`(2, f0, 1, f3)` satisfy Lemma E, `K` is Rupert (off `GenPosTie` and horizontal double normals at
 the view along `26`). -/
 theorem isRupert_type21_R {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hR : Type21R F d) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by

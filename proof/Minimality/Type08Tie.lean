@@ -22,9 +22,11 @@ or they pick up a poked-out corner.  The routes of Lemma X (in the frame `d; a, 
   `isRupert_r4p`); R4″ `Q_ab` with the rim `b a b' c a'` (`isRupert_r4pp`).
 
 Each five-corner route asks its rim to be strictly unimodal at `u₀` (`StrictUnimodal`)
-and `NoBadNormal` along its circle; the four-corner routes ask `NWS4` (no weak saddle)
-and `NoBadNormal`.  Which route applies is decided by the depths (the paper's analysis;
-here the routes are hypotheses, `Type08Gen.routeT`, `routeT'`).
+and `NoBadNormal` along its circle (for R2′ and R4′ with a poked-out vertex the refined
+`NoBadNormalR`: a double normal of the short edge, which is parallel to the face, is
+excluded through its feet); the four-corner routes ask `NWS4` (no weak saddle) and
+`NoBadNormal`.  Which route applies is decided by the depths (the paper's analysis):
+`isRupert_routeT`, `isRupert_routeT'` in `Type08X.lean`.
 -/
 
 namespace Minimality
@@ -424,7 +426,7 @@ theorem isRupert_r2p {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ : ℝ}
     (hα : 0 < α) (hβ : 0 < β) (hβ1 : β < 1) (hα₁ : 1 ≤ α₁) (hβ₁ : 0 < β₁) (hα₂ : 0 < α₂)
     (hκ : 0 < α + α₁ * (β - 1))
     (hu5 : StrictUnimodal (fun i => ⟪quint d c' b' a' c i, b - d⟫))
-    (hs5 : NoBadNormal (quint d c' b' a' c) (b - d) (a - d)) :
+    (hs5 : NoBadNormalR (quint d c' b' a' c) (b - d) (a - d)) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   classical
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
@@ -443,11 +445,11 @@ theorem isRupert_r2p {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ : ℝ}
     rw [show α + β * α₁ - α₁ = α + α₁ * (β - 1) by ring]; exact hκ
   have p7 : 0 < -β * α₂ + α₂ := by
     rw [show -β * α₂ + α₂ = α₂ * (1 - β) by ring]; exact mul_pos hα₂ (by linarith)
-  refine isRupert_of_slide'' V {b, a} (b - d) (d - a) hu (quint d c' b' a' c) ?_ ?_
+  refine isRupert_of_slide_uos V {b, a} (b - d) (d - a) hu (quint d c' b' a' c) ?_ ?_
     (quint_injective hdc' hdb' hda' hdc (Ne.symm hb'c') (Ne.symm ha'c') (Ne.symm hcc')
       (Ne.symm ha'b') hb'c ha'c)
     (by norm_num) (det3 (a - d) (c - d) (b - d)) hE ?_ ?_ ?_
-    (eventually_unimodal_of_strict _ _ _ hu5) (hs5.of_span 0 (-1) (by module))
+    (Or.inl hu5) (hs5.of_span 0 (-1) (by module))
   · intro i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       simp [V, quint_0, quint_1, quint_2, quint_3, quint_4]
   · intro i
@@ -584,7 +586,7 @@ theorem isRupert_r4p {a a' b b' c c' d : ℝ³} {α β β₁ α₂ β₂ : ℝ}
     (hα : 0 < α) (hα1 : α < 1) (hβ : 0 < β) (hαβ : 1 < α + β) (hβ₁ : 0 < β₁) (hα₂ : 0 < α₂)
     (hβ₂ : 0 < β₂) (hβ₂1 : β₂ < 1) (hαβ₂ : 1 < α₂ + β₂)
     (hu5 : StrictUnimodal (fun i => ⟪quint b c' a b' c i, b - d⟫))
-    (hs5 : NoBadNormal (quint b c' a b' c) (b - d) (c - d)) :
+    (hs5 : NoBadNormalR (quint b c' a b' c) (b - d) (c - d)) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   classical
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
@@ -600,11 +602,11 @@ theorem isRupert_r4p {a a' b b' c c' d : ℝ³} {α β β₁ α₂ β₂ : ℝ}
     P19⟩ := r4p_dets hb' hc'
   have p5 : 0 < -α * β₁ + β₁ := by
     rw [show -α * β₁ + β₁ = β₁ * (1 - α) by ring]; exact mul_pos hβ₁ (by linarith)
-  refine isRupert_of_slide'' V {d, a'} (b - d) (c - d) hu (quint b c' a b' c) ?_ ?_
+  refine isRupert_of_slide_uos V {d, a'} (b - d) (c - d) hu (quint b c' a b' c) ?_ ?_
     (quint_injective hbc' (Ne.symm hab) hbb' hbc (Ne.symm hac') (Ne.symm hb'c') (Ne.symm hcc')
       hab' hac hb'c)
     (by norm_num) (det3 (a - d) (c - d) (b - d)) hE ?_ ?_ ?_
-    (eventually_unimodal_of_strict _ _ _ hu5) hs5
+    (Or.inl hu5) hs5
   · intro i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       simp [V, quint_0, quint_1, quint_2, quint_3, quint_4]
   · intro i

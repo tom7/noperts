@@ -1,7 +1,6 @@
 module
 
-public import Minimality.Type08Tie
-public import Minimality.Type08R0
+public import Minimality.Type08X
 
 @[expose] public section
 
@@ -15,12 +14,19 @@ in all six.
 
 For the one-circle closings `K_c` (N2) and `K_b` (T4), `Type08Gen` also accepts the
 two-peaked five-corner rim of `R_d` (`RdCond`; Lemma R0 and Theorem R of A.10,
-`Type08R0.lean`, `Type08Rd.lean`).
+`Type08R0.lean`, `Type08Rd.lean`); Lemma H's five-corner rims may be strictly unimodal or
+have a depth-separated pair (`UniOrSep`, Lemma H (c)); for `K_d` (T4) `R_d` is empty
+(A.10's remark, `t4d_rd_empty`), so on its type-(d) surface only the absence of ties is
+asked.  At the far-end ties the route of Lemma X is chosen in `Type08X.lean`.
 
 * `t4_kappa_pos`: in the T4 case `b'` is a corner of the view along `d b` (part of
   Lemma G: no (G1) failure there).
+* `t4d_five_depths`, `t4d_five_strict`, `t4d_rd_empty`, `t4d_slide_of_par` (A.10, "T4–K_2:
+  `R_d` is empty"): with `β = 1` (`g = b'c ∥ [d, a]`), a weak saddle of `K_b` and `d → b`
+  not bad, the five-corner rim `d a c' b' c` rises from `d` to its only peak `b'`.
 * `isRupert_type08_slide_core`: the case analysis, given the Gale inputs of Lemma 7, of the
-  T4 "not bad" and of (H4) in Lemma R0 (weakly), and the far ends at the ties.
+  T4 "not bad" (also at the ties) and of (H4) in Lemma R0 (weakly), and the far ends at the
+  ties.
 * `isRupert_type08_slide_normalized`, `isRupert_type08_slide_gale`,
   `isRupert_type08_slide`, `isRupert_type08_slide_facets`: Theorem 10.1′ without planar
   equators (Lemma K is `Type08Flat.lean`).
@@ -212,82 +218,232 @@ theorem tie_beta_dets {a b b' c d : ℝ³} {α β : ℝ} (hb' : b' = d + α • 
   simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]
   constructor <;> ring
 
-theorem sub_one_pos_of_det {E X γ : ℝ} (hX : X = (γ - 1) * E) (h : 0 < X * E) : 1 < γ := by
-  rw [hX, mul_assoc] at h
-  have hE : 0 < E * E := by
-    rcases eq_or_ne E 0 with h0 | h0
-    · rw [h0, mul_zero, mul_zero] at h; exact absurd h (lt_irrefl _)
-    · exact mul_self_pos.mpr h0
-  linarith [(mul_pos_iff_of_pos_right hE).mp h]
+/-- A cyclic 5-sequence rising from `z₀` to its unique peak `z₃` (`z₀ < z₁ < z₂ < z₃`,
+`z₄ < z₃`, neighbours distinct) is strictly unimodal. -/
+theorem strictUnimodal_quint_of {z₀ z₁ z₂ z₃ z₄ : ℝ} (h01 : z₀ < z₁) (h12 : z₁ < z₂)
+    (h23 : z₂ < z₃) (h43 : z₄ < z₃) (h40 : z₄ ≠ z₀) : StrictUnimodal (quint z₀ z₁ z₂ z₃ z₄) := by
+  classical
+  obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
+  obtain ⟨s0, s1, s2, s3, s4⟩ := zmod5_sub_one
+  refine ⟨fun i => ?_, Finset.card_eq_one.mpr ⟨3, ?_⟩⟩
+  · rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
+      simp only [b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
+    exacts [h01.ne, h12.ne, h23.ne, h43.ne', h40]
+  · ext i
+    simp only [mem_filter, mem_univ, true_and, mem_singleton]
+    rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
+      simp only [b0, b1, b2, b3, b4, s0, s1, s2, s3, s4, quint_0, quint_1, quint_2, quint_3,
+        quint_4]
+    · exact ⟨fun h => absurd h.2 (not_lt.mpr h01.le), fun h => absurd h (by decide)⟩
+    · exact ⟨fun h => absurd h.2 (not_lt.mpr h12.le), fun h => absurd h (by decide)⟩
+    · exact ⟨fun h => absurd h.2 (not_lt.mpr h23.le), fun h => absurd h (by decide)⟩
+    · exact ⟨fun _ => trivial, fun _ => ⟨h23, h43⟩⟩
+    · exact ⟨fun h => absurd h.1 (not_lt.mpr h43.le), fun h => absurd h (by decide)⟩
 
-theorem sub_one_neg_of_det {E X γ : ℝ} (hX : X = (γ - 1) * E) (h : X * E < 0) : γ < 1 := by
-  rw [hX, mul_assoc] at h
-  have hE : 0 < E * E := by
-    rcases eq_or_ne E 0 with h0 | h0
-    · rw [h0, mul_zero, mul_zero] at h; exact absurd h (lt_irrefl _)
-    · exact mul_self_pos.mpr h0
-  have : γ - 1 < 0 := by
-    by_contra hc; push Not at hc; nlinarith
-  linarith
+/-- The same sequence negated (one valley at `z₃`) is strictly unimodal too: its peak is
+the larger of `−z₀`, `−z₄`. -/
+theorem strictUnimodal_quint_neg {z₀ z₁ z₂ z₃ z₄ : ℝ} (h01 : z₀ < z₁) (h12 : z₁ < z₂)
+    (h23 : z₂ < z₃) (h43 : z₄ < z₃) (h40 : z₄ ≠ z₀) :
+    StrictUnimodal (quint (-z₀) (-z₁) (-z₂) (-z₃) (-z₄)) := by
+  classical
+  obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
+  obtain ⟨s0, s1, s2, s3, s4⟩ := zmod5_sub_one
+  refine ⟨fun i => ?_, ?_⟩
+  · rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
+      simp only [b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, ne_eq,
+        neg_inj]
+    exacts [h01.ne, h12.ne, h23.ne, h43.ne', h40]
+  rcases lt_or_gt_of_ne h40 with h | h
+  · refine Finset.card_eq_one.mpr ⟨4, ?_⟩
+    ext i
+    simp only [mem_filter, mem_univ, true_and, mem_singleton]
+    rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
+      simp only [b0, b1, b2, b3, b4, s0, s1, s2, s3, s4, quint_0, quint_1, quint_2, quint_3,
+        quint_4, neg_lt_neg_iff]
+    · exact ⟨fun h' => absurd h'.1 (not_lt.mpr h.le), fun h' => absurd h' (by decide)⟩
+    · exact ⟨fun h' => absurd h'.1 (not_lt.mpr h01.le), fun h' => absurd h' (by decide)⟩
+    · exact ⟨fun h' => absurd h'.1 (not_lt.mpr h12.le), fun h' => absurd h' (by decide)⟩
+    · exact ⟨fun h' => absurd h'.1 (not_lt.mpr h23.le), fun h' => absurd h' (by decide)⟩
+    · exact ⟨fun _ => trivial, fun _ => ⟨h43, h⟩⟩
+  · refine Finset.card_eq_one.mpr ⟨0, ?_⟩
+    ext i
+    simp only [mem_filter, mem_univ, true_and, mem_singleton]
+    rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
+      simp only [b0, b1, b2, b3, b4, s0, s1, s2, s3, s4, quint_0, quint_1, quint_2, quint_3,
+        quint_4, neg_lt_neg_iff]
+    · exact ⟨fun _ => trivial, fun _ => ⟨h, h01⟩⟩
+    · exact ⟨fun h' => absurd h'.1 (not_lt.mpr h01.le), fun h' => absurd h' (by decide)⟩
+    · exact ⟨fun h' => absurd h'.1 (not_lt.mpr h12.le), fun h' => absurd h' (by decide)⟩
+    · exact ⟨fun h' => absurd h'.1 (not_lt.mpr h23.le), fun h' => absurd h' (by decide)⟩
+    · exact ⟨fun h' => absurd h'.2 (not_lt.mpr h.le), fun h' => absurd h' (by decide)⟩
+
+/-- **T4–`K_d` on the type-(d) surface, the depths** (see `t4d_five_strict`): `d < a < c'
+< b'` and `c < b'`. -/
+theorem t4d_five_depths {a b b' c c' d : ℝ³} {α α₁ β₁ : ℝ}
+    (hb' : b' = d + α • (a - d) + (c - d)) (hc' : c' = d + α₁ • (a - d) + β₁ • (b - d))
+    (hdb : d ≠ b) (hα : 0 < α) (hα₁ : 1 < α₁) (hβ₁ : 0 < β₁)
+    (hgood : ¬ max ⟪b, b - d⟫ ⟪b', b - d⟫ ≤ min ⟪c, b - d⟫ ⟪c', b - d⟫)
+    (hNb : ¬ NWS4 (quad ⟪b, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫))
+    (n0 : ⟪d, b - d⟫ ≠ ⟪a, b - d⟫) (n2 : ⟪c', b - d⟫ ≠ ⟪b', b - d⟫)
+    (n3 : ⟪b', b - d⟫ ≠ ⟪c, b - d⟫) :
+    ⟪d, b - d⟫ < ⟪a, b - d⟫ ∧ ⟪a, b - d⟫ < ⟪c', b - d⟫ ∧ ⟪c', b - d⟫ < ⟪b', b - d⟫ ∧
+      ⟪c, b - d⟫ < ⟪b', b - d⟫ := by
+  have hB : 0 < ⟪b - d, b - d⟫ := real_inner_self_pos.mpr (sub_ne_zero.mpr (Ne.symm hdb))
+  have eb' : ⟪b', b - d⟫ - ⟪c, b - d⟫ = α * (⟪a, b - d⟫ - ⟪d, b - d⟫) := by
+    rw [hb']; simp only [inner_add_left, inner_sub_left, real_inner_smul_left]; ring
+  have ec' : ⟪c', b - d⟫ - ⟪d, b - d⟫ =
+      α₁ * (⟪a, b - d⟫ - ⟪d, b - d⟫) + β₁ * ⟪b - d, b - d⟫ := by
+    rw [hc']; simp only [inner_add_left, inner_sub_left, real_inner_smul_left]; ring
+  simp only [NWS4, quad_0, quad_1, quad_2, quad_3, not_and_or, not_or, not_lt] at hNb
+  rcases hNb with ⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4⟩
+  · -- the weak saddle `min(z_b, z_{b'}) ≥ max(z_c, z_{c'})` (Lemma 9.3: not bad)
+    have hda : ⟪d, b - d⟫ < ⟪a, b - d⟫ := by
+      rcases lt_or_gt_of_ne n0 with h | h
+      · exact h
+      · nlinarith
+    have hac' : ⟪a, b - d⟫ < ⟪c', b - d⟫ := by nlinarith [mul_pos hβ₁ hB]
+    exact ⟨hda, hac', lt_of_le_of_ne h3 n2, lt_of_le_of_ne h4 (Ne.symm n3)⟩
+  · exact absurd (max_le (le_min h2 h1) (le_min h4 h3)) hgood
+
+/-- **T4–`K_d` on the type-(d) surface (A.10's remark: `R_d` is empty for T4–`K_2`).**  In the frame `d; a, c, b` with `β = 1` (`b' = d + α (a − d) + (c − d)`: the far
+edge `g = b'c` of `K_d` is parallel to `[d, a] = [v, m]`, hence to the realizing face
+`Q_ab`), `α > 0`, `α₁ > 1`, `β₁ > 0`: if the edge `d → b` is not bad and `K_b`'s rim
+`b c' b' c` has a weak saddle, then (Lemma 9.3) `min(z_b, z_{b'}) ≥ max(z_c, z_{c'})`, so
+`z_{b'} − z_c = α (z_a − z_d) ≥ 0`, and the five-corner rim `d a c' b' c` of Lemma H rises
+from `d` through `a` and `c'` to its only peak `b'`.  With no tie between neighbours it is
+strictly unimodal: never two-peaked. -/
+theorem t4d_five_strict {a b b' c c' d : ℝ³} {α α₁ β₁ : ℝ}
+    (hb' : b' = d + α • (a - d) + (c - d)) (hc' : c' = d + α₁ • (a - d) + β₁ • (b - d))
+    (hdb : d ≠ b) (hα : 0 < α) (hα₁ : 1 < α₁) (hβ₁ : 0 < β₁)
+    (hgood : ¬ max ⟪b, b - d⟫ ⟪b', b - d⟫ ≤ min ⟪c, b - d⟫ ⟪c', b - d⟫)
+    (hNb : ¬ NWS4 (quad ⟪b, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫))
+    (hne : ∀ i, ⟪quint d a c' b' c i, b - d⟫ ≠ ⟪quint d a c' b' c (i + 1), b - d⟫) :
+    StrictUnimodal (fun i => ⟪quint d a c' b' c i, b - d⟫) := by
+  obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
+  have n0 := hne 0; have n2 := hne 2; have n3 := hne 3; have n4 := hne 4
+  simp only [b0, b2, b3, b4, quint_0, quint_2, quint_3, quint_4] at n0 n2 n3 n4
+  obtain ⟨h1, h2, h3, h4⟩ := t4d_five_depths hb' hc' hdb hα hα₁ hβ₁ hgood hNb n0 n2 n3
+  rw [quint_inner_eq]
+  exact strictUnimodal_quint_of h1 h2 h3 h4 n4
+
+/-- **`R_d` is empty for T4–`K_d`** (A.10, "T4–K_2"): in the T4 frame (`E ≠ 0`, `α > 0`,
+`α₁ > 1`, `β₁ > 0`), with the edge `d → b` not bad and a weak saddle of `K_b`, the
+five-corner rim `d a c' b' c` along `Q_bc` is never in `R_d` (`RdCond` for `v, m, f, g_f,
+g_v, w = d, a, c', b', c, b`): its first condition, `g = b'c` parallel to `Q_ab`, is
+`β = 1`, and then the rim is strictly unimodal (`t4d_five_strict`). -/
+theorem t4d_rd_empty {a b b' c c' d : ℝ³} {α β α₁ β₁ : ℝ}
+    (hb' : b' = d + α • (a - d) + β • (c - d)) (hc' : c' = d + α₁ • (a - d) + β₁ • (b - d))
+    (hdb : d ≠ b) (hE : det3 (a - d) (c - d) (b - d) ≠ 0)
+    (hα : 0 < α) (hα₁ : 1 < α₁) (hβ₁ : 0 < β₁)
+    (hgood : ¬ max ⟪b, b - d⟫ ⟪b', b - d⟫ ≤ min ⟪c, b - d⟫ ⟪c', b - d⟫)
+    (hNb : ¬ NWS4 (quad ⟪b, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫)) :
+    ¬ RdCond d a c' b' c b := by
+  rintro ⟨hpar, -, -, hinj, h5⟩
+  have hβ : β = 1 := by
+    have e : det3 (d - b) (c' - d) (b' - c) = -(α₁ * (β - 1)) * det3 (a - d) (c - d) (b - d) := by
+      rw [hb', hc']; simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply,
+        smul_eq_mul]; ring
+    rw [e] at hpar
+    have := (mul_eq_zero.mp hpar).resolve_right hE
+    have h2 : α₁ * (β - 1) = 0 := by linarith
+    have := (mul_eq_zero.mp h2).resolve_left (by linarith)
+    linarith
+  rw [hβ, one_smul] at hb'
+  obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
+  have key : ∀ i : ZMod 5, i ≠ i + 1 := by decide
+  have hne : ∀ i, ⟪quint d a c' b' c i, b - d⟫ ≠ ⟪quint d a c' b' c (i + 1), b - d⟫ := by
+    intro i h
+    apply key i (hinj _)
+    simp only [← neg_sub b d, inner_neg_right, h]
+  have n0 := hne 0; have n2 := hne 2; have n3 := hne 3; have n4 := hne 4
+  simp only [b0, b2, b3, b4, quint_0, quint_2, quint_3, quint_4] at n0 n2 n3 n4
+  obtain ⟨h1, h2, h3, h4⟩ := t4d_five_depths hb' hc' hdb hα hα₁ hβ₁ hgood hNb n0 n2 n3
+  apply h5
+  have e : (fun i => ⟪quint d a c' b' c i, d - b⟫) =
+      quint (-⟪d, b - d⟫) (-⟪a, b - d⟫) (-⟪c', b - d⟫) (-⟪b', b - d⟫) (-⟪c, b - d⟫) := by
+    funext i
+    rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
+      simp only [quint_0, quint_1, quint_2, quint_3, quint_4, ← neg_sub b d, inner_neg_right]
+  rw [e]
+  exact strictUnimodal_quint_neg h1 h2 h3 h4 n4
+
+/-- **`slideT4d`'s type-(d) alternative gives Lemma H's.**  On the type-(d) surface of
+`K_d` (`det3 (d − b) (c' − d) (b' − c) = 0`: the far edge `b'c` parallel to `Q_ab`), with a
+weak saddle of `K_b` and no tie between neighbours of the five-corner rim, that rim is
+strictly unimodal (`R_d` is empty there, `t4d_rd_empty`), so Lemma H's alternative of
+`slideT4d` holds. -/
+theorem t4d_slide_of_par {a b b' c c' d : ℝ³} {α β α₁ β₁ : ℝ}
+    (hb' : b' = d + α • (a - d) + β • (c - d)) (hc' : c' = d + α₁ • (a - d) + β₁ • (b - d))
+    (hdb : d ≠ b) (hE : det3 (a - d) (c - d) (b - d) ≠ 0)
+    (hα : 0 < α) (hα₁ : 1 < α₁) (hβ₁ : 0 < β₁)
+    (hgood : ¬ max ⟪b, b - d⟫ ⟪b', b - d⟫ ≤ min ⟪c, b - d⟫ ⟪c', b - d⟫)
+    (hsd : NoBadNormal (quad d c' b' c) (b - d) (a - d) ∨
+      ((UniOrSep (quint d a c' b' c) (b - d) ∨
+          (det3 (d - b) (c' - d) (b' - c) = 0 ∧
+            ¬ NWS4 (quad ⟪b, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫) ∧
+            ∀ i, ⟪quint d a c' b' c i, b - d⟫ ≠ ⟪quint d a c' b' c (i + 1), b - d⟫)) ∧
+        NoBadNormal (quint d a c' b' c) (b - d) (c - d))) :
+    NoBadNormal (quad d c' b' c) (b - d) (a - d) ∨
+      (UniOrSep (quint d a c' b' c) (b - d) ∧
+        NoBadNormal (quint d a c' b' c) (b - d) (c - d)) := by
+  rcases hsd with hsd | ⟨hu | ⟨hpar, hNb, hne⟩, hs5⟩
+  · exact Or.inl hsd
+  · exact Or.inr ⟨hu, hs5⟩
+  · refine Or.inr ⟨Or.inl ?_, hs5⟩
+    have hβ : β = 1 := by
+      have e : det3 (d - b) (c' - d) (b' - c) =
+          -(α₁ * (β - 1)) * det3 (a - d) (c - d) (b - d) := by
+        rw [hb', hc']; simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply,
+          smul_eq_mul]; ring
+      rw [e] at hpar
+      have := (mul_eq_zero.mp hpar).resolve_right hE
+      have h2 : α₁ * (β - 1) = 0 := by linarith
+      have := (mul_eq_zero.mp h2).resolve_left (by linarith)
+      linarith
+    rw [hβ, one_smul] at hb'
+    exact t4d_five_strict hb' hc' hdb hα hα₁ hβ₁ hgood hNb hne
 
 /-- **The genericity of Theorem 10.1′ (Lean form) in one labelling.**  What the proof
 uses at the views along `d b` and `a' c` when `(a, b, c)` is the labelling of Lemma 6
 (depths `z = ⟪·, b − d⟫`, `E = det3 (a − d) (c − d) (b − d)`):
 * `tieTT'`: not both far-end ties `T` (`a' c ∥ d b`) and `T'` (`a c' ∥ d b`)
   (codimension 2);
-* `routeT`, `routeT'` (Lemma X): at `T` one of the routes R1 (`K_b` has no weak saddle,
-  slide along `Q_bc`), R2′ (`K_d` has none and `a'` is hidden, `β > 1`, slide along
-  `Q_ab`), R2″ (the rim `d a c' b' a'` along `Q_bc`), R2′ with `a'` poking out (`β < 1`,
-  the rim `d c' b' a' c` along `Q_ab`) applies; at `T'` one of R3 (`K_d`, `Q_ab`), R4′
-  (`K_b` and `a` hidden, `α > 1`, `Q_bc`), R4″ (`b a b' c a'`, `Q_ab`), R4′ with `a` poking
-  out (`α < 1`, `b c' a b' c`, `Q_bc`).  The addendum shows that one applies off
-  codimension 2; here the case analysis is the hypothesis;
+* `routeT`, `routeT'` (Lemma X, `Type08X.lean`): at `T` and `T'` the generic conditions
+  `RouteT`, `RouteT'` (the hidden vertex `a'` resp. `a` not on the side, no tie between
+  neighbours of the five-corner rims used, the slides' double-normal conditions, with the
+  persistent double normal of a poked-out short edge excluded through its feet,
+  `NoBadNormalR`).  Which route applies (R1, R2′, R2′ with `a'` poking out, R2″ at `T`; R3,
+  R4′, R4′ with `a` poking out, R4″ at `T'`) is derived from the depths
+  (`isRupert_routeT`, `isRupert_routeT'`), as in the addendum; all of it fails only in
+  codimension 2;
 * `touchN2`, `touchT4`, `levelQ`: no triple tie of the far ends with `y'` at the views
   along `a' c` (case N2) and `d b` (case T4), and `b − d` not normal to `Q_ac` (case Q),
   all codimension 2;
 * the slides of Lemma C (`NoBadNormal` along a face circle): for `K_c` (N2) along `Q_bc`,
   for `K_{a'}` (N2) along `Q_bc` or `a'b'c`, for `K_d` (Q) along `Q_ab` or `Q_bc`, for `K_b`
   (T4) along `Q_bc`, for `K_d` (T4) along `Q_ab`; for the three closings with one circle,
-  alternatively Lemma H's five-corner rim along the other face (strictly unimodal and
-  `NoBadNormal`), and for `K_c` (N2) and `K_b` (T4) also the two-peaked five-corner rim
-  of `R_d` (`RdCond`: the far edge parallel to the realizing face, a horizontal double
-  normal perpendicular to it crossing transversally, distinct depths, not unimodal;
-  Lemma R0 and Theorem R, `Type08R0.lean`).  The two-circle alternatives fail in
-  codimension 2; the one-circle ones on the class H1 of the addendum where also the
-  five-corner rim is neither strictly unimodal nor in `R_d` (type (c) of Lemma H with a
-  two-peaked rim, the depth-separated case not formalized; `R_d` for `K_d` (T4) is empty on
-  paper), and in codimension 2;
+  alternatively Lemma H's five-corner rim along the other face, strictly unimodal or with a
+  depth-separated pair (`UniOrSep`: Theorem 7.3 or, Lemma H (c), Theorem 8.10), with
+  `NoBadNormal`; for `K_c` (N2) and `K_b` (T4) also the two-peaked five-corner rim of `R_d`
+  (`RdCond`: the far edge parallel to the realizing face, a horizontal double normal
+  perpendicular to it crossing transversally, distinct depths, not unimodal; Lemma R0 and
+  Theorem R, `Type08R0.lean`); for `K_d` (T4), on its type-(d) surface (the far edge `b'c`
+  parallel to `Q_ab`) with a weak saddle of `K_b`, only no tie between neighbours of the
+  five-corner rim (`R_d` is empty there, `t4d_rd_empty`: the rim is strictly unimodal,
+  `t4d_five_strict`).  The two-circle alternatives fail in codimension 2; the one-circle ones
+  on the class H1 of the addendum only in codimension 2 too (type (c): the depth-separated
+  pair of Lemma H (c); type (d): unimodal, `R_d`, or for `K_d` (T4) never two-peaked);
 * `flatN2`, `flatT4` (Lemma K): if the equator `b c b' c'` of `A` is planar, no
   quadruple tie `z b = z b'`, `z c = z c'` at the views along `a' c` and `d b`. -/
 structure Type08Gen (a a' b b' c c' d : ℝ³) : Prop where
   tieTT' : ¬ ((∃ r : ℝ, c - a' = r • (b - d)) ∧ ∃ r : ℝ, c' - a = r • (b - d))
-  routeT : (∃ r : ℝ, c - a' = r • (b - d)) →
-    (NWS4 (quad ⟪b, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫) ∧
-      NoBadNormal (quad b c' b' c) (b - d) (c - d)) ∨
-    (NWS4 (quad ⟪d, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫) ∧
-      0 < det3 (a - d) (b' - c) (b - d) * det3 (a - d) (c - d) (b - d) ∧
-      NoBadNormal (quad d c' b' c) (b - d) (a - d)) ∨
-    (StrictUnimodal (fun i => ⟪quint d a c' b' a' i, b - d⟫) ∧
-      NoBadNormal (quint d a c' b' a') (b - d) (c - d)) ∨
-    (StrictUnimodal (fun i => ⟪quint d c' b' a' c i, b - d⟫) ∧
-      det3 (a - d) (b' - c) (b - d) * det3 (a - d) (c - d) (b - d) < 0 ∧
-      NoBadNormal (quint d c' b' a' c) (b - d) (a - d))
-  routeT' : (∃ r : ℝ, c' - a = r • (b - d)) →
-    (NWS4 (quad ⟪d, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫) ∧
-      NoBadNormal (quad d c' b' c) (b - d) (a - d)) ∨
-    (NWS4 (quad ⟪b, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫) ∧
-      0 < det3 (b' - a) (c - d) (b - d) * det3 (a - d) (c - d) (b - d) ∧
-      NoBadNormal (quad b c' b' c) (b - d) (c - d)) ∨
-    (StrictUnimodal (fun i => ⟪quint b a b' c a' i, b - d⟫) ∧
-      NoBadNormal (quint b a b' c a') (b - d) (a - d)) ∨
-    (StrictUnimodal (fun i => ⟪quint b c' a b' c i, b - d⟫) ∧
-      det3 (b' - a) (c - d) (b - d) * det3 (a - d) (c - d) (b - d) < 0 ∧
-      NoBadNormal (quint b c' a b' c) (b - d) (c - d))
+  routeT : (∃ r : ℝ, c - a' = r • (b - d)) → RouteT a a' b b' c c' d
+  routeT' : (∃ r : ℝ, c' - a = r • (b - d)) → RouteT' a a' b b' c c' d
   touchN2 : ¬ (⟪b, c - a'⟫ = ⟪c', c - a'⟫ ∧ ⟪b', c - a'⟫ = ⟪c', c - a'⟫)
   touchT4 : ¬ (⟪c, b - d⟫ = ⟪b', b - d⟫ ∧ ⟪c', b - d⟫ = ⟪b', b - d⟫)
   levelQ : ⟪a - d, b - d⟫ ≠ 0 ∨ ⟪c - d, b - d⟫ ≠ 0
   slideN2c : NoBadNormal (quad c b c' b') (c - a') (b - c) ∨
-    (StrictUnimodal (fun i => ⟪quint c d b c' b' i, c - a'⟫) ∧
+    (UniOrSep (quint c d b c' b') (c - a') ∧
       NoBadNormal (quint c d b c' b') (c - a') (b' - c)) ∨
     RdCond c d b c' b' a'
   slideN2a' : NoBadNormal (quad a' b c' b') (c - a') (b - a') ∨
@@ -295,11 +451,14 @@ structure Type08Gen (a a' b b' c c' d : ℝ³) : Prop where
   slideQ : NoBadNormal (quad d a b' c) (b - d) (a - d) ∨
     NoBadNormal (quad d a b' c) (b - d) (c - d)
   slideT4b : NoBadNormal (quad b c' b' c) (b - d) (c - d) ∨
-    (StrictUnimodal (fun i => ⟪quint b c' b' c a' i, b - d⟫) ∧
+    (UniOrSep (quint b c' b' c a') (b - d) ∧
       NoBadNormal (quint b c' b' c a') (b - d) (a - d)) ∨
     RdCond b a' c b' c' d
   slideT4d : NoBadNormal (quad d c' b' c) (b - d) (a - d) ∨
-    (StrictUnimodal (fun i => ⟪quint d a c' b' c i, b - d⟫) ∧
+    ((UniOrSep (quint d a c' b' c) (b - d) ∨
+        (det3 (d - b) (c' - d) (b' - c) = 0 ∧
+          ¬ NWS4 (quad ⟪b, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫) ∧
+          ∀ i, ⟪quint d a c' b' c i, b - d⟫ ≠ ⟪quint d a c' b' c (i + 1), b - d⟫)) ∧
       NoBadNormal (quint d a c' b' c) (b - d) (c - d))
   flatN2 : det3 (c - b) (b' - b) (c' - b) = 0 →
     ¬ (⟪b, c - a'⟫ = ⟪b', c - a'⟫ ∧ ⟪c, c - a'⟫ = ⟪c', c - a'⟫)
@@ -315,9 +474,9 @@ def Type08GenAll (a a' b b' c c' d : ℝ³) : Prop :=
 10.1 takes from the Gale diagram (in the labelling of Lemma 6): in case N2 (the far end
 of `Q_bc` along `d b` is `a'`) the edge `a' → c` of `O` is a quad edge (`a` hidden) that
 is not bad (Lemma 7), and in case T4 (far ends `c'`, `c`) the edge `d → b` is not bad
-(Lemmas 9.7, 4, 3), and the sides of (H4) in Lemma R0 (weakly: `b'`, `a'` on one side of
-the plane `c b c'`; `a'`, `c'` on opposite sides of the plane `b c b'`), a type-08 point set
-satisfying `Type08Gen` is Rupert. -/
+(Lemmas 9.7, 4, 3), as also at the ties `T`, `T'` (Lemma X), and the sides of (H4) in
+Lemma R0 (weakly: `b'`, `a'` on one side of the plane `c b c'`; `a'`, `c'` on opposite sides
+of the plane `b c b'`), a type-08 point set satisfying `Type08Gen` is Rupert. -/
 theorem isRupert_type08_slide_core {a a' b b' c c' d : ℝ³}
     (F : OctFacets a a' b b' c c') (hd : IsCap F d)
     (hN2 : F.abc'.f a' < F.abc'.f c → F.ab'c'.f a' < F.ab'c'.f c ∧
@@ -326,6 +485,8 @@ theorem isRupert_type08_slide_core {a a' b b' c c' d : ℝ³}
       ¬ max ⟪b, b - d⟫ ⟪b', b - d⟫ ≤ min ⟪c, b - d⟫ ⟪c', b - d⟫)
     (hT_far : F.abc'.f a' = F.abc'.f c → F.a'bc.f c' < F.a'bc.f a)
     (hT'_far : F.a'bc.f c' = F.a'bc.f a → F.abc'.f a' ≠ F.abc'.f c → F.abc'.f c < F.abc'.f a')
+    (hTgood : F.abc'.f a' = F.abc'.f c ∨ F.a'bc.f c' = F.a'bc.f a →
+      ¬ max ⟪b, b - d⟫ ⟪b', b - d⟫ ≤ min ⟪c, b - d⟫ ⟪c', b - d⟫)
     (hsideN2 : 0 ≤ det3 (b - c) (c' - c) (b' - c) * det3 (b - c) (c' - c) (a' - c))
     (hsideT4 : det3 (c - b) (b' - b) (a' - b) * det3 (c - b) (b' - b) (c' - b) ≤ 0)
     (hgen : Type08Gen a a' b b' c c' d) :
@@ -355,7 +516,6 @@ theorem isRupert_type08_slide_core {a a' b b' c c' d : ℝ³}
       a' = d + (F.ab'c.f a' / F.ab'c.f b) • (b - d) + (F.abc'.f a' / F.abc'.f c) • (c - d) :=
     hd.perm₁₂.Qac_coords'
   have hE := hd.det_Qac_ne
-  obtain ⟨B1, B2⟩ := tie_beta_dets (a := a) (b := b) (d := d) hb'
   by_cases htie₁ : F.abc'.f a' = F.abc'.f c
   · -- the tie `T` (Lemma X): `β₂ = 1`, and the far end of `Q_ab` is `c'`
     have hfc' := hT_far htie₁
@@ -364,15 +524,8 @@ theorem isRupert_type08_slide_core {a a' b b' c c' d : ℝ³}
     have ha'1 := ha'
     rw [hβ₂eq, one_smul] at ha'1
     have hκ := t4_kappa_pos hd hb' hc' ha' hα hβ₁ hα₂ hβ₂eq.le
-    rcases hgen.routeT (hd.tieT_geom htie₁) with ⟨hN, hs⟩ | ⟨hN', hβ1, hs⟩ | ⟨hu5, hs5⟩ |
-      ⟨hu5, hβ1, hs5⟩
-    · exact isRupert_kb_four hb' hc' ha' hnd7 hE hα hβ hαβ hα₁1.le
-        (fun h => absurd h hα₁1.ne') hβ₁ hα₂ hβ₂ hβ₂eq.le hαβ₂ hκ hN hs
-    · exact isRupert_kd_four hb' hc' ha' hnd7 hE hα hβ hα₁1.le hβ₁ hα₂ hβ₂ hβ₂eq.le
-        (fun _ => sub_one_pos_of_det B1 hβ1) hκ hN' hs
-    · exact isRupert_r2pp hb' hc' ha'1 hnd7 hE hα hβ hαβ hα₁1 hβ₁ hα₂ hκ hu5 hs5
-    · exact isRupert_r2p hb' hc' ha'1 hnd7 hE hα hβ (sub_one_neg_of_det B1 hβ1) hα₁1.le hβ₁ hα₂
-        hκ hu5 hs5
+    exact isRupert_routeT hb' hc' ha'1 hnd7 hE hα hβ hαβ hα₁1 hβ₁ hα₂ hκ (hTgood (Or.inl htie₁))
+      hgen.touchT4 (hgen.routeT (hd.tieT_geom htie₁))
   by_cases htie₂ : F.a'bc.f c' = F.a'bc.f a
   · -- the tie `T'` (Lemma X): `α₁ = 1`, and the far end of `Q_bc` is `c`
     have hfc := hT'_far htie₂ htie₁
@@ -380,16 +533,8 @@ theorem isRupert_type08_slide_core {a a' b b' c c' d : ℝ³}
     have hα₁eq : F.a'bc.f c' / F.a'bc.f a = 1 := by rw [htie₂, div_self hFa.ne]
     have hc'1 := hc'
     rw [hα₁eq, one_smul] at hc'1
-    have hκ := t4_kappa_pos hd hb' hc' ha' hα hβ₁ hα₂ hβ₂1.le
-    rcases hgen.routeT' (hd.tieT'_geom htie₂) with ⟨hN', hs⟩ | ⟨hN, hα1, hs⟩ | ⟨hu5, hs5⟩ |
-      ⟨hu5, hα1, hs5⟩
-    · exact isRupert_kd_four hb' hc' ha' hnd7 hE hα hβ hα₁eq.symm.le hβ₁ hα₂ hβ₂ hβ₂1.le
-        (fun h => absurd h hβ₂1.ne) hκ hN' hs
-    · exact isRupert_kb_four hb' hc' ha' hnd7 hE hα hβ hαβ hα₁eq.symm.le
-        (fun _ => sub_one_pos_of_det B2 hα1) hβ₁ hα₂ hβ₂ hβ₂1.le hαβ₂ hκ hN hs
-    · exact isRupert_r4pp hb' hc'1 ha' hnd7 hE hα hβ hαβ hβ₁ hβ₂ hβ₂1 hαβ₂ hu5 hs5
-    · exact isRupert_r4p hb' hc'1 ha' hnd7 hE hα (sub_one_neg_of_det B2 hα1) hβ hαβ hβ₁ hα₂ hβ₂
-        hβ₂1 hαβ₂ hu5 hs5
+    exact isRupert_routeT' hb' hc'1 ha' hnd7 hE hα hβ hαβ hβ₁ hα₂ hβ₂ hβ₂1 hαβ₂
+      (hTgood (Or.inr htie₂)) hgen.touchT4 (hgen.routeT' (hd.tieT'_geom htie₂))
   rcases lt_or_gt_of_ne htie₁ with hfar | hfc
   · -- case N2: the quad edge `a' → c` of `O`, with the cap `d` a middle of `Q_bc`
     obtain ⟨hq₂, hgood⟩ := hN2 hfar
@@ -429,22 +574,23 @@ theorem isRupert_type08_slide_core {a a' b b' c c' d : ℝ³}
       have hα₁1 : 1 < F.a'bc.f c' / F.a'bc.f a := (one_lt_div_of_neg hFa).mpr hfc'
       have hκ := t4_kappa_pos hd hb' hc' ha' hα hβ₁ hα₂ hβ₂1.le
       have hgood := hT4 hfc hfc'
+      have hsd := t4d_slide_of_par hb' hc' hdb hd.det_Qac_ne hα hα₁1 hβ₁ hgood hgen.slideT4d
       rcases hgen.slideT4b with hs | hs | hR
       · exact isRupert_t4_slide hb' hc' ha' hnd7 hd.det_Qac_ne hα hβ hαβ hα₁1 hβ₁ hα₂ hβ₂ hβ₂1
-          hαβ₂ hκ hgood hgen.touchT4 (Or.inl hs) hgen.slideT4d
+          hαβ₂ hκ hgood hgen.touchT4 (Or.inl hs) hsd
       · exact isRupert_t4_slide hb' hc' ha' hnd7 hd.det_Qac_ne hα hβ hαβ hα₁1 hβ₁ hα₂ hβ₂ hβ₂1
-          hαβ₂ hκ hgood hgen.touchT4 (Or.inr hs) hgen.slideT4d
+          hαβ₂ hκ hgood hgen.touchT4 (Or.inr hs) hsd
       · -- `R_d` (A.10): if `K_d` has no weak saddle, slide it; otherwise Lemma R0 and the
         -- two-peaked five-corner rim along `Q_ab`
         by_cases hNd : NWS4 (quad ⟪d, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫)
-        · rcases hgen.slideT4d with hs | ⟨hu5, hs5⟩
+        · rcases hsd with hs | ⟨hu5, hs5⟩
           · exact isRupert_t4_sel hb' hc' ha' hnd7 hd.det_Qac_ne hα hβ hαβ hα₁1 hβ₁ hα₂ hβ₂
               hβ₂1 hαβ₂ hκ (Or.inr ⟨hNd, hs⟩)
           · exact isRupert_t4d_five hb' hc' ha' hnd7 hd.det_Qac_ne hα hβ hαβ hα₁1 hβ₁ hα₂ hβ₂
               hβ₂1 hκ hu5 hs5
         have hNb : NWS4 (quad ⟪b, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫) := by
           by_contra hN
-          exact hNd (t4_closing hb' hc' ha' hdb hd.det_Qac_ne hα hβ hα₁1 hβ₁ hκ hgood
+          exact hNd (t4_closing hb' hc' ha' hdb hd.det_Qac_ne hα hβ (by linarith) hβ₁ hκ hgood
             hgen.touchT4 hN)
         exact isRupert_t4b_rdCond hb' hc' ha' hdb hd.det_Qac_ne hα hβ hα₁1 hβ₁ hβ₂ hβ₂1 hαβ₂ hκ
           ⟨F.a'b'c.f, F.a'b'c.N, F.a'b'c.hN, F.a'b'c.hP, F.a'b'c.hR, F.a'b'c.hQ,
@@ -482,7 +628,8 @@ theorem isRupert_type08_slide_normalized {a a' b b' c c' d : ℝ³} (h : IsOctah
   have hsides := type08_rd_sides h G hκa ha'b ha'b' hac hac'
   exact isRupert_type08_slide_core F hd (fun hfar => type08_lemma7 F G hκa hκb hκc hU hfar)
     (fun _ _ => type08_t4_not_bad h F hd G hκa hκb hκc hU hd.t4_opp)
-    (type08_T_far F G hκb hκc hU) (type08_T'_far F G hκb hκc hU) hsides.1.le hsides.2.le hgen
+    (type08_T_far F G hκb hκc hU) (type08_T'_far F G hκb hκc hU)
+    (fun _ => type08_t4_not_bad h F hd G hκa hκb hκc hU hd.t4_opp) hsides.1.le hsides.2.le hgen
 
 /-- **Theorem 10.1′ (type 08), Gale form**: as `isRupert_type08_slide`, with `κ ≠ 0` for the
 three pairs of `O` in place of the planar-equator determinants. -/

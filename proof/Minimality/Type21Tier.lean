@@ -30,7 +30,7 @@ Gale data `(l, m)` of the octahedron.
   (`isRupert_quad_edge_lift`) gives a passage (`isRupert_type21_H`; for `O2` at `1 → 4`,
   `1 → 0`: `isRupert_type21_H2`).
 
-Special positions: those of the lifts (`GenPos`, `NoHDNEdges`), as in §9.
+Special positions: those of the lifts (`GenPosTie`, `NoHDNEdges`), as in §9.
 -/
 
 namespace Minimality
@@ -103,10 +103,10 @@ def Type21Q (l m : ℝ³ → ℝ) (a a' b b' c c' : ℝ³) : Prop :=
 
 /-- **Tier Q for `O = K − 2`.**  If one of the K-quad edges of `O` is an E-good quad edge,
 then it is a quad edge that is not bad (Lemma 16.1), Lemma 3 of §9 lifts Lemma 9.3 to `K`,
-and `K` is Rupert (off `GenPos` and horizontal double normals at the edge views). -/
+and `K` is Rupert (off `GenPosTie` and horizontal double normals at the edge views). -/
 theorem isRupert_type21_Q {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c')
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hQ : Type21Q G.l G.m a a' b b' c c') :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
@@ -132,7 +132,7 @@ theorem isRupert_type21_Q {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c 
 `50, 43, 52, 32`): Gale data `G2` of `O2` with an E-good K-quad edge give a passage of `K`. -/
 theorem isRupert_type21_Q2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G2 : GaleData b' b a' a c d)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hQ : Type21Q G2.l G2.m b' b a' a c d) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
@@ -153,7 +153,7 @@ image is strictly inside the shadow (`quadHidden_of_beneath`).  Then `K`'s test 
 is the octahedron's, which is not bad (Lemma 16.1), and `K` is Rupert. -/
 theorem isRupert_type21_H {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c')
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hH : Type21H G.l G.m a a' b b' c c') :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
@@ -172,10 +172,9 @@ theorem isRupert_type21_H {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c 
     have e : insert d ({c, c', a', a, b, b'} : Finset ℝ³) = insert d {a, a', b, b', c, c'} := by
       ext z; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
     rw [← e] at hgen hnd ⊢
-    exact isRupert_quad_edge_lift F' h1 h2 h3 (Or.inr hhid)
+    exact isRupert_quad_edge_lift_tie F' h1 h2 h3 (Or.inr hhid)
       ⟨hdc, hdc', hda', hda, hdb, hdb'⟩
-      (genPos_hinj hgen (by simp) (by simp) (by simp) (by simp) (by simp) (Ne.symm ha'c)
-        ⟨hac, haa', hbc, Ne.symm ha'b, hb'c, Ne.symm ha'b'⟩)
+      (hgen.touch_oct F')
       (noHDN_pair hnd (by simp) (by simp) (Ne.symm ha'c))
   · -- `1 → 5`: the octahedron `(c, c', b', b, a, a')`
     set F' := F.perm₁₂.perm₂₃.perm₁₂.swap₂
@@ -185,17 +184,16 @@ theorem isRupert_type21_H {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c 
     have e : insert d ({c, c', b', b, a, a'} : Finset ℝ³) = insert d {a, a', b, b', c, c'} := by
       ext z; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
     rw [← e] at hgen hnd ⊢
-    exact isRupert_quad_edge_lift F' h1 h2 h3 (Or.inr hhid)
+    exact isRupert_quad_edge_lift_tie F' h1 h2 h3 (Or.inr hhid)
       ⟨hdc, hdc', hdb', hdb, hda, hda'⟩
-      (genPos_hinj hgen (by simp) (by simp) (by simp) (by simp) (by simp) (Ne.symm hb'c)
-        ⟨hbc, hbb', hac, hab', ha'c, ha'b'⟩)
+      (hgen.touch_oct F')
       (noHDN_pair hnd (by simp) (by simp) (Ne.symm hb'c))
 
 /-- **Tier H for `O2 = K − 6`** (`1 → 4` or `1 → 0`, the images of `1 → 3`, `1 → 5` under
 `σ2`): the cap `6` is hidden, and `K` is Rupert. -/
 theorem isRupert_type21_H2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G2 : GaleData b' b a' a c d)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hH : Type21H G2.l G2.m b' b a' a c d) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by

@@ -56,7 +56,7 @@ theorem galeD_pair_ne_zero {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c
 /-- **The normal form `(+, −, +)`** (Theorems 16.18, 16.20, 16.23 with Lemma 16.24).  `K − 2`
 in the pattern `(+, −, +)` (`CrossNorm G` and `[4 5] > 0`).  Off the special positions — no
 segment of `K` parallel to a plane through three other points (`NoPlaneParallel`, which
-contains every tie of a Gale comparison used and `f ≠ 0`), `GenPos`, no horizontal double
+contains every tie of a Gale comparison used and `f ≠ 0`), `GenPosTie`, no horizontal double
 normal at the edge views (`NoHDNEdges`), `2` off the planes `013` and `145` (the planar
 equators of `K − 6`), and the special positions of `T1` and of the two vertex tests of F2 — `K`
 is Rupert: one of the tiers Q (of `K − 2` or `K − 6`), H, R, F1, F2 holds, or `K` is on the
@@ -66,7 +66,7 @@ theorem isRupert_type21_pattern {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c') (hN : CrossNorm G)
     (h45 : 0 < galeD G.l G.m b b')
     (hpp : NoPlaneParallel (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (h013 : det3 (a - a') (c - a') (d - a') ≠ 0) (h145 : det3 (b - b') (c - b') (d - b') ≠ 0)
     (hT1 : ∀ u : ℝ³, u ≠ 0 → ⟪F.abc.N, u⟫ = 0 → ⟪F.ab'c'.N, u⟫ = 0 →
@@ -304,7 +304,7 @@ def Type21OtherGen {a a' b b' c c' : ℝ³} (_F : OctFacets a a' b b' c c') (d :
 
 /-- **Theorem 16.26 (type 21).**  Let `K = O ∪ {2}` be of type 21 (`IsCap21`).  Off the special
 positions — `NoPlaneParallel` (every tie of a Gale comparison used, and `f ≠ 0` for `K − 2` and
-`K − 6`), `GenPos`, no horizontal double normal at the edge views (`NoHDNEdges`), the five planar
+`K − 6`), `GenPosTie`, no horizontal double normal at the edge views (`NoHDNEdges`), the five planar
 equators of `K − 2` and `K − 6` (`{4, 5, 1, 6}`, `{0, 3, 1, 6}`, `{0, 3, 4, 5}`, `{0, 3, 1, 2}`,
 `{4, 5, 1, 2}`), and, for each of the four labellings `id, σ1, σ2, σ2σ1`, the special positions
 of `T1` (`Type21CapGen`) and of F2 (`Type21OtherGen`) — `K` is Rupert: one of the tiers Q (of
@@ -319,7 +319,7 @@ cap-face class. -/
 theorem isRupert_type21_all {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d)
     (hpp : NoPlaneParallel (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hE : det3 (b' - b) (c - b) (c' - b) ≠ 0 ∧ det3 (a' - a) (c - a) (c' - a) ≠ 0 ∧
       det3 (a' - a) (b - a) (b' - a) ≠ 0 ∧ det3 (a - a') (c - a') (d - a') ≠ 0 ∧

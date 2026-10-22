@@ -566,12 +566,12 @@ theorem t4_claim {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ β₂ : ℝ
     (hb' : b' = d + α • (a - d) + β • (c - d)) (hc' : c' = d + α₁ • (a - d) + β₁ • (b - d))
     (ha' : a' = d + α₂ • (b - d) + β₂ • (c - d)) (hdb : d ≠ b)
     (hE : det3 (a - d) (c - d) (b - d) ≠ 0)
-    (hα : 0 < α) (hβ : 0 < β) (hα₁ : 1 < α₁) (hβ₁ : 0 < β₁) (hκ : 0 < α + α₁ * (β - 1)) :
+    (hα : 0 < α) (hβ : 0 < β) (hα₁ : 0 < α₁) (hβ₁ : 0 < β₁) (hκ : 0 < α + α₁ * (β - 1)) :
     ∃ A B C E : ℝ, 0 < A ∧ 0 < B ∧ 0 < C ∧ 0 < E ∧ A + B = C + E ∧
       A * ⟪d, b - d⟫ + B * ⟪b', b - d⟫ < C * ⟪c, b - d⟫ + E * ⟪c', b - d⟫ := by
   obtain ⟨K0, K1, K2, K3, K4, K5, K6, K7, K8, K9, K10, K11, K12, K13, K14, K15, K16, K17, K18,
     K19, K20, K21, K22, K23, K24, K25, K26, D3, D21, D2, D1⟩ := t4_slide_dets hb' hc' ha'
-  have hα₁p : 0 < α₁ := by linarith
+  have hα₁p : 0 < α₁ := hα₁
   have hκ' : 0 < α + β * α₁ - α₁ := by
     rw [show α + β * α₁ - α₁ = α + α₁ * (β - 1) by ring]; exact hκ
   have pβα₁ : 0 < β * α₁ := mul_pos hβ hα₁p
@@ -660,7 +660,7 @@ theorem isRupert_t4b_rdCond {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ 
     fun h => hNd (NWS4_quad_swap h)
   exact isRupert_t4b_rd hc' hα₁ hβ₁ (Ne.symm hdb)
     (rdRim_of_R0 hm hβ₂ hβ₂1 (by linarith) hoff horient hΦ hside' hNv hNw
-      (t4_claim hb' hc' ha' hdb hE hα hβ hα₁ hβ₁ hκ) hR)
+      (t4_claim hb' hc' ha' hdb hE hα hβ (by linarith) hβ₁ hκ) hR)
 
 /-! ### (H4) from the Gale diagram -/
 

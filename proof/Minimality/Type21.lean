@@ -24,8 +24,8 @@ Labels as in `Type21Lemmas.lean`: `a, a', b, b', c, c', d = 0, 3, 4, 5, 1, 6, 2`
   which the cap is hidden (`HiddenAt`, at `04`, `01`, `14`; at `04` this never happens,
   `IsCap21.not_hidden_04`), then `K` is Rupert (`Type21Gale`).  Lemma 3 (`Type21Lift.lean`) handles the K-quad edges, Lemma 2 (a)
   (`isRupert_type21_hidden`) the TT edges.  Special positions excluded: planar equators
-  (`κ ≠ 0`, inside `Type21Gale`), `GenPos` (distinct depths, no touching, no parallel
-  segments) and `NoHDNEdges`.  Coverage (that some admissible pair always qualifies) is
+  (`κ ≠ 0`, inside `Type21Gale`), `GenPosTie` (no parallel segments, at most one tie at each edge view:
+  no touching) and `NoHDNEdges`.  Coverage (that some admissible pair always qualifies) is
   open: about 11% of shapes fail the hypothesis.
 -/
 
@@ -246,7 +246,7 @@ def Type21Gale {a a' b b' c c' : ℝ³} (G : GaleData a a' b b' c c') (d : ℝ³
 /-- Lemma 2 (a) for a good quad edge of a relabelled octahedron. -/
 theorem isRupert_goodQuad_hidden {x x' y y' p p' m : ℝ³} {O : Finset ℝ³}
     (F : OctFacets x x' y y' p p') (hG : GoodQuad F) (hset : ({x, x', y, y', p, p'} : Finset ℝ³) = O)
-    (hH : HiddenAt O (y - x) m) (hmO : m ∉ O) (hgen : GenPos (insert m O))
+    (hH : HiddenAt O (y - x) m) (hmO : m ∉ O) (hgen : GenPosTie (insert m O))
     (hnd : NoHDNEdges (insert m O)) : IsRupert (insert m O) := by
   subst hset
   obtain ⟨h1, h2, h3⟩ := hG
@@ -262,7 +262,7 @@ theorem HiddenAt.rev {O : Finset ℝ³} {x y m : ℝ³} (h : HiddenAt O (y - x) 
 (K-quad edges, Lemma 3) or `{04, 35}` (the TT edge `04` with the cap hidden, Lemma 2 (a)). -/
 theorem isRupert_type21_WC {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c')
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hκa : galeD G.l G.m a a' ≠ 0) (hκb : galeD G.l G.m b b' ≠ 0) (hκc : galeD G.l G.m c c' ≠ 0)
     (hadm : GaleAdm G c c')
@@ -293,7 +293,7 @@ theorem isRupert_type21_WC {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c
 (Lemma 3 at `06`) or `{01, 36}` (the TT edge `01` with the cap hidden). -/
 theorem isRupert_type21_WB {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c')
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hκa : galeD G.l G.m a a' ≠ 0) (hκb : galeD G.l G.m b b' ≠ 0) (hκc : galeD G.l G.m c c' ≠ 0)
     (hadm : GaleAdm G b b')
@@ -328,7 +328,7 @@ theorem isRupert_type21_WB {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c
 (Lemma 3 at `46`) or `{14, 56}` (the TT edge `14` with the cap hidden). -/
 theorem isRupert_type21_WA {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c')
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hκa : galeD G.l G.m a a' ≠ 0) (hκb : galeD G.l G.m b b' ≠ 0) (hκc : galeD G.l G.m c c' ≠ 0)
     (hadm : GaleAdm G a a')
@@ -360,13 +360,13 @@ theorem isRupert_type21_WA {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c
         hH.rev hdO hgen hnd
 
 /-- **Theorem 5 of §9 for `K − 2`.**  Let `K = O6 ∪ {2}` be of type 21 (`IsCap21`), in
-general position (`GenPos`) without horizontal double normals at the views along its
+general position (`GenPosTie`) without horizontal double normals at the views along its
 segments (`NoHDNEdges`).  If the Gale data of `O6` satisfy the hypothesis of Theorem 5
 (`Type21Gale`), then `K` has an edge crossing whose reduced polygon is unimodal with strict
 depths, and `K` is Rupert. -/
 theorem isRupert_type21_gale {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c')
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hC : Type21Gale G d) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
@@ -378,7 +378,7 @@ theorem isRupert_type21_gale {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b'
 
 /-- **Theorem 5 of §9 (type 21, the proved part of the Gale route).**  Let `K` be of type 21:
 the octahedron `O6 = K − 2` (`F`, opposite pairs `(0, 3)`, `(4, 5)`, `(1, 6)`) with the cap
-`2` (`IsCap21`), in general position (`GenPos`) and without horizontal double normals at
+`2` (`IsCap21`), in general position (`GenPosTie`) and without horizontal double normals at
 the views along its segments (`NoHDNEdges`).  Suppose the Gale data of `K − 2`, or those of
 `K − 6` (labelled by `σ2` as `5, 4, 3, 0, 1, 2`, cap `6`), satisfy the hypothesis of
 Theorem 5 (`Type21Gale`: no planar equator, and an admissible `W` whose crossed pair
@@ -386,7 +386,7 @@ contains a K-quad edge, or a TT edge at which the cap is hidden).  Then `K` is R
 That the hypothesis always holds is not proved (about 89% of random shapes satisfy it). -/
 theorem isRupert_type21 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hC : (∃ G : GaleData a a' b b' c c', Type21Gale G d) ∨
       (∃ G : GaleData b' b a' a c d, Type21Gale G c')) :

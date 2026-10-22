@@ -17,7 +17,7 @@ Labels as in `Type21Lemmas.lean`: `a, a', b, b', c, c', d = 0, 3, 4, 5, 1, 6, 2`
   first cases of Lemma 3 below, through `isRupert_quad_edge_lift`.
 * **Lemma 3 of §9 (the quad edges always lift).**  For each of the eight directions of
   the K-quad edges `05, 34, 06, 46` of `O6`, a quad edge of `O6` that is not bad gives a
-  passage, off special positions (`GenPos`, `NoHDNEdges`):
+  passage, off special positions (`GenPosTie`, `NoHDNEdges`):
   - `0 → 5` (`isRupert_type21_05`): `3` hidden forces `β < 1`, so `2` is a middle of
     `0256` (Lemma 3 (a));
   - `5 → 0` (`isRupert_type21_50`): `4` hidden forces `β > 1`, so `2` is the far end and
@@ -66,7 +66,7 @@ theorem isRupert_type21_hidden {x x' y y' p p' m : ℝ³} (F : OctFacets x x' y 
     (hgood : ¬ max ⟪y, y - x⟫ ⟪y', y - x⟫ ≤ min ⟪p, y - x⟫ ⟪p', y - x⟫)
     (hH : HiddenAt {x, x', y, y', p, p'} (y - x) m)
     (hmO : m ≠ x ∧ m ≠ x' ∧ m ≠ y ∧ m ≠ y' ∧ m ≠ p ∧ m ≠ p')
-    (hgen : GenPos (insert m ({x, x', y, y', p, p'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert m ({x, x', y, y', p, p'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert m ({x, x', y, y', p, p'} : Finset ℝ³))) :
     IsRupert (insert m {x, x', y, y', p, p'}) := by
   have hnd' := F.nodup
@@ -74,9 +74,8 @@ theorem isRupert_type21_hidden {x x' y y' p p' m : ℝ³} (F : OctFacets x x' y 
     not_or, List.nodup_nil, and_true] at hnd'
   obtain ⟨⟨hxx', hxy, hxy', hxp, hxp'⟩, ⟨hx'y, hx'y', hx'p, hx'p'⟩, ⟨hyy', hyp, hyp'⟩,
     ⟨hy'p, hy'p'⟩, hpp', -⟩ := hnd'
-  exact isRupert_quad_edge_lift F hq₁ hq₂ hgood (Or.inr (quadHidden_of_hiddenAt F hq₁ hq₂ hH))
-    hmO (genPos_hinj hgen (by simp) (by simp) (by simp) (by simp) (by simp) hxy
-      ⟨Ne.symm hxy', Ne.symm hyy', Ne.symm hxp, Ne.symm hyp, Ne.symm hxp', Ne.symm hyp'⟩)
+  exact isRupert_quad_edge_lift_tie F hq₁ hq₂ hgood (Or.inr (quadHidden_of_hiddenAt F hq₁ hq₂ hH))
+    hmO (hgen.touch_oct F)
     (noHDN_pair hnd (by simp) (by simp) hxy)
 
 /-! ### Lemma 3: the quad edges `05` and `06` with the cap a middle -/
@@ -92,7 +91,7 @@ is Rupert. -/
 theorem isRupert_type21_05 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
     (hq₁ : F.a'bc.f a < F.a'bc.f b') (hq₂ : F.a'bc'.f a < F.a'bc'.f b')
     (hgood : ¬ max ⟪b', b' - a⟫ ⟪b, b' - a⟫ ≤ min ⟪c, b' - a⟫ ⟪c', b' - a⟫)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   have hnd' := F.nodup
@@ -110,10 +109,9 @@ theorem isRupert_type21_05 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
   have hmid : QuadMiddle a b' c c' d :=
     ⟨β, α + β - 1, hβ, hβ1, by linarith, by linarith, Or.inr (by rw [hco]; module)⟩
   rw [← (type21_set a a' b b' c c' d).1] at hgen hnd ⊢
-  exact isRupert_quad_edge_lift F.swap₂ hq₁ hq₂ hgood (Or.inl hmid)
+  exact isRupert_quad_edge_lift_tie F.swap₂ hq₁ hq₂ hgood (Or.inl hmid)
     ⟨hda, hda', hdb', hdb, hdc, hdc'⟩
-    (genPos_hinj hgen (by simp) (by simp) (by simp) (by simp) (by simp) hab'
-      ⟨Ne.symm hab, hbb', Ne.symm hac, Ne.symm hb'c, Ne.symm hac', Ne.symm hb'c'⟩)
+    (hgen.touch_oct F.swap₂)
     (noHDN_pair hnd (by simp) (by simp) hab')
 
 /-- **Lemma 3 of §9 at `0 → 6`.**  If `0 → 6` is a quad edge of `O6` (`3` hidden: the facet
@@ -122,7 +120,7 @@ inequalities at `134`, `135`) that is not bad, then `α < 1` (the inequality at 
 theorem isRupert_type21_06 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
     (hq₁ : F.a'bc.f a < F.a'bc.f c') (hq₂ : F.a'b'c.f a < F.a'b'c.f c')
     (hgood : ¬ max ⟪c', c' - a⟫ ⟪c, c' - a⟫ ≤ min ⟪b, c' - a⟫ ⟪b', c' - a⟫)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   have hnd' := F.nodup
@@ -141,10 +139,9 @@ theorem isRupert_type21_06 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
   have hmid : QuadMiddle a c' b b' d :=
     ⟨α, α + β - 1, hα, hα1, by linarith, by linarith, Or.inr (by rw [hco]; module)⟩
   rw [← (type21_set a a' b b' c c' d).2.2.1] at hgen hnd ⊢
-  exact isRupert_quad_edge_lift F.perm₂₃.swap₂ hq₁ hq₂ hgood (Or.inl hmid)
+  exact isRupert_quad_edge_lift_tie F.perm₂₃.swap₂ hq₁ hq₂ hgood (Or.inl hmid)
     ⟨hda, hda', hdc', hdc, hdb, hdb'⟩
-    (genPos_hinj hgen (by simp) (by simp) (by simp) (by simp) (by simp) hac'
-      ⟨Ne.symm hac, hcc', Ne.symm hab, hbc', Ne.symm hab', hb'c'⟩)
+    (hgen.touch_oct F.perm₂₃.swap₂)
     (noHDN_pair hnd (by simp) (by simp) hac')
 
 /-! ### Lemma 3 (c): `6 → 0` with the cap the far end; `K_6` is the face `2346` -/
@@ -156,14 +153,15 @@ theorem zmod4_one_sub_one : (1 : ZMod 4) - 1 = 0 := by decide
 inequalities at `134`, `135`) with `α > 1`: at the view along `06` the far end of `0256`
 is `2` and `5` is a middle.  Then `K_6 = {6, 1, 2, 3, 4}` has the rim `6, 4, 3, 2`, the
 face `2346` in its cyclic order (`1` is hidden: it is hidden in `O`, whose shadow
-`q, 4, 3, 5` lies in `q, 4, 3, 2` since `5` lies on `[q, 2]`), planar, so unimodal unless
-an edge of `2346` is level; with distinct depths and no horizontal double normal, `K` is
-Rupert.  This case does not use the goodness of the quad edge. -/
+`q, 4, 3, 5` lies in `q, 4, 3, 2` since `5` lies on `[q, 2]`), planar, so its diagonals are
+not weakly separated unless three of its corners are at one depth (`nws4_of_planar_quad_tie`),
+and the rim is robustly unimodal (Theorem 18.3); with `GenPosTie` and no horizontal double
+normal, `K` is Rupert.  This case does not use the goodness of the quad edge. -/
 theorem isRupert_type21_60_far (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
     (hq₁ : F.a'bc.f c' < F.a'bc.f a) (hq₂ : F.a'b'c.f c' < F.a'b'c.f a)
     {α β : ℝ} (hα : 0 < α) (hβ : 0 < β) (hco : d = a + α • (b' - a) + β • (c' - a))
     (hα1 : 1 < α)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   classical
@@ -239,10 +237,10 @@ theorem isRupert_type21_60_far (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
   have hαi : 0 < α⁻¹ := inv_pos.mpr hα
   have hαi1 : α⁻¹ < 1 := inv_lt_one_of_one_lt₀ hα1
   have hδ : 0 < 1 - α⁻¹ + β * α⁻¹ := by nlinarith [mul_pos hβ hαi]
-  -- distinct depths along `06`
-  have hdep : ∀ s t, s ∈ V → t ∈ V → s ≠ t → s ≠ a → t ≠ a → ⟪s, a - c'⟫ ≠ ⟪t, a - c'⟫ :=
-    fun s t hs ht hst hsa hta =>
-      hgen.inner_ne_of_ne hs ht (by simp [V]) (by simp [V]) hst (Ne.symm hac') (Or.inr ⟨hsa, hta⟩)
+  -- no three of `4, 6, 3` at one depth along `06` (`GenPosTie`)
+  have hnt : ¬ (⟪c', a - c'⟫ = ⟪b, a - c'⟫ ∧ ⟪b, a - c'⟫ = ⟪a', a - c'⟫) :=
+    hgen.noTriple (by simp [V]) (by simp [V]) (by simp [V]) (by simp [V]) (by simp [V])
+      (Ne.symm hac') (Ne.symm hbc') (Ne.symm ha'b) (Ne.symm ha'c')
   have mV : ∀ z, (z = d ∨ z = a' ∨ z = b ∨ z = c') → z ∈ V := by
     intro z hz; rcases hz with rfl | rfl | rfl | rfl <;> simp [V]
   have hnd6 : NoHDNAt (V.erase a) (a - c') := hnd c' (by simp [V]) a (by simp [V]) (Ne.symm hac')
@@ -254,7 +252,7 @@ theorem isRupert_type21_60_far (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
       · linarith
       · rfl
     rw [hσ1] at t1 t2 t3 t4
-    refine isRupert_of_edgeView V {b'} (a - c') hu (k := 4) (by norm_num) (quad b c' d a') 1 a (-1)
+    refine isRupert_of_edgeView_robust V {b'} (a - c') hu (k := 4) (by norm_num) (quad b c' d a') 1 a (-1)
       (by simp [V]) (by simp only [quad_1, neg_smul, one_smul, sub_neg_eq_add]; abel)
       (by norm_num) ?_ ?_ ?_ ?_ ?_ hnd6 ?_
     · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
@@ -293,16 +291,9 @@ theorem isRupert_type21_60_far (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
         · rw [det3_rev]; linarith
       · exact absurd h h1
     · rw [quad_inner]
-      refine isCyclicUnimodal_of_NWS4 (quad_injective
-        (hdep b c' (mV b (by simp)) (mV c' (by simp)) hbc' (Ne.symm hab) (Ne.symm hac'))
-        (hdep b d (mV b (by simp)) (mV d (by simp)) (Ne.symm hdb) (Ne.symm hab) hda)
-        (hdep b a' (mV b (by simp)) (mV a' (by simp)) (Ne.symm ha'b) (Ne.symm hab) (Ne.symm haa'))
-        (hdep c' d (mV c' (by simp)) (mV d (by simp)) (Ne.symm hdc') (Ne.symm hac') hda)
-        (hdep c' a' (mV c' (by simp)) (mV a' (by simp)) (Ne.symm ha'c') (Ne.symm hac')
-          (Ne.symm haa'))
-        (hdep d a' (mV d (by simp)) (mV a' (by simp)) hda' hda (Ne.symm haa'))) ?_
-      refine nws4_of_planar_quad hν hμ (by linarith) (by rw [hco2]; abel)
-        (hdep b c' (mV b (by simp)) (mV c' (by simp)) hbc' (Ne.symm hab) (Ne.symm hac'))
+      refine (nws4_of_planar_quad_tie hν hμ (by linarith) (by rw [hco2]; abel) ?_).isRobustUnimodal
+      rintro ⟨e1, e2⟩
+      exact hnt ⟨e1.symm, e2⟩
     · intro m hm
       rw [mem_singleton.mp hm, a1, zmod4_one_sub_one]
       simp only [quad_0, quad_1, quad_2]
@@ -315,7 +306,7 @@ theorem isRupert_type21_60_far (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
       · rfl
       · linarith
     rw [hσ1, one_mul] at t1 t2 t3 t4
-    refine isRupert_of_edgeView V {b'} (a - c') hu (k := 4) (by norm_num) (quad b a' d c') 3 a (-1)
+    refine isRupert_of_edgeView_robust V {b'} (a - c') hu (k := 4) (by norm_num) (quad b a' d c') 3 a (-1)
       (by simp [V]) (by simp only [quad_3, neg_smul, one_smul, sub_neg_eq_add]; abel)
       (by norm_num) ?_ ?_ ?_ ?_ ?_ hnd6 ?_
     · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
@@ -351,15 +342,9 @@ theorem isRupert_type21_60_far (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
         exacts [t1, t2, t3, t4]
       · exact absurd h h3
     · rw [quad_inner]
-      refine isCyclicUnimodal_of_NWS4 (quad_injective
-        (hdep b a' (mV b (by simp)) (mV a' (by simp)) (Ne.symm ha'b) (Ne.symm hab) (Ne.symm haa'))
-        (hdep b d (mV b (by simp)) (mV d (by simp)) (Ne.symm hdb) (Ne.symm hab) hda)
-        (hdep b c' (mV b (by simp)) (mV c' (by simp)) hbc' (Ne.symm hab) (Ne.symm hac'))
-        (hdep a' d (mV a' (by simp)) (mV d (by simp)) (Ne.symm hda') (Ne.symm haa') hda)
-        (hdep a' c' (mV a' (by simp)) (mV c' (by simp)) ha'c' (Ne.symm haa') (Ne.symm hac'))
-        (hdep d c' (mV d (by simp)) (mV c' (by simp)) hdc' hda (Ne.symm hac'))) ?_
-      exact nws4_of_planar_quad hμ hν hμν hco2
-        (hdep b a' (mV b (by simp)) (mV a' (by simp)) (Ne.symm ha'b) (Ne.symm hab) (Ne.symm haa'))
+      refine (nws4_of_planar_quad_tie hμ hν hμν hco2 ?_).isRobustUnimodal
+      rintro ⟨e1, e2⟩
+      exact hnt ⟨e2.symm, e1⟩
     · intro m hm
       rw [mem_singleton.mp hm, a3, zmod4_three_sub_one]
       simp only [quad_0, quad_2, quad_3]
@@ -371,11 +356,11 @@ theorem isRupert_type21_60_far (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
 /-- **Lemma 3 of §9 at `6 → 0`.**  If `6 → 0` is a quad edge of `O6` (`1` hidden: the facet
 inequalities at `134`, `135`) that is not bad, `K` is Rupert: for `α < 1`, `2` is a middle
 of `0256` at the view along `06` (Lemma 2 (b)); for `α > 1`, Lemma 3 (c)
-(`isRupert_type21_60_far`); `α = 1` would make `25 ∥ 06` (`GenPos`). -/
+(`isRupert_type21_60_far`); `α = 1` would make `25 ∥ 06` (`GenPosTie`). -/
 theorem isRupert_type21_60 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
     (hq₁ : F.a'bc.f c' < F.a'bc.f a) (hq₂ : F.a'b'c.f c' < F.a'b'c.f a)
     (hgood : ¬ max ⟪a, a - c'⟫ ⟪a', a - c'⟫ ≤ min ⟪b, a - c'⟫ ⟪b', a - c'⟫)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   have hnd' := F.nodup
@@ -389,10 +374,9 @@ theorem isRupert_type21_60 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
   · have hmid : QuadMiddle c' a b b' d :=
       ⟨α, -β, hα, hα1, by linarith, by linarith, Or.inr (by rw [hco]; module)⟩
     rw [← (type21_set a a' b b' c c' d).2.2.2.1] at hgen hnd ⊢
-    exact isRupert_quad_edge_lift F.perm₂₃.swap₂.perm₁₂ hq₁ hq₂ hgood (Or.inl hmid)
+    exact isRupert_quad_edge_lift_tie F.perm₂₃.swap₂.perm₁₂ hq₁ hq₂ hgood (Or.inl hmid)
       ⟨hdc', hdc, hda, hda', hdb, hdb'⟩
-      (genPos_hinj hgen (by simp) (by simp) (by simp) (by simp) (by simp) (Ne.symm hac')
-        ⟨ha'c', Ne.symm haa', hbc', Ne.symm hab, hb'c', Ne.symm hab'⟩)
+      (hgen.touch_oct F.perm₂₃.swap₂.perm₁₂)
       (noHDN_pair hnd (by simp) (by simp) (Ne.symm hac'))
   · exfalso
     refine hgen.ne_smul (s := b') (t := d) (x := a) (y := c') (by simp) (by simp) (by simp)
@@ -473,7 +457,7 @@ and `234` lies in the plane of `346`), with `6` a middle; that edge is not bad i
 theorem isRupert_type21_50 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
     (hq₁ : F.a'bc.f b' < F.a'bc.f a) (hq₂ : F.a'bc'.f b' < F.a'bc'.f a)
     (hgood : ¬ max ⟪a, a - b'⟫ ⟪a', a - b'⟫ ≤ min ⟪c, a - b'⟫ ⟪c', a - b'⟫)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   have hnd' := F.nodup
@@ -583,10 +567,9 @@ theorem isRupert_type21_50 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
         _ = a + β⁻¹ • (d - a) + (α * β⁻¹) • (a - b') := by
             rw [show β • (c' - a) = d - a - α • (b' - a) by rw [hco]; abel]; module
   rw [← (type21_set a a' b b' c c' d).2.1] at hgen hnd ⊢
-  exact isRupert_quad_edge_lift hd.O2.swap₂ hq₁ hq₂ hgood2 (Or.inl hmid)
+  exact isRupert_quad_edge_lift_tie hd.O2.swap₂ hq₁ hq₂ hgood2 (Or.inl hmid)
     ⟨Ne.symm hb'c', Ne.symm hbc', Ne.symm hac', Ne.symm ha'c', Ne.symm hcc', Ne.symm hdc'⟩
-    (genPos_hinj hgen (by simp) (by simp) (by simp) (by simp) (by simp) (Ne.symm hab')
-      ⟨ha'b', Ne.symm haa', Ne.symm hb'c, Ne.symm hac, hdb', hda⟩)
+    (hgen.touch_oct hd.O2.swap₂)
     (noHDN_pair hnd (by simp) (by simp) (Ne.symm hab'))
 
 /-! ### The images under `σ1 = (04)(35)` -/
@@ -595,7 +578,7 @@ theorem isRupert_type21_50 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
 theorem isRupert_type21_43 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
     (hq₁ : F.ab'c.f b < F.ab'c.f a') (hq₂ : F.ab'c'.f b < F.ab'c'.f a')
     (hgood : ¬ max ⟪a', a' - b⟫ ⟪a, a' - b⟫ ≤ min ⟪c, a' - b⟫ ⟪c', a' - b⟫)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   rw [← (type21_set a a' b b' c c' d).2.2.2.2] at hgen hnd ⊢
@@ -605,7 +588,7 @@ theorem isRupert_type21_43 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
 theorem isRupert_type21_34 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
     (hq₁ : F.ab'c.f a' < F.ab'c.f b) (hq₂ : F.ab'c'.f a' < F.ab'c'.f b)
     (hgood : ¬ max ⟪b, b - a'⟫ ⟪b', b - a'⟫ ≤ min ⟪c, b - a'⟫ ⟪c', b - a'⟫)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   rw [← (type21_set a a' b b' c c' d).2.2.2.2] at hgen hnd ⊢
@@ -615,7 +598,7 @@ theorem isRupert_type21_34 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
 theorem isRupert_type21_46 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
     (hq₁ : F.ab'c.f b < F.ab'c.f c') (hq₂ : F.a'b'c.f b < F.a'b'c.f c')
     (hgood : ¬ max ⟪c', c' - b⟫ ⟪c, c' - b⟫ ≤ min ⟪a, c' - b⟫ ⟪a', c' - b⟫)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   rw [← (type21_set a a' b b' c c' d).2.2.2.2] at hgen hnd ⊢
@@ -625,7 +608,7 @@ theorem isRupert_type21_46 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
 theorem isRupert_type21_64 (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
     (hq₁ : F.ab'c.f c' < F.ab'c.f b) (hq₂ : F.a'b'c.f c' < F.a'b'c.f b)
     (hgood : ¬ max ⟪b, b - c'⟫ ⟪b', b - c'⟫ ≤ min ⟪a, b - c'⟫ ⟪a', b - c'⟫)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   rw [← (type21_set a a' b b' c c' d).2.2.2.2] at hgen hnd ⊢

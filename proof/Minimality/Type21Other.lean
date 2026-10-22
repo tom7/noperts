@@ -91,7 +91,7 @@ theorem isRupert_type21_classA {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b 
       τ * galeD G.l G.m b c * galeD G.l G.m b' c' < 0)
     (hn145 : τ * galeD G.l G.m c a' * galeD G.l G.m c' a <
       (β + τ * galeD G.l G.m c c') * galeD G.l G.m a' a)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   obtain ⟨s34, s05, s04, s56, s51, s46, s41, s63, s60, s13, s10⟩ := hN.signs F
@@ -223,7 +223,7 @@ theorem isRupert_type21_classB {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b 
     (t10 : galeD G.l G.m c a ≠ galeD G.l G.m b' c)
     (t13 : galeD G.l G.m b c ≠ galeD G.l G.m c a')
     (hRid : det3 (b - b') (c - b') (d - c') ≠ 0)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   have hnd' := F.nodup
@@ -572,7 +572,7 @@ theorem isRupert_type21_F1' {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' 
     (hO2 : galeD G.l G.m a' b < galeD G.l G.m c a')
     (hT1 : ∀ u : ℝ³, u ≠ 0 → ⟪F.abc.N, u⟫ = 0 → ⟪F.ab'c'.N, u⟫ = 0 →
       T1Gen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' u)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   have hnd' := F.nodup

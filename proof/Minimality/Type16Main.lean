@@ -11,9 +11,14 @@ public import Minimality.Type16Pairs
 (Proposition 14.3); in `R1` a step of Theorem 19.2, or on `Ω` Lemma 19.3 (`d > 1`), Lemma 19.4
 (`d < 1`, `b < 1` or `H_A < 0`) or Lemma 19.5 (`Ω_open`); in `R2` the same after `σ = (06)(12)`.
 The special positions are explicit: `NF16.Gen` (equalities in the sign conditions of the route
-and the far-end ties) and `NF16.Views` (distinct depths and no horizontal double normal at the
-three vertex views `vT2`, `v_A`, `u_a`), with general position (`GenPos`) and no horizontal
-double normal at the edge views (`NoHDNEdges16`).
+and the far-end ties) and `NF16.Views` (no horizontal double normal at the three vertex views
+`vT2`, `v_A`, `u_a`, and at most one tie at `v_A`), with general position up to single ties
+(`GenPosTie`) and no horizontal double normal at the edge views (`NoHDNEdges16`).  Depth ties are
+allowed everywhere else: the Lemma E cover by Lemma E with ties; on `Ω` the quadrilateral rims
+are robustly unimodal unless weakly separated, the pentagons by their open criteria
+(`quint_B_robust`, `quint_Tc_robust`, `quint_A_robust`), and the pair and triple arguments
+exclude the weak failures (`not_weakSep_of_meet`, `eq_of_weakSep_meet`, `weakSep_sign`; a weak
+failure that is no sign at all puts three points at one depth, against `GenPosTie`).
 -/
 
 set_option linter.unusedSimpArgs false
@@ -28,14 +33,14 @@ namespace NF16
 
 variable {x : Fin 7 → ℝ³}
 
-/-- The special positions at the three vertex views of Lemmas 19.3–19.5 (each view nonzero). -/
+/-- The special positions at the three vertex views of Lemmas 19.3–19.5 (each view nonzero): no
+horizontal double normal, and at most one tie at `v_A` (the pentagon `A` of Lemma 19.5).  Depth
+ties at `vT2` and `u_a` are allowed: the quadrilateral rims there are robustly unimodal unless
+weakly separated, and the pair arguments exclude both weak separations. -/
 structure Views (N : NF16 x) : Prop where
-  vT2 : N.vT2 ≠ 0 → [⟪x 4, N.vT2⟫, ⟪x 6, N.vT2⟫, ⟪x 3, N.vT2⟫, ⟪x 5, N.vT2⟫].Nodup ∧
-    NoHDNAt (univ.image x) N.vT2
-  vA : N.vA ≠ 0 → [⟪x 6, N.vA⟫, ⟪x 3, N.vA⟫, ⟪x 5, N.vA⟫, ⟪x 2, N.vA⟫, ⟪x 4, N.vA⟫].Nodup ∧
-    NoHDNAt (univ.image x) N.vA
-  uA : N.uA ≠ 0 → [⟪x 0, N.uA⟫, ⟪x 5, N.uA⟫, ⟪x 1, N.uA⟫, ⟪x 6, N.uA⟫].Nodup ∧
-    NoHDNAt (univ.image x) N.uA
+  vT2 : N.vT2 ≠ 0 → NoHDNAt (univ.image x) N.vT2
+  vA : N.vA ≠ 0 → OneTieAt (univ.image x) N.vA ∧ NoHDNAt (univ.image x) N.vA
+  uA : N.uA ≠ 0 → NoHDNAt (univ.image x) N.uA
 
 theorem nodup5_sub4 {z₀ z₁ z₂ z₃ z₄ : ℝ} (h : [z₀, z₁, z₂, z₃, z₄].Nodup) :
     [z₀, z₁, z₂, z₄].Nodup := by
@@ -45,7 +50,8 @@ theorem nodup5_sub4 {z₀ z₁ z₂ z₃ z₄ : ℝ} (h : [z₀, z₁, z₂, z�
 
 /-- **The residual `Ω`** (Lemmas 19.3, 19.4, 19.5; §19.6). -/
 theorem isRupert_omega (N : NF16 x) (O : Omega N) (G : Gen N) (W : Views N)
-    (hg : GenPos (univ.image x)) (hnd : NoHDNEdges16 x) : IsRupert (univ.image x) := by
+    (hgt : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x) :
+    IsRupert (univ.image x) := by
   have O' := O
   obtain ⟨hR1, hR2, hD, hqg, hg1, hqb, hc, nD2, nD3, nD4, nD6, nD7⟩ := O'
   have hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1) := by
@@ -65,7 +71,7 @@ theorem isRupert_omega (N : NF16 x) (O : Omega N) (G : Gen N) (W : Views N)
     obtain ⟨hvA, hndvA⟩ := W.vA hvA0
     have F1s : 0 < -((N.b - 1) * N.g * N.p * N.r + (N.q * (1 - N.d) + N.g * (N.r - 1)) *
         (N.a * (N.q - 1) - (N.b - 1) * N.p)) → IsRupert (univ.image x) := fun h =>
-      isRupert_F1s N O hd1' hf03 h hg hnd (nodup5_sub4 hvA) hndvA
+      isRupert_F1s N O hd1' hf03 h hgt hnd hndvA
     rcases lt_or_gt_of_ne G.b1 with hb | hb
     · refine F1s ?_
       have hq1 : 0 < N.q - 1 := by linarith
@@ -81,16 +87,15 @@ theorem isRupert_omega (N : NF16 x) (O : Omega N) (G : Gen N) (W : Views N)
         · nlinarith [N.t0246, mul_pos (sub_pos.mpr ha) N.hq, N.hb]
       have huA0 : N.uA ≠ 0 := by
         simp only [uA]; exact nfV_ne_zero N.hD (Or.inl (ne_of_gt hpr))
-      obtain ⟨huA, hnduA⟩ := W.uA huA0
-      exact isRupert_T6 N O hd1' (by linarith) G.a1 hf03 hA hf15 hpr G.T5 hg hnd huA hnduA
+      exact isRupert_T6 N O hd1' (by linarith) G.a1 hf03 hA hf15 hpr G.T5 hgt hnd (W.uA huA0)
         hvA hndvA
   · -- `d > 1`
-    obtain ⟨hv, hndv⟩ := W.vT2 (N.vT2_ne hf15)
-    exact isRupert_F3 N O (by linarith) G.a1 hf15 hg hnd hv hndv
+    exact isRupert_F3 N O (by linarith) G.a1 hf15 hgt hnd (W.vT2 (N.vT2_ne hf15))
 
 /-- **Theorem 19.6 in `R1`.** -/
 theorem isRupert_R1 (N : NF16 x) (hR1 : 0 < N.R1) (G : Gen N) (W : Views N)
-    (hg : GenPos (univ.image x)) (hnd : NoHDNEdges16 x) : IsRupert (univ.image x) :=
+    (hg : GenPosTie (univ.image x)) (hnd : NoHDNEdges16 x) :
+    IsRupert (univ.image x) :=
   isRupert_R1_or_omega N hR1 G hg hnd fun O => isRupert_omega N O G W hg hnd
 
 
@@ -98,13 +103,14 @@ theorem isRupert_R1 (N : NF16 x) (hR1 : 0 < N.R1) (G : Gen N) (W : Views N)
 normal form is Rupert: off `R1 ∪ R2` by the pair at `06`, in `R1` by `isRupert_R1`, in `R2` by
 `isRupert_R1` for `x ∘ σ`. -/
 theorem isRupert_nf (N : NF16 x) (G : Gen N) (Gσ : Gen N.sigma) (W : Views N)
-    (Wσ : Views N.sigma) (h1 : N.R1 ≠ 0) (h2 : N.R2 ≠ 0) (hg : GenPos (univ.image x))
+    (Wσ : Views N.sigma) (h1 : N.R1 ≠ 0) (h2 : N.R2 ≠ 0) (hg : GenPosTie (univ.image x))
     (hnd : NoHDNEdges16 x) : IsRupert (univ.image x) := by
   rcases lt_or_gt_of_ne h1 with hR1 | hR1
   · rcases lt_or_gt_of_ne h2 with hR2 | hR2
     · exact isRupert_E06 N hR1 hR2 hg hnd
     · have := isRupert_R1 N.sigma (by rw [sigma_R1]; exact hR2) Gσ Wσ
-        (by rw [image_sigma16]; exact hg) (by simp only [NoHDNEdges16, image_sigma16]; exact hnd)
+        (by rw [image_sigma16]; exact hg)
+        (by simp only [NoHDNEdges16, image_sigma16]; exact hnd)
       rwa [image_sigma16] at this
   · exact isRupert_R1 N hR1 G W hg hnd
 
@@ -126,11 +132,10 @@ theorem inner_zero_of_plane {f : ℝ³ → ℝ} {Nf : ℝ³} (hf : ∀ y z, f y 
   exact (mul_eq_zero.mp e).resolve_left hS
 
 /-- **The special positions of a vertex view** along the line of two face planes (normals
-`NP`, `NQ`): at every direction `u ≠ 0` of the line, distinct depths and no horizontal double
+`NP`, `NQ`): at every direction `u ≠ 0` of the line, at most one tie and no horizontal double
 normal. -/
 def ViewGen16 (V : Finset ℝ³) (NP NQ : ℝ³) : Prop :=
-  ∀ u : ℝ³, u ≠ 0 → ⟪NP, u⟫ = 0 → ⟪NQ, u⟫ = 0 →
-    (∀ y ∈ V, ∀ z ∈ V, y ≠ z → ⟪y, u⟫ ≠ ⟪z, u⟫) ∧ NoHDNAt V u
+  ∀ u : ℝ³, u ≠ 0 → ⟪NP, u⟫ = 0 → ⟪NQ, u⟫ = 0 → OneTieAt V u ∧ NoHDNAt V u
 
 theorem nodup_depths {x : Fin 7 → ℝ³} (hx : Function.Injective x) {u : ℝ³}
     (h : ∀ y ∈ univ.image x, ∀ z ∈ univ.image x, y ≠ z → ⟪y, u⟫ ≠ ⟪z, u⟫) (l : List (Fin 7))
@@ -156,7 +161,7 @@ theorem Views.of (T : Type16 x) (N : NF16 x)
         (by rw [T.t145.zero 5 (by decide), T.t145.zero 1 (by decide)])
         (by nf_simp N; refine mul_ne_zero ?_ N.hD; simp only [det3c]; intro e; linarith [N.t145_0])
         (by simp only [NF16.vT2, NF16.f15, NF16.t0146v]; nf_simp N; simp only [det3c]; ring))
-    exact ⟨by simpa using nodup_depths N.inj hd [4, 6, 3, 5] (by decide), hh⟩
+    exact hh
   · obtain ⟨hd, hh⟩ := h6 _ hne
       (inner_zero_of_plane T.t036.hN (P := x 0) (Q := x 3) (R := x 6) (v := N.vA) (S := x 5)
         (by rw [T.t036.zero 3 (by decide), T.t036.zero 0 (by decide)])
@@ -173,7 +178,7 @@ theorem Views.of (T : Type16 x) (N : NF16 x)
               intro e
               nlinarith [mul_pos N.hp N.hgd])
         (by simp only [NF16.vA, NF16.f03]; nf_simp N; simp only [det3c]; ring))
-    exact ⟨by simpa using nodup_depths N.inj hd [6, 3, 5, 2, 4] (by decide), hh⟩
+    exact ⟨hd, hh⟩
   · obtain ⟨hd, hh⟩ := h0 _ hne
       (inner_zero_of_plane T.q0235.hN (P := x 0) (Q := x 3) (R := x 5) (v := N.uA) (S := x 6)
         (by rw [T.q0235.zero 3 (by decide), T.q0235.zero 0 (by decide)])
@@ -185,7 +190,7 @@ theorem Views.of (T : Type16 x) (N : NF16 x)
         (by rw [T.t046.zero 6 (by decide), T.t046.zero 0 (by decide)])
         (by nf_simp N; refine mul_ne_zero ?_ N.hD; simp only [det3c]; intro e; linarith [N.t046_5])
         (by simp only [NF16.uA]; nf_simp N; simp only [det3c]; ring))
-    exact ⟨by simpa using nodup_depths N.inj hd [0, 5, 1, 6] (by decide), hh⟩
+    exact hh
 
 theorem npp_idx {x : Fin 7 → ℝ³} (hx : Function.Injective x)
     (hpp : NoPlaneParallel (univ.image x)) {i j k l m : Fin 7} (h : [i, j, k, l, m].Nodup) :
@@ -193,12 +198,12 @@ theorem npp_idx {x : Fin 7 → ℝ³} (hx : Function.Injective x)
   hpp _ (mem_image i) _ (mem_image j) _ (mem_image k) _ (mem_image l) _ (mem_image m)
     (by simpa using h.map hx)
 
-/-- **The nondegeneracy conditions from the points**: general position (`GenPos`: the far-end
-ties `a, b, g, d = 1` are parallel segments), no plane through three points parallel to a
+/-- **The nondegeneracy conditions from the points**: no parallel segments (`GenPosTie`: the
+far-end ties `a, b, g, d = 1` are parallel segments), no plane through three points parallel to a
 segment of two others (`NoPlaneParallel`: the facing conditions `q = g`, `r = d`, `c36`, `f15`,
 `f03`, `p + r = 1`, `T5`), the coplanarities `0134`, `2346`, and the line `036 ∩ 146` not
 parallel to the plane `245` (`H_A ≠ 0`). -/
-theorem Gen.of (T : Type16 x) (N : NF16 x) (hg : GenPos (univ.image x))
+theorem Gen.of (T : Type16 x) (N : NF16 x) (hg : GenPosTie (univ.image x))
     (hpp : NoPlaneParallel (univ.image x))
     (h0134 : det3 (x 0 - x 3) (x 1 - x 3) (x 4 - x 3) ≠ 0)
     (h2346 : det3 (x 2 - x 3) (x 4 - x 3) (x 6 - x 3) ≠ 0)
@@ -269,13 +274,13 @@ theorem det3_cyc (a b c : ℝ³) : det3 c a b = det3 a b c := by
   simp only [det3_expand]; ring
 
 /-- **Theorem 19.6 for type 16**, from the facets (`Type16`): off the special positions — general
-position (`GenPos`), no plane through three points parallel to a segment of two others
+position up to single ties (`GenPosTie`), no plane through three points parallel to a segment of two others
 (`NoPlaneParallel`), no horizontal double normal at the edge views (`NoHDNEdges16`), the
 coplanarities `0134`, `2346`, the lines `036 ∩ 146` and `036 ∩ 024` not parallel to the planes
 `245`, `145` (`H_A ≠ 0` and its `σ`-image), and `ViewGen16` at the six vertex views
 `046/145`, `036/146`, `0235/046` and their `σ`-images `046/245`, `036/024`, `1356/046` — a
 type-16 point set is Rupert. -/
-theorem isRupert_type16 (T : Type16 x) (hg : GenPos (univ.image x))
+theorem isRupert_type16 (T : Type16 x) (hg : GenPosTie (univ.image x))
     (hpp : NoPlaneParallel (univ.image x)) (hnd : NoHDNEdges16 x)
     (h0134 : det3 (x 0 - x 3) (x 1 - x 3) (x 4 - x 3) ≠ 0)
     (h2346 : det3 (x 2 - x 3) (x 4 - x 3) (x 6 - x 3) ≠ 0)
@@ -315,11 +320,10 @@ theorem Face16.ofAffine_inner {x : Fin 7 → ℝ³} {S : Finset (Fin 7)} (f : �
   linarith
 
 /-- **The special positions of a vertex view**, for affine face functions: at every direction
-`u ≠ 0` of the line of the two planes, no two points have the same depth, and no horizontal
-double normal. -/
+`u ≠ 0` of the line of the two planes, at most one pair of points at the same depth
+(`OneTieAt`), and no horizontal double normal. -/
 def ViewAff16 (V : Finset ℝ³) (fP fQ : ℝ³ →ᵃ[ℝ] ℝ) : Prop :=
-  ∀ u : ℝ³, u ≠ 0 → fP.linear u = 0 → fQ.linear u = 0 →
-    (∀ y ∈ V, ∀ z ∈ V, y ≠ z → ⟪y, u⟫ ≠ ⟪z, u⟫) ∧ NoHDNAt V u
+  ∀ u : ℝ³, u ≠ 0 → fP.linear u = 0 → fQ.linear u = 0 → OneTieAt V u ∧ NoHDNAt V u
 
 /-- The line of the planes of `fP`, `fQ` is not parallel to the plane `a b c`. -/
 def LineAff16 (fP fQ : ℝ³ →ᵃ[ℝ] ℝ) (a b c : ℝ³) : Prop :=
@@ -346,7 +350,7 @@ theorem isRupert_type16_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({1, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
     (hH : ∀ i, (i ∈ ({2, 4, 5} : Finset (Fin 7)) → fH (x i) = 0) ∧
       (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fH (x i) < 0))
-    (hg : GenPos (univ.image x)) (hpp : NoPlaneParallel (univ.image x))
+    (hg : GenPosTie (univ.image x)) (hpp : NoPlaneParallel (univ.image x))
     (hnd : ∀ v ∈ univ.image x, ∀ w ∈ univ.image x, v ≠ w →
       NoHDNAt ((univ.image x).erase w) (w - v))
     (h0134 : det3 (x 0 - x 3) (x 1 - x 3) (x 4 - x 3) ≠ 0)

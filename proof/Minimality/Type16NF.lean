@@ -1,6 +1,7 @@
 module
 
 public import Minimality.EdgePair
+public import Minimality.RobustEdge
 
 @[expose] public section
 
@@ -557,6 +558,91 @@ theorem isRupert_edgeTriσ {v w a b : ℝ³} (V : Finset ℝ³) {σ : ℝ} (hσ 
       · rw [det3_rev]; linarith
       · rw [det3_rev]; linarith
 
+/-- **`isRupert_edgePairσ` with ties** (Lemma E with ties): only the three far depths not all
+equal. -/
+theorem isRupert_edgePairσ_robust {v w a b c : ℝ³} (V : Finset ℝ³) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
+    (hvV : v ∈ V) (hwV : w ∈ V) (haV : a ∈ V) (hbV : b ∈ V) (hcV : c ∈ V)
+    (q₁ : 0 < σ * det3 (a - v) (c - v) (w - v)) (q₂ : 0 < σ * det3 (c - a) (b - a) (w - v))
+    (q₃ : 0 < σ * det3 (b - c) (v - c) (w - v)) (q₄ : 0 < σ * det3 (v - b) (a - b) (w - v))
+    (hE : det3 (b - a) (c - a) (v - a) * det3 (b - a) (c - a) (w - a) ≤ 0)
+    (h3 : ¬ (⟪a, w - v⟫ = ⟪c, w - v⟫ ∧ ⟪c, w - v⟫ = ⟪b, w - v⟫))
+    (hV : ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ z = c ∨ EdgeMid v w a b z ∨
+      EdgeHiddenσ σ (w - v) v a c b z)
+    (hnd₁ : NoHDNAt (V.erase w) (w - v)) (hnd₂ : NoHDNAt (V.erase v) (w - v)) :
+    IsRupert V := by
+  rcases hσ with rfl | rfl
+  · simp only [one_mul] at q₁ q₂ q₃ q₄
+    refine isRupert_edgePair_robust V hvV hwV haV hbV hcV q₁ q₂ q₃ q₄ hE h3 (fun z hz => ?_)
+      hnd₁ hnd₂
+    rcases hV z hz with h | h | h | h | h | h | ⟨h1, h2, h3, h4⟩
+    · exact Or.inl h
+    · exact Or.inr (Or.inl h)
+    · exact Or.inr (Or.inr (Or.inl h))
+    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))
+    · simp only [one_mul] at h1 h2 h3 h4
+      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨h1, h2, h3, h4⟩)))))
+  · have e1 : det3 (b - v) (c - v) (w - v) = -det3 (b - c) (v - c) (w - v) := by
+      simp only [det3_expand, PiLp.sub_apply]; ring
+    have e2 : det3 (c - b) (a - b) (w - v) = -det3 (c - a) (b - a) (w - v) := by
+      simp only [det3_expand, PiLp.sub_apply]; ring
+    have e3 : det3 (a - c) (v - c) (w - v) = -det3 (a - v) (c - v) (w - v) := by
+      simp only [det3_expand, PiLp.sub_apply]; ring
+    have e4 : det3 (v - a) (b - a) (w - v) = -det3 (v - b) (a - b) (w - v) := by
+      simp only [det3_expand, PiLp.sub_apply]; ring
+    have eE : ∀ y, det3 (a - b) (c - b) (y - b) = -det3 (b - a) (c - a) (y - a) := by
+      intro y; simp only [det3_expand, PiLp.sub_apply]; ring
+    refine isRupert_edgePair_robust (a := b) (b := a) V hvV hwV hbV haV hcV (by rw [e1]; linarith)
+      (by rw [e2]; linarith) (by rw [e3]; linarith) (by rw [e4]; linarith)
+      (by rw [eE, eE]; linarith) (fun h => h3 ⟨h.2.symm, h.1.symm⟩) (fun z hz => ?_) hnd₁ hnd₂
+    rcases hV z hz with h | h | h | h | h | h | ⟨h1, h2, h3, h4⟩
+    · exact Or.inl h
+    · exact Or.inr (Or.inl h)
+    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
+    · exact Or.inr (Or.inr (Or.inl h))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h.swap)))))
+    · refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨?_, ?_, ?_, ?_⟩)))))
+      · rw [det3_rev]; linarith
+      · rw [det3_rev]; linarith
+      · rw [det3_rev]; linarith
+      · rw [det3_rev]; linarith
+
+/-- **`isRupert_edgeTriσ` with ties**: only the three depths of the rim not all equal. -/
+theorem isRupert_edgeTriσ_robust {v w a b : ℝ³} (V : Finset ℝ³) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
+    (hvV : v ∈ V) (hwV : w ∈ V) (haV : a ∈ V) (hbV : b ∈ V)
+    (hT : 0 < σ * det3 (a - v) (b - v) (w - v))
+    (hz : ¬ (⟪v, w - v⟫ = ⟪a, w - v⟫ ∧ ⟪a, w - v⟫ = ⟪b, w - v⟫))
+    (hV : ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ EdgeMid v w a b z ∨
+      TriHiddenσ σ (w - v) v a b z)
+    (hnd : NoHDNAt (V.erase w) (w - v)) : IsRupert V := by
+  rcases hσ with rfl | rfl
+  · simp only [one_mul] at hT
+    refine isRupert_edgeTri_robust V hvV hwV haV hbV hT hz (fun z hz' => ?_) hnd
+    rcases hV z hz' with h | h | h | h | h | ⟨h1, h2, h3⟩
+    · exact Or.inl h
+    · exact Or.inr (Or.inl h)
+    · exact Or.inr (Or.inr (Or.inl h))
+    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
+    · simp only [one_mul] at h1 h2 h3
+      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨h1, h2, h3⟩))))
+  · have e : det3 (b - v) (a - v) (w - v) = -det3 (a - v) (b - v) (w - v) := by
+      simp only [det3_expand, PiLp.sub_apply]; ring
+    refine isRupert_edgeTri_robust (a := b) (b := a) V hvV hwV hbV haV (by rw [e]; linarith)
+      (fun h => hz ⟨h.1.trans h.2, h.2.symm⟩) (fun z hz' => ?_) hnd
+    rcases hV z hz' with h | h | h | h | h | ⟨h1, h2, h3⟩
+    · exact Or.inl h
+    · exact Or.inr (Or.inl h)
+    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
+    · exact Or.inr (Or.inr (Or.inl h))
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h.swap))))
+    · refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨?_, ?_, ?_⟩))))
+      · rw [det3_rev]; linarith
+      · rw [det3_rev]; linarith
+      · rw [det3_rev]; linarith
+
 /-- **Theorem 8.9 with Theorem 7.3 at an edge view, in either orientation**
 (`isRupert_of_edgeView`, at `u` or `−u`). -/
 theorem isRupert_of_edgeViewσ (V M : Finset ℝ³) (u : ℝ³) (hu : u ≠ 0) {σ : ℝ}
@@ -566,17 +652,17 @@ theorem isRupert_of_edgeViewσ (V M : Finset ℝ³) (u : ℝ³) (hu : u ≠ 0) {
     (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → 0 < σ * det3 (x (i + 1) - x i) (x j - x i) u)
     (hrest : ∀ y ∈ V, y ∉ M → y ≠ w → (∀ j, y ≠ x j) → ∀ i,
       0 < σ * det3 (x (i + 1) - x i) (y - x i) u)
-    (hz : IsCyclicUnimodal (fun i => ⟪x i, u⟫)) (hnd : NoHDNAt (V.erase w) u)
+    (hz : IsRobustUnimodal (fun i => ⟪x i, u⟫)) (hnd : NoHDNAt (V.erase w) u)
     (hM : ∀ m ∈ M, EdgeMiddle u (x i₀) w (x (i₀ + 1)) (x (i₀ - 1)) h m) : IsRupert V := by
   rcases hσ with rfl | rfl
   · simp only [one_mul] at hcyc hrest
-    exact isRupert_of_edgeView V M u hu hk x i₀ w h hwV hw hh hxV hxM hcyc hrest hz hnd hM
-  · refine isRupert_of_edgeView V M (-u) (neg_ne_zero.mpr hu) hk x i₀ w (-h) hwV
+    exact isRupert_of_edgeView_robust V M u hu hk x i₀ w h hwV hw hh hxV hxM hcyc hrest hz hnd hM
+  · refine isRupert_of_edgeView_robust V M (-u) (neg_ne_zero.mpr hu) hk x i₀ w (-h) hwV
       (by rw [hw, neg_smul_neg]) (neg_ne_zero.mpr hh) hxV hxM (fun i j hi hj => ?_)
       (fun y hy hyM hyw hyx i => ?_) ?_ hnd.neg (fun m hm => ?_)
     · have := hcyc i j hi hj; rw [det3_neg_right]; linarith
     · have := hrest y hy hyM hyw hyx i; rw [det3_neg_right]; linarith
-    · simp only [inner_neg_right]; exact hz.neg16 (by omega)
+    · simp only [inner_neg_right]; exact hz.neg
     · obtain ⟨c, s, δ, hc, hs0, hs1, hδ, hm'⟩ := hM m hm
       refine ⟨c, s, -δ, ?_, hs0, hs1, neg_ne_zero.mpr hδ, ?_⟩
       · rcases hc with hc | ⟨hc, hδh⟩
@@ -586,7 +672,7 @@ theorem isRupert_of_edgeViewσ (V M : Finset ℝ³) (u : ℝ³) (hu : u ≠ 0) {
         · exact Or.inl (by rw [hm', neg_smul_neg])
         · exact Or.inr (by rw [hm', neg_smul_neg])
 
-/-- **Proposition 8.8 with Theorem 7.3 at a vertex view, in either orientation**
+/-- **Proposition 8.8 with Theorem 18.3 at a vertex view, in either orientation**
 (`isRupert_of_vertexView`, at `u` or `−u`). -/
 theorem isRupert_of_vertexViewσ (V M : Finset ℝ³) (u : ℝ³) (hu : u ≠ 0) {σ : ℝ}
     (hσ : σ = 1 ∨ σ = -1) {k : ℕ} [NeZero k] (hk : 3 ≤ k) (x : ZMod k → ℝ³)
@@ -594,17 +680,17 @@ theorem isRupert_of_vertexViewσ (V M : Finset ℝ³) (u : ℝ³) (hu : u ≠ 0)
     (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → 0 < σ * det3 (x (i + 1) - x i) (x j - x i) u)
     (hrest : ∀ y ∈ V, y ∉ M → (∀ j, y ≠ x j) → ∀ i,
       0 < σ * det3 (x (i + 1) - x i) (y - x i) u)
-    (hz : IsCyclicUnimodal (fun i => ⟪x i, u⟫)) (hnd : NoHDNAt V u)
+    (hz : IsRobustUnimodal (fun i => ⟪x i, u⟫)) (hnd : NoHDNAt V u)
     (hM : ∀ m ∈ M, ∃ i : ZMod k, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
       m = x i + s • (x (i + 1) - x i) + δ • u) : IsRupert V := by
   rcases hσ with rfl | rfl
   · simp only [one_mul] at hcyc hrest
-    exact isRupert_of_vertexView V M u hu hk x hxV hxM hcyc hrest hz hnd hM
-  · refine isRupert_of_vertexView V M (-u) (neg_ne_zero.mpr hu) hk x hxV hxM
+    exact isRupert_of_vertexView_robust V M u hu hk x hxV hxM hcyc hrest hz hnd hM
+  · refine isRupert_of_vertexView_robust V M (-u) (neg_ne_zero.mpr hu) hk x hxV hxM
       (fun i j hi hj => ?_) (fun y hy hyM hyx i => ?_) ?_ hnd.neg (fun m hm => ?_)
     · have := hcyc i j hi hj; rw [det3_neg_right]; linarith
     · have := hrest y hy hyM hyx i; rw [det3_neg_right]; linarith
-    · simp only [inner_neg_right]; exact hz.neg16 (by omega)
+    · simp only [inner_neg_right]; exact hz.neg
     · obtain ⟨i, s, δ, hs0, hs1, hδ, hm'⟩ := hM m hm
       exact ⟨i, s, -δ, hs0, hs1, neg_ne_zero.mpr hδ, by rw [hm', neg_smul_neg]⟩
 
@@ -690,6 +776,28 @@ theorem depth_nodup3 {x : Fin 7 → ℝ³} (hx : Function.Injective x) (hg : Gen
     depth_ne (v := v) (w := w) hx hg hij h1 hh
   exact ⟨⟨D h2 (Or.inr ⟨h1, Ne.symm h5⟩), D h3 (Or.inr ⟨h1, Ne.symm h6⟩)⟩,
     D h8 (Or.inr ⟨Ne.symm h5, Ne.symm h6⟩), not_false⟩
+
+/-- The far depths of an edge pair at an edge `v w` (far path `a, c, b`) are not all equal
+(`GenPosTie`: two ties at one edge view). -/
+theorem depth_far3 {x : Fin 7 → ℝ³} (hx : Function.Injective x) (hg : GenPosTie (univ.image x))
+    {v w a b c : Fin 7} (h : [v, w, a, b, c].Nodup) :
+    ¬ (⟪x a, x w - x v⟫ = ⟪x c, x w - x v⟫ ∧ ⟪x c, x w - x v⟫ = ⟪x b, x w - x v⟫) := by
+  have hm : ∀ k, x k ∈ univ.image x := fun k => mem_image_of_mem x (mem_univ k)
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+    List.nodup_nil, and_true] at h
+  obtain ⟨⟨h1, h2, h3, h4⟩, ⟨h5, h6, h7⟩, ⟨h8, h9⟩, h10, -⟩ := h
+  exact hg.noTriple (hm v) (hm w) (hm a) (hm c) (hm b) (hx.ne h1) (hx.ne h9) (hx.ne (Ne.symm h10))
+    (hx.ne h8)
+
+/-- The depths of a triangle closing `v, a, b` at an edge `v w` are not all equal. -/
+theorem depth_tri3 {x : Fin 7 → ℝ³} (hx : Function.Injective x) (hg : GenPosTie (univ.image x))
+    {v w a b : Fin 7} (h : [v, w, a, b].Nodup) :
+    ¬ (⟪x v, x w - x v⟫ = ⟪x a, x w - x v⟫ ∧ ⟪x a, x w - x v⟫ = ⟪x b, x w - x v⟫) := by
+  have hm : ∀ k, x k ∈ univ.image x := fun k => mem_image_of_mem x (mem_univ k)
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+    List.nodup_nil, and_true] at h
+  obtain ⟨⟨h1, h2, h3⟩, ⟨h5, h6⟩, h8, -⟩ := h
+  exact hg.noTriple (hm v) (hm w) (hm v) (hm a) (hm b) (hx.ne h1) (hx.ne h2) (hx.ne h8) (hx.ne h3)
 
 /-- Rewrite the points of a normal form and the frame determinants: every test becomes
 `σ * (det3c … * D)`. -/

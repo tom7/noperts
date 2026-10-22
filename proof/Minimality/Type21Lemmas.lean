@@ -1,6 +1,7 @@
 module
 
 public import Minimality.Type29
+public import Minimality.RobustEdge
 
 @[expose] public section
 

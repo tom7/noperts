@@ -608,7 +608,7 @@ dependency `{1 ·}`), and `K` is Rupert (Lemma 3 of §9 for `K − 6`). -/
 theorem isRupert_type21_Q25 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c') (hN : CrossNorm G)
     (hA1 : F.a'bc.f d < F.a'bc.f b') (h3 : F.abc.f d < F.abc.f b')
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   obtain ⟨s34, s05, s04, s56, s51, s46, s41, s63, s60, s13, s10⟩ := hN.signs F
@@ -634,7 +634,7 @@ theorem isRupert_type21_step3 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b
     (hF3 : galeD G.l G.m c' a < galeD G.l G.m a b')
     (hF4 : galeD G.l G.m a' b < galeD G.l G.m b c)
     (h3 : F.abc.f d < F.abc.f b')
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   obtain ⟨α, β, τ, hα0, hβ, hαβ, hτ, hco, hα, ht⟩ := hd.tau hN
@@ -655,7 +655,7 @@ theorem isRupert_type21_step5 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b
     (hH2 : α * galeD G.l G.m c' a' + β * galeD G.l G.m a' b' < galeD G.l G.m b' c')
     (hE : τ * galeD G.l G.m c a' * galeD G.l G.m c' a <
       (β + τ * galeD G.l G.m c c') * galeD G.l G.m a' a)
-    (hgen : GenPos (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   have hnd' := F.nodup
