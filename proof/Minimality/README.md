@@ -731,6 +731,26 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   `isRupert_windowChainΛ2`, `_6`, `isRupert_windowChainΛ_octant`) and Theorem 20.9′
   (`isRupert_type24_uniform_side`). Not formalized: the LPs deciding side-safety, (H) and (H⁺),
   the third item `012/0345`, Conjecture B_DS, the per-class certificates.
+* §20, continued (2) and (3), of `FEWER-FACES-PROOFS.md` (the circle of `236`, DS side-safety;
+  `Type24Circle236.lean`, `Type24DS.lean`, `Type24Circle.lean`). Lemma 20.12 (`Cu13.S1`, `S2`,
+  `S4`, `S5`; (S1) at `K`'s metric `Type24.s1_pattern`, its geometric half from `T′(6,2)`'s rim
+  `Type24.c5_lt_of_rimT62`). Theorem 20.13: E23's three cases (`e23_cases`; edge crossings with a
+  general axle `EdgeRim`, `isRupert_edgeRim`), with the ten LPs as X-only hypotheses (`K236bar`,
+  `K236`, on Gram entries `Gram3`) on the closed (`isRupert_circle236_octant`) and open
+  (`isRupert_circle236_open`) obtuse octant; Corollary 20.14 (`Type24.ObtuseCovered`,
+  `isRupert_type24_obtuse_octant`) and Theorem 20.9″ (`isRupert_type24_uniform_circle`).
+  Corollary 20.19, the planar quad rim at every metric (`planarRim_coeffs`: `s, t > 0`,
+  `s + t > 1` read off the rim; `QuadTest'.isRupert_planar`, `isRupert_type24_planarQuad` from the
+  face `0345`). Lemma 20.18 (cu14's core `Cu14.P1`, `P2`, `lemmaY`; general labels `lemmaY_core`,
+  `YBelow`, `isRupert_lemmaY`; `R_bc` `isRupert_lemmaY_bc`, mirror `isRupert_lemmaY_bc'`). DS
+  side-safety (`ParPairAt`, `DepthSepZ`, `DSGood`, `DSSafeQ`, `isRupert_capEdge_dsSafe`),
+  Theorems 20.16 (`Type24.DSSideCovered`, `isRupert_type24_dsSide`) and 20.17 (`RegSign`,
+  `Type24.DSRegionsCovered`, `isRupert_type24_dsRegions`), the acute side by 20.17–20.19
+  (`Type24.AcuteCovered`, `isRupert_type24_acute`), Theorem 20.9‴ (`isRupert_type24_uniform_ds`,
+  `isRupert_type24_uniform_dsRegions`, `isRupert_type24_uniform_acute`). Not formalized: (S3),
+  closed forms of the LPs `z3 > z0, z5`, Lemma 20.15 (DS-safety is a hypothesis), the LPs and cell
+  enumerations deciding DS-safety, (K236) and (Y) for given classes, Propositions 20.7′ and 20.20
+  and their per-class certificates, the class counts.
 
 **L12. The view along an edge between two quadrilaterals** (`EdgeView.lean`,
 `QuadFacets.lean`; Theorems B, B′ of `FEWER-FACES-PROOFS.md` §4–5, in general
@@ -928,7 +948,9 @@ In import order.
 | `Type24Chain` | `FEWER-FACES-PROOFS.md` §20.3–20.5, 20.9: WP at the view `t3`, the window chain at every metric, the closed obtuse octant, the uniform statement | `wpChain_after`, `wpView_t3`, `isRupert_wp2_after`, `windowChain`, `WindowChain`, `isRupert_windowChain2`, `isRupert_windowChain6`, `isRupert_windowChain_octant`, `isRupert_type24_uniform` |
 | `Type24Side` | `FEWER-FACES-PROOFS.md` §20, continued (11, 12): the sink lemma 20.2 (d) and its `m = 2` corollary, the common sink, side-safety and Theorem 20.8′ (Conjecture A when each cosine is seen on a safe side), Theorem 8.10 as a cap-edge item | `exists_dip_of_not_unimodal`, `CapRim0.path`, `capRim0_sink`, `Type24.sinkE2`, `Type24.sinkE0`, `capRim0_five_fails_iff`, `common_sink`, `SideSafe`, `Type24.SideCovered`, `isRupert_type24_side_safe`, `Type24.obtuse_of_side_safe`, `not_fails4_of_depthSepAt`, `isRupert_capRim0_uos` |
 | `Type24Lambda` | `FEWER-FACES-PROOFS.md` §20, continued (13, 14): Lemma 20.10 (OO's identity, both clauses), Corollary 20.11, Theorem 20.4″ (the chain without `r4 > 1`), the window chain in general form, Theorem 20.9′ | `Lambda.lemma_20_10`, `Lambda.lemma_20_10_strict`, `lemma_20_10_wp`, `windowChain_gen`, `wpL2_of_poly`, `ChainData`, `isRupert_chainData2_L2`, `WindowChainΛ`, `isRupert_windowChainΛ_octant`, `isRupert_type24_uniform_side` |
-| `Type24Circle236` | `FEWER-FACES-PROOFS.md` §20, continued (2): Lemma 20.12 (UU's S1, S2, S4, S5, the linear identities of Theorem 20.13 on depth values; not yet connected to `IsRupert`) | `Cu13.S1`, `Cu13.S2`, `Cu13.S4`, `Cu13.S5` |
+| `Type24Circle236` | `FEWER-FACES-PROOFS.md` §20, continued (2): Lemma 20.12 (UU's S1, S2, S4, S5, the linear identities of Theorem 20.13 on depth values; connected to `IsRupert` in `Type24Circle`) | `Cu13.S1`, `Cu13.S2`, `Cu13.S4`, `Cu13.S5` |
+| `Type24DS` | `FEWER-FACES-PROOFS.md` §20, continued (3): Corollary 20.19 (the planar quad rim), Lemma 20.18 (Lemma Y; cu14's core moved in), DS side-safety (Theorems 20.16, 20.17), the acute side by 20.17–20.19 | `planarRim_coeffs`, `QuadTest'.isRupert_planar`, `isRupert_type24_planarQuad`, `Cu14.lemmaY`, `lemmaY_core`, `YBelow`, `isRupert_lemmaY`, `isRupert_lemmaY_bc`, `DSSafeQ`, `isRupert_capEdge_dsSafe`, `Type24.DSSideCovered`, `Type24.DSRegionsCovered`, `isRupert_type24_dsSide`, `isRupert_type24_dsRegions`, `Type24.AcuteCovered`, `isRupert_type24_acute` |
+| `Type24Circle` | `FEWER-FACES-PROOFS.md` §20, continued (2), (3): Theorem 20.13 (closed and open obtuse octant), Corollary 20.14, Theorems 20.9″ and 20.9‴ | `Gram3`, `K236bar`, `K236`, `EdgeRim`, `isRupert_edgeRim`, `e23_cases`, `Type24.c5_lt_of_rimT62`, `Type24.s1_pattern`, `isRupert_circle236_octant`, `isRupert_circle236_open`, `Type24.ObtuseCovered`, `isRupert_type24_obtuse_octant`, `isRupert_type24_uniform_circle`, `isRupert_type24_uniform_ds`, `isRupert_type24_uniform_acute` |
 | `TriBridge` | L13, Corollary T1 from facets: convex position of four points, the vertical and general bridges | `convex_four`, `isRupert_twoQuads_vertical`, `isRupert_twoQuads`, `TriGen`, `TriGenFar`, `TriGen.far`, `isRupert_of_two_quad_facets_vertex` |
 
 ## Formalization choices
