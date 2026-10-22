@@ -592,6 +592,15 @@ def T1Tie (K : Finset ℝ³) (a a' b b' u : ℝ³) : Prop :=
   QuadTie ⟪a, u⟫ ⟪b', u⟫ ⟪a', u⟫ ⟪b, u⟫ ∨
     (OneTieAt K u ∧ (⟪a, u⟫ = ⟪b, u⟫ → NoTieAt K (a - b)))
 
+/-- **The labelled rim of `T1` at `u`** (§22: the data of its certificate): the quadrilateral
+`a b' a' b` or the triangle `a b' b` (labels of F1: `0 5 3 4` and `0 5 4`). -/
+def T1Rim (K : Finset ℝ³) (a a' b b' u : ℝ³) : Prop :=
+  RimCertPts K u (quad a b' a' b) ∨ RimCertPts K u (tri a b' b)
+
+theorem T1Rim.rimCert {K : Finset ℝ³} {a a' b b' u : ℝ³} (h : T1Rim K a a' b b' u) :
+    RimCert K u :=
+  h.elim (·.rimCert4) (·.rimCert3)
+
 /-- **Lemma 16.7 (F1)**, in the normalized class (so (i) `s_C = +1` holds).  Let (ii)
 `{3 5} < [6 3]` (`δ_014(2) < δ_014(5)`), (iii) `0 → 4` a quad edge of `K − 6` (the faces
 `135`, `235` face up along `4 − 0`), and (iv) hO2 `[3 4] < [1 3]` (the far end of `014` along
@@ -612,7 +621,9 @@ theorem cert_type21_F1 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hP : det3 (b - b') (a' - b') (axisView G.l G.m a' a b' c') ≠ 0)
     (hz : T1Tie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b'
       (axisView G.l G.m a' a b' c'))
-    (hL₁ : ∀ σ : ℝ, (σ = 1 ∨ σ = -1) → L (σ • axisView G.l G.m a' a b' c'))
+    (hL₁ : ∀ σ : ℝ, (σ = 1 ∨ σ = -1) →
+      T1Rim (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b'
+        (σ • axisView G.l G.m a' a b' c') → L (σ • axisView G.l G.m a' a b' c'))
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
     CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
       (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
@@ -662,7 +673,7 @@ theorem cert_type21_F1 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
       rcases ho a hKa b' hKb' b' hKb' b hKb hab' (Ne.symm hbb') e1 e2 with ⟨h1, -⟩ | ⟨h1, -⟩
       · exact hab' h1
       · exact hab h1
-  have hT := rimCert_axisTest_gen F.swap₁.swap₂.swap₃ G.swap₁.swap₂.swap₃ hfar₁ hfar₂ hP htri
+  have hT := rimCertPts_axisTest_gen F.swap₁.swap₂.swap₃ G.swap₁.swap₂.swap₃ hfar₁ hfar₂ hP htri
     (insert d ({a, a', b, b', c, c'} : Finset ℝ³))
     (by
       intro x hx
@@ -675,7 +686,7 @@ theorem cert_type21_F1 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
         simp only [Finset.mem_insert, Finset.mem_singleton] at h ⊢
         rcases h with rfl | rfl | rfl | rfl | rfl | rfl <;> simp)
   rcases hT with ⟨σ, hσ, hR⟩ | ⟨⟨s, t, μ, hs0, hs1, ht0, ht1, hm⟩, -, hNR⟩
-  · exact CertV.line (hL₁ σ hσ) hR
+  · exact CertV.line (hL₁ σ hσ hR) (T1Rim.rimCert hR)
   replace hm : b' + t • (b - b') - (a + s • (a' - a)) = μ • u := hm
   replace hNR : ¬ IsRobustUnimodal (quad ⟪a, u⟫ ⟪b', u⟫ ⟪a', u⟫ ⟪b, u⟫) := hNR
   -- `T1` failed: `μ ≥ 0`, and `μ = 0` only if `s = 0` (Lemma 16.7 (a), (e))

@@ -62,6 +62,7 @@ public import Minimality.ParallelEdge
 public import Minimality.Type16Edge2
 public import Minimality.SameView
 public import Minimality.Type21Ridge
+public import Minimality.Type21Vtx
 
 /-!
 # Every nopert has at least 7 points
@@ -905,14 +906,20 @@ theorem not_type21_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
   h.2 (Minimality.isRupert_type21_facets x hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG hH
     hpp hgen hnd hEq hT1 hF2)
 
-/-- **Type 21 outside codimension 2, except horizontal double normals at four vertex views**
-(§18.6 step 2 and §22 of `FEWER-FACES-PROOFS.md`): a nopert does not have seven points labelled so
-that `014`, `015`, `0256`, `046`, `134`, `135`, `2346`, `235` are facets (given by functionals
-negative off them), unless one of the following holds.
+/-- **Type 21 outside codimension 2** (§18.6 step 2 and §22 of `FEWER-FACES-PROOFS.md`): a nopert
+does not have seven points labelled so that `014`, `015`, `0256`, `046`, `134`, `135`, `2346`,
+`235` are facets (given by functionals negative off them), unless one of the following holds.
 * A horizontal double normal at the view along the line of one of the facet pairs `014/0256`,
-  `014/2346`, `135/0256`, `135/2346` (`Minimality.NoHDNAff`): vertex views with a quadrilateral
-  face (F1's `T1`, F2's `V`; §22.2 with a quadrilateral, 22.9, 22.13, 22.14 are not formalized
-  there).
+  `014/2346`, `135/0256`, `135/2346` together with a failure of the codimension-2 conditions there
+  (`Minimality.HDNOrVtx21Aff`: §22.4's conditions `Minimality.VtxGen` — no two points over one
+  point, (G1), distinct depths, at most one direction of horizontal double normals, no double
+  normal perpendicular to the quadrilateral from one of its vertices — and `2` off `013`, `2` off
+  `145`, `6` off `145`, `6` off `013` respectively, the boundary of Lemma 22.13 in `V`'s
+  labelling).  Each line carries F1's `T1` (realized on both face circles: Proposition 22.2)
+  and F2's `V` (its triangle rim by a sector rim, Proposition 22.2; its quadrilateral rim by
+  §22.3–22.10, with (H4) for the middle `3` from Lemma 22.13 and the residual of Lemma 22.9 for
+  the middle `6` impossible by Lemma 22.14: there `V′` would not fail, and F2's certificates
+  prefer `V′`).
 * A horizontal double normal at the view along `06`, `46`, `25` or `23` together with a failure of
   the codimension-2 conditions of §22.4 there (`Minimality.QGenAff21`: only the axle seen
   end-on, (G1), distinct depths, at most one direction of horizontal double normals, no double
@@ -947,9 +954,11 @@ condition or Gale equality of the tier cover, no planar equator, no switch surfa
 `NoPlaneParallel` position of the approximants, `Minimality.IsCap21.not_switch`).  Every type-21
 shape is a limit of shapes off the special positions of the cover with the same tie; each of
 these has a rim certificate at a named view (Theorem 16.26), with the data of tiers Q and R at
-the seven edges with a quadrilateral; a subsequence carries one labelled certificate, and it
-passes to the limit (Lemma 18.2: the rim only loses corners; Theorems 18.1, 18.3, Proposition
-22.2 at the two-circle views, and §22.3–22.8 at the edges with a quadrilateral). -/
+the seven edges with a quadrilateral and of `T1`, `V` at the four vertex lines with a
+quadrilateral; a subsequence carries one labelled certificate, and it passes to the limit
+(Lemma 18.2: the rim only loses corners; Theorems 18.1, 18.3, Proposition 22.2 at the
+two-circle views, §22.3–22.8 at the edges with a quadrilateral, and §22.2–22.14 at the vertex
+lines with a quadrilateral).  No plain horizontal-double-normal hypothesis is left. -/
 theorem not_type21_of_isNopert_codim2 (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
@@ -989,17 +998,17 @@ theorem not_type21_of_isNopert_codim2 (x : Fin 7 → ℝ³) (h : IsNopert (Finse
       Minimality.HDNOrG1Edge (Finset.univ.image x) (x 1) (x 5) (x 0) (x 3) ∧
       Minimality.HDNOrG1Edge (Finset.univ.image x) (x 1) (x 3) (x 4) (x 5) ∧
       Minimality.HDNOrG1Edge (Finset.univ.image x) (x 3) (x 5) (x 1) (x 2))
-    (hV : Minimality.NoHDNAff (Finset.univ.image x) fA fC ∧
-      Minimality.NoHDNAff (Finset.univ.image x) fA fG ∧
-      Minimality.NoHDNAff (Finset.univ.image x) fF fC ∧
-      Minimality.NoHDNAff (Finset.univ.image x) fF fG ∧
-      Minimality.HDNOrG1Aff (Finset.univ.image x) fD fE (x 4) (x 0) (x 6) (x 4) (x 3) (x 1) ∧
+    (hVq : Minimality.HDNOrVtx21Aff x fC fA {0, 2, 5, 6} {0, 1, 4} 0 1 3 2 ∧
+      Minimality.HDNOrVtx21Aff x fG fA {2, 3, 4, 6} {0, 1, 4} 4 1 5 2 ∧
+      Minimality.HDNOrVtx21Aff x fC fF {0, 2, 5, 6} {1, 3, 5} 5 1 4 6 ∧
+      Minimality.HDNOrVtx21Aff x fG fF {2, 3, 4, 6} {1, 3, 5} 3 1 0 6)
+    (hV : Minimality.HDNOrG1Aff (Finset.univ.image x) fD fE (x 4) (x 0) (x 6) (x 4) (x 3) (x 1) ∧
       Minimality.HDNOrG1Aff (Finset.univ.image x) fD fB (x 0) (x 4) (x 6) (x 0) (x 5) (x 1) ∧
       Minimality.HDNOrG1Aff (Finset.univ.image x) fH fE (x 3) (x 5) (x 2) (x 3) (x 4) (x 1) ∧
       Minimality.HDNOrG1Aff (Finset.univ.image x) fH fB (x 5) (x 3) (x 2) (x 5) (x 0) (x 1))
     (htie : Minimality.OneTie21 x) : False :=
   h.2 (Minimality.isRupert_type21_limit_facets_codim2 x hx fA fB fC fD fE fF fG fH hA hB hC hD
-    hE hF hG hH hQ h5 h26 hEd hV htie)
+    hE hF hG hH hQ h5 h26 hEd hVq hV htie)
 
 /-- **Type 16** (Theorem 19.6 of `FEWER-FACES-PROOFS.md` §19, the cover): a nopert does not
 have seven points labelled so that `0235`, `1356` (quadrilaterals), `024`, `036`, `046`, `145`,

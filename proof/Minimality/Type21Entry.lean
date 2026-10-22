@@ -208,7 +208,7 @@ def T1ViewL (K : Finset ℝ³) (L : ℝ³ → Prop) (fP fQ : ℝ³ →ᵃ[ℝ] �
 
 theorem T1View.toL {V : Finset ℝ³} {fP fQ : ℝ³ →ᵃ[ℝ] ℝ} {a a' b b' : ℝ³}
     (h : T1View V fP fQ a a' b b') : T1ViewL V (NoHDNAt V) fP fQ a a' b b' :=
-  fun u hu h1 h2 => ⟨(h u hu h1 h2).1, Or.inl (h u hu h1 h2).2.1, (h u hu h1 h2).2.2⟩
+  fun u hu h1 h2 => ⟨(h u hu h1 h2).1, Or.inl (h u hu h1 h2).2.1, fun _ => (h u hu h1 h2).2.2⟩
 
 end Minimality
 

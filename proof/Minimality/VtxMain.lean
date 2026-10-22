@@ -77,6 +77,14 @@ def H4orCopl (u v a c b m : ℝ³) (ε : ℝ) : Prop :=
   0 < det3 (c - a) (b - a) (v - a) * (ε * det3 (c - a) (b - a) u) ∨
     det3 (a - m) (c - m) (b - m) = 0
 
+/-- (H4) or Lemma 22.10's coplanarity for the middle `m` shown in the sense `ε u`, or the
+residual pattern of Lemma 22.9 for `m` is impossible (as for type 21's `V` with the middle `6`,
+Lemma 22.14: there `V′` closes instead). -/
+def H4orEsc (u v a c b m : ℝ³) (ε : ℝ) : Prop :=
+  H4orCopl u v a c b m ε ∨
+    ¬ (ε * ⟪v, u⟫ < ε * ⟪m, u⟫ ∧ ε * ⟪v, u⟫ < ε * ⟪b, u⟫ ∧ ε * ⟪a, u⟫ < ε * ⟪v, u⟫ ∧
+      ε * ⟪c, u⟫ < ε * ⟪v, u⟫)
+
 /-- **(H4) from the other middle in the plane `a c b`** (type 16's `T_a`: `3` on the facet
 `1356 ∋ 5, 1, 6`): if the lower middle `q` lies in the plane of `a, c, b`, then (H4) holds in the
 sense of `u` (where `p` shows).  Along the chord, `Π(q) = (1 − s) Π(v) + δ Π'(u)` for the plane's
@@ -140,7 +148,7 @@ theorem isRupert_classD (E : VtxConf V u v a c b p q n Na Nb κa κb)
     {Z F : ℝ³} (hZ : Z ∈ segment ℝ v a) (hZv : Z ≠ v) (hZa : Z ≠ a) (hF : F ∈ segment ℝ c b)
     (hpar : ⟪Na, c⟫ = ⟪Na, b⟫) {r : ℝ} (hFZ : F - Z = r • Na) {ℓ₀ : ℝ³}
     (hdir : HDNDir V u ℓ₀) (hℓa : cross ℓ₀ Na = 0)
-    (hDp : H4orCopl u v a c b p 1) (hDq : H4orCopl u v a c b q (-1)) : IsRupert V := by
+    (hDp : H4orEsc u v a c b p 1) (hDq : H4orEsc u v a c b q (-1)) : IsRupert V := by
   classical
   obtain ⟨sp, δp, hsp0, hsp1, hδp, hpeq⟩ := E.p_coords
   obtain ⟨sq, δq, hsq0, hsq1, hδq, hqeq⟩ := E.q_coords
@@ -187,12 +195,16 @@ theorem isRupert_classD (E : VtxConf V u v a c b p q n Na Nb κa κb)
     · rw [hdiff, inner_neg_left, real_inner_smul_left, E.Na_av]; ring
   rcases hH with ⟨k1, k2, k3, k4⟩ | ⟨k1, k2, k3, k4⟩
   · -- (H1) for `p` along `u`
+    replace hDp : H4orCopl u v a c b p 1 := hDp.resolve_right fun h => h
+      ⟨by linarith, by linarith, by linarith, by linarith⟩
     obtain ⟨L', hL', hsg, hR⟩ := E.rdRimG_vtx hsp0 hsp1 hpeq one_ne_zero (by linarith) hpar
       ⟨by linarith, by linarith, by linarith, by linarith⟩ hfeet hDp
     have hL'0 : 0 < L' := hsg.mpr one_pos
     exact E.isRupert_rdUp (Or.inl ⟨rfl, rfl⟩) hsp0 hsp1 hpeq hsq0 hqeq hL'
       (mul_neg_of_pos_of_neg hL'0 hδq) hR
   · -- (H1) for `q` along `−u`
+    replace hDq : H4orCopl u v a c b q (-1) := hDq.resolve_right fun h => h
+      ⟨by linarith, by linarith, by linarith, by linarith⟩
     obtain ⟨L', hL', hsg, hR⟩ := E.rdRimG_vtx hsq0 hsq1 hqeq (by norm_num : (-1 : ℝ) ≠ 0)
       (by linarith) hpar ⟨by linarith, by linarith, by linarith, by linarith⟩ hfeet hDq
     have hL'0 : L' < 0 := by
@@ -208,7 +220,7 @@ theorem isRupert_persistA (E : VtxConf V u v a c b p q n Na Nb κa κb)
     (hz : NWS4 (quad ⟪v, u⟫ ⟪a, u⟫ ⟪c, u⟫ ⟪b, u⟫))
     (hdist : ∀ y ∈ V, ∀ y' ∈ V, y ≠ y' → ⟪y, u⟫ ≠ ⟪y', u⟫) (hone : OneHDNDir V u)
     (hfoot : FootA v a c b Na)
-    (hD : ⟪Na, c⟫ = ⟪Na, b⟫ → H4orCopl u v a c b p 1 ∧ H4orCopl u v a c b q (-1))
+    (hD : ⟪Na, c⟫ = ⟪Na, b⟫ → H4orEsc u v a c b p 1 ∧ H4orEsc u v a c b q (-1))
     {i j : ZMod 4} {Y Y' : ℝ³} (hY : Y ∈ segment ℝ (quad v a c b i) (quad v a c b (i + 1)))
     (hY' : Y' ∈ segment ℝ (quad v a c b j) (quad v a c b (j + 1))) (hne : Y' ≠ Y)
     (hu : ⟪Y' - Y, u⟫ = 0) (hea : ⟪Y' - Y, a - v⟫ = 0)
@@ -257,12 +269,13 @@ theorem isRupert_persistA (E : VtxConf V u v a c b p q n Na Nb κa κb)
 `v a c b` at the vertex view (`VtxConf`) makes the set Rupert under the codimension-2 conditions:
 distinct depths, at most one direction of horizontal double normals, no double normal
 perpendicular to `F_a` from an end of its side, and (H4) or Lemma 22.10's coplanarity in both
-senses where the far edge is parallel to `F_a`. -/
+senses where the far edge is parallel to `F_a` (or, for a middle, the impossibility of Lemma
+22.9's residual pattern for it, `H4orEsc`). -/
 theorem isRupert_vtxClosing (E : VtxConf V u v a c b p q n Na Nb κa κb)
     (hrob : IsRobustUnimodal (fun i => ⟪quad v a c b i, u⟫))
     (hdist : ∀ y ∈ V, ∀ y' ∈ V, y ≠ y' → ⟪y, u⟫ ≠ ⟪y', u⟫) (hone : OneHDNDir V u)
     (hfoot : FootA v a c b Na)
-    (hD : ⟪Na, c⟫ = ⟪Na, b⟫ → H4orCopl u v a c b p 1 ∧ H4orCopl u v a c b q (-1)) :
+    (hD : ⟪Na, c⟫ = ⟪Na, b⟫ → H4orEsc u v a c b p 1 ∧ H4orEsc u v a c b q (-1)) :
     IsRupert V := by
   classical
   have hinj : Function.Injective (fun i => ⟪quad v a c b i, u⟫) := by

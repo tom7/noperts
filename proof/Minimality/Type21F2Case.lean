@@ -160,7 +160,7 @@ every direction `u ≠ 0` of the line `abc ∩ a'bc'` (`V`, rim `b, d, b', c`) a
 the two rims are allowed ones (`F2Tie`). -/
 def F2ViewsL (K : Finset ℝ³) (L : ℝ³ → Prop) (a a' b b' c c' d : ℝ³) : Prop :=
   (∀ u : ℝ³, u ≠ 0 → det3 (a - b) (c - b) u = 0 → det3 (a' - b) (c' - b) u = 0 →
-    det3 (c - d) (b' - d) u ≠ 0 ∧ L u) ∧
+    det3 (c - d) (b' - d) u ≠ 0 ∧ (VRim K a a' b b' c c' d u → L u)) ∧
   (∀ v : ℝ³, v ≠ 0 → det3 (a - b) (c' - b) v = 0 → det3 (a' - b) (c - b) v = 0 →
     det3 (a - a') (b' - a') v ≠ 0 ∧ L v) ∧
   (∀ u v : ℝ³, u ≠ 0 → det3 (a - b) (c - b) u = 0 → det3 (a' - b) (c' - b) u = 0 →
@@ -191,7 +191,9 @@ theorem cert_type21_F2_frame {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b'
     (h35 : g35 < g51) (h51 : g51 < g05) (h05 : g05 < g56)
     (hP : 0 < r * g05 - τ * g51 * g60)
     (hab : 0 < g56 - τ * g51 * g56 - (r * g05 - τ * g51 * g60))
-    (hP5 : 0 < g35 * g60 - g35 * g56 + g13 * g56)
+    (hP5 : 0 < g35 * g60 - g35 * g56 + g13 * g56) {g30 : ℝ}
+    (hC1 : g10 * g35 - g05 * g13 = -(g51 * g30)) (h145 : τ * g13 * g60 < r * g30)
+    (hDD : 0 < (1 - r) * g30 + τ * g13 * g60)
     (hF2 : F2ViewsL (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L a a' b b' c c' d) :
     CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
       (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
@@ -414,6 +416,51 @@ theorem cert_type21_F2_frame {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b'
       linarith
     · refine (mul_neg_of_scaled (by positivity) (by positivity) mE1 mE2 ?_ hD').le
       exact mul_neg_of_pos_of_neg (by positivity) (mul_neg_of_pos_of_neg (by positivity) hQ)
+  -- the data of §22: `6` below the chord `4 2` along `u_V`, the cone of Lemma 22.14 (iii) and the
+  -- fact of Lemma 22.13 (`ρ ∈ (0, 1)`)
+  have kc' : (τ * g13 * g56 + r * g35) • (c' - b) = g35 • (d - b) + (-(τ * g13)) • u := by
+    linear_combination (norm := module) (-g35) • VD + (τ * g13) • hu2
+  have hc'u : ∃ s δ : ℝ, δ < 0 ∧ c' = b + s • (d - b) + δ • u := by
+    refine ⟨g35 / (τ * g13 * g56 + r * g35), (-(τ * g13)) / (τ * g13 * g56 + r * g35),
+      div_neg_of_neg_of_pos (neg_neg_of_pos (by positivity)) hΛ0, ?_⟩
+    have := combo_div hΛ0.ne' kc'
+    linear_combination (norm := module) this
+  have kv : (τ * g13) • (-v) = (τ * g13 * g51) • (c - b) + g35 • (b - d) + (g35 * r) • (c' - b) := by
+    linear_combination (norm := module) (-(τ * g13)) • hv2 + g35 • VD
+  have hcone : ∃ α β γ : ℝ, 0 < α ∧ 0 < β ∧ 0 < γ ∧
+      -v = α • (c - b) + β • (b - d) + γ • (c' - b) :=
+    ⟨_, _, _, by positivity, by positivity, by positivity,
+      combo_div3 (by positivity : (0 : ℝ) < τ * g13).ne' kv⟩
+  have cBC : (g10 * g51) • (b - c) = (-(g10 * g35 - g05 * g13)) • (a' - b) +
+      (-(g05 * g51)) • (b' - b) + (-(g05 * g61 - g10 * g56)) • (c' - b) := by
+    linear_combination (norm := module) (-1 : ℝ) • cC
+  have cB'C : (g10 * g51) • (b' - c) = (-(g10 * g35 - g05 * g13)) • (a' - b) +
+      (g10 * g51 - g05 * g51) • (b' - b) + (-(g05 * g61 - g10 * g56)) • (c' - b) := by
+    linear_combination (norm := module) (-1 : ℝ) • cC
+  have cDC : (g10 * g51) • (d - c) = (g10 * g51 * (τ * g13) - (g10 * g35 - g05 * g13)) • (a' - b) +
+      (-(g05 * g51)) • (b' - b) + (g10 * g51 * r - (g05 * g61 - g10 * g56)) • (c' - b) := by
+    linear_combination (norm := module) (g10 * g51) • VD - cC
+  have c6D : (1 : ℝ) • (c' - d) = (-(τ * g13)) • (a' - b) + (0 : ℝ) • (b' - b) +
+      (1 - r) • (c' - b) := by
+    linear_combination (norm := module) (-1 : ℝ) • VD
+  have dd : (g10 * g51) * (g10 * g51) * (g10 * g51) * det3 (b - c) (b' - c) (d - c) =
+      ((g10 * g51) * (g10 * g51) * (g51 * (r * g30 - τ * g13 * g60))) * D := by
+    rw [det3_scaled_combo cBC cB'C cDC]
+    linear_combination (D * (g10 * g51) * (g10 * g51) * (-r)) * hC1 +
+      (D * (g10 * g51) * (g10 * g51) * (τ * g13)) * P1
+  have d6 : (g10 * g51) * (g10 * g51) * 1 * det3 (b - c) (b' - c) (c' - d) =
+      ((g10 * g51) * (g51 * ((1 - r) * g30 + τ * g13 * g60))) * D := by
+    rw [det3_scaled_combo cBC cB'C c6D]
+    linear_combination (D * (g10 * g51) * (-(1 - r))) * hC1 +
+      (D * (g10 * g51) * (-(τ * g13))) * P1
+  have hΔ : VDelta b b' c c' d := by
+    unfold VDelta
+    rw [show det3 (b - c) (b' - c) (c' - c) - det3 (b - c) (b' - c) (d - c) =
+      det3 (b - c) (b' - c) (c' - d) by simp only [det3_expand, PiLp.sub_apply]; ring]
+    refine mul_pos_of_scaled (by positivity) (by positivity) dd d6 ?_ hD
+    have h1 : 0 < r * g30 - τ * g13 * g60 := by linarith
+    have k := mul_pos p10 p51
+    exact mul_pos (mul_pos (mul_pos k k) (mul_pos p51 h1)) (mul_pos k (mul_pos p51 hDD))
   -- F2
   have hσ₁ : -σ = 1 ∨ -σ = -1 := by
     rcases hσ with h | h
@@ -439,7 +486,7 @@ theorem cert_type21_F2_frame {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b'
     (pos_of_scaled (by positivity) dB2 (by
       have := mul_pos (show 0 < g13 * g10 * g56 by positivity) hσD
       linarith))
-    hP₂ hm₂ hm₂' hX₂ hmeet hsign hties
+    hP₂ hm₂ hm₂' hX₂ hmeet hsign hties hc'u hcone hΔ
     (hF2.1 ((-σ) • u) (smul_ne_zero (by rcases hσ with rfl | rfl <;> norm_num) hu0)
       (by rw [det3_smul_right, hN1, mul_zero]) (by rw [det3_smul_right, hN2, mul_zero])).2
     (hF2.2.1 (σ • v) (smul_ne_zero (by rcases hσ with rfl | rfl <;> norm_num) hv0)
@@ -689,8 +736,31 @@ theorem cert_type21_F2case {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c
     have := mul_pos s35 s46
     have := mul_pos s63 (sub_pos.mpr h51)
     linarith
+  -- the facts of Lemma 22.13: `[1 0][3 5] − [0 5][1 3] = −[5 1][3 0]` (Plücker), `2` not beyond
+  -- `145`, and `D = [1 3]([3 0] + [6 0]) − [4 1][3 0] > 0` (F2's `[1 3] < [3 4]`)
+  have hC1 : galeD G.l G.m c a * galeD G.l G.m a' b' - galeD G.l G.m a b' * galeD G.l G.m c a' =
+      -(galeD G.l G.m b' c * galeD G.l G.m a' a) := by
+    have pl := galeD_plucker G.l G.m c a a' b'
+    rw [anti b' c, anti a' a] at pl
+    linear_combination pl
+  have hDD : 0 < (1 - (β + τ * galeD G.l G.m c c')) * galeD G.l G.m a' a +
+      τ * galeD G.l G.m c a' * galeD G.l G.m c' a := by
+    have pl := galeD_plucker G.l G.m c a' c' a
+    have sc := galeD_sum G.hl G.hm c
+    have sa := galeD_sum G.hl G.hm a'
+    rw [galeD_self, anti b' c] at sc
+    rw [galeD_self, anti c a'] at sa
+    have key : (1 - (β + τ * galeD G.l G.m c c')) * galeD G.l G.m a' a +
+        τ * galeD G.l G.m c a' * galeD G.l G.m c' a =
+        τ * (galeD G.l G.m c a * (galeD G.l G.m a' b - galeD G.l G.m c a' +
+          galeD G.l G.m a' b') + galeD G.l G.m a' a * galeD G.l G.m b' c) := by
+      linear_combination (-galeD G.l G.m a' a) * S + (τ * galeD G.l G.m a' a) * sc -
+        (τ * galeD G.l G.m c a) * sa + τ * pl
+    rw [key]
+    have := sub_pos.mpr h31
+    exact mul_pos hτ (add_pos (mul_pos s10 (by linarith)) (mul_pos s30 s51))
   exact cert_type21_F2_frame F G s05 s10 s13 s35 s51 s56 s60 s63 hτ hr VA VC VD hu hu' P1
-    hB1 hΛ h51 f05 f56 hP hab hP5' hF2
+    hB1 hΛ h51 f05 f56 hP hab hP5' hC1 hn145 hDD hF2
 
 /-- **Theorem 16.23 (class (c), one crossing)**, in `τ`: `K − 2` in the pattern `(+, −, +)`,
 `2` beyond `013` (`{5 4} > 0`) but not beyond `145` (`{0 3} < 0`), `1 → 0` a quad edge of

@@ -245,6 +245,54 @@ def F2Tie (K : Finset ℝ³) (b b' p q p' q' u v : ℝ³) : Prop :=
     (OneTieAt K u ∧ OneTieAt K v ∧ (NoTieAt K u ∨ NoTieAt K v) ∧
       det3 (p - b) (b' - b) (q - p) ≠ 0 ∧ det3 (p' - b) (b' - b) (q' - p') ≠ 0)
 
+/-- **The cone fact of Lemma 22.14 at `V`'s view `u`** (F2's labels, closed form): `y` lies in the
+cone of `c − b`, `b − d`, `c' − b` (`1 − 4`, `4 − 2`, `6 − 4`: the three Cramer determinants have
+the sign of the frame determinant), and `⟪y, u⟫` has the sign opposite to the offset of the middle
+`c'` from the chord `b d` along `u` (`cross (d − b) (c' − b) = δ cross (d − b) u`). -/
+def VQuadCone (b c c' d u y : ℝ³) : Prop :=
+  0 ≤ det3 y (b - d) (c' - b) * det3 (c - b) (b - d) (c' - b) ∧
+    0 ≤ det3 (c - b) y (c' - b) * det3 (c - b) (b - d) (c' - b) ∧
+    0 ≤ det3 (c - b) (b - d) y * det3 (c - b) (b - d) (c' - b) ∧
+    ⟪cross (d - b) (c' - b), cross (d - b) u⟫ * ⟪y, u⟫ ≤ 0
+
+theorem VQuadCone.smul {b c c' d u y : ℝ³} (h : VQuadCone b c c' d u y) {r : ℝ} (hr : 0 < r) :
+    VQuadCone b c c' d u (r • y) := by
+  obtain ⟨h1, h2, h3, h4⟩ := h
+  have e1 : det3 (r • y) (b - d) (c' - b) = r * det3 y (b - d) (c' - b) := by
+    simp only [det3_expand, PiLp.smul_apply, smul_eq_mul]; ring
+  have e2 : det3 (c - b) (r • y) (c' - b) = r * det3 (c - b) y (c' - b) := by
+    simp only [det3_expand, PiLp.smul_apply, smul_eq_mul]; ring
+  have e3 : det3 (c - b) (b - d) (r • y) = r * det3 (c - b) (b - d) y := by
+    simp only [det3_expand, PiLp.smul_apply, smul_eq_mul]; ring
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · rw [e1, mul_assoc]; exact mul_nonneg hr.le h1
+  · rw [e2, mul_assoc]; exact mul_nonneg hr.le h2
+  · rw [e3, mul_assoc]; exact mul_nonneg hr.le h3
+  · rw [real_inner_smul_left, mul_left_comm]; exact mul_nonpos_of_nonneg_of_nonpos hr.le h4
+
+/-- **The fact of Lemma 22.13 in F2's region** (closed form): with `Δ(X) = det(b − c, b' − c,
+X − c)` (`4 − 1`, `5 − 1`: the plane `145`), `ρ = Δ(d)/Δ(c') ∈ (0, 1)`, i.e. `d` lies strictly
+between the plane `b c b'` and its parallel through `c'`. -/
+def VDelta (b b' c c' d : ℝ³) : Prop :=
+  0 < det3 (b - c) (b' - c) (d - c) *
+    (det3 (b - c) (b' - c) (c' - c) - det3 (b - c) (b' - c) (d - c))
+
+/-- **The data of `V`'s four-corner certificate** (§22, Lemmas 22.13, 22.14): a nonzero direction
+`y` of the line of `V′` (the planes `a b c'`, `a' b c`) with the cone fact at `u`, and 22.13's
+fact. -/
+def VQuadData (a a' b b' c c' d u : ℝ³) : Prop :=
+  (∃ y : ℝ³, y ≠ 0 ∧ det3 (a - b) (c' - b) y = 0 ∧ det3 (a' - b) (c - b) y = 0 ∧
+    VQuadCone b c c' d u y) ∧ VDelta b b' c c' d
+
+/-- **The labelled rim of `V` at `u`** (§22: the data of its certificate): the quadrilateral
+`b d b' c` with `VQuadData`, or the triangle `b d c` (type 21: `4 2 5 1`, `4 2 1`). -/
+def VRim (K : Finset ℝ³) (a a' b b' c c' d u : ℝ³) : Prop :=
+  (RimCertPts K u (quad b d b' c) ∧ VQuadData a a' b b' c c' d u) ∨ RimCertPts K u (tri b d c)
+
+theorem VRim.rimCert {K : Finset ℝ³} {a a' b b' c c' d u : ℝ³} (h : VRim K a a' b b' c c' d u) :
+    RimCert K u :=
+  h.elim (·.1.rimCert4) (·.rimCert3)
+
 /-- **Lemma 16.9 (F2)**, type-21 labels (`a, a', b, b', c, c', d = 0, 3, 4, 5, 1, 6, 2`).  The
 vertex crossings at `4`: `V = 014/2346` at `u_V = [5 0] (0 − 4) + [5 1] (1 − 4)` with the rim
 `(4, 2, 5, 1)` (or the triangle `(4, 2, 1)`), `3` a middle over `4 → 2`, `0` over `4 → 1`, `6` a
@@ -258,7 +306,10 @@ at `±u_V` or `±u_V'`: the two tests share the diagonal `[4, 5]`, and by Lemma 
 four-determinant product of Corollary 13.3 is negative, so the two rims are not both
 depth-separated; with one tie, a rim that is not robustly unimodal is weakly separated
 (`weakSep_of_not_robust`), the rim without a tie strictly, and the weak sign (`weakSep_det_sign`)
-gives the contradiction. -/
+gives the contradiction.  §22 data: `V′` is preferred (two triangles, no data needed); `V`'s
+certificate is issued only when `V′` fails, and then carries its labelled rim (`VRim`) and, for
+the quadrilateral, the facts of Lemmas 22.13 and 22.14 (`VQuadData`: `V′` failing gives
+`⟪u_V′, u_V⟫ ≤ 0` by Corollary 13.3 and 16.8 (a)). -/
 theorem cert_type21_F2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (G : GaleData a a' b b' c c') {σ₁ σ₂ s₁ δ₁ s₁' δ₁' s₂ δ₂ s₂' δ₂' : ℝ}
     (hσ₁ : σ₁ = 1 ∨ σ₁ = -1)
@@ -284,7 +335,13 @@ theorem cert_type21_F2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
       det3 (axisView G.l G.m b' b a c') (b' - b) (c - d))
     (hties : F2Tie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) b b' d c a' a
       (axisView G.l G.m b' b a c) (axisView G.l G.m b' b a c'))
-    (hL₁ : L (σ₁ • axisView G.l G.m b' b a c)) (hL₂ : L (σ₂ • axisView G.l G.m b' b a c')) :
+    (hc'u : ∃ s δ : ℝ, δ < 0 ∧ c' = b + s • (d - b) + δ • axisView G.l G.m b' b a c)
+    (hcone : ∃ α β γ : ℝ, 0 < α ∧ 0 < β ∧ 0 < γ ∧
+      -axisView G.l G.m b' b a c' = α • (c - b) + β • (b - d) + γ • (c' - b))
+    (hΔ : VDelta b b' c c' d)
+    (hL₁ : VRim (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d
+      (σ₁ • axisView G.l G.m b' b a c) → L (σ₁ • axisView G.l G.m b' b a c))
+    (hL₂ : L (σ₂ • axisView G.l G.m b' b a c')) :
     CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
       (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   set u := axisView G.l G.m b' b a c with hu
@@ -336,7 +393,7 @@ theorem cert_type21_F2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
       · exact ha'b h1.symm
       · exact hab h1.symm
   -- the test `V` at `u` (core labels `(b', b, d, c)`)
-  obtain ⟨K1, K2⟩ := rimCert_axisTest_core_gen hσ₁ hT₁ hΓ₁ hB₁ htri₁ K (by simp [hK])
+  obtain ⟨K1, K2⟩ := rimCertPts_axisTest_core_gen hσ₁ hT₁ hΓ₁ hB₁ htri₁ K (by simp [hK])
     (by simp [hK]) (by simp [hK]) (by simp [hK]) (fun x hx => by
       simp only [hK, Finset.mem_insert, Finset.mem_singleton] at hx
       rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -362,19 +419,6 @@ theorem cert_type21_F2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
           hm₂'⟩))))))
   have hσσ₁ : σ₁ ≠ 0 := by rcases hσ₁ with rfl | rfl <;> norm_num
   have hσσ₂ : σ₂ ≠ 0 := by rcases hσ₂ with rfl | rfl <;> norm_num
-  rcases lt_or_gt_of_ne (mul_ne_zero hσσ₁ hP₁) with hα₁ | hα₁
-  swap; · exact CertV.line hL₁ (K1 hα₁)
-  rcases lt_or_gt_of_ne (mul_ne_zero hσσ₂ hP₂) with hα₂ | hα₂
-  swap; · exact CertV.line hL₂ (L1 hα₂)
-  by_cases hR1 : IsRobustUnimodal (quad ⟪b, u⟫ ⟪d, u⟫ ⟪b', u⟫ ⟪c, u⟫)
-  · exact CertV.line hL₁ (K2 hα₁ hR1)
-  by_cases hR2 : IsRobustUnimodal (quad ⟪b, v⟫ ⟪a', v⟫ ⟪b', v⟫ ⟪a, v⟫)
-  · exact CertV.line hL₂ (L2 hα₂ hR2)
-  exfalso
-  obtain ⟨m1u, m2u⟩ := axisTest_meets hσ₁ hs₁0 hs₁1 hm₁ hs₁0' hs₁1' hm₁' hT₁ hΓ₁ hB₁ hα₁
-  obtain ⟨m2v, -⟩ := axisTest_meets hσ₂ hs₂0 hs₂1 hm₂ hs₂0' hs₂1' hm₂' hT₂ hΓ₂ hB₂ hα₂
-  have h08 := vertex_sep F.swap₁.swap₂.swap₃ G.swap₁.swap₂.swap₃
-  have hdet := mul_neg_of_pos_of_neg hsign h08
   have nd1 : [b, d, b', c].Nodup := by
     simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
       List.nodup_nil, and_true]
@@ -383,6 +427,75 @@ theorem cert_type21_F2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
       List.nodup_nil, and_true]
     exact ⟨⟨Ne.symm ha'b, hbb', Ne.symm hab⟩, ⟨ha'b', Ne.symm haa'⟩, Ne.symm hab', not_false⟩
+  -- `V′` first: its certificate needs no data (two triangles)
+  rcases lt_or_gt_of_ne (mul_ne_zero hσσ₂ hP₂) with hα₂ | hα₂
+  swap; · exact CertV.line hL₂ (L1 hα₂)
+  by_cases hR2 : IsRobustUnimodal (quad ⟪b, v⟫ ⟪a', v⟫ ⟪b', v⟫ ⟪a, v⟫)
+  · exact CertV.line hL₂ (L2 hα₂ hR2)
+  -- `V`, with `V′` failing
+  rcases lt_or_gt_of_ne (mul_ne_zero hσσ₁ hP₁) with hα₁ | hα₁
+  swap; · exact CertV.line (hL₁ (Or.inr (K1 hα₁))) (K1 hα₁).rimCert3
+  obtain ⟨m1u, m2u⟩ := axisTest_meets hσ₁ hs₁0 hs₁1 hm₁ hs₁0' hs₁1' hm₁' hT₁ hΓ₁ hB₁ hα₁
+  obtain ⟨m2v, -⟩ := axisTest_meets hσ₂ hs₂0 hs₂1 hm₂ hs₂0' hs₂1' hm₂' hT₂ hΓ₂ hB₂ hα₂
+  have h08 : det3 u (b' - b) (a - a') * det3 v (b' - b) (a - a') < 0 :=
+    vertex_sep F.swap₁.swap₂.swap₃ G.swap₁.swap₂.swap₃
+  -- Lemma 22.14 (ii): `V′` fails, so `⟪u_V′, u_V⟫ ≤ 0`
+  have huv : ⟪v, u⟫ ≤ 0 := by
+    by_contra hpos
+    push Not at hpos
+    have B := (show 0 ≤ ⟪v, u⟫ * (det3 v (b' - b) (a - a') * det3 u (b' - b) (a - a')) by
+      rcases hties with ⟨-, q2⟩ | ⟨-, o2, -, -, hS2⟩
+      · have hs2 : DepthSep b b' a' a v := by
+          by_contra hc
+          exact hR2 (isRobustUnimodal_quad q2 (fun h => hc (Or.inr h)) (fun h => hc (Or.inl h)))
+        exact (depthSep_det_sign hs2 m2v m2u).1
+      · have W2 := weakSep_of_not_robust (o2.oneTie4 hKb hKa' hKb' hKa nd2) hR2
+        exact weakSep_det_sign W2.symm m2v m2u hpos.ne' hS2)
+    have hprod : det3 v (b' - b) (a - a') * det3 u (b' - b) (a - a') < 0 := by
+      linarith [mul_comm (det3 v (b' - b) (a - a')) (det3 u (b' - b) (a - a'))]
+    linarith [mul_pos hpos (neg_pos.mpr hprod)]
+  by_cases hR1 : IsRobustUnimodal (quad ⟪b, u⟫ ⟪d, u⟫ ⟪b', u⟫ ⟪c, u⟫)
+  · -- `V`'s quadrilateral, with the data of Lemmas 22.13 and 22.14
+    refine CertV.line (hL₁ (Or.inl ⟨K2 hα₁ hR1, ?_, hΔ⟩)) (K2 hα₁ hR1).rimCert4
+    obtain ⟨s, δ, hδ, hc'⟩ := hc'u
+    obtain ⟨α, β, γ, hα, hβ, hγ, hy⟩ := hcone
+    have hv0 : v ≠ 0 := by
+      intro h0
+      have : det3 (a' - b) (a - b) v = 0 := by
+        rw [h0]; simp only [det3_expand, PiLp.zero_apply]; ring
+      rw [this, mul_zero] at hT₂; exact lt_irrefl _ hT₂
+    refine ⟨-v, neg_ne_zero.mpr hv0, ?_, ?_, ?_⟩
+    · rw [hm₂']; simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply,
+        PiLp.neg_apply, smul_eq_mul]; ring
+    · rw [hm₂]; simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply,
+        PiLp.neg_apply, smul_eq_mul]; ring
+    · set Dg := det3 (c - b) (b - d) (c' - b) with hDg
+      have e1 : det3 (-v) (b - d) (c' - b) = α * Dg := by
+        rw [hy, hDg]; simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply,
+          smul_eq_mul]; ring
+      have e2 : det3 (c - b) (-v) (c' - b) = β * Dg := by
+        rw [hy, hDg]; simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply,
+          smul_eq_mul]; ring
+      have e3 : det3 (c - b) (b - d) (-v) = γ * Dg := by
+        rw [hy, hDg]; simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply,
+          smul_eq_mul]; ring
+      have ec : cross (d - b) (c' - b) = δ • cross (d - b) u := by
+        rw [hc']; ext j; fin_cases j <;> simp [cross] <;> ring
+      refine ⟨?_, ?_, ?_, ?_⟩
+      · rw [e1, mul_assoc]; exact mul_nonneg hα.le (mul_self_nonneg Dg)
+      · rw [e2, mul_assoc]; exact mul_nonneg hβ.le (mul_self_nonneg Dg)
+      · rw [e3, mul_assoc]; exact mul_nonneg hγ.le (mul_self_nonneg Dg)
+      · rw [ec, cross_smul_right', real_inner_smul_left, real_inner_smul_right,
+          real_inner_smul_right, inner_neg_left]
+        have hσσ : σ₁ * σ₁ = 1 := by rcases hσ₁ with rfl | rfl <;> norm_num
+        have hCC := real_inner_self_nonneg (x := cross (d - b) u)
+        have : δ * (σ₁ * ⟪cross (d - b) u, cross (d - b) u⟫) * (σ₁ * -⟪v, u⟫) =
+            δ * (⟪cross (d - b) u, cross (d - b) u⟫ * -⟪v, u⟫) := by
+          linear_combination (δ * ⟪cross (d - b) u, cross (d - b) u⟫ * -⟪v, u⟫) * hσσ
+        rw [this]
+        exact mul_nonpos_of_nonpos_of_nonneg hδ.le (mul_nonneg hCC (by linarith))
+  exfalso
+  have hdet := mul_neg_of_pos_of_neg hsign h08
   rcases hties with ⟨q1, q2⟩ | ⟨o1, o2, hno, hS1, hS2⟩
   · -- the ties of `QuadTie`: both diagonals strictly separated
     have hs1 : DepthSep b b' d c u := by

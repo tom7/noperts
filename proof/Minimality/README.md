@@ -514,8 +514,8 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
 * §18.6 step 2 for type 21 (`Type21Limit.lean`, with `RimCertLift.lean`, `Type21LiftCert.lean`):
   **type 21 outside the HDN set and codimension 2**, `isRupert_type21_limit` /
   `isRupert_type21_limit_facets` and the entry point `not_type21_of_isNopert_codim2` (the entry
-  point with §22's weakening at the two-triangle views and at the seven edges with a
-  quadrilateral, and nothing at the non-edge segments, see §22 below).  Hypotheses: the facets, no horizontal double normal at the views along the segments and the
+  point with §22's weakening at every named view and nothing at the non-edge segments: no plain
+  horizontal-double-normal hypothesis, see §22 below).  Hypotheses: the facets, no horizontal double normal at the views along the segments and the
   lines of the eight facet pairs `014/0256`, `014/2346`, `135/0256`, `135/2346`, `046/134`,
   `046/015`, `235/134`, `235/015` (`NoHDNAff`), and at most one tie at these named views
   (`OneTie21`, counted as `OneTie16`).  No general position, no sign condition or Gale equality
@@ -616,8 +616,7 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   and `isRupert_of_tendsto_rimCert` concludes.  Not formalized: 19.7 (b) / 18.4 (β) across
   certificates (two ties on different certificates' rims are excluded together with every
   other pair of ties), the codimension count itself (stated, not proved).
-* §22 of `FEWER-FACES-PROOFS.md` (HDN exceptions of types 16 and 21; complete for type 16,
-  partial for type 21).
+* §22 of `FEWER-FACES-PROOFS.md` (HDN exceptions of types 16 and 21; complete for both).
   **Proposition 22.2, general form** (`Sector.lean`, `isRupert_of_tiltHides`): at a view `u`, a
   cycle `X` of points of `V`, every point weakly left of every side, robustly unimodal depths, and
   a tilt `d` that hides every point over a side line (`TiltHides`) make `V` Rupert, with no
@@ -667,7 +666,7 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   (`reg193_of_limit`: the normal-form parameters are continuous, `prm16`; strict off `Off193`),
   and `T2` at its own view, `isRupert_T2_at`).  The entry point `not_type16_of_isNopert_codim2`
   has no plain horizontal-double-normal hypothesis.  **Type 21** (`Type21Sector`,
-  `Type21QEdge`, `Type21Ridge`; all edges, not the four vertex lines with a quadrilateral): every
+  `Type21QEdge`, `Type21Ridge`, `Type21Vtx`; complete): every
   segment certificate of the cover is at one of the thirteen edges (`Edge21`, invariant under
   `σ1`, `σ2`), so the eight non-edge segments `02`, `03`, `12`, `16`, `24`, `36`, `45`, `56` ask
   nothing; the two-triangle edges `01`, `04`, `14`, `15`, `13`, `35` and lines `046/134`,
@@ -691,12 +690,34 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   realized on different face circles (or one of them on both; `ridge_adj21`), so two such double
   normals would have two directions (`OneHDNDir`; `isRupert_ridgeTri`).  The switch surface of
   Theorem 16.30 is a `NoPlaneParallel` position of the approximants (`IsCap21.not_switch`), so its
-  certificate is not used.  The entry point is `isRupert_type21_limit_facets_codim2`.  Still
-  excluded: horizontal double normals at the lines `014/0256`, `014/2346`, `135/0256`, `135/2346`
-  (F1's `T1` needs 22.2 for a vertex crossing at a quadrilateral, F2's `V` the vertex machinery
-  with 22.13, 22.14, and its triangle rim `4 2 1` Lemma 22.4 for a three-corner vertex rim; the
-  records of the cover carry no data at the vertex views yet).  Not formalized: the codimension
-  count of §22.4.
+  certificate is not used.  The four vertex lines with a quadrilateral, `014/0256`, `014/2346`,
+  `135/0256`, `135/2346`, take "no HDN or `VtxGen` and `2` off `013`, `2` off `145`, `6` off
+  `145`, `6` off `013`" (`HDNOrVtx21Aff`).  Each carries F1's `T1` and F2's `V` in different
+  labellings; the cover's vertex certificates now record their labelled rims (`T1Rim`, `VRim`,
+  through the view predicate `L`: `T1Gen`, `F2ViewsL`; at the top `VtxL21`, `VtxDat21`,
+  `CertD21`).  `T1`'s quadrilateral has its far end adjacent to the apex, so the closing is
+  realized on both circles: Proposition 22.2 at the limit (`isRupert_twoFaceLab21`, generic in the
+  labels).  `V`'s triangle rim `4 2 1` is closed without Lemma 22.4: of the two sector rims
+  `4 m 2 1` (`m = 3` or `6` shown), one is unimodal at distinct depths (the middle above the chord
+  if `1` is below the higher of `4`, `2`, else the one below), and a tilt into that sector shows it
+  (`isRupert_vSector`, `isRupert_vTriLim`; the middles lie over the open chord on opposite sides,
+  `quad_middles21`).  `V`'s quadrilateral `4 2 5 1` goes through `isRupert_vtx_limit`, whose
+  hypothesis at `[5, 1] ∥ 2346` is now (H4) or the impossibility of Lemma 22.9's residual pattern
+  for each middle (`VtxConf.H4orEsc`; `isRupert_classD` closes the impossible branch).  The middle
+  `3` gets (H4) from Lemma 22.13 at the limit: under the parallelism, with `Π` the plane `2 5 1` and
+  `Δ` the plane `4 1 5`, `Π(4) = −Δ(2)` and `Π(6) = Δ(6) − Δ(2)` (`pi_sep_of_delta`), so the
+  closed fact `Δ(2)(Δ(6) − Δ(2)) ≥ 0` (`VDelta`, proved strictly in F2's region from `2` not
+  beyond `145` and `[1 3] < [3 4]`) and `2` off `145` make the plane `2 5 1` separate `4` from `6`
+  or contain `6`, which gives (H4) (`VtxConf.h4_of_sepQ`, `h4_of_sepP`, `h4_of_coplQ`/`P`).  The
+  middle `6` uses Lemma 22.14 through the approximants: F2's certificates now prefer `V′` (two
+  triangles), so `V`'s quadrilateral is issued only when `V′` fails, and then Corollary 13.3 with
+  16.8 (a) gives `⟪u_V′, u_V⟫ ≤ 0`; with `−u_V′ = [5 1](1 − 4) + ([3 5]/(t̂[1 3]))((4 − 2) +
+  r(6 − 4))` (Lemma 22.14 (iii)) and `6` below the chord along `u_V`, these are closed facts
+  (`VQuadCone`, normalized to `±` the named view of `V′`, `VRimN`), and at the limit they contradict
+  the residual pattern for `6` (`esc_of_cone`).  Together `isRupert_vQuadLim`, one line
+  `isRupert_line21`, and the entry point `isRupert_type21_limit_facets_codim2` (`Type21Vtx.lean`):
+  no plain horizontal-double-normal hypothesis is left.  Not formalized: the codimension count of
+  §22.4.
 * §13 of `FEWER-FACES-PROOFS.md` (two-test certificates; `OctAxis.lean`), in Euclidean
   form (the metric of `ℝ³`). Theorem 13.7, the octahedral axis lemma
   (`isRupert_octAxis`): for an octahedron with an ordered axis `(a, a')`, a labelling
@@ -1054,12 +1075,13 @@ In import order.
 | `Type21F2Case` | Lemma 16.24 (F2 on the rest of class (c)): the frame computations (`det3_scaled_combo`), a hidden point from a degenerate combination, the geometry of the two vertex tests, the Gale facts of step 1; Theorem 16.23 (class (c)) | `det3_scaled_combo`, `axisHidden_of_rel`, `F2ViewsL`, `cert_type21_F2_frame`, `cert_type21_F2case`, `cert_type21_classC` |
 | `Type21Pattern` | The normal form `(+, −, +)` (classes (a), (b), (c) by the signs of `{5 4}`, `{0 3}`; the ties from `NoPlaneParallel`), the signs of `K − 6` (Lemmas 16.3, 16.14), Lemma 16.15 and Theorem 16.26 | `galeD_pair_ne_zero`, `cert_type21_pattern`, `type21_O2_signs`, `F2Views`, `Type21OtherGen`, `cert_type21_all` |
 | `Type21Facets` | Type 21 from its facets (Theorem 16.26), certificate form | `cert_type21_facets` |
-| `RimCertLift` | Rim certificates of the crossing tests of the type-21 tiers (§18.2): Theorem 8.9, Proposition 8.8 and Lemma 16.27′ at determinant views, the quad lift of Lemma 9.3 with ties (also labelled), Corollary 14.1 with the uniform tilt, the vertex test of Theorem 13.7; certificates at named views (`CertV`, with an edge predicate on the segments); weak separations with one tie | `CertV`, `CertV.monoE`, `rimCertPts_quad_edge_lift_tie`, `rimCertPts_of_edgeView_robust`, `rimCertPts_of_vertexView_robust`, `rimCertPts_of_edgeView_uniform_robust`, `rimCert_quad_edge_lift_tie`, `rimCert_edgePair_uniform_robust`, `rimCert_axisTest_gen`, `rimCert_axisTest_robust`, `OneTie4`, `NoTieAt`, `weakSep_of_not_robust`, `lt_of_le_of_noTie` |
+| `RimCertLift` | Rim certificates of the crossing tests of the type-21 tiers (§18.2): Theorem 8.9, Proposition 8.8 and Lemma 16.27′ at determinant views, the quad lift of Lemma 9.3 with ties (also labelled), Corollary 14.1 with the uniform tilt, the vertex test of Theorem 13.7; certificates at named views (`CertV`, with an edge predicate on the segments); weak separations with one tie | `CertV`, `CertV.monoE`, `rimCertPts_quad_edge_lift_tie`, `rimCertPts_of_edgeView_robust`, `rimCertPts_of_vertexView_robust`, `rimCertPts_of_edgeView_uniform_robust`, `rimCert_quad_edge_lift_tie`, `rimCert_edgePair_uniform_robust`, `rimCertPts_axisTest_core_gen`, `rimCertPts_axisTest_gen`, `rimCert_axisTest_gen`, `rimCert_axisTest_robust`, `OneTie4`, `NoTieAt`, `weakSep_of_not_robust`, `lt_of_le_of_noTie` |
 | `Type21LiftCert` | Lemma 3 of §9 (the eight directed K-quad edges of tier Q) in certificate form; the thirteen edges of type 21 and their symmetry; the data of tier Q at `06`, `46`, `25`, `23` (§22), Lemma E from a dependency (16.1 (ii)) | `Edge21`, `Edge21.sigma1`, `Edge21.sigma2`, `QAData`, `QEdge21`, `SegOK21`, `lemmaE_of_dep`, `qaData_of_lift`, `cert_type21_05`, `cert_type21_06`, `cert_type21_60_far`, `cert_type21_60`, `cert_type21_50`, `cert_type21_43`, `cert_type21_34`, `cert_type21_46`, `cert_type21_64` |
-| `Type21Limit` | Type 21, §18.6 step 2: the old entry statement from the certificates, normal-form shapes from parameters, the special positions of the cover as one nonzero polynomial, the named views and ties across them, the cover at a generic shape, the limit certificate; type 21 outside the HDN set and codimension 2 | `Facets21`, `Facets21.noSeg`, `isRupert_of_rimCert`, `isRupert_type21_facets`, `co21`, `nfShape21`, `Facets21.eq_nfShape`, `gen21`, `genPoly21_ne_zero`, `view21`, `Facets21.vtxView21_ne_zero`, `OneTie21`, `noTieAt_seg_of_tie`, `noTieAt_or`, `edgeSet21`, `UsedV21`, `CertP21`, `CertQ21`, `CertX21`, `cert21_of_generic`, `exists_certSeq21`, `isRupert_type21_limit`, `isRupert_type21_limit_facets` |
+| `Type21Limit` | Type 21, §18.6 step 2: the old entry statement from the certificates, normal-form shapes from parameters, the special positions of the cover as one nonzero polynomial, the named views and ties across them, the cover at a generic shape (with the data of `T1` and `V` at the four vertex lines with a quadrilateral), the limit certificate; type 21 outside the HDN set and codimension 2 | `Facets21`, `Facets21.noSeg`, `isRupert_of_rimCert`, `isRupert_type21_facets`, `co21`, `nfShape21`, `Facets21.eq_nfShape`, `gen21`, `genPoly21_ne_zero`, `view21`, `Facets21.vtxView21_ne_zero`, `OneTie21`, `noTieAt_seg_of_tie`, `noTieAt_or`, `edgeSet21`, `UsedV21`, `CertP21`, `CertQ21`, `VRimN`, `VtxDat21`, `VtxL21`, `CertD21`, `CertX21`, `cert21_of_generic`, `exists_certSeq21`, `isRupert_type21_limit`, `isRupert_type21_limit_facets` |
 | `Type21Sector` | Type 21, §22.2 at the two-triangle views (as `Type16Sector`) | `triEdge21`, `TriVtx21`, `Sec21`, `Sec21.tiltHides`, `isRupert_of_cert_seq21_sec`, `isRupert_type21_limit_sec`, `isRupert_type21_limit_facets_sec` |
 | `Type21QEdge` | Type 21, §22 at the edges `06`, `46`, `25`, `23` (tier Q): the approximants' facts of an edge pair, one edge at the limit (generic in the labels: edge pairs by §22.3–22.8, the planar closing by Proposition 22.2) | `QAData.facts`, `QGen21`, `isRupert_qEdge21`, `QGenAff21` |
-| `Type21Ridge` | Type 21, §22 at `05`, `34` (tier Q, both cases of §9 Lemma 3) and at the ridge `26` (tier R): an edge pair at a triangle–quadrilateral edge at the limit, Lemma 22.3 for a three-corner rim, the two triangle closings of the ridge on their circles, the entry statement | `isRupert_qPair21`, `Q5Gen21`, `isRupert_q5Edge21`, `triSlide_or`, `isRupert_ridgeTri`, `R26Gen21`, `isRupert_ridge21`, `isRupert_type21_limit_facets_codim2` |
+| `Type21Ridge` | Type 21, §22 at `05`, `34` (tier Q, both cases of §9 Lemma 3) and at the ridge `26` (tier R): an edge pair at a triangle–quadrilateral edge at the limit, Lemma 22.3 for a three-corner rim, the two triangle closings of the ridge on their circles, the entry statement with the vertex lines left to a hook | `isRupert_qPair21`, `Q5Gen21`, `isRupert_q5Edge21`, `triSlide_or`, `isRupert_ridgeTri`, `R26Gen21`, `isRupert_ridge21`, `isRupert_type21_limit_facets_codim2_of` |
+| `Type21Vtx` | Type 21, §22 at the four vertex lines with a quadrilateral: Proposition 22.2 at a vertex view at the limit (`T1`, realized on both circles), sector rims for `V`'s triangle, the middles of a quadrilateral face over the chord, (H4) from a separation by the plane `a c b` (Lemma 22.13 at the limit), the escape of Lemma 22.14, `V`'s quadrilateral at the limit, one line generic in the labels, the entry statement | `isRupert_vtxTwoFace_limit`, `isRupert_twoFaceLab21`, `isRupert_vSector`, `quad_offsets21`, `quad_middles21`, `isRupert_vTriLim`, `VtxConf.h4_of_sepQ`, `VtxConf.h4_of_sepP`, `pi_sep_of_delta`, `esc_of_cone`, `isRupert_vQuadLim`, `VQuadCone.limit`, `VDelta.limit`, `LineDat21`, `isRupert_line21`, `HDNOrVtx21Aff`, `isRupert_type21_limit_facets_codim2` |
 | `Type24` | `FEWER-FACES-PROOFS.md` §15 (type 24 outside `C̄ ∪ Σ_B`): oblique coordinates at the cap `1` by Cramer's rule, the side coefficients `ω` and `Δ`, the window triangle (Theorem 15.4, Theorem 5 at a view in the tangent cone), the side crossings as triangle tests (Lemma 15.5, Theorem 15.7), Corollary 15.8 | `cramer_vec`, `isRupert_vertexTri`, `isRupert_window_frame`, `isRupert_sideCrossing_frame`, `Type24`, `omega3`, `Delta24`, `omega_identity`, `isRupert_type24_window`, `isRupert_type24_B`, `isRupert_type24_outside_Cbar` |
 | `Type24Cap` | `FEWER-FACES-PROOFS.md` §17 at every metric: Lemma C (Theorem 17.10, the cap-edge crossings with explicit `δ`, the arch of the far path, `(H-cap)` from 17.9), Lemma Q / Q′ (17.4, 17.19, the planar quad), Lemma 17.15 (8.8 for disjoint faces) | `exists_arch`, `isCyclicUnimodal_of_arch`, `capStep_of_cos`, `capEdge_unimodal`, `isRupert_capEdge`, `CapRim`, `isRupert_capEdge_frame`, `isRupert_type24_E2`, `isRupert_type24_E6`, `isRupert_type24_capEdge`, `noInteriorMin_of_mid3`, `Fails4`, `planarQuad_fails4`, `planarQuad_unimodal`, `isRupert_quadView`, `isRupert_planarQuad`, `isRupert_disjointFaces` |
 | `Type24Corner` | `FEWER-FACES-PROOFS.md` §17 on the circle of `236` and at exact corners: the circle identity (17.3 (c)), M3 at every metric (BB) and at the corner (17.7), one ratio on circle 2 (17.14 (a)), the closed forms (17.5, 17.17 (b)–(d)), M1 (17.8), the T′ pair, M3′ (17.18), Rupert forms | `circle_depth`, `m3_not_both`, `ExactCorner`, `Type24.depth_corner`, `Type24.m3_corner`, `Type24.fails4_circle2_iff`, `Type24.pencil_0264`, `Type24.m1_corner`, `Type24.tpair_corner`, `Type24.m3prime_corner`, `QuadTest'`, `isRupert_of_two_tests`, `isRupert_m3`, `isRupert_m3_corner`, `isRupert_m1_corner`, `isRupert_tpair_corner`, `isRupert_m3prime_corner`, `isRupert_type24_Q` |

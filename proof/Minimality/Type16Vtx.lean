@@ -144,13 +144,13 @@ theorem isRupert_pVtx2 {x : Fin 7 → ℝ³} (T : Type16 x) (K : ℕ → Fin 7 �
       (by decide) hfa hfb hu hNa hNb
       ⟨s3, δ3 / (ε * -N.D), div_pos_of_neg_of_neg hδ3 hneg, conv h3⟩
       ⟨s2, δ2 / (ε * -N.D), div_neg_of_pos_of_neg hδ2 hneg, conv h2⟩ K hK _ hus hf hgen
-      fun E _ => E.hD_of_copl (Or.inl N.copl3)
+      fun E _ => (E.hD_of_copl (Or.inl N.copl3)).imp Or.inl Or.inl
   · refine isRupert_vtx_limit x T.inj hseg (v := 0) (a := 5) (c := 1) (b := 6) (p := 2)
       (q := 3) (m := 4) (by decide) (Sa := {0, 2, 3, 5}) (Sb := {0, 4, 6}) (by decide)
       (by decide) hfa hfb hu hNa hNb
       ⟨s2, δ2 / (ε * -N.D), div_pos hδ2 hpos, conv h2⟩
       ⟨s3, δ3 / (ε * -N.D), div_neg_of_neg_of_pos hδ3 hpos, conv h3⟩ K hK _ hus hf hgen
-      fun E _ => E.hD_of_copl (Or.inr N.copl3)
+      fun E _ => (E.hD_of_copl (Or.inr N.copl3)).imp Or.inl Or.inl
 
 theorem image_sigma16_set (x : Fin 7 → ℝ³) (S S' : Finset (Fin 7))
     (h : S.image sigma16 = S') : S.image (x ∘ sigma16) = S'.image x := by

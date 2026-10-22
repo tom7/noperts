@@ -79,9 +79,10 @@ theorem IsCap21.not_switch {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c
 /-- **The special positions of `T1`** at a view `u` (the vertex crossing at `0` of `014`,
 `0256`): `P(3)` is off the line `P(5) P(4)`, the ties of the rim `0, 5, 3, 4` are allowed ones
 (`T1Tie`: those of `QuadTie`, or at most one tie and none along `0 − 4` if `0, 4` tie), and the
-view satisfies `L` (for the old statement: no horizontal double normal of `K`). -/
+view satisfies `L` if `T1`'s labelled rim is certified there (`T1Rim`, the data of §22; for the
+old statement `L` is "no horizontal double normal of `K`"). -/
 def T1Gen (K : Finset ℝ³) (L : ℝ³ → Prop) (a a' b b' u : ℝ³) : Prop :=
-  det3 (b - b') (a' - b') u ≠ 0 ∧ T1Tie K a a' b b' u ∧ L u
+  det3 (b - b') (a' - b') u ≠ 0 ∧ T1Tie K a a' b b' u ∧ (T1Rim K a a' b b' u → L u)
 
 /-- **Theorem 16.13 (the cap-face class), normalized.**  `K = O ∪ {2}` of type 21
 (`IsCap21`), Gale data `G` of `O = K − 2` in the normalized cap-face class (`CapNorm`).  Off

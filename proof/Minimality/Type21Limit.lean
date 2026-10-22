@@ -1000,12 +1000,12 @@ def qEdgeSet21 : Finset (Finset (Fin 7)) := {{0, 6}, {4, 6}, {2, 5}, {2, 3}}
 `REdge21`). -/
 def wEdgeSet21 : Finset (Finset (Fin 7)) := {{0, 5}, {3, 4}, {2, 6}}
 
-/-- **The views of the certificates without data**: the edges other than the four of
-`qEdgeSet21`, and the eight vertex crossings. -/
+/-- **The views of the certificates without data**: the edges other than those of
+`qEdgeSet21` and `wEdgeSet21`, and the four vertex crossings of two triangles (`t ≥ 4`). -/
 def UsedX21 : (Fin 7 × Fin 7) ⊕ Fin 8 → Prop
   | .inl (i, j) => ({i, j} : Finset (Fin 7)) ∈ edgeSet21 ∧ ({i, j} : Finset (Fin 7)) ∉ qEdgeSet21 ∧
       ({i, j} : Finset (Fin 7)) ∉ wEdgeSet21
-  | .inr _ => True
+  | .inr t => 4 ≤ t.val
 
 theorem UsedX21.used {v : (Fin 7 × Fin 7) ⊕ Fin 8} (h : UsedX21 v) : UsedV21 v := by
   rcases v with ⟨i, j⟩ | t
@@ -1035,10 +1035,85 @@ def R26E21 (y : Fin 7 → ℝ³) : Prop :=
 /-- **The certificates at `05`, `34`, `26` with their data.** -/
 def CertW21 (y : Fin 7 → ℝ³) : Prop := Q5E21 y 0 3 4 5 ∨ Q5E21 y 4 5 0 3 ∨ R26E21 y
 
+/-- **The labelled rim of `V` at `u` with its data, normalized** (§22): as `VRim`, with the
+direction of `V′`'s line a sign times the vector `w` (its named view). -/
+def VRimN (K : Finset ℝ³) (b b' c c' d u w : ℝ³) : Prop :=
+  (RimCertPts K u (quad b d b' c) ∧
+      (∃ s : ℝ, (s = 1 ∨ s = -1) ∧ VQuadCone b c c' d u (s • w)) ∧ VDelta b b' c c' d) ∨
+    RimCertPts K u (tri b d c)
+
+theorem VRimN.rimCert {K : Finset ℝ³} {b b' c c' d u w : ℝ³} (h : VRimN K b b' c c' d u w) :
+    RimCert K u :=
+  h.elim (·.1.rimCert4) (·.rimCert3)
+
+/-- **The data of a certificate at the four vertex lines with a quadrilateral** (`t < 4`, §22):
+`T1`'s labelled rim in its labelling (`T1Rim`), or `V`'s labelled rim with the data of Lemmas
+22.13, 22.14 in its labelling (`VRimN`, with `V′`'s named view): at `0` (`014/0256`) `T1` and
+`σ1`'s `V`, at `4` (`014/2346`) `σ1`'s `T1` and `V`, at `5` (`135/0256`) `σ2`'s `T1` and
+`σ2σ1`'s `V`, at `3` (`135/2346`) `σ2σ1`'s `T1` and `σ2`'s `V`. -/
+def VtxDat21 (y : Fin 7 → ℝ³) (t : Fin 8) (u : ℝ³) : Prop :=
+  (![T1Rim (univ.image y) (y 0) (y 3) (y 4) (y 5) u ∨
+      VRimN (univ.image y) (y 0) (y 3) (y 1) (y 6) (y 2) u (vtxView21 y 5),
+    T1Rim (univ.image y) (y 4) (y 5) (y 0) (y 3) u ∨
+      VRimN (univ.image y) (y 4) (y 5) (y 1) (y 6) (y 2) u (vtxView21 y 4),
+    T1Rim (univ.image y) (y 5) (y 4) (y 3) (y 0) u ∨
+      VRimN (univ.image y) (y 5) (y 4) (y 1) (y 2) (y 6) u (vtxView21 y 7),
+    T1Rim (univ.image y) (y 3) (y 0) (y 5) (y 4) u ∨
+      VRimN (univ.image y) (y 3) (y 0) (y 1) (y 2) (y 6) u (vtxView21 y 6),
+    True, True, True, True] : Fin 8 → Prop) t
+
+theorem vtxDat21_0 (y : Fin 7 → ℝ³) (u : ℝ³) : VtxDat21 y 0 u =
+    (T1Rim (univ.image y) (y 0) (y 3) (y 4) (y 5) u ∨
+      VRimN (univ.image y) (y 0) (y 3) (y 1) (y 6) (y 2) u (vtxView21 y 5)) := rfl
+
+theorem vtxDat21_1 (y : Fin 7 → ℝ³) (u : ℝ³) : VtxDat21 y 1 u =
+    (T1Rim (univ.image y) (y 4) (y 5) (y 0) (y 3) u ∨
+      VRimN (univ.image y) (y 4) (y 5) (y 1) (y 6) (y 2) u (vtxView21 y 4)) := rfl
+
+theorem vtxDat21_2 (y : Fin 7 → ℝ³) (u : ℝ³) : VtxDat21 y 2 u =
+    (T1Rim (univ.image y) (y 5) (y 4) (y 3) (y 0) u ∨
+      VRimN (univ.image y) (y 5) (y 4) (y 1) (y 2) (y 6) u (vtxView21 y 7)) := rfl
+
+theorem vtxDat21_3 (y : Fin 7 → ℝ³) (u : ℝ³) : VtxDat21 y 3 u =
+    (T1Rim (univ.image y) (y 3) (y 0) (y 5) (y 4) u ∨
+      VRimN (univ.image y) (y 3) (y 0) (y 1) (y 2) (y 6) u (vtxView21 y 6)) := rfl
+
+/-- `V`'s data with the direction of `V′`'s line as a multiple of a vector `w`. -/
+theorem VRim.toN {K : Finset ℝ³} {a a' b b' c c' d u w : ℝ³} (h : VRim K a a' b b' c c' d u)
+    (hw : ∀ y : ℝ³, y ≠ 0 → det3 (a - b) (c' - b) y = 0 → det3 (a' - b) (c - b) y = 0 →
+      ∃ k : ℝ, k ≠ 0 ∧ y = k • w) : VRimN K b b' c c' d u w := by
+  rcases h with ⟨hq, ⟨y, hy0, h1, h2, hcone⟩, hΔ⟩ | ht
+  · obtain ⟨k, hk, rfl⟩ := hw y hy0 h1 h2
+    refine Or.inl ⟨hq, ⟨|k|⁻¹ * k, ?_, ?_⟩, hΔ⟩
+    · rcases lt_or_gt_of_ne hk with h | h
+      · right; rw [abs_of_neg h]; field_simp
+      · left; rw [abs_of_pos h, inv_mul_cancel₀ h.ne']
+    · have := hcone.smul (inv_pos.mpr (abs_pos.mpr hk))
+      rwa [smul_smul] at this
+  · exact Or.inr ht
+
+/-- **The named vertex views, with the data of §22 at the four lines with a quadrilateral.** -/
+def VtxL21 (y : Fin 7 → ℝ³) (u : ℝ³) : Prop :=
+  ∃ t : Fin 8, ∃ c : ℝ, c ≠ 0 ∧ u = c • vtxView21 y t ∧ VtxDat21 y t u
+
+/-- **A certificate at a vertex line with a quadrilateral, with its data.** -/
+def CertD21 (y : Fin 7 → ℝ³) : Prop :=
+  ∃ t : Fin 8, t.val < 4 ∧ ∃ c : ℝ, c ≠ 0 ∧ VtxDat21 y t (c • vtxView21 y t)
+
+theorem VtxDat21.rimCert {y : Fin 7 → ℝ³} {t : Fin 8} (ht : t.val < 4) {u : ℝ³}
+    (h : VtxDat21 y t u) : RimCert (univ.image y) u := by
+  fin_cases t
+  · exact h.elim T1Rim.rimCert VRimN.rimCert
+  · exact h.elim T1Rim.rimCert VRimN.rimCert
+  · exact h.elim T1Rim.rimCert VRimN.rimCert
+  · exact h.elim T1Rim.rimCert VRimN.rimCert
+  all_goals exact absurd ht (by decide)
+
 /-- **A type-21 certificate with data**: a rim certificate at a view of `UsedX21`, a
-certificate of tier Q at `06`, `46`, `25`, `23` with its data (`CertQ21`), or one at `05`,
-`34`, `26` with its data (`CertW21`). -/
-def CertX21 (y : Fin 7 → ℝ³) : Prop := CertP21 UsedX21 y ∨ CertQ21 y ∨ CertW21 y
+certificate of tier Q at `06`, `46`, `25`, `23` with its data (`CertQ21`), one at `05`,
+`34`, `26` with its data (`CertW21`), or one at the four vertex lines with a quadrilateral with
+its data (`CertD21`). -/
+def CertX21 (y : Fin 7 → ℝ³) : Prop := CertP21 UsedX21 y ∨ CertQ21 y ∨ CertW21 y ∨ CertD21 y
 
 theorem QAData.rimCert {K : Finset ℝ³} {v w a b c : ℝ³} (h : QAData K v w a b c) :
     RimCert K (w - v) := by
@@ -1087,20 +1162,23 @@ theorem QE21.cert21 {y : Fin 7 → ℝ³} {P P' R R' D C' : Fin 7} (h : QE21 y P
 
 /-- Every certificate with data is a certificate at a named view. -/
 theorem CertX21.toCert21 {y : Fin 7 → ℝ³} (h : CertX21 y) : Cert21 y := by
-  rcases h with ⟨u, ⟨v, hv, c, hc, rfl⟩, hr⟩ | h | h
+  rcases h with ⟨u, ⟨v, hv, c, hc, rfl⟩, hr⟩ | h | h | ⟨t, ht, c, hc, h⟩
   · exact ⟨_, ⟨v, hv.used, c, hc, rfl⟩, hr⟩
   · rcases h with h | h | h | h
     exacts [h.cert21 (by decide), h.cert21 (by decide), h.cert21 (by decide),
       h.cert21 (by decide)]
   · exact h.cert21
+  · exact ⟨_, ⟨.inr t, trivial, c, hc, rfl⟩, h.rimCert ht⟩
 
 theorem Cert21.of_certV {y : Fin 7 → ℝ³} (hy : Function.Injective y)
-    (h : CertV (univ.image y) (NamedVtx21 y)
+    (h : CertV (univ.image y) (VtxL21 y)
       (SegOK21 (univ.image y) (y 0) (y 3) (y 4) (y 5) (y 1) (y 6) (y 2))) :
     CertX21 y := by
   obtain ⟨u, hu, hc⟩ := h
-  rcases hu with ⟨t, c, hc0, rfl⟩ | ⟨v, hv, w, hw, -, he, rfl⟩
-  · exact Or.inl ⟨_, ⟨.inr t, trivial, c, hc0, rfl⟩, hc⟩
+  rcases hu with ⟨t, c, hc0, rfl, hdat⟩ | ⟨v, hv, w, hw, -, he, rfl⟩
+  · by_cases ht : t.val < 4
+    · exact Or.inr (Or.inr (Or.inr ⟨t, ht, c, hc0, hdat⟩))
+    · exact Or.inl ⟨_, ⟨.inr t, by show 4 ≤ t.val; omega, c, hc0, rfl⟩, hc⟩
   obtain ⟨i, -, rfl⟩ := mem_image.mp hv
   obtain ⟨j, -, rfl⟩ := mem_image.mp hw
   have hE := edge21_labels hy he.1
@@ -1109,7 +1187,7 @@ theorem Cert21.of_certV {y : Fin 7 → ℝ³} (hy : Function.Injective y)
     rintro p q (⟨rfl, rfl⟩ | ⟨rfl, rfl⟩)
     exacts [Or.inl ⟨rfl, rfl⟩, Or.inr ⟨rfl, rfl⟩]
   by_cases hw : ({i, j} : Finset (Fin 7)) ∈ wEdgeSet21
-  · right; right
+  · right; right; left
     simp only [wEdgeSet21, Finset.mem_insert, Finset.mem_singleton] at hw
     rcases hw with hw | hw | hw <;> obtain ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ := pair_eq_pair21 hw
     · exact Or.inl (Or.inl (he.2.2.2.2.2.1 (sp0 (Or.inl ⟨rfl, rfl⟩))))
@@ -1302,7 +1380,7 @@ theorem cert21_of_generic {o E₁ E₂ E₃ : ℝ³} {θ : Fin 7 → ℝ} {y : F
   have sgn : ∀ {A B : ℝ}, A = -B → B ≠ 0 → A ≠ 0 := fun h hB => by rw [h]; exact neg_ne_zero.mpr hB
   have sgn' : ∀ {A B : ℝ}, A = B → B ≠ 0 → A ≠ 0 := fun h hB => by rw [h]; exact hB
   refine Cert21.of_certV (nfShape21_inj hD hg)
-    (cert_type21_facets (L := NamedVtx21 (nfShape21 o E₁ E₂ E₃ θ)) (nfShape21
+    (cert_type21_facets (L := VtxL21 (nfShape21 o E₁ E₂ E₃ θ)) (nfShape21
       o E₁ E₂ E₃ θ) (nfShape21_inj hD hg)
     (fac21 κ _ 0) (fac21 κ _ 1) (fac21 κ _ 2) (fac21 κ _ 3) (fac21 κ _ 4) (fac21 κ _ 5)
     (fac21 κ _ 6) (fac21 κ _ 7) (hfac 0) (hfac 1) (hfac 2) (hfac 3) (hfac 4) (hfac 5) (hfac 6)
@@ -1323,7 +1401,8 @@ theorem cert21_of_generic {o E₁ E₂ E₃ : ℝ³} {θ : Fin 7 → ℝ} {y : F
           nfShape21 o E₁ E₂ E₃ θ 0) u = 0 by
         rw [det3_plane0256 o E₁ E₂ E₃ u θ (i := 0) (j := 5) (k := 0) (l := 6) rfl rfl rfl rfl, b,
           mul_zero])
-    exact ⟨hdet, Or.inr ⟨(hvt 0).smul hc, fun h => hY0 (cancel hc h)⟩, ⟨0, c, hc, rfl⟩⟩
+    exact ⟨hdet, Or.inr ⟨(hvt 0).smul hc, fun h => hY0 (cancel hc h)⟩,
+      fun hR => ⟨0, c, hc, rfl, by rw [vtxDat21_0]; exact Or.inl hR⟩⟩
   · -- `T1` at `4`: `014/2346`
     intro u hu h1 h2
     have a : det3 (nfShape21 o E₁ E₂ E₃ θ 1 - nfShape21 o E₁ E₂ E₃ θ 0) (nfShape21 o E₁ E₂ E₃ θ 4 -
@@ -1339,7 +1418,8 @@ theorem cert21_of_generic {o E₁ E₂ E₃ : ℝ³} {θ : Fin 7 → ℝ} {y : F
           nfShape21 o E₁ E₂ E₃ θ 4) u = 0 by
         rw [det3_plane2346 o E₁ E₂ E₃ u θ (i := 4) (j := 3) (k := 4) (l := 6) rfl rfl rfl rfl, b,
           mul_zero])
-    exact ⟨hdet, Or.inr ⟨(hvt 1).smul hc, fun h => hY1 (cancel hc h)⟩, ⟨1, c, hc, rfl⟩⟩
+    exact ⟨hdet, Or.inr ⟨(hvt 1).smul hc, fun h => hY1 (cancel hc h)⟩,
+      fun hR => ⟨1, c, hc, rfl, by rw [vtxDat21_1]; exact Or.inl hR⟩⟩
   · -- `T1` at `5`: `135/0256`
     intro u hu h1 h2
     have a : det3 (nfShape21 o E₁ E₂ E₃ θ 3 - nfShape21 o E₁ E₂ E₃ θ 1) (nfShape21 o E₁ E₂ E₃ θ 5 -
@@ -1355,7 +1435,8 @@ theorem cert21_of_generic {o E₁ E₂ E₃ : ℝ³} {θ : Fin 7 → ℝ} {y : F
           nfShape21 o E₁ E₂ E₃ θ 5) u = 0 by
         rw [det3_plane0256 o E₁ E₂ E₃ u θ (i := 5) (j := 0) (k := 5) (l := 2) rfl rfl rfl rfl, b,
           mul_zero])
-    exact ⟨hdet, Or.inr ⟨(hvt 2).smul hc, fun h => hY2 (cancel hc h)⟩, ⟨2, c, hc, rfl⟩⟩
+    exact ⟨hdet, Or.inr ⟨(hvt 2).smul hc, fun h => hY2 (cancel hc h)⟩,
+      fun hR => ⟨2, c, hc, rfl, by rw [vtxDat21_2]; exact Or.inl hR⟩⟩
   · -- `T1` at `3`: `135/2346`
     intro u hu h1 h2
     have a : det3 (nfShape21 o E₁ E₂ E₃ θ 3 - nfShape21 o E₁ E₂ E₃ θ 1) (nfShape21 o E₁ E₂ E₃ θ 5 -
@@ -1371,14 +1452,17 @@ theorem cert21_of_generic {o E₁ E₂ E₃ : ℝ³} {θ : Fin 7 → ℝ} {y : F
           nfShape21 o E₁ E₂ E₃ θ 3) u = 0 by
         rw [det3_plane2346 o E₁ E₂ E₃ u θ (i := 3) (j := 4) (k := 3) (l := 2) rfl rfl rfl rfl, b,
           mul_zero])
-    exact ⟨hdet, Or.inr ⟨(hvt 3).smul hc, fun h => hY3 (cancel hc h)⟩, ⟨3, c, hc, rfl⟩⟩
+    exact ⟨hdet, Or.inr ⟨(hvt 3).smul hc, fun h => hY3 (cancel hc h)⟩,
+      fun hR => ⟨3, c, hc, rfl, by rw [vtxDat21_3]; exact Or.inl hR⟩⟩
   -- F2 in the labelling `id` (vertex `4`): `V = 014/2346` (`t = 1`), `V′ = 046/134` (`t = 4`)
   · intro u hu h1 h2
     obtain ⟨hdet, c, hc, e⟩ := test21_of_perp hD hg 4 hu h1 h2
-    exact ⟨hdet, ⟨1, c, hc, e⟩⟩
+    refine ⟨hdet, fun hV => ⟨1, c, hc, e, ?_⟩⟩
+    rw [vtxDat21_1]
+    exact Or.inr (hV.toN fun y hy k1 k2 => (test21_of_perp hD hg 5 hy k1 k2).2)
   · intro u hu h1 h2
     obtain ⟨hdet, c, hc, e⟩ := test21_of_perp hD hg 5 hu h1 h2
-    exact ⟨hdet, ⟨4, c, hc, e⟩⟩
+    exact ⟨hdet, ⟨4, c, hc, e, trivial⟩⟩
   · intro u v hu h1 h2 hv h3 h4
     obtain ⟨-, c, hc, rfl⟩ := test21_of_perp hD hg 4 hu h1 h2
     obtain ⟨-, c', hc', rfl⟩ := test21_of_perp hD hg 5 hv h3 h4
@@ -1388,10 +1472,12 @@ theorem cert21_of_generic {o E₁ E₂ E₃ : ℝ³} {θ : Fin 7 → ℝ} {y : F
   -- F2 in the labelling `σ1` (vertex `0`): `V = 014/0256` (`t = 0`), `V′ = 046/015` (`t = 5`)
   · intro u hu h1 h2
     obtain ⟨hdet, c, hc, e⟩ := test21_of_perp hD hg 6 hu h1 h2
-    exact ⟨hdet, ⟨0, c, hc, e⟩⟩
+    refine ⟨hdet, fun hV => ⟨0, c, hc, e, ?_⟩⟩
+    rw [vtxDat21_0]
+    exact Or.inr (hV.toN fun y hy k1 k2 => (test21_of_perp hD hg 7 hy k1 k2).2)
   · intro u hu h1 h2
     obtain ⟨hdet, c, hc, e⟩ := test21_of_perp hD hg 7 hu h1 h2
-    exact ⟨hdet, ⟨5, c, hc, e⟩⟩
+    exact ⟨hdet, ⟨5, c, hc, e, trivial⟩⟩
   · intro u v hu h1 h2 hv h3 h4
     obtain ⟨-, c, hc, rfl⟩ := test21_of_perp hD hg 6 hu h1 h2
     obtain ⟨-, c', hc', rfl⟩ := test21_of_perp hD hg 7 hv h3 h4
@@ -1401,10 +1487,12 @@ theorem cert21_of_generic {o E₁ E₂ E₃ : ℝ³} {θ : Fin 7 → ℝ} {y : F
   -- F2 in the labelling `σ2` (vertex `3`): `V = 135/2346` (`t = 3`), `V′ = 235/134` (`t = 6`)
   · intro u hu h1 h2
     obtain ⟨hdet, c, hc, e⟩ := test21_of_perp hD hg 8 hu h1 h2
-    exact ⟨hdet, ⟨3, c, hc, e⟩⟩
+    refine ⟨hdet, fun hV => ⟨3, c, hc, e, ?_⟩⟩
+    rw [vtxDat21_3]
+    exact Or.inr (hV.toN fun y hy k1 k2 => (test21_of_perp hD hg 9 hy k1 k2).2)
   · intro u hu h1 h2
     obtain ⟨hdet, c, hc, e⟩ := test21_of_perp hD hg 9 hu h1 h2
-    exact ⟨hdet, ⟨6, c, hc, e⟩⟩
+    exact ⟨hdet, ⟨6, c, hc, e, trivial⟩⟩
   · intro u v hu h1 h2 hv h3 h4
     obtain ⟨-, c, hc, rfl⟩ := test21_of_perp hD hg 8 hu h1 h2
     obtain ⟨-, c', hc', rfl⟩ := test21_of_perp hD hg 9 hv h3 h4
@@ -1414,10 +1502,12 @@ theorem cert21_of_generic {o E₁ E₂ E₃ : ℝ³} {θ : Fin 7 → ℝ} {y : F
   -- F2 in the labelling `σ2σ1` (vertex `5`): `V = 135/0256` (`t = 2`), `V′ = 235/015` (`t = 7`)
   · intro u hu h1 h2
     obtain ⟨hdet, c, hc, e⟩ := test21_of_perp hD hg 10 hu h1 h2
-    exact ⟨hdet, ⟨2, c, hc, e⟩⟩
+    refine ⟨hdet, fun hV => ⟨2, c, hc, e, ?_⟩⟩
+    rw [vtxDat21_2]
+    exact Or.inr (hV.toN fun y hy k1 k2 => (test21_of_perp hD hg 11 hy k1 k2).2)
   · intro u hu h1 h2
     obtain ⟨hdet, c, hc, e⟩ := test21_of_perp hD hg 11 hu h1 h2
-    exact ⟨hdet, ⟨7, c, hc, e⟩⟩
+    exact ⟨hdet, ⟨7, c, hc, e, trivial⟩⟩
   · intro u v hu h1 h2 hv h3 h4
     obtain ⟨-, c, hc, rfl⟩ := test21_of_perp hD hg 10 hu h1 h2
     obtain ⟨-, c', hc', rfl⟩ := test21_of_perp hD hg 11 hv h3 h4

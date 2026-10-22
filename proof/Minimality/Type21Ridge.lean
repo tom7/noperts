@@ -838,10 +838,11 @@ no horizontal double normal or the codimension-2 conditions of §22.4 (`hQ`, `QG
 `05`, `34` the same (`h5`, `Q5GenAff21`); along `26` no horizontal double normal or the
 codimension-2 conditions there (`h26`, `R26GenAff21`); along
 the six two-triangle edges no horizontal double normal or (G1) (`hEd`); along the lines of
-`014/0256`, `014/2346`, `135/0256`, `135/2346` no horizontal double normal, along those of
 `046/134`, `046/015`, `235/134`, `235/015` no horizontal double normal or (G1) (`hV`); and at most
-one tie at these views (`OneTie21`).  Nothing is asked at the non-edge segments. -/
-theorem isRupert_type21_limit_facets_codim2 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
+one tie at these views (`OneTie21`).  Nothing is asked at the non-edge segments.  The
+certificates at the four vertex lines with a quadrilateral (`CertD21`) are left to `hVq`
+(closed in `Type21Vtx.lean`, `isRupert_type21_limit_facets_codim2`). -/
+theorem isRupert_type21_limit_facets_codim2_of (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 1, 4} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 1, 4} : Finset (Fin 7)) → fA (x i) < 0))
@@ -875,9 +876,11 @@ theorem isRupert_type21_limit_facets_codim2 (x : Fin 7 → ℝ³) (hx : Function
       HDNOrG1Edge (univ.image x) (x 1) (x 5) (x 0) (x 3) ∧
       HDNOrG1Edge (univ.image x) (x 1) (x 3) (x 4) (x 5) ∧
       HDNOrG1Edge (univ.image x) (x 3) (x 5) (x 1) (x 2))
-    (hV : NoHDNAff (univ.image x) fA fC ∧ NoHDNAff (univ.image x) fA fG ∧
-      NoHDNAff (univ.image x) fF fC ∧ NoHDNAff (univ.image x) fF fG ∧
-      HDNOrG1Aff (univ.image x) fD fE (x 4) (x 0) (x 6) (x 4) (x 3) (x 1) ∧
+    (hVq : ∀ K : ℕ → Fin 7 → ℝ³, (∀ m, Tendsto (fun n => K n m) atTop (𝓝 (x m))) →
+      (∃ᶠ n in atTop, CertD21 (K n) ∧
+        ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0) →
+      IsRupert (univ.image x))
+    (hV : HDNOrG1Aff (univ.image x) fD fE (x 4) (x 0) (x 6) (x 4) (x 3) (x 1) ∧
       HDNOrG1Aff (univ.image x) fD fB (x 0) (x 4) (x 6) (x 0) (x 5) (x 1) ∧
       HDNOrG1Aff (univ.image x) fH fE (x 3) (x 5) (x 2) (x 3) (x 4) (x 1) ∧
       HDNOrG1Aff (univ.image x) fH fB (x 5) (x 3) (x 2) (x 5) (x 0) (x 1))
@@ -888,19 +891,24 @@ theorem isRupert_type21_limit_facets_codim2 (x : Fin 7 → ℝ³) (hx : Function
       ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0) ∨
       (∃ᶠ n in atTop, CertQ21 (K n) ∧
         ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0) ∨
-      ∃ᶠ n in atTop, CertW21 (K n) ∧
+      (∃ᶠ n in atTop, CertW21 (K n) ∧
+        ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0) ∨
+      ∃ᶠ n in atTop, CertD21 (K n) ∧
         ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0 := by
     have : ∃ᶠ n in atTop, (CertP21 UsedX21 (K n) ∧
         ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0) ∨
         ((CertQ21 (K n) ∧ ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0) ∨
-        (CertW21 (K n) ∧ ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0)) :=
+        ((CertW21 (K n) ∧ ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0) ∨
+        (CertD21 (K n) ∧ ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0))) :=
       hc.mono fun n ⟨h, ht⟩ =>
         h.elim (fun h => Or.inl ⟨h, ht⟩) (fun h => Or.inr (h.elim (fun h => Or.inl ⟨h, ht⟩)
-          (fun h => Or.inr ⟨h, ht⟩)))
+          (fun h => Or.inr (h.elim (fun h => Or.inl ⟨h, ht⟩) (fun h => Or.inr ⟨h, ht⟩)))))
     rcases frequently_or_distrib.mp this with h | h
     · exact Or.inl h
-    · exact Or.inr (frequently_or_distrib.mp h)
-  rcases hsplit with h | h | h
+    rcases frequently_or_distrib.mp h with h | h
+    · exact Or.inr (Or.inl h)
+    · exact Or.inr (Or.inr (frequently_or_distrib.mp h))
+  rcases hsplit with h | h | h | h
   · -- the certificates without data
     have hE' : ∀ e : Fin 6, HDNOrG1Edge (univ.image x) (x (triEdge21 e).1)
         (x (triEdge21 e).2.1) (x (triEdge21 e).2.2.1) (x (triEdge21 e).2.2.2) := by
@@ -919,16 +927,13 @@ theorem isRupert_type21_limit_facets_codim2 (x : Fin 7 → ℝ³) (hx : Function
         · show NoHDNAt _ (x j - x i)
           rw [← e1, ← e2, ← neg_sub]; exact h.neg
       · exact Or.inr ⟨e, he, h⟩
-    · obtain ⟨V1, V2, V3, V4, V5, V6, V7, V8⟩ := hV
+    · obtain ⟨V5, V6, V7, V8⟩ := hV
+      have hu' : 4 ≤ t.val := hu
       fin_cases t
-      · exact Or.inl (V1 _ hv (affine_planeLine_perp fA hA (by decide) (by decide) (by decide))
-          (affine_planeLine_perp' fC hC (by decide) (by decide) (by decide)))
-      · exact Or.inl (V2 _ hv (affine_planeLine_perp fA hA (by decide) (by decide) (by decide))
-          (affine_planeLine_perp' fG hG (by decide) (by decide) (by decide)))
-      · exact Or.inl (V3 _ hv (affine_planeLine_perp fF hF (by decide) (by decide) (by decide))
-          (affine_planeLine_perp' fC hC (by decide) (by decide) (by decide)))
-      · exact Or.inl (V4 _ hv (affine_planeLine_perp fF hF (by decide) (by decide) (by decide))
-          (affine_planeLine_perp' fG hG (by decide) (by decide) (by decide)))
+      · exact absurd hu' (by decide)
+      · exact absurd hu' (by decide)
+      · exact absurd hu' (by decide)
+      · exact absurd hu' (by decide)
       · rcases V5 _ hv (affine_planeLine_perp fD hD (by decide) (by decide) (by decide))
           (affine_planeLine_perp' fE hE (by decide) (by decide) (by decide)) with h | h
         · exact Or.inl h
@@ -1001,6 +1006,8 @@ theorem isRupert_type21_limit_facets_codim2 (x : Fin 7 → ℝ³) (hx : Function
       · rcases hn.1 with h | h
         · exact ⟨_, ⟨.inl (6, 2), Or.inl rfl, 1, one_ne_zero, (one_smul _ _).symm⟩, h.rimCert⟩
         · exact ⟨_, ⟨.inl (2, 6), Or.inr rfl, 1, one_ne_zero, (one_smul _ _).symm⟩, h.rimCert⟩
+  · -- the four vertex lines with a quadrilateral
+    exact hVq K hK h
 
 end Minimality
 

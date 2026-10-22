@@ -79,7 +79,8 @@ carry one labelled four-corner rim certificate `v a c b` at views `u_k → u`; a
 lies in the planes of the facets `S_a = {v, a, p, q}` (a quadrilateral with `p` above and `q`
 below the chord `v a` along `u`) and `S_b = {v, b, m}`; at `u` the conditions of §22.4 hold
 (`VtxGen`), and where the far edge `[c, b]` is parallel to `S_a`, (H4) or Lemma 22.10's
-coplanarity holds in both senses (`hD`, which may use the configuration at the limit, e.g.
+coplanarity holds in both senses, or Lemma 22.9's residual pattern is impossible for that middle
+(`hD`, `H4orEsc`, which may use the configuration at the limit, e.g.
 `VtxConf.hD_of_copl`).  Then `x` is Rupert. -/
 theorem isRupert_vtx_limit {n : ℕ} (x : Fin n → ℝ³) (hx : Function.Injective x)
     (hseg : ∀ i j m : Fin n, x m ≠ x i → x m ≠ x j → ∀ s : ℝ, 0 < s → s < 1 →
@@ -98,8 +99,8 @@ theorem isRupert_vtx_limit {n : ℕ} (x : Fin n → ℝ³) (hx : Function.Inject
       RimCertPts (univ.image (K k)) (us k) (quad (K k v) (K k a) (K k c) (K k b)))
     (hgen : VtxGen (univ.image x) u (Sa.image x) (Sb.image x) Na)
     (hD : VtxConf (univ.image x) u (x v) (x a) (x c) (x b) (x p) (x q) (x m) Na Nb κa κb →
-      ⟪Na, x c⟫ = ⟪Na, x b⟫ → VtxConf.H4orCopl u (x v) (x a) (x c) (x b) (x p) 1 ∧
-      VtxConf.H4orCopl u (x v) (x a) (x c) (x b) (x q) (-1)) :
+      ⟪Na, x c⟫ = ⟪Na, x b⟫ → VtxConf.H4orEsc u (x v) (x a) (x c) (x b) (x p) 1 ∧
+      VtxConf.H4orEsc u (x v) (x a) (x c) (x b) (x q) (-1)) :
     IsRupert (univ.image x) := by
   classical
   set V := univ.image x with hVdef

@@ -496,19 +496,19 @@ theorem quad_mul_sigma (σ z₀ z₁ z₂ z₃ : ℝ) :
     quad (σ * z₀) (σ * z₁) (σ * z₂) (σ * z₃) = fun i => σ * quad z₀ z₁ z₂ z₃ i := by
   funext i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rfl
 
-/-- **The vertex crossing at `a'`, certificate form** (`isRupert_axisTest_core_robust` without the
-horizontal double normal, with the robustness of the quadrilateral as a hypothesis): the
-triangle rim `a' b b'` if `a` is on the inner side of `b b'`, the quadrilateral `a' b a b'` if
-its depths are robustly unimodal; the certificate is at `σ u`. -/
-theorem rimCert_axisTest_core_gen {a a' b b' u : ℝ³} {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
+/-- **The vertex crossing at `a'`, labelled certificate form**: the triangle rim `a' b b'` if
+`a` is on the inner side of `b b'`, the quadrilateral `a' b a b'` if its depths are robustly
+unimodal, as point certificates (`RimCertPts`) at `σ u`. -/
+theorem rimCertPts_axisTest_core_gen {a a' b b' u : ℝ³} {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
     (hT : 0 < σ * det3 (b - a') (b' - a') u) (hΓ : 0 < σ * det3 (b - a') (a - a') u)
     (hB : 0 < σ * det3 (a - a') (b' - a') u)
     (htri : ¬ (⟪a', u⟫ = ⟪b, u⟫ ∧ ⟪b, u⟫ = ⟪b', u⟫))
     (V : Finset ℝ³) (ha : a ∈ V) (ha' : a' ∈ V) (hb : b ∈ V) (hb' : b' ∈ V)
     (hV : ∀ v ∈ V, v = a ∨ v = a' ∨ v = b ∨ v = b' ∨ AxisExtra a a' b b' u v) :
-    (0 < σ * det3 (b' - b) (a - b) u → RimCert V (σ • u)) ∧
+    (0 < σ * det3 (b' - b) (a - b) u → RimCertPts V (σ • u) (tri a' b b')) ∧
     (σ * det3 (b' - b) (a - b) u < 0 →
-      IsRobustUnimodal (quad ⟪a', u⟫ ⟪b, u⟫ ⟪a, u⟫ ⟪b', u⟫) → RimCert V (σ • u)) := by
+      IsRobustUnimodal (quad ⟪a', u⟫ ⟪b, u⟫ ⟪a, u⟫ ⟪b', u⟫) →
+        RimCertPts V (σ • u) (quad a' b a b')) := by
   classical
   have hσσ : σ * σ = 1 := by rcases hσ with rfl | rfl <;> norm_num
   have hσ0 : σ ≠ 0 := by rintro rfl; norm_num at hσσ
@@ -549,7 +549,7 @@ theorem rimCert_axisTest_core_gen {a a' b b' u : ℝ³} {σ : ℝ} (hσ : σ = 1
   · -- the rim is the triangle `a' b b'`
     obtain ⟨b0, b1, b2⟩ := zmod3_add_one
     refine (rimCertPts_of_vertexView_robust V M (σ • u) hw0 (k := 3) le_rfl (tri a' b b') ?_ ?_
-      ?_ ?_ ?_ ?_).rimCert3
+      ?_ ?_ ?_ ?_)
     · intro i; rcases zmod3_cases i with rfl | rfl | rfl
       exacts [ha', hb, hb']
     · intro i hi
@@ -594,7 +594,7 @@ theorem rimCert_axisTest_core_gen {a a' b b' u : ℝ³} {σ : ℝ} (hσ : σ = 1
     obtain ⟨a0, a1, a2, a3⟩ := zmod4_add_one
     have hα' : 0 < σ * -det3 (b' - b) (a - b) u := by linarith
     refine (rimCertPts_of_vertexView_robust V M (σ • u) hw0 (k := 4) (by norm_num)
-      (quad a' b a b') ?_ ?_ ?_ ?_ ?_ ?_).rimCert4
+      (quad a' b a b') ?_ ?_ ?_ ?_ ?_ ?_)
     · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl
       exacts [ha', hb, ha, hb']
     · intro i hi
@@ -636,6 +636,22 @@ theorem rimCert_axisTest_core_gen {a a' b b' u : ℝ³} {σ : ℝ} (hσ : σ = 1
       · exact ⟨3, 1 - s, σ * δ, by linarith, by linarith, mul_ne_zero hσ0 hδ, by
           simp only [a3, quad_0, quad_3]; exact mid_view' hσσ⟩
 
+/-- **The vertex crossing at `a'`, certificate form** (`isRupert_axisTest_core_robust` without the
+horizontal double normal, with the robustness of the quadrilateral as a hypothesis): the
+triangle rim `a' b b'` if `a` is on the inner side of `b b'`, the quadrilateral `a' b a b'` if
+its depths are robustly unimodal; the certificate is at `σ u`. -/
+theorem rimCert_axisTest_core_gen {a a' b b' u : ℝ³} {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
+    (hT : 0 < σ * det3 (b - a') (b' - a') u) (hΓ : 0 < σ * det3 (b - a') (a - a') u)
+    (hB : 0 < σ * det3 (a - a') (b' - a') u)
+    (htri : ¬ (⟪a', u⟫ = ⟪b, u⟫ ∧ ⟪b, u⟫ = ⟪b', u⟫))
+    (V : Finset ℝ³) (ha : a ∈ V) (ha' : a' ∈ V) (hb : b ∈ V) (hb' : b' ∈ V)
+    (hV : ∀ v ∈ V, v = a ∨ v = a' ∨ v = b ∨ v = b' ∨ AxisExtra a a' b b' u v) :
+    (0 < σ * det3 (b' - b) (a - b) u → RimCert V (σ • u)) ∧
+    (σ * det3 (b' - b) (a - b) u < 0 →
+      IsRobustUnimodal (quad ⟪a', u⟫ ⟪b, u⟫ ⟪a, u⟫ ⟪b', u⟫) → RimCert V (σ • u)) := by
+  obtain ⟨K1, K2⟩ := rimCertPts_axisTest_core_gen hσ hT hΓ hB htri V ha ha' hb hb' hV
+  exact ⟨fun h => (K1 h).rimCert3, fun h hr => (K2 h hr).rimCert4⟩
+
 /-- **`isRupert_axisTest_core_robust` in certificate form** (the ties of `QuadTie`). -/
 theorem rimCert_axisTest_core_robust {a a' b b' u : ℝ³} {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
     (hT : 0 < σ * det3 (b - a') (b' - a') u) (hΓ : 0 < σ * det3 (b - a') (a - a') u)
@@ -649,11 +665,11 @@ theorem rimCert_axisTest_core_robust {a a' b b' u : ℝ³} {σ : ℝ} (hσ : σ 
   exact ⟨K1, fun hα hsep => K2 hα
     (isRobustUnimodal_quad hz (fun h => hsep (Or.inr h)) (fun h => hsep (Or.inl h)))⟩
 
-/-- **One test of Theorem 13.7, certificate form** (`isRupert_axisTest_robust` without the
-horizontal double normal, with any robustness criterion): the certificate at `±u₁`, or the rim
+/-- **One test of Theorem 13.7, labelled certificate form**: the point certificate of the
+quadrilateral `a' b a b'` or the triangle `a' b b'` at `±u₁`, or the rim
 is the quadrilateral `a' b a b'` with depths that are not robustly unimodal, and the projections
 of `[a', a]` and `[b, b']`, and those of `[a', a]` and `[c, c']`, meet along `u₁`. -/
-theorem rimCert_axisTest_gen {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c')
+theorem rimCertPts_axisTest_gen {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c')
     (G : GaleData a a' b b' c c')
     (hfar₁ : |galeD G.l G.m a b| < |galeD G.l G.m a c|)
     (hfar₂ : |galeD G.l G.m a b'| < |galeD G.l G.m a c'|)
@@ -663,7 +679,9 @@ theorem rimCert_axisTest_gen {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c
     (V : Finset ℝ³) (hO : ({a, a', b, b', c, c'} : Finset ℝ³) ⊆ V)
     (hV : ∀ v ∈ V, v ∈ ({a, a', b, b', c, c'} : Finset ℝ³) ∨
       AxisExtra a a' b b' (axisView G.l G.m a a' b c) v) :
-    (∃ σ : ℝ, (σ = 1 ∨ σ = -1) ∧ RimCert V (σ • axisView G.l G.m a a' b c)) ∨
+    (∃ σ : ℝ, (σ = 1 ∨ σ = -1) ∧
+      (RimCertPts V (σ • axisView G.l G.m a a' b c) (quad a' b a b') ∨
+        RimCertPts V (σ • axisView G.l G.m a a' b c) (tri a' b b'))) ∨
       (SegMeet a' a b b' (axisView G.l G.m a a' b c) ∧
         SegMeet a' a c c' (axisView G.l G.m a a' b c) ∧
         ¬ IsRobustUnimodal (quad ⟪a', axisView G.l G.m a a' b c⟫ ⟪b, axisView G.l G.m a a' b c⟫
@@ -685,16 +703,38 @@ theorem rimCert_axisTest_gen {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c
           ⟨s', δ', hs0', hs1', hδ', h.trans hc'⟩)))))
     · exact Or.inr (Or.inr (Or.inr (Or.inr h)))
   have mem : ∀ x ∈ ({a, a', b, b', c, c'} : Finset ℝ³), x ∈ V := fun x hx => hO hx
-  obtain ⟨K1, K2⟩ := rimCert_axisTest_core_gen hσ hT hΓ hB htri V (mem a (by simp))
+  obtain ⟨K1, K2⟩ := rimCertPts_axisTest_core_gen hσ hT hΓ hB htri V (mem a (by simp))
     (mem a' (by simp)) (mem b (by simp)) (mem b' (by simp)) hV'
   have hσα : σ * det3 (b' - b) (a - b) u ≠ 0 :=
     mul_ne_zero (by rcases hσ with rfl | rfl <;> norm_num) hP
   rcases lt_or_gt_of_ne hσα with hα | hα
   · by_cases hR : IsRobustUnimodal (quad ⟪a', u⟫ ⟪b, u⟫ ⟪a, u⟫ ⟪b', u⟫)
-    · exact Or.inl ⟨σ, hσ, K2 hα hR⟩
+    · exact Or.inl ⟨σ, hσ, Or.inl (K2 hα hR)⟩
     · obtain ⟨m1, m2⟩ := axisTest_meets hσ hs0 hs1 hc hs0' hs1' hc' hT hΓ hB hα
       exact Or.inr ⟨m1, m2, hR⟩
-  · exact Or.inl ⟨σ, hσ, K1 hα⟩
+  · exact Or.inl ⟨σ, hσ, Or.inr (K1 hα)⟩
+
+/-- **One test of Theorem 13.7, certificate form** (`isRupert_axisTest_robust` without the
+horizontal double normal, with any robustness criterion): the certificate at `±u₁`, or the rim
+is the quadrilateral `a' b a b'` with depths that are not robustly unimodal, and the projections
+of `[a', a]` and `[b, b']`, and those of `[a', a]` and `[c, c']`, meet along `u₁`. -/
+theorem rimCert_axisTest_gen {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c')
+    (G : GaleData a a' b b' c c')
+    (hfar₁ : |galeD G.l G.m a b| < |galeD G.l G.m a c|)
+    (hfar₂ : |galeD G.l G.m a b'| < |galeD G.l G.m a c'|)
+    (hP : det3 (b' - b) (a - b) (axisView G.l G.m a a' b c) ≠ 0)
+    (htri : ¬ (⟪a', axisView G.l G.m a a' b c⟫ = ⟪b, axisView G.l G.m a a' b c⟫ ∧
+      ⟪b, axisView G.l G.m a a' b c⟫ = ⟪b', axisView G.l G.m a a' b c⟫))
+    (V : Finset ℝ³) (hO : ({a, a', b, b', c, c'} : Finset ℝ³) ⊆ V)
+    (hV : ∀ v ∈ V, v ∈ ({a, a', b, b', c, c'} : Finset ℝ³) ∨
+      AxisExtra a a' b b' (axisView G.l G.m a a' b c) v) :
+    (∃ σ : ℝ, (σ = 1 ∨ σ = -1) ∧ RimCert V (σ • axisView G.l G.m a a' b c)) ∨
+      (SegMeet a' a b b' (axisView G.l G.m a a' b c) ∧
+        SegMeet a' a c c' (axisView G.l G.m a a' b c) ∧
+        ¬ IsRobustUnimodal (quad ⟪a', axisView G.l G.m a a' b c⟫ ⟪b, axisView G.l G.m a a' b c⟫
+          ⟪a, axisView G.l G.m a a' b c⟫ ⟪b', axisView G.l G.m a a' b c⟫)) :=
+  (rimCertPts_axisTest_gen F G hfar₁ hfar₂ hP htri V hO hV).imp_left fun ⟨σ, hσ, h⟩ =>
+    ⟨σ, hσ, h.elim (·.rimCert4) (·.rimCert3)⟩
 
 /-- **`isRupert_axisTest_robust` in certificate form** (the ties of `QuadTie`). -/
 theorem rimCert_axisTest_robust {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c')

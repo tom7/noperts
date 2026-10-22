@@ -613,6 +613,16 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.rimCert_axisTest_gen
 #assert_standard_axioms Minimality.weakSep_of_not_robust
 #assert_standard_axioms Minimality.weakSep_det_sign
+#assert_standard_axioms Minimality.isRupert_type21_limit_facets_codim2_of
+#assert_standard_axioms Minimality.isRupert_line21
+#assert_standard_axioms Minimality.isRupert_twoFaceLab21
+#assert_standard_axioms Minimality.isRupert_vSector
+#assert_standard_axioms Minimality.isRupert_vTriLim
+#assert_standard_axioms Minimality.isRupert_vQuadLim
+#assert_standard_axioms Minimality.pi_sep_of_delta
+#assert_standard_axioms Minimality.esc_of_cone
+#assert_standard_axioms Minimality.quad_offsets21
+#assert_standard_axioms Minimality.rimCertPts_axisTest_gen
 #assert_standard_axioms minimalNopert_of_certificatesValid
 #assert_standard_axioms Cu13.S1
 #assert_standard_axioms Cu13.S2
