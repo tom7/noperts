@@ -25,9 +25,9 @@ face `014`, whose vertex `1` lies over the open far side `0 – 4`.
 * **Lemma 16.29 (Lemma E at 25)** — `type21_switch_sep`: if `s_C(O) = +` (`CrossNorm`), `2` and
   `5` lie strictly on opposite sides of the plane `034` (the dependency `{1 ·}` of `K − 6`,
   `type21_depO2_c`, applied to that plane).
-* **Theorem 16.30 (the switch surface)** — `isRupert_type21_switch`: on the switch surface,
+* **Theorem 16.30 (the switch surface)** — `cert_type21_switch`: on the switch surface,
   with `CrossNorm` and `|[3 1]| > |[3 4]|`, off `NoPlaneParallel`, `GenPosTie` and `NoHDNEdges`,
-  `K` is Rupert: Lemma E with ties picks a robustly unimodal rim `(v, 0, 4, 3)` (`v = 2` or
+  `K` has a rim certificate (`CertV`): Lemma E with ties picks a robustly unimodal rim `(v, 0, 4, 3)` (`v = 2` or
   `5`), and the uniform tilt (Lemma 16.27, `isRupert_edgePair_uniform_robust`) handles the
   middles `6` (over the side at `p`) and `1` (over the far side `0 – 4`) together with the axle.
   This closes the halves `H⁻` (cap-face class, `Type21Cap.lean`) and `H⁻_c` (class (c),
@@ -36,12 +36,19 @@ face `014`, whose vertex `1` lies over the open far side `0 – 4`.
 
 Not formalized: the boundary cases of 16.30 (`s_C(O) = 0`, `|[3 1]| = |[3 4]|`: the latter is a
 tie of `NoPlaneParallel`) and Lemma 16.31.
+
+**Certificate form** (§18.2, §18.6 step 2): every theorem of the tier cover concludes a rim
+certificate at a named view (`CertV`: a segment view or a view satisfying `L`, the named vertex
+crossings) instead of Rupertness; no horizontal double normal is assumed.  The old statement
+`isRupert_type21_facets` and the limit theorem are in `Type21Limit.lean`.
 -/
 
 namespace Minimality
 
 open scoped RealInnerProductSpace Topology
 open Finset Filter
+
+variable {L : ℝ³ → Prop}
 
 /-- **A face parallel to the view.**  An affine `f` vanishing at `P`, `Q` with `⟪N, u⟫ = 0`:
 the triple tests `det3 (Q − P) (y − P) u` are proportional to the facet values `f y`. -/
@@ -230,18 +237,17 @@ theorem type21_switch_sep (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
 Gale data of `O = K − 2` in the normalization `CrossNorm` (`s_C(O) = +`; the cap-face class and
 the pattern `(+, −, +)` of the other classes), on the switch surface `δ_014(2) = δ_014(5)`, with
 `δ_0256(4) < δ_0256(1)` (`|[3 1]| > |[3 4]|`).  Off `NoPlaneParallel`, `GenPosTie` and horizontal
-double normals at the edge views (`NoHDNEdges`), `K` is Rupert: at the view along `25` the
+double normals at the edge views (`NoHDNEdges`), `K` has a rim certificate (`CertV`): at the view along `25` the
 shadow is the quadrilateral `(p, P0, P4, P3)` (16.28), `2` and `5` lie on opposite sides of the
 plane `034` (16.29), so one rim `(v, 0, 4, 3)` is unimodal (Lemma E), and the uniform tilt
 (16.27) takes care of the middles `6` (over the side `p – P0`) and `1` (over the far side
 `P0 – P4`) and of the axle. -/
-theorem isRupert_type21_switch (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
+theorem cert_type21_switch (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
     (G : GaleData a a' b b' c c') (hN : CrossNorm G)
     (hsw : F.abc.f d = F.abc.f b') (hF1 : F.ab'c'.f b < F.ab'c'.f c)
     (hpp : NoPlaneParallel (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
-    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
-    (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
   have hnd' := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd'
@@ -281,7 +287,6 @@ theorem isRupert_type21_switch (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
   -- distinct depths along `25`, no horizontal double normals there
   have hnt : ¬ (⟪a', b' - d⟫ = ⟪b, b' - d⟫ ∧ ⟪b, b' - d⟫ = ⟪a, b' - d⟫) :=
     hgen.noTriple hKd hKb' hKa' hKb hKa hdb' ha'b (Ne.symm hab) (Ne.symm haa')
-  obtain ⟨hnd₂, hnd₁⟩ := noHDN_pair hnd hKd hKb' hdb'
   have hMK : ∀ z, z ∈ ({c', c} : Finset ℝ³) ↔ z = c' ∨ z = c := by
     intro z; simp only [mem_insert, mem_singleton]
   have nM : ∀ z, z ≠ c' → z ≠ c → z ∉ ({c', c} : Finset ℝ³) := by
@@ -307,10 +312,11 @@ theorem isRupert_type21_switch (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
   obtain ⟨a0, a1, a2, a3⟩ := zmod4_add_one
   rcases lt_or_gt_of_ne hT3 with hneg | hpos
   · -- clockwise: the rim `(v, 3, 4, 0)`
-    refine isRupert_edgePair_uniform_robust (v := d) (w := b') (a := a') (c := b) (b := a) K
+    refine CertV.seg hKd hKb' hdb' (rimCert_edgePair_uniform_robust (v := d) (w := b') (a := a')
+      (c := b) (b := a) K
       {c', c} hKd hKb' hKa' hKa hKb (nM d hdc' hdc) (nM b' hb'c' hb'c)
       (nM a' ha'c' ha'c) (nM a hac' hac) (nM b hbc' hbc) ?_ ?_ ?_ ?_ ?_ hnt
-      (hV a' b a (Or.inr ⟨rfl, rfl, rfl⟩)) ?_ ?_ hnd₁ hnd₂
+      (hV a' b a (Or.inr ⟨rfl, rfl, rfl⟩)) ?_ ?_)
     · have : det3 (a' - d) (b - d) (b' - d) = -det3 (b - d) (a' - d) (b' - d) := by
         simp only [det3_expand, PiLp.sub_apply]; ring
       rw [this]; nlinarith
@@ -343,11 +349,12 @@ theorem isRupert_type21_switch (F : OctFacets a a' b b' c c') (hd : IsCap21 F d)
         simp only [a2, quad_2, quad_3]
         rw [hc]; module
   · -- counterclockwise: the rim `(v, 0, 4, 3)`
-    refine isRupert_edgePair_uniform_robust (v := d) (w := b') (a := a) (c := b) (b := a') K
+    refine CertV.seg hKd hKb' hdb' (rimCert_edgePair_uniform_robust (v := d) (w := b') (a := a)
+      (c := b) (b := a') K
       {c', c} hKd hKb' hKa hKa' hKb (nM d hdc' hdc) (nM b' hb'c' hb'c)
       (nM a hac' hac) (nM a' ha'c' ha'c) (nM b hbc' hbc) ?_ hpos ?_ ?_ hE
       (fun h => hnt ⟨h.2.symm, h.1.symm⟩)
-      (hV a b a' (Or.inl ⟨rfl, rfl, rfl⟩)) ?_ ?_ hnd₁ hnd₂
+      (hV a b a' (Or.inl ⟨rfl, rfl, rfl⟩)) ?_ ?_)
     · exact pos_of_mul_pos_right p1 hpos.le
     · have : det3 (a' - b) (d - b) (b' - d) = det3 (b - d) (a' - d) (b' - d) := by
         simp only [det3_expand, PiLp.sub_apply]; ring

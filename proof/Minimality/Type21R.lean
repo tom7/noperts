@@ -7,7 +7,7 @@ public import Minimality.Type21F2
 /-!
 # Type 21: the tier R (`FEWER-FACES-PROOFS.md` Lemma 16.5)
 
-* **A ridge view** (`isRupert_ridge`): an edge `v w` of `K` lying on two faces `f_A`, `f_B`
+* **A ridge view** (`rimCert_ridge`): an edge `v w` of `K` lying on two faces `f_A`, `f_B`
   that are both vertical at the view `u = w − v` (they contain `u`).  The shadow is the angle at
   `q = P v = P w` between the projections of the two faces, cut by the far ends `A`, `B`
   (the other vertex of each face, `m_A`, `m_B`, a middle, `EdgeMid`) and the last point `C`
@@ -17,18 +17,25 @@ public import Minimality.Type21F2
   the plane `A C B` (Lemma E), one of the closings `(v, A, C, B)`, `(w, A, C, B)` is robustly
   unimodal (`isRupert_edgePair_robust`).  Either orientation of the screen; depth ties allowed
   except three equal depths on a rim.
-* **Lemma 16.5 (R)** — `isRupert_type21_R`: the ridge `26` of type 21 (faces `0256`, `2346`,
+* **Lemma 16.5 (R)** — `cert_type21_R`: the ridge `26` of type 21 (faces `0256`, `2346`,
   view `u = 2 − 6`).  With `2 = 0 + α (5 − 0) + β (6 − 0)` and `2 = 4 + α' (3 − 4) + β' (6 − 4)`
   (`β = r' = δ_015(2)/δ_015(6)`, `β' = r = δ_134(2)/δ_134(6)`): the far end of `0256` is `5` if
   `β > 1` (then `0` is a middle) and `0` if `β < 1`; the far end of `2346` is `3` if `β' > 1`
   and `4` if `β' < 1`.  The tier R (`Type21R`): `1` hidden, or the far ends are `(5, 4)` and
   `2`, `6` lie on opposite sides of the plane `145`, or `(0, 3)` and the plane `013`.
+
+**Certificate form** (§18.2, §18.6 step 2): every theorem of the tier cover concludes a rim
+certificate at a named view (`CertV`: a segment view or a view satisfying `L`, the named vertex
+crossings) instead of Rupertness; no horizontal double normal is assumed.  The old statement
+`isRupert_type21_facets` and the limit theorem are in `Type21Limit.lean`.
 -/
 
 namespace Minimality
 
 open scoped RealInnerProductSpace Topology
 open Finset Filter
+
+variable {L : ℝ³ → Prop}
 
 theorem EdgeMid.swap_ab {v w a b m : ℝ³} (h : EdgeMid v w a b m) : EdgeMid v w b a m := by
   obtain ⟨s, δ, hs0, hs1, hδ, h | h | h | h⟩ := h
@@ -43,9 +50,9 @@ theorem EdgeMid.swap_ab {v w a b m : ℝ³} (h : EdgeMid v w a b m) : EdgeMid v 
 If `C` is hidden (`hid`: `C` and `v` on one side of the vertical plane through `A B`), or a
 corner with `v`, `w` weakly on opposite sides of the plane `A C B` (Lemma E), then, with ties
 allowed (`v, A, B` and `A, C, B` not each at one depth: Lemma E with ties,
-`isRupert_edgePair_robust`, and `isRupert_edgeTri_robust`) and no horizontal double normals at
-`u`, `K` is Rupert. -/
-theorem isRupert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ → ℝ} {NA NB : ℝ³}
+`rimCert_edgePair_robust`, and `rimCert_edgeTri_robust`), one closing at `u` is a rim
+certificate (no horizontal double normal assumed). -/
+theorem rimCert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ → ℝ} {NA NB : ℝ³}
     (hfA : ∀ y z, fA y - fA z = ⟪NA, y - z⟫) (hfB : ∀ y z, fB y - fB z = ⟪NB, y - z⟫)
     (hAv : fA v = 0) (hAw : fA w = 0) (hAA : fA A = 0) (hAB : fA B < 0) (hAC : fA C < 0)
     (hBv : fB v = 0) (hBw : fB w = 0) (hBB : fB B = 0) (hBA : fB A < 0) (hBC : fB C < 0)
@@ -56,9 +63,8 @@ theorem isRupert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ →
       (det3 (B - A) (C - A) (w - v) * det3 (B - A) (v - A) (w - v) < 0 ∧
         det3 (B - A) (C - A) (v - A) * det3 (B - A) (C - A) (w - A) ≤ 0))
     (htri : ¬ (⟪v, w - v⟫ = ⟪A, w - v⟫ ∧ ⟪A, w - v⟫ = ⟪B, w - v⟫))
-    (h3 : ¬ (⟪A, w - v⟫ = ⟪C, w - v⟫ ∧ ⟪C, w - v⟫ = ⟪B, w - v⟫))
-    (hnd₁ : NoHDNAt (K.erase w) (w - v)) (hnd₂ : NoHDNAt (K.erase v) (w - v)) :
-    IsRupert K := by
+    (h3 : ¬ (⟪A, w - v⟫ = ⟪C, w - v⟫ ∧ ⟪C, w - v⟫ = ⟪B, w - v⟫)) :
+    RimCert K (w - v) := by
   set u := w - v with hu
   set T := det3 (A - v) (B - v) u with hT_def
   have hNAu : ⟪NA, u⟫ = 0 := by rw [hu, ← hfA, hAw, hAv, sub_self]
@@ -100,8 +106,8 @@ theorem isRupert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ →
   · -- clockwise: use `(v, B, A)`
     rcases hcase with hh | ⟨hc, hE⟩
     · have hℓn : ℓ < 0 := neg_of_mul_pos_left hh hTn.le
-      refine isRupert_edgeTri_robust K hvK hwK hBK hAK ?_
-        (fun h => htri ⟨h.1.trans h.2, h.2.symm⟩) (fun z hz => ?_) hnd₁
+      refine rimCert_edgeTri_robust K hvK hwK hBK hAK ?_
+        (fun h => htri ⟨h.1.trans h.2, h.2.symm⟩) (fun z hz => ?_)
       · have : det3 (B - v) (A - v) u = -T := by
           simp only [hT_def, det3_expand, PiLp.sub_apply]; ring
         rw [this]; linarith
@@ -123,8 +129,8 @@ theorem isRupert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ →
             rw [this, d1]; nlinarith
         · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
     · have hℓp : 0 < ℓ := pos_of_mul_neg_left hc hTn.le
-      refine isRupert_edgePair_robust (v := v) (w := w) (a := B) (b := A) (c := C) K hvK hwK
-        hBK hAK hCK ?_ ?_ ?_ ?_ ?_ (fun h => h3 ⟨h.2.symm, h.1.symm⟩) (fun z hz => ?_) hnd₁ hnd₂
+      refine rimCert_edgePair_robust (v := v) (w := w) (a := B) (b := A) (c := C) K hvK hwK
+        hBK hAK hCK ?_ ?_ ?_ ?_ ?_ (fun h => h3 ⟨h.2.symm, h.1.symm⟩) (fun z hz => ?_)
       · have : det3 (B - v) (C - v) u = -det3 (C - v) (B - v) u := by
           simp only [det3_expand, PiLp.sub_apply]; ring
         rw [this, d2]; nlinarith
@@ -152,7 +158,7 @@ theorem isRupert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ →
   · -- counterclockwise: `(v, A, B)`
     rcases hcase with hh | ⟨hc, hE⟩
     · have hℓp : 0 < ℓ := pos_of_mul_pos_left hh hTp.le
-      refine isRupert_edgeTri_robust K hvK hwK hAK hBK hTp htri (fun z hz => ?_) hnd₁
+      refine rimCert_edgeTri_robust K hvK hwK hAK hBK hTp htri (fun z hz => ?_)
       rcases hK z hz with h | h | h | h | h | h
       · exact Or.inl h
       · exact Or.inr (Or.inl h)
@@ -166,8 +172,8 @@ theorem isRupert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ →
           rw [this, d2]; exact mul_pos rB hTp
       · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
     · have hℓn : ℓ < 0 := neg_of_mul_neg_left hc hTp.le
-      refine isRupert_edgePair_robust (v := v) (w := w) (a := A) (b := B) (c := C) K hvK hwK
-        hAK hBK hCK ?_ ?_ ?_ ?_ hE h3 (fun z hz => ?_) hnd₁ hnd₂
+      refine rimCert_edgePair_robust (v := v) (w := w) (a := A) (b := B) (c := C) K hvK hwK
+        hAK hBK hCK ?_ ?_ ?_ ?_ hE h3 (fun z hz => ?_)
       · rw [d1]; exact mul_pos rA hTp
       · have : det3 (C - A) (B - A) u = -ℓ := by
           simp only [hℓ, det3_expand, PiLp.sub_apply]; ring
@@ -190,16 +196,15 @@ theorem isRupert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ →
 
 /-- One quadrant of the ridge view of type 21: the far ends `A ∈ {0, 5}` of `0256` and
 `B ∈ {3, 4}` of `2346`, the other vertices `m_A`, `m_B` middles. -/
-theorem isRupert_type21_ridge_quad {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
+theorem cert_type21_ridge_quad {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) {A mA B mB : ℝ³} (hA : (A = b' ∧ mA = a) ∨ (A = a ∧ mA = b'))
     (hB : (B = a' ∧ mB = b) ∨ (B = b ∧ mB = a'))
     (hmA : EdgeMid c' d A B mA) (hmB : EdgeMid c' d A B mB)
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
-    (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hcase : 0 < det3 (B - A) (c - A) (d - c') * det3 (B - A) (c' - A) (d - c') ∨
       (det3 (B - A) (c - A) (d - c') * det3 (B - A) (c' - A) (d - c') < 0 ∧
         det3 (B - A) (c - A) (c' - A) * det3 (B - A) (c - A) (d - A) ≤ 0)) :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
   have hnd' := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd'
@@ -249,9 +254,9 @@ theorem isRupert_type21_ridge_quad {a a' b b' c c' d : ℝ³} (F : OctFacets a a
     exacts [Ne.symm ha'b', Ne.symm hbb', haa', hab]
   have htri := hgen.noTriple hKc' hKd hKc' hAK hBK (Ne.symm hdc') (Ne.symm Ac') AB (Ne.symm Bc')
   have h3 := hgen.noTriple hKc' hKd hAK hKc hBK (Ne.symm hdc') Ac (Ne.symm Bc) AB
-  obtain ⟨n1, n2⟩ := noHDN_pair hnd hKc' hKd (Ne.symm hdc')
-  refine isRupert_ridge K F.ab'c'.hN F.a'bc'.hN F.ab'c'.hR hd.ab'c' fAA fAB fAC F.a'bc'.hR
-    hd.a'bc' fBB fBA fBC hT hKc' hKd hAK hBK hKc (fun z hz => ?_) hcase htri h3 n2 n1
+  refine CertV.seg hKc' hKd (Ne.symm hdc') (rimCert_ridge K F.ab'c'.hN F.a'bc'.hN F.ab'c'.hR
+    hd.ab'c' fAA fAB fAC F.a'bc'.hR hd.a'bc' fBB fBA fBC hT hKc' hKd hAK hBK hKc (fun z hz => ?_)
+    hcase htri h3)
   simp only [hK, Finset.mem_insert, Finset.mem_singleton] at hz
   rcases hz with rfl | rfl | rfl | rfl | rfl | rfl | rfl
   · exact Or.inr (Or.inl rfl)
@@ -312,14 +317,13 @@ def Type21R {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c') (d : ℝ³) 
 /-- **Lemma 16.5 (the tier R)**: at the view along the ridge `26` the faces `0256`, `2346` are
 vertical; their far ends `f0 ∈ {0, 5}`, `f3 ∈ {3, 4}` and `1` are the corners of the shadow
 (the other vertices are middles).  If `1` is hidden, or the closings `(6, f0, 1, f3)`,
-`(2, f0, 1, f3)` satisfy Lemma E, `K` is Rupert (off `GenPosTie` and horizontal double normals at
+`(2, f0, 1, f3)` satisfy Lemma E, `K` has a rim certificate (`CertV`) (off `GenPosTie` and horizontal double normals at
 the view along `26`). -/
-theorem isRupert_type21_R {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
+theorem cert_type21_R {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d)
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
-    (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hR : Type21R F d) :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
   obtain ⟨hα, hβ, hαβ, hco⟩ := hd.coords
   obtain ⟨hα', hβ', hαβ', hco'⟩ := hd.sigma1.coords
   change 0 < F.abc'.f d / F.abc'.f a' at hα'
@@ -329,14 +333,14 @@ theorem isRupert_type21_R {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c 
     at hco'
   unfold Type21R Type21RQ at hR
   rcases hR with ⟨h1, h2, hok⟩ | ⟨h1, h2, hok⟩ | ⟨h1, h2, hok⟩ | ⟨h1, h2, hok⟩
-  · exact isRupert_type21_ridge_quad F hd (Or.inl ⟨rfl, rfl⟩) (Or.inl ⟨rfl, rfl⟩)
-      (ridge_mid_far hco hα h1) (ridge_mid_far hco' hα' h2).swap_ab hgen hnd hok
-  · exact isRupert_type21_ridge_quad F hd (Or.inl ⟨rfl, rfl⟩) (Or.inr ⟨rfl, rfl⟩)
-      (ridge_mid_far hco hα h1) (ridge_mid_near hco' hα' hβ' hαβ' h2).swap_ab hgen hnd hok
-  · exact isRupert_type21_ridge_quad F hd (Or.inr ⟨rfl, rfl⟩) (Or.inl ⟨rfl, rfl⟩)
-      (ridge_mid_near hco hα hβ hαβ h1) (ridge_mid_far hco' hα' h2).swap_ab hgen hnd hok
-  · exact isRupert_type21_ridge_quad F hd (Or.inr ⟨rfl, rfl⟩) (Or.inr ⟨rfl, rfl⟩)
-      (ridge_mid_near hco hα hβ hαβ h1) (ridge_mid_near hco' hα' hβ' hαβ' h2).swap_ab hgen hnd hok
+  · exact cert_type21_ridge_quad F hd (Or.inl ⟨rfl, rfl⟩) (Or.inl ⟨rfl, rfl⟩)
+      (ridge_mid_far hco hα h1) (ridge_mid_far hco' hα' h2).swap_ab hgen hok
+  · exact cert_type21_ridge_quad F hd (Or.inl ⟨rfl, rfl⟩) (Or.inr ⟨rfl, rfl⟩)
+      (ridge_mid_far hco hα h1) (ridge_mid_near hco' hα' hβ' hαβ' h2).swap_ab hgen hok
+  · exact cert_type21_ridge_quad F hd (Or.inr ⟨rfl, rfl⟩) (Or.inl ⟨rfl, rfl⟩)
+      (ridge_mid_near hco hα hβ hαβ h1) (ridge_mid_far hco' hα' h2).swap_ab hgen hok
+  · exact cert_type21_ridge_quad F hd (Or.inr ⟨rfl, rfl⟩) (Or.inr ⟨rfl, rfl⟩)
+      (ridge_mid_near hco hα hβ hαβ h1) (ridge_mid_near hco' hα' hβ' hαβ' h2).swap_ab hgen hok
 
 end Minimality
 

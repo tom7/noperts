@@ -12,20 +12,27 @@ Labels as in `Type21Lemmas.lean`: `a, a', b, b', c, c', d = 0, 3, 4, 5, 1, 6, 2`
 
 * `galeD_pair_ne_zero` — `[x x'] ≠ 0` for an antipodal pair when the opposite equator is not
   planar.
-* `isRupert_type21_pattern` — `K − 2` in the pattern `(+, −, +)` (`CrossNorm G`, `[4 5] > 0`):
-  off the special positions, `K` is Rupert.  With `τ` from the cap, the classes are decided by
+* `cert_type21_pattern` — `K − 2` in the pattern `(+, −, +)` (`CrossNorm G`, `[4 5] > 0`):
+  off the special positions, `K` has a rim certificate (`CertV`).  With `τ` from the cap, the classes are decided by
   the signs of `{5 4}` and `{0 3}`, the pair brackets of `K − 6` (`2` beyond `013`, `145`); they
   vanish exactly on the planar equators `{0, 1, 2, 3}`, `{1, 2, 4, 5}` of `K − 6`, which are
   excluded.  Class (b) (`{0 3} > 0`): 16.20; class (a) (`{5 4}, {0 3} < 0`): 16.18; class (c):
   16.23 with 16.24; on the switch surface `H⁻_c` (`δ_014(2) = δ_014(5)`, `δ_056(4) < δ_056(1)`)
-  Theorem 16.30 (`isRupert_type21_switch`).  Every tie of a Gale comparison used is a segment
+  Theorem 16.30 (`cert_type21_switch`).  Every tie of a Gale comparison used is a segment
   parallel to a face plane (`NoPlaneParallel`), as is `f ≠ 0` for `K − 2` and `K − 6`.
+
+**Certificate form** (§18.2, §18.6 step 2): every theorem of the tier cover concludes a rim
+certificate at a named view (`CertV`: a segment view or a view satisfying `L`, the named vertex
+crossings) instead of Rupertness; no horizontal double normal is assumed.  The old statement
+`isRupert_type21_facets` and the limit theorem are in `Type21Limit.lean`.
 -/
 
 namespace Minimality
 
 open scoped RealInnerProductSpace Topology
 open Finset Filter
+
+variable {L : ℝ³ → Prop}
 
 /-- **A pair bracket is nonzero off planar equators**: if the equator `b b' c c'` is not planar,
 `[a a'] ≠ 0` (else the dependency `[a ·]` is an affine dependency of `b, b', c, c'` with
@@ -59,26 +66,22 @@ segment of `K` parallel to a plane through three other points (`NoPlaneParallel`
 contains every tie of a Gale comparison used and `f ≠ 0`), `GenPosTie`, no horizontal double
 normal at the edge views (`NoHDNEdges`), `2` off the planes `013` and `145` (the planar
 equators of `K − 6`), and the special positions of `T1` and of the two vertex tests of F2 — `K`
-is Rupert: one of the tiers Q (of `K − 2` or `K − 6`), H, R, F1, F2 holds, or `K` is on the
+has a rim certificate: one of the tiers Q (of `K − 2` or `K − 6`), H, R, F1, F2 holds, or `K` is on the
 switch surface `H⁻_c` (`δ_014(2) = δ_014(5)` with `|[3 1]| > |[3 4]|`, here
 `δ_056(4) < δ_056(1)`) and Theorem 16.30 applies. -/
-theorem isRupert_type21_pattern {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
+theorem cert_type21_pattern {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c') (hN : CrossNorm G)
     (h45 : 0 < galeD G.l G.m b b')
     (hpp : NoPlaneParallel (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
-    (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (h013 : det3 (a - a') (c - a') (d - a') ≠ 0) (h145 : det3 (b - b') (c - b') (d - b') ≠ 0)
     (hT1 : ∀ u : ℝ³, u ≠ 0 → ⟪F.abc.N, u⟫ = 0 → ⟪F.ab'c'.N, u⟫ = 0 →
-      T1Gen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' u)
-    (hV : ∀ u : ℝ³, u ≠ 0 → det3 (a - b) (c - b) u = 0 → det3 (a' - b) (c' - b) u = 0 →
-      F2Gen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) b b' d c u)
-    (hV' : ∀ u : ℝ³, u ≠ 0 → det3 (a - b) (c' - b) u = 0 → det3 (a' - b) (c - b) u = 0 →
-      F2Gen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) b b' a' a u) :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
+      T1Gen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L a a' b b' u)
+    (hF2 : F2ViewsL (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L a a' b b' c c' d) :
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
   -- the switch surface `H⁻_c`: Theorem 16.30
   by_cases hHc : F.abc.f d = F.abc.f b' ∧ F.ab'c'.f b < F.ab'c'.f c
-  · exact isRupert_type21_switch F hd G hN hHc.1 hHc.2 hpp hgen hnd
+  · exact cert_type21_switch F hd G hN hHc.1 hHc.2 hpp hgen
   have hnd' := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd'
@@ -190,7 +193,7 @@ theorem isRupert_type21_pattern {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b
         (Ne.symm hbc) ha'b))
   -- tier `Q` of `K − 2`, else Lemma 16.16
   by_cases hQ : Type21Q G.l G.m a a' b b' c c'
-  · exact isRupert_type21_Q F hd G hgen hnd hQ
+  · exact cert_type21_Q F hd G hgen hQ
   obtain ⟨hq36, hq10⟩ := type21_O_quad36 F G hN h45 hf hQ
   -- the cap and the pair brackets of `K − 6`
   obtain ⟨α, β, τ, -, hβ, -, hτ, hco, hα, ht⟩ := hd.tau hN
@@ -204,7 +207,7 @@ theorem isRupert_type21_pattern {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b
   rcases lt_trichotomy ((β + τ * galeD G.l G.m c c') * galeD G.l G.m a' a)
     (τ * galeD G.l G.m c a' * galeD G.l G.m c' a) with hc145 | h0 | hn145
   · -- class (b)
-    exact isRupert_type21_classB F hd G hN hτ hco hα ht hc145 t10 t13 hRid hgen hnd
+    exact cert_type21_classB F hd G hN hτ hco hα ht hc145 t10 t13 hRid hgen
   · exfalso
     apply n2
     rw [k2, anti a' a]
@@ -212,13 +215,13 @@ theorem isRupert_type21_pattern {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b
   rcases lt_trichotomy ((β + τ * galeD G.l G.m c c') * galeD G.l G.m b' b +
     τ * galeD G.l G.m b c * galeD G.l G.m b' c') 0 with hn013 | h0 | hc013
   · -- class (a)
-    exact isRupert_type21_classA F hd G hN h45 hτ hco hα ht hq36 hq10 hn013 hn145 hgen hnd
+    exact cert_type21_classA F hd G hN h45 hτ hco hα ht hq36 hq10 hn013 hn145 hgen
   · exfalso
     apply n1
     rw [k1, h0, mul_zero]
   · -- class (c)
-    exact isRupert_type21_classC F hd G hN h45 hβ hτ hco hα ht hc013 hn145 hq10 hpp2 t34 t10 t51
-      t56 t23 hHc' hT1 hV hV' hgen hnd
+    exact cert_type21_classC F hd G hN h45 hβ hτ hco hα ht hc013 hn145 hq10 hpp2 t34 t10 t51
+      t56 t23 hHc' hT1 hF2 hgen
 
 /-! ### The normal forms (Lemma 16.15) -/
 
@@ -286,28 +289,35 @@ theorem type21_set_O21 (a a' b b' c c' d : ℝ³) :
     insert c' ({a', a, b', b, c, d} : Finset ℝ³) = insert d {a, a', b, b', c, c'} := by
   ext z; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
 
-/-- **The special positions of the two vertex tests of F2** in one labelling (vertex `b`): at
-every direction `u ≠ 0` of the line `abc ∩ a'bc'` (`V = 014/2346`), `F2Gen` with the rim
-`b, d, b', c`; at every direction of `abc' ∩ a'bc` (`V′ = 046/134`), `F2Gen` with the rim
-`b, a', b', a`.  The planes are given by determinants. -/
+/-- **The special positions of the two vertex tests of F2** in one labelling (vertex `b`), with
+the ties of `QuadTie` and no horizontal double normal of `V`: at every direction `u ≠ 0` of the
+line `abc ∩ a'bc'` (`V = 014/2346`, rim `b, d, b', c`) and of `abc' ∩ a'bc` (`V′ = 046/134`, rim
+`b, a', b', a`).  The planes are given by determinants. -/
 def F2Views (V : Finset ℝ³) (a a' b b' c c' d : ℝ³) : Prop :=
   (∀ u : ℝ³, u ≠ 0 → det3 (a - b) (c - b) u = 0 → det3 (a' - b) (c' - b) u = 0 →
-    F2Gen V b b' d c u) ∧
+    det3 (c - d) (b' - d) u ≠ 0 ∧ QuadTie ⟪b, u⟫ ⟪d, u⟫ ⟪b', u⟫ ⟪c, u⟫ ∧ NoHDNAt V u) ∧
   (∀ u : ℝ³, u ≠ 0 → det3 (a - b) (c' - b) u = 0 → det3 (a' - b) (c - b) u = 0 →
-    F2Gen V b b' a' a u)
+    det3 (a - a') (b' - a') u ≠ 0 ∧ QuadTie ⟪b, u⟫ ⟪a', u⟫ ⟪b', u⟫ ⟪a, u⟫ ∧ NoHDNAt V u)
+
+theorem F2Views.toL {V : Finset ℝ³} {a a' b b' c c' d : ℝ³} (h : F2Views V a a' b b' c c' d) :
+    F2ViewsL V (NoHDNAt V) a a' b b' c c' d :=
+  ⟨fun u hu h1 h2 => ⟨(h.1 u hu h1 h2).1, (h.1 u hu h1 h2).2.2⟩,
+    fun v hv h1 h2 => ⟨(h.2 v hv h1 h2).1, (h.2 v hv h1 h2).2.2⟩,
+    fun u v hu h1 h2 hv h3 h4 => Or.inl ⟨(h.1 u hu h1 h2).2.1, (h.2 v hv h3 h4).2.1⟩⟩
 
 /-- The special positions of the other classes for one labelling `F` of `K − 2` with the cap
 `d`: those of the two vertex tests of F2 (`F2Views`).  (The switch surface `H⁻_c` of class (c) is
 no longer excluded: Theorem 16.30.) -/
-def Type21OtherGen {a a' b b' c c' : ℝ³} (_F : OctFacets a a' b b' c c') (d : ℝ³) : Prop :=
-  F2Views (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d
+def Type21OtherGen (K : Finset ℝ³) (L : ℝ³ → Prop) {a a' b b' c c' : ℝ³}
+    (_F : OctFacets a a' b b' c c') (d : ℝ³) : Prop :=
+  F2ViewsL K L a a' b b' c c' d
 
 /-- **Theorem 16.26 (type 21).**  Let `K = O ∪ {2}` be of type 21 (`IsCap21`).  Off the special
 positions — `NoPlaneParallel` (every tie of a Gale comparison used, and `f ≠ 0` for `K − 2` and
 `K − 6`), `GenPosTie`, no horizontal double normal at the edge views (`NoHDNEdges`), the five planar
 equators of `K − 2` and `K − 6` (`{4, 5, 1, 6}`, `{0, 3, 1, 6}`, `{0, 3, 4, 5}`, `{0, 3, 1, 2}`,
 `{4, 5, 1, 2}`), and, for each of the four labellings `id, σ1, σ2, σ2σ1`, the special positions
-of `T1` (`Type21CapGen`) and of F2 (`Type21OtherGen`) — `K` is Rupert: one of the tiers Q (of
+of `T1` (`Type21CapGen`) and of F2 (`Type21OtherGen`) — `K` has a rim certificate (`CertV`): one of the tiers Q (of
 `K − 2` or `K − 6`), H, R, F1, F2 holds, or, on the switch surface, the certificate of
 Theorem 16.30 at the edge `25`.
 *Proof.* The cap-face class is Theorem 16.13.  Otherwise reflect the Gale diagram so that
@@ -316,27 +326,30 @@ normal form; `(+, −, −)` is mapped to it by `σ1`.  For the others `K − 6`
 (`type21_O2_signs`): `(−, +, −)` and, with `2` beyond `145`, `(+, +, −)` by `σ2`; `(−, +, +)` and,
 with `2` beyond `013`, `(−, −, +)` by `σ2σ1`; in the remaining two states `K − 6` is in its
 cap-face class. -/
-theorem isRupert_type21_all {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
+theorem cert_type21_all {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d)
     (hpp : NoPlaneParallel (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
-    (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hE : det3 (b' - b) (c - b) (c' - b) ≠ 0 ∧ det3 (a' - a) (c - a) (c' - a) ≠ 0 ∧
       det3 (a' - a) (b - a) (b' - a) ≠ 0 ∧ det3 (a - a') (c - a') (d - a') ≠ 0 ∧
       det3 (b - b') (c - b') (d - b') ≠ 0)
-    (hG : Type21CapGen F d ∧ Type21CapGen F.perm₁₂ d ∧ Type21CapGen hd.O2 c' ∧
-      Type21CapGen hd.O2.perm₁₂ c')
-    (hG' : Type21OtherGen F d ∧ Type21OtherGen F.perm₁₂ d ∧ Type21OtherGen hd.O2 c' ∧
-      Type21OtherGen hd.O2.perm₁₂ c') :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
+    (hG : Type21CapGen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L F d ∧
+      Type21CapGen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L F.perm₁₂ d ∧
+      Type21CapGen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L hd.O2 c' ∧
+      Type21CapGen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L hd.O2.perm₁₂ c')
+    (hG' : Type21OtherGen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L F d ∧
+      Type21OtherGen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L F.perm₁₂ d ∧
+      Type21OtherGen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L hd.O2 c' ∧
+      Type21OtherGen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L hd.O2.perm₁₂ c') :
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
   by_cases hcl : (∃ G : GaleData a a' b b' c c', CapFace G) ∨
       (∃ G : GaleData b' b a' a c d, CapFace G)
-  · exact isRupert_type21_capFace F hd hpp hgen hnd hG hcl
+  · exact cert_type21_capFace F hd hpp hgen hG hcl
   push Not at hcl
   obtain ⟨hcl1, hcl2⟩ := hcl
   obtain ⟨hE1, hE2, hE3, hE4, hE5⟩ := hE
   obtain ⟨g1, g2, g3, g4⟩ := hG
-  obtain ⟨⟨v1, w1⟩, ⟨v2, w2⟩, ⟨v3, w3⟩, ⟨v4, w4⟩⟩ := hG'
+  obtain ⟨v1, v2, v3, v4⟩ := hG'
   obtain ⟨G0⟩ := F.nonempty_galeData
   obtain ⟨G, h35⟩ : ∃ G : GaleData a a' b b' c c', 0 < galeD G.l G.m a' b' := by
     have hε : galeD G0.l G0.m a' b' ≠ 0 := galeD_ne_zero F.swap₁.swap₂ G0.swap₁.swap₂
@@ -355,14 +368,14 @@ theorem isRupert_type21_all {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' 
   have e1 := (type21_set a a' b b' c c' d).2.2.2.2
   -- the core for each labelling
   have coreO : 0 < galeD G.l G.m a' a → 0 < galeD G.l G.m c' c → 0 < galeD G.l G.m b b' →
-      IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := fun s30 s61 s45 =>
-    isRupert_type21_pattern F hd G ⟨s30, s61, h35⟩ s45 hpp hgen hnd hE4 hE5 g1 v1 w1
+      CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := fun s30 s61 s45 =>
+    cert_type21_pattern F hd G ⟨s30, s61, h35⟩ s45 hpp hgen hE4 hE5 g1 v1
   have coreS1 : galeD G.l G.m b' b < 0 → galeD G.l G.m c' c < 0 → galeD G.l G.m a a' < 0 →
-      IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
+      CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
     intro s54 s61 s03
-    rw [← e1] at hpp hgen hnd ⊢
-    refine isRupert_type21_pattern F.perm₁₂ hd.sigma1 G.perm₁₂.flip ⟨?_, ?_, ?_⟩ ?_ hpp hgen hnd
-      hE5 hE4 g2 v2 w2
+    rw [← e1] at hpp hgen g2 v2 ⊢
+    refine cert_type21_pattern F.perm₁₂ hd.sigma1 G.perm₁₂.flip ⟨?_, ?_, ?_⟩ ?_ hpp hgen
+      hE5 hE4 g2 v2
     · show 0 < galeD G.flip.l G.flip.m b' b
       rw [galeD_flip]; linarith
     · show 0 < galeD G.flip.l G.flip.m c' c
@@ -376,11 +389,11 @@ theorem isRupert_type21_all {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' 
   have m54 : galeD G2.l G2.m b' b ≠ 0 := galeD_pair_ne_zero hd.O2 G2 hE4
   have m30 : galeD G2.l G2.m a' a ≠ 0 := galeD_pair_ne_zero hd.O2.perm₁₂ G2.perm₁₂ hE5
   have coreS2 : 0 < galeD G2.l G2.m b' b → galeD G2.l G2.m d c < 0 →
-      galeD G2.l G2.m a' a < 0 → IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
+      galeD G2.l G2.m a' a < 0 → CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
     intro t54 t21 t30
-    rw [← eO2] at hpp hgen hnd ⊢
-    refine isRupert_type21_pattern hd.O2 hd.sigma2 G2.flip ⟨?_, ?_, ?_⟩ ?_ hpp hgen hnd
-      hE1 hE2 g3 v3 w3
+    rw [← eO2] at hpp hgen g3 v3 ⊢
+    refine cert_type21_pattern hd.O2 hd.sigma2 G2.flip ⟨?_, ?_, ?_⟩ ?_ hpp hgen
+      hE1 hE2 g3 v3
     · show 0 < galeD G2.flip.l G2.flip.m b b'
       rw [galeD_flip, anti2]; linarith
     · show 0 < galeD G2.flip.l G2.flip.m d c
@@ -390,11 +403,11 @@ theorem isRupert_type21_all {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' 
     · show 0 < galeD G2.flip.l G2.flip.m a' a
       rw [galeD_flip]; linarith
   have coreS21 : 0 < galeD G2.l G2.m b' b → 0 < galeD G2.l G2.m d c →
-      galeD G2.l G2.m a' a < 0 → IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
+      galeD G2.l G2.m a' a < 0 → CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
     intro t54 t21 t30
-    rw [← eO21] at hpp hgen hnd ⊢
-    refine isRupert_type21_pattern hd.O2.perm₁₂ hd.sigma2.sigma1 G2.perm₁₂ ⟨?_, ?_, ?_⟩ ?_ hpp
-      hgen hnd hE2 hE1 g4 v4 w4
+    rw [← eO21] at hpp hgen g4 v4 ⊢
+    refine cert_type21_pattern hd.O2.perm₁₂ hd.sigma2.sigma1 G2.perm₁₂ ⟨?_, ?_, ?_⟩ ?_ hpp
+      hgen hE2 hE1 g4 v4
     · show 0 < galeD G2.l G2.m a a'
       rw [anti2]; linarith
     · exact t21

@@ -15,23 +15,30 @@ are `{5 4} = r [5 4] + τ [4 1] [5 6]` (`< 0`: `2` not beyond `013`) and
 
 * **Lemma 16.16 for `K − 2`** — `type21_O_quad36`: if tier Q fails for `K − 2`, the admissible
   pair is `W = {4, 5}` and `3 → 6`, `1 → 0` are quad edges.
-* **Theorem 16.18 (class (a), no crossing)** — `isRupert_type21_classA`: `Q` at `23` of
+* **Theorem 16.18 (class (a), no crossing)** — `cert_type21_classA`: `Q` at `23` of
   `K − 6`; `2` stays in the box of the `01`-view (the identities
   `c ([4 6] − [3 4]) − [4 5]([1 0] − [5 1]) [3 4] = ([0 5] − [5 1]) [4 6] [4 1]` and
   `c ([5 6] − [3 5]) − [4 5] k = ([0 5] − [5 1]) [5 6] [4 1]`, `c` the speed of `{4 5}`).
-* **Theorem 16.20 (class (b), `2` beyond `145`)** — `isRupert_type21_classB`: `Q` at `05`, `Q` at
+* **Theorem 16.20 (class (b), `2` beyond `145`)** — `cert_type21_classB`: `Q` at `05`, `Q` at
   `34` of `K − 6`, or R at the ridge `26` (the plane `145` separates `2` from `6`,
   `type21_plane145`).
 * **Lemma 16.21 (near or A1)** — `type21_near_or_A1`; `f ≠ 0` from a non-parallel segment
   (`gale_f_ne`); the pair brackets of `K − 6` (`type21_galeO2_kappa`); **Lemma 16.22**
-  (`type21_O2_quad04`); F1 in facet form (`isRupert_type21_F1'`).  Theorem 16.23 (class (c)) is
-  `isRupert_type21_classC` in `Type21F2Case.lean`.
+  (`type21_O2_quad04`); F1 in facet form (`cert_type21_F1'`).  Theorem 16.23 (class (c)) is
+  `cert_type21_classC` in `Type21F2Case.lean`.
+
+**Certificate form** (§18.2, §18.6 step 2): every theorem of the tier cover concludes a rim
+certificate at a named view (`CertV`: a segment view or a view satisfying `L`, the named vertex
+crossings) instead of Rupertness; no horizontal double normal is assumed.  The old statement
+`isRupert_type21_facets` and the limit theorem are in `Type21Limit.lean`.
 -/
 
 namespace Minimality
 
 open scoped RealInnerProductSpace Topology
 open Finset Filter
+
+variable {L : ℝ³ → Prop}
 
 /-- **Lemma 16.16 for `K − 2` in the pattern `(+, −, +)`**: if no K-quad edge of `K − 2` is an
 E-good quad edge (tier Q fails), then by Lemma 9.8 the admissible pair is `{4, 5}`, and
@@ -80,8 +87,8 @@ theorem type21_id_s5 {a a' b b' c c' : ℝ³} {l m : ℝ³ → ℝ}
 `1 → 0` quad edges (Lemma 16.16), `2` beyond neither `013` (`{5 4} < 0`) nor `145`
 (`{0 3} < 0`).  Then `0` is hidden along `3 → 2` in `K − 6` (`2` stays in the box of the
 `01`-view: H1 and H2 hold, interpolating between `τ = 0` and the crossing time `[4 5]/c` of
-`013`), `3 → 2` is E-good (`{0 3} [0 6] > 0`), and `K` is Rupert (`Q` at `23`). -/
-theorem isRupert_type21_classA {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
+`013`), `3 → 2` is E-good (`{0 3} [0 6] > 0`), and `K` has a rim certificate (`CertV`) (`Q` at `23`). -/
+theorem cert_type21_classA {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c') (hN : CrossNorm G)
     (h45 : 0 < galeD G.l G.m b b') {α β τ : ℝ} (hτ : 0 < τ)
     (hco : d = a + α • (b' - a) + β • (c' - a)) (hα : α = τ * galeD G.l G.m b' c)
@@ -91,9 +98,8 @@ theorem isRupert_type21_classA {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b 
       τ * galeD G.l G.m b c * galeD G.l G.m b' c' < 0)
     (hn145 : τ * galeD G.l G.m c a' * galeD G.l G.m c' a <
       (β + τ * galeD G.l G.m c c') * galeD G.l G.m a' a)
-    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
-    (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
   obtain ⟨s34, s05, s04, s56, s51, s46, s41, s63, s60, s13, s10⟩ := hN.signs F
   have anti := galeD_anti G.l G.m
   have a1 := type21_id_a1 G.hl G.hm
@@ -159,7 +165,7 @@ theorem isRupert_type21_classA {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b 
         s41))
     have := pos_of_mul_pos_right this h45.le
     linarith
-  exact isRupert_type21_step5 F hd G hN hco hα ht hH1 hH2 hn145 hgen hnd
+  exact cert_type21_step5 F hd G hN hco hα ht hH1 hH2 hn145 hgen
 
 /-! ### Class (b): both crossed (Theorem 16.20) -/
 
@@ -213,7 +219,7 @@ theorem type21_ridge_T54 {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c
 `34` of `K − 6` (`|[6 4]| > |[6 3]|` by (b2), E-good since `{0 3}, {0 4} > 0`).  Else R at the
 ridge `26` (far ends `(5, 4)`; `1` hidden, or Lemma E with the plane `145`, which separates
 `2` from `6`). -/
-theorem isRupert_type21_classB {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
+theorem cert_type21_classB {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c') (hN : CrossNorm G)
     {α β τ : ℝ} (hτ : 0 < τ)
     (hco : d = a + α • (b' - a) + β • (c' - a)) (hα : α = τ * galeD G.l G.m b' c)
@@ -223,9 +229,8 @@ theorem isRupert_type21_classB {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b 
     (t10 : galeD G.l G.m c a ≠ galeD G.l G.m b' c)
     (t13 : galeD G.l G.m b c ≠ galeD G.l G.m c a')
     (hRid : det3 (b - b') (c - b') (d - c') ≠ 0)
-    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
-    (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
   have hnd' := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd'
@@ -248,7 +253,7 @@ theorem isRupert_type21_classB {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b 
       have := mul_le_mul_of_nonneg_left hc s10.le
       have := mul_lt_mul_of_pos_left h10 s60
       linarith [mul_pos h61 s05, P1]
-    refine isRupert_type21_Q F hd G hgen hnd (Or.inl ⟨?_, ?_, mul_pos hN.h30 hN.h35⟩)
+    refine cert_type21_Q F hd G hgen (Or.inl ⟨?_, ?_, mul_pos hN.h30 hN.h35⟩)
     · rw [anti b' c]; exact mul_neg_of_pos_of_neg s10 (by linarith)
     · rw [anti b' c']; exact mul_neg_of_pos_of_neg s60 (by linarith)
   -- `f0 = 5`
@@ -271,7 +276,7 @@ theorem isRupert_type21_classB {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b 
     have eβ : F.ab'c.f d / F.ab'c.f c' = β := by rw [e2]; exact mul_div_cancel_right₀ _ f6.ne
     have eβ' : F.a'bc.f d / F.a'bc.f c' = β + τ * galeD G.l G.m c c' := by
       rw [hfd]; exact mul_div_cancel_right₀ _ f6'.ne
-    refine isRupert_type21_R F hd hgen hnd ?_
+    refine cert_type21_R F hd hgen ?_
     unfold Type21R Type21RQ
     rw [eβ, eβ']
     refine Or.inr (Or.inl ⟨hβ1, hr1, ?_⟩)
@@ -343,8 +348,8 @@ theorem isRupert_type21_classB {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b 
         (by linarith) (by linarith) (by linarith) ?_ ?_
       · rw [Lc, anti c a]; have := mul_pos hrpos s10; linarith
       · rw [Ld, anti c' a]; linarith
-    rw [← type21_set_O2] at hgen hnd ⊢
-    exact isRupert_type21_43 hd.O2 hd.sigma2 hq₁ hq₂ hgood hgen hnd
+    rw [← type21_set_O2] at hgen ⊢
+    exact cert_type21_43 hd.O2 hd.sigma2 hq₁ hq₂ hgood hgen
 
 /-! ### Class (c): one crossing (Theorem 16.23) -/
 
@@ -565,16 +570,15 @@ theorem type21_O2_quad04 {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c
 
 /-- **F1 in facet form** (Lemma 16.7 with (ii) in the form `δ_014(2) < δ_014(5)`): `[3 5] > 0`,
 `[6 1] > 0`, (iii), (iv) hO2 and the special positions of `T1` at the line `014 ∩ 0256`. -/
-theorem isRupert_type21_F1' {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
+theorem cert_type21_F1' {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c') (hN : CrossNorm G)
     (hS : F.abc.f b' < F.abc.f d)
     (hiii : F.a'b'c.f a < F.a'b'c.f b ∧ hd.f235.f a < hd.f235.f b)
     (hO2 : galeD G.l G.m a' b < galeD G.l G.m c a')
     (hT1 : ∀ u : ℝ³, u ≠ 0 → ⟪F.abc.N, u⟫ = 0 → ⟪F.ab'c'.N, u⟫ = 0 →
-      T1Gen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' u)
-    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
-    (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
+      T1Gen (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L a a' b b' u)
+    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³))) :
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
   have hnd' := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd'
@@ -615,8 +619,11 @@ theorem isRupert_type21_F1' {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' 
     have := mul_neg_of_pos_of_neg s35 (F.abc'.neg b' (by simp) (Ne.symm hab')
       (Ne.symm hbb') hb'c')
     linarith
-  obtain ⟨hP, hz, hnd₁⟩ := hT1 u₁ hu0 hN014 hN056
-  exact isRupert_type21_F1 F hd G hN.h35 hN.h61 hα0 hβ hαβ hco hS' hiii hO2 hP hz hnd₁ hgen hnd
+  obtain ⟨hP, hz, -⟩ := hT1 u₁ hu0 hN014 hN056
+  exact cert_type21_F1 F hd G hN.h35 hN.h61 hα0 hβ hαβ hco hS' hiii hO2 hP hz
+    (fun σ hσ => (hT1 (σ • u₁) (smul_ne_zero (by rcases hσ with rfl | rfl <;> norm_num) hu0)
+      (by rw [real_inner_smul_right, hN014, mul_zero])
+      (by rw [real_inner_smul_right, hN056, mul_zero])).2.2) hgen
 
 end Minimality
 

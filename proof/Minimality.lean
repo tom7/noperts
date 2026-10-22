@@ -50,6 +50,7 @@ public import Minimality.Type24Lambda
 public import Minimality.Type24Circle236
 public import Minimality.Type21Entry
 public import Minimality.Type21Facets
+public import Minimality.Type21Limit
 public import Minimality.Type16Main
 public import Minimality.LimitCert
 public import Minimality.RobustEdge
@@ -868,6 +869,53 @@ theorem not_type21_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
     False :=
   h.2 (Minimality.isRupert_type21_facets x hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG hH
     hpp hgen hnd hEq hT1 hF2)
+
+/-- **Type 21 outside the HDN set and codimension 2** (§18.6 step 2 of `FEWER-FACES-PROOFS.md`):
+a nopert does not have seven points labelled so that `014`, `015`, `0256`, `046`, `134`, `135`,
+`2346`, `235` are facets (given by functionals negative off them), unless it has a horizontal
+double normal at the view along some segment or along the line of one of the eight facet pairs
+`014/0256`, `014/2346`, `135/0256`, `135/2346`, `046/134`, `046/015`, `235/134`, `235/015`
+(`Minimality.NoHDNAff`), or two ties at these named views that are not one equation
+(`Minimality.OneTie21` fails; the tie of `s, t` along `ij` and the tie of `i, j` along `st` count
+once): a set of codimension 2.  No general position, no sign condition or Gale equality of the
+tier cover, no (G1), no planar equator, no switch surface.  Every type-21 shape is a limit of
+shapes off the special positions of the cover with the same tie; each of these has a rim
+certificate at a named view (Theorem 16.26; at the vertex tests of `T1` and F2 a single tie that
+is a level rim edge inside a run is a weak separation of the diagonals, which the sign arguments
+of F1 and F2 exclude), a subsequence carries one labelled certificate, and it passes to the
+limit (Lemma 18.2: the rim only loses corners; Theorems 18.1, 18.3). -/
+theorem not_type21_of_isNopert_codim2 (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
+    (hx : Function.Injective x)
+    (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
+    (hA : ∀ i, (i ∈ ({0, 1, 4} : Finset (Fin 7)) → fA (x i) = 0) ∧
+      (i ∉ ({0, 1, 4} : Finset (Fin 7)) → fA (x i) < 0))
+    (hB : ∀ i, (i ∈ ({0, 1, 5} : Finset (Fin 7)) → fB (x i) = 0) ∧
+      (i ∉ ({0, 1, 5} : Finset (Fin 7)) → fB (x i) < 0))
+    (hC : ∀ i, (i ∈ ({0, 2, 5, 6} : Finset (Fin 7)) → fC (x i) = 0) ∧
+      (i ∉ ({0, 2, 5, 6} : Finset (Fin 7)) → fC (x i) < 0))
+    (hD : ∀ i, (i ∈ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) = 0) ∧
+      (i ∉ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) < 0))
+    (hE : ∀ i, (i ∈ ({1, 3, 4} : Finset (Fin 7)) → fE (x i) = 0) ∧
+      (i ∉ ({1, 3, 4} : Finset (Fin 7)) → fE (x i) < 0))
+    (hF : ∀ i, (i ∈ ({1, 3, 5} : Finset (Fin 7)) → fF (x i) = 0) ∧
+      (i ∉ ({1, 3, 5} : Finset (Fin 7)) → fF (x i) < 0))
+    (hG : ∀ i, (i ∈ ({2, 3, 4, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
+      (i ∉ ({2, 3, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
+    (hH : ∀ i, (i ∈ ({2, 3, 5} : Finset (Fin 7)) → fH (x i) = 0) ∧
+      (i ∉ ({2, 3, 5} : Finset (Fin 7)) → fH (x i) < 0))
+    (hnd : ∀ v ∈ Finset.univ.image x, ∀ w ∈ Finset.univ.image x, v ≠ w →
+      Minimality.NoHDNAt ((Finset.univ.image x).erase w) (w - v))
+    (hV : Minimality.NoHDNAff (Finset.univ.image x) fA fC ∧
+      Minimality.NoHDNAff (Finset.univ.image x) fA fG ∧
+      Minimality.NoHDNAff (Finset.univ.image x) fF fC ∧
+      Minimality.NoHDNAff (Finset.univ.image x) fF fG ∧
+      Minimality.NoHDNAff (Finset.univ.image x) fD fE ∧
+      Minimality.NoHDNAff (Finset.univ.image x) fD fB ∧
+      Minimality.NoHDNAff (Finset.univ.image x) fH fE ∧
+      Minimality.NoHDNAff (Finset.univ.image x) fH fB)
+    (htie : Minimality.OneTie21 x) : False :=
+  h.2 (Minimality.isRupert_type21_limit_facets x hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG
+    hH hnd hV htie)
 
 /-- **Type 16** (Theorem 19.6 of `FEWER-FACES-PROOFS.md` §19, the cover): a nopert does not
 have seven points labelled so that `0235`, `1356` (quadrilaterals), `024`, `036`, `046`, `145`,

@@ -1,6 +1,6 @@
 module
 
-public import Minimality.Type21
+public import Minimality.Type21LiftCert
 public import Minimality.EdgePair
 
 @[expose] public section
@@ -20,23 +20,30 @@ Gale data `(l, m)` of the octahedron.
   the dependency `[x' ·]` has one sign on `x, y, y'` and the other on `p, p'` (`pole_signs'`),
   which is `not_bad_of_dep` (E-good implies not bad, the remark after 16.1).
 * **Tier Q** — `Type21Q`: one of the eight directed K-quad edges `0→5, 5→0, 0→6, 6→0, 4→3,
-  3→4, 4→6, 6→4` of an octahedron labelled like `O` is E-good; `isRupert_type21_Q` (for `O`,
-  through Lemma 3 of §9 in `Type21Lift.lean`) and `isRupert_type21_Q2` (the same for `O2`,
+  3→4, 4→6, 6→4` of an octahedron labelled like `O` is E-good; `cert_type21_Q` (for `O`,
+  through Lemma 3 of §9 in `Type21Lift.lean`) and `cert_type21_Q2` (the same for `O2`,
   i.e. the K-quad edges `05, 34, 25, 23` of `K − 6`, through `σ2`).
 * **Tier H** — `Type21H`: `1 → 3` or `1 → 5` is an E-good quad edge.  The cap is then hidden
   along that edge: it is beneath the two vertical faces `134`, `135` (resp. `015`, `135`) and
   beneath or on the two faces of each far edge (`quadHidden_of_beneath`), so Lemma 16.4's
   silhouette argument is replaced by facet inequalities, and Lemma 2 (b) of §12
-  (`isRupert_quad_edge_lift`) gives a passage (`isRupert_type21_H`; for `O2` at `1 → 4`,
-  `1 → 0`: `isRupert_type21_H2`).
+  (`isRupert_quad_edge_lift`) gives a passage (`cert_type21_H`; for `O2` at `1 → 4`,
+  `1 → 0`: `cert_type21_H2`).
 
 Special positions: those of the lifts (`GenPosTie`, `NoHDNEdges`), as in §9.
+
+**Certificate form** (§18.2, §18.6 step 2): every theorem of the tier cover concludes a rim
+certificate at a named view (`CertV`: a segment view or a view satisfying `L`, the named vertex
+crossings) instead of Rupertness; no horizontal double normal is assumed.  The old statement
+`isRupert_type21_facets` and the limit theorem are in `Type21Limit.lean`.
 -/
 
 namespace Minimality
 
 open scoped RealInnerProductSpace Topology
 open Finset Filter
+
+variable {L : ℝ³ → Prop}
 
 /-! ### Lemma 16.1 -/
 
@@ -103,41 +110,39 @@ def Type21Q (l m : ℝ³ → ℝ) (a a' b b' c c' : ℝ³) : Prop :=
 
 /-- **Tier Q for `O = K − 2`.**  If one of the K-quad edges of `O` is an E-good quad edge,
 then it is a quad edge that is not bad (Lemma 16.1), Lemma 3 of §9 lifts Lemma 9.3 to `K`,
-and `K` is Rupert (off `GenPosTie` and horizontal double normals at the edge views). -/
-theorem isRupert_type21_Q {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
+and `K` has a rim certificate (off `GenPosTie`). -/
+theorem cert_type21_Q {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c')
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
-    (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hQ : Type21Q G.l G.m a a' b b' c c') :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
   rcases hQ with h | h | h | h | h | h | h | h
   · obtain ⟨h1, h2, h3⟩ := h.tests F.swap₂ G.swap₂
-    exact isRupert_type21_05 F hd h1 h2 h3 hgen hnd
+    exact cert_type21_05 F hd h1 h2 h3 hgen
   · obtain ⟨h1, h2, h3⟩ := h.tests F.perm₁₂.swap₁ G.perm₁₂.swap₁
-    exact isRupert_type21_50 F hd h1 h2 h3 hgen hnd
+    exact cert_type21_50 F hd h1 h2 h3 hgen
   · obtain ⟨h1, h2, h3⟩ := h.tests F.perm₂₃.swap₂ G.perm₂₃.swap₂
-    exact isRupert_type21_06 F hd h1 h2 h3 hgen hnd
+    exact cert_type21_06 F hd h1 h2 h3 hgen
   · obtain ⟨h1, h2, h3⟩ := h.tests F.perm₂₃.swap₂.perm₁₂ G.perm₂₃.swap₂.perm₁₂
-    exact isRupert_type21_60 F hd h1 h2 h3 hgen hnd
+    exact cert_type21_60 F hd h1 h2 h3 hgen
   · obtain ⟨h1, h2, h3⟩ := h.tests F.perm₁₂.swap₂ G.perm₁₂.swap₂
-    exact isRupert_type21_43 F hd h1 h2 h3 hgen hnd
+    exact cert_type21_43 F hd h1 h2 h3 hgen
   · obtain ⟨h1, h2, h3⟩ := h.tests F.swap₁ G.swap₁
-    exact isRupert_type21_34 F hd h1 h2 h3 hgen hnd
+    exact cert_type21_34 F hd h1 h2 h3 hgen
   · obtain ⟨h1, h2, h3⟩ := h.tests F.perm₁₂.perm₂₃.swap₂ G.perm₁₂.perm₂₃.swap₂
-    exact isRupert_type21_46 F hd h1 h2 h3 hgen hnd
+    exact cert_type21_46 F hd h1 h2 h3 hgen
   · obtain ⟨h1, h2, h3⟩ := h.tests F.perm₁₂.perm₂₃.swap₂.perm₁₂ G.perm₁₂.perm₂₃.swap₂.perm₁₂
-    exact isRupert_type21_64 F hd h1 h2 h3 hgen hnd
+    exact cert_type21_64 F hd h1 h2 h3 hgen
 
 /-- **Tier Q for `O2 = K − 6`** (labelled `5, 4, 3, 0, 1, 2` by `σ2`; its K-quad edges are
 `50, 43, 52, 32`): Gale data `G2` of `O2` with an E-good K-quad edge give a passage of `K`. -/
-theorem isRupert_type21_Q2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
+theorem cert_type21_Q2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G2 : GaleData b' b a' a c d)
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
-    (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hQ : Type21Q G2.l G2.m b' b a' a c d) :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
-  rw [← type21_set_O2] at hgen hnd ⊢
-  exact isRupert_type21_Q hd.O2 hd.sigma2 G2 hgen hnd hQ
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+  rw [← type21_set_O2] at hgen ⊢
+  exact cert_type21_Q hd.O2 hd.sigma2 G2 hgen hQ
 
 /-! ### Tier H -/
 
@@ -150,13 +155,12 @@ is an E-good quad edge of `O`, the cap `2` is hidden at the view along it: it is
 beneath the vertical faces `134`, `135` (resp. `015`, `135`) and beneath or on both faces of
 each far edge (`014`, `046` and `015`, `056`; resp. `014`, `046` and `134`, `346`), so its
 image is strictly inside the shadow (`quadHidden_of_beneath`).  Then `K`'s test at that edge
-is the octahedron's, which is not bad (Lemma 16.1), and `K` is Rupert. -/
-theorem isRupert_type21_H {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
+is the octahedron's, which is not bad (Lemma 16.1), and `K` has a rim certificate (`CertV`). -/
+theorem cert_type21_H {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G : GaleData a a' b b' c c')
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
-    (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hH : Type21H G.l G.m a a' b b' c c') :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
   have hnd' := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd'
@@ -171,11 +175,11 @@ theorem isRupert_type21_H {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c 
       ⟨hd.abc.le, hd.abc'.le, Or.inl hd.abc⟩ ⟨hd.ab'c.le, hd.ab'c'.le, Or.inl hd.ab'c⟩
     have e : insert d ({c, c', a', a, b, b'} : Finset ℝ³) = insert d {a, a', b, b', c, c'} := by
       ext z; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
-    rw [← e] at hgen hnd ⊢
-    exact isRupert_quad_edge_lift_tie F' h1 h2 h3 (Or.inr hhid)
+    rw [← e] at hgen ⊢
+    exact CertV.seg (by simp) (by simp) (Ne.symm ha'c)
+      (rimCert_quad_edge_lift_tie F' h1 h2 h3 (Or.inr hhid)
       ⟨hdc, hdc', hda', hda, hdb, hdb'⟩
-      (hgen.touch_oct F')
-      (noHDN_pair hnd (by simp) (by simp) (Ne.symm ha'c))
+      (hgen.touch_oct F'))
   · -- `1 → 5`: the octahedron `(c, c', b', b, a, a')`
     set F' := F.perm₁₂.perm₂₃.perm₁₂.swap₂
     obtain ⟨h1, h2, h3⟩ := h.tests F' G.perm₁₂.perm₂₃.perm₁₂.swap₂
@@ -183,22 +187,21 @@ theorem isRupert_type21_H {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c 
       ⟨hd.abc.le, hd.abc'.le, Or.inl hd.abc⟩ ⟨hd.a'bc.le, hd.a'bc'.le, Or.inl hd.a'bc⟩
     have e : insert d ({c, c', b', b, a, a'} : Finset ℝ³) = insert d {a, a', b, b', c, c'} := by
       ext z; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
-    rw [← e] at hgen hnd ⊢
-    exact isRupert_quad_edge_lift_tie F' h1 h2 h3 (Or.inr hhid)
+    rw [← e] at hgen ⊢
+    exact CertV.seg (by simp) (by simp) (Ne.symm hb'c)
+      (rimCert_quad_edge_lift_tie F' h1 h2 h3 (Or.inr hhid)
       ⟨hdc, hdc', hdb', hdb, hda, hda'⟩
-      (hgen.touch_oct F')
-      (noHDN_pair hnd (by simp) (by simp) (Ne.symm hb'c))
+      (hgen.touch_oct F'))
 
 /-- **Tier H for `O2 = K − 6`** (`1 → 4` or `1 → 0`, the images of `1 → 3`, `1 → 5` under
-`σ2`): the cap `6` is hidden, and `K` is Rupert. -/
-theorem isRupert_type21_H2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
+`σ2`): the cap `6` is hidden, and `K` has a rim certificate (`CertV`). -/
+theorem cert_type21_H2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap21 F d) (G2 : GaleData b' b a' a c d)
     (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
-    (hnd : NoHDNEdges (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
     (hH : Type21H G2.l G2.m b' b a' a c d) :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
-  rw [← type21_set_O2] at hgen hnd ⊢
-  exact isRupert_type21_H hd.O2 hd.sigma2 G2 hgen hnd hH
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L := by
+  rw [← type21_set_O2] at hgen ⊢
+  exact cert_type21_H hd.O2 hd.sigma2 G2 hgen hH
 
 end Minimality
 

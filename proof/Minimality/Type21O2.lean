@@ -13,12 +13,19 @@ public import Minimality.Type21Entry
   and E-good (`EGoodQuad`), in the orientation given by the sign of `[w u]` (Lemma 16.16).
 * **The Gale data of `K − 6`** — `type21_galeO2`: from the dependencies `{1 ·}` and `{0 ·}`
   (Lemma 16.2) a `GaleData` of `O2 = K − 6`, with its values at the six vertices.
+
+**Certificate form** (§18.2, §18.6 step 2): every theorem of the tier cover concludes a rim
+certificate at a named view (`CertV`: a segment view or a view satisfying `L`, the named vertex
+crossings) instead of Rupertness; no horizontal double normal is assumed.  The old statement
+`isRupert_type21_facets` and the limit theorem are in `Type21Limit.lean`.
 -/
 
 namespace Minimality
 
 open scoped RealInnerProductSpace Topology
 open Finset Filter
+
+variable {L : ℝ³ → Prop}
 
 /-- `x → y` is a quad edge in Gale form (Lemma 16.1 (i)), the third pair being `p, p'`. -/
 def GaleQuad (l m : ℝ³ → ℝ) (x y p p' : ℝ³) : Prop :=

@@ -15,13 +15,20 @@ Seven points `x 0, …, x 6` whose facets are `014, 015, 0256, 046, 134, 135, 23
 `356` (the pencil of `135` and `235` through `6`; `0` and `4` are beneath it by the convexity of
 the quadrilaterals `0256` and `2346`), and the cap `x 2` (`IsCap21`).
 `T1View`: the special positions of `T1` along a line of two faces.  The theorem from the facets
-is `isRupert_type21_facets` (`Type21Facets.lean`).
+is `cert_type21_facets` (`Type21Facets.lean`).
+
+**Certificate form** (§18.2, §18.6 step 2): every theorem of the tier cover concludes a rim
+certificate at a named view (`CertV`: a segment view or a view satisfying `L`, the named vertex
+crossings) instead of Rupertness; no horizontal double normal is assumed.  The old statement
+`isRupert_type21_facets` and the limit theorem are in `Type21Limit.lean`.
 -/
 
 namespace Minimality
 
 open scoped RealInnerProductSpace Topology
 open Finset Filter
+
+variable {L : ℝ³ → Prop}
 
 theorem image_seven21 (x : Fin 7 → ℝ³) :
     (({0, 3, 4, 5, 1, 6} : Finset (Fin 7)).image x) = {x 0, x 3, x 4, x 5, x 1, x 6} ∧
@@ -191,7 +198,17 @@ through the apex: at every direction `u ≠ 0` of their line, `T1Gen` (the antip
 side, only the ties of `QuadTie` among the depths of the rim corners, no horizontal double
 normal). -/
 def T1View (V : Finset ℝ³) (fP fQ : ℝ³ →ᵃ[ℝ] ℝ) (a a' b b' : ℝ³) : Prop :=
-  ∀ u : ℝ³, u ≠ 0 → fP.linear u = 0 → fQ.linear u = 0 → T1Gen V a a' b b' u
+  ∀ u : ℝ³, u ≠ 0 → fP.linear u = 0 → fQ.linear u = 0 →
+    det3 (b - b') (a' - b') u ≠ 0 ∧ QuadTie ⟪a, u⟫ ⟪b', u⟫ ⟪a', u⟫ ⟪b, u⟫ ∧ NoHDNAt V u
+
+/-- **`T1View` with any condition `L` on the views** in place of "no horizontal double normal"
+(for the certificate form: `L` names the view). -/
+def T1ViewL (K : Finset ℝ³) (L : ℝ³ → Prop) (fP fQ : ℝ³ →ᵃ[ℝ] ℝ) (a a' b b' : ℝ³) : Prop :=
+  ∀ u : ℝ³, u ≠ 0 → fP.linear u = 0 → fQ.linear u = 0 → T1Gen K L a a' b b' u
+
+theorem T1View.toL {V : Finset ℝ³} {fP fQ : ℝ³ →ᵃ[ℝ] ℝ} {a a' b b' : ℝ³}
+    (h : T1View V fP fQ a a' b b') : T1ViewL V (NoHDNAt V) fP fQ a a' b b' :=
+  fun u hu h1 h2 => ⟨(h u hu h1 h2).1, Or.inl (h u hu h1 h2).2.1, (h u hu h1 h2).2.2⟩
 
 end Minimality
 
