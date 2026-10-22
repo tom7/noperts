@@ -201,6 +201,16 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.isRupert_type29_C2
 #assert_standard_axioms Minimality.isRupert_type29_C3
 #assert_standard_axioms Minimality.isRupert_type29_P
+#assert_standard_axioms Minimality.NF29.isRupert_K4a
+#assert_standard_axioms Minimality.NF29.isRupert_K4b
+#assert_standard_axioms Minimality.NF29.isRupert_K3a
+#assert_standard_axioms Minimality.NF29.isRupert_K3b
+#assert_standard_axioms Minimality.NF29.isRupert_K4a_all
+#assert_standard_axioms Minimality.NF29.isRupert_K4b_all
+#assert_standard_axioms Minimality.NF29.isRupert_K3a_all
+#assert_standard_axioms Minimality.NF29.isRupert_K3b_all
+#assert_standard_axioms Minimality.isRupert_type29_K4
+#assert_standard_axioms Minimality.isRupert_type29_K3
 #assert_standard_axioms Minimality.lemmaU_b_real
 #assert_standard_axioms Minimality.lemmaU_nws4
 #assert_standard_axioms Minimality.lemmaU_coords_pos

@@ -52,6 +52,7 @@ public import Minimality.Type21Facets
 public import Minimality.Type16Main
 public import Minimality.LimitCert
 public import Minimality.RobustEdge
+public import Minimality.Type29Facets
 
 /-!
 # Every nopert has at least 7 points
