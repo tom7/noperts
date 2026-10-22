@@ -2,6 +2,7 @@ module
 
 public import Minimality.Type10
 public import Minimality.TriFacetsChord
+public import Minimality.EdgeChord
 public import Minimality.TriTie
 public import Minimality.ParallelOr
 
@@ -14,7 +15,10 @@ Theorem H of `FEWER-FACES-PROOFS.md` §7, by the algebraic method of
 `Type10.lean`: faces `A = 0246`, `B = 2345` (quadrilaterals), `D = 136`,
 `E = 034`; with `s = fB x0 / fB x6 + fD x0 / fD x4`, the view along the line
 of the planes of `D` and `B` (through `x3`) has a triangle shadow if `s < 1`
-(and `x0` is on its far side if `s = 1`, Lemma T′), and the view along the line
+(at `s = 1` the planes of `0246` and `2345` both contain its line, so the edge
+`24` is parallel to it, `ParallelEdge.lean`, and the view along `24` has `x1` on
+its far side: Lemma T′ over the edge, given `EdgeFar` along `24`; Cramer for `x1`
+in the frame `x6; x3, x4, x0`), and the view along the line
 of the planes of `A` and `D` (through `x6`) has one if `s > 1`: Cramer for `x5` in the frame `x4; x0, x3, x6` gives
 `fD x5 / fD x4 + fA x5 / fA x3 = 1 + α (s - 1)` with `α < 0` (from `B`, `E`).
 -/
@@ -27,8 +31,10 @@ open scoped RealInnerProductSpace
 set_option maxHeartbeats 4000000 in
 /-- **Theorem H (type 17).** Seven labelled points, no three collinear, with
 facets `0246`, `2345` (quadrilaterals), `136`, `034`, given by functionals
-negative off them, are Rupert, given `TriGenFar` at the lines of the planes of
-`136` and `2345` and of `0246` and `136`. -/
+negative off them, are Rupert, given `TriGenTri` (or `TriGenFarP`) at the lines
+of the planes of `136` and `2345` and of `0246` and `136`, and at the special
+value where the deciding number of the first is 1, `EdgeFar` along `24` (for
+Lemma T′ over that edge). -/
 theorem isRupert_type17 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hgen : NoThreeCollinear (univ.image x)) (fA fB fD fE : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) = 0) ∧
@@ -44,8 +50,8 @@ theorem isRupert_type17 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       TriGenFarP (univ.image x) (({1, 3, 6} : Finset (Fin 7)).image x)
         (({2, 3, 4, 5} : Finset (Fin 7)).image x) (x 3)) ∧
       (fB (x 0) / fB (x 6) + fD (x 0) / fD (x 4) = 1 →
-        TriGenFar (univ.image x) (({1, 3, 6} : Finset (Fin 7)).image x)
-          (({2, 3, 4, 5} : Finset (Fin 7)).image x) (x 3)))
+        EdgeFar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
+          (({2, 3, 4, 5} : Finset (Fin 7)).image x) (x 2) (x 4)))
     (hT2 : TriGenTri (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6) ∨
       TriGenFarP (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
@@ -105,33 +111,72 @@ theorem isRupert_type17 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
           ((hD 6).1 (by decide)) _ _ (n1 _ (hxV 4) (by rw [memQ]; decide)).ne
           ((hD 4).2 (by decide)).ne
       rw [e1, e2]; exact hlt
-    · -- `s = 1`: Lemma T′ (`x0` on the far side)
-      refine isRupert_of_facets_vertex_chord V hgen QD QB (sub _) (sub _)
-        (isFacet_of_index x _ fD hD) (isFacet_of_index x _ fB hB) (x 3) hiP
-        ⟨x 6, (memQ _ 6).mpr (by decide), fun h => by have := hx h; omega⟩
-        ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩ (hT1.2 heq) (x 6) (x 4)
-        ((memQ _ 6).mpr (by decide)) ((memQ _ 4).mpr (by decide))
-        (fun h => by have := hx h; omega) (fun h => by have := hx h; omega) (x 0) (hxV 0)
-        (by rw [memQ]; decide) (by rw [memQ]; decide) ?_
+    · -- `s = 1`: the view along the edge `24` has `x1` on its far side; Lemma T′ over the edge
+      have hv1 : fB (x 1) / fB (x 6) + fA (x 1) / fA (x 3) = 1 := by
+        -- Cramer for `x1` in the frame `x6; x3, x4, x0`
+        have EA := affine_cramer fA (x 6) (x 3) (x 4) (x 0) (x 1)
+        have EB := affine_cramer fB (x 6) (x 3) (x 4) (x 0) (x 1)
+        have ED := affine_cramer fD (x 6) (x 3) (x 4) (x 0) (x 1)
+        have a0 := (hA 0).1 (by decide); have a4 := (hA 4).1 (by decide)
+        have a6 := (hA 6).1 (by decide); have a3 := (hA 3).2 (by decide)
+        have b3 := (hB 3).1 (by decide); have b4 := (hB 4).1 (by decide)
+        have b6 := (hB 6).2 (by decide)
+        have d1 := (hD 1).1 (by decide); have d3 := (hD 3).1 (by decide)
+        have d6 := (hD 6).1 (by decide); have d4 := (hD 4).2 (by decide)
+        rw [a0, a4, a6] at EA; rw [b3, b4] at EB; rw [d1, d3, d6] at ED
+        set Δ := vol3 (x 3 - x 6) (x 4 - x 6) (x 0 - x 6)
+        set Δ3 := vol3 (x 3 - x 6) (x 4 - x 6) (x 1 - x 6)
+        -- `Δ ≠ 0`: `x3` is off the plane of `0246`
+        have hΔ : Δ ≠ 0 := by
+          intro h0
+          have k := affine_vanish3 fA a6 a4 a0 (x 3) (x 6 + crs3 (x 4 - x 6) (x 0 - x 6))
+          have pos := vol3_crs3_pos (p := x 6) (q := x 4) (r := x 0)
+            (fun h => by have := hx h; omega) (ncol 6 4 0 (by decide) (by decide) (by decide))
+          have e : vol3 (x 4 - x 6) (x 0 - x 6) (x 3 - x 6) = Δ := by
+            simp only [Δ, vol3, PiLp.sub_apply]; ring
+          rw [add_sub_cancel_left, e, h0, zero_mul] at k
+          have := mul_neg_of_pos_of_neg pos a3
+          linarith
+        have nb6 := b6.ne; have na3 := a3.ne; have nd4 := d4.ne
+        have key0 : Δ * (fB (x 1) * fA (x 3) * fD (x 4) + fA (x 1) * fB (x 6) * fD (x 4) -
+            fB (x 6) * fA (x 3) * fD (x 4)) = Δ3 * (fB (x 0) * fA (x 3) * fD (x 4) +
+            fD (x 0) * fB (x 6) * fA (x 3) - fB (x 6) * fA (x 3) * fD (x 4)) := by
+          linear_combination (fA (x 3) * fD (x 4)) * EB + (fB (x 6) * fD (x 4)) * EA +
+            (fB (x 6) * fA (x 3)) * ED
+        have hs : fB (x 0) * fD (x 4) + fB (x 6) * fD (x 0) = fB (x 6) * fD (x 4) := by
+          have h := heq
+          rw [div_add_div _ _ nb6 nd4, div_eq_one_iff_eq (mul_ne_zero nb6 nd4)] at h
+          exact h
+        rw [div_add_div _ _ nb6 na3, div_eq_one_iff_eq (mul_ne_zero nb6 na3)]
+        have : (Δ * fD (x 4)) * (fB (x 1) * fA (x 3) + fB (x 6) * fA (x 1)) =
+            (Δ * fD (x 4)) * (fB (x 6) * fA (x 3)) := by
+          linear_combination key0 + (Δ3 * fA (x 3)) * hs
+        exact mul_left_cancel₀ (mul_ne_zero hΔ nd4) this
+      refine isRupert_of_facets_edge_chord V hgen QA QB (sub _) (sub _) (isFacet_of_index x _ fA hA)
+        (isFacet_of_index x _ fB hB) (x 2) (x 4) (fun h => by have := hx h; omega) ?_
+        (hT1.2 heq) (x 6) (x 3) ((memQ _ 6).mpr (by decide)) ((memQ _ 3).mpr (by decide))
+        (by rw [memQ]; decide) (by rw [memQ]; decide) (x 1) (hxV 1) (by rw [memQ]; decide)
+        (by rw [memQ]; decide) ?_
+      · rw [inter, show ({0, 2, 4, 6} ∩ {2, 3, 4, 5} : Finset (Fin 7)) = {2, 4} by decide]
+        simp [Finset.image_insert]
       intro f1 f2 z1 n1 z2 n2
-      refine ⟨fun y hy hy1 hy2 hne => ?_, ?_⟩
-      · obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
-        rw [memQ] at hy1 hy2
-        have hi : i = 0 := by clear * - hy1 hy2; fin_cases i <;> simp_all
-        exact absurd (by rw [hi]) hne
-      have e2 : f2 (x 0) / f2 (x 6) = fB (x 0) / fB (x 6) :=
+      have e2 : ∀ k : Fin 7, f2 (x k) / f2 (x 6) = fB (x k) / fB (x 6) := fun k =>
         ratio f2 fB 2 3 4 (by decide) (by decide) (by decide)
           (z2 _ ((memQ _ 2).mpr (by decide))) (z2 _ ((memQ _ 3).mpr (by decide)))
           (z2 _ ((memQ _ 4).mpr (by decide))) ((hB 2).1 (by decide)) ((hB 3).1 (by decide))
           ((hB 4).1 (by decide)) _ _ (n2 _ (hxV 6) (by rw [memQ]; decide)).ne
           ((hB 6).2 (by decide)).ne
-      have e1 : f1 (x 0) / f1 (x 4) = fD (x 0) / fD (x 4) :=
-        ratio f1 fD 1 3 6 (by decide) (by decide) (by decide)
-          (z1 _ ((memQ _ 1).mpr (by decide))) (z1 _ ((memQ _ 3).mpr (by decide)))
-          (z1 _ ((memQ _ 6).mpr (by decide))) ((hD 1).1 (by decide)) ((hD 3).1 (by decide))
-          ((hD 6).1 (by decide)) _ _ (n1 _ (hxV 4) (by rw [memQ]; decide)).ne
-          ((hD 4).2 (by decide)).ne
-      rw [e1, e2]; exact heq.le
+      have e1 : ∀ k : Fin 7, f1 (x k) / f1 (x 3) = fA (x k) / fA (x 3) := fun k =>
+        ratio f1 fA 0 2 4 (by decide) (by decide) (by decide)
+          (z1 _ ((memQ _ 0).mpr (by decide))) (z1 _ ((memQ _ 2).mpr (by decide)))
+          (z1 _ ((memQ _ 4).mpr (by decide))) ((hA 0).1 (by decide)) ((hA 2).1 (by decide))
+          ((hA 4).1 (by decide)) _ _ (n1 _ (hxV 3) (by rw [memQ]; decide)).ne
+          ((hA 3).2 (by decide)).ne
+      refine ⟨fun y hy hy1 hy2 hne => ?_, by rw [e1, e2]; exact hv1.le⟩
+      obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
+      rw [memQ] at hy1 hy2
+      have hi : i = 1 := by clear * - hy1 hy2; fin_cases i <;> simp_all
+      exact absurd (by rw [hi]) hne
   · -- the view along the line of the planes of `0246` and `136`
     have hivhT2 : QA ∩ QD = {x 6} := by
       rw [inter, show ({0, 2, 4, 6} ∩ {1, 3, 6} : Finset (Fin 7)) = {6} by decide]

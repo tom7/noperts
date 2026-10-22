@@ -4,6 +4,7 @@ public import Minimality.TriFacetsEdge
 public import Minimality.TieFrame
 public import Minimality.ParallelOr
 public import Minimality.TriFacetsChord
+public import Minimality.EdgeChord
 
 @[expose] public section
 
@@ -16,8 +17,10 @@ facet functionals `fA, fB, fC, fD` of `1245, 1346, 2356, 023` and
 triangle shadow if `s < 1` (Lemma T over an edge), and the view along the line
 of the planes of `023` and `1245` has one if `s ≥ 1` (Lemma T at a vertex),
 by a Cramer identity for `x6` in the frame `x4; x0, x2, x3`.
-At `s = 1` the only point `x6` off both planes of the second view is on the far
-side, and that view works by Lemma T′ (`isRupert_of_facets_vertex_chord`).
+At `s = 1` the edge `14` is parallel to the line of the second view (the plane
+of `023` is parallel to it, `ParallelEdge.lean`), and the view along `14` has
+`x0` on its far side: Lemma T′ over the edge (`isRupert_of_facets_edge_chord`),
+given `EdgeFar` along `14` there (`FEWER-FACES-PROOFS.md` §23, item (ii)).
 
 The first part of the file is general: Cramer's rule applied to affine
 functionals, and the ratio of two affine functionals vanishing on the same
@@ -136,7 +139,8 @@ position with facets `1245, 1346, 2356` (the side quadrilaterals) and `023` (a
 cap triangle), given by functionals negative off them, are Rupert, given no
 other segment parallel to `14` and a settled tie of the far depths there
 (`EdgeTieR`) and `TriGenTri` at the line of the planes of `023` and `1245`
-(`TriGenFar` there only where the deciding number is 1, at Lemma T′). -/
+(at the special value where the deciding number is 1, `EdgeFar` along `14`
+instead, for Lemma T′ over that edge). -/
 theorem isRupert_type10 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hgen : NoThreeCollinear (univ.image x))
     (hsol : (interior (convexHull ℝ ((univ.image x : Finset ℝ³) : Set ℝ³))).Nonempty)
@@ -158,8 +162,8 @@ theorem isRupert_type10 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
         TriGenFarP (univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
         (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2)) ∧
       (fB (x 0) / fB (x 2) + fA (x 0) / fA (x 3) = 1 →
-        TriGenFar (univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
-          (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2))) :
+        EdgeFar (univ.image x) (({1, 2, 4, 5} : Finset (Fin 7)).image x)
+          (({1, 3, 4, 6} : Finset (Fin 7)).image x) (x 1) (x 4))) :
     IsRupert (univ.image x) := by
   classical
   set V := univ.image x with hV
@@ -296,35 +300,32 @@ theorem isRupert_type10 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
           ((hD 4).2 (by decide)).ne
       rw [e1, e2]
       rw [hk]; nlinarith
-    · -- `s = 1`: that point on the far side; Lemma T′
-      refine isRupert_of_facets_vertex_chord V hgen QD QA (sub _) (sub _)
-        (isFacet_of_index x _ fD hD) (isFacet_of_index x _ fA hA) (x 2) hiv
-        ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩
-        ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩
-        (hT2.2 hgeq.symm) (x 3) (x 4)
-        ((memQ _ 3).mpr (by decide)) ((memQ _ 4).mpr (by decide))
-        (fun h => by have := hx h; omega) (fun h => by have := hx h; omega) (x 6) (hxV 6)
-        (by rw [memQ]; decide) (by rw [memQ]; decide) ?_
+    · -- `s = 1`: the view along the edge `14` has `x0` on its far side; Lemma T′ over the edge
+      refine isRupert_of_facets_edge_chord V hgen QA QB (sub _) (sub _) (isFacet_of_index x _ fA hA)
+        (isFacet_of_index x _ fB hB) (x 1) (x 4) (fun h => by have := hx h; omega) ?_
+        (hT2.2 hgeq.symm) (x 2) (x 3) ((memQ _ 2).mpr (by decide)) ((memQ _ 3).mpr (by decide))
+        (by rw [memQ]; decide) (by rw [memQ]; decide) (x 0) (hxV 0) (by rw [memQ]; decide)
+        (by rw [memQ]; decide) ?_
+      · rw [inter, show ({1, 2, 4, 5} ∩ {1, 3, 4, 6} : Finset (Fin 7)) = {1, 4} by decide]
+        simp [Finset.image_insert]
       intro f1 f2 z1 n1 z2 n2
-      refine ⟨fun y hy hy1 hy2 hne => ?_, ?_⟩
-      · obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
-        rw [memQ] at hy1 hy2
-        have hi : i = 6 := by clear * - hy1 hy2; fin_cases i <;> simp_all
-        exact absurd (by rw [hi]) hne
-      have e2 : f2 (x 6) / f2 (x 3) = fA (x 6) / fA (x 3) :=
-        ratio f2 fA 1 2 4 (by decide) (by decide) (by decide)
-          (z2 _ ((memQ _ 1).mpr (by decide))) (z2 _ ((memQ _ 2).mpr (by decide)))
-          (z2 _ ((memQ _ 4).mpr (by decide))) ((hA 1).1 (by decide)) ((hA 2).1 (by decide))
-          ((hA 4).1 (by decide)) _ _ (n2 _ (hxV 3) (by rw [memQ]; decide)).ne
+      have e2 : f2 (x 0) / f2 (x 2) = fB (x 0) / fB (x 2) :=
+        ratio f2 fB 1 3 4 (by decide) (by decide) (by decide)
+          (z2 _ ((memQ _ 1).mpr (by decide))) (z2 _ ((memQ _ 3).mpr (by decide)))
+          (z2 _ ((memQ _ 4).mpr (by decide))) ((hB 1).1 (by decide)) ((hB 3).1 (by decide))
+          ((hB 4).1 (by decide)) _ _ (n2 _ (hxV 2) (by rw [memQ]; decide)).ne
+          ((hB 2).2 (by decide)).ne
+      have e1 : f1 (x 0) / f1 (x 3) = fA (x 0) / fA (x 3) :=
+        ratio f1 fA 1 2 4 (by decide) (by decide) (by decide)
+          (z1 _ ((memQ _ 1).mpr (by decide))) (z1 _ ((memQ _ 2).mpr (by decide)))
+          (z1 _ ((memQ _ 4).mpr (by decide))) ((hA 1).1 (by decide)) ((hA 2).1 (by decide))
+          ((hA 4).1 (by decide)) _ _ (n1 _ (hxV 3) (by rw [memQ]; decide)).ne
           ((hA 3).2 (by decide)).ne
-      have e1 : f1 (x 6) / f1 (x 4) = fD (x 6) / fD (x 4) :=
-        ratio f1 fD 0 2 3 (by decide) (by decide) (by decide)
-          (z1 _ ((memQ _ 0).mpr (by decide))) (z1 _ ((memQ _ 2).mpr (by decide)))
-          (z1 _ ((memQ _ 3).mpr (by decide))) ((hD 0).1 (by decide)) ((hD 2).1 (by decide))
-          ((hD 3).1 (by decide)) _ _ (n1 _ (hxV 4) (by rw [memQ]; decide)).ne
-          ((hD 4).2 (by decide)).ne
-      rw [e1, e2]
-      rw [hk]; nlinarith
+      refine ⟨fun y hy hy1 hy2 hne => ?_, by rw [e1, e2]; exact hgeq.symm.le⟩
+      obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
+      rw [memQ] at hy1 hy2
+      have hi : i = 0 := by clear * - hy1 hy2; fin_cases i <;> simp_all
+      exact absurd (by rw [hi]) hne
 
 end Minimality
 

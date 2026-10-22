@@ -4,6 +4,7 @@ public import Minimality.Type10
 public import Minimality.TriTie
 public import Minimality.ParallelOr
 public import Minimality.TriFacetsChord
+public import Minimality.EdgeChord
 
 @[expose] public section
 
@@ -17,8 +18,10 @@ Theorem F of `FEWER-FACES-PROOFS.md` §7, by the algebraic method of
 planes of `A` and `D` (through `x0`) has one if `s ≥ 1`: Cramer for `x1` in
 the frame `x3; x0, x4, x6` gives
 `fD x1 / fD x3 + fA x1 / fA x6 = 1 + ρ (s - 1)` with `ρ < 0` (from `B`, `G`).
-At `s = 1` the only point `x1` off both planes of the second view is on the far
-side, and that view works by Lemma T′ (`isRupert_of_facets_vertex_chord`).
+At `s = 1` the edge `35` is parallel to the line of the second view (the plane
+of `046` is parallel to it, `ParallelEdge.lean`), and the view along `35` has
+`x4` on its far side: Lemma T′ over the edge (`isRupert_of_facets_edge_chord`),
+given `EdgeFar` along `35` there (`FEWER-FACES-PROOFS.md` §23, item (ii)).
 -/
 
 namespace Minimality
@@ -31,8 +34,9 @@ set_option maxHeartbeats 4000000 in
 `0235`, `1356` (quadrilaterals), `046`, `346`, given by functionals negative off
 them, are Rupert, given no other segment parallel to `35` and a settled tie of
 the far depths there, or at a tie no right angle at the far ends (`EdgeTieR`)
-and `TriGenTri` at the line of the planes of `0235` and `046` (`TriGenFar` there
-only where the deciding number is 1, at Lemma T′). -/
+and `TriGenTri` at the line of the planes of `0235` and `046` (at the special
+value where the deciding number is 1, `EdgeFar` along `35` instead, for Lemma T′
+over that edge). -/
 theorem isRupert_type19 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hgen : NoThreeCollinear (univ.image x))
     (hsol : (interior (convexHull ℝ ((univ.image x : Finset ℝ³) : Set ℝ³))).Nonempty)
@@ -54,8 +58,8 @@ theorem isRupert_type19 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       TriGenFarP (univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
         (({0, 4, 6} : Finset (Fin 7)).image x) (x 0)) ∧
       (fB (x 4) / fB (x 0) + fA (x 4) / fA (x 6) = 1 →
-        TriGenFar (univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
-          (({0, 4, 6} : Finset (Fin 7)).image x) (x 0))) :
+        EdgeFar (univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
+          (({1, 3, 5, 6} : Finset (Fin 7)).image x) (x 3) (x 5))) :
     IsRupert (univ.image x) := by
   classical
   set V := univ.image x with hV
@@ -183,35 +187,32 @@ theorem isRupert_type19 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
           ((hA 6).2 (by decide)).ne
       rw [e1, e2]
       rw [hk]; nlinarith
-    · -- `s = 1`: that point on the far side; Lemma T′
-      refine isRupert_of_facets_vertex_chord V hgen QA QD (sub _) (sub _)
-        (isFacet_of_index x _ fA hA) (isFacet_of_index x _ fD hD) (x 0) hiv
-        ⟨x 3, (memQ _ 3).mpr (by decide), fun h => by have := hx h; omega⟩
-        ⟨x 6, (memQ _ 6).mpr (by decide), fun h => by have := hx h; omega⟩
-        (hT2.2 hgeq.symm) (x 3) (x 6)
-        ((memQ _ 3).mpr (by decide)) ((memQ _ 6).mpr (by decide))
-        (fun h => by have := hx h; omega) (fun h => by have := hx h; omega) (x 1) (hxV 1)
-        (by rw [memQ]; decide) (by rw [memQ]; decide) ?_
+    · -- `s = 1`: the view along the edge `35` has `x4` on its far side; Lemma T′ over the edge
+      refine isRupert_of_facets_edge_chord V hgen QA QB (sub _) (sub _) (isFacet_of_index x _ fA hA)
+        (isFacet_of_index x _ fB hB) (x 3) (x 5) (fun h => by have := hx h; omega) ?_
+        (hT2.2 hgeq.symm) (x 0) (x 6) ((memQ _ 0).mpr (by decide)) ((memQ _ 6).mpr (by decide))
+        (by rw [memQ]; decide) (by rw [memQ]; decide) (x 4) (hxV 4) (by rw [memQ]; decide)
+        (by rw [memQ]; decide) ?_
+      · rw [inter, show ({0, 2, 3, 5} ∩ {1, 3, 5, 6} : Finset (Fin 7)) = {3, 5} by decide]
+        simp [Finset.image_insert]
       intro f1 f2 z1 n1 z2 n2
-      refine ⟨fun y hy hy1 hy2 hne => ?_, ?_⟩
-      · obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
-        rw [memQ] at hy1 hy2
-        have hi : i = 1 := by clear * - hy1 hy2; fin_cases i <;> simp_all
-        exact absurd (by rw [hi]) hne
-      have e2 : f2 (x 1) / f2 (x 3) = fD (x 1) / fD (x 3) :=
-        ratio f2 fD 0 4 6 (by decide) (by decide) (by decide)
-          (z2 _ ((memQ _ 0).mpr (by decide))) (z2 _ ((memQ _ 4).mpr (by decide)))
-          (z2 _ ((memQ _ 6).mpr (by decide))) ((hD 0).1 (by decide)) ((hD 4).1 (by decide))
-          ((hD 6).1 (by decide)) _ _ (n2 _ (hxV 3) (by rw [memQ]; decide)).ne
-          ((hD 3).2 (by decide)).ne
-      have e1 : f1 (x 1) / f1 (x 6) = fA (x 1) / fA (x 6) :=
+      have e2 : ∀ k : Fin 7, f2 (x k) / f2 (x 0) = fB (x k) / fB (x 0) := fun k =>
+        ratio f2 fB 1 3 5 (by decide) (by decide) (by decide)
+          (z2 _ ((memQ _ 1).mpr (by decide))) (z2 _ ((memQ _ 3).mpr (by decide)))
+          (z2 _ ((memQ _ 5).mpr (by decide))) ((hB 1).1 (by decide)) ((hB 3).1 (by decide))
+          ((hB 5).1 (by decide)) _ _ (n2 _ (hxV 0) (by rw [memQ]; decide)).ne
+          ((hB 0).2 (by decide)).ne
+      have e1 : ∀ k : Fin 7, f1 (x k) / f1 (x 6) = fA (x k) / fA (x 6) := fun k =>
         ratio f1 fA 0 2 3 (by decide) (by decide) (by decide)
           (z1 _ ((memQ _ 0).mpr (by decide))) (z1 _ ((memQ _ 2).mpr (by decide)))
           (z1 _ ((memQ _ 3).mpr (by decide))) ((hA 0).1 (by decide)) ((hA 2).1 (by decide))
           ((hA 3).1 (by decide)) _ _ (n1 _ (hxV 6) (by rw [memQ]; decide)).ne
           ((hA 6).2 (by decide)).ne
-      rw [e1, e2]
-      rw [hk]; nlinarith
+      refine ⟨fun y hy hy1 hy2 hne => ?_, by rw [e1, e2]; exact hgeq.symm.le⟩
+      obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
+      rw [memQ] at hy1 hy2
+      have hi : i = 4 := by clear * - hy1 hy2; fin_cases i <;> simp_all
+      exact absurd (by rw [hi]) hne
 
 end Minimality
 

@@ -314,6 +314,22 @@ genericity conditions (G1), (G2) and the balance conditions (E1)–(E3))
   `x0; x2, x4, x6`; views along the planes of `0123`, `246` and of `0145`,
   `246`). With this, every type proved on paper (now 27 of 29, with types 08, 16 and 21) is excluded
   at the facet level in general position.
+* The special value of the dichotomy (`FEWER-FACES-PROOFS.md` §23, item (ii)) in
+  types 05, 10, 13, 17, 19, 23, 27: at deciding number 1 an edge (`01`, `14`, `45`,
+  `24`, `35`, `04`, `25`) is parallel to the line of the vertex view used there, so
+  `TriGenFar` at that view is false (`typeNN_special_parallel`, `ParallelEdge.lean`,
+  the referee's two-line argument: a face plane through three points of barycentric
+  value 1 contains the view line). The statements' clause is now "deciding number 1
+  → `EdgeFar` along that edge" (codimension 2 together with the special value): the
+  view along the edge has the off point on its far side (and any other off point
+  strictly inside), and Lemma T′ over an edge applies (`isRupert_of_facets_edge_chord`,
+  `EdgeChord.lean`; for 05, 17 by Cramer in the frames `x0; x2, x4, x6`, resp.
+  `x6; x3, x4, x0`; for 23, 27 the second off point by the frames of the third view).
+  This is the reading of Theorem 23.18 at the corner that carries the parallel edge;
+  the readings at the other two corners (Lemma T′ with a vertical edge at a far corner,
+  four sectors) are not formalized, so two ties at the special value are not the only
+  exception yet: the exception is the special value together with a tie of the two
+  other corners along the edge.
 * At the entry point, `not_type08_of_isNopert` (Theorem 10.1 of
   `FEWER-FACES-PROOFS.md` §10, type 08; `Type08Lemmas.lean`, `Type08Cases.lean`,
   `Type08T4.lean`, `Type08.lean`): not by Lemma T but by edge crossings (Theorem
@@ -890,6 +906,8 @@ In import order.
 | `HullChain` | L13, upper and lower chains of any finite point set with distinct `t` and no three collinear (gift wrapping), also with two points over the apex | `ChainFrom`, `exists_chainFrom`, `exists_chainOK`, `exists_chainOK_edge` |
 | `TriFacets` | L13, Lemma T at a vertex for any two facets, with interior points: frame, vertical, rotated, facet form | `isRupert_vertex_coords`, `isRupert_facets_vertex_vertical`, `isRupert_facets_vertex`, `isRupert_of_facets_vertex` |
 | `TriFacetsChord` | L13, Lemma T′ at a vertex for any two facets (one off point on the far side): frame, vertical, rotated, facet form | `isRupert_vertex_coords_chord`, `isRupert_facets_vertex_vertical_chord`, `isRupert_facets_vertex_chord`, `isRupert_of_facets_vertex_chord` |
+| `EdgeChord` | §23 item (ii), Lemma T′ over an edge for any two facets sharing it (one off point on the far side): frame, vertical, rotated, facet form (`EdgeFar`) | `isRupert_edge_coords_chord`, `isRupert_facets_edge_vertical_chord`, `isRupert_facets_edge_chord`, `isRupert_of_facets_edge_chord` |
+| `ParallelEdge` | §23, Proposition 23.16: at the special value of types 05, 10, 13, 17, 19, 23, 27 an edge is parallel to the line of the vertex view, so `TriGenFar` fails there | `not_triGenFar_of_parallel`, `eq_of_bary`, `bary_eq_one_of_mem`, `type05_special_parallel` … `type27_special_parallel` |
 | `TriTie` | L13, Lemma T at the tie: one concave run (`localMax_unique_of_run`, `RunSeq`), Lemma T in every sector with four modes that allow z(xa) = z(xb) (`isRupert_triShadow_gen`), chains monotone at an extreme (`ChainOK.rise_of_far_top`, `fall_of_apex_top`), the frame to facet layers, and a triangle face settles the tie (`TriGenTri.tie`); the same over an edge (`isRupert_edge_frame_tie`, `TieHE`, `EdgeTie`), where a triangle face through the edge always settles it (`edgeTie_of_tri`) | `isRupert_vertex_frame_tie`, `TieH`, `isRupert_of_facets_vertex_tie`, `TriGenTie`, `TriGenTri`, `isRupert_of_facets_edge_tri`, `EdgePar` |
 | `Forces` | L7, Lemma 7.1 at a view without a rotation or silhouette: if every force system (forces orthogonal to the view, `⟪F v, y - v⟫ ≤ 0` at test points, in equilibrium with zero torque about the view) vanishes, Rupert; for force-estimate arguments ("Lemma T at the tie, robust form") | `isRupert_of_no_forces`, `interior_proj_convexHull_nonempty`, `force_eq_zero_of_inside`, `force_mem_cone`, `det3_cramer` |
 | `TieForces` | L13, Lemma T at the tie, robust form: the scalar core of the force argument (mass on the corners above the tie is `O(δ)`, the far end loses its edge force, Cramer on the far ends' generators and torques) | `tie_core`, `cramer3`, `cramer3_bound` |

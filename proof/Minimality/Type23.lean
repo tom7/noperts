@@ -2,6 +2,7 @@ module
 
 public import Minimality.Type10
 public import Minimality.TriFacetsChord
+public import Minimality.EdgeChord
 public import Minimality.TriTie
 public import Minimality.ParallelOr
 
@@ -16,8 +17,11 @@ Theorem J of `FEWER-FACES-PROOFS.md` §7, by the algebraic method of
 `x1`), `Q2` along the line of the planes of `A` and `125` (through `x5`). If `P`
 fails at `6`, the frame `x1; x4, x5, x6` and `fA ≤ 0` at `x2, x3` give `Q1`; if it
 fails at `2`, the frame `x5; x1, x2, x4` and `fD x6 < 0` give `Q2`.
-At the tie (`x6` on the far side in `P`), `x3` is on the far side in `Q1`, which
-then works by Lemma T′ (`isRupert_of_facets_vertex_chord`).
+At the tie (`x6` on the far side in `P`) the plane of `156` is parallel to `04`
+(`ParallelEdge.lean`), and `P` works by Lemma T′ over the edge
+(`isRupert_of_facets_edge_chord`), `x2` being strictly inside (frame
+`x1; x4, x5, x6`), given `EdgeFar` along `04` there (`FEWER-FACES-PROOFS.md` §23,
+item (ii)).
 -/
 
 namespace Minimality
@@ -30,8 +34,8 @@ set_option maxHeartbeats 8000000 in
 `0345` (a quadrilateral), `014`, `125`, `156`, `456`, given by functionals
 negative off them, are Rupert, given no other segment parallel to `04` (`EdgePar`)
 and `TriGenTri` at the lines of the planes of `014` and `156` and of `0345` and
-`125` (with `TriGenFar` at the former when `fA x6 / fA x1 + fD x6 / fD x5 = 1`,
-where Lemma T′ is used). -/
+`125`, and `EdgeFar` along `04` when `fA x6 / fA x1 + fD x6 / fD x5 = 1` (the
+special value, where Lemma T′ over that edge is used). -/
 theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hgen : NoThreeCollinear (univ.image x)) (fA fD fE fH fK : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 3, 4, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
@@ -52,8 +56,8 @@ theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       TriGenFarP (univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
         (({1, 5, 6} : Finset (Fin 7)).image x) (x 1)) ∧
       (fA (x 6) / fA (x 1) + fD (x 6) / fD (x 5) = 1 →
-        TriGenFar (univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
-          (({1, 5, 6} : Finset (Fin 7)).image x) (x 1)))
+        EdgeFar (univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
+          (({0, 3, 4, 5} : Finset (Fin 7)).image x) (x 0) (x 4)))
     (hT2 : TriGenTri (univ.image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x)
       (({1, 2, 5} : Finset (Fin 7)).image x) (x 5) ∨
       TriGenFarP (univ.image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x)
@@ -277,51 +281,40 @@ theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
         have : -γ3 * (1 - fD (x 6) / fD (x 5)) < -γ3 * (fA (x 6) / fA (x 1)) := by
           apply mul_lt_mul_of_pos_left _ (by linarith); linarith
         nlinarith
-    -- `P_6 = 1`: `x3` on the far side, the view `Q1` by Lemma T′
-    refine isRupert_of_facets_vertex_chord V hgen QD QH (sub _) (sub _)
-      (isFacet_of_index x _ fD hD) (isFacet_of_index x _ fH hH) (x 1) hiv
-      ⟨x 4, (memQ _ 4).mpr (by decide), fun h => by have := hx h; omega⟩
-      ⟨x 5, (memQ _ 5).mpr (by decide), fun h => by have := hx h; omega⟩ (hT1.2 h6eq.symm) (x 4) (x 5)
-      ((memQ _ 4).mpr (by decide)) ((memQ _ 5).mpr (by decide))
-      (fun h => by have := hx h; omega) (fun h => by have := hx h; omega) (x 3) (hxV 3)
-      (by rw [memQ]; decide) (by rw [memQ]; decide) ?_
+    -- `P_6 = 1`: the view `P` along the edge `04` has `x6` on its far side and `x2`
+    -- strictly inside; Lemma T′ over the edge
+    refine isRupert_of_facets_edge_chord V hgen QD QA (sub _) (sub _) (isFacet_of_index x _ fD hD)
+      (isFacet_of_index x _ fA hA) (x 0) (x 4) (fun h => by have := hx h; omega) ?_
+      (hT1.2 h6eq.symm) (x 1) (x 5) ((memQ _ 1).mpr (by decide)) ((memQ _ 5).mpr (by decide))
+      (by rw [memQ]; decide) (by rw [memQ]; decide) (x 6) (hxV 6) (by rw [memQ]; decide)
+      (by rw [memQ]; decide) ?_
+    · rw [inter, show ({0, 1, 4} ∩ {0, 3, 4, 5} : Finset (Fin 7)) = {0, 4} by decide]
+      simp [Finset.image_insert]
     intro f1 f2 z1 n1 z2 n2
-    have e2' : ∀ k : Fin 7, f2 (x k) / f2 (x 4) = fH (x k) / fH (x 4) :=
-      fun k => ratio f2 fH 1 5 6 (by decide) (by decide) (by decide)
-        (z2 _ ((memQ _ 1).mpr (by decide))) (z2 _ ((memQ _ 5).mpr (by decide)))
-        (z2 _ ((memQ _ 6).mpr (by decide))) ((hH 1).1 (by decide)) ((hH 5).1 (by decide))
-        ((hH 6).1 (by decide)) _ _ (n2 _ (hxV 4) (by rw [memQ]; decide)).ne
-        ((hH 4).2 (by decide)).ne
-    have e1' : ∀ k : Fin 7, f1 (x k) / f1 (x 5) = fD (x k) / fD (x 5) :=
-      fun k => ratio f1 fD 0 1 4 (by decide) (by decide) (by decide)
-        (z1 _ ((memQ _ 0).mpr (by decide))) (z1 _ ((memQ _ 1).mpr (by decide)))
-        (z1 _ ((memQ _ 4).mpr (by decide))) ((hD 0).1 (by decide)) ((hD 1).1 (by decide))
-        ((hD 4).1 (by decide)) _ _ (n1 _ (hxV 5) (by rw [memQ]; decide)).ne
-        ((hD 5).2 (by decide)).ne
-    have vyc : f2 (x 3) / f2 (x 4) + f1 (x 3) / f1 (x 5) ≤ 1 := by
-      rw [e2' 3, e1' 3]
-      have k : fH (x 3) / fH (x 4) + fD (x 3) / fD (x 5) =
-          (α3 + β3 + γ3) - γ3 * (1 - fD (x 6) / fD (x 5)) := by
-        field_simp; linear_combination fD (x 5) * cH3 + fH (x 4) * cD3
-      rw [k]
-      have : -γ3 * (1 - fD (x 6) / fD (x 5)) ≤ -γ3 * (fA (x 6) / fA (x 1)) := by
-        apply mul_le_mul_of_nonneg_left _ (by linarith); linarith
-      nlinarith
-    refine ⟨fun y hy hy1 hy2 hne => ?_, vyc⟩
+    have e2 : ∀ k : Fin 7, f2 (x k) / f2 (x 1) = fA (x k) / fA (x 1) := fun k =>
+      ratio f2 fA 0 3 4 (by decide) (by decide) (by decide)
+          (z2 _ ((memQ _ 0).mpr (by decide))) (z2 _ ((memQ _ 3).mpr (by decide)))
+          (z2 _ ((memQ _ 4).mpr (by decide))) ((hA 0).1 (by decide)) ((hA 3).1 (by decide))
+          ((hA 4).1 (by decide)) _ _ (n2 _ (hxV 1) (by rw [memQ]; decide)).ne
+          ((hA 1).2 (by decide)).ne
+    have e1 : ∀ k : Fin 7, f1 (x k) / f1 (x 5) = fD (x k) / fD (x 5) := fun k =>
+      ratio f1 fD 0 1 4 (by decide) (by decide) (by decide)
+          (z1 _ ((memQ _ 0).mpr (by decide))) (z1 _ ((memQ _ 1).mpr (by decide)))
+          (z1 _ ((memQ _ 4).mpr (by decide))) ((hD 0).1 (by decide)) ((hD 1).1 (by decide))
+          ((hD 4).1 (by decide)) _ _ (n1 _ (hxV 5) (by rw [memQ]; decide)).ne
+          ((hD 5).2 (by decide)).ne
+    refine ⟨fun y hy hy1 hy2 hne => ?_, by rw [e1, e2]; exact h6eq.symm.le⟩
     obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
     rw [memQ] at hy1 hy2
     have hi : i = 2 := by
-      have : i ≠ 3 := fun h => hne (by rw [h])
+      have : i ≠ 6 := fun h => hne (by rw [h])
       clear * - hy1 hy2 this; fin_cases i <;> simp_all
     subst hi
-    rw [e2' 2, e1' 2]
-    have k : fH (x 2) / fH (x 4) + fD (x 2) / fD (x 5) =
-        (α2 + β2 + γ2) - γ2 * (1 - fD (x 6) / fD (x 5)) := by
-      field_simp; linear_combination fD (x 5) * cH2 + fH (x 4) * cD2
-    rw [k]
-    have : -γ2 * (1 - fD (x 6) / fD (x 5)) ≤ -γ2 * (fA (x 6) / fA (x 1)) := by
-      apply mul_le_mul_of_nonneg_left _ (by linarith); linarith
-    nlinarith
+    rw [e1, e2]
+    have k2 : fA (x 2) / fA (x 1) + fD (x 2) / fD (x 5) =
+        1 - α2 + γ2 * (fA (x 6) / fA (x 1) + fD (x 6) / fD (x 5) - 1) := by
+      field_simp; linear_combination fD (x 5) * cA2 + fA (x 1) * cD2
+    rw [k2, ← h6eq, sub_self, mul_zero]; linarith
 
 end Minimality
 

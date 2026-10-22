@@ -2,6 +2,7 @@ module
 
 public import Minimality.Type10
 public import Minimality.TriFacetsChord
+public import Minimality.EdgeChord
 public import Minimality.TriTie
 public import Minimality.ParallelOr
 
@@ -17,8 +18,10 @@ line of the planes of `025` and `046` (through `x0`). In the affine frame
 `x0; x2, x5, x6` (coordinates `α, β, γ`), `P` holds at `y` iff `α_y + β_y > 0`;
 if it fails at `1` then `fE x2 / fE x5 ≥ 1`, which gives `Q1`; if it fails at
 `4` then `fG x2 / fG x5 < 1`, which gives `Q2` at `1` and at `3`.
-At the tie (`x4` on the far side in `P`), `fG x2 / fG x5 = 1` and `x3` is on the
-far side in `Q2`, which then works by Lemma T′ (`isRupert_of_facets_vertex_chord`).
+At the tie (`x4` on the far side in `P`), `fG x2 / fG x5 = 1`: the plane of `046`
+is parallel to `25` (`ParallelEdge.lean`), and `P` works by Lemma T′ over the
+edge (`isRupert_of_facets_edge_chord`), `x1` being strictly inside, given
+`EdgeFar` along `25` there (`FEWER-FACES-PROOFS.md` §23, item (ii)).
 -/
 
 namespace Minimality
@@ -31,8 +34,8 @@ set_option maxHeartbeats 8000000 in
 `2356` (a quadrilateral), `025`, `016`, `046`, `045`, `012`, `456`, given by
 functionals negative off them, are Rupert, given no other segment parallel to `25`
 (`EdgePar`) and `TriGenTri` at the lines of the planes of `016` and `2356` and
-of `025` and `046` (with `TriGenFar` at the latter when `fG x2 / fG x5 = 1`,
-where Lemma T′ is used). -/
+of `025` and `046`, and `EdgeFar` along `25` when `fG x2 / fG x5 = 1` (the
+special value, where Lemma T′ over that edge is used). -/
 theorem isRupert_type27 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hgen : NoThreeCollinear (univ.image x)) (fB fD fE fG fH fI fJ : ℝ³ →ᵃ[ℝ] ℝ)
     (hB : ∀ i, (i ∈ ({2, 3, 5, 6} : Finset (Fin 7)) → fB (x i) = 0) ∧
@@ -61,8 +64,8 @@ theorem isRupert_type27 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       TriGenFarP (univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
         (({0, 4, 6} : Finset (Fin 7)).image x) (x 0)) ∧
       (fG (x 2) / fG (x 5) = 1 →
-        TriGenFar (univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
-          (({0, 4, 6} : Finset (Fin 7)).image x) (x 0))) :
+        EdgeFar (univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
+          (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 2) (x 5))) :
     IsRupert (univ.image x) := by
   classical
   set V := univ.image x with hV
@@ -286,45 +289,43 @@ theorem isRupert_type27 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
         rw [k]
         have := mul_lt_mul_of_pos_left hqlt hα3
         linarith
-    -- `fG x2 / fG x5 = 1`: `x3` on the far side, the view `Q2` by Lemma T′
-    refine isRupert_of_facets_vertex_chord V hgen QD QG (sub _) (sub _)
-      (isFacet_of_index x _ fD hD) (isFacet_of_index x _ fG hG) (x 0) hiv
-      ⟨x 5, (memQ _ 5).mpr (by decide), fun h => by have := hx h; omega⟩
-      ⟨x 6, (memQ _ 6).mpr (by decide), fun h => by have := hx h; omega⟩ (hT2.2 hqeq) (x 5) (x 6)
-      ((memQ _ 5).mpr (by decide)) ((memQ _ 6).mpr (by decide))
-      (fun h => by have := hx h; omega) (fun h => by have := hx h; omega) (x 3) (hxV 3)
-      (by rw [memQ]; decide) (by rw [memQ]; decide) ?_
+    -- `fG x2 / fG x5 = 1`: the view `P` along the edge `25` has `x4` on its far side and
+    -- `x1` strictly inside; Lemma T′ over the edge
+    have hq2 : fG (x 2) = fG (x 5) := by rw [div_eq_one_iff_eq ng5] at hqeq; exact hqeq
+    refine isRupert_of_facets_edge_chord V hgen QD QB (sub _) (sub _) (isFacet_of_index x _ fD hD)
+      (isFacet_of_index x _ fB hB) (x 2) (x 5) (fun h => by have := hx h; omega) ?_
+      (hT2.2 hqeq) (x 0) (x 6) ((memQ _ 0).mpr (by decide)) ((memQ _ 6).mpr (by decide))
+      (by rw [memQ]; decide) (by rw [memQ]; decide) (x 4) (hxV 4) (by rw [memQ]; decide)
+      (by rw [memQ]; decide) ?_
+    · rw [inter, show ({0, 2, 5} ∩ {2, 3, 5, 6} : Finset (Fin 7)) = {2, 5} by decide]
+      simp [Finset.image_insert]
     intro f1 f2 z1 n1 z2 n2
-    have e2' : ∀ k : Fin 7, f2 (x k) / f2 (x 5) = fG (x k) / fG (x 5) :=
-      fun k => ratio f2 fG 0 4 6 (by decide) (by decide) (by decide)
-        (z2 _ ((memQ _ 0).mpr (by decide))) (z2 _ ((memQ _ 4).mpr (by decide)))
-        (z2 _ ((memQ _ 6).mpr (by decide))) ((hG 0).1 (by decide)) ((hG 4).1 (by decide))
-        ((hG 6).1 (by decide)) _ _ (n2 _ (hxV 5) (by rw [memQ]; decide)).ne
-        ((hG 5).2 (by decide)).ne
-    have e1' : ∀ k : Fin 7, f1 (x k) / f1 (x 6) = fD (x k) / fD (x 6) :=
-      fun k => ratio f1 fD 0 2 5 (by decide) (by decide) (by decide)
-        (z1 _ ((memQ _ 0).mpr (by decide))) (z1 _ ((memQ _ 2).mpr (by decide)))
-        (z1 _ ((memQ _ 5).mpr (by decide))) ((hD 0).1 (by decide)) ((hD 2).1 (by decide))
-        ((hD 5).1 (by decide)) _ _ (n1 _ (hxV 6) (by rw [memQ]; decide)).ne
-        ((hD 6).2 (by decide)).ne
-    have vyc : f2 (x 3) / f2 (x 5) + f1 (x 3) / f1 (x 6) ≤ 1 := by
-      rw [e2' 3, e1' 3]
-      have k : fG (x 3) / fG (x 5) + fD (x 3) / fD (x 6) =
-          α3 * (fG (x 2) / fG (x 5)) + β3 + γ3 := by
-        field_simp; linear_combination fD (x 6) * cG3 + fG (x 5) * cD3
-      rw [k, hqeq]; linarith
-    refine ⟨fun y hy hy1 hy2 hne => ?_, vyc⟩
+    have e2 : ∀ k : Fin 7, f2 (x k) / f2 (x 0) = fB (x k) / fB (x 0) := fun k =>
+      ratio f2 fB 2 3 5 (by decide) (by decide) (by decide)
+          (z2 _ ((memQ _ 2).mpr (by decide))) (z2 _ ((memQ _ 3).mpr (by decide)))
+          (z2 _ ((memQ _ 5).mpr (by decide))) ((hB 2).1 (by decide)) ((hB 3).1 (by decide))
+          ((hB 5).1 (by decide)) _ _ (n2 _ (hxV 0) (by rw [memQ]; decide)).ne
+          ((hB 0).2 (by decide)).ne
+    have e1 : ∀ k : Fin 7, f1 (x k) / f1 (x 6) = fD (x k) / fD (x 6) := fun k =>
+      ratio f1 fD 0 2 5 (by decide) (by decide) (by decide)
+          (z1 _ ((memQ _ 0).mpr (by decide))) (z1 _ ((memQ _ 2).mpr (by decide)))
+          (z1 _ ((memQ _ 5).mpr (by decide))) ((hD 0).1 (by decide)) ((hD 2).1 (by decide))
+          ((hD 5).1 (by decide)) _ _ (n1 _ (hxV 6) (by rw [memQ]; decide)).ne
+          ((hD 6).2 (by decide)).ne
+    have h45 : α4 + β4 = 0 := by
+      have : (α4 + β4) * fG (x 5) = 0 := by linear_combination -cG4 - α4 * hq2
+      exact (mul_eq_zero.mp this).resolve_right ng5
+    refine ⟨fun y hy hy1 hy2 hne => ?_, by rw [e1, e2, P4]; linarith⟩
     obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hy
     rw [memQ] at hy1 hy2
     have hi : i = 1 := by
-      have : i ≠ 3 := fun h => hne (by rw [h])
+      have : i ≠ 4 := fun h => hne (by rw [h])
       clear * - hy1 hy2 this; fin_cases i <;> simp_all
     subst hi
-    rw [e2' 1, e1' 1]
-    have k : fG (x 1) / fG (x 5) + fD (x 1) / fD (x 6) =
-        α1 * (fG (x 2) / fG (x 5)) + β1 + γ1 := by
-      field_simp; linear_combination fD (x 6) * cG1 + fG (x 5) * cD1
-    rw [k, hqeq]; nlinarith
+    rw [e1, e2, P1]
+    have g1 := (hG 1).2 (by decide)
+    have : fG (x 1) = (α1 + β1) * fG (x 5) := by linear_combination cG1 + α1 * hq2
+    nlinarith
 
 end Minimality
 

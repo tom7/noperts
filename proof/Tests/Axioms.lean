@@ -84,6 +84,15 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms not_type22_of_isNopert
 #assert_standard_axioms not_type28_of_isNopert
 #assert_standard_axioms not_type05_of_isNopert
+#assert_standard_axioms Minimality.isRupert_of_facets_edge_chord
+#assert_standard_axioms Minimality.not_triGenFar_of_parallel
+#assert_standard_axioms Minimality.type05_special_parallel
+#assert_standard_axioms Minimality.type10_special_parallel
+#assert_standard_axioms Minimality.type13_special_parallel
+#assert_standard_axioms Minimality.type17_special_parallel
+#assert_standard_axioms Minimality.type19_special_parallel
+#assert_standard_axioms Minimality.type23_special_parallel
+#assert_standard_axioms Minimality.type27_special_parallel
 #assert_standard_axioms not_type08_of_isNopert
 #assert_standard_axioms Minimality.isRupert_type08
 #assert_standard_axioms Minimality.isRupert_type08_facets
