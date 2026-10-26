@@ -12,7 +12,10 @@ A convex polyhedron with 7 vertices has one of 34 combinatorial types: 5 simplic
 (`FEWER-FACES.md` §3; enumerated exactly by `enum7`, matching OEIS A049337).
 `sevenTypeFaces k` lists the faces of type `k + 1` in the gallery labelling of
 `FEWER-FACES.md` §4 (the labelling the per-type theorems of `Minimality/Cases.lean`
-use), taken from `dense/flat7/gallery29/typeNN-*f.txt`.
+use), computed as the convex hulls of the realizations
+`dense/flat7/gallery29/typeNN-*f-nice.txt` (the plain `typeNN-*f.txt` files use other
+labellings, and those of types 17, 19, 23 realize types 19, 16, 22). The 29 lists are pairwise
+non-isomorphic (2, 8, 11, 8 types with 6, 7, 8, 9 faces).
 
 `exists_sevenType` is the classification step: seven points in convex position with a
 solid hull and a facet of at least 4 points realize one of the 29 types. It is
@@ -54,15 +57,15 @@ def sevenTypeFaces : Fin 29 → List (Finset (Fin 7)) :=
     -- type 14
     [{0, 1, 4}, {0, 1, 6}, {0, 2, 3, 5}, {0, 3, 6}, {0, 4, 5}, {1, 4, 5, 6}, {2, 3, 6}, {2, 5, 6}],
     -- type 15
-    [{0, 1, 4, 5, 6}, {0, 2, 4}, {0, 2, 6}, {1, 2, 3}, {1, 2, 4}, {1, 3, 5}, {2, 3, 6}, {3, 5, 6}],
+    [{0, 1, 4, 5, 6}, {0, 2, 4}, {0, 2, 6}, {1, 3, 4}, {1, 3, 5}, {2, 3, 4}, {2, 3, 6}, {3, 5, 6}],
     -- type 16
     [{0, 2, 3, 5}, {0, 2, 4}, {0, 3, 6}, {0, 4, 6}, {1, 3, 5, 6}, {1, 4, 5}, {1, 4, 6}, {2, 4, 5}],
     -- type 17
-    [{0, 2, 4, 6}, {0, 3, 4}, {0, 3, 6}, {1, 2, 5}, {1, 2, 6}, {1, 5, 6}, {2, 3, 4, 5}, {3, 5, 6}],
+    [{0, 2, 4, 6}, {0, 3, 4}, {0, 3, 6}, {1, 2, 5}, {1, 2, 6}, {1, 3, 5}, {1, 3, 6}, {2, 3, 4, 5}],
     -- type 18
     [{0, 1, 4}, {0, 1, 5}, {0, 3, 4}, {0, 3, 5, 6}, {1, 2, 4, 5}, {2, 4, 6}, {2, 5, 6}, {3, 4, 6}],
     -- type 19
-    [{0, 2, 3, 5}, {0, 2, 4}, {0, 3, 4}, {1, 2, 4}, {1, 2, 5}, {1, 3, 5, 6}, {1, 4, 6}, {3, 4, 6}],
+    [{0, 2, 3, 5}, {0, 2, 6}, {0, 3, 4}, {0, 4, 6}, {1, 2, 5}, {1, 2, 6}, {1, 3, 5, 6}, {3, 4, 6}],
     -- type 20
     [{0, 1, 3, 5}, {0, 1, 6}, {0, 2, 5}, {0, 2, 6}, {1, 3, 4}, {1, 4, 6}, {2, 4, 5, 6}, {3, 4, 5}],
     -- type 21
@@ -70,7 +73,7 @@ def sevenTypeFaces : Fin 29 → List (Finset (Fin 7)) :=
     -- type 22
     [{0, 1, 2}, {0, 1, 3, 4}, {0, 2, 3}, {1, 2, 5}, {1, 4, 6}, {1, 5, 6}, {2, 3, 4}, {2, 4, 6}, {2, 5, 6}],
     -- type 23
-    [{0, 1, 3}, {0, 1, 4}, {0, 3, 4, 5}, {1, 2, 3}, {1, 2, 6}, {1, 4, 5}, {1, 5, 6}, {2, 3, 5}, {2, 5, 6}],
+    [{0, 1, 3}, {0, 1, 4}, {0, 3, 4, 5}, {1, 2, 3}, {1, 2, 5}, {1, 4, 6}, {1, 5, 6}, {2, 3, 5}, {4, 5, 6}],
     -- type 24
     [{0, 1, 2}, {0, 1, 6}, {0, 2, 5}, {0, 3, 4, 5}, {0, 4, 6}, {1, 2, 6}, {2, 3, 5}, {2, 3, 6}, {3, 4, 6}],
     -- type 25
@@ -82,7 +85,7 @@ def sevenTypeFaces : Fin 29 → List (Finset (Fin 7)) :=
     -- type 28
     [{0, 1, 5}, {0, 1, 6}, {0, 2, 3}, {0, 2, 4, 5}, {0, 3, 6}, {1, 4, 5}, {1, 4, 6}, {2, 3, 4}, {3, 4, 6}],
     -- type 29
-    [{0, 1, 2}, {0, 1, 5}, {0, 2, 3}, {0, 3, 6}, {0, 5, 6}, {1, 2, 4}, {1, 4, 5, 6}, {2, 3, 4}, {3, 4, 6}]]
+    [{0, 1, 2}, {0, 1, 5}, {0, 2, 3}, {0, 3, 5}, {1, 2, 4}, {1, 4, 5, 6}, {2, 3, 4}, {3, 4, 6}, {3, 5, 6}]]
 
 /-- The labelled points `x` realize the faces `fs`: every listed face is cut out
 by an affine functional, zero at its points and negative at the others. -/

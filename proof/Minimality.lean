@@ -240,8 +240,9 @@ down to the combinatorial types. Proved steps: at most 6 points (`isRupert_of_ca
 point inside the hull of the others (`isRupert_of_mem_convexHull_erase`), faces of 5 or more
 vertices (Theorem A, `facet_card_le_four_of_isNopert`). Not formalized (`sorry`): the passage
 from an extreme face to a facet (`exists_facet_of_isExtreme`), the classification into the 29
-types (`Minimality.exists_sevenType`), and every type except type 10 in general position, which
-uses `not_type10_of_isNopert_sv` (`Minimality/Cases.lean`). -/
+types (`Minimality.exists_sevenType`), types 24 and 29, and for every other type its special
+positions: each type's theorem in `Minimality/Cases.lean` closes the case under its general-position
+hypotheses (`byGen1`, …), and the `sorry` that remains has exactly their negation as hypothesis. -/
 
 /-- **An extreme face of dimension 2 is a facet** (not formalized; standard polytope theory):
 for points in convex position, a convex extreme subset of their hull with a 2-dimensional
@@ -272,8 +273,50 @@ theorem not_isNopert_of_realizes_big_face {x : Fin 7 → ℝ³} (hx : Function.I
   have := facet_card_le_four_of_isNopert _ _ h hV hsub (Minimality.isFacet_of_realizesFaces hR hf)
   omega
 
+/-- Split on general position: a per-type theorem with `n` general-position hypotheses
+closes the generic case; `spec` is the special-position case. -/
+theorem byGen1 {P : Prop} (key : P → False) (spec : ¬ P → False) : False :=
+  (Classical.em P).elim key spec
+
+theorem byGen2 {P Q : Prop} (key : P → Q → False) (spec : ¬ (P ∧ Q) → False) : False :=
+  byGen1 (fun h : P ∧ Q => key h.1 h.2) spec
+
+theorem byGen3 {P Q R : Prop} (key : P → Q → R → False) (spec : ¬ (P ∧ Q ∧ R) → False) :
+    False :=
+  byGen1 (fun h : P ∧ Q ∧ R => key h.1 h.2.1 h.2.2) spec
+
+theorem byGen4 {P Q R S : Prop} (key : P → Q → R → S → False)
+    (spec : ¬ (P ∧ Q ∧ R ∧ S) → False) : False :=
+  byGen1 (fun h : P ∧ Q ∧ R ∧ S => key h.1 h.2.1 h.2.2.1 h.2.2.2) spec
+
+theorem byGen5 {P Q R S T : Prop} (key : P → Q → R → S → T → False)
+    (spec : ¬ (P ∧ Q ∧ R ∧ S ∧ T) → False) : False :=
+  byGen1 (fun h : P ∧ Q ∧ R ∧ S ∧ T => key h.1 h.2.1 h.2.2.1 h.2.2.2.1 h.2.2.2.2) spec
+
+theorem byGen7 {P Q R S T U W : Prop} (key : P → Q → R → S → T → U → W → False)
+    (spec : ¬ (P ∧ Q ∧ R ∧ S ∧ T ∧ U ∧ W) → False) : False :=
+  byGen1 (fun h : P ∧ Q ∧ R ∧ S ∧ T ∧ U ∧ W =>
+    key h.1 h.2.1 h.2.2.1 h.2.2.2.1 h.2.2.2.2.1 h.2.2.2.2.2.1 h.2.2.2.2.2.2) spec
+
+/-- Cor. T1 for a realized type: two quadrilateral faces `q1`, `q2` meeting only in `v`. -/
+theorem quadPair {x : Fin 7 → ℝ³} (hx : Function.Injective x)
+    (hN : IsNopert (Finset.univ.image x)) {fs : List (Finset (Fin 7))}
+    (hR : Minimality.RealizesFaces x fs) (q1 q2 : Finset (Fin 7)) (v : Fin 7)
+    (h1 : q1 ∈ fs) (h2 : q2 ∈ fs) (hc1 : q1.card = 4) (hc2 : q2.card = 4)
+    (hint : q1 ∩ q2 = {v}) :
+    (Minimality.TriGenTieT (Finset.univ.image x) (q1.image x) (q2.image x) (x v) ∨
+      Minimality.TriGenFarP (Finset.univ.image x) (q1.image x) (q2.image x) (x v)) → False := by
+  classical
+  intro hT
+  have hV : (Finset.univ.image x).card = 7 := by rw [Finset.card_image_of_injective _ hx]; simp
+  refine not_two_quad_facets_vertex_of_isNopert _ hN hV (q1.image x) (q2.image x)
+    (Finset.image_subset_image (Finset.subset_univ _)) (Finset.image_subset_image (Finset.subset_univ _))
+    (by rw [Finset.card_image_of_injective _ hx, hc1]) (by rw [Finset.card_image_of_injective _ hx, hc2])
+    (Minimality.isFacet_of_realizesFaces hR h1) (Minimality.isFacet_of_realizesFaces hR h2) (x v) ?_ hT
+  rw [← Finset.image_inter _ _ hx, hint, Finset.image_singleton]
+
 /-- **Every 7-vertex nopert is simplicial** (skeleton: the case split into the 29 non-simplicial
-types is complete, most cases are `sorry`; see the section comment). -/
+types is complete; the `sorry`s are listed in the section comment). -/
 theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := by
   classical
   intro V hcard hsol hnR face ⟨hext, hdim, hconv⟩
@@ -296,53 +339,184 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
   have big : ∀ f ∈ Minimality.sevenTypeFaces k, 5 ≤ f.card → f.card < 7 → False :=
     fun f hf h5 h7' => not_isNopert_of_realizes_big_face hx hN hR hf h5 h7'
   fin_cases k
-  · exact big {1, 2, 4, 5, 6} (by decide) (by decide) (by decide)   -- type 01
-  · sorry   -- type 02: `not_two_quad_facets_vertex_of_isNopert` (Cor. T1)
-  · exact big {0, 2, 3, 4, 5, 6} (by decide) (by decide) (by decide)   -- type 03
-  · exact big {1, 2, 3, 5, 6} (by decide) (by decide) (by decide)   -- type 04
-  · sorry   -- type 05: `not_type05_of_isNopert_sv`
-  · exact big {1, 2, 4, 5, 6} (by decide) (by decide) (by decide)   -- type 06
-  · sorry   -- type 07: `not_two_quad_facets_vertex_of_isNopert`
-  · sorry   -- type 08: `not_type08_of_isNopert'` (outside codimension 2)
-  · sorry   -- type 09: `not_two_quad_facets_vertex_of_isNopert` (case (c) open)
-  · -- type 10: Theorem E (`not_type10_of_isNopert_sv`) in general position
-    obtain ⟨fA, hA⟩ := hR {1, 2, 4, 5} (by decide)
-    obtain ⟨fB, hB⟩ := hR {1, 3, 4, 6} (by decide)
-    obtain ⟨fC, hC⟩ := hR {2, 3, 5, 6} (by decide)
-    obtain ⟨fD, hD⟩ := hR {0, 2, 3} (by decide)
-    by_cases hgen :
-        (fB (x 0) / fB (x 2) + fA (x 0) / fA (x 3) ≠ 1 →
-          Minimality.EdgeTieR (Finset.univ.image x) (({1, 2, 4, 5} : Finset (Fin 7)).image x)
-            (({1, 3, 4, 6} : Finset (Fin 7)).image x) (x 1) (x 4) ∨
-          Minimality.EdgeFarP (Finset.univ.image x) (({1, 2, 4, 5} : Finset (Fin 7)).image x)
-            (({1, 3, 4, 6} : Finset (Fin 7)).image x) (x 1) (x 4)) ∧
-        (fB (x 0) / fB (x 2) + fA (x 0) / fA (x 3) ≠ 1 →
-          Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
-            (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2) ∨
-          Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
-            (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2)) ∧
-        (fB (x 0) / fB (x 2) + fA (x 0) / fA (x 3) = 1 →
-          ¬ Minimality.SpecTriple (x 1) (x 4) (x 2) (x 3))
-    · exact not_type10_of_isNopert_sv x hN hx fA fB fC fD hA hB hC hD hgen.1 hgen.2.1 hgen.2.2
-    · sorry -- type 10 in special position (paper: §23 (ii), §24; codimension 3 left)
-  · exact big {0, 2, 3, 4, 6} (by decide) (by decide) (by decide)   -- type 11
-  · sorry  -- type 12: `not_type12_of_isNopert_sv`
-  · sorry  -- type 13: `not_type13_of_isNopert_sv`
-  · sorry  -- type 14: `not_two_quad_facets_vertex_of_isNopert`
-  · exact big {0, 1, 4, 5, 6} (by decide) (by decide) (by decide)   -- type 15
-  · sorry  -- type 16: `not_type16_of_isNopert_codim2`
-  · sorry  -- type 17: `not_type17_of_isNopert_sv`
-  · sorry  -- type 18: `not_two_quad_facets_vertex_of_isNopert` (case (c) open)
-  · sorry  -- type 19: `not_type19_of_isNopert_sv`
-  · sorry  -- type 20: `not_two_quad_facets_vertex_of_isNopert` (case (c) open)
-  · sorry  -- type 21: `not_type21_of_isNopert_codim2`
-  · sorry  -- type 22: `not_type22_of_isNopert_sv`
-  · sorry  -- type 23: `not_type23_of_isNopert_sv`
+  · exact big {1, 2, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 01: Theorem A
+  · -- type 02: Cor. T1 at the quadrilaterals 0235, 1246 (sharing vertex 2); general position
+    -- asked, the special positions are open in Lean
+    exact byGen1 (quadPair hx hN hR {0, 2, 3, 5} {1, 2, 4, 6} 2 (by decide) (by decide) (by decide) (by decide)
+      (by decide)) (fun _ => sorry)
+  · exact big {0, 2, 3, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 03: Theorem A
+  · exact big {1, 2, 3, 5, 6} (by decide) (by decide) (by decide)  -- type 04: Theorem A
+  · -- type 05: `not_type05_of_isNopert_sv`; its general position (3 hypotheses) is asked, the special
+    -- positions are open in Lean
+    obtain ⟨fA, hfA⟩ := hR {0, 1, 2, 3} (by decide)
+    obtain ⟨fB, hfB⟩ := hR {0, 1, 4, 5} (by decide)
+    obtain ⟨fG, hfG⟩ := hR {2, 4, 6} (by decide)
+    obtain ⟨fK, hfK⟩ := hR {4, 5, 6} (by decide)
+    obtain ⟨fH, hfH⟩ := hR {2, 3, 4} (by decide)
+    exact byGen3 (not_type05_of_isNopert_sv x hN hx fA fB fG fK fH hfA hfB hfG hfK hfH)
+      (fun _ => sorry)
+  · exact big {1, 2, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 06: Theorem A
+  · -- type 07: Cor. T1 at the quadrilaterals 0256, 1234 (sharing vertex 2); general position
+    -- asked, the special positions are open in Lean
+    exact byGen1 (quadPair hx hN hR {0, 2, 5, 6} {1, 2, 3, 4} 2 (by decide) (by decide) (by decide) (by decide)
+      (by decide)) (fun _ => sorry)
+  · -- type 08: `not_type08_of_isNopert'`; its general position (2 hypotheses) is asked, the special
+    -- positions are open in Lean
+    obtain ⟨fA, hfA⟩ := hR {0, 1, 2, 3} (by decide)
+    obtain ⟨fB, hfB⟩ := hR {0, 2, 4, 5} (by decide)
+    obtain ⟨fC, hfC⟩ := hR {2, 3, 5, 6} (by decide)
+    obtain ⟨fD, hfD⟩ := hR {0, 1, 4} (by decide)
+    obtain ⟨fE, hfE⟩ := hR {1, 3, 6} (by decide)
+    obtain ⟨fF, hfF⟩ := hR {1, 4, 6} (by decide)
+    obtain ⟨fG, hfG⟩ := hR {4, 5, 6} (by decide)
+    exact byGen2 (not_type08_of_isNopert' x hN hx fA fB fC fD fE fF fG hfA hfB hfC hfD hfE hfF hfG)
+      (fun _ => sorry)
+  · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
+    -- asked, the special positions are open in Lean (incl. case (c) of Theorem 24.5)
+    exact byGen1 (quadPair hx hN hR {0, 1, 3, 4} {0, 2, 5, 6} 0 (by decide) (by decide) (by decide) (by decide)
+      (by decide)) (fun _ => sorry)
+  · -- type 10: `not_type10_of_isNopert_sv`; its general position (3 hypotheses) is asked, the special
+    -- positions are open in Lean
+    obtain ⟨fA, hfA⟩ := hR {1, 2, 4, 5} (by decide)
+    obtain ⟨fB, hfB⟩ := hR {1, 3, 4, 6} (by decide)
+    obtain ⟨fC, hfC⟩ := hR {2, 3, 5, 6} (by decide)
+    obtain ⟨fD, hfD⟩ := hR {0, 2, 3} (by decide)
+    exact byGen3 (not_type10_of_isNopert_sv x hN hx fA fB fC fD hfA hfB hfC hfD)
+      (fun _ => sorry)
+  · exact big {0, 2, 3, 4, 6} (by decide) (by decide) (by decide)  -- type 11: Theorem A
+  · -- type 12: `not_type12_of_isNopert_sv`; its general position (3 hypotheses) is asked, the special
+    -- positions are open in Lean
+    obtain ⟨fA, hfA⟩ := hR {0, 1, 3, 5} (by decide)
+    obtain ⟨fB, hfB⟩ := hR {0, 3, 4, 6} (by decide)
+    obtain ⟨fD, hfD⟩ := hR {0, 2, 4} (by decide)
+    obtain ⟨fG, hfG⟩ := hR {2, 3, 6} (by decide)
+    obtain ⟨fJ, hfJ⟩ := hR {2, 4, 6} (by decide)
+    exact byGen3 (not_type12_of_isNopert_sv x hN hx fA fB fD fG fJ hfA hfB hfD hfG hfJ)
+      (fun _ => sorry)
+  · -- type 13: `not_type13_of_isNopert_sv`; its general position (3 hypotheses) is asked, the special
+    -- positions are open in Lean
+    obtain ⟨fA, hfA⟩ := hR {0, 1, 4, 5} (by decide)
+    obtain ⟨fB, hfB⟩ := hR {2, 4, 5, 6} (by decide)
+    obtain ⟨fD, hfD⟩ := hR {1, 2, 3} (by decide)
+    obtain ⟨fG, hfG⟩ := hR {1, 2, 6} (by decide)
+    exact byGen3 (not_type13_of_isNopert_sv x hN hx fA fB fD fG hfA hfB hfD hfG)
+      (fun _ => sorry)
+  · -- type 14: Cor. T1 at the quadrilaterals 0235, 1456 (sharing vertex 5); general position
+    -- asked, the special positions are open in Lean
+    exact byGen1 (quadPair hx hN hR {0, 2, 3, 5} {1, 4, 5, 6} 5 (by decide) (by decide) (by decide) (by decide)
+      (by decide)) (fun _ => sorry)
+  · exact big {0, 1, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 15: Theorem A
+  · -- type 16: `not_type16_of_isNopert_codim2`; its general position (5 hypotheses) is asked, the special
+    -- positions are open in Lean
+    obtain ⟨fA, hfA⟩ := hR {0, 2, 3, 5} (by decide)
+    obtain ⟨fB, hfB⟩ := hR {1, 3, 5, 6} (by decide)
+    obtain ⟨fC, hfC⟩ := hR {0, 2, 4} (by decide)
+    obtain ⟨fD, hfD⟩ := hR {0, 3, 6} (by decide)
+    obtain ⟨fE, hfE⟩ := hR {0, 4, 6} (by decide)
+    obtain ⟨fF, hfF⟩ := hR {1, 4, 5} (by decide)
+    obtain ⟨fG, hfG⟩ := hR {1, 4, 6} (by decide)
+    obtain ⟨fH, hfH⟩ := hR {2, 4, 5} (by decide)
+    exact byGen5 (not_type16_of_isNopert_codim2 x hN hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
+      (fun _ => sorry)
+  · -- type 17: `not_type17_of_isNopert_sv`; its general position (3 hypotheses) is asked, the special
+    -- positions are open in Lean
+    obtain ⟨fA, hfA⟩ := hR {0, 2, 4, 6} (by decide)
+    obtain ⟨fB, hfB⟩ := hR {2, 3, 4, 5} (by decide)
+    obtain ⟨fD, hfD⟩ := hR {1, 3, 6} (by decide)
+    obtain ⟨fE, hfE⟩ := hR {0, 3, 4} (by decide)
+    exact byGen3 (not_type17_of_isNopert_sv x hN hx fA fB fD fE hfA hfB hfD hfE)
+      (fun _ => sorry)
+  · -- type 18: Cor. T1 at the quadrilaterals 0356, 1245 (sharing vertex 5); general position
+    -- asked, the special positions are open in Lean (incl. case (c) of Theorem 24.5)
+    exact byGen1 (quadPair hx hN hR {0, 3, 5, 6} {1, 2, 4, 5} 5 (by decide) (by decide) (by decide) (by decide)
+      (by decide)) (fun _ => sorry)
+  · -- type 19: `not_type19_of_isNopert_sv`; its general position (3 hypotheses) is asked, the special
+    -- positions are open in Lean
+    obtain ⟨fA, hfA⟩ := hR {0, 2, 3, 5} (by decide)
+    obtain ⟨fB, hfB⟩ := hR {1, 3, 5, 6} (by decide)
+    obtain ⟨fD, hfD⟩ := hR {0, 4, 6} (by decide)
+    obtain ⟨fG, hfG⟩ := hR {3, 4, 6} (by decide)
+    exact byGen3 (not_type19_of_isNopert_sv x hN hx fA fB fD fG hfA hfB hfD hfG)
+      (fun _ => sorry)
+  · -- type 20: Cor. T1 at the quadrilaterals 0135, 2456 (sharing vertex 5); general position
+    -- asked, the special positions are open in Lean (incl. case (c) of Theorem 24.5)
+    exact byGen1 (quadPair hx hN hR {0, 1, 3, 5} {2, 4, 5, 6} 5 (by decide) (by decide) (by decide) (by decide)
+      (by decide)) (fun _ => sorry)
+  · -- type 21: `not_type21_of_isNopert_codim2`; its general position (7 hypotheses) is asked, the special
+    -- positions are open in Lean
+    obtain ⟨fA, hfA⟩ := hR {0, 1, 4} (by decide)
+    obtain ⟨fB, hfB⟩ := hR {0, 1, 5} (by decide)
+    obtain ⟨fC, hfC⟩ := hR {0, 2, 5, 6} (by decide)
+    obtain ⟨fD, hfD⟩ := hR {0, 4, 6} (by decide)
+    obtain ⟨fE, hfE⟩ := hR {1, 3, 4} (by decide)
+    obtain ⟨fF, hfF⟩ := hR {1, 3, 5} (by decide)
+    obtain ⟨fG, hfG⟩ := hR {2, 3, 4, 6} (by decide)
+    obtain ⟨fH, hfH⟩ := hR {2, 3, 5} (by decide)
+    exact byGen7 (not_type21_of_isNopert_codim2 x hN hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
+      (fun _ => sorry)
+  · -- type 22: `not_type22_of_isNopert_sv`; its general position (3 hypotheses) is asked, the special
+    -- positions are open in Lean
+    obtain ⟨fA, hfA⟩ := hR {0, 1, 3, 4} (by decide)
+    obtain ⟨fD, hfD⟩ := hR {1, 2, 5} (by decide)
+    obtain ⟨fG, hfG⟩ := hR {2, 4, 6} (by decide)
+    obtain ⟨fN, hfN⟩ := hR {1, 4, 6} (by decide)
+    obtain ⟨fI, hfI⟩ := hR {2, 5, 6} (by decide)
+    exact byGen3 (not_type22_of_isNopert_sv x hN hx fA fD fG fN fI hfA hfD hfG hfN hfI)
+      (fun _ => sorry)
+  · -- type 23: `not_type23_of_isNopert_sv`; its general position (4 hypotheses) is asked, the special
+    -- positions are open in Lean
+    obtain ⟨fA, hfA⟩ := hR {0, 3, 4, 5} (by decide)
+    obtain ⟨fD, hfD⟩ := hR {0, 1, 4} (by decide)
+    obtain ⟨fE, hfE⟩ := hR {1, 2, 5} (by decide)
+    obtain ⟨fH, hfH⟩ := hR {1, 5, 6} (by decide)
+    obtain ⟨fK, hfK⟩ := hR {4, 5, 6} (by decide)
+    exact byGen4 (not_type23_of_isNopert_sv x hN hx fA fD fE fH fK hfA hfD hfE hfH hfK)
+      (fun _ => sorry)
   · sorry  -- type 24: open (`not_type24_outside_Cbar_of_isNopert` outside C̄)
-  · sorry  -- type 25: `not_type25_of_isNopert`
-  · sorry  -- type 26: `not_type26_of_isNopert`
-  · sorry  -- type 27: `not_type27_of_isNopert_sv`
-  · sorry  -- type 28: `not_type28_of_isNopert_sv`
+  · -- type 25: `not_type25_of_isNopert`; its general position (3 hypotheses) is asked, the special
+    -- positions are open in Lean
+    obtain ⟨fA, hfA⟩ := hR {0, 2, 4, 6} (by decide)
+    obtain ⟨fD, hfD⟩ := hR {0, 1, 3} (by decide)
+    obtain ⟨fF, hfF⟩ := hR {1, 3, 6} (by decide)
+    obtain ⟨fG, hfG⟩ := hR {0, 5, 6} (by decide)
+    obtain ⟨fH, hfH⟩ := hR {0, 3, 5} (by decide)
+    obtain ⟨fE, hfE⟩ := hR {0, 1, 4} (by decide)
+    obtain ⟨fI, hfI⟩ := hR {1, 2, 6} (by decide)
+    exact byGen3 (not_type25_of_isNopert x hN hx fA fD fF fG fH fE fI hfA hfD hfF hfG hfH hfE hfI)
+      (fun _ => sorry)
+  · -- type 26: `not_type26_of_isNopert`; its general position (3 hypotheses) is asked, the special
+    -- positions are open in Lean
+    obtain ⟨fA, hfA⟩ := hR {0, 2, 4, 6} (by decide)
+    obtain ⟨fT, hfT⟩ := hR {0, 3, 4} (by decide)
+    obtain ⟨fG, hfG⟩ := hR {2, 3, 5} (by decide)
+    obtain ⟨fH, hfH⟩ := hR {1, 3, 6} (by decide)
+    obtain ⟨fU, hfU⟩ := hR {0, 1, 3} (by decide)
+    obtain ⟨fW, hfW⟩ := hR {0, 1, 6} (by decide)
+    obtain ⟨fY, hfY⟩ := hR {2, 4, 5} (by decide)
+    obtain ⟨fZ, hfZ⟩ := hR {3, 4, 5} (by decide)
+    exact byGen3 (not_type26_of_isNopert x hN hx fA fT fG fH fU fW fY fZ hfA hfT hfG hfH hfU hfW hfY hfZ)
+      (fun _ => sorry)
+  · -- type 27: `not_type27_of_isNopert_sv`; its general position (4 hypotheses) is asked, the special
+    -- positions are open in Lean
+    obtain ⟨fB, hfB⟩ := hR {2, 3, 5, 6} (by decide)
+    obtain ⟨fD, hfD⟩ := hR {0, 2, 5} (by decide)
+    obtain ⟨fE, hfE⟩ := hR {0, 1, 6} (by decide)
+    obtain ⟨fG, hfG⟩ := hR {0, 4, 6} (by decide)
+    obtain ⟨fH, hfH⟩ := hR {0, 4, 5} (by decide)
+    obtain ⟨fI, hfI⟩ := hR {0, 1, 2} (by decide)
+    obtain ⟨fJ, hfJ⟩ := hR {4, 5, 6} (by decide)
+    exact byGen4 (not_type27_of_isNopert_sv x hN hx fB fD fE fG fH fI fJ hfB hfD hfE hfG hfH hfI hfJ)
+      (fun _ => sorry)
+  · -- type 28: `not_type28_of_isNopert_sv`; its general position (3 hypotheses) is asked, the special
+    -- positions are open in Lean
+    obtain ⟨fA, hfA⟩ := hR {0, 2, 4, 5} (by decide)
+    obtain ⟨fD, hfD⟩ := hR {0, 3, 6} (by decide)
+    obtain ⟨fG, hfG⟩ := hR {1, 4, 6} (by decide)
+    obtain ⟨fH, hfH⟩ := hR {0, 2, 3} (by decide)
+    obtain ⟨fF, hfF⟩ := hR {0, 1, 5} (by decide)
+    obtain ⟨fM, hfM⟩ := hR {1, 4, 5} (by decide)
+    exact byGen3 (not_type28_of_isNopert_sv x hN hx fA fD fG fH fF fM hfA hfD hfG hfH hfF hfM)
+      (fun _ => sorry)
   · sorry  -- type 29: open (classes K3, K4: `isRupert_type29_K3`, `isRupert_type29_K4`)
 
 end
