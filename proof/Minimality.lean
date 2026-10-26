@@ -5,6 +5,7 @@ public import Minimality.SevenTypes
 public import Minimality.FaceBridge
 public import Minimality.Classify
 public import Minimality.Type29Bridge
+public import Minimality.TripleTieObtuse
 
 /-!
 # Every nopert has at least 7 points
@@ -131,6 +132,46 @@ theorem not_two_quad_facets_vertex_of_isNopert (V : Finset ℝ³) (h : IsNopert 
   rcases hT with hT | hT
   · exact h.2 (Minimality.isRupert_of_facets_vertex_tieT V hgen Q1 Q2 h1V h2V h1f h2f v hint
       ⟨xa, hxa, hxav⟩ ⟨xb, hxb, hxbv⟩ hT hin hsol)
+  · exact h.2 (Minimality.isRupert_of_facets_vertex_par V hgen Q1 Q2 h1V h2V h1f h2f v hint
+      ⟨xa, hxa, hxav⟩ ⟨xb, hxb, hxbv⟩ hT hin)
+
+/-- **No two quadrilateral facets sharing one vertex, with a right or obtuse apex settled**
+(Corollary T1 of the triangle-shadow lemma, `FEWER-FACES-PROOFS.md` §7, with Theorems 24.5 and
+24.8 of §24; types 02, 07, 09, 14, 18, 20): as `not_two_quad_facets_vertex_of_isNopert`, with
+`Minimality.TriGenTieO` in place of `Minimality.TriGenTieT`.  In addition to everything that
+`TriGenTieT` allows, the triple tie of case (c) (the far vertices and the shared vertex at one
+depth along the line of the planes, both faces two-sided) is settled when the angle of the
+shadow triangle at the shared vertex is at least `π/2` (Theorem 24.8: the views of the face circle
+of one quadrilateral beside the view along its far edge have a unimodal rim with distinct
+depths and no persistent horizontal double normal, so the polyhedron is Rupert by the slide
+theorem 18.1).  The only position still excluded besides a parallel segment is the triple tie
+with both faces two-sided and all three angles of the shadow triangle acute or right
+(case (c) of Theorem 24.5 with acute T, or a right angle at a far vertex). -/
+theorem not_two_quad_facets_vertex_obtuse_of_isNopert (V : Finset ℝ³) (h : IsNopert V)
+    (hV : V.card = 7) (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V)
+    (h2V : Q2 ⊆ V) (h1c : Q1.card = 4) (h2c : Q2.card = 4) (h1f : Minimality.IsFacet V Q1)
+    (h2f : Minimality.IsFacet V Q2) (v : ℝ³) (hint : Q1 ∩ Q2 = {v})
+    (hT : Minimality.TriGenTieO V Q1 Q2 v ∨ Minimality.TriGenFarP V Q1 Q2 v) : False := by
+  classical
+  have hsol := (not_coplanar_iff_interior_convexHull_nonempty _).mp h.1
+  have hcov : Q1 ∪ Q2 = V := by
+    refine Finset.eq_of_subset_of_card_le (Finset.union_subset h1V h2V) ?_
+    rw [hV, Finset.card_union, hint, h1c, h2c, Finset.card_singleton]
+  have hv1 : v ∈ Q1 := (Finset.mem_inter.mp (hint ▸ Finset.mem_singleton_self v)).1
+  have hv2 : v ∈ Q2 := (Finset.mem_inter.mp (hint ▸ Finset.mem_singleton_self v)).2
+  obtain ⟨xa, hxa, hxav⟩ := Finset.exists_mem_ne (by omega : 1 < Q1.card) v
+  obtain ⟨xb, hxb, hxbv⟩ := Finset.exists_mem_ne (by omega : 1 < Q2.card) v
+  have hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧ ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ,
+      (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+      (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+      ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1 :=
+    ⟨xa, hxa, xb, hxb, hxav, hxbv, fun _ _ _ _ _ _ y hy hy1 hy2 => by
+      rw [← hcov, Finset.mem_union] at hy
+      exact absurd hy (by tauto)⟩
+  have hgen := Minimality.noThreeCollinear_of_not_isRupert hV hsol h.2
+  rcases hT with hT | hT
+  · exact h.2 (Minimality.isRupert_of_facets_vertex_tieO V hgen Q1 Q2 h1V h2V h1f h2f v hint
+      h1c h2c hcov hT hin hsol)
   · exact h.2 (Minimality.isRupert_of_facets_vertex_par V hgen Q1 Q2 h1V h2V h1f h2f v hint
       ⟨xa, hxa, hxav⟩ ⟨xb, hxb, hxbv⟩ hT hin)
 
@@ -292,18 +333,20 @@ theorem byGen7 {P Q R S T U W : Prop} (key : P → Q → R → S → T → U →
   byGen1 (fun h : P ∧ Q ∧ R ∧ S ∧ T ∧ U ∧ W =>
     key h.1 h.2.1 h.2.2.1 h.2.2.2.1 h.2.2.2.2.1 h.2.2.2.2.2.1 h.2.2.2.2.2.2) spec
 
-/-- Cor. T1 for a realized type: two quadrilateral faces `q1`, `q2` meeting only in `v`. -/
+/-- Cor. T1 for a realized type: two quadrilateral faces `q1`, `q2` meeting only in `v`, under
+general position `TriGenTieO` (the triple tie settled by Theorems 24.5 and 24.8, including a
+right or obtuse apex of the shadow triangle) or `TriGenFarP`. -/
 theorem quadPair {x : Fin 7 → ℝ³} (hx : Function.Injective x)
     (hN : IsNopert (Finset.univ.image x)) {fs : List (Finset (Fin 7))}
     (hR : Minimality.RealizesFaces x fs) (q1 q2 : Finset (Fin 7)) (v : Fin 7)
     (h1 : q1 ∈ fs) (h2 : q2 ∈ fs) (hc1 : q1.card = 4) (hc2 : q2.card = 4)
     (hint : q1 ∩ q2 = {v}) :
-    (Minimality.TriGenTieT (Finset.univ.image x) (q1.image x) (q2.image x) (x v) ∨
+    (Minimality.TriGenTieO (Finset.univ.image x) (q1.image x) (q2.image x) (x v) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (q1.image x) (q2.image x) (x v)) → False := by
   classical
   intro hT
   have hV : (Finset.univ.image x).card = 7 := by rw [Finset.card_image_of_injective _ hx]; simp
-  refine not_two_quad_facets_vertex_of_isNopert _ hN hV (q1.image x) (q2.image x)
+  refine not_two_quad_facets_vertex_obtuse_of_isNopert _ hN hV (q1.image x) (q2.image x)
     (Finset.image_subset_image (Finset.subset_univ _)) (Finset.image_subset_image (Finset.subset_univ _))
     (by rw [Finset.card_image_of_injective _ hx, hc1]) (by rw [Finset.card_image_of_injective _ hx, hc2])
     (Minimality.isFacet_of_realizesFaces hR h1) (Minimality.isFacet_of_realizesFaces hR h2) (x v) ?_ hT
