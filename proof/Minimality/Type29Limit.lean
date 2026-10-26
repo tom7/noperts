@@ -584,17 +584,21 @@ theorem isRupert_of_cert_seq29 (N : NF29 x)
   · exact isRupert_of_certL_seq29 N hvert hnd K hK v ε lab hq
   · exact isRupert_of_certL_seq29 N hvert hnd K hK v ε lab hq
 
-/-- **The approximating sequence** (§18.2, §28): a type-29 shape `x` of class K3a or K4a
-(`hcls`) with at most one tie at its named views is a limit of shapes `K_n`, each with a
+/-- **The approximating sequence with its parameters** (§18.2, §28): a type-29 shape `x` of class
+K3a or K4a (`hcls`) with at most one tie at its named views is a limit of shapes `K_n`, each with a
 certificate (`Cert29`) and with the tie of `x` (restored by a unimodular shear).  No polynomial
 genericity, no `Nodup`, no (G1): the `K_n` are off the special positions of the cover
-(`genPoly29`). -/
-theorem exists_certSeq29 (N : NF29 x) (htie : OneTieGlobal29 x)
+(`genPoly29`).  Moreover `K_n` has the normal form with parameters `θs n → θ(x)`, which carries the
+closed region facts of the certificates (`Ex29.facts`) to the limit. -/
+theorem exists_certSeq29_params (N : NF29 x) (htie : OneTieGlobal29 x)
     (hcls : (N.a2 < 0 ∧ 0 < N.b0 ∧ 0 < N.h0 * (1 - N.a2 - N.b2) - N.h2 * (1 - N.a0 - N.b0)) ∨
       (0 < N.a2 ∧ 0 < N.b0 ∧ N.h0 * (1 - N.a2 - N.b2) - N.h2 * (1 - N.a0 - N.b0) < 0)) :
-    ∃ K : ℕ → Fin 7 → ℝ³, (∀ m, Tendsto (fun n => K n m) atTop (𝓝 (x m))) ∧
+    ∃ (K : ℕ → Fin 7 → ℝ³) (θs : ℕ → Fin 8 → ℝ),
+      (∀ m, Tendsto (fun n => K n m) atTop (𝓝 (x m))) ∧
+      Tendsto θs atTop (𝓝 ![N.a0, N.b0, N.h0, N.a2, N.b2, N.h2, N.s, N.t]) ∧
       ∃ᶠ n in atTop, Cert29 (K n) ∧
-        ∀ w a b, TieInst29 x w a b → ⟪K n a - K n b, view29 (K n) w⟫ = 0 := by
+        (∀ w a b, TieInst29 x w a b → ⟪K n a - K n b, view29 (K n) w⟫ = 0) ∧
+        ∃ Nn : NF29 (K n), ![Nn.a0, Nn.b0, Nn.h0, Nn.a2, Nn.b2, Nn.h2, Nn.s, Nn.t] = θs n := by
   classical
   set θ₀ : Fin 8 → ℝ := ![N.a0, N.b0, N.h0, N.a2, N.b2, N.h2, N.s, N.t] with hθ₀
   have hx : x = nfShape29 N.o N.E₁ N.E₂ N.E₃ θ₀ := N.eq_nfShape29
@@ -693,12 +697,13 @@ theorem exists_certSeq29 (N : NF29 x) (htie : OneTieGlobal29 x)
     · filter_upwards [c3.eventually (lt_mem_nhds h3), c1.eventually (lt_mem_nhds h1),
         cv.eventually (gt_mem_nhds hv)] with n a b c
       exact Or.inr ⟨a, b, c⟩
-  refine ⟨K, hK, Eventually.frequently ?_⟩
+  refine ⟨K, θs, hK, hθs, Eventually.frequently ?_⟩
   filter_upwards [hineq, hcl, eventually_ties29 hK, hrest] with n hn hc hs hr
-  refine ⟨?_, fun w a b hw => by rw [hKY n]; exact hr w a b hw⟩
   have hD : det3 (R n N.E₁) (R n N.E₂) (R n N.E₃) ≠ 0 := by
     rw [hRdef]; simp only; rw [det3_restore (horth n)]; exact N.hD
   set Nn := NF29.ofParams (R n N.o) (R n N.E₁) (R n N.E₂) (R n N.E₃) (θs n) hD hn with hNn
+  refine ⟨?_, fun w a b hw => by rw [hKY n]; exact hr w a b hw, Nn,
+    by funext i; fin_cases i <;> rfl⟩
   have hg := hgen n
   rw [eval_genPoly29] at hg
   have hsubK : ∀ w a b, a ≠ b → view29 (K n) w ≠ 0 → ⟪K n a - K n b, view29 (K n) w⟫ = 0 →
@@ -711,6 +716,17 @@ theorem exists_certSeq29 (N : NF29 x) (htie : OneTieGlobal29 x)
   rcases hc with ⟨h3, h1, hv⟩ | ⟨h3, h1, hv⟩
   · exact Nn.cert29_K3a_all h3 h1 hv (Nn.k3Poly_of_gen hg) (Nn.k3C1Poly_of_gen hg) T29
   · exact Nn.cert29_K4a_all h3 h1 hv (Nn.k4Poly_of_gen hg) (Nn.k4C1Poly_of_gen hg) T29
+
+/-- **The approximating sequence** (§18.2, §28): `exists_certSeq29_params` without the
+parameters. -/
+theorem exists_certSeq29 (N : NF29 x) (htie : OneTieGlobal29 x)
+    (hcls : (N.a2 < 0 ∧ 0 < N.b0 ∧ 0 < N.h0 * (1 - N.a2 - N.b2) - N.h2 * (1 - N.a0 - N.b0)) ∨
+      (0 < N.a2 ∧ 0 < N.b0 ∧ N.h0 * (1 - N.a2 - N.b2) - N.h2 * (1 - N.a0 - N.b0) < 0)) :
+    ∃ K : ℕ → Fin 7 → ℝ³, (∀ m, Tendsto (fun n => K n m) atTop (𝓝 (x m))) ∧
+      ∃ᶠ n in atTop, Cert29 (K n) ∧
+        ∀ w a b, TieInst29 x w a b → ⟪K n a - K n b, view29 (K n) w⟫ = 0 := by
+  obtain ⟨K, θs, hK, -, hc⟩ := exists_certSeq29_params N htie hcls
+  exact ⟨K, hK, hc.mono fun n hn => ⟨hn.1, hn.2.1⟩⟩
 
 /-- **Type 29 outside the HDN set and codimension 2** (§18.2, §28, Theorem 21.22 and 21.11 with
 Theorem P).  A type-29 shape `x` (normal form `N`, in convex position `hvert`) of class K3a
