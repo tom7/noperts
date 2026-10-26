@@ -544,15 +544,17 @@ theorem ChainOKc.two_ends {Q : ℝ → ℝ → Prop} {z0 z0' : ℝ} {m m' : ℕ}
   · exact Or.inr h
   · exact absurd h (ne_of_gt hlt)
 
-/-- The far depths of the two faces leave room for a tilt: they are not all equal.  The three
+/-- The far depths of the two faces leave room for a tilt: they are not all equal.  The four
 ways the hypotheses of the frames guarantee it: all four depths different from the top-top and
-top-bottom comparisons, or exactly one face with a vertical far edge (its two ends differ), the
+top-bottom comparisons; exactly one face with a vertical far edge (its two ends differ), the
 other face's far end then free to tie with either of them (FEWER-FACES-PROOFS.md Proposition
-23.19 (1)). -/
+23.19 (1)); or both faces with a vertical far edge and not the rectangle (tops or bottoms
+differ; Proposition 23.19, last bullet). -/
 theorem hfar_of_sep {cz cz' dz dz' : ℝ} (t1 : cz' ≤ cz) (t2 : dz' ≤ dz)
-    (h : (cz ≠ dz ∧ cz ≠ dz') ∨ (cz' < cz ∧ dz' = dz) ∨ (cz' = cz ∧ dz' < dz)) :
+    (h : (cz ≠ dz ∧ cz ≠ dz') ∨ (cz' < cz ∧ dz' = dz) ∨ (cz' = cz ∧ dz' < dz) ∨
+      (cz' < cz ∧ dz' < dz ∧ (cz ≠ dz ∨ cz' ≠ dz'))) :
     dz' < cz ∨ cz' < dz := by
-  rcases h with ⟨-, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2⟩
+  rcases h with ⟨-, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2, -⟩
   · rcases lt_or_gt_of_ne h2 with h | h
     · right; linarith
     · left; exact h
@@ -562,6 +564,9 @@ theorem hfar_of_sep {cz cz' dz dz' : ℝ} (t1 : cz' ≤ cz) (t2 : dz' ≤ dz)
   · by_cases h : cz' < dz
     · right; exact h
     · left; linarith
+  · by_cases h : dz' < cz
+    · left; exact h
+    · right; linarith
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over a vertex, far companions allowed, from chains, with no unique-far-end
@@ -570,9 +575,12 @@ condition** (FEWER-FACES-PROOFS.md Proposition 24.12 and Proposition 23.19 (1)�
 vertical (`hcard`) and the far depths of the faces do not tie, except that a tie is allowed when
 exactly one face has a vertical far edge (`hsep`; Proposition 23.19 (1): the far edge then
 decides the sector, whatever the tied depth).  When both faces have a vertical far edge, the
-sector of the tilt is chosen by the depths of the two tops (which must differ, top against top
-and top against bottom): `s = 1` with the second face's top as middle vertex if it lies below
-the first face's top, else `s = -1` with the first face's top as middle vertex. -/
+four tilts are chosen by the depths: if the tops differ, `s = 1` with the second face's top as
+middle vertex when it lies below the first face's top, else `s = -1` with the first face's top
+as middle vertex; if the tops tie, the same with the bottoms (`s = 1`, the first face's bottom
+as middle vertex, when the second face's bottom is lower; else `s = -1`, the second face's
+bottom).  Only the full rectangle (tops and bottoms both tied) is excluded
+(Proposition 23.19, last bullet; `hsep`'s fourth alternative). -/
 theorem isRupert_vertex_frame_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ → ℝ → Prop)
     {z0 : ℝ}
     (hU1 : ∃ m ca cz, ChainOKc Q1 z0 1 m ca cz) (hL1 : ∃ m ca cz, ChainOKc Q1 z0 (-1) m ca cz)
@@ -584,7 +592,8 @@ theorem isRupert_vertex_frame_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q
     (hsep : ∀ m ca cz m' ca' cz' n cb dz n' cb' dz', ChainOKc Q1 z0 1 m ca cz →
       ChainOKc Q1 z0 (-1) m' ca' cz' → ChainOKc Q2 z0 1 n cb dz → ChainOKc Q2 z0 (-1) n' cb' dz' →
       (cz m ≠ dz n ∧ cz m ≠ dz' n') ∨ (cz' m' < cz m ∧ dz' n' = dz n) ∨
-        (cz' m' = cz m ∧ dz' n' < dz n))
+        (cz' m' = cz m ∧ dz' n' < dz n) ∨
+        (cz' m' < cz m ∧ dz' n' < dz n ∧ (cz m ≠ dz n ∨ cz' m' ≠ dz' n')))
     (V : Finset ℝ³)
     (hV1 : ∀ a z, Q1 a z → oblPt O r1 r2 a 0 z ∈ V) (hV2 : ∀ b z, Q2 b z → oblPt O r1 r2 0 b z ∈ V)
     (hVc : ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧
@@ -605,12 +614,21 @@ theorem isRupert_vertex_frame_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q
   obtain ⟨n1, cb1, dz1, L2⟩ := hL2
   obtain ⟨ea1, eb1, hlt1, hv1⟩ := U1.two_ends L1 hcard1 hc1 hne1
   obtain ⟨ea2, eb2, hlt2, hv2⟩ := U2.two_ends L2 hcard2 hc2 hne2
-  obtain ⟨hs1, -⟩ : cz0 m0 ≠ dz0 n0 ∧ cz0 m0 ≠ dz1 n1 := by
-    rcases hsep m0 ca0 cz0 m1 ca1 cz1 n0 cb0 dz0 n1 cb1 dz1 U1 L1 U2 L2 with h | h | h
-    · exact h
+  have hc : cz0 m0 < dz0 n0 ∨ dz0 n0 < cz0 m0 ∨ dz1 n1 < cz1 m1 ∨ cz1 m1 < dz1 n1 := by
+    rcases hsep m0 ca0 cz0 m1 ca1 cz1 n0 cb0 dz0 n1 cb1 dz1 U1 L1 U2 L2 with h | h | h | h
+    · rcases lt_or_gt_of_ne h.1 with h' | h'
+      · exact Or.inl h'
+      · exact Or.inr (Or.inl h')
     · exfalso; linarith [h.2, eb2, hlt2]
     · exfalso; linarith [h.1, eb1, hlt1]
-  rcases lt_or_gt_of_ne hs1 with h | h
+    · rcases h.2.2 with h' | h'
+      · rcases lt_or_gt_of_ne h' with h'' | h''
+        · exact Or.inl h''
+        · exact Or.inr (Or.inl h'')
+      · rcases lt_or_gt_of_ne h' with h'' | h''
+        · exact Or.inr (Or.inr (Or.inr h''))
+        · exact Or.inr (Or.inr (Or.inl h''))
+  rcases hc with h | h | h | h
   · -- the first face's top is below the second's: `s = -1`, the middle vertex the first top
     have hA0 := L1.far_pos
     have hB0 := U2.far_pos
@@ -659,6 +677,54 @@ theorem isRupert_vertex_frame_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q
       · right; right; refine ⟨ha, hb, ?_⟩
         have := hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
         rw [ea2]; exact this
+  · -- tops may tie, the second face's bottom is below the first's: `s = 1`, the middle vertex
+    -- the first face's bottom
+    have hA0 := U1.far_pos
+    have hB0 := L2.far_pos
+    refine vertex_core_tail1 O r1 r2 hρ Q1 Q2 1 (Or.inl rfl) U1 (by simpa using L2)
+      (α := 1) (β := 2 * cb1 n1 / ca0 m0) one_pos (by positivity) ?_ (zT := cz1 m1)
+      (by rw [← ea1]; exact L1.mem m1 le_rfl) ?_ (by rw [eb1]; linarith) (by linarith) hap1 hap2
+      hpos1 hpos2 V hV1 hV2 ?_
+    · rw [mul_div_assoc', mul_comm (cb1 n1) 1, one_mul, mul_comm (ca0 m0) (2 * cb1 n1),
+        mul_div_assoc, div_self hA0.ne']
+      linarith
+    · intro z hz
+      rcases hv1 z hz with h' | h'
+      · exact Or.inl h'
+      · exact Or.inr (by rw [eb1]; exact h')
+    · intro y hy
+      obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
+      refine ⟨a, b, z, rfl, ?_⟩
+      rcases hc with h' | h' | ⟨ha, hb, hin⟩
+      · exact Or.inl h'
+      · exact Or.inr (Or.inl h')
+      · right; right; refine ⟨ha, hb, ?_⟩
+        have := hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
+        rw [ea2]; exact this
+  · -- bottoms: the first face's bottom is below the second's: `s = -1`, the middle vertex the
+    -- second face's bottom
+    have hA0 := L1.far_pos
+    have hB0 := U2.far_pos
+    refine vertex_core_tail2 O r1 r2 hρ Q1 Q2 (-1) (Or.inr rfl) L1 (by simpa using U2)
+      (α := 2 * ca1 m1 / cb0 n0) (β := 1) (by positivity) one_pos ?_ (zT := dz1 n1)
+      (by rw [← ea2]; exact L2.mem n1 le_rfl) ?_ (by linarith) (by rw [eb2]; linarith) hap1 hap2
+      hpos1 hpos2 V hV1 hV2 ?_
+    · rw [mul_div_assoc', mul_one, mul_comm (cb0 n0) (2 * ca1 m1), mul_div_assoc,
+        div_self hB0.ne']
+      linarith
+    · intro z hz
+      rcases hv2 z hz with h' | h'
+      · exact Or.inl h'
+      · exact Or.inr (by rw [eb2]; exact h')
+    · intro y hy
+      obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
+      refine ⟨a, b, z, rfl, ?_⟩
+      rcases hc with h' | h' | ⟨ha, hb, hin⟩
+      · exact Or.inl h'
+      · exact Or.inr (Or.inl h')
+      · right; right; refine ⟨ha, hb, ?_⟩
+        have := hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
+        rw [ea1]; exact this
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over an edge, far companions allowed, from chains, with no unique-far-end
@@ -676,7 +742,8 @@ theorem isRupert_edge_frame_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 
     (hsep : ∀ m ca cz m' ca' cz' n cb dz n' cb' dz', ChainOKc Q1 zx' 1 m ca cz →
       ChainOKc Q1 zx (-1) m' ca' cz' → ChainOKc Q2 zx' 1 n cb dz → ChainOKc Q2 zx (-1) n' cb' dz' →
       (cz m ≠ dz n ∧ cz m ≠ dz' n') ∨ (cz' m' < cz m ∧ dz' n' = dz n) ∨
-        (cz' m' = cz m ∧ dz' n' < dz n))
+        (cz' m' = cz m ∧ dz' n' < dz n) ∨
+        (cz' m' < cz m ∧ dz' n' < dz n ∧ (cz m ≠ dz n ∨ cz' m' ≠ dz' n')))
     (V : Finset ℝ³)
     (hV1 : ∀ a z, Q1 a z → oblPt O r1 r2 a 0 z ∈ V) (hV2 : ∀ b z, Q2 b z → oblPt O r1 r2 0 b z ∈ V)
     (hVc : ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧
@@ -697,12 +764,21 @@ theorem isRupert_edge_frame_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 
   obtain ⟨n1, cb1, dz1, L2⟩ := hL2
   obtain ⟨ea1, eb1, hlt1, hv1⟩ := U1.two_ends L1 hcard1 hc1 hne1
   obtain ⟨ea2, eb2, hlt2, hv2⟩ := U2.two_ends L2 hcard2 hc2 hne2
-  obtain ⟨hs1, -⟩ : cz0 m0 ≠ dz0 n0 ∧ cz0 m0 ≠ dz1 n1 := by
-    rcases hsep m0 ca0 cz0 m1 ca1 cz1 n0 cb0 dz0 n1 cb1 dz1 U1 L1 U2 L2 with h | h | h
-    · exact h
+  have hc : cz0 m0 < dz0 n0 ∨ dz0 n0 < cz0 m0 ∨ dz1 n1 < cz1 m1 ∨ cz1 m1 < dz1 n1 := by
+    rcases hsep m0 ca0 cz0 m1 ca1 cz1 n0 cb0 dz0 n1 cb1 dz1 U1 L1 U2 L2 with h | h | h | h
+    · rcases lt_or_gt_of_ne h.1 with h' | h'
+      · exact Or.inl h'
+      · exact Or.inr (Or.inl h')
     · exfalso; linarith [h.2, eb2, hlt2]
     · exfalso; linarith [h.1, eb1, hlt1]
-  rcases lt_or_gt_of_ne hs1 with h | h
+    · rcases h.2.2 with h' | h'
+      · rcases lt_or_gt_of_ne h' with h'' | h''
+        · exact Or.inl h''
+        · exact Or.inr (Or.inl h'')
+      · rcases lt_or_gt_of_ne h' with h'' | h''
+        · exact Or.inr (Or.inr (Or.inr h''))
+        · exact Or.inr (Or.inr (Or.inl h''))
+  rcases hc with h | h | h | h
   · have hA0 := L1.far_pos
     have hB0 := U2.far_pos
     refine edge_core_tail1 O r1 r2 hρ Q1 Q2 (-1) (Or.inr rfl) (by linarith) L1 (by simpa using U2)
@@ -750,6 +826,51 @@ theorem isRupert_edge_frame_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 
       · right; right; refine ⟨ha, hb, ?_⟩
         have := hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
         rw [ea2]; exact this
+  · have hA0 := U1.far_pos
+    have hB0 := L2.far_pos
+    refine edge_core_tail1 O r1 r2 hρ Q1 Q2 1 (Or.inl rfl) (by linarith) U1 (by simpa using L2)
+      (α := 1) (β := 2 * cb1 n1 / ca0 m0) one_pos (by positivity) ?_ (zT := cz1 m1)
+      (by rw [← ea1]; exact L1.mem m1 le_rfl) ?_ (by rw [eb1]; linarith) (by linarith)
+      (fun z hz => (hap1 z hz).symm) (fun z hz => (hap2 z hz).symm) hQ1x hQ2x' hpos1 hpos2 V hV1
+      hV2 ?_
+    · rw [mul_div_assoc', mul_comm (cb1 n1) 1, one_mul, mul_comm (ca0 m0) (2 * cb1 n1),
+        mul_div_assoc, div_self hA0.ne']
+      linarith
+    · intro z hz
+      rcases hv1 z hz with h' | h'
+      · exact Or.inl h'
+      · exact Or.inr (by rw [eb1]; exact h')
+    · intro y hy
+      obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
+      refine ⟨a, b, z, rfl, ?_⟩
+      rcases hc with h' | h' | ⟨ha, hb, hin⟩
+      · exact Or.inl h'
+      · exact Or.inr (Or.inl h')
+      · right; right; refine ⟨ha, hb, ?_⟩
+        have := hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
+        rw [ea2]; exact this
+  · have hA0 := L1.far_pos
+    have hB0 := U2.far_pos
+    refine edge_core_tail2 O r1 r2 hρ Q1 Q2 (-1) (Or.inr rfl) (by linarith) L1 (by simpa using U2)
+      (α := 2 * ca1 m1 / cb0 n0) (β := 1) (by positivity) one_pos ?_ (zT := dz1 n1)
+      (by rw [← ea2]; exact L2.mem n1 le_rfl) ?_ (by linarith) (by rw [eb2]; linarith) hap1 hap2
+      hQ1x' hQ2x hpos1 hpos2 V hV1 hV2 ?_
+    · rw [mul_div_assoc', mul_one, mul_comm (cb0 n0) (2 * ca1 m1), mul_div_assoc,
+        div_self hB0.ne']
+      linarith
+    · intro z hz
+      rcases hv2 z hz with h' | h'
+      · exact Or.inl h'
+      · exact Or.inr (by rw [eb2]; exact h')
+    · intro y hy
+      obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
+      refine ⟨a, b, z, rfl, ?_⟩
+      rcases hc with h' | h' | ⟨ha, hb, hin⟩
+      · exact Or.inl h'
+      · exact Or.inr (Or.inl h')
+      · right; right; refine ⟨ha, hb, ?_⟩
+        have := hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
+        rw [ea1]; exact this
 
 end Minimality
 

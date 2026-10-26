@@ -19,16 +19,25 @@ open Finset
 open scoped RealInnerProductSpace
 
 /-- **The far-depth condition of Lemma T with parallel segments** (FEWER-FACES-PROOFS.md
-Proposition 23.19 (1), Proposition 24.12).  `far1` (`far2`) selects the far points of the first
+Proposition 23.19, Proposition 24.12).  `far1` (`far2`) selects the far points of the first
 (second) face, `d` is the depth along the view line.  A far end of one face may tie in depth with
-a far end of the other only when exactly one of the two faces has a vertical far edge (a second
-far point at another depth): by §7's strengthening of Lemma T a unimodal mixed tilt then exists
-for all depths, the sector chosen by comparing the depth of the tied end with the far edge.
-When neither face has a second far point, or both have one, the ends must not tie. -/
+a far end of the other in three ways:
+- exactly one of the two faces has a vertical far edge (a second far point at another depth): by
+  §7's strengthening of Lemma T a unimodal mixed tilt then exists for all depths, the sector
+  chosen by comparing the depth of the tied end with the far edge (Proposition 23.19 (1));
+- both faces have a vertical far edge, but the tie is single: not every far end of one face ties
+  with a far end of the other, i.e. the far depths do not form the *rectangle*
+  `z(ya) = z(yb), z(ya′) = z(yb′)` (Proposition 23.19, last bullet).  Then the tops differ or
+  the bottoms differ, and one of the four sectors of `isRupert_vertex_frame_par'` works.
+When neither face has a second far point, the ends must not tie.  (The two other far ends of
+the third conjunct are required to differ as points, as for the tied pair.) -/
 def FarDepthOK (Q1 Q2 : Finset ℝ³) (far1 far2 : ℝ³ → Prop) (d : ℝ³ → ℝ) : Prop :=
   ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → far1 p → far2 q → d p = d q →
     ((∃ p' ∈ Q1, far1 p' ∧ d p' ≠ d p) ∧ (∀ q' ∈ Q2, far2 q' → d q' = d q)) ∨
-    ((∀ p' ∈ Q1, far1 p' → d p' = d p) ∧ (∃ q' ∈ Q2, far2 q' ∧ d q' ≠ d q))
+    ((∀ p' ∈ Q1, far1 p' → d p' = d p) ∧ (∃ q' ∈ Q2, far2 q' ∧ d q' ≠ d q)) ∨
+    ((∃ p' ∈ Q1, far1 p' ∧ d p' ≠ d p) ∧ (∃ q' ∈ Q2, far2 q' ∧ d q' ≠ d q) ∧
+      ∀ p' ∈ Q1, far1 p' → d p' ≠ d p → ∀ q' ∈ Q2, far2 q' → d q' ≠ d q → p' ≠ q' →
+        d p' ≠ d q')
 
 /-- Distinct far depths give `FarDepthOK` (no tie to discuss). -/
 theorem FarDepthOK.of_ne {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {d : ℝ³ → ℝ}
@@ -40,9 +49,11 @@ theorem FarDepthOK.of_ne {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {d 
 theorem FarDepthOK.symm {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {d : ℝ³ → ℝ}
     (h : FarDepthOK Q1 Q2 far1 far2 d) : FarDepthOK Q2 Q1 far2 far1 d := by
   intro q hq p hp hqp h2 h1 hd
-  rcases h p hp q hq (Ne.symm hqp) h1 h2 hd.symm with ⟨a, b⟩ | ⟨a, b⟩
-  · exact Or.inr ⟨b, a⟩
+  rcases h p hp q hq (Ne.symm hqp) h1 h2 hd.symm with ⟨a, b⟩ | ⟨a, b⟩ | ⟨a, b, c⟩
+  · exact Or.inr (Or.inl ⟨b, a⟩)
   · exact Or.inl ⟨b, a⟩
+  · exact Or.inr (Or.inr ⟨b, a, fun q' hq' f dq p' hp' f' dp ne e =>
+      c p' hp' f' dp q' hq' f dq (Ne.symm ne) e.symm⟩)
 
 /-- `FarDepthOK` only depends on the far predicates on the faces. -/
 theorem FarDepthOK.congr {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ → Prop}
@@ -50,9 +61,13 @@ theorem FarDepthOK.congr {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ �
     (h2 : ∀ q ∈ Q2, far2 q ↔ far2' q) : FarDepthOK Q1 Q2 far1' far2' d := by
   intro p hp q hq hpq f1 f2 hd
   rcases h p hp q hq hpq ((h1 p hp).mpr f1) ((h2 q hq).mpr f2) hd with
-    ⟨⟨p', hp', f', ne⟩, k⟩ | ⟨k, ⟨q', hq', f', ne⟩⟩
+    ⟨⟨p', hp', f', ne⟩, k⟩ | ⟨k, ⟨q', hq', f', ne⟩⟩ | ⟨⟨p', hp', f', ne⟩, ⟨q', hq', g', ne'⟩, k⟩
   · exact Or.inl ⟨⟨p', hp', (h1 p' hp').mp f', ne⟩, fun q' hq' f => k q' hq' ((h2 q' hq').mpr f)⟩
-  · exact Or.inr ⟨fun p' hp' f => k p' hp' ((h1 p' hp').mpr f), ⟨q', hq', (h2 q' hq').mp f', ne⟩⟩
+  · exact Or.inr (Or.inl ⟨fun p' hp' f => k p' hp' ((h1 p' hp').mpr f),
+      ⟨q', hq', (h2 q' hq').mp f', ne⟩⟩)
+  · exact Or.inr (Or.inr ⟨⟨p', hp', (h1 p' hp').mp f', ne⟩, ⟨q', hq', (h2 q' hq').mp g', ne'⟩,
+      fun p'' hp'' f'' dp q'' hq'' g'' dq nq =>
+        k p'' hp'' ((h1 p'' hp'').mpr f'') dp q'' hq'' ((h2 q'' hq'').mpr g'') dq nq⟩)
 
 /-- `FarDepthOK` for the opposite depth (the view line reversed). -/
 theorem FarDepthOK.neg_depth {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {d d' : ℝ³ → ℝ}
@@ -74,23 +89,41 @@ theorem FarDepthOK.map {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ →
   obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp hx
   obtain ⟨q, hq, rfl⟩ := Finset.mem_image.mp hy
   rw [hd1 p hp, hd2 q hq] at hd
+  have dne1 : ∀ p' ∈ Q1, d p' ≠ d p → d' (g p') ≠ d' (g p) := fun p' hp' ne e => by
+    rw [hd1 p' hp', hd1 p hp] at e; exact ne (mul_left_cancel₀ hc e)
+  have dne2 : ∀ q' ∈ Q2, d q' ≠ d q → d' (g q') ≠ d' (g q) := fun q' hq' ne e => by
+    rw [hd2 q' hq', hd2 q hq] at e; exact ne (mul_left_cancel₀ hc e)
   rcases h p hp q hq (fun e => hxy (by rw [e])) ((hf1 p hp).mp f1) ((hf2 q hq).mp f2)
-      (mul_left_cancel₀ hc hd) with ⟨⟨p', hp', f', ne⟩, k⟩ | ⟨k, ⟨q', hq', f', ne⟩⟩
+      (mul_left_cancel₀ hc hd) with ⟨⟨p', hp', f', ne⟩, k⟩ | ⟨k, ⟨q', hq', f', ne⟩⟩ |
+      ⟨⟨p', hp', f', ne⟩, ⟨q', hq', f'', ne'⟩, k⟩
   · refine Or.inl ⟨⟨g p', Finset.mem_image_of_mem g hp', (hf1 p' hp').mpr f', ?_⟩, ?_⟩
     · rw [hd1 p' hp', hd1 p hp]; exact fun e => ne (mul_left_cancel₀ hc e)
     · intro y' hy' f
       obtain ⟨q', hq', rfl⟩ := Finset.mem_image.mp hy'
       rw [hd2 q' hq', hd2 q hq, k q' hq' ((hf2 q' hq').mp f)]
-  · refine Or.inr ⟨?_, ⟨g q', Finset.mem_image_of_mem g hq', (hf2 q' hq').mpr f', ?_⟩⟩
+  · refine Or.inr (Or.inl ⟨?_, ⟨g q', Finset.mem_image_of_mem g hq', (hf2 q' hq').mpr f', ?_⟩⟩)
     · intro x' hx' f
       obtain ⟨p', hp', rfl⟩ := Finset.mem_image.mp hx'
       rw [hd1 p' hp', hd1 p hp, k p' hp' ((hf1 p' hp').mp f)]
     · rw [hd2 q' hq', hd2 q hq]; exact fun e => ne (mul_left_cancel₀ hc e)
+  · refine Or.inr (Or.inr ⟨⟨g p', Finset.mem_image_of_mem g hp', (hf1 p' hp').mpr f',
+      dne1 p' hp' ne⟩, ⟨g q', Finset.mem_image_of_mem g hq', (hf2 q' hq').mpr f'',
+      dne2 q' hq' ne'⟩, ?_⟩)
+    intro x' hx' f dx y' hy' g' dy nxy
+    obtain ⟨p'', hp'', rfl⟩ := Finset.mem_image.mp hx'
+    obtain ⟨q'', hq'', rfl⟩ := Finset.mem_image.mp hy'
+    rw [hd1 p'' hp'', hd2 q'' hq'']
+    rw [hd1 p'' hp'', hd1 p hp] at dx
+    rw [hd2 q'' hq'', hd2 q hq] at dy
+    exact fun e => k p'' hp'' ((hf1 p'' hp'').mp f) (fun e' => dx (by rw [e']))
+      q'' hq'' ((hf2 q'' hq'').mp g') (fun e' => dy (by rw [e']))
+      (fun e' => nxy (by rw [e'])) (mul_left_cancel₀ hc e)
 
 /-- **From `FarDepthOK` to the chain hypothesis of the frames.**  The tops and bottoms
-`cz, cz'` (`dz, dz'`) of the far ends of the first (second) face are not all equal, in the three
-ways of `hfar_of_sep`: all tops different from both ends of the other face, or exactly one face
-with a vertical far edge. -/
+`cz, cz'` (`dz, dz'`) of the far ends of the first (second) face satisfy the four alternatives of
+`hfar_of_sep`: all tops different from both ends of the other face; exactly one face with a
+vertical far edge; or both with a vertical far edge, and not the rectangle (tops or bottoms
+differ). -/
 theorem sep_of_farDepth {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop}
     (hT : FarDepthOK Q1 Q2 far1 far2 (fun p => p 2))
     (hpq : ∀ p ∈ Q1, ∀ q ∈ Q2, far1 p → p ≠ q) {cz cz' dz dz' : ℝ} {pU pL qU qL : ℝ³}
@@ -99,37 +132,61 @@ theorem sep_of_farDepth {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop}
     (gL : far2 qL) (wL : qL 2 = dz')
     (e1 : ∀ p' ∈ Q1, far1 p' → cz' ≤ p' 2 ∧ p' 2 ≤ cz)
     (e2 : ∀ q' ∈ Q2, far2 q' → dz' ≤ q' 2 ∧ q' 2 ≤ dz) :
-    (cz ≠ dz ∧ cz ≠ dz') ∨ (cz' < cz ∧ dz' = dz) ∨ (cz' = cz ∧ dz' < dz) := by
+    (cz ≠ dz ∧ cz ≠ dz') ∨ (cz' < cz ∧ dz' = dz) ∨ (cz' = cz ∧ dz' < dz) ∨
+      (cz' < cz ∧ dz' < dz ∧ (cz ≠ dz ∨ cz' ≠ dz')) := by
+  -- the tied pair is `(pU, q)`, `q` an end of the second face
   have key : ∀ q ∈ Q2, far2 q → (q 2 = dz ∨ q 2 = dz') → pU 2 = q 2 →
-      (cz' < cz ∧ dz' = dz) ∨ (cz' = cz ∧ dz' < dz) := by
+      (cz' < cz ∧ dz' = dz) ∨ (cz' = cz ∧ dz' < dz) ∨
+        (cz' < cz ∧ dz' < dz ∧ (q 2 = dz → cz' ≠ dz')) := by
     intro q hq fq hq2 h
     rcases hT pU hpU q hq (hpq pU hpU q hq fU) fU fq h with
-      ⟨⟨p', hp', f', ne⟩, hall⟩ | ⟨hall, ⟨q', hq', f', ne⟩⟩
+      ⟨⟨p', hp', f', ne⟩, hall⟩ | ⟨hall, ⟨q', hq', f', ne⟩⟩ |
+      ⟨⟨p', hp', f', ne⟩, ⟨q', hq', f'', ne'⟩, hboth⟩
     · simp only at ne hall
       left
       obtain ⟨b1, b2⟩ := e1 p' hp' f'
       refine ⟨lt_of_le_of_lt b1 (lt_of_le_of_ne b2 (by rwa [zU] at ne)), ?_⟩
       rw [← wL, ← wU, hall qL hqL gL, hall qU hqU gU]
     · simp only at ne hall
-      right
+      right; left
       obtain ⟨b1, b2⟩ := e2 q' hq' f'
       refine ⟨by rw [← zL, ← zU]; exact hall pL hpL fL, ?_⟩
       rcases hq2 with h2 | h2
       · exact lt_of_le_of_lt b1 (lt_of_le_of_ne b2 (by rwa [h2] at ne))
       · exact lt_of_lt_of_le (lt_of_le_of_ne b1 (fun e => ne (by rw [← e, h2]))) b2
+    · simp only at ne ne' hboth
+      right; right
+      obtain ⟨b1, b2⟩ := e1 p' hp' f'
+      obtain ⟨c1, c2⟩ := e2 q' hq' f''
+      have hlt1 : cz' < cz := lt_of_le_of_lt b1 (lt_of_le_of_ne b2 (by rwa [zU] at ne))
+      have hlt2 : dz' < dz := by
+        rcases hq2 with h2 | h2
+        · exact lt_of_le_of_lt c1 (lt_of_le_of_ne c2 (by rwa [h2] at ne'))
+        · exact lt_of_lt_of_le (lt_of_le_of_ne c1 (fun e => ne' (by rw [← e, h2]))) c2
+      refine ⟨hlt1, hlt2, fun h2 => ?_⟩
+      have := hboth pL hpL fL (by rw [zL, zU]; exact hlt1.ne) qL hqL gL
+        (by rw [wL, h2]; exact hlt2.ne) (fun e => ?_)
+      · rw [zL, wL] at this; exact this
+      · exact hpq pL hpL qL hqL fL e
   by_cases h1 : cz = dz
-  · right; exact key qU hqU gU (Or.inl wU) (by rw [zU, wU, h1])
+  · rcases key qU hqU gU (Or.inl wU) (by rw [zU, wU, h1]) with h | h | ⟨a, b, c⟩
+    · exact Or.inr (Or.inl h)
+    · exact Or.inr (Or.inr (Or.inl h))
+    · exact Or.inr (Or.inr (Or.inr ⟨a, b, Or.inr (c wU)⟩))
   by_cases h2 : cz = dz'
-  · right; exact key qL hqL gL (Or.inr wL) (by rw [zU, wL, h2])
+  · rcases key qL hqL gL (Or.inr wL) (by rw [zU, wL, h2]) with h | h | ⟨a, b, c⟩
+    · exact Or.inr (Or.inl h)
+    · exact Or.inr (Or.inr (Or.inl h))
+    · exact Or.inr (Or.inr (Or.inr ⟨a, b, Or.inl h1⟩))
   left; exact ⟨h1, h2⟩
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over a vertex in coordinates, segments parallel to the view
-line allowed, with no condition on the far ends but distinct depths.** As
+line allowed, with the far-depth condition `FarDepthOK`.** As
 `isRupert_vertex_coords` without the injectivity of `(a, b)` (two vertices may lie on one line
 parallel to the view, anywhere on a face).  When both faces have a vertical far edge the tilt
-sector is chosen by the depths of the far ends (`isRupert_vertex_frame_par'`,
-FEWER-FACES-PROOFS.md Proposition 24.12). -/
+sector is chosen by the depths of the far ends, tops or bottoms (`isRupert_vertex_frame_par'`,
+FEWER-FACES-PROOFS.md Proposition 23.19); only the full rectangle is excluded. -/
 theorem isRupert_vertex_coords_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V Q1 Q2 : Finset ℝ³)
     (v : ℝ³) (a b : ℝ³ → ℝ) (hy : ∀ p ∈ V, p = oblPt O r1 r2 (a p) (b p) (p 2))
     (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hint : Q1 ∩ Q2 = {v})
@@ -669,9 +726,11 @@ vertical far edge** (`FarDepthOK`).  The far ends of the two faces (the points o
 the other's functional is least) have distinct depths along the line, except that a tie is
 allowed when exactly one of the two faces has a second far point (a segment inside it parallel to
 the line, at the far end): FEWER-FACES-PROOFS.md Proposition 23.19 (1), by §7's strengthening of
-Lemma T, whose sector is chosen by comparing the tied depth with the far edge.  The shapes in
-which both faces have a vertical far edge (Proposition 24.12) still need distinct tops.  The
-earlier versions asked distinct depths throughout (`TriGenFarPD`) and in addition a unique far
+Lemma T, whose sector is chosen by comparing the tied depth with the far edge.  When both faces
+have a vertical far edge, every tie is allowed except the full rectangle (tops tied and bottoms
+tied, Proposition 23.19, last bullet; the rectangle itself is Proposition 24.12, not yet
+formalized).  The earlier versions asked distinct depths throughout (`TriGenFarPD`) and in
+addition a unique far
 end on one face (`TriGenFarPU`). -/
 def TriGenFarP (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
   ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
@@ -1396,8 +1455,9 @@ def EdgeFarPD (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) : Prop :=
 of far depths when exactly one face has a vertical far edge** (`FarDepthOK`; see `TriGenFarP`).
 Far depths along the edge are distinct, except that a tie is allowed when exactly one of the two
 faces has a second far point (a segment inside it parallel to the edge): FEWER-FACES-PROOFS.md
-Proposition 23.19 (1).  Both faces with a vertical far edge (Proposition 24.12) still need
-distinct tops.  The earlier versions asked distinct depths throughout (`EdgeFarPD`) and in
+Proposition 23.19 (1).  When both faces have a vertical far edge, every tie is allowed except
+the full rectangle (tops tied and bottoms tied; Proposition 23.19, last bullet; the rectangle
+is open on paper at edge views).  The earlier versions asked distinct depths throughout (`EdgeFarPD`) and in
 addition a unique far end on one face (`EdgeFarPU`). -/
 def EdgeFarP (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) : Prop :=
   ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →

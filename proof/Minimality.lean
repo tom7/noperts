@@ -105,8 +105,9 @@ vertices all on one side of the tied depth) or the shadow triangle obtuse at a f
 vertex; weaker than `Minimality.TriGenTieR` and `Minimality.TriGenFar`), or
 `Minimality.TriGenFarP` (segments parallel to it allowed, the far vertices at
 different depths, except that a tie is allowed when exactly one face has a vertical far edge
-(`Minimality.FarDepthOK`, Proposition 23.19 (1)); when both faces have a vertical far edge the
-tilt sector is chosen by the depths of the far ends, `isRupert_vertex_frame_par'`). Besides a parallel segment, the
+(`Minimality.FarDepthOK`, Proposition 23.19 (1)); when both faces have a vertical far edge,
+any tie is allowed except the full rectangle (tops tied and bottoms tied), the tilt sector being
+chosen by the depths of the tops, else of the bottoms, `isRupert_vertex_frame_par'`). Besides a parallel segment, the
 only position excluded is the triple tie with both faces two-sided and both far
 angles of the shadow triangle acute or right (case (c) of Theorem 24.5). -/
 theorem not_two_quad_facets_vertex_of_isNopert (V : Finset ℝ³) (h : IsNopert V)
