@@ -6,6 +6,7 @@ public import Minimality.FaceBridge
 public import Minimality.Classify
 public import Minimality.Type29Bridge
 public import Minimality.TripleTieObtuse
+public import Minimality.TripleTieAdjacent
 
 /-!
 # Every nopert has at least 7 points
@@ -355,6 +356,34 @@ theorem quadPair {x : Fin 7 → ℝ³} (hx : Function.Injective x)
     (Minimality.isFacet_of_realizesFaces hR h1) (Minimality.isFacet_of_realizesFaces hR h2) (x v) ?_ hT
   rw [← Finset.image_inter _ _ hx, hint, Finset.image_singleton]
 
+/-- Cor. T1 for the types 07 and 14 under the weaker general position `TriGenPar` (no segment
+parallel to the line of the two planes) or `TriGenFarP`: case (c) of the triple tie does not occur
+at the quadrilaterals `0256`, `1234` of type 07 (`Minimality.triGenTieO_type07`) and `0235`,
+`1456` of type 14 (`Minimality.triGenTieO_type14`), by Lemma 23.0 (a) of
+`FEWER-FACES-PROOFS.md`, so `TriGenPar` gives `TriGenTieO`. -/
+theorem quadPairPar07 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
+    (hN : IsNopert (Finset.univ.image x)) {fs : List (Finset (Fin 7))}
+    (hfs : fs = Minimality.sevenTypeFaces 6) (hR : Minimality.RealizesFaces x fs) :
+    (Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 5, 6} : Finset (Fin 7)).image x)
+      (({1, 2, 3, 4} : Finset (Fin 7)).image x) (x 2) ∨
+    Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 5, 6} : Finset (Fin 7)).image x)
+      (({1, 2, 3, 4} : Finset (Fin 7)).image x) (x 2)) → False := by
+  subst hfs
+  exact fun h => quadPair hx hN hR {0, 2, 5, 6} {1, 2, 3, 4} 2 (by decide) (by decide)
+    (by decide) (by decide) (by decide) (h.imp (Minimality.triGenTieO_type07 hx hR) id)
+
+/-- Type 14 of `quadPairPar07`: the quadrilaterals `0235`, `1456` at vertex `5`. -/
+theorem quadPairPar14 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
+    (hN : IsNopert (Finset.univ.image x)) {fs : List (Finset (Fin 7))}
+    (hfs : fs = Minimality.sevenTypeFaces 13) (hR : Minimality.RealizesFaces x fs) :
+    (Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
+      (({1, 4, 5, 6} : Finset (Fin 7)).image x) (x 5) ∨
+    Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
+      (({1, 4, 5, 6} : Finset (Fin 7)).image x) (x 5)) → False := by
+  subst hfs
+  exact fun h => quadPair hx hN hR {0, 2, 3, 5} {1, 4, 5, 6} 5 (by decide) (by decide)
+    (by decide) (by decide) (by decide) (h.imp (Minimality.triGenTieO_type14 hx hR) id)
+
 /-- Theorem B (`not_four_quad_facets_of_isNopert`) for a realized type with four quadrilateral
 faces: in `Minimality.GenPos` the points are not a nopert. -/
 theorem fourQuad {x : Fin 7 → ℝ³} (hx : Function.Injective x)
@@ -458,10 +487,10 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     exact byGen2 (not_type05_of_isNopert_sv x hN hx fA fB fG fK fH hfA hfB hfG hfK hfH)
       (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
   · exact big {1, 2, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 06: Theorem A
-  · -- type 07: Cor. T1 at the quadrilaterals 0256, 1234 (sharing vertex 2); general position
-    -- asked, the special positions are open in Lean
-    exact byGen1 (quadPair hx hN hR {0, 2, 5, 6} {1, 2, 3, 4} 2 (by decide) (by decide) (by decide) (by decide)
-      (by decide)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
+  · -- type 07: Cor. T1 at the quadrilaterals 0256, 1234 (sharing vertex 2); case (c) of the
+    -- triple tie does not occur (Lemma 23.0 (a)), so only `TriGenPar` (no segment parallel to the
+    -- line of the two planes) or `TriGenFarP` is asked; the special positions are open in Lean
+    exact byGen1 (quadPairPar07 hx hN rfl hR) (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 08: `not_type08_of_isNopert'`; its general position (2 hypotheses) is asked, the special
     -- positions are open in Lean
     obtain ⟨fA, hfA⟩ := hR {0, 1, 2, 3} (by decide)
@@ -503,10 +532,10 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fG, hfG⟩ := hR {1, 2, 6} (by decide)
     exact byGen2 (not_type13_of_isNopert_sv x hN hx fA fB fD fG hfA hfB hfD hfG)
       (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
-  · -- type 14: Cor. T1 at the quadrilaterals 0235, 1456 (sharing vertex 5); general position
-    -- asked, the special positions are open in Lean
-    exact byGen1 (quadPair hx hN hR {0, 2, 3, 5} {1, 4, 5, 6} 5 (by decide) (by decide) (by decide) (by decide)
-      (by decide)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
+  · -- type 14: Cor. T1 at the quadrilaterals 0235, 1456 (sharing vertex 5); case (c) of the
+    -- triple tie does not occur (Lemma 23.0 (a)), so only `TriGenPar` or `TriGenFarP` is asked;
+    -- the special positions are open in Lean
+    exact byGen1 (quadPairPar14 hx hN rfl hR) (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
   · exact big {0, 1, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 15: Theorem A
   · -- type 16: `not_type16_of_isNopert_codim2`; its general position (5 hypotheses) is asked, the special
     -- positions are open in Lean
