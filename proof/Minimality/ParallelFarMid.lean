@@ -1,6 +1,7 @@
 module
 
 public import Minimality.ParallelFar
+public import Minimality.ParallelFarNM
 public import Minimality.TriShadowMid
 public import Minimality.TriShadowMidP
 public import Minimality.TriShadow2Mid
@@ -176,26 +177,6 @@ theorem vertex_core_mid (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ 
   · exact isRupert_triShadow_midP O r1 r2 hρ C1.one_le C2.one_le s hs hα hβ ca cz cb dz c10.1
       c20.1 (by rw [c10.2, c20.2]) C1.inc C2.inc V aM bM zM hMV hM1 hM2
       (fun l hl => hV1 _ _ (C1.mem l hl)) (fun l hl => hV2 _ _ (C2.mem l hl)) hVc' hMQ hPrev
-
-/-- Every point of the face lies at `a ≤ ca m`. -/
-theorem ChainOKc.a_le {Q : ℝ → ℝ → Prop} {z0 s : ℝ} {m : ℕ} {ca cz : ℕ → ℝ}
-    (C : ChainOKc Q z0 s m ca cz) {a z : ℝ} (h : Q a z) : a ≤ ca m := by
-  by_cases e : a = ca m ∧ z = cz m
-  · exact e.1.le
-  rcases C.far a z h e with h | ⟨h, -⟩
-  · exact h.le
-  · exact h.le
-
-/-- The `a`-coordinates along a chain increase. -/
-theorem ChainOKc.mono {Q : ℝ → ℝ → Prop} {z0 s : ℝ} {m : ℕ} {ca cz : ℕ → ℝ}
-    (C : ChainOKc Q z0 s m ca cz) : ∀ i j, i < j → j ≤ m → ca i < ca j := by
-  intro i j hij hj
-  induction j with
-  | zero => omega
-  | succ j ih =>
-    rcases Nat.lt_succ_iff_lt_or_eq.mp hij with h | h
-    · exact lt_trans (ih h (by omega)) (C.inc j (by omega))
-    · subst h; exact C.inc i (by omega)
 
 set_option maxHeartbeats 4000000 in
 /-- **Both far ends have vertical companions, sector `A β < B α`**: the middle vertex is the
@@ -616,6 +597,31 @@ theorem AtMost3.of_card_le {S : Finset (ℝ × ℝ)} (h : S.card ≤ 3) :
     Finset.card_insert_of_notMem (by simp [n34]), Finset.card_singleton] at c
   omega
 
+/-- A face (as a set of points `(a, z)` of its plane) with at most four points: any five of its
+points repeat. -/
+def AtMost4 (Q : ℝ → ℝ → Prop) : Prop :=
+  ∀ p1 p2 p3 p4 p5 : ℝ × ℝ, Q p1.1 p1.2 → Q p2.1 p2.2 → Q p3.1 p3.2 → Q p4.1 p4.2 →
+    Q p5.1 p5.2 → p1 = p2 ∨ p1 = p3 ∨ p1 = p4 ∨ p1 = p5 ∨ p2 = p3 ∨ p2 = p4 ∨ p2 = p5 ∨
+      p3 = p4 ∨ p3 = p5 ∨ p4 = p5
+
+/-- A finite set of at most four points is `AtMost4`. -/
+theorem AtMost4.of_card_le {S : Finset (ℝ × ℝ)} (h : S.card ≤ 4) :
+    AtMost4 (fun x z => (x, z) ∈ S) := by
+  intro p1 p2 p3 p4 p5 h1 h2 h3 h4 h5
+  by_contra hcon
+  push Not at hcon
+  obtain ⟨n12, n13, n14, n15, n23, n24, n25, n34, n35, n45⟩ := hcon
+  have hsub : ({p1, p2, p3, p4, p5} : Finset (ℝ × ℝ)) ⊆ S := by
+    intro x hx
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+    rcases hx with rfl | rfl | rfl | rfl | rfl <;> assumption
+  have c := Finset.card_le_card hsub
+  rw [Finset.card_insert_of_notMem (by simp [n12, n13, n14, n15]),
+    Finset.card_insert_of_notMem (by simp [n23, n24, n25]),
+    Finset.card_insert_of_notMem (by simp [n34, n35]),
+    Finset.card_insert_of_notMem (by simp [n45]), Finset.card_singleton] at c
+  omega
+
 /-- **A chain of a triangle has no middle**: if the vertical over the far end of a chain carries
 a second point and the face has at most three points, the chain is the single segment from the
 apex to the far end (FEWER-FACES-PROOFS.md Proposition 24.12: the chains of a triangle face have
@@ -636,6 +642,75 @@ theorem ChainOKc.m_eq_one {Q : ℝ → ℝ → Prop} {z0 s : ℝ} {m : ℕ} {ca 
   · linarith
   · linarith
   · exact hne (congrArg Prod.snd h).symm
+
+/-- A chain that is a single segment from the apex to a far end at the apex's depth keeps the
+whole face on its side of that depth. -/
+theorem ChainOKc.le_of_one {Q : ℝ → ℝ → Prop} {z0 s : ℝ} {m : ℕ} {ca cz : ℕ → ℝ}
+    (C : ChainOKc Q z0 s m ca cz) (hm : m = 1) (h : cz m = z0) :
+    ∀ a z, Q a z → s * z ≤ s * z0 := by
+  subst hm
+  intro a z hq
+  by_cases e0 : a = ca 0 ∧ z = cz 0
+  · rw [e0.2, C.start.2]
+  by_cases e1 : a = ca 1 ∧ z = cz 1
+  · rw [e1.2, h]
+  have hs := C.side a z hq 0 (by omega) (by simpa using e0) (by simpa using e1)
+  have hd : 0 < ca (0 + 1) - ca 0 := sub_pos.mpr (C.inc 0 (by omega))
+  have hz0 := C.start.2
+  have h1 : cz (0 + 1) = z0 := h
+  have e : s * ((ca (0 + 1) - ca 0) * (z - cz 0) - (cz (0 + 1) - cz 0) * (a - ca 0)) =
+      (ca (0 + 1) - ca 0) * (s * z - s * z0) := by rw [h1, hz0]; ring
+  rw [e] at hs
+  by_contra hcon
+  push Not at hcon
+  nlinarith [mul_pos hd (sub_pos.mpr hcon)]
+
+/-- **In a face with at most four points one of the two chains is a single segment.**  The upper
+chain `U` (ending at the top `P` of the far vertical) and the lower chain `L` of a face with a
+second point `c` below `P` on the far vertical: if both had a middle, the apex, the first
+vertices of both chains, `P` and `c` would be five distinct points (if the first vertices
+agreed, `P` below and `c` above the line from the apex through them would contradict `c < P`). -/
+theorem ChainOKc.one_of_atMost4 {Q : ℝ → ℝ → Prop} {z0 : ℝ} {m m' : ℕ} {ca cz ca' cz' : ℕ → ℝ}
+    (U : ChainOKc Q z0 1 m ca cz) (L : ChainOKc Q z0 (-1) m' ca' cz') (h4 : AtMost4 Q) {c : ℝ}
+    (hc : Q (ca m) c) (hlt : c < cz m) : m = 1 ∨ m' = 1 := by
+  by_contra hcon
+  push Not at hcon
+  obtain ⟨hm, hm'⟩ := hcon
+  have hm2 : 2 ≤ m := by have := U.one_le; omega
+  have hm2' : 2 ≤ m' := by have := L.one_le; omega
+  have ea := U.far_a_eq L
+  have u0 := U.start
+  have l0 := L.start
+  have a1 := U.mono 0 1 (by omega) (by omega)
+  have a1m := U.mono 1 m (by omega) le_rfl
+  have b1 := L.mono 0 1 (by omega) (by omega)
+  have b1m := L.mono 1 m' (by omega) le_rfl
+  rcases h4 (ca 0, cz 0) (ca 1, cz 1) (ca m, cz m) (ca' 1, cz' 1) (ca m, c)
+    (U.mem 0 (Nat.zero_le _)) (U.mem 1 (by omega)) (U.mem m le_rfl) (L.mem 1 (by omega)) hc with
+    h | h | h | h | h | h | h | h | h | h <;>
+    have h1 := congrArg Prod.fst h <;> simp only at h1
+  · linarith
+  · linarith
+  · linarith
+  · linarith
+  · linarith
+  · -- the first vertices of both chains agree
+    have h2 := congrArg Prod.snd h
+    simp only at h2
+    have sU := U.side (ca m) (cz m) (U.mem m le_rfl) 0 (by omega) (fun h => by linarith [h.1])
+      (fun h => by linarith [h.1])
+    have sL := L.side (ca m) c hc 0 (by omega) (fun h => by linarith [h.1])
+      (fun h => by linarith [h.1])
+    rw [← h1, ← h2] at sL
+    rw [u0.1, u0.2] at sU
+    rw [l0.1, l0.2] at sL
+    nlinarith [mul_pos (show 0 < ca 1 by linarith) (sub_pos.mpr hlt)]
+  · linarith
+  · linarith
+  · have h2 := congrArg Prod.snd h
+    simp only at h2
+    linarith
+  · linarith
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over a vertex, far companions allowed, from chains, with no unique-far-end
@@ -663,7 +738,11 @@ theorem isRupert_vertex_frame_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q
     (hpos1 : ∀ a z, Q1 a z → 0 ≤ a) (hpos2 : ∀ b z, Q2 b z → 0 ≤ b)
     (hcard1 : ∀ a z1 z2 z3, Q1 a z1 → Q1 a z2 → Q1 a z3 → z1 = z2 ∨ z1 = z3 ∨ z2 = z3)
     (hcard2 : ∀ a z1 z2 z3, Q2 a z1 → Q2 a z2 → Q2 a z3 → z1 = z2 ∨ z1 = z3 ∨ z2 = z3)
-    {TRI : Prop} (hTRI : TRI → AtMost3 Q1 ∨ AtMost3 Q2)
+    {TRI : Prop} (hTRI : TRI → AtMost3 Q1 ∨ AtMost3 Q2 ∨ (AtMost4 Q1 ∧ AtMost4 Q2 ∧
+      (∀ m ca cz, ChainOKc Q1 z0 1 m ca cz → cz m = z0 →
+        ∃ a z, (Q1 a z ∨ Q2 a z) ∧ z0 < z) ∧
+      (∀ m ca cz, ChainOKc Q1 z0 (-1) m ca cz → cz m = z0 →
+        ∃ a z, (Q1 a z ∨ Q2 a z) ∧ z < z0)))
     (hsep : ∀ m ca cz m' ca' cz' n cb dz n' cb' dz', ChainOKc Q1 z0 1 m ca cz →
       ChainOKc Q1 z0 (-1) m' ca' cz' → ChainOKc Q2 z0 1 n cb dz → ChainOKc Q2 z0 (-1) n' cb' dz' →
       (cz m ≠ dz n ∧ cz m ≠ dz' n') ∨ (cz' m' < cz m ∧ dz' n' = dz n) ∨
@@ -812,120 +891,213 @@ theorem isRupert_vertex_frame_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q
         have := hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
         rw [ea1]; exact this
 
-  · -- the rectangle (tops tied, bottoms tied) with a triangle face: Proposition 24.12.  A
-    -- triangle's chains have no middle, so its far end (or the apex `v`) is the strict top or
-    -- bottom of the face; the cycle of `isRupert_triShadow_midP` / `isRupert_triShadow_mid`
-    -- (the middle vertex tied with a far end, read as part of the chain of the face with a
-    -- predecessor below it) is unimodal whatever the tie-break.
-    rcases hTRI hT with h3 | h3
-    · have hm0 : m0 = 1 := U1.m_eq_one h3 hc1 hne1
+  · -- the rectangle (tops tied, bottoms tied): Proposition 24.12.  Four mixed sectors, each
+    -- needing the last step of one chain to rise or fall suitably; if all four fail, the
+    -- non-mixed arcs `(−, +, −)`, `(+, −, +)` (`vertex_core_nm`).
+    have sec1 : cz0 (m0 - 1) < cz0 m0 → IsRupert V := fun hR => by
+      -- `s = 1`, the middle vertex the second face's top, `P` above its chain predecessor
+      have hA0 := U1.far_pos
+      have hB0 := L2.far_pos
+      refine vertex_core_tail2 O r1 r2 hρ Q1 Q2 1 (Or.inl rfl) U1 (by simpa using L2)
+        (α := 2 * ca0 m0 / cb1 n1) (β := 1) (by positivity) one_pos ?_ (zT := dz0 n0)
+        (by rw [ea2]; exact U2.mem n0 le_rfl) ?_ (Or.inr ?_) (by rw [eb2]; linarith) hap1 hap2
+        hpos1 hpos2 V hV1 hV2 ?_
+      · rw [mul_div_assoc', mul_one, mul_comm (cb1 n1) (2 * ca0 m0), mul_div_assoc,
+          div_self hB0.ne']
+        linarith
+      · intro z hz
+        rw [ea2] at hz
+        rcases hv2 z hz with h' | h'
+        · exact Or.inr h'
+        · exact Or.inl (by rw [eb2]; exact h')
+      · linarith
+      · intro y hy
+        obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
+        refine ⟨a, b, z, rfl, ?_⟩
+        rcases hc with h' | h' | ⟨ha, hb, hin⟩
+        · exact Or.inl h'
+        · exact Or.inr (Or.inl h')
+        · right; right; refine ⟨ha, hb, ?_⟩
+          have := hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
+          rw [ea2]; exact this
+    have sec4 : cz1 m1 < cz1 (m1 - 1) → IsRupert V := fun hR => by
+      -- `s = -1`, the middle vertex the second face's bottom, `P` below its chain predecessor
+      have hA0 := L1.far_pos
+      have hB0 := U2.far_pos
+      refine vertex_core_tail2 O r1 r2 hρ Q1 Q2 (-1) (Or.inr rfl) L1 (by simpa using U2)
+        (α := 2 * ca1 m1 / cb0 n0) (β := 1) (by positivity) one_pos ?_ (zT := dz1 n1)
+        (by rw [← ea2]; exact L2.mem n1 le_rfl) ?_ (Or.inr ?_) (by rw [eb2]; linarith) hap1 hap2
+        hpos1 hpos2 V hV1 hV2 ?_
+      · rw [mul_div_assoc', mul_one, mul_comm (cb0 n0) (2 * ca1 m1), mul_div_assoc,
+          div_self hB0.ne']
+        linarith
+      · intro z hz
+        rcases hv2 z hz with h' | h'
+        · exact Or.inl h'
+        · exact Or.inr (by rw [eb2]; exact h')
+      · linarith
+      · intro y hy
+        obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
+        refine ⟨a, b, z, rfl, ?_⟩
+        rcases hc with h' | h' | ⟨ha, hb, hin⟩
+        · exact Or.inl h'
+        · exact Or.inr (Or.inl h')
+        · right; right; refine ⟨ha, hb, ?_⟩
+          have := hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
+          rw [ea1]; exact this
+    have sec2 : dz1 n1 < dz1 (n1 - 1) → IsRupert V := fun hR => by
+      -- `s = 1`, the middle vertex the first face's bottom, `Q` below its chain predecessor
+      have hA0 := U1.far_pos
+      have hB0 := L2.far_pos
+      refine vertex_core_tail1 O r1 r2 hρ Q1 Q2 1 (Or.inl rfl) U1 (by simpa using L2)
+        (α := 1) (β := 2 * cb1 n1 / ca0 m0) one_pos (by positivity) ?_ (zT := cz1 m1)
+        (by rw [← ea1]; exact L1.mem m1 le_rfl) ?_ (by rw [eb1]; linarith) (Or.inr ?_) hap1 hap2
+        hpos1 hpos2 V hV1 hV2 ?_
+      · rw [mul_div_assoc', mul_comm (cb1 n1) 1, one_mul, mul_comm (ca0 m0) (2 * cb1 n1),
+          mul_div_assoc, div_self hA0.ne']
+        linarith
+      · intro z hz
+        rcases hv1 z hz with h' | h'
+        · exact Or.inl h'
+        · exact Or.inr (by rw [eb1]; exact h')
+      · linarith
+      · intro y hy
+        obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
+        refine ⟨a, b, z, rfl, ?_⟩
+        rcases hc with h' | h' | ⟨ha, hb, hin⟩
+        · exact Or.inl h'
+        · exact Or.inr (Or.inl h')
+        · right; right; refine ⟨ha, hb, ?_⟩
+          have := hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
+          rw [ea2]; exact this
+    have sec3 : dz0 (n0 - 1) < dz0 n0 → IsRupert V := fun hR => by
+      -- `s = -1`, the middle vertex the first face's top, `Q` above its chain predecessor
+      have hA0 := L1.far_pos
+      have hB0 := U2.far_pos
+      refine vertex_core_tail1 O r1 r2 hρ Q1 Q2 (-1) (Or.inr rfl) L1 (by simpa using U2)
+        (α := 1) (β := 2 * cb0 n0 / ca1 m1) one_pos (by positivity) ?_ (zT := cz0 m0)
+        (by rw [ea1]; exact U1.mem m0 le_rfl) ?_ (by rw [eb1]; linarith) (Or.inr ?_) hap1 hap2
+        hpos1 hpos2 V hV1 hV2 ?_
+      · rw [mul_div_assoc', mul_comm (cb0 n0) 1, one_mul, mul_comm (ca1 m1) (2 * cb0 n0),
+          mul_div_assoc, div_self hA0.ne']
+        linarith
+      · intro z hz
+        rw [ea1] at hz
+        rcases hv1 z hz with h' | h'
+        · exact Or.inr h'
+        · exact Or.inl (by rw [eb1]; exact h')
+      · linarith
+      · intro y hy
+        obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
+        refine ⟨a, b, z, rfl, ?_⟩
+        rcases hc with h' | h' | ⟨ha, hb, hin⟩
+        · exact Or.inl h'
+        · exact Or.inr (Or.inl h')
+        · right; right; refine ⟨ha, hb, ?_⟩
+          have := hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
+          rw [ea1]; exact this
+    rcases hTRI hT with h3 | h3 | ⟨h4a, h4b, hvT, hvB⟩
+    · -- the first face is a triangle: its chains have no middle
+      have hm0 : m0 = 1 := U1.m_eq_one h3 hc1 hne1
       have hm1 : m1 = 1 := L1.m_eq_one h3 (c := cz0 m0) (by rw [ea1]; exact U1.mem m0 le_rfl)
         (by rw [eb1]; exact hlt1.ne')
+      have hp0 : cz0 (m0 - 1) = z0 := by rw [hm0]; exact U1.start.2
+      have hp1 : cz1 (m1 - 1) = z0 := by rw [hm1]; exact L1.start.2
       by_cases hz : z0 < cz0 m0
-      · -- the far end `ya′` is the strict top: `s = 1`, the tie-break irrelevant
-        have hA0 := U1.far_pos
-        have hB0 := L2.far_pos
-        refine vertex_core_tail2 O r1 r2 hρ Q1 Q2 1 (Or.inl rfl) U1 (by simpa using L2)
-          (α := 2 * ca0 m0 / cb1 n1) (β := 1) (by positivity) one_pos ?_ (zT := dz0 n0)
-          (by rw [ea2]; exact U2.mem n0 le_rfl) ?_ (Or.inr ?_) (by rw [eb2]; linarith) hap1 hap2
-          hpos1 hpos2 V hV1 hV2 ?_
-        · rw [mul_div_assoc', mul_one, mul_comm (cb1 n1) (2 * ca0 m0), mul_div_assoc,
-            div_self hB0.ne']
-          linarith
-        · intro z hz
-          rw [ea2] at hz
-          rcases hv2 z hz with h' | h'
-          · exact Or.inr h'
-          · exact Or.inl (by rw [eb2]; exact h')
-        · rw [hm0, show (1 : ℕ) - 1 = 0 from rfl, U1.start.2]; rw [hm0] at hz; linarith
-        · intro y hy
-          obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
-          refine ⟨a, b, z, rfl, ?_⟩
-          rcases hc with h' | h' | ⟨ha, hb, hin⟩
-          · exact Or.inl h'
-          · exact Or.inr (Or.inl h')
-          · right; right; refine ⟨ha, hb, ?_⟩
-            have := hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
-            rw [ea2]; exact this
-      · -- `v` is above the face: `ya` is the strict bottom, `s = -1`
-        have hA0 := L1.far_pos
-        have hB0 := U2.far_pos
-        refine vertex_core_tail2 O r1 r2 hρ Q1 Q2 (-1) (Or.inr rfl) L1 (by simpa using U2)
-          (α := 2 * ca1 m1 / cb0 n0) (β := 1) (by positivity) one_pos ?_ (zT := dz1 n1)
-          (by rw [← ea2]; exact L2.mem n1 le_rfl) ?_ (Or.inr ?_) (by rw [eb2]; linarith) hap1 hap2
-          hpos1 hpos2 V hV1 hV2 ?_
-        · rw [mul_div_assoc', mul_one, mul_comm (cb0 n0) (2 * ca1 m1), mul_div_assoc,
-            div_self hB0.ne']
-          linarith
-        · intro z hz
-          rcases hv2 z hz with h' | h'
-          · exact Or.inl h'
-          · exact Or.inr (by rw [eb2]; exact h')
-        · rw [hm1, show (1 : ℕ) - 1 = 0 from rfl, L1.start.2]; rw [hm1] at eb1
-          linarith [not_lt.mp hz, hlt1]
-        · intro y hy
-          obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
-          refine ⟨a, b, z, rfl, ?_⟩
-          rcases hc with h' | h' | ⟨ha, hb, hin⟩
-          · exact Or.inl h'
-          · exact Or.inr (Or.inl h')
-          · right; right; refine ⟨ha, hb, ?_⟩
-            have := hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
-            rw [ea1]; exact this
-    · have hn0 : n0 = 1 := U2.m_eq_one h3 hc2 hne2
+      · exact sec1 (by rw [hp0]; exact hz)
+      · exact sec4 (by rw [hp1]; linarith [not_lt.mp hz])
+    · -- the second face is a triangle
+      have hn0 : n0 = 1 := U2.m_eq_one h3 hc2 hne2
       have hn1 : n1 = 1 := L2.m_eq_one h3 (c := dz0 n0) (by rw [ea2]; exact U2.mem n0 le_rfl)
         (by rw [eb2]; exact hlt2.ne')
+      have hq0 : dz0 (n0 - 1) = z0 := by rw [hn0]; exact U2.start.2
+      have hq1 : dz1 (n1 - 1) = z0 := by rw [hn1]; exact L2.start.2
       by_cases hz : dz1 n1 < z0
-      · -- `v` is above the bottom `yb`: `s = 1`
-        have hA0 := U1.far_pos
-        have hB0 := L2.far_pos
-        refine vertex_core_tail1 O r1 r2 hρ Q1 Q2 1 (Or.inl rfl) U1 (by simpa using L2)
-          (α := 1) (β := 2 * cb1 n1 / ca0 m0) one_pos (by positivity) ?_ (zT := cz1 m1)
-          (by rw [← ea1]; exact L1.mem m1 le_rfl) ?_ (by rw [eb1]; linarith) (Or.inr ?_) hap1 hap2
-          hpos1 hpos2 V hV1 hV2 ?_
-        · rw [mul_div_assoc', mul_comm (cb1 n1) 1, one_mul, mul_comm (ca0 m0) (2 * cb1 n1),
-            mul_div_assoc, div_self hA0.ne']
-          linarith
-        · intro z hz
-          rcases hv1 z hz with h' | h'
-          · exact Or.inl h'
-          · exact Or.inr (by rw [eb1]; exact h')
-        · rw [hn1, show (1 : ℕ) - 1 = 0 from rfl, L2.start.2]; rw [hn1] at hz; linarith
-        · intro y hy
-          obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
+      · exact sec2 (by rw [hq1]; exact hz)
+      · exact sec3 (by rw [hq0]; linarith [not_lt.mp hz])
+    · -- two faces with at most four points: when the four mixed sectors fail, one of the two
+      -- non-mixed arcs works unless the apex ties with a far end (`hvT`, `hvB`)
+      by_cases R1 : cz0 (m0 - 1) < cz0 m0
+      · exact sec1 R1
+      by_cases R4 : cz1 m1 < cz1 (m1 - 1)
+      · exact sec4 R4
+      by_cases R2 : dz1 n1 < dz1 (n1 - 1)
+      · exact sec2 R2
+      by_cases R3 : dz0 (n0 - 1) < dz0 n0
+      · exact sec3 R3
+      rw [not_lt] at R1 R2 R3 R4
+      have hm01 := U1.one_of_atMost4 L1 h4a hc1 hlt1
+      have hn01 := U2.one_of_atMost4 L2 h4b hc2 hlt2
+      have hVc' : ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧
+          ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧
+            a * cb0 n0 + b * ca0 m0 < ca0 m0 * cb0 n0)) := by
+        intro y hy
+        obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
+        refine ⟨a, b, z, rfl, ?_⟩
+        rcases hc with h' | h' | ⟨ha, hb, hin⟩
+        · exact Or.inl h'
+        · exact Or.inr (Or.inl h')
+        · exact Or.inr (Or.inr ⟨ha, hb, hin m0 ca0 cz0 n0 cb0 dz0 U1 U2⟩)
+      rcases hm01 with hm0 | hm1 <;> rcases hn01 with hn0 | hn1
+      · -- both upper chains single segments, `v` above the tops: the arc `(−, +, −)`
+        have hp0 : cz0 (m0 - 1) = z0 := by rw [hm0]; exact U1.start.2
+        have e1 : cz0 1 = cz0 m0 := by rw [hm0]
+        have hzT : z0 ≠ cz0 m0 := fun e => by
+          obtain ⟨a, z, hz, hlt⟩ := hvT m0 ca0 cz0 U1 e.symm
+          rcases hz with hz | hz
+          · have := U1.le_of_one hm0 e.symm a z hz; linarith
+          · have := U2.le_of_one hn0 (by rw [← hr1]; exact e.symm) a z hz; linarith
+        have hlt : cz0 m0 < z0 := lt_of_le_of_ne (by rw [← hp0]; exact R1) (Ne.symm hzT)
+        refine vertex_core_nm O r1 r2 hρ Q1 Q2 1 (Or.inl rfl) U1 U2 hc1 hne1 hv1 hc2 hne2 hv2
+          (Or.inl (by linarith)) hap1 hap2 hpos1 hpos2 V hV1 hV2 hVc'
+      · -- `R1` and `R2` contradict the tie of the bottoms
+        have hp0 : cz0 (m0 - 1) = z0 := by rw [hm0]; exact U1.start.2
+        have hq1 : dz1 (n1 - 1) = z0 := by rw [hn1]; exact L2.start.2
+        exfalso
+        rw [hp0] at R1
+        rw [hq1] at R2
+        linarith
+      · -- `R4` and `R3` contradict the tie of the tops
+        have hp1 : cz1 (m1 - 1) = z0 := by rw [hm1]; exact L1.start.2
+        have hq0 : dz0 (n0 - 1) = z0 := by rw [hn0]; exact U2.start.2
+        exfalso
+        rw [hp1] at R4
+        rw [hq0] at R3
+        linarith
+      · -- both lower chains single segments, `v` below the bottoms: the arc `(+, −, +)`
+        have hp1 : cz1 (m1 - 1) = z0 := by rw [hm1]; exact L1.start.2
+        have e1 : cz1 1 = cz1 m1 := by rw [hm1]
+        have hzB : z0 ≠ cz1 m1 := fun e => by
+          obtain ⟨a, z, hz, hlt⟩ := hvB m1 ca1 cz1 L1 e.symm
+          rcases hz with hz | hz
+          · have := L1.le_of_one hm1 e.symm a z hz; linarith
+          · have := L2.le_of_one hn1 (by rw [← hr2]; exact e.symm) a z hz; linarith
+        have hlt : z0 < cz1 m1 := lt_of_le_of_ne (by rw [← hp1]; exact R4) hzB
+        have hVc'' : ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧
+            ((b = 0 ∧ Q1 a z) ∨ (a = 0 ∧ Q2 b z) ∨ (0 < a ∧ 0 < b ∧
+              a * cb1 n1 + b * ca1 m1 < ca1 m1 * cb1 n1)) := by
+          intro y hy
+          obtain ⟨a, b, z, rfl, hc⟩ := hVc' y hy
           refine ⟨a, b, z, rfl, ?_⟩
           rcases hc with h' | h' | ⟨ha, hb, hin⟩
           · exact Or.inl h'
           · exact Or.inr (Or.inl h')
-          · right; right; refine ⟨ha, hb, ?_⟩
-            have := hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
-            rw [ea2]; exact this
-      · -- `v` is not above `yb`: `s = -1`
-        have hA0 := L1.far_pos
-        have hB0 := U2.far_pos
-        refine vertex_core_tail1 O r1 r2 hρ Q1 Q2 (-1) (Or.inr rfl) L1 (by simpa using U2)
-          (α := 1) (β := 2 * cb0 n0 / ca1 m1) one_pos (by positivity) ?_ (zT := cz0 m0)
-          (by rw [ea1]; exact U1.mem m0 le_rfl) ?_ (by rw [eb1]; linarith) (Or.inr ?_) hap1 hap2
-          hpos1 hpos2 V hV1 hV2 ?_
-        · rw [mul_div_assoc', mul_comm (cb0 n0) 1, one_mul, mul_comm (ca1 m1) (2 * cb0 n0),
-            mul_div_assoc, div_self hA0.ne']
-          linarith
-        · intro z hz
-          rw [ea1] at hz
-          rcases hv1 z hz with h' | h'
-          · exact Or.inr h'
-          · exact Or.inl (by rw [eb1]; exact h')
-        · rw [hn0, show (1 : ℕ) - 1 = 0 from rfl, U2.start.2]; rw [hn0] at hlt2
-          linarith [not_lt.mp hz, eb2, hlt2]
-        · intro y hy
-          obtain ⟨a, b, z, rfl, hc⟩ := hVc y hy
-          refine ⟨a, b, z, rfl, ?_⟩
-          rcases hc with h' | h' | ⟨ha, hb, hin⟩
-          · exact Or.inl h'
-          · exact Or.inr (Or.inl h')
-          · right; right; refine ⟨ha, hb, ?_⟩
-            have := hin m0 ca0 cz0 n0 cb0 dz0 U1 U2
-            rw [ea1]; exact this
+          · exact Or.inr (Or.inr ⟨ha, hb, by rw [ea1, ea2]; exact hin⟩)
+        refine vertex_core_nm O r1 r2 hρ Q1 Q2 (-1) (Or.inr rfl) L1 L2
+          (zM1 := cz0 m0) (zM2 := dz0 n0) (by rw [ea1]; exact U1.mem m0 le_rfl)
+          (by rw [eb1]; exact hlt1.ne')
+          (fun z hz => by
+            rw [ea1] at hz
+            rcases hv1 z hz with h' | h'
+            · exact Or.inr h'
+            · exact Or.inl (by rw [eb1]; exact h'))
+          (by rw [ea2]; exact U2.mem n0 le_rfl) (by rw [eb2]; exact hlt2.ne')
+          (fun z hz => by
+            rw [ea2] at hz
+            rcases hv2 z hz with h' | h'
+            · exact Or.inr h'
+            · exact Or.inl (by rw [eb2]; exact h'))
+          (Or.inl (by linarith)) hap1 hap2 hpos1 hpos2 V hV1 hV2 hVc''
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over an edge, far companions allowed, from chains, with no unique-far-end

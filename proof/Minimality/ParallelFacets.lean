@@ -119,18 +119,119 @@ theorem FarDepthOK.map {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ →
       q'' hq'' ((hf2 q'' hq'').mp g') (fun e' => dy (by rw [e']))
       (fun e' => nxy (by rw [e'])) (mul_left_cancel₀ hc e)
 
-/-- **The far-depth condition when one face is a triangle** (FEWER-FACES-PROOFS.md
+/-- **When the full rectangle is allowed.**  Both faces have a vertical far edge, the tops tie and
+the bottoms tie (the rectangle `z(ya) = z(yb)`, `z(ya′) = z(yb′)` of FEWER-FACES-PROOFS.md
+Proposition 23.19, last bullet).  Then one of the four mixed sectors of
+`isRupert_vertex_frame_par'` works if the last step of one of the four chains rises or falls
+suitably, and otherwise one of the two non-mixed arcs of Proposition 24.12 works
+(`vertex_core_nm`).  This is guaranteed in two situations:
+- one of the faces is a triangle (`Q1.card = 3 ∨ Q2.card = 3`): its chains have no middle;
+- both faces are quadrilaterals (at most one middle each), and the shared vertex `w` is not tied
+  with a far end unless the faces have vertices strictly on both sides of its depth.  The
+  non-mixed arc needs `w` strictly on one side of the tied depths; a tie of `w` with a far end
+  with all vertices of both faces on one side of it is the triple tie of Theorem 24.5 (a), with
+  a vertical far edge over each far corner, which these arcs do not settle. -/
+def RectOK (Q1 Q2 : Finset ℝ³) (far1 far2 : ℝ³ → Prop) (d : ℝ³ → ℝ) : Prop :=
+  Q1.card = 3 ∨ Q2.card = 3 ∨ (Q1.card = 4 ∧ Q2.card = 4 ∧
+    ∀ w ∈ Q1 ∩ Q2, ((∃ p ∈ Q1, far1 p ∧ d p = d w) ∨ (∃ q ∈ Q2, far2 q ∧ d q = d w)) →
+      (∃ x ∈ Q1 ∪ Q2, d x < d w) ∧ (∃ x ∈ Q1 ∪ Q2, d w < d x))
+
+/-- **The far-depth condition when the rectangle is allowed** (FEWER-FACES-PROOFS.md
 Proposition 23.19, Proposition 24.12).  As `FarDepthOK`, but the full rectangle (both faces with
-a vertical far edge, tops tied and bottoms tied) is also allowed when one of the two faces is a
-triangle (`Q1.card = 3 ∨ Q2.card = 3`): the chains of a triangle face have no middle, and the
-sector argument of Proposition 24.12 (`isRupert_vertex_frame_par'`) then applies. -/
+a vertical far edge, tops tied and bottoms tied) is also allowed when `RectOK` holds: one of the
+faces is a triangle, or both are quadrilaterals and the shared vertex avoids the far depths. -/
 def FarDepthOKT (Q1 Q2 : Finset ℝ³) (far1 far2 : ℝ³ → Prop) (d : ℝ³ → ℝ) : Prop :=
   ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → far1 p → far2 q → d p = d q →
     ((∃ p' ∈ Q1, far1 p' ∧ d p' ≠ d p) ∧ (∀ q' ∈ Q2, far2 q' → d q' = d q)) ∨
     ((∀ p' ∈ Q1, far1 p' → d p' = d p) ∧ (∃ q' ∈ Q2, far2 q' ∧ d q' ≠ d q)) ∨
     ((∃ p' ∈ Q1, far1 p' ∧ d p' ≠ d p) ∧ (∃ q' ∈ Q2, far2 q' ∧ d q' ≠ d q) ∧
       ((∀ p' ∈ Q1, far1 p' → d p' ≠ d p → ∀ q' ∈ Q2, far2 q' → d q' ≠ d q → p' ≠ q' →
-        d p' ≠ d q') ∨ Q1.card = 3 ∨ Q2.card = 3))
+        d p' ≠ d q') ∨ RectOK Q1 Q2 far1 far2 d))
+
+theorem RectOK.symm {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {d : ℝ³ → ℝ}
+    (h : RectOK Q1 Q2 far1 far2 d) : RectOK Q2 Q1 far2 far1 d := by
+  rcases h with h | h | ⟨h1, h2, h3⟩
+  · exact Or.inr (Or.inl h)
+  · exact Or.inl h
+  · refine Or.inr (Or.inr ⟨h2, h1, fun w hw hp => ?_⟩)
+    rw [Finset.inter_comm] at hw
+    rw [Finset.union_comm]
+    exact h3 w hw hp.symm
+
+theorem RectOK.congr {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ → Prop} {d : ℝ³ → ℝ}
+    (h : RectOK Q1 Q2 far1 far2 d) (h1 : ∀ p ∈ Q1, far1 p ↔ far1' p)
+    (h2 : ∀ q ∈ Q2, far2 q ↔ far2' q) : RectOK Q1 Q2 far1' far2' d := by
+  rcases h with h | h | ⟨c1, c2, c3⟩
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · refine Or.inr (Or.inr ⟨c1, c2, fun w hw hp => c3 w hw ?_⟩)
+    rcases hp with ⟨p, hp, f, e⟩ | ⟨q, hq, f, e⟩
+    · exact Or.inl ⟨p, hp, (h1 p hp).mpr f, e⟩
+    · exact Or.inr ⟨q, hq, (h2 q hq).mpr f, e⟩
+
+theorem RectOK.neg_depth {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {d d' : ℝ³ → ℝ}
+    (h : RectOK Q1 Q2 far1 far2 d) (hd : ∀ p, d' p = -d p) : RectOK Q1 Q2 far1 far2 d' := by
+  rcases h with h | h | ⟨c1, c2, c3⟩
+  · exact Or.inl h
+  · exact Or.inr (Or.inl h)
+  · refine Or.inr (Or.inr ⟨c1, c2, fun w hw hp => ?_⟩)
+    have hp' : (∃ p ∈ Q1, far1 p ∧ d p = d w) ∨ (∃ q ∈ Q2, far2 q ∧ d q = d w) := by
+      rcases hp with ⟨p, hp, f, e⟩ | ⟨q, hq, f, e⟩
+      · rw [hd, hd] at e; exact Or.inl ⟨p, hp, f, neg_inj.mp e⟩
+      · rw [hd, hd] at e; exact Or.inr ⟨q, hq, f, neg_inj.mp e⟩
+    obtain ⟨⟨x, hx, hxl⟩, ⟨y, hy, hyl⟩⟩ := c3 w hw hp'
+    exact ⟨⟨y, hy, by rw [hd, hd]; linarith⟩, ⟨x, hx, by rw [hd, hd]; linarith⟩⟩
+
+theorem RectOK.map {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ → Prop} {d d' : ℝ³ → ℝ}
+    (g : ℝ³ → ℝ³) (hg : Function.Injective g) (c : ℝ) (hc : c ≠ 0)
+    (h : RectOK Q1 Q2 far1 far2 d) (hf1 : ∀ p ∈ Q1, far1' (g p) ↔ far1 p)
+    (hf2 : ∀ q ∈ Q2, far2' (g q) ↔ far2 q) (hd1 : ∀ p ∈ Q1, d' (g p) = c * d p)
+    (hd2 : ∀ q ∈ Q2, d' (g q) = c * d q) :
+    RectOK (Q1.image g) (Q2.image g) far1' far2' d' := by
+  classical
+  rcases h with h | h | ⟨c1, c2, c3⟩
+  · exact Or.inl (by rwa [Finset.card_image_of_injective _ hg])
+  · exact Or.inr (Or.inl (by rwa [Finset.card_image_of_injective _ hg]))
+  · refine Or.inr (Or.inr ⟨by rwa [Finset.card_image_of_injective _ hg],
+      by rwa [Finset.card_image_of_injective _ hg], fun w hw hp => ?_⟩)
+    obtain ⟨hwa, hwb⟩ := Finset.mem_inter.mp hw
+    obtain ⟨w1, hw1, rfl⟩ := Finset.mem_image.mp hwa
+    obtain ⟨w2, hw2, e⟩ := Finset.mem_image.mp hwb
+    have : w2 = w1 := hg e
+    subst this
+    have hmem : w2 ∈ Q1 ∩ Q2 := Finset.mem_inter.mpr ⟨hw1, hw2⟩
+    have hp' : (∃ p ∈ Q1, far1 p ∧ d p = d w2) ∨ (∃ q ∈ Q2, far2 q ∧ d q = d w2) := by
+      rcases hp with ⟨x, hx, f, e⟩ | ⟨y, hy, f, e⟩
+      · obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp hx
+        rw [hd1 w2 hw1, hd1 p hp] at e
+        exact Or.inl ⟨p, hp, (hf1 p hp).mp f, mul_left_cancel₀ hc e⟩
+      · obtain ⟨q, hq, rfl⟩ := Finset.mem_image.mp hy
+        rw [hd1 w2 hw1, hd2 q hq] at e
+        exact Or.inr ⟨q, hq, (hf2 q hq).mp f, mul_left_cancel₀ hc e⟩
+    obtain ⟨⟨x, hx, hxl⟩, ⟨y, hy, hyl⟩⟩ := c3 w2 hmem hp'
+    have key : ∀ z ∈ Q1 ∪ Q2, d' (g z) = c * d z := by
+      intro z hz
+      rcases Finset.mem_union.mp hz with h | h
+      · exact hd1 z h
+      · exact hd2 z h
+    have hxu : g x ∈ (Q1.image g) ∪ (Q2.image g) := by
+      rcases Finset.mem_union.mp hx with h | h
+      · exact Finset.mem_union_left _ (Finset.mem_image_of_mem g h)
+      · exact Finset.mem_union_right _ (Finset.mem_image_of_mem g h)
+    have hyu : g y ∈ (Q1.image g) ∪ (Q2.image g) := by
+      rcases Finset.mem_union.mp hy with h | h
+      · exact Finset.mem_union_left _ (Finset.mem_image_of_mem g h)
+      · exact Finset.mem_union_right _ (Finset.mem_image_of_mem g h)
+    have hw' : d' (g w2) = c * d w2 := hd1 w2 hw1
+    rcases lt_or_gt_of_ne hc with hneg | hpos
+    · have h1 := mul_pos (neg_pos.mpr hneg) (sub_pos.mpr hyl)
+      have h2 := mul_pos (neg_pos.mpr hneg) (sub_pos.mpr hxl)
+      exact ⟨⟨g y, hyu, by rw [key y hy, hw']; nlinarith⟩,
+        ⟨g x, hxu, by rw [key x hx, hw']; nlinarith⟩⟩
+    · have h1 := mul_pos hpos (sub_pos.mpr hxl)
+      have h2 := mul_pos hpos (sub_pos.mpr hyl)
+      exact ⟨⟨g x, hxu, by rw [key x hx, hw']; nlinarith⟩,
+        ⟨g y, hyu, by rw [key y hy, hw']; nlinarith⟩⟩
 
 /-- `FarDepthOK` implies `FarDepthOKT`. -/
 theorem FarDepthOK.toT {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {d : ℝ³ → ℝ}
@@ -174,7 +275,7 @@ theorem FarDepthOKT.congr {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ 
     rcases k with k | k
     · exact Or.inl fun p'' hp'' f'' dp q'' hq'' g'' dq nq =>
         k p'' hp'' ((h1 p'' hp'').mpr f'') dp q'' hq'' ((h2 q'' hq'').mpr g'') dq nq
-    · exact Or.inr k
+    · exact Or.inr (k.congr h1 h2)
 
 /-- `FarDepthOKT` for the opposite depth (the view line reversed). -/
 theorem FarDepthOKT.neg_depth {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {d d' : ℝ³ → ℝ}
@@ -182,7 +283,25 @@ theorem FarDepthOKT.neg_depth {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop
     FarDepthOKT Q1 Q2 far1 far2 d' := by
   intro p hp q hq hpq f1 f2 e
   rw [hd, hd] at e
-  simpa only [hd, ne_eq, neg_inj] using h p hp q hq hpq f1 f2 (neg_inj.mp e)
+  rcases h p hp q hq hpq f1 f2 (neg_inj.mp e) with ⟨⟨p', hp', f', ne⟩, k⟩ |
+      ⟨k, ⟨q', hq', f', ne⟩⟩ | ⟨⟨p', hp', f', ne⟩, ⟨q', hq', f'', ne'⟩, k⟩
+  · refine Or.inl ⟨⟨p', hp', f', ?_⟩, fun q'' hq'' f => ?_⟩
+    · rw [hd, hd]; exact fun e => ne (neg_inj.mp e)
+    · rw [hd, hd, k q'' hq'' f]
+  · refine Or.inr (Or.inl ⟨fun p'' hp'' f => ?_, ⟨q', hq', f', ?_⟩⟩)
+    · rw [hd, hd, k p'' hp'' f]
+    · rw [hd, hd]; exact fun e => ne (neg_inj.mp e)
+  · refine Or.inr (Or.inr ⟨⟨p', hp', f', ?_⟩, ⟨q', hq', f'', ?_⟩, ?_⟩)
+    · rw [hd, hd]; exact fun e => ne (neg_inj.mp e)
+    · rw [hd, hd]; exact fun e => ne' (neg_inj.mp e)
+    · rcases k with k | k
+      · left
+        intro p'' hp'' f dp q'' hq'' g dq nq
+        have dp' : d p'' ≠ d p := fun e' => dp (by rw [hd, hd, e'])
+        have dq' : d q'' ≠ d q := fun e' => dq (by rw [hd, hd, e'])
+        rw [hd, hd]
+        exact fun e => k p'' hp'' f dp' q'' hq'' g dq' nq (neg_inj.mp e)
+      · exact Or.inr (k.neg_depth hd)
 
 /-- `FarDepthOKT` transported by an injective map, the depth rescaled by a nonzero factor. -/
 theorem FarDepthOKT.map {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ → Prop}
@@ -228,7 +347,7 @@ theorem FarDepthOKT.map {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ �
         q'' hq'' ((hf2 q'' hq'').mp g') (fun e' => dy (by rw [e']))
         (fun e' => nxy (by rw [e'])) (mul_left_cancel₀ hc e)
     · right
-      rwa [Finset.card_image_of_injective _ hg, Finset.card_image_of_injective _ hg]
+      exact RectOK.map g hg c hc k hf1 hf2 hd1 hd2
 
 /-- **From `FarDepthOK` to the chain hypothesis of the frames.**  The tops and bottoms
 `cz, cz'` (`dz, dz'`) of the far ends of the first (second) face satisfy the four alternatives of
@@ -292,9 +411,9 @@ theorem sep_of_farDepth {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop}
   left; exact ⟨h1, h2⟩
 
 /-- **From `FarDepthOKT` to the chain hypothesis of the frames** (as `sep_of_farDepth`): with a
-triangle face (`TRI`) the full rectangle is also allowed. -/
+the rectangle allowed (`RectOK`, `TRI`) the full rectangle is also allowed. -/
 theorem sep_of_farDepthT {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop}
-    {TRI : Prop} (hTRI : (Q1.card = 3 ∨ Q2.card = 3) → TRI)
+    {TRI : Prop} (hTRI : RectOK Q1 Q2 far1 far2 (fun p => p 2) → TRI)
     (hT : FarDepthOKT Q1 Q2 far1 far2 (fun p => p 2))
     (hpq : ∀ p ∈ Q1, ∀ q ∈ Q2, far1 p → p ≠ q) {cz cz' dz dz' : ℝ} {pU pL qU qL : ℝ³}
     (hpU : pU ∈ Q1) (fU : far1 pU) (zU : pU 2 = cz) (hpL : pL ∈ Q1) (fL : far1 pL)
@@ -523,7 +642,9 @@ theorem isRupert_vertex_coords_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (
     exact this (by unfold orient2; ring)
   refine isRupert_vertex_frame_par' O r1 r2 hρ (fun x z => (x, z) ∈ S1) (fun x z => (x, z) ∈ S2)
     (z0 := v 2) (chains1 1 (Or.inl rfl)) (chains1 (-1) (Or.inr rfl)) (chains2 1 (Or.inl rfl))
-    (chains2 (-1) (Or.inr rfl)) ?_ ?_ ?_ ?_ hcard1 hcard2 (TRI := Q1.card = 3 ∨ Q2.card = 3) ?_ ?_ V
+    (chains2 (-1) (Or.inr rfl)) ?_ ?_ ?_ ?_ hcard1 hcard2
+    (TRI := RectOK Q1 Q2 (fun p => ∀ p' ∈ Q1, a p' ≤ a p) (fun q => ∀ q' ∈ Q2, b q' ≤ b q)
+      (fun p => p 2)) ?_ ?_ V
     ?_ ?_ ?_
   · intro z h
     obtain ⟨p, hp, e1, e2⟩ := ofS1 0 z h
@@ -545,16 +666,42 @@ theorem isRupert_vertex_coords_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (
     by_cases hpv : p = v
     · rw [← e1, hpv, hbv]
     · rw [← e1]; exact (bpos p hp hpv).le
-  · -- a triangle face has at most three points
-    rintro (h | h)
+  · -- a triangle face has at most three points, a quadrilateral at most four
+    rintro (h | h | ⟨h4a, h4b, hv⟩)
     · left
       refine AtMost3.of_card_le ?_
       calc S1.card ≤ Q1.card := Finset.card_image_le
         _ = 3 := h
-    · right
+    · right; left
       refine AtMost3.of_card_le ?_
       calc S2.card ≤ Q2.card := Finset.card_image_le
         _ = 3 := h
+    · right; right
+      have hvmem : v ∈ Q1 ∩ Q2 := Finset.mem_inter.mpr ⟨hv1, hv2⟩
+      have toS : ∀ x ∈ Q1 ∪ Q2, ∃ a' z', ((a', z') ∈ S1 ∨ (a', z') ∈ S2) ∧ z' = x 2 := by
+        intro x hx
+        rcases Finset.mem_union.mp hx with h | h
+        · exact ⟨a x, x 2, Or.inl (Finset.mem_image_of_mem (fun p => (a p, p 2)) h), rfl⟩
+        · exact ⟨b x, x 2, Or.inr (Finset.mem_image_of_mem (fun p => (b p, p 2)) h), rfl⟩
+      have hext : ∀ {s : ℝ} {m : ℕ} {ca cz : ℕ → ℝ},
+          ChainOKc (fun x z => (x, z) ∈ S1) (v 2) s m ca cz → cz m = v 2 →
+          (∃ x ∈ Q1 ∪ Q2, v 2 > x 2) ∧ (∃ x ∈ Q1 ∪ Q2, v 2 < x 2) := by
+        intro s m ca cz C e
+        obtain ⟨p, hp, -, e2, hmax⟩ := far1 C
+        exact hv v hvmem (Or.inl ⟨p, hp, hmax, by show p 2 = v 2; rw [e2, e]⟩)
+      refine ⟨AtMost4.of_card_le ?_, AtMost4.of_card_le ?_, ?_, ?_⟩
+      · calc S1.card ≤ Q1.card := Finset.card_image_le
+          _ = 4 := h4a
+      · calc S2.card ≤ Q2.card := Finset.card_image_le
+          _ = 4 := h4b
+      · intro m ca cz C e
+        obtain ⟨-, ⟨y, hy, hyl⟩⟩ := hext C e
+        obtain ⟨a', z', hz', rfl⟩ := toS y hy
+        exact ⟨a', y 2, hz', hyl⟩
+      · intro m ca cz C e
+        obtain ⟨⟨x, hx, hxl⟩, -⟩ := hext C e
+        obtain ⟨a', z', hz', rfl⟩ := toS x hx
+        exact ⟨a', x 2, hz', hxl⟩
   · -- the far depths: no tie unless exactly one face has a vertical far edge, or the full
     -- rectangle with a triangle face
     intro m ca cz m' ca' cz' n cb dz n' cb' dz' U1 L1 U2 L2
@@ -562,7 +709,8 @@ theorem isRupert_vertex_coords_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (
     obtain ⟨pL, hpL, aL, zL, mL⟩ := far1 L1
     obtain ⟨qU, hqU, bU, wU, nU⟩ := far2 U2
     obtain ⟨qL, hqL, bL, wL, nL⟩ := far2 L2
-    refine sep_of_farDepthT (TRI := Q1.card = 3 ∨ Q2.card = 3) id hfarZ
+    refine sep_of_farDepthT (TRI := RectOK Q1 Q2 (fun p => ∀ p' ∈ Q1, a p' ≤ a p)
+      (fun q => ∀ q' ∈ Q2, b q' ≤ b q) (fun p => p 2)) id hfarZ
       (fun p hp q hq h => pq p hp q hq h) hpU mU zU hpL mL zL hqU nU wU
       hqL nL wL ?_ ?_
     · intro p' hp' f'

@@ -5,6 +5,7 @@ public import Minimality.SevenTypes
 public import Minimality.FaceBridge
 public import Minimality.Classify
 public import Minimality.Type29Bridge
+public import Minimality.Type29Codim2
 public import Minimality.TripleTieObtuse
 public import Minimality.TripleTieAdjacent
 public import Minimality.ParDichotomy
@@ -109,7 +110,11 @@ different depths, except that a tie is allowed when exactly one face has a verti
 (`Minimality.FarDepthOKT`, Proposition 23.19 (1)); when both faces have a vertical far edge,
 any tie is allowed except the full rectangle (tops tied and bottoms tied), the tilt sector being
 chosen by the depths of the tops, else of the bottoms, `isRupert_vertex_frame_par'`; the
-rectangle is allowed too when one face is a triangle, Proposition 24.12). Besides a parallel segment, the
+rectangle is allowed too when one face is a triangle (Proposition 24.12), or when both faces are
+quadrilaterals and the shared vertex is not at a far depth with all vertices of both faces on
+one side of it (`Minimality.RectOK`): then the four mixed sectors, or else one of the two
+non-mixed arcs `(−, +, −)`, `(+, −, +)` of Proposition 24.12 (`Minimality.vertex_core_nm`),
+works). Besides a parallel segment, the
 only position excluded is the triple tie with both faces two-sided and both far
 angles of the shadow triangle acute or right (case (c) of Theorem 24.5). -/
 theorem not_two_quad_facets_vertex_of_isNopert (V : Finset ℝ³) (h : IsNopert V)
@@ -350,7 +355,10 @@ theorem byGen7 {P Q R S T U W : Prop} (key : P → Q → R → S → T → U →
 
 /-- Cor. T1 for a realized type: two quadrilateral faces `q1`, `q2` meeting only in `v`, under
 general position `TriGenTieO` (the triple tie settled by Theorems 24.5 and 24.8, including a
-right or obtuse apex of the shadow triangle) or `TriGenFarP`. -/
+right or obtuse apex of the shadow triangle) or `TriGenFarP` (segments parallel to the line
+allowed; for two quadrilaterals also the rectangle of two vertical far edges, tops tied and
+bottoms tied, unless the shared vertex is at a far depth with both faces on one side of it:
+Proposition 24.12, `Minimality.RectOK`). -/
 theorem quadPair {x : Fin 7 → ℝ³} (hx : Function.Injective x)
     (hN : IsNopert (Finset.univ.image x)) {fs : List (Finset (Fin 7))}
     (hR : Minimality.RealizesFaces x fs) (q1 q2 : Finset (Fin 7)) (v : Fin 7)
@@ -371,29 +379,46 @@ theorem quadPair {x : Fin 7 → ℝ³} (hx : Function.Injective x)
 parallel to the line of the two planes) or `TriGenFarP`: case (c) of the triple tie does not occur
 at the quadrilaterals `0256`, `1234` of type 07 (`Minimality.triGenTieO_type07`) and `0235`,
 `1456` of type 14 (`Minimality.triGenTieO_type14`), by Lemma 23.0 (a) of
-`FEWER-FACES-PROOFS.md`, so `TriGenPar` gives `TriGenTieO`. -/
+`FEWER-FACES-PROOFS.md`, so `TriGenPar` gives `TriGenTieO`.  For two quadrilaterals one of
+`TriGenPar`, `TriGenFarP` and the residual position `Minimality.QuadTripleRect` always holds
+(`Minimality.triGenPar_or_farP_quad_idx`: a vertical far edge is allowed, and the rectangle of two
+of them too, Proposition 24.12), so the general position of the type is `¬ QuadTripleRect`: the
+rectangle of two vertical far edges (tops tied, bottoms tied) with the shared vertex at a tied far
+depth and every vertex of both faces on one side of it (the triple tie with both faces one-sided
+and a vertical far edge at each far corner; by Lemma 24.14 (α′) a first-order tilt works there
+only for an obtuse apex). -/
 theorem quadPairPar07 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
     (hN : IsNopert (Finset.univ.image x)) {fs : List (Finset (Fin 7))}
     (hfs : fs = Minimality.sevenTypeFaces 6) (hR : Minimality.RealizesFaces x fs) :
-    (Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 5, 6} : Finset (Fin 7)).image x)
-      (({1, 2, 3, 4} : Finset (Fin 7)).image x) (x 2) ∨
-    Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 5, 6} : Finset (Fin 7)).image x)
-      (({1, 2, 3, 4} : Finset (Fin 7)).image x) (x 2)) → False := by
+    ¬ Minimality.QuadTripleRect (Finset.univ.image x) (({0, 2, 5, 6} : Finset (Fin 7)).image x)
+      (({1, 2, 3, 4} : Finset (Fin 7)).image x) (x 2) → False := by
   subst hfs
-  exact fun h => quadPair hx hN hR {0, 2, 5, 6} {1, 2, 3, 4} 2 (by decide) (by decide)
-    (by decide) (by decide) (by decide) (h.imp (Minimality.triGenTieO_type07 hx hR) id)
+  intro hQ
+  have hgen := noThreeCollinear_seven x hN hx
+  rcases Minimality.triGenPar_or_farP_quad_idx hx hgen {0, 2, 5, 6} {1, 2, 3, 4} 2 (by decide)
+    (by decide) (by decide) with h | h | h
+  · exact quadPair hx hN hR {0, 2, 5, 6} {1, 2, 3, 4} 2 (by decide) (by decide)
+      (by decide) (by decide) (by decide) (Or.inl (Minimality.triGenTieO_type07 hx hR h))
+  · exact quadPair hx hN hR {0, 2, 5, 6} {1, 2, 3, 4} 2 (by decide) (by decide)
+      (by decide) (by decide) (by decide) (Or.inr h)
+  · exact hQ h
 
 /-- Type 14 of `quadPairPar07`: the quadrilaterals `0235`, `1456` at vertex `5`. -/
 theorem quadPairPar14 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
     (hN : IsNopert (Finset.univ.image x)) {fs : List (Finset (Fin 7))}
     (hfs : fs = Minimality.sevenTypeFaces 13) (hR : Minimality.RealizesFaces x fs) :
-    (Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
-      (({1, 4, 5, 6} : Finset (Fin 7)).image x) (x 5) ∨
-    Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
-      (({1, 4, 5, 6} : Finset (Fin 7)).image x) (x 5)) → False := by
+    ¬ Minimality.QuadTripleRect (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
+      (({1, 4, 5, 6} : Finset (Fin 7)).image x) (x 5) → False := by
   subst hfs
-  exact fun h => quadPair hx hN hR {0, 2, 3, 5} {1, 4, 5, 6} 5 (by decide) (by decide)
-    (by decide) (by decide) (by decide) (h.imp (Minimality.triGenTieO_type14 hx hR) id)
+  intro hQ
+  have hgen := noThreeCollinear_seven x hN hx
+  rcases Minimality.triGenPar_or_farP_quad_idx hx hgen {0, 2, 3, 5} {1, 4, 5, 6} 5 (by decide)
+    (by decide) (by decide) with h | h | h
+  · exact quadPair hx hN hR {0, 2, 3, 5} {1, 4, 5, 6} 5 (by decide) (by decide)
+      (by decide) (by decide) (by decide) (Or.inl (Minimality.triGenTieO_type14 hx hR h))
+  · exact quadPair hx hN hR {0, 2, 3, 5} {1, 4, 5, 6} 5 (by decide) (by decide)
+      (by decide) (by decide) (by decide) (Or.inr h)
+  · exact hQ h
 
 /-- Theorem B (`not_four_quad_facets_of_isNopert`) for a realized type with four quadrilateral
 faces: in `Minimality.GenPos` the points are not a nopert. -/
@@ -507,7 +532,12 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
   · exact big {1, 2, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 06: Theorem A
   · -- type 07: Cor. T1 at the quadrilaterals 0256, 1234 (sharing vertex 2); case (c) of the
     -- triple tie does not occur (Lemma 23.0 (a)), so only `TriGenPar` (no segment parallel to the
-    -- line of the two planes) or `TriGenFarP` is asked; the special positions are open in Lean
+    -- line of the two planes) or `TriGenFarP` is asked, and one of them holds unless
+    -- `QuadTripleRect` (`triGenPar_or_farP_quad_idx`): the remaining `sorry` assumes exactly that
+    -- residual position (a rectangle of two vertical far edges whose far corner is tied with the
+    -- shared vertex, both faces one-sided: the triple tie of Theorem 24.5 (a) with vertical far
+    -- edges; the face `{2, 0, 4}` of this tie, resp. `{5, 2, 4}` for type 14, is not a face of the
+    -- type, which would make it vacuous, but that argument is not formalized)
     exact byGen1 (quadPairPar07 hx hN rfl hR) (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 08: `not_type08_of_isNopert'`; its general position (2 hypotheses) is asked, the special
     -- positions are open in Lean
@@ -556,8 +586,9 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     exact byGen2 (not_type13_of_isNopert_sv x hN hx fA fB fD fG hfA hfB hfD hfG)
       (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 14: Cor. T1 at the quadrilaterals 0235, 1456 (sharing vertex 5); case (c) of the
-    -- triple tie does not occur (Lemma 23.0 (a)), so only `TriGenPar` or `TriGenFarP` is asked;
-    -- the special positions are open in Lean
+    -- triple tie does not occur (Lemma 23.0 (a)), so only `TriGenPar` or `TriGenFarP` is asked,
+    -- and one of them holds unless `QuadTripleRect` (see type 07): the remaining `sorry` assumes
+    -- exactly that residual position
     exact byGen1 (quadPairPar14 hx hN rfl hR) (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
   · exact big {0, 1, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 15: Theorem A
   · -- type 16: `not_type16_of_isNopert_codim2`; its general position (5 hypotheses) is asked, the special
@@ -705,8 +736,9 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- form `N` (Lemma 21.1); its class (Lemma 21.2) is the sign pattern of `(a2, b0, V)`. Classes K3
     -- and K4 (`NF29.isRupert_K3a_all`, …, as in `isRupert_type29_K3`, `isRupert_type29_K4`) are
     -- proved under their general position (`K3Gen`, `K3C1Gen`, `K4Gen`, `K4C1Gen` of `N` for the
-    -- a forms, of `N.sigma` for the b forms); open in Lean: the class boundaries, K2, K1, and the
-    -- special positions of K3 and K4
+    -- a forms, of `N.sigma` for the b forms), and outside codimension 2 (`NF29.isRupert_K3a_codim2`,
+    -- …: at most one tie, and no HDN or its escape per closing, §28); open in Lean: the class
+    -- boundaries, K2, K1, and the codimension-2 special positions of K3 and K4
     obtain ⟨F, hd⟩ := Minimality.type29_cap hx hvert hR
     set N := Minimality.IsCap29.toNF29 hx F hd
     rcases N.classes with hbd | hK2 | hK1 | ⟨ha2, hb0, hV⟩ | ⟨ha2, hb0, hV⟩ | ⟨ha2, hb0, hV⟩ |
@@ -714,13 +746,21 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     · exact byThm5Faces hx hN _ h3 (fun _ => sorry)  -- a class boundary: `a2 = 0`, `b0 = 0` or `V = 0`
     · exact byThm5Faces hx hN _ h3 (fun _ => sorry)  -- class K2: `a2, b0 < 0`
     · exact byThm5Faces hx hN _ h3 (fun _ => sorry)  -- class K1: `a2 < 0 < b0`, `V < 0` (K1a), or `a2 > 0 > b0`, `V > 0` (K1b)
-    · -- class K3a
-      exact byGen2 (fun G G1 => hnR (N.isRupert_K3a_all ha2 hb0 hV G G1)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
-    · -- class K3b
-      exact byGen2 (fun G G1 => hnR (N.isRupert_K3b_all ha2 hb0 hV G G1)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
-    · -- class K4a
-      exact byGen2 (fun G G1 => hnR (N.isRupert_K4a_all ha2 hb0 hV G G1)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
-    · -- class K4b
-      exact byGen2 (fun G G1 => hnR (N.isRupert_K4b_all ha2 hb0 hV G G1)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
+    · -- class K3a: outside codimension 2 (§28, `NF29.isRupert_K3a_codim2`), else its general position
+      exact byGen2 (fun htie hH => hnR (N.isRupert_K3a_codim2 ha2 hb0 hV htie hH))
+        (fun _ => byGen2 (fun G G1 => hnR (N.isRupert_K3a_all ha2 hb0 hV G G1))
+          (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
+    · -- class K3b: outside codimension 2 (§28, `NF29.isRupert_K3b_codim2`), else its general position
+      exact byGen2 (fun htie hH => hnR (N.isRupert_K3b_codim2 ha2 hb0 hV htie hH))
+        (fun _ => byGen2 (fun G G1 => hnR (N.isRupert_K3b_all ha2 hb0 hV G G1))
+          (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
+    · -- class K4a: outside codimension 2 (§28, `NF29.isRupert_K4a_codim2`), else its general position
+      exact byGen2 (fun htie hH => hnR (N.isRupert_K4a_codim2 ha2 hb0 hV htie hH))
+        (fun _ => byGen2 (fun G G1 => hnR (N.isRupert_K4a_all ha2 hb0 hV G G1))
+          (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
+    · -- class K4b: outside codimension 2 (§28, `NF29.isRupert_K4b_codim2`), else its general position
+      exact byGen2 (fun htie hH => hnR (N.isRupert_K4b_codim2 ha2 hb0 hV htie hH))
+        (fun _ => byGen2 (fun G G1 => hnR (N.isRupert_K4b_all ha2 hb0 hV G G1))
+          (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
 
 end

@@ -184,10 +184,10 @@ theorem par_pair {V Q1 Q2 : Finset ℝ³} {v e p q : ℝ³} {c : ℝ} (hint : Q1
       exact Or.inr ⟨a2, b2, farp, fun x hx => by rw [s1]; exact farp x hx⟩
     · exact absurd (Or.inr (Or.inr ⟨a1, a2, b1, fun h => a2 (m2' h)⟩)) hnm
 
-/-- **A failure of `FarDepthOKT` with a triangle face makes the far set of each face a single
-depth** (the far ends of each face have the same depth at that view). -/
+/-- **A failure of `FarDepthOKT` where the rectangle is allowed (`RectOK`) makes the far set of
+each face a single depth** (the far ends of each face have the same depth at that view). -/
 theorem farUniform {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {d : ℝ³ → ℝ}
-    (hcard : Q1.card = 3 ∨ Q2.card = 3) (h : ¬ FarDepthOKT Q1 Q2 far1 far2 d) :
+    (hcard : RectOK Q1 Q2 far1 far2 d) (h : ¬ FarDepthOKT Q1 Q2 far1 far2 d) :
     (∃ p0 ∈ Q1, far1 p0 ∧ ∀ p' ∈ Q1, far1 p' → d p' = d p0) ∧
       (∃ q0 ∈ Q2, far2 q0 ∧ ∀ q' ∈ Q2, far2 q' → d q' = d q0) := by
   by_contra hU
@@ -206,6 +206,40 @@ theorem farUniform {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {d : ℝ�
     · push Not at u2
       obtain ⟨q', hq', fq', dq'⟩ := u2
       exact Or.inr (Or.inr ⟨⟨p', hp', fp', dp'⟩, ⟨q', hq', fq', dq'⟩, Or.inr hcard⟩)
+
+/-- **A failure of `FarDepthOKT` is a uniform far depth on both faces, or a rectangle where the
+rectangle is not allowed.**  Either the far ends of each face all have one depth, or both faces
+have two far ends at different depths (`p`, `p'` and `q`, `q'`), which tie crosswise
+(`d p = d q`, `d p' = d q'`) while `RectOK` fails. -/
+theorem farRect_of_not {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {d : ℝ³ → ℝ}
+    (h : ¬ FarDepthOKT Q1 Q2 far1 far2 d) :
+    ((∃ p0 ∈ Q1, far1 p0 ∧ ∀ p' ∈ Q1, far1 p' → d p' = d p0) ∧
+      (∃ q0 ∈ Q2, far2 q0 ∧ ∀ q' ∈ Q2, far2 q' → d q' = d q0)) ∨
+    (∃ p ∈ Q1, ∃ p' ∈ Q1, ∃ q ∈ Q2, ∃ q' ∈ Q2, far1 p ∧ far1 p' ∧ far2 q ∧ far2 q' ∧
+      d p = d q ∧ d p' = d q' ∧ d p ≠ d p' ∧ ¬ RectOK Q1 Q2 far1 far2 d) := by
+  classical
+  by_contra hcon
+  apply h
+  intro p hp q hq hpq f1 f2 hd
+  by_cases u1 : ∀ p' ∈ Q1, far1 p' → d p' = d p
+  · by_cases u2 : ∀ q' ∈ Q2, far2 q' → d q' = d q
+    · exact absurd (Or.inl ⟨⟨p, hp, f1, u1⟩, ⟨q, hq, f2, u2⟩⟩) hcon
+    · push Not at u2
+      obtain ⟨q', hq', fq', dq'⟩ := u2
+      exact Or.inr (Or.inl ⟨u1, q', hq', fq', dq'⟩)
+  · push Not at u1
+    obtain ⟨p', hp', fp', dp'⟩ := u1
+    by_cases u2 : ∀ q' ∈ Q2, far2 q' → d q' = d q
+    · exact Or.inl ⟨⟨p', hp', fp', dp'⟩, u2⟩
+    · push Not at u2
+      obtain ⟨q', hq', fq', dq'⟩ := u2
+      refine Or.inr (Or.inr ⟨⟨p', hp', fp', dp'⟩, ⟨q', hq', fq', dq'⟩, ?_⟩)
+      by_cases hR : RectOK Q1 Q2 far1 far2 d
+      · exact Or.inr hR
+      · left
+        intro p'' hp'' f'' dp'' q'' hq'' g'' dq'' nq e
+        exact hcon (Or.inr ⟨p, hp, p'', hp'', q, hq, q'', hq'', f1, f'', f2, g'', hd, e,
+          fun h => dp'' h.symm, hR⟩)
 
 /-- **The core.** A vertical far edge `p q` of the facet `Q1` (both far for the functional `f2`
 of the other facet) contradicts the uniform far depth of `Q1` at another view line `e`: the two
@@ -336,13 +370,103 @@ theorem triGenPar_or_farP {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (hgen : NoThreeCo
     exact hc ⟨g1, g2, z1, n1, z2, n2, e, he, e1, e2, hnm⟩
   obtain ⟨f1, f2, z1, n1, z2, n2, e, he, e1, e2, p, hp, q, hq, hpq, c, hc, hnm⟩ := hP'
   obtain ⟨g1, g2, y1, m1, y2, m2, e', he', e1', e2', hnF⟩ := hF'
-  obtain ⟨⟨p0, hp0, hf0, hu0⟩, ⟨q0, hq0, hf0', hu0'⟩⟩ := farUniform hcard hnF
+  obtain ⟨⟨p0, hp0, hf0, hu0⟩, ⟨q0, hq0, hf0', hu0'⟩⟩ :=
+    farUniform (hcard.elim Or.inl fun h => Or.inr (Or.inl h)) hnF
   rcases par_pair hint f1 f2 z1 n1 z2 n2 e1 e2 hp hq hpq hc hnm with
     ⟨hpQ, hqQ, fp, fq⟩ | ⟨hpQ, hqQ, fp, fq⟩
   · exact par_core hgen h1V h2V hint (by omega) h2 hw2 hw2Q f2 z2 n2 g1 g2 y1 m1 y2 m2 he' e1' e2'
       ⟨p0, hp0, hf0, hu0⟩ hpQ hqQ hpq fp fq
   · exact par_core hgen h2V h1V (by rw [Finset.inter_comm]; exact hint) (by omega) h1 hw1 hw1Q
       f1 z1 n1 g2 g1 y2 m2 y1 m1 he' e2' e1' ⟨q0, hq0, hf0', hu0'⟩ hpQ hqQ hpq fp fq
+
+/-- **The residual position of two quadrilaterals** (FEWER-FACES-PROOFS.md Proposition 24.12 and
+Theorem 24.5 (a)).  At a view `e` along the line of the planes of the facets `Q1`, `Q2` (functionals
+`f1`, `f2`) the far ends of `Q1` include two points `p`, `p'` at different depths (a vertical far
+edge: minimizers of `f2` over `Q1`), those of `Q2` two points `q`, `q'`, and the depths tie
+crosswise (`p ~ q`, `p' ~ q'`, the rectangle); and the shared vertex `v` has the depth of a far
+end, with every vertex of both faces on one side of it (the triple tie with both faces one-sided).
+For two quadrilaterals this is, besides a segment parallel to the line with an endpoint at a far
+end that is not covered by the rectangle, the only position that `Minimality.TriGenFarP` excludes
+(`RectOK`). -/
+def QuadTripleRect (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
+  ∃ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) ∧ (∀ p ∈ V, p ∉ Q1 → f1 p < 0) ∧
+    (∀ p ∈ Q2, f2 p = 0) ∧ (∀ p ∈ V, p ∉ Q2 → f2 p < 0) ∧
+    ∃ e : ℝ³, e ≠ 0 ∧ f1 (v + e) = 0 ∧ f2 (v + e) = 0 ∧
+      ∃ p ∈ Q1, ∃ p' ∈ Q1, ∃ q ∈ Q2, ∃ q' ∈ Q2,
+        (∀ x ∈ Q1, f2 p ≤ f2 x) ∧ (∀ x ∈ Q1, f2 p' ≤ f2 x) ∧
+        (∀ x ∈ Q2, f1 q ≤ f1 x) ∧ (∀ x ∈ Q2, f1 q' ≤ f1 x) ∧
+        ⟪p, e⟫ = ⟪q, e⟫ ∧ ⟪p', e⟫ = ⟪q', e⟫ ∧ ⟪p, e⟫ ≠ ⟪p', e⟫ ∧
+        ((∃ w ∈ Q1, (∀ x ∈ Q1, f2 w ≤ f2 x) ∧ ⟪w, e⟫ = ⟪v, e⟫) ∨
+          (∃ w ∈ Q2, (∀ x ∈ Q2, f1 w ≤ f1 x) ∧ ⟪w, e⟫ = ⟪v, e⟫)) ∧
+        ((∀ x ∈ Q1 ∪ Q2, ⟪v, e⟫ ≤ ⟪x, e⟫) ∨ (∀ x ∈ Q1 ∪ Q2, ⟪x, e⟫ ≤ ⟪v, e⟫))
+
+/-- **`TriGenPar`, `TriGenFarP` or the residual position, for two quadrilaterals.**  For two
+facets `Q1`, `Q2` of `V` meeting in `v`, with no three points of `V` collinear, both
+quadrilaterals: either every segment parallel to the line of the two planes is a `MidPair`
+(`TriGenPar`), or `TriGenFarP` holds, or `QuadTripleRect` holds.  (As `triGenPar_or_farP`, with the
+rectangle also allowed for two quadrilaterals unless the shared vertex has the depth of a far end
+and all vertices of both faces lie on one side of it.) -/
+theorem triGenPar_or_farP_quad {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (hgen : NoThreeCollinear V)
+    (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hint : Q1 ∩ Q2 = {v}) (hc1 : Q1.card = 4)
+    (hc2 : Q2.card = 4) (hout1 : ∃ w ∈ V, w ∉ Q1) (hout2 : ∃ w ∈ V, w ∉ Q2) :
+    TriGenPar V Q1 Q2 v ∨ TriGenFarP V Q1 Q2 v ∨ QuadTripleRect V Q1 Q2 v := by
+  classical
+  by_contra hcon
+  rw [not_or, not_or] at hcon
+  obtain ⟨hP, hF, hR⟩ := hcon
+  obtain ⟨w1, hw1, hw1Q⟩ := hout1
+  obtain ⟨w2, hw2, hw2Q⟩ := hout2
+  have hP' : ∃ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) ∧ (∀ p ∈ V, p ∉ Q1 → f1 p < 0) ∧
+      (∀ p ∈ Q2, f2 p = 0) ∧ (∀ p ∈ V, p ∉ Q2 → f2 p < 0) ∧ ∃ e : ℝ³, e ≠ 0 ∧ f1 (v + e) = 0 ∧
+      f2 (v + e) = 0 ∧ ∃ p ∈ V, ∃ q ∈ V, p ≠ q ∧ ∃ c : ℝ, q - p = c • e ∧
+        ¬ MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q')
+          p q := by
+    by_contra hc
+    apply hP
+    intro f1 f2 z1 n1 z2 n2 e he e1 e2 p hp q hq hpq c hc'
+    by_contra hnm
+    exact hc ⟨f1, f2, z1, n1, z2, n2, e, he, e1, e2, p, hp, q, hq, hpq, c, hc', hnm⟩
+  have hF' : ∃ g1 g2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, g1 p = 0) ∧ (∀ p ∈ V, p ∉ Q1 → g1 p < 0) ∧
+      (∀ p ∈ Q2, g2 p = 0) ∧ (∀ p ∈ V, p ∉ Q2 → g2 p < 0) ∧ ∃ e : ℝ³, e ≠ 0 ∧ g1 (v + e) = 0 ∧
+      g2 (v + e) = 0 ∧ ¬ FarDepthOKT Q1 Q2 (fun p => ∀ p' ∈ Q1, g2 p ≤ g2 p')
+        (fun q => ∀ q' ∈ Q2, g1 q ≤ g1 q') (fun p => ⟪p, e⟫) := by
+    by_contra hc
+    apply hF
+    intro g1 g2 z1 n1 z2 n2 e he e1 e2
+    by_contra hnm
+    exact hc ⟨g1, g2, z1, n1, z2, n2, e, he, e1, e2, hnm⟩
+  obtain ⟨f1, f2, z1, n1, z2, n2, e, he, e1, e2, p, hp, q, hq, hpq, c, hc, hnm⟩ := hP'
+  obtain ⟨g1, g2, y1, m1, y2, m2, e', he', e1', e2', hnF⟩ := hF'
+  rcases farRect_of_not hnF with ⟨⟨p0, hp0, hf0, hu0⟩, ⟨q0, hq0, hf0', hu0'⟩⟩ |
+      ⟨a, ha, a', ha', b, hb, b', hb', fa, fa', fb, fb', t1, t2, t3, hnR⟩
+  · rcases par_pair hint f1 f2 z1 n1 z2 n2 e1 e2 hp hq hpq hc hnm with
+      ⟨hpQ, hqQ, fp, fq⟩ | ⟨hpQ, hqQ, fp, fq⟩
+    · exact par_core hgen h1V h2V hint (by omega) (by omega) hw2 hw2Q f2 z2 n2 g1 g2 y1 m1 y2 m2
+        he' e1' e2' ⟨p0, hp0, hf0, hu0⟩ hpQ hqQ hpq fp fq
+    · exact par_core hgen h2V h1V (by rw [Finset.inter_comm]; exact hint) (by omega) (by omega)
+        hw1 hw1Q f1 z1 n1 g2 g1 y2 m2 y1 m1 he' e2' e1' ⟨q0, hq0, hf0', hu0'⟩ hpQ hqQ hpq fp fq
+  · apply hR
+    have hnR' : ¬ ∀ w ∈ Q1 ∩ Q2, ((∃ p ∈ Q1, (∀ p' ∈ Q1, g2 p ≤ g2 p') ∧ ⟪p, e'⟫ = ⟪w, e'⟫) ∨
+        (∃ q ∈ Q2, (∀ q' ∈ Q2, g1 q ≤ g1 q') ∧ ⟪q, e'⟫ = ⟪w, e'⟫)) →
+        (∃ x ∈ Q1 ∪ Q2, ⟪x, e'⟫ < ⟪w, e'⟫) ∧ (∃ x ∈ Q1 ∪ Q2, ⟪w, e'⟫ < ⟪x, e'⟫) :=
+      fun H => hnR (Or.inr (Or.inr ⟨hc1, hc2, H⟩))
+    push Not at hnR'
+    obtain ⟨w, hw, hties, hone⟩ := hnR'
+    have hwv : w = v := by
+      have : w ∈ ({v} : Finset ℝ³) := hint ▸ hw
+      exact Finset.mem_singleton.mp this
+    subst hwv
+    refine ⟨g1, g2, y1, m1, y2, m2, e', he', e1', e2', a, ha, a', ha', b, hb, b', hb', fa, fa', fb,
+      fb', t1, t2, t3, ?_, ?_⟩
+    · rcases hties with ⟨x, hx, hxf, hxe⟩ | ⟨x, hx, hxf, hxe⟩
+      · exact Or.inl ⟨x, hx, hxf, hxe⟩
+      · exact Or.inr ⟨x, hx, hxf, hxe⟩
+    · by_cases hlow : ∃ x ∈ Q1 ∪ Q2, ⟪x, e'⟫ < ⟪w, e'⟫
+      · right
+        exact hone hlow
+      · left
+        push Not at hlow
+        exact hlow
 
 /-- `triGenPar_or_farP` for labelled points: two facets `A`, `B` of the labelled seven points
 (each with at most six labels), meeting in the label `v`, one of them a triangle. -/
@@ -361,6 +485,30 @@ theorem triGenPar_or_farP_idx {x : Fin 7 → ℝ³} (hx : Function.Injective x)
     (Finset.image_subset_image (Finset.subset_univ B))
     (by rw [← Finset.image_inter _ _ hx, hint, Finset.image_singleton])
     (by omega) (by omega) (by omega) ?_ ?_
+  · obtain ⟨w, hw, hwA⟩ := Finset.exists_mem_notMem_of_card_lt_card (s := A.image x)
+      (t := Finset.univ.image x) (by omega)
+    exact ⟨w, hw, hwA⟩
+  · obtain ⟨w, hw, hwB⟩ := Finset.exists_mem_notMem_of_card_lt_card (s := B.image x)
+      (t := Finset.univ.image x) (by omega)
+    exact ⟨w, hw, hwB⟩
+
+/-- `triGenPar_or_farP_quad` for labelled points: two quadrilateral facets `A`, `B` of the labelled
+seven points, meeting in the label `v`. -/
+theorem triGenPar_or_farP_quad_idx {x : Fin 7 → ℝ³} (hx : Function.Injective x)
+    (hgen : NoThreeCollinear (Finset.univ.image x)) (A B : Finset (Fin 7)) (v : Fin 7)
+    (hint : A ∩ B = {v}) (hA : A.card = 4) (hB : B.card = 4) :
+    TriGenPar (Finset.univ.image x) (A.image x) (B.image x) (x v) ∨
+      TriGenFarP (Finset.univ.image x) (A.image x) (B.image x) (x v) ∨
+      QuadTripleRect (Finset.univ.image x) (A.image x) (B.image x) (x v) := by
+  classical
+  have hV : (Finset.univ.image x).card = 7 := by
+    rw [Finset.card_image_of_injective _ hx]; simp
+  have cA : (A.image x).card = A.card := Finset.card_image_of_injective _ hx
+  have cB : (B.image x).card = B.card := Finset.card_image_of_injective _ hx
+  refine triGenPar_or_farP_quad hgen (Finset.image_subset_image (Finset.subset_univ A))
+    (Finset.image_subset_image (Finset.subset_univ B))
+    (by rw [← Finset.image_inter _ _ hx, hint, Finset.image_singleton])
+    (by omega) (by omega) ?_ ?_
   · obtain ⟨w, hw, hwA⟩ := Finset.exists_mem_notMem_of_card_lt_card (s := A.image x)
       (t := Finset.univ.image x) (by omega)
     exact ⟨w, hw, hwA⟩
