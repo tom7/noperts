@@ -355,6 +355,22 @@ theorem quadPair {x : Fin 7 → ℝ³} (hx : Function.Injective x)
     (Minimality.isFacet_of_realizesFaces hR h1) (Minimality.isFacet_of_realizesFaces hR h2) (x v) ?_ hT
   rw [← Finset.image_inter _ _ hx, hint, Finset.image_singleton]
 
+/-- Theorem B (`not_four_quad_facets_of_isNopert`) for a realized type with four quadrilateral
+faces: in `Minimality.GenPos` the points are not a nopert. -/
+theorem fourQuad {x : Fin 7 → ℝ³} (hx : Function.Injective x)
+    (hN : IsNopert (Finset.univ.image x)) {fs : List (Finset (Fin 7))}
+    (hR : Minimality.RealizesFaces x fs) (q : Fin 4 → Finset (Fin 7)) (hq : ∀ k, q k ∈ fs)
+    (hc : ∀ k, (q k).card = 4) (hi : Function.Injective q) :
+    Minimality.GenPos (Finset.univ.image x) → False := by
+  classical
+  intro hg
+  have hV : (Finset.univ.image x).card = 7 := by rw [Finset.card_image_of_injective _ hx]; simp
+  exact not_four_quad_facets_of_isNopert _ hN hV hg (fun k => (q k).image x)
+    (fun k => Finset.image_subset_image (Finset.subset_univ _))
+    (fun k => by rw [Finset.card_image_of_injective _ hx, hc k])
+    (fun k => Minimality.isFacet_of_realizesFaces hR (hq k))
+    ((Finset.image_injective hx).comp hi)
+
 /-- Theorem 5 on the faces of a realized type: if some face has an admissible view, the
 points are Rupert. Used to narrow the special-position branches of the skeleton. -/
 theorem byThm5Faces {x : Fin 7 → ℝ³} (hx : Function.Injective x)
@@ -423,10 +439,13 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
   have h3 := h3 k
   fin_cases k
   · exact big {1, 2, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 01: Theorem A
-  · -- type 02: Cor. T1 at the quadrilaterals 0235, 1246 (sharing vertex 2); general position
-    -- asked, the special positions are open in Lean
+  · -- type 02: Cor. T1 at the quadrilaterals 0235, 1246 (sharing vertex 2); where its general
+    -- position fails, Theorem B on the four quadrilaterals 0134, 0235, 1246, 3456 under
+    -- `GenPos`; the special positions of both are open in Lean
     exact byGen1 (quadPair hx hN hR {0, 2, 3, 5} {1, 2, 4, 6} 2 (by decide) (by decide) (by decide) (by decide)
-      (by decide)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
+      (by decide)) (fun _ => byGen1 (fourQuad hx hN hR ![{0, 1, 3, 4}, {0, 2, 3, 5}, {1, 2, 4, 6},
+        {3, 4, 5, 6}] (by decide) (by decide) (by decide))
+        (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
   · exact big {0, 2, 3, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 03: Theorem A
   · exact big {1, 2, 3, 5, 6} (by decide) (by decide) (by decide)  -- type 04: Theorem A
   · -- type 05: `not_type05_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
