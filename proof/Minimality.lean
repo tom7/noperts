@@ -4,6 +4,7 @@ public import Minimality.Cases
 public import Minimality.SevenTypes
 public import Minimality.FaceBridge
 public import Minimality.Classify
+public import Minimality.Type29Bridge
 
 /-!
 # Every nopert has at least 7 points
@@ -243,8 +244,10 @@ point inside the hull of the others (`isRupert_of_mem_convexHull_erase`), faces 
 vertices (Theorem A, `facet_card_le_four_of_isNopert`), and that a 2-dimensional extreme face is
 a facet (`Minimality.exists_facet_of_isExtreme`, `Minimality/FaceBridge.lean`), and the
 classification into the 29 types (`Minimality.exists_sevenType`, `Minimality/Classify.lean`: a
-sign-vector certificate checked in the kernel). Not formalized (`sorry`): types 24 and 29, and for
-every other type its special positions: each type's theorem in `Minimality/Cases.lean` closes the case under its general-position
+sign-vector certificate checked in the kernel). Not formalized (`sorry`): type 24; for type 29
+(split by the class of its octahedron, `Minimality.type29_cap`, `Minimality.NF29.classes`) the
+classes K1, K2 and the class boundaries; and for every other type, and for K3 and K4, the special
+positions: each type's theorem in `Minimality/Cases.lean` closes the case under its general-position
 hypotheses (`byGen1`, …), and the `sorry` that remains has exactly their negation as hypothesis. -/
 
 /-- A realized type with a face of 5 or 6 vertices is not a nopert (Theorem A). -/
@@ -508,6 +511,26 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fM, hfM⟩ := hR {1, 4, 5} (by decide)
     exact byGen3 (not_type28_of_isNopert_sv x hN hx fA fD fG fH fF fM hfA hfD hfG hfH hfF hfM)
       (fun _ => sorry)
-  · sorry  -- type 29: open (classes K3, K4: `isRupert_type29_K3`, `isRupert_type29_K4`)
+  · -- type 29: the octahedron `O = K − 6` with the cap `6` (`Minimality.type29_cap`) has the normal
+    -- form `N` (Lemma 21.1); its class (Lemma 21.2) is the sign pattern of `(a2, b0, V)`. Classes K3
+    -- and K4 (`NF29.isRupert_K3a_all`, …, as in `isRupert_type29_K3`, `isRupert_type29_K4`) are
+    -- proved under their general position (`K3Gen`, `K3C1Gen`, `K4Gen`, `K4C1Gen` of `N` for the
+    -- a forms, of `N.sigma` for the b forms); open in Lean: the class boundaries, K2, K1, and the
+    -- special positions of K3 and K4
+    obtain ⟨F, hd⟩ := Minimality.type29_cap hx hvert hR
+    set N := Minimality.IsCap29.toNF29 hx F hd
+    rcases N.classes with hbd | hK2 | hK1 | ⟨ha2, hb0, hV⟩ | ⟨ha2, hb0, hV⟩ | ⟨ha2, hb0, hV⟩ |
+      ⟨ha2, hb0, hV⟩
+    · sorry  -- a class boundary: `a2 = 0`, `b0 = 0` or `V = 0`
+    · sorry  -- class K2: `a2, b0 < 0`
+    · sorry  -- class K1: `a2 < 0 < b0`, `V < 0` (K1a), or `a2 > 0 > b0`, `V > 0` (K1b)
+    · -- class K3a
+      exact byGen2 (fun G G1 => hnR (N.isRupert_K3a_all ha2 hb0 hV G G1)) (fun _ => sorry)
+    · -- class K3b
+      exact byGen2 (fun G G1 => hnR (N.isRupert_K3b_all ha2 hb0 hV G G1)) (fun _ => sorry)
+    · -- class K4a
+      exact byGen2 (fun G G1 => hnR (N.isRupert_K4a_all ha2 hb0 hV G G1)) (fun _ => sorry)
+    · -- class K4b
+      exact byGen2 (fun G G1 => hnR (N.isRupert_K4b_all ha2 hb0 hV G G1)) (fun _ => sorry)
 
 end
