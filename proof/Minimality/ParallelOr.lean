@@ -9,7 +9,8 @@ public import Minimality.ParallelFacets
 # Lemma T views under either general position
 
 The views of the per-type theorems accept either the tie-tolerant general
-position (`TriGenTie`, `EdgeTieR`: no segment parallel to the view line) or
+position (`TriGenTie`; `EdgeTieR`: no segment parallel to the view line, except between two
+middles of one face or two hidden vertices) or
 the parallel-tolerant one (`TriGenFarP`, `EdgeFarP`: distinct far depths, or a tie when exactly
 one face has a vertical far edge). A segment parallel
 to the view line then matters only together with a far tie that is not settled by a vertical

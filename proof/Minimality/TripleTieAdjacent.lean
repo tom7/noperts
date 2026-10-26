@@ -242,7 +242,8 @@ theorem triGenTieO_of_quads {V Q1 Q2 : Finset ℝ³} {v P a1 a2 Q b1 b2 : ℝ³}
     (C2 : ∃ φ : ℝ³ →ᵃ[ℝ] ℝ, φ v < 0 ∧ φ a1 = 0 ∧ φ b2 = 0 ∧ φ P ≤ 0 ∧ φ Q ≤ 0) :
     TriGenPar V Q1 Q2 v → TriGenTieO V Q1 Q2 v := by
   intro hpar f1 f2 z1 n1 z2 n2 e he e1 e2
-  refine ⟨hpar f1 f2 z1 n1 z2 n2 e he e1 e2, ?_⟩
+  refine ⟨fun p hp q hq hpq c hc => absurd hc (hpar f1 f2 z1 n1 z2 n2 e he e1 e2 p hp q hq hpq c),
+    ?_⟩
   intro p hp q hq _ hpmin hqmin
   have only : ∀ y ∈ Q1, y ∈ Q2 → y = v := fun y h1 h2 => by
     have : y ∈ Q1 ∩ Q2 := mem_inter.mpr ⟨h1, h2⟩

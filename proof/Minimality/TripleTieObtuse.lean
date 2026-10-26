@@ -1055,7 +1055,8 @@ theorem isRupert_of_obtuse_apex (V Q1 Q2 : Finset ℝ³) (hgen : NoThreeCollinea
     (z1 : ∀ p ∈ Q1, f1 p = 0) (n1 : ∀ p ∈ V, p ∉ Q1 → f1 p < 0)
     (z2 : ∀ p ∈ Q2, f2 p = 0) (n2 : ∀ p ∈ V, p ∉ Q2 → f2 p < 0)
     (e : ℝ³) (he : e ≠ 0) (e1 : f1 (v + e) = 0) (e2 : f2 (v + e) = 0)
-    (hpar : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ∀ c : ℝ, q - p ≠ c • e)
+    (hpar : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ∀ c : ℝ, q - p = c • e →
+      MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q') p q)
     (p : ℝ³) (hp : p ∈ Q1) (q : ℝ³) (hq : q ∈ Q2) (hpq : p ≠ q)
     (hpm : ∀ p' ∈ Q1, f2 p ≤ f2 p') (hqm : ∀ q' ∈ Q2, f1 q ≤ f1 q')
     (hnot : ¬ TieHT Q1 Q2 v p q (fun x => ⟪x, e⟫))
@@ -1166,14 +1167,18 @@ theorem isRupert_of_obtuse_apex (V Q1 Q2 : Finset ℝ³) (hgen : NoThreeCollinea
       nlinarith
     have hα1' : α x ≠ 1 := by
       intro h1
-      apply hpar x hxV p hpV hxp (-(ζ x))
-      have := hcoef x
-      rw [hν0, h1, zero_smul, one_smul, add_zero] at this
-      have h2 : x - (p + ζ x • e) = 0 := by
-        calc x - (p + ζ x • e) = (x - v) - (A + ζ x • e) := by rw [hAd]; abel
-          _ = 0 := by rw [this]; exact sub_self _
-      have hxp' : x - p = ζ x • e := sub_eq_of_eq_add' (sub_eq_zero.mp h2)
-      rw [neg_smul, ← hxp', neg_sub]
+      have hc : p - x = (-(ζ x)) • e := by
+        have := hcoef x
+        rw [hν0, h1, zero_smul, one_smul, add_zero] at this
+        have h2 : x - (p + ζ x • e) = 0 := by
+          calc x - (p + ζ x • e) = (x - v) - (A + ζ x • e) := by rw [hAd]; abel
+            _ = 0 := by rw [this]; exact sub_self _
+        have hxp' : x - p = ζ x • e := sub_eq_of_eq_add' (sub_eq_zero.mp h2)
+        rw [neg_smul, ← hxp', neg_sub]
+      rcases hpar x hxV p hpV hxp _ hc with ⟨-, -, -, nf⟩ | ⟨-, hp2, -, -⟩ | ⟨hx1, -, -, -⟩
+      · exact nf hpm
+      · exact hpv (only p hp hp2)
+      · exact absurd hx hx1
     have hζ0 : ζ x ≠ 0 := by
       intro h0
       apply hgen v hvV p hpV x hxV hpv.symm hxv.symm hxp.symm (α x)
@@ -1205,14 +1210,18 @@ theorem isRupert_of_obtuse_apex (V Q1 Q2 : Finset ℝ³) (hgen : NoThreeCollinea
       nlinarith
     have hν1' : ν y ≠ 1 := by
       intro h1
-      apply hpar y hyV q hqV hyq (-(ζ y))
-      have := hcoef y
-      rw [hαy, h1, mul_one, one_smul, hBA] at this
-      have h2 : y - (q + ζ y • e) = 0 := by
-        calc y - (q + ζ y • e) = (y - v) - (Bv + ζ y • e) := by rw [hBd]; abel
-          _ = 0 := by rw [this]; exact sub_self _
-      have hyq' : y - q = ζ y • e := sub_eq_of_eq_add' (sub_eq_zero.mp h2)
-      rw [neg_smul, ← hyq', neg_sub]
+      have hc : q - y = (-(ζ y)) • e := by
+        have := hcoef y
+        rw [hαy, h1, mul_one, one_smul, hBA] at this
+        have h2 : y - (q + ζ y • e) = 0 := by
+          calc y - (q + ζ y • e) = (y - v) - (Bv + ζ y • e) := by rw [hBd]; abel
+            _ = 0 := by rw [this]; exact sub_self _
+        have hyq' : y - q = ζ y • e := sub_eq_of_eq_add' (sub_eq_zero.mp h2)
+        rw [neg_smul, ← hyq', neg_sub]
+      rcases hpar y hyV q hqV hyq _ hc with ⟨hy1, hq1, -, -⟩ | ⟨-, -, -, nf⟩ | ⟨-, hy2, -, -⟩
+      · exact hqv (only q hq1 hq)
+      · exact nf hqm
+      · exact absurd hy hy2
     have hζ0 : ζ y ≠ 0 := by
       intro h0
       apply hgen v hvV q hqV y hyV hqv.symm hyv.symm hyq.symm (ν y)
@@ -1322,17 +1331,9 @@ theorem isRupert_of_obtuse_apex (V Q1 Q2 : Finset ℝ³) (hgen : NoThreeCollinea
   rw [← hV]
   exact c.isRupert_model
 
-/-- **General position for Lemma T at the line of the planes of two facets, the triple tie
-settled including a right or obtuse apex** (Theorems 24.5 and 24.8 of
-`FEWER-FACES-PROOFS.md` §24): as `TriGenTieT`, with one more way out at the far ends `p`, `q`:
-`p`, `q` and the shared vertex `v` at one depth along the line, and the angle of the shadow
-triangle `(v, p, q)` at `v` at least `π/2` (`⟪p - v, q - v⟫ ≤ 0`).  By Theorem 24.8 this settles
-the case-(c) triple tie (both faces two-sided) of two quadrilateral faces covering the seven
-points: the views of the face circle of `Q1` beside the view along `p - v` have a unimodal
-rim with distinct depths, so `V` is Rupert by Theorem 18.1 (`isRupert_of_obtuse_apex`).  What it
-excludes beyond a parallel segment: the triple tie with both faces two-sided and the shadow
-triangle acute at `v` and neither obtuse at `p` nor at `q`. -/
-def TriGenTieO (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
+/-- The former general position `TriGenTieON`, kept for reference: as `TriGenTieO`, with no
+segment at all parallel to the line.  `TriGenTieON.weaken` gives `TriGenTieO`. -/
+def TriGenTieON (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
   ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
     (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
     ∀ e : ℝ³, e ≠ 0 → f1 (v + e) = 0 → f2 (v + e) = 0 →
@@ -1340,6 +1341,37 @@ def TriGenTieO (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
       ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
         TieHT Q1 Q2 v p q (fun x => ⟪x, e⟫) ∨
           (⟪p, e⟫ = ⟪q, e⟫ ∧ ⟪v, e⟫ = ⟪p, e⟫ ∧ ⟪p - v, q - v⟫ ≤ 0)
+
+
+/-- **General position for Lemma T at the line of the planes of two facets, the triple tie
+settled including a right or obtuse apex** (Theorems 24.5 and 24.8 of
+`FEWER-FACES-PROOFS.md` §24): as `TriGenTieT`, with one more way out at the far ends `p`, `q`:
+`p`, `q` and the shared vertex `v` at one depth along the line, and the angle of the shadow
+triangle `(v, p, q)` at `v` at least `π/2` (`⟪p - v, q - v⟫ ≤ 0`).  By Theorem 24.8 this settles
+the case-(c) triple tie (both faces two-sided) of two quadrilateral faces covering the seven
+points: the views of the face circle of `Q1` beside the view along `p - v` have a unimodal
+rim with distinct depths, so `V` is Rupert by Theorem 18.1 (`isRupert_of_obtuse_apex`).  Segments
+parallel to the line are allowed between two middles of one face or two hidden vertices
+(`MidPair`; Proposition 23.19 (2), (3)); the earlier form without any parallel segment is `TriGenTieON`.  What it excludes beyond
+such a segment: the triple tie with both faces two-sided and the shadow triangle acute at `v`
+and neither obtuse at `p` nor at `q`. -/
+def TriGenTieO (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
+  ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+    (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+    ∀ e : ℝ³, e ≠ 0 → f1 (v + e) = 0 → f2 (v + e) = 0 →
+      (∀ p ∈ V, ∀ q ∈ V, p ≠ q → ∀ c : ℝ, q - p = c • e →
+        MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q')
+          p q) ∧
+      ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
+        TieHT Q1 Q2 v p q (fun x => ⟪x, e⟫) ∨
+          (⟪p, e⟫ = ⟪q, e⟫ ∧ ⟪v, e⟫ = ⟪p, e⟫ ∧ ⟪p - v, q - v⟫ ≤ 0)
+
+/-- No parallel segment at all gives `TriGenTieO`. -/
+theorem TriGenTieON.weaken {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h : TriGenTieON V Q1 Q2 v) :
+    TriGenTieO V Q1 Q2 v := by
+  intro f1 f2 z1 n1 z2 n2 e he e1 e2
+  obtain ⟨hpar, hfar⟩ := h f1 f2 z1 n1 z2 n2 e he e1 e2
+  exact ⟨fun p hp q hq hpq c hc => absurd hc (hpar p hp q hq hpq c), hfar⟩
 
 theorem TriGenTieT.toO {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h : TriGenTieT V Q1 Q2 v) :
     TriGenTieO V Q1 Q2 v := by

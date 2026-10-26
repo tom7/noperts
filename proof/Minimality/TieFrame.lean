@@ -2,6 +2,7 @@ module
 
 public import Minimality.TieRight
 public import Minimality.TriTie
+public import Minimality.ParallelFar
 
 @[expose] public section
 
@@ -780,6 +781,136 @@ at a far end is allowed: `isRupert_of_tilted_tie_right`). -/
 def TieHR (Q1 Q2 : Finset ℝ³) (v p q : ℝ³) (h : ℝ³ → ℝ) : Prop :=
   TieH Q1 Q2 v p q h ∨ (h p = h q ∧ h v ≠ h p)
 
+/-- **A pair of middles of one face, or a pair of hidden vertices** (FEWER-FACES-PROOFS.md §5
+(2), (3), Proposition 23.19 (2), (3), (3)): `p`, `q` are two vertices of the first face, neither of
+them a far end of it (`far1`); or two vertices of the second face, neither a far end of it
+(`far2`); or two vertices outside both faces.  Used for the segments parallel to the view line
+that a general position hypothesis at a tie may allow: such a pair changes no corner and no
+chain extreme (a hidden pair is only constrained by lying in the shadow triangle), so the
+robust Lemma T at the tie still applies. -/
+def MidPair (Q1 Q2 : Finset ℝ³) (far1 far2 : ℝ³ → Prop) (p q : ℝ³) : Prop :=
+  (p ∈ Q1 ∧ q ∈ Q1 ∧ ¬ far1 p ∧ ¬ far1 q) ∨ (p ∈ Q2 ∧ q ∈ Q2 ∧ ¬ far2 p ∧ ¬ far2 q) ∨
+    (p ∉ Q1 ∧ p ∉ Q2 ∧ q ∉ Q1 ∧ q ∉ Q2)
+
+theorem MidPair.swap {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {p q : ℝ³}
+    (h : MidPair Q1 Q2 far1 far2 p q) : MidPair Q2 Q1 far2 far1 p q := by
+  rcases h with h | h | ⟨a, b, c, d⟩
+  · exact Or.inr (Or.inl h)
+  · exact Or.inl h
+  · exact Or.inr (Or.inr ⟨b, a, d, c⟩)
+
+theorem MidPair.comm {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {p q : ℝ³}
+    (h : MidPair Q1 Q2 far1 far2 p q) : MidPair Q1 Q2 far1 far2 q p := by
+  rcases h with ⟨a, b, c, d⟩ | ⟨a, b, c, d⟩ | ⟨a, b, c, d⟩
+  · exact Or.inl ⟨b, a, d, c⟩
+  · exact Or.inr (Or.inl ⟨b, a, d, c⟩)
+  · exact Or.inr (Or.inr ⟨c, d, a, b⟩)
+
+/-- A pair of middles for smaller far predicates (a vertex far in the smaller sense is far in the
+larger). -/
+theorem MidPair.mono {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ → Prop} {p q : ℝ³}
+    (h : MidPair Q1 Q2 far1 far2 p q) (h1 : ∀ x ∈ Q1, far1' x → far1 x)
+    (h2 : ∀ x ∈ Q2, far2' x → far2 x) : MidPair Q1 Q2 far1' far2' p q := by
+  rcases h with ⟨hp, hq, np, nq⟩ | ⟨hp, hq, np, nq⟩ | h
+  · exact Or.inl ⟨hp, hq, fun f => np (h1 p hp f), fun f => nq (h1 q hq f)⟩
+  · exact Or.inr (Or.inl ⟨hp, hq, fun f => np (h2 p hp f), fun f => nq (h2 q hq f)⟩)
+  · exact Or.inr (Or.inr h)
+
+/-- A pair of middles transported by an injective map. -/
+theorem MidPair.map [DecidableEq ℝ³] {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ → Prop}
+    {p q : ℝ³} (h : MidPair Q1 Q2 far1 far2 p q) (g : ℝ³ → ℝ³) (hg : Function.Injective g)
+    (h1 : ∀ x ∈ Q1, far1' (g x) → far1 x) (h2 : ∀ x ∈ Q2, far2' (g x) → far2 x) :
+    MidPair (Q1.image g) (Q2.image g) far1' far2' (g p) (g q) := by
+  have mem : ∀ (S : Finset ℝ³) x, g x ∈ S.image g ↔ x ∈ S := fun S x =>
+    ⟨fun h => by obtain ⟨y, hy, e⟩ := Finset.mem_image.mp h; rwa [← hg e],
+      Finset.mem_image_of_mem g⟩
+  rcases h with ⟨hp, hq, np, nq⟩ | ⟨hp, hq, np, nq⟩ | ⟨a, b, c, d⟩
+  · exact Or.inl ⟨Finset.mem_image_of_mem g hp, Finset.mem_image_of_mem g hq,
+      fun f => np (h1 p hp f), fun f => nq (h1 q hq f)⟩
+  · exact Or.inr (Or.inl ⟨Finset.mem_image_of_mem g hp, Finset.mem_image_of_mem g hq,
+      fun f => np (h2 p hp f), fun f => nq (h2 q hq f)⟩)
+  · exact Or.inr (Or.inr ⟨fun h => a ((mem _ _).mp h), fun h => b ((mem _ _).mp h),
+      fun h => c ((mem _ _).mp h), fun h => d ((mem _ _).mp h)⟩)
+
+/-- **Chains when the far end is the unique point of largest `a`, middles on a vertical
+allowed.** As `exists_chainOK` without distinct `a`: `exists_chainOKc` builds the chain on the
+top point of each vertical, and `huniq` (the point of largest `a` is unique) turns it into a
+`ChainOK`.  The lower points of a vertical lie strictly on the chain's side. -/
+theorem exists_chainOK_uniq (S : Finset (ℝ × ℝ)) (z0 : ℝ) (h0 : (0, z0) ∈ S)
+    (hpos : ∀ q ∈ S, q ≠ (0, z0) → 0 < q.1) (hne : ∃ q ∈ S, q ≠ (0, z0))
+    (hcol : ∀ p ∈ S, ∀ q ∈ S, ∀ r ∈ S, p ≠ q → p ≠ r → q ≠ r →
+      (q.1 - p.1) * (r.2 - p.2) - (q.2 - p.2) * (r.1 - p.1) ≠ 0)
+    (huniq : ∀ q ∈ S, ∀ q' ∈ S, (∀ r ∈ S, r.1 ≤ q.1) → q'.1 = q.1 → q' = q)
+    (s : ℝ) (hs : s = 1 ∨ s = -1) :
+    ∃ m ca cz, ChainOK (fun a z => (a, z) ∈ S) z0 s m ca cz := by
+  obtain ⟨m, ca, cz, C⟩ := exists_chainOKc S z0 h0 hpos hne hcol s hs
+  refine ⟨m, ca, cz, C.one_le, C.start, C.inc, C.mem, fun a z hq hn => ?_, C.side⟩
+  have hP : (ca m, cz m) ∈ S := C.mem m le_rfl
+  have hmax : ∀ r ∈ S, r.1 ≤ ca m := by
+    intro r hr
+    by_cases e : r.1 = ca m ∧ r.2 = cz m
+    · exact e.1.le
+    · rcases C.far r.1 r.2 hr e with h | ⟨h, -⟩ <;> exact h.le
+  rcases C.far a z hq hn with h | ⟨h, -⟩
+  · exact h
+  · exfalso
+    have := huniq (ca m, cz m) hP (a, z) hq hmax h
+    exact hn ⟨congrArg Prod.fst this, congrArg Prod.snd this⟩
+
+/-- **Chains over an edge when the far end is the unique point of largest `a`, middles on a
+vertical allowed.** As `exists_chainOK_edge`, with the injectivity of `a` off the second apex
+point replaced by the uniqueness of the far end (`exists_chainOK_uniq`). -/
+theorem exists_chainOK_edge_uniq (S : Finset (ℝ × ℝ)) (zs zo s : ℝ) (hs : s = 1 ∨ s = -1)
+    (hso : s * zo < s * zs) (h0 : (0, zs) ∈ S)
+    (hpos : ∀ q ∈ S, q ≠ (0, zs) → q ≠ (0, zo) → 0 < q.1) (hne : ∃ q ∈ S, 0 < q.1)
+    (hcol : ∀ p ∈ S, ∀ q ∈ S, ∀ r ∈ S, p ≠ q → p ≠ r → q ≠ r →
+      (q.1 - p.1) * (r.2 - p.2) - (q.2 - p.2) * (r.1 - p.1) ≠ 0)
+    (huniq : ∀ q ∈ S.erase (0, zo), ∀ q' ∈ S.erase (0, zo),
+      (∀ r ∈ S.erase (0, zo), r.1 ≤ q.1) → q'.1 = q.1 → q' = q) :
+    ∃ m ca cz, ChainOK (fun a z => (a, z) ∈ S) zs s m ca cz := by
+  classical
+  have hzz : zs ≠ zo := fun h => by rw [h] at hso; exact lt_irrefl _ hso
+  have hne0 : ((0 : ℝ), zs) ≠ (0, zo) := fun h => hzz (congrArg Prod.snd h)
+  obtain ⟨m, ca, cz, C⟩ := exists_chainOK_uniq (S.erase (0, zo)) zs
+    (Finset.mem_erase.mpr ⟨hne0, h0⟩)
+    (fun q hq hq0 => hpos q (Finset.mem_of_mem_erase hq) hq0 (Finset.ne_of_mem_erase hq))
+    (by
+      obtain ⟨q, hq, hq0⟩ := hne
+      refine ⟨q, Finset.mem_erase.mpr ⟨fun h => ?_, hq⟩, fun h => ?_⟩
+      · rw [h] at hq0; exact lt_irrefl _ hq0
+      · rw [h] at hq0; exact lt_irrefl _ hq0)
+    (fun p hp q hq r hr => hcol p (Finset.mem_of_mem_erase hp) q (Finset.mem_of_mem_erase hq)
+      r (Finset.mem_of_mem_erase hr))
+    huniq s hs
+  refine ⟨m, ca, cz, C.one_le, C.start, C.inc, fun l hl => Finset.mem_of_mem_erase (C.mem l hl),
+    fun a z hq hn => ?_, fun a z hq l hl h1' h2' => ?_⟩
+  · by_cases e : (a, z) = (0, zo)
+    · have := C.far_pos; rw [show a = 0 from congrArg Prod.fst e]; exact this
+    · exact C.far a z (Finset.mem_erase.mpr ⟨e, hq⟩) hn
+  · by_cases e : (a, z) = (0, zo)
+    · have ea : a = 0 := congrArg Prod.fst e
+      have ez' : z = zo := congrArg Prod.snd e
+      rw [ea, ez']
+      have hd := C.inc l hl
+      rcases Nat.eq_zero_or_pos l with rfl | hl0
+      · rw [C.start.1, C.start.2]
+        have : 0 < ca 1 := by have := C.inc 0 (by omega); rw [C.start.1] at this; exact this
+        have k : s * ((ca (0 + 1) - 0) * (zo - zs) - (cz (0 + 1) - zs) * (0 - 0)) =
+            (ca 1) * (s * zo - s * zs) := by ring
+        rw [k]; exact mul_neg_of_pos_of_neg this (by linarith)
+      · have hl1 : 0 < ca l := C.pos l hl0 (by omega)
+        have hs0 := C.side 0 zs (C.mem 0 (by omega) |> fun h => by
+          rw [C.start.1, C.start.2] at h; exact h) l hl
+          (fun h => by linarith [h.1]) (fun h => by linarith [h.1, C.pos (l + 1) (by omega) (by omega)])
+        have k : s * ((ca (l + 1) - ca l) * (zo - cz l) - (cz (l + 1) - cz l) * (0 - ca l)) =
+            s * ((ca (l + 1) - ca l) * (zs - cz l) - (cz (l + 1) - cz l) * (0 - ca l)) +
+            (ca (l + 1) - ca l) * (s * zo - s * zs) := by ring
+        rw [k]
+        have : (ca (l + 1) - ca l) * (s * zo - s * zs) < 0 :=
+          mul_neg_of_pos_of_neg (by linarith) (by linarith)
+        linarith
+    · exact C.side a z (Finset.mem_erase.mpr ⟨e, hq⟩) l hl h1' h2'
+
 theorem inner_obl_angle1 (O r1 r2 : ℝ²) (A B c z0 : ℝ) :
     ⟪oblPt O r1 r2 0 B c - oblPt O r1 r2 A 0 c, oblPt O r1 r2 A 0 c - oblPt O r1 r2 0 0 z0⟫ =
       A * (r1 0 * (B * r2 0 - A * r1 0) + r1 1 * (B * r2 1 - A * r1 1)) := by
@@ -803,7 +934,8 @@ theorem isRupert_vertex_coords_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (
     (ha2 : ∀ p ∈ Q2, a p = 0) (ha2' : ∀ p ∈ V, p ∉ Q2 → 0 < a p)
     (hne1 : ∃ p ∈ Q1, p ≠ v) (hne2 : ∃ p ∈ Q2, p ≠ v)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hinj : Set.InjOn (fun p => (a p, b p)) (V : Set ℝ³))
+    (hmid : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → a p = a q → b p = b q →
+      MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, a p' ≤ a p) (fun q => ∀ q' ∈ Q2, b q' ≤ b q) p q)
     (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, a p' ≤ a p) → (∀ q' ∈ Q2, b q' ≤ b q) →
       TieHR Q1 Q2 v p q (fun x => x 2))
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧
@@ -838,7 +970,7 @@ theorem isRupert_vertex_coords_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (
   -- chains
   have chains1 : ∀ s : ℝ, (s = 1 ∨ s = -1) → ∃ m ca cz, ChainOK (fun x z => (x, z) ∈ S1) (v 2) s m ca cz := by
     intro s hs
-    apply exists_chainOK S1 (v 2) (by rw [hS1, Finset.mem_image]; exact ⟨v, hv1, by rw [hav]⟩)
+    apply exists_chainOK_uniq S1 (v 2) (by rw [hS1, Finset.mem_image]; exact ⟨v, hv1, by rw [hav]⟩)
     · intro q hq hne
       obtain ⟨p, hp, e1, e2⟩ := ofS1 q.1 q.2 hq
       rw [← e1]; refine apos p hp (fun h => hne ?_)
@@ -846,11 +978,6 @@ theorem isRupert_vertex_coords_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (
     · obtain ⟨p, hp, hpv⟩ := hne1
       refine ⟨(a p, p 2), Finset.mem_image_of_mem _ hp, fun h => ?_⟩
       have := congrArg Prod.fst h; simp only at this; linarith [apos p hp hpv]
-    · intro q hq q' hq' e
-      obtain ⟨p, hp, e1, e2⟩ := ofS1 q.1 q.2 hq
-      obtain ⟨p', hp', e1', e2'⟩ := ofS1 q'.1 q'.2 hq'
-      have : p = p' := hinj (h1V hp) (h1V hp') (by simp only [Prod.mk.injEq]; rw [hb1 p hp, hb1 p' hp']; exact ⟨by rw [e1, e1']; exact e, rfl⟩)
-      exact Prod.ext e (by rw [← e2, ← e2', this])
     · intro q hq q' hq' q'' hq'' n1 n2 n3
       obtain ⟨p, hp, e1, e2⟩ := ofS1 q.1 q.2 hq
       obtain ⟨p', hp', e1', e2'⟩ := ofS1 q'.1 q'.2 hq'
@@ -859,18 +986,30 @@ theorem isRupert_vertex_coords_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (
           u' 2 = r'.2 → u ≠ u' := by
         intro r r' u u' h h1 h2 h1' h2' hu; apply h
         exact Prod.ext (by rw [← h1, ← h1', hu]) (by rw [← h2, ← h2', hu])
-      have hne : a p ≠ a p' := fun h => d n1 e1 e2 e1' e2'
-        (hinj (h1V hp) (h1V hp') (by simp only [Prod.mk.injEq]; rw [hb1 p hp, hb1 p' hp']; exact ⟨h, rfl⟩))
-      have := orient_ne_of_frame1 (O := O) (r1 := r1) (r2 := r2) (zi := p 2) (zj := p' 2) (zk := p'' 2)
+      have hne : (a p, p 2) ≠ (a p', p' 2) := by rw [e1, e2, e1', e2']; exact n1
+      have := orient_ne_of_frame1' (O := O) (r1 := r1) (r2 := r2) (zi := p 2) (zj := p' 2) (zk := p'' 2)
         (ak := a p'') hne (by
           intro c; rw [← pt1 p hp, ← pt1 p' hp', ← pt1 p'' hp'']
           exact hcol p (h1V hp) p' (h1V hp') p'' (h1V hp'') (d n1 e1 e2 e1' e2')
             (d n2 e1 e2 e1'' e2'') (d n3 e1' e2' e1'' e2'') c)
       unfold orient2 at this; rwa [e1, e2, e1', e2', e1'', e2''] at this
+    · intro q hq q' hq' hmax e
+      obtain ⟨p, hp, e1, e2⟩ := ofS1 q.1 q.2 hq
+      obtain ⟨p', hp', e1', e2'⟩ := ofS1 q'.1 q'.2 hq'
+      have hpmax : ∀ x ∈ Q1, a x ≤ a p := fun x hx => by
+        rw [e1]; exact hmax (a x, x 2) (Finset.mem_image_of_mem _ hx)
+      by_cases hpp : p' = p
+      · exact Prod.ext e (by rw [← e2', ← e2, hpp])
+      · exfalso
+        rcases hmid p' (h1V hp') p (h1V hp) hpp (by rw [e1', e1]; exact e)
+            (by rw [hb1 p' hp', hb1 p hp]) with ⟨-, -, -, nf⟩ | ⟨hp'2, hp2, -, -⟩ | ⟨hp'1, -, -, -⟩
+        · exact nf hpmax
+        · exact hpp ((only p' hp' hp'2).trans (only p hp hp2).symm)
+        · exact absurd hp' hp'1
     · exact hs
   have chains2 : ∀ s : ℝ, (s = 1 ∨ s = -1) → ∃ m ca cz, ChainOK (fun x z => (x, z) ∈ S2) (v 2) s m ca cz := by
     intro s hs
-    apply exists_chainOK S2 (v 2) (by rw [hS2, Finset.mem_image]; exact ⟨v, hv2, by rw [hbv]⟩)
+    apply exists_chainOK_uniq S2 (v 2) (by rw [hS2, Finset.mem_image]; exact ⟨v, hv2, by rw [hbv]⟩)
     · intro q hq hne
       obtain ⟨p, hp, e1, e2⟩ := ofS2 q.1 q.2 hq
       rw [← e1]; refine bpos p hp (fun h => hne ?_)
@@ -878,11 +1017,6 @@ theorem isRupert_vertex_coords_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (
     · obtain ⟨p, hp, hpv⟩ := hne2
       refine ⟨(b p, p 2), Finset.mem_image_of_mem _ hp, fun h => ?_⟩
       have := congrArg Prod.fst h; simp only at this; linarith [bpos p hp hpv]
-    · intro q hq q' hq' e
-      obtain ⟨p, hp, e1, e2⟩ := ofS2 q.1 q.2 hq
-      obtain ⟨p', hp', e1', e2'⟩ := ofS2 q'.1 q'.2 hq'
-      have : p = p' := hinj (h2V hp) (h2V hp') (by simp only [Prod.mk.injEq]; rw [ha2 p hp, ha2 p' hp']; exact ⟨rfl, by rw [e1, e1']; exact e⟩)
-      exact Prod.ext e (by rw [← e2, ← e2', this])
     · intro q hq q' hq' q'' hq'' n1 n2 n3
       obtain ⟨p, hp, e1, e2⟩ := ofS2 q.1 q.2 hq
       obtain ⟨p', hp', e1', e2'⟩ := ofS2 q'.1 q'.2 hq'
@@ -891,14 +1025,26 @@ theorem isRupert_vertex_coords_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (
           u' 2 = r'.2 → u ≠ u' := by
         intro r r' u u' h h1 h2 h1' h2' hu; apply h
         exact Prod.ext (by rw [← h1, ← h1', hu]) (by rw [← h2, ← h2', hu])
-      have hne : b p ≠ b p' := fun h => d n1 e1 e2 e1' e2'
-        (hinj (h2V hp) (h2V hp') (by simp only [Prod.mk.injEq]; rw [ha2 p hp, ha2 p' hp']; exact ⟨rfl, h⟩))
-      have := orient_ne_of_frame2 (O := O) (r1 := r1) (r2 := r2) (zi := p 2) (zj := p' 2) (zk := p'' 2)
+      have hne : (b p, p 2) ≠ (b p', p' 2) := by rw [e1, e2, e1', e2']; exact n1
+      have := orient_ne_of_frame2' (O := O) (r1 := r1) (r2 := r2) (zi := p 2) (zj := p' 2) (zk := p'' 2)
         (bk := b p'') hne (by
           intro c; rw [← pt2 p hp, ← pt2 p' hp', ← pt2 p'' hp'']
           exact hcol p (h2V hp) p' (h2V hp') p'' (h2V hp'') (d n1 e1 e2 e1' e2')
             (d n2 e1 e2 e1'' e2'') (d n3 e1' e2' e1'' e2'') c)
       unfold orient2 at this; rwa [e1, e2, e1', e2', e1'', e2''] at this
+    · intro q hq q' hq' hmax e
+      obtain ⟨p, hp, e1, e2⟩ := ofS2 q.1 q.2 hq
+      obtain ⟨p', hp', e1', e2'⟩ := ofS2 q'.1 q'.2 hq'
+      have hpmax : ∀ x ∈ Q2, b x ≤ b p := fun x hx => by
+        rw [e1]; exact hmax (b x, x 2) (Finset.mem_image_of_mem _ hx)
+      by_cases hpp : p' = p
+      · exact Prod.ext e (by rw [← e2', ← e2, hpp])
+      · exfalso
+        rcases hmid p' (h2V hp') p (h2V hp) hpp (by rw [ha2 p' hp', ha2 p hp])
+            (by rw [e1', e1]; exact e) with ⟨hp'1, hp1, -, -⟩ | ⟨-, -, -, nf⟩ | ⟨-, hp'2, -, -⟩
+        · exact hpp ((only p' hp'1 hp').trans (only p hp1 hp).symm)
+        · exact nf hpmax
+        · exact absurd hp' hp'2
     · exact hs
   obtain ⟨xa, hxa, xb, hxb, hxav, hxbv, hin'⟩ := hin
   refine isRupert_vertex_frame_tieR O r1 r2 hρ (fun x z => (x, z) ∈ S1) (fun x z => (x, z) ∈ S2)
@@ -1033,11 +1179,10 @@ theorem interior_convexHull_image_rot {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R �
   rw [e, ← (so3Isometry hR).toHomeomorph.image_interior]
   exact ⟨c, hc, rfl⟩
 
-/-- General position for Lemma T at the line of the planes of two facets, with
-the robust tie: as `TriGenTie`, with `TieHR` at the far ends (at a tie of the
-far ends, the shared vertex off their height suffices). Codimension 2 for any
-two faces. -/
-def TriGenTieR (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
+/-- The former general position `TriGenTieR`, kept for reference: as `TriGenTie`, with `TieHR`
+at the far ends (at a tie of the far ends, the shared vertex off their height suffices), and no
+segment at all parallel to the line.  `TriGenTieRN.weaken` gives `TriGenTieR`. -/
+def TriGenTieRN (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
   ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
     (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
     ∀ e : ℝ³, e ≠ 0 → f1 (v + e) = 0 → f2 (v + e) = 0 →
@@ -1045,11 +1190,41 @@ def TriGenTieR (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
       ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
         TieHR Q1 Q2 v p q (fun x => ⟪x, e⟫)
 
-theorem TriGenTie.toR {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h : TriGenTie V Q1 Q2 v) :
+/-- General position for Lemma T at the line of the planes of two facets, with
+the robust tie: as `TriGenTie`, with `TieHR` at the far ends (at a tie of the
+far ends, the shared vertex off their height suffices), **and segments parallel to the line
+allowed between two middles of one face, or between two hidden vertices** (`MidPair`: a middle
+is not a far end of its face; a hidden vertex lies off both faces).  By FEWER-FACES-PROOFS.md
+Proposition 23.19 (2), (3) such a pair changes no corner and no chain extreme, so the robust
+Lemma T at the tie still holds.  A segment parallel to the line with an endpoint at a far end,
+or joining a face vertex to a hidden one, is still excluded.  Codimension 2 for any two faces.  The earlier version, with no parallel
+segment at all, is `TriGenTieRN`. -/
+def TriGenTieR (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
+  ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+    (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+    ∀ e : ℝ³, e ≠ 0 → f1 (v + e) = 0 → f2 (v + e) = 0 →
+      (∀ p ∈ V, ∀ q ∈ V, p ≠ q → ∀ c : ℝ, q - p = c • e →
+        MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q')
+          p q) ∧
+      ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
+        TieHR Q1 Q2 v p q (fun x => ⟪x, e⟫)
+
+/-- No parallel segment at all gives `TriGenTieR`. -/
+theorem TriGenTieRN.weaken {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h : TriGenTieRN V Q1 Q2 v) :
     TriGenTieR V Q1 Q2 v := by
   intro f1 f2 z1 n1 z2 n2 e he e1 e2
   obtain ⟨hpar, hfar⟩ := h f1 f2 z1 n1 z2 n2 e he e1 e2
+  exact ⟨fun p hp q hq hpq c hc => absurd hc (hpar p hp q hq hpq c), hfar⟩
+
+theorem TriGenTie.toRN {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h : TriGenTie V Q1 Q2 v) :
+    TriGenTieRN V Q1 Q2 v := by
+  intro f1 f2 z1 n1 z2 n2 e he e1 e2
+  obtain ⟨hpar, hfar⟩ := h f1 f2 z1 n1 z2 n2 e he e1 e2
   exact ⟨hpar, fun p hp q hq hpq h1 h2 => Or.inl (hfar p hp q hq hpq h1 h2)⟩
+
+theorem TriGenTie.toR {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h : TriGenTie V Q1 Q2 v) :
+    TriGenTieR V Q1 Q2 v :=
+  h.toRN.weaken
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over a vertex at the tie, the planes vertical.**  `Q1`, `Q2` are facets
@@ -1062,7 +1237,8 @@ theorem isRupert_facets_vertex_vertical_tieR (V Q1 Q2 : Finset ℝ³) (v : ℝ³
     (e1 : f1 (v + ez) = 0) (e2 : f2 (v + ez) = 0)
     (hne1 : ∃ p ∈ Q1, p ≠ v) (hne2 : ∃ p ∈ Q2, p ≠ v)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hpar : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → p 0 ≠ q 0 ∨ p 1 ≠ q 1)
+    (hpar : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → p 0 = q 0 → p 1 = q 1 →
+      MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q') p q)
     (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
       TieHR Q1 Q2 v p q (fun x => x 2))
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧
@@ -1140,13 +1316,15 @@ theorem isRupert_facets_vertex_vertical_tieR (V Q1 Q2 : Finset ℝ³) (v : ℝ³
     have := n1 p hp hq; rw [G1] at this; nlinarith
   have ha2' : ∀ p ∈ V, p ∉ Q2 → 0 < a p := fun p hp hq => by
     have := n2 p hp hq; rw [G2] at this; nlinarith
-  have hinj : Set.InjOn (fun p => (a p, b p)) (V : Set ℝ³) := by
-    intro p hp q hq e
-    simp only [Prod.mk.injEq] at e
-    by_contra hpq
+  have hmid : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → a p = a q → b p = b q →
+      MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, a p' ≤ a p) (fun q => ∀ q' ∈ Q2, b q' ≤ b q) p q := by
+    intro p hp q hq hpq ea eb
     obtain ⟨c0, c1⟩ := hxy p; obtain ⟨d0, d1⟩ := hxy q
-    rw [e.1, e.2] at c0 c1
-    rcases hpar p hp q hq hpq with h | h <;> apply h <;> linarith
+    rw [ea, eb] at c0 c1
+    refine (hpar p hp q hq hpq (by linarith) (by linarith)).mono (fun x _ hx p' hp' => ?_)
+      (fun x _ hx q' hq' => ?_)
+    · rw [G2 x, G2 p']; exact mul_le_mul_of_nonpos_right (hx p' hp') m21.le
+    · rw [G1 x, G1 q']; exact mul_le_mul_of_nonpos_right (hx q' hq') m12.le
   have hfar' : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, a p' ≤ a p) → (∀ q' ∈ Q2, b q' ≤ b q) →
       TieHR Q1 Q2 v p q (fun x => x 2) := fun p hp q hq hpq h1 h2 =>
     hfarZ p hp q hq hpq (fun p' hp' => by
@@ -1170,14 +1348,13 @@ theorem isRupert_facets_vertex_vertical_tieR (V Q1 Q2 : Finset ℝ³) (v : ℝ³
       h2V h1V (by rw [Finset.inter_comm]; exact hint) ha2 ha2' hb1 hb1' ⟨p2, hp2, hp2v⟩
       ⟨p1, hp1, hp1v⟩ hcol ?_
       (fun p hp q hq hpq h1 h2 => (hfar' q hq p hp (Ne.symm hpq) h2 h1).swap) ?_ hsol
-    · intro p hp q hq e
-      simp only [Prod.mk.injEq] at e
-      exact hinj hp hq (by simp only [Prod.mk.injEq]; exact ⟨e.2, e.1⟩)
+    · intro p hp q hq hpq ea eb
+      exact (hmid p hp q hq hpq eb ea).swap
     · obtain ⟨xa, hxa, xb, hxb, hxav, hxbv, h⟩ := hin'
       exact ⟨xb, hxb, xa, hxa, hxbv, hxav, fun y hy hy2 hy1 => by
         rw [add_comm]; exact h y hy hy1 hy2⟩
   · exact isRupert_vertex_coords_tieR O r1 r2 hpos V Q1 Q2 v a b (fun p _ => hy p) h1V h2V hint
-      hb1 hb1' ha2 ha2' ⟨p1, hp1, hp1v⟩ ⟨p2, hp2, hp2v⟩ hcol hinj hfar' hin' hsol
+      hb1 hb1' ha2 ha2' ⟨p1, hp1, hp1v⟩ ⟨p2, hp2, hp2v⟩ hcol hmid hfar' hin' hsol
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over a vertex at the tie** for two facets `Q1`, `Q2` (functionals `f1`, `f2`)
@@ -1193,7 +1370,8 @@ theorem isRupert_facets_vertex_tieR (V Q1 Q2 : Finset ℝ³) (v : ℝ³)
     (e : ℝ³) (he : e ≠ 0) (e1 : f1 (v + e) = 0) (e2 : f2 (v + e) = 0)
     (hne1 : ∃ p ∈ Q1, p ≠ v) (hne2 : ∃ p ∈ Q2, p ≠ v)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hpar : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ∀ c : ℝ, q - p ≠ c • e)
+    (hpar : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ∀ c : ℝ, q - p = c • e →
+      MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q') p q)
     (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
       TieHR Q1 Q2 v p q (fun x => ⟪x, e⟫))
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧
@@ -1250,16 +1428,18 @@ theorem isRupert_facets_vertex_tieR (V Q1 Q2 : Finset ℝ³) (v : ℝ³)
     apply hginj
     simp only [map_sub, map_smul] at h ⊢; exact h
   · refine allg V _ (fun p hp => allg V _ (fun q hq => ?_))
-    intro hpq
-    by_contra h; push Not at h
-    obtain ⟨h0, h1⟩ := h
-    apply hpar p hp q hq (fun e => hpq (by rw [e])) ((g (q - p)) 2 / r)
-    apply hginj
-    rw [map_smul, hRe]
-    ext k; fin_cases k
-    · simp [ez, map_sub]; linarith
-    · simp [ez, map_sub]; linarith
-    · simp [ez]; field_simp
+    intro hpq h0 h1
+    have hc : q - p = ((g (q - p)) 2 / r) • e := by
+      apply hginj
+      rw [map_smul, hRe]
+      ext k; fin_cases k
+      · simp [ez, map_sub]; linarith
+      · simp [ez, map_sub]; linarith
+      · simp [ez]; field_simp
+    refine (hpar p hp q hq (fun e => hpq (by rw [e])) _ hc).map g hginj
+      (fun x _ hf p' hp' => ?_) (fun x _ hf q' hq' => ?_)
+    · have := hf (g p') (Finset.mem_image_of_mem g hp'); rwa [tF2, tF2] at this
+    · have := hf (g q') (Finset.mem_image_of_mem g hq'); rwa [tF1, tF1] at this
   · refine allg Q1 _ (fun p hp => allg Q2 _ (fun q hq => ?_))
     intro hpq h1 h2
     refine (hfarZ p hp q hq (fun e => hpq (by rw [e])) (fun p' hp' => ?_) (fun q' hq' => ?_)).map g
@@ -1540,18 +1720,46 @@ theorem TieHER.map {Q1 Q2 : Finset ℝ³} {v w p q : ℝ³} {h h' : ℝ³ → �
   · exact Or.inl (H.map g hr hh)
   · exact Or.inr (by rw [hh, hh, e])
 
-/-- General position for Lemma T along an edge with the robust tie: as
-`EdgeTie`, with `TieHER` at the far ends (a tie of the far ends suffices).
-Codimension 2 for any two faces. -/
-def EdgeTieR (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) : Prop :=
+/-- The former general position `EdgeTieR`, kept for reference: as `EdgeTie`, with `TieHER` at the
+far ends (a tie of the far ends suffices), and no other segment at all parallel to the edge.
+`EdgeTieRN.weaken` gives `EdgeTieR`. -/
+def EdgeTieRN (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) : Prop :=
   (∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → ∀ c : ℝ, q - p ≠ c • (w - v)) ∧
   ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
     (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
     ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
       TieHER Q1 Q2 v w p q (fun x => ⟪x, w - v⟫)
 
-theorem EdgeTie.toR {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h : EdgeTie V Q1 Q2 v w) : EdgeTieR V Q1 Q2 v w :=
+/-- General position for Lemma T along an edge with the robust tie: as
+`EdgeTie`, with `TieHER` at the far ends (a tie of the far ends suffices), **and segments
+parallel to the edge allowed between two middles of one face, or between two hidden vertices**
+(`MidPair`: a middle is not a far end of its face; a hidden vertex lies off both faces; the
+edge itself is not counted).  By FEWER-FACES-PROOFS.md Proposition 23.19 (2), (3) such a pair
+changes no corner and no chain extreme, so the robust Lemma T at the tie still holds.  A
+segment parallel to the edge with an endpoint at a far end, or joining a face vertex to a
+hidden one, is still excluded.  Codimension 2 for any two faces.  The earlier version, with no other
+parallel segment at all, is `EdgeTieRN`. -/
+def EdgeTieR (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) : Prop :=
+  ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+    (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+    (∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → ∀ c : ℝ, q - p = c • (w - v) →
+      MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q') p q) ∧
+    ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
+      TieHER Q1 Q2 v w p q (fun x => ⟪x, w - v⟫)
+
+/-- No other parallel segment at all gives `EdgeTieR`. -/
+theorem EdgeTieRN.weaken {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h : EdgeTieRN V Q1 Q2 v w) :
+    EdgeTieR V Q1 Q2 v w :=
+  fun f1 f2 z1 n1 z2 n2 =>
+    ⟨fun p hp q hq hpq hne c hc => absurd hc (h.1 p hp q hq hpq hne c), h.2 f1 f2 z1 n1 z2 n2⟩
+
+theorem EdgeTie.toRN {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h : EdgeTie V Q1 Q2 v w) :
+    EdgeTieRN V Q1 Q2 v w :=
   ⟨h.1, fun f1 f2 z1 n1 z2 n2 p hp q hq hpq h1 h2 => Or.inl (h.2 f1 f2 z1 n1 z2 n2 p hp q hq hpq h1 h2)⟩
+
+theorem EdgeTie.toR {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h : EdgeTie V Q1 Q2 v w) :
+    EdgeTieR V Q1 Q2 v w :=
+  h.toRN.weaken
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over an edge, in frame coordinates.**  The points of `V` are
@@ -1565,8 +1773,8 @@ theorem isRupert_edge_coords_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V 
     (ha2 : ∀ p ∈ Q2, a p = 0) (ha2' : ∀ p ∈ V, p ∉ Q2 → 0 < a p)
     (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hinjv : Set.InjOn (fun p => (a p, b p)) ((V.erase v : Finset ℝ³) : Set ℝ³))
-    (hinjw : Set.InjOn (fun p => (a p, b p)) ((V.erase w : Finset ℝ³) : Set ℝ³))
+    (hmid : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → a p = a q → b p = b q →
+      MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, a p' ≤ a p) (fun q => ∀ q' ∈ Q2, b q' ≤ b q) p q)
     (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, a p' ≤ a p) → (∀ q' ∈ Q2, b q' ≤ b q) →
       TieHER Q1 Q2 v w p q (fun x => x 2))
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
@@ -1611,11 +1819,7 @@ theorem isRupert_edge_coords_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V 
     intro s u u' hs huu hso
     have hu1 : u ∈ Q1 := by rcases huu with ⟨rfl, -⟩ | ⟨rfl, -⟩ <;> assumption
     have hau : a u = 0 := by rcases huu with ⟨rfl, -⟩ | ⟨rfl, -⟩ <;> assumption
-    have hinj : Set.InjOn (fun p => (a p, b p)) ((V.erase u' : Finset ℝ³) : Set ℝ³) := by
-      rcases huu with ⟨-, rfl⟩ | ⟨-, rfl⟩
-      · exact hinjw
-      · exact hinjv
-    apply exists_chainOK_edge S1 (u 2) (u' 2) s hs hso
+    apply exists_chainOK_edge_uniq S1 (u 2) (u' 2) s hs hso
       (by rw [hS1, Finset.mem_image]; exact ⟨u, hu1, by rw [hau]⟩)
     · intro q hq h0 h1
       obtain ⟨p, hp, e1, e2⟩ := ofS1 q.1 q.2 hq
@@ -1630,19 +1834,6 @@ theorem isRupert_edge_coords_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V 
       · rw [← e1]; exact ha2' p (h1V hp) hp2
     · obtain ⟨p, hp, hp2⟩ := hne1
       exact ⟨(a p, p 2), Finset.mem_image_of_mem _ hp, ha2' p (h1V hp) hp2⟩
-    · intro q hq q' hq' e
-      have hq0 := Finset.ne_of_mem_erase hq; have hq0' := Finset.ne_of_mem_erase hq'
-      obtain ⟨p, hp, e1, e2⟩ := ofS1 q.1 q.2 (Finset.mem_of_mem_erase hq)
-      obtain ⟨p', hp', e1', e2'⟩ := ofS1 q'.1 q'.2 (Finset.mem_of_mem_erase hq')
-      have pu : p ≠ u' := fun h => hq0 (Prod.ext (by
-        show q.1 = 0; rw [← e1, h]; rcases huu with ⟨-, rfl⟩ | ⟨-, rfl⟩ <;> assumption)
-        (by rw [← e2, h]))
-      have pu' : p' ≠ u' := fun h => hq0' (Prod.ext (by
-        show q'.1 = 0; rw [← e1', h]; rcases huu with ⟨-, rfl⟩ | ⟨-, rfl⟩ <;> assumption)
-        (by rw [← e2', h]))
-      have : p = p' := hinj (Finset.mem_erase.mpr ⟨pu, h1V hp⟩) (Finset.mem_erase.mpr ⟨pu', h1V hp'⟩)
-        (by simp only [Prod.mk.injEq]; rw [hb1 p hp, hb1 p' hp']; exact ⟨by rw [e1, e1']; exact e, rfl⟩)
-      exact Prod.ext e (by rw [← e2, ← e2', this])
     · intro q hq q' hq' q'' hq'' n1 n2 n3
       obtain ⟨p, hp, e1, e2⟩ := ofS1 q.1 q.2 hq
       obtain ⟨p', hp', e1', e2'⟩ := ofS1 q'.1 q'.2 hq'
@@ -1654,16 +1845,41 @@ theorem isRupert_edge_coords_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V 
           exact hcol p (h1V hp) p' (h1V hp') p'' (h1V hp'') (d1 n1 e1 e2 e1' e2')
             (d1 n2 e1 e2 e1'' e2'') (d1 n3 e1' e2' e1'' e2'') c)
       unfold orient2 at this; rwa [e1, e2, e1', e2', e1'', e2''] at this
+    · intro q hq q' hq' hmax e
+      obtain ⟨p, hp, e1, e2⟩ := ofS1 q.1 q.2 (Finset.mem_of_mem_erase hq)
+      obtain ⟨p', hp', e1', e2'⟩ := ofS1 q'.1 q'.2 (Finset.mem_of_mem_erase hq')
+      obtain ⟨x, hx, hx2⟩ := hne1
+      have hxpos := ha2' x (h1V hx) hx2
+      have hpos : 0 < a p := by
+        have := hmax (a x, x 2) (Finset.mem_erase.mpr ⟨fun h => by
+          have := congrArg Prod.fst h; simp only at this; linarith, Finset.mem_image_of_mem _ hx⟩)
+        rw [e1]; exact lt_of_lt_of_le hxpos this
+      have hpmax : ∀ y ∈ Q1, a y ≤ a p := fun y hy => by
+        by_cases hy2 : y ∈ Q2
+        · rw [ha2 y hy2]; exact hpos.le
+        · rw [e1]; exact hmax (a y, y 2) (Finset.mem_erase.mpr ⟨fun h => by
+            have := congrArg Prod.fst h; simp only at this
+            linarith [ha2' y (h1V hy) hy2], Finset.mem_image_of_mem _ hy⟩)
+      by_cases hpp : p' = p
+      · exact Prod.ext e (by rw [← e2', ← e2, hpp])
+      · exfalso
+        have hnot : ({p', p} : Finset ℝ³) ≠ {v, w} := fun h => by
+          have hm : p ∈ ({v, w} : Finset ℝ³) := h ▸ (by simp)
+          simp only [Finset.mem_insert, Finset.mem_singleton] at hm
+          rcases hm with h' | h'
+          · rw [h', hav] at hpos; exact lt_irrefl _ hpos
+          · rw [h', haw] at hpos; exact lt_irrefl _ hpos
+        rcases hmid p' (h1V hp') p (h1V hp) hpp hnot (by rw [e1', e1]; exact e)
+            (by rw [hb1 p' hp', hb1 p hp]) with ⟨-, -, -, nf⟩ | ⟨-, hp2, -, -⟩ | ⟨hp'1, -, -, -⟩
+        · exact nf hpmax
+        · rw [ha2 p hp2] at hpos; exact lt_irrefl _ hpos
+        · exact absurd hp' hp'1
   have chains2 : ∀ (s : ℝ) (u u' : ℝ³), (s = 1 ∨ s = -1) → (u = v ∧ u' = w ∨ u = w ∧ u' = v) →
       s * u' 2 < s * u 2 → ∃ m ca cz, ChainOK (fun x z => (x, z) ∈ S2) (u 2) s m ca cz := by
     intro s u u' hs huu hso
     have hu2 : u ∈ Q2 := by rcases huu with ⟨rfl, -⟩ | ⟨rfl, -⟩ <;> assumption
     have hbu : b u = 0 := by rcases huu with ⟨rfl, -⟩ | ⟨rfl, -⟩ <;> assumption
-    have hinj : Set.InjOn (fun p => (a p, b p)) ((V.erase u' : Finset ℝ³) : Set ℝ³) := by
-      rcases huu with ⟨-, rfl⟩ | ⟨-, rfl⟩
-      · exact hinjw
-      · exact hinjv
-    apply exists_chainOK_edge S2 (u 2) (u' 2) s hs hso
+    apply exists_chainOK_edge_uniq S2 (u 2) (u' 2) s hs hso
       (by rw [hS2, Finset.mem_image]; exact ⟨u, hu2, by rw [hbu]⟩)
     · intro q hq h0 h1
       obtain ⟨p, hp, e1, e2⟩ := ofS2 q.1 q.2 hq
@@ -1678,19 +1894,6 @@ theorem isRupert_edge_coords_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V 
       · rw [← e1]; exact hb1' p (h2V hp) hp1
     · obtain ⟨p, hp, hp1⟩ := hne2
       exact ⟨(b p, p 2), Finset.mem_image_of_mem _ hp, hb1' p (h2V hp) hp1⟩
-    · intro q hq q' hq' e
-      have hq0 := Finset.ne_of_mem_erase hq; have hq0' := Finset.ne_of_mem_erase hq'
-      obtain ⟨p, hp, e1, e2⟩ := ofS2 q.1 q.2 (Finset.mem_of_mem_erase hq)
-      obtain ⟨p', hp', e1', e2'⟩ := ofS2 q'.1 q'.2 (Finset.mem_of_mem_erase hq')
-      have pu : p ≠ u' := fun h => hq0 (Prod.ext (by
-        show q.1 = 0; rw [← e1, h]; rcases huu with ⟨-, rfl⟩ | ⟨-, rfl⟩ <;> assumption)
-        (by rw [← e2, h]))
-      have pu' : p' ≠ u' := fun h => hq0' (Prod.ext (by
-        show q'.1 = 0; rw [← e1', h]; rcases huu with ⟨-, rfl⟩ | ⟨-, rfl⟩ <;> assumption)
-        (by rw [← e2', h]))
-      have : p = p' := hinj (Finset.mem_erase.mpr ⟨pu, h2V hp⟩) (Finset.mem_erase.mpr ⟨pu', h2V hp'⟩)
-        (by simp only [Prod.mk.injEq]; rw [ha2 p hp, ha2 p' hp']; exact ⟨rfl, by rw [e1, e1']; exact e⟩)
-      exact Prod.ext e (by rw [← e2, ← e2', this])
     · intro q hq q' hq' q'' hq'' n1 n2 n3
       obtain ⟨p, hp, e1, e2⟩ := ofS2 q.1 q.2 hq
       obtain ⟨p', hp', e1', e2'⟩ := ofS2 q'.1 q'.2 hq'
@@ -1702,6 +1905,35 @@ theorem isRupert_edge_coords_tieR (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V 
           exact hcol p (h2V hp) p' (h2V hp') p'' (h2V hp'') (d2 n1 e1 e2 e1' e2')
             (d2 n2 e1 e2 e1'' e2'') (d2 n3 e1' e2' e1'' e2'') c)
       unfold orient2 at this; rwa [e1, e2, e1', e2', e1'', e2''] at this
+    · intro q hq q' hq' hmax e
+      obtain ⟨p, hp, e1, e2⟩ := ofS2 q.1 q.2 (Finset.mem_of_mem_erase hq)
+      obtain ⟨p', hp', e1', e2'⟩ := ofS2 q'.1 q'.2 (Finset.mem_of_mem_erase hq')
+      obtain ⟨x, hx, hx1⟩ := hne2
+      have hxpos := hb1' x (h2V hx) hx1
+      have hpos : 0 < b p := by
+        have := hmax (b x, x 2) (Finset.mem_erase.mpr ⟨fun h => by
+          have := congrArg Prod.fst h; simp only at this; linarith, Finset.mem_image_of_mem _ hx⟩)
+        rw [e1]; exact lt_of_lt_of_le hxpos this
+      have hpmax : ∀ y ∈ Q2, b y ≤ b p := fun y hy => by
+        by_cases hy1 : y ∈ Q1
+        · rw [hb1 y hy1]; exact hpos.le
+        · rw [e1]; exact hmax (b y, y 2) (Finset.mem_erase.mpr ⟨fun h => by
+            have := congrArg Prod.fst h; simp only at this
+            linarith [hb1' y (h2V hy) hy1], Finset.mem_image_of_mem _ hy⟩)
+      by_cases hpp : p' = p
+      · exact Prod.ext e (by rw [← e2', ← e2, hpp])
+      · exfalso
+        have hnot : ({p', p} : Finset ℝ³) ≠ {v, w} := fun h => by
+          have hm : p ∈ ({v, w} : Finset ℝ³) := h ▸ (by simp)
+          simp only [Finset.mem_insert, Finset.mem_singleton] at hm
+          rcases hm with h' | h'
+          · rw [h', hbv] at hpos; exact lt_irrefl _ hpos
+          · rw [h', hbw] at hpos; exact lt_irrefl _ hpos
+        rcases hmid p' (h2V hp') p (h2V hp) hpp hnot (by rw [ha2 p' hp', ha2 p hp])
+            (by rw [e1', e1]; exact e) with ⟨hp'1, hp1, -, -⟩ | ⟨-, -, -, nf⟩ | ⟨-, hp'2, -, -⟩
+        · rw [hb1 p hp1] at hpos; exact lt_irrefl _ hpos
+        · exact nf hpmax
+        · exact absurd hp' hp'2
   have up : (1 : ℝ) * v 2 < 1 * w 2 := by linarith
   have lo : (-1 : ℝ) * w 2 < -1 * v 2 := by linarith
   obtain ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩ := hin
@@ -1830,7 +2062,8 @@ theorem isRupert_facets_edge_vertical_lt_tieR (V Q1 Q2 : Finset ℝ³) (v w : �
     (e1 : f1 (v + ez) = 0) (e2 : f2 (v + ez) = 0)
     (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hpar : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → p 0 ≠ q 0 ∨ p 1 ≠ q 1)
+    (hpar : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → p 0 = q 0 → p 1 = q 1 →
+      MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q') p q)
     (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
       TieHER Q1 Q2 v w p q (fun x => x 2))
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
@@ -1903,29 +2136,20 @@ theorem isRupert_facets_edge_vertical_lt_tieR (V Q1 Q2 : Finset ℝ³) (v w : �
     have := n1 p hp hq; rw [G1] at this; nlinarith
   have ha2' : ∀ p ∈ V, p ∉ Q2 → 0 < a p := fun p hp hq => by
     have := n2 p hp hq; rw [G2] at this; nlinarith
-  have hinj : ∀ u ∈ ({v, w} : Finset ℝ³),
-      Set.InjOn (fun p => (a p, b p)) ((V.erase u : Finset ℝ³) : Set ℝ³) := by
-    intro u hu p hp q hq e
-    simp only [Prod.mk.injEq] at e
-    by_contra hpq
-    have hp' := Finset.mem_erase.mp hp; have hq' := Finset.mem_erase.mp hq
-    have hne : ({p, q} : Finset ℝ³) ≠ {v, w} := by
-      intro h
-      have : u ∈ ({p, q} : Finset ℝ³) := h ▸ hu
-      simp only [Finset.mem_insert, Finset.mem_singleton] at this
-      rcases this with rfl | rfl
-      · exact hp'.1 rfl
-      · exact hq'.1 rfl
+  have hmid : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → a p = a q → b p = b q →
+      MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, a p' ≤ a p) (fun q => ∀ q' ∈ Q2, b q' ≤ b q) p q := by
+    intro p hp q hq hpq hne ea eb
     obtain ⟨c0, c1⟩ := hxy p; obtain ⟨d0, d1⟩ := hxy q
-    rw [e.1, e.2] at c0 c1
-    rcases hpar p hp'.2 q hq'.2 hpq hne with h | h <;> apply h <;> linarith
-  have hinjv := hinj v (by simp)
+    rw [ea, eb] at c0 c1
+    refine (hpar p hp q hq hpq hne (by linarith) (by linarith)).mono (fun x _ hx p' hp' => ?_)
+      (fun x _ hx q' hq' => ?_)
+    · rw [G2 x, G2 p']; exact mul_le_mul_of_nonpos_right (hx p' hp') m21.le
+    · rw [G1 x, G1 q']; exact mul_le_mul_of_nonpos_right (hx q' hq') m12.le
   have hfar' : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, a p' ≤ a p) → (∀ q' ∈ Q2, b q' ≤ b q) →
       TieHER Q1 Q2 v w p q (fun x => x 2) := fun p hp q hq hpq h1 h2 =>
     hfarZ p hp q hq hpq (fun p' hp' => by
         rw [G2 p, G2 p']; exact mul_le_mul_of_nonpos_right (h1 p' hp') m21.le)
       (fun q' hq' => by rw [G1 q, G1 q']; exact mul_le_mul_of_nonpos_right (h2 q' hq') m12.le)
-  have hinjw := hinj w (by simp)
   have hin' : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → a y / a xa + b y / b xb < 1 := by
     obtain ⟨xa, hxa, xb, hxb, hxa2, hxb1, h⟩ := hin
@@ -1941,19 +2165,15 @@ theorem isRupert_facets_edge_vertical_lt_tieR (V Q1 Q2 : Finset ℝ³) (v w : �
       intro p q z; ext j; fin_cases j <;> simp [oblPt] <;> ring
     refine isRupert_edge_coords_tieR O r2 r1 hpos' V Q2 Q1 v w hvw b a
       (fun p _ => by rw [swap]; exact hy p) h2V h1V (by rw [Finset.inter_comm]; exact hint)
-      ha2 ha2' hb1 hb1' ⟨p2, hp2, hp21⟩ ⟨p1, hp1, hp12⟩ hcol ?_ ?_
+      ha2 ha2' hb1 hb1' ⟨p2, hp2, hp21⟩ ⟨p1, hp1, hp12⟩ hcol ?_
       (fun p hp q hq hpq h1 h2 => (hfar' q hq p hp (Ne.symm hpq) h2 h1).swap) ?_ hsol
-    · intro p hp q hq e
-      simp only [Prod.mk.injEq] at e
-      exact hinjv hp hq (by simp only [Prod.mk.injEq]; exact ⟨e.2, e.1⟩)
-    · intro p hp q hq e
-      simp only [Prod.mk.injEq] at e
-      exact hinjw hp hq (by simp only [Prod.mk.injEq]; exact ⟨e.2, e.1⟩)
+    · intro p hp q hq hpq hne ea eb
+      exact (hmid p hp q hq hpq hne eb ea).swap
     · obtain ⟨xa, hxa, xb, hxb, hxa2, hxb1, h⟩ := hin'
       exact ⟨xb, hxb, xa, hxa, hxb1, hxa2, fun y hy hy2 hy1 => by
         rw [add_comm]; exact h y hy hy1 hy2⟩
   · exact isRupert_edge_coords_tieR O r1 r2 hpos V Q1 Q2 v w hvw a b (fun p _ => hy p) h1V h2V hint
-      hb1 hb1' ha2 ha2' ⟨p1, hp1, hp12⟩ ⟨p2, hp2, hp21⟩ hcol hinjv hinjw hfar' hin' hsol
+      hb1 hb1' ha2 ha2' ⟨p1, hp1, hp12⟩ ⟨p2, hp2, hp21⟩ hcol hmid hfar' hin' hsol
 
 /-- **Lemma T over an edge, the edge vertical.** -/
 theorem isRupert_facets_edge_vertical_tieR (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : v ≠ w)
@@ -1963,7 +2183,8 @@ theorem isRupert_facets_edge_vertical_tieR (V Q1 Q2 : Finset ℝ³) (v w : ℝ³
     (e1 : f1 (v + ez) = 0) (e2 : f2 (v + ez) = 0)
     (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hpar : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → p 0 ≠ q 0 ∨ p 1 ≠ q 1)
+    (hpar : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → p 0 = q 0 → p 1 = q 1 →
+      MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q') p q)
     (hvw2 : v 2 ≠ w 2)
     (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
       TieHER Q1 Q2 v w p q (fun x => x 2))
@@ -1990,7 +2211,7 @@ theorem isRupert_facets_edge_vertical_tieR (V Q1 Q2 : Finset ℝ³) (v w : ℝ³
     refine isRupert_facets_edge_vertical_lt_tieR V Q1 Q2 w v hgt h1V h2V
       (by rw [Finset.pair_comm]; exact hint) f1 f2 z1 n1 z2 n2
       (hw f1 (z1 v hv1) e1 (z1 w hw1)) (hw f2 (z2 v hv2) e2 (z2 w hw2)) hne1 hne2 hcol
-      (fun p hp q hq hpq h => hpar p hp q hq hpq (by rw [Finset.pair_comm v w]; exact h))
+      (fun p hp q hq hpq h e0 e1' => hpar p hp q hq hpq (by rw [Finset.pair_comm v w]; exact h) e0 e1')
       (fun p hp q hq hpq h1 h2 => (hfarZ p hp q hq hpq h1 h2).comm) hin hsol
 
 set_option maxHeartbeats 4000000 in
@@ -2005,7 +2226,8 @@ theorem isRupert_facets_edge_tieR (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : 
     (z2 : ∀ p ∈ Q2, f2 p = 0) (n2 : ∀ p ∈ V, p ∉ Q2 → f2 p < 0)
     (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hpar : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → ∀ c : ℝ, q - p ≠ c • (w - v))
+    (hpar : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → ∀ c : ℝ, q - p = c • (w - v) →
+      MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q') p q)
     (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
       TieHER Q1 Q2 v w p q (fun x => ⟪x, w - v⟫))
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
@@ -2067,19 +2289,20 @@ theorem isRupert_facets_edge_tieR (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : 
     apply hginj
     simp only [map_sub, map_smul] at h ⊢; exact h
   · refine allg V _ (fun p hp => allg V _ (fun q hq => ?_))
-    intro hpq hpair
-    by_contra h; push Not at h
-    obtain ⟨h0, h1⟩ := h
-    apply hpar p hp q hq (fun e => hpq (by rw [e])) (fun e => hpair (by
+    intro hpq hpair h0 h1
+    have hc : q - p = ((g (q - p)) 2 / r) • (w - v) := by
+      apply hginj
+      rw [map_smul, hRe]
+      ext k; fin_cases k
+      · simp [ez, map_sub]; linarith
+      · simp [ez, map_sub]; linarith
+      · simp [ez]; field_simp
+    refine (hpar p hp q hq (fun e => hpq (by rw [e])) (fun e => hpair (by
       rw [show ({g p, g q} : Finset ℝ³) = Finset.image g {p, q} by simp,
-        show ({g v, g w} : Finset ℝ³) = Finset.image g {v, w} by simp, e]))
-      ((g (q - p)) 2 / r)
-    apply hginj
-    rw [map_smul, hRe]
-    ext k; fin_cases k
-    · simp [ez, map_sub]; linarith
-    · simp [ez, map_sub]; linarith
-    · simp [ez]; field_simp
+        show ({g v, g w} : Finset ℝ³) = Finset.image g {v, w} by simp, e])) _ hc).map g hginj
+      (fun x _ hf p' hp' => ?_) (fun x _ hf q' hq' => ?_)
+    · have := hf (g p') (Finset.mem_image_of_mem g hp'); rwa [tF2, tF2] at this
+    · have := hf (g q') (Finset.mem_image_of_mem g hq'); rwa [tF1, tF1] at this
   · rw [hgz, hgz]
     intro h
     have k : ⟪v, w - v⟫ = ⟪w, w - v⟫ := by simpa [hr.ne'] using h
@@ -2122,11 +2345,9 @@ theorem isRupert_of_facets_edge_tieR (V : Finset ℝ³) (hgen : NoThreeCollinear
   obtain ⟨f1, z1, n1⟩ := h1f
   obtain ⟨f2, z2, n2⟩ := h2f
   obtain ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin'⟩ := hin
-  refine isRupert_facets_edge_tieR V Q1 Q2 v w hvw h1V h2V hint f1 f2 z1 n1 z2 n2 hne1 hne2 ?_ ?_
-    (hfarZ.2 f1 f2 z1 n1 z2 n2)
-    ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin' f1 f2 z1 n1 z2 n2⟩ hsol
-  · exact hgen
-  · exact hfarZ.1
+  obtain ⟨hpar, hfar⟩ := hfarZ f1 f2 z1 n1 z2 n2
+  exact isRupert_facets_edge_tieR V Q1 Q2 v w hvw h1V h2V hint f1 f2 z1 n1 z2 n2 hne1 hne2 hgen
+    hpar hfar ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin' f1 f2 z1 n1 z2 n2⟩ hsol
 
 end Minimality
 

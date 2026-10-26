@@ -147,7 +147,8 @@ depth along the line of the planes, both faces two-sided) is settled when the an
 shadow triangle at the shared vertex is at least `π/2` (Theorem 24.8: the views of the face circle
 of one quadrilateral beside the view along its far edge have a unimodal rim with distinct
 depths and no persistent horizontal double normal, so the polyhedron is Rupert by the slide
-theorem 18.1).  The only position still excluded besides a parallel segment is the triple tie
+theorem 18.1).  The only position still excluded besides a parallel segment (other than between two middles of one
+face or two hidden vertices) is the triple tie
 with both faces two-sided and all three angles of the shadow triangle acute or right
 (case (c) of Theorem 24.5 with acute T, or a right angle at a far vertex). -/
 theorem not_two_quad_facets_vertex_obtuse_of_isNopert (V : Finset ℝ³) (h : IsNopert V)
@@ -208,7 +209,8 @@ theorem not_facets_vertex_triShadow_of_isNopert (V : Finset ℝ³) (h : IsNopert
 
 /-- **Lemma T over an edge** (`FEWER-FACES-PROOFS.md` §7): in a nopert with no three
 points collinear, two facets sharing exactly the edge `v w`, with general
-position along it (`Minimality.EdgeTieR`: no other segment parallel to it,
+position along it (`Minimality.EdgeTieR`: no other segment parallel to it except between
+two middles of one face or two hidden vertices,
 distinct depths along it at the two far ends, or a tie settled by a top or
 bottom vertex or with no right angle at the far ends (Lemma T at the tie, robust
 form); weaker than `Minimality.EdgeFar`; or `Minimality.EdgeFarP`: segments
