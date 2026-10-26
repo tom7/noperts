@@ -4,7 +4,11 @@ The entry point is [`../Minimality.lean`](../Minimality.lean): it states, for
 non-expert readers, that every nopert (`IsNopert`, in
 [`../Nopert.lean`](../Nopert.lean)) has at least 7 points, that a nopert with
 exactly 7 points has no face with 5 or more of them, and the sharp statements
-about flat point sets.  The idea of the proof is explained in
+about flat point sets.  It also has the skeleton `anySevenVertexNopertIsSimplicial`
+of `AnySevenVertexNopertIsSimplicial` (every 7-vertex nopert is simplicial; with
+`sorry`): the split into the 29 non-simplicial types of
+[`SevenTypes.lean`](SevenTypes.lean), whose per-type theorems are in
+[`Cases.lean`](Cases.lean).  The idea of the proof is explained in
 [`minimality.md`](../../minimality.md) (section "A bit more detail",
 steps 1–6).
 
