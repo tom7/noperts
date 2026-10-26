@@ -208,6 +208,160 @@ theorem isRupert_vtriσ (V M : Finset ℝ³) {u : ℝ³} (hu : u ≠ 0) {σ : �
     · exact ⟨1, s, δ, hs0, hs1, hδ, by simp only [a1, tri_1, tri_2]; exact h⟩
     · exact ⟨2, s, δ, hs0, hs1, hδ, by simp only [a2, tri_2, tri_0]; exact h⟩
 
+/-! ### Certificate forms of the tests (`FEWER-FACES-PROOFS.md` §18.2, §21.15)
+
+A test of type 29 ends in a rim at its named view.  `RimThen V u y H` records the two things
+the tests deliver: the rim `y` as a certificate `RimCertPts` at the view `σ u` (the part that
+passes to limits, without the horizontal double normal or any `Nodup`/`NoHDNAt` hypothesis), and
+the original conclusion "if `H` (the `NoHDNAt` hypotheses), then `IsRupert V`". -/
+
+/-- **A rim certificate with the old conclusion as a corollary.** -/
+def RimThen (V : Finset ℝ³) (u : ℝ³) {k : ℕ} (y : ZMod k → ℝ³) (H : Prop) : Prop :=
+  ∃ σ : ℝ, (σ = 1 ∨ σ = -1) ∧ RimCertPts V (σ • u) y ∧ (H → IsRupert V)
+
+/-- **An edge-pair certificate** (Lemma E with ties) **with the old conclusion.** -/
+def RimCertThen (V : Finset ℝ³) (u : ℝ³) (H : Prop) : Prop :=
+  RimCert V u ∧ (H → IsRupert V)
+
+/-- A middle over a side of a triangular rim (vertex views). -/
+theorem tri_class_mid {y₀ y₁ y₂ u m : ℝ³}
+    (h : ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
+      (m = y₀ + s • (y₁ - y₀) + δ • u ∨ m = y₁ + s • (y₂ - y₁) + δ • u ∨
+        m = y₂ + s • (y₀ - y₂) + δ • u)) :
+    ∃ j₁ j₂ : ZMod 3, ∃ s δ : ℝ, 0 ≤ s ∧ s ≤ 1 ∧
+      m = tri y₀ y₁ y₂ j₁ + s • (tri y₀ y₁ y₂ j₂ - tri y₀ y₁ y₂ j₁) + δ • u := by
+  obtain ⟨s, δ, hs0, hs1, -, h | h | h⟩ := h
+  · exact ⟨0, 1, s, δ, hs0.le, hs1.le, h⟩
+  · exact ⟨1, 2, s, δ, hs0.le, hs1.le, h⟩
+  · exact ⟨2, 0, s, δ, hs0.le, hs1.le, h⟩
+
+/-- **`isRupert_vtriσ`, certificate form** (§18.2): the triangle rim at the view `σ u`. -/
+theorem rimCertPts_vtriσ (V M : Finset ℝ³) {u : ℝ³} {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
+    {y₀ y₁ y₂ : ℝ³} (h₀ : y₀ ∈ V) (h₁ : y₁ ∈ V) (h₂ : y₂ ∈ V)
+    (c₁ : 0 < σ * det3 (y₁ - y₀) (y₂ - y₀) u)
+    (hrest : ∀ z ∈ V, z ∉ M → z ≠ y₀ → z ≠ y₁ → z ≠ y₂ →
+      0 < σ * det3 (y₁ - y₀) (z - y₀) u ∧ 0 < σ * det3 (y₂ - y₁) (z - y₁) u ∧
+        0 < σ * det3 (y₀ - y₂) (z - y₂) u)
+    (hz : [⟪y₀, u⟫, ⟪y₁, u⟫, ⟪y₂, u⟫].Nodup)
+    (hM : ∀ m ∈ M, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
+      (m = y₀ + s • (y₁ - y₀) + δ • u ∨ m = y₁ + s • (y₂ - y₁) + δ • u ∨
+        m = y₂ + s • (y₀ - y₂) + δ • u)) :
+    RimCertPts V (σ • u) (tri y₀ y₁ y₂) := by
+  classical
+  have hz' : ¬ (⟪y₀, σ • u⟫ = ⟪y₁, σ • u⟫ ∧ ⟪y₁, σ • u⟫ = ⟪y₂, σ • u⟫) := by
+    simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+      List.nodup_nil, and_true] at hz
+    obtain ⟨⟨z1, z2⟩, z3, -⟩ := hz
+    rintro ⟨e1, e2⟩
+    simp only [real_inner_smul_right] at e1
+    exact z1 (mul_left_cancel₀ (sigma_ne_zero hσ) e1)
+  refine rimCertPts_tri V h₀ h₁ h₂ (by rw [← det3_sigma]; exact c₁) (fun z hz => ?_) hz'
+  by_cases hzM : z ∈ M
+  · exact Or.inl (class_sigma (sigma_sq hσ) (tri_class_mid (hM z hzM)))
+  by_cases e0 : z = y₀
+  · exact Or.inl ⟨0, 0, 0, 0, le_rfl, zero_le_one, by rw [e0]; simp [tri_0]⟩
+  by_cases e1 : z = y₁
+  · exact Or.inl ⟨1, 1, 0, 0, le_rfl, zero_le_one, by rw [e1]; simp [tri_1]⟩
+  by_cases e2 : z = y₂
+  · exact Or.inl ⟨2, 2, 0, 0, le_rfl, zero_le_one, by rw [e2]; simp [tri_2]⟩
+  obtain ⟨r0, r1, r2⟩ := hrest z hz hzM e0 e1 e2
+  rw [det3_sigma] at r0 r1 r2
+  exact Or.inr ⟨r0, r1, r2⟩
+
+/-- **`isRupert_vquadσ` with its certificate** (§18.2, §21.15). -/
+theorem vquadσ_both (V M : Finset ℝ³) {u : ℝ³} (hu : u ≠ 0) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
+    {y₀ y₁ y₂ y₃ : ℝ³} (h₀ : y₀ ∈ V) (h₁ : y₁ ∈ V) (h₂ : y₂ ∈ V) (h₃ : y₃ ∈ V)
+    (n₀ : y₀ ∉ M) (n₁ : y₁ ∉ M) (n₂ : y₂ ∉ M) (n₃ : y₃ ∉ M)
+    (c₁ : 0 < σ * det3 (y₁ - y₀) (y₂ - y₀) u) (c₂ : 0 < σ * det3 (y₁ - y₀) (y₃ - y₀) u)
+    (c₃ : 0 < σ * det3 (y₂ - y₁) (y₃ - y₁) u) (c₄ : 0 < σ * det3 (y₂ - y₁) (y₀ - y₁) u)
+    (c₅ : 0 < σ * det3 (y₃ - y₂) (y₀ - y₂) u) (c₆ : 0 < σ * det3 (y₃ - y₂) (y₁ - y₂) u)
+    (c₇ : 0 < σ * det3 (y₀ - y₃) (y₁ - y₃) u) (c₈ : 0 < σ * det3 (y₀ - y₃) (y₂ - y₃) u)
+    (hrest : ∀ z ∈ V, z ∉ M → z ≠ y₀ → z ≠ y₁ → z ≠ y₂ → z ≠ y₃ →
+      0 < σ * det3 (y₁ - y₀) (z - y₀) u ∧ 0 < σ * det3 (y₂ - y₁) (z - y₁) u ∧
+        0 < σ * det3 (y₃ - y₂) (z - y₂) u ∧ 0 < σ * det3 (y₀ - y₃) (z - y₃) u)
+    (hz : IsRobustUnimodal (quad ⟪y₀, u⟫ ⟪y₁, u⟫ ⟪y₂, u⟫ ⟪y₃, u⟫))
+    (hM : ∀ m ∈ M, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
+      (m = y₀ + s • (y₁ - y₀) + δ • u ∨ m = y₁ + s • (y₂ - y₁) + δ • u ∨
+        m = y₂ + s • (y₃ - y₂) + δ • u ∨ m = y₃ + s • (y₀ - y₃) + δ • u)) :
+    RimThen V u (quad y₀ y₁ y₂ y₃) (NoHDNAt V u) :=
+  ⟨σ, hσ, rimCertPts_vquadσ V M hu hσ h₀ h₁ h₂ h₃ n₀ n₁ n₂ n₃ c₁ c₂ c₃ c₄ c₅ c₆ c₇ c₈ hrest hz hM,
+    fun hnd => isRupert_vquadσ V M hu hσ h₀ h₁ h₂ h₃ n₀ n₁ n₂ n₃ c₁ c₂ c₃ c₄ c₅ c₆ c₇ c₈ hrest hz
+      hnd hM⟩
+
+/-- **`isRupert_vtriσ` with its certificate** (§18.2, §21.15). -/
+theorem vtriσ_both (V M : Finset ℝ³) {u : ℝ³} (hu : u ≠ 0) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
+    {y₀ y₁ y₂ : ℝ³} (h₀ : y₀ ∈ V) (h₁ : y₁ ∈ V) (h₂ : y₂ ∈ V)
+    (n₀ : y₀ ∉ M) (n₁ : y₁ ∉ M) (n₂ : y₂ ∉ M)
+    (c₁ : 0 < σ * det3 (y₁ - y₀) (y₂ - y₀) u) (c₂ : 0 < σ * det3 (y₂ - y₁) (y₀ - y₁) u)
+    (c₃ : 0 < σ * det3 (y₀ - y₂) (y₁ - y₂) u)
+    (hrest : ∀ z ∈ V, z ∉ M → z ≠ y₀ → z ≠ y₁ → z ≠ y₂ →
+      0 < σ * det3 (y₁ - y₀) (z - y₀) u ∧ 0 < σ * det3 (y₂ - y₁) (z - y₁) u ∧
+        0 < σ * det3 (y₀ - y₂) (z - y₂) u)
+    (hz : [⟪y₀, u⟫, ⟪y₁, u⟫, ⟪y₂, u⟫].Nodup)
+    (hM : ∀ m ∈ M, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
+      (m = y₀ + s • (y₁ - y₀) + δ • u ∨ m = y₁ + s • (y₂ - y₁) + δ • u ∨
+        m = y₂ + s • (y₀ - y₂) + δ • u)) :
+    RimThen V u (tri y₀ y₁ y₂) (NoHDNAt V u) :=
+  ⟨σ, hσ, rimCertPts_vtriσ V M hσ h₀ h₁ h₂ c₁ hrest hz hM,
+    fun hnd => isRupert_vtriσ V M hu hσ h₀ h₁ h₂ n₀ n₁ n₂ c₁ c₂ c₃ hrest hz hnd hM⟩
+
+/-- **`isRupert_equadσ` with its certificate** (§18.2, §21.15). -/
+theorem equadσ_both (V M : Finset ℝ³) {u : ℝ³} (hu : u ≠ 0) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
+    {y₀ y₁ y₂ y₃ w : ℝ³} {h : ℝ} (hh : h ≠ 0) (hw : w = y₀ - h • u) (hwV : w ∈ V)
+    (h₀ : y₀ ∈ V) (h₁ : y₁ ∈ V) (h₂ : y₂ ∈ V) (h₃ : y₃ ∈ V)
+    (n₀ : y₀ ∉ M) (n₁ : y₁ ∉ M) (n₂ : y₂ ∉ M) (n₃ : y₃ ∉ M)
+    (c₁ : 0 < σ * det3 (y₁ - y₀) (y₂ - y₀) u) (c₂ : 0 < σ * det3 (y₁ - y₀) (y₃ - y₀) u)
+    (c₃ : 0 < σ * det3 (y₂ - y₁) (y₃ - y₁) u) (c₄ : 0 < σ * det3 (y₂ - y₁) (y₀ - y₁) u)
+    (c₅ : 0 < σ * det3 (y₃ - y₂) (y₀ - y₂) u) (c₆ : 0 < σ * det3 (y₃ - y₂) (y₁ - y₂) u)
+    (c₇ : 0 < σ * det3 (y₀ - y₃) (y₁ - y₃) u) (c₈ : 0 < σ * det3 (y₀ - y₃) (y₂ - y₃) u)
+    (hrest : ∀ z ∈ V, z ∉ M → z ≠ w → z ≠ y₀ → z ≠ y₁ → z ≠ y₂ → z ≠ y₃ →
+      0 < σ * det3 (y₁ - y₀) (z - y₀) u ∧ 0 < σ * det3 (y₂ - y₁) (z - y₁) u ∧
+        0 < σ * det3 (y₃ - y₂) (z - y₂) u ∧ 0 < σ * det3 (y₀ - y₃) (z - y₃) u)
+    (hz : IsRobustUnimodal (quad ⟪y₀, u⟫ ⟪y₁, u⟫ ⟪y₂, u⟫ ⟪y₃, u⟫))
+    (hM : ∀ m ∈ M, EdgeMiddle u y₀ w y₁ y₃ h m) :
+    RimThen V u (quad y₀ y₁ y₂ y₃) (NoHDNAt (V.erase w) u) :=
+  ⟨σ, hσ, rimCertPts_equadσ V M hu hσ hh hw hwV h₀ h₁ h₂ h₃ n₀ n₁ n₂ n₃ c₁ c₂ c₃ c₄ c₅ c₆ c₇ c₈
+      hrest hz hM,
+    fun hnd => isRupert_equadσ V M hu hσ hh hw hwV h₀ h₁ h₂ h₃ n₀ n₁ n₂ n₃ c₁ c₂ c₃ c₄ c₅ c₆ c₇
+      c₈ hrest hz hnd hM⟩
+
+/-- **`isRupert_equintσ` with its certificate** (§18.2, §21.15). -/
+theorem equintσ_both (V M : Finset ℝ³) {u : ℝ³} (hu : u ≠ 0) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
+    {y₀ y₁ y₂ y₃ y₄ w : ℝ³} {h : ℝ} (hh : h ≠ 0) (hw : w = y₀ - h • u) (hwV : w ∈ V)
+    (h₀ : y₀ ∈ V) (h₁ : y₁ ∈ V) (h₂ : y₂ ∈ V) (h₃ : y₃ ∈ V) (h₄ : y₄ ∈ V)
+    (n₀ : y₀ ∉ M) (n₁ : y₁ ∉ M) (n₂ : y₂ ∉ M) (n₃ : y₃ ∉ M) (n₄ : y₄ ∉ M)
+    (hc : Pent15 σ y₀ y₁ y₂ y₃ y₄ u)
+    (hrest : ∀ z ∈ V, z ∉ M → z ≠ w → z ≠ y₀ → z ≠ y₁ → z ≠ y₂ → z ≠ y₃ → z ≠ y₄ →
+      PentIn σ y₀ y₁ y₂ y₃ y₄ u z)
+    (hz : IsRobustUnimodal (quint ⟪y₀, u⟫ ⟪y₁, u⟫ ⟪y₂, u⟫ ⟪y₃, u⟫ ⟪y₄, u⟫))
+    (hM : ∀ m ∈ M, EdgeMiddle u y₀ w y₁ y₄ h m) :
+    RimThen V u (quint y₀ y₁ y₂ y₃ y₄) (NoHDNAt (V.erase w) u) :=
+  ⟨σ, hσ, rimCertPts_equintσ V M hu hσ hh hw hwV h₀ h₁ h₂ h₃ h₄ n₀ n₁ n₂ n₃ n₄ hc hrest hz hM,
+    fun hnd => isRupert_equintσ V M hu hσ hh hw hwV h₀ h₁ h₂ h₃ h₄ n₀ n₁ n₂ n₃ n₄ hc hrest hz
+      hnd hM⟩
+
+/-- **`isRupert_edgePairσ` with its certificate** (Lemma E with ties, `rimCert_edgePairσ_robust`;
+§18.2, §21.13).  The `Nodup` hypotheses are kept for the corollary; the certificate only needs
+`a`, `c` to have different depths. -/
+theorem edgePairσ_both {v w a b c : ℝ³} (V : Finset ℝ³) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
+    (hvV : v ∈ V) (hwV : w ∈ V) (haV : a ∈ V) (hbV : b ∈ V) (hcV : c ∈ V)
+    (q₁ : 0 < σ * det3 (a - v) (c - v) (w - v)) (q₂ : 0 < σ * det3 (c - a) (b - a) (w - v))
+    (q₃ : 0 < σ * det3 (b - c) (v - c) (w - v)) (q₄ : 0 < σ * det3 (v - b) (a - b) (w - v))
+    (hE : det3 (b - a) (c - a) (v - a) * det3 (b - a) (c - a) (w - a) ≤ 0)
+    (hz₁ : [⟪v, w - v⟫, ⟪a, w - v⟫, ⟪c, w - v⟫, ⟪b, w - v⟫].Nodup)
+    (hz₂ : [⟪w, w - v⟫, ⟪a, w - v⟫, ⟪c, w - v⟫, ⟪b, w - v⟫].Nodup)
+    (hV : ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ z = c ∨ EdgeMid v w a b z ∨
+      EdgeHiddenσ σ (w - v) v a c b z) :
+    RimCertThen V (w - v)
+      (NoHDNAt (V.erase w) (w - v) ∧ NoHDNAt (V.erase v) (w - v)) := by
+  refine ⟨rimCert_edgePairσ_robust V hσ hvV hwV haV hbV hcV q₁ q₂ q₃ q₄ hE ?_ hV,
+    fun hnd => isRupert_edgePairσ V hσ hvV hwV haV hbV hcV q₁ q₂ q₃ q₄ hE hz₁ hz₂ hV hnd.1 hnd.2⟩
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+    List.nodup_nil, and_true] at hz₁
+  rintro ⟨e1, -⟩
+  exact hz₁.2.1.1 e1
+
+
 end Minimality
 
 end

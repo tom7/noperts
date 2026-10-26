@@ -89,9 +89,10 @@ noncomputable def NF29.vT3 (N : NF29 x) : ℝ³ :=
 noncomputable def NF29.vY1 (N : NF29 x) : ℝ³ :=
   nfV N.E₁ N.E₂ N.E₃ (-N.a0 * N.s) (N.h0 * N.s + N.a0 * (1 - N.t)) (N.h0 * N.s)
 
-/-- **Test `T1 = 012/1456`** (§21.15 (i)): the vertex crossing at `1`, view `u1 = (F5, −F4, 0)`, rim
-`(1, 2, 3, 6)`; `0` a middle over `1–2`, `4`, `5` over `6–1`. -/
-theorem NF29.isRupert_k3_T1 (N : NF29 x)
+/-- Certificate form of `NF29.isRupert_k3_T1`
+(`FEWER-FACES-PROOFS.md` §18.2, §21): the rim at its named view as `RimCertPts`
+(or `RimCert`), without the `NoHDNAt` hypotheses, which only enter the corollary. -/
+theorem NF29.rimThen_k3_T1 (N : NF29 x)
     (hb0 : 0 < N.b0)
     (hG5n : 0 < -N.a0 * N.h2 + N.a2 * N.h0 + N.a0 - N.a2)
     (hF45 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.b0 * N.h2 - N.b2 * N.h0)
@@ -99,15 +100,16 @@ theorem NF29.isRupert_k3_T1 (N : NF29 x)
     (hf : 0 < -N.a0 * N.h2 * N.t + N.a2 * N.h0 * N.t + N.b0 * N.h2 * N.s - N.b2 * N.h0 * N.s - N.b0
           * N.h2 + N.b2 * N.h0)
     (hh21 : 0 < -N.h2 + 1)
-    (hz : IsRobustUnimodal (quad ⟪x 1, N.vT1⟫ ⟪x 2, N.vT1⟫ ⟪x 3, N.vT1⟫ ⟪x 6, N.vT1⟫))
-    (hnd : NoHDNAt (univ.image x) (N.vT1)) : IsRupert (univ.image x) := by
+    (hz : IsRobustUnimodal (quad ⟪x 1, N.vT1⟫ ⟪x 2, N.vT1⟫ ⟪x 3, N.vT1⟫ ⟪x 6, N.vT1⟫)) :
+    RimThen (univ.image x) (N.vT1) (quad (x 1) (x 2) (x 3) (x 6))
+      (NoHDNAt (univ.image x) (N.vT1)) := by
   have hA0 : 0 < -N.a0 := by linarith [N.ha0]
   have hB2 : 0 < -N.b2 := by linarith [N.hb2]
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_vquadσ (univ.image x) ({x 0, x 4, x 5} : Finset ℝ³) (u := N.vT1) ?_ hσ
+  refine vquadσ_both (univ.image x) ({x 0, x 4, x 5} : Finset ℝ³) (u := N.vT1) ?_ hσ
     (img29 1) (img29 2) (img29 3) (img29 6)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz ?_
   · exact nfV_ne_zero N.hD (Or.inl (ne_of_gt N.hF5))
   · simp only [NF29.vT1]; nf29_test N hσD
         (by show 0 < N.a0 * N.b2 * N.h2 - N.a2 * N.b0 * N.h2; linarith [mul_pos (N.hh2) N.hDD])
@@ -192,24 +194,41 @@ theorem NF29.isRupert_k3_T1 (N : NF29 x)
       obtain ⟨s, δ, h1, h2, h3, h4⟩ := hmid
       exact ⟨s, δ, h1, h2, h3, Or.inr <| Or.inr <| Or.inr <| h4⟩
 
-/-- **Test `T2 = 1456/234`** (§21.15 (i)), `0` a corner: the vertex crossing at `4`, view `u2 = (κ,
-B2, 0)`, rim `(4, 3, 0, 5)`; `2` a middle over `4–3`, `1`, `6` over `5–4`. -/
-theorem NF29.isRupert_k3_T2a (N : NF29 x)
+/-- **Test `T1 = 012/1456`** (§21.15 (i)): the vertex crossing at `1`, view `u1 = (F5, −F4, 0)`, rim
+`(1, 2, 3, 6)`; `0` a middle over `1–2`, `4`, `5` over `6–1`. -/
+theorem NF29.isRupert_k3_T1 (N : NF29 x)
+    (hb0 : 0 < N.b0)
+    (hG5n : 0 < -N.a0 * N.h2 + N.a2 * N.h0 + N.a0 - N.a2)
+    (hF45 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.b0 * N.h2 - N.b2 * N.h0)
+    (hh20 : 0 < -N.h0 + N.h2)
+    (hf : 0 < -N.a0 * N.h2 * N.t + N.a2 * N.h0 * N.t + N.b0 * N.h2 * N.s - N.b2 * N.h0 * N.s - N.b0
+          * N.h2 + N.b2 * N.h0)
+    (hh21 : 0 < -N.h2 + 1)
+    (hz : IsRobustUnimodal (quad ⟪x 1, N.vT1⟫ ⟪x 2, N.vT1⟫ ⟪x 3, N.vT1⟫ ⟪x 6, N.vT1⟫))
+    (hnd : NoHDNAt (univ.image x) (N.vT1)) : IsRupert (univ.image x) := by
+  obtain ⟨-, -, -, h⟩ := NF29.rimThen_k3_T1 N hb0 hG5n hF45 hh20 hf hh21 hz
+  exact h hnd
+
+/-- Certificate form of `NF29.isRupert_k3_T2a`
+(`FEWER-FACES-PROOFS.md` §18.2, §21): the rim at its named view as `RimCertPts`
+(or `RimCert`), without the `NoHDNAt` hypotheses, which only enter the corollary. -/
+theorem NF29.rimThen_k3_T2a (N : NF29 x)
     (hA2 : 0 < -N.a2)
     (hh21 : 0 < -N.h2 + 1)
     (hsg : 0 < N.a2 * N.t - N.b2 * N.s + N.h2 * N.t - N.a2 - N.h2 - N.t + 1)
     (hc0 : 0 < N.a0 * N.b2 - N.a2 * N.b0 - N.a2 * N.h0 - N.b0 * N.h2 - N.h0 * N.h2 + N.a2 + N.b0 +
           N.h0 + N.h2 - 1)
-    (hz : IsRobustUnimodal (quad ⟪x 4, N.vT2⟫ ⟪x 3, N.vT2⟫ ⟪x 0, N.vT2⟫ ⟪x 5, N.vT2⟫))
-    (hnd : NoHDNAt (univ.image x) (N.vT2)) : IsRupert (univ.image x) := by
+    (hz : IsRobustUnimodal (quad ⟪x 4, N.vT2⟫ ⟪x 3, N.vT2⟫ ⟪x 0, N.vT2⟫ ⟪x 5, N.vT2⟫)) :
+    RimThen (univ.image x) (N.vT2) (quad (x 4) (x 3) (x 0) (x 5))
+      (NoHDNAt (univ.image x) (N.vT2)) := by
   have hB2 : 0 < -N.b2 := by linarith [N.hb2]
   have h345_2 : 0 < 1 - N.a2 - N.b2 - N.h2 := by linarith [N.t345_2]
   have hst : 0 < N.s + N.t - 1 := by linarith [N.hst]
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_vquadσ (univ.image x) ({x 1, x 2, x 6} : Finset ℝ³) (u := N.vT2) ?_ hσ
+  refine vquadσ_both (univ.image x) ({x 1, x 2, x 6} : Finset ℝ³) (u := N.vT2) ?_ hσ
     (img29 4) (img29 3) (img29 0) (img29 5)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz ?_
   · exact nfV_ne_zero N.hD (Or.inr (Or.inl (ne_of_gt (by linarith [N.hb2]))))
   · simp only [NF29.vT2]; nf29_test N hσD N.hDG4
   · simp only [NF29.vT2]; nf29_test N hσD h345_2
@@ -264,22 +283,38 @@ theorem NF29.isRupert_k3_T2a (N : NF29 x)
       obtain ⟨s, δ, h1, h2, h3, h4⟩ := hmid
       exact ⟨s, δ, h1, h2, h3, Or.inr <| Or.inr <| Or.inr <| h4⟩
 
-/-- **Test `T2`** with `0` hidden: rim `(4, 3, 5)` (a triangle: free). -/
-theorem NF29.isRupert_k3_T2b (N : NF29 x)
+/-- **Test `T2 = 1456/234`** (§21.15 (i)), `0` a corner: the vertex crossing at `4`, view `u2 = (κ,
+B2, 0)`, rim `(4, 3, 0, 5)`; `2` a middle over `4–3`, `1`, `6` over `5–4`. -/
+theorem NF29.isRupert_k3_T2a (N : NF29 x)
+    (hA2 : 0 < -N.a2)
+    (hh21 : 0 < -N.h2 + 1)
+    (hsg : 0 < N.a2 * N.t - N.b2 * N.s + N.h2 * N.t - N.a2 - N.h2 - N.t + 1)
+    (hc0 : 0 < N.a0 * N.b2 - N.a2 * N.b0 - N.a2 * N.h0 - N.b0 * N.h2 - N.h0 * N.h2 + N.a2 + N.b0 +
+          N.h0 + N.h2 - 1)
+    (hz : IsRobustUnimodal (quad ⟪x 4, N.vT2⟫ ⟪x 3, N.vT2⟫ ⟪x 0, N.vT2⟫ ⟪x 5, N.vT2⟫))
+    (hnd : NoHDNAt (univ.image x) (N.vT2)) : IsRupert (univ.image x) := by
+  obtain ⟨-, -, -, h⟩ := NF29.rimThen_k3_T2a N hA2 hh21 hsg hc0 hz
+  exact h hnd
+
+/-- Certificate form of `NF29.isRupert_k3_T2b`
+(`FEWER-FACES-PROOFS.md` §18.2, §21): the rim at its named view as `RimCertPts`
+(or `RimCert`), without the `NoHDNAt` hypotheses, which only enter the corollary. -/
+theorem NF29.rimThen_k3_T2b (N : NF29 x)
     (hA2 : 0 < -N.a2)
     (hh21 : 0 < -N.h2 + 1)
     (hsg : 0 < N.a2 * N.t - N.b2 * N.s + N.h2 * N.t - N.a2 - N.h2 - N.t + 1)
     (hc0 : 0 < -N.a0 * N.b2 + N.a2 * N.b0 + N.a2 * N.h0 + N.b0 * N.h2 + N.h0 * N.h2 - N.a2 - N.b0 -
           N.h0 - N.h2 + 1)
-    (hz : [⟪x 4, N.vT2⟫, ⟪x 3, N.vT2⟫, ⟪x 5, N.vT2⟫].Nodup)
-    (hnd : NoHDNAt (univ.image x) (N.vT2)) : IsRupert (univ.image x) := by
+    (hz : [⟪x 4, N.vT2⟫, ⟪x 3, N.vT2⟫, ⟪x 5, N.vT2⟫].Nodup) :
+    RimThen (univ.image x) (N.vT2) (tri (x 4) (x 3) (x 5))
+      (NoHDNAt (univ.image x) (N.vT2)) := by
   have hB2 : 0 < -N.b2 := by linarith [N.hb2]
   have h345_2 : 0 < 1 - N.a2 - N.b2 - N.h2 := by linarith [N.t345_2]
   have hst : 0 < N.s + N.t - 1 := by linarith [N.hst]
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_vtriσ (univ.image x) ({x 1, x 2, x 6} : Finset ℝ³) (u := N.vT2) ?_ hσ
+  refine vtriσ_both (univ.image x) ({x 1, x 2, x 6} : Finset ℝ³) (u := N.vT2) ?_ hσ
     (img29 4) (img29 3) (img29 5)
-    (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ hz hnd ?_
+    (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ hz ?_
   · exact nfV_ne_zero N.hD (Or.inr (Or.inl (ne_of_gt (by linarith [N.hb2]))))
   · simp only [NF29.vT2]; nf29_test N hσD h345_2
   · simp only [NF29.vT2]; nf29_test N hσD h345_2
@@ -329,23 +364,38 @@ theorem NF29.isRupert_k3_T2b (N : NF29 x)
       obtain ⟨s, δ, h1, h2, h3, h4⟩ := hmid
       exact ⟨s, δ, h1, h2, h3, Or.inr <| Or.inr <| h4⟩
 
-/-- **Test `T2`** with `6` the far end of the quadrilateral (`σ6 < −κ`): rim `(4, 3, 6)` (free). -/
-theorem NF29.isRupert_k3_T2c (N : NF29 x)
+/-- **Test `T2`** with `0` hidden: rim `(4, 3, 5)` (a triangle: free). -/
+theorem NF29.isRupert_k3_T2b (N : NF29 x)
+    (hA2 : 0 < -N.a2)
+    (hh21 : 0 < -N.h2 + 1)
+    (hsg : 0 < N.a2 * N.t - N.b2 * N.s + N.h2 * N.t - N.a2 - N.h2 - N.t + 1)
+    (hc0 : 0 < -N.a0 * N.b2 + N.a2 * N.b0 + N.a2 * N.h0 + N.b0 * N.h2 + N.h0 * N.h2 - N.a2 - N.b0 -
+          N.h0 - N.h2 + 1)
+    (hz : [⟪x 4, N.vT2⟫, ⟪x 3, N.vT2⟫, ⟪x 5, N.vT2⟫].Nodup)
+    (hnd : NoHDNAt (univ.image x) (N.vT2)) : IsRupert (univ.image x) := by
+  obtain ⟨-, -, -, h⟩ := NF29.rimThen_k3_T2b N hA2 hh21 hsg hc0 hz
+  exact h hnd
+
+/-- Certificate form of `NF29.isRupert_k3_T2c`
+(`FEWER-FACES-PROOFS.md` §18.2, §21): the rim at its named view as `RimCertPts`
+(or `RimCert`), without the `NoHDNAt` hypotheses, which only enter the corollary. -/
+theorem NF29.rimThen_k3_T2c (N : NF29 x)
     (hA2 : 0 < -N.a2)
     (hh01 : 0 < -N.h0 + 1)
     (hh21 : 0 < -N.h2 + 1)
     (hsg : 0 < -N.a2 * N.t + N.b2 * N.s - N.h2 * N.t + N.a2 + N.h2 + N.t - 1)
     (hx0 : 0 < -N.a0 * N.b2 + N.a2 * N.b0 + N.a2 * N.h0 + N.b0 * N.h2 + N.h0 * N.h2 - N.a2 - N.b0 -
           N.h0 - N.h2 + 1)
-    (hz : [⟪x 4, N.vT2⟫, ⟪x 3, N.vT2⟫, ⟪x 6, N.vT2⟫].Nodup)
-    (hnd : NoHDNAt (univ.image x) (N.vT2)) : IsRupert (univ.image x) := by
+    (hz : [⟪x 4, N.vT2⟫, ⟪x 3, N.vT2⟫, ⟪x 6, N.vT2⟫].Nodup) :
+    RimThen (univ.image x) (N.vT2) (tri (x 4) (x 3) (x 6))
+      (NoHDNAt (univ.image x) (N.vT2)) := by
   have hB2 : 0 < -N.b2 := by linarith [N.hb2]
   have h345_2 : 0 < 1 - N.a2 - N.b2 - N.h2 := by linarith [N.t345_2]
   have hst : 0 < N.s + N.t - 1 := by linarith [N.hst]
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_vtriσ (univ.image x) ({x 1, x 2, x 5} : Finset ℝ³) (u := N.vT2) ?_ hσ
+  refine vtriσ_both (univ.image x) ({x 1, x 2, x 5} : Finset ℝ³) (u := N.vT2) ?_ hσ
     (img29 4) (img29 3) (img29 6)
-    (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ hz hnd ?_
+    (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ hz ?_
   · exact nfV_ne_zero N.hD (Or.inr (Or.inl (ne_of_gt (by linarith [N.hb2]))))
   · simp only [NF29.vT2]; nf29_test N hσD N.d234
   · simp only [NF29.vT2]; nf29_test N hσD N.d234
@@ -402,6 +452,19 @@ theorem NF29.isRupert_k3_T2c (N : NF29 x)
         (by simp only [NF29.vT2]; nf29_vec N)
       obtain ⟨s, δ, h1, h2, h3, h4⟩ := hmid
       exact ⟨s, δ, h1, h2, h3, Or.inr <| Or.inr <| h4⟩
+
+/-- **Test `T2`** with `6` the far end of the quadrilateral (`σ6 < −κ`): rim `(4, 3, 6)` (free). -/
+theorem NF29.isRupert_k3_T2c (N : NF29 x)
+    (hA2 : 0 < -N.a2)
+    (hh01 : 0 < -N.h0 + 1)
+    (hh21 : 0 < -N.h2 + 1)
+    (hsg : 0 < -N.a2 * N.t + N.b2 * N.s - N.h2 * N.t + N.a2 + N.h2 + N.t - 1)
+    (hx0 : 0 < -N.a0 * N.b2 + N.a2 * N.b0 + N.a2 * N.h0 + N.b0 * N.h2 + N.h0 * N.h2 - N.a2 - N.b0 -
+          N.h0 - N.h2 + 1)
+    (hz : [⟪x 4, N.vT2⟫, ⟪x 3, N.vT2⟫, ⟪x 6, N.vT2⟫].Nodup)
+    (hnd : NoHDNAt (univ.image x) (N.vT2)) : IsRupert (univ.image x) := by
+  obtain ⟨-, -, -, h⟩ := NF29.rimThen_k3_T2c N hA2 hh01 hh21 hsg hx0 hz
+  exact h hnd
 
 /-- **The pair `P14 = {T1, T2}`** (§21.15 (i)): Corollary 13.3. -/
 theorem NF29.isRupert_k3_P14 (N : NF29 x)
@@ -514,8 +577,10 @@ theorem NF29.isRupert_k3_P14 (N : NF29 x)
     · exact NF29.isRupert_k3_T2a N hA2 hh21 hsg hc0 (quad_unimodal h2 hz2).isRobustUnimodal hnd2
   · exact NF29.isRupert_k3_T1 N hb0 hG5n hF45 hh20 hf hh21 (quad_unimodal h1 hz1).isRobustUnimodal
         hnd1
-/-- **Test `T1`** in P11 (§21.15 (iv)): rim `(1, 2, 3, 6)`. -/
-theorem NF29.isRupert_k3_T1o (N : NF29 x)
+/-- Certificate form of `NF29.isRupert_k3_T1o`
+(`FEWER-FACES-PROOFS.md` §18.2, §21): the rim at its named view as `RimCertPts`
+(or `RimCert`), without the `NoHDNAt` hypotheses, which only enter the corollary. -/
+theorem NF29.rimThen_k3_T1o (N : NF29 x)
     (hh01 : 0 < -N.h0 + 1)
     (hF45 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.b0 * N.h2 - N.b2 * N.h0)
     (hh20 : 0 < -N.h0 + N.h2)
@@ -523,13 +588,14 @@ theorem NF29.isRupert_k3_T1o (N : NF29 x)
     (hf : 0 < -N.a0 * N.h2 * N.t + N.a2 * N.h0 * N.t + N.b0 * N.h2 * N.s - N.b2 * N.h0 * N.s - N.b0
           * N.h2 + N.b2 * N.h0)
     (hh2g : 0 < N.h2 - 1)
-    (hz : IsRobustUnimodal (quad ⟪x 1, N.vT1⟫ ⟪x 2, N.vT1⟫ ⟪x 3, N.vT1⟫ ⟪x 6, N.vT1⟫))
-    (hnd : NoHDNAt (univ.image x) (N.vT1)) : IsRupert (univ.image x) := by
+    (hz : IsRobustUnimodal (quad ⟪x 1, N.vT1⟫ ⟪x 2, N.vT1⟫ ⟪x 3, N.vT1⟫ ⟪x 6, N.vT1⟫)) :
+    RimThen (univ.image x) (N.vT1) (quad (x 1) (x 2) (x 3) (x 6))
+      (NoHDNAt (univ.image x) (N.vT1)) := by
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_vquadσ (univ.image x) ({x 0, x 4, x 5} : Finset ℝ³) (u := N.vT1) ?_ hσ
+  refine vquadσ_both (univ.image x) ({x 0, x 4, x 5} : Finset ℝ³) (u := N.vT1) ?_ hσ
     (img29 1) (img29 2) (img29 3) (img29 6)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz ?_
   · exact nfV_ne_zero N.hD (Or.inl (ne_of_gt N.hF5))
   · simp only [NF29.vT1]; nf29_test N hσD
         (by show 0 < N.a0 * N.b2 * N.h2 - N.a2 * N.b0 * N.h2; linarith [mul_pos (N.hh2) N.hDD])
@@ -608,9 +674,24 @@ theorem NF29.isRupert_k3_T1o (N : NF29 x)
       obtain ⟨s, δ, h1, h2, h3, h4⟩ := hmid
       exact ⟨s, δ, h1, h2, h3, Or.inr <| Or.inr <| Or.inr <| h4⟩
 
-/-- **Test `T3 = 015/124`** in P11 (§21.15 (iv)): the vertex crossing at `1`, view `u3 = (A0 h2, B2
-h0, h0 h2)`, rim `(1, 4, 3, 0)`; `2` a middle over `1–4`, `5` over `0–1`, `6` hidden. -/
-theorem NF29.isRupert_k3_T3o (N : NF29 x)
+/-- **Test `T1`** in P11 (§21.15 (iv)): rim `(1, 2, 3, 6)`. -/
+theorem NF29.isRupert_k3_T1o (N : NF29 x)
+    (hh01 : 0 < -N.h0 + 1)
+    (hF45 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.b0 * N.h2 - N.b2 * N.h0)
+    (hh20 : 0 < -N.h0 + N.h2)
+    (hth : 0 < -N.a2 * N.t + N.b2 * N.s)
+    (hf : 0 < -N.a0 * N.h2 * N.t + N.a2 * N.h0 * N.t + N.b0 * N.h2 * N.s - N.b2 * N.h0 * N.s - N.b0
+          * N.h2 + N.b2 * N.h0)
+    (hh2g : 0 < N.h2 - 1)
+    (hz : IsRobustUnimodal (quad ⟪x 1, N.vT1⟫ ⟪x 2, N.vT1⟫ ⟪x 3, N.vT1⟫ ⟪x 6, N.vT1⟫))
+    (hnd : NoHDNAt (univ.image x) (N.vT1)) : IsRupert (univ.image x) := by
+  obtain ⟨-, -, -, h⟩ := NF29.rimThen_k3_T1o N hh01 hF45 hh20 hth hf hh2g hz
+  exact h hnd
+
+/-- Certificate form of `NF29.isRupert_k3_T3o`
+(`FEWER-FACES-PROOFS.md` §18.2, §21): the rim at its named view as `RimCertPts`
+(or `RimCert`), without the `NoHDNAt` hypotheses, which only enter the corollary. -/
+theorem NF29.rimThen_k3_T3o (N : NF29 x)
     (hh01 : 0 < -N.h0 + 1)
     (hh20 : 0 < -N.h0 + N.h2)
     (hth : 0 < -N.a2 * N.t + N.b2 * N.s)
@@ -621,16 +702,17 @@ theorem NF29.isRupert_k3_T3o (N : NF29 x)
     (hal : 0 < -N.a0 * N.b0 * N.h2 + N.a0 * N.b2 * N.h0 - N.a0 * N.h0 * N.h2 - N.b0 * N.h0 * N.h2 -
           N.h0 ^ 2 * N.h2 + N.a0 * N.h2 + N.h0 * N.h2)
     (hhF5 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.h0 * N.h2)
-    (hz : IsRobustUnimodal (quad ⟪x 1, N.vT3⟫ ⟪x 4, N.vT3⟫ ⟪x 3, N.vT3⟫ ⟪x 0, N.vT3⟫))
-    (hnd : NoHDNAt (univ.image x) (N.vT3)) : IsRupert (univ.image x) := by
+    (hz : IsRobustUnimodal (quad ⟪x 1, N.vT3⟫ ⟪x 4, N.vT3⟫ ⟪x 3, N.vT3⟫ ⟪x 0, N.vT3⟫)) :
+    RimThen (univ.image x) (N.vT3) (quad (x 1) (x 4) (x 3) (x 0))
+      (NoHDNAt (univ.image x) (N.vT3)) := by
   have hA0 : 0 < -N.a0 := by linarith [N.ha0]
   have hB2 : 0 < -N.b2 := by linarith [N.hb2]
   have h345_0 : 0 < 1 - N.a0 - N.b0 - N.h0 := by linarith [N.t345_0]
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_vquadσ (univ.image x) ({x 2, x 5} : Finset ℝ³) (u := N.vT3) ?_ hσ
+  refine vquadσ_both (univ.image x) ({x 2, x 5} : Finset ℝ³) (u := N.vT3) ?_ hσ
     (img29 1) (img29 4) (img29 3) (img29 0)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz ?_
   · exact nfV_ne_zero N.hD (Or.inr (Or.inr (ne_of_gt (mul_pos N.hh0 N.hh2))))
   · simp only [NF29.vT3]; nf29_test N hσD (by show 0 < -N.b2 * N.h0; linarith [mul_pos (N.hh0) hB2])
   · simp only [NF29.vT3]; nf29_test N hσD
@@ -712,24 +794,44 @@ theorem NF29.isRupert_k3_T3o (N : NF29 x)
       obtain ⟨s, δ, h1, h2, h3, h4⟩ := hmid
       exact ⟨s, δ, h1, h2, h3, Or.inr <| Or.inr <| Or.inr <| h4⟩
 
-/-- **Test `T3`, planar** (§21.15 (v)): rim `(1, 4, 6, 5)` in `H`; `2` a middle over `1–4`, `0` over
-`5–1`, `3` hidden (`Q3` inside `(1, 4, 6, 5)`). -/
-theorem NF29.isRupert_k3_T3p (N : NF29 x)
+/-- **Test `T3 = 015/124`** in P11 (§21.15 (iv)): the vertex crossing at `1`, view `u3 = (A0 h2, B2
+h0, h0 h2)`, rim `(1, 4, 3, 0)`; `2` a middle over `1–4`, `5` over `0–1`, `6` hidden. -/
+theorem NF29.isRupert_k3_T3o (N : NF29 x)
+    (hh01 : 0 < -N.h0 + 1)
+    (hh20 : 0 < -N.h0 + N.h2)
+    (hth : 0 < -N.a2 * N.t + N.b2 * N.s)
+    (hh2g : 0 < N.h2 - 1)
+    (hh0F5 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.h0)
+    (hF4h2 : 0 < N.b0 * N.h2 - N.b2 * N.h0 - N.h2)
+    (hN : 0 < N.a0 * N.b2 - N.a2 * N.b0 - N.a2 * N.h0 + N.a2)
+    (hal : 0 < -N.a0 * N.b0 * N.h2 + N.a0 * N.b2 * N.h0 - N.a0 * N.h0 * N.h2 - N.b0 * N.h0 * N.h2 -
+          N.h0 ^ 2 * N.h2 + N.a0 * N.h2 + N.h0 * N.h2)
+    (hhF5 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.h0 * N.h2)
+    (hz : IsRobustUnimodal (quad ⟪x 1, N.vT3⟫ ⟪x 4, N.vT3⟫ ⟪x 3, N.vT3⟫ ⟪x 0, N.vT3⟫))
+    (hnd : NoHDNAt (univ.image x) (N.vT3)) : IsRupert (univ.image x) := by
+  obtain ⟨-, -, -, h⟩ := NF29.rimThen_k3_T3o N hh01 hh20 hth hh2g hh0F5 hF4h2 hN hal hhF5 hz
+  exact h hnd
+
+/-- Certificate form of `NF29.isRupert_k3_T3p`
+(`FEWER-FACES-PROOFS.md` §18.2, §21): the rim at its named view as `RimCertPts`
+(or `RimCert`), without the `NoHDNAt` hypotheses, which only enter the corollary. -/
+theorem NF29.rimThen_k3_T3p (N : NF29 x)
     (hh2g : 0 < N.h2 - 1)
     (hh0F5 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.h0)
     (hh2F4 : 0 < -N.b0 * N.h2 + N.b2 * N.h0 + N.h2)
     (hq46 : 0 < N.a0 * N.h2 * N.t - N.b2 * N.h0 * N.s + N.h0 * N.h2 * N.t + N.b2 * N.h0)
     (hq65 : 0 < -N.a0 * N.h2 * N.t + N.b2 * N.h0 * N.s + N.h0 * N.h2 * N.s + N.a0 * N.h2)
-    (hz : IsRobustUnimodal (quad ⟪x 1, N.vT3⟫ ⟪x 4, N.vT3⟫ ⟪x 6, N.vT3⟫ ⟪x 5, N.vT3⟫))
-    (hnd : NoHDNAt (univ.image x) (N.vT3)) : IsRupert (univ.image x) := by
+    (hz : IsRobustUnimodal (quad ⟪x 1, N.vT3⟫ ⟪x 4, N.vT3⟫ ⟪x 6, N.vT3⟫ ⟪x 5, N.vT3⟫)) :
+    RimThen (univ.image x) (N.vT3) (quad (x 1) (x 4) (x 6) (x 5))
+      (NoHDNAt (univ.image x) (N.vT3)) := by
   have hA0 : 0 < -N.a0 := by linarith [N.ha0]
   have hB2 : 0 < -N.b2 := by linarith [N.hb2]
   have hst : 0 < N.s + N.t - 1 := by linarith [N.hst]
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_vquadσ (univ.image x) ({x 0, x 2} : Finset ℝ³) (u := N.vT3) ?_ hσ
+  refine vquadσ_both (univ.image x) ({x 0, x 2} : Finset ℝ³) (u := N.vT3) ?_ hσ
     (img29 1) (img29 4) (img29 6) (img29 5)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz ?_
   · exact nfV_ne_zero N.hD (Or.inr (Or.inr (ne_of_gt (mul_pos N.hh0 N.hh2))))
   · simp only [NF29.vT3]; nf29_test N hσD
         (by show 0 < N.h0 * N.h2 * N.t; linarith [mul_pos (mul_pos (N.hh0) N.hh2) N.ht])
@@ -788,25 +890,40 @@ theorem NF29.isRupert_k3_T3p (N : NF29 x)
       obtain ⟨s, δ, h1, h2, h3, h4⟩ := hmid
       exact ⟨s, δ, h1, h2, h3, Or.inl <| h4⟩
 
-/-- **Test `Xa = 015/035-0`** (§21.16): the edge crossing along `05` (apex `5`, view `5 − 0`), rim
-`(5, 1, 4, 3)`; `2`, `6` hidden. -/
-theorem NF29.isRupert_k3_Xa (N : NF29 x)
+/-- **Test `T3`, planar** (§21.15 (v)): rim `(1, 4, 6, 5)` in `H`; `2` a middle over `1–4`, `0` over
+`5–1`, `3` hidden (`Q3` inside `(1, 4, 6, 5)`). -/
+theorem NF29.isRupert_k3_T3p (N : NF29 x)
+    (hh2g : 0 < N.h2 - 1)
+    (hh0F5 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.h0)
+    (hh2F4 : 0 < -N.b0 * N.h2 + N.b2 * N.h0 + N.h2)
+    (hq46 : 0 < N.a0 * N.h2 * N.t - N.b2 * N.h0 * N.s + N.h0 * N.h2 * N.t + N.b2 * N.h0)
+    (hq65 : 0 < -N.a0 * N.h2 * N.t + N.b2 * N.h0 * N.s + N.h0 * N.h2 * N.s + N.a0 * N.h2)
+    (hz : IsRobustUnimodal (quad ⟪x 1, N.vT3⟫ ⟪x 4, N.vT3⟫ ⟪x 6, N.vT3⟫ ⟪x 5, N.vT3⟫))
+    (hnd : NoHDNAt (univ.image x) (N.vT3)) : IsRupert (univ.image x) := by
+  obtain ⟨-, -, -, h⟩ := NF29.rimThen_k3_T3p N hh2g hh0F5 hh2F4 hq46 hq65 hz
+  exact h hnd
+
+/-- Certificate form of `NF29.isRupert_k3_Xa`
+(`FEWER-FACES-PROOFS.md` §18.2, §21): the rim at its named view as `RimCertPts`
+(or `RimCert`), without the `NoHDNAt` hypotheses, which only enter the corollary. -/
+theorem NF29.rimThen_k3_Xa (N : NF29 x)
     (hh2F4 : 0 < -N.b0 * N.h2 + N.b2 * N.h0 + N.h2)
     (hXf : 0 < -N.a0 * N.t + N.b0 * N.s - N.h0 * N.t - N.b0 - N.s + 1)
     (hb01 : 0 < -N.b0 + 1)
     (hXa2 : 0 < -N.a0 * N.b2 + N.a2 * N.b0 + N.b0 * N.h2 - N.b2 * N.h0 - N.a2 - N.b0 - N.h2 + 1)
     (hz : IsRobustUnimodal
-          (quad ⟪x 5, (x 5 - x 0)⟫ ⟪x 1, (x 5 - x 0)⟫ ⟪x 4, (x 5 - x 0)⟫ ⟪x 3, (x 5 - x 0)⟫))
-    (hnd : NoHDNAt ((univ.image x).erase (x 0)) ((x 5 - x 0))) : IsRupert (univ.image x) := by
+          (quad ⟪x 5, (x 5 - x 0)⟫ ⟪x 1, (x 5 - x 0)⟫ ⟪x 4, (x 5 - x 0)⟫ ⟪x 3, (x 5 - x 0)⟫)) :
+    RimThen (univ.image x) (x 5 - x 0) (quad (x 5) (x 1) (x 4) (x 3))
+      (NoHDNAt ((univ.image x).erase (x 0)) ((x 5 - x 0))) := by
   have hA0 : 0 < -N.a0 := by linarith [N.ha0]
   have h345_0 : 0 < 1 - N.a0 - N.b0 - N.h0 := by linarith [N.t345_0]
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_equadσ (univ.image x) (∅ : Finset ℝ³) (u := (x 5 - x 0)) ?_ hσ (h := 1)
+  refine equadσ_both (univ.image x) (∅ : Finset ℝ³) (u := (x 5 - x 0)) ?_ hσ (h := 1)
       one_ne_zero
     (by module) (img29 0)
     (img29 5) (img29 1) (img29 4) (img29 3)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz ?_
   · exact sub_ne_zero.mpr (N.inj.ne (by decide))
   · nf29_test N hσD N.hh0
   · nf29_test N hσD hA0
@@ -837,23 +954,38 @@ theorem NF29.isRupert_k3_Xa (N : NF29 x)
   · intro m hm
     simp at hm
 
-/-- **Test `T2`** for `h2 > 1` (§21.16, §21.19): rim `(4, 2, 0, 5)`; `3` a middle over `4–2`, `1`,
-`6` over `5–4`. -/
-theorem NF29.isRupert_k3_T2o (N : NF29 x)
+/-- **Test `Xa = 015/035-0`** (§21.16): the edge crossing along `05` (apex `5`, view `5 − 0`), rim
+`(5, 1, 4, 3)`; `2`, `6` hidden. -/
+theorem NF29.isRupert_k3_Xa (N : NF29 x)
+    (hh2F4 : 0 < -N.b0 * N.h2 + N.b2 * N.h0 + N.h2)
+    (hXf : 0 < -N.a0 * N.t + N.b0 * N.s - N.h0 * N.t - N.b0 - N.s + 1)
+    (hb01 : 0 < -N.b0 + 1)
+    (hXa2 : 0 < -N.a0 * N.b2 + N.a2 * N.b0 + N.b0 * N.h2 - N.b2 * N.h0 - N.a2 - N.b0 - N.h2 + 1)
+    (hz : IsRobustUnimodal
+          (quad ⟪x 5, (x 5 - x 0)⟫ ⟪x 1, (x 5 - x 0)⟫ ⟪x 4, (x 5 - x 0)⟫ ⟪x 3, (x 5 - x 0)⟫))
+    (hnd : NoHDNAt ((univ.image x).erase (x 0)) ((x 5 - x 0))) : IsRupert (univ.image x) := by
+  obtain ⟨-, -, -, h⟩ := NF29.rimThen_k3_Xa N hh2F4 hXf hb01 hXa2 hz
+  exact h hnd
+
+/-- Certificate form of `NF29.isRupert_k3_T2o`
+(`FEWER-FACES-PROOFS.md` §18.2, §21): the rim at its named view as `RimCertPts`
+(or `RimCert`), without the `NoHDNAt` hypotheses, which only enter the corollary. -/
+theorem NF29.rimThen_k3_T2o (N : NF29 x)
     (hV3 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.b0 * N.h2 - N.b2 * N.h0 + N.h0 - N.h2)
     (hh2g : 0 < N.h2 - 1)
     (hkap : 0 < -N.a2 - N.h2 + 1)
     (hsg : 0 < N.a2 * N.t - N.b2 * N.s + N.h2 * N.t - N.a2 - N.h2 - N.t + 1)
-    (hz : IsRobustUnimodal (quad ⟪x 4, N.vT2⟫ ⟪x 2, N.vT2⟫ ⟪x 0, N.vT2⟫ ⟪x 5, N.vT2⟫))
-    (hnd : NoHDNAt (univ.image x) (N.vT2)) : IsRupert (univ.image x) := by
+    (hz : IsRobustUnimodal (quad ⟪x 4, N.vT2⟫ ⟪x 2, N.vT2⟫ ⟪x 0, N.vT2⟫ ⟪x 5, N.vT2⟫)) :
+    RimThen (univ.image x) (N.vT2) (quad (x 4) (x 2) (x 0) (x 5))
+      (NoHDNAt (univ.image x) (N.vT2)) := by
   have hB2 : 0 < -N.b2 := by linarith [N.hb2]
   have h345_2 : 0 < 1 - N.a2 - N.b2 - N.h2 := by linarith [N.t345_2]
   have hst : 0 < N.s + N.t - 1 := by linarith [N.hst]
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_vquadσ (univ.image x) ({x 1, x 3, x 6} : Finset ℝ³) (u := N.vT2) ?_ hσ
+  refine vquadσ_both (univ.image x) ({x 1, x 3, x 6} : Finset ℝ³) (u := N.vT2) ?_ hσ
     (img29 4) (img29 2) (img29 0) (img29 5)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz ?_
   · exact nfV_ne_zero N.hD (Or.inr (Or.inl (ne_of_gt (by linarith [N.hb2]))))
   · simp only [NF29.vT2]; nf29_test N hσD
         (by
@@ -932,22 +1064,36 @@ theorem NF29.isRupert_k3_T2o (N : NF29 x)
       obtain ⟨s, δ, h1, h2, h3, h4⟩ := hmid
       exact ⟨s, δ, h1, h2, h3, Or.inr <| Or.inr <| Or.inr <| h4⟩
 
-/-- **Test `Y1 = 015/356`, planar** (§21.17): the vertex crossing at `5`, view `(A0 s, h0 s − A0 (1
-− t), h0 s)`, rim `(1, 4, 6, 5)` in `H`; `0` a middle over `5–1`, `3` over `6–5`, `2` hidden. -/
-theorem NF29.isRupert_k3_Y1p (N : NF29 x)
+/-- **Test `T2`** for `h2 > 1` (§21.16, §21.19): rim `(4, 2, 0, 5)`; `3` a middle over `4–2`, `1`,
+`6` over `5–4`. -/
+theorem NF29.isRupert_k3_T2o (N : NF29 x)
+    (hV3 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.b0 * N.h2 - N.b2 * N.h0 + N.h0 - N.h2)
+    (hh2g : 0 < N.h2 - 1)
+    (hkap : 0 < -N.a2 - N.h2 + 1)
+    (hsg : 0 < N.a2 * N.t - N.b2 * N.s + N.h2 * N.t - N.a2 - N.h2 - N.t + 1)
+    (hz : IsRobustUnimodal (quad ⟪x 4, N.vT2⟫ ⟪x 2, N.vT2⟫ ⟪x 0, N.vT2⟫ ⟪x 5, N.vT2⟫))
+    (hnd : NoHDNAt (univ.image x) (N.vT2)) : IsRupert (univ.image x) := by
+  obtain ⟨-, -, -, h⟩ := NF29.rimThen_k3_T2o N hV3 hh2g hkap hsg hz
+  exact h hnd
+
+/-- Certificate form of `NF29.isRupert_k3_Y1p`
+(`FEWER-FACES-PROOFS.md` §18.2, §21): the rim at its named view as `RimCertPts`
+(or `RimCert`), without the `NoHDNAt` hypotheses, which only enter the corollary. -/
+theorem NF29.rimThen_k3_Y1p (N : NF29 x)
     (hb0 : 0 < N.b0)
     (hYs : 0 < N.h0 * N.s + N.a0)
     (hp56 : 0 < N.a2 * N.t - N.b2 * N.s - N.h2 * N.s - N.a2 + N.s)
     (hL36 : 0 < -N.a0 * N.h2 * N.t + N.b2 * N.h0 * N.s + N.h0 * N.h2 * N.s + N.a0 * N.h2)
-    (hz : IsRobustUnimodal (quad ⟪x 1, N.vY1⟫ ⟪x 4, N.vY1⟫ ⟪x 6, N.vY1⟫ ⟪x 5, N.vY1⟫))
-    (hnd : NoHDNAt (univ.image x) (N.vY1)) : IsRupert (univ.image x) := by
+    (hz : IsRobustUnimodal (quad ⟪x 1, N.vY1⟫ ⟪x 4, N.vY1⟫ ⟪x 6, N.vY1⟫ ⟪x 5, N.vY1⟫)) :
+    RimThen (univ.image x) (N.vY1) (quad (x 1) (x 4) (x 6) (x 5))
+      (NoHDNAt (univ.image x) (N.vY1)) := by
   have hA0 : 0 < -N.a0 := by linarith [N.ha0]
   have hst : 0 < N.s + N.t - 1 := by linarith [N.hst]
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_vquadσ (univ.image x) ({x 0, x 3} : Finset ℝ³) (u := N.vY1) ?_ hσ
+  refine vquadσ_both (univ.image x) ({x 0, x 3} : Finset ℝ³) (u := N.vY1) ?_ hσ
     (img29 1) (img29 4) (img29 6) (img29 5)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz ?_
   · exact nfV_ne_zero N.hD (Or.inr (Or.inr (ne_of_gt (mul_pos N.hh0 N.hs))))
   · simp only [NF29.vY1]; nf29_test N hσD
         (by show 0 < N.h0 * N.s * N.t; linarith [mul_pos (mul_pos (N.hh0) N.hs) N.ht])
@@ -1015,9 +1161,22 @@ theorem NF29.isRupert_k3_Y1p (N : NF29 x)
       obtain ⟨s, δ, h1, h2, h3, h4⟩ := hmid
       exact ⟨s, δ, h1, h2, h3, Or.inr <| Or.inr <| Or.inl <| h4⟩
 
-/-- **Test `T3`** on `S` with `L36 < 0` (§21.19): rim `(1, 4, 3, 5)`; `2` a middle over `1–4`, `0`
-over `5–1`, `6` hidden. -/
-theorem NF29.isRupert_k3_T3s (N : NF29 x)
+/-- **Test `Y1 = 015/356`, planar** (§21.17): the vertex crossing at `5`, view `(A0 s, h0 s − A0 (1
+− t), h0 s)`, rim `(1, 4, 6, 5)` in `H`; `0` a middle over `5–1`, `3` over `6–5`, `2` hidden. -/
+theorem NF29.isRupert_k3_Y1p (N : NF29 x)
+    (hb0 : 0 < N.b0)
+    (hYs : 0 < N.h0 * N.s + N.a0)
+    (hp56 : 0 < N.a2 * N.t - N.b2 * N.s - N.h2 * N.s - N.a2 + N.s)
+    (hL36 : 0 < -N.a0 * N.h2 * N.t + N.b2 * N.h0 * N.s + N.h0 * N.h2 * N.s + N.a0 * N.h2)
+    (hz : IsRobustUnimodal (quad ⟪x 1, N.vY1⟫ ⟪x 4, N.vY1⟫ ⟪x 6, N.vY1⟫ ⟪x 5, N.vY1⟫))
+    (hnd : NoHDNAt (univ.image x) (N.vY1)) : IsRupert (univ.image x) := by
+  obtain ⟨-, -, -, h⟩ := NF29.rimThen_k3_Y1p N hb0 hYs hp56 hL36 hz
+  exact h hnd
+
+/-- Certificate form of `NF29.isRupert_k3_T3s`
+(`FEWER-FACES-PROOFS.md` §18.2, §21): the rim at its named view as `RimCertPts`
+(or `RimCert`), without the `NoHDNAt` hypotheses, which only enter the corollary. -/
+theorem NF29.rimThen_k3_T3s (N : NF29 x)
     (hh2g : 0 < N.h2 - 1)
     (hh0F5 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.h0)
     (hh2F4 : 0 < -N.b0 * N.h2 + N.b2 * N.h0 + N.h2)
@@ -1025,15 +1184,16 @@ theorem NF29.isRupert_k3_T3s (N : NF29 x)
     (hW43 : 0 < -N.a0 * N.h2 * N.t + N.b2 * N.h0 * N.s - N.h0 * N.h2 * N.t - N.b2 * N.h0)
     (hAh0 : 0 < -N.a0 - N.h0)
     (hs1g : 0 < N.s - 1)
-    (hz : IsRobustUnimodal (quad ⟪x 1, N.vT3⟫ ⟪x 4, N.vT3⟫ ⟪x 3, N.vT3⟫ ⟪x 5, N.vT3⟫))
-    (hnd : NoHDNAt (univ.image x) (N.vT3)) : IsRupert (univ.image x) := by
+    (hz : IsRobustUnimodal (quad ⟪x 1, N.vT3⟫ ⟪x 4, N.vT3⟫ ⟪x 3, N.vT3⟫ ⟪x 5, N.vT3⟫)) :
+    RimThen (univ.image x) (N.vT3) (quad (x 1) (x 4) (x 3) (x 5))
+      (NoHDNAt (univ.image x) (N.vT3)) := by
   have hA0 : 0 < -N.a0 := by linarith [N.ha0]
   have hB2 : 0 < -N.b2 := by linarith [N.hb2]
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_vquadσ (univ.image x) ({x 0, x 2} : Finset ℝ³) (u := N.vT3) ?_ hσ
+  refine vquadσ_both (univ.image x) ({x 0, x 2} : Finset ℝ³) (u := N.vT3) ?_ hσ
     (img29 1) (img29 4) (img29 3) (img29 5)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz ?_
   · exact nfV_ne_zero N.hD (Or.inr (Or.inr (ne_of_gt (mul_pos N.hh0 N.hh2))))
   · simp only [NF29.vT3]; nf29_test N hσD (by show 0 < -N.b2 * N.h0; linarith [mul_pos (N.hh0) hB2])
   · simp only [NF29.vT3]; nf29_test N hσD
@@ -1091,6 +1251,22 @@ theorem NF29.isRupert_k3_T3s (N : NF29 x)
         (by simp only [NF29.vT3]; nf29_vec N)
       obtain ⟨s, δ, h1, h2, h3, h4⟩ := hmid
       exact ⟨s, δ, h1, h2, h3, Or.inl <| h4⟩
+
+/-- **Test `T3`** on `S` with `L36 < 0` (§21.19): rim `(1, 4, 3, 5)`; `2` a middle over `1–4`, `0`
+over `5–1`, `6` hidden. -/
+theorem NF29.isRupert_k3_T3s (N : NF29 x)
+    (hh2g : 0 < N.h2 - 1)
+    (hh0F5 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.h0)
+    (hh2F4 : 0 < -N.b0 * N.h2 + N.b2 * N.h0 + N.h2)
+    (hL36n : 0 < N.a0 * N.h2 * N.t - N.b2 * N.h0 * N.s - N.h0 * N.h2 * N.s - N.a0 * N.h2)
+    (hW43 : 0 < -N.a0 * N.h2 * N.t + N.b2 * N.h0 * N.s - N.h0 * N.h2 * N.t - N.b2 * N.h0)
+    (hAh0 : 0 < -N.a0 - N.h0)
+    (hs1g : 0 < N.s - 1)
+    (hz : IsRobustUnimodal (quad ⟪x 1, N.vT3⟫ ⟪x 4, N.vT3⟫ ⟪x 3, N.vT3⟫ ⟪x 5, N.vT3⟫))
+    (hnd : NoHDNAt (univ.image x) (N.vT3)) : IsRupert (univ.image x) := by
+  obtain ⟨-, -, -, h⟩ := NF29.rimThen_k3_T3s N hh2g hh0F5 hh2F4 hL36n hW43 hAh0 hs1g hz
+  exact h hnd
+
 /-- **The pair `P11 = {T1, T3}`** (§21.15 (iv)): the shared diagonal `[1, 3]`; Corollary 13.3. -/
 theorem NF29.isRupert_k3_P11 (N : NF29 x)
     (hA2 : 0 < -N.a2)
@@ -1442,9 +1618,10 @@ theorem NF29.isRupert_k3_P13 (N : NF29 x)
     · exact NF29.isRupert_k3_T2o N hV3 hh2g hkap hsg (quad_unimodal h2 hz2).isRobustUnimodal hnd2
   · exact NF29.isRupert_k3_T3s N hh2g hh0F5 hh2F4 hL36n hW43 hAh0 hs1g
         (quad_unimodal h1 hz1).isRobustUnimodal hnd1
-/-- **Test `Y1 = 015/356`** on `S` with `L36 > 0` (§21.21): rim `(5, 1, 4, 3)`; `0` a middle over
-`5–1`, `6` over `3–5`, `2` hidden. -/
-theorem NF29.isRupert_k3_Y1q (N : NF29 x)
+/-- Certificate form of `NF29.isRupert_k3_Y1q`
+(`FEWER-FACES-PROOFS.md` §18.2, §21): the rim at its named view as `RimCertPts`
+(or `RimCert`), without the `NoHDNAt` hypotheses, which only enter the corollary. -/
+theorem NF29.rimThen_k3_Y1q (N : NF29 x)
     (hb0 : 0 < N.b0)
     (hV3 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.b0 * N.h2 - N.b2 * N.h0 + N.h0 - N.h2)
     (hh01 : 0 < -N.h0 + 1)
@@ -1456,17 +1633,18 @@ theorem NF29.isRupert_k3_Y1q (N : NF29 x)
     (hL36 : 0 < -N.a0 * N.h2 * N.t + N.b2 * N.h0 * N.s + N.h0 * N.h2 * N.s + N.a0 * N.h2)
     (hAh0 : 0 < -N.a0 - N.h0)
     (hs1g : 0 < N.s - 1)
-    (hz : IsRobustUnimodal (quad ⟪x 5, N.vY1⟫ ⟪x 1, N.vY1⟫ ⟪x 4, N.vY1⟫ ⟪x 3, N.vY1⟫))
-    (hnd : NoHDNAt (univ.image x) (N.vY1)) : IsRupert (univ.image x) := by
+    (hz : IsRobustUnimodal (quad ⟪x 5, N.vY1⟫ ⟪x 1, N.vY1⟫ ⟪x 4, N.vY1⟫ ⟪x 3, N.vY1⟫)) :
+    RimThen (univ.image x) (N.vY1) (quad (x 5) (x 1) (x 4) (x 3))
+      (NoHDNAt (univ.image x) (N.vY1)) := by
   have hA0 : 0 < -N.a0 := by linarith [N.ha0]
   have hB2 : 0 < -N.b2 := by linarith [N.hb2]
   have h345_0 : 0 < 1 - N.a0 - N.b0 - N.h0 := by linarith [N.t345_0]
   have hst : 0 < N.s + N.t - 1 := by linarith [N.hst]
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_vquadσ (univ.image x) ({x 0, x 6} : Finset ℝ³) (u := N.vY1) ?_ hσ
+  refine vquadσ_both (univ.image x) ({x 0, x 6} : Finset ℝ³) (u := N.vY1) ?_ hσ
     (img29 5) (img29 1) (img29 4) (img29 3)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hz ?_
   · exact nfV_ne_zero N.hD (Or.inr (Or.inr (ne_of_gt (mul_pos N.hh0 N.hs))))
   · simp only [NF29.vY1]; nf29_test N hσD (by show 0 < N.h0 * N.s; linarith [mul_pos (N.hh0) N.hs])
   · simp only [NF29.vY1]; nf29_test N hσD
@@ -1542,9 +1720,30 @@ theorem NF29.isRupert_k3_Y1q (N : NF29 x)
       obtain ⟨s, δ, h1, h2, h3, h4⟩ := hmid
       exact ⟨s, δ, h1, h2, h3, Or.inr <| Or.inr <| Or.inr <| h4⟩
 
-/-- **Test `Y2 = 1456/346-4`** (§21.20): the edge crossing along `46` (apex `6`, view `6 − 4`), rim
-`(6, 3, 2, 0, 5)`; `1` a middle over `5–6`. -/
-theorem NF29.isRupert_k3_Y2 (N : NF29 x)
+/-- **Test `Y1 = 015/356`** on `S` with `L36 > 0` (§21.21): rim `(5, 1, 4, 3)`; `0` a middle over
+`5–1`, `6` over `3–5`, `2` hidden. -/
+theorem NF29.isRupert_k3_Y1q (N : NF29 x)
+    (hb0 : 0 < N.b0)
+    (hV3 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.b0 * N.h2 - N.b2 * N.h0 + N.h0 - N.h2)
+    (hh01 : 0 < -N.h0 + 1)
+    (hh2g : 0 < N.h2 - 1)
+    (hkap : 0 < -N.a2 - N.h2 + 1)
+    (hh0F5 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.h0)
+    (hb01 : 0 < -N.b0 + 1)
+    (hAs : 0 < -N.h0 * N.s - N.a0)
+    (hL36 : 0 < -N.a0 * N.h2 * N.t + N.b2 * N.h0 * N.s + N.h0 * N.h2 * N.s + N.a0 * N.h2)
+    (hAh0 : 0 < -N.a0 - N.h0)
+    (hs1g : 0 < N.s - 1)
+    (hz : IsRobustUnimodal (quad ⟪x 5, N.vY1⟫ ⟪x 1, N.vY1⟫ ⟪x 4, N.vY1⟫ ⟪x 3, N.vY1⟫))
+    (hnd : NoHDNAt (univ.image x) (N.vY1)) : IsRupert (univ.image x) := by
+  obtain ⟨-, -, -, h⟩ := NF29.rimThen_k3_Y1q N hb0 hV3 hh01 hh2g hkap hh0F5 hb01 hAs hL36 hAh0 hs1g
+      hz
+  exact h hnd
+
+/-- Certificate form of `NF29.isRupert_k3_Y2`
+(`FEWER-FACES-PROOFS.md` §18.2, §21): the rim at its named view as `RimCertPts`
+(or `RimCert`), without the `NoHDNAt` hypotheses, which only enter the corollary. -/
+theorem NF29.rimThen_k3_Y2 (N : NF29 x)
     (hb0 : 0 < N.b0)
     (hV3 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.b0 * N.h2 - N.b2 * N.h0 + N.h0 - N.h2)
     (hh01 : 0 < -N.h0 + 1)
@@ -1554,18 +1753,19 @@ theorem NF29.isRupert_k3_Y2 (N : NF29 x)
     (hW43 : 0 < -N.a0 * N.h2 * N.t + N.b2 * N.h0 * N.s - N.h0 * N.h2 * N.t - N.b2 * N.h0)
     (hs1g : 0 < N.s - 1)
     (hz : IsRobustUnimodal (quint ⟪x 6, (x 6 - x 4)⟫ ⟪x 3, (x 6 - x 4)⟫ ⟪x 2, (x 6 - x 4)⟫ ⟪x 0,
-            (x 6 - x 4)⟫ ⟪x 5, (x 6 - x 4)⟫))
-    (hnd : NoHDNAt ((univ.image x).erase (x 4)) ((x 6 - x 4))) : IsRupert (univ.image x) := by
+            (x 6 - x 4)⟫ ⟪x 5, (x 6 - x 4)⟫)) :
+    RimThen (univ.image x) (x 6 - x 4) (quint (x 6) (x 3) (x 2) (x 0) (x 5))
+      (NoHDNAt ((univ.image x).erase (x 4)) ((x 6 - x 4))) := by
   have hB2 : 0 < -N.b2 := by linarith [N.hb2]
   have h345_0 : 0 < 1 - N.a0 - N.b0 - N.h0 := by linarith [N.t345_0]
   have hst : 0 < N.s + N.t - 1 := by linarith [N.hst]
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_equintσ (univ.image x) ({x 1} : Finset ℝ³) (u := (x 6 - x 4)) ?_ hσ (h := 1)
+  refine equintσ_both (univ.image x) ({x 1} : Finset ℝ³) (u := (x 6 - x 4)) ?_ hσ (h := 1)
       one_ne_zero
     (by module) (img29 4)
     (img29 6) (img29 3) (img29 2) (img29 0) (img29 5)
     (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff])
-        (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) ?_ ?_ hz hnd ?_
+        (by simp [N.inj.eq_iff]) (by simp [N.inj.eq_iff]) ?_ ?_ hz ?_
   · exact sub_ne_zero.mpr (N.inj.ne (by decide))
   · refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
     · nf29_test N hσD N.d234
@@ -1635,7 +1835,22 @@ theorem NF29.isRupert_k3_Y2 (N : NF29 x)
     obtain ⟨s, δ, h1, h2, h3, h4⟩ := hmid
     exact ⟨x 6, s, δ, Or.inl rfl, h1, h2, h3, Or.inr h4⟩
 
-
+/-- **Test `Y2 = 1456/346-4`** (§21.20): the edge crossing along `46` (apex `6`, view `6 − 4`), rim
+`(6, 3, 2, 0, 5)`; `1` a middle over `5–6`. -/
+theorem NF29.isRupert_k3_Y2 (N : NF29 x)
+    (hb0 : 0 < N.b0)
+    (hV3 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.b0 * N.h2 - N.b2 * N.h0 + N.h0 - N.h2)
+    (hh01 : 0 < -N.h0 + 1)
+    (hh20 : 0 < -N.h0 + N.h2)
+    (hh2g : 0 < N.h2 - 1)
+    (hb01 : 0 < -N.b0 + 1)
+    (hW43 : 0 < -N.a0 * N.h2 * N.t + N.b2 * N.h0 * N.s - N.h0 * N.h2 * N.t - N.b2 * N.h0)
+    (hs1g : 0 < N.s - 1)
+    (hz : IsRobustUnimodal (quint ⟪x 6, (x 6 - x 4)⟫ ⟪x 3, (x 6 - x 4)⟫ ⟪x 2, (x 6 - x 4)⟫ ⟪x 0,
+            (x 6 - x 4)⟫ ⟪x 5, (x 6 - x 4)⟫))
+    (hnd : NoHDNAt ((univ.image x).erase (x 4)) ((x 6 - x 4))) : IsRupert (univ.image x) := by
+  obtain ⟨-, -, -, h⟩ := NF29.rimThen_k3_Y2 N hb0 hV3 hh01 hh20 hh2g hb01 hW43 hs1g hz
+  exact h hnd
 
 /-- **The pattern argument of Lemma 21.20 for `Y2`** in reals: with `q = ⟪u, u⟫ > 0`,
 `w = ⟪u, u1⟫ > 0`, the cone identities (Y2-1), (Y2-2), (Y5c) with positive coefficients and
@@ -1835,9 +2050,10 @@ theorem NF29.isRupert_k3_Yp (N : NF29 x)
     exact NF29.isRupert_k3_Y2 N hb0 hV3 hh01 hh20 hh2g hb01 hW43 hs1g hY2.isRobustUnimodal hnd2
   · exact NF29.isRupert_k3_Y1q N hb0 hV3 hh01 hh2g hkap hh0F5 hb01 hAs hL36 hAh0 hs1g
         (quad_unimodal h1 hz1).isRobustUnimodal hnd1
-/-- **Theorem 21.13, C2 at `56`** (`6 → 5` in `K − 4`, `t < 1`, `θ < α`): Lemma E at the edge `56`
-of `K`, far path `1, 2, 3`; `4` a middle, `0` hidden. -/
-theorem NF29.isRupert_k3_C56 (N : NF29 x)
+/-- Certificate form of `NF29.isRupert_k3_C56`
+(`FEWER-FACES-PROOFS.md` §18.2, §21): the rim at its named view as `RimCertPts`
+(or `RimCert`), without the `NoHDNAt` hypotheses, which only enter the corollary. -/
+theorem NF29.rimThen_k3_C56 (N : NF29 x)
     (hA2 : 0 < -N.a2)
     (hV3 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.b0 * N.h2 - N.b2 * N.h0 + N.h0 - N.h2)
     (hthn : 0 < N.a2 * N.t - N.b2 * N.s)
@@ -1847,13 +2063,14 @@ theorem NF29.isRupert_k3_C56 (N : NF29 x)
     (hgG5 : 0 < N.a0 * N.h2 * N.t - N.a2 * N.h0 * N.t - N.b0 * N.h2 * N.s + N.b2 * N.h0 * N.s - N.a0
           * N.h2 - N.a0 * N.t + N.a2 * N.h0 + N.a2 * N.t + N.b0 * N.s - N.b2 * N.s + N.a0 - N.a2)
     (hz₁ : [⟪x 6, (x 5 - x 6)⟫, ⟪x 3, (x 5 - x 6)⟫, ⟪x 2, (x 5 - x 6)⟫, ⟪x 1, (x 5 - x 6)⟫].Nodup)
-    (hz₂ : [⟪x 5, (x 5 - x 6)⟫, ⟪x 3, (x 5 - x 6)⟫, ⟪x 2, (x 5 - x 6)⟫, ⟪x 1, (x 5 - x 6)⟫].Nodup)
-    (hnd₁ : NoHDNAt ((univ.image x).erase (x 5)) (x 5 - x 6))
-    (hnd₂ : NoHDNAt ((univ.image x).erase (x 6)) (x 5 - x 6)) : IsRupert (univ.image x) := by
+    (hz₂ : [⟪x 5, (x 5 - x 6)⟫, ⟪x 3, (x 5 - x 6)⟫, ⟪x 2, (x 5 - x 6)⟫, ⟪x 1, (x 5 - x 6)⟫].Nodup) :
+    RimCertThen (univ.image x) (x 5 - x 6)
+      (NoHDNAt ((univ.image x).erase (x 5)) (x 5 - x 6) ∧
+        NoHDNAt ((univ.image x).erase (x 6)) (x 5 - x 6)) := by
   have hst : 0 < N.s + N.t - 1 := by linarith [N.hst]
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_edgePairσ (univ.image x) hσ (img29 6) (img29 5) (img29 3) (img29 1) (img29 2)
-    ?_ ?_ ?_ ?_ ?_ hz₁ hz₂ ?_ hnd₁ hnd₂
+  refine edgePairσ_both (univ.image x) hσ (img29 6) (img29 5) (img29 3) (img29 1) (img29 2)
+    ?_ ?_ ?_ ?_ ?_ hz₁ hz₂ ?_
   · nf29_test N hσD (pos_of_mul_pos_r N.hh0
           (by
             show 0 < (N.a2 * N.t - N.b2 * N.s - N.h2 * N.s - N.a2 + N.s) * (N.h0)
@@ -1889,22 +2106,41 @@ theorem NF29.isRupert_k3_C56 (N : NF29 x)
     · exact Or.inr <| Or.inl rfl
     · exact Or.inl rfl
 
-/-- **Theorem 21.13, C2 at `14`** (`4 → 1` in `K − 5`, `t > 1`, `θ < α`): Lemma E at the edge `14`
-of `K`, far path `2, 3, 6`; `5` a middle, `0` hidden. -/
-theorem NF29.isRupert_k3_C14 (N : NF29 x)
+/-- **Theorem 21.13, C2 at `56`** (`6 → 5` in `K − 4`, `t < 1`, `θ < α`): Lemma E at the edge `56`
+of `K`, far path `1, 2, 3`; `4` a middle, `0` hidden. -/
+theorem NF29.isRupert_k3_C56 (N : NF29 x)
+    (hA2 : 0 < -N.a2)
+    (hV3 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.b0 * N.h2 - N.b2 * N.h0 + N.h0 - N.h2)
+    (hthn : 0 < N.a2 * N.t - N.b2 * N.s)
+    (ht1 : 0 < -N.t + 1)
+    (hfF5 : 0 < -N.a0 * N.h2 * N.t + N.a2 * N.h0 * N.t + N.b0 * N.h2 * N.s - N.b2 * N.h0 * N.s +
+          N.a0 * N.h2 - N.a2 * N.h0)
+    (hgG5 : 0 < N.a0 * N.h2 * N.t - N.a2 * N.h0 * N.t - N.b0 * N.h2 * N.s + N.b2 * N.h0 * N.s - N.a0
+          * N.h2 - N.a0 * N.t + N.a2 * N.h0 + N.a2 * N.t + N.b0 * N.s - N.b2 * N.s + N.a0 - N.a2)
+    (hz₁ : [⟪x 6, (x 5 - x 6)⟫, ⟪x 3, (x 5 - x 6)⟫, ⟪x 2, (x 5 - x 6)⟫, ⟪x 1, (x 5 - x 6)⟫].Nodup)
+    (hz₂ : [⟪x 5, (x 5 - x 6)⟫, ⟪x 3, (x 5 - x 6)⟫, ⟪x 2, (x 5 - x 6)⟫, ⟪x 1, (x 5 - x 6)⟫].Nodup)
+    (hnd₁ : NoHDNAt ((univ.image x).erase (x 5)) (x 5 - x 6))
+    (hnd₂ : NoHDNAt ((univ.image x).erase (x 6)) (x 5 - x 6)) : IsRupert (univ.image x) := by
+  exact (NF29.rimThen_k3_C56 N hA2 hV3 hthn ht1 hfF5 hgG5 hz₁ hz₂).2 ⟨hnd₁, hnd₂⟩
+
+/-- Certificate form of `NF29.isRupert_k3_C14`
+(`FEWER-FACES-PROOFS.md` §18.2, §21): the rim at its named view as `RimCertPts`
+(or `RimCert`), without the `NoHDNAt` hypotheses, which only enter the corollary. -/
+theorem NF29.rimThen_k3_C14 (N : NF29 x)
     (hb0 : 0 < N.b0)
     (hG4 : 0 < -N.b0 * N.h2 + N.b2 * N.h0 + N.b0 - N.b2)
     (hthn : 0 < N.a2 * N.t - N.b2 * N.s)
     (ht1g : 0 < N.t - 1)
     (he0n : 0 < -N.b0 - N.h0 + 1)
     (hz₁ : [⟪x 4, (x 1 - x 4)⟫, ⟪x 6, (x 1 - x 4)⟫, ⟪x 3, (x 1 - x 4)⟫, ⟪x 2, (x 1 - x 4)⟫].Nodup)
-    (hz₂ : [⟪x 1, (x 1 - x 4)⟫, ⟪x 6, (x 1 - x 4)⟫, ⟪x 3, (x 1 - x 4)⟫, ⟪x 2, (x 1 - x 4)⟫].Nodup)
-    (hnd₁ : NoHDNAt ((univ.image x).erase (x 1)) (x 1 - x 4))
-    (hnd₂ : NoHDNAt ((univ.image x).erase (x 4)) (x 1 - x 4)) : IsRupert (univ.image x) := by
+    (hz₂ : [⟪x 1, (x 1 - x 4)⟫, ⟪x 6, (x 1 - x 4)⟫, ⟪x 3, (x 1 - x 4)⟫, ⟪x 2, (x 1 - x 4)⟫].Nodup) :
+    RimCertThen (univ.image x) (x 1 - x 4)
+      (NoHDNAt ((univ.image x).erase (x 1)) (x 1 - x 4) ∧
+        NoHDNAt ((univ.image x).erase (x 4)) (x 1 - x 4)) := by
   have hB2 : 0 < -N.b2 := by linarith [N.hb2]
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_edgePairσ (univ.image x) hσ (img29 4) (img29 1) (img29 6) (img29 2) (img29 3)
-    ?_ ?_ ?_ ?_ ?_ hz₁ hz₂ ?_ hnd₁ hnd₂
+  refine edgePairσ_both (univ.image x) hσ (img29 4) (img29 1) (img29 6) (img29 2) (img29 3)
+    ?_ ?_ ?_ ?_ ?_ hz₁ hz₂ ?_
   · nf29_test N hσD N.ht
   · nf29_test N hσD (by show 0 < -N.h2 * N.t - N.b2 + N.t; linarith [hthn, N.d234])
   · nf29_test N hσD hB2
@@ -1938,9 +2174,24 @@ theorem NF29.isRupert_k3_C14 (N : NF29 x)
           ⟨s, δ, h1, h2, h3, Or.inr <| Or.inr <| Or.inl (h4.trans (by module))⟩
     · exact Or.inr <| Or.inr <| Or.inl rfl
 
-/-- **Theorem 21.13, C2 at `46`** (`4 → 6` in `K − 5`, `θ > α`, `f < F4`): Lemma E at the edge `46`
-of `K`, far path `1, 2, 3`; `5` a middle, `0` hidden. -/
-theorem NF29.isRupert_k3_C46 (N : NF29 x)
+/-- **Theorem 21.13, C2 at `14`** (`4 → 1` in `K − 5`, `t > 1`, `θ < α`): Lemma E at the edge `14`
+of `K`, far path `2, 3, 6`; `5` a middle, `0` hidden. -/
+theorem NF29.isRupert_k3_C14 (N : NF29 x)
+    (hb0 : 0 < N.b0)
+    (hG4 : 0 < -N.b0 * N.h2 + N.b2 * N.h0 + N.b0 - N.b2)
+    (hthn : 0 < N.a2 * N.t - N.b2 * N.s)
+    (ht1g : 0 < N.t - 1)
+    (he0n : 0 < -N.b0 - N.h0 + 1)
+    (hz₁ : [⟪x 4, (x 1 - x 4)⟫, ⟪x 6, (x 1 - x 4)⟫, ⟪x 3, (x 1 - x 4)⟫, ⟪x 2, (x 1 - x 4)⟫].Nodup)
+    (hz₂ : [⟪x 1, (x 1 - x 4)⟫, ⟪x 6, (x 1 - x 4)⟫, ⟪x 3, (x 1 - x 4)⟫, ⟪x 2, (x 1 - x 4)⟫].Nodup)
+    (hnd₁ : NoHDNAt ((univ.image x).erase (x 1)) (x 1 - x 4))
+    (hnd₂ : NoHDNAt ((univ.image x).erase (x 4)) (x 1 - x 4)) : IsRupert (univ.image x) := by
+  exact (NF29.rimThen_k3_C14 N hb0 hG4 hthn ht1g he0n hz₁ hz₂).2 ⟨hnd₁, hnd₂⟩
+
+/-- Certificate form of `NF29.isRupert_k3_C46`
+(`FEWER-FACES-PROOFS.md` §18.2, §21): the rim at its named view as `RimCertPts`
+(or `RimCert`), without the `NoHDNAt` hypotheses, which only enter the corollary. -/
+theorem NF29.rimThen_k3_C46 (N : NF29 x)
     (hb0 : 0 < N.b0)
     (hG4 : 0 < -N.b0 * N.h2 + N.b2 * N.h0 + N.b0 - N.b2)
     (hG5n : 0 < -N.a0 * N.h2 + N.a2 * N.h0 + N.a0 - N.a2)
@@ -1949,15 +2200,16 @@ theorem NF29.isRupert_k3_C46 (N : NF29 x)
           * N.h2 - N.b2 * N.h0)
     (hs1 : 0 < -N.s + 1)
     (hz₁ : [⟪x 4, (x 6 - x 4)⟫, ⟪x 3, (x 6 - x 4)⟫, ⟪x 2, (x 6 - x 4)⟫, ⟪x 1, (x 6 - x 4)⟫].Nodup)
-    (hz₂ : [⟪x 6, (x 6 - x 4)⟫, ⟪x 3, (x 6 - x 4)⟫, ⟪x 2, (x 6 - x 4)⟫, ⟪x 1, (x 6 - x 4)⟫].Nodup)
-    (hnd₁ : NoHDNAt ((univ.image x).erase (x 6)) (x 6 - x 4))
-    (hnd₂ : NoHDNAt ((univ.image x).erase (x 4)) (x 6 - x 4)) : IsRupert (univ.image x) := by
+    (hz₂ : [⟪x 6, (x 6 - x 4)⟫, ⟪x 3, (x 6 - x 4)⟫, ⟪x 2, (x 6 - x 4)⟫, ⟪x 1, (x 6 - x 4)⟫].Nodup) :
+    RimCertThen (univ.image x) (x 6 - x 4)
+      (NoHDNAt ((univ.image x).erase (x 6)) (x 6 - x 4) ∧
+        NoHDNAt ((univ.image x).erase (x 4)) (x 6 - x 4)) := by
   have hB2 : 0 < -N.b2 := by linarith [N.hb2]
   have h345_0 : 0 < 1 - N.a0 - N.b0 - N.h0 := by linarith [N.t345_0]
   have hst : 0 < N.s + N.t - 1 := by linarith [N.hst]
   obtain ⟨σ, hσ, hσD⟩ := exists_sign N.hD
-  refine isRupert_edgePairσ (univ.image x) hσ (img29 4) (img29 6) (img29 3) (img29 1) (img29 2)
-    ?_ ?_ ?_ ?_ ?_ hz₁ hz₂ ?_ hnd₁ hnd₂
+  refine edgePairσ_both (univ.image x) hσ (img29 4) (img29 6) (img29 3) (img29 1) (img29 2)
+    ?_ ?_ ?_ ?_ ?_ hz₁ hz₂ ?_
   · nf29_test N hσD N.d234
   · nf29_test N hσD (by show 0 < -N.a2 * N.t + N.b2 * N.s - N.b2; linarith [hB2, hth])
   · nf29_test N hσD (by show 0 < N.h2 * N.t; linarith [mul_pos (N.hh2) N.ht])
@@ -1995,6 +2247,22 @@ theorem NF29.isRupert_k3_C46 (N : NF29 x)
       exact Or.inr <| Or.inr <| Or.inr <| Or.inr <| Or.inr <| Or.inl
           ⟨s, δ, h1, h2, h3, Or.inr <| Or.inr <| Or.inr (h4.trans (by module))⟩
     · exact Or.inr <| Or.inl rfl
+
+/-- **Theorem 21.13, C2 at `46`** (`4 → 6` in `K − 5`, `θ > α`, `f < F4`): Lemma E at the edge `46`
+of `K`, far path `1, 2, 3`; `5` a middle, `0` hidden. -/
+theorem NF29.isRupert_k3_C46 (N : NF29 x)
+    (hb0 : 0 < N.b0)
+    (hG4 : 0 < -N.b0 * N.h2 + N.b2 * N.h0 + N.b0 - N.b2)
+    (hG5n : 0 < -N.a0 * N.h2 + N.a2 * N.h0 + N.a0 - N.a2)
+    (hth : 0 < -N.a2 * N.t + N.b2 * N.s)
+    (hfn : 0 < N.a0 * N.h2 * N.t - N.a2 * N.h0 * N.t - N.b0 * N.h2 * N.s + N.b2 * N.h0 * N.s + N.b0
+          * N.h2 - N.b2 * N.h0)
+    (hs1 : 0 < -N.s + 1)
+    (hz₁ : [⟪x 4, (x 6 - x 4)⟫, ⟪x 3, (x 6 - x 4)⟫, ⟪x 2, (x 6 - x 4)⟫, ⟪x 1, (x 6 - x 4)⟫].Nodup)
+    (hz₂ : [⟪x 6, (x 6 - x 4)⟫, ⟪x 3, (x 6 - x 4)⟫, ⟪x 2, (x 6 - x 4)⟫, ⟪x 1, (x 6 - x 4)⟫].Nodup)
+    (hnd₁ : NoHDNAt ((univ.image x).erase (x 6)) (x 6 - x 4))
+    (hnd₂ : NoHDNAt ((univ.image x).erase (x 4)) (x 6 - x 4)) : IsRupert (univ.image x) := by
+  exact (NF29.rimThen_k3_C46 N hb0 hG4 hG5n hth hfn hs1 hz₁ hz₂).2 ⟨hnd₁, hnd₂⟩
 
 /-- **Lemma 21.12 (K3.1, K3.6 (a))** on `K3a ∩ R_G`: if `O` is of class K3a (`a2 < 0 < b0`,
 `V > 0`) and none of its E-good `G` edges `0 → 3`, `1 → 4`, `5 → 1` is a quad edge
