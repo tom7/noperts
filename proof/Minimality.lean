@@ -244,10 +244,11 @@ point inside the hull of the others (`isRupert_of_mem_convexHull_erase`), faces 
 vertices (Theorem A, `facet_card_le_four_of_isNopert`), and that a 2-dimensional extreme face is
 a facet (`Minimality.exists_facet_of_isExtreme`, `Minimality/FaceBridge.lean`), and the
 classification into the 29 types (`Minimality.exists_sevenType`, `Minimality/Classify.lean`: a
-sign-vector certificate checked in the kernel). Not formalized (`sorry`): type 24; for type 29
-(split by the class of its octahedron, `Minimality.type29_cap`, `Minimality.NF29.classes`) the
-classes K1, K2 and the class boundaries; and for every other type, and for K3 and K4, the special
-positions: each type's theorem in `Minimality/Cases.lean` closes the case under its general-position
+sign-vector certificate checked in the kernel). Not formalized (`sorry`): type 24 inside
+`C̄ ∪ Σ_B` (it is proved outside, `not_type24_outside_Cbar_of_isNopert`); for type 29 (split by
+the class of its octahedron, `Minimality.type29_cap`, `Minimality.NF29.classes`) the classes K1,
+K2 and the class boundaries; and for every other type, and for K3 and K4, the special positions:
+each type's theorem in `Minimality/Cases.lean` closes the case under its general-position
 hypotheses (`byGen1`, …), and the `sorry` that remains has exactly their negation as hypothesis. -/
 
 /-- A realized type with a face of 5 or 6 vertices is not a nopert (Theorem A). -/
@@ -466,7 +467,18 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fK, hfK⟩ := hR {4, 5, 6} (by decide)
     exact byGen4 (not_type23_of_isNopert_sv x hN hx fA fD fE fH fK hfA hfD hfE hfH hfK)
       (fun _ => sorry)
-  · sorry  -- type 24: open (`not_type24_outside_Cbar_of_isNopert` outside C̄)
+  · -- type 24: `not_type24_outside_Cbar_of_isNopert`; proved outside C̄ ∪ Σ_B
+    obtain ⟨fA, hfA⟩ := hR {0, 1, 2} (by decide)
+    obtain ⟨fB, hfB⟩ := hR {0, 1, 6} (by decide)
+    obtain ⟨fC, hfC⟩ := hR {1, 2, 6} (by decide)
+    obtain ⟨fD, hfD⟩ := hR {2, 3, 6} (by decide)
+    obtain ⟨fE, hfE⟩ := hR {0, 4, 6} (by decide)
+    obtain ⟨fF, hfF⟩ := hR {0, 2, 5} (by decide)
+    -- the sorry: type 24 inside C̄ = {ω3, ω4, ω5 > 0, Δ ≥ 0} (open), or in Σ_B without a free side
+    -- crossing
+    exact byGen2
+      (not_type24_outside_Cbar_of_isNopert x hN fA fB fC fD fE fF hfA hfB hfC hfD hfE hfF)
+      (fun _ => sorry)
   · -- type 25: `not_type25_of_isNopert`; its general position (3 hypotheses) is asked, the special
     -- positions are open in Lean
     obtain ⟨fA, hfA⟩ := hR {0, 2, 4, 6} (by decide)
