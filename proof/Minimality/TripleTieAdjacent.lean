@@ -242,8 +242,7 @@ theorem triGenTieO_of_quads {V Q1 Q2 : Finset ℝ³} {v P a1 a2 Q b1 b2 : ℝ³}
     (C2 : ∃ φ : ℝ³ →ᵃ[ℝ] ℝ, φ v < 0 ∧ φ a1 = 0 ∧ φ b2 = 0 ∧ φ P ≤ 0 ∧ φ Q ≤ 0) :
     TriGenPar V Q1 Q2 v → TriGenTieO V Q1 Q2 v := by
   intro hpar f1 f2 z1 n1 z2 n2 e he e1 e2
-  refine ⟨fun p hp q hq hpq c hc => absurd hc (hpar f1 f2 z1 n1 z2 n2 e he e1 e2 p hp q hq hpq c),
-    ?_⟩
+  refine ⟨fun p hp q hq hpq c hc => hpar f1 f2 z1 n1 z2 n2 e he e1 e2 p hp q hq hpq c hc, ?_⟩
   intro p hp q hq _ hpmin hqmin
   have only : ∀ y ∈ Q1, y ∈ Q2 → y = v := fun y h1 h2 => by
     have : y ∈ Q1 ∩ Q2 := mem_inter.mpr ⟨h1, h2⟩
@@ -333,11 +332,19 @@ theorem triGenTieO_of_quads {V Q1 Q2 : Finset ℝ³} {v P a1 a2 Q b1 b2 : ℝ³}
     · -- both far ends opposite `v`: the two facets `C1`, `C2` through `a1`
       obtain ⟨φ1, hv1, ha1', hb1', hP1, hQ1'⟩ := C1
       obtain ⟨φ2, hv2, ha2', hb2', hP2, hQ2'⟩ := C2
-      have npa : ∀ c : ℝ, a1 - p ≠ c • e := fun c =>
-        hpar f1 f2 z1 n1 z2 n2 e he e1 e2 p (h1V hp) a1 (h1V ma1)
-          (by rw [hpP]; exact ha1P.symm) c
-      have nq : ∀ b, b ∈ Q2 → b ≠ Q → ∀ c : ℝ, b - q ≠ c • e := fun b hb hbQ c =>
-        hpar f1 f2 z1 n1 z2 n2 e he e1 e2 q (h2V hq) b (h2V hb) (by rw [hqQ]; exact hbQ.symm) c
+      -- a parallel segment at a far end is no middle pair (`MidPair`): `p`, `q` are far ends
+      have npa : ∀ c : ℝ, a1 - p ≠ c • e := fun c hc => by
+        rcases hpar f1 f2 z1 n1 z2 n2 e he e1 e2 p (h1V hp) a1 (h1V ma1)
+          (by rw [hpP]; exact ha1P.symm) c hc with ⟨-, -, np, -⟩ | ⟨hp2, -, -, -⟩ | ⟨hn1, -, -, -⟩
+        · exact np hpmin
+        · exact hpv (only p hp hp2)
+        · exact hn1 hp
+      have nq : ∀ b, b ∈ Q2 → b ≠ Q → ∀ c : ℝ, b - q ≠ c • e := fun b hb hbQ c hc => by
+        rcases hpar f1 f2 z1 n1 z2 n2 e he e1 e2 q (h2V hq) b (h2V hb)
+          (by rw [hqQ]; exact hbQ.symm) c hc with ⟨hq1, -, -, -⟩ | ⟨-, -, nq', -⟩ | ⟨-, hn2, -, -⟩
+        · exact hqv (only q hq1 hq)
+        · exact nq' hqmin
+        · exact hn2 hq
       have u1 := F.cross_pos (z1 a1 ma1) (z2 b1 mb1) (hpmin a1 ma1) (neg2 a1 ma1 ha1v)
         (hqmin b1 mb1) (neg1 b1 mb1 hb1v) npa (nq b1 mb1 hb1Q) ha1' hb1' hv1
         (by rw [hpP]; exact hP1) (by rw [hqQ]; exact hQ1')

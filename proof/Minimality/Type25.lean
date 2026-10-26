@@ -33,7 +33,8 @@ functionals negative off them, are Rupert, given no other segment parallel to `1
 (`EdgePar`) and `TriGenPar` at the lines of the planes of `013` and `0246` and
 of `013` and `056`. -/
 theorem isRupert_type25 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
-    (hgen : NoThreeCollinear (univ.image x)) (fA fD fF fG fH fE fI : ℝ³ →ᵃ[ℝ] ℝ)
+    (hgen : NoThreeCollinear (univ.image x))
+    (hsol : (interior (convexHull ℝ ((univ.image x : Finset ℝ³) : Set ℝ³))).Nonempty) (fA fD fF fG fH fE fI : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) < 0))
     (hD : ∀ i, (i ∈ ({0, 1, 3} : Finset (Fin 7)) → fD (x i) = 0) ∧
@@ -48,7 +49,7 @@ theorem isRupert_type25 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({0, 1, 4} : Finset (Fin 7)) → fE (x i) < 0))
     (hI : ∀ i, (i ∈ ({1, 2, 6} : Finset (Fin 7)) → fI (x i) = 0) ∧
       (i ∉ ({1, 2, 6} : Finset (Fin 7)) → fI (x i) < 0))
-    (hZ1 : EdgePar (univ.image x) (x 1) (x 3) ∨
+    (hZ1 : EdgePar (univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x) (({1, 3, 6} : Finset (Fin 7)).image x) (x 1) (x 3) ∨
       EdgeFarP (univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 1) (x 3))
     (hT1 : TriGenPar (univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
@@ -159,7 +160,7 @@ theorem isRupert_type25 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
         (isFacet_of_index x _ fF hF) (x 1) (x 3) (fun h => by have := hx h; omega) ?_
         ⟨x 0, (memQ _ 0).mpr (by decide), by rw [memQ]; decide⟩
         ⟨x 6, (memQ _ 6).mpr (by decide), by rw [memQ]; decide⟩
-        (Or.inl (by rw [Finset.card_image_of_injective _ hx]; rfl)) hZ1 ?_
+        (Or.inl (by rw [Finset.card_image_of_injective _ hx]; rfl)) hZ1 ?_ hsol
       · rw [inter, show ({0, 1, 3} ∩ {1, 3, 6} : Finset (Fin 7)) = {1, 3} by decide]
         simp [Finset.image_insert]
       refine ⟨x 0, (memQ _ 0).mpr (by decide), x 6, (memQ _ 6).mpr (by decide),

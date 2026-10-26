@@ -241,7 +241,8 @@ set_option maxHeartbeats 8000000 in
 /-- **Type 23 with the special value settled.** As `isRupert_type23`, with its general position
 asked only off `s = 1`, and nothing at the special value. -/
 theorem isRupert_type23_sv (x : Fin 7 → ℝ³) (hx : Function.Injective x)
-    (hgen : NoThreeCollinear (univ.image x)) (fA fD fE fH fK : ℝ³ →ᵃ[ℝ] ℝ)
+    (hgen : NoThreeCollinear (univ.image x))
+    (hsol : (interior (convexHull ℝ ((univ.image x : Finset ℝ³) : Set ℝ³))).Nonempty) (fA fD fE fH fK : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 3, 4, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 3, 4, 5} : Finset (Fin 7)) → fA (x i) < 0))
     (hD : ∀ i, (i ∈ ({0, 1, 4} : Finset (Fin 7)) → fD (x i) = 0) ∧
@@ -253,7 +254,7 @@ theorem isRupert_type23_sv (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hK : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) = 0) ∧
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) < 0))
     (hZ1 : fA (x 6) / fA (x 1) + fD (x 6) / fD (x 5) ≠ 1 →
-      EdgePar (univ.image x) (x 0) (x 4) ∨
+      EdgePar (univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x) (x 0) (x 4) ∨
       EdgeFarP (univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
         (({0, 3, 4, 5} : Finset (Fin 7)).image x) (x 0) (x 4))
     (hT1 : fA (x 6) / fA (x 1) + fD (x 6) / fD (x 5) ≠ 1 →
@@ -273,14 +274,15 @@ theorem isRupert_type23_sv (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (type23_special_parallel x hx hgen fA fD fH hA hD hH hs).1 (by decide) (by decide)
       (by decide) (by decide) (by decide) (by decide) (by decide)
       (Or.inl (by decide))
-  · exact isRupert_type23 x hx hgen fA fD fE fH fK hA hD hE hH hK (hZ1 hs)
+  · exact isRupert_type23 x hx hgen hsol fA fD fE fH fK hA hD hE hH hK (hZ1 hs)
       ⟨hT1 hs, fun h => absurd h hs⟩ (hT2 hs)
 
 set_option maxHeartbeats 8000000 in
 /-- **Type 27 with the special value settled.** As `isRupert_type27`, with its general position
 asked only off `fG x2 / fG x5 = 1`, and nothing at the special value. -/
 theorem isRupert_type27_sv (x : Fin 7 → ℝ³) (hx : Function.Injective x)
-    (hgen : NoThreeCollinear (univ.image x)) (fB fD fE fG fH fI fJ : ℝ³ →ᵃ[ℝ] ℝ)
+    (hgen : NoThreeCollinear (univ.image x))
+    (hsol : (interior (convexHull ℝ ((univ.image x : Finset ℝ³) : Set ℝ³))).Nonempty) (fB fD fE fG fH fI fJ : ℝ³ →ᵃ[ℝ] ℝ)
     (hB : ∀ i, (i ∈ ({2, 3, 5, 6} : Finset (Fin 7)) → fB (x i) = 0) ∧
       (i ∉ ({2, 3, 5, 6} : Finset (Fin 7)) → fB (x i) < 0))
     (hD : ∀ i, (i ∈ ({0, 2, 5} : Finset (Fin 7)) → fD (x i) = 0) ∧
@@ -296,7 +298,7 @@ theorem isRupert_type27_sv (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hJ : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fJ (x i) = 0) ∧
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fJ (x i) < 0))
     (hZ1 : fG (x 2) / fG (x 5) ≠ 1 →
-      EdgePar (univ.image x) (x 2) (x 5) ∨
+      EdgePar (univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x) (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 2) (x 5) ∨
       EdgeFarP (univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
         (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 2) (x 5))
     (hT1 : fG (x 2) / fG (x 5) ≠ 1 →
@@ -316,7 +318,7 @@ theorem isRupert_type27_sv (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (type27_special_parallel x hx hgen fD fG hD hG hs).1 (by decide) (by decide)
       (by decide) (by decide) (by decide) (by decide) (by decide)
       (Or.inl (by decide))
-  · exact isRupert_type27 x hx hgen fB fD fE fG fH fI fJ hB hD hE hG hH hI hJ (hZ1 hs) (hT1 hs)
+  · exact isRupert_type27 x hx hgen hsol fB fD fE fG fH fI fJ hB hD hE hG hH hI hJ (hZ1 hs) (hT1 hs)
       ⟨hT2 hs, fun h => absurd h hs⟩
 
 set_option maxHeartbeats 8000000 in

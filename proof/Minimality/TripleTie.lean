@@ -1545,28 +1545,51 @@ theorem oneSided_tri {V Q : Finset ℝ³} (hgen : NoThreeCollinear V) (hQV : Q �
   · refine ⟨-1, Or.inr rfl, fun x hx h1 h2 => ?_⟩
     rw [only x hx h1 h2]; simp only; linarith
 
-/-- General position for Lemma T when one face is a triangle: only no segment
-parallel to the line of the two planes (a triangle face settles every tie of the far
-ends, the triple tie included: `TriGenPar.tieS`). -/
-def TriGenPar (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
+/-- The former general position `TriGenParN`, kept for reference: as `TriGenPar`, with no segment
+at all parallel to the line of the two planes.  `TriGenParN.weaken` gives `TriGenPar`. -/
+def TriGenParN (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
   ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
     (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
     ∀ e : ℝ³, e ≠ 0 → f1 (v + e) = 0 → f2 (v + e) = 0 →
       ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ∀ c : ℝ, q - p ≠ c • e
 
+/-- General position for Lemma T when one face is a triangle: only the segments parallel to the
+line of the two planes matter (a triangle face settles every tie of the far ends, the triple tie
+included: `TriGenPar.tieS`), and **such a segment is allowed between two middles of one face, or
+two hidden vertices** (`MidPair`; FEWER-FACES-PROOFS.md Proposition 23.19 (2), (3): such a pair
+changes no corner and no chain extreme).  A parallel segment with an endpoint at a far end, or
+joining a face vertex to a hidden one, is still excluded.  The earlier form, with no parallel
+segment at all, is `TriGenParN`. -/
+def TriGenPar (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
+  ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+    (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+    ∀ e : ℝ³, e ≠ 0 → f1 (v + e) = 0 → f2 (v + e) = 0 →
+      ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ∀ c : ℝ, q - p = c • e →
+        MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q') p q
+
+/-- No parallel segment at all gives `TriGenPar`. -/
+theorem TriGenParN.weaken {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h : TriGenParN V Q1 Q2 v) :
+    TriGenPar V Q1 Q2 v := fun f1 f2 z1 n1 z2 n2 e he e1 e2 p hp q hq hpq c hc =>
+  absurd hc (h f1 f2 z1 n1 z2 n2 e he e1 e2 p hp q hq hpq c)
+
 theorem TriGenTri.par {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h : TriGenTri V Q1 Q2 v) :
     TriGenPar V Q1 Q2 v := fun f1 f2 z1 n1 z2 n2 e he e1 e2 =>
+  (h f1 f2 z1 n1 z2 n2 e he e1 e2).1
+
+theorem TriGenTriN.par {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h : TriGenTriN V Q1 Q2 v) :
+    TriGenParN V Q1 Q2 v := fun f1 f2 z1 n1 z2 n2 e he e1 e2 =>
   (h f1 f2 z1 n1 z2 n2 e he e1 e2).1
 
 set_option maxHeartbeats 4000000 in
 /-- **A triangle face settles every tie at the far ends** (Lemma T at the tie, and
 Theorem 24.5 (a), (b) at the triple tie): with no three points collinear, `TriGenPar`
-gives the far condition `TieHW False` (no robust way out needed, so no solid). -/
+gives the far condition `TieHW False` (no robust way out needed, so no solid), and the parallel
+clause of `TriGenTieW` as it stands (middle and hidden pairs, Proposition 23.19 (2), (3)). -/
 theorem TriGenPar.tieS {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (hgen : NoThreeCollinear V)
     (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hint : Q1 ∩ Q2 = {v}) (hcard : Q1.card = 3 ∨ Q2.card = 3)
     (h : TriGenPar V Q1 Q2 v) : TriGenTieW False V Q1 Q2 v := by
   intro f1 f2 z1 n1 z2 n2 e he e1 e2
-  refine ⟨fun p hp q hq hpq c hc => absurd hc (h f1 f2 z1 n1 z2 n2 e he e1 e2 p hp q hq hpq c),
+  refine ⟨fun p hp q hq hpq c hc => h f1 f2 z1 n1 z2 n2 e he e1 e2 p hp q hq hpq c hc,
     fun p hp q hq hpq hpm hqm => ?_⟩
   have hv1 : v ∈ Q1 := (Finset.mem_inter.mp (hint ▸ Finset.mem_singleton_self v)).1
   have hv2 : v ∈ Q2 := (Finset.mem_inter.mp (hint ▸ Finset.mem_singleton_self v)).2

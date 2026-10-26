@@ -781,57 +781,6 @@ at a far end is allowed: `isRupert_of_tilted_tie_right`). -/
 def TieHR (Q1 Q2 : Finset ℝ³) (v p q : ℝ³) (h : ℝ³ → ℝ) : Prop :=
   TieH Q1 Q2 v p q h ∨ (h p = h q ∧ h v ≠ h p)
 
-/-- **A pair of middles of one face, or a pair of hidden vertices** (FEWER-FACES-PROOFS.md §5
-(2), (3), Proposition 23.19 (2), (3), (3)): `p`, `q` are two vertices of the first face, neither of
-them a far end of it (`far1`); or two vertices of the second face, neither a far end of it
-(`far2`); or two vertices outside both faces.  Used for the segments parallel to the view line
-that a general position hypothesis at a tie may allow: such a pair changes no corner and no
-chain extreme (a hidden pair is only constrained by lying in the shadow triangle), so the
-robust Lemma T at the tie still applies. -/
-def MidPair (Q1 Q2 : Finset ℝ³) (far1 far2 : ℝ³ → Prop) (p q : ℝ³) : Prop :=
-  (p ∈ Q1 ∧ q ∈ Q1 ∧ ¬ far1 p ∧ ¬ far1 q) ∨ (p ∈ Q2 ∧ q ∈ Q2 ∧ ¬ far2 p ∧ ¬ far2 q) ∨
-    (p ∉ Q1 ∧ p ∉ Q2 ∧ q ∉ Q1 ∧ q ∉ Q2)
-
-theorem MidPair.swap {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {p q : ℝ³}
-    (h : MidPair Q1 Q2 far1 far2 p q) : MidPair Q2 Q1 far2 far1 p q := by
-  rcases h with h | h | ⟨a, b, c, d⟩
-  · exact Or.inr (Or.inl h)
-  · exact Or.inl h
-  · exact Or.inr (Or.inr ⟨b, a, d, c⟩)
-
-theorem MidPair.comm {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {p q : ℝ³}
-    (h : MidPair Q1 Q2 far1 far2 p q) : MidPair Q1 Q2 far1 far2 q p := by
-  rcases h with ⟨a, b, c, d⟩ | ⟨a, b, c, d⟩ | ⟨a, b, c, d⟩
-  · exact Or.inl ⟨b, a, d, c⟩
-  · exact Or.inr (Or.inl ⟨b, a, d, c⟩)
-  · exact Or.inr (Or.inr ⟨c, d, a, b⟩)
-
-/-- A pair of middles for smaller far predicates (a vertex far in the smaller sense is far in the
-larger). -/
-theorem MidPair.mono {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ → Prop} {p q : ℝ³}
-    (h : MidPair Q1 Q2 far1 far2 p q) (h1 : ∀ x ∈ Q1, far1' x → far1 x)
-    (h2 : ∀ x ∈ Q2, far2' x → far2 x) : MidPair Q1 Q2 far1' far2' p q := by
-  rcases h with ⟨hp, hq, np, nq⟩ | ⟨hp, hq, np, nq⟩ | h
-  · exact Or.inl ⟨hp, hq, fun f => np (h1 p hp f), fun f => nq (h1 q hq f)⟩
-  · exact Or.inr (Or.inl ⟨hp, hq, fun f => np (h2 p hp f), fun f => nq (h2 q hq f)⟩)
-  · exact Or.inr (Or.inr h)
-
-/-- A pair of middles transported by an injective map. -/
-theorem MidPair.map [DecidableEq ℝ³] {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ → Prop}
-    {p q : ℝ³} (h : MidPair Q1 Q2 far1 far2 p q) (g : ℝ³ → ℝ³) (hg : Function.Injective g)
-    (h1 : ∀ x ∈ Q1, far1' (g x) → far1 x) (h2 : ∀ x ∈ Q2, far2' (g x) → far2 x) :
-    MidPair (Q1.image g) (Q2.image g) far1' far2' (g p) (g q) := by
-  have mem : ∀ (S : Finset ℝ³) x, g x ∈ S.image g ↔ x ∈ S := fun S x =>
-    ⟨fun h => by obtain ⟨y, hy, e⟩ := Finset.mem_image.mp h; rwa [← hg e],
-      Finset.mem_image_of_mem g⟩
-  rcases h with ⟨hp, hq, np, nq⟩ | ⟨hp, hq, np, nq⟩ | ⟨a, b, c, d⟩
-  · exact Or.inl ⟨Finset.mem_image_of_mem g hp, Finset.mem_image_of_mem g hq,
-      fun f => np (h1 p hp f), fun f => nq (h1 q hq f)⟩
-  · exact Or.inr (Or.inl ⟨Finset.mem_image_of_mem g hp, Finset.mem_image_of_mem g hq,
-      fun f => np (h2 p hp f), fun f => nq (h2 q hq f)⟩)
-  · exact Or.inr (Or.inr ⟨fun h => a ((mem _ _).mp h), fun h => b ((mem _ _).mp h),
-      fun h => c ((mem _ _).mp h), fun h => d ((mem _ _).mp h)⟩)
-
 /-- **Chains when the far end is the unique point of largest `a`, middles on a vertical
 allowed.** As `exists_chainOK` without distinct `a`: `exists_chainOKc` builds the chain on the
 top point of each vertical, and `huniq` (the point of largest `a` is unique) turns it into a
@@ -2348,6 +2297,47 @@ theorem isRupert_of_facets_edge_tieR (V : Finset ℝ³) (hgen : NoThreeCollinear
   obtain ⟨hpar, hfar⟩ := hfarZ f1 f2 z1 n1 z2 n2
   exact isRupert_facets_edge_tieR V Q1 Q2 v w hvw h1V h2V hint f1 f2 z1 n1 z2 n2 hne1 hne2 hgen
     hpar hfar ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin' f1 f2 z1 n1 z2 n2⟩ hsol
+
+/-- **Lemma T at the tie over an edge with a triangle face, middle and hidden parallels
+allowed**: `EdgePar` gives `EdgeTieR` (the triangle settles any tie of the far ends: `TieHE`;
+the parallel clause is the same, FEWER-FACES-PROOFS.md Proposition 23.19 (2), (3)). -/
+theorem edgeTieR_of_tri {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
+    (hv1 : v ∈ Q1) (hw1 : w ∈ Q1) (hv2 : v ∈ Q2) (hw2 : w ∈ Q2) (hvw : v ≠ w)
+    (h12 : ∃ x ∈ Q1, x ∉ Q2) (h21 : ∃ x ∈ Q2, x ∉ Q1) (hcard : Q1.card = 3 ∨ Q2.card = 3)
+    (hpar : EdgePar V Q1 Q2 v w) : EdgeTieR V Q1 Q2 v w :=
+  fun f1 f2 z1 n1 z2 n2 =>
+    ⟨hpar f1 f2 z1 n1 z2 n2, fun p hp q hq hpq h1 h2 =>
+      Or.inl (edgeTieHE_of_tri h1V h2V hv1 hw1 hv2 hw2 hvw h12 h21 hcard f1 f2 z1 n1 z2 n2
+        p hp q hq hpq h1 h2)⟩
+
+/-- **Lemma T over an edge with a triangle face, facet form**: as `isRupert_of_facets_edge_tieR`,
+with `EdgeTieR` replaced by `EdgePar` (no far-depth condition) when `Q1` or `Q2` is a triangle.
+Segments parallel to the edge are allowed between two middles of one face or two hidden
+vertices (`MidPair`; FEWER-FACES-PROOFS.md Proposition 23.19 (2), (3)).  The earlier version, with
+no other parallel segment at all, is `isRupert_of_facets_edge_triN`. -/
+theorem isRupert_of_facets_edge_tri (V : Finset ℝ³) (hgen : NoThreeCollinear V)
+    (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (h1f : IsFacet V Q1) (h2f : IsFacet V Q2)
+    (v w : ℝ³) (hvw : v ≠ w) (hint : Q1 ∩ Q2 = {v, w})
+    (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
+    (hcard : Q1.card = 3 ∨ Q2.card = 3) (hpar : EdgePar V Q1 Q2 v w)
+    (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧ ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ,
+      (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+      (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+      ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1)
+    (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) : IsRupert V := by
+  have hvi : v ∈ Q1 ∩ Q2 := by rw [hint]; simp
+  have hwi : w ∈ Q1 ∩ Q2 := by rw [hint]; simp
+  exact isRupert_of_facets_edge_tieR V hgen Q1 Q2 h1V h2V h1f h2f v w hvw hint hne1 hne2
+    (edgeTieR_of_tri h1V h2V (Finset.mem_inter.mp hvi).1 (Finset.mem_inter.mp hwi).1
+      (Finset.mem_inter.mp hvi).2 (Finset.mem_inter.mp hwi).2 hvw hne1 hne2 hcard hpar) hin hsol
+
+/-- **Lemma T over a vertex with a triangle face, middle and hidden parallels allowed**:
+`TriGenTri` gives `TriGenTieR` (`TriGenTri.far`). -/
+theorem TriGenTri.tieR {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
+    (hint : Q1 ∩ Q2 = {v}) (hcard : Q1.card = 3 ∨ Q2.card = 3) (h : TriGenTri V Q1 Q2 v) :
+    TriGenTieR V Q1 Q2 v := fun f1 f2 z1 n1 z2 n2 e he e1 e2 =>
+  ⟨(h f1 f2 z1 n1 z2 n2 e he e1 e2).1, fun p hp q hq hpq h1 h2 =>
+    Or.inl (TriGenTri.far h1V h2V hint hcard h f1 f2 z1 n1 z2 n2 e he e1 e2 p hp q hq hpq h1 h2)⟩
 
 end Minimality
 

@@ -38,7 +38,8 @@ and `TriGenPar` at the lines of the planes of `014` and `156` and of `0345` and
 `125`, and `EdgeFar` along `04` when `fA x6 / fA x1 + fD x6 / fD x5 = 1` (the
 special value, where Lemma T′ over that edge is used). -/
 theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
-    (hgen : NoThreeCollinear (univ.image x)) (fA fD fE fH fK : ℝ³ →ᵃ[ℝ] ℝ)
+    (hgen : NoThreeCollinear (univ.image x))
+    (hsol : (interior (convexHull ℝ ((univ.image x : Finset ℝ³) : Set ℝ³))).Nonempty) (fA fD fE fH fK : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 3, 4, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 3, 4, 5} : Finset (Fin 7)) → fA (x i) < 0))
     (hD : ∀ i, (i ∈ ({0, 1, 4} : Finset (Fin 7)) → fD (x i) = 0) ∧
@@ -49,7 +50,7 @@ theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({1, 5, 6} : Finset (Fin 7)) → fH (x i) < 0))
     (hK : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) = 0) ∧
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) < 0))
-    (hZ1 : EdgePar (univ.image x) (x 0) (x 4) ∨
+    (hZ1 : EdgePar (univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x) (x 0) (x 4) ∨
       EdgeFarP (univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
       (({0, 3, 4, 5} : Finset (Fin 7)).image x) (x 0) (x 4))
     (hT1 : (TriGenPar (univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
@@ -106,7 +107,7 @@ theorem isRupert_type23 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
         (isFacet_of_index x _ fA hA) (x 0) (x 4) (fun h => by have := hx h; omega) ?_
         ⟨x 1, (memQ _ 1).mpr (by decide), by rw [memQ]; decide⟩
         ⟨x 5, (memQ _ 5).mpr (by decide), by rw [memQ]; decide⟩
-        (Or.inl (by rw [Finset.card_image_of_injective _ hx]; rfl)) hZ1 ?_
+        (Or.inl (by rw [Finset.card_image_of_injective _ hx]; rfl)) hZ1 ?_ hsol
       · rw [inter, show ({0, 1, 4} ∩ {0, 3, 4, 5} : Finset (Fin 7)) = {0, 4} by decide]
         simp [Finset.image_insert]
       refine ⟨x 1, (memQ _ 1).mpr (by decide), x 5, (memQ _ 5).mpr (by decide),

@@ -1256,17 +1256,90 @@ theorem three_heights {hv hp hw : ℝ} (h : hv ≠ hp) :
     · exact ⟨1, Or.inl rfl, Or.inr ⟨by linarith, by linarith⟩⟩
     · exact ⟨-1, Or.inr rfl, Or.inl ⟨by linarith, by linarith⟩⟩
 
-/-- General position for Lemma T when one face is a triangle: no segment
-parallel to the line of the planes, and the far ends do not tie with each other
-and with the shared vertex at once (a coincidence of codimension 2). With a
-triangle face this gives `TriGenTie` (`TriGenTri.tie`). -/
-def TriGenTri (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
+/-- **A pair of middles of one face, or a pair of hidden vertices** (FEWER-FACES-PROOFS.md §5
+(2), (3), Proposition 23.19 (2), (3), (3)): `p`, `q` are two vertices of the first face, neither of
+them a far end of it (`far1`); or two vertices of the second face, neither a far end of it
+(`far2`); or two vertices outside both faces.  Used for the segments parallel to the view line
+that a general position hypothesis at a tie may allow: such a pair changes no corner and no
+chain extreme (a hidden pair is only constrained by lying in the shadow triangle), so the
+robust Lemma T at the tie still applies. -/
+def MidPair (Q1 Q2 : Finset ℝ³) (far1 far2 : ℝ³ → Prop) (p q : ℝ³) : Prop :=
+  (p ∈ Q1 ∧ q ∈ Q1 ∧ ¬ far1 p ∧ ¬ far1 q) ∨ (p ∈ Q2 ∧ q ∈ Q2 ∧ ¬ far2 p ∧ ¬ far2 q) ∨
+    (p ∉ Q1 ∧ p ∉ Q2 ∧ q ∉ Q1 ∧ q ∉ Q2)
+
+theorem MidPair.swap {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {p q : ℝ³}
+    (h : MidPair Q1 Q2 far1 far2 p q) : MidPair Q2 Q1 far2 far1 p q := by
+  rcases h with h | h | ⟨a, b, c, d⟩
+  · exact Or.inr (Or.inl h)
+  · exact Or.inl h
+  · exact Or.inr (Or.inr ⟨b, a, d, c⟩)
+
+theorem MidPair.comm {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {p q : ℝ³}
+    (h : MidPair Q1 Q2 far1 far2 p q) : MidPair Q1 Q2 far1 far2 q p := by
+  rcases h with ⟨a, b, c, d⟩ | ⟨a, b, c, d⟩ | ⟨a, b, c, d⟩
+  · exact Or.inl ⟨b, a, d, c⟩
+  · exact Or.inr (Or.inl ⟨b, a, d, c⟩)
+  · exact Or.inr (Or.inr ⟨c, d, a, b⟩)
+
+/-- A pair of middles for smaller far predicates (a vertex far in the smaller sense is far in the
+larger). -/
+theorem MidPair.mono {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ → Prop} {p q : ℝ³}
+    (h : MidPair Q1 Q2 far1 far2 p q) (h1 : ∀ x ∈ Q1, far1' x → far1 x)
+    (h2 : ∀ x ∈ Q2, far2' x → far2 x) : MidPair Q1 Q2 far1' far2' p q := by
+  rcases h with ⟨hp, hq, np, nq⟩ | ⟨hp, hq, np, nq⟩ | h
+  · exact Or.inl ⟨hp, hq, fun f => np (h1 p hp f), fun f => nq (h1 q hq f)⟩
+  · exact Or.inr (Or.inl ⟨hp, hq, fun f => np (h2 p hp f), fun f => nq (h2 q hq f)⟩)
+  · exact Or.inr (Or.inr h)
+
+/-- A pair of middles transported by an injective map. -/
+theorem MidPair.map [DecidableEq ℝ³] {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ → Prop}
+    {p q : ℝ³} (h : MidPair Q1 Q2 far1 far2 p q) (g : ℝ³ → ℝ³) (hg : Function.Injective g)
+    (h1 : ∀ x ∈ Q1, far1' (g x) → far1 x) (h2 : ∀ x ∈ Q2, far2' (g x) → far2 x) :
+    MidPair (Q1.image g) (Q2.image g) far1' far2' (g p) (g q) := by
+  have mem : ∀ (S : Finset ℝ³) x, g x ∈ S.image g ↔ x ∈ S := fun S x =>
+    ⟨fun h => by obtain ⟨y, hy, e⟩ := Finset.mem_image.mp h; rwa [← hg e],
+      Finset.mem_image_of_mem g⟩
+  rcases h with ⟨hp, hq, np, nq⟩ | ⟨hp, hq, np, nq⟩ | ⟨a, b, c, d⟩
+  · exact Or.inl ⟨Finset.mem_image_of_mem g hp, Finset.mem_image_of_mem g hq,
+      fun f => np (h1 p hp f), fun f => nq (h1 q hq f)⟩
+  · exact Or.inr (Or.inl ⟨Finset.mem_image_of_mem g hp, Finset.mem_image_of_mem g hq,
+      fun f => np (h2 p hp f), fun f => nq (h2 q hq f)⟩)
+  · exact Or.inr (Or.inr ⟨fun h => a ((mem _ _).mp h), fun h => b ((mem _ _).mp h),
+      fun h => c ((mem _ _).mp h), fun h => d ((mem _ _).mp h)⟩)
+
+/-- The former general position `TriGenTriN`, kept for reference: as `TriGenTri`, with no segment
+at all parallel to the line of the planes.  `TriGenTriN.weaken` gives `TriGenTri`; `TriGenTriN.tie`
+gives `TriGenTie`. -/
+def TriGenTriN (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
   ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
     (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
     ∀ e : ℝ³, e ≠ 0 → f1 (v + e) = 0 → f2 (v + e) = 0 →
       (∀ p ∈ V, ∀ q ∈ V, p ≠ q → ∀ c : ℝ, q - p ≠ c • e) ∧
       ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
         ⟪p, e⟫ ≠ ⟪q, e⟫ ∨ ⟪p, e⟫ ≠ ⟪v, e⟫
+
+/-- General position for Lemma T when one face is a triangle: **segments parallel to the line of
+the planes allowed between two middles of one face, or two hidden vertices** (`MidPair`;
+FEWER-FACES-PROOFS.md Proposition 23.19 (2), (3): such a pair changes no corner and no chain
+extreme), and the far ends do not tie with each other and with the shared vertex at once (a
+coincidence of codimension 2).  With a triangle face this gives `TriGenTieR` (`TriGenTri.tieR`
+in `TieFrame`).  The earlier form, with no parallel segment at all, is `TriGenTriN`. -/
+def TriGenTri (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
+  ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+    (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+    ∀ e : ℝ³, e ≠ 0 → f1 (v + e) = 0 → f2 (v + e) = 0 →
+      (∀ p ∈ V, ∀ q ∈ V, p ≠ q → ∀ c : ℝ, q - p = c • e →
+        MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q')
+          p q) ∧
+      ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
+        ⟪p, e⟫ ≠ ⟪q, e⟫ ∨ ⟪p, e⟫ ≠ ⟪v, e⟫
+
+/-- No parallel segment at all gives `TriGenTri`. -/
+theorem TriGenTriN.weaken {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h : TriGenTriN V Q1 Q2 v) :
+    TriGenTri V Q1 Q2 v := by
+  intro f1 f2 z1 n1 z2 n2 e he e1 e2
+  obtain ⟨hpar, hfar⟩ := h f1 f2 z1 n1 z2 n2 e he e1 e2
+  exact ⟨fun p hp q hq hpq c hc => absurd hc (hpar p hp q hq hpq c), hfar⟩
 
 /-- A triangle `{v, p, w}` (`v`, `p` given, distinct): its points are `v`, `p` and
 one more. -/
@@ -1285,12 +1358,18 @@ theorem exists_third_of_card_three {Q : Finset ℝ³} (hQ : Q.card = 3) {v p : �
   rw [hw, Finset.mem_singleton] at this
   exact Or.inr (Or.inr this)
 
-theorem TriGenTri.tie {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
+/-- **The far-end condition from a triangle face**: `TriGenTri` (whatever it allows of parallel
+segments) gives `TieH` at the far ends. -/
+theorem TriGenTri.far {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
     (hint : Q1 ∩ Q2 = {v}) (hcard : Q1.card = 3 ∨ Q2.card = 3) (h : TriGenTri V Q1 Q2 v) :
-    TriGenTie V Q1 Q2 v := by
+    ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+    (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+    ∀ e : ℝ³, e ≠ 0 → f1 (v + e) = 0 → f2 (v + e) = 0 →
+      ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
+        TieH Q1 Q2 v p q (fun x => ⟪x, e⟫) := by
   intro f1 f2 z1 n1 z2 n2 e he e1 e2
-  obtain ⟨hpar, hfar⟩ := h f1 f2 z1 n1 z2 n2 e he e1 e2
-  refine ⟨hpar, fun p hp q hq hpq hpm hqm => ?_⟩
+  obtain ⟨-, hfar⟩ := h f1 f2 z1 n1 z2 n2 e he e1 e2
+  intro p hp q hq hpq hpm hqm
   have hv1 : v ∈ Q1 := (Finset.mem_inter.mp (hint ▸ Finset.mem_singleton_self v)).1
   have hv2 : v ∈ Q2 := (Finset.mem_inter.mp (hint ▸ Finset.mem_singleton_self v)).2
   have only : ∀ x ∈ Q1, x ∈ Q2 → x = v := by
@@ -1335,6 +1414,12 @@ theorem TriGenTri.tie {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h1V : Q1 ⊆ V) (h2V
       · exact absurd rfl hxv
       · exact hst.1
       · exact hst.2
+
+theorem TriGenTriN.tie {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
+    (hint : Q1 ∩ Q2 = {v}) (hcard : Q1.card = 3 ∨ Q2.card = 3) (h : TriGenTriN V Q1 Q2 v) :
+    TriGenTie V Q1 Q2 v := fun f1 f2 z1 n1 z2 n2 e he e1 e2 =>
+  ⟨(h f1 f2 z1 n1 z2 n2 e he e1 e2).1,
+    TriGenTri.far h1V h2V hint hcard h.weaken f1 f2 z1 n1 z2 n2 e he e1 e2⟩
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over an edge, the tie allowed.** As `isRupert_triShadow2`, with
@@ -2551,15 +2636,17 @@ theorem tieHE_of_tri2 {Q1 Q2 : Finset ℝ³} {v w p q : ℝ³} {h : ℝ³ → �
     TieHE Q1 Q2 v w p q h :=
   (tieHE_of_tri1 (Q2 := Q1) (p := q) (q := p) hc hv hw hq hqv hqw hvw).swap
 
-/-- **Lemma T at the tie over an edge with a triangle face.** If one face through
-the edge `v w` is a triangle, the far-end condition of `EdgeFar` is not needed:
-only no other segment parallel to the edge. -/
-theorem edgeTie_of_tri {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
+/-- **The far-end condition over an edge with a triangle face**: if one face through the edge
+`v w` is a triangle, `TieHE` holds at any far ends (no far-depth condition, whatever segments are
+parallel to the edge). -/
+theorem edgeTieHE_of_tri {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
     (hv1 : v ∈ Q1) (hw1 : w ∈ Q1) (hv2 : v ∈ Q2) (hw2 : w ∈ Q2) (hvw : v ≠ w)
-    (h12 : ∃ x ∈ Q1, x ∉ Q2) (h21 : ∃ x ∈ Q2, x ∉ Q1) (hcard : Q1.card = 3 ∨ Q2.card = 3)
-    (hpar : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → ∀ c : ℝ,
-      q - p ≠ c • (w - v)) : EdgeTie V Q1 Q2 v w := by
-  refine ⟨hpar, fun f1 f2 z1 n1 z2 n2 p hp q hq hpq hpm hqm => ?_⟩
+    (h12 : ∃ x ∈ Q1, x ∉ Q2) (h21 : ∃ x ∈ Q2, x ∉ Q1) (hcard : Q1.card = 3 ∨ Q2.card = 3) :
+    ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+    (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+    ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
+      TieHE Q1 Q2 v w p q (fun x => ⟪x, w - v⟫) := by
+  intro f1 f2 z1 n1 z2 n2 p hp q hq hpq hpm hqm
   have hh : ⟪v, w - v⟫ ≠ ⟪w, w - v⟫ := by
     intro e
     have : ⟪w - v, w - v⟫ = 0 := by rw [inner_sub_left, e, sub_self]
@@ -2575,6 +2662,17 @@ theorem edgeTie_of_tri {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h1V : Q1 ⊆ V) (
     refine tieHE_of_tri2 hc hv2 hw2 hq (fun e => ?_) (fun e => ?_) hh
     · rw [e, z1 v hv1] at hlt; exact lt_irrefl _ hlt
     · rw [e, z1 w hw1] at hlt; exact lt_irrefl _ hlt
+
+/-- **Lemma T at the tie over an edge with a triangle face.** If one face through
+the edge `v w` is a triangle, the far-end condition of `EdgeFar` is not needed:
+only no other segment parallel to the edge. -/
+theorem edgeTie_of_tri {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
+    (hv1 : v ∈ Q1) (hw1 : w ∈ Q1) (hv2 : v ∈ Q2) (hw2 : w ∈ Q2) (hvw : v ≠ w)
+    (h12 : ∃ x ∈ Q1, x ∉ Q2) (h21 : ∃ x ∈ Q2, x ∉ Q1) (hcard : Q1.card = 3 ∨ Q2.card = 3)
+    (hpar : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → ∀ c : ℝ,
+      q - p ≠ c • (w - v)) : EdgeTie V Q1 Q2 v w :=
+  ⟨hpar, fun f1 f2 z1 n1 z2 n2 =>
+    edgeTieHE_of_tri h1V h2V hv1 hw1 hv2 hw2 hvw h12 h21 hcard f1 f2 z1 n1 z2 n2⟩
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over an edge at the tie, facet form** (`FEWER-FACES-PROOFS.md` §7): two
@@ -2605,19 +2703,46 @@ theorem isRupert_of_facets_edge_tie (V : Finset ℝ³) (hgen : NoThreeCollinear 
   · exact hgen
   · exact hfarZ.1
 
-/-- No segment of `V` other than `v w` is parallel to `v w`: the part of
-`EdgeFar` left when a face through the edge is a triangle (`edgeTie_of_tri`). -/
-def EdgePar (V : Finset ℝ³) (v w : ℝ³) : Prop :=
+/-- The former `EdgePar`, kept for reference: no segment of `V` other than `v w` is parallel to
+`v w` (the part of `EdgeFar` left when a face through the edge is a triangle).
+`EdgeParN.weaken` gives `EdgePar`. -/
+def EdgeParN (V : Finset ℝ³) (v w : ℝ³) : Prop :=
   ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → ∀ c : ℝ, q - p ≠ c • (w - v)
 
+/-- General position along an edge `v w` of two faces `Q1`, `Q2` of which one is a triangle: **a
+segment of `V` other than `v w` parallel to the edge is allowed between two middles of one face,
+or two hidden vertices** (`MidPair`; FEWER-FACES-PROOFS.md Proposition 23.19 (2), (3); the edge
+itself is not counted).  A parallel segment with an endpoint at a far end, or joining a face
+vertex to a hidden one, is still excluded.  The earlier form, with no other parallel segment at
+all, is `EdgeParN` (`EdgeParN.weaken`); it gives `EdgeTieR` over a triangle face
+(`edgeTieR_of_tri`). -/
+def EdgePar (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) : Prop :=
+  ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+    (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+    ∀ p ∈ V, ∀ q ∈ V, p ≠ q → ({p, q} : Finset ℝ³) ≠ {v, w} → ∀ c : ℝ, q - p = c • (w - v) →
+      MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q') p q
+
+/-- No other parallel segment at all gives `EdgePar`. -/
+theorem EdgeParN.weaken {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h : EdgeParN V v w) :
+    EdgePar V Q1 Q2 v w :=
+  fun _ _ _ _ _ _ p hp q hq hpq hne c hc => absurd hc (h p hp q hq hpq hne c)
+
+/-- `EdgePar` does not depend on the orientation of the edge. -/
+theorem EdgePar.rev {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h : EdgePar V Q1 Q2 v w) :
+    EdgePar V Q1 Q2 w v :=
+  fun f1 f2 z1 n1 z2 n2 p hp q hq hpq hne c hc =>
+    h f1 f2 z1 n1 z2 n2 p hp q hq hpq (by rwa [Finset.pair_comm w v] at hne) (-c)
+      (by rw [hc, neg_smul, ← smul_neg, neg_sub])
+
 /-- **Lemma T over an edge with a triangle face, facet form**: as
-`isRupert_of_facets_edge`, with `EdgeFar` weakened to `EdgePar` (no far-depth
-condition) when `Q1` or `Q2` is a triangle. -/
-theorem isRupert_of_facets_edge_tri (V : Finset ℝ³) (hgen : NoThreeCollinear V)
+`isRupert_of_facets_edge`, with `EdgeFar` weakened to `EdgeParN` (no far-depth
+condition) when `Q1` or `Q2` is a triangle.  The version allowing middle and hidden pairs
+parallel to the edge is `isRupert_of_facets_edge_tri` (`TieFrame`). -/
+theorem isRupert_of_facets_edge_triN (V : Finset ℝ³) (hgen : NoThreeCollinear V)
     (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (h1f : IsFacet V Q1) (h2f : IsFacet V Q2)
     (v w : ℝ³) (hvw : v ≠ w) (hint : Q1 ∩ Q2 = {v, w})
     (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
-    (hcard : Q1.card = 3 ∨ Q2.card = 3) (hpar : EdgePar V v w)
+    (hcard : Q1.card = 3 ∨ Q2.card = 3) (hpar : EdgeParN V v w)
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧ ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ,
       (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
       (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →

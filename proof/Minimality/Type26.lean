@@ -31,7 +31,8 @@ set_option maxHeartbeats 8000000 in
 /-- Theorem L in the case where the far end of `0246` in the view along `04` is
 `2` (`fT x6 / fT x2 ≤ 1`). -/
 theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
-    (hgen : NoThreeCollinear (univ.image x)) (fA fT fG fH fU fW fY : ℝ³ →ᵃ[ℝ] ℝ)
+    (hgen : NoThreeCollinear (univ.image x))
+    (hsol : (interior (convexHull ℝ ((univ.image x : Finset ℝ³) : Set ℝ³))).Nonempty) (fA fT fG fH fU fW fY : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) < 0))
     (hT : ∀ i, (i ∈ ({0, 3, 4} : Finset (Fin 7)) → fT (x i) = 0) ∧
@@ -47,7 +48,7 @@ theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (hY : ∀ i, (i ∈ ({2, 4, 5} : Finset (Fin 7)) → fY (x i) = 0) ∧
       (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fY (x i) < 0))
     (hcase : fT (x 6) / fT (x 2) ≤ 1)
-    (hZ1 : EdgePar (univ.image x) (x 0) (x 4) ∨
+    (hZ1 : EdgePar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x) (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4) ∨
       EdgeFarP (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4))
     (hT2 : TriGenPar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
@@ -140,7 +141,7 @@ theorem type26_core (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (isFacet_of_index x _ fT hT) (x 0) (x 4) (fun h => by have := hx h; omega) ?_
       ⟨x 2, (memQ _ 2).mpr (by decide), by rw [memQ]; decide⟩
       ⟨x 3, (memQ _ 3).mpr (by decide), by rw [memQ]; decide⟩
-        (Or.inr (by rw [Finset.card_image_of_injective _ hx]; rfl)) hZ1 ?_
+        (Or.inr (by rw [Finset.card_image_of_injective _ hx]; rfl)) hZ1 ?_ hsol
     · rw [inter, show ({0, 2, 4, 6} ∩ {0, 3, 4} : Finset (Fin 7)) = {0, 4} by decide]
       simp [Finset.image_insert]
     refine ⟨x 2, (memQ _ 2).mpr (by decide), x 3, (memQ _ 3).mpr (by decide),
@@ -254,7 +255,8 @@ by functionals negative off them, are Rupert, given no other segment parallel to
 `04` (`EdgePar`) and `TriGenPar` at the lines of the planes of `0246` and `235`
 and of `0246` and `136`. -/
 theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
-    (hgen : NoThreeCollinear (univ.image x)) (fA fT fG fH fU fW fY fZ : ℝ³ →ᵃ[ℝ] ℝ)
+    (hgen : NoThreeCollinear (univ.image x))
+    (hsol : (interior (convexHull ℝ ((univ.image x : Finset ℝ³) : Set ℝ³))).Nonempty) (fA fT fG fH fU fW fY fZ : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) < 0))
     (hT : ∀ i, (i ∈ ({0, 3, 4} : Finset (Fin 7)) → fT (x i) = 0) ∧
@@ -271,7 +273,7 @@ theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fY (x i) < 0))
     (hZ : ∀ i, (i ∈ ({3, 4, 5} : Finset (Fin 7)) → fZ (x i) = 0) ∧
       (i ∉ ({3, 4, 5} : Finset (Fin 7)) → fZ (x i) < 0))
-    (hZ1 : EdgePar (univ.image x) (x 0) (x 4) ∨
+    (hZ1 : EdgePar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x) (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4) ∨
       EdgeFarP (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4))
     (hT2 : TriGenPar (univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
@@ -285,7 +287,7 @@ theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     IsRupert (univ.image x) := by
   classical
   by_cases hc : fT (x 6) / fT (x 2) ≤ 1
-  · exact type26_core x hx hgen fA fT fG fH fU fW fY hA hT hG hH hU hW hY hc hZ1 hT2
+  · exact type26_core x hx hgen hsol fA fT fG fH fU fW fY hA hT hG hH hU hW hY hc hZ1 hT2
   -- the automorphism `0 ↔ 4, 1 ↔ 5, 2 ↔ 6`
   set σ : Fin 7 → Fin 7 := ![4, 5, 6, 3, 0, 1, 2] with hσ
   have σσ : ∀ i, σ (σ i) = i := by decide
@@ -309,7 +311,7 @@ theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
   have y6 : y 6 = x 2 := rfl
   rw [← hV]
   have t2 := (hT 2).2 (by decide); have t6 := (hT 6).2 (by decide)
-  refine type26_core y (hx.comp σinj) (hV ▸ hgen) fA fT fH fG fZ fY fW
+  refine type26_core y (hx.comp σinj) (hV ▸ hgen) (hV ▸ hsol) fA fT fH fG fZ fY fW
     (tr fA _ _ (by decide) hA) (tr fT _ _ (by decide) hT) (tr fH _ _ (by decide) hH)
     (tr fG _ _ (by decide) hG) (tr fZ _ _ (by decide) hZ) (tr fY _ _ (by decide) hY)
     (tr fW _ _ (by decide) hW) ?_ ?_ ?_
@@ -320,8 +322,7 @@ theorem isRupert_type26 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       imgσ _ ({0, 3, 4} : Finset (Fin 7)) (by decide)]
     rcases hZ1 with hZ1 | hZ1
     · left
-      exact fun p hp q hq hpq hpair c h => hZ1 p hp q hq hpq
-        (by rw [Finset.pair_comm (x 0) (x 4)]; exact hpair) (-c) (by rw [h, neg_smul, ← smul_neg, neg_sub])
+      exact hZ1.rev
     · right; exact hZ1.swap
   · rw [hV, imgσ _ ({0, 2, 4, 6} : Finset (Fin 7)) (by decide),
       imgσ _ ({1, 3, 6} : Finset (Fin 7)) (by decide), y2]

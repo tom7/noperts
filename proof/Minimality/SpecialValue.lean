@@ -799,7 +799,7 @@ theorem isRupert_special (V Q1 Q2 G : Finset ℝ³) (v w : ℝ³) (hvw : v ≠ w
     (z2 : ∀ p ∈ Q2, f2 p = 0) (n2 : ∀ p ∈ V, p ∉ Q2 → f2 p < 0)
     (zG : ∀ p ∈ G, fG p = 0) (nG : ∀ p ∈ V, p ∉ G → fG p < 0) (hspec : fG w = fG v)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hpar : EdgePar V v w)
+    (hpar : EdgeParN V v w)
     (xa xb g m1 m2 : ℝ³) (hxa : xa ∈ Q1) (hxb : xb ∈ Q2) (hxaG : xa ∈ G) (hxbG : xb ∈ G)
     (hgG : g ∈ G) (hxa2 : xa ∉ Q2) (hxb1 : xb ∉ Q1) (hg1 : g ∉ Q1) (hg2 : g ∉ Q2)
     (hGm : ∀ p ∈ G, p = xa ∨ p = xb ∨ p = g)
@@ -903,7 +903,7 @@ theorem edgePar_of_cover {V Q1 Q2 G : Finset ℝ³} {v w : ℝ³} (f1 f2 fG : �
     (zG : ∀ p ∈ G, fG p = 0) (nG : ∀ p ∈ V, p ∉ G → fG p < 0)
     (hv1 : v ∈ Q1) (hw1 : w ∈ Q1) (hv2 : v ∈ Q2) (hw2 : w ∈ Q2) (hspec : fG w = fG v)
     (hsep : ∀ p ∈ V, ∀ q ∈ V, p ≠ q → (p ∈ Q1 ↔ q ∈ Q1) → (p ∈ Q2 ↔ q ∈ Q2) →
-      (p ∈ G ↔ q ∈ G) → (p = v ∧ q = w) ∨ (p = w ∧ q = v)) : EdgePar V v w := by
+      (p ∈ G ↔ q ∈ G) → (p = v ∧ q = w) ∨ (p = w ∧ q = v)) : EdgeParN V v w := by
   intro p hp q hq hpq hpair c hc
   have shift : ∀ f : ℝ³ →ᵃ[ℝ] ℝ, f w = f v → f q = f p := by
     intro f hf

@@ -276,7 +276,7 @@ theorem not_type27_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({0, 1, 2} : Finset (Fin 7)) → fI (x i) < 0))
     (hJ : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fJ (x i) = 0) ∧
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fJ (x i) < 0))
-    (hZ1 : Minimality.EdgePar (Finset.univ.image x) (x 2) (x 5) ∨
+    (hZ1 : Minimality.EdgePar (Finset.univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x) (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 2) (x 5) ∨
       Minimality.EdgeFarP (Finset.univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
       (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 2) (x 5))
     (hT1 : Minimality.TriGenPar (Finset.univ.image x) (({0, 1, 6} : Finset (Fin 7)).image x)
@@ -291,6 +291,7 @@ theorem not_type27_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
         Minimality.EdgeFar (Finset.univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
           (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 2) (x 5))) : False :=
   h.2 (Minimality.isRupert_type27 x hx (noThreeCollinear_seven x h hx)
+    ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1)
     fB fD fE fG fH fI fJ hB hD hE hG hH hI hJ hZ1 hT1 hT2)
 
 /-- **Type 23** (Theorem J of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
@@ -321,7 +322,7 @@ theorem not_type23_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({1, 5, 6} : Finset (Fin 7)) → fH (x i) < 0))
     (hK : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) = 0) ∧
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) < 0))
-    (hZ1 : Minimality.EdgePar (Finset.univ.image x) (x 0) (x 4) ∨
+    (hZ1 : Minimality.EdgePar (Finset.univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x) (x 0) (x 4) ∨
       Minimality.EdgeFarP (Finset.univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
       (({0, 3, 4, 5} : Finset (Fin 7)).image x) (x 0) (x 4))
     (hT1 : (Minimality.TriGenPar (Finset.univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
@@ -336,6 +337,7 @@ theorem not_type23_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x)
       (({1, 2, 5} : Finset (Fin 7)).image x) (x 5)) : False :=
   h.2 (Minimality.isRupert_type23 x hx (noThreeCollinear_seven x h hx)
+    ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1)
     fA fD fE fH fK hA hD hE hH hK hZ1 hT1 hT2)
 
 /-- **Type 25** (Theorem K of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
@@ -365,7 +367,7 @@ theorem not_type25_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({0, 1, 4} : Finset (Fin 7)) → fE (x i) < 0))
     (hI : ∀ i, (i ∈ ({1, 2, 6} : Finset (Fin 7)) → fI (x i) = 0) ∧
       (i ∉ ({1, 2, 6} : Finset (Fin 7)) → fI (x i) < 0))
-    (hZ1 : Minimality.EdgePar (Finset.univ.image x) (x 1) (x 3) ∨
+    (hZ1 : Minimality.EdgePar (Finset.univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x) (({1, 3, 6} : Finset (Fin 7)).image x) (x 1) (x 3) ∨
       Minimality.EdgeFarP (Finset.univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 1) (x 3))
     (hT1 : Minimality.TriGenPar (Finset.univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
@@ -377,6 +379,7 @@ theorem not_type25_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 1, 3} : Finset (Fin 7)).image x)
       (({0, 5, 6} : Finset (Fin 7)).image x) (x 0)) : False :=
   h.2 (Minimality.isRupert_type25 x hx (noThreeCollinear_seven x h hx)
+    ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1)
     fA fD fF fG fH fE fI hA hD hF hG hH hE hI hZ1 hT1 hT2)
 
 /-- **Type 26** (Theorem L of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
@@ -408,7 +411,7 @@ theorem not_type26_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fY (x i) < 0))
     (hZ : ∀ i, (i ∈ ({3, 4, 5} : Finset (Fin 7)) → fZ (x i) = 0) ∧
       (i ∉ ({3, 4, 5} : Finset (Fin 7)) → fZ (x i) < 0))
-    (hZ1 : Minimality.EdgePar (Finset.univ.image x) (x 0) (x 4) ∨
+    (hZ1 : Minimality.EdgePar (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x) (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4) ∨
       Minimality.EdgeFarP (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({0, 3, 4} : Finset (Fin 7)).image x) (x 0) (x 4))
     (hT2 : Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
@@ -420,6 +423,7 @@ theorem not_type26_of_isNopert (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
       (({1, 3, 6} : Finset (Fin 7)).image x) (x 6)) : False :=
   h.2 (Minimality.isRupert_type26 x hx (noThreeCollinear_seven x h hx)
+    ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1)
     fA fT fG fH fU fW fY fZ hA hT hG hH hU hW hY hZ hZ1 hT2 hT6)
 
 /-- **Type 12** (Theorem M of `FEWER-FACES-PROOFS.md` §7): a nopert does not have
@@ -1161,7 +1165,7 @@ theorem not_type23_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.un
     (hK : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) = 0) ∧
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fK (x i) < 0))
     (hZ1 : fA (x 6) / fA (x 1) + fD (x 6) / fD (x 5) ≠ 1 →
-      Minimality.EdgePar (Finset.univ.image x) (x 0) (x 4) ∨
+      Minimality.EdgePar (Finset.univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x) (x 0) (x 4) ∨
       Minimality.EdgeFarP (Finset.univ.image x) (({0, 1, 4} : Finset (Fin 7)).image x)
         (({0, 3, 4, 5} : Finset (Fin 7)).image x) (x 0) (x 4))
     (hT1 : fA (x 6) / fA (x 1) + fD (x 6) / fD (x 5) ≠ 1 →
@@ -1175,6 +1179,7 @@ theorem not_type23_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.un
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x)
         (({1, 2, 5} : Finset (Fin 7)).image x) (x 5)) : False :=
   h.2 (Minimality.isRupert_type23_sv x hx (noThreeCollinear_seven x h hx)
+    ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1)
     fA fD fE fH fK hA hD hE hH hK hZ1 hT1 hT2)
 
 /-- **Type 27, the special value settled**: as `not_type27_of_isNopert`, its general position
@@ -1197,7 +1202,7 @@ theorem not_type27_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.un
     (hJ : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fJ (x i) = 0) ∧
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fJ (x i) < 0))
     (hZ1 : fG (x 2) / fG (x 5) ≠ 1 →
-      Minimality.EdgePar (Finset.univ.image x) (x 2) (x 5) ∨
+      Minimality.EdgePar (Finset.univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x) (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 2) (x 5) ∨
       Minimality.EdgeFarP (Finset.univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
         (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 2) (x 5))
     (hT1 : fG (x 2) / fG (x 5) ≠ 1 →
@@ -1211,6 +1216,7 @@ theorem not_type27_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.un
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
         (({0, 4, 6} : Finset (Fin 7)).image x) (x 0)) : False :=
   h.2 (Minimality.isRupert_type27_sv x hx (noThreeCollinear_seven x h hx)
+    ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1)
     fB fD fE fG fH fI fJ hB hD hE hG hH hI hJ hZ1 hT1 hT2)
 
 /-- **Type 12, the special value settled**: as `not_type12_of_isNopert`, its general position

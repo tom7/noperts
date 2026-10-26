@@ -38,7 +38,8 @@ functionals negative off them, are Rupert, given no other segment parallel to `2
 of `025` and `046`, and `EdgeFar` along `25` when `fG x2 / fG x5 = 1` (the
 special value, where Lemma T′ over that edge is used). -/
 theorem isRupert_type27 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
-    (hgen : NoThreeCollinear (univ.image x)) (fB fD fE fG fH fI fJ : ℝ³ →ᵃ[ℝ] ℝ)
+    (hgen : NoThreeCollinear (univ.image x))
+    (hsol : (interior (convexHull ℝ ((univ.image x : Finset ℝ³) : Set ℝ³))).Nonempty) (fB fD fE fG fH fI fJ : ℝ³ →ᵃ[ℝ] ℝ)
     (hB : ∀ i, (i ∈ ({2, 3, 5, 6} : Finset (Fin 7)) → fB (x i) = 0) ∧
       (i ∉ ({2, 3, 5, 6} : Finset (Fin 7)) → fB (x i) < 0))
     (hD : ∀ i, (i ∈ ({0, 2, 5} : Finset (Fin 7)) → fD (x i) = 0) ∧
@@ -53,7 +54,7 @@ theorem isRupert_type27 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
       (i ∉ ({0, 1, 2} : Finset (Fin 7)) → fI (x i) < 0))
     (hJ : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fJ (x i) = 0) ∧
       (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fJ (x i) < 0))
-    (hZ1 : EdgePar (univ.image x) (x 2) (x 5) ∨
+    (hZ1 : EdgePar (univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x) (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 2) (x 5) ∨
       EdgeFarP (univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
       (({2, 3, 5, 6} : Finset (Fin 7)).image x) (x 2) (x 5))
     (hT1 : TriGenPar (univ.image x) (({0, 1, 6} : Finset (Fin 7)).image x)
@@ -172,7 +173,7 @@ theorem isRupert_type27 (x : Fin 7 → ℝ³) (hx : Function.Injective x)
         (isFacet_of_index x _ fB hB) (x 2) (x 5) (fun h => by have := hx h; omega) ?_
         ⟨x 0, (memQ _ 0).mpr (by decide), by rw [memQ]; decide⟩
         ⟨x 6, (memQ _ 6).mpr (by decide), by rw [memQ]; decide⟩
-        (Or.inl (by rw [Finset.card_image_of_injective _ hx]; rfl)) hZ1 ?_
+        (Or.inl (by rw [Finset.card_image_of_injective _ hx]; rfl)) hZ1 ?_ hsol
       · rw [inter, show ({0, 2, 5} ∩ {2, 3, 5, 6} : Finset (Fin 7)) = {2, 5} by decide]
         simp [Finset.image_insert]
       refine ⟨x 0, (memQ _ 0).mpr (by decide), x 6, (memQ _ 6).mpr (by decide),
