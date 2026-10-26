@@ -40,7 +40,10 @@ set_option maxHeartbeats 4000000 in
 /-- **Lemma T in the oblique frame, general mixed tilt, with a middle vertex.**  The cycle is
 `C1 0, …, C1 m, M, C2 n, …, C2 1` (then back to the apex).  The segments `C1 m → M` and
 `M → C2 n` replace the far edge: their tests are the hypotheses `TiltOK` of `hVc`.  The
-depths satisfy `s z_Q < s z_M < s z_P`. -/
+depths satisfy `s z_M < s z_P` and either `s z_Q < s z_M`, or `s z_Q` below its chain predecessor
+`s dz (n - 1)` (then `M` and `Q` may tie in depth, as in the rectangle of
+FEWER-FACES-PROOFS.md Proposition 24.12: the unimodality criterion only needs `Q` not to be a
+local maximum). -/
 theorem isRupert_triShadow_mid (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n : ℕ}
     (hm : 1 ≤ m) (hn : 1 ≤ n) (s : ℝ) (hs : s = 1 ∨ s = -1) {α β : ℝ} (hα : 0 < α)
     (hβ : 0 < β) (ca cz cb dz : ℕ → ℝ)
@@ -62,7 +65,8 @@ theorem isRupert_triShadow_mid (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n :
       (a = 0 → ∀ l, l < n → y ≠ oblPt O r1 r2 0 (cb (l + 1)) (dz (l + 1)) →
         y ≠ oblPt O r1 r2 0 (cb l) (dz l) →
         s * ((cb l - cb (l + 1)) * (z - dz (l + 1)) - (dz l - dz (l + 1)) * (b - cb (l + 1))) < 0))
-    (hPM : s * zM < s * cz m) (hMQ : s * dz n < s * zM) : IsRupert V := by
+    (hPM : s * zM < s * cz m)
+    (hMQ : s * dz n < s * zM ∨ s * dz n < s * dz (n - 1)) : IsRupert V := by
   have hNZ : NeZero (m + n + 2) := ⟨by omega⟩
   have hval : ∀ v : ℕ, v < m + n + 2 → ((v : ZMod (m + n + 2))).val = v := fun v hv => by
     rw [ZMod.val_natCast, Nat.mod_eq_of_lt hv]
@@ -303,7 +307,15 @@ theorem isRupert_triShadow_mid (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n :
       subst hl
       rw [hZ2 (m + 2) le_rfl (by omega), show m + n + 2 - (m + 2) = n by omega,
         show m + 2 - 1 = m + 1 by omega, hZM]
-      exact lt_max_of_lt_left hMQ
+      rcases hMQ with hMQ | hMQ
+      · exact lt_max_of_lt_left hMQ
+      · refine lt_max_of_lt_right ?_
+        have hnext : Z ((m + 2 + 1 : ℕ) : ZMod (m + n + 2)) = dz (n - 1) := by
+          rcases Nat.lt_or_ge 1 n with hn1 | hn1
+          · rw [hZ2 (m + 2 + 1) (by omega) (by omega),
+              show m + n + 2 - (m + 2 + 1) = n - 1 by omega]
+          · rw [show m + 2 + 1 = m + n + 2 by omega, hZk, show n - 1 = 0 by omega]
+        rw [hnext]; exact hMQ
     · set j := m + n + 2 - l with hj
       have hj1 : 1 ≤ j := by omega
       have hjn : j < n := by omega
