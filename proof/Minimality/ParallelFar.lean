@@ -17,8 +17,8 @@ still strictly inside the tilted shadow when it is on the chain's side
 (`s * (z - cz m) < 0`) and the tilt `(-s α, s β)` of
 `isRupert_triShadow2_tilt` leans toward the second face (`ca m * β < cb n * α`);
 likewise at the second face's far end with the opposite ratio. Both at once
-is Corollary T1's rectangle exception (FEWER-FACES-PROOFS.md §7). See
-FEWER-FACES.md §11, step (ii).
+is Corollary T1's rectangle exception (FEWER-FACES-PROOFS.md §7); it is handled by the other
+sector of the tilt (`ParallelFarMid.lean`). See FEWER-FACES.md §11, step (ii).
 -/
 
 namespace Minimality
@@ -283,7 +283,8 @@ set_option maxHeartbeats 4000000 in
 /-- **Lemma T over a vertex, far companions allowed, from chains.** As
 `isRupert_vertex_frame`, for chains that may have vertical companions at
 their far ends (`ChainOKc`), provided one of the two faces has a single
-point of largest `a` (else the rectangle exception) and the far depths are
+point of largest `a` (else the rectangle exception, treated in `isRupert_vertex_frame_par'`)
+and the far depths are
 not all tied (`hfar`: the top of one face's far vertical is above the
 bottom of the other's, in one of the two orders). -/
 theorem isRupert_vertex_frame_par (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ → ℝ → Prop)
