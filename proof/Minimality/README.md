@@ -8,7 +8,8 @@ about flat point sets.  It also has the skeleton `anySevenVertexNopertIsSimplici
 of `AnySevenVertexNopertIsSimplicial` (every 7-vertex nopert is simplicial; with
 `sorry`): the split into the 29 non-simplicial types of
 [`SevenTypes.lean`](SevenTypes.lean), whose per-type theorems are in
-[`Cases.lean`](Cases.lean).  The idea of the proof is explained in
+[`Cases.lean`](Cases.lean); [`FaceBridge.lean`](FaceBridge.lean) proves that a
+2-dimensional extreme face of the hull is a facet.  The idea of the proof is explained in
 [`minimality.md`](../../minimality.md) (section "A bit more detail",
 steps 1–6).
 

@@ -2,6 +2,7 @@ module
 
 public import Minimality.Cases
 public import Minimality.SevenTypes
+public import Minimality.FaceBridge
 
 /-!
 # Every nopert has at least 7 points
@@ -238,24 +239,11 @@ theorem isRupert_iff_of_card_le_six (V : Finset ℝ³) (hV : V.card ≤ 6) :
 `anySevenVertexNopertIsSimplicial` proves `AnySevenVertexNopertIsSimplicial` (`MainTheorem.lean`)
 down to the combinatorial types. Proved steps: at most 6 points (`isRupert_of_card_le_six`), a
 point inside the hull of the others (`isRupert_of_mem_convexHull_erase`), faces of 5 or more
-vertices (Theorem A, `facet_card_le_four_of_isNopert`). Not formalized (`sorry`): the passage
-from an extreme face to a facet (`exists_facet_of_isExtreme`), the classification into the 29
-types (`Minimality.exists_sevenType`), types 24 and 29, and for every other type its special
+vertices (Theorem A, `facet_card_le_four_of_isNopert`), and that a 2-dimensional extreme face is
+a facet (`Minimality.exists_facet_of_isExtreme`, `Minimality/FaceBridge.lean`). Not formalized
+(`sorry`): the classification into the 29 types (`Minimality.exists_sevenType`), types 24 and 29, and for every other type its special
 positions: each type's theorem in `Minimality/Cases.lean` closes the case under its general-position
 hypotheses (`byGen1`, …), and the `sorry` that remains has exactly their negation as hypothesis. -/
-
-/-- **An extreme face of dimension 2 is a facet** (not formalized; standard polytope theory):
-for points in convex position, a convex extreme subset of their hull with a 2-dimensional
-affine span is cut out by an affine functional, and its extreme points are the points of `V`
-on it: at least 3, and not all of `V` (a solid hull is not a facet). -/
-theorem exists_facet_of_isExtreme (V : Finset ℝ³)
-    (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty)
-    (hvert : ∀ v ∈ V, v ∉ convexHull ℝ ((V.erase v : Finset ℝ³) : Set ℝ³))
-    (face : Set ℝ³) (hext : IsExtreme ℝ (convexHull ℝ (V : Set ℝ³)) face)
-    (hdim : (affineSpan ℝ face).finDim = 2) (hconv : Convex ℝ face) :
-    ∃ F : Finset ℝ³, F ⊂ V ∧ 3 ≤ F.card ∧ Minimality.IsFacet V F ∧
-      face.extremePoints ℝ = (F : Set ℝ³) := by
-  sorry
 
 /-- A realized type with a face of 5 or 6 vertices is not a nopert (Theorem A). -/
 theorem not_isNopert_of_realizes_big_face {x : Fin 7 → ℝ³} (hx : Function.Injective x)
@@ -329,7 +317,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     fun v hv hin => hnR (Minimality.isRupert_of_mem_convexHull_erase h7 hsol hv hin)
   have hN : IsNopert V := (isNopert_iff V).2 ⟨hsol, hnR⟩
   -- the face is a facet `F` with at least 3 and (Theorem A) at most 4 points
-  obtain ⟨F, hFV, hF3, hfacet, hFext⟩ := exists_facet_of_isExtreme V hsol hvert face hext hdim hconv
+  obtain ⟨F, hFV, hF3, hfacet, hFext⟩ :=
+    Minimality.exists_facet_of_isExtreme V hsol hvert face hext hdim hconv
   rw [hFext, Set.ncard_coe_finset]
   have hF4 : F.card ≤ 4 := facet_card_le_four_of_isNopert V F hN h7 hFV hfacet
   by_contra hne
