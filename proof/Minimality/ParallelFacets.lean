@@ -18,6 +18,111 @@ namespace Minimality
 open Finset
 open scoped RealInnerProductSpace
 
+/-- **The far-depth condition of Lemma T with parallel segments** (FEWER-FACES-PROOFS.md
+Proposition 23.19 (1), Proposition 24.12).  `far1` (`far2`) selects the far points of the first
+(second) face, `d` is the depth along the view line.  A far end of one face may tie in depth with
+a far end of the other only when exactly one of the two faces has a vertical far edge (a second
+far point at another depth): by §7's strengthening of Lemma T a unimodal mixed tilt then exists
+for all depths, the sector chosen by comparing the depth of the tied end with the far edge.
+When neither face has a second far point, or both have one, the ends must not tie. -/
+def FarDepthOK (Q1 Q2 : Finset ℝ³) (far1 far2 : ℝ³ → Prop) (d : ℝ³ → ℝ) : Prop :=
+  ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → far1 p → far2 q → d p = d q →
+    ((∃ p' ∈ Q1, far1 p' ∧ d p' ≠ d p) ∧ (∀ q' ∈ Q2, far2 q' → d q' = d q)) ∨
+    ((∀ p' ∈ Q1, far1 p' → d p' = d p) ∧ (∃ q' ∈ Q2, far2 q' ∧ d q' ≠ d q))
+
+/-- Distinct far depths give `FarDepthOK` (no tie to discuss). -/
+theorem FarDepthOK.of_ne {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {d : ℝ³ → ℝ}
+    (h : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → far1 p → far2 q → d p ≠ d q) :
+    FarDepthOK Q1 Q2 far1 far2 d :=
+  fun p hp q hq hpq h1 h2 hd => absurd hd (h p hp q hq hpq h1 h2)
+
+/-- `FarDepthOK` is symmetric in the two faces. -/
+theorem FarDepthOK.symm {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {d : ℝ³ → ℝ}
+    (h : FarDepthOK Q1 Q2 far1 far2 d) : FarDepthOK Q2 Q1 far2 far1 d := by
+  intro q hq p hp hqp h2 h1 hd
+  rcases h p hp q hq (Ne.symm hqp) h1 h2 hd.symm with ⟨a, b⟩ | ⟨a, b⟩
+  · exact Or.inr ⟨b, a⟩
+  · exact Or.inl ⟨b, a⟩
+
+/-- `FarDepthOK` only depends on the far predicates on the faces. -/
+theorem FarDepthOK.congr {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ → Prop}
+    {d : ℝ³ → ℝ} (h : FarDepthOK Q1 Q2 far1 far2 d) (h1 : ∀ p ∈ Q1, far1 p ↔ far1' p)
+    (h2 : ∀ q ∈ Q2, far2 q ↔ far2' q) : FarDepthOK Q1 Q2 far1' far2' d := by
+  intro p hp q hq hpq f1 f2 hd
+  rcases h p hp q hq hpq ((h1 p hp).mpr f1) ((h2 q hq).mpr f2) hd with
+    ⟨⟨p', hp', f', ne⟩, k⟩ | ⟨k, ⟨q', hq', f', ne⟩⟩
+  · exact Or.inl ⟨⟨p', hp', (h1 p' hp').mp f', ne⟩, fun q' hq' f => k q' hq' ((h2 q' hq').mpr f)⟩
+  · exact Or.inr ⟨fun p' hp' f => k p' hp' ((h1 p' hp').mpr f), ⟨q', hq', (h2 q' hq').mp f', ne⟩⟩
+
+/-- `FarDepthOK` for the opposite depth (the view line reversed). -/
+theorem FarDepthOK.neg_depth {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {d d' : ℝ³ → ℝ}
+    (h : FarDepthOK Q1 Q2 far1 far2 d) (hd : ∀ p, d' p = -d p) :
+    FarDepthOK Q1 Q2 far1 far2 d' := by
+  intro p hp q hq hpq f1 f2 e
+  rw [hd, hd] at e
+  simpa only [hd, ne_eq, neg_inj] using h p hp q hq hpq f1 f2 (neg_inj.mp e)
+
+/-- `FarDepthOK` transported by an injective map, the depth rescaled by a nonzero factor. -/
+theorem FarDepthOK.map {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ → Prop}
+    {d d' : ℝ³ → ℝ} (g : ℝ³ → ℝ³) (hg : Function.Injective g) (c : ℝ) (hc : c ≠ 0)
+    (h : FarDepthOK Q1 Q2 far1 far2 d) (hf1 : ∀ p ∈ Q1, far1' (g p) ↔ far1 p)
+    (hf2 : ∀ q ∈ Q2, far2' (g q) ↔ far2 q) (hd1 : ∀ p ∈ Q1, d' (g p) = c * d p)
+    (hd2 : ∀ q ∈ Q2, d' (g q) = c * d q) :
+    FarDepthOK (Q1.image g) (Q2.image g) far1' far2' d' := by
+  classical
+  intro x hx y hy hxy f1 f2 hd
+  obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp hx
+  obtain ⟨q, hq, rfl⟩ := Finset.mem_image.mp hy
+  rw [hd1 p hp, hd2 q hq] at hd
+  rcases h p hp q hq (fun e => hxy (by rw [e])) ((hf1 p hp).mp f1) ((hf2 q hq).mp f2)
+      (mul_left_cancel₀ hc hd) with ⟨⟨p', hp', f', ne⟩, k⟩ | ⟨k, ⟨q', hq', f', ne⟩⟩
+  · refine Or.inl ⟨⟨g p', Finset.mem_image_of_mem g hp', (hf1 p' hp').mpr f', ?_⟩, ?_⟩
+    · rw [hd1 p' hp', hd1 p hp]; exact fun e => ne (mul_left_cancel₀ hc e)
+    · intro y' hy' f
+      obtain ⟨q', hq', rfl⟩ := Finset.mem_image.mp hy'
+      rw [hd2 q' hq', hd2 q hq, k q' hq' ((hf2 q' hq').mp f)]
+  · refine Or.inr ⟨?_, ⟨g q', Finset.mem_image_of_mem g hq', (hf2 q' hq').mpr f', ?_⟩⟩
+    · intro x' hx' f
+      obtain ⟨p', hp', rfl⟩ := Finset.mem_image.mp hx'
+      rw [hd1 p' hp', hd1 p hp, k p' hp' ((hf1 p' hp').mp f)]
+    · rw [hd2 q' hq', hd2 q hq]; exact fun e => ne (mul_left_cancel₀ hc e)
+
+/-- **From `FarDepthOK` to the chain hypothesis of the frames.**  The tops and bottoms
+`cz, cz'` (`dz, dz'`) of the far ends of the first (second) face are not all equal, in the three
+ways of `hfar_of_sep`: all tops different from both ends of the other face, or exactly one face
+with a vertical far edge. -/
+theorem sep_of_farDepth {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop}
+    (hT : FarDepthOK Q1 Q2 far1 far2 (fun p => p 2))
+    (hpq : ∀ p ∈ Q1, ∀ q ∈ Q2, far1 p → p ≠ q) {cz cz' dz dz' : ℝ} {pU pL qU qL : ℝ³}
+    (hpU : pU ∈ Q1) (fU : far1 pU) (zU : pU 2 = cz) (hpL : pL ∈ Q1) (fL : far1 pL)
+    (zL : pL 2 = cz') (hqU : qU ∈ Q2) (gU : far2 qU) (wU : qU 2 = dz) (hqL : qL ∈ Q2)
+    (gL : far2 qL) (wL : qL 2 = dz')
+    (e1 : ∀ p' ∈ Q1, far1 p' → cz' ≤ p' 2 ∧ p' 2 ≤ cz)
+    (e2 : ∀ q' ∈ Q2, far2 q' → dz' ≤ q' 2 ∧ q' 2 ≤ dz) :
+    (cz ≠ dz ∧ cz ≠ dz') ∨ (cz' < cz ∧ dz' = dz) ∨ (cz' = cz ∧ dz' < dz) := by
+  have key : ∀ q ∈ Q2, far2 q → (q 2 = dz ∨ q 2 = dz') → pU 2 = q 2 →
+      (cz' < cz ∧ dz' = dz) ∨ (cz' = cz ∧ dz' < dz) := by
+    intro q hq fq hq2 h
+    rcases hT pU hpU q hq (hpq pU hpU q hq fU) fU fq h with
+      ⟨⟨p', hp', f', ne⟩, hall⟩ | ⟨hall, ⟨q', hq', f', ne⟩⟩
+    · simp only at ne hall
+      left
+      obtain ⟨b1, b2⟩ := e1 p' hp' f'
+      refine ⟨lt_of_le_of_lt b1 (lt_of_le_of_ne b2 (by rwa [zU] at ne)), ?_⟩
+      rw [← wL, ← wU, hall qL hqL gL, hall qU hqU gU]
+    · simp only at ne hall
+      right
+      obtain ⟨b1, b2⟩ := e2 q' hq' f'
+      refine ⟨by rw [← zL, ← zU]; exact hall pL hpL fL, ?_⟩
+      rcases hq2 with h2 | h2
+      · exact lt_of_le_of_lt b1 (lt_of_le_of_ne b2 (by rwa [h2] at ne))
+      · exact lt_of_lt_of_le (lt_of_le_of_ne b1 (fun e => ne (by rw [← e, h2]))) b2
+  by_cases h1 : cz = dz
+  · right; exact key qU hqU gU (Or.inl wU) (by rw [zU, wU, h1])
+  by_cases h2 : cz = dz'
+  · right; exact key qL hqL gL (Or.inr wL) (by rw [zU, wL, h2])
+  left; exact ⟨h1, h2⟩
+
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over a vertex in coordinates, segments parallel to the view
 line allowed, with no condition on the far ends but distinct depths.** As
@@ -32,8 +137,8 @@ theorem isRupert_vertex_coords_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (
     (ha2 : ∀ p ∈ Q2, a p = 0) (ha2' : ∀ p ∈ V, p ∉ Q2 → 0 < a p)
     (hne1 : ∃ p ∈ Q1, p ≠ v) (hne2 : ∃ p ∈ Q2, p ≠ v)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, a p' ≤ a p) → (∀ q' ∈ Q2, b q' ≤ b q) →
-      p 2 ≠ q 2)
+    (hfarZ : FarDepthOK Q1 Q2 (fun p => ∀ p' ∈ Q1, a p' ≤ a p) (fun q => ∀ q' ∈ Q2, b q' ≤ b q)
+      (fun p => p 2))
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → a y / a xa + b y / b xb < 1) : IsRupert V := by
   classical
@@ -205,16 +310,44 @@ theorem isRupert_vertex_coords_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (
     by_cases hpv : p = v
     · rw [← e1, hpv, hbv]
     · rw [← e1]; exact (bpos p hp hpv).le
-  · -- the far depths differ
+  · -- the far depths: no tie unless exactly one face has a vertical far edge
     intro m ca cz m' ca' cz' n cb dz n' cb' dz' U1 L1 U2 L2
     obtain ⟨pU, hpU, aU, zU, mU⟩ := far1 U1
+    obtain ⟨pL, hpL, aL, zL, mL⟩ := far1 L1
     obtain ⟨qU, hqU, bU, wU, nU⟩ := far2 U2
     obtain ⟨qL, hqL, bL, wL, nL⟩ := far2 L2
-    have h1 := hfarZ pU hpU qU hqU (pq pU hpU qU hqU mU) mU nU
-    have h2 := hfarZ pU hpU qL hqL (pq pU hpU qL hqL mU) mU nL
-    rw [zU, wU] at h1
-    rw [zU, wL] at h2
-    exact ⟨h1, h2⟩
+    refine sep_of_farDepth hfarZ (fun p hp q hq h => pq p hp q hq h) hpU mU zU hpL mL zL hqU nU wU
+      hqL nL wL ?_ ?_
+    · intro p' hp' f'
+      have hm := Finset.mem_image_of_mem (fun p => (a p, p 2)) hp'
+      have hU : p' 2 ≤ cz m := by
+        by_cases e : a p' = ca m ∧ p' 2 = cz m
+        · exact e.2.le
+        rcases U1.far _ _ hm e with h | ⟨h, h2⟩
+        · have := f' pU hpU; linarith
+        · linarith
+      have hL : cz' m' ≤ p' 2 := by
+        by_cases e : a p' = ca' m' ∧ p' 2 = cz' m'
+        · exact e.2.ge
+        rcases L1.far _ _ hm e with h | ⟨h, h2⟩
+        · have := f' pL hpL; linarith
+        · linarith
+      exact ⟨hL, hU⟩
+    · intro q' hq' f'
+      have hm := Finset.mem_image_of_mem (fun p => (b p, p 2)) hq'
+      have hU : q' 2 ≤ dz n := by
+        by_cases e : b q' = cb n ∧ q' 2 = dz n
+        · exact e.2.le
+        rcases U2.far _ _ hm e with h | ⟨h, h2⟩
+        · have := f' qU hqU; linarith
+        · linarith
+      have hL : dz' n' ≤ q' 2 := by
+        by_cases e : b q' = cb' n' ∧ q' 2 = dz' n'
+        · exact e.2.ge
+        rcases L2.far _ _ hm e with h | ⟨h, h2⟩
+        · have := f' qL hqL; linarith
+        · linarith
+      exact ⟨hL, hU⟩
   · intro x z h
     obtain ⟨p, hp, e1, e2⟩ := ofS1 x z h
     rw [← e1, ← e2, ← pt1 p hp]; exact h1V hp
@@ -264,7 +397,7 @@ theorem isRupert_vertex_coords_par (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → a y / a xa + b y / b xb < 1) : IsRupert V :=
   isRupert_vertex_coords_par' O r1 r2 hρ V Q1 Q2 v a b hy h1V h2V hint hb1 hb1' ha2 ha2' hne1 hne2
-    hcol hfarZ hin
+    hcol (FarDepthOK.of_ne hfarZ) hin
 
 
 set_option maxHeartbeats 4000000 in
@@ -278,8 +411,8 @@ theorem isRupert_facets_vertex_vertical_par' (V Q1 Q2 : Finset ℝ³) (v : ℝ³
     (e1 : f1 (v + ez) = 0) (e2 : f2 (v + ez) = 0)
     (hne1 : ∃ p ∈ Q1, p ≠ v) (hne2 : ∃ p ∈ Q2, p ≠ v)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
-      p 2 ≠ q 2)
+    (hfarZ : FarDepthOK Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q')
+      (fun p => p 2))
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V := by
   classical
@@ -354,11 +487,12 @@ theorem isRupert_facets_vertex_vertical_par' (V Q1 Q2 : Finset ℝ³) (v : ℝ³
     have := n1 p hp hq; rw [G1] at this; nlinarith
   have ha2' : ∀ p ∈ V, p ∉ Q2 → 0 < a p := fun p hp hq => by
     have := n2 p hp hq; rw [G2] at this; nlinarith
-  have hfar' : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, a p' ≤ a p) → (∀ q' ∈ Q2, b q' ≤ b q) →
-      p 2 ≠ q 2 := fun p hp q hq hpq h1 h2 =>
-    hfarZ p hp q hq hpq (fun p' hp' => by
-        rw [G2 p, G2 p']; exact mul_le_mul_of_nonpos_right (h1 p' hp') m21.le)
-      (fun q' hq' => by rw [G1 q, G1 q']; exact mul_le_mul_of_nonpos_right (h2 q' hq') m12.le)
+  have hfar' : FarDepthOK Q1 Q2 (fun p => ∀ p' ∈ Q1, a p' ≤ a p)
+      (fun q => ∀ q' ∈ Q2, b q' ≤ b q) (fun p => p 2) :=
+    hfarZ.congr (fun p _ => forall₂_congr fun p' _ => by
+        rw [G2 p, G2 p']; constructor <;> intro h <;> nlinarith)
+      (fun q _ => forall₂_congr fun q' _ => by
+        rw [G1 q, G1 q']; constructor <;> intro h <;> nlinarith)
   have hin' : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → a y / a xa + b y / b xb < 1 := by
     obtain ⟨xa, hxa, xb, hxb, hxav, hxbv, h⟩ := hin
@@ -376,7 +510,7 @@ theorem isRupert_facets_vertex_vertical_par' (V Q1 Q2 : Finset ℝ³) (v : ℝ³
     refine isRupert_vertex_coords_par' O r2 r1 hpos' V Q2 Q1 v b a (fun p _ => by rw [swap]; exact hy p)
       h2V h1V (by rw [Finset.inter_comm]; exact hint) ha2 ha2' hb1 hb1' ⟨p2, hp2, hp2v⟩
       ⟨p1, hp1, hp1v⟩ hcol
-      (fun p hp q hq hpq h1 h2 => (hfar' q hq p hp (Ne.symm hpq) h2 h1).symm) ?_
+      hfar'.symm ?_
     · obtain ⟨xa, hxa, xb, hxb, hxav, hxbv, h⟩ := hin'
       exact ⟨xb, hxb, xa, hxa, hxbv, hxav, fun y hy hy2 hy1 => by
         rw [add_comm]; exact h y hy hy1 hy2⟩
@@ -400,7 +534,7 @@ theorem isRupert_facets_vertex_vertical_par (V Q1 Q2 : Finset ℝ³) (v : ℝ³)
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V :=
   isRupert_facets_vertex_vertical_par' V Q1 Q2 v h1V h2V hint f1 f2 z1 n1 z2 n2 e1 e2 hne1 hne2
-    hcol hfarZ hin
+    hcol (FarDepthOK.of_ne hfarZ) hin
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over a vertex, any frame, segments parallel to the view line
@@ -412,8 +546,8 @@ theorem isRupert_facets_vertex_par' (V Q1 Q2 : Finset ℝ³) (v : ℝ³)
     (e : ℝ³) (he : e ≠ 0) (e1 : f1 (v + e) = 0) (e2 : f2 (v + e) = 0)
     (hne1 : ∃ p ∈ Q1, p ≠ v) (hne2 : ∃ p ∈ Q2, p ≠ v)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
-      ⟪p, e⟫ ≠ ⟪q, e⟫)
+    (hfarZ : FarDepthOK Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q')
+      (fun p => ⟪p, e⟫))
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V := by
   classical
@@ -466,13 +600,19 @@ theorem isRupert_facets_vertex_par' (V Q1 Q2 : Finset ℝ³) (v : ℝ³)
       (fun e => hqw (by rw [e])) c
     apply hginj
     simp only [map_sub, map_smul] at h ⊢; exact h
-  · refine allg Q1 _ (fun p hp => allg Q2 _ (fun q hq => ?_))
-    intro hpq h1 h2 h
-    simp only [hgz] at h
-    refine hfarZ p hp q hq (fun e => hpq (by rw [e])) (fun p' hp' => ?_) (fun q' hq' => ?_)
-      (by simpa [hr.ne'] using h)
-    · have := h1 (g p') (Finset.mem_image_of_mem g hp'); rwa [tF2, tF2] at this
-    · have := h2 (g q') (Finset.mem_image_of_mem g hq'); rwa [tF1, tF1] at this
+  · refine hfarZ.map g hginj r⁻¹ (inv_ne_zero hr.ne') ?_ ?_ (fun p _ => ?_) (fun q _ => ?_)
+    · intro p _; constructor
+      · intro h p' hp'
+        have := h (g p') (Finset.mem_image_of_mem g hp'); rwa [tF2, tF2] at this
+      · intro h y hy
+        obtain ⟨p', hp', rfl⟩ := Finset.mem_image.mp hy; rw [tF2, tF2]; exact h p' hp'
+    · intro q _; constructor
+      · intro h q' hq'
+        have := h (g q') (Finset.mem_image_of_mem g hq'); rwa [tF1, tF1] at this
+      · intro h y hy
+        obtain ⟨q', hq', rfl⟩ := Finset.mem_image.mp hy; rw [tF1, tF1]; exact h q' hq'
+    · rw [hgz]; ring
+    · rw [hgz]; ring
   · obtain ⟨xa, hxa, xb, hxb, hxav, hxbv, h⟩ := hin
     refine ⟨g xa, Finset.mem_image_of_mem g hxa, g xb, Finset.mem_image_of_mem g hxb,
       fun e => hxav (hginj e), fun e => hxbv (hginj e), allg V _ (fun y hy hy1 hy2 => ?_)⟩
@@ -497,12 +637,12 @@ theorem isRupert_facets_vertex_par (V Q1 Q2 : Finset ℝ³) (v : ℝ³)
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V :=
   isRupert_facets_vertex_par' V Q1 Q2 v h1V h2V hint f1 f2 z1 n1 z2 n2 e he e1 e2 hne1 hne2 hcol
-    hfarZ hin
+    (FarDepthOK.of_ne hfarZ) hin
 
-/-- The former general position `TriGenFarP`, kept for reference: distinct depths at the far
+/-- The former general position `TriGenFarPU`, kept for reference: distinct depths at the far
 ends (as `TriGenFar`) and, in addition, one facet with a single point where the other's
 functional is least (to avoid Corollary T1's rectangle exception, which the four sign sectors of
-`isRupert_vertex_frame_par'` make unnecessary).  `TriGenFarPU.weaken` gives `TriGenFarP`. -/
+`isRupert_vertex_frame_par'` make unnecessary).  `TriGenFarPU.weaken` gives `TriGenFarPD`. -/
 def TriGenFarPU (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
   ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
     (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
@@ -512,23 +652,49 @@ def TriGenFarPU (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
       ((∀ p ∈ Q1, ∀ p' ∈ Q1, (∀ p'' ∈ Q1, f2 p ≤ f2 p'') → f2 p' = f2 p → p' = p) ∨
         (∀ q ∈ Q2, ∀ q' ∈ Q2, (∀ q'' ∈ Q2, f1 q ≤ f1 q'') → f1 q' = f1 q → q' = q))
 
-/-- General position for Lemma T at the line of the planes of two facets,
-**segments parallel to the line allowed**: distinct depths at the far ends (as `TriGenFar`).
-There is no condition on the number of far vertices: the shapes in which both faces have a
-vertical far edge (codimension 2) are handled by the four sign sectors of the tilt
-(FEWER-FACES-PROOFS.md Proposition 24.12 and Proposition 23.19 (1)–(3)).  The earlier version
-asked in addition a unique far end on one face (`TriGenFarPU`). -/
-def TriGenFarP (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
+/-- The former general position `TriGenFarP`, kept for reference: **distinct** depths at the far
+ends (as `TriGenFar`), with segments parallel to the line allowed and no condition on the number
+of far vertices.  `TriGenFarPD.weaken` gives `TriGenFarP`, which also allows a tie when exactly
+one face has a vertical far edge. -/
+def TriGenFarPD (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
   ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
     (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
     ∀ e : ℝ³, e ≠ 0 → f1 (v + e) = 0 → f2 (v + e) = 0 →
       ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
         ⟪p, e⟫ ≠ ⟪q, e⟫
 
+/-- General position for Lemma T at the line of the planes of two facets,
+**segments parallel to the line allowed, and a tie of far depths when exactly one face has a
+vertical far edge** (`FarDepthOK`).  The far ends of the two faces (the points of each facet where
+the other's functional is least) have distinct depths along the line, except that a tie is
+allowed when exactly one of the two faces has a second far point (a segment inside it parallel to
+the line, at the far end): FEWER-FACES-PROOFS.md Proposition 23.19 (1), by §7's strengthening of
+Lemma T, whose sector is chosen by comparing the tied depth with the far edge.  The shapes in
+which both faces have a vertical far edge (Proposition 24.12) still need distinct tops.  The
+earlier versions asked distinct depths throughout (`TriGenFarPD`) and in addition a unique far
+end on one face (`TriGenFarPU`). -/
+def TriGenFarP (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
+  ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+    (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+    ∀ e : ℝ³, e ≠ 0 → f1 (v + e) = 0 → f2 (v + e) = 0 →
+      FarDepthOK Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q')
+        (fun p => ⟪p, e⟫)
+
+/-- Distinct far depths imply `TriGenFarP`. -/
+theorem TriGenFarPD.weaken {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h : TriGenFarPD V Q1 Q2 v) :
+    TriGenFarP V Q1 Q2 v :=
+  fun f1 f2 z1 n1 z2 n2 e he e1 e2 =>
+    FarDepthOK.of_ne (h f1 f2 z1 n1 z2 n2 e he e1 e2)
+
+/-- `TriGenFarPU` implies `TriGenFarPD`. -/
+theorem TriGenFarPU.weakenD {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h : TriGenFarPU V Q1 Q2 v) :
+    TriGenFarPD V Q1 Q2 v :=
+  fun f1 f2 z1 n1 z2 n2 e he e1 e2 => (h f1 f2 z1 n1 z2 n2 e he e1 e2).1
+
 /-- `TriGenFarPU` implies `TriGenFarP`. -/
 theorem TriGenFarPU.weaken {V Q1 Q2 : Finset ℝ³} {v : ℝ³} (h : TriGenFarPU V Q1 Q2 v) :
     TriGenFarP V Q1 Q2 v :=
-  fun f1 f2 z1 n1 z2 n2 e he e1 e2 => (h f1 f2 z1 n1 z2 n2 e he e1 e2).1
+  h.weakenD.weaken
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over a vertex, facet form, segments parallel to the view line
@@ -618,8 +784,8 @@ theorem isRupert_edge_coords_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V 
     (ha2 : ∀ p ∈ Q2, a p = 0) (ha2' : ∀ p ∈ V, p ∉ Q2 → 0 < a p)
     (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, a p' ≤ a p) → (∀ q' ∈ Q2, b q' ≤ b q) →
-      p 2 ≠ q 2)
+    (hfarZ : FarDepthOK Q1 Q2 (fun p => ∀ p' ∈ Q1, a p' ≤ a p) (fun q => ∀ q' ∈ Q2, b q' ≤ b q)
+      (fun p => p 2))
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → a y / a xa + b y / b xb < 1) : IsRupert V := by
   classical
@@ -820,16 +986,44 @@ theorem isRupert_edge_coords_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V 
     by_cases hp1 : p ∈ Q1
     · rw [← e1, hb1 p hp1]
     · rw [← e1]; exact (hb1' p (h2V hp) hp1).le
-  · -- the far depths differ
+  · -- the far depths: no tie unless exactly one face has a vertical far edge
     intro m ca cz m' ca' cz' n cb dz n' cb' dz' U1 L1 U2 L2
     obtain ⟨pU, hpU, aU, zU, mU⟩ := far1 U1
+    obtain ⟨pL, hpL, aL, zL, mL⟩ := far1 L1
     obtain ⟨qU, hqU, bU, wU, nU⟩ := far2 U2
     obtain ⟨qL, hqL, bL, wL, nL⟩ := far2 L2
-    have h1 := hfarZ pU hpU qU hqU (pq pU hpU qU hqU mU) mU nU
-    have h2 := hfarZ pU hpU qL hqL (pq pU hpU qL hqL mU) mU nL
-    rw [zU, wU] at h1
-    rw [zU, wL] at h2
-    exact ⟨h1, h2⟩
+    refine sep_of_farDepth hfarZ (fun p hp q hq h => pq p hp q hq h) hpU mU zU hpL mL zL hqU nU wU
+      hqL nL wL ?_ ?_
+    · intro p' hp' f'
+      have hm := Finset.mem_image_of_mem (fun p => (a p, p 2)) hp'
+      have hU : p' 2 ≤ cz m := by
+        by_cases e : a p' = ca m ∧ p' 2 = cz m
+        · exact e.2.le
+        rcases U1.far _ _ hm e with h | ⟨h, h2⟩
+        · have := f' pU hpU; linarith
+        · linarith
+      have hL : cz' m' ≤ p' 2 := by
+        by_cases e : a p' = ca' m' ∧ p' 2 = cz' m'
+        · exact e.2.ge
+        rcases L1.far _ _ hm e with h | ⟨h, h2⟩
+        · have := f' pL hpL; linarith
+        · linarith
+      exact ⟨hL, hU⟩
+    · intro q' hq' f'
+      have hm := Finset.mem_image_of_mem (fun p => (b p, p 2)) hq'
+      have hU : q' 2 ≤ dz n := by
+        by_cases e : b q' = cb n ∧ q' 2 = dz n
+        · exact e.2.le
+        rcases U2.far _ _ hm e with h | ⟨h, h2⟩
+        · have := f' qU hqU; linarith
+        · linarith
+      have hL : dz' n' ≤ q' 2 := by
+        by_cases e : b q' = cb' n' ∧ q' 2 = dz' n'
+        · exact e.2.ge
+        rcases L2.far _ _ hm e with h | ⟨h, h2⟩
+        · have := f' qL hqL; linarith
+        · linarith
+      exact ⟨hL, hU⟩
   · intro x z h
     obtain ⟨p, hp, e1, e2⟩ := ofS1 x z h
     rw [← e1, ← e2, ← pt1 p hp]; exact h1V hp
@@ -879,7 +1073,7 @@ theorem isRupert_edge_coords_par (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V Q
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → a y / a xa + b y / b xb < 1) : IsRupert V :=
   isRupert_edge_coords_par' O r1 r2 hρ V Q1 Q2 v w hvw a b hy h1V h2V hint hb1 hb1' ha2 ha2'
-    hne1 hne2 hcol hfarZ hin
+    hne1 hne2 hcol (FarDepthOK.of_ne hfarZ) hin
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over an edge, the edge vertical (`v` below `w`), segments parallel
@@ -892,8 +1086,8 @@ theorem isRupert_facets_edge_vertical_lt_par' (V Q1 Q2 : Finset ℝ³) (v w : �
     (e1 : f1 (v + ez) = 0) (e2 : f2 (v + ez) = 0)
     (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
-      p 2 ≠ q 2)
+    (hfarZ : FarDepthOK Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q')
+      (fun p => p 2))
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V := by
   classical
@@ -963,11 +1157,12 @@ theorem isRupert_facets_edge_vertical_lt_par' (V Q1 Q2 : Finset ℝ³) (v w : �
     have := n1 p hp hq; rw [G1] at this; nlinarith
   have ha2' : ∀ p ∈ V, p ∉ Q2 → 0 < a p := fun p hp hq => by
     have := n2 p hp hq; rw [G2] at this; nlinarith
-  have hfar' : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, a p' ≤ a p) → (∀ q' ∈ Q2, b q' ≤ b q) →
-      p 2 ≠ q 2 := fun p hp q hq hpq h1 h2 =>
-    hfarZ p hp q hq hpq (fun p' hp' => by
-        rw [G2 p, G2 p']; exact mul_le_mul_of_nonpos_right (h1 p' hp') m21.le)
-      (fun q' hq' => by rw [G1 q, G1 q']; exact mul_le_mul_of_nonpos_right (h2 q' hq') m12.le)
+  have hfar' : FarDepthOK Q1 Q2 (fun p => ∀ p' ∈ Q1, a p' ≤ a p)
+      (fun q => ∀ q' ∈ Q2, b q' ≤ b q) (fun p => p 2) :=
+    hfarZ.congr (fun p _ => forall₂_congr fun p' _ => by
+        rw [G2 p, G2 p']; constructor <;> intro h <;> nlinarith)
+      (fun q _ => forall₂_congr fun q' _ => by
+        rw [G1 q, G1 q']; constructor <;> intro h <;> nlinarith)
   have hin' : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → a y / a xa + b y / b xb < 1 := by
     obtain ⟨xa, hxa, xb, hxb, hxa2, hxb1, h⟩ := hin
@@ -984,7 +1179,7 @@ theorem isRupert_facets_edge_vertical_lt_par' (V Q1 Q2 : Finset ℝ³) (v w : �
     refine isRupert_edge_coords_par' O r2 r1 hpos' V Q2 Q1 v w hvw b a
       (fun p _ => by rw [swap]; exact hy p) h2V h1V (by rw [Finset.inter_comm]; exact hint)
       ha2 ha2' hb1 hb1' ⟨p2, hp2, hp21⟩ ⟨p1, hp1, hp12⟩ hcol
-      (fun p hp q hq hpq h1 h2 => (hfar' q hq p hp (Ne.symm hpq) h2 h1).symm) ?_
+      hfar'.symm ?_
     · obtain ⟨xa, hxa, xb, hxb, hxa2, hxb1, h⟩ := hin'
       exact ⟨xb, hxb, xa, hxa, hxb1, hxa2, fun y hy hy2 hy1 => by
         rw [add_comm]; exact h y hy hy1 hy2⟩
@@ -1007,7 +1202,8 @@ theorem isRupert_facets_edge_vertical_lt_par (V Q1 Q2 : Finset ℝ³) (v w : ℝ
       (∀ q ∈ Q2, ∀ q' ∈ Q2, (∀ q'' ∈ Q2, f1 q ≤ f1 q'') → f1 q' = f1 q → q' = q))
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V :=
-  isRupert_facets_edge_vertical_lt_par' V Q1 Q2 v w hvw h1V h2V hint f1 f2 z1 n1 z2 n2 e1 e2 hne1 hne2 hcol hfarZ hin
+  isRupert_facets_edge_vertical_lt_par' V Q1 Q2 v w hvw h1V h2V hint f1 f2 z1 n1 z2 n2 e1 e2 hne1
+    hne2 hcol (FarDepthOK.of_ne hfarZ) hin
 
 /-- **Lemma T over an edge, the edge vertical, segments parallel to it
 allowed, with no unique-far-end condition.** -/
@@ -1019,8 +1215,8 @@ theorem isRupert_facets_edge_vertical_par' (V Q1 Q2 : Finset ℝ³) (v w : ℝ³
     (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
     (hvw2 : v 2 ≠ w 2)
-    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
-      p 2 ≠ q 2)
+    (hfarZ : FarDepthOK Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q')
+      (fun p => p 2))
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V := by
   have hvi : v ∈ Q1 ∩ Q2 := by rw [hint]; simp
@@ -1064,7 +1260,7 @@ theorem isRupert_facets_edge_vertical_par (V Q1 Q2 : Finset ℝ³) (v w : ℝ³)
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V :=
   isRupert_facets_edge_vertical_par' V Q1 Q2 v w hvw h1V h2V hint f1 f2 z1 n1 z2 n2 e1 e2 hne1 hne2
-    hcol hvw2 hfarZ hin
+    hcol hvw2 (FarDepthOK.of_ne hfarZ) hin
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over an edge, any frame, segments parallel to the edge allowed**
@@ -1075,8 +1271,8 @@ theorem isRupert_facets_edge_par' (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : 
     (z2 : ∀ p ∈ Q2, f2 p = 0) (n2 : ∀ p ∈ V, p ∉ Q2 → f2 p < 0)
     (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
     (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
-      ⟪p, w - v⟫ ≠ ⟪q, w - v⟫)
+    (hfarZ : FarDepthOK Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q')
+      (fun p => ⟪p, w - v⟫))
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V := by
   classical
@@ -1138,13 +1334,19 @@ theorem isRupert_facets_edge_par' (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : 
     have k : ⟪v, w - v⟫ = ⟪w, w - v⟫ := by simpa [hr.ne'] using h
     have : ⟪w - v, w - v⟫ = 0 := by rw [inner_sub_left]; linarith
     exact hvw (sub_eq_zero.mp (inner_self_eq_zero.mp this)).symm
-  · refine allg Q1 _ (fun p hp => allg Q2 _ (fun q hq => ?_))
-    intro hpq h1 h2 h
-    simp only [hgz] at h
-    refine hfarZ p hp q hq (fun e => hpq (by rw [e])) (fun p' hp' => ?_) (fun q' hq' => ?_)
-      (by simpa [hr.ne'] using h)
-    · have := h1 (g p') (Finset.mem_image_of_mem g hp'); rwa [tF2, tF2] at this
-    · have := h2 (g q') (Finset.mem_image_of_mem g hq'); rwa [tF1, tF1] at this
+  · refine hfarZ.map g hginj r⁻¹ (inv_ne_zero hr.ne') ?_ ?_ (fun p _ => ?_) (fun q _ => ?_)
+    · intro p _; constructor
+      · intro h p' hp'
+        have := h (g p') (Finset.mem_image_of_mem g hp'); rwa [tF2, tF2] at this
+      · intro h y hy
+        obtain ⟨p', hp', rfl⟩ := Finset.mem_image.mp hy; rw [tF2, tF2]; exact h p' hp'
+    · intro q _; constructor
+      · intro h q' hq'
+        have := h (g q') (Finset.mem_image_of_mem g hq'); rwa [tF1, tF1] at this
+      · intro h y hy
+        obtain ⟨q', hq', rfl⟩ := Finset.mem_image.mp hy; rw [tF1, tF1]; exact h q' hq'
+    · rw [hgz]; ring
+    · rw [hgz]; ring
   · obtain ⟨xa, hxa, xb, hxb, hxa2, hxb1, h⟩ := hin
     refine ⟨g xa, Finset.mem_image_of_mem g hxa, g xb, Finset.mem_image_of_mem g hxb,
       fun e => hxa2 ((memg Q2 xa).mp e), fun e => hxb1 ((memg Q1 xb).mp e),
@@ -1167,9 +1369,10 @@ theorem isRupert_facets_edge_par (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : v
       (∀ q ∈ Q2, ∀ q' ∈ Q2, (∀ q'' ∈ Q2, f1 q ≤ f1 q'') → f1 q' = f1 q → q' = q))
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V :=
-  isRupert_facets_edge_par' V Q1 Q2 v w hvw h1V h2V hint f1 f2 z1 n1 z2 n2 hne1 hne2 hcol hfarZ hin
+  isRupert_facets_edge_par' V Q1 Q2 v w hvw h1V h2V hint f1 f2 z1 n1 z2 n2 hne1 hne2 hcol
+    (FarDepthOK.of_ne hfarZ) hin
 
-/-- The former general position `EdgeFarP`, kept for reference: distinct far depths along the
+/-- The former general position `EdgeFarPU`, kept for reference: distinct far depths along the
 edge (as `EdgeFar`) and, in addition, one facet with a single point where the other's functional
 is least.  `EdgeFarPU.weaken` gives `EdgeFarP`. -/
 def EdgeFarPU (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) : Prop :=
@@ -1180,22 +1383,42 @@ def EdgeFarPU (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) : Prop :=
     ((∀ p ∈ Q1, ∀ p' ∈ Q1, (∀ p'' ∈ Q1, f2 p ≤ f2 p'') → f2 p' = f2 p → p' = p) ∨
       (∀ q ∈ Q2, ∀ q' ∈ Q2, (∀ q'' ∈ Q2, f1 q ≤ f1 q'') → f1 q' = f1 q → q' = q))
 
-/-- General position for Lemma T along an edge, **segments parallel to the edge allowed**:
-distinct far depths along it (as `EdgeFar`).  There is no condition on the number of far
-vertices: the shapes in which both faces have a vertical far edge (codimension 2) are handled
-by the four sign sectors of the tilt (FEWER-FACES-PROOFS.md Proposition 24.12 and
-Proposition 23.19 (1)–(3)).  The earlier version asked in addition a unique far end on one
-face (`EdgeFarPU`). -/
-def EdgeFarP (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) : Prop :=
+/-- The former general position `EdgeFarP`, kept for reference: **distinct** far depths along the
+edge (as `EdgeFar`), with segments parallel to the edge allowed and no condition on the number
+of far vertices.  `EdgeFarPD.weaken` gives `EdgeFarP`. -/
+def EdgeFarPD (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) : Prop :=
   ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
     (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
     ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
       ⟪p, w - v⟫ ≠ ⟪q, w - v⟫
 
+/-- General position for Lemma T along an edge, **segments parallel to the edge allowed, and a tie
+of far depths when exactly one face has a vertical far edge** (`FarDepthOK`; see `TriGenFarP`).
+Far depths along the edge are distinct, except that a tie is allowed when exactly one of the two
+faces has a second far point (a segment inside it parallel to the edge): FEWER-FACES-PROOFS.md
+Proposition 23.19 (1).  Both faces with a vertical far edge (Proposition 24.12) still need
+distinct tops.  The earlier versions asked distinct depths throughout (`EdgeFarPD`) and in
+addition a unique far end on one face (`EdgeFarPU`). -/
+def EdgeFarP (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) : Prop :=
+  ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
+    (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
+      FarDepthOK Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q')
+        (fun p => ⟪p, w - v⟫)
+
+/-- Distinct far depths imply `EdgeFarP`. -/
+theorem EdgeFarPD.weaken {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h : EdgeFarPD V Q1 Q2 v w) :
+    EdgeFarP V Q1 Q2 v w :=
+  fun f1 f2 z1 n1 z2 n2 => FarDepthOK.of_ne (h f1 f2 z1 n1 z2 n2)
+
+/-- `EdgeFarPU` implies `EdgeFarPD`. -/
+theorem EdgeFarPU.weakenD {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h : EdgeFarPU V Q1 Q2 v w) :
+    EdgeFarPD V Q1 Q2 v w :=
+  fun f1 f2 z1 n1 z2 n2 => (h f1 f2 z1 n1 z2 n2).1
+
 /-- `EdgeFarPU` implies `EdgeFarP`. -/
 theorem EdgeFarPU.weaken {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h : EdgeFarPU V Q1 Q2 v w) :
     EdgeFarP V Q1 Q2 v w :=
-  fun f1 f2 z1 n1 z2 n2 => (h f1 f2 z1 n1 z2 n2).1
+  h.weakenD.weaken
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over an edge, facet form, segments parallel to the edge

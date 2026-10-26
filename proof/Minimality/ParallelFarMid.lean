@@ -544,13 +544,34 @@ theorem ChainOKc.two_ends {Q : ℝ → ℝ → Prop} {z0 z0' : ℝ} {m m' : ℕ}
   · exact Or.inr h
   · exact absurd h (ne_of_gt hlt)
 
+/-- The far depths of the two faces leave room for a tilt: they are not all equal.  The three
+ways the hypotheses of the frames guarantee it: all four depths different from the top-top and
+top-bottom comparisons, or exactly one face with a vertical far edge (its two ends differ), the
+other face's far end then free to tie with either of them (FEWER-FACES-PROOFS.md Proposition
+23.19 (1)). -/
+theorem hfar_of_sep {cz cz' dz dz' : ℝ} (t1 : cz' ≤ cz) (t2 : dz' ≤ dz)
+    (h : (cz ≠ dz ∧ cz ≠ dz') ∨ (cz' < cz ∧ dz' = dz) ∨ (cz' = cz ∧ dz' < dz)) :
+    dz' < cz ∨ cz' < dz := by
+  rcases h with ⟨-, h2⟩ | ⟨h1, h2⟩ | ⟨h1, h2⟩
+  · rcases lt_or_gt_of_ne h2 with h | h
+    · right; linarith
+    · left; exact h
+  · by_cases h : dz' < cz
+    · left; exact h
+    · right; linarith
+  · by_cases h : cz' < dz
+    · right; exact h
+    · left; linarith
+
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over a vertex, far companions allowed, from chains, with no unique-far-end
 condition** (FEWER-FACES-PROOFS.md Proposition 24.12 and Proposition 23.19 (1)–(3)).  As
 `isRupert_vertex_frame_par` without `hone`, provided at most two points of a face lie on a
-vertical (`hcard`) and the far depths differ across the faces (`hsep`: top against top and top
-against bottom).  When both faces have a vertical far edge, the sector of the tilt is chosen by
-the depths of the two tops: `s = 1` with the second face's top as middle vertex if it lies below
+vertical (`hcard`) and the far depths of the faces do not tie, except that a tie is allowed when
+exactly one face has a vertical far edge (`hsep`; Proposition 23.19 (1): the far edge then
+decides the sector, whatever the tied depth).  When both faces have a vertical far edge, the
+sector of the tilt is chosen by the depths of the two tops (which must differ, top against top
+and top against bottom): `s = 1` with the second face's top as middle vertex if it lies below
 the first face's top, else `s = -1` with the first face's top as middle vertex. -/
 theorem isRupert_vertex_frame_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ → ℝ → Prop)
     {z0 : ℝ}
@@ -562,7 +583,8 @@ theorem isRupert_vertex_frame_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q
     (hcard2 : ∀ a z1 z2 z3, Q2 a z1 → Q2 a z2 → Q2 a z3 → z1 = z2 ∨ z1 = z3 ∨ z2 = z3)
     (hsep : ∀ m ca cz m' ca' cz' n cb dz n' cb' dz', ChainOKc Q1 z0 1 m ca cz →
       ChainOKc Q1 z0 (-1) m' ca' cz' → ChainOKc Q2 z0 1 n cb dz → ChainOKc Q2 z0 (-1) n' cb' dz' →
-      cz m ≠ dz n ∧ cz m ≠ dz' n')
+      (cz m ≠ dz n ∧ cz m ≠ dz' n') ∨ (cz' m' < cz m ∧ dz' n' = dz n) ∨
+        (cz' m' = cz m ∧ dz' n' < dz n))
     (V : Finset ℝ³)
     (hV1 : ∀ a z, Q1 a z → oblPt O r1 r2 a 0 z ∈ V) (hV2 : ∀ b z, Q2 b z → oblPt O r1 r2 0 b z ∈ V)
     (hVc : ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧
@@ -575,19 +597,19 @@ theorem isRupert_vertex_frame_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q
   · refine isRupert_vertex_frame_par O r1 r2 hρ Q1 Q2 hU1 hL1 hU2 hL2 hap1 hap2 hpos1 hpos2 hone
       ?_ V hV1 hV2 hVc
     intro m ca cz m' ca' cz' n cb dz n' cb' dz' U1 L1 U2 L2
-    obtain ⟨-, h2⟩ := hsep m ca cz m' ca' cz' n cb dz n' cb' dz' U1 L1 U2 L2
-    have t1 := U1.low_le_up L1
-    have t2 := U2.low_le_up L2
-    rcases lt_or_gt_of_ne h2 with h | h
-    · right; linarith
-    · left; exact h
+    exact hfar_of_sep (U1.low_le_up L1) (U2.low_le_up L2)
+      (hsep m ca cz m' ca' cz' n cb dz n' cb' dz' U1 L1 U2 L2)
   push Not at hone
   obtain ⟨⟨m0, ca0, cz0, U1, c1, hc1, hne1⟩, ⟨n0, cb0, dz0, U2, c2, hc2, hne2⟩⟩ := hone
   obtain ⟨m1, ca1, cz1, L1⟩ := hL1
   obtain ⟨n1, cb1, dz1, L2⟩ := hL2
   obtain ⟨ea1, eb1, hlt1, hv1⟩ := U1.two_ends L1 hcard1 hc1 hne1
   obtain ⟨ea2, eb2, hlt2, hv2⟩ := U2.two_ends L2 hcard2 hc2 hne2
-  obtain ⟨hs1, -⟩ := hsep m0 ca0 cz0 m1 ca1 cz1 n0 cb0 dz0 n1 cb1 dz1 U1 L1 U2 L2
+  obtain ⟨hs1, -⟩ : cz0 m0 ≠ dz0 n0 ∧ cz0 m0 ≠ dz1 n1 := by
+    rcases hsep m0 ca0 cz0 m1 ca1 cz1 n0 cb0 dz0 n1 cb1 dz1 U1 L1 U2 L2 with h | h | h
+    · exact h
+    · exfalso; linarith [h.2, eb2, hlt2]
+    · exfalso; linarith [h.1, eb1, hlt1]
   rcases lt_or_gt_of_ne hs1 with h | h
   · -- the first face's top is below the second's: `s = -1`, the middle vertex the first top
     have hA0 := L1.far_pos
@@ -653,7 +675,8 @@ theorem isRupert_edge_frame_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 
     (hcard2 : ∀ a z1 z2 z3, Q2 a z1 → Q2 a z2 → Q2 a z3 → z1 = z2 ∨ z1 = z3 ∨ z2 = z3)
     (hsep : ∀ m ca cz m' ca' cz' n cb dz n' cb' dz', ChainOKc Q1 zx' 1 m ca cz →
       ChainOKc Q1 zx (-1) m' ca' cz' → ChainOKc Q2 zx' 1 n cb dz → ChainOKc Q2 zx (-1) n' cb' dz' →
-      cz m ≠ dz n ∧ cz m ≠ dz' n')
+      (cz m ≠ dz n ∧ cz m ≠ dz' n') ∨ (cz' m' < cz m ∧ dz' n' = dz n) ∨
+        (cz' m' = cz m ∧ dz' n' < dz n))
     (V : Finset ℝ³)
     (hV1 : ∀ a z, Q1 a z → oblPt O r1 r2 a 0 z ∈ V) (hV2 : ∀ b z, Q2 b z → oblPt O r1 r2 0 b z ∈ V)
     (hVc : ∀ y ∈ V, ∃ a b z, y = oblPt O r1 r2 a b z ∧
@@ -666,19 +689,19 @@ theorem isRupert_edge_frame_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 
   · refine isRupert_edge_frame_par O r1 r2 hρ Q1 Q2 hxx hU1 hL1 hU2 hL2 hap1 hap2 hQ1x hQ1x'
       hQ2x hQ2x' hpos1 hpos2 hone ?_ V hV1 hV2 hVc
     intro m ca cz m' ca' cz' n cb dz n' cb' dz' U1 L1 U2 L2
-    obtain ⟨-, h2⟩ := hsep m ca cz m' ca' cz' n cb dz n' cb' dz' U1 L1 U2 L2
-    have t1 := U1.low_le_up L1
-    have t2 := U2.low_le_up L2
-    rcases lt_or_gt_of_ne h2 with h | h
-    · right; linarith
-    · left; exact h
+    exact hfar_of_sep (U1.low_le_up L1) (U2.low_le_up L2)
+      (hsep m ca cz m' ca' cz' n cb dz n' cb' dz' U1 L1 U2 L2)
   push Not at hone
   obtain ⟨⟨m0, ca0, cz0, U1, c1, hc1, hne1⟩, ⟨n0, cb0, dz0, U2, c2, hc2, hne2⟩⟩ := hone
   obtain ⟨m1, ca1, cz1, L1⟩ := hL1
   obtain ⟨n1, cb1, dz1, L2⟩ := hL2
   obtain ⟨ea1, eb1, hlt1, hv1⟩ := U1.two_ends L1 hcard1 hc1 hne1
   obtain ⟨ea2, eb2, hlt2, hv2⟩ := U2.two_ends L2 hcard2 hc2 hne2
-  obtain ⟨hs1, -⟩ := hsep m0 ca0 cz0 m1 ca1 cz1 n0 cb0 dz0 n1 cb1 dz1 U1 L1 U2 L2
+  obtain ⟨hs1, -⟩ : cz0 m0 ≠ dz0 n0 ∧ cz0 m0 ≠ dz1 n1 := by
+    rcases hsep m0 ca0 cz0 m1 ca1 cz1 n0 cb0 dz0 n1 cb1 dz1 U1 L1 U2 L2 with h | h | h
+    · exact h
+    · exfalso; linarith [h.2, eb2, hlt2]
+    · exfalso; linarith [h.1, eb1, hlt1]
   rcases lt_or_gt_of_ne hs1 with h | h
   · have hA0 := L1.far_pos
     have hB0 := U2.far_pos

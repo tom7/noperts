@@ -104,8 +104,9 @@ by Theorem 24.5 of `FEWER-FACES-PROOFS.md` §24: a face one-sided (its other
 vertices all on one side of the tied depth) or the shadow triangle obtuse at a far
 vertex; weaker than `Minimality.TriGenTieR` and `Minimality.TriGenFar`), or
 `Minimality.TriGenFarP` (segments parallel to it allowed, the far vertices at
-different depths; when both faces have a vertical far edge the tilt sector is chosen by the
-depths of the far ends, `isRupert_vertex_frame_par'`). Besides a parallel segment, the
+different depths, except that a tie is allowed when exactly one face has a vertical far edge
+(`Minimality.FarDepthOK`, Proposition 23.19 (1)); when both faces have a vertical far edge the
+tilt sector is chosen by the depths of the far ends, `isRupert_vertex_frame_par'`). Besides a parallel segment, the
 only position excluded is the triple tie with both faces two-sided and both far
 angles of the shadow triangle acute or right (case (c) of Theorem 24.5). -/
 theorem not_two_quad_facets_vertex_of_isNopert (V : Finset ℝ³) (h : IsNopert V)
@@ -184,7 +185,8 @@ parallel to it, distinct depths along it at the two far ends, or a tie settled
 by a top or bottom vertex or by the robust form, or the triple tie with the
 shared vertex settled by Theorem 24.5 (a face one-sided or a far angle obtuse);
 weaker than `Minimality.TriGenTieR` and `Minimality.TriGenFar`; or `Minimality.TriGenFarP`:
-parallel segments allowed, distinct far depths), never have every
+parallel segments allowed, distinct far depths unless exactly one face has a vertical far edge),
+never have every
 other point strictly inside the shadow triangle of `v` and two further points
 `xa`, `xb` of the facets. The interior condition is barycentric, stated with any
 facet functionals `f1`, `f2` (it does not depend on their scaling). -/
@@ -210,7 +212,7 @@ position along it (`Minimality.EdgeTieR`: no other segment parallel to it,
 distinct depths along it at the two far ends, or a tie settled by a top or
 bottom vertex or with no right angle at the far ends (Lemma T at the tie, robust
 form); weaker than `Minimality.EdgeFar`; or `Minimality.EdgeFarP`: segments
-parallel to it allowed, distinct far depths),
+parallel to it allowed, distinct far depths unless exactly one face has a vertical far edge),
 never have every
 other point strictly inside the shadow triangle of the edge and two further
 points `xa ∈ Q1 \ Q2`, `xb ∈ Q2 \ Q1` (barycentric form with any facet

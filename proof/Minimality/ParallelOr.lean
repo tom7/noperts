@@ -10,8 +10,10 @@ public import Minimality.ParallelFacets
 
 The views of the per-type theorems accept either the tie-tolerant general
 position (`TriGenTie`, `EdgeTieR`: no segment parallel to the view line) or
-the parallel-tolerant one (`TriGenFarP`, `EdgeFarP`: distinct far depths). A segment parallel
-to the view line then matters only together with a far tie (codimension 3).
+the parallel-tolerant one (`TriGenFarP`, `EdgeFarP`: distinct far depths, or a tie when exactly
+one face has a vertical far edge). A segment parallel
+to the view line then matters only together with a far tie that is not settled by a vertical
+far edge on exactly one face (codimension 3).
 FEWER-FACES.md §11.
 -/
 
@@ -65,11 +67,8 @@ open scoped RealInnerProductSpace in
 theorem EdgeFarP.swap {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h : EdgeFarP V Q1 Q2 v w) :
     EdgeFarP V Q1 Q2 w v := by
   intro f1 f2 z1 n1 z2 n2
-  have hfar := h f1 f2 z1 n1 z2 n2
-  refine fun p hp q hq hpq h1 h2 e => hfar p hp q hq hpq h1 h2 ?_
-  have k : ∀ x : ℝ³, ⟪x, v - w⟫ = -⟪x, w - v⟫ := fun x => by
-    rw [show v - w = -(w - v) by abel, inner_neg_right]
-  rw [k, k] at e; linarith
+  refine (h f1 f2 z1 n1 z2 n2).neg_depth (fun x => ?_)
+  rw [show v - w = -(w - v) by abel, inner_neg_right]
 
 end Minimality
 
