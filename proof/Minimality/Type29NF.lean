@@ -242,19 +242,16 @@ theorem rimCertPts_vtriσ (V M : Finset ℝ³) {u : ℝ³} {σ : ℝ} (hσ : σ 
     (hrest : ∀ z ∈ V, z ∉ M → z ≠ y₀ → z ≠ y₁ → z ≠ y₂ →
       0 < σ * det3 (y₁ - y₀) (z - y₀) u ∧ 0 < σ * det3 (y₂ - y₁) (z - y₁) u ∧
         0 < σ * det3 (y₀ - y₂) (z - y₂) u)
-    (hz : [⟪y₀, u⟫, ⟪y₁, u⟫, ⟪y₂, u⟫].Nodup)
+    (hz : ¬ (⟪y₀, u⟫ = ⟪y₁, u⟫ ∧ ⟪y₁, u⟫ = ⟪y₂, u⟫))
     (hM : ∀ m ∈ M, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
       (m = y₀ + s • (y₁ - y₀) + δ • u ∨ m = y₁ + s • (y₂ - y₁) + δ • u ∨
         m = y₂ + s • (y₀ - y₂) + δ • u)) :
     RimCertPts V (σ • u) (tri y₀ y₁ y₂) := by
   classical
   have hz' : ¬ (⟪y₀, σ • u⟫ = ⟪y₁, σ • u⟫ ∧ ⟪y₁, σ • u⟫ = ⟪y₂, σ • u⟫) := by
-    simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-      List.nodup_nil, and_true] at hz
-    obtain ⟨⟨z1, z2⟩, z3, -⟩ := hz
     rintro ⟨e1, e2⟩
-    simp only [real_inner_smul_right] at e1
-    exact z1 (mul_left_cancel₀ (sigma_ne_zero hσ) e1)
+    simp only [real_inner_smul_right] at e1 e2
+    exact hz ⟨mul_left_cancel₀ (sigma_ne_zero hσ) e1, mul_left_cancel₀ (sigma_ne_zero hσ) e2⟩
   refine rimCertPts_tri V h₀ h₁ h₂ (by rw [← det3_sigma]; exact c₁) (fun z hz => ?_) hz'
   by_cases hzM : z ∈ M
   · exact Or.inl (class_sigma (sigma_sq hσ) (tri_class_mid (hM z hzM)))
@@ -288,7 +285,14 @@ theorem vquadσ_both (V M : Finset ℝ³) {u : ℝ³} (hu : u ≠ 0) {σ : ℝ} 
     fun hnd => isRupert_vquadσ V M hu hσ h₀ h₁ h₂ h₃ n₀ n₁ n₂ n₃ c₁ c₂ c₃ c₄ c₅ c₆ c₇ c₈ hrest hz
       hnd hM⟩
 
-/-- **`isRupert_vtriσ` with its certificate** (§18.2, §21.15). -/
+/-- Four distinct depths have no tie `a = b ∧ b = c` (the weak hypothesis of a triangle rim). -/
+theorem nodup3_weak {a b c : ℝ} (h : [a, b, c].Nodup) : ¬ (a = b ∧ b = c) := by
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+    List.nodup_nil, and_true] at h
+  exact fun e => h.1.1 e.1
+
+/-- **`isRupert_vtriσ` with its certificate** (§18.2, §21.15).  The certificate needs only that
+the three depths are not all equal; the corollary needs them distinct. -/
 theorem vtriσ_both (V M : Finset ℝ³) {u : ℝ³} (hu : u ≠ 0) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
     {y₀ y₁ y₂ : ℝ³} (h₀ : y₀ ∈ V) (h₁ : y₁ ∈ V) (h₂ : y₂ ∈ V)
     (n₀ : y₀ ∉ M) (n₁ : y₁ ∉ M) (n₂ : y₂ ∉ M)
@@ -297,13 +301,13 @@ theorem vtriσ_both (V M : Finset ℝ³) {u : ℝ³} (hu : u ≠ 0) {σ : ℝ} (
     (hrest : ∀ z ∈ V, z ∉ M → z ≠ y₀ → z ≠ y₁ → z ≠ y₂ →
       0 < σ * det3 (y₁ - y₀) (z - y₀) u ∧ 0 < σ * det3 (y₂ - y₁) (z - y₁) u ∧
         0 < σ * det3 (y₀ - y₂) (z - y₂) u)
-    (hz : [⟪y₀, u⟫, ⟪y₁, u⟫, ⟪y₂, u⟫].Nodup)
+    (hz : ¬ (⟪y₀, u⟫ = ⟪y₁, u⟫ ∧ ⟪y₁, u⟫ = ⟪y₂, u⟫))
     (hM : ∀ m ∈ M, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
       (m = y₀ + s • (y₁ - y₀) + δ • u ∨ m = y₁ + s • (y₂ - y₁) + δ • u ∨
         m = y₂ + s • (y₀ - y₂) + δ • u)) :
-    RimThen V u (tri y₀ y₁ y₂) (NoHDNAt V u) :=
+    RimThen V u (tri y₀ y₁ y₂) ([⟪y₀, u⟫, ⟪y₁, u⟫, ⟪y₂, u⟫].Nodup ∧ NoHDNAt V u) :=
   ⟨σ, hσ, rimCertPts_vtriσ V M hσ h₀ h₁ h₂ c₁ hrest hz hM,
-    fun hnd => isRupert_vtriσ V M hu hσ h₀ h₁ h₂ n₀ n₁ n₂ c₁ c₂ c₃ hrest hz hnd hM⟩
+    fun h => isRupert_vtriσ V M hu hσ h₀ h₁ h₂ n₀ n₁ n₂ c₁ c₂ c₃ hrest h.1 h.2 hM⟩
 
 /-- **`isRupert_equadσ` with its certificate** (§18.2, §21.15). -/
 theorem equadσ_both (V M : Finset ℝ³) {u : ℝ³} (hu : u ≠ 0) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
@@ -340,27 +344,34 @@ theorem equintσ_both (V M : Finset ℝ³) {u : ℝ³} (hu : u ≠ 0) {σ : ℝ}
     fun hnd => isRupert_equintσ V M hu hσ hh hw hwV h₀ h₁ h₂ h₃ h₄ n₀ n₁ n₂ n₃ n₄ hc hrest hz
       hnd hM⟩
 
+/-- **An edge-pair certificate** (Lemma E with ties) **with the old conclusion**: the data
+`EPairData` of `rimCert_edgePairσ_robust` (§18.2, §21.13), and the corollary `IsRupert V` when
+the depths at both ends are distinct and there is no horizontal double normal. -/
+def EPairThen (V : Finset ℝ³) (v w a b c : ℝ³) (H : Prop) : Prop :=
+  ∃ σ : ℝ, EPairData V σ v w a b c ∧
+    ([⟪v, w - v⟫, ⟪a, w - v⟫, ⟪c, w - v⟫, ⟪b, w - v⟫].Nodup →
+      [⟪w, w - v⟫, ⟪a, w - v⟫, ⟪c, w - v⟫, ⟪b, w - v⟫].Nodup → H → IsRupert V)
+
+/-- Four distinct depths `p, a, c, b` have no tie `a = c ∧ c = b`. -/
+theorem nodup4_weak {p a c b : ℝ} (h : [p, a, c, b].Nodup) : ¬ (a = c ∧ c = b) := by
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+    List.nodup_nil, and_true] at h
+  exact fun e => h.2.1.1 e.1
+
 /-- **`isRupert_edgePairσ` with its certificate** (Lemma E with ties, `rimCert_edgePairσ_robust`;
-§18.2, §21.13).  The `Nodup` hypotheses are kept for the corollary; the certificate only needs
-`a`, `c` to have different depths. -/
+§18.2, §21.13).  The certificate (`EPairData`) needs only `¬ (a ~ c ∧ c ~ b)` for the depths along
+`w − v`; the corollary needs the `Nodup` hypotheses. -/
 theorem edgePairσ_both {v w a b c : ℝ³} (V : Finset ℝ³) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
     (hvV : v ∈ V) (hwV : w ∈ V) (haV : a ∈ V) (hbV : b ∈ V) (hcV : c ∈ V)
     (q₁ : 0 < σ * det3 (a - v) (c - v) (w - v)) (q₂ : 0 < σ * det3 (c - a) (b - a) (w - v))
     (q₃ : 0 < σ * det3 (b - c) (v - c) (w - v)) (q₄ : 0 < σ * det3 (v - b) (a - b) (w - v))
     (hE : det3 (b - a) (c - a) (v - a) * det3 (b - a) (c - a) (w - a) ≤ 0)
-    (hz₁ : [⟪v, w - v⟫, ⟪a, w - v⟫, ⟪c, w - v⟫, ⟪b, w - v⟫].Nodup)
-    (hz₂ : [⟪w, w - v⟫, ⟪a, w - v⟫, ⟪c, w - v⟫, ⟪b, w - v⟫].Nodup)
+    (hw3 : ¬ (⟪a, w - v⟫ = ⟪c, w - v⟫ ∧ ⟪c, w - v⟫ = ⟪b, w - v⟫))
     (hV : ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ z = c ∨ EdgeMid v w a b z ∨
       EdgeHiddenσ σ (w - v) v a c b z) :
-    RimCertThen V (w - v)
-      (NoHDNAt (V.erase w) (w - v) ∧ NoHDNAt (V.erase v) (w - v)) := by
-  refine ⟨rimCert_edgePairσ_robust V hσ hvV hwV haV hbV hcV q₁ q₂ q₃ q₄ hE ?_ hV,
-    fun hnd => isRupert_edgePairσ V hσ hvV hwV haV hbV hcV q₁ q₂ q₃ q₄ hE hz₁ hz₂ hV hnd.1 hnd.2⟩
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true] at hz₁
-  rintro ⟨e1, -⟩
-  exact hz₁.2.1.1 e1
-
+    EPairThen V v w a b c (NoHDNAt (V.erase w) (w - v) ∧ NoHDNAt (V.erase v) (w - v)) :=
+  ⟨σ, ⟨hσ, q₁, q₂, q₃, q₄, hE, hw3, hV⟩, fun hz₁ hz₂ hnd =>
+    isRupert_edgePairσ V hσ hvV hwV haV hbV hcV q₁ q₂ q₃ q₄ hE hz₁ hz₂ hV hnd.1 hnd.2⟩
 
 end Minimality
 
