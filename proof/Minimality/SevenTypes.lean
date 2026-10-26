@@ -17,9 +17,8 @@ use), computed as the convex hulls of the realizations
 labellings, and those of types 17, 19, 23 realize types 19, 16, 22). The 29 lists are pairwise
 non-isomorphic (2, 8, 11, 8 types with 6, 7, 8, 9 faces).
 
-`exists_sevenType` is the classification step: seven points in convex position with a
-solid hull and a facet of at least 4 points realize one of the 29 types. It is
-not formalized (`sorry`); the enumeration behind it is `enum7`.
+The classification step, `exists_sevenType` (`Minimality/Classify.lean`): seven points in
+convex position with a facet of exactly 4 points realize one of the 29 types.
 -/
 
 namespace Minimality
@@ -103,18 +102,6 @@ theorem isFacet_of_realizesFaces {x : Fin 7 → ℝ³} {fs : List (Finset (Fin 7
     exact (hφ i).1 hi
   · obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hp
     exact (hφ i).2 fun hi => hpf (Finset.mem_image_of_mem x hi)
-
-/-- **Classification of the non-simplicial types** (not formalized; `enum7`): seven
-points in convex position (none in the hull of the others) with a solid hull and a
-facet containing at least 4 of them can be labelled `x 0, …, x 6` so that they
-realize the faces of one of the 29 types. -/
-theorem exists_sevenType (V : Finset ℝ³) (hV : V.card = 7)
-    (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty)
-    (hvert : ∀ v ∈ V, v ∉ convexHull ℝ ((V.erase v : Finset ℝ³) : Set ℝ³))
-    (F : Finset ℝ³) (hFV : F ⊆ V) (hF : 4 ≤ F.card) (hfacet : IsFacet V F) :
-    ∃ k : Fin 29, ∃ x : Fin 7 → ℝ³, Function.Injective x ∧ Finset.univ.image x = V ∧
-      RealizesFaces x (sevenTypeFaces k) := by
-  sorry
 
 end Minimality
 

@@ -3,6 +3,7 @@ module
 public import Minimality.Cases
 public import Minimality.SevenTypes
 public import Minimality.FaceBridge
+public import Minimality.Classify
 
 /-!
 # Every nopert has at least 7 points
@@ -240,9 +241,10 @@ theorem isRupert_iff_of_card_le_six (V : Finset ℝ³) (hV : V.card ≤ 6) :
 down to the combinatorial types. Proved steps: at most 6 points (`isRupert_of_card_le_six`), a
 point inside the hull of the others (`isRupert_of_mem_convexHull_erase`), faces of 5 or more
 vertices (Theorem A, `facet_card_le_four_of_isNopert`), and that a 2-dimensional extreme face is
-a facet (`Minimality.exists_facet_of_isExtreme`, `Minimality/FaceBridge.lean`). Not formalized
-(`sorry`): the classification into the 29 types (`Minimality.exists_sevenType`), types 24 and 29, and for every other type its special
-positions: each type's theorem in `Minimality/Cases.lean` closes the case under its general-position
+a facet (`Minimality.exists_facet_of_isExtreme`, `Minimality/FaceBridge.lean`), and the
+classification into the 29 types (`Minimality.exists_sevenType`, `Minimality/Classify.lean`: a
+sign-vector certificate checked in the kernel). Not formalized (`sorry`): types 24 and 29, and for
+every other type its special positions: each type's theorem in `Minimality/Cases.lean` closes the case under its general-position
 hypotheses (`byGen1`, …), and the `sorry` that remains has exactly their negation as hypothesis. -/
 
 /-- A realized type with a face of 5 or 6 vertices is not a nopert (Theorem A). -/
@@ -324,7 +326,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
   by_contra hne
   -- a quadrilateral facet: label the points by one of the 29 types
   obtain ⟨k, x, hx, rfl, hR⟩ :=
-    Minimality.exists_sevenType _ h7 hsol hvert F hFV.subset (by omega) hfacet
+    Minimality.exists_sevenType _ h7 hvert F hFV.subset (by omega) hfacet
   have big : ∀ f ∈ Minimality.sevenTypeFaces k, 5 ≤ f.card → f.card < 7 → False :=
     fun f hf h5 h7' => not_isNopert_of_realizes_big_face hx hN hR hf h5 h7'
   fin_cases k
