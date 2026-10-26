@@ -341,14 +341,14 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
       (by decide)) (fun _ => sorry)
   · exact big {0, 2, 3, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 03: Theorem A
   · exact big {1, 2, 3, 5, 6} (by decide) (by decide) (by decide)  -- type 04: Theorem A
-  · -- type 05: `not_type05_of_isNopert_sv`; its general position (3 hypotheses) is asked, the special
-    -- positions are open in Lean
+  · -- type 05: `not_type05_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
+    -- special value of Lemma T′ (settled there, 26.8); the other special positions are open in Lean
     obtain ⟨fA, hfA⟩ := hR {0, 1, 2, 3} (by decide)
     obtain ⟨fB, hfB⟩ := hR {0, 1, 4, 5} (by decide)
     obtain ⟨fG, hfG⟩ := hR {2, 4, 6} (by decide)
     obtain ⟨fK, hfK⟩ := hR {4, 5, 6} (by decide)
     obtain ⟨fH, hfH⟩ := hR {2, 3, 4} (by decide)
-    exact byGen3 (not_type05_of_isNopert_sv x hN hx fA fB fG fK fH hfA hfB hfG hfK hfH)
+    exact byGen2 (not_type05_of_isNopert_sv x hN hx fA fB fG fK fH hfA hfB hfG hfK hfH)
       (fun _ => sorry)
   · exact big {1, 2, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 06: Theorem A
   · -- type 07: Cor. T1 at the quadrilaterals 0256, 1234 (sharing vertex 2); general position
@@ -370,31 +370,31 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- asked, the special positions are open in Lean (incl. case (c) of Theorem 24.5)
     exact byGen1 (quadPair hx hN hR {0, 1, 3, 4} {0, 2, 5, 6} 0 (by decide) (by decide) (by decide) (by decide)
       (by decide)) (fun _ => sorry)
-  · -- type 10: `not_type10_of_isNopert_sv`; its general position (3 hypotheses) is asked, the special
-    -- positions are open in Lean
+  · -- type 10: `not_type10_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
+    -- special value of Lemma T′ (settled there, 26.8); the other special positions are open in Lean
     obtain ⟨fA, hfA⟩ := hR {1, 2, 4, 5} (by decide)
     obtain ⟨fB, hfB⟩ := hR {1, 3, 4, 6} (by decide)
     obtain ⟨fC, hfC⟩ := hR {2, 3, 5, 6} (by decide)
     obtain ⟨fD, hfD⟩ := hR {0, 2, 3} (by decide)
-    exact byGen3 (not_type10_of_isNopert_sv x hN hx fA fB fC fD hfA hfB hfC hfD)
+    exact byGen2 (not_type10_of_isNopert_sv x hN hx fA fB fC fD hfA hfB hfC hfD)
       (fun _ => sorry)
   · exact big {0, 2, 3, 4, 6} (by decide) (by decide) (by decide)  -- type 11: Theorem A
-  · -- type 12: `not_type12_of_isNopert_sv`; its general position (3 hypotheses) is asked, the special
-    -- positions are open in Lean
+  · -- type 12: `not_type12_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
+    -- special value of Lemma T′ (settled there, 24.15); the other special positions are open in Lean
     obtain ⟨fA, hfA⟩ := hR {0, 1, 3, 5} (by decide)
     obtain ⟨fB, hfB⟩ := hR {0, 3, 4, 6} (by decide)
     obtain ⟨fD, hfD⟩ := hR {0, 2, 4} (by decide)
     obtain ⟨fG, hfG⟩ := hR {2, 3, 6} (by decide)
     obtain ⟨fJ, hfJ⟩ := hR {2, 4, 6} (by decide)
-    exact byGen3 (not_type12_of_isNopert_sv x hN hx fA fB fD fG fJ hfA hfB hfD hfG hfJ)
+    exact byGen2 (not_type12_of_isNopert_sv x hN hx fA fB fD fG fJ hfA hfB hfD hfG hfJ)
       (fun _ => sorry)
-  · -- type 13: `not_type13_of_isNopert_sv`; its general position (3 hypotheses) is asked, the special
-    -- positions are open in Lean
+  · -- type 13: `not_type13_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
+    -- special value of Lemma T′ (settled there, 26.8); the other special positions are open in Lean
     obtain ⟨fA, hfA⟩ := hR {0, 1, 4, 5} (by decide)
     obtain ⟨fB, hfB⟩ := hR {2, 4, 5, 6} (by decide)
     obtain ⟨fD, hfD⟩ := hR {1, 2, 3} (by decide)
     obtain ⟨fG, hfG⟩ := hR {1, 2, 6} (by decide)
-    exact byGen3 (not_type13_of_isNopert_sv x hN hx fA fB fD fG hfA hfB hfD hfG)
+    exact byGen2 (not_type13_of_isNopert_sv x hN hx fA fB fD fG hfA hfB hfD hfG)
       (fun _ => sorry)
   · -- type 14: Cor. T1 at the quadrilaterals 0235, 1456 (sharing vertex 5); general position
     -- asked, the special positions are open in Lean
@@ -413,25 +413,27 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fH, hfH⟩ := hR {2, 4, 5} (by decide)
     exact byGen5 (not_type16_of_isNopert_codim2 x hN hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
       (fun _ => sorry)
-  · -- type 17: `not_type17_of_isNopert_sv`; its general position (3 hypotheses) is asked, the special
-    -- positions are open in Lean
+  · -- type 17: `not_type17_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
+    -- special value of Lemma T′ (settled there, 26.8); the other special positions are open in Lean
     obtain ⟨fA, hfA⟩ := hR {0, 2, 4, 6} (by decide)
     obtain ⟨fB, hfB⟩ := hR {2, 3, 4, 5} (by decide)
     obtain ⟨fD, hfD⟩ := hR {1, 3, 6} (by decide)
     obtain ⟨fE, hfE⟩ := hR {0, 3, 4} (by decide)
-    exact byGen3 (not_type17_of_isNopert_sv x hN hx fA fB fD fE hfA hfB hfD hfE)
+    obtain ⟨fF, hfF⟩ := hR {0, 3, 6} (by decide)
+    exact byGen2 (not_type17_of_isNopert_sv x hN hx fA fB fD fE fF hfA hfB hfD hfE hfF)
       (fun _ => sorry)
   · -- type 18: Cor. T1 at the quadrilaterals 0356, 1245 (sharing vertex 5); general position
     -- asked, the special positions are open in Lean (incl. case (c) of Theorem 24.5)
     exact byGen1 (quadPair hx hN hR {0, 3, 5, 6} {1, 2, 4, 5} 5 (by decide) (by decide) (by decide) (by decide)
       (by decide)) (fun _ => sorry)
-  · -- type 19: `not_type19_of_isNopert_sv`; its general position (3 hypotheses) is asked, the special
-    -- positions are open in Lean
+  · -- type 19: `not_type19_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
+    -- special value of Lemma T′ (settled there, 26.8); the other special positions are open in Lean
     obtain ⟨fA, hfA⟩ := hR {0, 2, 3, 5} (by decide)
     obtain ⟨fB, hfB⟩ := hR {1, 3, 5, 6} (by decide)
     obtain ⟨fD, hfD⟩ := hR {0, 4, 6} (by decide)
     obtain ⟨fG, hfG⟩ := hR {3, 4, 6} (by decide)
-    exact byGen3 (not_type19_of_isNopert_sv x hN hx fA fB fD fG hfA hfB hfD hfG)
+    obtain ⟨fE, hfE⟩ := hR {0, 2, 6} (by decide)
+    exact byGen2 (not_type19_of_isNopert_sv x hN hx fA fB fD fG fE hfA hfB hfD hfG hfE)
       (fun _ => sorry)
   · -- type 20: Cor. T1 at the quadrilaterals 0135, 2456 (sharing vertex 5); general position
     -- asked, the special positions are open in Lean (incl. case (c) of Theorem 24.5)
@@ -449,23 +451,23 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fH, hfH⟩ := hR {2, 3, 5} (by decide)
     exact byGen7 (not_type21_of_isNopert_codim2 x hN hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
       (fun _ => sorry)
-  · -- type 22: `not_type22_of_isNopert_sv`; its general position (3 hypotheses) is asked, the special
-    -- positions are open in Lean
+  · -- type 22: `not_type22_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
+    -- special value of Lemma T′ (settled there, 24.15); the other special positions are open in Lean
     obtain ⟨fA, hfA⟩ := hR {0, 1, 3, 4} (by decide)
     obtain ⟨fD, hfD⟩ := hR {1, 2, 5} (by decide)
     obtain ⟨fG, hfG⟩ := hR {2, 4, 6} (by decide)
     obtain ⟨fN, hfN⟩ := hR {1, 4, 6} (by decide)
     obtain ⟨fI, hfI⟩ := hR {2, 5, 6} (by decide)
-    exact byGen3 (not_type22_of_isNopert_sv x hN hx fA fD fG fN fI hfA hfD hfG hfN hfI)
+    exact byGen2 (not_type22_of_isNopert_sv x hN hx fA fD fG fN fI hfA hfD hfG hfN hfI)
       (fun _ => sorry)
-  · -- type 23: `not_type23_of_isNopert_sv`; its general position (4 hypotheses) is asked, the special
-    -- positions are open in Lean
+  · -- type 23: `not_type23_of_isNopert_sv`; its general position (3 hypotheses) is asked off the
+    -- special value of Lemma T′ (settled there, 26.8); the other special positions are open in Lean
     obtain ⟨fA, hfA⟩ := hR {0, 3, 4, 5} (by decide)
     obtain ⟨fD, hfD⟩ := hR {0, 1, 4} (by decide)
     obtain ⟨fE, hfE⟩ := hR {1, 2, 5} (by decide)
     obtain ⟨fH, hfH⟩ := hR {1, 5, 6} (by decide)
     obtain ⟨fK, hfK⟩ := hR {4, 5, 6} (by decide)
-    exact byGen4 (not_type23_of_isNopert_sv x hN hx fA fD fE fH fK hfA hfD hfE hfH hfK)
+    exact byGen3 (not_type23_of_isNopert_sv x hN hx fA fD fE fH fK hfA hfD hfE hfH hfK)
       (fun _ => sorry)
   · -- type 24: `not_type24_outside_Cbar_of_isNopert`; proved outside C̄ ∪ Σ_B
     obtain ⟨fA, hfA⟩ := hR {0, 1, 2} (by decide)
@@ -502,8 +504,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fZ, hfZ⟩ := hR {3, 4, 5} (by decide)
     exact byGen3 (not_type26_of_isNopert x hN hx fA fT fG fH fU fW fY fZ hfA hfT hfG hfH hfU hfW hfY hfZ)
       (fun _ => sorry)
-  · -- type 27: `not_type27_of_isNopert_sv`; its general position (4 hypotheses) is asked, the special
-    -- positions are open in Lean
+  · -- type 27: `not_type27_of_isNopert_sv`; its general position (3 hypotheses) is asked off the
+    -- special value of Lemma T′ (settled there, 26.8); the other special positions are open in Lean
     obtain ⟨fB, hfB⟩ := hR {2, 3, 5, 6} (by decide)
     obtain ⟨fD, hfD⟩ := hR {0, 2, 5} (by decide)
     obtain ⟨fE, hfE⟩ := hR {0, 1, 6} (by decide)
@@ -511,17 +513,18 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fH, hfH⟩ := hR {0, 4, 5} (by decide)
     obtain ⟨fI, hfI⟩ := hR {0, 1, 2} (by decide)
     obtain ⟨fJ, hfJ⟩ := hR {4, 5, 6} (by decide)
-    exact byGen4 (not_type27_of_isNopert_sv x hN hx fB fD fE fG fH fI fJ hfB hfD hfE hfG hfH hfI hfJ)
+    exact byGen3 (not_type27_of_isNopert_sv x hN hx fB fD fE fG fH fI fJ hfB hfD hfE hfG hfH hfI hfJ)
       (fun _ => sorry)
-  · -- type 28: `not_type28_of_isNopert_sv`; its general position (3 hypotheses) is asked, the special
-    -- positions are open in Lean
+  · -- type 28: `not_type28_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
+    -- special value of Lemma T′ (settled there, 24.15); the other special positions are open in Lean
     obtain ⟨fA, hfA⟩ := hR {0, 2, 4, 5} (by decide)
     obtain ⟨fD, hfD⟩ := hR {0, 3, 6} (by decide)
     obtain ⟨fG, hfG⟩ := hR {1, 4, 6} (by decide)
     obtain ⟨fH, hfH⟩ := hR {0, 2, 3} (by decide)
     obtain ⟨fF, hfF⟩ := hR {0, 1, 5} (by decide)
     obtain ⟨fM, hfM⟩ := hR {1, 4, 5} (by decide)
-    exact byGen3 (not_type28_of_isNopert_sv x hN hx fA fD fG fH fF fM hfA hfD hfG hfH hfF hfM)
+    obtain ⟨fE, hfE⟩ := hR {0, 1, 6} (by decide)
+    exact byGen2 (not_type28_of_isNopert_sv x hN hx fA fD fG fH fF fM fE hfA hfD hfG hfH hfF hfM hfE)
       (fun _ => sorry)
   · -- type 29: the octahedron `O = K − 6` with the cap `6` (`Minimality.type29_cap`) has the normal
     -- form `N` (Lemma 21.1); its class (Lemma 21.2) is the sign pattern of `(a2, b0, V)`. Classes K3

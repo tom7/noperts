@@ -995,16 +995,17 @@ type 05). At `s = 1` three faces are edge-on in one view, and the statements abo
 condition there that excludes a single tie (`EdgeFar` along the forced parallel edge for
 05, 10, 13, 17, 19, 23, 27; `TriGenFar` for 12, 22, 28), on top of their general position at
 the views that coincide there. The statements below ask their general position only off
-`s = 1`, and at `s = 1` only that the three corners of the shadow triangle are not at one
-depth (`Minimality.SpecTriple`, `Minimality.ViewTriple`): every other tie, and any segment
-parallel to the view, is settled by a reading of Lemma T′ at one of the three corners
-(`FEWER-FACES-PROOFS.md` Theorems 23.18 and 24.13; `Minimality/SpecialValue.lean`). They
+`s = 1`, and nothing at `s = 1`: every tie, and any segment parallel to the view, is settled
+by a reading of Lemma T′ at one of the three corners (`FEWER-FACES-PROOFS.md` Theorems 23.18
+and 24.13) or, at the triple tie of the three corners, by the level triangle in the sector
+tilts at the view (Proposition 26.8, Lemma 24.14 with Corollary 24.15;
+`Minimality/SpecialValue.lean`, `Minimality/SpecialTriple.lean`). Types 17, 19, 28 take one
+more facet (`036`, `026`, `016`), which shows that the tied corners do not span a face. They
 imply the statements above. -/
 
 /-- **Type 05, the special value settled**: as `not_type05_of_isNopert`, with
 `Minimality.TriGenPar` (or `Minimality.TriGenFarP`) at the two views asked only where the
-deciding number `fG x5 / fG x0 + fA x5 / fA x4` is not 1, and where it is 1 only no triple
-tie of `x2`, `x4` and `x0` or `x1` along `01`. -/
+deciding number `fG x5 / fG x0 + fA x5 / fA x4` is not 1, and nothing asked where it is 1. -/
 theorem not_type05_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fA fB fG fK fH : ℝ³ →ᵃ[ℝ] ℝ)
@@ -1027,15 +1028,12 @@ theorem not_type05_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.un
       Minimality.TriGenPar (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
         (({2, 4, 6} : Finset (Fin 7)).image x) (x 4) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
-        (({2, 4, 6} : Finset (Fin 7)).image x) (x 4))
-    (hS : fG (x 5) / fG (x 0) + fA (x 5) / fA (x 4) = 1 →
-      ¬ Minimality.SpecTriple (x 0) (x 1) (x 2) (x 4)) : False :=
+        (({2, 4, 6} : Finset (Fin 7)).image x) (x 4)) : False :=
   h.2 (Minimality.isRupert_type05_sv x hx (noThreeCollinear_seven x h hx)
-    fA fB fG fK fH hA hB hG hK hH hT1 hT2 hS)
+    fA fB fG fK fH hA hB hG hK hH hT1 hT2)
 
-/-- **Type 10, the special value settled**: as `not_type10_of_isNopert`, its general
-position asked only where `fB x0 / fB x2 + fA x0 / fA x3` is not 1, and where it is 1 only
-no triple tie of `x2`, `x3` and `x1` or `x4` along `14`. -/
+/-- **Type 10, the special value settled**: as `not_type10_of_isNopert`, its general position
+asked only where `fB x0 / fB x2 + fA x0 / fA x3` is not 1, and nothing asked where it is 1. -/
 theorem not_type10_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fA fB fC fD : ℝ³ →ᵃ[ℝ] ℝ)
@@ -1056,16 +1054,13 @@ theorem not_type10_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.un
       Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
         (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 3} : Finset (Fin 7)).image x)
-        (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2))
-    (hS : fB (x 0) / fB (x 2) + fA (x 0) / fA (x 3) = 1 →
-      ¬ Minimality.SpecTriple (x 1) (x 4) (x 2) (x 3)) : False :=
+        (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 2)) : False :=
   h.2 (Minimality.isRupert_type10_sv x hx (noThreeCollinear_seven x h hx)
     ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1)
-    fA fB fC fD hA hB hC hD hZ1 hT2 hS)
+    fA fB fC fD hA hB hC hD hZ1 hT2)
 
-/-- **Type 13, the special value settled**: as `not_type13_of_isNopert`, its general
-position asked only where `fB x3 / fB x1 + fA x3 / fA x2` is not 1, and where it is 1 only
-no triple tie of `x1`, `x2` and `x4` or `x5` along `45`. -/
+/-- **Type 13, the special value settled**: as `not_type13_of_isNopert`, its general position
+asked only where `fB x3 / fB x1 + fA x3 / fA x2` is not 1, and nothing asked where it is 1. -/
 theorem not_type13_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fA fB fD fG : ℝ³ →ᵃ[ℝ] ℝ)
@@ -1086,19 +1081,17 @@ theorem not_type13_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.un
       Minimality.TriGenPar (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
         (({1, 2, 3} : Finset (Fin 7)).image x) (x 1) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
-        (({1, 2, 3} : Finset (Fin 7)).image x) (x 1))
-    (hS : fB (x 3) / fB (x 1) + fA (x 3) / fA (x 2) = 1 →
-      ¬ Minimality.SpecTriple (x 4) (x 5) (x 1) (x 2)) : False :=
+        (({1, 2, 3} : Finset (Fin 7)).image x) (x 1)) : False :=
   h.2 (Minimality.isRupert_type13_sv x hx (noThreeCollinear_seven x h hx)
     ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1)
-    fA fB fD fG hA hB hD hG hZ1 hT2 hS)
+    fA fB fD fG hA hB hD hG hZ1 hT2)
 
-/-- **Type 17, the special value settled**: as `not_type17_of_isNopert`, its general
-position asked only where `fB x0 / fB x6 + fD x0 / fD x4` is not 1, and where it is 1 only
-no triple tie of `x6`, `x3` and `x2` or `x4` along `24`. -/
+/-- **Type 17, the special value settled**: as `not_type17_of_isNopert`, its general position
+asked only where `fB x0 / fB x6 + fD x0 / fD x4` is not 1, and nothing asked where it is 1;
+`036` is one more facet. -/
 theorem not_type17_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
-    (fA fB fD fE : ℝ³ →ᵃ[ℝ] ℝ)
+    (fA fB fD fE fF : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 2, 4, 6} : Finset (Fin 7)) → fA (x i) < 0))
     (hB : ∀ i, (i ∈ ({2, 3, 4, 5} : Finset (Fin 7)) → fB (x i) = 0) ∧
@@ -1107,6 +1100,8 @@ theorem not_type17_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.un
       (i ∉ ({1, 3, 6} : Finset (Fin 7)) → fD (x i) < 0))
     (hE : ∀ i, (i ∈ ({0, 3, 4} : Finset (Fin 7)) → fE (x i) = 0) ∧
       (i ∉ ({0, 3, 4} : Finset (Fin 7)) → fE (x i) < 0))
+    (hF : ∀ i, (i ∈ ({0, 3, 6} : Finset (Fin 7)) → fF (x i) = 0) ∧
+      (i ∉ ({0, 3, 6} : Finset (Fin 7)) → fF (x i) < 0))
     (hT1 : fB (x 0) / fB (x 6) + fD (x 0) / fD (x 4) ≠ 1 →
       Minimality.TriGenPar (Finset.univ.image x) (({1, 3, 6} : Finset (Fin 7)).image x)
         (({2, 3, 4, 5} : Finset (Fin 7)).image x) (x 3) ∨
@@ -1116,18 +1111,16 @@ theorem not_type17_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.un
       Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
         (({1, 3, 6} : Finset (Fin 7)).image x) (x 6) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 4, 6} : Finset (Fin 7)).image x)
-        (({1, 3, 6} : Finset (Fin 7)).image x) (x 6))
-    (hS : fB (x 0) / fB (x 6) + fD (x 0) / fD (x 4) = 1 →
-      ¬ Minimality.SpecTriple (x 2) (x 4) (x 6) (x 3)) : False :=
+        (({1, 3, 6} : Finset (Fin 7)).image x) (x 6)) : False :=
   h.2 (Minimality.isRupert_type17_sv x hx (noThreeCollinear_seven x h hx)
-    fA fB fD fE hA hB hD hE hT1 hT2 hS)
+    fA fB fD fE fF hA hB hD hE hF hT1 hT2)
 
-/-- **Type 19, the special value settled**: as `not_type19_of_isNopert`, its general
-position asked only where `fB x4 / fB x0 + fA x4 / fA x6` is not 1, and where it is 1 only
-no triple tie of `x0`, `x6` and `x3` or `x5` along `35`. -/
+/-- **Type 19, the special value settled**: as `not_type19_of_isNopert`, its general position
+asked only where `fB x4 / fB x0 + fA x4 / fA x6` is not 1, and nothing asked where it is 1;
+`026` is one more facet. -/
 theorem not_type19_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
-    (fA fB fD fG : ℝ³ →ᵃ[ℝ] ℝ)
+    (fA fB fD fG fE : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 2, 3, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 2, 3, 5} : Finset (Fin 7)) → fA (x i) < 0))
     (hB : ∀ i, (i ∈ ({1, 3, 5, 6} : Finset (Fin 7)) → fB (x i) = 0) ∧
@@ -1136,6 +1129,8 @@ theorem not_type19_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.un
       (i ∉ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) < 0))
     (hG : ∀ i, (i ∈ ({3, 4, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
       (i ∉ ({3, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
+    (hE : ∀ i, (i ∈ ({0, 2, 6} : Finset (Fin 7)) → fE (x i) = 0) ∧
+      (i ∉ ({0, 2, 6} : Finset (Fin 7)) → fE (x i) < 0))
     (hZ1 : fB (x 4) / fB (x 0) + fA (x 4) / fA (x 6) ≠ 1 →
       Minimality.EdgeTieR (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
         (({1, 3, 5, 6} : Finset (Fin 7)).image x) (x 3) (x 5) ∨
@@ -1145,16 +1140,13 @@ theorem not_type19_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.un
       Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
         (({0, 4, 6} : Finset (Fin 7)).image x) (x 0) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
-        (({0, 4, 6} : Finset (Fin 7)).image x) (x 0))
-    (hS : fB (x 4) / fB (x 0) + fA (x 4) / fA (x 6) = 1 →
-      ¬ Minimality.SpecTriple (x 3) (x 5) (x 0) (x 6)) : False :=
+        (({0, 4, 6} : Finset (Fin 7)).image x) (x 0)) : False :=
   h.2 (Minimality.isRupert_type19_sv x hx (noThreeCollinear_seven x h hx)
     ((not_coplanar_iff_interior_convexHull_nonempty _).mp h.1)
-    fA fB fD fG hA hB hD hG hZ1 hT2 hS)
+    fA fB fD fG fE hA hB hD hG hE hZ1 hT2)
 
-/-- **Type 23, the special value settled**: as `not_type23_of_isNopert`, its general
-position asked only where `fA x6 / fA x1 + fD x6 / fD x5` is not 1, and where it is 1 only
-no triple tie of `x1`, `x5` and `x0` or `x4` along `04`. -/
+/-- **Type 23, the special value settled**: as `not_type23_of_isNopert`, its general position
+asked only where `fA x6 / fA x1 + fD x6 / fD x5` is not 1, and nothing asked where it is 1. -/
 theorem not_type23_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fA fD fE fH fK : ℝ³ →ᵃ[ℝ] ℝ)
@@ -1181,15 +1173,12 @@ theorem not_type23_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.un
       Minimality.TriGenPar (Finset.univ.image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x)
         (({1, 2, 5} : Finset (Fin 7)).image x) (x 5) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 3, 4, 5} : Finset (Fin 7)).image x)
-        (({1, 2, 5} : Finset (Fin 7)).image x) (x 5))
-    (hS : fA (x 6) / fA (x 1) + fD (x 6) / fD (x 5) = 1 →
-      ¬ Minimality.SpecTriple (x 0) (x 4) (x 1) (x 5)) : False :=
+        (({1, 2, 5} : Finset (Fin 7)).image x) (x 5)) : False :=
   h.2 (Minimality.isRupert_type23_sv x hx (noThreeCollinear_seven x h hx)
-    fA fD fE fH fK hA hD hE hH hK hZ1 hT1 hT2 hS)
+    fA fD fE fH fK hA hD hE hH hK hZ1 hT1 hT2)
 
-/-- **Type 27, the special value settled**: as `not_type27_of_isNopert`, its general
-position asked only where `fG x2 / fG x5` is not 1, and where it is 1 only no triple tie of
-`x0`, `x6` and `x2` or `x5` along `25`. -/
+/-- **Type 27, the special value settled**: as `not_type27_of_isNopert`, its general position
+asked only where `fG x2 / fG x5` is not 1, and nothing asked where it is 1. -/
 theorem not_type27_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fB fD fE fG fH fI fJ : ℝ³ →ᵃ[ℝ] ℝ)
@@ -1220,14 +1209,12 @@ theorem not_type27_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.un
       Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
         (({0, 4, 6} : Finset (Fin 7)).image x) (x 0) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 5} : Finset (Fin 7)).image x)
-        (({0, 4, 6} : Finset (Fin 7)).image x) (x 0))
-    (hS : fG (x 2) / fG (x 5) = 1 → ¬ Minimality.SpecTriple (x 2) (x 5) (x 0) (x 6)) : False :=
+        (({0, 4, 6} : Finset (Fin 7)).image x) (x 0)) : False :=
   h.2 (Minimality.isRupert_type27_sv x hx (noThreeCollinear_seven x h hx)
-    fB fD fE fG fH fI fJ hB hD hE hG hH hI hJ hZ1 hT1 hT2 hS)
+    fB fD fE fG fH fI fJ hB hD hE hG hH hI hJ hZ1 hT1 hT2)
 
-/-- **Type 12, the special value settled**: as `not_type12_of_isNopert`, its general
-position asked only where `fD x6 / fD x3 + fA x6 / fA x2` is not 1, and where it is 1 only
-no triple tie of `x0`, `x3`, `x2` in the view along the planes of `0135` and `024`. -/
+/-- **Type 12, the special value settled**: as `not_type12_of_isNopert`, its general position
+asked only where `fD x6 / fD x3 + fA x6 / fA x2` is not 1, and nothing asked where it is 1. -/
 theorem not_type12_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fA fB fD fG fJ : ℝ³ →ᵃ[ℝ] ℝ)
@@ -1250,15 +1237,12 @@ theorem not_type12_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.un
       Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 4} : Finset (Fin 7)).image x)
         (({2, 3, 6} : Finset (Fin 7)).image x) (x 2) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 4} : Finset (Fin 7)).image x)
-        (({2, 3, 6} : Finset (Fin 7)).image x) (x 2))
-    (hS : fD (x 6) / fD (x 3) + fA (x 6) / fA (x 2) = 1 →
-      ¬ Minimality.ViewTriple fA fD (x 0) (x 3) (x 2)) : False :=
+        (({2, 3, 6} : Finset (Fin 7)).image x) (x 2)) : False :=
   h.2 (Minimality.isRupert_type12_sv x hx (noThreeCollinear_seven x h hx)
-    fA fB fD fG fJ hA hB hD hG hJ hT1 hT2 hS)
+    fA fB fD fG fJ hA hB hD hG hJ hT1 hT2)
 
-/-- **Type 22, the special value settled**: as `not_type22_of_isNopert`, its general
-position asked only where `fG x5 / fG x1 + fA x5 / fA x2` is not 1, and where it is 1 only
-no triple tie of `x4`, `x1`, `x2` in the view along the planes of `0134` and `246`. -/
+/-- **Type 22, the special value settled**: as `not_type22_of_isNopert`, its general position
+asked only where `fG x5 / fG x1 + fA x5 / fA x2` is not 1, and nothing asked where it is 1. -/
 theorem not_type22_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
     (fA fD fG fN fI : ℝ³ →ᵃ[ℝ] ℝ)
@@ -1281,18 +1265,16 @@ theorem not_type22_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.un
       Minimality.TriGenPar (Finset.univ.image x) (({0, 1, 3, 4} : Finset (Fin 7)).image x)
         (({2, 4, 6} : Finset (Fin 7)).image x) (x 4) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 1, 3, 4} : Finset (Fin 7)).image x)
-        (({2, 4, 6} : Finset (Fin 7)).image x) (x 4))
-    (hS : fG (x 5) / fG (x 1) + fA (x 5) / fA (x 2) = 1 →
-      ¬ Minimality.ViewTriple fA fG (x 4) (x 1) (x 2)) : False :=
+        (({2, 4, 6} : Finset (Fin 7)).image x) (x 4)) : False :=
   h.2 (Minimality.isRupert_type22_sv x hx (noThreeCollinear_seven x h hx)
-    fA fD fG fN fI hA hD hG hN hI hT1 hT2 hS)
+    fA fD fG fN fI hA hD hG hN hI hT1 hT2)
 
-/-- **Type 28, the special value settled**: as `not_type28_of_isNopert`, its general
-position asked only where `fG x3 / fG x0 + fA x3 / fA x6` is not 1, and where it is 1 only
-no triple tie of `x4`, `x0`, `x6` in the view along the planes of `0245` and `146`. -/
+/-- **Type 28, the special value settled**: as `not_type28_of_isNopert`, its general position
+asked only where `fG x3 / fG x0 + fA x3 / fA x6` is not 1, and nothing asked where it is 1;
+`016` is one more facet. -/
 theorem not_type28_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
     (hx : Function.Injective x)
-    (fA fD fG fH fF fM : ℝ³ →ᵃ[ℝ] ℝ)
+    (fA fD fG fH fF fM fE : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 2, 4, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 2, 4, 5} : Finset (Fin 7)) → fA (x i) < 0))
     (hD : ∀ i, (i ∈ ({0, 3, 6} : Finset (Fin 7)) → fD (x i) = 0) ∧
@@ -1305,6 +1287,8 @@ theorem not_type28_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.un
       (i ∉ ({0, 1, 5} : Finset (Fin 7)) → fF (x i) < 0))
     (hM : ∀ i, (i ∈ ({1, 4, 5} : Finset (Fin 7)) → fM (x i) = 0) ∧
       (i ∉ ({1, 4, 5} : Finset (Fin 7)) → fM (x i) < 0))
+    (hE : ∀ i, (i ∈ ({0, 1, 6} : Finset (Fin 7)) → fE (x i) = 0) ∧
+      (i ∉ ({0, 1, 6} : Finset (Fin 7)) → fE (x i) < 0))
     (hT1 : fG (x 3) / fG (x 0) + fA (x 3) / fA (x 6) ≠ 1 →
       Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
         (({1, 4, 6} : Finset (Fin 7)).image x) (x 4) ∨
@@ -1314,10 +1298,8 @@ theorem not_type28_of_isNopert_sv (x : Fin 7 → ℝ³) (h : IsNopert (Finset.un
       Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
         (({0, 3, 6} : Finset (Fin 7)).image x) (x 0) ∨
       Minimality.TriGenFarP (Finset.univ.image x) (({0, 2, 4, 5} : Finset (Fin 7)).image x)
-        (({0, 3, 6} : Finset (Fin 7)).image x) (x 0))
-    (hS : fG (x 3) / fG (x 0) + fA (x 3) / fA (x 6) = 1 →
-      ¬ Minimality.ViewTriple fA fG (x 4) (x 0) (x 6)) : False :=
+        (({0, 3, 6} : Finset (Fin 7)).image x) (x 0)) : False :=
   h.2 (Minimality.isRupert_type28_sv x hx (noThreeCollinear_seven x h hx)
-    fA fD fG fH fF fM hA hD hG hH hF hM hT1 hT2 hS)
+    fA fD fG fH fF fM fE hA hD hG hH hF hM hE hT1 hT2)
 
 end
