@@ -913,7 +913,7 @@ theorem EdgeRect.parallelogram {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (hvw : v �
     (hint : Q1 ∩ Q2 = {v, w}) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hne1 : ∃ p ∈ Q1, p ∉ Q2)
     (hne2 : ∃ p ∈ Q2, p ∉ Q1) (h : EdgeRect V Q1 Q2 v w) :
     ∃ p ∈ Q1, ∃ p' ∈ Q1, ∃ q ∈ Q2, ∃ q' ∈ Q2, p ∉ Q2 ∧ p' ∉ Q2 ∧ q ∉ Q1 ∧ q' ∉ Q1 ∧
-      p ≠ p' ∧ q ≠ q' ∧ p' - p = q' - q := by
+      p ≠ p' ∧ q ≠ q' ∧ p' - p = q' - q ∧ ⟪p, w - v⟫ = ⟪q, w - v⟫ ∧ ⟪p', w - v⟫ = ⟪q', w - v⟫ := by
   obtain ⟨f1, f2, z1, n1, z2, n2, p, hp, p', hp', q, hq, q', hq', fp, fp', fq, fq', t1, t2, t3⟩ :=
     h
   obtain ⟨b, hbA, hbB⟩ := hne1
@@ -943,7 +943,7 @@ theorem EdgeRect.parallelogram {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (hvw : v �
     rcases mul_eq_zero.mp this with h | h
     · linarith
     · linarith
-  exact ⟨p, hp, p', hp', q, hq, q', hq', pQ, p'Q, qQ, q'Q, hpp, hqq, by rw [hs, hs', hss]⟩
+  exact ⟨p, hp, p', hp', q, hq, q', hq', pQ, p'Q, qQ, q'Q, hpp, hqq, by rw [hs, hs', hss], t1, t2⟩
 
 /-- `EdgePar` gives `EdgeTieR` (the tie clause of `EdgeTieR`, `TieHER`, always holds: a tie of
 the far ends is accepted). -/
@@ -989,11 +989,12 @@ theorem EdgeRect.labels {x : Fin 7 → ℝ³} (hx : Function.Injective x) (A B :
     (hB : ∃ i ∈ B, i ∉ A)
     (h : EdgeRect (Finset.univ.image x) (A.image x) (B.image x) (x v) (x w)) :
     ∃ i ∈ A, ∃ i' ∈ A, ∃ j ∈ B, ∃ j' ∈ B, i ∉ B ∧ i' ∉ B ∧ j ∉ A ∧ j' ∉ A ∧ i ≠ i' ∧ j ≠ j' ∧
-      x i' - x i = x j' - x j := by
+      x i' - x i = x j' - x j ∧ ⟪x i, x w - x v⟫ = ⟪x j, x w - x v⟫ ∧
+      ⟪x i', x w - x v⟫ = ⟪x j', x w - x v⟫ := by
   classical
   have hmem : ∀ (S : Finset (Fin 7)) (y : ℝ³), y ∈ S.image x ↔ ∃ i ∈ S, x i = y := fun S y => by
     simp [Finset.mem_image]
-  obtain ⟨p, hp, p', hp', q, hq, q', hq', pQ, p'Q, qQ, q'Q, hpp, hqq, hrel⟩ :=
+  obtain ⟨p, hp, p', hp', q, hq, q', hq', pQ, p'Q, qQ, q'Q, hpp, hqq, hrel, ht1, ht2⟩ :=
     EdgeRect.parallelogram (V := Finset.univ.image x) (fun h => hvw (hx h))
       (by rw [← Finset.image_inter _ _ hx, hint, Finset.image_insert, Finset.image_singleton])
       (Finset.image_subset_image (Finset.subset_univ A))
@@ -1015,7 +1016,7 @@ theorem EdgeRect.labels {x : Fin 7 → ℝ³} (hx : Function.Injective x) (A B :
   exact ⟨i, hi, i', hi', j, hj, j', hj', fun h => pQ (Finset.mem_image_of_mem x h),
     fun h => p'Q (Finset.mem_image_of_mem x h), fun h => qQ (Finset.mem_image_of_mem x h),
     fun h => q'Q (Finset.mem_image_of_mem x h), fun h => hpp (by rw [h]),
-    fun h => hqq (by rw [h]), hrel⟩
+    fun h => hqq (by rw [h]), hrel, ht1, ht2⟩
 
 /-- An affine functional takes equal increments on equal vector differences. -/
 theorem aff_parallelogram (f : ℝ³ →ᵃ[ℝ] ℝ) {p p' q q' : ℝ³} (h : p' - p = q' - q) :
@@ -1036,7 +1037,7 @@ theorem not_edgeRect_type13 {x : Fin 7 → ℝ³} (hx : Function.Injective x) (f
     ¬ EdgeRect (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
       (({2, 4, 5, 6} : Finset (Fin 7)).image x) (x 4) (x 5) := by
   intro h
-  obtain ⟨i, hiA, i', hi'A, j, hjB, j', hj'B, hiB, hi'B, hjA, hj'A, hii, hjj, hrel⟩ :=
+  obtain ⟨i, hiA, i', hi'A, j, hjB, j', hj'B, hiB, hi'B, hjA, hj'A, hii, hjj, hrel, -, -⟩ :=
     EdgeRect.labels hx {0, 1, 4, 5} {2, 4, 5, 6} 4 5 (by decide) (by decide) (by decide)
       (by decide) h
   have key := aff_parallelogram f hrel
@@ -1060,7 +1061,7 @@ theorem not_edgeRect_type19 {x : Fin 7 → ℝ³} (hx : Function.Injective x) (f
     ¬ EdgeRect (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
       (({1, 3, 5, 6} : Finset (Fin 7)).image x) (x 3) (x 5) := by
   intro h
-  obtain ⟨i, hiA, i', hi'A, j, hjB, j', hj'B, hiB, hi'B, hjA, hj'A, hii, hjj, hrel⟩ :=
+  obtain ⟨i, hiA, i', hi'A, j, hjB, j', hj'B, hiB, hi'B, hjA, hj'A, hii, hjj, hrel, -, -⟩ :=
     EdgeRect.labels hx {0, 2, 3, 5} {1, 3, 5, 6} 3 5 (by decide) (by decide) (by decide)
       (by decide) h
   have key := aff_parallelogram f hrel

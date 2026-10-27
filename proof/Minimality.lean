@@ -11,6 +11,7 @@ public import Minimality.TripleTieObtuse
 public import Minimality.TripleTieAdjacent
 public import Minimality.ParDichotomy
 public import Minimality.QuadTripleRect
+public import Minimality.Type10Prism
 
 /-!
 # Every nopert has at least 7 points
@@ -313,7 +314,8 @@ or `TriGenFarP` always holds, `Minimality.triGenPar_or_farP_idx`, and `EdgePar` 
 edge views of 23, 25, 26, 27, `Minimality.edgePar_or_farP_idx`; types 13 and 19 are closed too: at
 their edge of two quadrilaterals the only residual is the edge rectangle `Minimality.EdgeRect`,
 refuted by a triangle facet, `Minimality.not_edgeRect_type13`, `…type19`; type 10 is closed except
-that rectangle, which its facets allow; for 07 and 14, two quadrilaterals,
+a right triangular prism (`Minimality.type10_rightPrism`: the rectangle at `14` and, by the cyclic
+relabelling, at `25`, `36`); for 07 and 14, two quadrilaterals,
 the residual position `QuadTripleRect` is refuted from the facets,
 `Minimality.not_quadTripleRect_type07`, `…type14`), and for K3 and K4, the special
 positions: each type's theorem in `Minimality/Cases.lean` closes the case under its general-position
@@ -567,26 +569,14 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- asked, the special positions are open in Lean (incl. case (c) of Theorem 24.5)
     exact byGen1 (quadPair hx hN hR {0, 1, 3, 4} {0, 2, 5, 6} 0 (by decide) (by decide) (by decide) (by decide)
       (by decide)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
-  · -- type 10: `not_type10_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
-    -- special value of Lemma T′ (settled there, 26.8).  The vertex view has the triangle `023`
-    -- (`triGenPar_or_farP_idx`); at the edge `14` of the quadrilaterals `1245`, `1346`,
-    -- `EdgeTieR` or `EdgeFarP` holds (`edgeTieR_or_farP_rect_idx`) unless the *edge rectangle*
-    -- `EdgeRect` (lateral edges `25`, `36` parallel to `14`, tied crosswise: a capped prism with
-    -- `23` orthogonal to the axis, realizable from the facets); that case stays open (`sorry`)
-    obtain ⟨fA, hfA⟩ := hR {1, 2, 4, 5} (by decide)
-    obtain ⟨fB, hfB⟩ := hR {1, 3, 4, 6} (by decide)
-    obtain ⟨fC, hfC⟩ := hR {2, 3, 5, 6} (by decide)
-    obtain ⟨fD, hfD⟩ := hR {0, 2, 3} (by decide)
-    have hgen := noThreeCollinear_seven x hN hx
-    have hT := Minimality.triGenPar_or_farP_idx hx hgen {0, 2, 3} {1, 2, 4, 5} 2
-      (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
-    rcases Minimality.edgeTieR_or_farP_rect_idx hx hgen {1, 2, 4, 5} {1, 3, 4, 6} 1 4
-      (by decide) (by decide) (by decide) (by decide) with hE | hE | hE
-    · exact not_type10_of_isNopert_sv x hN hx fA fB fC fD hfA hfB hfC hfD (fun _ => Or.inl hE)
-        (fun _ => hT)
-    · exact not_type10_of_isNopert_sv x hN hx fA fB fC fD hfA hfB hfC hfD (fun _ => Or.inr hE)
-        (fun _ => hT)
-    · exact byThm5Faces hx hN _ h3 (fun _ => sorry)  -- the edge rectangle `hE`
+  · -- type 10: `not_type10_of_isNopert_sv` closes everything except the edge rectangle at the
+    -- edge `14` (`Minimality.type10_edgeRect`).  The face set is invariant under the cyclic
+    -- relabelling `ρ10` (`1 → 2 → 3`, `4 → 5 → 6`), so the same holds at `25`, `36`; the three
+    -- rectangles force a right triangular prism (`Minimality.type10_rightPrism`: lateral edges
+    -- `14`, `25`, `36` equal vectors, triangle `123` orthogonal to them); that case stays open
+    -- (`sorry`, hypothesis `hP`)
+    have hP : Minimality.RightPrism10 x := Minimality.type10_rightPrism x hN hx hR
+    exact byThm5Faces hx hN _ h3 (fun _ => sorry)
   · exact big {0, 2, 3, 4, 6} (by decide) (by decide) (by decide)  -- type 11: Theorem A
   · -- type 12: `not_type12_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
     -- special value of Lemma T′ (settled there, 24.15).  Both views have a triangle (`024`), so
