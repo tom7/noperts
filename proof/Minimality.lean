@@ -28,6 +28,7 @@ public import Minimality.CaseC18Reduce
 public import Minimality.CaseC18Vertex
 public import Minimality.CaseC18Final
 public import Minimality.CaseC20VSlide
+public import Minimality.CaseC20Step4
 public import Minimality.CaseC20Final
 public import Minimality.SlideRim
 public import Minimality.CaseC18VSlide
@@ -840,7 +841,9 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- family A, the edge `xa xb`; `T_A` for `b+ < a−` along the slid views of the circle of `0135`),
     -- off the special positions `CaseC20Special x` (the right angles `A12 = A11`, `A12 = A22`, the
     -- class boundaries of `V` and `V^R`, `b+ = a−`, `c− = b+`, `A3 = 0` and images, the metric lines
-    -- `ℓ1`, `ℓν` of the covering, and the two hyperplanes `ClassH`, `ClassHR` of the persistent horizontal double normals of `V`, `T_A` and of `V^R`, `T_A^R`, `CaseC20VSlide`).
+    -- `ℓ1`, `ℓν` of the covering; the hyperplanes `ClassH`, `ClassHR` of the persistent horizontal double
+    -- normals of `V`, `T_A` and their `R`-images are no longer special: Step 4 slides along `Δ`'s resp. `016`'s
+    -- circle there, `CaseC20Step4`).
     -- The `sorry` has in context `hrest : CaseC20Special x`
     have hQ := quadPairPar20 hx hN rfl hR
     exact byGen1 (quadPair hx hN hR {0, 1, 3, 5} {2, 4, 5, 6} 5 (by decide) (by decide) (by decide) (by decide)

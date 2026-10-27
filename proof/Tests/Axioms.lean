@@ -713,3 +713,5 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.CaseC18.Frame18.vN4_classH_rupert
 #assert_standard_axioms Minimality.CaseC18.Frame18.vNt_classH_rupert
 #assert_standard_axioms Minimality.CaseC18.Frame18.Vside_classH
+#assert_standard_axioms Minimality.CaseC20.Frame20.vN4_any
+#assert_standard_axioms Minimality.CaseC20.Frame20.tANR_any
