@@ -14,6 +14,7 @@ public import Minimality.ParDichotomy
 public import Minimality.QuadTripleRect
 public import Minimality.Type10Prism
 public import Minimality.Type10RightPrism
+public import Minimality.CaseC09Alg
 
 /-!
 # Every nopert has at least 7 points
