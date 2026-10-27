@@ -796,7 +796,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- vertex crossings V, V^Z at their own views with the pair partner T_A), off the special
     -- positions `CaseC18Special x` (`a∓ = b±`, `a± = c±`, the right angles `A12 = A11`, `A12 = A22`,
     -- `d± = A1 t±` (the far-end switch), `D2 = 0` (the border of V's rim), a horizontal double
-    -- normal of V or V^Z at its view, three equal depths of V's triangle rim).  The `sorry` has in
+    -- normal of V or V^Z at its view).  The `sorry` has in
     -- context `hrest : CaseC18Special x`
     have hQ := quadPairPar18 hx hN rfl hR
     exact byGen1 (quadPair hx hN hR {0, 3, 5, 6} {1, 2, 4, 5} 5 (by decide) (by decide) (by decide) (by decide)

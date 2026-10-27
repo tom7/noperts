@@ -3,6 +3,7 @@ module
 public import Minimality.CaseC18Tests
 public import Minimality.RobustCert
 public import Minimality.RimCert
+public import Minimality.RimHDN
 public import Minimality.Type08Cases
 
 @[expose] public section
@@ -43,15 +44,18 @@ lemma fvC_lin (a u : C3) (s δ : ℝ) :
       s • F.fvC a + δ • F.fvC u := by
   simp only [fvC]; module
 
-/-- **Theorem 18.1 (tie form) at a vertex view in frame coordinates.** -/
-theorem rupert_vertex (hx : Function.Injective x) {k : ℕ} [NeZero k] (hk : 3 ≤ k)
+/-- **Theorem 18.1 (tie form) at a vertex view in frame coordinates**, with a level triangle rim
+allowed in place of robust unimodality (it always has a horizontal double normal, which `hnd`
+excludes). -/
+theorem rupert_vertex_or (hx : Function.Injective x) {k : ℕ} [NeZero k] (hk : 3 ≤ k)
     (c : ZMod k → Fin 7) (M : Finset (Fin 7)) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u : C3)
     (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0) (hMc : ∀ m ∈ M, ∀ i, m ≠ c i)
     (hcyc : ∀ i j : ZMod k, j ≠ i → j ≠ i + 1 →
       PS σ u ((F.ptC (c (i + 1))).sub (F.ptC (c i))) ((F.ptC (c j)).sub (F.ptC (c i))))
     (hrest : ∀ j' : Fin 7, j' ∉ M → (∀ jj, j' ≠ c jj) → ∀ i : ZMod k,
       PS σ u ((F.ptC (c (i + 1))).sub (F.ptC (c i))) ((F.ptC j').sub (F.ptC (c i))))
-    (hz : IsRobustUnimodal (fun i => F.GG (F.ptC (c i)) u))
+    (hz : IsRobustUnimodal (fun i => F.GG (F.ptC (c i)) u) ∨
+      (k = 3 ∧ ∀ i j, F.GG (F.ptC (c i)) u = F.GG (F.ptC (c j)) u))
     (hnd : NoHDNAt (Finset.univ.image x) (F.fvC u))
     (hM : ∀ m ∈ M, ∃ i : ZMod k, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
       (F.ptC m).x = (F.ptC (c i)).x + s * ((F.ptC (c (i + 1))).x - (F.ptC (c i)).x) + δ * u.x ∧
@@ -83,7 +87,7 @@ theorem rupert_vertex (hx : Function.Injective x) {k : ℕ} [NeZero k] (hk : 3 �
     have := mul_pos hk2 h
     calc 0 < F.kap ^ 2 * (σ * Dc a b u) := this
       _ = t * (F.kap * Dc a b u) := by rw [ht]; ring
-  refine isRupert_of_vertexView_robust (Finset.univ.image x) (M.image x) (ε • u0) hu' (k := k) hk
+  refine isRupert_of_vertexView_robust_or (Finset.univ.image x) (M.image x) (ε • u0) hu' (k := k) hk
     (fun i => x (c i)) (fun i => Finset.mem_image_of_mem x (Finset.mem_univ _)) ?_ ?_ ?_ ?_ ?_ ?_
   · intro i hi
     obtain ⟨m, hm, hmi⟩ := Finset.mem_image.mp hi
@@ -98,15 +102,25 @@ theorem rupert_vertex (hx : Function.Injective x) {k : ℕ} [NeZero k] (hk : 3 �
     rw [F.x_sub, F.x_sub]
     exact hconv _ _ (hrest j' (fun h => hyM (Finset.mem_image_of_mem x h))
       (fun jj h => hyx jj (by simp [h])) i)
-  · have h1 := (robust_add_const hz (⟪F.base, u0⟫)).sigma hεs
-    have hfun : (fun i : ZMod k => ε * (F.GG (F.ptC (c i)) u + ⟪F.base, u0⟫)) =
+  · have hfun : (fun i : ZMod k => ε * (F.GG (F.ptC (c i)) u + ⟪F.base, u0⟫)) =
         fun i => ⟪x (c i), ε • u0⟫ := by
       funext i
       rw [real_inner_smul_right, hu0def, F.inner_x_fvC]; ring
-    rw [← hfun]; exact h1
-  · rcases hεs with h | h
-    · rw [h, one_smul]; exact hnd
-    · rw [h, neg_one_smul]; exact hnd.neg
+    rcases hz with hz | ⟨hk3, hlev⟩
+    · left
+      have h1 := (robust_add_const hz (⟪F.base, u0⟫)).sigma hεs
+      rw [← hfun]; exact h1
+    · right
+      refine ⟨hk3, fun i j => ?_⟩
+      show ⟪x (c i), ε • u0⟫ = ⟪x (c j), ε • u0⟫
+      have hi : ε * (F.GG (F.ptC (c i)) u + ⟪F.base, u0⟫) = ⟪x (c i), ε • u0⟫ := congrFun hfun i
+      have hj : ε * (F.GG (F.ptC (c j)) u + ⟪F.base, u0⟫) = ⟪x (c j), ε • u0⟫ := congrFun hfun j
+      rw [← hi, ← hj, hlev i j]
+  · have hnd' : NoHDNAt (Finset.univ.image x) (ε • u0) := by
+      rcases hεs with h | h
+      · rw [h, one_smul]; exact hnd
+      · rw [h, neg_one_smul]; exact hnd.neg
+    exact hnd'.rim _ (fun i => Finset.mem_image_of_mem x (Finset.mem_univ _))
   · intro m hm
     obtain ⟨m0, hm0, rfl⟩ := Finset.mem_image.mp hm
     obtain ⟨i, s, δ, hs0, hs1, hδ, ex, ey, ez⟩ := hM m0 hm0
@@ -123,6 +137,23 @@ theorem rupert_vertex (hx : Function.Injective x) {k : ℕ} [NeZero k] (hk : 3 �
       rw [smul_smul, show ε * δ * ε = δ * (ε * ε) by ring, hεε, mul_one]
       have : x m0 = x (c i) + (x m0 - x (c i)) := by abel
       rw [this, key]; abel
+
+/-- **Theorem 18.1 (tie form) at a vertex view in frame coordinates.** -/
+theorem rupert_vertex (hx : Function.Injective x) {k : ℕ} [NeZero k] (hk : 3 ≤ k)
+    (c : ZMod k → Fin 7) (M : Finset (Fin 7)) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u : C3)
+    (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0) (hMc : ∀ m ∈ M, ∀ i, m ≠ c i)
+    (hcyc : ∀ i j : ZMod k, j ≠ i → j ≠ i + 1 →
+      PS σ u ((F.ptC (c (i + 1))).sub (F.ptC (c i))) ((F.ptC (c j)).sub (F.ptC (c i))))
+    (hrest : ∀ j' : Fin 7, j' ∉ M → (∀ jj, j' ≠ c jj) → ∀ i : ZMod k,
+      PS σ u ((F.ptC (c (i + 1))).sub (F.ptC (c i))) ((F.ptC j').sub (F.ptC (c i))))
+    (hz : IsRobustUnimodal (fun i => F.GG (F.ptC (c i)) u))
+    (hnd : NoHDNAt (Finset.univ.image x) (F.fvC u))
+    (hM : ∀ m ∈ M, ∃ i : ZMod k, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
+      (F.ptC m).x = (F.ptC (c i)).x + s * ((F.ptC (c (i + 1))).x - (F.ptC (c i)).x) + δ * u.x ∧
+      (F.ptC m).y = (F.ptC (c i)).y + s * ((F.ptC (c (i + 1))).y - (F.ptC (c i)).y) + δ * u.y ∧
+      (F.ptC m).z = (F.ptC (c i)).z + s * ((F.ptC (c (i + 1))).z - (F.ptC (c i)).z) + δ * u.z) :
+    IsRupert (Finset.univ.image x) :=
+  F.rupert_vertex_or hx hk c M σ hσ u hu hMc hcyc hrest (Or.inl hz) hnd hM
 
 end Frame7
 
@@ -457,12 +488,11 @@ namespace Frame18
 variable {x : Fin 7 → ℝ³} (F : Frame18 x)
 
 /-- **`V` with the triangle rim `(m1+, m1-, xb)`** (class Ntri, non-realizable, `m2-` inside):
-Rupert unless the three depths are equal, or `V` has a horizontal double normal. -/
+Rupert unless `V` has a horizontal double normal (three equal depths give one). -/
 theorem vNt_rupert (hx : Function.Injective x) (hD2 : 0 < F.S.D2p) (hV : 0 < F.S.Vp)
     (hA1z : 0 < F.S.hm * F.S.tp - F.S.hp * (1 - F.S.tm))
     (hA1 : 0 < F.S.hp * F.S.tm - F.S.hm * (1 - F.S.tp))
-    (hnd : NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC F.S.uV))
-    (hne : ¬ (F.dV 0 = F.dV 6 ∧ F.dV 6 = F.dV 4)) :
+    (hnd : NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC F.S.uV)) :
     IsRupert (Finset.univ.image x) := by
   have htp := F.S.tp_pos; have hsp1 := F.S.sp_lt
   have ux : 0 < -F.S.sp * F.S.tp + F.S.tp := by nlinarith [mul_pos htp (sub_pos.2 hsp1)]
@@ -480,7 +510,7 @@ theorem vNt_rupert (hx : Function.Injective x) (hD2 : 0 < F.S.D2p) (hV : 0 < F.S
     intro i
     rcases zmod3_cases i with rfl | rfl | rfl <;>
       simp [tri_0, tri_1, tri_2, ptC_0, ptC_6, ptC_4]
-  refine F.toFrame7.rupert_vertex hx (k := 3) (by norm_num) (tri 0 6 4) {5, 3, 1} 1
+  refine F.toFrame7.rupert_vertex_or hx (k := 3) (by norm_num) (tri 0 6 4) {5, 3, 1} 1
     (Or.inl rfl) F.S.uV (Or.inl (by simpa [Shape18.uV] using ux.ne')) ?_ ?_ ?_ ?_ hnd ?_
   · intro m hm i
     simp only [Finset.mem_insert, Finset.mem_singleton] at hm
@@ -503,8 +533,17 @@ theorem vNt_rupert (hx : Function.Injective x) (hD2 : 0 < F.S.D2p) (hV : 0 < F.S
         tri (F.dV 0) (F.dV 6) (F.dV 4) := by
       funext i
       rcases zmod3_cases i with rfl | rfl | rfl <;> simp [tri_0, tri_1, tri_2, dV]
-    rw [hf]
-    exact isRobustUnimodal_three hne
+    by_cases hlev : F.dV 0 = F.dV 6 ∧ F.dV 6 = F.dV 4
+    · right
+      refine ⟨rfl, fun i j => ?_⟩
+      have e : ∀ i, F.toFrame7.GG (F.toFrame7.ptC (tri 0 6 4 i)) F.S.uV =
+          tri (F.dV 0) (F.dV 6) (F.dV 4) i := fun i => congrFun hf i
+      rw [e i, e j]
+      rcases zmod3_cases i with rfl | rfl | rfl <;> rcases zmod3_cases j with rfl | rfl | rfl <;>
+        simp only [tri_0, tri_1, tri_2] <;> linarith [hlev.1, hlev.2]
+    · left
+      rw [hf]
+      exact isRobustUnimodal_three hlev
   · intro m hm
     simp only [Finset.mem_insert, Finset.mem_singleton] at hm
     rcases hm with rfl | rfl | rfl
@@ -611,11 +650,11 @@ lemma dV_pos_of (hVp : F.S.dp < F.S.A1 * F.S.tp) : 0 < F.S.Vp := by
 
 /-- **The `V` side of 27.59 (b), (c)** (class N4 or Ntri, non-realizable): with `a- < b+`,
 `a+ < b-` and `μ+ < A1`, `K` is Rupert off the border `D2 = 0`, a horizontal double normal of
-`V` at its view, and the three equal depths of the triangle rim. -/
+`V` at its view. -/
 theorem Vside (hx : Function.Injective x) (hVp : F.S.dp < F.S.A1 * F.S.tp)
     (h1 : F.S.am < F.S.bp) (h2 : F.S.ap < F.S.bm) (hD2 : F.S.D2p ≠ 0)
-    (hnd : NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC F.S.uV))
-    (hne : ¬ (F.dV 0 = F.dV 6 ∧ F.dV 6 = F.dV 4)) : IsRupert (Finset.univ.image x) := by
+    (hnd : NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC F.S.uV)) :
+    IsRupert (Finset.univ.image x) := by
   have htp := F.S.tp_pos; have htp1 := F.S.tp_lt; have hsp1 := F.S.sp_lt
   have hV := F.dV_pos_of hVp
   have hA1 := sub_pos.2 (F.A1_of h1)
@@ -634,7 +673,7 @@ theorem Vside (hx : Function.Injective x) (hVp : F.S.dp < F.S.A1 * F.S.tp)
       nlinarith [mul_nonneg (mul_pos htp (sub_pos.2 hsp1)).le (sub_nonneg.2 f1),
         mul_nonneg (sub_pos.2 htp1).le (sub_nonneg.2 c2),
         mul_pos (mul_pos hgg F.S.hp_pos) (sub_pos.2 hroof)]
-  · exact F.vNt_rupert hx hpos hV hA1z hA1 hnd hne
+  · exact F.vNt_rupert hx hpos hV hA1z hA1 hnd
 
 end Frame18
 

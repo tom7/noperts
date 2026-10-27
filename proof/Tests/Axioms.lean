@@ -687,3 +687,4 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.isRupert_levelTri_two_faces
 #assert_standard_axioms Minimality.specLevel_of_facet
 #assert_standard_axioms Minimality.tri3Level_of_facet
+#assert_standard_axioms Minimality.hasHorizontalDoubleNormal_of_level_triangle
