@@ -7,6 +7,7 @@ public import Minimality.Classify
 public import Minimality.Type29Bridge
 public import Minimality.Type29Codim2
 public import Minimality.Type02CaseC
+public import Minimality.Type02HDN
 public import Minimality.TripleTieObtuse
 public import Minimality.TripleTieAdjacent
 public import Minimality.ParDichotomy
@@ -615,15 +616,19 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
   · -- type 02: Cor. T1 at the quadrilaterals 0235, 1246 (sharing vertex 2); where its general
     -- position fails, Theorem B on the four quadrilaterals 0134, 0235, 1246, 3456 under
     -- `GenPos`, and Lemma E or a planar closing at the edge 34 (23.12, metric-free:
-    -- `type02_edge34_byGen`, off an HDN at 34 and a far triple tie; a vertical far edge 01 or
+    -- `type02_edge34_byGen''`, off a far triple tie, or an HDN at 34 with the conditions of §22.4 failing; a vertical far edge 01 or
     -- 56 at the edge view 34 is no exception: its far point is a double over the rim corner,
     -- Lemma 16.27′, `isRupert_edgePair_robustD`).
-    -- The `sorry` has in context: `¬ Type02EdgeGen' x` (an HDN at 34 for a closing, or a far
-    -- depth triple tie, codimension ≥ 1 / 2); `¬ GenPos` (Theorem B); and
+    -- The `sorry` has in context: `¬ Type02EdgeGen'' x` (a far depth triple tie, codimension 2; or a
+    -- horizontal double normal at 34 of a closing together with a failure of the conditions of
+    -- §22.4 there, `Type02HDNOK`: a segment other than 34 parallel to it, (G1), two equal depths, two
+    -- directions of double normals, a double normal perpendicular to a face from a face vertex, or
+    -- a far edge parallel to a face with Lemma E not strict; codimension >= 2);
+    -- `¬ GenPos` (Theorem B); and
     -- `quadPairPar02`: the acute case-(c) triple tie at 0235, 1246 (`TriGenPar` but not
     -- `TriGenTieO`, vertex 2) or `QuadTripleRect` there
     have hQ := quadPairPar02 hx hN rfl hR
-    exact byGen1 (Minimality.type02_edge34_byGen hN hR) (fun _ =>
+    exact byGen1 (Minimality.type02_edge34_byGen'' hx (noThreeCollinear_seven x hN hx) hN hR) (fun _ =>
       byGen1 (fourQuad hx hN hR ![{0, 1, 3, 4}, {0, 2, 3, 5}, {1, 2, 4, 6}, {3, 4, 5, 6}]
           (by decide) (by decide) (by decide))
         (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
