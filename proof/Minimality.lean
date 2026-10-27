@@ -31,6 +31,7 @@ public import Minimality.CaseC20VSlide
 public import Minimality.CaseC20Final
 public import Minimality.SlideRim
 public import Minimality.CaseC18VSlide
+public import Minimality.CaseC18Step4
 public import Minimality.DepthSepTorque
 
 /-!
@@ -799,10 +800,11 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- crossings 27.32 and its Z-image, 27.31, the families A and A^Z, Theorem 5 with W = F2, and the
     -- vertex crossings V, V^Z at their own views with the pair partner T_A), off the special
     -- positions `CaseC18Special x` (`a∓ = b±`, `a± = c±`, the right angles `A12 = A11`, `A12 = A22`,
-    -- `d± = A1 t±` (the far-end switch), `D2 = 0` (the border of V's rim), and the hyperplane
-    -- `ClassH`: `A12 (h+ + h-) = A11 (t+ h- + t- h+)`, the class `H_F1` of Proposition 27.38 (a),
-    -- where V's rim keeps a horizontal double normal along F1's circle; off it V's view is slid
-    -- along that circle, `CaseC18VSlide.lean`, Theorem 27.41 Steps 1-3).  The `sorry` has in
+    -- `d± = A1 t±` (the far-end switch), `D2 = 0` (the border of V's rim), and the codimension-2
+    -- part of the hyperplane `ClassH` (`A12 (h+ + h-) = A11 (t+ h- + t- h+)`, the class `H_F1` of
+    -- Proposition 27.38 (a)) where the chord `m1+ m1-` is level at V's view.  Off `ClassH` V's view
+    -- is slid along F1's circle (`CaseC18VSlide.lean`, Theorem 27.41 Steps 1-3); on it along Δ's
+    -- circle, with Theorem D's torque (`CaseC18Step4.lean`, Step 4).  The `sorry` has in
     -- context `hrest : CaseC18Special' x`
     have hQ := quadPairPar18 hx hN rfl hR
     exact byGen1 (quadPair hx hN hR {0, 3, 5, 6} {1, 2, 4, 5} 5 (by decide) (by decide) (by decide) (by decide)

@@ -704,50 +704,6 @@ theorem Vside_slide (hx : Function.Injective x) (hVp : F.S.dp < F.S.A1 * F.S.tp)
 
 end Frame18
 
-/-- **The special positions with the HDN items of `V`, `V^Z` replaced by one hyperplane.**  As
-`CaseC18Special`, with the last two items replaced by `F.ClassH` (`V^Z`'s hyperplane is the
-same, `Frame18.classH_zFrame_iff`). -/
-def CaseC18Special' (x : Fin 7 → ℝ³) : Prop :=
-  ∃ F : Frame18 x, F.a12 = F.a11 ∨ F.a12 = F.a22 ∨ F.S.am = F.S.bp ∨ F.S.ap = F.S.bm ∨
-    F.S.ap = F.S.cp ∨ F.S.am = F.S.cm ∨ F.S.dp = F.S.A1 * F.S.tp ∨ F.S.dm = F.S.A1 * F.S.tm ∨
-    F.S.D2p = 0 ∨ F.ClassH
-
-/-- `Frame18.isRupert_of_not_special` with the smaller special set (proof: that of
-`isRupert_of_not_special` with `Vside` replaced by `Vside_slide`, and `classH_zFrame_iff` for
-the `Z` branch). -/
-theorem Frame18.isRupert_of_not_special' {x : Fin 7 → ℝ³} (F : Frame18 x)
-    (hx : Function.Injective x) (h : ¬ CaseC18Special' x) :
-    IsRupert (Finset.univ.image x) := by
-  have hF : ¬ (F.a12 = F.a11 ∨ F.a12 = F.a22 ∨ F.S.am = F.S.bp ∨ F.S.ap = F.S.bm ∨
-      F.S.ap = F.S.cp ∨ F.S.am = F.S.cm ∨ F.S.dp = F.S.A1 * F.S.tp ∨
-      F.S.dm = F.S.A1 * F.S.tm ∨ F.S.D2p = 0 ∨ F.ClassH) :=
-    fun h' => h ⟨F, h'⟩
-  simp only [not_or] at hF
-  obtain ⟨nα, nβ, n1, n2, n3, n4, nVp, nVm, nD, nH⟩ := hF
-  have hα : F.a12 < F.a11 := lt_of_le_of_ne F.A12_le_A11 nα
-  have hβ : F.a12 < F.a22 := lt_of_le_of_ne F.A12_le_A22 nβ
-  rcases F.rupert_or_V hx hα hβ n1 n2 n3 n4 with h | ⟨h1, h2, hV⟩
-  · exact h
-  rcases hV with hV | hV
-  · exact F.Vside_slide hx (lt_of_le_of_ne hV nVp) h1 h2 nD nH
-  · apply rupert_of_z
-    have hxz : Function.Injective (x ∘ zperm) := hx.comp zperm_bijective.1
-    refine F.zFrame.Vside_slide hxz ?_ h2 h1 ?_ ?_
-    · have : F.zFrame.S.dp = F.S.dm := rfl
-      have hA : F.zFrame.S.A1 = F.S.A1 := by
-        show F.S.am + F.S.ap = F.S.ap + F.S.am
-        ring
-      show F.S.dm < F.zFrame.S.A1 * F.S.tm
-      rw [hA]
-      exact lt_of_le_of_ne hV nVm
-    · intro h0
-      apply nD
-      have e : F.zFrame.S = F.S.swap := rfl
-      rw [e] at h0
-      simp only [Shape18.D2p, Shape18.swap] at h0 ⊢
-      linarith
-    · exact fun hz => nH ((F.classH_zFrame_iff).1 hz)
-
 /-!
 ## Proof summary
 

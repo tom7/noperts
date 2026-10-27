@@ -710,3 +710,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.no_balanced_zeroTorque_of_depthSeparated
 #assert_standard_axioms Minimality.hasHorizontalDoubleNormal_of_pairTorque_eq_zero
 #assert_standard_axioms Minimality.isRupert_of_chords_depthSeparated_torque
+#assert_standard_axioms Minimality.CaseC18.Frame18.vN4_classH_rupert
+#assert_standard_axioms Minimality.CaseC18.Frame18.vNt_classH_rupert
+#assert_standard_axioms Minimality.CaseC18.Frame18.Vside_classH
