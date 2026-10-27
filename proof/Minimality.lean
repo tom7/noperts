@@ -12,6 +12,7 @@ public import Minimality.TripleTieAdjacent
 public import Minimality.ParDichotomy
 public import Minimality.QuadTripleRect
 public import Minimality.Type10Prism
+public import Minimality.Type10RightPrism
 
 /-!
 # Every nopert has at least 7 points
@@ -605,10 +606,11 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- edge `14` (`Minimality.type10_edgeRect`).  The face set is invariant under the cyclic
     -- relabelling `ρ10` (`1 → 2 → 3`, `4 → 5 → 6`), so the same holds at `25`, `36`; the three
     -- rectangles force a right triangular prism (`Minimality.type10_rightPrism`: lateral edges
-    -- `14`, `25`, `36` equal vectors, triangle `123` orthogonal to them); that case stays open
-    -- (`sorry`, hypothesis `hP`)
+    -- `14`, `25`, `36` equal vectors, triangle `123` orthogonal to them), and a capped right
+    -- prism is Rupert (`Minimality.isRupert_type10_rightPrism`: the apex is hidden at the
+    -- near-axis views of Theorem 8.1): closed
     have hP : Minimality.RightPrism10 x := Minimality.type10_rightPrism x hN hx hR
-    exact byThm5Faces hx hN _ h3 (fun _ => sorry)
+    exact (hN.2 (Minimality.isRupert_type10_rightPrism x hx hP hR)).elim
   · exact big {0, 2, 3, 4, 6} (by decide) (by decide) (by decide)  -- type 11: Theorem A
   · -- type 12: `not_type12_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
     -- special value of Lemma T′ (settled there, 24.15).  Both views have a triangle (`024`), so
