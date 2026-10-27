@@ -17,7 +17,7 @@ https://github.com/google-deepmind/formal-conjectures/blob/main/FormalConjecture
 
 @[expose] public section
 
-notation "ℝ³" => EuclideanSpace ℝ (Fin 3)
+local notation "ℝ³" => EuclideanSpace ℝ (Fin 3)
 
 /-- Projects a vector from 3-space to 2-space by dropping the third coordinate. -/
 def proj_xy {k : Type} (v : EuclideanSpace k (Fin 3)) : EuclideanSpace k (Fin 2) :=
