@@ -693,3 +693,10 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.arc_certificate
 #assert_standard_axioms Minimality.prop33_3
 #assert_standard_axioms Minimality.Arc016Witness.witness_prop33_3
+#assert_standard_axioms Minimality.eventually_noHDNRim_slide
+#assert_standard_axioms Minimality.CaseC18.Frame7.eventually_noHDNRim_slide
+#assert_standard_axioms Minimality.CaseC20.Frame20.tANR'
+#assert_standard_axioms Minimality.CaseC18.Frame18.noPersistHDN_or_classH_N4
+#assert_standard_axioms Minimality.CaseC18.Frame18.noPersistHDN_or_classH_Nt
+#assert_standard_axioms Minimality.CaseC18.Frame18.Vside_slide
+#assert_standard_axioms Minimality.CaseC18.Frame18.isRupert_of_not_special'

@@ -28,6 +28,8 @@ public import Minimality.CaseC18Reduce
 public import Minimality.CaseC18Vertex
 public import Minimality.CaseC18Final
 public import Minimality.CaseC20Final
+public import Minimality.SlideRim
+public import Minimality.CaseC18VSlide
 
 /-!
 # Every nopert has at least 7 points
@@ -795,16 +797,18 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- crossings 27.32 and its Z-image, 27.31, the families A and A^Z, Theorem 5 with W = F2, and the
     -- vertex crossings V, V^Z at their own views with the pair partner T_A), off the special
     -- positions `CaseC18Special x` (`a∓ = b±`, `a± = c±`, the right angles `A12 = A11`, `A12 = A22`,
-    -- `d± = A1 t±` (the far-end switch), `D2 = 0` (the border of V's rim), a horizontal double
-    -- normal of V or V^Z at its view).  The `sorry` has in
-    -- context `hrest : CaseC18Special x`
+    -- `d± = A1 t±` (the far-end switch), `D2 = 0` (the border of V's rim), and the hyperplane
+    -- `ClassH`: `A12 (h+ + h-) = A11 (t+ h- + t- h+)`, the class `H_F1` of Proposition 27.38 (a),
+    -- where V's rim keeps a horizontal double normal along F1's circle; off it V's view is slid
+    -- along that circle, `CaseC18VSlide.lean`, Theorem 27.41 Steps 1-3).  The `sorry` has in
+    -- context `hrest : CaseC18Special' x`
     have hQ := quadPairPar18 hx hN rfl hR
     exact byGen1 (quadPair hx hN hR {0, 3, 5, 6} {1, 2, 4, 5} 5 (by decide) (by decide) (by decide) (by decide)
       (by decide)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
-        by_cases hrest : Minimality.CaseC18.CaseC18Special x
+        by_cases hrest : Minimality.CaseC18.CaseC18Special' x
         · sorry
         · obtain ⟨F⟩ := Minimality.CaseC18.frame18 hx (noThreeCollinear_seven x hN hx) hR hQ.1 hQ.2
-          exact hN.2 (F.isRupert_of_not_special hx hrest)))
+          exact hN.2 (F.isRupert_of_not_special' hx hrest)))
   · -- type 19: `not_type19_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
     -- special value of Lemma T′ (settled there, 26.8).  The vertex view has the triangle `046`
     -- (`triGenPar_or_farP_idx`); at the edge `35` of the quadrilaterals `0235`, `1356`,
