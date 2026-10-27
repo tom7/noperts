@@ -17,6 +17,7 @@ public import Minimality.Type10RightPrism
 public import Minimality.CaseC09Alg
 public import Minimality.CaseC09Frame
 public import Minimality.CaseC09Tests
+public import Minimality.CaseC09Cross
 
 /-!
 # Every nopert has at least 7 points
