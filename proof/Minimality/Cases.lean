@@ -25,6 +25,8 @@ public import Minimality.Type16M
 public import Minimality.OctAxis
 public import Minimality.EdgePair
 public import Minimality.Type21
+public import Minimality.Type16Metric
+public import Minimality.Type21Metric
 public import Minimality.Forces
 public import Minimality.TieForces
 public import Minimality.TieRobust
@@ -850,6 +852,91 @@ theorem not_type21_of_isNopert_codim2 (x : Fin 7 → ℝ³) (h : IsNopert (Finse
   h.2 (Minimality.isRupert_type21_limit_facets_codim2 x hx fA fB fC fD fE fF fG fH hA hB hC hD
     hE hF hG hH hQ h5 h26 hEd hVq hV htie)
 
+/-- **Type 21 with two ties at a pair of tilt tests** (`Minimality.TwoView21`, Theorem 24.3): no
+general position of the tiers is asked. -/
+theorem not_type21_of_twoView21 (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
+    (hx : Function.Injective x)
+    (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
+    (hA : ∀ i, (i ∈ ({0, 1, 4} : Finset (Fin 7)) → fA (x i) = 0) ∧
+      (i ∉ ({0, 1, 4} : Finset (Fin 7)) → fA (x i) < 0))
+    (hB : ∀ i, (i ∈ ({0, 1, 5} : Finset (Fin 7)) → fB (x i) = 0) ∧
+      (i ∉ ({0, 1, 5} : Finset (Fin 7)) → fB (x i) < 0))
+    (hC : ∀ i, (i ∈ ({0, 2, 5, 6} : Finset (Fin 7)) → fC (x i) = 0) ∧
+      (i ∉ ({0, 2, 5, 6} : Finset (Fin 7)) → fC (x i) < 0))
+    (hD : ∀ i, (i ∈ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) = 0) ∧
+      (i ∉ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) < 0))
+    (hE : ∀ i, (i ∈ ({1, 3, 4} : Finset (Fin 7)) → fE (x i) = 0) ∧
+      (i ∉ ({1, 3, 4} : Finset (Fin 7)) → fE (x i) < 0))
+    (hF : ∀ i, (i ∈ ({1, 3, 5} : Finset (Fin 7)) → fF (x i) = 0) ∧
+      (i ∉ ({1, 3, 5} : Finset (Fin 7)) → fF (x i) < 0))
+    (hG : ∀ i, (i ∈ ({2, 3, 4, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
+      (i ∉ ({2, 3, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
+    (hH : ∀ i, (i ∈ ({2, 3, 5} : Finset (Fin 7)) → fH (x i) = 0) ∧
+      (i ∉ ({2, 3, 5} : Finset (Fin 7)) → fH (x i) < 0))
+    (P : Minimality.TwoView21 x) : False :=
+  h.2 (Minimality.isRupert_type21_twoView_facets x hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG
+    hH P)
+
+/-- **Type 21 outside codimension 2, with two-view pairs** (`not_type21_of_isNopert_codim2` with
+`OneTie21` weakened to `OneTie21 ∨ TwoView21`): two ties at the named views are allowed when the
+limit certificate is a pair of tilt tests with realizing tilts (Theorem 24.3,
+`Minimality.TwoView21`; the cover of type 21 is affine-invariant,
+`Minimality.exists_certSeq21_map`, so it is metric-free: `Minimality.metricFree_of_cover`).
+`TwoView21` asks no general position of the tiers (`hQ`, `h5`, `h26`, `hEd`, `hVq`, `hV`): it has
+its own horizontal double normal condition at the other certificates of the cover. -/
+theorem not_type21_of_isNopert_codim2' (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
+    (hx : Function.Injective x)
+    (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
+    (hA : ∀ i, (i ∈ ({0, 1, 4} : Finset (Fin 7)) → fA (x i) = 0) ∧
+      (i ∉ ({0, 1, 4} : Finset (Fin 7)) → fA (x i) < 0))
+    (hB : ∀ i, (i ∈ ({0, 1, 5} : Finset (Fin 7)) → fB (x i) = 0) ∧
+      (i ∉ ({0, 1, 5} : Finset (Fin 7)) → fB (x i) < 0))
+    (hC : ∀ i, (i ∈ ({0, 2, 5, 6} : Finset (Fin 7)) → fC (x i) = 0) ∧
+      (i ∉ ({0, 2, 5, 6} : Finset (Fin 7)) → fC (x i) < 0))
+    (hD : ∀ i, (i ∈ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) = 0) ∧
+      (i ∉ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) < 0))
+    (hE : ∀ i, (i ∈ ({1, 3, 4} : Finset (Fin 7)) → fE (x i) = 0) ∧
+      (i ∉ ({1, 3, 4} : Finset (Fin 7)) → fE (x i) < 0))
+    (hF : ∀ i, (i ∈ ({1, 3, 5} : Finset (Fin 7)) → fF (x i) = 0) ∧
+      (i ∉ ({1, 3, 5} : Finset (Fin 7)) → fF (x i) < 0))
+    (hG : ∀ i, (i ∈ ({2, 3, 4, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
+      (i ∉ ({2, 3, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
+    (hH : ∀ i, (i ∈ ({2, 3, 5} : Finset (Fin 7)) → fH (x i) = 0) ∧
+      (i ∉ ({2, 3, 5} : Finset (Fin 7)) → fH (x i) < 0))
+    (hQ : (Minimality.NoHDNAt (Finset.univ.image x) (x 6 - x 0) ∨
+        Minimality.QGenAff21 x fD fC 0 3 4 5 6 {0, 4, 6} {0, 2, 5, 6}) ∧
+      (Minimality.NoHDNAt (Finset.univ.image x) (x 6 - x 4) ∨
+        Minimality.QGenAff21 x fD fG 4 5 0 3 6 {0, 4, 6} {2, 3, 4, 6}) ∧
+      (Minimality.NoHDNAt (Finset.univ.image x) (x 2 - x 5) ∨
+        Minimality.QGenAff21 x fH fC 5 4 3 0 2 {2, 3, 5} {0, 2, 5, 6}) ∧
+      (Minimality.NoHDNAt (Finset.univ.image x) (x 2 - x 3) ∨
+        Minimality.QGenAff21 x fH fG 3 0 5 4 2 {2, 3, 5} {2, 3, 4, 6}))
+    (h5 : (Minimality.NoHDNAt (Finset.univ.image x) (x 5 - x 0) ∨
+        Minimality.Q5GenAff21 x fB fC 0 3 1 6 2 5 4 {0, 1, 5} {0, 2, 5, 6}) ∧
+      (Minimality.NoHDNAt (Finset.univ.image x) (x 3 - x 4) ∨
+        Minimality.Q5GenAff21 x fE fG 4 5 1 6 2 3 0 {1, 3, 4} {2, 3, 4, 6}))
+    (h26 : Minimality.NoHDNAt (Finset.univ.image x) (x 2 - x 6) ∨
+      Minimality.R26GenAff21 x fC fG)
+    (hEd : Minimality.HDNOrG1Edge (Finset.univ.image x) (x 0) (x 1) (x 4) (x 5) ∧
+      Minimality.HDNOrG1Edge (Finset.univ.image x) (x 0) (x 4) (x 1) (x 6) ∧
+      Minimality.HDNOrG1Edge (Finset.univ.image x) (x 1) (x 4) (x 0) (x 3) ∧
+      Minimality.HDNOrG1Edge (Finset.univ.image x) (x 1) (x 5) (x 0) (x 3) ∧
+      Minimality.HDNOrG1Edge (Finset.univ.image x) (x 1) (x 3) (x 4) (x 5) ∧
+      Minimality.HDNOrG1Edge (Finset.univ.image x) (x 3) (x 5) (x 1) (x 2))
+    (hVq : Minimality.HDNOrVtx21Aff x fC fA {0, 2, 5, 6} {0, 1, 4} 0 1 3 2 ∧
+      Minimality.HDNOrVtx21Aff x fG fA {2, 3, 4, 6} {0, 1, 4} 4 1 5 2 ∧
+      Minimality.HDNOrVtx21Aff x fC fF {0, 2, 5, 6} {1, 3, 5} 5 1 4 6 ∧
+      Minimality.HDNOrVtx21Aff x fG fF {2, 3, 4, 6} {1, 3, 5} 3 1 0 6)
+    (hV : Minimality.HDNOrG1Aff (Finset.univ.image x) fD fE (x 4) (x 0) (x 6) (x 4) (x 3) (x 1) ∧
+      Minimality.HDNOrG1Aff (Finset.univ.image x) fD fB (x 0) (x 4) (x 6) (x 0) (x 5) (x 1) ∧
+      Minimality.HDNOrG1Aff (Finset.univ.image x) fH fE (x 3) (x 5) (x 2) (x 3) (x 4) (x 1) ∧
+      Minimality.HDNOrG1Aff (Finset.univ.image x) fH fB (x 5) (x 3) (x 2) (x 5) (x 0) (x 1))
+    (htie' : Minimality.OneTie21 x ∨ Minimality.TwoView21 x) : False := by
+  rcases htie' with htie | P
+  · exact not_type21_of_isNopert_codim2 x h hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG hH
+      hQ h5 h26 hEd hVq hV htie
+  · exact not_type21_of_twoView21 x h hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG hH P
+
 /-- **Type 16** (Theorem 19.6 of `FEWER-FACES-PROOFS.md` §19, the cover): a nopert does not
 have seven points labelled so that `0235`, `1356` (quadrilaterals), `024`, `036`, `046`, `145`,
 `146`, `245` are facets (given by functionals negative off them), off the special positions:
@@ -990,6 +1077,88 @@ theorem not_type16_of_isNopert_codim2 (x : Fin 7 → ℝ³) (h : IsNopert (Finse
     (htie : Minimality.OneTie16 x) : False :=
   h.2 (Minimality.isRupert_type16_limit_facets_edge x hx fA fB fC fD fE fF fG fH hA hB hC hD hE
     hF hG hH h35 hEd hQ hV htie)
+
+/-- **Type 16 with two ties at a pair of tilt tests** (`Minimality.TwoView16`, Theorem 24.3): no
+general position of the tiers is asked. -/
+theorem not_type16_of_twoView16 (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
+    (hx : Function.Injective x)
+    (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
+    (hA : ∀ i, (i ∈ ({0, 2, 3, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
+      (i ∉ ({0, 2, 3, 5} : Finset (Fin 7)) → fA (x i) < 0))
+    (hB : ∀ i, (i ∈ ({1, 3, 5, 6} : Finset (Fin 7)) → fB (x i) = 0) ∧
+      (i ∉ ({1, 3, 5, 6} : Finset (Fin 7)) → fB (x i) < 0))
+    (hC : ∀ i, (i ∈ ({0, 2, 4} : Finset (Fin 7)) → fC (x i) = 0) ∧
+      (i ∉ ({0, 2, 4} : Finset (Fin 7)) → fC (x i) < 0))
+    (hD : ∀ i, (i ∈ ({0, 3, 6} : Finset (Fin 7)) → fD (x i) = 0) ∧
+      (i ∉ ({0, 3, 6} : Finset (Fin 7)) → fD (x i) < 0))
+    (hE : ∀ i, (i ∈ ({0, 4, 6} : Finset (Fin 7)) → fE (x i) = 0) ∧
+      (i ∉ ({0, 4, 6} : Finset (Fin 7)) → fE (x i) < 0))
+    (hF : ∀ i, (i ∈ ({1, 4, 5} : Finset (Fin 7)) → fF (x i) = 0) ∧
+      (i ∉ ({1, 4, 5} : Finset (Fin 7)) → fF (x i) < 0))
+    (hG : ∀ i, (i ∈ ({1, 4, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
+      (i ∉ ({1, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
+    (hH : ∀ i, (i ∈ ({2, 4, 5} : Finset (Fin 7)) → fH (x i) = 0) ∧
+      (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fH (x i) < 0))
+    (P : Minimality.TwoView16 x) : False :=
+  h.2 (Minimality.isRupert_type16_twoView_facets x hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG
+    hH P)
+
+/-- **Type 16 outside codimension 2, with two-view pairs** (`not_type16_of_isNopert_codim2` with
+`OneTie16` weakened to `OneTie16 ∨ TwoView16`): two ties at the named views are allowed when the
+limit certificate is a pair of tilt tests with realizing tilts (Theorem 24.3,
+`Minimality.TwoView16`; the cover of type 16 is affine-invariant,
+`Minimality.exists_certSeq16_map`, so it is metric-free: `Minimality.metricFree_of_cover`).
+`TwoView16` asks no general position of the tiers
+(`h35`, `hEd`, `hQ`, `hV`): it has its own horizontal double normal condition at the other
+certificates of the cover. -/
+theorem not_type16_of_isNopert_codim2' (x : Fin 7 → ℝ³) (h : IsNopert (Finset.univ.image x))
+    (hx : Function.Injective x)
+    (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
+    (hA : ∀ i, (i ∈ ({0, 2, 3, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
+      (i ∉ ({0, 2, 3, 5} : Finset (Fin 7)) → fA (x i) < 0))
+    (hB : ∀ i, (i ∈ ({1, 3, 5, 6} : Finset (Fin 7)) → fB (x i) = 0) ∧
+      (i ∉ ({1, 3, 5, 6} : Finset (Fin 7)) → fB (x i) < 0))
+    (hC : ∀ i, (i ∈ ({0, 2, 4} : Finset (Fin 7)) → fC (x i) = 0) ∧
+      (i ∉ ({0, 2, 4} : Finset (Fin 7)) → fC (x i) < 0))
+    (hD : ∀ i, (i ∈ ({0, 3, 6} : Finset (Fin 7)) → fD (x i) = 0) ∧
+      (i ∉ ({0, 3, 6} : Finset (Fin 7)) → fD (x i) < 0))
+    (hE : ∀ i, (i ∈ ({0, 4, 6} : Finset (Fin 7)) → fE (x i) = 0) ∧
+      (i ∉ ({0, 4, 6} : Finset (Fin 7)) → fE (x i) < 0))
+    (hF : ∀ i, (i ∈ ({1, 4, 5} : Finset (Fin 7)) → fF (x i) = 0) ∧
+      (i ∉ ({1, 4, 5} : Finset (Fin 7)) → fF (x i) < 0))
+    (hG : ∀ i, (i ∈ ({1, 4, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
+      (i ∉ ({1, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
+    (hH : ∀ i, (i ∈ ({2, 4, 5} : Finset (Fin 7)) → fH (x i) = 0) ∧
+      (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fH (x i) < 0))
+    (h35 : Minimality.NoHDNAt (Finset.univ.image x) (x 5 - x 3) ∨ Minimality.Gen35Aff x fA fB)
+    (hEd : Minimality.HDNOrG1Edge (Finset.univ.image x) (x 0) (x 6) (x 3) (x 4) ∧
+      Minimality.HDNOrG1Edge (Finset.univ.image x) (x 1) (x 4) (x 5) (x 6) ∧
+      Minimality.HDNOrG1Edge (Finset.univ.image x) (x 2) (x 4) (x 0) (x 5))
+    (hQ : (Minimality.NoHDNAt (Finset.univ.image x) (x 2 - x 0) ∨
+        Minimality.EdgeGenAff x fA fC 0 2 {0, 2, 3, 5} {0, 2, 4} 3 4 6) ∧
+      (Minimality.NoHDNAt (Finset.univ.image x) (x 1 - x 6) ∨
+        Minimality.EdgeGenAff x fB fG 6 1 {1, 3, 5, 6} {1, 4, 6} 3 4 0) ∧
+      (Minimality.NoHDNAt (Finset.univ.image x) (x 5 - x 1) ∨
+        Minimality.EdgeGenAff x fB fF 1 5 {1, 3, 5, 6} {1, 4, 5} 3 4 0) ∧
+      (Minimality.NoHDNAt (Finset.univ.image x) (x 5 - x 2) ∨
+        Minimality.EdgeGenAff x fA fH 2 5 {0, 2, 3, 5} {2, 4, 5} 3 4 6) ∧
+      (Minimality.NoHDNAt (Finset.univ.image x) (x 3 - x 0) ∨
+        Minimality.EdgeGenAff x fD fA 0 3 {0, 3, 6} {0, 2, 3, 5} 6 2 4) ∧
+      (Minimality.NoHDNAt (Finset.univ.image x) (x 6 - x 3) ∨
+        Minimality.EdgeGenAff x fD fB 3 6 {0, 3, 6} {1, 3, 5, 6} 0 1 4))
+    (hV : Minimality.HDNOrG1Aff (Finset.univ.image x) fE fF (x 0) (x 4) (x 6) (x 1) (x 4) (x 5) ∧
+      Minimality.HDNOrG1Aff (Finset.univ.image x) fD fG (x 0) (x 3) (x 6) (x 1) (x 4) (x 6) ∧
+      Minimality.HDNOrVtxGenAff (Finset.univ.image x) fA fE
+        (({0, 2, 3, 5} : Finset (Fin 7)).image x) (({0, 4, 6} : Finset (Fin 7)).image x) ∧
+      Minimality.HDNOrG1Aff (Finset.univ.image x) fE fH (x 6) (x 4) (x 0) (x 2) (x 4) (x 5) ∧
+      Minimality.HDNOrG1Aff (Finset.univ.image x) fD fC (x 6) (x 3) (x 0) (x 2) (x 4) (x 0) ∧
+      Minimality.HDNOrVtxGenAff (Finset.univ.image x) fB fE
+        (({1, 3, 5, 6} : Finset (Fin 7)).image x) (({0, 4, 6} : Finset (Fin 7)).image x))
+    (htie' : Minimality.OneTie16 x ∨ Minimality.TwoView16 x) : False := by
+  rcases htie' with htie | P
+  · exact not_type16_of_isNopert_codim2 x h hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG hH
+      h35 hEd hQ hV htie
+  · exact not_type16_of_twoView16 x h hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG hH P
 
 
 /-! ### The special value of Lemma T′ settled (types 05, 10, 12, 13, 17, 19, 22, 23, 27, 28)
