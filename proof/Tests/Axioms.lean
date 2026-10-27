@@ -700,3 +700,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.CaseC18.Frame18.noPersistHDN_or_classH_Nt
 #assert_standard_axioms Minimality.CaseC18.Frame18.Vside_slide
 #assert_standard_axioms Minimality.CaseC18.Frame18.isRupert_of_not_special'
+#assert_standard_axioms Minimality.CaseC20.Frame20.classH_rFrame_iff
+#assert_standard_axioms Minimality.CaseC20.Frame20.noPersistHDN_or_classH_vN4
+#assert_standard_axioms Minimality.CaseC20.Frame20.noPersistHDN_or_classH_tANR
+#assert_standard_axioms Minimality.CaseC20.Frame20.vN4_slide
+#assert_standard_axioms Minimality.CaseC20.Frame20.tANR_slide
+#assert_standard_axioms Minimality.CaseC20.Frame20.isRupert_of_not_special

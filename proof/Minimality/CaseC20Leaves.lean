@@ -5,6 +5,7 @@ public import Minimality.CaseC20ST
 public import Minimality.CaseC20NR
 public import Minimality.CaseC20Tests
 public import Minimality.CaseC20TestsNR
+public import Minimality.CaseC20VSlide
 
 @[expose] public section
 
@@ -262,7 +263,7 @@ theorem Frame20.ra4_X {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
 
 /-- 27.74 (i), ω > 0 -/
 theorem Frame20.om1p {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (htt : 0 ≤ F.S.tm - F.S.tp) (hom : 0 < (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hfreqTA : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC (C3.slide F.S.u_tANR ⟨0, 0, -1⟩ η)))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (htt : 0 ≤ F.S.tm - F.S.tp) (hom : 0 < (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hH : ¬ F.ClassH)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -277,7 +278,7 @@ theorem Frame20.om1p {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
   by_cases o0 : (F.dep F.S.u_tANR 0 < F.dep F.S.u_tANR 6 ∨ F.dep F.S.u_tANR 0 < F.dep F.S.u_tANR 3 ∨ F.dep F.S.u_tANR 4 < F.dep F.S.u_tANR 6 ∨ F.dep F.S.u_tANR 4 < F.dep F.S.u_tANR 3) ∧ (F.dep F.S.u_tANR 6 < F.dep F.S.u_tANR 0 ∨ F.dep F.S.u_tANR 3 < F.dep F.S.u_tANR 0 ∨ F.dep F.S.u_tANR 6 < F.dep F.S.u_tANR 4 ∨ F.dep F.S.u_tANR 3 < F.dep F.S.u_tANR 4)
-  · exact F.tANR hx (by linarith only [hA1r]) o0.1 o0.2 hfreqTA
+  · exact F.tANR_slide hx (by linarith only [hA1r]) o0.1 o0.2 hH
   by_cases o1 : (F.dep F.S.u_tP 1 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 1 < F.dep F.S.u_tP 6 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 6) ∧ (F.dep F.S.u_tP 3 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 3 < F.dep F.S.u_tP 4 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 4)
   · exact F.tP (by linarith only [hA1r]) o1.1 o1.2
   exfalso
@@ -308,7 +309,7 @@ theorem Frame20.om1p {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
 
 /-- 27.74 (i), ω < 0 -/
 theorem Frame20.om1n {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (htt : 0 ≤ F.S.tm - F.S.tp) (hom : 0 < (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hfreqTA : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC (C3.slide F.S.u_tANR ⟨0, 0, -1⟩ η)))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (htt : 0 ≤ F.S.tm - F.S.tp) (hom : 0 < (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hH : ¬ F.ClassH)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -323,7 +324,7 @@ theorem Frame20.om1n {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
   by_cases o0 : (F.dep F.S.u_tANR 0 < F.dep F.S.u_tANR 6 ∨ F.dep F.S.u_tANR 0 < F.dep F.S.u_tANR 3 ∨ F.dep F.S.u_tANR 4 < F.dep F.S.u_tANR 6 ∨ F.dep F.S.u_tANR 4 < F.dep F.S.u_tANR 3) ∧ (F.dep F.S.u_tANR 6 < F.dep F.S.u_tANR 0 ∨ F.dep F.S.u_tANR 3 < F.dep F.S.u_tANR 0 ∨ F.dep F.S.u_tANR 6 < F.dep F.S.u_tANR 4 ∨ F.dep F.S.u_tANR 3 < F.dep F.S.u_tANR 4)
-  · exact F.tANR hx (by linarith only [hA1r]) o0.1 o0.2 hfreqTA
+  · exact F.tANR_slide hx (by linarith only [hA1r]) o0.1 o0.2 hH
   by_cases o1 : (F.dep F.S.u_tP 1 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 1 < F.dep F.S.u_tP 6 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 6) ∧ (F.dep F.S.u_tP 3 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 3 < F.dep F.S.u_tP 4 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 4)
   · exact F.tP (by linarith only [hA1r]) o1.1 o1.2
   exfalso
@@ -354,7 +355,7 @@ theorem Frame20.om1n {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
 
 /-- 27.74 (i), ω = 0, off ℓ1 -/
 theorem Frame20.om1z1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (htt : 0 ≤ F.S.tm - F.S.tp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.km*F.S.tm) * (F.a11 - F.a12) + (-F.S.hm*F.S.sm + F.S.hm + F.S.km*F.S.tm - F.S.km) * F.a12) (hfreqTA : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC (C3.slide F.S.u_tANR ⟨0, 0, -1⟩ η)))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (htt : 0 ≤ F.S.tm - F.S.tp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.km*F.S.tm) * (F.a11 - F.a12) + (-F.S.hm*F.S.sm + F.S.hm + F.S.km*F.S.tm - F.S.km) * F.a12) (hH : ¬ F.ClassH)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -369,7 +370,7 @@ theorem Frame20.om1z1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
   by_cases o0 : (F.dep F.S.u_tANR 0 < F.dep F.S.u_tANR 6 ∨ F.dep F.S.u_tANR 0 < F.dep F.S.u_tANR 3 ∨ F.dep F.S.u_tANR 4 < F.dep F.S.u_tANR 6 ∨ F.dep F.S.u_tANR 4 < F.dep F.S.u_tANR 3) ∧ (F.dep F.S.u_tANR 6 < F.dep F.S.u_tANR 0 ∨ F.dep F.S.u_tANR 3 < F.dep F.S.u_tANR 0 ∨ F.dep F.S.u_tANR 6 < F.dep F.S.u_tANR 4 ∨ F.dep F.S.u_tANR 3 < F.dep F.S.u_tANR 4)
-  · exact F.tANR hx (by linarith only [hA1r]) o0.1 o0.2 hfreqTA
+  · exact F.tANR_slide hx (by linarith only [hA1r]) o0.1 o0.2 hH
   by_cases o1 : (F.dep F.S.u_tP 1 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 1 < F.dep F.S.u_tP 6 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 6) ∧ (F.dep F.S.u_tP 3 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 3 < F.dep F.S.u_tP 4 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 4)
   · exact F.tP (by linarith only [hA1r]) o1.1 o1.2
   exfalso
@@ -400,7 +401,7 @@ theorem Frame20.om1z1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
 
 /-- 27.74 (i), ω = 0, off ℓ1 -/
 theorem Frame20.om1z2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (htt : 0 ≤ F.S.tm - F.S.tp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (-F.S.km*F.S.tm) * (F.a11 - F.a12) + (F.S.hm*F.S.sm - F.S.hm - F.S.km*F.S.tm + F.S.km) * F.a12) (hfreqTA : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC (C3.slide F.S.u_tANR ⟨0, 0, -1⟩ η)))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (htt : 0 ≤ F.S.tm - F.S.tp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (-F.S.km*F.S.tm) * (F.a11 - F.a12) + (F.S.hm*F.S.sm - F.S.hm - F.S.km*F.S.tm + F.S.km) * F.a12) (hH : ¬ F.ClassH)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -415,7 +416,7 @@ theorem Frame20.om1z2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
   by_cases o0 : (F.dep F.S.u_tANR 0 < F.dep F.S.u_tANR 6 ∨ F.dep F.S.u_tANR 0 < F.dep F.S.u_tANR 3 ∨ F.dep F.S.u_tANR 4 < F.dep F.S.u_tANR 6 ∨ F.dep F.S.u_tANR 4 < F.dep F.S.u_tANR 3) ∧ (F.dep F.S.u_tANR 6 < F.dep F.S.u_tANR 0 ∨ F.dep F.S.u_tANR 3 < F.dep F.S.u_tANR 0 ∨ F.dep F.S.u_tANR 6 < F.dep F.S.u_tANR 4 ∨ F.dep F.S.u_tANR 3 < F.dep F.S.u_tANR 4)
-  · exact F.tANR hx (by linarith only [hA1r]) o0.1 o0.2 hfreqTA
+  · exact F.tANR_slide hx (by linarith only [hA1r]) o0.1 o0.2 hH
   by_cases o1 : (F.dep F.S.u_tP 1 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 1 < F.dep F.S.u_tP 6 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 6) ∧ (F.dep F.S.u_tP 3 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 3 < F.dep F.S.u_tP 4 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 4)
   · exact F.tP (by linarith only [hA1r]) o1.1 o1.2
   exfalso
@@ -446,7 +447,7 @@ theorem Frame20.om1z2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
 
 /-- 27.74 (ii): {T_A, V}, h+ ≥ d+ -/
 theorem Frame20.om2a {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1 : 0 < F.S.hm*F.S.tp - F.S.hm + F.S.hp*F.S.tm) (hVp : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVW : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hWp : 0 ≤ -F.S.hp*F.S.sp + F.S.hp - F.S.kp) (hndV : NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC F.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1 : 0 < F.S.hm*F.S.tp - F.S.hm + F.S.hp*F.S.tm) (hVp : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVW : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hWp : 0 ≤ -F.S.hp*F.S.sp + F.S.hp - F.S.kp) (hH : ¬ F.ClassH)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -463,7 +464,7 @@ theorem Frame20.om2a {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
   by_cases o0 : (F.dep F.S.u_tA 0 < F.dep F.S.u_tA 6 ∨ F.dep F.S.u_tA 0 < F.dep F.S.u_tA 5 ∨ F.dep F.S.u_tA 4 < F.dep F.S.u_tA 6 ∨ F.dep F.S.u_tA 4 < F.dep F.S.u_tA 5) ∧ (F.dep F.S.u_tA 6 < F.dep F.S.u_tA 0 ∨ F.dep F.S.u_tA 5 < F.dep F.S.u_tA 0 ∨ F.dep F.S.u_tA 6 < F.dep F.S.u_tA 4 ∨ F.dep F.S.u_tA 5 < F.dep F.S.u_tA 4)
   · exact F.tA (by linarith only [hA1]) o0.1 o0.2
   by_cases o1 : (F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 6 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 6) ∧ (F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 4 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 4)
-  · exact F.vN4 hx (by linarith only [hVp]) (by linarith only [hVW]) o1.1 o1.2 hndV
+  · exact F.vN4_slide hx (by linarith only [hVp]) (by linarith only [hVW]) o1.1 o1.2 hH
   exfalso
   simp only [not_and_or, not_or, not_lt] at o0
   simp only [not_and_or, not_or, not_lt] at o1
@@ -492,7 +493,7 @@ theorem Frame20.om2a {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
 
 /-- 27.74 (ii): {T_A, V}, t+ ≤ t−, h+ ≤ d+ -/
 theorem Frame20.om2b {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1 : 0 < F.S.hm*F.S.tp - F.S.hm + F.S.hp*F.S.tm) (hVp : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVW : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (htt : 0 ≤ F.S.tm - F.S.tp) (hWn : 0 ≤ F.S.hp*F.S.sp - F.S.hp + F.S.kp) (hndV : NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC F.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1 : 0 < F.S.hm*F.S.tp - F.S.hm + F.S.hp*F.S.tm) (hVp : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVW : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (htt : 0 ≤ F.S.tm - F.S.tp) (hWn : 0 ≤ F.S.hp*F.S.sp - F.S.hp + F.S.kp) (hH : ¬ F.ClassH)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -509,7 +510,7 @@ theorem Frame20.om2b {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
   by_cases o0 : (F.dep F.S.u_tA 0 < F.dep F.S.u_tA 6 ∨ F.dep F.S.u_tA 0 < F.dep F.S.u_tA 5 ∨ F.dep F.S.u_tA 4 < F.dep F.S.u_tA 6 ∨ F.dep F.S.u_tA 4 < F.dep F.S.u_tA 5) ∧ (F.dep F.S.u_tA 6 < F.dep F.S.u_tA 0 ∨ F.dep F.S.u_tA 5 < F.dep F.S.u_tA 0 ∨ F.dep F.S.u_tA 6 < F.dep F.S.u_tA 4 ∨ F.dep F.S.u_tA 5 < F.dep F.S.u_tA 4)
   · exact F.tA (by linarith only [hA1]) o0.1 o0.2
   by_cases o1 : (F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 6 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 6) ∧ (F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 4 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 4)
-  · exact F.vN4 hx (by linarith only [hVp]) (by linarith only [hVW]) o1.1 o1.2 hndV
+  · exact F.vN4_slide hx (by linarith only [hVp]) (by linarith only [hVW]) o1.1 o1.2 hH
   exfalso
   simp only [not_and_or, not_or, not_lt] at o0
   simp only [not_and_or, not_or, not_lt] at o1
@@ -538,7 +539,7 @@ theorem Frame20.om2b {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
 
 /-- 27.74 (ii): {T_A, V, T′}, h+ ≥ d+, p -/
 theorem Frame20.om3p {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hVp : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVW : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hWp : 0 ≤ -F.S.hp*F.S.sp + F.S.hp - F.S.kp) (hom : 0 < (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hfreqTA : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC (C3.slide F.S.u_tANR ⟨0, 0, -1⟩ η))) (hndV : NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC F.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hVp : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVW : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hWp : 0 ≤ -F.S.hp*F.S.sp + F.S.hp - F.S.kp) (hom : 0 < (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hH : ¬ F.ClassH)   :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -553,9 +554,9 @@ theorem Frame20.om3p {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
   by_cases o0 : (F.dep F.S.u_tANR 0 < F.dep F.S.u_tANR 6 ∨ F.dep F.S.u_tANR 0 < F.dep F.S.u_tANR 3 ∨ F.dep F.S.u_tANR 4 < F.dep F.S.u_tANR 6 ∨ F.dep F.S.u_tANR 4 < F.dep F.S.u_tANR 3) ∧ (F.dep F.S.u_tANR 6 < F.dep F.S.u_tANR 0 ∨ F.dep F.S.u_tANR 3 < F.dep F.S.u_tANR 0 ∨ F.dep F.S.u_tANR 6 < F.dep F.S.u_tANR 4 ∨ F.dep F.S.u_tANR 3 < F.dep F.S.u_tANR 4)
-  · exact F.tANR hx (by linarith only [hA1r]) o0.1 o0.2 hfreqTA
+  · exact F.tANR_slide hx (by linarith only [hA1r]) o0.1 o0.2 hH
   by_cases o1 : (F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 6 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 6) ∧ (F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 4 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 4)
-  · exact F.vN4 hx (by linarith only [hVp]) (by linarith only [hVW]) o1.1 o1.2 hndV
+  · exact F.vN4_slide hx (by linarith only [hVp]) (by linarith only [hVW]) o1.1 o1.2 hH
   by_cases o2 : (F.dep F.S.u_tP 1 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 1 < F.dep F.S.u_tP 6 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 6) ∧ (F.dep F.S.u_tP 3 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 3 < F.dep F.S.u_tP 4 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 4)
   · exact F.tP (by linarith only [hA1r]) o2.1 o2.2
   exfalso
@@ -616,7 +617,7 @@ theorem Frame20.om3p {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
 
 /-- 27.74 (ii): {T_A, V, T′}, h+ ≥ d+, n -/
 theorem Frame20.om3n {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hVp : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVW : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hWp : 0 ≤ -F.S.hp*F.S.sp + F.S.hp - F.S.kp) (hom : 0 < (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hfreqTA : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC (C3.slide F.S.u_tANR ⟨0, 0, -1⟩ η))) (hndV : NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC F.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hVp : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVW : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hWp : 0 ≤ -F.S.hp*F.S.sp + F.S.hp - F.S.kp) (hom : 0 < (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hH : ¬ F.ClassH)   :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -631,9 +632,9 @@ theorem Frame20.om3n {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
   by_cases o0 : (F.dep F.S.u_tANR 0 < F.dep F.S.u_tANR 6 ∨ F.dep F.S.u_tANR 0 < F.dep F.S.u_tANR 3 ∨ F.dep F.S.u_tANR 4 < F.dep F.S.u_tANR 6 ∨ F.dep F.S.u_tANR 4 < F.dep F.S.u_tANR 3) ∧ (F.dep F.S.u_tANR 6 < F.dep F.S.u_tANR 0 ∨ F.dep F.S.u_tANR 3 < F.dep F.S.u_tANR 0 ∨ F.dep F.S.u_tANR 6 < F.dep F.S.u_tANR 4 ∨ F.dep F.S.u_tANR 3 < F.dep F.S.u_tANR 4)
-  · exact F.tANR hx (by linarith only [hA1r]) o0.1 o0.2 hfreqTA
+  · exact F.tANR_slide hx (by linarith only [hA1r]) o0.1 o0.2 hH
   by_cases o1 : (F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 6 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 6) ∧ (F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 4 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 4)
-  · exact F.vN4 hx (by linarith only [hVp]) (by linarith only [hVW]) o1.1 o1.2 hndV
+  · exact F.vN4_slide hx (by linarith only [hVp]) (by linarith only [hVW]) o1.1 o1.2 hH
   by_cases o2 : (F.dep F.S.u_tP 1 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 1 < F.dep F.S.u_tP 6 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 6) ∧ (F.dep F.S.u_tP 3 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 3 < F.dep F.S.u_tP 4 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 4)
   · exact F.tP (by linarith only [hA1r]) o2.1 o2.2
   exfalso
@@ -694,7 +695,7 @@ theorem Frame20.om3n {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
 
 /-- 27.74 (ii): {T_A, V, T′}, h+ ≥ d+, z1 -/
 theorem Frame20.om3z1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hVp : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVW : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hWp : 0 ≤ -F.S.hp*F.S.sp + F.S.hp - F.S.kp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.km*F.S.tm) * (F.a11 - F.a12) + (-F.S.hm*F.S.sm + F.S.hm + F.S.km*F.S.tm - F.S.km) * F.a12) (hfreqTA : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC (C3.slide F.S.u_tANR ⟨0, 0, -1⟩ η))) (hndV : NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC F.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hVp : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVW : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hWp : 0 ≤ -F.S.hp*F.S.sp + F.S.hp - F.S.kp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.km*F.S.tm) * (F.a11 - F.a12) + (-F.S.hm*F.S.sm + F.S.hm + F.S.km*F.S.tm - F.S.km) * F.a12) (hH : ¬ F.ClassH)   :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -709,9 +710,9 @@ theorem Frame20.om3z1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
   by_cases o0 : (F.dep F.S.u_tANR 0 < F.dep F.S.u_tANR 6 ∨ F.dep F.S.u_tANR 0 < F.dep F.S.u_tANR 3 ∨ F.dep F.S.u_tANR 4 < F.dep F.S.u_tANR 6 ∨ F.dep F.S.u_tANR 4 < F.dep F.S.u_tANR 3) ∧ (F.dep F.S.u_tANR 6 < F.dep F.S.u_tANR 0 ∨ F.dep F.S.u_tANR 3 < F.dep F.S.u_tANR 0 ∨ F.dep F.S.u_tANR 6 < F.dep F.S.u_tANR 4 ∨ F.dep F.S.u_tANR 3 < F.dep F.S.u_tANR 4)
-  · exact F.tANR hx (by linarith only [hA1r]) o0.1 o0.2 hfreqTA
+  · exact F.tANR_slide hx (by linarith only [hA1r]) o0.1 o0.2 hH
   by_cases o1 : (F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 6 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 6) ∧ (F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 4 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 4)
-  · exact F.vN4 hx (by linarith only [hVp]) (by linarith only [hVW]) o1.1 o1.2 hndV
+  · exact F.vN4_slide hx (by linarith only [hVp]) (by linarith only [hVW]) o1.1 o1.2 hH
   by_cases o2 : (F.dep F.S.u_tP 1 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 1 < F.dep F.S.u_tP 6 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 6) ∧ (F.dep F.S.u_tP 3 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 3 < F.dep F.S.u_tP 4 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 4)
   · exact F.tP (by linarith only [hA1r]) o2.1 o2.2
   exfalso
@@ -772,7 +773,7 @@ theorem Frame20.om3z1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
 
 /-- 27.74 (ii): {T_A, V, T′}, h+ ≥ d+, z2 -/
 theorem Frame20.om3z2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hVp : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVW : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hWp : 0 ≤ -F.S.hp*F.S.sp + F.S.hp - F.S.kp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (-F.S.km*F.S.tm) * (F.a11 - F.a12) + (F.S.hm*F.S.sm - F.S.hm - F.S.km*F.S.tm + F.S.km) * F.a12) (hfreqTA : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC (C3.slide F.S.u_tANR ⟨0, 0, -1⟩ η))) (hndV : NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC F.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hVp : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVW : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hWp : 0 ≤ -F.S.hp*F.S.sp + F.S.hp - F.S.kp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (-F.S.km*F.S.tm) * (F.a11 - F.a12) + (F.S.hm*F.S.sm - F.S.hm - F.S.km*F.S.tm + F.S.km) * F.a12) (hH : ¬ F.ClassH)   :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -787,9 +788,9 @@ theorem Frame20.om3z2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
   by_cases o0 : (F.dep F.S.u_tANR 0 < F.dep F.S.u_tANR 6 ∨ F.dep F.S.u_tANR 0 < F.dep F.S.u_tANR 3 ∨ F.dep F.S.u_tANR 4 < F.dep F.S.u_tANR 6 ∨ F.dep F.S.u_tANR 4 < F.dep F.S.u_tANR 3) ∧ (F.dep F.S.u_tANR 6 < F.dep F.S.u_tANR 0 ∨ F.dep F.S.u_tANR 3 < F.dep F.S.u_tANR 0 ∨ F.dep F.S.u_tANR 6 < F.dep F.S.u_tANR 4 ∨ F.dep F.S.u_tANR 3 < F.dep F.S.u_tANR 4)
-  · exact F.tANR hx (by linarith only [hA1r]) o0.1 o0.2 hfreqTA
+  · exact F.tANR_slide hx (by linarith only [hA1r]) o0.1 o0.2 hH
   by_cases o1 : (F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 6 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 6) ∧ (F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 4 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 4)
-  · exact F.vN4 hx (by linarith only [hVp]) (by linarith only [hVW]) o1.1 o1.2 hndV
+  · exact F.vN4_slide hx (by linarith only [hVp]) (by linarith only [hVW]) o1.1 o1.2 hH
   by_cases o2 : (F.dep F.S.u_tP 1 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 1 < F.dep F.S.u_tP 6 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 6) ∧ (F.dep F.S.u_tP 3 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 3 < F.dep F.S.u_tP 4 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 4)
   · exact F.tP (by linarith only [hA1r]) o2.1 o2.2
   exfalso
@@ -850,7 +851,7 @@ theorem Frame20.om3z2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
 
 /-- 27.76 N4 p -/
 theorem Frame20.om4ap {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1R : 0 < F.S.km*F.S.sp + F.S.kp*F.S.sm - F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu : 0 < (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp - F.S.sm) * F.a12 + (F.S.hm*F.S.hp + F.S.hp*F.S.km*F.S.tm - F.S.hp*F.S.km) * F.gg) (hndVR : NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC F.rFrame.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1R : 0 < F.S.km*F.S.sp + F.S.kp*F.S.sm - F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu : 0 < (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp - F.S.sm) * F.a12 + (F.S.hm*F.S.hp + F.S.hp*F.S.km*F.S.tm - F.S.hp*F.S.km) * F.gg) (hHR : ¬ F.ClassHR)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -869,7 +870,7 @@ theorem Frame20.om4ap {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_tA 0 < F.rFrame.dep F.rFrame.S.u_tA 6 ∨ F.rFrame.dep F.rFrame.S.u_tA 0 < F.rFrame.dep F.rFrame.S.u_tA 5 ∨ F.rFrame.dep F.rFrame.S.u_tA 4 < F.rFrame.dep F.rFrame.S.u_tA 6 ∨ F.rFrame.dep F.rFrame.S.u_tA 4 < F.rFrame.dep F.rFrame.S.u_tA 5) ∧ (F.rFrame.dep F.rFrame.S.u_tA 6 < F.rFrame.dep F.rFrame.S.u_tA 0 ∨ F.rFrame.dep F.rFrame.S.u_tA 5 < F.rFrame.dep F.rFrame.S.u_tA 0 ∨ F.rFrame.dep F.rFrame.S.u_tA 6 < F.rFrame.dep F.rFrame.S.u_tA 4 ∨ F.rFrame.dep F.rFrame.S.u_tA 5 < F.rFrame.dep F.rFrame.S.u_tA 4)
   · exact rupert_of_r (F.rFrame.tA (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1R]) o1.1 o1.2)
   by_cases o2 : (F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 6 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 6) ∧ (F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 4 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 4)
-  · exact rupert_of_r (F.rFrame.vN4 (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 hndVR)
+  · exact rupert_of_r (F.rFrame.vN4_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   exfalso
   simp only [not_and_or, not_or, not_lt] at o0
   simp only [not_and_or, not_or, not_lt] at o1
@@ -928,7 +929,7 @@ theorem Frame20.om4ap {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
 
 /-- 27.76 N4 n -/
 theorem Frame20.om4an {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1R : 0 < F.S.km*F.S.sp + F.S.kp*F.S.sm - F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu : 0 < (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hndVR : NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC F.rFrame.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1R : 0 < F.S.km*F.S.sp + F.S.kp*F.S.sm - F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu : 0 < (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hHR : ¬ F.ClassHR)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -947,7 +948,7 @@ theorem Frame20.om4an {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_tA 0 < F.rFrame.dep F.rFrame.S.u_tA 6 ∨ F.rFrame.dep F.rFrame.S.u_tA 0 < F.rFrame.dep F.rFrame.S.u_tA 5 ∨ F.rFrame.dep F.rFrame.S.u_tA 4 < F.rFrame.dep F.rFrame.S.u_tA 6 ∨ F.rFrame.dep F.rFrame.S.u_tA 4 < F.rFrame.dep F.rFrame.S.u_tA 5) ∧ (F.rFrame.dep F.rFrame.S.u_tA 6 < F.rFrame.dep F.rFrame.S.u_tA 0 ∨ F.rFrame.dep F.rFrame.S.u_tA 5 < F.rFrame.dep F.rFrame.S.u_tA 0 ∨ F.rFrame.dep F.rFrame.S.u_tA 6 < F.rFrame.dep F.rFrame.S.u_tA 4 ∨ F.rFrame.dep F.rFrame.S.u_tA 5 < F.rFrame.dep F.rFrame.S.u_tA 4)
   · exact rupert_of_r (F.rFrame.tA (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1R]) o1.1 o1.2)
   by_cases o2 : (F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 6 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 6) ∧ (F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 4 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 4)
-  · exact rupert_of_r (F.rFrame.vN4 (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 hndVR)
+  · exact rupert_of_r (F.rFrame.vN4_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   exfalso
   simp only [not_and_or, not_or, not_lt] at o0
   simp only [not_and_or, not_or, not_lt] at o1
@@ -1006,7 +1007,7 @@ theorem Frame20.om4an {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
 
 /-- 27.76 N4 z1 -/
 theorem Frame20.om4az1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1R : 0 < F.S.km*F.S.sp + F.S.kp*F.S.sm - F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu1 : 0 ≤ (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp - F.S.sm) * F.a12 + (F.S.hm*F.S.hp + F.S.hp*F.S.km*F.S.tm - F.S.hp*F.S.km) * F.gg) (hnu2 : 0 ≤ (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.tm*F.S.tp - F.S.tm - F.S.tp + 1) * (F.a11 - F.a12) + (F.S.tm*F.S.tp - F.S.tm - F.S.tp + 1) * F.a12 + (-F.S.hm*F.S.hp) * F.gg) (hndVR : NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC F.rFrame.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1R : 0 < F.S.km*F.S.sp + F.S.kp*F.S.sm - F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu1 : 0 ≤ (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp - F.S.sm) * F.a12 + (F.S.hm*F.S.hp + F.S.hp*F.S.km*F.S.tm - F.S.hp*F.S.km) * F.gg) (hnu2 : 0 ≤ (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.tm*F.S.tp - F.S.tm - F.S.tp + 1) * (F.a11 - F.a12) + (F.S.tm*F.S.tp - F.S.tm - F.S.tp + 1) * F.a12 + (-F.S.hm*F.S.hp) * F.gg) (hHR : ¬ F.ClassHR)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -1025,7 +1026,7 @@ theorem Frame20.om4az1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_tA 0 < F.rFrame.dep F.rFrame.S.u_tA 6 ∨ F.rFrame.dep F.rFrame.S.u_tA 0 < F.rFrame.dep F.rFrame.S.u_tA 5 ∨ F.rFrame.dep F.rFrame.S.u_tA 4 < F.rFrame.dep F.rFrame.S.u_tA 6 ∨ F.rFrame.dep F.rFrame.S.u_tA 4 < F.rFrame.dep F.rFrame.S.u_tA 5) ∧ (F.rFrame.dep F.rFrame.S.u_tA 6 < F.rFrame.dep F.rFrame.S.u_tA 0 ∨ F.rFrame.dep F.rFrame.S.u_tA 5 < F.rFrame.dep F.rFrame.S.u_tA 0 ∨ F.rFrame.dep F.rFrame.S.u_tA 6 < F.rFrame.dep F.rFrame.S.u_tA 4 ∨ F.rFrame.dep F.rFrame.S.u_tA 5 < F.rFrame.dep F.rFrame.S.u_tA 4)
   · exact rupert_of_r (F.rFrame.tA (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1R]) o1.1 o1.2)
   by_cases o2 : (F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 6 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 6) ∧ (F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 4 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 4)
-  · exact rupert_of_r (F.rFrame.vN4 (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 hndVR)
+  · exact rupert_of_r (F.rFrame.vN4_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   exfalso
   simp only [not_and_or, not_or, not_lt] at o0
   simp only [not_and_or, not_or, not_lt] at o1
@@ -1084,7 +1085,7 @@ theorem Frame20.om4az1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
 
 /-- 27.76 N4 z2 -/
 theorem Frame20.om4az2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1R : 0 < F.S.km*F.S.sp + F.S.kp*F.S.sm - F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu1 : 0 ≤ (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp - F.S.sm) * F.a12 + (F.S.hm*F.S.hp + F.S.hp*F.S.km*F.S.tm - F.S.hp*F.S.km) * F.gg) (hnu2 : 0 ≤ (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hl : 0 < (-F.S.tm*F.S.tp + F.S.tm + F.S.tp - 1) * (F.a11 - F.a12) + (-F.S.tm*F.S.tp + F.S.tm + F.S.tp - 1) * F.a12 + (F.S.hm*F.S.hp) * F.gg) (hndVR : NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC F.rFrame.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1R : 0 < F.S.km*F.S.sp + F.S.kp*F.S.sm - F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu1 : 0 ≤ (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp - F.S.sm) * F.a12 + (F.S.hm*F.S.hp + F.S.hp*F.S.km*F.S.tm - F.S.hp*F.S.km) * F.gg) (hnu2 : 0 ≤ (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hl : 0 < (-F.S.tm*F.S.tp + F.S.tm + F.S.tp - 1) * (F.a11 - F.a12) + (-F.S.tm*F.S.tp + F.S.tm + F.S.tp - 1) * F.a12 + (F.S.hm*F.S.hp) * F.gg) (hHR : ¬ F.ClassHR)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -1103,7 +1104,7 @@ theorem Frame20.om4az2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_tA 0 < F.rFrame.dep F.rFrame.S.u_tA 6 ∨ F.rFrame.dep F.rFrame.S.u_tA 0 < F.rFrame.dep F.rFrame.S.u_tA 5 ∨ F.rFrame.dep F.rFrame.S.u_tA 4 < F.rFrame.dep F.rFrame.S.u_tA 6 ∨ F.rFrame.dep F.rFrame.S.u_tA 4 < F.rFrame.dep F.rFrame.S.u_tA 5) ∧ (F.rFrame.dep F.rFrame.S.u_tA 6 < F.rFrame.dep F.rFrame.S.u_tA 0 ∨ F.rFrame.dep F.rFrame.S.u_tA 5 < F.rFrame.dep F.rFrame.S.u_tA 0 ∨ F.rFrame.dep F.rFrame.S.u_tA 6 < F.rFrame.dep F.rFrame.S.u_tA 4 ∨ F.rFrame.dep F.rFrame.S.u_tA 5 < F.rFrame.dep F.rFrame.S.u_tA 4)
   · exact rupert_of_r (F.rFrame.tA (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1R]) o1.1 o1.2)
   by_cases o2 : (F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 6 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 6) ∧ (F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 4 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 4)
-  · exact rupert_of_r (F.rFrame.vN4 (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 hndVR)
+  · exact rupert_of_r (F.rFrame.vN4_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   exfalso
   simp only [not_and_or, not_or, not_lt] at o0
   simp only [not_and_or, not_or, not_lt] at o1
@@ -1474,7 +1475,7 @@ theorem Frame20.om4bz2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
 
 /-- 27.76 N4, d− < c+ p -/
 theorem Frame20.om4cp {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu : 0 < (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp - F.S.sm) * F.a12 + (F.S.hm*F.S.hp + F.S.hp*F.S.km*F.S.tm - F.S.hp*F.S.km) * F.gg) (hfreqTAR : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC (C3.slide F.rFrame.S.u_tANR ⟨0, 0, -1⟩ η))) (hndVR : NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC F.rFrame.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu : 0 < (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp - F.S.sm) * F.a12 + (F.S.hm*F.S.hp + F.S.hp*F.S.km*F.S.tm - F.S.hp*F.S.km) * F.gg) (hHR : ¬ F.ClassHR)   :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -1491,9 +1492,9 @@ theorem Frame20.om4cp {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
   by_cases o0 : (F.dep F.S.u_tP 1 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 1 < F.dep F.S.u_tP 6 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 6) ∧ (F.dep F.S.u_tP 3 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 3 < F.dep F.S.u_tP 4 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 4)
   · exact F.tP (by linarith only [hA1r]) o0.1 o0.2
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 3 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 3) ∧ (F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 4 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 4)
-  · exact rupert_of_r (F.rFrame.tANR (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 hfreqTAR)
+  · exact rupert_of_r (F.rFrame.tANR_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o2 : (F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 6 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 6) ∧ (F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 4 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 4)
-  · exact rupert_of_r (F.rFrame.vN4 (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 hndVR)
+  · exact rupert_of_r (F.rFrame.vN4_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o3 : (F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 6 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 6) ∧ (F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 4 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 4)
   · exact rupert_of_r (F.rFrame.tP (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o3.1 o3.2)
   exfalso
@@ -1620,7 +1621,7 @@ theorem Frame20.om4cp {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
 
 /-- 27.76 N4, d− < c+ z1 -/
 theorem Frame20.om4cz1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu1 : 0 ≤ (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp - F.S.sm) * F.a12 + (F.S.hm*F.S.hp + F.S.hp*F.S.km*F.S.tm - F.S.hp*F.S.km) * F.gg) (hnu2 : 0 ≤ (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.tm*F.S.tp - F.S.tm - F.S.tp + 1) * (F.a11 - F.a12) + (F.S.tm*F.S.tp - F.S.tm - F.S.tp + 1) * F.a12 + (-F.S.hm*F.S.hp) * F.gg) (hfreqTAR : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC (C3.slide F.rFrame.S.u_tANR ⟨0, 0, -1⟩ η))) (hndVR : NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC F.rFrame.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu1 : 0 ≤ (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp - F.S.sm) * F.a12 + (F.S.hm*F.S.hp + F.S.hp*F.S.km*F.S.tm - F.S.hp*F.S.km) * F.gg) (hnu2 : 0 ≤ (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.tm*F.S.tp - F.S.tm - F.S.tp + 1) * (F.a11 - F.a12) + (F.S.tm*F.S.tp - F.S.tm - F.S.tp + 1) * F.a12 + (-F.S.hm*F.S.hp) * F.gg) (hHR : ¬ F.ClassHR)   :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -1637,9 +1638,9 @@ theorem Frame20.om4cz1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
   by_cases o0 : (F.dep F.S.u_tP 1 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 1 < F.dep F.S.u_tP 6 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 6) ∧ (F.dep F.S.u_tP 3 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 3 < F.dep F.S.u_tP 4 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 4)
   · exact F.tP (by linarith only [hA1r]) o0.1 o0.2
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 3 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 3) ∧ (F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 4 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 4)
-  · exact rupert_of_r (F.rFrame.tANR (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 hfreqTAR)
+  · exact rupert_of_r (F.rFrame.tANR_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o2 : (F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 6 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 6) ∧ (F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 4 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 4)
-  · exact rupert_of_r (F.rFrame.vN4 (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 hndVR)
+  · exact rupert_of_r (F.rFrame.vN4_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o3 : (F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 6 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 6) ∧ (F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 4 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 4)
   · exact rupert_of_r (F.rFrame.tP (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o3.1 o3.2)
   exfalso
@@ -1766,7 +1767,7 @@ theorem Frame20.om4cz1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
 
 /-- 27.76 N4, d− < c+ z2 -/
 theorem Frame20.om4cz2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu1 : 0 ≤ (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp - F.S.sm) * F.a12 + (F.S.hm*F.S.hp + F.S.hp*F.S.km*F.S.tm - F.S.hp*F.S.km) * F.gg) (hnu2 : 0 ≤ (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hl : 0 < (-F.S.tm*F.S.tp + F.S.tm + F.S.tp - 1) * (F.a11 - F.a12) + (-F.S.tm*F.S.tp + F.S.tm + F.S.tp - 1) * F.a12 + (F.S.hm*F.S.hp) * F.gg) (hfreqTAR : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC (C3.slide F.rFrame.S.u_tANR ⟨0, 0, -1⟩ η))) (hndVR : NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC F.rFrame.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu1 : 0 ≤ (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp - F.S.sm) * F.a12 + (F.S.hm*F.S.hp + F.S.hp*F.S.km*F.S.tm - F.S.hp*F.S.km) * F.gg) (hnu2 : 0 ≤ (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hl : 0 < (-F.S.tm*F.S.tp + F.S.tm + F.S.tp - 1) * (F.a11 - F.a12) + (-F.S.tm*F.S.tp + F.S.tm + F.S.tp - 1) * F.a12 + (F.S.hm*F.S.hp) * F.gg) (hHR : ¬ F.ClassHR)   :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -1783,9 +1784,9 @@ theorem Frame20.om4cz2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
   by_cases o0 : (F.dep F.S.u_tP 1 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 1 < F.dep F.S.u_tP 6 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 6) ∧ (F.dep F.S.u_tP 3 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 3 < F.dep F.S.u_tP 4 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 4)
   · exact F.tP (by linarith only [hA1r]) o0.1 o0.2
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 3 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 3) ∧ (F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 4 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 4)
-  · exact rupert_of_r (F.rFrame.tANR (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 hfreqTAR)
+  · exact rupert_of_r (F.rFrame.tANR_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o2 : (F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 6 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 6) ∧ (F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 4 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 4)
-  · exact rupert_of_r (F.rFrame.vN4 (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 hndVR)
+  · exact rupert_of_r (F.rFrame.vN4_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o3 : (F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 6 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 6) ∧ (F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 4 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 4)
   · exact rupert_of_r (F.rFrame.tP (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o3.1 o3.2)
   exfalso
@@ -1912,7 +1913,7 @@ theorem Frame20.om4cz2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
 
 /-- 27.76 N4, d− < c+, ν<0, op -/
 theorem Frame20.om4cnop {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu : 0 < (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hom : 0 < (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hfreqTAR : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC (C3.slide F.rFrame.S.u_tANR ⟨0, 0, -1⟩ η))) (hndVR : NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC F.rFrame.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu : 0 < (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hom : 0 < (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hHR : ¬ F.ClassHR)   :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -1929,9 +1930,9 @@ theorem Frame20.om4cnop {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inj
   by_cases o0 : (F.dep F.S.u_tP 1 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 1 < F.dep F.S.u_tP 6 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 6) ∧ (F.dep F.S.u_tP 3 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 3 < F.dep F.S.u_tP 4 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 4)
   · exact F.tP (by linarith only [hA1r]) o0.1 o0.2
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 3 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 3) ∧ (F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 4 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 4)
-  · exact rupert_of_r (F.rFrame.tANR (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 hfreqTAR)
+  · exact rupert_of_r (F.rFrame.tANR_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o2 : (F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 6 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 6) ∧ (F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 4 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 4)
-  · exact rupert_of_r (F.rFrame.vN4 (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 hndVR)
+  · exact rupert_of_r (F.rFrame.vN4_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o3 : (F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 6 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 6) ∧ (F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 4 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 4)
   · exact rupert_of_r (F.rFrame.tP (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o3.1 o3.2)
   exfalso
@@ -2058,7 +2059,7 @@ theorem Frame20.om4cnop {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inj
 
 /-- 27.76 N4, d− < c+, ν<0, om -/
 theorem Frame20.om4cnom {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu : 0 < (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hom : 0 < (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hfreqTAR : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC (C3.slide F.rFrame.S.u_tANR ⟨0, 0, -1⟩ η))) (hndVR : NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC F.rFrame.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu : 0 < (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hom : 0 < (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hHR : ¬ F.ClassHR)   :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -2075,9 +2076,9 @@ theorem Frame20.om4cnom {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inj
   by_cases o0 : (F.dep F.S.u_tP 1 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 1 < F.dep F.S.u_tP 6 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 6) ∧ (F.dep F.S.u_tP 3 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 3 < F.dep F.S.u_tP 4 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 4)
   · exact F.tP (by linarith only [hA1r]) o0.1 o0.2
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 3 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 3) ∧ (F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 4 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 4)
-  · exact rupert_of_r (F.rFrame.tANR (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 hfreqTAR)
+  · exact rupert_of_r (F.rFrame.tANR_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o2 : (F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 6 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 6) ∧ (F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 4 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 4)
-  · exact rupert_of_r (F.rFrame.vN4 (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 hndVR)
+  · exact rupert_of_r (F.rFrame.vN4_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o3 : (F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 6 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 6) ∧ (F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 4 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 4)
   · exact rupert_of_r (F.rFrame.tP (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o3.1 o3.2)
   exfalso
@@ -2204,7 +2205,7 @@ theorem Frame20.om4cnom {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inj
 
 /-- 27.76 N4, d− < c+, ν<0, oz1 -/
 theorem Frame20.om4cnoz1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu : 0 < (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl2 : 0 < (F.S.hp*F.S.sp) * (F.a22 - F.a12) + (F.S.hp*F.S.sp - F.S.hp - F.S.kp*F.S.tp + F.S.kp) * F.a12) (hfreqTAR : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC (C3.slide F.rFrame.S.u_tANR ⟨0, 0, -1⟩ η))) (hndVR : NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC F.rFrame.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu : 0 < (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl2 : 0 < (F.S.hp*F.S.sp) * (F.a22 - F.a12) + (F.S.hp*F.S.sp - F.S.hp - F.S.kp*F.S.tp + F.S.kp) * F.a12) (hHR : ¬ F.ClassHR)   :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -2221,9 +2222,9 @@ theorem Frame20.om4cnoz1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
   by_cases o0 : (F.dep F.S.u_tP 1 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 1 < F.dep F.S.u_tP 6 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 6) ∧ (F.dep F.S.u_tP 3 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 3 < F.dep F.S.u_tP 4 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 4)
   · exact F.tP (by linarith only [hA1r]) o0.1 o0.2
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 3 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 3) ∧ (F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 4 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 4)
-  · exact rupert_of_r (F.rFrame.tANR (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 hfreqTAR)
+  · exact rupert_of_r (F.rFrame.tANR_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o2 : (F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 6 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 6) ∧ (F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 4 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 4)
-  · exact rupert_of_r (F.rFrame.vN4 (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 hndVR)
+  · exact rupert_of_r (F.rFrame.vN4_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o3 : (F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 6 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 6) ∧ (F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 4 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 4)
   · exact rupert_of_r (F.rFrame.tP (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o3.1 o3.2)
   exfalso
@@ -2350,7 +2351,7 @@ theorem Frame20.om4cnoz1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
 
 /-- 27.76 N4, d− < c+, ν<0, oz2 -/
 theorem Frame20.om4cnoz2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu : 0 < (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl2 : 0 < (-F.S.hp*F.S.sp) * (F.a22 - F.a12) + (-F.S.hp*F.S.sp + F.S.hp + F.S.kp*F.S.tp - F.S.kp) * F.a12) (hfreqTAR : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC (C3.slide F.rFrame.S.u_tANR ⟨0, 0, -1⟩ η))) (hndVR : NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC F.rFrame.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVpR : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVWR : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hss : 0 < F.S.sm - F.S.sp) (hnu : 0 < (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl2 : 0 < (-F.S.hp*F.S.sp) * (F.a22 - F.a12) + (-F.S.hp*F.S.sp + F.S.hp + F.S.kp*F.S.tp - F.S.kp) * F.a12) (hHR : ¬ F.ClassHR)   :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -2367,9 +2368,9 @@ theorem Frame20.om4cnoz2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
   by_cases o0 : (F.dep F.S.u_tP 1 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 1 < F.dep F.S.u_tP 6 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 6) ∧ (F.dep F.S.u_tP 3 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 3 < F.dep F.S.u_tP 4 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 4)
   · exact F.tP (by linarith only [hA1r]) o0.1 o0.2
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 3 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 3) ∧ (F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 4 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 4)
-  · exact rupert_of_r (F.rFrame.tANR (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 hfreqTAR)
+  · exact rupert_of_r (F.rFrame.tANR_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o2 : (F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 6 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 6) ∧ (F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 4 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 4)
-  · exact rupert_of_r (F.rFrame.vN4 (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 hndVR)
+  · exact rupert_of_r (F.rFrame.vN4_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVpR]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVWR]) o2.1 o2.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o3 : (F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 6 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 6) ∧ (F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 4 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 4)
   · exact rupert_of_r (F.rFrame.tP (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o3.1 o3.2)
   exfalso
@@ -2496,7 +2497,7 @@ theorem Frame20.om4cnoz2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
 
 /-- 27.76 Rv, d− < c+ p -/
 theorem Frame20.om4dp {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVR : 0 < F.S.hm*F.S.sp + F.S.km*F.S.sp*F.S.tm - F.S.km*F.S.sp + F.S.kp*F.S.sm*F.S.tm - F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hnu : 0 < (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp - F.S.sm) * F.a12 + (F.S.hm*F.S.hp + F.S.hp*F.S.km*F.S.tm - F.S.hp*F.S.km) * F.gg) (hfreqTAR : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC (C3.slide F.rFrame.S.u_tANR ⟨0, 0, -1⟩ η)))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVR : 0 < F.S.hm*F.S.sp + F.S.km*F.S.sp*F.S.tm - F.S.km*F.S.sp + F.S.kp*F.S.sm*F.S.tm - F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hnu : 0 < (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp - F.S.sm) * F.a12 + (F.S.hm*F.S.hp + F.S.hp*F.S.km*F.S.tm - F.S.hp*F.S.km) * F.gg) (hHR : ¬ F.ClassHR)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -2513,7 +2514,7 @@ theorem Frame20.om4dp {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
   by_cases o0 : (F.dep F.S.u_tP 1 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 1 < F.dep F.S.u_tP 6 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 6) ∧ (F.dep F.S.u_tP 3 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 3 < F.dep F.S.u_tP 4 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 4)
   · exact F.tP (by linarith only [hA1r]) o0.1 o0.2
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 3 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 3) ∧ (F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 4 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 4)
-  · exact rupert_of_r (F.rFrame.tANR (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 hfreqTAR)
+  · exact rupert_of_r (F.rFrame.tANR_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o2 : (F.rFrame.dep F.rFrame.S.u_vRv 0 < F.rFrame.dep F.rFrame.S.u_vRv 6 ∨ F.rFrame.dep F.rFrame.S.u_vRv 0 < F.rFrame.dep F.rFrame.S.u_vRv 5 ∨ F.rFrame.dep F.rFrame.S.u_vRv 4 < F.rFrame.dep F.rFrame.S.u_vRv 6 ∨ F.rFrame.dep F.rFrame.S.u_vRv 4 < F.rFrame.dep F.rFrame.S.u_vRv 5) ∧ (F.rFrame.dep F.rFrame.S.u_vRv 6 < F.rFrame.dep F.rFrame.S.u_vRv 0 ∨ F.rFrame.dep F.rFrame.S.u_vRv 5 < F.rFrame.dep F.rFrame.S.u_vRv 0 ∨ F.rFrame.dep F.rFrame.S.u_vRv 6 < F.rFrame.dep F.rFrame.S.u_vRv 4 ∨ F.rFrame.dep F.rFrame.S.u_vRv 5 < F.rFrame.dep F.rFrame.S.u_vRv 4)
   · exact rupert_of_r (F.rFrame.vRv (by simp only [rFrame_S, Shape20.swap]; linarith only [hKb]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVR]) o2.1 o2.2)
   by_cases o3 : (F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 6 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 6) ∧ (F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 4 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 4)
@@ -2642,7 +2643,7 @@ theorem Frame20.om4dp {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
 
 /-- 27.76 Rv, d− < c+ n -/
 theorem Frame20.om4dn {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVR : 0 < F.S.hm*F.S.sp + F.S.km*F.S.sp*F.S.tm - F.S.km*F.S.sp + F.S.kp*F.S.sm*F.S.tm - F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hnu : 0 < (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hfreqTAR : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC (C3.slide F.rFrame.S.u_tANR ⟨0, 0, -1⟩ η)))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVR : 0 < F.S.hm*F.S.sp + F.S.km*F.S.sp*F.S.tm - F.S.km*F.S.sp + F.S.kp*F.S.sm*F.S.tm - F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hnu : 0 < (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hHR : ¬ F.ClassHR)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -2659,7 +2660,7 @@ theorem Frame20.om4dn {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
   by_cases o0 : (F.dep F.S.u_tP 1 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 1 < F.dep F.S.u_tP 6 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 6) ∧ (F.dep F.S.u_tP 3 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 3 < F.dep F.S.u_tP 4 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 4)
   · exact F.tP (by linarith only [hA1r]) o0.1 o0.2
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 3 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 3) ∧ (F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 4 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 4)
-  · exact rupert_of_r (F.rFrame.tANR (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 hfreqTAR)
+  · exact rupert_of_r (F.rFrame.tANR_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o2 : (F.rFrame.dep F.rFrame.S.u_vRv 0 < F.rFrame.dep F.rFrame.S.u_vRv 6 ∨ F.rFrame.dep F.rFrame.S.u_vRv 0 < F.rFrame.dep F.rFrame.S.u_vRv 5 ∨ F.rFrame.dep F.rFrame.S.u_vRv 4 < F.rFrame.dep F.rFrame.S.u_vRv 6 ∨ F.rFrame.dep F.rFrame.S.u_vRv 4 < F.rFrame.dep F.rFrame.S.u_vRv 5) ∧ (F.rFrame.dep F.rFrame.S.u_vRv 6 < F.rFrame.dep F.rFrame.S.u_vRv 0 ∨ F.rFrame.dep F.rFrame.S.u_vRv 5 < F.rFrame.dep F.rFrame.S.u_vRv 0 ∨ F.rFrame.dep F.rFrame.S.u_vRv 6 < F.rFrame.dep F.rFrame.S.u_vRv 4 ∨ F.rFrame.dep F.rFrame.S.u_vRv 5 < F.rFrame.dep F.rFrame.S.u_vRv 4)
   · exact rupert_of_r (F.rFrame.vRv (by simp only [rFrame_S, Shape20.swap]; linarith only [hKb]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVR]) o2.1 o2.2)
   by_cases o3 : (F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 6 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 6) ∧ (F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 4 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 4)
@@ -2788,7 +2789,7 @@ theorem Frame20.om4dn {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
 
 /-- 27.76 Rv, d− < c+ z1 -/
 theorem Frame20.om4dz1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVR : 0 < F.S.hm*F.S.sp + F.S.km*F.S.sp*F.S.tm - F.S.km*F.S.sp + F.S.kp*F.S.sm*F.S.tm - F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hnu1 : 0 ≤ (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp - F.S.sm) * F.a12 + (F.S.hm*F.S.hp + F.S.hp*F.S.km*F.S.tm - F.S.hp*F.S.km) * F.gg) (hnu2 : 0 ≤ (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.tm*F.S.tp - F.S.tm - F.S.tp + 1) * (F.a11 - F.a12) + (F.S.tm*F.S.tp - F.S.tm - F.S.tp + 1) * F.a12 + (-F.S.hm*F.S.hp) * F.gg) (hfreqTAR : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC (C3.slide F.rFrame.S.u_tANR ⟨0, 0, -1⟩ η)))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVR : 0 < F.S.hm*F.S.sp + F.S.km*F.S.sp*F.S.tm - F.S.km*F.S.sp + F.S.kp*F.S.sm*F.S.tm - F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hnu1 : 0 ≤ (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp - F.S.sm) * F.a12 + (F.S.hm*F.S.hp + F.S.hp*F.S.km*F.S.tm - F.S.hp*F.S.km) * F.gg) (hnu2 : 0 ≤ (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.tm*F.S.tp - F.S.tm - F.S.tp + 1) * (F.a11 - F.a12) + (F.S.tm*F.S.tp - F.S.tm - F.S.tp + 1) * F.a12 + (-F.S.hm*F.S.hp) * F.gg) (hHR : ¬ F.ClassHR)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -2805,7 +2806,7 @@ theorem Frame20.om4dz1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
   by_cases o0 : (F.dep F.S.u_tP 1 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 1 < F.dep F.S.u_tP 6 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 6) ∧ (F.dep F.S.u_tP 3 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 3 < F.dep F.S.u_tP 4 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 4)
   · exact F.tP (by linarith only [hA1r]) o0.1 o0.2
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 3 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 3) ∧ (F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 4 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 4)
-  · exact rupert_of_r (F.rFrame.tANR (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 hfreqTAR)
+  · exact rupert_of_r (F.rFrame.tANR_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o2 : (F.rFrame.dep F.rFrame.S.u_vRv 0 < F.rFrame.dep F.rFrame.S.u_vRv 6 ∨ F.rFrame.dep F.rFrame.S.u_vRv 0 < F.rFrame.dep F.rFrame.S.u_vRv 5 ∨ F.rFrame.dep F.rFrame.S.u_vRv 4 < F.rFrame.dep F.rFrame.S.u_vRv 6 ∨ F.rFrame.dep F.rFrame.S.u_vRv 4 < F.rFrame.dep F.rFrame.S.u_vRv 5) ∧ (F.rFrame.dep F.rFrame.S.u_vRv 6 < F.rFrame.dep F.rFrame.S.u_vRv 0 ∨ F.rFrame.dep F.rFrame.S.u_vRv 5 < F.rFrame.dep F.rFrame.S.u_vRv 0 ∨ F.rFrame.dep F.rFrame.S.u_vRv 6 < F.rFrame.dep F.rFrame.S.u_vRv 4 ∨ F.rFrame.dep F.rFrame.S.u_vRv 5 < F.rFrame.dep F.rFrame.S.u_vRv 4)
   · exact rupert_of_r (F.rFrame.vRv (by simp only [rFrame_S, Shape20.swap]; linarith only [hKb]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVR]) o2.1 o2.2)
   by_cases o3 : (F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 6 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 6) ∧ (F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 4 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 4)
@@ -2934,7 +2935,7 @@ theorem Frame20.om4dz1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
 
 /-- 27.76 Rv, d− < c+ z2 -/
 theorem Frame20.om4dz2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVR : 0 < F.S.hm*F.S.sp + F.S.km*F.S.sp*F.S.tm - F.S.km*F.S.sp + F.S.kp*F.S.sm*F.S.tm - F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hnu1 : 0 ≤ (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp - F.S.sm) * F.a12 + (F.S.hm*F.S.hp + F.S.hp*F.S.km*F.S.tm - F.S.hp*F.S.km) * F.gg) (hnu2 : 0 ≤ (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hl : 0 < (-F.S.tm*F.S.tp + F.S.tm + F.S.tp - 1) * (F.a11 - F.a12) + (-F.S.tm*F.S.tp + F.S.tm + F.S.tp - 1) * F.a12 + (F.S.hm*F.S.hp) * F.gg) (hfreqTAR : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC (C3.slide F.rFrame.S.u_tANR ⟨0, 0, -1⟩ η)))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hA1Rr : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVR : 0 < F.S.hm*F.S.sp + F.S.km*F.S.sp*F.S.tm - F.S.km*F.S.sp + F.S.kp*F.S.sm*F.S.tm - F.S.kp*F.S.sm) (hKb : 0 < F.S.hm + F.S.km*F.S.tm - F.S.km) (hnu1 : 0 ≤ (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp - F.S.sm) * F.a12 + (F.S.hm*F.S.hp + F.S.hp*F.S.km*F.S.tm - F.S.hp*F.S.km) * F.gg) (hnu2 : 0 ≤ (F.S.sm*F.S.tm*F.S.tp - F.S.sm*F.S.tm - F.S.sm*F.S.tp + F.S.sm) * F.a12 + (-F.S.hm*F.S.hp - F.S.hp*F.S.km*F.S.tm + F.S.hp*F.S.km) * F.gg) (hl : 0 < (-F.S.tm*F.S.tp + F.S.tm + F.S.tp - 1) * (F.a11 - F.a12) + (-F.S.tm*F.S.tp + F.S.tm + F.S.tp - 1) * F.a12 + (F.S.hm*F.S.hp) * F.gg) (hHR : ¬ F.ClassHR)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -2951,7 +2952,7 @@ theorem Frame20.om4dz2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
   by_cases o0 : (F.dep F.S.u_tP 1 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 1 < F.dep F.S.u_tP 6 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 3 ∨ F.dep F.S.u_tP 4 < F.dep F.S.u_tP 6) ∧ (F.dep F.S.u_tP 3 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 1 ∨ F.dep F.S.u_tP 3 < F.dep F.S.u_tP 4 ∨ F.dep F.S.u_tP 6 < F.dep F.S.u_tP 4)
   · exact F.tP (by linarith only [hA1r]) o0.1 o0.2
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 3 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 3) ∧ (F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 4 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 4)
-  · exact rupert_of_r (F.rFrame.tANR (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 hfreqTAR)
+  · exact rupert_of_r (F.rFrame.tANR_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1Rr]) o1.1 o1.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o2 : (F.rFrame.dep F.rFrame.S.u_vRv 0 < F.rFrame.dep F.rFrame.S.u_vRv 6 ∨ F.rFrame.dep F.rFrame.S.u_vRv 0 < F.rFrame.dep F.rFrame.S.u_vRv 5 ∨ F.rFrame.dep F.rFrame.S.u_vRv 4 < F.rFrame.dep F.rFrame.S.u_vRv 6 ∨ F.rFrame.dep F.rFrame.S.u_vRv 4 < F.rFrame.dep F.rFrame.S.u_vRv 5) ∧ (F.rFrame.dep F.rFrame.S.u_vRv 6 < F.rFrame.dep F.rFrame.S.u_vRv 0 ∨ F.rFrame.dep F.rFrame.S.u_vRv 5 < F.rFrame.dep F.rFrame.S.u_vRv 0 ∨ F.rFrame.dep F.rFrame.S.u_vRv 6 < F.rFrame.dep F.rFrame.S.u_vRv 4 ∨ F.rFrame.dep F.rFrame.S.u_vRv 5 < F.rFrame.dep F.rFrame.S.u_vRv 4)
   · exact rupert_of_r (F.rFrame.vRv (by simp only [rFrame_S, Shape20.swap]; linarith only [hKb]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVR]) o2.1 o2.2)
   by_cases o3 : (F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 6 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 6) ∧ (F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 4 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 4)
@@ -3410,7 +3411,7 @@ theorem Frame20.ra4_X_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inj
 
 /-- 27.74 (i), ω > 0 (R-image) -/
 theorem Frame20.om1p_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (htt : 0 ≤ -F.S.sm + F.S.sp) (hom : 0 < (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hfreqTAR : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC (C3.slide F.rFrame.S.u_tANR ⟨0, 0, -1⟩ η)))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (htt : 0 ≤ -F.S.sm + F.S.sp) (hom : 0 < (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hHR : ¬ F.ClassHR)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -3425,7 +3426,7 @@ theorem Frame20.om1p_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
   by_cases o0 : (F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 3 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 3) ∧ (F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 4 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 4)
-  · exact rupert_of_r (F.rFrame.tANR (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o0.1 o0.2 hfreqTAR)
+  · exact rupert_of_r (F.rFrame.tANR_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o0.1 o0.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 6 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 6) ∧ (F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 4 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 4)
   · exact rupert_of_r (F.rFrame.tP (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o1.1 o1.2)
   exfalso
@@ -3456,7 +3457,7 @@ theorem Frame20.om1p_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
 
 /-- 27.74 (i), ω < 0 (R-image) -/
 theorem Frame20.om1n_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (htt : 0 ≤ -F.S.sm + F.S.sp) (hom : 0 < (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hfreqTAR : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC (C3.slide F.rFrame.S.u_tANR ⟨0, 0, -1⟩ η)))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (htt : 0 ≤ -F.S.sm + F.S.sp) (hom : 0 < (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hHR : ¬ F.ClassHR)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -3471,7 +3472,7 @@ theorem Frame20.om1n_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
   by_cases o0 : (F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 3 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 3) ∧ (F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 4 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 4)
-  · exact rupert_of_r (F.rFrame.tANR (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o0.1 o0.2 hfreqTAR)
+  · exact rupert_of_r (F.rFrame.tANR_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o0.1 o0.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 6 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 6) ∧ (F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 4 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 4)
   · exact rupert_of_r (F.rFrame.tP (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o1.1 o1.2)
   exfalso
@@ -3502,7 +3503,7 @@ theorem Frame20.om1n_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
 
 /-- 27.74 (i), ω = 0, off ℓ1 (R-image) -/
 theorem Frame20.om1z1_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (htt : 0 ≤ -F.S.sm + F.S.sp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.hp*F.S.sp) * (F.a22 - F.a12) + (F.S.hp*F.S.sp - F.S.hp - F.S.kp*F.S.tp + F.S.kp) * F.a12) (hfreqTAR : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC (C3.slide F.rFrame.S.u_tANR ⟨0, 0, -1⟩ η)))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (htt : 0 ≤ -F.S.sm + F.S.sp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.hp*F.S.sp) * (F.a22 - F.a12) + (F.S.hp*F.S.sp - F.S.hp - F.S.kp*F.S.tp + F.S.kp) * F.a12) (hHR : ¬ F.ClassHR)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -3517,7 +3518,7 @@ theorem Frame20.om1z1_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inj
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
   by_cases o0 : (F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 3 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 3) ∧ (F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 4 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 4)
-  · exact rupert_of_r (F.rFrame.tANR (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o0.1 o0.2 hfreqTAR)
+  · exact rupert_of_r (F.rFrame.tANR_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o0.1 o0.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 6 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 6) ∧ (F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 4 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 4)
   · exact rupert_of_r (F.rFrame.tP (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o1.1 o1.2)
   exfalso
@@ -3548,7 +3549,7 @@ theorem Frame20.om1z1_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inj
 
 /-- 27.74 (i), ω = 0, off ℓ1 (R-image) -/
 theorem Frame20.om1z2_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (htt : 0 ≤ -F.S.sm + F.S.sp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (-F.S.hp*F.S.sp) * (F.a22 - F.a12) + (-F.S.hp*F.S.sp + F.S.hp + F.S.kp*F.S.tp - F.S.kp) * F.a12) (hfreqTAR : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC (C3.slide F.rFrame.S.u_tANR ⟨0, 0, -1⟩ η)))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (htt : 0 ≤ -F.S.sm + F.S.sp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (-F.S.hp*F.S.sp) * (F.a22 - F.a12) + (-F.S.hp*F.S.sp + F.S.hp + F.S.kp*F.S.tp - F.S.kp) * F.a12) (hHR : ¬ F.ClassHR)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -3563,7 +3564,7 @@ theorem Frame20.om1z2_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inj
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
   by_cases o0 : (F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 3 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 3) ∧ (F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 4 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 4)
-  · exact rupert_of_r (F.rFrame.tANR (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o0.1 o0.2 hfreqTAR)
+  · exact rupert_of_r (F.rFrame.tANR_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o0.1 o0.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 6 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 6) ∧ (F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 4 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 4)
   · exact rupert_of_r (F.rFrame.tP (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o1.1 o1.2)
   exfalso
@@ -3594,7 +3595,7 @@ theorem Frame20.om1z2_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inj
 
 /-- 27.74 (ii): {T_A, V}, h+ ≥ d+ (R-image) -/
 theorem Frame20.om2a_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1 : 0 < F.S.km*F.S.sp + F.S.kp*F.S.sm - F.S.kp) (hVp : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVW : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hWp : 0 ≤ -F.S.hm - F.S.km*F.S.tm + F.S.km) (hndVR : NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC F.rFrame.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1 : 0 < F.S.km*F.S.sp + F.S.kp*F.S.sm - F.S.kp) (hVp : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVW : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hWp : 0 ≤ -F.S.hm - F.S.km*F.S.tm + F.S.km) (hHR : ¬ F.ClassHR)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -3611,7 +3612,7 @@ theorem Frame20.om2a_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
   by_cases o0 : (F.rFrame.dep F.rFrame.S.u_tA 0 < F.rFrame.dep F.rFrame.S.u_tA 6 ∨ F.rFrame.dep F.rFrame.S.u_tA 0 < F.rFrame.dep F.rFrame.S.u_tA 5 ∨ F.rFrame.dep F.rFrame.S.u_tA 4 < F.rFrame.dep F.rFrame.S.u_tA 6 ∨ F.rFrame.dep F.rFrame.S.u_tA 4 < F.rFrame.dep F.rFrame.S.u_tA 5) ∧ (F.rFrame.dep F.rFrame.S.u_tA 6 < F.rFrame.dep F.rFrame.S.u_tA 0 ∨ F.rFrame.dep F.rFrame.S.u_tA 5 < F.rFrame.dep F.rFrame.S.u_tA 0 ∨ F.rFrame.dep F.rFrame.S.u_tA 6 < F.rFrame.dep F.rFrame.S.u_tA 4 ∨ F.rFrame.dep F.rFrame.S.u_tA 5 < F.rFrame.dep F.rFrame.S.u_tA 4)
   · exact rupert_of_r (F.rFrame.tA (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1]) o0.1 o0.2)
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 6 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 6) ∧ (F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 4 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 4)
-  · exact rupert_of_r (F.rFrame.vN4 (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVp]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVW]) o1.1 o1.2 hndVR)
+  · exact rupert_of_r (F.rFrame.vN4_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVp]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVW]) o1.1 o1.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   exfalso
   simp only [not_and_or, not_or, not_lt] at o0
   simp only [not_and_or, not_or, not_lt] at o1
@@ -3640,7 +3641,7 @@ theorem Frame20.om2a_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
 
 /-- 27.74 (ii): {T_A, V}, t+ ≤ t−, h+ ≤ d+ (R-image) -/
 theorem Frame20.om2b_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1 : 0 < F.S.km*F.S.sp + F.S.kp*F.S.sm - F.S.kp) (hVp : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVW : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (htt : 0 ≤ -F.S.sm + F.S.sp) (hWn : 0 ≤ F.S.hm + F.S.km*F.S.tm - F.S.km) (hndVR : NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC F.rFrame.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1 : 0 < F.S.km*F.S.sp + F.S.kp*F.S.sm - F.S.kp) (hVp : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVW : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (htt : 0 ≤ -F.S.sm + F.S.sp) (hWn : 0 ≤ F.S.hm + F.S.km*F.S.tm - F.S.km) (hHR : ¬ F.ClassHR)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -3657,7 +3658,7 @@ theorem Frame20.om2b_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
   by_cases o0 : (F.rFrame.dep F.rFrame.S.u_tA 0 < F.rFrame.dep F.rFrame.S.u_tA 6 ∨ F.rFrame.dep F.rFrame.S.u_tA 0 < F.rFrame.dep F.rFrame.S.u_tA 5 ∨ F.rFrame.dep F.rFrame.S.u_tA 4 < F.rFrame.dep F.rFrame.S.u_tA 6 ∨ F.rFrame.dep F.rFrame.S.u_tA 4 < F.rFrame.dep F.rFrame.S.u_tA 5) ∧ (F.rFrame.dep F.rFrame.S.u_tA 6 < F.rFrame.dep F.rFrame.S.u_tA 0 ∨ F.rFrame.dep F.rFrame.S.u_tA 5 < F.rFrame.dep F.rFrame.S.u_tA 0 ∨ F.rFrame.dep F.rFrame.S.u_tA 6 < F.rFrame.dep F.rFrame.S.u_tA 4 ∨ F.rFrame.dep F.rFrame.S.u_tA 5 < F.rFrame.dep F.rFrame.S.u_tA 4)
   · exact rupert_of_r (F.rFrame.tA (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1]) o0.1 o0.2)
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 6 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 6) ∧ (F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 4 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 4)
-  · exact rupert_of_r (F.rFrame.vN4 (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVp]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVW]) o1.1 o1.2 hndVR)
+  · exact rupert_of_r (F.rFrame.vN4_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVp]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVW]) o1.1 o1.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   exfalso
   simp only [not_and_or, not_or, not_lt] at o0
   simp only [not_and_or, not_or, not_lt] at o1
@@ -3686,7 +3687,7 @@ theorem Frame20.om2b_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
 
 /-- 27.74 (ii): {T_A, V, T′}, h+ ≥ d+, p (R-image) -/
 theorem Frame20.om3p_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVp : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVW : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hWp : 0 ≤ -F.S.hm - F.S.km*F.S.tm + F.S.km) (hom : 0 < (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hfreqTAR : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC (C3.slide F.rFrame.S.u_tANR ⟨0, 0, -1⟩ η))) (hndVR : NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC F.rFrame.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVp : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVW : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hWp : 0 ≤ -F.S.hm - F.S.km*F.S.tm + F.S.km) (hom : 0 < (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hHR : ¬ F.ClassHR)   :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -3701,9 +3702,9 @@ theorem Frame20.om3p_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
   by_cases o0 : (F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 3 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 3) ∧ (F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 4 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 4)
-  · exact rupert_of_r (F.rFrame.tANR (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o0.1 o0.2 hfreqTAR)
+  · exact rupert_of_r (F.rFrame.tANR_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o0.1 o0.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 6 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 6) ∧ (F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 4 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 4)
-  · exact rupert_of_r (F.rFrame.vN4 (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVp]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVW]) o1.1 o1.2 hndVR)
+  · exact rupert_of_r (F.rFrame.vN4_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVp]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVW]) o1.1 o1.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o2 : (F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 6 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 6) ∧ (F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 4 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 4)
   · exact rupert_of_r (F.rFrame.tP (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o2.1 o2.2)
   exfalso
@@ -3764,7 +3765,7 @@ theorem Frame20.om3p_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
 
 /-- 27.74 (ii): {T_A, V, T′}, h+ ≥ d+, n (R-image) -/
 theorem Frame20.om3n_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVp : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVW : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hWp : 0 ≤ -F.S.hm - F.S.km*F.S.tm + F.S.km) (hom : 0 < (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hfreqTAR : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC (C3.slide F.rFrame.S.u_tANR ⟨0, 0, -1⟩ η))) (hndVR : NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC F.rFrame.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVp : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVW : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hWp : 0 ≤ -F.S.hm - F.S.km*F.S.tm + F.S.km) (hom : 0 < (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hHR : ¬ F.ClassHR)   :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -3779,9 +3780,9 @@ theorem Frame20.om3n_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
   by_cases o0 : (F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 3 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 3) ∧ (F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 4 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 4)
-  · exact rupert_of_r (F.rFrame.tANR (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o0.1 o0.2 hfreqTAR)
+  · exact rupert_of_r (F.rFrame.tANR_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o0.1 o0.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 6 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 6) ∧ (F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 4 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 4)
-  · exact rupert_of_r (F.rFrame.vN4 (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVp]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVW]) o1.1 o1.2 hndVR)
+  · exact rupert_of_r (F.rFrame.vN4_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVp]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVW]) o1.1 o1.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o2 : (F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 6 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 6) ∧ (F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 4 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 4)
   · exact rupert_of_r (F.rFrame.tP (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o2.1 o2.2)
   exfalso
@@ -3842,7 +3843,7 @@ theorem Frame20.om3n_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
 
 /-- 27.74 (ii): {T_A, V, T′}, h+ ≥ d+, z1 (R-image) -/
 theorem Frame20.om3z1_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVp : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVW : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hWp : 0 ≤ -F.S.hm - F.S.km*F.S.tm + F.S.km) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.hp*F.S.sp) * (F.a22 - F.a12) + (F.S.hp*F.S.sp - F.S.hp - F.S.kp*F.S.tp + F.S.kp) * F.a12) (hfreqTAR : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC (C3.slide F.rFrame.S.u_tANR ⟨0, 0, -1⟩ η))) (hndVR : NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC F.rFrame.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVp : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVW : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hWp : 0 ≤ -F.S.hm - F.S.km*F.S.tm + F.S.km) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.hp*F.S.sp) * (F.a22 - F.a12) + (F.S.hp*F.S.sp - F.S.hp - F.S.kp*F.S.tp + F.S.kp) * F.a12) (hHR : ¬ F.ClassHR)   :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -3857,9 +3858,9 @@ theorem Frame20.om3z1_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inj
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
   by_cases o0 : (F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 3 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 3) ∧ (F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 4 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 4)
-  · exact rupert_of_r (F.rFrame.tANR (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o0.1 o0.2 hfreqTAR)
+  · exact rupert_of_r (F.rFrame.tANR_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o0.1 o0.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 6 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 6) ∧ (F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 4 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 4)
-  · exact rupert_of_r (F.rFrame.vN4 (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVp]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVW]) o1.1 o1.2 hndVR)
+  · exact rupert_of_r (F.rFrame.vN4_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVp]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVW]) o1.1 o1.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o2 : (F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 6 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 6) ∧ (F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 4 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 4)
   · exact rupert_of_r (F.rFrame.tP (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o2.1 o2.2)
   exfalso
@@ -3920,7 +3921,7 @@ theorem Frame20.om3z1_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inj
 
 /-- 27.74 (ii): {T_A, V, T′}, h+ ≥ d+, z2 (R-image) -/
 theorem Frame20.om3z2_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVp : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVW : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hWp : 0 ≤ -F.S.hm - F.S.km*F.S.tm + F.S.km) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (-F.S.hp*F.S.sp) * (F.a22 - F.a12) + (-F.S.hp*F.S.sp + F.S.hp + F.S.kp*F.S.tp - F.S.kp) * F.a12) (hfreqTAR : ∃ᶠ η in 𝓝[>] (0 : ℝ), NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC (C3.slide F.rFrame.S.u_tANR ⟨0, 0, -1⟩ η))) (hndVR : NoHDNAt (Finset.univ.image (x ∘ rperm)) (F.rFrame.toFrame7.fvC F.rFrame.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVp : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVW : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hWp : 0 ≤ -F.S.hm - F.S.km*F.S.tm + F.S.km) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (-F.S.hp*F.S.sp) * (F.a22 - F.a12) + (-F.S.hp*F.S.sp + F.S.hp + F.S.kp*F.S.tp - F.S.kp) * F.a12) (hHR : ¬ F.ClassHR)   :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -3935,9 +3936,9 @@ theorem Frame20.om3z2_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inj
   have rp : 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) := sub_pos.2 F.S.roof_p'
   have rm : 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) := sub_pos.2 F.S.roof_m'
   by_cases o0 : (F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 0 < F.rFrame.dep F.rFrame.S.u_tANR 3 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 6 ∨ F.rFrame.dep F.rFrame.S.u_tANR 4 < F.rFrame.dep F.rFrame.S.u_tANR 3) ∧ (F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 0 ∨ F.rFrame.dep F.rFrame.S.u_tANR 6 < F.rFrame.dep F.rFrame.S.u_tANR 4 ∨ F.rFrame.dep F.rFrame.S.u_tANR 3 < F.rFrame.dep F.rFrame.S.u_tANR 4)
-  · exact rupert_of_r (F.rFrame.tANR (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o0.1 o0.2 hfreqTAR)
+  · exact rupert_of_r (F.rFrame.tANR_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o0.1 o0.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o1 : (F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 0 < F.rFrame.dep F.rFrame.S.u_vN4 6 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 3 ∨ F.rFrame.dep F.rFrame.S.u_vN4 4 < F.rFrame.dep F.rFrame.S.u_vN4 6) ∧ (F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 0 ∨ F.rFrame.dep F.rFrame.S.u_vN4 3 < F.rFrame.dep F.rFrame.S.u_vN4 4 ∨ F.rFrame.dep F.rFrame.S.u_vN4 6 < F.rFrame.dep F.rFrame.S.u_vN4 4)
-  · exact rupert_of_r (F.rFrame.vN4 (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVp]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVW]) o1.1 o1.2 hndVR)
+  · exact rupert_of_r (F.rFrame.vN4_slide (hx.comp rperm_bijective.1) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVp]) (by simp only [rFrame_S, Shape20.swap]; linarith only [hVW]) o1.1 o1.2 (fun h => hHR (F.classH_rFrame_iff.1 h)))
   by_cases o2 : (F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 1 < F.rFrame.dep F.rFrame.S.u_tP 6 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 3 ∨ F.rFrame.dep F.rFrame.S.u_tP 4 < F.rFrame.dep F.rFrame.S.u_tP 6) ∧ (F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 1 ∨ F.rFrame.dep F.rFrame.S.u_tP 3 < F.rFrame.dep F.rFrame.S.u_tP 4 ∨ F.rFrame.dep F.rFrame.S.u_tP 6 < F.rFrame.dep F.rFrame.S.u_tP 4)
   · exact rupert_of_r (F.rFrame.tP (by simp only [rFrame_S, Shape20.swap]; linarith only [hA1r]) o2.1 o2.2)
   exfalso
@@ -3998,7 +3999,7 @@ theorem Frame20.om3z2_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inj
 
 /-- 27.76 N4 p (R-image) -/
 theorem Frame20.om4ap_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hA1R : 0 < F.S.hm*F.S.tp - F.S.hm + F.S.hp*F.S.tm) (hVpR : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVWR : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hKb : 0 < F.S.hp*F.S.sp - F.S.hp + F.S.kp) (hss : 0 < -F.S.tm + F.S.tp) (hnu : 0 < (-F.S.sm*F.S.sp*F.S.tp + F.S.sm*F.S.tp + F.S.sp*F.S.tp - F.S.tp) * F.a12 + (F.S.hp*F.S.km*F.S.sp - F.S.hp*F.S.km + F.S.km*F.S.kp) * F.gg) (hndV : NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC F.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hA1R : 0 < F.S.hm*F.S.tp - F.S.hm + F.S.hp*F.S.tm) (hVpR : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVWR : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hKb : 0 < F.S.hp*F.S.sp - F.S.hp + F.S.kp) (hss : 0 < -F.S.tm + F.S.tp) (hnu : 0 < (-F.S.sm*F.S.sp*F.S.tp + F.S.sm*F.S.tp + F.S.sp*F.S.tp - F.S.tp) * F.a12 + (F.S.hp*F.S.km*F.S.sp - F.S.hp*F.S.km + F.S.km*F.S.kp) * F.gg) (hH : ¬ F.ClassH)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -4017,7 +4018,7 @@ theorem Frame20.om4ap_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inj
   by_cases o1 : (F.dep F.S.u_tA 0 < F.dep F.S.u_tA 6 ∨ F.dep F.S.u_tA 0 < F.dep F.S.u_tA 5 ∨ F.dep F.S.u_tA 4 < F.dep F.S.u_tA 6 ∨ F.dep F.S.u_tA 4 < F.dep F.S.u_tA 5) ∧ (F.dep F.S.u_tA 6 < F.dep F.S.u_tA 0 ∨ F.dep F.S.u_tA 5 < F.dep F.S.u_tA 0 ∨ F.dep F.S.u_tA 6 < F.dep F.S.u_tA 4 ∨ F.dep F.S.u_tA 5 < F.dep F.S.u_tA 4)
   · exact F.tA (by linarith only [hA1R]) o1.1 o1.2
   by_cases o2 : (F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 6 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 6) ∧ (F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 4 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 4)
-  · exact F.vN4 hx (by linarith only [hVpR]) (by linarith only [hVWR]) o2.1 o2.2 hndV
+  · exact F.vN4_slide hx (by linarith only [hVpR]) (by linarith only [hVWR]) o2.1 o2.2 hH
   exfalso
   simp only [not_and_or, not_or, not_lt] at o0
   simp only [not_and_or, not_or, not_lt] at o1
@@ -4076,7 +4077,7 @@ theorem Frame20.om4ap_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inj
 
 /-- 27.76 N4 n (R-image) -/
 theorem Frame20.om4an_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hA1R : 0 < F.S.hm*F.S.tp - F.S.hm + F.S.hp*F.S.tm) (hVpR : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVWR : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hKb : 0 < F.S.hp*F.S.sp - F.S.hp + F.S.kp) (hss : 0 < -F.S.tm + F.S.tp) (hnu : 0 < (F.S.sm*F.S.sp*F.S.tp - F.S.sm*F.S.tp - F.S.sp*F.S.tp + F.S.tp) * F.a12 + (-F.S.hp*F.S.km*F.S.sp + F.S.hp*F.S.km - F.S.km*F.S.kp) * F.gg) (hndV : NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC F.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hA1R : 0 < F.S.hm*F.S.tp - F.S.hm + F.S.hp*F.S.tm) (hVpR : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVWR : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hKb : 0 < F.S.hp*F.S.sp - F.S.hp + F.S.kp) (hss : 0 < -F.S.tm + F.S.tp) (hnu : 0 < (F.S.sm*F.S.sp*F.S.tp - F.S.sm*F.S.tp - F.S.sp*F.S.tp + F.S.tp) * F.a12 + (-F.S.hp*F.S.km*F.S.sp + F.S.hp*F.S.km - F.S.km*F.S.kp) * F.gg) (hH : ¬ F.ClassH)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -4095,7 +4096,7 @@ theorem Frame20.om4an_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inj
   by_cases o1 : (F.dep F.S.u_tA 0 < F.dep F.S.u_tA 6 ∨ F.dep F.S.u_tA 0 < F.dep F.S.u_tA 5 ∨ F.dep F.S.u_tA 4 < F.dep F.S.u_tA 6 ∨ F.dep F.S.u_tA 4 < F.dep F.S.u_tA 5) ∧ (F.dep F.S.u_tA 6 < F.dep F.S.u_tA 0 ∨ F.dep F.S.u_tA 5 < F.dep F.S.u_tA 0 ∨ F.dep F.S.u_tA 6 < F.dep F.S.u_tA 4 ∨ F.dep F.S.u_tA 5 < F.dep F.S.u_tA 4)
   · exact F.tA (by linarith only [hA1R]) o1.1 o1.2
   by_cases o2 : (F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 6 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 6) ∧ (F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 4 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 4)
-  · exact F.vN4 hx (by linarith only [hVpR]) (by linarith only [hVWR]) o2.1 o2.2 hndV
+  · exact F.vN4_slide hx (by linarith only [hVpR]) (by linarith only [hVWR]) o2.1 o2.2 hH
   exfalso
   simp only [not_and_or, not_or, not_lt] at o0
   simp only [not_and_or, not_or, not_lt] at o1
@@ -4154,7 +4155,7 @@ theorem Frame20.om4an_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inj
 
 /-- 27.76 N4 z1 (R-image) -/
 theorem Frame20.om4az1_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hA1R : 0 < F.S.hm*F.S.tp - F.S.hm + F.S.hp*F.S.tm) (hVpR : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVWR : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hKb : 0 < F.S.hp*F.S.sp - F.S.hp + F.S.kp) (hss : 0 < -F.S.tm + F.S.tp) (hnu1 : 0 ≤ (-F.S.sm*F.S.sp*F.S.tp + F.S.sm*F.S.tp + F.S.sp*F.S.tp - F.S.tp) * F.a12 + (F.S.hp*F.S.km*F.S.sp - F.S.hp*F.S.km + F.S.km*F.S.kp) * F.gg) (hnu2 : 0 ≤ (F.S.sm*F.S.sp*F.S.tp - F.S.sm*F.S.tp - F.S.sp*F.S.tp + F.S.tp) * F.a12 + (-F.S.hp*F.S.km*F.S.sp + F.S.hp*F.S.km - F.S.km*F.S.kp) * F.gg) (hl : 0 < (F.S.sm*F.S.sp - F.S.sm - F.S.sp + 1) * (F.a22 - F.a12) + (F.S.sm*F.S.sp - F.S.sm - F.S.sp + 1) * F.a12 + (-F.S.km*F.S.kp) * F.gg) (hndV : NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC F.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hA1R : 0 < F.S.hm*F.S.tp - F.S.hm + F.S.hp*F.S.tm) (hVpR : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVWR : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hKb : 0 < F.S.hp*F.S.sp - F.S.hp + F.S.kp) (hss : 0 < -F.S.tm + F.S.tp) (hnu1 : 0 ≤ (-F.S.sm*F.S.sp*F.S.tp + F.S.sm*F.S.tp + F.S.sp*F.S.tp - F.S.tp) * F.a12 + (F.S.hp*F.S.km*F.S.sp - F.S.hp*F.S.km + F.S.km*F.S.kp) * F.gg) (hnu2 : 0 ≤ (F.S.sm*F.S.sp*F.S.tp - F.S.sm*F.S.tp - F.S.sp*F.S.tp + F.S.tp) * F.a12 + (-F.S.hp*F.S.km*F.S.sp + F.S.hp*F.S.km - F.S.km*F.S.kp) * F.gg) (hl : 0 < (F.S.sm*F.S.sp - F.S.sm - F.S.sp + 1) * (F.a22 - F.a12) + (F.S.sm*F.S.sp - F.S.sm - F.S.sp + 1) * F.a12 + (-F.S.km*F.S.kp) * F.gg) (hH : ¬ F.ClassH)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -4173,7 +4174,7 @@ theorem Frame20.om4az1_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
   by_cases o1 : (F.dep F.S.u_tA 0 < F.dep F.S.u_tA 6 ∨ F.dep F.S.u_tA 0 < F.dep F.S.u_tA 5 ∨ F.dep F.S.u_tA 4 < F.dep F.S.u_tA 6 ∨ F.dep F.S.u_tA 4 < F.dep F.S.u_tA 5) ∧ (F.dep F.S.u_tA 6 < F.dep F.S.u_tA 0 ∨ F.dep F.S.u_tA 5 < F.dep F.S.u_tA 0 ∨ F.dep F.S.u_tA 6 < F.dep F.S.u_tA 4 ∨ F.dep F.S.u_tA 5 < F.dep F.S.u_tA 4)
   · exact F.tA (by linarith only [hA1R]) o1.1 o1.2
   by_cases o2 : (F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 6 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 6) ∧ (F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 4 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 4)
-  · exact F.vN4 hx (by linarith only [hVpR]) (by linarith only [hVWR]) o2.1 o2.2 hndV
+  · exact F.vN4_slide hx (by linarith only [hVpR]) (by linarith only [hVWR]) o2.1 o2.2 hH
   exfalso
   simp only [not_and_or, not_or, not_lt] at o0
   simp only [not_and_or, not_or, not_lt] at o1
@@ -4232,7 +4233,7 @@ theorem Frame20.om4az1_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
 
 /-- 27.76 N4 z2 (R-image) -/
 theorem Frame20.om4az2_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hA1R : 0 < F.S.hm*F.S.tp - F.S.hm + F.S.hp*F.S.tm) (hVpR : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVWR : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hKb : 0 < F.S.hp*F.S.sp - F.S.hp + F.S.kp) (hss : 0 < -F.S.tm + F.S.tp) (hnu1 : 0 ≤ (-F.S.sm*F.S.sp*F.S.tp + F.S.sm*F.S.tp + F.S.sp*F.S.tp - F.S.tp) * F.a12 + (F.S.hp*F.S.km*F.S.sp - F.S.hp*F.S.km + F.S.km*F.S.kp) * F.gg) (hnu2 : 0 ≤ (F.S.sm*F.S.sp*F.S.tp - F.S.sm*F.S.tp - F.S.sp*F.S.tp + F.S.tp) * F.a12 + (-F.S.hp*F.S.km*F.S.sp + F.S.hp*F.S.km - F.S.km*F.S.kp) * F.gg) (hl : 0 < (-F.S.sm*F.S.sp + F.S.sm + F.S.sp - 1) * (F.a22 - F.a12) + (-F.S.sm*F.S.sp + F.S.sm + F.S.sp - 1) * F.a12 + (F.S.km*F.S.kp) * F.gg) (hndV : NoHDNAt (Finset.univ.image x) (F.toFrame7.fvC F.S.u_vN4))  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hA1R : 0 < F.S.hm*F.S.tp - F.S.hm + F.S.hp*F.S.tm) (hVpR : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVWR : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hKb : 0 < F.S.hp*F.S.sp - F.S.hp + F.S.kp) (hss : 0 < -F.S.tm + F.S.tp) (hnu1 : 0 ≤ (-F.S.sm*F.S.sp*F.S.tp + F.S.sm*F.S.tp + F.S.sp*F.S.tp - F.S.tp) * F.a12 + (F.S.hp*F.S.km*F.S.sp - F.S.hp*F.S.km + F.S.km*F.S.kp) * F.gg) (hnu2 : 0 ≤ (F.S.sm*F.S.sp*F.S.tp - F.S.sm*F.S.tp - F.S.sp*F.S.tp + F.S.tp) * F.a12 + (-F.S.hp*F.S.km*F.S.sp + F.S.hp*F.S.km - F.S.km*F.S.kp) * F.gg) (hl : 0 < (-F.S.sm*F.S.sp + F.S.sm + F.S.sp - 1) * (F.a22 - F.a12) + (-F.S.sm*F.S.sp + F.S.sm + F.S.sp - 1) * F.a12 + (F.S.km*F.S.kp) * F.gg) (hH : ¬ F.ClassH)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -4251,7 +4252,7 @@ theorem Frame20.om4az2_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
   by_cases o1 : (F.dep F.S.u_tA 0 < F.dep F.S.u_tA 6 ∨ F.dep F.S.u_tA 0 < F.dep F.S.u_tA 5 ∨ F.dep F.S.u_tA 4 < F.dep F.S.u_tA 6 ∨ F.dep F.S.u_tA 4 < F.dep F.S.u_tA 5) ∧ (F.dep F.S.u_tA 6 < F.dep F.S.u_tA 0 ∨ F.dep F.S.u_tA 5 < F.dep F.S.u_tA 0 ∨ F.dep F.S.u_tA 6 < F.dep F.S.u_tA 4 ∨ F.dep F.S.u_tA 5 < F.dep F.S.u_tA 4)
   · exact F.tA (by linarith only [hA1R]) o1.1 o1.2
   by_cases o2 : (F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 0 < F.dep F.S.u_vN4 6 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 3 ∨ F.dep F.S.u_vN4 4 < F.dep F.S.u_vN4 6) ∧ (F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 0 ∨ F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 4 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 4)
-  · exact F.vN4 hx (by linarith only [hVpR]) (by linarith only [hVWR]) o2.1 o2.2 hndV
+  · exact F.vN4_slide hx (by linarith only [hVpR]) (by linarith only [hVWR]) o2.1 o2.2 hH
   exfalso
   simp only [not_and_or, not_or, not_lt] at o0
   simp only [not_and_or, not_or, not_lt] at o1
