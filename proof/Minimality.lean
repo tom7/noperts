@@ -486,6 +486,48 @@ theorem quadPairPar09 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
       (by decide) (by decide) (by decide) (Or.inr h)
   · exact hcon (Or.inr h)
 
+/-- Type 18 of `quadPairPar02`: the quadrilaterals `0356`, `1245` at vertex `5`.  Here
+`QuadTripleRect` is refuted from the facets (`not_quadTripleRect_type18`), so what is left of
+Cor. T1 is exactly the acute case-(c) triple tie (`TriGenPar` holds, `TriGenTieO` fails). -/
+theorem quadPairPar18 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
+    (hN : IsNopert (Finset.univ.image x)) {fs : List (Finset (Fin 7))}
+    (hfs : fs = Minimality.sevenTypeFaces 17) (hR : Minimality.RealizesFaces x fs) :
+    Minimality.TriGenPar (Finset.univ.image x) (({0, 3, 5, 6} : Finset (Fin 7)).image x)
+        (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 5) ∧
+      ¬ Minimality.TriGenTieO (Finset.univ.image x) (({0, 3, 5, 6} : Finset (Fin 7)).image x)
+        (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 5) := by
+  subst hfs
+  have hgen := noThreeCollinear_seven x hN hx
+  rcases Minimality.triGenPar_or_farP_quad_idx hx hgen {0, 3, 5, 6} {1, 2, 4, 5} 5 (by decide)
+    (by decide) (by decide) with h | h | h
+  · refine ⟨h, fun hT => ?_⟩
+    exact quadPair hx hN hR {0, 3, 5, 6} {1, 2, 4, 5} 5 (by decide) (by decide)
+      (by decide) (by decide) (by decide) (Or.inl hT)
+  · exact (quadPair hx hN hR {0, 3, 5, 6} {1, 2, 4, 5} 5 (by decide) (by decide)
+      (by decide) (by decide) (by decide) (Or.inr h)).elim
+  · exact (Minimality.not_quadTripleRect_type18 hx hgen hR h).elim
+
+/-- Type 20 of `quadPairPar02`: the quadrilaterals `0135`, `2456` at vertex `5`.  Here
+`QuadTripleRect` is refuted from the facets (`not_quadTripleRect_type20`), so what is left of
+Cor. T1 is exactly the acute case-(c) triple tie (`TriGenPar` holds, `TriGenTieO` fails). -/
+theorem quadPairPar20 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
+    (hN : IsNopert (Finset.univ.image x)) {fs : List (Finset (Fin 7))}
+    (hfs : fs = Minimality.sevenTypeFaces 19) (hR : Minimality.RealizesFaces x fs) :
+    Minimality.TriGenPar (Finset.univ.image x) (({0, 1, 3, 5} : Finset (Fin 7)).image x)
+        (({2, 4, 5, 6} : Finset (Fin 7)).image x) (x 5) ∧
+      ¬ Minimality.TriGenTieO (Finset.univ.image x) (({0, 1, 3, 5} : Finset (Fin 7)).image x)
+        (({2, 4, 5, 6} : Finset (Fin 7)).image x) (x 5) := by
+  subst hfs
+  have hgen := noThreeCollinear_seven x hN hx
+  rcases Minimality.triGenPar_or_farP_quad_idx hx hgen {0, 1, 3, 5} {2, 4, 5, 6} 5 (by decide)
+    (by decide) (by decide) with h | h | h
+  · refine ⟨h, fun hT => ?_⟩
+    exact quadPair hx hN hR {0, 1, 3, 5} {2, 4, 5, 6} 5 (by decide) (by decide)
+      (by decide) (by decide) (by decide) (Or.inl hT)
+  · exact (quadPair hx hN hR {0, 1, 3, 5} {2, 4, 5, 6} 5 (by decide) (by decide)
+      (by decide) (by decide) (by decide) (Or.inr h)).elim
+  · exact (Minimality.not_quadTripleRect_type20 hx hgen hR h).elim
+
 /-- Theorem B (`not_four_quad_facets_of_isNopert`) for a realized type with four quadrilateral
 faces: in `Minimality.GenPos` the points are not a nopert. -/
 theorem fourQuad {x : Fin 7 → ℝ³} (hx : Function.Injective x)
@@ -710,8 +752,11 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
       (fun _ => Minimality.triGenPar_or_farP_idx hx hgen {0, 2, 4, 6} {1, 3, 6} 6
         (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
-  · -- type 18: Cor. T1 at the quadrilaterals 0356, 1245 (sharing vertex 5); general position
-    -- asked, the special positions are open in Lean (incl. case (c) of Theorem 24.5)
+  · -- type 18: Cor. T1 at the quadrilaterals 0356, 1245 (sharing vertex 5).  `quadPairPar18` (as
+    -- `quadPairPar02`, with `QuadTripleRect` refuted from the facets): the `sorry` has in context
+    -- `hQ`, exactly the acute case-(c) triple tie at 0356, 1245 (`TriGenPar` but not `TriGenTieO`,
+    -- vertex 5); on paper closed off explicit special positions (§27 continued (4), 27.59)
+    have hQ := quadPairPar18 hx hN rfl hR
     exact byGen1 (quadPair hx hN hR {0, 3, 5, 6} {1, 2, 4, 5} 5 (by decide) (by decide) (by decide) (by decide)
       (by decide)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 19: `not_type19_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
@@ -732,8 +777,11 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
       (by decide) (by decide) (by decide) (by decide)).imp_right fun h =>
       h.resolve_right (Minimality.not_edgeRect_type19 hx fE hfE)
     exact not_type19_of_isNopert_sv x hN hx fA fB fD fG fE hfA hfB hfD hfG hfE (fun _ => hE) (fun _ => hT)
-  · -- type 20: Cor. T1 at the quadrilaterals 0135, 2456 (sharing vertex 5); general position
-    -- asked, the special positions are open in Lean (incl. case (c) of Theorem 24.5)
+  · -- type 20: Cor. T1 at the quadrilaterals 0135, 2456 (sharing vertex 5).  `quadPairPar20` (as
+    -- `quadPairPar02`, with `QuadTripleRect` refuted from the facets): the `sorry` has in context
+    -- `hQ`, exactly the acute case-(c) triple tie at 0135, 2456 (`TriGenPar` but not `TriGenTieO`,
+    -- vertex 5); on paper closed by §27 continued (4) up to a ~0.01% twisted remainder
+    have hQ := quadPairPar20 hx hN rfl hR
     exact byGen1 (quadPair hx hN hR {0, 1, 3, 5} {2, 4, 5, 6} 5 (by decide) (by decide) (by decide) (by decide)
       (by decide)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 21: `not_type21_of_multiView21` (Theorem 24.3: ties at a family of tilt tests with

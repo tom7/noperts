@@ -549,6 +549,32 @@ theorem not_quadTripleRect_type14 {x : Fin 7 → ℝ³} (hx : Function.Injective
     (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
     (by decide) (by decide)
 
+/-- **Type 18** (`0356`, `1245` at vertex `5`): the residual position does not occur; the
+far corners are `3` and `4` opposite `5`, `a` is `0` or `6`, `b` is `1` or `2`.  (Case (c) of
+the triple tie does occur in type 18; only the rectangle is refuted.) -/
+theorem not_quadTripleRect_type18 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
+    (hgen : NoThreeCollinear (Finset.univ.image x))
+    (hR : RealizesFaces x (sevenTypeFaces 17)) :
+    ¬ QuadTripleRect (Finset.univ.image x) (({0, 3, 5, 6} : Finset (Fin 7)).image x)
+      (({1, 2, 4, 5} : Finset (Fin 7)).image x) (x 5) :=
+  quadTripleRect_false_of_realizes hx hgen hR {0, 3, 5, 6} {1, 2, 4, 5} 5 3 0 6 4 1 2
+    (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+    (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+    (by decide) (by decide)
+
+/-- **Type 20** (`0135`, `2456` at vertex `5`): the residual position does not occur; the
+far corners are `1` and `6` opposite `5`, `a` is `0` or `3`, `b` is `2` or `4`.  (Case (c) of
+the triple tie does occur in type 20; only the rectangle is refuted.) -/
+theorem not_quadTripleRect_type20 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
+    (hgen : NoThreeCollinear (Finset.univ.image x))
+    (hR : RealizesFaces x (sevenTypeFaces 19)) :
+    ¬ QuadTripleRect (Finset.univ.image x) (({0, 1, 3, 5} : Finset (Fin 7)).image x)
+      (({2, 4, 5, 6} : Finset (Fin 7)).image x) (x 5) :=
+  quadTripleRect_false_of_realizes hx hgen hR {0, 1, 3, 5} {2, 4, 5, 6} 5 1 0 3 6 2 4
+    (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+    (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+    (by decide) (by decide)
+
 end Minimality
 
 end
