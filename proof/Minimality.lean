@@ -432,6 +432,35 @@ theorem quadPairPar14 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
       (by decide) (by decide) (by decide) (Or.inr h)
   · exact hQ h
 
+/-- Type 02 of `quadPairPar07`: the quadrilaterals `0235`, `1246` at vertex `2`.  Unlike types 07
+and 14, case (c) of the triple tie can occur, so `TriGenPar` does not give `TriGenTieO`; and
+`QuadTripleRect` is not refuted from the facets: of the four tie pairs `(a, b)` (`a` in `{0, 5}`,
+`b` in `{1, 6}`; far corners `3`, `4`) only `(0, 6)` and `(5, 1)` are killed (by `0134`/`3456` and
+`012`/`256`), while `(0, 1)` and `(5, 6)`, the vertical far edges `01`, `56` at the edge view `34`,
+are not (`KillL … 2 0 3 5 1 4 6` and `KillL … 2 5 3 0 6 4 1` are false).  Hence what is left of
+Cor. T1 here is the acute case-(c) triple tie (`TriGenPar` holds, `TriGenTieO` fails) or
+`QuadTripleRect`. -/
+theorem quadPairPar02 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
+    (hN : IsNopert (Finset.univ.image x)) {fs : List (Finset (Fin 7))}
+    (hfs : fs = Minimality.sevenTypeFaces 1) (hR : Minimality.RealizesFaces x fs) :
+    (Minimality.TriGenPar (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
+        (({1, 2, 4, 6} : Finset (Fin 7)).image x) (x 2) ∧
+      ¬ Minimality.TriGenTieO (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
+        (({1, 2, 4, 6} : Finset (Fin 7)).image x) (x 2)) ∨
+    Minimality.QuadTripleRect (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
+      (({1, 2, 4, 6} : Finset (Fin 7)).image x) (x 2) := by
+  subst hfs
+  have hgen := noThreeCollinear_seven x hN hx
+  by_contra hcon
+  rcases Minimality.triGenPar_or_farP_quad_idx hx hgen {0, 2, 3, 5} {1, 2, 4, 6} 2 (by decide)
+    (by decide) (by decide) with h | h | h
+  · refine hcon (Or.inl ⟨h, fun hT => ?_⟩)
+    exact quadPair hx hN hR {0, 2, 3, 5} {1, 2, 4, 6} 2 (by decide) (by decide)
+      (by decide) (by decide) (by decide) (Or.inl hT)
+  · exact quadPair hx hN hR {0, 2, 3, 5} {1, 2, 4, 6} 2 (by decide) (by decide)
+      (by decide) (by decide) (by decide) (Or.inr h)
+  · exact hcon (Or.inr h)
+
 /-- Theorem B (`not_four_quad_facets_of_isNopert`) for a realized type with four quadrilateral
 faces: in `Minimality.GenPos` the points are not a nopert. -/
 theorem fourQuad {x : Fin 7 → ℝ³} (hx : Function.Injective x)
@@ -519,13 +548,16 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
   · -- type 02: Cor. T1 at the quadrilaterals 0235, 1246 (sharing vertex 2); where its general
     -- position fails, Theorem B on the four quadrilaterals 0134, 0235, 1246, 3456 under
     -- `GenPos`, and Lemma E or a planar closing at the edge 34 (23.12, metric-free:
-    -- `type02_edge34_byGen`, off an HDN or a vertical far edge at 34 and a far triple tie);
-    -- the special positions left are in the intersection of all three exceptional sets
+    -- `type02_edge34_byGen`, off an HDN or a vertical far edge at 34 and a far triple tie).
+    -- The `sorry` has in context: `¬ Type02EdgeGen x`; `¬ GenPos` (Theorem B); and
+    -- `quadPairPar02`: the acute case-(c) triple tie at 0235, 1246 (`TriGenPar` but not
+    -- `TriGenTieO`, vertex 2) or `QuadTripleRect` there (not refuted: the vertical far edges
+    -- 01 and 56 at the edge view 34 survive the facets)
+    have hQ := quadPairPar02 hx hN rfl hR
     exact byGen1 (Minimality.type02_edge34_byGen hN hR) (fun _ =>
-      byGen1 (quadPair hx hN hR {0, 2, 3, 5} {1, 2, 4, 6} 2 (by decide) (by decide) (by decide)
-        (by decide) (by decide)) (fun _ => byGen1 (fourQuad hx hN hR ![{0, 1, 3, 4},
-          {0, 2, 3, 5}, {1, 2, 4, 6}, {3, 4, 5, 6}] (by decide) (by decide) (by decide))
-          (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))))
+      byGen1 (fourQuad hx hN hR ![{0, 1, 3, 4}, {0, 2, 3, 5}, {1, 2, 4, 6}, {3, 4, 5, 6}]
+          (by decide) (by decide) (by decide))
+        (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
   · exact big {0, 2, 3, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 03: Theorem A
   · exact big {1, 2, 3, 5, 6} (by decide) (by decide) (by decide)  -- type 04: Theorem A
   · -- type 05: `not_type05_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
