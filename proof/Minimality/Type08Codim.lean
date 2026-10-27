@@ -1,6 +1,8 @@
 module
 
 public import Minimality.Type08X
+public import Minimality.Type08TouchN2
+public import Minimality.Type08TouchT4
 
 @[expose] public section
 
@@ -19,7 +21,7 @@ have a depth-separated pair (`UniOrSep`, Lemma H (c)); for `K_d` (T4) `R_d` is e
 (A.10's remark, `t4d_rd_empty`), so on its type-(d) surface only the absence of ties is
 asked.  At the far-end ties the route of Lemma X is chosen in `Type08X.lean`.
 
-* `t4_kappa_pos`: in the T4 case `b'` is a corner of the view along `d b` (part of
+* `t4_kappa_pos` (now in `Type08TouchT4.lean`): in the T4 case `b'` is a corner of the view along `d b` (part of
   Lemma G: no (G1) failure there).
 * `t4d_five_depths`, `t4d_five_strict`, `t4d_rd_empty`, `t4d_slide_of_par` (A.10, "T4–K_2:
   `R_d` is empty"): with `β = 1` (`g = b'c ∥ [d, a]`), a weak saddle of `K_b` and `d → b`
@@ -38,44 +40,6 @@ open scoped RealInnerProductSpace Topology
 open Finset Filter
 
 /-! ### Theorem 10.1 by slides -/
-
-/-- In the T4 case `b'` is a corner of the view along `d b` (Lemma G: `b'` never lies on
-the side `[P c', P c]`): `κ' = α + α₁ (β − 1) > 0`, since `c'` lies beneath the face
-`a'b'c` of `O` and `β₂ < 1`. -/
-theorem t4_kappa_pos {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c'} (hd : IsCap F d)
-    {α β α₁ β₁ α₂ β₂ : ℝ}
-    (hb' : b' = d + α • (a - d) + β • (c - d)) (hc' : c' = d + α₁ • (a - d) + β₁ • (b - d))
-    (ha' : a' = d + α₂ • (b - d) + β₂ • (c - d))
-    (hα : 0 < α) (hβ₁ : 0 < β₁) (hα₂ : 0 < α₂) (hβ₂1 : β₂ ≤ 1) : 0 < α + α₁ * (β - 1) := by
-  have hnd := F.nodup
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
-    not_or, List.nodup_nil, and_true] at hnd
-  obtain ⟨⟨haa', hab, hab', hac, hac'⟩, ⟨ha'b, ha'b', ha'c, ha'c'⟩, ⟨hbb', hbc, hbc'⟩,
-    ⟨hb'c, hb'c'⟩, hcc', -⟩ := hnd
-  set f := F.a'b'c.f
-  have fb' := affine_frame F.a'b'c.hN d a c α β
-  have fa' := affine_frame F.a'b'c.hN d b c α₂ β₂
-  have fc' := affine_frame F.a'b'c.hN d a b α₁ β₁
-  rw [← hb', F.a'b'c.hQ, F.a'b'c.hR] at fb'
-  rw [← ha', F.a'b'c.hP, F.a'b'c.hR] at fa'
-  rw [← hc'] at fc'
-  have hc'n := F.a'b'c.neg c' (by simp) (Ne.symm ha'c') (Ne.symm hb'c') (Ne.symm hcc')
-  have hdn := hd.a'b'c
-  set D := F.a'b'c.f d
-  set X := F.a'b'c.f a - D
-  set Y := F.a'b'c.f b - D
-  have h1 : α * X = (β - 1) * D := by linarith
-  have h2 : α₂ * Y = (β₂ - 1) * D := by linarith
-  have h3 : D + α₁ * X + β₁ * Y < 0 := by linarith
-  have h4 : α * α₂ * (D + α₁ * X + β₁ * Y) < 0 := mul_neg_of_pos_of_neg (mul_pos hα hα₂) h3
-  have h5 : α * α₂ * (D + α₁ * X + β₁ * Y) =
-      D * (α * α₂ + α₁ * α₂ * (β - 1) + α * β₁ * (β₂ - 1)) := by
-    linear_combination (α₁ * α₂) * h1 + (α * β₁) * h2
-  have h6 : 0 < α * α₂ + α₁ * α₂ * (β - 1) + α * β₁ * (β₂ - 1) :=
-    pos_of_mul_neg_right (h5 ▸ h4) hdn.le
-  have h7 : 0 ≤ α * β₁ * (1 - β₂) := mul_nonneg (mul_pos hα hβ₁).le (by linarith)
-  have h8 : 0 < α₂ * (α + α₁ * (β - 1)) := by nlinarith
-  exact pos_of_mul_pos_right h8 hα₂.le
 
 /-- **Lemma 1 (a) of §10, Gale form, with `[b' a'] ≠ 0`** (no assumption on `κ_b`). -/
 theorem far_end_Qbc_iff' {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c')
@@ -416,9 +380,16 @@ uses at the views along `d b` and `a' c` when `(a, b, c)` is the labelling of Le
   R4′, R4′ with `a` poking out, R4″ at `T'`) is derived from the depths
   (`isRupert_routeT`, `isRupert_routeT'`), as in the addendum; all of it fails only in
   codimension 2;
-* `touchN2`, `touchT4`, `levelQ`: no triple tie of the far ends with `y'` at the views
-  along `a' c` (case N2) and `d b` (case T4), and `b − d` not normal to `Q_ac` (case Q),
-  all codimension 2;
+* `touchN2`, `touchT4`, `touchTie`: at a triple tie of the far ends with `y'` (the touching,
+  `z b = z c' = z b'` along `a' c` in case N2, `z c = z b' = z c'` along `d b` in case T4;
+  codimension 2), the horizontal end of the face circle closes `K` (Proposition 30.4 of
+  `FEWER-FACES-PROOFS.md`: `isRupert_touchN2`, `isRupert_touchT4`, `Type08TouchN2.lean`,
+  `Type08TouchT4.lean`) under the further conditions `Touch30N2`, `Touch30T4` (`b₁ ≠ 0`,
+  `r₂ ≠ b₂`, in T4 `z a' ≠ z b`, no persistent tie in depth of `a` with the rim, no persistent
+  horizontal double normal of the rim, and `y'` beyond when it is farther than `f₁` from the
+  plane of the face circle); `touchTie` excludes the touching together with a far-end tie
+  `T`, `T'` (codimension 3 as well);
+* `levelQ`: `b − d` not normal to `Q_ac` (case Q), codimension 2;
 * the slides of Lemma C (`NoBadNormal` along a face circle): for `K_c` (N2) along `Q_bc`,
   for `K_{a'}` (N2) along `Q_bc` or `a'b'c`, for `K_d` (Q) along `Q_ab` or `Q_bc`, for `K_b`
   (T4) along `Q_bc`, for `K_d` (T4) along `Q_ab`; for the three closings with one circle,
@@ -439,8 +410,12 @@ structure Type08Gen (a a' b b' c c' d : ℝ³) : Prop where
   tieTT' : ¬ ((∃ r : ℝ, c - a' = r • (b - d)) ∧ ∃ r : ℝ, c' - a = r • (b - d))
   routeT : (∃ r : ℝ, c - a' = r • (b - d)) → RouteT a a' b b' c c' d
   routeT' : (∃ r : ℝ, c' - a = r • (b - d)) → RouteT' a a' b b' c c' d
-  touchN2 : ¬ (⟪b, c - a'⟫ = ⟪c', c - a'⟫ ∧ ⟪b', c - a'⟫ = ⟪c', c - a'⟫)
-  touchT4 : ¬ (⟪c, b - d⟫ = ⟪b', b - d⟫ ∧ ⟪c', b - d⟫ = ⟪b', b - d⟫)
+  touchN2 : (⟪b, c - a'⟫ = ⟪c', c - a'⟫ ∧ ⟪b', c - a'⟫ = ⟪c', c - a'⟫) →
+    Touch30N2 a a' b b' c c' d
+  touchT4 : (⟪c, b - d⟫ = ⟪b', b - d⟫ ∧ ⟪c', b - d⟫ = ⟪b', b - d⟫) →
+    Touch30T4 a a' b b' c c' d
+  touchTie : (⟪c, b - d⟫ = ⟪b', b - d⟫ ∧ ⟪c', b - d⟫ = ⟪b', b - d⟫) →
+    ¬ ((∃ r : ℝ, c - a' = r • (b - d)) ∨ ∃ r : ℝ, c' - a = r • (b - d))
   levelQ : ⟪a - d, b - d⟫ ≠ 0 ∨ ⟪c - d, b - d⟫ ≠ 0
   slideN2c : NoBadNormal (quad c b c' b') (c - a') (b - c) ∨
     (UniOrSep (quint c d b c' b') (c - a') ∧
@@ -525,7 +500,8 @@ theorem isRupert_type08_slide_core {a a' b b' c c' d : ℝ³}
     rw [hβ₂eq, one_smul] at ha'1
     have hκ := t4_kappa_pos hd hb' hc' ha' hα hβ₁ hα₂ hβ₂eq.le
     exact isRupert_routeT hb' hc' ha'1 hnd7 hE hα hβ hαβ hα₁1 hβ₁ hα₂ hκ (hTgood (Or.inl htie₁))
-      hgen.touchT4 (hgen.routeT (hd.tieT_geom htie₁))
+      (fun ht => hgen.touchTie ht (Or.inl (hd.tieT_geom htie₁)))
+      (hgen.routeT (hd.tieT_geom htie₁))
   by_cases htie₂ : F.a'bc.f c' = F.a'bc.f a
   · -- the tie `T'` (Lemma X): `α₁ = 1`, and the far end of `Q_bc` is `c`
     have hfc := hT'_far htie₂ htie₁
@@ -534,20 +510,24 @@ theorem isRupert_type08_slide_core {a a' b b' c c' d : ℝ³}
     have hc'1 := hc'
     rw [hα₁eq, one_smul] at hc'1
     exact isRupert_routeT' hb' hc'1 ha' hnd7 hE hα hβ hαβ hβ₁ hα₂ hβ₂ hβ₂1 hαβ₂
-      (hTgood (Or.inr htie₂)) hgen.touchT4 (hgen.routeT' (hd.tieT'_geom htie₂))
+      (hTgood (Or.inr htie₂)) (fun ht => hgen.touchTie ht (Or.inr (hd.tieT'_geom htie₂)))
+      (hgen.routeT' (hd.tieT'_geom htie₂))
   rcases lt_or_gt_of_ne htie₁ with hfar | hfc
   · -- case N2: the quad edge `a' → c` of `O`, with the cap `d` a middle of `Q_bc`
     obtain ⟨hq₂, hgood⟩ := hN2 hfar
+    by_cases ht : (⟪b, c - a'⟫ = ⟪c', c - a'⟫ ∧ ⟪b', c - a'⟫ = ⟪c', c - a'⟫)
+    · -- the far triple tie with `c'` beyond (Proposition 30.4)
+      exact isRupert_touchN2 F hd hfar hq₂ hgood ht (hgen.touchN2 ht)
     obtain ⟨s, δ, hs0, hs1, hδ, hdmid⟩ := hd.middle_Qbc hfar
     have e : (insert d ({a', a, c, c', b, b'} : Finset ℝ³)) = insert d {a, a', b, b', c, c'} :=
       (type08_set_perm a a' b b' c c' d).1
     rw [← e]
     rcases hgen.slideN2c with hs | hs | hR
     · exact isRupert_quad_edge_middle_slide (m := d) F.swap₁.perm₂₃ hfar hq₂ hgood
-        ⟨s, δ, hs0, hs1, hδ, hdmid⟩ ⟨hda', hda, hdc, hdc', hdb, hdb'⟩ hgen.touchN2 (Or.inl hs)
+        ⟨s, δ, hs0, hs1, hδ, hdmid⟩ ⟨hda', hda, hdc, hdc', hdb, hdb'⟩ ht (Or.inl hs)
         hgen.slideN2a'
     · exact isRupert_quad_edge_middle_slide (m := d) F.swap₁.perm₂₃ hfar hq₂ hgood
-        ⟨s, δ, hs0, hs1, hδ, hdmid⟩ ⟨hda', hda, hdc, hdc', hdb, hdb'⟩ hgen.touchN2 (Or.inr hs)
+        ⟨s, δ, hs0, hs1, hδ, hdmid⟩ ⟨hda', hda, hdc, hdc', hdb, hdb'⟩ ht (Or.inr hs)
         hgen.slideN2a'
     · -- `R_d` (A.10): if `K_{a'}` has no weak saddle, slide it; otherwise Lemma R0 and the
       -- two-peaked five-corner rim along `a'b'c`
@@ -557,7 +537,7 @@ theorem isRupert_type08_slide_core {a a' b b' c c' d : ℝ³}
           (Or.inr ⟨hNx, hgen.slideN2a'⟩)
       have hNy : NWS4 (quad ⟪c, c - a'⟫ ⟪b, c - a'⟫ ⟪c', c - a'⟫ ⟪b', c - a'⟫) := by
         by_contra hN
-        exact hNx (nws4_closing_oct F.swap₁.perm₂₃ hfar hq₂ hN hgood hgen.touchN2)
+        exact hNx (nws4_closing_oct F.swap₁.perm₂₃ hfar hq₂ hN hgood ht)
       exact isRupert_quad_edge_middle_rdCond F.swap₁.perm₂₃ hfar hq₂ ⟨s, δ, hs0, hs1, hδ, hdmid⟩
         ⟨F.abc'.f, F.abc'.N, F.abc'.hN, hd.abc', F.abc'.hQ, F.abc'.hR,
           F.abc'.neg c (by simp) (Ne.symm hac) (Ne.symm hbc) hcc',
@@ -574,12 +554,15 @@ theorem isRupert_type08_slide_core {a a' b b' c c' d : ℝ³}
       have hα₁1 : 1 < F.a'bc.f c' / F.a'bc.f a := (one_lt_div_of_neg hFa).mpr hfc'
       have hκ := t4_kappa_pos hd hb' hc' ha' hα hβ₁ hα₂ hβ₂1.le
       have hgood := hT4 hfc hfc'
+      by_cases ht : (⟪c, b - d⟫ = ⟪b', b - d⟫ ∧ ⟪c', b - d⟫ = ⟪b', b - d⟫)
+      · -- the far triple tie with `b'` beyond (Proposition 30.4)
+        exact isRupert_touchT4 F hd hfc hfc' hgood ht (hgen.touchT4 ht)
       have hsd := t4d_slide_of_par hb' hc' hdb hd.det_Qac_ne hα hα₁1 hβ₁ hgood hgen.slideT4d
       rcases hgen.slideT4b with hs | hs | hR
       · exact isRupert_t4_slide hb' hc' ha' hnd7 hd.det_Qac_ne hα hβ hαβ hα₁1 hβ₁ hα₂ hβ₂ hβ₂1
-          hαβ₂ hκ hgood hgen.touchT4 (Or.inl hs) hsd
+          hαβ₂ hκ hgood ht (Or.inl hs) hsd
       · exact isRupert_t4_slide hb' hc' ha' hnd7 hd.det_Qac_ne hα hβ hαβ hα₁1 hβ₁ hα₂ hβ₂ hβ₂1
-          hαβ₂ hκ hgood hgen.touchT4 (Or.inr hs) hsd
+          hαβ₂ hκ hgood ht (Or.inr hs) hsd
       · -- `R_d` (A.10): if `K_d` has no weak saddle, slide it; otherwise Lemma R0 and the
         -- two-peaked five-corner rim along `Q_ab`
         by_cases hNd : NWS4 (quad ⟪d, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫)
@@ -591,7 +574,7 @@ theorem isRupert_type08_slide_core {a a' b b' c c' d : ℝ³}
         have hNb : NWS4 (quad ⟪b, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫) := by
           by_contra hN
           exact hNd (t4_closing hb' hc' ha' hdb hd.det_Qac_ne hα hβ (by linarith) hβ₁ hκ hgood
-            hgen.touchT4 hN)
+            ht hN)
         exact isRupert_t4b_rdCond hb' hc' ha' hdb hd.det_Qac_ne hα hβ hα₁1 hβ₁ hβ₂ hβ₂1 hαβ₂ hκ
           ⟨F.a'b'c.f, F.a'b'c.N, F.a'b'c.hN, F.a'b'c.hP, F.a'b'c.hR, F.a'b'c.hQ,
             F.a'b'c.neg b (by simp) (Ne.symm ha'b) hbb' hbc,
