@@ -516,6 +516,566 @@ theorem triGenPar_or_farP_quad_idx {x : Fin 7 → ℝ³} (hx : Function.Injectiv
       (t := Finset.univ.image x) (by omega)
     exact ⟨w, hw, hwB⟩
 
+
+/-! ### The edge views: `EdgePar` or `EdgeFarP` when a face at the edge is a triangle -/
+
+/-- A segment of `V` parallel to the edge `v w` of two faces that is not a `MidPair` joins two far
+ends of one facet (as `par_pair`, along an edge: both functionals vanish at `v` and `w`). -/
+theorem edge_par_pair {V Q1 Q2 : Finset ℝ³} {v w p q : ℝ³} {c : ℝ} (hint : Q1 ∩ Q2 = {v, w})
+    (f1 f2 : ℝ³ →ᵃ[ℝ] ℝ) (z1 : ∀ p ∈ Q1, f1 p = 0) (n1 : ∀ p ∈ V, p ∉ Q1 → f1 p < 0)
+    (z2 : ∀ p ∈ Q2, f2 p = 0) (n2 : ∀ p ∈ V, p ∉ Q2 → f2 p < 0)
+    (hp : p ∈ V) (hq : q ∈ V) (hc : q - p = c • (w - v))
+    (hnm : ¬ MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q')
+      p q) :
+    (p ∈ Q1 ∧ q ∈ Q1 ∧ (∀ x ∈ Q1, f2 p ≤ f2 x) ∧ (∀ x ∈ Q1, f2 q ≤ f2 x)) ∨
+      (p ∈ Q2 ∧ q ∈ Q2 ∧ (∀ x ∈ Q2, f1 p ≤ f1 x) ∧ (∀ x ∈ Q2, f1 q ≤ f1 x)) := by
+  have hv : v ∈ Q1 ∩ Q2 := by rw [hint]; simp
+  have hw : w ∈ Q1 ∩ Q2 := by rw [hint]; simp
+  rw [Finset.mem_inter] at hv hw
+  have e1 : f1 (v + (w - v)) = 0 := by rw [add_sub_cancel]; exact z1 w hw.1
+  have e2 : f2 (v + (w - v)) = 0 := by rw [add_sub_cancel]; exact z2 w hw.2
+  have hq' : q = p + c • (w - v) := by rw [← hc]; abel
+  have s1 : f1 q = f1 p := by rw [hq']; exact aff_shift f1 (z1 v hv.1) e1 p c
+  have s2 : f2 q = f2 p := by rw [hq']; exact aff_shift f2 (z2 v hv.2) e2 p c
+  have m1 : p ∈ Q1 → q ∈ Q1 := fun h => by
+    by_contra hn; have := n1 q hq hn; rw [s1, z1 p h] at this; exact lt_irrefl _ this
+  have m1' : q ∈ Q1 → p ∈ Q1 := fun h => by
+    by_contra hn; have := n1 p hp hn; rw [← s1, z1 q h] at this; exact lt_irrefl _ this
+  have m2 : p ∈ Q2 → q ∈ Q2 := fun h => by
+    by_contra hn; have := n2 q hq hn; rw [s2, z2 p h] at this; exact lt_irrefl _ this
+  have m2' : q ∈ Q2 → p ∈ Q2 := fun h => by
+    by_contra hn; have := n2 p hp hn; rw [← s2, z2 q h] at this; exact lt_irrefl _ this
+  by_cases a1 : p ∈ Q1
+  · have b1 := m1 a1
+    have farp : ∀ x ∈ Q1, f2 p ≤ f2 x := by
+      by_contra hfp
+      apply hnm
+      exact Or.inl ⟨a1, b1, hfp, fun h => hfp (fun x hx => by have := h x hx; rwa [s2] at this)⟩
+    exact Or.inl ⟨a1, b1, farp, fun x hx => by rw [s2]; exact farp x hx⟩
+  · have b1 : q ∉ Q1 := fun h => a1 (m1' h)
+    by_cases a2 : p ∈ Q2
+    · have b2 := m2 a2
+      have farp : ∀ x ∈ Q2, f1 p ≤ f1 x := by
+        by_contra hfp
+        apply hnm
+        exact Or.inr (Or.inl ⟨a2, b2, hfp,
+          fun h => hfp (fun x hx => by have := h x hx; rwa [s1] at this)⟩)
+      exact Or.inr ⟨a2, b2, farp, fun x hx => by rw [s1]; exact farp x hx⟩
+    · exact absurd (Or.inr (Or.inr ⟨a1, a2, b1, fun h => a2 (m2' h)⟩)) hnm
+
+/-- **A triangle face at an edge has a unique far end**: the points of the triangle `Qa` where
+the functional `fb` of the other face `Qb` is least form a single point (the triangle's third
+vertex lies off `Qb`, so `fb` is negative there). -/
+theorem tri_far_unique {V Qa Qb : Finset ℝ³} {v w : ℝ³} (hvw : v ≠ w)
+    (hint : Qa ∩ Qb = {v, w}) (hcard : Qa.card = 3) {b : ℝ³} (hb : b ∈ Qa) (hbQ : b ∉ Qb)
+    (hbV : b ∈ V) (fb : ℝ³ →ᵃ[ℝ] ℝ) (zb : ∀ p ∈ Qb, fb p = 0)
+    (nb : ∀ p ∈ V, p ∉ Qb → fb p < 0) {x y : ℝ³} (hx : x ∈ Qa) (hy : y ∈ Qa)
+    (fx : ∀ z ∈ Qa, fb x ≤ fb z) (fy : ∀ z ∈ Qa, fb y ≤ fb z) : x = y := by
+  classical
+  by_contra hxy
+  have hv : v ∈ Qa ∩ Qb := by rw [hint]; simp
+  have hw : w ∈ Qa ∩ Qb := by rw [hint]; simp
+  rw [Finset.mem_inter] at hv hw
+  have nbb := nb b hbV hbQ
+  have xQ : x ∉ Qb := fun h => by have := fx b hb; rw [zb x h] at this; linarith
+  have yQ : y ∉ Qb := fun h => by have := fy b hb; rw [zb y h] at this; linarith
+  have hxv : x ≠ v := fun h => xQ (h ▸ hv.2)
+  have hxw : x ≠ w := fun h => xQ (h ▸ hw.2)
+  have hyv : y ≠ v := fun h => yQ (h ▸ hv.2)
+  have hyw : y ≠ w := fun h => yQ (h ▸ hw.2)
+  have h4 : ({v, w, x, y} : Finset ℝ³) ⊆ Qa := by
+    intro z hz
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hz
+    rcases hz with h | h | h | h
+    · rw [h]; exact hv.1
+    · rw [h]; exact hw.1
+    · rw [h]; exact hx
+    · rw [h]; exact hy
+  have hc4 : ({v, w, x, y} : Finset ℝ³).card = 4 := by
+    rw [Finset.card_insert_of_notMem, Finset.card_insert_of_notMem, Finset.card_pair hxy]
+    · simp [Ne.symm hxw, Ne.symm hyw]
+    · simp [hvw, Ne.symm hxv, Ne.symm hyv]
+  have := Finset.card_le_card h4
+  omega
+
+/-- **The core of the edge dichotomy.**  A non-`MidPair` parallel segment `p q` of the face `Qa`
+(a vertical far edge for the functional `fb`), with a triangle among the two faces, makes the far
+depths `FarDepthOK` (at any other pair of functionals `ga`, `gb`). -/
+theorem edgeDich_core {V Qa Qb : Finset ℝ³} {v w : ℝ³} (hgen : NoThreeCollinear V)
+    (haV : Qa ⊆ V) (hbV : Qb ⊆ V) (hvw : v ≠ w) (hint : Qa ∩ Qb = {v, w})
+    (hnea : ∃ p ∈ Qa, p ∉ Qb) (hneb : ∃ p ∈ Qb, p ∉ Qa) (hcard : Qa.card = 3 ∨ Qb.card = 3)
+    (fb ga gb : ℝ³ →ᵃ[ℝ] ℝ) (zb : ∀ p ∈ Qb, fb p = 0) (nb : ∀ p ∈ V, p ∉ Qb → fb p < 0)
+    (zga : ∀ p ∈ Qa, ga p = 0) (nga : ∀ p ∈ V, p ∉ Qa → ga p < 0)
+    (zgb : ∀ p ∈ Qb, gb p = 0) (ngb : ∀ p ∈ V, p ∉ Qb → gb p < 0)
+    (hnF : ¬ FarDepthOK Qa Qb (fun p => ∀ p' ∈ Qa, gb p ≤ gb p')
+      (fun q => ∀ q' ∈ Qb, ga q ≤ ga q') (fun p => ⟪p, w - v⟫))
+    {p q : ℝ³} {c : ℝ} (hp : p ∈ Qa) (hq : q ∈ Qa) (hpq : p ≠ q)
+    (fp : ∀ x ∈ Qa, fb p ≤ fb x) (fq : ∀ x ∈ Qa, fb q ≤ fb x) (hc : q - p = c • (w - v)) :
+    False := by
+  classical
+  obtain ⟨b, hbA, hbB⟩ := hnea
+  rcases hcard with h3 | h3
+  · exact hpq (tri_far_unique hvw hint h3 hbA hbB (haV hbA) fb zb nb hp hq fp fq)
+  · have hq' : q = p + c • (w - v) := by rw [← hc]; abel
+    have hc0 : c ≠ 0 := by
+      rintro rfl; apply hpq; rw [hq']; simp
+    have hne : w - v ≠ 0 := sub_ne_zero.mpr hvw.symm
+    have hdep : ⟪p, w - v⟫ ≠ ⟪q, w - v⟫ := by
+      rw [hq', inner_add_left, real_inner_smul_left]
+      have : 0 < ⟪w - v, w - v⟫ := real_inner_self_pos.mpr hne
+      intro h
+      have : c * ⟪w - v, w - v⟫ = 0 := by linarith
+      rcases mul_eq_zero.mp this with h | h
+      · exact hc0 h
+      · linarith
+    obtain ⟨κ, hκ, hg⟩ := aff_prop hgen hbV (by omega) fb gb zb nb zgb ngb (haV hbA) hbB
+    have gp : ∀ x ∈ Qa, gb p ≤ gb x := fun x hx => by
+      rw [hg, hg]; exact mul_le_mul_of_nonneg_left (fp x hx) hκ.le
+    have gq : ∀ x ∈ Qa, gb q ≤ gb x := fun x hx => by
+      rw [hg, hg]; exact mul_le_mul_of_nonneg_left (fq x hx) hκ.le
+    have hb' : Qb ∩ Qa = {v, w} := by rw [Finset.inter_comm]; exact hint
+    obtain ⟨b', hb'B, hb'A⟩ := hneb
+    apply hnF
+    intro p0 hp0 q0 hq0 hne0 f0 g0 hd
+    refine Or.inl ⟨?_, ?_⟩
+    · by_cases h0 : ⟪p, w - v⟫ = ⟪p0, w - v⟫
+      · exact ⟨q, hq, gq, fun h => hdep (h0.trans h.symm)⟩
+      · exact ⟨p, hp, gp, fun h => h0 h⟩
+    · intro q' hq' g'
+      rw [tri_far_unique (V := V) hvw hb' h3 hb'B hb'A (hbV hb'B) ga zga nga hq' hq0 g' g0]
+
+/-- **`EdgePar` or `EdgeFarP` along an edge shared by two facets one of which is a triangle**
+(FEWER-FACES-PROOFS.md Proposition 23.19 (1)–(3)).  A segment parallel to the edge that is not a
+`MidPair` is a vertical far edge of one facet; the triangle has a unique far end, so the far
+depths are then `FarDepthOK` (a tie has the triangle's single far end on one side and a vertical
+far edge on the other).  No residual remains. -/
+theorem edgePar_or_farP {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (hgen : NoThreeCollinear V)
+    (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hvw : v ≠ w) (hint : Q1 ∩ Q2 = {v, w})
+    (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1) (hcard : Q1.card = 3 ∨ Q2.card = 3) :
+    EdgePar V Q1 Q2 v w ∨ EdgeFarP V Q1 Q2 v w := by
+  classical
+  by_contra hcon
+  rw [not_or] at hcon
+  obtain ⟨hP, hF⟩ := hcon
+  have hP' : ∃ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) ∧ (∀ p ∈ V, p ∉ Q1 → f1 p < 0) ∧
+      (∀ p ∈ Q2, f2 p = 0) ∧ (∀ p ∈ V, p ∉ Q2 → f2 p < 0) ∧
+      ∃ p ∈ V, ∃ q ∈ V, p ≠ q ∧ ({p, q} : Finset ℝ³) ≠ {v, w} ∧ ∃ c : ℝ, q - p = c • (w - v) ∧
+        ¬ MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q')
+          p q := by
+    by_contra hc
+    apply hP
+    intro f1 f2 z1 n1 z2 n2 p hp q hq hpq hpv c hc'
+    by_contra hnm
+    exact hc ⟨f1, f2, z1, n1, z2, n2, p, hp, q, hq, hpq, hpv, c, hc', hnm⟩
+  have hF' : ∃ g1 g2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, g1 p = 0) ∧ (∀ p ∈ V, p ∉ Q1 → g1 p < 0) ∧
+      (∀ p ∈ Q2, g2 p = 0) ∧ (∀ p ∈ V, p ∉ Q2 → g2 p < 0) ∧
+      ¬ FarDepthOK Q1 Q2 (fun p => ∀ p' ∈ Q1, g2 p ≤ g2 p')
+        (fun q => ∀ q' ∈ Q2, g1 q ≤ g1 q') (fun p => ⟪p, w - v⟫) := by
+    by_contra hc
+    apply hF
+    intro g1 g2 z1 n1 z2 n2
+    by_contra hnm
+    exact hc ⟨g1, g2, z1, n1, z2, n2, hnm⟩
+  obtain ⟨f1, f2, z1, n1, z2, n2, p, hp, q, hq, hpq, -, c, hc, hnm⟩ := hP'
+  obtain ⟨g1, g2, y1, m1, y2, m2, hnF⟩ := hF'
+  rcases edge_par_pair hint f1 f2 z1 n1 z2 n2 hp hq hc hnm with
+    ⟨hpQ, hqQ, fp, fq⟩ | ⟨hpQ, hqQ, fp, fq⟩
+  · exact edgeDich_core hgen h1V h2V hvw hint hne1 hne2 hcard f2 g1 g2 z2 n2 y1 m1 y2 m2 hnF
+      hpQ hqQ hpq fp fq hc
+  · exact edgeDich_core hgen h2V h1V hvw (by rw [Finset.inter_comm]; exact hint) hne2 hne1
+      hcard.symm f1 g2 g1 z1 n1 y2 m2 y1 m1 (fun H => hnF H.symm) hpQ hqQ hpq fp fq hc
+
+/-- `edgePar_or_farP` for labelled points: two facets `A`, `B` of the labelled seven points
+(each with at most six labels), meeting in the edge `v w`, one of them a triangle. -/
+theorem edgePar_or_farP_idx {x : Fin 7 → ℝ³} (hx : Function.Injective x)
+    (hgen : NoThreeCollinear (Finset.univ.image x)) (A B : Finset (Fin 7)) (v w : Fin 7)
+    (hvw : v ≠ w) (hint : A ∩ B = {v, w}) (hA : ∃ i ∈ A, i ∉ B) (hB : ∃ i ∈ B, i ∉ A)
+    (hAB : A.card = 3 ∨ B.card = 3) :
+    EdgePar (Finset.univ.image x) (A.image x) (B.image x) (x v) (x w) ∨
+      EdgeFarP (Finset.univ.image x) (A.image x) (B.image x) (x v) (x w) := by
+  classical
+  refine edgePar_or_farP hgen (Finset.image_subset_image (Finset.subset_univ A))
+    (Finset.image_subset_image (Finset.subset_univ B)) (fun h => hvw (hx h))
+    (by rw [← Finset.image_inter _ _ hx, hint, Finset.image_insert, Finset.image_singleton])
+    ?_ ?_ ?_
+  · obtain ⟨i, hi, hiB⟩ := hA
+    exact ⟨x i, Finset.mem_image_of_mem x hi, fun h => hiB (by
+      obtain ⟨j, hj, hji⟩ := Finset.mem_image.mp h
+      rwa [hx hji] at hj)⟩
+  · obtain ⟨i, hi, hiA⟩ := hB
+    exact ⟨x i, Finset.mem_image_of_mem x hi, fun h => hiA (by
+      obtain ⟨j, hj, hji⟩ := Finset.mem_image.mp h
+      rwa [hx hji] at hj)⟩
+  · rw [Finset.card_image_of_injective _ hx, Finset.card_image_of_injective _ hx]
+    exact hAB
+
+
+/-! ### Two quadrilaterals at an edge: the residual is the edge rectangle -/
+
+/-- A segment of `V` parallel to the edge `v w` has different depths at its ends. -/
+theorem inner_ne_of_par {v w p q : ℝ³} {c : ℝ} (hvw : v ≠ w) (hpq : p ≠ q)
+    (hc : q - p = c • (w - v)) : ⟪p, w - v⟫ ≠ ⟪q, w - v⟫ := by
+  have hq' : q = p + c • (w - v) := by rw [← hc]; abel
+  have hc0 : c ≠ 0 := by
+    rintro rfl; apply hpq; rw [hq']; simp
+  have hne : w - v ≠ 0 := sub_ne_zero.mpr hvw.symm
+  rw [hq', inner_add_left, real_inner_smul_left]
+  have : 0 < ⟪w - v, w - v⟫ := real_inner_self_pos.mpr hne
+  intro h
+  have : c * ⟪w - v, w - v⟫ = 0 := by linarith
+  rcases mul_eq_zero.mp this with h | h
+  · exact hc0 h
+  · linarith
+
+/-- A face of the pair has at least three points. -/
+theorem three_le_card_of_inter {Q1 Q2 : Finset ℝ³} {v w b : ℝ³} (hvw : v ≠ w)
+    (hint : Q1 ∩ Q2 = {v, w}) (hb : b ∈ Q2) (hbQ : b ∉ Q1) : 3 ≤ Q2.card := by
+  classical
+  have hv : v ∈ Q1 ∩ Q2 := by rw [hint]; simp
+  have hw : w ∈ Q1 ∩ Q2 := by rw [hint]; simp
+  rw [Finset.mem_inter] at hv hw
+  have hvb : v ≠ b := fun h => hbQ (h ▸ hv.1)
+  have hwb : w ≠ b := fun h => hbQ (h ▸ hw.1)
+  have h3 : ({v, w, b} : Finset ℝ³).card = 3 := Finset.card_eq_three.mpr ⟨v, w, b, hvw, hvb, hwb, rfl⟩
+  have hsub : ({v, w, b} : Finset ℝ³) ⊆ Q2 := by
+    intro z hz
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hz
+    rcases hz with h | h | h
+    · rw [h]; exact hv.2
+    · rw [h]; exact hw.2
+    · rw [h]; exact hb
+  have := Finset.card_le_card hsub
+  omega
+
+/-- **The edge rectangle**: the residual position of two faces at an edge `v w` for which neither
+`EdgePar` nor `EdgeFarP` holds.  At the (unique up to scale) functionals `f1`, `f2` the far ends
+of `Q1` include two points `p`, `p'` at different depths along `w - v` (a vertical far edge,
+parallel to the edge) and those of `Q2` two points `q`, `q'`, and the depths tie crosswise
+(`p ~ q`, `p' ~ q'`).  A triangle face has a single far end, so this needs two faces with at least
+four points (`edgePar_or_farP`). -/
+def EdgeRect (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) : Prop :=
+  ∃ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) ∧ (∀ p ∈ V, p ∉ Q1 → f1 p < 0) ∧
+    (∀ p ∈ Q2, f2 p = 0) ∧ (∀ p ∈ V, p ∉ Q2 → f2 p < 0) ∧
+    ∃ p ∈ Q1, ∃ p' ∈ Q1, ∃ q ∈ Q2, ∃ q' ∈ Q2,
+      (∀ x ∈ Q1, f2 p ≤ f2 x) ∧ (∀ x ∈ Q1, f2 p' ≤ f2 x) ∧
+      (∀ x ∈ Q2, f1 q ≤ f1 x) ∧ (∀ x ∈ Q2, f1 q' ≤ f1 x) ∧
+      ⟪p, w - v⟫ = ⟪q, w - v⟫ ∧ ⟪p', w - v⟫ = ⟪q', w - v⟫ ∧ ⟪p, w - v⟫ ≠ ⟪p', w - v⟫
+
+theorem EdgeRect.swap {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h : EdgeRect V Q2 Q1 v w) :
+    EdgeRect V Q1 Q2 v w := by
+  obtain ⟨f1, f2, z1, n1, z2, n2, p, hp, p', hp', q, hq, q', hq', a, b, c, d, t1, t2, t3⟩ := h
+  exact ⟨f2, f1, z2, n2, z1, n1, q, hq, q', hq', p, hp, p', hp', c, d, a, b, t1.symm, t2.symm,
+    fun e => t3 (by rw [t1, t2, e])⟩
+
+/-- **A vertical far edge on one face and a failure of `FarDepthOK` give the rectangle.** -/
+theorem rect_of_nonuniform {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {d : ℝ³ → ℝ}
+    (h : ¬ FarDepthOK Q1 Q2 far1 far2 d) {p q : ℝ³} (hp : p ∈ Q1) (hq : q ∈ Q1) (fp : far1 p)
+    (fq : far1 q) (hd : d p ≠ d q) :
+    ∃ p0 ∈ Q1, ∃ p' ∈ Q1, ∃ q0 ∈ Q2, ∃ q' ∈ Q2, far1 p0 ∧ far1 p' ∧ far2 q0 ∧ far2 q' ∧
+      d p0 = d q0 ∧ d p' = d q' ∧ d p0 ≠ d p' := by
+  by_contra hcon
+  apply h
+  intro p0 hp0 q0 hq0 hne f0 g0 hdd
+  have hp1 : ∃ p1 ∈ Q1, far1 p1 ∧ d p1 ≠ d p0 := by
+    by_cases h0 : d p = d p0
+    · exact ⟨q, hq, fq, fun e => hd (h0.trans e.symm)⟩
+    · exact ⟨p, hp, fp, h0⟩
+  obtain ⟨p1, hp1Q, hp1f, hp1d⟩ := hp1
+  by_cases u : ∀ q' ∈ Q2, far2 q' → d q' = d q0
+  · exact Or.inl ⟨⟨p1, hp1Q, hp1f, hp1d⟩, u⟩
+  · push Not at u
+    obtain ⟨q1, hq1Q, hq1f, hq1d⟩ := u
+    refine Or.inr (Or.inr ⟨⟨p1, hp1Q, hp1f, hp1d⟩, ⟨q1, hq1Q, hq1f, hq1d⟩, ?_⟩)
+    intro p' hp' f' dp' q' hq' g' dq' ne e
+    exact hcon ⟨p0, hp0, p', hp', q0, hq0, q', hq', f0, f', g0, g', hdd, e, fun h => dp' h.symm⟩
+
+/-- Two points of the faces `Q1`, `Q2` with equal values of both functionals differ by a multiple
+of the edge `w - v`. -/
+theorem edge_dir {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (hvw : v ≠ w) (hint : Q1 ∩ Q2 = {v, w})
+    (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
+    (f1 f2 : ℝ³ →ᵃ[ℝ] ℝ) (z1 : ∀ p ∈ Q1, f1 p = 0) (n1 : ∀ p ∈ V, p ∉ Q1 → f1 p < 0)
+    (z2 : ∀ p ∈ Q2, f2 p = 0) (n2 : ∀ p ∈ V, p ∉ Q2 → f2 p < 0) {p p' : ℝ³}
+    (e1 : f1 p' = f1 p) (e2 : f2 p' = f2 p) : ∃ t : ℝ, p' - p = t • (w - v) := by
+  have hv : v ∈ Q1 ∩ Q2 := by rw [hint]; simp
+  have hw : w ∈ Q1 ∩ Q2 := by rw [hint]; simp
+  rw [Finset.mem_inter] at hv hw
+  obtain ⟨α1, β1, γ1, d1⟩ := aff_dif f1
+  obtain ⟨α2, β2, γ2, d2⟩ := aff_dif f2
+  have hu1 : α1 * (p' 0 - p 0) + β1 * (p' 1 - p 1) + γ1 * (p' 2 - p 2) = 0 := by
+    rw [← d1 p p', e1]; ring
+  have hu2 : α2 * (p' 0 - p 0) + β2 * (p' 1 - p 1) + γ2 * (p' 2 - p 2) = 0 := by
+    rw [← d2 p p', e2]; ring
+  have he1 : α1 * (w 0 - v 0) + β1 * (w 1 - v 1) + γ1 * (w 2 - v 2) = 0 := by
+    rw [← d1 v w, z1 v hv.1, z1 w hw.1]; ring
+  have he2 : α2 * (w 0 - v 0) + β2 * (w 1 - v 1) + γ2 * (w 2 - v 2) = 0 := by
+    rw [← d2 v w, z2 v hv.2, z2 w hw.2]; ring
+  obtain ⟨a, ha, haQ⟩ := hne1
+  obtain ⟨b, hb, hbQ⟩ := hne2
+  have ha1 : α1 * (a 0 - v 0) + β1 * (a 1 - v 1) + γ1 * (a 2 - v 2) = 0 := by
+    rw [← d1 v a, z1 a ha, z1 v hv.1]; ring
+  have ha2 : α2 * (a 0 - v 0) + β2 * (a 1 - v 1) + γ2 * (a 2 - v 2) ≠ 0 := by
+    rw [← d2 v a, z2 v hv.2]
+    have := n2 a (h1V ha) haQ
+    linarith
+  have hb1 : α1 * (b 0 - v 0) + β1 * (b 1 - v 1) + γ1 * (b 2 - v 2) ≠ 0 := by
+    rw [← d1 v b, z1 v hv.1]
+    have := n1 b (h2V hb) hbQ
+    linarith
+  have hne : w 0 - v 0 ≠ 0 ∨ w 1 - v 1 ≠ 0 ∨ w 2 - v 2 ≠ 0 := by
+    by_contra hcon
+    push Not at hcon
+    apply hvw
+    ext i
+    fin_cases i
+    · show v 0 = w 0
+      linarith [hcon.1]
+    · show v 1 = w 1
+      linarith [hcon.2.1]
+    · show v 2 = w 2
+      linarith [hcon.2.2]
+  obtain ⟨t, h0, h1, h2⟩ := ker_line α1 β1 γ1 α2 β2 γ2 (p' 0 - p 0) (p' 1 - p 1) (p' 2 - p 2)
+    (w 0 - v 0) (w 1 - v 1) (w 2 - v 2) (a 0 - v 0) (a 1 - v 1) (a 2 - v 2)
+    (b 0 - v 0) (b 1 - v 1) (b 2 - v 2) hu1 hu2 he1 he2 ha1 ha2 hb1 hne
+  refine ⟨t, ?_⟩
+  ext i
+  fin_cases i
+  · show p' 0 - p 0 = t * (w 0 - v 0)
+    linarith
+  · show p' 1 - p 1 = t * (w 1 - v 1)
+    linarith
+  · show p' 2 - p 2 = t * (w 2 - v 2)
+    linarith
+
+/-- **`EdgePar`, `EdgeFarP` or the edge rectangle** (no assumption on the faces).  A non-`MidPair`
+segment parallel to the edge is a vertical far edge of one face, so that face has far ends at two
+depths; a failure of `FarDepthOK` is then a crosswise tie of two far ends of each face
+(`EdgeRect`). -/
+theorem edgePar_or_farP_rect {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (hgen : NoThreeCollinear V)
+    (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hvw : v ≠ w) (hint : Q1 ∩ Q2 = {v, w})
+    (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1) :
+    EdgePar V Q1 Q2 v w ∨ EdgeFarP V Q1 Q2 v w ∨ EdgeRect V Q1 Q2 v w := by
+  classical
+  by_contra hcon
+  rw [not_or, not_or] at hcon
+  obtain ⟨hP, hF, hR⟩ := hcon
+  have hP' : ∃ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, f1 p = 0) ∧ (∀ p ∈ V, p ∉ Q1 → f1 p < 0) ∧
+      (∀ p ∈ Q2, f2 p = 0) ∧ (∀ p ∈ V, p ∉ Q2 → f2 p < 0) ∧
+      ∃ p ∈ V, ∃ q ∈ V, p ≠ q ∧ ({p, q} : Finset ℝ³) ≠ {v, w} ∧ ∃ c : ℝ, q - p = c • (w - v) ∧
+        ¬ MidPair Q1 Q2 (fun p => ∀ p' ∈ Q1, f2 p ≤ f2 p') (fun q => ∀ q' ∈ Q2, f1 q ≤ f1 q')
+          p q := by
+    by_contra hc
+    apply hP
+    intro f1 f2 z1 n1 z2 n2 p hp q hq hpq hpv c hc'
+    by_contra hnm
+    exact hc ⟨f1, f2, z1, n1, z2, n2, p, hp, q, hq, hpq, hpv, c, hc', hnm⟩
+  have hF' : ∃ g1 g2 : ℝ³ →ᵃ[ℝ] ℝ, (∀ p ∈ Q1, g1 p = 0) ∧ (∀ p ∈ V, p ∉ Q1 → g1 p < 0) ∧
+      (∀ p ∈ Q2, g2 p = 0) ∧ (∀ p ∈ V, p ∉ Q2 → g2 p < 0) ∧
+      ¬ FarDepthOK Q1 Q2 (fun p => ∀ p' ∈ Q1, g2 p ≤ g2 p')
+        (fun q => ∀ q' ∈ Q2, g1 q ≤ g1 q') (fun p => ⟪p, w - v⟫) := by
+    by_contra hc
+    apply hF
+    intro g1 g2 z1 n1 z2 n2
+    by_contra hnm
+    exact hc ⟨g1, g2, z1, n1, z2, n2, hnm⟩
+  obtain ⟨f1, f2, z1, n1, z2, n2, p, hp, q, hq, hpq, -, c, hc, hnm⟩ := hP'
+  obtain ⟨g1, g2, y1, m1, y2, m2, hnF⟩ := hF'
+  obtain ⟨b, hbA, hbB⟩ := hne1
+  obtain ⟨b', hb'B, hb'A⟩ := hne2
+  have c1 : 3 ≤ Q1.card :=
+    three_le_card_of_inter hvw (by rw [Finset.inter_comm]; exact hint) hbA hbB
+  have c2 : 3 ≤ Q2.card := three_le_card_of_inter hvw hint hb'B hb'A
+  have hd := inner_ne_of_par hvw hpq hc
+  rcases edge_par_pair hint f1 f2 z1 n1 z2 n2 hp hq hc hnm with
+    ⟨hpQ, hqQ, fp, fq⟩ | ⟨hpQ, hqQ, fp, fq⟩
+  · obtain ⟨κ, hκ, hg⟩ := aff_prop hgen h2V c2 f2 g2 z2 n2 y2 m2 (h1V hbA) hbB
+    have gp : ∀ x ∈ Q1, g2 p ≤ g2 x := fun x hx => by
+      rw [hg, hg]; exact mul_le_mul_of_nonneg_left (fp x hx) hκ.le
+    have gq : ∀ x ∈ Q1, g2 q ≤ g2 x := fun x hx => by
+      rw [hg, hg]; exact mul_le_mul_of_nonneg_left (fq x hx) hκ.le
+    obtain ⟨p0, hp0, p', hp', q0, hq0, q', hq', a1, a2, a3, a4, t1, t2, t3⟩ :=
+      rect_of_nonuniform hnF hpQ hqQ gp gq hd
+    exact hR ⟨g1, g2, y1, m1, y2, m2, p0, hp0, p', hp', q0, hq0, q', hq', a1, a2, a3, a4,
+      t1, t2, t3⟩
+  · obtain ⟨κ, hκ, hg⟩ := aff_prop hgen h1V c1 f1 g1 z1 n1 y1 m1 (h2V hb'B) hb'A
+    have gp : ∀ x ∈ Q2, g1 p ≤ g1 x := fun x hx => by
+      rw [hg, hg]; exact mul_le_mul_of_nonneg_left (fp x hx) hκ.le
+    have gq : ∀ x ∈ Q2, g1 q ≤ g1 x := fun x hx => by
+      rw [hg, hg]; exact mul_le_mul_of_nonneg_left (fq x hx) hκ.le
+    obtain ⟨p0, hp0, p', hp', q0, hq0, q', hq', a1, a2, a3, a4, t1, t2, t3⟩ :=
+      rect_of_nonuniform (fun H => hnF H.symm) hpQ hqQ gp gq hd
+    exact hR (EdgeRect.swap ⟨g2, g1, y2, m2, y1, m1, p0, hp0, p', hp', q0, hq0, q', hq',
+      a1, a2, a3, a4, t1, t2, t3⟩)
+
+/-- **The edge rectangle is a parallelogram.**  The four far ends of the rectangle lie off the
+other face, are distinct in pairs, and `p' - p = q' - q`: they are the vertices of a (planar)
+parallelogram whose two sides `p p'`, `q q'` are parallel to the edge. -/
+theorem EdgeRect.parallelogram {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (hvw : v ≠ w)
+    (hint : Q1 ∩ Q2 = {v, w}) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hne1 : ∃ p ∈ Q1, p ∉ Q2)
+    (hne2 : ∃ p ∈ Q2, p ∉ Q1) (h : EdgeRect V Q1 Q2 v w) :
+    ∃ p ∈ Q1, ∃ p' ∈ Q1, ∃ q ∈ Q2, ∃ q' ∈ Q2, p ∉ Q2 ∧ p' ∉ Q2 ∧ q ∉ Q1 ∧ q' ∉ Q1 ∧
+      p ≠ p' ∧ q ≠ q' ∧ p' - p = q' - q := by
+  obtain ⟨f1, f2, z1, n1, z2, n2, p, hp, p', hp', q, hq, q', hq', fp, fp', fq, fq', t1, t2, t3⟩ :=
+    h
+  obtain ⟨b, hbA, hbB⟩ := hne1
+  obtain ⟨b', hb'B, hb'A⟩ := hne2
+  have nb := n2 b (h1V hbA) hbB
+  have nb' := n1 b' (h2V hb'B) hb'A
+  have pQ : p ∉ Q2 := fun h => by have := fp b hbA; rw [z2 p h] at this; linarith
+  have p'Q : p' ∉ Q2 := fun h => by have := fp' b hbA; rw [z2 p' h] at this; linarith
+  have qQ : q ∉ Q1 := fun h => by have := fq b' hb'B; rw [z1 q h] at this; linarith
+  have q'Q : q' ∉ Q1 := fun h => by have := fq' b' hb'B; rw [z1 q' h] at this; linarith
+  have hpp : p ≠ p' := fun h => t3 (by rw [h])
+  have hqq : q ≠ q' := fun h => t3 (by rw [t1, t2, h])
+  obtain ⟨s, hs⟩ := edge_dir hvw hint h1V h2V ⟨b, hbA, hbB⟩ ⟨b', hb'B, hb'A⟩ f1 f2 z1 n1 z2 n2
+    (p := p) (p' := p') (by rw [z1 p hp, z1 p' hp'])
+    (le_antisymm (fp' p hp) (fp p' hp'))
+  obtain ⟨s', hs'⟩ := edge_dir hvw hint h1V h2V ⟨b, hbA, hbB⟩ ⟨b', hb'B, hb'A⟩ f1 f2 z1 n1 z2 n2
+    (p := q) (p' := q') (le_antisymm (fq' q hq) (fq q' hq')) (by rw [z2 q hq, z2 q' hq'])
+  have hpos : 0 < ⟪w - v, w - v⟫ := real_inner_self_pos.mpr (sub_ne_zero.mpr hvw.symm)
+  have e1 : ⟪p', w - v⟫ = ⟪p, w - v⟫ + s * ⟪w - v, w - v⟫ := by
+    have : p' = p + s • (w - v) := by rw [← hs]; abel
+    rw [this, inner_add_left, real_inner_smul_left]
+  have e2 : ⟪q', w - v⟫ = ⟪q, w - v⟫ + s' * ⟪w - v, w - v⟫ := by
+    have : q' = q + s' • (w - v) := by rw [← hs']; abel
+    rw [this, inner_add_left, real_inner_smul_left]
+  have hss : s = s' := by
+    have : (s - s') * ⟪w - v, w - v⟫ = 0 := by linarith
+    rcases mul_eq_zero.mp this with h | h
+    · linarith
+    · linarith
+  exact ⟨p, hp, p', hp', q, hq, q', hq', pQ, p'Q, qQ, q'Q, hpp, hqq, by rw [hs, hs', hss]⟩
+
+/-- `EdgePar` gives `EdgeTieR` (the tie clause of `EdgeTieR`, `TieHER`, always holds: a tie of
+the far ends is accepted). -/
+theorem EdgePar.toTieR {V Q1 Q2 : Finset ℝ³} {v w : ℝ³} (h : EdgePar V Q1 Q2 v w) :
+    EdgeTieR V Q1 Q2 v w := by
+  intro f1 f2 z1 n1 z2 n2
+  refine ⟨fun p hp q hq hpq hne c hc => h f1 f2 z1 n1 z2 n2 p hp q hq hpq hne c hc, ?_⟩
+  intro p _ q _ _ _ _
+  by_cases e : ⟪p, w - v⟫ = ⟪q, w - v⟫
+  · exact Or.inr e
+  · exact Or.inl (Or.inl e)
+
+/-- `edgePar_or_farP_rect` for labelled points, as `EdgeTieR` or `EdgeFarP` or the rectangle. -/
+theorem edgeTieR_or_farP_rect_idx {x : Fin 7 → ℝ³} (hx : Function.Injective x)
+    (hgen : NoThreeCollinear (Finset.univ.image x)) (A B : Finset (Fin 7)) (v w : Fin 7)
+    (hvw : v ≠ w) (hint : A ∩ B = {v, w}) (hA : ∃ i ∈ A, i ∉ B) (hB : ∃ i ∈ B, i ∉ A) :
+    EdgeTieR (Finset.univ.image x) (A.image x) (B.image x) (x v) (x w) ∨
+      EdgeFarP (Finset.univ.image x) (A.image x) (B.image x) (x v) (x w) ∨
+      EdgeRect (Finset.univ.image x) (A.image x) (B.image x) (x v) (x w) := by
+  classical
+  rcases edgePar_or_farP_rect hgen (Finset.image_subset_image (Finset.subset_univ A))
+    (Finset.image_subset_image (Finset.subset_univ B)) (fun h => hvw (hx h))
+    (by rw [← Finset.image_inter _ _ hx, hint, Finset.image_insert, Finset.image_singleton])
+    (by
+      obtain ⟨i, hi, hiB⟩ := hA
+      exact ⟨x i, Finset.mem_image_of_mem x hi, fun h => hiB (by
+        obtain ⟨j, hj, hji⟩ := Finset.mem_image.mp h
+        rwa [hx hji] at hj)⟩)
+    (by
+      obtain ⟨i, hi, hiA⟩ := hB
+      exact ⟨x i, Finset.mem_image_of_mem x hi, fun h => hiA (by
+        obtain ⟨j, hj, hji⟩ := Finset.mem_image.mp h
+        rwa [hx hji] at hj)⟩) with h | h | h
+  · exact Or.inl h.toTieR
+  · exact Or.inr (Or.inl h)
+  · exact Or.inr (Or.inr h)
+
+/-- **Labelled form of the rectangle's parallelogram**: for two facets `A`, `B` of the labelled
+points meeting in the edge `v w`, the edge rectangle gives labels `i i' ∈ A \ B`, `j j' ∈ B \ A`
+with `i ≠ i'`, `j ≠ j'` and `x i' - x i = x j' - x j`. -/
+theorem EdgeRect.labels {x : Fin 7 → ℝ³} (hx : Function.Injective x) (A B : Finset (Fin 7))
+    (v w : Fin 7) (hvw : v ≠ w) (hint : A ∩ B = {v, w}) (hA : ∃ i ∈ A, i ∉ B)
+    (hB : ∃ i ∈ B, i ∉ A)
+    (h : EdgeRect (Finset.univ.image x) (A.image x) (B.image x) (x v) (x w)) :
+    ∃ i ∈ A, ∃ i' ∈ A, ∃ j ∈ B, ∃ j' ∈ B, i ∉ B ∧ i' ∉ B ∧ j ∉ A ∧ j' ∉ A ∧ i ≠ i' ∧ j ≠ j' ∧
+      x i' - x i = x j' - x j := by
+  classical
+  have hmem : ∀ (S : Finset (Fin 7)) (y : ℝ³), y ∈ S.image x ↔ ∃ i ∈ S, x i = y := fun S y => by
+    simp [Finset.mem_image]
+  obtain ⟨p, hp, p', hp', q, hq, q', hq', pQ, p'Q, qQ, q'Q, hpp, hqq, hrel⟩ :=
+    EdgeRect.parallelogram (V := Finset.univ.image x) (fun h => hvw (hx h))
+      (by rw [← Finset.image_inter _ _ hx, hint, Finset.image_insert, Finset.image_singleton])
+      (Finset.image_subset_image (Finset.subset_univ A))
+      (Finset.image_subset_image (Finset.subset_univ B))
+      (by
+        obtain ⟨i, hi, hiB⟩ := hA
+        exact ⟨x i, Finset.mem_image_of_mem x hi, fun h => hiB (by
+          obtain ⟨j, hj, hji⟩ := Finset.mem_image.mp h
+          rwa [hx hji] at hj)⟩)
+      (by
+        obtain ⟨i, hi, hiA⟩ := hB
+        exact ⟨x i, Finset.mem_image_of_mem x hi, fun h => hiA (by
+          obtain ⟨j, hj, hji⟩ := Finset.mem_image.mp h
+          rwa [hx hji] at hj)⟩) h
+  obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp hp
+  obtain ⟨i', hi', rfl⟩ := Finset.mem_image.mp hp'
+  obtain ⟨j, hj, rfl⟩ := Finset.mem_image.mp hq
+  obtain ⟨j', hj', rfl⟩ := Finset.mem_image.mp hq'
+  exact ⟨i, hi, i', hi', j, hj, j', hj', fun h => pQ (Finset.mem_image_of_mem x h),
+    fun h => p'Q (Finset.mem_image_of_mem x h), fun h => qQ (Finset.mem_image_of_mem x h),
+    fun h => q'Q (Finset.mem_image_of_mem x h), fun h => hpp (by rw [h]),
+    fun h => hqq (by rw [h]), hrel⟩
+
+/-- An affine functional takes equal increments on equal vector differences. -/
+theorem aff_parallelogram (f : ℝ³ →ᵃ[ℝ] ℝ) {p p' q q' : ℝ³} (h : p' - p = q' - q) :
+    f p' - f p = f q' - f q := by
+  have h1 := f.linearMap_vsub p' p
+  have h2 := f.linearMap_vsub q' q
+  simp only [vsub_eq_sub] at h1 h2
+  rw [← h1, ← h2, h]
+
+
+/-! ### The edge rectangle at types 13 and 19 is refuted by a triangle facet -/
+
+/-- Type 13: the edge rectangle at the edge `45` of the quadrilaterals `0145`, `2456` would make
+`0, 1, 2, 6` a parallelogram, but the triangle `126` is a facet. -/
+theorem not_edgeRect_type13 {x : Fin 7 → ℝ³} (hx : Function.Injective x) (f : ℝ³ →ᵃ[ℝ] ℝ)
+    (hf : ∀ i, (i ∈ ({1, 2, 6} : Finset (Fin 7)) → f (x i) = 0) ∧
+      (i ∉ ({1, 2, 6} : Finset (Fin 7)) → f (x i) < 0)) :
+    ¬ EdgeRect (Finset.univ.image x) (({0, 1, 4, 5} : Finset (Fin 7)).image x)
+      (({2, 4, 5, 6} : Finset (Fin 7)).image x) (x 4) (x 5) := by
+  intro h
+  obtain ⟨i, hiA, i', hi'A, j, hjB, j', hj'B, hiB, hi'B, hjA, hj'A, hii, hjj, hrel⟩ :=
+    EdgeRect.labels hx {0, 1, 4, 5} {2, 4, 5, 6} 4 5 (by decide) (by decide) (by decide)
+      (by decide) h
+  have key := aff_parallelogram f hrel
+  have hA : ∀ i ∈ ({0, 1, 4, 5} : Finset (Fin 7)), i ∉ ({2, 4, 5, 6} : Finset (Fin 7)) →
+      i = 0 ∨ i = 1 := by decide
+  have hB : ∀ i ∈ ({2, 4, 5, 6} : Finset (Fin 7)), i ∉ ({0, 1, 4, 5} : Finset (Fin 7)) →
+      i = 2 ∨ i = 6 := by decide
+  have f0 : f (x 0) < 0 := (hf 0).2 (by decide)
+  have f1 : f (x 1) = 0 := (hf 1).1 (by decide)
+  have f2 : f (x 2) = 0 := (hf 2).1 (by decide)
+  have f6 : f (x 6) = 0 := (hf 6).1 (by decide)
+  rcases hA i hiA hiB with rfl | rfl <;> rcases hA i' hi'A hi'B with rfl | rfl <;>
+    rcases hB j hjB hjA with rfl | rfl <;> rcases hB j' hj'B hj'A with rfl | rfl <;>
+    first | exact absurd rfl hii | exact absurd rfl hjj | linarith
+
+/-- Type 19: the edge rectangle at the edge `35` of the quadrilaterals `0235`, `1356` would make
+`0, 2, 1, 6` a parallelogram, but the triangle `026` is a facet. -/
+theorem not_edgeRect_type19 {x : Fin 7 → ℝ³} (hx : Function.Injective x) (f : ℝ³ →ᵃ[ℝ] ℝ)
+    (hf : ∀ i, (i ∈ ({0, 2, 6} : Finset (Fin 7)) → f (x i) = 0) ∧
+      (i ∉ ({0, 2, 6} : Finset (Fin 7)) → f (x i) < 0)) :
+    ¬ EdgeRect (Finset.univ.image x) (({0, 2, 3, 5} : Finset (Fin 7)).image x)
+      (({1, 3, 5, 6} : Finset (Fin 7)).image x) (x 3) (x 5) := by
+  intro h
+  obtain ⟨i, hiA, i', hi'A, j, hjB, j', hj'B, hiB, hi'B, hjA, hj'A, hii, hjj, hrel⟩ :=
+    EdgeRect.labels hx {0, 2, 3, 5} {1, 3, 5, 6} 3 5 (by decide) (by decide) (by decide)
+      (by decide) h
+  have key := aff_parallelogram f hrel
+  have hA : ∀ i ∈ ({0, 2, 3, 5} : Finset (Fin 7)), i ∉ ({1, 3, 5, 6} : Finset (Fin 7)) →
+      i = 0 ∨ i = 2 := by decide
+  have hB : ∀ i ∈ ({1, 3, 5, 6} : Finset (Fin 7)), i ∉ ({0, 2, 3, 5} : Finset (Fin 7)) →
+      i = 1 ∨ i = 6 := by decide
+  have f0 : f (x 0) = 0 := (hf 0).1 (by decide)
+  have f1 : f (x 1) < 0 := (hf 1).2 (by decide)
+  have f2 : f (x 2) = 0 := (hf 2).1 (by decide)
+  have f6 : f (x 6) = 0 := (hf 6).1 (by decide)
+  rcases hA i hiA hiB with rfl | rfl <;> rcases hA i' hi'A hi'B with rfl | rfl <;>
+    rcases hB j hjB hjA with rfl | rfl <;> rcases hB j' hj'B hj'A with rfl | rfl <;>
+    first | exact absurd rfl hii | exact absurd rfl hjj | linarith
+
 end Minimality
 
 end

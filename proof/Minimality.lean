@@ -6,6 +6,7 @@ public import Minimality.FaceBridge
 public import Minimality.Classify
 public import Minimality.Type29Bridge
 public import Minimality.Type29Codim2
+public import Minimality.Type02CaseC
 public import Minimality.TripleTieObtuse
 public import Minimality.TripleTieAdjacent
 public import Minimality.ParDichotomy
@@ -305,9 +306,14 @@ classification into the 29 types (`Minimality.exists_sevenType`, `Minimality/Cla
 sign-vector certificate checked in the kernel). Not formalized (`sorry`): type 24 inside
 `C̄ ∪ Σ_B` (it is proved outside, `not_type24_outside_Cbar_of_isNopert`); for type 29 (split by
 the class of its octahedron, `Minimality.type29_cap`, `Minimality.NF29.classes`) the classes K1,
-K2 and the class boundaries; and for every other type except 05, 07, 12, 14, 17, 22, 28 (closed
-completely: each of their views pairs a triangle with another facet, so `TriGenPar` or
-`TriGenFarP` always holds, `Minimality.triGenPar_or_farP_idx`; for 07 and 14, two quadrilaterals,
+K2 and the class boundaries; and for every other type except 05, 07, 12, 13, 14, 17, 19, 22, 23,
+25, 26, 27, 28 (closed completely: each of their views pairs a triangle with another facet,
+so `TriGenPar`
+or `TriGenFarP` always holds, `Minimality.triGenPar_or_farP_idx`, and `EdgePar` or `EdgeFarP` at the
+edge views of 23, 25, 26, 27, `Minimality.edgePar_or_farP_idx`; types 13 and 19 are closed too: at
+their edge of two quadrilaterals the only residual is the edge rectangle `Minimality.EdgeRect`,
+refuted by a triangle facet, `Minimality.not_edgeRect_type13`, `…type19`; type 10 is closed except
+that rectangle, which its facets allow; for 07 and 14, two quadrilaterals,
 the residual position `QuadTripleRect` is refuted from the facets,
 `Minimality.not_quadTripleRect_type07`, `…type14`), and for K3 and K4, the special
 positions: each type's theorem in `Minimality/Cases.lean` closes the case under its general-position
@@ -510,11 +516,14 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
   · exact big {1, 2, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 01: Theorem A
   · -- type 02: Cor. T1 at the quadrilaterals 0235, 1246 (sharing vertex 2); where its general
     -- position fails, Theorem B on the four quadrilaterals 0134, 0235, 1246, 3456 under
-    -- `GenPos`; the special positions of both are open in Lean
-    exact byGen1 (quadPair hx hN hR {0, 2, 3, 5} {1, 2, 4, 6} 2 (by decide) (by decide) (by decide) (by decide)
-      (by decide)) (fun _ => byGen1 (fourQuad hx hN hR ![{0, 1, 3, 4}, {0, 2, 3, 5}, {1, 2, 4, 6},
-        {3, 4, 5, 6}] (by decide) (by decide) (by decide))
-        (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
+    -- `GenPos`, and Lemma E or a planar closing at the edge 34 (23.12, metric-free:
+    -- `type02_edge34_byGen`, off an HDN or a vertical far edge at 34 and a far triple tie);
+    -- the special positions left are in the intersection of all three exceptional sets
+    exact byGen1 (Minimality.type02_edge34_byGen hN hR) (fun _ =>
+      byGen1 (quadPair hx hN hR {0, 2, 3, 5} {1, 2, 4, 6} 2 (by decide) (by decide) (by decide)
+        (by decide) (by decide)) (fun _ => byGen1 (fourQuad hx hN hR ![{0, 1, 3, 4},
+          {0, 2, 3, 5}, {1, 2, 4, 6}, {3, 4, 5, 6}] (by decide) (by decide) (by decide))
+          (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))))
   · exact big {0, 2, 3, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 03: Theorem A
   · exact big {1, 2, 3, 5, 6} (by decide) (by decide) (by decide)  -- type 04: Theorem A
   · -- type 05: `not_type05_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
@@ -559,13 +568,25 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     exact byGen1 (quadPair hx hN hR {0, 1, 3, 4} {0, 2, 5, 6} 0 (by decide) (by decide) (by decide) (by decide)
       (by decide)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 10: `not_type10_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
-    -- special value of Lemma T′ (settled there, 26.8); the other special positions are open in Lean
+    -- special value of Lemma T′ (settled there, 26.8).  The vertex view has the triangle `023`
+    -- (`triGenPar_or_farP_idx`); at the edge `14` of the quadrilaterals `1245`, `1346`,
+    -- `EdgeTieR` or `EdgeFarP` holds (`edgeTieR_or_farP_rect_idx`) unless the *edge rectangle*
+    -- `EdgeRect` (lateral edges `25`, `36` parallel to `14`, tied crosswise: a capped prism with
+    -- `23` orthogonal to the axis, realizable from the facets); that case stays open (`sorry`)
     obtain ⟨fA, hfA⟩ := hR {1, 2, 4, 5} (by decide)
     obtain ⟨fB, hfB⟩ := hR {1, 3, 4, 6} (by decide)
     obtain ⟨fC, hfC⟩ := hR {2, 3, 5, 6} (by decide)
     obtain ⟨fD, hfD⟩ := hR {0, 2, 3} (by decide)
-    exact byGen2 (not_type10_of_isNopert_sv x hN hx fA fB fC fD hfA hfB hfC hfD)
-      (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
+    have hgen := noThreeCollinear_seven x hN hx
+    have hT := Minimality.triGenPar_or_farP_idx hx hgen {0, 2, 3} {1, 2, 4, 5} 2
+      (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+    rcases Minimality.edgeTieR_or_farP_rect_idx hx hgen {1, 2, 4, 5} {1, 3, 4, 6} 1 4
+      (by decide) (by decide) (by decide) (by decide) with hE | hE | hE
+    · exact not_type10_of_isNopert_sv x hN hx fA fB fC fD hfA hfB hfC hfD (fun _ => Or.inl hE)
+        (fun _ => hT)
+    · exact not_type10_of_isNopert_sv x hN hx fA fB fC fD hfA hfB hfC hfD (fun _ => Or.inr hE)
+        (fun _ => hT)
+    · exact byThm5Faces hx hN _ h3 (fun _ => sorry)  -- the edge rectangle `hE`
   · exact big {0, 2, 3, 4, 6} (by decide) (by decide) (by decide)  -- type 11: Theorem A
   · -- type 12: `not_type12_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
     -- special value of Lemma T′ (settled there, 24.15).  Both views have a triangle (`024`), so
@@ -582,13 +603,22 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
       (fun _ => Minimality.triGenPar_or_farP_idx hx hgen {0, 2, 4} {2, 3, 6} 2
         (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
   · -- type 13: `not_type13_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
-    -- special value of Lemma T′ (settled there, 26.8); the other special positions are open in Lean
+    -- special value of Lemma T′ (settled there, 26.8).  The vertex view has the triangle `123`
+    -- (`triGenPar_or_farP_idx`); at the edge `45` of the quadrilaterals `0145`, `2456`,
+    -- `EdgeTieR` or `EdgeFarP` holds (`edgeTieR_or_farP_rect_idx`) unless the edge rectangle,
+    -- which makes `0, 1, 2, 6` a parallelogram, contradicting the facet `126`
+    -- (`not_edgeRect_type13`): closed, no special position is left
     obtain ⟨fA, hfA⟩ := hR {0, 1, 4, 5} (by decide)
     obtain ⟨fB, hfB⟩ := hR {2, 4, 5, 6} (by decide)
     obtain ⟨fD, hfD⟩ := hR {1, 2, 3} (by decide)
     obtain ⟨fG, hfG⟩ := hR {1, 2, 6} (by decide)
-    exact byGen2 (not_type13_of_isNopert_sv x hN hx fA fB fD fG hfA hfB hfD hfG)
-      (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
+    have hgen := noThreeCollinear_seven x hN hx
+    have hT := Minimality.triGenPar_or_farP_idx hx hgen {0, 1, 4, 5} {1, 2, 3} 1
+      (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+    have hE : _ ∨ _ := (Minimality.edgeTieR_or_farP_rect_idx hx hgen {0, 1, 4, 5} {2, 4, 5, 6} 4 5
+      (by decide) (by decide) (by decide) (by decide)).imp_right fun h =>
+      h.resolve_right (Minimality.not_edgeRect_type13 hx fG hfG)
+    exact not_type13_of_isNopert_sv x hN hx fA fB fD fG hfA hfB hfD hfG (fun _ => hE) (fun _ => hT)
   · -- type 14: Cor. T1 at the quadrilaterals 0235, 1456 (sharing vertex 5); case (c) of the
     -- triple tie does not occur (Lemma 23.0 (a)), so only `TriGenPar` or `TriGenFarP` is needed,
     -- and one of them holds unless `QuadTripleRect`, which is refuted from the facets of the type
@@ -627,14 +657,23 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     exact byGen1 (quadPair hx hN hR {0, 3, 5, 6} {1, 2, 4, 5} 5 (by decide) (by decide) (by decide) (by decide)
       (by decide)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 19: `not_type19_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
-    -- special value of Lemma T′ (settled there, 26.8); the other special positions are open in Lean
+    -- special value of Lemma T′ (settled there, 26.8).  The vertex view has the triangle `046`
+    -- (`triGenPar_or_farP_idx`); at the edge `35` of the quadrilaterals `0235`, `1356`,
+    -- `EdgeTieR` or `EdgeFarP` holds (`edgeTieR_or_farP_rect_idx`) unless the edge rectangle,
+    -- which makes `0, 2, 1, 6` a parallelogram, contradicting the facet `026`
+    -- (`not_edgeRect_type19`): closed, no special position is left
     obtain ⟨fA, hfA⟩ := hR {0, 2, 3, 5} (by decide)
     obtain ⟨fB, hfB⟩ := hR {1, 3, 5, 6} (by decide)
     obtain ⟨fD, hfD⟩ := hR {0, 4, 6} (by decide)
     obtain ⟨fG, hfG⟩ := hR {3, 4, 6} (by decide)
     obtain ⟨fE, hfE⟩ := hR {0, 2, 6} (by decide)
-    exact byGen2 (not_type19_of_isNopert_sv x hN hx fA fB fD fG fE hfA hfB hfD hfG hfE)
-      (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
+    have hgen := noThreeCollinear_seven x hN hx
+    have hT := Minimality.triGenPar_or_farP_idx hx hgen {0, 2, 3, 5} {0, 4, 6} 0
+      (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+    have hE : _ ∨ _ := (Minimality.edgeTieR_or_farP_rect_idx hx hgen {0, 2, 3, 5} {1, 3, 5, 6} 3 5
+      (by decide) (by decide) (by decide) (by decide)).imp_right fun h =>
+      h.resolve_right (Minimality.not_edgeRect_type19 hx fE hfE)
+    exact not_type19_of_isNopert_sv x hN hx fA fB fD fG fE hfA hfB hfD hfG hfE (fun _ => hE) (fun _ => hT)
   · -- type 20: Cor. T1 at the quadrilaterals 0135, 2456 (sharing vertex 5); general position
     -- asked, the special positions are open in Lean (incl. case (c) of Theorem 24.5)
     exact byGen1 (quadPair hx hN hR {0, 1, 3, 5} {2, 4, 5, 6} 5 (by decide) (by decide) (by decide) (by decide)
@@ -666,14 +705,22 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
       (fun _ => Minimality.triGenPar_or_farP_idx hx hgen {0, 1, 3, 4} {2, 4, 6} 4
         (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
   · -- type 23: `not_type23_of_isNopert_sv`; its general position (3 hypotheses) is asked off the
-    -- special value of Lemma T′ (settled there, 26.8); the other special positions are open in Lean
+    -- special value of Lemma T′ (settled there, 26.8).  The edge view `04` has the triangle `014`
+    -- (`edgePar_or_farP_idx`: `EdgePar` or `EdgeFarP` always holds) and both vertex views have a
+    -- triangle (`triGenPar_or_farP_idx`): closed, no special position is left
     obtain ⟨fA, hfA⟩ := hR {0, 3, 4, 5} (by decide)
     obtain ⟨fD, hfD⟩ := hR {0, 1, 4} (by decide)
     obtain ⟨fE, hfE⟩ := hR {1, 2, 5} (by decide)
     obtain ⟨fH, hfH⟩ := hR {1, 5, 6} (by decide)
     obtain ⟨fK, hfK⟩ := hR {4, 5, 6} (by decide)
-    exact byGen3 (not_type23_of_isNopert_sv x hN hx fA fD fE fH fK hfA hfD hfE hfH hfK)
-      (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
+    have hgen := noThreeCollinear_seven x hN hx
+    exact not_type23_of_isNopert_sv x hN hx fA fD fE fH fK hfA hfD hfE hfH hfK
+      (fun _ => (Minimality.edgePar_or_farP_idx hx hgen {0, 1, 4} {0, 3, 4, 5} 0 4
+        (by decide) (by decide) (by decide) (by decide) (by decide)))
+      (fun _ => (Minimality.triGenPar_or_farP_idx hx hgen {0, 1, 4} {1, 5, 6} 1
+        (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)))
+      (fun _ => (Minimality.triGenPar_or_farP_idx hx hgen {0, 3, 4, 5} {1, 2, 5} 5
+        (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)))
   · -- type 24: `not_type24_outside_Cbar_of_isNopert`; proved outside C̄ ∪ Σ_B
     obtain ⟨fA, hfA⟩ := hR {0, 1, 2} (by decide)
     obtain ⟨fB, hfB⟩ := hR {0, 1, 6} (by decide)
@@ -686,8 +733,9 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     exact byGen2
       (not_type24_outside_Cbar_of_isNopert x hN fA fB fC fD fE fF hfA hfB hfC hfD hfE hfF)
       (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
-  · -- type 25: `not_type25_of_isNopert`; its general position (3 hypotheses) is asked, the special
-    -- positions are open in Lean
+  · -- type 25: `not_type25_of_isNopert`; its general position (3 hypotheses) holds always: the
+    -- edge view `13` has two triangles (`edgePar_or_farP_idx`), the vertex views a triangle
+    -- (`triGenPar_or_farP_idx`): closed, no special position is left
     obtain ⟨fA, hfA⟩ := hR {0, 2, 4, 6} (by decide)
     obtain ⟨fD, hfD⟩ := hR {0, 1, 3} (by decide)
     obtain ⟨fF, hfF⟩ := hR {1, 3, 6} (by decide)
@@ -695,10 +743,17 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fH, hfH⟩ := hR {0, 3, 5} (by decide)
     obtain ⟨fE, hfE⟩ := hR {0, 1, 4} (by decide)
     obtain ⟨fI, hfI⟩ := hR {1, 2, 6} (by decide)
-    exact byGen3 (not_type25_of_isNopert x hN hx fA fD fF fG fH fE fI hfA hfD hfF hfG hfH hfE hfI)
-      (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
-  · -- type 26: `not_type26_of_isNopert`; its general position (3 hypotheses) is asked, the special
-    -- positions are open in Lean
+    have hgen := noThreeCollinear_seven x hN hx
+    exact not_type25_of_isNopert x hN hx fA fD fF fG fH fE fI hfA hfD hfF hfG hfH hfE hfI
+      (Minimality.edgePar_or_farP_idx hx hgen {0, 1, 3} {1, 3, 6} 1 3
+        (by decide) (by decide) (by decide) (by decide) (by decide))
+      (Minimality.triGenPar_or_farP_idx hx hgen {0, 1, 3} {0, 2, 4, 6} 0
+        (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
+      (Minimality.triGenPar_or_farP_idx hx hgen {0, 1, 3} {0, 5, 6} 0
+        (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
+  · -- type 26: `not_type26_of_isNopert`; its general position (3 hypotheses) holds always: the
+    -- edge view `04` has the triangle `034` (`edgePar_or_farP_idx`), the vertex views a triangle
+    -- (`triGenPar_or_farP_idx`): closed, no special position is left
     obtain ⟨fA, hfA⟩ := hR {0, 2, 4, 6} (by decide)
     obtain ⟨fT, hfT⟩ := hR {0, 3, 4} (by decide)
     obtain ⟨fG, hfG⟩ := hR {2, 3, 5} (by decide)
@@ -707,10 +762,18 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fW, hfW⟩ := hR {0, 1, 6} (by decide)
     obtain ⟨fY, hfY⟩ := hR {2, 4, 5} (by decide)
     obtain ⟨fZ, hfZ⟩ := hR {3, 4, 5} (by decide)
-    exact byGen3 (not_type26_of_isNopert x hN hx fA fT fG fH fU fW fY fZ hfA hfT hfG hfH hfU hfW hfY hfZ)
-      (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
+    have hgen := noThreeCollinear_seven x hN hx
+    exact not_type26_of_isNopert x hN hx fA fT fG fH fU fW fY fZ hfA hfT hfG hfH hfU hfW hfY hfZ
+      (Minimality.edgePar_or_farP_idx hx hgen {0, 2, 4, 6} {0, 3, 4} 0 4
+        (by decide) (by decide) (by decide) (by decide) (by decide))
+      (Minimality.triGenPar_or_farP_idx hx hgen {0, 2, 4, 6} {2, 3, 5} 2
+        (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
+      (Minimality.triGenPar_or_farP_idx hx hgen {0, 2, 4, 6} {1, 3, 6} 6
+        (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
   · -- type 27: `not_type27_of_isNopert_sv`; its general position (3 hypotheses) is asked off the
-    -- special value of Lemma T′ (settled there, 26.8); the other special positions are open in Lean
+    -- special value of Lemma T′ (settled there, 26.8).  The edge view `25` has the triangle `025`
+    -- (`edgePar_or_farP_idx`) and both vertex views a triangle (`triGenPar_or_farP_idx`): closed,
+    -- no special position is left
     obtain ⟨fB, hfB⟩ := hR {2, 3, 5, 6} (by decide)
     obtain ⟨fD, hfD⟩ := hR {0, 2, 5} (by decide)
     obtain ⟨fE, hfE⟩ := hR {0, 1, 6} (by decide)
@@ -718,8 +781,14 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fH, hfH⟩ := hR {0, 4, 5} (by decide)
     obtain ⟨fI, hfI⟩ := hR {0, 1, 2} (by decide)
     obtain ⟨fJ, hfJ⟩ := hR {4, 5, 6} (by decide)
-    exact byGen3 (not_type27_of_isNopert_sv x hN hx fB fD fE fG fH fI fJ hfB hfD hfE hfG hfH hfI hfJ)
-      (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
+    have hgen := noThreeCollinear_seven x hN hx
+    exact not_type27_of_isNopert_sv x hN hx fB fD fE fG fH fI fJ hfB hfD hfE hfG hfH hfI hfJ
+      (fun _ => (Minimality.edgePar_or_farP_idx hx hgen {0, 2, 5} {2, 3, 5, 6} 2 5
+        (by decide) (by decide) (by decide) (by decide) (by decide)))
+      (fun _ => (Minimality.triGenPar_or_farP_idx hx hgen {0, 1, 6} {2, 3, 5, 6} 6
+        (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)))
+      (fun _ => (Minimality.triGenPar_or_farP_idx hx hgen {0, 2, 5} {0, 4, 6} 0
+        (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)))
   · -- type 28: `not_type28_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
     -- special value of Lemma T′ (settled there, 24.15).  Both views pair the quadrilateral `0245`
     -- with a triangle, so `TriGenPar` or `TriGenFarP` always holds (`triGenPar_or_farP_idx`):
