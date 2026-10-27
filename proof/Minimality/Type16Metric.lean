@@ -421,28 +421,29 @@ theorem RimMatch16.pair {x : Fin 7 → ℝ³} {u₁ : ℝ³} {k₁ : ℕ} [NeZer
   · left; intro n; simp only [h, real_inner_smul_right]
   · right; intro n; simp only [h, real_inner_smul_right]
 
-/-! ### Two views with ties -/
+/-! ### Several views with ties -/
 
-/-- **Two tilt tests at certificates of the cover** (Theorem 24.3 for type 16).  `q₁, q₂` are
-labelled certificate indices (a named view, a sign, a labelled rim of 3, 4 or 5 corners) whose
-rims `x ∘ q.lab` at the views `q.vw x` are tilt tests (`TiltTest`: the silhouette at the tilted
-views is a cyclic subsequence of the rim, for a nonempty open cone `Θ` of tilts), the views are
-not proportional, and the cones are compatible (`compat_of_signs`) if the views are orthogonal.
-Every other certificate of the cover that survives in the limit (`WeakRim`: distinct labels, all
-points weakly left of its polygon, labels weakly counterclockwise) has no horizontal double normal
-at its limit view and distinct depths of its labels.  Rotations and reflections of the two rims at
-the same views belong to the tests. -/
-def TwoView16 (x : Fin 7 → ℝ³) : Prop :=
-  ∃ (q₁ q₂ : Q16) (Θ₁ Θ₂ : Set ℝ³) (k₁ k₂ : ℕ) (_ : NeZero k₁) (_ : NeZero k₂)
-    (σ₁ : ZMod k₁ → ZMod q₁.K) (σ₂ : ZMod k₂ → ZMod q₂.K),
-    TiltTest (univ.image x) (q₁.vw x) (fun i => x (q₁.lab i)) σ₁ Θ₁ ∧
-    TiltTest (univ.image x) (q₂.vw x) (fun i => x (q₂.lab i)) σ₂ Θ₂ ∧
-    (∀ t : ℝ, q₂.vw x ≠ t • q₁.vw x) ∧
-    (⟪q₁.vw x, q₂.vw x⟫ = 0 → ∃ d ∈ Θ₁, ∃ d' ∈ Θ₂, ⟪q₂.vw x, d⟫ = ⟪q₁.vw x, d'⟫) ∧
-    ∀ q : Q16, ¬ RimMatch16 x (q₁.vw x) q₁.lab q → ¬ RimMatch16 x (q₂.vw x) q₂.lab q →
-      q.vw x ≠ 0 → Function.Injective q.lab → WeakRim x (q.vw x) q.lab →
-        NoHDNAt (univ.image x) (q.vw x) ∧
-          ∀ i j, q.lab i ≠ q.lab j → ⟪x (q.lab i) - x (q.lab j), q.vw x⟫ ≠ 0
+/-- **A finite family of tilt tests at certificates of the cover** (Theorem 24.3 for type 16).
+The indices `q i` are labelled certificate indices (a named view, a sign, a labelled rim of 3, 4
+or 5 corners) whose rims `x ∘ (q i).lab` at the views `(q i).vw x` are tilt tests (`TiltTest`:
+the silhouette at the tilted views is a cyclic subsequence of the rim, for a nonempty open cone
+`Θ i` of tilts), and a single symmetric `H` realizes a tilt of every test at once
+(`H u_i = d_i + c_i u_i`, `d_i ∈ Θ i`; Lemma 24.2 — for two non-proportional views this is
+`compat_of_signs`, and the cones are the whole planes `u_i^⊥` when the silhouette is strictly
+convex with all other points strictly inside).  Every other certificate of the cover that survives
+in the limit (`WeakRim`: distinct labels, all points weakly left of its polygon, labels weakly
+counterclockwise) has no horizontal double normal at its limit view and distinct depths of its
+labels.  Rotations and reflections of the test rims at the same views belong to the tests. -/
+def MultiView16 (x : Fin 7 → ℝ³) : Prop :=
+  ∃ (m : ℕ) (q : Fin m → Q16) (Θ : Fin m → Set ℝ³) (k' : Fin m → ℕ) (_ : ∀ i, NeZero (k' i))
+    (σ : ∀ i, ZMod (k' i) → ZMod (q i).K),
+    (∀ i, TiltTest (univ.image x) ((q i).vw x) (fun j => x ((q i).lab j)) (σ i) (Θ i)) ∧
+    (∃ H : ℝ³ →L[ℝ] ℝ³, H ∈ SymOp ∧
+      ∀ i, ∃ d ∈ Θ i, ∃ c : ℝ, H ((q i).vw x) = d + c • (q i).vw x) ∧
+    ∀ q' : Q16, (∀ i, ¬ RimMatch16 x ((q i).vw x) (q i).lab q') →
+      q'.vw x ≠ 0 → Function.Injective q'.lab → WeakRim x (q'.vw x) q'.lab →
+        NoHDNAt (univ.image x) (q'.vw x) ∧
+          ∀ a b, q'.lab a ≠ q'.lab b → ⟪x (q'.lab a) - x (q'.lab b), q'.vw x⟫ ≠ 0
 
 /-- The curve of linear maps `M ε = I + (ε/2) H` and its metric `Gm ε = M ε ∘ M ε`. -/
 theorem curve_inner (H : ℝ³ →L[ℝ] ℝ³) (hH : (H : ℝ³ →ₗ[ℝ] ℝ³).IsSymmetric) (ε : ℝ)
@@ -458,34 +459,19 @@ theorem curve_inner (H : ℝ³ →L[ℝ] ℝ³) (hH : (H : ℝ³ →ₗ[ℝ] ℝ
 theorem detMap_one : detMap (ContinuousLinearMap.id ℝ ℝ³) = 1 := by
   simp [detMap, det3_expand]
 
-/-- **Type 16 with two ties at two certificates** (Theorem 24.3 with the cover, the bridge
-`metricFree_of_cover`).  A type-16 shape with `TwoView16` is Rupert: the two tilt tests are
+/-- **Type 16 with several ties at a family of tests** (Theorem 24.3 with the cover, the bridge
+`metricFree_of_cover`).  A type-16 shape with `MultiView16` is Rupert: the tilt tests are
 metric-free along the curve `I + (ε/2) H` because the cover is affine-invariant
 (`exists_certSeq16_map`), or else the limit lemma makes the shape Rupert directly. -/
-theorem isRupert_type16_twoView {x : Fin 7 → ℝ³} (T : Type16 x) (P : TwoView16 x) :
+theorem isRupert_type16_multiView {x : Fin 7 → ℝ³} (T : Type16 x) (P : MultiView16 x) :
     IsRupert (univ.image x) := by
   classical
-  obtain ⟨q₁, q₂, Θ, Θ', k₁, k₂, i₁, i₂, σ, σ', T1, T2, hind, hcompat, hO⟩ := P
-  set u : ℝ³ := q₁.vw x with hu
-  set u' : ℝ³ := q₂.vw x with hu'
-  set X : ZMod q₁.K → ℝ³ := fun i => x (q₁.lab i) with hX
-  set X' : ZMod q₂.K → ℝ³ := fun i => x (q₂.lab i) with hX'
-  obtain ⟨d, hdΘ, d', hdΘ', hcoup, hg, hg'⟩ := exists_good_pair T1 T2 hcompat
-  set c : ℝ := (⟪u, d'⟫ - ⟪u', d⟫) / ⟪u, u'⟫ with hc
-  have hrel : ⟪d, u'⟫ + c * ⟪u, u'⟫ = ⟪u, d'⟫ := by
-    by_cases ho : ⟪u, u'⟫ = 0
-    · rw [real_inner_comm, hcoup ho, ho]; ring
-    · rw [hc]; field_simp; rw [real_inner_comm]; ring
-  have hgood : GoodTilt X u (d + c • u) := by
-    intro i j hij hti
-    have := hg i j hij hti
-    simp only [inner_add_right, real_inner_smul_right, hti, mul_zero, add_zero]
-    exact this
-  obtain ⟨H, hsymm, hHu, hHu'⟩ := exists_symm_clm (A := d + c • u) (B := d') T1.ne_zero hind (by
-    simp only [inner_add_right, real_inner_smul_right]
-    rw [← real_inner_comm d u'] at hrel
-    rw [real_inner_comm u u']
-    linarith)
+  obtain ⟨m, q, Θ, k', i₁, σ, hT, ⟨H₀, hH₀s, hH₀⟩, hO⟩ := P
+  set u : Fin m → ℝ³ := fun i => (q i).vw x with hu
+  set X : ∀ i, ZMod (q i).K → ℝ³ := fun i j => x ((q i).lab j) with hX
+  obtain ⟨H, hHs, hHΘ, hgood⟩ := exists_symm_good X u (fun i => (hT i).ne_zero)
+    (fun i => (hT i).inj) Θ (fun i => (hT i).isOpen) H₀ hH₀s hH₀
+  have hsymm : (H : ℝ³ →ₗ[ℝ] ℝ³).IsSymmetric := hHs
   -- the curve of metrics
   set M : ℝ → ℝ³ →L[ℝ] ℝ³ := fun ε => ContinuousLinearMap.id ℝ ℝ³ + (ε / 2) • H with hM
   set Gm : ℝ → ℝ³ →L[ℝ] ℝ³ := fun ε => (M ε).comp (M ε) with hGm
@@ -523,6 +509,11 @@ theorem isRupert_type16_twoView {x : Fin 7 → ℝ³} (T : Type16 x) (P : TwoVie
         _ = ε / 2 * ‖H‖ * ‖a‖ := by ring
     have : ‖a‖ = 0 := by nlinarith [norm_nonneg a]
     exact norm_eq_zero.mp this
+  -- the second-order expansion of the metric at each view
+  have hGu : ∀ i ε, Gm ε (u i) = u i + ε • H (u i) + ε ^ 2 • ((1 / 4 : ℝ) • H (H (u i))) := by
+    intro i ε
+    rw [hGv, hMv, hMv, map_add, map_smul]
+    module
   -- the generic bridge
   have hmain := metricFree_of_cover x T.noSeg ⟨3, 0, 5, 6, T.det_ne⟩ (Q := Q16) Q16.K Q16.lab
     Q16.vw (fun q h y => Q16.vw_eq_zero T q h y)
@@ -544,39 +535,27 @@ theorem isRupert_type16_twoView {x : Fin 7 → ℝ³} (T : Type16 x) (P : TwoVie
         · exact hd
       refine ⟨c0, hc0', ?_⟩
       simp only [Q16.vw, hv, map_smul, smul_comm (sgnB q.2.1) c0])
-    (k₁ := q₁.K) (k₂ := q₂.K) q₁.K_three q₂.K_three X X' u u' (fun ε => u + ε • (d + c • u))
-    (fun ε => u' + ε • d') (RimMatch16 x u q₁.lab) (RimMatch16 x u' q₂.lab)
-    (fun q h => h.pair) (fun q h => h.pair)
-    (by
-      have hGu : ∀ ε, Gm ε u = u + ε • (d + c • u) + ε ^ 2 • ((1 / 4 : ℝ) • H (d + c • u)) := by
-        intro ε
-        rw [hGv, hMv, hMv, map_add, map_smul, hHu]
-        module
+    (ι := Fin m) (k := fun i => (q i).K) (fun i => (q i).K_three) X u
+    (fun i ε => u i + ε • H (u i)) (fun i q' => RimMatch16 x (u i) (q i).lab q')
+    (fun i q' h => h.pair)
+    (fun i => by
       simp only [hGu]
-      exact eventually_order_tilt X u (d + c • u) ((1 / 4 : ℝ) • H (d + c • u)) hgood)
-    (by
-      have hGu : ∀ ε, Gm ε u' = u' + ε • d' + ε ^ 2 • ((1 / 4 : ℝ) • H d') := by
-        intro ε
-        rw [hGv, hMv, hMv, map_add, map_smul, hHu']
-        module
-      simp only [hGu]
-      exact eventually_order_tilt X' u' d' ((1 / 4 : ℝ) • H d') hg')
-    hO
+      exact eventually_order_tilt (X i) (u i) (H (u i)) ((1 / 4 : ℝ) • H (H (u i))) (hgood i))
+    (fun q' hq' => hO q' hq')
   rcases hmain with hR | hMF
   · exact hR
-  have hall := hMF.and ((eventually_injective_depth hgood).and (eventually_injective_depth hg'))
-  have hall' : ∀ᶠ ε in 𝓝[>] (0 : ℝ),
-      IsCyclicUnimodal (fun i => ⟪X i, u + ε • (d + c • u)⟫) ∨
-        IsCyclicUnimodal (fun i => ⟪X' i, u' + ε • d'⟫) :=
-    hall.mono fun _ ⟨h1, h2, h3⟩ => h1 h2 h3
-  rcases frequently_or_distrib.mp hall'.frequently with h | h
-  · exact T1.isRupert_of_freq hdΘ (frequently_unimodal_tilt X u d c h)
-  · exact T2.isRupert_of_freq hdΘ' h
+  have hall := hMF.and (eventually_all.2 fun i => eventually_injective_depth (hgood i))
+  have hall' : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∃ i, IsCyclicUnimodal (fun j => ⟪X i j, u i + ε • H (u i)⟫) :=
+    hall.mono fun _ ⟨h1, h2⟩ => h1 h2
+  obtain ⟨i, hi⟩ := frequently_exists_of_finite hall'.frequently
+  obtain ⟨d, hd, c, hdc⟩ := hHΘ i
+  rw [hdc] at hi
+  exact (hT i).isRupert_of_freq hd (frequently_unimodal_tilt (X i) (u i) d c hi)
 
 /-- **Theorem 24.3 for type 16 from the facets**: seven points labelled so that `0235`, `1356`
 (quadrilaterals), `024`, `036`, `046`, `145`, `146`, `245` are facets (functionals negative off
-them) with `TwoView16` are Rupert. -/
-theorem isRupert_type16_twoView_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
+them) with `MultiView16` are Rupert. -/
+theorem isRupert_type16_multiView_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
     (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 2, 3, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 2, 3, 5} : Finset (Fin 7)) → fA (x i) < 0))
@@ -594,8 +573,8 @@ theorem isRupert_type16_twoView_facets (x : Fin 7 → ℝ³) (hx : Function.Inje
       (i ∉ ({1, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
     (hH : ∀ i, (i ∈ ({2, 4, 5} : Finset (Fin 7)) → fH (x i) = 0) ∧
       (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fH (x i) < 0))
-    (P : TwoView16 x) : IsRupert (univ.image x) :=
-  isRupert_type16_twoView ⟨hx, Face16.ofAffine fA hA, Face16.ofAffine fB hB,
+    (P : MultiView16 x) : IsRupert (univ.image x) :=
+  isRupert_type16_multiView ⟨hx, Face16.ofAffine fA hA, Face16.ofAffine fB hB,
     Face16.ofAffine fC hC, Face16.ofAffine fD hD, Face16.ofAffine fE hE, Face16.ofAffine fF hF,
     Face16.ofAffine fG hG, Face16.ofAffine fH hH⟩ P
 

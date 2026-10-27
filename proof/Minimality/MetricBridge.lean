@@ -147,6 +147,97 @@ theorem eventually_order_tilt {k : ℕ} [NeZero k] (X : ZMod k → ℝ³) (u g r
         nlinarith
       linarith
 
+/-! ### A generic symmetric operator for a family of tests -/
+
+/-- The symmetric operators of `ℝ³`, as a submodule of the continuous linear maps. -/
+def SymOp : Submodule ℝ (ℝ³ →L[ℝ] ℝ³) where
+  carrier := {H | ∀ a b, ⟪H a, b⟫ = ⟪a, H b⟫}
+  add_mem' := fun {H K} hH hK a b => by
+    simp only [add_apply, inner_add_left, inner_add_right, hH a b, hK a b]
+  zero_mem' := fun a b => by simp
+  smul_mem' := fun c H hH a b => by
+    simp only [smul_apply, real_inner_smul_left, real_inner_smul_right,
+      hH a b]
+
+/-- **A generic symmetric operator realizes all tilts at once** (Lemma 24.2 for a family of tests).
+If some symmetric `H₀` sends each view `u i` into the cone `Θ i` modulo `u i`
+(`H₀ (u i) = d + c u i` with `d ∈ Θ i`), then so does a symmetric `H` that is good for every
+rim: it separates every tied pair of labels of every rim `X i` at `u i`. -/
+theorem exists_symm_good {ι : Type} [Finite ι] {k : ι → ℕ} [∀ i, NeZero (k i)]
+    (X : ∀ i, ZMod (k i) → ℝ³) (u : ι → ℝ³) (hu : ∀ i, u i ≠ 0) (hX : ∀ i, Function.Injective (X i))
+    (Θ : ι → Set ℝ³) (hΘ : ∀ i, ∃ U : Set ℝ³, IsOpen U ∧ Θ i = U ∩ {d | ⟪u i, d⟫ = 0})
+    (H₀ : ℝ³ →L[ℝ] ℝ³) (hsym : H₀ ∈ SymOp) (hH₀ : ∀ i, ∃ d ∈ Θ i, ∃ c : ℝ, H₀ (u i) = d + c • u i) :
+    ∃ H : ℝ³ →L[ℝ] ℝ³, H ∈ SymOp ∧ (∀ i, ∃ d ∈ Θ i, ∃ c : ℝ, H (u i) = d + c • u i) ∧
+      ∀ i, GoodTilt (X i) (u i) (H (u i)) := by
+  classical
+  choose U hU hΘU using hΘ
+  have huu : ∀ i, ⟪u i, u i⟫ ≠ 0 := fun i h => hu i (inner_self_eq_zero.mp h)
+  let proj : ∀ i, SymOp → ℝ³ := fun i H => (H : ℝ³ →L[ℝ] ℝ³) (u i) -
+    (⟪u i, (H : ℝ³ →L[ℝ] ℝ³) (u i)⟫ / ⟪u i, u i⟫) • u i
+  have hproj : ∀ i, Continuous (proj i) := by
+    intro i
+    have h1 : Continuous fun H : SymOp => (H : ℝ³ →L[ℝ] ℝ³) (u i) :=
+      (ContinuousLinearMap.apply ℝ ℝ³ (u i)).continuous.comp continuous_subtype_val
+    simp only [proj]
+    fun_prop
+  let O : Set SymOp := {H | ∀ i, proj i H ∈ U i}
+  have hO : IsOpen O := by
+    have : O = ⋂ i, proj i ⁻¹' U i := by ext H; simp [O]
+    rw [this]
+    exact isOpen_iInter_of_finite fun i => (hU i).preimage (hproj i)
+  have hperp : ∀ i H, ⟪u i, proj i H⟫ = 0 := by
+    intro i H
+    simp only [proj, inner_sub_right, real_inner_smul_right]
+    rw [mul_comm, mul_div_cancel₀ _ (huu i), sub_self]
+  have hmem : ∀ i H, proj i H ∈ U i → proj i H ∈ Θ i := fun i H h => by
+    rw [hΘU i]; exact ⟨h, hperp i H⟩
+  have hdec : ∀ (i : ι) (H : SymOp), (H : ℝ³ →L[ℝ] ℝ³) (u i) =
+      proj i H + (⟪u i, (H : ℝ³ →L[ℝ] ℝ³) (u i)⟫ / ⟪u i, u i⟫) • u i := fun i H => by
+    simp only [proj]; abel
+  have hne : O.Nonempty := by
+    refine ⟨⟨H₀, hsym⟩, fun i => ?_⟩
+    obtain ⟨d, hd, c, hc⟩ := hH₀ i
+    have hdU : d ∈ U i := by rw [hΘU i] at hd; exact hd.1
+    have hdp : ⟪u i, d⟫ = 0 := by rw [hΘU i] at hd; exact hd.2
+    have : proj i ⟨H₀, hsym⟩ = d := by
+      simp only [proj, hc, inner_add_right, real_inner_smul_right, hdp, zero_add]
+      rw [mul_div_assoc, div_self (huu i), mul_one, add_sub_cancel_right]
+    rw [this]; exact hdU
+  -- the functionals
+  let J := {p : (Σ i, ZMod (k i) × ZMod (k i)) // p.2.1 ≠ p.2.2 ∧
+    ⟪X p.1 p.2.1 - X p.1 p.2.2, u p.1⟫ = 0}
+  let ℓ : J → SymOp →ₗ[ℝ] ℝ := fun p =>
+    { toFun := fun H => ⟪X p.1.1 p.1.2.1 - X p.1.1 p.1.2.2, (H : ℝ³ →L[ℝ] ℝ³) (u p.1.1)⟫
+      map_add' := fun H K => by simp [inner_add_right]
+      map_smul' := fun c H => by simp [real_inner_smul_right] }
+  have hℓ : ∀ p : J, ℓ p ≠ 0 := by
+    intro p h0
+    set a : ℝ³ := X p.1.1 p.1.2.1 - X p.1.1 p.1.2.2 with ha
+    have ha0 : a ≠ 0 := sub_ne_zero.mpr fun e => p.2.1 (hX _ e)
+    set uu := u p.1.1
+    have hau : ⟪a, uu⟫ = 0 := p.2.2
+    let S : ℝ³ →L[ℝ] ℝ³ := (innerSL ℝ a).smulRight uu + (innerSL ℝ uu).smulRight a
+    have hS : ∀ x, S x = ⟪a, x⟫ • uu + ⟪uu, x⟫ • a := fun x => by simp [S]
+    have hSsym : S ∈ SymOp := fun x y => by
+      simp only [hS, inner_add_left, inner_add_right, real_inner_smul_left, real_inner_smul_right]
+      rw [real_inner_comm uu x, real_inner_comm a x]
+      ring
+    have := LinearMap.congr_fun h0 ⟨S, hSsym⟩
+    simp only [ℓ, LinearMap.coe_mk, AddHom.coe_mk, LinearMap.zero_apply] at this
+    rw [← ha, hS, inner_add_right, real_inner_smul_right, real_inner_smul_right,
+      real_inner_self_eq_norm_sq] at this
+    have hau2 : ⟪a, u p.1.1⟫ = 0 := hau
+    simp only [hau, hau2, mul_zero, zero_add] at this
+    have h1 : 0 < ⟪a, a⟫ := real_inner_self_pos.mpr ha0
+    have h2 : 0 < ‖uu‖ ^ 2 := by
+      have := norm_pos_iff.mpr (hu p.1.1)
+      positivity
+    nlinarith
+  obtain ⟨H, hHO, hHne⟩ := exists_avoid_kernels ℓ hℓ hO hne
+  refine ⟨H, H.2, fun i => ⟨proj i H, hmem i H (hHO i), _, hdec i H⟩, fun i a b hab htie => ?_⟩
+  have := hHne ⟨⟨i, (a, b)⟩, hab, htie⟩
+  simpa [ℓ] using this
+
 /-! ### The case of a test certificate -/
 
 /-- **A certificate of a test**: if shapes `Y s → M ε ∘ x` carry (frequently) the certificate
@@ -213,15 +304,15 @@ the view as a function of the shape).  `M ε` is a curve of linear maps with `Gm
 of shapes `Y s`, frequently carrying a certificate of `Q`.  The views are equivariant
 (`hequiv`: `vw q (M ∘ x) = c M (vw q x)`, `c > 0`) and continuous in the shape (`hcont`).
 
-Two tests: rims `X₁, X₂` at views `u₁, u₂`, with curves of depth functionals `w₁ ε, w₂ ε`; the
-certificates `P₁ q`, `P₂ q` of the tests are those whose labelled rims are rotations or reflections
-of `X₁`, `X₂` at multiples of `u₁`, `u₂` (`hP₁`, `hP₂`); `hord₁`, `hord₂` say that the `Gm ε`-depths
-of `X₁, X₂` at `u₁, u₂` are distinct and refine the order of the depths along `w₁ ε, w₂ ε`.
-Every other certificate that survives in the limit (`WeakLeft` at `x`) has no horizontal double
-normal at its view and distinct depths of its labels (`hO`).
+A finite family of tests `i : ι`: rims `X i` at views `u i`, with curves of depth functionals
+`w i ε`; the certificates `P i q` of the test `i` are those whose labelled rims are rotations or
+reflections of `X i` at multiples of `u i` (`hP`); `hord` says that the `Gm ε`-depths of `X i` at
+`u i` are distinct and refine the order of the depths along `w i ε`.  Every certificate of no test
+that survives in the limit (`WeakRim`) has no horizontal double normal at its view and distinct
+depths of its labels (`hO`).
 
-Then `x` is Rupert, or for small `ε` the depths of `X₁` along `w₁ ε` (if distinct) are cyclically
-unimodal, or those of `X₂` along `w₂ ε` are (if distinct). -/
+Then `x` is Rupert, or for small `ε`, if the depths of every rim `X i` along `w i ε` are distinct,
+the depths of some rim are cyclically unimodal. -/
 theorem metricFree_of_cover {n : ℕ} (x : Fin n → ℝ³)
     (hseg : ∀ i j m : Fin n, x m ≠ x i → x m ≠ x j → ∀ s : ℝ, 0 < s → s < 1 →
       x m ≠ x i + s • (x j - x i))
@@ -239,29 +330,21 @@ theorem metricFree_of_cover {n : ℕ} (x : Fin n → ℝ³)
         ∃ᶠ s in atTop, ∃ q, RimCertAt (Y s) (vw q (Y s)) (lab q))
     (hequiv : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ q, ∃ c : ℝ, 0 < c ∧
       vw q (fun i => M ε (x i)) = c • M ε (vw q x))
-    {k₁ k₂ : ℕ} [NeZero k₁] [NeZero k₂] (hk₁ : 3 ≤ k₁) (hk₂ : 3 ≤ k₂)
-    (X₁ : ZMod k₁ → ℝ³) (X₂ : ZMod k₂ → ℝ³) (u₁ u₂ : ℝ³) (w₁ w₂ : ℝ → ℝ³)
-    (P₁ P₂ : Q → Prop)
-    (hP₁ : ∀ q, P₁ q → ∃ lam : ℝ, vw q x = lam • u₁ ∧ ∀ w,
-      (Function.Injective (fun i => ⟪X₁ i, w⟫) →
-        Function.Injective (fun i => ⟪x (lab q i), lam • w⟫)) ∧
-      (IsRobustUnimodal (fun i => ⟪x (lab q i), lam • w⟫) →
-        IsRobustUnimodal (fun i => ⟪X₁ i, w⟫)))
-    (hP₂ : ∀ q, P₂ q → ∃ lam : ℝ, vw q x = lam • u₂ ∧ ∀ w,
-      (Function.Injective (fun i => ⟪X₂ i, w⟫) →
-        Function.Injective (fun i => ⟪x (lab q i), lam • w⟫)) ∧
-      (IsRobustUnimodal (fun i => ⟪x (lab q i), lam • w⟫) →
-        IsRobustUnimodal (fun i => ⟪X₂ i, w⟫)))
-    (hord₁ : ∀ᶠ ε in 𝓝[>] (0 : ℝ), Function.Injective (fun i => ⟪X₁ i, Gm ε u₁⟫) ∧
-      ∀ i j, ⟪X₁ i, Gm ε u₁⟫ < ⟪X₁ j, Gm ε u₁⟫ → ⟪X₁ i, w₁ ε⟫ < ⟪X₁ j, w₁ ε⟫)
-    (hord₂ : ∀ᶠ ε in 𝓝[>] (0 : ℝ), Function.Injective (fun i => ⟪X₂ i, Gm ε u₂⟫) ∧
-      ∀ i j, ⟪X₂ i, Gm ε u₂⟫ < ⟪X₂ j, Gm ε u₂⟫ → ⟪X₂ i, w₂ ε⟫ < ⟪X₂ j, w₂ ε⟫)
-    (hO : ∀ q, ¬ P₁ q → ¬ P₂ q → vw q x ≠ 0 → Function.Injective (lab q) →
+    {ι : Type} [Finite ι] {k : ι → ℕ} [∀ i, NeZero (k i)] (hk : ∀ i, 3 ≤ k i)
+    (X : ∀ i, ZMod (k i) → ℝ³) (u : ι → ℝ³) (w : ι → ℝ → ℝ³) (P : ι → Q → Prop)
+    (hP : ∀ i q, P i q → ∃ lam : ℝ, vw q x = lam • u i ∧ ∀ w',
+      (Function.Injective (fun j => ⟪X i j, w'⟫) →
+        Function.Injective (fun j => ⟪x (lab q j), lam • w'⟫)) ∧
+      (IsRobustUnimodal (fun j => ⟪x (lab q j), lam • w'⟫) →
+        IsRobustUnimodal (fun j => ⟪X i j, w'⟫)))
+    (hord : ∀ i, ∀ᶠ ε in 𝓝[>] (0 : ℝ), Function.Injective (fun j => ⟪X i j, Gm ε (u i)⟫) ∧
+      ∀ a b, ⟪X i a, Gm ε (u i)⟫ < ⟪X i b, Gm ε (u i)⟫ → ⟪X i a, w i ε⟫ < ⟪X i b, w i ε⟫)
+    (hO : ∀ q, (∀ i, ¬ P i q) → vw q x ≠ 0 → Function.Injective (lab q) →
       WeakRim x (vw q x) (lab q) → NoHDNAt (univ.image x) (vw q x) ∧
-        ∀ i j, lab q i ≠ lab q j → ⟪x (lab q i) - x (lab q j), vw q x⟫ ≠ 0) :
+        ∀ a b, lab q a ≠ lab q b → ⟪x (lab q a) - x (lab q b), vw q x⟫ ≠ 0) :
     IsRupert (univ.image x) ∨ ∀ᶠ ε in 𝓝[>] (0 : ℝ),
-      Function.Injective (fun i => ⟪X₁ i, w₁ ε⟫) → Function.Injective (fun i => ⟪X₂ i, w₂ ε⟫) →
-        IsCyclicUnimodal (fun i => ⟪X₁ i, w₁ ε⟫) ∨ IsCyclicUnimodal (fun i => ⟪X₂ i, w₂ ε⟫) := by
+      (∀ i, Function.Injective (fun j => ⟪X i j, w i ε⟫)) →
+        ∃ i, IsCyclicUnimodal (fun j => ⟪X i j, w i ε⟫) := by
   classical
   by_cases hR : IsRupert (univ.image x)
   · exact Or.inl hR
@@ -269,54 +352,44 @@ theorem metricFree_of_cover {n : ℕ} (x : Fin n → ℝ³)
   by_contra hcon
   rw [Filter.not_eventually] at hcon
   -- the bad parameters
-  have hbad : ∃ᶠ ε in 𝓝[>] (0 : ℝ), Function.Injective (fun i => ⟪X₁ i, w₁ ε⟫) ∧
-      Function.Injective (fun i => ⟪X₂ i, w₂ ε⟫) ∧ ¬ IsCyclicUnimodal (fun i => ⟪X₁ i, w₁ ε⟫) ∧
-      ¬ IsCyclicUnimodal (fun i => ⟪X₂ i, w₂ ε⟫) :=
+  have hbad : ∃ᶠ ε in 𝓝[>] (0 : ℝ), (∀ i, Function.Injective (fun j => ⟪X i j, w i ε⟫)) ∧
+      ∀ i, ¬ IsCyclicUnimodal (fun j => ⟪X i j, w i ε⟫) :=
     hcon.mono fun ε h => by
       by_contra h'
       apply h
-      intro h1 h2
+      intro h1
       by_contra h3
       push Not at h3
-      exact h' ⟨h1, h2, h3.1, h3.2⟩
+      exact h' ⟨h1, h3⟩
   -- the cover at each small ε
   let Rq : Q → ℝ → Prop := fun q ε => ∃ Y : ℕ → Fin n → ℝ³,
     (∀ i, Tendsto (fun s => Y s i) atTop (𝓝 (M ε (x i)))) ∧
       ∃ᶠ s in atTop, RimCertAt (Y s) (vw q (Y s)) (lab q)
-  have hgood : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < ε ∧ (∃ q, Rq q ε) ∧
+  let Good : ℝ → Prop := fun ε => 0 < ε ∧
       (∀ q, ∃ c : ℝ, 0 < c ∧ vw q (fun i => M ε (x i)) = c • M ε (vw q x)) ∧
-      (Function.Injective (fun i => ⟪X₁ i, Gm ε u₁⟫) ∧
-        ∀ i j, ⟪X₁ i, Gm ε u₁⟫ < ⟪X₁ j, Gm ε u₁⟫ → ⟪X₁ i, w₁ ε⟫ < ⟪X₁ j, w₁ ε⟫) ∧
-      (Function.Injective (fun i => ⟪X₂ i, Gm ε u₂⟫) ∧
-        ∀ i j, ⟪X₂ i, Gm ε u₂⟫ < ⟪X₂ j, Gm ε u₂⟫ → ⟪X₂ i, w₂ ε⟫ < ⟪X₂ j, w₂ ε⟫) := by
-    filter_upwards [self_mem_nhdsWithin, hApprox, hequiv, hord₁, hord₂] with ε h0 hA hE h1 h2
-    refine ⟨h0, ?_, hE, h1, h2⟩
+      ∀ i, Function.Injective (fun j => ⟪X i j, Gm ε (u i)⟫) ∧
+        ∀ a b, ⟪X i a, Gm ε (u i)⟫ < ⟪X i b, Gm ε (u i)⟫ → ⟪X i a, w i ε⟫ < ⟪X i b, w i ε⟫
+  have hgood : ∀ᶠ ε in 𝓝[>] (0 : ℝ), Good ε ∧ ∃ q, Rq q ε := by
+    have hord' : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ i, Function.Injective (fun j => ⟪X i j, Gm ε (u i)⟫) ∧
+      ∀ a b, ⟪X i a, Gm ε (u i)⟫ < ⟪X i b, Gm ε (u i)⟫ → ⟪X i a, w i ε⟫ < ⟪X i b, w i ε⟫ :=
+      eventually_all.2 hord
+    filter_upwards [self_mem_nhdsWithin, hApprox, hequiv, hord'] with ε h0 hA hE h1
+    refine ⟨⟨h0, hE, h1⟩, ?_⟩
     obtain ⟨Y, hY, hc⟩ := hA
     obtain ⟨q, hq⟩ := frequently_exists_of_finite hc
     exact ⟨q, Y, hY, hq⟩
-  have h1 : ∃ᶠ ε in 𝓝[>] (0 : ℝ), ∃ q, (Function.Injective (fun i => ⟪X₁ i, w₁ ε⟫) ∧
-      Function.Injective (fun i => ⟪X₂ i, w₂ ε⟫) ∧ ¬ IsCyclicUnimodal (fun i => ⟪X₁ i, w₁ ε⟫) ∧
-      ¬ IsCyclicUnimodal (fun i => ⟪X₂ i, w₂ ε⟫)) ∧ Rq q ε ∧ 0 < ε ∧
-      (∀ q, ∃ c : ℝ, 0 < c ∧ vw q (fun i => M ε (x i)) = c • M ε (vw q x)) ∧
-      (Function.Injective (fun i => ⟪X₁ i, Gm ε u₁⟫) ∧
-        ∀ i j, ⟪X₁ i, Gm ε u₁⟫ < ⟪X₁ j, Gm ε u₁⟫ → ⟪X₁ i, w₁ ε⟫ < ⟪X₁ j, w₁ ε⟫) ∧
-      (Function.Injective (fun i => ⟪X₂ i, Gm ε u₂⟫) ∧
-        ∀ i j, ⟪X₂ i, Gm ε u₂⟫ < ⟪X₂ j, Gm ε u₂⟫ → ⟪X₂ i, w₂ ε⟫ < ⟪X₂ j, w₂ ε⟫) :=
-    (hbad.and_eventually hgood).mono fun ε ⟨hb, h0, ⟨q, hq⟩, hE, h1, h2⟩ =>
-      ⟨q, hb, hq, h0, hE, h1, h2⟩
+  have h1 : ∃ᶠ ε in 𝓝[>] (0 : ℝ), ∃ q, ((∀ i, Function.Injective (fun j => ⟪X i j, w i ε⟫)) ∧
+      ∀ i, ¬ IsCyclicUnimodal (fun j => ⟪X i j, w i ε⟫)) ∧ Rq q ε ∧ Good ε :=
+    (hbad.and_eventually hgood).mono fun ε ⟨hb, hg, q, hq⟩ => ⟨q, hb, hq, hg⟩
   obtain ⟨q, hq⟩ := frequently_exists_of_finite h1
-  by_cases hp1 : P₁ q
-  · obtain ⟨ε, ⟨hb1, hb2, hb3, hb4⟩, ⟨Y, hY, hc⟩, h0, hE, ho1, ho2⟩ := hq.exists
-    obtain ⟨lam, hvq, hP⟩ := hP₁ q hp1
+  by_cases hp : ∃ i, P i q
+  · obtain ⟨i, hpi⟩ := hp
+    obtain ⟨ε, ⟨hb1, hb3⟩, ⟨Y, hY, hc⟩, h0, hE, ho⟩ := hq.exists
+    obtain ⟨lam, hvq, hP'⟩ := hP i q hpi
     obtain ⟨c, hc0, hcε⟩ := hE q
-    exact hb3 (pair_contra x K lab vw hcont M Gm hMG hk₁ X₁ u₁ q lam hvq hP ε (w₁ ε) Y hY hc c hc0
-      hcε ho1.1 ho1.2 hb1)
-  by_cases hp2 : P₂ q
-  · obtain ⟨ε, ⟨hb1, hb2, hb3, hb4⟩, ⟨Y, hY, hc⟩, h0, hE, ho1, ho2⟩ := hq.exists
-    obtain ⟨lam, hvq, hP⟩ := hP₂ q hp2
-    obtain ⟨c, hc0, hcε⟩ := hE q
-    exact hb4 (pair_contra x K lab vw hcont M Gm hMG hk₂ X₂ u₂ q lam hvq hP ε (w₂ ε) Y hY hc c hc0
-      hcε ho2.1 ho2.2 hb2)
+    exact hb3 i (pair_contra x K lab vw hcont M Gm hMG (hk i) (X i) (u i) q lam hvq hP' ε (w i ε)
+      Y hY hc c hc0 hcε (ho i).1 (ho i).2 (hb1 i))
+  push Not at hp
   -- any other certificate passes to the limit
   have key : ∀ ε : ℝ, 0 < ε → ∃ y : Fin n → ℝ³, (∀ i, dist (y i) (M ε (x i)) < ε) ∧
       (Rq q ε → RimCertAt y (vw q y) (lab q)) := by
@@ -360,13 +433,13 @@ theorem metricFree_of_cover {n : ℕ} (x : Fin n → ℝ³)
       0 ≤ det3 (x (lab q b) - x (lab q a)) (x (lab q c) - x (lab q a)) (vw q x) :=
     fun a b c h => cyc_nonneg_of_tendsto hxs hus hcert h
   have hinjl : Function.Injective (lab q) := (hcert.exists.choose_spec).injective_lab
-  obtain ⟨hnd, hdist⟩ := hO q hp1 hp2 hu hinjl ⟨hWL, hWC⟩
+  obtain ⟨hnd, hdist⟩ := hO q hp hu hinjl ⟨hWL, hWC⟩
   refine hR (isRupert_of_tendsto_rimCert x hseg hsp (lab q) hu hnd yf (fun ε => vw q (yf ε))
-    hxs hus (hcert.mono fun ε h => ⟨h, fun i j hij => ?_⟩))
-  by_cases hl : lab q i = lab q j
+    hxs hus (hcert.mono fun ε h => ⟨h, fun a b hab => ?_⟩))
+  by_cases hl : lab q a = lab q b
   · rw [hl]
-  · exact absurd (by rw [inner_sub_left, hij, sub_self] :
-      ⟪x (lab q i) - x (lab q j), vw q x⟫ = 0) (hdist i j hl)
+  · exact absurd (by rw [inner_sub_left, hab, sub_self] :
+      ⟪x (lab q a) - x (lab q b), vw q x⟫ = 0) (hdist a b hl)
 
 end Minimality
 

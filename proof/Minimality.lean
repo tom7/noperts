@@ -652,8 +652,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     have hgen := noThreeCollinear_seven x hN hx
     exact quadPairPar14 hx hN rfl hR (Minimality.not_quadTripleRect_type14 hx hgen hR)
   · exact big {0, 1, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 15: Theorem A
-  · -- type 16: `not_type16_of_twoView16` (Theorem 24.3: two ties at a pair of tilt tests with
-    -- realizing tilts, `Minimality.TwoView16`; the cover is affine-invariant, so metric-free), where
+  · -- type 16: `not_type16_of_multiView16` (Theorem 24.3: ties at a family of tilt tests with
+    -- realizing tilts, `Minimality.MultiView16`; the cover is affine-invariant, so metric-free), where
     -- it holds; else `not_type16_of_isNopert_codim2'`; its general position (5 hypotheses) is asked,
     -- the special positions are open in Lean
     obtain ⟨fA, hfA⟩ := hR {0, 2, 3, 5} (by decide)
@@ -664,7 +664,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fF, hfF⟩ := hR {1, 4, 5} (by decide)
     obtain ⟨fG, hfG⟩ := hR {1, 4, 6} (by decide)
     obtain ⟨fH, hfH⟩ := hR {2, 4, 5} (by decide)
-    exact byGen1 (not_type16_of_twoView16 x hN hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF
+    exact byGen1 (not_type16_of_multiView16 x hN hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF
       hfG hfH) (fun _ => byGen5 (fun h35 hEd hQ hV htie => not_type16_of_isNopert_codim2' x hN hx fA
         fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH h35 hEd hQ hV (Or.inl htie))
       (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
@@ -708,8 +708,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- asked, the special positions are open in Lean (incl. case (c) of Theorem 24.5)
     exact byGen1 (quadPair hx hN hR {0, 1, 3, 5} {2, 4, 5, 6} 5 (by decide) (by decide) (by decide) (by decide)
       (by decide)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
-  · -- type 21: `not_type21_of_twoView21` (Theorem 24.3: two ties at a pair of tilt tests with
-    -- realizing tilts, `Minimality.TwoView21`; the cover is affine-invariant, so metric-free), where
+  · -- type 21: `not_type21_of_multiView21` (Theorem 24.3: ties at a family of tilt tests with
+    -- realizing tilts, `Minimality.MultiView21`; the cover is affine-invariant, so metric-free), where
     -- it holds; else `not_type21_of_isNopert_codim2'`; its general position (7 hypotheses) is asked,
     -- the special positions are open in Lean
     obtain ⟨fA, hfA⟩ := hR {0, 1, 4} (by decide)
@@ -720,7 +720,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fF, hfF⟩ := hR {1, 3, 5} (by decide)
     obtain ⟨fG, hfG⟩ := hR {2, 3, 4, 6} (by decide)
     obtain ⟨fH, hfH⟩ := hR {2, 3, 5} (by decide)
-    exact byGen1 (not_type21_of_twoView21 x hN hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF
+    exact byGen1 (not_type21_of_multiView21 x hN hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF
       hfG hfH) (fun _ => byGen7 (fun hQ h5 h26 hEd hVq hV htie =>
         not_type21_of_isNopert_codim2' x hN hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG
           hfH hQ h5 h26 hEd hVq hV (Or.inl htie))
