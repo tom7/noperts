@@ -621,8 +621,8 @@ its pairs, not both far-end ties at the view along `x 2 b`, at each tie the gene
 conditions of Lemma X (`Minimality.RouteT`, `RouteT'`; which route applies is derived), at a
 touching (a triple or, at a planar equator, a quadruple depth tie at a named view;
 codimension 2) the conditions of Proposition 30.4 (`Minimality.Touch30N2`, `Touch30T4`: one-
-equation exclusions and "r beyond"; the touching itself is closed by `isRupert_touchN2`,
-`isRupert_touchT4`), and along the face circles of the named crossings (or, for the closings
+equation exclusions; the touching itself is closed by `isRupert_touchN2`, `isRupert_touchT4`,
+with "r not beyond" by the sector tilt of Proposition 29.3, `Type08Sector.lean`), and along the face circles of the named crossings (or, for the closings
 with one circle, the five-corner rim along the other face, Lemma H: strictly unimodal or
 with a depth-separated pair, `Minimality.UniOrSep`) depth ties and horizontal double
 normals occur only at isolated views (`Minimality.NoBadNormal`); for the closings `K_c`

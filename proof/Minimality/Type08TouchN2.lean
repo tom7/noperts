@@ -5,6 +5,7 @@ public import Minimality.HFrame
 public import Minimality.HEndFinal
 public import Minimality.UniformTilt
 public import Minimality.Type08Slide
+public import Minimality.Type08Sector
 
 @[expose] public section
 
@@ -51,29 +52,37 @@ theorem n2_frame (F : OctFacets a a' b b' c c') :
     exact real_inner_self_pos.mpr hne
 
 
-/-- **General position at the far triple tie, N2** (`FEWER-FACES-PROOFS.md` Proposition 30.4;
-codimension 3 inside the touching).  Put `u₀ = c − a'`, `e` the horizontal direction of `b' − c`,
-`G = a'b'c`.  Then: (E) the point `b` is not over the line through `c` normal to `e`
-(`b₁ ≠ 0`) and `c'`, `b` are at different distances from the plane of `G` (`r₂ ≠ b₂`);
-(beyond) if `c'` is farther than `b` from the plane of `G` then `c'` has the largest abscissa along
-`e` among the far corners; (distinct depths) if moreover `b₁ < 0` the vertex `a` does not tie in depth
-with `d`, `c`, `a'` along the whole circle (`a − p` is not normal to `G`); (no persistent HDN)
-the rim of the horizontal end has no horizontal double normal at arbitrarily small tilts. -/
+/-- **General position at the far triple tie, N2** (`FEWER-FACES-PROOFS.md` Propositions 29.3 and
+30.4; codimension 3 inside the touching).  Put `u₀ = c − a'`, `e` the horizontal direction of
+`b' − c`, `G = a'b'c`.  Then: (E) the point `b` is not over the line through `c` normal to `e`
+(`b₁ ≠ 0`) and `c'`, `b` are at different distances from the plane of `G` (`r₂ ≠ b₂`); if `c'` is
+farther than `b` from the plane of `G`, its abscissa `r₁` along `e` is not `max (A, b₁)` (`A` the
+abscissa of `b'`); and, when `c'` is farther and has the largest abscissa among the far corners
+(`A < r₁`, `b₁ < r₁`: "`r` beyond", the horizontal end of the face circle), (distinct depths)
+if moreover `b₁ < 0` the vertex `a` does not tie in depth with `d`, `c`, `a'` along the whole
+circle (`a − p` is not normal to `G`), and (no persistent HDN) the rim of the horizontal end has no
+horizontal double normal at arbitrarily small tilts.  Without "`r` beyond" the sector tilt at `u₀`
+(Proposition 29.3) closes `K` with no further condition. -/
 def Touch30N2 (a a' b b' c c' d : ℝ³) : Prop :=
   ∀ (F : OctFacets a a' b b' c c') (_ : IsCap F d),
     ⟪b - c, hfE c b' (c - a')⟫ ≠ 0 ∧ F.a'b'c.f c' ≠ F.a'b'c.f b ∧
-    (F.a'b'c.f c' < F.a'b'c.f b → ⟪b' - c, hfE c b' (c - a')⟫ < ⟪c' - c, hfE c b' (c - a')⟫ ∧
-      ⟪b - c, hfE c b' (c - a')⟫ < ⟪c' - c, hfE c b' (c - a')⟫) ∧
-    (F.a'b'c.f c' < F.a'b'c.f b → ⟪b - c, hfE c b' (c - a')⟫ < 0 →
+    (F.a'b'c.f c' < F.a'b'c.f b →
+      ⟪c' - c, hfE c b' (c - a')⟫ ≠ max ⟪b' - c, hfE c b' (c - a')⟫ ⟪b - c, hfE c b' (c - a')⟫) ∧
+    (F.a'b'c.f c' < F.a'b'c.f b → ⟪b' - c, hfE c b' (c - a')⟫ < ⟪c' - c, hfE c b' (c - a')⟫ →
+      ⟪b - c, hfE c b' (c - a')⟫ < ⟪c' - c, hfE c b' (c - a')⟫ →
+      ⟪b - c, hfE c b' (c - a')⟫ < 0 →
       ¬ (⟪a - d, hfE c b' (c - a')⟫ = 0 ∧ ⟪a - d, c - a'⟫ = 0) ∧
       ¬ (⟪a - c, hfE c b' (c - a')⟫ = 0 ∧ ⟪a - c, c - a'⟫ = 0) ∧
       ¬ (⟪a - a', hfE c b' (c - a')⟫ = 0 ∧ ⟪a - a', c - a'⟫ = 0)) ∧
-    (F.a'b'c.f c' < F.a'b'c.f b → ∃ᶠ δ in 𝓝[>] (0 : ℝ),
-      NoHDNAt ({c', a, d, c, a'} : Finset ℝ³) (hfE c b' (c - a') - δ • (c - a'))) ∧
+    (F.a'b'c.f c' < F.a'b'c.f b → ⟪b' - c, hfE c b' (c - a')⟫ < ⟪c' - c, hfE c b' (c - a')⟫ →
+      ⟪b - c, hfE c b' (c - a')⟫ < ⟪c' - c, hfE c b' (c - a')⟫ →
+      ∃ᶠ δ in 𝓝[>] (0 : ℝ),
+        NoHDNAt ({c', a, d, c, a'} : Finset ℝ³) (hfE c b' (c - a') - δ • (c - a'))) ∧
     (F.a'b'c.f b < F.a'b'c.f c' → ∃ᶠ δ in 𝓝[>] (0 : ℝ),
       NoHDNAt ({b, d, c, a'} : Finset ℝ³) (hfE c b' (c - a') - δ • (c - a')))
 
 
+set_option maxHeartbeats 1000000 in
 /-- **Proposition 30.4, case N2.**  At the far triple tie of the named closing N2 (`z b = z c' = z b'`
 along `u₀ = c − a'`, `z c > z b'`), the horizontal end of the face circle of `a'b'c` closes `K`,
 under the general position `Touch30N2`. -/
@@ -84,7 +93,7 @@ theorem isRupert_touchN2 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
     (T : Touch30N2 a a' b b' c c' d) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   classical
-  obtain ⟨Tb1, Tr2, Tbey, Tnt, Thd1, Thd2⟩ := T F hd
+  obtain ⟨Tb1, Tr2, Tmax, Tnt, Thd1, Thd2⟩ := T F hd
   have hnd := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd
@@ -309,12 +318,53 @@ theorem isRupert_touchN2 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
   rcases lt_or_gt_of_ne Tr2 with hlt | hgt
   · -- case 1: `c'` is farther than `b` from the plane of `G`
     have hr : b2 < r2 := by rw [hb2, hr2]; linarith
-    obtain ⟨hA1, hb1'⟩ := Tbey hlt
+    by_cases hnb : ¬ (A < r1 ∧ b1 < r1)
+    · -- `r` not beyond: the sector tilt at `u₀` (Proposition 29.3)
+      have hr1 : r1 < A ∨ r1 < b1 := by
+        have hne := Tmax hlt
+        by_contra hcon
+        push Not at hcon
+        obtain ⟨h1, h2⟩ := hcon
+        apply hne
+        refine le_antisymm ?_ (max_le h1 h2)
+        by_contra hlt'
+        push Not at hlt'
+        exact hnb ⟨lt_of_le_of_lt (le_max_left _ _) hlt', lt_of_le_of_lt (le_max_right _ _) hlt'⟩
+      have hq1 : b1 * r2 - b2 * r1 < 0 := by
+        have h := E1 c' (by simp) (Ne.symm hcc') (Ne.symm hbc') (Ne.symm ha'c')
+        have h2 := Fr.shadow_sign c b b' c b c' h
+        rw [hρc, hΦc, hΦb, hΦc'] at h2
+        have e : crossXY ⟨0, 0, zv⟩ ⟨b1, b2, 0⟩ ⟨r1, r2, 0⟩ = b1 * r2 - b2 * r1 := by
+          simp only [crossXY]; ring
+        rw [e] at h2
+        exact neg_of_mul_pos_right h2 hρneg
+      have hu1 : b1 * a2 - b2 * a1 < 0 := by
+        have h := E1 a (by simp) hac hab haa'
+        have h2 := Fr.shadow_sign c b b' c b a h
+        rw [hρc, hΦc, hΦb, hΦa] at h2
+        have e : crossXY ⟨0, 0, zv⟩ ⟨b1, b2, 0⟩ ⟨a1, a2, a3⟩ = b1 * a2 - b2 * a1 := by
+          simp only [crossXY]; ring
+        rw [e] at h2
+        exact neg_of_mul_pos_right h2 hρneg
+      have hmlt : (1 - s) * zv < m3 := by rw [hm3eq]; nlinarith [mul_pos hδ0 hUpos]
+      exact HFrame.sector5_n2 Fr (V := insert d ({a, a', b, b', c, c'} : Finset ℝ³))
+        (cP := c) (mP := d) (fP := b) (rP := c') (gP := b') (wP := a') (aP := a)
+        (by
+          intro y hy
+          simp only [Finset.mem_insert, Finset.mem_singleton] at hy
+          rcases hy with h | h | h | h | h | h | h
+          exacts [Or.inr (Or.inl h), Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr h))))),
+            Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))), Or.inr (Or.inr (Or.inl h)),
+            Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))), Or.inl h, Or.inr (Or.inr (Or.inr (Or.inl h)))])
+        (by simp) (by simp) (by simp) (by simp) (by simp)
+        hΦc hΦd hΦb hΦc' hΦb' hΦa' hΦa hs0 hs1 hzvpos hmlt (by linarith) hAE hApos hb2pos hr2pos
+        ha2pos hDr hq1 hTa1 hTa2 hu1 hr1
+    obtain ⟨hA1, hb1'⟩ := not_not.mp hnb
     obtain ⟨σ, hσ⟩ := cfg.tests1 hr
     have hdep : ∀ᶠ δ in 𝓝[>] (0 : ℝ), IsCyclicUnimodal
         (dep (rim1 zv zw r1 r2 s b1 b2 m3 a1 a2 a3) δ) := by
       rcases lt_or_gt_of_ne Tb1 with hneg | hpos
-      · obtain ⟨n2, n3, n4⟩ := Tnt hlt hneg
+      · obtain ⟨n2, n3, n4⟩ := Tnt hlt hA1 hb1' hneg
         refine cfg.depth1_neg hA1 hb1' hneg ?_ ?_ ?_
         · rintro ⟨h1, h2⟩
           apply n2; constructor
@@ -332,7 +382,7 @@ theorem isRupert_touchN2 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
           · rw [show a - a' = (a - b') - (a' - b') by abel, inner_sub_left]; show a3 - zw = 0; linarith
       · exact cfg.depth1_pos hr hA1 hb1' hpos
     refine HFrame.rim_final Fr (by norm_num : 3 ≤ 5) _ {b'} {c', a, d, c, a'} (quint c' a d c a') ?_ ?_ ?_ σ ?_
-      (Thd1 hlt)
+      (Thd1 hlt hA1 hb1')
     · intro i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> simp [quint]
     · intro i
       rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> simp [quint] <;> intro h <;> subst h <;> tauto

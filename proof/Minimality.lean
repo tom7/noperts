@@ -662,8 +662,9 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     exact quadPairPar07 hx hN rfl hR (Minimality.not_quadTripleRect_type07 hx hgen hR)
   · -- type 08: `not_type08_of_isNopert'`; its general position (2 hypotheses) is asked, the special
     -- positions are open in Lean.  The far triple tie (touching) of the named closings N2, T4 is
-    -- no longer excluded in `Type08Gen`: with `c'` (resp. `b'`) beyond it is closed by the
-    -- horizontal end of a face circle (Proposition 30.4, `isRupert_touchN2`, `isRupert_touchT4`)
+    -- no longer excluded in `Type08Gen`: with `c'` (resp. `b'`) not beyond it is closed by the
+    -- sector tilt at the view (Proposition 29.3), with it beyond by the horizontal end of a face
+    -- circle (Proposition 30.4); `isRupert_touchN2`, `isRupert_touchT4`
     -- under the codimension-3 conditions `Touch30N2`, `Touch30T4`, `touchTie`
     obtain ⟨fA, hfA⟩ := hR {0, 1, 2, 3} (by decide)
     obtain ⟨fB, hfB⟩ := hR {0, 2, 4, 5} (by decide)

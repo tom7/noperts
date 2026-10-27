@@ -6,6 +6,7 @@ public import Minimality.HEndFinal
 public import Minimality.UniformTilt
 public import Minimality.Type08Slide
 public import Minimality.Type08T4
+public import Minimality.Type08Sector
 
 @[expose] public section
 
@@ -92,20 +93,23 @@ theorem t4_kappa_pos {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c'} (
   have h8 : 0 < α₂ * (α + α₁ * (β - 1)) := by nlinarith
   exact pos_of_mul_pos_right h8 hα₂.le
 
-/-- **General position at the far triple tie, T4** (Proposition 30.4).  Put `u₀ = b − d`, `e` the
-horizontal direction of `c − b`, `G = Q_bc`.  (E): `c'` is not over the line through `b` normal to
-`e` (`b₁ ≠ 0`), `b'` and `c'` are at different distances from the plane of `G` (`r₂ ≠ b₂`) and
-`z a' ≠ z b`; the vertex `a'` does not tie in depth with `a` along the whole circle; (beyond) if
-`b'` is farther than `c'` from the plane of `G`, it has the largest abscissa among the far
-corners; (no persistent HDN) the rim of the horizontal end has no horizontal double normal at
-arbitrarily small tilts. -/
+/-- **General position at the far triple tie, T4** (Propositions 29.3 and 30.4).  Put
+`u₀ = b − d`, `e` the horizontal direction of `c − b`, `G = Q_bc`.  (E): `c'` is not over the line
+through `b` normal to `e` (`b₁ ≠ 0`), `b'` and `c'` are at different distances from the plane of
+`G` and `z a' ≠ z b`; the vertex `a'` does not tie in depth with `a` along the whole circle; if
+`b'` is farther than `c'` from the plane of `G`, its abscissa `r₁` along `e` is not `max (A, b₁)`
+(`A` the abscissa of `c`); and, when moreover `b'` has the largest abscissa among the far corners
+(`A < r₁`, `b₁ < r₁`: "`r` beyond", the horizontal end of the face circle), (no persistent HDN) the
+rim of the horizontal end has no horizontal double normal at arbitrarily small tilts.  Without
+"`r` beyond" the sector tilt at `u₀` (Proposition 29.3) closes `K` with no further condition. -/
 def Touch30T4 (a a' b b' c c' d : ℝ³) : Prop :=
   ∀ (F : OctFacets a a' b b' c c') (_ : IsCap F d),
     ⟪c' - b, hfE b c (b - d)⟫ ≠ 0 ∧ F.a'bc.f b' ≠ F.a'bc.f c' ∧ ⟪a' - b, b - d⟫ ≠ 0 ∧
     ¬ (⟪a' - a, hfE b c (b - d)⟫ = 0 ∧ ⟪a' - a, b - d⟫ = 0) ∧
-    (F.a'bc.f b' < F.a'bc.f c' → ⟪c - b, hfE b c (b - d)⟫ < ⟪b' - b, hfE b c (b - d)⟫ ∧
-      ⟪c' - b, hfE b c (b - d)⟫ < ⟪b' - b, hfE b c (b - d)⟫) ∧
-    (F.a'bc.f b' < F.a'bc.f c' → ∃ᶠ δ in 𝓝[>] (0 : ℝ),
+    (F.a'bc.f b' < F.a'bc.f c' →
+      ⟪b' - b, hfE b c (b - d)⟫ ≠ max ⟪c - b, hfE b c (b - d)⟫ ⟪c' - b, hfE b c (b - d)⟫) ∧
+    (F.a'bc.f b' < F.a'bc.f c' → ⟪c - b, hfE b c (b - d)⟫ < ⟪b' - b, hfE b c (b - d)⟫ →
+      ⟪c' - b, hfE b c (b - d)⟫ < ⟪b' - b, hfE b c (b - d)⟫ → ∃ᶠ δ in 𝓝[>] (0 : ℝ),
       NoHDNAt ({b', a', d, a} : Finset ℝ³) (hfE b c (b - d) - δ • (b - d))) ∧
     (F.a'bc.f c' < F.a'bc.f b' → 0 < ⟪a' - b, b - d⟫ → ∃ᶠ δ in 𝓝[>] (0 : ℝ),
       NoHDNAt ({c', a', d, a} : Finset ℝ³) (hfE b c (b - d) - δ • (b - d))) ∧
@@ -123,7 +127,7 @@ theorem isRupert_touchT4 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
     (T : Touch30T4 a a' b b' c c' d) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   classical
-  obtain ⟨Tb1, Tr2, Tz, Tnt, Tbey, Thd1, Thd2, Thd3⟩ := T F hd
+  obtain ⟨Tb1, Tr2, Tz, Tnt, Tmax, Thd1, Thd2, Thd3⟩ := T F hd
   have hnd := F.nodup
   simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd
@@ -421,12 +425,66 @@ theorem isRupert_touchT4 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
   · -- case (i): `b'` is farther than `c'` from the plane of `G`
     have hr : b2 < r2 := by rw [hb2, hr2]; linarith
     have hzz : zv < za := (cfg.T2_a_neg_iff).mp (cfg.T2_a_neg_of hr)
-    obtain ⟨hA1, hb1'⟩ := Tbey hlt
+    by_cases hnb : ¬ (A < r1 ∧ b1 < r1)
+    · -- `r` not beyond: the sector tilt at `u₀` (Proposition 29.3)
+      have hr1 : r1 < A ∨ r1 < b1 := by
+        have hne := Tmax hlt
+        by_contra hcon
+        push Not at hcon
+        obtain ⟨h1, h2⟩ := hcon
+        apply hne
+        refine le_antisymm ?_ (max_le h1 h2)
+        by_contra hlt'
+        push Not at hlt'
+        exact hnb ⟨lt_of_le_of_lt (le_max_left _ _) hlt', lt_of_le_of_lt (le_max_right _ _) hlt'⟩
+      have hq3 : 0 < r1 * b2 - b1 * r2 := by
+        obtain ⟨-, d2, -, d4, -⟩ := t4_slide_dets hb' hc' ha'
+        have hEf2 : 0 < det3 (a - d) (c - d) (b - d) * det3 (a - d) (c - d) (b - d) :=
+          mul_self_pos.mpr hEf
+        have hprod : 0 < det3 (b' - c') (b - c') (b - d) * det3 (c' - b) (c - b) (b - d) := by
+          rw [d4, d2]
+          have : (β * α₁) * det3 (a - d) (c - d) (b - d) * (α₁ * det3 (a - d) (c - d) (b - d)) =
+              (β * α₁ * α₁) * (det3 (a - d) (c - d) (b - d) * det3 (a - d) (c - d) (b - d)) := by
+            ring
+          rw [this]; exact mul_pos (mul_pos (mul_pos hβ hα₁pos) hα₁pos) hEf2
+        have h2 := Fr.shadow_sign c' b' b b c' c hprod
+        rw [hΦc', hΦb', hΦb, hΦc] at h2
+        have e : crossXY ⟨b1, b2, 0⟩ ⟨r1, r2, 0⟩ ⟨0, 0, zv⟩ * crossXY ⟨0, 0, zv⟩ ⟨b1, b2, 0⟩ ⟨A, 0, 0⟩ =
+            (r1 * b2 - b1 * r2) * (b2 * A) := by simp only [crossXY]; ring
+        rw [e] at h2
+        exact pos_of_mul_pos_left h2 (mul_pos hb2pos hApos).le
+      have hk : a3 < (1 - α₁⁻¹) * zv := by
+        have h1 : ⟪c' - c, u0⟫ = zw + α₁ * (a3 - zw) + β₁ * U := by
+          have : c' - c = (d - c) + α₁ • ((a - c) - (d - c)) + β₁ • u0 := by
+            rw [hc', hu0]; module
+          rw [this]
+          simp only [hzw, ha3, hU, inner_add_left, real_inner_smul_left, inner_sub_left]
+        have h2 : zw + α₁ * (a3 - zw) + β₁ * U = 0 := by rw [← h1]; exact hZc'
+        have h3 : α₁ * a3 < (α₁ - 1) * zv := by nlinarith [mul_pos hβ₁ hUpos]
+        rw [show (1 - α₁⁻¹) * zv = ((α₁ - 1) * zv) / α₁ by field_simp, lt_div_iff₀ hα₁pos]
+        linarith
+      have hm' : (1 - β₂) * zv < za := by
+        rw [hZa']
+        nlinarith [mul_pos (sub_pos.2 (show 1 - β₂ < α₂ by linarith)) hUpos]
+      exact HFrame.sector5_t4 Fr (V := insert d ({a, a', b, b', c, c'} : Finset ℝ³))
+        (cP := b) (mP := a') (fP := c) (rP := b') (gP := c') (wP := d) (aP := a)
+        (by
+          intro y hy
+          simp only [Finset.mem_insert, Finset.mem_singleton] at hy
+          rcases hy with h | h | h | h | h | h | h
+          exacts [Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))),
+            Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr h))))), Or.inr (Or.inl h), Or.inl h,
+            Or.inr (Or.inr (Or.inr (Or.inl h))), Or.inr (Or.inr (Or.inl h)),
+            Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))])
+        (by simp) (by simp) (by simp) (by simp) (by simp)
+        hΦb hΦa' hΦc hΦb' hΦc' hΦd hΦa hβ₂ hβ₂1 hXa' hzvpos hm' (by linarith) hAE hApos hb2pos
+        hr2pos hDr hq3 hua0 hua1 hk hr1
+    obtain ⟨hA1, hb1'⟩ := not_not.mp hnb
     obtain ⟨σ, hσ⟩ := cfg.testsA hr
     have hdep := cfg.depthA hA1 hb1' Tb1 hnt
     obtain ⟨hmb, hmc⟩ := hmid12 hzz
     refine HFrame.rim_final Fr (by norm_num : 3 ≤ 4) _ {b, c} {b', a', d, a} (quad b' a' d a) ?_ ?_ ?_ σ ?_
-      (Thd1 hlt)
+      (Thd1 hlt hA1 hb1')
     · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> simp [quad]
     · intro i
       rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> simp [quad] <;> refine ⟨?_, ?_⟩ <;> intro h <;> subst h <;> tauto

@@ -382,13 +382,15 @@ uses at the views along `d b` and `a' c` when `(a, b, c)` is the labelling of Le
   codimension 2;
 * `touchN2`, `touchT4`, `touchTie`: at a triple tie of the far ends with `y'` (the touching,
   `z b = z c' = z b'` along `a' c` in case N2, `z c = z b' = z c'` along `d b` in case T4;
-  codimension 2), the horizontal end of the face circle closes `K` (Proposition 30.4 of
-  `FEWER-FACES-PROOFS.md`: `isRupert_touchN2`, `isRupert_touchT4`, `Type08TouchN2.lean`,
-  `Type08TouchT4.lean`) under the further conditions `Touch30N2`, `Touch30T4` (`b₁ ≠ 0`,
-  `r₂ ≠ b₂`, in T4 `z a' ≠ z b`, no persistent tie in depth of `a` with the rim, no persistent
-  horizontal double normal of the rim, and `y'` beyond when it is farther than `f₁` from the
-  plane of the face circle); `touchTie` excludes the touching together with a far-end tie
-  `T`, `T'` (codimension 3 as well);
+  codimension 2), `K` is Rupert: with `y'` not beyond (`r₁ < A` or `r₁ < b₁`) by the sector tilt
+  at the view itself (Proposition 29.3, `Type08Sector.lean`: no condition), and with `y'` beyond
+  by the horizontal end of the face circle (Proposition 30.4, `isRupert_touchN2`,
+  `isRupert_touchT4`, `Type08TouchN2.lean`, `Type08TouchT4.lean`) under the further conditions
+  `Touch30N2`, `Touch30T4`: `b₁ ≠ 0`, `r₂ ≠ b₂`, in T4 `z a' ≠ z b`, no persistent tie in depth of
+  `a` with the rim, `r₁ ≠ max (A, b₁)` (the abscissa of `y'` is not the larger of the other two
+  far corners) when `y'` is farther than `f₁` from the plane of the face circle, and, for `y'`
+  beyond, no persistent horizontal double normal of the rim; `touchTie` excludes the touching
+  together with a far-end tie `T`, `T'` (codimension 3 as well);
 * `levelQ`: `b − d` not normal to `Q_ac` (case Q), codimension 2;
 * the slides of Lemma C (`NoBadNormal` along a face circle): for `K_c` (N2) along `Q_bc`,
   for `K_{a'}` (N2) along `Q_bc` or `a'b'c`, for `K_d` (Q) along `Q_ab` or `Q_bc`, for `K_b`
@@ -516,7 +518,7 @@ theorem isRupert_type08_slide_core {a a' b b' c c' d : ℝ³}
   · -- case N2: the quad edge `a' → c` of `O`, with the cap `d` a middle of `Q_bc`
     obtain ⟨hq₂, hgood⟩ := hN2 hfar
     by_cases ht : (⟪b, c - a'⟫ = ⟪c', c - a'⟫ ∧ ⟪b', c - a'⟫ = ⟪c', c - a'⟫)
-    · -- the far triple tie with `c'` beyond (Proposition 30.4)
+    · -- the far triple tie (Propositions 29.3, 30.4)
       exact isRupert_touchN2 F hd hfar hq₂ hgood ht (hgen.touchN2 ht)
     obtain ⟨s, δ, hs0, hs1, hδ, hdmid⟩ := hd.middle_Qbc hfar
     have e : (insert d ({a', a, c, c', b, b'} : Finset ℝ³)) = insert d {a, a', b, b', c, c'} :=
@@ -555,7 +557,7 @@ theorem isRupert_type08_slide_core {a a' b b' c c' d : ℝ³}
       have hκ := t4_kappa_pos hd hb' hc' ha' hα hβ₁ hα₂ hβ₂1.le
       have hgood := hT4 hfc hfc'
       by_cases ht : (⟪c, b - d⟫ = ⟪b', b - d⟫ ∧ ⟪c', b - d⟫ = ⟪b', b - d⟫)
-      · -- the far triple tie with `b'` beyond (Proposition 30.4)
+      · -- the far triple tie (Propositions 29.3, 30.4)
         exact isRupert_touchT4 F hd hfc hfc' hgood ht (hgen.touchT4 ht)
       have hsd := t4d_slide_of_par hb' hc' hdb hd.det_Qac_ne hα hα₁1 hβ₁ hgood hgen.slideT4d
       rcases hgen.slideT4b with hs | hs | hR
