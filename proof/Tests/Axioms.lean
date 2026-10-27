@@ -5,6 +5,7 @@ import SnubDodecahedron
 import SnubCube
 import Nopert231
 import Minimality
+import Minimality.Arc016Witness
 import ProofOfMainTheorem
 
 /-!
@@ -688,3 +689,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.specLevel_of_facet
 #assert_standard_axioms Minimality.tri3Level_of_facet
 #assert_standard_axioms Minimality.hasHorizontalDoubleNormal_of_level_triangle
+#assert_standard_axioms Minimality.Arc.isRupert_of_row_neg
+#assert_standard_axioms Minimality.arc_certificate
+#assert_standard_axioms Minimality.prop33_3
+#assert_standard_axioms Minimality.Arc016Witness.witness_prop33_3
