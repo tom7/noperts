@@ -618,9 +618,11 @@ and without excluding horizontal double normals at the edge views.  The octahedr
 `x 0, …, x 6` without `x 2` (pairs `(0, 6)`, `(3, 4)`, `(5, 1)`) may have one planar
 equator, and `Minimality.Type08GenAll` holds: in each of the six labellings `(a, b, c)` of
 its pairs, not both far-end ties at the view along `x 2 b`, at each tie the generic
-conditions of Lemma X (`Minimality.RouteT`, `RouteT'`; which route applies is derived), no
+conditions of Lemma X (`Minimality.RouteT`, `RouteT'`; which route applies is derived), at a
 touching (a triple or, at a planar equator, a quadruple depth tie at a named view;
-codimension 2), and along the face circles of the named crossings (or, for the closings
+codimension 2) the conditions of Proposition 30.4 (`Minimality.Touch30N2`, `Touch30T4`: one-
+equation exclusions and "r beyond"; the touching itself is closed by `isRupert_touchN2`,
+`isRupert_touchT4`), and along the face circles of the named crossings (or, for the closings
 with one circle, the five-corner rim along the other face, Lemma H: strictly unimodal or
 with a depth-separated pair, `Minimality.UniOrSep`) depth ties and horizontal double
 normals occur only at isolated views (`Minimality.NoBadNormal`); for the closings `K_c`
