@@ -549,11 +549,13 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
   · -- type 02: Cor. T1 at the quadrilaterals 0235, 1246 (sharing vertex 2); where its general
     -- position fails, Theorem B on the four quadrilaterals 0134, 0235, 1246, 3456 under
     -- `GenPos`, and Lemma E or a planar closing at the edge 34 (23.12, metric-free:
-    -- `type02_edge34_byGen`, off an HDN or a vertical far edge at 34 and a far triple tie).
-    -- The `sorry` has in context: `¬ Type02EdgeGen x`; `¬ GenPos` (Theorem B); and
+    -- `type02_edge34_byGen`, off an HDN at 34 and a far triple tie; a vertical far edge 01 or
+    -- 56 at the edge view 34 is no exception: its far point is a double over the rim corner,
+    -- Lemma 16.27′, `isRupert_edgePair_robustD`).
+    -- The `sorry` has in context: `¬ Type02EdgeGen' x` (an HDN at 34 for a closing, or a far
+    -- depth triple tie, codimension ≥ 1 / 2); `¬ GenPos` (Theorem B); and
     -- `quadPairPar02`: the acute case-(c) triple tie at 0235, 1246 (`TriGenPar` but not
-    -- `TriGenTieO`, vertex 2) or `QuadTripleRect` there (not refuted: the vertical far edges
-    -- 01 and 56 at the edge view 34 survive the facets)
+    -- `TriGenTieO`, vertex 2) or `QuadTripleRect` there
     have hQ := quadPairPar02 hx hN rfl hR
     exact byGen1 (Minimality.type02_edge34_byGen hN hR) (fun _ =>
       byGen1 (fourQuad hx hN hR ![{0, 1, 3, 4}, {0, 2, 3, 5}, {1, 2, 4, 6}, {3, 4, 5, 6}]

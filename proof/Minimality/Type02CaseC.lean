@@ -1,6 +1,6 @@
 module
 
-public import Minimality.RobustEdge
+public import Minimality.RobustEdgeDoubles
 public import Minimality.SevenTypes
 
 @[expose] public section
@@ -17,19 +17,23 @@ the points `3`, `4` lie weakly on opposite sides of the plane `a 2 b`.  This hol
 shape of the type, with no case-(c) hypothesis, so it closes the case-(c) triple tie of the view
 of `0235`, `1246` as well (the paper uses it only there).
 
-The exceptions are those of §24.6, with the vertical far edge as in Theorem B
-(`isRupert_type02`): `Type02EdgeGen x` asks
+The exceptions are those of §24.6 (`Type02EdgeGen' x`; the older `Type02EdgeGen`, with the extra
+clauses `g1`, `g2`, implies it):
 
 * the horizontal-double-normal exclusion `NoHDNAt` for both reduced point sets of the closings at
   the view `x 4 - x 3` (a codimension-1 condition at a fixed view, §22 / Lemma 7.4);
-* `(G1)`: `x 1 - x 0` and `x 6 - x 5` are not parallel to `x 4 - x 3` (a codimension-1
-  condition each: a vertical far edge, closed in the paper by the limit machinery of 18.1, 18.2);
 * the far depths are not all equal: for the far ends `(a, b)` of the two faces at the edge,
   `x a`, `x 2`, `x b` are not at one depth along `x 4 - x 3` (codimension 2; with `NoHDNAt` this
   is the "two ties" of §6).
 
-`isRupert_type02_edge34` proves `IsRupert` from the six facets under `Type02EdgeGen`, and
-`type02_edge34_false` is the form for the skeleton: `Type02EdgeGen x → False` for a realized
+There is no clause for a vertical far edge (`x 1 - x 0` or `x 6 - x 5` parallel to `x 4 - x 3`,
+`(G1)`): then `x 1` lies exactly over the corner `x 0` of the rim in the shadow, a *double* over a
+non-axle corner, which costs nothing at the uniform tilt (Lemma 16.27′,
+`isRupert_edgePair_robustD`, `RobustEdgeDoubles.lean`).  The rim is labelled with `0` (resp. `5`)
+as the far end, and the tie clauses refer to that labelling (`Type02FarEnd'`).
+
+`isRupert_type02_edge34` proves `IsRupert` from the six facets under `Type02EdgeGen'`, and
+`type02_edge34_false` is the form for the skeleton: `Type02EdgeGen' x → False` for a realized
 nopert of type 02.
 -/
 
@@ -66,6 +70,12 @@ theorem edgeMid_symm {v w a b m : ℝ³} (h : EdgeMid v w a b m) : EdgeMid v w b
   · exact ⟨1 - s, δ, by linarith, by linarith, hδ, Or.inr (Or.inr (Or.inr (by rw [h]; module)))⟩
   · exact ⟨1 - s, δ, by linarith, by linarith, hδ, Or.inr (Or.inr (Or.inl (by rw [h]; module)))⟩
 
+/-- Swapping `a` and `b` in `EdgeDoubleOver`. -/
+theorem edgeDoubleOver_symm {u a b c z : ℝ³} (h : EdgeDoubleOver u a b c z) :
+    EdgeDoubleOver u b a c z := by
+  obtain ⟨k, hk, h | h | h⟩ := h
+  exacts [⟨k, hk, Or.inr (Or.inl h)⟩, ⟨k, hk, Or.inl h⟩, ⟨k, hk, Or.inr (Or.inr h)⟩]
+
 /-- The `det3` of the four-point test is symmetric under swapping `a` and `b`. -/
 theorem hE_swap (a b c p : ℝ³) :
     det3 (a - b) (c - b) (p - b) = - det3 (b - a) (c - a) (p - a) := by
@@ -83,7 +93,8 @@ theorem rim_core (V : Finset ℝ³) {v w a b c E1 E2 : ℝ³}
     (hvV : v ∈ V) (hwV : w ∈ V) (haV : a ∈ V) (hbV : b ∈ V) (hcV : c ∈ V)
     (hE : det3 (b - a) (c - a) (v - a) * det3 (b - a) (c - a) (w - a) ≤ 0)
     (h3 : ¬ (⟪a, w - v⟫ = ⟪c, w - v⟫ ∧ ⟪c, w - v⟫ = ⟪b, w - v⟫))
-    (hV : ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ z = c ∨ EdgeMid v w a b z)
+    (hV : ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ z = c ∨ EdgeMid v w a b z ∨
+      EdgeDoubleOver (w - v) a b c z)
     (hnd₁ : NoHDNAt (V.erase w) (w - v)) (hnd₂ : NoHDNAt (V.erase v) (w - v)) :
     IsRupert V := by
   set u := w - v with hu
@@ -105,12 +116,13 @@ theorem rim_core (V : Finset ℝ³) {v w a b c E1 E2 : ℝ³}
     rw [e6, e7, det3_coord_u]; nlinarith [mul_pos hD (mul_pos hα htB)]
   have q₄ : 0 < det3 (v - b) (a - b) u := by
     rw [e8, e9, det3_coord_u]; nlinarith [mul_pos hD (mul_pos htA htB)]
-  exact isRupert_edgePair_robust V hvV hwV haV hbV hcV q₁ q₂ q₃ q₄ hE h3
+  exact isRupert_edgePair_robustD V hvV hwV haV hbV hcV q₁ q₂ q₃ q₄ hE h3
     (fun z hz => by
-      rcases hV z hz with h | h | h | h | h | h
+      rcases hV z hz with h | h | h | h | h | h | h
       exacts [Or.inl h, Or.inr (Or.inl h), Or.inr (Or.inr (Or.inl h)),
         Or.inr (Or.inr (Or.inr (Or.inl h))), Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))),
-        Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))])
+        Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))),
+        Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr h))))))])
     hnd₁ hnd₂
 
 /-- **Lemma E in coordinates, either orientation.** -/
@@ -123,7 +135,8 @@ theorem rim_core' (V : Finset ℝ³) {v w a b c E1 E2 : ℝ³}
     (hvV : v ∈ V) (hwV : w ∈ V) (haV : a ∈ V) (hbV : b ∈ V) (hcV : c ∈ V)
     (hE : det3 (b - a) (c - a) (v - a) * det3 (b - a) (c - a) (w - a) ≤ 0)
     (h3 : ¬ (⟪a, w - v⟫ = ⟪c, w - v⟫ ∧ ⟪c, w - v⟫ = ⟪b, w - v⟫))
-    (hV : ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ z = c ∨ EdgeMid v w a b z)
+    (hV : ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ z = c ∨ EdgeMid v w a b z ∨
+      EdgeDoubleOver (w - v) a b c z)
     (hnd₁ : NoHDNAt (V.erase w) (w - v)) (hnd₂ : NoHDNAt (V.erase v) (w - v)) :
     IsRupert V := by
   rcases lt_or_gt_of_ne hD with hneg | hpos
@@ -136,10 +149,11 @@ theorem rim_core' (V : Finset ℝ³) {v w a b c E1 E2 : ℝ³}
     · rw [hE_swap a b c v, hE_swap a b c w]; nlinarith [hE]
     · exact fun ⟨h1, h2⟩ => h3 ⟨h2.symm, h1.symm⟩
     · intro z hz
-      rcases hV z hz with h | h | h | h | h | h
+      rcases hV z hz with h | h | h | h | h | h | h
       exacts [Or.inl h, Or.inr (Or.inl h), Or.inr (Or.inr (Or.inr (Or.inl h))),
         Or.inr (Or.inr (Or.inl h)), Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))),
-        Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (edgeMid_symm h)))))]
+        Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (edgeMid_symm h)))))),
+        Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (edgeDoubleOver_symm h))))))]
   · exact rim_core V hpos ha hb hc htA htB hα hβ hch hvV hwV haV hbV hcV hE h3 hV hnd₁ hnd₂
 
 /-! ### Coordinates in the frame `e0 = x0 - x3`, `e5 = x5 - x3`, `u = x4 - x3` -/
@@ -321,10 +335,12 @@ theorem hE_B (v A N E a b c : ℝ³) (α β t ζ s η : ℝ)
 /-- Cover of the seven indices and the vertex classification of Lemma E. -/
 theorem hV_mk (x : Fin 7 → ℝ³) (ia ib m1 m2 : Fin 7)
     (hcov : ∀ i : Fin 7, i = 3 ∨ i = 4 ∨ i = ia ∨ i = ib ∨ i = 2 ∨ i = m1 ∨ i = m2)
-    (h1 : EdgeMid (x 3) (x 4) (x ia) (x ib) (x m1))
-    (h2 : EdgeMid (x 3) (x 4) (x ia) (x ib) (x m2)) :
+    (h1 : EdgeMid (x 3) (x 4) (x ia) (x ib) (x m1) ∨
+      EdgeDoubleOver (x 4 - x 3) (x ia) (x ib) (x 2) (x m1))
+    (h2 : EdgeMid (x 3) (x 4) (x ia) (x ib) (x m2) ∨
+      EdgeDoubleOver (x 4 - x 3) (x ia) (x ib) (x 2) (x m2)) :
     ∀ z ∈ Finset.univ.image x, z = x 3 ∨ z = x 4 ∨ z = x ia ∨ z = x ib ∨ z = x 2 ∨
-      EdgeMid (x 3) (x 4) (x ia) (x ib) z := by
+      EdgeMid (x 3) (x 4) (x ia) (x ib) z ∨ EdgeDoubleOver (x 4 - x 3) (x ia) (x ib) (x 2) z := by
   intro z hz
   obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hz
   rcases hcov i with h | h | h | h | h | h | h
@@ -369,6 +385,34 @@ structure Type02EdgeGen (x : Fin 7 → ℝ³) : Prop where
   t15 : Type02FarEnd x 1 0 → Type02FarEnd x 5 6 → ¬ Type02Tie x 1 5
   t16 : Type02FarEnd x 1 0 → Type02FarEnd x 6 5 → ¬ Type02Tie x 1 6
 
+/-- The weak far end: `a` is the far end of the face (`Type02FarEnd`), or `m` lies exactly over
+`a` in the shadow along `x 4 - x 3` (the edge `a m` is parallel to `34`: a vertical far edge,
+where `m` is a double over the corner `a`, Lemma 16.27′). -/
+def Type02FarEnd' (x : Fin 7 → ℝ³) (a m : Fin 7) : Prop :=
+  Type02FarEnd x a m ∨ ∃ c : ℝ, x m - x a = c • (x 4 - x 3)
+
+/-- **The general position of Lemma 23.12 + §24.6 at the edge `34` of type 02, with vertical far
+edges allowed.**  As `Type02EdgeGen`, without `g1`, `g2`: a far edge `01` or `56` parallel to
+`34` is no exception, because the point over the corner is a double (Lemma 16.27′,
+`isRupert_edgePair_robustD`).  The ties only refer to the labelling of the rim: the far end `0`
+(resp. `5`) of the face `0134` (resp. `3456`) may be weak, `Type02FarEnd'`; for a vertical far
+edge `01` the rim is labelled with `0`, and `1` is the double over it. -/
+structure Type02EdgeGen' (x : Fin 7 → ℝ³) : Prop where
+  hdn4 : NoHDNAt ((Finset.univ.image x).erase (x 4)) (x 4 - x 3)
+  hdn3 : NoHDNAt ((Finset.univ.image x).erase (x 3)) (x 4 - x 3)
+  t05 : Type02FarEnd' x 0 1 → Type02FarEnd' x 5 6 → ¬ Type02Tie x 0 5
+  t06 : Type02FarEnd' x 0 1 → Type02FarEnd x 6 5 → ¬ Type02Tie x 0 6
+  t15 : Type02FarEnd x 1 0 → Type02FarEnd' x 5 6 → ¬ Type02Tie x 1 5
+  t16 : Type02FarEnd x 1 0 → Type02FarEnd x 6 5 → ¬ Type02Tie x 1 6
+
+/-- `Type02EdgeGen` is stronger than `Type02EdgeGen'`. -/
+theorem Type02EdgeGen.toGen' {x : Fin 7 → ℝ³} (h : Type02EdgeGen x) : Type02EdgeGen' x :=
+  ⟨h.hdn4, h.hdn3,
+    fun a b => h.t05 (a.resolve_right (fun ⟨c, hc⟩ => h.g1 c hc))
+      (b.resolve_right (fun ⟨c, hc⟩ => h.g2 c hc)),
+    fun a b => h.t06 (a.resolve_right (fun ⟨c, hc⟩ => h.g1 c hc)) b,
+    fun a b => h.t15 a (b.resolve_right (fun ⟨c, hc⟩ => h.g2 c hc)), h.t16⟩
+
 theorem pos_of_mul_neg' {a b : ℝ} (hb : b < 0) (h : a * b < 0) : 0 < a := by
   by_contra ha; push Not at ha
   have := mul_nonneg_of_nonpos_of_nonpos ha hb.le; linarith
@@ -383,7 +427,7 @@ theorem isRupert_type02_edge34 (x : Fin 7 → ℝ³)
       f (x 1) < 0 ∧ f (x 4) < 0 ∧ f (x 6) < 0)
     (hF4 : ∃ f : ℝ³ →ᵃ[ℝ] ℝ, f (x 4) = 0 ∧ f (x 1) = 0 ∧ f (x 2) = 0 ∧ f (x 6) = 0 ∧
       f (x 0) < 0 ∧ f (x 3) < 0 ∧ f (x 5) < 0)
-    (hgen : Type02EdgeGen x) : IsRupert (Finset.univ.image x) := by
+    (hgen : Type02EdgeGen' x) : IsRupert (Finset.univ.image x) := by
   classical
   obtain ⟨f1, a3, a0, a1, a4, a2, a5, a6⟩ := hF1
   obtain ⟨f2, b3, b5, b6, b4, b0, b1, b2⟩ := hF2
@@ -494,19 +538,17 @@ theorem isRupert_type02_edge34 (x : Fin 7 → ℝ³)
   have e1 : x 1 = x 3 + α1 • e0 + γ1 • u := by rw [h1]; module
   have e6 : x 6 = x 3 + β6 • e5 + γ6 • u := by rw [h6]; module
   have e2 : x 2 = x 3 + α2 • e0 + β2 • e5 := by rw [h2]; module
-  have hα1ne : α1 ≠ 1 := by
-    intro h; apply hgen.g1 γ1
-    rw [hu', e1, hx0, h]; module
-  have hβ6ne : β6 ≠ 1 := by
-    intro h; apply hgen.g2 γ6
-    rw [hu', e6, hx5, h]; module
   have q1 : α1 * p0 < 1 := by rw [N1] at hγ1; linarith
   have q6 : β6 * p5 < 1 := by rw [N6] at hγ6; linarith
   -- the far-end witnesses
-  have fe01 : α1 < 1 → Type02FarEnd x 0 1 := fun hlt =>
-    ⟨α1, γ1, hα1, hlt, by rw [← he0, hu', e1]⟩
-  have fe56 : β6 < 1 → Type02FarEnd x 5 6 := fun hlt =>
-    ⟨β6, γ6, hβ6, hlt, by rw [← he5, hu', e6]⟩
+  have fe01 : α1 ≤ 1 → Type02FarEnd' x 0 1 := fun hle => by
+    rcases hle.lt_or_eq with hlt | h
+    · exact Or.inl ⟨α1, γ1, hα1, hlt, by rw [← he0, hu', e1]⟩
+    · exact Or.inr ⟨γ1, by rw [e1, hx0, hu', h]; module⟩
+  have fe56 : β6 ≤ 1 → Type02FarEnd' x 5 6 := fun hle => by
+    rcases hle.lt_or_eq with hlt | h
+    · exact Or.inl ⟨β6, γ6, hβ6, hlt, by rw [← he5, hu', e6]⟩
+    · exact Or.inr ⟨γ6, by rw [e6, hx5, hu', h]; module⟩
   have fe10 : 1 < α1 → Type02FarEnd x 1 0 := fun hgt =>
     ⟨1 / α1, -γ1 / α1, by positivity, by rw [div_lt_one hα1]; exact hgt, by
       rw [e1, hx0, hu']
@@ -531,7 +573,18 @@ theorem isRupert_type02_edge34 (x : Fin 7 → ℝ³)
   have hc2 : x 2 = x 3 + α2 • e0 + β2 • e5 + (0 : ℝ) • u := by rw [e2]; module
   have ha1 : x 1 = x 3 + α1 • e0 + (0 : ℝ) • e5 + γ1 • u := by rw [e1]; module
   have hb6 : x 6 = x 3 + (0 : ℝ) • e0 + β6 • e5 + γ6 • u := by rw [e6]; module
-  rcases lt_or_gt_of_ne hα1ne with hlt | hgt <;> rcases lt_or_gt_of_ne hβ6ne with hlt6 | hgt6
+  -- the middle `1` over the side `0`: a middle, or a double over `0` (a vertical far edge `01`)
+  have mid1 : α1 ≤ 1 → ∀ b, EdgeMid (x 3) (x 4) (x 0) b (x 1) ∨
+      EdgeDoubleOver (x 4 - x 3) (x 0) b (x 2) (x 1) := fun hle b => by
+    rcases hle.lt_or_eq with hlt | h
+    · exact Or.inl (mid_a_up hx0 hα1 hlt hγa m1 b)
+    · exact Or.inr ⟨γ1, hγ1.ne', Or.inl (by rw [e1, hx0, hu', h]; module)⟩
+  have mid6 : β6 ≤ 1 → ∀ a, EdgeMid (x 3) (x 4) a (x 5) (x 6) ∨
+      EdgeDoubleOver (x 4 - x 3) a (x 5) (x 2) (x 6) := fun hle a => by
+    rcases hle.lt_or_eq with hlt | h
+    · exact Or.inl (mid_b_up hx5 hβ6 hlt hγb m6 a)
+    · exact Or.inr ⟨γ6, hγ6.ne', Or.inr (Or.inl (by rw [e6, hx5, hu', h]; module))⟩
+  rcases le_or_gt α1 1 with hlt | hgt <;> rcases le_or_gt β6 1 with hlt6 | hgt6
   · -- (a, b) = (0, 5): planar rim `0235`
     have hch : (1 : ℝ) * 1 < α2 * 1 + β2 * 1 := by
       have := mul_lt_mul_of_pos_left hp0' hα2
@@ -541,7 +594,7 @@ theorem isRupert_type02_edge34 (x : Fin 7 → ℝ³)
       (mem 2) ?_ (hgen.t05 (fe01 hlt) (fe56 hlt6)) ?_ hgen.hdn4 hgen.hdn3
     · rw [hx4]; exact hE_A (x 3) e0 e5 u (x 0) (x 5) (x 2) α2 β2 ha0 hb5 hc2
     · exact hV_mk x 0 5 1 6 (by decide)
-        (mid_a_up hx0 hα1 hlt hγa m1 (x 5)) (mid_b_up hx5 hβ6 hlt6 hγb m6 (x 0))
+        (mid1 hlt (x 5)) (mid6 hlt6 (x 0))
   · -- (a, b) = (0, 6): Lemma E
     have hch : (1 : ℝ) * β6 < α2 * β6 + β2 * 1 := by
       have e : β6 = α2 * β6 * p0 + β2 * (β6 * p5) := by linear_combination (-β6) * N2
@@ -556,7 +609,7 @@ theorem isRupert_type02_edge34 (x : Fin 7 → ℝ³)
         rw [N6]; linear_combination (-β6) * N2
       rw [this]; exact neg_nonpos.2 (mul_pos (mul_pos hβ6 hα2) (sub_pos.2 hp0')).le
     · exact hV_mk x 0 6 1 5 (by decide)
-        (mid_a_up hx0 hα1 hlt hγa m1 (x 6)) (mid_b_low hgt6 hγ6 m6 hx5 (x 0))
+        (mid1 hlt (x 6)) (Or.inl (mid_b_low hgt6 hγ6 m6 hx5 (x 0)))
   · -- (a, b) = (1, 5): Lemma E
     have hch : α1 * 1 < α2 * 1 + β2 * α1 := by
       have e : α1 = α2 * (α1 * p0) + β2 * α1 * p5 := by linear_combination (-α1) * N2
@@ -571,7 +624,7 @@ theorem isRupert_type02_edge34 (x : Fin 7 → ℝ³)
         rw [N1]; linear_combination (-α1) * N2
       rw [this]; exact neg_nonpos.2 (mul_pos (mul_pos hα1 hβ2) (sub_pos.2 hp5')).le
     · exact hV_mk x 1 5 0 6 (by decide)
-        (mid_a_low hgt hγ1 m1 hx0 (x 5)) (mid_b_up hx5 hβ6 hlt6 hγb m6 (x 1))
+        (Or.inl (mid_a_low hgt hγ1 m1 hx0 (x 5))) (mid6 hlt6 (x 1))
   · -- (a, b) = (1, 6): planar rim `1246`
     have hch : α1 * β6 < α2 * β6 + β2 * α1 := by
       have e : α1 * β6 = α2 * β6 * (α1 * p0) + β2 * α1 * (β6 * p5) := by
@@ -585,20 +638,21 @@ theorem isRupert_type02_edge34 (x : Fin 7 → ℝ³)
       refine hE_B (x 3) e0 e5 u (x 1) (x 6) (x 2) α2 β2 α1 γ1 β6 γ6 ha1 hb6 hc2 ?_
       rw [N1, N6]; linear_combination (-(α1 * β6)) * N2
     · exact hV_mk x 1 6 0 5 (by decide)
-        (mid_a_low hgt hγ1 m1 hx0 (x 6)) (mid_b_low hgt6 hγ6 m6 hx5 (x 1))
+        (Or.inl (mid_a_low hgt hγ1 m1 hx0 (x 6))) (Or.inl (mid_b_low hgt6 hγ6 m6 hx5 (x 1)))
 
 /-- **Type 02, case (c): Lemma E at the edge `34`** (Lemma 23.12 and §24.6 of
 `FEWER-FACES-PROOFS.md`), in the form for the skeleton `anySevenVertexNopertIsSimplicial`: a
 7-point nopert whose labelling realizes the faces `0134`, `0235`, `1246`, `3456` of type 02
-(`Minimality.sevenTypeFaces 1`) satisfies `¬ Type02EdgeGen x`.  Hypotheses of
-`Type02EdgeGen`: the HDN exclusion at the view `x 4 - x 3` for both closings, `(G1)`, and the far
-depths not all equal; each fails only in codimension 1 (HDN, `(G1)`) or 2 (ties) of the shapes of
-the type, hence in codimension ≥ 3 inside the case-(c) family of the view of `0235`, `1246`. -/
+(`Minimality.sevenTypeFaces 1`) satisfies `¬ Type02EdgeGen' x`.  Hypotheses of
+`Type02EdgeGen'`: the HDN exclusion at the view `x 4 - x 3` for both closings and the far
+depths not all equal (a vertical far edge is allowed, as a double); each fails only in
+codimension 1 (HDN) or 2 (ties) of the shapes of the type, hence in codimension ≥ 3 inside the
+case-(c) family of the view of `0235`, `1246`. -/
 theorem type02_edge34_false {x : Fin 7 → ℝ³} (hN : IsNopert (Finset.univ.image x))
     {fs : List (Finset (Fin 7))} (hR : Minimality.RealizesFaces x fs)
     (h1 : ({0, 1, 3, 4} : Finset (Fin 7)) ∈ fs) (h2 : ({0, 2, 3, 5} : Finset (Fin 7)) ∈ fs)
     (h3 : ({1, 2, 4, 6} : Finset (Fin 7)) ∈ fs) (h4 : ({3, 4, 5, 6} : Finset (Fin 7)) ∈ fs)
-    (hgen : Type02EdgeGen x) : False := by
+    (hgen : Type02EdgeGen' x) : False := by
   obtain ⟨f1, hf1⟩ := hR _ h1
   obtain ⟨f2, hf2⟩ := hR _ h4
   obtain ⟨f3, hf3⟩ := hR _ h2
@@ -621,7 +675,7 @@ theorem type02_edge34_false {x : Fin 7 → ℝ³} (hN : IsNopert (Finset.univ.im
 `hR : RealizesFaces x (sevenTypeFaces 1)`. -/
 theorem type02_edge34_byGen {x : Fin 7 → ℝ³} (hN : IsNopert (Finset.univ.image x))
     (hR : Minimality.RealizesFaces x (Minimality.sevenTypeFaces 1)) :
-    Type02EdgeGen x → False :=
+    Type02EdgeGen' x → False :=
   type02_edge34_false hN hR (by decide) (by decide) (by decide) (by decide)
 
 end Minimality
