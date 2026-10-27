@@ -31,6 +31,7 @@ public import Minimality.CaseC20VSlide
 public import Minimality.CaseC20Final
 public import Minimality.SlideRim
 public import Minimality.CaseC18VSlide
+public import Minimality.DepthSepTorque
 
 /-!
 # Every nopert has at least 7 points
