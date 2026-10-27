@@ -9,6 +9,7 @@ public import Minimality.Type29Codim2
 public import Minimality.TripleTieObtuse
 public import Minimality.TripleTieAdjacent
 public import Minimality.ParDichotomy
+public import Minimality.QuadTripleRect
 
 /-!
 # Every nopert has at least 7 points
@@ -304,9 +305,11 @@ classification into the 29 types (`Minimality.exists_sevenType`, `Minimality/Cla
 sign-vector certificate checked in the kernel). Not formalized (`sorry`): type 24 inside
 `C̄ ∪ Σ_B` (it is proved outside, `not_type24_outside_Cbar_of_isNopert`); for type 29 (split by
 the class of its octahedron, `Minimality.type29_cap`, `Minimality.NF29.classes`) the classes K1,
-K2 and the class boundaries; and for every other type except 05, 12, 17, 22, 28 (closed
+K2 and the class boundaries; and for every other type except 05, 07, 12, 14, 17, 22, 28 (closed
 completely: each of their views pairs a triangle with another facet, so `TriGenPar` or
-`TriGenFarP` always holds, `Minimality.triGenPar_or_farP_idx`), and for K3 and K4, the special
+`TriGenFarP` always holds, `Minimality.triGenPar_or_farP_idx`; for 07 and 14, two quadrilaterals,
+the residual position `QuadTripleRect` is refuted from the facets,
+`Minimality.not_quadTripleRect_type07`, `…type14`), and for K3 and K4, the special
 positions: each type's theorem in `Minimality/Cases.lean` closes the case under its general-position
 hypotheses (`byGen1`, …), and the `sorry` that remains has exactly their negation as hypothesis.
 Every remaining `sorry` also assumes that no face of the type has an admissible view, i.e.
@@ -382,7 +385,8 @@ at the quadrilaterals `0256`, `1234` of type 07 (`Minimality.triGenTieO_type07`)
 `FEWER-FACES-PROOFS.md`, so `TriGenPar` gives `TriGenTieO`.  For two quadrilaterals one of
 `TriGenPar`, `TriGenFarP` and the residual position `Minimality.QuadTripleRect` always holds
 (`Minimality.triGenPar_or_farP_quad_idx`: a vertical far edge is allowed, and the rectangle of two
-of them too, Proposition 24.12), so the general position of the type is `¬ QuadTripleRect`: the
+of them too, Proposition 24.12), so the general position of the type is `¬ QuadTripleRect` (which holds,
+`Minimality.not_quadTripleRect_type07`, `…type14`): the
 rectangle of two vertical far edges (tops tied, bottoms tied) with the shared vertex at a tied far
 depth and every vertex of both faces on one side of it (the triple tie with both faces one-sided
 and a vertical far edge at each far corner; by Lemma 24.14 (α′) a first-order tilt works there
@@ -532,13 +536,13 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
   · exact big {1, 2, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 06: Theorem A
   · -- type 07: Cor. T1 at the quadrilaterals 0256, 1234 (sharing vertex 2); case (c) of the
     -- triple tie does not occur (Lemma 23.0 (a)), so only `TriGenPar` (no segment parallel to the
-    -- line of the two planes) or `TriGenFarP` is asked, and one of them holds unless
-    -- `QuadTripleRect` (`triGenPar_or_farP_quad_idx`): the remaining `sorry` assumes exactly that
-    -- residual position (a rectangle of two vertical far edges whose far corner is tied with the
-    -- shared vertex, both faces one-sided: the triple tie of Theorem 24.5 (a) with vertical far
-    -- edges; the face `{2, 0, 4}` of this tie, resp. `{5, 2, 4}` for type 14, is not a face of the
-    -- type, which would make it vacuous, but that argument is not formalized)
-    exact byGen1 (quadPairPar07 hx hN rfl hR) (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
+    -- line of the two planes) or `TriGenFarP` is needed, and one of them holds unless
+    -- `QuadTripleRect` (`triGenPar_or_farP_quad_idx`).  That residual position (a rectangle of two
+    -- vertical far edges whose far corner is tied with the shared vertex, both faces one-sided)
+    -- is refuted from the facets of the type (`not_quadTripleRect_type07`): closed, no special
+    -- position is left
+    have hgen := noThreeCollinear_seven x hN hx
+    exact quadPairPar07 hx hN rfl hR (Minimality.not_quadTripleRect_type07 hx hgen hR)
   · -- type 08: `not_type08_of_isNopert'`; its general position (2 hypotheses) is asked, the special
     -- positions are open in Lean
     obtain ⟨fA, hfA⟩ := hR {0, 1, 2, 3} (by decide)
@@ -586,10 +590,11 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     exact byGen2 (not_type13_of_isNopert_sv x hN hx fA fB fD fG hfA hfB hfD hfG)
       (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 14: Cor. T1 at the quadrilaterals 0235, 1456 (sharing vertex 5); case (c) of the
-    -- triple tie does not occur (Lemma 23.0 (a)), so only `TriGenPar` or `TriGenFarP` is asked,
-    -- and one of them holds unless `QuadTripleRect` (see type 07): the remaining `sorry` assumes
-    -- exactly that residual position
-    exact byGen1 (quadPairPar14 hx hN rfl hR) (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
+    -- triple tie does not occur (Lemma 23.0 (a)), so only `TriGenPar` or `TriGenFarP` is needed,
+    -- and one of them holds unless `QuadTripleRect`, which is refuted from the facets of the type
+    -- (`not_quadTripleRect_type14`): closed
+    have hgen := noThreeCollinear_seven x hN hx
+    exact quadPairPar14 hx hN rfl hR (Minimality.not_quadTripleRect_type14 hx hgen hR)
   · exact big {0, 1, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 15: Theorem A
   · -- type 16: `not_type16_of_isNopert_codim2`; its general position (5 hypotheses) is asked, the special
     -- positions are open in Lean
