@@ -37,6 +37,7 @@ public import Minimality.CaseC18VSlide
 public import Minimality.CaseC18Step4
 public import Minimality.CaseC18Level
 public import Minimality.CaseC18Sp
+public import Minimality.CaseC18M
 public import Minimality.DepthSepTorque
 
 /-!
@@ -805,17 +806,18 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- normal-form frame `frame18` and `Frame18.isRupert_of_not_special` (Theorem 27.59: the edge
     -- crossings 27.32 and its Z-image, 27.31, the families A and A^Z, Theorem 5 with W = F2, and the
     -- vertex crossings V, V^Z at their own views with the pair partner T_A), off the special
-    -- positions `CaseC18Special' x` (PROOFS section 35, `CaseC18Sp.lean`): R1' (`A12 = A11`,
-    -- `b+ ≤ a-`, `b- ≤ a+`, not `c+ < a+ ∧ c- < a-`), the corners `a- = b+ = c-` and its Z-image
-    -- `a+ = b- = c+`, and the V side (`d+ = A1 t+`, `d- = A1 t-` (the far-end switch) or `D2 = 0` (the
-    -- border of V's rim), with `a+ < c+`, `a- < c-`).  The other equalities (`a∓ = b±`, `a± = c±`,
-    -- the right angles `A12 = A11`, `A12 = A22`) are no longer special: Theorems 1-4 of section 35
-    -- (`t31b_le`, `t31_C4/C5/C6`, `tB_merged`, `rupert_of_a12_eq_a11`).  The hyperplane `ClassH`
-    -- (`A12 (h+ + h-) = A11 (t+ h- + t- h+)`, the class `H_F1` of Proposition 27.38 (a)) is no
-    -- special position: off it V's view is slid along F1's circle (`CaseC18VSlide.lean`, Theorem
-    -- 27.41 Steps 1-3); on it along Δ's circle, with Theorem D's torque (`CaseC18Step4.lean`,
-    -- Step 4), and at the level chord `m1+ m1-` at V's view by Theorem LC (`CaseC18Level.lean`, a
-    -- tilt along F1's circle plus `e_y`).  The `sorry` has in
+    -- positions `CaseC18Special' x` (PROOFS section 36, `CaseC18M.lean`; Theorems M, M', R, Lemma LV
+    -- at the view `m1-`, with Theorems 1-4 of section 35 in `CaseC18Sp.lean`): the codim-3 residual
+    -- of R1' (`A12 = A11`, `b+ ≤ a-`, `b- ≤ a+`, not `c+ < a+ ∧ c- < a-`, `D2p ≤ 0`, and for each
+    -- side `a∓ = b±` or the tie `g a∓ d∓ = A11 ∧ A22 a∓ ≥ A11 c∓`), the codim-2 set `L_M'`
+    -- (`d+ = A1 t+`, `g a- d- = A12`, `A11 t+ - g a- h+ > A12`, `A12 c- ≤ A22 a- ≤ A12 d+`, with
+    -- `A1 t- ≤ d-`, `a± < c±`) and its Z-image, and the codim-4 corners `a- = b+ = c-`,
+    -- `A12 = A22`, `g a- d- = A12`, `A11 t+ - g a- h+ < A12` and its Z-image.  The other
+    -- equalities (`a∓ = b±`, `a± = c±`, `d± = A1 t±`, `D2 = 0`, the right angles) are no longer
+    -- special.  (PROOFS section 37 has since reduced the paper's special set further to the
+    -- codim-7 family E; not yet in Lean.)  The old section 35 assembly (V's own view slid along
+    -- F1's circle, `CaseC18VSlide`/`CaseC18Step4`/`CaseC18Level`) is no longer used by the type-18
+    -- skeleton.  The `sorry` has in
     -- context `hrest : CaseC18Special' x`
     have hQ := quadPairPar18 hx hN rfl hR
     exact byGen1 (quadPair hx hN hR {0, 3, 5, 6} {1, 2, 4, 5} 5 (by decide) (by decide) (by decide) (by decide)

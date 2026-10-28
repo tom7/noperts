@@ -10,12 +10,10 @@ public import Minimality.CaseC18Level
 Paper: `FEWER-FACES-PROOFS.md` section 35 (Lemma B, Theorems 1-4), referee fixes at its top.
 All groups are proved; see `nopert229/out/bottleneck/sp18/handoff_lean.md` for the plan.
 
-Final special set (`CaseC18Special'`):
-```
-  (a12 = a11 ∧ bp ≤ am ∧ bm ≤ ap ∧ ¬(cp < ap ∧ cm < am))
-  ∨ (am = bp ∧ am = cm) ∨ (ap = bm ∧ ap = cp)
-  ∨ ((dp = A1 tp ∨ dm = A1 tm ∨ D2p = 0) ∧ ap < cp ∧ am < cm)
-```
+The section 35 special set (`R1'`, the corners, the V side with `dp = A1 tp ∨ dm = A1 tm ∨ D2p = 0`)
+and its assembly `isRupert_of_not_special'` were superseded by PROOFS section 36: the final
+`CaseC18Special'` and `Frame18.isRupert_of_not_special'` are now in `CaseC18M.lean`, which uses
+`rupert_or_V'` and `rupert_of_a12_eq_a11` from this file (the `Vside_*` calls are no longer used).
 
 Test summary (all at the view `u = xa - xb = (1,-1,0)` unless noted; `Z` = `rupert_of_z (zFrame ..)`):
 * Group 0 (Theorem 1): `t31b_le`, `t31c_le` (no `hβ`, via the open depth predicate `Q5v`).
@@ -23,7 +21,7 @@ Test summary (all at the view `u = xa - xb = (1,-1,0)` unless noted; `Z` = `rupe
 * Group 2 (Theorem 2, C5/C6): `t31_C5z`, `t31_C5`, `t31_C6`, `t31_C6z`.
 * Group 3 (Theorem 3): `tB_merged`, `tBz_merged`.
 * Group 4 (Theorem 4): `g12_pos_of_eq`, `tA1_of_eq`, `tA1z_of_eq`, `t31a_eq`, `rupert_of_a12_eq_a11`.
-* Group 5 (assembly): `rupert_or_V'`, `CaseC18Special'`, `isRupert_of_not_special'`.
+* Group 5 (assembly): `rupert_or_V'` (the old `CaseC18Special'` assembly moved to `CaseC18M`).
 -/
 
 namespace Minimality.CaseC18
@@ -1119,65 +1117,6 @@ theorem rupert_or_V' (hx : Function.Injective x) (hα : F.a12 < F.a11)
   exact F.rupert_of_F2_view hx α γ k1 k2 k3
 
 end Frame18
-
-/-- **The special positions of type 18 after section 35**. -/
-def CaseC18Special' (x : Fin 7 → ℝ³) : Prop :=
-  ∃ F : Frame18 x,
-    (F.a12 = F.a11 ∧ F.S.bp ≤ F.S.am ∧ F.S.bm ≤ F.S.ap ∧ ¬ (F.S.cp < F.S.ap ∧ F.S.cm < F.S.am))
-    ∨ (F.S.am = F.S.bp ∧ F.S.am = F.S.cm) ∨ (F.S.ap = F.S.bm ∧ F.S.ap = F.S.cp)
-    ∨ ((F.S.dp = F.S.A1 * F.S.tp ∨ F.S.dm = F.S.A1 * F.S.tm ∨ F.S.D2p = 0) ∧
-        F.S.ap < F.S.cp ∧ F.S.am < F.S.cm)
-
-/-- **Off the special positions of type 18, a frame is Rupert.**  `A12 = A11` is Theorem 4
-(`rupert_of_a12_eq_a11`); otherwise `rupert_or_V'`, then the V-side calls
-(`Vside_classH_any`/`Vside_slide`, and `zFrame` for `V^Z`) with `nVp`, `nVm`, `nD` from the last
-disjunct and `ap < cp`, `am < cm`. -/
-theorem Frame18.isRupert_of_not_special' {x : Fin 7 → ℝ³} (F : Frame18 x)
-    (hx : Function.Injective x) (h : ¬ CaseC18Special' x) :
-    IsRupert (Finset.univ.image x) := by
-  have nR : ¬ (F.a12 = F.a11 ∧ F.S.bp ≤ F.S.am ∧ F.S.bm ≤ F.S.ap ∧
-        ¬ (F.S.cp < F.S.ap ∧ F.S.cm < F.S.am)) := fun h' => h ⟨F, Or.inl h'⟩
-  have c1 : ¬ (F.S.am = F.S.bp ∧ F.S.am = F.S.cm) := fun h' => h ⟨F, Or.inr (Or.inl h')⟩
-  have c2 : ¬ (F.S.ap = F.S.bm ∧ F.S.ap = F.S.cp) :=
-    fun h' => h ⟨F, Or.inr (Or.inr (Or.inl h'))⟩
-  have nV : ¬ ((F.S.dp = F.S.A1 * F.S.tp ∨ F.S.dm = F.S.A1 * F.S.tm ∨ F.S.D2p = 0) ∧
-        F.S.ap < F.S.cp ∧ F.S.am < F.S.cm) := fun h' => h ⟨F, Or.inr (Or.inr (Or.inr h'))⟩
-  by_cases heq : F.a12 = F.a11
-  · apply F.rupert_of_a12_eq_a11 heq
-    by_contra hn
-    push Not at hn
-    obtain ⟨n1, n2, n3⟩ := hn
-    exact nR ⟨heq, n1, n2, fun hh => absurd (n3 hh.1) (not_le.2 hh.2)⟩
-  have hα : F.a12 < F.a11 := lt_of_le_of_ne F.A12_le_A11 heq
-  rcases F.rupert_or_V' hx hα c1 c2 with h | ⟨h1, h2, hcp, hcm, hV⟩
-  · exact h
-  have nVp : F.S.dp ≠ F.S.A1 * F.S.tp := fun e => nV ⟨Or.inl e, hcp, hcm⟩
-  have nVm : F.S.dm ≠ F.S.A1 * F.S.tm := fun e => nV ⟨Or.inr (Or.inl e), hcp, hcm⟩
-  have nD : F.S.D2p ≠ 0 := fun e => nV ⟨Or.inr (Or.inr e), hcp, hcm⟩
-  rcases hV with hV | hV
-  · by_cases hH : F.ClassH
-    · exact F.Vside_classH_any hx (lt_of_le_of_ne hV nVp) h1 h2 nD hH
-    · exact F.Vside_slide hx (lt_of_le_of_ne hV nVp) h1 h2 nD hH
-  · apply rupert_of_z
-    have hxz : Function.Injective (x ∘ zperm) := hx.comp zperm_bijective.1
-    have hdp : F.zFrame.S.dp < F.zFrame.S.A1 * F.zFrame.S.tp := by
-      have : F.zFrame.S.dp = F.S.dm := rfl
-      have hA : F.zFrame.S.A1 = F.S.A1 := by
-        show F.S.am + F.S.ap = F.S.ap + F.S.am
-        ring
-      show F.S.dm < F.zFrame.S.A1 * F.S.tm
-      rw [hA]
-      exact lt_of_le_of_ne hV nVm
-    have hD : F.zFrame.S.D2p ≠ 0 := by
-      intro h0
-      apply nD
-      have e : F.zFrame.S = F.S.swap := rfl
-      rw [e] at h0
-      simp only [Shape18.D2p, Shape18.swap] at h0 ⊢
-      linarith
-    by_cases hH : F.ClassH
-    · exact F.zFrame.Vside_classH_any hxz hdp h2 h1 hD ((F.classH_zFrame_iff).2 hH)
-    · exact F.zFrame.Vside_slide hxz hdp h2 h1 hD (fun hz => hH ((F.classH_zFrame_iff).1 hz))
 
 end Minimality.CaseC18
 

@@ -1277,8 +1277,8 @@ Paper: FEWER-FACES-PROOFS.md Theorem 27.41 Step 4 (~16932), Lemma 22.4, Theorem 
   (`c = xb`; `e = [m1+, v]` if `B > 0`, `e = [v, m1-]` if `B < 0`) is depth-separated at `uV` and its torque
   satisfies `torque * G(D, uV) = -a12 g hp tp kp` resp. `-a12 g hm Vp` (an identity; `ClassH` is used only
   for the depth order).  `z(m2-)` vs `z(xb)` comes from `vN4_A` and `hB`.
-* `vN4_classH_rupert`, `vNt_classH_rupert`, `Vside_classH`.  `CaseC18Special'` and
-  `Frame18.isRupert_of_not_special'` are in `CaseC18Sp.lean`.
+* `vN4_classH_rupert`, `vNt_classH_rupert`, `Vside_classH`.  The final `CaseC18Special'` and
+  `Frame18.isRupert_of_not_special'` are in `CaseC18M.lean` (the section 35 versions were removed).
 
 ## The level chord
 
