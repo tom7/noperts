@@ -341,7 +341,7 @@ theorem tie_no_forces_at_right (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (n
     intro y hy
     obtain ⟨s, t, hs, ht, e⟩ := force_mem_cone (hconvX y hy) (hFw y (hXV hy))
       (hFn y (hXV hy) _ (hnb1 y hy)) (hFn y (hXV hy) _ (hnb0 y hy))
-    exact ⟨s, t, hs, ht, by simp only [G, tgen, ite_false, ite_true]; exact e⟩
+    exact ⟨s, t, hs, ht, by simp only [G, tgen, ite_true]; exact e⟩
   choose! s t hs ht hst using hcone
   obtain ⟨π1, π3, h1, h3, hFa⟩ := force_mem_cone hconva (hFw a ha) (hFn a ha b hb) (hFn a ha a0 ha0)
   obtain ⟨κ3, κ2, k3, k2, hFb⟩ := force_mem_cone hconvb (hFw b hb) (hFn b hb b1 hb1) (hFn b hb a ha)
@@ -350,7 +350,7 @@ theorem tie_no_forces_at_right (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (n
   set δ := σ * ⟪b - a, w⟫ with hδdef
   let l : ℝ³ × Bool → ℝ := fun j => if j.2 then t j.1 else s j.1
   have hFX : ∀ y ∈ X, F y = l (y, false) • G (y, false) + l (y, true) • G (y, true) := by
-    intro y hy; simp only [l, ite_false, ite_true]; exact hst y hy
+    intro y hy; simp only [l, ite_true]; exact hst y hy
   have split : ∀ {M : Type} [AddCommMonoid M] (φ : ℝ³ → M), (∀ y, F y = 0 → φ y = 0) →
       ∑ y ∈ V, φ y = ∑ y ∈ X, φ y + φ a + φ b := fun φ hφ =>
     sum_split V X φ hXV ha hb hab haX hbX fun y hy h1 h2 h3 => hφ y (hzero y hy h1 h2 h3)
@@ -498,7 +498,7 @@ theorem tie_no_forces_at_right_neg (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³
     intro y hy
     obtain ⟨s, t, hs, ht, e⟩ := force_mem_cone (hconvX y hy) (hFw y (hXV hy))
       (hFn y (hXV hy) _ (hnb1 y hy)) (hFn y (hXV hy) _ (hnb0 y hy))
-    exact ⟨s, t, hs, ht, by simp only [G, tgen, ite_false, ite_true]; exact e⟩
+    exact ⟨s, t, hs, ht, by simp only [G, tgen, ite_true]; exact e⟩
   choose! s t hs ht hst using hcone
   obtain ⟨π1, π3, h1, h3, hFa⟩ := force_mem_cone hconva (hFw a ha) (hFn a ha b hb) (hFn a ha a0 ha0)
   obtain ⟨κ3, κ2, k3, k2, hFb⟩ := force_mem_cone hconvb (hFw b hb) (hFn b hb b1 hb1) (hFn b hb a ha)
@@ -507,7 +507,7 @@ theorem tie_no_forces_at_right_neg (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³
   set δ := σ * ⟪a - b, w⟫ with hδdef
   let l : ℝ³ × Bool → ℝ := fun j => if j.2 then t j.1 else s j.1
   have hFX : ∀ y ∈ X, F y = l (y, false) • G (y, false) + l (y, true) • G (y, true) := by
-    intro y hy; simp only [l, ite_false, ite_true]; exact hst y hy
+    intro y hy; simp only [l, ite_true]; exact hst y hy
   have split : ∀ {M : Type} [AddCommMonoid M] (φ : ℝ³ → M), (∀ y, F y = 0 → φ y = 0) →
       ∑ y ∈ V, φ y = ∑ y ∈ X, φ y + φ a + φ b := fun φ hφ =>
     sum_split V X φ hXV ha hb hab haX hbX fun y hy h1 h2 h3 => hφ y (hzero y hy h1 h2 h3)

@@ -337,14 +337,14 @@ theorem isRupert_twoQuads_frame (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
     have hA0 := C10.far_pos
     have hB0 := C20.far_pos
     obtain ⟨i, ei1, ei2⟩ : ∃ i : Fin 3, ca0 m0 = ![a1, a2, a3] i ∧ cz0 m0 = ![z1, z2, z3] i := by
-      simp only [hQ1def, QuadPt] at hA
+      simp only [QuadPt] at hA
       rcases hA with ⟨e, -⟩ | ⟨e1, e2⟩ | ⟨e1, e2⟩ | ⟨e1, e2⟩
       · linarith
       · exact ⟨0, e1, e2⟩
       · exact ⟨1, e1, e2⟩
       · exact ⟨2, e1, e2⟩
     obtain ⟨j, ej1, ej2⟩ : ∃ j : Fin 3, cb0 n0 = ![b1, b2, b3] j ∧ dz0 n0 = ![w1, w2, w3] j := by
-      simp only [hQ2def, QuadPt] at hB
+      simp only [QuadPt] at hB
       rcases hB with ⟨e, -⟩ | ⟨e1, e2⟩ | ⟨e1, e2⟩ | ⟨e1, e2⟩
       · linarith
       · exact ⟨0, e1, e2⟩

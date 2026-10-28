@@ -217,15 +217,15 @@ theorem Frame20.vN4 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injecti
     rcases hm with rfl | rfl | rfl
     · obtain ⟨s, δ, hs0, hs1, hδ, ex, ey, ez⟩ := vN4_mid5 F.S hV hVW
       refine ⟨0, s, δ, hs0, hs1, hδ, ?_, ?_, ?_⟩ <;>
-        simp only [b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3, F.ptC_5, F.ptC_0, F.ptC_3, Shape20.u_vN4] at ex ey ez ⊢ <;>
+        simp only [b0, quad_0, quad_1, F.ptC_5, Shape20.u_vN4] at ex ey ez ⊢ <;>
         linarith
     · obtain ⟨s, δ, hs0, hs1, hδ, ex, ey, ez⟩ := vN4_mid1 F.S hV hVW
       refine ⟨0, s, δ, hs0, hs1, hδ, ?_, ?_, ?_⟩ <;>
-        simp only [b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3, F.ptC_1, F.ptC_0, F.ptC_3, Shape20.u_vN4] at ex ey ez ⊢ <;>
+        simp only [b0, quad_0, quad_1, F.ptC_1, Shape20.u_vN4] at ex ey ez ⊢ <;>
         linarith
     · obtain ⟨s, δ, hs0, hs1, hδ, ex, ey, ez⟩ := vN4_mid2 F.S hV hVW
       refine ⟨3, s, δ, hs0, hs1, hδ, ?_, ?_, ?_⟩ <;>
-        simp only [b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3, F.ptC_2, F.ptC_6, F.ptC_0, Shape20.u_vN4] at ex ey ez ⊢ <;>
+        simp only [b3, quad_0, quad_3, F.ptC_2, Shape20.u_vN4] at ex ey ez ⊢ <;>
         linarith
 
 namespace Shape20
@@ -404,11 +404,11 @@ theorem Frame20.tANR {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
     rcases hm with rfl | rfl
     · obtain ⟨s, δ, hs0, hs1, hδ, ex, ey, ez⟩ := hm5
       refine ⟨3, s, δ, hs0, hs1, hδ, ?_, ?_, ?_⟩ <;>
-        simp only [b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3, F.ptC_5, F.ptC_3, F.ptC_0] at ex ey ez ⊢ <;>
+        simp only [b3, quad_0, quad_3, F.ptC_5] at ex ey ez ⊢ <;>
         linarith
     · obtain ⟨s, δ, hs0, hs1, hδ, ex, ey, ez⟩ := hm1
       refine ⟨3, s, δ, hs0, hs1, hδ, ?_, ?_, ?_⟩ <;>
-        simp only [b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3, F.ptC_1, F.ptC_3, F.ptC_0] at ex ey ez ⊢ <;>
+        simp only [b3, quad_0, quad_3, F.ptC_1] at ex ey ez ⊢ <;>
         linarith
 
 end Minimality.CaseC20

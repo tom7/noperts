@@ -92,8 +92,7 @@ noncomputable def liftH (n : ℝ²) : ℝ³ := !₂[n 0, n 1, 0]
 
 theorem inner_screenVel (ω τ v : ℝ³) (n : ℝ²) :
     ⟪n, screenVel ω τ v⟫ = ⟪ω, cross v (liftH n)⟫ + ⟪τ, liftH n⟫ := by
-  simp [screenVel, proj_xy, crossMatrix, cross, liftH, Matrix.toLpLin_apply, Matrix.mulVec,
-    dotProduct, Fin.sum_univ_three, PiLp.inner_apply, Fin.sum_univ_two]
+  simp [screenVel, proj_xy, crossMatrix, cross, liftH, Matrix.toLpLin_apply, dotProduct, Fin.sum_univ_three, PiLp.inner_apply, Fin.sum_univ_two]
   ring
 
 theorem normalConeAt_isClosed (S : Set ℝ²) (p : ℝ²) : IsClosed (normalConeAt S p) := by

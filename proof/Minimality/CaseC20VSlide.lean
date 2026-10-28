@@ -459,11 +459,11 @@ theorem vN4_slide (hx : Function.Injective x)
     rcases hm with rfl | rfl
     · obtain ⟨s, δ, hs0, hs1, hδ, ex, ez⟩ := hm5
       refine ⟨0, s, δ, hs0, hs1, hδ, ?_, ?_, ?_⟩ <;>
-        simp [b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3, F.ptC_5, F.ptC_0, F.ptC_3, C3.slide,
+        simp [b0, quad_0, quad_1, F.ptC_5, C3.slide,
           Shape20.u_vN4, Shape20.eF1] at ex ez ⊢ <;> linarith
     · obtain ⟨s, δ, hs0, hs1, hδ, ex, ez⟩ := hm1
       refine ⟨0, s, δ, hs0, hs1, hδ, ?_, ?_, ?_⟩ <;>
-        simp [b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3, F.ptC_1, F.ptC_0, F.ptC_3, C3.slide,
+        simp [b0, quad_0, quad_1, F.ptC_1, C3.slide,
           Shape20.u_vN4, Shape20.eF1] at ex ez ⊢ <;> linarith
 
 /-- **`T_A` for `b+ < a-`** (as `Frame20.tANR'`): `hnp` replaced by `¬ F.ClassH`. -/

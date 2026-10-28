@@ -35,7 +35,7 @@ theorem IsT4.exists_normalForm {A B C T K₁ K₂ : ℝ³} (h : IsT4 A B C T K�
       a₁ - β₁ + c₁ + t₁ = 1 ∧ a₂ + b₂ - γ₂ + t₂ = 1 ∧ β₁ * γ₂ = c₁ * b₂ ∧
       K₁ = a₁ • A - β₁ • B + c₁ • C + t₁ • T ∧ K₂ = a₂ • A + b₂ • B - γ₂ • C + t₂ • T := by
   have hnd := h.nodup
-  simp only [List.nodup_cons, List.mem_cons, List.mem_singleton, List.not_mem_nil, or_false,
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd
   obtain ⟨⟨hAB, hAC, hAT, hAK₁, hAK₂⟩, ⟨hBC, hBT, hBK₁, hBK₂⟩, ⟨hCT, hCK₁, hCK₂⟩,
     ⟨hTK₁, hTK₂⟩, hK₁K₂, -⟩ := hnd
@@ -158,7 +158,7 @@ theorem isRupert_T4_core {A B C T : ℝ³} (hΔ : det3 (B - A) (C - A) (T - A) �
   have eC : C = P 0 1 0 := by simp [hP, cmb, f₂]
   have eT : T = P 0 0 1 := by simp [hP, cmb, f₃]
   have hf₃ : f₃ ≠ 0 := by
-    intro h0; apply hΔ; simp [h0, det3, cross, PiLp.inner_apply, Fin.sum_univ_three]
+    intro h0; apply hΔ; simp [h0, det3, cross]
   obtain ⟨a0, a1, a2, a3⟩ := zmod4_add_one
   -- choose the view: `w` in the open interval, off the circle `⟪f₃, d⟫ = 0`
   set lo := max 0 ((t₁ - 1) / c₁)

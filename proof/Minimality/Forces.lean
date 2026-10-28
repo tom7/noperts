@@ -124,7 +124,7 @@ theorem force_mem_cone {v y₀ y₁ w F : ℝ³} (hD : 0 < det3 (y₁ - v) (y₀
   apply smul_right_injective ℝ³ hD.ne'
   simp only [smul_add, smul_smul]
   rw [h, mul_div_cancel₀ _ hD.ne', mul_div_cancel₀ _ hD.ne']
-  simp only [smul_neg, neg_smul, neg_neg]
+  simp only [smul_neg, neg_smul]
 
 /-- **Lemma 7.1 at a view, frame-free.** If every force system at the view `w`
 (see the module docstring) vanishes, `V` is Rupert. -/

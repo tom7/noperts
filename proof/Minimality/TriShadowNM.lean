@@ -443,8 +443,7 @@ theorem isRupert_triShadow_nm (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n : 
     rw [hZpos _ (by omega)]; simp [triZN]
   have hZQ : Z ((m + 3 : ℕ) : ZMod (m + n + 3)) = dz n := by
     rw [hZpos _ (by omega)]
-    simp [triZN, show ¬ m + 3 ≤ m by omega, show ¬ m + 3 = m + 1 by omega,
-      show ¬ m + 3 = m + 2 by omega, show m + n + 3 - (m + 3) = n by omega]
+    simp [triZN, show ¬ m + 3 ≤ m by omega, show m + n + 3 - (m + 3) = n by omega]
   have hZ2 : ∀ l, m + 3 ≤ l → l ≤ m + n + 2 → Z (l : ZMod (m + n + 3)) = dz (m + n + 3 - l) := by
     intro l h1 h2; rw [hZpos l (by omega)]
     simp [triZN, show ¬ l ≤ m by omega, show ¬ l = m + 1 by omega, show ¬ l = m + 2 by omega]

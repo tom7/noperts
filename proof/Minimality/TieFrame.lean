@@ -44,7 +44,7 @@ theorem farDet_obl (O r1 r2 : ℝ²) (A A0 B B1 c z0 z1 : ℝ) :
       (oblPt O r1 r2 A 0 c) (oblPt O r1 r2 0 B c) ez =
       (A - A0) * (B - B1) * cross2 r1 r2 * A *
         (r1 0 * (B * r2 0 - A * r1 0) + r1 1 * (B * r2 1 - A * r1 1)) := by
-  simp [farDet, cross, ez, oblPt, cross2, PiLp.inner_apply, Fin.sum_univ_three]; ring
+  simp [farDet, cross, ez, oblPt, cross2, PiLp.inner_apply]; ring
 
 theorem farDet_obl_neg (O r1 r2 : ℝ²) (A A0 B B1 c z0 z1 : ℝ) :
     farDet (cross (oblPt O r1 r2 0 B1 z1 - oblPt O r1 r2 0 B c) ez)
@@ -53,7 +53,7 @@ theorem farDet_obl_neg (O r1 r2 : ℝ²) (A A0 B B1 c z0 z1 : ℝ) :
       (oblPt O r1 r2 0 B c) (oblPt O r1 r2 A 0 c) ez =
       (A - A0) * (B - B1) * cross2 r1 r2 * B *
         (r2 0 * (A * r1 0 - B * r2 0) + r2 1 * (A * r1 1 - B * r2 1)) := by
-  simp [farDet, cross, ez, oblPt, cross2, PiLp.inner_apply, Fin.sum_univ_three]; ring
+  simp [farDet, cross, ez, oblPt, cross2, PiLp.inner_apply]; ring
 
 /-- The right angle at `a` in the oblique frame. -/
 theorem inner_obl_right_a (O r1 r2 : ℝ²) (A B c A0 z0 : ℝ) :

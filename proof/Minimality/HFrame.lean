@@ -185,8 +185,7 @@ theorem det3_u0_coord (P Q S : ℝ³) :
   rw [e1, e6] at h
   simp only [hdet] at h
   simp only [crossXY, hfΦ_x_sub F, hfΦ_y_sub F]
-  simp only [real_inner_comm (hfE v g u0) (Q - P), real_inner_comm (hfE v g u0) (S - P),
-    real_inner_comm (-N) (Q - P), real_inner_comm (-N) (S - P)]
+  simp only [real_inner_comm (hfE v g u0) (Q - P), real_inner_comm (hfE v g u0) (S - P)]
   linear_combination -h
 
 

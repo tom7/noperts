@@ -468,7 +468,7 @@ theorem vNt_rest1_ev
   have c02 := vNt_cyc S D2p Vp A1z A1 0 2 (by decide) (by decide)
   have c10 := vNt_cyc S D2p Vp A1z A1 1 0 (by decide) (by decide)
   obtain ⟨b0, b1, b2⟩ := zmod3_add_one
-  simp only [b0, b1, b2, tri_0, tri_1, tri_2] at c02 c10
+  simp only [b0, b1, tri_0, tri_1, tri_2] at c02 c10
   have t0 : PS 1 S.uV ((⟨S.tm, 0, -S.hm⟩ : C3).sub ⟨S.tp, 0, S.hp⟩)
       ((⟨0, S.sp, S.kp⟩ : C3).sub ⟨S.tp, 0, S.hp⟩) := by
     unfold PS at c02 ⊢; rw [one_mul] at c02 ⊢
@@ -671,11 +671,11 @@ theorem vNt_slide_rupert (hx : Function.Injective x) (hD2 : 0 < F.S.D2p) (hV : 0
     rcases hm with rfl | rfl
     · obtain ⟨s, δ, hs0, hs1, hδ, ex, ez⟩ := hm5
       refine ⟨0, s, δ, hs0, hs1, hδ, ?_, ?_, ?_⟩ <;>
-        simp [tri_0, tri_1, hc, ptC_5, ptC_0, ptC_6, C3.slide, Shape18.uV, Shape18.eF1] at ex ez ⊢ <;>
+        simp [tri_0, tri_1, ptC_5, ptC_0, ptC_6, C3.slide, Shape18.uV, Shape18.eF1] at ex ez ⊢ <;>
         linarith
     · obtain ⟨s, δ, hs0, hs1, hδ, ex, ez⟩ := hm3
       refine ⟨0, s, δ, hs0, hs1, hδ, ?_, ?_, ?_⟩ <;>
-        simp [tri_0, tri_1, hc, ptC_3, ptC_0, ptC_6, C3.slide, Shape18.uV, Shape18.eF1] at ex ez ⊢ <;>
+        simp [tri_0, tri_1, ptC_3, ptC_0, ptC_6, C3.slide, Shape18.uV, Shape18.eF1] at ex ez ⊢ <;>
         linarith
 
 /-- **The `V` side of 27.59 off `ClassH`** (as `Vside`, with `hnd` replaced by `¬ F.ClassH`). -/

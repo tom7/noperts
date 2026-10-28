@@ -499,7 +499,7 @@ theorem N4D_pair_V (hH : F.ClassH) (hV : 0 < F.S.Vq)
       · have : s = 1 := by rw [hv] at hs1; omega
         subst this
         have e : (4 : ZMod 5) + ((1 : ℕ) : ZMod 5) = 0 := by decide
-        simp only [e, pent_0, pent_4, dV, Frame20.dep, F.ptC_0, F.ptC_6] at h0 ⊢
+        simp only [e, pent_0, pent_4, Frame20.dep, F.ptC_0, F.ptC_6] at h0 ⊢
         exact h0
       · rw [hv] at hs1
         interval_cases s
@@ -507,7 +507,7 @@ theorem N4D_pair_V (hH : F.ClassH) (hV : 0 < F.S.Vq)
           simp only [e, pent_1, pent_4, dV, Frame20.dep, F.ptC_5, F.ptC_6] at d5 hd4 ⊢
           linarith
         · have e : (4 : ZMod 5) + ((3 : ℕ) : ZMod 5) = 2 := by decide
-          simp only [e, pent_2, pent_4, dV, Frame20.dep, F.ptC_3, F.ptC_6] at h6 ⊢
+          simp only [e, pent_2, pent_4, Frame20.dep, F.ptC_3, F.ptC_6] at h6 ⊢
           linarith
         · have e : (4 : ZMod 5) + ((4 : ℕ) : ZMod 5) = 3 := by decide
           simp only [e, pent_3, pent_4, dV, Frame20.dep, F.ptC_4, F.ptC_6] at h2 ⊢
@@ -567,7 +567,7 @@ theorem N4D_pair_V (hH : F.ClassH) (hV : 0 < F.S.Vq)
       · rw [hv] at hs1
         interval_cases s
         · have e : (4 : ZMod 5) + ((1 : ℕ) : ZMod 5) = 0 := by decide
-          simp only [e, pent_0, pent_4, dV, Frame20.dep, F.ptC_0, F.ptC_6] at h0 ⊢
+          simp only [e, pent_0, pent_4, Frame20.dep, F.ptC_0, F.ptC_6] at h0 ⊢
           exact h0
         · have e : (4 : ZMod 5) + ((2 : ℕ) : ZMod 5) = 1 := by decide
           simp only [e, pent_1, pent_4, dV, Frame20.dep, F.ptC_5, F.ptC_6] at d5 hd4 ⊢
@@ -575,7 +575,7 @@ theorem N4D_pair_V (hH : F.ClassH) (hV : 0 < F.S.Vq)
       · rw [hv] at hs1
         interval_cases s
         · have e : (4 : ZMod 5) + ((3 : ℕ) : ZMod 5) = 2 := by decide
-          simp only [e, pent_2, pent_4, dV, Frame20.dep, F.ptC_3, F.ptC_6] at h6 ⊢
+          simp only [e, pent_2, pent_4, Frame20.dep, F.ptC_3, F.ptC_6] at h6 ⊢
           exact h6
         · have e : (4 : ZMod 5) + ((4 : ℕ) : ZMod 5) = 3 := by decide
           simp only [e, pent_3, pent_4, dV, Frame20.dep, F.ptC_4, F.ptC_6] at h2 ⊢
@@ -670,7 +670,7 @@ theorem TA_pair (hH : F.ClassH) (hA1 : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.
           simp only [e, pent_2, pent_1, dT, dep, F.ptC_4, F.ptC_6] at h4 ⊢
           exact h4
         · have e : (1 : ZMod 5) + ((2 : ℕ) : ZMod 5) = 3 := by decide
-          simp only [e, pent_3, pent_1, dT, dep, F.ptC_3, F.ptC_6] at h3 ⊢
+          simp only [e, pent_3, pent_1, dep, F.ptC_3, F.ptC_6] at h3 ⊢
           exact h3
       · rw [hv] at hs1
         interval_cases s
@@ -678,7 +678,7 @@ theorem TA_pair (hH : F.ClassH) (hA1 : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.
           simp only [e, pent_4, pent_1, dT, dep, F.ptC_5, F.ptC_6] at d5 hd6 ⊢
           linarith
         · have e : (1 : ZMod 5) + ((4 : ℕ) : ZMod 5) = 0 := by decide
-          simp only [e, pent_0, pent_1, dT, dep, F.ptC_0, F.ptC_6] at h0 ⊢
+          simp only [e, pent_0, pent_1, dep, F.ptC_0, F.ptC_6] at h0 ⊢
           exact h0
     · rw [F.toFrame7.x_sub, F.toFrame7.inner_fvC]; exact hden
     · rw [F.toFrame7.torque3_frame]
@@ -738,7 +738,7 @@ theorem TA_pair (hH : F.ClassH) (hA1 : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.
           simp only [e, pent_2, pent_1, dT, dep, F.ptC_4, F.ptC_6] at h4 ⊢
           exact h4
         · have e : (1 : ZMod 5) + ((2 : ℕ) : ZMod 5) = 3 := by decide
-          simp only [e, pent_3, pent_1, dT, dep, F.ptC_3, F.ptC_6] at h3 ⊢
+          simp only [e, pent_3, pent_1, dep, F.ptC_3, F.ptC_6] at h3 ⊢
           exact h3
         · have e : (1 : ZMod 5) + ((3 : ℕ) : ZMod 5) = 4 := by decide
           simp only [e, pent_4, pent_1, dT, dep, F.ptC_5, F.ptC_6] at d5 hd6 ⊢
@@ -746,7 +746,7 @@ theorem TA_pair (hH : F.ClassH) (hA1 : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.
       · rw [hv] at hs1
         interval_cases s
         have e : (1 : ZMod 5) + ((4 : ℕ) : ZMod 5) = 0 := by decide
-        simp only [e, pent_0, pent_1, dT, dep, F.ptC_0, F.ptC_6] at h0 ⊢
+        simp only [e, pent_0, pent_1, dep, F.ptC_0, F.ptC_6] at h0 ⊢
         exact h0
     · rw [F.toFrame7.x_sub, F.toFrame7.inner_fvC]; exact hden
     · rw [F.toFrame7.torque3_frame]

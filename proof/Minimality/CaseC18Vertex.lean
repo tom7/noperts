@@ -480,7 +480,7 @@ theorem vN4_rupert (hx : Function.Injective x) (hD2 : F.S.D2p < 0) (hV : 0 < F.S
     · obtain ⟨s, δ, hs0, hs1, hδ, ex, ey, ez⟩ := F.S.mid_m2p
       have a3 : (3 : ZMod 4) + 1 = 0 := by decide
       refine ⟨3, s, δ, hs0, hs1, hδ, ?_, ?_, ?_⟩ <;>
-        simp [a3, quad_0, quad_3, hc, ptC_1, ptC_0, ptC_4, Shape18.uV] at ex ey ez ⊢ <;> linarith
+        simp [a3, quad_0, quad_3, ptC_1, ptC_0, ptC_4, Shape18.uV] at ex ey ez ⊢ <;> linarith
 
 end Frame18
 
@@ -549,17 +549,17 @@ theorem vNt_rupert (hx : Function.Injective x) (hD2 : 0 < F.S.D2p) (hV : 0 < F.S
     rcases hm with rfl | rfl | rfl
     · obtain ⟨s, δ, hs0, hs1, hδ, ex, ez⟩ := F.S.mid_v hV
       refine ⟨0, s, δ, hs0, hs1, hδ, ?_, ?_, ?_⟩ <;>
-        simp [tri_0, tri_1, hc, ptC_5, ptC_0, ptC_6, Shape18.uV] at ex ez ⊢ <;> linarith
+        simp [tri_0, tri_1, ptC_5, ptC_0, ptC_6, Shape18.uV] at ex ez ⊢ <;> linarith
     · obtain ⟨s, δ, hs0, hs1, hδ, ex, ez⟩ := F.S.mid_xa hV (by
         unfold Shape18.Wp Shape18.Vp
         have := F.S.roof_p'
         nlinarith [mul_pos hA1z (sub_pos.2 (F.S.sp_lt)), F.S.kp_pos, F.S.tm_lt, F.S.tm_pos])
       refine ⟨0, s, δ, hs0, hs1, hδ, ?_, ?_, ?_⟩ <;>
-        simp [tri_0, tri_1, hc, ptC_3, ptC_0, ptC_6, Shape18.uV] at ex ez ⊢ <;> linarith
+        simp [tri_0, tri_1, ptC_3, ptC_0, ptC_6, Shape18.uV] at ex ez ⊢ <;> linarith
     · obtain ⟨s, δ, hs0, hs1, hδ, ex, ey, ez⟩ := F.S.mid_m2p
       have a2 : (2 : ZMod 3) + 1 = 0 := by decide
       refine ⟨2, s, δ, hs0, hs1, hδ, ?_, ?_, ?_⟩ <;>
-        simp [a2, tri_0, tri_2, hc, ptC_1, ptC_0, ptC_4, Shape18.uV] at ex ey ez ⊢ <;> linarith
+        simp [a2, tri_0, tri_2, ptC_1, ptC_0, ptC_4, Shape18.uV] at ex ey ez ⊢ <;> linarith
 
 end Frame18
 

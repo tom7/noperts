@@ -145,15 +145,15 @@ theorem cross_add_smul_right (y G0 G1 : ℝ³) (s t : ℝ) :
   ext i; fin_cases i <;> simp [cross] <;> ring
 
 theorem inner_single0 (x : ℝ³) : ⟪x, EuclideanSpace.single 0 1⟫ = x 0 := by
-  simp [PiLp.inner_apply, Fin.sum_univ_three]
+  simp [PiLp.inner_apply]
 
 theorem inner_single1 (x : ℝ³) : ⟪x, EuclideanSpace.single 1 1⟫ = x 1 := by
-  simp [PiLp.inner_apply, Fin.sum_univ_three]
+  simp [PiLp.inner_apply]
 
 /-- Splitting a sum over the generators of `X`. -/
 theorem sum_gen {M : Type*} [AddCommMonoid M] (X : Finset ℝ³) (φ : ℝ³ × Bool → M) :
     ∑ j ∈ X ×ˢ (univ : Finset Bool), φ j = ∑ y ∈ X, (φ (y, false) + φ (y, true)) := by
-  rw [sum_product]; simp [Fintype.sum_bool, add_comm]
+  rw [sum_product]; simp [add_comm]
 
 set_option maxHeartbeats 8000000 in
 /-- **The robust tie at one view.** At a view `w`: the corners `X` (each
@@ -203,7 +203,7 @@ theorem tie_no_forces_at (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (nb0 nb1
     intro y hy
     obtain ⟨s, t, hs, ht, e⟩ := force_mem_cone (hconvX y hy) (hFw y (hXV hy))
       (hFn y (hXV hy) _ (hnb1 y hy)) (hFn y (hXV hy) _ (hnb0 y hy))
-    exact ⟨s, t, hs, ht, by simp only [G, tgen, ite_false, ite_true]; exact e⟩
+    exact ⟨s, t, hs, ht, by simp only [G, tgen, ite_true]; exact e⟩
   choose! s t hs ht hst using hcone
   obtain ⟨π1, π3, h1, h3, hFa⟩ := force_mem_cone hconva (hFw a ha) (hFn a ha b hb) (hFn a ha a0 ha0)
   obtain ⟨κ3, κ2, k3, k2, hFb⟩ := force_mem_cone hconvb (hFw b hb) (hFn b hb b1 hb1) (hFn b hb a ha)
@@ -212,7 +212,7 @@ theorem tie_no_forces_at (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (nb0 nb1
   set δ := σ * ⟪b - a, w⟫ with hδdef
   let l : ℝ³ × Bool → ℝ := fun j => if j.2 then t j.1 else s j.1
   have hFX : ∀ y ∈ X, F y = l (y, false) • G (y, false) + l (y, true) • G (y, true) := by
-    intro y hy; simp only [l, ite_false, ite_true]; exact hst y hy
+    intro y hy; simp only [l, ite_true]; exact hst y hy
   -- sums over `V` split as `X`, `a`, `b`
   have split : ∀ {M : Type} [AddCommMonoid M] (φ : ℝ³ → M), (∀ y, F y = 0 → φ y = 0) →
       ∑ y ∈ V, φ y = ∑ y ∈ X, φ y + φ a + φ b := fun φ hφ =>
@@ -346,7 +346,7 @@ theorem tie_no_forces_at_neg (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (nb0
     intro y hy
     obtain ⟨s, t, hs, ht, e⟩ := force_mem_cone (hconvX y hy) (hFw y (hXV hy))
       (hFn y (hXV hy) _ (hnb1 y hy)) (hFn y (hXV hy) _ (hnb0 y hy))
-    exact ⟨s, t, hs, ht, by simp only [G, tgen, ite_false, ite_true]; exact e⟩
+    exact ⟨s, t, hs, ht, by simp only [G, tgen, ite_true]; exact e⟩
   choose! s t hs ht hst using hcone
   obtain ⟨π1, π3, h1, h3, hFa⟩ := force_mem_cone hconva (hFw a ha) (hFn a ha b hb) (hFn a ha a0 ha0)
   obtain ⟨κ3, κ2, k3, k2, hFb⟩ := force_mem_cone hconvb (hFw b hb) (hFn b hb b1 hb1) (hFn b hb a ha)
@@ -355,7 +355,7 @@ theorem tie_no_forces_at_neg (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (nb0
   set δ := σ * ⟪a - b, w⟫ with hδdef
   let l : ℝ³ × Bool → ℝ := fun j => if j.2 then t j.1 else s j.1
   have hFX : ∀ y ∈ X, F y = l (y, false) • G (y, false) + l (y, true) • G (y, true) := by
-    intro y hy; simp only [l, ite_false, ite_true]; exact hst y hy
+    intro y hy; simp only [l, ite_true]; exact hst y hy
   -- sums over `V` split as `X`, `a`, `b`
   have split : ∀ {M : Type} [AddCommMonoid M] (φ : ℝ³ → M), (∀ y, F y = 0 → φ y = 0) →
       ∑ y ∈ V, φ y = ∑ y ∈ X, φ y + φ a + φ b := fun φ hφ =>

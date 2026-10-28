@@ -271,7 +271,7 @@ theorem frameDep_isDep {a a' b c v w : ℝ³} (hnd : [a, a', b, v, c, w].Nodup) 
   obtain ⟨⟨haa', hab, hav, hac, haw⟩, ⟨ha'b, ha'v, ha'c, ha'w⟩, ⟨hbv, hbc, hbw⟩,
     ⟨hvc, hvw⟩, hcw, -⟩ := hnd
   have hcr := cramer (b - a) (c - a) (a' - a) (v - a)
-  constructor <;> simp only [frameDep, ↓reduceIte, haa', Ne.symm haa', hab, Ne.symm hab, hav, Ne.symm hav, hac, Ne.symm hac, haw, Ne.symm haw, ha'b, Ne.symm ha'b, ha'v, Ne.symm ha'v, ha'c, Ne.symm ha'c, ha'w, Ne.symm ha'w, hbv, Ne.symm hbv, hbc, Ne.symm hbc, hbw, Ne.symm hbw, hvc, Ne.symm hvc, hvw, Ne.symm hvw, hcw, Ne.symm hcw]
+  constructor <;> simp only [frameDep, ↓reduceIte, haa', hab, hav, hac, Ne.symm haw, ha'b, ha'v, ha'c, Ne.symm ha'w, hbv, Ne.symm hbc, Ne.symm hbw, Ne.symm hvc, Ne.symm hvw, Ne.symm hcw]
   · ring
   · rw [zero_smul, add_zero]
     linear_combination (norm := module) -hcr
@@ -310,7 +310,7 @@ theorem OctFacets.nonempty_galeData {a a' b b' c c' : ℝ³} (F : OctFacets a a'
     ⟨hb'c, hb'c'⟩, hcc', -⟩ := hnd
   refine ⟨⟨frameDep a b c a' b', frameDep a b c a' c', frameDep_isDep F.nodup,
     (frameDep_isDep hnd').swap₂₃', fun α β _ _ _ h4 _ h6 => ?_⟩⟩
-  simp only [frameDep, ↓reduceIte, haa', Ne.symm haa', hab, Ne.symm hab, hab', Ne.symm hab', hac, Ne.symm hac, hac', Ne.symm hac', ha'b, Ne.symm ha'b, ha'b', Ne.symm ha'b', ha'c, Ne.symm ha'c, ha'c', Ne.symm ha'c', hbb', Ne.symm hbb', hbc, Ne.symm hbc, hbc', Ne.symm hbc', hb'c, Ne.symm hb'c, hb'c', Ne.symm hb'c', hcc', Ne.symm hcc'] at h4 h6
+  simp only [frameDep, ↓reduceIte, Ne.symm hab', Ne.symm hac', Ne.symm ha'b', Ne.symm ha'c', Ne.symm hbb', Ne.symm hbc', hb'c, hb'c', Ne.symm hb'c', Ne.symm hcc'] at h4 h6
   constructor
   · have : α * det3 (b - a) (c - a) (a' - a) = 0 := by linarith
     exact (mul_eq_zero.mp this).resolve_right hD
@@ -391,7 +391,7 @@ theorem dep_zero_of_face {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c')
   simp only [zero_smul, add_zero] at hv
   have hrel : D b • (b - a) + D c • (c - a) + (0 : ℝ) • (0 : ℝ³) = 0 := by
     have ha : D a = -(D b + D c) := by linarith
-    rw [ha] at hv; rw [← hv]; simp only [smul_sub, smul_zero]; module
+    rw [ha] at hv; rw [← hv]; simp only [smul_sub]; module
   -- `cross (b - a) (c - a) ≠ 0` forces both coefficients to vanish
   have key : ∀ α β : ℝ, α • (b - a) + β • (c - a) = 0 → α = 0 ∧ β = 0 := by
     intro α β h

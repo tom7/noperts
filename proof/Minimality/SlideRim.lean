@@ -290,11 +290,11 @@ theorem Frame20.tANR_rim {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
     rcases hm with rfl | rfl
     · obtain ⟨s, δ, hs0, hs1, hδ, ex, ey, ez⟩ := hm5
       refine ⟨3, s, δ, hs0, hs1, hδ, ?_, ?_, ?_⟩ <;>
-        simp only [b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3, F.ptC_5, F.ptC_3, F.ptC_0] at ex ey ez ⊢ <;>
+        simp only [b3, quad_0, quad_3, F.ptC_5] at ex ey ez ⊢ <;>
         linarith
     · obtain ⟨s, δ, hs0, hs1, hδ, ex, ey, ez⟩ := hm1
       refine ⟨3, s, δ, hs0, hs1, hδ, ?_, ?_, ?_⟩ <;>
-        simp only [b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3, F.ptC_1, F.ptC_3, F.ptC_0] at ex ey ez ⊢ <;>
+        simp only [b3, quad_0, quad_3, F.ptC_1] at ex ey ez ⊢ <;>
         linarith
 
 

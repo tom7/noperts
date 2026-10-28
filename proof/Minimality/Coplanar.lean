@@ -49,7 +49,7 @@ theorem screenVel_of_depth_eq (ω τ x : ℝ³) (g : ℝ²) (c : ℝ)
   ext i
   fin_cases i <;>
     simp [screenVel, proj_xy, crossMatrix, rot90, tiltVec, Matrix.toLpLin_apply,
-      Matrix.mulVec, dotProduct, Fin.sum_univ_three, PiLp.inner_apply, Fin.sum_univ_two] at hx ⊢
+      dotProduct, Fin.sum_univ_three, PiLp.inner_apply, Fin.sum_univ_two] at hx ⊢
   · linear_combination (ω 1) * hx
   · linear_combination (-ω 0) * hx
 
@@ -168,7 +168,7 @@ theorem exists_firstOrderInward_of_plane (V W : Finset ℝ³) (hWV : W ⊆ V) (N
   set c : ℝ := h / N 2
   have hplane : ∀ x : ℝ³, ⟪N, x⟫ = h → x 2 = ⟪g, proj_xy x⟫ + c := by
     intro x hx
-    simp only [PiLp.inner_apply, Fin.sum_univ_three, Fin.sum_univ_two, RCLike.inner_apply,
+    simp only [PiLp.inner_apply, Fin.sum_univ_three, RCLike.inner_apply,
       conj_trivial] at hx
     simp only [hg, c, proj_xy, PiLp.inner_apply, Fin.sum_univ_two, RCLike.inner_apply,
       conj_trivial]

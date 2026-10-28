@@ -223,7 +223,7 @@ theorem tB (hA : F.a12 < F.a11) (B2 : F.S.hm * F.S.tp < F.S.hp * (1 - F.S.tm))
     refine Q4_eventually (z := zz) (w := ww) (Or.inr (Or.inr (Or.inl (Or.inl ?_))))
       (B_lex (z := zz) (w := ww) (p := F.S.tp * F.S.kp) (q := F.S.hp * (1 - F.S.sp)) (r := F.S.hp * F.S.sp)
         (mul_pos htp hkp) (mul_pos hhp (by linarith)) (mul_pos hhp hsp) ?_)
-    · simp only [hzz, hPq, GG_eq, quad_0, quad_1, quad_2, quad_3]
+    · simp only [hzz, hPq, GG_eq, quad_1, quad_2]
       nlinarith [mul_pos htp (sub_pos.2 hA)]
     · simp only [hzz, hPq, GG_eq, quad_0, quad_1, quad_2, quad_3]
       nlinarith [mul_pos (sub_pos.2 roof) (add_pos (mul_pos (mul_pos htp htp) hA11) (mul_pos (mul_pos hhp hhp) hgg))]
@@ -350,10 +350,10 @@ theorem t31a (hα : F.a12 < F.a11) (Hp : F.S.kp * F.S.tp < F.S.hp * F.S.sp)
     set zz : ZMod 4 → ℝ := fun i => F.toFrame7.GG (Pq i) ⟨1, -1, 0⟩ with hzz
     set ww : ZMod 4 → ℝ := fun i => F.toFrame7.GG (Pq i) ⟨F.S.tm + F.S.tp - 2, 0, -F.S.hm + F.S.hp⟩ with hww
     have e1 : zz 0 < zz 1 := by
-      simp only [hzz, hPq, GG_eq, quad_0, quad_1, quad_2, quad_3]
+      simp only [hzz, hPq, GG_eq, quad_0, quad_1]
       nlinarith [mul_pos htp (sub_pos.2 hα)]
     have e2 : zz 1 < zz 2 := by
-      simp only [hzz, hPq, GG_eq, quad_0, quad_1, quad_2, quad_3]
+      simp only [hzz, hPq, GG_eq, quad_1, quad_2]
       nlinarith [mul_pos (sub_pos.2 htp1) (sub_pos.2 hα)]
     exact Q4_eventually (z := zz) (w := ww) (Or.inl (Or.inl e1)) (Or.inr (Or.inr (Or.inl (Or.inl e2))))
 
@@ -473,19 +473,19 @@ theorem t31b (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (Hp : F.S.hp * F.S.sp <
     set zz : ZMod 5 → ℝ := fun i => F.toFrame7.GG (Pq i) ⟨1, -1, 0⟩ with hzz
     set ww : ZMod 5 → ℝ := fun i => F.toFrame7.GG (Pq i) ⟨F.S.tm + F.S.tp - 2, 0, -F.S.hm + F.S.hp⟩ with hww
     have e1 : zz 1 < zz 0 := by
-      simp only [hzz, hPq, GG_eq, quint_0, quint_1, quint_2, quint_3, quint_4]
+      simp only [hzz, hPq, GG_eq, quint_0, quint_1]
       nlinarith [mul_pos htm (sub_pos.2 hα)]
     have e2 : zz 2 < zz 1 := by
-      simp only [hzz, hPq, GG_eq, quint_0, quint_1, quint_2, quint_3, quint_4]
+      simp only [hzz, hPq, GG_eq, quint_1, quint_2]
       nlinarith [mul_pos hsp (sub_pos.2 hβ)]
     have e3 : zz 2 < zz 3 := by
-      simp only [hzz, hPq, GG_eq, quint_0, quint_1, quint_2, quint_3, quint_4]
+      simp only [hzz, hPq, GG_eq, quint_2, quint_3]
       nlinarith [mul_pos hsp (sub_pos.2 hβ), mul_pos htp (sub_pos.2 hα)]
     have e4 : zz 3 < zz 4 := by
-      simp only [hzz, hPq, GG_eq, quint_0, quint_1, quint_2, quint_3, quint_4]
+      simp only [hzz, hPq, GG_eq, quint_3, quint_4]
       nlinarith [mul_pos (sub_pos.2 htp1) (sub_pos.2 hα)]
     have e5 : zz 0 < zz 4 := by
-      simp only [hzz, hPq, GG_eq, quint_0, quint_1, quint_2, quint_3, quint_4]
+      simp only [hzz, hPq, GG_eq, quint_0, quint_4]
       nlinarith [mul_pos (sub_pos.2 htm1) (sub_pos.2 hα)]
     exact Q5c_eventually (z := zz) (w := ww) (Or.inl e1) (Or.inl e2) (Or.inl e3) (Or.inl e4) (Or.inl e5)
 
@@ -631,7 +631,7 @@ theorem tA1 (A1 : F.S.hm * (1 - F.S.tp) < F.S.hp * F.S.tm) (hg : 0 < F.g12) :
     set zz : ZMod 4 → ℝ := fun i => F.toFrame7.GG (Pq i) ⟨F.S.tp - 1, 0, F.S.hp⟩ with hzz
     set ww : ZMod 4 → ℝ := fun i => F.toFrame7.GG (Pq i) ⟨-2 * F.S.tp, 1, -2 * F.S.hp⟩ with hww
     have hB : zz 1 < zz 0 := by
-      simp only [hzz, hPq, GG_eq, quad_0, quad_1, quad_2, quad_3]
+      simp only [hzz, hPq, GG_eq, quad_0, quad_1]
       unfold g12 at hg
       nlinarith
     refine Q4_eventually (z := zz) (w := ww)

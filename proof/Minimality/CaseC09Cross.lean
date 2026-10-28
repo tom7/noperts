@@ -1524,7 +1524,7 @@ theorem t32M (hA : F.a12 < F.a22) (h : F.S.bm < F.S.cp) :
       (Or.inr (Or.inr (Or.inl (Or.inl ?_))))
       (B_lex (z := zz) (w := ww) (p := F.S.sp * F.S.hp) (q := F.S.kp * (1 - F.S.tp)) (r := F.S.kp * F.S.tp)
         (mul_pos hsp hhp) (mul_pos hkp (by linarith)) (mul_pos hkp htp) ?_)
-    · simp only [hzz, hPq, GG, Gf, quad_0, quad_1, quad_2, quad_3]
+    · simp only [hzz, hPq, GG, Gf, quad_1, quad_2]
       nlinarith [mul_pos hsp (sub_pos.2 hA)]
     · simp only [hzz, hPq, GG, Gf, quad_0, quad_1, quad_2, quad_3]
       nlinarith [mul_pos (mul_pos hsp hsp) hA22, mul_pos (mul_pos hkp hkp) hgg,
@@ -1577,21 +1577,21 @@ theorem t31II (hA1 : F.a12 ≤ F.a11) (hts : F.S.tm < F.S.sm) (hac : F.S.ap < F.
     · have hd : 0 < F.a11 - F.a12 := sub_pos.2 hlt
       refine Q4_eventually (z := zz) (w := ww) (Or.inl (Or.inl ?_))
         (Or.inr (Or.inr (Or.inl (Or.inl ?_))))
-      · simp only [hzz, hPq, GG, Gf, quad_0, quad_1, quad_2, quad_3]
+      · simp only [hzz, hPq, GG, Gf, quad_0, quad_1]
         nlinarith [mul_pos htm hd]
-      · simp only [hzz, hPq, GG, Gf, quad_0, quad_1, quad_2, quad_3]
+      · simp only [hzz, hPq, GG, Gf, quad_1, quad_2]
         nlinarith [mul_pos (sub_pos.2 htm1) hd]
     · -- a right angle at `xa`: the ties are broken by the tilt `-u₁`
       have hz : F.a11 - F.a12 = 0 := by linarith
       refine Q4_eventually (z := zz) (w := ww) (Or.inr (Or.inr (Or.inl (Or.inr ⟨?_, ?_⟩))))
         (Or.inl (Or.inr ⟨?_, ?_⟩))
-      · simp only [hzz, hPq, GG, Gf, quad_0, quad_1, quad_2, quad_3]
+      · simp only [hzz, hPq, GG, Gf, quad_1, quad_2]
         linear_combination (1 - F.S.tm) * hz
-      · simp only [hww, hPq, GG, Gf, quad_0, quad_1, quad_2, quad_3]
+      · simp only [hww, hPq, GG, Gf, quad_1, quad_2]
         nlinarith [mul_pos h11 (sub_pos.2 htm1)]
-      · simp only [hzz, hPq, GG, Gf, quad_0, quad_1, quad_2, quad_3]
+      · simp only [hzz, hPq, GG, Gf, quad_0, quad_1]
         linear_combination F.S.tm * hz
-      · simp only [hww, hPq, GG, Gf, quad_0, quad_1, quad_2, quad_3]
+      · simp only [hww, hPq, GG, Gf, quad_0, quad_1]
         nlinarith [mul_pos h11 htm]
 
 /-- **27.31, case I-A** (`s- < t-`, `a+ < c+`; apex `xb`): the rim `(v, m2-, xb, m2+)`, the tilt
@@ -1624,9 +1624,9 @@ theorem t31IA (hA2 : F.a12 < F.a22) (hst : F.S.sm < F.S.tm) (hac : F.S.ap < F.S.
     have hd : 0 < F.a22 - F.a12 := sub_pos.2 hA2
     refine Q4_eventually (z := zz) (w := ww) (Or.inr (Or.inr (Or.inl (Or.inl ?_))))
       (Or.inl (Or.inl ?_))
-    · simp only [hzz, hPq, GG, Gf, quad_0, quad_1, quad_2, quad_3]
+    · simp only [hzz, hPq, GG, Gf, quad_1, quad_2]
       nlinarith [mul_pos (sub_pos.2 hsm1) hd]
-    · simp only [hzz, hPq, GG, Gf, quad_0, quad_1, quad_2, quad_3]
+    · simp only [hzz, hPq, GG, Gf, quad_0, quad_1]
       nlinarith [mul_pos hsm hd]
 
 lemma H31'_of (h : F.S.cp < F.S.ap) : F.S.kp * F.S.tp < F.S.hp * F.S.sp := by
@@ -1667,24 +1667,24 @@ theorem t31IB (hA1 : F.a12 ≤ F.a11) (hA2 : F.a12 < F.a22) (hst : F.S.sm < F.S.
     have h11 : 0 < F.a11 := lt_of_lt_of_le F.A12_pos F.A12_le_A11
     have hd2 : 0 < F.a22 - F.a12 := sub_pos.2 hA2
     refine Q5c_eventually (z := zz) (w := ww) (Or.inl ?_) (Or.inl ?_) (Or.inl ?_) (Or.inl ?_) ?_
-    · simp only [hzz, hPq, GG, Gf, quint_0, quint_1, quint_2, quint_3, quint_4]
+    · simp only [hzz, hPq, GG, Gf, quint_0, quint_1]
       nlinarith [mul_pos hsm hd2]
-    · simp only [hzz, hPq, GG, Gf, quint_0, quint_1, quint_2, quint_3, quint_4]
+    · simp only [hzz, hPq, GG, Gf, quint_1, quint_2]
       nlinarith [mul_pos (sub_pos.2 hsm1) hd2]
-    · simp only [hzz, hPq, GG, Gf, quint_0, quint_1, quint_2, quint_3, quint_4]
+    · simp only [hzz, hPq, GG, Gf, quint_2, quint_3]
       nlinarith [mul_pos (sub_pos.2 hsp1) hd2]
-    · simp only [hzz, hPq, GG, Gf, quint_0, quint_1, quint_2, quint_3, quint_4]
+    · simp only [hzz, hPq, GG, Gf, quint_3, quint_4]
       nlinarith [mul_pos hsp hd2, mul_nonneg htp.le hd1]
     · rcases lt_or_eq_of_le hA1 with hlt | heq
       · left
-        simp only [hzz, hPq, GG, Gf, quint_0, quint_1, quint_2, quint_3, quint_4]
+        simp only [hzz, hPq, GG, Gf, quint_0, quint_4]
         nlinarith [mul_pos htp (sub_pos.2 hlt)]
       · right
         have hz : F.a11 - F.a12 = 0 := by linarith
         constructor
-        · simp only [hzz, hPq, GG, Gf, quint_0, quint_1, quint_2, quint_3, quint_4]
+        · simp only [hzz, hPq, GG, Gf, quint_0, quint_4]
           linear_combination (-F.S.tp) * hz
-        · simp only [hww, hPq, GG, Gf, quint_0, quint_1, quint_2, quint_3, quint_4]
+        · simp only [hww, hPq, GG, Gf, quint_0, quint_4]
           nlinarith [mul_pos h11 htp]
 
 /-- **Theorem 27.31 for type 09** (off the special positions `t- = s-`, `a+ = c+`). -/
@@ -1748,7 +1748,7 @@ theorem amT1 (hg : 0 < F.g12) (A1 : F.S.cm < F.S.dp) :
       (B_lex4 (z := zz) (w := ww) (p := F.S.kp) (q := (1 - F.S.sp) * F.S.hm)
         (r := F.S.tm * F.S.kp) (s := F.S.kp + (1 - F.S.sp) * F.S.hm - F.S.tm * F.S.kp)
         hkp hc1 (mul_pos htm hkp) (by nlinarith [mul_pos (sub_pos.2 htm1) hkp]) (by ring) ?_)
-    · simp only [hzz, hPq, GG, Gf, quad_0, quad_1, quad_2, quad_3, g12] at hg ⊢
+    · simp only [hzz, hPq, GG, Gf, quad_2, quad_3, g12] at hg ⊢
       nlinarith
     · simp only [hzz, hPq, GG, Gf, quad_0, quad_1, quad_2, quad_3]
       nlinarith [mul_pos hsp (mul_pos hhm hnu)]

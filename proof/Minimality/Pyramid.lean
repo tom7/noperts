@@ -36,7 +36,7 @@ theorem proj_xy_ez : proj_xy ez = 0 := by
   ext i; fin_cases i <;> simp [proj_xy, ez]
 
 theorem inner_ez (x : ℝ³) : ⟪x, ez⟫ = x 2 := by
-  simp [ez, PiLp.inner_apply, Fin.sum_univ_three]
+  simp [ez, PiLp.inner_apply]
 
 /-- Horizontal rotation by +90° of the horizontal part. -/
 noncomputable def rot90h (d : ℝ³) : ℝ³ := !₂[-d 1, d 0, 0]

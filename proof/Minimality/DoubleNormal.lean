@@ -369,7 +369,7 @@ theorem exists_admissible_inward_field (W : Finset ℝ²)
       ring
     · simp only [hz, ← hŵ, inner_add_right, real_inner_smul_right, hwu, hww,
         real_inner_self_eq_norm_sq]
-      simp only [k, ← inner_sub_right, real_inner_self_eq_norm_sq]
+      simp only [k, ← inner_sub_right]
       field_simp
       rw [inner_sub_right]
       ring
