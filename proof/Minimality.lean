@@ -43,6 +43,7 @@ public import Minimality.CaseC18M
 public import Minimality.CaseC18Fo
 public import Minimality.CaseC18E
 public import Minimality.DepthSepTorque
+public import Minimality.CaseC09Close
 
 /-!
 # Every nopert has at least 7 points
@@ -338,7 +339,7 @@ classification into the 29 types (`Minimality.exists_sevenType`, `Minimality/Cla
 sign-vector certificate checked in the kernel). Not formalized (`sorry`): type 24 inside
 `C̄ ∪ Σ_B` (it is proved outside, `not_type24_outside_Cbar_of_isNopert`); for type 29 (split by
 the class of its octahedron, `Minimality.type29_cap`, `Minimality.NF29.classes`) the classes K1,
-K2 and the class boundaries; and for every other type except 05, 07, 12, 13, 14, 17, 18, 19, 22, 23,
+K2 and the class boundaries; and for every other type except 05, 07, 09, 12, 13, 14, 17, 18, 19, 22, 23,
 25, 26, 27, 28 (closed completely: each of their views pairs a triangle with another facet,
 so `TriGenPar`
 or `TriGenFarP` always holds, `Minimality.triGenPar_or_farP_idx`, and `EdgePar` or `EdgeFarP` at the
@@ -349,7 +350,7 @@ a right triangular prism (`Minimality.type10_rightPrism`: the rectangle at `14` 
 relabelling, at `25`, `36`); for 07 and 14, two quadrilaterals,
 the residual position `QuadTripleRect` is refuted from the facets,
 `Minimality.not_quadTripleRect_type07`, `…type14`; type 18 is closed by the normal-form frame
-analysis, `Minimality/CaseC18*.lean`, PROOFS §§27, 35-38, ending in `CaseC18Special'.isRupert`), and for K3 and K4, the special
+analysis, `Minimality/CaseC18*.lean`, PROOFS §§27, 35-38, ending in `CaseC18Special'.isRupert`; type 09 likewise: the frame analysis `CaseC09*.lean` with the special positions of `CaseC09Close.lean` (`CaseC09Special.isRupert`) and the residual `QuadTripleRect` of `QuadRect09.lean`, PROOFS §§34, 39-40), and for K3 and K4, the special
 positions: each type's theorem in `Minimality/Cases.lean` closes the case under its general-position
 hypotheses (`byGen1`, …), and the `sorry` that remains has exactly their negation as hypothesis.
 Every remaining `sorry` also assumes that no face of the type has an admissible view, i.e.
@@ -706,7 +707,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     exact byGen2 (not_type08_of_isNopert' x hN hx fA fB fC fD fE fF fG hfA hfB hfC hfD hfE hfF hfG)
       (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
-    -- asked, the special positions are open in Lean.  `quadPairPar09` (as `quadPairPar02`):
+    -- asked; type 09 is fully closed (no `sorry`).  `quadPairPar09` (as `quadPairPar02`):
     -- `TriGenFarP` and `TriGenPar ∧ TriGenTieO` are closed by `quadPair`; the acute case-(c)
     -- triple tie at 0134, 0256 (`TriGenPar` but not `TriGenTieO`, vertex 0) is closed by the
     -- normal-form frame `frame09` and `Frame09.isRupert_of_not_special` (Theorem 27.58 with the
@@ -715,13 +716,13 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- `a- = b+ ∧ b+ = s+ A2`, or the right angle `A12 = A22` at `xb`; `a+ = c+` removed by Theorem 09.A, `CaseC09Ac.lean`; 09.5 `t- = s-`, `a- ≠ d+`
     -- is in `CaseC09Ac.lean`, where `CaseC09Special` is defined).  The `QuadTripleRect` residual position at 0134, 0256 (vertex 0) is Rupert
     -- (`Minimality.isRupert_of_quadTripleRect09`, Theorem 09.Q, `QuadRect09.lean`: it forces a prism
-    -- shape, which is Rupert at a near-axis view).  The `sorry` has in context `hrest : CaseC09Special x`
+    -- shape, which is Rupert at a near-axis view).  The special positions `hrest : CaseC09Special x` (K1, K2, `A12 = A22`) are closed by `Minimality.CaseC09.CaseC09Special.isRupert` (`CaseC09Close.lean`, PROOFS §§39-40)
     have hQ := quadPairPar09 hx hN rfl hR
     exact byGen1 (quadPair hx hN hR {0, 1, 3, 4} {0, 2, 5, 6} 0 (by decide) (by decide) (by decide) (by decide)
       (by decide)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
         rcases hQ with ⟨hP, hT⟩ | hRect
         · by_cases hrest : Minimality.CaseC09.CaseC09Special x
-          · sorry
+          · exact hN.2 (Minimality.CaseC09.CaseC09Special.isRupert hx hrest)
           · obtain ⟨F⟩ := Minimality.CaseC09.frame09 hx (noThreeCollinear_seven x hN hx) hR hP hT
             exact hN.2 (F.isRupert_of_not_special hx hrest)
         · exact hN.2 (Minimality.isRupert_of_quadTripleRect09 hx (noThreeCollinear_seven x hN hx)
