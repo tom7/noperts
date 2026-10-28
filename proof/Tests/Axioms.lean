@@ -702,6 +702,14 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.CaseC18.Frame18.vNt_level_rupert
 #assert_standard_axioms Minimality.CaseC18.Frame18.Vside_classH_any
 #assert_standard_axioms Minimality.CaseC18.Frame18.isRupert_of_not_special'
+#assert_standard_axioms Minimality.CaseC09.Shape09.thm_27_58'
+#assert_standard_axioms Minimality.CaseC09.Frame09.rimT1_sector_dp
+#assert_standard_axioms Minimality.CaseC09.Frame09.rimT1_sector_bp
+#assert_standard_axioms Minimality.CaseC09.Frame09.rimT2_sector
+#assert_standard_axioms Minimality.CaseC09.Frame09.rupert_of_27_48_special
+#assert_standard_axioms Minimality.CaseC09.Frame09.rupert_or_27_48''
+#assert_standard_axioms Minimality.CaseC09.Frame09.isRupert_caseC'
+#assert_standard_axioms Minimality.CaseC09.Frame09.isRupert_of_not_special
 #assert_standard_axioms Minimality.CaseC20.Frame20.classH_rFrame_iff
 #assert_standard_axioms Minimality.CaseC20.Frame20.noPersistHDN_or_classH_vN4
 #assert_standard_axioms Minimality.CaseC20.Frame20.noPersistHDN_or_classH_tANR

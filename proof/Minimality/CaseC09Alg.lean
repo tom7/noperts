@@ -327,7 +327,7 @@ lemma bsp_mul : S.bp / S.sp * S.sp = S.bp := by
 
 lemma t5_of (hlo : S.A2 / S.A1 < 1 - S.ep / S.B1)
     (hmid : (S.bp - S.am) * (S.A2 / S.A1) < S.bp - S.cm - S.ep)
-    (hcb : S.cp < S.bm) (hca : S.cp < S.ap) : S.T5F1 := by
+    (hcb : S.cp ≤ S.bm) (hca : S.cp < S.ap) : S.T5F1 := by
   have hA1 : 0 < S.A1 := add_pos S.ap_pos S.am_pos
   have hB1 : 0 < S.B1 := add_pos S.bp_pos S.bm_pos
   have hA2 : 0 < S.A2 := add_pos S.cp_pos S.cm_pos
@@ -343,7 +343,7 @@ lemma t5_of (hlo : S.A2 / S.A1 < 1 - S.ep / S.B1)
   · nlinarith
 
 /-- Case (I) of 27.58: `a- > b+` and `b+ > s+A2` give Theorem 5 with `W = F1`. -/
-lemma t5_case_I (hts : S.tm < S.sm) (hca : S.cp < S.ap) (hcb : S.cp < S.bm)
+lemma t5_case_I (hts : S.tm < S.sm) (hca : S.cp < S.ap) (hcb : S.cp ≤ S.bm)
     (h1 : S.bp < S.am) (h2 : S.sp * S.A2 < S.bp) : S.T5F1 := by
   have hA1 : 0 < S.A1 := add_pos S.ap_pos S.am_pos
   have hB1 : 0 < S.B1 := add_pos S.bp_pos S.bm_pos
@@ -363,7 +363,7 @@ lemma t5_case_I (hts : S.tm < S.sm) (hca : S.cp < S.ap) (hcb : S.cp < S.bm)
         (S.bm * S.am - S.bp * S.cp) + S.bm * (S.ap - S.cp) + S.cm * (S.A1 - S.B1) := by
       unfold A1 A2 B1; ring
     have t1 : 0 < S.bm * S.am - S.bp * S.cp := by
-      nlinarith [mul_pos hcp (sub_pos.2 h1), mul_pos ham (sub_pos.2 hcb)]
+      nlinarith [mul_pos hcp (sub_pos.2 h1), mul_nonneg ham.le (sub_nonneg.2 hcb)]
     have t2 : 0 < S.bm * (S.ap - S.cp) := mul_pos hbm (sub_pos.2 hca)
     rcases le_or_gt S.B1 S.A1 with h | h
     · nlinarith [mul_nonneg hcm.le (sub_nonneg.2 h)]
@@ -382,8 +382,8 @@ lemma t5_case_I (hts : S.tm < S.sm) (hca : S.cp < S.ap) (hcb : S.cp < S.bm)
   exact S.t5_of hlo hmid hcb hca
 
 /-- Case (III) of 27.58: `a- < b+`, `b+ > s+A2`, `a- ≥ s+A2` give Theorem 5 with `W = F1`. -/
-lemma t5_case_III (hts : S.tm < S.sm) (hca : S.cp < S.ap) (hcb : S.cp < S.bm)
-    (h1 : S.am < S.bp) (h2 : S.sp * S.A2 < S.bp) (h3 : S.sp * S.A2 ≤ S.am) : S.T5F1 := by
+lemma t5_case_III (hts : S.tm < S.sm) (hca : S.cp < S.ap) (hcb : S.cp ≤ S.bm)
+    (h1 : S.am ≤ S.bp) (h2 : S.sp * S.A2 < S.bp) (h3 : S.sp * S.A2 ≤ S.am) : S.T5F1 := by
   have hA1 : 0 < S.A1 := add_pos S.ap_pos S.am_pos
   have hB1 : 0 < S.B1 := add_pos S.bp_pos S.bm_pos
   have hA2 : 0 < S.A2 := add_pos S.cp_pos S.cm_pos
@@ -422,7 +422,7 @@ lemma t5_case_III (hts : S.tm < S.sm) (hca : S.cp < S.ap) (hcb : S.cp < S.bm)
           rw [← mul_assoc, mul_sub, mul_div_cancel₀ _ hsp.ne']
         rw [this]
         unfold A1
-        nlinarith [mul_pos hap (sub_pos.2 h2), mul_pos hbp (sub_pos.2 h1),
+        nlinarith [mul_pos hap (sub_pos.2 h2), mul_nonneg hbp.le (sub_nonneg.2 h1),
           mul_nonneg hbp.le (sub_nonneg.2 h3)]
       exact lt_of_mul_lt_mul_left k0 hsp.le
     calc (S.bp - S.am) * S.A2 * S.A1⁻¹ < (S.bp / S.sp - S.A2) * S.A1 * S.A1⁻¹ :=
@@ -470,7 +470,7 @@ theorem thm_27_58 (hts : S.tm < S.sm) (hca : S.cp < S.ap) (hcb : S.cp < S.bm)
           rw [not_le] at hh
           refine hAM ⟨hAM1, ?_, hAM3⟩
           nlinarith [mul_lt_mul_of_pos_right hh htm, hspA]
-        exact hT5 (S.t5_case_III hts hca hcb h h3 h2)
+        exact hT5 (S.t5_case_III hts hca hcb.le h.le h3 h2)
     · exact h
   · -- b+ < s+A2
     rcases lt_or_gt_of_ne sp3 with h3 | h3
@@ -482,8 +482,8 @@ theorem thm_27_58 (hts : S.tm < S.sm) (hca : S.cp < S.ap) (hcb : S.cp < S.bm)
           rw [not_le] at hh
           refine hAM ⟨hAM1, ?_, hAM3⟩
           nlinarith [mul_lt_mul_of_pos_right hh htm, hspA]
-        exact hT5 (S.t5_case_III hts hca hcb h h3 h2)
-      · exact hT5 (S.t5_case_I hts hca hcb h h3)
+        exact hT5 (S.t5_case_III hts hca hcb.le h.le h3 h2)
+      · exact hT5 (S.t5_case_I hts hca hcb.le h h3)
 
 /-! ### Theorem 27.48: the rim comparisons and the contradiction of the two failures -/
 

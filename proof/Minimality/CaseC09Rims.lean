@@ -19,7 +19,8 @@ The pair `P09 = (T1, T2)`:
 Under `t- < s-` the two conditions cover everything (`t48_contra`, i.e. the two failure
 inequalities sum to `A12 (t- - s-) ≥ 0`), so one of the tests is unimodal:
 `Frame09.rupert_of_27_48`.  Then `Frame09.isRupert_caseC` combines this with
-`rupert_or_27_48'`.
+`rupert_or_27_48'`.  The special positions (`CaseC09Special`, `isRupert_of_not_special`) and the
+sector tests that remove most of them (§34.4.2) are in `Minimality/CaseC09Special.lean`.
 -/
 
 namespace Minimality.CaseC09
@@ -485,27 +486,6 @@ theorem isRupert_caseC (hx : Function.Injective x) (hA : F.a12 < F.a22)
   rcases F.rupert_or_27_48' hx hA sp0 sp4 sp5 sp1 sp2 sp3 with h | ⟨a, b, c, d, e⟩
   · exact h
   · exact F.rupert_of_27_48 a b c d e
-
-end Frame09
-
-/-- **The special positions of type 09's acute case (c)** (on `x`, for some frame): the strict
-inequalities of the proof of `Frame09.isRupert_caseC` become equalities
-(`t- = s-`, `a+ = c+`, `c+ = b-`, `a- = b+`, `a- = d+`, `b+ = s+ A2`), or the far angle at `xb`
-is a right angle (`A12 = A22`). -/
-def CaseC09Special (x : Fin 7 → ℝ³) : Prop :=
-  ∃ F : Frame09 x, F.S.tm = F.S.sm ∨ F.S.ap = F.S.cp ∨ F.S.cp = F.S.bm ∨ F.S.am = F.S.bp ∨
-    F.S.am = F.S.dp ∨ F.S.bp = F.S.sp * F.S.A2 ∨ F.a12 = F.a22
-
-namespace Frame09
-
-/-- Off the special positions, a type-09 frame (acute case (c)) is Rupert. -/
-theorem isRupert_of_not_special {x : Fin 7 → ℝ³} (F : Frame09 x) (hx : Function.Injective x)
-    (h : ¬ CaseC09Special x) : IsRupert (Finset.univ.image x) := by
-  have hF : ¬ (F.S.tm = F.S.sm ∨ F.S.ap = F.S.cp ∨ F.S.cp = F.S.bm ∨ F.S.am = F.S.bp ∨
-    F.S.am = F.S.dp ∨ F.S.bp = F.S.sp * F.S.A2 ∨ F.a12 = F.a22) := fun h' => h ⟨F, h'⟩
-  simp only [not_or] at hF
-  obtain ⟨n0, n4, n5, n1, n2, n3, nA⟩ := hF
-  exact F.isRupert_caseC hx (lt_of_le_of_ne F.A12_le_A22 nA) n0 n4 n5 n1 n2 n3
 
 end Frame09
 
