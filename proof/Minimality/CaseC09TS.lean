@@ -508,7 +508,7 @@ theorem t095_5 (hA : F.a12 < F.a22) (hts : F.S.tm = F.S.sm) (hda : F.S.am < F.S.
       nlinarith [mul_pos htm hd2']
 
 /-- **09.5, case `t- = s-`, `d+ > a-`** (part B): Rupert, at every metric of `𝒞 ∪ 𝒞₁`
-(`A12 < A22`, `A12 ≤ A11`).  `a+ = c+` is kept in `CaseC09Special` (the case `a+ = c+` is not
+(`A12 < A22`, `A12 ≤ A11`), off `a+ = c+` (that case is not
 a sector: `m1+` would lie on the side `(v, m2+)`).  Since `b+ < d+`, `c+ < a+` forces `t+ < s+`, so
 `m1+` is a rim corner iff `c+ < a+`, and an interior point iff `a+ < c+`. -/
 theorem rupert_of_tm_eq_sm_gt (hx : Function.Injective x) (hA : F.a12 < F.a22)
@@ -517,46 +517,6 @@ theorem rupert_of_tm_eq_sm_gt (hx : Function.Injective x) (hA : F.a12 < F.a22)
   rcases lt_or_gt_of_ne hac with h | h
   · exact F.t095_4 hA hts hda h
   · exact F.t095_5 hA hts hda h
-
-end Frame09
-
-namespace Frame09
-variable {x : Fin 7 → ℝ³} (F : Frame09 x)
-
-/-- Type 09, acute case (c), off the shrunken special set. -/
-theorem isRupert_caseC' (hx : Function.Injective x) (hA : F.a12 < F.a22)
-    (sp0 : F.S.tm ≠ F.S.sm ∨ F.S.am ≠ F.S.dp) (sp4 : F.S.ap ≠ F.S.cp)
-    (hc : ¬ (F.S.am = F.S.bp ∧ F.S.bp = F.S.sp * F.S.A2)) :
-    IsRupert (Finset.univ.image x) := by
-  by_cases hts : F.S.tm = F.S.sm
-  · have hda : F.S.am ≠ F.S.dp := sp0.resolve_left (not_not.mpr hts)
-    rcases lt_or_gt_of_ne hda with h | h
-    · exact F.rupert_of_tm_eq_sm_gt hx hA hts h sp4
-    · exact F.rupert_of_tm_eq_sm_lt hx hA hts h
-  · rcases F.rupert_or_27_48'' hx hA hts sp4 with h | ⟨a, b, c, d, e⟩
-    · exact h
-    · exact F.rupert_of_27_48_special a b c d e hc
-
-end Frame09
-
-/-- **The special positions of type 09's acute case (c)** (on `x`, for some frame): `t- = s-` with
-`a- = d+` (the remaining part of 09.5), `a+ = c+`, the right angle `A12 = A22` at `xb`, or the
-corner `a- = b+ ∧ b+ = s+A2`.  (`t- = s-` with `a- ≠ d+`, `c+ = b-`, `a- = d+`, `b+ = s+A2`,
-`a- = b+` alone are removed by 09.5, 09.4, 09.1, 09.2, 09.3 and fix 1.) -/
-def CaseC09Special (x : Fin 7 → ℝ³) : Prop :=
-  ∃ F : Frame09 x, (F.S.tm = F.S.sm ∧ F.S.am = F.S.dp) ∨ F.S.ap = F.S.cp ∨ F.a12 = F.a22 ∨
-    (F.S.am = F.S.bp ∧ F.S.bp = F.S.sp * F.S.A2)
-
-namespace Frame09
-
-/-- Off the special positions, a type-09 frame (acute case (c)) is Rupert. -/
-theorem isRupert_of_not_special {x : Fin 7 → ℝ³} (F : Frame09 x) (hx : Function.Injective x)
-    (h : ¬ CaseC09Special x) : IsRupert (Finset.univ.image x) := by
-  have hF : ¬ ((F.S.tm = F.S.sm ∧ F.S.am = F.S.dp) ∨ F.S.ap = F.S.cp ∨ F.a12 = F.a22 ∨
-      (F.S.am = F.S.bp ∧ F.S.bp = F.S.sp * F.S.A2)) := fun h' => h ⟨F, h'⟩
-  simp only [not_or] at hF
-  obtain ⟨n0, n4, nA, n1⟩ := hF
-  exact F.isRupert_caseC' hx (lt_of_le_of_ne F.A12_le_A22 nA) (not_and_or.mp n0) n4 n1
 
 end Frame09
 

@@ -9,14 +9,14 @@ public import Minimality.CaseC09Rims
 
 The refereed proofs 09.1-09.4 and the
 referee's fix 1 (the corner `a- = d+ ∧ b+ = s+A2`) shrink `CaseC09Special` to
-`t- = s- ∨ ap = cp ∨ A12 = A22 ∨ (a- = b+ ∧ b+ = s+A2)` (09.5 and the final definition are in
+`t- = s- ∨ A12 = A22 ∨ (a- = b+ ∧ b+ = s+A2)` (09.5 and the final definition are in
 `CaseC09TS.lean`, which imports this file).
 
 * 09.4 (`c+ = b-`): `Shape09.thm_27_58'`, the algebra of 27.58 with `c+ ≤ b-`.
 * 09.1/09.2/09.3 (`a- = d+`, `b+ = s+A2`, `a- = b+`): the sector versions of the rim tests
   `rimT1`, `rimT2` (`rimT1_sector_dp`, `rimT1_sector_bp`, `rimT2_sector`), combined in
   `rupert_of_27_48_special` (including the corner, by the sum of the two failure inequalities).
-* 09.5 (`t- = s-`) is in `CaseC09TS.lean`, together with `CaseC09Special` and `isRupert_of_not_special`.
+* 09.5 (`t- = s-`) is in `CaseC09TS.lean`, (`CaseC09Special` and `isRupert_of_not_special` are in `CaseC09Ac.lean`).
 -/
 
 namespace Minimality.CaseC09

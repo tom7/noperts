@@ -21,6 +21,7 @@ public import Minimality.CaseC09Cross
 public import Minimality.CaseC09Rims
 public import Minimality.CaseC09Special
 public import Minimality.CaseC09TS
+public import Minimality.CaseC09Ac
 public import Minimality.CaseC18Alg
 public import Minimality.CaseC18Frame
 public import Minimality.CaseC18Z
@@ -709,9 +710,9 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- triple tie at 0134, 0256 (`TriGenPar` but not `TriGenTieO`, vertex 0) is closed by the
     -- normal-form frame `frame09` and `Frame09.isRupert_of_not_special` (Theorem 27.58 with the
     -- three crossing tests, 27.48 and 27.34, and the sector tests of §34.4.2, `CaseC09Special.lean`, `CaseC09TS.lean`),
-    -- off the special positions `CaseC09Special x` (`t- = s- ∧ a- = d+`, `a+ = c+`, the corner
-    -- `a- = b+ ∧ b+ = s+ A2`, or the right angle `A12 = A22` at `xb`; 09.5 `t- = s-`, `a- ≠ d+`
-    -- is in `CaseC09TS.lean`, where `CaseC09Special` is defined).  The `sorry` has in context `hrest`: `CaseC09Special x` or
+    -- off the special positions `CaseC09Special x` (`t- = s- ∧ a- = d+`, the corner
+    -- `a- = b+ ∧ b+ = s+ A2`, or the right angle `A12 = A22` at `xb`; `a+ = c+` removed by Theorem 09.A, `CaseC09Ac.lean`; 09.5 `t- = s-`, `a- ≠ d+`
+    -- is in `CaseC09Ac.lean`, where `CaseC09Special` is defined).  The `sorry` has in context `hrest`: `CaseC09Special x` or
     -- `QuadTripleRect` at 0134, 0256 (vertex 0)
     have hQ := quadPairPar09 hx hN rfl hR
     exact byGen1 (quadPair hx hN hR {0, 1, 3, 4} {0, 2, 5, 6} 0 (by decide) (by decide) (by decide) (by decide)
