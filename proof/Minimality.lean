@@ -35,6 +35,7 @@ public import Minimality.CaseC20VSlide
 public import Minimality.CaseC20Step4
 public import Minimality.CaseC20Final
 public import Minimality.CaseC20Sp
+public import Minimality.CaseC20Face
 public import Minimality.SlideRim
 public import Minimality.CaseC18VSlide
 public import Minimality.CaseC18Step4
@@ -859,19 +860,19 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- `V = 0135/026` and of its `R`-image; Ra by 27.64 (`V`, `V + T_A`, 27.32^R, `V + X`, `V + Y`),
     -- otherwise the sign split of 27.79 with the pairs `{T_A, T′}`, `{T_A, V}`, `{T′, T_A^R, V^R}`,
     -- family A, the edge `xa xb`; `T_A` for `b+ < a−` along the slid views of the circle of `0135`),
-    -- off the reduced special positions `CaseC20Special' x` (`CaseC20Special` minus 8 of its 27 disjuncts: the polynomial lines n1, n3, n17, n18, n19, n23, n24, n25 are closed in `CaseC20Sp`; what remains: the right angles `A12 = A11`, `A12 = A22`, the
+    -- off the reduced special positions `CaseC20Special' x` (`CaseC20Special` minus 8 of its 27 disjuncts: the polynomial lines n1, n3, n17, n18, n19, n23, n24, n25 are closed in `CaseC20Sp`; what remains (`CaseC20Special''`, with Theorem F20 on the faces in `CaseC20Face`): the codim-2 face residuals m1′ (A12 = A11, A1 = 0, 0 < p ≤ q) and its R-image m2′, the
     -- class boundaries of `V` and `V^R`, `b+ = a−`, `c− = b+`, `A3 = 0` and images, the metric lines
     -- `ℓ1`, `ℓν` of the covering; the hyperplanes `ClassH`, `ClassHR` of the persistent horizontal double
     -- normals of `V`, `T_A` and their `R`-images are no longer special: Step 4 slides along `Δ`'s resp. `016`'s
     -- circle there, `CaseC20Step4`).
-    -- The `sorry` has in context `hrest : CaseC20Special' x`
+    -- The `sorry` has in context `hrest : CaseC20Special'' x`
     have hQ := quadPairPar20 hx hN rfl hR
     exact byGen1 (quadPair hx hN hR {0, 1, 3, 5} {2, 4, 5, 6} 5 (by decide) (by decide) (by decide) (by decide)
       (by decide)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
-        by_cases hrest : Minimality.CaseC20.CaseC20Special' x
+        by_cases hrest : Minimality.CaseC20.CaseC20Special'' x
         · sorry
         · obtain ⟨F⟩ := Minimality.CaseC20.frame20 hx (noThreeCollinear_seven x hN hx) hR hQ.1 hQ.2
-          exact hN.2 (F.isRupert_of_not_special' hx hrest)))
+          exact hN.2 (F.isRupert_of_not_special'' hx hrest)))
   · -- type 21: `not_type21_of_multiView21` (Theorem 24.3: ties at a family of tilt tests with
     -- realizing tilts, `Minimality.MultiView21`; the cover is affine-invariant, so metric-free), where
     -- it holds; else `not_type21_of_isNopert_codim2'`; its general position (7 hypotheses) is asked,
