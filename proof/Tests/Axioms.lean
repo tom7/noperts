@@ -760,3 +760,4 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.CaseC18.Frame18.isRupert_of_D1
 #assert_standard_axioms Minimality.CaseC18.Frame18.LMp_isRupert
 #assert_standard_axioms Minimality.CaseC18.CaseC18Special'.isRupert
+#assert_standard_axioms Minimality.isRupert_of_quadTripleRect09

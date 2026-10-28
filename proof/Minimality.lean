@@ -14,6 +14,7 @@ public import Minimality.ParDichotomy
 public import Minimality.QuadTripleRect
 public import Minimality.Type10Prism
 public import Minimality.Type10RightPrism
+public import Minimality.QuadRect09
 public import Minimality.CaseC09Alg
 public import Minimality.CaseC09Frame
 public import Minimality.CaseC09Tests
@@ -712,20 +713,19 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- three crossing tests, 27.48 and 27.34, and the sector tests of §34.4.2, `CaseC09Special.lean`, `CaseC09TS.lean`),
     -- off the special positions `CaseC09Special x` (`t- = s- ∧ a- = d+`, the corner
     -- `a- = b+ ∧ b+ = s+ A2`, or the right angle `A12 = A22` at `xb`; `a+ = c+` removed by Theorem 09.A, `CaseC09Ac.lean`; 09.5 `t- = s-`, `a- ≠ d+`
-    -- is in `CaseC09Ac.lean`, where `CaseC09Special` is defined).  The `sorry` has in context `hrest`: `CaseC09Special x` or
-    -- `QuadTripleRect` at 0134, 0256 (vertex 0)
+    -- is in `CaseC09Ac.lean`, where `CaseC09Special` is defined).  The `QuadTripleRect` residual position at 0134, 0256 (vertex 0) is Rupert
+    -- (`Minimality.isRupert_of_quadTripleRect09`, Theorem 09.Q, `QuadRect09.lean`: it forces a prism
+    -- shape, which is Rupert at a near-axis view).  The `sorry` has in context `hrest : CaseC09Special x`
     have hQ := quadPairPar09 hx hN rfl hR
     exact byGen1 (quadPair hx hN hR {0, 1, 3, 4} {0, 2, 5, 6} 0 (by decide) (by decide) (by decide) (by decide)
       (by decide)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
-        by_cases hrest : Minimality.CaseC09.CaseC09Special x ∨
-            Minimality.QuadTripleRect (Finset.univ.image x) (({0, 1, 3, 4} : Finset (Fin 7)).image x)
-              (({0, 2, 5, 6} : Finset (Fin 7)).image x) (x 0)
-        · sorry
-        · rw [not_or] at hrest
-          rcases hQ with ⟨hP, hT⟩ | hRect
+        rcases hQ with ⟨hP, hT⟩ | hRect
+        · by_cases hrest : Minimality.CaseC09.CaseC09Special x
+          · sorry
           · obtain ⟨F⟩ := Minimality.CaseC09.frame09 hx (noThreeCollinear_seven x hN hx) hR hP hT
-            exact hN.2 (F.isRupert_of_not_special hx hrest.1)
-          · exact hrest.2 hRect))
+            exact hN.2 (F.isRupert_of_not_special hx hrest)
+        · exact hN.2 (Minimality.isRupert_of_quadTripleRect09 hx (noThreeCollinear_seven x hN hx)
+            hRect)))
   · -- type 10: `not_type10_of_isNopert_sv` closes everything except the edge rectangle at the
     -- edge `14` (`Minimality.type10_edgeRect`).  The face set is invariant under the cyclic
     -- relabelling `ρ10` (`1 → 2 → 3`, `4 → 5 → 6`), so the same holds at `25`, `36`; the three
