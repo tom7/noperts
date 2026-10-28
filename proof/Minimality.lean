@@ -56,6 +56,7 @@ public import Minimality.Type02FN
 public import Minimality.Type02FNB
 public import Minimality.Type02V12
 public import Minimality.Type02Assemble
+public import Minimality.Type08S.G9_Final
 
 /-!
 # Every nopert has at least 7 points
@@ -702,6 +703,12 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- sector tilt at the view (Proposition 29.3), with it beyond by the horizontal end of a face
     -- circle (Proposition 30.4); `isRupert_touchN2`, `isRupert_touchT4`
     -- under the codimension-3 conditions `Touch30N2`, `Touch30T4`, `touchTie`
+    -- Lean-verified (paper sp08*, `Type08S/G9_Final.lean`): `type08_rupert_or_resid` gives Rupert
+    -- or `hres : Resid08Final (x 0) (x 6) (x 3) (x 4) (x 5) (x 1) (x 2)`, the residual set of the
+    -- sp08 argument: two planar equators; a planar Gale `κ = 0` with a failing flat `Type08Gen`;
+    -- in one of the six labellings of Lemma 6, N2/T4 touching not closable (wrong region), more than
+    -- two or dependent depth ties, an HDN at a single-circle closing view, `CoT2`/`CoT'2`.  That
+    -- residual is the remaining `sorry` (`not_type08_of_isNopert'` stays for other users)
     obtain ⟨fA, hfA⟩ := hR {0, 1, 2, 3} (by decide)
     obtain ⟨fB, hfB⟩ := hR {0, 2, 4, 5} (by decide)
     obtain ⟨fC, hfC⟩ := hR {2, 3, 5, 6} (by decide)
@@ -709,8 +716,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fE, hfE⟩ := hR {1, 3, 6} (by decide)
     obtain ⟨fF, hfF⟩ := hR {1, 4, 6} (by decide)
     obtain ⟨fG, hfG⟩ := hR {4, 5, 6} (by decide)
-    exact byGen2 (not_type08_of_isNopert' x hN hx fA fB fC fD fE fF fG hfA hfB hfC hfD hfE hfF hfG)
-      (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
+    exact (Minimality.Type08Sp.type08_rupert_or_resid x hx fA fB fC fD fE fF fG hfA hfB hfC hfD hfE
+      hfF hfG).elim hN.2 (fun hres => byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
     -- asked; type 09 is fully closed (no `sorry`).  `quadPairPar09` (as `quadPairPar02`):
     -- `TriGenFarP` and `TriGenPar ∧ TriGenTieO` are closed by `quadPair`; the acute case-(c)

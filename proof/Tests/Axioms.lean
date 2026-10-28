@@ -782,3 +782,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.CaseC18.frame02
 #assert_standard_axioms Minimality.CaseC18.Frame02.isRupert
 #assert_standard_axioms Minimality.CaseC18.type02_false
+#assert_standard_axioms Minimality.Type08Sp.type08_rupert_or_resid
+#assert_standard_axioms Minimality.Type08Sp.isRupert_type08_limit_hdn
+#assert_standard_axioms Minimality.robust_corner_rim_of_MF
+#assert_standard_axioms Minimality.isRupert_of_motionCert
