@@ -38,6 +38,8 @@ public import Minimality.CaseC18Step4
 public import Minimality.CaseC18Level
 public import Minimality.CaseC18Sp
 public import Minimality.CaseC18M
+public import Minimality.CaseC18Fo
+public import Minimality.CaseC18E
 public import Minimality.DepthSepTorque
 
 /-!
@@ -334,7 +336,7 @@ classification into the 29 types (`Minimality.exists_sevenType`, `Minimality/Cla
 sign-vector certificate checked in the kernel). Not formalized (`sorry`): type 24 inside
 `C̄ ∪ Σ_B` (it is proved outside, `not_type24_outside_Cbar_of_isNopert`); for type 29 (split by
 the class of its octahedron, `Minimality.type29_cap`, `Minimality.NF29.classes`) the classes K1,
-K2 and the class boundaries; and for every other type except 05, 07, 12, 13, 14, 17, 19, 22, 23,
+K2 and the class boundaries; and for every other type except 05, 07, 12, 13, 14, 17, 18, 19, 22, 23,
 25, 26, 27, 28 (closed completely: each of their views pairs a triangle with another facet,
 so `TriGenPar`
 or `TriGenFarP` always holds, `Minimality.triGenPar_or_farP_idx`, and `EdgePar` or `EdgeFarP` at the
@@ -344,7 +346,8 @@ refuted by a triangle facet, `Minimality.not_edgeRect_type13`, `…type19`; type
 a right triangular prism (`Minimality.type10_rightPrism`: the rectangle at `14` and, by the cyclic
 relabelling, at `25`, `36`); for 07 and 14, two quadrilaterals,
 the residual position `QuadTripleRect` is refuted from the facets,
-`Minimality.not_quadTripleRect_type07`, `…type14`), and for K3 and K4, the special
+`Minimality.not_quadTripleRect_type07`, `…type14`; type 18 is closed by the normal-form frame
+analysis, `Minimality/CaseC18*.lean`, PROOFS §§27, 35-38, ending in `CaseC18Special'.isRupert`), and for K3 and K4, the special
 positions: each type's theorem in `Minimality/Cases.lean` closes the case under its general-position
 hypotheses (`byGen1`, …), and the `sorry` that remains has exactly their negation as hypothesis.
 Every remaining `sorry` also assumes that no face of the type has an admissible view, i.e.
@@ -814,16 +817,18 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- `A1 t- ≤ d-`, `a± < c±`) and its Z-image, and the codim-4 corners `a- = b+ = c-`,
     -- `A12 = A22`, `g a- d- = A12`, `A11 t+ - g a- h+ < A12` and its Z-image.  The other
     -- equalities (`a∓ = b±`, `a± = c±`, `d± = A1 t±`, `D2 = 0`, the right angles) are no longer
-    -- special.  (PROOFS section 37 has since reduced the paper's special set further to the
-    -- codim-7 family E; not yet in Lean.)  The old section 35 assembly (V's own view slid along
+    -- special.  (PROOFS section 37 reduced the paper's special set further, to the codim-7 family
+    -- E; PROOFS sections 37-38 then close every position of `CaseC18Special'`: Theorems E, E1, E2,
+    -- W, C, R' and F, and E* by the first-order bridge, `CaseC18Fo`/`CaseC18E`, assembled as
+    -- `CaseC18Special'.isRupert`.)  The old section 35 assembly (V's own view slid along
     -- F1's circle, `CaseC18VSlide`/`CaseC18Step4`/`CaseC18Level`) is no longer used by the type-18
-    -- skeleton.  The `sorry` has in
-    -- context `hrest : CaseC18Special' x`
+    -- skeleton.  Type 18 is thus fully closed, no `sorry`: the chain is `CaseC18Sp` (PROOFS 35),
+    -- `CaseC18M` (PROOFS 36) and `CaseC18E` (PROOFS 37-38).
     have hQ := quadPairPar18 hx hN rfl hR
     exact byGen1 (quadPair hx hN hR {0, 3, 5, 6} {1, 2, 4, 5} 5 (by decide) (by decide) (by decide) (by decide)
       (by decide)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
         by_cases hrest : Minimality.CaseC18.CaseC18Special' x
-        · sorry
+        · exact hN.2 (Minimality.CaseC18.CaseC18Special'.isRupert hrest)
         · obtain ⟨F⟩ := Minimality.CaseC18.frame18 hx (noThreeCollinear_seven x hN hx) hR hQ.1 hQ.2
           exact hN.2 (F.isRupert_of_not_special' hx hrest)))
   · -- type 19: `not_type19_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
