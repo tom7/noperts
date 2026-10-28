@@ -46,6 +46,16 @@ public import Minimality.CaseC18Fo
 public import Minimality.CaseC18E
 public import Minimality.DepthSepTorque
 public import Minimality.CaseC09Close
+public import Minimality.QuadRect02
+public import Minimality.Type02Frame
+public import Minimality.Type02A
+public import Minimality.Type02B
+public import Minimality.Type02R
+public import Minimality.Type02X
+public import Minimality.Type02FN
+public import Minimality.Type02FNB
+public import Minimality.Type02V12
+public import Minimality.Type02Assemble
 
 /-!
 # Every nopert has at least 7 points
@@ -341,7 +351,7 @@ classification into the 29 types (`Minimality.exists_sevenType`, `Minimality/Cla
 sign-vector certificate checked in the kernel). Not formalized (`sorry`): type 24 inside
 `C̄ ∪ Σ_B` (it is proved outside, `not_type24_outside_Cbar_of_isNopert`); for type 29 (split by
 the class of its octahedron, `Minimality.type29_cap`, `Minimality.NF29.classes`) the classes K1,
-K2 and the class boundaries; and for every other type except 05, 07, 09, 12, 13, 14, 17, 18, 19, 22, 23,
+K2 and the class boundaries; and for every other type except 02, 05, 07, 09, 12, 13, 14, 17, 18, 19, 22, 23,
 25, 26, 27, 28 (closed completely: each of their views pairs a triangle with another facet,
 so `TriGenPar`
 or `TriGenFarP` always holds, `Minimality.triGenPar_or_farP_idx`, and `EdgePar` or `EdgeFarP` at the
@@ -351,7 +361,7 @@ refuted by a triangle facet, `Minimality.not_edgeRect_type13`, `…type19`; type
 a right triangular prism (`Minimality.type10_rightPrism`: the rectangle at `14` and, by the cyclic
 relabelling, at `25`, `36`); for 07 and 14, two quadrilaterals,
 the residual position `QuadTripleRect` is refuted from the facets,
-`Minimality.not_quadTripleRect_type07`, `…type14`; type 18 is closed by the normal-form frame
+`Minimality.not_quadTripleRect_type07`, `…type14`; type 02 is closed by the case-(c) frame `Minimality/Type02*.lean` (sector theorems, assembly `Type02Assemble.lean`) and `QuadRect02.lean`; type 18 is closed by the normal-form frame
 analysis, `Minimality/CaseC18*.lean`, PROOFS §§27, 35-38, ending in `CaseC18Special'.isRupert`; type 09 likewise: the frame analysis `CaseC09*.lean` with the special positions of `CaseC09Close.lean` (`CaseC09Special.isRupert`) and the residual `QuadTripleRect` of `QuadRect09.lean`, PROOFS §§34, 39-40), and for K3 and K4, the special
 positions: each type's theorem in `Minimality/Cases.lean` closes the case under its general-position
 hypotheses (`byGen1`, …), and the `sorry` that remains has exactly their negation as hypothesis.
@@ -646,25 +656,18 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
   have h3 := h3 k
   fin_cases k
   · exact big {1, 2, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 01: Theorem A
-  · -- type 02: Cor. T1 at the quadrilaterals 0235, 1246 (sharing vertex 2); where its general
-    -- position fails, Theorem B on the four quadrilaterals 0134, 0235, 1246, 3456 under
-    -- `GenPos`, and Lemma E or a planar closing at the edge 34 (23.12, metric-free:
-    -- `type02_edge34_byGen''`, off a far triple tie, or an HDN at 34 with the conditions of §22.4 failing; a vertical far edge 01 or
-    -- 56 at the edge view 34 is no exception: its far point is a double over the rim corner,
-    -- Lemma 16.27′, `isRupert_edgePair_robustD`).
-    -- The `sorry` has in context: `¬ Type02EdgeGen'' x` (a far depth triple tie, codimension 2; or a
-    -- horizontal double normal at 34 of a closing together with a failure of the conditions of
-    -- §22.4 there, `Type02HDNOK`: a segment other than 34 parallel to it, (G1), two equal depths, two
-    -- directions of double normals, a double normal perpendicular to a face from a face vertex, or
-    -- a far edge parallel to a face with Lemma E not strict; codimension >= 2);
-    -- `¬ GenPos` (Theorem B); and
-    -- `quadPairPar02`: the acute case-(c) triple tie at 0235, 1246 (`TriGenPar` but not
-    -- `TriGenTieO`, vertex 2) or `QuadTripleRect` there
+  · -- type 02: closed, no `sorry`.  `quadPairPar02` (Cor. T1 at the quadrilaterals 0235, 1246, sharing
+    -- vertex 2) leaves the acute case-(c) triple tie (`TriGenPar` but not `TriGenTieO`, vertex 2) or
+    -- `QuadTripleRect` there; neither needs any other general position (no `Type02EdgeGen''`, no
+    -- `GenPos`).  `QuadTripleRect` is `Minimality.isRupert_of_quadTripleRect02` (`QuadRect02.lean`); the
+    -- triple tie gives the normal-form frame `Frame02` (`Type02Frame.lean`, `frame02`), which is Rupert by
+    -- the sector theorems in Frame7 coordinates: `Type02A` (acute, generic rims), `Type02B` (acute,
+    -- vertical far edges), `Type02R` and `Type02FN`/`Type02FNB` (right far angle at `x3`, Lemma FN),
+    -- `Type02X` (exceptional sets X1, X2), `Type02V12` (both far edges vertical) and the assembly
+    -- `Type02Assemble.lean` (`type02_false`).  Paper: `nopert229/out/bottleneck/sp02/draft.md`,
+    -- `sp02b/draft.md` (Lean-verified, not refereed).
     have hQ := quadPairPar02 hx hN rfl hR
-    exact byGen1 (Minimality.type02_edge34_byGen'' hx (noThreeCollinear_seven x hN hx) hN hR) (fun _ =>
-      byGen1 (fourQuad hx hN hR ![{0, 1, 3, 4}, {0, 2, 3, 5}, {1, 2, 4, 6}, {3, 4, 5, 6}]
-          (by decide) (by decide) (by decide))
-        (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
+    exact Minimality.CaseC18.type02_false hx hN hR hQ
   · exact big {0, 2, 3, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 03: Theorem A
   · exact big {1, 2, 3, 5, 6} (by decide) (by decide) (by decide)  -- type 04: Theorem A
   · -- type 05: `not_type05_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
