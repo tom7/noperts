@@ -750,6 +750,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.CaseC20.Frame20.vN4_slide
 #assert_standard_axioms Minimality.CaseC20.Frame20.tANR_slide
 #assert_standard_axioms Minimality.CaseC20.Frame20.isRupert_of_not_special
+#assert_standard_axioms Minimality.CaseC20.Frame20.isRupert_of_not_special'
 #assert_standard_axioms Minimality.forces_supported_of_depthSeparated
 #assert_standard_axioms Minimality.no_balanced_zeroTorque_of_depthSeparated
 #assert_standard_axioms Minimality.hasHorizontalDoubleNormal_of_pairTorque_eq_zero
