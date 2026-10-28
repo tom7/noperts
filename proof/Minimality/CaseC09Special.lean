@@ -9,13 +9,14 @@ public import Minimality.CaseC09Rims
 
 The refereed proofs 09.1-09.4 and the
 referee's fix 1 (the corner `a- = d+ ∧ b+ = s+A2`) shrink `CaseC09Special` to
-`t- = s- ∨ ap = cp ∨ A12 = A22 ∨ (a- = b+ ∧ b+ = s+A2)`.
+`t- = s- ∨ ap = cp ∨ A12 = A22 ∨ (a- = b+ ∧ b+ = s+A2)` (09.5 and the final definition are in
+`CaseC09TS.lean`, which imports this file).
 
 * 09.4 (`c+ = b-`): `Shape09.thm_27_58'`, the algebra of 27.58 with `c+ ≤ b-`.
 * 09.1/09.2/09.3 (`a- = d+`, `b+ = s+A2`, `a- = b+`): the sector versions of the rim tests
   `rimT1`, `rimT2` (`rimT1_sector_dp`, `rimT1_sector_bp`, `rimT2_sector`), combined in
   `rupert_of_27_48_special` (including the corner, by the sum of the two failure inequalities).
-* 09.5 (`t- = s-`, `a- ≠ d+`) is not yet formalized: `t- = s-` stays a special position.
+* 09.5 (`t- = s-`) is in `CaseC09TS.lean`, together with `CaseC09Special` and `isRupert_of_not_special`.
 -/
 
 namespace Minimality.CaseC09
@@ -508,36 +509,6 @@ theorem rupert_or_27_48'' (hx : Function.Injective x) (hA : F.a12 < F.a22)
   · exact Or.inl (F.rupert_of_Q3456 hx hQ)
   obtain ⟨a, b, c, d⟩ := F.S.thm_27_58' hts hca hcb hAM hT5 hQ
   exact Or.inr ⟨hts, a, b, c, d⟩
-
-/-- Type 09, acute case (c), off the shrunken special set. -/
-theorem isRupert_caseC' (hx : Function.Injective x) (hA : F.a12 < F.a22)
-    (sp0 : F.S.tm ≠ F.S.sm) (sp4 : F.S.ap ≠ F.S.cp)
-    (hc : ¬ (F.S.am = F.S.bp ∧ F.S.bp = F.S.sp * F.S.A2)) :
-    IsRupert (Finset.univ.image x) := by
-  rcases F.rupert_or_27_48'' hx hA sp0 sp4 with h | ⟨a, b, c, d, e⟩
-  · exact h
-  · exact F.rupert_of_27_48_special a b c d e hc
-
-end Frame09
-
-/-- **The special positions of type 09's acute case (c)** (on `x`, for some frame): `t- = s-`
-(09.5, still open), `a+ = c+`, the right angle `A12 = A22` at `xb`, or the corner
-`a- = b+ ∧ b+ = s+A2`.  (`c+ = b-`, `a- = d+`, `b+ = s+A2`, `a- = b+` alone are removed by
-09.4, 09.1, 09.2, 09.3 and fix 1.) -/
-def CaseC09Special (x : Fin 7 → ℝ³) : Prop :=
-  ∃ F : Frame09 x, F.S.tm = F.S.sm ∨ F.S.ap = F.S.cp ∨ F.a12 = F.a22 ∨
-    (F.S.am = F.S.bp ∧ F.S.bp = F.S.sp * F.S.A2)
-
-namespace Frame09
-
-/-- Off the special positions, a type-09 frame (acute case (c)) is Rupert. -/
-theorem isRupert_of_not_special {x : Fin 7 → ℝ³} (F : Frame09 x) (hx : Function.Injective x)
-    (h : ¬ CaseC09Special x) : IsRupert (Finset.univ.image x) := by
-  have hF : ¬ (F.S.tm = F.S.sm ∨ F.S.ap = F.S.cp ∨ F.a12 = F.a22 ∨
-      (F.S.am = F.S.bp ∧ F.S.bp = F.S.sp * F.S.A2)) := fun h' => h ⟨F, h'⟩
-  simp only [not_or] at hF
-  obtain ⟨n0, n4, nA, n1⟩ := hF
-  exact F.isRupert_caseC' hx (lt_of_le_of_ne F.A12_le_A22 nA) n0 n4 n1
 
 end Frame09
 

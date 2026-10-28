@@ -20,7 +20,7 @@ Under `t- < s-` the two conditions cover everything (`t48_contra`, i.e. the two 
 inequalities sum to `A12 (t- - s-) ≥ 0`), so one of the tests is unimodal:
 `Frame09.rupert_of_27_48`.  Then `Frame09.isRupert_caseC` combines this with
 `rupert_or_27_48'`.  The special positions (`CaseC09Special`, `isRupert_of_not_special`) and the
-sector tests that remove most of them (§34.4.2) are in `Minimality/CaseC09Special.lean`.
+sector tests that remove most of them (§34.4.2) are in `Minimality/CaseC09Special.lean` and `CaseC09TS.lean`.
 -/
 
 namespace Minimality.CaseC09
