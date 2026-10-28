@@ -1162,7 +1162,8 @@ theorem NtD_pair (hH : F.ClassH) (hV : 0 < F.S.Vp) (hlev : F.dV 0 ≠ F.dV 6) :
   · exact absurd (by linarith) hlev
 
 /-- **`V` with the triangle rim, on the hyperplane `ClassH`**, away from the level chord
-`dV 0 = dV 6` (`B = 0`: `m1+, m1-, xb` level at `uV`, a codimension-2 position inside `ClassH`). -/
+`dV 0 = dV 6` (`B = 0`: `m1+, m1-, xb` level at `uV`, a codimension-2 position inside `ClassH`, closed
+by Theorem LC, `vNt_level_rupert` in `CaseC18Level.lean`). -/
 theorem vNt_classH_rupert (hx : Function.Injective x) (hD2 : 0 < F.S.D2p) (hV : 0 < F.S.Vp)
     (hA1z : 0 < F.S.hm * F.S.tp - F.S.hp * (1 - F.S.tm))
     (hA1 : 0 < F.S.hp * F.S.tm - F.S.hm * (1 - F.S.tp)) (hH : F.ClassH)
@@ -1228,7 +1229,8 @@ theorem vNt_classH_rupert (hx : Function.Injective x) (hD2 : 0 < F.S.D2p) (hV : 
       simp only [b3, quad_3, quad_0] <;> assumption
 
 /-- **The `V` side of 27.59 on `ClassH`** (the case `hH : F.ClassH` of `Vside_slide`).  For `D2p > 0`
-the extra hypothesis `dV 0 ≠ dV 6` is needed (see `vNt_classH_rupert`). -/
+the extra hypothesis `dV 0 ≠ dV 6` is needed here; `Vside_classH_any` (`CaseC18Level.lean`) removes it by
+Theorem LC. -/
 theorem Vside_classH (hx : Function.Injective x) (hVp : F.S.dp < F.S.A1 * F.S.tp)
     (h1 : F.S.am < F.S.bp) (h2 : F.S.ap < F.S.bm) (hD2 : F.S.D2p ≠ 0) (hH : F.ClassH)
     (hlev : 0 < F.S.D2p → F.dV 0 ≠ F.dV 6) : IsRupert (Finset.univ.image x) := by
@@ -1254,60 +1256,6 @@ theorem Vside_classH (hx : Function.Injective x) (hVp : F.S.dp < F.S.A1 * F.S.tp
 
 end Frame18
 
-/-- **The special positions of type 18, with the hyperplane `ClassH` reduced to its codimension-2
-part.**  As `CaseC18Special`, with the two HDN items of `V`, `V^Z` replaced by `ClassH` and, on it, the
-level chord `m1+ m1-` at the view of `V` (resp. `V^Z`, whose `uV`, hence `dV`, are those of
-`zFrame`): there `xb` is not strictly between `m1+` and `m1-` in depth, so Step 4's pair is not
-depth-separated at `η = 0` (`vNt_classH_rupert`; for the 4-cycle rim `hA ∧ hB` exclude it). -/
-def CaseC18Special' (x : Fin 7 → ℝ³) : Prop :=
-  ∃ F : Frame18 x, F.a12 = F.a11 ∨ F.a12 = F.a22 ∨ F.S.am = F.S.bp ∨ F.S.ap = F.S.bm ∨
-    F.S.ap = F.S.cp ∨ F.S.am = F.S.cm ∨ F.S.dp = F.S.A1 * F.S.tp ∨ F.S.dm = F.S.A1 * F.S.tm ∨
-    F.S.D2p = 0 ∨ (F.ClassH ∧ (F.dV 0 = F.dV 6 ∨ F.zFrame.dV 0 = F.zFrame.dV 6))
-
-/-- `Frame18.isRupert_of_not_special` with the smaller special set (proof: that of
-`isRupert_of_not_special` with `Vside` replaced by `Vside_slide` off `ClassH` and `Vside_classH`
-(Theorem 27.41 Step 4) on it, and `classH_zFrame_iff` for the `Z` branch). -/
-theorem Frame18.isRupert_of_not_special' {x : Fin 7 → ℝ³} (F : Frame18 x)
-    (hx : Function.Injective x) (h : ¬ CaseC18Special' x) :
-    IsRupert (Finset.univ.image x) := by
-  have hF : ¬ (F.a12 = F.a11 ∨ F.a12 = F.a22 ∨ F.S.am = F.S.bp ∨ F.S.ap = F.S.bm ∨
-      F.S.ap = F.S.cp ∨ F.S.am = F.S.cm ∨ F.S.dp = F.S.A1 * F.S.tp ∨
-      F.S.dm = F.S.A1 * F.S.tm ∨ F.S.D2p = 0 ∨
-      (F.ClassH ∧ (F.dV 0 = F.dV 6 ∨ F.zFrame.dV 0 = F.zFrame.dV 6))) :=
-    fun h' => h ⟨F, h'⟩
-  simp only [not_or] at hF
-  obtain ⟨nα, nβ, n1, n2, n3, n4, nVp, nVm, nD, nH⟩ := hF
-  have hα : F.a12 < F.a11 := lt_of_le_of_ne F.A12_le_A11 nα
-  have hβ : F.a12 < F.a22 := lt_of_le_of_ne F.A12_le_A22 nβ
-  rcases F.rupert_or_V hx hα hβ n1 n2 n3 n4 with h | ⟨h1, h2, hV⟩
-  · exact h
-  rcases hV with hV | hV
-  · by_cases hH : F.ClassH
-    · exact F.Vside_classH hx (lt_of_le_of_ne hV nVp) h1 h2 nD hH
-        (fun _ e => nH ⟨hH, Or.inl e⟩)
-    · exact F.Vside_slide hx (lt_of_le_of_ne hV nVp) h1 h2 nD hH
-  · apply rupert_of_z
-    have hxz : Function.Injective (x ∘ zperm) := hx.comp zperm_bijective.1
-    have hdp : F.zFrame.S.dp < F.zFrame.S.A1 * F.zFrame.S.tp := by
-      have : F.zFrame.S.dp = F.S.dm := rfl
-      have hA : F.zFrame.S.A1 = F.S.A1 := by
-        show F.S.am + F.S.ap = F.S.ap + F.S.am
-        ring
-      show F.S.dm < F.zFrame.S.A1 * F.S.tm
-      rw [hA]
-      exact lt_of_le_of_ne hV nVm
-    have hD : F.zFrame.S.D2p ≠ 0 := by
-      intro h0
-      apply nD
-      have e : F.zFrame.S = F.S.swap := rfl
-      rw [e] at h0
-      simp only [Shape18.D2p, Shape18.swap] at h0 ⊢
-      linarith
-    by_cases hH : F.ClassH
-    · exact F.zFrame.Vside_classH hxz hdp h2 h1 hD ((F.classH_zFrame_iff).2 hH)
-        (fun _ e => nH ⟨hH, Or.inr e⟩)
-    · exact F.zFrame.Vside_slide hxz hdp h2 h1 hD (fun hz => hH ((F.classH_zFrame_iff).1 hz))
-
 end Minimality.CaseC18
 
 /-!
@@ -1329,20 +1277,17 @@ Paper: FEWER-FACES-PROOFS.md Theorem 27.41 Step 4 (~16932), Lemma 22.4, Theorem 
   (`c = xb`; `e = [m1+, v]` if `B > 0`, `e = [v, m1-]` if `B < 0`) is depth-separated at `uV` and its torque
   satisfies `torque * G(D, uV) = -a12 g hp tp kp` resp. `-a12 g hm Vp` (an identity; `ClassH` is used only
   for the depth order).  `z(m2-)` vs `z(xb)` comes from `vN4_A` and `hB`.
-* `vN4_classH_rupert`, `vNt_classH_rupert`, `Vside_classH`; `CaseC18Special'` (moved here from
-  `CaseC18VSlide`) and `Frame18.isRupert_of_not_special'`.
+* `vN4_classH_rupert`, `vNt_classH_rupert`, `Vside_classH`.  `CaseC18Special'` and
+  `Frame18.isRupert_of_not_special'` are in `CaseC18Level.lean`.
 
-## The remaining special position
+## The level chord
 
 `ClassH` with `dV 0 = dV 6` (the chord `m1+ m1-` level at `uV`, hence also `xb`): there `xb` is not
 strictly between `m1+` and `m1-`, `DepthSepAt` fails at `η = 0`.  For the 4-cycle rim `hA ∧ hB` exclude
-it.  For the triangle rim it is a codimension-2 item of `CaseC18Special'`.  Along the slide the three
-depths split at first order by `G(·, eD)`: `G(m1+ - xb, eD) = |m1+ - xb|² > 0` always, and
-`G(m1- - xb, eD) = G(m1- - xb, m1+ - xb) = a11 tm tp - a12 (tm + tp) + a22 - g hm hp`.  `xb` lies strictly
-between them iff this is `< 0` (the angle at `xb` of the triangle `m1+, m1-, xb` is obtuse); when it is
-`>= 0` `xb` is the lowest of the three at `u_η` and no pair with `c = xb` exists, so removing the item by
-this slide is impossible there (and for `< 0` it would need a first-order `DepthSepAt` and torque limit,
-a few hundred lines).
+it.  For the triangle rim this slide cannot remove it (the depths split at first order by
+`G(·, eD)`, `G(m1- - xb, eD) = a11 tm tp - a12 (tm + tp) + a22 - g hm hp`, and `xb` need not lie between).
+It is closed by Theorem LC in `CaseC18Level.lean` (`vNt_level_rupert`, a tilt along `F1`'s circle plus
+`e_y`), which gives `Vside_classH_any` without the `hlev` hypothesis.
 -/
 
 end
