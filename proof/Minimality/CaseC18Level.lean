@@ -452,53 +452,6 @@ theorem Vside_classH_any (hx : Function.Injective x) (hVp : F.S.dp < F.S.A1 * F.
 
 end Frame18
 
-/-- **The special positions of type 18**: the items of `CaseC18Special` with the hyperplane `ClassH`
-removed (off `ClassH` the view of `V` is slid along `F1`'s circle, `Vside_slide`; on it Step 4,
-`Vside_classH`, and Theorem LC for the level chord `dV 0 = dV 6`, `Vside_classH_any`). -/
-def CaseC18Special' (x : Fin 7 → ℝ³) : Prop :=
-  ∃ F : Frame18 x, F.a12 = F.a11 ∨ F.a12 = F.a22 ∨ F.S.am = F.S.bp ∨ F.S.ap = F.S.bm ∨
-    F.S.ap = F.S.cp ∨ F.S.am = F.S.cm ∨ F.S.dp = F.S.A1 * F.S.tp ∨ F.S.dm = F.S.A1 * F.S.tm ∨
-    F.S.D2p = 0
-
-/-- `isRupert_of_not_special'` with `Vside_classH_any` (and `zFrame.Vside_classH_any` for `Z`). -/
-theorem Frame18.isRupert_of_not_special' {x : Fin 7 → ℝ³} (F : Frame18 x)
-    (hx : Function.Injective x) (h : ¬ CaseC18Special' x) :
-    IsRupert (Finset.univ.image x) := by
-  have hF : ¬ (F.a12 = F.a11 ∨ F.a12 = F.a22 ∨ F.S.am = F.S.bp ∨ F.S.ap = F.S.bm ∨
-      F.S.ap = F.S.cp ∨ F.S.am = F.S.cm ∨ F.S.dp = F.S.A1 * F.S.tp ∨
-      F.S.dm = F.S.A1 * F.S.tm ∨ F.S.D2p = 0) :=
-    fun h' => h ⟨F, h'⟩
-  simp only [not_or] at hF
-  obtain ⟨nα, nβ, n1, n2, n3, n4, nVp, nVm, nD⟩ := hF
-  have hα : F.a12 < F.a11 := lt_of_le_of_ne F.A12_le_A11 nα
-  have hβ : F.a12 < F.a22 := lt_of_le_of_ne F.A12_le_A22 nβ
-  rcases F.rupert_or_V hx hα hβ n1 n2 n3 n4 with h | ⟨h1, h2, hV⟩
-  · exact h
-  rcases hV with hV | hV
-  · by_cases hH : F.ClassH
-    · exact F.Vside_classH_any hx (lt_of_le_of_ne hV nVp) h1 h2 nD hH
-    · exact F.Vside_slide hx (lt_of_le_of_ne hV nVp) h1 h2 nD hH
-  · apply rupert_of_z
-    have hxz : Function.Injective (x ∘ zperm) := hx.comp zperm_bijective.1
-    have hdp : F.zFrame.S.dp < F.zFrame.S.A1 * F.zFrame.S.tp := by
-      have : F.zFrame.S.dp = F.S.dm := rfl
-      have hA : F.zFrame.S.A1 = F.S.A1 := by
-        show F.S.am + F.S.ap = F.S.ap + F.S.am
-        ring
-      show F.S.dm < F.zFrame.S.A1 * F.S.tm
-      rw [hA]
-      exact lt_of_le_of_ne hV nVm
-    have hD : F.zFrame.S.D2p ≠ 0 := by
-      intro h0
-      apply nD
-      have e : F.zFrame.S = F.S.swap := rfl
-      rw [e] at h0
-      simp only [Shape18.D2p, Shape18.swap] at h0 ⊢
-      linarith
-    by_cases hH : F.ClassH
-    · exact F.zFrame.Vside_classH_any hxz hdp h2 h1 hD ((F.classH_zFrame_iff).2 hH)
-    · exact F.zFrame.Vside_slide hxz hdp h2 h1 hD (fun hz => hH ((F.classH_zFrame_iff).1 hz))
-
 end Minimality.CaseC18
 
 end

@@ -36,6 +36,7 @@ public import Minimality.SlideRim
 public import Minimality.CaseC18VSlide
 public import Minimality.CaseC18Step4
 public import Minimality.CaseC18Level
+public import Minimality.CaseC18Sp
 public import Minimality.DepthSepTorque
 
 /-!
@@ -804,8 +805,12 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- normal-form frame `frame18` and `Frame18.isRupert_of_not_special` (Theorem 27.59: the edge
     -- crossings 27.32 and its Z-image, 27.31, the families A and A^Z, Theorem 5 with W = F2, and the
     -- vertex crossings V, V^Z at their own views with the pair partner T_A), off the special
-    -- positions `CaseC18Special x` (`a∓ = b±`, `a± = c±`, the right angles `A12 = A11`, `A12 = A22`,
-    -- `d± = A1 t±` (the far-end switch), `D2 = 0` (the border of V's rim)).  The hyperplane `ClassH`
+    -- positions `CaseC18Special' x` (PROOFS section 35, `CaseC18Sp.lean`): R1' (`A12 = A11`,
+    -- `b+ ≤ a-`, `b- ≤ a+`, not `c+ < a+ ∧ c- < a-`), the corners `a- = b+ = c-` and its Z-image
+    -- `a+ = b- = c+`, and the V side (`d+ = A1 t+`, `d- = A1 t-` (the far-end switch) or `D2 = 0` (the
+    -- border of V's rim), with `a+ < c+`, `a- < c-`).  The other equalities (`a∓ = b±`, `a± = c±`,
+    -- the right angles `A12 = A11`, `A12 = A22`) are no longer special: Theorems 1-4 of section 35
+    -- (`t31b_le`, `t31_C4/C5/C6`, `tB_merged`, `rupert_of_a12_eq_a11`).  The hyperplane `ClassH`
     -- (`A12 (h+ + h-) = A11 (t+ h- + t- h+)`, the class `H_F1` of Proposition 27.38 (a)) is no
     -- special position: off it V's view is slid along F1's circle (`CaseC18VSlide.lean`, Theorem
     -- 27.41 Steps 1-3); on it along Δ's circle, with Theorem D's torque (`CaseC18Step4.lean`,

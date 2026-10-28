@@ -1278,7 +1278,7 @@ Paper: FEWER-FACES-PROOFS.md Theorem 27.41 Step 4 (~16932), Lemma 22.4, Theorem 
   satisfies `torque * G(D, uV) = -a12 g hp tp kp` resp. `-a12 g hm Vp` (an identity; `ClassH` is used only
   for the depth order).  `z(m2-)` vs `z(xb)` comes from `vN4_A` and `hB`.
 * `vN4_classH_rupert`, `vNt_classH_rupert`, `Vside_classH`.  `CaseC18Special'` and
-  `Frame18.isRupert_of_not_special'` are in `CaseC18Level.lean`.
+  `Frame18.isRupert_of_not_special'` are in `CaseC18Sp.lean`.
 
 ## The level chord
 
