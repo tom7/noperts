@@ -31,12 +31,12 @@ lemma x_lt_y {X Y P Q : ℝ} (hY : 0 < Y) (hP : 0 < P) (hXY : X < Y) (hPQ : P < 
   · nlinarith [mul_pos hY (hP.trans hPQ)]
   · nlinarith [mul_pos h (sub_pos.2 hPQ), mul_pos (sub_pos.2 hXY) hP]
 
-lemma tmsm_lt {tm sm sp : ℝ} (htm : 0 < tm) (hsp1 : sp < 1) (hsm1 : sm < 1) (hts : tm < sm) :
+lemma tmsm_lt {tm sm sp : ℝ} (htm : 0 < tm) (hsp1 : sp < 1) (hsm1 : sm < 1) (hts : tm ≤ sm) :
     tm * (sm - sp) < sm * (1 - sp) := by
-  have hsm : 0 < sm := htm.trans hts
+  have hsm : 0 < sm := htm.trans_le hts
   rcases le_or_gt sm sp with h | h
   · nlinarith [mul_pos hsm (sub_pos.2 hsp1), mul_nonneg htm.le (sub_nonneg.2 h)]
-  · nlinarith [mul_pos (sub_pos.2 h) (sub_pos.2 hts), mul_pos (sub_pos.2 h) (sub_pos.2 hsm1)]
+  · nlinarith [mul_nonneg (sub_pos.2 h).le (sub_nonneg.2 hts), mul_pos (sub_pos.2 h) (sub_pos.2 hsm1)]
 
 lemma cmp_12 {tp tm bp bm am : ℝ} (htp1 : tp < 1) (htm : 0 < tm) (hbpa : bp < am)
     (R : bm * (1 - tm) = am * tm) : tm * ((1 - tp) * (bp + bm)) < (1 - tp) * bm := by
@@ -214,7 +214,7 @@ lemma f2_pos : 0 < S.f2 := by
 
 
 /-- The nine comparisons of 27.57: `t- N < M`. -/
-lemma tm_N57_lt_M57 (hts : S.tm < S.sm) (had : S.dp < S.am) : S.tm * S.N57 < S.M57 := by
+lemma tm_N57_lt_M57 (hts : S.tm ≤ S.sm) (had : S.dp < S.am) : S.tm * S.N57 < S.M57 := by
   have htm := S.tm_pos; have htm1 := S.tm_lt; have htp := S.tp_pos; have htp1 := S.tp_lt
   have hsm := S.sm_pos; have hsm1 := S.sm_lt; have hsp := S.sp_pos; have hsp1 := S.sp_lt
   have hbm := S.bm_pos; have hbp := S.bp_pos; have hdp := S.dp_pos; have hf1 := S.f1_pos
@@ -273,7 +273,7 @@ lemma M57_pos : 0 < S.M57 := by
 holds with `W` the lower quad `3456 = (xa, m1-, xb, m2-)`, in the form of the paper's solvability
 condition `t- N < M`. -/
 theorem q3456_of_lt (hts : S.tm < S.sm) (had : S.dp < S.am) : S.Q3456 := by
-  have hkey := S.tm_N57_lt_M57 hts had
+  have hkey := S.tm_N57_lt_M57 hts.le had
   have htm := S.tm_pos; have hsm := S.sm_pos; have hM := S.M57_pos
   set M := S.M57 with hMdef
   set N := S.N57 with hNdef

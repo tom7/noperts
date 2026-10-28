@@ -20,6 +20,7 @@ public import Minimality.CaseC09Tests
 public import Minimality.CaseC09Cross
 public import Minimality.CaseC09Rims
 public import Minimality.CaseC09Special
+public import Minimality.CaseC09TS
 public import Minimality.CaseC18Alg
 public import Minimality.CaseC18Frame
 public import Minimality.CaseC18Z

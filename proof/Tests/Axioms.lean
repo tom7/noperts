@@ -710,6 +710,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.CaseC09.Frame09.rupert_or_27_48''
 #assert_standard_axioms Minimality.CaseC09.Frame09.isRupert_caseC'
 #assert_standard_axioms Minimality.CaseC09.Frame09.isRupert_of_not_special
+#assert_standard_axioms Minimality.CaseC09.Frame09.rupert_of_tm_eq_sm_lt
 #assert_standard_axioms Minimality.CaseC20.Frame20.classH_rFrame_iff
 #assert_standard_axioms Minimality.CaseC20.Frame20.noPersistHDN_or_classH_vN4
 #assert_standard_axioms Minimality.CaseC20.Frame20.noPersistHDN_or_classH_tANR
