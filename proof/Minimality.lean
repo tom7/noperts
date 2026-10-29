@@ -6,6 +6,8 @@ public import Minimality.FaceBridge
 public import Minimality.Classify
 public import Minimality.Type29Bridge
 public import Minimality.Type29Codim2
+public import Minimality.Generic.PV.PVMain
+public import Minimality.Generic.PV.FaceCircle
 public import Minimality.Type02CaseC
 public import Minimality.Type02HDN
 public import Minimality.TripleTieObtuse
