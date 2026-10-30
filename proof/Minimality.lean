@@ -61,7 +61,7 @@ public import Minimality.Type02V12
 public import Minimality.Type02Assemble
 public import Minimality.Type08S.G9_Final
 public import Minimality.Type08S.SCm
-public import Minimality.Type08S.P2QFinalI
+public import Minimality.Type08S.P2RFinalJ
 
 /-!
 # Every nopert has at least 7 points
@@ -708,8 +708,10 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- sector tilt at the view (Proposition 29.3), with it beyond by the horizontal end of a face
     -- circle (Proposition 30.4); `isRupert_touchN2`, `isRupert_touchT4`
     -- under the codimension-3 conditions `Touch30N2`, `Touch30T4`, `touchTie`
-    -- Lean-verified (paper sp08*, `Type08S/P2QFinalI.lean`): `type08_rupert_or_residI` gives Rupert
-    -- or `hres : Resid08FinalI (x 0) (x 6) (x 3) (x 4) (x 5) (x 1) (x 2)`, the residual set of the
+    -- Lean-verified (paper sp08*, `Type08S/P2RFinalJ.lean`): `type08_rupert_or_residJ` gives Rupert
+    -- or `hres : Resid08FinalJ (x 0) (x 6) (x 3) (x 4) (x 5) (x 1) (x 2)` (pkR: lexicographic cells, Theorem 24.1,
+    -- close L1, B1, the level face at T', alpha4 = 1 with C < 0 and the P3 tie with D_c < 0; new leftovers
+    -- `TpA1ii`, `P3Tpii`; every leftover has no lex cell at its view), inside the residual set of the
     -- sp08 argument: the planar items (two planar equators, a planar Gale `κ = 0`) survive only inside the codim-3
     -- `ResidP6` (package P5, `P2Q*`: weak Lemma 6 and the pipeline on `Norm08w`); otherwise,
     -- in one of the six labellings of Lemma 6, at `T` the codim-4 leftover `S4T2` (package P1, `P2T*`:
@@ -725,7 +727,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fE, hfE⟩ := hR {1, 3, 6} (by decide)
     obtain ⟨fF, hfF⟩ := hR {1, 4, 6} (by decide)
     obtain ⟨fG, hfG⟩ := hR {4, 5, 6} (by decide)
-    exact (Minimality.Type08Sp.type08_rupert_or_residI x hx fA fB fC fD fE fF fG hfA hfB hfC hfD hfE
+    exact (Minimality.Type08Sp.type08_rupert_or_residJ x hx fA fB fC fD fE fF fG hfA hfB hfC hfD hfE
       hfF hfG).elim hN.2 (fun hres => byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
     -- asked; type 09 is fully closed (no `sorry`).  `quadPairPar09` (as `quadPairPar02`):
