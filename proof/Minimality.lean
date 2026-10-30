@@ -61,7 +61,7 @@ public import Minimality.Type02V12
 public import Minimality.Type02Assemble
 public import Minimality.Type08S.G9_Final
 public import Minimality.Type08S.SCm
-public import Minimality.Type08S.P2FinalG
+public import Minimality.Type08S.P2FinalH
 
 /-!
 # Every nopert has at least 7 points
@@ -708,12 +708,13 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- sector tilt at the view (Proposition 29.3), with it beyond by the horizontal end of a face
     -- circle (Proposition 30.4); `isRupert_touchN2`, `isRupert_touchT4`
     -- under the codimension-3 conditions `Touch30N2`, `Touch30T4`, `touchTie`
-    -- Lean-verified (paper sp08*, `Type08S/P2FinalG.lean`): `type08_rupert_or_residG` gives Rupert
-    -- or `hres : Resid08FinalG (x 0) (x 6) (x 3) (x 4) (x 5) (x 1) (x 2)`, the residual set of the
+    -- Lean-verified (paper sp08*, `Type08S/P2FinalH.lean`): `type08_rupert_or_residH` gives Rupert
+    -- or `hres : Resid08FinalH (x 0) (x 6) (x 3) (x 4) (x 5) (x 1) (x 2)`, the residual set of the
     -- sp08 argument: two planar equators; a planar Gale `κ = 0` with a failing flat `Type08Gen`;
-    -- in one of the six labellings of Lemma 6, the case at `T` (package P1, unproved), or at `T'` the Σ₄
-    -- leftover `S4TpG2` (Lemma T'S, `Tp_poked_of_H`, `Tp_caseA` proved; `Tp_far` proved).  Proved and used: the
-    -- Q region, the refined limit theorem (R2T*, touching, ties), non-persistent and persistent HDN
+    -- in one of the six labellings of Lemma 6, at `T` the codim-4 leftover `S4T2` (package P1, `P2T*`:
+    -- limit theorem at `T`, touching, `K_b` HDNs, case B by the cells (−,−,−), (+,−,−), 18.3 and the `K_2` slide),
+    -- or at `T'` the Σ₄ leftover `S4TpG2` (Lemma T'S, `Tp_poked_of_H`, `Tp_caseA` proved; `Tp_far` proved).  Proved
+    -- and used: the Q region, the refined limit theorem (R2T*, touching, ties), non-persistent and persistent HDN
     -- closings, T'X, R3, R4h, the level face.  That
     -- residual is the remaining `sorry` (`not_type08_of_isNopert'` stays for other users)
     obtain ⟨fA, hfA⟩ := hR {0, 1, 2, 3} (by decide)
@@ -723,7 +724,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fE, hfE⟩ := hR {1, 3, 6} (by decide)
     obtain ⟨fF, hfF⟩ := hR {1, 4, 6} (by decide)
     obtain ⟨fG, hfG⟩ := hR {4, 5, 6} (by decide)
-    exact (Minimality.Type08Sp.type08_rupert_or_residG x hx fA fB fC fD fE fF fG hfA hfB hfC hfD hfE
+    exact (Minimality.Type08Sp.type08_rupert_or_residH x hx fA fB fC fD fE fF fG hfA hfB hfC hfD hfE
       hfF hfG).elim hN.2 (fun hres => byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
     -- asked; type 09 is fully closed (no `sorry`).  `quadPairPar09` (as `quadPairPar02`):
