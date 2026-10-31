@@ -412,4 +412,42 @@ theorem hdet_smul {u v p q r s : ℝ³} {l1 l2 : ℝ} (hl1 : l1 ≠ 0) (hl2 : l2
     nlinarith [mul_pos (mul_self_pos.2 hl1) (mul_self_pos.2 hl2)]
   exact neg_of_mul_neg_right h this.le
 
+/-! ### Unimodular images of a pentagon test -/
+
+theorem depthSep_smul {a b e f w : ℝ³} {c : ℝ} (hc : c ≠ 0) (h : DepthSep a b e f (c • w)) :
+    DepthSep a b e f w := by
+  simp only [DepthSep, max_lt_iff, lt_min_iff, real_inner_smul_right] at h ⊢
+  rcases lt_or_gt_of_ne hc with hn | hp
+  · rcases h with ⟨⟨h1, h2⟩, h3, h4⟩ | ⟨⟨h1, h2⟩, h3, h4⟩
+    · right; refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> nlinarith
+    · left; refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> nlinarith
+  · rcases h with ⟨⟨h1, h2⟩, h3, h4⟩ | ⟨⟨h1, h2⟩, h3, h4⟩
+    · left; refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> nlinarith
+    · right; refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> nlinarith
+
+/-- A pentagon `(a,b,c,d,e)` at the view `f`. -/
+noncomputable def pentagonTest (f : (Fin 7 → ℝ³) → ℝ³) (a b c d e : Fin 7) : LabTest 7 :=
+  ⟨5, f, fun i => ![a, b, c, d, e] i⟩
+
+theorem depth_pentagon_map {f : (Fin 7 → ℝ³) → ℝ³} (hf : CovView f) (L : ℝ³ →L[ℝ] ℝ³) (y : Fin 7 → ℝ³)
+    (hL : LinearMap.det (L : ℝ³ →ₗ[ℝ] ℝ³) = 1) (a b c d e : Fin 7) :
+    (pentagonTest f a b c d e).depth (mapShape L y) =
+      quint ⟪L (y a), L (f y)⟫ ⟪L (y b), L (f y)⟫ ⟪L (y c), L (f y)⟫ ⟪L (y d), L (f y)⟫
+        ⟪L (y e), L (f y)⟫ := by
+  rw [← hf.2 L y hL]
+  funext i
+  fin_cases i <;> rfl
+
+theorem depth_pentagon (f : (Fin 7 → ℝ³) → ℝ³) (y : Fin 7 → ℝ³) (a b c d e : Fin 7) :
+    (pentagonTest f a b c d e).depth y = quint ⟪y a, f y⟫ ⟪y b, f y⟫ ⟪y c, f y⟫ ⟪y d, f y⟫ ⟪y e, f y⟫ := by
+  funext i; fin_cases i <;> rfl
+
+theorem eq_zero_of_map_eq_zero_of_det_one {L : ℝ³ →L[ℝ] ℝ³} (hL : LinearMap.det (L : ℝ³ →ₗ[ℝ] ℝ³) = 1) {v : ℝ³}
+    (h : L v = 0) : v = 0 := by
+  by_contra hv
+  have : LinearMap.det (L : ℝ³ →ₗ[ℝ] ℝ³) = 0 :=
+    LinearMap.det_eq_zero_iff_ker_ne_bot.mpr (by
+      rw [Submodule.ne_bot_iff]; exact ⟨v, by simpa using h, hv⟩)
+  rw [hL] at this; exact one_ne_zero this
+
 end Minimality

@@ -220,6 +220,150 @@ theorem shared_core_ie (y : Fin 7 → ℝ³) (hyinj : Function.Injective y)
     exact shared_core_weak y hyinj fu fv hfu hfv a' a b b' c c' n1 n2 hl1 hl2 hu hv
       m1u m1v m2u m2v hdet o1 o2 (q := 2) le_rfl ties hties hind (fun a _ => hex a)
 
+/-- **MF for the pair (V, Y)** at a unimodular `L`, generic in the pair data. `hYuni` is
+`NF29.k4_Y_view` (curried); `hm` the crossing of the V diagonals with `l < 0`. -/
+theorem mf_vy (L : ℝ³ →L[ℝ] ℝ³) (hL : LinearMap.det (L : ℝ³ →ₗ[ℝ] ℝ³) = 1)
+    (y : Fin 7 → ℝ³) (hyinj : Function.Injective y) (vN : ℝ³) (hvN : vN ≠ 0) (c : ℝ) (hc : c ≠ 0)
+    (fu : (Fin 7 → ℝ³) → ℝ³) (hfu : CovView fu) (hfu' : fu y = c • vN)
+    (fv : (Fin 7 → ℝ³) → ℝ³) (hfv : CovView fv) (hfv' : fv y = y 5 - y 3)
+    {s t l : ℝ} (hs0 : 0 ≤ s) (hs1 : s ≤ 1) (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hm : (y 1 + t • (y 3 - y 1)) - (y 5 + s • (y 2 - y 5)) = l • vN) (hl : l < 0)
+    (hYuni : ∀ w : ℝ³, 0 < ⟪y 5 - y 3, w⟫ → 0 ≤ ⟪vN, w⟫ →
+      Function.Injective (quint ⟪y 5, w⟫ ⟪y 0, w⟫ ⟪y 1, w⟫ ⟪y 4, w⟫ ⟪y 6, w⟫) →
+      IsCyclicUnimodal (quint ⟪y 5, w⟫ ⟪y 0, w⟫ ⟪y 1, w⟫ ⟪y 4, w⟫ ⟪y 6, w⟫))
+    (i1 : Function.Injective (quad ⟪L (y 5), L (fu y)⟫ ⟪L (y 1), L (fu y)⟫ ⟪L (y 2), L (fu y)⟫
+      ⟪L (y 3), L (fu y)⟫))
+    (i2 : Function.Injective (quint ⟪L (y 5), L (fv y)⟫ ⟪L (y 0), L (fv y)⟫ ⟪L (y 1), L (fv y)⟫
+      ⟪L (y 4), L (fv y)⟫ ⟪L (y 6), L (fv y)⟫)) :
+    IsCyclicUnimodal (quad ⟪L (y 5), L (fu y)⟫ ⟪L (y 1), L (fu y)⟫ ⟪L (y 2), L (fu y)⟫
+      ⟪L (y 3), L (fu y)⟫) ∨
+    IsCyclicUnimodal (quint ⟪L (y 5), L (fv y)⟫ ⟪L (y 0), L (fv y)⟫ ⟪L (y 1), L (fv y)⟫
+      ⟪L (y 4), L (fv y)⟫ ⟪L (y 6), L (fv y)⟫) := by
+  by_contra hn
+  push Not at hn
+  have s1 : DepthSep (L (y 5)) (L (y 2)) (L (y 1)) (L (y 3)) (L (fu y)) := by
+    by_contra hcn; exact hn.1 (quad_unimodal hcn (nodup_of_injective_quad i1))
+  rw [hfu', map_smul] at s1
+  have s1' := depthSep_smul hc s1
+  have hw : L vN ≠ 0 := fun h => hvN (eq_zero_of_map_eq_zero_of_det_one hL h)
+  have hm' : (L (y 1) + t • (L (y 3) - L (y 1))) - (L (y 5) + s • (L (y 2) - L (y 5))) = l • L vN := by
+    have := congrArg L hm
+    simpa [map_sub, map_add, map_smul] using this
+  -- ψ_L > 0
+  have hψ : ⟪L (y 3), L vN⟫ < ⟪L (y 5), L vN⟫ := by
+    rcases s1' with h | h
+    · exfalso
+      simp only [max_lt_iff, lt_min_iff] at h
+      exact not_weakSep_of_meet hs0 hs1 ht0 ht1 hm' hl hw h.1.1.le h.2.1.le (h.1.2.le) h.2.2.le
+    · simp only [max_lt_iff, lt_min_iff] at h
+      exact h.1.2
+  -- the Y view
+  set w := ContinuousLinearMap.adjoint L (L (y 5 - y 3)) with hwdef
+  have hwi : ∀ p : ℝ³, ⟪p, w⟫ = ⟪L p, L (y 5 - y 3)⟫ := fun p => by
+    rw [hwdef, ContinuousLinearMap.adjoint_inner_right]
+  have hne : L (y 5 - y 3) ≠ 0 := fun h => by
+    exact hyinj.ne (by decide : (5 : Fin 7) ≠ 3) (sub_eq_zero.mp (eq_zero_of_map_eq_zero_of_det_one hL h))
+  have hsq : 0 < ⟪y 5 - y 3, w⟫ := by
+    rw [hwi]; exact real_inner_self_pos.mpr hne
+  have hψ' : 0 ≤ ⟪vN, w⟫ := by
+    rw [hwi, real_inner_comm, map_sub, inner_sub_left]
+    linarith
+  have key : ∀ a b c d e : Fin 7, quint ⟪L (y a), L (fv y)⟫ ⟪L (y b), L (fv y)⟫ ⟪L (y c), L (fv y)⟫
+      ⟪L (y d), L (fv y)⟫ ⟪L (y e), L (fv y)⟫ = quint ⟪y a, w⟫ ⟪y b, w⟫ ⟪y c, w⟫ ⟪y d, w⟫ ⟪y e, w⟫ := by
+    intro a b c d e; rw [hfv', hwi, hwi, hwi, hwi, hwi]
+  rw [key] at i2
+  exact hn.2 (by rw [key]; exact hYuni w hsq hψ' i2)
+
+/-- The two tests: V quad `(5,1,2,3)` at `fu`, Y pentagon `(5,0,1,4,6)` at `fv`. -/
+noncomputable def vyGroup (fu fv : (Fin 7 → ℝ³) → ℝ³) : Bool → ViewGroup 7
+  | true => .single (LabTest.quad fu 5 1 2 3)
+  | false => .single (pentagonTest fv 5 0 1 4 6)
+
+theorem vyGroup_hTv (fu fv : (Fin 7 → ℝ³) → ℝ³) :
+    ∀ a, ∀ T ∈ (vyGroup fu fv a).tests, T.view = (vyGroup fu fv a).view := by
+  intro a T hT
+  cases a <;> simp [vyGroup, ViewGroup.tests] at hT <;> subst hT <;> rfl
+
+theorem vyGroup_lab_inj (fu fv : (Fin 7 → ℝ³) → ℝ³) :
+    ∀ a, ∀ T ∈ (vyGroup fu fv a).tests, Function.Injective T.lab := by
+  intro a T hT
+  cases a <;> simp [vyGroup, ViewGroup.tests] at hT <;> subst hT
+  · show Function.Injective (fun i : ZMod 5 => ![(5 : Fin 7), 0, 1, 4, 6] i)
+    decide
+  · show Function.Injective (fun i : ZMod 4 => ![(5 : Fin 7), 1, 2, 3] i)
+    decide
+
+/-- **Robust rim for the pair (V, Y)** (the analogue of `robust_rim_of_pair_signs` for the pentagon Y; no `hno`). -/
+theorem robust_rim_vy (fu fv : (Fin 7 → ℝ³) → ℝ³) (hfu : CovView fu) (hfv : CovView fv)
+    (y : Fin 7 → ℝ³) (hyinj : Function.Injective y) (vN : ℝ³) (hvN : vN ≠ 0) (c : ℝ) (hc : c ≠ 0)
+    (hfu' : fu y = c • vN) (hfv' : fv y = y 5 - y 3)
+    {s t l : ℝ} (hs0 : 0 ≤ s) (hs1 : s ≤ 1) (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hm : (y 1 + t • (y 3 - y 1)) - (y 5 + s • (y 2 - y 5)) = l • vN) (hl : l < 0)
+    (hYuni : ∀ w : ℝ³, 0 < ⟪y 5 - y 3, w⟫ → 0 ≤ ⟪vN, w⟫ →
+      Function.Injective (quint ⟪y 5, w⟫ ⟪y 0, w⟫ ⟪y 1, w⟫ ⟪y 4, w⟫ ⟪y 6, w⟫) →
+      IsCyclicUnimodal (quint ⟪y 5, w⟫ ⟪y 0, w⟫ ⟪y 1, w⟫ ⟪y 4, w⟫ ⟪y 6, w⟫))
+    {q : ℕ} (hq : q ≤ 2) (ties : Fin q → Bool × Fin 7 × Fin 7)
+    (hties : ∀ t, ⟪y (ties t).2.1 - y (ties t).2.2, (vyGroup fu fv (ties t).1).view y⟫ = 0)
+    (hind : TieIndep (fun t => y (ties t).2.1 - y (ties t).2.2)
+      (fun t => (vyGroup fu fv (ties t).1).view y))
+    (hcover : ∀ e, ∀ T ∈ (vyGroup fu fv e).tests, ∀ i j : ZMod T.k, T.depth y i = T.depth y j →
+      Relation.EqvGen (fun p p' => ∃ t, (ties t).1 = e ∧ (ties t).2 = (p, p')) (T.lab i) (T.lab j)) :
+    IsRobustUnimodal (quad ⟪y 5, fu y⟫ ⟪y 1, fu y⟫ ⟪y 2, fu y⟫ ⟪y 3, fu y⟫) ∨
+    IsRobustUnimodal (quint ⟪y 5, fv y⟫ ⟪y 0, fv y⟫ ⟪y 1, fv y⟫ ⟪y 4, fv y⟫ ⟪y 6, fv y⟫) := by
+  have hcov : ∀ e, CovView (vyGroup fu fv e).view := by
+    intro e; cases e
+    · exact hfv
+    · exact hfu
+  have hMF : ∀ᶠ L : ℝ³ →L[ℝ] ℝ³ in 𝓝 1, LinearMap.det (L : ℝ³ →ₗ[ℝ] ℝ³) = 1 →
+      (∀ e, ∀ T ∈ (vyGroup fu fv e).tests, Function.Injective (T.depth (mapShape L y))) →
+      ∃ e, ∃ T ∈ (vyGroup fu fv e).tests, IsCyclicUnimodal (T.depth (mapShape L y)) := by
+    refine Filter.Eventually.of_forall fun L hL hi => ?_
+    have i1 := hi true (LabTest.quad fu 5 1 2 3) (by simp [vyGroup, ViewGroup.tests])
+    have i2 := hi false (pentagonTest fv 5 0 1 4 6) (by simp [vyGroup, ViewGroup.tests])
+    rw [depth_quad_map hfu L y hL] at i1
+    rw [depth_pentagon_map hfv L y hL] at i2
+    rcases mf_vy L hL y hyinj vN hvN c hc fu hfu hfu' fv hfv hfv' hs0 hs1 ht0 ht1 hm hl hYuni
+      i1 i2 with h | h
+    · exact ⟨true, LabTest.quad fu 5 1 2 3, by simp [vyGroup, ViewGroup.tests], by
+        rw [depth_quad_map hfu L y hL]; exact h⟩
+    · exact ⟨false, pentagonTest fv 5 0 1 4 6, by simp [vyGroup, ViewGroup.tests], by
+        rw [depth_pentagon_map hfv L y hL]; exact h⟩
+  have := robust_corner_rim_of_MF (n := 7) (q := q) (A := Bool) y (vyGroup fu fv)
+    hcov (fun e => by cases e <;> simp [vyGroup, ViewGroup.Ordered])
+    (fun e T h => by
+      cases e <;> simp [vyGroup] at h <;> subst h <;> simp [LabTest.quad, pentagonTest])
+    (vyGroup_lab_inj fu fv) hq ties hties hind hcover hMF
+  rcases this with ⟨e, T, hT, hr⟩ | ⟨e, hs⟩
+  · cases e
+    · simp [vyGroup, ViewGroup.tests] at hT; subst hT; right
+      rwa [depth_pentagon] at hr
+    · simp [vyGroup, ViewGroup.tests] at hT; subst hT; left
+      rwa [depth_quad] at hr
+  · cases e <;> simp [vyGroup, ViewGroup.Straddle] at hs
+
+/-- **The robust rim of `V` or `Y` with independent ties at both views**: the two ties (one at `fu y`,
+one at `fv y`, `IndepF`) are listed and `hcover` comes from `OneTieAt`. -/
+theorem robust_rim_vy_ie (fu fv : (Fin 7 → ℝ³) → ℝ³) (hfu : CovView fu) (hfv : CovView fv)
+    (y : Fin 7 → ℝ³) (hyinj : Function.Injective y) (vN : ℝ³) (hvN : vN ≠ 0) (c : ℝ) (hc : c ≠ 0)
+    (hfu' : fu y = c • vN) (hfv' : fv y = y 5 - y 3)
+    {s t l : ℝ} (hs0 : 0 ≤ s) (hs1 : s ≤ 1) (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hm : (y 1 + t • (y 3 - y 1)) - (y 5 + s • (y 2 - y 5)) = l • vN) (hl : l < 0)
+    (hYuni : ∀ w : ℝ³, 0 < ⟪y 5 - y 3, w⟫ → 0 ≤ ⟪vN, w⟫ →
+      Function.Injective (quint ⟪y 5, w⟫ ⟪y 0, w⟫ ⟪y 1, w⟫ ⟪y 4, w⟫ ⟪y 6, w⟫) →
+      IsCyclicUnimodal (quint ⟪y 5, w⟫ ⟪y 0, w⟫ ⟪y 1, w⟫ ⟪y 4, w⟫ ⟪y 6, w⟫))
+    (o1 : OneTieAt (univ.image y) (fu y)) (o2 : OneTieAt (univ.image y) (fv y))
+    (hI : IndepF (univ.image y) (fu y) (fv y))
+    (hno : ¬ (NoTieAt (univ.image y) (fu y) ∨ NoTieAt (univ.image y) (fv y))) :
+    IsRobustUnimodal (quad ⟪y 5, fu y⟫ ⟪y 1, fu y⟫ ⟪y 2, fu y⟫ ⟪y 3, fu y⟫) ∨
+    IsRobustUnimodal (quint ⟪y 5, fv y⟫ ⟪y 0, fv y⟫ ⟪y 1, fv y⟫ ⟪y 4, fv y⟫ ⟪y 6, fv y⟫) := by
+  obtain ⟨i, j, k, l', e1, e2, hind'⟩ := exists_ties_of_indepF hI hno
+  obtain ⟨ties, hties, hind, hex⟩ := exists_listed_ties (vyGroup fu fv) rfl rfl e1 e2 hind'
+  have hcov := hcover_of_oneTieAt (vyGroup fu fv) (vyGroup_hTv fu fv) y hyinj
+    (fun a => by cases a; exact o2; exact o1) ties hties hind (fun a _ => hex a)
+    (vyGroup_lab_inj fu fv)
+  exact robust_rim_vy fu fv hfu hfv y hyinj vN hvN c hc hfu' hfv' hs0 hs1 ht0 ht1 hm hl hYuni
+    (q := 2) le_rfl ties hties hind hcov
+
 end Minimality
 
 end

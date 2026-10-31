@@ -12,7 +12,7 @@ public import Minimality.Generic.LimitSeq
 
 `OneTieGlobal29` (at most one tie) is replaced by `TwoTie29`: independent generating ties
 (`TieGen29`) and the cover's own tie hypothesis `Tie29` (at most one tied pair at each named view,
-no tie at one view of each combined pair) for `x` and for `x ∘ σ`.  The ties are restored along an
+independent ties at the two views of each combined pair, `IndepF`) for `x` and for `x ∘ σ`.  The ties are restored along an
 approximating sequence (`exists_seq_restore_ties`); the cover at the sequence needs only `Tie29`.
 -/
 
@@ -82,20 +82,6 @@ theorem tie29_of_sub {x y : Fin 7 → ℝ³} (hx : Function.Injective x) (ht : T
       IndepF (univ.image y) (view29 y p.1) (view29 y p.2)) : Tie29 y where
   one := fun v hv =>
     oneTieAt_of_sub29 hx (ht.one v (hne v hv)) (fun a b hab h => hsub v a b hab hv h)
-  pair := fun p hp h1 h2 => by
-    have key : ∀ v, view29 y v ≠ 0 → NoTieAt (univ.image x) (view29 x v) →
-        NoTieAt (univ.image y) (view29 y v) := by
-      intro v hv hn s hs t ht hst e
-      obtain ⟨a, -, rfl⟩ := mem_image.mp hs
-      obtain ⟨b, -, rfl⟩ := mem_image.mp ht
-      have hab : a ≠ b := fun h => hst (by rw [h])
-      have := hsub v a b hab hv (by rw [inner_sub_left, e, sub_self])
-      rw [inner_sub_left, sub_eq_zero] at this
-      exact hn _ (mem_image_of_mem x (mem_univ a)) _ (mem_image_of_mem x (mem_univ b))
-        (fun h => hab (hx h)) this
-    rcases ht.pair p hp (hne _ h1) (hne _ h2) with h | h
-    · exact Or.inl (key _ h1 h)
-    · exact Or.inr (key _ h2 h)
   indep := hI
 
 /-! ### `σ`-invariance -/

@@ -12,7 +12,7 @@ public import Minimality.Type29CertWeak
   `ψ(d) ≥ 0`, for the depths along an arbitrary view `w` near `5 − 3` (the cone facts are linear
   identities of the depths).
 * `NF29.cert_k4_A` (tier (A), `F35`): `V = 035/1456` (rim `(5, 1, 2, 3)`) or `Y = 035/356-3` (rim
-  `(5, 0, 1, 4, 6)`) as a `Cert29`, with at most one tie at each view and none at one of them.
+  `(5, 0, 1, 4, 6)`) as a `Cert29`, with at most one tie at each view, independent if both are tied (`hI`).
   `V` failing means `{5, 2}` weakly above `{1, 3}` (`not_weakSep_of_meet`, the crossing has
   `λ < 0`), so `ψ ≥ 0`; `ψ > 0` makes `Y` robustly unimodal by perturbing the view
   (`robust_of_view_nhds`), `ψ = 0` is a tie of `V`, so `Y` has none.
@@ -121,15 +121,17 @@ theorem NF29.certY29 (N : NF29 x) (ha2 : 0 < N.a2) (he0 : 0 < N.b0 + N.h0 - 1)
 tier (A)); the conclusion is `CertV29 x ∨ CertY29 x`, so that
 `Cert29.ofSigmaA` applies to `x ∘ σ`.  `V` fails only with
 `{5, 2}` weakly above `{1, 3}`, hence `ψ = ⟪vV, 5 − 3⟫ ≥ 0`; then `Y` is robustly unimodal:
-for `ψ > 0` by perturbing the view, for `ψ = 0` (a tie of `V`) because `Y` has no tie. -/
+for `ψ > 0` by perturbing the view, for `ψ = 0` (a tie of `V`) because `Y` has no tie.  If both
+views are tied (independent ties, `hI`), `robust_rim_vy_ie` (the sign product at every unimodular
+image, `mf_vy`) gives a robust rim of `V` or `Y` directly. -/
 theorem NF29.cert_k4_A (N : NF29 x) (ha2 : 0 < N.a2) (he0 : 0 < N.b0 + N.h0 - 1)
     (hbh2 : 0 < N.b2 + N.h2)
     (hs1 : 0 < -N.s + 1) (ht1 : 0 < -N.t + 1) (hh01 : 0 < -N.h0 + 1)
     (hc : 0 < N.a0 * N.b2 - N.a2 * N.b0 - N.a2 * N.h0 + N.a2)
     (oV : OneTieAt (univ.image x) (view29 x (.inr 2)))
     (oY : OneTieAt (univ.image x) (view29 x (.inl (3, 5))))
-    (hno : NoTieAt (univ.image x) (view29 x (.inr 2)) ∨
-      NoTieAt (univ.image x) (view29 x (.inl (3, 5)))) : CertV29 x ∨ CertY29 x := by
+    (hI : IndepF (univ.image x) (view29 x (.inr 2)) (view29 x (.inl (3, 5)))) :
+    CertV29 x ∨ CertY29 x := by
   have oV' : OneTieAt (univ.image x) N.vV := oV.of_eq_smul N.vV_eq N.hDni
   by_cases hRV : IsRobustUnimodal (quad ⟪x 5, N.vV⟫ ⟪x 1, N.vV⟫ ⟪x 2, N.vV⟫ ⟪x 3, N.vV⟫)
   · exact Or.inl (N.certV29 he0 hh01 hc hRV)
@@ -143,6 +145,21 @@ theorem NF29.cert_k4_A (N : NF29 x) (ha2 : 0 < N.a2) (he0 : 0 < N.b0 + N.h0 - 1)
   have hA0h2 : 0 < -N.a0 * N.h2 := by
     nlinarith [mul_pos N.hh2 he0, mul_pos N.hh0 (show
       0 < 1 - N.a2 - N.b2 - N.h2 by linarith [N.t345_2])]
+  by_cases hno : NoTieAt (univ.image x) (view29 x (.inr 2)) ∨
+    NoTieAt (univ.image x) (view29 x (.inl (3, 5)))
+  swap
+  · have hv : (-N.D) ≠ 0 := neg_ne_zero.mpr N.hD
+    have hfu' : view29 x (.inr 2) = (-N.D) • N.vV := by
+      rw [N.vV_eq, smul_smul, mul_inv_cancel₀ hv, one_smul]
+    rcases robust_rim_vy_ie (fun y => view29 y (.inr 2)) (fun y => view29 y (.inl (3, 5)))
+      (covView_view29 _) (covView_view29 _) x N.inj N.vV
+      (nfV_ne_zero N.hD (Or.inl (neg_pos.mpr N.ha0).ne')) (-N.D) hv hfu' rfl
+      (div_pos hA0 hK).le ((div_le_one hK).mpr (by linarith))
+      (div_pos hA0h2 hK).le ((div_le_one hK).mpr (by linarith [N.hDG5])) hm
+      (div_neg_of_neg_of_pos (by linarith) hK) (N.k4_Y_view he0 hs1 ht1) oV oY hI hno with hz | hz
+    · exact Or.inl (N.certV29 he0 hh01 hc
+        (robust_quad_smul x (inv_ne_zero hv) N.vV_eq _ _ _ _ hz))
+    · exact Or.inr (N.certY29 ha2 he0 hs1 hbh2 hz)
   have h35 : ⟪x 3, N.vV⟫ ≤ ⟪x 5, N.vV⟫ := by
     rcases W with h | h
     · exact le_trans (le_max_right _ _) (le_trans h (min_le_left _ _))

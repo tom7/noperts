@@ -13,7 +13,7 @@ certificate": `NF29.cert29_K3a_all` and `NF29.cert29_K4a_all` conclude `Cert29 x
 a labelled rim certificate at a named view with its closed region facts, or an edge pair of Lemma
 E).  Hypotheses: the class (`a2 < 0 < b0`, `V > 0`, resp. `a2, b0 > 0`, `V < 0`), the polynomial
 genericity (`K3Poly`, `K4Poly`, `K3C1Poly`, `K4C1Poly`: avoided by the approximants of §22), and
-the ties allowed (`Tie29`: at most one tied pair at each named view, none at one view of each
+the ties allowed (`Tie29`: at most one tied pair at each named view, independent ties at the two views of each
 combined pair).  Depth ties and horizontal double normals no longer appear: they are checked at
 the limit (`Cert29`).  `K3b`, `K4b` are the `σ`-images (`x ∘ σ29`, `NF29.sigma`).
 -/
@@ -348,7 +348,7 @@ theorem NF29.cert_K4a (N : NF29 x) (ha2 : 0 < N.a2) (hb0 : 0 < N.b0)
       nlinarith [N.hDD, mul_pos ha2 (show 0 < 1 - N.h0 by linarith)]
     rcases N.cert_k4_A ha2 he0 hbh2 hs1 ht1 (by linarith) hc
       (htie.one _ N.view_V_ne) (htie.one _ (N.seg_ne (i := 3) (j := 5) (by decide)))
-      (htie.pair (.inr 2, .inl (3, 5)) (by decide) N.view_V_ne
+      (htie.indep (.inr 2, .inl (3, 5)) (by decide) N.view_V_ne
         (N.seg_ne (i := 3) (j := 5) (by decide))) with h | h
     · exact Cert29.ofV h
     · exact Cert29.ofY h
@@ -377,15 +377,15 @@ theorem NF29.cert_K4a (N : NF29 x) (ha2 : 0 < N.a2) (hb0 : 0 < N.b0)
         rw [image_sigma29, view29_sigma_inr2]; exact (htie.one _ N.view_T2_ne).neg
       have oY : OneTieAt (univ.image (x ∘ sigma29)) (view29 (x ∘ sigma29) (.inl (3, 5))) := by
         rw [image_sigma29]; exact htie.one (.inl (3, 4)) (N.seg_ne (by decide))
-      have hno : NoTieAt (univ.image (x ∘ sigma29)) (view29 (x ∘ sigma29) (.inr 2)) ∨
-          NoTieAt (univ.image (x ∘ sigma29)) (view29 (x ∘ sigma29) (.inl (3, 5))) := by
+      have hI : IndepF (univ.image (x ∘ sigma29)) (view29 (x ∘ sigma29) (.inr 2))
+          (view29 (x ∘ sigma29) (.inl (3, 5))) := by
         rw [image_sigma29, view29_sigma_inr2]
-        rcases htie.pair (.inr 1, .inl (3, 4)) (by decide) N.view_T2_ne (N.seg_ne (by decide))
-          with h | h
-        · exact Or.inl h.neg
-        · exact Or.inr h
+        have := (htie.indep (.inr 1, .inl (3, 4)) (by decide) N.view_T2_ne
+          (N.seg_ne (by decide))).smul (c := -1) (c' := 1) (by norm_num) one_ne_zero
+        rw [neg_one_smul, one_smul] at this
+        exact this
       exact Cert29.ofSigmaA (N.sigma.cert_k4_A hb0 he2 (by show 0 < N.a0 + N.h0; linarith) ht1
-        hs1 hh21 hc' oV oY hno)
+        hs1 hh21 hc' oV oY hI)
 
 /-- **Theorem 21.22 with Theorem P: class K3a**, as a certificate. -/
 theorem NF29.cert29_K3a_all (N : NF29 x) (ha2 : N.a2 < 0) (hb0 : 0 < N.b0)

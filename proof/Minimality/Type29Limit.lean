@@ -455,9 +455,6 @@ theorem tie29_of_ties {x y : Fin 7 → ℝ³} (hy : Function.Injective y) (htie 
     (hsub : ∀ v a b, a ≠ b → view29 y v ≠ 0 → ⟪y a - y b, view29 y v⟫ = 0 → TieInst29 x v a b) :
     Tie29 y where
   one := fun v hv => oneTieAt_of_ties29 htie hsub v hv
-  pair := fun p hp h1 h2 =>
-    noTieAt_or29 htie hsub (pairViews29_sep p (pairViewsNG29_subset hp)).1
-      (pairViews29_sep p (pairViewsNG29_subset hp)).2 h1 h2
   indep := fun p hp h1 h2 => IndepF.of_noTie
     (noTieAt_or29 htie hsub (pairViews29_sep p (pairViewsGO29_subset hp)).1
       (pairViews29_sep p (pairViewsGO29_subset hp)).2 h1 h2)
