@@ -1,6 +1,7 @@
 module
 
 public import Minimality.Cases
+public import Minimality.Type16Ties
 public import Minimality.SevenTypes
 public import Minimality.FaceBridge
 public import Minimality.Classify
@@ -813,8 +814,10 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
   · exact big {0, 1, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 15: Theorem A
   · -- type 16: `not_type16_of_multiView16` (Theorem 24.3: ties at a family of tilt tests with
     -- realizing tilts, `Minimality.MultiView16`; the cover is affine-invariant, so metric-free), where
-    -- it holds; else `not_type16_of_isNopert_codim2'`; its general position (5 hypotheses) is asked,
-    -- the special positions are open in Lean
+    -- it holds; else `not_type16_of_isNopert_ties` (Type16Ties: several independent ties, restored along
+    -- the approximating sequence); its general position (4 HDN hypotheses and `OneTie16 ∨ TwoTie16`) is
+    -- asked.  Open in Lean: an HDN item failing, two tied pairs at one segment view or at `v_A`/`σ v_A`,
+    -- dependent ties
     obtain ⟨fA, hfA⟩ := hR {0, 2, 3, 5} (by decide)
     obtain ⟨fB, hfB⟩ := hR {1, 3, 5, 6} (by decide)
     obtain ⟨fC, hfC⟩ := hR {0, 2, 4} (by decide)
@@ -824,8 +827,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fG, hfG⟩ := hR {1, 4, 6} (by decide)
     obtain ⟨fH, hfH⟩ := hR {2, 4, 5} (by decide)
     exact byGen1 (not_type16_of_multiView16 x hN hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF
-      hfG hfH) (fun _ => byGen5 (fun h35 hEd hQ hV htie => not_type16_of_isNopert_codim2' x hN hx fA
-        fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH h35 hEd hQ hV (Or.inl htie))
+      hfG hfH) (fun _ => byGen5 (fun h35 hEd hQ hV htie => not_type16_of_isNopert_ties x hN hx fA
+        fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH h35 hEd hQ hV htie)
       (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
   · -- type 17: `not_type17_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
     -- special value of Lemma T′ (settled there, 26.8).  Both views have the triangle `136`, so

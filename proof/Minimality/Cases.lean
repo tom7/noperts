@@ -1027,7 +1027,9 @@ holds.
   codimension 2.  Every closing at two triangles is realized on both face circles, so
   Proposition 22.2 (`Minimality.isRupert_of_tiltHides`) tilts it to a generic unimodal view.
 * Two ties at the named views that are not one equation (`Minimality.OneTie16` fails; the tie of
-  `s, t` along `ij` and the tie of `i, j` along `st` count once): codimension 2.
+  `s, t` along `ij` and the tie of `i, j` along `st` count once): codimension 2.  Independent ties
+  with at most one tied pair at each segment view and at `v_A`, `σ v_A` are closed by
+  `not_type16_of_isNopert_ties` (Type16Ties.lean, `Minimality.TwoTie16`).
 No general position, no sign condition of the route, no (G1) elsewhere.  Every type-16 shape is a
 limit of shapes off the special positions of the cover with the same tie; each of these has a rim
 certificate at a named view (Theorem 19.6), a subsequence carries one labelled certificate, and it
