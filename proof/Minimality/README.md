@@ -1184,6 +1184,8 @@ In import order.
 | `PolygonHalfPlanes` | A strictly convex ccw polygon is the intersection of its edge half-planes (open intersection ⊆ hull ⊆ closed intersection); supplies `hpoly`/`hS` of the second-order theorems from a rim | `halfPlanes_of_ccwPolygon` |
 | `SecondOrderHDNView` | Theorem H2 with the shadow given as a strictly convex rim (`_rim`), and at a general view `u` with `det3 · · u` triple products and an axis `w ⊥ u` (`_view`) | `isRupert_of_levelHDN_rim`, `isRupert_of_levelHDN_view` |
 | `SecondOrderHDNWitness` | Non-vacuity of H2: an explicit 11-point rational shape with a level corner–corner HDN is Rupert through `isRupert_of_levelHDN_rim` | `levelHDN_witness`, `levelHDN_witness_isRupert` |
+| `CornerEdgeHDN` | Theorem CE′ (nopert229 specpos/CE/notes.md §2): a corner–edge level double normal (corner `vp`, the other end inside a shadow edge `[a, b]` with `z_a ≠ z_b`) is removed at second order by the motion `ω = σ·D₃ + β(b − a)` about `vp`, which keeps the HDN pairs tight and has spin when `β ≠ 0` (`isRupert_of_secondOrder_spin`); margins in closed form (`cornerEdge_c`); rim form and the strict corollary (`β` small) | `isRupert_of_cornerEdgeHDN`, `isRupert_of_cornerEdgeHDN_rim`, `isRupert_of_cornerEdgeHDN_strict` |
+| `CornerEdgeHDNWitness` | Non-vacuity of CE′: an explicit 11-point rational shape with a corner–edge HDN is Rupert through the rim form (σ = 1, β = 1/4) | `ceW_isRupert` |
 
 ## Formalization choices
 

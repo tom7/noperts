@@ -78,6 +78,8 @@ public import Minimality.SecondOrderHDN
 public import Minimality.PolygonHalfPlanes
 public import Minimality.SecondOrderHDNView
 public import Minimality.SecondOrderHDNWitness
+public import Minimality.CornerEdgeHDN
+public import Minimality.CornerEdgeHDNWitness
 
 /-!
 # Every nopert has at least 7 points
