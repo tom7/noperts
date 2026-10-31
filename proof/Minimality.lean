@@ -2,6 +2,7 @@ module
 
 public import Minimality.Cases
 public import Minimality.Type16Ties
+public import Minimality.Type29Ties
 public import Minimality.SevenTypes
 public import Minimality.FaceBridge
 public import Minimality.Classify
@@ -1057,20 +1058,20 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     · exact byThm5Faces hx hN _ h3 (fun _ => sorry)  -- a class boundary: `a2 = 0`, `b0 = 0` or `V = 0`
     · exact byThm5Faces hx hN _ h3 (fun _ => sorry)  -- class K2: `a2, b0 < 0`
     · exact byThm5Faces hx hN _ h3 (fun _ => sorry)  -- class K1: `a2 < 0 < b0`, `V < 0` (K1a), or `a2 > 0 > b0`, `V > 0` (K1b)
-    · -- class K3a: outside codimension 2 (§28, `NF29.isRupert_K3a_codim2`), else its general position
-      exact byGen2 (fun htie hH => hnR (N.isRupert_K3a_codim2 ha2 hb0 hV htie hH))
+    · -- class K3a: outside codimension 2 (§28, `NF29.isRupert_K3a_codim2'`; several independent ties: Type29Ties), else its general position
+      exact byGen2 (fun htie hH => hnR (N.isRupert_K3a_codim2' ha2 hb0 hV htie hH))
         (fun _ => byGen2 (fun G G1 => hnR (N.isRupert_K3a_all ha2 hb0 hV G G1))
           (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
-    · -- class K3b: outside codimension 2 (§28, `NF29.isRupert_K3b_codim2`), else its general position
-      exact byGen2 (fun htie hH => hnR (N.isRupert_K3b_codim2 ha2 hb0 hV htie hH))
+    · -- class K3b: outside codimension 2 (§28, `NF29.isRupert_K3b_codim2'`; several independent ties: Type29Ties), else its general position
+      exact byGen2 (fun htie hH => hnR (N.isRupert_K3b_codim2' ha2 hb0 hV htie hH))
         (fun _ => byGen2 (fun G G1 => hnR (N.isRupert_K3b_all ha2 hb0 hV G G1))
           (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
-    · -- class K4a: outside codimension 2 (§28, `NF29.isRupert_K4a_codim2`), else its general position
-      exact byGen2 (fun htie hH => hnR (N.isRupert_K4a_codim2 ha2 hb0 hV htie hH))
+    · -- class K4a: outside codimension 2 (§28, `NF29.isRupert_K4a_codim2'`; several independent ties: Type29Ties), else its general position
+      exact byGen2 (fun htie hH => hnR (N.isRupert_K4a_codim2' ha2 hb0 hV htie hH))
         (fun _ => byGen2 (fun G G1 => hnR (N.isRupert_K4a_all ha2 hb0 hV G G1))
           (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
-    · -- class K4b: outside codimension 2 (§28, `NF29.isRupert_K4b_codim2`), else its general position
-      exact byGen2 (fun htie hH => hnR (N.isRupert_K4b_codim2 ha2 hb0 hV htie hH))
+    · -- class K4b: outside codimension 2 (§28, `NF29.isRupert_K4b_codim2'`; several independent ties: Type29Ties), else its general position
+      exact byGen2 (fun htie hH => hnR (N.isRupert_K4b_codim2' ha2 hb0 hV htie hH))
         (fun _ => byGen2 (fun G G1 => hnR (N.isRupert_K4b_all ha2 hb0 hV G G1))
           (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
 
