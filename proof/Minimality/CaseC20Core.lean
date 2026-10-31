@@ -337,26 +337,15 @@ theorem Frame20.ra4_A_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
   simp only [not_and_or, not_or, not_lt] at o1
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
     simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_tA] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n1_3), mul_nonneg (hsm1).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.hp_pos F.S.km_pos)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_tA] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [(sub_nonneg.2 n0_2), mul_nonneg (hsp1).le (sub_nonneg.2 n1_1), mul_pos ((mul_pos htp1 hsp1)) hga, mul_pos ((mul_pos F.S.hp_pos F.S.kp_pos)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_tA] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [(sub_nonneg.2 n1_4), mul_pos ((mul_pos htp1 F.S.sm_pos)) hga, mul_pos ((mul_pos F.S.hp_pos F.S.km_pos)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_tA] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg ((mul_pos F.S.tp_pos htp1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos htp1 htp1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos F.S.tp_pos hsp1)).le (sub_nonneg.2 n1_1), mul_pos ((mul_pos F.S.hp_pos hQ)) hde, mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.hp_pos) F.S.kp_pos)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le hW) (hA1).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le hW) (hA1).le) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sm_pos F.S.hm_pos) rp)) hde, mul_pos ((mul_pos (mul_pos hsm1 F.S.hm_pos) rp)) hde]
+  · linarith only [mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n1_3), mul_nonneg (hsm1).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.hp_pos F.S.km_pos)) hde]
+  · linarith only [(sub_nonneg.2 n0_2), mul_nonneg (hsp1).le (sub_nonneg.2 n1_1), mul_pos ((mul_pos htp1 hsp1)) hga, mul_pos ((mul_pos F.S.hp_pos F.S.kp_pos)) hde]
+  · linarith only [(sub_nonneg.2 n1_4), mul_pos ((mul_pos htp1 F.S.sm_pos)) hga, mul_pos ((mul_pos F.S.hp_pos F.S.km_pos)) hde]
+  · linarith only [mul_nonneg ((mul_pos F.S.tp_pos htp1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos htp1 htp1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos F.S.tp_pos hsp1)).le (sub_nonneg.2 n1_1), mul_pos ((mul_pos F.S.hp_pos hQ)) hde, mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.hp_pos) F.S.kp_pos)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le hW) (hA1).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le hW) (hA1).le) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sm_pos F.S.hm_pos) rp)) hde, mul_pos ((mul_pos (mul_pos hsm1 F.S.hm_pos) rp)) hde]
 
 
 set_option maxHeartbeats 1600000 in
@@ -384,56 +373,21 @@ theorem Frame20.ra4_Y_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
   simp only [not_and_or, not_or, not_lt] at o1
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 | n1 | n1 | n1
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
     simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [(sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hsp1)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos hsp1) hsm1)) hga, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.km_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos htp1 F.S.km_pos) hQ)) hde, mul_pos ((mul_pos (mul_pos F.S.tm_pos F.S.km_pos) rp)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le hW) (hA1r).le) (hde).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n1_1), (sub_nonneg.2 n1_2), mul_pos ((mul_pos F.S.tp_pos F.S.sp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.tm_pos)) hbe, mul_pos ((mul_pos F.S.tm_pos htm1)) hbe, mul_pos ((mul_pos htm1 htm1)) hbe, mul_pos ((mul_pos htp1 hsp1)) hga, mul_pos ((mul_pos F.S.hp_pos F.S.kp_pos)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg (htm1).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.hp_pos F.S.hm_pos)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg ((mul_pos F.S.hp_pos F.S.km_pos)).le (sub_nonneg.2 n0_2), mul_nonneg ((mul_pos F.S.km_pos hA1r)).le (sub_nonneg.2 n0_2), mul_nonneg ((mul_pos F.S.hp_pos F.S.hp_pos)).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos F.S.hp_pos hA1r)).le (sub_nonneg.2 n0_4), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.kp_pos).le) hA3h) (hal).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le hW) hA3h) (hal).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.hp_pos).le) hD) (hal).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (rm).le) hD) (hal).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hD) (hA1r).le) (hal).le), (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le hD) hCm) (hal).le), mul_pos ((mul_pos (mul_pos hsm1 F.S.hp_pos) rp)) hal, mul_pos ((mul_pos (mul_pos hsm1 rp) rm)) hal, mul_pos ((mul_pos (mul_pos hsm1 rp) hA1r)) hal, (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (hQ).le) hCm) (hal).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.hp_pos).le) hD) (hga).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hD) (hA1r).le) (hga).le), mul_pos ((mul_pos (mul_pos hsm1 F.S.hp_pos) rp)) hga, mul_pos ((mul_pos (mul_pos hsm1 rp) hA1r)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [(sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.sp_pos hsp1)) hbe, mul_pos ((mul_pos hsp1 hsp1)) hbe, mul_pos ((mul_pos htp1 hsp1)) hga, mul_pos ((mul_pos F.S.hp_pos F.S.kp_pos)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg ((mul_pos F.S.tp_pos htm1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos htp1 htm1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos F.S.tp_pos hsp1)).le (sub_nonneg.2 n1_1), mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.kp_pos) hQ)) hde, mul_pos ((mul_pos (mul_pos htp1 F.S.kp_pos) hQ)) hde, mul_pos ((mul_pos (mul_pos F.S.sp_pos F.S.hp_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le hW) (hQ).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le hW) (hQ).le) (hde).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n1_1), (mul_nonneg hA3h (sub_nonneg.2 n1_1)), mul_pos ((mul_pos F.S.tp_pos F.S.kp_pos)) hal, mul_pos ((mul_pos F.S.tp_pos F.S.km_pos)) hal, (mul_nonneg (mul_nonneg (F.S.tp_pos).le hA3h) (hal).le), mul_pos ((mul_pos F.S.tp_pos rp)) hbe, (mul_nonneg (mul_nonneg (F.S.tp_pos).le hD) (hbe).le), mul_pos ((mul_pos htp1 F.S.kp_pos)) hbe, mul_pos ((mul_pos htp1 F.S.km_pos)) hbe, mul_pos ((mul_pos htp1 rp)) hbe, (mul_nonneg (mul_nonneg (htp1).le hD) (hbe).le), mul_pos ((mul_pos F.S.tm_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, (mul_nonneg (mul_nonneg (F.S.sp_pos).le hCm) (hbe).le), mul_pos ((mul_pos F.S.sm_pos F.S.kp_pos)) hbe, mul_pos ((mul_pos F.S.sm_pos hA1r)) hbe, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg (htm1).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.hp_pos F.S.hm_pos)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg ((mul_pos htm1 F.S.sm_pos)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos htm1 hsm1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos F.S.tp_pos hsp1)).le (sub_nonneg.2 n1_3), mul_pos ((mul_pos (mul_pos htp1 F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (hQ).le) hCm) (hde).le), mul_pos ((mul_pos (mul_pos hsm1 F.S.hp_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (hQ).le) hCm) (hde).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_3), (mul_nonneg hW (sub_nonneg.2 n1_3)), (mul_nonneg hD (sub_nonneg.2 n1_3)), mul_pos ((mul_pos F.S.tp_pos F.S.kp_pos)) hal, (mul_nonneg (mul_nonneg (F.S.tp_pos).le hW) (hal).le), (mul_nonneg (mul_nonneg (F.S.tp_pos).le hD) (hal).le), mul_pos ((mul_pos hsp1 F.S.km_pos)) hbe, (mul_nonneg (mul_nonneg (hsp1).le hCm) (hbe).le), mul_pos ((mul_pos hsm1 F.S.kp_pos)) hbe]
+  · linarith only [(sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hsp1)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos hsp1) hsm1)) hga, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.km_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos htp1 F.S.km_pos) hQ)) hde, mul_pos ((mul_pos (mul_pos F.S.tm_pos F.S.km_pos) rp)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le hW) (hA1r).le) (hde).le)]
+  · linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n1_1), (sub_nonneg.2 n1_2), mul_pos ((mul_pos F.S.tp_pos F.S.sp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.tm_pos)) hbe, mul_pos ((mul_pos F.S.tm_pos htm1)) hbe, mul_pos ((mul_pos htm1 htm1)) hbe, mul_pos ((mul_pos htp1 hsp1)) hga, mul_pos ((mul_pos F.S.hp_pos F.S.kp_pos)) hde]
+  · linarith only [mul_nonneg (htm1).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.hp_pos F.S.hm_pos)) hde]
+  · linarith only [mul_nonneg ((mul_pos F.S.hp_pos F.S.km_pos)).le (sub_nonneg.2 n0_2), mul_nonneg ((mul_pos F.S.km_pos hA1r)).le (sub_nonneg.2 n0_2), mul_nonneg ((mul_pos F.S.hp_pos F.S.hp_pos)).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos F.S.hp_pos hA1r)).le (sub_nonneg.2 n0_4), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.kp_pos).le) hA3h) (hal).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le hW) hA3h) (hal).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.hp_pos).le) hD) (hal).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (rm).le) hD) (hal).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hD) (hA1r).le) (hal).le), (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le hD) hCm) (hal).le), mul_pos ((mul_pos (mul_pos hsm1 F.S.hp_pos) rp)) hal, mul_pos ((mul_pos (mul_pos hsm1 rp) rm)) hal, mul_pos ((mul_pos (mul_pos hsm1 rp) hA1r)) hal, (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (hQ).le) hCm) (hal).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.hp_pos).le) hD) (hga).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hD) (hA1r).le) (hga).le), mul_pos ((mul_pos (mul_pos hsm1 F.S.hp_pos) rp)) hga, mul_pos ((mul_pos (mul_pos hsm1 rp) hA1r)) hga]
+  · linarith only [(sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.sp_pos hsp1)) hbe, mul_pos ((mul_pos hsp1 hsp1)) hbe, mul_pos ((mul_pos htp1 hsp1)) hga, mul_pos ((mul_pos F.S.hp_pos F.S.kp_pos)) hde]
+  · linarith only [mul_nonneg ((mul_pos F.S.tp_pos htm1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos htp1 htm1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos F.S.tp_pos hsp1)).le (sub_nonneg.2 n1_1), mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.kp_pos) hQ)) hde, mul_pos ((mul_pos (mul_pos htp1 F.S.kp_pos) hQ)) hde, mul_pos ((mul_pos (mul_pos F.S.sp_pos F.S.hp_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le hW) (hQ).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le hW) (hQ).le) (hde).le)]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n1_1), (mul_nonneg hA3h (sub_nonneg.2 n1_1)), mul_pos ((mul_pos F.S.tp_pos F.S.kp_pos)) hal, mul_pos ((mul_pos F.S.tp_pos F.S.km_pos)) hal, (mul_nonneg (mul_nonneg (F.S.tp_pos).le hA3h) (hal).le), mul_pos ((mul_pos F.S.tp_pos rp)) hbe, (mul_nonneg (mul_nonneg (F.S.tp_pos).le hD) (hbe).le), mul_pos ((mul_pos htp1 F.S.kp_pos)) hbe, mul_pos ((mul_pos htp1 F.S.km_pos)) hbe, mul_pos ((mul_pos htp1 rp)) hbe, (mul_nonneg (mul_nonneg (htp1).le hD) (hbe).le), mul_pos ((mul_pos F.S.tm_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, (mul_nonneg (mul_nonneg (F.S.sp_pos).le hCm) (hbe).le), mul_pos ((mul_pos F.S.sm_pos F.S.kp_pos)) hbe, mul_pos ((mul_pos F.S.sm_pos hA1r)) hbe, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hbe]
+  · linarith only [mul_nonneg (htm1).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.hp_pos F.S.hm_pos)) hde]
+  · linarith only [mul_nonneg ((mul_pos htm1 F.S.sm_pos)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos htm1 hsm1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos F.S.tp_pos hsp1)).le (sub_nonneg.2 n1_3), mul_pos ((mul_pos (mul_pos htp1 F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (hQ).le) hCm) (hde).le), mul_pos ((mul_pos (mul_pos hsm1 F.S.hp_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (hQ).le) hCm) (hde).le)]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_3), (mul_nonneg hW (sub_nonneg.2 n1_3)), (mul_nonneg hD (sub_nonneg.2 n1_3)), mul_pos ((mul_pos F.S.tp_pos F.S.kp_pos)) hal, (mul_nonneg (mul_nonneg (F.S.tp_pos).le hW) (hal).le), (mul_nonneg (mul_nonneg (F.S.tp_pos).le hD) (hal).le), mul_pos ((mul_pos hsp1 F.S.km_pos)) hbe, (mul_nonneg (mul_nonneg (hsp1).le hCm) (hbe).le), mul_pos ((mul_pos hsm1 F.S.kp_pos)) hbe]
 
 
 set_option maxHeartbeats 1600000 in
@@ -461,56 +415,21 @@ theorem Frame20.ra4_X_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
   simp only [not_and_or, not_or, not_lt] at o1
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 | n1 | n1 | n1
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
     simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n1_1), mul_nonneg (hsp1).le (sub_nonneg.2 n1_1), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, (mul_nonneg (mul_nonneg (htm1).le hCm) (hal).le), mul_pos ((mul_pos htp1 rm)) hbe, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hbe, (mul_nonneg (mul_nonneg (htm1).le hCm) (hbe).le), mul_pos ((mul_pos F.S.sm_pos hA1r)) hbe, mul_pos ((mul_pos hsm1 hA1r)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg ((mul_pos F.S.tm_pos htm1)).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos F.S.tm_pos F.S.sp_pos)).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos F.S.tm_pos hsp1)).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos htm1 htm1)).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.tm_pos) hsp1)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos htm1) hsp1)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos hsp1) hsm1)) hga, (mul_nonneg (mul_nonneg (hQ).le hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.hm_pos).le) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (rm).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.km_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sm_pos F.S.hm_pos) rp)) hde, mul_pos ((mul_pos (mul_pos F.S.sm_pos F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le hW) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (F.S.hm_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos hsm1 F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le hW) hA3) (hde).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [(sub_nonneg.2 n0_4), mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.sp_pos) hsp1)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos hsp1) hsp1)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos hsp1) hsm1)) hga, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.hm_pos).le) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le hW) (hQ).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le hW) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le hW) hA3) (hde).le), mul_pos ((mul_pos (mul_pos htp1 rm) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hW) (hQ).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hW) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hW) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.kp_pos).le) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.km_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos F.S.tm_pos F.S.km_pos) hQ)) hde, mul_pos ((mul_pos (mul_pos F.S.tm_pos rp) rm)) hde, mul_pos ((mul_pos (mul_pos htm1 F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hm_pos).le) hD) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sp_pos F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (hQ).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hD) (hA1r).le) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sm_pos F.S.hm_pos) rp)) hde, mul_pos ((mul_pos (mul_pos F.S.sm_pos F.S.kp_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (F.S.hm_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos hsm1 hQ) hA1r)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [(sub_nonneg.2 n1_3), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, (mul_nonneg (mul_nonneg (htm1).le hCm) (hal).le), mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsp1 hA1r)) hal, mul_pos ((mul_pos htp1 rm)) hbe, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hbe, (mul_nonneg (mul_nonneg (htm1).le hCm) (hbe).le), mul_pos ((mul_pos F.S.sm_pos hA1r)) hbe, mul_pos ((mul_pos hsm1 hA1r)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg ((mul_pos F.S.tp_pos F.S.sp_pos)).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos htp1 F.S.sp_pos)).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos F.S.sp_pos hsp1)).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos hsp1 hsp1)).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.tm_pos) hsp1)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos htm1) hsp1)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos hsp1) hsm1)) hga, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.km_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos htp1 F.S.km_pos) hQ)) hde, mul_pos ((mul_pos (mul_pos F.S.tm_pos F.S.km_pos) rp)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le hW) (hA1r).le) (hde).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n1_1), mul_nonneg (hsp1).le (sub_nonneg.2 n1_1), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, (mul_nonneg (mul_nonneg (htm1).le hCm) (hal).le), mul_pos ((mul_pos htp1 rm)) hbe, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hbe, (mul_nonneg (mul_nonneg (htm1).le hCm) (hbe).le), mul_pos ((mul_pos F.S.sm_pos hA1r)) hbe, mul_pos ((mul_pos hsm1 hA1r)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg ((mul_pos F.S.tm_pos F.S.sm_pos)).le (sub_nonneg.2 n1_4), mul_nonneg ((mul_pos htm1 F.S.sm_pos)).le (sub_nonneg.2 n1_4), mul_nonneg ((mul_pos F.S.sm_pos hsm1)).le (sub_nonneg.2 n1_4), mul_nonneg ((mul_pos hsm1 hsm1)).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.tm_pos) rp)) hbe, mul_pos ((mul_pos (mul_pos F.S.tp_pos hsp1) hA1r)) hbe, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (hsp1).le) hCm) (hbe).le), mul_pos ((mul_pos (mul_pos htp1 F.S.tm_pos) rp)) hbe, (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.tm_pos).le) hD) (hbe).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (htm1).le) hD) (hbe).le), mul_pos ((mul_pos (mul_pos htp1 F.S.sm_pos) F.S.kp_pos)) hbe, mul_pos ((mul_pos (mul_pos htp1 F.S.sm_pos) hQ)) hbe, mul_pos ((mul_pos (mul_pos htp1 hsm1) hQ)) hbe, mul_pos ((mul_pos (mul_pos hsp1 F.S.sm_pos) hA1r)) hbe, (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (hsp1).le) hA3) (hga).le), mul_pos ((mul_pos (mul_pos htp1 F.S.sm_pos) F.S.kp_pos)) hga, mul_pos ((mul_pos (mul_pos htp1 F.S.sm_pos) hQ)) hga, mul_pos ((mul_pos (mul_pos F.S.tm_pos F.S.sm_pos) rp)) hga, mul_pos ((mul_pos (mul_pos hsp1 F.S.sm_pos) hA1r)) hga, mul_pos ((mul_pos (mul_pos F.S.hp_pos F.S.kp_pos) rm)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg ((mul_pos F.S.tm_pos hA1r)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos htp1 F.S.tm_pos) rm)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos F.S.tm_pos F.S.tm_pos) F.S.hp_pos)).le (sub_nonneg.2 n0_1), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (htm1).le) hCm) (sub_nonneg.2 n0_1)), (mul_nonneg (mul_nonneg (F.S.tm_pos).le hA3) (sub_nonneg.2 n0_2)), mul_nonneg ((mul_pos F.S.tp_pos hsp1)).le (sub_nonneg.2 n1_1), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.hm_pos).le) (rp).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.hm_pos).le) hW) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.hm_pos).le) hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.hm_pos).le) hD) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.kp_pos).le) (hA1r).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.hp_pos).le) (F.S.hp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.hp_pos).le) (F.S.hp_pos).le) hD) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos F.S.tm_pos F.S.hp_pos) F.S.hm_pos) F.S.kp_pos)) hde, mul_pos ((mul_pos (mul_pos (mul_pos F.S.tm_pos F.S.hp_pos) F.S.kp_pos) hA1r)) hde, mul_pos ((mul_pos (mul_pos (mul_pos F.S.tm_pos F.S.hp_pos) F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.hp_pos).le) (rp).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.hp_pos).le) hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.hp_pos).le) hD) hCm) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos F.S.tm_pos F.S.hm_pos) F.S.km_pos) rp)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.kp_pos).le) (F.S.km_pos).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.kp_pos).le) hCm) hA3) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos F.S.tm_pos F.S.km_pos) rp) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.km_pos).le) hW) hA3) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos F.S.tm_pos F.S.km_pos) hQ) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.km_pos).le) (hQ).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le (F.S.hm_pos).le) (F.S.kp_pos).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le (F.S.kp_pos).le) (hA1r).le) hCm) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos F.S.sp_pos F.S.kp_pos) hA1r) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.kp_pos).le) (hA1r).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hW) (hA1r).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (hQ).le) (hA1r).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hD) (hA1r).le) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hD) (hA1r).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hD) (hA1r).le) hA3) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos hsp1 F.S.kp_pos) hA1r) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le (F.S.kp_pos).le) (hA1r).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hW) (hA1r).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le (hQ).le) (hA1r).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hD) (hA1r).le) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hD) (hA1r).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hD) (hA1r).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (F.S.kp_pos).le) (hA1r).le) hA3) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos F.S.sm_pos hQ) hA1r) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (hQ).le) (hA1r).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (F.S.hm_pos).le) (F.S.kp_pos).le) hA3) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos hsm1 F.S.hm_pos) rp) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (F.S.hm_pos).le) (rp).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (F.S.hm_pos).le) hW) hA3) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos hsm1 F.S.hm_pos) hQ) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (F.S.hm_pos).le) (hQ).le) hCm) (hde).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [(sub_nonneg.2 n1_3), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, (mul_nonneg (mul_nonneg (htm1).le hCm) (hal).le), mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsp1 hA1r)) hal, mul_pos ((mul_pos htp1 rm)) hbe, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hbe, (mul_nonneg (mul_nonneg (htm1).le hCm) (hbe).le), mul_pos ((mul_pos F.S.sm_pos hA1r)) hbe, mul_pos ((mul_pos hsm1 hA1r)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [(mul_nonneg (mul_nonneg (htm1).le hCm) (sub_nonneg.2 n0_1)), mul_nonneg ((mul_pos hsm1 hA1r)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos htp1 F.S.tm_pos) rm)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos htp1 htm1) rm)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos F.S.tm_pos hsm1) F.S.hp_pos)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos htm1 F.S.sm_pos) hA1r)).le (sub_nonneg.2 n0_1), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (htm1).le) hA3) (sub_nonneg.2 n0_2)), (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le (htm1).le) hA3) (sub_nonneg.2 n0_2)), mul_nonneg ((mul_pos F.S.tp_pos hsp1)).le (sub_nonneg.2 n1_3), mul_pos ((mul_pos (mul_pos F.S.hp_pos rm) hQ)) hde]
+  · linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n1_1), mul_nonneg (hsp1).le (sub_nonneg.2 n1_1), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, (mul_nonneg (mul_nonneg (htm1).le hCm) (hal).le), mul_pos ((mul_pos htp1 rm)) hbe, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hbe, (mul_nonneg (mul_nonneg (htm1).le hCm) (hbe).le), mul_pos ((mul_pos F.S.sm_pos hA1r)) hbe, mul_pos ((mul_pos hsm1 hA1r)) hbe]
+  · linarith only [mul_nonneg ((mul_pos F.S.tm_pos htm1)).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos F.S.tm_pos F.S.sp_pos)).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos F.S.tm_pos hsp1)).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos htm1 htm1)).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.tm_pos) hsp1)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos htm1) hsp1)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos hsp1) hsm1)) hga, (mul_nonneg (mul_nonneg (hQ).le hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.hm_pos).le) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (rm).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.km_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sm_pos F.S.hm_pos) rp)) hde, mul_pos ((mul_pos (mul_pos F.S.sm_pos F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le hW) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (F.S.hm_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos hsm1 F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le hW) hA3) (hde).le)]
+  · linarith only [(sub_nonneg.2 n0_4), mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.sp_pos) hsp1)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos hsp1) hsp1)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos hsp1) hsm1)) hga, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.hm_pos).le) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le hW) (hQ).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le hW) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le hW) hA3) (hde).le), mul_pos ((mul_pos (mul_pos htp1 rm) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hW) (hQ).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hW) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hW) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.kp_pos).le) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.km_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos F.S.tm_pos F.S.km_pos) hQ)) hde, mul_pos ((mul_pos (mul_pos F.S.tm_pos rp) rm)) hde, mul_pos ((mul_pos (mul_pos htm1 F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hm_pos).le) hD) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sp_pos F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (hQ).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hD) (hA1r).le) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sm_pos F.S.hm_pos) rp)) hde, mul_pos ((mul_pos (mul_pos F.S.sm_pos F.S.kp_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (F.S.hm_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos hsm1 hQ) hA1r)) hde]
+  · linarith only [(sub_nonneg.2 n1_3), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, (mul_nonneg (mul_nonneg (htm1).le hCm) (hal).le), mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsp1 hA1r)) hal, mul_pos ((mul_pos htp1 rm)) hbe, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hbe, (mul_nonneg (mul_nonneg (htm1).le hCm) (hbe).le), mul_pos ((mul_pos F.S.sm_pos hA1r)) hbe, mul_pos ((mul_pos hsm1 hA1r)) hbe]
+  · linarith only [mul_nonneg ((mul_pos F.S.tp_pos F.S.sp_pos)).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos htp1 F.S.sp_pos)).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos F.S.sp_pos hsp1)).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos hsp1 hsp1)).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.tm_pos) hsp1)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos htm1) hsp1)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos hsp1) hsm1)) hga, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.km_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos htp1 F.S.km_pos) hQ)) hde, mul_pos ((mul_pos (mul_pos F.S.tm_pos F.S.km_pos) rp)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le hW) (hA1r).le) (hde).le)]
+  · linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n1_1), mul_nonneg (hsp1).le (sub_nonneg.2 n1_1), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, (mul_nonneg (mul_nonneg (htm1).le hCm) (hal).le), mul_pos ((mul_pos htp1 rm)) hbe, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hbe, (mul_nonneg (mul_nonneg (htm1).le hCm) (hbe).le), mul_pos ((mul_pos F.S.sm_pos hA1r)) hbe, mul_pos ((mul_pos hsm1 hA1r)) hbe]
+  · linarith only [mul_nonneg ((mul_pos F.S.tm_pos F.S.sm_pos)).le (sub_nonneg.2 n1_4), mul_nonneg ((mul_pos htm1 F.S.sm_pos)).le (sub_nonneg.2 n1_4), mul_nonneg ((mul_pos F.S.sm_pos hsm1)).le (sub_nonneg.2 n1_4), mul_nonneg ((mul_pos hsm1 hsm1)).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.tm_pos) rp)) hbe, mul_pos ((mul_pos (mul_pos F.S.tp_pos hsp1) hA1r)) hbe, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (hsp1).le) hCm) (hbe).le), mul_pos ((mul_pos (mul_pos htp1 F.S.tm_pos) rp)) hbe, (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.tm_pos).le) hD) (hbe).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (htm1).le) hD) (hbe).le), mul_pos ((mul_pos (mul_pos htp1 F.S.sm_pos) F.S.kp_pos)) hbe, mul_pos ((mul_pos (mul_pos htp1 F.S.sm_pos) hQ)) hbe, mul_pos ((mul_pos (mul_pos htp1 hsm1) hQ)) hbe, mul_pos ((mul_pos (mul_pos hsp1 F.S.sm_pos) hA1r)) hbe, (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (hsp1).le) hA3) (hga).le), mul_pos ((mul_pos (mul_pos htp1 F.S.sm_pos) F.S.kp_pos)) hga, mul_pos ((mul_pos (mul_pos htp1 F.S.sm_pos) hQ)) hga, mul_pos ((mul_pos (mul_pos F.S.tm_pos F.S.sm_pos) rp)) hga, mul_pos ((mul_pos (mul_pos hsp1 F.S.sm_pos) hA1r)) hga, mul_pos ((mul_pos (mul_pos F.S.hp_pos F.S.kp_pos) rm)) hde]
+  · linarith only [mul_nonneg ((mul_pos F.S.tm_pos hA1r)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos htp1 F.S.tm_pos) rm)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos F.S.tm_pos F.S.tm_pos) F.S.hp_pos)).le (sub_nonneg.2 n0_1), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (htm1).le) hCm) (sub_nonneg.2 n0_1)), (mul_nonneg (mul_nonneg (F.S.tm_pos).le hA3) (sub_nonneg.2 n0_2)), mul_nonneg ((mul_pos F.S.tp_pos hsp1)).le (sub_nonneg.2 n1_1), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.hm_pos).le) (rp).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.hm_pos).le) hW) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.hm_pos).le) hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.hm_pos).le) hD) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.kp_pos).le) (hA1r).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.hp_pos).le) (F.S.hp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.hp_pos).le) (F.S.hp_pos).le) hD) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos F.S.tm_pos F.S.hp_pos) F.S.hm_pos) F.S.kp_pos)) hde, mul_pos ((mul_pos (mul_pos (mul_pos F.S.tm_pos F.S.hp_pos) F.S.kp_pos) hA1r)) hde, mul_pos ((mul_pos (mul_pos (mul_pos F.S.tm_pos F.S.hp_pos) F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.hp_pos).le) (rp).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.hp_pos).le) hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.hp_pos).le) hD) hCm) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos F.S.tm_pos F.S.hm_pos) F.S.km_pos) rp)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.kp_pos).le) (F.S.km_pos).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.kp_pos).le) hCm) hA3) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos F.S.tm_pos F.S.km_pos) rp) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.km_pos).le) hW) hA3) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos F.S.tm_pos F.S.km_pos) hQ) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.km_pos).le) (hQ).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le (F.S.hm_pos).le) (F.S.kp_pos).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le (F.S.kp_pos).le) (hA1r).le) hCm) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos F.S.sp_pos F.S.kp_pos) hA1r) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.kp_pos).le) (hA1r).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hW) (hA1r).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (hQ).le) (hA1r).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hD) (hA1r).le) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hD) (hA1r).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hD) (hA1r).le) hA3) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos hsp1 F.S.kp_pos) hA1r) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le (F.S.kp_pos).le) (hA1r).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hW) (hA1r).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le (hQ).le) (hA1r).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hD) (hA1r).le) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hD) (hA1r).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hD) (hA1r).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (F.S.kp_pos).le) (hA1r).le) hA3) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos F.S.sm_pos hQ) hA1r) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (hQ).le) (hA1r).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (F.S.hm_pos).le) (F.S.kp_pos).le) hA3) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos hsm1 F.S.hm_pos) rp) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (F.S.hm_pos).le) (rp).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (F.S.hm_pos).le) hW) hA3) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos hsm1 F.S.hm_pos) hQ) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (F.S.hm_pos).le) (hQ).le) hCm) (hde).le)]
+  · linarith only [(sub_nonneg.2 n1_3), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, (mul_nonneg (mul_nonneg (htm1).le hCm) (hal).le), mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsp1 hA1r)) hal, mul_pos ((mul_pos htp1 rm)) hbe, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hbe, (mul_nonneg (mul_nonneg (htm1).le hCm) (hbe).le), mul_pos ((mul_pos F.S.sm_pos hA1r)) hbe, mul_pos ((mul_pos hsm1 hA1r)) hbe]
+  · linarith only [(mul_nonneg (mul_nonneg (htm1).le hCm) (sub_nonneg.2 n0_1)), mul_nonneg ((mul_pos hsm1 hA1r)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos htp1 F.S.tm_pos) rm)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos htp1 htm1) rm)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos F.S.tm_pos hsm1) F.S.hp_pos)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos htm1 F.S.sm_pos) hA1r)).le (sub_nonneg.2 n0_1), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (htm1).le) hA3) (sub_nonneg.2 n0_2)), (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le (htm1).le) hA3) (sub_nonneg.2 n0_2)), mul_nonneg ((mul_pos F.S.tp_pos hsp1)).le (sub_nonneg.2 n1_3), mul_pos ((mul_pos (mul_pos F.S.hp_pos rm) hQ)) hde]
 
 
 set_option maxHeartbeats 1600000 in
@@ -542,54 +461,20 @@ theorem Frame20.om4ap_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos htp1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (hVpR).le (sub_nonneg.2 n0_4), mul_nonneg (hVWR).le (sub_nonneg.2 n1_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 hVWR)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(sub_nonneg.2 n0_3), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n1_4), hnu, mul_pos ((mul_pos htp1 F.S.tm_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hsm1)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n0_1), mul_nonneg (htm1).le (sub_nonneg.2 n0_3), mul_pos F.S.sp_pos hnu, mul_pos hsm1 hnu, mul_pos hss hnu]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n2_4), mul_nonneg (htm1).le (sub_nonneg.2 n2_4), mul_pos F.S.tp_pos hnu, mul_pos htp1 hnu]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hga]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos htp1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (hVpR).le (sub_nonneg.2 n0_4), mul_nonneg (hVWR).le (sub_nonneg.2 n1_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 hVWR)) hga]
+  · linarith only [(sub_nonneg.2 n0_3), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n1_4), hnu, mul_pos ((mul_pos htp1 F.S.tm_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hsm1)) hga]
+  · linarith only [mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n0_1), mul_nonneg (htm1).le (sub_nonneg.2 n0_3), mul_pos F.S.sp_pos hnu, mul_pos hsm1 hnu, mul_pos hss hnu]
+  · linarith only [mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n2_4), mul_nonneg (htm1).le (sub_nonneg.2 n2_4), mul_pos F.S.tp_pos hnu, mul_pos htp1 hnu]
 
 
 set_option maxHeartbeats 1600000 in
@@ -621,54 +506,20 @@ theorem Frame20.om4an_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (htp1).le (sub_nonneg.2 n0_1), (sub_nonneg.2 n0_2), mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n0_3), mul_nonneg (htp1).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n1_3), mul_pos F.S.sp_pos hnu, mul_pos hsm1 hnu, mul_pos hss hnu, mul_pos ((mul_pos htp1 htp1)) hal, mul_pos ((mul_pos htp1 htm1)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_2), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n1_3), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (hVpR).le (sub_nonneg.2 n0_4), mul_nonneg (hVWR).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 hVWR)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (htp1).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n1_4), mul_nonneg (htp1).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.sm_pos hsm1)) hga, mul_pos ((mul_pos hsm1 hsm1)) hga, mul_pos ((mul_pos F.S.hp_pos F.S.km_pos)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(sub_nonneg.2 n2_4), mul_pos F.S.sp_pos hnu, mul_pos hsm1 hnu, mul_pos hss hnu]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg ((mul_pos htm1 F.S.sp_pos)).le (sub_nonneg.2 n1_1), mul_nonneg ((mul_pos htm1 hss)).le (sub_nonneg.2 n1_1), mul_nonneg ((mul_pos F.S.tp_pos hsm1)).le (sub_nonneg.2 n2_2), mul_nonneg ((mul_pos htp1 hsm1)).le (sub_nonneg.2 n2_2), mul_pos ((mul_pos (mul_pos F.S.tm_pos rm) hA1R)) hde, mul_pos ((mul_pos (mul_pos htm1 rm) hA1R)) hde, mul_pos ((mul_pos (mul_pos hsm1 F.S.kp_pos) rm)) hde, mul_pos ((mul_pos (mul_pos hsm1 F.S.km_pos) rm)) hde, mul_pos ((mul_pos (mul_pos F.S.km_pos rm) hss)) hde]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hga]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (htp1).le (sub_nonneg.2 n0_1), (sub_nonneg.2 n0_2), mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n0_3), mul_nonneg (htp1).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n1_3), mul_pos F.S.sp_pos hnu, mul_pos hsm1 hnu, mul_pos hss hnu, mul_pos ((mul_pos htp1 htp1)) hal, mul_pos ((mul_pos htp1 htm1)) hal]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_2), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n1_3), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (hVpR).le (sub_nonneg.2 n0_4), mul_nonneg (hVWR).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 hVWR)) hga]
+  · linarith only [mul_nonneg (htp1).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n1_4), mul_nonneg (htp1).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.sm_pos hsm1)) hga, mul_pos ((mul_pos hsm1 hsm1)) hga, mul_pos ((mul_pos F.S.hp_pos F.S.km_pos)) hde]
+  · linarith only [(sub_nonneg.2 n2_4), mul_pos F.S.sp_pos hnu, mul_pos hsm1 hnu, mul_pos hss hnu]
+  · linarith only [mul_nonneg ((mul_pos htm1 F.S.sp_pos)).le (sub_nonneg.2 n1_1), mul_nonneg ((mul_pos htm1 hss)).le (sub_nonneg.2 n1_1), mul_nonneg ((mul_pos F.S.tp_pos hsm1)).le (sub_nonneg.2 n2_2), mul_nonneg ((mul_pos htp1 hsm1)).le (sub_nonneg.2 n2_2), mul_pos ((mul_pos (mul_pos F.S.tm_pos rm) hA1R)) hde, mul_pos ((mul_pos (mul_pos htm1 rm) hA1R)) hde, mul_pos ((mul_pos (mul_pos hsm1 F.S.kp_pos) rm)) hde, mul_pos ((mul_pos (mul_pos hsm1 F.S.km_pos) rm)) hde, mul_pos ((mul_pos (mul_pos F.S.km_pos rm) hss)) hde]
 
 
 set_option maxHeartbeats 1600000 in
@@ -700,54 +551,20 @@ theorem Frame20.om4az1_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.I
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(sub_nonneg.2 n0_3), mul_nonneg (htm1).le (sub_nonneg.2 n0_4), (sub_nonneg.2 n1_4), (sub_nonneg.2 n2_4), mul_pos ((mul_pos htp1 F.S.tm_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hsm1)) hga, mul_pos ((mul_pos hsm1 hsm1)) hga, mul_pos ((mul_pos hsm1 hss)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_4), mul_nonneg (hVWR).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos hsm1 hVpR)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (htm1).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n2_4), mul_nonneg (hsm1).le (sub_nonneg.2 n2_4), mul_nonneg (hss).le (sub_nonneg.2 n2_4), mul_pos F.S.tm_pos hl]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (htm1).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.sm_pos).le hnu1, mul_nonneg (hsm1).le hnu1, mul_pos F.S.tm_pos hl]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hga]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hga]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [(sub_nonneg.2 n0_3), mul_nonneg (htm1).le (sub_nonneg.2 n0_4), (sub_nonneg.2 n1_4), (sub_nonneg.2 n2_4), mul_pos ((mul_pos htp1 F.S.tm_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hsm1)) hga, mul_pos ((mul_pos hsm1 hsm1)) hga, mul_pos ((mul_pos hsm1 hss)) hga]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_4), mul_nonneg (hVWR).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos hsm1 hVpR)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (htm1).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n2_4), mul_nonneg (hsm1).le (sub_nonneg.2 n2_4), mul_nonneg (hss).le (sub_nonneg.2 n2_4), mul_pos F.S.tm_pos hl]
+  · linarith only [mul_nonneg (htm1).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.sm_pos).le hnu1, mul_nonneg (hsm1).le hnu1, mul_pos F.S.tm_pos hl]
 
 
 set_option maxHeartbeats 1600000 in
@@ -779,54 +596,20 @@ theorem Frame20.om4az2_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.I
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_pos F.S.hm_pos hl, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_3), mul_nonneg (hVpR).le (sub_nonneg.2 n1_4), (mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_pos hVpR hl, (mul_nonneg hKb (hl).le), mul_pos ((mul_pos htp1 hVWR)) hal, mul_pos ((mul_pos hsm1 hVpR)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_1), mul_pos hVpR hl, (mul_nonneg hKb (hl).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_1), mul_pos F.S.hm_pos hl]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hga]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hga]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_pos F.S.hm_pos hl, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hga]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_3), mul_nonneg (hVpR).le (sub_nonneg.2 n1_4), (mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_pos hVpR hl, (mul_nonneg hKb (hl).le), mul_pos ((mul_pos htp1 hVWR)) hal, mul_pos ((mul_pos hsm1 hVpR)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_1), mul_pos hVpR hl, (mul_nonneg hKb (hl).le)]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_1), mul_pos F.S.hm_pos hl]
 
 
 set_option maxHeartbeats 1600000 in
@@ -858,54 +641,20 @@ theorem Frame20.om4bp_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos htp1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n0_1), mul_nonneg (htm1).le (sub_nonneg.2 n0_3), mul_pos F.S.tm_pos hnu, mul_pos htm1 hnu]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tp_pos rm)) hga, mul_pos ((mul_pos htp1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos htp1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n0_1), mul_nonneg (htm1).le (sub_nonneg.2 n0_3), mul_pos F.S.tm_pos hnu, mul_pos htm1 hnu]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tp_pos rm)) hga, mul_pos ((mul_pos htp1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
 
 
 set_option maxHeartbeats 1600000 in
@@ -937,54 +686,20 @@ theorem Frame20.om4bn_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), (mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_3), mul_pos ((mul_pos htp1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(sub_nonneg.2 n0_4), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n1_4), mul_nonneg (htm1).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tm_pos hsm1)) hga, mul_pos ((mul_pos htm1 hsm1)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n2_3), mul_nonneg (htp1).le (sub_nonneg.2 n2_3), mul_pos F.S.sm_pos hnu, mul_pos hsm1 hnu]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_1)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), mul_pos ((mul_pos F.S.sm_pos rm)) hbe, mul_pos ((mul_pos F.S.sm_pos rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hga]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), (mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_3), mul_pos ((mul_pos htp1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [(sub_nonneg.2 n0_4), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n1_4), mul_nonneg (htm1).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tm_pos hsm1)) hga, mul_pos ((mul_pos htm1 hsm1)) hga]
+  · linarith only [mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n2_3), mul_nonneg (htp1).le (sub_nonneg.2 n2_3), mul_pos F.S.sm_pos hnu, mul_pos hsm1 hnu]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_1)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), mul_pos ((mul_pos F.S.sm_pos rm)) hbe, mul_pos ((mul_pos F.S.sm_pos rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
 
 
 set_option maxHeartbeats 1600000 in
@@ -1016,54 +731,20 @@ theorem Frame20.om4bz1_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.I
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (htm1).le (sub_nonneg.2 n0_1), mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n0_2), mul_nonneg (hsm1).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n1_3), mul_nonneg (hsm1).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n2_3), mul_nonneg (hsm1).le (sub_nonneg.2 n2_3), mul_pos F.S.sp_pos hl, mul_pos hsp1 hl]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), (mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hal, mul_pos ((mul_pos htm1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n0_4), mul_nonneg (hsp1).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n1_4), mul_nonneg (hsp1).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.sm_pos hsm1)) hga, mul_pos ((mul_pos hsm1 hsm1)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_nonneg (F.S.km_pos).le hnu1, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (htm1).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n2_3), mul_nonneg (htp1).le (sub_nonneg.2 n2_3), mul_pos F.S.tm_pos hl]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_1)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), mul_pos ((mul_pos F.S.sm_pos rm)) hbe, mul_pos ((mul_pos F.S.sm_pos rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [mul_nonneg (htm1).le (sub_nonneg.2 n0_1), mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n0_2), mul_nonneg (hsm1).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n1_3), mul_nonneg (hsm1).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n2_3), mul_nonneg (hsm1).le (sub_nonneg.2 n2_3), mul_pos F.S.sp_pos hl, mul_pos hsp1 hl]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), (mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hal, mul_pos ((mul_pos htm1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n0_4), mul_nonneg (hsp1).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n1_4), mul_nonneg (hsp1).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.sm_pos hsm1)) hga, mul_pos ((mul_pos hsm1 hsm1)) hga]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_nonneg (F.S.km_pos).le hnu1, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (htm1).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n2_3), mul_nonneg (htp1).le (sub_nonneg.2 n2_3), mul_pos F.S.tm_pos hl]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_1)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), mul_pos ((mul_pos F.S.sm_pos rm)) hbe, mul_pos ((mul_pos F.S.sm_pos rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
 
 
 set_option maxHeartbeats 1600000 in
@@ -1095,54 +776,20 @@ theorem Frame20.om4bz2_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.I
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_3)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.km_pos).le hnu2, mul_pos F.S.km_pos hl, (mul_nonneg hKb (hl).le), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hal, mul_pos ((mul_pos htm1 hA1r)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n1_4), mul_nonneg (hsm1).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n2_4), mul_nonneg (htp1).le (sub_nonneg.2 n2_4), hl, mul_pos F.S.tm_pos hl, mul_pos ((mul_pos F.S.tp_pos htp1)) hal, mul_pos ((mul_pos htp1 htp1)) hal, mul_pos ((mul_pos F.S.tp_pos htm1)) hga, mul_pos ((mul_pos htp1 htm1)) hga, mul_pos ((mul_pos F.S.tm_pos hsm1)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n0_1), mul_nonneg (htm1).le (sub_nonneg.2 n0_1), mul_pos F.S.sm_pos hl, mul_pos hsm1 hl]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_3)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), (mul_nonneg hKb (hl).le), (mul_nonneg (mul_nonneg (htp1).le hKb) (hal).le), mul_pos ((mul_pos F.S.tp_pos rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hga]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_3)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.km_pos).le hnu2, mul_pos F.S.km_pos hl, (mul_nonneg hKb (hl).le), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hal, mul_pos ((mul_pos htm1 hA1r)) hal]
+  · linarith only [mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n1_4), mul_nonneg (hsm1).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n2_4), mul_nonneg (htp1).le (sub_nonneg.2 n2_4), hl, mul_pos F.S.tm_pos hl, mul_pos ((mul_pos F.S.tp_pos htp1)) hal, mul_pos ((mul_pos htp1 htp1)) hal, mul_pos ((mul_pos F.S.tp_pos htm1)) hga, mul_pos ((mul_pos htp1 htm1)) hga, mul_pos ((mul_pos F.S.tm_pos hsm1)) hga]
+  · linarith only [mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n0_1), mul_nonneg (htm1).le (sub_nonneg.2 n0_1), mul_pos F.S.sm_pos hl, mul_pos hsm1 hl]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_3)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), (mul_nonneg hKb (hl).le), (mul_nonneg (mul_nonneg (htp1).le hKb) (hal).le), mul_pos ((mul_pos F.S.tp_pos rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
 
 
 set_option maxHeartbeats 1600000 in
@@ -1178,118 +825,29 @@ theorem Frame20.om4cp_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2 <;>
     rcases o3 with n3 | n3
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_4), mul_nonneg (hVpR).le (sub_nonneg.2 n1_1), (mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (hVpR).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), mul_nonneg (hA1Rr).le (sub_nonneg.2 n2_2), mul_nonneg (rm).le (sub_nonneg.2 n3_1), mul_nonneg (hVWR).le (sub_nonneg.2 n3_1), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos hsm1 rm)) hbe, mul_pos ((mul_pos hsm1 hVpR)) hbe, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hbe).le), mul_pos ((mul_pos rm hss)) hbe, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_2), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), (mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n1_3), (mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_3), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos rm hss)) hbe, mul_pos ((mul_pos rm hss)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sm_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(sub_nonneg.2 n0_3), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n1_3), mul_pos F.S.tm_pos hnu, mul_pos htm1 hnu, mul_pos ((mul_pos htp1 F.S.tm_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_1), mul_pos ((mul_pos hsm1 F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hsm1 F.S.km_pos)) hga, mul_pos ((mul_pos hsm1 hA1Rr)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n0_1), mul_nonneg (htm1).le (sub_nonneg.2 n0_3), mul_pos F.S.sm_pos hnu, mul_pos hsm1 hnu]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_1), mul_pos ((mul_pos hsm1 F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hsm1 F.S.km_pos)) hga, mul_pos ((mul_pos hsm1 hA1Rr)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n2_4), mul_pos hVpR hnu, (mul_nonneg hKb (hnu).le)]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_4), mul_nonneg (hVpR).le (sub_nonneg.2 n1_1), (mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (hVpR).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), mul_nonneg (hA1Rr).le (sub_nonneg.2 n2_2), mul_nonneg (rm).le (sub_nonneg.2 n3_1), mul_nonneg (hVWR).le (sub_nonneg.2 n3_1), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos hsm1 rm)) hbe, mul_pos ((mul_pos hsm1 hVpR)) hbe, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hbe).le), mul_pos ((mul_pos rm hss)) hbe, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_2), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), (mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n1_3), (mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_3), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos rm hss)) hbe, mul_pos ((mul_pos rm hss)) hga]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sm_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [(sub_nonneg.2 n0_3), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n1_3), mul_pos F.S.tm_pos hnu, mul_pos htm1 hnu, mul_pos ((mul_pos htp1 F.S.tm_pos)) hal]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_1), mul_pos ((mul_pos hsm1 F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hsm1 F.S.km_pos)) hga, mul_pos ((mul_pos hsm1 hA1Rr)) hga]
+  · linarith only [mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n0_1), mul_nonneg (htm1).le (sub_nonneg.2 n0_3), mul_pos F.S.sm_pos hnu, mul_pos hsm1 hnu]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_1), mul_pos ((mul_pos hsm1 F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hsm1 F.S.km_pos)) hga, mul_pos ((mul_pos hsm1 hA1Rr)) hga]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n2_4), mul_pos hVpR hnu, (mul_nonneg hKb (hnu).le)]
 
 
 set_option maxHeartbeats 1600000 in
@@ -1325,118 +883,29 @@ theorem Frame20.om4cz1_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.I
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2 <;>
     rcases o3 with n3 | n3
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsp1 hA1Rr)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_nonneg (hVpR).le (sub_nonneg.2 n0_2), mul_nonneg (hVWR).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n3_4), mul_nonneg (hVpR).le (sub_nonneg.2 n3_4), mul_nonneg (F.S.km_pos).le hnu1, mul_pos F.S.km_pos hl, mul_pos hVpR hl, (mul_nonneg hKb (hl).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (hVWR).le (sub_nonneg.2 n0_3), mul_nonneg (hVWR).le (sub_nonneg.2 n1_4), mul_nonneg (hVWR).le (sub_nonneg.2 n3_1), mul_pos hVpR hl, (mul_nonneg hKb (hl).le), mul_pos ((mul_pos hsm1 hVWR)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_1), mul_pos ((mul_pos hsm1 F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hsm1 F.S.km_pos)) hga, mul_pos ((mul_pos hsm1 hA1Rr)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (hA1r).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_nonneg (hA1r).le (sub_nonneg.2 n1_3), mul_pos hA1r hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sm_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(sub_nonneg.2 n0_3), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n2_4), mul_nonneg (htp1).le (sub_nonneg.2 n2_4), mul_pos ((mul_pos htp1 F.S.tm_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos hsm1 hVpR)) hbe, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hbe).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(sub_nonneg.2 n0_3), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.tm_pos).le hnu1, mul_nonneg (htm1).le hnu1, mul_pos ((mul_pos htp1 F.S.tm_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (htm1).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n2_4), mul_nonneg (hsm1).le (sub_nonneg.2 n2_4), mul_nonneg (hss).le (sub_nonneg.2 n2_4), mul_pos F.S.tm_pos hl]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVpR).le (sub_nonneg.2 n1_2), (mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), mul_nonneg (hA1Rr).le (sub_nonneg.2 n2_2), mul_nonneg (rm).le (sub_nonneg.2 n3_1), mul_nonneg (hVWR).le (sub_nonneg.2 n3_1), mul_pos ((mul_pos hsm1 rm)) hbe, mul_pos ((mul_pos hsm1 hVpR)) hbe, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hbe).le), mul_pos ((mul_pos rm hss)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_1), mul_pos ((mul_pos rm hss)) hbe, mul_pos ((mul_pos rm hss)) hga]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsp1 hA1Rr)) hbe]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_nonneg (hVpR).le (sub_nonneg.2 n0_2), mul_nonneg (hVWR).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n3_4), mul_nonneg (hVpR).le (sub_nonneg.2 n3_4), mul_nonneg (F.S.km_pos).le hnu1, mul_pos F.S.km_pos hl, mul_pos hVpR hl, (mul_nonneg hKb (hl).le)]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (hVWR).le (sub_nonneg.2 n0_3), mul_nonneg (hVWR).le (sub_nonneg.2 n1_4), mul_nonneg (hVWR).le (sub_nonneg.2 n3_1), mul_pos hVpR hl, (mul_nonneg hKb (hl).le), mul_pos ((mul_pos hsm1 hVWR)) hbe]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_1), mul_pos ((mul_pos hsm1 F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hsm1 F.S.km_pos)) hga, mul_pos ((mul_pos hsm1 hA1Rr)) hga]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (hA1r).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_nonneg (hA1r).le (sub_nonneg.2 n1_3), mul_pos hA1r hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sm_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe]
+  · linarith only [(sub_nonneg.2 n0_3), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n2_4), mul_nonneg (htp1).le (sub_nonneg.2 n2_4), mul_pos ((mul_pos htp1 F.S.tm_pos)) hal]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos hsm1 hVpR)) hbe, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hbe).le)]
+  · linarith only [(sub_nonneg.2 n0_3), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.tm_pos).le hnu1, mul_nonneg (htm1).le hnu1, mul_pos ((mul_pos htp1 F.S.tm_pos)) hal]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
+  · linarith only [mul_nonneg (htm1).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n2_4), mul_nonneg (hsm1).le (sub_nonneg.2 n2_4), mul_nonneg (hss).le (sub_nonneg.2 n2_4), mul_pos F.S.tm_pos hl]
+  · linarith only [mul_nonneg (hVpR).le (sub_nonneg.2 n1_2), (mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), mul_nonneg (hA1Rr).le (sub_nonneg.2 n2_2), mul_nonneg (rm).le (sub_nonneg.2 n3_1), mul_nonneg (hVWR).le (sub_nonneg.2 n3_1), mul_pos ((mul_pos hsm1 rm)) hbe, mul_pos ((mul_pos hsm1 hVpR)) hbe, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hbe).le), mul_pos ((mul_pos rm hss)) hbe]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_1), mul_pos ((mul_pos rm hss)) hbe, mul_pos ((mul_pos rm hss)) hga]
 
 
 set_option maxHeartbeats 1600000 in
@@ -1472,118 +941,29 @@ theorem Frame20.om4cz2_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.I
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2 <;>
     rcases o3 with n3 | n3
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_3), mul_nonneg (hVWR).le (sub_nonneg.2 n1_3), mul_pos F.S.km_pos hl, mul_pos hVpR hl, (mul_nonneg hKb (hl).le), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_3), mul_nonneg (hVpR).le (sub_nonneg.2 n1_3), (mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_pos F.S.km_pos hl, mul_pos hVWR hl, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_3), mul_nonneg (hVWR).le (sub_nonneg.2 n1_3), mul_pos F.S.km_pos hl, mul_pos hVpR hl, (mul_nonneg hKb (hl).le), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hal, mul_pos ((mul_pos htm1 hA1r)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_3), mul_pos F.S.hm_pos hl, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.tp_pos hA1Rr)) hbe, mul_pos ((mul_pos htp1 hA1Rr)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_1), mul_pos hVpR hl, (mul_nonneg hKb (hl).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n3_4), mul_nonneg (hVpR).le (sub_nonneg.2 n3_4), mul_pos F.S.km_pos hl, mul_pos hVpR hl, (mul_nonneg hKb (hl).le), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n0_1), mul_pos hsm1 hl, mul_pos hss hl]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_3), mul_nonneg (hVWR).le (sub_nonneg.2 n1_3), mul_pos F.S.km_pos hl, mul_pos hVpR hl, (mul_nonneg hKb (hl).le), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_3), mul_nonneg (hVpR).le (sub_nonneg.2 n1_3), (mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_pos F.S.km_pos hl, mul_pos hVWR hl, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_3), mul_nonneg (hVWR).le (sub_nonneg.2 n1_3), mul_pos F.S.km_pos hl, mul_pos hVpR hl, (mul_nonneg hKb (hl).le), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hal, mul_pos ((mul_pos htm1 hA1r)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_3), mul_pos F.S.hm_pos hl, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.tp_pos hA1Rr)) hbe, mul_pos ((mul_pos htp1 hA1Rr)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_1), mul_pos hVpR hl, (mul_nonneg hKb (hl).le)]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n3_4), mul_nonneg (hVpR).le (sub_nonneg.2 n3_4), mul_pos F.S.km_pos hl, mul_pos hVpR hl, (mul_nonneg hKb (hl).le), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n0_1), mul_pos hsm1 hl, mul_pos hss hl]
 
 
 set_option maxHeartbeats 1600000 in
@@ -1619,118 +999,29 @@ theorem Frame20.om4cnop_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2 <;>
     rcases o3 with n3 | n3
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_pos F.S.hm_pos hom, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_pos F.S.hm_pos hom, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_2), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n1_4), mul_nonneg (hVpR).le (sub_nonneg.2 n1_4), (mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_1), mul_nonneg (hVWR).le (sub_nonneg.2 n3_1), mul_pos F.S.km_pos hnu, mul_pos F.S.hm_pos hom, mul_pos hVpR hom, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos hsm1 F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hVWR)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_pos F.S.hm_pos hom, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos hsm1)) hbe, mul_pos ((mul_pos hsm1 hsm1)) hbe, mul_pos ((mul_pos hsm1 hss)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n2_4), mul_pos hVpR hnu, (mul_nonneg hKb (hnu).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_4), mul_pos hVpR hom, (mul_nonneg hKb (hom).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(sub_nonneg.2 n0_4), mul_pos F.S.tp_pos hom, mul_pos htp1 hom]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_1), mul_pos F.S.kp_pos hom, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_4), mul_pos hVpR hom, (mul_nonneg hKb (hom).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n1_1), mul_nonneg (hsm1).le (sub_nonneg.2 n1_2), mul_nonneg (hsm1).le (sub_nonneg.2 n3_1), (sub_nonneg.2 n3_2), mul_pos ((mul_pos hsm1 hsm1)) hbe, mul_pos ((mul_pos hsm1 hsm1)) hga, mul_pos ((mul_pos F.S.km_pos F.S.km_pos)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVpR).le (sub_nonneg.2 n0_4), (mul_nonneg hKb (sub_nonneg.2 n1_1)), (mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_1), mul_pos hVWR hom, mul_pos ((mul_pos rm hss)) hbe, mul_pos ((mul_pos rm hss)) hga]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_pos F.S.hm_pos hom, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_pos F.S.hm_pos hom, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_2), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n1_4), mul_nonneg (hVpR).le (sub_nonneg.2 n1_4), (mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_1), mul_nonneg (hVWR).le (sub_nonneg.2 n3_1), mul_pos F.S.km_pos hnu, mul_pos F.S.hm_pos hom, mul_pos hVpR hom, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos hsm1 F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hVWR)) hbe]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_pos F.S.hm_pos hom, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [(sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos hsm1)) hbe, mul_pos ((mul_pos hsm1 hsm1)) hbe, mul_pos ((mul_pos hsm1 hss)) hbe]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n2_4), mul_pos hVpR hnu, (mul_nonneg hKb (hnu).le)]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_4), mul_pos hVpR hom, (mul_nonneg hKb (hom).le)]
+  · linarith only [(sub_nonneg.2 n0_4), mul_pos F.S.tp_pos hom, mul_pos htp1 hom]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_1), mul_pos F.S.kp_pos hom, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_4), mul_pos hVpR hom, (mul_nonneg hKb (hom).le)]
+  · linarith only [mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n1_1), mul_nonneg (hsm1).le (sub_nonneg.2 n1_2), mul_nonneg (hsm1).le (sub_nonneg.2 n3_1), (sub_nonneg.2 n3_2), mul_pos ((mul_pos hsm1 hsm1)) hbe, mul_pos ((mul_pos hsm1 hsm1)) hga, mul_pos ((mul_pos F.S.km_pos F.S.km_pos)) hde]
+  · linarith only [mul_nonneg (hVpR).le (sub_nonneg.2 n0_4), (mul_nonneg hKb (sub_nonneg.2 n1_1)), (mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_1), mul_pos hVWR hom, mul_pos ((mul_pos rm hss)) hbe, mul_pos ((mul_pos rm hss)) hga]
 
 
 set_option maxHeartbeats 1600000 in
@@ -1766,118 +1057,29 @@ theorem Frame20.om4cnom_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2 <;>
     rcases o3 with n3 | n3
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_2), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hom, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_2), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hom, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hnu, (mul_nonneg hKb (hom).le), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_nonneg (hVWR).le (sub_nonneg.2 n1_4), (mul_nonneg hKb (sub_nonneg.2 n3_1)), mul_nonneg (hVpR).le (sub_nonneg.2 n3_3), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hbe).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos hVpR hom, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n2_4), mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.tp_pos hnu, mul_pos htp1 hnu, mul_pos hss hnu]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n1_3), mul_pos F.S.sp_pos hom, mul_pos hss hom]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n1_4), mul_nonneg (hVWR).le (sub_nonneg.2 n3_1), mul_nonneg (hVWR).le (sub_nonneg.2 n3_4), mul_pos ((mul_pos hsm1 hVpR)) hbe, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hbe).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n2_4), mul_pos hsm1 hnu, mul_pos hss hnu]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_1), mul_pos ((mul_pos hsm1 F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hsm1 F.S.km_pos)) hga, mul_pos ((mul_pos hsm1 hA1Rr)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_1), mul_pos ((mul_pos rm hss)) hbe, mul_pos ((mul_pos rm hss)) hga]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_2), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hom, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_2), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hom, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hnu, (mul_nonneg hKb (hom).le), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_nonneg (hVWR).le (sub_nonneg.2 n1_4), (mul_nonneg hKb (sub_nonneg.2 n3_1)), mul_nonneg (hVpR).le (sub_nonneg.2 n3_3), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hbe).le)]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos hVpR hom, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n2_4), mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.tp_pos hnu, mul_pos htp1 hnu, mul_pos hss hnu]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
+  · linarith only [mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n1_3), mul_pos F.S.sp_pos hom, mul_pos hss hom]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n1_4), mul_nonneg (hVWR).le (sub_nonneg.2 n3_1), mul_nonneg (hVWR).le (sub_nonneg.2 n3_4), mul_pos ((mul_pos hsm1 hVpR)) hbe, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hbe).le)]
+  · linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n2_4), mul_pos hsm1 hnu, mul_pos hss hnu]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_1), mul_pos ((mul_pos hsm1 F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hsm1 F.S.km_pos)) hga, mul_pos ((mul_pos hsm1 hA1Rr)) hga]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_1), mul_pos ((mul_pos rm hss)) hbe, mul_pos ((mul_pos rm hss)) hga]
 
 
 set_option maxHeartbeats 1600000 in
@@ -1913,118 +1115,29 @@ theorem Frame20.om4cnoz1_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2 <;>
     rcases o3 with n3 | n3
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hnu, (mul_nonneg hKb hom2), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_2), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hnu, mul_nonneg (F.S.km_pos).le hom2, (mul_nonneg hKb hom2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), (mul_nonneg hKb (sub_nonneg.2 n1_2)), (mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_3), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos rm hss)) hbe, mul_pos ((mul_pos rm hss)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(sub_nonneg.2 n2_4), mul_pos F.S.sm_pos hnu, mul_pos hsm1 hnu]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n3_3), mul_pos hsm1 hl2]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.tm_pos hA1Rr)) hbe, mul_pos ((mul_pos htm1 hA1Rr)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n2_4), mul_pos hVpR hnu, (mul_nonneg hKb (hnu).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_1), mul_pos ((mul_pos rm hss)) hbe, mul_pos ((mul_pos rm hss)) hga]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hnu, (mul_nonneg hKb hom2), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_2), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hnu, mul_nonneg (F.S.km_pos).le hom2, (mul_nonneg hKb hom2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), (mul_nonneg hKb (sub_nonneg.2 n1_2)), (mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_3), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos rm hss)) hbe, mul_pos ((mul_pos rm hss)) hga]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
+  · linarith only [(sub_nonneg.2 n2_4), mul_pos F.S.sm_pos hnu, mul_pos hsm1 hnu]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n3_3), mul_pos hsm1 hl2]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.tm_pos hA1Rr)) hbe, mul_pos ((mul_pos htm1 hA1Rr)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n2_4), mul_pos hVpR hnu, (mul_nonneg hKb (hnu).le)]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_1), mul_pos ((mul_pos rm hss)) hbe, mul_pos ((mul_pos rm hss)) hga]
 
 
 set_option maxHeartbeats 1600000 in
@@ -2060,118 +1173,29 @@ theorem Frame20.om4cnoz2_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2 <;>
     rcases o3 with n3 | n3
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hnu, (mul_nonneg hKb hom2), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_2), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hnu, mul_nonneg (F.S.km_pos).le hom2, (mul_nonneg hKb hom2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), (mul_nonneg hKb (sub_nonneg.2 n3_4)), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), (mul_nonneg hKb (sub_nonneg.2 n1_2)), (mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_3), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos rm hss)) hbe, mul_pos ((mul_pos rm hss)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n2_4), mul_pos hsm1 hnu, mul_pos hss hnu]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n1_4), mul_pos hsm1 hl2]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_1), mul_pos ((mul_pos hsm1 F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hsm1 F.S.km_pos)) hga, mul_pos ((mul_pos hsm1 hA1Rr)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n2_4), mul_nonneg (htp1).le (sub_nonneg.2 n2_4), mul_pos F.S.sp_pos hnu, mul_pos hsm1 hnu, mul_pos hss hnu]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_1), mul_pos ((mul_pos rm hss)) hbe, mul_pos ((mul_pos rm hss)) hga]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hnu, (mul_nonneg hKb hom2), mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_2), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hnu, mul_nonneg (F.S.km_pos).le hom2, (mul_nonneg hKb hom2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), (mul_nonneg hKb (sub_nonneg.2 n3_4)), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos htp1 hVpR)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), (mul_nonneg hKb (sub_nonneg.2 n1_2)), (mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_3), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hA1r)) hal, mul_pos ((mul_pos hsm1 hA1r)) hal, mul_pos ((mul_pos hA1r hss)) hal, mul_pos ((mul_pos rm hss)) hbe, mul_pos ((mul_pos rm hss)) hga]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
+  · linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n2_4), mul_pos hsm1 hnu, mul_pos hss hnu]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
+  · linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n1_4), mul_pos hsm1 hl2]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_1), mul_pos ((mul_pos hsm1 F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hsm1 F.S.km_pos)) hga, mul_pos ((mul_pos hsm1 hA1Rr)) hga]
+  · linarith only [mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n2_4), mul_nonneg (htp1).le (sub_nonneg.2 n2_4), mul_pos F.S.sp_pos hnu, mul_pos hsm1 hnu, mul_pos hss hnu]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sp_pos hA1Rr)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hA1Rr hss)) hbe]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_1), mul_pos ((mul_pos rm hss)) hbe, mul_pos ((mul_pos rm hss)) hga]
 
 
 set_option maxHeartbeats 1600000 in
@@ -2207,118 +1231,29 @@ theorem Frame20.om4dp_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2 <;>
     rcases o3 with n3 | n3
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tp_pos rm)) hga, mul_pos ((mul_pos htp1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_1), mul_pos ((mul_pos hsm1 F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hsm1 F.S.km_pos)) hga, mul_pos ((mul_pos hsm1 hA1Rr)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_1), mul_pos ((mul_pos hsm1 F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hsm1 F.S.km_pos)) hga, mul_pos ((mul_pos hsm1 hA1Rr)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (rm).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_nonneg (rm).le (sub_nonneg.2 n3_1), (mul_nonneg hKb (sub_nonneg.2 n3_1)), mul_nonneg (rm).le (sub_nonneg.2 n3_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tp_pos rm)) hbe, mul_pos ((mul_pos htp1 rm)) hbe, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hbe).le), mul_pos ((mul_pos F.S.sm_pos rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_1)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.sm_pos rm)) hbe, mul_pos ((mul_pos F.S.sm_pos rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tp_pos rm)) hga, mul_pos ((mul_pos htp1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_1), mul_pos ((mul_pos hsm1 F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hsm1 F.S.km_pos)) hga, mul_pos ((mul_pos hsm1 hA1Rr)) hga]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_1), mul_pos ((mul_pos hsm1 F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos hsm1 F.S.km_pos)) hga, mul_pos ((mul_pos hsm1 hA1Rr)) hga]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (rm).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_nonneg (rm).le (sub_nonneg.2 n3_1), (mul_nonneg hKb (sub_nonneg.2 n3_1)), mul_nonneg (rm).le (sub_nonneg.2 n3_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.tp_pos rm)) hbe, mul_pos ((mul_pos htp1 rm)) hbe, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hbe).le), mul_pos ((mul_pos F.S.sm_pos rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_1)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hnu, mul_pos ((mul_pos F.S.sm_pos rm)) hbe, mul_pos ((mul_pos F.S.sm_pos rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
 
 
 set_option maxHeartbeats 1600000 in
@@ -2354,118 +1289,29 @@ theorem Frame20.om4dn_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2 <;>
     rcases o3 with n3 | n3
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_2), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_4), (mul_nonneg hKb (sub_nonneg.2 n3_4)), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), (mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos ((mul_pos htp1 F.S.hm_pos)) hal, mul_pos ((mul_pos F.S.sp_pos rm)) hga, mul_pos ((mul_pos hsp1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.tp_pos hA1Rr)) hbe, mul_pos ((mul_pos htp1 hA1Rr)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hA1Rr).le (sub_nonneg.2 n2_4), mul_pos hA1Rr hnu, mul_pos ((mul_pos F.S.sp_pos rm)) hga, mul_pos ((mul_pos hsm1 hVR)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (hA1Rr).le (sub_nonneg.2 n2_4), mul_pos hA1Rr hnu, mul_pos ((mul_pos F.S.sp_pos rm)) hga, mul_pos ((mul_pos hsm1 hVR)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(sub_nonneg.2 n2_3), mul_pos F.S.sp_pos hnu, mul_pos hsp1 hnu]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), (mul_nonneg hKb (sub_nonneg.2 n3_1)), mul_pos ((mul_pos F.S.sm_pos rm)) hbe, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hbe).le), mul_pos ((mul_pos F.S.sm_pos rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_2), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_4), (mul_nonneg hKb (sub_nonneg.2 n3_4)), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), (mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos ((mul_pos htp1 F.S.hm_pos)) hal, mul_pos ((mul_pos F.S.sp_pos rm)) hga, mul_pos ((mul_pos hsp1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.tp_pos hA1Rr)) hbe, mul_pos ((mul_pos htp1 hA1Rr)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
+  · linarith only [mul_nonneg (hA1Rr).le (sub_nonneg.2 n2_4), mul_pos hA1Rr hnu, mul_pos ((mul_pos F.S.sp_pos rm)) hga, mul_pos ((mul_pos hsm1 hVR)) hga]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_nonneg (hA1Rr).le (sub_nonneg.2 n2_4), mul_pos hA1Rr hnu, mul_pos ((mul_pos F.S.sp_pos rm)) hga, mul_pos ((mul_pos hsm1 hVR)) hga]
+  · linarith only [(sub_nonneg.2 n2_3), mul_pos F.S.sp_pos hnu, mul_pos hsp1 hnu]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), (mul_nonneg hKb (sub_nonneg.2 n3_1)), mul_pos ((mul_pos F.S.sm_pos rm)) hbe, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hbe).le), mul_pos ((mul_pos F.S.sm_pos rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
 
 
 set_option maxHeartbeats 1600000 in
@@ -2501,118 +1347,29 @@ theorem Frame20.om4dz1_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.I
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2 <;>
     rcases o3 with n3 | n3
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (hA1r).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_nonneg (hA1r).le (sub_nonneg.2 n3_4), mul_pos hA1r hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (hA1r).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_nonneg (hA1r).le (sub_nonneg.2 n3_4), (mul_nonneg hKb (sub_nonneg.2 n3_4)), mul_pos hA1r hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_nonneg (rm).le (sub_nonneg.2 n0_2), mul_nonneg (rm).le (sub_nonneg.2 n0_3), (mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_nonneg (rm).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n3_1), mul_nonneg (rm).le (sub_nonneg.2 n3_1), (mul_nonneg hKb (sub_nonneg.2 n3_3)), mul_nonneg (F.S.km_pos).le hnu1, mul_pos F.S.km_pos hl, mul_pos rm hl, (mul_nonneg (mul_nonneg (htp1).le hKb) (hal).le), mul_pos ((mul_pos F.S.tp_pos rm)) hbe, mul_pos ((mul_pos htp1 rm)) hbe, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hbe, mul_pos ((mul_pos F.S.sm_pos rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_nonneg (hA1r).le (sub_nonneg.2 n0_3), mul_nonneg (hA1r).le (sub_nonneg.2 n1_3), mul_pos hA1r hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.tm_pos hA1Rr)) hbe, mul_pos ((mul_pos htm1 hA1Rr)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (rm).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), mul_nonneg (rm).le (sub_nonneg.2 n3_1), (mul_nonneg hKb (sub_nonneg.2 n3_1)), mul_nonneg (rm).le (sub_nonneg.2 n3_4), mul_pos ((mul_pos F.S.tp_pos rm)) hbe, mul_pos ((mul_pos htp1 rm)) hbe, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hbe).le), mul_pos ((mul_pos F.S.sm_pos rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (hA1r).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_nonneg (hA1r).le (sub_nonneg.2 n3_4), mul_pos hA1r hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (hA1r).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_nonneg (hA1r).le (sub_nonneg.2 n3_4), (mul_nonneg hKb (sub_nonneg.2 n3_4)), mul_pos hA1r hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_nonneg (rm).le (sub_nonneg.2 n0_2), mul_nonneg (rm).le (sub_nonneg.2 n0_3), (mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_nonneg (rm).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n3_1), mul_nonneg (rm).le (sub_nonneg.2 n3_1), (mul_nonneg hKb (sub_nonneg.2 n3_3)), mul_nonneg (F.S.km_pos).le hnu1, mul_pos F.S.km_pos hl, mul_pos rm hl, (mul_nonneg (mul_nonneg (htp1).le hKb) (hal).le), mul_pos ((mul_pos F.S.tp_pos rm)) hbe, mul_pos ((mul_pos htp1 rm)) hbe, mul_pos ((mul_pos hsm1 F.S.hm_pos)) hbe, mul_pos ((mul_pos F.S.sm_pos rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_nonneg (hA1r).le (sub_nonneg.2 n0_3), mul_nonneg (hA1r).le (sub_nonneg.2 n1_3), mul_pos hA1r hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_pos ((mul_pos F.S.tm_pos hA1Rr)) hbe, mul_pos ((mul_pos htm1 hA1Rr)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_2)), mul_nonneg (rm).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_2), mul_nonneg (rm).le (sub_nonneg.2 n3_1), (mul_nonneg hKb (sub_nonneg.2 n3_1)), mul_nonneg (rm).le (sub_nonneg.2 n3_4), mul_pos ((mul_pos F.S.tp_pos rm)) hbe, mul_pos ((mul_pos htp1 rm)) hbe, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hbe).le), mul_pos ((mul_pos F.S.sm_pos rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
 
 
 set_option maxHeartbeats 1600000 in
@@ -2648,118 +1405,29 @@ theorem Frame20.om4dz2_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.I
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2 <;>
     rcases o3 with n3 | n3
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_nonneg (F.S.km_pos).le hnu1, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), (mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_3), mul_pos F.S.hm_pos hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_3)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hl, (mul_nonneg hKb (hl).le), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hal, mul_pos ((mul_pos htm1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_3), mul_nonneg (F.S.km_pos).le hnu1, mul_pos F.S.hm_pos hl, mul_pos ((mul_pos htp1 F.S.km_pos)) hal, (mul_nonneg (mul_nonneg (htp1).le hKb) (hal).le), mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos F.S.tp_pos rm)) hga, mul_pos ((mul_pos hsm1 F.S.km_pos)) hga, mul_pos ((mul_pos hsm1 hA1Rr)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    obtain ⟨n3_1, n3_2, n3_3, n3_4⟩ := n3
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_tP, Shape20.u_tANR, Shape20.u_vRv, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4 n3_1 n3_2 n3_3 n3_4
-    linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_nonneg (F.S.km_pos).le hnu1, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_4), (mul_nonneg hKb (sub_nonneg.2 n1_3)), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_3), mul_pos F.S.hm_pos hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_3)), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.km_pos hl, (mul_nonneg hKb (hl).le), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hal, mul_pos ((mul_pos htm1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos rm)) hga, mul_pos ((mul_pos htm1 rm)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_1), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_4), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n3_2), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n3_3), mul_nonneg (F.S.km_pos).le hnu1, mul_pos F.S.hm_pos hl, mul_pos ((mul_pos htp1 F.S.km_pos)) hal, (mul_nonneg (mul_nonneg (htp1).le hKb) (hal).le), mul_pos ((mul_pos hsm1 hA1Rr)) hbe, mul_pos ((mul_pos F.S.tp_pos rm)) hga, mul_pos ((mul_pos hsm1 F.S.km_pos)) hga, mul_pos ((mul_pos hsm1 hA1Rr)) hga, (mul_nonneg (mul_nonneg (hsm1).le hKb) (hga).le)]
+  · linarith only [mul_pos ((mul_pos F.S.kp_pos rm)) hal, mul_pos ((mul_pos F.S.km_pos hVR)) hal, (mul_nonneg (mul_nonneg (hA1Rr).le hKb) (hal).le)]
 
 
 set_option maxHeartbeats 1600000 in
@@ -2787,26 +1455,15 @@ theorem Frame20.ra4_A_R_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.
   simp only [not_and_or, not_or, not_lt] at o1
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_tA] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n1_3), mul_nonneg (htp1).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.hp_pos F.S.km_pos)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_tA] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_4), (mul_nonneg hW (sub_nonneg.2 n1_3)), mul_pos ((mul_pos F.S.sm_pos F.S.hm_pos)) hbe, (mul_nonneg (mul_nonneg (F.S.sm_pos).le hW) (hbe).le), mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_tA] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [(sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tp_pos hsm1)) hga, mul_pos ((mul_pos F.S.hp_pos F.S.km_pos)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_tA] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg ((mul_pos F.S.sm_pos hsm1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos hsm1 hsm1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos htm1 F.S.sm_pos)).le (sub_nonneg.2 n1_1), mul_pos ((mul_pos F.S.km_pos hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le hW) (hA1).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hW) (hA1).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.kp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le (F.S.kp_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sm_pos F.S.hm_pos) F.S.kp_pos)) hde, mul_pos ((mul_pos (mul_pos F.S.sm_pos F.S.hm_pos) F.S.km_pos)) hde]
+  · linarith only [mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n1_3), mul_nonneg (htp1).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.hp_pos F.S.km_pos)) hde]
+  · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_4), (mul_nonneg hW (sub_nonneg.2 n1_3)), mul_pos ((mul_pos F.S.sm_pos F.S.hm_pos)) hbe, (mul_nonneg (mul_nonneg (F.S.sm_pos).le hW) (hbe).le), mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [(sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tp_pos hsm1)) hga, mul_pos ((mul_pos F.S.hp_pos F.S.km_pos)) hde]
+  · linarith only [mul_nonneg ((mul_pos F.S.sm_pos hsm1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos hsm1 hsm1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos htm1 F.S.sm_pos)).le (sub_nonneg.2 n1_1), mul_pos ((mul_pos F.S.km_pos hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le hW) (hA1).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hW) (hA1).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.kp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le (F.S.kp_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sm_pos F.S.hm_pos) F.S.kp_pos)) hde, mul_pos ((mul_pos (mul_pos F.S.sm_pos F.S.hm_pos) F.S.km_pos)) hde]
 
 
 set_option maxHeartbeats 1600000 in
@@ -2834,56 +1491,21 @@ theorem Frame20.ra4_Y_R_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.
   simp only [not_and_or, not_or, not_lt] at o1
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 | n1 | n1 | n1
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg ((mul_pos F.S.tp_pos F.S.sp_pos)).le (sub_nonneg.2 n0_3), mul_nonneg ((mul_pos F.S.tp_pos hsp1)).le (sub_nonneg.2 n0_3), mul_nonneg (htp1).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos (mul_pos htp1 htm1) F.S.sm_pos)) hbe, mul_pos ((mul_pos (mul_pos htp1 htm1) F.S.sm_pos)) hga, mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.hp_pos) hQ)) hde, mul_pos ((mul_pos (mul_pos htp1 F.S.hp_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.kp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hW) (hA1r).le) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sp_pos F.S.hp_pos) rm)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (F.S.hp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (F.S.kp_pos).le) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (rp).le) hW) (hde).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n1_1), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_1), mul_nonneg (hA1r).le (sub_nonneg.2 n1_1), (mul_nonneg hA3h (sub_nonneg.2 n1_1)), mul_pos ((mul_pos F.S.tp_pos F.S.hm_pos)) hal, mul_pos ((mul_pos F.S.tp_pos hQ)) hal, (mul_nonneg (mul_nonneg (F.S.tp_pos).le hD) (hal).le), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 F.S.kp_pos)) hal, mul_pos ((mul_pos htp1 hQ)) hal, (mul_nonneg (mul_nonneg (htp1).le hD) (hal).le), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hal, (mul_nonneg (mul_nonneg (F.S.tm_pos).le hCm) (hal).le), mul_pos ((mul_pos htm1 F.S.kp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos F.S.hp_pos)) hal, mul_pos ((mul_pos hsp1 F.S.hm_pos)) hal, mul_pos ((mul_pos hsm1 F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sm_pos F.S.hp_pos)) hbe, mul_pos ((mul_pos F.S.sm_pos F.S.hm_pos)) hbe, mul_pos ((mul_pos F.S.sm_pos hA1r)) hbe, (mul_nonneg (mul_nonneg (F.S.sm_pos).le hA3h) (hbe).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.kp_pos F.S.km_pos)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg (htm1).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos F.S.tm_pos F.S.sm_pos)).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos F.S.tm_pos hsm1)).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos (mul_pos htm1 F.S.sp_pos) F.S.sm_pos)) hbe, mul_pos ((mul_pos (mul_pos htm1 hsp1) F.S.sm_pos)) hbe, mul_pos ((mul_pos (mul_pos htp1 htm1) F.S.sm_pos)) hga, (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.kp_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos htp1 F.S.kp_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hW) (hA1r).le) (hde).le), mul_pos ((mul_pos (mul_pos htp1 hQ) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le hD) (hA1r).le) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sp_pos F.S.hp_pos) rm)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hp_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sp_pos F.S.hp_pos) hQ)) hde, mul_pos ((mul_pos (mul_pos F.S.sp_pos rp) rm)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (F.S.hp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (F.S.kp_pos).le) hD) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sm_pos rp) hQ)) hde, mul_pos ((mul_pos (mul_pos hsm1 rp) hQ)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [(sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tm_pos htm1)) hal, mul_pos ((mul_pos htm1 htm1)) hal, mul_pos ((mul_pos htm1 hsm1)) hga, mul_pos ((mul_pos F.S.hm_pos F.S.km_pos)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg ((mul_pos F.S.tp_pos hsp1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos htp1 hsp1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos htm1 F.S.sm_pos)).le (sub_nonneg.2 n1_1), mul_pos ((mul_pos (mul_pos F.S.tm_pos F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le hW) (hQ).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le hW) (hQ).le) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sm_pos F.S.hm_pos) hQ)) hde, mul_pos ((mul_pos (mul_pos hsm1 F.S.hm_pos) hQ)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n1_1), (sub_nonneg.2 n1_2), mul_pos ((mul_pos F.S.sp_pos F.S.sp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hsp1)) hal, mul_pos ((mul_pos hsp1 hsp1)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.sm_pos)) hbe, mul_pos ((mul_pos htm1 hsm1)) hga, mul_pos ((mul_pos F.S.hm_pos F.S.km_pos)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.kp_pos F.S.km_pos)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg ((mul_pos F.S.sp_pos hsp1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos hsp1 hsp1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos htm1 F.S.sm_pos)).le (sub_nonneg.2 n1_3), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (hQ).le) hCm) (hde).le), mul_pos ((mul_pos (mul_pos htp1 F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (hQ).le) hCm) (hde).le), mul_pos ((mul_pos (mul_pos hsm1 F.S.hp_pos) hQ)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_3), (mul_nonneg hW (sub_nonneg.2 n1_3)), mul_nonneg (hA1r).le (sub_nonneg.2 n1_3), mul_pos ((mul_pos F.S.tp_pos hQ)) hal, mul_pos ((mul_pos htp1 hQ)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hal, mul_pos ((mul_pos htm1 F.S.kp_pos)) hal, mul_pos ((mul_pos hsp1 F.S.hm_pos)) hal, mul_pos ((mul_pos F.S.sm_pos F.S.hm_pos)) hbe, (mul_nonneg (mul_nonneg (F.S.sm_pos).le hW) (hbe).le), mul_pos ((mul_pos F.S.sm_pos hA1r)) hbe]
+  · linarith only [mul_nonneg ((mul_pos F.S.tp_pos F.S.sp_pos)).le (sub_nonneg.2 n0_3), mul_nonneg ((mul_pos F.S.tp_pos hsp1)).le (sub_nonneg.2 n0_3), mul_nonneg (htp1).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos (mul_pos htp1 htm1) F.S.sm_pos)) hbe, mul_pos ((mul_pos (mul_pos htp1 htm1) F.S.sm_pos)) hga, mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.hp_pos) hQ)) hde, mul_pos ((mul_pos (mul_pos htp1 F.S.hp_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.kp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hW) (hA1r).le) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sp_pos F.S.hp_pos) rm)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (F.S.hp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (F.S.kp_pos).le) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (rp).le) hW) (hde).le)]
+  · linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n1_1), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_1), mul_nonneg (hA1r).le (sub_nonneg.2 n1_1), (mul_nonneg hA3h (sub_nonneg.2 n1_1)), mul_pos ((mul_pos F.S.tp_pos F.S.hm_pos)) hal, mul_pos ((mul_pos F.S.tp_pos hQ)) hal, (mul_nonneg (mul_nonneg (F.S.tp_pos).le hD) (hal).le), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 F.S.kp_pos)) hal, mul_pos ((mul_pos htp1 hQ)) hal, (mul_nonneg (mul_nonneg (htp1).le hD) (hal).le), mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hal, (mul_nonneg (mul_nonneg (F.S.tm_pos).le hCm) (hal).le), mul_pos ((mul_pos htm1 F.S.kp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos F.S.hp_pos)) hal, mul_pos ((mul_pos hsp1 F.S.hm_pos)) hal, mul_pos ((mul_pos hsm1 F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.sm_pos F.S.hp_pos)) hbe, mul_pos ((mul_pos F.S.sm_pos F.S.hm_pos)) hbe, mul_pos ((mul_pos F.S.sm_pos hA1r)) hbe, (mul_nonneg (mul_nonneg (F.S.sm_pos).le hA3h) (hbe).le)]
+  · linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.kp_pos F.S.km_pos)) hde]
+  · linarith only [mul_nonneg (htm1).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos F.S.tm_pos F.S.sm_pos)).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos F.S.tm_pos hsm1)).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos (mul_pos htm1 F.S.sp_pos) F.S.sm_pos)) hbe, mul_pos ((mul_pos (mul_pos htm1 hsp1) F.S.sm_pos)) hbe, mul_pos ((mul_pos (mul_pos htp1 htm1) F.S.sm_pos)) hga, (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.kp_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos htp1 F.S.kp_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hW) (hA1r).le) (hde).le), mul_pos ((mul_pos (mul_pos htp1 hQ) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le hD) (hA1r).le) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sp_pos F.S.hp_pos) rm)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hp_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sp_pos F.S.hp_pos) hQ)) hde, mul_pos ((mul_pos (mul_pos F.S.sp_pos rp) rm)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (F.S.hp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (F.S.kp_pos).le) hD) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sm_pos rp) hQ)) hde, mul_pos ((mul_pos (mul_pos hsm1 rp) hQ)) hde]
+  · linarith only [(sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tm_pos htm1)) hal, mul_pos ((mul_pos htm1 htm1)) hal, mul_pos ((mul_pos htm1 hsm1)) hga, mul_pos ((mul_pos F.S.hm_pos F.S.km_pos)) hde]
+  · linarith only [mul_nonneg ((mul_pos F.S.tp_pos hsp1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos htp1 hsp1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos htm1 F.S.sm_pos)).le (sub_nonneg.2 n1_1), mul_pos ((mul_pos (mul_pos F.S.tm_pos F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le hW) (hQ).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le hW) (hQ).le) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sm_pos F.S.hm_pos) hQ)) hde, mul_pos ((mul_pos (mul_pos hsm1 F.S.hm_pos) hQ)) hde]
+  · linarith only [mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n1_1), (sub_nonneg.2 n1_2), mul_pos ((mul_pos F.S.sp_pos F.S.sp_pos)) hal, mul_pos ((mul_pos F.S.sp_pos hsp1)) hal, mul_pos ((mul_pos hsp1 hsp1)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.sm_pos)) hbe, mul_pos ((mul_pos htm1 hsm1)) hga, mul_pos ((mul_pos F.S.hm_pos F.S.km_pos)) hde]
+  · linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.kp_pos F.S.km_pos)) hde]
+  · linarith only [mul_nonneg ((mul_pos F.S.sp_pos hsp1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos hsp1 hsp1)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos htm1 F.S.sm_pos)).le (sub_nonneg.2 n1_3), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (hQ).le) hCm) (hde).le), mul_pos ((mul_pos (mul_pos htp1 F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (hQ).le) hCm) (hde).le), mul_pos ((mul_pos (mul_pos hsm1 F.S.hp_pos) hQ)) hde]
+  · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_3), (mul_nonneg hW (sub_nonneg.2 n1_3)), mul_nonneg (hA1r).le (sub_nonneg.2 n1_3), mul_pos ((mul_pos F.S.tp_pos hQ)) hal, mul_pos ((mul_pos htp1 hQ)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hal, mul_pos ((mul_pos htm1 F.S.kp_pos)) hal, mul_pos ((mul_pos hsp1 F.S.hm_pos)) hal, mul_pos ((mul_pos F.S.sm_pos F.S.hm_pos)) hbe, (mul_nonneg (mul_nonneg (F.S.sm_pos).le hW) (hbe).le), mul_pos ((mul_pos F.S.sm_pos hA1r)) hbe]
 
 
 set_option maxHeartbeats 1600000 in
@@ -2911,56 +1533,21 @@ theorem Frame20.ra4_X_R_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.
   simp only [not_and_or, not_or, not_lt] at o1
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 | n1 | n1 | n1
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [(sub_nonneg.2 n1_1), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, (mul_nonneg (mul_nonneg (F.S.tp_pos).le hCm) (hal).le), (mul_nonneg (mul_nonneg (htp1).le hCm) (hal).le), mul_pos ((mul_pos hsm1 F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos htm1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, (mul_nonneg (mul_nonneg (hsp1).le hCm) (hbe).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [(sub_nonneg.2 n0_4), mul_pos ((mul_pos (mul_pos F.S.tp_pos htm1) F.S.sm_pos)) hbe, mul_pos ((mul_pos (mul_pos htp1 htm1) F.S.sm_pos)) hbe, mul_pos ((mul_pos (mul_pos htp1 htm1) F.S.sm_pos)) hga, mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.hm_pos) hQ)) hde, mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.kp_pos) rm)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le hW) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (hQ).le) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.kp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hW) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (hQ).le) hD) (hde).le), mul_pos ((mul_pos (mul_pos F.S.tm_pos F.S.hp_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le hW) (hQ).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (hQ).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le hW) (hQ).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.km_pos).le) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (F.S.kp_pos).le) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le hD) (hA1r).le) (hde).le), mul_pos ((mul_pos (mul_pos hsm1 F.S.hp_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le hD) (hA1r).le) (hde).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [(sub_nonneg.2 n0_4), mul_pos ((mul_pos (mul_pos F.S.tp_pos htm1) F.S.sm_pos)) hbe, mul_pos ((mul_pos (mul_pos htp1 htm1) F.S.sm_pos)) hbe, mul_pos ((mul_pos (mul_pos htp1 htm1) F.S.sm_pos)) hga, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le hW) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le hW) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.kp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hW) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hW) hA3) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sp_pos F.S.hp_pos) rm)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hW) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hW) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hD) (hA1r).le) (hde).le), mul_pos ((mul_pos (mul_pos hsm1 F.S.hp_pos) hQ)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [(sub_nonneg.2 n1_3), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, (mul_nonneg (mul_nonneg (F.S.tp_pos).le hCm) (hal).le), (mul_nonneg (mul_nonneg (htp1).le hCm) (hal).le), mul_pos ((mul_pos hsm1 F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos htm1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, (mul_nonneg (mul_nonneg (hsp1).le hCm) (hbe).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [(sub_nonneg.2 n0_4), mul_pos ((mul_pos htm1 F.S.sm_pos)) hbe, mul_pos ((mul_pos (mul_pos htp1 htm1) F.S.sm_pos)) hga, (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.kp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.km_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.km_pos).le) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hW) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hW) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hW) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hW) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hW) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hD) (hA1r).le) (hde).le), mul_pos ((mul_pos (mul_pos hsm1 F.S.hp_pos) hQ)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [(sub_nonneg.2 n1_1), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, (mul_nonneg (mul_nonneg (F.S.tp_pos).le hCm) (hal).le), (mul_nonneg (mul_nonneg (htp1).le hCm) (hal).le), mul_pos ((mul_pos hsm1 F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos htm1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, (mul_nonneg (mul_nonneg (hsp1).le hCm) (hbe).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg ((mul_pos F.S.tp_pos F.S.km_pos)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos F.S.tp_pos hA1r)).le (sub_nonneg.2 n0_1), (mul_nonneg (mul_nonneg (F.S.tp_pos).le hA3) (sub_nonneg.2 n0_2)), (mul_nonneg (mul_nonneg (htp1).le hA3) (sub_nonneg.2 n0_2)), mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos (mul_pos F.S.tp_pos htm1) F.S.kp_pos)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos htm1) hA1r)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.sm_pos) F.S.hm_pos)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.sm_pos) hQ)) hal, mul_pos ((mul_pos (mul_pos htp1 htm1) hA1r)) hal, mul_pos ((mul_pos (mul_pos htp1 F.S.sp_pos) F.S.hm_pos)) hal, mul_pos ((mul_pos (mul_pos htp1 F.S.sp_pos) rm)) hal, (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le (hsp1).le) hCm) (hal).le), (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le (hsm1).le) hA3) (hal).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.sp_pos).le) hW) (hal).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (hsp1).le) hW) (hal).le), mul_pos ((mul_pos (mul_pos F.S.sp_pos hsm1) F.S.hm_pos)) hal, mul_pos ((mul_pos (mul_pos htp1 F.S.sp_pos) rm)) hbe, mul_pos ((mul_pos (mul_pos htm1 F.S.sm_pos) hA1r)) hbe, (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le (F.S.sm_pos).le) hCm) (hbe).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (hsm1).le) hD) (hbe).le), mul_pos ((mul_pos (mul_pos F.S.km_pos rp) rm)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [mul_nonneg ((mul_pos (mul_pos F.S.tp_pos F.S.sp_pos) F.S.km_pos)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos F.S.tp_pos F.S.sp_pos) hA1r)).le (sub_nonneg.2 n0_1), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.sp_pos).le) hA3) (sub_nonneg.2 n0_2)), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.sp_pos).le) hA3) (sub_nonneg.2 n0_2)), mul_nonneg ((mul_pos htm1 F.S.sm_pos)).le (sub_nonneg.2 n1_1), mul_pos ((mul_pos (mul_pos (mul_pos htp1 F.S.kp_pos) F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.kp_pos).le) (F.S.km_pos).le) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.hm_pos).le) (hA1r).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le (F.S.hm_pos).le) (hA1r).le) hA3) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos htm1 F.S.km_pos) hA1r) hA1r)) hde, mul_pos ((mul_pos (mul_pos (mul_pos F.S.sp_pos F.S.hp_pos) F.S.hp_pos) rm)) hde, mul_pos ((mul_pos (mul_pos (mul_pos F.S.sp_pos F.S.hp_pos) F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hp_pos).le) hW) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hp_pos).le) hW) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hp_pos).le) hD) (hA1r).le) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos F.S.sp_pos F.S.hm_pos) F.S.kp_pos) F.S.km_pos)) hde, mul_pos ((mul_pos (mul_pos (mul_pos F.S.sp_pos F.S.hm_pos) F.S.km_pos) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hm_pos).le) (F.S.km_pos).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.kp_pos).le) hW) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.kp_pos).le) hD) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.km_pos).le) hW) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le (F.S.hp_pos).le) hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le (F.S.hm_pos).le) (F.S.kp_pos).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le (F.S.kp_pos).le) hW) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le (F.S.kp_pos).le) hD) hCm) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos F.S.sm_pos F.S.hm_pos) F.S.kp_pos) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (F.S.hm_pos).le) (F.S.kp_pos).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (F.S.kp_pos).le) hW) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (F.S.kp_pos).le) hW) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (F.S.kp_pos).le) hW) hA3) (hde).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [(sub_nonneg.2 n1_3), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, (mul_nonneg (mul_nonneg (F.S.tp_pos).le hCm) (hal).le), (mul_nonneg (mul_nonneg (htp1).le hCm) (hal).le), mul_pos ((mul_pos hsm1 F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos htm1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, (mul_nonneg (mul_nonneg (hsp1).le hCm) (hbe).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_0, rperm_1, rperm_2, rperm_3, rperm_4, rperm_5, rperm_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
-    linarith only [(mul_nonneg (mul_nonneg (hsp1).le hCm) (sub_nonneg.2 n0_1)), mul_nonneg ((mul_pos (mul_pos F.S.tp_pos hsp1) hA1r)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos htp1 F.S.sp_pos) F.S.km_pos)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos htp1 F.S.sp_pos) hA1r)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos htp1 hsp1) hA1r)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos F.S.sm_pos hsm1) rp)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos hsm1 hsm1) rp)).le (sub_nonneg.2 n0_1), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (hsp1).le) hA3) (sub_nonneg.2 n0_2)), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le (hsp1).le) hA3) (sub_nonneg.2 n0_2)), mul_nonneg ((mul_pos htm1 F.S.sm_pos)).le (sub_nonneg.2 n1_3), mul_pos ((mul_pos (mul_pos F.S.km_pos rp) hQ)) hde]
+  · linarith only [(sub_nonneg.2 n1_1), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, (mul_nonneg (mul_nonneg (F.S.tp_pos).le hCm) (hal).le), (mul_nonneg (mul_nonneg (htp1).le hCm) (hal).le), mul_pos ((mul_pos hsm1 F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos htm1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, (mul_nonneg (mul_nonneg (hsp1).le hCm) (hbe).le)]
+  · linarith only [(sub_nonneg.2 n0_4), mul_pos ((mul_pos (mul_pos F.S.tp_pos htm1) F.S.sm_pos)) hbe, mul_pos ((mul_pos (mul_pos htp1 htm1) F.S.sm_pos)) hbe, mul_pos ((mul_pos (mul_pos htp1 htm1) F.S.sm_pos)) hga, mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.hm_pos) hQ)) hde, mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.kp_pos) rm)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le hW) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (hQ).le) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.kp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hW) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (hQ).le) hD) (hde).le), mul_pos ((mul_pos (mul_pos F.S.tm_pos F.S.hp_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le hW) (hQ).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (hQ).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le hW) (hQ).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.km_pos).le) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (F.S.kp_pos).le) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le hD) (hA1r).le) (hde).le), mul_pos ((mul_pos (mul_pos hsm1 F.S.hp_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le hD) (hA1r).le) (hde).le)]
+  · linarith only [(sub_nonneg.2 n0_4), mul_pos ((mul_pos (mul_pos F.S.tp_pos htm1) F.S.sm_pos)) hbe, mul_pos ((mul_pos (mul_pos htp1 htm1) F.S.sm_pos)) hbe, mul_pos ((mul_pos (mul_pos htp1 htm1) F.S.sm_pos)) hga, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le hW) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le hW) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.kp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hW) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le hW) hA3) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sp_pos F.S.hp_pos) rm)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hW) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hW) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hD) (hA1r).le) (hde).le), mul_pos ((mul_pos (mul_pos hsm1 F.S.hp_pos) hQ)) hde]
+  · linarith only [(sub_nonneg.2 n1_3), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, (mul_nonneg (mul_nonneg (F.S.tp_pos).le hCm) (hal).le), (mul_nonneg (mul_nonneg (htp1).le hCm) (hal).le), mul_pos ((mul_pos hsm1 F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos htm1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, (mul_nonneg (mul_nonneg (hsp1).le hCm) (hbe).le)]
+  · linarith only [(sub_nonneg.2 n0_4), mul_pos ((mul_pos htm1 F.S.sm_pos)) hbe, mul_pos ((mul_pos (mul_pos htp1 htm1) F.S.sm_pos)) hga, (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.kp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hp_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.km_pos).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.km_pos).le) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hW) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hW) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hW) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hW) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hW) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le hD) (hA1r).le) (hde).le), mul_pos ((mul_pos (mul_pos hsm1 F.S.hp_pos) hQ)) hde]
+  · linarith only [(sub_nonneg.2 n1_1), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, (mul_nonneg (mul_nonneg (F.S.tp_pos).le hCm) (hal).le), (mul_nonneg (mul_nonneg (htp1).le hCm) (hal).le), mul_pos ((mul_pos hsm1 F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos htm1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, (mul_nonneg (mul_nonneg (hsp1).le hCm) (hbe).le)]
+  · linarith only [mul_nonneg ((mul_pos F.S.tp_pos F.S.km_pos)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos F.S.tp_pos hA1r)).le (sub_nonneg.2 n0_1), (mul_nonneg (mul_nonneg (F.S.tp_pos).le hA3) (sub_nonneg.2 n0_2)), (mul_nonneg (mul_nonneg (htp1).le hA3) (sub_nonneg.2 n0_2)), mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos (mul_pos F.S.tp_pos htm1) F.S.kp_pos)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos htm1) hA1r)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.sm_pos) F.S.hm_pos)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.sm_pos) hQ)) hal, mul_pos ((mul_pos (mul_pos htp1 htm1) hA1r)) hal, mul_pos ((mul_pos (mul_pos htp1 F.S.sp_pos) F.S.hm_pos)) hal, mul_pos ((mul_pos (mul_pos htp1 F.S.sp_pos) rm)) hal, (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le (hsp1).le) hCm) (hal).le), (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le (hsm1).le) hA3) (hal).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.sp_pos).le) hW) (hal).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (hsp1).le) hW) (hal).le), mul_pos ((mul_pos (mul_pos F.S.sp_pos hsm1) F.S.hm_pos)) hal, mul_pos ((mul_pos (mul_pos htp1 F.S.sp_pos) rm)) hbe, mul_pos ((mul_pos (mul_pos htm1 F.S.sm_pos) hA1r)) hbe, (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le (F.S.sm_pos).le) hCm) (hbe).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (hsm1).le) hD) (hbe).le), mul_pos ((mul_pos (mul_pos F.S.km_pos rp) rm)) hde]
+  · linarith only [mul_nonneg ((mul_pos (mul_pos F.S.tp_pos F.S.sp_pos) F.S.km_pos)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos F.S.tp_pos F.S.sp_pos) hA1r)).le (sub_nonneg.2 n0_1), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.sp_pos).le) hA3) (sub_nonneg.2 n0_2)), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.sp_pos).le) hA3) (sub_nonneg.2 n0_2)), mul_nonneg ((mul_pos htm1 F.S.sm_pos)).le (sub_nonneg.2 n1_1), mul_pos ((mul_pos (mul_pos (mul_pos htp1 F.S.kp_pos) F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (F.S.kp_pos).le) (F.S.km_pos).le) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.hm_pos).le) (hA1r).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le (F.S.hm_pos).le) (hA1r).le) hA3) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos htm1 F.S.km_pos) hA1r) hA1r)) hde, mul_pos ((mul_pos (mul_pos (mul_pos F.S.sp_pos F.S.hp_pos) F.S.hp_pos) rm)) hde, mul_pos ((mul_pos (mul_pos (mul_pos F.S.sp_pos F.S.hp_pos) F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hp_pos).le) hW) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hp_pos).le) hW) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hp_pos).le) hD) (hA1r).le) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos F.S.sp_pos F.S.hm_pos) F.S.kp_pos) F.S.km_pos)) hde, mul_pos ((mul_pos (mul_pos (mul_pos F.S.sp_pos F.S.hm_pos) F.S.km_pos) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.hm_pos).le) (F.S.km_pos).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.kp_pos).le) hW) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.kp_pos).le) hD) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (F.S.km_pos).le) hW) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le (F.S.hp_pos).le) hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le (F.S.hm_pos).le) (F.S.kp_pos).le) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le (F.S.kp_pos).le) hW) hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le (F.S.kp_pos).le) hD) hCm) (hde).le), mul_pos ((mul_pos (mul_pos (mul_pos F.S.sm_pos F.S.hm_pos) F.S.kp_pos) hA1r)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (F.S.hm_pos).le) (F.S.kp_pos).le) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (F.S.kp_pos).le) hW) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le (F.S.kp_pos).le) hW) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (F.S.kp_pos).le) hW) hA3) (hde).le)]
+  · linarith only [(sub_nonneg.2 n1_3), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, (mul_nonneg (mul_nonneg (F.S.tp_pos).le hCm) (hal).le), (mul_nonneg (mul_nonneg (htp1).le hCm) (hal).le), mul_pos ((mul_pos hsm1 F.S.hp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos htm1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, (mul_nonneg (mul_nonneg (hsp1).le hCm) (hbe).le)]
+  · linarith only [(mul_nonneg (mul_nonneg (hsp1).le hCm) (sub_nonneg.2 n0_1)), mul_nonneg ((mul_pos (mul_pos F.S.tp_pos hsp1) hA1r)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos htp1 F.S.sp_pos) F.S.km_pos)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos htp1 F.S.sp_pos) hA1r)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos htp1 hsp1) hA1r)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos F.S.sm_pos hsm1) rp)).le (sub_nonneg.2 n0_1), mul_nonneg ((mul_pos (mul_pos hsm1 hsm1) rp)).le (sub_nonneg.2 n0_1), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sp_pos).le (hsp1).le) hA3) (sub_nonneg.2 n0_2)), (mul_nonneg (mul_nonneg (mul_nonneg (hsp1).le (hsp1).le) hA3) (sub_nonneg.2 n0_2)), mul_nonneg ((mul_pos htm1 F.S.sm_pos)).le (sub_nonneg.2 n1_3), mul_pos ((mul_pos (mul_pos F.S.km_pos rp) hQ)) hde]
 
 
 set_option maxHeartbeats 1600000 in
@@ -2992,54 +1579,20 @@ theorem Frame20.om4ap_R_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe, mul_pos ((mul_pos hsm1 rp)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hVpR)) hbe, mul_pos ((mul_pos hA1r hss)) hbe, mul_pos ((mul_pos hsm1 rp)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_pos F.S.hp_pos hnu, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le), mul_pos ((mul_pos hsm1 rp)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(sub_nonneg.2 n0_3), mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n1_4), hnu, mul_pos ((mul_pos F.S.sp_pos hsm1)) hbe, mul_pos ((mul_pos htp1 F.S.sp_pos)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hsp1).le (sub_nonneg.2 n0_3), mul_pos htp1 hnu, mul_pos F.S.tm_pos hnu, mul_pos hss hnu]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n2_4), mul_pos hVpR hnu, (mul_nonneg hKb (hnu).le)]
+  · linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe, mul_pos ((mul_pos hsm1 rp)) hga]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe]
+  · linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hVpR)) hbe, mul_pos ((mul_pos hA1r hss)) hbe, mul_pos ((mul_pos hsm1 rp)) hga]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_pos F.S.hp_pos hnu, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le), mul_pos ((mul_pos hsm1 rp)) hga]
+  · linarith only [(sub_nonneg.2 n0_3), mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n1_4), hnu, mul_pos ((mul_pos F.S.sp_pos hsm1)) hbe, mul_pos ((mul_pos htp1 F.S.sp_pos)) hga]
+  · linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hsp1).le (sub_nonneg.2 n0_3), mul_pos htp1 hnu, mul_pos F.S.tm_pos hnu, mul_pos hss hnu]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n2_4), mul_pos hVpR hnu, (mul_nonneg hKb (hnu).le)]
 
 
 set_option maxHeartbeats 1600000 in
@@ -3071,54 +1624,20 @@ theorem Frame20.om4an_R_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hVpR)) hbe, mul_pos ((mul_pos htp1 F.S.kp_pos)) hga, mul_pos ((mul_pos hsm1 rp)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (hVpR).le (sub_nonneg.2 n0_4), mul_nonneg (hVWR).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_4), mul_pos ((mul_pos htp1 hVpR)) hga, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le), mul_pos ((mul_pos hsm1 rp)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n0_4), mul_nonneg (htp1).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n1_4), mul_nonneg (htp1).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos htp1 F.S.sp_pos)) hga, mul_pos ((mul_pos htp1 hsp1)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n2_4), mul_nonneg (hsm1).le (sub_nonneg.2 n2_4), mul_pos htp1 hnu, mul_pos F.S.tm_pos hnu, mul_pos hss hnu]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg ((mul_pos F.S.tm_pos hsp1)).le (sub_nonneg.2 n1_1), mul_nonneg ((mul_pos hsp1 hss)).le (sub_nonneg.2 n1_1), mul_nonneg ((mul_pos htp1 F.S.sm_pos)).le (sub_nonneg.2 n2_2), mul_nonneg ((mul_pos htp1 hsm1)).le (sub_nonneg.2 n2_2), mul_pos ((mul_pos (mul_pos htp1 F.S.hp_pos) rp)) hde, mul_pos ((mul_pos (mul_pos htp1 F.S.hm_pos) rp)) hde, mul_pos ((mul_pos (mul_pos F.S.sp_pos rp) hA1R)) hde, mul_pos ((mul_pos (mul_pos hsp1 rp) hA1R)) hde, mul_pos ((mul_pos (mul_pos F.S.hp_pos rp) hss)) hde]
+  · linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hVpR)) hbe, mul_pos ((mul_pos htp1 F.S.kp_pos)) hga, mul_pos ((mul_pos hsm1 rp)) hga]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe]
+  · linarith only [mul_nonneg (hVpR).le (sub_nonneg.2 n0_4), mul_nonneg (hVWR).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_4), mul_pos ((mul_pos htp1 hVpR)) hga, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le), mul_pos ((mul_pos hsm1 rp)) hga]
+  · linarith only [mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n0_4), mul_nonneg (htp1).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n1_4), mul_nonneg (htp1).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos htp1 F.S.sp_pos)) hga, mul_pos ((mul_pos htp1 hsp1)) hga]
+  · linarith only [mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n2_4), mul_nonneg (hsm1).le (sub_nonneg.2 n2_4), mul_pos htp1 hnu, mul_pos F.S.tm_pos hnu, mul_pos hss hnu]
+  · linarith only [mul_nonneg ((mul_pos F.S.tm_pos hsp1)).le (sub_nonneg.2 n1_1), mul_nonneg ((mul_pos hsp1 hss)).le (sub_nonneg.2 n1_1), mul_nonneg ((mul_pos htp1 F.S.sm_pos)).le (sub_nonneg.2 n2_2), mul_nonneg ((mul_pos htp1 hsm1)).le (sub_nonneg.2 n2_2), mul_pos ((mul_pos (mul_pos htp1 F.S.hp_pos) rp)) hde, mul_pos ((mul_pos (mul_pos htp1 F.S.hm_pos) rp)) hde, mul_pos ((mul_pos (mul_pos F.S.sp_pos rp) hA1R)) hde, mul_pos ((mul_pos (mul_pos hsp1 rp) hA1R)) hde, mul_pos ((mul_pos (mul_pos F.S.hp_pos rp) hss)) hde]
 
 
 set_option maxHeartbeats 1600000 in
@@ -3150,54 +1669,20 @@ theorem Frame20.om4az1_R_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe, mul_pos ((mul_pos hsm1 rp)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe, mul_pos ((mul_pos hsm1 rp)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (hVpR).le (sub_nonneg.2 n0_4), mul_nonneg (hVWR).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_4), mul_pos ((mul_pos htp1 hVWR)) hga, mul_pos ((mul_pos hsm1 rp)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_nonneg (F.S.hp_pos).le hnu1, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le), mul_pos ((mul_pos hsm1 rp)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n2_4), mul_nonneg (htm1).le (sub_nonneg.2 n2_4), mul_nonneg (hss).le hnu2, mul_pos F.S.sp_pos hl]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.sm_pos).le hnu1, mul_nonneg (hsm1).le hnu1, mul_pos F.S.sp_pos hl]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe]
+  · linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe, mul_pos ((mul_pos hsm1 rp)) hga]
+  · linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe, mul_pos ((mul_pos hsm1 rp)) hga]
+  · linarith only [mul_nonneg (hVpR).le (sub_nonneg.2 n0_4), mul_nonneg (hVWR).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_4), mul_pos ((mul_pos htp1 hVWR)) hga, mul_pos ((mul_pos hsm1 rp)) hga]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_nonneg (F.S.hp_pos).le hnu1, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le), mul_pos ((mul_pos hsm1 rp)) hga]
+  · linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n2_4), mul_nonneg (htm1).le (sub_nonneg.2 n2_4), mul_nonneg (hss).le hnu2, mul_pos F.S.sp_pos hl]
+  · linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.sm_pos).le hnu1, mul_nonneg (hsm1).le hnu1, mul_pos F.S.sp_pos hl]
 
 
 set_option maxHeartbeats 1600000 in
@@ -3229,54 +1714,20 @@ theorem Frame20.om4az2_R_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_4), mul_pos F.S.hp_pos hl, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hVpR)) hbe, mul_pos ((mul_pos hA1r hss)) hbe, mul_pos ((mul_pos htp1 F.S.kp_pos)) hga, mul_pos ((mul_pos hsm1 rp)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_4), mul_pos F.S.hp_pos hl, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hVpR)) hbe, mul_pos ((mul_pos hA1r hss)) hbe, mul_pos ((mul_pos htp1 F.S.kp_pos)) hga, mul_pos ((mul_pos hsm1 rp)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.hp_pos hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 rp)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (rm).le (sub_nonneg.2 n0_3), mul_nonneg (rm).le (sub_nonneg.2 n1_4), mul_pos rm hl, mul_pos ((mul_pos hsm1 rm)) hbe, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (rm).le (sub_nonneg.2 n0_3), mul_nonneg (rm).le (sub_nonneg.2 n1_4), mul_pos rm hl, mul_pos ((mul_pos hsm1 rm)) hbe, mul_pos ((mul_pos htp1 rm)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_1), mul_pos hVpR hl, (mul_nonneg hKb (hl).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (hA1R).le (sub_nonneg.2 n0_1), mul_pos hA1R hl]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_4), mul_pos F.S.hp_pos hl, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hVpR)) hbe, mul_pos ((mul_pos hA1r hss)) hbe, mul_pos ((mul_pos htp1 F.S.kp_pos)) hga, mul_pos ((mul_pos hsm1 rp)) hga]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_2), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_4), mul_pos F.S.hp_pos hl, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 hVpR)) hbe, mul_pos ((mul_pos hA1r hss)) hbe, mul_pos ((mul_pos htp1 F.S.kp_pos)) hga, mul_pos ((mul_pos hsm1 rp)) hga]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_4), mul_pos F.S.hp_pos hl, mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 rp)) hga]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hA1r hss)) hbe]
+  · linarith only [mul_nonneg (rm).le (sub_nonneg.2 n0_3), mul_nonneg (rm).le (sub_nonneg.2 n1_4), mul_pos rm hl, mul_pos ((mul_pos hsm1 rm)) hbe, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (rm).le (sub_nonneg.2 n0_3), mul_nonneg (rm).le (sub_nonneg.2 n1_4), mul_pos rm hl, mul_pos ((mul_pos hsm1 rm)) hbe, mul_pos ((mul_pos htp1 rm)) hga]
+  · linarith only [mul_nonneg (hVWR).le (sub_nonneg.2 n0_1), mul_pos hVpR hl, (mul_nonneg hKb (hl).le)]
+  · linarith only [mul_nonneg (hA1R).le (sub_nonneg.2 n0_1), mul_pos hA1R hl]
 
 
 set_option maxHeartbeats 1600000 in
@@ -3308,54 +1759,20 @@ theorem Frame20.om4bp_R_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.hp_pos hnu, mul_pos ((mul_pos F.S.tp_pos rp)) hga, mul_pos ((mul_pos htp1 rp)) hga, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_pos F.S.hp_pos hnu, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le), mul_pos ((mul_pos hsm1 rp)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.hp_pos hnu, mul_pos ((mul_pos F.S.tp_pos rp)) hga, mul_pos ((mul_pos htp1 rp)) hga, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hsp1).le (sub_nonneg.2 n0_3), mul_pos F.S.sp_pos hnu, mul_pos hsp1 hnu]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_1)), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_2), mul_pos ((mul_pos F.S.tp_pos rp)) hal, mul_pos ((mul_pos F.S.tp_pos rp)) hga, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
+  · linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.hp_pos hnu, mul_pos ((mul_pos F.S.tp_pos rp)) hga, mul_pos ((mul_pos htp1 rp)) hga, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_pos F.S.hp_pos hnu, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le), mul_pos ((mul_pos hsm1 rp)) hga]
+  · linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_4), mul_pos F.S.hp_pos hnu, mul_pos ((mul_pos F.S.tp_pos rp)) hga, mul_pos ((mul_pos htp1 rp)) hga, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hsp1).le (sub_nonneg.2 n0_3), mul_pos F.S.sp_pos hnu, mul_pos hsp1 hnu]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_1)), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_2), mul_pos ((mul_pos F.S.tp_pos rp)) hal, mul_pos ((mul_pos F.S.tp_pos rp)) hga, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le)]
 
 
 set_option maxHeartbeats 1600000 in
@@ -3387,54 +1804,20 @@ theorem Frame20.om4bn_R_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos htp1 F.S.kp_pos)) hga, mul_pos ((mul_pos hsm1 rp)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 rp)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(sub_nonneg.2 n0_4), mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n1_4), mul_nonneg (htp1).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tp_pos htp1)) hga, mul_pos ((mul_pos htp1 htp1)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n2_4), mul_nonneg (hsp1).le (sub_nonneg.2 n2_4), mul_pos ((mul_pos hsp1 F.S.sm_pos)) hga, mul_pos ((mul_pos F.S.kp_pos F.S.km_pos)) hde]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(sub_nonneg.2 n2_3), mul_pos F.S.sp_pos hnu, mul_pos hsp1 hnu]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_1)), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_2), mul_pos ((mul_pos F.S.tp_pos rp)) hal, mul_pos ((mul_pos F.S.tp_pos rp)) hga, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos htp1 F.S.kp_pos)) hga, mul_pos ((mul_pos hsm1 rp)) hga]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
+  · linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 rp)) hga]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
+  · linarith only [(sub_nonneg.2 n0_4), mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n1_4), mul_nonneg (htp1).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.tp_pos htp1)) hga, mul_pos ((mul_pos htp1 htp1)) hga]
+  · linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n2_4), mul_nonneg (hsp1).le (sub_nonneg.2 n2_4), mul_pos ((mul_pos hsp1 F.S.sm_pos)) hga, mul_pos ((mul_pos F.S.kp_pos F.S.km_pos)) hde]
+  · linarith only [(sub_nonneg.2 n2_3), mul_pos F.S.sp_pos hnu, mul_pos hsp1 hnu]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_1)), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_2), mul_pos ((mul_pos F.S.tp_pos rp)) hal, mul_pos ((mul_pos F.S.tp_pos rp)) hga, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le)]
 
 
 set_option maxHeartbeats 1600000 in
@@ -3466,54 +1849,20 @@ theorem Frame20.om4bz1_R_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 rp)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sm_pos hA1r)) hbe, mul_pos ((mul_pos hsm1 hA1r)) hbe, mul_pos ((mul_pos hsm1 rp)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hsp1).le (sub_nonneg.2 n0_1), mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n0_2), mul_nonneg (hsp1).le (sub_nonneg.2 n0_4), (sub_nonneg.2 n2_4), mul_pos ((mul_pos F.S.sm_pos hsm1)) hbe, mul_pos ((mul_pos hsm1 hsm1)) hbe, mul_pos ((mul_pos F.S.tp_pos hsp1)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_3), (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le), mul_pos ((mul_pos hsm1 rp)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_4), mul_nonneg (F.S.hp_pos).le hnu1, mul_pos ((mul_pos F.S.tp_pos rp)) hga, mul_pos ((mul_pos htp1 rp)) hga, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n2_3), mul_nonneg (hsm1).le (sub_nonneg.2 n2_3), mul_pos F.S.sp_pos hl]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_1)), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_2), mul_pos ((mul_pos F.S.tp_pos rp)) hal, mul_pos ((mul_pos F.S.tp_pos rp)) hga, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos hsm1 rp)) hga]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
+  · linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_1), (mul_nonneg hKb (sub_nonneg.2 n0_2)), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos F.S.sm_pos hA1r)) hbe, mul_pos ((mul_pos hsm1 hA1r)) hbe, mul_pos ((mul_pos hsm1 rp)) hga]
+  · linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hsp1).le (sub_nonneg.2 n0_1), mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n0_2), mul_nonneg (hsp1).le (sub_nonneg.2 n0_4), (sub_nonneg.2 n2_4), mul_pos ((mul_pos F.S.sm_pos hsm1)) hbe, mul_pos ((mul_pos hsm1 hsm1)) hbe, mul_pos ((mul_pos F.S.tp_pos hsp1)) hga]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_4)), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_3), (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le), mul_pos ((mul_pos hsm1 rp)) hga]
+  · linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_4), mul_nonneg (F.S.hp_pos).le hnu1, mul_pos ((mul_pos F.S.tp_pos rp)) hga, mul_pos ((mul_pos htp1 rp)) hga, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (hsp1).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n2_3), mul_nonneg (hsm1).le (sub_nonneg.2 n2_3), mul_pos F.S.sp_pos hl]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_1)), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_2), mul_pos ((mul_pos F.S.tp_pos rp)) hal, mul_pos ((mul_pos F.S.tp_pos rp)) hga, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le)]
 
 
 set_option maxHeartbeats 1600000 in
@@ -3545,53 +1894,20 @@ theorem Frame20.om4bz2_R_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function
   rcases o0 with n0 | n0 <;>
     rcases o1 with n1 | n1 <;>
     rcases o2 with n2 | n2
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
+  all_goals
+    obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
     try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_1)), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_2), mul_pos ((mul_pos F.S.tp_pos rp)) hal, mul_pos ((mul_pos F.S.tp_pos rp)) hga, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le)]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [mul_nonneg (rp).le (sub_nonneg.2 n0_3), mul_nonneg (rp).le (sub_nonneg.2 n1_4), mul_pos rp hl, mul_pos ((mul_pos hsm1 rp)) hbe, mul_pos ((mul_pos htp1 rp)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_3)), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_3), mul_pos F.S.hp_pos hl, (mul_nonneg hKb (hl).le), mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos htm1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos htp1 F.S.kp_pos)) hga]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(sub_nonneg.2 n0_1), mul_pos F.S.tm_pos hl, mul_pos htm1 hl]
-  · obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    simp only [C3.rimg, rFrame_S, Shape20.swap, Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_4, F.ptC_5, F.ptC_6, rperm_1, rperm_3, rperm_4, rperm_6, Shape20.u_tP, Shape20.u_tA, Shape20.u_vRv] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
-    linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_3)), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_4), (mul_nonneg hKb (hl).le), (mul_nonneg (mul_nonneg (hsm1).le hKb) (hbe).le), (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le), mul_pos ((mul_pos F.S.sm_pos rp)) hga]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
+  · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos hA1r)) hbe, mul_pos ((mul_pos htp1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n1_1)), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_2), mul_pos ((mul_pos F.S.tp_pos rp)) hal, mul_pos ((mul_pos F.S.tp_pos rp)) hga, (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le)]
+  · linarith only [mul_nonneg (rp).le (sub_nonneg.2 n0_3), mul_nonneg (rp).le (sub_nonneg.2 n1_4), mul_pos rp hl, mul_pos ((mul_pos hsm1 rp)) hbe, mul_pos ((mul_pos htp1 rp)) hga]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_3)), mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n1_4), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_3), mul_pos F.S.hp_pos hl, (mul_nonneg hKb (hl).le), mul_pos ((mul_pos F.S.tm_pos hA1r)) hbe, mul_pos ((mul_pos htm1 hA1r)) hbe, mul_pos ((mul_pos F.S.sp_pos F.S.km_pos)) hbe, mul_pos ((mul_pos htp1 F.S.kp_pos)) hga]
+  · linarith only [(sub_nonneg.2 n0_1), mul_pos F.S.tm_pos hl, mul_pos htm1 hl]
+  · linarith only [(mul_nonneg hKb (sub_nonneg.2 n0_3)), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n2_4), (mul_nonneg hKb (hl).le), (mul_nonneg (mul_nonneg (hsm1).le hKb) (hbe).le), (mul_nonneg (mul_nonneg (htp1).le hKb) (hga).le), mul_pos ((mul_pos F.S.sm_pos rp)) hga]
 
 end Minimality.CaseC20
+
