@@ -1,6 +1,7 @@
 module
 
 public import Minimality.Type29Cert
+public import Minimality.Type21F2Weak
 
 @[expose] public section
 
@@ -287,13 +288,32 @@ def pairViews29 : Finset (View29 × View29) :=
   {(.inr 0, .inr 1), (.inr 0, .inr 3), (.inl (0, 5), .inr 1), (.inr 3, .inr 1),
     (.inr 4, .inl (4, 6)), (.inr 2, .inl (3, 5)), (.inr 1, .inl (3, 4)), (.inl (0, 3), .inr 6)}
 
+/-- The combined pairs with no tie at one of the two views: `{Y1, Y2}` (closed without a sign
+product), tier (A) `(V, Y)` and its `σ`-image `(T2, Y')`. -/
+def pairViewsNG29 : Finset (View29 × View29) :=
+  {(.inr 4, .inl (4, 6)), (.inr 2, .inl (3, 5)), (.inr 1, .inl (3, 4))}
+
+/-- The combined pairs with a tie at both views allowed when the two tied pairs are independent
+(`IndepF`; the sign-product route `pair_core_ie`, `shared_core_ie`): `P14`, `P11`, `{Xa, T2}`,
+`P13` and tier (B2) `(W, Z)`. -/
+def pairViewsGO29 : Finset (View29 × View29) :=
+  {(.inr 0, .inr 1), (.inr 0, .inr 3), (.inl (0, 5), .inr 1), (.inr 3, .inr 1),
+    (.inl (0, 3), .inr 6)}
+
+theorem pairViewsNG29_subset : pairViewsNG29 ⊆ pairViews29 := by decide
+
+theorem pairViewsGO29_subset : pairViewsGO29 ⊆ pairViews29 := by decide
+
 /-- **The ties allowed in the covers** (the codimension-2 hypothesis): at most one tied pair at
-each nonzero named view, and no tie at one of the two views of each combined pair (a second tie
-is a second equation on the shape). -/
+each nonzero named view; no tie at one of the two views of the pairs `pairViewsNG29` (a second
+tie is a second equation on the shape); and for the pairs `pairViewsGO29` the tied pairs at the
+two views (one at each, if both views have a tie) are independent (`IndepF`). -/
 structure Tie29 (x : Fin 7 → ℝ³) : Prop where
   one : OneTie29 x
-  pair : ∀ p ∈ pairViews29, view29 x p.1 ≠ 0 → view29 x p.2 ≠ 0 →
+  pair : ∀ p ∈ pairViewsNG29, view29 x p.1 ≠ 0 → view29 x p.2 ≠ 0 →
     NoTieAt (univ.image x) (view29 x p.1) ∨ NoTieAt (univ.image x) (view29 x p.2)
+  indep : ∀ p ∈ pairViewsGO29, view29 x p.1 ≠ 0 → view29 x p.2 ≠ 0 →
+    IndepF (univ.image x) (view29 x p.1) (view29 x p.2)
 
 theorem Tie29.edge {x : Fin 7 → ℝ³} (hx : Function.Injective x) (ht : Tie29 x) {i j : Fin 7}
     (hij : i ≠ j) : OneTieAt (univ.image x) (x j - x i) :=

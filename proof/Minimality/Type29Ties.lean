@@ -2,6 +2,7 @@ module
 
 public import Minimality.Type29Codim2
 public import Minimality.Type16Metric
+public import Minimality.Type21Ties
 public import Minimality.Generic.LimitSeq
 
 @[expose] public section
@@ -43,28 +44,9 @@ cover's tie condition `Tie29` at `x` and at its `σ`-image. -/
 def TwoTie29 (x : Fin 7 → ℝ³) : Prop :=
   TieGen29 x ∧ Tie29 x ∧ Tie29 (x ∘ sigma29)
 
-theorem detMap_eq29 (L : ℝ³ →L[ℝ] ℝ³) : detMap L = LinearMap.det (L : ℝ³ →ₗ[ℝ] ℝ³) := by
-  rw [← LinearMap.det_toMatrix (EuclideanSpace.basisFun (Fin 3) ℝ).toBasis, Matrix.det_fin_three]
-  simp only [detMap, det3_expand, LinearMap.toMatrix_apply]
-  simp [EuclideanSpace.basisFun_apply]
-  ring
-
 theorem map_nfShape29 (M : ℝ³ →L[ℝ] ℝ³) (o E₁ E₂ E₃ : ℝ³) (θ : Fin 8 → ℝ) :
     (fun i => M (nfShape29 o E₁ E₂ E₃ θ i)) = nfShape29 (M o) (M E₁) (M E₂) (M E₃) θ := by
   funext i; fin_cases i <;> exact map_nfP M o E₁ E₂ E₃ _ _ _
-
-theorem covView_view29 (v : View29) : CovView (fun y : Fin 7 → ℝ³ => view29 y v) := by
-  refine ⟨?_, ?_⟩
-  · refine continuous_iff_continuousAt.2 fun y => ?_
-    exact tendsto_view29 (fun m => (continuous_apply m).tendsto y) v
-  · intro L y hL
-    have hd : detMap L = 1 := by rw [detMap_eq29]; exact hL
-    rcases v with ⟨i, j⟩ | t
-    · show L (y j) - L (y i) = L (y j - y i)
-      rw [map_sub]
-    · show planeLine (L (y _)) (L (y _)) (L (y _)) (L (y _)) (L (y _)) (L (y _)) = _
-      rw [planeLine_map, hd, one_smul]
-      rfl
 
 /-- **At most one tied pair at a view whose ties are ties of `x`'s view.** -/
 theorem oneTieAt_of_sub29 {x y : Fin 7 → ℝ³} (hinj : Function.Injective x) {u u' : ℝ³}
@@ -90,11 +72,14 @@ theorem oneTieAt_of_sub29 {x y : Fin 7 → ℝ³} (hinj : Function.Injective x) 
   · exact Or.inl ⟨by rw [hinj h1], by rw [hinj h2]⟩
   · exact Or.inr ⟨by rw [hinj h1], by rw [hinj h2]⟩
 
-/-- **`Tie29` passes to a shape whose ties at the named views are ties of `x`.** -/
+/-- **`Tie29` passes to a shape whose ties at the named views are ties of `x`**
+(and whose pairs `pairViewsGO29` satisfy `IndepF`, which does not pass pointwise). -/
 theorem tie29_of_sub {x y : Fin 7 → ℝ³} (hx : Function.Injective x) (ht : Tie29 x)
     (hne : ∀ v, view29 y v ≠ 0 → view29 x v ≠ 0)
     (hsub : ∀ v a b, a ≠ b → view29 y v ≠ 0 → ⟪y a - y b, view29 y v⟫ = 0 →
-      ⟪x a - x b, view29 x v⟫ = 0) : Tie29 y where
+      ⟪x a - x b, view29 x v⟫ = 0)
+    (hI : ∀ p ∈ pairViewsGO29, view29 y p.1 ≠ 0 → view29 y p.2 ≠ 0 →
+      IndepF (univ.image y) (view29 y p.1) (view29 y p.2)) : Tie29 y where
   one := fun v hv =>
     oneTieAt_of_sub29 hx (ht.one v (hne v hv)) (fun a b hab h => hsub v a b hab hv h)
   pair := fun p hp h1 h2 => by
@@ -111,6 +96,7 @@ theorem tie29_of_sub {x y : Fin 7 → ℝ³} (hx : Function.Injective x) (ht : T
     rcases ht.pair p hp (hne _ h1) (hne _ h2) with h | h
     · exact Or.inl (key _ h1 h)
     · exact Or.inr (key _ h2 h)
+  indep := hI
 
 /-! ### `σ`-invariance -/
 
@@ -229,8 +215,18 @@ theorem exists_certSeq29_params_ties {x : Fin 7 → ℝ³} (N : NF29 x) (h : Two
     · filter_upwards [c3.eventually (lt_mem_nhds h3), c1.eventually (lt_mem_nhds h1),
         cv.eventually (gt_mem_nhds hv)] with n a b c
       exact Or.inr ⟨a, b, c⟩
+  have hind4 : ∀ p : View29 × View29, ∀ᶠ n in atTop, p ∈ pairViewsGO29 → view29 x p.1 ≠ 0 →
+      view29 x p.2 ≠ 0 → ∀ i j k l : Fin 7, i ≠ j → k ≠ l → ⟪x i - x j, view29 x p.1⟫ = 0 →
+        ⟪x k - x l, view29 x p.2⟫ = 0 →
+        TieIndep ![K n i - K n j, K n k - K n l] ![view29 (K n) p.1, view29 (K n) p.2] := by
+    intro p
+    by_cases h : p ∈ pairViewsGO29 ∧ view29 x p.1 ≠ 0 ∧ view29 x p.2 ≠ 0
+    · obtain ⟨hp, h1, h2⟩ := h
+      filter_upwards [eventually_indepF hK (tendsto_view29 hK p.1) (tendsto_view29 hK p.2) N.inj
+        (htie.indep p hp h1 h2)] with n hn _ _ _ using hn
+    · exact Eventually.of_forall fun n hp h1 h2 => absurd ⟨hp, h1, h2⟩ h
   refine ⟨K, θs, hK, hθs, Eventually.frequently ?_⟩
-  filter_upwards [hineq, hcl, eventually_ties29 hK] with n hn hc hs
+  filter_upwards [hineq, hcl, eventually_ties29 hK, eventually_all.mpr hind4] with n hn hc hs hI
   have hties : ∀ w a b, TieInst29 x w a b → ⟪K n a - K n b, view29 (K n) w⟫ = 0 := by
     intro w a b hw
     refine hgen (K n) (fun t => ?_) w a b hw
@@ -250,7 +246,11 @@ theorem exists_certSeq29_params_ties {x : Fin 7 → ℝ³} (N : NF29 x) (h : Two
     refine N.view29_ne_zero v ?_
     rintro i rfl
     exact hv (by simp [view29])
-  have T29 : Tie29 (K n) := tie29_of_sub N.inj htie hne hsubK
+  have hIK : ∀ p ∈ pairViewsGO29, view29 (K n) p.1 ≠ 0 → view29 (K n) p.2 ≠ 0 →
+      IndepF (univ.image (K n)) (view29 (K n) p.1) (view29 (K n) p.2) := fun p hp h1 h2 =>
+    indepF_of_sub (x := x) (y := K n) (fun a b _ h => hs p.1 a b h) (fun a b _ h => hs p.2 a b h)
+      (hI p hp (hne p.1 h1) (hne p.2 h2))
+  have T29 : Tie29 (K n) := tie29_of_sub N.inj htie hne hsubK hIK
   rcases hc with ⟨h3, h1, hv⟩ | ⟨h3, h1, hv⟩
   · exact Nn.cert29_K3a_all h3 h1 hv (Nn.k3Poly_of_gen hg) (Nn.k3C1Poly_of_gen hg) T29
   · exact Nn.cert29_K4a_all h3 h1 hv (Nn.k4Poly_of_gen hg) (Nn.k4C1Poly_of_gen hg) T29

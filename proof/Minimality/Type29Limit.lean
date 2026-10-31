@@ -257,39 +257,6 @@ theorem NF29.k4C1Poly_of_gen (h : genFactors29 N.a0 N.b0 N.h0 N.a2 N.b2 N.h2 N.s
 
 end ofGen
 
-/-- **The nonvanishing set of a nonzero polynomial is dense**, as a sequence, in any number of
-variables (`exists_seq_eval_ne_zero` of type 16 for `Fin 7`; `MvPolynomial.funext_set` on
-boxes). -/
-theorem exists_seq_eval_ne_zero_fin {m : ℕ} {P : MvPolynomial (Fin m) ℝ} (hP : P ≠ 0)
-    (θ : Fin m → ℝ) :
-    ∃ θs : ℕ → Fin m → ℝ, Tendsto θs atTop (𝓝 θ) ∧ ∀ n, MvPolynomial.eval (θs n) P ≠ 0 := by
-  have box : ∀ n : ℕ, ∃ θ' : Fin m → ℝ, (∀ i, |θ' i - θ i| < 1 / ((n : ℝ) + 1)) ∧
-      MvPolynomial.eval θ' P ≠ 0 := by
-    intro n
-    have hε : (0 : ℝ) < 1 / ((n : ℝ) + 1) := by positivity
-    by_contra hc
-    push Not at hc
-    apply hP
-    refine MvPolynomial.funext_set (R := ℝ) (σ := Fin m) (p := P) (q := 0)
-      (fun i => Set.Ioo (θ i - 1 / ((n : ℝ) + 1)) (θ i + 1 / ((n : ℝ) + 1)))
-      (fun i => Set.Ioo_infinite (α := ℝ) (by linarith)) fun y hy => ?_
-    rw [map_zero]
-    refine hc y fun i => ?_
-    have := hy i (Set.mem_univ i)
-    rw [abs_sub_lt_iff]; constructor <;> linarith [this.1, this.2]
-  choose θs hθs hne using box
-  refine ⟨θs, tendsto_pi_nhds.mpr fun i => ?_, hne⟩
-  rw [Metric.tendsto_atTop]
-  intro ε hε
-  obtain ⟨M, hM⟩ := exists_nat_one_div_lt hε
-  refine ⟨M, fun n hn => ?_⟩
-  rw [Real.dist_eq]
-  have h1 := hθs n i
-  have h2 : 1 / ((n : ℝ) + 1) ≤ 1 / ((M : ℝ) + 1) := by
-    apply one_div_le_one_div_of_le (by positivity)
-    exact_mod_cast Nat.add_le_add_right hn 1
-  linarith
-
 /-! ### Named views in the limit -/
 
 variable {x : Fin 7 → ℝ³}
@@ -335,13 +302,6 @@ theorem view29_restore {s : ℝ} {e b : ℝ³} (h : ⟪e, b⟫ = 0) (y : Fin 7 �
   rcases v with ⟨i, j⟩ | t
   · exact (restore_sub s e b _ _).symm
   · exact planeLine_restore h _ _ _ _ _ _
-
-theorem tendsto_view29 {ι : Type*} {l : Filter ι} {K : ι → Fin 7 → ℝ³} {x : Fin 7 → ℝ³}
-    (hK : ∀ m, Tendsto (fun n => K n m) l (𝓝 (x m))) (v : View29) :
-    Tendsto (fun n => view29 (K n) v) l (𝓝 (view29 x v)) := by
-  rcases v with ⟨i, j⟩ | t
-  · exact (hK j).sub (hK i)
-  · exact tendsto_planeLine (hK _) (hK _) (hK _) (hK _) (hK _) (hK _)
 
 /-- **Type 29 is in convex position**: no point lies inside a segment of two others
 (from `hvert`, every vertex is off the hull of the others). -/
@@ -496,7 +456,11 @@ theorem tie29_of_ties {x y : Fin 7 → ℝ³} (hy : Function.Injective y) (htie 
     Tie29 y where
   one := fun v hv => oneTieAt_of_ties29 htie hsub v hv
   pair := fun p hp h1 h2 =>
-    noTieAt_or29 htie hsub (pairViews29_sep p hp).1 (pairViews29_sep p hp).2 h1 h2
+    noTieAt_or29 htie hsub (pairViews29_sep p (pairViewsNG29_subset hp)).1
+      (pairViews29_sep p (pairViewsNG29_subset hp)).2 h1 h2
+  indep := fun p hp h1 h2 => IndepF.of_noTie
+    (noTieAt_or29 htie hsub (pairViews29_sep p (pairViewsGO29_subset hp)).1
+      (pairViews29_sep p (pairViewsGO29_subset hp)).2 h1 h2)
 
 /-! ### The limit certificate -/
 

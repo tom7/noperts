@@ -1,7 +1,7 @@
 module
 
 public import Minimality.Type29CertTests
-public import Minimality.Type29CertTie
+public import Minimality.Type29CertWeak
 
 @[expose] public section
 
@@ -43,8 +43,7 @@ theorem NF29.cert_k3_P14 (N : NF29 x)
           N.h0 + N.h2 - 1)
     (o1 : OneTieAt (univ.image x) (view29 x (.inr 0)))
     (o2 : OneTieAt (univ.image x) (view29 x (.inr 1)))
-    (hno : NoTieAt (univ.image x) (view29 x (.inr 0)) ∨
-        NoTieAt (univ.image x) (view29 x (.inr 1))) :
+    (hI : IndepF (univ.image x) (view29 x (.inr 0)) (view29 x (.inr 1))) :
     Cert29 x := by
   have hA0 : 0 < -N.a0 := by linarith [N.ha0]
   have hB2 : 0 < -N.b2 := by linarith [N.hb2]
@@ -164,18 +163,14 @@ theorem NF29.cert_k3_P14 (N : NF29 x)
     (by simp only [NF29.vT2]; nf29_vec N)
     (ne_of_gt (by linarith [h345_0]))
     (by rw [eq22]; exact mul_ne_zero pq22.ne' N.hD)
-  have o1' : OneTieAt (univ.image x) N.vT1 := o1.of_eq_smul N.vT1_eq N.hDi
-  have o2' : OneTieAt (univ.image x) N.vT2 := o2.of_eq_smul N.vT2_eq N.hDni
-  have hno' : NoTieAt (univ.image x) N.vT1 ∨ NoTieAt (univ.image x) N.vT2 := by
-    rcases hno with hnu | hnv
-    · exact Or.inl (hnu.of_eq_smul N.vT1_eq N.hDi)
-    · exact Or.inr (hnv.of_eq_smul N.vT2_eq N.hDni)
   have hp1 := prod_pos_of_eq N.hD eq11 eq12 pq11 pq12
   have hn2 := prod_neg_of_eq N.hD eq21 eq22 pq21 pq22
-  rcases pair_core (img29 1) (img29 3) (img29 2) (img29 6) (img29 4) (img29 0) (img29 3) (img29 5)
-    (List.nodup4_img N.inj (by decide : [(1 : Fin 7), 2, 3, 6].Nodup))
-    (List.nodup4_img N.inj (by decide : [(4 : Fin 7), 3, 0, 5].Nodup))
-    m11 m12 m21 m22 hS1 hS2 hp1 hn2 o1' o2' hno' with hR2 | ⟨hR1, hdot⟩
+  rcases pair_core_ie x N.inj (fun y => view29 y (.inr 0)) (fun y => view29 y (.inr 1))
+    (covView_view29 _) (covView_view29 _) 1 3 2 6 4 0 3 5
+    (by decide : [(1 : Fin 7), 2, 3, 6].Nodup)
+    (by decide : [(4 : Fin 7), 3, 0, 5].Nodup)
+    N.hDi N.hDni N.vT1_eq N.vT2_eq
+    m11 m12 m21 m22 hS1 hS2 hp1 hn2 o1 o2 hI with hR2 | ⟨hR1, hdot⟩
   · exact NF29.cert_k3_T2a N hA2 hh21 hsg hc0 hR2 ⟨N, by linarith [hh20], by linarith [hh21]⟩
   · exact NF29.cert_k3_T1 N hb0 hG5n hF45 hh20 hf hh21 hR1 ⟨⟨N, by linarith [hth],
       by linarith [hh21]⟩, N.dot_T1T2 hdot⟩
@@ -201,8 +196,7 @@ theorem NF29.cert_k3_P11 (N : NF29 x)
     (hhF5 : 0 < N.a0 * N.h2 - N.a2 * N.h0 + N.h0 * N.h2)
     (o1 : OneTieAt (univ.image x) (view29 x (.inr 0)))
     (o2 : OneTieAt (univ.image x) (view29 x (.inr 3)))
-    (hno : NoTieAt (univ.image x) (view29 x (.inr 0)) ∨
-        NoTieAt (univ.image x) (view29 x (.inr 3))) :
+    (hI : IndepF (univ.image x) (view29 x (.inr 0)) (view29 x (.inr 3))) :
     Cert29 x := by
   have hA0 : 0 < -N.a0 := by linarith [N.ha0]
   have hB2 : 0 < -N.b2 := by linarith [N.hb2]
@@ -332,18 +326,14 @@ theorem NF29.cert_k3_P11 (N : NF29 x)
     (by simp only [NF29.vT3]; nf29_vec N)
     (ne_of_gt hb0)
     (by rw [eq22]; exact mul_ne_zero pq22.ne' N.hD)
-  have o1' : OneTieAt (univ.image x) N.vT1 := o1.of_eq_smul N.vT1_eq N.hDi
-  have o2' : OneTieAt (univ.image x) N.vT3 := o2.of_eq_smul N.vT3_eq N.hDi
-  have hno' : NoTieAt (univ.image x) N.vT1 ∨ NoTieAt (univ.image x) N.vT3 := by
-    rcases hno with hnu | hnv
-    · exact Or.inl (hnu.of_eq_smul N.vT1_eq N.hDi)
-    · exact Or.inr (hnv.of_eq_smul N.vT3_eq N.hDi)
   have hp1 := prod_pos_of_eq N.hD eq11 eq12 pq11 pq12
   have hn2 := prod_neg_of_eq N.hD eq21 eq22 pq21 pq22
-  rcases pair_core (img29 1) (img29 3) (img29 2) (img29 6) (img29 1) (img29 3) (img29 4) (img29 0)
-    (List.nodup4_img N.inj (by decide : [(1 : Fin 7), 2, 3, 6].Nodup))
-    (List.nodup4_img N.inj (by decide : [(1 : Fin 7), 4, 3, 0].Nodup))
-    m11 m12 m21 m22 hS1 hS2 hp1 hn2 o1' o2' hno' with hR2 | ⟨hR1, hdot⟩
+  rcases pair_core_ie x N.inj (fun y => view29 y (.inr 0)) (fun y => view29 y (.inr 3))
+    (covView_view29 _) (covView_view29 _) 1 3 2 6 1 3 4 0
+    (by decide : [(1 : Fin 7), 2, 3, 6].Nodup)
+    (by decide : [(1 : Fin 7), 4, 3, 0].Nodup)
+    N.hDi N.hDi N.vT1_eq N.vT3_eq
+    m11 m12 m21 m22 hS1 hS2 hp1 hn2 o1 o2 hI with hR2 | ⟨hR1, hdot⟩
   · exact NF29.cert_k3_T3o N hh01 hh20 hth hh2g hh0F5 hF4h2 hN hal hhF5 hR2
   · exact NF29.cert_k3_T1o N hh01 hF45 hh20 hth hf hh2g hR1 ⟨⟨N, by linarith [hth],
       by linarith [hh2g]⟩, N.dot_T1T3 hdot⟩
@@ -366,8 +356,7 @@ theorem NF29.cert_k3_X (N : NF29 x)
     (hXa2 : 0 < -N.a0 * N.b2 + N.a2 * N.b0 + N.b0 * N.h2 - N.b2 * N.h0 - N.a2 - N.b0 - N.h2 + 1)
     (o1 : OneTieAt (univ.image x) (view29 x (.inl (0, 5))))
     (o2 : OneTieAt (univ.image x) (view29 x (.inr 1)))
-    (hno : NoTieAt (univ.image x) (view29 x (.inl (0,
-        5))) ∨ NoTieAt (univ.image x) (view29 x (.inr 1))) :
+    (hI : IndepF (univ.image x) (view29 x (.inl (0, 5))) (view29 x (.inr 1))) :
     Cert29 x := by
   have hA0 : 0 < -N.a0 := by linarith [N.ha0]
   have hB2 : 0 < -N.b2 := by linarith [N.hb2]
@@ -493,18 +482,14 @@ theorem NF29.cert_k3_X (N : NF29 x)
     (by simp only [NF29.vT2]; nf29_vec N)
     (ne_of_lt (by linarith [hV3]))
     (by rw [eq22]; exact mul_ne_zero pq22.ne' N.hD)
-  have o1' : OneTieAt (univ.image x) (x 5 - x 0) := o1
-  have o2' : OneTieAt (univ.image x) N.vT2 := o2.of_eq_smul N.vT2_eq N.hDni
-  have hno' : NoTieAt (univ.image x) (x 5 - x 0) ∨ NoTieAt (univ.image x) N.vT2 := by
-    rcases hno with hnu | hnv
-    · exact Or.inl (hnu)
-    · exact Or.inr (hnv.of_eq_smul N.vT2_eq N.hDni)
   have hp1 := prod_pos_of_eq N.hD eq11 eq12 pq11 pq12
   have hn2 := prod_neg_of_eq N.hD eq21 eq22 pq21 pq22
-  rcases pair_core (img29 5) (img29 4) (img29 1) (img29 3) (img29 4) (img29 0) (img29 2) (img29 5)
-    (List.nodup4_img N.inj (by decide : [(5 : Fin 7), 1, 4, 3].Nodup))
-    (List.nodup4_img N.inj (by decide : [(4 : Fin 7), 2, 0, 5].Nodup))
-    m11 m12 m21 m22 hS1 hS2 hp1 hn2 o1' o2' hno' with hR2 | ⟨hR1, hdot⟩
+  rcases pair_core_ie x N.inj (fun y => view29 y (.inl (0, 5))) (fun y => view29 y (.inr 1))
+    (covView_view29 _) (covView_view29 _) 5 4 1 3 4 0 2 5
+    (by decide : [(5 : Fin 7), 1, 4, 3].Nodup)
+    (by decide : [(4 : Fin 7), 2, 0, 5].Nodup)
+    one_ne_zero N.hDni (by rw [one_smul]; rfl) N.vT2_eq
+    m11 m12 m21 m22 hS1 hS2 hp1 hn2 o1 o2 hI with hR2 | ⟨hR1, hdot⟩
   · exact NF29.cert_k3_T2o N hV3 hh2g hkap hsg hR2 ⟨N, by linarith [hh01], by linarith [hh2g]⟩
   · exact NF29.cert_k3_Xa N hh2F4 hXf hb01 hXa2 hR1
 
@@ -523,8 +508,7 @@ theorem NF29.cert_k3_P13 (N : NF29 x)
     (hs1g : 0 < N.s - 1)
     (o1 : OneTieAt (univ.image x) (view29 x (.inr 3)))
     (o2 : OneTieAt (univ.image x) (view29 x (.inr 1)))
-    (hno : NoTieAt (univ.image x) (view29 x (.inr 3)) ∨
-        NoTieAt (univ.image x) (view29 x (.inr 1))) :
+    (hI : IndepF (univ.image x) (view29 x (.inr 3)) (view29 x (.inr 1))) :
     Cert29 x := by
   have hA0 : 0 < -N.a0 := by linarith [N.ha0]
   have hB2 : 0 < -N.b2 := by linarith [N.hb2]
@@ -643,18 +627,14 @@ theorem NF29.cert_k3_P13 (N : NF29 x)
     (by simp only [NF29.vT2]; nf29_vec N)
     (ne_of_lt (by linarith [hV3]))
     (by rw [eq22]; exact mul_ne_zero pq22.ne' N.hD)
-  have o1' : OneTieAt (univ.image x) N.vT3 := o1.of_eq_smul N.vT3_eq N.hDi
-  have o2' : OneTieAt (univ.image x) N.vT2 := o2.of_eq_smul N.vT2_eq N.hDni
-  have hno' : NoTieAt (univ.image x) N.vT3 ∨ NoTieAt (univ.image x) N.vT2 := by
-    rcases hno with hnu | hnv
-    · exact Or.inl (hnu.of_eq_smul N.vT3_eq N.hDi)
-    · exact Or.inr (hnv.of_eq_smul N.vT2_eq N.hDni)
   have hp1 := prod_pos_of_eq N.hD eq11 eq12 pq11 pq12
   have hn2 := prod_neg_of_eq N.hD eq21 eq22 pq21 pq22
-  rcases pair_core (img29 1) (img29 3) (img29 4) (img29 5) (img29 4) (img29 0) (img29 2) (img29 5)
-    (List.nodup4_img N.inj (by decide : [(1 : Fin 7), 4, 3, 5].Nodup))
-    (List.nodup4_img N.inj (by decide : [(4 : Fin 7), 2, 0, 5].Nodup))
-    m11 m12 m21 m22 hS1 hS2 hp1 hn2 o1' o2' hno' with hR2 | ⟨hR1, hdot⟩
+  rcases pair_core_ie x N.inj (fun y => view29 y (.inr 3)) (fun y => view29 y (.inr 1))
+    (covView_view29 _) (covView_view29 _) 1 3 4 5 4 0 2 5
+    (by decide : [(1 : Fin 7), 4, 3, 5].Nodup)
+    (by decide : [(4 : Fin 7), 2, 0, 5].Nodup)
+    N.hDi N.hDni N.vT3_eq N.vT2_eq
+    m11 m12 m21 m22 hS1 hS2 hp1 hn2 o1 o2 hI with hR2 | ⟨hR1, hdot⟩
   · exact NF29.cert_k3_T2o N hV3 hh2g hkap hsg hR2 ⟨N, by linarith [hh01], by linarith [hh2g]⟩
   · exact NF29.cert_k3_T3s N hh2g hh0F5 hh2F4 hL36n hW43 hAh0 hs1g hR1
 

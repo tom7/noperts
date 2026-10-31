@@ -1,7 +1,7 @@
 module
 
 public import Minimality.Type29CertTests
-public import Minimality.Type29CertTie
+public import Minimality.Type29CertWeak
 
 @[expose] public section
 
@@ -213,8 +213,7 @@ theorem NF29.cert_k4_B2 (N : NF29 x)
     (hc2 : 0 < -N.a0 * N.b2 - N.a0 * N.h2 + N.a2 * N.b0 + N.a2 * N.h0 - N.a2 - N.b0 - N.h0 + 1)
     (o1 : OneTieAt (univ.image x) (view29 x (.inl (0, 3))))
     (o2 : OneTieAt (univ.image x) (view29 x (.inr 6)))
-    (hno : NoTieAt (univ.image x) (view29 x (.inl (0, 3))) ∨
-      NoTieAt (univ.image x) (view29 x (.inr 6))) : Cert29 x := by
+    (hI : IndepF (univ.image x) (view29 x (.inl (0, 3))) (view29 x (.inr 6))) : Cert29 x := by
   have hA0 : 0 < -N.a0 := by linarith [N.ha0]
   have hB2 : 0 < -N.b2 := by linarith [N.hb2]
   have h345_0 : 0 < 1 - N.a0 - N.b0 - N.h0 := by linarith [N.t345_0]
@@ -473,18 +472,14 @@ theorem NF29.cert_k4_B2 (N : NF29 x)
     (by simp only [NF29.vZ]; nf29_vec N)
     (ne_of_gt hb0)
     (by rw [eZ2]; exact mul_ne_zero pZ2.ne N.hD)
-  have o1' : OneTieAt (univ.image x) (x 3 - x 0) := o1
-  have o2' : OneTieAt (univ.image x) N.vZ := o2.of_eq_smul N.vZ_eq N.hDi
-  have hno' : NoTieAt (univ.image x) (x 3 - x 0) ∨ NoTieAt (univ.image x) N.vZ := by
-    rcases hno with hnu | hnv
-    · exact Or.inl hnu
-    · exact Or.inr (hnv.of_eq_smul N.vZ_eq N.hDi)
   have hdet := det4_neg N.hD eW1 eZ1 eW2 eZ2
     (mul_neg_of_pos_of_neg (mul_pos pW1 pZ1) (mul_neg_of_pos_of_neg pW2 pZ2))
-  rcases shared_core (img29 3) (img29 1) (img29 5) (img29 2) (img29 4) (img29 0)
-    (List.nodup4_img N.inj (by decide : [(3 : Fin 7), 5, 1, 2].Nodup))
-    (List.nodup4_img N.inj (by decide : [(3 : Fin 7), 0, 1, 4].Nodup))
-    m1u m1v m2u m2v hS1 hS2 hdet o1' o2' hno' with hRW | hRZ
+  rcases shared_core_ie x N.inj (fun y => view29 y (.inl (0, 3))) (fun y => view29 y (.inr 6))
+    (covView_view29 _) (covView_view29 _) 3 1 5 2 4 0
+    (by decide : [(3 : Fin 7), 5, 1, 2].Nodup)
+    (by decide : [(3 : Fin 7), 0, 1, 4].Nodup)
+    one_ne_zero N.hDi (by rw [one_smul]; rfl) N.vZ_eq
+    m1u m1v m2u m2v hS1 hS2 hdet o1 o2 hI with hRW | hRZ
   · exact NF29.cert_k4_W N ha2 hb0 he0 he2 hs1 ht1 hbh2 hh0g hAh hh21 hc2 hRW
   · exact NF29.cert_k4_Z N ha2 hb0 he0 he2 hs1 ht1 hbh2 hh0g hAh hh21 hc2 hRZ
 

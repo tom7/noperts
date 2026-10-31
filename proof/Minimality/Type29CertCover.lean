@@ -182,7 +182,7 @@ theorem NF29.cert_k3_i (N : NF29 x)
           N.b0 + N.h0 + N.h2 - 1 := by linarith
       exact N.cert_k3_P14 hA2 hb0 hh01 hG5n hF45 hh20 hth hf hh21 hsg hc0
                 (htie.one _ N.view_T1_ne) (htie.one _ N.view_T2_ne)
-                (htie.pair (.inr 0, .inr 1) (by decide) N.view_T1_ne N.view_T2_ne)
+                (htie.indep (.inr 0, .inr 1) (by decide) N.view_T1_ne N.view_T2_ne)
 
 theorem NF29.cert_k3_open (N : NF29 x)
     (hA2 : 0 < -N.a2)
@@ -261,7 +261,7 @@ theorem NF29.cert_k3_open (N : NF29 x)
               := by linarith
           exact N.cert_k3_P13 hV3 hh01 hh2g hkap hh0F5 hh2F4 hsg hL36n hW43 hAh0 hs1g
                 (htie.one _ N.view_T3_ne) (htie.one _ N.view_T2_ne)
-                (htie.pair (.inr 3, .inr 1) (by decide) N.view_T3_ne N.view_T2_ne)
+                (htie.indep (.inr 3, .inr 1) (by decide) N.view_T3_ne N.view_T2_ne)
         · have hL36 : 0 < -N.a0 * N.h2 * N.t + N.b2 * N.h0 * N.s + N.h0 * N.h2 * N.s + N.a0 * N.h2
               := by linarith
           have hc4 : 0 < N.a0 * N.b2 - N.a2 * N.b0 - N.b0 * N.h2 + N.b2 * N.h0 - N.a0 + N.a2 - N.h0
@@ -288,7 +288,7 @@ theorem NF29.cert_k3_open (N : NF29 x)
           1 := pos_of_mul_pos_r N.hh0 (by linarith [mul_pos (hV3) hb01, mul_pos (h345_0) hh2F4])
       exact N.cert_k3_X hA2 hb0 hV3 hh01 hG4 hG5n hh20 hh2g hkap hh2F4 hXf hb01 hsg hXa2
                 (htie.one _ (N.seg_ne (i := 0) (j := 5) (by decide))) (htie.one _ N.view_T2_ne)
-                (htie.pair (.inl (0, 5),
+                (htie.indep (.inl (0, 5),
                     .inr 1) (by decide) (N.seg_ne (i := 0) (j := 5) (by decide)) N.view_T2_ne)
   · have hF4h2 : 0 < N.b0 * N.h2 - N.b2 * N.h0 - N.h2 := by linarith
     have hN : 0 < N.a0 * N.b2 - N.a2 * N.b0 - N.a2 * N.h0 + N.a2 := by
@@ -301,7 +301,7 @@ theorem NF29.cert_k3_open (N : NF29 x)
     exact N.cert_k3_P11 hA2 hb0 hh01 hG5n hF45 hh20 hth hf hh2g hkap hh0F5 hF4h2 hN hal hhF5
        
                 (htie.one _ N.view_T1_ne) (htie.one _ N.view_T3_ne)
-                (htie.pair (.inr 0, .inr 3) (by decide) N.view_T1_ne N.view_T3_ne)
+                (htie.indep (.inr 0, .inr 3) (by decide) N.view_T1_ne N.view_T3_ne)
 
 theorem NF29.cert_K3a (N : NF29 x) (ha2 : N.a2 < 0) (hb0 : 0 < N.b0)
     (hV : 0 < N.h0 * (1 - N.a2 - N.b2) - N.h2 * (1 - N.a0 - N.b0))
@@ -368,7 +368,7 @@ theorem NF29.cert_K4a (N : NF29 x) (ha2 : 0 < N.a2) (hb0 : 0 < N.b0)
         linarith
       exact N.cert_k4_B2 ha2 hb0 he0 he2 hs1 ht1 hbh2 (by linarith) (by linarith) hh21 hc2
         (htie.one _ (N.seg_ne (i := 0) (j := 3) (by decide))) (htie.one _ N.view_Z_ne)
-        (htie.pair (.inl (0, 3), .inr 6) (by decide) (N.seg_ne (i := 0) (j := 3) (by decide))
+        (htie.indep (.inl (0, 3), .inr 6) (by decide) (N.seg_ne (i := 0) (j := 3) (by decide))
           N.view_Z_ne)
     · -- (B1): `σ` of (A)
       have hc' : 0 < N.b2 * N.a0 - N.b0 * N.a2 - N.b0 * N.h2 + N.b0 := by
