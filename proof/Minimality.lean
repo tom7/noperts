@@ -62,6 +62,7 @@ public import Minimality.Type02Assemble
 public import Minimality.Type08S.G9_Final
 public import Minimality.Type08S.SCm
 public import Minimality.Type08S.P2RFinalJ
+public import Minimality.MirrorBound
 
 /-!
 # Every nopert has at least 7 points
