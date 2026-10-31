@@ -26,9 +26,10 @@ open Finset Filter
 
 namespace Minimality
 namespace Type08Sp
-namespace W5
-
 variable {e1 e2 e3 : ℝ³}
+
+
+namespace W5
 
 set_option maxHeartbeats 4000000 in
 theorem extra_N2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg : RegN2 N.F)
@@ -103,6 +104,7 @@ theorem extra_N2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg
   rcases mul_eq_zero.mp this with h | h
   · exact hE h
   · exact p0.ne' h
+
 
 end W5
 end Type08Sp

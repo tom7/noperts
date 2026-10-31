@@ -77,6 +77,7 @@ theorem lemE_all {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) :
       mul_nonneg ga (mul_pos p1 p2).le
     nlinarith [mul_nonneg hD2 k]
 
+
 end W5
 end Type08Sp
 end Minimality

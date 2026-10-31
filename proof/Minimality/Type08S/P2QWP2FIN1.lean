@@ -32,18 +32,20 @@ open Finset Filter
 
 namespace Minimality
 namespace Type08Sp
-namespace W5
-
 /-- Screen direction of the face circle `F` of the closing `t` (identical to `P2Pkg.eF`). -/
 noncomputable def eF (a a' b b' c c' d : ℝ³) (t : Fin 3 × Bool × Bool) : ℝ³ :=
   let u := (test08 t.1 t.2.1 t.2.2).view (pts08 a a' b b' c c' d)
   let v := if t.1 = 0 then b - a' else if t.2.2 then c - d else c' - b
   v - (⟪v, u⟫ / ⟪u, u⟫) • u
 
+
 theorem eF_of_view {e1 e2 e3 : ℝ³} (hF : Fr e1 e2 e3) (u v : ℝ³) (κv : ℝ) (hκv : κv ≠ 0)
     (hu : u = κv • e3) (hv2 : ⟪v, e2⟫ = 0) :
     v - (⟪v, u⟫ / ⟪u, u⟫) • u = ⟪v, e1⟫ • e1 := by
   subst hu; exact eF_calc hF hκv v hv2
+
+
+namespace W5
 
 theorem close_hdn_np {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
     (hT : ¬ IsT a' b c d) (hT' : ¬ IsT' a b c' d) {t : Fin 3 × Bool × Bool} (ht : t ∈ SC08)
@@ -158,6 +160,7 @@ theorem close_hdn_np {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
         · have hfun : (fun i => pts08 a a' b b' c c' d ((test08 1 true true).lab (σ i))) =
               fun i => quad b c' b' c (σ i) := funext fun i => hlab (σ i)
           rw [hfun] at hnp; exact hnp
+
 
 end W5
 end Type08Sp

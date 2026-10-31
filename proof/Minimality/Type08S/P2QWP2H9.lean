@@ -33,9 +33,8 @@ open Finset Filter
 
 namespace Minimality
 namespace Type08Sp
-namespace W5
-
 variable {e1 e2 e3 : ℝ³}
+
 
 /-- The G-middle TriCert in the coordinates of `extra_Kb/K2` (`q` on the screen segment `0 g`, below the chord). -/
 theorem triCert_midG' (hF : Fr e1 e2 e3) (o : ℝ³) (V : Finset ℝ³)
@@ -58,6 +57,9 @@ theorem triCert_midG' (hF : Fr e1 e2 e3) (o : ℝ³) (V : Finset ℝ³)
   filter_upwards [ev_aff Yg Xg hYg] with s hs
   rw [hX, hY]
   exact triCert_midG hF o V hL hYg hl0 hl1 (by linarith) h1 h2 h3 hab
+
+
+namespace W5
 
 set_option maxHeartbeats 4000000 in
 /-- **T4 `K_b` with a persistent HDN.** -/
@@ -134,6 +136,7 @@ theorem pers_Kb {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg 
     rw [hset]; exact hR
   · exact hSC2 e1 e2 e3 κ hF hκ hxe hf2 hL hr hrob hcase
 
+
 set_option maxHeartbeats 4000000 in
 /-- **T4 `K_2` with a persistent HDN.** -/
 theorem pers_K2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg : RegT4 N.F)
@@ -205,6 +208,7 @@ theorem pers_K2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg 
       · rintro ((h | h | h | h | h) | (h | h)) <;> subst h <;> simp only [true_or, or_true]
     rw [hset]; exact hR
   · exact hSC2 e1 e2 e3 κ hF hκ hxe hf2 hL hr hrob hcase
+
 
 end W5
 end Type08Sp

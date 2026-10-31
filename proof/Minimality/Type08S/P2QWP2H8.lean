@@ -38,13 +38,13 @@ open Finset Filter
 
 namespace Minimality
 namespace Type08Sp
-namespace W5
-
 variable {e1 e2 e3 : ℝ³}
+
 
 /-- **Lemma E (iii), weak** (sp08d §4.1), for the closing `(x, f, r, g)` with other apex `x'`. -/
 def LemE3 (xp x f r g : ℝ³) : Prop :=
   det3 (r - f) (g - f) (x - f) * det3 (r - f) (g - f) (xp - f) ≤ 0
+
 
 theorem lemEF_of_3 (hF : Fr e1 e2 e3) (O : ℝ³) {κ L zf Xr Yr zr Xg Yg zg : ℝ} (hY : Yr = Yg) (hYr : 0 < Yr)
     (h : LemE3 O (O + pc e1 e2 e3 0 0 κ) (O + pc e1 e2 e3 L 0 zf) (O + pc e1 e2 e3 Xr Yr zr)
@@ -61,6 +61,7 @@ theorem lemEF_of_3 (hF : Fr e1 e2 e3) (O : ℝ³) {κ L zf Xr Yr zr Xg Yg zg : �
   by_contra hc; push_neg at hc
   nlinarith [mul_pos (pow_pos hYr 2) hc]
 
+
 /-- **SC2 cases of N2's `K_c`** (chord end at `f`, parallel set), canonical frame (`x' = a'`, `x = c`, `f = b`,
 `r = c'`, `g = b'`). -/
 def SC2N2 (a a' b b' c c' d : ℝ³) : Prop :=
@@ -73,6 +74,7 @@ def SC2N2 (a a' b b' c c' d : ℝ³) : Prop :=
         ⟪b' - a', e3⟫) →
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³))
 
+
 /-- **SC2 cases of T4's `K_b`** (`x' = d`, `x = b`, `f = c`, `r = b'`, `g = c'`). -/
 def SC2Kb (a a' b b' c c' d : ℝ³) : Prop :=
   ∀ (e1 e2 e3 : ℝ³) (κ : ℝ), Fr e1 e2 e3 → κ ≠ 0 → b - d = κ • e3 → ⟪c - d, e2⟫ = 0 →
@@ -84,6 +86,7 @@ def SC2Kb (a a' b b' c c' d : ℝ³) : Prop :=
         ⟪c' - d, e3⟫) →
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³))
 
+
 /-- **SC2 cases of T4's `K_2`** (`x' = b`, `x = d`, `f = c'`, `r = b'`, `g = c`). -/
 def SC2K2 (a a' b b' c c' d : ℝ³) : Prop :=
   ∀ (e1 e2 e3 : ℝ³) (κ : ℝ), Fr e1 e2 e3 → κ ≠ 0 → d - b = κ • e3 → ⟪c' - b, e2⟫ = 0 →
@@ -94,6 +97,9 @@ def SC2K2 (a a' b b' c c' d : ℝ³) : Prop :=
       Par5 ⟪c' - b, e1⟫ κ ⟪c' - b, e3⟫ ⟪b' - b, e1⟫ ⟪b' - b, e2⟫ ⟪b' - b, e3⟫ ⟪c - b, e1⟫ ⟪c - b, e2⟫
         ⟪c - b, e3⟫) →
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³))
+
+
+namespace W5
 
 set_option maxHeartbeats 4000000 in
 /-- **N2 `K_c` with a persistent HDN** (frame form of `close_hdn_pers`, N2 case). -/
@@ -188,6 +194,7 @@ theorem pers_N2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg 
       · rintro ((h | h | h | h | h) | (h | h)) <;> subst h <;> simp only [true_or, or_true]
     rw [hset]; exact hR
   · exact hSC2 e1 e2 e3 κ hF hκ hce hb2 hL hr hrob hcase
+
 
 end W5
 end Type08Sp

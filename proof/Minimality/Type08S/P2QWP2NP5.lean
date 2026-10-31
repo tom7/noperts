@@ -30,9 +30,10 @@ open Finset Filter
 
 namespace Minimality
 namespace Type08Sp
-namespace W5
-
 variable {e1 e2 e3 : ℝ³}
+
+
+namespace W5
 
 theorem np_N2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg : RegN2 N.F)
     (hF : Fr e1 e2 e3) {κ κv : ℝ} (hκ : κ ≠ 0) (hκv : κv = κ ∨ κv = -κ) (hce : c - a' = κ • e3)
@@ -75,6 +76,7 @@ theorem np_N2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg : 
   ext y
   simp only [mem_insert, mem_singleton]
   tauto
+
 
 end W5
 end Type08Sp

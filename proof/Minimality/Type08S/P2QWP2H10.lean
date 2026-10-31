@@ -156,6 +156,7 @@ theorem close_hdn_pers {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
               fun i => quad b c' b' c (σ i) := funext fun i => hlab (σ i)
           rw [hfun] at hp; exact hp
 
+
 end W5
 end Type08Sp
 end Minimality

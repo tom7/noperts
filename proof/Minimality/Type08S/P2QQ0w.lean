@@ -9,6 +9,10 @@ set_option autoImplicit true
 namespace Minimality
 namespace Type08Sp
 
+/-- The culJ region of `Norm08w`: entries 0–8, 12–23 of `ineq08` strict, `gWa, gWb ≥ 0` (entries 9–11 dropped). -/
+def Ineq08w (θ : Fin 6 → ℝ) : Prop :=
+  (∀ k : Fin 24, k ≠ 9 → k ≠ 10 → k ≠ 11 → 0 < ineq08 θ k) ∧ 0 ≤ gWa θ ∧ 0 ≤ gWb θ
+
 set_option maxHeartbeats 4000000 in
 theorem polyAw (a1 b1 a4 g4 b6 g6 : ℝ) (p0 : 0 < a1) (p1 : 0 < b1) (p2 : 0 < a4) (p3 : 0 < g4) (p4 : 0 < b6) (p5 : 0 < g6) (e1 : 0 < a1 + b1 - 1) (e2 : 0 < a4 + g4 - 1) (e3 : 0 < b6 + g6 - 1) (dA : 0 < -1 + g6) (dB : 0 < -1 + a1) (ga : 0 ≤ -a1 + a1 * g4 - b1 * a4 + a4) (gb : 0 ≤ a1 * b6 + b1 - b1 * g6 - b6) (f1 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f2 : 0 < a1 * g4 + b1 * g4 - g4) (f3 : 0 < -b1 + b1 * a4 + b1 * g4) (f4 : 0 < a1 * g6 + b1 * g6 - g6) (f5 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f6 : 0 < -a1 + a1 * b6 + a1 * g6) (f7 : 0 < a4 * b6 + g4 * b6 - b6) (f8 : 0 < -a4 + a4 * b6 + a4 * g6) (f9 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) (f10 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f11 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f12 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) :
     0 < -a1 + a1 * b6 + a1 * g6 ∧ 0 < -a4 + a4 * b6 + a4 * g6 ∧ 0 < -1 + b6 + g6 ∧ 0 < -a1 + a1 * g4 * b6 + a1 * g6 - b1 * a4 + b1 * a4 * g6 + a4 - a4 * g6 ∧ 0 < 1 - a1 + a1 * g6 - b1 + b1 * g6 - g6 ∧ 0 < -a1 + a1 * g6 ∧ 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6 ∧ 0 < a1 * g4 * b6 + b1 - b1 * a4 + b1 * a4 * g6 - b1 * g6 - g4 * b6 ∧ 0 < a1 * g4 * b6 - b1 * a4 + b1 * a4 * g6 ∧ 0 < a4 * b6 + g4 * b6 - b6 ∧ 0 < a4 * b6 := by
@@ -105,6 +109,16 @@ theorem gWU_neg_w0 (θ : Fin 6 → ℝ) (hθ : ∀ k, k ≠ 9 → k ≠ 10 → k
   simp only [fc08, cdet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val,
     Matrix.head_cons] at f10
   unfold gWU; nlinarith [f10]
+
+/-- The strict region `∀ k, 0 < ineq08 θ k` lies in the closure region `Ineq08w`. -/
+theorem Ineq08w.of_pos {θ : Fin 6 → ℝ} (h : ∀ k, 0 < ineq08 θ k) : Ineq08w θ := by
+  have hU := gWU_neg_w0 θ (fun k _ _ _ => h k)
+  have h9 : 0 < -(gWa θ * gWU θ) := h 9
+  have h10 : 0 < -(gWb θ * gWU θ) := h 10
+  refine ⟨fun k _ _ _ => h k, ?_, ?_⟩
+  · by_contra hc; push_neg at hc; nlinarith [mul_pos_of_neg_of_neg hc hU]
+  · by_contra hc; push_neg at hc; nlinarith [mul_pos_of_neg_of_neg hc hU]
+
 
 set_option maxHeartbeats 4000000 in
 theorem common08w (θ : Fin 6 → ℝ) (hθ : ∀ k, k ≠ 9 → k ≠ 10 → k ≠ 11 → 0 < ineq08 θ k) (hga : 0 ≤ gWa θ) (hgb : 0 ≤ gWb θ) :

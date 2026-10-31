@@ -24,9 +24,10 @@ open Finset Filter
 
 namespace Minimality
 namespace Type08Sp
-namespace W5
-
 variable {e1 e2 e3 : ℝ³}
+
+
+namespace W5
 
 set_option maxHeartbeats 4000000 in
 theorem pic_K2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg : RegT4 N.F)
@@ -102,6 +103,7 @@ theorem pic_K2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg :
   · rw [hYq, mul_div_assoc, div_self hYg.ne', mul_one]
     linarith
 
+
 theorem ClsT4_K2_of_top {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg : RegT4 N.F)
     (hF : Fr e1 e2 e3) {κ : ℝ} (hκ : κ ≠ 0) (hxe : d - b = κ • e3) (hf2 : ⟪c' - b, e2⟫ = 0)
     (hL : 0 < ⟪c' - b, e1⟫) (hr : 0 < ⟪b' - b, e2⟫)
@@ -109,6 +111,7 @@ theorem ClsT4_K2_of_top {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d
       ⟪c - b, e1⟫ ⟪c - b, e2⟫ ⟪c - b, e3⟫) : ClsT4 b d c' b' c a a' := by
   obtain ⟨h1, h2, h3, h4, h5⟩ := pic_K2 N hreg hF hκ hxe hf2 hL hr
   exact ⟨e1, e2, e3, κ, hF, hκ, hxe, hf2, hL, hr, h1, h2, htop, h3, h4, h5⟩
+
 
 end W5
 end Type08Sp

@@ -23,13 +23,15 @@ open Finset Filter
 
 namespace Minimality
 namespace Type08Sp
-namespace W5
-
 variable {e1 e2 e3 : ℝ³}
+
 
 /-- Picture numbers of a T4 closing that are not class-(c) data (frame numbers). -/
 def PicT4 (L Xr Yr Xg Yg Xd lam : ℝ) : Prop :=
   0 < (Xg - Xr) * (-Yr) - (Yg - Yr) * (L - Xr) ∧ 0 < Yg * Xr - Xg * Yr ∧ 0 < Xd ∧ Xd < L ∧ lam < 1
+
+
+namespace W5
 
 set_option maxHeartbeats 4000000 in
 theorem pic_Kb {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg : RegT4 N.F)
@@ -103,6 +105,7 @@ theorem pic_Kb {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg :
     rw [div_lt_one hpos]
     nlinarith [mul_pos dB hYa]
 
+
 theorem ClsT4_Kb_of_top {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg : RegT4 N.F)
     (hF : Fr e1 e2 e3) {κ : ℝ} (hκ : κ ≠ 0) (hxe : b - d = κ • e3) (hf2 : ⟪c - d, e2⟫ = 0)
     (hL : 0 < ⟪c - d, e1⟫) (hr : 0 < ⟪b' - d, e2⟫)
@@ -110,6 +113,7 @@ theorem ClsT4_Kb_of_top {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d
       ⟪c' - d, e1⟫ ⟪c' - d, e2⟫ ⟪c' - d, e3⟫) : ClsT4 d b c b' c' a' a := by
   obtain ⟨h1, h2, h3, h4, h5⟩ := pic_Kb N hreg hF hκ hxe hf2 hL hr
   exact ⟨e1, e2, e3, κ, hF, hκ, hxe, hf2, hL, hr, h1, h2, htop, h3, h4, h5⟩
+
 
 end W5
 end Type08Sp

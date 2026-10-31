@@ -27,12 +27,12 @@ open Finset Filter
 
 namespace Minimality
 namespace Type08Sp
-namespace W5
-
 variable {e1 e2 e3 : ℝ³}
+
 
 theorem inner_diff (x y z e : ℝ³) : ⟪x - y, e⟫ = ⟪x - z, e⟫ - ⟪y - z, e⟫ := by
   rw [← inner_sub_left]; congr 1; abel
+
 
 /-- Screen cross product of two difference vectors, with origin `O`. -/
 theorem cross_pts (hF : Fr e1 e2 e3) {u : ℝ³} {κ : ℝ} (hu : u = κ • e3) (O P Q R T : ℝ³) :
@@ -40,6 +40,7 @@ theorem cross_pts (hF : Fr e1 e2 e3) {u : ℝ³} {κ : ℝ} (hu : u = κ • e3)
       (⟪P - O, e2⟫ - ⟪Q - O, e2⟫) * (⟪R - O, e1⟫ - ⟪T - O, e1⟫)) := by
   rw [cross2_frame hF hu, inner_diff P Q O e1, inner_diff P Q O e2, inner_diff R T O e1,
     inner_diff R T O e2]
+
 
 /-- The screen cross product as `D · (normal-form polynomial) / κ`. -/
 theorem tgt_eq (o E₁ E₂ E₃ : ℝ³) (θ : Fin 6 → ℝ) (hF : Fr e1 e2 e3) {κ : ℝ}
@@ -55,6 +56,7 @@ theorem tgt_eq (o E₁ E₂ E₃ : ℝ³) (θ : Fin 6 → ℝ) (hF : Fr e1 e2 e3
       det3 E₁ E₂ E₃ * Qp := by
   rw [← cross_pts hF hu O, det3_nfd, hQe]
 
+
 /-- Positivity of a screen cross product from a normal-form determinant. -/
 theorem tgt_nf (o E₁ E₂ E₃ : ℝ³) (θ : Fin 6 → ℝ) (hF : Fr e1 e2 e3) {κ : ℝ} (hk : κ ≠ 0)
     (hkD : 0 < κ * det3 E₁ E₂ E₃) {i0 j0 : Fin 7}
@@ -68,11 +70,15 @@ theorem tgt_nf (o E₁ E₂ E₃ : ℝ³) (θ : Fin 6 → ℝ) (hF : Fr e1 e2 e3
         (⟪nfShape08 o E₁ E₂ E₃ θ j2 - O, e1⟫ - ⟪nfShape08 o E₁ E₂ E₃ θ i2 - O, e1⟫) :=
   sign_transfer hk hkD (tgt_eq o E₁ E₂ E₃ θ hF hu O i1 j1 i2 j2 Qp hQe) hQ
 
+
 /-- Picture numbers of the N2 closing `K_c` that are not class-(c) data (frame numbers). -/
 def PicN2 (L Xr Yr Xg Yg Xd Xa Ya : ℝ) : Prop :=
   0 < (Xg - Xr) * (-Yr) - (Yg - Yr) * (L - Xr) ∧ 0 < Yg * Xr - Xg * Yr ∧ 0 < Xd ∧ Xd < L ∧
   0 < Ya ∧ 0 < (Xr - L) * Ya - Yr * (Xa - L) ∧
   0 < (Xg - Xr) * (Ya - Yr) - (Yg - Yr) * (Xa - Xr) ∧ 0 < -Xg * (Ya - Yg) + Yg * (Xa - Xg)
+
+
+namespace W5
 
 set_option maxHeartbeats 4000000 in
 theorem pic_N2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg : RegN2 N.F)
@@ -143,6 +149,7 @@ theorem pic_N2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg :
   · linarith
   · linarith
   · linarith
+
 
 end W5
 end Type08Sp

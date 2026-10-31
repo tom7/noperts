@@ -1,6 +1,7 @@
 module
 
 public import Minimality.Type08S.P2QQ0c
+public import Minimality.Type08S.P2QDefs
 public import Minimality.Type08S.P2QQ1b
 public import Minimality.VtxMain
 

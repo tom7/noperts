@@ -1,6 +1,7 @@
 module
 
 public import Minimality.Type08S.P2QQ0c
+public import Minimality.Type08S.P2QParEnd
 public import Minimality.Type08S.P2QWSCl
 public import Minimality.Type08S.P2QWP2PF0
 public import Minimality.Type08S.P2QWP2PF1
