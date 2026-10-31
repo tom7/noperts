@@ -30,12 +30,13 @@ def HY21 (y : Fin 7 → ℝ³) : Prop :=
   (⟪y 5, vtxView21 y 2⟫ = ⟪y 3, vtxView21 y 2⟫ → NoTieAt (univ.image y) (y 5 - y 3)) ∧
   (⟪y 3, vtxView21 y 3⟫ = ⟪y 5, vtxView21 y 3⟫ → NoTieAt (univ.image y) (y 3 - y 5))
 
-/-- **`hF` of the cover** (at `y`): a tie at no more than one of the two views of an F2 pair. -/
+/-- **`hF` of the cover** (at `y`): at the two views of an F2 pair, the tied pairs (one at each
+view, if both views have a tie) are independent (`IndepF`; vacuous if one view has no tie). -/
 def HF21 (y : Fin 7 → ℝ³) : Prop :=
-  (NoTieAt (univ.image y) (vtxView21 y 1) ∨ NoTieAt (univ.image y) (vtxView21 y 4)) ∧
-  (NoTieAt (univ.image y) (vtxView21 y 0) ∨ NoTieAt (univ.image y) (vtxView21 y 5)) ∧
-  (NoTieAt (univ.image y) (vtxView21 y 3) ∨ NoTieAt (univ.image y) (vtxView21 y 6)) ∧
-  (NoTieAt (univ.image y) (vtxView21 y 2) ∨ NoTieAt (univ.image y) (vtxView21 y 7))
+  IndepF (univ.image y) (vtxView21 y 1) (vtxView21 y 4) ∧
+  IndepF (univ.image y) (vtxView21 y 0) (vtxView21 y 5) ∧
+  IndepF (univ.image y) (vtxView21 y 3) (vtxView21 y 6) ∧
+  IndepF (univ.image y) (vtxView21 y 2) (vtxView21 y 7)
 
 /-- **The tie hypotheses of `cert21_of_generic`**: at most one tied pair at each segment view and at
 each vertex crossing, `hY`, `hF`. -/
@@ -65,27 +66,6 @@ def CertSeq21 (x : Fin 7 → ℝ³) : Prop :=
   ∃ K : ℕ → Fin 7 → ℝ³, (∀ m, Tendsto (fun n => K n m) atTop (𝓝 (x m))) ∧
     ∃ᶠ n in atTop, CertX21 (K n) ∧
       ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0
-
-theorem detMap_eq21 (L : ℝ³ →L[ℝ] ℝ³) : detMap L = LinearMap.det (L : ℝ³ →ₗ[ℝ] ℝ³) := by
-  rw [← LinearMap.det_toMatrix (EuclideanSpace.basisFun (Fin 3) ℝ).toBasis, Matrix.det_fin_three]
-  simp only [detMap, det3_expand, LinearMap.toMatrix_apply]
-  simp [EuclideanSpace.basisFun_apply]
-  ring
-
-/-- The named views are covariant. -/
-theorem covView_view21 (v : (Fin 7 × Fin 7) ⊕ Fin 8) :
-    CovView (fun y : Fin 7 → ℝ³ => view21 y v) := by
-  refine ⟨?_, ?_⟩
-  · refine continuous_iff_continuousAt.2 fun y => ?_
-    exact tendsto_view21 (fun m => (continuous_apply m).tendsto y) v
-  · intro L y hL
-    have hd : detMap L = 1 := by rw [detMap_eq21]; exact hL
-    obtain ⟨c, hc, e⟩ := view21_map L y v
-    show view21 (fun l => L (y l)) v = L (view21 y v)
-    rw [e]
-    rcases hc with rfl | rfl
-    · rw [one_smul]
-    · rw [hd, one_smul]
 
 /-- **At most one tied pair at a view whose ties are ties of `x`'s view.** -/
 theorem oneTieAt_transfer {x y : Fin 7 → ℝ³} (hinj : Function.Injective x) {u u' : ℝ³}
@@ -125,13 +105,62 @@ theorem noTieAt_transfer {x y : Fin 7 → ℝ³} (hinj : Function.Injective x) {
   exact hx _ (mem_image_of_mem x (mem_univ a)) _ (mem_image_of_mem x (mem_univ b))
     (fun h => hab (hinj h)) t1
 
-/-- **`CoverTie21` passes from `x` to a shape whose ties at the named views are ties of `x`.** -/
+/-- **Independence of the tied pairs passes to a shape whose ties are ties of `x`**, given
+independence of the pairs of `y` that are tied at `x`. -/
+theorem indepF_of_sub {x y : Fin 7 → ℝ³} {u v u' v' : ℝ³}
+    (hsubu : ∀ a b, a ≠ b → ⟪y a - y b, u'⟫ = 0 → ⟪x a - x b, u⟫ = 0)
+    (hsubv : ∀ a b, a ≠ b → ⟪y a - y b, v'⟫ = 0 → ⟪x a - x b, v⟫ = 0)
+    (hI : ∀ i j k l : Fin 7, i ≠ j → k ≠ l → ⟪x i - x j, u⟫ = 0 → ⟪x k - x l, v⟫ = 0 →
+      TieIndep ![y i - y j, y k - y l] ![u', v']) :
+    IndepF (univ.image y) u' v' := by
+  intro p hp p' hp' hpp e r hr r' hr' hrr e'
+  obtain ⟨i, -, rfl⟩ := mem_image.mp hp
+  obtain ⟨j, -, rfl⟩ := mem_image.mp hp'
+  obtain ⟨k, -, rfl⟩ := mem_image.mp hr
+  obtain ⟨l, -, rfl⟩ := mem_image.mp hr'
+  have hij : i ≠ j := fun h => hpp (by rw [h])
+  have hkl : k ≠ l := fun h => hrr (by rw [h])
+  exact hI i j k l hij hkl (hsubu i j hij (by rw [inner_sub_left, e, sub_self]))
+    (hsubv k l hkl (by rw [inner_sub_left, e', sub_self]))
+
+/-- **Independence of the tied pairs of `x` persists along a convergent sequence** (the pairs
+tied at `x`, with the views `u, v` of `x`). -/
+theorem eventually_indepF {x : Fin 7 → ℝ³} {K : ℕ → Fin 7 → ℝ³} {u v : ℝ³} {u' v' : ℕ → ℝ³}
+    (hK : ∀ m, Tendsto (fun n => K n m) atTop (𝓝 (x m)))
+    (hu : Tendsto u' atTop (𝓝 u)) (hv : Tendsto v' atTop (𝓝 v))
+    (hinj : Function.Injective x) (hx : IndepF (univ.image x) u v) :
+    ∀ᶠ n in atTop, ∀ i j k l : Fin 7, i ≠ j → k ≠ l → ⟪x i - x j, u⟫ = 0 → ⟪x k - x l, v⟫ = 0 →
+      TieIndep ![K n i - K n j, K n k - K n l] ![u' n, v' n] := by
+  refine eventually_all.mpr fun i => eventually_all.mpr fun j => eventually_all.mpr fun k =>
+    eventually_all.mpr fun l => ?_
+  by_cases h : i ≠ j ∧ k ≠ l ∧ ⟪x i - x j, u⟫ = 0 ∧ ⟪x k - x l, v⟫ = 0
+  · obtain ⟨hij, hkl, e1, e2⟩ := h
+    have hI := hx (x i) (mem_image_of_mem x (mem_univ i)) (x j) (mem_image_of_mem x (mem_univ j))
+      (hinj.ne hij) (by rwa [inner_sub_left, sub_eq_zero] at e1) (x k)
+      (mem_image_of_mem x (mem_univ k)) (x l) (mem_image_of_mem x (mem_univ l)) (hinj.ne hkl)
+      (by rwa [inner_sub_left, sub_eq_zero] at e2)
+    have hT : Tendsto (fun n => ((![K n i - K n j, K n k - K n l] : Fin 2 → ℝ³),
+        (![u' n, v' n] : Fin 2 → ℝ³))) atTop
+        (𝓝 ((![x i - x j, x k - x l] : Fin 2 → ℝ³), (![u, v] : Fin 2 → ℝ³))) := by
+      refine Tendsto.prodMk_nhds (tendsto_pi_nhds.2 fun s => ?_) (tendsto_pi_nhds.2 fun s => ?_)
+      · fin_cases s
+        · exact (hK i).sub (hK j)
+        · exact (hK k).sub (hK l)
+      · fin_cases s
+        · exact hu
+        · exact hv
+    filter_upwards [hT.eventually hI.eventually] with n hn _ _ _ _
+    exact hn
+  · exact Eventually.of_forall fun n hij hkl e1 e2 => absurd ⟨hij, hkl, e1, e2⟩ h
+
+/-- **`CoverTie21` passes from `x` to a shape whose ties at the named views are ties of `x`**
+(and which satisfies `HF21`, which does not pass pointwise). -/
 theorem coverTie21_of_sub {x y : Fin 7 → ℝ³} (hinj : Function.Injective x)
     (hsub : ∀ v a b, a ≠ b → view21 y v ≠ 0 → ⟪y a - y b, view21 y v⟫ = 0 →
       ⟪x a - x b, view21 x v⟫ = 0)
     (hv : ∀ t, vtxView21 y t ≠ 0) (hw : ∀ i j, i ≠ j → y i - y j ≠ 0)
-    (h : CoverTie21 x) : CoverTie21 y := by
-  obtain ⟨hseg, hvt, ⟨hY0, hY1, hY2, hY3⟩, ⟨hF1, hF2, hF3, hF4⟩⟩ := h
+    (hFy : HF21 y) (h : CoverTie21 x) : CoverTie21 y := by
+  obtain ⟨hseg, hvt, ⟨hY0, hY1, hY2, hY3⟩, -⟩ := h
   have prem : ∀ (t : Fin 8) (a b : Fin 7), a ≠ b → ⟪y a, vtxView21 y t⟫ = ⟪y b, vtxView21 y t⟫ →
       ⟪x a, vtxView21 x t⟫ = ⟪x b, vtxView21 x t⟫ := by
     intro t a b hab e
@@ -144,16 +173,12 @@ theorem coverTie21_of_sub {x y : Fin 7 → ℝ³} (hinj : Function.Injective x)
       NoTieAt (univ.image y) (y a - y b) := fun a b hab hn =>
     noTieAt_transfer hinj hn fun c d hcd e =>
       hsub (.inl (b, a)) c d hcd (hw a b hab) e
-  have vtx : ∀ t : Fin 8, NoTieAt (univ.image x) (vtxView21 x t) →
-      NoTieAt (univ.image y) (vtxView21 y t) := fun t hn =>
-    noTieAt_transfer hinj hn fun c d hcd e => hsub (.inr t) c d hcd (hv t) e
   refine ⟨⟨fun v hv' w hw' hvw => ?_⟩, fun t => ?_,
     ⟨fun e => seg 0 4 (by decide) (hY0 (prem 0 0 4 (by decide) e)),
       fun e => seg 4 0 (by decide) (hY1 (prem 1 4 0 (by decide) e)),
       fun e => seg 5 3 (by decide) (hY2 (prem 2 5 3 (by decide) e)),
       fun e => seg 3 5 (by decide) (hY3 (prem 3 3 5 (by decide) e))⟩,
-    ⟨hF1.imp (vtx 1) (vtx 4), hF2.imp (vtx 0) (vtx 5), hF3.imp (vtx 3) (vtx 6),
-      hF4.imp (vtx 2) (vtx 7)⟩⟩
+    hFy⟩
   · obtain ⟨i, -, rfl⟩ := mem_image.mp hv'
     obtain ⟨j, -, rfl⟩ := mem_image.mp hw'
     have hij : i ≠ j := fun e => hvw (by rw [e])
@@ -219,16 +244,29 @@ theorem exists_certSeq21_ties {x : Fin 7 → ℝ³} (T : Facets21 x) (h : TwoTie
       · exact Eventually.of_forall fun _ h => absurd hij h
       · exact (((hK i).sub (hK j)).eventually_ne (sub_ne_zero.mpr (T.inj.ne hij))).mono
           fun n hn _ => hn
+  have hind4 : ∀ s s' : Fin 8, IndepF (univ.image x) (vtxView21 x s) (vtxView21 x s') →
+      ∀ᶠ n in atTop, ∀ i j k l : Fin 7, i ≠ j → k ≠ l → ⟪x i - x j, vtxView21 x s⟫ = 0 →
+        ⟪x k - x l, vtxView21 x s'⟫ = 0 →
+        TieIndep ![K n i - K n j, K n k - K n l] ![vtxView21 (K n) s, vtxView21 (K n) s'] :=
+    fun s s' hI => eventually_indepF hK (tendsto_view21 hK (.inr s)) (tendsto_view21 hK (.inr s'))
+      T.inj hI
+  obtain ⟨hF1, hF2, hF3, hF4⟩ := hcov.2.2.2
   refine ⟨K, hK, Eventually.frequently ?_⟩
-  filter_upwards [eventually_ties21 hK, hfac, hvtx, hsegs] with n hs hf hv hw
+  filter_upwards [eventually_ties21 hK, hfac, hvtx, hsegs, hind4 _ _ hF1, hind4 _ _ hF2,
+    hind4 _ _ hF3, hind4 _ _ hF4] with n hs hf hv hw hI1 hI2 hI3 hI4
   have hties : ∀ w a b, TieInst21 x w a b → ⟪K n a - K n b, view21 (K n) w⟫ = 0 :=
     fun w a b hw' => hgen (K n) (fun t => hrest n t) w a b hw'
   refine ⟨?_, hties⟩
   have hD : det3 (L n E₁) (L n E₂) (L n E₃) ≠ 0 := by
     rw [det3_map, detMap_eq21, hdet n, one_mul]; exact T.det_ne
   have hg : gen21 (θs n) ≠ 0 := by have := hPs n; rwa [eval_genPoly21] at this
+  have hFK : HF21 (K n) := by
+    have sub : ∀ t : Fin 8, ∀ a b, a ≠ b → ⟪K n a - K n b, vtxView21 (K n) t⟫ = 0 →
+        ⟪x a - x b, vtxView21 x t⟫ = 0 := fun t a b _ h' => hs (.inr t) a b h'
+    exact ⟨indepF_of_sub (sub 1) (sub 4) hI1, indepF_of_sub (sub 0) (sub 5) hI2,
+      indepF_of_sub (sub 3) (sub 6) hI3, indepF_of_sub (sub 2) (sub 7) hI4⟩
   have hcovK : CoverTie21 (K n) := by
-    refine coverTie21_of_sub T.inj (fun w a b hab hwv h' => hs w a b h') hv hw hcov
+    refine coverTie21_of_sub T.inj (fun w a b hab hwv h' => hs w a b h') hv hw hFK hcov
   obtain ⟨hgt, hvt, hY, hF⟩ := hcovK
   exact cert21_of_generic (hKe n) hD hg hκ hf hgt hvt hY hF
 /-- **Type 21 outside the HDN set and codimension 2, with several independent ties**: a copy of

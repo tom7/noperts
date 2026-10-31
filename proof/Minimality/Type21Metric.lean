@@ -29,12 +29,6 @@ open Finset Filter
 
 /-! ### Named views under linear maps -/
 
-theorem view21_map (M : ℝ³ →L[ℝ] ℝ³) (y : Fin 7 → ℝ³) (v : (Fin 7 × Fin 7) ⊕ Fin 8) :
-    ∃ c : ℝ, (c = 1 ∨ c = detMap M) ∧ view21 (fun l => M (y l)) v = c • M (view21 y v) := by
-  rcases v with ⟨i, j⟩ | t
-  · exact ⟨1, Or.inl rfl, by rw [one_smul]; simp [view21]⟩
-  · exact ⟨detMap M, Or.inr rfl, planeLine_map M _ _ _ _ _ _⟩
-
 theorem map_nfShape21 (M : ℝ³ →L[ℝ] ℝ³) (o E₁ E₂ E₃ : ℝ³) (θ : Fin 7 → ℝ) :
     (fun i => M (nfShape21 o E₁ E₂ E₃ θ i)) = nfShape21 (M o) (M E₁) (M E₂) (M E₃) θ := by
   funext i; exact map_nfP M o E₁ E₂ E₃ _ _ _
@@ -88,10 +82,10 @@ theorem cert21_nfShape21 (o E₁ E₂ E₃ : ℝ³) (θ : Fin 7 → ℝ) (hD : d
     (fun t => oneTieAt_of_noTies21 hnt (.inr t) (hvtx t))
     ⟨fun _ => hY 0 4 (by decide), fun _ => hY 4 0 (by decide), fun _ => hY 5 3 (by decide),
       fun _ => hY 3 5 (by decide)⟩
-    ⟨Or.inl (noTieAt_of_noTies21 hnt (.inr 1) (hvtx 1)),
-      Or.inl (noTieAt_of_noTies21 hnt (.inr 0) (hvtx 0)),
-      Or.inl (noTieAt_of_noTies21 hnt (.inr 3) (hvtx 3)),
-      Or.inl (noTieAt_of_noTies21 hnt (.inr 2) (hvtx 2))⟩).toCert21
+    ⟨IndepF.of_noTie (Or.inl (noTieAt_of_noTies21 hnt (.inr 1) (hvtx 1))),
+      IndepF.of_noTie (Or.inl (noTieAt_of_noTies21 hnt (.inr 0) (hvtx 0))),
+      IndepF.of_noTie (Or.inl (noTieAt_of_noTies21 hnt (.inr 3) (hvtx 3))),
+      IndepF.of_noTie (Or.inl (noTieAt_of_noTies21 hnt (.inr 2) (hvtx 2)))⟩).toCert21
 
 /-- **The cover is affine-invariant** (bridge input for type 21): for an invertible linear map `M`,
 the shape `M ∘ x` of a type-21 shape is a pointwise limit of certified shapes

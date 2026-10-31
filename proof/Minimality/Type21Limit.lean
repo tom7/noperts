@@ -213,15 +213,6 @@ def d21 {R : Type*} [CommRing R] (θ : Fin 7 → R) (i j k l m : Fin 7) : R :=
 def par21 {R : Type*} [CommRing R] (θ : Fin 7 → R) (i j k l : Fin 7) : R :=
   crSq (co21 θ j - co21 θ i) (co21 θ l - co21 θ k)
 
-/-- **The eight vertex crossings** of the cover: the lines of the facet pairs `014/0256` (at
-`0`), `014/2346` (at `4`), `135/0256` (at `5`), `135/2346` (at `3`), `046/134` (at `4`),
-`046/015` (at `0`), `235/134` (at `3`), `235/015` (at `5`), each facet by three of its labels,
-the common vertex first (as in the vertex tests of F2, `F2ViewsL`). -/
-def vtx21 : Fin 8 → (Fin 7 × Fin 7 × Fin 7) × (Fin 7 × Fin 7 × Fin 7) :=
-  ![((0, 4, 1), (0, 5, 6)), ((4, 0, 1), (4, 3, 6)), ((5, 3, 1), (5, 0, 2)),
-    ((3, 5, 1), (3, 4, 2)), ((4, 0, 6), (4, 3, 1)), ((0, 4, 6), (0, 5, 1)),
-    ((3, 5, 2), (3, 4, 1)), ((5, 3, 2), (5, 0, 1))]
-
 /-- The `t`-th vertex crossing in normal-form coordinates. -/
 def plv21 {R : Type*} [CommRing R] (θ : Fin 7 → R) (t : Fin 8) : Fin 3 → R :=
   plR (co21 θ (vtx21 t).1.2.1 - co21 θ (vtx21 t).1.1)
@@ -373,16 +364,6 @@ theorem det3_nfShape21 (o E₁ E₂ E₃ : ℝ³) (θ : Fin 7 → ℝ) (i j k l 
   rw [nfShape21_sub, nfShape21_sub, nfShape21_sub, det3_nfV]
   simp only [d21, dR, det3c, Pi.sub_apply]
 
-/-- The view along the `t`-th vertex crossing. -/
-noncomputable def vtxView21 (x : Fin 7 → ℝ³) (t : Fin 8) : ℝ³ :=
-  planeLine (x (vtx21 t).1.1) (x (vtx21 t).1.2.1) (x (vtx21 t).1.2.2) (x (vtx21 t).2.1)
-    (x (vtx21 t).2.2.1) (x (vtx21 t).2.2.2)
-
-/-- **The named views of type 21**: the segments and the eight vertex crossings. -/
-noncomputable def view21 (x : Fin 7 → ℝ³) : (Fin 7 × Fin 7) ⊕ Fin 8 → ℝ³
-  | .inl ij => x ij.2 - x ij.1
-  | .inr t => vtxView21 x t
-
 theorem vtxView21_nfShape (o E₁ E₂ E₃ : ℝ³) (θ : Fin 7 → ℝ) (t : Fin 8) :
     vtxView21 (nfShape21 o E₁ E₂ E₃ θ) t =
       det3 E₁ E₂ E₃ • nfV E₁ E₂ E₃ (plv21 θ t 0) (plv21 θ t 1) (plv21 θ t 2) := by
@@ -400,15 +381,6 @@ theorem det3_vtx_nfShape21 (o E₁ E₂ E₃ : ℝ³) (θ : Fin 7 → ℝ) (X Y 
       det3 E₁ E₂ E₃ * (vt21 θ X Y Z t * det3 E₁ E₂ E₃) := by
   rw [vtxView21_nfShape, det3_smul_right, nfShape21_sub, nfShape21_sub, det3_nfV]
   simp only [vt21, dR, det3c, Pi.sub_apply]
-
-/-- The line of two planes as a cross product of their normals. -/
-theorem planeLine_eq_cross (p₀ p₁ p₂ q₀ q₁ q₂ : ℝ³) :
-    planeLine p₀ p₁ p₂ q₀ q₁ q₂ =
-      cross (cross (p₁ - p₀) (p₂ - p₀)) (cross (q₁ - q₀) (q₂ - q₀)) := by
-  ext i; fin_cases i <;>
-    simp only [planeLine, det3_expand, Fin.zero_eta, Fin.mk_one, Fin.reduceFinMk,
-      cross_apply_zero, cross_apply_one, cross_apply_two, PiLp.sub_apply, PiLp.smul_apply,
-      smul_eq_mul] <;> ring
 
 /-- **A direction of a vertex crossing is a multiple of its named view**, and a test that is
 nonzero at the named view is nonzero at it. -/
@@ -515,13 +487,6 @@ theorem view21_restore {s : ℝ} {e b : ℝ³} (h : ⟪e, b⟫ = 0) (y : Fin 7 �
   rcases v with ⟨i, j⟩ | t
   · exact (restore_sub s e b _ _).symm
   · exact planeLine_restore h _ _ _ _ _ _
-
-theorem tendsto_view21 {ι : Type*} {l : Filter ι} {K : ι → Fin 7 → ℝ³} {x : Fin 7 → ℝ³}
-    (hK : ∀ m, Tendsto (fun n => K n m) l (𝓝 (x m))) (v : (Fin 7 × Fin 7) ⊕ Fin 8) :
-    Tendsto (fun n => view21 (K n) v) l (𝓝 (view21 x v)) := by
-  rcases v with ⟨i, j⟩ | t
-  · exact (hK j).sub (hK i)
-  · exact tendsto_planeLine (hK _) (hK _) (hK _) (hK _) (hK _) (hK _)
 
 /-- A tie at a named view: two labels `s ≠ t` at equal depth along a nonzero named view. -/
 def TieInst21 (x : Fin 7 → ℝ³) (v : (Fin 7 × Fin 7) ⊕ Fin 8) (s t : Fin 7) : Prop :=
@@ -1331,8 +1296,8 @@ theorem det3_plane2346 (o E₁ E₂ E₃ u : ℝ³) (θ : Fin 7 → ℝ) {i j k 
 /-- **The tier cover at a generic normal-form shape** (Theorem 16.26 in certificate form): off
 the special positions of `gen21`, with determinant facet functions, at most one tie at each
 segment view and at each vertex crossing, no tie along `a − b` if `a, b` tie at the view of `T1`
-(the view of `Y`), and a tie at no more than one of the two views of F2, a rim certificate at a
-named view. -/
+(the view of `Y`), and independent tied pairs at the two views of F2 (`IndepF`; vacuous if one of
+them has no tie), a rim certificate at a named view. -/
 theorem cert21_of_generic {o E₁ E₂ E₃ : ℝ³} {θ : Fin 7 → ℝ} {y : Fin 7 → ℝ³}
     (hy : y = nfShape21 o E₁ E₂ E₃ θ) (hD : det3 E₁ E₂ E₃ ≠ 0)
     (hg : gen21 θ ≠ 0) {κ : Fin 8 → ℝ} (hκ : ∀ f, κ f ≠ 0)
@@ -1343,10 +1308,10 @@ theorem cert21_of_generic {o E₁ E₂ E₃ : ℝ³} {θ : Fin 7 → ℝ} {y : F
       (⟪y 4, vtxView21 y 1⟫ = ⟪y 0, vtxView21 y 1⟫ → NoTieAt (univ.image y) (y 4 - y 0)) ∧
       (⟪y 5, vtxView21 y 2⟫ = ⟪y 3, vtxView21 y 2⟫ → NoTieAt (univ.image y) (y 5 - y 3)) ∧
       (⟪y 3, vtxView21 y 3⟫ = ⟪y 5, vtxView21 y 3⟫ → NoTieAt (univ.image y) (y 3 - y 5)))
-    (hF : (NoTieAt (univ.image y) (vtxView21 y 1) ∨ NoTieAt (univ.image y) (vtxView21 y 4)) ∧
-      (NoTieAt (univ.image y) (vtxView21 y 0) ∨ NoTieAt (univ.image y) (vtxView21 y 5)) ∧
-      (NoTieAt (univ.image y) (vtxView21 y 3) ∨ NoTieAt (univ.image y) (vtxView21 y 6)) ∧
-      (NoTieAt (univ.image y) (vtxView21 y 2) ∨ NoTieAt (univ.image y) (vtxView21 y 7))) :
+    (hF : IndepF (univ.image y) (vtxView21 y 1) (vtxView21 y 4) ∧
+      IndepF (univ.image y) (vtxView21 y 0) (vtxView21 y 5) ∧
+      IndepF (univ.image y) (vtxView21 y 3) (vtxView21 y 6) ∧
+      IndepF (univ.image y) (vtxView21 y 2) (vtxView21 y 7)) :
     CertX21 y := by
   subst hy
   have hfac : ∀ f i, (i ∈ facS f → fac21 κ (nfShape21 o E₁ E₂ E₃ θ) f (nfShape21 o E₁ E₂ E₃ θ i) =
@@ -1359,6 +1324,9 @@ theorem cert21_of_generic {o E₁ E₂ E₃ : ℝ³} {θ : Fin 7 → ℝ} {y : F
     fun f u h => (mul_eq_zero.mp h).resolve_left (hκ f)
   obtain ⟨hY0, hY1, hY2, hY3⟩ := hY
   obtain ⟨hF1, hF2, hF3, hF4⟩ := hF
+  have inj7 : ∀ f : Fin 7 → Fin 7, Function.Injective f →
+      Function.Injective (fun i => nfShape21 o E₁ E₂ E₃ θ (f i)) :=
+    fun f hf => (nfShape21_inj hD hg).comp hf
   have cancel : ∀ {p q w : ℝ³} {c : ℝ}, c ≠ 0 → ⟪p, c • w⟫ = ⟪q, c • w⟫ → ⟪p, w⟫ = ⟪q, w⟫ :=
     fun hc h => by simp only [real_inner_smul_right] at h; exact mul_left_cancel₀ hc h
   -- the planar equators in the labels of the vertex tests of F2
@@ -1466,9 +1434,12 @@ theorem cert21_of_generic {o E₁ E₂ E₃ : ℝ³} {θ : Fin 7 → ℝ} {y : F
   · intro u v hu h1 h2 hv h3 h4
     obtain ⟨-, c, hc, rfl⟩ := test21_of_perp hD hg 4 hu h1 h2
     obtain ⟨-, c', hc', rfl⟩ := test21_of_perp hD hg 5 hv h3 h4
-    refine Or.inr ⟨(hvt 1).smul hc, (hvt 4).smul hc', hF1.imp (·.smul hc) (·.smul hc'),
-      sgn (by simp only [det3_expand, PiLp.sub_apply]; ring) E4,
-      sgn' (by simp only [det3_expand, PiLp.sub_apply]; ring) E2⟩
+    refine Or.inr ⟨(hvt 1).smul hc, (hvt 4).smul hc',       sgn (by simp only [det3_expand, PiLp.sub_apply]; ring) E4,
+      sgn' (by simp only [det3_expand, PiLp.sub_apply]; ring) E2,
+      hF1.smul hc hc', by
+        have := inj7 ![0, 1, 2, 3, 4, 5, 6] (by decide)
+        convert this using 1
+        funext i; fin_cases i <;> rfl⟩
   -- F2 in the labelling `σ1` (vertex `0`): `V = 014/0256` (`t = 0`), `V′ = 046/015` (`t = 5`)
   · intro u hu h1 h2
     obtain ⟨hdet, c, hc, e⟩ := test21_of_perp hD hg 6 hu h1 h2
@@ -1481,9 +1452,12 @@ theorem cert21_of_generic {o E₁ E₂ E₃ : ℝ³} {θ : Fin 7 → ℝ} {y : F
   · intro u v hu h1 h2 hv h3 h4
     obtain ⟨-, c, hc, rfl⟩ := test21_of_perp hD hg 6 hu h1 h2
     obtain ⟨-, c', hc', rfl⟩ := test21_of_perp hD hg 7 hv h3 h4
-    refine Or.inr ⟨(hvt 0).smul hc, (hvt 5).smul hc', hF2.imp (·.smul hc) (·.smul hc'),
-      sgn (by simp only [det3_expand, PiLp.sub_apply]; ring) E3,
-      sgn' (by simp only [det3_expand, PiLp.sub_apply]; ring) E2⟩
+    refine Or.inr ⟨(hvt 0).smul hc, (hvt 5).smul hc',       sgn (by simp only [det3_expand, PiLp.sub_apply]; ring) E3,
+      sgn' (by simp only [det3_expand, PiLp.sub_apply]; ring) E2,
+      hF2.smul hc hc', by
+        have := inj7 ![4, 1, 2, 5, 0, 3, 6] (by decide)
+        convert this using 1
+        funext i; fin_cases i <;> rfl⟩
   -- F2 in the labelling `σ2` (vertex `3`): `V = 135/2346` (`t = 3`), `V′ = 235/134` (`t = 6`)
   · intro u hu h1 h2
     obtain ⟨hdet, c, hc, e⟩ := test21_of_perp hD hg 8 hu h1 h2
@@ -1496,9 +1470,12 @@ theorem cert21_of_generic {o E₁ E₂ E₃ : ℝ³} {θ : Fin 7 → ℝ} {y : F
   · intro u v hu h1 h2 hv h3 h4
     obtain ⟨-, c, hc, rfl⟩ := test21_of_perp hD hg 8 hu h1 h2
     obtain ⟨-, c', hc', rfl⟩ := test21_of_perp hD hg 9 hv h3 h4
-    refine Or.inr ⟨(hvt 3).smul hc, (hvt 6).smul hc', hF3.imp (·.smul hc) (·.smul hc'),
-      sgn (by simp only [det3_expand, PiLp.sub_apply]; ring) E1,
-      sgn' (by simp only [det3_expand, PiLp.sub_apply]; ring) E2⟩
+    refine Or.inr ⟨(hvt 3).smul hc, (hvt 6).smul hc',       sgn (by simp only [det3_expand, PiLp.sub_apply]; ring) E1,
+      sgn' (by simp only [det3_expand, PiLp.sub_apply]; ring) E2,
+      hF3.smul hc hc', by
+        have := inj7 ![5, 1, 6, 4, 3, 0, 2] (by decide)
+        convert this using 1
+        funext i; fin_cases i <;> rfl⟩
   -- F2 in the labelling `σ2σ1` (vertex `5`): `V = 135/0256` (`t = 2`), `V′ = 235/015` (`t = 7`)
   · intro u hu h1 h2
     obtain ⟨hdet, c, hc, e⟩ := test21_of_perp hD hg 10 hu h1 h2
@@ -1511,9 +1488,12 @@ theorem cert21_of_generic {o E₁ E₂ E₃ : ℝ³} {θ : Fin 7 → ℝ} {y : F
   · intro u v hu h1 h2 hv h3 h4
     obtain ⟨-, c, hc, rfl⟩ := test21_of_perp hD hg 10 hu h1 h2
     obtain ⟨-, c', hc', rfl⟩ := test21_of_perp hD hg 11 hv h3 h4
-    refine Or.inr ⟨(hvt 2).smul hc, (hvt 7).smul hc', hF4.imp (·.smul hc) (·.smul hc'),
-      sgn (by simp only [det3_expand, PiLp.sub_apply]; ring) E0,
-      sgn' (by simp only [det3_expand, PiLp.sub_apply]; ring) E2⟩
+    refine Or.inr ⟨(hvt 2).smul hc, (hvt 7).smul hc',       sgn (by simp only [det3_expand, PiLp.sub_apply]; ring) E0,
+      sgn' (by simp only [det3_expand, PiLp.sub_apply]; ring) E2,
+      hF4.smul hc hc', by
+        have := inj7 ![3, 1, 6, 0, 5, 4, 2] (by decide)
+        convert this using 1
+        funext i; fin_cases i <;> rfl⟩
 
 /-! ### Ties across named views -/
 
@@ -1768,10 +1748,10 @@ theorem exists_certSeq21 {x : Fin 7 → ℝ³} (T : Facets21 x) (htie : OneTie21
       noTieAt_seg_of_tie htie hsubK (by decide) (hv 1) (hw 4 0 (by decide)),
       noTieAt_seg_of_tie htie hsubK (by decide) (hv 2) (hw 5 3 (by decide)),
       noTieAt_seg_of_tie htie hsubK (by decide) (hv 3) (hw 3 5 (by decide))⟩
-    ⟨noTieAt_or htie hsubK (by decide) (hv 1) (hv 4),
-      noTieAt_or htie hsubK (by decide) (hv 0) (hv 5),
-      noTieAt_or htie hsubK (by decide) (hv 3) (hv 6),
-      noTieAt_or htie hsubK (by decide) (hv 2) (hv 7)⟩
+    ⟨IndepF.of_noTie (noTieAt_or htie hsubK (by decide) (hv 1) (hv 4)),
+      IndepF.of_noTie (noTieAt_or htie hsubK (by decide) (hv 0) (hv 5)),
+      IndepF.of_noTie (noTieAt_or htie hsubK (by decide) (hv 3) (hv 6)),
+      IndepF.of_noTie (noTieAt_or htie hsubK (by decide) (hv 2) (hv 7))⟩
 
 
 /-- **Type 21 outside the HDN set and codimension 2** (§18.6 step 2).  A type-21 shape `x`

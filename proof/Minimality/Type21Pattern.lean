@@ -303,7 +303,7 @@ theorem F2Views.toL {V : Finset ℝ³} {a a' b b' c c' d : ℝ³} (h : F2Views V
     F2ViewsL V (NoHDNAt V) a a' b b' c c' d :=
   ⟨fun u hu h1 h2 => ⟨(h.1 u hu h1 h2).1, fun _ => (h.1 u hu h1 h2).2.2⟩,
     fun v hv h1 h2 => ⟨(h.2 v hv h1 h2).1, (h.2 v hv h1 h2).2.2⟩,
-    fun u v hu h1 h2 hv h3 h4 => Or.inl ⟨(h.1 u hu h1 h2).2.1, (h.2 v hv h3 h4).2.1⟩⟩
+    fun u v hu h1 h2 hv h3 h4 => Or.inl (Or.inl ⟨(h.1 u hu h1 h2).2.1, (h.2 v hv h3 h4).2.1⟩)⟩
 
 /-- The special positions of the other classes for one labelling `F` of `K − 2` with the cap
 `d`: those of the two vertex tests of F2 (`F2Views`).  (The switch surface `H⁻_c` of class (c) is

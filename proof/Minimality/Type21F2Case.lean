@@ -1,6 +1,7 @@
 module
 
 public import Minimality.Type21Other
+public import Minimality.Type21F2Weak
 
 @[expose] public section
 
@@ -157,7 +158,8 @@ theorem axisHidden_of_rel {P P' Q Q' u m : ℝ³} {p q γ x y z : ℝ} (hp : 0 <
 every direction `u ≠ 0` of the line `abc ∩ a'bc'` (`V`, rim `b, d, b', c`) and every direction
 `v ≠ 0` of `abc' ∩ a'bc` (`V′`, rim `b, a', b', a`), the far side off the antipode
 (`[c − d, b' − d, u] ≠ 0`, `[a − a', b' − a', v] ≠ 0`), the views satisfy `L`, and the ties of
-the two rims are allowed ones (`F2Tie`). -/
+the two rims are allowed ones (`F2Tie`, or `F2TieW`: one tie at each view, the tied pairs
+independent). -/
 def F2ViewsL (K : Finset ℝ³) (L : ℝ³ → Prop) (a a' b b' c c' d : ℝ³) : Prop :=
   (∀ u : ℝ³, u ≠ 0 → det3 (a - b) (c - b) u = 0 → det3 (a' - b) (c' - b) u = 0 →
     det3 (c - d) (b' - d) u ≠ 0 ∧ (VRim K a a' b b' c c' d u → L u)) ∧
@@ -165,8 +167,9 @@ def F2ViewsL (K : Finset ℝ³) (L : ℝ³ → Prop) (a a' b b' c c' d : ℝ³) 
     det3 (a - a') (b' - a') v ≠ 0 ∧ L v) ∧
   (∀ u v : ℝ³, u ≠ 0 → det3 (a - b) (c - b) u = 0 → det3 (a' - b) (c' - b) u = 0 →
     v ≠ 0 → det3 (a - b) (c' - b) v = 0 → det3 (a' - b) (c - b) v = 0 →
-    F2Tie K b b' d c a' a u v)
+    F2Tie K b b' d c a' a u v ∨ F2TieW K a a' b b' c c' d u v)
 
+set_option maxHeartbeats 800000 in
 /-- **Lemma 16.24, steps 2–4, in the frame `4; 3, 5, 6`.**  The bracket values are parameters
 (`g05 = [0 5]`, `g10 = [1 0]`, …, all positive in the pattern `(+, −, +)`); `VA`, `VC` are the
 dependencies `[1 ·]`, `[5 ·]` at `4`, `VD` the cap, `hu`, `hu'` the views.  The facts of step 1
@@ -466,7 +469,11 @@ theorem cert_type21_F2_frame {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b'
     rcases hσ with h | h
     · right; rw [h]
     · left; rw [h]; norm_num
-  exact cert_type21_F2 F G hσ₁
+  have hL₁' := (hF2.1 ((-σ) • u) (smul_ne_zero (by rcases hσ with rfl | rfl <;> norm_num) hu0)
+      (by rw [det3_smul_right, hN1, mul_zero]) (by rw [det3_smul_right, hN2, mul_zero])).2
+  have hL₂' := (hF2.2.1 (σ • v) (smul_ne_zero (by rcases hσ with rfl | rfl <;> norm_num) hv0)
+      (by rw [det3_smul_right, hN3, mul_zero]) (by rw [det3_smul_right, hN4, mul_zero])).2
+  exact cert_type21_F2_weak F G hσ₁
     (pos_of_scaled (by positivity) dT1 (by
       have := mul_pos (show 0 < g05 * g51 * (τ * g13 * g56 + r * g35) by positivity) hσD
       linarith))
@@ -487,10 +494,8 @@ theorem cert_type21_F2_frame {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b'
       have := mul_pos (show 0 < g13 * g10 * g56 by positivity) hσD
       linarith))
     hP₂ hm₂ hm₂' hX₂ hmeet hsign hties hc'u hcone hΔ
-    (hF2.1 ((-σ) • u) (smul_ne_zero (by rcases hσ with rfl | rfl <;> norm_num) hu0)
-      (by rw [det3_smul_right, hN1, mul_zero]) (by rw [det3_smul_right, hN2, mul_zero])).2
-    (hF2.2.1 (σ • v) (smul_ne_zero (by rcases hσ with rfl | rfl <;> norm_num) hv0)
-      (by rw [det3_smul_right, hN3, mul_zero]) (by rw [det3_smul_right, hN4, mul_zero])).2
+    hL₁' hL₂'
+    hN1 hN2 hN3 hN4
 
 /-- **Lemma 16.24 (F2 on the rest of class (c))**, in `τ`: `K − 2` in the pattern `(+, −, +)`,
 `2` beyond `013` (`{5 4} > 0`) but not beyond `145` (`{0 3} < 0`), `1 → 0` a quad edge of

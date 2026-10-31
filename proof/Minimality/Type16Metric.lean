@@ -29,34 +29,6 @@ open Finset Filter
 
 /-! ### Named views under linear maps -/
 
-/-- The determinant of a linear map of `ℝ³`, as the triple product of the images of the
-standard basis. -/
-noncomputable def detMap (M : ℝ³ →L[ℝ] ℝ³) : ℝ :=
-  det3 (M (EuclideanSpace.single 0 1)) (M (EuclideanSpace.single 1 1))
-    (M (EuclideanSpace.single 2 1))
-
-theorem map_coord (M : ℝ³ →L[ℝ] ℝ³) (a : ℝ³) (j : Fin 3) :
-    (M a) j = a 0 * (M (EuclideanSpace.single 0 1)) j + a 1 * (M (EuclideanSpace.single 1 1)) j +
-      a 2 * (M (EuclideanSpace.single 2 1)) j := by
-  have ha : a = a 0 • EuclideanSpace.single (0 : Fin 3) (1 : ℝ) +
-      a 1 • EuclideanSpace.single (1 : Fin 3) (1 : ℝ) +
-      a 2 • EuclideanSpace.single (2 : Fin 3) (1 : ℝ) := by
-    ext i; fin_cases i <;> simp
-  conv_lhs => rw [ha]
-  simp only [map_add, map_smul, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]
-
-theorem det3_map (M : ℝ³ →L[ℝ] ℝ³) (a b c : ℝ³) :
-    det3 (M a) (M b) (M c) = detMap M * det3 a b c := by
-  simp only [detMap, det3_expand, map_coord M a, map_coord M b, map_coord M c]
-  ring
-
-theorem planeLine_map (M : ℝ³ →L[ℝ] ℝ³) (p₀ p₁ p₂ q₀ q₁ q₂ : ℝ³) :
-    planeLine (M p₀) (M p₁) (M p₂) (M q₀) (M q₁) (M q₂) =
-      detMap M • M (planeLine p₀ p₁ p₂ q₀ q₁ q₂) := by
-  rw [planeLine, planeLine, ← map_sub M p₁ p₀, ← map_sub M p₂ p₀, ← map_sub M q₂ q₀,
-    ← map_sub M q₁ q₀, det3_map, det3_map]
-  simp only [map_sub, map_smul, smul_sub, smul_smul]
-
 theorem view16_map_inl (M : ℝ³ →L[ℝ] ℝ³) (y : Fin 7 → ℝ³) (i j : Fin 7) :
     view16 (fun l => M (y l)) (.inl (i, j)) = M (view16 y (.inl (i, j))) := by
   simp [view16]
@@ -359,14 +331,6 @@ theorem robust_of_equiv {k : ℕ} [NeZero k] (a b : ZMod k → ℝ) (r : ℤ)
     rw [h1]
     congr 1
     ring
-
-theorem robust_mul_ne_zero {k : ℕ} {z : ZMod k → ℝ} (hz : IsRobustUnimodal z) {c : ℝ}
-    (hc : c ≠ 0) : IsRobustUnimodal (fun i => c * z i) := by
-  rcases lt_or_gt_of_ne hc with h | h
-  · have := (hz.smul (neg_pos.mpr h)).neg
-    convert this using 2 with i
-    ring
-  · exact hz.smul h
 
 /-- The relation between a labelled rim and a rotation or reflection of another, on depths. -/
 theorem equiv_aux {k : ℕ} [NeZero k] (a b : ZMod k → ℝ) (r : ℤ) (lam : ℝ) (hlam : lam ≠ 0)
