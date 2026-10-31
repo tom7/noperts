@@ -23,6 +23,15 @@ namespace Minimality
 open scoped RealInnerProductSpace Topology
 open Finset Filter
 
+/-- The injectivity and segment facts shared by the facet structures of types 21 and 29: the only
+hypotheses of `quad_offsets`, `quad_middles`, `isRupert_vSector`, `isRupert_vTriLim`. -/
+structure InjNoSeg (x : Fin 7 → ℝ³) : Prop where
+  inj : Function.Injective x
+  noSeg : ∀ i j m : Fin 7, x m ≠ x i → x m ≠ x j → ∀ s : ℝ, 0 < s → s < 1 →
+    x m ≠ x i + s • (x j - x i)
+
+theorem Facets21.toInjNoSeg {x : Fin 7 → ℝ³} (T : Facets21 x) : InjNoSeg x := ⟨T.inj, T.noSeg⟩
+
 /-- A facet's normal is not orthogonal to the cross product of two of its edges at a vertex. -/
 theorem Face16.det3_normal_ne {x : Fin 7 → ℝ³} {S : Finset (Fin 7)} (F : Face16 x S)
     {i j a b : Fin 7} (hi : i ∈ S) (hj : j ∈ S) (ha : a ∈ S) (hb : b ∉ S)
@@ -155,7 +164,7 @@ view `u` the quadrilateral `S_Q = {v, a, m, m'}` (apex `v`, far end `a`) and the
 left of the sides of the triangle rim `v a b`.  If the sector rim `v m a b` (the middle `m` shown,
 `m'` and `n` hidden) is robustly unimodal, a tilt into the sector shows it, so the set is Rupert,
 whatever its horizontal double normals. -/
-theorem isRupert_vSector {x : Fin 7 → ℝ³} (T : Facets21 x) {v a b n m m' : Fin 7}
+theorem isRupert_vSector {x : Fin 7 → ℝ³} (T : InjNoSeg x) {v a b n m m' : Fin 7}
     {SQ ST : Finset (Fin 7)} (FQ : Face16 x SQ) (FT : Face16 x ST)
     (hmem : v ∈ SQ ∧ a ∈ SQ ∧ m ∈ SQ ∧ m' ∈ SQ ∧ b ∉ SQ ∧
       (∀ i ∈ SQ, i = v ∨ i = a ∨ i = m ∨ i = m') ∧
@@ -289,7 +298,7 @@ theorem isRobustUnimodal_quad_of {z₀ z₁ z₂ z₃ : ℝ} (hd : [z₀, z₁, 
 the face `S_Q ∋ v, a, m₁, m₂` with apex `v` and far end `a` opposite (the sides `v m₁`, `v m₂` are
 edges: facets `S₁ ∋ v, m₁` and `S₂ ∋ v, m₂` with the other two beneath), seen edge-on at `u`:
 if `m_i = v + s_i (a − v) + δ_i u`, then `δ₁ δ₂ < 0`. -/
-theorem quad_offsets21 {x : Fin 7 → ℝ³} (T : Facets21 x) {v a b m₁ m₂ : Fin 7}
+theorem quad_offsets {x : Fin 7 → ℝ³} (T : InjNoSeg x) {v a b m₁ m₂ : Fin 7}
     {SQ S₁ S₂ : Finset (Fin 7)} (FQ : Face16 x SQ) (F₁ : Face16 x S₁) (F₂ : Face16 x S₂)
     (hmem : v ∈ SQ ∧ a ∈ SQ ∧ m₁ ∈ SQ ∧ m₂ ∈ SQ ∧ b ∉ SQ ∧ v ∈ S₁ ∧ m₁ ∈ S₁ ∧ a ∉ S₁ ∧
       m₂ ∉ S₁ ∧ v ∈ S₂ ∧ m₂ ∈ S₂ ∧ a ∉ S₂ ∧ m₁ ∉ S₂)
@@ -366,7 +375,7 @@ edges: facets `S₁ ∋ v, m₁` and `S₂ ∋ v, m₂` with the other two benea
 the face's plane and is not along `a − v`, and `b` (off the face) is strictly left of `v a`.  If
 every point is weakly left of the triangle `v a b`, then `m₁`, `m₂` lie over the open chord, on
 opposite sides: `m_i = v + s_i (a − v) + δ_i u`, `0 < s_i < 1`, `δ₁ δ₂ < 0`. -/
-theorem quad_middles21 {x : Fin 7 → ℝ³} (T : Facets21 x) {v a b m₁ m₂ : Fin 7}
+theorem quad_middles {x : Fin 7 → ℝ³} (T : InjNoSeg x) {v a b m₁ m₂ : Fin 7}
     {SQ S₁ S₂ : Finset (Fin 7)} (FQ : Face16 x SQ) (F₁ : Face16 x S₁) (F₂ : Face16 x S₂)
     (hmem : v ∈ SQ ∧ a ∈ SQ ∧ m₁ ∈ SQ ∧ m₂ ∈ SQ ∧ b ∉ SQ ∧ v ∈ S₁ ∧ m₁ ∈ S₁ ∧ a ∉ S₁ ∧
       m₂ ∉ S₁ ∧ v ∈ S₂ ∧ m₂ ∈ S₂ ∧ a ∉ S₂ ∧ m₁ ∉ S₂)
@@ -412,7 +421,7 @@ theorem quad_middles21 {x : Fin 7 → ℝ³} (T : Facets21 x) {v a b m₁ m₂ :
   obtain ⟨s₁, δ₁, hs₁0, hs₁1, hm₁⟩ := coords h1Q (Ne.symm hv1') (Ne.symm ha1')
   obtain ⟨s₂, δ₂, hs₂0, hs₂1, hm₂⟩ := coords h2Q (Ne.symm hv2') (Ne.symm ha2')
   refine ⟨s₁, δ₁, s₂, δ₂, hs₁0, hs₁1, hs₂0, hs₂1, ?_, hm₁, hm₂⟩
-  exact quad_offsets21 T FQ F₁ F₂ ⟨hvQ, haQ, h1Q, h2Q, hbQ, hv1, h11, ha1, h21, hv2, h22, ha2, h12⟩
+  exact quad_offsets T FQ F₁ F₂ ⟨hvQ, haQ, h1Q, h2Q, hbQ, hv1, h11, ha1, h21, hv2, h22, ha2, h12⟩
     (by simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
       List.nodup_nil, and_true]; exact ⟨⟨hva, hv1', hv2'⟩, ⟨ha1', ha2'⟩, h12', not_false⟩)
     hpar hm₁ hm₂
@@ -423,7 +432,7 @@ The shapes `K_n → x` carry the triangle certificate `v a b` at views `u_n → 
 `S_T = {v, b, n}`.  At the limit, with no two points over one point, (G1) and distinct depths, one
 of the two sector rims `v m a b` is unimodal: if `b` is below the higher of `v`, `a`, the middle
 above the chord, else the one below.  So `x` is Rupert, whatever its horizontal double normals. -/
-theorem isRupert_vTriLim {x : Fin 7 → ℝ³} (T : Facets21 x) {v a b n m₁ m₂ : Fin 7}
+theorem isRupert_vTriLim {x : Fin 7 → ℝ³} (T : InjNoSeg x) {v a b n m₁ m₂ : Fin 7}
     {SQ ST S₁ S₂ : Finset (Fin 7)} (FQ : Face16 x SQ) (FT : Face16 x ST) (F₁ : Face16 x S₁)
     (F₂ : Face16 x S₂)
     (hmem : v ∈ SQ ∧ a ∈ SQ ∧ m₁ ∈ SQ ∧ m₂ ∈ SQ ∧ b ∉ SQ ∧
@@ -473,7 +482,7 @@ theorem isRupert_vTriLim {x : Fin 7 → ℝ³} (T : Facets21 x) {v a b n m₁ m�
     · obtain ⟨i, hi, he⟩ := mem_image.mp h
       exact haT (T.inj he ▸ hi)
   obtain ⟨s₁, δ₁, s₂, δ₂, hs₁0, hs₁1, hs₂0, hs₂1, hδδ, hm₁, hm₂⟩ :=
-    quad_middles21 T FQ F₁ F₂ ⟨hvQ, haQ, h1Q, h2Q, hbQ, hv1, h11, ha1, h21, hv2, h22, ha2, h12⟩
+    quad_middles T FQ F₁ F₂ ⟨hvQ, haQ, h1Q, h2Q, hbQ, hv1, h11, ha1, h21, hv2, h22, ha2, h12⟩
       (by simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
         List.nodup_nil, and_true]; exact ⟨⟨hva, hvb, hv1', hv2'⟩, ⟨hab, ha1', ha2'⟩,
           ⟨hb1, hb2⟩, h12', not_false⟩) hQu hpar hD
@@ -749,7 +758,7 @@ theorem isRupert_vQuadLim {x : Fin 7 → ℝ³} (T : Facets21 x) {v a c b h w n 
     (FQ.inner_sub hwQ hvQ) hcu hNQ
   have hxh : x h = x v + sh • (x a - x v) + δh • u := by linear_combination (norm := module) hhX
   have hxw : x w = x v + sw • (x a - x v) + δw • u := by linear_combination (norm := module) hwX
-  have hδδ : δh * δw < 0 := quad_offsets21 T FQ F₁ F₂
+  have hδδ : δh * δw < 0 := quad_offsets T.toInjNoSeg FQ F₁ F₂
     ⟨hvQ, haQ, hhQ, hwQ, hbQ, hv1, hh1, ha1, hw1, hv2, hw2, ha2, hh2⟩
     (by simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
       List.nodup_nil, and_true]; exact ⟨⟨hva, hvh, hvw⟩, ⟨hah, haw⟩, hhw, not_false⟩)
@@ -972,7 +981,7 @@ theorem isRupert_line21 {x : Fin 7 → ℝ³} (T : Facets21 x) {v a c b h w n : 
       exact isRupert_vQuadLim T FQ FT F₁ F₂ hSQ hST ⟨hvS₁, hhS₁, haS₁, hwS₁⟩
         ⟨hvS₂, hwS₂, haS₂, hhS₂⟩ hnd hu hQu hTu _ hus K hK (hfr'.mono fun k hk => hk.1) hg
         (smul_ne_zero hs0 hW') hcone hΔ hoff
-    · exact isRupert_vTriLim T FQ FT F₁ F₂ vt vtnd hu hQu _ hus K hK ht hg.par hg.g1 hg.dist
+    · exact isRupert_vTriLim T.toInjNoSeg FQ FT F₁ F₂ vt vtnd hu hQu _ hus K hK ht hg.par hg.g1 hg.dist
 
 theorem LineDat21.norm {y : Fin 7 → ℝ³} {v a c b h w n : Fin 7} {W W' : ℝ³} {r : ℝ}
     (hr : r ≠ 0) (hd : LineDat21 y v a c b h w n (r • W) W') :

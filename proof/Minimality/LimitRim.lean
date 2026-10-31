@@ -2,6 +2,8 @@ module
 
 public import Minimality.LimitCert
 public import Mathlib.Analysis.Convex.KreinMilman
+public import Minimality.RimHDN
+public import Minimality.Perturb
 
 @[expose] public section
 
@@ -513,36 +515,73 @@ theorem exists_lift_screen {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R ∈ SO3) {u 
     simp at h0 h1
     ext j; fin_cases j <;> simp [← h0, ← h1]
 
-/-- **The limit lemma, with the corner rim constructed** (Lemma 18.2 (a)–(c) with Theorems 18.1
-and 18.3).  Shapes `xs t → x` carry one labelled rim certificate (`RimCertAt`, views
-`us t → u ≠ 0`), and the ties of the labelled depths of `x` are ties along the sequence (for
-instance, the labelled depths of `x` are distinct).  If no point of `x` lies inside a segment of
-two others, `x` does not lie in a plane, and there is no horizontal double normal at `u`, then
-`x` is Rupert: the least label over each corner of the shadow gives a strictly convex rim
-(`exists_cornerRim`) whose depths are robustly unimodal, and every other point is interior, a
-chord middle (`δ ≠ 0` since no point is inside a segment) or a double. -/
-theorem isRupert_of_tendsto_rimCert {n : ℕ} (x : Fin n → ℝ³)
+/-- The polygon part of `RimCertAt` (same as G3p's `RimGeom`). -/
+def RimGeomG {n k : ℕ} (x : Fin n → ℝ³) (u : ℝ³) (lab : ZMod k → Fin n) : Prop :=
+  3 ≤ k ∧ (∀ i j : ZMod k, j ≠ i → j ≠ i + 1 →
+    0 < det3 (x (lab (i + 1)) - x (lab i)) (x (lab j) - x (lab i)) u) ∧
+  ∀ (m : Fin n) (i : ZMod k), 0 ≤ det3 (x (lab (i + 1)) - x (lab i)) (x m - x (lab i)) u
+
+theorem RimGeomG.ne_zero {n k : ℕ} {x : Fin n → ℝ³} {u : ℝ³} {lab : ZMod k → Fin n}
+    (h : RimGeomG x u lab) : u ≠ 0 := by
+  rintro rfl
+  have := h.2.1 0 (0 - 1) (zmod_sub_one_ne h.1 0) (zmod_sub_one_ne_add_one h.1 0)
+  simp [det3] at this
+
+theorem RimGeomG.isCcwPolygon {n k : ℕ} {x : Fin n → ℝ³} {u : ℝ³} {lab : ZMod k → Fin n}
+    (h : RimGeomG x u lab) {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R ∈ SO3) {r : ℝ} (hr : 0 < r)
+    (hRu : R.toEuclideanLin u = r • ez) :
+    IsCcwPolygon (fun i => proj_xy (R.toEuclideanLin (x (lab i)))) :=
+  ⟨h.1, fun i j hi hj => by
+    simp only [proj_rot_sub]; exact cross2_proj_rot_pos hR hr hRu (h.2.1 i j hi hj)⟩
+
+theorem RimGeomG.suppIn {n k : ℕ} [NeZero k] {x : Fin n → ℝ³} {u : ℝ³} {lab : ZMod k → Fin n}
+    (h : RimGeomG x u lab) (m : Fin n) : SuppIn u (fun i => x (lab i)) (x m) := by
+  obtain ⟨R, hR, r, hr, hRu⟩ := exists_rotation_to_ez_pos u h.ne_zero
+  have hp := h.isCcwPolygon hR hr hRu
+  have hq : proj_xy (R.toEuclideanLin (x m)) ∈
+      convexHull ℝ (Set.range fun i => proj_xy (R.toEuclideanLin (x (lab i)))) := by
+    refine hp.mem_convexHull_of_left fun i => ?_
+    have := h.2.2 m i
+    rw [← cross2_proj_rot hR hRu] at this
+    simp only [proj_rot_sub]
+    exact nonneg_of_mul_nonneg_right (by linarith) hr
+  intro w hw
+  obtain ⟨y', ⟨i, rfl⟩, hle⟩ := ((innerₛₗ ℝ (proj_xy (R.toEuclideanLin w))).convexOn
+    (convex_convexHull ℝ _)).exists_ge_of_mem_convexHull (subset_convexHull ℝ _) hq
+  refine ⟨i, ?_⟩
+  rw [inner_eq_proj_of_perp hR hr.ne' hRu hw, inner_eq_proj_of_perp hR hr.ne' hRu hw]
+  simpa only [innerₛₗ_apply_apply] using hle
+
+theorem RimGeomG.cyc_all {n k : ℕ} [NeZero k] {x : Fin n → ℝ³} {u : ℝ³}
+    {lab : ZMod k → Fin n} (h : RimGeomG x u lab) {a b c : ZMod k} (hc : CycBetween a b c) :
+    0 < det3 (x (lab b) - x (lab a)) (x (lab c) - x (lab a)) u := by
+  obtain ⟨R, hR, r, hr, hRu⟩ := exists_rotation_to_ez_pos u h.ne_zero
+  have := (h.isCcwPolygon hR hr hRu).cross2_pos_of_cycBetween hc
+  rw [← cross2_proj_rot hR hRu, ← proj_rot_sub, ← proj_rot_sub]
+  exact mul_pos hr this
+
+theorem isRupert_or_rimHDN_of_tendsto_geom {n : ℕ} (x : Fin n → ℝ³)
     (hseg : ∀ i j m : Fin n, x m ≠ x i → x m ≠ x j → ∀ s : ℝ, 0 < s → s < 1 →
       x m ≠ x i + s • (x j - x i))
     (hsp : ∃ i j l m : Fin n, det3 (x j - x i) (x l - x i) (x m - x i) ≠ 0)
     {k : ℕ} [NeZero k] (lab : ZMod k → Fin n) {u : ℝ³} (hu : u ≠ 0)
-    (hnd : NoHDNAt (univ.image x) u)
     {ι : Type*} {l : Filter ι} (xs : ι → Fin n → ℝ³) (us : ι → ℝ³)
     (hxs : ∀ m, Tendsto (fun t => xs t m) l (𝓝 (x m))) (hus : Tendsto us l (𝓝 u))
-    (hcert : ∃ᶠ t in l, RimCertAt (xs t) (us t) lab ∧
-      ∀ i j, ⟪x (lab i), u⟫ = ⟪x (lab j), u⟫ → ⟪xs t (lab i), us t⟫ = ⟪xs t (lab j), us t⟫) :
-    IsRupert (univ.image x) := by
+    (hc : ∃ᶠ t in l, RimGeomG (xs t) (us t) lab)
+    (hZ : IsRobustUnimodal (fun i => ⟪x (lab i), u⟫)) :
+    IsRupert (univ.image x) ∨
+      ∃ (k' : ℕ) (_ : NeZero k') (σ : ZMod k' → ZMod k),
+        RimCertAt x u (lab ∘ σ) ∧ IsRobustUnimodal (fun i => ⟪x (lab (σ i)), u⟫) ∧
+          ¬ NoHDNRim (fun i => x (lab (σ i))) u := by
   classical
   set X : ZMod k → ℝ³ := fun i => x (lab i) with hXdef
-  have hc := hcert.mono fun _ h => h.1
   -- Lemma 18.2 at `K`
   have hW : ∀ a b c, CycBetween a b c → 0 ≤ det3 (X b - X a) (X c - X a) u :=
-    fun a b c h => cyc_nonneg_of_tendsto hxs hus hc h
+    fun a b c h => le_of_tendsto_frequently tendsto_const_nhds
+      (Tendsto.det3' ((hxs _).sub (hxs _)) ((hxs _).sub (hxs _)) hus)
+      (hc.mono fun _ ht => (ht.cyc_all h).le)
   have hS : ∀ m, SuppIn u X (x m) := fun m =>
     suppIn_of_tendsto hu hus (fun i => hxs (lab i)) (hxs m) (hc.mono fun t ht => ht.suppIn m)
-  have hZ : IsRobustUnimodal (fun i => ⟪X i, u⟫) :=
-    isRobustUnimodal_of_tendsto_ties (fun i => (hxs (lab i)).inner hus)
-      (hcert.mono fun t ht => ⟨ht.1.robust, ht.2⟩)
   -- the frame at `K`
   obtain ⟨R, hR, r, hr, hRu⟩ := exists_rotation_to_ez_pos u hu
   set P : ℝ³ → ℝ² := fun v => proj_xy (R.toEuclideanLin v) with hPdef
@@ -704,10 +743,55 @@ theorem isRupert_of_tendsto_rimCert {n : ℕ} (x : Fin n → ℝ³)
       rw [← this]; field_simp
     simp only [hdepth]
     exact (hZ.comp σ hσcyc).smul (inv_pos.mpr hr)
-  exact isRupert_of_uniform_doubles_robustUnimodal V M D R hR hr hRu xc (fun i => hmem _) hxM hq'
-    hin hz (hnd R hR r hr.ne' hRu k' xc (fun i => hmem _) hq')
-    (fun m hm => (mem_filter.mp hm).2) (fun y hy => (mem_filter.mp hy).2.2)
+  by_cases hrim : NoHDNRim (fun i => x (lab (σ i))) u
+  · left
+    exact isRupert_of_uniform_doubles_robustUnimodal V M D R hR hr hRu xc (fun i => hmem _) hxM hq'
+      hin hz (hrim R hR r hr.ne' hRu hq')
+      (fun m hm => (mem_filter.mp hm).2) (fun y hy => (mem_filter.mp hy).2.2)
+  · right
+    have hzσ : IsRobustUnimodal (fun i => ⟪x (lab (σ i)), u⟫) := hZ.comp σ hσcyc
+    refine ⟨k', hk', σ, ?_, hzσ, hrim⟩
+    refine ⟨hq'.1, fun i j hi hj => ?_, fun m i => ?_, hzσ⟩
+    · have := hq'.2 i j hi hj
+      simp only [hqdef, hPdef, hxcdef] at this
+      rw [proj_rot_sub, proj_rot_sub] at this
+      rw [← cross2_proj_rot hR hRu]
+      exact mul_pos hr this
+    · have := hq'.left_of_mem_convexHull i (hhull' m)
+      simp only [hqdef, hPdef, hxcdef] at this
+      rw [proj_rot_sub, proj_rot_sub] at this
+      rw [← cross2_proj_rot hR hRu]
+      exact mul_nonneg hr.le this
 
+
+/-- **The limit lemma, with the corner rim constructed** (Lemma 18.2 (a)–(c) with Theorems 18.1
+and 18.3).  Shapes `xs t → x` carry one labelled rim certificate (`RimCertAt`, views
+`us t → u ≠ 0`), and the ties of the labelled depths of `x` are ties along the sequence (for
+instance, the labelled depths of `x` are distinct).  If no point of `x` lies inside a segment of
+two others, `x` does not lie in a plane, and there is no horizontal double normal at `u`, then
+`x` is Rupert: the least label over each corner of the shadow gives a strictly convex rim
+(`exists_cornerRim`) whose depths are robustly unimodal, and every other point is interior, a
+chord middle (`δ ≠ 0` since no point is inside a segment) or a double. -/
+theorem isRupert_of_tendsto_rimCert {n : ℕ} (x : Fin n → ℝ³)
+    (hseg : ∀ i j m : Fin n, x m ≠ x i → x m ≠ x j → ∀ s : ℝ, 0 < s → s < 1 →
+      x m ≠ x i + s • (x j - x i))
+    (hsp : ∃ i j l m : Fin n, det3 (x j - x i) (x l - x i) (x m - x i) ≠ 0)
+    {k : ℕ} [NeZero k] (lab : ZMod k → Fin n) {u : ℝ³} (hu : u ≠ 0)
+    (hnd : NoHDNAt (univ.image x) u)
+    {ι : Type*} {l : Filter ι} (xs : ι → Fin n → ℝ³) (us : ι → ℝ³)
+    (hxs : ∀ m, Tendsto (fun t => xs t m) l (𝓝 (x m))) (hus : Tendsto us l (𝓝 u))
+    (hcert : ∃ᶠ t in l, RimCertAt (xs t) (us t) lab ∧
+      ∀ i j, ⟪x (lab i), u⟫ = ⟪x (lab j), u⟫ → ⟪xs t (lab i), us t⟫ = ⟪xs t (lab j), us t⟫) :
+    IsRupert (univ.image x) := by
+  classical
+  have hZ : IsRobustUnimodal (fun i => ⟪x (lab i), u⟫) :=
+    isRobustUnimodal_of_tendsto_ties (fun i => (hxs (lab i)).inner hus)
+      (hcert.mono fun t ht => ⟨ht.1.robust, ht.2⟩)
+  have hG : ∃ᶠ t in l, RimGeomG (xs t) (us t) lab := hcert.mono fun _ h =>
+    ⟨h.1.three, h.1.cyc, h.1.left⟩
+  rcases isRupert_or_rimHDN_of_tendsto_geom x hseg hsp lab hu xs us hxs hus hG hZ with h | ⟨k', _, σ, _, _, hrim⟩
+  · exact h
+  · exact absurd (hnd.rim _ fun i => mem_image_of_mem _ (mem_univ _)) hrim
 
 end Minimality
 

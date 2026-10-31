@@ -622,7 +622,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.isRupert_vQuadLim
 #assert_standard_axioms Minimality.pi_sep_of_delta
 #assert_standard_axioms Minimality.esc_of_cone
-#assert_standard_axioms Minimality.quad_offsets21
+#assert_standard_axioms Minimality.quad_offsets
 #assert_standard_axioms Minimality.rimCertPts_axisTest_gen
 #assert_standard_axioms minimalNopert_of_certificatesValid
 #assert_standard_axioms Cu13.S1

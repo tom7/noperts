@@ -3,7 +3,7 @@ module
 public import Minimality.Type08S.P2Defs
 public import Minimality.Type08S.P2P4
 public import Minimality.Type08S.P2E1
-public import Minimality.Type08S.P2E2
+public import Minimality.LimitRim
 
 @[expose] public section
 
@@ -25,7 +25,7 @@ Proof (no tie restoration, no `TieOKG`, no `¬ Touch`):
    determinant); `c > z_w` is `TieN2 ∧ N2Closable` (with P4) resp. `TieT4 ∧ T4Closable`, Rupert by GT
    (`gt_far_N2''`, `gt_far_T4'`);
 5. the robust closing: generic approximants `θ_n → θ` in the same region give the polygon part for both
-   closings at one sign `s` (`poly08`); `E2.isRupert_or_rimHDN_of_tendsto_geom` with robustness at `K`
+   closings at one sign `s` (`poly08`); `isRupert_or_rimHDN_of_tendsto_geom` with robustness at `K`
    gives Rupert or a robust corner rim with its own HDN; N2's `K_{a'}` (not in `SC08`) is Rupert by
    `rupert_of_free_limit_rim`.
 -/
