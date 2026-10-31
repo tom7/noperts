@@ -67,6 +67,7 @@ public import Minimality.Virial
 public import Minimality.VirialQ
 public import Minimality.SecondOrder
 public import Minimality.SecondOrderT2
+public import Minimality.SecondOrderT2b
 
 /-!
 # Every nopert has at least 7 points
