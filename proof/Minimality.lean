@@ -65,6 +65,7 @@ public import Minimality.Type08S.P2RFinalJ
 public import Minimality.MirrorBound
 public import Minimality.Virial
 public import Minimality.VirialQ
+public import Minimality.VirialFlat
 public import Minimality.SecondOrder
 public import Minimality.SecondOrderT2
 public import Minimality.SecondOrderT2b
