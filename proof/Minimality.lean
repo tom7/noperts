@@ -65,6 +65,7 @@ public import Minimality.Type08S.P2RFinalJ
 public import Minimality.MirrorBound
 public import Minimality.Virial
 public import Minimality.VirialQ
+public import Minimality.SecondOrder
 
 /-!
 # Every nopert has at least 7 points
