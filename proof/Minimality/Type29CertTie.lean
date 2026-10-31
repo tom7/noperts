@@ -288,10 +288,10 @@ def pairViews29 : Finset (View29 × View29) :=
   {(.inr 0, .inr 1), (.inr 0, .inr 3), (.inl (0, 5), .inr 1), (.inr 3, .inr 1),
     (.inr 4, .inl (4, 6)), (.inr 2, .inl (3, 5)), (.inr 1, .inl (3, 4)), (.inl (0, 3), .inr 6)}
 
-/-- The combined pairs with no tie at one of the two views: `{Y1, Y2}` (closed without a sign
-product), tier (A) `(V, Y)` and its `σ`-image `(T2, Y')`. -/
+/-- The combined pairs with no tie at one of the two views: tier (A) `(V, Y)` and its `σ`-image
+`(T2, Y')`.  (`{Y1, Y2}` needs no such clause: `cert_k3_Yp` uses only one tie at each view.) -/
 def pairViewsNG29 : Finset (View29 × View29) :=
-  {(.inr 4, .inl (4, 6)), (.inr 2, .inl (3, 5)), (.inr 1, .inl (3, 4))}
+  {(.inr 2, .inl (3, 5)), (.inr 1, .inl (3, 4))}
 
 /-- The combined pairs with a tie at both views allowed when the two tied pairs are independent
 (`IndepF`; the sign-product route `pair_core_ie`, `shared_core_ie`): `P14`, `P11`, `{Xa, T2}`,
