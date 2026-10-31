@@ -40,39 +40,6 @@ namespace Minimality
 open scoped RealInnerProductSpace Topology
 open Finset Filter
 
-/-- **The nonvanishing set of a nonzero polynomial is dense**, as a sequence, in any number of
-variables (`exists_seq_eval_ne_zero` of type 16 for `Fin 7`; `MvPolynomial.funext_set` on
-boxes). -/
-theorem exists_seq_eval_ne_zero_fin {m : ℕ} {P : MvPolynomial (Fin m) ℝ} (hP : P ≠ 0)
-    (θ : Fin m → ℝ) :
-    ∃ θs : ℕ → Fin m → ℝ, Tendsto θs atTop (𝓝 θ) ∧ ∀ n, MvPolynomial.eval (θs n) P ≠ 0 := by
-  have box : ∀ n : ℕ, ∃ θ' : Fin m → ℝ, (∀ i, |θ' i - θ i| < 1 / ((n : ℝ) + 1)) ∧
-      MvPolynomial.eval θ' P ≠ 0 := by
-    intro n
-    have hε : (0 : ℝ) < 1 / ((n : ℝ) + 1) := by positivity
-    by_contra hc
-    push Not at hc
-    apply hP
-    refine MvPolynomial.funext_set (R := ℝ) (σ := Fin m) (p := P) (q := 0)
-      (fun i => Set.Ioo (θ i - 1 / ((n : ℝ) + 1)) (θ i + 1 / ((n : ℝ) + 1)))
-      (fun i => Set.Ioo_infinite (α := ℝ) (by linarith)) fun y hy => ?_
-    rw [map_zero]
-    refine hc y fun i => ?_
-    have := hy i (Set.mem_univ i)
-    rw [abs_sub_lt_iff]; constructor <;> linarith [this.1, this.2]
-  choose θs hθs hne using box
-  refine ⟨θs, tendsto_pi_nhds.mpr fun i => ?_, hne⟩
-  rw [Metric.tendsto_atTop]
-  intro ε hε
-  obtain ⟨M, hM⟩ := exists_nat_one_div_lt hε
-  refine ⟨M, fun n hn => ?_⟩
-  rw [Real.dist_eq]
-  have h1 := hθs n i
-  have h2 : 1 / ((n : ℝ) + 1) ≤ 1 / ((M : ℝ) + 1) := by
-    apply one_div_le_one_div_of_le (by positivity)
-    exact_mod_cast Nat.add_le_add_right hn 1
-  linarith
-
 /-! ### Labelled tests -/
 
 /-- A labelled test: a view as a function of the shape and a cyclic label sequence. -/

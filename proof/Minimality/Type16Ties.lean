@@ -4,6 +4,8 @@ public import Minimality.Cases
 public import Minimality.Type16Edge2
 public import Minimality.Type16Metric
 public import Minimality.Generic.LimitSeq
+public import Minimality.Generic.PairR2T
+public import Minimality.Generic.NamedViews
 
 @[expose] public section
 
@@ -95,25 +97,14 @@ theorem cert16_nfShape_tieSeg (o E₁ E₂ E₃ : ℝ³) (θ : Fin 7 → ℝ) (h
     exact (hvA.2 hv4).smul (inv_ne_zero hD')
   exact NF16.cert_nf Nn G Gσ W Wσ hR.1 hR.2 hgt
 
-theorem detMap_eq16 (L : ℝ³ →L[ℝ] ℝ³) : detMap L = LinearMap.det (L : ℝ³ →ₗ[ℝ] ℝ³) := by
-  rw [← LinearMap.det_toMatrix (EuclideanSpace.basisFun (Fin 3) ℝ).toBasis, Matrix.det_fin_three]
-  simp only [detMap, det3_expand, LinearMap.toMatrix_apply]
-  simp [EuclideanSpace.basisFun_apply]
-  ring
-
 /-- The named views are covariant (segments: linear; vertex crossings: `planeLine_map`, factor
 `det = 1`). -/
+theorem view16_eq_namedView : view16 = namedView vtx16 := by
+  funext x v; rcases v with _ | _ <;> rfl
+
 theorem covView_view16 (v : (Fin 7 × Fin 7) ⊕ Fin 6) :
-    CovView (fun y : Fin 7 → ℝ³ => view16 y v) := by
-  refine ⟨?_, ?_⟩
-  · refine continuous_iff_continuousAt.2 fun y => ?_
-    exact tendsto_view16 (fun m => (continuous_apply m).tendsto y) v
-  · intro L y hL
-    have hd : detMap L = 1 := by rw [detMap_eq16]; exact hL
-    rcases v with ⟨i, j⟩ | t
-    · exact view16_map_inl L y i j
-    · show view16 (fun i => L (y i)) (.inr t) = L (view16 y (.inr t))
-      rw [view16_map_inr, hd, one_smul]
+    CovView (fun y : Fin 7 → ℝ³ => view16 y v) :=
+  by rw [view16_eq_namedView]; exact covView_namedView vtx16 v
 
 /-- **At most one tied pair at a named view of a shape whose ties are ties of `x`.** -/
 theorem oneTieAt_of_sub {x y : Fin 7 → ℝ³} (hinj : Function.Injective x)
@@ -181,7 +172,7 @@ theorem exists_certSeq16_ties {x : Fin 7 → ℝ³} (T : Type16 x) (h : TwoTie16
     fun w a b hw => hgen (K n) (fun t => hrest n t) w a b hw
   refine ⟨?_, hties⟩
   have hD : det3 (L n N.E₁) (L n N.E₂) (L n N.E₃) ≠ 0 := by
-    rw [det3_map, detMap_eq16, hdet n, one_mul]; exact N.hD
+    rw [det3_map, detMap_eq_det, hdet n, one_mul]; exact N.hD
   have hSeg : TieSeg (univ.image (K n)) := by
     refine ⟨fun v hv w hw hvw => ?_⟩
     obtain ⟨i, -, rfl⟩ := mem_image.mp hv

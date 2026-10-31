@@ -17,7 +17,7 @@ limit view has a horizontal double normal.
 
 * `nfShape`, `ineq16`, `NF16.ofParams`: normal-form shapes from parameters.
 * `genPoly16`: the product of the sign conditions of the route (`Gen`, its `σ`-image, `R1`,
-  `R2`), a nonzero polynomial (`genPoly16_ne_zero`); `exists_seq_eval_ne_zero`: the shapes off
+  `R2`), a nonzero polynomial (`genPoly16_ne_zero`); `exists_seq_eval_ne_zero_fin`: the shapes off
   its zero set are dense (`MvPolynomial.funext_set` on small boxes).
 * `restore`: a unimodular shear `y ↦ y + s ⟪e, y⟫ b` (`e ⊥ b`) that restores one tie.
 * `TieInst16`, `SameTie16`, `OneTie16`: ties at the named views; **at most one tie** (counting
@@ -210,18 +210,18 @@ theorem NF16.Gen.ofFactors {x : Fin 7 → ℝ³} (N : NF16 x)
     sub_ne_zero.mp h9, sub_ne_zero.mp h10, h11, fun e => h12 (by rw [e, sub_self]), h13,
     h14⟩
 
-/-- **The nonvanishing set of a nonzero polynomial is dense**, as a sequence: every point is a
+/-- **The nonvanishing set of a nonzero polynomial is dense**, as a sequence, in any number of variables: every point is a
 limit of points where the polynomial does not vanish (`MvPolynomial.funext_set` on boxes). -/
-theorem exists_seq_eval_ne_zero {P : MvPolynomial (Fin 7) ℝ} (hP : P ≠ 0) (θ : Fin 7 → ℝ) :
-    ∃ θs : ℕ → Fin 7 → ℝ, Tendsto θs atTop (𝓝 θ) ∧ ∀ n, MvPolynomial.eval (θs n) P ≠ 0 := by
-  have box : ∀ n : ℕ, ∃ θ' : Fin 7 → ℝ, (∀ i, |θ' i - θ i| < 1 / ((n : ℝ) + 1)) ∧
+theorem exists_seq_eval_ne_zero_fin {m : ℕ} {P : MvPolynomial (Fin m) ℝ} (hP : P ≠ 0) (θ : Fin m → ℝ) :
+    ∃ θs : ℕ → Fin m → ℝ, Tendsto θs atTop (𝓝 θ) ∧ ∀ n, MvPolynomial.eval (θs n) P ≠ 0 := by
+  have box : ∀ n : ℕ, ∃ θ' : Fin m → ℝ, (∀ i, |θ' i - θ i| < 1 / ((n : ℝ) + 1)) ∧
       MvPolynomial.eval θ' P ≠ 0 := by
     intro n
     have hε : (0 : ℝ) < 1 / ((n : ℝ) + 1) := by positivity
     by_contra hc
     push Not at hc
     apply hP
-    refine MvPolynomial.funext_set (R := ℝ) (σ := Fin 7) (p := P) (q := 0)
+    refine MvPolynomial.funext_set (R := ℝ) (σ := Fin m) (p := P) (q := 0)
       (fun i => Set.Ioo (θ i - 1 / ((n : ℝ) + 1)) (θ i + 1 / ((n : ℝ) + 1)))
       (fun i => Set.Ioo_infinite (α := ℝ) (by linarith)) fun y hy => ?_
     rw [map_zero]
@@ -307,12 +307,29 @@ theorem tendsto_planeLine {ι : Type*} {l : Filter ι} {p₀ p₁ p₂ q₀ q₁
   exact ((Tendsto.det3' (h₁.sub h₀) (h₂.sub h₀) (k₂.sub k₀)).smul (k₁.sub k₀)).sub
     ((Tendsto.det3' (h₁.sub h₀) (h₂.sub h₀) (k₁.sub k₀)).smul (k₂.sub k₀))
 
+/-- **Named views from a table of vertex crossings** (shared by types 16, 21, 29): the segments
+`x j - x i` and, for each row of `vtx`, the line of two planes through label triples. -/
+noncomputable def namedView {k : ℕ}
+    (vtx : Fin k → (Fin 7 × Fin 7 × Fin 7) × (Fin 7 × Fin 7 × Fin 7)) (x : Fin 7 → ℝ³) :
+    (Fin 7 × Fin 7) ⊕ Fin k → ℝ³
+  | .inl ij => x ij.2 - x ij.1
+  | .inr t => planeLine (x (vtx t).1.1) (x (vtx t).1.2.1) (x (vtx t).1.2.2) (x (vtx t).2.1)
+      (x (vtx t).2.2.1) (x (vtx t).2.2.2)
+
+theorem tendsto_namedView {k : ℕ} (vtx : Fin k → (Fin 7 × Fin 7 × Fin 7) × (Fin 7 × Fin 7 × Fin 7))
+    {ι : Type*} {l : Filter ι} {K : ι → Fin 7 → ℝ³} {x : Fin 7 → ℝ³}
+    (hK : ∀ m, Tendsto (fun n => K n m) l (𝓝 (x m))) (v : (Fin 7 × Fin 7) ⊕ Fin k) :
+    Tendsto (fun n => namedView vtx (K n) v) l (𝓝 (namedView vtx x v)) := by
+  rcases v with ⟨i, j⟩ | t
+  · exact (hK j).sub (hK i)
+  · exact tendsto_planeLine (hK _) (hK _) (hK _) (hK _) (hK _) (hK _)
+
 theorem tendsto_view16 {ι : Type*} {l : Filter ι} {K : ι → Fin 7 → ℝ³} {x : Fin 7 → ℝ³}
     (hK : ∀ m, Tendsto (fun n => K n m) l (𝓝 (x m))) (v : (Fin 7 × Fin 7) ⊕ Fin 6) :
     Tendsto (fun n => view16 (K n) v) l (𝓝 (view16 x v)) := by
   rcases v with ⟨i, j⟩ | t
-  · exact (hK j).sub (hK i)
-  · exact tendsto_planeLine (hK _) (hK _) (hK _) (hK _) (hK _) (hK _)
+  · exact tendsto_namedView vtx16 hK (.inl (i, j))
+  · exact tendsto_namedView vtx16 hK (.inr t)
 
 /-- **The named views of a type-16 shape are nonzero** (except the degenerate segments). -/
 theorem Type16.view16_ne_zero {x : Fin 7 → ℝ³} (T : Type16 x) (v : (Fin 7 × Fin 7) ⊕ Fin 6)
@@ -348,68 +365,66 @@ theorem Type16.view16_ne_zero {x : Fin 7 → ℝ³} (T : Type16 x) (v : (Fin 7 �
     · have := vtx T.sigma.toNF 2; rwa [vtxView16_sigma] at this
 
 
-/-! ### Ties at the named views -/
+/-! ### Ties at named views (generic over the vertex-line index type) -/
 
-/-- A tie at a named view: two labels `s ≠ t` at equal depth along a nonzero named view. -/
-def TieInst16 (x : Fin 7 → ℝ³) (v : (Fin 7 × Fin 7) ⊕ Fin 6) (s t : Fin 7) : Prop :=
-  s ≠ t ∧ view16 x v ≠ 0 ∧ ⟪x s - x t, view16 x v⟫ = 0
+theorem inner_coords (a b : ℝ³) : ⟪a, b⟫ = a 0 * b 0 + a 1 * b 1 + a 2 * b 2 := by
+  simp [PiLp.inner_apply, Fin.sum_univ_three, mul_comm]
+
+/-- A tie at a named view: two labels `s ≠ t` at equal depth along a nonzero named view.
+(`view`: the named views of a type; `W`: its vertex-line index type.) -/
+def TieInstG {W : Type*} (view : (Fin 7 → ℝ³) → (Fin 7 × Fin 7) ⊕ W → ℝ³) (x : Fin 7 → ℝ³)
+    (v : (Fin 7 × Fin 7) ⊕ W) (s t : Fin 7) : Prop :=
+  s ≠ t ∧ view x v ≠ 0 ∧ ⟪x s - x t, view x v⟫ = 0
 
 /-- Two ties that are one equation for every shape: the same view (up to reversing a segment)
 and the same pair, or the tie of `s, t` along `i j` and the tie of `i, j` along `s t`. -/
-def SameTie16 (v : (Fin 7 × Fin 7) ⊕ Fin 6) (s t : Fin 7) (v' : (Fin 7 × Fin 7) ⊕ Fin 6)
+def SameTieG {W : Type*} (v : (Fin 7 × Fin 7) ⊕ W) (s t : Fin 7) (v' : (Fin 7 × Fin 7) ⊕ W)
     (s' t' : Fin 7) : Prop :=
   ((v' = v ∨ ∃ i j, v = .inl (i, j) ∧ v' = .inl (j, i)) ∧
       ((s' = s ∧ t' = t) ∨ (s' = t ∧ t' = s))) ∨
     ∃ i j, v = .inl (i, j) ∧ (v' = .inl (s, t) ∨ v' = .inl (t, s)) ∧
       ((s' = i ∧ t' = j) ∨ (s' = j ∧ t' = i))
 
-/-- **At most one tie** at the named views of `x` (19.8 (i), conservatively: over all named
-views, not only the rims of one certificate): any two ties are one equation.  Two ties that are
-not one equation are two conditions on the shape, so this fails only in codimension 2. -/
-def OneTie16 (x : Fin 7 → ℝ³) : Prop :=
-  ∀ v s t v' s' t', TieInst16 x v s t → TieInst16 x v' s' t' → SameTie16 v s t v' s' t'
-
-theorem inner_coords (a b : ℝ³) : ⟪a, b⟫ = a 0 * b 0 + a 1 * b 1 + a 2 * b 2 := by
-  simp [PiLp.inner_apply, Fin.sum_univ_three, mul_comm]
+/-- **At most one tie** at the named views of `x`: any two ties are one equation.  Two ties that
+are not one equation are two conditions on the shape, so this fails only in codimension 2. -/
+def OneTieG {W : Type*} (view : (Fin 7 → ℝ³) → (Fin 7 × Fin 7) ⊕ W → ℝ³) (x : Fin 7 → ℝ³) : Prop :=
+  ∀ v s t v' s' t', TieInstG view x v s t → TieInstG view x v' s' t' → SameTieG v s t v' s' t'
 
 /-- One equation holds at every shape where the other does. -/
-theorem SameTie16.inner_eq_zero {v : (Fin 7 × Fin 7) ⊕ Fin 6} {s t : Fin 7}
-    {v' : (Fin 7 × Fin 7) ⊕ Fin 6} {s' t' : Fin 7} (h : SameTie16 v s t v' s' t')
-    (y : Fin 7 → ℝ³) (h0 : ⟪y s - y t, view16 y v⟫ = 0) : ⟪y s' - y t', view16 y v'⟫ = 0 := by
+theorem SameTieG.inner_eq_zero {W : Type*} {view : (Fin 7 → ℝ³) → (Fin 7 × Fin 7) ⊕ W → ℝ³}
+    (hseg : ∀ x i j, view x (.inl (i, j)) = x j - x i) {v : (Fin 7 × Fin 7) ⊕ W} {s t : Fin 7}
+    {v' : (Fin 7 × Fin 7) ⊕ W} {s' t' : Fin 7} (h : SameTieG v s t v' s' t')
+    (y : Fin 7 → ℝ³) (h0 : ⟪y s - y t, view y v⟫ = 0) : ⟪y s' - y t', view y v'⟫ = 0 := by
   rcases h with ⟨hv, hp⟩ | ⟨i, j, rfl, hv', hp⟩
-  · have hv'' : view16 y v' = view16 y v ∨ view16 y v' = -view16 y v := by
+  · have hv'' : view y v' = view y v ∨ view y v' = -view y v := by
       rcases hv with rfl | ⟨i, j, rfl, rfl⟩
       · exact Or.inl rfl
-      · exact Or.inr (by simp only [view16, neg_sub])
+      · exact Or.inr (by simp only [hseg, neg_sub])
     have hp' : y s' - y t' = y s - y t ∨ y s' - y t' = -(y s - y t) := by
       rcases hp with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
       · exact Or.inl rfl
       · exact Or.inr (neg_sub _ _).symm
     rcases hv'' with e | e <;> rcases hp' with f | f <;>
       simp only [e, f, inner_neg_left, inner_neg_right, h0, neg_zero]
-  · simp only [view16] at h0
+  · simp only [hseg] at h0
     rw [inner_coords] at h0
     rcases hv' with rfl | rfl <;> rcases hp with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
-      simp only [view16] <;> rw [inner_coords] <;>
+      simp only [hseg] <;> rw [inner_coords] <;>
       simp only [PiLp.sub_apply] at h0 ⊢ <;>
       first | linear_combination h0 | linear_combination -h0
 
-theorem OneTieAt.smul {V : Finset ℝ³} {u : ℝ³} (h : OneTieAt V u) {c : ℝ} (hc : c ≠ 0) :
-    OneTieAt V (c • u) := by
-  intro s hs t ht s' hs' t' ht' hst hst' e1 e2
-  simp only [real_inner_smul_right] at e1 e2
-  exact h s hs t ht s' hs' t' ht' hst hst' (mul_left_cancel₀ hc e1) (mul_left_cancel₀ hc e2)
-
 /-- **At most one tie at a named view** of a shape whose ties are ties of `x`. -/
-theorem oneTieAt_of_ties {x y : Fin 7 → ℝ³} (htie : OneTie16 x)
-    (hsub : ∀ v a b, a ≠ b → view16 y v ≠ 0 → ⟪y a - y b, view16 y v⟫ = 0 → TieInst16 x v a b)
-    (v : (Fin 7 × Fin 7) ⊕ Fin 6) (hv : view16 y v ≠ 0) :
-    OneTieAt (univ.image y) (view16 y v) := by
+theorem oneTieAt_of_tiesG {W : Type*} {view : (Fin 7 → ℝ³) → (Fin 7 × Fin 7) ⊕ W → ℝ³}
+    (hseg : ∀ x i j, view x (.inl (i, j)) = x j - x i) {x y : Fin 7 → ℝ³}
+    (htie : OneTieG view x)
+    (hsub : ∀ v a b, a ≠ b → view y v ≠ 0 → ⟪y a - y b, view y v⟫ = 0 → TieInstG view x v a b)
+    (v : (Fin 7 × Fin 7) ⊕ W) (hv : view y v ≠ 0) :
+    OneTieAt (Finset.univ.image y) (view y v) := by
   intro s hs t ht s' hs' t' ht' hst hst' e1 e2
-  obtain ⟨a, -, rfl⟩ := mem_image.mp hs
-  obtain ⟨b, -, rfl⟩ := mem_image.mp ht
-  obtain ⟨a', -, rfl⟩ := mem_image.mp hs'
-  obtain ⟨b', -, rfl⟩ := mem_image.mp ht'
+  obtain ⟨a, -, rfl⟩ := Finset.mem_image.mp hs
+  obtain ⟨b, -, rfl⟩ := Finset.mem_image.mp ht
+  obtain ⟨a', -, rfl⟩ := Finset.mem_image.mp hs'
+  obtain ⟨b', -, rfl⟩ := Finset.mem_image.mp ht'
   have hab : a ≠ b := fun h => hst (by rw [h])
   have hab' : a' ≠ b' := fun h => hst' (by rw [h])
   have t1 := hsub v a b hab hv (by rw [inner_sub_left, e1, sub_self])
@@ -423,8 +438,8 @@ theorem oneTieAt_of_ties {x y : Fin 7 → ℝ³} (htie : OneTie16 x)
       rcases hv' with h | h
       · simp only [Sum.inl.injEq, Prod.mk.injEq] at h; exact Or.inl h
       · simp only [Sum.inl.injEq, Prod.mk.injEq] at h; exact Or.inr h
-    have hne' : x j - x i ≠ 0 := hne
-    have h0' : ⟪x a - x b, x j - x i⟫ = 0 := h0
+    have hne' : x j - x i ≠ 0 := by rwa [hseg] at hne
+    have h0' : ⟪x a - x b, x j - x i⟫ = 0 := by rwa [hseg] at h0
     rcases hij with ⟨h1, h2⟩ | ⟨h1, h2⟩
     · rw [h1, h2] at hne' h0'
       rw [← neg_sub, inner_neg_left, neg_eq_zero] at h0'
@@ -434,19 +449,64 @@ theorem oneTieAt_of_ties {x y : Fin 7 → ℝ³} (htie : OneTie16 x)
 
 /-- **Strict comparisons persist**: eventually every tie of `K_n` at a named view is a tie of the
 limit `x`. -/
-theorem eventually_ties {x : Fin 7 → ℝ³} {K : ℕ → Fin 7 → ℝ³}
-    (hK : ∀ m, Tendsto (fun n => K n m) atTop (𝓝 (x m))) :
-    ∀ᶠ n in atTop, ∀ v a b, ⟪K n a - K n b, view16 (K n) v⟫ = 0 →
-      ⟪x a - x b, view16 x v⟫ = 0 := by
-  have h : ∀ q : ((Fin 7 × Fin 7) ⊕ Fin 6) × Fin 7 × Fin 7, ∀ᶠ n in atTop,
-      ⟪K n q.2.1 - K n q.2.2, view16 (K n) q.1⟫ = 0 → ⟪x q.2.1 - x q.2.2, view16 x q.1⟫ = 0 := by
+theorem eventually_tiesG {W : Type*} [Finite W]
+    {view : (Fin 7 → ℝ³) → (Fin 7 × Fin 7) ⊕ W → ℝ³} {x : Fin 7 → ℝ³} {K : ℕ → Fin 7 → ℝ³}
+    (hK : ∀ m, Tendsto (fun n => K n m) atTop (𝓝 (x m)))
+    (htv : ∀ v, Tendsto (fun n => view (K n) v) atTop (𝓝 (view x v))) :
+    ∀ᶠ n in atTop, ∀ v a b, ⟪K n a - K n b, view (K n) v⟫ = 0 →
+      ⟪x a - x b, view x v⟫ = 0 := by
+  have h : ∀ q : ((Fin 7 × Fin 7) ⊕ W) × Fin 7 × Fin 7, ∀ᶠ n in atTop,
+      ⟪K n q.2.1 - K n q.2.2, view (K n) q.1⟫ = 0 → ⟪x q.2.1 - x q.2.2, view x q.1⟫ = 0 := by
     rintro ⟨v, a, b⟩
-    by_cases h0 : ⟪x a - x b, view16 x v⟫ = 0
+    by_cases h0 : ⟪x a - x b, view x v⟫ = 0
     · exact Eventually.of_forall fun _ _ => h0
-    · exact ((((hK a).sub (hK b)).inner (tendsto_view16 hK v)).eventually_ne h0).mono
+    · exact ((((hK a).sub (hK b)).inner (htv v)).eventually_ne h0).mono
         fun n hn h => absurd h hn
   filter_upwards [eventually_all.mpr h] with n hn v a b h
   exact hn (v, a, b) h
+
+/-! ### Ties at the named views of type 16 -/
+
+/-- A tie at a named view: two labels `s ≠ t` at equal depth along a nonzero named view. -/
+def TieInst16 (x : Fin 7 → ℝ³) (v : (Fin 7 × Fin 7) ⊕ Fin 6) (s t : Fin 7) : Prop :=
+  s ≠ t ∧ view16 x v ≠ 0 ∧ ⟪x s - x t, view16 x v⟫ = 0
+
+/-- Two ties that are one equation for every shape (`SameTieG`). -/
+abbrev SameTie16 (v : (Fin 7 × Fin 7) ⊕ Fin 6) (s t : Fin 7) (v' : (Fin 7 × Fin 7) ⊕ Fin 6) (s' t' : Fin 7) : Prop :=
+  SameTieG v s t v' s' t'
+
+/-- **At most one tie** at the named views of `x` (19.8 (i), conservatively: over all named
+views, not only the rims of one certificate): any two ties are one equation.  Two ties that are
+not one equation are two conditions on the shape, so this fails only in codimension 2. -/
+def OneTie16 (x : Fin 7 → ℝ³) : Prop :=
+  ∀ v s t v' s' t', TieInst16 x v s t → TieInst16 x v' s' t' → SameTie16 v s t v' s' t'
+
+/-- One equation holds at every shape where the other does. -/
+theorem SameTie16.inner_eq_zero {v : (Fin 7 × Fin 7) ⊕ Fin 6} {s t : Fin 7}
+    {v' : (Fin 7 × Fin 7) ⊕ Fin 6} {s' t' : Fin 7} (h : SameTie16 v s t v' s' t')
+    (y : Fin 7 → ℝ³) (h0 : ⟪y s - y t, view16 y v⟫ = 0) : ⟪y s' - y t', view16 y v'⟫ = 0 :=
+  SameTieG.inner_eq_zero (fun _ _ _ => rfl) h y h0
+
+theorem OneTieAt.smul {V : Finset ℝ³} {u : ℝ³} (h : OneTieAt V u) {c : ℝ} (hc : c ≠ 0) :
+    OneTieAt V (c • u) := by
+  intro s hs t ht s' hs' t' ht' hst hst' e1 e2
+  simp only [real_inner_smul_right] at e1 e2
+  exact h s hs t ht s' hs' t' ht' hst hst' (mul_left_cancel₀ hc e1) (mul_left_cancel₀ hc e2)
+
+/-- **At most one tie at a named view** of a shape whose ties are ties of `x`. -/
+theorem oneTieAt_of_ties {x y : Fin 7 → ℝ³} (htie : OneTie16 x)
+    (hsub : ∀ v a b, a ≠ b → view16 y v ≠ 0 → ⟪y a - y b, view16 y v⟫ = 0 → TieInst16 x v a b)
+    (v : (Fin 7 × Fin 7) ⊕ Fin 6) (hv : view16 y v ≠ 0) :
+    OneTieAt (univ.image y) (view16 y v) :=
+  oneTieAt_of_tiesG (fun _ _ _ => rfl) htie hsub v hv
+
+/-- **Strict comparisons persist**: eventually every tie of `K_n` at a named view is a tie of the
+limit `x`. -/
+theorem eventually_ties {x : Fin 7 → ℝ³} {K : ℕ → Fin 7 → ℝ³}
+    (hK : ∀ m, Tendsto (fun n => K n m) atTop (𝓝 (x m))) :
+    ∀ᶠ n in atTop, ∀ v a b, ⟪K n a - K n b, view16 (K n) v⟫ = 0 →
+      ⟪x a - x b, view16 x v⟫ = 0 :=
+  eventually_tiesG hK (fun v => tendsto_view16 hK v)
 
 /-! ### The limit certificate -/
 
@@ -541,7 +601,7 @@ theorem exists_certSeq16 {x : Fin 7 → ℝ³} (T : Type16 x) (htie : OneTie16 x
   set N := T.toNF with hNdef
   set θ₀ : Fin 7 → ℝ := ![N.a, N.b, N.g, N.d, N.p, N.q, N.r] with hθ₀
   have hx : x = nfShape N.o N.E₁ N.E₂ N.E₃ θ₀ := N.eq_nfShape
-  obtain ⟨θs, hθs, hgen⟩ := exists_seq_eval_ne_zero genPoly16_ne_zero θ₀
+  obtain ⟨θs, hθs, hgen⟩ := exists_seq_eval_ne_zero_fin genPoly16_ne_zero θ₀
   set Y : ℕ → Fin 7 → ℝ³ := fun n => nfShape N.o N.E₁ N.E₂ N.E₃ (θs n) with hYdef
   have hY : ∀ m, Tendsto (fun n => Y n m) atTop (𝓝 (x m)) := by
     intro m
@@ -596,7 +656,7 @@ theorem exists_certSeq16 {x : Fin 7 → ℝ³} (T : Type16 x) (htie : OneTie16 x
       have ev1 : ∀ᶠ n in atTop, ⟪B n, B n⟫ ≠ 0 := (hB.inner hB).eventually_ne hBB.ne'
       have ev2 : ∀ᶠ n in atTop, ⟪A n, E n⟫ ≠ 0 := (hA.inner hE).eventually_ne hAA.ne'
       filter_upwards [ev1, ev2] with n h1 h2 w a b hw
-      refine (htie w₀ a₀ b₀ w a b ⟨hab₀, hw₀, ht₀⟩ hw).inner_eq_zero _ ?_
+      refine SameTie16.inner_eq_zero (htie w₀ a₀ b₀ w a b ⟨hab₀, hw₀, ht₀⟩ hw) _ ?_
       rw [← restore_sub, view16_restore (horth n)]
       show ⟪restore (S n) (E n) (B n) (B n), restore (S n) (E n) (B n) (A n)⟫ = 0
       simp only [restore, horth n, mul_zero, zero_smul, add_zero, inner_add_right,

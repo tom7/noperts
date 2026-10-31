@@ -328,13 +328,9 @@ theorem noSeg29_of_hvert {x : Fin 7 → ℝ³}
 def TieInst29 (x : Fin 7 → ℝ³) (v : View29) (s t : Fin 7) : Prop :=
   s ≠ t ∧ view29 x v ≠ 0 ∧ ⟪x s - x t, view29 x v⟫ = 0
 
-/-- Two ties that are one equation for every shape: the same view (up to reversing a segment)
-and the same pair, or the tie of `s, t` along `i j` and the tie of `i, j` along `s t`. -/
-def SameTie29 (v : View29) (s t : Fin 7) (v' : View29) (s' t' : Fin 7) : Prop :=
-  ((v' = v ∨ ∃ i j, v = .inl (i, j) ∧ v' = .inl (j, i)) ∧
-      ((s' = s ∧ t' = t) ∨ (s' = t ∧ t' = s))) ∨
-    ∃ i j, v = .inl (i, j) ∧ (v' = .inl (s, t) ∨ v' = .inl (t, s)) ∧
-      ((s' = i ∧ t' = j) ∨ (s' = j ∧ t' = i))
+/-- Two ties that are one equation for every shape (`SameTieG`). -/
+abbrev SameTie29 (v : View29) (s t : Fin 7) (v' : View29) (s' t' : Fin 7) : Prop :=
+  SameTieG v s t v' s' t'
 
 /-- **At most one tie** at the named views of `x` (§18.6, §28: conservatively over all named
 views, not only the rims of one certificate): any two ties are one equation.  Two ties that are
@@ -346,55 +342,14 @@ def OneTieGlobal29 (x : Fin 7 → ℝ³) : Prop :=
 /-- One equation holds at every shape where the other does. -/
 theorem SameTie29.inner_eq_zero {v : View29} {s t : Fin 7} {v' : View29} {s' t' : Fin 7}
     (h : SameTie29 v s t v' s' t') (y : Fin 7 → ℝ³) (h0 : ⟪y s - y t, view29 y v⟫ = 0) :
-    ⟪y s' - y t', view29 y v'⟫ = 0 := by
-  rcases h with ⟨hv, hp⟩ | ⟨i, j, rfl, hv', hp⟩
-  · have hv'' : view29 y v' = view29 y v ∨ view29 y v' = -view29 y v := by
-      rcases hv with rfl | ⟨i, j, rfl, rfl⟩
-      · exact Or.inl rfl
-      · exact Or.inr (by simp only [view29, neg_sub])
-    have hp' : y s' - y t' = y s - y t ∨ y s' - y t' = -(y s - y t) := by
-      rcases hp with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-      · exact Or.inl rfl
-      · exact Or.inr (neg_sub _ _).symm
-    rcases hv'' with e | e <;> rcases hp' with f | f <;>
-      simp only [e, f, inner_neg_left, inner_neg_right, h0, neg_zero]
-  · simp only [view29] at h0
-    rw [inner_coords] at h0
-    rcases hv' with rfl | rfl <;> rcases hp with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
-      simp only [view29] <;> rw [inner_coords] <;>
-      simp only [PiLp.sub_apply] at h0 ⊢ <;>
-      first | linear_combination h0 | linear_combination -h0
+    ⟪y s' - y t', view29 y v'⟫ = 0 :=
+  SameTieG.inner_eq_zero (fun _ _ _ => rfl) h y h0
 
 /-- **At most one tie at a named view** of a shape whose ties are ties of `x`. -/
 theorem oneTieAt_of_ties29 {x y : Fin 7 → ℝ³} (htie : OneTieGlobal29 x)
     (hsub : ∀ v a b, a ≠ b → view29 y v ≠ 0 → ⟪y a - y b, view29 y v⟫ = 0 → TieInst29 x v a b)
-    (v : View29) (hv : view29 y v ≠ 0) : OneTieAt (univ.image y) (view29 y v) := by
-  intro s hs t ht s' hs' t' ht' hst hst' e1 e2
-  obtain ⟨a, -, rfl⟩ := mem_image.mp hs
-  obtain ⟨b, -, rfl⟩ := mem_image.mp ht
-  obtain ⟨a', -, rfl⟩ := mem_image.mp hs'
-  obtain ⟨b', -, rfl⟩ := mem_image.mp ht'
-  have hab : a ≠ b := fun h => hst (by rw [h])
-  have hab' : a' ≠ b' := fun h => hst' (by rw [h])
-  have t1 := hsub v a b hab hv (by rw [inner_sub_left, e1, sub_self])
-  have t2 := hsub v a' b' hab' hv (by rw [inner_sub_left, e2, sub_self])
-  rcases htie v a b v a' b' t1 t2 with ⟨-, ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩⟩ | ⟨i, j, rfl, hv', -⟩
-  · exact Or.inl ⟨rfl, rfl⟩
-  · exact Or.inr ⟨rfl, rfl⟩
-  · exfalso
-    obtain ⟨-, hne, h0⟩ := t1
-    have hij : (i = a ∧ j = b) ∨ (i = b ∧ j = a) := by
-      rcases hv' with h | h
-      · simp only [Sum.inl.injEq, Prod.mk.injEq] at h; exact Or.inl h
-      · simp only [Sum.inl.injEq, Prod.mk.injEq] at h; exact Or.inr h
-    have hne' : x j - x i ≠ 0 := hne
-    have h0' : ⟪x a - x b, x j - x i⟫ = 0 := h0
-    rcases hij with ⟨h1, h2⟩ | ⟨h1, h2⟩
-    · rw [h1, h2] at hne' h0'
-      rw [← neg_sub, inner_neg_left, neg_eq_zero] at h0'
-      exact hne' (inner_self_eq_zero.mp h0')
-    · rw [h1, h2] at hne' h0'
-      exact hne' (inner_self_eq_zero.mp h0')
+    (v : View29) (hv : view29 y v ≠ 0) : OneTieAt (univ.image y) (view29 y v) :=
+  oneTieAt_of_tiesG (fun _ _ _ => rfl) htie hsub v hv
 
 /-- The global tie condition implies the per-view one (`OneTie29`). -/
 theorem OneTieGlobal29.oneTie {x : Fin 7 → ℝ³} (h : OneTieGlobal29 x) : OneTie29 x :=
@@ -405,16 +360,8 @@ limit `x`. -/
 theorem eventually_ties29 {x : Fin 7 → ℝ³} {K : ℕ → Fin 7 → ℝ³}
     (hK : ∀ m, Tendsto (fun n => K n m) atTop (𝓝 (x m))) :
     ∀ᶠ n in atTop, ∀ v a b, ⟪K n a - K n b, view29 (K n) v⟫ = 0 →
-      ⟪x a - x b, view29 x v⟫ = 0 := by
-  have h : ∀ q : View29 × Fin 7 × Fin 7, ∀ᶠ n in atTop,
-      ⟪K n q.2.1 - K n q.2.2, view29 (K n) q.1⟫ = 0 → ⟪x q.2.1 - x q.2.2, view29 x q.1⟫ = 0 := by
-    rintro ⟨v, a, b⟩
-    by_cases h0 : ⟪x a - x b, view29 x v⟫ = 0
-    · exact Eventually.of_forall fun _ _ => h0
-    · exact ((((hK a).sub (hK b)).inner (tendsto_view29 hK v)).eventually_ne h0).mono
-        fun n hn h => absurd h hn
-  filter_upwards [eventually_all.mpr h] with n hn v a b h
-  exact hn (v, a, b) h
+      ⟪x a - x b, view29 x v⟫ = 0 :=
+  eventually_tiesG hK (fun v => tendsto_view29 hK v)
 
 /-- Two distinct views, one of them a vertex line, are never one equation. -/
 theorem not_sameTie29 {v w : View29} (hvw : v ≠ w) (hr : v.isRight = true ∨ w.isRight = true)
@@ -618,7 +565,7 @@ theorem exists_certSeq29_params (N : NF29 x) (htie : OneTieGlobal29 x)
       have ev1 : ∀ᶠ n in atTop, ⟪B n, B n⟫ ≠ 0 := (hB.inner hB).eventually_ne hBB.ne'
       have ev2 : ∀ᶠ n in atTop, ⟪A n, E n⟫ ≠ 0 := (hA.inner hE).eventually_ne hAA.ne'
       filter_upwards [ev1, ev2] with n h1 h2 w a b hw
-      refine (htie w₀ a₀ b₀ w a b ⟨hab₀, hw₀, ht₀⟩ hw).inner_eq_zero _ ?_
+      refine SameTie29.inner_eq_zero (htie w₀ a₀ b₀ w a b ⟨hab₀, hw₀, ht₀⟩ hw) _ ?_
       rw [← restore_sub, view29_restore (horth n)]
       show ⟪restore (S n) (E n) (B n) (B n), restore (S n) (E n) (B n) (A n)⟫ = 0
       simp only [restore, horth n, mul_zero, zero_smul, add_zero, inner_add_right,

@@ -2,6 +2,7 @@ module
 
 public import Minimality.Type08S.SCf
 public import Minimality.Type08S.G9_Final
+public import Minimality.Generic.PairR2T
 
 @[expose] public section
 
@@ -182,7 +183,7 @@ theorem isRupert_type08_limit_hdn_rim {a a' b b' c c' d : ℝ³} (N : Norm08 a a
       filter_upwards [hineq] with p hp hg hdet hind' hnew hties'
       simp only [mapShape_nfShape08] at hind' hnew hties' ⊢
       have hE' : det3 (p.2 E₁) (p.2 E₂) (p.2 E₃) ≠ 0 := by
-        rw [det3_map, detMap_eq08, hdet, one_mul]; exact hE
+        rw [det3_map, detMap_eq_det, hdet, one_mul]; exact hE
       set Y := nfShape08 (p.2 o) (p.2 E₁) (p.2 E₂) (p.2 E₃) p.1 with hY
       have hnew' : ∀ c : Fin 3 × Bool × Bool, ∀ i j : ZMod (test08 c.1 c.2.1 c.2.2).k,
           ⟪Y ((test08 c.1 c.2.1 c.2.2).lab i), (test08 c.1 c.2.1 c.2.2).view Y⟫ =

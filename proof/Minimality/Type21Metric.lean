@@ -104,7 +104,7 @@ theorem exists_certSeq21_map {x : Fin 7 → ℝ³} (T : Facets21 x) (M : ℝ³ �
   set E₁ := x 0 - x 2 with hE₁
   set E₂ := x 3 - x 2 with hE₂
   set E₃ := x 6 - x 2 with hE₃
-  obtain ⟨θs, hθs, hgen⟩ := exists_seq_eval_ne_zero genPoly21_ne_zero θ₀
+  obtain ⟨θs, hθs, hgen⟩ := exists_seq_eval_ne_zero_fin genPoly21_ne_zero θ₀
   set Y0 : ℕ → Fin 7 → ℝ³ := fun s => nfShape21 o E₁ E₂ E₃ (θs s) with hY0
   have hY0t : ∀ i, Tendsto (fun s => Y0 s i) atTop (𝓝 (x i)) := by
     intro m

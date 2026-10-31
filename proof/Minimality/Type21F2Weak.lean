@@ -6,6 +6,7 @@ public import Minimality.Type16Rims
 public import Minimality.Type16Limit
 public import Minimality.Generic.TwoTie
 public import Minimality.Generic.PairR2T
+public import Minimality.Generic.NamedViews
 
 @[expose] public section
 
@@ -46,12 +47,13 @@ noncomputable def view21 (x : Fin 7 → ℝ³) : (Fin 7 × Fin 7) ⊕ Fin 8 → 
   | .inl ij => x ij.2 - x ij.1
   | .inr t => vtxView21 x t
 
+theorem view21_eq_namedView : view21 = namedView vtx21 := by
+  funext x v; rcases v with _ | _ <;> rfl
+
 theorem tendsto_view21 {ι : Type*} {l : Filter ι} {K : ι → Fin 7 → ℝ³} {x : Fin 7 → ℝ³}
     (hK : ∀ m, Tendsto (fun n => K n m) l (𝓝 (x m))) (v : (Fin 7 × Fin 7) ⊕ Fin 8) :
-    Tendsto (fun n => view21 (K n) v) l (𝓝 (view21 x v)) := by
-  rcases v with ⟨i, j⟩ | t
-  · exact (hK j).sub (hK i)
-  · exact tendsto_planeLine (hK _) (hK _) (hK _) (hK _) (hK _) (hK _)
+    Tendsto (fun n => view21 (K n) v) l (𝓝 (view21 x v)) :=
+  by rw [view21_eq_namedView]; exact tendsto_namedView vtx21 hK v
 
 theorem view21_map (M : ℝ³ →L[ℝ] ℝ³) (y : Fin 7 → ℝ³) (v : (Fin 7 × Fin 7) ⊕ Fin 8) :
     ∃ c : ℝ, (c = 1 ∨ c = detMap M) ∧ view21 (fun l => M (y l)) v = c • M (view21 y v) := by
@@ -61,18 +63,8 @@ theorem view21_map (M : ℝ³ →L[ℝ] ℝ³) (y : Fin 7 → ℝ³) (v : (Fin 7
 
 /-- The named views are covariant. -/
 theorem covView_view21 (v : (Fin 7 × Fin 7) ⊕ Fin 8) :
-    CovView (fun y : Fin 7 → ℝ³ => view21 y v) := by
-  refine ⟨?_, ?_⟩
-  · refine continuous_iff_continuousAt.2 fun y => ?_
-    exact tendsto_view21 (fun m => (continuous_apply m).tendsto y) v
-  · intro L y hL
-    have hd : detMap L = 1 := by rw [detMap_eq_det]; exact hL
-    obtain ⟨c, hc, e⟩ := view21_map L y v
-    show view21 (fun l => L (y l)) v = L (view21 y v)
-    rw [e]
-    rcases hc with rfl | rfl
-    · rw [one_smul]
-    · rw [hd, one_smul]
+    CovView (fun y : Fin 7 → ℝ³ => view21 y v) :=
+  by rw [view21_eq_namedView]; exact covView_namedView vtx21 v
 
 /-- Views of the F2 pair at vertex views `1` (V) and `4` (V'), labelling `id` of `F2ViewsL`
 (`b = x4, b' = x5, c = x1, d = x2, a = x0, a' = x3`): the quads are `(4,2,5,1)` and `(4,3,5,0)`. -/

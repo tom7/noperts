@@ -9,6 +9,7 @@ public import Minimality.Generic.TwoTie
 public import Minimality.Type16Metric
 public import Minimality.CaseC18M
 public import Minimality.EdgeClassD
+public import Minimality.Generic.PairR2T
 
 @[expose] public section
 
@@ -1273,12 +1274,6 @@ theorem mf08_Q (o E₁ E₂ E₃ : ℝ³) (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 <
     exact hQ _ h
 
 
-theorem detMap_eq08 (L : ℝ³ →L[ℝ] ℝ³) : detMap L = LinearMap.det (L : ℝ³ →ₗ[ℝ] ℝ³) := by
-  rw [← LinearMap.det_toMatrix (EuclideanSpace.basisFun (Fin 3) ℝ).toBasis, Matrix.det_fin_three]
-  simp only [detMap, det3_expand, LinearMap.toMatrix_apply]
-  simp [EuclideanSpace.basisFun_apply]
-  ring
-
 theorem depth_neg08 (i : Fin 3) (j : Bool) (y : Fin 7 → ℝ³) :
     (test08 i false j).depth y = fun k => -(test08 i true j).depth y k := by
   funext k
@@ -1292,7 +1287,7 @@ theorem N2_core (o E₁ E₂ E₃ : ℝ³) (hE : det3 E₁ E₂ E₃ ≠ 0) (θ 
     (hinj : ∀ j, Function.Injective ((test08 0 true j).depth (nfShape08 (L o) (L E₁) (L E₂) (L E₃) θ))) :
     ∃ j, IsCyclicUnimodal ((test08 0 true j).depth (nfShape08 (L o) (L E₁) (L E₂) (L E₃) θ)) := by
   have hE' : det3 (L E₁) (L E₂) (L E₃) ≠ 0 := by
-    rw [det3_map, detMap_eq08, hL, one_mul]; exact hE
+    rw [det3_map, detMap_eq_det, hL, one_mul]; exact hE
   obtain ⟨N⟩ := norm08_of_nf (o := L o) hE' hθ
   set x := nfShape08 (L o) (L E₁) (L E₂) (L E₃) θ with hx
   have hnd := N.F.nodup
@@ -1342,7 +1337,7 @@ theorem T4_core (o E₁ E₂ E₃ : ℝ³) (hE : det3 E₁ E₂ E₃ ≠ 0) (θ 
     (hinj : ∀ j, Function.Injective ((test08 1 true j).depth (nfShape08 (L o) (L E₁) (L E₂) (L E₃) θ))) :
     ∃ j, IsCyclicUnimodal ((test08 1 true j).depth (nfShape08 (L o) (L E₁) (L E₂) (L E₃) θ)) := by
   have hE' : det3 (L E₁) (L E₂) (L E₃) ≠ 0 := by
-    rw [det3_map, detMap_eq08, hL, one_mul]; exact hE
+    rw [det3_map, detMap_eq_det, hL, one_mul]; exact hE
   obtain ⟨N⟩ := norm08_of_nf (o := L o) hE' hθ
   set x := nfShape08 (L o) (L E₁) (L E₂) (L E₃) θ with hx
   obtain ⟨p0, p1, p2, p3, p4, p5, -, -, -, hga, -⟩ := common08 θ hθ
@@ -2396,7 +2391,7 @@ theorem isRupert_type08_limit_hdn {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b 
       filter_upwards [hineq] with p hp hg hdet hind' hnew hties'
       simp only [mapShape_nfShape08] at hind' hnew hties' ⊢
       have hE' : det3 (p.2 E₁) (p.2 E₂) (p.2 E₃) ≠ 0 := by
-        rw [det3_map, detMap_eq08, hdet, one_mul]; exact hE
+        rw [det3_map, detMap_eq_det, hdet, one_mul]; exact hE
       set Y := nfShape08 (p.2 o) (p.2 E₁) (p.2 E₂) (p.2 E₃) p.1 with hY
       have hnew' : ∀ c : Fin 3 × Bool × Bool, ∀ i j : ZMod (test08 c.1 c.2.1 c.2.2).k,
           ⟪Y ((test08 c.1 c.2.1 c.2.2).lab i), (test08 c.1 c.2.1 c.2.2).view Y⟫ =

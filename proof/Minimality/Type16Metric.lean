@@ -170,7 +170,7 @@ theorem exists_certSeq16_map {x : Fin 7 → ℝ³} (N : NF16 x) (M : ℝ³ →L[
   classical
   set θ₀ : Fin 7 → ℝ := ![N.a, N.b, N.g, N.d, N.p, N.q, N.r] with hθ₀
   have hx : x = nfShape N.o N.E₁ N.E₂ N.E₃ θ₀ := N.eq_nfShape
-  obtain ⟨θs, hθs, hgen⟩ := exists_seq_eval_ne_zero genPoly16_ne_zero θ₀
+  obtain ⟨θs, hθs, hgen⟩ := exists_seq_eval_ne_zero_fin genPoly16_ne_zero θ₀
   set Y0 : ℕ → Fin 7 → ℝ³ := fun s => nfShape N.o N.E₁ N.E₂ N.E₃ (θs s) with hY0
   have hY0t : ∀ i, Tendsto (fun s => Y0 s i) atTop (𝓝 (x i)) := by
     intro m

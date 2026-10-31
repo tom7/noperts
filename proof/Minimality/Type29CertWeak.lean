@@ -3,6 +3,7 @@ module
 public import Minimality.Type29CertTie
 public import Minimality.Type21F2Weak
 public import Minimality.Generic.PairR2T
+public import Minimality.Generic.NamedViews
 
 @[expose] public section
 
@@ -25,25 +26,16 @@ namespace Minimality
 open scoped RealInnerProductSpace Topology
 open Filter Noperts Finset
 
+theorem view29_eq_namedView : view29 = namedView vtxLines29 := by
+  funext x v; rcases v with _ | _ <;> rfl
+
 theorem tendsto_view29 {ι : Type*} {l : Filter ι} {K : ι → Fin 7 → ℝ³} {x : Fin 7 → ℝ³}
     (hK : ∀ m, Tendsto (fun n => K n m) l (𝓝 (x m))) (v : View29) :
-    Tendsto (fun n => view29 (K n) v) l (𝓝 (view29 x v)) := by
-  rcases v with ⟨i, j⟩ | t
-  · exact (hK j).sub (hK i)
-  · exact tendsto_planeLine (hK _) (hK _) (hK _) (hK _) (hK _) (hK _)
+    Tendsto (fun n => view29 (K n) v) l (𝓝 (view29 x v)) :=
+  by rw [view29_eq_namedView]; exact tendsto_namedView vtxLines29 hK v
 
-theorem covView_view29 (v : View29) : CovView (fun y : Fin 7 → ℝ³ => view29 y v) := by
-  refine ⟨?_, ?_⟩
-  · refine continuous_iff_continuousAt.2 fun y => ?_
-    exact tendsto_view29 (fun m => (continuous_apply m).tendsto y) v
-  · intro L y hL
-    have hd : detMap L = 1 := by rw [detMap_eq_det]; exact hL
-    rcases v with ⟨i, j⟩ | t
-    · show L (y j) - L (y i) = L (y j - y i)
-      rw [map_sub]
-    · show planeLine (L (y _)) (L (y _)) (L (y _)) (L (y _)) (L (y _)) (L (y _)) = _
-      rw [planeLine_map, hd, one_smul]
-      rfl
+theorem covView_view29 (v : View29) : CovView (fun y : Fin 7 → ℝ³ => view29 y v) :=
+  by rw [view29_eq_namedView]; exact covView_namedView vtxLines29 v
 
 
 
