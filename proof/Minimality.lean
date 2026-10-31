@@ -2,6 +2,7 @@ module
 
 public import Minimality.Cases
 public import Minimality.Type16Ties
+public import Minimality.Type21Ties
 public import Minimality.Type29Ties
 public import Minimality.SevenTypes
 public import Minimality.FaceBridge
@@ -913,8 +914,10 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
           exact hN.2 (F.isRupert_of_not_special'' hx hrest)))
   · -- type 21: `not_type21_of_multiView21` (Theorem 24.3: ties at a family of tilt tests with
     -- realizing tilts, `Minimality.MultiView21`; the cover is affine-invariant, so metric-free), where
-    -- it holds; else `not_type21_of_isNopert_codim2'`; its general position (7 hypotheses) is asked,
-    -- the special positions are open in Lean
+    -- it holds; else `not_type21_of_isNopert_ties` (Type21Ties: several independent ties, restored along
+    -- the approximating sequence); its general position (6 HDN hypotheses and `OneTie21 ∨ TwoTie21`) is
+    -- asked.  Open in Lean: an HDN item failing, the cover's own tie conditions failing (`CoverTie21`),
+    -- dependent ties
     obtain ⟨fA, hfA⟩ := hR {0, 1, 4} (by decide)
     obtain ⟨fB, hfB⟩ := hR {0, 1, 5} (by decide)
     obtain ⟨fC, hfC⟩ := hR {0, 2, 5, 6} (by decide)
@@ -925,8 +928,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fH, hfH⟩ := hR {2, 3, 5} (by decide)
     exact byGen1 (not_type21_of_multiView21 x hN hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF
       hfG hfH) (fun _ => byGen7 (fun hQ h5 h26 hEd hVq hV htie =>
-        not_type21_of_isNopert_codim2' x hN hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG
-          hfH hQ h5 h26 hEd hVq hV (Or.inl htie))
+        not_type21_of_isNopert_ties x hN hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG
+          hfH hQ h5 h26 hEd hVq hV htie)
       (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
   · -- type 22: `not_type22_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
     -- special value of Lemma T′ (settled there, 24.15).  Both views have the triangle `246`, so
