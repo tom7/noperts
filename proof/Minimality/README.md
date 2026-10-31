@@ -1179,6 +1179,8 @@ In import order.
 | `SecondOrderSpin` | A weakly inward first-order motion with spin about the view axis is a passage: the second-order term of a balanced load is at most `-ω₂²·tr M`, and `tr M > 0` (nopert229 specpos/plan.md A1) | `virial_secondOrder_le`, `isRupert_of_secondOrder_spin` |
 | `SecondOrderHDN` | Theorem H2 (specpos/plan.md §2): a level double normal between two shadow points, each strictly inside the other's tight half-planes, with a tilt axis not parallel to the chord and every other boundary point drifting inward, is a passage at second order (`Q·|D|² = −⟪F₊,D⟫·cross2(D,w)²`) | `isRupert_of_levelHDN` |
 | `PolygonHalfPlanes` | A strictly convex ccw polygon is the intersection of its edge half-planes (open intersection ⊆ hull ⊆ closed intersection); supplies `hpoly`/`hS` of the second-order theorems from a rim | `halfPlanes_of_ccwPolygon` |
+| `SecondOrderHDNView` | Theorem H2 with the shadow given as a strictly convex rim (`_rim`), and at a general view `u` with `det3 · · u` triple products and an axis `w ⊥ u` (`_view`) | `isRupert_of_levelHDN_rim`, `isRupert_of_levelHDN_view` |
+| `SecondOrderHDNWitness` | Non-vacuity of H2: an explicit 11-point rational shape with a level corner–corner HDN is Rupert through `isRupert_of_levelHDN_rim` | `levelHDN_witness`, `levelHDN_witness_isRupert` |
 
 ## Formalization choices
 
