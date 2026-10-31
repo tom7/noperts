@@ -234,7 +234,7 @@ theorem exists_certSeq29_params_ties {x : Fin 7 → ℝ³} (N : NF29 x) (h : Two
     rw [← hKm n] at this
     exact this
   have hD : det3 (L n N.E₁) (L n N.E₂) (L n N.E₃) ≠ 0 := by
-    rw [det3_map, detMap_eq29, hdet n, one_mul]; exact N.hD
+    rw [det3_map, detMap_eq_det, hdet n, one_mul]; exact N.hD
   set Nn := NF29.ofParams (L n N.o) (L n N.E₁) (L n N.E₂) (L n N.E₃) (θs n) hD hn with hNn
   refine ⟨?_, hties, Nn, by funext i; fin_cases i <;> rfl⟩
   have hg := hPs n

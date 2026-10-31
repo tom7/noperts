@@ -258,7 +258,7 @@ theorem exists_certSeq21_ties {x : Fin 7 → ℝ³} (T : Facets21 x) (h : TwoTie
     fun w a b hw' => hgen (K n) (fun t => hrest n t) w a b hw'
   refine ⟨?_, hties⟩
   have hD : det3 (L n E₁) (L n E₂) (L n E₃) ≠ 0 := by
-    rw [det3_map, detMap_eq21, hdet n, one_mul]; exact T.det_ne
+    rw [det3_map, detMap_eq_det, hdet n, one_mul]; exact T.det_ne
   have hg : gen21 (θs n) ≠ 0 := by have := hPs n; rwa [eval_genPoly21] at this
   have hFK : HF21 (K n) := by
     have sub : ∀ t : Fin 8, ∀ a b, a ≠ b → ⟪K n a - K n b, vtxView21 (K n) t⟫ = 0 →

@@ -293,6 +293,188 @@ theorem VRim.rimCert {K : Finset ℝ³} {a a' b b' c c' d u : ℝ³} (h : VRim K
     RimCert K u :=
   h.elim (·.1.rimCert4) (·.rimCert3)
 
+/-- **`cert_type21_F2` with the tie hypotheses abstracted**: everything but the use of the ties.
+The tie-dependent steps are the hypotheses `htri₁`, `htri₂` (no triple of equal depths at the
+triangle rims), `hB` (the weak sign of `V′` at `u_V` when `V′` is not robustly unimodal) and
+`hfin` (the contradiction when neither rim is robustly unimodal); `cert_type21_F2` supplies them
+from `F2Tie`, `cert_type21_F2_weak` from `F2TieW`. -/
+theorem cert_type21_F2_gen {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
+    (G : GaleData a a' b b' c c') {σ₁ σ₂ s₁ δ₁ s₁' δ₁' s₂ δ₂ s₂' δ₂' : ℝ}
+    (hσ₁ : σ₁ = 1 ∨ σ₁ = -1)
+    (hT₁ : 0 < σ₁ * det3 (d - b) (c - b) (axisView G.l G.m b' b a c))
+    (hΓ₁ : 0 < σ₁ * det3 (d - b) (b' - b) (axisView G.l G.m b' b a c))
+    (hB₁ : 0 < σ₁ * det3 (b' - b) (c - b) (axisView G.l G.m b' b a c))
+    (hP₁ : det3 (c - d) (b' - d) (axisView G.l G.m b' b a c) ≠ 0)
+    (hm₁ : 0 < s₁ ∧ s₁ < 1 ∧ δ₁ ≠ 0 ∧ a' = b + s₁ • (d - b) + δ₁ • axisView G.l G.m b' b a c)
+    (hm₁' : 0 < s₁' ∧ s₁' < 1 ∧ δ₁' ≠ 0 ∧ a = b + s₁' • (c - b) + δ₁' • axisView G.l G.m b' b a c)
+    (hX₁ : AxisExtra b' b d c (axisView G.l G.m b' b a c) c')
+
+    (hσ₂ : σ₂ = 1 ∨ σ₂ = -1)
+    (hT₂ : 0 < σ₂ * det3 (a' - b) (a - b) (axisView G.l G.m b' b a c'))
+    (hΓ₂ : 0 < σ₂ * det3 (a' - b) (b' - b) (axisView G.l G.m b' b a c'))
+    (hB₂ : 0 < σ₂ * det3 (b' - b) (a - b) (axisView G.l G.m b' b a c'))
+    (hP₂ : det3 (a - a') (b' - a') (axisView G.l G.m b' b a c') ≠ 0)
+    (hm₂ : 0 < s₂ ∧ s₂ < 1 ∧ δ₂ ≠ 0 ∧ c = b + s₂ • (a' - b) + δ₂ • axisView G.l G.m b' b a c')
+    (hm₂' : 0 < s₂' ∧ s₂' < 1 ∧ δ₂' ≠ 0 ∧ c' = b + s₂' • (a - b) + δ₂' • axisView G.l G.m b' b a c')
+    (hX₂ : AxisExtra b' b a' a (axisView G.l G.m b' b a c') d)
+
+    (hmeet : SegMeet b b' d c (axisView G.l G.m b' b a c'))
+    (hsign : 0 < det3 (axisView G.l G.m b' b a c) (b' - b) (c - d) *
+      det3 (axisView G.l G.m b' b a c') (b' - b) (c - d))
+    (hc'u : ∃ s δ : ℝ, δ < 0 ∧ c' = b + s • (d - b) + δ • axisView G.l G.m b' b a c)
+    (hcone : ∃ α β γ : ℝ, 0 < α ∧ 0 < β ∧ 0 < γ ∧
+      -axisView G.l G.m b' b a c' = α • (c - b) + β • (b - d) + γ • (c' - b))
+    (hΔ : VDelta b b' c c' d)
+    (hL₁ : VRim (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d
+      (σ₁ • axisView G.l G.m b' b a c) → L (σ₁ • axisView G.l G.m b' b a c))
+    (hL₂ : L (σ₂ • axisView G.l G.m b' b a c'))
+    (htri₁ : b ≠ d → d ≠ c → b ≠ c → ¬ (⟪b, axisView G.l G.m b' b a c⟫ = ⟪d, axisView G.l G.m b' b a c⟫ ∧ ⟪d, axisView G.l G.m b' b a c⟫ = ⟪c, axisView G.l G.m b' b a c⟫))
+    (htri₂ : a' ≠ b → a ≠ a' → a ≠ b → ¬ (⟪b, axisView G.l G.m b' b a c'⟫ = ⟪a', axisView G.l G.m b' b a c'⟫ ∧ ⟪a', axisView G.l G.m b' b a c'⟫ = ⟪a, axisView G.l G.m b' b a c'⟫))
+    (hB : [b, a', b', a].Nodup → ¬ IsRobustUnimodal (quad ⟪b, axisView G.l G.m b' b a c'⟫ ⟪a', axisView G.l G.m b' b a c'⟫ ⟪b', axisView G.l G.m b' b a c'⟫ ⟪a, axisView G.l G.m b' b a c'⟫) →
+      SegMeet b b' a' a (axisView G.l G.m b' b a c') → SegMeet b b' a' a (axisView G.l G.m b' b a c) → ⟪axisView G.l G.m b' b a c', axisView G.l G.m b' b a c⟫ ≠ 0 →
+      0 ≤ ⟪axisView G.l G.m b' b a c', axisView G.l G.m b' b a c⟫ * (det3 (axisView G.l G.m b' b a c') (b' - b) (a - a') * det3 (axisView G.l G.m b' b a c) (b' - b) (a - a')))
+    (hfin : [b, d, b', c].Nodup → [b, a', b', a].Nodup →
+      ¬ IsRobustUnimodal (quad ⟪b, axisView G.l G.m b' b a c⟫ ⟪d, axisView G.l G.m b' b a c⟫ ⟪b', axisView G.l G.m b' b a c⟫ ⟪c, axisView G.l G.m b' b a c⟫) →
+      ¬ IsRobustUnimodal (quad ⟪b, axisView G.l G.m b' b a c'⟫ ⟪a', axisView G.l G.m b' b a c'⟫ ⟪b', axisView G.l G.m b' b a c'⟫ ⟪a, axisView G.l G.m b' b a c'⟫) →
+      det3 (axisView G.l G.m b' b a c) (b' - b) (c - d) * det3 (axisView G.l G.m b' b a c') (b' - b) (c - d) *
+        (det3 (axisView G.l G.m b' b a c) (b' - b) (a - a') * det3 (axisView G.l G.m b' b a c') (b' - b) (a - a')) < 0 →
+      SegMeet b b' d c (axisView G.l G.m b' b a c) → SegMeet b b' a' a (axisView G.l G.m b' b a c') → SegMeet b b' a' a (axisView G.l G.m b' b a c) → False) :
+    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
+      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
+  set u := axisView G.l G.m b' b a c with hu
+  set v := axisView G.l G.m b' b a c' with hv
+  set K := insert d ({a, a', b, b', c, c'} : Finset ℝ³) with hK
+  obtain ⟨hs₁0, hs₁1, hδ₁, hm₁⟩ := hm₁
+  obtain ⟨hs₁0', hs₁1', hδ₁', hm₁'⟩ := hm₁'
+  obtain ⟨hs₂0, hs₂1, hδ₂, hm₂⟩ := hm₂
+  obtain ⟨hs₂0', hs₂1', hδ₂', hm₂'⟩ := hm₂'
+  have hKa : a ∈ K := by simp [hK]
+  have hKa' : a' ∈ K := by simp [hK]
+  have hKb : b ∈ K := by simp [hK]
+  have hKb' : b' ∈ K := by simp [hK]
+  have hKc : c ∈ K := by simp [hK]
+  have hKd : d ∈ K := by simp [hK]
+  have hnd := F.nodup
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
+    not_or, List.nodup_nil, and_true] at hnd
+  obtain ⟨⟨haa', hab, hab', hac, hac'⟩, ⟨ha'b, ha'b', ha'c, ha'c'⟩, ⟨hbb', hbc, hbc'⟩,
+    ⟨hb'c, hb'c'⟩, hcc', -⟩ := hnd
+  have hbd : b ≠ d := by
+    intro e
+    have h0 : det3 (d - b) (c - b) u = 0 := by
+      rw [← e, sub_self]; simp only [det3_expand, PiLp.zero_apply]; ring
+    rw [h0, mul_zero] at hT₁; exact lt_irrefl _ hT₁
+  have hdb' : d ≠ b' := by
+    intro e
+    have h0 : det3 (d - b) (b' - b) u = 0 := by
+      rw [e]; simp only [det3_expand, PiLp.sub_apply]; ring
+    rw [h0, mul_zero] at hΓ₁; exact lt_irrefl _ hΓ₁
+  have hdc : d ≠ c := by
+    intro e
+    have h0 : det3 (d - b) (c - b) u = 0 := by
+      rw [e]; simp only [det3_expand, PiLp.sub_apply]; ring
+    rw [h0, mul_zero] at hT₁; exact lt_irrefl _ hT₁
+  have htri₁ := htri₁ hbd hdc hbc
+  have htri₂ := htri₂ ha'b haa' hab
+  -- the test `V` at `u` (core labels `(b', b, d, c)`)
+  obtain ⟨K1, K2⟩ := rimCertPts_axisTest_core_gen hσ₁ hT₁ hΓ₁ hB₁ htri₁ K (by simp [hK])
+    (by simp [hK]) (by simp [hK]) (by simp [hK]) (fun x hx => by
+      simp only [hK, Finset.mem_insert, Finset.mem_singleton] at hx
+      rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl
+      · exact Or.inr (Or.inr (Or.inl rfl))
+      · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨s₁', δ₁', hs₁0', hs₁1', hδ₁', hm₁'⟩)))))
+      · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨s₁, δ₁, hs₁0, hs₁1, hδ₁, hm₁⟩)))))
+      · exact Or.inr (Or.inl rfl)
+      · exact Or.inl rfl
+      · exact Or.inr (Or.inr (Or.inr (Or.inl rfl)))
+      · exact Or.inr (Or.inr (Or.inr (Or.inr hX₁))))
+  -- the test `V'` at `v` (core labels `(b', b, a', a)`)
+  obtain ⟨L1, L2⟩ := rimCert_axisTest_core_gen hσ₂ hT₂ hΓ₂ hB₂ htri₂ K (by simp [hK])
+    (by simp [hK]) (by simp [hK]) (by simp [hK]) (fun x hx => by
+      simp only [hK, Finset.mem_insert, Finset.mem_singleton] at hx
+      rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl
+      · exact Or.inr (Or.inr (Or.inr (Or.inr hX₂)))
+      · exact Or.inr (Or.inr (Or.inr (Or.inl rfl)))
+      · exact Or.inr (Or.inr (Or.inl rfl))
+      · exact Or.inr (Or.inl rfl)
+      · exact Or.inl rfl
+      · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨s₂, δ₂, hs₂0, hs₂1, hδ₂, hm₂⟩)))))
+      · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨s₂', δ₂', hs₂0', hs₂1', hδ₂',
+          hm₂'⟩))))))
+  have hσσ₁ : σ₁ ≠ 0 := by rcases hσ₁ with rfl | rfl <;> norm_num
+  have hσσ₂ : σ₂ ≠ 0 := by rcases hσ₂ with rfl | rfl <;> norm_num
+  have nd1 : [b, d, b', c].Nodup := by
+    simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+      List.nodup_nil, and_true]
+    exact ⟨⟨hbd, hbb', hbc⟩, ⟨hdb', hdc⟩, hb'c, not_false⟩
+  have nd2 : [b, a', b', a].Nodup := by
+    simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
+      List.nodup_nil, and_true]
+    exact ⟨⟨Ne.symm ha'b, hbb', Ne.symm hab⟩, ⟨ha'b', Ne.symm haa'⟩, Ne.symm hab', not_false⟩
+  -- `V′` first: its certificate needs no data (two triangles)
+  rcases lt_or_gt_of_ne (mul_ne_zero hσσ₂ hP₂) with hα₂ | hα₂
+  swap; · exact CertV.line hL₂ (L1 hα₂)
+  by_cases hR2 : IsRobustUnimodal (quad ⟪b, v⟫ ⟪a', v⟫ ⟪b', v⟫ ⟪a, v⟫)
+  · exact CertV.line hL₂ (L2 hα₂ hR2)
+  -- `V`, with `V′` failing
+  rcases lt_or_gt_of_ne (mul_ne_zero hσσ₁ hP₁) with hα₁ | hα₁
+  swap; · exact CertV.line (hL₁ (Or.inr (K1 hα₁))) (K1 hα₁).rimCert3
+  obtain ⟨m1u, m2u⟩ := axisTest_meets hσ₁ hs₁0 hs₁1 hm₁ hs₁0' hs₁1' hm₁' hT₁ hΓ₁ hB₁ hα₁
+  obtain ⟨m2v, -⟩ := axisTest_meets hσ₂ hs₂0 hs₂1 hm₂ hs₂0' hs₂1' hm₂' hT₂ hΓ₂ hB₂ hα₂
+  have h08 : det3 u (b' - b) (a - a') * det3 v (b' - b) (a - a') < 0 :=
+    vertex_sep F.swap₁.swap₂.swap₃ G.swap₁.swap₂.swap₃
+  -- Lemma 22.14 (ii): `V′` fails, so `⟪u_V′, u_V⟫ ≤ 0`
+  have huv : ⟪v, u⟫ ≤ 0 := by
+    by_contra hpos
+    push Not at hpos
+    have B := hB nd2 hR2 m2v m2u hpos.ne'
+    have hprod : det3 v (b' - b) (a - a') * det3 u (b' - b) (a - a') < 0 := by
+      linarith [mul_comm (det3 v (b' - b) (a - a')) (det3 u (b' - b) (a - a'))]
+    linarith [mul_pos hpos (neg_pos.mpr hprod)]
+  by_cases hR1 : IsRobustUnimodal (quad ⟪b, u⟫ ⟪d, u⟫ ⟪b', u⟫ ⟪c, u⟫)
+  · -- `V`'s quadrilateral, with the data of Lemmas 22.13 and 22.14
+    refine CertV.line (hL₁ (Or.inl ⟨K2 hα₁ hR1, ?_, hΔ⟩)) (K2 hα₁ hR1).rimCert4
+    obtain ⟨s, δ, hδ, hc'⟩ := hc'u
+    obtain ⟨α, β, γ, hα, hβ, hγ, hy⟩ := hcone
+    have hv0 : v ≠ 0 := by
+      intro h0
+      have : det3 (a' - b) (a - b) v = 0 := by
+        rw [h0]; simp only [det3_expand, PiLp.zero_apply]; ring
+      rw [this, mul_zero] at hT₂; exact lt_irrefl _ hT₂
+    refine ⟨-v, neg_ne_zero.mpr hv0, ?_, ?_, ?_⟩
+    · rw [hm₂']; simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply,
+        PiLp.neg_apply, smul_eq_mul]; ring
+    · rw [hm₂]; simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply,
+        PiLp.neg_apply, smul_eq_mul]; ring
+    · set Dg := det3 (c - b) (b - d) (c' - b) with hDg
+      have e1 : det3 (-v) (b - d) (c' - b) = α * Dg := by
+        rw [hy, hDg]; simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply,
+          smul_eq_mul]; ring
+      have e2 : det3 (c - b) (-v) (c' - b) = β * Dg := by
+        rw [hy, hDg]; simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply,
+          smul_eq_mul]; ring
+      have e3 : det3 (c - b) (b - d) (-v) = γ * Dg := by
+        rw [hy, hDg]; simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply,
+          smul_eq_mul]; ring
+      have ec : cross (d - b) (c' - b) = δ • cross (d - b) u := by
+        rw [hc']; ext j; fin_cases j <;> simp [cross] <;> ring
+      refine ⟨?_, ?_, ?_, ?_⟩
+      · rw [e1, mul_assoc]; exact mul_nonneg hα.le (mul_self_nonneg Dg)
+      · rw [e2, mul_assoc]; exact mul_nonneg hβ.le (mul_self_nonneg Dg)
+      · rw [e3, mul_assoc]; exact mul_nonneg hγ.le (mul_self_nonneg Dg)
+      · rw [ec, cross_smul_right', real_inner_smul_left, real_inner_smul_right,
+          real_inner_smul_right, inner_neg_left]
+        have hσσ : σ₁ * σ₁ = 1 := by rcases hσ₁ with rfl | rfl <;> norm_num
+        have hCC := real_inner_self_nonneg (x := cross (d - b) u)
+        have : δ * (σ₁ * ⟪cross (d - b) u, cross (d - b) u⟫) * (σ₁ * -⟪v, u⟫) =
+            δ * (⟪cross (d - b) u, cross (d - b) u⟫ * -⟪v, u⟫) := by
+          linear_combination (δ * ⟪cross (d - b) u, cross (d - b) u⟫ * -⟪v, u⟫) * hσσ
+        rw [this]
+        exact mul_nonpos_of_nonpos_of_nonneg hδ.le (mul_nonneg hCC (by linarith))
+  exfalso
+  have hdet := mul_neg_of_pos_of_neg hsign h08
+  exact hfin nd1 nd2 hR1 hR2 hdet m1u m2v m2u
+
 /-- **Lemma 16.9 (F2)**, type-21 labels (`a, a', b, b', c, c', d = 0, 3, 4, 5, 1, 6, 2`).  The
 vertex crossings at `4`: `V = 014/2346` at `u_V = [5 0] (0 − 4) + [5 1] (1 − 4)` with the rim
 `(4, 2, 5, 1)` (or the triangle `(4, 2, 1)`), `3` a middle over `4 → 2`, `0` over `4 → 1`, `6` a
@@ -346,45 +528,22 @@ theorem cert_type21_F2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
       (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
   set u := axisView G.l G.m b' b a c with hu
   set v := axisView G.l G.m b' b a c' with hv
-  set K := insert d ({a, a', b, b', c, c'} : Finset ℝ³) with hK
-  obtain ⟨hs₁0, hs₁1, hδ₁, hm₁⟩ := hm₁
-  obtain ⟨hs₁0', hs₁1', hδ₁', hm₁'⟩ := hm₁'
-  obtain ⟨hs₂0, hs₂1, hδ₂, hm₂⟩ := hm₂
-  obtain ⟨hs₂0', hs₂1', hδ₂', hm₂'⟩ := hm₂'
-  have hKa : a ∈ K := by simp [hK]
-  have hKa' : a' ∈ K := by simp [hK]
-  have hKb : b ∈ K := by simp [hK]
-  have hKb' : b' ∈ K := by simp [hK]
-  have hKc : c ∈ K := by simp [hK]
-  have hKd : d ∈ K := by simp [hK]
-  have hnd := F.nodup
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
-    not_or, List.nodup_nil, and_true] at hnd
-  obtain ⟨⟨haa', hab, hab', hac, hac'⟩, ⟨ha'b, ha'b', ha'c, ha'c'⟩, ⟨hbb', hbc, hbc'⟩,
-    ⟨hb'c, hb'c'⟩, hcc', -⟩ := hnd
-  have hbd : b ≠ d := by
-    intro e
-    have h0 : det3 (d - b) (c - b) u = 0 := by
-      rw [← e, sub_self]; simp only [det3_expand, PiLp.zero_apply]; ring
-    rw [h0, mul_zero] at hT₁; exact lt_irrefl _ hT₁
-  have hdb' : d ≠ b' := by
-    intro e
-    have h0 : det3 (d - b) (b' - b) u = 0 := by
-      rw [e]; simp only [det3_expand, PiLp.sub_apply]; ring
-    rw [h0, mul_zero] at hΓ₁; exact lt_irrefl _ hΓ₁
-  have hdc : d ≠ c := by
-    intro e
-    have h0 : det3 (d - b) (c - b) u = 0 := by
-      rw [e]; simp only [det3_expand, PiLp.sub_apply]; ring
-    rw [h0, mul_zero] at hT₁; exact lt_irrefl _ hT₁
-  have htri₁ : ¬ (⟪b, u⟫ = ⟪d, u⟫ ∧ ⟪d, u⟫ = ⟪c, u⟫) := by
+  have hKa : a ∈ insert d ({a, a', b, b', c, c'} : Finset ℝ³) := by simp
+  have hKa' : a' ∈ insert d ({a, a', b, b', c, c'} : Finset ℝ³) := by simp
+  have hKb : b ∈ insert d ({a, a', b, b', c, c'} : Finset ℝ³) := by simp
+  have hKb' : b' ∈ insert d ({a, a', b, b', c, c'} : Finset ℝ³) := by simp
+  have hKc : c ∈ insert d ({a, a', b, b', c, c'} : Finset ℝ³) := by simp
+  have hKd : d ∈ insert d ({a, a', b, b', c, c'} : Finset ℝ³) := by simp
+  refine cert_type21_F2_gen F G hσ₁ hT₁ hΓ₁ hB₁ hP₁ hm₁ hm₁' hX₁ hσ₂ hT₂ hΓ₂ hB₂ hP₂ hm₂ hm₂' hX₂
+    hmeet hsign hc'u hcone hΔ hL₁ hL₂ ?_ ?_ ?_ ?_
+  · intro hbd hdc hbc
     rcases hties with ⟨q1, -⟩ | ⟨o1, -, -⟩
     · exact q1.2.1
     · rintro ⟨e1, e2⟩
       rcases o1 b hKb d hKd d hKd c hKc hbd hdc e1 e2 with ⟨h1, -⟩ | ⟨h1, -⟩
       · exact hbd h1
       · exact hbc h1
-  have htri₂ : ¬ (⟪b, v⟫ = ⟪a', v⟫ ∧ ⟪a', v⟫ = ⟪a, v⟫) := by
+  · intro ha'b haa' hab
     rcases hties with ⟨-, q2⟩ | ⟨-, o2, -⟩
     · exact q2.2.1
     · rintro ⟨e1, e2⟩
@@ -392,140 +551,53 @@ theorem cert_type21_F2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
         ⟨h1, -⟩ | ⟨h1, -⟩
       · exact ha'b h1.symm
       · exact hab h1.symm
-  -- the test `V` at `u` (core labels `(b', b, d, c)`)
-  obtain ⟨K1, K2⟩ := rimCertPts_axisTest_core_gen hσ₁ hT₁ hΓ₁ hB₁ htri₁ K (by simp [hK])
-    (by simp [hK]) (by simp [hK]) (by simp [hK]) (fun x hx => by
-      simp only [hK, Finset.mem_insert, Finset.mem_singleton] at hx
-      rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl
-      · exact Or.inr (Or.inr (Or.inl rfl))
-      · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨s₁', δ₁', hs₁0', hs₁1', hδ₁', hm₁'⟩)))))
-      · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨s₁, δ₁, hs₁0, hs₁1, hδ₁, hm₁⟩)))))
-      · exact Or.inr (Or.inl rfl)
-      · exact Or.inl rfl
-      · exact Or.inr (Or.inr (Or.inr (Or.inl rfl)))
-      · exact Or.inr (Or.inr (Or.inr (Or.inr hX₁))))
-  -- the test `V'` at `v` (core labels `(b', b, a', a)`)
-  obtain ⟨L1, L2⟩ := rimCert_axisTest_core_gen hσ₂ hT₂ hΓ₂ hB₂ htri₂ K (by simp [hK])
-    (by simp [hK]) (by simp [hK]) (by simp [hK]) (fun x hx => by
-      simp only [hK, Finset.mem_insert, Finset.mem_singleton] at hx
-      rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl
-      · exact Or.inr (Or.inr (Or.inr (Or.inr hX₂)))
-      · exact Or.inr (Or.inr (Or.inr (Or.inl rfl)))
-      · exact Or.inr (Or.inr (Or.inl rfl))
-      · exact Or.inr (Or.inl rfl)
-      · exact Or.inl rfl
-      · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨s₂, δ₂, hs₂0, hs₂1, hδ₂, hm₂⟩)))))
-      · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨s₂', δ₂', hs₂0', hs₂1', hδ₂',
-          hm₂'⟩))))))
-  have hσσ₁ : σ₁ ≠ 0 := by rcases hσ₁ with rfl | rfl <;> norm_num
-  have hσσ₂ : σ₂ ≠ 0 := by rcases hσ₂ with rfl | rfl <;> norm_num
-  have nd1 : [b, d, b', c].Nodup := by
-    simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-      List.nodup_nil, and_true]
-    exact ⟨⟨hbd, hbb', hbc⟩, ⟨hdb', hdc⟩, hb'c, not_false⟩
-  have nd2 : [b, a', b', a].Nodup := by
-    simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-      List.nodup_nil, and_true]
-    exact ⟨⟨Ne.symm ha'b, hbb', Ne.symm hab⟩, ⟨ha'b', Ne.symm haa'⟩, Ne.symm hab', not_false⟩
-  -- `V′` first: its certificate needs no data (two triangles)
-  rcases lt_or_gt_of_ne (mul_ne_zero hσσ₂ hP₂) with hα₂ | hα₂
-  swap; · exact CertV.line hL₂ (L1 hα₂)
-  by_cases hR2 : IsRobustUnimodal (quad ⟪b, v⟫ ⟪a', v⟫ ⟪b', v⟫ ⟪a, v⟫)
-  · exact CertV.line hL₂ (L2 hα₂ hR2)
-  -- `V`, with `V′` failing
-  rcases lt_or_gt_of_ne (mul_ne_zero hσσ₁ hP₁) with hα₁ | hα₁
-  swap; · exact CertV.line (hL₁ (Or.inr (K1 hα₁))) (K1 hα₁).rimCert3
-  obtain ⟨m1u, m2u⟩ := axisTest_meets hσ₁ hs₁0 hs₁1 hm₁ hs₁0' hs₁1' hm₁' hT₁ hΓ₁ hB₁ hα₁
-  obtain ⟨m2v, -⟩ := axisTest_meets hσ₂ hs₂0 hs₂1 hm₂ hs₂0' hs₂1' hm₂' hT₂ hΓ₂ hB₂ hα₂
-  have h08 : det3 u (b' - b) (a - a') * det3 v (b' - b) (a - a') < 0 :=
-    vertex_sep F.swap₁.swap₂.swap₃ G.swap₁.swap₂.swap₃
-  -- Lemma 22.14 (ii): `V′` fails, so `⟪u_V′, u_V⟫ ≤ 0`
-  have huv : ⟪v, u⟫ ≤ 0 := by
-    by_contra hpos
-    push Not at hpos
-    have B := (show 0 ≤ ⟪v, u⟫ * (det3 v (b' - b) (a - a') * det3 u (b' - b) (a - a')) by
-      rcases hties with ⟨-, q2⟩ | ⟨-, o2, -, -, hS2⟩
+  · intro nd2 hR2 m2v m2u hne
+    rcases hties with ⟨-, q2⟩ | ⟨-, o2, -, -, hS2⟩
+    · have hs2 : DepthSep b b' a' a (axisView G.l G.m b' b a c') := by
+        by_contra hc
+        exact hR2 (isRobustUnimodal_quad q2 (fun h => hc (Or.inr h)) (fun h => hc (Or.inl h)))
+      exact (depthSep_det_sign hs2 m2v m2u).1
+    · have W2 := weakSep_of_not_robust (o2.oneTie4 hKb hKa' hKb' hKa nd2) hR2
+      exact weakSep_det_sign W2.symm m2v m2u hne hS2
+  · intro nd1 nd2 hR1 hR2 hdet m1u m2v m2u
+    have hn1 := nd1
+    have hn2 := nd2
+    simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or, List.nodup_nil,
+      and_true] at hn1 hn2
+    obtain ⟨⟨hbd, -, hbc⟩, ⟨hdb', -⟩, hb'c, -⟩ := hn1
+    obtain ⟨⟨hba', -, hba⟩, ⟨ha'b', -⟩, hb'a, -⟩ := hn2
+    have ha'b : a' ≠ b := Ne.symm hba'
+    have hab : a ≠ b := Ne.symm hba
+    have hab' : a ≠ b' := Ne.symm hb'a
+    rcases hties with ⟨q1, q2⟩ | ⟨o1, o2, hno, hS1, hS2⟩
+    · -- the ties of `QuadTie`: both diagonals strictly separated
+      have hs1 : DepthSep b b' d c u := by
+        by_contra hc
+        exact hR1 (isRobustUnimodal_quad q1 (fun h => hc (Or.inr h)) (fun h => hc (Or.inl h)))
+      have hs2 : DepthSep b b' a' a v := by
+        by_contra hc
+        exact hR2 (isRobustUnimodal_quad q2 (fun h => hc (Or.inr h)) (fun h => hc (Or.inl h)))
+      exact not_both_depthSep hs1 hs2 m1u hmeet m2v m2u hdet
+    · -- one tie: weak separations, one of them strict
+      have W1 := weakSep_of_not_robust (o1.oneTie4 hKb hKd hKb' hKc nd1) hR1
+      have W2 := weakSep_of_not_robust (o2.oneTie4 hKb hKa' hKb' hKa nd2) hR2
+      rcases hno with n1 | n2
+      · have hs1 : DepthSep b b' d c u := by
+          rcases W1 with w | w
+          · exact Or.inr (lt_of_le_of_noTie n1 hKd hKc hKb hKb' (Ne.symm hbd) hdb' (Ne.symm hbc)
+              (Ne.symm hb'c) w)
+          · exact Or.inl (lt_of_le_of_noTie n1 hKb hKb' hKd hKc hbd hbc (Ne.symm hdb') hb'c w)
+        obtain ⟨A, hne⟩ := depthSep_det_sign hs1 m1u hmeet
+        have hne' : ⟪v, u⟫ ≠ 0 := by rw [real_inner_comm]; exact hne
+        exact not_both_of_signs A (weakSep_det_sign W2.symm m2v m2u hne' hS2) hne hdet
       · have hs2 : DepthSep b b' a' a v := by
-          by_contra hc
-          exact hR2 (isRobustUnimodal_quad q2 (fun h => hc (Or.inr h)) (fun h => hc (Or.inl h)))
-        exact (depthSep_det_sign hs2 m2v m2u).1
-      · have W2 := weakSep_of_not_robust (o2.oneTie4 hKb hKa' hKb' hKa nd2) hR2
-        exact weakSep_det_sign W2.symm m2v m2u hpos.ne' hS2)
-    have hprod : det3 v (b' - b) (a - a') * det3 u (b' - b) (a - a') < 0 := by
-      linarith [mul_comm (det3 v (b' - b) (a - a')) (det3 u (b' - b) (a - a'))]
-    linarith [mul_pos hpos (neg_pos.mpr hprod)]
-  by_cases hR1 : IsRobustUnimodal (quad ⟪b, u⟫ ⟪d, u⟫ ⟪b', u⟫ ⟪c, u⟫)
-  · -- `V`'s quadrilateral, with the data of Lemmas 22.13 and 22.14
-    refine CertV.line (hL₁ (Or.inl ⟨K2 hα₁ hR1, ?_, hΔ⟩)) (K2 hα₁ hR1).rimCert4
-    obtain ⟨s, δ, hδ, hc'⟩ := hc'u
-    obtain ⟨α, β, γ, hα, hβ, hγ, hy⟩ := hcone
-    have hv0 : v ≠ 0 := by
-      intro h0
-      have : det3 (a' - b) (a - b) v = 0 := by
-        rw [h0]; simp only [det3_expand, PiLp.zero_apply]; ring
-      rw [this, mul_zero] at hT₂; exact lt_irrefl _ hT₂
-    refine ⟨-v, neg_ne_zero.mpr hv0, ?_, ?_, ?_⟩
-    · rw [hm₂']; simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply,
-        PiLp.neg_apply, smul_eq_mul]; ring
-    · rw [hm₂]; simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply,
-        PiLp.neg_apply, smul_eq_mul]; ring
-    · set Dg := det3 (c - b) (b - d) (c' - b) with hDg
-      have e1 : det3 (-v) (b - d) (c' - b) = α * Dg := by
-        rw [hy, hDg]; simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply,
-          smul_eq_mul]; ring
-      have e2 : det3 (c - b) (-v) (c' - b) = β * Dg := by
-        rw [hy, hDg]; simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply,
-          smul_eq_mul]; ring
-      have e3 : det3 (c - b) (b - d) (-v) = γ * Dg := by
-        rw [hy, hDg]; simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply,
-          smul_eq_mul]; ring
-      have ec : cross (d - b) (c' - b) = δ • cross (d - b) u := by
-        rw [hc']; ext j; fin_cases j <;> simp [cross] <;> ring
-      refine ⟨?_, ?_, ?_, ?_⟩
-      · rw [e1, mul_assoc]; exact mul_nonneg hα.le (mul_self_nonneg Dg)
-      · rw [e2, mul_assoc]; exact mul_nonneg hβ.le (mul_self_nonneg Dg)
-      · rw [e3, mul_assoc]; exact mul_nonneg hγ.le (mul_self_nonneg Dg)
-      · rw [ec, cross_smul_right', real_inner_smul_left, real_inner_smul_right,
-          real_inner_smul_right, inner_neg_left]
-        have hσσ : σ₁ * σ₁ = 1 := by rcases hσ₁ with rfl | rfl <;> norm_num
-        have hCC := real_inner_self_nonneg (x := cross (d - b) u)
-        have : δ * (σ₁ * ⟪cross (d - b) u, cross (d - b) u⟫) * (σ₁ * -⟪v, u⟫) =
-            δ * (⟪cross (d - b) u, cross (d - b) u⟫ * -⟪v, u⟫) := by
-          linear_combination (δ * ⟪cross (d - b) u, cross (d - b) u⟫ * -⟪v, u⟫) * hσσ
-        rw [this]
-        exact mul_nonpos_of_nonpos_of_nonneg hδ.le (mul_nonneg hCC (by linarith))
-  exfalso
-  have hdet := mul_neg_of_pos_of_neg hsign h08
-  rcases hties with ⟨q1, q2⟩ | ⟨o1, o2, hno, hS1, hS2⟩
-  · -- the ties of `QuadTie`: both diagonals strictly separated
-    have hs1 : DepthSep b b' d c u := by
-      by_contra hc
-      exact hR1 (isRobustUnimodal_quad q1 (fun h => hc (Or.inr h)) (fun h => hc (Or.inl h)))
-    have hs2 : DepthSep b b' a' a v := by
-      by_contra hc
-      exact hR2 (isRobustUnimodal_quad q2 (fun h => hc (Or.inr h)) (fun h => hc (Or.inl h)))
-    exact not_both_depthSep hs1 hs2 m1u hmeet m2v m2u hdet
-  · -- one tie: weak separations, one of them strict
-    have W1 := weakSep_of_not_robust (o1.oneTie4 hKb hKd hKb' hKc nd1) hR1
-    have W2 := weakSep_of_not_robust (o2.oneTie4 hKb hKa' hKb' hKa nd2) hR2
-    rcases hno with n1 | n2
-    · have hs1 : DepthSep b b' d c u := by
-        rcases W1 with w | w
-        · exact Or.inr (lt_of_le_of_noTie n1 hKd hKc hKb hKb' (Ne.symm hbd) hdb' (Ne.symm hbc)
-            (Ne.symm hb'c) w)
-        · exact Or.inl (lt_of_le_of_noTie n1 hKb hKb' hKd hKc hbd hbc (Ne.symm hdb') hb'c w)
-      obtain ⟨A, hne⟩ := depthSep_det_sign hs1 m1u hmeet
-      have hne' : ⟪v, u⟫ ≠ 0 := by rw [real_inner_comm]; exact hne
-      exact not_both_of_signs A (weakSep_det_sign W2.symm m2v m2u hne' hS2) hne hdet
-    · have hs2 : DepthSep b b' a' a v := by
-        rcases W2 with w | w
-        · exact Or.inr (lt_of_le_of_noTie n2 hKa' hKa hKb hKb' ha'b ha'b' hab hab' w)
-        · exact Or.inl (lt_of_le_of_noTie n2 hKb hKb' hKa' hKa (Ne.symm ha'b) (Ne.symm hab)
-            (Ne.symm ha'b') (Ne.symm hab') w)
-      obtain ⟨B, hne'⟩ := depthSep_det_sign hs2 m2v m2u
-      have hne : ⟪u, v⟫ ≠ 0 := by rw [real_inner_comm]; exact hne'
-      exact not_both_of_signs (weakSep_det_sign W1.symm m1u hmeet hne hS1) B hne hdet
+          rcases W2 with w | w
+          · exact Or.inr (lt_of_le_of_noTie n2 hKa' hKa hKb hKb' ha'b ha'b' hab hab' w)
+          · exact Or.inl (lt_of_le_of_noTie n2 hKb hKb' hKa' hKa (Ne.symm ha'b) (Ne.symm hab)
+              (Ne.symm ha'b') (Ne.symm hab') w)
+        obtain ⟨B, hne'⟩ := depthSep_det_sign hs2 m2v m2u
+        have hne : ⟪u, v⟫ ≠ 0 := by rw [real_inner_comm]; exact hne'
+        exact not_both_of_signs (weakSep_det_sign W1.symm m1u hmeet hne hS1) B hne hdet
+  
 
 end Minimality
-
-end

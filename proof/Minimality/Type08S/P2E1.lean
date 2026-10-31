@@ -65,12 +65,6 @@ theorem not_mem_segment_of_noSeg {x a b : ℝ³} (hxa : x ≠ a) (hxb : x ≠ b)
 
 /-! ### The lexicographic metric -/
 
-theorem detMap_eq_det (L : ℝ³ →L[ℝ] ℝ³) : detMap L = LinearMap.det (L : ℝ³ →ₗ[ℝ] ℝ³) := by
-  rw [← LinearMap.det_toMatrix (EuclideanSpace.basisFun (Fin 3) ℝ).toBasis, Matrix.det_fin_three]
-  simp only [detMap, det3_expand, LinearMap.toMatrix_apply]
-  simp [EuclideanSpace.basisFun_apply]
-  ring
-
 /-- The shear `x ↦ x + ε ⟪u, x⟫ d`. -/
 noncomputable def lexShear (u d : ℝ³) (ε : ℝ) : ℝ³ →L[ℝ] ℝ³ :=
   1 + ε • (innerSL ℝ u).smulRight d
