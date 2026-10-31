@@ -6,7 +6,7 @@ public import Minimality.Type08S.P2TA2c
 
 set_option relaxedAutoImplicit true
 /-!
-# pkP / A2d: `close_hdn_pers_KbT` (statement of PT0; the `S4T'` safety valve L5 is not used).
+# pkP / A2d: `close_hdn_pers_KbT` (Rupert outright; this removed PT0's safety valve L5 from `S4T'`).
 -/
 
 set_option autoImplicit true
@@ -28,8 +28,7 @@ theorem close_hdn_pers_KbT {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c'
       (test08 1 s true).view (pts08 a a' b b' c c' d)⟫))
     (hp : ¬ NoPersistHDN (fun i => pts08 a a' b b' c c' d ((test08 1 s true).lab (σ i)))
         ((test08 1 s true).view (pts08 a a' b b' c c' d)) (eF a a' b b' c c' d (1, s, true))) :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) ∨ S4T' a a' b b' c c' d := by
-  left
+    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   obtain ⟨e1, e2, e3, κ, hF, hκ, hxe, hf2, hL, hr'⟩ := frame_Kb N
   have hκ0 : -κ ≠ 0 := neg_ne_zero.mpr hκ
   cases s

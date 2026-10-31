@@ -83,9 +83,9 @@ def StP3Tp (a b b' c c' d : ℝ³) : Prop :=
 
 /-! ## The items left (each with `¬ HasLexCell`) -/
 
-/-- **At `T`**: P1's L2, case B's (B2) and (B3) (codim 4 each), the valve L5.  L1 is empty under `Norm08` (package
-R1); case B's (B1) and P1's L3 close (N2's weak far triple with `AngBig`: package R2); P1's L4 lands in (B2), (B3) or
-the tree's `cellXba2_rupert`. -/
+/-- **At `T`**: P1's L2, case B's (B2) and (B3) (codim 4 each).  L1 is empty under `Norm08` (package R1); case B's
+(B1) and P1's L3 close (N2's weak far triple with `AngBig`: package R2); P1's L4 lands in (B2), (B3) or the tree's
+`cellXba2_rupert`.  PT0's valve L5 is gone (pkR package W): `close_hdn_pers_KbT` is Rupert outright. -/
 def S4TR (a a' b b' c c' d : ℝ³) : Prop :=
   IsT a' b c d ∧
     ((TouchT b b' c c' d ∧ ⟪c, b - d⟫ < ⟪b, b - d⟫ ∧ ¬ AngBig a b b' c d ∧
@@ -94,10 +94,7 @@ def S4TR (a a' b b' c c' d : ℝ³) : Prop :=
      (¬ RobKb a a' b b' c c' d ∧ N2WST a' b b' c c' d ∧ ¬ AngBig a b b' c d ∧
         ¬ NoHDNAt ({d, c', b', c} : Finset ℝ³) (b - d)) ∨
      (¬ RobKb a a' b b' c c' d ∧ RobXba a' b b' c' d ∧ ¬ AngBig a b b' c d ∧ ⟪c', b - d⟫ = ⟪b', b - d⟫ ∧
-        ¬ NoHDNAt ({b, c', b', a'} : Finset ℝ³) (b - d) ∧ ¬ NoHDNAt ({d, c', b', c} : Finset ℝ³) (b - d)) ∨
-     -- P1's valve L5 (level face of `Q_ac` at `T`, HDN of `R1`): never produced by the tree's route (`close_T_sig4`
-     -- uses `close_hdn_pers_KbT`, which is Rupert outright); kept because `S4T'` contains it.  Package W removes it.
-     (LevelQac a b c d ∧ ¬ NoHDNAt ({b, c', b', c} : Finset ℝ³) (b - d)))
+        ¬ NoHDNAt ({b, c', b', a'} : Finset ℝ³) (b - d) ∧ ¬ NoHDNAt ({d, c', b', c} : Finset ℝ³) (b - d)))
 
 /-- **R4 leftover** (`α4 = 1` at `T'` with `QacTop`, `0 ≤ C := ⟪c - d, b - d⟫`, i.e. case (ii) of R4a/HANDOFF.md; includes the
 level face `C = 0`).  Carries the `X_2a`-HDN and `¬ CaseATp` conjuncts of the branch of `S4TpG2` it comes from, so that it
@@ -137,11 +134,10 @@ def Resid08FinalJ (a a' b b' c c' d : ℝ³) : Prop :=
 /-! ## `J ⊆ I` (proved) -/
 
 theorem S4TR_imp {a a' b b' c c' d : ℝ³} (h : S4TR a a' b b' c c' d) : S4T2 a a' b b' c c' d := by
-  obtain ⟨hT, ⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4, h5, h6⟩ | ⟨h1, h2⟩⟩ := h
+  obtain ⟨hT, ⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4, h5, h6⟩⟩ := h
   · exact Or.inl ⟨hT, Or.inr (Or.inl ⟨h1, h3, h4⟩)⟩
   · exact Or.inr ⟨hT, h1, Or.inr (Or.inl ⟨h2, h3, h4⟩)⟩
   · exact Or.inr ⟨hT, h1, Or.inr (Or.inr ⟨h2, h3, h4, h5, h6⟩)⟩
-  · exact Or.inl ⟨hT, Or.inr (Or.inr (Or.inr (Or.inr ⟨h1, h2⟩)))⟩
 
 theorem S4TpR_imp {a a' b b' c c' d : ℝ³} (h : S4TpR a a' b b' c c' d) : S4TpG2 a a' b b' c c' d := by
   obtain ⟨hT', hq, -, -, -, hX, h2, hA⟩ := h

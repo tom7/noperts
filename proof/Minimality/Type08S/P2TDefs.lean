@@ -62,9 +62,7 @@ def S4T' (a a' b b' c c' d : ℝ³) : Prop :=
      -- an HDN persisting along `Q_bc`'s circle.  Codim 4 (map.md §5).
      (¬ RobKb a a' b b' c c' d ∧ ¬ AngBig a b b' c d ∧ ¬ NoHDNAt ({d, c', b', c} : Finset ℝ³) (b - d) ∧
        ¬ (RobXba a' b b' c' d ∧ NoHDNAt ({b, c', b', a'} : Finset ℝ³) (b - d)) ∧
-       ¬ (RobX2a a' b b' c' d ∧ NoPersistHDN (quad d c' b' a') (b - d) (eBC b c d))) ∨
-     -- (L5) safety valve for P1-A2 (sp08f §8 item 2 "(Q) at T"): level face of `Q_ac` and an HDN of `R1`.  Codim 4.
-     (LevelQac a b c d ∧ ¬ NoHDNAt ({b, c', b', c} : Finset ℝ³) (b - d)))
+       ¬ (RobX2a a' b b' c' d ∧ NoPersistHDN (quad d c' b' a') (b - d) (eBC b c d))))
 
 end Type08Sp
 end Minimality

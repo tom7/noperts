@@ -70,6 +70,9 @@ public import Minimality.VirialFlat
 public import Minimality.SecondOrder
 public import Minimality.SecondOrderT2
 public import Minimality.SecondOrderT2b
+public import Minimality.SecondOrderSpin
+public import Minimality.SecondOrderHDN
+public import Minimality.PolygonHalfPlanes
 
 /-!
 # Every nopert has at least 7 points

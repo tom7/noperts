@@ -29,7 +29,7 @@ open Finset Filter
 namespace Minimality
 namespace Type08Sp
 
-/-- The full leftover at `T` (codim 4): `S4T'` (touching L1/L2, the persistent-`K_b` valve L5) or case B's `S4TB`. -/
+/-- The full leftover at `T` (codim 4): `S4T'` (touching L1/L2, case B's L3/L4) or case B's `S4TB`. -/
 def S4T2 (a a' b b' c c' d : ℝ³) : Prop := S4T' a a' b b' c c' d ∨ S4TB a a' b b' c c' d
 
 theorem close_T_sig4 {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (hT : IsT a' b c d) :
@@ -41,7 +41,7 @@ theorem close_T_sig4 {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (h
     by_cases hnp : NoPersistHDN (fun i => pts08 a a' b b' c c' d ((test08 1 s true).lab (σ i)))
         ((test08 1 s true).view (pts08 a a' b b' c c' d)) (eF a a' b b' c c' d (1, s, true))
     · exact Or.inl (close_hdn_np_KbT N hT hrim hrob hnp)
-    · exact (close_hdn_pers_KbT N hT hrim hrob hnp).imp id Or.inl
+    · exact Or.inl (close_hdn_pers_KbT N hT hrim hrob hnp)
   · exact (close_caseB_T N hT hB h).imp id Or.inr
 
 theorem S4T2_isT {a a' b b' c c' d : ℝ³} (h : S4T2 a a' b b' c c' d) : IsT a' b c d := by

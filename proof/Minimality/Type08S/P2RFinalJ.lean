@@ -74,7 +74,7 @@ theorem s4T2_rupert_or_R {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d
   have ws : IsT a' b c d → ¬ RobKb a a' b b' c c' d → N2WST a' b b' c c' d → AngBig a b b' c d →
       IsRupert (V8 a a' b b' c c' d) :=
     fun hT hB hw hang => rupert_of_at N (lexCell_N2WS N ⟨hT, hB, hw⟩ hang)
-  rcases h with ⟨hT, ⟨h1, heq⟩ | ⟨h1, h2, h3⟩ | ⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4, h5⟩ | ⟨h1, h2⟩⟩ |
+  rcases h with ⟨hT, ⟨h1, heq⟩ | ⟨h1, h2, h3⟩ | ⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4, h5⟩⟩ |
       ⟨hT, hB, ⟨h1, h2, h3⟩ | ⟨h1, h2, h3⟩ | ⟨h1, h2, h3, h4, h5⟩⟩
   · exact (touchT_eq_false N hT h1 heq).elim
   · rcases (h1.2.2).eq_or_lt with heq | hlt
@@ -86,13 +86,12 @@ theorem s4T2_rupert_or_R {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d
   · rcases caseB_Xba N hT h1 with hX | hw
     · have hXh : ¬ NoHDNAt ({b, c', b', a'} : Finset ℝ³) (b - d) := fun hn => h4 ⟨hX, hn⟩
       by_cases hRP : ⟪c', b - d⟫ = ⟪b', b - d⟫
-      · exact Or.inr ⟨hT, Or.inr (Or.inr (Or.inl ⟨h1, hX, h2, hRP, hXh, h3⟩))⟩
+      · exact Or.inr ⟨hT, Or.inr (Or.inr ⟨h1, hX, h2, hRP, hXh, h3⟩)⟩
       · exact Or.inl (cellXba2_rupert N hT h1 h2 hX hRP)
     · exact Or.inr ⟨hT, Or.inr (Or.inl ⟨h1, hw, h2, h3⟩)⟩
-  · exact Or.inr ⟨hT, Or.inr (Or.inr (Or.inr ⟨h1, h2⟩))⟩
   · exact Or.inl (ws hT hB h1 h2)
   · exact Or.inr ⟨hT, Or.inr (Or.inl ⟨hB, h1, h2, h3⟩)⟩
-  · exact Or.inr ⟨hT, Or.inr (Or.inr (Or.inl ⟨hB, h1, h2, h3, h4, h5⟩))⟩
+  · exact Or.inr ⟨hT, Or.inr (Or.inr ⟨hB, h1, h2, h3, h4, h5⟩)⟩
 
 /-- `Al4One` with `QacTop`: case (i) is Rupert, case (ii) is the leftover. -/
 theorem tpA1_rupert_or {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (hT' : IsT' a b c' d)
