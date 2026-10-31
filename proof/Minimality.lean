@@ -63,6 +63,7 @@ public import Minimality.Type08S.G9_Final
 public import Minimality.Type08S.SCm
 public import Minimality.Type08S.P2RFinalJ
 public import Minimality.MirrorBound
+public import Minimality.MirrorPlane
 public import Minimality.Virial
 public import Minimality.VirialQ
 public import Minimality.VirialFlat
