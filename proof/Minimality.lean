@@ -4,6 +4,7 @@ public import Minimality.Cases
 public import Minimality.Type08S.C2K2E
 public import Minimality.Type08S.C2K9K
 public import Minimality.Type08S.C2K5ZE
+public import Minimality.Type08S.C2K6PZ
 public import Minimality.Type08S.C2FC1
 public import Minimality.Type16Ties
 public import Minimality.Type21Ties
@@ -770,6 +771,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         have _hresK9 := Minimality.Type08Sp.resid08FinalK8_imp_K9 _hresK8
         -- K5 (planar ResidP6): every planar sub-item closed off its tie slices (C2K5*); `Resid08FinalK10`
         have _hresK10 := Minimality.Type08Sp.resid08FinalK9_imp_K10' _hresK9
+        -- K6P (ParEnd tie slices): QCE2 closed; QN2/QCEb cut to the stratum M (+ QN2's α1 ≤ 1 double ties)
+        have _hresK11 := Minimality.Type08Sp.resid08FinalK10_imp_K11 _hresK10
         byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
     -- asked; type 09 is fully closed (no `sorry`).  `quadPairPar09` (as `quadPairPar02`):

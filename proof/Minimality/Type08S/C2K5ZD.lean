@@ -91,14 +91,14 @@ def K5ZsN2 (a a' b b' c c' d : ℝ³) : Prop :=
   det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndN2 a a' b b' c c' ∧
     (⟪a - d, b - c⟫ = 0 ∨ ⟪c' - d, b - c⟫ = 0 ∨ ⟪b' - d, b - c⟫ = 0)
 
-/-- QCEb (`κ_a = 0`, `ParEndKb`, view `b - c`): `ρ_a = 0`, or `ζ(a,c') = ⟪a - c', b - c⟫ = 0`, or `ζ(a,b') = ⟪a - b', b - c⟫ = 0`. -/
+/-- QCEb (T4 region, `κ_a = 0`, `ParEndKb`, view `b - c`): `ρ_a = 0`, or `ζ(a,c') = ⟪a - c', b - c⟫ = 0`, or `ζ(a,b') = ⟪a - b', b - c⟫ = 0`. -/
 def K5ZsCEb {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) : Prop :=
-  det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndKb b b' c c' d ∧
+  RegT4 W.F ∧ det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndKb b b' c c' d ∧
     (⟪a - d, b - c⟫ = 0 ∨ ⟪a - c', b - c⟫ = 0 ∨ ⟪a - b', b - c⟫ = 0)
 
-/-- QCE2 (`κ_a = 0`, `ParEndK2`, view `a - d`): `ζ(b,c) = ⟪b - c, a - d⟫ = 0`. -/
+/-- QCE2 (T4 region, `κ_a = 0`, `ParEndK2`, view `a - d`): `ζ(b,c) = ⟪b - c, a - d⟫ = 0`. -/
 def K5ZsCE2 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) : Prop :=
-  det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndK2 b b' c c' d ∧
+  RegT4 W.F ∧ det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndK2 b b' c c' d ∧
     ⟪b - c, a - d⟫ = 0
 
 /-- **The K5 leftover in one labelling**: one of the named slices. -/
@@ -180,13 +180,13 @@ theorem k5z_resP_split (H : K5ZbHyp) {a a' b b' c c' d : ℝ³} (W : Norm08w a a
         exact Or.inl (H.qn2 W hκ hN2 h1 h2 h3)
     · -- QCEb
       by_cases hs : ⟪a - d, b - c⟫ = 0 ∨ ⟪a - c', b - c⟫ = 0 ∨ ⟪a - b', b - c⟫ = 0
-      · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hκ, hKb, hs⟩))))))))
+      · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hreg, hκ, hKb, hs⟩))))))))
       · simp only [not_or] at hs
         obtain ⟨h1, h2, h3⟩ := hs
         exact Or.inl (H.qceb W hκ hKb hreg.1 hreg.2 h1 h2 h3)
     · -- QCE2
       by_cases hs : ⟪b - c, a - d⟫ = 0
-      · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨hκ, hK2, hs⟩))))))))
+      · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨hreg, hκ, hK2, hs⟩))))))))
       · exact Or.inl (k5a_qce2_hasLexCell W hκ hK2 hreg.1 hreg.2 hs)
 
 /-! ## The new residual -/
