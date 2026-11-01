@@ -804,3 +804,5 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK5_imp_K6
 #assert_standard_axioms Minimality.Type08Sp.s4TRK4_hasLexCell
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK6_imp_K7
+#assert_standard_axioms Minimality.Type08Sp.tpA1iiK_hasLexCell
+#assert_standard_axioms Minimality.Type08Sp.resid08FinalK7_imp_K8

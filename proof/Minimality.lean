@@ -2,7 +2,7 @@ module
 
 public import Minimality.Cases
 public import Minimality.Type08S.C2K2E
-public import Minimality.Type08S.C2K7E
+public import Minimality.Type08S.C2K8J
 public import Minimality.Type08S.C2FC1
 public import Minimality.Type16Ties
 public import Minimality.Type21Ties
@@ -763,6 +763,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         have _hresK6 := Minimality.Type08Sp.resid08FinalK5_imp_K6 _hresK5
         -- K7 (5-cycle (b, a', c, b', c') at b - d): S4TRK4 removed; non-planar leftover only TpA1iiK
         have _hresK7 := Minimality.Type08Sp.resid08FinalK6_imp_K7 _hresK6
+        -- K8 (tilt choice in the Q1/Q2/Q4 cones; β6 = 1 by Q1⁺/Q4⁺): TpA1iiK off three codim-6 conditions
+        have _hresK8 := Minimality.Type08Sp.resid08FinalK7_imp_K8 _hresK7
         byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
     -- asked; type 09 is fully closed (no `sorry`).  `quadPairPar09` (as `quadPairPar02`):
