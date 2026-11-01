@@ -10,6 +10,8 @@ import Minimality.TwoRayDiag
 import Minimality.Type16V2PopV
 import Minimality.Type16V2Tri
 import Minimality.Type08S.C2K5LP
+import Minimality.Type08S.C2K5AG
+import Minimality.Type08S.C2K5AI
 import ProofOfMainTheorem
 
 /-!
@@ -830,3 +832,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Type08Sp.C2.planar_a_iff
 #assert_standard_axioms Minimality.Type08Sp.C2.planar_b_iff
 #assert_standard_axioms Minimality.Type08Sp.C2.planar_c_iff
+#assert_standard_axioms Minimality.Type08Sp.C2.k5a_qce2_hasLexCell
+#assert_standard_axioms Minimality.Type08Sp.C2.k5a_core_hasLexCellAt
+#assert_standard_axioms Minimality.Type08Sp.C2.p0_k2_extract
+#assert_standard_axioms Minimality.Type08Sp.C2.p0_k2_par5_empty
+#assert_standard_axioms Minimality.Type08Sp.C2.p0_kb_collpers
+#assert_standard_axioms Minimality.Type08Sp.C2.p0_n2_collpers
