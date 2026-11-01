@@ -17,7 +17,7 @@ planar (`PlanarEq`, from `PlanarTwo ∨ PlanarGen` of `Resid08FinalK9`, invarian
   `κ_b = 0` is impossible (it forces `T'`);  `T'`, not `T`: `κ_a = 0` → QPa, `κ_c = 0` → QPc, `κ_b = 0` impossible.
   The far ends are strict off `T ∩ T'` (`k5z_far1`, `k5z_far2`), `κ_b > 0` at `T` off `T'` (`k5z_kb_pos`).
 * `κ_a = 0 ∧ ParEnd`: `ParEndN2` → QN2, `ParEndKb` → QCEb (both K5b, hypotheses `K5ZbHyp`), `ParEndK2` → QCE2.
-  QCEb and QCE2 need the strict T4 region `RegT4 W.F`, which `ResP` does not record: its failure is a leftover.
+  `ResP` records the region of each `ParEnd` disjunct (`ParEndR`: `RegN2` / `RegT4`), so QCEb and QCE2 get the two strict T4 far ends.
 
 Every branch not closed is a named slice predicate (`K5Zs*`); `K5ZSlice W` is their disjunction.
 -/
@@ -46,7 +46,7 @@ structure K5ZbHyp : Prop where
       W.F.abc'.f c < W.F.abc'.f a' → W.F.a'bc.f c' < W.F.a'bc.f a →
       ⟪a - d, b - c⟫ ≠ 0 → ⟪a - c', b - c⟫ ≠ 0 → ⟪a - b', b - c⟫ ≠ 0 → HasLexCell (V8 a a' b b' c c' d)
 
-/-! ## The leftover slices (one labelling; all codim 4 in the item, except `¬ RegT4` in `K5ZsCE2`, `K5ZsCEb`)
+/-! ## The leftover slices (one labelling; all codim 4 in the item)
 
 Notation: `κ_a = 0` is `det3 (c - b) (b' - b) (c' - b) = 0`, `κ_c = 0` is `det3 (b - a) (a' - a) (b' - a) = 0`;
 in the W0 frame (`Δ = det3 (a - d) (b - d) (c - d) ≠ 0`) `β1 = 1 ⇔ det3 (a - d) (c' - b) (c - d) = 0`,
@@ -91,17 +91,15 @@ def K5ZsN2 (a a' b b' c c' d : ℝ³) : Prop :=
   det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndN2 a a' b b' c c' ∧
     (⟪a - d, b - c⟫ = 0 ∨ ⟪c' - d, b - c⟫ = 0 ∨ ⟪b' - d, b - c⟫ = 0)
 
-/-- QCEb (`κ_a = 0`, `ParEndKb`, view `b - c`): outside the strict T4 region (**codim 3**, not recorded by
-`ResP`), or `ρ_a = 0`, or `ζ(a,c') = ⟪a - c', b - c⟫ = 0`, or `ζ(a,b') = ⟪a - b', b - c⟫ = 0`. -/
+/-- QCEb (`κ_a = 0`, `ParEndKb`, view `b - c`): `ρ_a = 0`, or `ζ(a,c') = ⟪a - c', b - c⟫ = 0`, or `ζ(a,b') = ⟪a - b', b - c⟫ = 0`. -/
 def K5ZsCEb {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) : Prop :=
   det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndKb b b' c c' d ∧
-    (¬ RegT4 W.F ∨ ⟪a - d, b - c⟫ = 0 ∨ ⟪a - c', b - c⟫ = 0 ∨ ⟪a - b', b - c⟫ = 0)
+    (⟪a - d, b - c⟫ = 0 ∨ ⟪a - c', b - c⟫ = 0 ∨ ⟪a - b', b - c⟫ = 0)
 
-/-- QCE2 (`κ_a = 0`, `ParEndK2`, view `a - d`): outside the strict T4 region (**codim 3**), or
-`ζ(b,c) = ⟪b - c, a - d⟫ = 0`. -/
+/-- QCE2 (`κ_a = 0`, `ParEndK2`, view `a - d`): `ζ(b,c) = ⟪b - c, a - d⟫ = 0`. -/
 def K5ZsCE2 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) : Prop :=
   det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndK2 b b' c c' d ∧
-    (¬ RegT4 W.F ∨ ⟪b - c, a - d⟫ = 0)
+    ⟪b - c, a - d⟫ = 0
 
 /-- **The K5 leftover in one labelling**: one of the named slices. -/
 def K5ZSlice {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) : Prop :=
@@ -113,7 +111,7 @@ def K5ZSlice {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) : Prop :=
 
 open C2 in
 theorem k5z_resP_split (H : K5ZbHyp) {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
-    (hpl : PlanarEq a a' b b' c c') (h : ResP a a' b b' c c' d) :
+    (hpl : PlanarEq a a' b b' c c') (h : ResP W.F d) :
     HasLexCell (V8 a a' b b' c c' d) ∨ K5ZSlice W := by
   obtain ⟨α1, α4, β1, γ4, β6, γ6, hdet, -⟩ := norm08w_coords W
   have hne : ∀ {x : ℝ}, x ≠ 0 → x * det3 (a - d) (b - d) (c - d) ≠ 0 := fun hx => mul_ne_zero hx hdet
@@ -173,7 +171,7 @@ theorem k5z_resP_split (H : K5ZbHyp) {a a' b b' c c' d : ℝ³} (W : Norm08w a a
           rcases lt_or_gt_of_ne (hne hs) with h4 | h4
           · exact k5c_qpc_lt_hasLexCell W hT' hκc h4
           · exact k5c_qpc_gt_hasLexCell W hT' hfar h4
-  · rcases hpe with hN2 | hKb | hK2
+  · rcases hpe with ⟨-, hN2⟩ | ⟨hreg, hKb⟩ | ⟨hreg, hK2⟩
     · -- QN2
       by_cases hs : ⟪a - d, b - c⟫ = 0 ∨ ⟪c' - d, b - c⟫ = 0 ∨ ⟪b' - d, b - c⟫ = 0
       · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hκ, hN2, hs⟩)))))))
@@ -181,23 +179,21 @@ theorem k5z_resP_split (H : K5ZbHyp) {a a' b b' c c' d : ℝ³} (W : Norm08w a a
         obtain ⟨h1, h2, h3⟩ := hs
         exact Or.inl (H.qn2 W hκ hN2 h1 h2 h3)
     · -- QCEb
-      by_cases hs : ¬ RegT4 W.F ∨ ⟪a - d, b - c⟫ = 0 ∨ ⟪a - c', b - c⟫ = 0 ∨ ⟪a - b', b - c⟫ = 0
+      by_cases hs : ⟪a - d, b - c⟫ = 0 ∨ ⟪a - c', b - c⟫ = 0 ∨ ⟪a - b', b - c⟫ = 0
       · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hκ, hKb, hs⟩))))))))
-      · simp only [not_or, not_not] at hs
-        obtain ⟨⟨hr1, hr2⟩, h1, h2, h3⟩ := hs
-        exact Or.inl (H.qceb W hκ hKb hr1 hr2 h1 h2 h3)
+      · simp only [not_or] at hs
+        obtain ⟨h1, h2, h3⟩ := hs
+        exact Or.inl (H.qceb W hκ hKb hreg.1 hreg.2 h1 h2 h3)
     · -- QCE2
-      by_cases hs : ¬ RegT4 W.F ∨ ⟪b - c, a - d⟫ = 0
+      by_cases hs : ⟪b - c, a - d⟫ = 0
       · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨hκ, hK2, hs⟩))))))))
-      · simp only [not_or, not_not] at hs
-        obtain ⟨⟨hr1, hr2⟩, h1⟩ := hs
-        exact Or.inl (k5a_qce2_hasLexCell W hκ hK2 hr1 hr2 h1)
+      · exact Or.inl (k5a_qce2_hasLexCell W hκ hK2 hreg.1 hreg.2 hs)
 
 /-! ## The new residual -/
 
 /-- The K5 leftover in one labelling (with its `Norm08w` structure and the `ResP` it came from). -/
 def K5ZResidP (a a' b b' c c' d : ℝ³) : Prop :=
-  ∃ W : Norm08w a a' b b' c c' d, ResP a a' b b' c c' d ∧ K5ZSlice W
+  ∃ W : Norm08w a a' b b' c c' d, ResP W.F d ∧ K5ZSlice W
 
 /-- The K5 leftover in one of the six labellings (same order as `ResidP6`). -/
 def K5ZResidP6 (a a' b b' c c' d : ℝ³) : Prop :=

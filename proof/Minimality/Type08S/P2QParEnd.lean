@@ -51,5 +51,10 @@ def ParEndK2 (b b' c c' d : ℝ³) : Prop :=
 def ParEnd (a a' b b' c c' d : ℝ³) : Prop :=
   ParEndN2 a a' b b' c c' ∨ ParEndKb b b' c c' d ∨ ParEndK2 b b' c c' d
 
+/-- `ParEnd`, each disjunct recorded together with the facet region under which the pipeline excludes it
+(`RegN2` for `ParEndN2`, the strict T4 region `RegT4` for `ParEndKb`, `ParEndK2`). -/
+def ParEndR {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c') (d : ℝ³) : Prop :=
+  (RegN2 F ∧ ParEndN2 a a' b b' c c') ∨ (RegT4 F ∧ ParEndKb b b' c c' d) ∨ (RegT4 F ∧ ParEndK2 b b' c c' d)
+
 end Type08Sp
 end Minimality

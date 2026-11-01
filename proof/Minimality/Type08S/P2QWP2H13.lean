@@ -110,7 +110,7 @@ theorem par_false (hF : Fr e1 e2 e3) (O : ℝ³) {κ L zf Xr Yr zr Xg Yg zg : �
 
 /-- SC2 of N2 `K_c` reduced to the chord end at `f`. -/
 theorem SC2N2_of_CEf {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
-    (hpe : ¬ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEnd a a' b b' c c' d))
+    (hpe : ¬ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndR N.F d)) (hreg : RegN2 N.F)
     (h : ∀ (e1 e2 e3 : ℝ³) (κ : ℝ), Fr e1 e2 e3 → κ ≠ 0 → c - a' = κ • e3 → ⟪b - a', e2⟫ = 0 →
       0 < ⟪b - a', e1⟫ → 0 < ⟪c' - a', e2⟫ → Rob4 κ ⟪b - a', e3⟫ ⟪c' - a', e3⟫ ⟪b' - a', e3⟫ →
       CEf5 ⟪b - a', e1⟫ κ ⟪b - a', e3⟫ ⟪c' - a', e1⟫ ⟪c' - a', e2⟫ ⟪c' - a', e3⟫ ⟪b' - a', e1⟫ ⟪b' - a', e2⟫
@@ -121,7 +121,7 @@ theorem SC2N2_of_CEf {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
   · exact h e1 e2 e3 κ hF hκ hce hb2 hL hr hrob hf
   · by_cases hdet : det3 (c - b) (b' - b) (c' - b) = 0
     · exfalso
-      exact hpe ⟨hdet, Or.inl ⟨e1, e2, e3, κ, hF, hκ, hce, hb2, hL, hr, hrob, hpar.1, Or.inr hpar⟩⟩
+      exact hpe ⟨hdet, Or.inl ⟨hreg, e1, e2, e3, κ, hF, hκ, hce, hb2, hL, hr, hrob, hpar.1, Or.inr hpar⟩⟩
     · exfalso
       have hxx : c = a' + pc e1 e2 e3 0 0 κ := by rw [← pc_smul_e3 hF, ← hce]; abel
       have hxf : b = a' + pc e1 e2 e3 ⟪b - a', e1⟫ 0 ⟪b - a', e3⟫ := by
@@ -133,7 +133,7 @@ theorem SC2N2_of_CEf {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
 
 /-- SC2 of T4 `K_b` reduced to the chord end at `f`. -/
 theorem SC2Kb_of_CEf {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
-    (hpe : ¬ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEnd a a' b b' c c' d))
+    (hpe : ¬ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndR N.F d)) (hreg : RegT4 N.F)
     (h : ∀ (e1 e2 e3 : ℝ³) (κ : ℝ), Fr e1 e2 e3 → κ ≠ 0 → b - d = κ • e3 → ⟪c - d, e2⟫ = 0 →
       0 < ⟪c - d, e1⟫ → 0 < ⟪b' - d, e2⟫ → Rob4 κ ⟪c - d, e3⟫ ⟪b' - d, e3⟫ ⟪c' - d, e3⟫ →
       CEf5 ⟪c - d, e1⟫ κ ⟪c - d, e3⟫ ⟪b' - d, e1⟫ ⟪b' - d, e2⟫ ⟪b' - d, e3⟫ ⟪c' - d, e1⟫ ⟪c' - d, e2⟫
@@ -144,7 +144,7 @@ theorem SC2Kb_of_CEf {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
   · exact h e1 e2 e3 κ hF hκ hce hb2 hL hr hrob hf
   · by_cases hdet : det3 (c - b) (b' - b) (c' - b) = 0
     · exfalso
-      exact hpe ⟨hdet, Or.inr (Or.inl ⟨e1, e2, e3, κ, hF, hκ, hce, hb2, hL, hr, hrob, hpar.1, Or.inr hpar⟩)⟩
+      exact hpe ⟨hdet, Or.inr (Or.inl ⟨hreg, e1, e2, e3, κ, hF, hκ, hce, hb2, hL, hr, hrob, hpar.1, Or.inr hpar⟩)⟩
     · exfalso
       have hxx : b = d + pc e1 e2 e3 0 0 κ := by rw [← pc_smul_e3 hF, ← hce]; abel
       have hxf : c = d + pc e1 e2 e3 ⟪c - d, e1⟫ 0 ⟪c - d, e3⟫ := by
@@ -156,7 +156,7 @@ theorem SC2Kb_of_CEf {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
 
 /-- SC2 of T4 `K_2` reduced to the chord end at `f`. -/
 theorem SC2K2_of_CEf {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
-    (hpe : ¬ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEnd a a' b b' c c' d))
+    (hpe : ¬ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndR N.F d)) (hreg : RegT4 N.F)
     (h : ∀ (e1 e2 e3 : ℝ³) (κ : ℝ), Fr e1 e2 e3 → κ ≠ 0 → d - b = κ • e3 → ⟪c' - b, e2⟫ = 0 →
       0 < ⟪c' - b, e1⟫ → 0 < ⟪b' - b, e2⟫ → Rob4 κ ⟪c' - b, e3⟫ ⟪b' - b, e3⟫ ⟪c - b, e3⟫ →
       CEf5 ⟪c' - b, e1⟫ κ ⟪c' - b, e3⟫ ⟪b' - b, e1⟫ ⟪b' - b, e2⟫ ⟪b' - b, e3⟫ ⟪c - b, e1⟫ ⟪c - b, e2⟫
@@ -167,7 +167,7 @@ theorem SC2K2_of_CEf {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
   · exact h e1 e2 e3 κ hF hκ hce hb2 hL hr hrob hf
   · by_cases hdet : det3 (c - b) (b' - b) (c' - b) = 0
     · exfalso
-      exact hpe ⟨hdet, Or.inr (Or.inr ⟨e1, e2, e3, κ, hF, hκ, hce, hb2, hL, hr, hrob, hpar.1, Or.inr hpar⟩)⟩
+      exact hpe ⟨hdet, Or.inr (Or.inr ⟨hreg, e1, e2, e3, κ, hF, hκ, hce, hb2, hL, hr, hrob, hpar.1, Or.inr hpar⟩)⟩
     · exfalso
       have hxx : d = b + pc e1 e2 e3 0 0 κ := by rw [← pc_smul_e3 hF, ← hce]; abel
       have hxf : c' = b + pc e1 e2 e3 ⟪c' - b, e1⟫ 0 ⟪c' - b, e3⟫ := by

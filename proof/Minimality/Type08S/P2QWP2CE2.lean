@@ -45,7 +45,7 @@ namespace W5
 
 set_option maxHeartbeats 4000000 in
 theorem cef_N2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
-    (hpe : ¬ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEnd a a' b b' c c' d)) (hreg : RegN2 N.F) :
+    (hpe : ¬ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndR N.F d)) (hreg : RegN2 N.F) :
     CEfN2 a a' b b' c c' d := by
   intro e1 e2 e3 κ hF hκ hce hb2 hL hr hrob hce5
   have hnd := N.F.nodup
@@ -107,7 +107,7 @@ theorem cef_N2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
   have hR := ce_frame hF a' E hκ hL hr hYg hcr hcg hE hrob
     (fun hY => by
       by_cases hdet : det3 (c - b) (b' - b) (c' - b) = 0
-      · exact absurd ⟨hdet, Or.inl ⟨e1, e2, e3, κ, hF, hκ, hce, hb2, hL, hr, hrob, hY, Or.inl hce5⟩⟩ hpe
+      · exact absurd ⟨hdet, Or.inl ⟨hreg, e1, e2, e3, κ, hF, hκ, hce, hb2, hL, hr, hrob, hY, Or.inl hce5⟩⟩ hpe
       · exact lemEs_frame hF a' hr hY (by rw [← hxx, ← hxf, ← hxr, ← hxg]; exact (lemE_strict_w N hdet).1)) hce5
   simp only [rim5, hEdef] at hR
   rw [show a' + pc e1 e2 e3 0 0 0 = a' by simp [pc], ← hxx, ← hxf, ← hxr, ← hxg, ← hxp, ← hxw] at hR
@@ -120,7 +120,7 @@ theorem cef_N2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
 
 set_option maxHeartbeats 4000000 in
 theorem cef_Kb {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
-    (hpe : ¬ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEnd a a' b b' c c' d)) (hreg : RegT4 N.F) :
+    (hpe : ¬ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndR N.F d)) (hreg : RegT4 N.F) :
     CEfKb a a' b b' c c' d := by
   intro e1 e2 e3 κ hF hκ hxe hf2 hL hr hrob hce5
   have hnd := N.F.nodup
@@ -160,7 +160,7 @@ theorem cef_Kb {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
   have hR := ce_frame hF d E hκ hL hr hYg hcr hcg hE hrob
     (fun hY => by
       by_cases hdet : det3 (c - b) (b' - b) (c' - b) = 0
-      · exact absurd ⟨hdet, Or.inr (Or.inl ⟨e1, e2, e3, κ, hF, hκ, hxe, hf2, hL, hr, hrob, hY, Or.inl hce5⟩)⟩ hpe
+      · exact absurd ⟨hdet, Or.inr (Or.inl ⟨hreg, e1, e2, e3, κ, hF, hκ, hxe, hf2, hL, hr, hrob, hY, Or.inl hce5⟩)⟩ hpe
       · exact lemEs_frame hF d hr hY (by rw [← hxx, ← hxf, ← hxr, ← hxg]; exact (lemE_strict_w N hdet).2.1)) hce5
   simp only [rim5, hEdef] at hR
   rw [show d + pc e1 e2 e3 0 0 0 = d by simp [pc], ← hxx, ← hxf, ← hxr, ← hxg, ← hxp, ← hxw] at hR
@@ -173,7 +173,7 @@ theorem cef_Kb {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
 
 set_option maxHeartbeats 4000000 in
 theorem cef_K2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
-    (hpe : ¬ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEnd a a' b b' c c' d)) (hreg : RegT4 N.F) :
+    (hpe : ¬ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndR N.F d)) (hreg : RegT4 N.F) :
     CEfK2 a a' b b' c c' d := by
   intro e1 e2 e3 κ hF hκ hxe hf2 hL hr hrob hce5
   have hnd := N.F.nodup
@@ -213,7 +213,7 @@ theorem cef_K2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
   have hR := ce_frame hF b E hκ hL hr hYg hcr hcg hE hrob
     (fun hY => by
       by_cases hdet : det3 (c - b) (b' - b) (c' - b) = 0
-      · exact absurd ⟨hdet, Or.inr (Or.inr ⟨e1, e2, e3, κ, hF, hκ, hxe, hf2, hL, hr, hrob, hY, Or.inl hce5⟩)⟩ hpe
+      · exact absurd ⟨hdet, Or.inr (Or.inr ⟨hreg, e1, e2, e3, κ, hF, hκ, hxe, hf2, hL, hr, hrob, hY, Or.inl hce5⟩)⟩ hpe
       · exact lemEs_frame hF b hr hY (by rw [← hxx, ← hxf, ← hxr, ← hxg]; exact (lemE_strict_w N hdet).2.2)) hce5
   simp only [rim5, hEdef] at hR
   rw [show b + pc e1 e2 e3 0 0 0 = b by simp [pc], ← hxx, ← hxf, ← hxr, ← hxg, ← hxp, ← hxw] at hR

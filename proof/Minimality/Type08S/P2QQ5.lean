@@ -19,7 +19,7 @@ namespace Type08Sp
 theorem close_hdn_w {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
     (hT : ¬ IsT a' b c d) (hT' : ¬ IsT' a b c' d) {t : Fin 3 × Bool × Bool} (ht : t ∈ SC08)
     (hreg : (t.1 = 0 ∧ RegN2 N.F) ∨ (t.1 = 1 ∧ RegT4 N.F)) (h : RobHDN a a' b b' c c' d t)
-    (hpe : ¬ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEnd a a' b b' c c' d)) :
+    (hpe : ¬ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndR N.F d)) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   classical
   obtain ⟨k', hk', σ, hrim, hrob, -⟩ := h

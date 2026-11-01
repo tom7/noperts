@@ -62,7 +62,7 @@ def CEfK2 (a a' b b' c c' d : ℝ³) : Prop :=
       ⟪c - b, e3⟫ → IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³))
 
 theorem close_hdn_pers' {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
-    (hpe : ¬ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEnd a a' b b' c c' d))
+    (hpe : ¬ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndR N.F d))
     (hT : ¬ IsT a' b c d) (hT' : ¬ IsT' a b c' d) {t : Fin 3 × Bool × Bool} (ht : t ∈ SC08)
     (hreg : (t.1 = 0 ∧ RegN2 N.F) ∨ (t.1 = 1 ∧ RegT4 N.F))
     {k' : ℕ} [NeZero k'] {σ : ZMod k' → ZMod (test08 t.1 t.2.1 t.2.2).k}
@@ -75,8 +75,8 @@ theorem close_hdn_pers' {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d
     -- the SC2 package, chord end at `f` only (the parallel set is empty on `Norm08w`, H13)
     (hfN2 : RegN2 N.F → CEfN2 a a' b b' c c' d) (hfT4 : RegT4 N.F → CEfKb a a' b b' c c' d ∧ CEfK2 a a' b b' c c' d) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) :=
-  close_hdn_pers N hT hT' ht hreg hrim hrob hp (fun hr => SC2N2_of_CEf N hpe (hfN2 hr))
-    (fun hr => ⟨SC2Kb_of_CEf N hpe (hfT4 hr).1, SC2K2_of_CEf N hpe (hfT4 hr).2⟩)
+  close_hdn_pers N hT hT' ht hreg hrim hrob hp (fun hr => SC2N2_of_CEf N hpe hr (hfN2 hr))
+    (fun hr => ⟨SC2Kb_of_CEf N hpe hr (hfT4 hr).1, SC2K2_of_CEf N hpe hr (hfT4 hr).2⟩)
 
 end W5
 end Type08Sp

@@ -36,7 +36,7 @@ namespace W5
 
 /-- `close_hdn_pers` (P2Pkg statement), unconditional on the SC2 package. -/
 theorem close_hdn_pers_full {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
-    (hpe : ¬ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEnd a a' b b' c c' d))
+    (hpe : ¬ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndR N.F d))
     (hT : ¬ IsT a' b c d) (hT' : ¬ IsT' a b c' d) {t : Fin 3 × Bool × Bool} (ht : t ∈ SC08)
     (hreg : (t.1 = 0 ∧ RegN2 N.F) ∨ (t.1 = 1 ∧ RegT4 N.F))
     {k' : ℕ} [NeZero k'] {σ : ZMod k' → ZMod (test08 t.1 t.2.1 t.2.2).k}

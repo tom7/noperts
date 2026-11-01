@@ -35,7 +35,7 @@ namespace Type08Sp
 
 /-- **The planar pipeline in one labelling.** -/
 theorem planar_rupert_or_resP {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) ∨ ResP a a' b b' c c' d := by
+    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) ∨ ResP N.F d := by
   classical
   by_cases hTT : IsT a' b c d ∨ IsT' a b c' d
   · rcases isRupert_type08_limit_T4cl N hTT with h | h | h | h
@@ -48,7 +48,7 @@ theorem planar_rupert_or_resP {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' 
   · exact Or.inl (close_caseQ N.F N.hd hQ.1 hQ.2)
   rcases isRupert_type08_limit_hdnR'_w N hT hT' hQ with h | ⟨t, ht, hreg, hr⟩
   · exact Or.inl h
-  · by_cases hpe : det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEnd a a' b b' c c' d
+  · by_cases hpe : det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndR N.F d
     · exact Or.inr (Or.inr hpe)
     · exact Or.inl (close_hdn_w N hT hT' ht hreg hr hpe)
 

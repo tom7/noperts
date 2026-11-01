@@ -59,12 +59,13 @@ def LeftTT (a a' b b' c c' d : ℝ³) : Prop :=
 
 /-! ## The planar residual and the new top-level residual -/
 
-/-- **The planar leftover in one labelling** (codim ≥ 3, see the header). -/
-def ResP (a a' b b' c c' d : ℝ³) : Prop :=
-  LeftTT a a' b b' c c' d ∨ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEnd a a' b b' c c' d)
+/-- **The planar leftover in one labelling** (codim ≥ 4; the ParEnd branch carries its facet region, so it
+needs the facet structure `F`). -/
+def ResP {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c') (d : ℝ³) : Prop :=
+  LeftTT a a' b b' c c' d ∨ (det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndR F d)
 
 /-- `ResP` in a labelling that carries a `Norm08w` structure. -/
-def ResidP (a a' b b' c c' d : ℝ³) : Prop := ∃ _ : Norm08w a a' b b' c c' d, ResP a a' b b' c c' d
+def ResidP (a a' b b' c c' d : ℝ³) : Prop := ∃ N : Norm08w a a' b b' c c' d, ResP N.F d
 
 /-- The planar residual in one of the six labellings. -/
 def ResidP6 (a a' b b' c c' d : ℝ³) : Prop :=
