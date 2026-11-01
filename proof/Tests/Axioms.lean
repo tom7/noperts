@@ -7,6 +7,8 @@ import Nopert231
 import Minimality
 import Minimality.Arc016Witness
 import Minimality.TwoRayDiag
+import Minimality.Type16V2PopV
+import Minimality.Type16V2Tri
 import ProofOfMainTheorem
 
 /-!
@@ -810,3 +812,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.TwoRay.v1_hasLexCellAt
 #assert_standard_axioms Minimality.TwoRay.v1_isRupert
 #assert_standard_axioms Minimality.TwoRay.v1b_hasLexCellAt
+#assert_standard_axioms Minimality.V2.freeVtx16_isRupert
+#assert_standard_axioms Minimality.V2.freePop16_isRupert
+#assert_standard_axioms Minimality.V2.tt_gen
+#assert_standard_axioms Minimality.V2.pop_gen
