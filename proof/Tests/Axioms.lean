@@ -6,6 +6,7 @@ import SnubCube
 import Nopert231
 import Minimality
 import Minimality.Arc016Witness
+import Minimality.TwoRayDiag
 import ProofOfMainTheorem
 
 /-!
@@ -806,3 +807,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK6_imp_K7
 #assert_standard_axioms Minimality.Type08Sp.tpA1iiK_hasLexCell
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK7_imp_K8
+#assert_standard_axioms Minimality.TwoRay.v1_hasLexCellAt
+#assert_standard_axioms Minimality.TwoRay.v1_isRupert
+#assert_standard_axioms Minimality.TwoRay.v1b_hasLexCellAt
