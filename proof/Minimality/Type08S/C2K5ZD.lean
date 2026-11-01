@@ -34,16 +34,17 @@ namespace Type08Sp
 /-! ## The K5b wrappers (to be supplied when K5b lands) -/
 
 /-- **The two K5b cell lemmas**, as hypotheses (package K5b, QN2 and QCEb at the view `b - c`).
-`qn2`: `κ_a = 0`, `ParEndN2`, `ρ_a = ⟪a - d, b - c⟫ ≠ 0`.  `qceb`: `κ_a = 0`, `ParEndKb`, the two T4 far ends
-(`RegT4 W.F`), `ρ_a ≠ 0` and `ζ(a,c') = ⟪a - c', b - c⟫ ≠ 0`. -/
+`qn2`: `κ_a = 0`, `ParEndN2`, `ρ_a = ⟪a - d, b - c⟫ ≠ 0`, `⟪c' - d, b - c⟫ ≠ 0`, `⟪b' - d, b - c⟫ ≠ 0`.
+`qceb`: `κ_a = 0`, `ParEndKb`, the two T4 far ends (`RegT4 W.F`), `ρ_a ≠ 0`, `ζ(a,c') = ⟪a - c', b - c⟫ ≠ 0`,
+`ζ(a,b') = ⟪a - b', b - c⟫ ≠ 0`.  Discharged by `k5z_bhyp` (C2K5ZE) from the K5b wrappers. -/
 structure K5ZbHyp : Prop where
   qn2 : ∀ {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d),
     det3 (c - b) (b' - b) (c' - b) = 0 → ParEndN2 a a' b b' c c' → ⟪a - d, b - c⟫ ≠ 0 →
-      HasLexCell (V8 a a' b b' c c' d)
+      ⟪c' - d, b - c⟫ ≠ 0 → ⟪b' - d, b - c⟫ ≠ 0 → HasLexCell (V8 a a' b b' c c' d)
   qceb : ∀ {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d),
     det3 (c - b) (b' - b) (c' - b) = 0 → ParEndKb b b' c c' d →
       W.F.abc'.f c < W.F.abc'.f a' → W.F.a'bc.f c' < W.F.a'bc.f a →
-      ⟪a - d, b - c⟫ ≠ 0 → ⟪a - c', b - c⟫ ≠ 0 → HasLexCell (V8 a a' b b' c c' d)
+      ⟪a - d, b - c⟫ ≠ 0 → ⟪a - c', b - c⟫ ≠ 0 → ⟪a - b', b - c⟫ ≠ 0 → HasLexCell (V8 a a' b b' c c' d)
 
 /-! ## The leftover slices (one labelling; all codim 4 in the item, except `¬ RegT4` in `K5ZsCE2`, `K5ZsCEb`)
 
@@ -84,15 +85,17 @@ def K5ZsTc (a a' b b' c c' d : ℝ³) : Prop :=
   IsT a' b c d ∧ ¬ IsT' a b c' d ∧ det3 (b - a) (a' - a) (b' - a) = 0 ∧
     (det3 (b' - a) (b - d) (c - d) = 0 ∨ ⟪d - b, a - b'⟫ = 0)
 
-/-- QN2 (`κ_a = 0`, `ParEndN2`, view `b - c`): `ρ_a = ⟪a - d, b - c⟫ = 0`. -/
+/-- QN2 (`κ_a = 0`, `ParEndN2`, view `b - c`): `ρ_a = ⟪a - d, b - c⟫ = 0`, or one of the two K5b tree literals
+`⟪c' - d, b - c⟫`, `⟪b' - d, b - c⟫` vanishes. -/
 def K5ZsN2 (a a' b b' c c' d : ℝ³) : Prop :=
-  det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndN2 a a' b b' c c' ∧ ⟪a - d, b - c⟫ = 0
+  det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndN2 a a' b b' c c' ∧
+    (⟪a - d, b - c⟫ = 0 ∨ ⟪c' - d, b - c⟫ = 0 ∨ ⟪b' - d, b - c⟫ = 0)
 
 /-- QCEb (`κ_a = 0`, `ParEndKb`, view `b - c`): outside the strict T4 region (**codim 3**, not recorded by
-`ResP`), or `ρ_a = 0`, or `ζ(a,c') = ⟪a - c', b - c⟫ = 0`. -/
+`ResP`), or `ρ_a = 0`, or `ζ(a,c') = ⟪a - c', b - c⟫ = 0`, or `ζ(a,b') = ⟪a - b', b - c⟫ = 0`. -/
 def K5ZsCEb {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) : Prop :=
   det3 (c - b) (b' - b) (c' - b) = 0 ∧ ParEndKb b b' c c' d ∧
-    (¬ RegT4 W.F ∨ ⟪a - d, b - c⟫ = 0 ∨ ⟪a - c', b - c⟫ = 0)
+    (¬ RegT4 W.F ∨ ⟪a - d, b - c⟫ = 0 ∨ ⟪a - c', b - c⟫ = 0 ∨ ⟪a - b', b - c⟫ = 0)
 
 /-- QCE2 (`κ_a = 0`, `ParEndK2`, view `a - d`): outside the strict T4 region (**codim 3**), or
 `ζ(b,c) = ⟪b - c, a - d⟫ = 0`. -/
@@ -172,15 +175,17 @@ theorem k5z_resP_split (H : K5ZbHyp) {a a' b b' c c' d : ℝ³} (W : Norm08w a a
           · exact k5c_qpc_gt_hasLexCell W hT' hfar h4
   · rcases hpe with hN2 | hKb | hK2
     · -- QN2
-      by_cases hs : ⟪a - d, b - c⟫ = 0
+      by_cases hs : ⟪a - d, b - c⟫ = 0 ∨ ⟪c' - d, b - c⟫ = 0 ∨ ⟪b' - d, b - c⟫ = 0
       · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hκ, hN2, hs⟩)))))))
-      · exact Or.inl (H.qn2 W hκ hN2 hs)
+      · simp only [not_or] at hs
+        obtain ⟨h1, h2, h3⟩ := hs
+        exact Or.inl (H.qn2 W hκ hN2 h1 h2 h3)
     · -- QCEb
-      by_cases hs : ¬ RegT4 W.F ∨ ⟪a - d, b - c⟫ = 0 ∨ ⟪a - c', b - c⟫ = 0
+      by_cases hs : ¬ RegT4 W.F ∨ ⟪a - d, b - c⟫ = 0 ∨ ⟪a - c', b - c⟫ = 0 ∨ ⟪a - b', b - c⟫ = 0
       · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl ⟨hκ, hKb, hs⟩))))))))
       · simp only [not_or, not_not] at hs
-        obtain ⟨⟨hr1, hr2⟩, h1, h2⟩ := hs
-        exact Or.inl (H.qceb W hκ hKb hr1 hr2 h1 h2)
+        obtain ⟨⟨hr1, hr2⟩, h1, h2, h3⟩ := hs
+        exact Or.inl (H.qceb W hκ hKb hr1 hr2 h1 h2 h3)
     · -- QCE2
       by_cases hs : ¬ RegT4 W.F ∨ ⟪b - c, a - d⟫ = 0
       · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨hκ, hK2, hs⟩))))))))

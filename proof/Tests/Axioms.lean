@@ -16,6 +16,7 @@ import Minimality.Type08S.C2K5FN
 import Minimality.Type08S.C2K5DL
 import Minimality.Type08S.C2K5DM
 import Minimality.Type08S.C2K5ZD
+import Minimality.Type08S.C2K5ZE
 import ProofOfMainTheorem
 
 /-!
@@ -855,3 +856,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Type08Sp.C2.k5z_qta_hasLexCell
 #assert_standard_axioms Minimality.Type08Sp.k5z_resP_split
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK9_imp_K10
+#assert_standard_axioms Minimality.Type08Sp.C2.k5b_qn2_hasLexCell
+#assert_standard_axioms Minimality.Type08Sp.C2.k5b_qceb_hasLexCell
+#assert_standard_axioms Minimality.Type08Sp.k5z_bhyp
+#assert_standard_axioms Minimality.Type08Sp.resid08FinalK9_imp_K10'
