@@ -1,6 +1,8 @@
 module
 
 public import Minimality.Cases
+public import Minimality.Type08S.C2FJ
+public import Minimality.Type08S.C2FC1
 public import Minimality.Type16Ties
 public import Minimality.Type21Ties
 public import Minimality.Type29Ties
@@ -746,7 +748,10 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fF, hfF⟩ := hR {1, 4, 6} (by decide)
     obtain ⟨fG, hfG⟩ := hR {4, 5, 6} (by decide)
     exact (Minimality.Type08Sp.type08_rupert_or_residJ x hx fA fB fC fD fE fF fG hfA hfB hfC hfD hfE
-      hfF hfG).elim hN.2 (fun hres => byThm5Faces hx hN _ h3 (fun _ => sorry))
+      hfF hfG).elim hN.2 (fun hres =>
+        -- C2 (face cells at the edge views a - d, c - d): the residual shrinks to `Resid08FinalK`
+        have _hresK := Minimality.Type08Sp.resid08FinalJ_imp_K hres
+        byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
     -- asked; type 09 is fully closed (no `sorry`).  `quadPairPar09` (as `quadPairPar02`):
     -- `TriGenFarP` and `TriGenPar ∧ TriGenTieO` are closed by `quadPair`; the acute case-(c)

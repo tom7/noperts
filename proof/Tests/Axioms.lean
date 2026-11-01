@@ -571,7 +571,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.isRupert_of_tendsto_rimCert
 #assert_standard_axioms Minimality.exists_cornerRim
 #assert_standard_axioms Minimality.rimCert_edgePair_robust
-#assert_standard_axioms Minimality.exists_seq_eval_ne_zero
+#assert_standard_axioms Minimality.exists_seq_eval_ne_zero_fin
 #assert_standard_axioms Minimality.isRupert_type16_limit
 #assert_standard_axioms Minimality.isRupert_type16_limit_facets
 #assert_standard_axioms not_type16_of_isNopert_codim2
@@ -786,3 +786,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Type08Sp.isRupert_type08_limit_hdn
 #assert_standard_axioms Minimality.robust_corner_rim_of_MF
 #assert_standard_axioms Minimality.isRupert_of_motionCert
+
+-- C2 (2026-11-01): type 08's residual shrunk by face cells at the edge views a - d, c - d
+#assert_standard_axioms Minimality.Type08Sp.C2.s4TR_hasLexCell
+#assert_standard_axioms Minimality.Type08Sp.C2.s4TpR_hasLexCell
+#assert_standard_axioms Minimality.Type08Sp.resid08FinalJ_imp_K
