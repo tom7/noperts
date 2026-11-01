@@ -9,6 +9,7 @@ import Minimality.Arc016Witness
 import Minimality.TwoRayDiag
 import Minimality.Type16V2PopV
 import Minimality.Type16V2Tri
+import Minimality.Type08S.C2K5LP
 import ProofOfMainTheorem
 
 /-!
@@ -818,3 +819,14 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.V2.pop_gen
 #assert_standard_axioms Minimality.Type08Sp.tpA1iiK8_hasLexCell
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK8_imp_K9
+#assert_standard_axioms Minimality.Type08Sp.C2.k5e_lt_hasLexCell
+#assert_standard_axioms Minimality.Type08Sp.C2.k5e_gt_hasLexCell
+#assert_standard_axioms Minimality.Type08Sp.C2.k5c_qpc_gt_hasLexCell
+#assert_standard_axioms Minimality.Type08Sp.C2.k5c_qpc_lt_hasLexCell
+#assert_standard_axioms Minimality.Type08Sp.C2.k5c_qtc_lt_hasLexCell
+#assert_standard_axioms Minimality.Type08Sp.C2.k5c_qtc_gt_hasLexCell
+#assert_standard_axioms Minimality.Type08Sp.C2.norm08w_coordsT
+#assert_standard_axioms Minimality.Type08Sp.C2.norm08w_coordsTp
+#assert_standard_axioms Minimality.Type08Sp.C2.planar_a_iff
+#assert_standard_axioms Minimality.Type08Sp.C2.planar_b_iff
+#assert_standard_axioms Minimality.Type08Sp.C2.planar_c_iff
