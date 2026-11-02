@@ -12,6 +12,7 @@ public import Minimality.Type16Ties
 public import Minimality.Type16UW
 public import Minimality.Type16VW
 public import Minimality.Type21SilH
+public import Minimality.Type21Sl2G
 public import Minimality.Type21Ties
 public import Minimality.Type29Ties
 public import Minimality.SevenTypes
@@ -975,10 +976,10 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
           hfH hQ h5 h26 hEd hVq hV htie)
       (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
         -- silhouette cells at segment views (Type21Sil*): `sorry` only under the rule's leftover
-        by_cases hres : Minimality.H21.H21Resid (Minimality.Facets21.ofAffine x hx fA fB fC fD fE fF fG fH
+        by_cases hres : Minimality.H21.H21Resid2 (Minimality.Facets21.ofAffine x hx fA fB fC fD fE fF fG fH
             hfA hfB hfC hfD hfE hfF hfG hfH)
         · sorry
-        · exact Minimality.H21.h21_rule_false hN _ hres)))
+        · exact Minimality.H21.h21b_rule_false hN _ hres)))
   · -- type 22: `not_type22_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
     -- special value of Lemma T′ (settled there, 24.15).  Both views have the triangle `246`, so
     -- `TriGenPar` or `TriGenFarP` always holds (`triGenPar_or_farP_idx`): closed
