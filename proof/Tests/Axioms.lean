@@ -14,7 +14,7 @@ import Minimality.Type16UW
 import Minimality.Type16VW
 import Minimality.Type21SilH
 import Minimality.Type21Sl2G
-import Minimality.Type29SilC
+import Minimality.Type29SilE
 import Minimality.Type16ArcB
 import Minimality.SilS0XD
 import Minimality.Type21RobA
@@ -914,3 +914,4 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.H21.s0x_29_s05
 #assert_standard_axioms Minimality.H21.h21r_rule_false
 #assert_standard_axioms Minimality.H21.h21r_resid3_imp_resid2
+#assert_standard_axioms Minimality.H29S.h29s2_rule_false
