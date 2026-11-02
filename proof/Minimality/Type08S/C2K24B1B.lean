@@ -23,7 +23,7 @@ set_option maxHeartbeats 6400000 in
 theorem k24b1_cell {a a' b b' c c' d : ℝ³} {β1 β6 γ6 : ℝ}
     (W : Norm08w a a' b b' c c' d) (hC : K6mCoords a a' b b' c c' d 1 β1 β6 γ6)
     (hM : K6sM a a' b b' c c' d) (hrel : K16Rel a b c d 1 β1)
-    (hβ : 1 < β1) (hβs : β1 < β6 + γ6) (h6 : β6 ≤ 1 ∧ γ6 ≤ 1) :
+    (hβ : 1 < β1) (hβs : β1 < β6 + γ6) :
     HasLexCell (V8 a a' b b' c c' d) := by
   obtain ⟨hdet, hc', hb', ha', hα1', hβ1', h1, hβ6', hγ6', h3⟩ := hC
   obtain ⟨m1, m2, m3⟩ := hM
