@@ -18,6 +18,7 @@ import Minimality.Type29SilE
 import Minimality.Type16ArcB
 import Minimality.SilS0XD
 import Minimality.Type21RobA
+import Minimality.Type21TA
 import Minimality.Type20SilC
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -920,3 +921,4 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.H20S.h20s_rule_false
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK12_imp_K14
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK13_imp_K14M
+#assert_standard_axioms Minimality.H21.h21t_rule_false
