@@ -8,7 +8,7 @@ public import Minimality.Type08S.C2K6PZ
 public import Minimality.Type08S.C2K6MZ
 public import Minimality.Type08S.C2K6TZ
 public import Minimality.Type08S.C2K14P
-public import Minimality.Type08S.C2K19ZA
+public import Minimality.Type08S.C2K20ZA
 public import Minimality.Type08S.C2FC1
 public import Minimality.Type16Ties
 public import Minimality.Type16UW
@@ -810,6 +810,10 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         have _hresK17I := Minimality.Type08Sp.resid08FinalK17H_imp_K17I _hresK17H
         -- K19 (C2K19ZA): tie rows U1, U3, S1.3, S1.6, S1.7 (C2K19A–G); leftovers K19LeftPa/Pc/Ta
         have _hresK19 := Minimality.Type08Sp.resid08FinalK17I_imp_K19 _hresK17I
+        -- K20 (C2K20ZA): the S1.5 corner and the S1.4 tie are Rupert (truncated prisms, C2K20E); the step
+        -- takes ¬IsRupert of the labelled point set, which is hN for the image of x (`image_seven`)
+        have _hresK20 := Minimality.Type08Sp.resid08FinalK19_imp_K20
+          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK19
         byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
     -- asked; type 09 is fully closed (no `sorry`).  `quadPairPar09` (as `quadPairPar02`):
