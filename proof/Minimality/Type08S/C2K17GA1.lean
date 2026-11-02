@@ -1,0 +1,183 @@
+module
+
+public import Minimality.Type08S.C2K17F2A
+
+@[expose] public section
+
+
+/-!
+# K17GA / GA1: Bundle A, S1.1 (Zdb(i)): Ta regime, and the R3 cell (a,d,b,a',b') at a - c'
+-/
+set_option autoImplicit true
+set_option relaxedAutoImplicit true
+set_option linter.unusedVariables false
+set_option linter.unusedSimpArgs false
+set_option linter.unreachableTactic false
+set_option linter.unusedTactic false
+
+open scoped RealInnerProductSpace Topology
+open Finset Filter
+
+namespace Minimality
+namespace Type08Sp
+namespace C2
+
+set_option maxHeartbeats 6400000 in
+/-- Core of S1.1b for both regimes: the hypotheses of `k6t4_zdb_core` (coordinates, `hbc0`, `hE0`). -/
+theorem k17ga_s11b_core {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ}
+    (W : Norm08w a a' b b' c c' d)
+    (hdet : det3 (a - d) (b - d) (c - d) ≠ 0)
+    (hc' : c' = d + α1 • (a - d) + β1 • (b - d)) (hb' : b' = d + α4 • (a - d) + γ4 • (c - d))
+    (ha' : a' = d + β6 • (b - d) + (1 : ℝ) • (c - d))
+    (hα11 : 1 < α1) (hα41 : 1 < α4) (hβ1 : 0 < β1) (hγ4 : 0 < γ4) (hb6 : 1 ≤ β6)
+    (hbc0 : 1 < β1 + (-γ4 / (α4 - 1)) * α1 * (1 - β6))
+    (hE0 : 0 ≤ α4 - α4 * β1 - α1 + α1 * γ4) (hζ0 : ⟪d - b, a - b'⟫ = 0)
+    (hz1 : ⟪c' - c, a - b'⟫ = 0) :
+    HasLexCell (V8 a a' b b' c c' d) ∨
+      (0 ≤ ⟪b - d, c - d⟫ ∧ 0 ≤ ⟪a' - c', (β1 * (α4 - 1)) • (b - d) - (γ4 * (α1 - 1)) • (c - d)⟫) := by
+  obtain ⟨w, hwdef⟩ : ∃ w, w = α4 - 1 := ⟨_, rfl⟩
+  have hw : 0 < w := by linarith
+  obtain ⟨σ, hσ⟩ : ∃ σ, σ = -1 / w := ⟨_, rfl⟩
+  obtain ⟨κ, hκ⟩ : ∃ κ, κ = -γ4 / w := ⟨_, rfl⟩
+  have hσw : σ * w = -1 := by rw [hσ]; field_simp
+  have hκw : κ * w = -γ4 := by rw [hκ]; field_simp
+  have hσ0 : σ < 0 := by rw [hσ]; exact div_neg_of_neg_of_pos (by norm_num) hw
+  have hκ0 : κ < 0 := by rw [hκ]; exact div_neg_of_neg_of_pos (by linarith) hw
+  have hκσ : κ = σ * γ4 := by
+    have : (κ - σ * γ4) * w = 0 := by nlinarith
+    exact sub_eq_zero.mp ((mul_eq_zero.mp this).resolve_right hw.ne')
+  have hbc : 1 < β1 + κ * α1 * (1 - β6) := by rw [hκ, hwdef]; exact hbc0
+  have hE : (σ - 1) * (1 - β1) ≤ α1 * (σ - κ) := by
+    have : ((σ - 1) * (1 - β1) - α1 * (σ - κ)) * w ≤ 0 := by nlinarith
+    by_contra hh; push Not at hh
+    nlinarith [mul_pos (sub_pos.2 hh) hw]
+  set p := a - d with hp
+  set q := b - d with hq
+  set r := c - d with hr
+  set R := a - b' with hR
+  have hRv : R = (-w) • p - γ4 • r := by
+    rw [hR, hb', hp, hr, hwdef]; module
+  have hpR : p = σ • R + κ • r := by
+    rw [hRv]
+    match_scalars <;> nlinarith
+  have hΔ : det3 q r R ≠ 0 := by
+    have e : det3 q r R = (-w) * det3 p q r := by
+      rw [hRv]
+      simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]; ring
+    rw [e]; exact mul_ne_zero (neg_ne_zero.2 hw.ne') hdet
+  have hfp : ∀ x y z : ℝ, fpoint q r R d (x, y, z) = d + x • q + y • r + z • R := by
+    intro x y z; simp only [fpoint, fcomb]; module
+  have eO : fpoint q r R d (0, 0, 0) = d := by rw [hfp]; simp
+  have eB : fpoint q r R d (1, 0, 0) = b := by rw [hfp, hq]; module
+  have eC : fpoint q r R d (0, 1, 0) = c := by rw [hfp, hr]; module
+  have eA : fpoint q r R d (0, κ, σ) = a := by
+    rw [hfp]; have h := hpR; rw [hp] at h
+    linear_combination (norm := module) (-1 : ℝ) • h
+  have eB' : fpoint q r R d (0, κ, σ - 1) = b' := by
+    rw [hfp]; have h := hpR; rw [hp] at h
+    linear_combination (norm := module) (-1 : ℝ) • h + (1 : ℝ) • hR
+  have eC' : fpoint q r R d (β1, κ * α1, α1 * σ) = c' := by
+    rw [hfp, hc']; have h := hpR; rw [hp] at h
+    linear_combination (norm := module) (-α1) • h
+  have eA' : fpoint q r R d (β6, 1, 0) = a' := by
+    rw [hfp, ha']; module
+  have hRne : R ≠ 0 := by intro h0; apply hΔ; rw [h0]; simp [det3_expand]
+  have hB0 : ⟪q, R⟫ = 0 := by
+    have e : ⟪q, R⟫ = -⟪d - b, a - b'⟫ := by rw [hq, hR, ← inner_neg_left]; congr 1; abel
+    rw [e, hζ0]; simp
+  have hcc : ⟪c' - c, a - b'⟫ = α1 * (κ * ⟪r, R⟫ + σ * ⟪R, R⟫) - ⟪r, R⟫ := by
+    have e : c' - c = β1 • q + (κ * α1 - 1) • r + (α1 * σ) • R := by
+      have h : p = σ • R + κ • r := hpR
+      have hc : c = d + r := by rw [hr]; abel
+      rw [hc', hc]
+      linear_combination (norm := module) α1 • h
+    rw [e, ← hR, inner_add_left, inner_add_left, real_inner_smul_left, real_inner_smul_left, real_inner_smul_left, hB0]
+    ring
+  have hζ : ⟪r, R⟫ = α1 * (κ * ⟪r, R⟫ + σ * ⟪R, R⟫) := by rw [hcc] at hz1; linarith
+  -- the literal in frame atoms
+  have hac : a' - c' = (β6 - β1) • q + (1 - κ * α1) • r + (-(α1 * σ)) • R := by
+    rw [← eA', ← eC', hfp, hfp]; module
+  have hX1 : ⟪a' - c', q⟫ = (β6 - β1) * ⟪q, q⟫ + (1 - κ * α1) * ⟪q, r⟫ - α1 * σ * ⟪q, R⟫ := by
+    rw [hac]; simp only [inner_add_left, real_inner_smul_left]; rw [real_inner_comm r q, real_inner_comm R q]; ring
+  have hX2 : ⟪a' - c', r⟫ = (β6 - β1) * ⟪q, r⟫ + (1 - κ * α1) * ⟪r, r⟫ - α1 * σ * ⟪r, R⟫ := by
+    rw [hac]; simp only [inner_add_left, real_inner_smul_left]; rw [real_inner_comm R r]; ring
+  have hGw : ⟪a' - c', (β1 * (α4 - 1)) • (b - d) - (γ4 * (α1 - 1)) • (c - d)⟫ =
+      w * (β1 * ((β6 - β1) * ⟪q, q⟫ + (1 - κ * α1) * ⟪q, r⟫ - α1 * σ * ⟪q, R⟫) +
+        κ * (α1 - 1) * ((β6 - β1) * ⟪q, r⟫ + (1 - κ * α1) * ⟪r, r⟫ - α1 * σ * ⟪r, R⟫)) := by
+    rw [← hq, ← hr, inner_sub_right, real_inner_smul_right, real_inner_smul_right, hX1, hX2, ← hwdef]
+    linear_combination (-(α1 - 1) * ((β6 - β1) * ⟪q, r⟫ + (1 - κ * α1) * ⟪r, r⟫ - α1 * σ * ⟪r, R⟫)) * hκw
+  by_cases hL : ⟪q, r⟫ < 0 ∨ ⟪a' - c', (β1 * (α4 - 1)) • (b - d) - (γ4 * (α1 - 1)) • (c - d)⟫ < 0
+  · left
+    refine ⟨R, hRne, k17f_qtc1_tie_frame (V8 a a' b b' c c' d) q r R d hΔ hκ0 hσ0 hα11 hβ1 hb6 hbc hE
+      hB0 hζ ?_ ?_ ?_⟩
+    · rcases hL with hL | hL
+      · exact Or.inl hL
+      · right
+        rw [hGw] at hL
+        by_contra hh; push Not at hh
+        nlinarith [mul_nonneg hw.le hh]
+    · intro i
+      rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
+      · simp only [kmCyc1_0, eA]; simp [V8]
+      · simp only [kmCyc1_1, eC']; simp [V8]
+      · simp only [kmCyc1_2, eA']; simp [V8]
+      · simp only [kmCyc1_3, eC]; simp [V8]
+      · simp only [kmCyc1_4, eO]; simp [V8]
+    · intro y hy
+      rw [eA, eC', eA', eC, eO, eB, eB']
+      simp only [V8, Finset.mem_insert, Finset.mem_singleton] at hy
+      tauto
+  · right
+    push Not at hL
+    exact ⟨hL.1, hL.2⟩
+
+/-- Coordinates of the Zdb(i) Ta context: the hypotheses of `k17ga_s11b_core`. -/
+theorem k17ga_ta_coords {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K17fZdbTa a a' b b' c c' d) :
+    ∃ α1 α4 β1 γ4 β6 : ℝ, det3 (a - d) (b - d) (c - d) ≠ 0 ∧ c' = d + α1 • (a - d) + β1 • (b - d) ∧
+      b' = d + α4 • (a - d) + γ4 • (c - d) ∧ a' = d + β6 • (b - d) + (1 : ℝ) • (c - d) ∧
+      1 < α1 ∧ 1 < α4 ∧ 1 < β1 ∧ 0 < γ4 ∧ 1 ≤ β6 ∧
+      1 < β1 + (-γ4 / (α4 - 1)) * α1 * (1 - β6) ∧ 0 ≤ α4 - α4 * β1 - α1 + α1 * γ4 := by
+  obtain ⟨⟨hT, hT', hκa, -, -⟩, hβ1d, hα4, hβ6d, -⟩ := h
+  have hfar := k5z_far2 W hT hT'
+  obtain ⟨α1, α4, β1, γ4, β6, hdet, hc', hb', ha', hα1, hβ1, hαβ, hα4p, hγ4, hαγ, hβ6, hfa⟩ :=
+    norm08w_coordsT W hT
+  have hα11 : 1 < α1 := hfa hfar
+  have hκ' := (planar_a_iff hdet hc' hb').1 hκa
+  have hD2 : 0 < det3 (a - d) (b - d) (c - d) ^ 2 := by positivity
+  rw [det_alpha4 hb'] at hα4
+  have hα41 : 1 < α4 := by nlinarith
+  rw [det_beta1 hc'] at hβ1d
+  have hβ11 : 1 < β1 := by nlinarith
+  rw [k5f_det_beta6 ha'] at hβ6d
+  have hb6 : 1 ≤ β6 := by nlinarith
+  have hE0 : α4 - α4 * β1 - α1 + α1 * γ4 = 0 := by linarith
+  obtain ⟨w, hwdef⟩ : ∃ w, w = α4 - 1 := ⟨_, rfl⟩
+  have hw : 0 < w := by linarith
+  obtain ⟨κ, hκ⟩ : ∃ κ, κ = -γ4 / w := ⟨_, rfl⟩
+  have hκ0 : κ < 0 := by rw [hκ]; exact div_neg_of_neg_of_pos (by linarith) hw
+  have hbc0 : 1 < β1 + (-γ4 / (α4 - 1)) * α1 * (1 - β6) := by
+    rw [← hwdef, ← hκ]
+    have : 0 ≤ κ * α1 * (1 - β6) := by
+      have h1 : κ * α1 < 0 := by nlinarith
+      nlinarith
+    linarith
+  exact ⟨α1, α4, β1, γ4, β6, hdet, hc', hb', ha', hα11, hα41, hβ11, hγ4, hb6, hbc0, hE0.ge⟩
+
+/-- **S1.1 R1, Ta regime**: a cell, or `⟪b-d,c-d⟫ ≥ 0 ∧ ζ_{a-c'}(c',a') ≥ 0`. -/
+theorem k17ga_s11_ta {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K17fZdbTa a a' b b' c c' d)
+    (hz1 : ⟪c' - c, a - b'⟫ = 0) :
+    HasLexCell (V8 a a' b b' c c' d) ∨ (0 ≤ ⟪b - d, c - d⟫ ∧ 0 ≤ ⟪c' - a', a - c'⟫) := by
+  have hζ0 : ⟪d - b, a - b'⟫ = 0 := h.2.2.2.2.1
+  obtain ⟨α1, α4, β1, γ4, β6, hdet, hc', hb', ha', hα11, hα41, hβ1, hγ4, hb6, hbc0, hE0⟩ :=
+    k17ga_ta_coords W h
+  rcases k17ga_s11b_core W hdet hc' hb' ha' hα11 hα41 (by linarith) hγ4 hb6 hbc0 hE0 hζ0 hz1 with h1 | ⟨hq, hG⟩
+  · exact Or.inl h1
+  · right
+    refine ⟨hq, ?_⟩
+    rw [k17f_s11_G hc' hb' ha' hζ0 hz1] at hG
+    by_contra hh; push Not at hh
+    nlinarith [mul_pos (sub_pos.2 hα41) (neg_pos.2 hh)]
+
+end C2
+end Type08Sp
+end Minimality
