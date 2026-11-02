@@ -8,7 +8,7 @@ public import Minimality.CaseC20Final
 # Type 20, acute case (c): the reduced special set
 
 `CaseC20Special'` is `CaseC20Special` with the 8 disjuncts n1, n3, n17, n18, n19, n23, n24, n25 removed
-(ported from `nopert229/out/bottleneck/sp20`); `Frame20.isRupert_of_not_special'` is Rupert off it.
+(ported from `nopert229/out/bottleneck/archive/sp20`); `Frame20.isRupert_of_not_special'` is Rupert off it.
 -/
 
 

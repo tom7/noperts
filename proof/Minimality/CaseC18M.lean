@@ -8,7 +8,7 @@ public import Minimality.CaseC09Rims
 /-!
 # Type 18, acute case (c): PROOFS section 36 (Theorems M, M', R, Lemma LV)
 
-Theorems M, M', R, Lemma LV, the sector tests and the assembly.  Plan, templates and risks: `nopert229/out/bottleneck/sp18b/handoff_lean.md`.  Paper:
+Theorems M, M', R, Lemma LV, the sector tests and the assembly.  Plan, templates and risks: `nopert229/out/bottleneck/archive/sp18b/handoff_lean.md`.  Paper:
 `FEWER-FACES-PROOFS.md` "## 36." (referee fixes at its top override the text).
 
 The special set `CaseC18Special'` (five disjuncts: codim-3 R1' residual, `L_M'` and its

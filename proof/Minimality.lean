@@ -705,7 +705,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- the sector theorems in Frame7 coordinates: `Type02A` (acute, generic rims), `Type02B` (acute,
     -- vertical far edges), `Type02R` and `Type02FN`/`Type02FNB` (right far angle at `x3`, Lemma FN),
     -- `Type02X` (exceptional sets X1, X2), `Type02V12` (both far edges vertical) and the assembly
-    -- `Type02Assemble.lean` (`type02_false`).  Paper: `nopert229/out/bottleneck/sp02/draft.md`,
+    -- `Type02Assemble.lean` (`type02_false`).  Paper: `nopert229/out/bottleneck/archive/sp02/draft.md`,
     -- `sp02b/draft.md` (Lean-verified, not refereed).
     have hQ := quadPairPar02 hx hN rfl hR
     exact Minimality.CaseC18.type02_false hx hN hR hQ

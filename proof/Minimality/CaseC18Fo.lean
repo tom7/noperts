@@ -8,7 +8,7 @@ public import Minimality.FirstOrder
 /-!
 # Type 18, acute case (c): the first-order (spin) bridge in frame coordinates
 
-All PROVED.  Notes: `nopert229/out/bottleneck/sp18d/handoff_lean.md`.  Paper: `FEWER-FACES-PROOFS.md` "## 38."
+All PROVED.  Notes: `nopert229/out/bottleneck/archive/sp18d/handoff_lean.md`.  Paper: `FEWER-FACES-PROOFS.md` "## 38."
 
 `isRupert_of_tiltCert` (`Tilt.lean`) is Lemma 1 in the *frame-free local-certificate form*: for
 each vertex either a corner whose velocity points into the (convex) angle it makes with two other

@@ -9,7 +9,7 @@ public import Minimality.CaseC18Fo
 # Type 18, acute case (c): PROOFS sections 37-38 (Theorems E, E2, W, C, R', F and E*)
 
 All theorems are PROVED (no `sorry`), and so is the final assembly `CaseC18Special'.isRupert`:
-type 18 has no special position left.  History and per-group notes: `nopert229/out/bottleneck/sp18d/handoff_lean.md`.
+type 18 has no special position left.  History and per-group notes: `nopert229/out/bottleneck/archive/sp18d/handoff_lean.md`.
 Paper: `FEWER-FACES-PROOFS.md` "## 37." (Theorems E, E1, E2, W, C, R', F) and "## 38." (E*);
 the referee's fixes at the top of each section override the text.
 

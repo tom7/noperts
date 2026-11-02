@@ -8,7 +8,7 @@ public import Minimality.Type10RightPrism
 /-!
 # Theorem 09.Q: `QuadTripleRect` at the quadrilaterals of type 09 is Rupert
 
-FEWER-FACES-PROOFS.md §39.5.  Plan (see `out/bottleneck/sp09/handoff_lean_Q.md`):
+FEWER-FACES-PROOFS.md §39.5.  Plan (see `out/bottleneck/archive/sp09/handoff_lean_Q.md`):
 
 * Group A: `QuadTripleRect` (+ no three collinear, two quadrilaterals covering `V`) gives a
   *prism shape*: `V = {v, v+A, v+A+l e, v+αA+z1 e, v+B, v+B+l e, v+βB+z2 e}` with `A, B ⊥ e`,

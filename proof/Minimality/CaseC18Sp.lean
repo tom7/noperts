@@ -8,7 +8,7 @@ public import Minimality.CaseC18Level
 # Type 18, acute case (c): the special positions after PROOFS section 35 
 
 Paper: `FEWER-FACES-PROOFS.md` section 35 (Lemma B, Theorems 1-4), referee fixes at its top.
-All groups are proved; see `nopert229/out/bottleneck/sp18/handoff_lean.md` for the plan.
+All groups are proved; see `nopert229/out/bottleneck/archive/sp18/handoff_lean.md` for the plan.
 
 The section 35 special set (`R1'`, the corners, the V side with `dp = A1 tp ∨ dm = A1 tm ∨ D2p = 0`)
 and its assembly `isRupert_of_not_special'` were superseded by PROOFS section 36: the final
