@@ -20,7 +20,7 @@ open C2
 def K6Slice {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) : Prop :=
   K5ZsTT a a' b b' c c' d ∨ K5ZsPa a a' b b' c c' d ∨ K5ZsPc a a' b b' c c' d ∨
   K5ZsTouch a a' b b' c c' d ∨ K5ZsTa a a' b b' c c' d ∨ K5ZsTc a a' b b' c c' d ∨
-  K6sMN2 a a' b b' c c' d ∨ K6sDN2 a a' b b' c c' d ∨ K6sMKb a a' b b' c c' d
+  K6sMN2 a a' b b' c c' d ∨ K6sDN2 a a' b b' c c' d ∨ (RegT4 W.F ∧ K6sMKb a a' b b' c c' d)
 
 theorem k6p_slice_step {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K5ZSlice W) :
     HasLexCell (V8 a a' b b' c c' d) ∨ K6Slice W := by
@@ -35,9 +35,9 @@ theorem k6p_slice_step {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
     · exact Or.inl h
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))))
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))))))
-  · rcases k6p_qceb_final W h.1.1 h.1.2 h with h | h
-    · exact Or.inl h
-    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr h))))))))
+  · rcases k6p_qceb_final W h.1.1 h.1.2 h with h' | h'
+    · exact Or.inl h'
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨h.1, h'⟩))))))))
   · exact Or.inl (k6p_qce2_final W h.1.1 h.1.2 h)
 
 def K6ResidP (a a' b b' c c' d : ℝ³) : Prop :=
