@@ -8,7 +8,7 @@ public import Minimality.Type08S.C2K6PZ
 public import Minimality.Type08S.C2K6MZ
 public import Minimality.Type08S.C2K6TZ
 public import Minimality.Type08S.C2K14P
-public import Minimality.Type08S.C2K17AZ
+public import Minimality.Type08S.C2K19ZA
 public import Minimality.Type08S.C2FC1
 public import Minimality.Type16Ties
 public import Minimality.Type16UW
@@ -808,6 +808,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         have _hresK17H := Minimality.Type08Sp.resid08FinalK17G_imp_K17H _hresK17G
         -- K17I (C2K17AZ): DN2 at α1 = 1 closed by `k17a_dn2one`
         have _hresK17I := Minimality.Type08Sp.resid08FinalK17H_imp_K17I _hresK17H
+        -- K19 (C2K19ZA): tie rows U1, U3, S1.3, S1.6, S1.7 (C2K19A–G); leftovers K19LeftPa/Pc/Ta
+        have _hresK19 := Minimality.Type08Sp.resid08FinalK17I_imp_K19 _hresK17I
         byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
     -- asked; type 09 is fully closed (no `sorry`).  `quadPairPar09` (as `quadPairPar02`):
