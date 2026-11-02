@@ -15,6 +15,7 @@ import Minimality.Type16VW
 import Minimality.Type21SilH
 import Minimality.Type21Sl2G
 import Minimality.Type29SilE
+import Minimality.Type29GB
 import Minimality.Type16Arc3B
 import Minimality.MaxwellRadonI
 import Minimality.SilS0XD
@@ -33,7 +34,7 @@ import Minimality.Type08S.C2K6PZ
 import Minimality.Type08S.C2K6MZ
 import Minimality.Type08S.C2K6TZ
 import Minimality.Type08S.C2K14P
-import Minimality.Type08S.C2K17B2Y
+import Minimality.Type08S.C2K17GCZ
 import Minimality.Type08S.C2K17F1A
 import Minimality.Type08S.C2K17F2A
 import ProofOfMainTheorem
@@ -938,3 +939,5 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Type08Sp.C2.k17f_s11_tc
 #assert_standard_axioms Minimality.Type08Sp.C2.k17f_Pa
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK17B_imp_K17B2
+#assert_standard_axioms Minimality.H29S.h29g_rule_false
+#assert_standard_axioms Minimality.Type08Sp.resid08FinalK17B2_imp_K17G
