@@ -3,11 +3,12 @@ module
 public import Minimality.Type08S.C2K6MZ
 public import Minimality.Type08S.C2K6TAM
 public import Minimality.Type08S.C2K6TBZ
+public import Minimality.Type08S.C2K6HF
 
 @[expose] public section
 
 /-!
-# K6TZ: the T/T′ tie slices cut to their K6T leftovers; `Resid08FinalK12 → Resid08FinalK13`
+# K6TZ: the T/T′ tie slices cut to their K6T leftovers, and M's box H1 (C2K6H*); `Resid08FinalK12 → Resid08FinalK13`
 -/
 
 namespace Minimality
@@ -19,7 +20,7 @@ open C2
 def K8Slice {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) : Prop :=
   K6tLeftTT a a' b b' c c' d ∨ K6tLeftPa a a' b b' c c' d ∨ K6tLeftPc a a' b b' c c' d ∨
   K6tLeftTa a a' b b' c c' d ∨ K6tLeftTc a a' b b' c c' d ∨
-  K6sMLeftN2 a a' b b' c c' d ∨ K6sDN2one a a' b b' c c' d ∨ K6sMLeftKb a a' b b' c c' d
+  K6sMLeftN2' a a' b b' c c' d ∨ K6sDN2one a a' b b' c c' d ∨ K6sMLeftKb a a' b b' c c' d
 
 theorem k6t_slice_step {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K7Slice W) :
     HasLexCell (V8 a a' b b' c c' d) ∨ K8Slice W := by
@@ -42,7 +43,9 @@ theorem k6t_slice_step {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
   · rcases k6t1_Tc W h with h | h
     · exact Or.inl h
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))))
+  · rcases k6mh1_left h with h | h
+    · exact Or.inl h
+    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))))
   · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))))
   · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr h)))))))
 

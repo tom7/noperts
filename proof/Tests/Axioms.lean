@@ -884,3 +884,4 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.H16U.h16u_rule_isRupert
 #assert_standard_axioms Minimality.H16U.h16u_rule_false
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK12_imp_K13
+#assert_standard_axioms Minimality.Type08Sp.C2.k6mh1_left
