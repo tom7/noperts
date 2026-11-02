@@ -6,6 +6,7 @@ public import Minimality.Type08S.C2K9K
 public import Minimality.Type08S.C2K5ZE
 public import Minimality.Type08S.C2K6PZ
 public import Minimality.Type08S.C2K6MZ
+public import Minimality.Type08S.C2K6TZ
 public import Minimality.Type08S.C2FC1
 public import Minimality.Type16Ties
 public import Minimality.Type16UW
@@ -777,6 +778,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         have _hresK11 := Minimality.Type08Sp.resid08FinalK10_imp_K11 _hresK10
         -- K6M (stratum M, DN2): metric-free face boxes, H2/H4; leftovers: box boundaries, ties, H1, H5, DN2 at α1 = 1
         have _hresK12 := Minimality.Type08Sp.resid08FinalK11_imp_K12 _hresK11
+        -- K6T (T/T′ tie slices): cut to their K6T leftovers (C2K6TA*, C2K6TB*)
+        have _hresK13 := Minimality.Type08Sp.resid08FinalK12_imp_K13 _hresK12
         byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
     -- asked; type 09 is fully closed (no `sorry`).  `quadPairPar09` (as `quadPairPar02`):
