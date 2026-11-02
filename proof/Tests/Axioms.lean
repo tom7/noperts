@@ -895,3 +895,5 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Type08Sp.C2.k6t3_Pc
 #assert_standard_axioms Minimality.H21.h21_sil_cell
 #assert_standard_axioms Minimality.H21.h21_rule_false
+#assert_standard_axioms Minimality.Type08Sp.C2.k6tz_Tc'
+#assert_standard_axioms Minimality.Type08Sp.C2.k6tz_Ta'
