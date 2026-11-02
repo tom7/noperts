@@ -13,6 +13,7 @@ public import Minimality.Type16UW
 public import Minimality.Type16VW
 public import Minimality.Type21SilH
 public import Minimality.Type21Sl2G
+public import Minimality.Type29SilC
 public import Minimality.Type21Ties
 public import Minimality.Type29Ties
 public import Minimality.SevenTypes
@@ -1107,24 +1108,45 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     set N := Minimality.IsCap29.toNF29 hx F hd
     rcases N.classes with hbd | hK2 | hK1 | ⟨ha2, hb0, hV⟩ | ⟨ha2, hb0, hV⟩ | ⟨ha2, hb0, hV⟩ |
       ⟨ha2, hb0, hV⟩
-    · exact byThm5Faces hx hN _ h3 (fun _ => sorry)  -- a class boundary: `a2 = 0`, `b0 = 0` or `V = 0`
-    · exact byThm5Faces hx hN _ h3 (fun _ => sorry)  -- class K2: `a2, b0 < 0`
-    · exact byThm5Faces hx hN _ h3 (fun _ => sorry)  -- class K1: `a2 < 0 < b0`, `V < 0` (K1a), or `a2 > 0 > b0`, `V > 0` (K1b)
+    · exact byThm5Faces hx hN _ h3 (fun _ => by
+        by_cases hres : Minimality.H29S.H29SilResid N.facets
+        · sorry
+        · exact (Minimality.H29S.h29s_rule_false hN _ hres).elim)  -- a class boundary: `a2 = 0`, `b0 = 0` or `V = 0`
+    · exact byThm5Faces hx hN _ h3 (fun _ => by
+        by_cases hres : Minimality.H29S.H29SilResid N.facets
+        · sorry
+        · exact (Minimality.H29S.h29s_rule_false hN _ hres).elim)  -- class K2: `a2, b0 < 0`
+    · exact byThm5Faces hx hN _ h3 (fun _ => by
+        by_cases hres : Minimality.H29S.H29SilResid N.facets
+        · sorry
+        · exact (Minimality.H29S.h29s_rule_false hN _ hres).elim)  -- class K1: `a2 < 0 < b0`, `V < 0` (K1a), or `a2 > 0 > b0`, `V > 0` (K1b)
     · -- class K3a: outside codimension 2 (§28, `NF29.isRupert_K3a_codim2'`; several independent ties: Type29Ties), else its general position
       exact byGen2 (fun htie hH => hnR (N.isRupert_K3a_codim2' ha2 hb0 hV htie hH))
         (fun _ => byGen2 (fun G G1 => hnR (N.isRupert_K3a_all ha2 hb0 hV G G1))
-          (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
+          (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
+            by_cases hres : Minimality.H29S.H29SilResid N.facets
+            · sorry
+            · exact (Minimality.H29S.h29s_rule_false hN _ hres).elim)))
     · -- class K3b: outside codimension 2 (§28, `NF29.isRupert_K3b_codim2'`; several independent ties: Type29Ties), else its general position
       exact byGen2 (fun htie hH => hnR (N.isRupert_K3b_codim2' ha2 hb0 hV htie hH))
         (fun _ => byGen2 (fun G G1 => hnR (N.isRupert_K3b_all ha2 hb0 hV G G1))
-          (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
+          (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
+            by_cases hres : Minimality.H29S.H29SilResid N.facets
+            · sorry
+            · exact (Minimality.H29S.h29s_rule_false hN _ hres).elim)))
     · -- class K4a: outside codimension 2 (§28, `NF29.isRupert_K4a_codim2'`; several independent ties: Type29Ties), else its general position
       exact byGen2 (fun htie hH => hnR (N.isRupert_K4a_codim2' ha2 hb0 hV htie hH))
         (fun _ => byGen2 (fun G G1 => hnR (N.isRupert_K4a_all ha2 hb0 hV G G1))
-          (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
+          (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
+            by_cases hres : Minimality.H29S.H29SilResid N.facets
+            · sorry
+            · exact (Minimality.H29S.h29s_rule_false hN _ hres).elim)))
     · -- class K4b: outside codimension 2 (§28, `NF29.isRupert_K4b_codim2'`; several independent ties: Type29Ties), else its general position
       exact byGen2 (fun htie hH => hnR (N.isRupert_K4b_codim2' ha2 hb0 hV htie hH))
         (fun _ => byGen2 (fun G G1 => hnR (N.isRupert_K4b_all ha2 hb0 hV G G1))
-          (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry)))
+          (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
+            by_cases hres : Minimality.H29S.H29SilResid N.facets
+            · sorry
+            · exact (Minimality.H29S.h29s_rule_false hN _ hres).elim)))
 
 end
