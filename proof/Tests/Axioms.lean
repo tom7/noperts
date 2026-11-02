@@ -10,6 +10,7 @@ import Minimality.TwoRayDiag
 import Minimality.Type16V2PopV
 import Minimality.Type16V2Tri
 import Minimality.Type16UM
+import Minimality.Type16UW
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
 import Minimality.Type08S.C2K5AI
@@ -879,3 +880,5 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Type08Sp.C2.k6m_qceb
 #assert_standard_axioms Minimality.Type08Sp.C2.k6m_dn2
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK11_imp_K12
+#assert_standard_axioms Minimality.H16U.h16u_rule_isRupert
+#assert_standard_axioms Minimality.H16U.h16u_rule_false
