@@ -10,6 +10,7 @@ public import Minimality.Type08S.C2K6TZ
 public import Minimality.Type08S.C2FC1
 public import Minimality.Type16Ties
 public import Minimality.Type16UW
+public import Minimality.Type16VW
 public import Minimality.Type21Ties
 public import Minimality.Type29Ties
 public import Minimality.SevenTypes
@@ -869,10 +870,10 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH h35 hEd hQ hV htie)
       (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
         -- the sigma-symmetric lex-cell rule (Type16U*, Type16UW): `sorry` only under its leftover
-        by_cases hres : Minimality.H16U.H16UResid
+        by_cases hres : Minimality.H16U.H16VResid
             (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
         · sorry
-        · exact Minimality.H16U.h16u_rule_false hN _ hres)))
+        · exact Minimality.H16U.h16v_rule_false hN _ hres)))
   · -- type 17: `not_type17_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
     -- special value of Lemma T′ (settled there, 26.8).  Both views have the triangle `136`, so
     -- `TriGenPar` or `TriGenFarP` always holds (`triGenPar_or_farP_idx`): closed
