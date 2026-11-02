@@ -8,7 +8,7 @@ public import Minimality.Type08S.C2K6PZ
 public import Minimality.Type08S.C2K6MZ
 public import Minimality.Type08S.C2K6TZ
 public import Minimality.Type08S.C2K14P
-public import Minimality.Type08S.C2K16R
+public import Minimality.Type08S.C2K17CZ
 public import Minimality.Type08S.C2FC1
 public import Minimality.Type16Ties
 public import Minimality.Type16UW
@@ -795,6 +795,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         have _hresK14 := Minimality.Type08Sp.resid08FinalK12_imp_K14 _hresK12
         -- K16 (C2K16*): α1 = 1 boundary under RegN2/RegT4 (pentagon), H5 rules r0 r1 r2 r9
         have _hresK16 := Minimality.Type08Sp.resid08FinalK14_imp_K16 _hresK14
+        -- K17C (C2K17C*): the M boundary at β1 = 1 (Coll5 forces ⟪a−d,b−d⟫ = 0; six cells; leftover K17cLeft)
+        have _hresK17C := Minimality.Type08Sp.resid08FinalK16_imp_K17C _hresK16
         byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
     -- asked; type 09 is fully closed (no `sorry`).  `quadPairPar09` (as `quadPairPar02`):

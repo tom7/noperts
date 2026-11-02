@@ -33,7 +33,7 @@ import Minimality.Type08S.C2K6PZ
 import Minimality.Type08S.C2K6MZ
 import Minimality.Type08S.C2K6TZ
 import Minimality.Type08S.C2K14P
-import Minimality.Type08S.C2K16R
+import Minimality.Type08S.C2K17CZ
 import ProofOfMainTheorem
 
 /-!
@@ -930,3 +930,4 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.MRB.mrb_no_balanced_of_unimodal
 #assert_standard_axioms Minimality.H21.h21t2_rule_false
 #assert_standard_axioms Minimality.H16A.h16a3_rule_false
+#assert_standard_axioms Minimality.Type08Sp.resid08FinalK16_imp_K17C
