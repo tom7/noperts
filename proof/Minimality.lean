@@ -16,7 +16,7 @@ public import Minimality.Type16VW
 public import Minimality.Type21SilH
 public import Minimality.Type21Sl2G
 public import Minimality.Type29SilE
-public import Minimality.Type16Arc2B
+public import Minimality.Type16Arc3B
 public import Minimality.MaxwellRadonI
 public import Minimality.SilS0XD
 public import Minimality.Type21RobA
@@ -886,11 +886,11 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         -- the sigma-symmetric lex-cell rule (Type16U*, Type16UW): `sorry` only under its leftover
         by_cases hres : Minimality.H16U.H16VResid
             (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
-        · -- arc cells at views between two menu views (Type16ArcA/B, Type16Arc2A/B: 34 robust leaves): `sorry` only under `H16ArcResid2`
-          by_cases hres2 : Minimality.H16A.H16ArcResid2
+        · -- arc cells at views between two menu views (Type16ArcA/B, Type16Arc2A/B, Arc3B: 35 robust leaves): `sorry` only under `H16ArcResid3`
+          by_cases hres2 : Minimality.H16A.H16ArcResid3
               (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
           · sorry
-          · exact (Minimality.H16A.h16a2_rule_false hN _ hres2).elim
+          · exact (Minimality.H16A.h16a3_rule_false hN _ hres2).elim
         · exact Minimality.H16U.h16v_rule_false hN _ hres)))
   · -- type 17: `not_type17_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
     -- special value of Lemma T′ (settled there, 26.8).  Both views have the triangle `136`, so
