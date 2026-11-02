@@ -12,7 +12,7 @@ The S1 tie theorems need the item context, which `K6t4Zdb0` and `K14LeftPa` drop
 * `K17fZdbTc` = `K5ZsTc ∧ α4 > 1 ∧ K6t4Zdb0` (`hfar`, `κ_b > 0` follow from `K5ZsTc` and `W` by `k5z_far2`, `k5z_kb_pos`);
 * `K17fZdbTa` = `K5ZsTa ∧ β1 > 1 ∧ α4 > 1 ∧ β6 ≥ 1 ∧ K6t4Zdb0` (`hfar` by `k5z_far2`);
 * `K17fLeftPa` = `K5ZsPa ∧ K14LeftPa` (`hfar` by `k5z_far1`).
-Wrappers: `k17f_Tc'` (copy of `k6tz_Tc'`), `k17f_Ta'` (copy of `k6tz_Ta'`), `k17f_Ta14` (copy of `k14_Ta'`), `k17f_Pa`
+Wrappers: `k17f_Tc'0` (copy of `k6tz_Tc'`), `k17f_Ta'` (copy of `k6tz_Ta'`), `k17f_Ta140` (copy of `k14_Ta'`), `k17f_Pa`
 (copy of `k14_Pa`).  Integration: swap them into `k14_slice_step` (C2K14P) with the strengthened slice predicates;
 `k16_slice_step` passes them through unchanged.
 -/
@@ -43,13 +43,13 @@ def K17fZdbTa (a a' b b' c c' d : ℝ³) : Prop :=
 /-- `K14LeftPa` with its item context. -/
 def K17fLeftPa (a a' b b' c c' d : ℝ³) : Prop := K5ZsPa a a' b b' c c' d ∧ K14LeftPa a a' b b' c c' d
 
-def K17fLeftTc' (a a' b b' c c' d : ℝ³) : Prop := K6tTcA41 a a' b b' c c' d ∨ K17fZdbTc a a' b b' c c' d
+def K17fLeftTc'0 (a a' b b' c c' d : ℝ³) : Prop := K6tTcA41 a a' b b' c c' d ∨ K17fZdbTc a a' b b' c c' d
 
 def K17fLeftTa' (a a' b b' c c' d : ℝ³) : Prop :=
   K6t4B11 a a' b b' c c' d ∨ K17fZdbTa a a' b b' c c' d ∨ K6tTaC a a' b b' c c' d ∨
   K6tTaA41 a a' b b' c c' d ∨ K6tTaE a a' b b' c c' d
 
-def K17fLeftTa14 (a a' b b' c c' d : ℝ³) : Prop :=
+def K17fLeftTa140 (a a' b b' c c' d : ℝ³) : Prop :=
   K6t4B11 a a' b b' c c' d ∨ K17fZdbTa a a' b b' c c' d ∨ K14TaC a a' b b' c c' d ∨
   K6tTaA41 a a' b b' c c' d ∨ K6tTaE a a' b b' c c' d
 
@@ -58,8 +58,8 @@ theorem k17f_Pa {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K
   (k14_Pa W (k5z_far1 W h.1 h.2.1) h).imp_right (fun h1 => ⟨h, h1⟩)
 
 set_option maxHeartbeats 3200000 in
-theorem k17f_Tc' {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K5ZsTc a a' b b' c c' d) :
-    HasLexCell (V8 a a' b b' c c' d) ∨ K17fLeftTc' a a' b b' c c' d := by
+theorem k17f_Tc'0 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K5ZsTc a a' b b' c c' d) :
+    HasLexCell (V8 a a' b b' c c' d) ∨ K17fLeftTc'0 a a' b b' c c' d := by
   have h0 := h
   obtain ⟨hT, hT', hκc, hs⟩ := h
   have hdet : det3 (a - d) (b - d) (c - d) ≠ 0 := by
@@ -141,9 +141,9 @@ theorem k17f_Ta' {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
                   · exact Or.inr (Or.inr (Or.inl ⟨hTa, hP1, hP4, hP6.le, l⟩))
                 · exact Or.inl (k5z_qta_D_hasLexCell W hT hκ hfar hζ hP1 hP4 hP6)
 
-theorem k17f_Ta14 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
+theorem k17f_Ta140 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
     (h : K5ZsTouch a a' b b' c c' d ∨ K5ZsTa a a' b b' c c' d) :
-    HasLexCell (V8 a a' b b' c c' d) ∨ K17fLeftTa14 a a' b b' c c' d := by
+    HasLexCell (V8 a a' b b' c c' d) ∨ K17fLeftTa140 a a' b b' c c' d := by
   have hT : IsT a' b c d := h.elim (fun h => h.1) (fun h => h.1)
   have hT' : ¬ IsT' a b c' d := h.elim (fun h => h.2.1) (fun h => h.2.1)
   rcases k17f_Ta' W h with c | l
@@ -157,6 +157,22 @@ theorem k17f_Ta14 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
       · exact Or.inl (k14_TaC_hasLexCell W hT0 hκ (k5z_far2 W hT0 hT') hP1 hP4 hP6 hD)
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl l))))
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr l))))
+
+/-- `K17fLeftTc'0` with the item context kept (`¬ IsT'`, far ends, `κ_b > 0` are re-derived from it). -/
+def K17fLeftTc' (a a' b b' c c' d : ℝ³) : Prop := K5ZsTc a a' b b' c c' d ∧ K17fLeftTc'0 a a' b b' c c' d
+
+/-- `K17fLeftTa140` with the item context kept. -/
+def K17fLeftTa14 (a a' b b' c c' d : ℝ³) : Prop :=
+  (K5ZsTouch a a' b b' c c' d ∨ K5ZsTa a a' b b' c c' d) ∧ K17fLeftTa140 a a' b b' c c' d
+
+theorem k17f_Tc' {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K5ZsTc a a' b b' c c' d) :
+    HasLexCell (V8 a a' b b' c c' d) ∨ K17fLeftTc' a a' b b' c c' d :=
+  (k17f_Tc'0 W h).imp_right (fun h1 => ⟨h, h1⟩)
+
+theorem k17f_Ta14 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
+    (h : K5ZsTouch a a' b b' c c' d ∨ K5ZsTa a a' b b' c c' d) :
+    HasLexCell (V8 a a' b b' c c' d) ∨ K17fLeftTa14 a a' b b' c c' d :=
+  (k17f_Ta140 W h).imp_right (fun h1 => ⟨h, h1⟩)
 
 end C2
 end Type08Sp
