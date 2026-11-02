@@ -17,6 +17,7 @@ public import Minimality.Type29SilE
 public import Minimality.Type16ArcB
 public import Minimality.SilS0XD
 public import Minimality.Type21RobA
+public import Minimality.Type20SilC
 public import Minimality.Type21Ties
 public import Minimality.Type29Ties
 public import Minimality.SevenTypes
@@ -961,7 +962,10 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     exact byGen1 (quadPair hx hN hR {0, 1, 3, 5} {2, 4, 5, 6} 5 (by decide) (by decide) (by decide) (by decide)
       (by decide)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
         by_cases hrest : Minimality.CaseC20.CaseC20Special'' x
-        · sorry
+        · -- silhouette cells at all segment and facet-line views (Type20SilA–C): `sorry` only under `H20SilResid`
+          by_cases hsil : Minimality.H20S.H20SilResid (Minimality.H20S.h20s_fac hR)
+          · sorry
+          · exact (Minimality.H20S.h20s_rule_false hN hx hR hsil).elim
         · obtain ⟨F⟩ := Minimality.CaseC20.frame20 hx (noThreeCollinear_seven x hN hx) hR hQ.1 hQ.2
           exact hN.2 (F.isRupert_of_not_special'' hx hrest)))
   · -- type 21: `not_type21_of_multiView21` (Theorem 24.3: ties at a family of tilt tests with
