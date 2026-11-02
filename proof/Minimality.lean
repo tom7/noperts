@@ -15,6 +15,7 @@ public import Minimality.Type21SilH
 public import Minimality.Type21Sl2G
 public import Minimality.Type29SilC
 public import Minimality.Type16ArcB
+public import Minimality.SilS0XD
 public import Minimality.Type21Ties
 public import Minimality.Type29Ties
 public import Minimality.SevenTypes
