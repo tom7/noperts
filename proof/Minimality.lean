@@ -8,6 +8,7 @@ public import Minimality.Type08S.C2K6PZ
 public import Minimality.Type08S.C2K6MZ
 public import Minimality.Type08S.C2K6TZ
 public import Minimality.Type08S.C2K14P
+public import Minimality.Type08S.C2K16R
 public import Minimality.Type08S.C2FC1
 public import Minimality.Type16Ties
 public import Minimality.Type16UW
@@ -791,6 +792,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         -- K6T (T/T′ tie slices) and K14 (C2K14*: M ties H2/H4 by a depth literal, α1 = 1 partly, Ta ZC off D_c = 0,
         -- Pa(1) at α4 > 1, one H5 rule); supersedes the K13 step (C2K6TZ), which it contains
         have _hresK14 := Minimality.Type08Sp.resid08FinalK12_imp_K14 _hresK12
+        -- K16 (C2K16*): α1 = 1 boundary under RegN2/RegT4 (pentagon), H5 rules r0 r1 r2 r9
+        have _hresK16 := Minimality.Type08Sp.resid08FinalK14_imp_K16 _hresK14
         byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
     -- asked; type 09 is fully closed (no `sorry`).  `quadPairPar09` (as `quadPairPar02`):
