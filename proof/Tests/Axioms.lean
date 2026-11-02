@@ -30,6 +30,7 @@ import Minimality.Type08S.C2K5ZE
 import Minimality.Type08S.C2K6PZ
 import Minimality.Type08S.C2K6MZ
 import Minimality.Type08S.C2K6TZ
+import Minimality.Type08S.C2K14P
 import ProofOfMainTheorem
 
 /-!
@@ -917,3 +918,5 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.H21.h21r_resid3_imp_resid2
 #assert_standard_axioms Minimality.H29S.h29s2_rule_false
 #assert_standard_axioms Minimality.H20S.h20s_rule_false
+#assert_standard_axioms Minimality.Type08Sp.resid08FinalK12_imp_K14
+#assert_standard_axioms Minimality.Type08Sp.resid08FinalK13_imp_K14M
