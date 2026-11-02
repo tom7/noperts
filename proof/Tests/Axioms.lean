@@ -37,6 +37,7 @@ import Minimality.Type08S.C2K14P
 import Minimality.Type08S.C2K17GCZ
 import Minimality.Type08S.C2K17HZ
 import Minimality.Type08S.C2K17AZ
+import Minimality.Type08S.C2K19G
 import Minimality.Type08S.C2K18A
 import Minimality.Type08S.C2K18B
 import Minimality.Type08S.C2K18C
