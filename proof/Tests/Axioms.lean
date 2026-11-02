@@ -19,7 +19,7 @@ import Minimality.Type16Arc2B
 import Minimality.MaxwellRadonI
 import Minimality.SilS0XD
 import Minimality.Type21RobA
-import Minimality.Type21TA
+import Minimality.Type21T2A
 import Minimality.Type20SilC
 import Minimality.Type08S.C2K5LP
 import Minimality.Type08S.C2K5AG
@@ -928,3 +928,4 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.H16A.h16a2_rule_false
 #assert_standard_axioms Minimality.MRB.mrb_main
 #assert_standard_axioms Minimality.MRB.mrb_no_balanced_of_unimodal
+#assert_standard_axioms Minimality.H21.h21t2_rule_false

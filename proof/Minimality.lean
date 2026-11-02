@@ -20,7 +20,7 @@ public import Minimality.Type16Arc2B
 public import Minimality.MaxwellRadonI
 public import Minimality.SilS0XD
 public import Minimality.Type21RobA
-public import Minimality.Type21TA
+public import Minimality.Type21T2A
 public import Minimality.Type20SilC
 public import Minimality.Type21Ties
 public import Minimality.Type29Ties
@@ -994,11 +994,11 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         not_type21_of_isNopert_ties x hN hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG
           hfH hQ h5 h26 hEd hVq hV htie)
       (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
-        -- silhouette cells at segment, edge and line views with robust unimodality (Type21Sil*, Sl2*, RobA): `sorry` only under `H21Resid4` (Type21TA adds the edge views s06 s23 s25 s26)
-        by_cases hres : Minimality.H21.H21Resid4 (Minimality.Facets21.ofAffine x hx fA fB fC fD fE fF fG fH
+        -- silhouette cells at segment, edge and line views with robust unimodality (Type21Sil*, Sl2*, RobA): `sorry` only under `H21Resid5` (Type21TA: edge views s06 s23 s25 s26; Type21T2A: quad diagonals and all line patterns)
+        by_cases hres : Minimality.H21.H21Resid5 (Minimality.Facets21.ofAffine x hx fA fB fC fD fE fF fG fH
             hfA hfB hfC hfD hfE hfF hfG hfH)
         · sorry
-        · exact Minimality.H21.h21t_rule_false hN _ hres)))
+        · exact Minimality.H21.h21t2_rule_false hN _ hres)))
   · -- type 22: `not_type22_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
     -- special value of Lemma T′ (settled there, 24.15).  Both views have the triangle `246`, so
     -- `TriGenPar` or `TriGenFarP` always holds (`triGenPar_or_farP_idx`): closed
