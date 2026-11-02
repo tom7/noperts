@@ -1,6 +1,6 @@
 module
 
-public import Minimality.Type08S.C2K14O
+public import Minimality.Type08S.C2K17F0A
 
 @[expose] public section
 
@@ -74,8 +74,8 @@ theorem k14_MKb {a a' b b' c c' d : ℝ³} (h : K6sMLeftKb a a' b b' c c' d) :
 
 /-- **The K14 leftover in one labelling.** -/
 def K14Slice {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) : Prop :=
-  K6t3LeftTT a a' b b' c c' d ∨ K14LeftPa a a' b b' c c' d ∨ K6t3LeftPc a a' b b' c c' d ∨
-  K14LeftTa' a a' b b' c c' d ∨ K6tLeftTc' a a' b b' c c' d ∨
+  K6t3LeftTT a a' b b' c c' d ∨ K17fLeftPa a a' b b' c c' d ∨ K6t3LeftPc a a' b b' c c' d ∨
+  K17fLeftTa14 a a' b b' c c' d ∨ K17fLeftTc' a a' b b' c c' d ∨
   K14LeftMN2 a a' b b' c c' d ∨ K6sDN2one a a' b b' c c' d ∨ K14LeftMKb a a' b b' c c' d
 
 theorem k14_slice_step {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K7Slice W) :
@@ -84,19 +84,19 @@ theorem k14_slice_step {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
   · rcases k6t3_TT W h with h | h
     · exact Or.inl h
     · exact Or.inr (Or.inl h)
-  · rcases k14_Pa W (k5z_far1 W h.1 h.2.1) h with h | h
+  · rcases k17f_Pa W h with h | h
     · exact Or.inl h
     · exact Or.inr (Or.inr (Or.inl h))
   · rcases k6t3_Pc W h with h | h
     · exact Or.inl h
     · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
-  · rcases k14_Ta' W (Or.inl h) with h | h
+  · rcases k17f_Ta14 W (Or.inl h) with h | h
     · exact Or.inl h
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
-  · rcases k14_Ta' W (Or.inr h) with h | h
+  · rcases k17f_Ta14 W (Or.inr h) with h | h
     · exact Or.inl h
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
-  · rcases k6tz_Tc' W h with h | h
+  · rcases k17f_Tc' W h with h | h
     · exact Or.inl h
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))
   · rcases k6mh1_left h with h | h

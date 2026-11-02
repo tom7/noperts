@@ -67,8 +67,8 @@ theorem k17_MKb {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K
   · exact Or.inr ⟨hs, α1, β1, β6, γ6, hC, hreg, Or.inr (Or.inr h0)⟩
 
 def K17CSlice {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) : Prop :=
-  K6t3LeftTT a a' b b' c c' d ∨ K14LeftPa a a' b b' c c' d ∨ K6t3LeftPc a a' b b' c c' d ∨
-  K14LeftTa' a a' b b' c c' d ∨ K6tLeftTc' a a' b b' c c' d ∨
+  K6t3LeftTT a a' b b' c c' d ∨ K17fLeftPa a a' b b' c c' d ∨ K6t3LeftPc a a' b b' c c' d ∨
+  K17fLeftTa14 a a' b b' c c' d ∨ K17fLeftTc' a a' b b' c c' d ∨
   K17LeftMN2 W ∨ K6sDN2one a a' b b' c c' d ∨ K17LeftMKb W
 
 theorem k17c_slice_step {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K16Slice W) :

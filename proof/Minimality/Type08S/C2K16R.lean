@@ -64,8 +64,8 @@ theorem k16_MKb {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K
 
 /-- **The K16 leftover in one labelling.** -/
 def K16Slice {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) : Prop :=
-  K6t3LeftTT a a' b b' c c' d ∨ K14LeftPa a a' b b' c c' d ∨ K6t3LeftPc a a' b b' c c' d ∨
-  K14LeftTa' a a' b b' c c' d ∨ K6tLeftTc' a a' b b' c c' d ∨
+  K6t3LeftTT a a' b b' c c' d ∨ K17fLeftPa a a' b b' c c' d ∨ K6t3LeftPc a a' b b' c c' d ∨
+  K17fLeftTa14 a a' b b' c c' d ∨ K17fLeftTc' a a' b b' c c' d ∨
   K16LeftMN2 W ∨ K6sDN2one a a' b b' c c' d ∨ K16LeftMKb W
 
 theorem k16_slice_step {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K14Slice W) :
