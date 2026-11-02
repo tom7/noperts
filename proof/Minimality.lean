@@ -8,7 +8,7 @@ public import Minimality.Type08S.C2K6PZ
 public import Minimality.Type08S.C2K6MZ
 public import Minimality.Type08S.C2K6TZ
 public import Minimality.Type08S.C2K14P
-public import Minimality.Type08S.C2K17BZ
+public import Minimality.Type08S.C2K17B2Y
 public import Minimality.Type08S.C2FC1
 public import Minimality.Type16Ties
 public import Minimality.Type16UW
@@ -799,6 +799,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         have _hresK17C := Minimality.Type08Sp.resid08FinalK16_imp_K17C _hresK16
         -- K17B (C2K17B*): H1-L2 (safe sub-leaf, the L34 triangle, two arc rules); leftover K17bL2Left
         have _hresK17B := Minimality.Type08Sp.resid08FinalK17C_imp_K17B _hresK17C
+        -- K17B2 (C2K17B2*): K6M2's L2 rules 1, 2, 3, 4, 5, 13; leftover K17b2L2Left
+        have _hresK17B2 := Minimality.Type08Sp.resid08FinalK17B_imp_K17B2 _hresK17B
         byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
     -- asked; type 09 is fully closed (no `sorry`).  `quadPairPar09` (as `quadPairPar02`):

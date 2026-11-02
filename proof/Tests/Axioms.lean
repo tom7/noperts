@@ -33,7 +33,7 @@ import Minimality.Type08S.C2K6PZ
 import Minimality.Type08S.C2K6MZ
 import Minimality.Type08S.C2K6TZ
 import Minimality.Type08S.C2K14P
-import Minimality.Type08S.C2K17BZ
+import Minimality.Type08S.C2K17B2Y
 import Minimality.Type08S.C2K17F1A
 import Minimality.Type08S.C2K17F2A
 import ProofOfMainTheorem
@@ -937,3 +937,4 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Type08Sp.k17f_s17
 #assert_standard_axioms Minimality.Type08Sp.C2.k17f_s11_tc
 #assert_standard_axioms Minimality.Type08Sp.C2.k17f_Pa
+#assert_standard_axioms Minimality.Type08Sp.resid08FinalK17B_imp_K17B2
