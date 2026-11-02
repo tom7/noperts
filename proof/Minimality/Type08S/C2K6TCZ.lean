@@ -17,17 +17,24 @@ namespace Minimality
 namespace Type08Sp
 
 /-- **Leftover of QTT after K6TL3**: only the codim-6 coincidence `ζ(a,d) = ζ(c,d) = 0`. -/
-def K6t3LeftTT (a a' b b' c c' d : ℝ³) : Prop := ⟪a - d, d - b⟫ = 0 ∧ ⟪c - d, d - b⟫ = 0
+def K6t3LeftTT0 (a a' b b' c c' d : ℝ³) : Prop := ⟪a - d, d - b⟫ = 0 ∧ ⟪c - d, d - b⟫ = 0
 
 open C2 in
-theorem k6t3_TT {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K5ZsTT a a' b b' c c' d) :
-    HasLexCell (V8 a a' b b' c c' d) ∨ K6t3LeftTT a a' b b' c c' d := by
+theorem k6t3_TT0 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K5ZsTT a a' b b' c c' d) :
+    HasLexCell (V8 a a' b b' c c' d) ∨ K6t3LeftTT0 a a' b b' c c' d := by
   have hT := h.1
   have hT' := h.2.1
   rcases k6t2_TT W h with h1 | h1 | ⟨h2, h3, h4⟩
   · exact Or.inl h1
   · exact Or.inr h1
   · exact Or.inl (k6t3_tt5b_le W hT hT' h2 h3 h4)
+
+/-- `K6t3LeftTT0` with the item context kept (`IsT a' b c d`, `IsT' a b c' d`). -/
+def K6t3LeftTT (a a' b b' c c' d : ℝ³) : Prop := K5ZsTT a a' b b' c c' d ∧ K6t3LeftTT0 a a' b b' c c' d
+
+theorem k6t3_TT {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K5ZsTT a a' b b' c c' d) :
+    HasLexCell (V8 a a' b b' c c' d) ∨ K6t3LeftTT a a' b b' c c' d :=
+  (k6t3_TT0 W h).imp_right (fun h1 => ⟨h, h1⟩)
 
 /-- **Leftover of QPa after K6TL3** (`Δ = det3 (a-d)(b-d)(c-d)`): as `K6tLeftPa`, with `ζ(a,d) ≥ 0` resp. `ζ(b',c) ≥ 0`
 sharpened to `= 0` (the tie `u = 0` with `⟪b - d, c - d⟫ ≤ 0`, resp. `ζ(b',c) = 0`). -/

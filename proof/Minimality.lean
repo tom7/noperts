@@ -8,7 +8,7 @@ public import Minimality.Type08S.C2K6PZ
 public import Minimality.Type08S.C2K6MZ
 public import Minimality.Type08S.C2K6TZ
 public import Minimality.Type08S.C2K14P
-public import Minimality.Type08S.C2K22ZA
+public import Minimality.Type08S.C2K23ZA
 public import Minimality.Type08S.C2FC1
 public import Minimality.Type16Ties
 public import Minimality.Type16UW
@@ -820,6 +820,9 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         -- K22 (C2K22A1, C2K22C1A, C2K22ZA): the M boundary at β1 = 1 is a right prism (Rupert); Pc C1 at β1 = γ4 = 1
         have _hresK22 := Minimality.Type08Sp.resid08FinalK21_imp_K22
           (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK21
+        -- K23 (C2K20T*, C2K23ZA): TT closed by five cells up to the ties `K20Left`
+        have _hresK23 := Minimality.Type08Sp.resid08FinalK22_imp_K23
+          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK22
         byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
     -- asked; type 09 is fully closed (no `sorry`).  `quadPairPar09` (as `quadPairPar02`):
