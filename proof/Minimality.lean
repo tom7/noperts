@@ -8,7 +8,7 @@ public import Minimality.Type08S.C2K6PZ
 public import Minimality.Type08S.C2K6MZ
 public import Minimality.Type08S.C2K6TZ
 public import Minimality.Type08S.C2K14P
-public import Minimality.Type08S.C2K37ZA
+public import Minimality.Type08S.C2K38ZA
 public import Minimality.Type08S.C2FC1
 public import Minimality.Type16Ties
 public import Minimality.Type16UW
@@ -866,6 +866,9 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         -- K37 (C2K37ZA): M stratum, γ6 = 1 by the b ↔ c mirror of the β6 = 1 chain (both sides)
         have _hresK37 := Minimality.Type08Sp.resid08FinalK36_imp_K37
           (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK36
+        -- K38 (C2K38ZA): M stratum, the Lz = Lw = 0 corner on Lq < 0 (three generated cells; and the γ6 = 1 mirror)
+        have _hresK38 := Minimality.Type08Sp.resid08FinalK37_imp_K38
+          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK37
         byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
     -- asked; type 09 is fully closed (no `sorry`).  `quadPairPar09` (as `quadPairPar02`):
