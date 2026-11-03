@@ -1,4 +1,10 @@
-import Minimality.Type08S.C2K28B4a2
+module
+
+public import Minimality.Type08S.C2K28B4a2
+
+@[expose] public section
+
+set_option maxHeartbeats 1000000
 set_option autoImplicit true
 set_option relaxedAutoImplicit true
 set_option linter.unusedVariables false

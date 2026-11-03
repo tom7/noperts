@@ -1,4 +1,10 @@
-import Minimality.Type08S.C2K16E
+module
+
+public import Minimality.Type08S.C2K16E
+
+@[expose] public section
+
+set_option maxHeartbeats 1000000
 
 set_option autoImplicit true
 set_option relaxedAutoImplicit true

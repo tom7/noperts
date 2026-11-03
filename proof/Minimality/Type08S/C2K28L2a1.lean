@@ -1,7 +1,13 @@
-import Minimality.Type08S.C2K22ZA
-import Minimality.Type08S.C2K19G
-import Minimality.Type08S.C2K18A
-import Minimality.Type08S.C2K25Tie
+module
+
+public import Minimality.Type08S.C2K22ZA
+public import Minimality.Type08S.C2K19G
+public import Minimality.Type08S.C2K18A
+public import Minimality.Type08S.C2K25Tie
+
+@[expose] public section
+
+set_option maxHeartbeats 1000000
 
 set_option autoImplicit true
 set_option relaxedAutoImplicit true

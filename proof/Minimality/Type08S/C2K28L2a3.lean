@@ -1,11 +1,16 @@
-import Minimality.Type08S.C2K28L2a2
-import Minimality.Type08S.C2K16E
-import Minimality.Type08S.C2K6HF
+module
+
+public import Minimality.Type08S.C2K28L2a2
+public import Minimality.Type08S.C2K16E
+public import Minimality.Type08S.C2K6HF
+
+@[expose] public section
 
 set_option autoImplicit true
 set_option relaxedAutoImplicit true
 set_option linter.unusedVariables false
 set_option linter.unusedSimpArgs false
+set_option maxHeartbeats 1000000
 
 open scoped RealInnerProductSpace Topology
 open Finset Filter
