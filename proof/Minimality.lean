@@ -8,7 +8,7 @@ public import Minimality.Type08S.C2K6PZ
 public import Minimality.Type08S.C2K6MZ
 public import Minimality.Type08S.C2K6TZ
 public import Minimality.Type08S.C2K14P
-public import Minimality.Type08S.C2K45ZA
+public import Minimality.Type08S.C2K46ZA
 public import Minimality.Type08S.C2FC1
 public import Minimality.Type16Ties
 public import Minimality.Type16UW
@@ -890,6 +890,10 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         -- K45 (C2K45ZA): M stratum, R2 at oc = 0 ≤ ob (cell k43r2_B0); R2 closed
         have _hresK45 := Minimality.Type08Sp.resid08FinalK44_imp_K45
           (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK44
+        -- K46 (C2K46ZA): M stratum, the A2 tie (σ = β1, R1) by four motion cells (C2K46L/C/Cp/U, transfer C2K46TRB);
+        -- σ = β1 tie closed, Kb side empty; left: the L2 tail corners `K33L2Corner` (N2)
+        have _hresK46 := Minimality.Type08Sp.resid08FinalK45_imp_K46
+          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK45
         byThm5Faces hx hN _ h3 (fun _ => sorry))
   · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
     -- asked; type 09 is fully closed (no `sorry`).  `quadPairPar09` (as `quadPairPar02`):
