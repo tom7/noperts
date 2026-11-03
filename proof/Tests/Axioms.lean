@@ -53,6 +53,7 @@ import Minimality.Type08S.C2K28ZA
 import Minimality.Type08S.C2K29ZA
 import Minimality.Type08S.C2K30ZA
 import Minimality.Type08S.C2K31ZA
+import Minimality.Type08S.C2K32ZA
 import Minimality.Type08S.C2K25Tie
 import Minimality.Type16GenA
 import Minimality.Type08S.C2K24B1B
@@ -1046,6 +1047,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK28_imp_K29
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK29_imp_K30
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK30_imp_K31
+#assert_standard_axioms Minimality.Type08Sp.resid08FinalK31_imp_K32
+#assert_standard_axioms Minimality.Type08Sp.C2.k24b2_ge
+#assert_standard_axioms Minimality.Type08Sp.C2.k24b2_lt
 #assert_standard_axioms Minimality.Type08Sp.C2.k28b4_Bp0
 #assert_standard_axioms Minimality.Type08Sp.C2.k28b4_Cp0
 #assert_standard_axioms Minimality.Type08Sp.C2.k28b4_Dq0
