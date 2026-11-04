@@ -836,7 +836,7 @@ theorem N4D_pair (hH : F.ClassH) (hV : 0 < F.S.Vp)
       intro h
       rw [h, zero_mul] at key
       have : 0 < F.a12 * F.gg * F.S.hp * F.S.tp * F.S.kp := by
-        have := F.A12_pos; positivity
+        have h12 : 0 < F.a12 := F.A12_pos; positivity
       linarith
   · -- `dV 0 < dV 4 < dV 6`: `a = v`, `c = xb`
     have h2 : F.dV 4 < F.dV 2 := by
@@ -906,7 +906,7 @@ theorem N4D_pair (hH : F.ClassH) (hV : 0 < F.S.Vp)
       rw [h, zero_mul] at key
       have : 0 < F.a12 * F.gg * F.S.hm * ((1 - F.S.sp) * (F.S.hp * F.S.tm + F.S.hm * F.S.tp) -
           F.S.kp * F.S.tm) := by
-        have := F.A12_pos; positivity
+        have h12 : 0 < F.a12 := F.A12_pos; positivity
       linarith
   · exfalso
     rcases hA with h | h | h | h <;> rcases hB with h' | h' | h' | h' <;> linarith
@@ -1096,7 +1096,7 @@ theorem NtD_pair (hH : F.ClassH) (hV : 0 < F.S.Vp) (hlev : F.dV 0 ≠ F.dV 6) :
       intro h
       rw [h, zero_mul] at key
       have : 0 < F.a12 * F.gg * F.S.hp * F.S.tp * F.S.kp := by
-        have := F.A12_pos; positivity
+        have h12 : 0 < F.a12 := F.A12_pos; positivity
       linarith
   · have hv : ((1 : ZMod 4) - 3).val = 2 := by decide
     have hden : F.toFrame7.GG ((F.toFrame7.ptC (quad 0 5 6 4 (1 + 1))).sub
@@ -1157,7 +1157,7 @@ theorem NtD_pair (hH : F.ClassH) (hV : 0 < F.S.Vp) (hlev : F.dV 0 ≠ F.dV 6) :
       rw [h, zero_mul] at key
       have : 0 < F.a12 * F.gg * F.S.hm * ((1 - F.S.sp) * (F.S.hp * F.S.tm + F.S.hm * F.S.tp) -
           F.S.kp * F.S.tm) := by
-        have := F.A12_pos; positivity
+        have h12 : 0 < F.a12 := F.A12_pos; positivity
       linarith
   · exact absurd (by linarith) hlev
 

@@ -123,7 +123,7 @@ theorem not_firstOrderInward_of_mirror (V : Finset ℝ³) (hne : V.Nonempty)
   have hmem : q + (r / 2) • (EuclideanSpace.single 1 1 : ℝ²) ∈ interior S := by
     apply hball
     rw [Metric.mem_ball, dist_eq_norm]
-    rw [add_sub_cancel_left, norm_smul, EuclideanSpace.norm_single, norm_one, Real.norm_eq_abs,
+    rw [add_sub_cancel_left, norm_smul, PiLp.norm_single, norm_one, Real.norm_eq_abs,
       abs_of_pos (by linarith)]
     linarith
   have := hbound _ (interior_subset hmem)

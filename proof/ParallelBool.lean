@@ -41,8 +41,7 @@ private theorem taskGetSpawn {α : Type} (fn : Unit → α)
 
 /-- Evaluate `predicate` on `[start, start + count)` in a flat loop. -/
 def chunkB (predicate : ℕ → Bool) (start count : ℕ) : Bool :=
-  Fin.foldl count (init := true) fun acc j =>
-    acc && predicate (start + j.val)
+  Fin.foldl count (fun acc j => acc && predicate (start + j.val)) true
 
 theorem chunkB_eq_true_iff (predicate : ℕ → Bool) (start count : ℕ) :
     chunkB predicate start count = true ↔

@@ -246,7 +246,8 @@ theorem contDiff_matrix_det {ι : Type*} [Fintype ι] [DecidableEq ι] :
   refine ContDiff.sum fun σ _ => ?_
   refine ContDiff.mul contDiff_const ?_
   refine contDiff_prod fun i _ => ?_
-  exact (contDiff_apply ℝ ℝ i).comp (contDiff_apply ℝ (ι → ℝ) (σ i))
+  exact (contDiff_apply ℝ (fun _ : ι => ℝ) i).comp
+    (contDiff_apply ℝ (fun _ : ι => ι → ℝ) (σ i))
 
 theorem contDiff_detC : ContDiff ℝ 1 detC := by
   let b := Module.finBasis ℝ ℝ³
@@ -409,9 +410,9 @@ theorem exists_L_prescribed_ties_core {q : ℕ} (d u : Fin q → ℝ³) (h0 : �
   have hCD : ContDiffAt ℝ 1 tieF x0 := by
     refine contDiffAt_pi.2 fun t => ?_
     have e1 : ContDiff ℝ 1 (fun x : X => x.2.1 t) :=
-      (contDiff_apply ℝ ℝ³ t).comp (contDiff_fst.comp contDiff_snd)
+      by fun_prop
     have e2 : ContDiff ℝ 1 (fun x : X => x.2.2 t) :=
-      (contDiff_apply ℝ ℝ³ t).comp (contDiff_snd.comp contDiff_snd)
+      by fun_prop
     exact (hLm.clm_apply e1.contDiffAt).inner ℝ (hLm.clm_apply e2.contDiffAt)
   set D1 : X →L[ℝ] (Fin q → ℝ) := fderiv ℝ tieF x0 with hD1def
   have hD1 : HasStrictFDerivAt tieF D1 x0 := hCD.hasStrictFDerivAt one_ne_zero
