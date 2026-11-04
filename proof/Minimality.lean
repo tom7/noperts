@@ -397,8 +397,8 @@ classification into the 29 types (`Minimality.exists_sevenType`, `Minimality/Cla
 sign-vector certificate checked in the kernel). Not formalized (`sorry`): type 24 inside
 `C̄ ∪ Σ_B` (it is proved outside, `not_type24_outside_Cbar_of_isNopert`); for type 29 (split by
 the class of its octahedron, `Minimality.type29_cap`, `Minimality.NF29.classes`) the classes K1,
-K2 and the class boundaries; and for every other type except 02, 05, 07, 09, 12, 13, 14, 17, 18, 19, 22, 23,
-25, 26, 27, 28 (closed completely: each of their views pairs a triangle with another facet,
+K2 and the class boundaries; and for every other type except 02, 05, 07, 08, 09, 12, 13, 14, 17, 18, 19, 22, 23,
+25, 26, 27, 28 (type 08: `not_type08_closed`, the chain `Type08S/C2K*ZA` ending in `C2K47ZA`; the others closed completely: each of their views pairs a triangle with another facet,
 so `TriGenPar`
 or `TriGenFarP` always holds, `Minimality.triGenPar_or_farP_idx`, and `EdgePar` or `EdgeFarP` at the
 edge views of 23, 25, 26, 27, `Minimality.edgePar_or_farP_idx`; types 13 and 19 are closed too: at
