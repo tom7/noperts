@@ -36,7 +36,7 @@ theorem angBig_Yrg {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (hT 
   unfold AngBig at hang
   rw [h1, h2] at hang
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   nlinarith [mul_pos hXa hYg, mul_pos (mul_pos hXa hYg) (mul_self_pos.mpr hκ), mul_pos hXa hXa,
     mul_nonneg (mul_nonneg (mul_pos hXa hYg).le (mul_self_pos.mpr hκ).le) (sub_nonneg.mpr hcon), mul_pos (mul_pos hXa hXa) (mul_self_pos.mpr hκ)]
 

@@ -98,7 +98,7 @@ theorem close_T_H2'' {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
       {d, c', b', a'}} : Finset (Finset ℝ³)) → NoHDNAt S (b - d) ∨ NoHDNAt T (b - d) := by
     intro S T hST hS hT'
     by_contra h
-    push_neg at h
+    push Not at h
     exact hP2 ⟨S, T, hST, hS, hT', h.1, h.2⟩
   -- ties are excluded
   have mem6 : ∀ p : ℝ³, (p = d ∨ p = b ∨ p = c ∨ p = a' ∨ p = b' ∨ p = c') →

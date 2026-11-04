@@ -30,7 +30,7 @@ theorem k28h5rb_core (P t u1 u2 M al be ob og sg b g A B T L2 L3 : ℝ)
     subst eb eg eA eB esg eT eL2 eL3
     ring
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have q1 : 0 ≤ T*al*sg := by positivity
   have q2 : 0 ≤ T*al*al*be := by positivity
   have q3 : 0 ≤ T*al*al*sg := by positivity

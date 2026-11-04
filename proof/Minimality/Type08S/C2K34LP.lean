@@ -141,7 +141,7 @@ theorem k32h_LpLz {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     · exact h
   have hLq' : α1 - 1 + β1 * μ < 0 := by
     rw [hm3μ] at kq
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_nonneg hn k1.le]
   obtain ⟨R, hR⟩ : ∃ R : ℝ³, R = μ • (a - d) - (c - d) := ⟨_, rfl⟩
   rw [← hR] at kc ka

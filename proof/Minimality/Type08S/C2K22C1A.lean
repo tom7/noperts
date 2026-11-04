@@ -70,7 +70,7 @@ theorem k22c1_close {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
     ext x; simp only [V8, Finset.mem_insert, Finset.mem_singleton]; tauto
   · right; right
     refine ⟨hpq, hpr, β1, γ4, γ6, hdet, hc', hb', ha', hβ1, hγ4, hγ6, hγ61, ?_⟩
-    by_contra hn; push_neg at hn; exact hb hn
+    by_contra hn; push Not at hn; exact hb hn
 
 end C2
 end Type08Sp

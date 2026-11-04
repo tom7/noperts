@@ -44,7 +44,7 @@ theorem k94_w3d (s pp qq qr rr e : ℝ) (hs : 0 < s) (hpp : 0 < pp) (hqx : qr < 
   obtain ⟨g, hgd⟩ : ∃ g, g = y+u^2-u := ⟨_, rfl⟩
   have hEg : e*g - (y+u^2) = 0 := by rw [hgd]; linear_combination (-1)*E2
   have hg : 0 < g := by
-    by_contra hc; push_neg at hc
+    by_contra hc; push Not at hc
     nlinarith [mul_nonpos_of_nonneg_of_nonpos (by linarith : (0:ℝ) ≤ e) hc, mul_pos hu hu]
   have hgne := hg.ne'
   have he : e = (u+g)/g := by
@@ -62,7 +62,7 @@ theorem k94_w3d (s pp qq qr rr e : ℝ) (hs : 0 < s) (hpp : 0 < pp) (hqx : qr < 
         = pp*u*y*(1-(u+g))/(g*(2*(u+g)*u+g)) := by
       rw [he, hk']; field_simp; subst hgd; ring
     rw [eX] at hX4
-    by_contra hc; push_neg at hc
+    by_contra hc; push Not at hc
     have : pp*u*y*(1-(u+g))/(g*(2*(u+g)*u+g)) < 0 :=
       div_neg_of_neg_of_pos (mul_neg_of_pos_of_neg (by positivity) (by linarith)) (by positivity)
     linarith

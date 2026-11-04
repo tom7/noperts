@@ -52,7 +52,7 @@ theorem k24h1b0_m {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hD : 0 < ⟪Q, Q⟫ * ⟪R, R⟫ - ⟪Q, R⟫ ^ 2 := by linarith
   have hW : 0 < ⟪Q, Q⟫ + ⟪R, R⟫ - 2 * ⟪Q, R⟫ := by linarith
   refine ⟨?_, hPR⟩
-  by_contra hn; push_neg at hn
+  by_contra hn; push Not at hn
   have := mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hW.le
   nlinarith [mul_pos (sub_pos.2 hβ1) hD]
 

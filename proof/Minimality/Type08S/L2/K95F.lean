@@ -17,20 +17,20 @@ open scoped RealInnerProductSpace
 namespace Minimality.Type08Sp.C2
 
 theorem k92_pos_of {G Ri Ac : ℝ} (hR : Ri < 0) (hA : Ac < 0) (h : G * Ac = Ri) : 0 < G := by
-  by_contra hn; push_neg at hn
+  by_contra hn; push Not at hn
   have := mul_nonneg_of_nonpos_of_nonpos hn hA.le
   linarith
 
 theorem k92_nn1 {s a q b D : ℝ} (hs : 0 < s) (ha : 0 < a) (hb : 0 < b) (hD : 0 < D)
     (h : 0 ≤ s * (a * q * b / D)) : 0 ≤ q := by
-  by_contra hq; push_neg at hq
+  by_contra hq; push Not at hq
   have : s * (a * q * b / D) < 0 :=
     mul_neg_of_pos_of_neg hs (div_neg_of_neg_of_pos (mul_neg_of_neg_of_pos (mul_neg_of_pos_of_neg ha hq) hb) hD)
   linarith
 
 theorem k92_nn2 {s a q D : ℝ} (hs : 0 < s) (ha : 0 < a) (hD : 0 < D)
     (h : 0 ≤ s * (a * q / D)) : 0 ≤ q := by
-  by_contra hq; push_neg at hq
+  by_contra hq; push Not at hq
   have : s * (a * q / D) < 0 :=
     mul_neg_of_pos_of_neg hs (div_neg_of_neg_of_pos (mul_neg_of_pos_of_neg ha hq) hD)
   linarith
@@ -107,7 +107,7 @@ theorem k95_gwb {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     rw [ipc (a - c') (a - b') (-u) (-(v+1)) 0 (-u) 0 (-(v+1))
       (by rw [hc', hα, hβ]; module) (by rw [hb', hα, hβ]; module),
       k92_X3 u v m x y hv hx hy hW0 hP0] at h
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     have : 0 < s * (k92K u v x y * k92M3 u v x y / (v*(x+y)*k92Wn u v x y)) :=
       mul_pos hs (div_pos hn (by positivity))
     linarith
@@ -208,7 +208,7 @@ theorem k95_gwb {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     have hle := hAC hPB0
     rw [hR (a - b') (-u) 0 (-(v+1)) eab]
     refine mul_nonneg hs.le ?_
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     have := mul_pos_of_neg_of_neg hn hAc
     rw [hRin] at this
     linarith

@@ -75,7 +75,7 @@ theorem classD5_of {zp L zx zf Xr Yr zr Xg Yg zg : ℝ} (hL : 0 < L) (hzp : zp <
   rw [one_mul] at hDx
   have hDp : (Xr - Xg) * (zp - zf) + L * (zr - zg) ≤ 0 := by
     unfold LemEF at hE
-    by_contra hc; push_neg at hc; nlinarith [mul_pos hDx hc]
+    by_contra hc; push Not at hc; nlinarith [mul_pos hDx hc]
   set K := zx - zf + m * L with hK
   have hKpos : 0 < K := by
     have : (Xr - Xg) * (zx - zf) + L * (zr - zg) = (Xr - Xg) * K := by rw [hK, hm]; ring
@@ -84,7 +84,7 @@ theorem classD5_of {zp L zx zf Xr Yr zr Xg Yg zg : ℝ} (hL : 0 < L) (hzp : zp <
     have : (Xr - Xg) * (zp - zf) + L * (zr - zg) = (Xr - Xg) * (zp - (zx - K)) := by rw [hK, hm]; ring
     rw [this] at hDp
     have : zp - (zx - K) ≤ 0 := by
-      by_contra hc; push_neg at hc; nlinarith [mul_pos hΔ hc]
+      by_contra hc; push Not at hc; nlinarith [mul_pos hΔ hc]
     linarith
   set σ0 := zg - m * Xg with hσ0
   have hσK : σ0 = zx - s * K := by
@@ -100,7 +100,7 @@ theorem classD5_of {zp L zx zf Xr Yr zr Xg Yg zg : ℝ} (hL : 0 < L) (hzp : zp <
   clear_value σ0 zc K m
   rcases hcase with ⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4⟩
   · have hmneg : m < 0 := by
-      by_contra hc; push_neg at hc; linarith [mul_nonneg hc hΔ.le]
+      by_contra hc; push Not at hc; linarith [mul_nonneg hc hΔ.le]
     have a1 : zf < zc := by rw [hzc]; linarith [mul_pos (sub_pos.2 hs1) (sub_pos.2 h1)]
     have a2 : zc < zx := by rw [hzc]; linarith [mul_pos hs0 (sub_pos.2 h1)]
     have a3 : zc < σ0 := by rw [hσc]; linarith [mul_pos (neg_pos.2 hmneg) (mul_pos hs0 hL)]

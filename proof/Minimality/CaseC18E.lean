@@ -3949,7 +3949,7 @@ theorem F2 {tp tm γ : ℝ} (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm) (htm1 
   have hT0 : 0 < tp + tm := by linarith
   have hκ : 0 < kappa tp tm γ := by
     by_contra hc
-    push_neg at hc
+    push Not at hc
     nlinarith [sq_nonneg tm]
   unfold bB
   -- (T-1)/(T κ t-) < (T-1) t-/T since 1/(κ t-) < t-
@@ -4148,7 +4148,7 @@ theorem eStar_cert {tp tm γ lam : ℝ} (h : EFam F tp tm γ lam) :
   rw [hκ] at hF1 hF3
   have hκpos : 0 < κ := by
     by_contra hc
-    push_neg at hc
+    push Not at hc
     nlinarith [sq_nonneg tm]
   obtain ⟨a, ha⟩ : ∃ a, a = (tp + tm - 1) / ((tp + tm) * κ) := ⟨_, rfl⟩
   have hapos : 0 < a := by rw [ha]; apply div_pos <;> [linarith; positivity]

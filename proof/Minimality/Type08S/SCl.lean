@@ -57,7 +57,7 @@ theorem plane_Y (hF : Fr e1 e2 e3) {f : ℝ³ → ℝ} {N : ℝ³} (hN : ∀ y z
   have := hf q
   rw [this] at hq
   by_contra hB
-  push_neg at hB
+  push Not at hB
   nlinarith
 
 /-- **Side lemma** (a facet through the F-side `xp f` seen in the plane `Y = 0`): `x` and `p`
@@ -120,7 +120,7 @@ theorem chord_neg (hF : Fr e1 e2 e3) {f : ℝ³ → ℝ} {N : ℝ³} (hN : ∀ y
   have hC0 : C ≠ 0 := by intro h; rw [h] at hCk; simp at hCk
   have h2 : C ^ 2 * (κ * Δ) < 0 := by nlinarith
   by_contra hh
-  push_neg at hh
+  push Not at hh
   nlinarith [sq_nonneg C, mul_nonneg (sq_nonneg C) hh]
 
 /-- Nondegeneracy determinants of a `Norm08` shape, through the normal form. -/
@@ -165,7 +165,7 @@ theorem kap_coords (hF : Fr e1 e2 e3) {x xp : ℝ³} {κ : ℝ} (h : x - xp = κ
   · rw [h, real_inner_smul_left, hF.n33]; ring
 
 theorem pos_of_neg_mul {B Y : ℝ} (hB : B < 0) (h : B * Y < 0) : 0 < Y := by
-  by_contra hh; push_neg at hh; nlinarith
+  by_contra hh; push Not at hh; nlinarith
 
 theorem zero_of_neg_mul {B Y : ℝ} (hB : B < 0) (h : B * Y = 0) : Y = 0 :=
   (mul_eq_zero.mp h).resolve_left hB.ne
@@ -310,7 +310,7 @@ theorem SCfT4_of_cls {xp x f r g p q u : ℝ³}
     have hs : 0 < κ * κ := mul_self_pos.mpr hκ
     set Δ := ⟪q - xp, e3⟫ - ((1 - lam) * ⟪x - xp, e3⟫ + lam * ⟪g - xp, e3⟫) with hΔ
     have h1 : κ * Δ < 0 := hchord
-    by_contra hh; push_neg at hh
+    by_contra hh; push Not at hh
     have : 0 ≤ (σ * Δ) * (κ * κ) := mul_nonneg hh hs.le
     nlinarith [mul_pos hk hs]
 

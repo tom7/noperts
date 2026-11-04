@@ -457,7 +457,7 @@ theorem v12_ex1 {tp tm k l α g : ℝ} (hp : 0 < tp) (a1 : 0 < 1 - tp) (hm : 0 <
   obtain ⟨s1, s2, s3, s4, e1, e2, e3, e4, h1, h3, h4, hs2⟩ := fam (-G34 / 2) (by linarith) (by linarith)
   by_cases hc : s2 < 0
   · exact v12_good_of_u hα hg _ _ s1 s2 s3 s4 e1 e2 e3 e4 h1 h3 (Or.inl ⟨hc, h4⟩)
-  · push_neg at hc
+  · push Not at hc
     obtain ⟨t1, t2, t3, t4, f1, f2, f3, f4, k1, k3, k4, ks2⟩ := fam (-G34 / 4) (by linarith) (by linarith)
     have h2 : 0 < t2 := by
       rw [ks2]; rw [hs2] at hc; nlinarith [mul_pos_of_neg_of_neg hG' hG24n]
@@ -521,7 +521,7 @@ theorem v12_ex2 {tp tm k l α g : ℝ} (hp : 0 < tp) (a1 : 0 < 1 - tp) (hm : 0 <
   obtain ⟨s1, s2, s3, s4, e1, e2, e3, e4, h1, h3, h2, hs4⟩ := fam (-G23 / 2) (by linarith) (by linarith)
   by_cases hc : s4 < 0
   · exact v12_good_of_u hα hg _ _ s1 s2 s3 s4 e1 e2 e3 e4 h1 h3 (Or.inl ⟨h2, hc⟩)
-  · push_neg at hc
+  · push Not at hc
     obtain ⟨t1, t2, t3, t4, f1, f2, f3, f4, k1, k3, k2, kt4⟩ := fam (-G23 / 4) (by linarith) (by linarith)
     have h4 : 0 < t4 := by
       rw [kt4]; rw [hs4] at hc; nlinarith [mul_pos_of_neg_of_neg hG' hG24n]
@@ -676,12 +676,12 @@ theorem v12_noall {tp tm k l α g : ℝ} (hp : 0 < tp) (hm : 0 < tm) (hk : 0 < k
   have t2 := mul_nonneg hp.le h12
   have hX0 : 0 ≤ k * (1 - tp) - tp * l := by
     by_contra h
-    push_neg at h
+    push Not at h
     have := mul_neg_of_pos_of_neg p1 h
     linarith
   have hX1 : k * (1 - tp) - tp * l ≤ 0 := by
     by_contra h
-    push_neg at h
+    push Not at h
     have := mul_pos p2 h
     linarith
   have hX : k * (1 - tp) - tp * l = 0 := le_antisymm hX1 hX0
@@ -763,12 +763,12 @@ theorem right_V12_pf (hr : gA12 x = gA11 x)
   by_cases c5 : 0 < ⟪x 2 - x 5, x 3 - x 5⟫
   · refine v12_comp_perm permAlpha (G.v12_fl2 hr' hA' hB' ?_)
     rw [hx2, hx0, hx3]; exact c5
-  push_neg at c2 c0 c5
+  push Not at c2 c0 c5
   have h3pos : (⟪x 2 - x 0, x 3 - x 0⟫ < 0 ∨ ⟪x 2 - x 5, x 3 - x 5⟫ < 0) →
       0 < ⟪x 0 - x 3, x 5 - x 3⟫ := by
     intro hlt
     by_contra h3
-    push_neg at h3
+    push Not at h3
     obtain ⟨k, l, hk, hl, h1, h2, h3', h4⟩ := exists_kl F.S
     obtain ⟨i0, i5, i2, i3⟩ := F.v12_inner h1 h3'
     have hg := F.gg_pos

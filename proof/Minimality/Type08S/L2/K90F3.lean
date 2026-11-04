@@ -11,13 +11,13 @@ set_option relaxedAutoImplicit true
 set_option maxHeartbeats 40000000
 
 theorem k90_pos_of (a b c : ℝ) (ha : 0 < a) (hc : 0 < c) (h : 0 < a*b/c) : 0 < b := by
-  by_contra hb; push_neg at hb
+  by_contra hb; push Not at hb
   have h1 : a*b ≤ 0 := mul_nonpos_of_nonneg_of_nonpos ha.le hb
   have := div_nonpos_of_nonpos_of_nonneg h1 hc.le
   linarith
 
 theorem k90_nonneg_of (a b c : ℝ) (ha : 0 < a) (hc : 0 < c) (h : 0 ≤ a*b/c) : 0 ≤ b := by
-  by_contra hb; push_neg at hb
+  by_contra hb; push Not at hb
   have h1 : a*b < 0 := mul_neg_of_pos_of_neg ha hb
   have := div_neg_of_neg_of_pos h1 hc
   linarith
@@ -58,7 +58,7 @@ theorem k90_F3 (s pp qq qr rr m al be : ℝ) (hs : 0 < s) (hpp : 0 < pp) (hm : 0
     exact (mul_eq_zero.1 h).resolve_left (by positivity)
   have E3 : be*(y^2 + y*k + y*u^2 + y*u - k*u^2 - k*u) = (y+k)*(y+u^2+u) := by linear_combination u*E1 - (y+k)*E2
   have hD : 0 < y^2 + y*k + y*u^2 + y*u - k*u^2 - k*u := by
-    by_contra hc; push_neg at hc
+    by_contra hc; push Not at hc
     have := mul_nonpos_of_nonneg_of_nonpos (by linarith : (0:ℝ) ≤ be) hc
     have : 0 < (y+k)*(y+u^2+u) := by positivity
     linarith
@@ -80,7 +80,7 @@ theorem k90_F3 (s pp qq qr rr m al be : ℝ) (hs : 0 < s) (hpp : 0 < pp) (hm : 0
     rw [hβe, hαe]; field_simp; subst hDv; ring
   rw [e1] at hmα
   have hS2 : 0 < y - k*u := by
-    by_contra hc; push_neg at hc
+    by_contra hc; push Not at hc
     have h1 : 2*(y-k*u)*(y+u^2+u) ≤ 0 := mul_nonpos_of_nonpos_of_nonneg (by linarith) (by positivity)
     have h2 := div_nonpos_of_nonpos_of_nonneg h1 hD.le
     have := mul_nonpos_of_nonneg_of_nonpos hm.le h2

@@ -34,7 +34,7 @@ theorem tpU1 {a c ν α4 γ4 β6 γ6 : ℝ} (hν : 0 < ν) (hα4 : 0 < α4) (hγ
   -- A has a larger neighbour
   have hA : a < 0 ∨ a < α4 * a + γ4 * c := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     obtain ⟨ha0, hab⟩ := hcon
     rcases le_total c 0 with hc | hc
     · rw [max_eq_left hc] at hMa; linarith
@@ -43,7 +43,7 @@ theorem tpU1 {a c ν α4 γ4 β6 γ6 : ℝ} (hν : 0 < ν) (hα4 : 0 < α4) (hγ
   -- B' has a larger neighbour
   have hB : α4 * a + γ4 * c < a ∨ α4 * a + γ4 * c < c := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     obtain ⟨hba, hbc⟩ := hcon
     have hb0 : α4 * a + γ4 * c < 0 := by
       rcases le_total c 0 with hc | hc

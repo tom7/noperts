@@ -66,7 +66,7 @@ theorem isRupert_of_cayleyPolyJet (V : Finset ℝ³) {ι : Type*} [Fintype ι] (
     have hd := cayleyDen_pos (cayleyJetC c s)
     have : ⟪n e, proj_xy ((cayley (cayleyJetC c s)).toEuclideanLin v) + cayleyJetT τ s⟫ - h e < 0 := by
       by_contra hc
-      push_neg at hc
+      push Not at hc
       nlinarith
     rw [add_comm]; linarith
   obtain ⟨s, hs⟩ := hev.exists

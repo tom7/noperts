@@ -250,7 +250,7 @@ theorem k34lw_Z {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
       have hc := real_inner_comm (b - d) (c - d)
       rw [show b - c = (b - d) - (c - d) by abel]
       simp only [inner_sub_left, inner_sub_right] at hc ⊢; linarith
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     rw [h2, ← h3] at h1
     nlinarith [mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hbc.le, mul_pos (by linarith : (0:ℝ) < β1 - 1) hrel.2]
   refine ⟨R, hR0, ?_⟩

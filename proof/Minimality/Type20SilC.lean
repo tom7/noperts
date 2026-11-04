@@ -96,10 +96,10 @@ theorem h20s_rule_isRupert (F : S0xFac 8 h20s_S x) (hx : Function.Injective x)
   unfold H20SilResid at h
   by_cases hs : ∀ i j pat, ¬ H20SegLeaf F i j pat
   · have hl : ¬ ∀ X Y pat, ¬ H20LinLeaf F X Y pat := fun hl => h ⟨hs, hl⟩
-    push_neg at hl
+    push Not at hl
     obtain ⟨X, Y, pat, hl⟩ := hl
     exact h20s_lin_isRupert F hx hl
-  · push_neg at hs
+  · push Not at hs
     obtain ⟨i, j, pat, hs⟩ := hs
     exact h20s_seg_isRupert F hx hs
 

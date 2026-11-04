@@ -102,7 +102,7 @@ theorem hrest_of_tri (V : Finset ℝ³) (u v : ℝ³) (x : ZMod 5 → ℝ³) (hx
   obtain ⟨m, hmE, hmin⟩ := Finset.exists_min_image E ℓ ⟨y0, hy0E⟩
   have hmpos : 0 < ℓ m := by
     by_contra hneg
-    push_neg at hneg
+    push Not at hneg
     obtain ⟨a, ha, b, hb, c, hc', hA, hb1, hb2, hb3⟩ := ht m hmE
     obtain ⟨hs, hid⟩ := bary_id (x (i + 1) - x i) a b c m w (x i)
     have hlow : ∀ p ∈ V, ℓ m ≤ ℓ p := by
@@ -111,7 +111,7 @@ theorem hrest_of_tri (V : Finset ℝ³) (u v : ℝ³) (x : ZMod 5 → ℝ³) (hx
       · exact hmin p hpE
       · have : ∃ j, p = x j := by
           by_contra hno
-          push_neg at hno
+          push Not at hno
           exact hpE (by simp [hEdef, hp, fun j => (hno j)])
         obtain ⟨j, rfl⟩ := this
         exact le_trans hneg (hrim j)

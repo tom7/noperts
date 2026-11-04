@@ -89,10 +89,10 @@ theorem h16g_rule_isRupert (T : Type16 x) (h : ¬ H16GenResid T) : IsRupert (uni
   unfold H16GenResid at h
   by_cases hs : ∀ i j pat, ¬ H16GSegLeaf T i j pat
   · have hl : ¬ ∀ X Y pat, ¬ H16GLinLeaf T X Y pat := fun hl => h ⟨hs, hl⟩
-    push_neg at hl
+    push Not at hl
     obtain ⟨X, Y, pat, hl⟩ := hl
     exact h16g_lin_isRupert T hl
-  · push_neg at hs
+  · push Not at hs
     obtain ⟨i, j, pat, hs⟩ := hs
     exact h16g_seg_isRupert T hs
 

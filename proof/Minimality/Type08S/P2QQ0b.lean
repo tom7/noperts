@@ -32,11 +32,11 @@ theorem exists_vanish08 (x1 y1 x2 y2 x3 y3 : ℝ) (h12 : x1 * y2 - y1 * x2 = 0)
       by_cases h3 : x3 = 0 ∧ y3 = 0
       · exact ⟨1, 0, Or.inl one_ne_zero, by simp, by simp, by simp [h3.1]⟩
       · refine ⟨y3, -x3, ?_, by simp, by simp, by ring⟩
-        by_contra hc; push_neg at hc; exact h3 ⟨by linarith [hc.2], hc.1⟩
+        by_contra hc; push Not at hc; exact h3 ⟨by linarith [hc.2], hc.1⟩
     · refine ⟨y2, -x2, ?_, by simp, by ring, by linarith⟩
-      by_contra hc; push_neg at hc; exact h2 ⟨by linarith [hc.2], hc.1⟩
+      by_contra hc; push Not at hc; exact h2 ⟨by linarith [hc.2], hc.1⟩
   · refine ⟨y1, -x1, ?_, by ring, by linarith, by linarith⟩
-    by_contra hc; push_neg at hc; exact h1 ⟨by linarith [hc.2], hc.1⟩
+    by_contra hc; push Not at hc; exact h1 ⟨by linarith [hc.2], hc.1⟩
 
 /-- `gale_nf08` with `μ ≠ 0` (independence of the Gale data). -/
 theorem gale_nf08w {a a' b b' c c' d : ℝ³} (G : GaleData a a' b b' c c')

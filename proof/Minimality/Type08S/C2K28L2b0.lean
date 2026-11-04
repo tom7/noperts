@@ -29,7 +29,7 @@ theorem k28l2b_alg {α1 β1 pp s qq rr qr mp mr : ℝ} (hα1 : 1 < α1) (hβ1 : 
     s < 0 ∧ mp < 0 ∧ 0 < mr ∧ α1 * mp + (β1 - 1) * mr < 0 ∧ 0 < -mp * rr + mr * s := by
   have hN : 0 < qq + rr - 2 * qr := by linarith
   have hs : s < 0 := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     have h1 : 0 ≤ α1 * s * (qq + rr - 2 * qr) := mul_nonneg (mul_nonneg (by linarith) hn) hN.le
     have h2 : 0 < (β1 - 1) * (qq * rr - qr ^ 2) := mul_pos (by linarith) hK
     linarith
@@ -38,7 +38,7 @@ theorem k28l2b_alg {α1 β1 pp s qq rr qr mp mr : ℝ} (hα1 : 1 < α1) (hβ1 : 
   have h5 : 0 ≤ β1 * mr + (α1 - 1) * mp := by linarith
   have h6 : 0 ≤ -(α1 * mp + (β1 - 1) * mr) := by linarith
   have ht0 : 0 ≤ -mp := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     have : 0 ≤ (-mp) * (α1 + β1 - 1) := by
       nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ β1) h6, mul_nonneg b1.le h5]
     nlinarith
@@ -61,14 +61,14 @@ theorem k28l2b_alg {α1 β1 pp s qq rr qr mp mr : ℝ} (hα1 : 1 < α1) (hβ1 : 
       linear_combination hrel
     have : 0 < ((β1 - 1) * rr + α1 * s) * (qq + rr - 2 * qr) := by
       rw [e]; exact mul_pos b1 (pow_pos (by linarith) 2)
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith
   have ht : 0 < -mp := by linarith
   have key : (β1 - 1) * (-mp * rr + mr * s) ≥ (-mp) * ((β1 - 1) * rr + α1 * s) := by
     nlinarith [mul_nonneg (neg_nonneg.2 hs.le) h6, mul_pos ht b1]
   have : 0 < (β1 - 1) * (-mp * rr + mr * s) := by
     have := mul_pos ht hX; linarith
-  by_contra hn; push_neg at hn
+  by_contra hn; push Not at hn
   nlinarith
 
 end C2

@@ -65,7 +65,7 @@ theorem k22z1_c1_le {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h
   have hu0 : 0 < u := by linarith
   have hα4' : α4 = 1 + (1 + g) * k := by rw [hg, hk] at hαγ; linarith
   have hk0 : 0 < k := by
-    by_contra hh; push_neg at hh
+    by_contra hh; push Not at hh
     have : (1 + g) * k ≤ 0 := mul_nonpos_of_nonneg_of_nonpos (by linarith) hh
     linarith
   subst hk hg hu hα4'
@@ -104,7 +104,7 @@ theorem k22z1_c1_le {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h
     rw [this] at h3
     nlinarith
   have hgr : 0 < ⟪p, r⟫ + k * ⟪p, p⟫ := by
-    by_contra hh; push_neg at hh
+    by_contra hh; push Not at hh
     have f1 : ⟪p, r⟫ - (1 + u) * ⟪p, p⟫ ≤ 0 := by nlinarith [mul_pos hk0 hpp, mul_pos hu0 hpp]
     nlinarith [mul_nonneg_of_nonpos_of_nonpos f1 hh]
   -- frame

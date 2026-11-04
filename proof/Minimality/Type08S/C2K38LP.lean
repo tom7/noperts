@@ -220,7 +220,7 @@ theorem k34lw_P {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hQRv : ⟪a - d, a - c'⟫ = β1 * ⟪a - d, R⟫ := by rw [hac, inner_smul_right]
   have hgQR : 0 < ⟪a - d, R⟫ := (mul_pos_iff_of_pos_left hβ0).1 (by rw [← hQRv]; exact hS)
   have hgPR : ⟪c - d, R⟫ < 0 := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_nonneg k1.le hn, mul_neg_of_neg_of_pos k3 hgQR, hE]
   have hgA : 0 < -β1 * ⟪c - d, R⟫ - (α1 - 1) * ⟪a - d, R⟫ := by
     have : 0 < m1 * (-β1 * ⟪c - d, R⟫ - (α1 - 1) * ⟪a - d, R⟫) := by

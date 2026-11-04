@@ -28,7 +28,7 @@ theorem k94_F1 (s pp qq qr rr m al be : ℝ) (hs : 0 < s) (hpp : 0 < pp) (hm : 0
     have : 0 < pp*qq := lt_of_le_of_lt (sq_nonneg s) hD2
     exact (pos_iff_pos_of_mul_pos this).1 hpp
   have hrr0 : 0 < rr := by
-    by_contra hc; push_neg at hc
+    by_contra hc; push Not at hc
     nlinarith [mul_nonpos_of_nonneg_of_nonpos hqq0.le hc, sq_nonneg qr]
   have hqrE : pp*qr = s^2 := by
     have h : be*(rr+s)*(pp*qr - s^2) = 0 := by linear_combination s*hppE - (pp*rr - s^2)*hF1
@@ -54,7 +54,7 @@ theorem k94_F1 (s pp qq qr rr m al be : ℝ) (hs : 0 < s) (hpp : 0 < pp) (hm : 0
     rw [eq_div_iff (by positivity)]; exact hbeE
   have hm1 : m*(be*(1-t)) = 1 := by rw [hal'] at hmα; linear_combination hmα
   have hw : 0 < 1 - t := by
-    by_contra hc; push_neg at hc
+    by_contra hc; push Not at hc
     have := mul_nonpos_of_nonneg_of_nonpos (mul_pos hm (by linarith : (0:ℝ) < be)).le hc
     nlinarith
   obtain ⟨w, hwd⟩ : ∃ w, w = 1 - t := ⟨_, rfl⟩

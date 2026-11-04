@@ -66,10 +66,10 @@ theorem k24h1c_keys {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   simp only [hPR, hRP] at ht1 hm1 hm2 hg ⊢
   have hdet2 : 0 < det3 P Q R ^ 2 := by positivity
   have hee : 0 < ⟪Q, Q⟫ + ⟪R, R⟫ - 2 * ⟪Q, R⟫ := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [sq_nonneg (⟪Q, Q⟫ - ⟪R, R⟫), real_inner_self_nonneg (x := Q), real_inner_self_nonneg (x := R)]
   have hm : ⟪P, Q⟫ < 0 := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     have := mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hee.le
     nlinarith [mul_pos (sub_pos.2 hβ1) hr2]
   have hqq : ⟪Q, R⟫ < ⟪R, R⟫ := by nlinarith
@@ -78,13 +78,13 @@ theorem k24h1c_keys {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hpd : ⟪P, Q⟫ ^ 2 * (⟪Q, Q⟫ + ⟪R, R⟫ - 2 * ⟪Q, R⟫) <
       ⟪P, P⟫ * (⟪Q, Q⟫ * ⟪R, R⟫ - ⟪Q, R⟫ ^ 2) := by nlinarith
   have hss : -(β1 - 1) * ⟪P, Q⟫ < α1 * ⟪P, P⟫ := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     have h1 := mul_le_mul_of_nonneg_right hn hr2.le
     nlinarith
   have hpos : 0 ≤ α1 * ⟪P, Q⟫ + (β1 - 1) * ⟪R, R⟫ := by
     have : (⟪Q, Q⟫ + ⟪R, R⟫ - 2 * ⟪Q, R⟫) * (α1 * ⟪P, Q⟫ + (β1 - 1) * ⟪R, R⟫) =
         (β1 - 1) * (⟪R, R⟫ - ⟪Q, R⟫) ^ 2 := by linear_combination hr1'
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_neg_of_pos_of_neg hee hn, mul_nonneg (sub_pos.2 hβ1).le (sq_nonneg (⟪R, R⟫ - ⟪Q, R⟫))]
   have hα : 0 < α1 - 1 := by linarith
   constructor

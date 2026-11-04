@@ -66,7 +66,7 @@ theorem sc2S_core (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
     (((e1'.and (e4.and e5)).and (e8.and (e9.and es))).and hE).exists
   have hs0 : 0 < s := by
     have : 0 < Xg + s * Y := by linarith
-    by_contra hneg; push_neg at hneg
+    by_contra hneg; push Not at hneg
     nlinarith [mul_nonneg (by linarith : 0 ≤ -s) hY.le, hXg, hL]
   have hDpos : 0 < DS σ L zp Y m σ0 z0 κ ρ s := by unfold DS; nlinarith [hDs]
   have hDdef : DS σ L zp Y m σ0 z0 κ ρ s = σ * κ * (ρ * s) * (σ0 - zp) * (z0 - (σ0 + m * L)) -

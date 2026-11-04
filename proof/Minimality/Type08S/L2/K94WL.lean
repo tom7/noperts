@@ -47,7 +47,7 @@ theorem k94_wall {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hb6e : β6 = α1 := by rw [hb6m, hm1]; ring
   have hg6e : γ6 = α1 := by rw [hg6m, hm1]; ring
   have he2 : α1 ≤ 2 := by
-    by_contra hc; push_neg at hc
+    by_contra hc; push Not at hc
     rw [hb6e, hg6e] at hk17
     nlinarith [mul_pos (by linarith : (0:ℝ) < α1 - 2) (by linarith : (0:ℝ) < α1 - 1), mul_pos (mul_pos (by linarith : (0:ℝ) < α1 - 2) (by linarith : (0:ℝ) < α1 - 1)) (by linarith : (0:ℝ) < 2*α1-1)]
   have hWC := k94_wcore s pp qq qr rr α1 hs hpp hqx hqy hα hrel' hppE hD hD2 hdet hX4 he2 hbr

@@ -125,7 +125,7 @@ theorem k24mtd_depth {s g h6 b1 xr yr nr : ℝ} (hs : 0 < s) (hb1 : 1 < b1) (hh6
     have h1 : 0 < ((1 - g) + s * h6) * (yr - (-s * xr - nr)) := mul_pos (by nlinarith) (by linarith)
     rw [← hid] at h1
     by_contra hn
-    push_neg at hn
+    push Not at hn
     nlinarith [mul_pos (by nlinarith : 0 < 1 + b1 * s) (by linarith : 0 < h6 + g - 1)]
   refine ⟨hZ, by nlinarith, ?_⟩
   linear_combination (-1 : ℝ) * T2

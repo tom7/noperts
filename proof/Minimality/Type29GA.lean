@@ -92,10 +92,10 @@ theorem h29g_rule_isRupert (T : Facets29 x) (h : ¬ H29GenResid T) : IsRupert (u
   unfold H29GenResid at h
   by_cases hs : ∀ i j pat, ¬ H29GSegLeaf T i j pat
   · have hl : ¬ ∀ X Y pat, ¬ H29GLinLeaf T X Y pat := fun hl => h ⟨hs, hl⟩
-    push_neg at hl
+    push Not at hl
     obtain ⟨X, Y, pat, hl⟩ := hl
     exact h29g_lin_isRupert T hl
-  · push_neg at hs
+  · push Not at hs
     obtain ⟨i, j, pat, hs⟩ := hs
     exact h29g_seg_isRupert T hs
 

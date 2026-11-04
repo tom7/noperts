@@ -63,7 +63,7 @@ theorem k28b4t_keysq {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hD : 0 < ⟪Q, Q⟫ * ⟪R, R⟫ - ⟪Q, R⟫ ^ 2 := by linarith
   have hW : 0 < ⟪Q, Q⟫ + ⟪R, R⟫ - 2 * ⟪Q, R⟫ := by linarith
   have hs : ⟪P, Q⟫ < 0 := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     have := mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hW.le
     nlinarith [mul_pos (sub_pos.2 hβ1) hD]
   have em1 : ⟪c' - a', P⟫ = α1 * ⟪P, P⟫ + (β1 - 1 - γ6) * ⟪P, Q⟫ := by
@@ -96,13 +96,13 @@ theorem k28b4t_keysq {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     exact this
   have hsa : ⟪P, Q⟫ ^ 2 < ⟪P, P⟫ * ⟪R, R⟫ := by rw [← hPR]; exact hsq
   have hW' : α1 * (-⟪P, Q⟫) ≤ (β1 - 1) * ⟪R, R⟫ := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     have e : ⟪R, R⟫ * (⟪Q, Q⟫ + ⟪R, R⟫ - 2 * ⟪Q, R⟫) - (⟪Q, Q⟫ * ⟪R, R⟫ - ⟪Q, R⟫ ^ 2) = (⟪R, R⟫ - ⟪Q, R⟫) ^ 2 := by ring
     nlinarith [mul_pos (sub_pos.2 hn) hW, mul_pos (sub_pos.2 hβ1) hW, sq_nonneg (⟪R, R⟫ - ⟪Q, R⟫), mul_nonneg (sub_pos.2 hβ1).le (sq_nonneg (⟪R, R⟫ - ⟪Q, R⟫))]
   have g1 : m3 * ⟪P, Q⟫ - m1 * ⟪R, R⟫ < 0 := by
     have h1 : (β1 - 1) * (m3 * ⟪P, Q⟫ - m1 * ⟪R, R⟫) < 0 := by
       nlinarith [mul_pos (by linarith : 0 < α1 * m1 + (β1 - 1) * m3) (neg_pos.2 hs0), mul_nonneg hm1p.le (sub_nonneg.2 hW')]
-    by_contra h; push_neg at h
+    by_contra h; push Not at h
     nlinarith [mul_nonneg (sub_pos.2 hβ1).le h]
   have g2 : m3 * ⟪P, P⟫ - m1 * ⟪P, Q⟫ < 0 := by
     rw [hm1, hm3]

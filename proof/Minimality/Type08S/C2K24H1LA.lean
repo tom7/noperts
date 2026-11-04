@@ -92,12 +92,12 @@ theorem k24h1l_real {pp σ qq qr rr α β B g : ℝ} (hα : 1 < α) (hβ : 1 < �
   have hs : 0 < β - 1 := by linarith
   have hα0 : 0 < α := by linarith
   have hrr0 : 0 < rr := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     rcases le_or_gt 0 qq with h | h
     · nlinarith [mul_nonneg h (neg_nonneg.2 hn), sq_nonneg qr]
     · nlinarith [mul_pos (sub_pos.2 hqq) (sub_pos.2 hrr), mul_pos (neg_pos.2 h) (neg_pos.2 (lt_of_lt_of_le hrr hn)), sq_nonneg qr]
   have hσ : σ < 0 := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     have := mul_nonneg (mul_nonneg hα0.le hn) hW.le
     nlinarith [mul_pos hs hD]
   have hR : 0 < α * σ + (β - 1) * rr := by

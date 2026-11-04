@@ -267,7 +267,7 @@ theorem k54Cp_regions {σ l ea : ℝ} (hσ : 0 < σ) (hea : ea = l^2*σ^2/(2*(1+
   have hs2 : 0 < σ^2 := by positivity
   constructor
   · by_contra h
-    push_neg at h
+    push Not at h
     have h1 := mul_le_mul_of_nonneg_left hR1 (by positivity : (0:ℝ) ≤ 2*(1+σ^2))
     have h2 := mul_pos hs2 (sub_pos.2 h)
     nlinarith

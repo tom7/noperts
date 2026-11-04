@@ -406,7 +406,7 @@ theorem caseII (p q k l tp tm lam : ℝ) (hp : 0 < p) (hq : 0 < q) (hk : 0 < k) 
     nlinarith
   have hlam2 : lam < 1 / 2 := by
     have : 2 * lam * (k ^ 2 * p + q) < (k ^ 2 * p + q) := by nlinarith [mul_pos (mul_pos hk hl) hp]
-    by_contra hh; push_neg at hh; nlinarith
+    by_contra hh; push Not at hh; nlinarith
   have hL1 : FL1 l tm (l + lam * k) (lam - 1) := Or.inr (by nlinarith [mul_pos hlam (add_pos hk hl)])
   have hL2 : FL2 k l tp tm (l + lam * k) (lam - 1) := Or.inr (by
     nlinarith [mul_pos hk ha3, mul_pos hl a3, mul_pos (mul_pos hl a3) hlam, mul_pos hlam (mul_pos hk ha3)])
@@ -430,7 +430,7 @@ theorem caseIII (p q k l tp tm lam : ℝ) (hp : 0 < p) (hq : 0 < q) (hk : 0 < k)
     nlinarith
   have hlam2 : lam < (1 - tp) / 2 := by
     have : 2 * lam * (k ^ 2 * p + q) < (1 - tp) * (k ^ 2 * p + q) := by nlinarith [mul_pos a1 hq, mul_pos ha1 hq]
-    by_contra hh; push_neg at hh; nlinarith
+    by_contra hh; push Not at hh; nlinarith
   have hL2 : FL2 k l tp tm (-k * (1 - tp) + lam * k) (tp + lam) := Or.inl (by nlinarith [mul_pos hlam hk])
   have hL1 : FL1 l tm (-k * (1 - tp) + lam * k) (tp + lam) := Or.inl (by
     nlinarith [mul_pos (mul_pos hk ha3) (sub_pos.2 hlam2), mul_pos (mul_pos hl a3) hlam,
@@ -477,18 +477,18 @@ theorem exists_GR (p q k l tp tm : ℝ) (hp : 0 < p) (hq : 0 < q) (hk : 0 < k) (
     rcases caseII p q k l tp tm lam hp hq hk hl ha1 a1 ha3 a3 hlam (by linarith) h12 hc with h | h
     · exact ⟨_, _, Or.inl h⟩
     · exact ⟨_, _, Or.inr (Or.inl h)⟩
-  · push_neg at h12
+  · push Not at h12
     by_cases h23 : -k ^ 2 * (1 - tp) * p + tp * q < 0
     · obtain ⟨lam, hlam, hl1, hc⟩ := pick_lam (k ^ 2 * p + q) (-k ^ 2 * (1 - tp) * p + tp * q) _ (l * k * p - q) hg22 h23 h13
       rcases caseIII p q k l tp tm lam hp hq hk hl ha1 a1 ha3 a3 hlam hl1 h23 hc with h | h
       · exact ⟨_, _, Or.inl h⟩
       · exact ⟨_, _, Or.inr (Or.inr h)⟩
-    · push_neg at h23
+    · push Not at h23
       -- right trapezoid
       have kp : 0 < k * p := mul_pos hk hp
       have s1 : k * p * (k * (1 - tp) - tp * l) ≤ 0 := by nlinarith [mul_nonneg ha1.le h12]
       have s2 : k * (1 - tp) - tp * l ≤ 0 := by
-        by_contra hh; push_neg at hh; nlinarith [mul_pos kp hh]
+        by_contra hh; push Not at hh; nlinarith [mul_pos kp hh]
       have e2 : l * tp = k * (1 - tp) := by linarith
       have e1 : q = l * k * p := by
         have hh : k * p * (l * tp) = k * p * (k * (1 - tp)) := by rw [e2]
@@ -549,7 +549,7 @@ theorem right_V1B5_pf (F : Frame02 x) (hr : gA12 x = gA11 x)
   obtain ⟨k, l, hk, hl, h1, h2, h3, h4⟩ := exists_kl F.S
   by_cases hd : 0 < l * F.S.tp - k * (1 - F.S.tp)
   · exact F.fnB_I hr hA hB k l hk hl h1 h2 h3 h4 hd
-  push_neg at hd
+  push Not at hd
   have a1 := sub_pos.2 F.S.tp_lt
   have a3 := sub_pos.2 F.S.tm_lt
   have ha : 0 < gA11 x := hr ▸ F.A12_pos

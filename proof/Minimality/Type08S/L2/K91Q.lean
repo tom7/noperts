@@ -46,7 +46,7 @@ theorem k91_q2 {u v t x b6 g6 lam pp pq qq qr rr : ℝ}
   have h1 := mul_le_mul_of_nonpos_right hcb hAneg.le
   have h2 : v * lam * Av = -(v * Bv) := by rw [mul_assoc, hlam]; ring
   have hN : 0 ≤ v*b6*u*(v+1)^2*x - t*(u+v+1)^2*(b6*u+v+1) := by
-    by_contra hneg; push_neg at hneg
+    by_contra hneg; push Not at hneg
     have : (v*b6*u*(v+1)^2*x - t*(u+v+1)^2*(b6*u+v+1))/(u*(v+1)^2) < 0 := div_neg_of_neg_of_pos hneg (by positivity)
     rw [← key] at this; nlinarith
   have eQ : k91G ((v+1)*t/u) (-t) (x + u*t/(v+1)) (u*t/(v+1)) (t*(u+v+1)*x/W + u*t/(v+1)) (-(u+1)) b6 (1 + u*b6/(v+1) - (v+1)) 0 0 1 = t*(u+v+1)*(b6*u*(v+1)^2*x - t*(u+v+1)*(b6*u+v+1))/((v+1)^2*W) := by
@@ -55,7 +55,7 @@ theorem k91_q2 {u v t x b6 g6 lam pp pq qq qr rr : ℝ}
   have hF : 0 < b6*u*(v+1)^2*x - t*(u+v+1)*(b6*u+v+1) := by
     have h3 : 0 < t*(u+v+1)*(b6*u+v+1)*(u+1) := by positivity
     have h4 : v * (b6*u*(v+1)^2*x - t*(u+v+1)*(b6*u+v+1)) = (v*b6*u*(v+1)^2*x - t*(u+v+1)^2*(b6*u+v+1)) + t*(u+v+1)*(b6*u+v+1)*(u+1) := by ring
-    by_contra hh; push_neg at hh
+    by_contra hh; push Not at hh
     nlinarith [mul_nonneg hv.le (neg_nonneg.2 hh)]
   positivity
 end Minimality.Type08Sp.C2

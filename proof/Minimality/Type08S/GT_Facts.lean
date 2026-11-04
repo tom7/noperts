@@ -75,7 +75,7 @@ theorem lemma12_xa {A zv β μ b1 b2 r1 r2 s a1 a2 : ℝ} (hA : 0 < A) (hzv : 0 
     have h2 : zv * (1 - r1 / A) = -(zv * (r1 - A) / A) := by field_simp; ring
     rw [h2] at hr
     by_contra hc
-    push_neg at hc
+    push Not at hc
     nlinarith [mul_nonneg (neg_nonneg.mpr hc) hr2.le]
   have hμ0 : 0 < μ := by
     have : μ * (r1 * b2 - r2 * b1) > zv := by
@@ -83,7 +83,7 @@ theorem lemma12_xa {A zv β μ b1 b2 r1 r2 s a1 a2 : ℝ} (hA : 0 < A) (hzv : 0 
       have e : μ * ((r2 - b2) * (0 - b1) - (r1 - b1) * (0 - b2)) = μ * (r1 * b2 - r2 * b1) := by ring
       rw [e] at this; exact this
     by_contra hc
-    push_neg at hc
+    push Not at hc
     nlinarith [mul_nonneg (neg_nonneg.mpr hc) hdet.le]
   set dx := β + μ * (r1 - b1) with hdx
   set dy := zv / A + μ * (r2 - b2) with hdy

@@ -69,7 +69,7 @@ theorem hq2_of_regN2 {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (h
         N.F.ab'c'.f c * (fc08 θ 0 3 5 1 - fc08 θ 0 3 5 4) := by linear_combination hfac'
     rw [this]; exact mul_neg_of_neg_of_pos hneg (by linarith)
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   nlinarith
 
 end Type08Sp

@@ -36,7 +36,7 @@ theorem allsep4_real {n q B C α1 α4 β1 γ4 β6 : ℝ} (hn : 0 < n) (hα : 1 <
     · nlinarith [mul_nonneg h4.le (sub_nonneg.2 d4), mul_nonneg (sub_nonneg.2 h) (sub_nonneg.2 d3),
         mul_pos hE (neg_pos.2 hq)]
     · have hB : 0 < B := by
-        by_contra hB; push_neg at hB
+        by_contra hB; push Not at hB
         nlinarith [mul_nonneg h4.le (sub_nonneg.2 d4), mul_nonneg (sub_nonneg.2 h) (neg_nonneg.2 hB),
           mul_pos p3 (neg_pos.2 hq)]
       nlinarith [mul_nonneg h4.le (neg_nonneg.2 d2), mul_pos hα0 hB, mul_pos p3 (neg_pos.2 hq)]

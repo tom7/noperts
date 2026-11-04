@@ -52,7 +52,7 @@ theorem triCert_midG' (hF : Fr e1 e2 e3) (o : ℝ³) (V : Finset ℝ³)
     have e : (0 - Yg) * (zq - zg) - (κ - zg) * (Yq - Yg) = -Yg * (zq - ((1 - lam) * κ + lam * zg)) := by
       rw [hY]; ring
     rw [e] at hchord
-    by_contra hc; push_neg at hc
+    by_contra hc; push Not at hc
     nlinarith [mul_nonneg hYg.le hc]
   filter_upwards [ev_aff Yg Xg hYg] with s hs
   rw [hX, hY]

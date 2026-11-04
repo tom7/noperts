@@ -43,7 +43,7 @@ theorem k30_b4 {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     HasLexCell (V8 a a' b b' c c' d) ∨ K30B4Tie a a' b' c c' d := by
   by_cases ht : ⟪c' - a', b' - c⟫ = 0 ∨ ⟪c' - a', b' - a⟫ = 0 ∨ ⟪c' - c, k28b4c_u0 a a' c c' d⟫ = 0
   · exact Or.inr ⟨hLp, ht⟩
-  push_neg at ht
+  push Not at ht
   obtain ⟨hp0, hq0, hz0⟩ := ht
   have hLp' : 0 < ⟪c' - a', b' - c⟫ := lt_of_le_of_ne hLp (Ne.symm hp0)
   left

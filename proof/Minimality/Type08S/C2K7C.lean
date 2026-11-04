@@ -54,7 +54,7 @@ theorem k7_hasLexCellAt (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R �
   have h2 : (α4 - α1) * Bp = t * A := by linear_combination (-1 : ℝ) * hEq - hx
   have ht : t < 0 := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have hfac' : α4 * (1 - β1) * Bp < α1 * β6 * Bp := mul_lt_mul_of_pos_right hfac hB
     have h3 : α4 * Bp = α1 * Bp + t * A := by linarith
     have h4 : A * (1 - β1) - α1 * Bp > 0 := by linarith
@@ -63,7 +63,7 @@ theorem k7_hasLexCellAt (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R �
     have hid : Bp * (⟪P, Q⟫ + (α4 - α1) * ⟪Q, Q⟫ - β1 * Bp) = t * (⟪Q, Q⟫ * A - Bp ^ 2) := by
       linear_combination Bp * hs + ⟪Q, Q⟫ * h2
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     nlinarith [mul_nonneg hB.le hcon, mul_neg_of_neg_of_pos ht hCS]
   have hg1 : ⟪P, P⟫ + (α4 - α1) * ⟪P, Q⟫ - β1 * ⟪P, R⟫ = ⟪P, P⟫ + (β6 - 1) * ⟪P, R⟫ := by
     linear_combination (α4 - α1) * hs + (1 - β6) * h2 - t * hx

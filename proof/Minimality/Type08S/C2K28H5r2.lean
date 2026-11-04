@@ -72,12 +72,12 @@ theorem k28h5rb_hrb {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   generalize ⟪q, r⟫ = qr at *
   generalize ⟪r, r⟫ = rr at *
   have hu1 : 0 < qq - qr := by
-    by_contra h; push_neg at h; nlinarith [mul_nonneg hβ1p.le (neg_nonneg.2 h)]
+    by_contra h; push Not at h; nlinarith [mul_nonneg hβ1p.le (neg_nonneg.2 h)]
   have hu2 : 0 < rr - qr := by
-    by_contra h; push_neg at h; nlinarith [mul_nonneg hβ1p.le (neg_nonneg.2 h)]
+    by_contra h; push Not at h; nlinarith [mul_nonneg hβ1p.le (neg_nonneg.2 h)]
   have hm2 : 0 < qq * rr - qr ^ 2 := hr2
   have ht : 0 < -pq := by
-    by_contra h; push_neg at h
+    by_contra h; push Not at h
     have h' : 0 ≤ pq := by linarith
     nlinarith [mul_nonneg (mul_nonneg hα1p.le h') (add_pos hu1 hu2).le, mul_pos (by linarith : (0:ℝ) < β1 - 1) hm2]
   have key := k28h5rb_core pp (-pq) (qq - qr) (rr - qr) qr (α1 - 1) (β1 - 1) (1 - β6) (1 - γ6)

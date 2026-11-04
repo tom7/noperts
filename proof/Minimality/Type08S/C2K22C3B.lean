@@ -83,7 +83,7 @@ theorem k22c3_cell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h 
     rw [← this]; linarith
   have hg6 : 0 < 1 - γ6 := by linarith
   have hg4 : γ4 < 1 := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     have : (1 - γ4) * ⟪R, R⟫ ≤ 0 := mul_nonpos_of_nonpos_of_nonneg (by linarith) hRR.le
     nlinarith [mul_nonneg hg6.le (neg_nonneg.2 this)]
   have hg4p : 0 < 1 - γ4 := by linarith

@@ -59,7 +59,7 @@ theorem k24h1d_core {α1 β1 β6 γ6 pp qq rr s t : ℝ} (hα : 1 < α1) (hβ1 :
     linear_combination htie
   have hBpos : 0 < β1 * (γ6 - 1) * (rr - t) := mul_pos (mul_pos hb0 (by linarith)) hB'
   have key1 : (α1 - 1) * s + β1 * t < 0 := by
-    by_contra h; push_neg at h
+    by_contra h; push Not at h
     have := mul_nonneg hS.le h
     linarith
   refine ⟨by linarith, ?_, ?_, ?_, ?_⟩
@@ -94,7 +94,7 @@ theorem k24h1d_core {α1 β1 β6 γ6 pp qq rr s t : ℝ} (hα : 1 < α1) (hβ1 :
       mul_pos (mul_pos hb0 hB') (by nlinarith)
     rw [← k2] at this
     have h5 : 0 < (β6 + γ6 - 1) * α1 := mul_pos hS (by linarith)
-    by_contra h; push_neg at h
+    by_contra h; push Not at h
     have := mul_nonpos_of_nonneg_of_nonpos h5.le h
     linarith
 

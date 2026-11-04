@@ -61,13 +61,13 @@ theorem k24mtc_core {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ} (hC : K6m
   have hF1 : ⟪a', r⟫ < ⟪c, r⟫ := by
     have e : ⟪c - a', b - a'⟫ = γ6 * ⟪c - a', r⟫ := by rw [hγr, inner_smul_right]
     have : 0 < ⟪c - a', r⟫ := by
-      by_contra hn; push_neg at hn; nlinarith [mul_nonneg hγ6.le (neg_nonneg.2 hn)]
+      by_contra hn; push Not at hn; nlinarith [mul_nonneg hγ6.le (neg_nonneg.2 hn)]
     rw [inner_sub_left] at this; linarith
   have hF2 : 0 ≤ ⟪b', r⟫ - ⟪c', r⟫ := by
     have e : γ6 * (⟪b', r⟫ - ⟪c', r⟫) = ⟪b' - c', b - a'⟫ := by
       rw [hγr, inner_smul_right, inner_sub_left]
     have : 0 ≤ ⟪b' - c', b - a'⟫ := by rw [k4]; nlinarith
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_pos hγ6 (neg_pos.2 hn)]
   have hbc : b' - c' = β1 • (c - b) := by rw [hb', hc']; module
   have hcbq : ⟪c - b, q⟫ < 0 := by

@@ -41,18 +41,18 @@ theorem k28b4_E {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hm3μ : m3 = μ * m1 := by rw [hμ]; field_simp
   have hLp' : 0 < α1 + (β1 - 1) * μ := by
     rw [hm3μ] at kp
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_nonneg (by linarith : 0 ≤ -(α1 + (β1 - 1) * μ)) k1.le]
   have hLq' : 0 < α1 - 1 + β1 * μ := by
     rw [hm3μ] at kq
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_nonneg (by linarith : 0 ≤ -(α1 - 1 + β1 * μ)) k1.le]
   obtain ⟨R, hR⟩ : ∃ R : ℝ³, R = μ • (a - d) - (c - d) := ⟨_, rfl⟩
   rw [← hR] at kc ka
   have hu0R : m3 • (a - d) - m1 • (c - d) = m1 • R := by rw [hR, hm3μ]; module
   rw [hu0R, inner_smul_right] at hLz
   have kz : ⟪c' - c, R⟫ < 0 := by
-    by_contra hn; push_neg at hn; nlinarith [mul_nonneg k1.le hn]
+    by_contra hn; push Not at hn; nlinarith [mul_nonneg k1.le hn]
   have hΔ : det3 (a - d) (b - d) R ≠ 0 := by
     have e : det3 (a - d) (b - d) R = -det3 (a - d) (b - d) (c - d) := by
       rw [hR]; simp only [det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]; ring

@@ -145,7 +145,7 @@ theorem k22c1b_edge {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
         refine cellP 1 one_pos (Or.inr ⟨hb1, hg, by nlinarith, by nlinarith, ?_⟩)
         have e1 : (1 - γ6) * qr * rr ≤ qr * qr := by nlinarith
         have e2 : (1 - γ6) * qr < qq := by
-          by_contra hc; push_neg at hc
+          by_contra hc; push Not at hc
           nlinarith [mul_le_mul_of_nonneg_right hc hrrp.le]
         nlinarith
       · -- leftover
@@ -172,7 +172,7 @@ theorem k22c1b_edge {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
       refine ⟨hpq, hpr, 1, γ4, γ6, hdet, hc', hb', ha', hβ1, hγ4, hγ6, hγ61, hfr, Or.inl ⟨rfl, hqr ▸ hnn, ?_⟩⟩
       rcases lt_or_gt_of_ne hg1 with h' | h'
       · exact Or.inl h'
-      · right; refine ⟨h', ?_⟩; push_neg at hg; rw [hqq, hqr]; exact hg h'
+      · right; refine ⟨h', ?_⟩; push Not at hg; rw [hqq, hqr]; exact hg h'
   · -- (ii)
     left
     set E := γ4 * rr - β1 * qr with hE

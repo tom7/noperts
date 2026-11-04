@@ -64,9 +64,9 @@ theorem k28h5b_H23 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   generalize ⟪q, r⟫ = qr at *
   generalize ⟪r, r⟫ = rr at *
   have hu1 : 0 < qq - qr := by
-    by_contra h; push_neg at h; nlinarith [mul_nonneg hβ1p.le (neg_nonneg.2 h)]
+    by_contra h; push Not at h; nlinarith [mul_nonneg hβ1p.le (neg_nonneg.2 h)]
   have hu2 : 0 < rr - qr := by
-    by_contra h; push_neg at h; nlinarith [mul_nonneg hβ1p.le (neg_nonneg.2 h)]
+    by_contra h; push Not at h; nlinarith [mul_nonneg hβ1p.le (neg_nonneg.2 h)]
   have hT' : 0 ≤ (α1-1)*pp + β1*pq := by linarith
   have hrel' : α1*pq*(qq+rr-2*qr) = -(β1-1)*(qq*rr-qr^2) := by linear_combination hr1
   have hs' : β1 < β6 + γ6 := hσ

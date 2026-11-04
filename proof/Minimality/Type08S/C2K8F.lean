@@ -88,7 +88,7 @@ theorem tpA1ii_pos_hasLexCell {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c
   · -- `β6 ≥ 1`, `t = a'`
     have hβ6g : 1 ≤ β6 := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       rw [hXE] at hge
       nlinarith
     have h1' := h1 hge
@@ -123,7 +123,7 @@ theorem tpA1ii_pos_hasLexCell {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c
   · -- `β6 < 1`, `t = b`
     have hβ6l : β6 < 1 := by
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       rw [hXE] at hlt
       nlinarith
     have h2' := h2 hlt

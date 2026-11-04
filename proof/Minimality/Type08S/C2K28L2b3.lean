@@ -74,17 +74,17 @@ theorem k28l2_Bp {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hPR : ⟪P, R⟫ = ⟪P, Q⟫ := by linarith
   simp only [hPR] at hD' hB' hB0'
   have hq : ⟪Q, R⟫ < ⟪Q, Q⟫ := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ β1) (sub_nonneg.2 hn)]
   have hr : ⟪Q, R⟫ < ⟪R, R⟫ := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ β1) (sub_nonneg.2 hn)]
   have hD'' : (1 - α1) * mp - β1 * mr ≤ 0 := by rw [hmp, hmr]; nlinarith [hD']
   have hB'' : α1 * mp + (β1 - 1) * mr ≤ 0 := by rw [hmp, hmr]; nlinarith [hB']
   have hBs : α1 * mp + (β1 - 1) * mr ≠ 0 := by
     intro h; apply hB0'; rw [hmp, hmr] at h; nlinarith [h]
   have hne : mp ≠ 0 ∨ mr ≠ 0 := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     apply hBs; rw [hn.1, hn.2]; ring
   obtain ⟨hs, hmp0, hmr0, hBlt, hzr⟩ := k28l2b_alg hα1 hβ1 hq hr hr2 hr1 hmp hmr hD'' hB'' hBs hne
   obtain ⟨μ, hμ⟩ : ∃ μ : ℝ, μ = mr / (-mp) := ⟨_, rfl⟩
@@ -92,10 +92,10 @@ theorem k28l2_Bp {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hμ0 : 0 < μ := by rw [hμ]; exact div_pos hmr0 ht
   have hμt : μ * (-mp) = mr := by rw [hμ, div_mul_cancel₀ _ ht.ne']
   have hE5 : α1 ≤ β1 * μ + 1 := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_pos (sub_pos.2 hn) ht]
   have hE6 : (β1 - 1) * μ < α1 := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_le_mul_of_nonneg_right hn ht.le]
   obtain ⟨r, hr'⟩ : ∃ r : ℝ³, r = R + μ • P := ⟨_, rfl⟩
   have hΔ : det3 P Q r ≠ 0 := by
@@ -107,7 +107,7 @@ theorem k28l2_Bp {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hu_r : mr • P - mp • R = (-mp) • r := by rw [hr', ← hμt]; module
   have hzr : ⟪c, r⟫ < ⟪a', r⟫ := by
     rw [hu, hu_r, inner_smul_right, inner_smul_right] at hz
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_nonneg ht.le (sub_nonneg.2 hn)]
   have hdac : ⟪a - c', r⟫ = 0 := by
     rw [w1, hr']
@@ -118,7 +118,7 @@ theorem k28l2_Bp {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hcd : 0 < ⟪c - d, r⟫ := by
     rw [← hR, hr']
     simp only [inner_add_right, inner_smul_right, hRP, hPR]
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_nonneg ht.le (neg_nonneg.2 hn), hμt]
   obtain ⟨m1, hm1d⟩ : ∃ m1 : ℝ, m1 = ⟪c' - a, P⟫ := ⟨_, rfl⟩
   obtain ⟨m2, hm2d⟩ : ∃ m2 : ℝ, m2 = ⟪c' - a, Q⟫ := ⟨_, rfl⟩
@@ -160,7 +160,7 @@ theorem k28l2_Bp {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     simp only at h1 h2
     have hv2 : v2 < 0 := by linarith
     refine ⟨hv2, ?_⟩
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_nonneg hm1p.le (neg_nonneg.2 hn), mul_pos hww (neg_pos.2 hv2), mul_pos (by linarith : (0:ℝ) < β1) h2]
   refine ⟨r, hr0, ?_⟩
   refine k25_tie_cell2 (V8 a a' b b' c c' d) P Q r d hΔ (k := 5) (by norm_num) (k28l2bY α1 β1 β6 γ6 μ)

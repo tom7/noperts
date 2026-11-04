@@ -72,11 +72,11 @@ theorem k22x2_cell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h 
   have hz0 : 0 < ⟪P, Q⟫ := by nlinarith
   have hγ4 : 1 < γ4 := by
     by_contra hn
-    push_neg at hn
+    push Not at hn
     nlinarith
   have hCS : ⟪Q, R⟫ ^ 2 < ⟪Q, Q⟫ * ⟪R, R⟫ := by
     by_contra hn
-    push_neg at hn
+    push Not at hn
     have hn0 : ‖⟪Q, Q⟫ • R - ⟪Q, R⟫ • Q‖ ^ 2 ≤ 0 := by
       rw [← real_inner_self_eq_norm_sq]
       simp only [inner_sub_left, inner_sub_right, inner_smul_left, inner_smul_right, conj_trivial, hRQ]
@@ -97,7 +97,7 @@ theorem k22x2_cell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h 
     · linarith
   have hb'' : (1 - γ4) * ⟪Q, R⟫ < ⟪R, R⟫ := by
     by_contra hn
-    push_neg at hn
+    push Not at hn
     nlinarith [mul_le_mul_of_nonneg_left hn hQQ.le]
   refine ⟨R, hR0, ?_⟩
   refine k18_cone_cell (V8 a a' b b' c c' d) P Q R d hΔ (k := 4) (by norm_num) (k22x2Y β1 γ4 γ6)

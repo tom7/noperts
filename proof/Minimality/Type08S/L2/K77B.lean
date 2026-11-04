@@ -253,7 +253,7 @@ theorem k77_thm1 (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P) 
     ⟨P * Y * z ^ 2 / (2 * (Y - Q)), by field_simp⟩
   have hepos : 0 < eps := by
     have : 0 < 2 * (Y - Q) * eps := by rw [heps]; positivity
-    by_contra hc; push_neg at hc; nlinarith
+    by_contra hc; push Not at hc; nlinarith
   exact k77_core1 B P Q Y dx dz cx cz ex ey ez hB hP hQ hY hYQ hconv hd0 hd1 hc0 hc1 hin1 hin2 hin3 hin4
     z eps hz heps hepos h1 h2 h3
 

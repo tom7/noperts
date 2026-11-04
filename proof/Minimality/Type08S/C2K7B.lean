@@ -55,7 +55,7 @@ theorem k7_facet {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) {α1 �
     rw [hn3, hn2] at ec
     nlinarith
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have : α1 * F.f b' = δ * (α1 * β6 - α4 * (1 - β1)) := by
     have : F.f b' = δ + α4 * n1 + n3 := by linarith
     rw [this]

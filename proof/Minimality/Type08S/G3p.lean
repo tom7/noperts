@@ -156,7 +156,7 @@ theorem facet_sign08 {V : Finset ℝ³} {P Q R : ℝ³} (F : FacetFn V P Q R) {v
       F.f w * det3 (Q - P) (R - P) (v - P) ^ 2 := by
     linear_combination (det3 (Q - P) (R - P) (v - P)) * h.symm
   by_contra hc
-  push_neg at hc
+  push Not at hc
   nlinarith [mul_nonneg_of_nonpos_of_nonpos hv.le hc, mul_pos_of_neg_of_neg hv hw]
 
 /-! ### Gale brackets in the normal form -/
@@ -1225,13 +1225,13 @@ theorem nws_Q {zd za zb zc a g : ℝ} (ha : 0 < a) (hg : 0 < g) (hag : 1 < a + g
     · nlinarith [mul_nonneg hx hy, mul_nonneg ha.le hx, mul_nonneg hg.le hy]
   constructor
   · by_contra h
-    push_neg at h
+    push Not at h
     obtain ⟨h1', h2', h3', h4'⟩ := h
     apply h1
     have := key (zd - za) (zd - zc) (by linarith) (by linarith) (by nlinarith) (by nlinarith)
     linarith
   · by_contra h
-    push_neg at h
+    push Not at h
     obtain ⟨h1', h2', h3', h4'⟩ := h
     apply h1
     have := key (za - zd) (zc - zd) (by linarith) (by linarith) (by nlinarith) (by nlinarith)

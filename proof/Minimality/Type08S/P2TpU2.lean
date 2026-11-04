@@ -33,14 +33,14 @@ theorem tpU2 {a c ν α4 γ4 β1 : ℝ} (hν : 0 < ν) (hα4 : 0 < α4) (hγ4 : 
   have hM0 : 0 < max a (α4 * a + γ4 * c) := lt_of_le_of_lt (le_max_left _ _) hM
   have hD : 0 < c ∨ 0 < a := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     obtain ⟨hc, ha⟩ := hcon
     rcases le_total a (α4 * a + γ4 * c) with h | h
     · rw [max_eq_right h] at hM0; nlinarith [mul_nonneg hα4.le (neg_nonneg.2 ha), mul_nonneg hγ4.le (neg_nonneg.2 hc)]
     · rw [max_eq_left h] at hM0; linarith
   have hC : c < α4 * a + γ4 * c ∨ c < 0 := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     obtain ⟨hcb, hc0⟩ := hcon
     have hmx : max 0 c = c := max_eq_right hc0
     rw [hmx] at hM

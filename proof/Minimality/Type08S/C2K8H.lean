@@ -88,7 +88,7 @@ theorem tpA1ii_zero_tie_hasLexCell {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b
   rcases htie with ⟨hpos, hz, hxy⟩ | ⟨hneg, hz, hxy⟩
   · have hβ6g : 1 < β6 := by
       rw [hXE] at hpos
-      by_contra hcon; push_neg at hcon
+      by_contra hcon; push Not at hcon
       nlinarith
     rw [es1] at hz
     obtain ⟨u1, u2, t1, t2, hut, hco, hw⟩ := k8_tilt2 ⟪a' - c', p⟫ ⟪a' - c', q⟫ hxy
@@ -99,7 +99,7 @@ theorem tpA1ii_zero_tie_hasLexCell {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b
           simp [k3q2pCyc, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4]) hVall
   · have hβ6l : β6 < 1 := by
       rw [hXE] at hneg
-      by_contra hcon; push_neg at hcon
+      by_contra hcon; push Not at hcon
       nlinarith
     rw [es2] at hz
     obtain ⟨u1, u2, t1, t2, hut, hco, hw⟩ := k8_tilt2 ⟪b - c', p⟫ ⟪b - c', q⟫ hxy
@@ -135,7 +135,7 @@ theorem tpA1ii_hasLexCell_K8 {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c 
       rcases hties with ⟨h1, h2⟩ | ⟨h1, h2⟩
       · exact Or.inl ⟨h1, h2, (hL2 hC0').1 h1 h2⟩
       · exact Or.inr ⟨h1, h2, (hL2 hC0').2 h1 h2⟩
-    · push_neg at hties
+    · push Not at hties
       exact tpA1ii_hasLexCell N h hX (fun hp => hties.1 hp) (fun hn => hties.2 hn)
 
 end C2

@@ -110,7 +110,7 @@ theorem k34lw_Sq {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
       have hc := real_inner_comm (b - d) (c - d)
       rw [show b - c = (b - d) - (c - d) by abel]
       simp only [inner_sub_left, inner_sub_right] at hc ⊢; linarith
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     rw [h2, ← h3] at h1
     nlinarith [mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hbc.le, mul_pos (by linarith : (0:ℝ) < β1 - 1) hrel.2]
   have hX : 0 ≤ ⟪a - d, R⟫ := by
@@ -158,7 +158,7 @@ theorem k34lw_Sq {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
       have e : γ6 * (⟪a - d, a - d⟫ - ⟪a - d, c - d⟫) * (ν * m1 + m3) = γ6 * m1 * (ν * (⟪a - d, a - d⟫ - ⟪a - d, c - d⟫) - (⟪c - d, c - d⟫ - ⟪a - d, c - d⟫)) := by
         linear_combination ν * 0 + key
       rw [e]; exact mul_neg_of_pos_of_neg (mul_pos hγ6 k1) (by linarith)
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_nonneg hg.le hn]
   have e5 : b' - a = (α1 - 1) • (a - d) + β1 • (c - d) := by rw [hb']; module
   rw [e5, inner_add_right, inner_smul_right, inner_smul_right, ← hm1, ← hm3]

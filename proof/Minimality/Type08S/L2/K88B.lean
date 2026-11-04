@@ -177,7 +177,7 @@ lemma k84_exist (P Q Y W : ℝ) (hP : 0 < P) (hQ : 0 < Q) (hY : Q < Y) (hW : W <
   have R6 : 0 < 2*P*(Y-Q) - 2*d*z := by
     by_cases hd : 0 < d
     · have := hz3 hd; rw [lt_div_iff₀ hd] at this; nlinarith
-    · push_neg at hd; nlinarith [mul_pos hP hYQ, mul_nonneg (neg_nonneg.2 hd) hzpos.le]
+    · push Not at hd; nlinarith [mul_pos hP hYQ, mul_nonneg (neg_nonneg.2 hd) hzpos.le]
   have R7 : 0 < 2*W*(Y-Q) + 2*c*z := by nlinarith
   have hPW : 0 < P - W := by linarith
   refine ⟨z, min (2*P*(Y-Q) - 2*d*z) (2*W*(Y-Q) + 2*c*z) / (2*(P-W)), hzpos, ?_, e2, ?_, ?_⟩

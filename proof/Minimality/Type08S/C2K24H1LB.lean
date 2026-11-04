@@ -90,7 +90,7 @@ theorem k24h1_ge {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ} (W : Norm08w
   have hF4' : ⟪c', r⟫ ≤ ⟪a, r⟫ := by
     rw [hbc, inner_smul_right] at hL
     have : 0 ≤ ⟪a - c', r⟫ := by
-      by_contra hn; push_neg at hn; nlinarith [mul_pos hs (neg_pos.2 hn)]
+      by_contra hn; push Not at hn; nlinarith [mul_pos hs (neg_pos.2 hn)]
     rw [inner_sub_left] at this; linarith
   -- tie breaking functional
   obtain ⟨E, hEray, hEex⟩ : ∃ E : List (ℝ × ℝ), (∀ l ∈ E, k18LexPos (l.1 * (-1) + l.2 * 0) (l.1 * 0 + l.2 * 1)) ∧

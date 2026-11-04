@@ -98,7 +98,7 @@ theorem pic_K2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg :
   · have : 0 < θ 0 * ⟪(nfShape08 d E₁ E₂ E₃ θ 0) - (nfShape08 d E₁ E₂ E₃ θ 2), e1⟫ := by rw [hXd]; exact hL
     exact pos_of_mul_pos_right this p0.le
   · by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     nlinarith [mul_pos dB hL]
   · rw [hYq, mul_div_assoc, div_self hYg.ne', mul_one]
     linarith

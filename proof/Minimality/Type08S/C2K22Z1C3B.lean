@@ -101,7 +101,7 @@ theorem k22z1_c3_strict {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d
     rw [e, inner_sub_left, iqR, ipR] at hS
     linarith
   have hpp : 0 < ⟪p, p⟫ := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_nonneg hu0.le (by linarith : 0 ≤ -⟪p, p⟫)]
   set x := ⟪r, p⟫ with hx
   set pp := ⟪p, p⟫ with hpp'

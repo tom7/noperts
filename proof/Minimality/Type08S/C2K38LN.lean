@@ -209,7 +209,7 @@ theorem k34lw_N {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hP1v : 0 < ⟪c - d, R⟫ := by
     have hS' : ⟪a - c', a - d⟫ < 0 := by rw [real_inner_comm]; exact hS
     have hpa : 0 < ⟪a - c', c - d⟫ := by
-      by_contra hn; push_neg at hn
+      by_contra hn; push Not at hn
       nlinarith [mul_nonneg k1.le (neg_nonneg.2 hn), mul_pos_of_neg_of_neg k3 hS']
     rw [hac, inner_smul_left, real_inner_comm] at hpa
     simp only [conj_trivial] at hpa

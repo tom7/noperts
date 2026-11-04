@@ -35,11 +35,11 @@ lemma poly_fan (a b q y : ℝ²) (hD : 0 < cross2 (b - a) (q - a))
   obtain ⟨s, hsD⟩ : ∃ s, s * cross2 (b - a) (q - a) = -cross2 (q - a) (y - a) :=
     ⟨_, div_mul_cancel₀ _ hDne⟩
   have ht0 : 0 ≤ t := by
-    by_contra h; push_neg at h; nlinarith [mul_neg_of_neg_of_pos h hD]
+    by_contra h; push Not at h; nlinarith [mul_neg_of_neg_of_pos h hD]
   have hs0 : 0 ≤ s := by
-    by_contra h; push_neg at h; nlinarith [mul_neg_of_neg_of_pos h hD]
+    by_contra h; push Not at h; nlinarith [mul_neg_of_neg_of_pos h hD]
   have hst : s + t ≤ 1 := by
-    by_contra h; push_neg at h
+    by_contra h; push Not at h
     have h4 : cross2 (b - a) (q - a) < (s + t) * cross2 (b - a) (q - a) := by nlinarith
     simp only [cross2, PiLp.sub_apply] at h3 h4 htD hsD
     nlinarith
@@ -100,7 +100,7 @@ theorem halfPlanes_of_ccwPolygon {k : ℕ} [NeZero k] (c : ZMod k → ℝ²) (hk
       rw [this] at hmspec; linarith [hmspec.2]
     have hfi : 0 < f (m - 1) := by
       by_contra hneg
-      push_neg at hneg
+      push Not at hneg
       exact Nat.find_min hex (m := m - 1) (by omega) ⟨by omega, hneg⟩
     obtain ⟨i, hi⟩ : ∃ i, m = i + 1 := ⟨m - 1, by omega⟩
     have him : i = m - 1 := by omega

@@ -45,7 +45,7 @@ theorem k94_w3f (pp u y g k e s qq qr rr : ℝ) (hpp : 0 < pp) (hu : 0 < u) (hy 
   · intro hL
     rw [e_Lam] at hL
     have h2 : 0 < 2*g+3*u-1 := by
-      by_contra hc; push_neg at hc
+      by_contra hc; push Not at hc
       have : pp*u*(g+2*u)*(2*g+3*u-1)/(2*(u+g)*u+g) ≤ 0 :=
         div_nonpos_of_nonpos_of_nonneg (mul_nonpos_of_nonneg_of_nonpos (by positivity) hc) hQ.le
       linarith
@@ -57,7 +57,7 @@ theorem k94_w3f (pp u y g k e s qq qr rr : ℝ) (hpp : 0 < pp) (hu : 0 < u) (hy 
   · intro hL
     rw [e_Lam] at hL
     have h2 : 0 < 1-2*g-3*u := by
-      by_contra hc; push_neg at hc
+      by_contra hc; push Not at hc
       have : 0 ≤ pp*u*(g+2*u)*(2*g+3*u-1)/(2*(u+g)*u+g) :=
         div_nonneg (mul_nonneg (by positivity) (by linarith)) hQ.le
       linarith
@@ -96,7 +96,7 @@ theorem k94_w3f (pp u y g k e s qq qr rr : ℝ) (hpp : 0 < pp) (hu : 0 < u) (hy 
     have hs' : s = u*pp := hs
     obtain ⟨t, ht⟩ : ∃ t : ℝ, t*(1-2*u) = 1 := ⟨1/(1-2*u), by field_simp⟩
     have htpos : 0 < t := by
-      by_contra hc; push_neg at hc
+      by_contra hc; push Not at hc
       nlinarith [mul_nonpos_of_nonpos_of_nonneg hc h12.le]
     have hkey : (t-1)/(2*t) = u := by
       rw [div_eq_iff (by positivity)]; nlinarith [ht]

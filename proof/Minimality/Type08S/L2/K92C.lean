@@ -57,10 +57,10 @@ theorem k92_comb {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   · left; exact k61_B hC hR1 hα1 hβ1 hb6 hlam hg6 hB (by nlinarith) fF2 fF3 hT (hQ1 hB)
   by_cases hCc : α1 ≤ (β1 - 1) * lam
   · left; exact k61_C hC hR1 hα1 hβ1 hb6 hlam hg6 hσ (by nlinarith) hCc fF1 fF3 hT (hQ2 hCc)
-  push_neg at hB hCc
+  push Not at hB hCc
   by_cases hzab : 0 < ⟪a, R⟫ - ⟪b', R⟫
   · left; exact k61_A hC hR1 hα1 hβ1 hb6 hlam hg6 hB hCc fF1 fF2 hzab hT hP
-  push_neg at hzab
+  push Not at hzab
   rcases hB.lt_or_eq with hlt | heq
   · rcases lt_trichotomy (⟪a', R⟫ - ⟪b, R⟫) 0 with hz | hz | hz
     · left; exact k61_Ap hC hR1 hα1 hβ1 hb6 hlam hg6 hlt hCc fF1 fF2 hT hP (by linarith)

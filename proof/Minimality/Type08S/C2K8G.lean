@@ -148,7 +148,7 @@ theorem k8_tilt2 (x y : ℝ) (h : 0 < x ∨ 0 < y) : ∃ u1 u2 t1 t2 : ℝ, u1 *
     have := neg_abs_le ((η + lam * η) * x)
     nlinarith
   · have hx : 0 < x := h.resolve_right hy
-    push_neg at hy
+    push Not at hy
     by_cases hy0 : y = 0
     · refine ⟨1, 1, 1, 0, by simp, fun lam hl0 hl1 => ⟨by linarith, by simp⟩, ?_⟩
       intro lam hl0 hl1

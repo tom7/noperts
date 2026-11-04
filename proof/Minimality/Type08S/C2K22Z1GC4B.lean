@@ -60,7 +60,7 @@ theorem k22z1g_c4 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h :
   have hu0 : 0 < u := by linarith
   have hα4' : α4 = 1 + k := by rw [hk] at hαγ; linarith
   have hk0 : 0 < k := by
-    by_contra hh; push_neg at hh
+    by_contra hh; push Not at hh
     have : 1 * k ≤ 0 := by linarith
     linarith
   subst hk hu hα4'

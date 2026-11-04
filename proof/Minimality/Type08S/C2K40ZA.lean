@@ -44,7 +44,7 @@ theorem k40_sig {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   by_cases h0 : k33Mpp a b c d = 0 ∨ k28b2rOri α1 β1 β6 γ6 ⟪a - d, a - d⟫ ⟪a - d, b - d⟫ ⟪b - d, b - d⟫
       ⟪b - d, c - d⟫ ⟪c - d, c - d⟫ = 0
   · exact Or.inr ⟨hm, Or.inr ⟨hl, h0⟩⟩
-  push_neg at h0
+  push Not at h0
   obtain ⟨hm0, ho0⟩ := h0
   have hmp : 0 < k33Mpp a b c d := lt_of_le_of_ne hm (Ne.symm hm0)
   have hop : 0 < k28b2rOri α1 β1 β6 γ6 ⟪a - d, a - d⟫ ⟪a - d, b - d⟫ ⟪b - d, b - d⟫

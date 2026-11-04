@@ -45,7 +45,7 @@ theorem exists_strict_of_no_balanced {κ E : Type*} [Fintype κ] [NormedAddCommG
     · have := h (fun k => μ (some k)) (fun k => hμ0 _) hz h1
       have := hμ0 none
       linarith
-    · push_neg at hz
+    · push Not at hz
       have : ∑ k, μ (some k) = 0 := Finset.sum_eq_zero fun k _ => hz k
       have hn : μ none = 1 := by linarith
       have : ∑ k, μ (some k) * b k = 0 := Finset.sum_eq_zero fun k _ => by rw [hz k]; ring

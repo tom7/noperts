@@ -37,7 +37,7 @@ theorem angBig_gamma {a b b' c d e1 e2 e3 o : ℝ³} {ν v1 C0 w1 ha w3 α4 γ4 
     rw [hc, hd]; simp only [pt, pc]; module
   rw [f1, f2, f3, f4, det3_coord, det3_coord] at hang
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   have hpos : 0 < ν ^ 2 * ha ^ 2 * v1 ^ 2 := by positivity
   nlinarith [sq_nonneg (det3 e1 e2 e3), mul_nonneg (sq_nonneg (det3 e1 e2 e3)) (mul_nonneg hpos.le (sub_nonneg.mpr hcon))]
 

@@ -173,7 +173,7 @@ theorem k32h_LzLq {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hm3μ : m3 = μ * m1 := by rw [hμ]; field_simp
   have hLp' : 0 < α1 + (β1 - 1) * μ := by
     rw [hm3μ] at kp
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_nonneg (by linarith : 0 ≤ -(α1 + (β1 - 1) * μ)) k1.le]
   have hLq' : α1 - 1 + β1 * μ = 0 := by
     rw [hm3μ] at kq

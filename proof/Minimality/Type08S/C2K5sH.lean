@@ -115,7 +115,7 @@ theorem k5_hasLexCell {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (
       · simp only [k1Cyc, pc5_3, eB']; simp [V8]
       · simp only [k1Cyc, pc5_4, eC]; simp [V8]
     · have hx0 : 0 < ⟪(β6 - 1) • p + q, p⟫ := by
-        push_neg at hX1
+        push Not at hX1
         rcases hX1.1.lt_or_eq with h | h
         · exact h
         · exact absurd ⟨h.symm, hX1.2⟩ hres'

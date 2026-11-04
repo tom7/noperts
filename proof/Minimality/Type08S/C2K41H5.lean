@@ -166,11 +166,11 @@ theorem k39h5_S0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hRR : 0 < ⟪R, R⟫ := real_inner_self_pos.2 hR0
   have key1 : 0 < ⟪b' - c, R⟫ := by
     rw [hS, hEd, hbR, zero_smul, zero_sub, inner_neg_right, real_inner_smul_right, real_inner_smul_right] at hd1
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_pos hE hβ1p, mul_nonneg (mul_pos hE hβ1p).le (neg_nonneg.2 hn)]
   have key2 : 0 < ⟪c - a', R⟫ := by
     rw [hS, hEd, hbR, zero_smul, zero_sub, inner_neg_right, real_inner_smul_right, real_inner_smul_right] at hd2
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_pos hE hβ1p, mul_nonneg (mul_pos hE hβ1p).le (neg_nonneg.2 hn)]
   have key3 : 0 < ⟪b' - c', R⟫ := by
     have e : b' - c' = (b' - a) - (c' - a) := by abel

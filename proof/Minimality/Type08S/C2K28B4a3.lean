@@ -35,7 +35,7 @@ theorem k28b4_A {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hm3μ : m3 = μ * m1 := by rw [hμ]; field_simp
   have hLp' : α1 + (β1 - 1) * μ < 0 := by
     rw [hm3μ] at k4
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_nonneg hn k1.le]
   obtain ⟨R, hR⟩ : ∃ R : ℝ³, R = μ • (a - d) - (c - d) := ⟨_, rfl⟩
   rw [← hR] at k5

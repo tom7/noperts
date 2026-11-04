@@ -70,7 +70,7 @@ theorem k22c1b_uni {k : ℕ} [NeZero k] (h1 : (1 : ZMod k) ≠ 0) (z w : ZMod k 
     intro j hj
     simp only [hS, Finset.mem_filter, Finset.mem_univ, true_and] at hj
     by_contra hc
-    push_neg at hc
+    push Not at hc
     rcases h j hc.1 hc.2 with h' | h'
     · exact k22c1b_lexLt_asymm hj.1 h'
     · exact k22c1b_lexLt_asymm hj.2 h'

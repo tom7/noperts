@@ -53,7 +53,7 @@ theorem resNJ_imp_K {a a' b b' c c' d : ℝ³} {N : Norm08 a a' b b' c c' d} (h 
     exact h3 (C2.s4TR_hasLexCell N h hne)
   · refine Or.inr (Or.inl ⟨h, ?_⟩)
     by_contra hne
-    push_neg at hne
+    push Not at hne
     obtain ⟨hb6, hC⟩ := hne
     apply h3
     refine C2.s4TpR_hasLexCell N h hb6 ?_

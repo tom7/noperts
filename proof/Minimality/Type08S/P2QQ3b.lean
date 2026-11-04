@@ -241,7 +241,7 @@ theorem hq2_of_regN2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (
         N.F.ab'c'.f c * (fc08 θ 0 3 5 1 - fc08 θ 0 3 5 4) := by linear_combination hfac'
     rw [this]; exact mul_neg_of_neg_of_pos hneg (by linarith)
   by_contra hcon
-  push_neg at hcon
+  push Not at hcon
   nlinarith
 theorem nfN2_of_rim {o E₁ E₂ E₃ : ℝ³} (hE : det3 E₁ E₂ E₃ ≠ 0) {θ : Fin 6 → ℝ}
     (hθ : Ineq08w θ) (h6 : 1 < θ 5) (s : Bool) {k' : ℕ} [NeZero k']

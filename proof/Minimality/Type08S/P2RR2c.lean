@@ -43,7 +43,7 @@ theorem arith_N2 {ν w3 C0 α1 α4 β1 γ4 : ℝ} (hν : 0 < ν) (hα : 1 < α1)
       rw [k]; apply mul_pos hν; linarith
     have k3 : 0 < α4 * w3 - ν * (1 - γ4) := pos_of_mul_pos_right k2 (by linarith)
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     nlinarith
   refine ⟨h1, h2, ?_⟩
   by_cases hb : β1 < 1
@@ -51,7 +51,7 @@ theorem arith_N2 {ν w3 C0 α1 α4 β1 γ4 : ℝ} (hν : 0 < ν) (hα : 1 < α1)
     have : 0 < α1 * w3 := by rw [hw]; apply mul_pos hν; linarith
     exact pos_of_mul_pos_right this (by linarith)
   · right
-    push_neg at hb
+    push Not at hb
     have : α1 * w3 ≤ 0 := by rw [hw]; nlinarith
     have hw0 : w3 ≤ 0 := by nlinarith
     have : 0 < γ4 * C0 := by nlinarith

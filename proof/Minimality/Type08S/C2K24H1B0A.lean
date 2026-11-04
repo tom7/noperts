@@ -151,10 +151,10 @@ theorem k24h1b0_T {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   simp only [hPR, hRP] at ht1 hm1 hm2 hg ⊢
   have hdet2 : 0 < det3 P Q R ^ 2 := by positivity
   have hee : 0 < ⟪Q, Q⟫ + ⟪R, R⟫ - 2 * ⟪Q, R⟫ := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [sq_nonneg (⟪Q, Q⟫ - ⟪R, R⟫), real_inner_self_nonneg (x := Q), real_inner_self_nonneg (x := R)]
   have hm : ⟪P, Q⟫ < 0 := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     have := mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hee.le
     nlinarith [mul_pos (sub_pos.2 hβ1) hr2]
   have hα : 0 < α1 - 1 := by linarith
@@ -162,7 +162,7 @@ theorem k24h1b0_T {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     linear_combination (-1 : ℝ) * ht1
   have hkp : 0 < (1 - α1) * ⟪P, Q⟫ := by nlinarith
   have hrk : (1 - α1) * ⟪P, Q⟫ < β1 * ⟪R, R⟫ := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     have h1 : 0 < γ6 + β6 - 1 := by linarith
     nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ γ6 - 1) (by linarith : (0:ℝ) ≤ (1 - α1) * ⟪P, Q⟫ - β1 * ⟪R, R⟫), mul_pos (by linarith : (0:ℝ) < β6) (by nlinarith : (0:ℝ) < (1 - α1) * ⟪P, Q⟫ - β1 * ⟪Q, R⟫)]
   have hD : 0 < ⟪Q, Q⟫ * ⟪R, R⟫ - ⟪Q, R⟫ ^ 2 := by nlinarith

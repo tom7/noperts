@@ -58,7 +58,7 @@ theorem lemEF_of_3 (hF : Fr e1 e2 e3) (O : ℝ³) {κ L zf Xr Yr zr Xg Yg zg : �
   unfold LemEF
   have key : Yr ^ 2 * (((Xr - Xg) * (κ - zf) + L * (zr - zg)) * ((Xr - Xg) * (0 - zf) + L * (zr - zg))) ≤ 0 := by
     convert h using 1; ring
-  by_contra hc; push_neg at hc
+  by_contra hc; push Not at hc
   nlinarith [mul_pos (pow_pos hYr 2) hc]
 
 

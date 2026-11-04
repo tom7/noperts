@@ -14,7 +14,7 @@ namespace Minimality.Type08Sp.C2
 theorem k61_pq_neg {α1 β1 pq qq qr rr : ℝ} (hβ : 1 < β1) (hα : 1 < α1) (hqq : qr < qq) (hrr : qr < rr)
     (hrel : α1 * pq * (qq + rr - 2 * qr) = -(β1 - 1) * (qq * rr - qr ^ 2)) (hpd : 0 < qq * rr - qr ^ 2) :
     pq < 0 := by
-  by_contra h; push_neg at h
+  by_contra h; push Not at h
   nlinarith [mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) h) (by linarith : (0:ℝ) ≤ qq + rr - 2 * qr),
     mul_pos (by linarith : (0:ℝ) < β1 - 1) hpd]
 

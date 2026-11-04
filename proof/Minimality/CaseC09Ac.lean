@@ -224,7 +224,7 @@ theorem t095_rest3_5_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp
         ((quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ (i + 1)).sub (quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ i))
         ((⟨1, 0, 0⟩ : C3).sub (quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ i)) := by
   have hds : 0 < ds := by
-    by_contra hn; push_neg at hn; nlinarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
+    by_contra hn; push Not at hn; nlinarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
   have hsm' : 0 < 1 - tm := by linarith
   have hsp' : 0 < 1 - sp := by linarith
   have htm' : 0 < 1 - tm := by linarith
@@ -270,7 +270,7 @@ theorem t095_rest4_5_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp
         ((quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ (i + 1)).sub (quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ i))
         ((⟨tm, 0, -hm⟩ : C3).sub (quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ i)) := by
   have hds : 0 < ds := by
-    by_contra hn; push_neg at hn; nlinarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
+    by_contra hn; push Not at hn; nlinarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
   have hsm' : 0 < 1 - tm := by linarith
   have hsp' : 0 < 1 - sp := by linarith
   have htm' : 0 < 1 - tm := by linarith

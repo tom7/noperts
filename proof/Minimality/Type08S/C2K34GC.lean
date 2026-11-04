@@ -44,7 +44,7 @@ theorem k32g_hE_real {α1 β1 γ6 pp s qq qr rr m1 m3 : ℝ} (hα1 : 1 < α1) (h
   have hpos : 0 < γ6 * qr + (qq - qr) := by
     have : (γ6 * qr + (qq - qr)) * (rr - qr) = qq * rr - qr ^ 2 := by
       nlinarith [V]
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_nonneg (neg_nonneg.2 hn) (sub_pos.2 hv).le]
   exact mul_pos hγ6 hpos
 

@@ -116,8 +116,8 @@ theorem Ineq08w.of_pos {θ : Fin 6 → ℝ} (h : ∀ k, 0 < ineq08 θ k) : Ineq0
   have h9 : 0 < -(gWa θ * gWU θ) := h 9
   have h10 : 0 < -(gWb θ * gWU θ) := h 10
   refine ⟨fun k _ _ _ => h k, ?_, ?_⟩
-  · by_contra hc; push_neg at hc; nlinarith [mul_pos_of_neg_of_neg hc hU]
-  · by_contra hc; push_neg at hc; nlinarith [mul_pos_of_neg_of_neg hc hU]
+  · by_contra hc; push Not at hc; nlinarith [mul_pos_of_neg_of_neg hc hU]
+  · by_contra hc; push Not at hc; nlinarith [mul_pos_of_neg_of_neg hc hU]
 
 
 set_option maxHeartbeats 4000000 in

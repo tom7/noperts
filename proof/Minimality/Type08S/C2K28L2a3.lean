@@ -35,7 +35,7 @@ theorem k28l2a_alg {α1 β1 pp s qr qq rr : ℝ} (hα1 : 1 < α1) (hβ1 : 1 < β
   have hA : 0 < α1 - 1 := by linarith
   have hW : 0 < qq + rr - 2 * qr := by linarith
   have hs : s < 0 := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hW.le, mul_pos hB hD]
   obtain ⟨μ, hμd⟩ : ∃ μ, μ = -((1 - α1) * pp - β1 * s) := ⟨_, rfl⟩
   obtain ⟨mr, hmrd⟩ : ∃ mr, mr = (1 - α1) * s - β1 * qr := ⟨_, rfl⟩

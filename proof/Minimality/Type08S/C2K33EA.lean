@@ -36,7 +36,7 @@ theorem k32e_signs (α β γ pp s qq qr rr : ℝ) (hα : 1 < α) (hβ : 1 < β) 
     s < 0 ∧ 0 < α * pp + (β - 1 - γ) * s ∧ α * s + (β - 1) * qr - γ * rr < 0 := by
   have hW : 0 < qq + rr - 2 * qr := by linarith
   have hs : s < 0 := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     have := mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α) hn) hW.le
     nlinarith [mul_pos (sub_pos.2 hβ) hD]
   refine ⟨hs, ?_, ?_⟩
@@ -99,7 +99,7 @@ theorem k32e_core_b4E (α β γ pp s qq qr rr : ℝ) (hα : 1 < α) (hβ : 1 < �
         + γ * (γ - 1) * (rr - qr) * (qq + rr - 2 * qr) := by
     linear_combination (-γ) * hrel
   have hq : 0 < (γ - 1) * (rr - qr) * (qq + rr - 2 * qr) - γ * (qq - qr) * (rr - qr) := by
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     have h1 : 0 ≤ (β - 1) * (-((γ - 1) * (rr - qr) * (qq + rr - 2 * qr) - γ * (qq - qr) * (rr - qr))) :=
       mul_nonneg (by linarith) (by linarith)
     have h2 : 0 ≤ (α * (qq + rr - 2 * qr)) * ((α * s + (β - 1) * qr - γ * rr) * (α * pp + (β - 1) * s)

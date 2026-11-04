@@ -34,7 +34,7 @@ theorem k94_w1 (s pp qq qr rr e : ℝ) (hs : 0 < s) (hpp : 0 < pp) (hqx : qr < q
     have : 0 < pp*qq := lt_of_le_of_lt (sq_nonneg s) hD2
     exact (pos_iff_pos_of_mul_pos this).1 hpp
   have hrr0 : 0 < rr := by
-    by_contra hc; push_neg at hc
+    by_contra hc; push Not at hc
     nlinarith [mul_nonpos_of_nonneg_of_nonpos hqq0.le hc, sq_nonneg qr]
   have hqrE : pp*qr = s^2 := by
     have h : e*(rr+s)*(pp*qr - s^2) = 0 := by linear_combination s*hppE - (pp*rr - s^2)*hF1
@@ -51,7 +51,7 @@ theorem k94_w1 (s pp qq qr rr e : ℝ) (hs : 0 < s) (hpp : 0 < pp) (hqx : qr < q
     have h : (t*pp)*(e - 1 - e*t) = 0 := by linear_combination hF1
     exact (mul_eq_zero.1 h).resolve_left (by positivity)
   have hw : 0 < 1 - t := by
-    by_contra hc; push_neg at hc
+    by_contra hc; push Not at hc
     nlinarith [mul_nonpos_of_nonneg_of_nonpos (by linarith : (0:ℝ) ≤ e) hc]
   obtain ⟨w1, hwd⟩ : ∃ w1, w1 = 1 - t := ⟨_, rfl⟩
   rw [← hwd] at hw
@@ -64,7 +64,7 @@ theorem k94_w1 (s pp qq qr rr e : ℝ) (hs : 0 < s) (hpp : 0 < pp) (hqx : qr < q
   have hk0 : 0 < 1 - t^2 := by nlinarith
   obtain ⟨v, hv, hvd⟩ : ∃ v, 0 < v ∧ Y = (1-t^2) + v := by
     refine ⟨Y - (1-t^2), ?_, by ring⟩
-    by_contra hc; push_neg at hc
+    by_contra hc; push Not at hc
     have : Z*(Y-(1-t^2)) = (1-t^2)*Y := by linear_combination hYZ
     nlinarith [mul_nonpos_of_nonneg_of_nonpos hZ.le hc, mul_pos hk0 hY]
   have hZe : Z = (1-t^2)*((1-t^2)+v)/v := by

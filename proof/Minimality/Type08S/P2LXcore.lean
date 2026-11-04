@@ -73,13 +73,13 @@ theorem qtop_ev (h c : ZMod 5 → ℝ) (p : ZMod 5)
 theorem sgn_pos {σ a b : ℝ} (hσσ : σ * σ = 1) (ha : 0 < σ * a) (hab : 0 < a * b) : 0 < σ * b := by
   have e : (σ * b) * (σ * a) = a * b := by linear_combination (a * b) * hσσ
   by_contra hn
-  push_neg at hn
+  push Not at hn
   nlinarith [mul_nonpos_of_nonpos_of_nonneg hn ha.le]
 
 theorem sgn_neg {σ a b : ℝ} (hσσ : σ * σ = 1) (ha : 0 < σ * a) (hab : a * b < 0) : σ * b < 0 := by
   have e : (σ * b) * (σ * a) = a * b := by linear_combination (a * b) * hσσ
   by_contra hn
-  push_neg at hn
+  push Not at hn
   nlinarith [mul_nonneg hn ha.le]
 
 def ClassV2tail (L zx zf Xr Yr zr Xg Yg zg : ℝ) : Prop :=

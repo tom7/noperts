@@ -680,7 +680,7 @@ theorem rimB_rest (S : Shape18) (P q : ℝ) (hP : P < 0) (hV1 : S.sm * S.hm * q 
            linear_combination (-q - S.tp * P) * hVe
          have k2 := mul_pos (mul_pos a12 a6) (neg_pos.2 hm2)
          by_contra hc
-         push_neg at hc
+         push Not at hc
          nlinarith [mul_nonneg a3.le (neg_nonneg.2 hc)])
 
 
@@ -768,7 +768,7 @@ theorem rimC_rest (S : Shape18) (P q : ℝ) (hP : 0 < P) (hV1 : 0 < S.sm * S.hm 
            linear_combination (-q - S.tp * P) * hVe
          have k2 := mul_pos (mul_pos a12 a6) (neg_pos.2 hm2)
          by_contra hc
-         push_neg at hc
+         push Not at hc
          nlinarith [mul_nonneg a3.le (neg_nonneg.2 hc)])
 
 
@@ -837,12 +837,12 @@ theorem rimCp_cyc (S : Shape18) (P q : ℝ) (hP : 0 < P) (hV1 : 0 < S.sm * S.hm 
     | (right; constructor
        · linear_combination hVe
        · by_contra hc
-         push_neg at hc
+         push Not at hc
          nlinarith [mul_nonneg a3.le (neg_nonneg.2 hc)])
     | (right; constructor
        · linear_combination (-1 : ℝ) * hVe
        · by_contra hc
-         push_neg at hc
+         push Not at hc
          nlinarith [mul_nonneg a3.le (neg_nonneg.2 hc)])
 
 set_option maxHeartbeats 2000000 in
@@ -935,12 +935,12 @@ theorem rimM_cyc (S : Shape18) (P q : ℝ) (hP : 0 < P) (hV1 : S.sm * S.hm * q +
     | (right; constructor
        · linear_combination (-1 : ℝ) * hVe
        · by_contra hc
-         push_neg at hc
+         push Not at hc
          nlinarith [mul_nonneg a3.le (neg_nonneg.2 hc)])
     | (right; constructor
        · linear_combination hVe
        · by_contra hc
-         push_neg at hc
+         push Not at hc
          nlinarith [mul_nonneg a3.le (neg_nonneg.2 hc)])
 
 set_option maxHeartbeats 2000000 in
@@ -989,12 +989,12 @@ theorem rimM_rest (S : Shape18) (P q : ℝ) (hP : 0 < P) (hV1 : S.sm * S.hm * q 
     | (right; constructor
        · linear_combination (-1 : ℝ) * hVe
        · by_contra hc
-         push_neg at hc
+         push Not at hc
          nlinarith [mul_nonneg a3.le (neg_nonneg.2 hc)])
     | (right; constructor
        · linear_combination hVe
        · by_contra hc
-         push_neg at hc
+         push Not at hc
          nlinarith [mul_nonneg a3.le (neg_nonneg.2 hc)])
 
 /-! ### Group C helpers: rims at `am = bp` (the double `m1+ = xa + h u0`), pure real lemmas -/

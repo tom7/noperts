@@ -71,7 +71,7 @@ theorem k22x1_cell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h 
   have hz0 : 0 < ⟪P, Q⟫ := by nlinarith
   have hγ4 : 1 < γ4 := by
     by_contra hn
-    push_neg at hn
+    push Not at hn
     nlinarith
   refine ⟨R, hR0, ?_⟩
   refine k18_cone_cell (V8 a a' b b' c c' d) P Q R d hΔ (k := 3) (by norm_num) (k19Tri 1 β1 γ4)

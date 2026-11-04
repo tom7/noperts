@@ -31,7 +31,7 @@ theorem nf_tt_g1 (N : NF16 x) (h : N.q * N.d < (N.p + N.r - 1) * (N.g - 1)) : 1 
   have t0146 := N.t0146; have t024_1 := N.t024_1; have t146_2 := N.t146_2; have t245_6 := N.t245_6
   have t145_0 := N.t145_0; have tB125 := N.tB125
   by_contra hc
-  push_neg at hc
+  push Not at hc
   have hg1 : N.g < 1 := by nlinarith [mul_pos hq hd]
   nlinarith [mul_pos hq hd]
 
@@ -42,7 +42,7 @@ theorem nf_tt_c1 (N : NF16 x) (h : N.q * N.d < (N.p + N.r - 1) * (N.g - 1)) : 1 
   have t0146 := N.t0146; have t024_1 := N.t024_1; have t146_2 := N.t146_2; have t245_6 := N.t245_6
   have t145_0 := N.t145_0; have tB125 := N.tB125
   by_contra hc
-  push_neg at hc
+  push Not at hc
   nlinarith [mul_pos hq hd, mul_pos hp hq, mul_pos hq hr]
 
 theorem nf_tt_c3 (N : NF16 x) (h : N.q * N.d < (N.p + N.r - 1) * (N.g - 1)) :
@@ -71,7 +71,7 @@ theorem h16u_tt_LBE_cell (T : Type16 x) (h : T.ff 4 (x 1) < T.ff 4 (x 5))
   have hlit : N.q * N.d < (N.p + N.r - 1) * (N.g - 1) := by
     rw [P.eE1, P.eE5] at h
     have h' : 1 + s < 1 - N.d + s * N.g := by
-      by_contra hc; push_neg at hc
+      by_contra hc; push Not at hc
       have := mul_le_mul_of_nonpos_left hc he3.le
       linarith
     have : N.d < s * (N.g - 1) := by linarith
@@ -106,7 +106,7 @@ theorem h16u_tt_LBE_cell (T : Type16 x) (h : T.ff 4 (x 1) < T.ff 4 (x 5))
               (N.a - N.p) * (N.q * (1 - N.d) + (N.p + N.r - 1) * N.g) := by
           rw [← hsq]; ring
         rw [this]; exact c3
-      by_contra hc; push_neg at hc; nlinarith
+      by_contra hc; push Not at hc; nlinarith
     have hp := N.hp
     have : 0 < P.e3 * P.b0 := mul_pos_of_neg_of_neg he3 hb0
     nlinarith [mul_pos this (neg_pos.2 e)]
@@ -117,7 +117,7 @@ theorem h16u_tt_LBE_cell (T : Type16 x) (h : T.ff 4 (x 1) < T.ff 4 (x 5))
     have : 0 < s * N.g - N.d := by
       have h3 : N.q * N.d < (N.p + N.r - 1) * N.g := by nlinarith [N.hg]
       have : N.d < s * N.g := by
-        by_contra hc; push_neg at hc
+        by_contra hc; push Not at hc
         have := mul_le_mul_of_nonneg_left hc hq.le
         have e : N.q * (s * N.g) = (N.p + N.r - 1) * N.g := by rw [← hsq]; ring
         linarith

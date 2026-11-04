@@ -55,7 +55,7 @@ theorem tilt_choice {σ v1 w1 ha α1 α4 γ4 : ℝ} (hσ : σ = 1 ∨ σ = -1) (
     (by
       intro i
       by_contra hcon
-      push_neg at hcon
+      push Not at hcon
       obtain ⟨hp, hq⟩ := hcon
       have hX : (XY i).1 = 0 := by
         rcases mul_eq_zero.mp ((div_eq_zero_iff.mp hq).resolve_right hha.ne') with h | h

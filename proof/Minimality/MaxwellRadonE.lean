@@ -48,16 +48,16 @@ theorem mrb_single_pos {r X Y δ} (D : MRBData r X Y δ) (hr : 2 ≤ r) {a : ℕ
 theorem mrb_nocrown {r X Y δ} (D : MRBData r X Y δ) (hr : 2 ≤ r) (hnc : ¬ mrb_crown r δ) :
     ∀ k, k < r → δ k = 0 := by
   by_contra hnz
-  push_neg at hnz
+  push Not at hnz
   obtain ⟨p, hp, hp0⟩ := hnz
   -- there are positive and negative entries
   have hposex : ∃ q, q < r ∧ 0 < δ q := by
-    by_contra hh; push_neg at hh
+    by_contra hh; push Not at hh
     have := (Finset.sum_eq_zero_iff_of_nonpos (fun k hk => hh k (Finset.mem_range.1 hk))).1 D.h0
       p (Finset.mem_range.2 hp)
     exact hp0 this
   have hnegex : ∃ q, q < r ∧ δ q < 0 := by
-    by_contra hh; push_neg at hh
+    by_contra hh; push Not at hh
     have := (Finset.sum_eq_zero_iff_of_nonneg (fun k hk => hh k (Finset.mem_range.1 hk))).1 D.h0
       p (Finset.mem_range.2 hp)
     exact hp0 this
@@ -94,7 +94,7 @@ theorem mrb_nocrown {r X Y δ} (D : MRBData r X Y δ) (hr : 2 ≤ r) (hnc : ¬ m
       intro k hk hv
       by_contra hcon
       have hk' : k < a ∨ b < k := by
-        by_contra h2; push_neg at h2
+        by_contra h2; push Not at h2
         rcases h2 with h2
         have : k ≠ a := by rintro rfl; linarith
         have : k ≠ b := by rintro rfl; linarith
@@ -107,35 +107,35 @@ theorem mrb_nocrown {r X Y δ} (D : MRBData r X Y δ) (hr : 2 ≤ r) (hnc : ¬ m
     by_cases C2 : ∃ n, n < r ∧ δ n < 0 ∧ c < n ∧ n < d
     · obtain ⟨n, hnr, hnv, hcn, hnd⟩ := C2
       exact hnc ⟨a, c, n, d, hac, hcn, hnd, hdr, Or.inr ⟨hav, hcv, hnv, hdv⟩⟩
-    · push_neg at C2
+    · push Not at C2
       rcases hcd.lt_or_eq with hlt | heq
       · refine hp0 (mrb_chordB D (i := c) (j := d) hlt hdr ?_ ?_ p hp)
         · intro k h1 h2
-          by_contra hh; push_neg at hh
+          by_contra hh; push Not at hh
           have := C2 k (by omega) hh h1
           omega
         · intro k hk hk'
-          by_contra hh; push_neg at hh
+          by_contra hh; push Not at hh
           have := hPc k hk hh
           omega
       · refine hp0 (mrb_single_pos D hr hcr (a := c) ?_ p hp)
         intro k hk hk'
-        by_contra hh; push_neg at hh
+        by_contra hh; push Not at hh
         have := hPc k hk hh
         omega
-  · push_neg at C1
+  · push Not at C1
     rcases hab.lt_or_eq with hlt | heq
     · refine hp0 (mrb_chordA r X Y δ D.hO D.hne D.h0 D.hX D.hY (i := a) (j := b) hlt hbr ?_ ?_ p hp)
       · intro k h1 h2
-        by_contra hh; push_neg at hh
+        by_contra hh; push Not at hh
         exact absurd (C1 k (by omega) hh h1) (by omega)
       · intro k hk hk'
-        by_contra hh; push_neg at hh
+        by_contra hh; push Not at hh
         have := hNa k hk hh
         omega
     · refine hp0 (mrb_single_neg D hr har (a := a) ?_ p hp)
       intro k hk hk'
-      by_contra hh; push_neg at hh
+      by_contra hh; push Not at hh
       have := hNa k hk hh
       omega
 

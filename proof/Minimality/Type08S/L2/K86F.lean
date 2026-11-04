@@ -109,7 +109,7 @@ theorem k86_facts {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 lam : ℝ}
   have hl : lam * (α1 * pp - (β6 + γ6 - β1) * pq) = -α1 * pq + β6 * qq + (γ6 - β1) * qr := by
     linear_combination (-1) * hlamdef
   have hlampos : 0 < lam := by
-    by_contra h; push_neg at h
+    by_contra h; push Not at h
     nlinarith [mul_nonneg (neg_nonneg.2 h) hA.le]
   have kzA : (α1 * pp - (β6 + γ6 - β1) * pq) * (lam * pp + pq) = pp * β6 * (qq - qr) := by
     linear_combination pp * hl + (β6 + γ6 - β1) * hD
@@ -118,7 +118,7 @@ theorem k86_facts {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 lam : ℝ}
   have kac : (α1 * pp - (β6 + γ6 - β1) * pq) * (β1 * lam - α1 + 1) = β1 * β6 * (qq - qr) := by
     linear_combination β1 * hl - α1 * hU1 + (β6 + γ6 - β1) * hU2
   have pos_of : ∀ x y : ℝ, 0 < x → x * y = x * y → 0 < x * y → 0 < y := fun x y hx _ h => by
-    by_contra h'; push_neg at h'; nlinarith [mul_nonneg hx.le (neg_nonneg.2 h')]
+    by_contra h'; push Not at h'; nlinarith [mul_nonneg hx.le (neg_nonneg.2 h')]
   refine ⟨by linarith [hA], hlampos, ?_, hpqn, hU1, hU2, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · have := pos_of _ _ hA rfl (by rw [kac]; exact mul_pos (mul_pos (by linarith) (by linarith)) (sub_pos.2 hqq))
     linarith

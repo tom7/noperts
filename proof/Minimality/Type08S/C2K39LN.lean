@@ -213,12 +213,12 @@ theorem k34lw_Nq {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
       have hc := real_inner_comm (b - d) (c - d)
       rw [show b - c = (b - d) - (c - d) by abel]
       simp only [inner_sub_left, inner_sub_right] at hc ⊢; linarith
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     rw [h2, ← h3] at h1
     nlinarith [mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hbc.le, mul_pos (by linarith : (0:ℝ) < β1 - 1) hrel.2]
   have hX : ⟪a - d, R⟫ < 0 := by
     have h : β1 * ⟪a - d, R⟫ < 0 := by rw [← hQRv]; exact hS
-    by_contra hn; push_neg at hn; nlinarith
+    by_contra hn; push Not at hn; nlinarith
   have hcm : c' - a' = γ6 • (a - d) - γ6 • (c - d) - (β1 - 1) • R := by
     rw [hc', ha', hR]; ext i
     simp only [PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, PiLp.neg_apply, smul_eq_mul]
@@ -245,12 +245,12 @@ theorem k34lw_Nq {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have k3 : m3 < 0 := by
     have key : γ6 * (⟪a - d, a - d⟫ - ⟪a - d, c - d⟫) * m3 = γ6 * m1 * (⟪a - d, c - d⟫ - ⟪c - d, c - d⟫) := by
       linear_combination (β1 - 1) * hE - m3 * e1 + m1 * e3
-    by_contra hn; push_neg at hn
+    by_contra hn; push Not at hn
     nlinarith [mul_nonneg (mul_pos hγ6 hW).le hn, mul_pos (mul_pos hγ6 k1) hN0]
   have hP1v : 0 < ⟪c - d, R⟫ := by
     have hS' : ⟪a - c', a - d⟫ < 0 := by rw [real_inner_comm]; exact hS
     have hpa : 0 < ⟪a - c', c - d⟫ := by
-      by_contra hn; push_neg at hn
+      by_contra hn; push Not at hn
       nlinarith [mul_nonneg k1.le (neg_nonneg.2 hn), mul_pos_of_neg_of_neg k3 hS']
     rw [hac, inner_smul_left, real_inner_comm] at hpa
     simp only [conj_trivial] at hpa

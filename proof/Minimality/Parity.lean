@@ -41,12 +41,12 @@ theorem odd_card_sign_changes (g : ℕ → ℝ) (m : ℕ) (hg : ∀ t ≤ m, g t
       by_cases hc : g n * g (n + 1) < 0
       · rw [if_pos hc, card_insert_of_notMem (by simp), Nat.even_add_one, ih]
         constructor
-        · intro h; by_contra h'; push_neg at h'
+        · intro h; by_contra h'; push Not at h'
           have : 0 < g 0 * g n * (g n * g (n + 1)) := by nlinarith [mul_pos (mul_self_pos.mpr hn') (mul_self_pos.mpr h0)]
           nlinarith [sq_nonneg (g n), mul_self_pos.mpr hn']
         · intro h h2; nlinarith [mul_self_pos.mpr hn']
       · rw [if_neg hc, ih]
-        push_neg at hc
+        push Not at hc
         have hc' : 0 < g n * g (n + 1) := lt_of_le_of_ne hc (fun e => (mul_ne_zero hn' hn1) e.symm)
         constructor
         · intro h; nlinarith [mul_self_pos.mpr hn']
