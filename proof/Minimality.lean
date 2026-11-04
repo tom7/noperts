@@ -109,32 +109,32 @@ public import Minimality.CornerEdgeHDNWitness
 A convex polyhedron is *Rupert* if a copy of it can pass through a straight
 hole cut in another copy of the same size (`IsRupert`, `MainTheorem.lean`:
 some view of the polyhedron, possibly shifted, fits strictly inside the
-shadow of another view).  A *nopert* is a solid convex polyhedron that is not
-Rupert (`IsNopert`, `Nopert.lean`).  Polyhedra are given by finite sets
+shadow of another view). A *nopert* is a solid convex polyhedron that is not
+Rupert (`IsNopert`, `Nopert.lean`). Polyhedra are given by finite sets
 `V : Finset ℝ³` of points; the polyhedron is their convex hull.
 
 This file states the main results; the proofs are in the `Minimality/`
 modules (see `Minimality/README.md` for an overview).
 
-* `seven_le_card_of_isNopert`: every nopert has at least 7 points.  This
+* `seven_le_card_of_isNopert`: every nopert has at least 7 points. This
   follows from `isRupert_of_card_le_six`: every solid convex polyhedron
   given by at most 6 points is Rupert.
 * `facet_card_le_four_of_isNopert`: a nopert with exactly 7 points has no
   facet containing 5 or more of them, so its faces are triangles and
-  quadrilaterals.  This follows from `isRupert_of_card_seven_of_facet`: seven
+  quadrilaterals. This follows from `isRupert_of_card_seven_of_facet`: seven
   points with a solid hull, at least five (but not all) of them on a facet, are
   Rupert (Theorem A of the notes; `Minimality/FaceFive.lean`).
 * For flat point sets the answer is known for any number of points: points in
   a plane, not all on one line, are Rupert
   (`isRupert_of_coplanar_of_not_collinear`), while points on one line are not
-  (`not_isRupert_of_collinear`).  Hence `isRupert_iff_of_card_le_six`:
+  (`not_isRupert_of_collinear`). Hence `isRupert_iff_of_card_le_six`:
   at most 6 points are Rupert exactly when they are not all on one line (or
   there are none at all).
 * `anySevenVertexNopertIsSimplicial` (skeleton, contains `sorry`): every
   7-vertex nopert is simplicial (`AnySevenVertexNopertIsSimplicial`,
   `MainTheorem.lean`), split into the 29 non-simplicial types; the per-type
   theorems are in `Minimality/Cases.lean`, the types in
-  `Minimality/SevenTypes.lean`.
+  `Minimality/SevenTypes.lean`. (Experimental branch: Still open!)
 
 All results except `anySevenVertexNopertIsSimplicial` depend only on the three
 standard axioms `propext`, `Classical.choice` and `Quot.sound`.
@@ -144,7 +144,7 @@ standard axioms `propext`, `Classical.choice` and `Quot.sound`.
 
 /-- **Every solid convex polyhedron with at most 6 vertices is Rupert.**
 More precisely: at most 6 points of `ℝ³`, not all in one plane, have a Rupert
-convex hull.  (The points need not all be vertices of the hull.) -/
+convex hull. (The points need not all be vertices of the hull.) -/
 theorem isRupert_of_card_le_six (V : Finset ℝ³) (hV : V.card ≤ 6)
     (hsolid : ¬ Coplanar ℝ (V : Set ℝ³)) : IsRupert V :=
   Minimality.isRupert_of_card_le_six V hV
@@ -158,7 +158,7 @@ theorem seven_le_card_of_isNopert (V : Finset ℝ³) (h : IsNopert V) : 7 ≤ V.
 
 /-- **Seven points with a large facet are Rupert.**  Seven points of `ℝ³`, not
 all in one plane, of which at least five but not all lie on a facet of their
-convex hull, are Rupert.  (`Minimality.IsFacet V F`: some affine function
+convex hull, are Rupert. (`Minimality.IsFacet V F`: some affine function
 vanishes on `F` and is negative at the other points of `V`.) -/
 theorem isRupert_of_card_seven_of_facet (V F : Finset ℝ³) (hV : V.card = 7)
     (hsolid : ¬ Coplanar ℝ (V : Set ℝ³)) (hFV : F ⊂ V) (hF : 5 ≤ F.card)
@@ -242,13 +242,13 @@ theorem not_two_quad_facets_vertex_of_isNopert (V : Finset ℝ³) (h : IsNopert 
 /-- **No two quadrilateral facets sharing one vertex, with a right or obtuse apex settled**
 (Corollary T1 of the triangle-shadow lemma, `FEWER-FACES-PROOFS.md` §7, with Theorems 24.5 and
 24.8 of §24; types 02, 07, 09, 14, 18, 20): as `not_two_quad_facets_vertex_of_isNopert`, with
-`Minimality.TriGenTieO` in place of `Minimality.TriGenTieT`.  In addition to everything that
+`Minimality.TriGenTieO` in place of `Minimality.TriGenTieT`. In addition to everything that
 `TriGenTieT` allows, the triple tie of case (c) (the far vertices and the shared vertex at one
 depth along the line of the planes, both faces two-sided) is settled when the angle of the
 shadow triangle at the shared vertex is at least `π/2` (Theorem 24.8: the views of the face circle
 of one quadrilateral beside the view along its far edge have a unimodal rim with distinct
 depths and no persistent horizontal double normal, so the polyhedron is Rupert by the slide
-theorem 18.1).  The only position still excluded besides a parallel segment (other than between two middles of one
+theorem 18.1). The only position still excluded besides a parallel segment (other than between two middles of one
 face or two hidden vertices) is the triple tie
 with both faces two-sided and all three angles of the shadow triangle acute or right
 (case (c) of Theorem 24.5 with acute T, or a right angle at a far vertex). -/
@@ -481,7 +481,7 @@ theorem quadPair {x : Fin 7 → ℝ³} (hx : Function.Injective x)
 parallel to the line of the two planes) or `TriGenFarP`: case (c) of the triple tie does not occur
 at the quadrilaterals `0256`, `1234` of type 07 (`Minimality.triGenTieO_type07`) and `0235`,
 `1456` of type 14 (`Minimality.triGenTieO_type14`), by Lemma 23.0 (a) of
-`FEWER-FACES-PROOFS.md`, so `TriGenPar` gives `TriGenTieO`.  For two quadrilaterals one of
+`FEWER-FACES-PROOFS.md`, so `TriGenPar` gives `TriGenTieO`. For two quadrilaterals one of
 `TriGenPar`, `TriGenFarP` and the residual position `Minimality.QuadTripleRect` always holds
 (`Minimality.triGenPar_or_farP_quad_idx`: a vertical far edge is allowed, and the rectangle of two
 of them too, Proposition 24.12), so the general position of the type is `¬ QuadTripleRect` (which holds,
@@ -523,12 +523,12 @@ theorem quadPairPar14 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
       (by decide) (by decide) (by decide) (Or.inr h)
   · exact hQ h
 
-/-- Type 02 of `quadPairPar07`: the quadrilaterals `0235`, `1246` at vertex `2`.  Unlike types 07
+/-- Type 02 of `quadPairPar07`: the quadrilaterals `0235`, `1246` at vertex `2`. Unlike types 07
 and 14, case (c) of the triple tie can occur, so `TriGenPar` does not give `TriGenTieO`; and
 `QuadTripleRect` is not refuted from the facets: of the four tie pairs `(a, b)` (`a` in `{0, 5}`,
 `b` in `{1, 6}`; far corners `3`, `4`) only `(0, 6)` and `(5, 1)` are killed (by `0134`/`3456` and
 `012`/`256`), while `(0, 1)` and `(5, 6)`, the vertical far edges `01`, `56` at the edge view `34`,
-are not (`KillL … 2 0 3 5 1 4 6` and `KillL … 2 5 3 0 6 4 1` are false).  Hence what is left of
+are not (`KillL … 2 0 3 5 1 4 6` and `KillL … 2 5 3 0 6 4 1` are false). Hence what is left of
 Cor. T1 here is the acute case-(c) triple tie (`TriGenPar` holds, `TriGenTieO` fails) or
 `QuadTripleRect`. -/
 theorem quadPairPar02 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
@@ -552,7 +552,7 @@ theorem quadPairPar02 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
       (by decide) (by decide) (by decide) (Or.inr h)
   · exact hcon (Or.inr h)
 
-/-- Type 09 of `quadPairPar02`: the quadrilaterals `0134`, `0256` at vertex `0`.  What is left of
+/-- Type 09 of `quadPairPar02`: the quadrilaterals `0134`, `0256` at vertex `0`. What is left of
 Cor. T1 here is the acute case-(c) triple tie (`TriGenPar` holds, `TriGenTieO` fails) or
 `QuadTripleRect`. -/
 theorem quadPairPar09 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
@@ -576,7 +576,7 @@ theorem quadPairPar09 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
       (by decide) (by decide) (by decide) (Or.inr h)
   · exact hcon (Or.inr h)
 
-/-- Type 18 of `quadPairPar02`: the quadrilaterals `0356`, `1245` at vertex `5`.  Here
+/-- Type 18 of `quadPairPar02`: the quadrilaterals `0356`, `1245` at vertex `5`. Here
 `QuadTripleRect` is refuted from the facets (`not_quadTripleRect_type18`), so what is left of
 Cor. T1 is exactly the acute case-(c) triple tie (`TriGenPar` holds, `TriGenTieO` fails). -/
 theorem quadPairPar18 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
@@ -597,7 +597,7 @@ theorem quadPairPar18 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
       (by decide) (by decide) (by decide) (Or.inr h)).elim
   · exact (Minimality.not_quadTripleRect_type18 hx hgen hR h).elim
 
-/-- Type 20 of `quadPairPar02`: the quadrilaterals `0135`, `2456` at vertex `5`.  Here
+/-- Type 20 of `quadPairPar02`: the quadrilaterals `0135`, `2456` at vertex `5`. Here
 `QuadTripleRect` is refuted from the facets (`not_quadTripleRect_type20`), so what is left of
 Cor. T1 is exactly the acute case-(c) triple tie (`TriGenPar` holds, `TriGenTieO` fails). -/
 theorem quadPairPar20 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
@@ -845,22 +845,22 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
   have h3 := h3 k
   fin_cases k
   · exact big {1, 2, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 01: Theorem A
-  · -- type 02: closed, no `sorry`.  `quadPairPar02` (Cor. T1 at the quadrilaterals 0235, 1246, sharing
+  · -- type 02: closed, no `sorry`. `quadPairPar02` (Cor. T1 at the quadrilaterals 0235, 1246, sharing
     -- vertex 2) leaves the acute case-(c) triple tie (`TriGenPar` but not `TriGenTieO`, vertex 2) or
     -- `QuadTripleRect` there; neither needs any other general position (no `Type02EdgeGen''`, no
-    -- `GenPos`).  `QuadTripleRect` is `Minimality.isRupert_of_quadTripleRect02` (`QuadRect02.lean`); the
+    -- `GenPos`). `QuadTripleRect` is `Minimality.isRupert_of_quadTripleRect02` (`QuadRect02.lean`); the
     -- triple tie gives the normal-form frame `Frame02` (`Type02Frame.lean`, `frame02`), which is Rupert by
     -- the sector theorems in Frame7 coordinates: `Type02A` (acute, generic rims), `Type02B` (acute,
     -- vertical far edges), `Type02R` and `Type02FN`/`Type02FNB` (right far angle at `x3`, Lemma FN),
     -- `Type02X` (exceptional sets X1, X2), `Type02V12` (both far edges vertical) and the assembly
-    -- `Type02Assemble.lean` (`type02_false`).  Paper: `nopert229/out/bottleneck/archive/sp02/draft.md`,
+    -- `Type02Assemble.lean` (`type02_false`). Paper: `nopert229/out/bottleneck/archive/sp02/draft.md`,
     -- `sp02b/draft.md` (Lean-verified, not refereed).
     have hQ := quadPairPar02 hx hN rfl hR
     exact Minimality.CaseC18.type02_false hx hN hR hQ
   · exact big {0, 2, 3, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 03: Theorem A
   · exact big {1, 2, 3, 5, 6} (by decide) (by decide) (by decide)  -- type 04: Theorem A
   · -- type 05: `not_type05_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
-    -- special value of Lemma T′ (settled there, 26.8).  Both views pair a quadrilateral with the
+    -- special value of Lemma T′ (settled there, 26.8). Both views pair a quadrilateral with the
     -- triangle `246`, so `TriGenPar` or `TriGenFarP` always holds (`triGenPar_or_farP_idx`:
     -- a vertical far edge is allowed, the full rectangle too, Proposition 24.12): closed, no
     -- special position is left
@@ -879,41 +879,50 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
   · -- type 07: Cor. T1 at the quadrilaterals 0256, 1234 (sharing vertex 2); case (c) of the
     -- triple tie does not occur (Lemma 23.0 (a)), so only `TriGenPar` (no segment parallel to the
     -- line of the two planes) or `TriGenFarP` is needed, and one of them holds unless
-    -- `QuadTripleRect` (`triGenPar_or_farP_quad_idx`).  That residual position (a rectangle of two
+    -- `QuadTripleRect` (`triGenPar_or_farP_quad_idx`). That residual position (a rectangle of two
     -- vertical far edges whose far corner is tied with the shared vertex, both faces one-sided)
     -- is refuted from the facets of the type (`not_quadTripleRect_type07`): closed, no special
     -- position is left
     have hgen := noThreeCollinear_seven x hN hx
     exact quadPairPar07 hx hN rfl hR (Minimality.not_quadTripleRect_type07 hx hgen hR)
-  · -- type 08: closed, no `sorry` (`not_type08_closed`; history below).  The far triple tie (touching) of the named closings N2, T4 is
-    -- no longer excluded in `Type08Gen`: with `c'` (resp. `b'`) not beyond it is closed by the
-    -- sector tilt at the view (Proposition 29.3), with it beyond by the horizontal end of a face
-    -- circle (Proposition 30.4); `isRupert_touchN2`, `isRupert_touchT4`
-    -- under the codimension-3 conditions `Touch30N2`, `Touch30T4`, `touchTie`
-    -- Lean-verified (paper sp08*, `Type08S/P2RFinalJ.lean`): `type08_rupert_or_residJ` gives Rupert
-    -- or `hres : Resid08FinalJ (x 0) (x 6) (x 3) (x 4) (x 5) (x 1) (x 2)` (pkR: lexicographic cells, Theorem 24.1,
-    -- close L1, B1, the level face at T', alpha4 = 1 with C < 0 and the P3 tie with D_c < 0; new leftovers
-    -- `TpA1ii`, `P3Tpii`; every leftover has no lex cell at its view), inside the residual set of the
-    -- sp08 argument: the planar items (two planar equators, a planar Gale `κ = 0`) survive only inside the codim-3
-    -- `ResidP6` (package P5, `P2Q*`: weak Lemma 6 and the pipeline on `Norm08w`); otherwise,
-    -- in one of the six labellings of Lemma 6, at `T` the codim-4 leftover `S4T2` (package P1, `P2T*`:
-    -- limit theorem at `T`, touching, `K_b` HDNs, case B by the cells (−,−,−), (+,−,−), 18.3 and the `K_2` slide),
-    -- or at `T'` the Σ₄ leftover `S4TpG2` (Lemma T'S, `Tp_poked_of_H`, `Tp_caseA` proved; `Tp_far` proved).  Proved
-    -- and used: the Q region, the refined limit theorem (R2T*, touching, ties), non-persistent and persistent HDN
-    -- closings, T'X, R3, R4h, the level face.  That
-    -- residual is closed by the K-chain ending in C2K47ZA (`not_type08_of_isNopert'` stays for other users)
-    exact not_type08_closed hx hN hR
-  · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
-    -- asked; type 09 is fully closed (no `sorry`).  `quadPairPar09` (as `quadPairPar02`):
-    -- `TriGenFarP` and `TriGenPar ∧ TriGenTieO` are closed by `quadPair`; the acute case-(c)
-    -- triple tie at 0134, 0256 (`TriGenPar` but not `TriGenTieO`, vertex 0) is closed by the
-    -- normal-form frame `frame09` and `Frame09.isRupert_of_not_special` (Theorem 27.58 with the
-    -- three crossing tests, 27.48 and 27.34, and the sector tests of §34.4.2, `CaseC09Special.lean`, `CaseC09TS.lean`),
-    -- off the special positions `CaseC09Special x` (`t- = s- ∧ a- = d+`, the corner
-    -- `a- = b+ ∧ b+ = s+ A2`, or the right angle `A12 = A22` at `xb`; `a+ = c+` removed by Theorem 09.A, `CaseC09Ac.lean`; 09.5 `t- = s-`, `a- ≠ d+`
-    -- is in `CaseC09Ac.lean`, where `CaseC09Special` is defined).  The `QuadTripleRect` residual position at 0134, 0256 (vertex 0) is Rupert
-    -- (`Minimality.isRupert_of_quadTripleRect09`, Theorem 09.Q, `QuadRect09.lean`: it forces a prism
-    -- shape, which is Rupert at a near-axis view).  The special positions `hrest : CaseC09Special x` (K1, K2, `A12 = A22`) are closed by `Minimality.CaseC09.CaseC09Special.isRupert` (`CaseC09Close.lean`, PROOFS §§39-40)
+  · /-
+     type 08: closed, no `sorry` (`not_type08_closed`; history below). The far triple tie
+     (touching) of the named closings N2, T4 is no longer excluded in `Type08Gen`: with `c'`
+     (resp. `b'`) not beyond it is closed by the sector tilt at the view (Proposition 29.3),
+     with it beyond by the horizontal end of a face circle (Proposition 30.4);
+     `isRupert_touchN2`, `isRupert_touchT4` under the codimension-3 conditions `Touch30N2`,
+     `Touch30T4`, `touchTie` Lean-verified (paper sp08*, `Type08S/P2RFinalJ.lean`):
+     `type08_rupert_or_residJ` gives Rupert or `hres : Resid08FinalJ (x 0) (x 6) (x 3) (x 4)
+     (x 5) (x 1) (x 2)` (pkR: lexicographic cells, Theorem 24.1, close L1, B1, the level face
+     at T', alpha4 = 1 with C < 0 and the P3 tie with D_c < 0; new leftovers `TpA1ii`,
+     `P3Tpii`; every leftover has no lex cell at its view), inside the residual set of the
+     sp08 argument: the planar items (two planar equators, a planar Gale `κ = 0`) survive only
+     inside the codim-3 `ResidP6` (package P5, `P2Q*`: weak Lemma 6 and the pipeline on
+     `Norm08w`); otherwise, in one of the six labellings of Lemma 6, at `T` the codim-4
+     leftover `S4T2` (package P1, `P2T*`: limit theorem at `T`, touching, `K_b` HDNs, case B
+     by the cells (−,−,−), (+,−,−), 18.3 and the `K_2` slide), or at `T'` the Σ₄ leftover
+     `S4TpG2` (Lemma T'S, `Tp_poked_of_H`, `Tp_caseA` proved; `Tp_far` proved). Proved and
+     used: the Q region, the refined limit theorem (R2T*, touching, ties), non-persistent and
+     persistent HDN closings, T'X, R3, R4h, the level face. That residual is closed by the
+     K-chain ending in C2K47ZA (`not_type08_of_isNopert'` stays for other users) -/
+     exact not_type08_closed hx hN hR
+
+  · /-
+     type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
+     asked; type 09 is fully closed (no `sorry`). `quadPairPar09` (as `quadPairPar02`):
+     `TriGenFarP` and `TriGenPar ∧ TriGenTieO` are closed by `quadPair`; the acute case-(c)
+     triple tie at 0134, 0256 (`TriGenPar` but not `TriGenTieO`, vertex 0) is closed by the
+     normal-form frame `frame09` and `Frame09.isRupert_of_not_special` (Theorem 27.58 with the
+     three crossing tests, 27.48 and 27.34, and the sector tests of §34.4.2,
+     `CaseC09Special.lean`, `CaseC09TS.lean`), off the special positions `CaseC09Special x`
+     (`t- = s- ∧ a- = d+`, the corner `a- = b+ ∧ b+ = s+ A2`, or the right angle
+     `A12 = A22` at `xb`; `a+ = c+` removed by Theorem 09.A, `CaseC09Ac.lean`;
+     09.5 `t- = s-`, `a- ≠ d+` is in `CaseC09Ac.lean`, where `CaseC09Special` is defined).
+     The `QuadTripleRect` residual position at 0134, 0256 (vertex 0) is Rupert
+     (`Minimality.isRupert_of_quadTripleRect09`, Theorem 09.Q, `QuadRect09.lean`: it forces
+     a prism shape, which is Rupert at a near-axis view). The special positions
+     `hrest : CaseC09Special x` (K1, K2, `A12 = A22`) are closed by
+     `Minimality.CaseC09.CaseC09Special.isRupert` (`CaseC09Close.lean`, PROOFS §§39-40) -/
     have hQ := quadPairPar09 hx hN rfl hR
     exact byGen1 (quadPair hx hN hR {0, 1, 3, 4} {0, 2, 5, 6} 0 (by decide) (by decide) (by decide) (by decide)
       (by decide)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
@@ -925,7 +934,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         · exact hN.2 (Minimality.isRupert_of_quadTripleRect09 hx (noThreeCollinear_seven x hN hx)
             hRect)))
   · -- type 10: `not_type10_of_isNopert_sv` closes everything except the edge rectangle at the
-    -- edge `14` (`Minimality.type10_edgeRect`).  The face set is invariant under the cyclic
+    -- edge `14` (`Minimality.type10_edgeRect`). The face set is invariant under the cyclic
     -- relabelling `ρ10` (`1 → 2 → 3`, `4 → 5 → 6`), so the same holds at `25`, `36`; the three
     -- rectangles force a right triangular prism (`Minimality.type10_rightPrism`: lateral edges
     -- `14`, `25`, `36` equal vectors, triangle `123` orthogonal to them), and a capped right
@@ -935,7 +944,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     exact (hN.2 (Minimality.isRupert_type10_rightPrism x hx hP hR)).elim
   · exact big {0, 2, 3, 4, 6} (by decide) (by decide) (by decide)  -- type 11: Theorem A
   · -- type 12: `not_type12_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
-    -- special value of Lemma T′ (settled there, 24.15).  Both views have a triangle (`024`), so
+    -- special value of Lemma T′ (settled there, 24.15). Both views have a triangle (`024`), so
     -- `TriGenPar` or `TriGenFarP` always holds (`triGenPar_or_farP_idx`): closed
     obtain ⟨fA, hfA⟩ := hR {0, 1, 3, 5} (by decide)
     obtain ⟨fB, hfB⟩ := hR {0, 3, 4, 6} (by decide)
@@ -949,7 +958,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
       (fun _ => Minimality.triGenPar_or_farP_idx hx hgen {0, 2, 4} {2, 3, 6} 2
         (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
   · -- type 13: `not_type13_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
-    -- special value of Lemma T′ (settled there, 26.8).  The vertex view has the triangle `123`
+    -- special value of Lemma T′ (settled there, 26.8). The vertex view has the triangle `123`
     -- (`triGenPar_or_farP_idx`); at the edge `45` of the quadrilaterals `0145`, `2456`,
     -- `EdgeTieR` or `EdgeFarP` holds (`edgeTieR_or_farP_rect_idx`) unless the edge rectangle,
     -- which makes `0, 1, 2, 6` a parallelogram, contradicting the facet `126`
@@ -976,7 +985,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- realizing tilts, `Minimality.MultiView16`; the cover is affine-invariant, so metric-free), where
     -- it holds; else `not_type16_of_isNopert_ties` (Type16Ties: several independent ties, restored along
     -- the approximating sequence); its general position (4 HDN hypotheses and `OneTie16 ∨ TwoTie16`) is
-    -- asked.  Open in Lean: an HDN item failing, two tied pairs at one segment view or at `v_A`/`σ v_A`,
+    -- asked. Open in Lean: an HDN item failing, two tied pairs at one segment view or at `v_A`/`σ v_A`,
     -- dependent ties
     obtain ⟨fA, hfA⟩ := hR {0, 2, 3, 5} (by decide)
     obtain ⟨fB, hfB⟩ := hR {1, 3, 5, 6} (by decide)
@@ -1001,7 +1010,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
           · exact (Minimality.H16A.h16g_arcgen_rule_false hN _ hres2).elim
         · exact Minimality.H16U.h16v_rule_false hN _ hres)))
   · -- type 17: `not_type17_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
-    -- special value of Lemma T′ (settled there, 26.8).  Both views have the triangle `136`, so
+    -- special value of Lemma T′ (settled there, 26.8). Both views have the triangle `136`, so
     -- `TriGenPar` or `TriGenFarP` always holds (`triGenPar_or_farP_idx`): closed
     obtain ⟨fA, hfA⟩ := hR {0, 2, 4, 6} (by decide)
     obtain ⟨fB, hfB⟩ := hR {2, 3, 4, 5} (by decide)
@@ -1014,7 +1023,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
       (fun _ => Minimality.triGenPar_or_farP_idx hx hgen {0, 2, 4, 6} {1, 3, 6} 6
         (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
-  · -- type 18: Cor. T1 at the quadrilaterals 0356, 1245 (sharing vertex 5).  `quadPairPar18` (as
+  · -- type 18: Cor. T1 at the quadrilaterals 0356, 1245 (sharing vertex 5). `quadPairPar18` (as
     -- `quadPairPar02`, with `QuadTripleRect` refuted from the facets) is exactly the acute case-(c)
     -- triple tie at 0356, 1245 (`TriGenPar` but not `TriGenTieO`, vertex 5), closed by the
     -- normal-form frame `frame18` and `Frame18.isRupert_of_not_special` (Theorem 27.59: the edge
@@ -1026,14 +1035,14 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- side `a∓ = b±` or the tie `g a∓ d∓ = A11 ∧ A22 a∓ ≥ A11 c∓`), the codim-2 set `L_M'`
     -- (`d+ = A1 t+`, `g a- d- = A12`, `A11 t+ - g a- h+ > A12`, `A12 c- ≤ A22 a- ≤ A12 d+`, with
     -- `A1 t- ≤ d-`, `a± < c±`) and its Z-image, and the codim-4 corners `a- = b+ = c-`,
-    -- `A12 = A22`, `g a- d- = A12`, `A11 t+ - g a- h+ < A12` and its Z-image.  The other
+    -- `A12 = A22`, `g a- d- = A12`, `A11 t+ - g a- h+ < A12` and its Z-image. The other
     -- equalities (`a∓ = b±`, `a± = c±`, `d± = A1 t±`, `D2 = 0`, the right angles) are no longer
-    -- special.  (PROOFS section 37 reduced the paper's special set further, to the codim-7 family
+    -- special. (PROOFS section 37 reduced the paper's special set further, to the codim-7 family
     -- E; PROOFS sections 37-38 then close every position of `CaseC18Special'`: Theorems E, E1, E2,
     -- W, C, R' and F, and E* by the first-order bridge, `CaseC18Fo`/`CaseC18E`, assembled as
     -- `CaseC18Special'.isRupert`.)  The old section 35 assembly (V's own view slid along
     -- F1's circle, `CaseC18VSlide`/`CaseC18Step4`/`CaseC18Level`) is no longer used by the type-18
-    -- skeleton.  Type 18 is thus fully closed, no `sorry`: the chain is `CaseC18Sp` (PROOFS 35),
+    -- skeleton. Type 18 is thus fully closed, no `sorry`: the chain is `CaseC18Sp` (PROOFS 35),
     -- `CaseC18M` (PROOFS 36) and `CaseC18E` (PROOFS 37-38).
     have hQ := quadPairPar18 hx hN rfl hR
     exact byGen1 (quadPair hx hN hR {0, 3, 5, 6} {1, 2, 4, 5} 5 (by decide) (by decide) (by decide) (by decide)
@@ -1043,7 +1052,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         · obtain ⟨F⟩ := Minimality.CaseC18.frame18 hx (noThreeCollinear_seven x hN hx) hR hQ.1 hQ.2
           exact hN.2 (F.isRupert_of_not_special' hx hrest)))
   · -- type 19: `not_type19_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
-    -- special value of Lemma T′ (settled there, 26.8).  The vertex view has the triangle `046`
+    -- special value of Lemma T′ (settled there, 26.8). The vertex view has the triangle `046`
     -- (`triGenPar_or_farP_idx`); at the edge `35` of the quadrilaterals `0235`, `1356`,
     -- `EdgeTieR` or `EdgeFarP` holds (`edgeTieR_or_farP_rect_idx`) unless the edge rectangle,
     -- which makes `0, 2, 1, 6` a parallelogram, contradicting the facet `026`
@@ -1060,7 +1069,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
       (by decide) (by decide) (by decide) (by decide)).imp_right fun h =>
       h.resolve_right (Minimality.not_edgeRect_type19 hx fE hfE)
     exact not_type19_of_isNopert_sv x hN hx fA fB fD fG fE hfA hfB hfD hfG hfE (fun _ => hE) (fun _ => hT)
-  · -- type 20: Cor. T1 at the quadrilaterals 0135, 2456 (sharing vertex 5).  `quadPairPar20` (as
+  · -- type 20: Cor. T1 at the quadrilaterals 0135, 2456 (sharing vertex 5). `quadPairPar20` (as
     -- `quadPairPar02`, with `QuadTripleRect` refuted from the facets) is exactly the acute case-(c)
     -- triple tie at 0135, 2456 (`TriGenPar` but not `TriGenTieO`, vertex 5), closed by the
     -- normal-form frame `frame20` and `Frame20.isRupert_of_not_special'` (`CaseC20Sp`; Theorem 27.79: the class of
@@ -1087,7 +1096,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- realizing tilts, `Minimality.MultiView21`; the cover is affine-invariant, so metric-free), where
     -- it holds; else `not_type21_of_isNopert_ties` (Type21Ties: several independent ties, restored along
     -- the approximating sequence); its general position (6 HDN hypotheses and `OneTie21 ∨ TwoTie21`) is
-    -- asked.  Open in Lean: an HDN item failing, the cover's own tie conditions failing (`CoverTie21`),
+    -- asked. Open in Lean: an HDN item failing, the cover's own tie conditions failing (`CoverTie21`),
     -- dependent ties
     obtain ⟨fA, hfA⟩ := hR {0, 1, 4} (by decide)
     obtain ⟨fB, hfB⟩ := hR {0, 1, 5} (by decide)
@@ -1108,7 +1117,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         · sorry
         · exact Minimality.H21.h21t2_rule_false hN _ hres)))
   · -- type 22: `not_type22_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
-    -- special value of Lemma T′ (settled there, 24.15).  Both views have the triangle `246`, so
+    -- special value of Lemma T′ (settled there, 24.15). Both views have the triangle `246`, so
     -- `TriGenPar` or `TriGenFarP` always holds (`triGenPar_or_farP_idx`): closed
     obtain ⟨fA, hfA⟩ := hR {0, 1, 3, 4} (by decide)
     obtain ⟨fD, hfD⟩ := hR {1, 2, 5} (by decide)
@@ -1122,7 +1131,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
       (fun _ => Minimality.triGenPar_or_farP_idx hx hgen {0, 1, 3, 4} {2, 4, 6} 4
         (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
   · -- type 23: `not_type23_of_isNopert_sv`; its general position (3 hypotheses) is asked off the
-    -- special value of Lemma T′ (settled there, 26.8).  The edge view `04` has the triangle `014`
+    -- special value of Lemma T′ (settled there, 26.8). The edge view `04` has the triangle `014`
     -- (`edgePar_or_farP_idx`: `EdgePar` or `EdgeFarP` always holds) and both vertex views have a
     -- triangle (`triGenPar_or_farP_idx`): closed, no special position is left
     obtain ⟨fA, hfA⟩ := hR {0, 3, 4, 5} (by decide)
@@ -1188,7 +1197,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
       (Minimality.triGenPar_or_farP_idx hx hgen {0, 2, 4, 6} {1, 3, 6} 6
         (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
   · -- type 27: `not_type27_of_isNopert_sv`; its general position (3 hypotheses) is asked off the
-    -- special value of Lemma T′ (settled there, 26.8).  The edge view `25` has the triangle `025`
+    -- special value of Lemma T′ (settled there, 26.8). The edge view `25` has the triangle `025`
     -- (`edgePar_or_farP_idx`) and both vertex views a triangle (`triGenPar_or_farP_idx`): closed,
     -- no special position is left
     obtain ⟨fB, hfB⟩ := hR {2, 3, 5, 6} (by decide)
@@ -1207,7 +1216,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
       (fun _ => (Minimality.triGenPar_or_farP_idx hx hgen {0, 2, 5} {0, 4, 6} 0
         (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)))
   · -- type 28: `not_type28_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
-    -- special value of Lemma T′ (settled there, 24.15).  Both views pair the quadrilateral `0245`
+    -- special value of Lemma T′ (settled there, 24.15). Both views pair the quadrilateral `0245`
     -- with a triangle, so `TriGenPar` or `TriGenFarP` always holds (`triGenPar_or_farP_idx`):
     -- closed
     obtain ⟨fA, hfA⟩ := hR {0, 2, 4, 5} (by decide)
