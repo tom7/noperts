@@ -674,6 +674,149 @@ theorem byThm5Faces {x : Fin 7 → ℝ³} (hx : Function.Injective x)
   · push Not at hex
     exact rest (fun f hf => by simpa [Set.not_nonempty_iff_eq_empty] using hex f hf)
 
+/-- **Type 08 is closed**: no 7-point Nopert realizes the faces of type 08 (general and special positions).
+Separate from the skeleton so that its axioms can be checked (`Tests/Axioms.lean`). -/
+theorem not_type08_closed {x : Fin 7 → ℝ³} (hx : Function.Injective x)
+    (hN : IsNopert (Finset.univ.image x))
+    (hR : Minimality.RealizesFaces x (Minimality.sevenTypeFaces 7)) : False := by
+  obtain ⟨fA, hfA⟩ := hR {0, 1, 2, 3} (by decide)
+  obtain ⟨fB, hfB⟩ := hR {0, 2, 4, 5} (by decide)
+  obtain ⟨fC, hfC⟩ := hR {2, 3, 5, 6} (by decide)
+  obtain ⟨fD, hfD⟩ := hR {0, 1, 4} (by decide)
+  obtain ⟨fE, hfE⟩ := hR {1, 3, 6} (by decide)
+  obtain ⟨fF, hfF⟩ := hR {1, 4, 6} (by decide)
+  obtain ⟨fG, hfG⟩ := hR {4, 5, 6} (by decide)
+  exact (Minimality.Type08Sp.type08_rupert_or_residJ x hx fA fB fC fD fE fF fG hfA hfB hfC hfD hfE
+    hfF hfG).elim hN.2 (fun hres =>
+      -- C2 (face cells at the edge views a - d, c - d): the residual shrinks to `Resid08FinalK`
+      -- K2 (5-cycle (a, d, b, a', b') at a - d): P3Tpii and L2 on γ4 = 1 removed
+      have _hresK2 := Minimality.Type08Sp.resid08FinalK_imp_K2 (Minimality.Type08Sp.resid08FinalJ_imp_K hres)
+      -- K1 (cycles X1 = (d, b, a', b', c), X2 = (a, c', b, a', c, d) at a - d): B2/B3 on γ4 = 1 off ⟪a' - b, a - d⟫ = 0
+      have _hresK3 := Minimality.Type08Sp.resid08FinalK2_imp_K3 _hresK2
+      -- K4 (6-cycle (a, c', b, a', c, b') at a - d; 5-cycle at c - d on β6 = 1): S4TpRK removed
+      have _hresK4 := Minimality.Type08Sp.resid08FinalK3_imp_K4 _hresK3
+      -- K3 (one sign at c - d; cycles Q1, Q2, Q4): TpA1ii off β6 = 1 and s = 0
+      have _hresK5 := Minimality.Type08Sp.resid08FinalK4_imp_K5 _hresK4
+      -- K5s (X1/X2 at a - d with tilt choice; B' = 0 by lexUni6_gen): S4TRK3 off a codim-7 sub-slice
+      have _hresK6 := Minimality.Type08Sp.resid08FinalK5_imp_K6 _hresK5
+      -- K7 (5-cycle (b, a', c, b', c') at b - d): S4TRK4 removed; non-planar leftover only TpA1iiK
+      have _hresK7 := Minimality.Type08Sp.resid08FinalK6_imp_K7 _hresK6
+      -- K8 (tilt choice in the Q1/Q2/Q4 cones; β6 = 1 by Q1⁺/Q4⁺): TpA1iiK off three codim-6 conditions
+      have _hresK8 := Minimality.Type08Sp.resid08FinalK7_imp_K8 _hresK7
+      -- K9 (cells at ℓ = b - d; L1 empty): every non-planar item closed, only the planar ResidP6 is left
+      have _hresK9 := Minimality.Type08Sp.resid08FinalK8_imp_K9 _hresK8
+      -- K5 (planar ResidP6): every planar sub-item closed off its tie slices (C2K5*); `Resid08FinalK10`
+      have _hresK10 := Minimality.Type08Sp.resid08FinalK9_imp_K10' _hresK9
+      -- K6P (ParEnd tie slices): QCE2 closed; QN2/QCEb cut to the stratum M (+ QN2's α1 ≤ 1 double ties)
+      have _hresK11 := Minimality.Type08Sp.resid08FinalK10_imp_K11 _hresK10
+      -- K6M (stratum M, DN2): metric-free face boxes, H2/H4; leftovers: box boundaries, ties, H1, H5, DN2 at α1 = 1
+      have _hresK12 := Minimality.Type08Sp.resid08FinalK11_imp_K12 _hresK11
+      -- K6T (T/T′ tie slices) and K14 (C2K14*: M ties H2/H4 by a depth literal, α1 = 1 partly, Ta ZC off D_c = 0,
+      -- Pa(1) at α4 > 1, one H5 rule); supersedes the K13 step (C2K6TZ), which it contains
+      have _hresK14 := Minimality.Type08Sp.resid08FinalK12_imp_K14 _hresK12
+      -- K16 (C2K16*): α1 = 1 boundary under RegN2/RegT4 (pentagon), H5 rules r0 r1 r2 r9
+      have _hresK16 := Minimality.Type08Sp.resid08FinalK14_imp_K16 _hresK14
+      -- K17C (C2K17C*): the M boundary at β1 = 1 (Coll5 forces ⟪a−d,b−d⟫ = 0; six cells; leftover K17cLeft)
+      have _hresK17C := Minimality.Type08Sp.resid08FinalK16_imp_K17C _hresK16
+      -- K17B (C2K17B*): H1-L2 (safe sub-leaf, the L34 triangle, two arc rules); leftover K17bL2Left
+      have _hresK17B := Minimality.Type08Sp.resid08FinalK17C_imp_K17B _hresK17C
+      -- K17B2 (C2K17B2*): K6M2's L2 rules 1, 2, 3, 4, 5, 13; leftover K17b2L2Left
+      have _hresK17B2 := Minimality.Type08Sp.resid08FinalK17B_imp_K17B2 _hresK17B
+      -- K17G (C2K17GC*, bundle C): the Pa and Pc tie slices (S1.5, S1.6, S1.7, U1-U3); leftovers K17gcLeftPa/Pc
+      have _hresK17G := Minimality.Type08Sp.resid08FinalK17B2_imp_K17G _hresK17B2
+      -- K17H (C2K17HZ): Ta/Tc tie slices by bundles A, B, D and K18; leftovers K17hLeftTa/Tc (codim ≥ 6 ties)
+      have _hresK17H := Minimality.Type08Sp.resid08FinalK17G_imp_K17H _hresK17G
+      -- K17I (C2K17AZ): DN2 at α1 = 1 closed by `k17a_dn2one`
+      have _hresK17I := Minimality.Type08Sp.resid08FinalK17H_imp_K17I _hresK17H
+      -- K19 (C2K19ZA): tie rows U1, U3, S1.3, S1.6, S1.7 (C2K19A–G); leftovers K19LeftPa/Pc/Ta
+      have _hresK19 := Minimality.Type08Sp.resid08FinalK17I_imp_K19 _hresK17I
+      -- K20 (C2K20ZA): the S1.5 corner and the S1.4 tie are Rupert (truncated prisms, C2K20E); the step
+      -- takes ¬IsRupert of the labelled point set, which is hN for the image of x (`image_seven`)
+      have _hresK20 := Minimality.Type08Sp.resid08FinalK19_imp_K20
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK19
+      -- K21 (C2K21A–C, C2K21ZA): Pa and Ta closed, Tc's A41 corner Rupert; H5 by rules 3, 6, 7, 8 (C2K20H*)
+      have _hresK21 := Minimality.Type08Sp.resid08FinalK20_imp_K21
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK20
+      -- K22 (C2K22A1, C2K22C1A, C2K22ZA): the M boundary at β1 = 1 is a right prism (Rupert); Pc C1 at β1 = γ4 = 1
+      have _hresK22 := Minimality.Type08Sp.resid08FinalK21_imp_K22
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK21
+      -- K23 (C2K20T*, C2K23ZA): TT closed by five cells up to the ties `K20Left`
+      have _hresK23 := Minimality.Type08Sp.resid08FinalK22_imp_K23
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK22
+      -- K24 (C2K24ZA): Pc closed (C1 `k22c1b_close`, C2 `k22c2_close`, C3 `k22c3_cell`)
+      have _hresK24 := Minimality.Type08Sp.resid08FinalK23_imp_K24
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK23
+      -- K25 (C2K25ZA): TT closed (right prism, `k24_TT_prism`)
+      have _hresK25 := Minimality.Type08Sp.resid08FinalK24_imp_K25
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK24
+      -- K26 (C2K26ZA): Tc Z1 closed (`k22z1_close`); only the M stratum is left
+      have _hresK26 := Minimality.Type08Sp.resid08FinalK25_imp_K26
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK25
+      -- K27 (C2K27ZA): M stratum, K14mTie and the α1 = 1 boundary piece closed
+      have _hresK27 := Minimality.Type08Sp.resid08FinalK26_imp_K27
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK26
+      -- K28 (C2K28ZA): M stratum, the H1 tie closed (six cells)
+      have _hresK28 := Minimality.Type08Sp.resid08FinalK27_imp_K28
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK27
+      -- K29 (C2K29ZA): M stratum, β6 = 1 leaf A, the L2 tail up to corners, H5 cell A (T < 0)
+      have _hresK29 := Minimality.Type08Sp.resid08FinalK28_imp_K29
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK28
+      -- K30 (C2K30ZA): M stratum, β6 = 1 leaves B–E, H5 cell A at T = 0
+      have _hresK30 := Minimality.Type08Sp.resid08FinalK29_imp_K30
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK29
+      -- K31 (C2K31ZA): M stratum, the β6 = 1 ties (up to corners `K31B4Rest`)
+      have _hresK31 := Minimality.Type08Sp.resid08FinalK30_imp_K31
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK30
+      -- K32 (C2K32ZA): M stratum, σ = β1 off the tie ⟪a - c', a - d⟫ = 0
+      have _hresK32 := Minimality.Type08Sp.resid08FinalK31_imp_K32
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK31
+      -- K33 (C2K33ZA): M stratum, σ = β1 tie cells (M < 0, R2.5, R2.4, R1+.5), four empty corners
+      have _hresK33 := Minimality.Type08Sp.resid08FinalK32_imp_K33
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK32
+      -- K34 (C2K34ZA): M stratum, β6 = 1 corners Lp = Lz = 0 and Lz = Lq = 0 (generated cells)
+      have _hresK34 := Minimality.Type08Sp.resid08FinalK33_imp_K34
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK33
+      -- K35 (C2K35ZA): M stratum, H5 residue cell B (S < 0) with all side facts
+      have _hresK35 := Minimality.Type08Sp.resid08FinalK34_imp_K35
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK34
+      -- K36 (C2K36ZA): M stratum, the Kb side reduced to the N2 side's open pieces (hrel by `k16_kb_rel`)
+      have _hresK36 := Minimality.Type08Sp.resid08FinalK35_imp_K36
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK35
+      -- K37 (C2K37ZA): M stratum, γ6 = 1 by the b ↔ c mirror of the β6 = 1 chain (both sides)
+      have _hresK37 := Minimality.Type08Sp.resid08FinalK36_imp_K37
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK36
+      -- K38 (C2K38ZA): M stratum, the Lz = Lw = 0 corner on Lq < 0 (three generated cells; and the γ6 = 1 mirror)
+      have _hresK38 := Minimality.Type08Sp.resid08FinalK37_imp_K38
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK37
+      -- K39 (C2K39ZA): M stratum, β6 = 1 and γ6 = 1 closed (Lz = Lw = 0 on Lq > 0: `k34lw_Nq`, `k34lw_Sq`)
+      have _hresK39 := Minimality.Type08Sp.resid08FinalK38_imp_K39
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK38
+      -- K40 (C2K40ZA): M stratum, σ = β1 tie, cell R1+.6 (generated, monomial certificates)
+      have _hresK40 := Minimality.Type08Sp.resid08FinalK39_imp_K40
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK39
+      -- K41 (C2K41ZA): M stratum, H5 at S = 0 and R1 at M = 0 (cells A, B, C) closed
+      have _hresK41 := Minimality.Type08Sp.resid08FinalK40_imp_K41
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK40
+      -- K42 (C2K42ZA): M stratum, σ = β1 R1 rule with ori = 0 (cells M0, B0, C0)
+      have _hresK42 := Minimality.Type08Sp.resid08FinalK41_imp_K42
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK41
+      -- K43 (C2K43ZA): M stratum, R1 at M = 0 ∧ ori < 0 ∧ dep = 0 (cells V3a, V3b, V3c)
+      have _hresK43 := Minimality.Type08Sp.resid08FinalK42_imp_K43
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK42
+      -- K44 (C2K44ZA): M stratum, R2 leftovers (cells k43r2_A/B/C/D); left: oc = 0 ≤ ob
+      have _hresK44 := Minimality.Type08Sp.resid08FinalK43_imp_K44
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK43
+      -- K45 (C2K45ZA): M stratum, R2 at oc = 0 ≤ ob (cell k43r2_B0); R2 closed
+      have _hresK45 := Minimality.Type08Sp.resid08FinalK44_imp_K45
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK44
+      -- K46 (C2K46ZA): M stratum, the A2 tie (σ = β1, R1) by four motion cells (C2K46L/C/Cp/U, transfer C2K46TRB);
+      -- σ = β1 tie closed, Kb side empty; left: the L2 tail corners `K33L2Corner` (N2)
+      have _hresK46 := Minimality.Type08Sp.resid08FinalK45_imp_K46
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK45
+      -- K47 (C2K47ZA): the L2 tail corners (lex cells, k-jets, a motion cell): the residual is empty
+      Minimality.Type08Sp.resid08FinalK46_false
+        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK46)
+
 /-- **Every 7-vertex nopert is simplicial** (skeleton: the case split into the 29 non-simplicial
 types is complete; the `sorry`s are listed in the section comment). -/
 theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := by
@@ -742,8 +885,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- position is left
     have hgen := noThreeCollinear_seven x hN hx
     exact quadPairPar07 hx hN rfl hR (Minimality.not_quadTripleRect_type07 hx hgen hR)
-  · -- type 08: `not_type08_of_isNopert'`; its general position (2 hypotheses) is asked, the special
-    -- positions are open in Lean.  The far triple tie (touching) of the named closings N2, T4 is
+  · -- type 08: closed, no `sorry` (`not_type08_closed`; history below).  The far triple tie (touching) of the named closings N2, T4 is
     -- no longer excluded in `Type08Gen`: with `c'` (resp. `b'`) not beyond it is closed by the
     -- sector tilt at the view (Proposition 29.3), with it beyond by the horizontal end of a face
     -- circle (Proposition 30.4); `isRupert_touchN2`, `isRupert_touchT4`
@@ -759,144 +901,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- or at `T'` the Σ₄ leftover `S4TpG2` (Lemma T'S, `Tp_poked_of_H`, `Tp_caseA` proved; `Tp_far` proved).  Proved
     -- and used: the Q region, the refined limit theorem (R2T*, touching, ties), non-persistent and persistent HDN
     -- closings, T'X, R3, R4h, the level face.  That
-    -- residual is the remaining `sorry` (`not_type08_of_isNopert'` stays for other users)
-    obtain ⟨fA, hfA⟩ := hR {0, 1, 2, 3} (by decide)
-    obtain ⟨fB, hfB⟩ := hR {0, 2, 4, 5} (by decide)
-    obtain ⟨fC, hfC⟩ := hR {2, 3, 5, 6} (by decide)
-    obtain ⟨fD, hfD⟩ := hR {0, 1, 4} (by decide)
-    obtain ⟨fE, hfE⟩ := hR {1, 3, 6} (by decide)
-    obtain ⟨fF, hfF⟩ := hR {1, 4, 6} (by decide)
-    obtain ⟨fG, hfG⟩ := hR {4, 5, 6} (by decide)
-    exact (Minimality.Type08Sp.type08_rupert_or_residJ x hx fA fB fC fD fE fF fG hfA hfB hfC hfD hfE
-      hfF hfG).elim hN.2 (fun hres =>
-        -- C2 (face cells at the edge views a - d, c - d): the residual shrinks to `Resid08FinalK`
-        -- K2 (5-cycle (a, d, b, a', b') at a - d): P3Tpii and L2 on γ4 = 1 removed
-        have _hresK2 := Minimality.Type08Sp.resid08FinalK_imp_K2 (Minimality.Type08Sp.resid08FinalJ_imp_K hres)
-        -- K1 (cycles X1 = (d, b, a', b', c), X2 = (a, c', b, a', c, d) at a - d): B2/B3 on γ4 = 1 off ⟪a' - b, a - d⟫ = 0
-        have _hresK3 := Minimality.Type08Sp.resid08FinalK2_imp_K3 _hresK2
-        -- K4 (6-cycle (a, c', b, a', c, b') at a - d; 5-cycle at c - d on β6 = 1): S4TpRK removed
-        have _hresK4 := Minimality.Type08Sp.resid08FinalK3_imp_K4 _hresK3
-        -- K3 (one sign at c - d; cycles Q1, Q2, Q4): TpA1ii off β6 = 1 and s = 0
-        have _hresK5 := Minimality.Type08Sp.resid08FinalK4_imp_K5 _hresK4
-        -- K5s (X1/X2 at a - d with tilt choice; B' = 0 by lexUni6_gen): S4TRK3 off a codim-7 sub-slice
-        have _hresK6 := Minimality.Type08Sp.resid08FinalK5_imp_K6 _hresK5
-        -- K7 (5-cycle (b, a', c, b', c') at b - d): S4TRK4 removed; non-planar leftover only TpA1iiK
-        have _hresK7 := Minimality.Type08Sp.resid08FinalK6_imp_K7 _hresK6
-        -- K8 (tilt choice in the Q1/Q2/Q4 cones; β6 = 1 by Q1⁺/Q4⁺): TpA1iiK off three codim-6 conditions
-        have _hresK8 := Minimality.Type08Sp.resid08FinalK7_imp_K8 _hresK7
-        -- K9 (cells at ℓ = b - d; L1 empty): every non-planar item closed, only the planar ResidP6 is left
-        have _hresK9 := Minimality.Type08Sp.resid08FinalK8_imp_K9 _hresK8
-        -- K5 (planar ResidP6): every planar sub-item closed off its tie slices (C2K5*); `Resid08FinalK10`
-        have _hresK10 := Minimality.Type08Sp.resid08FinalK9_imp_K10' _hresK9
-        -- K6P (ParEnd tie slices): QCE2 closed; QN2/QCEb cut to the stratum M (+ QN2's α1 ≤ 1 double ties)
-        have _hresK11 := Minimality.Type08Sp.resid08FinalK10_imp_K11 _hresK10
-        -- K6M (stratum M, DN2): metric-free face boxes, H2/H4; leftovers: box boundaries, ties, H1, H5, DN2 at α1 = 1
-        have _hresK12 := Minimality.Type08Sp.resid08FinalK11_imp_K12 _hresK11
-        -- K6T (T/T′ tie slices) and K14 (C2K14*: M ties H2/H4 by a depth literal, α1 = 1 partly, Ta ZC off D_c = 0,
-        -- Pa(1) at α4 > 1, one H5 rule); supersedes the K13 step (C2K6TZ), which it contains
-        have _hresK14 := Minimality.Type08Sp.resid08FinalK12_imp_K14 _hresK12
-        -- K16 (C2K16*): α1 = 1 boundary under RegN2/RegT4 (pentagon), H5 rules r0 r1 r2 r9
-        have _hresK16 := Minimality.Type08Sp.resid08FinalK14_imp_K16 _hresK14
-        -- K17C (C2K17C*): the M boundary at β1 = 1 (Coll5 forces ⟪a−d,b−d⟫ = 0; six cells; leftover K17cLeft)
-        have _hresK17C := Minimality.Type08Sp.resid08FinalK16_imp_K17C _hresK16
-        -- K17B (C2K17B*): H1-L2 (safe sub-leaf, the L34 triangle, two arc rules); leftover K17bL2Left
-        have _hresK17B := Minimality.Type08Sp.resid08FinalK17C_imp_K17B _hresK17C
-        -- K17B2 (C2K17B2*): K6M2's L2 rules 1, 2, 3, 4, 5, 13; leftover K17b2L2Left
-        have _hresK17B2 := Minimality.Type08Sp.resid08FinalK17B_imp_K17B2 _hresK17B
-        -- K17G (C2K17GC*, bundle C): the Pa and Pc tie slices (S1.5, S1.6, S1.7, U1-U3); leftovers K17gcLeftPa/Pc
-        have _hresK17G := Minimality.Type08Sp.resid08FinalK17B2_imp_K17G _hresK17B2
-        -- K17H (C2K17HZ): Ta/Tc tie slices by bundles A, B, D and K18; leftovers K17hLeftTa/Tc (codim ≥ 6 ties)
-        have _hresK17H := Minimality.Type08Sp.resid08FinalK17G_imp_K17H _hresK17G
-        -- K17I (C2K17AZ): DN2 at α1 = 1 closed by `k17a_dn2one`
-        have _hresK17I := Minimality.Type08Sp.resid08FinalK17H_imp_K17I _hresK17H
-        -- K19 (C2K19ZA): tie rows U1, U3, S1.3, S1.6, S1.7 (C2K19A–G); leftovers K19LeftPa/Pc/Ta
-        have _hresK19 := Minimality.Type08Sp.resid08FinalK17I_imp_K19 _hresK17I
-        -- K20 (C2K20ZA): the S1.5 corner and the S1.4 tie are Rupert (truncated prisms, C2K20E); the step
-        -- takes ¬IsRupert of the labelled point set, which is hN for the image of x (`image_seven`)
-        have _hresK20 := Minimality.Type08Sp.resid08FinalK19_imp_K20
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK19
-        -- K21 (C2K21A–C, C2K21ZA): Pa and Ta closed, Tc's A41 corner Rupert; H5 by rules 3, 6, 7, 8 (C2K20H*)
-        have _hresK21 := Minimality.Type08Sp.resid08FinalK20_imp_K21
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK20
-        -- K22 (C2K22A1, C2K22C1A, C2K22ZA): the M boundary at β1 = 1 is a right prism (Rupert); Pc C1 at β1 = γ4 = 1
-        have _hresK22 := Minimality.Type08Sp.resid08FinalK21_imp_K22
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK21
-        -- K23 (C2K20T*, C2K23ZA): TT closed by five cells up to the ties `K20Left`
-        have _hresK23 := Minimality.Type08Sp.resid08FinalK22_imp_K23
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK22
-        -- K24 (C2K24ZA): Pc closed (C1 `k22c1b_close`, C2 `k22c2_close`, C3 `k22c3_cell`)
-        have _hresK24 := Minimality.Type08Sp.resid08FinalK23_imp_K24
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK23
-        -- K25 (C2K25ZA): TT closed (right prism, `k24_TT_prism`)
-        have _hresK25 := Minimality.Type08Sp.resid08FinalK24_imp_K25
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK24
-        -- K26 (C2K26ZA): Tc Z1 closed (`k22z1_close`); only the M stratum is left
-        have _hresK26 := Minimality.Type08Sp.resid08FinalK25_imp_K26
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK25
-        -- K27 (C2K27ZA): M stratum, K14mTie and the α1 = 1 boundary piece closed
-        have _hresK27 := Minimality.Type08Sp.resid08FinalK26_imp_K27
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK26
-        -- K28 (C2K28ZA): M stratum, the H1 tie closed (six cells)
-        have _hresK28 := Minimality.Type08Sp.resid08FinalK27_imp_K28
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK27
-        -- K29 (C2K29ZA): M stratum, β6 = 1 leaf A, the L2 tail up to corners, H5 cell A (T < 0)
-        have _hresK29 := Minimality.Type08Sp.resid08FinalK28_imp_K29
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK28
-        -- K30 (C2K30ZA): M stratum, β6 = 1 leaves B–E, H5 cell A at T = 0
-        have _hresK30 := Minimality.Type08Sp.resid08FinalK29_imp_K30
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK29
-        -- K31 (C2K31ZA): M stratum, the β6 = 1 ties (up to corners `K31B4Rest`)
-        have _hresK31 := Minimality.Type08Sp.resid08FinalK30_imp_K31
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK30
-        -- K32 (C2K32ZA): M stratum, σ = β1 off the tie ⟪a - c', a - d⟫ = 0
-        have _hresK32 := Minimality.Type08Sp.resid08FinalK31_imp_K32
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK31
-        -- K33 (C2K33ZA): M stratum, σ = β1 tie cells (M < 0, R2.5, R2.4, R1+.5), four empty corners
-        have _hresK33 := Minimality.Type08Sp.resid08FinalK32_imp_K33
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK32
-        -- K34 (C2K34ZA): M stratum, β6 = 1 corners Lp = Lz = 0 and Lz = Lq = 0 (generated cells)
-        have _hresK34 := Minimality.Type08Sp.resid08FinalK33_imp_K34
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK33
-        -- K35 (C2K35ZA): M stratum, H5 residue cell B (S < 0) with all side facts
-        have _hresK35 := Minimality.Type08Sp.resid08FinalK34_imp_K35
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK34
-        -- K36 (C2K36ZA): M stratum, the Kb side reduced to the N2 side's open pieces (hrel by `k16_kb_rel`)
-        have _hresK36 := Minimality.Type08Sp.resid08FinalK35_imp_K36
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK35
-        -- K37 (C2K37ZA): M stratum, γ6 = 1 by the b ↔ c mirror of the β6 = 1 chain (both sides)
-        have _hresK37 := Minimality.Type08Sp.resid08FinalK36_imp_K37
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK36
-        -- K38 (C2K38ZA): M stratum, the Lz = Lw = 0 corner on Lq < 0 (three generated cells; and the γ6 = 1 mirror)
-        have _hresK38 := Minimality.Type08Sp.resid08FinalK37_imp_K38
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK37
-        -- K39 (C2K39ZA): M stratum, β6 = 1 and γ6 = 1 closed (Lz = Lw = 0 on Lq > 0: `k34lw_Nq`, `k34lw_Sq`)
-        have _hresK39 := Minimality.Type08Sp.resid08FinalK38_imp_K39
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK38
-        -- K40 (C2K40ZA): M stratum, σ = β1 tie, cell R1+.6 (generated, monomial certificates)
-        have _hresK40 := Minimality.Type08Sp.resid08FinalK39_imp_K40
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK39
-        -- K41 (C2K41ZA): M stratum, H5 at S = 0 and R1 at M = 0 (cells A, B, C) closed
-        have _hresK41 := Minimality.Type08Sp.resid08FinalK40_imp_K41
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK40
-        -- K42 (C2K42ZA): M stratum, σ = β1 R1 rule with ori = 0 (cells M0, B0, C0)
-        have _hresK42 := Minimality.Type08Sp.resid08FinalK41_imp_K42
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK41
-        -- K43 (C2K43ZA): M stratum, R1 at M = 0 ∧ ori < 0 ∧ dep = 0 (cells V3a, V3b, V3c)
-        have _hresK43 := Minimality.Type08Sp.resid08FinalK42_imp_K43
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK42
-        -- K44 (C2K44ZA): M stratum, R2 leftovers (cells k43r2_A/B/C/D); left: oc = 0 ≤ ob
-        have _hresK44 := Minimality.Type08Sp.resid08FinalK43_imp_K44
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK43
-        -- K45 (C2K45ZA): M stratum, R2 at oc = 0 ≤ ob (cell k43r2_B0); R2 closed
-        have _hresK45 := Minimality.Type08Sp.resid08FinalK44_imp_K45
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK44
-        -- K46 (C2K46ZA): M stratum, the A2 tie (σ = β1, R1) by four motion cells (C2K46L/C/Cp/U, transfer C2K46TRB);
-        -- σ = β1 tie closed, Kb side empty; left: the L2 tail corners `K33L2Corner` (N2)
-        have _hresK46 := Minimality.Type08Sp.resid08FinalK45_imp_K46
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK45
-        -- K47 (C2K47ZA): the L2 tail corners (lex cells, k-jets, a motion cell): the residual is empty
-        Minimality.Type08Sp.resid08FinalK46_false
-          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK46)
+    -- residual is closed by the K-chain ending in C2K47ZA (`not_type08_of_isNopert'` stays for other users)
+    exact not_type08_closed hx hN hR
   · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
     -- asked; type 09 is fully closed (no `sorry`).  `quadPairPar09` (as `quadPairPar02`):
     -- `TriGenFarP` and `TriGenPar ∧ TriGenTieO` are closed by `quadPair`; the acute case-(c)

@@ -1098,6 +1098,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK44_imp_K45
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK45_imp_K46
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK46_false
+#assert_standard_axioms not_type08_closed
 #assert_standard_axioms Minimality.Type08Sp.C2.k46_tie_rupert
 #assert_standard_axioms Minimality.Type08Sp.C2.a2mc_all
 #assert_standard_axioms Minimality.isRupert_of_cayleyPolyJet
