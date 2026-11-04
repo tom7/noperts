@@ -68,6 +68,7 @@ import Minimality.Type08S.C2K43ZA
 import Minimality.Type08S.C2K44ZA
 import Minimality.Type08S.C2K45ZA
 import Minimality.Type08S.C2K46ZA
+import Minimality.Type08S.C2K47ZA
 import Minimality.Generic.CayleyJet
 import Minimality.Type08S.LexKEx
 import Minimality.Type08S.LexGenA
@@ -1096,6 +1097,7 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Type08Sp.C2.k43r2_D
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK44_imp_K45
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK45_imp_K46
+#assert_standard_axioms Minimality.Type08Sp.resid08FinalK46_false
 #assert_standard_axioms Minimality.Type08Sp.C2.k46_tie_rupert
 #assert_standard_axioms Minimality.Type08Sp.C2.a2mc_all
 #assert_standard_axioms Minimality.isRupert_of_cayleyPolyJet

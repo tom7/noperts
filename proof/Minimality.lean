@@ -8,7 +8,7 @@ public import Minimality.Type08S.C2K6PZ
 public import Minimality.Type08S.C2K6MZ
 public import Minimality.Type08S.C2K6TZ
 public import Minimality.Type08S.C2K14P
-public import Minimality.Type08S.C2K46ZA
+public import Minimality.Type08S.C2K47ZA
 public import Minimality.Type08S.C2FC1
 public import Minimality.Type16Ties
 public import Minimality.Type16UW
@@ -894,7 +894,9 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         -- σ = β1 tie closed, Kb side empty; left: the L2 tail corners `K33L2Corner` (N2)
         have _hresK46 := Minimality.Type08Sp.resid08FinalK45_imp_K46
           (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK45
-        byThm5Faces hx hN _ h3 (fun _ => sorry))
+        -- K47 (C2K47ZA): the L2 tail corners (lex cells, k-jets, a motion cell): the residual is empty
+        Minimality.Type08Sp.resid08FinalK46_false
+          (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK46)
   · -- type 09: Cor. T1 at the quadrilaterals 0134, 0256 (sharing vertex 0); general position
     -- asked; type 09 is fully closed (no `sorry`).  `quadPairPar09` (as `quadPairPar02`):
     -- `TriGenFarP` and `TriGenPar ∧ TriGenTieO` are closed by `quadPair`; the acute case-(c)
