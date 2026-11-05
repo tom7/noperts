@@ -1,5 +1,6 @@
 name = "noperts"
 defaultTargets = ["Noperts", "Septopert", "Minimality", "ProofOfMainTheorem",
+  "MinimalityExtra", "ProofOfMinimalityExtra",
   "DeltoidalHexecontahedron", "PentagonalHexecontahedron", "SnubDodecahedron", "SnubCube", "Nopert231",
   "constructSeptopert", "checkSeptopertCap", "constructDeltoidalHexecontahedron",
   "constructPentagonalHexecontahedron", "constructSnubDodecahedron", "constructSnubCube",
@@ -60,6 +61,14 @@ globs = ["Minimality", "Minimality.+"]
 [[lean_lib]]
 name = "ProofOfMainTheorem"
 globs = ["ProofOfMainTheorem"]
+
+[[lean_lib]]
+name = "MinimalityExtra"
+globs = ["MinimalityExtra", "MinimalityExtra.+"]
+
+[[lean_lib]]
+name = "ProofOfMinimalityExtra"
+globs = ["ProofOfMinimalityExtra"]
 
 [[lean_lib]]
 name = "Tests"
