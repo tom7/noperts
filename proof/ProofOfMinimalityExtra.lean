@@ -2,6 +2,7 @@ module
 
 public import MinimalityExtra.NoUnimodal
 public import MinimalityExtra.Sanity
+public import MinimalityExtra.MetricUniform
 public import Minimality.Tilt
 public import Minimality.Thm73
 public import Minimality.OctaTools
