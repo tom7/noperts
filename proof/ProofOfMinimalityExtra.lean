@@ -4,6 +4,7 @@ public import MinimalityExtra.NoUnimodal
 public import MinimalityExtra.Sanity
 public import MinimalityExtra.MetricUniform
 public import MinimalityExtra.TetraViews
+public import MinimalityExtra.Chirotope
 public import Minimality.Tilt
 public import Minimality.Thm73
 public import Minimality.OctaTools

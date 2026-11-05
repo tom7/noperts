@@ -39,6 +39,13 @@ plain coordinate vectors `Fin 3 → ℝ`.
 `ExistsTetrahedronViewsIndependent`: one tetrahedron has a view with a unimodal rim that is
 rigid, a view with a two-peaked rim that is free, and a view with a two-peaked rim that is rigid.
 So a unimodal rim alone does not make a view free: that also needs no horizontal double normal.
+
+## The chirotope does not determine the silhouette
+
+`ChirotopeDoesNotDetermineSilhouette`: two generic 5-point configurations with the same signs of
+all 4-point determinants can have different shadows along the direction of a pair of points. That
+direction depends on 5-point determinants such as `det(b - a, d - c, e - c)`, so a certificate
+at a pair view cannot be uniform over a chirotope class.
 -/
 
 @[expose] public section
@@ -222,5 +229,40 @@ def ExistsTetrahedronViewsIndependent : Prop :=
         ¬ FreeAt (univ.image x) wc
 
 end TetrahedronViews
+
+section Chirotope
+
+open Matrix
+
+/-- Two 5-point configurations have the same chirotope (the signs of the 4-point
+determinants `det(x j - x i, x k - x i, x l - x i)`): for all indices `i j k l`, the sign of
+this determinant for `x` equals its sign for `y`. -/
+def SameChirotope (x y : Fin 5 → Fin 3 → ℝ) : Prop :=
+  ∀ i j k l : Fin 5,
+    SignType.sign (tripleProduct (x j - x i) (x k - x i) (x l - x i)) =
+      SignType.sign (tripleProduct (y j - y i) (y k - y i) (y l - y i))
+
+/-- A 5-point configuration is generic in the chirotope sense: every 4-point determinant with
+four distinct indices is nonzero. -/
+def ChirotopeGeneric (x : Fin 5 → Fin 3 → ℝ) : Prop :=
+  ∀ i j k l : Fin 5, i ≠ j → i ≠ k → i ≠ l → j ≠ k → j ≠ l → k ≠ l →
+    tripleProduct (x j - x i) (x k - x i) (x l - x i) ≠ 0
+
+/-- The directed side `(a, b)` of the shadow of `p` along the view `u`: every other point
+`p m` (with `m` not `a`, `b`, and not the vertex `4`, which projects onto vertex `3`) lies
+strictly to the left of the directed line from `p a` to `p b` in the projection. -/
+def IsShadowSide (p : Fin 5 → Fin 3 → ℝ) (u : Fin 3 → ℝ) (a b : Fin 5) : Prop :=
+  ∀ m : Fin 5, m ≠ a → m ≠ b → m ≠ 4 → 0 < tripleProduct (p b - p a) (p m - p a) u
+
+/-- The chirotope does not determine the silhouette. There are two generic 5-point
+configurations with the same chirotope, such that for some directed side `(a, b)` with
+`a, b` in `{0, 1, 2, 3}`, the pair is a shadow side along `x 4 - x 3` but not along
+`y 4 - y 3`. -/
+def ChirotopeDoesNotDetermineSilhouette : Prop :=
+  ∃ x y : Fin 5 → Fin 3 → ℝ, ChirotopeGeneric x ∧ ChirotopeGeneric y ∧ SameChirotope x y ∧
+    ∃ a b : Fin 5, a ≠ 4 ∧ b ≠ 4 ∧ a ≠ b ∧
+      IsShadowSide x (x 4 - x 3) a b ∧ ¬ IsShadowSide y (y 4 - y 3) a b
+
+end Chirotope
 
 end MinimalityExtra
