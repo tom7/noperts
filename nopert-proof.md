@@ -26,11 +26,18 @@ can only produce data that fails the checks.
 
 ## Poses and symmetry reductions
 
-A pose is an outer **view** direction u and a **relative rotation** R
-between the two copies (the inner copy's offset is eliminated by the
-certificates). Both are reduced modulo the solid's symmetries before any
-search, since at a symmetry R the two shadows coincide and nothing can be
-certified there:
+We imagine that the inner solid moves parallel to the camera's axis, so
+the **view direction** u indicates which direction we're looking at the
+outer solid from (and thus the direction that the inner solid tries to
+pass through it). We then have a **relative rotation** of the inner
+copy relative to the outer. A Rupert passage also allows translation,
+but this is handled inside the certificates.
+
+Poses are reduced modulo the solid's symmetries before any search. This
+reduces the number of certificates, and is essential because when one
+solid is rotated a multiple of some symmetry, the two shadows are exactly
+the same and nothing can be certified there (it looks like the identity).
+To do this, we reduce:
 - the view into a fundamental domain (a triangle or a few) of the solid's
   symmetry group with the antipode;
 - the relative rotation into the cell of the identity (a Dirichlet,
