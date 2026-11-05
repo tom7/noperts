@@ -39,6 +39,9 @@ plain coordinate vectors `Fin 3 → ℝ`.
 `ExistsTetrahedronViewsIndependent`: one tetrahedron has a view with a unimodal rim that is
 rigid, a view with a two-peaked rim that is free, and a view with a two-peaked rim that is rigid.
 So a unimodal rim alone does not make a view free: that also needs no horizontal double normal.
+`ExistsMetricChangingFreedom`: the same tetrahedron and affine view, with the same silhouette and
+the same depth order, can be free in one metric and rigid in another, so freedom at a two-peaked
+rim is not combinatorial.
 
 ## The chirotope does not determine the silhouette
 
@@ -227,6 +230,30 @@ def ExistsTetrahedronViewsIndependent : Prop :=
       (∃ lab : ZMod 4 → Fin 4, Function.Injective lab ∧ StrictRimN x wc lab ∧
           IsCyclicTwoPeaked (fun i => ⟪x (lab i), wc⟫)) ∧
         ¬ FreeAt (univ.image x) wc
+
+/-- **First-order freedom depends on the metric; the combinatorics does not.**
+Same polytope, same affine view, same silhouette, same depth order, two metrics: free in one,
+rigid in the other. Precisely: there are four non-coplanar points `x`, a view direction `v`, a
+cyclic labelling `lab` and an invertible matrix `A` (with positive determinant; `A` encodes the
+metric `G = AᵀA`, so that `y i = A (x i)` is the same shape seen in the metric `G`, with view
+`w = A v`) such that `lab` is a strict rim of `x` at `v` and of `y` at `w`; the depths
+`⟪x (lab i), v⟫` and `⟪y (lab i), w⟫` are both cyclically two-peaked and induce the same order
+(`depth i < depth j` for `x` exactly when it holds for `y`); and the view `v` of `x` is free
+while the view `w` of `y` is rigid. -/
+def ExistsMetricChangingFreedom : Prop :=
+  ∃ (x : Fin 4 → ℝ³) (v : ℝ³) (lab : ZMod 4 → Fin 4) (A : Matrix (Fin 3) (Fin 3) ℝ),
+    det3 (x 1 - x 0) (x 2 - x 0) (x 3 - x 0) ≠ 0 ∧ 0 < A.det ∧
+    Function.Injective lab ∧
+    StrictRimN x v lab ∧
+    StrictRimN (fun i => Matrix.toEuclideanLin A (x i)) (Matrix.toEuclideanLin A v) lab ∧
+    IsCyclicTwoPeaked (fun i => ⟪x (lab i), v⟫) ∧
+    IsCyclicTwoPeaked
+      (fun i => ⟪Matrix.toEuclideanLin A (x (lab i)), Matrix.toEuclideanLin A v⟫) ∧
+    (∀ i j : ZMod 4, ⟪x (lab i), v⟫ < ⟪x (lab j), v⟫ ↔
+      ⟪Matrix.toEuclideanLin A (x (lab i)), Matrix.toEuclideanLin A v⟫ <
+        ⟪Matrix.toEuclideanLin A (x (lab j)), Matrix.toEuclideanLin A v⟫) ∧
+    FreeAt (univ.image x) v ∧
+    ¬ FreeAt (univ.image (fun i => Matrix.toEuclideanLin A (x i))) (Matrix.toEuclideanLin A v)
 
 end TetrahedronViews
 
