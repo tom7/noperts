@@ -4,6 +4,7 @@ public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.LinearAlgebra.Matrix.PosDef
+public import Mathlib.LinearAlgebra.LinearIndependent.Basic
 
 /-!
 # Side results of the minimality project (statements)
@@ -49,6 +50,13 @@ rim is not combinatorial.
 all 4-point determinants can have different shadows along the direction of a pair of points. That
 direction depends on 5-point determinants such as `det(b - a, d - c, e - c)`, so a certificate
 at a pair view cannot be uniform over a chirotope class.
+
+## Arrangement vertices suffice
+
+`ArrangementVerticesSuffice`: if finitely many linear forms on `ℝ³`, two of them independent,
+are all positive somewhere, then some vertex of their great-circle arrangement, with a tilt,
+already has that sign pattern lexicographically. So a search for a cell defined by the signs of
+linear forms in the view need only try arrangement vertices.
 -/
 
 @[expose] public section
@@ -291,5 +299,62 @@ def ChirotopeDoesNotDetermineSilhouette : Prop :=
       IsShadowSide x (x 4 - x 3) a b ∧ ¬ IsShadowSide y (y 4 - y 3) a b
 
 end Chirotope
+
+section ArrangementVertices
+
+open Matrix
+
+/-- ARRANGEMENT VERTICES SUFFICE. Let `l 0, …, l (n-1)` be linear forms on `ℝ³` (vectors;
+the value at the view `u` is `l k ⬝ᵥ u`; signs of conditions are absorbed into the forms, so the
+open chamber is `{u | ∀ k, 0 < l k ⬝ᵥ u}`). Assume at least two of the forms are linearly
+independent (this is implied by the forms spanning `ℝ³`, and is the sharp requirement; see
+`ChamberNeedsRank`) and the chamber is nonempty. Then there are a nonzero view `u₀`, two
+indices `i j` with independent forms vanishing at `u₀` (so `u₀` is a multiple of the cross
+product `l i × l j`, an arrangement vertex) and a tilt `d` such that for every form `k` either
+`l k ⬝ᵥ u₀ > 0`, or `l k ⬝ᵥ u₀ = 0` and `l k ⬝ᵥ d > 0` (lexicographic cell: `u₀ + ε d` lies in
+the chamber for small `ε > 0`). -/
+def ArrangementVerticesSuffice : Prop :=
+  ∀ (n : ℕ) (l : Fin n → Fin 3 → ℝ),
+    (∃ i j, LinearIndependent ℝ ![l i, l j]) →
+    (∃ d : Fin 3 → ℝ, ∀ k, 0 < l k ⬝ᵥ d) →
+    ∃ (u₀ : Fin 3 → ℝ) (i j : Fin n) (d : Fin 3 → ℝ),
+      u₀ ≠ 0 ∧ LinearIndependent ℝ ![l i, l j] ∧ l i ⬝ᵥ u₀ = 0 ∧ l j ⬝ᵥ u₀ = 0 ∧
+      ∀ k, 0 < l k ⬝ᵥ u₀ ∨ (l k ⬝ᵥ u₀ = 0 ∧ 0 < l k ⬝ᵥ d)
+
+/-- The same with the hypothesis in the form used by the notes: the forms span the dual of
+`ℝ³`, `Submodule.span ℝ (Set.range l) = ⊤` (rank 3). Weaker than `ArrangementVerticesSuffice`'s
+hypothesis, so this is a consequence. -/
+def ArrangementVerticesSufficeSpan : Prop :=
+  ∀ (n : ℕ) (l : Fin n → Fin 3 → ℝ),
+    Submodule.span ℝ (Set.range l) = ⊤ →
+    (∃ d : Fin 3 → ℝ, ∀ k, 0 < l k ⬝ᵥ d) →
+    ∃ (u₀ : Fin 3 → ℝ) (i j : Fin n) (d : Fin 3 → ℝ),
+      u₀ ≠ 0 ∧ LinearIndependent ℝ ![l i, l j] ∧ l i ⬝ᵥ u₀ = 0 ∧ l j ⬝ᵥ u₀ = 0 ∧
+      ∀ k, 0 < l k ⬝ᵥ u₀ ∨ (l k ⬝ᵥ u₀ = 0 ∧ 0 < l k ⬝ᵥ d)
+
+/-- Explicit lexicographic form of `ArrangementVerticesSuffice`: moreover `u₀ + ε • d` lies in
+the open chamber for every small `ε > 0`. -/
+def ArrangementVerticesSufficeLex : Prop :=
+  ∀ (n : ℕ) (l : Fin n → Fin 3 → ℝ),
+    (∃ i j, LinearIndependent ℝ ![l i, l j]) →
+    (∃ d : Fin 3 → ℝ, ∀ k, 0 < l k ⬝ᵥ d) →
+    ∃ (u₀ : Fin 3 → ℝ) (i j : Fin n) (d : Fin 3 → ℝ),
+      u₀ ≠ 0 ∧ LinearIndependent ℝ ![l i, l j] ∧ l i ⬝ᵥ u₀ = 0 ∧ l j ⬝ᵥ u₀ = 0 ∧
+      (∃ ε₀ : ℝ, 0 < ε₀ ∧ ∀ ε : ℝ, 0 < ε → ε < ε₀ → ∀ k, 0 < l k ⬝ᵥ (u₀ + ε • d))
+
+/-- THE INDEPENDENT-PAIR HYPOTHESIS IS NEEDED (and it is the sharp one). There is a family of
+forms (a single form, so rank 1: all forms parallel) whose open chamber is nonempty, with no two
+independent forms, and for which no vertex-with-tilt as in `ArrangementVerticesSuffice` exists.
+For families of rank 2 (two independent forms, all forms in their span) the theorem holds: the
+vertex is the common kernel line of all the forms, which lies in the closed cone. -/
+def ChamberNeedsRank : Prop :=
+  ∃ (n : ℕ) (l : Fin n → Fin 3 → ℝ),
+    (∃ d : Fin 3 → ℝ, ∀ k, 0 < l k ⬝ᵥ d) ∧
+    (¬ ∃ i j, LinearIndependent ℝ ![l i, l j]) ∧
+    ¬ ∃ (u₀ : Fin 3 → ℝ) (i j : Fin n) (d : Fin 3 → ℝ),
+      u₀ ≠ 0 ∧ LinearIndependent ℝ ![l i, l j] ∧ l i ⬝ᵥ u₀ = 0 ∧ l j ⬝ᵥ u₀ = 0 ∧
+      ∀ k, 0 < l k ⬝ᵥ u₀ ∨ (l k ⬝ᵥ u₀ = 0 ∧ 0 < l k ⬝ᵥ d)
+
+end ArrangementVertices
 
 end MinimalityExtra
