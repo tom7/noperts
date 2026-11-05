@@ -357,4 +357,21 @@ def ChamberNeedsRank : Prop :=
 
 end ArrangementVertices
 
+section Box
+
+/-- Auxiliary: the sign (`1` or `-1`) of coordinate `j` of corner `i`: `1` iff bit `j` of `i` is set. -/
+noncomputable def boxSign (j : ℕ) (i : Fin 8) : ℝ := if i.val / 2 ^ j % 2 = 1 then 1 else -1
+
+/-- The eight corners of the box with half-sides `a b c`; bit j of the index gives the sign of coordinate j. -/
+noncomputable def boxPts (a b c : ℝ) : Fin 8 → ℝ³ :=
+  fun i => !₂[boxSign 0 i * a, boxSign 1 i * b, boxSign 2 i * c]
+
+/-- **Rectangular boxes have no unimodal view.** -/
+def BoxesHaveNoUnimodalView : Prop :=
+  ∀ a b c : ℝ, 0 < a → 0 < b → 0 < c → ∀ (u : ℝ³) (k : ℕ) (_ : NeZero k) (lab : ZMod k → Fin 8),
+    3 ≤ k → Function.Injective lab → StrictRimN (boxPts a b c) u lab →
+      ¬ IsCyclicUnimodal (fun i => ⟪boxPts a b c (lab i), u⟫)
+
+end Box
+
 end MinimalityExtra

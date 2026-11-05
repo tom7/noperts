@@ -7,6 +7,7 @@ public import MinimalityExtra.TetraViews
 public import MinimalityExtra.Chirotope
 public import MinimalityExtra.MetricFreedom
 public import MinimalityExtra.ArrangementVertex
+public import MinimalityExtra.Box
 public import Minimality.Tilt
 public import Minimality.Thm73
 public import Minimality.OctaTools
