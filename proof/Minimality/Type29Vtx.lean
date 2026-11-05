@@ -173,8 +173,8 @@ theorem T1_h4esc (N : NF29 x) (hh : N.h2 = 1) (hl : 0 < -N.a2 * N.t + N.b2 * N.s
   have hpos : 0 < det3 (x 3 - x 6) (x 2 - x 6) (x 1 - x 6) *
       det3 (x 3 - x 6) (x 2 - x 6) N.vT1 := by
     rw [key1]
-    have := N.hD
-    exact mul_pos (mul_pos hl N.hDD) (by positivity)
+    have hD0 : N.D ≠ 0 := N.hD
+    exact mul_pos (mul_pos hl N.hDD) (by positivity : (0:ℝ) < N.D ^ 2)
   refine ⟨Or.inl (Or.inl ?_), Or.inr fun hpat => hesc ?_⟩
   · rw [det3_smul_right]
     have e : det3 (x 3 - x 6) (x 2 - x 6) (x 1 - x 6) *
