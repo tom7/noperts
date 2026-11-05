@@ -33,6 +33,12 @@ rim is unimodal at every metric (`CoplanarRimDepthUnimodal`); four non-coplanar 
 two-peaked at some metric, whatever the view (`TwoPeakedDepthsAtSomeMetric`). So no fixed view
 with a non-coplanar rim certifies unimodality at every metric. Here points and functionals are
 plain coordinate vectors `Fin 3 → ℝ`.
+
+## Rim shape and first-order freedom are independent at a single view
+
+`ExistsTetrahedronViewsIndependent`: one tetrahedron has a view with a unimodal rim that is
+rigid, a view with a two-peaked rim that is free, and a view with a two-peaked rim that is rigid.
+So a unimodal rim alone does not make a view free: that also needs no horizontal double normal.
 -/
 
 @[expose] public section
@@ -172,5 +178,49 @@ def CoplanarConvexQuadrilateralNeverTwoPeaked : Prop :=
     IsStrictConvexPlanarCycle x n → ∀ l : Fin 3 → ℝ, ¬ TwoCyclicPeaks4 (fun i => l ⬝ᵥ x i)
 
 end MetricUniform
+
+section TetrahedronViews
+
+/-- `StrictRim` of `MinimalityExtra.lean`, with the same definition, for a point family indexed
+by an arbitrary `Fin n` (the original is for `Fin 7`). -/
+def StrictRimN {n k : ℕ} [NeZero k] (x : Fin n → ℝ³) (u : ℝ³) (lab : ZMod k → Fin n) : Prop :=
+  ∀ (m : Fin n) (i : ZMod k), m ≠ lab i → m ≠ lab (i + 1) →
+    0 < det3 (x (lab (i + 1)) - x (lab i)) (x m - x (lab i)) u
+
+/-- A cyclic sequence of distinct reals with exactly two local maxima (hence exactly two
+local minima). For `k = 4` this means: both entries of one diagonal are strictly above both
+entries of the other. -/
+def IsCyclicTwoPeaked {k : ℕ} [NeZero k] (z : ZMod k → ℝ) : Prop :=
+  Function.Injective z ∧
+    (Finset.univ.filter (fun i : ZMod k => z (i - 1) < z i ∧ z (i + 1) < z i)).card = 2
+
+/-- The view `w` of the finite point set `V` is *free*: there is a first-order motion
+`(ω, τ)` with a `TiltCert` certificate at every point of `V` (every silhouette corner moves
+strictly inward, every other point is strictly inside a projected triangle of points of `V`).
+This is `HasFirstOrderPassage` at a fixed view. A view is *rigid* if it is not free. -/
+def FreeAt (V : Finset ℝ³) (w : ℝ³) : Prop :=
+  ∃ ω τ : ℝ³, ∀ y ∈ V, TiltCert V w ω τ y
+
+/-- **Rim shape and first-order freedom are independent at a single view.**  There are four
+points `x` of `ℝ³`, not coplanar, and three views `wa wb wc` such that, with `V` the set of
+the four points:
+(a) at `wa` the four points form a strict rim (a 4-cycle) whose depths `⟪x i, wa⟫` are
+cyclically unimodal (distinct, one local maximum), and the view is rigid;
+(b) at `wb` the strict rim has cyclically two-peaked depths and the view is free;
+(c) at `wc` the strict rim has cyclically two-peaked depths and the view is rigid. -/
+def ExistsTetrahedronViewsIndependent : Prop :=
+  ∃ x : Fin 4 → ℝ³, det3 (x 1 - x 0) (x 2 - x 0) (x 3 - x 0) ≠ 0 ∧
+    ∃ wa wb wc : ℝ³,
+      (∃ lab : ZMod 4 → Fin 4, Function.Injective lab ∧ StrictRimN x wa lab ∧
+          IsCyclicUnimodal (fun i => ⟪x (lab i), wa⟫)) ∧
+        ¬ FreeAt (univ.image x) wa ∧
+      (∃ lab : ZMod 4 → Fin 4, Function.Injective lab ∧ StrictRimN x wb lab ∧
+          IsCyclicTwoPeaked (fun i => ⟪x (lab i), wb⟫)) ∧
+        FreeAt (univ.image x) wb ∧
+      (∃ lab : ZMod 4 → Fin 4, Function.Injective lab ∧ StrictRimN x wc lab ∧
+          IsCyclicTwoPeaked (fun i => ⟪x (lab i), wc⟫)) ∧
+        ¬ FreeAt (univ.image x) wc
+
+end TetrahedronViews
 
 end MinimalityExtra
