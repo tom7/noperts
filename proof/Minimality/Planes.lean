@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 public import Minimality.Basic
 public import Mathlib.Analysis.InnerProductSpace.Projection.FiniteDimensional
 public import Mathlib.LinearAlgebra.Matrix.ToLinearEquiv

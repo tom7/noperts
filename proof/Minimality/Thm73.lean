@@ -1,5 +1,6 @@
 module
 
+public import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 public import Minimality.Polygon
 
 @[expose] public section

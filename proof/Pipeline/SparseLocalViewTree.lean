@@ -216,8 +216,7 @@ theorem sparseValidIxAtB_eq_true_iff (symmetryIndex : OrbitIndex) (r : ℚ)
 /-- Check a contiguous index range using a flat native loop. -/
 def sparseChunkValidB (symmetryIndex : OrbitIndex) (r : ℚ)
     (get : ℕ → Row) (size start count : ℕ) : Bool :=
-  Fin.foldl count (init := true) fun acc j =>
-    acc && sparseValidIxAtB symmetryIndex r get size (start + j.val)
+  Fin.foldl count (fun acc j => acc && sparseValidIxAtB symmetryIndex r get size (start + j.val)) true
 
 private theorem sparseChunkValidB_eq_true_iff
     (symmetryIndex : OrbitIndex) (r : ℚ) (get : ℕ → Row)
