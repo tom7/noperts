@@ -27,6 +27,8 @@ public import MinimalityExtra.BoxShadow
 public import MinimalityExtra.FlatMetrics
 public import MinimalityExtra.SilhouetteCodes
 public import MinimalityExtra.CornerWedge
+public import MinimalityExtra.TorqueForms
+public import MinimalityExtra.TwoDisjointFaces
 public import MinimalityExtra.LimitRows
 public import Minimality.Tilt
 public import Minimality.Thm73

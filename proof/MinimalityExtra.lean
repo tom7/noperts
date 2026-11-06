@@ -1341,4 +1341,92 @@ def SilhouetteCodeCounts : Prop :=
 
 end SilhouetteCodes
 
+section TorqueForms
+
+open Matrix
+
+/-- The covector `ι_x ω = det (x, ·)` on the screen `ℝ²`, as a vector: `det (x, y) = tfJ x ⬝ᵥ y`. -/
+def tfJ (x : Fin 2 → ℝ) : Fin 2 → ℝ := ![-x 1, x 0]
+
+/-- The area form `det (a, b)` of the screen `ℝ²`. -/
+def tfDet (a b : Fin 2 → ℝ) : ℝ := a 0 * b 1 - a 1 * b 0
+
+/-- The symmetric product `f ⊙ ι_x ω` as a matrix: entry `(r, s)` is
+`(f_r (ι_x ω)_s + f_s (ι_x ω)_r) / 2`, so that `S(y, y') = y ⬝ᵥ (S *ᵥ y')` equals
+`(f(y) det (x, y') + f(y') det (x, y)) / 2`. -/
+noncomputable def torqueTerm (x f : Fin 2 → ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
+  !![f 0 * tfJ x 0, (f 0 * tfJ x 1 + f 1 * tfJ x 0) / 2;
+     (f 0 * tfJ x 1 + f 1 * tfJ x 0) / 2, f 1 * tfJ x 1]
+
+/-- The torque form `S_f = Σ_i f_i ⊙ ι_{x_i} ω` of covector loads `f i` at screen points `x i`. -/
+noncomputable def torqueForm {n : ℕ} (x f : Fin n → Fin 2 → ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
+  ∑ i, torqueTerm (x i) (f i)
+
+/-- **Theorem T (torque forms), the algebraic content.**  Screen points `x i ∈ ℝ²`, loads
+`f i` (covectors, written as vectors), depths `z i`.
+(0) `S_f` is symmetric.
+(1) (Shear invariance.)  If `Σ f i = 0` and `Σ z i • f i = 0` (the balanced equations), then
+`S_f` is unchanged by `x i ↦ x i + z i • a + b`.
+(2) (Torque in any screen metric.)  Let `A` have positive determinant and `g = Aᵀ A` (so `A` is a
+frame in which `g` is the Euclidean metric: points move to `A x i`, covectors to `(Aᵀ)⁻¹ f i`).
+The Euclidean torque `Σ det (A x i, (Aᵀ)⁻¹ f i)` of the transformed system equals
+`√(det g) · tr (g⁻¹ S_f)`; so it depends on `A` only through `g`.
+(3) (Parallel rays.)  Forces `m • n` at `q` and `-m • n` at `c` (`m ≠ 0`, `n ⬝ᵥ (q - c) ≠ 0`)
+have a torque form of negative determinant (indefinite, signature `(1,1)`), and for every positive
+definite `g`, `tr (g⁻¹ S) = 0` iff `tfJ n ⬝ᵥ (g *ᵥ (q - c)) = 0`, i.e. iff `q - c` is
+`g`-orthogonal to the edge direction `tfJ n` (`n (tfJ n) = 0`): the double normal is horizontal.
+Not stated: the equivalence "free iff the signs of `tr (g⁻¹ S_r)` over the extreme rays `r` of the
+balanced cone agree", which is Lemma 7.1 for the view plus linearity of `f ↦ S_f`. -/
+def TorqueForms : Prop :=
+  (∀ (n : ℕ) (x f : Fin n → Fin 2 → ℝ), (torqueForm x f)ᵀ = torqueForm x f) ∧
+  (∀ (n : ℕ) (x f : Fin n → Fin 2 → ℝ) (z : Fin n → ℝ),
+    ∑ i, f i = 0 → ∑ i, z i • f i = 0 → ∀ a b : Fin 2 → ℝ,
+      torqueForm (fun i => x i + z i • a + b) f = torqueForm x f) ∧
+  (∀ (n : ℕ) (x f : Fin n → Fin 2 → ℝ) (A : Matrix (Fin 2) (Fin 2) ℝ), 0 < A.det →
+    ∑ i, tfDet (A *ᵥ x i) ((Aᵀ)⁻¹ *ᵥ f i) =
+      Real.sqrt (Aᵀ * A).det * ((Aᵀ * A)⁻¹ * torqueForm x f).trace) ∧
+  (∀ (nn q c : Fin 2 → ℝ) (m : ℝ), m ≠ 0 → nn ⬝ᵥ (q - c) ≠ 0 →
+    (torqueForm ![q, c] ![m • nn, (-m) • nn]).det < 0 ∧
+    ∀ g : Matrix (Fin 2) (Fin 2) ℝ, g.PosDef →
+      (((g⁻¹ * torqueForm ![q, c] ![m • nn, (-m) • nn]).trace = 0) ↔
+        tfJ nn ⬝ᵥ (g *ᵥ (q - c)) = 0))
+
+end TorqueForms
+
+/-- **Lemma Q (two disjoint faces.**  Let `V` be a finite set of points
+in convex position, `F₁`, `F₂ ⊆ V` the vertex sets of two faces with no common vertex, cut out by
+the supporting planes `⟪nᵢ, ·⟫ = hᵢ` (all of `V` on the side `≤`, and `Fᵢ` exactly the points on
+the plane); their planes are not parallel, and `u₀` points along the line of the two planes.
+Assume that along `u₀` the shadow of `V` is a strictly convex quadrilateral `xa₁ xa₂ xb₂ xb₁`
+(a cyclic order of constant orientation `σ = ±1`: every other corner, and every point of
+`V ∖ (F₁ ∪ F₂)`, lies strictly on the `σ`-side of each of its four sides), with `[xa₁, xa₂]` the
+shadow of `F₁` and `[xb₁, xb₂]` the shadow of `F₂`: the other vertices of `Fᵢ` have their shadow
+on the open side, so there is a single vertex over each corner and none over the open sides
+`(xa₂, xb₂)`, `(xb₁, xa₁)`.  Suppose the depths `⟪u₀, ·⟫` are distinct on `V` and
+`(z(xa₁) − z(xb₁)) (z(xa₂) − z(xb₂)) > 0`.  Then `V` is Rupert.  (The distinctness of all depths
+is a hypothesis the paper leaves implicit.) -/
+def LemmaQTwoDisjointFaces : Prop :=
+  ∀ (V F₁ F₂ : Finset ℝ³) (n₁ n₂ u₀ : ℝ³) (h₁ h₂ σ : ℝ) (xa₁ xa₂ xb₁ xb₂ : ℝ³),
+    (∀ p ∈ V, p ∉ convexHull ℝ ((V.erase p : Finset ℝ³) : Set ℝ³)) →
+    F₁ ⊆ V → F₂ ⊆ V → Disjoint F₁ F₂ → 3 ≤ F₁.card → 3 ≤ F₂.card →
+    (∀ p ∈ V, ⟪n₁, p⟫ ≤ h₁ ∧ (⟪n₁, p⟫ = h₁ ↔ p ∈ F₁)) →
+    (∀ p ∈ V, ⟪n₂, p⟫ ≤ h₂ ∧ (⟪n₂, p⟫ = h₂ ↔ p ∈ F₂)) →
+    cross n₁ n₂ ≠ 0 → u₀ ≠ 0 → ⟪n₁, u₀⟫ = 0 → ⟪n₂, u₀⟫ = 0 →
+    xa₁ ∈ F₁ → xa₂ ∈ F₁ → xb₁ ∈ F₂ → xb₂ ∈ F₂ →
+    (∀ y ∈ F₁, y ≠ xa₁ → y ≠ xa₂ →
+      ∃ t s : ℝ, 0 < t ∧ t < 1 ∧ y = xa₁ + t • (xa₂ - xa₁) + s • u₀) →
+    (∀ y ∈ F₂, y ≠ xb₁ → y ≠ xb₂ →
+      ∃ t s : ℝ, 0 < t ∧ t < 1 ∧ y = xb₁ + t • (xb₂ - xb₁) + s • u₀) →
+    (σ = 1 ∨ σ = -1) →
+    (0 < σ * det3 (xa₂ - xa₁) (xb₂ - xa₁) u₀ ∧ 0 < σ * det3 (xa₂ - xa₁) (xb₁ - xa₁) u₀ ∧
+     0 < σ * det3 (xb₂ - xa₂) (xb₁ - xa₂) u₀ ∧ 0 < σ * det3 (xb₂ - xa₂) (xa₁ - xa₂) u₀ ∧
+     0 < σ * det3 (xb₁ - xb₂) (xa₁ - xb₂) u₀ ∧ 0 < σ * det3 (xb₁ - xb₂) (xa₂ - xb₂) u₀ ∧
+     0 < σ * det3 (xa₁ - xb₁) (xa₂ - xb₁) u₀ ∧ 0 < σ * det3 (xa₁ - xb₁) (xb₂ - xb₁) u₀) →
+    (∀ p ∈ V, p ∉ F₁ → p ∉ F₂ →
+      0 < σ * det3 (xa₂ - xa₁) (p - xa₁) u₀ ∧ 0 < σ * det3 (xb₂ - xa₂) (p - xa₂) u₀ ∧
+      0 < σ * det3 (xb₁ - xb₂) (p - xb₂) u₀ ∧ 0 < σ * det3 (xa₁ - xb₁) (p - xb₁) u₀) →
+    Set.InjOn (fun x => ⟪u₀, x⟫) (V : Set ℝ³) →
+    0 < (⟪u₀, xa₁⟫ - ⟪u₀, xb₁⟫) * (⟪u₀, xa₂⟫ - ⟪u₀, xb₂⟫) →
+    IsRupert V
+
 end MinimalityExtra
