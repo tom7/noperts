@@ -4,6 +4,7 @@ public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.LinearAlgebra.Matrix.PosDef
+public import Mathlib.LinearAlgebra.CrossProduct
 public import Mathlib.LinearAlgebra.LinearIndependent.Basic
 
 /-!
@@ -419,5 +420,65 @@ def DepthSeparatedViewIsFree : Prop :=
     FreeAt (Finset.univ.image x) w
 
 end DepthSeparated
+
+/-!
+## Three identities and a sequence lemma
+
+`HdnEquation` writes the HDN condition at every metric through the adjugate. `SingleViewFarkas`
+says when a depth pattern cannot occur at a view at any metric. `MergeLemma` is about cyclic
+sequences: a transversal crossing of adjacent entries whose merged cycle is unimodal leaves the
+cycle unimodal on one side of the crossing.
+-/
+
+section Identities
+
+open Matrix in
+/-- (Lemma 27.35, the HDN equation.)  Let `G` be a metric (positive definite matrix), `u` a
+view, `[a, b]` a side with `z a ≠ z b` where `z x = ⟪u, x⟫_G = u ⬝ᵥ G *ᵥ x`, and `c` a further
+point; `e = b - a`, `w = c - a`.  If `y = a + λ e` is the point of the line `ab` at depth
+`z c` (that is `λ ⟪u, e⟫_G = ⟪u, w⟫_G`), then
+`⟪u, e⟫_G ⟪y - c, e⟫_G = ⟪u, w⟫_G ⟪e, e⟫_G - ⟪u, e⟫_G ⟪w, e⟫_G = (u × e)ᵀ adj(G) (w × e)`. -/
+def HdnEquation : Prop :=
+  ∀ (G : Matrix (Fin 3) (Fin 3) ℝ), G.PosDef → ∀ (a b c u : Fin 3 → ℝ) (lam : ℝ),
+    u ⬝ᵥ G *ᵥ a ≠ u ⬝ᵥ G *ᵥ b →
+    lam * (u ⬝ᵥ G *ᵥ (b - a)) = u ⬝ᵥ G *ᵥ (c - a) →
+      (u ⬝ᵥ G *ᵥ (b - a)) * ((a + lam • (b - a) - c) ⬝ᵥ G *ᵥ (b - a)) =
+          (u ⬝ᵥ G *ᵥ (c - a)) * ((b - a) ⬝ᵥ G *ᵥ (b - a)) -
+            (u ⬝ᵥ G *ᵥ (b - a)) * ((c - a) ⬝ᵥ G *ᵥ (b - a)) ∧
+      (u ⬝ᵥ G *ᵥ (c - a)) * ((b - a) ⬝ᵥ G *ᵥ (b - a)) -
+            (u ⬝ᵥ G *ᵥ (b - a)) * ((c - a) ⬝ᵥ G *ᵥ (b - a)) =
+          crossProduct u (b - a) ⬝ᵥ G.adjugate *ᵥ crossProduct (c - a) (b - a)
+
+open Matrix in
+/-- (Lemma 25.60, single-view Farkas.)  Points `P : ι → ℝ³`, a pattern `p` (a finite set of
+pairs `(h, l)`, each asserting `z h ≥ z l`), and a view `r ≠ 0`.  The
+pattern is *realizable* at `r` if some metric `G` (positive definite) has depth
+`z x = x ⬝ᵥ G *ᵥ r` with `z h ≥ z l` for all `(h, l) ∈ p`.  If `-r` lies in the convex cone
+spanned by the differences `P h - P l`, `(h, l) ∈ p`, the pattern is not realizable at `r`. -/
+def SingleViewFarkas : Prop :=
+  ∀ {ι : Type} (P : ι → Fin 3 → ℝ) (p : Finset (ι × ι)) (r : Fin 3 → ℝ), r ≠ 0 →
+    (∃ c : ι × ι → ℝ, (∀ q ∈ p, 0 ≤ c q) ∧
+        -r = ∑ q ∈ p, c q • (P q.1 - P q.2)) →
+      ¬ ∃ G : Matrix (Fin 3) (Fin 3) ℝ, G.PosDef ∧
+          ∀ q ∈ p, P q.2 ⬝ᵥ G *ᵥ r ≤ P q.1 ⬝ᵥ G *ᵥ r
+
+/-- (Lemma 26.4, merge lemma.)  A cycle of `n + 2` affine functions `f j (λ) = α j + β j * λ`
+(the depths of the rim corners along a circle of views); the corners `0` and `1` are adjacent.
+At `λ₀` the depths of `0` and `1` cross transversally (`β 0 ≠ β 1` and equal value), and the
+cycle in which `0` and `1` are merged into one entry (`ZMod (n+1)`, the entry `j` of the
+original cycle going to `max (j.val - 1) 0`) has distinct values and a single local maximum
+(`IsCyclicUnimodal`).  Then the original cycle is unimodal for all `λ` in an open interval
+on one side of `λ₀` adjacent to `λ₀`.  The (cyclic) position of the adjacent pair is
+normalised to `0, 1`, and the original cycle has at least `2` entries (for `n = 0` the
+hypothesis is void). -/
+def MergeLemma : Prop :=
+  ∀ (n : ℕ) (α β : ZMod (n + 2) → ℝ) (lam0 : ℝ) (m : ZMod (n + 1) → ℝ),
+    β 0 ≠ β 1 → (∀ j, α j + β j * lam0 = m ((j.val - 1 : ℕ) : ZMod (n + 1))) →
+    IsCyclicUnimodal m →
+    ∃ ε > 0,
+      (∀ lam, lam0 < lam → lam < lam0 + ε → IsCyclicUnimodal (fun j => α j + β j * lam)) ∨
+      (∀ lam, lam0 - ε < lam → lam < lam0 → IsCyclicUnimodal (fun j => α j + β j * lam))
+
+end Identities
 
 end MinimalityExtra
