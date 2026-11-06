@@ -6,6 +6,7 @@ public import Mathlib.Data.Fintype.Basic
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.LinearAlgebra.CrossProduct
 public import MainTheorem
+public import Mathlib.Analysis.Convex.Intrinsic
 public import Mathlib.LinearAlgebra.LinearIndependent.Basic
 
 /-!
@@ -655,5 +656,36 @@ def TwoInteriorCornersNeverMetricFree : Prop :=
           (G *ᵥ u) ⬝ᵥ p (j + 1) < (G *ᵥ u) ⬝ᵥ p j)).card
 
 end TestPairs
+
+/-!
+## Core criteria
+
+The unimodal criterion and the coplanar-silhouette theorem, stated with the definitions of this
+file. Proofs in `ProofOfMinimalityExtra.lean`, from the repository's theorems.
+-/
+
+section Core
+
+/-- **Unimodal view criterion (Theorem 7.3).** -/
+def UnimodalViewIsRupert : Prop :=
+  ∀ x : Fin 7 → ℝ³, HasUnimodalView x → IsRupert (Finset.univ.image x)
+
+/-- **Coplanar silhouette theorem (Theorem 5).** -/
+def CoplanarSilhouetteIsRupert : Prop :=
+  ∀ (V W : Finset ℝ³) (u : ℝ³), W ⊆ V → ¬ Collinear ℝ (W : Set ℝ³) →
+    Coplanar ℝ (W : Set ℝ³) → u ∉ (affineSpan ℝ (W : Set ℝ³)).direction →
+    (∀ v ∈ V, v ∉ W → ∃ t : ℝ, v + t • u ∈ intrinsicInterior ℝ (convexHull ℝ (W : Set ℝ³))) →
+    IsRupert V
+
+/-- Triangle shadow special case. -/
+def TriangleShadowIsRupert : Prop :=
+  ∀ (V : Finset ℝ³) (a b c u : ℝ³), a ∈ V → b ∈ V → c ∈ V →
+    AffineIndependent ℝ ![a, b, c] →
+    u ∉ (affineSpan ℝ ({a, b, c} : Set ℝ³)).direction →
+    (∀ v ∈ V, v ≠ a → v ≠ b → v ≠ c →
+      ∃ t : ℝ, v + t • u ∈ intrinsicInterior ℝ (convexHull ℝ ({a, b, c} : Set ℝ³))) →
+    IsRupert V
+
+end Core
 
 end MinimalityExtra
