@@ -206,10 +206,8 @@ private lemma no_pair_fin_one (l : Fin 1 → Fin 3 → ℝ) :
   exact zero_ne_one this
 
 theorem chamberNeedsRank : ChamberNeedsRank := by
-  refine ⟨1, fun _ => ![1, 0, 0], ⟨![1, 0, 0], fun k => ?_⟩, no_pair_fin_one _, ?_⟩
-  · simp [dotProduct, Fin.sum_univ_three]
-  · rintro ⟨u₀, i, j, d, -, hli, -⟩
-    exact no_pair_fin_one (fun _ => (![1, 0, 0] : Fin 3 → ℝ)) ⟨i, j, hli⟩
+  refine ⟨1, fun _ => ![1, 0, 0], Nat.one_pos, ⟨![1, 0, 0], fun k => ?_⟩, no_pair_fin_one _⟩
+  simp [dotProduct, Fin.sum_univ_three]
 
 end MinimalityExtra
 

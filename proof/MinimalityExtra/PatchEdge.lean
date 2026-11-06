@@ -29,15 +29,12 @@ theorem det3_patch_shift (v w a b c : E3) :
 /-- Proof of `PatchEdgeBeyondPlane`: the sign of `v` against the plane `a b c` is the sign of `b`
 against the plane `v a c`. -/
 theorem patchEdgeBeyondPlane : PatchEdgeBeyondPlane := by
-  intro V v w a b c hv hw ha hb hc q1 hface hcrease q2
+  intro V v w a b c hv hw ha hb hc q1 hface hcrease
   have hb0 : 0 ≤ det3 (a - v) (c - v) (b - v) := by
     rcases hface with h | h
     · exact h b hb
     · have := h w hw; linarith
-  have hF : 0 < det3 (b - a) (c - a) (v - a) := by
-    rw [det3_patch_identity]; exact lt_of_le_of_ne hb0 (Ne.symm hcrease)
-  refine ⟨hF, ?_⟩
-  rw [det3_patch_shift]; linarith
+  rw [det3_patch_identity]; exact lt_of_le_of_ne hb0 (Ne.symm hcrease)
 
 end MinimalityExtra
 

@@ -104,8 +104,9 @@ theorem invisibilitySign : InvisibilitySign := by
   exact hinv _ hmem hz
 
 theorem invisibilitySignPair : InvisibilitySignPair := by
-  intro 𝒲₁ 𝒲₂ u₁ u₂ _ _ hsign G hG W₁ hW₁ W₂ hW₂ ⟨h1, h2⟩
-  apply hsign W₁ hW₁ _ h1 W₂ hW₂ _ h2
+  intro W₁ W₂ u₁ u₂ hi₁ hi₂ φ₁ hφ₁ φ₂ hφ₂ hsign G hG ⟨h1, h2⟩
+  have s1 := invisibilitySign W₁ u₁ u₂ hi₁ φ₁ hφ₁ _ h1
+  have s2 := invisibilitySign W₂ u₂ u₁ hi₂ φ₂ hφ₂ _ h2
   have hs : G.transpose = G := hG.isHermitian.eq
   have h10 : G 1 0 = G 0 1 := by simpa using congrFun (congrFun hs 0) 1
   have h20 : G 2 0 = G 0 2 := by simpa using congrFun (congrFun hs 0) 2
@@ -113,7 +114,16 @@ theorem invisibilitySignPair : InvisibilitySignPair := by
   have : (G *ᵥ u₁) ⬝ᵥ u₂ = (G *ᵥ u₂) ⬝ᵥ u₁ := by
     simp [Matrix.mulVec, dotProduct, Fin.sum_univ_three, h10, h20, h21]
     ring
-  rw [this]
+  rw [this] at s1
+  apply hsign
+  rcases lt_trichotomy ((G *ᵥ u₂) ⬝ᵥ u₁) 0 with hc | hc | hc
+  · have a1 : φ₁ ⬝ᵥ u₂ < 0 := by nlinarith
+    have a2 : φ₂ ⬝ᵥ u₁ < 0 := by nlinarith
+    rw [sign_neg a1, sign_neg a2]
+  · rw [hc] at s1; simp at s1
+  · have a1 : 0 < φ₁ ⬝ᵥ u₂ := by nlinarith
+    have a2 : 0 < φ₂ ⬝ᵥ u₁ := by nlinarith
+    rw [sign_pos a1, sign_pos a2]
 
 theorem invisibilityEdge : InvisibilityEdge := by
   intro W u v e c he hec φ hφ

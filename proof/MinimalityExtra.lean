@@ -299,7 +299,7 @@ open Matrix
 along great circles. If some view makes all the forms positive, then a vertex of this arrangement,
 with a small tilt to break its ties, does too. So a search for a cell defined by the signs of linear
 forms need only try arrangement vertices. Conditions of the opposite sign are handled by negating
-the form. The two independent forms are what make a vertex exist (see `ChamberNeedsRank`). -/
+the form. The two independent forms are what make a vertex exist, and a nonempty chamber does not supply them (see `ChamberNeedsRank`). -/
 def ArrangementVerticesSuffice : Prop :=
   ∀ (n : ℕ) (l : Fin n → Fin 3 → ℝ),
     (∃ i j, LinearIndependent ℝ ![l i, l j]) →
@@ -329,17 +329,14 @@ def ArrangementVerticesSufficeLex : Prop :=
       u₀ ≠ 0 ∧ LinearIndependent ℝ ![l i, l j] ∧ l i ⬝ᵥ u₀ = 0 ∧ l j ⬝ᵥ u₀ = 0 ∧
       (∃ ε₀ : ℝ, 0 < ε₀ ∧ ∀ ε : ℝ, 0 < ε → ε < ε₀ → ∀ k, 0 < l k ⬝ᵥ (u₀ + ε • d))
 
-/-- **The independent pair cannot be dropped.** A single form, for instance, has a nonempty chamber
-and no arrangement vertex at all. As stated this is immediate, since the conclusion of
-`ArrangementVerticesSuffice` itself names an independent pair. Two independent forms suffice, even
-when all the forms lie in their span: The vertex is then the common kernel line. -/
+/-- **The independent pair is not automatic.** A nonempty family of forms can have a nonempty
+chamber without containing two independent forms (one form, for instance), so the rank hypothesis
+of `ArrangementVerticesSuffice` is a real condition and not a consequence of the chamber being
+nonempty. -/
 def ChamberNeedsRank : Prop :=
-  ∃ (n : ℕ) (l : Fin n → Fin 3 → ℝ),
+  ∃ (n : ℕ) (l : Fin n → Fin 3 → ℝ), 0 < n ∧
     (∃ d : Fin 3 → ℝ, ∀ k, 0 < l k ⬝ᵥ d) ∧
-    (¬ ∃ i j, LinearIndependent ℝ ![l i, l j]) ∧
-    ¬ ∃ (u₀ : Fin 3 → ℝ) (i j : Fin n) (d : Fin 3 → ℝ),
-      u₀ ≠ 0 ∧ LinearIndependent ℝ ![l i, l j] ∧ l i ⬝ᵥ u₀ = 0 ∧ l j ⬝ᵥ u₀ = 0 ∧
-      ∀ k, 0 < l k ⬝ᵥ u₀ ∨ (l k ⬝ᵥ u₀ = 0 ∧ 0 < l k ⬝ᵥ d)
+    ¬ ∃ i j, LinearIndependent ℝ ![l i, l j]
 
 end ArrangementVertices
 
@@ -685,17 +682,19 @@ def InvisibilitySign : Prop :=
   ∀ (W : Set (Fin 3 → ℝ)) (u v : Fin 3 → ℝ), (∀ φ ∈ FailCone W u, φ ⬝ᵥ v ≠ 0) →
     ∀ φ₁ ∈ FailCone W u, ∀ φ₂ ∈ FailCone W u, 0 < (φ₁ ⬝ᵥ v) * (φ₂ ⬝ᵥ v)
 
-/-- **Two invisible failures exclude each other (Lemma V (b)).** If the patterns of each test are
-invisible along the view of the other, and the resulting signs always differ, then at no metric do
-both tests fail. This is the angle lemma in the language of fail cones. -/
+/-- **Two invisible failures exclude each other (Lemma V (b)).** Suppose the pattern of each test
+is invisible along the view of the other. If one functional of each fail cone is chosen and they
+give opposite signs on the other test's view, then at no metric do both tests fail. By invisibility
+the chosen functionals speak for their whole cones. This is the angle lemma in the language of fail
+cones. -/
 def InvisibilitySignPair : Prop :=
-  ∀ (𝒲₁ 𝒲₂ : Set (Set (Fin 3 → ℝ))) (u₁ u₂ : Fin 3 → ℝ),
-    (∀ W ∈ 𝒲₁, ∀ φ ∈ FailCone W u₁, φ ⬝ᵥ u₂ ≠ 0) →
-    (∀ W ∈ 𝒲₂, ∀ φ ∈ FailCone W u₂, φ ⬝ᵥ u₁ ≠ 0) →
-    (∀ W₁ ∈ 𝒲₁, ∀ φ₁ ∈ FailCone W₁ u₁, ∀ W₂ ∈ 𝒲₂, ∀ φ₂ ∈ FailCone W₂ u₂,
-      SignType.sign (φ₁ ⬝ᵥ u₂) ≠ SignType.sign (φ₂ ⬝ᵥ u₁)) →
+  ∀ (W₁ W₂ : Set (Fin 3 → ℝ)) (u₁ u₂ : Fin 3 → ℝ),
+    (∀ φ ∈ FailCone W₁ u₁, φ ⬝ᵥ u₂ ≠ 0) →
+    (∀ φ ∈ FailCone W₂ u₂, φ ⬝ᵥ u₁ ≠ 0) →
+    ∀ φ₁ ∈ FailCone W₁ u₁, ∀ φ₂ ∈ FailCone W₂ u₂,
+      SignType.sign (φ₁ ⬝ᵥ u₂) ≠ SignType.sign (φ₂ ⬝ᵥ u₁) →
     ∀ G : Matrix (Fin 3) (Fin 3) ℝ, G.PosDef →
-      ∀ W₁ ∈ 𝒲₁, ∀ W₂ ∈ 𝒲₂, ¬ (G *ᵥ u₁ ∈ FailCone W₁ u₁ ∧ G *ᵥ u₂ ∈ FailCone W₂ u₂)
+      ¬ (G *ᵥ u₁ ∈ FailCone W₁ u₁ ∧ G *ᵥ u₂ ∈ FailCone W₂ u₂)
 
 /-- **A rim edge parallel to the view (Corollary V1 (i)).** If the pattern contains an edge parallel
 to `v`, it is invisible along `v`, and the sign of `v` on the fail cone is the sign of `c`, where
@@ -1022,19 +1021,16 @@ def Strict7SeptIsRupert : Prop :=
 end ExplicitShapes
 
 /-- **Patch-edge lemma, geometric part.** Look along the segment from `v` to `w`. Suppose that
-`v a c` is a supporting plane of `V`, that `b` is off it, and that `a`, `c`, `b` are placed around
-the shadow of `v` as in a convex quadrilateral. Then `v` lies strictly beyond the plane `a b c`, and
-`w` lies less far beyond it, possibly on the other side. Whether `w` reaches the other side is a
-hypothesis of the edge pair theorem (Lemma E). Nothing is claimed about the rest of the shadow. -/
+`v a c` is a supporting plane of `V` with `w` strictly off it, and that `b` is off it too. Then `v`
+lies strictly beyond the plane `a b c`. How `w` sits relative to that plane is a hypothesis of the
+edge pair theorem (Lemma E), not something this lemma decides. -/
 def PatchEdgeBeyondPlane : Prop :=
   ∀ (V : Finset ℝ³) (v w a b c : ℝ³), v ∈ V → w ∈ V → a ∈ V → b ∈ V → c ∈ V →
     0 < det3 (a - v) (c - v) (w - v) →
     ((∀ z ∈ V, 0 ≤ det3 (a - v) (c - v) (z - v)) ∨
       (∀ z ∈ V, det3 (a - v) (c - v) (z - v) ≤ 0)) →
     det3 (a - v) (c - v) (b - v) ≠ 0 →
-    0 < det3 (c - a) (b - a) (w - v) →
-    0 < det3 (b - a) (c - a) (v - a) ∧
-      det3 (b - a) (c - a) (w - a) < det3 (b - a) (c - a) (v - a)
+    0 < det3 (b - a) (c - a) (v - a)
 
 section BoxRule
 
@@ -1427,13 +1423,12 @@ def HasQuadFace (x : Fin 7 → ℝ³) : Prop :=
   ∃ (n : ℝ³) (h : ℝ), n ≠ 0 ∧ (∀ i : Fin 7, i.val < 4 → ⟪n, x i⟫ = h) ∧
     (∀ i : Fin 7, 4 ≤ i.val → ⟪n, x i⟫ < h)
 
-/-- **No unimodal view on an open set of first-order passages.**  There is a 7-point set `x₀`
-with a quadrilateral face and `ε > 0` such that every `x` within `ε` of `x₀` (coordinatewise,
-in the sup distance) that still has a quadrilateral face (the four points kept coplanar) has all
-vertices exposed, a first-order passage, and no unimodal view.  So the failure of the unimodal
-criterion's converse
-(`ExistsFirstOrderPassageWithoutUnimodalView`) is not confined to one shape: it holds on a
-neighbourhood within the codimension-one family of point sets with a planar quadrilateral. -/
+/-- **The failure of the converse is not confined to one shape.** There are seven points in `ℝ³`
+with a quadrilateral face, and a tolerance, such that every nearby seven points that still have a
+quadrilateral face (the same four kept coplanar, the other three strictly below) have all vertices
+exposed, a first-order passage, and no unimodal view. Closeness is measured in each point
+separately. So the failure of `ExistsFirstOrderPassageWithoutUnimodalView` holds on a whole
+neighborhood inside the family of point sets with a planar quadrilateral. -/
 def ExistsOpenFamilyWithoutUnimodalView : Prop :=
   ∃ (x₀ : Fin 7 → ℝ³) (ε : ℝ), 0 < ε ∧ HasQuadFace x₀ ∧
     ∀ x : Fin 7 → ℝ³, (∀ i, dist (x i) (x₀ i) < ε) → HasQuadFace x →
@@ -1444,11 +1439,11 @@ def ExistsOpenFamilyWithoutUnimodalView : Prop :=
 -- theorem existsOpenFamilyWithoutUnimodalView : ExistsOpenFamilyWithoutUnimodalView :=
 --   NoUniO.open_family
 
-/-- **The Septopert is a limit of Rupert shapes** (so it is not in the interior of the set of
-Noperts).  Let `s` be the seven points of the Septopert with the exact integer coordinates of
-`septopert.md` (the proof's `septopert` is this divided by `2^20`).  For every `ε > 0` there are seven
-points, each coordinate within `ε` of the corresponding coordinate of `s`, different from `s`, whose
-image is `IsRupert`.  (Proof: vertex 6 raised by `10^6 t` in the first coordinate, for all small `t > 0`.) -/
+/-- **The Septopert is a limit of Rupert shapes.** Take the seven points of the Septopert, with the
+exact integer coordinates of `septopert.md` (the scale is `2^20` times that of the main
+development). Every neighborhood of them contains seven different points that are Rupert. So the
+Septopert is not in the interior of the set of Noperts. The nearby shapes move the last vertex in
+the first coordinate. -/
 def SeptopertIsLimitOfRupert : Prop :=
   ∀ ε : ℝ, 0 < ε → ∃ x : Fin 7 → ℝ³,
     (∀ i j, |x i j - (![!₂[-940638, 327651, 327651], !₂[327651, -940638, 327651],
@@ -1461,9 +1456,9 @@ def SeptopertIsLimitOfRupert : Prop :=
 
 section EqualWidth
 
-/-- Two poses whose shadows have the same extent in some unit direction `m` of the screen:
-the inner shadow, translated by any offset, is not in the interior of the outer shadow. The
-nonemptiness of `vs` is needed only to rule out the empty set. -/
+/-- **No passage with equal widths.** If the inner and outer shadows of a nonempty convex body have
+the same width in some direction of the screen, then the inner shadow, however it is translated,
+does not fit in the interior of the outer one. -/
 def NoEqualWidthPassage : Prop :=
   ∀ vs : Finset ℝ³, vs.Nonempty →
   ∀ inner_rotation ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ,
@@ -1475,10 +1470,10 @@ def NoEqualWidthPassage : Prop :=
     ¬ ({ inner_offset + proj_xy (inner_rotation.toEuclideanLin p) | p ∈ convexHull ℝ (vs : Set ℝ³) } ⊆
         interior { proj_xy (outer_rotation.toEuclideanLin p) | p ∈ convexHull ℝ (vs : Set ℝ³) })
 
-/-- A pose is picture-symmetric about a unit vector `n` of space when both rotations send `n` into
-the screen, to the same direction up to sign (case 1), or both send `n` to `±e₃`, so that the
-two views are along `n` (case 2). No such pose is a passage. The polytope is arbitrary (nonempty);
-in particular it need not have a mirror with normal `n`. -/
+/-- **No picture-symmetric passage.** Call a pair of poses picture-symmetric about a unit vector
+`n` of space if both rotations send `n` into the screen, to the same direction up to sign, or both
+send `n` to the view axis, so that both views are along `n`. For any nonempty convex body, such a
+pair is never a passage. The body need not have a mirror with normal `n`. -/
 def PictureSymmetricPoseNoPassage : Prop :=
   ∀ vs : Finset ℝ³, vs.Nonempty →
   ∀ inner_rotation ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ,

@@ -85,7 +85,7 @@ theorem slx_isRupert (t : ℝ) (h0 : 0 < t) (h1 : t < 1) : IsRupert (univ.image 
     linarith
   exact Minimality.isRupert_of_tiltCert _ (SLW t) hw ω τ fun y hy => sl_tiltCert _ _ _ _ _ (hc y hy)
 
-theorem seplimit : SeptopertIsLimitOfRupert := by
+theorem septopertIsLimitOfRupert : SeptopertIsLimitOfRupert := by
   intro ε hε
   set t : ℝ := min (1 / 2) (ε / 2000000) with ht
   have ht0 : 0 < t := lt_min (by norm_num) (by positivity)
