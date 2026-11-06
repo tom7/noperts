@@ -563,6 +563,42 @@ def CloseVerticesRupert : Prop :=
     (∃ a ∈ V, ∃ b ∈ V, ∃ c ∈ V, r ≤ ‖cross (b - a) (c - a)‖) →
     (∃ x ∈ V, ∃ y ∈ V, x ≠ y ∧ dist x y < ε) → IsRupert V
 
+/-- `PassesThrough L W`: some rotations and an offset put the shadow of `conv L` inside the
+interior of the outer shadow of `conv W`. This is `IsRupert` with two point sets. -/
+def PassesThrough (L W : Finset ℝ³) : Prop :=
+  ∃ inner_rotation ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ,
+  ∃ inner_offset : EuclideanSpace ℝ (Fin 2),
+  ∃ outer_rotation ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ,
+  let inner_shadow :=
+    { inner_offset + proj_xy (inner_rotation.toEuclideanLin p) | p ∈ convexHull ℝ (L : Set ℝ³) }
+  let outer_shadow :=
+    { proj_xy (outer_rotation.toEuclideanLin p) | p ∈ convexHull ℝ (W : Set ℝ³) }
+  inner_shadow ⊆ interior outer_shadow
+
+/-- **Sandwich.** If `conv W ⊆ conv K ⊆ conv L` and `L` passes through `W`, then `K` is Rupert.
+The same rotations and offset work for `K`: its inner shadow is inside that of `L`, and its outer
+shadow contains that of `W`. -/
+def RupertSandwich : Prop :=
+  ∀ W K L : Finset ℝ³,
+    convexHull ℝ (W : Set ℝ³) ⊆ convexHull ℝ (K : Set ℝ³) →
+    convexHull ℝ (K : Set ℝ³) ⊆ convexHull ℝ (L : Set ℝ³) →
+    PassesThrough L W → IsRupert K
+
+/-- **Cylinder extension.** Let `K₀` pass through itself with rotations `Ri`, `Ro` and offset `o`
+(inner shadow inside the interior of the outer shadow). Then every `y` whose inner-view image
+`o + proj_xy (Ri y)` lies in the interior of the outer shadow gives a Rupert set `insert y K₀`. -/
+def CylinderExtension : Prop :=
+  ∀ (K₀ : Finset ℝ³) (Ri Ro : Matrix (Fin 3) (Fin 3) ℝ),
+    Ri ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ →
+    Ro ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ →
+    ∀ o : EuclideanSpace ℝ (Fin 2),
+    { o + proj_xy (Ri.toEuclideanLin p) | p ∈ convexHull ℝ (K₀ : Set ℝ³) } ⊆
+      interior { proj_xy (Ro.toEuclideanLin q) | q ∈ convexHull ℝ (K₀ : Set ℝ³) } →
+    ∀ y : ℝ³,
+      o + proj_xy (Ri.toEuclideanLin y) ∈
+        interior { proj_xy (Ro.toEuclideanLin q) | q ∈ convexHull ℝ (K₀ : Set ℝ³) } →
+      IsRupert (insert y K₀)
+
 end Stable
 
 /-!

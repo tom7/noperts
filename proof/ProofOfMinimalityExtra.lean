@@ -16,6 +16,7 @@ public import MinimalityExtra.TestPairs
 public import MinimalityExtra.LemmaAQ
 public import MinimalityExtra.MetricSpin
 public import MinimalityExtra.EdgePlane
+public import MinimalityExtra.Sandwich
 public import Minimality.Tilt
 public import Minimality.Thm73
 public import Minimality.OctaTools
