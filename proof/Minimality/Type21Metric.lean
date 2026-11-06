@@ -289,28 +289,8 @@ theorem Q21.vw_eq_zero {x : Fin 7 → ℝ³} (T : Facets21 x) (q : Q21) (h : q.v
   · rw [hv] at h0
     exact absurd h0 (T.view21_ne_zero (.inr t) (fun l e' => by cases e'))
 
-/-- The certificate `q` has a rim that is a rotation or reflection of the rim `lab₁`, at a
-multiple of the view `u₁`. -/
-def RimMatch21 (x : Fin 7 → ℝ³) (u₁ : ℝ³) {k₁ : ℕ} (lab₁ : ZMod k₁ → Fin 7) (q : Q21) : Prop :=
-  (∃ lam : ℝ, lam ≠ 0 ∧ q.vw x = lam • u₁) ∧ q.K = k₁ ∧ ∃ r : ℤ,
-    (∀ n : ℤ, q.lab (n : ZMod q.K) = lab₁ ((n + r : ℤ) : ZMod k₁)) ∨
-    (∀ n : ℤ, q.lab (n : ZMod q.K) = lab₁ ((r - n : ℤ) : ZMod k₁))
-
-theorem RimMatch21.pair {x : Fin 7 → ℝ³} {u₁ : ℝ³} {k₁ : ℕ} [NeZero k₁] {lab₁ : ZMod k₁ → Fin 7}
-    {q : Q21} (h : RimMatch21 x u₁ lab₁ q) :
-    ∃ lam : ℝ, q.vw x = lam • u₁ ∧ ∀ w : ℝ³,
-      (Function.Injective (fun i => ⟪x (lab₁ i), w⟫) →
-        Function.Injective (fun i => ⟪x (q.lab i), lam • w⟫)) ∧
-      (IsRobustUnimodal (fun i => ⟪x (q.lab i), lam • w⟫) →
-        IsRobustUnimodal (fun i => ⟪x (lab₁ i), w⟫)) := by
-  obtain ⟨⟨lam, hlam, hv⟩, hk, r, hr⟩ := h
-  refine ⟨lam, hv, ?_⟩
-  subst hk
-  intro w
-  refine equiv_aux (fun i => ⟪x (q.lab i), lam • w⟫) (fun i => ⟪x (lab₁ i), w⟫) r lam hlam ?_
-  rcases hr with h | h
-  · left; intro n; simp only [h, real_inner_smul_right]
-  · right; intro n; simp only [h, real_inner_smul_right]
+abbrev RimMatch21 (x : Fin 7 → ℝ³) (u₁ : ℝ³) {k₁ : ℕ} (lab₁ : ZMod k₁ → Fin 7) (q : Q21) : Prop :=
+  RimMatchG x u₁ lab₁ q.lab (q.vw x)
 
 /-! ### Two views with ties -/
 
@@ -325,109 +305,32 @@ convex with all other points strictly inside).  Every other certificate of the c
 in the limit (`WeakRim`: distinct labels, all points weakly left of its polygon, labels weakly
 counterclockwise) has no horizontal double normal at its limit view and distinct depths of its
 labels.  Rotations and reflections of the test rims at the same views belong to the tests. -/
-def MultiView21 (x : Fin 7 → ℝ³) : Prop :=
-  ∃ (m : ℕ) (q : Fin m → Q21) (Θ : Fin m → Set ℝ³) (k' : Fin m → ℕ) (_ : ∀ i, NeZero (k' i))
-    (σ : ∀ i, ZMod (k' i) → ZMod (q i).K),
-    (∀ i, TiltTest (univ.image x) ((q i).vw x) (fun j => x ((q i).lab j)) (σ i) (Θ i)) ∧
-    (∃ H : ℝ³ →L[ℝ] ℝ³, H ∈ SymOp ∧
-      ∀ i, ∃ d ∈ Θ i, ∃ c : ℝ, H ((q i).vw x) = d + c • (q i).vw x) ∧
-    ∀ q' : Q21, (∀ i, ¬ RimMatch21 x ((q i).vw x) (q i).lab q') →
-      q'.vw x ≠ 0 → Function.Injective q'.lab → WeakRim x (q'.vw x) q'.lab →
-        NoHDNAt (univ.image x) (q'.vw x) ∧
-          ∀ a b, q'.lab a ≠ q'.lab b → ⟪x (q'.lab a) - x (q'.lab b), q'.vw x⟫ ≠ 0
+abbrev MultiView21 (x : Fin 7 → ℝ³) : Prop := MultiViewG x Q21.K Q21.lab Q21.vw
 
 /-- **Type 21 with several ties at a family of tests** (Theorem 24.3 with the cover, the bridge
 `metricFree_of_cover`).  A type-21 shape with `MultiView21` is Rupert: the tilt tests are
 metric-free along the curve `I + (ε/2) H` because the cover is affine-invariant
 (`exists_certSeq21_map`), or else the limit lemma makes the shape Rupert directly. -/
 theorem isRupert_type21_multiView {x : Fin 7 → ℝ³} (T : Facets21 x) (P : MultiView21 x) :
-    IsRupert (univ.image x) := by
-  classical
-  obtain ⟨m, q, Θ, k', i₁, σ, hT, ⟨H₀, hH₀s, hH₀⟩, hO⟩ := P
-  set u : Fin m → ℝ³ := fun i => (q i).vw x with hu
-  set X : ∀ i, ZMod (q i).K → ℝ³ := fun i j => x ((q i).lab j) with hX
-  obtain ⟨H, hHs, hHΘ, hgood⟩ := exists_symm_good X u (fun i => (hT i).ne_zero)
-    (fun i => (hT i).inj) Θ (fun i => (hT i).isOpen) H₀ hH₀s hH₀
-  have hsymm : (H : ℝ³ →ₗ[ℝ] ℝ³).IsSymmetric := hHs
-  -- the curve of metrics
-  set M : ℝ → ℝ³ →L[ℝ] ℝ³ := fun ε => ContinuousLinearMap.id ℝ ℝ³ + (ε / 2) • H with hM
-  set Gm : ℝ → ℝ³ →L[ℝ] ℝ³ := fun ε => (M ε).comp (M ε) with hGm
-  have hMv : ∀ ε v, M ε v = v + (ε / 2) • H v := fun ε v => by simp [hM]
-  have hGv : ∀ ε v, Gm ε v = M ε (M ε v) := fun ε v => rfl
-  have hMG : ∀ ε a b, ⟪M ε a, M ε b⟫ = ⟪a, Gm ε b⟫ := by
-    intro ε a b
-    rw [hMv, hMv, hGv, hMv, hMv]
-    exact curve_inner H hsymm ε a b
-  have hMt : ∀ v : ℝ³, Tendsto (fun ε => M ε v) (𝓝[>] (0 : ℝ)) (𝓝 v) := by
-    intro v
-    have hc' : Continuous fun ε : ℝ => v + (ε / 2) • H v := by fun_prop
-    simpa [hMv] using hc'.continuousAt.tendsto.mono_left (nhdsWithin_le_nhds (a := (0 : ℝ)))
-  have hdetpos : ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < detMap (M ε) := by
-    have h := Tendsto.det3' (hMt (EuclideanSpace.single 0 1)) (hMt (EuclideanSpace.single 1 1))
-      (hMt (EuclideanSpace.single 2 1))
-    have h1 : det3 (EuclideanSpace.single (0 : Fin 3) (1 : ℝ))
-        (EuclideanSpace.single (1 : Fin 3) (1 : ℝ)) (EuclideanSpace.single (2 : Fin 3) (1 : ℝ))
-        = 1 := detMap_one
-    rw [h1] at h
-    exact h.eventually (lt_mem_nhds one_pos)
-  have hsmall : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ε / 2 * ‖H‖ < 1 := by
-    have hc' : Continuous fun ε : ℝ => ε / 2 * ‖H‖ := by fun_prop
-    exact (hc'.continuousAt.eventually (gt_mem_nhds (by simp))).filter_mono nhdsWithin_le_nhds
-  have hMinj : ∀ ε, ε / 2 * ‖H‖ < 1 → 0 < ε → ∀ a, M ε a = 0 → a = 0 := by
-    intro ε hε hε0 a ha
-    rw [hMv] at ha
-    have e : a = -((ε / 2) • H a) := eq_neg_of_add_eq_zero_left ha
-    have h1 : ‖a‖ ≤ ε / 2 * ‖H‖ * ‖a‖ := by
-      calc ‖a‖ = ‖(ε / 2) • H a‖ := by
-            have := congrArg norm e
-            rwa [norm_neg] at this
-        _ = ε / 2 * ‖H a‖ := by rw [norm_smul, Real.norm_of_nonneg (by positivity)]
-        _ ≤ ε / 2 * (‖H‖ * ‖a‖) := mul_le_mul_of_nonneg_left (H.le_opNorm a) (by positivity)
-        _ = ε / 2 * ‖H‖ * ‖a‖ := by ring
-    have : ‖a‖ = 0 := by nlinarith [norm_nonneg a]
-    exact norm_eq_zero.mp this
-  -- the second-order expansion of the metric at each view
-  have hGu : ∀ i ε, Gm ε (u i) = u i + ε • H (u i) + ε ^ 2 • ((1 / 4 : ℝ) • H (H (u i))) := by
-    intro i ε
-    rw [hGv, hMv, hMv, map_add, map_smul]
-    module
-  -- the generic bridge
-  have hmain := metricFree_of_cover x T.noSeg ⟨2, 0, 3, 6, T.det_ne⟩ (Q := Q21) Q21.K Q21.lab
-    Q21.vw (fun q h y => Q21.vw_eq_zero T q h y)
-    (fun q z ι l xs h => (tendsto_view21 h q.v).const_smul _) M Gm hMG (fun i => hMt (x i))
-    (by
-      have hpos : ∀ᶠ ε in 𝓝[>] (0 : ℝ), (0 : ℝ) < ε := self_mem_nhdsWithin
-      filter_upwards [hdetpos, hsmall, hpos] with ε hd hs hε0
-      obtain ⟨Y, hY, hc'⟩ := exists_certSeq21_map T (M ε) (hMinj ε hs hε0) (by
+    IsRupert (univ.image x) :=
+  isRupert_multiViewG T.noSeg ⟨2, 0, 3, 6, T.det_ne⟩ Q21.K Q21.lab Q21.vw (fun q => q.K_three)
+    (fun q h y => Q21.vw_eq_zero T q h y)
+    (fun q z ι l xs h => (tendsto_view21 h q.v).const_smul _)
+    (fun M hMinj hd => by
+      obtain ⟨Y, hY, hc'⟩ := exists_certSeq21_map T M hMinj (by
         rw [det3_map]; exact mul_ne_zero hd.ne' T.det_ne)
       refine ⟨Y, hY, (hc'.frequently).mono fun s hs' => ?_⟩
       obtain ⟨v, e, L, hv, hL⟩ := CertP21.exists_certL hs'
       exact ⟨⟨(v, e, L), hv⟩, (certL21_iff (Y s) ⟨(v, e, L), hv⟩).1 hL⟩)
-    (by
-      filter_upwards [hdetpos] with ε hd q
-      obtain ⟨c0, hc0, hv⟩ := view21_map (M ε) x q.v
+    (fun M hd q => by
+      obtain ⟨c0, hc0, hv⟩ := view21_map M x q.v
       have hc0' : 0 < c0 := by
         rcases hc0 with rfl | rfl
         · exact one_pos
         · exact hd
       refine ⟨c0, hc0', ?_⟩
       simp only [Q21.vw, hv, map_smul, smul_comm (sgnB q.e) c0])
-    (ι := Fin m) (k := fun i => (q i).K) (fun i => (q i).K_three) X u
-    (fun i ε => u i + ε • H (u i)) (fun i q' => RimMatch21 x (u i) (q i).lab q')
-    (fun i q' h => h.pair)
-    (fun i => by
-      simp only [hGu]
-      exact eventually_order_tilt (X i) (u i) (H (u i)) ((1 / 4 : ℝ) • H (H (u i))) (hgood i))
-    (fun q' hq' => hO q' hq')
-  rcases hmain with hR | hMF
-  · exact hR
-  have hall := hMF.and (eventually_all.2 fun i => eventually_injective_depth (hgood i))
-  have hall' : ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∃ i, IsCyclicUnimodal (fun j => ⟪X i j, u i + ε • H (u i)⟫) :=
-    hall.mono fun _ ⟨h1, h2⟩ => h1 h2
-  obtain ⟨i, hi⟩ := frequently_exists_of_finite hall'.frequently
-  obtain ⟨d, hd, c, hdc⟩ := hHΘ i
-  rw [hdc] at hi
-  exact (hT i).isRupert_of_freq hd (frequently_unimodal_tilt (X i) (u i) d c hi)
+    P
 
 /-- **Theorem 24.3 for type 21 from the facets**: seven points labelled so that `014, 015, 0256,
 046, 134, 135, 2346, 235` are facets (functionals negative off them) with `MultiView21` are
