@@ -29,6 +29,13 @@ public import MinimalityExtra.SilhouetteCodes
 public import MinimalityExtra.CornerWedge
 public import MinimalityExtra.TorqueForms
 public import MinimalityExtra.TwoDisjointFaces
+public import MinimalityExtra.VertexOverBoundary
+public import MinimalityExtra.FaceCircleSkeleton
+public import MinimalityExtra.FaceNormal
+public import MinimalityExtra.PassageSymmetry
+public import MinimalityExtra.NoUnimodalOpen
+public import MinimalityExtra.SeptLimit
+public import MinimalityExtra.PictureSymmetric
 public import MinimalityExtra.LimitRows
 public import Minimality.Tilt
 public import Minimality.Thm73
