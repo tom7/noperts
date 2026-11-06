@@ -899,9 +899,9 @@ face of `conv V` with outward normal `ν`, here only assumed nonempty), and `v �
 behind the plane `ν⬝x = c`, i.e. `ν⬝v = min_V ν⬝x`.  Let `p* = v + ((c - ν⬝v)/ν⬝ν) • ν`, its foot on the
 plane.  Then (a) `p*` lies in the plane; (b) the force line of `v` is `v + ℝν`, which passes through `p*`
 (`p* - v = λ ν`, `λ ≥ 0`), and `p*` is the orthogonal projection (every `y` in the plane has
-`(p* - v) ⬝ (y - p*) = 0`); (c) at every view `u ⊥ ν` (projection along `u`, `π_u y = y - (u⬝y/u⬝u) u`,
+`(p* - v) ⬝ (y - p*) = 0`); (c) at every view `u ⊥ ν` (projection along `u`, `πᵤ y = y - (u⬝y/u⬝u) u`,
 and `u ≠ 0`) the vertex and the foot have equal depth `u⬝v = u⬝p*`, `ν` stays the screen direction
-(`ν⬝π_u y = ν⬝y`), so `v` is a back extreme of the projected set: `ν⬝π_u v ≤ ν⬝π_u x` for all
+(`ν⬝πᵤ y = ν⬝y`), so `v` is a back extreme of the projected set: `ν⬝πᵤ v ≤ ν⬝πᵤ x` for all
 `x ∈ V` while `F` is a front extreme; that is, `ν` lies in `v`'s normal cone (with sign) at every
 view of the circle, and the width of the projected set in direction `ν` is `c - ν⬝v`, attained by the
 pair `F, v`, independent of `u`.  The content is elementary (orthogonal projection plus
