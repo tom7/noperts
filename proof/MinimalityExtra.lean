@@ -421,6 +421,28 @@ def DepthSeparatedViewIsFree : Prop :=
     ⟪levelPoint (fun i => x (lab i)) w a c - x (lab c), x (lab (a + 1)) - x (lab a)⟫ ≠ 0 →
     FreeAt (Finset.univ.image x) w
 
+/-- The spin part of a row of the Edge-Plane Lemma: the value at the end `X j` of the edge `i` of
+the rotation about the vertical through `X a`, corrected along `N` so that the edge `a` keeps its
+line. -/
+noncomputable def edgePlaneSpin {k : ℕ} (X : ZMod k → ℝ³) (w : ℝ³) (a i j : ZMod k) : ℝ :=
+  det3 (X (i + 1) - X i) (cross w (X j - X a)) w +
+    (⟪X j - X a, w⟫ / ⟪X (a + 1) - X a, w⟫) *
+      det3 (X (i + 1) - X i) (cross (X (a + 1) - X a) w) w
+
+/-- **Edge-Plane Lemma.** At a view with a strict rim, if some `(α, μ, s)` makes every row off the
+edge `a` positive, the view is free. The rows ask the line `ρ = α + μ z` to separate two point
+sets in a plane; the motion turns about an axis in the plane through the edge `a` normal to its
+support plane. -/
+def EdgePlaneFreedom : Prop :=
+  ∀ (n k : ℕ) [NeZero k], 3 ≤ k → ∀ (x : Fin n → ℝ³) (w : ℝ³) (lab : ZMod k → Fin n),
+    Function.Injective lab → StrictRimN x w lab → HiddenInTriangles x w lab →
+    ∀ (a : ZMod k) (s α μ : ℝ), ⟪x (lab (a + 1)) - x (lab a), w⟫ ≠ 0 →
+    (∀ i j : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+      0 < (α + μ * ⟪x (lab j) - x (lab a), w⟫) *
+          det3 (x (lab (i + 1)) - x (lab i)) (x (lab (a + 1)) - x (lab a)) w +
+        s * edgePlaneSpin (fun i => x (lab i)) w a i j) →
+    FreeAt (Finset.univ.image x) w
+
 end DepthSeparated
 
 /-!
