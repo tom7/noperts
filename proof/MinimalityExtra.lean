@@ -374,4 +374,50 @@ def BoxesHaveNoUnimodalView : Prop :=
 
 end Box
 
+/-!
+## Depth-separated views are free (Theorem 8.10)
+
+A generic view is free, with any number of peaks and no torque condition, when a rim edge and a
+corner on parallel support lines split the rim by depth: the level of the corner crosses the rim
+only at that corner and on that edge. On a unimodal rim every level does this. The repository's
+`Minimality.exists_tiltCert_of_depthSeparated` proves the same in a frame, by Gordan's lemma; the
+proof in `MinimalityExtra/DepthSeparated.lean` is frame-free with an explicit motion.
+-/
+
+section DepthSeparated
+
+/-- The point of the line through the edge `a` at the depth of the corner `c`. -/
+noncomputable def levelPoint {k : ℕ} (X : ZMod k → ℝ³) (w : ℝ³) (a c : ZMod k) : ℝ³ :=
+  X a + (⟪X c - X a, w⟫ / ⟪X (a + 1) - X a, w⟫) • (X (a + 1) - X a)
+
+/-- The hidden points of `x` (off the rim `lab`) lie strictly inside a projected triangle of
+points.  Only a hidden point on every such triangle's boundary fails this, a special position. -/
+def HiddenInTriangles {n k : ℕ} (x : Fin n → ℝ³) (w : ℝ³) (lab : ZMod k → Fin n) : Prop :=
+  ∀ m, (∀ i, m ≠ lab i) → ∃ p ∈ Finset.univ.image x, ∃ q ∈ Finset.univ.image x, ∃ r ∈ Finset.univ.image x,
+    0 < det3 (q - p) (r - p) w ∧ 0 < det3 (q - p) (x m - p) w ∧
+    0 < det3 (r - q) (x m - q) w ∧ 0 < det3 (p - r) (x m - r) w
+
+/-- A *split antipodal level pair* (edge `a`, corner `c`) of the cycle `X` at the view `w`: `c`
+is the strict minimum of the height `det3 d w ·` across the edge `a` (`d = X (a+1) - X a`), so the
+support lines at the edge and at `c` are parallel, the corners on the arc from `c` to `a` lie on
+one side of the level of `c`, and those on the arc from `a + 1` back to `c` on the other.  This is
+`Minimality.IsDepthSeparatedPair`, frame-free and with a strict antipode. -/
+def IsDepthSeparatedAt {k : ℕ} (X : ZMod k → ℝ³) (w : ℝ³) (a c : ZMod k) : Prop :=
+  (∀ i, i ≠ c → det3 (X (a + 1) - X a) w (X c) < det3 (X (a + 1) - X a) w (X i)) ∧
+    (((∀ s : ℕ, 0 < s → s ≤ (a - c).val → ⟪X c, w⟫ < ⟪X (c + s), w⟫) ∧
+        ∀ s : ℕ, (a - c).val < s → s < k → ⟪X (c + s), w⟫ < ⟪X c, w⟫) ∨
+      ((∀ s : ℕ, 0 < s → s ≤ (a - c).val → ⟪X (c + s), w⟫ < ⟪X c, w⟫) ∧
+        ∀ s : ℕ, (a - c).val < s → s < k → ⟪X c, w⟫ < ⟪X (c + s), w⟫))
+
+/-- **Depth-separated views are free.**  A view with a strict rim and a split antipodal level pair without a
+horizontal double normal at it is free, whatever the number of peaks. -/
+def DepthSeparatedViewIsFree : Prop :=
+  ∀ (n k : ℕ) [NeZero k] (x : Fin n → ℝ³) (w : ℝ³) (lab : ZMod k → Fin n) (a c : ZMod k),
+    3 ≤ k → Function.Injective lab → StrictRimN x w lab → HiddenInTriangles x w lab →
+    IsDepthSeparatedAt (fun i => x (lab i)) w a c →
+    ⟪levelPoint (fun i => x (lab i)) w a c - x (lab c), x (lab (a + 1)) - x (lab a)⟫ ≠ 0 →
+    FreeAt (Finset.univ.image x) w
+
+end DepthSeparated
+
 end MinimalityExtra
