@@ -48,124 +48,31 @@ def Edge21 (a a' b b' c c' d v w : ℝ³) : Prop :=
     SPair v w c' d ∨ SPair v w a c' ∨ SPair v w b' d ∨ SPair v w b c' ∨ SPair v w a' c ∨
     SPair v w a' b ∨ SPair v w a' b' ∨ SPair v w a' d
 
+/-- Closes `Edge21` goals that are a relabelling of a hypothesis: each of the thirteen
+cases of the hypothesis hits one disjunct of the goal. -/
+local macro "edge21_perm" : tactic => `(tactic| (
+  unfold Edge21 at *
+  rcases ‹_› with h | h | h | h | h | h | h | h | h | h | h | h | h <;>
+  (unfold SPair at h ⊢; rcases h with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> simp [h1, h2])))
+
 theorem Edge21.symm {a a' b b' c c' d v w : ℝ³} (h : Edge21 a a' b b' c c' d v w) :
     Edge21 a a' b b' c c' d w v := by
-  rcases h with h | h | h | h | h | h | h | h | h | h | h | h | h
-  · left; exact h.symm
-  · iterate 1 right
-    left; exact h.symm
-  · iterate 2 right
-    left; exact h.symm
-  · iterate 3 right
-    left; exact h.symm
-  · iterate 4 right
-    left; exact h.symm
-  · iterate 5 right
-    left; exact h.symm
-  · iterate 6 right
-    left; exact h.symm
-  · iterate 7 right
-    left; exact h.symm
-  · iterate 8 right
-    left; exact h.symm
-  · iterate 9 right
-    left; exact h.symm
-  · iterate 10 right
-    left; exact h.symm
-  · iterate 11 right
-    left; exact h.symm
-  · iterate 12 right
-    exact h.symm
+  edge21_perm
 
 /-- The edges under `σ1 = (04)(35)`. -/
 theorem Edge21.sigma1 {a a' b b' c c' d v w : ℝ³} (h : Edge21 b b' a a' c c' d v w) :
     Edge21 a a' b b' c c' d v w := by
-  rcases h with h | h | h | h | h | h | h | h | h | h | h | h | h
-  · iterate 2 right
-    left; exact h
-  · iterate 1 right
-    left; exact h.swap
-  · left; exact h
-  · iterate 10 right
-    left; exact h.swap
-  · iterate 9 right
-    left; exact h
-  · iterate 5 right
-    left; exact h
-  · iterate 8 right
-    left; exact h
-  · iterate 12 right
-    exact h
-  · iterate 6 right
-    left; exact h
-  · iterate 4 right
-    left; exact h
-  · iterate 3 right
-    left; exact h.swap
-  · iterate 11 right
-    left; exact h.swap
-  · iterate 7 right
-    left; exact h
+  edge21_perm
 
 /-- The edges under `σ2 = (05)(34)(26)` (the octahedron `K − 6` with the cap `6`). -/
 theorem Edge21.sigma2 {a a' b b' c c' d v w : ℝ³} (h : Edge21 b' b a' a c d c' v w) :
     Edge21 a a' b b' c c' d v w := by
-  rcases h with h | h | h | h | h | h | h | h | h | h | h | h | h
-  · iterate 4 right
-    left; exact h
-  · iterate 11 right
-    left; exact h.swap
-  · iterate 9 right
-    left; exact h
-  · iterate 3 right
-    left; exact h.swap
-  · left; exact h
-  · iterate 5 right
-    left; exact h.swap
-  · iterate 7 right
-    left; exact h
-  · iterate 6 right
-    left; exact h
-  · iterate 12 right
-    exact h
-  · iterate 2 right
-    left; exact h
-  · iterate 10 right
-    left; exact h.swap
-  · iterate 1 right
-    left; exact h.swap
-  · iterate 8 right
-    left; exact h
+  edge21_perm
 
 /-- The edges under `σ2σ1`. -/
 theorem Edge21.sigma21 {a a' b b' c c' d v w : ℝ³} (h : Edge21 a' a b' b c d c' v w) :
     Edge21 a a' b b' c c' d v w := by
-  rcases h with h | h | h | h | h | h | h | h | h | h | h | h | h
-  · iterate 9 right
-    left; exact h
-  · iterate 11 right
-    left; exact h
-  · iterate 4 right
-    left; exact h
-  · iterate 10 right
-    left; exact h
-  · iterate 2 right
-    left; exact h
-  · iterate 5 right
-    left; exact h.swap
-  · iterate 12 right
-    exact h
-  · iterate 8 right
-    left; exact h
-  · iterate 7 right
-    left; exact h
-  · left; exact h
-  · iterate 3 right
-    left; exact h
-  · iterate 1 right
-    left; exact h
-  · iterate 6 right
-    left; exact h
+  edge21_perm
 
 /-! ### Data of the certificates at the edges `06`, `46`, `25`, `23` (tier Q) -/
 
