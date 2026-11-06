@@ -7,6 +7,7 @@ public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.LinearAlgebra.CrossProduct
 public import MainTheorem
 public import Mathlib.Analysis.Convex.Intrinsic
+public import Mathlib.Analysis.Convex.Extreme
 public import Mathlib.LinearAlgebra.LinearIndependent.Basic
 
 /-!
@@ -766,6 +767,37 @@ def TriangleShadowIsRupert : Prop :=
     (∀ v ∈ V, v ≠ a → v ≠ b → v ≠ c →
       ∃ t : ℝ, v + t • u ∈ intrinsicInterior ℝ (convexHull ℝ ({a, b, c} : Set ℝ³))) →
     IsRupert V
+
+/-- Hypotheses of Theorem 5 (`CoplanarSilhouetteIsRupert`): `W` is a
+non-collinear coplanar subset of `V`, the view direction `u` is not parallel to the plane of `W`,
+and every other vertex of `V` meets the plane of `W` along `u` in the relative interior of
+`conv W`. -/
+def CoplanarSilhouetteHyp (V W : Finset ℝ³) (u : ℝ³) : Prop :=
+  W ⊆ V ∧ ¬ Collinear ℝ (W : Set ℝ³) ∧
+    Coplanar ℝ (W : Set ℝ³) ∧ u ∉ (affineSpan ℝ (W : Set ℝ³)).direction ∧
+    (∀ v ∈ V, v ∉ W → ∃ t : ℝ, v + t • u ∈ intrinsicInterior ℝ (convexHull ℝ (W : Set ℝ³)))
+
+/-- The vertices of `V` lying over the corners of the shadow `π '' conv V` (`π` a linear map to the
+plane `EuclideanSpace ℝ (Fin 2)`; its kernel is the view direction). -/
+def ShadowCorners (V : Finset ℝ³) (π : ℝ³ →ₗ[ℝ] EuclideanSpace ℝ (Fin 2)) : Set ℝ³ :=
+  {v | v ∈ V ∧ π v ∈ Set.extremePoints ℝ (π '' convexHull ℝ (V : Set ℝ³))}
+
+/-- (ii): on a nonempty open set `U` of views (`u ≠ 0`; the view is the projection `π` with kernel
+`ℝ u`), the shadow has nonempty interior, the vertices over its corners are coplanar, and every
+other vertex projects into the open shadow. -/
+def CoplanarShadowCorners (V : Finset ℝ³) : Prop :=
+  ∃ U : Set ℝ³, IsOpen U ∧ U.Nonempty ∧ (0 : ℝ³) ∉ U ∧
+    ∀ u ∈ U, ∀ π : ℝ³ →ₗ[ℝ] EuclideanSpace ℝ (Fin 2), LinearMap.ker π = Submodule.span ℝ {u} →
+      (interior (π '' convexHull ℝ (V : Set ℝ³))).Nonempty ∧
+      Coplanar ℝ (ShadowCorners V π) ∧
+      ∀ v ∈ V, π v ∉ Set.extremePoints ℝ (π '' convexHull ℝ (V : Set ℝ³)) →
+        π v ∈ interior (π '' convexHull ℝ (V : Set ℝ³))
+
+/-- **Proposition 27.14 (i) ⇔ (ii).**  For `V` in convex position (every point is a vertex of
+`conv V`): Theorem 5's hypotheses hold for some `W ⊆ V` and some `u`, iff (ii). -/
+def CoplanarSilhouetteIff : Prop :=
+  ∀ V : Finset ℝ³, (∀ v ∈ V, v ∈ Set.extremePoints ℝ (convexHull ℝ (V : Set ℝ³))) →
+    ((∃ (W : Finset ℝ³) (u : ℝ³), CoplanarSilhouetteHyp V W u) ↔ CoplanarShadowCorners V)
 
 end Core
 
