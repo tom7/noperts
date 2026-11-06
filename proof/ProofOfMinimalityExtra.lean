@@ -11,6 +11,7 @@ public import MinimalityExtra.Box
 public import MinimalityExtra.DepthSeparated
 public import MinimalityExtra.MetricIdentities
 public import MinimalityExtra.Merge
+public import MinimalityExtra.RupertStable
 public import Minimality.Tilt
 public import Minimality.Thm73
 public import Minimality.OctaTools

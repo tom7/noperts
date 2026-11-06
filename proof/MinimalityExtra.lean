@@ -5,6 +5,7 @@ public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 public import Mathlib.LinearAlgebra.CrossProduct
+public import MainTheorem
 public import Mathlib.LinearAlgebra.LinearIndependent.Basic
 
 /-!
@@ -480,5 +481,65 @@ def MergeLemma : Prop :=
       (∀ lam, lam0 - ε < lam → lam < lam0 → IsCyclicUnimodal (fun j => α j + β j * lam))
 
 end Identities
+
+/-!
+## Stability of the Rupert property
+
+Rupert is stable under small changes of the hull, with an explicit rate in terms of the clearance
+of a passage. Since every set of at most 6 non-collinear points is Rupert, compactness shows
+that any finite set close enough to one (and not nearly collinear) is Rupert, for any number of
+points. In particular a 7-vertex Nopert in the unit ball with a triple of points of cross
+product norm at least `r` has all vertex distances at least `ε(r)`; the constant is not explicit.
+-/
+
+section Stable
+
+/-- `W` has a passage with clearance `δ`: a closed `δ`-ball about each point of the inner shadow lies
+in the outer shadow. -/
+def HasClearance (W : Finset ℝ³) (δ : ℝ) : Prop :=
+  ∃ inner_rotation ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ,
+  ∃ inner_offset : EuclideanSpace ℝ (Fin 2),
+  ∃ outer_rotation ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ,
+  ∀ p ∈ convexHull ℝ (W : Set ℝ³),
+    Metric.closedBall (inner_offset + proj_xy (inner_rotation.toEuclideanLin p)) δ ⊆
+      { proj_xy (outer_rotation.toEuclideanLin q) | q ∈ convexHull ℝ (W : Set ℝ³) }
+
+/-- **Clearance is stable.** A passage of `W` with clearance `δ` gives a passage of `V` when every
+point of `V` is within `ε₁` of the hull of `W`, every point of `W` within `ε₂` of the hull of `V`, and
+`ε₁ + ε₂ < δ`. -/
+def ClearanceStable : Prop :=
+  ∀ (V W : Finset ℝ³) (δ ε₁ ε₂ : ℝ), HasClearance W δ →
+    (∀ v ∈ V, ∃ q ∈ convexHull ℝ (W : Set ℝ³), dist v q ≤ ε₁) →
+    (∀ w ∈ W, ∃ q ∈ convexHull ℝ (V : Set ℝ³), dist w q ≤ ε₂) →
+    ε₁ + ε₂ < δ → IsRupert V
+
+/-- **A Rupert passage has positive clearance.** -/
+def RupertHasClearance : Prop :=
+  ∀ W : Finset ℝ³, IsRupert W → ∃ δ > 0, HasClearance W δ
+
+/-- Rupert is stable under small Hausdorff perturbations near a point set of at most six points
+that is not collinear: for every `r > 0` there is `ε > 0` such that every `V` (of any size) whose
+points are within `ε` of the hull of such a `W` (in the closed unit ball, with a triple of cross
+norm at least `r`), and conversely, is Rupert. -/
+def RupertNearFewPoints : Prop :=
+  ∀ r : ℝ, 0 < r → ∃ ε : ℝ, 0 < ε ∧ ∀ V W : Finset ℝ³, W.card ≤ 6 → (∀ w ∈ W, ‖w‖ ≤ 1) →
+    (∃ a ∈ W, ∃ b ∈ W, ∃ c ∈ W, r ≤ ‖cross (b - a) (c - a)‖) →
+    (∀ v ∈ V, ∃ q ∈ convexHull ℝ (W : Set ℝ³), dist v q ≤ ε) →
+    (∀ w ∈ W, ∃ q ∈ convexHull ℝ (V : Set ℝ³), dist w q ≤ ε) → IsRupert V
+
+/-- **Close vertices make a 7-vertex polytope Rupert** (nonconstructive).  For every `r > 0` there
+is `ε > 0` such that every set `V` of at most 7 points in the closed unit ball containing a triple
+`a, b, c` with `r ≤ ‖(b - a) × (c - a)‖` and two distinct points at distance less than `ε` is
+Rupert.
+
+For Noperts this says: a 7-vertex Nopert in the unit ball with a triple of cross norm at least `r`
+has all pairwise vertex distances at least `ε(r)`.  (The bound `ε(r)` is not made explicit, since
+it comes from a compactness argument.) -/
+def CloseVerticesRupert : Prop :=
+  ∀ r : ℝ, 0 < r → ∃ ε : ℝ, 0 < ε ∧ ∀ V : Finset ℝ³, V.card ≤ 7 → (∀ v ∈ V, ‖v‖ ≤ 1) →
+    (∃ a ∈ V, ∃ b ∈ V, ∃ c ∈ V, r ≤ ‖cross (b - a) (c - a)‖) →
+    (∃ x ∈ V, ∃ y ∈ V, x ≠ y ∧ dist x y < ε) → IsRupert V
+
+end Stable
 
 end MinimalityExtra
