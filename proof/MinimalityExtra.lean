@@ -542,4 +542,118 @@ def CloseVerticesRupert : Prop :=
 
 end Stable
 
+/-!
+## Pairs of tests at every metric
+
+`AngleLemma` and the invisibility statements say when two tests cannot both fail at one metric.
+`TwoInteriorCornersNeverMetricFree` is the negative side: a rim with four consecutive non-coplanar
+corners is not unimodal at some metric. Only one closing is treated here, not both at once.
+-/
+
+section TestPairs
+
+open Matrix
+
+/-- (Lemma 13.2, the angle lemma, rims of any size.)  Two crossing tests: rims
+`x₁ : ZMod k₁ → ℝ³`, `x₂ : ZMod k₂ → ℝ³` (cyclic) with nonzero views `u₁, u₂`.  At a metric `G`
+(positive definite) the depth of a point `y` along `u` is `(G u) ⬝ᵥ y`.  A *pattern* of a rim
+is the set of pairs `(h, l)` with `z l < z h` of an injective depth sequence `z` that is not
+cyclically unimodal (more than or fewer than one strict local maximum); it is *admissible* if
+it occurs.  Its cone is the cone spanned by the differences `x h - x l`.  Suppose that for
+every admissible pattern `s₁` of the first rim and `s₂` of the second there is a sign `ε = ±1`
+with `ε u₂ ∈ cone(s₁)` and `-ε u₁ ∈ cone(s₂)`.  Then at every metric at which both rims have
+injective depths, the depths of the first rim or those of the second are cyclically unimodal
+(injective with exactly one strict local maximum). -/
+def AngleLemma : Prop :=
+  ∀ {k₁ k₂ : ℕ} [NeZero k₁] [NeZero k₂] (x₁ : ZMod k₁ → Fin 3 → ℝ) (x₂ : ZMod k₂ → Fin 3 → ℝ)
+    (u₁ u₂ : Fin 3 → ℝ), u₁ ≠ 0 → u₂ ≠ 0 →
+    (∀ (z₁ : ZMod k₁ → ℝ) (z₂ : ZMod k₂ → ℝ),
+      Function.Injective z₁ → ¬ (Function.Injective z₁ ∧
+        (Finset.univ.filter (fun i : ZMod k₁ => z₁ (i - 1) < z₁ i ∧ z₁ (i + 1) < z₁ i)).card = 1) →
+      Function.Injective z₂ → ¬ (Function.Injective z₂ ∧
+        (Finset.univ.filter (fun i : ZMod k₂ => z₂ (i - 1) < z₂ i ∧ z₂ (i + 1) < z₂ i)).card = 1) →
+      ∃ ε : ℝ, (ε = 1 ∨ ε = -1) ∧
+        (∃ c : ZMod k₁ × ZMod k₁ → ℝ, (∀ q, 0 ≤ c q) ∧
+          ε • u₂ = ∑ q ∈ Finset.univ.filter (fun q : ZMod k₁ × ZMod k₁ => z₁ q.2 < z₁ q.1),
+            c q • (x₁ q.1 - x₁ q.2)) ∧
+        (∃ c : ZMod k₂ × ZMod k₂ → ℝ, (∀ q, 0 ≤ c q) ∧
+          -ε • u₁ = ∑ q ∈ Finset.univ.filter (fun q : ZMod k₂ × ZMod k₂ => z₂ q.2 < z₂ q.1),
+            c q • (x₂ q.1 - x₂ q.2))) →
+    ∀ G : Matrix (Fin 3) (Fin 3) ℝ, G.PosDef →
+      Function.Injective (fun i => (G *ᵥ u₁) ⬝ᵥ x₁ i) →
+      Function.Injective (fun i => (G *ᵥ u₂) ⬝ᵥ x₂ i) →
+      (Function.Injective (fun i => (G *ᵥ u₁) ⬝ᵥ x₁ i) ∧
+        (Finset.univ.filter (fun i : ZMod k₁ =>
+          (G *ᵥ u₁) ⬝ᵥ x₁ (i - 1) < (G *ᵥ u₁) ⬝ᵥ x₁ i ∧
+          (G *ᵥ u₁) ⬝ᵥ x₁ (i + 1) < (G *ᵥ u₁) ⬝ᵥ x₁ i)).card = 1) ∨
+      (Function.Injective (fun i => (G *ᵥ u₂) ⬝ᵥ x₂ i) ∧
+        (Finset.univ.filter (fun i : ZMod k₂ =>
+          (G *ᵥ u₂) ⬝ᵥ x₂ (i - 1) < (G *ᵥ u₂) ⬝ᵥ x₂ i ∧
+          (G *ᵥ u₂) ⬝ᵥ x₂ (i + 1) < (G *ᵥ u₂) ⬝ᵥ x₂ i)).card = 1)
+
+/-- The depth functionals at which a test with view `u` fails with the pattern `W` (the set of
+difference vectors `W_T(s)` that the pattern forces to be positive in depth):
+`Φ(W, u) = {φ | φ u > 0 ∧ φ w > 0 for all w ∈ W}`.  (A functional is `φ ⬝ᵥ ·`.) -/
+def FailCone (W : Set (Fin 3 → ℝ)) (u : Fin 3 → ℝ) : Set (Fin 3 → ℝ) :=
+  {φ | 0 < φ ⬝ᵥ u ∧ ∀ w ∈ W, 0 < φ ⬝ᵥ w}
+
+/-- (Lemma V (a), visibility.)  If the pattern `W` is *invisible* along `v` (no functional of
+`Φ(W, u)` vanishes on `v`), then `φ v` has one and the same sign on all of `Φ(W, u)`.
+(The Farkas reformulation `τ v ∈ cone(W ∪ {u})` is not included.) -/
+def InvisibilitySign : Prop :=
+  ∀ (W : Set (Fin 3 → ℝ)) (u v : Fin 3 → ℝ), (∀ φ ∈ FailCone W u, φ ⬝ᵥ v ≠ 0) →
+    ∀ φ₁ ∈ FailCone W u, ∀ φ₂ ∈ FailCone W u, 0 < (φ₁ ⬝ᵥ v) * (φ₂ ⬝ᵥ v)
+
+/-- (Lemma V (b).)  Let `𝒲₁`, `𝒲₂` be the sets of admissible patterns of two tests with views
+`u₁, u₂`.  Suppose every pattern of the first is invisible along `u₂`, every pattern of the
+second is invisible along `u₁`, and the signs of `φ u₂` on `Φ(W₁, u₁)` and of `φ u₁` on
+`Φ(W₂, u₂)` always differ.  Then at no metric `G` (positive definite) do both tests fail, i.e.
+`G u₁ ∈ Φ(W₁, u₁)` and `G u₂ ∈ Φ(W₂, u₂)` for no `W₁ ∈ 𝒲₁`, `W₂ ∈ 𝒲₂`. -/
+def InvisibilitySignPair : Prop :=
+  ∀ (𝒲₁ 𝒲₂ : Set (Set (Fin 3 → ℝ))) (u₁ u₂ : Fin 3 → ℝ),
+    (∀ W ∈ 𝒲₁, ∀ φ ∈ FailCone W u₁, φ ⬝ᵥ u₂ ≠ 0) →
+    (∀ W ∈ 𝒲₂, ∀ φ ∈ FailCone W u₂, φ ⬝ᵥ u₁ ≠ 0) →
+    (∀ W₁ ∈ 𝒲₁, ∀ φ₁ ∈ FailCone W₁ u₁, ∀ W₂ ∈ 𝒲₂, ∀ φ₂ ∈ FailCone W₂ u₂,
+      SignType.sign (φ₁ ⬝ᵥ u₂) ≠ SignType.sign (φ₂ ⬝ᵥ u₁)) →
+    ∀ G : Matrix (Fin 3) (Fin 3) ℝ, G.PosDef →
+      ∀ W₁ ∈ 𝒲₁, ∀ W₂ ∈ 𝒲₂, ¬ (G *ᵥ u₁ ∈ FailCone W₁ u₁ ∧ G *ᵥ u₂ ∈ FailCone W₂ u₂)
+
+/-- (Corollary V1 (i), a rim edge parallel to `v`.)  If the edge vector `e = c • v`, `c ≠ 0`,
+lies in the pattern `W` (an edge `X_{i+1} - X_i`, or the negated edge), then every functional of
+`Φ(W, u)` has `c * φ v > 0`: the pattern is invisible along `v` and `φ v` has the sign of `c`. -/
+def InvisibilityEdge : Prop :=
+  ∀ (W : Set (Fin 3 → ℝ)) (u v e : Fin 3 → ℝ) (c : ℝ), e ∈ W → e = c • v →
+    ∀ φ ∈ FailCone W u, 0 < c * (φ ⬝ᵥ v)
+
+/-- (Corollary V1 (ii), a middle corner on a flat triple.)  Let `x - ((1-t) y + t z) = κ v`
+with `0 ≤ t ≤ 1` (the projection of `x` along `v` lies between those of `y` and `z`).  If `x`
+is a strict local maximum of the pattern (`x - y, x - z ∈ W`) then `κ φ v > 0` on `Φ(W, u)`;
+if a strict local minimum (`y - x, z - x ∈ W`) then `κ φ v < 0`. -/
+def InvisibilityFlat : Prop :=
+  ∀ (W : Set (Fin 3 → ℝ)) (u v x y z : Fin 3 → ℝ) (t κ : ℝ), 0 ≤ t → t ≤ 1 →
+    x - ((1 - t) • y + t • z) = κ • v →
+    ((x - y ∈ W ∧ x - z ∈ W → ∀ φ ∈ FailCone W u, 0 < κ * (φ ⬝ᵥ v)) ∧
+     (y - x ∈ W ∧ z - x ∈ W → ∀ φ ∈ FailCone W u, κ * (φ ⬝ᵥ v) < 0))
+
+/-- (Lemma E′, two or more interior far corners: never metric-free.)  Let `p 0, …, p (k-1)`,
+`k ≥ 4`, be pairwise distinct points of `ℝ³`, the cyclic sequence of the apex and the far
+corners of a closing, and `u` a view.  Suppose four consecutive points `p i, …, p (i+3)` are
+not coplanar and `det(p (i+2) - p i, p (i+3) - p (i+1), u) ≠ 0` (the projections of
+`p (i+2) - p i` and `p (i+3) - p (i+1)` along `u` are the crossing diagonals of a convex
+quadrilateral, hence independent).  Then some positive definite metric `G` gives injective
+depths `⟪G u, p j⟫` with at least two strict cyclic local maxima: the closing is not
+unimodal there. -/
+def TwoInteriorCornersNeverMetricFree : Prop :=
+  ∀ {k : ℕ} [NeZero k], 4 ≤ k → ∀ (p : ZMod k → Fin 3 → ℝ) (u : Fin 3 → ℝ) (i : ZMod k),
+    Function.Injective p →
+    tripleProduct (p (i + 1) - p i) (p (i + 2) - p i) (p (i + 3) - p i) ≠ 0 →
+    tripleProduct (p (i + 2) - p i) (p (i + 3) - p (i + 1)) u ≠ 0 →
+      ∃ G : Matrix (Fin 3) (Fin 3) ℝ, G.PosDef ∧
+        Function.Injective (fun j => (G *ᵥ u) ⬝ᵥ p j) ∧
+        2 ≤ (Finset.univ.filter (fun j : ZMod k =>
+          (G *ᵥ u) ⬝ᵥ p (j - 1) < (G *ᵥ u) ⬝ᵥ p j ∧
+          (G *ᵥ u) ⬝ᵥ p (j + 1) < (G *ᵥ u) ⬝ᵥ p j)).card
+
+end TestPairs
+
 end MinimalityExtra
