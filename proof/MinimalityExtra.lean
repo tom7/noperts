@@ -447,6 +447,55 @@ def EdgePlaneFreedom : Prop :=
 end DepthSeparated
 
 /-!
+## Limit rows can undercount
+
+At a view `u` on the circle of a face, a vertex of the face can lie in the silhouette (a chord
+end or middle) for `u` and be hidden for the tilted views `u + ε d`. The *limit rows* of the rim
+cycle of `u + ε d` (`ε → 0⁺`) are its corner rows evaluated at `u`. `ExistsLimitRowsUndercount`
+says that they can be rigid (a Farkas certificate) while every tilted view is free.
+-/
+
+section LimitRows
+
+/-- The row of the corner `X i` of the cycle `X` at the view `w` on the side towards `X (i + 1)`,
+as a linear form in the motion `(ω, τ)` (velocity `ω × y + τ` at `y`): the first of the two
+inequalities of `TiltCert` at the corner. -/
+noncomputable def cornerRowNext {k : ℕ} [NeZero k] (X : ZMod k → ℝ³) (w ω τ : ℝ³) (i : ZMod k) : ℝ :=
+  det3 (X (i + 1) - X i) (cross ω (X i) + τ) w
+
+/-- The row of the corner `X i` on the side towards `X (i - 1)`: the second inequality of
+`TiltCert` at the corner. -/
+noncomputable def cornerRowPrev {k : ℕ} [NeZero k] (X : ZMod k → ℝ³) (w ω τ : ℝ³) (i : ZMod k) : ℝ :=
+  det3 (X i - X (i - 1)) (cross ω (X i) + τ) w
+
+/-- The `2k` corner rows of the cycle `X` at the view `w` are *rigid*, with a Farkas certificate:
+nonnegative weights, not all zero, whose combination vanishes for every motion. (Then no motion
+makes all the rows positive.) -/
+def LimitRowsRigid {k : ℕ} [NeZero k] (X : ZMod k → ℝ³) (w : ℝ³) : Prop :=
+  ∃ p q : ZMod k → ℝ, (∀ i, 0 ≤ p i ∧ 0 ≤ q i) ∧ (∃ i, 0 < p i ∨ 0 < q i) ∧
+    ∀ ω τ : ℝ³, ∑ i, (p i * cornerRowNext X w ω τ i + q i * cornerRowPrev X w ω τ i) = 0
+
+/-- **Limit rows can undercount.**  There is a tetrahedron `x` (four affinely independent points),
+a view `u` parallel to one of its faces (a face-circle view, `x a, x b, x c` span a plane
+containing the direction `u`), a tilt `d` out of that plane, and a cyclic order `lab` of three of
+the points such that: for every `0 < ε < ε₀`, `lab` is the strict rim of the view `u + ε d` (the
+fourth point hidden in the triangle) and the view `u + ε d` is free; but the limit rows, the corner
+rows of the cycle `lab` at `u` itself, are rigid by a Farkas certificate. So rigidity of the
+limiting first-order problem does not imply rigidity of the nearby views. -/
+def ExistsLimitRowsUndercount : Prop :=
+  ∃ (x : Fin 4 → ℝ³) (lab : ZMod 3 → Fin 4) (u d : ℝ³) (ε₀ : ℝ),
+    0 < ε₀ ∧ det3 (x 1 - x 0) (x 2 - x 0) (x 3 - x 0) ≠ 0 ∧
+    Function.Injective lab ∧
+    (∃ a b c : Fin 4, a ≠ b ∧ a ≠ c ∧ b ≠ c ∧
+      det3 (x b - x a) (x c - x a) u = 0 ∧ det3 (x b - x a) (x c - x a) d ≠ 0) ∧
+    LimitRowsRigid (fun i => x (lab i)) u ∧
+    ∀ ε : ℝ, 0 < ε → ε < ε₀ →
+      StrictRimN x (u + ε • d) lab ∧ HiddenInTriangles x (u + ε • d) lab ∧
+        FreeAt (Finset.univ.image x) (u + ε • d)
+
+end LimitRows
+
+/-!
 ## Metric identities and a sequence lemma
 
 `HdnEquation` writes the HDN condition at every metric through the adjugate. `SingleViewFarkas`
