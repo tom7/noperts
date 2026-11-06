@@ -11,7 +11,7 @@ set_option autoImplicit true
 set_option relaxedAutoImplicit true
 open scoped RealInnerProductSpace
 open Polynomial Minimality
-namespace K77
+namespace Waist
 
 noncomputable def jc (n0 n1 h v0 v1 v2 z t2 t3 t4 u2 u3 u4 : ℝ) : ℕ → ℝ := fun k =>
   [ -h + n0*v0 + n1*v1,
@@ -48,4 +48,4 @@ lemma N_eq (n : ℝ²) (h : ℝ) (v : ℝ³) (z t2 t3 t4 u2 u3 u4 : ℝ) :
   simp [map_add, map_mul, map_sub, map_neg, map_pow, map_ofNat]
   ring
 
-end K77
+end Waist

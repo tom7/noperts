@@ -2,8 +2,8 @@ module
 
 public import Minimality.Type08S.L2.K89A
 public import Minimality.Type08S.L2.K89B
-public import Minimality.Type08S.L2.k87_wA
-public import Minimality.Type08S.L2.k87_wB
+public import Minimality.Type08S.L2.K87LexwA
+public import Minimality.Type08S.L2.K87LexwB
 public import Minimality.Type08S.L2.K89C
 
 @[expose] public section

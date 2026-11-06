@@ -1,7 +1,7 @@
 module
 
 public import Minimality.Type08S.L2.K88A
-public import Minimality.Type08S.L2.K77B
+public import Minimality.Generic.Waist
 
 @[expose] public section
 
@@ -19,7 +19,7 @@ theorem k88_scr (B P Q W Y dx cx ex : ℝ) (hB : 0 < B) (hQ : 0 < Q) (hY : 0 < Y
     (hin5 : -Y * ex + W * 1 < 0) (hW : W ≤ 0)
     (hcase : (Y < Q ∧ B < P) ∨ (Q < Y ∧ W < 0 ∧ B ≤ P) ∨ (Q < Y ∧ W = 0 ∧ B * (Y - Q) < P * Y ∧ 0 < P))
     (sx sy dz cz ez : ℝ) (hsx : 0 < sx) (hsy : 0 < sy) :
-    IsRupert (K78.VV (sx*B) (sx*P) (sy*Q) (sx*W) (sy*Y) (sx*dx) dz (sx*cx) cz (sx*ex) (sy*1) ez) := by
+    IsRupert (WaistW.VV (sx*B) (sx*P) (sy*Q) (sx*W) (sy*Y) (sx*dx) dz (sx*cx) cz (sx*ex) (sy*1) ez) := by
   have hxy := mul_pos hsx hsy
   have h3 : (sy*Q) * (sx*ex) + (sx*B - sx*P) * (sy*1) < (sy*Q) * (sx*B) := by
     have := mul_lt_mul_of_pos_left hin3 hxy; nlinarith [this]
@@ -34,18 +34,18 @@ theorem k88_scr (B P Q W Y dx cx ex : ℝ) (hB : 0 < B) (hQ : 0 < Q) (hY : 0 < Y
   have hW' : sx*W ≤ 0 := by nlinarith
   have hey : 0 < sy*1 := by positivity
   rcases hcase with ⟨h1, h2⟩ | ⟨h1, h2, h6⟩ | ⟨h1, h2, h6, h7⟩
-  · exact K78.k78_thmA _ _ _ _ _ _ dz _ cz _ _ ez (by positivity) (by positivity) (by positivity) hW'
+  · exact WaistW.waistW_thmA _ _ _ _ _ _ dz _ cz _ _ ez (by positivity) (by positivity) (by positivity) hW'
       (by nlinarith) (by nlinarith) hd0' hd1' hc0' hc1' hey h3 h4 h5
-  · exact K78.k78_thmB _ _ _ _ _ _ dz _ cz _ _ ez (by positivity) (by positivity) (by positivity)
+  · exact WaistW.waistW_thmB _ _ _ _ _ _ dz _ cz _ _ ez (by positivity) (by positivity) (by positivity)
       (by nlinarith) (by nlinarith) (by nlinarith) hd0' hd1' hc0' hc1' hey h3 h4 h5
   · subst h2
     have hex : 0 < ex := by
       have : 0 < Y * ex := by linarith
       exact pos_of_mul_pos_right this hY.le
-    have := K77.k77_thm1 (sx*B) (sx*P) (sy*Q) (sy*Y) (sx*dx) dz (sx*cx) cz (sx*ex) (sy*1) ez
+    have := Waist.waist_thm1 (sx*B) (sx*P) (sy*Q) (sy*Y) (sx*dx) dz (sx*cx) cz (sx*ex) (sy*1) ez
       (by positivity) (by positivity) (by positivity) (by positivity) (by nlinarith) (by nlinarith)
       hd0' hd1' hc0' hc1' hey (by positivity) (by simpa using h3) (by simpa using h4)
-    simpa [K77.VV, K78.VV] using this
+    simpa [Waist.VV, WaistW.VV] using this
 
 theorem k88_of_screen {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     (hC : K6mCoords a a' b b' c c' d α1 β1 β6 γ6)

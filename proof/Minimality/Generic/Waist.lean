@@ -2,7 +2,7 @@ module
 
 public import Minimality.Generic.CayleyJet
 public import Minimality.PolygonHalfPlanes
-public import Minimality.Type08S.L2.K77A
+public import Minimality.Generic.WaistJet
 
 @[expose] public section
 
@@ -12,7 +12,7 @@ set_option autoImplicit true
 set_option relaxedAutoImplicit true
 open scoped RealInnerProductSpace
 open Polynomial Minimality
-namespace K77
+namespace Waist
 
 noncomputable def cc (B P Q Y : ℝ) : ZMod 4 → ℝ² :=
   ![!₂[0,0], !₂[B,0], !₂[P,Q], !₂[0,Y]]
@@ -41,7 +41,7 @@ open Classical in
 noncomputable def VV (B P Q Y dx dz cx cz ex ey ez : ℝ) : Finset ℝ³ :=
   {!₂[0,0,0], !₂[B,0,0], !₂[P,Q,0], !₂[0,Y,0], !₂[dx,0,dz], !₂[cx,0,cz], !₂[ex,ey,ez]}
 
-lemma k77_reduce (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P) (hQ : 0 < Q) (hY : 0 < Y)
+lemma waist_reduce (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P) (hQ : 0 < Q) (hY : 0 < Y)
     (hconv : B * (Y - Q) < P * Y)
     (z t2 t3 t4 u2 u3 u4 : ℝ)
     (hlex : ∀ v ∈ VV B P Q Y dx dz cx cz ex ey ez, ∀ e : Fin 4,
@@ -88,7 +88,7 @@ macro_rules
        nlinarith [$ts,*]))
 
 set_option maxHeartbeats 16000000 in
-lemma k77_core1 (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P) (hQ : 0 < Q) (hY : 0 < Y)
+lemma waist_core1 (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P) (hQ : 0 < Q) (hY : 0 < Y)
     (hYQ : Q < Y) (hconv : B * (Y - Q) < P * Y)
     (hd0 : 0 < dx) (hd1 : dx < B) (hc0 : 0 < cx) (hc1 : cx < B)
     (hin1 : 0 < ey) (hin2 : 0 < ex) (hin3 : Q * ex + (B - P) * ey < Q * B)
@@ -98,7 +98,7 @@ lemma k77_core1 (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P) (
     (h2 : z * (B * P - P ^ 2 - Q ^ 2 + Q * Y) < P * Q)
     (h3 : z * (P ^ 2 + (Q - Y) ^ 2) < P * (Y - Q)) :
     IsRupert (VV B P Q Y dx dz cx cz ex ey ez) := by
-  refine k77_reduce B P Q Y dx dz cx cz ex ey ez hB hP hQ hY hconv z (2*Y*z) 0 (eps - 2*Y*z) 0 0 (Y*z^2) ?_
+  refine waist_reduce B P Q Y dx dz cx cz ex ey ez hB hP hQ hY hconv z (2*Y*z) 0 (eps - 2*Y*z) 0 0 (Y*z^2) ?_
   intro v hv e
   simp only [VV, Finset.mem_insert, Finset.mem_singleton] at hv
   have hz2 := pow_pos hz 2
@@ -167,7 +167,7 @@ macro_rules
        exact div_neg_of_neg_of_pos (by nlinarith [$ts,*]) hD))
 
 set_option maxHeartbeats 32000000 in
-lemma k77_core2 (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P) (hQ : 0 < Q) (hY : 0 < Y)
+lemma waist_core2 (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P) (hQ : 0 < Q) (hY : 0 < Y)
     (hYQ : Y < Q) (hBP : B < P) (hBP2 : Y * (Q - Y) < B * P)
     (hd0 : 0 < dx) (hd1 : dx < B) (hc0 : 0 < cx) (hc1 : cx < B)
     (hin1 : 0 < ey) (hin2 : 0 < ex) (hin3 : Q * ex + (B - P) * ey < Q * B)
@@ -180,7 +180,7 @@ lemma k77_core2 (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P) (
   have hconv : B * (Y - Q) < P * Y := by nlinarith [mul_pos hB hK]
   have hD : 0 < P^2 + (Q-Y)^2 := by positivity
   have hc2 : 0 < B*Q - B*Y + P*Y := by nlinarith [mul_pos hB hK]
-  refine k77_reduce B P Q Y dx dz cx cz ex ey ez hB hP hQ hY hconv
+  refine waist_reduce B P Q Y dx dz cx cz ex ey ez hB hP hQ hY hconv
     (-P*(Q-Y)/(P^2+(Q-Y)^2)) (2*P*(B*P-Y*(Q-Y))/(P^2+(Q-Y)^2)) (2*P) 0
     (2*B*P*(Q-Y)/(P^2+(Q-Y)^2)) (Q-Y) 0 ?_
   intro v hv e
@@ -239,7 +239,7 @@ lemma exists_z3 (a1 a2 a3 b1 b2 b3 : ℝ) (h1 : 0 < b1) (h2 : 0 < b2) (h3 : 0 < 
   refine ⟨_, hz, z_aux _ _ _ hz ((min_le_left _ _).trans (min_le_left _ _)),
     z_aux _ _ _ hz ((min_le_left _ _).trans (min_le_right _ _)), z_aux _ _ _ hz (min_le_right _ _)⟩
 
-theorem k77_thm1 (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P) (hQ : 0 < Q) (hY : 0 < Y)
+theorem waist_thm1 (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P) (hQ : 0 < Q) (hY : 0 < Y)
     (hYQ : Q < Y) (hconv : B * (Y - Q) < P * Y)
     (hd0 : 0 < dx) (hd1 : dx < B) (hc0 : 0 < cx) (hc1 : cx < B)
     (hin1 : 0 < ey) (hin2 : 0 < ex) (hin3 : Q * ex + (B - P) * ey < Q * B)
@@ -254,15 +254,15 @@ theorem k77_thm1 (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P) 
   have hepos : 0 < eps := by
     have : 0 < 2 * (Y - Q) * eps := by rw [heps]; positivity
     by_contra hc; push Not at hc; nlinarith
-  exact k77_core1 B P Q Y dx dz cx cz ex ey ez hB hP hQ hY hYQ hconv hd0 hd1 hc0 hc1 hin1 hin2 hin3 hin4
+  exact waist_core1 B P Q Y dx dz cx cz ex ey ez hB hP hQ hY hYQ hconv hd0 hd1 hc0 hc1 hin1 hin2 hin3 hin4
     z eps hz heps hepos h1 h2 h3
 
-theorem k77_thm2 (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P) (hQ : 0 < Q) (hY : 0 < Y)
+theorem waist_thm2 (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P) (hQ : 0 < Q) (hY : 0 < Y)
     (hYQ : Y < Q) (hBP : B < P) (hBP2 : Y * (Q - Y) < B * P)
     (hd0 : 0 < dx) (hd1 : dx < B) (hc0 : 0 < cx) (hc1 : cx < B)
     (hin1 : 0 < ey) (hin2 : 0 < ex) (hin3 : Q * ex + (B - P) * ey < Q * B)
     (hin4 : (Y - Q) * ex + P * ey < P * Y) :
     IsRupert (VV B P Q Y dx dz cx cz ex ey ez) :=
-  k77_core2 B P Q Y dx dz cx cz ex ey ez hB hP hQ hY hYQ hBP hBP2 hd0 hd1 hc0 hc1 hin1 hin2 hin3 hin4
+  waist_core2 B P Q Y dx dz cx cz ex ey ez hB hP hQ hY hYQ hBP hBP2 hd0 hd1 hc0 hc1 hin1 hin2 hin3 hin4
 
-end K77
+end Waist

@@ -2,7 +2,7 @@ module
 
 public import Minimality.Generic.CayleyJet
 public import Minimality.PolygonHalfPlanes
-public import Minimality.Type08S.L2.K77A
+public import Minimality.Generic.WaistJet
 
 @[expose] public section
 
@@ -11,8 +11,8 @@ set_option maxHeartbeats 1000000
 set_option autoImplicit true
 set_option relaxedAutoImplicit true
 open scoped RealInnerProductSpace
-open Polynomial Minimality K77 Filter Topology
-namespace K78
+open Polynomial Minimality Waist Filter Topology
+namespace WaistW
 
 noncomputable def cc (B P Q W Y : ℝ) : ZMod 4 → ℝ² :=
   ![!₂[0,0], !₂[B,0], !₂[P,Q], !₂[W,Y]]
@@ -35,7 +35,7 @@ open Classical in
 noncomputable def VV (B P Q W Y dx dz cx cz ex ey ez : ℝ) : Finset ℝ³ :=
   {!₂[0,0,0], !₂[B,0,0], !₂[P,Q,0], !₂[W,Y,0], !₂[dx,0,dz], !₂[cx,0,cz], !₂[ex,ey,ez]}
 
-lemma k78_reduce (B P Q W Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hQ : 0 < Q) (hY : 0 < Y)
+lemma waistW_reduce (B P Q W Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hQ : 0 < Q) (hY : 0 < Y)
     (hW : W ≤ 0) (hBP : B ≤ P)
     (z t2 u2 : ℝ)
     (hlex : ∀ v ∈ VV B P Q W Y dx dz cx cz ex ey ez, ∀ e : Fin 4,
@@ -93,7 +93,7 @@ noncomputable def R6 (P Q W Y z t u : ℝ) : ℝ := (Y-Q)*t + (P-W)*u + 2*(P^2+Q
 noncomputable def R7 (P Q W Y z t u : ℝ) : ℝ := (Y-Q)*t + (P-W)*u + 2*(P*W+Q*Y-W^2-Y^2)*z - 2*W*(Y-Q)
 
 set_option maxHeartbeats 16000000 in
-lemma k78_core (B P Q W Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hQ : 0 < Q) (hY : 0 < Y)
+lemma waistW_core (B P Q W Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hQ : 0 < Q) (hY : 0 < Y)
     (hW : W ≤ 0) (hBP : B ≤ P)
     (hk : 0 < P*Y - Q*W) (hk2 : 0 < (P-B)*Y + Q*(B-W))
     (hd0 : 0 < dx) (hd1 : dx < B) (hc0 : 0 < cx) (hc1 : cx < B)
@@ -106,7 +106,7 @@ lemma k78_core (B P Q W Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hQ : 0 < Q) 
     (r7 : R7 P Q W Y z t u < 0)
     (r8 : R1 dx z u < 0) (r9 : R1 cx z u < 0) :
     IsRupert (VV B P Q W Y dx dz cx cz ex ey ez) := by
-  refine k78_reduce B P Q W Y dx dz cx cz ex ey ez hB hQ hY hW hBP z t u ?_
+  refine waistW_reduce B P Q W Y dx dz cx cz ex ey ez hB hQ hY hW hBP z t u ?_
   intro v hv e
   simp only [VV, Finset.mem_insert, Finset.mem_singleton] at hv
   simp only [R0, R1, R2, R3, R4, R5, R6, R7] at *
@@ -192,7 +192,7 @@ lemma k84_exist (P Q Y W : ℝ) (hP : 0 < P) (hQ : 0 < Q) (hY : Q < Y) (hW : W <
     nlinarith
 
 set_option maxHeartbeats 8000000 in
-theorem k78_thmB (B P Q W Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hQ : 0 < Q) (hY : 0 < Y)
+theorem waistW_thmB (B P Q W Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hQ : 0 < Q) (hY : 0 < Y)
     (hW : W < 0) (hBP : B ≤ P) (hYQ : Q < Y)
     (hd0 : 0 < dx) (hd1 : dx < B) (hc0 : 0 < cx) (hc1 : cx < B)
     (hin1 : 0 < ey) (hin3 : Q * ex + (B - P) * ey < Q * B)
@@ -207,7 +207,7 @@ theorem k78_thmB (B P Q W Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hQ : 0 < Q
     nlinarith [mul_lt_mul_of_pos_left hd1 hQY, mul_nonneg (sub_nonneg.2 hBP) hY.le, mul_pos hQ (neg_pos.2 hW)]
   have hcc : (Y-Q)*cx < P*Y - Q*W := by
     nlinarith [mul_lt_mul_of_pos_left hc1 hQY, mul_nonneg (sub_nonneg.2 hBP) hY.le, mul_pos hQ (neg_pos.2 hW)]
-  refine k78_core B P Q W Y dx dz cx cz ex ey ez hB hQ hY hW.le hBP hk hk2 hd0 hd1 hc0 hc1 hdd hcc
+  refine waistW_core B P Q W Y dx dz cx cz ex ey ez hB hQ hY hW.le hBP hk hk2 hd0 hd1 hc0 hc1 hdd hcc
     hin1 hin3 hin4 hin5 z 0 eps ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;>
   simp only [R0, R1, R2, R3, R4, R5, R6, R7]
   · linarith
@@ -232,7 +232,7 @@ lemma ev_lt (f : ℝ → ℝ) (hf : Continuous f) (h : f 0 < 0) : ∀ᶠ e in �
   ((hf.continuousAt.eventually_lt continuousAt_const h).filter_mono nhdsWithin_le_nhds)
 
 set_option maxHeartbeats 32000000 in
-theorem k78_thmA (B P Q W Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hQ : 0 < Q) (hY : 0 < Y)
+theorem waistW_thmA (B P Q W Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hQ : 0 < Q) (hY : 0 < Y)
     (hW : W ≤ 0) (hBP : B < P) (hYQ : Y < Q)
     (hd0 : 0 < dx) (hd1 : dx < B) (hc0 : 0 < cx) (hc1 : cx < B)
     (hin1 : 0 < ey) (hin3 : Q * ex + (B - P) * ey < Q * B)
@@ -304,7 +304,7 @@ theorem k78_thmA (B P Q W Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hQ : 0 < Q
   have hk2 : 0 < ((B+p)-B)*Y + (Y+m)*(B-(-w)) := by nlinarith [mul_pos hp hY, mul_pos hB hY, mul_pos hB hm, mul_nonneg hw hY.le, mul_nonneg hw hm.le]
   have hdd : (Y-(Y+m))*dx < (B+p)*Y - (Y+m)*(-w) := by nlinarith [mul_pos hm hd0]
   have hcc : (Y-(Y+m))*cx < (B+p)*Y - (Y+m)*(-w) := by nlinarith [mul_pos hm hc0]
-  exact k78_core B (B+p) (Y+m) (-w) Y dx dz cx cz ex ey ez hB hQ hY hW hBP.le hk hk2 hd0 hd1 hc0 hc1 hdd hcc
+  exact waistW_core B (B+p) (Y+m) (-w) Y dx dz cx cz ex ey ez hB hQ hY hW hBP.le hk hk2 hd0 hd1 hc0 hc1 hdd hcc
     hin1 hin3 hin4 hin5 _ _ _ s0 s1 s2 s3 s4 s5 s6 s7 s8 s9
 
-end K78
+end WaistW

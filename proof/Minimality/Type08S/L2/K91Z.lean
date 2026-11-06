@@ -2,10 +2,10 @@ module
 
 public import Minimality.Type08S.L2.K86F
 public import Minimality.Type08S.L2.K91F
-public import Minimality.Type08S.L2.k86_c1c
-public import Minimality.Type08S.L2.k86_cD
-public import Minimality.Type08S.L2.k86_cAp
-public import Minimality.Type08S.L2.k86_cC
+public import Minimality.Type08S.L2.K86Lexc1c
+public import Minimality.Type08S.L2.K86LexcD
+public import Minimality.Type08S.L2.K86LexcAp
+public import Minimality.Type08S.L2.K86LexcC
 
 @[expose] public section
 

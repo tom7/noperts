@@ -1,12 +1,12 @@
 module
 
 public import Minimality.Type08S.L2.K61A
-public import Minimality.Type08S.L2.k61_A
-public import Minimality.Type08S.L2.k61_Ap
-public import Minimality.Type08S.L2.k61_B
-public import Minimality.Type08S.L2.k61_C
-public import Minimality.Type08S.L2.k61_D
-public import Minimality.Type08S.L2.k61_D0
+public import Minimality.Type08S.L2.K61LexA
+public import Minimality.Type08S.L2.K61LexAp
+public import Minimality.Type08S.L2.K61LexB
+public import Minimality.Type08S.L2.K61LexC
+public import Minimality.Type08S.L2.K61LexD
+public import Minimality.Type08S.L2.K61LexD0
 
 @[expose] public section
 

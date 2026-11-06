@@ -1,10 +1,10 @@
 module
 
 public import Minimality.Type08S.L2.K61Z
-public import Minimality.Type08S.L2.k63_Dz
-public import Minimality.Type08S.L2.k93_D0w
-public import Minimality.Type08S.L2.k93_Pw
-public import Minimality.Type08S.L2.k93_Tw
+public import Minimality.Type08S.L2.K63LexDz
+public import Minimality.Type08S.L2.K93LexD0w
+public import Minimality.Type08S.L2.K93LexPw
+public import Minimality.Type08S.L2.K93LexTw
 
 @[expose] public section
 

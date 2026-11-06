@@ -1,6 +1,6 @@
 module
 
-public import Minimality.Type08S.L2.K88B
+public import Minimality.Generic.WaistW
 public import Minimality.Type08S.L2.K71B
 public import Minimality.Type08S.L2.K83B
 
@@ -63,7 +63,7 @@ theorem k88_geom {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     (hAv : ⟪a - d, a' - b'⟫ < 0)
     (hzab : ⟪a - b', k61_R a a' b b' d⟫ = 0) (hzba : ⟪a' - b, k61_R a a' b b' d⟫ = 0) :
     ∃ sx sy dz cz ez : ℝ, 0 < sx ∧ 0 < sy ∧
-      (IsRupert (K78.VV (sx*⟪b-a,b-a⟫) (sx*⟪a'-a,b-a⟫) (sy*γ6) (sx*⟪b'-a,b-a⟫) (sy*β1)
+      (IsRupert (WaistW.VV (sx*⟪b-a,b-a⟫) (sx*⟪a'-a,b-a⟫) (sy*γ6) (sx*⟪b'-a,b-a⟫) (sy*β1)
         (sx*⟪d-a,b-a⟫) dz (sx*⟪c'-a,b-a⟫) cz (sx*⟪c-a,b-a⟫) sy ez) → IsRupert (V8 a a' b b' c c' d)) := by
   obtain ⟨hdet, hc', hb', ha', -⟩ := hC
   set p := a - d with hp
@@ -156,7 +156,7 @@ theorem k88_geom {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     rw [hSv, yc]
   rw [eA, eB, eA', eB', eD, eC', eC]
   convert hV using 1
-  unfold K78.VV
+  unfold WaistW.VV
   ext x
   simp only [Finset.mem_insert, Finset.mem_singleton]
   tauto
