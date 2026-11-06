@@ -712,4 +712,131 @@ def RobustUnimodalIffNoAlternation : Prop :=
 
 end RobustUnimodal
 
+/-!
+## Metrics, spin, and the farthest vertex
+
+`ThmFBijection` is Theorem F in full. `InwardMotionHasSpin` is Corollary 8.6, here at every view.
+`AnchorCore` and `AnchorWidth` are the elementary core of the Anchor Lemma; its consequences for
+witness sets are not stated here.
+-/
+
+section MetricSpin
+
+open Matrix
+
+/-- The annihilator of `v` among covectors: `{φ | φ ⬝ᵥ v = 0}`, a plane in `ℝ³` when `v ≠ 0`. -/
+def annV (v : Fin 3 → ℝ) : Submodule ℝ (Fin 3 → ℝ) where
+  carrier := {φ | φ ⬝ᵥ v = 0}
+  add_mem' := by intro a b ha hb; simp_all [add_dotProduct]
+  zero_mem' := by simp
+  smul_mem' := by intro c a ha; simp_all [smul_dotProduct]
+
+/-- Symmetric positive definite bilinear forms on the plane `annV v` (the screen metrics `H`). -/
+def PD2 (v : Fin 3 → ℝ) : Type :=
+  {B : LinearMap.BilinForm ℝ (annV v) // (∀ a b, B a b = B b a) ∧ ∀ a, a ≠ 0 → 0 < B a a}
+
+/-- The bilinear form `(a, b) ↦ a ⬝ᵥ (M *ᵥ b)` on `annV v`. -/
+def restrictForm (v : Fin 3 → ℝ) (M : Matrix (Fin 3) (Fin 3) ℝ) : LinearMap.BilinForm ℝ (annV v) :=
+  LinearMap.mk₂ ℝ (fun a b => (a : Fin 3 → ℝ) ⬝ᵥ (M *ᵥ (b : Fin 3 → ℝ)))
+    (by intros; simp [add_dotProduct])
+    (by intros; simp [smul_dotProduct])
+    (by intros; simp [dotProduct_add, mulVec_add])
+    (by intros; simp [dotProduct_smul, mulVec_smul])
+
+theorem pos_dot (G : Matrix (Fin 3) (Fin 3) ℝ) (hG : G.PosDef) (v : Fin 3 → ℝ) (hv : v ≠ 0) :
+    0 < (G *ᵥ v) ⬝ᵥ v := by
+  have := hG.dotProduct_mulVec_pos hv
+  simpa [dotProduct_comm, star_trivial] using this
+
+theorem pd_symm (M : Matrix (Fin 3) (Fin 3) ℝ) (hM : M.PosDef) : Mᵀ = M := by
+  have h := hM.isHermitian
+  rw [Matrix.IsHermitian, Matrix.conjTranspose_eq_transpose_of_trivial] at h
+  exact h
+
+theorem sym_dot (M : Matrix (Fin 3) (Fin 3) ℝ) (h : Mᵀ = M) (a b : Fin 3 → ℝ) :
+    a ⬝ᵥ (M *ᵥ b) = b ⬝ᵥ (M *ᵥ a) := by
+  have e : a ᵥ* M = M *ᵥ a := by
+    conv_lhs => rw [← h]
+    exact vecMul_transpose M a
+  rw [dotProduct_mulVec, e, dotProduct_comm]
+
+/-- The splitting map of Theorem F at an affine view `v ≠ 0`:
+`G ↦ (ℓ, H) = (G v, G⁻¹ |_{ann v})`. -/
+noncomputable def metricSplit (v : Fin 3 → ℝ) (hv : v ≠ 0) (G : {G : Matrix (Fin 3) (Fin 3) ℝ // G.PosDef}) :
+    {l : Fin 3 → ℝ // 0 < l ⬝ᵥ v} × PD2 v :=
+  (⟨G.1 *ᵥ v, pos_dot G.1 G.2 v hv⟩,
+   ⟨restrictForm v G.1⁻¹, by
+      intro a b
+      exact sym_dot _ (pd_symm _ G.2.inv) _ _,
+    by
+      intro a ha
+      have hs : (G.1⁻¹).PosDef := G.2.inv
+      have := hs.dotProduct_mulVec_pos (x := (a : Fin 3 → ℝ)) (by simpa using ha)
+      simpa [restrictForm, star_trivial] using this⟩)
+
+/-- (Theorem F, full.)  For every `v ≠ 0`, `G ↦ (ℓ, H) = (G v, G⁻¹|_{ann v})` is a bijection from
+positive definite `3×3` matrices onto `{ℓ | ℓ(v) > 0} × {symmetric positive definite forms on ann v}`.
+(Reading: the depths `⟪G v, ·⟫` depend only on `ℓ`; the inverse is
+`G⁻¹ = v vᵀ/ℓ(v) + (ℓ-complement extension of H)`.) -/
+def ThmFBijection : Prop :=
+  ∀ (v : Fin 3 → ℝ) (hv : v ≠ 0), Function.Bijective (metricSplit v hv)
+
+/-- (Anchor Lemma, core.)  `V ⊆ ℝ³` finite, `ν ≠ 0`, `c = max_V ν⬝x` (so `F = {x ∈ V | ν⬝x = c}` is the
+face of `conv V` with outward normal `ν`, here only assumed nonempty), and `v ∈ V` a vertex farthest
+behind the plane `ν⬝x = c`, i.e. `ν⬝v = min_V ν⬝x`.  Let `p* = v + ((c - ν⬝v)/ν⬝ν) • ν`, its foot on the
+plane.  Then (a) `p*` lies in the plane; (b) the force line of `v` is `v + ℝν`, which passes through `p*`
+(`p* - v = λ ν`, `λ ≥ 0`), and `p*` is the orthogonal projection (every `y` in the plane has
+`(p* - v) ⬝ (y - p*) = 0`); (c) at every view `u ⊥ ν` (projection along `u`, `π_u y = y - (u⬝y/u⬝u) u`,
+and `u ≠ 0`) the vertex and the foot have equal depth `u⬝v = u⬝p*`, `ν` stays the screen direction
+(`ν⬝π_u y = ν⬝y`), so `v` is a back extreme of the projected set: `ν⬝π_u v ≤ ν⬝π_u x` for all
+`x ∈ V` while `F` is a front extreme; that is, `ν` lies in `v`'s normal cone (with sign) at every
+view of the circle, and the width of the projected set in direction `ν` is `c - ν⬝v`, attained by the
+pair `F, v`, independent of `u`.  The content is elementary (orthogonal projection plus
+`ν ⊥ u`); the substance of the paper's lemma is the consequences for witness sets, not this core. -/
+def AnchorCore : Prop :=
+  ∀ (V : Finset (Fin 3 → ℝ)) (ν : Fin 3 → ℝ) (c : ℝ) (v : Fin 3 → ℝ), ν ≠ 0 → v ∈ V →
+    (∀ x ∈ V, ν ⬝ᵥ x ≤ c) → (∃ f ∈ V, ν ⬝ᵥ f = c) → (∀ x ∈ V, ν ⬝ᵥ v ≤ ν ⬝ᵥ x) →
+    let l := (c - ν ⬝ᵥ v) / (ν ⬝ᵥ ν)
+    let p := v + l • ν
+    0 ≤ l ∧ ν ⬝ᵥ p = c ∧ (∀ y, ν ⬝ᵥ y = c → (p - v) ⬝ᵥ (y - p) = 0) ∧
+    ∀ u : Fin 3 → ℝ, u ≠ 0 → u ⬝ᵥ ν = 0 →
+      u ⬝ᵥ p = u ⬝ᵥ v ∧
+      (∀ y, ν ⬝ᵥ (y - ((u ⬝ᵥ y) / (u ⬝ᵥ u)) • u) = ν ⬝ᵥ y) ∧
+      (∀ x ∈ V, ν ⬝ᵥ (v - ((u ⬝ᵥ v) / (u ⬝ᵥ u)) • u) ≤ ν ⬝ᵥ (x - ((u ⬝ᵥ x) / (u ⬝ᵥ u)) • u)) ∧
+      (∀ x ∈ V, ν ⬝ᵥ (x - ((u ⬝ᵥ x) / (u ⬝ᵥ u)) • u) ≤ c) ∧
+      (∃ f ∈ V, ν ⬝ᵥ (f - ((u ⬝ᵥ f) / (u ⬝ᵥ u)) • u) = c)
+
+/-- (Anchor Lemma, width form, exact first-order version.)  With `ν`, `c`, `F = {x ∈ V | ν⬝x = c}`
+as above and `v` the *unique* minimizer of `ν⬝·` on `V`, for all `δ` near `0` the width
+`w(μ) = max_V μ⬝x - min_V μ⬝x` satisfies exactly
+`w(ν + δ) = w(ν) + max_{x ∈ F} (x - v) ⬝ δ`.
+(For `δ ⊥ ν` this reads `max_{x∈F} ⟨x - p*, δ⟩`, since `⟨p* - v, δ⟩ = λ⟨ν, δ⟩ = 0`; there is no
+`O(δ²)` term because `w` is piecewise linear for unnormalised `μ`.) -/
+def AnchorWidth : Prop :=
+  ∀ (V : Finset (Fin 3 → ℝ)) (hV : V.Nonempty) (ν : Fin 3 → ℝ) (c : ℝ) (v : Fin 3 → ℝ), v ∈ V →
+    (∀ x ∈ V, ν ⬝ᵥ x ≤ c) → (∀ x ∈ V, x ≠ v → ν ⬝ᵥ v < ν ⬝ᵥ x) →
+    ∀ hF : (V.filter (fun x => ν ⬝ᵥ x = c)).Nonempty,
+      ∀ᶠ δ in nhds (0 : Fin 3 → ℝ),
+        (V.sup' hV (fun x => (ν + δ) ⬝ᵥ x) - V.inf' hV (fun x => (ν + δ) ⬝ᵥ x)) =
+          (c - ν ⬝ᵥ v) + (V.filter (fun x => ν ⬝ᵥ x = c)).sup' hF (fun x => (x - v) ⬝ᵥ δ)
+
+/-- (Corollary 8.6, no genericity needed.)  Let `x i ∈ ℝ²` be the corners (screen positions) of a
+silhouette with depths `z i`; the silhouette is `D = conv {x i}`.  A first-order motion of the inner
+copy is a small rotation about a horizontal axis `g`, a translation `t`, and a spin `θ` about the view
+axis; it moves corner `i` with velocity `t + z i • g + θ • J (x i)`, `J (a,b) = (-b, a)`.  The motion is
+*inward* if every corner enters the interior of `D` along it (for all small `ε > 0`, the point
+`x i + ε • velocity` lies in `interior D`).  Then every inward motion has `θ ≠ 0`.
+
+Proof idea: take `n ⊥ g` (`n = J g`, or any `n ≠ 0` if `g = 0`).  The corners extreme in the
+directions `n` and `-n` have velocities with `n`-component `n ⬝ t` (the `g` and, for `θ = 0`, the
+`J x` terms vanish), and inwardness forces it `< 0` at one and `> 0` at the other.  The statement is
+not just bilinearity, but it is elementary and holds at every view, generic or not. -/
+def InwardMotionHasSpin : Prop :=
+  ∀ (ι : Type) [Fintype ι] [Nonempty ι] (x : ι → Fin 2 → ℝ) (z : ι → ℝ) (t g : Fin 2 → ℝ) (θ : ℝ),
+    (∀ i, ∀ᶠ ε in nhdsWithin (0:ℝ) (Set.Ioi 0),
+      x i + ε • (t + z i • g + θ • ![-(x i 1), x i 0]) ∈ interior (convexHull ℝ (Set.range x))) →
+    θ ≠ 0
+
+end MetricSpin
+
 end MinimalityExtra
