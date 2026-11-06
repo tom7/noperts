@@ -446,10 +446,12 @@ def EdgePlaneFreedom : Prop :=
 end DepthSeparated
 
 /-!
-## Three identities and a sequence lemma
+## Metric identities and a sequence lemma
 
 `HdnEquation` writes the HDN condition at every metric through the adjugate. `SingleViewFarkas`
-says when a depth pattern cannot occur at a view at any metric. `MergeLemma` is about cyclic
+says when a depth pattern cannot occur at a view at any metric. `CircleReduction` and
+`CircleReductionExists` say that on the circle `n^⊥` a metric acts only through its restriction to
+`n^⊥` and a free shadow vector. `MergeLemma` is about cyclic
 sequences: a transversal crossing of adjacent entries whose merged cycle is unimodal leaves the
 cycle unimodal on one side of the crossing.
 -/
@@ -485,6 +487,27 @@ def SingleViewFarkas : Prop :=
         -r = ∑ q ∈ p, c q • (P q.1 - P q.2)) →
       ¬ ∃ G : Matrix (Fin 3) (Fin 3) ℝ, G.PosDef ∧
           ∀ q ∈ p, P q.2 ⬝ᵥ G *ᵥ r ≤ P q.1 ⬝ᵥ G *ᵥ r
+
+open Matrix in
+/-- (Lemma 25.59, circle reduction, identity part.)  Let `n ≠ 0`, `Π = n^⊥`, `G ≻ 0`, and let
+`d` satisfy `G d = n` and `n·d = 1` (so `d = G⁻¹n` up to the normalisation).  Let `m` satisfy
+`n·m = 1`.  For `v` with `Pv = v - (n·v) m` (so `Pv ∈ Π`) and `g = d - m` (so `g ∈ Π`), every
+`r ∈ Π` satisfies `⟨r, G v⟩ = ⟨r, G Pv⟩ - (n·v) ⟨r, G g⟩`. -/
+def CircleReduction : Prop :=
+  ∀ (G : Matrix (Fin 3) (Fin 3) ℝ) (n d m v r : Fin 3 → ℝ), G.PosDef → n ≠ 0 →
+    G *ᵥ d = n → n ⬝ᵥ d = 1 → n ⬝ᵥ m = 1 → n ⬝ᵥ r = 0 →
+      r ⬝ᵥ G *ᵥ v = r ⬝ᵥ G *ᵥ (v - (n ⬝ᵥ v) • m) - (n ⬝ᵥ v) * (r ⬝ᵥ G *ᵥ (d - m))
+
+open Matrix in
+/-- (Lemma 25.59, circle reduction, existence part.)  Given a symmetric `Y` that is positive on
+`n^⊥ \ {0}`, and `m`, `g` with `n·m = 1`, `n·g = 0`, there is a positive definite `G` with
+`G (m + g) = n` and `⟨r, G s⟩ = ⟨r, Y s⟩` for all `r, s ∈ n^⊥`. -/
+def CircleReductionExists : Prop :=
+  ∀ (Y : Matrix (Fin 3) (Fin 3) ℝ) (n m g : Fin 3 → ℝ),
+    Y.IsSymm → n ⬝ᵥ m = 1 → n ⬝ᵥ g = 0 →
+    (∀ r, n ⬝ᵥ r = 0 → r ≠ 0 → 0 < r ⬝ᵥ Y *ᵥ r) →
+    ∃ G : Matrix (Fin 3) (Fin 3) ℝ, G.PosDef ∧ G *ᵥ (m + g) = n ∧
+      ∀ r s, n ⬝ᵥ r = 0 → n ⬝ᵥ s = 0 → r ⬝ᵥ G *ᵥ s = r ⬝ᵥ Y *ᵥ s
 
 /-- (Lemma 26.4, merge lemma.)  A cycle of `n + 2` affine functions `f j (λ) = α j + β j * λ`
 (the depths of the rim corners along a circle of views); the corners `0` and `1` are adjacent.
