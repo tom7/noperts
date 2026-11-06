@@ -2,6 +2,7 @@ module
 
 public import Mathlib
 public import MinimalityExtra
+public import MinimalityExtra.ShadowMap
 public import Minimality
 
 /-!
@@ -37,15 +38,6 @@ theorem rot_norm {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R ∈ Matrix.specialOrth
     simpa [dotProduct, sq, Matrix.mulVec] using key p.ofLp
   exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp this
 
-
-/-- The shadow map `p ↦ proj_xy (R p)` as a linear map. -/
-noncomputable def gL (R : Matrix (Fin 3) (Fin 3) ℝ) : ℝ³ →ₗ[ℝ] EuclideanSpace ℝ (Fin 2) where
-  toFun p := proj_xy (R.toEuclideanLin p)
-  map_add' x y := by ext i; fin_cases i <;> simp [proj_xy]
-  map_smul' c x := by ext i; fin_cases i <;> simp [proj_xy]
-
-theorem gL_apply (R : Matrix (Fin 3) (Fin 3) ℝ) (p : ℝ³) :
-    gL R p = proj_xy (R.toEuclideanLin p) := rfl
 
 theorem proj_norm (v : ℝ³) : ‖proj_xy v‖ ≤ ‖v‖ := by
   apply le_of_sq_le_sq _ (norm_nonneg _)
