@@ -1001,4 +1001,344 @@ def InwardMotionHasSpin : Prop :=
 
 end MetricSpin
 
+/-- `i` is a strict cyclic local maximum of `z`: both cyclic neighbours are strictly lower. -/
+def IsCyclicPeak {k : ℕ} [NeZero k] (z : ZMod k → ℝ) (i : ZMod k) : Prop :=
+  z (i - 1) < z i ∧ z (i + 1) < z i
+
+/-- The positive definite metrics `G` for which the depths `⟪G v, x i⟫` of the cyclic family
+`x 0, …, x (k-1)` have two distinct strict cyclic local maxima (a subset of the positive
+definite matrices, with the subspace topology). -/
+def twoPeakMetrics {k : ℕ} [NeZero k] (x : ZMod k → Fin 3 → ℝ) (v : Fin 3 → ℝ) :
+    Set {G : Matrix (Fin 3) (Fin 3) ℝ // G.PosDef} :=
+  {G | ∃ i j : ZMod k, i ≠ j ∧ IsCyclicPeak (fun m => depth G.1 v (x m)) i ∧
+    IsCyclicPeak (fun m => depth G.1 v (x m)) j}
+
+/-- (Theorem U, rim of any length.)  Let `x 0, …, x (k-1)` be distinct points of `ℝ³`, read
+cyclically (the corners of a rim, in any order: no convexity or planarity of the cycle is
+assumed), that are not all coplanar (there is no `n ≠ 0` with `n ⬝ x i` constant), and let
+`v ≠ 0` be any view direction.  Then the set of positive definite `G` at which the depths
+`⟪G v, x i⟫` have at least two distinct strict cyclic peaks is open (in the space of positive
+definite matrices) and nonempty, and at each such `G` the depths are not cyclically
+unimodal.  The statement needs `x` injective (with equal corners ties cannot be avoided) and
+nothing on the order of the corners; for `k = 4` it is `TwoPeakedDepthsAtSomeMetric` plus
+openness.  Two peaks, not exactly two, and not rigidity. -/
+def TwoPeakedRimOpenSetOfMetrics : Prop :=
+  ∀ (k : ℕ) [NeZero k] (x : ZMod k → Fin 3 → ℝ) (v : Fin 3 → ℝ),
+    Function.Injective x → (¬ ∃ n : Fin 3 → ℝ, n ≠ 0 ∧ ∀ i, n ⬝ᵥ x i = n ⬝ᵥ x 0) → v ≠ 0 →
+      IsOpen (twoPeakMetrics x v) ∧ (twoPeakMetrics x v).Nonempty ∧
+        ∀ G ∈ twoPeakMetrics x v, ¬ IsCyclicUnimodal (fun i => depth G.1 v (x i))
+
+section OppositeView
+
+/-- A compact set `B` in the plane cannot be mapped into its own interior by a map that preserves
+the distances between points of `B`. (No convexity is needed; the diameter argument.) -/
+def NoIsometricCopyInInterior : Prop :=
+  ∀ B : Set (EuclideanSpace ℝ (Fin 2)), IsCompact B → B.Nonempty →
+    ∀ φ : EuclideanSpace ℝ (Fin 2) → EuclideanSpace ℝ (Fin 2),
+      (∀ x ∈ B, ∀ y ∈ B, dist (φ x) (φ y) = dist x y) → ¬ φ '' B ⊆ interior B
+
+/-- No passage has inner view opposite to the outer view. Take a nonempty finite point set `vs`
+and the inner and outer poses exactly as in `IsRupert`. If the third coordinate of the inner
+rotated point is always the negative of the outer one (the viewing directions are opposite,
+`v = -u`), then the inner shadow is not contained in the interior of the outer shadow. The inner
+shadow is then a congruent copy of the outer one (a reflection composed with a translation), and
+a compact set has no congruent copy inside its interior. Nonemptiness of `vs` is needed, since
+the empty set trivially lies in every interior. -/
+def NoOppositeViewPassage : Prop :=
+  ∀ vs : Finset ℝ³, vs.Nonempty →
+  ∀ inner_rotation ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ,
+  ∀ inner_offset : EuclideanSpace ℝ (Fin 2),
+  ∀ outer_rotation ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ,
+    (∀ p : ℝ³, inner_rotation.toEuclideanLin p 2 = - outer_rotation.toEuclideanLin p 2) →
+    ¬ ({ inner_offset + proj_xy (inner_rotation.toEuclideanLin p) | p ∈ convexHull ℝ (vs : Set ℝ³) } ⊆
+        interior { proj_xy (outer_rotation.toEuclideanLin p) | p ∈ convexHull ℝ (vs : Set ℝ³) })
+
+end OppositeView
+
+/-!
+## Two explicit shapes
+
+`Type24FacePairViewsRigid`: an explicit type 24 polytope (eight triangles and a quadrilateral)
+on which the view along `n₁ × n₂` is first-order rigid for every pair of facets, the full point
+set and the 50 reduced tests of the project's "face-pair" argument alike.
+`Strict7SeptIsRupert`: an explicit simplicial 7-vertex polytope, rounded to rationals, is Rupert
+by an explicit pose (and nothing is claimed about its first-order rigidity).
+-/
+
+section ExplicitShapes
+
+/-- **All face-pair views of an explicit type 24 polytope are rigid.**  There are seven points `x`
+of `ℝ³` (the shape `fpfail_24_r1` of `FEWER-FACES-LOG.md`, rationalized so that its quadrilateral
+face is exactly planar, then scaled to integer coordinates) with nine listed facets: an outward
+normal `N j` and offset `c j` with `⟪N j, x i⟫ ≤ c j` for every point and equality at three
+non-collinear points (so each `{⟪N j, ·⟫ = c j}` is a facet plane), and any two of the nine
+normals are not parallel.  For every pair `j < k` the face-pair view `w = N j × N k` is rigid for
+the whole point set: `¬ FreeAt (univ.image x) w`, i.e. there is no first-order motion `(ω, τ)`
+with a `TiltCert` at every point.  Moreover the 50 *reduced* tests of the note (one per facet
+pair sharing at most a vertex, two per pair sharing an edge, as `T` lists them, with the kept
+vertex sets written out) are rigid: for each `t` the view `N j × N k` is not `FreeAt` for the
+kept subset `(T t).2.2`.  (The reduced tests drop the middle vertices of the two faces seen
+edge-on, and for a shared edge one end of it; their rigidity is the exact check behind
+"no face pair is first-order free" for this shape.)
+
+What is claimed, and no more: first-order rigidity at these exact views, for the point sets and
+views listed, at the standard Euclidean metric.  Not claimed: that the nine facets are all the
+facets (the exact enumeration of the note says so; the statement does not need it), that the
+reduction is the right one, rigidity at nearby tilted views (the note found the shape rigid
+there only by sampling), that the set of such shapes is open (checked by perturbation sampling
+only), or that the shape is Rupert (it is, by a global passage found numerically). -/
+def Type24FacePairViewsRigid : Prop :=
+  ∃ (x : Fin 7 → ℝ³) (N : Fin 9 → ℝ³) (c : Fin 9 → ℝ) (T : Fin 50 → Fin 9 × Fin 9 × Finset (Fin 7)),
+    (∀ j i, ⟪N j, x i⟫ ≤ c j) ∧
+    (∀ j, ∃ a b d : Fin 7, ⟪N j, x a⟫ = c j ∧ ⟪N j, x b⟫ = c j ∧ ⟪N j, x d⟫ = c j ∧
+      det3 (x b - x a) (x d - x a) (N j) ≠ 0) ∧
+    (∀ j k, j < k → cross (N j) (N k) ≠ 0 ∧ ¬ FreeAt (Finset.univ.image x) (cross (N j) (N k))) ∧
+    (∀ j k, j < k → ∃ t, (T t).1 = j ∧ (T t).2.1 = k) ∧
+    (∀ t, (T t).1 < (T t).2.1 ∧
+      ¬ FreeAt ((T t).2.2.image x) (cross (N (T t).1) (N (T t).2.1)))
+
+/-- **A neighbour of the Septopert is Rupert, by an explicit pose.**  The seven points below are the
+vertices of the 7-vertex simplicial polytope `strict7_sept` (`data/hard/strict7_sept.xyz`, a shape
+near the Septopert without symmetry) rounded to three decimals.  This polytope is Rupert: some
+copy can be rotated, translated and passed through a hole in another copy.  Nothing is claimed
+about first-order rigidity or about the other views of the shape; the pose (two rational
+rotations, an offset, and the passage certificate with positive rational weights) was found by
+the finite-passage solver with clearance `0.0036` (about `0.4` percent of the diameter), and is
+checked exactly in `MinimalityExtra/StrictSeptRupert.lean`. -/
+def Strict7SeptIsRupert : Prop :=
+  IsRupert (Finset.univ.image (![!₂[(-112/125 : ℝ), (157/500 : ℝ), (311/1000 : ℝ)], !₂[(157/500 : ℝ), (-179/200 : ℝ), (39/125 : ℝ)], !₂[(63/200 : ℝ), (31/100 : ℝ), (-897/1000 : ℝ)], !₂[(331/500 : ℝ), (47/1000 : ℝ), (11/200 : ℝ)], !₂[(1/25 : ℝ), (329/500 : ℝ), (29/500 : ℝ)], !₂[(11/250 : ℝ), (53/1000 : ℝ), (327/500 : ℝ)], !₂[(-477/1000 : ℝ), (-487/1000 : ℝ), (-123/250 : ℝ)]] : Fin 7 → ℝ³))
+
+end ExplicitShapes
+
+/-- **Patch-edge lemma, geometric part.**  Let `V` be a finite point set, `v w a b c ∈ V`, so
+that `v w` is the view direction `u = w - v` and `(q, a, c, b)` (`q` the shadow of `v` and `w`)
+is counterclockwise at `u` in the two ways used here: `det(a - v, c - v, u) > 0` (the face
+`v a c` is seen from the `u` side) and `det(c - a, b - a, u) > 0` (the diagonals `qc`, `ab`
+are oriented as in a convex quadrilateral).  Suppose `v a c` is a supporting plane of `V`
+(all of `V` weakly on one side) and the crease is genuine: `b` is not in the plane `v a c`
+(this is the case when `v a c` and `v c b` are distinct faces).  Then `v` lies strictly on the
+`u`-lower side of the plane `a b c` (`det(b - a, c - a, v - a) > 0`), and `w` lies strictly
+lower in the same functional (`det(b - a, c - a, w - a) < det(b - a, c - a, v - a)`), so `w` is
+on the other side of the plane `a b c` exactly when `det(b - a, c - a, w - a) ≤ 0`, the
+hypothesis of Lemma E. Nothing is claimed about the rest of the shadow. -/
+def PatchEdgeBeyondPlane : Prop :=
+  ∀ (V : Finset ℝ³) (v w a b c : ℝ³), v ∈ V → w ∈ V → a ∈ V → b ∈ V → c ∈ V →
+    0 < det3 (a - v) (c - v) (w - v) →
+    ((∀ z ∈ V, 0 ≤ det3 (a - v) (c - v) (z - v)) ∨
+      (∀ z ∈ V, det3 (a - v) (c - v) (z - v) ≤ 0)) →
+    det3 (a - v) (c - v) (b - v) ≠ 0 →
+    0 < det3 (c - a) (b - a) (w - v) →
+    0 < det3 (b - a) (c - a) (v - a) ∧
+      det3 (b - a) (c - a) (w - a) < det3 (b - a) (c - a) (v - a)
+
+section BoxRule
+
+/-- **Box rule (Lemma R).** Let `e, n` be orthonormal and let every point of `V` have
+`⟪e, v⟫ ∈ [a, a+μ]` and `⟪n, v⟫ ∈ [b, b+w]` (so the shadow of `V` along `e × n` lies in a
+`μ × w` box). If, in some view `R₂`, the four corners of a rectangle `[c₀, c₀+L] × [c₁, c₁+H]`
+with `μ ≤ L` and `w ≤ H` lie in the interior of the shadow, then `V` is Rupert. This is the
+rule behind the closed-form thin-shape passages: the inner view is edge-on along two width
+directions, and only the outer view needs a rectangle. Here `V` is assumed solid
+(the hull has nonempty interior). -/
+def BoxRule : Prop :=
+  ∀ (V : Finset ℝ³), (interior (convexHull ℝ (V : Set ℝ³))).Nonempty →
+    ∀ (e n : ℝ³), ⟪e, e⟫ = 1 → ⟪n, n⟫ = 1 → ⟪e, n⟫ = 0 →
+    ∀ (R₂ : Matrix (Fin 3) (Fin 3) ℝ), R₂ ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ →
+    ∀ (a b μ w c₀ c₁ L H : ℝ), 0 < L → 0 < H → μ ≤ L → w ≤ H →
+    (∀ v ∈ V, a ≤ ⟪e, v⟫ ∧ ⟪e, v⟫ ≤ a + μ ∧ b ≤ ⟪n, v⟫ ∧ ⟪n, v⟫ ≤ b + w) →
+    (∀ s t : ℝ, (s = 0 ∨ s = 1) → (t = 0 ∨ t = 1) →
+      !₂[c₀ + s * L, c₁ + t * H] ∈
+        interior { proj_xy (R₂.toEuclideanLin p) | p ∈ convexHull ℝ (V : Set ℝ³) }) →
+    IsRupert V
+
+end BoxRule
+
+/-! ## The corner wedge is Rupert (Theorem 02.W)
+
+`CornerWedgeRupert`: let `A, B, H1, H6 > 0`. The *corner wedge*
+`W = {0 ≤ X ≤ A, 0 ≤ Z ≤ B, 0 ≤ y ≤ (H1/A) X + (H6/B) Z}` is a box over the rectangle
+`[0,A] × [0,B]` cut by the plane through the base corner `(0,0,0)` that passes through the heights
+`H1` over `(A,0)`, `H6` over `(0,B)` and `H1 + H6` over `(A,B)`. It has the seven vertices
+`(0,0,0), (A,0,0), (A,H1,0), (0,0,B), (A,0,B), (0,H6,B), (A,H1+H6,B)` (coordinates `(X, y, Z)`),
+and is Rupert for all four parameters. (The proof is first-order freedom with spin at the views
+`e_Z + ε(γ e_X − δ e_y)`; for a given wedge the construction produces a passage, and the claim here
+is existence only.) -/
+
+/-- The seven vertices of the corner wedge, in the order `x0, …, x6` with
+`x2 = (0,0,0)`, `x0 = (A,0,0)`, `x1 = (A,H1,0)`, `x5 = (0,0,B)`, `x3 = (A,0,B)`,
+`x6 = (0,H6,B)`, `x4 = (A,H1+H6,B)`. -/
+noncomputable def cornerWedgeVertices (A B H1 H6 : ℝ) : Fin 7 → ℝ³ :=
+  ![!₂[A, 0, 0], !₂[A, H1, 0], !₂[0, 0, 0], !₂[A, 0, B], !₂[A, H1 + H6, B],
+    !₂[0, 0, B], !₂[0, H6, B]]
+
+open Classical in
+/-- Every corner wedge (a box over a rectangle cut by a plane through a base corner) has the
+Rupert property. -/
+def CornerWedgeRupert : Prop :=
+  ∀ A B H1 H6 : ℝ, 0 < A → 0 < B → 0 < H1 → 0 < H6 →
+    IsRupert (Finset.univ.image (cornerWedgeVertices A B H1 H6))
+
+section FlatMetrics
+
+open Matrix
+
+/-- `StrictRim` of `MinimalityExtra.lean` for a point family `x : Fin n → ℝ³` written in
+coordinates `Fin 3 → ℝ`, with `tripleProduct` for `det3`: the projections along `u` of the points
+`x (lab i)` are the corners of a strictly convex counterclockwise polygon containing the projections
+of all points.  This condition is affine: it does not depend on a metric. -/
+def StrictRimF {n k : ℕ} [NeZero k] (x : Fin n → Fin 3 → ℝ) (u : Fin 3 → ℝ)
+    (lab : ZMod k → Fin n) : Prop :=
+  ∀ (m : Fin n) (i : ZMod k), m ≠ lab i → m ≠ lab (i + 1) →
+    0 < tripleProduct (x (lab (i + 1)) - x (lab i)) (x m - x (lab i)) u
+
+/-- The point set `x` has a unimodal view *at the metric `G`*: a view direction `u`, and a strict rim
+(a cycle of `k ≥ 3` distinct points, `StrictRimF`, independent of `G`) whose depths in the metric
+`G`, namely `⟪u, x (lab i)⟫_G = (G u) ⬝ᵥ x (lab i)` (`depth G u`), are cyclically unimodal.
+For `G = 1` this is `HasUnimodalView` (in coordinates).  There is no genericity (no-HDN) clause. -/
+def HasUnimodalViewAt (G : Matrix (Fin 3) (Fin 3) ℝ) (x : Fin 7 → Fin 3 → ℝ) : Prop :=
+  ∃ (u : Fin 3 → ℝ) (k : ℕ) (_ : NeZero k) (lab : ZMod k → Fin 7),
+    3 ≤ k ∧ Function.Injective lab ∧ StrictRimF x u lab ∧
+      IsCyclicUnimodal (fun i => depth G u (x (lab i)))
+
+/-- (Lemma FL, flat metrics are unimodal; spin75 §4, strict-rim form.)  Let `x` be seven points of
+`ℝ³`, and `w ≠ 0` a direction whose projection has a strict rim `lab` (`k ≥ 3` distinct corners,
+all other points strictly inside; `StrictRimF x w lab`).  Let `G m` be positive definite with
+`G m / tr (G m) → Gs`, where `Gs w = 0` and `ker Gs = ℝ w` (so `Gs` is positive semidefinite of rank 2
+with kernel `w`).  Then for all large `m` the points have a unimodal view at the metric `G m`.
+
+Differences from the paper: the paper assumes only that `w` is not parallel to a difference of two
+vertices, and handles three or more rim corners that project to one line (the rim is then decided at
+second order).  Here the rim is assumed strict, which excludes that case; the paper's weaker
+hypothesis is not formalized.  Also there is no genericity (no-HDN) clause in `HasUnimodalViewAt`.
+Conversely nothing is assumed about the points that are not rim corners (the hypothesis
+"`w` not parallel to a vertex difference" is only needed, and follows, for corners). -/
+def FlatMetricsUnimodal : Prop :=
+  ∀ (x : Fin 7 → Fin 3 → ℝ) (w : Fin 3 → ℝ) (k : ℕ) [NeZero k] (lab : ZMod k → Fin 7),
+    w ≠ 0 → 3 ≤ k → Function.Injective lab → StrictRimF x w lab →
+    ∀ (G : ℕ → Matrix (Fin 3) (Fin 3) ℝ) (Gs : Matrix (Fin 3) (Fin 3) ℝ),
+      (∀ m, (G m).PosDef) →
+      Filter.Tendsto (fun m => (G m).trace⁻¹ • G m) Filter.atTop (nhds Gs) →
+      Gs *ᵥ w = 0 → (∀ d, Gs *ᵥ d = 0 → ∃ t : ℝ, d = t • w) →
+      ∀ᶠ m in Filter.atTop, HasUnimodalViewAt (G m) x
+
+/-- (Lemma DC, defeat set of a view cell; spin75 §5.)  Let `u 0, u 1, u 2` be three views, `x (lab ·)`
+a rim (`k ≥ 3`, injective) that is a strict rim at every view `Σ a i • u i` with all `a i > 0`
+(the open cell `Ω`), and `G` any matrix (positive definiteness is not needed).  The depth functional
+at `v = Σ a i • u i` is `G v = Σ a i • G (u i)`.  Then:
+
+(i) a view of the cell with cyclically unimodal depths gives `HasUnimodalViewAt G x` (paper (a),
+(d): the unimodal criterion then applies);
+
+(ii) there is no such unimodal view in `Ω` iff for every `l0` whose depths on the rim are unimodal
+(`l0 ∈ U_R`), the open chamber `Q = {l | l0 (x i) < l0 (x j) → l (x i) < l (x j)}` of `l0` is separated
+from the cone `{Σ a i • G (u i) | a i > 0}` by a nonzero `w`: `l ⬝ w ≥ 0` on `Q` and `G (u i) ⬝ w ≤ 0`
+for each `i` (paper (b); the conditions are bilinear in `(w, G)`).
+
+Paper (a) is bilinearity (`depth_cell`); paper (c) is convexity and is left out. -/
+def DefeatCellCriterion : Prop :=
+  ∀ (x : Fin 7 → Fin 3 → ℝ) (k : ℕ) [NeZero k] (lab : ZMod k → Fin 7)
+    (u : Fin 3 → Fin 3 → ℝ) (G : Matrix (Fin 3) (Fin 3) ℝ),
+    3 ≤ k → Function.Injective lab →
+    (∀ a : Fin 3 → ℝ, (∀ i, 0 < a i) → StrictRimF x (∑ i, a i • u i) lab) →
+    ((∃ a : Fin 3 → ℝ, (∀ i, 0 < a i) ∧
+        IsCyclicUnimodal (fun j => depth G (∑ i, a i • u i) (x (lab j)))) →
+      HasUnimodalViewAt G x) ∧
+    ((¬ ∃ a : Fin 3 → ℝ, (∀ i, 0 < a i) ∧
+        IsCyclicUnimodal (fun j => depth G (∑ i, a i • u i) (x (lab j)))) ↔
+      ∀ l0 : Fin 3 → ℝ, IsCyclicUnimodal (fun j => l0 ⬝ᵥ x (lab j)) →
+        ∃ w : Fin 3 → ℝ, w ≠ 0 ∧
+          (∀ l : Fin 3 → ℝ, (∀ i j, l0 ⬝ᵥ x (lab i) < l0 ⬝ᵥ x (lab j) →
+              l ⬝ᵥ x (lab i) < l ⬝ᵥ x (lab j)) → 0 ≤ l ⬝ᵥ w) ∧
+          ∀ i, (G *ᵥ u i) ⬝ᵥ w ≤ 0)
+
+end FlatMetrics
+
+/-! ## Combinatorial silhouette codes of types 24 and 29
+
+A view direction `u` gives a sign vector on the 9 face normals (front faces `S`, back faces
+`Sᶜ`).  Combinatorially, `S` is possible only if `S` and `Sᶜ` are both nonempty and connected in the
+dual graph (faces adjacent when they share an edge) and the edges between them form one simple
+cycle of the vertex-edge graph.  `IsSilhouetteCode` spells this out for a face list given by
+cyclic vertex lists; `SilhouetteCodeCounts` counts such `S` for types 24 and 29. -/
+
+section SilhouetteCodes
+
+/-- The edges of a polygon given by its cyclic vertex list (consecutive vertices, cyclically). -/
+def polyEdges (L : List (Fin 7)) : Finset (Fin 7 × Fin 7) :=
+  ((L.zip (L.rotate 1)).map fun p => (min p.1 p.2, max p.1 p.2)).toFinset
+
+/-- Two faces of the polytope (given by the cyclic vertex lists `F f`) are adjacent (`true`): they share an edge. -/
+def FacesAdjacent (F : Fin 9 → List (Fin 7)) (f g : Fin 9) : Bool :=
+  decide (polyEdges (F f) ∩ polyEdges (F g)).Nonempty
+
+/-- One step of exploring `S` through adjacent faces: `T` together with the faces of `S` adjacent
+to a face of `T`. -/
+def exploreFaces (adj : Fin 9 → Fin 9 → Bool) (S T : Finset (Fin 9)) :
+    Finset (Fin 9) :=
+  T ∪ S.filter (fun g => ∃ f ∈ T, adj f g = true)
+
+/-- The set `S` of faces is connected in the dual graph (faces adjacent when `adj`): exploring
+from some face of `S` through adjacent faces of `S`, for 8 steps (enough for 9 faces), reaches
+all of `S`. -/
+def DualConnected (adj : Fin 9 → Fin 9 → Bool) (S : Finset (Fin 9)) : Prop :=
+  ∃ f ∈ S, (exploreFaces adj S)^[8] {f} = S
+
+/-- The edges lying on a face of `S` and on a face outside `S`. -/
+def silhouetteEdges (F : Fin 9 → List (Fin 7)) (S : Finset (Fin 9)) : Finset (Fin 7 × Fin 7) :=
+  (S.biUnion fun f => polyEdges (F f)) ∩ (Sᶜ.biUnion fun g => polyEdges (F g))
+
+/-- One step of exploring the vertices touched by the edge set `B` along edges of `B`. -/
+def exploreVertices (B : Finset (Fin 7 × Fin 7)) (T : Finset (Fin 7)) : Finset (Fin 7) :=
+  T ∪ Finset.univ.filter (fun w => ∃ e ∈ B, (e.1 ∈ T ∧ w = e.2) ∨ (e.2 ∈ T ∧ w = e.1))
+
+/-- A nonempty edge set `B` is a single simple cycle: every vertex lies on `0` or `2` edges of
+`B`, and exploring along `B` from some touched vertex, for 6 steps (enough for 7 vertices), reaches
+all touched vertices. -/
+def IsSingleCycle (B : Finset (Fin 7 × Fin 7)) : Prop :=
+  B.Nonempty ∧ (∀ v : Fin 7, (B.filter (fun e => v = e.1 ∨ v = e.2)).card = 0 ∨
+      (B.filter (fun e => v = e.1 ∨ v = e.2)).card = 2) ∧
+    ∃ v : Fin 7, (∃ e ∈ B, v = e.1 ∨ v = e.2) ∧
+      (exploreVertices B)^[6] {v} = Finset.univ.filter (fun w => ∃ e ∈ B, w = e.1 ∨ w = e.2)
+
+/-- `S` (the front faces) is a combinatorial silhouette code of the polytope with faces `F`:
+`S` and its complement are both nonempty and connected in the dual graph, and the edges between
+them form a single simple cycle of the vertex-edge graph. -/
+def IsSilhouetteCode (F : Fin 9 → List (Fin 7)) (S : Finset (Fin 9)) : Prop :=
+  S.Nonempty ∧ Sᶜ.Nonempty ∧ IsSingleCycle (silhouetteEdges F S) ∧
+    DualConnected (FacesAdjacent F) S ∧ DualConnected (FacesAdjacent F) Sᶜ
+
+instance (adj : Fin 9 → Fin 9 → Bool) (S : Finset (Fin 9)) :
+    Decidable (DualConnected adj S) := by
+  unfold DualConnected; infer_instance
+
+instance (B : Finset (Fin 7 × Fin 7)) : Decidable (IsSingleCycle B) := by
+  unfold IsSingleCycle; infer_instance
+
+instance (F : Fin 9 → List (Fin 7)) (S : Finset (Fin 9)) : Decidable (IsSilhouetteCode F S) := by
+  unfold IsSilhouetteCode; infer_instance
+
+/-- The 9 faces of type 24 (`sevenTypeFaces 23` of the proof module), each as the cyclic list of
+its vertices. -/
+def type24Faces : Fin 9 → List (Fin 7) :=
+  ![[0,1,2],[0,1,6],[0,2,5],[0,4,3,5],[0,4,6],[1,2,6],[2,3,5],[2,3,6],[3,4,6]]
+
+/-- The 9 faces of type 29 (`sevenTypeFaces 28` of the proof module), each as the cyclic list of
+its vertices. -/
+def type29Faces : Fin 9 → List (Fin 7) :=
+  ![[0,1,2],[0,1,5],[0,2,3],[0,3,5],[1,2,4],[1,4,6,5],[2,3,4],[3,4,6],[3,5,6]]
+
+/-- Counts of combinatorial silhouette codes (sign vectors of the 9 face normals against a view
+direction `u`): for the faces of type 24 (resp. 29), exactly 174 (resp. 198) of the `2^9` subsets
+`S` of faces (the front faces) are such that `S` and its complement are both nonempty and connected
+in the dual graph, with the edges between them forming one simple cycle of the vertex-edge graph;
+`u ↔ -u` is `S ↔ Sᶜ`, so exactly 87 (resp. 99) contain face 0.  This only counts combinatorial
+possibilities; it does not claim that each such code is realized by a view of a realization. -/
+def SilhouetteCodeCounts : Prop :=
+  (Finset.univ.filter (IsSilhouetteCode type24Faces)).card = 174 ∧
+  (Finset.univ.filter (IsSilhouetteCode type29Faces)).card = 198 ∧
+  (Finset.univ.filter (fun S => (0 : Fin 9) ∈ S ∧ IsSilhouetteCode type24Faces S)).card = 87 ∧
+  (Finset.univ.filter (fun S => (0 : Fin 9) ∈ S ∧ IsSilhouetteCode type29Faces S)).card = 99
+
+end SilhouetteCodes
+
 end MinimalityExtra

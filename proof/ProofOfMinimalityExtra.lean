@@ -18,6 +18,15 @@ public import MinimalityExtra.MetricSpin
 public import MinimalityExtra.EdgePlane
 public import MinimalityExtra.Sandwich
 public import MinimalityExtra.CoplanarIff
+public import MinimalityExtra.TwoPeakRim
+public import MinimalityExtra.Opposite
+public import MinimalityExtra.FacePairRigid
+public import MinimalityExtra.StrictSeptRupert
+public import MinimalityExtra.PatchEdge
+public import MinimalityExtra.BoxShadow
+public import MinimalityExtra.FlatMetrics
+public import MinimalityExtra.SilhouetteCodes
+public import MinimalityExtra.CornerWedge
 public import MinimalityExtra.LimitRows
 public import Minimality.Tilt
 public import Minimality.Thm73
@@ -167,6 +176,20 @@ theorem unimodalViewIsRupert : UnimodalViewIsRupert := by
 #print axioms FreeAt.isRupert
 
 end Core
+
+/-- The face lists of `SilhouetteCodeCounts` have the same vertex sets (in the same order) as
+`Minimality.sevenTypeFaces` for types 24 and 29. -/
+theorem type24Faces_agree :
+    List.ofFn (fun f => (type24Faces f).toFinset) = Minimality.sevenTypeFaces 23 := by
+  decide +kernel
+
+theorem type29Faces_agree :
+    List.ofFn (fun f => (type29Faces f).toFinset) = Minimality.sevenTypeFaces 28 := by
+  decide +kernel
+
+#print axioms silhouetteCodeCounts
+#print axioms type24Faces_agree
+#print axioms type29Faces_agree
 
 end MinimalityExtra
 
