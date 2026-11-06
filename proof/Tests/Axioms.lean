@@ -44,8 +44,6 @@ import Minimality.Type08S.C2K20ZA
 import Minimality.Type08S.C2K20HI
 import Minimality.Type08S.C2K21ZA
 import Minimality.Type08S.C2K22ZA
-import Minimality.Type08S.C2K23ZA
-import Minimality.Type08S.C2K24ZA
 import Minimality.Type08S.C2K25ZA
 import Minimality.Type08S.C2K26ZA
 import Minimality.Type08S.C2K27ZA
@@ -1043,7 +1041,6 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Type08Sp.C2.k20h_h5
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK20_imp_K21
 #assert_standard_axioms Minimality.Type08Sp.resid08FinalK21_imp_K22
-#assert_standard_axioms Minimality.Type08Sp.resid08FinalK22_imp_K23
 #assert_standard_axioms Minimality.Type08Sp.C2.k20_TT
 #assert_standard_axioms Minimality.Type08Sp.C2.k22c1b_close
 #assert_standard_axioms Minimality.Type08Sp.C2.k22x1_cell
@@ -1051,10 +1048,9 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Type08Sp.C2.k22x3_cell
 #assert_standard_axioms Minimality.Type08Sp.C2.k22t1_cell
 #assert_standard_axioms Minimality.Type08Sp.C2.k22t2_cell
-#assert_standard_axioms Minimality.Type08Sp.resid08FinalK23_imp_K24
 #assert_standard_axioms Minimality.Type08Sp.C2.k22c2_close
 #assert_standard_axioms Minimality.Type08Sp.C2.k22c3_cell
-#assert_standard_axioms Minimality.Type08Sp.resid08FinalK24_imp_K25
+#assert_standard_axioms Minimality.Type08Sp.resid08FinalK22_imp_K25
 #assert_standard_axioms Minimality.Type08Sp.k24_TT_prism
 #assert_standard_axioms Minimality.H16A.h16g_arcgen_rule_false
 #assert_standard_axioms Minimality.Type08Sp.C2.k24b1_cell

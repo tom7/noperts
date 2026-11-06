@@ -2,7 +2,8 @@ module
 
 public import Minimality.Type08S.C2K33EE
 public import Minimality.Type08S.C2K33ZA
-public import Minimality.Type08S.C2K20TGA
+public import Minimality.Type08S.G3p
+public import Minimality.OctAxis
 
 @[expose] public section
 

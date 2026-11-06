@@ -740,15 +740,9 @@ theorem not_type08_closed {x : Fin 7 → ℝ³} (hx : Function.Injective x)
       -- K22 (C2K22A1, C2K22C1A, C2K22ZA): the M boundary at β1 = 1 is a right prism (Rupert); Pc C1 at β1 = γ4 = 1
       have _hresK22 := Minimality.Type08Sp.resid08FinalK21_imp_K22
         (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK21
-      -- K23 (C2K20T*, C2K23ZA): TT closed by five cells up to the ties `K20Left`
-      have _hresK23 := Minimality.Type08Sp.resid08FinalK22_imp_K23
+      -- K25 (C2K25ZA): TT closed (right prism, `k25_TT_prism`), Pc closed (`k22c1b_close`, `k22c2_close`, `k22c3_cell`)
+      have _hresK25 := Minimality.Type08Sp.resid08FinalK22_imp_K25
         (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK22
-      -- K24 (C2K24ZA): Pc closed (C1 `k22c1b_close`, C2 `k22c2_close`, C3 `k22c3_cell`)
-      have _hresK24 := Minimality.Type08Sp.resid08FinalK23_imp_K24
-        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK23
-      -- K25 (C2K25ZA): TT closed (right prism, `k24_TT_prism`)
-      have _hresK25 := Minimality.Type08Sp.resid08FinalK24_imp_K25
-        (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK24
       -- K26 (C2K26ZA): Tc Z1 closed (`k22z1_close`); only the M stratum is left
       have _hresK26 := Minimality.Type08Sp.resid08FinalK25_imp_K26
         (fun h => hN.2 (by rw [(Minimality.image_seven x).2]; exact h)) _hresK25
