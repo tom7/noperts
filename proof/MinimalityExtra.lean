@@ -688,4 +688,28 @@ def TriangleShadowIsRupert : Prop :=
 
 end Core
 
+section RobustUnimodal
+
+/-- A cyclic sequence is *robustly unimodal*: conditions (R1)–(R3), as `Minimality.IsRobustUnimodal`. Ties are allowed where they cannot create two peaks. -/
+def IsRobustUnimodal {k : ℕ} (z : ZMod k → ℝ) : Prop :=
+  (∀ (B : ZMod k) (a b c d : ℕ), a < b → b < c → c < d → d < k →
+    ¬ (z (B + b) < z (B + a) ∧ z (B + b) < z (B + c) ∧ z (B + d) < z (B + a) ∧
+      z (B + d) < z (B + c))) ∧
+  (∀ i j l : ZMod k, i ≠ j → j ≠ l → i ≠ l → z i = z j → z j = z l → False) ∧
+  (∀ (B : ZMod k) (a b c d : ℕ), a < b → b < c → c < d → d < k →
+    z (B + b) = z (B + c) →
+      ¬ (z (B + a) < z (B + b) ∧ z (B + c) < z (B + d)) ∧
+      ¬ (z (B + b) < z (B + a) ∧ z (B + d) < z (B + c)))
+
+/-- Lemma AQ form: no weak alternation (`min (z a, z c) ≥ max (z b, z d)` in cyclic order). -/
+def WeakAlternationFree {k : ℕ} (z : ZMod k → ℝ) : Prop :=
+  ∀ (B : ZMod k) (b c d : ℕ), 0 < b → b < c → c < d → d < k →
+    ¬ (z (B + b) ≤ z B ∧ z (B + b) ≤ z (B + c) ∧ z (B + d) ≤ z B ∧ z (B + d) ≤ z (B + c))
+
+/-- **Lemma AQ.** For `k ≥ 4` a cyclic sequence is robustly unimodal iff it has no weak alternation. -/
+def RobustUnimodalIffNoAlternation : Prop :=
+  ∀ (k : ℕ) [NeZero k], 4 ≤ k → ∀ z : ZMod k → ℝ, IsRobustUnimodal z ↔ WeakAlternationFree z
+
+end RobustUnimodal
+
 end MinimalityExtra
