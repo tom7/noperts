@@ -291,8 +291,7 @@ by a top or bottom vertex or by the robust form, or the triple tie with the
 shared vertex settled by Theorem 24.5 (a face one-sided or a far angle obtuse);
 weaker than `Minimality.TriGenTieR` and `Minimality.TriGenFar`; or `Minimality.TriGenFarP`:
 parallel segments allowed, distinct far depths unless exactly one face has a vertical far edge),
-never have every
-other point strictly inside the shadow triangle of `v` and two further points
+never have every other point strictly inside the shadow triangle of `v` and two further points
 `xa`, `xb` of the facets. The interior condition is barycentric, stated with any
 facet functionals `f1`, `f2` (it does not depend on their scaling). -/
 theorem not_facets_vertex_triShadow_of_isNopert (V : Finset ℝ³) (h : IsNopert V)
@@ -314,15 +313,13 @@ theorem not_facets_vertex_triShadow_of_isNopert (V : Finset ℝ³) (h : IsNopert
 /-- **Lemma T over an edge** (`FEWER-FACES-PROOFS.md` §7): in a nopert with no three
 points collinear, two facets sharing exactly the edge `v w`, with general
 position along it (`Minimality.EdgeTieR`: no other segment parallel to it except between
-two middles of one face or two hidden vertices,
-distinct depths along it at the two far ends, or a tie settled by a top or
-bottom vertex or with no right angle at the far ends (Lemma T at the tie, robust
-form); weaker than `Minimality.EdgeFar`; or `Minimality.EdgeFarP`: segments
-parallel to it allowed, distinct far depths unless exactly one face has a vertical far edge),
-never have every
-other point strictly inside the shadow triangle of the edge and two further
-points `xa ∈ Q1 \ Q2`, `xb ∈ Q2 \ Q1` (barycentric form with any facet
-functionals `f1`, `f2`). -/
+two middles of one face or two hidden vertices, distinct depths along it at the two far
+ends, or a tie settled by a top or bottom vertex or with no right angle at the
+far ends (Lemma T at the tie, robust form); weaker than `Minimality.EdgeFar`;
+or `Minimality.EdgeFarP`: segments parallel to it allowed, distinct far depths unless
+exactly one face has a vertical far edge), never have every other point strictly inside
+the shadow triangle of the edge and two further points `xa ∈ Q1 \ Q2`, `xb ∈ Q2 \ Q1`
+(barycentric form with any facet functionals `f1`, `f2`). -/
 theorem not_facets_edge_triShadow_of_isNopert (V : Finset ℝ³) (h : IsNopert V)
     (hgen : Minimality.NoThreeCollinear V) (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V)
     (h1f : Minimality.IsFacet V Q1) (h2f : Minimality.IsFacet V Q2) (v w : ℝ³) (hvw : v ≠ w)
