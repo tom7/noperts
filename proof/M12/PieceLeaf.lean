@@ -12,7 +12,7 @@ As `M12.ArcLeaf`, for the other two caps that M12's tubes and 5D search leave to
 (`search/h12/arc-cap.txt`, each with Cayley rotation radius 1/46 in chart 0):
 
 * cap 2, the axis region `InAxis` (`M12.axis_not_rupert`, claim `AxisHolds`);
-* cap 3, the P strip around (2, 1, 0): the convex cone `InP` of five half-spaces (the `piece` line
+* cap 3, the P strip around (2, 1, 0): the convex cone `PieceInP` of five half-spaces (the `piece` line
   of cap 3), whose claim `PCapClaim` is a hypothesis (no certificate yet).
 
 A leaf is a chart-0 box in the ball of radius 1/46 and a view triangle with all corners in the
@@ -143,13 +143,13 @@ def pNs : List (Fin 3 → ℚ) :=
   [![-15 / 16, 65 / 32, -1], ![17 / 16, -63 / 32, 1], ![-9 / 10, 41 / 20, 5], ![7 / 4, -13 / 8, -5]]
 
 /-- The views of cap 3. -/
-abbrev InP (v : Fin 3 → ℝ) : Prop := Cone pN0 pNs v
+abbrev PieceInP (v : Fin 3 → ℝ) : Prop := Cone pN0 pNs v
 
 /-- **The claim of cap 3** (not yet certified): no Rupert pose, whatever the offset, has a view in
-the strip `InP` around (2, 1, 0) and a relative rotation the Cayley rotation of a vector of length
+the strip `PieceInP` around (2, 1, 0) and a relative rotation the Cayley rotation of a vector of length
 at most 1/46. -/
 def PCapClaim : Prop :=
-  ∀ (p : MatrixPose), InP p.view → ∀ w : Fin 3 → ℝ,
+  ∀ (p : MatrixPose), PieceInP p.view → ∀ w : Fin 3 → ℝ,
     p.relativeRotation = cayleyMatrix (w 0) (w 1) (w 2) → rdot w w ≤ (1 / 46) ^ 2 → ¬ RupertPose p solid
 
 def pLeafOk (iv : AtlasInterval ℚ) (T : AtlasProjectiveView.Triangle ℚ) : Bool :=

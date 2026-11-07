@@ -12,7 +12,7 @@ public import Pipeline.KCapDecode
 the pieces): per chart a line `chart u <side> <kind> <axis> <sign>` or
 `chart w <piece> <kind> <a> <b> <c>`, then the tree in preorder as for
 `KCap.parseTree`. Nothing here is trusted: `certCheckPar` is `certCheck` with the
-frontier subtrees of every chart as native tasks (`certCheck_of_par`).
+frontier subtrees (depth 20) of every chart as native tasks (`certCheck_of_par`).
 -/
 
 namespace Noperts.Pipeline
@@ -34,7 +34,7 @@ def items (req : List ChartId) (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Pa
     match entry c id with
     | some t =>
       let cd := chartCd V fr pr id
-      (t.frontier 12 (rootBox pr id)).map fun e => (id, cd, e.1, e.2)
+      (t.frontier 20 (rootBox pr id)).map fun e => (id, cd, e.1, e.2)
     | none => []).toArray
 
 def itemOk (V : Array (KCap.KVec K)) (pr : Params) (it : ChartId × ChartData K × KTree × Box) : Bool :=
@@ -69,7 +69,7 @@ theorem certCheckOn_of_par (req : List ChartId) (V : Array (KCap.KVec K)) (fr : 
   refine ⟨he1, ?_⟩
   rw [he2]
   unfold chartCheck
-  apply KTree.check_of_frontier _ _ 12
+  apply KTree.check_of_frontier _ _ 20
   intro f hf
   have hmem : (id, chartCd V fr pr id, f.1, f.2) ∈ (items req V fr pr c).toList := by
     simp only [items, List.toList_toArray, List.mem_flatMap]
