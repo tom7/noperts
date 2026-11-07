@@ -148,6 +148,15 @@ rotation is within 1/46; the exact cover of the polygon by the
 pieces is proved in Lean (`Pipeline/ArcCap*.lean`, `SeptopertM18/ArcCap.lean`), and
 the tube and the 5D search leave that polygon to it.
 
+The [Septopert](septopert.md) and [SeptopertM12](septopert-m12.md) are in a
+doubly special position (a cube corner and an exact Triforce), and need two
+more special caps with the same machinery: an **axis cap**, a point cap at
+the view along the 3-fold axis, and a **P cap** for a stretch of views along
+the circle on which face 0–2–4 is edge-on. There the first-order flexes form a
+2-dimensional cone, so the P cap combines a point cap at the end view P with a
+wedge of polar charts along the strip (`Pipeline/ArcCapAxis.lean`,
+`Pipeline/ArcCapP.lean`, `Septopert/PCap.lean`).
+
 ## Ties and tie tubes
 
 A **tie** is a family of poses of clearance exactly 0. No box around it can
@@ -167,6 +176,8 @@ theorems that turn valid tables into `¬ IsRupert`.
 
 | | rational model / neighborhood | identity tube | blow-up rows | caps | ties | reductions |
 |---|---|---|---|---|---|---|
+| [Septopert](septopert.md) | exact (rational) | yes | yes | at the mirror normal | mirror ties | C3, mirror-tie; plus arc, axis and P caps |
+| [SeptopertM12](septopert-m12.md) | exact (rational) | yes | yes | at the mirror normal | mirror ties | C3, mirror-tie; plus arc, axis and P caps |
 | [SeptopertM18](septopert-m18.md) | exact (rational) | yes | yes | at the mirror normal | mirror ties | C3, mirror-tie; plus an arc cap |
 | [SeptopertClassic](septopert-classic.md) | exact (rational) | yes | yes | at the mirror normal | mirror ties | C3, mirror-tie |
 | [Snub cube](snub-cube.md) | `OModel` | yes | | at the zero-margin view | one tie, in the cap | octahedral |

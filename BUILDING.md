@@ -3,10 +3,11 @@
 How the repository is laid out and how to build it. Each result has its own
 page with its statement, trust model and reproduction steps:
 
-- [septopert.md](septopert.md): the Septopert, a 7-vertex nopert (draft page; Lean:
-  `proof/Septopert/`, the witness of `ProofOfMainTheorem`);
-- [septopert-m18.md](septopert-m18.md): the SeptopertM18, a 7-vertex nopert (a Lean
-  verification backed by certificate data);
+- [septopert.md](septopert.md): the Septopert, a 7-vertex nopert (a Lean
+  verification backed by certificate data; `proof/Septopert/`, the witness of
+  `ProofOfMainTheorem`);
+- [septopert-m12.md](septopert-m12.md) and [septopert-m18.md](septopert-m18.md):
+  SeptopertM12 and SeptopertM18, two more 7-vertex noperts of the family (likewise);
 - [septopert-classic.md](septopert-classic.md): Septopert Classic, the first
   7-vertex nopert (likewise);
 - [deltoidal-hexecontahedron.md](deltoidal-hexecontahedron.md): the deltoidal

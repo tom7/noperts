@@ -1,8 +1,15 @@
-# The SeptopertM18
+# SeptopertM18
 Tom 7, 7 Nov 2026
 
-The SeptopertM18 is a convex polyhedron with 7 vertices that is not
-Rupert (a "nopert"). It is an improved version of the [SeptopertM18
+> [!NOTE]
+> **SeptopertM18** was the canonical Septopert for part of a day. The
+> canonical [Septopert](septopert.md) is a smaller member of the same
+> family (height 7 instead of 18), found by a census of the family
+> and proved the same day. This page is kept because SeptopertM18 is
+> where the arc cap was developed.
+
+SeptopertM18 is a convex polyhedron with 7 vertices that is not
+Rupert (a "nopert"). It is an improved version of [Septopert
 Classic](septopert-classic.md), which was the first one we found in
 this family. 7 vertices is the fewest possible vertices for a nopert.
 This page gives the exact statement, what Lean checked and how, and
@@ -16,7 +23,7 @@ Lean entry point: [`proof/SeptopertM18.lean`](proof/SeptopertM18.lean).
 
 Here is an exact [STL file](septopert-m18.stl). On github, you can
 rotate it around in your browser by just clicking on that. All the
-members of the SeptopertM18 family look identical to human eyes (these
+members of the Septopert family look identical to human eyes (these
 occupy only a tiny region of parameter space), but around here
 we like to be precise!
 
@@ -35,7 +42,7 @@ The solid is the convex hull of these points (its vertices):
 The differences from the holotype [Septopert Classic](septopert-classic.md) are:
  * It has smaller integer coordinates
  * Its apex is a cube corner (dihedral angles are exactly 90°). It is
-   in a special position at the edge (we think) of the SeptopertM18
+   in a special position at the edge (we think) of the Septopert
    family. This makes it harder to prove nopert; it needed a new kind
    of certificate.
 
@@ -77,7 +84,7 @@ divided by 32).
 
 ![Line drawing of two views of the SeptopertM18, with colored edges](septopert-m18-edges.svg)
 
-(Note: This is a schematic drawing used for any member of the SeptopertM18 family, not exact.)
+(Note: This is a schematic drawing used for any member of the Septopert family, not exact.)
 
 | color | description | edges | dihedral angle | relative edge length |
 |-------|-------------|-------|----------------|----------------------|
