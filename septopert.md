@@ -153,10 +153,34 @@ and symbolic study, not part of the proof).
 
 ## Least height
 
-TODO (branch least-height): the theorem that no member of the family
-with integer coordinates spanning a range of at most 12 (height below
-7) is a nopert, so the Septopert has the least height of any integer
-member of the family. Statement, case counts and how it is checked.
+Write a member of the family by its five coordinate values x = (x0, ..., x4):
+the points (x0, x1, x1), (x2, x3, x3) and their permutations, and
+(x4, x4, x4). Its **height** is half the range of those values, rounded up.
+The Septopert's values are 7, −7, 3, −4, 7 (range 14), so its height is 7.
+No integer member of lower height is a nopert. In
+[`proof/SeptopertFamily.lean`](proof/SeptopertFamily.lean):
+
+```lean
+theorem not_isNopert_of_familyHeight_lt_seven (hvalid : LeastHeightValid) :
+    ∀ x : Fin 5 → ℤ, familyHeight x < 7 → ¬ IsNopert (familyVerts x)
+```
+
+The statement covers every integer tuple, with any signs. Translating,
+scaling and reflecting the tuple preserves being a nopert (proved in Lean),
+so it reduces to 55,651 canonical tuples with values in [0, 12], each with a
+small certificate checked by `checkSeptopertFamily` (about 4 seconds):
+
+- 161 are coplanar (a plane through all 7 points);
+- 25,932 have a point in the convex hull of the others (explicit convex
+  weights), so at most 6 points span the hull and the
+  [minimality](minimality.md) theorem applies;
+- 29,558 have an exact Rupert passage: rotations from integer quaternions
+  q (as R(q)/|q|²), a rational offset, and for each inner vertex an outer
+  triangle that strictly contains its shadow.
+
+The table is [`proof/SeptopertFamily/data/leastheight.txt`](proof/SeptopertFamily/data/leastheight.txt)
+(2.7 MB). Like the other results, this is a kernel theorem (axioms
+`propext`, `Classical.choice`, `Quot.sound`) plus a native check of the data.
 
 ## Status
 
