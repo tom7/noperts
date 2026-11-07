@@ -3,7 +3,7 @@
 How the repository is laid out and how to build it. Each result has its own
 page with its statement, trust model and reproduction steps:
 
-- [septopert.md](septopert.md): the Septopert, a 7-vertex nopert (a Lean
+- [septopert-m18.md](septopert-m18.md): the SeptopertM18, a 7-vertex nopert (a Lean
   verification backed by certificate data);
 - [septopert-classic.md](septopert-classic.md): Septopert Classic, the first
   7-vertex nopert (likewise);
@@ -45,9 +45,9 @@ page with its statement, trust model and reproduction steps:
     domain of `Pipeline/FivefoldReduction.lean`. The snub dodecahedron
     and #231 check identity-tube rows against tangent-cone generators
     (`Pipeline/SparseSupport.lean`).
-  - `Septopert`: entry point `proof/Septopert.lean`, details in
-    `proof/Septopert/`. Built like Septopert Classic below, with one more
-    certificate, the arc cap (`Septopert/ArcCap.lean`, `Septopert/ArcLeaf.lean`;
+  - `SeptopertM18`: entry point `proof/SeptopertM18.lean`, details in
+    `proof/SeptopertM18/`. Built like Septopert Classic below, with one more
+    certificate, the arc cap (`SeptopertM18/ArcCap.lean`, `SeptopertM18/ArcLeaf.lean`;
     `Pipeline/ArcCap*.lean`).
   - `SeptopertClassic`: entry point `proof/SeptopertClassic.lean`, details in
     `proof/SeptopertClassic/` (its model, `SolidModel.lean`; its own solution tree,
@@ -95,8 +95,8 @@ page with its statement, trust model and reproduction steps:
   - `Tests`: checks that run at build time: every headline uses only the
     standard axioms, no solid's model is in scope without opening its
     namespace, and the chart-3 table is valid for each solid that uses it.
-  - Executables: `constructSeptopert` (checks the Septopert's certificate
-    data), `checkSeptopertCap` and `checkSeptopertArc` (check only its cap and
+  - Executables: `constructSeptopertM18` (checks the SeptopertM18's certificate
+    data), `checkSeptopertM18Cap` and `checkSeptopertM18Arc` (check only its cap and
     arc cap certificates), `constructSeptopertClassic` (checks Septopert Classic's certificate
     data), `checkSeptopertClassicCap` (checks only its cap certificate),
     `constructDeltoidalHexecontahedron` (checks the deltoidal
@@ -113,8 +113,8 @@ page with its statement, trust model and reproduction steps:
   - `search/common/`: the code the searches share (the identity tube, the
     identity blow-up certificates `idcap.cc` with `kpoly.h`, the 5D search
     and packing, `codebdd`, unit tests) and their build rules, `common.mk`.
-  - `search/septopert/`, `search/septopert-classic/`, `search/dh/`, `search/ph/`, `search/sd/`,
-    `search/sc/`, `search/nopert231/`: the searches for the Septopert, Septopert Classic, the
+  - `search/septopert-m18/`, `search/septopert-classic/`, `search/dh/`, `search/ph/`, `search/sd/`,
+    `search/sc/`, `search/nopert231/`: the searches for the SeptopertM18, Septopert Classic, the
     deltoidal hexecontahedron, the pentagonal hexecontahedron, the snub
     dodecahedron, the snub cube and candidate #231, each with its `rebuild.sh` (see the result's page),
     model files, Lean data generators, own tools, and `solid.h` (the
@@ -149,7 +149,7 @@ page with its statement, trust model and reproduction steps:
 - Linux
 - elan (the toolchain is pinned in `proof/lean-toolchain`, v4.34.1, with Mathlib v4.34.1)
 - for `search/`: clang, GMP, svn, python3 (python3 regenerates Lean data
-  files in the model stages: the Septopert's and Septopert Classic's view covers with
+  files in the model stages: the SeptopertM18's and Septopert Classic's view covers with
   `proof/scripts/emit_septopert_view_cover.py`, the other solids' data with
   the scripts in their `search/<solid>/` directories)
 - optionally `systemd-run --user`, which the rebuild scripts use to cap

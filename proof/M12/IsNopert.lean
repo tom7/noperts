@@ -11,7 +11,7 @@ public import Nopert
 
 M12 is the convex polyhedron whose vertices are the permutations of (-11, 7, 7)/16 and
 (12, 3, 3)/16, and (-5, -5, -5)/16 (`M12.vertexQ`, `M12.verts` its vertex set, `M12.solid` its
-hull). As for the Septopert (`Septopert.lean`), the Lean proof `isNopert_of_certificatesValid`
+hull). As for the SeptopertM18 (`SeptopertM18.lean`), the Lean proof `isNopert_of_certificatesValid`
 shows that valid certificate data give `IsNopert verts`, and the program `constructM12` checks the
 data natively (the tables and the cap, arc cap and axis cap certificates).
 

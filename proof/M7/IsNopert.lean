@@ -11,7 +11,7 @@ public import Nopert
 
 M7 is the convex polyhedron whose vertices are the permutations of (-27, 15, 15)/64 and
 (27, 6, 6)/64, and (-13, -13, -13)/64 (`M7.vertexQ`, `M7.verts` its vertex set, `M7.solid` its
-hull). As for the Septopert (`Septopert.lean`), the Lean proof `isNopert_of_certificatesValid`
+hull). As for the SeptopertM18 (`SeptopertM18.lean`), the Lean proof `isNopert_of_certificatesValid`
 shows that valid certificate data give `IsNopert verts`, and the program `constructM7` checks the
 data natively (the tables and the cap, arc cap and axis cap certificates).
 

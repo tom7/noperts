@@ -10,7 +10,7 @@ public import M12.Model
 M12 (`M12.Model`: vertices (a,a,b) up to coordinate permutation and (t,t,t), denominator 16) has
 the 3-fold axis (1,1,1). `c3Perm k` and `mirrorPerm i` are the vertex permutations induced by
 `c3Mat k` and `mirrorMat i` (coordinate permutations); the vertex order is that of `vertexQ`, so
-they are those of the Septopert.
+they are those of the SeptopertM18.
 -/
 
 namespace M12

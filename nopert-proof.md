@@ -134,7 +134,7 @@ the solids' `Caps` modules).
 
 ### Arc caps
 
-A cap handles a single view; the [Septopert](septopert.md) needs more. Its
+A cap handles a single view; the [SeptopertM18](septopert-m18.md) needs more. Its
 first-order margin vanishes along a whole arc of views (the right angle at its
 cube-corner apex makes the first order exactly zero there), so no
 identity tube can reach the arc and only second order decides. An **arc cap**
@@ -145,7 +145,7 @@ in the other two directions, and boxes in (t, ν, α, s) get balanced witnesses
 with the common factors of ν divided out, as for the point cap. Its claim
 covers every pose whose view lies in a convex polygon around the arc and whose
 rotation is within 1/46; the exact cover of the polygon by the
-pieces is proved in Lean (`Pipeline/ArcCap*.lean`, `Septopert/ArcCap.lean`), and
+pieces is proved in Lean (`Pipeline/ArcCap*.lean`, `SeptopertM18/ArcCap.lean`), and
 the tube and the 5D search leave that polygon to it.
 
 ## Ties and tie tubes
@@ -167,7 +167,7 @@ theorems that turn valid tables into `¬ IsRupert`.
 
 | | rational model / neighborhood | identity tube | blow-up rows | caps | ties | reductions |
 |---|---|---|---|---|---|---|
-| [Septopert](septopert.md) | exact (rational) | yes | yes | at the mirror normal | mirror ties | C3, mirror-tie; plus an arc cap |
+| [SeptopertM18](septopert-m18.md) | exact (rational) | yes | yes | at the mirror normal | mirror ties | C3, mirror-tie; plus an arc cap |
 | [SeptopertClassic](septopert-classic.md) | exact (rational) | yes | yes | at the mirror normal | mirror ties | C3, mirror-tie |
 | [Snub cube](snub-cube.md) | `OModel` | yes | | at the zero-margin view | one tie, in the cap | octahedral |
 | [Snub dodecahedron](snub-dodecahedron.md) | `IModel` | yes | | | | icosahedral, fivefold |

@@ -1,7 +1,7 @@
 module
 
 public import Minimality
-public import Septopert
+public import SeptopertM18
 
 /-!
 # The vertex count of the smallest possible nopert is seven.
@@ -16,7 +16,7 @@ See `BUILDING.md` for more details.
 
 @[expose] public section
 
-open Septopert
+open SeptopertM18
 
 /-- Every nontrivial convex polyhedron with fewer than 7 vertices is Rupert. -/
 theorem notExistsNonRupertPolyhedronBelowSizeSeven :
@@ -25,7 +25,7 @@ theorem notExistsNonRupertPolyhedronBelowSizeSeven :
   exact hnR (isRupert_of_card_le_six V (by omega)
     ((not_coplanar_iff_interior_convexHull_nonempty _).mpr hint))
 
-/-- The Septopert has at most 7 points.
+/-- The SeptopertM18 has at most 7 points.
 
 It actually has exactly 7, but this conveniently dodges having to prove uniqueness. -/
 theorem card_septopert_le_seven : septopert.card ≤ 7 := by
@@ -35,7 +35,7 @@ theorem card_septopert_le_seven : septopert.card ≤ 7 := by
     _ = 7 := by simp
 
 /-- **There is a nontrivial 7-vertex polyhedron that is not Rupert**, given
-valid certificate data: the Septopert. -/
+valid certificate data: the SeptopertM18. -/
 theorem existsNonRupertPolyhedronSizeSeven_of_certificatesValid (h : CertificatesValid) :
     ExistsNonRupertPolyhedronSizeSeven :=
   ⟨septopert, card_septopert_le_seven,

@@ -18,9 +18,9 @@ Usage:
   constructM7 chart <tube manifest.txt> <chart directory> <chart>
   constructM7 local <tube manifest.txt> <index>
   constructM7 rows <tube manifest.txt> <chart> <job pack> [locals]
-    As `constructSeptopert`'s diagnostic modes.
+    As `constructSeptopertM18`'s diagnostic modes.
 
-The data is untrusted and checked natively, in parallel (see `constructSeptopert.lean`).
+The data is untrusted and checked natively, in parallel (see `constructSeptopertM18.lean`).
 -/
 
 open Noperts.Pipeline
