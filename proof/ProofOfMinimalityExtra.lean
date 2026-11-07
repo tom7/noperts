@@ -37,6 +37,7 @@ public import MinimalityExtra.NoUnimodalOpen
 public import MinimalityExtra.SeptLimit
 public import MinimalityExtra.PictureSymmetric
 public import MinimalityExtra.LimitRows
+public import MinimalityExtra.QuadEdge
 public import Minimality.Tilt
 public import Minimality.Thm73
 public import Minimality.OctaTools

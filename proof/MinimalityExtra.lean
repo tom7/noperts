@@ -47,7 +47,8 @@ A *type* is one of the combinatorial types of 7-vertex polytopes, in the numberi
 ## Contents
 
 - *Criteria:* Conditions that make a polytope Rupert or a view free, from depth patterns on the rim
-  or from the position of faces, and explicit Rupert shapes.
+  or from the position of faces, explicit Rupert shapes, and a depth lemma for an edge of a
+  quadrilateral seen end-on (the quad-edge lemma).
 - *Limits of the method:* Examples showing that these criteria have no converse and that natural
   shortcuts fail. What a rim looks like does not decide freedom, the chirotope does not decide the
   silhouette, and limits of views can mislead.
@@ -826,6 +827,59 @@ def RobustUnimodalIffNoAlternation : Prop :=
   ∀ (k : ℕ) [NeZero k], 4 ≤ k → ∀ z : ZMod k → ℝ, IsRobustUnimodal z ↔ WeakAlternationFree z
 
 end RobustUnimodal
+
+/-! ## An edge of a quadrilateral seen end-on -/
+
+section QuadEdge
+
+open Matrix
+
+/-- **The quad-edge lemma: Lemma E with a point in the middle.**  Look along an edge `ab` of a
+convex quadrilateral `a b m f`, with two more points `c` and `g`, so that `b` is deeper than `a`.
+Lemma E (`Minimality/EdgePair.lean`) says that when the segment through `f` and `g` pierces the
+triangle `abc`, then dropping `a` or dropping `b` leaves a four-corner rim whose depths are
+unimodal. Here the edge `ab` also has the point `m` of the quadrilateral behind it, so dropping
+`a` leaves the five-corner rim `b, m, f, c, g` instead of four corners. The lemma says that Lemma
+E's conclusion survives, at the price of one more inequality. Either `b` is at least as far from the
+plane `acf` as `g` is, or `c` is no higher than `f` over the plane `bgm`. Then at every view along
+which `b` is deeper than `a`, one of the two rims, `a, f, c, g` or `b, m, f, c, g`, has no weak
+alternation, except at the three directions in which three of the depths coincide. The strict form
+says that when both inequalities are strict, only the normal of the plane `cfg` can fail.
+
+This is a statement about six points in space, not about a polytope. The cycles are unimodal
+in the sense of `WeakAlternationFree`, which allows ties. -/
+def QuadEdgeLemma : Prop :=
+  ∀ a b m f c g : Fin 3 → ℝ,
+    (∃ t u : ℝ, 0 < t ∧ t < 1 ∧ 0 < u ∧ u < 1 ∧ (1 - t) • a + t • m = (1 - u) • b + u • f) →
+    (∃ p q r s : ℝ, 0 < p ∧ 0 < q ∧ 0 < r ∧ p + q + r = 1 ∧ 0 < s ∧ s < 1 ∧
+      p • a + q • b + r • c = (1 - s) • f + s • g) →
+    ((∃ (n : Fin 3 → ℝ) (k : ℝ), n ⬝ᵥ a = k ∧ n ⬝ᵥ c = k ∧ n ⬝ᵥ f = k ∧
+        k < n ⬝ᵥ g ∧ n ⬝ᵥ g ≤ n ⬝ᵥ b) ∨
+     (∃ (n : Fin 3 → ℝ) (k : ℝ), n ⬝ᵥ b = k ∧ n ⬝ᵥ g = k ∧ n ⬝ᵥ m = k ∧
+        k < n ⬝ᵥ f ∧ n ⬝ᵥ c ≤ n ⬝ᵥ f)) →
+    ∀ w : Fin 3 → ℝ, 0 < w ⬝ᵥ (b - a) →
+      WeakAlternationFree (fun i : ZMod 4 => w ⬝ᵥ (![a, f, c, g] : ZMod 4 → Fin 3 → ℝ) i) ∨
+      WeakAlternationFree (fun i : ZMod 5 => w ⬝ᵥ (![b, m, f, c, g] : ZMod 5 → Fin 3 → ℝ) i) ∨
+      (w ⬝ᵥ c = w ⬝ᵥ f ∧ w ⬝ᵥ f = w ⬝ᵥ g) ∨ (w ⬝ᵥ a = w ⬝ᵥ c ∧ w ⬝ᵥ c = w ⬝ᵥ f) ∨
+      (w ⬝ᵥ b = w ⬝ᵥ g ∧ w ⬝ᵥ g = w ⬝ᵥ m)
+
+/-- **The quad-edge lemma, strict form.**  With the two inequalities of `QuadEdgeLemma` strict, the
+only direction (along which `b` is deeper than `a`) at which neither rim is unimodal can be the
+normal of the plane `cfg`, where `c`, `f`, `g` have equal depth. So the failure set is one ray. -/
+def QuadEdgeLemmaStrict : Prop :=
+  ∀ a b m f c g : Fin 3 → ℝ,
+    (∃ t u : ℝ, 0 < t ∧ t < 1 ∧ 0 < u ∧ u < 1 ∧ (1 - t) • a + t • m = (1 - u) • b + u • f) →
+    (∃ p q r s : ℝ, 0 < p ∧ 0 < q ∧ 0 < r ∧ p + q + r = 1 ∧ 0 < s ∧ s < 1 ∧
+      p • a + q • b + r • c = (1 - s) • f + s • g) →
+    ((∃ (n : Fin 3 → ℝ) (k : ℝ), n ⬝ᵥ a = k ∧ n ⬝ᵥ c = k ∧ n ⬝ᵥ f = k ∧
+        k < n ⬝ᵥ g ∧ n ⬝ᵥ g < n ⬝ᵥ b) ∨
+     (∃ (n : Fin 3 → ℝ) (k : ℝ), n ⬝ᵥ b = k ∧ n ⬝ᵥ g = k ∧ n ⬝ᵥ m = k ∧
+        k < n ⬝ᵥ f ∧ n ⬝ᵥ c < n ⬝ᵥ f)) →
+    ∀ w : Fin 3 → ℝ, 0 < w ⬝ᵥ (b - a) → ¬ (w ⬝ᵥ c = w ⬝ᵥ f ∧ w ⬝ᵥ f = w ⬝ᵥ g) →
+      WeakAlternationFree (fun i : ZMod 4 => w ⬝ᵥ (![a, f, c, g] : ZMod 4 → Fin 3 → ℝ) i) ∨
+      WeakAlternationFree (fun i : ZMod 5 => w ⬝ᵥ (![b, m, f, c, g] : ZMod 5 → Fin 3 → ℝ) i)
+
+end QuadEdge
 
 /-! ## Metrics, spin, and the farthest vertex -/
 
