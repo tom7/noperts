@@ -1,4 +1,5 @@
 import Septopert.IsNopert
+import Septopert.Integer
 import Septopert.PCap
 import Septopert.NativeExecutable
 import Septopert.PackedSolutionTree
@@ -14,7 +15,7 @@ Usage:
     axis cap certificate (cap 2), the P cap certificate (cap 3: the two files are concatenated), every
     tube table and all four chart tables, and prints
       constructed: CapOk → ArcOk → AxisOk → PCapClaim → ¬ IsRupert verts
-      instantiated: IsNopert Septopert.verts (...)
+      instantiated: IsNopert Septopert.intVerts (...)
   constructSeptopert chart <tube manifest.txt> <chart directory> <chart>
   constructSeptopert local <tube manifest.txt> <index>
   constructSeptopert rows <tube manifest.txt> <chart> <job pack> [locals]
@@ -143,9 +144,9 @@ def fullMode (manifestPath directory capPath arcPath axisPath pwpPath puPath : S
   let _notRupert : CapOk → ArcOk → AxisOk → PCapClaim → ¬ IsRupert verts := checked.down
   let _fromCaps : PCapClaim → ¬ IsRupert verts := _notRupert capOk.down arcOk.down axisOk.down
   IO.println "constructed: CapOk → ArcOk → AxisOk → PCapClaim → ¬ IsRupert verts"
-  let _nopert : IsNopert verts :=
-    ⟨not_coplanar_verts, _fromCaps (pCapClaim_of_ok pcapOk.down)⟩
-  IO.println "instantiated: IsNopert Septopert.verts (CapOk, ArcOk, AxisOk, PCapOk checked natively; tube and chart tables checked)"
+  let _nopert : IsNopert intVerts :=
+    isNopert_intVerts_of_not_isRupert_verts (_fromCaps (pCapClaim_of_ok pcapOk.down))
+  IO.println "instantiated: IsNopert Septopert.intVerts (CapOk, ArcOk, AxisOk, PCapOk checked natively; tube and chart tables checked)"
 
 def main (args : List String) : IO Unit := do
   match args with

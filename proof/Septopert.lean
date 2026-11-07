@@ -3,6 +3,7 @@ module
 public import Septopert.ArcCap
 public import Septopert.AxisCap
 public import Septopert.IsNopert
+public import Septopert.Integer
 
 @[expose] public section
 
