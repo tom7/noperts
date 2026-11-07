@@ -26,7 +26,7 @@ open Noperts.Pipeline.ArcCap
 open Noperts.Pipeline.KCap
 
 /-- The apex frame. -/
-def apexFrame : ArcCap.Frame ℚ := ⟨![-1, 2, 2], ![2, -1, 2], ![2, 2, -1]⟩
+def apexFrame : ArcCap.Frame ℚ := ⟨![-1, 2, 2], ![2, -1, 2], ![2, 2, -1], 1 / 3, 1 / 3, 1 / 3⟩
 
 /-- The solid's vertices. -/
 def arcVerts : Array (KCap.KVec ℚ) := Array.ofFn fun i : Fin 7 => fun j => vertexQ i j

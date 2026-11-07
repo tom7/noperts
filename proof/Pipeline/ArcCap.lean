@@ -55,6 +55,10 @@ structure Frame (K : Type) where
   E1 : KCap.KVec K
   E2 : KCap.KVec K
   X : KCap.KVec K
+  /-- The Cayley weights: w = k₁ x E₁ + k₂ y E₂ + k₃ z X. -/
+  k1 : ℚ
+  k2 : ℚ
+  k3 : ℚ
 
 /-- The parameters: the U cap's radius μ₀, ranges R, S and identity cone Rc, Sc;
 the wedge's radius ν₀, ranges R₁, R₂, R₃ and ratio Z; the arc's regime change t*
@@ -81,6 +85,9 @@ structure Params where
   f0d : ℚ
   f1c : ℚ
   f1d : ℚ
+  /-- Whether the boxes of the cone (1, −) of side 0 inside the wedge are left to the wedge
+  (`wedgeBoxOk`): the arc caps, not the axis cap. -/
+  wedge : Bool
 
 def Params.Ok (pr : Params) : Prop :=
   0 ≤ pr.mu0 ∧ 0 ≤ pr.R ∧ 0 ≤ pr.S ∧ 0 ≤ pr.nu0 ∧ 0 ≤ pr.R1 ∧ 0 ≤ pr.R2 ∧ 0 ≤ pr.R3 ∧ 0 ≤ pr.Z ∧ 0 ≤ pr.zmid
@@ -116,9 +123,10 @@ inductive Piece where
   | w0 | wm | w1 | w2
 deriving DecidableEq, Repr
 
-/-- `u side k`: side true is (a, b) = μ e (1, τ), false is μ e (τ, −1). -/
+/-- `u side k`: the side of the square, (a, b) = μ e (1, τ) (side 0), μ e (−1, τ) (side 1),
+μ e (τ, 1) (side 2), μ e (τ, −1) (side 3 and above). -/
 inductive ChartId where
-  | u (side : Bool) (k : UKind)
+  | u (side : ℕ) (k : UKind)
   | w (π : Piece) (k : WKind)
 deriving DecidableEq, Repr
 
@@ -145,11 +153,11 @@ def wrc (pr : Params) : ℕ → ℚ
 def uOf (fr : Frame K) (a b : KPoly K 5) : KCap.PVec K :=
   KCap.PVec.sub (KCap.PVec.sub (KCap.PVec.const fr.X) (KCap.PVec.smul a (KCap.PVec.const fr.E1))) (KCap.PVec.smul b (KCap.PVec.const fr.E2))
 
-/-- The Cayley vector (x E₁ + y E₂ + z X) / 3. -/
+/-- The Cayley vector k₁ x E₁ + k₂ y E₂ + k₃ z X. -/
 def wOf (fr : Frame K) (x y z : KPoly K 5) : KCap.PVec K :=
-  KCap.PVec.smul (pconst (1 / 3))
-    (KCap.PVec.add (KCap.PVec.smul x (KCap.PVec.const fr.E1))
-      (KCap.PVec.add (KCap.PVec.smul y (KCap.PVec.const fr.E2)) (KCap.PVec.smul z (KCap.PVec.const fr.X))))
+  KCap.PVec.add (KCap.PVec.smul (pconst fr.k1 *ₚ x) (KCap.PVec.const fr.E1))
+    (KCap.PVec.add (KCap.PVec.smul (pconst fr.k2 *ₚ y) (KCap.PVec.const fr.E2))
+      (KCap.PVec.smul (pconst fr.k3 *ₚ z) (KCap.PVec.const fr.X)))
 
 /-- The apex coordinates of a chart. -/
 structure Coords (K : Type) where
@@ -171,10 +179,11 @@ def uS (pr : Params) : UKind → ℕ → KPoly K 5
   | .cone ax sg, i => pconst (rc pr i) *ₚ (pvar 2 *ₚ faceCoord 3 ax sg 1 i)
 
 /-- (a, b) on a side of the square, from the radius m. -/
-def uCoords (pr : Params) (side : Bool) (k : UKind) : Coords K :=
+def uCoords (pr : Params) (side : ℕ) (k : UKind) : Coords K :=
   let me := pvar 0 *ₚ uE k
   let s := uS (K := K) pr k
-  ⟨if side then me else me *ₚ pvar 1, if side then me *ₚ pvar 1 else pconst (-1) *ₚ me,
+  ⟨if side = 0 then me else if side = 1 then pconst (-1) *ₚ me else me *ₚ pvar 1,
+   if side = 0 ∨ side = 1 then me *ₚ pvar 1 else if side = 2 then me else pconst (-1) *ₚ me,
     pconst (-1 / 2) *ₚ (pvar 0 *ₚ s 1), pconst (1 / 2) *ₚ (pvar 0 *ₚ s 0),
     (pvar 0 *ₚ pvar 0) *ₚ s 2⟩
 
@@ -313,7 +322,7 @@ def wedgeBoxOk (pr : Params) (box : Box) : Bool :=
 the cone (1, −) of side true in the wedge. -/
 def coneOk (pr : Params) : ChartId → Box → Bool
   | .u _ .fe, box => withinB box 2 0 pr.Rc && withinB box 3 0 pr.Rc && withinB box 4 0 pr.Sc
-  | .u true (.cone 1 false), box => wedgeBoxOk pr box
+  | .u 0 (.cone 1 false), box => pr.wedge && wedgeBoxOk pr box
   | _, _ => false
 
 /-- The chart data, the view and the Cayley vector forced once. -/
@@ -334,15 +343,26 @@ def wKinds : List WKind :=
   ([true, false].flatMap fun sg => .face0 sg ::
     [S1.i, .p, .m].flatMap fun x => [.face1 x sg, .face2 x sg])
 
+/-- The U charts of some sides of the square. -/
+def uCharts (sides : List ℕ) : List ChartId :=
+  sides.flatMap fun side => uKinds.map (.u side)
+
+/-- The charts of an arc cap: the sides 0 and 3 of the half square and the wedge. -/
 def requiredCharts : List ChartId :=
-  ([true, false].flatMap fun side => uKinds.map (.u side)) ++
-  ([Piece.w0, .wm, .w1, .w2].flatMap fun π => wKinds.map (.w π))
+  uCharts [0, 3] ++ ([Piece.w0, .wm, .w1, .w2].flatMap fun π => wKinds.map (.w π))
+
+/-- The charts of an axis cap: the four sides of the square. -/
+def axisCharts : List ChartId := uCharts [0, 1, 2, 3]
 
 /-- A certificate: a tree per chart. -/
 abbrev Cert := List (ChartId × KTree)
 
+/-- Every chart of `req` has a checked tree. -/
+def certCheckOn (req : List ChartId) (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (c : Cert) : Bool :=
+  req.all fun id => c.any fun e => decide (e.1 = id) && chartCheck V fr pr id e.2
+
 def certCheck (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (c : Cert) : Bool :=
-  requiredCharts.all fun id => c.any fun e => decide (e.1 = id) && chartCheck V fr pr id e.2
+  certCheckOn requiredCharts V fr pr c
 
 /-! ### The real poses -/
 
@@ -358,7 +378,7 @@ noncomputable def uR (fr : Frame K) (a b : ℝ) : Fin 3 → ℝ :=
   kval fr.X - a • kval fr.E1 - b • kval fr.E2
 
 noncomputable def wR (fr : Frame K) (x y z : ℝ) : Fin 3 → ℝ :=
-  (1 / 3 : ℝ) • (x • kval fr.E1 + (y • kval fr.E2 + z • kval fr.X))
+  ((fr.k1 : ℝ) * x) • kval fr.E1 + (((fr.k2 : ℝ) * y) • kval fr.E2 + ((fr.k3 : ℝ) * z) • kval fr.X)
 
 /-- No pose over these apex coordinates is Rupert. -/
 def Good (V : Array (KCap.KVec K)) (fr : Frame K) (a b x y z : ℝ) : Prop :=
@@ -372,9 +392,8 @@ theorem eval_uOf (fr : Frame K) (a b : KPoly K 5) (y : Fin 5 → ℝ) :
 
 theorem eval_wOf (fr : Frame K) (a b c : KPoly K 5) (y : Fin 5 → ℝ) :
     (wOf fr a b c).eval y = wR fr (KPoly.eval 5 a y) (KPoly.eval 5 b y) (KPoly.eval 5 c y) := by
-  simp only [wOf, KCap.PVec.eval_add, KCap.PVec.eval_smul, KCap.PVec.eval_const, wR, eval_pconst]
-  push_cast
-  rfl
+  simp only [wOf, KCap.PVec.eval_add, KCap.PVec.eval_smul, KCap.PVec.eval_const, wR, eval_pconst,
+    KPoly.eval_mul]
 
 /-- The apex coordinates' values at a chart point. -/
 def PointGood (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (id : ChartId) (y : Fin 5 → ℝ) : Prop :=
