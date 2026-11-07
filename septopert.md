@@ -10,8 +10,6 @@ how to reproduce the result.
 
 Lean entry point: [`proof/Septopert.lean`](proof/Septopert.lean).
 
-<!-- TODO(Tom): credits/history -->
-
 ## The solid
 
 ![The Septopert, spinning around with confidence](septopert.gif)
@@ -99,41 +97,84 @@ In [`proof/Septopert.lean`](proof/Septopert.lean):
 theorem isNopert_of_certificatesValid (h : CertificatesValid) : IsNopert septopert
 ```
 
-`IsNopert` and `IsRupert` are exactly as for Septopert Classic (see
-[its page](septopert-classic.md#the-statement)): The points are not
-all in one plane, and no rotated copy of the solid has a shadow that
-fits strictly inside the shadow of another. `CertificatesValid` says
-that the certificate data passes Lean's validity checks:
+`IsNopert V` (in `proof/Nopert.lean`) says that the points of `V` are
+not all in one plane, so their convex hull is a genuine solid, and
+that this solid is not Rupert. `IsRupert` (in
+`proof/MainTheorem.lean`) is the Rupert property: Two copies of the
+solid, each rotated, can be placed so that the shadow of one lies
+strictly inside the shadow of the other. `CertificatesValid` says that
+the certificate data (four solution tables and a cap certificate)
+passes Lean's validity checks. The same `IsNopert` is used by the
+[minimality](minimality.md) result, so the [two
+together](proof/ProofOfMainTheorem.lean) say that the vertex count of
+the smallest possible nopert is exactly 7.
+
+## What is proved and what is verified
+
+The main content is the non-existence of a rupert passage. This is a
+**Lean verification**, not a direct kernel-only Lean proof:
+
+1. **Lean proof.** `isNopert_of_certificatesValid` is checked by Lean's
+   kernel and depends only on the standard axioms (`propext`,
+   `Classical.choice`, `Quot.sound`).
+2. **Verification of the data.** The data is about 850,000 table rows
+   (45 MB), too much for the kernel. The program `constructSeptopert`
+   runs the same Lean validity checks as compiled code on every row,
+   and only if all pass does it construct `IsNopert septopert` (via
+   part 1) and print `instantiated: IsNopert septopert (the Septopert
+   is a Nopert: not Rupert)`. This step trusts Lean's compiler and
+   runtime to evaluate the checks correctly. This is the same trust as
+   `native_decide`, though `native_decide` is not used.
+
+The C++ search in `search/septopert/` that produced the data does not
+need to be trusted: A mistake there can only produce data that fails
+the checks. That said, the C++ does its own independent checks of the
+certificate conditions as it searchs for them and prepares them for
+Lean. It would be very unlikely that a bug in the Lean
+compiler/runtime would also occur in the C++ search (perhaps something
+like a bug in GMP's integer multiplication routines.)
+
+We also need to trust that the proof statement itself matches the
+pre-formal idea of what we mean by "Rupert" and "Nopert". I use the
+same [definition](proof/MainTheorem.lean) from the Noperthedron
+project. It is not very mysterious:
 
 ```lean
-def CertificatesValid : Prop :=
-  ∃ table : CayleyAtlas.ChartIndex → SolutionTree.Table,
-    (∀ chart, (table chart).chart = chart) ∧
-    (∀ chart, (table chart).Valid) ∧
-    SolutionTree.CapOk ∧
-    SolutionTree.ArcOk
+def IsRupert (vertices : Finset (EuclideanSpace ℝ (Fin 3))) : Prop :=
+   ∃ inner_rotation ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ,
+   ∃ inner_offset : EuclideanSpace ℝ (Fin 2),
+   ∃ outer_rotation ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ,
+   let hull := convexHull ℝ vertices
+   let inner_shadow := { inner_offset + proj_xy (inner_rotation.toEuclideanLin p) | p ∈ hull }
+   let outer_shadow := { proj_xy (outer_rotation.toEuclideanLin p) | p ∈ hull }
+   inner_shadow ⊆ interior outer_shadow
 ```
 
-That is: one solution table for each of the four charts that together
-cover every rotation, each valid; `CapOk`, the cap certificate around the
-mirror directions (as for Septopert Classic); and `ArcOk`, the new arc cap
-certificate, which covers small rotations at views near an arc ending at
-U = (2,2,−1)/3.
+A set of points (note: not a solid) is Rupert if there exists
+rotations for the inner and outer copies (`specialOrthogonalGroup`
+just means 3D rotation), and a 2D translation of the inner copy, such
+that the inner shadow is contained in the interior of the outer
+shadow. The shadows are just the 2D projections of the 3D convex
+hulls. This is almost identical to how I describe it to people on
+the whiteboard.
 
-The trust model is the same as for Septopert Classic. The "genuine
-solid" half is proved outright, and `isNopert_of_certificatesValid` is
-checked by Lean's kernel and depends only on `propext`,
-`Classical.choice` and `Quot.sound`. The data (about 844,000 table
-rows in 44 MB of packs, 1 MB of tube packs and two cap certificates)
-is too big for the kernel, so the program `constructSeptopert` runs
-the same validity checks as compiled code and, only if every one
-passes, builds `IsNopert septopert` and prints `instantiated: IsNopert
-septopert (the Septopert is a Nopert: not Rupert)`. That step trusts
-Lean's compiler and runtime (the trust of `native_decide`, which is
-not used). The C++ search that produced the data does not need to be
-trusted: A mistake there can only produce data that fails the checks.
-The comments on Septopert Classic's page about the definition of
-`IsRupert` and about degenerate point sets apply unchanged.
+That said: There is certainly subtlety to be wary of! For example,
+I could have presented you a proof like this:
+
+```lean
+noncomputable def CoolShape : Finset ℝ³ := { ... vertices ... }
+
+theorem CoolShapeIsNotRupert : ¬ IsRupert CoolShape := by ...
+```
+
+And claimed that this `CoolShape` is a Nopert (not Rupert) with some
+enormous meandering proof. But `¬ IsRupert` is also easily satisfied
+by degenerate vertices! For example, if all the vertices are
+collinear, then the convex hull is just a line, and its interior is
+empty, so we can never have `line ⊆ ∅`. Our
+[definition](proof/Nopert.lean) of `IsNopert` adds a condition that
+the point set gives a genuine solid 
+(`¬ Coplanar ℝ (V : Set ℝ³) ∧ ¬ IsRupert V`).
 
 ## How the proof works
 

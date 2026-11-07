@@ -2,8 +2,8 @@
 Tom 7, 10 Oct 2026
 
 > [!NOTE]
-> **Septopert Classic** is the first 7-vertex nopert we found, the holotype
-> for which the Septopert family is named. The canonical
+> **Septopert Classic** is the first 7-vertex nopert we found, the
+> holotype for which the Septopert family is named. The canonical
 > [Septopert](septopert.md) is a member of that same family with even
 > simpler integer coordintes. Most people will care more about the
 > canonical one; this page is mostly for archaeology purposes.
@@ -20,8 +20,9 @@ Lean entry point: [`proof/SeptopertClassic.lean`](proof/SeptopertClassic.lean).
 
 ![Septopert Classic, spinning around with confidence](septopert-classic.gif)
 
-Here is an exact [STL file](septopert-classic.stl). On github, you can
-rotate it around in your browser by just clicking on that.
+Here is an exact [STL file](septopert-classic.stl). The coordinates
+are exact floats. On github, you can rotate it around in your browser by just
+clicking on that.
 
 The solid is the convex hull of these points (its vertices):
 
@@ -126,47 +127,8 @@ different method. This is not part of the proof at all, but it
 provides additional comfort that we didn't just get hypnotized by the
 AI or miss something silly in the proof statement.
 
-We also need to trust that the proof statement itself matches the
-pre-formal idea of what we mean by "Rupert" and "Nopert". I use the
-same [definition](proof/MainTheorem.lean) from the Noperthedron
-project. It is not very mysterious:
-
-```lean
-def IsRupert (vertices : Finset (EuclideanSpace ℝ (Fin 3))) : Prop :=
-   ∃ inner_rotation ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ,
-   ∃ inner_offset : EuclideanSpace ℝ (Fin 2),
-   ∃ outer_rotation ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ,
-   let hull := convexHull ℝ vertices
-   let inner_shadow := { inner_offset + proj_xy (inner_rotation.toEuclideanLin p) | p ∈ hull }
-   let outer_shadow := { proj_xy (outer_rotation.toEuclideanLin p) | p ∈ hull }
-   inner_shadow ⊆ interior outer_shadow
-```
-
-A set of points (note: not a solid) is Rupert if there exists
-rotations for the inner and outer copies (`specialOrthogonalGroup`
-just means 3D rotation), and a 2D translation of the inner copy, such
-that the inner shadow is contained in the interior of the outer
-shadow. The shadows are just the 2D projections of the 3D convex
-hulls. This is almost identical to how I describe it to people on
-the whiteboard.
-
-That said: There is certainly subtlety to be wary of! For example,
-I could have presented you a proof like this:
-
-```lean
-noncomputable def CoolShape : Finset ℝ³ := { ... vertices ... }
-
-theorem CoolShapeIsNotRupert : ¬ IsRupert CoolShape := by ...
-```
-
-And claimed that this `CoolShape` is a Nopert (not Rupert) with some
-enormous meandering proof. But `¬ IsRupert` is also easily satisfied
-by degenerate vertices! For example, if all the vertices are
-collinear, then the convex hull is just a line, and its interior is
-empty, so we can never have `line ⊆ ∅`. Our
-[definition](proof/Nopert.lean) of `IsNopert` adds a condition that
-the point set gives a genuine solid 
-(`¬ Coplanar ℝ (V : Set ℝ³) ∧ ¬ IsRupert V`).
+For some subtlety in the proof statement itself, see the discussion
+for the canonical [Septopert](septopert.md).
 
 ## How the proof works
 
