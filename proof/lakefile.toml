@@ -1,7 +1,7 @@
 name = "noperts"
-defaultTargets = ["Noperts", "SeptopertClassic", "NeoSeptopert", "Minimality", "ProofOfMainTheorem",
+defaultTargets = ["Noperts", "SeptopertClassic", "Septopert", "Minimality", "ProofOfMainTheorem",
   "DeltoidalHexecontahedron", "PentagonalHexecontahedron", "SnubDodecahedron", "SnubCube", "Nopert231",
-  "constructSeptopertClassic", "checkSeptopertClassicCap", "constructNeoSeptopert", "checkNeoSeptopertCap", "checkNeoSeptopertArc", "constructDeltoidalHexecontahedron",
+  "constructSeptopertClassic", "checkSeptopertClassicCap", "constructSeptopert", "checkSeptopertCap", "checkSeptopertArc", "constructDeltoidalHexecontahedron",
   "constructPentagonalHexecontahedron", "constructSnubDodecahedron", "constructSnubCube",
   "checkSnubCubeCap", "constructNopert231",
   "Tests"]
@@ -54,8 +54,8 @@ name = "SeptopertClassic"
 globs = ["SeptopertClassic", "SeptopertClassic.+"]
 
 [[lean_lib]]
-name = "NeoSeptopert"
-globs = ["NeoSeptopert", "NeoSeptopert.+"]
+name = "Septopert"
+globs = ["Septopert", "Septopert.+"]
 
 [[lean_lib]]
 name = "Minimality"
@@ -110,18 +110,18 @@ root = "constructSeptopertClassic"
 buildType = "release"
 
 [[lean_exe]]
-name = "constructNeoSeptopert"
-root = "constructNeoSeptopert"
+name = "constructSeptopert"
+root = "constructSeptopert"
 buildType = "release"
 
 [[lean_exe]]
-name = "checkNeoSeptopertCap"
-root = "checkNeoSeptopertCap"
+name = "checkSeptopertCap"
+root = "checkSeptopertCap"
 buildType = "release"
 
 [[lean_exe]]
-name = "checkNeoSeptopertArc"
-root = "checkNeoSeptopertArc"
+name = "checkSeptopertArc"
+root = "checkSeptopertArc"
 buildType = "release"
 
 [[lean_exe]]
