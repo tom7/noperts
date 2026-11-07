@@ -1093,9 +1093,9 @@ def Type24FacePairViewsRigid : Prop :=
     (∀ t, (T t).1 < (T t).2.1 ∧
       ¬ FreeAt ((T t).2.2.image x) (cross (N (T t).1) (N (T t).2.1)))
 
-/-- **A neighbor of the Septopert is Rupert, by an explicit pose.** The Septopert is a simplicial
-polytope with no generic unimodal view. These seven points are the simplicial shape `strict7_sept`
-(`data/hard/strict7_sept.xyz`), near the Septopert but without its symmetry, rounded to three
+/-- **A neighbor of Septopert Classic is Rupert, by an explicit pose.** Septopert Classic is a
+simplicial polytope with no generic unimodal view. These seven points are the simplicial shape `strict7_sept`
+(`data/hard/strict7_sept.xyz`), near Septopert Classic but without its symmetry, rounded to three
 decimals. The passage is tight, with clearance `0.0036`, about `0.4` percent of the diameter.
 Nothing is claimed about first-order rigidity or about other views. -/
 def Strict7SeptIsRupert : Prop :=
@@ -1522,12 +1522,13 @@ def ExistsOpenFamilyWithoutUnimodalView : Prop :=
 -- theorem existsOpenFamilyWithoutUnimodalView : ExistsOpenFamilyWithoutUnimodalView :=
 --   NoUniO.open_family
 
-/-- **The Septopert is a limit of Rupert shapes.** Take the seven points of the Septopert, with the
-exact integer coordinates of `septopert.md` (the scale is `2^20` times that of the main
-development). Every neighborhood of them contains seven different points that are Rupert. So the
-Septopert is not in the interior of the set of Noperts. The nearby shapes move the last vertex in
+/-- **Septopert Classic is a limit of Rupert shapes.** Take the seven points of Septopert Classic,
+with the exact integer coordinates of `septopert-classic.md` (the scale is `2^20` times that of the
+main development). Every neighborhood of them contains seven different points that are Rupert. So
+Septopert Classic is not in the interior of the set of Noperts. (Nothing is claimed here about the
+Septopert, M18.) The nearby shapes move the last vertex in
 the first coordinate. -/
-def SeptopertIsLimitOfRupert : Prop :=
+def SeptopertClassicIsLimitOfRupert : Prop :=
   ∀ ε : ℝ, 0 < ε → ∃ x : Fin 7 → ℝ³,
     (∀ i j, |x i j - (![!₂[-940638, 327651, 327651], !₂[327651, -940638, 327651],
       !₂[327651, 327651, -940638], !₂[703968, 47788, 47788], !₂[47788, 703968, 47788],

@@ -6,9 +6,9 @@ public import Minimality.Tilt
 public import Minimality.OctaTools
 
 /-!
-# The Septopert is a limit of Rupert shapes
+# Septopert Classic is a limit of Rupert shapes
 
-Proof of `MinimalityExtra.SeptopertIsLimitOfRupert`.  Family `SLX t`: the Septopert (integer
+Proof of `MinimalityExtra.SeptopertClassicIsLimitOfRupert`.  Family `SLX t`: Septopert Classic (integer
 vertices) with the `x`-coordinate of vertex 6 raised by `10^6 t`.  For `0 < t < 1` the view
 `w = (-10 - t, -t, 10 - t)` (a tilt of order `t` off the face circle of the face `3 4 5`, next to the
 mirror view `(-1, 0, 1)`) has strict rim `6, 1, 5, 4, 2` (vertices `0` and `3` hidden), and the
@@ -85,7 +85,7 @@ theorem slx_isRupert (t : ℝ) (h0 : 0 < t) (h1 : t < 1) : IsRupert (univ.image 
     linarith
   exact Minimality.isRupert_of_tiltCert _ (SLW t) hw ω τ fun y hy => sl_tiltCert _ _ _ _ _ (hc y hy)
 
-theorem septopertIsLimitOfRupert : SeptopertIsLimitOfRupert := by
+theorem septopertClassicIsLimitOfRupert : SeptopertClassicIsLimitOfRupert := by
   intro ε hε
   set t : ℝ := min (1 / 2) (ε / 2000000) with ht
   have ht0 : 0 < t := lt_min (by norm_num) (by positivity)
