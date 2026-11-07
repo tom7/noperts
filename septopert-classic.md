@@ -1,15 +1,18 @@
 # Septopert Classic
 Tom 7, 10 Oct 2026
 
-Septopert Classic was the first Septopert found. It has been superseded by
-[the Septopert](septopert.md), a nearby 7-vertex Nopert with small integer
-coordinates; this page is kept for history.
+> [!NOTE]
+> **Septopert Classic** is the first 7-vertex nopert we found, the holotype
+> for which the Septopert family is named. The canonical
+> [Septopert](septopert.md) is a member of that same family with even
+> simpler integer coordintes. Most people will care more about the
+> canonical one; this page is mostly for archaeology purposes.
 
-Septopert Classic is a new convex polyhedron with 7 vertices that is not Rupert.
-Since 7 is the [fewest possible vertices](minimality.md), this is the
-smallest possible Nopert.
-This page gives the exact statement, what Lean checked and how, and how to
-reproduce the result.
+**Septopert Classic** is a new convex polyhedron with 7 vertices that is
+not Rupert. Since 7 is the [fewest possible vertices](minimality.md),
+this is the smallest possible Nopert by vertex count. This page gives
+the exact statement, what Lean checked and how, and how to reproduce
+the result.
 
 Lean entry point: [`proof/SeptopertClassic.lean`](proof/SeptopertClassic.lean).
 
@@ -56,8 +59,9 @@ In lowest terms (the form used in Lean, `septopertClassic` in
   and 3 (vertex 6). Combinatorially a gyroelongated triangular pyramid: a
   triangular antiprism (vertices 0–5) with a pyramid (apex 6) on its larger
   face.
-- `search/septopert-classic/septopert-classic-model.txt` is the exact (rational) model the
-  search uses; `proof/SeptopertClassic/ModelData.lean` has the same vertices.
+- `search/septopert-classic/septopert-classic-model.txt` is the exact
+  (rational) model the search uses;
+  `proof/SeptopertClassic/ModelData.lean` has the same vertices.
 
 ### Edge info
 
@@ -78,31 +82,35 @@ In [`proof/SeptopertClassic.lean`](proof/SeptopertClassic.lean):
 theorem isNopert_of_certificatesValid (h : CertificatesValid) : IsNopert septopertClassic
 ```
 
-`IsNopert V` (in `proof/Nopert.lean`) says that the points of `V` are not all
-in one plane, so their convex hull is a genuine solid, and that this solid is
-not Rupert. `IsRupert` (in `proof/MainTheorem.lean`) is the Rupert property:
-Two copies of the solid, each rotated, can be placed so that the shadow of
-one lies strictly inside the shadow of the other. `CertificatesValid` says
-that the certificate data (four solution tables and a cap certificate) passes
-Lean's validity checks. The same `IsNopert` is used by the
-[minimality](minimality.md) result, so the [two together](proof/ProofOfMainTheorem.lean) say that the vertex count of the smallest possible nopert is exactly 7.
+`IsNopert V` (in `proof/Nopert.lean`) says that the points of `V` are
+not all in one plane, so their convex hull is a genuine solid, and
+that this solid is not Rupert. `IsRupert` (in
+`proof/MainTheorem.lean`) is the Rupert property: Two copies of the
+solid, each rotated, can be placed so that the shadow of one lies
+strictly inside the shadow of the other. `CertificatesValid` says that
+the certificate data (four solution tables and a cap certificate)
+passes Lean's validity checks. The same `IsNopert` is used by the
+[minimality](minimality.md) result, so the [two
+together](proof/ProofOfMainTheorem.lean) say that the vertex count of
+the smallest possible nopert is exactly 7.
 
 ## What is proved and what is verified
 
-This is a **Lean verification**, not a direct kernel-only Lean proof:
+The main content is the non-existence of a rupert passage. This is a
+**Lean verification**, not a direct kernel-only Lean proof:
 
 1. **Lean proof.** `isNopert_of_certificatesValid` is checked by Lean's
    kernel and depends only on the standard axioms (`propext`,
-   `Classical.choice`, `Quot.sound`). Its "genuine solid" half needs no data
-   at all.
+   `Classical.choice`, `Quot.sound`).
 2. **Verification of the data.** The data is about 850,000 table rows
-   (45 MB), too much for the kernel. The program `constructSeptopertClassic` runs
-   the same Lean validity checks as compiled code on every row, and only if
-   all pass does it construct `IsNopert septopertClassic` (via part 1) and print
-   `instantiated: IsNopert septopertClassic (Septopert Classic is a Nopert: not Rupert)`.
-   This step trusts Lean's compiler and runtime to evaluate the checks
-   correctly. This is the same trust as `native_decide`, though `native_decide` is
-   not used.
+   (45 MB), too much for the kernel. The program
+   `constructSeptopertClassic` runs the same Lean validity checks as
+   compiled code on every row, and only if all pass does it construct
+   `IsNopert septopertClassic` (via part 1) and print `instantiated:
+   IsNopert septopertClassic (Septopert Classic is a Nopert: not
+   Rupert)`. This step trusts Lean's compiler and runtime to evaluate
+   the checks correctly. This is the same trust as `native_decide`,
+   though `native_decide` is not used.
 
 The C++ search in `search/septopert-classic/` that produced the data does not
 need to be trusted: A mistake there can only produce data that fails
@@ -112,11 +120,11 @@ Lean. It would be very unlikely that a bug in the Lean
 compiler/runtime would also occur in the C++ search (perhaps something
 like a bug in GMP's integer multiplication routines.)
 
-Additionally, I ran my GPU solver for 60 billion iterations on Septopert Classic,
-which searches for Rupert passages via a completely different method.
-This is not part of the proof at all, but it provides additional comfort
-that we didn't just get hypnotized by the AI or miss something silly in the
-proof statement.
+Additionally, I ran my GPU solver for 60 billion iterations on
+Septopert Classic, which searches for Rupert passages via a completely
+different method. This is not part of the proof at all, but it
+provides additional comfort that we didn't just get hypnotized by the
+AI or miss something silly in the proof statement.
 
 We also need to trust that the proof statement itself matches the
 pre-formal idea of what we mean by "Rupert" and "Nopert". I use the
@@ -182,16 +190,17 @@ for Septopert Classic:
   each ruling out every rotation within 1/64 of the identity over its view
   triangle; the [5D search](nopert-proof.md#the-5d-search) covers the rest.
 - Near a view where two faces are edge-on at once, the best inner vertex
-  switches inside boxes; [blended inner points](nopert-proof.md#balanced-witnesses)
-  certify them.
+  switches inside boxes;
+  [blended inner points](nopert-proof.md#balanced-witnesses) certify them.
 
 ## Status
 
-Verified on 2026-10-15 on a 64-core machine: `constructSeptopertClassic` checked
-the cap certificate, the 22 tube tables (250 rows, 176 of them identity
-blow-up rows) and the four chart tables (476,073, 143,787, 123,839 and
-104,243 rows) and printed `instantiated: IsNopert septopertClassic (Septopert Classic
-is a Nopert: not Rupert)`. You can reproduce it yourself, following the
+Verified on 2026-10-15 on a 64-core machine:
+`constructSeptopertClassic` checked the cap certificate, the 22 tube
+tables (250 rows, 176 of them identity blow-up rows) and the four
+chart tables (476,073, 143,787, 123,839 and 104,243 rows) and printed
+`instantiated: IsNopert septopertClassic (Septopert Classic is a
+Nopert: not Rupert)`. You can reproduce it yourself, following the
 instructions in [BUILDING.md](BUILDING.md):
 
 ```sh
@@ -205,15 +214,16 @@ multiple cores and tests a cache of recent certificates that can be reused
 for nearby cells. So you may not get the same row counts, etc. as I did.
 
 This builds everything, runs `codebdd` on the exact model
-`search/septopert-classic/septopert-classic-model.txt` (and regenerates the view cover
-`proof/SeptopertClassic/ViewCoverData.lean` from its output), builds the identity
-tube and replaces nearly all of it by identity blow-up rows, runs the search,
-packs the tables into `work/`, and finally runs `constructSeptopertClassic` on
-them. Stages: `model`, `tube`, `idcap`, `tubepack`, `cap`, `search`, `pack`,
+`search/septopert-classic/septopert-classic-model.txt` (and
+regenerates the view cover `proof/SeptopertClassic/ViewCoverData.lean`
+from its output), builds the identity tube and replaces nearly all of
+it by identity blow-up rows, runs the search, packs the tables into
+`work/`, and finally runs `constructSeptopertClassic` on them. Stages:
+`model`, `tube`, `idcap`, `tubepack`, `cap`, `search`, `pack`,
 `verify`; `--from STAGE` restarts at a stage, `--only STAGE` runs one,
 `--work DIR` moves the output. Each stage appends its wall time to
-`work/stages.log` (and prints its peak memory); the Lean build runs in the
-background while the C++ stages run (log `work/lean_build.log`).
+`work/stages.log` (and prints its peak memory); the Lean build runs in
+the background while the C++ stages run (log `work/lean_build.log`).
 
 Measured times of a from-scratch run on 64 cores with 64 threads
 (2026-10-15; the model stage on 2026-10-14), about 21 min in all:
@@ -259,7 +269,8 @@ less than 150,000 rows each.
 
 ## The data
 
-The certificate data is machine output, intended to be CC0:
+The certificate data is machine output, intended to be CC0 (but not
+hosted here):
 
 - `cap-1_16.cert`: 550 KB, the cap certificate around the mirror directions;
 - `tube_packs/`: 1.4 MB, 22 identity-tube tables and `manifest.txt`;

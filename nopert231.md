@@ -1,14 +1,18 @@
-# Candidate #231
+# Nopert #231
 
-Candidate #231 is a convex polyhedron with 20 vertices, 27 faces (2
-pentagons, 20 triangles and 5 planar quadrilaterals) and fivefold rotational
-symmetry about an axis. It looks identical to candidate #214, which turned
-out to be Rupert, but it is not Rupert. This page gives the exact statement,
-what Lean checked and how, and how to verify the result.
+Nopert #231 is a convex polyhedron with 20 vertices, 27 faces (2
+pentagons, 20 triangles and 5 planar quadrilaterals) and fivefold
+rotational symmetry about an axis. It looks identical to candidate
+#214, which turned out to be Rupert, but 231 is a proper nopert. This
+page gives the exact statement, what Lean checked and how, and how to
+verify the result.
 
 Lean entry point: [`proof/Nopert231.lean`](proof/Nopert231.lean).
 
 ## The solid
+
+The solid itself has irrational vertices, since it has five-fold
+cyclic symmerty.
 
 The proof works with fixed rational vertices, `rationalVertices` in
 [`proof/Nopert231/Vertices.lean`](proof/Nopert231/Vertices.lean). They are four
