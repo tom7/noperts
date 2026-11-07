@@ -3,6 +3,7 @@ module
 public import Minimality.Cases
 public import Minimality.Type21SAT.Main
 public import Minimality.Type29SAT.Main
+public import Minimality.Type29TSAT.FinalBoundary
 public import Minimality.Type08S.C2K2E
 public import Minimality.Type08S.C2K9K
 public import Minimality.Type08S.C2K5ZE
@@ -1210,15 +1211,13 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
   · -- type 29: the octahedron `O = K − 6` with the cap `6` (`Minimality.type29_cap`) has the normal
     -- form `N` (Lemma 21.1); its class (Lemma 21.2) is the sign pattern of `(a2, b0, V)`. Classes K3
     -- and K4 are closed by the sign-matrix SAT route (`NF29.isRupert_K3a_closed`, …, Type29SAT/; no
-    -- general-position hypothesis). Open in Lean: the class boundaries, K2, K1
+    -- general-position hypothesis). The class boundaries are closed by the SAT route with tie views (`NF29.isRupert_boundary`, Type29TSAT/). Open in Lean: K2, K1
     obtain ⟨F, hd⟩ := Minimality.type29_cap hx hvert hR
     set N := Minimality.IsCap29.toNF29 hx F hd
     rcases N.classes with hbd | hK2 | hK1 | ⟨ha2, hb0, hV⟩ | ⟨ha2, hb0, hV⟩ | ⟨ha2, hb0, hV⟩ |
       ⟨ha2, hb0, hV⟩
-    · exact byThm5Faces hx hN _ h3 (fun _ => by
-        by_cases hres : Minimality.H29S.H29GenResid N.facets
-        · sorry
-        · exact (Minimality.H29S.h29g_rule_false hN _ hres).elim)  -- a class boundary: `a2 = 0`, `b0 = 0` or `V = 0`
+    · -- a class boundary (`a2 = 0`, `b0 = 0` or `V = 0`): the SAT route with tie views (`NF29.isRupert_boundary`)
+      exact hnR (N.isRupert_boundary hbd)
     · exact byThm5Faces hx hN _ h3 (fun _ => by
         by_cases hres : Minimality.H29S.H29GenResid N.facets
         · sorry
