@@ -273,18 +273,18 @@ def faceFree (pr : Params) (ax : ℕ) : ℚ × ℚ :=
   | 1 => (rng pr 0, rng pr 2)
   | _ => (rng pr 0, rng pr 1)
 
+/-- The range of p₁. -/
+def p1Box (pr : Params) (π : Piece) : ℚ × ℚ := if π = .wm then sym pr.zmid else (0, 1)
+
 def rootBox (pr : Params) : ChartId → Box
   | .u _ .fe => ![(0, pr.mu0), (-1, 2), sym pr.R, sym pr.R, sym pr.S]
   | .u _ (.face ax _) => ![(0, pr.mu0), (-1, 2), (0, 1), sym (faceFree pr ax).1, sym (faceFree pr ax).2]
   | .u _ (.cone _ _) => ![(0, pr.mu0), (-1, 2), (0, 1), (-1, 2), (-1, 2)]
-  | .w π k =>
-    let p1 : ℚ × ℚ := if π = .wm then sym pr.zmid else (0, 1)
-    match k with
-    | .fe _ _ => ![(0, pr.nu0), p1, (0, pr.R1), sym pr.R2, sym pr.R3]
-    | .cone _ _ _ => ![(0, pr.nu0), p1, (0, 1), (-1, 2), (-1, 2)]
-    | .face0 _ => ![(0, pr.nu0), p1, (-1, 2), sym pr.R2, sym pr.R3]
-    | .face1 x _ => ![(0, pr.nu0), p1, (-1, 2), s1Box pr x, sym pr.R3]
-    | .face2 x _ => ![(0, pr.nu0), p1, (-1, 2), s1Box pr x, sym pr.R2]
+  | .w π (.fe _ _) => ![(0, pr.nu0), p1Box pr π, (0, pr.R1), sym pr.R2, sym pr.R3]
+  | .w π (.cone _ _ _) => ![(0, pr.nu0), p1Box pr π, (0, 1), (-1, 2), (-1, 2)]
+  | .w π (.face0 _) => ![(0, pr.nu0), p1Box pr π, (-1, 2), sym pr.R2, sym pr.R3]
+  | .w π (.face1 x _) => ![(0, pr.nu0), p1Box pr π, (-1, 2), s1Box pr x, sym pr.R3]
+  | .w π (.face2 x _) => ![(0, pr.nu0), p1Box pr π, (-1, 2), s1Box pr x, sym pr.R2]
 
 /-- The chart variables divided out of a tuple polynomial: all ≥ 0 on the root box. -/
 def redVars : ChartId → List (Fin 5)
@@ -401,8 +401,8 @@ theorem rootBox_width {pr : Params} (hp : pr.Ok) (id : ChartId) : ∀ i, 0 ≤ (
   have hf : ∀ ax, 0 ≤ (faceFree pr ax).1 ∧ 0 ≤ (faceFree pr ax).2 := by
     intro ax
     rcases ax with _ | _ | ax <;> simp [faceFree, rng, h2, h3]
-  have hp1 : ∀ π : Piece, 0 ≤ (if π = .wm then sym pr.zmid else ((0, 1) : ℚ × ℚ)).2 := by
-    intro π; split_ifs
+  have hp1 : ∀ π : Piece, 0 ≤ (p1Box pr π).2 := by
+    intro π; unfold p1Box; split_ifs
     · exact hS _ h9
     · norm_num
   intro i
@@ -426,7 +426,7 @@ theorem rootBox_red {pr : Params} (id : ChartId) (y : Fin 5 → ℝ) (hy : KPoly
   have h1w : ∀ π k, π ≠ .wm → id = .w π k → 0 ≤ y 1 := by
     rintro π k hπ rfl
     have := (hy 1).1
-    cases k <;> simpa [rootBox, hπ] using this
+    cases k <;> simpa [rootBox, p1Box, hπ] using this
   intro i hi
   cases id with
   | u side k =>

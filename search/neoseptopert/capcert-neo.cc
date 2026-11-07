@@ -320,6 +320,7 @@ void LoadSolid(Solid *s) {
 // ----- Charts -----
 struct Chart {
   std::string name;
+  std::string id;  // the chart id in the export format (ArcCapDecode.lean); empty: not exported
   PVec u, w;
   std::vector<int> div;
   Box box;
@@ -346,6 +347,7 @@ struct Params {
   bool tmid = false;
   double zmid = 8;
   int regime = 0;  // 0: A-E flex; 1: A-v4 flex
+  int piece = 0;  // export: 0..3 = W0, Wm, W1, W2
   bool wedge_prune = false;  // U cap: skip boxes inside the wedge
 };
 Q QD(double x) { return DyadicRat(x); }
@@ -356,9 +358,10 @@ void AddUCharts(const Solid &so, const Params &pr, std::vector<Chart> *out) {
   const double m0 = pr.mu0.ToDouble();
   for (int side : pr.sides) {
     auto mk = [&](const std::string &name, const Poly &e, const std::array<Poly, 3> &s, Box box,
-                  std::vector<int> div, int kind) {
+                  std::vector<int> div, int kind, const std::string &idk) {
       Chart c;
       c.name = "U" + std::to_string(side) + ":" + name;
+      c.id = "u " + std::to_string(side == 0 ? 1 : 0) + " " + idk;
       const Poly one = Poly::Const(Q(1)), me = mu * e;
       Poly a, b;
       switch (side) {
@@ -382,7 +385,7 @@ void AddUCharts(const Solid &so, const Params &pr, std::vector<Chart> *out) {
       out->push_back(std::move(c));
     };
     mk("Fe", Poly::Const(Q(1)), {P2, P3, P4},
-       {{{0, m0}, {-1, 1}, {-rng[0], rng[0]}, {-rng[1], rng[1]}, {-rng[2], rng[2]}}}, {0}, 0);
+       {{{0, m0}, {-1, 1}, {-rng[0], rng[0]}, {-rng[1], rng[1]}, {-rng[2], rng[2]}}}, {0}, 0, "0 0 0");
     for (int ax = 0; ax < 3; ax++)
       for (int sg : {1, -1}) {
         // face
@@ -393,25 +396,30 @@ void AddUCharts(const Solid &so, const Params &pr, std::vector<Chart> *out) {
         s[fr[0]] = P3;
         s[fr[1]] = P4;
         std::string nm = std::to_string(ax) + (sg > 0 ? "+" : "-");
-        mk("face" + nm, P2, s, {{{0, m0}, {-1, 1}, {0, 1}, {-rng[fr[0]], rng[fr[0]]}, {-rng[fr[1]], rng[fr[1]]}}}, {0}, 1);
+        mk("face" + nm, P2, s, {{{0, m0}, {-1, 1}, {0, 1}, {-rng[fr[0]], rng[fr[0]]}, {-rng[fr[1]], rng[fr[1]]}}}, {0}, 1,
+           "1 " + std::to_string(ax) + (sg > 0 ? " 1" : " 0"));
         // cone: s_i = p2 Range_i sigma_i
         std::array<Poly, 3> c;
         const double rc[3] = {pr.Rc, pr.Rc, pr.Sc};
         c[ax] = QD(sg * rc[ax]) * P2;
         c[fr[0]] = QD(rc[fr[0]]) * (P2 * P3);
         c[fr[1]] = QD(rc[fr[1]]) * (P2 * P4);
-        mk("cone" + nm, Poly::Const(Q(1)), c, {{{0, m0}, {-1, 1}, {0, 1}, {-1, 1}, {-1, 1}}}, {0, 2}, 1);
+        mk("cone" + nm, Poly::Const(Q(1)), c, {{{0, m0}, {-1, 1}, {0, 1}, {-1, 1}, {-1, 1}}}, {0, 2}, 1,
+           "2 " + std::to_string(ax) + (sg > 0 ? " 1" : " 0"));
         if (side == 0 && ax == 1 && sg == -1 && pr.wedge_prune) {
           // In the wedge: t = mu, nu al = tau, nu s1 = Rc t', nu^2 s2 = Rc t' (sigma1 - f), nu^2 s3 = t' (Sc sigma3 - Rc/2),
           // f = (17 - 22 mu)/64, so the pose is in the wedge's weighted cube when these are within nu0 (1, R1, R2, R3 scaled).
-          const double Rc = pr.Rc, Sc = pr.Sc, n0 = pr.nu0.ToDouble(), R1 = pr.R1, R2 = pr.R2, R3 = pr.R3;
+          // Exact over Q: this is Lean's ArcCap.wedgeBoxOk.
+          const Q Rc = QD(pr.Rc), Sc = QD(pr.Sc), n0 = pr.nu0, R1 = QD(pr.R1), R2 = QD(pr.R2), R3 = QD(pr.R3);
           out->back().prune = [=](const Box &b) {
-            const double tt = b[2].second;
-            const double f0 = (17 - 22 * b[0].second) / 64, f1 = (17 - 22 * b[0].first) / 64;
-            const double dsig = std::max(std::abs(b[3].first - f1), std::abs(b[3].second - f0));
-            const double dspin = std::max(std::abs(Sc * b[4].first - Rc / 2), std::abs(Sc * b[4].second - Rc / 2));
-            return std::max(std::abs(b[1].first), std::abs(b[1].second)) <= n0 && Rc * tt <= R1 * n0 &&
-                   Rc * tt * dsig <= R2 * n0 * n0 && tt * dspin <= R3 * n0 * n0;
+            auto lo = [&](int i) { return QD(b[i].first); };
+            auto hi = [&](int i) { return QD(b[i].second); };
+            auto f = [](const Q &m) { return Q(1, 64) * (Q(17) - Q(22) * m); };
+            auto mx = [](const Q &x, const Q &y) { return Q::Abs(x) < Q::Abs(y) ? Q::Abs(y) : Q::Abs(x); };
+            const Q tt = hi(2), dsig = mx(lo(3) - f(lo(0)), hi(3) - f(hi(0)));
+            const Q half = Rc * Q(1, 2), dspin = mx(Sc * lo(4) - half, Sc * hi(4) - half);
+            return !(n0 < mx(lo(1), hi(1))) && !(R1 * n0 < Rc * tt) && !(R2 * n0 * n0 < Rc * tt * dsig) &&
+                   !(R3 * n0 * n0 < tt * dspin);
           };
         }
       }
@@ -430,9 +438,11 @@ void AddWedgeCharts(const Solid &so, const Params &pr, std::vector<Chart> *out) 
   const Poly t_lin = lo_t + (hi_t - lo_t) * P1;
   const double n0 = pr.nu0.ToDouble(), Z = pr.Z;
   const double R1 = pr.R1, R2 = pr.R2, R3 = pr.R3;
-  auto mk = [&](const std::string &name, const Poly &al, const Poly &s1, const Poly &s2, const Poly &s3, Box box, bool cone, bool inner) {
+  auto mk = [&](const std::string &name, const Poly &al, const Poly &s1, const Poly &s2, const Poly &s3, Box box, bool cone, bool inner,
+                const std::string &idk) {
     Chart c;
     c.name = "W" + std::to_string(pr.regime) + ":" + name;
+    if (!idk.empty()) c.id = "w " + std::to_string(pr.piece) + " " + idk;
     // Mid chart at tc = tlo = 17/86 (v4 on line A-E exactly when t = tc (1 - b)):
     // b = (5/4) tc nu al, t = tc (1 - b + nu r), so that the offset of v4 from line A-E is proportional to r alone.
     const Poly b = pr.tmid ? (Q(5, 4) * pr.tlo) * (nu * al) : (t_lin * nu) * al;
@@ -459,10 +469,10 @@ void AddWedgeCharts(const Solid &so, const Params &pr, std::vector<Chart> *out) 
   const Q Zq = QD(Z);
   for (int al : {1, -1}) {
     const Poly A = Poly::Const(Q(al));
-    const std::string as = al > 0 ? "+" : "-";
-    mk("FeI" + as, A, nu * P2, P3, P4, {{NU, T, {-Z, Z}, {-R2, R2}, {-R3, R3}}}, false, true);
-    mk("FeP" + as, A, Zq * nu + P2, P3, P4, {{NU, T, {0, R1}, {-R2, R2}, {-R3, R3}}}, false, false);
-    mk("FeM" + as, A, Q(-1) * (Zq * nu + P2), P3, P4, {{NU, T, {0, R1}, {-R2, R2}, {-R3, R3}}}, false, false);
+    const std::string as = al > 0 ? "+" : "-", ab = al > 0 ? "1" : "0";
+    mk("FeI" + as, A, nu * P2, P3, P4, {{NU, T, {-Z, Z}, {-R2, R2}, {-R3, R3}}}, false, true, "");
+    mk("FeP" + as, A, Zq * nu + P2, P3, P4, {{NU, T, {0, R1}, {-R2, R2}, {-R3, R3}}}, false, false, "0 " + ab + " 1 0");
+    mk("FeM" + as, A, Q(-1) * (Zq * nu + P2), P3, P4, {{NU, T, {0, R1}, {-R2, R2}, {-R3, R3}}}, false, false, "0 " + ab + " 0 0");
     const double rc[3] = {pr.Zc, pr.R2c, pr.R3c};
     for (int ax = 0; ax < 3; ax++)
       for (int sg : {1, -1}) {
@@ -472,22 +482,23 @@ void AddWedgeCharts(const Solid &so, const Params &pr, std::vector<Chart> *out) 
         c[ax] = QD(sg * rc[ax]) * P2;
         c[fr[0]] = QD(rc[fr[0]]) * (P2 * P3);
         c[fr[1]] = QD(rc[fr[1]]) * (P2 * P4);
-        mk("cone" + as + std::to_string(ax) + (sg > 0 ? "+" : "-"), A, nu * c[0], c[1], c[2], {{NU, T, {0, 1}, {-1, 1}, {-1, 1}}}, true, false);
+        mk("cone" + as + std::to_string(ax) + (sg > 0 ? "+" : "-"), A, nu * c[0], c[1], c[2], {{NU, T, {0, 1}, {-1, 1}, {-1, 1}}}, true, false,
+           "1 " + ab + " " + std::to_string(ax) + (sg > 0 ? " 1" : " 0"));
       }
   }
   // Faces: al = p2 in [-1,1].
   for (int sg : {1, -1}) {
-    const std::string ss = sg > 0 ? "+" : "-";
+    const std::string ss = sg > 0 ? "+" : "-", sb = sg > 0 ? "1" : "0";
     const Q sq(sg);
-    mk("face0" + ss, P2, Poly::Const(sq * QD(R1)), P3, P4, {{NU, T, {-1, 1}, {-R2, R2}, {-R3, R3}}}, false, false);
+    mk("face0" + ss, P2, Poly::Const(sq * QD(R1)), P3, P4, {{NU, T, {-1, 1}, {-R2, R2}, {-R3, R3}}}, false, false, "2 " + sb + " 0 0");
     // s2 = sg R2; s1 from p3, s3 = p4.
     const Poly S2 = Poly::Const(QD(sg * R2)), S3 = Poly::Const(QD(sg * R3));
-    mk("face1I" + ss, P2, nu * P3, S2, P4, {{NU, T, {-1, 1}, {-Z, Z}, {-R3, R3}}}, false, false);
-    mk("face1P" + ss, P2, Zq * nu + P3, S2, P4, {{NU, T, {-1, 1}, {0, R1}, {-R3, R3}}}, false, false);
-    mk("face1M" + ss, P2, Q(-1) * (Zq * nu + P3), S2, P4, {{NU, T, {-1, 1}, {0, R1}, {-R3, R3}}}, false, false);
-    mk("face2I" + ss, P2, nu * P3, P4, S3, {{NU, T, {-1, 1}, {-Z, Z}, {-R2, R2}}}, false, false);
-    mk("face2P" + ss, P2, Zq * nu + P3, P4, S3, {{NU, T, {-1, 1}, {0, R1}, {-R2, R2}}}, false, false);
-    mk("face2M" + ss, P2, Q(-1) * (Zq * nu + P3), P4, S3, {{NU, T, {-1, 1}, {0, R1}, {-R2, R2}}}, false, false);
+    mk("face1I" + ss, P2, nu * P3, S2, P4, {{NU, T, {-1, 1}, {-Z, Z}, {-R3, R3}}}, false, false, "3 " + sb + " 0 0");
+    mk("face1P" + ss, P2, Zq * nu + P3, S2, P4, {{NU, T, {-1, 1}, {0, R1}, {-R3, R3}}}, false, false, "3 " + sb + " 1 0");
+    mk("face1M" + ss, P2, Q(-1) * (Zq * nu + P3), S2, P4, {{NU, T, {-1, 1}, {0, R1}, {-R3, R3}}}, false, false, "3 " + sb + " 2 0");
+    mk("face2I" + ss, P2, nu * P3, P4, S3, {{NU, T, {-1, 1}, {-Z, Z}, {-R2, R2}}}, false, false, "4 " + sb + " 0 0");
+    mk("face2P" + ss, P2, Zq * nu + P3, P4, S3, {{NU, T, {-1, 1}, {0, R1}, {-R2, R2}}}, false, false, "4 " + sb + " 1 0");
+    mk("face2M" + ss, P2, Q(-1) * (Zq * nu + P3), P4, S3, {{NU, T, {-1, 1}, {0, R1}, {-R2, R2}}}, false, false, "4 " + sb + " 2 0");
   }
 }
 
@@ -829,6 +840,7 @@ struct Certifier {
 
   // Tries witness wi on the box. Sample points' data in pts.
   bool verbose = false;
+  static inline thread_local std::string last_leaf;
   bool Try(int wi, const Box &box, const std::vector<PD> &pts) {
     const Wit &w = pool.wits[wi];
     st.tries++;
@@ -877,6 +889,7 @@ struct Certifier {
     }
     int j[3] = {0, 0, 0};
     std::string tuplog;
+    std::map<std::array<int, 3>, std::array<int, 3>> tupres;
     std::function<bool(int)> rec = [&](int k) -> bool {
       if (k == w.n) {
         // Inner choices: argmax set, plus the j's themselves.
@@ -912,6 +925,7 @@ struct Certifier {
             printf("      j %d %d %d  i %d %d %d worst-pt %.3g  bern %.3g\n", j[0], j[1], j[2], ii[0], ii[1], ii[2], std::get<0>(combos[r]), BernsteinLowerD(*D, box));
           }
           if (NonNeg(*TupD(wi, ii, j), box)) {
+            tupres[{j[0], j[1], j[2]}] = {ii[0], ii[1], ii[2]};
             if (g_leaflog) {
               char buf[80];
               snprintf(buf, sizeof buf, " %d %d %d %d %d %d ;", j[0], j[1], j[2], ii[0], ii[1], ii[2]);
@@ -926,6 +940,26 @@ struct Certifier {
       return true;
     };
     if (!rec(0)) return false;
+    {
+      // The export line, tuples in Lean's order (`tuples`: index 0 fastest).
+      std::string e = "l " + std::to_string(w.n) + " " + std::to_string(w.s);
+      for (int k = 0; k < w.n; k++) {
+        e += " " + std::to_string(pool.chords[w.ch[k]].a) + " " + std::to_string(pool.chords[w.ch[k]].b) + " " + std::to_string(S[k].size());
+        for (int v : S[k]) e += " " + std::to_string(v);
+      }
+      e += " " + std::to_string(ntup);
+      std::array<int, 3> jj{0, 0, 0};
+      std::function<void(int)> emit = [&](int k) {
+        if (k < 0) {
+          const auto &it = tupres.at(jj);
+          for (int q = 0; q < w.n; q++) e += " " + std::to_string(it[q]);
+          return;
+        }
+        for (int v : S[k]) { jj[k] = v; emit(k - 1); }
+      };
+      emit(w.n - 1);
+      last_leaf = e;
+    }
     if (g_leaflog) {
       std::string l = ch.name;
       char buf[64];
@@ -946,9 +980,10 @@ struct Certifier {
     if (DDot(w, w) == 0) return;
     if (ClearDeficit(so.Vd, u, w) < -1e-11) st.selfbad++;
   }
-  bool Rec(const Box &box, int depth) {
-    if (ch.prune && ch.prune(box)) { st.pruned++; return true; }
-    if (st.failed.load() >= max_fail) { st.failed++; return false; }
+  // Appends the subtree to *out, in preorder (`s axis`, `l ...`, `c`, `f`).
+  bool Rec(const Box &box, int depth, std::string *out) {
+    if (ch.prune && ch.prune(box)) { st.pruned++; *out += "c\n"; return true; }
+    if (st.failed.load() >= max_fail) { st.failed++; *out += "f\n"; return false; }
     // Sample points: center and 2 NV face centers pulled in slightly.
     double c[NV];
     for (int i = 0; i < NV; i++) c[i] = 0.5 * (box[i].first + box[i].second);
@@ -1006,6 +1041,7 @@ struct Certifier {
         SelfCheck(c);
         mru.erase(mru.begin() + r);
         mru.insert(mru.begin(), wi);
+        *out += last_leaf + "\n";
         return true;
       }
     }
@@ -1023,6 +1059,7 @@ struct Certifier {
         SelfCheck(c);
         mru.insert(mru.begin(), order[r].second);
         if (mru.size() > 6) mru.pop_back();
+        *out += last_leaf + "\n";
         return true;
       }
     }
@@ -1042,6 +1079,7 @@ struct Certifier {
         s += "\n";
         fputs(s.c_str(), g_faillog);
       }
+      *out += "f\n";
       return false;
     }
     int best = 0;
@@ -1054,8 +1092,9 @@ struct Certifier {
     Box b1 = box, b2 = box;
     b1[best].second = m;
     b2[best].first = m;
-    const bool r1 = Rec(b1, depth + 1);
-    const bool r2 = Rec(b2, depth + 1);
+    *out += "s " + std::to_string(best) + "\n";
+    const bool r1 = Rec(b1, depth + 1, out);
+    const bool r2 = Rec(b2, depth + 1, out);
     return r1 && r2;
   }
 };
@@ -1065,7 +1104,7 @@ struct Certifier {
 int main(int argc, char **argv) {
   std::fesetround(FE_TONEAREST);
   Params pr;
-  std::string family = "U", only, debug;
+  std::string family = "U", only, debug, export_file;
   int max_depth = 26, threads = 24;
   int64_t max_fail = 2000;
   for (int i = 1; i < argc; i++) {
@@ -1092,6 +1131,8 @@ int main(int argc, char **argv) {
     else if (a == "--zh") pr.zh = Q(std::string_view(next()));
     else if (a == "--tmid") { pr.tmid = true; pr.zmid = std::stod(next()); }
     else if (a == "--regime") pr.regime = std::stoi(next());
+    else if (a == "--piece") pr.piece = std::stoi(next());
+    else if (a == "--export") export_file = next();
     else if (a == "--sides") {
       pr.sides.clear();
       for (char c : next()) pr.sides.push_back(c - '0');
@@ -1121,7 +1162,7 @@ int main(int argc, char **argv) {
   else LOG(FATAL) << family;
   for (Chart &c : charts) c.Finish();
   printf("%zu charts, %zu chords, %zu witnesses, %s\n", charts.size(), pool.chords.size(), pool.wits.size(), g_exact ? "exact" : "double");
-  struct Task { size_t chart; Box box; };
+  struct Task { size_t chart; Box box; int m; std::string out; };
   std::vector<Task> tasks;
   std::vector<std::unique_ptr<Certifier>> certs(charts.size());
   std::vector<std::atomic<int>> pending(charts.size());
@@ -1144,7 +1185,7 @@ int main(int argc, char **argv) {
         const double md = 0.5 * (b0[i].first + b0[i].second);
         if (m >> i & 1) b[i].first = md; else b[i].second = md;
       }
-      tasks.push_back({k, b});
+      tasks.push_back({k, b, m, ""});
       cnt++;
     }
     pending[k] = cnt;
@@ -1165,7 +1206,8 @@ int main(int argc, char **argv) {
         printf("active %zu\n", c.active.size());
         c.Debug(b);
         c.verbose = true;
-        printf("Rec: %d\n", (int)c.Rec(b, max_depth));
+        std::string dummy;
+        printf("Rec: %d\n", (int)c.Rec(b, max_depth, &dummy));
       }
     return 0;
   }
@@ -1179,9 +1221,9 @@ int main(int argc, char **argv) {
       for (;;) {
         const size_t q = nx++;
         if (q >= tasks.size()) return;
-        const Task &task = tasks[q];
+        Task &task = tasks[q];
         Certifier &c = *certs[task.chart];
-        if (!c.Rec(task.box, 5)) okc[task.chart] = false;
+        if (!c.Rec(task.box, 5, &task.out)) okc[task.chart] = false;
         if (--pending[task.chart] == 0) {
           std::lock_guard<std::mutex> l(om);
           std::string hist;
@@ -1206,6 +1248,25 @@ int main(int argc, char **argv) {
   for (auto &t : ts) t.join();
   if (g_faillog) fclose(g_faillog);
   if (g_leaflog) fclose(g_leaflog);
+  if (!export_file.empty()) {
+    // Per chart: `chart <id>`, then the tree: the 5 root splits (axes 0..4), then each task's subtree.
+    FILE *f = fopen(export_file.c_str(), "w");
+    CHECK(f != nullptr) << export_file;
+    std::map<size_t, std::array<const std::string *, 32>> by;
+    for (const Task &t : tasks) by[t.chart][t.m] = &t.out;
+    for (const auto &[k, outs] : by) {
+      if (charts[k].id.empty()) continue;
+      fprintf(f, "chart %s\n", charts[k].id.c_str());
+      std::function<void(int, int)> node = [&](int i, int m) {
+        if (i == NV) { fputs(outs[m]->c_str(), f); return; }
+        fprintf(f, "s %d\n", i);
+        node(i + 1, m);
+        node(i + 1, m | 1 << i);
+      };
+      node(0, 0);
+    }
+    fclose(f);
+  }
   printf("TOTAL leaves %lld failed %lld\n", (long long)tot_ok.load(), (long long)tot_fail.load());
   return 0;
 }
