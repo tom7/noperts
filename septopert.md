@@ -38,14 +38,16 @@ apex edges of length 14, base edges 14√2 and inner triangle edges 7√2.
 Despite being discovered by Tom 7, the sevenness is really just a
 mathematical coincidence! Jackpot!
 
-The Lean statement is about exactly these integer points (largest
-|v| = √147 ≈ 12.12). Any scale or rigid transformation of the solid is a
-Nopert too.
+The Lean statement is about exactly these integer points (largest |v|
+= √147 ≈ 12.12). Any scale or rigid transformation of the solid is a
+Nopert too. (Internally, the proof actually reuses some older
+machinery and works in a different frame and scale, and then uses
+lemmas to prove the statement for the vertices above.)
 
-- Symmetry C3v, as for the other members: a 3-fold axis along (1,1,1)
+- Symmetry C3v, as for the other members: a 3-fold axis along (1, 1, 1)
   and three mirror planes. Vertices 0–2 are the permutations of
   (−7, 7, 7), vertices 3–5 those of (3, −4, −4), and vertex 6 is
-  7·(1,1,1).
+  7·(1, 1, 1).
 - 10 triangular faces, the same 10 as the rest of the family (vertex
   lists 015, 016, 024, 026, 045, 123, 126, 135, 234, 345); vertex
   degrees 5,5,5 (vertices 0–2), 4,4,4 (3–5) and 3 (vertex 6).
@@ -55,19 +57,15 @@ Nopert too.
   - *Cube corner.* The apex, vertex 6, is a cube corner, as for
     SeptopertM18: the edges 6–0, 6–1, 6–2 are mutually orthogonal, so
     the three apex dihedral angles are exactly 90°.
-  - *Exact Triforce.* In the orthographic projection along the 3-fold
-    axis (onto the plane through the origin perpendicular to (1,1,1)),
+- *Exact Triforce.* In the orthographic projection along the 3-fold
+    axis (onto the plane through the origin perpendicular to (1, 1, 1)),
     the image of vertex 3 is exactly −1/2 times the image of vertex 0
     (and so on), so the inner triangle 3–4–5 projects onto the medial
-    triangle of the base 0–1–2. Equivalently, vertex 4 projects onto the
-    midpoint of 0–2, so the plane of face 0–2–4 is parallel to the axis,
-    and face 0–2–4 is perpendicular to face 3–4–5 (whose normal is the
-    axis). This is a second right angle, and it
-    gives a second family of views at which the first order vanishes.
-
-  SeptopertM12 is in the same double special position; SeptopertM18
-  and Septopert Classic are not Triforces (Classic misses by about
-  3.5%).
+    triangle of the base 0–1–2. Equivalently, vertex 4 projects onto
+    the midpoint of 0–2, so the plane of face 0–2–4 is parallel to the
+    axis, and face 0–2–4 is perpendicular to face 3–4–5 (whose normal
+    is the axis). This is a second right angle, and it gives a second
+    family of views at which the first order vanishes.
 
 ### Edge info
 
@@ -123,6 +121,22 @@ compiled code and only then constructs `IsNopert intVerts`, printing
 ```
 instantiated: IsNopert Septopert.intVerts (CapOk, ArcOk, AxisOk, PCapOk checked natively; tube and chart tables checked)
 ```
+
+## Other Septoperts
+
+This page describes *the* canonical Septopert, which has the smallest
+integer coordinates of the family. It sits on the edge (we think) of
+the family, in a special position with an exact cube corner and an
+exact Triforce.
+
+We proved several other members of the family nopert on the way:
+
+ * [Septopert M12](septopert-m12.md) is in the same double special position
+ * [Septopert M18](septopert-m18.md) has the cube corner, but the triforce
+ misses by about 3.7%.
+ * [Septopert Classic](septopert-classic.md) is in general position,
+ although it is close (90.333818° dihedral angle, 3.5% off triforce).
+
 
 ## How the proof works
 
@@ -187,6 +201,7 @@ small certificate checked by `checkSeptopertFamily` (about 4 seconds):
 The table is [`proof/SeptopertFamily/data/leastheight.txt`](proof/SeptopertFamily/data/leastheight.txt)
 (2.7 MB). Like the other results, this is a kernel theorem (axioms
 `propext`, `Classical.choice`, `Quot.sound`) plus a native check of the data.
+
 
 ## Status
 

@@ -52,7 +52,7 @@ And they are all 7s (3 + 4 = 7)!
 The Lean statement (`proof/Septopert/Integer.lean`) is about exactly these
 points, and the vertices in the [STL file](septopert.stl) are exact.
 
-- Symmetry: C3v, with the 3-fold axis along (1,1,1).
+- Symmetry: C3v, with the 3-fold axis along (1, 1, 1).
 - Combinatorics: 10 triangular faces, vertex degrees 5,5,5 (0–2), 4,4,4
   (3–5) and 3 (vertex 6). Using the terminology of Johnson solids (though
   it is not one), it is a gyroelongated triangular pyramid (by analogy with
@@ -63,8 +63,7 @@ points, and the vertices in the [STL file](septopert.stl) are exact.
 - The apex, vertex 6, is a cube corner: its three edges are exactly
   perpendicular.
 - Its integer coordinates are the smallest possible for a Nopert of this
-  form: no member of the family with height (half the range of the
-  coordinates, rounded up) below 7 is a Nopert.
+  form: no member of the family can have all its integer coordinates in [-6, 6].
 
 See the [Septopert page](septopert.md) for details. Other members of the
 family we proved Nopert: [Septopert Classic](septopert-classic.md),
