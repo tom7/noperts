@@ -49,6 +49,8 @@ A *type* is one of the combinatorial types of 7-vertex polytopes, in the numberi
 - *Criteria:* Conditions that make a polytope Rupert or a view free, from depth patterns on the rim
   or from the position of faces, explicit Rupert shapes, and a depth lemma for an edge of a
   quadrilateral seen end-on (the quad-edge lemma).
+- *Gram extension:* Which images of one or two views a positive definite symmetric matrix can
+  take.
 - *Limits of the method:* Examples showing that these criteria have no converse and that natural
   shortcuts fail. What a rim looks like does not decide freedom, the chirotope does not decide the
   silhouette, and limits of views can mislead.
@@ -880,6 +882,33 @@ def QuadEdgeLemmaStrict : Prop :=
       WeakAlternationFree (fun i : ZMod 5 => w ⬝ᵥ (![b, m, f, c, g] : ZMod 5 → Fin 3 → ℝ) i)
 
 end QuadEdge
+
+/-! ## Gram extension -/
+
+section GramExtension
+
+open Matrix
+
+/-- **Which pairs of covectors a metric can take two views to.** Take two independent views `u₁`,
+`u₂` and two vectors `w₁`, `w₂`. There is a positive definite symmetric matrix `G` with
+`G u₁ = w₁` and `G u₂ = w₂` exactly when `w₁ ⬝ᵥ u₂ = w₂ ⬝ᵥ u₁` and the two-by-two matrix with rows
+`(w₁·u₁, w₁·u₂)` and `(w₁·u₂, w₂·u₂)` is positive definite, that is `0 < w₁·u₁`, `0 < w₂·u₂`
+and `(w₁·u₂)² < (w₁·u₁)(w₂·u₂)`. In words: The metric restricted to the plane spanned by `u₁` and
+`u₂` is a positive definite form, and nothing else is required, since the third dimension is free to
+be made as stiff as needed. -/
+def GramExtensionTwoViews : Prop :=
+  ∀ u₁ u₂ w₁ w₂ : Fin 3 → ℝ, LinearIndependent ℝ ![u₁, u₂] →
+    ((∃ G : Matrix (Fin 3) (Fin 3) ℝ, G.PosDef ∧ G *ᵥ u₁ = w₁ ∧ G *ᵥ u₂ = w₂) ↔
+      (w₁ ⬝ᵥ u₂ = w₂ ⬝ᵥ u₁ ∧ 0 < w₁ ⬝ᵥ u₁ ∧ 0 < w₂ ⬝ᵥ u₂ ∧
+        (w₁ ⬝ᵥ u₂) ^ 2 < (w₁ ⬝ᵥ u₁) * (w₂ ⬝ᵥ u₂)))
+
+/-- **Which covectors a metric can take one view to.** For a nonzero view `u`, some positive
+definite symmetric matrix `G` has `G u = w` exactly when `0 < w ⬝ᵥ u`. -/
+def GramExtensionOneView : Prop :=
+  ∀ u w : Fin 3 → ℝ, u ≠ 0 →
+    ((∃ G : Matrix (Fin 3) (Fin 3) ℝ, G.PosDef ∧ G *ᵥ u = w) ↔ 0 < w ⬝ᵥ u)
+
+end GramExtension
 
 /-! ## Metrics, spin, and the farthest vertex -/
 
