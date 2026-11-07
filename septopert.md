@@ -156,7 +156,7 @@ and symbolic study, not part of the proof).
 Write a member of the family by its five coordinate values x = (x0, ..., x4):
 the points (x0, x1, x1), (x2, x3, x3) and their permutations, and
 (x4, x4, x4). Its **height** is half the range of those values, rounded up.
-The Septopert's values are 7, −7, 3, −4, 7 (range 14), so its height is 7.
+The Septopert's values are −7, 7, 3, −4, 7 (range 14), so its height is 7.
 No integer member of lower height is a nopert. In
 [`proof/SeptopertFamily.lean`](proof/SeptopertFamily.lean):
 
