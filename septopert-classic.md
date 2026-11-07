@@ -236,8 +236,9 @@ hosted here):
 
 - `cap-1_16.cert`: 550 KB, the cap certificate around the mirror directions;
 - `tube_packs/`: 1.4 MB, 22 identity-tube tables and `manifest.txt`;
-- `packs/`: 45 MB, 92 per-code solution packs (`packs/c<chart>/t<code>.pack`;
-  the largest, `packs/c0/t2.pack`, is 2.9 MB).
+- `packs/`: 45 MB of solution packs, one for each of the 4 charts and 22
+  view-code triangles (`packs/c<chart>/t<triangle>.pack`; the largest,
+  `packs/c0/t2.pack`, is 2.9 MB).
 
 All three together compress to about 8 MB (`tar czf`).
 
