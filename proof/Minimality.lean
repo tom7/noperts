@@ -25,6 +25,7 @@ public import Minimality.Type21RobA
 public import Minimality.Type21T2A
 public import Minimality.Type20SilC
 public import Minimality.Type20IMA
+public import Minimality.Type20IV
 public import Minimality.Type21Ties
 public import Minimality.Type29Ties
 public import Minimality.SevenTypes
@@ -1076,13 +1077,17 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- `ℓ1`, `ℓν` of the covering; the hyperplanes `ClassH`, `ClassHR` of the persistent horizontal double
     -- normals of `V`, `T_A` and their `R`-images are no longer special: Step 4 slides along `Δ`'s resp. `016`'s
     -- circle there, `CaseC20Step4`).
-    -- The `sorry` has in context `hrest' : CaseC20Rest x` (`CaseC20Special''` without the I_MA disjuncts, which
-    -- are Rupert: `Type20IMA`, `caseC20Special''_reduce`) and `hsil : H20SilResid`.
+    -- The `sorry` has in context `hrest'' : CaseC20Rest2 x` (`CaseC20Special''` without the I_MA, I_MC and I_V
+    -- disjuncts, which are Rupert: `Type20IMA`, `Type20IMC*`, `Type20IV`, `caseC20Special''_reduce`,
+    -- `caseC20Rest_reduce`; what remains are m1', m2' and the lines 273, 274, 283, 286, i.e. I_A and I_Q)
+    -- and `hsil : H20SilResid`.
     have hQ := quadPairPar20 hx hN rfl hR
     exact byGen1 (quadPair hx hN hR {0, 1, 3, 5} {2, 4, 5, 6} 5 (by decide) (by decide) (by decide) (by decide)
       (by decide)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
         by_cases hrest : Minimality.CaseC20.CaseC20Special'' x
         · rcases Minimality.CaseC20.caseC20Special''_reduce hx hR hrest with hrup | hrest'
+          · exact (hN.2 hrup).elim
+          rcases Minimality.CaseC20.caseC20Rest_reduce hx hR hrest' with hrup | hrest''
           · exact (hN.2 hrup).elim
           -- silhouette cells at all segment and facet-line views (Type20SilA–C): `sorry` only under `H20SilResid`
           by_cases hsil : Minimality.H20S.H20SilResid (Minimality.H20S.h20s_fac hR)
