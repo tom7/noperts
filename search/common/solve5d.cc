@@ -188,6 +188,12 @@ std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
         return rows5d::CapLeaf{(int)(opt_.caps.size() + ci)};
     }
   }
+  if (job_.chart == 0 && !opt_.piece_caps.empty()) {
+    for (size_t ci = 0; ci < opt_.piece_caps.size(); ci++) {
+      if (exact5d::PieceCapLeafValid(iv, node.tri, job_.chart, opt_.piece_caps[ci]))
+        return rows5d::CapLeaf{(int)(opt_.caps.size() + opt_.trib_caps.size() + ci)};
+    }
+  }
   // Tie leaves: the box lies within the tie tube about H_u H_x (deltoidal
   // hexecontahedron). Screen trace(H_u R H_x) at the center first.
   if (opt_.ties != nullptr) {
@@ -387,6 +393,21 @@ std::optional<bool> Solver::ViewBeatsBox(const Node &node, const geom5d::BoxD &b
 Split Solver::ChooseSplit(const Node &node) const {
   const geom5d::BoxD bd = geom5d::ToDouble(node.box);
   int axis = geom5d::WidestAxis(bd);
+  // A box in a piece cap's ball closes at the piece cap's leaves of the tube
+  // tree (they are not refined by a smaller box): refine the view down to them.
+  if (job_.chart == 0 && !opt_.piece_caps.empty()) {
+    double wmax2 = 0;
+    for (int a = 0; a < 3; a++) {
+      const double c = std::abs(bd.center[a]) + bd.radius[a];
+      wmax2 += c * c;
+    }
+    const auto reached = atlas_->Walk(job_.t, rows5d::ViewPath(node.path));
+    for (size_t ci = 0; ci < opt_.piece_caps.size() && !reached.leaf; ci++) {
+      const size_t index = opt_.caps.size() + opt_.trib_caps.size() + ci;
+      if (wmax2 <= opt_.piece_caps[ci].wmax2_d * (1 - 1e-9) && index < 32 && (reached.caps >> index & 1))
+        return Split{.view = true};
+    }
+  }
   if (job_.chart == 0 && geom5d::ContainsOrigin(bd)) {
     // Only the identity tube can close a box containing the identity. If the
     // box is too big for every radius certified below this view, shrink it;

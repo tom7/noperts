@@ -1,9 +1,9 @@
 import NeoSeptopert.ArcCap
 
 /-!
-Checks the NeoSeptopert's arc cap certificate (`capcert-neo.cc --export`, see
-`nopert229/out/bottleneck/neo/capwork/exportall.sh`) and instantiates the claim
-(`NeoSeptopert.arcHolds_of_cert`).
+Diagnostic: checks only the NeoSeptopert's arc cap certificate (`capcert-neo.cc --export`,
+stage `arccert` of `search/neoseptopert/rebuild.sh`) and instantiates the claim
+(`NeoSeptopert.arcHolds_of_cert`). The full verification, `constructNeoSeptopert`, checks it too.
 
 Usage: `checkNeoSeptopertArc <cert.txt> [diag]` (`diag`: per-chart results, sequential
 over the charts).

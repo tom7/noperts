@@ -4,7 +4,9 @@
 // search does this when it creates a cap leaf; this covers journals written
 // by searches that screened cap leaves in double precision only.
 //
-// Usage: capleaf-check.exe --caps caps.txt [--jobs DIR] [--trees_dir DIR] [--bdd codebdd.json]
+// Piece caps (--piece_caps, as search5d's) come after the caps in the index.
+//
+// Usage: capleaf-check.exe --caps caps.txt [--piece_caps FILE] [--jobs DIR] [--trees_dir DIR] [--bdd codebdd.json]
 #include <cstdio>
 #include <filesystem>
 #include <fstream>
@@ -17,10 +19,12 @@
 #include "tubeatlas5d.h"
 int main(int argc, char **argv) {
   std::string jobs = "jobs", trees = "trees_r2", bdd = "codebdd.json", caps_file;
+  std::vector<piececap::PieceCap> piece_caps;
   for (int i = 1; i < argc; i++) {
     const std::string a = argv[i];
     auto next = [&]() -> std::string { CHECK(i + 1 < argc); return argv[++i]; };
     if (a == "--caps") caps_file = next();
+    else if (a == "--piece_caps") piece_caps = piececap::ReadPieceCaps(next());
     else if (a == "--jobs") jobs = next();
     else if (a == "--trees_dir") trees = next();
     else if (a == "--bdd") bdd = next();
@@ -61,10 +65,13 @@ int main(int argc, char **argv) {
         const auto *cl = std::get_if<rows5d::CapLeaf>(&r.leaf);
         if (cl == nullptr) continue;
         total++;
-        CHECK(cl->cap >= 0 && cl->cap < (int)caps.size()) << r.path;
+        CHECK(cl->cap >= 0 && cl->cap < (int)(caps.size() + piece_caps.size())) << r.path;
         const auto T = rows5d::NodeTriangle(atlas.Triangle(t), r.path);
         const auto B = rows5d::NodeBox(geom5d::RootBox(chart), r.path);
-        if (!exact5d::CapLeafValid(geom5d::ToInterval(B), T, chart, caps[cl->cap])) {
+        const bool ok = cl->cap < (int)caps.size()
+            ? exact5d::CapLeafValid(geom5d::ToInterval(B), T, chart, caps[cl->cap])
+            : exact5d::PieceCapLeafValid(geom5d::ToInterval(B), T, chart, piece_caps[cl->cap - caps.size()]);
+        if (!ok) {
           bad++;
           printf("INVALID c%d t%d %s cap %d\n", chart, t, r.path.c_str(), cl->cap);
         }

@@ -24,6 +24,7 @@
 #include <vector>
 
 #include "bignum/big.h"
+#include "piececap.h"
 
 namespace exact5d {
 
@@ -206,6 +207,10 @@ struct CapExact {
 };
 Q KLower(const KQ &x);
 bool CapLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, const CapExact &cap);
+// Cap leaf of a piece cap (piececap.h): the box (chart 0) is in the cap's Cayley
+// ball and all corners of the triangle lie in one piece. Lean (M18's arc cap):
+// NeoSeptopert.arcLeafOk.
+bool PieceCapLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, const piececap::PieceCap &cap);
 
 // Cap leaves over Q(t), t the tribonacci constant (snub cube; the caps of
 // nopert229/sccap.cc, Lean Pipeline/KCap*). TQ is a + b t + c t^2; signs are

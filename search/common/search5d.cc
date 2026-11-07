@@ -14,7 +14,7 @@
 //                [--bdd codebdd.json] [--cone_samples N] [--split_kappa K]
 //                [--split_rule 0|1|2] [--min_peel 5..7]
 //                [--view_scale S] [--view_lookahead] [--lookahead_band B] [--tube_view_depth D]
-//                [--max_full_retry N] [--half_turn_prune] [--tie_dir DIR] [--caps FILE] [--trib_caps FILE]
+//                [--max_full_retry N] [--half_turn_prune] [--tie_dir DIR] [--caps FILE] [--trib_caps FILE] [--piece_caps FILE]
 //                [--exact_check] [--retry_deferred] [--requeue_deferred] [--blend5d L]
 //
 // --blend5d L (default 4, validated on the Septopert): 0 the inner vertex
@@ -204,6 +204,7 @@ int main(int argc, char **argv) {
         args.opt.caps.push_back(c);
       }
     }
+    else if (a == "--piece_caps") args.opt.piece_caps = piececap::ReadPieceCaps(next());
     else if (a == "--trib_caps") {
       // Per line: kind mu0 R t0 s0, then x e1 e2 Z E1 X (each 3 coordinates
       // a b c = a + b t + c t^2). Rationals (sccapcert --caps).

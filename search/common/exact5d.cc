@@ -844,6 +844,17 @@ bool CapLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, const Ca
   return true;
 }
 
+bool PieceCapLeafValid(const Interval5 &iv, const TriangleQ &tri, int chart, const piececap::PieceCap &cap) {
+  if (chart != 0) return false;
+  Q w2(0);
+  for (int a = 2; a < 5; a++) {
+    const Q lo2 = iv.min[a] * iv.min[a], hi2 = iv.max[a] * iv.max[a];
+    w2 = w2 + (lo2 < hi2 ? hi2 : lo2);
+  }
+  if (cap.wmax2 < w2) return false;
+  return piececap::PieceOf(cap, tri, [](const VecQ &p) { return p; }) >= 0;
+}
+
 TQ TAdd(const TQ &x, const TQ &y) { return {x.a + y.a, x.b + y.b, x.c + y.c}; }
 TQ TSub(const TQ &x, const TQ &y) { return {x.a - y.a, x.b - y.b, x.c - y.c}; }
 TQ TScale(const Q &k, const TQ &x) { return {k * x.a, k * x.b, k * x.c}; }

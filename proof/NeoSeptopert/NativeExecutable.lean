@@ -12,8 +12,9 @@ public import Pipeline.SparseLocalViewTree
 The DH's `NativeExecutable` re-targeted to the NeoSeptopert: a release-mode program
 checks the shared identity-tube tables and the four chart tables in parallel
 (data-only, untrusted decoders) and keeps the semantic validity proofs in `PLift`;
-`constructProof` returns `CapOk → ¬ IsRupert verts`, and the cap certificate
-check (`CapsNative.certOkPar`, `certOk_of_par`) supplies `CapOk`. The view
+`constructProof` returns `CapOk → ArcOk → ¬ IsRupert verts`, and the certificate
+checks supply the hypotheses: the cap's (`CapsNative.certOkPar`, `certOk_of_par`)
+`CapOk`, the arc cap's (`arcCertOkPar`, `arcCertOk_of_par`) `ArcOk`. The view
 cover needs no native check (`ViewCover.coverValid_eq` is kernel-checked).
 -/
 
@@ -137,8 +138,8 @@ structure CheckedChartTables where
   valid : ∀ chart, (tables chart).Valid
 
 theorem CheckedChartTables.notRupert (checked : CheckedChartTables) :
-    CapOk → ¬ IsRupert verts :=
-  fun hcap => not_rupert_of_valid_tables checked.tables checked.charts checked.valid hcap
+    CapOk → ArcOk → ¬ IsRupert verts :=
+  fun hcap harc => not_rupert_of_valid_tables checked.tables checked.charts checked.valid hcap harc
 
 /-- Check one chart's table and keep only the fact that a valid table for
 the chart exists (so the table's data can be freed before the next chart). -/
@@ -152,7 +153,7 @@ def checkChart (taskCount : Nat) (shared : SharedLocalTables)
   let valid ← checkGlobal s!"{chart}" taskCount table.1 hs
   pure ⟨⟨table.1, table.2.1, valid.down⟩⟩
 
-/-- Check all tables and construct `CapOk → ¬ IsRupert verts`. The chart
+/-- Check all tables and construct `CapOk → ArcOk → ¬ IsRupert verts`. The chart
 tables are loaded one at a time, as a function of the checked shared-local
 tables; the two equations keep a loader from checking rows under the wrong
 chart or tubes. Each chart's data is dropped once it is checked. -/
@@ -160,7 +161,7 @@ def constructProof (localTaskCount globalTaskCount : Nat)
     (localTables : SharedLocalTables)
     (loadChart : (shared : SharedLocalTables) → (chart : CayleyAtlas.ChartIndex) →
       IO {table : SolutionTree.Table // table.chart = chart ∧ table.sharedLocal = shared}) :
-    IO (PLift (CapOk → ¬ IsRupert verts)) := do
+    IO (PLift (CapOk → ArcOk → ¬ IsRupert verts)) := do
   let checkedLocal ← checkLocalAll localTaskCount localTables
   let shared := localTables
   have sharedValid : SharedLocalValid shared := checkedLocal.down
@@ -168,7 +169,7 @@ def constructProof (localTaskCount globalTaskCount : Nat)
   let valid1 ← checkChart globalTaskCount shared sharedValid 1 (← loadChart shared 1)
   let valid2 ← checkChart globalTaskCount shared sharedValid 2 (← loadChart shared 2)
   let valid3 ← checkChart globalTaskCount shared sharedValid 3 (← loadChart shared 3)
-  have notRupert : CapOk → ¬ IsRupert verts := by
+  have notRupert : CapOk → ArcOk → ¬ IsRupert verts := by
     obtain ⟨t0, c0, v0⟩ := valid0.down
     obtain ⟨t1, c1, v1⟩ := valid1.down
     obtain ⟨t2, c2, v2⟩ := valid2.down
@@ -190,7 +191,7 @@ def constructProof (localTaskCount globalTaskCount : Nat)
         · exact v2
         · exact v3 }
     exact checked.notRupert
-  log "constructed: CapOk → ¬ IsRupert verts"
+  log "constructed: CapOk → ArcOk → ¬ IsRupert verts"
   pure ⟨notRupert⟩
 
 /-- Check a cap certificate (`capcert-neoSeptopert.exe --export`) natively and return `CapOk`. -/
@@ -201,5 +202,15 @@ def checkCap (c : Cap.CapCert) : IO (PLift CapOk) := do
     pure ⟨⟨c, certOk_of_par c h⟩⟩
   else
     throw (IO.userError "the cap certificate is not valid")
+
+/-- Check an arc cap certificate (`capcert-neo.exe --export`, all pieces) natively and return
+`ArcOk`. -/
+def checkArc (c : ArcCap.Cert) : IO (PLift ArcOk) := do
+  let t0 ← IO.monoMsNow
+  if h : arcCertOkPar c = true then
+    log s!"valid arc cap certificate: {(← IO.monoMsNow) - t0} ms"
+    pure ⟨⟨c, arcCertOk_of_par c h⟩⟩
+  else
+    throw (IO.userError "the arc cap certificate is not valid")
 
 end NeoSeptopert.NativeExecutable

@@ -44,6 +44,7 @@ using vec3 = yocto::vec<double, 3>;
 
 #include "tubecert.cc"
 
+#include "piececap.h"
 #include "tubetree.h"
 
 using namespace tubetree;
@@ -66,6 +67,9 @@ struct SolverOptions {
   // triangles inside a cap become cap leaves instead of being certified.
   struct Cap { double c[3]; double rho; };
   std::vector<Cap> caps;
+  // --piece_caps FILE: caps given exactly by convex pieces (piececap.h): a
+  // triangle with all corners in one piece is a cap leaf. Index: after --cap's.
+  std::vector<piececap::PieceCap> piece_caps;
   // --cap_r R: the tube radius cap leaves claim (tubetree::CapLeaf), for the
   // cap theorems to certify. With R > 0 the tree is written with cap leaves
   // (it is not packable until Lean has the cap theorems); with 0 (default)
@@ -732,6 +736,13 @@ class CodeSolver {
         return true;
       }
     }
+    for (int ci = 0; ci < (int)opt_.piece_caps.size(); ci++) {
+      const auto point = [](const BigVecQ3 &c) { return piececap::VecQ{c.x, c.y, c.z}; };
+      if (piececap::PieceOf(opt_.piece_caps[ci], tri.corners, point) >= 0) {
+        if (index) *index = (int)opt_.caps.size() + ci;
+        return true;
+      }
+    }
     return false;
   }
 
@@ -935,6 +946,8 @@ int main(int argc, char **argv) {
       const double n = std::sqrt(cap.c[0] * cap.c[0] + cap.c[1] * cap.c[1] + cap.c[2] * cap.c[2]);
       for (double &x : cap.c) x /= n;
       opt.caps.push_back(cap);
+    } else if (arg == "--piece_caps" && i + 1 < argc) {
+      opt.piece_caps = piececap::ReadPieceCaps(argv[++i]);
     } else if (arg == "--cap_r" && i + 1 < argc) {
       opt.cap_r = BigRat(std::string_view(argv[++i]));
     } else if (arg == "--min_r" && i + 1 < argc) {

@@ -64,6 +64,10 @@ struct Options {
   // Cap leaves over Q(t) (snub cube; exact5d::TribCapLeafValid), after the
   // caps above in the leaf's index.
   std::vector<exact5d::TribCap> trib_caps;
+  // Piece caps (piececap.h; M18's arc cap), after the caps above in the leaf's
+  // index: all corners of the view triangle in one piece, the chart-0 box in
+  // the cap's Cayley ball (exact5d::PieceCapLeafValid).
+  std::vector<piececap::PieceCap> piece_caps;
   // Split the box when its widest half-width exceeds split_kappa times the
   // view triangle's angular diameter, else split the view.
   double split_kappa = 0.5;

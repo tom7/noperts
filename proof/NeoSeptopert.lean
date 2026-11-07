@@ -75,14 +75,17 @@ noncomputable def neoSeptopert : Finset ℝ³ :=
 
 /-- The certificate data is valid: there are four solution tables, one for each
 of the four charts that together cover every rotation, each passing Lean's
-validity check, and the cap certificate (which covers the small region the
-tables leave out, around the solid's mirror directions) passes its check.
-This is the statement that `constructNeoSeptopert` establishes by computation. -/
+validity check, the cap certificate (which covers the small region the
+tables leave out, around the solid's mirror directions) passes its check, and
+the arc cap certificate (which covers the other region the tables leave out,
+small rotations at views near the arc from (2, 2, -1) towards a mirror direction)
+passes its check. This is the statement that `constructNeoSeptopert` establishes by computation. -/
 def CertificatesValid : Prop :=
   ∃ table : CayleyAtlas.ChartIndex → SolutionTree.Table,
     (∀ chart, (table chart).chart = chart) ∧
     (∀ chart, (table chart).Valid) ∧
-    SolutionTree.CapOk
+    SolutionTree.CapOk ∧
+    SolutionTree.ArcOk
 
 /-- `neoSeptopert` is the vertex set the proof works with (`NeoSeptopert.verts`). -/
 theorem neoSeptopert_eq_verts : neoSeptopert = verts := by
@@ -109,9 +112,9 @@ theorem neoSeptopert_eq_verts : neoSeptopert = verts := by
 /-- If the certificate data is valid, the NeoSeptopert is not Rupert. -/
 theorem not_isRupert_of_certificatesValid (h : CertificatesValid) :
     ¬ IsRupert neoSeptopert := by
-  obtain ⟨table, hchart, hvalid, hcap⟩ := h
+  obtain ⟨table, hchart, hvalid, hcap, harc⟩ := h
   rw [neoSeptopert_eq_verts]
-  exact not_rupert_of_valid_tables table hchart hvalid hcap
+  exact not_rupert_of_valid_tables table hchart hvalid hcap harc
 
 /-- The NeoSeptopert is a genuine solid: its points are not all in one plane.
 (Proved outright: vertices 0, 1, 2 and 6 span a tetrahedron.) -/
