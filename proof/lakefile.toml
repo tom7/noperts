@@ -1,7 +1,7 @@
 name = "noperts"
 defaultTargets = ["Noperts", "SeptopertClassic", "SeptopertM18", "Minimality", "ProofOfMainTheorem",
   "DeltoidalHexecontahedron", "PentagonalHexecontahedron", "SnubDodecahedron", "SnubCube", "Nopert231",
-  "constructSeptopertClassic", "checkSeptopertClassicCap", "constructSeptopertM18", "checkSeptopertM18Cap", "checkSeptopertM18Arc", "checkSeptopertM12Arc", "checkSeptopertM12Axis", "checkSeptopertM12PCap", "constructSeptopertM12", "checkM7Arc", "checkM7Axis", "checkM7PCap", "constructM7", "constructDeltoidalHexecontahedron",
+  "constructSeptopertClassic", "checkSeptopertClassicCap", "constructSeptopertM18", "checkSeptopertM18Cap", "checkSeptopertM18Arc", "checkSeptopertM12Arc", "checkSeptopertM12Axis", "checkSeptopertM12PCap", "constructSeptopertM12", "checkSeptopertArc", "checkSeptopertAxis", "checkSeptopertPCap", "constructSeptopert", "constructDeltoidalHexecontahedron",
   "constructPentagonalHexecontahedron", "constructSnubDodecahedron", "constructSnubCube",
   "checkSnubCubeCap", "constructNopert231",
   "Tests"]
@@ -66,8 +66,8 @@ name = "SeptopertM12"
 globs = ["SeptopertM12", "SeptopertM12.+"]
 
 [[lean_lib]]
-name = "M7"
-globs = ["M7", "M7.+"]
+name = "Septopert"
+globs = ["Septopert", "Septopert.+"]
 
 [[lean_lib]]
 name = "ProofOfMainTheorem"
@@ -148,18 +148,18 @@ root = "checkSeptopertM12Axis"
 buildType = "release"
 
 [[lean_exe]]
-name = "constructM7"
-root = "constructM7"
+name = "constructSeptopert"
+root = "constructSeptopert"
 buildType = "release"
 
 [[lean_exe]]
-name = "checkM7Arc"
-root = "checkM7Arc"
+name = "checkSeptopertArc"
+root = "checkSeptopertArc"
 buildType = "release"
 
 [[lean_exe]]
-name = "checkM7Axis"
-root = "checkM7Axis"
+name = "checkSeptopertAxis"
+root = "checkSeptopertAxis"
 buildType = "release"
 
 [[lean_exe]]
@@ -168,8 +168,8 @@ root = "checkSeptopertM12PCap"
 buildType = "release"
 
 [[lean_exe]]
-name = "checkM7PCap"
-root = "checkM7PCap"
+name = "checkSeptopertPCap"
+root = "checkSeptopertPCap"
 buildType = "release"
 
 [[lean_exe]]
