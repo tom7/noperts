@@ -33,8 +33,9 @@ The result has two parts, and they are trusted differently.
    It depends only on the standard axioms (`propext`, `Classical.choice`,
    `Quot.sound`) and on nothing about how the data was produced.
 
-2. **A Lean verification** that the data is valid. The data is about 85
-   million table rows (6.7 GB), far too much for the kernel to check directly.
+2. **A Lean verification** that the data is valid. The data is about 850
+   thousand table rows (45 MB) and two cap certificates (1.1 MB), too much for
+   the kernel to check directly.
    Instead, the program `constructNeoSeptopert` (in `constructNeoSeptopert.lean`)
    reads the data, runs Lean's own validity checks on every row as compiled
    code, and, only if every check passes, uses part 1 to build a value of type
