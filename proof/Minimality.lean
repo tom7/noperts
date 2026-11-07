@@ -26,6 +26,7 @@ public import Minimality.Type21T2A
 public import Minimality.Type20SilC
 public import Minimality.Type20IMA
 public import Minimality.Type20IV
+public import Minimality.Type20IA2
 public import Minimality.Type21Ties
 public import Minimality.Type29Ties
 public import Minimality.SevenTypes
@@ -399,7 +400,7 @@ classification into the 29 types (`Minimality.exists_sevenType`, `Minimality/Cla
 sign-vector certificate checked in the kernel). Not formalized (`sorry`): type 24 inside
 `C̄ ∪ Σ_B` (it is proved outside, `not_type24_outside_Cbar_of_isNopert`); for type 29 (split by
 the class of its octahedron, `Minimality.type29_cap`, `Minimality.NF29.classes`) the classes K1,
-K2 and the class boundaries; and for every other type except 02, 05, 07, 08, 09, 12, 13, 14, 17, 18, 19, 22, 23,
+K2 and the class boundaries; and for every other type except 02, 05, 07, 08, 09, 12, 13, 14, 17, 18, 19, 20, 22, 23,
 25, 26, 27, 28 (type 08: `not_type08_closed`, the chain `Type08S/C2K*ZA` ending in `C2K47ZA`; the others closed completely: each of their views pairs a triangle with another facet,
 so `TriGenPar`
 or `TriGenFarP` always holds, `Minimality.triGenPar_or_farP_idx`, and `EdgePar` or `EdgeFarP` at the
@@ -410,7 +411,7 @@ a right triangular prism (`Minimality.type10_rightPrism`: the rectangle at `14` 
 relabelling, at `25`, `36`); for 07 and 14, two quadrilaterals,
 the residual position `QuadTripleRect` is refuted from the facets,
 `Minimality.not_quadTripleRect_type07`, `…type14`; type 02 is closed by the case-(c) frame `Minimality/Type02*.lean` (sector theorems, assembly `Type02Assemble.lean`) and `QuadRect02.lean`; type 18 is closed by the normal-form frame
-analysis, `Minimality/CaseC18*.lean`, PROOFS §§27, 35-38, ending in `CaseC18Special'.isRupert`; type 09 likewise: the frame analysis `CaseC09*.lean` with the special positions of `CaseC09Close.lean` (`CaseC09Special.isRupert`) and the residual `QuadTripleRect` of `QuadRect09.lean`, PROOFS §§34, 39-40), and for K3 and K4, the special
+analysis, `Minimality/CaseC18*.lean`, PROOFS §§27, 35-38, ending in `CaseC18Special'.isRupert`; type 20 likewise: the normal-form frame `CaseC20*.lean`, the special positions closed by the covering items of `Type20IMA`, `Type20IMC*`, `Type20IV`, `Type20IA*`, `Type20IQ` (`caseC20Special''_isRupert`); type 09 likewise: the frame analysis `CaseC09*.lean` with the special positions of `CaseC09Close.lean` (`CaseC09Special.isRupert`) and the residual `QuadTripleRect` of `QuadRect09.lean`, PROOFS §§34, 39-40), and for K3 and K4, the special
 positions: each type's theorem in `Minimality/Cases.lean` closes the case under its general-position
 hypotheses (`byGen1`, …), and the `sorry` that remains has exactly their negation as hypothesis.
 Every remaining `sorry` also assumes that no face of the type has an admissible view, i.e.
@@ -1077,22 +1078,14 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- `ℓ1`, `ℓν` of the covering; the hyperplanes `ClassH`, `ClassHR` of the persistent horizontal double
     -- normals of `V`, `T_A` and their `R`-images are no longer special: Step 4 slides along `Δ`'s resp. `016`'s
     -- circle there, `CaseC20Step4`).
-    -- The `sorry` has in context `hrest'' : CaseC20Rest2 x` (`CaseC20Special''` without the I_MA, I_MC and I_V
-    -- disjuncts, which are Rupert: `Type20IMA`, `Type20IMC*`, `Type20IV`, `caseC20Special''_reduce`,
-    -- `caseC20Rest_reduce`; what remains are m1', m2' and the lines 273, 274, 283, 286, i.e. I_A and I_Q)
-    -- and `hsil : H20SilResid`.
+    -- Type 20 is closed, no `sorry`: the reduced special positions `CaseC20Special''` are Rupert
+    -- (`caseC20Special''_isRupert`, `Type20IA2`: the items I_MA, I_MC, I_V, I_A, I_Q of the covering notes,
+    -- `Type20IMA`, `Type20IMC*`, `Type20IV`, `Type20IA*`, `Type20IQ`), and off them `isRupert_of_not_special''`.
     have hQ := quadPairPar20 hx hN rfl hR
     exact byGen1 (quadPair hx hN hR {0, 1, 3, 5} {2, 4, 5, 6} 5 (by decide) (by decide) (by decide) (by decide)
       (by decide)) (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
         by_cases hrest : Minimality.CaseC20.CaseC20Special'' x
-        · rcases Minimality.CaseC20.caseC20Special''_reduce hx hR hrest with hrup | hrest'
-          · exact (hN.2 hrup).elim
-          rcases Minimality.CaseC20.caseC20Rest_reduce hx hR hrest' with hrup | hrest''
-          · exact (hN.2 hrup).elim
-          -- silhouette cells at all segment and facet-line views (Type20SilA–C): `sorry` only under `H20SilResid`
-          by_cases hsil : Minimality.H20S.H20SilResid (Minimality.H20S.h20s_fac hR)
-          · sorry
-          · exact (Minimality.H20S.h20s_rule_false hN hx hR hsil).elim
+        · exact (hN.2 (Minimality.CaseC20.caseC20Special''_isRupert hx hR hrest)).elim
         · obtain ⟨F⟩ := Minimality.CaseC20.frame20 hx (noThreeCollinear_seven x hN hx) hR hQ.1 hQ.2
           exact hN.2 (F.isRupert_of_not_special'' hx hrest)))
   · -- type 21: `not_type21_of_multiView21` (Theorem 24.3: ties at a family of tilt tests with
