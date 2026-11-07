@@ -1,4 +1,4 @@
-import SeptopertM18
+import Septopert
 import DeltoidalHexecontahedron
 import PentagonalHexecontahedron
 import SnubDodecahedron

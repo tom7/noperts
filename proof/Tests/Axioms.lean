@@ -1,5 +1,4 @@
 import Septopert
-import SeptopertM18
 import DeltoidalHexecontahedron
 import PentagonalHexecontahedron
 import SnubDodecahedron
@@ -25,7 +24,6 @@ elab "#assert_standard_axioms " id:ident : command => do
     throwError "{name} depends on {axioms}"
 
 #assert_standard_axioms Septopert.isNopert_intVerts
-#assert_standard_axioms SeptopertM18.isNopert_of_certificatesValid
 #assert_standard_axioms DeltoidalHexecontahedron.isNopert_of_certificatesValid
 #assert_standard_axioms PentagonalHexecontahedron.isNopert_of_certificatesValid
 #assert_standard_axioms SnubDodecahedron.isNopert_of_certificatesValid
