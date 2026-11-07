@@ -196,7 +196,7 @@ def tuplePolyC (n : ℕ) (cA cB : List (List (ℕ × KPoly K 5))) (fA fB : ℕ �
     KPoly.add 5 (KPoly.sub 5 (lookupD (cA.getD k []) (i k) (fA k (i k))) (lookupD (cB.getD k []) (j k) (fB k (j k))))
       acc) (KPoly.zero 5)
 
-def Leaf.check (cd : ChartData K) (id : ChartId) (box : Box) : Bool :=
+def Leaf.checkBy (red : KPoly K 5 → KPoly K 5) (cd : ChartData K) (box : Box) : Bool :=
   let n := l.n
   let Ls := (List.range n).map (l.L V cd)
   let cA := (List.range n).map fun k => ((l.inner.map (·.getD k 0)).eraseDups).map fun i => (i, l.termA V cd Ls k i)
@@ -210,13 +210,17 @@ def Leaf.check (cd : ChartData K) (id : ChartId) (box : Box) : Bool :=
   let T := tuples n (fun k => l.S k)
   T.length = l.inner.length &&
   (T.zip l.inner).all fun (jt, it) =>
-    nonnegOn (reduce id (tuplePolyC n cA cB (l.termA V cd Ls) (termB V cd Ls)
+    nonnegOn (red (tuplePolyC n cA cB (l.termA V cd Ls) (termB V cd Ls)
       (fun k => if h : k < n then jt ⟨k, h⟩ else 0) (fun k => it.getD k 0))) box
 
-/-- `Leaf.check` with the tuples checked as native tasks (`Leaf.checkPar_eq`: the
+/-- The balanced check of a chart: `Leaf.checkBy` with the chart's division `reduce`. -/
+def Leaf.check (cd : ChartData K) (id : ChartId) (box : Box) : Bool :=
+  l.checkBy V (reduce id) cd box
+
+/-- `Leaf.checkBy` with the tuples checked as native tasks (`Leaf.checkPar_eq`: the
 same value): a leaf near a codimension-2 view can have hundreds of tuples, each
 an exact Bernstein bound. -/
-def Leaf.checkPar (cd : ChartData K) (id : ChartId) (box : Box) : Bool :=
+def Leaf.checkParBy (red : KPoly K 5 → KPoly K 5) (cd : ChartData K) (box : Box) : Bool :=
   let n := l.n
   let Ls := (List.range n).map (l.L V cd)
   let cA := (List.range n).map fun k => ((l.inner.map (·.getD k 0)).eraseDups).map fun i => (i, l.termA V cd Ls k i)
@@ -230,14 +234,22 @@ def Leaf.checkPar (cd : ChartData K) (id : ChartId) (box : Box) : Bool :=
   let T := tuples n (fun k => l.S k)
   T.length = l.inner.length &&
   (((T.zip l.inner).map fun (jt, it) => Task.spawn fun _ =>
-    nonnegOn (reduce id (tuplePolyC n cA cB (l.termA V cd Ls) (termB V cd Ls)
+    nonnegOn (red (tuplePolyC n cA cB (l.termA V cd Ls) (termB V cd Ls)
       (fun k => if h : k < n then jt ⟨k, h⟩ else 0) (fun k => it.getD k 0))) box).all fun t => t.get)
 
-theorem Leaf.checkPar_eq (cd : ChartData K) (id : ChartId) (box : Box) :
-    l.checkPar V cd id box = l.check V cd id box := by
-  unfold Leaf.checkPar Leaf.check
+theorem Leaf.checkParBy_eq (red : KPoly K 5 → KPoly K 5) (cd : ChartData K) (box : Box) :
+    l.checkParBy V red cd box = l.checkBy V red cd box := by
+  unfold Leaf.checkParBy Leaf.checkBy
   simp only [List.all_map, Function.comp_def]
   rfl
+
+/-- `Leaf.check` with the tuples checked as native tasks. -/
+def Leaf.checkPar (cd : ChartData K) (id : ChartId) (box : Box) : Bool :=
+  l.checkParBy V (reduce id) cd box
+
+theorem Leaf.checkPar_eq (cd : ChartData K) (id : ChartId) (box : Box) :
+    l.checkPar V cd id box = l.check V cd id box :=
+  l.checkParBy_eq V _ cd box
 
 theorem lookupD_eq (L : List (ℕ × KPoly K 5)) (f : ℕ → KPoly K 5) (hL : ∀ p ∈ L, p.2 = f p.1) (i : ℕ) :
     lookupD L i (f i) = f i := by
@@ -478,16 +490,16 @@ theorem cramer3 (s : ℝ) (u c0 c1 c2 : Fin 3 → ℝ) :
   funext i
   fin_cases i <;> simp [rcross, rdot] <;> ring
 
-theorem Leaf.check_soundOf (uP wP : PVec K) (id : ChartId) (V : Array (KVec K)) (l : Leaf)
-    (box : Box) (h : l.check V (chartDataOf uP wP V) id box = true) (hw : ∀ i, 0 ≤ (box i).2)
-    (y : Fin 5 → ℝ) (hy : KPoly.InBox box y) (h0 : 0 ≤ y 0)
-    (h1 : id.kind = .tcone → 0 ≤ y 1) (h2 : id.kind = .cone → 0 ≤ y 2)
+theorem Leaf.checkBy_soundOf (uP wP : PVec K) (red : KPoly K 5 → KPoly K 5) (V : Array (KVec K)) (l : Leaf)
+    (box : Box) (h : l.checkBy V red (chartDataOf uP wP V) box = true) (hw : ∀ i, 0 ≤ (box i).2)
+    (y : Fin 5 → ℝ) (hy : KPoly.InBox box y)
+    (hred : ∀ q, 0 ≤ KPoly.eval 5 (red q) y → 0 ≤ KPoly.eval 5 q y)
     (S : Set ℝ³) (hS : S = convexHull ℝ {v | ∃ vj ∈ V.toList.map kval, v = Cap.toEuc vj})
     (p : MatrixPose) (ξ : ℝ) (hview : p.view = ξ • uP.eval y)
     (hR : p.relativeRotation = cayleyMatrix (wP.eval y 0) (wP.eval y 1) (wP.eval y 2)) :
     ¬ RupertPose p S := by
   set cd := chartDataOf uP wP V with hcd
-  unfold Leaf.check at h
+  unfold Leaf.checkBy at h
   simp only [Bool.and_eq_true, Bool.or_eq_true, decide_eq_true_eq, List.all_eq_true] at h
   obtain ⟨⟨⟨⟨⟨hshape, hind⟩, hlamck⟩, hposck⟩, hdom⟩, hlen, htup⟩ := h
   set n := l.n with hn
@@ -560,7 +572,7 @@ theorem Leaf.check_soundOf (uP wP : PVec K) (id : ChartId) (V : Array (KVec K)) 
       have hb := hbl _ (l.blend_mem (it.getD k 0 - V.size) (by omega))
       exact ⟨hb.1.1.1, hb.1.1.2, hb.1.2, hb.2⟩
   rw [tuplePolyC_eq] at htk
-  have hP0 := eval_reduce_nonneg id _ y h0 h1 h2 (eval_lowerDeg_nonneg htk hw hy)
+  have hP0 := hred _ (eval_lowerDeg_nonneg htk hw hy)
   rw [eval_tuplePolyOf uP wP V l _ _ hiv y] at hP0
   -- The weights.
   have hlam : ∀ k : Fin n, 0 ≤ lamR k := by
@@ -629,6 +641,17 @@ theorem Leaf.check_soundOf (uP wP : PVec K) (id : ChartId) (V : Array (KVec K)) 
       rw [dif_pos k.isLt]
     simp only [e] at hP0
     exact hP0
+
+theorem Leaf.check_soundOf (uP wP : PVec K) (id : ChartId) (V : Array (KVec K)) (l : Leaf)
+    (box : Box) (h : l.check V (chartDataOf uP wP V) id box = true) (hw : ∀ i, 0 ≤ (box i).2)
+    (y : Fin 5 → ℝ) (hy : KPoly.InBox box y) (h0 : 0 ≤ y 0)
+    (h1 : id.kind = .tcone → 0 ≤ y 1) (h2 : id.kind = .cone → 0 ≤ y 2)
+    (S : Set ℝ³) (hS : S = convexHull ℝ {v | ∃ vj ∈ V.toList.map kval, v = Cap.toEuc vj})
+    (p : MatrixPose) (ξ : ℝ) (hview : p.view = ξ • uP.eval y)
+    (hR : p.relativeRotation = cayleyMatrix (wP.eval y 0) (wP.eval y 1) (wP.eval y 2)) :
+    ¬ RupertPose p S :=
+  Leaf.checkBy_soundOf uP wP (reduce id) V l box h hw y hy
+    (fun q hq => eval_reduce_nonneg id q y h0 h1 h2 hq) S hS p ξ hview hR
 
 theorem Leaf.check_sound (fr : Frame K) (pr : Params) (id : ChartId) (V : Array (KVec K)) (l : Leaf)
     (box : Box) (h : l.check V (chartData fr pr id V) id box = true) (hw : ∀ i, 0 ≤ (box i).2)
