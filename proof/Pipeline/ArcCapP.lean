@@ -8,7 +8,7 @@ public import Pipeline.ArcCapAxis
 # The wedge along a circle of views and the U cap around it (the P cap)
 
 For a special view P with an edge-on face whose circle of views carries a two-dimensional first-order
-flex (M12: P = (2, 1, 0) and face 024), the views near the circle are blown up as
+flex (SeptopertM12: P = (2, 1, 0) and face 024), the views near the circle are blown up as
 
   u = X − t E₁ − b E₂,   w = x W₁ + y W₂ + z W₃   (rotation basis `Frame.W1..W3`, weights k = 1),
 
