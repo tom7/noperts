@@ -1,0 +1,72 @@
+solid septopert
+  facet normal -0.425797036 -0.425797036 0.798369443
+    outer loop
+      vertex -0.5625 0.28125 0.28125
+      vertex 0.28125 -0.5625 0.28125
+      vertex 0.09375 0.09375 0.53125
+    endloop
+  endfacet
+  facet normal -0.666666667 -0.666666667 0.333333333
+    outer loop
+      vertex -0.5625 0.28125 0.28125
+      vertex -0.28125 -0.28125 -0.28125
+      vertex 0.28125 -0.5625 0.28125
+    endloop
+  endfacet
+  facet normal -0.425797036 0.798369443 -0.425797036
+    outer loop
+      vertex -0.5625 0.28125 0.28125
+      vertex 0.09375 0.53125 0.09375
+      vertex 0.28125 0.28125 -0.5625
+    endloop
+  endfacet
+  facet normal -0.666666667 0.333333333 -0.666666667
+    outer loop
+      vertex -0.5625 0.28125 0.28125
+      vertex 0.28125 0.28125 -0.5625
+      vertex -0.28125 -0.28125 -0.28125
+    endloop
+  endfacet
+  facet normal -0.0671913141 0.705508798 0.705508798
+    outer loop
+      vertex -0.5625 0.28125 0.28125
+      vertex 0.09375 0.09375 0.53125
+      vertex 0.09375 0.53125 0.09375
+    endloop
+  endfacet
+  facet normal 0.798369443 -0.425797036 -0.425797036
+    outer loop
+      vertex 0.28125 -0.5625 0.28125
+      vertex 0.28125 0.28125 -0.5625
+      vertex 0.53125 0.09375 0.09375
+    endloop
+  endfacet
+  facet normal 0.333333333 -0.666666667 -0.666666667
+    outer loop
+      vertex 0.28125 -0.5625 0.28125
+      vertex -0.28125 -0.28125 -0.28125
+      vertex 0.28125 0.28125 -0.5625
+    endloop
+  endfacet
+  facet normal 0.705508798 -0.0671913141 0.705508798
+    outer loop
+      vertex 0.28125 -0.5625 0.28125
+      vertex 0.53125 0.09375 0.09375
+      vertex 0.09375 0.09375 0.53125
+    endloop
+  endfacet
+  facet normal 0.705508798 0.705508798 -0.0671913141
+    outer loop
+      vertex 0.28125 0.28125 -0.5625
+      vertex 0.09375 0.53125 0.09375
+      vertex 0.53125 0.09375 0.09375
+    endloop
+  endfacet
+  facet normal 0.577350269 0.577350269 0.577350269
+    outer loop
+      vertex 0.53125 0.09375 0.09375
+      vertex 0.09375 0.53125 0.09375
+      vertex 0.09375 0.09375 0.53125
+    endloop
+  endfacet
+endsolid septopert

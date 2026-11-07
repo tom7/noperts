@@ -3,8 +3,10 @@
 How the repository is laid out and how to build it. Each result has its own
 page with its statement, trust model and reproduction steps:
 
-- [septopert-classic.md](septopert-classic.md): Septopert Classic, a 7-vertex nopert (a Lean
+- [septopert.md](septopert.md): the Septopert, a 7-vertex nopert (a Lean
   verification backed by certificate data);
+- [septopert-classic.md](septopert-classic.md): Septopert Classic, the first
+  7-vertex nopert (likewise);
 - [deltoidal-hexecontahedron.md](deltoidal-hexecontahedron.md): the deltoidal
   hexecontahedron is a nopert (a Lean verification backed by certificate
   data);
@@ -43,6 +45,10 @@ page with its statement, trust model and reproduction steps:
     domain of `Pipeline/FivefoldReduction.lean`. The snub dodecahedron
     and #231 check identity-tube rows against tangent-cone generators
     (`Pipeline/SparseSupport.lean`).
+  - `Septopert`: entry point `proof/Septopert.lean`, details in
+    `proof/Septopert/`. Built like Septopert Classic below, with one more
+    certificate, the arc cap (`Septopert/ArcCap.lean`, `Septopert/ArcLeaf.lean`;
+    `Pipeline/ArcCap*.lean`).
   - `SeptopertClassic`: entry point `proof/SeptopertClassic.lean`, details in
     `proof/SeptopertClassic/` (its model, `SolidModel.lean`; its own solution tree,
     with C3 and mirror reductions and caps). Its identity-tube tables are
@@ -55,10 +61,10 @@ page with its statement, trust model and reproduction steps:
   - `ProofOfMainTheorem`: `proof/ProofOfMainTheorem.lean` combines the two
     into the main theorem of `proof/MainTheorem.lean` (whose statements are
     by Jason Reed): `minimalNopert_of_certificatesValid :
-    SeptopertClassic.CertificatesValid → MinimalNopert`, that 7 is the smallest
+    Septopert.CertificatesValid → MinimalNopert`, that 7 is the smallest
     number of vertices of a nopert, and its second half,
     `notExistsNonRupertPolyhedronBelowSizeSeven`, without hypotheses. The
-    minimality half is a Lean proof; Septopert Classic half is conditional on
+    minimality half is a Lean proof; the other half is conditional on
     `CertificatesValid`, i.e. a Lean verification.
   - `DeltoidalHexecontahedron`: entry point
     `proof/DeltoidalHexecontahedron.lean`, details in
@@ -89,7 +95,9 @@ page with its statement, trust model and reproduction steps:
   - `Tests`: checks that run at build time: every headline uses only the
     standard axioms, no solid's model is in scope without opening its
     namespace, and the chart-3 table is valid for each solid that uses it.
-  - Executables: `constructSeptopertClassic` (checks Septopert Classic's certificate
+  - Executables: `constructSeptopert` (checks the Septopert's certificate
+    data), `checkSeptopertCap` and `checkSeptopertArc` (check only its cap and
+    arc cap certificates), `constructSeptopertClassic` (checks Septopert Classic's certificate
     data), `checkSeptopertClassicCap` (checks only its cap certificate),
     `constructDeltoidalHexecontahedron` (checks the deltoidal
     hexecontahedron's certificate data), `constructPentagonalHexecontahedron`
@@ -105,8 +113,8 @@ page with its statement, trust model and reproduction steps:
   - `search/common/`: the code the searches share (the identity tube, the
     identity blow-up certificates `idcap.cc` with `kpoly.h`, the 5D search
     and packing, `codebdd`, unit tests) and their build rules, `common.mk`.
-  - `search/septopert-classic/`, `search/dh/`, `search/ph/`, `search/sd/`,
-    `search/sc/`, `search/nopert231/`: the searches for Septopert Classic, the
+  - `search/septopert/`, `search/septopert-classic/`, `search/dh/`, `search/ph/`, `search/sd/`,
+    `search/sc/`, `search/nopert231/`: the searches for the Septopert, Septopert Classic, the
     deltoidal hexecontahedron, the pentagonal hexecontahedron, the snub
     dodecahedron, the snub cube and candidate #231, each with its `rebuild.sh` (see the result's page),
     model files, Lean data generators, own tools, and `solid.h` (the
@@ -141,7 +149,7 @@ page with its statement, trust model and reproduction steps:
 - Linux
 - elan (the toolchain is pinned in `proof/lean-toolchain`, v4.34.1, with Mathlib v4.34.1)
 - for `search/`: clang, GMP, svn, python3 (python3 regenerates Lean data
-  files in the model stages: Septopert Classic's view cover with
+  files in the model stages: the Septopert's and Septopert Classic's view covers with
   `proof/scripts/emit_septopert_view_cover.py`, the other solids' data with
   the scripts in their `search/<solid>/` directories)
 - optionally `systemd-run --user`, which the rebuild scripts use to cap
@@ -178,7 +186,7 @@ Optionally, `proof/git-hooks/pre-commit` (copy it to `.git/hooks/`; it needs
 
 ```sh
 ./get-cc-lib.sh
-make -C search/septopert-classic -j 16 all    # likewise search/dh, search/ph, ...
+make -C search/septopert -j 16 all    # likewise search/septopert-classic, search/dh, search/ph, ...
 ```
 
 Each solid's directory builds its own copy of the shared code (which

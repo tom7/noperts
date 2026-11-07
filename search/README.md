@@ -10,6 +10,7 @@ whatever data it writes.
   `contacts5d`, `cert5d`, `rows5d`, `solve5d`, `search5d`, `pack5d`, ...),
   `codebdd` (all but #231's), the diagnostics and renderings, the unit tests,
   and the build rules (`common.mk`).
+- [`septopert/`](septopert/): the Septopert's search (`septopert/rebuild.sh`).
 - [`septopert-classic/`](septopert-classic/): Septopert Classic's search
   (`septopert-classic/rebuild.sh`).
 - [`dh/`](dh/): the deltoidal hexecontahedron's search (`dh/rebuild.sh`).

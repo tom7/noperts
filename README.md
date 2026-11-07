@@ -33,27 +33,27 @@ The nopert verifications involve a huge case analysis. So when I say "verificati
 
 ![The Septopert, spinning around with confidence](septopert.gif)
 
-This is the Septopert, a minimal Nopert by vertex count (seven). 
+This is the Septopert, a minimal Nopert by vertex count (seven), and the Nopert of least known height. 
 Here they are:
 
 ```
-(-940638,   327651,   327651)
-( 327651,  -940638,   327651)
-( 327651,   327651,  -940638)
-( 703968,    47788,    47788)
-(  47788,   703968,    47788)
-(  47788,    47788,   703968)
-(-514207,  -514207,  -514207)
+(-18,   9,   9)
+(  9, -18,   9)
+(  9,   9, -18)
+( 17,   3,   3)
+(  3,  17,   3)
+(  3,   3,  17)
+( -9,  -9,  -9)
 ```
 
 It has three-fold symmetry, so you see the same numbers over and over.
 
-In the proof (`proof/Septopert.lean`) we divide everything by 2^20
-(1048576) so that the radius of the solid is close to 1, which you
+In the proof (`proof/Septopert.lean`) we divide everything by 32
+so that the radius of the solid is below 1, which you
 might want to do too, unless you want a REALLY BIG nopert. Rupertness
 is invariant under scale and rigid transformations, of course.
 
-- All of the values fit in 32-bit floats, so the vertices in the
+- All of the values fit in 32-bit floats (even after dividing by 32), so the vertices in the
   [STL file](septopert.stl) are exact!
 - Symmetry: C3v, with the 3-fold axis along (1,1,1).
 - Combinatorics: 10 triangular faces, vertex degrees 5,5,5 (0–2), 4,4,4
@@ -63,6 +63,9 @@ is invariant under scale and rigid transformations, of course.
 - Viewed down the axis from the small face: A Triforce. Triangle 3-4-5
   projects to within 3.5% of the medial triangle of 0-1-2, and vertex 6 is
   hidden behind the center.
+- The apex, vertex 6, is a cube corner: its three edges are exactly
+  perpendicular.
+<!-- TODO(Tom): check the Triforce numbers above; they were written for Septopert Classic and not recomputed for the Septopert. -->
 
 ## Prints Nopert
 
@@ -76,7 +79,7 @@ AI: Embarrassingly much AI is involved here. David did the initial attempt at pr
 
 Meanwhile we learned that earlier this year, Tony Zeng [proposed](https://arxiv.org/pdf/2604.26531) a much smaller solid (8 vertices) as a candidate Nopert. David was able to [verify it](https://github.com/dwrensha/StellatedTetrahedron/tree/main) in Lean using the improved machinery. 
 
-This stood as the smallest proven Nopert for about one day. I had been simultaneously racing to verify a 7-vertex shape, the Septopert described above, that I found with computer search using my adversarial solvers. It is only just barely Nopert, so the proof requires a large certificate (7 gigabytes of packed data). I verified that on Oct 9, taking about 4 hours on a 64-core behemoth.
+This stood as the smallest proven Nopert for about one day. I had been simultaneously racing to verify a 7-vertex shape, the Septopert described above, that I found with computer search using my adversarial solvers. It is only just barely Nopert, so the proof requires a large certificate (7 gigabytes of packed data). I verified that on Oct 9, taking about 4 hours on a 64-core behemoth. That first Septopert is now called [Septopert Classic](septopert-classic.md). An integer shape near it, with a cube-corner apex, was then verified using a new kind of certificate (an arc cap), and it is the Septopert on this page.
 
 The natural question is then: Can we find a six-vertex Nopert? Or maybe we could prove that every tetrahedron is Rupert? Or every five-vertex solid? Starting from some ideas of Jason's from 2025 and I like to think some wise guidance from its academic advisor and taskmaster (me), Opus 5.5 was able to [prove this](minimality.md) in about a day (Lean kernel-only proof): All convex solids with six or fewer vertices are Rupert. That means that the Septopert is a minimal Nopert (by vertex count).
 
@@ -87,4 +90,4 @@ The size of the certificates is annoying because it means you have to re-run the
 Lean code (proof/) is Apache 2.0. The C++ code (search/) is GPLv3
 except where noted.
 
-<center><img src="septopert-dry-salt-bed.jpg" width="868" height="549" alt ="The Septopert on the Dry Salt Bed"></center>
+<center><img src="septopert-dry-salt-bed.jpg" width="868" height="549" alt ="Septopert Classic on the Dry Salt Bed"></center>

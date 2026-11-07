@@ -1,6 +1,10 @@
 # Septopert Classic
 Tom 7, 10 Oct 2026
 
+Septopert Classic was the first Septopert found. It has been superseded by
+[the Septopert](septopert.md), a nearby 7-vertex Nopert with small integer
+coordinates; this page is kept for history.
+
 Septopert Classic is a new convex polyhedron with 7 vertices that is not Rupert.
 Since 7 is the [fewest possible vertices](minimality.md), this is the
 smallest possible Nopert.
@@ -29,7 +33,7 @@ The solid is the convex hull of these points (its vertices):
 ```
 
 The proof divides by 2^20 so that the maximum magnitude is about 1.
-In lowest terms (the form used in Lean, `septopert-classic` in
+In lowest terms (the form used in Lean, `septopertClassic` in
 `proof/SeptopertClassic.lean`):
 
 | vertex | x | y | z |
@@ -57,7 +61,7 @@ In lowest terms (the form used in Lean, `septopert-classic` in
 
 ### Edge info
 
-![Line drawing of two views of the septopert-classic, with colored edges](septopert-classic-edges.svg)
+![Line drawing of two views of Septopert Classic, with colored edges](septopert-classic-edges.svg)
 
 | color | description | dihedral angle | relative edge length        |
 |-------|-------------|----------------|-----------------------------|
@@ -71,7 +75,7 @@ In lowest terms (the form used in Lean, `septopert-classic` in
 In [`proof/SeptopertClassic.lean`](proof/SeptopertClassic.lean):
 
 ```lean
-theorem isNopert_of_certificatesValid (h : CertificatesValid) : IsNopert septopert-classic
+theorem isNopert_of_certificatesValid (h : CertificatesValid) : IsNopert septopertClassic
 ```
 
 `IsNopert V` (in `proof/Nopert.lean`) says that the points of `V` are not all
@@ -94,8 +98,8 @@ This is a **Lean verification**, not a direct kernel-only Lean proof:
 2. **Verification of the data.** The data is about 850,000 table rows
    (45 MB), too much for the kernel. The program `constructSeptopertClassic` runs
    the same Lean validity checks as compiled code on every row, and only if
-   all pass does it construct `IsNopert septopert-classic` (via part 1) and print
-   `instantiated: IsNopert septopert-classic (Septopert Classic is a Nopert: not Rupert)`.
+   all pass does it construct `IsNopert septopertClassic` (via part 1) and print
+   `instantiated: IsNopert septopertClassic (Septopert Classic is a Nopert: not Rupert)`.
    This step trusts Lean's compiler and runtime to evaluate the checks
    correctly. This is the same trust as `native_decide`, though `native_decide` is
    not used.
@@ -186,7 +190,7 @@ for Septopert Classic:
 Verified on 2026-10-15 on a 64-core machine: `constructSeptopertClassic` checked
 the cap certificate, the 22 tube tables (250 rows, 176 of them identity
 blow-up rows) and the four chart tables (476,073, 143,787, 123,839 and
-104,243 rows) and printed `instantiated: IsNopert septopert-classic (Septopert Classic
+104,243 rows) and printed `instantiated: IsNopert septopertClassic (Septopert Classic
 is a Nopert: not Rupert)`. You can reproduce it yourself, following the
 instructions in [BUILDING.md](BUILDING.md):
 
@@ -231,7 +235,7 @@ times on two different computers (October 9 and 10), and independently
 from a fresh clone in a sandbox. This first version of the proof used
 the "identity tube" to rule out local passages. Its data was enormous
 at about 85 million rows (6.7 GB), taking 3 hours and 15 GB of RAM on
-64 cores; see the [historic revision](https://github.com/tom7/noperts/blob/8a8ea2ab/septopert-classic.md).
+64 cores; see the [historic revision](https://github.com/tom7/noperts/blob/8a8ea2ab/septopert.md).
 
 A new version developed a few days later uses "blow-up" certificates,
 which cuts the size by about 50x, although each certificate is more
