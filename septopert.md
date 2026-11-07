@@ -34,9 +34,10 @@ The solid is the convex hull of these points (its vertices):
 
 The differences from the holotype [Septopert Classic](septopert-classic.md) are:
  * It has smaller integer coordinates
- * Its apex is a cube corner (dihedral edges are exactly 90°). It is in
-   a special position at the edge of the Septopert family. This makes it
-   harder to prove nopert; it needed a new kind of certificate.
+ * Its apex is a cube corner (dihedral angles are exactly 90°). It is
+   in a special position at the edge (we think) of the Septopert
+   family. This makes it harder to prove nopert; it needed a new kind
+   of certificate.
 
 The proof divides by 32 so that the maximum magnitude is below 1. In lowest
 terms (the form used in Lean, `septopert` in `proof/Septopert.lean`):
@@ -103,11 +104,11 @@ that this solid is not Rupert. `IsRupert` (in
 `proof/MainTheorem.lean`) is the Rupert property: Two copies of the
 solid, each rotated, can be placed so that the shadow of one lies
 strictly inside the shadow of the other. `CertificatesValid` says that
-the certificate data (four solution tables and a cap certificate)
-passes Lean's validity checks. The same `IsNopert` is used by the
-[minimality](minimality.md) result, so the [two
-together](proof/ProofOfMainTheorem.lean) say that the vertex count of
-the smallest possible nopert is exactly 7.
+the certificate data (four solution tables, a mirror cap certificate,
+and an arc cap certificate) passes Lean's validity checks. The same
+`IsNopert` is used by the [minimality](minimality.md) result, so the
+[two together](proof/ProofOfMainTheorem.lean) say that the vertex
+count of the smallest possible nopert is exactly 7.
 
 ## What is proved and what is verified
 
@@ -129,7 +130,7 @@ The main content is the non-existence of a rupert passage. This is a
 The C++ search in `search/septopert/` that produced the data does not
 need to be trusted: A mistake there can only produce data that fails
 the checks. That said, the C++ does its own independent checks of the
-certificate conditions as it searchs for them and prepares them for
+certificate conditions as it searches for them and prepares them for
 Lean. It would be very unlikely that a bug in the Lean
 compiler/runtime would also occur in the C++ search (perhaps something
 like a bug in GMP's integer multiplication routines.)
@@ -150,7 +151,7 @@ def IsRupert (vertices : Finset (EuclideanSpace ℝ (Fin 3))) : Prop :=
    inner_shadow ⊆ interior outer_shadow
 ```
 
-A set of points (note: not a solid) is Rupert if there exists
+A set of points (note: not a solid) is Rupert if there exist
 rotations for the inner and outer copies (`specialOrthogonalGroup`
 just means 3D rotation), and a 2D translation of the inner copy, such
 that the inner shadow is contained in the interior of the outer
@@ -200,12 +201,12 @@ outright along a sub-arc of views, the arc ending at U = (2,2,−1)/3,
 the view straight down the apex edge 6–2. On this arc the face 0–2–6
 is edge-on, and the right angle at the apex makes the first order
 exactly zero: A tilt of the inner copy relative to the outer one moves
-the apex and its two neighbours in the shadow by nothing at first
-order, so there is a whole cone of first-order flexes that the first
-order cannot rule out. Approaching the arc from the side where the
-margin is positive, it goes to zero linearly with the distance, so the
-tube radii shrink to nothing and no first-order certificate can reach
-the arc.
+the apex and its two neighbours only along the shadow's edge (never
+outward) at first order, so there is a whole cone of first-order
+flexes that the first order cannot rule out. Approaching the arc from
+the side where the margin is positive, it goes to zero linearly with
+the distance, so the tube radii shrink to nothing and no first-order
+certificate can reach the arc.
 
 The arc is not a passage, because the decision moves to second order,
 where it is strictly negative: With the rotation angle θ, the best
@@ -282,7 +283,7 @@ cd work && ../proof/.lake/build/bin/constructSeptopert \
 The certificate data is machine output, intended to be CC0 (but not
 hosted here):
 
-- `arc.cert`: 610 KB, the arc cap certificate (146 charts, 14,735 leaves);
+- `arc.cert`: 614 KB, the arc cap certificate (146 charts, 14,735 leaves);
 - `cap-1_16.cert`: 520 KB, the cap certificate around the mirror directions;
 - `tube_packs/`: 960 KB, 22 identity-tube tables and `manifest.txt`;
 - `packs/`: 44 MB, 88 per-code solution packs (`packs/c<chart>/t<code>.pack`,

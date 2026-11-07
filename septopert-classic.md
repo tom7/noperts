@@ -5,7 +5,7 @@ Tom 7, 10 Oct 2026
 > **Septopert Classic** is the first 7-vertex nopert we found, the
 > holotype for which the Septopert family is named. The canonical
 > [Septopert](septopert.md) is a member of that same family with even
-> simpler integer coordintes. Most people will care more about the
+> simpler integer coordinates. Most people will care more about the
 > canonical one; this page is mostly for archaeology purposes.
 
 **Septopert Classic** is a new convex polyhedron with 7 vertices that is
