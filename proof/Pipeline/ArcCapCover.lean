@@ -98,8 +98,9 @@ def GoodW (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (π : Piece) (�
     (1 / 2 * (ν * t * s1 * t) + ν * ν * (t * t) * s3)
 
 /-- A pose of the U cap is good. -/
-def GoodU (V : Array (KCap.KVec K)) (fr : Frame K) (side : Bool) (μ τ e s0 s1 s2 : ℝ) : Prop :=
-  Good V fr (if side then μ * e else μ * e * τ) (if side then μ * e * τ else -1 * (μ * e))
+def GoodU (V : Array (KCap.KVec K)) (fr : Frame K) (side : ℕ) (μ τ e s0 s1 s2 : ℝ) : Prop :=
+  Good V fr (if side = 0 then μ * e else if side = 1 then -1 * (μ * e) else μ * e * τ)
+    (if side = 0 ∨ side = 1 then μ * e * τ else if side = 2 then μ * e else -1 * (μ * e))
     (-1 / 2 * (μ * s1)) (1 / 2 * (μ * s0)) (μ * μ * s2)
 
 theorem pointGood_w (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (π : Piece) (k : WKind) (y : Fin 5 → ℝ) :
@@ -110,13 +111,20 @@ theorem pointGood_w (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (π :
     eval_pT, eval_pB, eval_pF]
   norm_num
 
-theorem pointGood_u (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (side : Bool) (k : UKind) (y : Fin 5 → ℝ) :
+theorem pointGood_u (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (side : ℕ) (k : UKind) (y : Fin 5 → ℝ) :
     PointGood V fr pr (.u side k) y ↔ GoodU V fr side (y 0) (y 1) (KPoly.eval 5 (uE (K := K) k) y)
       (KPoly.eval 5 (uS (K := K) pr k 0) y) (KPoly.eval 5 (uS (K := K) pr k 1) y)
       (KPoly.eval 5 (uS (K := K) pr k 2) y) := by
-  cases side <;>
-  simp [PointGood, coords, uCoords, GoodU, KPoly.eval_mul, eval_pconst, eval_pvar] <;>
-  norm_num
+  by_cases h0 : side = 0
+  · subst h0
+    simp [PointGood, coords, uCoords, GoodU, KPoly.eval_mul, eval_pconst, eval_pvar]
+  by_cases h1 : side = 1
+  · subst h1
+    simp [PointGood, coords, uCoords, GoodU, KPoly.eval_mul, eval_pconst, eval_pvar]
+  by_cases h2 : side = 2
+  · subst h2
+    simp [PointGood, coords, uCoords, GoodU, KPoly.eval_mul, eval_pconst, eval_pvar]
+  simp [PointGood, coords, uCoords, GoodU, KPoly.eval_mul, eval_pconst, eval_pvar, h0, h1, h2]
 
 /-- A face coordinate evaluates back to the vector it came from. -/
 theorem eval_faceCoord_of (a : Fin 3) (sg : Bool) (c : ℚ) (v : Fin 3 → ℝ)
@@ -292,7 +300,7 @@ theorem goodW_of_cube (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (π
     simpa [y, eval_pconst, eval_pvar, ← hs] using hG
 
 /-- **The U cube**: with every chart of the side closed, a pose of the cube is good. -/
-theorem goodU_of_cube (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (side : Bool)
+theorem goodU_of_cube (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (side : ℕ)
     (hg : ∀ k ∈ uKinds, ∀ y, KPoly.InBox (rootBox pr (.u side k)) y → PointGood V fr pr (.u side k) y)
     {μ τ e : ℝ} {s : Fin 3 → ℝ} (hμ0 : 0 ≤ μ) (hμ1 : μ ≤ pr.mu0) (hτ : |τ| ≤ 1)
     (he0 : 0 ≤ e) (he1 : e ≤ 1) (hs : ∀ i : Fin 3, |s i| ≤ rng pr i)
@@ -326,8 +334,8 @@ theorem goodU_of_cube (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (si
 
 /-! ### From the certificate -/
 
-theorem cert_tree {V : Array (KCap.KVec K)} {fr : Frame K} {pr : Params} {c : Cert}
-    (hc : certCheck V fr pr c = true) {id : ChartId} (hid : id ∈ requiredCharts) :
+theorem cert_tree {V : Array (KCap.KVec K)} {fr : Frame K} {pr : Params} {c : Cert} {req : List ChartId}
+    (hc : certCheckOn req V fr pr c = true) {id : ChartId} (hid : id ∈ req) :
     ∃ t, chartCheck V fr pr id t = true := by
   have := List.all_eq_true.mp hc id hid
   obtain ⟨e, -, he⟩ := List.any_eq_true.mp this
@@ -341,11 +349,16 @@ theorem mem_required_w (π : Piece) {k : WKind} (hk : k ∈ wKinds) : ChartId.w 
   simp only [List.mem_flatMap, List.mem_map]
   exact ⟨π, by cases π <;> simp, k, hk, rfl⟩
 
-theorem mem_required_u (side : Bool) {k : UKind} (hk : k ∈ uKinds) : ChartId.u side k ∈ requiredCharts := by
+theorem mem_uCharts {sides : List ℕ} {side : ℕ} (hs : side ∈ sides) {k : UKind} (hk : k ∈ uKinds) :
+    ChartId.u side k ∈ uCharts sides := by
+  simp only [uCharts, List.mem_flatMap, List.mem_map]
+  exact ⟨side, hs, k, hk, rfl⟩
+
+theorem mem_required_u {side : ℕ} (hs : side = 0 ∨ side = 3) {k : UKind} (hk : k ∈ uKinds) :
+    ChartId.u side k ∈ requiredCharts := by
   simp only [requiredCharts, List.mem_append]
   left
-  simp only [List.mem_flatMap, List.mem_map]
-  exact ⟨side, by cases side <;> simp, k, hk, rfl⟩
+  exact mem_uCharts (by rcases hs with rfl | rfl <;> simp) hk
 
 /-- The wedge's charts are closed. -/
 theorem cert_goodW {V : Array (KCap.KVec K)} {fr : Frame K} {pr : Params} {c : Cert} (hp : pr.Ok)
@@ -356,7 +369,7 @@ theorem cert_goodW {V : Array (KCap.KVec K)} {fr : Frame K} {pr : Params} {c : C
   exact chart_good V fr pr hp _ t ht (fun box h => by simp [coneOk] at h)
 
 /-- An F_e point inside the identity cone is a point of a cone chart. -/
-theorem fe_good_of_cone (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (side : Bool)
+theorem fe_good_of_cone (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (side : ℕ)
     (hRc : 0 < (pr.Rc : ℝ)) (hSc : 0 < (pr.Sc : ℝ))
     (hcone : ∀ (a : Fin 3) sg y, KPoly.InBox (rootBox pr (.u side (.cone a sg))) y →
       PointGood V fr pr (.u side (.cone a sg)) y)
@@ -398,38 +411,42 @@ theorem fe_good_of_cone (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (
   simpa [y', uE, uS, eval_kOne, eval_pvar] using hG
 
 /-- The U charts are closed, the part of the cone (1, −) of side true in the wedge left to `hprune`. -/
-theorem cert_goodU {V : Array (KCap.KVec K)} {fr : Frame K} {pr : Params} {c : Cert} (hp : pr.Ok)
-    (hc : certCheck V fr pr c = true) (hRc : 0 < (pr.Rc : ℝ)) (hSc : 0 < (pr.Sc : ℝ))
-    (hprune : ∀ box, wedgeBoxOk pr box = true → ∀ y, KPoly.InBox box y →
-      KPoly.InBox (rootBox pr (.u true (.cone 1 false))) y →
-      PointGood V fr pr (.u true (.cone 1 false)) y)
-    (side : Bool) :
+theorem cert_goodU {V : Array (KCap.KVec K)} {fr : Frame K} {pr : Params} {c : Cert} {req : List ChartId}
+    (hp : pr.Ok) (hc : certCheckOn req V fr pr c = true) (hRc : 0 < (pr.Rc : ℝ)) (hSc : 0 < (pr.Sc : ℝ))
+    (hprune : pr.wedge = true → ∀ box, wedgeBoxOk pr box = true → ∀ y, KPoly.InBox box y →
+      KPoly.InBox (rootBox pr (.u 0 (.cone 1 false))) y →
+      PointGood V fr pr (.u 0 (.cone 1 false)) y)
+    (side : ℕ) (hside : ∀ k ∈ uKinds, ChartId.u side k ∈ req) :
     ∀ k ∈ uKinds, ∀ y, KPoly.InBox (rootBox pr (.u side k)) y → PointGood V fr pr (.u side k) y := by
-  have hcone : ∀ (side : Bool) (a : ℕ) sg, a < 3 → ∀ y, KPoly.InBox (rootBox pr (.u side (.cone a sg))) y →
+  have hcone : ∀ (a : ℕ) sg, a < 3 → ∀ y, KPoly.InBox (rootBox pr (.u side (.cone a sg))) y →
       PointGood V fr pr (.u side (.cone a sg)) y := by
-    intro side a sg ha
-    obtain ⟨t, ht⟩ := cert_tree hc (mem_required_u side (mem_uKinds_cone ⟨a, ha⟩ sg))
+    intro a sg ha
+    obtain ⟨t, ht⟩ := cert_tree hc (hside _ (mem_uKinds_cone ⟨a, ha⟩ sg))
     refine chart_good V fr pr hp _ t ht ?_
     intro box h y hy hr
-    by_cases hs : side = true ∧ a = 1 ∧ sg = false
+    by_cases hs : side = 0 ∧ a = 1 ∧ sg = false
     · obtain ⟨rfl, rfl, rfl⟩ := hs
-      exact hprune box h y hy hr
+      simp only [coneOk, Bool.and_eq_true] at h
+      exact hprune h.1 box h.2 y hy hr
     · exfalso
       revert h
-      rcases side <;> rcases sg <;> obtain rfl | rfl | rfl : a = 0 ∨ a = 1 ∨ a = 2 := by omega
-      all_goals first | exact absurd ⟨rfl, rfl, rfl⟩ hs | simp [coneOk]
+      rcases side with _ | side
+      · rcases sg <;> obtain rfl | rfl | rfl : a = 0 ∨ a = 1 ∨ a = 2 := by omega
+        all_goals first | exact absurd ⟨rfl, rfl, rfl⟩ hs | simp [coneOk]
+      · rcases sg <;> obtain rfl | rfl | rfl : a = 0 ∨ a = 1 ∨ a = 2 := by omega
+        all_goals simp [coneOk]
   intro k hk
   cases k with
   | cone a sg =>
     have ha : a < 3 := by
       simp [uKinds] at hk
       omega
-    exact hcone side a sg ha
+    exact hcone a sg ha
   | face a sg =>
-    obtain ⟨t, ht⟩ := cert_tree hc (mem_required_u side hk)
+    obtain ⟨t, ht⟩ := cert_tree hc (hside _ hk)
     exact chart_good V fr pr hp _ t ht (fun box h => by simp [coneOk] at h)
   | fe =>
-    obtain ⟨t, ht⟩ := cert_tree hc (mem_required_u side hk)
+    obtain ⟨t, ht⟩ := cert_tree hc (hside _ hk)
     refine chart_good V fr pr hp _ t ht ?_
     intro box h y hy hr
     simp only [coneOk, Bool.and_eq_true] at h
@@ -438,7 +455,7 @@ theorem cert_goodU {V : Array (KCap.KVec K)} {fr : Frame K} {pr : Params} {c : C
     have b3 := withinB_sound h3 hy
     have b4 := withinB_sound h4 hy
     simp only [Rat.cast_zero, sub_zero] at b2 b3 b4
-    exact fe_good_of_cone V fr pr side hRc hSc (fun a sg => hcone side a sg a.isLt) y hr b2 b3 b4
+    exact fe_good_of_cone V fr pr side hRc hSc (fun a sg => hcone a sg a.isLt) y hr b2 b3 b4
 
 end real
 

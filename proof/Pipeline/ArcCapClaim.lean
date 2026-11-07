@@ -51,6 +51,7 @@ def neoParams : Params where
   f0d := -22 / 64
   f1c := 17 / 22
   f1d := -64 / 22
+  wedge := true
 
 theorem neoParams_ok : neoParams.Ok := by norm_num [Params.Ok, neoParams]
 
@@ -394,8 +395,8 @@ theorem prune_fit {μ τ q σ1 σ3 : ℝ} (hpos : 0 < μ) (hq0 : 0 ≤ q) (hτ :
 /-- Points of the wedge boxes of the cone (1, −) of side true are wedge poses. -/
 theorem prune_point {c : Cert} (hc : certCheck V fr neoParams c = true) (box : Box)
     (h : wedgeBoxOk neoParams box = true) (y : Fin 5 → ℝ) (hy : KPoly.InBox box y)
-    (hr : KPoly.InBox (rootBox neoParams (.u true (.cone 1 false))) y) :
-    PointGood V fr neoParams (.u true (.cone 1 false)) y := by
+    (hr : KPoly.InBox (rootBox neoParams (.u 0 (.cone 1 false))) y) :
+    PointGood V fr neoParams (.u 0 (.cone 1 false)) y := by
   rw [pointGood_u]
   have e0 : KPoly.eval 5 (uS (K := K) neoParams (.cone 1 false) 0) y = 1 / 2 * (y 2 * y 3) := by
     simp [uS, KPoly.eval_mul, eval_pconst, eval_pvar, eval_faceCoord, rc, neoParams, freeVar]
@@ -404,7 +405,7 @@ theorem prune_point {c : Cert} (hc : certCheck V fr neoParams c = true) (box : B
   have e2 : KPoly.eval 5 (uS (K := K) neoParams (.cone 1 false) 2) y = 8 * (y 2 * y 4) := by
     simp [uS, KPoly.eval_mul, eval_pconst, eval_pvar, eval_faceCoord, rc, neoParams, freeVar]
   rw [e0, e1, e2]
-  simp only [uE, eval_kOne, GoodU, ite_true, mul_one]
+  simp only [uE, eval_kOne, GoodU, mul_one, ite_true, ↓reduceIte, Nat.zero_ne_one, ite_false, or_false, if_true, eq_self_iff_true]
   set μ := y 0 with hμ
   set τ := y 1
   set q := y 2
@@ -486,8 +487,9 @@ theorem prune_point {c : Cert} (hc : certCheck V fr neoParams c = true) (box : B
 theorem u_good {c : Cert} (hc : certCheck V fr neoParams c = true) {a b x y z : ℝ}
     (ha : |a| ≤ 1 / 8) (hb : |b| ≤ 1 / 8) (hab : b ≤ a) (hx : |x| ≤ 1 / 8) (hy : |y| ≤ 1 / 8)
     (hz : |z| ≤ 1 / 8) : Good V fr a b x y z := by
-  have cube := fun side => cert_goodU (V := V) (fr := fr) neoParams_ok hc (by norm_num [neoParams])
-    (by norm_num [neoParams]) (prune_point hc) side
+  have cube := fun side (hs : side = 0 ∨ side = 3) => cert_goodU (V := V) (fr := fr) neoParams_ok hc
+    (by norm_num [neoParams]) (by norm_num [neoParams]) (fun _ => prune_point hc) side
+    (fun k hk => mem_required_u hs hk)
   have hm0 : 0 ≤ max |a| |b| := le_max_of_le_left (abs_nonneg _)
   obtain ⟨μ, e, s, h0, h1, he0, he1, hme, hs, hcase⟩ :=
     Cap.weighted_cube ![1, 1, 2] (by intro i; fin_cases i <;> simp) ![2, 2, 8]
@@ -527,14 +529,14 @@ theorem u_good {c : Cert} (hc : certCheck V fr neoParams c = true) {a b x y z : 
     rcases ha0.lt_or_eq with hpos | hz0
     · have hτ : |b / a| ≤ 1 := by
         rw [abs_div, abs_of_pos hpos, div_le_one hpos]; exact hba
-      have hG := goodU_of_cube V fr neoParams true (cube true) h0 hμ1 hτ he0 he1 hr hf
-      simp only [GoodU, ite_true, hm, ex, ey, ez] at hG
+      have hG := goodU_of_cube V fr neoParams 0 (cube 0 (Or.inl rfl)) h0 hμ1 hτ he0 he1 hr hf
+      simp only [GoodU, hm, ex, ey, ez] at hG
       rwa [mul_div_cancel₀ _ hpos.ne'] at hG
     · have hb0 : b = 0 := by
         have : |b| ≤ 0 := by rw [hz0]; exact hba
         exact abs_nonpos_iff.mp this
-      have hG := goodU_of_cube V fr neoParams true (cube true) h0 hμ1 (τ := 0) (by norm_num) he0 he1 hr hf
-      simp only [GoodU, ite_true, hm, ex, ey, ez, mul_zero] at hG
+      have hG := goodU_of_cube V fr neoParams 0 (cube 0 (Or.inl rfl)) h0 hμ1 (τ := 0) (by norm_num) he0 he1 hr hf
+      simp only [GoodU, hm, ex, ey, ez, mul_zero] at hG
       rwa [hb0]
   · have hlt := not_le.mp hba
     have hb0 : b < 0 := by
@@ -548,8 +550,8 @@ theorem u_good {c : Cert} (hc : certCheck V fr neoParams c = true) {a b x y z : 
       rw [← hme, abs_of_neg hb0]; exact max_eq_right hab'
     have hτ : |a / -b| ≤ 1 := by
       rw [abs_div, abs_of_pos hnb, div_le_one hnb]; exact hab'
-    have hG := goodU_of_cube V fr neoParams false (cube false) h0 hμ1 hτ he0 he1 hr hf
-    simp only [GoodU, Bool.false_eq_true, ite_false, hm, ex, ey, ez] at hG
+    have hG := goodU_of_cube V fr neoParams 3 (cube 3 (Or.inr rfl)) h0 hμ1 hτ he0 he1 hr hf
+    simp only [GoodU, hm, ex, ey, ez] at hG
     rw [mul_div_cancel₀ _ hnb.ne'] at hG
     simpa using hG
 
@@ -576,6 +578,12 @@ structure FrameOk (fr : Frame K) : Prop where
   n1 : rdot (kval fr.E1) (kval fr.E1) = 9
   n2 : rdot (kval fr.E2) (kval fr.E2) = 9
   nx : rdot (kval fr.X) (kval fr.X) = 9
+  k1 : (fr.k1 : ℝ) = 1 / 3
+  k2 : (fr.k2 : ℝ) = 1 / 3
+  k3 : (fr.k3 : ℝ) = 1 / 3
+  w1 : fr.W1 = fr.E1
+  w2 : fr.W2 = fr.E2
+  w3 : fr.W3 = fr.X
 
 /-- The view polygon P, by linear inequalities in the view v: the half square
 |v·E₁|, |v·E₂| ≤ v·X / 8, v·E₁ ≤ v·E₂, and the wedge |v·E₂| ≤ −(v·E₁) / 8, −v·E₁ ≤ (13/32) v·X. -/
@@ -632,7 +640,7 @@ theorem arc_not_rupert {c : Cert} (hc : certCheck V fr neoParams c = true) (hf :
   · have hw : wR fr (rdot w (kval fr.E1) / 3) (rdot w (kval fr.E2) / 3) (rdot w (kval fr.X) / 3) = w := by
       conv_rhs => rw [dec w]
       funext i
-      simp only [wR, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+      simp only [wR, Pi.add_apply, Pi.smul_apply, smul_eq_mul, hf.k1, hf.k2, hf.k3, hf.w1, hf.w2, hf.w3]
       ring
     rw [hw]; exact hR
 
