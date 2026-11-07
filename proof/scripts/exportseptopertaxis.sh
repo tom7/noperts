@@ -3,7 +3,7 @@
 # The tool numbers the sides' ids 1 (side 0) and 0 (sides 1, 2, 3); renumbered here to Lean's codes
 # (ArcCapDecode.parseId): side 0 -> 1, side 1 -> 2, side 2 -> 3, side 3 -> 0.
 C=/root/nopert-project/nopert229/out/bottleneck/neo/m7cap
-cd 0 0cd "0 0dirname "-e")/../../search/septopert" && pwd)
+cd "$(dirname "$0")/../../search/septopert"
 nice -n 5 ./capcert-m12.exe --solid m7 --family U --frame axis --sides 0123 --mu0 1/16 --R 2 --S 16 --Rc 1 --Sc 16 \
   --max_depth 40 --max_fail 300 --try 16 --threads 12 --exact --export $C/cert-axx.raw > $C/log-axx-export.txt 2>&1
 grep TOTAL $C/log-axx-export.txt

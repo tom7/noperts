@@ -6,7 +6,7 @@ A="--max_depth 44 --max_fail 2000 --try 16 --threads 12 --exact $@"
 W="--family W --nu0 $nu0 --R1 $R1 --R2 $R2 --R3 $R3 --Z $Z --Zc $Z --R2c $R2 --R3c $R3 $A"
 C=/root/nopert-project/nopert229/out/bottleneck/neo/m7cap
 s() { p=$1; shift
-  ( time (cd 0 0cd "0 0dirname "-e")/../../search/septopert" && pwd) && nice -n 5 ./capcert-m12.exe --solid m7 "$@" --export $C/cert-$tag-$p.part) ) > $C/log-$tag-$p.txt 2>&1
+  ( time (cd "$(dirname "$0")/../../search/septopert" && nice -n 5 ./capcert-m12.exe --solid m7 "$@" --export $C/cert-$tag-$p.part) ) > $C/log-$tag-$p.txt 2>&1
   echo "$p: $(grep TOTAL $C/log-$tag-$p.txt) $(grep -c FAIL $C/log-$tag-$p.txt) failing, $(grep real $C/log-$tag-$p.txt)"; }
 s U --family U --mu0 $mu0 --nu0 $nu0 --R1 $R1 --R2 $R2 --R3 $R3 --wedge_prune $A
 s W0 $W --regime 0 --piece 0 --tlo 0 --thi $TS --zh $zh
