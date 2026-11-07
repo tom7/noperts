@@ -1,7 +1,7 @@
 name = "noperts"
 defaultTargets = ["Noperts", "Septopert", "NeoSeptopert", "Minimality", "ProofOfMainTheorem",
   "DeltoidalHexecontahedron", "PentagonalHexecontahedron", "SnubDodecahedron", "SnubCube", "Nopert231",
-  "constructSeptopert", "checkSeptopertCap", "constructNeoSeptopert", "checkNeoSeptopertCap", "constructDeltoidalHexecontahedron",
+  "constructSeptopert", "checkSeptopertCap", "constructNeoSeptopert", "checkNeoSeptopertCap", "checkNeoSeptopertArc", "constructDeltoidalHexecontahedron",
   "constructPentagonalHexecontahedron", "constructSnubDodecahedron", "constructSnubCube",
   "checkSnubCubeCap", "constructNopert231",
   "Tests"]
@@ -117,6 +117,11 @@ buildType = "release"
 [[lean_exe]]
 name = "checkNeoSeptopertCap"
 root = "checkNeoSeptopertCap"
+buildType = "release"
+
+[[lean_exe]]
+name = "checkNeoSeptopertArc"
+root = "checkNeoSeptopertArc"
 buildType = "release"
 
 [[lean_exe]]

@@ -568,6 +568,93 @@ theorem cover_good {c : Cert} (hc : certCheck V fr neoParams c = true) {a b x y 
     · exact u_good hc (by rw [abs_of_nonneg ha0]; linarith) (by linarith) (by linarith [le_abs_self b]) hx' hy' hz'
     · exact wedge_good hc hge h2 h1 hx hy hz
 
+/-- The apex frame is orthogonal, of squared length 9. -/
+structure FrameOk (fr : Frame K) : Prop where
+  h12 : rdot (kval fr.E1) (kval fr.E2) = 0
+  h1x : rdot (kval fr.E1) (kval fr.X) = 0
+  h2x : rdot (kval fr.E2) (kval fr.X) = 0
+  n1 : rdot (kval fr.E1) (kval fr.E1) = 9
+  n2 : rdot (kval fr.E2) (kval fr.E2) = 9
+  nx : rdot (kval fr.X) (kval fr.X) = 9
+
+/-- The view polygon P, by linear inequalities in the view v: the half square
+|v·E₁|, |v·E₂| ≤ v·X / 8, v·E₁ ≤ v·E₂, and the wedge |v·E₂| ≤ −(v·E₁) / 8, −v·E₁ ≤ (13/32) v·X. -/
+def InPolygon (fr : Frame K) (v : Fin 3 → ℝ) : Prop :=
+  0 < rdot v (kval fr.X) ∧
+    ((|rdot v (kval fr.E1)| ≤ rdot v (kval fr.X) / 8 ∧ |rdot v (kval fr.E2)| ≤ rdot v (kval fr.X) / 8 ∧
+        rdot v (kval fr.E1) ≤ rdot v (kval fr.E2)) ∨
+      (|rdot v (kval fr.E2)| ≤ -rdot v (kval fr.E1) / 8 ∧ -rdot v (kval fr.E1) ≤ 13 / 32 * rdot v (kval fr.X)))
+
+/-- **The arc cap**: with a checked certificate, no pose whose view lies in the polygon P and whose
+relative rotation is the Cayley rotation of w, |w·E₁|, |w·E₂|, |w·X| ≤ 3/46 (each apex coordinate at
+most 1/46), is Rupert, whatever the offset. -/
+theorem arc_not_rupert {c : Cert} (hc : certCheck V fr neoParams c = true) (hf : FrameOk fr)
+    (p : MatrixPose) (hv : InPolygon fr p.view) (w : Fin 3 → ℝ)
+    (hR : p.relativeRotation = cayleyMatrix (w 0) (w 1) (w 2))
+    (h1 : |rdot w (kval fr.E1)| ≤ 3 / 46) (h2 : |rdot w (kval fr.E2)| ≤ 3 / 46)
+    (h3 : |rdot w (kval fr.X)| ≤ 3 / 46) : ¬ RupertPose p (hull V) := by
+  have hn : ∀ {a : ℝ}, a = 9 → a ≠ 0 := fun h => by rw [h]; norm_num
+  have dec : ∀ v : Fin 3 → ℝ, v = (rdot v (kval fr.E1) / 9) • kval fr.E1 + (rdot v (kval fr.E2) / 9) • kval fr.E2 +
+      (rdot v (kval fr.X) / 9) • kval fr.X := by
+    intro v
+    have := decomp3 _ _ _ v hf.h12 hf.h1x hf.h2x (hn hf.n1) (hn hf.n2) (hn hf.nx)
+    rwa [hf.n1, hf.n2, hf.nx] at this
+  obtain ⟨hx0, hreg⟩ := hv
+  set e1 := rdot p.view (kval fr.E1) with he1
+  set e2 := rdot p.view (kval fr.E2) with he2
+  set xx := rdot p.view (kval fr.X) with hxx
+  have hreg' : (|-e1 / xx| ≤ 1 / 8 ∧ |-e2 / xx| ≤ 1 / 8 ∧ -e2 / xx ≤ -e1 / xx) ∨
+      (|-e2 / xx| ≤ -e1 / xx / 8 ∧ -e1 / xx ≤ 13 / 32) := by
+    have absd : ∀ {q r : ℝ}, |q| ≤ r * xx → |-q / xx| ≤ r := by
+      intro q r h
+      rw [abs_div, abs_neg, abs_of_pos hx0, div_le_iff₀ hx0]; exact h
+    rcases hreg with ⟨a1, a2, a3⟩ | ⟨a1, a2⟩
+    · left
+      refine ⟨absd (by linarith), absd (by linarith), ?_⟩
+      rw [div_le_div_iff_of_pos_right hx0]; linarith
+    · right
+      constructor
+      · have e : -e1 / xx / 8 = (-e1 / 8) / xx := by ring
+        rw [e, abs_div, abs_neg, abs_of_pos hx0]
+        exact (div_le_div_iff_of_pos_right hx0).mpr (by linarith)
+      · rw [div_le_iff₀ hx0]; exact a2
+  have hG := cover_good (V := V) (fr := fr) hc (a := -e1 / xx) (b := -e2 / xx) (x := rdot w (kval fr.E1) / 3)
+    (y := rdot w (kval fr.E2) / 3) (z := rdot w (kval fr.X) / 3) hreg'
+    (by rw [abs_div, abs_of_pos (by norm_num : (0 : ℝ) < 3)]; linarith)
+    (by rw [abs_div, abs_of_pos (by norm_num : (0 : ℝ) < 3)]; linarith)
+    (by rw [abs_div, abs_of_pos (by norm_num : (0 : ℝ) < 3)]; linarith)
+  refine hG p (xx / 9) ?_ ?_
+  · conv_lhs => rw [dec p.view]
+    funext i
+    simp only [uR, Pi.add_apply, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
+    field_simp
+    ring
+  · have hw : wR fr (rdot w (kval fr.E1) / 3) (rdot w (kval fr.E2) / 3) (rdot w (kval fr.X) / 3) = w := by
+      conv_rhs => rw [dec w]
+      funext i
+      simp only [wR, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+      ring
+    rw [hw]; exact hR
+
+theorem rdot_sq_le (a b : Fin 3 → ℝ) : rdot a b ^ 2 ≤ rdot a a * rdot b b := by
+  simp only [rdot]
+  nlinarith [sq_nonneg (a 0 * b 1 - a 1 * b 0), sq_nonneg (a 0 * b 2 - a 2 * b 0),
+    sq_nonneg (a 1 * b 2 - a 2 * b 1)]
+
+/-- The arc cap for a Cayley vector of Euclidean length at most 1/46 (what `CayleyNear` gives for a
+rotation within 1/46 of the identity). -/
+theorem arc_not_rupert_of_norm {c : Cert} (hc : certCheck V fr neoParams c = true) (hf : FrameOk fr)
+    (p : MatrixPose) (hv : InPolygon fr p.view) (w : Fin 3 → ℝ)
+    (hR : p.relativeRotation = cayleyMatrix (w 0) (w 1) (w 2))
+    (hw : rdot w w ≤ (1 / 46) ^ 2) : ¬ RupertPose p (hull V) := by
+  have hb : ∀ e : Fin 3 → ℝ, rdot e e = 9 → |rdot w e| ≤ 3 / 46 := by
+    intro e he
+    have h := rdot_sq_le w e
+    rw [he] at h
+    apply abs_le_of_sq_le_sq _ (by norm_num)
+    nlinarith
+  exact arc_not_rupert hc hf p hv w hR (hb _ hf.n1) (hb _ hf.n2) (hb _ hf.nx)
+
 end real
 
 end ArcCap
