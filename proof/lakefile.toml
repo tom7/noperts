@@ -1,7 +1,7 @@
 name = "noperts"
 defaultTargets = ["Noperts", "SeptopertClassic", "Septopert", "Minimality", "ProofOfMainTheorem",
   "DeltoidalHexecontahedron", "PentagonalHexecontahedron", "SnubDodecahedron", "SnubCube", "Nopert231",
-  "constructSeptopertClassic", "checkSeptopertClassicCap", "constructSeptopert", "checkSeptopertCap", "checkSeptopertArc", "checkM12Arc", "checkM12Axis", "constructM12", "constructDeltoidalHexecontahedron",
+  "constructSeptopertClassic", "checkSeptopertClassicCap", "constructSeptopert", "checkSeptopertCap", "checkSeptopertArc", "checkM12Arc", "checkM12Axis", "constructM12", "checkM7Arc", "checkM7Axis", "constructM7", "constructDeltoidalHexecontahedron",
   "constructPentagonalHexecontahedron", "constructSnubDodecahedron", "constructSnubCube",
   "checkSnubCubeCap", "constructNopert231",
   "Tests"]
@@ -64,6 +64,10 @@ globs = ["Minimality", "Minimality.+"]
 [[lean_lib]]
 name = "M12"
 globs = ["M12", "M12.+"]
+
+[[lean_lib]]
+name = "M7"
+globs = ["M7", "M7.+"]
 
 [[lean_lib]]
 name = "ProofOfMainTheorem"
@@ -141,6 +145,21 @@ buildType = "release"
 [[lean_exe]]
 name = "checkM12Axis"
 root = "checkM12Axis"
+buildType = "release"
+
+[[lean_exe]]
+name = "constructM7"
+root = "constructM7"
+buildType = "release"
+
+[[lean_exe]]
+name = "checkM7Arc"
+root = "checkM7Arc"
+buildType = "release"
+
+[[lean_exe]]
+name = "checkM7Axis"
+root = "checkM7Axis"
 buildType = "release"
 
 [[lean_exe]]
