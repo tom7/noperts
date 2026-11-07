@@ -92,6 +92,14 @@ page with its statement, trust model and reproduction steps:
     `proof/Nopert231/` (its model, `SolidModel.lean`; its data, tangent cones
     and view cover; idealized #231, `Ideal231.lean`; and its own solution
     tree, with the fivefold reduction).
+  - `SeptopertFamily`: entry point `proof/SeptopertFamily.lean`, details in
+    `proof/SeptopertFamily/`: no integer member of the Septopert family of
+    height below 7 is a nopert (`not_isNopert_of_familyHeight_lt_seven`),
+    given that its certificate table (`SeptopertFamily/data/leastheight.txt`)
+    passes the integer check of `SeptopertFamily/Check.lean`
+    (`LeastHeightValid`). Each tuple is coplanar, has a point in the hull of
+    the others (then at most 6 points span it: `isRupert_of_card_le_six`), or
+    has an explicit rational Rupert passage.
   - `Tests`: checks that run at build time: every headline uses only the
     standard axioms, no solid's model is in scope without opening its
     namespace, and the chart-3 table is valid for each solid that uses it.
@@ -104,7 +112,10 @@ page with its statement, trust model and reproduction steps:
     (checks the pentagonal hexecontahedron's), `constructSnubDodecahedron`
     (checks the snub dodecahedron's), `constructSnubCube` (checks the snub
     cube's, including its cap certificate), `checkSnubCubeCap` (checks only
-    the cap certificate) and `constructNopert231` (checks candidate #231's).
+    the cap certificate), `constructNopert231` (checks candidate #231's) and
+    `checkSeptopertFamily` (checks the Septopert family table, in about 5 s:
+    `lake exe checkSeptopertFamily SeptopertFamily/data/leastheight.txt` in
+    `proof/`).
 
   License: Apache-2.0 (`proof/LICENSE`). Derived from the
   [Noperthedron](https://github.com/jcreedcmu/Noperthedron) formalization,
