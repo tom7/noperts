@@ -1,6 +1,7 @@
 module
 
 public import M7.IsNotRupert
+public import M7.PCap
 public import Nopert
 
 @[expose] public section
@@ -14,17 +15,36 @@ hull). As for the Septopert (`Septopert.lean`), the Lean proof `isNopert_of_cert
 shows that valid certificate data give `IsNopert verts`, and the program `constructM7` checks the
 data natively (the tables and the cap, arc cap and axis cap certificates).
 
-One claim is still a hypothesis: cap 3, `PCapClaim` (the strip of views around (2, 1, 0) with
-rotations within 1/46), has no certificate yet.
+Cap 3 (`PCapClaim`, the strip of views around (2, 1, 0) with rotations within 1/46) is certified by
+the P cap certificate of `M7.PCap`: `PCapOk` says that `pcapCertOk` accepts some certificate.
 -/
 
 namespace M7
 
 open Noperts Noperts.Pipeline
 
+/-- The P cap certificate (cap 3) is accepted by the checker. -/
+def PCapOk : Prop := ∃ c : ArcCap.Cert, pcapCertOk c = true
+
+/-- The strip `PieceInP` of cap 3 is the piece `InPiece3` of the P cap. -/
+theorem inPiece3_of_pieceInP {v : Fin 3 → ℝ} (h : PieceInP v) : InPiece3 v := by
+  obtain ⟨h0, h1⟩ := h
+  have key : ∀ n ∈ pNs, 0 ≤ dotR n v := h1
+  simp only [pNs, List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq] at key
+  obtain ⟨k1, k2, k3, k4⟩ := key
+  simp only [dotR, pN0] at h0 k1 k2 k3 k4
+  simp [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two] at h0 k1 k2 k3 k4
+  refine ⟨by norm_num at h0 ⊢; linarith, ?_, ?_, ?_, ?_⟩ <;> norm_num at * <;> linarith
+
+/-- Cap 3's claim follows from an accepted P cap certificate. -/
+theorem pCapClaim_of_ok (h : PCapOk) : PCapClaim := by
+  obtain ⟨c, hc⟩ := h
+  intro p hv w hR hw
+  exact pcap_piece_not_rupert c hc p (inPiece3_of_pieceInP hv) w hR hw
+
 /-- The certificate data is valid: four solution tables (one per chart, each passing the validity
 check), the cap certificate at the mirror normal, the arc cap certificate (cap 1), the axis cap
-certificate (cap 2), and the claim of cap 3. -/
+certificate (cap 2), and the P cap certificate (cap 3). -/
 def CertificatesValid : Prop :=
   ∃ table : CayleyAtlas.ChartIndex → SolutionTree.Table,
     (∀ chart, (table chart).chart = chart) ∧
@@ -32,12 +52,12 @@ def CertificatesValid : Prop :=
     SolutionTree.CapOk ∧
     SolutionTree.ArcOk ∧
     SolutionTree.AxisOk ∧
-    PCapClaim
+    PCapOk
 
 /-- If the certificate data is valid, M7 is not Rupert. -/
 theorem not_isRupert_of_certificatesValid (h : CertificatesValid) : ¬ IsRupert verts := by
   obtain ⟨table, hchart, hvalid, hcap, harc, haxis, hpc⟩ := h
-  exact not_rupert_of_valid_tables table hchart hvalid hcap harc haxis hpc
+  exact not_rupert_of_valid_tables table hchart hvalid hcap harc haxis (pCapClaim_of_ok hpc)
 
 /-- M7 is a genuine solid: its vertices 0, 1, 2 and 6 span a tetrahedron. -/
 theorem not_coplanar_verts : ¬ Coplanar ℝ (verts : Set ℝ³) := by

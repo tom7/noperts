@@ -567,7 +567,7 @@ theorem arc_not_rupert_m7 {c : Cert} (hc : certCheck V fr m7Params c = true) (hf
   · have hw : wR fr (rdot w (kval fr.E1) / 3) (rdot w (kval fr.E2) / 3) (rdot w (kval fr.X) / 3) = w := by
       conv_rhs => rw [dec w]
       funext i
-      simp only [wR, Pi.add_apply, Pi.smul_apply, smul_eq_mul, hf.k1, hf.k2, hf.k3]
+      simp only [wR, Pi.add_apply, Pi.smul_apply, smul_eq_mul, hf.k1, hf.k2, hf.k3, hf.w1, hf.w2, hf.w3]
       ring
     rw [hw]; exact hR
 

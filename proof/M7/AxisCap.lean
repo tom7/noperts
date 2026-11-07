@@ -56,7 +56,7 @@ def axisParams : ArcCap.Params where
 theorem axisParams_ok : axisParams.Ok := by norm_num [ArcCap.Params.Ok, axisParams]
 
 /-- The axis frame, with the Cayley weights (1/2, 2/3, 1/3). -/
-def axisFrame : ArcCap.Frame ℚ := ⟨![1, -1, 0], ![1 / 2, 1 / 2, -1], ![1, 1, 1], 1 / 2, 2 / 3, 1 / 3⟩
+def axisFrame : ArcCap.Frame ℚ := { E1 := ![1, -1, 0], E2 := ![1 / 2, 1 / 2, -1], X := ![1, 1, 1], k1 := 1 / 2, k2 := 2 / 3, k3 := 1 / 3 }
 
 /-- The solid's vertices. -/
 def axisVerts : Array (KCap.KVec ℚ) := Array.ofFn fun i : Fin 7 => fun j => vertexQ i j
@@ -71,7 +71,7 @@ theorem axisCertOk_of_par (c : ArcCap.Cert) (h : axisCertOkPar c = true) : axisC
 theorem kval_q (v : KCap.KVec ℚ) (i : Fin 3) : KCap.PVec.kval v i = (v i : ℝ) := rfl
 
 theorem axisFrame_ok : FrameOkG axisFrame 2 (3 / 2) 3 := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, by norm_num, by norm_num, by norm_num, ?_, ?_, ?_⟩ <;>
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, by norm_num, by norm_num, by norm_num, ?_, ?_, ?_, rfl, rfl, rfl⟩ <;>
     simp [axisFrame, rdot, kval_q, Fin.sum_univ_three] <;> norm_num
 
 theorem hull_axisVerts : hull axisVerts = solid := by

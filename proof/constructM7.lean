@@ -1,18 +1,20 @@
 import M7.IsNopert
+import M7.PCap
 import M7.NativeExecutable
 import M7.PackedSolutionTree
 
 /-!
 Native executable that checks M7's certificate data and constructs
-`CapOk → ArcOk → AxisOk → PCapClaim → ¬ IsRupert verts`, as in
-`M7.isNopert_of_certificatesValid` (cap 3's claim `PCapClaim` is an assumption: no certificate
-yet, so `IsNopert` itself is not instantiated).
+`IsNopert verts`, as in `M7.isNopert_of_certificatesValid` (cap 3 is certified by the P cap
+certificate of `M7.PCap`, checked natively; no assumption remains).
 
 Usage:
-  constructM7 <tube manifest.txt> <chart directory> <cap.cert> <arc.cert> <axis.cert>
+  constructM7 <tube manifest.txt> <chart directory> <cap.cert> <arc.cert> <axis.cert> <pcap-wp.cert> <pcap-u.cert>
     Checks everything: the cap certificate (mirror normal), the arc cap certificate (cap 1), the
-    axis cap certificate (cap 2), every tube table and all four chart tables, and prints
+    axis cap certificate (cap 2), the P cap certificate (cap 3: the two files are concatenated), every
+    tube table and all four chart tables, and prints
       constructed: CapOk → ArcOk → AxisOk → PCapClaim → ¬ IsRupert verts
+      instantiated: IsNopert M7.verts (...)
   constructM7 chart <tube manifest.txt> <chart directory> <chart>
   constructM7 local <tube manifest.txt> <index>
   constructM7 rows <tube manifest.txt> <chart> <job pack> [locals]
@@ -115,7 +117,7 @@ def chartMode (manifestPath directory : String) (chart : CayleyAtlas.ChartIndex)
     log s!"chart {chart}: all {table.size} rows valid (and the root)"
   else throw (IO.userError "invalid chart table")
 
-def fullMode (manifestPath directory capPath arcPath axisPath : String) : IO Unit := do
+def fullMode (manifestPath directory capPath arcPath axisPath pwpPath puPath : String) : IO Unit := do
   let cap := decodeCert (← IO.FS.lines capPath)
   log s!"cap: {cap.charts.length} charts"
   let capOk ← checkCap cap
@@ -125,6 +127,14 @@ def fullMode (manifestPath directory capPath arcPath axisPath : String) : IO Uni
   let axis := Noperts.Pipeline.ArcCap.decodeCert arcBlends (← IO.FS.lines axisPath)
   log s!"axis cap: {axis.length} charts"
   let axisOk ← checkAxis axis
+  let pcap := Noperts.Pipeline.ArcCap.decodeCert arcBlends ((← IO.FS.lines pwpPath) ++ (← IO.FS.lines puPath))
+  log s!"P cap (cap 3): {pcap.length} charts"
+  let t0 ← IO.monoMsNow
+  let pcapOk : PLift PCapOk ←
+    if h : pcapCertOkPar pcap = true then do
+      log s!"valid P cap certificate: {(← IO.monoMsNow) - t0} ms"
+      pure ⟨⟨pcap, pcapCertOk_of_par pcap h⟩⟩
+    else throw (IO.userError "the P cap certificate is not valid")
   let localTables ← readLocalTables manifestPath
   unless localTables.size = ViewCover.codeTriangles.size do
     throw (IO.userError s!"{localTables.size} tube tables for {ViewCover.codeTriangles.size} code triangles")
@@ -132,7 +142,10 @@ def fullMode (manifestPath directory capPath arcPath axisPath : String) : IO Uni
     (loadChart directory localTables.size)
   let _notRupert : CapOk → ArcOk → AxisOk → PCapClaim → ¬ IsRupert verts := checked.down
   let _fromCaps : PCapClaim → ¬ IsRupert verts := _notRupert capOk.down arcOk.down axisOk.down
-  IO.println "constructed: CapOk → ArcOk → AxisOk → PCapClaim → ¬ IsRupert verts (cap 3's claim is an assumption)"
+  IO.println "constructed: CapOk → ArcOk → AxisOk → PCapClaim → ¬ IsRupert verts"
+  let _nopert : IsNopert verts :=
+    ⟨not_coplanar_verts, _fromCaps (pCapClaim_of_ok pcapOk.down)⟩
+  IO.println "instantiated: IsNopert M7.verts (CapOk, ArcOk, AxisOk, PCapOk checked natively; tube and chart tables checked)"
 
 def main (args : List String) : IO Unit := do
   match args with
@@ -146,9 +159,9 @@ def main (args : List String) : IO Unit := do
         log s!"tube table {k} valid"
       else throw (IO.userError "no such table")
   | ["chart", m, d, c] => chartMode m d (Fin.ofNat 4 c.toNat!)
-  | [m, d, cap, arc, axis] => fullMode m d cap arc axis
+  | [m, d, cap, arc, axis, pwp, pu] => fullMode m d cap arc axis pwp pu
   | _ => throw (IO.userError <| "usage:\n" ++
-      "  constructM7 <tube manifest.txt> <chart directory> <cap.cert> <arc.cert> <axis.cert>   (checks everything)\n" ++
+      "  constructM7 <tube manifest.txt> <chart directory> <cap.cert> <arc.cert> <axis.cert> <pcap-wp.cert> <pcap-u.cert>   (checks everything)\n" ++
       "  constructM7 chart <tube manifest.txt> <chart directory> <chart>\n" ++
       "  constructM7 local <tube manifest.txt> <index>\n" ++
       "  constructM7 rows <tube manifest.txt> <chart> <job pack> [locals]")
