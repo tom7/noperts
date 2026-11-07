@@ -1,6 +1,8 @@
 module
 
 public import Minimality.Cases
+public import Minimality.Type21SAT.Main
+public import Minimality.Type29SAT.Main
 public import Minimality.Type08S.C2K2E
 public import Minimality.Type08S.C2K9K
 public import Minimality.Type08S.C2K5ZE
@@ -1085,30 +1087,10 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         · exact (hN.2 (Minimality.CaseC20.caseC20Special''_isRupert hx hR hrest)).elim
         · obtain ⟨F⟩ := Minimality.CaseC20.frame20 hx (noThreeCollinear_seven x hN hx) hR hQ.1 hQ.2
           exact hN.2 (F.isRupert_of_not_special'' hx hrest)))
-  · -- type 21: `not_type21_of_multiView21` (Theorem 24.3: ties at a family of tilt tests with
-    -- realizing tilts, `Minimality.MultiView21`; the cover is affine-invariant, so metric-free), where
-    -- it holds; else `not_type21_of_isNopert_ties` (Type21Ties: several independent ties, restored along
-    -- the approximating sequence); its general position (6 HDN hypotheses and `OneTie21 ∨ TwoTie21`) is
-    -- asked. Open in Lean: an HDN item failing, the cover's own tie conditions failing (`CoverTie21`),
-    -- dependent ties
-    obtain ⟨fA, hfA⟩ := hR {0, 1, 4} (by decide)
-    obtain ⟨fB, hfB⟩ := hR {0, 1, 5} (by decide)
-    obtain ⟨fC, hfC⟩ := hR {0, 2, 5, 6} (by decide)
-    obtain ⟨fD, hfD⟩ := hR {0, 4, 6} (by decide)
-    obtain ⟨fE, hfE⟩ := hR {1, 3, 4} (by decide)
-    obtain ⟨fF, hfF⟩ := hR {1, 3, 5} (by decide)
-    obtain ⟨fG, hfG⟩ := hR {2, 3, 4, 6} (by decide)
-    obtain ⟨fH, hfH⟩ := hR {2, 3, 5} (by decide)
-    exact byGen1 (not_type21_of_multiView21 x hN hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF
-      hfG hfH) (fun _ => byGen7 (fun hQ h5 h26 hEd hVq hV htie =>
-        not_type21_of_isNopert_ties x hN hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG
-          hfH hQ h5 h26 hEd hVq hV htie)
-      (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
-        -- silhouette cells at segment, edge and line views with robust unimodality (Type21Sil*, Sl2*, RobA): `sorry` only under `H21Resid5` (Type21TA: edge views s06 s23 s25 s26; Type21T2A: quad diagonals and all line patterns)
-        by_cases hres : Minimality.H21.H21Resid5 (Minimality.Facets21.ofAffine x hx fA fB fC fD fE fF fG fH
-            hfA hfB hfC hfD hfE hfF hfG hfH)
-        · sorry
-        · exact Minimality.H21.h21t2_rule_false hN _ hres)))
+  · -- type 21: closed by the sign-matrix SAT route (`Minimality.H21.SAT.type21_isRupert`, Type21SAT/):
+    -- every shape realizing the faces of type 21 is Rupert, with no general-position hypothesis. The sign
+    -- cover is a kernel-checked LRAT proof (Type21SAT/Checker, `check_sound`); nopert229 notes/SAT-ROUTE.md
+    exact hN.2 (Minimality.H21.SAT.type21_isRupert x hR)
   · -- type 22: `not_type22_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
     -- special value of Lemma T′ (settled there, 24.15). Both views have the triangle `246`, so
     -- `TriGenPar` or `TriGenFarP` always holds (`triGenPar_or_farP_idx`): closed
@@ -1227,11 +1209,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         (by decide) (by decide) (by decide) (by decide) (by decide) (by decide))
   · -- type 29: the octahedron `O = K − 6` with the cap `6` (`Minimality.type29_cap`) has the normal
     -- form `N` (Lemma 21.1); its class (Lemma 21.2) is the sign pattern of `(a2, b0, V)`. Classes K3
-    -- and K4 (`NF29.isRupert_K3a_all`, …, as in `isRupert_type29_K3`, `isRupert_type29_K4`) are
-    -- proved under their general position (`K3Gen`, `K3C1Gen`, `K4Gen`, `K4C1Gen` of `N` for the
-    -- a forms, of `N.sigma` for the b forms), and outside codimension 2 (`NF29.isRupert_K3a_codim2`,
-    -- …: at most one tie, and no HDN or its escape per closing, §28); open in Lean: the class
-    -- boundaries, K2, K1, and the codimension-2 special positions of K3 and K4
+    -- and K4 are closed by the sign-matrix SAT route (`NF29.isRupert_K3a_closed`, …, Type29SAT/; no
+    -- general-position hypothesis). Open in Lean: the class boundaries, K2, K1
     obtain ⟨F, hd⟩ := Minimality.type29_cap hx hvert hR
     set N := Minimality.IsCap29.toNF29 hx F hd
     rcases N.classes with hbd | hK2 | hK1 | ⟨ha2, hb0, hV⟩ | ⟨ha2, hb0, hV⟩ | ⟨ha2, hb0, hV⟩ |
@@ -1248,33 +1227,13 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         by_cases hres : Minimality.H29S.H29GenResid N.facets
         · sorry
         · exact (Minimality.H29S.h29g_rule_false hN _ hres).elim)  -- class K1: `a2 < 0 < b0`, `V < 0` (K1a), or `a2 > 0 > b0`, `V > 0` (K1b)
-    · -- class K3a: outside codimension 2 (§28, `NF29.isRupert_K3a_codim2'`; several independent ties: Type29Ties), else its general position
-      exact byGen2 (fun htie hH => hnR (N.isRupert_K3a_codim2' ha2 hb0 hV htie hH))
-        (fun _ => byGen2 (fun G G1 => hnR (N.isRupert_K3a_all ha2 hb0 hV G G1))
-          (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
-            by_cases hres : Minimality.H29S.H29GenResid N.facets
-            · sorry
-            · exact (Minimality.H29S.h29g_rule_false hN _ hres).elim)))
-    · -- class K3b: outside codimension 2 (§28, `NF29.isRupert_K3b_codim2'`; several independent ties: Type29Ties), else its general position
-      exact byGen2 (fun htie hH => hnR (N.isRupert_K3b_codim2' ha2 hb0 hV htie hH))
-        (fun _ => byGen2 (fun G G1 => hnR (N.isRupert_K3b_all ha2 hb0 hV G G1))
-          (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
-            by_cases hres : Minimality.H29S.H29GenResid N.facets
-            · sorry
-            · exact (Minimality.H29S.h29g_rule_false hN _ hres).elim)))
-    · -- class K4a: outside codimension 2 (§28, `NF29.isRupert_K4a_codim2'`; several independent ties: Type29Ties), else its general position
-      exact byGen2 (fun htie hH => hnR (N.isRupert_K4a_codim2' ha2 hb0 hV htie hH))
-        (fun _ => byGen2 (fun G G1 => hnR (N.isRupert_K4a_all ha2 hb0 hV G G1))
-          (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
-            by_cases hres : Minimality.H29S.H29GenResid N.facets
-            · sorry
-            · exact (Minimality.H29S.h29g_rule_false hN _ hres).elim)))
-    · -- class K4b: outside codimension 2 (§28, `NF29.isRupert_K4b_codim2'`; several independent ties: Type29Ties), else its general position
-      exact byGen2 (fun htie hH => hnR (N.isRupert_K4b_codim2' ha2 hb0 hV htie hH))
-        (fun _ => byGen2 (fun G G1 => hnR (N.isRupert_K4b_all ha2 hb0 hV G G1))
-          (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
-            by_cases hres : Minimality.H29S.H29GenResid N.facets
-            · sorry
-            · exact (Minimality.H29S.h29g_rule_false hN _ hres).elim)))
+    · -- class K3a: the SAT route (`NF29.isRupert_K3a_closed`)
+      exact hnR (N.isRupert_K3a_closed ha2 hb0 hV)
+    · -- class K3b: the SAT route (`NF29.isRupert_K3b_closed`)
+      exact hnR (N.isRupert_K3b_closed ha2 hb0 hV)
+    · -- class K4a: the SAT route (`NF29.isRupert_K4a_closed`)
+      exact hnR (N.isRupert_K4a_closed ha2 hb0 hV)
+    · -- class K4b: the SAT route (`NF29.isRupert_K4b_closed`)
+      exact hnR (N.isRupert_K4b_closed ha2 hb0 hV)
 
 end
