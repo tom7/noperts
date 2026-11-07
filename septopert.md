@@ -124,7 +124,7 @@ The trust model is the same as for Septopert Classic. The "genuine
 solid" half is proved outright, and `isNopert_of_certificatesValid` is
 checked by Lean's kernel and depends only on `propext`,
 `Classical.choice` and `Quot.sound`. The data (about 844,000 table
-rows in 43 MB of packs, 1 MB of tube packs and two cap certificates)
+rows in 44 MB of packs, 1 MB of tube packs and two cap certificates)
 is too big for the kernel, so the program `constructSeptopert` runs
 the same validity checks as compiled code and, only if every one
 passes, builds `IsNopert septopert` and prints `instantiated: IsNopert
@@ -238,5 +238,16 @@ cd work && ../proof/.lake/build/bin/constructSeptopert \
 
 ## The data
 
-TODO(tom7): sizes and hosting. 
+The certificate data is machine output, intended to be CC0 (but not
+hosted here):
+
+- `arc.cert`: 610 KB, the arc cap certificate (146 charts, 14,735 leaves);
+- `cap-1_16.cert`: 520 KB, the cap certificate around the mirror directions;
+- `tube_packs/`: 960 KB, 22 identity-tube tables and `manifest.txt`;
+- `packs/`: 44 MB, 88 per-code solution packs (`packs/c<chart>/t<code>.pack`,
+  about 844,000 rows; the largest, `packs/c0/t2.pack`, is 3.1 MB).
+
+All four together compress to about 8 MB (`tar czf`).
+
+To check it yourself, rebuild it (see "Status" above).
 
