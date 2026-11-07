@@ -215,9 +215,14 @@ along the sub-arc (a floating-point and symbolic study, not part of
 the proof; it explains why a certificate should exist). To prove that,
 the **arc cap** blows up the rotation and the distance to the arc
 together, along a rational parametrization of the arc: The view is
-x(t) + μ·a·N, the rotation is μ·(s₁, s₂, s₃), and boxes in (t, a, s)
-get width witnesses divided by μ, just as the point cap does at the
-mirror normal but along a curve instead of at a point. The arc cap
+x(t) + ν·t·α·N (a distance ν·t off the arc at position t along it),
+and the rotation is ν·t·s₁ along the arc's first-order flex plus
+ν²·t·s₂ and ν²·t²·s₃ in the two other directions. Boxes in (t, ν, α, s)
+then get width witnesses with the common factors of ν divided out,
+just as the point cap does at the mirror normal but along a curve
+instead of at a point. At U itself, where the arc ends, a point cap of
+the same kind takes views μ·(a, b) away from U, with a tilt μ·(s₁, s₂)
+and a spin μ²·s₃ of the rotation. The arc cap
 claim is that no pose with any offset, whose view lies in a certain
 convex polygon around U and the arc and whose rotation is within 1/46
 in Cayley coordinates, is a passage. It is a certificate of 146 charts
@@ -286,8 +291,9 @@ hosted here):
 - `arc.cert`: 614 KB, the arc cap certificate (146 charts, 14,735 leaves);
 - `cap-1_16.cert`: 520 KB, the cap certificate around the mirror directions;
 - `tube_packs/`: 960 KB, 22 identity-tube tables and `manifest.txt`;
-- `packs/`: 44 MB, 88 per-code solution packs (`packs/c<chart>/t<code>.pack`,
-  about 844,000 rows; the largest, `packs/c0/t2.pack`, is 3.1 MB).
+- `packs/`: 44 MB, 88 solution packs, one for each of the 4 charts and
+  22 view-code triangles (`packs/c<chart>/t<triangle>.pack`; about
+  844,000 rows; the largest, `packs/c0/t2.pack`, is 3.1 MB).
 
 All four together compress to about 8 MB (`tar czf`).
 
