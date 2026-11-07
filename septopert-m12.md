@@ -33,9 +33,10 @@ Lean entry point: [`proof/SeptopertM12.lean`](proof/SeptopertM12.lean).
 - Symmetry C3v and the same 10 faces as the rest of the family.
 - *Cube corner*: the apex edges 6–0, 6–1, 6–2 are mutually orthogonal
   (each of length 18), so the apex dihedrals are exactly 90°.
-- *Exact Triforce*: along the axis, vertex 3 lies at −1/2 times vertex 0,
-  so triangle 3–4–5 projects onto the medial triangle of 0–1–2, and face
-  0–2–4 is perpendicular to face 3–4–5.
+- *Exact Triforce*: in the orthographic projection along the axis, the
+  image of vertex 3 is −1/2 times the image of vertex 0, so triangle
+  3–4–5 projects onto the medial triangle of 0–1–2; face 0–2–4 is parallel
+  to the axis and perpendicular to face 3–4–5.
 - Dihedral angles 90° (apex), 144.735610° (base, the same as the
   Septopert's), 107.993014° (triforce exterior) and 141.844193° (triforce
   center); edge lengths 18, 18√2, √237 and 9√2.

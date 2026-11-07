@@ -3,10 +3,10 @@ Tom 7, 7 Nov 2026
 
 The Septopert is a convex polyhedron with 7 vertices that is not
 Rupert (a "nopert"). 7 vertices is the fewest possible for a nopert.
-It is the third and smallest member of the Septopert family to be
-proved: after the holotype [Septopert Classic](septopert-classic.md)
-and [SeptopertM18](septopert-m18.md), with
-[SeptopertM12](septopert-m12.md) alongside it. Its integer coordinates
+The canonical Septopert, described on this page, is the best version
+of a family of similar noperts, including the holotype
+[Septopert Classic](septopert-classic.md), the [SeptopertM18](septopert-m18.md),
+and [SeptopertM12](septopert-m12.md). Its integer coordinates
 are the smallest possible for a nopert in this family (see "Least
 height" below). This page gives the exact statement, what Lean checked
 and how, and how to reproduce the result.
@@ -21,7 +21,7 @@ Lean entry point: [`proof/Septopert.lean`](proof/Septopert.lean); the headline t
 Here is an exact [STL file](septopert.stl). On github, you can
 rotate it around in your browser by just clicking on that.
 
-The solid is the convex hull of these points (its vertices):
+The Septopert is the convex hull of these points (its vertices):
 
 ```
 (-7,  7,  7)
@@ -35,6 +35,8 @@ The solid is the convex hull of these points (its vertices):
 
 It is a very 7 solid: 7 vertices, coordinates ±7 and 3, 4 (3 + 4 = 7),
 apex edges of length 14, base edges 14√2 and inner triangle edges 7√2.
+Despite being discovered by Tom 7, the sevenness is really just a
+mathematical coincidence! Jackpot!
 
 The Lean statement is about exactly these integer points (largest
 |v| = √147 ≈ 12.12). Any scale or rigid transformation of the solid is a
@@ -53,11 +55,14 @@ Nopert too.
   - *Cube corner.* The apex, vertex 6, is a cube corner, as for
     SeptopertM18: the edges 6–0, 6–1, 6–2 are mutually orthogonal, so
     the three apex dihedral angles are exactly 90°.
-  - *Exact Triforce.* Seen along the 3-fold axis, vertex 3 lies exactly
-    at −1/2 times vertex 0 (and so on), so the inner triangle 3–4–5
-    projects onto the medial triangle of the base 0–1–2. Equivalently,
-    the plane of face 0–2–4 contains the axis, and so face 0–2–4 is
-    perpendicular to face 3–4–5. This is a second right angle, and it
+  - *Exact Triforce.* In the orthographic projection along the 3-fold
+    axis (onto the plane through the origin perpendicular to (1,1,1)),
+    the image of vertex 3 is exactly −1/2 times the image of vertex 0
+    (and so on), so the inner triangle 3–4–5 projects onto the medial
+    triangle of the base 0–1–2. Equivalently, vertex 4 projects onto the
+    midpoint of 0–2, so the plane of face 0–2–4 is parallel to the axis,
+    and face 0–2–4 is perpendicular to face 3–4–5 (whose normal is the
+    axis). This is a second right angle, and it
     gives a second family of views at which the first order vanishes.
 
   SeptopertM12 is in the same double special position; SeptopertM18
@@ -136,14 +141,15 @@ first-order margin vanishes there:
    first-order margin zero. It is certified by an arc cap (wedge charts
    along the arc plus a point cap at U).
 3. **The axis view**, the view along the 3-fold axis. Here the Triforce
-   makes the inner triangle's projection line up exactly with the base's
-   medial triangle (an exact coincidence), and the first order again vanishes, at an isolated
-   view. It is certified by a point cap around the axis (rotations
+   puts the inner triangle's shadow exactly on the base's medial
+   triangle, and the first order again vanishes, at an isolated view. It is certified by a point cap around the axis (rotations
    within 1/46 in Cayley coordinates; tilt μ·(s₁, s₂), spin μ²·s₃).
-4. **The face-024 strip.** Face 0–2–4 contains the axis, so there is a
-   circle of views at which it is edge-on, and the first order vanishes
-   along a stretch of that circle starting at a view P, with a
-   2-dimensional cone of first-order flexes. It is certified by the
+4. **The face-024 strip.** Every face is edge-on along a great circle of
+   views. For face 0–2–4, which is perpendicular to face 3–4–5, the right
+   angle makes the first order vanish along a stretch of that circle
+   starting at a view P (as the apex's right angle does along the
+   cube-corner arc), here with a 2-dimensional cone of first-order
+   flexes. It is certified by the
    P cap: a point cap at the end view P together with a wedge of polar
    charts along the strip.
 
