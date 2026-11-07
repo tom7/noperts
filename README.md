@@ -61,11 +61,11 @@ is invariant under scale and rigid transformations, of course.
   it is not one), it is a gyroelongated triangular pyramid (by analogy with
   J10 and J11).
 - Viewed down the axis from the small face: A Triforce. Triangle 3-4-5
-  projects to within 3.5% of the medial triangle of 0-1-2, and vertex 6 is
+  projects to within 3.7% of the medial triangle of 0-1-2 (exactly: its
+  vertices are at 14/27 of the distance instead of 1/2), and vertex 6 is
   hidden behind the center.
 - The apex, vertex 6, is a cube corner: its three edges are exactly
   perpendicular.
-<!-- TODO(Tom): check the Triforce numbers above; they were written for Septopert Classic and not recomputed for the Septopert. -->
 
 ## Prints Nopert
 
