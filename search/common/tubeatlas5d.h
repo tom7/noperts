@@ -14,6 +14,7 @@
 #define _NOPERT_TUBEATLAS5D_H
 
 #include <optional>
+#include <cstdint>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -44,6 +45,8 @@ class TubeAtlas {
     // The largest certificate radius in the reached node's subtree: an
     // upper bound on the radius any further view refinement can certify.
     BigRat r_upper{0};
+    // Bit i: the subtree has a cap leaf of cap index i (i < 32).
+    uint32_t caps = 0;
     // Whether the reached node is a leaf of the table.
     bool leaf = false;
   };
@@ -56,6 +59,7 @@ class TubeAtlas {
     int children[4] = {-1, -1, -1, -1};  // all -1 for a leaf
     BigRat r_lower{0};
     BigRat r_upper{0};
+    uint32_t caps = 0;
   };
   struct Table {
     int code = 0, tri = 0, root = 0;

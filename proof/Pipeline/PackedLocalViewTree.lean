@@ -72,7 +72,7 @@ def readRat : Decoder Rat := do
   pure ((((zigzagInt numerator : Int) : Rat) / (denominator : Rat)) : Rat)
 
 /-- The model slot of the C++ checker's vertex number `n` (for the
-Septopert, the first of the slots holding that vertex). -/
+SeptopertClassic, the first of the slots holding that vertex). -/
 def vertexSlot (n : Nat) : VertexIndex := SolidModel.vertexSlot n
 
 def readVertices : Decoder (Fin 3 → VertexIndex) := do

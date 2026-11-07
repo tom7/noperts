@@ -11,7 +11,7 @@ The general checker allows a loose `κ = 10⁻¹⁰` per vertex. The projective
 local certificates, which work near outer-silhouette transitions where that
 allowance is much larger than the actual rounding, use the solid's own
 per-vertex error `tightVertexErrorQ = modelErrorQ` instead: 0 for the
-Septopert (the C++ checker's `MODEL_EXACT`: `supportError = 0`, and exact
+SeptopertClassic (the C++ checker's `MODEL_EXACT`: `supportError = 0`, and exact
 support ties pass the `≤ 0` support checks), `6 · 10⁻¹⁶` for the icosahedral
 solids. Every `CyclicModel` meets it by its `close` field.
 -/

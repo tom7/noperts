@@ -585,7 +585,7 @@ obligation (`displacementError ≤ certifiedDisplacementLower - dBound * defect`
 forcing deep subdivision or stalling the search.
 
 By using the model's `tightVertexErrorQ` (`6 / 10^16` for the fivefold solids, 0 for the
-Septopert; `TightApproximation.vertex_close_tight`),
+SeptopertClassic; `TightApproximation.vertex_close_tight`),
 `displacementError` drops to `300 * box.dBound * (6 / 10^16) ≈ 3.6e-13`. This reduces the
 error term by over 166,000×, recovering almost the entire physical clearance margin for
 search and certification.

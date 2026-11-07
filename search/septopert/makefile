@@ -6,7 +6,7 @@ include ../common/common.mk
 default : $(TESTS:%=%.exe)
 
 # Every program (rebuild.sh runs the pipeline ones).
-all: default qtube s5d codebdd.exe capcert-septopert.exe dfwhere.exe capleaf-check.exe
+all: default qtube s5d codebdd.exe capcert-septopert.exe capcert-neo.exe dfwhere.exe capleaf-check.exe
 
 # Identity tube:
 #  codebdd: exact rational model, codes and code triangles (codebdd.json).
@@ -25,7 +25,8 @@ s5d: search5d.exe pack5d.exe scoreboard5d.exe
 
 # Diagnostics: dfwhere (where a 5D job's deferred leaves are) and
 # capleaf-check (an exact re-check of the 5D journals' cap leaves).
-# capcert-septopert: the Septopert's cap certificate at its mirror normal.
+# capcert-septopert: the cap certificate at the mirror normal.
+# capcert-neo: the arc cap certificate (views arc-cap.txt; rebuild.sh stage arccert).
 dfwhere.exe : dfwhere.o rigidity-margin.o $(OBJECTS_CORE) $(OBJECTS)
 
 .PHONY : qtube s5d

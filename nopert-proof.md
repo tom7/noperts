@@ -51,7 +51,7 @@ To do this, we reduce:
 ## Rational models and neighborhoods
 
 The certificates are checked against fixed rational vertices. Unless the
-solid is itself rational (the Septopert), the theorem covers every solid
+solid is itself rational (Septopert Classic), the theorem covers every solid
 with the right symmetry within 6·10⁻¹⁶ of a rational model (`IModel`,
 `OModel`, `C5Model`), and Lean's kernel decides, by exact algebraic
 arithmetic and interval enclosures, that the exact solid is one of them.
@@ -67,7 +67,7 @@ theorem is about the exact solid near the ties; see [Caps](#caps) and
 combinatorics (the *face-visibility code*) is constant, and triangulates
 them into **code triangles**. That the code triangles cover the view domain
 is a separate check (`WedgeCover`, `ViewCover`): decided by the kernel for
-the Septopert, checked natively with the tables for the others.
+Septopert Classic, checked natively with the tables for the others.
 
 ## Balanced witnesses
 
@@ -132,6 +132,22 @@ bounded exactly (over ℚ, ℚ(t) or ℚ(√5, sin 72°)). The 5D search's cap l
 cite the cap's claim (`Pipeline/KCapTree.lean`, `Pipeline/KCapCheck.lean`;
 the solids' `Caps` modules).
 
+### Arc caps
+
+A cap handles a single view; the [Septopert](septopert.md) needs more. Its
+first-order margin vanishes along a whole arc of views (the right angle at its
+cube-corner apex makes the first order exactly zero there), so no
+identity tube can reach the arc and only second order decides. An **arc cap**
+blows up the rotation and the distance to the arc together along a rational
+parametrization of the arc: The view is x(t) + ν·t·α·N, the rotation is ν·t·s₁
+along the arc's first-order flex plus second-order terms (ν²·t·s₂, ν²·t²·s₃)
+in the other two directions, and boxes in (t, ν, α, s) get balanced witnesses
+with the common factors of ν divided out, as for the point cap. Its claim
+covers every pose whose view lies in a convex polygon around the arc and whose
+rotation is within 1/46; the exact cover of the polygon by the
+pieces is proved in Lean (`Pipeline/ArcCap*.lean`, `Septopert/ArcCap.lean`), and
+the tube and the 5D search leave that polygon to it.
+
 ## Ties and tie tubes
 
 A **tie** is a family of poses of clearance exactly 0. No box around it can
@@ -151,7 +167,8 @@ theorems that turn valid tables into `¬ IsRupert`.
 
 | | rational model / neighborhood | identity tube | blow-up rows | caps | ties | reductions |
 |---|---|---|---|---|---|---|
-| [Septopert](septopert.md) | exact (rational) | yes | yes | at the mirror normal | mirror ties | C3, mirror-tie |
+| [Septopert](septopert.md) | exact (rational) | yes | yes | at the mirror normal | mirror ties | C3, mirror-tie; plus an arc cap |
+| [SeptopertClassic](septopert-classic.md) | exact (rational) | yes | yes | at the mirror normal | mirror ties | C3, mirror-tie |
 | [Snub cube](snub-cube.md) | `OModel` | yes | | at the zero-margin view | one tie, in the cap | octahedral |
 | [Snub dodecahedron](snub-dodecahedron.md) | `IModel` | yes | | | | icosahedral, fivefold |
 | [Pentagonal hexecontahedron](pentagonal-hexecontahedron.md) | `IModel` | yes | | | | icosahedral, fivefold |

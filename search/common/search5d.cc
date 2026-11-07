@@ -14,15 +14,15 @@
 //                [--bdd codebdd.json] [--cone_samples N] [--split_kappa K]
 //                [--split_rule 0|1|2] [--min_peel 5..7]
 //                [--view_scale S] [--view_lookahead] [--lookahead_band B] [--tube_view_depth D]
-//                [--max_full_retry N] [--half_turn_prune] [--tie_dir DIR] [--caps FILE] [--trib_caps FILE]
+//                [--max_full_retry N] [--half_turn_prune] [--tie_dir DIR] [--caps FILE] [--trib_caps FILE] [--piece_caps FILE]
 //                [--exact_check] [--retry_deferred] [--requeue_deferred] [--blend5d L]
 //
-// --blend5d L (default 4, validated on the Septopert): 0 the inner vertex
+// --blend5d L (default 4, validated on Septopert Classic): 0 the inner vertex
 // per contact at the box centre (the earlier behavior); 2 box-aware with
 // blended inner points (pack tags 17 / 18; a solid's Lean decoder must read
 // them); 4 escalate (0 first; 2 only where 0 fails, since blended rows cost
 // more bytes, and only on the triples whose inner choice 2 changes).
-// Septopert packs: 51.4 MB with 2, 44.9 MB with 4.
+// SeptopertClassic packs: 51.4 MB with 2, 44.9 MB with 4.
 //
 // --retry_deferred also solves every deferred (df) leaf in the journals again
 // (typically with a larger --subtree_budget); its new records replace it.
@@ -204,6 +204,7 @@ int main(int argc, char **argv) {
         args.opt.caps.push_back(c);
       }
     }
+    else if (a == "--piece_caps") args.opt.piece_caps = piececap::ReadPieceCaps(next());
     else if (a == "--trib_caps") {
       // Per line: kind mu0 R t0 s0, then x e1 e2 Z E1 X (each 3 coordinates
       // a b c = a + b t + c t^2). Rationals (sccapcert --caps).

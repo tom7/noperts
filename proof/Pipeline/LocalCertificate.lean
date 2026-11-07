@@ -69,7 +69,7 @@ def crossQ (u v : Fin 3 → ℚ) : Fin 3 → ℚ :=
     u 0 * v 1 - u 1 * v 0]
 
 /-- The rational stand-in for the symmetry rotation `g` (exact for the
-Septopert, rational Taylor values for the fivefold solids). -/
+SeptopertClassic, rational Taylor values for the fivefold solids). -/
 def symmetryMatrixQ (g : OrbitIndex) : Matrix (Fin 3) (Fin 3) ℚ :=
   SolidModel.symmetryMatrixQ g
 
@@ -164,7 +164,7 @@ def Box.εα (box : Box) : ℚ :=
 def Box.eulerRadius (box : Box) : ℚ :=
   box.εα + box.εφ₁ + box.εθ₁ + box.εφ₂ + box.εθ₂
 
-/-- The operator-norm error of `symmetryMatrixQ` (0 for the Septopert). -/
+/-- The operator-norm error of `symmetryMatrixQ` (0 for Septopert Classic). -/
 def symmetryError : ℚ := SolidModel.symmetryErrorQ
 
 theorem symmetryQCLM_difference_norm_bounded (g : OrbitIndex) :

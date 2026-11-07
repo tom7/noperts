@@ -1,7 +1,7 @@
 // idcap: blow-up certificates at the identity over a view triangle (the
 // design: nopert229/notes/DENSE-SPOTS.md). The identity tube (tubecode)
 // bounds the second-order terms crudely (radius <= 2 c, c its first-order
-// cage margin); where c is small (the Septopert's strip of views near
+// cage margin); where c is small (Septopert Classic's strip of views near
 // (0.9285, 0.3565, 0.1040), c ~ 3e-4) its radius is tiny, although the exact
 // balanced witnesses hold much farther out. Here the rotations near the
 // identity are blown up and the witnesses checked as polynomials (as the
@@ -43,7 +43,7 @@
 // --double: the double screen only (no exact check).
 // --affine [--affine_gap 4]: affine nodes (Lean ATree.affine) where a failing
 // tuple's bad region is slanted (an experiment; see SEPTOPERT-IMPROVEMENTS).
-// Defaults: validated end to end (Lean, SERVER OK on the Septopert) are on;
+// Defaults: validated end to end (Lean, SERVER OK on Septopert Classic) are on;
 // --no_blend, --no_retry_leaf_contacts and --code_jobs 1 give the earlier
 // behavior.
 // --blend (default on): where no single inner choice certifies a tuple, try points on

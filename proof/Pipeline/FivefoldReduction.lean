@@ -25,7 +25,7 @@ translated pose of the atlas:
 
 This is the reduction of candidate #231's top layer. The icosahedral solids
 reduce further, by the whole icosahedral group (`IModel` in `IcoView`), and
-the Septopert's C3 axis is not an Euler axis (`Septopert.Reduce`).
+Septopert Classic's C3 axis is not an Euler axis (`SeptopertClassic.Reduce`).
 -/
 
 namespace Noperts.Pipeline

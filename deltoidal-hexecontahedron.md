@@ -64,7 +64,7 @@ The DH is only just not Rupert. It has poses with clearance exactly 0
 about 0.0695·η. `search/dh/dh-boundary.py` checks this numerically, with
 60 digits, for η from 10⁻³ down to 10⁻¹⁸; it is not part of the Lean result.
 So every neighbourhood of the DH, however small, contains Rupert solids.
-Unlike for the Septopert, there is no true statement about all solids near a
+Unlike for Septopert Classic, there is no true statement about all solids near a
 rational model, and the proof uses the exact solid near the ties (the
 techniques are described in [How the Nopert proofs work](nopert-proof.md)):
 

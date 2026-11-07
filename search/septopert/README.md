@@ -26,6 +26,10 @@ tool and test.
 - `export-codetrees-pack.exe`: tube trees to Lean packs.
 - `capcert-septopert.exe` (`capcert-septopert.cc`, the Septopert's own):
   cap certificate at the mirror normal.
+- `capcert-neo.exe` (`capcert-neo.cc`): the arc cap certificate, near the view
+  (2, 2, -1)/3 and the arc from it towards the mirror normal.
+  `arc-cap.txt`: the views and rotations the arc cap claims (`tubecode` and
+  `search5d --piece_caps`; Lean: `Septopert.arcLeafOk`).
 - `search5d.exe`: parallel journaled 5D search.
 - `pack5d.exe`: 5D journals to per-code Lean packs.
 - `scoreboard5d.exe`, `dfwhere.exe`, `capleaf-check.exe`:

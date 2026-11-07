@@ -33,8 +33,9 @@ The result has two parts, and they are trusted differently.
    It depends only on the standard axioms (`propext`, `Classical.choice`,
    `Quot.sound`) and on nothing about how the data was produced.
 
-2. **A Lean verification** that the data is valid. The data is about 85
-   million table rows (6.7 GB), far too much for the kernel to check directly.
+2. **A Lean verification** that the data is valid. The data is about 850
+   thousand table rows (45 MB) and two cap certificates (1.1 MB), too much for
+   the kernel to check directly.
    Instead, the program `constructSeptopert` (in `constructSeptopert.lean`)
    reads the data, runs Lean's own validity checks on every row as compiled
    code, and, only if every check passes, uses part 1 to build a value of type
@@ -63,43 +64,46 @@ namespace Septopert
 open Noperts Noperts.Pipeline
 
 /-- The seven vertices of the Septopert. They are exact rational numbers; written
-over the common denominator 2²⁰ = 1048576 they are integers (see `septopert.md`). -/
+over the common denominator 32 they are integers (see `septopert.md`). -/
 noncomputable def septopert : Finset ℝ³ :=
-  {!₂[-470319/524288, 327651/1048576, 327651/1048576],
-   !₂[327651/1048576, -470319/524288, 327651/1048576],
-   !₂[327651/1048576, 327651/1048576, -470319/524288],
-   !₂[21999/32768, 11947/262144, 11947/262144],
-   !₂[11947/262144, 21999/32768, 11947/262144],
-   !₂[11947/262144, 11947/262144, 21999/32768],
-   !₂[-514207/1048576, -514207/1048576, -514207/1048576]}
+  {!₂[-9/16, 9/32, 9/32],
+   !₂[9/32, -9/16, 9/32],
+   !₂[9/32, 9/32, -9/16],
+   !₂[17/32, 3/32, 3/32],
+   !₂[3/32, 17/32, 3/32],
+   !₂[3/32, 3/32, 17/32],
+   !₂[-9/32, -9/32, -9/32]}
 
 /-- The certificate data is valid: there are four solution tables, one for each
 of the four charts that together cover every rotation, each passing Lean's
-validity check, and the cap certificate (which covers the small region the
-tables leave out, around the solid's mirror directions) passes its check.
-This is the statement that `constructSeptopert` establishes by computation. -/
+validity check, the cap certificate (which covers the small region the
+tables leave out, around the solid's mirror directions) passes its check, and
+the arc cap certificate (which covers the other region the tables leave out,
+small rotations at views near the arc from (2, 2, -1) towards a mirror direction)
+passes its check. This is the statement that `constructSeptopert` establishes by computation. -/
 def CertificatesValid : Prop :=
   ∃ table : CayleyAtlas.ChartIndex → SolutionTree.Table,
     (∀ chart, (table chart).chart = chart) ∧
     (∀ chart, (table chart).Valid) ∧
-    SolutionTree.CapOk
+    SolutionTree.CapOk ∧
+    SolutionTree.ArcOk
 
 /-- `septopert` is the vertex set the proof works with (`Septopert.verts`). -/
 theorem septopert_eq_verts : septopert = verts := by
-  have h0 : toR3 (vertexQ 0) = !₂[-470319/524288, 327651/1048576, 327651/1048576] := by
+  have h0 : toR3 (vertexQ 0) = !₂[-9/16, 9/32, 9/32] := by
     ext j; fin_cases j <;> simp [toR3, vertexQ]
-  have h1 : toR3 (vertexQ 1) = !₂[327651/1048576, -470319/524288, 327651/1048576] := by
+  have h1 : toR3 (vertexQ 1) = !₂[9/32, -9/16, 9/32] := by
     ext j; fin_cases j <;> simp [toR3, vertexQ]
-  have h2 : toR3 (vertexQ 2) = !₂[327651/1048576, 327651/1048576, -470319/524288] := by
+  have h2 : toR3 (vertexQ 2) = !₂[9/32, 9/32, -9/16] := by
     ext j; fin_cases j <;> simp [toR3, vertexQ]
-  have h3 : toR3 (vertexQ 3) = !₂[21999/32768, 11947/262144, 11947/262144] := by
+  have h3 : toR3 (vertexQ 3) = !₂[17/32, 3/32, 3/32] := by
     ext j; fin_cases j <;> simp [toR3, vertexQ]
-  have h4 : toR3 (vertexQ 4) = !₂[11947/262144, 21999/32768, 11947/262144] := by
+  have h4 : toR3 (vertexQ 4) = !₂[3/32, 17/32, 3/32] := by
     ext j; fin_cases j <;> simp [toR3, vertexQ]
-  have h5 : toR3 (vertexQ 5) = !₂[11947/262144, 11947/262144, 21999/32768] := by
+  have h5 : toR3 (vertexQ 5) = !₂[3/32, 3/32, 17/32] := by
     ext j; fin_cases j <;> simp [toR3, vertexQ]
   have h6 : toR3 (vertexQ 6) =
-      !₂[-514207/1048576, -514207/1048576, -514207/1048576] := by
+      !₂[-9/32, -9/32, -9/32] := by
     ext j; fin_cases j <;> simp [toR3, vertexQ]
   have huniv : (Finset.univ : Finset (Fin 7)) = {0, 1, 2, 3, 4, 5, 6} := by decide
   unfold septopert verts
@@ -109,18 +113,18 @@ theorem septopert_eq_verts : septopert = verts := by
 /-- If the certificate data is valid, the Septopert is not Rupert. -/
 theorem not_isRupert_of_certificatesValid (h : CertificatesValid) :
     ¬ IsRupert septopert := by
-  obtain ⟨table, hchart, hvalid, hcap⟩ := h
+  obtain ⟨table, hchart, hvalid, hcap, harc⟩ := h
   rw [septopert_eq_verts]
-  exact not_rupert_of_valid_tables table hchart hvalid hcap
+  exact not_rupert_of_valid_tables table hchart hvalid hcap harc
 
 /-- The Septopert is a genuine solid: its points are not all in one plane.
 (Proved outright: vertices 0, 1, 2 and 6 span a tetrahedron.) -/
 theorem not_coplanar_septopert : ¬ Coplanar ℝ (septopert : Set ℝ³) := by
   refine not_coplanar_of_det3_ne_zero
-    (a := !₂[-470319/524288, 327651/1048576, 327651/1048576])
-    (b := !₂[327651/1048576, -470319/524288, 327651/1048576])
-    (c := !₂[327651/1048576, 327651/1048576, -470319/524288])
-    (d := !₂[-514207/1048576, -514207/1048576, -514207/1048576])
+    (a := !₂[-9/16, 9/32, 9/32])
+    (b := !₂[9/32, -9/16, 9/32])
+    (c := !₂[9/32, 9/32, -9/16])
+    (d := !₂[-9/32, -9/32, -9/32])
     (by simp [septopert]) (by simp [septopert]) (by simp [septopert]) (by simp [septopert]) ?_
   simp [det3, Matrix.det_fin_three]
   norm_num

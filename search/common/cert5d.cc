@@ -171,7 +171,7 @@ std::array<int, 3> InnerOf(const std::vector<int> &inner_of, const Triple &tr) {
 // keep). With g_blend5d = 4 (escalate), the blended level rescreens only the
 // triples whose inner choice differs from level 0's: the others were
 // already screened (and failed) at level 0, so the candidate slots go to
-// new ones. (Rescreening every triple instead: Septopert packs 46.4 MB vs
+// new ones. (Rescreening every triple instead: SeptopertClassic packs 46.4 MB vs
 // 44.9 MB, and 5x the time on the deltoidal hexecontahedron's t22.)
 std::vector<std::pair<int, std::array<int, 3>>> Candidates(const ContactPool &pool,
                                                            const geom5d::TriangleD &tri,

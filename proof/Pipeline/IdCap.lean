@@ -31,7 +31,7 @@ tree checks, no such pose is Rupert.
 
 namespace Noperts.Pipeline
 
-/-- ℚ as an exact scalar field (the Septopert's vertices are rational). -/
+/-- ℚ as an exact scalar field (Septopert Classic's vertices are rational). -/
 instance : ExactScalarOps ℚ where
   zero := 0
   one := 1

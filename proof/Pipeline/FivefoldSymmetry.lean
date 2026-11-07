@@ -15,8 +15,8 @@ So each azimuth can be reduced modulo `2π/5` without changing the shadows
 (`rotM_add_fifth_iterated`), and every pose has a representative with outer
 azimuth in `[0, 2π/5)` and inner azimuth within `π/5` of it
 (`tighten_theta`): the pose domain the certificate tree must cover is
-`InTightPoseRegion`. (For the Septopert the 3-fold axis is (1,1,1), not an
-Euler axis, and its reduction is different; see `Septopert.Reduce`.)
+`InTightPoseRegion`. (For Septopert Classic the 3-fold axis is (1,1,1), not an
+Euler axis, and its reduction is different; see `SeptopertClassic.Reduce`.)
 -/
 
 namespace Noperts.Pipeline

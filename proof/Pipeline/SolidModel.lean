@@ -26,7 +26,7 @@ every solid. It sees a solid only through a `SolidModel` instance:
   operator norm;
 * `modelErrorQ`: how far the rotated seeds may be from the rational vertices.
 
-The Septopert's symmetry is C3 about (1,1,1), exact over ℚ (the cyclic
+Septopert Classic's symmetry is C3 about (1,1,1), exact over ℚ (the cyclic
 coordinate permutations), so both errors are 0. The icosahedral solids
 (deltoidal and pentagonal hexecontahedra, snub dodecahedron) and candidate #231
 use C5 about the z axis: `symmetryMatrixQ` holds rational Taylor values of
@@ -277,7 +277,7 @@ noncomputable def goodPoly : GoodPoly VertexIndex where
 end CyclicModel
 
 /-- The rational seeds moved by the exact symmetry: the model the solid's
-data describes (for the Septopert, the rational vertices themselves). -/
+data describes (for Septopert Classic, the rational vertices themselves). -/
 noncomputable def exactModel : CyclicModel where
   seed s := toR3 (seedVertex s)
   close := SolidModel.seed_close

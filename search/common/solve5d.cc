@@ -91,14 +91,14 @@ std::vector<Node> Children(const Node &node, const Split &split) {
 std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
   const exact5d::Interval5 iv = geom5d::ToInterval(node.box);
   if (exact5d::OutsideCayleyBall(iv)) return rows5d::RadiusPruneLeaf{};
-  // Fundamental prune (fivefold symmetry; the Septopert has none: its C3 cell
+  // Fundamental prune (fivefold symmetry; Septopert Classic has none: its C3 cell
   // prune below replaces it).
   if (solid::kFivefold) {
     for (int dir : {1, -1}) {
       if (exact5d::FundamentalPruneValid(iv, job_.chart, dir)) return rows5d::FundamentalPruneLeaf{dir};
     }
   }
-  // Icosahedral prune (the Septopert's C3 cell prune): a symmetry neighbor
+  // Icosahedral prune (Septopert Classic's C3 cell prune): a symmetry neighbor
   // (a rotation c_k of C3) that increases trace over the whole box.
   // The exact lower bound is at most the value at the center, so only try
   // neighbors whose advantage there (in double) is clearly positive.
@@ -117,7 +117,7 @@ std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
       if (adv > 1e-9 && exact5d::IcoPruneValid(iv, job_.chart, n)) return rows5d::IcoPruneLeaf{n};
     }
   }
-  // Half-turn prune (the Septopert's mirror prune): some g (Q_g) with
+  // Half-turn prune (Septopert Classic's mirror prune): some g (Q_g) with
   // trace(H_u R g) > trace(R) over the whole box and view triangle. Screen in double at the box center and
   // the triangle's centroid; try the best few exactly.
   if (opt_.half_turn_prune) {
@@ -186,6 +186,12 @@ std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
       if (!TribCapScreen(opt_.trib_caps[ci], td, b)) continue;
       if (exact5d::TribCapLeafValid(iv, node.tri, job_.chart, opt_.trib_caps[ci]))
         return rows5d::CapLeaf{(int)(opt_.caps.size() + ci)};
+    }
+  }
+  if (job_.chart == 0 && !opt_.piece_caps.empty()) {
+    for (size_t ci = 0; ci < opt_.piece_caps.size(); ci++) {
+      if (exact5d::PieceCapLeafValid(iv, node.tri, job_.chart, opt_.piece_caps[ci]))
+        return rows5d::CapLeaf{(int)(opt_.caps.size() + opt_.trib_caps.size() + ci)};
     }
   }
   // Tie leaves: the box lies within the tie tube about H_u H_x (deltoidal
@@ -387,6 +393,21 @@ std::optional<bool> Solver::ViewBeatsBox(const Node &node, const geom5d::BoxD &b
 Split Solver::ChooseSplit(const Node &node) const {
   const geom5d::BoxD bd = geom5d::ToDouble(node.box);
   int axis = geom5d::WidestAxis(bd);
+  // A box in a piece cap's ball closes at the piece cap's leaves of the tube
+  // tree (they are not refined by a smaller box): refine the view down to them.
+  if (job_.chart == 0 && !opt_.piece_caps.empty()) {
+    double wmax2 = 0;
+    for (int a = 0; a < 3; a++) {
+      const double c = std::abs(bd.center[a]) + bd.radius[a];
+      wmax2 += c * c;
+    }
+    const auto reached = atlas_->Walk(job_.t, rows5d::ViewPath(node.path));
+    for (size_t ci = 0; ci < opt_.piece_caps.size() && !reached.leaf; ci++) {
+      const size_t index = opt_.caps.size() + opt_.trib_caps.size() + ci;
+      if (wmax2 <= opt_.piece_caps[ci].wmax2_d * (1 - 1e-9) && index < 32 && (reached.caps >> index & 1))
+        return Split{.view = true};
+    }
+  }
   if (job_.chart == 0 && geom5d::ContainsOrigin(bd)) {
     // Only the identity tube can close a box containing the identity. If the
     // box is too big for every radius certified below this view, shrink it;

@@ -5,6 +5,8 @@ page with its statement, trust model and reproduction steps:
 
 - [septopert.md](septopert.md): the Septopert, a 7-vertex nopert (a Lean
   verification backed by certificate data);
+- [septopert-classic.md](septopert-classic.md): Septopert Classic, the first
+  7-vertex nopert (likewise);
 - [deltoidal-hexecontahedron.md](deltoidal-hexecontahedron.md): the deltoidal
   hexecontahedron is a nopert (a Lean verification backed by certificate
   data);
@@ -44,7 +46,11 @@ page with its statement, trust model and reproduction steps:
     and #231 check identity-tube rows against tangent-cone generators
     (`Pipeline/SparseSupport.lean`).
   - `Septopert`: entry point `proof/Septopert.lean`, details in
-    `proof/Septopert/` (its model, `SolidModel.lean`; its own solution tree,
+    `proof/Septopert/`. Built like Septopert Classic below, with one more
+    certificate, the arc cap (`Septopert/ArcCap.lean`, `Septopert/ArcLeaf.lean`;
+    `Pipeline/ArcCap*.lean`).
+  - `SeptopertClassic`: entry point `proof/SeptopertClassic.lean`, details in
+    `proof/SeptopertClassic/` (its model, `SolidModel.lean`; its own solution tree,
     with C3 and mirror reductions and caps). Its identity-tube tables are
     mostly identity blow-up rows (`Row.idcap`: `Pipeline/IdCap.lean`, the
     certificates and their claim; `Pipeline/CayleyNear.lean`;
@@ -58,7 +64,7 @@ page with its statement, trust model and reproduction steps:
     Septopert.CertificatesValid → MinimalNopert`, that 7 is the smallest
     number of vertices of a nopert, and its second half,
     `notExistsNonRupertPolyhedronBelowSizeSeven`, without hypotheses. The
-    minimality half is a Lean proof; the Septopert half is conditional on
+    minimality half is a Lean proof; the other half is conditional on
     `CertificatesValid`, i.e. a Lean verification.
   - `DeltoidalHexecontahedron`: entry point
     `proof/DeltoidalHexecontahedron.lean`, details in
@@ -90,7 +96,9 @@ page with its statement, trust model and reproduction steps:
     standard axioms, no solid's model is in scope without opening its
     namespace, and the chart-3 table is valid for each solid that uses it.
   - Executables: `constructSeptopert` (checks the Septopert's certificate
-    data), `checkSeptopertCap` (checks only its cap certificate),
+    data), `checkSeptopertCap` and `checkSeptopertArc` (check only its cap and
+    arc cap certificates), `constructSeptopertClassic` (checks Septopert Classic's certificate
+    data), `checkSeptopertClassicCap` (checks only its cap certificate),
     `constructDeltoidalHexecontahedron` (checks the deltoidal
     hexecontahedron's certificate data), `constructPentagonalHexecontahedron`
     (checks the pentagonal hexecontahedron's), `constructSnubDodecahedron`
@@ -105,8 +113,8 @@ page with its statement, trust model and reproduction steps:
   - `search/common/`: the code the searches share (the identity tube, the
     identity blow-up certificates `idcap.cc` with `kpoly.h`, the 5D search
     and packing, `codebdd`, unit tests) and their build rules, `common.mk`.
-  - `search/septopert/`, `search/dh/`, `search/ph/`, `search/sd/`,
-    `search/sc/`, `search/nopert231/`: the searches for the Septopert, the
+  - `search/septopert/`, `search/septopert-classic/`, `search/dh/`, `search/ph/`, `search/sd/`,
+    `search/sc/`, `search/nopert231/`: the searches for the Septopert, Septopert Classic, the
     deltoidal hexecontahedron, the pentagonal hexecontahedron, the snub
     dodecahedron, the snub cube and candidate #231, each with its `rebuild.sh` (see the result's page),
     model files, Lean data generators, own tools, and `solid.h` (the
@@ -141,11 +149,11 @@ page with its statement, trust model and reproduction steps:
 - Linux
 - elan (the toolchain is pinned in `proof/lean-toolchain`, v4.34.1, with Mathlib v4.34.1)
 - for `search/`: clang, GMP, svn, python3 (python3 regenerates Lean data
-  files in the model stages: the Septopert's view cover with
+  files in the model stages: the Septopert's and Septopert Classic's view covers with
   `proof/scripts/emit_septopert_view_cover.py`, the other solids' data with
   the scripts in their `search/<solid>/` directories)
 - optionally `systemd-run --user`, which the rebuild scripts use to cap
-  each stage's memory (and, for the Septopert, report its peak). Without a
+  each stage's memory (and, for Septopert Classic, report its peak). Without a
   systemd user session (e.g. in a container), they run uncapped.
 - network access for `./get-cc-lib.sh` (svn) and `lake exe cache get`.
   Offline, copy in a checkout of cc-lib at the revision in
@@ -178,7 +186,7 @@ Optionally, `proof/git-hooks/pre-commit` (copy it to `.git/hooks/`; it needs
 
 ```sh
 ./get-cc-lib.sh
-make -C search/septopert -j 16 all    # likewise search/dh, search/ph, ...
+make -C search/septopert -j 16 all    # likewise search/septopert-classic, search/dh, search/ph, ...
 ```
 
 Each solid's directory builds its own copy of the shared code (which
@@ -194,7 +202,7 @@ build the Lean checker in the background while the C++ stages run (log
 
 ## Former names
 
-Until 2026-10-09 the code called the Septopert `Nopert7` (`constructNopert7`,
+Until 2026-10-09 the code called Septopert Classic `Nopert7` (`constructNopert7`,
 `checkNopert7Cap`, `Noperthedron/Nopert7/`, `nopert7_rebuild.sh`,
 `capcert7`), K in comments, and `nopert_233` in the search database
 (model `nopert233_model.txt`, coordinates `7v-cocta-c3v-2.xyz`); the
@@ -238,7 +246,7 @@ that produced its data is on nopert229's `snubdodecahedron` branch.
 Until 2026-10-10 the deltoidal and pentagonal hexecontahedra and the snub
 dodecahedron each had their own copy of the certificate pipeline in their
 directory (the branch's `PentagonalHexecontahedron/` or `SnubDodecahedron/`
-directory, renamed), and `Pipeline/` was the Septopert's. They were merged
+directory, renamed), and `Pipeline/` was Septopert Classic's. They were merged
 into `Pipeline/`, made generic over the solid (`SolidModel`,
 `IcosahedralSolid`): each solid's `Vertices.lean` became its `SolidModel.lean`,
 the per-solid part of its `IcoGroupData.lean` its `OrbitData.lean`, and the

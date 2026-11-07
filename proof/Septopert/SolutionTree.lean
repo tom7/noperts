@@ -10,6 +10,7 @@ public import ParallelBool
 public import Septopert.CellPrune
 public import Septopert.ViewCoverData
 public import Septopert.CapLeaf
+public import Septopert.ArcLeaf
 
 @[expose] public section
 
@@ -32,8 +33,10 @@ rotation chart · cayley in the C3v cell at the view (`InCell`), view in D′
   for the exact model (`exactModel`, whose hull is `solid`);
 - `c3Prune` (pack tag 13, journal `pi`) and `mirrorPrune` (tag 14, journal
   `ph`): the exact cell prunes of `CellPrune`;
-- `capLeaf` (tag 16, journal `cl`): `capLeaf_sound`, given a checked cap
-  certificate (`CapOk`).
+- `capLeaf` (tag 16, journal `cl`): cap 0 is the cap at the mirror normal
+  (`capLeafOk`, `capLeaf_sound`, given a checked cap certificate `CapOk`), cap 1
+  the arc cap (`arcLeafOk`, `arcLeaf_sound`, given a checked arc cap certificate
+  `ArcOk`). No other index is valid.
 
 No fivefold/icosahedral/half-turn/upper-view predicates, no tie rows.
 -/
@@ -60,6 +63,9 @@ def InDomain (p : AtlasPose ℝ) : Prop := InC3vViewDomain (poseView p)
 
 /-- A checked cap certificate exists (`Caps.certOk`). -/
 def CapOk : Prop := ∃ c : Cap.CapCert, certOk c = true
+
+/-- A checked arc cap certificate exists (`arcCertOk`). -/
+def ArcOk : Prop := ∃ c : ArcCap.Cert, arcCertOk c = true
 
 /-- The identity-tube tables, one per code triangle, in
 `ViewCover.codeTriangles` order. -/
@@ -302,7 +308,8 @@ inductive Row where
   the box, tr(H_u R Q_g) > tr R. -/
   | mirrorPrune (id : ℕ) (box : MirrorPrune.Box) (root : Fin 8)
   /-- Cap leaf (pack tag 16, journal `cl`): a chart-0 box and view triangle
-  inside the certified cap (`capLeafOk`). -/
+  inside the certified cap `cap`: 0 the cap at the mirror normal (`capLeafOk`),
+  1 the arc cap (`arcLeafOk`). -/
   | capLeaf (id : ℕ) (interval : Interval) (root : Fin 8) (triangle : Triangle) (cap : ℕ)
 
 def Row.id : Row → ℕ
@@ -405,7 +412,9 @@ def Row.ValidAt (chart : ChartIndex) (get : ℕ → Row)
       (get child).region = .triangle root outer ∧
       triangleWithinB outer triangle = true
   | .mirrorPrune _ box _ => box.chart = chart ∧ box.Valid
-  | .capLeaf _ interval _ triangle _ => chart = 0 ∧ capLeafOk interval triangle = true
+  | .capLeaf _ interval _ triangle cap =>
+      chart = 0 ∧ ((cap = 0 ∧ capLeafOk interval triangle = true) ∨
+        (cap = 1 ∧ arcLeafOk interval triangle = true))
   | .codeRoot id children interval =>
       children.size = ViewCover.codeTriangles.size ∧
       ∀ t (ht : t < children.size),
@@ -437,7 +446,7 @@ theorem not_rupert_solid {p : AtlasPose ℝ} {chart : ChartIndex} {offset : ℝ�
 
 theorem valid_imp_noRupert_ix (chart : ChartIndex) (get : ℕ → Row)
     (size : ℕ) (shared : SharedLocalTables)
-    (sharedValid : SharedLocalValid shared) (hcap : CapOk)
+    (sharedValid : SharedLocalValid shared) (hcap : CapOk) (harc : ArcOk)
     (rowsValid : RowsValidAt chart get size shared)
     (i : ℕ) (hi : i < size) :
     NoRupert chart (get i).interval (get i).region := by
@@ -500,7 +509,7 @@ theorem valid_imp_noRupert_ix (chart : ChartIndex) (get : ℕ → Row)
       obtain ⟨hsize, hall⟩ := hvalid
       have ht : t < children.size := hsize ▸ htlt
       obtain ⟨hforward, hchildSize, hchildInterval, hchildRegion⟩ := hall t ht
-      have hchild := valid_imp_noRupert_ix chart get size shared sharedValid hcap rowsValid
+      have hchild := valid_imp_noRupert_ix chart get size shared sharedValid hcap harc rowsValid
         children[t] hchildSize
       rw [hchildInterval, hchildRegion] at hchild
       have hgetD : ViewCover.codeTriangles.getD t defaultCode = (root, tri) := by
@@ -512,16 +521,16 @@ theorem valid_imp_noRupert_ix (chart : ChartIndex) (get : ℕ → Row)
         hlowerInterval, hupperInterval, hlowerRegion, hupperRegion⟩ := hvalid
       apply noRupert_halves chart interval region coordinate
       · rw [← hlowerInterval, ← hlowerRegion]
-        exact valid_imp_noRupert_ix chart get size shared sharedValid hcap rowsValid
+        exact valid_imp_noRupert_ix chart get size shared sharedValid hcap harc rowsValid
           lowerChild hlowerSize
       · rw [← hupperInterval, ← hupperRegion]
-        exact valid_imp_noRupert_ix chart get size shared sharedValid hcap rowsValid
+        exact valid_imp_noRupert_ix chart get size shared sharedValid hcap harc rowsValid
           upperChild hupperSize
   | viewSplit id children interval root triangle =>
       rintro ⟨p, hp, hbounded, hcell, hdom, offset, hregion, hrupert⟩
       obtain ⟨child, hchildMem⟩ := mem_split hregion.2
       obtain ⟨hforward, hchildSize, hchildInterval, hchildRegion⟩ := hvalid child
-      have hchild := valid_imp_noRupert_ix chart get size shared sharedValid hcap rowsValid
+      have hchild := valid_imp_noRupert_ix chart get size shared sharedValid hcap harc rowsValid
         (children child) hchildSize
       rw [hchildInterval, hchildRegion] at hchild
       exact hchild ⟨p, hp, hbounded, hcell, hdom, offset, ⟨hregion.1, hchildMem⟩, hrupert⟩
@@ -530,15 +539,15 @@ theorem valid_imp_noRupert_ix (chart : ChartIndex) (get : ℕ → Row)
         hlowerInterval, hupperInterval, hlowerRegion, hupperRegion⟩ := hvalid
       apply noRupert_cut chart interval region coordinate cut
       · rw [← hlowerInterval, ← hlowerRegion]
-        exact valid_imp_noRupert_ix chart get size shared sharedValid hcap rowsValid
+        exact valid_imp_noRupert_ix chart get size shared sharedValid hcap harc rowsValid
           lowerChild hlowerSize
       · rw [← hupperInterval, ← hupperRegion]
-        exact valid_imp_noRupert_ix chart get size shared sharedValid hcap rowsValid
+        exact valid_imp_noRupert_ix chart get size shared sharedValid hcap harc rowsValid
           upperChild hupperSize
   | regionRelax id child interval root triangle outer =>
       rintro ⟨p, hp, hbounded, hcell, hdom, offset, hregion, hrupert⟩
       obtain ⟨hforward, hchildSize, hchildInterval, hchildRegion, hwithin⟩ := hvalid
-      have hchild := valid_imp_noRupert_ix chart get size shared sharedValid hcap rowsValid
+      have hchild := valid_imp_noRupert_ix chart get size shared sharedValid hcap harc rowsValid
         child hchildSize
       rw [hchildInterval, hchildRegion] at hchild
       exact hchild ⟨p, hp, hbounded, hcell, hdom, offset,
@@ -561,9 +570,13 @@ theorem valid_imp_noRupert_ix (chart : ChartIndex) (get : ℕ → Row)
       rintro ⟨p, hp, -, hcell, -, offset, hregion, hrupert⟩
       obtain ⟨hchart, hok⟩ := hvalid
       subst hchart
-      obtain ⟨c, hc⟩ := hcap
-      exact capLeaf_sound c hc interval root triangle hok p hp hcell
-        (lt_of_lt_of_le one_pos hregion.1) hregion.2 offset hrupert
+      rcases hok with ⟨-, hok⟩ | ⟨-, hok⟩
+      · obtain ⟨c, hc⟩ := hcap
+        exact capLeaf_sound c hc interval root triangle hok p hp hcell
+          (lt_of_lt_of_le one_pos hregion.1) hregion.2 offset hrupert
+      · obtain ⟨c, hc⟩ := harc
+        exact arcLeaf_sound (arcHolds_of_cert c hc) interval root triangle hok p hp
+          (lt_of_lt_of_le one_pos hregion.1) hregion.2 offset hrupert
 termination_by size - i
 decreasing_by
   all_goals
@@ -657,27 +670,27 @@ theorem Table.Valid.of_withTasksB {table : Table} {taskCount : ℕ}
 /-! ## Soundness of the tables -/
 
 theorem Table.valid_imp_no_chart_translated_pose (table : Table) (h : table.Valid)
-    (hcap : CapOk) :
+    (hcap : CapOk) (harc : ArcOk) :
     ¬ ∃ p ∈ AtlasPose.rootInterval ℝ, p.CayleyBounded ∧ InCell table.chart p ∧ InDomain p ∧
       ∃ offset : ℝ², RupertPose (p.matrixPoseWithOffset table.chart offset) solid := by
   obtain ⟨hnonempty, hrows, hrootInterval, hrootRegion, hshared⟩ := h
   have hchecked := valid_imp_noRupert_ix table.chart table.get table.size
-    table.sharedLocal hshared hcap hrows 0 hnonempty
+    table.sharedLocal hshared hcap harc hrows 0 hnonempty
   rw [hrootInterval, hrootRegion] at hchecked
   rintro ⟨p, hp, hbounded, hcell, hdom, offset, hrupert⟩
   exact hchecked ⟨p, by rw [AtlasInterval.rootInterval_toReal]; exact hp, hbounded, hcell, hdom,
     offset, trivial, hrupert⟩
 
-/-- Four valid chart tables and a checked cap certificate exclude every matrix
+/-- Four valid chart tables and checked cap and arc cap certificates exclude every matrix
 pose of `solid` (via the C3v reduction `exists_c3v_atlas_translated_pose_solid`). -/
 theorem no_matrixPose_of_valid_tables (table : ChartIndex → Table)
     (hchart : ∀ chart, (table chart).chart = chart)
-    (hvalid : ∀ chart, (table chart).Valid) (hcap : CapOk) :
+    (hvalid : ∀ chart, (table chart).Valid) (hcap : CapOk) (harc : ArcOk) :
     ¬ ∃ p : MatrixPose, RupertPose p solid := by
   rintro ⟨p, hrupert⟩
   obtain ⟨chart, q, offset, hq, hbounded, -, hdom, hcell, heq⟩ :=
     exists_c3v_atlas_translated_pose_solid p
-  have hno := (table chart).valid_imp_no_chart_translated_pose (hvalid chart) hcap
+  have hno := (table chart).valid_imp_no_chart_translated_pose (hvalid chart) hcap harc
   rw [hchart chart] at hno
   exact hno ⟨q, hq, hbounded, hcell, hdom, offset, heq.mpr hrupert⟩
 

@@ -151,7 +151,7 @@ static BigRat RoundDyadic(const BigRat &v, int bits) {
   return BigRat(BigInt::DivFloor(num, den), scale);
 }
 
-// A model file (e.g. septopert-model.txt): the vertices to high precision in C5
+// A model file (e.g. septopert-classic-model.txt): the vertices to high precision in C5
 // order (vertex S k + s is seed s rotated by 2 pi k / 5), and the faces that
 // are not triangles. Lines: "name N", "seeds S", "vertex i x y z",
 // "face i j k ...", and others (ignored).
@@ -1521,7 +1521,7 @@ int main(int argc, char **argv) {
   const BigRat target = BigRat(36, 100000000000000000LL) * BigRat(36, 100000000000000000LL);
   if (model.seeds == 0) {
     // No C5 structure: the rational vertices are the model, exactly C3v about
-    // (1,1,1) (the Septopert) or exactly octahedral (the snub cube), checked.
+    // (1,1,1) (Septopert Classic) or exactly octahedral (the snub cube), checked.
     verts = model.rational_vertices;
     const auto perms = C3vVertexPermutations(verts);
     if (!perms.empty()) {

@@ -7,8 +7,10 @@
 #            the Lean view cover proof/Septopert/ViewCoverData.lean
 #            (proof/scripts/emit_septopert_view_cover.py)
 #   tube     identity tube per code (tubecode --min_r 1/100000, the cap at the
-#            mirror normal n = (1,0,-1)/sqrt2 left to the cap certificate),
-#            then tuberefine on the codes away from the cap (codes 7, 9, 11-13
+#            mirror normal n = (1,0,-1)/sqrt2 left to the cap certificate, and
+#            the views of arc-cap.txt, where no first-order leaf exists, left
+#            to the arc cap certificate),
+#            then tuberefine on the codes away from the cap (codes 6, 9, 11-13
 #            touch n and are not refined: it only multiplies their leaves)
 #   idcap    identity blow-up certificates (idcap --trees_in/--trees_out,
 #            rho 1/64; idcap's defaults: blended inner points, a retry
@@ -19,11 +21,14 @@
 #   cap      the cap certificate at n (capcert-septopert --mu0 1/16 --max_depth 38)
 #            and the search's caps file (frame x = (1,0,-1), e1 = (0,2,0),
 #            e2 = (1,0,1), mu0 = 1/16, |w| <= 1/91)
+#   arccert  the arc cap certificate near U = (2,2,-1)/3 and the arc from U
+#            towards n: capcert-neo, one run per piece of the cover (146
+#            charts). Its claim: views of arc-cap.txt, |w| <= 1/46, chart 0.
 #   search   5D search, 22 code triangles x charts 0-3, rounds until nothing
 #            is deferred (search5d --retry_deferred --requeue_deferred; its
 #            default blended inner points: pack tags 17 / 18)
 #   pack     per-code 5D packs c<C>/t<T>.pack (pack5d --per_code)
-#   verify   Lean: constructSeptopert <tube manifest> <packs> <cap.cert>
+#   verify   Lean: constructSeptopert <tube manifest> <packs> <cap.cert> <arc.cert>
 #
 # Every stage is restartable (tubecode and search5d journal their work; pack5d
 # skips packs newer than their journals). search5d is not deterministic (work
@@ -40,12 +45,12 @@
 # if it fails. (Helpers: ../common/rebuild-lib.sh.)
 set -euo pipefail
 
-STAGES=(model tube idcap tubepack cap search pack verify)
+STAGES=(model tube idcap tubepack cap arccert search pack verify)
 FROM=tube
 ONLY=""
 DRY=0
 THREADS=$(nproc)
-MEM_GB=40
+MEM_GB=100
 WORK=""
 NOPERT=$(cd "$(dirname "$0")" && pwd)
 LEAN=$NOPERT/../../proof
@@ -69,6 +74,10 @@ JOBS=$WORK/jobs
 PACKS=$WORK/packs
 CAP_CERT=$WORK/cap-1_16.cert
 CAPS_FILE=$WORK/caps.txt
+ARC_CERT=$WORK/arc.cert
+# The arc cap's views and rotations (tubecode, search5d). Index 1 in the trees
+# and journals (after the cap at n); Lean routes it to arcLeafOk.
+ARC_CAP=(--piece_caps arc-cap.txt)
 
 # HAVE_SCOPE, want, stage_begin/stage_end, the background Lean build.
 source "$NOPERT/../common/rebuild-lib.sh"
@@ -80,7 +89,7 @@ run() {
 # (Without systemd-run, just the command.)
 capped() {
   # (Called in subshells: the unit name must not depend on a counter.)
-  local unit="septopert-$$-$(date +%s%N)"
+  local unit="neosept-$$-$(date +%s%N)"
   echo "+ [scope ${MEM_GB}G] $*" >&2
   if [ $DRY -eq 1 ]; then return; fi
   if [ $HAVE_SCOPE -eq 0 ]; then "$@"; return; fi
@@ -100,13 +109,13 @@ NTRI=22
 
 echo "== build"
 run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe idcap.exe export-codetrees-pack.exe \
-  capcert-septopert.exe search5d.exe pack5d.exe dfwhere.exe
+  capcert-septopert.exe capcert-neo.exe search5d.exe pack5d.exe dfwhere.exe
 
 if want model; then
   stage_begin model
   (cd "$NOPERT" && run ./codebdd.exe --model_file=septopert-model.txt codebdd.json)
   # The view cover (Lean: Septopert/ViewCoverData.lean) from codebdd.json.
-  run python3 -B "$LEAN/scripts/emit_septopert_view_cover.py" --bdd "$NOPERT/codebdd.json" \
+  run python3 -B "$LEAN/scripts/emit_septopert_view_cover.py" --bdd "$NOPERT/codebdd.json" --solid Septopert --model_file septopert-model.txt \
     "$LEAN/Septopert/ViewCoverData.lean"
   run make -C "$NOPERT" -j "$THREADS" tubecode.exe tuberefine.exe idcap.exe export-codetrees-pack.exe search5d.exe pack5d.exe
   stage_end model
@@ -126,21 +135,22 @@ fi
 # codebdd.json is written by the model stage (it is not committed).
 require_codebdd tube idcap tubepack search pack
 
-# The cap at n for the tube (angular radius 0.04 < the cap cone's 0.044).
-TUBE_CAP=(--cap 0.70710678118654752,0,-0.70710678118654752,0.04 --cap_r 1/46)
+# The cap at n for the tube (angular radius 0.04 < the cap cone's 0.044), and
+# the arc cap.
+TUBE_CAP=(--cap 0.70710678118654752,0,-0.70710678118654752,0.04 "${ARC_CAP[@]}" --cap_r 1/46)
 
 if want tube; then
   stage_begin tube
   run mkdir -p "$TREES_RAW" "$TREES"
   for code in $(seq 0 $((NCODES - 1))); do
     (cd "$NOPERT" && capped ./tubecode.exe --code "$code" --output_dir "$TREES_RAW" --threads "$THREADS" \
-      "${TUBE_CAP[@]}" --min_r 1/100000)
+      "${TUBE_CAP[@]}" --min_r 1/100000 --best_cage)
   done
   # Refinement (larger certified radii) away from the cap; code 1 (the
   # first-order margin minimum) with a lower goal to keep its tree small.
   for code in $(seq 0 $((NCODES - 1))); do
     case $code in
-      7|9|11|12|13) run cp "$TREES_RAW/tree.$code.json" "$TREES/tree.$code.json" ;;
+      6|9|11|12|13) run cp "$TREES_RAW/tree.$code.json" "$TREES/tree.$code.json" ;;
       1) (cd "$NOPERT" && capped ./tuberefine.exe --code 1 --in_dir "$TREES_RAW" --out_dir "$TREES" \
             --goal 1/4000 --goal_frac 1/2 --levels 4 --threads "$THREADS") ;;
       10) (cd "$NOPERT" && capped ./tuberefine.exe --code 10 --in_dir "$TREES_RAW" --out_dir "$TREES" \
@@ -179,9 +189,36 @@ if want cap; then
   stage_end cap
 fi
 
+# The arc cap certificate: one capcert-neo run per piece of the cover (U cap;
+# wedge pieces W0, Wm, W1, W2, meeting at t* = 17/86 and 11/32), exact, with the
+# parameters of Lean's ArcCap.neoParams. The pieces' exports, concatenated in
+# this order, are the certificate.
+if want arccert; then
+  stage_begin arccert
+  ARC_MU0=1/8; ARC_NU0=1/8; ARC_R1=3; ARC_R2=32; ARC_R3=128; ARC_Z=16
+  ARC_COMMON=(--max_depth 44 --max_fail 2000 --try 16 --threads "$THREADS" --exact)
+  ARC_W=(--family W --nu0 $ARC_NU0 --R1 $ARC_R1 --R2 $ARC_R2 --R3 $ARC_R3 --Z $ARC_Z --Zc $ARC_Z
+         --R2c $ARC_R2 --R3c $ARC_R3 "${ARC_COMMON[@]}")
+  (cd "$NOPERT" && capped ./capcert-neo.exe --family U --mu0 $ARC_MU0 --nu0 $ARC_NU0 --R1 $ARC_R1 --R2 $ARC_R2 \
+    --R3 $ARC_R3 --wedge_prune "${ARC_COMMON[@]}" --export "$ARC_CERT.U")
+  (cd "$NOPERT" && capped ./capcert-neo.exe "${ARC_W[@]}" --regime 0 --piece 0 --tlo 0 --thi 17/86 --zh 2 \
+    --export "$ARC_CERT.W0")
+  (cd "$NOPERT" && capped ./capcert-neo.exe "${ARC_W[@]}" --regime 0 --piece 1 --tlo 17/86 --thi 17/86 --tmid 6 \
+    --export "$ARC_CERT.Wm")
+  (cd "$NOPERT" && capped ./capcert-neo.exe "${ARC_W[@]}" --regime 1 --piece 2 --tlo 17/86 --zl 2 --thi 11/32 \
+    --export "$ARC_CERT.W1")
+  (cd "$NOPERT" && capped ./capcert-neo.exe "${ARC_W[@]}" --regime 1 --piece 3 --tlo 11/32 --thi 13/32 \
+    --export "$ARC_CERT.W2")
+  if [ $DRY -eq 0 ]; then
+    cat "$ARC_CERT.U" "$ARC_CERT.W0" "$ARC_CERT.Wm" "$ARC_CERT.W1" "$ARC_CERT.W2" > "$ARC_CERT"
+    rm "$ARC_CERT.U" "$ARC_CERT.W0" "$ARC_CERT.Wm" "$ARC_CERT.W1" "$ARC_CERT.W2"
+  fi
+  stage_end arccert
+fi
+
 SEARCH=(--all --charts 0,1,2,3 --threads "$THREADS" --commit_depth 12 --subtree_budget 200000
         --max_depth 200 --trees_dir "$TREES_ID" --view_scale 4 --max_full_retry 1024 --half_turn_prune
-        --caps "$CAPS_FILE" --out_dir "$JOBS" --requeue_deferred)
+        --caps "$CAPS_FILE" "${ARC_CAP[@]}" --out_dir "$JOBS" --requeue_deferred)
 if want search; then
   stage_begin search
   # Rounds until nothing is deferred (the requeue closes nearly everything in
@@ -215,7 +252,7 @@ if want verify; then
   lean_build_wait
   [ $DRY -eq 1 ] || [ -x "$LEAN/.lake/build/bin/constructSeptopert" ] || {
     echo "missing $LEAN/.lake/build/bin/constructSeptopert (lake build constructSeptopert)" >&2; exit 1; }
-  capped "$LEAN/.lake/build/bin/constructSeptopert" "$TUBEPACKS/manifest.txt" "$PACKS" "$CAP_CERT" \
+  capped "$LEAN/.lake/build/bin/constructSeptopert" "$TUBEPACKS/manifest.txt" "$PACKS" "$CAP_CERT" "$ARC_CERT" \
     2>&1 | tee "$WORK/verify.log"
   stage_end verify
 fi

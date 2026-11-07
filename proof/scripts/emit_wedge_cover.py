@@ -15,7 +15,7 @@ u0 + u1 + u2 = 1:
 
 Here a_k are the path constraints: the three edge functionals of the base
 triangle followed by the split normals (with sign) from the root. The Lean
-side checks the tree (Septopert/ViewCover.lean for the Septopert's view
+side checks the tree (SeptopertClassic/ViewCover.lean for Septopert Classic's view
 domains, on the plane of each projective root; Pipeline/WedgeCover.lean for
 the other solids, whose generators are in search/).
 

@@ -9,9 +9,9 @@ not Rupert (`¬ IsRupert Septopert.verts`, from the checked data), as in
 `Septopert.isNopert_of_certificatesValid`.
 
 Usage:
-  constructSeptopert <tube manifest.txt> <chart directory> <cap.cert>
-    Checks everything: the cap certificate, every tube table and all four
-    chart tables. On success it prints
+  constructSeptopert <tube manifest.txt> <chart directory> <cap.cert> <arc.cert>
+    Checks everything: the cap certificate, the arc cap certificate, every tube
+    table and all four chart tables. On success it prints
       instantiated: IsNopert septopert (the Septopert is a Nopert: not Rupert)
     This is the verification of the result; the other modes are diagnostics.
   constructSeptopert chart <tube manifest.txt> <chart directory> <chart>
@@ -26,7 +26,7 @@ Usage:
 The arguments: `manifest.txt` lists one tube pack per code triangle (in
 `ViewCover.codeTriangles` order), next to the packs; the chart directory holds
 `c<C>/t<T>.pack` (chart C = 0..3, code T = 0..21); `cap.cert` is the cap
-certificate. How to produce or obtain the data, and the running time and
+certificate, `arc.cert` the arc cap certificate. How to produce or obtain the data, and the running time and
 memory needed: see `septopert.md` and `BUILDING.md` at the root of the
 repository.
 
@@ -135,16 +135,19 @@ def chartMode (manifestPath directory : String) (chart : CayleyAtlas.ChartIndex)
     log s!"chart {chart}: all {table.size} rows valid (and the root)"
   else throw (IO.userError "invalid chart table")
 
-def fullMode (manifestPath directory capPath : String) : IO Unit := do
+def fullMode (manifestPath directory capPath arcPath : String) : IO Unit := do
   let cap := decodeCert (← IO.FS.lines capPath)
   log s!"cap: {cap.charts.length} charts"
   let capOk ← checkCap cap
+  let arc := Noperts.Pipeline.ArcCap.decodeCert arcBlends (← IO.FS.lines arcPath)
+  log s!"arc cap: {arc.length} charts"
+  let arcOk ← checkArc arc
   let localTables ← readLocalTables manifestPath
   unless localTables.size = ViewCover.codeTriangles.size do
     throw (IO.userError s!"{localTables.size} tube tables for {ViewCover.codeTriangles.size} code triangles")
   let checked ← constructProof chunks chunks localTables
     (loadChart directory localTables.size)
-  let notRupert : ¬ IsRupert verts := checked.down capOk.down
+  let notRupert : ¬ IsRupert verts := checked.down capOk.down arcOk.down
   let _nopert : IsNopert septopert := ⟨not_coplanar_septopert, septopert_eq_verts ▸ notRupert⟩
   IO.println "instantiated: IsNopert septopert (the Septopert is a Nopert: not Rupert)"
 
@@ -160,9 +163,9 @@ def main (args : List String) : IO Unit := do
         log s!"tube table {k} valid"
       else throw (IO.userError "no such table")
   | ["chart", m, d, c] => chartMode m d (Fin.ofNat 4 c.toNat!)
-  | [m, d, cap] => fullMode m d cap
+  | [m, d, cap, arc] => fullMode m d cap arc
   | _ => throw (IO.userError <| "usage:\n" ++
-      "  constructSeptopert <tube manifest.txt> <chart directory> <cap.cert>   (checks everything)\n" ++
+      "  constructSeptopert <tube manifest.txt> <chart directory> <cap.cert> <arc.cert>   (checks everything)\n" ++
       "  constructSeptopert chart <tube manifest.txt> <chart directory> <chart>\n" ++
       "  constructSeptopert local <tube manifest.txt> <index>\n" ++
       "  constructSeptopert rows <tube manifest.txt> <chart> <job pack> [locals]")

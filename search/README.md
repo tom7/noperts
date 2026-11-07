@@ -10,8 +10,9 @@ whatever data it writes.
   `contacts5d`, `cert5d`, `rows5d`, `solve5d`, `search5d`, `pack5d`, ...),
   `codebdd` (all but #231's), the diagnostics and renderings, the unit tests,
   and the build rules (`common.mk`).
-- [`septopert/`](septopert/): the Septopert's search
-  (`septopert/rebuild.sh`).
+- [`septopert/`](septopert/): the Septopert's search (`septopert/rebuild.sh`).
+- [`septopert-classic/`](septopert-classic/): Septopert Classic's search
+  (`septopert-classic/rebuild.sh`).
 - [`dh/`](dh/): the deltoidal hexecontahedron's search (`dh/rebuild.sh`).
 - [`ph/`](ph/): the pentagonal hexecontahedron's search (`ph/rebuild.sh`).
 - [`sd/`](sd/): the snub dodecahedron's search (`sd/rebuild.sh`).
@@ -19,7 +20,7 @@ whatever data it writes.
   (`nopert231/rebuild.sh`), with its history.
 
 Each solid's directory has its README, makefile, rebuild script, model
-files and Lean data generators, and the solid's own tools (the Septopert's
+files and Lean data generators, and the solid's own tools (Septopert Classic's
 and the DH's cap certificates, the DH's tie tubes, #231's `codebdd`). The
 result's page (in the repository root) says how to run it; the rebuilds
 write to `work/`, `work-dh/`, `work-ph/`, `work-sd/` and `work-231/` at the

@@ -1,11 +1,12 @@
 # The Septopert
-Tom 7, 10 Oct 2026
+Tom 7, 7 Nov 2026
 
-The Septopert is a new convex polyhedron with 7 vertices that is not Rupert.
-Since 7 is the [fewest possible vertices](minimality.md), this is the
-smallest possible Nopert.
-This page gives the exact statement, what Lean checked and how, and how to
-reproduce the result.
+The Septopert is a convex polyhedron with 7 vertices that is not
+Rupert (a "nopert"). It is an improved version of the [Septopert
+Classic](septopert-classic.md), which was the first one we found in
+this family. 7 vertices is the fewest possible vertices for a nopert.
+This page gives the exact statement, what Lean checked and how, and
+how to reproduce the result.
 
 Lean entry point: [`proof/Septopert.lean`](proof/Septopert.lean).
 
@@ -14,57 +15,80 @@ Lean entry point: [`proof/Septopert.lean`](proof/Septopert.lean).
 ![The Septopert, spinning around with confidence](septopert.gif)
 
 Here is an exact [STL file](septopert.stl). On github, you can
-rotate it around in your browser by just clicking on that.
+rotate it around in your browser by just clicking on that. All the
+members of the Septopert family look identical to human eyes (these
+occupy only a tiny region of parameter space), but around here
+we like to be precise!
 
 The solid is the convex hull of these points (its vertices):
 
 ```
-(-940638,   327651,   327651)
-( 327651,  -940638,   327651)
-( 327651,   327651,  -940638)
-( 703968,    47788,    47788)
-(  47788,   703968,    47788)
-(  47788,    47788,   703968)
-(-514207,  -514207,  -514207)
+(-18,   9,   9)
+(  9, -18,   9)
+(  9,   9, -18)
+( 17,   3,   3)
+(  3,  17,   3)
+(  3,   3,  17)
+( -9,  -9,  -9)
 ```
 
-The proof divides by 2^20 so that the maximum magnitude is about 1.
-In lowest terms (the form used in Lean, `septopert` in
-`proof/Septopert.lean`):
+The differences from the holotype [Septopert Classic](septopert-classic.md) are:
+ * It has smaller integer coordinates
+ * Its apex is a cube corner (dihedral angles are exactly 90°). It is
+   in a special position at the edge (we think) of the Septopert
+   family. This makes it harder to prove nopert; it needed a new kind
+   of certificate.
 
-| vertex | x | y | z |
-|---|---|---|---|
-| 0 | −470319/524288 | 327651/1048576 | 327651/1048576 |
-| 1 | 327651/1048576 | −470319/524288 | 327651/1048576 |
-| 2 | 327651/1048576 | 327651/1048576 | −470319/524288 |
-| 3 | 21999/32768 | 11947/262144 | 11947/262144 |
-| 4 | 11947/262144 | 21999/32768 | 11947/262144 |
-| 5 | 11947/262144 | 11947/262144 | 21999/32768 |
-| 6 | −514207/1048576 | −514207/1048576 | −514207/1048576 |
+The proof divides by 32 so that the maximum magnitude is below 1. In lowest
+terms (the form used in Lean, `septopert` in `proof/Septopert.lean`):
 
-- The statement is about these points (largest |v| ≈ 0.99999935).
-  The integer form is the same solid scaled by 2^20. Any scale or
-  rigid transformation of the solid is a Nopert.
-- Symmetry C3v: a 3-fold axis along (1,1,1) and three mirror planes (each
-  swapping two coordinates). Vertices 0–2 are the permutations of (a, b, b),
-  vertices 3–5 those of (c, d, d), and vertex 6 is e·(1,1,1).
-- 10 triangular faces; vertex degrees 5,5,5 (vertices 0–2), 4,4,4 (3–5)
-  and 3 (vertex 6). Combinatorially a gyroelongated triangular pyramid: a
-  triangular antiprism (vertices 0–5) with a pyramid (apex 6) on its larger
-  face.
-- `search/septopert/septopert-model.txt` is the exact (rational) model the
-  search uses; `proof/Septopert/ModelData.lean` has the same vertices.
+| vertex |  x    |  y    |  z    |
+|--------|-------|-------|-------|
+| 0      | −9/16 | 9/32  | 9/32  |
+| 1      | 9/32  | −9/16 | 9/32  |
+| 2      | 9/32  | 9/32  | −9/16 |
+| 3      | 17/32 | 3/32  | 3/32  |
+| 4      | 3/32  | 17/32 | 3/32  |
+| 5      | 3/32  | 3/32  | 17/32 |
+| 6      | −9/32 | −9/32 | −9/32 |
+
+- The statement is about these points (largest |v| = √486/32 ≈ 0.689).
+  Any scale or rigid transformation of the solid is a Nopert.
+- Symmetry C3v, as for Septopert Classic: a 3-fold axis along (1,1,1)
+  and three mirror planes. Vertices 0–2 are the permutations of (a, b,
+  b), vertices 3–5 those of (c, d, d), and vertex 6 is e·(1,1,1).
+- 10 triangular faces, the same 10 as Septopert Classic's (vertex
+  lists 015, 016, 024, 026, 045, 123, 126, 135, 234, 345); vertex
+  degrees 5,5,5 (vertices 0–2), 4,4,4 (3–5) and 3 (vertex 6).
+  Combinatorially a gyroelongated triangular pyramid, as before.
+- **The special feature**: The apex, vertex 6, is a cube corner. Its
+  three faces are mutually perpendicular, and equivalently the edges
+  6–0, 6–1 and 6–2 are mutually orthogonal (each of length 27/32, and
+  (v₀−v₆)·(v₁−v₆) = 0 exactly). Septopert Classic's apex edges are at
+  90.33°; here the angle is exactly 90°.
+
 
 ### Edge info
 
-![Line drawing of two views of the septopert, with colored edges](septopert-edges.svg)
+Computed in exact arithmetic (rational face normals; dihedral angles
+and lengths from the exact squared quantities). Relative edge lengths
+are in units of the Lean coordinates (that is, the integer length
+divided by 32).
 
-| color | description | dihedral angle | relative edge length        |
-|-------|-------------|----------------|-----------------------------|
-|![blue](swatch-apex.svg)| apex of pyramid | 90.333818° | 1.206047 |
-|![yellow](swatch-base.svg)| base of pyramid | 146.145261° | 1.710540 |
-|![green](swatch-triforce-exterior.svg)| triforce exterior | 107.080553° | 1.043358 |
-|![red](swatch-triforce-center.svg)| triforce center | 140.788349° | 0.884989 |
+![Line drawing of two views of the Septopert, with colored edges](septopert-edges.svg)
+
+(Note: This is a schematic drawing used for any member of the Septopert family, not exact.)
+
+| color | description | edges | dihedral angle | relative edge length |
+|-------|-------------|-------|----------------|----------------------|
+|![blue](swatch-apex.svg)| apex of pyramid | 6–0, 6–1, 6–2 | 90° (exactly) | 0.843750 (= 27/32) |
+|![yellow](swatch-base.svg)| base of pyramid | 0–1, 0–2, 1–2 | 146.496544° | 1.193243 |
+|![green](swatch-triforce-exterior.svg)| triforce exterior | 0–4, 0–5, 1–3, 1–5, 2–3, 2–4 | 106.945562° | 0.726856 |
+|![red](swatch-triforce-center.svg)| triforce center | 3–4, 3–5, 4–5 | 140.882929° | 0.618718 |
+
+(For comparison, Septopert Classic's apex dihedral is 90.333818°. The
+squared lengths over 32² are 729, 1458, 541 and 392, so the apex edge
+is the only rational length.)
 
 ## The statement
 
@@ -74,45 +98,42 @@ In [`proof/Septopert.lean`](proof/Septopert.lean):
 theorem isNopert_of_certificatesValid (h : CertificatesValid) : IsNopert septopert
 ```
 
-`IsNopert V` (in `proof/Nopert.lean`) says that the points of `V` are not all
-in one plane, so their convex hull is a genuine solid, and that this solid is
-not Rupert. `IsRupert` (in `proof/MainTheorem.lean`) is the Rupert property:
-Two copies of the solid, each rotated, can be placed so that the shadow of
-one lies strictly inside the shadow of the other. `CertificatesValid` says
-that the certificate data (four solution tables and a cap certificate) passes
-Lean's validity checks. The same `IsNopert` is used by the
-[minimality](minimality.md) result, so the [two together](proof/ProofOfMainTheorem.lean) say that the vertex count of the smallest possible nopert is exactly 7.
+`IsNopert V` (in `proof/Nopert.lean`) says that the points of `V` are
+not all in one plane, so their convex hull is a genuine solid, and
+that this solid is not Rupert. `IsRupert` (in
+`proof/MainTheorem.lean`) is the Rupert property: Two copies of the
+solid, each rotated, can be placed so that the shadow of one lies
+strictly inside the shadow of the other. `CertificatesValid` says that
+the certificate data (four solution tables, a mirror cap certificate,
+and an arc cap certificate) passes Lean's validity checks. The same
+`IsNopert` is used by the [minimality](minimality.md) result, so the
+[two together](proof/ProofOfMainTheorem.lean) say that the vertex
+count of the smallest possible nopert is exactly 7.
 
 ## What is proved and what is verified
 
-This is a **Lean verification**, not a direct kernel-only Lean proof:
+The main content is the non-existence of a rupert passage. This is a
+**Lean verification**, not a direct kernel-only Lean proof:
 
 1. **Lean proof.** `isNopert_of_certificatesValid` is checked by Lean's
    kernel and depends only on the standard axioms (`propext`,
-   `Classical.choice`, `Quot.sound`). Its "genuine solid" half needs no data
-   at all.
+   `Classical.choice`, `Quot.sound`).
 2. **Verification of the data.** The data is about 850,000 table rows
-   (45 MB), too much for the kernel. The program `constructSeptopert` runs
-   the same Lean validity checks as compiled code on every row, and only if
-   all pass does it construct `IsNopert septopert` (via part 1) and print
-   `instantiated: IsNopert septopert (the Septopert is a Nopert: not Rupert)`.
-   This step trusts Lean's compiler and runtime to evaluate the checks
-   correctly. This is the same trust as `native_decide`, though `native_decide` is
-   not used.
+   (45 MB), too much for the kernel. The program `constructSeptopert`
+   runs the same Lean validity checks as compiled code on every row,
+   and only if all pass does it construct `IsNopert septopert` (via
+   part 1) and print `instantiated: IsNopert septopert (the Septopert
+   is a Nopert: not Rupert)`. This step trusts Lean's compiler and
+   runtime to evaluate the checks correctly. This is the same trust as
+   `native_decide`, though `native_decide` is not used.
 
 The C++ search in `search/septopert/` that produced the data does not
 need to be trusted: A mistake there can only produce data that fails
 the checks. That said, the C++ does its own independent checks of the
-certificate conditions as it searchs for them and prepares them for
+certificate conditions as it searches for them and prepares them for
 Lean. It would be very unlikely that a bug in the Lean
 compiler/runtime would also occur in the C++ search (perhaps something
 like a bug in GMP's integer multiplication routines.)
-
-Additionally, I ran my GPU solver for 60 billion iterations on the Septopert,
-which searches for Rupert passages via a completely different method.
-This is not part of the proof at all, but it provides additional comfort
-that we didn't just get hypnotized by the AI or miss something silly in the
-proof statement.
 
 We also need to trust that the proof statement itself matches the
 pre-formal idea of what we mean by "Rupert" and "Nopert". I use the
@@ -130,7 +151,7 @@ def IsRupert (vertices : Finset (EuclideanSpace ℝ (Fin 3))) : Prop :=
    inner_shadow ⊆ interior outer_shadow
 ```
 
-A set of points (note: not a solid) is Rupert if there exists
+A set of points (note: not a solid) is Rupert if there exist
 rotations for the inner and outer copies (`specialOrthogonalGroup`
 just means 3D rotation), and a 2D translation of the inner copy, such
 that the inner shadow is contained in the interior of the outer
@@ -158,110 +179,123 @@ the point set gives a genuine solid
 
 ## How the proof works
 
-The techniques are described in [How the Nopert proofs work](nopert-proof.md);
-for the Septopert:
+The overall technique is the one described in [How the Nopert proofs
+work](nopert-proof.md), and nearly everything is reused from Septopert
+Classic, because the symmetry group, the combinatorics and the 22
+view-code triangles (15 codes, numbered differently) are the same:
 
-- The vertices are rational, so the tables are checked against the exact
-  solid ([rational models](nopert-proof.md#rational-models-and-neighborhoods)).
-- Views are reduced into the C3v view domain (two triangles, covered by the
-  [code triangles](nopert-proof.md#codes-and-the-view-cover)), relative
-  rotations into the C3v cell, using the C3 prune and the
-  [mirror-tie reduction](nopert-proof.md#poses-and-symmetry-reductions)
-  (`Septopert/CellPrune.lean`, `Septopert/MirrorTie.lean`).
-- Near its mirror normal x = (1, 0, −1) a mirror tie approaches the identity,
-  so a [cap](nopert-proof.md#caps) covers those poses
-  (`capcert-septopert`, `Septopert/Caps.lean`).
-- The Septopert is only just barely Nopert: in one strip of views its
-  first-order margin is about 3·10⁻⁴. So nearly all of its
-  [identity tube](nopert-proof.md#the-identity-tube) is replaced by
-  [identity blow-up rows](nopert-proof.md#identity-blow-up-certificates),
-  each ruling out every rotation within 1/64 of the identity over its view
-  triangle; the [5D search](nopert-proof.md#the-5d-search) covers the rest.
-- Near a view where two faces are edge-on at once, the best inner vertex
-  switches inside boxes; [blended inner points](nopert-proof.md#balanced-witnesses)
-  certify them.
+- the exact rational model, the view cover and the C3v reductions (C3 prune,
+  mirror ties);
+- the [identity tube](nopert-proof.md#the-identity-tube), replaced mostly by
+  [identity blow-up rows](nopert-proof.md#identity-blow-up-certificates);
+- the [cap](nopert-proof.md#caps) at the mirror normal (1, 0, −1)/√2, and the
+  [5D search](nopert-proof.md#the-5d-search) with blended inner points for the
+  rest.
+
+The new piece is forced by the cube corner. The tube works by
+first-order margins: Near the identity rotation, a view is ruled out
+if some inner vertex must leave the outer shadow at first order, and
+the margin says by how much. For Septopert Classic the margin is small
+somewhere (about 3·10⁻⁴) but positive. For the Septopert it vanishes
+outright along a sub-arc of views, the arc ending at U = (2,2,−1)/3,
+the view straight down the apex edge 6–2. On this arc the face 0–2–6
+is edge-on, and the right angle at the apex makes the first order
+exactly zero: A tilt of the inner copy relative to the outer one moves
+the apex and its two neighbours only along the shadow's edge (never
+outward) at first order, so there is a whole cone of first-order
+flexes that the first order cannot rule out. Approaching the arc from
+the side where the margin is positive, it goes to zero linearly with
+the distance, so the tube radii shrink to nothing and no first-order
+certificate can reach the arc.
+
+The arc is not a passage, because the decision moves to second order,
+where it is strictly negative: With the rotation angle θ, the best
+clearance is about −3.69 θ² at U and between −4.46 θ² and −5.51 θ²
+along the sub-arc (a floating-point and symbolic study, not part of
+the proof; it explains why a certificate should exist). To prove that,
+the **arc cap** blows up the rotation and the distance to the arc
+together, along a rational parametrization of the arc: The view is
+x(t) + ν·t·α·N (a distance ν·t off the arc at position t along it),
+and the rotation is ν·t·s₁ along the arc's first-order flex plus
+ν²·t·s₂ and ν²·t²·s₃ in the two other directions. Boxes in (t, ν, α, s)
+then get width witnesses with the common factors of ν divided out,
+just as the point cap does at the mirror normal but along a curve
+instead of at a point. At U itself, where the arc ends, a point cap of
+the same kind takes views μ·(a, b) away from U, with a tilt μ·(s₁, s₂)
+and a spin μ²·s₃ of the rotation. The arc cap
+claim is that no pose with any offset, whose view lies in a certain
+convex polygon around U and the arc and whose rotation is within 1/46
+in Cayley coordinates, is a passage. It is a certificate of 146 charts
+(14,735 leaves, `capcert-neo`), and the exact cover of the polygon by
+the pieces is proved in Lean (`proof/Pipeline/ArcCap.lean`,
+`ArcCapClaim.lean`, `ArcCapCover.lean`, `ArcCapDecode.lean`; the
+instance for this solid is `proof/Septopert/ArcCap.lean`). The tube
+and the search leave that polygon (`search/septopert/arc-cap.txt`) to
+the arc cap. See also [Arc caps](nopert-proof.md#arc-caps) in the
+overview.
 
 ## Status
 
-Verified on 2026-10-15 on a 64-core machine: `constructSeptopert` checked
-the cap certificate, the 22 tube tables (250 rows, 176 of them identity
-blow-up rows) and the four chart tables (476,073, 143,787, 123,839 and
-104,243 rows) and printed `instantiated: IsNopert septopert (the Septopert
-is a Nopert: not Rupert)`. You can reproduce it yourself, following the
-instructions in [BUILDING.md](BUILDING.md):
+Verified on 2026-11-07: `constructSeptopert` checked the cap
+certificate, the arc cap certificate (614 KB, 146 charts, 14,735 leaves;
+Lean checking 344 s), the tube tables, and the four chart tables (472,636,
+143,633, 123,513 and 104,558 rows), and printed `instantiated: IsNopert
+septopert (the Septopert is a Nopert: not Rupert)`. Verification
+took 548 s.
+
+It was then reproduced from scratch (from the tube stage, with the model
+files as committed) with 56 threads on a shared machine, giving the same row
+counts and the same `instantiated` line:
 
 ```sh
 ./get-cc-lib.sh
 (cd proof && lake exe cache get)    # Mathlib build cache
-search/septopert/rebuild.sh --from model --threads 64
+search/septopert/rebuild.sh --threads 56 --work work-fresh
 ```
 
-Note that the certificate search is not deterministic since it runs on
-multiple cores and tests a cache of recent certificates that can be reused
-for nearby cells. So you may not get the same row counts, etc. as I did.
+The search is multithreaded and not deterministic, so other runs may
+differ in details. Stages: `model`, `tube`, `idcap`, `tubepack`,
+`cap`, `arccert`, `search`, `pack`, `verify` (`--from STAGE`, `--only
+STAGE`, `--work DIR` as for Septopert Classic). The new stage
+`arccert` runs `capcert-neo` once per piece of the arc cover.
 
-This builds everything, runs `codebdd` on the exact model
-`search/septopert/septopert-model.txt` (and regenerates the view cover
-`proof/Septopert/ViewCoverData.lean` from its output), builds the identity
-tube and replaces nearly all of it by identity blow-up rows, runs the search,
-packs the tables into `work/`, and finally runs `constructSeptopert` on
-them. Stages: `model`, `tube`, `idcap`, `tubepack`, `cap`, `search`, `pack`,
-`verify`; `--from STAGE` restarts at a stage, `--only STAGE` runs one,
-`--work DIR` moves the output. Each stage appends its wall time to
-`work/stages.log` (and prints its peak memory); the Lean build runs in the
-background while the C++ stages run (log `work/lean_build.log`).
+Measured stage times of that run (2093 s in all, on a shared machine):
 
-Measured times of a from-scratch run on 64 cores with 64 threads
-(2026-10-15; the model stage on 2026-10-14), about 21 min in all:
+| Stage   | Time  |
+|---------|-------|
+| tube    | 158 s |
+| idcap   | 640 s |
+| cap     | 44 s  |
+| arccert | 81 s  |
+| search  | 143 s |
+| pack    | 82 s  |
+| verify  | 945 s |
 
-| Stage | Time |
-|---|---|
-| model | 9 s |
-| tube + tubepack | 3.5 min |
-| idcap | 11.4 min |
-| cap | 36 s |
-| search | 1.5 min (354,845 nodes) |
-| pack | 45 s |
-| verify | 3.4 min, 744 MiB peak |
-
-### History
-
-I first verified the Septopert on October 9, 2026. I reproduced it two
-times on two different computers (October 9 and 10), and independently
-from a fresh clone in a sandbox. This first version of the proof used
-the "identity tube" to rule out local passages. Its data was enormous
-at about 85 million rows (6.7 GB), taking 3 hours and 15 GB of RAM on
-64 cores; see the [historic revision](https://github.com/tom7/noperts/blob/8a8ea2ab/septopert.md).
-
-A new version developed a few days later uses "blow-up" certificates,
-which cuts the size by about 50x, although each certificate is more
-expensive to verify. An end-to-end reproduction takes about 80 minutes
-on a 64-core beefcake.
+The work directory was 2.1 GB.
 
 ## Verifying existing data
 
-Given the data (`tube_packs/`, `packs/`, `cap-1_16.cert`), only the last
-stage is needed:
+Given the data, only the last stage is needed:
 
 ```sh
 (cd proof && lake build constructSeptopert)
-cd work && LEAN_NUM_THREADS=64 ../proof/.lake/build/bin/constructSeptopert \
-  tube_packs/manifest.txt packs cap-1_16.cert
+cd work && ../proof/.lake/build/bin/constructSeptopert \
+  tube_packs/manifest.txt packs cap-1_16.cert arc.cert
 ```
-
-It checks the cap certificate, the 22 tube tables, then the four chart
-tables one at a time. Chart 0 has about 480,000 rows; charts 1–3 have
-less than 150,000 rows each.
 
 ## The data
 
-The certificate data is machine output, intended to be CC0:
+The certificate data is machine output, intended to be CC0 (but not
+hosted here):
 
-- `cap-1_16.cert`: 550 KB, the cap certificate around the mirror directions;
-- `tube_packs/`: 1.4 MB, 22 identity-tube tables and `manifest.txt`;
-- `packs/`: 45 MB, 92 per-code solution packs (`packs/c<chart>/t<code>.pack`;
-  the largest, `packs/c0/t2.pack`, is 2.9 MB).
+- `arc.cert`: 614 KB, the arc cap certificate (146 charts, 14,735 leaves);
+- `cap-1_16.cert`: 520 KB, the cap certificate around the mirror directions;
+- `tube_packs/`: 960 KB, 22 identity-tube tables and `manifest.txt`;
+- `packs/`: 44 MB, 88 solution packs, one for each of the 4 charts and
+  22 view-code triangles (`packs/c<chart>/t<triangle>.pack`; about
+  844,000 rows; the largest, `packs/c0/t2.pack`, is 3.1 MB).
 
-All three together compress to about 8 MB (`tar czf`).
+All four together compress to about 8 MB (`tar czf`).
 
 To check it yourself, rebuild it (see "Status" above).
+
