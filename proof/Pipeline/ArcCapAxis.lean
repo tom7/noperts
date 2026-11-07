@@ -37,22 +37,18 @@ section real
 variable {K : Type} [ExactScalarOps K] [ExactScalarVal K]
 variable {V : Array (KCap.KVec K)} {fr : Frame K}
 
-/-- **The square**: with a checked certificate on the four sides, every pose of the square and the
-weighted box is good. -/
-theorem square_good {pr : Params} {c : Cert} (hp : pr.Ok) (hc : certCheckOn axisCharts V fr pr c = true)
-    (hRc : 0 < (pr.Rc : ℝ)) (hSc : 0 < (pr.Sc : ℝ)) (hwd : pr.wedge = false) (hR : 2 ≤ (pr.R : ℝ))
-    (hS : 0 < (pr.S : ℝ)) {a b x y z : ℝ} (ha : |a| ≤ pr.mu0) (hb : |b| ≤ pr.mu0) (hx : |x| ≤ pr.mu0)
-    (hy : |y| ≤ pr.mu0) (hz : |z| ≤ pr.S * (pr.mu0 : ℝ) ^ 2) : Good V fr a b x y z := by
+/-- **The square, from closed charts**: if every chart of the four sides is closed, every pose of the
+square and the weighted box (|x|, |y| ≤ R μ₀ / 2, |z| ≤ S μ₀²) is good. -/
+theorem square_good_of_cube {pr : Params}
+    (cube : ∀ side : ℕ, side < 4 → ∀ k ∈ uKinds, ∀ y, KPoly.InBox (rootBox pr (.u side k)) y →
+      PointGood V fr pr (.u side k) y)
+    (hR : 0 < (pr.R : ℝ)) (hS : 0 < (pr.S : ℝ)) {a b x y z : ℝ} (ha : |a| ≤ pr.mu0) (hb : |b| ≤ pr.mu0)
+    (hx : |x| ≤ pr.R * pr.mu0 / 2) (hy : |y| ≤ pr.R * pr.mu0 / 2) (hz : |z| ≤ pr.S * (pr.mu0 : ℝ) ^ 2) :
+    Good V fr a b x y z := by
   have hm0 : 0 ≤ max |a| |b| := le_max_of_le_left (abs_nonneg _)
-  have hR0q : (0 : ℚ) < pr.R := by exact_mod_cast (by linarith : (0 : ℝ) < pr.R)
+  have hR0q : (0 : ℚ) < pr.R := by exact_mod_cast hR
   have hSq : (0 : ℚ) < pr.S := by exact_mod_cast hS
   have hmu : (0 : ℝ) ≤ pr.mu0 := le_trans (abs_nonneg _) ha
-  have cube : ∀ side : ℕ, side < 4 → ∀ k ∈ uKinds, ∀ y, KPoly.InBox (rootBox pr (.u side k)) y →
-      PointGood V fr pr (.u side k) y := by
-    intro side hs
-    refine cert_goodU hp hc hRc hSc (fun h => absurd h (by simp [hwd])) side ?_
-    intro k hk
-    exact mem_uCharts (by simp [axisCharts]; omega) hk
   obtain ⟨μ, e, s, h0, h1, he0, he1, hme, hs, hcase⟩ :=
     Cap.weighted_cube ![1, 1, 2] (by intro i; fin_cases i <;> simp) ![(pr.R : ℝ), pr.R, pr.S]
       (by intro i; fin_cases i <;> simp [hR0q, hSq]) pr.mu0 (max |a| |b|) hm0 (max_le ha hb)
@@ -61,9 +57,9 @@ theorem square_good {pr : Params} {c : Cert} (hp : pr.Ok) (hc : certCheckOn axis
         intro i
         fin_cases i
         · simp only [Fin.zero_eta, Matrix.cons_val_zero, pow_one, abs_mul, abs_two]
-          nlinarith
+          linarith
         · simp only [Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_zero, pow_one, abs_mul, abs_neg, abs_two]
-          nlinarith
+          linarith
         · simp only [Fin.reduceFinMk, Matrix.cons_val]; exact hz)
   have s0 := hs 0; have s1 := hs 1; have s2 := hs 2
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, pow_one] at s0 s1 s2
@@ -121,6 +117,19 @@ theorem square_good {pr : Params} {c : Cert} (hp : pr.Ok) (hc : certCheckOn axis
       rw [abs_of_nonpos hb0] at haτ
       rw [haτ]; simpa using hG
 
+/-- **The square**: with a checked certificate on the four sides, every pose of the square and the
+weighted box is good. -/
+theorem square_good {pr : Params} {c : Cert} (hp : pr.Ok) (hc : certCheckOn axisCharts V fr pr c = true)
+    (hRc : 0 < (pr.Rc : ℝ)) (hSc : 0 < (pr.Sc : ℝ)) (hwd : pr.wedge = false) (hR : 2 ≤ (pr.R : ℝ))
+    (hS : 0 < (pr.S : ℝ)) {a b x y z : ℝ} (ha : |a| ≤ pr.mu0) (hb : |b| ≤ pr.mu0) (hx : |x| ≤ pr.mu0)
+    (hy : |y| ≤ pr.mu0) (hz : |z| ≤ pr.S * (pr.mu0 : ℝ) ^ 2) : Good V fr a b x y z := by
+  have hmu : (0 : ℝ) ≤ pr.mu0 := le_trans (abs_nonneg _) ha
+  refine square_good_of_cube ?_ (by linarith) hS ha hb (by nlinarith) (by nlinarith) hz
+  intro side hs
+  refine cert_goodU hp hc hRc hSc (fun h => absurd h (by simp [hwd])) side ?_
+  intro k hk
+  exact mem_uCharts (by simp [axisCharts]; omega) hk
+
 /-- A frame E₁, E₂, X orthogonal, of squared lengths n₁, n₂, n₃, with the Cayley weights
 k_i = 1 / n_i. -/
 structure FrameOkG (fr : Frame K) (n1 n2 nx : ℝ) : Prop where
@@ -136,6 +145,9 @@ structure FrameOkG (fr : Frame K) (n1 n2 nx : ℝ) : Prop where
   k1 : (fr.k1 : ℝ) * n1 = 1
   k2 : (fr.k2 : ℝ) * n2 = 1
   k3 : (fr.k3 : ℝ) * nx = 1
+  w1 : fr.W1 = fr.E1
+  w2 : fr.W2 = fr.E2
+  w3 : fr.W3 = fr.X
 
 /-- The views of the square |a|, |b| ≤ μ₀ of the frame: v ∝ X − a E₁ − b E₂. -/
 def InSquare (fr : Frame K) (n1 n2 nx m : ℝ) (v : Fin 3 → ℝ) : Prop :=
@@ -205,7 +217,7 @@ theorem square_not_rupert {pr : Params} {c : Cert} {n1 n2 nx r : ℝ} (hp : pr.O
   · have hw' : wR fr (rdot w (kval fr.E1)) (rdot w (kval fr.E2)) (rdot w (kval fr.X)) = w := by
       conv_rhs => rw [dec w]
       funext i
-      simp only [wR, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+      simp only [wR, Pi.add_apply, Pi.smul_apply, smul_eq_mul, hf.w1, hf.w2, hf.w3]
       have k1 : (fr.k1 : ℝ) = 1 / n1 := by field_simp; linarith [hf.k1]
       have k2 : (fr.k2 : ℝ) = 1 / n2 := by field_simp; linarith [hf.k2]
       have k3 : (fr.k3 : ℝ) = 1 / nx := by field_simp; linarith [hf.k3]

@@ -115,6 +115,19 @@ def parseId (t : Array String) : ChartId :=
       | 0 => .fe
       | 1 => .face (n 4) (b 5)
       | _ => .cone (n 4) (b 5))
+  else if t[1]! == "pu" then
+    -- the U charts of the P cap: the same line as `u`
+    .pu (match n 2 with | 1 => 0 | 0 => 3 | 2 => 1 | _ => 2) (match n 3 with
+      | 0 => .fe
+      | 1 => .face (n 4) (b 5)
+      | _ => .cone (n 4) (b 5))
+  else if t[1]! == "p" then
+    -- the wedge of the P cap: `p 0 al k sg` (fp), `p 1 sg` (face0), `p 2 sg` (face1), `p 3 m sg` (face2)
+    .p (match n 2 with
+      | 0 => .fp (b 3) (n 4) (b 5)
+      | 1 => .face0 (b 3)
+      | 2 => .face1 (b 3)
+      | _ => .face2 (n 3) (b 4))
   else
     .w (pieceOfNat (n 2)) (match n 3 with
       | 0 => .fe (b 4) (b 5)

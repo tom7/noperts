@@ -581,6 +581,9 @@ structure FrameOk (fr : Frame K) : Prop where
   k1 : (fr.k1 : ℝ) = 1 / 3
   k2 : (fr.k2 : ℝ) = 1 / 3
   k3 : (fr.k3 : ℝ) = 1 / 3
+  w1 : fr.W1 = fr.E1
+  w2 : fr.W2 = fr.E2
+  w3 : fr.W3 = fr.X
 
 /-- The view polygon P, by linear inequalities in the view v: the half square
 |v·E₁|, |v·E₂| ≤ v·X / 8, v·E₁ ≤ v·E₂, and the wedge |v·E₂| ≤ −(v·E₁) / 8, −v·E₁ ≤ (13/32) v·X. -/
@@ -637,7 +640,7 @@ theorem arc_not_rupert {c : Cert} (hc : certCheck V fr neoParams c = true) (hf :
   · have hw : wR fr (rdot w (kval fr.E1) / 3) (rdot w (kval fr.E2) / 3) (rdot w (kval fr.X) / 3) = w := by
       conv_rhs => rw [dec w]
       funext i
-      simp only [wR, Pi.add_apply, Pi.smul_apply, smul_eq_mul, hf.k1, hf.k2, hf.k3]
+      simp only [wR, Pi.add_apply, Pi.smul_apply, smul_eq_mul, hf.k1, hf.k2, hf.k3, hf.w1, hf.w2, hf.w3]
       ring
     rw [hw]; exact hR
 
