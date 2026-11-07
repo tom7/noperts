@@ -4,6 +4,7 @@ defaultTargets = ["Noperts", "SeptopertClassic", "SeptopertM18", "Minimality", "
   "constructSeptopertClassic", "checkSeptopertClassicCap", "constructSeptopertM18", "checkSeptopertM18Cap", "checkSeptopertM18Arc", "checkSeptopertM12Arc", "checkSeptopertM12Axis", "checkSeptopertM12PCap", "constructSeptopertM12", "checkSeptopertArc", "checkSeptopertAxis", "checkSeptopertPCap", "constructSeptopert", "constructDeltoidalHexecontahedron",
   "constructPentagonalHexecontahedron", "constructSnubDodecahedron", "constructSnubCube",
   "checkSnubCubeCap", "constructNopert231",
+  "SeptopertFamily", "checkSeptopertFamily",
   "Tests"]
 
 [leanOptions]
@@ -96,6 +97,10 @@ globs = ["SnubDodecahedron", "SnubDodecahedron.+"]
 [[lean_lib]]
 name = "Nopert231"
 globs = ["Nopert231", "Nopert231.+"]
+
+[[lean_lib]]
+name = "SeptopertFamily"
+globs = ["SeptopertFamily", "SeptopertFamily.+"]
 
 [[lean_exe]]
 name = "checkSeptopertClassicCap"
@@ -190,4 +195,9 @@ buildType = "release"
 [[lean_exe]]
 name = "constructNopert231"
 root = "constructNopert231"
+buildType = "release"
+
+[[lean_exe]]
+name = "checkSeptopertFamily"
+root = "checkSeptopertFamily"
 buildType = "release"
