@@ -369,6 +369,205 @@ theorem wedge_good {c : Cert} (hc : certCheck V fr neoParams c = true) {t b x y 
   · exact w1_good hc ht (by norm_num) le_rfl (fit1 (by linarith) hhi hb hx hy hz) (by linarith) h3
   · exact w2_good hc ht (by norm_num) le_rfl (fit1 (by linarith) hhi hb hx hy hz) h3 hhi
 
+omit [ExactScalarVal K] in
+theorem prune_fit {μ τ q σ1 σ3 : ℝ} (hpos : 0 < μ) (hq0 : 0 ≤ q) (hτ : |τ| ≤ 1 / 8) (hq34 : q ≤ 3 / 4)
+    (k3 : q * |σ1 - f0 μ| ≤ 1) (k4 : q * |8 * σ3 - 1 / 4| ≤ 2) :
+    Fits μ (f0 μ) μ (μ * τ) (-1 / 2 * (μ * -(1 / 2 * q))) (1 / 2 * (μ * (1 / 2 * (q * σ1))))
+      (μ * μ * (8 * (q * σ3))) (1 / 8) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · rw [abs_mul, abs_of_pos hpos]
+    exact mul_le_mul_of_nonneg_left hτ hpos.le
+  · have : 2 * (-1 / 2 * (μ * -(1 / 2 * q))) = 1 / 2 * (μ * q) := by ring
+    rw [this, abs_of_nonneg (by positivity)]
+    have := mul_le_mul_of_nonneg_left hq34 hpos.le
+    linarith
+  · have : 2 * (1 / 2 * (μ * (1 / 2 * (q * σ1)))) - f0 μ * (2 * (-1 / 2 * (μ * -(1 / 2 * q)))) =
+        1 / 2 * μ * (q * (σ1 - f0 μ)) := by ring
+    rw [this, abs_mul, abs_of_pos (by positivity), abs_mul, abs_of_nonneg hq0]
+    have := mul_le_mul_of_nonneg_left k3 (by positivity : 0 ≤ 1 / 2 * μ)
+    linarith
+  · have : μ * μ * (8 * (q * σ3)) - μ * (-1 / 2 * (μ * -(1 / 2 * q))) = μ ^ 2 * (q * (8 * σ3 - 1 / 4)) := by ring
+    rw [this, abs_mul, abs_of_pos (by positivity), abs_mul, abs_of_nonneg hq0]
+    have := mul_le_mul_of_nonneg_left k4 (by positivity : 0 ≤ μ ^ 2)
+    linarith
+
+/-- Points of the wedge boxes of the cone (1, −) of side true are wedge poses. -/
+theorem prune_point {c : Cert} (hc : certCheck V fr neoParams c = true) (box : Box)
+    (h : wedgeBoxOk neoParams box = true) (y : Fin 5 → ℝ) (hy : KPoly.InBox box y)
+    (hr : KPoly.InBox (rootBox neoParams (.u true (.cone 1 false))) y) :
+    PointGood V fr neoParams (.u true (.cone 1 false)) y := by
+  rw [pointGood_u]
+  have e0 : KPoly.eval 5 (uS (K := K) neoParams (.cone 1 false) 0) y = 1 / 2 * (y 2 * y 3) := by
+    simp [uS, KPoly.eval_mul, eval_pconst, eval_pvar, eval_faceCoord, rc, neoParams, freeVar]
+  have e1 : KPoly.eval 5 (uS (K := K) neoParams (.cone 1 false) 1) y = -(1 / 2 * y 2) := by
+    simp [uS, KPoly.eval_mul, eval_pconst, eval_pvar, eval_faceCoord, rc, neoParams, signQ]
+  have e2 : KPoly.eval 5 (uS (K := K) neoParams (.cone 1 false) 2) y = 8 * (y 2 * y 4) := by
+    simp [uS, KPoly.eval_mul, eval_pconst, eval_pvar, eval_faceCoord, rc, neoParams, freeVar]
+  rw [e0, e1, e2]
+  simp only [uE, eval_kOne, GoodU, ite_true, mul_one]
+  set μ := y 0 with hμ
+  set τ := y 1
+  set q := y 2
+  set σ1 := y 3
+  set σ3 := y 4
+  have hμ0 : 0 ≤ μ := by simpa [rootBox] using (hr 0).1
+  have hμ1 : μ ≤ 1 / 8 := by simpa [rootBox, neoParams] using (hr 0).2
+  have hq0 : 0 ≤ q := by simpa [rootBox] using (hr 2).1
+  have x0 := hy 0; have x1 := hy 1; have x2 := hy 2; have x3 := hy 3; have x4 := hy 4
+  rcases hμ0.lt_or_eq with hpos | hz
+  swap
+  · -- μ = 0: the view X at the identity, a point of W0.
+    have hG := cube_good (V := V) (fr := fr) hc .w0 (μ := 0) (p := 0) (al := 1) (s1 := 0) (s2 := 0) (s3 := 0)
+      le_rfl (by norm_num) (by simpa [p1Box] using mem_zero (w := 1) le_rfl (by norm_num)) (by norm_num)
+      (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    simpa [GoodW, tR, bR, ← hz] using hG
+  simp only [wedgeBoxOk, Bool.and_eq_true, decide_eq_true_eq] at h
+  obtain ⟨⟨⟨a1, a2⟩, a3⟩, a4⟩ := h
+  simp only [neoParams] at a1 a2 a3 a4
+  set L0 := (box 0).1
+  set H0 := (box 0).1 + (box 0).2
+  set L1 := (box 1).1
+  set H1 := (box 1).1 + (box 1).2
+  set H2 := (box 2).1 + (box 2).2
+  set L3 := (box 3).1
+  set H3 := (box 3).1 + (box 3).2
+  set L4 := (box 4).1
+  set H4 := (box 4).1 + (box 4).2
+  set dsig := max |L3 - (17 / 64 + -22 / 64 * L0)| |H3 - (17 / 64 + -22 / 64 * H0)| with hdsig
+  set dspin := max |8 * L4 - 1 / 2 / 2| |8 * H4 - 1 / 2 / 2| with hdspin
+  have r1 : (max |(L1 : ℝ)| |(H1 : ℝ)|) ≤ 1 / 8 := by
+    have := (Rat.cast_le (K := ℝ)).mpr a1; push_cast at this; exact this
+  have r2 : (1 / 2 : ℝ) * H2 ≤ 3 * (1 / 8) := by
+    have := (Rat.cast_le (K := ℝ)).mpr a2; push_cast at this; exact this
+  have r3 : (1 / 2 : ℝ) * H2 * dsig ≤ 32 * (1 / 8) ^ 2 := by
+    have := (Rat.cast_le (K := ℝ)).mpr a3
+    rw [Rat.cast_mul, Rat.cast_mul] at this
+    push_cast at this ⊢; exact this
+  have r4 : (H2 : ℝ) * dspin ≤ 128 * (1 / 8) ^ 2 := by
+    have := (Rat.cast_le (K := ℝ)).mpr a4
+    rw [Rat.cast_mul] at this
+    push_cast at this ⊢; exact this
+  have y1L : (L1 : ℝ) ≤ τ := x1.1
+  have y1H : τ ≤ (H1 : ℝ) := by simpa [H1] using x1.2
+  have y2H : q ≤ (H2 : ℝ) := by simpa [H2] using x2.2
+  have y0L : (L0 : ℝ) ≤ μ := x0.1
+  have y0H : μ ≤ (H0 : ℝ) := by simpa [H0] using x0.2
+  have y3L : (L3 : ℝ) ≤ σ1 := x3.1
+  have y3H : σ1 ≤ (H3 : ℝ) := by simpa [H3] using x3.2
+  have y4L : (L4 : ℝ) ≤ σ3 := x4.1
+  have y4H : σ3 ≤ (H4 : ℝ) := by simpa [H4] using x4.2
+  have absMax : ∀ {lo hi v : ℝ}, lo ≤ v → v ≤ hi → |v| ≤ max |lo| |hi| := by
+    intro lo hi v h1 h2
+    rcases le_total 0 v with h | h
+    · rw [abs_of_nonneg h]; exact le_trans (le_trans h2 (le_abs_self hi)) (le_max_right _ _)
+    · rw [abs_of_nonpos h]; exact le_trans (le_trans (by linarith) (neg_le_abs lo)) (le_max_left _ _)
+  have hτ : |τ| ≤ 1 / 8 := le_trans (absMax y1L y1H) r1
+  have hdsig' : |σ1 - f0 μ| ≤ (dsig : ℝ) := by
+    have := absMax (lo := (L3 : ℝ) - (17 / 64 + -22 / 64 * L0)) (hi := (H3 : ℝ) - (17 / 64 + -22 / 64 * H0))
+      (v := σ1 - f0 μ) (by simp only [f0]; linarith) (by simp only [f0]; linarith)
+    rw [hdsig]; push_cast; exact this
+  have hdspin' : |8 * σ3 - 1 / 4| ≤ (dspin : ℝ) := by
+    have := absMax (lo := 8 * (L4 : ℝ) - 1 / 2 / 2) (hi := 8 * (H4 : ℝ) - 1 / 2 / 2) (v := 8 * σ3 - 1 / 4)
+      (by linarith) (by linarith)
+    rw [hdspin]; push_cast; exact this
+  have hd0 : (0 : ℝ) ≤ dsig := le_trans (abs_nonneg _) hdsig'
+  have hd1 : (0 : ℝ) ≤ dspin := le_trans (abs_nonneg _) hdspin'
+  have hq34 : q ≤ 3 / 4 := by linarith
+  have k3 : q * |σ1 - f0 μ| ≤ 1 := by
+    have := mul_le_mul y2H hdsig' (abs_nonneg _) (le_trans hq0 y2H)
+    nlinarith
+  have k4 : q * |8 * σ3 - 1 / 4| ≤ 2 := by
+    have := mul_le_mul y2H hdspin' (abs_nonneg _) (le_trans hq0 y2H)
+    nlinarith
+  have hF := prune_fit hpos hq0 hτ hq34 k3 k4
+  exact w0_good hc hpos (by norm_num) le_rfl hF (by linarith)
+
+/-- **The U cap**: every view of the half square, every rotation of the weighted box. -/
+theorem u_good {c : Cert} (hc : certCheck V fr neoParams c = true) {a b x y z : ℝ}
+    (ha : |a| ≤ 1 / 8) (hb : |b| ≤ 1 / 8) (hab : b ≤ a) (hx : |x| ≤ 1 / 8) (hy : |y| ≤ 1 / 8)
+    (hz : |z| ≤ 1 / 8) : Good V fr a b x y z := by
+  have cube := fun side => cert_goodU (V := V) (fr := fr) neoParams_ok hc (by norm_num [neoParams])
+    (by norm_num [neoParams]) (prune_point hc) side
+  have hm0 : 0 ≤ max |a| |b| := le_max_of_le_left (abs_nonneg _)
+  obtain ⟨μ, e, s, h0, h1, he0, he1, hme, hs, hcase⟩ :=
+    Cap.weighted_cube ![1, 1, 2] (by intro i; fin_cases i <;> simp) ![2, 2, 8]
+      (by intro i; fin_cases i <;> simp) (1 / 8) (max |a| |b|) hm0 (max_le ha hb) ![2 * y, -2 * x, z]
+      (by
+        intro i
+        fin_cases i
+        · simp only [Fin.zero_eta, Matrix.cons_val_zero, pow_one, abs_mul, abs_two]; linarith
+        · simp only [Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_zero, pow_one, abs_mul, abs_neg, abs_two]
+          linarith
+        · simp only [Fin.reduceFinMk, Matrix.cons_val]; norm_num; linarith)
+  have s0 := hs 0; have s1 := hs 1; have s2 := hs 2
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, pow_one] at s0 s1 s2
+  have hr : ∀ i : Fin 3, |s i| ≤ rng neoParams i := by
+    intro i
+    fin_cases i
+    · simpa [rng, neoParams] using s0.2
+    · simpa [rng, neoParams] using s1.2
+    · simpa [rng, neoParams] using s2.2
+  have hf : e = 1 ∨ ∃ k : Fin 3, |s k| = rng neoParams k := by
+    rcases hcase with h | ⟨k, hk⟩
+    · exact Or.inl h
+    · right
+      refine ⟨k, ?_⟩
+      fin_cases k
+      · simpa [rng, neoParams] using hk
+      · simpa [rng, neoParams] using hk
+      · simpa [rng, neoParams] using hk
+  have hμ1 : μ ≤ neoParams.mu0 := by simpa [neoParams] using h1
+  have ex : -1 / 2 * (μ * s 1) = x := by have := s1.1; linarith
+  have ey : 1 / 2 * (μ * s 0) = y := by have := s0.1; linarith
+  have ez : μ * μ * s 2 = z := by have := s2.1; rw [this]; ring
+  by_cases hba : |b| ≤ a
+  · have ha0 : 0 ≤ a := le_trans (abs_nonneg _) hba
+    have hm : μ * e = a := by
+      rw [← hme, abs_of_nonneg ha0]; exact max_eq_left hba
+    rcases ha0.lt_or_eq with hpos | hz0
+    · have hτ : |b / a| ≤ 1 := by
+        rw [abs_div, abs_of_pos hpos, div_le_one hpos]; exact hba
+      have hG := goodU_of_cube V fr neoParams true (cube true) h0 hμ1 hτ he0 he1 hr hf
+      simp only [GoodU, ite_true, hm, ex, ey, ez] at hG
+      rwa [mul_div_cancel₀ _ hpos.ne'] at hG
+    · have hb0 : b = 0 := by
+        have : |b| ≤ 0 := by rw [hz0]; exact hba
+        exact abs_nonpos_iff.mp this
+      have hG := goodU_of_cube V fr neoParams true (cube true) h0 hμ1 (τ := 0) (by norm_num) he0 he1 hr hf
+      simp only [GoodU, ite_true, hm, ex, ey, ez, mul_zero] at hG
+      rwa [hb0]
+  · have hlt := not_le.mp hba
+    have hb0 : b < 0 := by
+      by_contra hcon
+      rw [abs_of_nonneg (not_lt.mp hcon)] at hlt
+      linarith
+    rw [abs_of_neg hb0] at hlt
+    have hnb : 0 < -b := by linarith
+    have hab' : |a| ≤ -b := abs_le.mpr ⟨by linarith, by linarith⟩
+    have hm : μ * e = -b := by
+      rw [← hme, abs_of_neg hb0]; exact max_eq_right hab'
+    have hτ : |a / -b| ≤ 1 := by
+      rw [abs_div, abs_of_pos hnb, div_le_one hnb]; exact hab'
+    have hG := goodU_of_cube V fr neoParams false (cube false) h0 hμ1 hτ he0 he1 hr hf
+    simp only [GoodU, Bool.false_eq_true, ite_false, hm, ex, ey, ez] at hG
+    rw [mul_div_cancel₀ _ hnb.ne'] at hG
+    simpa using hG
+
+/-- **The cover**: a view of the half square or the wedge, a rotation within 1/46 in each apex
+coordinate. -/
+theorem cover_good {c : Cert} (hc : certCheck V fr neoParams c = true) {a b x y z : ℝ}
+    (hv : (|a| ≤ 1 / 8 ∧ |b| ≤ 1 / 8 ∧ b ≤ a) ∨ (|b| ≤ a / 8 ∧ a ≤ 13 / 32))
+    (hx : |x| ≤ 1 / 46) (hy : |y| ≤ 1 / 46) (hz : |z| ≤ 1 / 46) : Good V fr a b x y z := by
+  have hx' : |x| ≤ 1 / 8 := by linarith
+  have hy' : |y| ≤ 1 / 8 := by linarith
+  have hz' : |z| ≤ 1 / 8 := by linarith
+  rcases hv with ⟨h1, h2, h3⟩ | ⟨h1, h2⟩
+  · exact u_good hc h1 h2 h3 hx' hy' hz'
+  · have ha0 : 0 ≤ a := by linarith [abs_nonneg b]
+    rcases lt_or_ge a (1 / 8) with hlt | hge
+    · exact u_good hc (by rw [abs_of_nonneg ha0]; linarith) (by linarith) (by linarith [le_abs_self b]) hx' hy' hz'
+    · exact wedge_good hc hge h2 h1 hx hy hz
+
 end real
 
 end ArcCap
