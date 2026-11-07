@@ -21,14 +21,18 @@
 #   cap      the cap certificate at n (capcert-septopert-m12 --mu0 1/16 --max_depth 38)
 #            and the search's caps file (frame x = (1,0,-1), e1 = (0,2,0),
 #            e2 = (1,0,1), mu0 = 1/16, |w| <= 1/91)
-#   arccert  the arc cap certificate near U = (2,2,-1)/3 and the arc from U
-#            towards n: capcert-neo, one run per piece of the cover (146
-#            charts). Its claim: views of arc-cap.txt, |w| <= 1/46, chart 0.
+#   arccert  cap 1, the arc cap certificate near U = (2,2,-1)/3 and the arc from U
+#            towards n: capcert-m12 --solid m12, one run per piece of the cover
+#            (146 charts, t* = 4/19, 5/14). Claim: views of arc-cap.txt, |w| <= 1/46.
+#   axiscert cap 2, the axis cap at (1,1,1): capcert-m12 --frame axis (52 charts)
+#   pcapcert cap 3, the P cap at P = (2,1,0): capcert-m12 --frame P, wedge WP (26
+#            charts) and U cap (52 charts), then leaf2cert.py (../common)
 #   search   5D search, 22 code triangles x charts 0-3, rounds until nothing
 #            is deferred (search5d --retry_deferred --requeue_deferred; its
 #            default blended inner points: pack tags 17 / 18)
 #   pack     per-code 5D packs c<C>/t<T>.pack (pack5d --per_code)
-#   verify   Lean: constructSeptopertM12 <tube manifest> <packs> <cap.cert> <arc.cert>
+#   verify   Lean: constructSeptopertM12 <tube manifest> <packs> <cap.cert> <arc.cert> <axis> <pcap-wp> <pcap-u>
+#            (the regenerated certificates of WORK, not proof/*/data)
 #
 # Every stage is restartable (tubecode and search5d journal their work; pack5d
 # skips packs newer than their journals). search5d is not deterministic (work
@@ -45,7 +49,7 @@
 # if it fails. (Helpers: ../common/rebuild-lib.sh.)
 set -euo pipefail
 
-STAGES=(model tube idcap tubepack cap arccert search pack verify)
+STAGES=(model tube idcap tubepack cap arccert axiscert pcapcert search pack verify)
 FROM=tube
 ONLY=""
 DRY=0
@@ -75,6 +79,9 @@ PACKS=$WORK/packs
 CAP_CERT=$WORK/cap-1_16.cert
 CAPS_FILE=$WORK/caps.txt
 ARC_CERT=$WORK/arc.cert
+AXIS_CERT=$WORK/axis-cap.cert
+PCAP_WP=$WORK/pcap-wp.cert
+PCAP_U=$WORK/pcap-u.cert
 # The arc cap's views and rotations (tubecode, search5d). Index 1 in the trees
 # and journals (after the cap at n); Lean routes it to arcLeafOk.
 ARC_CAP=(--piece_caps arc-cap.txt)
@@ -109,7 +116,7 @@ NTRI=16
 
 echo "== build"
 run make -C "$NOPERT" -j "$THREADS" codebdd.exe tubecode.exe tuberefine.exe idcap.exe export-codetrees-pack.exe \
-  capcert-septopert-m12.exe capcert-neo.exe search5d.exe pack5d.exe dfwhere.exe
+  capcert-septopert-m12.exe capcert-m12.exe search5d.exe pack5d.exe dfwhere.exe
 
 if want model; then
   stage_begin model
@@ -190,31 +197,71 @@ if want cap; then
   stage_end cap
 fi
 
-# The arc cap certificate: one capcert-neo run per piece of the cover (U cap;
-# wedge pieces W0, Wm, W1, W2, meeting at t* = 17/86 and 11/32), exact, with the
-# parameters of Lean's ArcCap.neoParams. The pieces' exports, concatenated in
-# this order, are the certificate.
+# The arc cap certificate (cap 1): the U cap and the arc wedge, one capcert-m12 run
+# per piece of the cover (U cap; wedge pieces W0, Wm, W1, W2, meeting at
+# t* = 4/19 and 5/14), exact, with the parameters of Lean's ArcCap.neoParams. The
+# pieces' exports, concatenated in this order, are the certificate.
+CAPCERT=(./capcert-m12.exe --solid m12)
 if want arccert; then
   stage_begin arccert
   ARC_MU0=1/8; ARC_NU0=1/8; ARC_R1=3; ARC_R2=32; ARC_R3=128; ARC_Z=16
+  ARC_TS=4/19; ARC_TE=5/14
   ARC_COMMON=(--max_depth 44 --max_fail 2000 --try 16 --threads "$THREADS" --exact)
   ARC_W=(--family W --nu0 $ARC_NU0 --R1 $ARC_R1 --R2 $ARC_R2 --R3 $ARC_R3 --Z $ARC_Z --Zc $ARC_Z
          --R2c $ARC_R2 --R3c $ARC_R3 "${ARC_COMMON[@]}")
-  (cd "$NOPERT" && capped ./capcert-neo.exe --family U --mu0 $ARC_MU0 --nu0 $ARC_NU0 --R1 $ARC_R1 --R2 $ARC_R2 \
+  (cd "$NOPERT" && capped "${CAPCERT[@]}" --family U --mu0 $ARC_MU0 --nu0 $ARC_NU0 --R1 $ARC_R1 --R2 $ARC_R2 \
     --R3 $ARC_R3 --wedge_prune "${ARC_COMMON[@]}" --export "$ARC_CERT.U")
-  (cd "$NOPERT" && capped ./capcert-neo.exe "${ARC_W[@]}" --regime 0 --piece 0 --tlo 0 --thi 17/86 --zh 2 \
+  (cd "$NOPERT" && capped "${CAPCERT[@]}" "${ARC_W[@]}" --regime 0 --piece 0 --tlo 0 --thi $ARC_TS --zh 2 \
     --export "$ARC_CERT.W0")
-  (cd "$NOPERT" && capped ./capcert-neo.exe "${ARC_W[@]}" --regime 0 --piece 1 --tlo 17/86 --thi 17/86 --tmid 6 \
+  (cd "$NOPERT" && capped "${CAPCERT[@]}" "${ARC_W[@]}" --regime 0 --piece 1 --tlo $ARC_TS --thi $ARC_TS --tmid 6 \
     --export "$ARC_CERT.Wm")
-  (cd "$NOPERT" && capped ./capcert-neo.exe "${ARC_W[@]}" --regime 1 --piece 2 --tlo 17/86 --zl 2 --thi 11/32 \
+  (cd "$NOPERT" && capped "${CAPCERT[@]}" "${ARC_W[@]}" --regime 1 --piece 2 --tlo $ARC_TS --zl 2 --thi $ARC_TE \
     --export "$ARC_CERT.W1")
-  (cd "$NOPERT" && capped ./capcert-neo.exe "${ARC_W[@]}" --regime 1 --piece 3 --tlo 11/32 --thi 13/32 \
+  (cd "$NOPERT" && capped "${CAPCERT[@]}" "${ARC_W[@]}" --regime 1 --piece 3 --tlo $ARC_TE --thi 13/32 \
     --export "$ARC_CERT.W2")
   if [ $DRY -eq 0 ]; then
     cat "$ARC_CERT.U" "$ARC_CERT.W0" "$ARC_CERT.Wm" "$ARC_CERT.W1" "$ARC_CERT.W2" > "$ARC_CERT"
     rm "$ARC_CERT.U" "$ARC_CERT.W0" "$ARC_CERT.Wm" "$ARC_CERT.W1" "$ARC_CERT.W2"
   fi
   stage_end arccert
+fi
+
+# The axis cap certificate (cap 2): the U cap in the axis frame at the 3-fold
+# axis (1,1,1), 4 sides x 13 chart kinds = 52 charts, exact. The tool numbers the
+# sides' ids 1 (side 0) and 0 (sides 1, 2, 3); renumbered here to Lean's codes
+# (ArcCapDecode.parseId): side 0 -> 1, side 1 -> 2, side 2 -> 3, side 3 -> 0.
+if want axiscert; then
+  stage_begin axiscert
+  (cd "$NOPERT" && capped "${CAPCERT[@]}" --family U --frame axis --sides 0123 --mu0 1/16 --R 2 --S 16 --Rc 1 --Sc 16 \
+    --max_depth 40 --max_fail 300 --try 16 --threads "$THREADS" --exact --export "$AXIS_CERT.raw")
+  if [ $DRY -eq 0 ]; then
+    awk 'BEGIN{n=0} /^chart u /{ s=int(n/13); n++; $3 = (s==0?1:(s==1?2:(s==2?3:0))) } {print}' \
+      "$AXIS_CERT.raw" > "$AXIS_CERT"
+    rm "$AXIS_CERT.raw"
+    echo "axis cap: $(grep -c '^chart' "$AXIS_CERT") charts"
+  fi
+  stage_end axiscert
+fi
+
+# The P cap certificate (cap 3): P = (2,1,0), the wedge along face 024's
+# circle (family WP, 26 charts) and the U cap at P with the wedge prune
+# (52 charts), exact. The tool logs the closed leaves; leaf2cert.py turns them
+# into the Lean certificate trees (pcap-wp.cert, pcap-u.cert).
+if want pcapcert; then
+  stage_begin pcapcert
+  (cd "$NOPERT" && capped "${CAPCERT[@]}" --family WP --frame P --fpolar --nu0 1 --tlo 0 --thi 1/8 --R1 2 --R2 2 \
+    --R3 16 --Z 8 --max_depth 40 --max_fail 60 --try 16 --threads "$THREADS" --exact --leaflog "$PCAP_WP.leaf")
+  (cd "$NOPERT" && capped "${CAPCERT[@]}" --family U --frame P --sides 0123 --mu0 1/8 --R 0.5 --S 2 --Rc 0.25 --Sc 2 \
+    --wp_prune --nu0 1 --thi 1/8 --R1 2 --R2 2 --R3 16 --max_depth 46 --max_fail 300 --try 16 --threads "$THREADS" \
+    --exact --leaflog "$PCAP_U.leaf")
+  run python3 -B "$NOPERT/../common/leaf2cert.py" "$PCAP_WP" WP "$PCAP_WP.leaf"
+  run python3 -B "$NOPERT/../common/leaf2cert.py" "$PCAP_U" U "$PCAP_U.leaf"
+  if [ $DRY -eq 0 ]; then
+    echo "P cap: WP $(grep -c '^chart' "$PCAP_WP") charts, $(wc -l < "$PCAP_WP.leaf") leaves;" \
+         "U $(grep -c '^chart' "$PCAP_U") charts, $(wc -l < "$PCAP_U.leaf") leaves"
+    rm "$PCAP_WP.leaf" "$PCAP_U.leaf"
+  fi
+  stage_end pcapcert
 fi
 
 SEARCH=(--all --charts 0,1,2,3 --threads "$THREADS" --commit_depth 12 --subtree_budget 200000
@@ -254,6 +301,7 @@ if want verify; then
   [ $DRY -eq 1 ] || [ -x "$LEAN/.lake/build/bin/constructSeptopertM12" ] || {
     echo "missing $LEAN/.lake/build/bin/constructSeptopertM12 (lake build constructSeptopertM12)" >&2; exit 1; }
   capped "$LEAN/.lake/build/bin/constructSeptopertM12" "$TUBEPACKS/manifest.txt" "$PACKS" "$CAP_CERT" "$ARC_CERT" \
+    "$AXIS_CERT" "$PCAP_WP" "$PCAP_U" \
     2>&1 | tee "$WORK/verify.log"
   stage_end verify
 fi
