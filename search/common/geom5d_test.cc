@@ -105,7 +105,7 @@ static void TestBoxes() {
       const Q w = chart == 3 ? Q(1) : Q(1, 3);
       CHECK(root.lo[restricted[chart]] == -w && root.hi[restricted[chart]] == w);
     } else {
-      // The Septopert: every chart is the full Cayley cube [-1, 1]^3.
+      // Septopert Classic: every chart is the full Cayley cube [-1, 1]^3.
       for (int a = 0; a < 3; a++) CHECK(root.lo[a] == Q(-1) && root.hi[a] == Q(1));
     }
 

@@ -87,7 +87,7 @@ struct SolverOptions {
   // With --min_r, a hint that passes with a small radius is otherwise handed
   // down unchanged until splitting shrinks its delta enough, which can take
   // many levels where a fresh cage would have a much larger cover (the
-  // Septopert near (0.9285, 0.3565, 0.1040): cover 1.6e-5 inherited to depth
+  // SeptopertClassic near (0.9285, 0.3565, 0.1040): cover 1.6e-5 inherited to depth
   // 19-20, vs 4.3e-4 for the best cage).
   bool best_cage = false;
 };

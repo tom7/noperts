@@ -17,12 +17,12 @@
 //                [--max_full_retry N] [--half_turn_prune] [--tie_dir DIR] [--caps FILE] [--trib_caps FILE] [--piece_caps FILE]
 //                [--exact_check] [--retry_deferred] [--requeue_deferred] [--blend5d L]
 //
-// --blend5d L (default 4, validated on the Septopert): 0 the inner vertex
+// --blend5d L (default 4, validated on Septopert Classic): 0 the inner vertex
 // per contact at the box centre (the earlier behavior); 2 box-aware with
 // blended inner points (pack tags 17 / 18; a solid's Lean decoder must read
 // them); 4 escalate (0 first; 2 only where 0 fails, since blended rows cost
 // more bytes, and only on the triples whose inner choice 2 changes).
-// Septopert packs: 51.4 MB with 2, 44.9 MB with 4.
+// SeptopertClassic packs: 51.4 MB with 2, 44.9 MB with 4.
 //
 // --retry_deferred also solves every deferred (df) leaf in the journals again
 // (typically with a larger --subtree_budget); its new records replace it.

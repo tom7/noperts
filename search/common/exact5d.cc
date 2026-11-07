@@ -706,7 +706,7 @@ Q IcoPruneLower(const Interval5 &iv, int chart, int n) {
 
 // Rounded tables (the snub/DH neighbors): |G - G~| < 10^-12 per entry and
 // |Num_ij| <= 1 + |w|^2 <= 4 on the bounded region, so the rounding changes
-// the quadratic by less than 36 * 10^-12. Exact tables (the Septopert's C3): 0.
+// the quadratic by less than 36 * 10^-12. Exact tables (Septopert Classic's C3): 0.
 Q IcoPruneAllowance() {
   const MatrixTable &T = solid::kSymmetryNeighbors;
   return T.exact ? Q(0) : Q(36, T.denom);
@@ -758,7 +758,7 @@ static Q RoundedTableAllowance(const TriangleQ &tri, int c, int d) {
   return Q(2, 1000000000000) * (Q(6) * l1(tri[c]) * l1(tri[d]) + Q(9) * BigRat::Abs(dot));
 }
 
-// An exact table (the Septopert's Q_g, mirror-q.h) needs no allowance.
+// An exact table (Septopert Classic's Q_g, mirror-q.h) needs no allowance.
 Q HalfTurnPruneAllowance(const TriangleQ &tri, int c, int d) {
   return solid::kHalfTurnGroup.exact ? Q(0) : RoundedTableAllowance(tri, c, d);
 }
@@ -1003,7 +1003,7 @@ Interval5 RestrictedRootInterval(int chart) {
   iv.min = {Q(0), Q(0), Q(-1), Q(-1), Q(-1)};
   iv.max = {Q(8, 5), Q(4), Q(1), Q(1), Q(1)};
   // With the fivefold symmetry (AtlasFundamentalPrune.restrictedRootInterval),
-  // charts 0-2 narrow one coordinate to [-1/3, 1/3]. (The Septopert, C3v:
+  // charts 0-2 narrow one coordinate to [-1/3, 1/3]. (Septopert Classic, C3v:
   // every chart is searched over the whole cube.)
   if (solid::kFivefold) {
     static constexpr int kCoordinate[4] = {4, 3, 2, 4};

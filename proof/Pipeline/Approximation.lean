@@ -11,7 +11,7 @@ Every `CyclicModel` (within `modelErrorQ ≤ 10⁻¹²` of the rational model) i
 `κ`-approximation (`κ = 10⁻¹⁰`) of the rational model, the budget of the
 general checker; in particular so is the exact model (the rational seeds
 moved by the exact symmetry). (How a solid shows that its exact model meets
-`modelErrorQ` is its own business: the Septopert's model is exact, the
+`modelErrorQ` is its own business: Septopert Classic's model is exact, the
 icosahedral solids bridge from the rational vertices to the exact fivefold
 rotations through rational Taylor values of cos and sin, `FivefoldModel`.)
 -/

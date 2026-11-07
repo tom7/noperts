@@ -1,15 +1,15 @@
 // Solving 5D search nodes. A job is a code triangle t and a chart
 // (0..solid::kMaxChart: 0..2 for the fivefold solids, chart 3 being a fixed
-// table in Lean; 0..3 for the Septopert, each over the whole Cayley cube). A
+// table in Lean; 0..3 for Septopert Classic, each over the whole Cayley cube). A
 // node, named by its split path (rows5d), is closed by the cheapest
 // applicable leaf, else split:
 //
 //   pr  the box lies outside the Cayley ball
 //   pf  (fivefold solids) the box lies outside the fivefold fundamental domain
-//   pi  the box lies outside the icosahedral Dirichlet cell (the Septopert's
+//   pi  the box lies outside the icosahedral Dirichlet cell (Septopert Classic's
 //       C3 cell: trace(R c_k) > trace R, exact)
 //   ph  (--half_turn_prune) the box lies outside the half-turn cell (the
-//       Septopert's mirror cell: trace(H_u R Q_g) > trace R)
+//       SeptopertClassic's mirror cell: trace(H_u R Q_g) > trace R)
 //   cl  (with --caps) the box is in a certified cap domain
 //   tl  (with --tie_dir) the box lies in a certified tie tube
 //   tu  chart 0, and the box lies in the identity tube of the radius the tube
@@ -52,7 +52,7 @@ struct Options {
   int max_full_retry = 0;
   // Half-turn prune (exact5d::HalfTurnPruneValid with solid::kHalfTurnGroup):
   // centrally symmetric solids (the deltoidal hexecontahedron), and the
-  // Septopert's mirror prune (its C3v cell; always wanted for the Septopert).
+  // SeptopertClassic's mirror prune (its C3v cell; always wanted for Septopert Classic).
   bool half_turn_prune = false;
   // Tie leaves (deltoidal hexecontahedron): radii certified by tietube.cc.
   const tieatlas5d::TieAtlas *ties = nullptr;

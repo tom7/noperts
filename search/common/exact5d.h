@@ -12,7 +12,7 @@
 // Any view root (Lean's rootSign, binary order): a triangle's corners are on
 // their root's plane (sum_i s_i u_i = 1, s_i u_i >= 0), so each point is a
 // positive multiple of its view. Only Admissible depends on the root (it
-// checks SignedTriangleValid); for the Septopert the view domain uses roots 0
+// checks SignedTriangleValid); for Septopert Classic the view domain uses roots 0
 // and 1, for the other solids only root 0.
 //
 // The solid's tables and settings (solid::...) come from its solid.h.
@@ -159,10 +159,10 @@ bool OutsideCayleyBall(const Interval5 &iv);
 // (Direction.positive) or -1 (Direction.negative).
 Q FundamentalLower(const Interval5 &iv, int chart, int direction);
 bool FundamentalPruneValid(const Interval5 &iv, int chart, int direction);
-// Icosahedral prune (icosahedral solids) or C3 cell prune (the Septopert):
+// Icosahedral prune (icosahedral solids) or C3 cell prune (Septopert Classic):
 // some right symmetry, neighbor n of solid::kSymmetryNeighbors
 // (symmetry-neighbors.h: the rotations by +-72 degrees about the six 5-fold
-// axes, rounded to 10^-12; the Septopert's c3Mat (n + 1), exact), strictly
+// axes, rounded to 10^-12; Septopert Classic's c3Mat (n + 1), exact), strictly
 // increases trace over the whole box, so the box is outside the identity's
 // icosahedral Dirichlet cell (the C3v cell).
 Q IcoPruneLower(const Interval5 &iv, int chart, int n);
@@ -172,10 +172,10 @@ Q IcoPruneLower(const Interval5 &iv, int chart, int n);
 // gK = K). So R may be taken to maximize the trace over {R g, H_u R g}, and a
 // box is pruned when trace(H_u R g) > trace(R) over all of it for one g
 // (index into solid::kHalfTurnGroup: ico-group.h, rounded to 10^-12). The
-// Septopert's mirror prune is the same leaf with g = Q_g (mirror-q.h, exact:
+// SeptopertClassic's mirror prune is the same leaf with g = Q_g (mirror-q.h, exact:
 // the allowance is 0): a pose (u, R) is a passage iff (u, H_u R Q_g) is, for
-// Q_g = -sigma_g (sigma_g a mirror of the Septopert; Lean:
-// Septopert.MirrorTie), so R may be taken in the C3v cell. With
+// Q_g = -sigma_g (sigma_g a mirror of Septopert Classic; Lean:
+// SeptopertClassic.MirrorTie), so R may be taken in the C3v cell. With
 // u = p / |p|, p = sum_c lambda_c P_c over
 // the view triangle's corners, (trace(H_p R G) - trace(R)) |p|^2 D(w) is a
 // homogeneous quadratic in lambda with degree-2 Bernstein coefficients
@@ -250,7 +250,7 @@ bool IdentityTubeValid(const Interval5 &iv, const Q &r);
 
 // The root pose box of a chart: with the fivefold symmetry
 // (solid::kFivefold), AtlasFundamentalPrune.restrictedRootInterval (one
-// coordinate narrowed to [-1/3, 1/3] in charts 0-2); for the Septopert,
+// coordinate narrowed to [-1/3, 1/3] in charts 0-2); for Septopert Classic,
 // AtlasPose.rootInterval for every chart.
 Interval5 RestrictedRootInterval(int chart);
 

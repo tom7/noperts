@@ -19,11 +19,11 @@
 // coordinate rounded to a multiple of 2^-52, with each non-triangular face
 // snapped exactly planar. Lean proves the result for every polyhedron with
 // the exact symmetry within 6e-16 of this model (an `IModel`, a `C5Model`),
-// and the true solid is one of them. The Septopert's rational vertices are
+// and the true solid is one of them. Septopert Classic's rational vertices are
 // the solid itself (solid::kModelExact).
 //
 // codebdd generates the model from the solid's model file (e.g.
-// septopert-model.txt; #231: nopert231-root.txt) into
+// septopert-classic-model.txt; #231: nopert231-root.txt) into
 //   model-vertices.h     (C++: the doubles and exact rationals below)
 //   model-vertices.lean  (installed into the Lean model)
 //   model-vertices.json

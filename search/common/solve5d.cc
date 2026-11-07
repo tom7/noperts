@@ -91,14 +91,14 @@ std::vector<Node> Children(const Node &node, const Split &split) {
 std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
   const exact5d::Interval5 iv = geom5d::ToInterval(node.box);
   if (exact5d::OutsideCayleyBall(iv)) return rows5d::RadiusPruneLeaf{};
-  // Fundamental prune (fivefold symmetry; the Septopert has none: its C3 cell
+  // Fundamental prune (fivefold symmetry; Septopert Classic has none: its C3 cell
   // prune below replaces it).
   if (solid::kFivefold) {
     for (int dir : {1, -1}) {
       if (exact5d::FundamentalPruneValid(iv, job_.chart, dir)) return rows5d::FundamentalPruneLeaf{dir};
     }
   }
-  // Icosahedral prune (the Septopert's C3 cell prune): a symmetry neighbor
+  // Icosahedral prune (Septopert Classic's C3 cell prune): a symmetry neighbor
   // (a rotation c_k of C3) that increases trace over the whole box.
   // The exact lower bound is at most the value at the center, so only try
   // neighbors whose advantage there (in double) is clearly positive.
@@ -117,7 +117,7 @@ std::optional<rows5d::Leaf> Solver::TryPrune(const Node &node) const {
       if (adv > 1e-9 && exact5d::IcoPruneValid(iv, job_.chart, n)) return rows5d::IcoPruneLeaf{n};
     }
   }
-  // Half-turn prune (the Septopert's mirror prune): some g (Q_g) with
+  // Half-turn prune (Septopert Classic's mirror prune): some g (Q_g) with
   // trace(H_u R g) > trace(R) over the whole box and view triangle. Screen in double at the box center and
   // the triangle's centroid; try the best few exactly.
   if (opt_.half_turn_prune) {

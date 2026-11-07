@@ -51,7 +51,7 @@ To do this, we reduce:
 ## Rational models and neighborhoods
 
 The certificates are checked against fixed rational vertices. Unless the
-solid is itself rational (the Septopert), the theorem covers every solid
+solid is itself rational (Septopert Classic), the theorem covers every solid
 with the right symmetry within 6·10⁻¹⁶ of a rational model (`IModel`,
 `OModel`, `C5Model`), and Lean's kernel decides, by exact algebraic
 arithmetic and interval enclosures, that the exact solid is one of them.
@@ -67,7 +67,7 @@ theorem is about the exact solid near the ties; see [Caps](#caps) and
 combinatorics (the *face-visibility code*) is constant, and triangulates
 them into **code triangles**. That the code triangles cover the view domain
 is a separate check (`WedgeCover`, `ViewCover`): decided by the kernel for
-the Septopert, checked natively with the tables for the others.
+Septopert Classic, checked natively with the tables for the others.
 
 ## Balanced witnesses
 
@@ -151,7 +151,7 @@ theorems that turn valid tables into `¬ IsRupert`.
 
 | | rational model / neighborhood | identity tube | blow-up rows | caps | ties | reductions |
 |---|---|---|---|---|---|---|
-| [Septopert](septopert.md) | exact (rational) | yes | yes | at the mirror normal | mirror ties | C3, mirror-tie |
+| [SeptopertClassic](septopert-classic.md) | exact (rational) | yes | yes | at the mirror normal | mirror ties | C3, mirror-tie |
 | [Snub cube](snub-cube.md) | `OModel` | yes | | at the zero-margin view | one tie, in the cap | octahedral |
 | [Snub dodecahedron](snub-dodecahedron.md) | `IModel` | yes | | | | icosahedral, fivefold |
 | [Pentagonal hexecontahedron](pentagonal-hexecontahedron.md) | `IModel` | yes | | | | icosahedral, fivefold |

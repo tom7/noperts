@@ -26,7 +26,7 @@ lies in the max-trace cell of O (`OModel.exists_octa_full_atlas_translated_pose`
   are nonnegative: no Farkas step is needed, everything is integer.
 * **The outer angles**: a screen rotation puts the outer rotation into the form
   `rotRM_mat θ φ 0` with θ ∈ [0, π/4] (`exists_octa_euler_outer`; the C3v
-  argument of the Septopert, which uses only the walls u₁ ≤ u₀ and 0 ≤ u₁).
+  argument of Septopert Classic, which uses only the walls u₁ ≤ u₀ and 0 ≤ u₁).
 * **The relative rotation**, modulo O on the right, into the cell where no
   rotation of O increases the trace (`InOctaCell`), and then into a bounded
   Cayley chart.

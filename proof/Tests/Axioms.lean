@@ -1,4 +1,4 @@
-import Septopert
+import SeptopertClassic
 import DeltoidalHexecontahedron
 import PentagonalHexecontahedron
 import SnubDodecahedron
@@ -23,7 +23,7 @@ elab "#assert_standard_axioms " id:ident : command => do
   unless axioms.qsort Name.lt == expected.qsort Name.lt do
     throwError "{name} depends on {axioms}"
 
-#assert_standard_axioms Septopert.isNopert_of_certificatesValid
+#assert_standard_axioms SeptopertClassic.isNopert_of_certificatesValid
 #assert_standard_axioms DeltoidalHexecontahedron.isNopert_of_certificatesValid
 #assert_standard_axioms PentagonalHexecontahedron.isNopert_of_certificatesValid
 #assert_standard_axioms SnubDodecahedron.isNopert_of_certificatesValid

@@ -12,7 +12,7 @@ The rotations `symmetryMatrix k` of the model's cyclic symmetry are
 symmetries of the model. A relative rotation is in the max-trace (Dirichlet)
 cell when none of them increases its trace on the right
 (`InSymmetryFundamentalDomain`). For the icosahedral solids the symmetry is
-C5 about z; for the Septopert it is C3 about (1,1,1).
+C5 about z; for Septopert Classic it is C3 about (1,1,1).
 -/
 
 namespace Noperts.Pipeline

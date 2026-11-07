@@ -1,7 +1,7 @@
 # Minimality: Every nopert has at least 7 vertices
 
 Every convex polyhedron with 6 or fewer vertices is Rupert, and the
-[Septopert](septopert.md) is a Nopert witness with 7 vertices. So we
+[SeptopertClassic](septopert-classic.md) is a Nopert witness with 7 vertices. So we
 achieve a tight bound: 7 is the smallest number of vertices for any
 Nopert.
 
@@ -23,7 +23,7 @@ theorem seven_le_card_of_isNopert (V : Finset ℝ³) (h : IsNopert V) : 7 ≤ V.
 ```
 
 `IsRupert` (in `proof/MainTheorem.lean`) is the same definition used for the
-Septopert. `V` is a finite set of points; the solid is its convex hull. (In
+SeptopertClassic. `V` is a finite set of points; the solid is its convex hull. (In
 this formalization, the points do not need to be the vertices. But this
 also of course bounds the number of vertices.)
 
