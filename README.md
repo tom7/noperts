@@ -73,6 +73,18 @@ family we proved Nopert: [Septopert Classic](septopert-classic.md),
 
 Here is [septopert.stl](septopert.stl), a model you could 3D print.
 
+## Side results
+
+The repository contains side results about noperts that we discovered
+while working on the minimality problem.
+
+* A nopert with acute dihedral angles, the [Chipped
+  M18](chipped-m18.md). This is the [Septopert M18](septopert-m18.md)
+  with three of its vertices chipped off symetrically. This is the
+  first known nopert with acute dihedral angles (81.95°). For a while
+  we conjetured that acute angles were impossible (that they yield
+  Rupert passages).
+  
 ## Credits and brief history
 
 This work builds heavily on the [Noperthedron formalization](https://github.com/jcreedcmu/Noperthedron) by Jason Reed, David Renshaw, and others. That is in turn a formalization of Jakob Steininger and Sergey Yurkevich's paper [*A convex polyhedron without Rupert's property*](https://arxiv.org/abs/2508.18475) ("SY25") which introduces the Noperthedron and its original verification.

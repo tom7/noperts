@@ -115,7 +115,8 @@ page with its statement, trust model and reproduction steps:
     axis and P cap certificates), and likewise `constructSeptopertM12`, `checkSeptopertM12Arc`,
     `checkSeptopertM12Axis`, `checkSeptopertM12PCap`; `constructSeptopertM18` (checks the SeptopertM18's certificate
     data), `checkSeptopertM18Cap` and `checkSeptopertM18Arc` (check only its cap and
-    arc cap certificates), `constructSeptopertClassic` (checks Septopert Classic's certificate
+    arc cap certificates), `constructChippedM18` (checks the Chipped M18's certificate data), `checkChippedM18Cap` and `checkChippedM18Arc`
+    (check only its cap and arc cap certificates), `constructSeptopertClassic` (checks Septopert Classic's certificate
     data), `checkSeptopertClassicCap` (checks only its cap certificate),
     `constructDeltoidalHexecontahedron` (checks the deltoidal
     hexecontahedron's certificate data), `constructPentagonalHexecontahedron`
@@ -134,8 +135,8 @@ page with its statement, trust model and reproduction steps:
   - `search/common/`: the code the searches share (the identity tube, the
     identity blow-up certificates `idcap.cc` with `kpoly.h`, the 5D search
     and packing, `codebdd`, unit tests) and their build rules, `common.mk`.
-  - `search/septopert/`, `search/septopert-m12/`, `search/septopert-m18/`, `search/septopert-classic/`, `search/dh/`, `search/ph/`, `search/sd/`,
-    `search/sc/`, `search/nopert231/`: the searches for the Septopert, SeptopertM12, SeptopertM18, Septopert Classic, the
+  - `search/septopert/`, `search/septopert-m12/`, `search/septopert-m18/`, `search/chipped-m18/`, `search/septopert-classic/`, `search/dh/`, `search/ph/`, `search/sd/`,
+    `search/sc/`, `search/nopert231/`: the searches for the Septopert, SeptopertM12, SeptopertM18, Chipped M18, Septopert Classic, the
     deltoidal hexecontahedron, the pentagonal hexecontahedron, the snub
     dodecahedron, the snub cube and candidate #231, each with its `rebuild.sh` (see the result's page),
     model files, Lean data generators, own tools, and `solid.h` (the

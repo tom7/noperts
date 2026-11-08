@@ -1,7 +1,7 @@
 name = "noperts"
-defaultTargets = ["Noperts", "SeptopertClassic", "SeptopertM18", "Minimality", "ProofOfMainTheorem",
+defaultTargets = ["Noperts", "SeptopertClassic", "SeptopertM18", "ChippedM18", "Minimality", "ProofOfMainTheorem",
   "DeltoidalHexecontahedron", "PentagonalHexecontahedron", "SnubDodecahedron", "SnubCube", "Nopert231",
-  "constructSeptopertClassic", "checkSeptopertClassicCap", "constructSeptopertM18", "checkSeptopertM18Cap", "checkSeptopertM18Arc", "checkSeptopertM12Arc", "checkSeptopertM12Axis", "checkSeptopertM12PCap", "constructSeptopertM12", "checkSeptopertArc", "checkSeptopertAxis", "checkSeptopertPCap", "constructSeptopert", "constructDeltoidalHexecontahedron",
+  "constructSeptopertClassic", "checkSeptopertClassicCap", "constructSeptopertM18", "checkSeptopertM18Cap", "checkSeptopertM18Arc", "constructChippedM18", "checkChippedM18Cap", "checkChippedM18Arc", "checkSeptopertM12Arc", "checkSeptopertM12Axis", "checkSeptopertM12PCap", "constructSeptopertM12", "checkSeptopertArc", "checkSeptopertAxis", "checkSeptopertPCap", "constructSeptopert", "constructDeltoidalHexecontahedron",
   "constructPentagonalHexecontahedron", "constructSnubDodecahedron", "constructSnubCube",
   "checkSnubCubeCap", "constructNopert231",
   "SeptopertFamily", "checkSeptopertFamily",
@@ -200,4 +200,23 @@ buildType = "release"
 [[lean_exe]]
 name = "checkSeptopertFamily"
 root = "checkSeptopertFamily"
+buildType = "release"
+
+[[lean_lib]]
+name = "ChippedM18"
+globs = ["ChippedM18", "ChippedM18.+"]
+
+[[lean_exe]]
+name = "constructChippedM18"
+root = "constructChippedM18"
+buildType = "release"
+
+[[lean_exe]]
+name = "checkChippedM18Cap"
+root = "checkChippedM18Cap"
+buildType = "release"
+
+[[lean_exe]]
+name = "checkChippedM18Arc"
+root = "checkChippedM18Arc"
 buildType = "release"
