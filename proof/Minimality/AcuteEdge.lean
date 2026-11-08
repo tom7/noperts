@@ -1,6 +1,8 @@
-import Mathlib
-import Minimality.SplitRows
-import Minimality.Type08Rd
+module
+
+public import Mathlib
+public import Minimality.SplitRows
+public import Minimality.Type08Rd
 
 /-!
 # Acute Edge Lemma (paper proof: nopert229/out/bottleneck/acute/ael/PROOF.md)
@@ -23,6 +25,8 @@ Uses `FreeAt` from Minimality.SplitRows and the orthonormal frame of Minimality.
 * `ael_cross`: `nF = σ (x b - x a) × (x f - x a)`, `nF' = σ' (x b - x a) × (x g - x a)`: facet
   structure as chirotope signs `det3`, (A) as one sign of a Gram expression.
 -/
+
+@[expose] public section
 
 set_option autoImplicit false
 open scoped RealInnerProductSpace Topology
@@ -473,3 +477,5 @@ theorem ael_cross {n : ℕ} (x : Fin n → ℝ³) (a b f g : Fin n) (σ σ' : �
   · obtain ⟨q, hq⟩ := hq; exact ⟨q, by rw [key]; exact hq⟩
 
 end Minimality.Split.AcuteEdge
+
+end

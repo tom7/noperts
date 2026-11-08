@@ -38,6 +38,7 @@ public import MinimalityExtra.SeptLimit
 public import MinimalityExtra.PictureSymmetric
 public import MinimalityExtra.LimitRows
 public import MinimalityExtra.QuadEdge
+public import MinimalityExtra.AcuteEdge
 public import MinimalityExtra.GramExtension
 public import Minimality.Tilt
 public import Minimality.Thm73

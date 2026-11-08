@@ -48,7 +48,8 @@ A *type* is one of the combinatorial types of 7-vertex polytopes, in the numberi
 
 - *Criteria:* Conditions that make a polytope Rupert or a view free, from depth patterns on the rim
   or from the position of faces, explicit Rupert shapes, and a depth lemma for an edge of a
-  quadrilateral seen end-on (the quad-edge lemma).
+  quadrilateral seen end-on (the quad-edge lemma), and the Acute Edge Lemma (a polytope with an acute
+  dihedral whose other vertices all project into the edge is Rupert).
 - *Gram extension:* Which images of one or two views a positive definite symmetric matrix can
   take.
 - *Limits of the method:* Examples showing that these criteria have no converse and that natural
@@ -882,6 +883,30 @@ def QuadEdgeLemmaStrict : Prop :=
       WeakAlternationFree (fun i : ZMod 5 => w ⬝ᵥ (![b, m, f, c, g] : ZMod 5 → Fin 3 → ℝ) i)
 
 end QuadEdge
+
+/-- **The Acute Edge Lemma.**  Let the points `x 0, …, x (n-1)` be the vertices of a polytope, and
+let `ab` be an edge at which two supporting planes meet at an *acute dihedral angle*: `nF` and `nF'`
+are normals of two planes through `a` and `b`, with every point on the side `⟪nF, x i - x a⟫ ≤ 0`
+and `⟪nF', x i - x a⟫ ≤ 0`, and the outward normals make an obtuse angle, `⟪nF, nF'⟫ < 0`. Only `a`
+and `b` lie on both planes, and some point lies strictly inside the first half-space. Suppose every
+other vertex `x i` projects into the segment `ab`, that is, lies in the slab between the planes
+through `a` and `b` perpendicular to `ab`: strictly on the `a` side of the plane through `b`, and
+weakly (equality allowed) on the `b` side of the plane through `a`. Then the polytope is Rupert.
+
+In words: Where two faces meet in a sharp edge and the rest of the polytope hangs over the edge, a
+view nearly along the edge, tilted slightly, lets a copy slip through. The slab condition is
+allowed to be tight at one end only. With equality at both ends, as for the edges at the cube
+corners of the Septopert, the lemma says nothing. -/
+def AcuteEdgeLemma : Prop :=
+  ∀ (n : ℕ) (x : Fin n → ℝ³) (a b : Fin n) (nF nF' : ℝ³),
+    (∀ i, ⟪nF, x i - x a⟫ ≤ 0) → ⟪nF, x b - x a⟫ = 0 →
+    (∀ i, ⟪nF', x i - x a⟫ ≤ 0) → ⟪nF', x b - x a⟫ = 0 →
+    ⟪nF, nF'⟫ < 0 → (∃ q, ⟪nF, x q - x a⟫ < 0) →
+    (∀ i, i ≠ a → i ≠ b → 0 ≤ ⟪x i - x a, x b - x a⟫) →
+    (∀ i, i ≠ a → i ≠ b → 0 < ⟪x i - x b, x a - x b⟫) →
+    (∀ i, i ≠ a → i ≠ b → ⟪nF, x i - x a⟫ < 0 ∨ ⟪nF', x i - x a⟫ < 0) →
+    IsRupert (Finset.univ.image x)
+
 
 /-! ## Gram extension -/
 
