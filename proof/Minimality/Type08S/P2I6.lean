@@ -1,6 +1,7 @@
 module
 
-public import Minimality.Type08S.P2I5
+public import Minimality.Type08S.P2I4
+public import Minimality.Type08S.P2TpSetup
 
 @[expose] public section
 

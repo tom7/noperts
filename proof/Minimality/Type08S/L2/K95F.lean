@@ -2,7 +2,6 @@ module
 
 public import Minimality.Type08S.L2.K71B
 public import Minimality.Type08S.L2.K92B
-public import Minimality.Type08S.L2.K92C
 public import Minimality.Type08S.L2.K92D
 public import Minimality.Type08S.L2.K95B
 public import Minimality.Type08S.L2.K95C

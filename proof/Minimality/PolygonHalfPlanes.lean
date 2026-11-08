@@ -1,6 +1,7 @@
 module
 
-public import Minimality.SecondOrderT2b
+public import Minimality.SecondOrder
+public import Minimality.CycSeq
 
 @[expose] public section
 

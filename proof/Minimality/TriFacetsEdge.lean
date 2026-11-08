@@ -1,6 +1,8 @@
 module
 
-public import Minimality.TriFacets
+public import Minimality.HullChain
+public import Minimality.TriFaces
+public import Minimality.TriBridge
 
 @[expose] public section
 

@@ -7,7 +7,6 @@ public import Minimality.Type08S.C2K17GD3C
 public import Minimality.Type08S.C2K17GD2F
 public import Minimality.Type08S.C2K17GD1
 public import Minimality.Type08S.C2K17GB12
-public import Minimality.Type08S.C2K17GA12
 public import Minimality.Type08S.C2K18B
 public import Minimality.Type08S.C2K18C
 public import Minimality.Type08S.C2K18D

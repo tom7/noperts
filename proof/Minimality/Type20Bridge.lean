@@ -1,7 +1,7 @@
 module
 
-public import Minimality.Type20SilC
 public import Minimality.CaseC20Bridge
+public import Minimality.Type20SilB
 
 @[expose] public section
 

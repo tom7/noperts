@@ -24,7 +24,6 @@ public import Minimality.Type29
 public import Minimality.Type16M
 public import Minimality.OctAxis
 public import Minimality.EdgePair
-public import Minimality.Type21
 public import Minimality.Type16Metric
 public import Minimality.Type21Metric
 public import Minimality.Forces
@@ -33,16 +32,12 @@ public import Minimality.TieRobust
 public import Minimality.TieFrame
 public import Minimality.TripleTie
 public import Minimality.TieRight
-public import Minimality.Transversal
-public import Minimality.Parity
 public import Minimality.Chords
 public import Minimality.EdgeChords
 public import Minimality.UniformTilt
 public import Minimality.UnimodalCert
 public import Minimality.DepthSeparated
-public import Minimality.ExtremeRays
 public import Minimality.Global
-public import Minimality.Shear
 public import Minimality.ParallelFar
 public import Minimality.ParallelFacets
 public import Minimality.Type24
@@ -56,7 +51,6 @@ public import Minimality.Type21Entry
 public import Minimality.Type21Facets
 public import Minimality.Type21Limit
 public import Minimality.Type16Main
-public import Minimality.LimitCert
 public import Minimality.RobustEdge
 public import Minimality.Type16Limit
 public import Minimality.Type21Sector
@@ -67,6 +61,8 @@ public import Minimality.SameView
 public import Minimality.Type21Ridge
 public import Minimality.Type21Vtx
 public import Minimality.SpecialTypes
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+public import Mathlib.LinearAlgebra.Dimension.OrzechProperty
 
 /-!
 # The non-simplicial 7-vertex types, case by case

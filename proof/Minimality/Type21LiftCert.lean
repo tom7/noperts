@@ -1,7 +1,7 @@
 module
 
-public import Minimality.Type21
 public import Minimality.RimCertLift
+public import Minimality.Type21Lift
 
 @[expose] public section
 

@@ -1,6 +1,6 @@
 module
 
-public import Minimality.CaseC18Level
+public import Minimality.CaseC18Step4
 
 @[expose] public section
 

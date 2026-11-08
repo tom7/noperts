@@ -1,6 +1,11 @@
 module
 
-public import Minimality.Type21SAT.LratA
+public import Minimality.Type21SAT.LratAS0
+public import Minimality.Type21SAT.LratAS1
+public import Minimality.Type21SAT.LratAS2
+public import Minimality.Type21SAT.LratAS3
+public import Minimality.Type21SAT.LratAS4
+public import Minimality.Type21SAT.LratACnf
 
 @[expose] public section
 set_option maxRecDepth 100000

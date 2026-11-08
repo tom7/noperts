@@ -1,7 +1,7 @@
 module
 
-public import Minimality.CaseC18Final
 public import Minimality.SlideRim
+public import Minimality.CaseC18Reduce
 
 @[expose] public section
 

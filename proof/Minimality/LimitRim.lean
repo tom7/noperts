@@ -1,6 +1,5 @@
 module
 
-public import Minimality.LimitCert
 public import Mathlib.Analysis.Convex.KreinMilman
 public import Minimality.RimHDN
 public import Minimality.Perturb

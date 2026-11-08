@@ -1,6 +1,6 @@
 module
 
-public import Minimality.Type08S.C2K6TCG
+public import Minimality.Type08S.C2K6TCF
 
 @[expose] public section
 

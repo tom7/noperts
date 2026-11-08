@@ -2,7 +2,6 @@ module
 
 public import Minimality.TriShadowChord
 public import Minimality.TriFacesChord
-public import Minimality.TriFacets
 public import Minimality.TriFacetsEdge
 
 @[expose] public section

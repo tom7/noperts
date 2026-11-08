@@ -1,6 +1,6 @@
 module
 
-public import Minimality.CaseC20Final
+public import Minimality.CaseC20Leaves
 
 @[expose] public section
 

@@ -1,6 +1,5 @@
 module
 
-public import Minimality.Type08S.P2H9
 public import Minimality.Type08S.P2H11
 public import Minimality.Type08S.P2QWP2H10
 

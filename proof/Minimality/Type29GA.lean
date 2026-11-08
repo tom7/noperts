@@ -1,6 +1,6 @@
 module
 
-public import Minimality.Type29SilE
+public import Minimality.SilS0XD
 
 @[expose] public section
 

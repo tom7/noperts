@@ -1,7 +1,7 @@
 module
 
-public import Minimality.Type08S.P2H8
 public import Minimality.Type08S.P2QWP2H11
+public import Minimality.Type08S.P2FIN1
 
 @[expose] public section
 

@@ -1,6 +1,5 @@
 module
 
-public import Minimality.Type08S.P2PF0
 public import Minimality.Type08S.P2QWP2PF1
 
 @[expose] public section
