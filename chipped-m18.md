@@ -2,40 +2,44 @@
 Tom 7, 8 Nov 2026
 
 The Chipped M18 is a convex polyhedron that is not Rupert (a "nopert")
-and has **acute dihedral angles**. It is [SeptopertM18](septopert-m18.md)
-with three of its corners chipped off, the way a glass one would break.
-It answers a question that came up in the [minimality](minimality.md)
-work: every nopert we knew had only obtuse or right dihedral angles,
-and we had conjectured that an acute edge always lets a copy slip
-through. It doesn't.
+and has **acute dihedral angles**. It is [Septopert
+M18](septopert-m18.md) with three of its corners chipped off, the way
+a glass one would break if you dropped it on the ground and it bounced
+exactly just right so that the corners broke symetrically. It answers
+a question that came up in the [minimality](minimality.md) work: Every
+nopert we knew had only obtuse or right dihedral angles, and we had
+conjectured that an acute edge always yields a Rupert passage. The
+Chipped M18 is a counterexample to that conjecture, a nopert with
+acute dihedral angles.
 
 Lean entry point: [`proof/ChippedM18.lean`](proof/ChippedM18.lean).
 
 ## The solid
 
-![The Chipped M18, spinning around with confidence](chipped-m18.gif)
+![The Chipped M18, still confident despite damage](chipped-m18.gif)
 
 Here is an exact [STL file](chipped-m18.stl) (in the integer coordinates
 below).
 
-Start with SeptopertM18, whose vertices are (−18, 9, 9), (17, 3, 3),
-(−9, −9, −9) and their coordinate permutations (over 32). Cut off the
-vertex (−18, 9, 9)/32 with the half-space (−1, 5, 5)·x ≤ 209/64, and its
-two images under the 3-fold rotation about (1,1,1) with the rotated
-half-spaces. Each cut removes a small corner (the new acute edges are about 1/60 as
-long as M18's base edges) and leaves a pentagonal face. The three cut planes are
-images of each other, and each lies symmetrically about a mirror plane
-of M18, so the Chipped M18 keeps M18's full C3v symmetry.
+Start with Septopert M18, whose vertices are (−18, 9, 9), (17, 3, 3),
+(−9, −9, −9) and their coordinate permutations, scaled by 1/32. Cut
+off the vertex (−18, 9, 9)/32 with the half-space (−1, 5, 5)·x ≤
+209/64, and its two images under the 3-fold rotation about (1,1,1)
+with the rotated half-spaces. Each cut removes a small corner (the new
+acute edges are about 1/60 as long as M18's base edges) and leaves a
+small pentagonal face. The three cut planes are images of each other,
+and each lies symmetrically about a mirror plane of M18, so the
+Chipped M18 keeps M18's full C3v symmetry.
 
 It has 19 vertices and 13 faces (three new pentagons). Over a common
 denominator of 4224 its vertices are integers:
 
 ```
 (−2354,  1144,  1144)  and its 3 coordinate permutations   (a chip vertex)
-(−2299,  1111,  1188)  and all 6 permutations                (chip vertices)
-(−1494,   936,  1524)  and all 6 permutations                (chip vertices)
+(−2299,  1111,  1188)  and all 6 permutations              (chip vertices)
+(−1494,   936,  1524)  and all 6 permutations              (chip vertices)
 (  396,   396,  2244)  and its 3 coordinate permutations   (M18's (3,3,17)/32)
-(−1188, −1188, −1188)                                        (the apex, M18's (−9,−9,−9)/32)
+(−1188, −1188, −1188)                                      (the apex, M18's (−9,−9,−9)/32)
 ```
 
 The Lean statement (`chippedM18`) uses these divided by 4224. Any scale
@@ -48,13 +52,13 @@ Lean coordinates (the integers above divided by 4224).
 
 ![Line drawing of the Chipped M18, with a zoom onto one of its acute corners](chipped-m18-edges.svg)
 
-(Unlike the Septopert diagrams, this one is drawn from the exact
-vertices. The right panel zooms onto one corner of a chip, where its two
-acute edges meet an apex edge. Hidden edges are dashed.)
+Schematic. The chip is a small feature repeated three times; the
+right panel zooms in on one of them. Each edge of the same color
+is equal.
 
 | color | description | edges | dihedral angle | edge length |
 |-------|-------------|-------|----------------|-------------|
-|![vermillion](swatch-acute.svg)| **acute**: chip pentagon against a pyramid face | 0–1, 0–2, 10–12, 11–13, 12–14, 13–15 | **81.950533°** (cos = 1/√51) | 0.018414 |
+|![orange](swatch-acute.svg)| **acute**: chip pentagon against a pyramid face | 0–1, 0–2, 10–12, 11–13, 12–14, 13–15 | **81.950533°** (cos = 1/√51) | 0.018414 |
 |![blue](swatch-apex.svg)| apex of pyramid | 0–5, 5–12, 5–13 | 90° (exactly) | 0.828125 (= 53/64) |
 |![green](swatch-triforce-exterior.svg)| triforce exterior (shortened) | 3–6, 6–8, 4–7, 7–9, 16–18, 17–18 | 106.945562° | 0.495584 |
 |![purple](swatch-chip-pentagon-108.svg)| chip pentagon, new edge | 1–3, 2–4, 8–10, 9–11, 14–16, 15–17 | 108.691736° | 0.210627 |
@@ -89,11 +93,12 @@ chippedM18`.
 The Chipped M18 keeps M18's symmetry, so it reuses M18's pipeline and
 Lean development almost unchanged ([How the Nopert proofs
 work](nopert-proof.md)): the exact rational model and view cover (21
-view codes and 32 code triangles, against M18's 15 and 22), the identity
-tube with [identity blow-up rows](nopert-proof.md#identity-blow-up-certificates),
-the [cap](nopert-proof.md#caps) at the mirror normal, the
-[arc cap](nopert-proof.md#arc-caps) along the cube-corner arc ending at
-U = (2,2,−1)/3, and the [5D search](nopert-proof.md#the-5d-search).
+view codes and 32 code triangles, against M18's 15 and 22), the
+identity tube with [identity blow-up
+rows](nopert-proof.md#identity-blow-up-certificates), the
+[cap](nopert-proof.md#caps) at the mirror normal, the [arc
+cap](nopert-proof.md#arc-caps) along the cube-corner arc ending at U =
+(2,2,−1)/3, and the [5D search](nopert-proof.md#the-5d-search).
 
 Keeping the symmetry was the point. Chipping a single vertex of a
 nopert, which is the obvious way to make an acute edge, breaks its

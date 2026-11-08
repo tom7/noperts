@@ -26,7 +26,6 @@ Elsewhere there are claimed proofs or verifications that the rhombicosidodecahed
 * A Lean [verification](nopert231.md) that my nopert candidate #231 is indeed a Nopert. This looks visually identical to the solid I showed in my video (#214) and conjectured to be Nopert, but fixes the problem that [#214 is actually Rupert](https://youtu.be/XFeKRSN9l9w)!
 * The description and [verification](septopert.md) of the <b>Septopert</b>, a new 7-vertex Nopert. This is the smallest known Nopert.
 * A Lean proof (kernel-only) that this is also [the smallest possible](minimality.md); every convex polyhedron with six or fewer vertices is Rupert.
-* A Lean verification that the [Chipped M18](chipped-m18.md), a Septopert with three corners chipped off, is a Nopert. It has acute dihedral angles (81.95°), which we had conjectured no Nopert could have.
 
 The nopert verifications involve a huge case analysis. So when I say "verification," I mean a proof that depends on external data files. We prove a proper theorem (Lean kernel-only) that says roughly "if this Lean program validates the certificates, then the shape is not Rupert," and we run the program to see that it does in fact validate the certificates. This means trusting more than a kernel-only proof (akin to a proof that uses `native_decide`); the Lean compiler and runtime need to be correct as well. The certificates are found by [C++ code](search/), which need not be trusted. The certificates are also too big (many gigabytes) to include, so to reproduce the result you need to rebuild them using the [scripts](BUILDING.md). The proof techniques are described in [How the Nopert proofs work](nopert-proof.md).
 
@@ -74,6 +73,18 @@ family we proved Nopert: [Septopert Classic](septopert-classic.md),
 
 Here is [septopert.stl](septopert.stl), a model you could 3D print.
 
+## Side results
+
+The repository contains side results about noperts that we discovered
+while working on the minimality problem.
+
+* A nopert with acute dihedral angles, the [Chipped
+  M18](chipped-m18.md). This is the [Septopert M18](septopert-m18.md)
+  with three of its vertices chipped off symetrically. This is the
+  first known nopert with acute dihedral angles (81.95°). For a while
+  we conjetured that acute angles were impossible (that they yield
+  Rupert passages).
+  
 ## Credits and brief history
 
 This work builds heavily on the [Noperthedron formalization](https://github.com/jcreedcmu/Noperthedron) by Jason Reed, David Renshaw, and others. That is in turn a formalization of Jakob Steininger and Sergey Yurkevich's paper [*A convex polyhedron without Rupert's property*](https://arxiv.org/abs/2508.18475) ("SY25") which introduces the Noperthedron and its original verification.
