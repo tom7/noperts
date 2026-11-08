@@ -13,8 +13,7 @@ A convex polyhedron with 7 vertices has one of 34 combinatorial types: 5 simplic
 `sevenTypeFaces k` lists the faces of type `k + 1` in the gallery labelling of
 `FEWER-FACES.md` §4 (the labelling the per-type theorems of `Minimality/Cases.lean`
 use), computed as the convex hulls of the realizations
-`nopert229/data/flat7/gallery29/typeNN-*f-nice.txt` (the plain `typeNN-*f.txt` files use other
-labellings, and those of types 17, 19, 23 realize types 19, 16, 22). The 29 lists are pairwise
+of a gallery of exact realizations, one per type (not part of this repository). The 29 lists are pairwise
 non-isomorphic (2, 8, 11, 8 types with 6, 7, 8, 9 faces).
 
 The classification step, `exists_sevenType` (`Minimality/Classify.lean`): seven points in

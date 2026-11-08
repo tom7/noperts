@@ -13,7 +13,7 @@ vertices) with the `x`-coordinate of vertex 6 raised by `10^6 t`.  For `0 < t < 
 `w = (-10 - t, -t, 10 - t)` (a tilt of order `t` off the face circle of the face `3 4 5`, next to the
 mirror view `(-1, 0, 1)`) has strict rim `6, 1, 5, 4, 2` (vertices `0` and `3` hidden), and the
 motion `ω = (1 + t, -32, 1)`, `τ = (-1200000 t, -470000 t, 0)` moves every rim corner strictly
-inward.  Found with exact LP (`out/bottleneck/side17/`): the order-0 part `ω₀ = (1,-32,1)`, `τ₀ = 0`
+inward.  Found with an exact LP: the order-0 part `ω₀ = (1,-32,1)`, `τ₀ = 0`
 makes four rows positive and six rows zero, the order-`t` part makes those six positive.
 -/
 

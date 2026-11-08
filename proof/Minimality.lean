@@ -828,8 +828,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     -- the sector theorems in Frame7 coordinates: `Type02A` (acute, generic rims), `Type02B` (acute,
     -- vertical far edges), `Type02R` and `Type02FN`/`Type02FNB` (right far angle at `x3`, Lemma FN),
     -- `Type02X` (exceptional sets X1, X2), `Type02V12` (both far edges vertical) and the assembly
-    -- `Type02Assemble.lean` (`type02_false`). Paper: `nopert229/out/bottleneck/archive/sp02/draft.md`,
-    -- `sp02b/draft.md` (Lean-verified, not refereed).
+    -- `Type02Assemble.lean` (`type02_false`). The paper proof (two drafts, Lean-verified, not refereed) is not
+    -- published.
     have hQ := quadPairPar02 hx hN rfl hR
     exact Minimality.CaseC18.type02_false hx hN hR hQ
   · exact big {0, 2, 3, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 03: Theorem A
@@ -1075,7 +1075,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
           exact hN.2 (F.isRupert_of_not_special'' hx hrest)))
   · -- type 21: closed by the sign-matrix SAT route (`Minimality.H21.SAT.type21_isRupert`, Type21SAT/):
     -- every shape realizing the faces of type 21 is Rupert, with no general-position hypothesis. The sign
-    -- cover is a kernel-checked LRAT proof (Type21SAT/Checker, `check_sound`); nopert229 notes/SAT-ROUTE.md
+    -- cover is a kernel-checked LRAT proof (Type21SAT/Checker, `check_sound`).
     exact hN.2 (Minimality.H21.SAT.type21_isRupert x hR)
   · -- type 22: `not_type22_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
     -- special value of Lemma T′ (settled there, 24.15). Both views have the triangle `246`, so

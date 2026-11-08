@@ -20,7 +20,7 @@ normalization `σ(0,1,2,4) = +`, and lexicographic minimality among the relabell
 fix `{0,1,2,3}` (`Canon`). `Good σ` says that for some type `k` and some relabelling `π`
 every face of `typeL k` is cut out by a triple whose other signs are one-sided.
 
-`check` verifies a decision tree (`Cert`, produced by `nopert229/cls_tree.cc`) whose
+`check` verifies a decision tree (`Cert`, produced by an external program) whose
 leaves are violated conditions, symmetry prunings or accepted types; `check_sound` shows
 that a passing tree proves `Hyps σ → Good σ` for every sign vector extending the root.
 -/

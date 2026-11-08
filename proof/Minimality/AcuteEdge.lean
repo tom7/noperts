@@ -9,7 +9,7 @@ public import Minimality.Type08Rd
 
 The statement in words, why it holds, and why its hypotheses are needed (the general acute-dihedral
 statement is false: `ChipM18K5`) are in the docstring of `MinimalityExtra.AcuteEdgeLemma`, which is
-proved from `ael_euclid` here. Paper proof: nopert229/out/bottleneck/acute/ael/PROOF.md. Uses
+proved from `ael_euclid` here. Uses
 `FreeAt` from Minimality.SplitRows and the orthonormal frame of Minimality.Type08Rd.
 
 ## Contents

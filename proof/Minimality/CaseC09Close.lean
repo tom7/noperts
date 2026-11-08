@@ -11,8 +11,7 @@ public import Minimality.CaseC18M
 
 `CaseC09Special x` is Rupert: Theorem K1 (`t- = s- ∧ a- = d+`), Theorem K2
 (`a- = b+ ∧ b+ = s+A2`) and the right angle `A12 = A22` (Theorem 09.6 with Lemma W″ replacing
-Lemmas V, X and the corner E′).  Paper: `FEWER-FACES-PROOFS.md` "## 39." and "## 40.";
-map, rim/tilt table, templates and risks: `nopert229/out/bottleneck/archive/sp09b/handoff_lean.md`.
+Lemmas V, X and the corner E′).  Paper: `FEWER-FACES-PROOFS.md` "## 39." and "## 40.".
 
 All sector tests are proved (groups 1a-4); the case tree
 (`rupert_K1`, `rupert_K2`, `rupert_a12_eq_a22`, `CaseC09Special.isRupert`) are proved from them.

@@ -6,8 +6,7 @@ public import MinimalityExtra.DepthSeparated
 # The Edge-Plane Lemma
 
 Rotations whose axis lies in the plane through a rim edge normal to its support plane: freedom of
-this form is the separation of two point sets in a plane. Theorem 8.10 is its steep case. Notes:
-out/bottleneck/p4/SPEC.md §8.
+this form is the separation of two point sets in a plane. Theorem 8.10 is its steep case.
 -/
 
 @[expose] public section

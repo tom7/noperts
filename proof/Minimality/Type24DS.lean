@@ -20,7 +20,7 @@ public import Minimality.Type24Side
   Lemma 17.4's argument (`planarQuad_fails4`) applies.  One affine certificate, no metric
   hypothesis.
 * **Lemma 20.18 (Lemma Y, the single region)**: cu14's core (`Cu14.P1`, `Cu14.P2`,
-  `Cu14.lemmaY`, moved here verbatim from `nopert229/cu14_lemmaY.lean`), its general form
+  `Cu14.lemmaY`, moved here verbatim from an earlier standalone file), its general form
   (`lemmaY_core`: arbitrary labels `P, Q, R`, a view `σ e_p + τ e_q` with `σ, τ > 0`), and the
   Rupert form (`isRupert_lemmaY`): on the region `R_k = {h_pq > 0, h_pr ≤ 0, h_qr ≤ 0}`, if the
   cap edges `E_P`, `E_Q` have the five-corner rims `(1, Q, s, r_P, R)`, `(1, P, s, r_Q, R)` and
@@ -52,7 +52,7 @@ per-class certificates, the class counts.
 
 /-
 cu14 (2026-10-22): the two linear arguments of Lemma Y (type 24, the region R_bc = {c_bc > 0, c_ab, c_ac ≤ 0}),
-stated on Gram entries and depth values.  Moved verbatim from `nopert229/cu14_lemmaY.lean`.
+stated on Gram entries and depth values.  Moved verbatim from an earlier standalone file.
 
 Notation: X3 = (a3, b3, c3), X4 = (a4, b4, c4), X5 = (a5, b5, c5) (oblique coordinates at the cap 1).  Along the cap
 edge 12 (view e_b) the depth of v is Zb v = a_v hab + b_v gb + c_v hbc; along 16 (view e_c) it is

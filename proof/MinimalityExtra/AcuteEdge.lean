@@ -8,7 +8,7 @@ public import Minimality.AcuteEdge
 # The Acute Edge Lemma
 
 Proof of `AcuteEdgeLemma` of `MinimalityExtra.lean`, from `Minimality.Split.AcuteEdge.ael_euclid`
-(Minimality/AcuteEdge.lean; paper proof in nopert229 out/bottleneck/acute/ael/PROOF.md).
+(Minimality/AcuteEdge.lean).
 -/
 
 @[expose] public section

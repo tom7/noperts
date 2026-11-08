@@ -8,8 +8,7 @@ public import Minimality.ManyTies
 /-!
 # The split leaf (Theorem 8.10 rows) for the SAT bridges of types 16 and 29
 
-Staged in nopert229/out/bottleneck/p29/sat/L29S/ (DESIGN.md there); not yet imported by
-`Minimality` (no bridge uses it yet). Namespace `Minimality.Split`, next to the row machinery of
+Reached from the type 16 SAT bridge (`Minimality.Type16SAT`). Namespace `Minimality.Split`, next to the row machinery of
 `Minimality.SplitRows`.
 
 * `split_core`: a view `w₀` with a strict rim `lab` and strict split rows gives a free view nearby:

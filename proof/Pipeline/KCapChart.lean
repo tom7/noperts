@@ -9,7 +9,7 @@ public import Pipeline.CapCover
 # The charts of a balanced cap certificate
 
 A cap around a degenerate view x blows up the poses near (x, identity)
-(`nopert229/sccap.cc`; the snub cube's cap at its view u*). With an
+(`search/sc/sccapcert.cc`; the snub cube's cap at its view u*). With an
 orthogonal view frame (x, e₁, e₂) and a rotation frame (Z, E₁, X), the
 chart variables are (μ, τ, p₀, p₁, p₂) and
 

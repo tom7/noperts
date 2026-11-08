@@ -18,7 +18,7 @@ written through the Gram entries `ga, gb, gc, hab, hac, hbc`.
 * `Cu13.S2`, `Cu13.S4`, `Cu13.S5`: the LPs of 20.13 that settle `z6 > z1`, `z6 > z0`, `z6 > z5`.
 
 Not yet connected to `IsRupert` (Theorem 20.13 itself needs the rims of `T′(6,2)`, `S_6`, `E23`
-in the `Type24*` setting).  Source: `nopert229/cu13_circle236.lean`, reused verbatim.
+in the `Type24*` setting).  Reused verbatim from an earlier standalone file.
 -/
 namespace Cu13
 
