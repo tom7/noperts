@@ -5,9 +5,34 @@ public import Minimality.SplitRows
 public import Minimality.Type08Rd
 
 /-!
-# Acute Edge Lemma (paper proof: nopert229/out/bottleneck/acute/ael/PROOF.md)
+# Acute Edge Lemma
 
-Uses `FreeAt` from Minimality.SplitRows and the orthonormal frame of Minimality.Type08Rd.
+**What it says.** Let `ab` be an edge of a convex polytope where two faces `F` and `F'` meet at an
+acute dihedral angle, and suppose every other vertex lies over the edge: its orthogonal projection
+onto the line `ab` falls inside the segment `ab` (strictly at one end; equality is allowed at the
+other). Then the polytope is Rupert.
+
+**Why.** Because the dihedral is acute, there is a direction `w` perpendicular to the edge, in the
+plane of `F`, from which every vertex other than `a` and `b` lies strictly behind the line `ab`: the
+edge is the front of the polytope. (At a right dihedral the face `F'` would be seen exactly edge-on,
+at depth zero, and this fails.) The slab condition says more: every other vertex sits behind the
+segment `ab` itself, not beyond its ends. Look along a slight tilt of `w`. A small rotation about
+the edge's direction, with a small translation, then moves every vertex of a second copy strictly
+into the shadow of the first: a vertex `p ≠ a, b` is pushed in by the angle it makes with `a` and
+`b`, and `a`, `b` themselves by a vertex below the plane of `F`. So the polytope is first-order free
+at that view, hence Rupert. No rim analysis or unimodality is needed, and the faces may be any
+polygons.
+
+**The general statement is false.** "Every polytope with an acute dihedral angle is Rupert" does not
+hold: `ChipM18K5`, the Septopert M18 with three vertices chipped off (six edges at 81.95°), is a
+Nopert. Its acute edges are the short edges at the cuts, and the rest of the polytope reaches far
+beyond their ends, so the slab condition fails there. Its right-angled apex edges satisfy the slab
+condition but not the strict acuteness `⟪nF, nF'⟫ < 0`. So both hypotheses are needed.
+
+Paper proof: nopert229/out/bottleneck/acute/ael/PROOF.md. Uses `FreeAt` from
+Minimality.SplitRows and the orthonormal frame of Minimality.Type08Rd.
+
+## Contents
 
 * `ael_core` (normal form, PROOF.md §2): `x a = 0`, `x b = (L, 0, 0)`, every other point has
   `0 < x₀ < L` (slab) and `x₁ > 0` (depth), every point has `x₂ ≤ 0` (the plane of `F` supports),
