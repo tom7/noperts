@@ -135,7 +135,26 @@ To reproduce it from scratch:
 search/chipped-m18/rebuild.sh       # all stages; WORK=DIR and TH=N to override the work dir and thread count
 ```
 
-(A clean reproduction of the certificates is in progress; its stage times will go here.)
+It was reproduced from scratch on 2026-11-08, with 36 threads on a
+shared machine, in 2 hours 32 minutes:
+
+| stage | time |
+|-------|------|
+| `model` | 13 s |
+| `tube` | 6 min |
+| `idcap` | 17 min |
+| `tubepack` | 1 s |
+| `cap` | 5 min |
+| `arccert` | 6 min |
+| `search` | 90 min |
+| `pack` | 7 min |
+| `verify` | 22 min |
+
+Most of the search's 90 minutes is a long tail on a single thread. The
+search is multithreaded and not deterministic, so the reproduced
+certificates differ in details (the arc cap has 19,955 leaves and the
+first chart table 4,018,177 rows), but `constructChippedM18` checks them the same way and gives
+the same `instantiated` line.
 
 ## The data
 
