@@ -36,7 +36,8 @@
 #
 # Usage: ./rebuild.sh [--from STAGE] [--only STAGE] [--dry_run]
 #        [--threads N] [--mem_gb G] [--work DIR]
-#        (default: from tube, one thread per core, 40 GB, ../../work)
+#        (default: from model, one thread per core, 100 GB, ../../work; a fresh
+#        clone has no codebdd.json, which only the model stage writes)
 # Long stages run in a systemd scope with MemoryMax (and no swap); each
 # stage's wall time and the scope's peak memory are appended to
 # WORK/stages.log.
@@ -46,7 +47,7 @@
 set -euo pipefail
 
 STAGES=(model tube idcap tubepack cap arccert search pack verify)
-FROM=tube
+FROM=model
 ONLY=""
 DRY=0
 THREADS=$(nproc)

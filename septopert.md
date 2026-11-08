@@ -214,10 +214,39 @@ above. On 12 cores of a busy machine it took about 23 minutes (stage
 times: mirror cap 196 s, arc cap 723 s, axis cap 16 s, P cap 300 s,
 tables the rest).
 
-TODO: reproduction from scratch with `search/septopert/rebuild.sh`.
-The arc, axis and P cap certificates were made by scripts outside the
-pipeline (capcert-m7 and leaf2cert.py); they need to be wired into
-rebuild.sh before the reproduction.
+It was then reproduced from scratch on 2026-11-08, from a fresh clone of
+this repository (commit 3d8fce61), with 60 threads on an otherwise idle
+64-core machine. All stages, including the three special cap
+certificates, were regenerated; the chart tables had the same row counts
+as above, the regenerated model files matched the committed ones, and
+`constructSeptopert` printed the same `instantiated` line:
+
+```sh
+./get-cc-lib.sh
+(cd proof && lake exe cache get)    # Mathlib build cache
+search/septopert/rebuild.sh --threads 60 --work work-fresh
+```
+
+The search is multithreaded and not deterministic, so other runs may
+differ in details. Stages: `model`, `tube`, `idcap`, `tubepack`, `cap`,
+`arccert`, `axiscert`, `pcapcert`, `search`, `pack`, `verify` (`--from
+STAGE`, `--only STAGE`, `--work DIR`; the default is to start at
+`model`). Measured stage times (31 minutes in all):
+
+| Stage    | Time  |
+|----------|-------|
+| model    | 9 s   |
+| tube     | 35 s  |
+| idcap    | 781 s |
+| cap      | 24 s  |
+| arccert  | 96 s  |
+| axiscert | 2 s   |
+| pcapcert | 93 s  |
+| search   | 69 s  |
+| pack     | 41 s  |
+| verify   | 727 s |
+
+The work directory was 274 MB.
 
 ## The data
 

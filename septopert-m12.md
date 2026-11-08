@@ -76,4 +76,13 @@ It took 99 minutes on 32 cores of a busy machine, 67 of them for the
 P cap, most of that on a single chart. (The Septopert's P cap is about 5
 times smaller.)
 
-TODO: reproduction from scratch with `search/septopert-m12/rebuild.sh`.
+It was then reproduced from scratch on 2026-11-08 from a fresh clone
+(commit 3d8fce61), with 60 threads (low-priority search jobs shared the
+machine): `search/septopert-m12/rebuild.sh
+--threads 60 --work work-fresh` regenerated every stage, with the same
+row counts and the same `instantiated` line, in 2 h 36 min. Stage times:
+model 9 s, tube 11 s, idcap 868 s, cap 23 s, arccert 101 s, axiscert 2 s,
+pcapcert 1,574 s, search 128 s, pack 100 s and verify 6,552 s. The P cap
+(certificate and check) is mostly one thread on one large chart, so other
+work can share the machine. Its 8.4 MB U-side certificate is regenerated
+by the `pcapcert` stage rather than committed.

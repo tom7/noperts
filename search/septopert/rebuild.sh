@@ -27,7 +27,7 @@
 #   axiscert cap 2, the axis cap at (1,1,1): capcert-m12 --frame axis (52 charts)
 #   pcapcert cap 3, the P cap at P = (2,1,0): capcert-m12 --frame P, wedge WP (26
 #            charts) and U cap (52 charts), then leaf2cert.py (../common)
-#   search   5D search, 22 code triangles x charts 0-3, rounds until nothing
+#   search   5D search, 16 code triangles x charts 0-3, rounds until nothing
 #            is deferred (search5d --retry_deferred --requeue_deferred; its
 #            default blended inner points: pack tags 17 / 18)
 #   pack     per-code 5D packs c<C>/t<T>.pack (pack5d --per_code)
@@ -40,7 +40,8 @@
 #
 # Usage: ./rebuild.sh [--from STAGE] [--only STAGE] [--dry_run]
 #        [--threads N] [--mem_gb G] [--work DIR]
-#        (default: from tube, one thread per core, 40 GB, ../../work)
+#        (default: from model, one thread per core, 100 GB, ../../work; a fresh
+#        clone has no codebdd.json, which only the model stage writes)
 # Long stages run in a systemd scope with MemoryMax (and no swap); each
 # stage's wall time and the scope's peak memory are appended to
 # WORK/stages.log.
@@ -50,7 +51,7 @@
 set -euo pipefail
 
 STAGES=(model tube idcap tubepack cap arccert axiscert pcapcert search pack verify)
-FROM=tube
+FROM=model
 ONLY=""
 DRY=0
 THREADS=$(nproc)
