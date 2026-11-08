@@ -12,6 +12,7 @@ whatever data it writes.
   and the build rules (`common.mk`).
 - [`septopert/`](septopert/), [`septopert-m12/`](septopert-m12/): the Septopert's and SeptopertM12's searches (`rebuild.sh` in each).
 - [`septopert-m18/`](septopert-m18/): the SeptopertM18's search (`septopert-m18/rebuild.sh`).
+- [`chipped-m18/`](chipped-m18/): the Chipped M18's search (`chipped-m18/rebuild.sh`).
 - [`septopert-classic/`](septopert-classic/): Septopert Classic's search
   (`septopert-classic/rebuild.sh`).
 - [`dh/`](dh/): the deltoidal hexecontahedron's search (`dh/rebuild.sh`).
