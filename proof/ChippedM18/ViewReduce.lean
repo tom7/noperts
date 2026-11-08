@@ -94,7 +94,7 @@ theorem proj_outer_mirrorScene (p : MatrixPose) (i : Fin 3) (v : ℝ³) :
       halfTurnZMat.toEuclideanLin (p.outerRot.val.toEuclideanLin ((mirrorQMat i).toEuclideanLin v)) := by
     simp [MatrixPose.mirrorScene, halfTurnZ, mirrorQ, Matrix.toLpLin_apply, Matrix.mulVec_mulVec,
       Matrix.mul_assoc]
-  simp only [PoseLike.outer, AffineMap.coe_comp, LinearMap.coe_toAffineMap, Function.comp_apply] at h ⊢
+  simp only [PoseLike.outer, LinearMap.coe_toAffineMap] at h ⊢
   rw [h, proj_halfTurnZ, map_neg, map_neg]
 
 theorem proj_inner_mirrorScene (p : MatrixPose) (i : Fin 3) (v : ℝ³) :

@@ -117,8 +117,7 @@ private theorem Box.mismatchQCLM_eq (box : Box) :
   simp only [Box.mismatchQCLM,
     Noperts.Atlas.LocalCertificate.rotRMQCLM, symmetryQCLM,
     sub_apply, ContinuousLinearMap.comp_apply,
-    LinearMap.coe_toContinuousLinearMap', Matrix.ofLp_toLpLin,
-    Matrix.toLin'_apply, Matrix.toLpLin_apply]
+    LinearMap.coe_toContinuousLinearMap', Matrix.toLpLin_apply]
   rw [hmat, Matrix.sub_mulVec, Matrix.mulVec_mulVec]
   rfl
 
@@ -615,7 +614,7 @@ theorem valid_center_mismatch_bound (box : Box) (h : box.Valid) :
   calc
     ‖box.centerMismatchCLM‖ =
         ‖box.mismatchQCLM + (box.centerMismatchCLM - box.mismatchQCLM)‖ := by
-      congr 1 <;> abel
+      congr 1; abel
     _ ≤ ‖box.mismatchQCLM‖ +
         ‖box.centerMismatchCLM - box.mismatchQCLM‖ := norm_add_le _ _
     _ ≤ _ := by
@@ -691,7 +690,7 @@ theorem valid_mismatch_bound (box : Box) (h : box.Valid)
           (symmetryError : ℝ) + (box.eulerRadius : ℝ) := by
     calc
       ‖current‖ = ‖box.centerMismatchCLM + (current - box.centerMismatchCLM)‖ := by
-        congr 1 <;> abel
+        congr 1; abel
       _ ≤ ‖box.centerMismatchCLM‖ + ‖current - box.centerMismatchCLM‖ :=
         norm_add_le _ _
       _ ≤ _ := add_le_add hcenter hdiff

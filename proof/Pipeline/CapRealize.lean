@@ -497,7 +497,7 @@ theorem realize_tie (st : Setup) (pr : Params) (zOf : Kind × ℕ × ℕ × Bool
       simp [rootLoHiStd, baseLoHi, y]; exact ⟨hμ0, hμ1⟩
     · rw [rootLoHi_std' st pr id 1 (by rw [htl]; exact hlo 1 (by norm_num) (by norm_num))]
       simp [rootLoHiStd, baseLoHi, y]; exact abs_le.mp hτ
-    · simp only [rootLoHi, Fin.val_two, htl, hl2]
+    · simp only [rootLoHi, htl, hl2]
       exact ⟨by simpa [y] using hb0l, by simpa [y] using hb0h⟩
     · simp only [rootLoHi, htl, hl3]
       exact ⟨by simpa [y] using hb1l, by simpa [y] using hb1h⟩
@@ -507,7 +507,7 @@ theorem realize_tie (st : Setup) (pr : Params) (zOf : Kind × ℕ × ℕ × Bool
       simp only [rootLoHiStd, h1, h2, false_and, ite_false, show (2 : ℕ) ≤ 4 by norm_num, ite_true]
       have hb := abs_le.mp (hs ⟨free1 axis, hf1l⟩)
       simp only [baseLoHi, hidk, hida, show (4 : ℕ) - 3 = 1 from rfl, free_getD axis hax]
-      simp only [y, Fin.isValue]
+      simp only [y]
       push_cast
       exact ⟨by simpa using hb.1, by simpa using hb.2⟩
   · -- (e, s).
@@ -532,7 +532,7 @@ theorem realize_tie (st : Setup) (pr : Params) (zOf : Kind × ℕ × ℕ × Bool
       · rw [ite_eq_right (by omega), show (i : ℕ) = free1 axis from h, hp2]
         simp only
         have h1 : id.ratio ≠ 1 := by omega
-        simp only [rRatioVar, h1, ite_false, hidr]
+        simp only [rRatioVar, hidr]
         have h2 : ¬(m = 2 ∧ pvarOf id id.ratioCoord = some 2) := fun h => by omega
         rw [ite_eq_right h2, hy4]
         have : i = ⟨free1 axis, hf1l⟩ := Fin.ext h

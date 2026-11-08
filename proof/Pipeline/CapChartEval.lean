@@ -81,7 +81,7 @@ theorem eval_tieES (m Z Z2 K Kp : ℕ) (y : Fin 5 → ℝ) :
     NPoly.eval 5 (tieES m Z Z2 K Kp).1 y = (rTieES m Z Z2 K Kp y).1 ∧
       NPoly.eval 5 (tieES m Z Z2 K Kp).2 y = (rTieES m Z Z2 K Kp y).2 := by
   unfold tieES rTieES
-  split_ifs <;> simp [NPoly.eval_mul, NPoly.eval_add, NPoly.eval_scale, eval_mu, eval_pv, eval_pint, rpv] <;> ring
+  split_ifs <;> simp [NPoly.eval_mul, NPoly.eval_add, NPoly.eval_scale, eval_mu, eval_pv, eval_pint, rpv]
 
 noncomputable def Setup.rTieChartES (st : Setup) (id : ChartId) (y : Fin 5 → ℝ) : Option (ℝ × ℝ) :=
   if 10 ≤ id.ratio ∧ id.kind = .face then
@@ -155,11 +155,11 @@ theorem eval_eAndS (st : Setup) (id : ChartId) (A B : KVec) (y : Fin 5 → ℝ) 
       rw [e1, e2]
       exact ⟨by simp [eval_pv, rpv], eval_faceS st id y⟩
   all_goals
-    refine ⟨by simp [eval_pint, eval_pv, rpv], fun i => ?_⟩
-    simp only [hk]
+    refine ⟨by simp [eval_pint], fun i => ?_⟩
+    simp only
     split_ifs <;>
     first
-    | (simp [eval_pint, eval_ratioVar, NPoly.eval_add, NPoly.eval_mul, eval_tau, eval_pv, NPoly.eval_zero,
+    | (simp [eval_pint, NPoly.eval_add, NPoly.eval_mul, eval_tau, eval_pv, NPoly.eval_zero,
           NPoly.eval_const, val_kdot, kval_kcross, rpv]; done)
     | (split <;> simp_all [eval_pint, eval_ratioVar, NPoly.eval_add, NPoly.eval_mul, eval_tau, eval_pv,
           NPoly.eval_zero, NPoly.eval_const, val_kdot, kval_kcross, rpv])

@@ -148,7 +148,7 @@ theorem frameMat_orthogonal : frameMat ∈ Matrix.orthogonalGroup (Fin 3) ℝ :=
   ext i j
   have h := congrArg IcoQ.val (hc i j)
   rw [val_dotK] at h
-  simp only [Matrix.mul_apply, Matrix.star_apply, star_trivial, Matrix.transpose_apply, Fin.sum_univ_three,
+  simp only [Matrix.mul_apply, Matrix.transpose_apply, Fin.sum_univ_three,
     Matrix.one_apply, frameMat, Matrix.of_apply]
   simp only [rdot, kv, PVec.kval] at h
   rw [h]

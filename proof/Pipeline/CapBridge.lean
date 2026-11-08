@@ -29,7 +29,7 @@ theorem inner_euc3 (a b : ℝ³) : ⟪a, b⟫ = a 0 * b 0 + a 1 * b 1 + a 2 * b 
 
 theorem inner_proj_xyL (a b : ℝ³) : ⟪proj_xyL a, proj_xyL b⟫ = ⟪a, b⟫ - a 2 * b 2 := by
   rw [inner_euc3]
-  simp [PiLp.inner_apply, Fin.sum_univ_two, proj_xyL, proj_xy_mat, Matrix.toLpLin_apply, Matrix.mulVec,
+  simp [PiLp.inner_apply, Fin.sum_univ_two, proj_xyL, proj_xy_mat, Matrix.toLpLin_apply,
     dotProduct, Fin.sum_univ_three]
   ring
 

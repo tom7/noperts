@@ -192,11 +192,11 @@ theorem capHolds_of_cert (c : CapCert) (hc : certOk c = true) : CapHolds := by
   have hd0 : dualVec c.st 0 = ![0, 2, 0] := by
     funext k
     simp only [dualVec, hfv, hx, kv_capX]
-    fin_cases k <;> simp [rdot] <;> norm_num
+    fin_cases k <;> simp [rdot] ; norm_num
   have hd1 : dualVec c.st 1 = ![1, 0, 1] := by
     funext k
     simp only [dualVec, hfv, hx, kv_capX]
-    fin_cases k <;> simp [rdot] <;> norm_num
+    fin_cases k <;> simp [rdot]
   rw [hd0, hd1, hx, kv_capX, hmu, ite_eq_left hpr, hG, gMat_capGcol] at hclaim
   exact hclaim
 

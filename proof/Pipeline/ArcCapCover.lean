@@ -132,7 +132,7 @@ theorem eval_faceCoord_of (a : Fin 3) (sg : Bool) (c : ℚ) (v : Fin 3 → ℝ)
     KPoly.eval 5 (faceCoord (K := K) 3 a sg c i)
       ![y0, y1, y2, (other3 a v).1, (other3 a v).2] = v i := by
   rw [eval_faceCoord]
-  fin_cases a <;> fin_cases i <;> simp [freeVar, other3] at hv ⊢ <;> first | exact hv.symm | skip
+  fin_cases a <;> fin_cases i <;> simp [freeVar, other3] at hv ⊢ <;> first | exact hv.symm
 
 theorem mem_wKinds_fe (al pos : Bool) : WKind.fe al pos ∈ wKinds := by
   cases al <;> cases pos <;> simp [wKinds]
@@ -334,6 +334,7 @@ theorem goodU_of_cube (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (si
 
 /-! ### From the certificate -/
 
+omit [ExactScalarVal K] in
 theorem cert_tree {V : Array (KCap.KVec K)} {fr : Frame K} {pr : Params} {c : Cert} {req : List ChartId}
     (hc : certCheckOn req V fr pr c = true) {id : ChartId} (hid : id ∈ req) :
     ∃ t, chartCheck V fr pr id t = true := by

@@ -190,7 +190,7 @@ theorem orbit_rotationMajor (k s : Nat) (hk : k < 5) (hs : s < seedCount) :
 
 theorem slot_eq (i : VertexIndex) :
     seedCount * (orbitIndex i).val + (seedIndex i).val = i.val := by
-  simp only [orbitIndex, seedIndex, seedCount, Fintype.card_fin]
+  simp only [orbitIndex, seedIndex, seedCount]
   exact Nat.div_add_mod _ _
 
 /-- The fivefold model with seeds `orbit s`. -/

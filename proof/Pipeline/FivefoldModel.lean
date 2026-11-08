@@ -204,8 +204,7 @@ theorem fivefoldRotation_mul (a b : Fin 5) :
   rw [hangle]
   convert Rz_mat_add_int_mul_two_pi
     (Int.ofNat ((a.val + b.val) / 5))
-    (((a + b : Fin 5) : ℝ) * (2 * Real.pi / 5)) using 1 <;>
-    norm_num
+    (((a + b : Fin 5) : ℝ) * (2 * Real.pi / 5)) using 1
 
 /-- Rational Taylor approximation to the exact fivefold rotation. -/
 def fivefoldMatrixQ (g : Fin 5) : Matrix (Fin 3) (Fin 3) ℚ :=
@@ -399,7 +398,6 @@ theorem tightSin_close (k : Fin 5) :
   · simpa [tightSin, abs_sub_comm] using sin72_tight
   · norm_num [tightSin]
     have h := sin144_tight
-    norm_num at h ⊢
     simpa [show 2 * Real.pi * (2 : ℝ) / 5 = 4 * Real.pi / 5 by ring,
       abs_sub_comm] using h
   · norm_num [tightSin]
@@ -407,14 +405,14 @@ theorem tightSin_close (k : Fin 5) :
       Real.sin_two_pi_sub]
     calc
       _ = |Real.sin (4 * Real.pi / 5) - ((sin144Q : ℚ) : ℝ)| := by
-        congr 1 <;> ring
+        congr 1; ring
       _ ≤ tightTrigError := sin144_tight
   · norm_num [tightSin]
     rw [show 2 * Real.pi * (4 : ℝ) / 5 = 2 * Real.pi - 2 * Real.pi / 5 by ring,
       Real.sin_two_pi_sub]
     calc
       _ = |Real.sin (2 * Real.pi / 5) - ((sin72Q : ℚ) : ℝ)| := by
-        congr 1 <;> ring
+        congr 1; ring
       _ ≤ tightTrigError := sin72_tight
 
 /-- Seed `i % s` rotated by the 17-digit rational cos and sin of

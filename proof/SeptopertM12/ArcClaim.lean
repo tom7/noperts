@@ -354,7 +354,7 @@ theorem prune_point_m12 {c : Cert} (hc : certCheck V fr m12Params c = true) (box
   have e2 : KPoly.eval 5 (uS (K := K) m12Params (.cone 1 false) 2) y = 8 * (y 2 * y 4) := by
     simp [uS, KPoly.eval_mul, eval_pconst, eval_pvar, eval_faceCoord, rc, m12Params, freeVar]
   rw [e0, e1, e2]
-  simp only [uE, eval_kOne, GoodU, mul_one, ite_true, ↓reduceIte, Nat.zero_ne_one, ite_false, or_false, if_true, eq_self_iff_true]
+  simp only [uE, eval_kOne, GoodU, mul_one, ↓reduceIte, Nat.zero_ne_one, or_false]
   set μ := y 0 with hμ
   set τ := y 1
   set q := y 2

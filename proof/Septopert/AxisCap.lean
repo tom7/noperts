@@ -72,7 +72,7 @@ theorem kval_q (v : KCap.KVec ℚ) (i : Fin 3) : KCap.PVec.kval v i = (v i : ℝ
 
 theorem axisFrame_ok : FrameOkG axisFrame 2 (3 / 2) 3 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, by norm_num, by norm_num, by norm_num, ?_, ?_, ?_, rfl, rfl, rfl⟩ <;>
-    simp [axisFrame, rdot, kval_q, Fin.sum_univ_three] <;> norm_num
+    simp [axisFrame, rdot, kval_q] <;> norm_num
 
 theorem hull_axisVerts : hull axisVerts = solid := by
   unfold hull solid poly Polyhedron.hull
@@ -97,11 +97,11 @@ def InAxis (v : Fin 3 → ℝ) : Prop :=
 theorem inAxis_square {v : Fin 3 → ℝ} (h : InAxis v) : InSquare axisFrame 2 (3 / 2) 3 (((1 / 16 : ℚ)) : ℝ) v := by
   obtain ⟨h0, h1, h2⟩ := h
   have e1 : rdot v (KCap.PVec.kval axisFrame.E1) = v 0 - v 1 := by
-    simp [axisFrame, rdot, kval_q, Fin.sum_univ_three]; ring
+    simp [axisFrame, rdot, kval_q]; ring
   have e2 : rdot v (KCap.PVec.kval axisFrame.E2) = (v 0 + v 1 - 2 * v 2) / 2 := by
-    simp [axisFrame, rdot, kval_q, Fin.sum_univ_three]; ring
+    simp [axisFrame, rdot, kval_q]; ring
   have ex : rdot v (KCap.PVec.kval axisFrame.X) = v 0 + v 1 + v 2 := by
-    simp [axisFrame, rdot, kval_q, Fin.sum_univ_three]
+    simp [axisFrame, rdot, kval_q]
   refine ⟨by rw [ex]; exact h0, ?_, ?_⟩
   · rw [e1, ex]; push_cast; linarith
   · rw [e2, ex, abs_div]; push_cast

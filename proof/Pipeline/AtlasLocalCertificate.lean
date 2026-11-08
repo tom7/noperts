@@ -156,7 +156,6 @@ theorem Box.eval_mismatchQuadratic (box : Box) (p : AtlasPose ℝ)
     RatQuadratic3.evalReal_scale,
     AtlasQuadratic.eval_numeratorQuadratic,
     Noperts.Atlas.CayleyEdgeCertificate.eval_denomQuadratic]
-  push_cast
   ring
 
 omit [SolidModel] in

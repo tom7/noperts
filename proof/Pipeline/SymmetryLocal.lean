@@ -119,7 +119,7 @@ theorem symmetry_apply_exactVertex (g : OrbitIndex) (i : VertexIndex) :
   rw [rotate_vertex']
   congr 2
   apply Fin.ext
-  simp only [Fin.val_add, symmetryAction, orbitIndex_vertexIndex]
+  simp only [Fin.val_add]
   rw [Nat.add_comm]
 
 /-- The inner vertex `i` tracks the outer vertex obtained by the exact

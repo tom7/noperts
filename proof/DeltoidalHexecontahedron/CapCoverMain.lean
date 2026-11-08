@@ -41,7 +41,7 @@ def FrameOK (st : Setup) : Prop := Orthonormal3 (kv st.e1) (kv st.e2) (kv st.x)
 theorem frameAB_val (st : Setup) (side : ℕ) (hside : side < 4) :
     kv (st.frameAB side).1 = (sideA side).1 • kv st.e1 + (sideA side).2 • kv st.e2 ∧
       kv (st.frameAB side).2 = (sideB side).1 • kv st.e1 + (sideB side).2 • kv st.e2 := by
-  interval_cases side <;> simp [Setup.frameAB, sideA, sideB, kval_kneg] <;> funext i <;> simp
+  interval_cases side <;> simp [Setup.frameAB, sideA, sideB, kval_kneg]
 
 theorem side_props (st : Setup) (hF : FrameOK st) (side : ℕ) (hside : side < 4) (τ : ℝ) :
     let a := kv (st.frameAB side).1 + τ • kv (st.frameAB side).2
@@ -309,7 +309,7 @@ theorem cap_cover (st : Setup) (pr : Params) (zOf : Kind × ℕ × ℕ × Bool �
           rw [hsd, hres]
           funext i
           rw [hseq i]
-          fin_cases i <;> simp [rCenter, han] <;> ring
+          fin_cases i <;> simp [rCenter, han]
         · intro hfe; rw [hk'] at hfe; exact absurd hfe (by decide)
       · obtain ⟨id, hid, hk', hsd, y, hy, hy0, hy1, hres⟩ :=
           realize_fe st pr zOf side (hz _) μ τ hμ0 hμ1' hτ sv hsb A B

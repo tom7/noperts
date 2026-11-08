@@ -107,8 +107,7 @@ theorem cube_face (ρ : ℚ) (w : Fin 3 → ℝ) (hw : ∀ k, |w k| ≤ ρ) :
   · funext k
     simp only [rFaceW]
     fin_cases f <;> fin_cases k <;>
-      simp_all [faceA1, faceA2, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two] <;>
-      linarith
+      simp_all [faceA1, faceA2, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two]
 
 /-! ### Tie data and the leaf test -/
 
@@ -348,12 +347,12 @@ theorem rcross_view (T : Triangle) (κ : ℝ) (lam : Fin 3 → ℝ) (c : Fin 3 �
   funext k
   have e : ∀ i, (κ • viewOf T lam) i = κ * (lam 0 * (T 0 i : ℝ) + lam 1 * (T 1 i : ℝ) + lam 2 * (T 2 i : ℝ)) := by
     intro i; simp only [Pi.smul_apply, smul_eq_mul, viewOf, Fin.sum_univ_three]
-  simp only [rcross, e, Pi.smul_apply, smul_eq_mul, Finset.sum_apply, Fin.sum_univ_three, Pi.add_apply]
+  simp only [rcross, e, Pi.smul_apply, smul_eq_mul, Fin.sum_univ_three, Pi.add_apply]
   fin_cases k <;> simp <;> ring
 
 theorem rdot_sum3 (A : Fin 3 → ℝ) (lam : Fin 3 → ℝ) (B : Fin 3 → Fin 3 → ℝ) (κ : ℝ) :
     rdot A (κ • ∑ a, lam a • B a) = κ * ∑ a, lam a * rdot A (B a) := by
-  simp only [rdot, Pi.smul_apply, smul_eq_mul, Finset.sum_apply, Fin.sum_univ_three, Pi.add_apply]
+  simp only [rdot, Pi.smul_apply, smul_eq_mul, Fin.sum_univ_three, Pi.add_apply]
   ring
 
 /-- The witness value is linear in the view. -/
@@ -370,7 +369,7 @@ theorem rcross_view_sq (T : Triangle) (κ : ℝ) (lam : Fin 3 → ℝ) (c : Fin 
       κ ^ 2 * ∑ a, ∑ b, lam a * lam b * rdot (rcross (fun k => (T a k : ℝ)) c) (rcross (fun k => (T b k : ℝ)) c) := by
   rw [rcross_view]
   set B := fun a => rcross (fun k => (T a k : ℝ)) c
-  simp only [rdot, Pi.smul_apply, smul_eq_mul, Finset.sum_apply, Fin.sum_univ_three, Pi.add_apply]
+  simp only [rdot, Pi.smul_apply, smul_eq_mul, Fin.sum_univ_three, Pi.add_apply]
   ring
 
 /-- **Tie claims from certificates.** -/

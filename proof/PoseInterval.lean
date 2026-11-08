@@ -155,10 +155,10 @@ theorem mem_closed_ball_center_of_mem (iv : PoseInterval ℝ) (p : Pose ℝ) (hp
   simp only [PoseInterval.radius]
   set s := (iv.max.θ₁ - iv.min.θ₁) ⊔ (iv.max.φ₁ - iv.min.φ₁) ⊔
     (iv.max.θ₂ - iv.min.θ₂) ⊔ (iv.max.φ₂ - iv.min.φ₂) ⊔ (iv.max.α - iv.min.α) with hs
-  have ha : iv.max.θ₁ - iv.min.θ₁ ≤ s := by simp [hs, le_sup_iff]
-  have hb : iv.max.φ₁ - iv.min.φ₁ ≤ s := by simp [hs, le_sup_iff]
-  have hc : iv.max.θ₂ - iv.min.θ₂ ≤ s := by simp [hs, le_sup_iff]
-  have hd : iv.max.φ₂ - iv.min.φ₂ ≤ s := by simp [hs, le_sup_iff]
+  have ha : iv.max.θ₁ - iv.min.θ₁ ≤ s := by simp [hs]
+  have hb : iv.max.φ₁ - iv.min.φ₁ ≤ s := by simp [hs]
+  have hc : iv.max.θ₂ - iv.min.θ₂ ≤ s := by simp [hs]
+  have hd : iv.max.φ₂ - iv.min.φ₂ ≤ s := by simp [hs]
   have he : iv.max.α - iv.min.α ≤ s := by simp [hs]
   rw [Pose.mem_closedBall_iff]
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;>

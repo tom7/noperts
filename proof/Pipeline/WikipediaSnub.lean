@@ -301,9 +301,10 @@ theorem snubP_eq (c : Fin 3) :
       IcoZ.val (snubPC c) * snubXiW ^ 2) / 20 := by
   have h5 := sqrt5_sq
   fin_cases c <;> simp [snubP, snubPA, snubPB, snubPC, IcoZ.val, goldenPhi] <;>
-    ring_nf <;> simp only [h5] <;> ring_nf <;>
-    (try (have h53 : sqrt5 ^ 3 = 5 * sqrt5 := by rw [pow_succ, h5]
-          rw [h53]; ring))
+    ring_nf <;> simp only [h5] <;> ring_nf
+  try
+    have h53 : sqrt5 ^ 3 = 5 * sqrt5 := by rw [pow_succ, h5]
+    rw [h53]; ring
 
 
 end Noperts.Pipeline.WikipediaSnub

@@ -552,7 +552,7 @@ theorem snubM1_axis : snubM1.toEuclideanLin m1Axis = m1Axis := by
   have hsq := goldenPhi_sq
   ext i
   fin_cases i <;>
-    simp [snubM1, m1Axis, Matrix.toLpLin_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_three] <;>
+    simp [snubM1, m1Axis, Matrix.toLpLin_apply, ] <;>
     field_simp <;> nlinarith [hsq]
 
 theorem wiki_one : wiki 1 = snubM1 := by
@@ -599,7 +599,7 @@ theorem det3_eq_zero_of_perp {u v w : ℝ³} (hu : ⟪m1Axis, u⟫ = 0) (hv : �
     (hw : ⟪m1Axis, w⟫ = 0) : det3 u v w = 0 := by
   have key : det3 u v w * (1 : ℝ) = ⟪m1Axis, u⟫ * (v 2 * w 0 - v 0 * w 2) +
       ⟪m1Axis, v⟫ * (w 2 * u 0 - w 0 * u 2) + ⟪m1Axis, w⟫ * (u 2 * v 0 - u 0 * v 2) := by
-    simp only [inner_eq3, m1Axis, PiLp.toLp_apply, Matrix.cons_val_zero, Matrix.cons_val_one,
+    simp only [inner_eq3, m1Axis, Matrix.cons_val_zero, Matrix.cons_val_one,
       Matrix.cons_val_two, Matrix.head_cons, Matrix.tail_cons, det3]
     ring
   rw [hu, hv, hw] at key
@@ -1043,7 +1043,7 @@ theorem phIModel_vertex (i : VertexIndex) :
   have hc := slotCheck_eq
   simp only [slotCheck, Bool.and_eq_true, List.all_eq_true, List.mem_range,
     decide_eq_true_eq] at hc
-  obtain ⟨⟨-, hT⟩, hw⟩ := hc.1 i.val (by simpa using i.isLt)
+  obtain ⟨⟨-, hT⟩, hw⟩ := hc.1 i.val (by simp)
   rw [IModel.toC5_vertex, IModel.orbit]
   change (ico (vElem i.val)).toEuclideanLin (phV0 (vOrbit i.val)) = _
   rw [phV0, map_smul, ← IModel.toEuclideanLin_mul, ico_mul_snubFrame_of hT,
@@ -1061,7 +1061,7 @@ theorem phIModel_verts :
     Set.mem_image, Finset.mem_coe, mem_phPoles]
   constructor
   · rintro ⟨i, rfl⟩
-    exact ⟨_, ⟨slotWikiOf i.val, (hc.1 i.val (by simpa using i.isLt)).1.1, (vOrbit i.val).val,
+    exact ⟨_, ⟨slotWikiOf i.val, (hc.1 i.val (by simp)).1.1, (vOrbit i.val).val,
       (vOrbit i.val).isLt, rfl⟩, (phIModel_vertex i).symm⟩
   · rintro ⟨_, ⟨g, hg, o, ho, rfl⟩, rfl⟩
     have hrow := hc.2 o ho g hg
@@ -1103,7 +1103,7 @@ theorem pentagonalHexecontahedron_not_rupert (h : ∀ P : IModel, ¬ IsRupert P.
   funext x
   have hx : (snubFrame * Mᵀ).toEuclideanLin (M.toEuclideanLin x) = snubFrame.toEuclideanLin x := by
     rw [← IModel.toEuclideanLin_mul, Matrix.mul_assoc, hMM, Matrix.mul_one]
-  simp only [Function.comp, map_add, map_smul, hx, smul_add, smul_smul]
+  simp only [map_add, map_smul, hx, smul_add, smul_smul]
   rw [mul_assoc, inv_mul_cancel₀ hs.ne', mul_one]
   abel
 

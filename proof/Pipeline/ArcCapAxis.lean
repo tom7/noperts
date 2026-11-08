@@ -91,13 +91,13 @@ theorem square_good_of_cube {pr : Params}
     rcases le_total 0 a with ha0 | ha0
     · have hm' : μ * e = a := by rw [hm, abs_of_nonneg ha0]
       have hG := G 0 (by norm_num) τ hτ
-      simp only [GoodU, if_true] at hG
+      simp only [GoodU, ite_true] at hG
       rw [hm'] at hG
       rw [abs_of_nonneg ha0] at hbτ
       rw [hbτ]; simpa using hG
     · have hm' : μ * e = -a := by rw [hm, abs_of_nonpos ha0]
       have hG := G 1 (by norm_num) τ hτ
-      simp only [GoodU, one_ne_zero, if_false, if_true] at hG
+      simp only [GoodU, one_ne_zero, ite_false, ite_true] at hG
       rw [hm'] at hG
       rw [abs_of_nonpos ha0] at hbτ
       rw [hbτ]; simpa using hG
@@ -128,7 +128,7 @@ theorem square_good {pr : Params} {c : Cert} (hp : pr.Ok) (hc : certCheckOn axis
   intro side hs
   refine cert_goodU hp hc hRc hSc (fun h => absurd h (by simp [hwd])) side ?_
   intro k hk
-  exact mem_uCharts (by simp [axisCharts]; omega) hk
+  exact mem_uCharts (by simp; omega) hk
 
 /-- A frame E₁, E₂, X orthogonal, of squared lengths n₁, n₂, n₃, with the Cayley weights
 k_i = 1 / n_i. -/
@@ -181,7 +181,7 @@ theorem square_not_rupert {pr : Params} {c : Cert} {n1 n2 nx r : ℝ} (hp : pr.O
   set xx := rdot p.view (kval fr.X) with hxx
   have hmu : (0 : ℝ) ≤ pr.mu0 := by
     by_contra hneg
-    push_neg at hneg
+    push Not at hneg
     have h3 : 0 ≤ (pr.mu0 : ℝ) * (n1 * xx) := by
       rw [← mul_assoc]; exact le_trans (mul_nonneg (abs_nonneg _) hf.px.le) h1
     exact absurd h3 (not_le.mpr (mul_neg_of_neg_of_pos hneg (mul_pos hf.p1 hx0)))

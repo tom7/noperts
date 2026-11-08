@@ -146,18 +146,18 @@ theorem goodP_of_cube (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params)
     · set y : Fin 5 → ℝ := ![ν, p, α, s1 - pr.Z * ν, s2] with hy
       have hin : KPoly.InBox (rootBox pr (.p (.face2 1 sg))) y := by
         show KPoly.InBox ![(0, pr.nu0), (0, 1), (-1, 2), (0, pr.R1), sym pr.R2] y
-        exact inBox_vec hν hp hal' (mem_zero (by simp [y]; linarith) (by simp [y]; linarith [(abs_le.mp h1).2])) hq2
+        exact inBox_vec hν hp hal' (mem_zero (by simp; linarith) (by simp; linarith [(abs_le.mp h1).2])) hq2
       have hG := (pointGood_p V fr pr (.face2 1 sg) y).mp (hg _ (mem_pKinds_face2 1 (by norm_num) sg) y hin)
       simp [y, pAl, pS, eval_pconst, eval_pvar, KPoly.eval_add, KPoly.eval_mul] at hG
-      convert hG using 2 <;> ring
+      convert hG using 2
     by_cases c2 : s1 < -(pr.Z * ν)
     · set y : Fin 5 → ℝ := ![ν, p, α, -s1 - pr.Z * ν, s2] with hy
       have hin : KPoly.InBox (rootBox pr (.p (.face2 2 sg))) y := by
         show KPoly.InBox ![(0, pr.nu0), (0, 1), (-1, 2), (0, pr.R1), sym pr.R2] y
-        exact inBox_vec hν hp hal' (mem_zero (by simp [y]; linarith) (by simp [y]; linarith [(abs_le.mp h1).1])) hq2
+        exact inBox_vec hν hp hal' (mem_zero (by simp; linarith) (by simp; linarith [(abs_le.mp h1).1])) hq2
       have hG := (pointGood_p V fr pr (.face2 2 sg) y).mp (hg _ (mem_pKinds_face2 2 (by norm_num) sg) y hin)
       simp [y, pAl, pS, eval_pconst, eval_pvar, KPoly.eval_add, KPoly.eval_mul] at hG
-      convert hG using 2 <;> ring
+      convert hG using 2
     have b1 : |s1| ≤ pr.Z * ν := abs_le.mpr ⟨by linarith, by linarith⟩
     have r1 : |s1 / ν| ≤ pr.Z := by
       rw [abs_div, abs_of_pos hpos, div_le_iff₀ hpos]; exact b1
@@ -166,18 +166,18 @@ theorem goodP_of_cube (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params)
     · set y : Fin 5 → ℝ := ![ν, p, α, s1 / ν, s2 - pr.Z * ν] with hy
       have hin : KPoly.InBox (rootBox pr (.p (.face2 3 sg))) y := by
         show KPoly.InBox ![(0, pr.nu0), (0, 1), (-1, 2), sym pr.Z, (0, pr.R2)] y
-        exact inBox_vec hν hp hal' (mem_sym r1) (mem_zero (by simp [y]; linarith) (by simp [y]; linarith [(abs_le.mp h2).2]))
+        exact inBox_vec hν hp hal' (mem_sym r1) (mem_zero (by simp; linarith) (by simp; linarith [(abs_le.mp h2).2]))
       have hG := (pointGood_p V fr pr (.face2 3 sg) y).mp (hg _ (mem_pKinds_face2 3 (by norm_num) sg) y hin)
       simp [y, pAl, pS, eval_pconst, eval_pvar, KPoly.eval_add, KPoly.eval_mul, d1] at hG
-      convert hG using 2 <;> ring
+      convert hG using 2
     by_cases c4 : s2 < -(pr.Z * ν)
     · set y : Fin 5 → ℝ := ![ν, p, α, s1 / ν, -s2 - pr.Z * ν] with hy
       have hin : KPoly.InBox (rootBox pr (.p (.face2 4 sg))) y := by
         show KPoly.InBox ![(0, pr.nu0), (0, 1), (-1, 2), sym pr.Z, (0, pr.R2)] y
-        exact inBox_vec hν hp hal' (mem_sym r1) (mem_zero (by simp [y]; linarith) (by simp [y]; linarith [(abs_le.mp h2).1]))
+        exact inBox_vec hν hp hal' (mem_sym r1) (mem_zero (by simp; linarith) (by simp; linarith [(abs_le.mp h2).1]))
       have hG := (pointGood_p V fr pr (.face2 4 sg) y).mp (hg _ (mem_pKinds_face2 4 (by norm_num) sg) y hin)
       simp [y, pAl, pS, eval_pconst, eval_pvar, KPoly.eval_add, KPoly.eval_mul, d1] at hG
-      convert hG using 2 <;> ring
+      convert hG using 2
     have b2 : |s2| ≤ pr.Z * ν := abs_le.mpr ⟨by linarith, by linarith⟩
     have r2 : |s2 / ν| ≤ pr.Z := by
       rw [abs_div, abs_of_pos hpos, div_le_iff₀ hpos]; exact b2
@@ -187,7 +187,7 @@ theorem goodP_of_cube (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params)
       show KPoly.InBox ![(0, pr.nu0), (0, 1), (-1, 2), sym pr.Z, sym pr.Z] y
       exact inBox_vec hν hp hal' (mem_sym r1) (mem_sym r2)
     have hG := (pointGood_p V fr pr (.face2 0 sg) y).mp (hg _ (mem_pKinds_face2 0 (by norm_num) sg) y hin)
-    simp [y, pAl, pS, eval_pconst, eval_pvar, KPoly.eval_add, KPoly.eval_mul, d1, d2] at hG
+    simp [y, pAl, pS, eval_pconst, eval_pvar, KPoly.eval_mul, d1, d2] at hG
     exact hG
 
 /-- **The wedge cube is good**: every pose with view (t, b), t ≤ thi, and rotation (x, y, z) of weighted norm
@@ -510,7 +510,7 @@ theorem pcapGen_not_rupert {V : Array (KCap.KVec K)} {fr : Frame K} {pr : Params
   set xx := rdot p.view (kval fr.X) with hxx
   have hmu : (0 : ℝ) ≤ pr.mu0 := by
     by_contra hneg
-    push_neg at hneg
+    push Not at hneg
     have h3 : 0 ≤ (pr.mu0 : ℝ) * (n1 * xx) := by
       rw [← mul_assoc]; exact le_trans (mul_nonneg (abs_nonneg _) hf.px.le) h1
     exact absurd h3 (not_le.mpr (mul_neg_of_neg_of_pos hneg (mul_pos hf.p1 hx0)))

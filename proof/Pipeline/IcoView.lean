@@ -321,7 +321,7 @@ theorem viewCone_mem_icoViewTriangle (p : AtlasPose ℝ)
   refine ⟨weight, ?_, ?_, ?_⟩
   · intro k
     fin_cases k <;> simp [weight] <;> apply div_nonneg <;> try positivity
-    all_goals first | linarith | exact hscale0.le
+    all_goals linarith
   · have hne : x + y + z ≠ 0 := hscaleEq ▸ hscale0.ne'
     simp only [weight, Fin.sum_univ_three]
     simp

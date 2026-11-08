@@ -144,7 +144,7 @@ theorem horner_ladd {α : Type} (v : α → ℝ) (x : ℝ) (f : α → α → α
 
 theorem eval_add [ExactScalarVal K] : ∀ (k : ℕ) (a b : KPoly K k) (y : Fin k → ℝ), eval k (add k a b) y = eval k a y + eval k b y
   | 0, a, b, _ => @ExactScalarVal.val_add K _ _ a b
-  | k + 1, a, b, y => horner_ladd _ _ _ (fun p q => eval_add k p q _) _ _
+  | k + 1, _, _, _ => horner_ladd _ _ _ (fun p q => eval_add k p q _) _ _
 
 theorem eval_scale [ExactScalarVal K] : ∀ (k : ℕ) (q : ℚ) (a : KPoly K k) (y : Fin k → ℝ), eval k (scale k q a) y = q * eval k a y
   | 0, q, a, _ => @ExactScalarVal.val_scale K _ _ q a
@@ -217,7 +217,7 @@ theorem horner_zero_of_all {α : Type} (v : α → ℝ) (x : ℝ) (Z : α → Bo
 
 theorem eval_of_isZero [ExactScalarVal K] : ∀ (k : ℕ) (p : KPoly K k) (y : Fin k → ℝ), isZero k p = true → eval k p y = 0
   | 0, c, _, h => @ExactScalarVal.val_of_isZero K _ _ c h
-  | k + 1, p, y, h => horner_zero_of_all _ _ (isZero k) (fun a ha => eval_of_isZero k a _ ha) _ h
+  | k + 1, _, _, h => horner_zero_of_all _ _ (isZero k) (fun a ha => eval_of_isZero k a _ ha) _ h
 
 /-- The product of coefficient lists; a zero coefficient (`isz`) contributes only the shift. -/
 def mulL {α : Type} (addf mulf : α → α → α) (z : α) (isz : α → Bool) : List α → List α → List α
@@ -252,7 +252,7 @@ theorem horner_mulL {α : Type} (v : α → ℝ) (x : ℝ) (addf mulf : α → �
 
 theorem eval_mul [ExactScalarVal K] : ∀ (k : ℕ) (a b : KPoly K k) (y : Fin k → ℝ), eval k (mul k a b) y = eval k a y * eval k b y
   | 0, a, b, _ => @ExactScalarVal.val_mul K _ _ a b
-  | k + 1, a, b, y =>
+  | k + 1, _, _, _ =>
     horner_mulL _ _ _ _ _ _ (fun p q => eval_add k p q _) (fun p q => eval_mul k p q _) (eval_zero k _)
       (fun p hp => eval_of_isZero k p _ hp) _ _
 

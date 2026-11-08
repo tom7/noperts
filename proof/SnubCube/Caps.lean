@@ -555,16 +555,16 @@ theorem capLeaf_sound (S : Set ℝ³) (hcaps : CapsHold S) (iv : AtlasInterval �
     refine ⟨hux, hm0, ?_, ?_, ?_, ?_, ?_⟩
     · have e : (scTieMu0 : ℝ) * (rdot u x0 / xx) - -(rdot u e1 / n1) =
           ((scTieMu0 : ℝ) * (n1 * n2) * rdot u x0 + (xx * n2) * rdot u e1) / (xx * n1 * n2) := by
-        first | (field_simp; ring) | field_simp
+        first | (field_simp; ring)
       have : 0 ≤ (scTieMu0 : ℝ) * (rdot u x0 / xx) - -(rdot u e1 / n1) := by rw [e]; positivity
       linarith
     · rw [abs_le]
       have ea : (scParams.tieT0 : ℝ) * -(rdot u e1 / n1) - rdot u e2 / n2 =
           (-((scParams.tieT0 : ℝ) * (xx * n2)) * rdot u e1 + -(xx * n1) * rdot u e2) / (xx * n1 * n2) := by
-        first | (field_simp; ring) | field_simp
+        first | (field_simp; ring)
       have eb : (scParams.tieT0 : ℝ) * -(rdot u e1 / n1) + rdot u e2 / n2 =
           (-((scParams.tieT0 : ℝ) * (xx * n2)) * rdot u e1 + (xx * n1) * rdot u e2) / (xx * n1 * n2) := by
-        first | (field_simp; ring) | field_simp
+        first | field_simp
       have ha : 0 ≤ (scParams.tieT0 : ℝ) * -(rdot u e1 / n1) - rdot u e2 / n2 := by rw [ea]; positivity
       have hb : 0 ≤ (scParams.tieT0 : ℝ) * -(rdot u e1 / n1) + rdot u e2 / n2 := by rw [eb]; positivity
       constructor <;> linarith

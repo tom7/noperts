@@ -840,11 +840,13 @@ theorem Box.blendT_nonneg (box : Box) (i : Fin 3) : 0 ≤ box.blendT i := le_max
 theorem Box.blendT_le_one (box : Box) (i : Fin 3) : box.blendT i ≤ 1 :=
   max_le zero_le_one (min_le_left _ _)
 
+omit [SolidModel] in
 theorem toR3_blend (a b : Fin 3 → ℚ) (t : ℚ) :
     toR3 ((1 - t) • a + t • b) = (1 - (t : ℝ)) • toR3 a + (t : ℝ) • toR3 b := by
   ext j
   simp [toR3]
 
+omit [SolidModel] in
 theorem norm_blend_le {x y : ℝ³} {t e : ℝ} (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
     (hx : ‖x‖ ≤ e) (hy : ‖y‖ ≤ e) : ‖(1 - t) • x + t • y‖ ≤ e := by
   calc ‖(1 - t) • x + t • y‖ ≤ ‖(1 - t) • x‖ + ‖t • y‖ := norm_add_le _ _
@@ -858,9 +860,9 @@ theorem Box.innerPt_close (box : Box) (i : Fin 3) :
     ‖box.innerPt (P := P) i - toR3 (box.innerQ i)‖ ≤ (tightVertexErrorQ : ℝ) := by
   unfold Box.innerPt Box.innerQ
   by_cases h : box.blendT i = 0
-  · simp only [h, if_true]
+  · simp only [h, ite_true]
     exact P.vertex_close_tight _
-  · simp only [h, if_false]
+  · simp only [h, ite_false]
     rw [toR3_blend]
     have e : (1 - (box.blendT i : ℝ)) • P.vertex (box.innerIndex i) +
           (box.blendT i : ℝ) • P.vertex (box.innerOther i) -
@@ -876,9 +878,9 @@ theorem Box.innerPt_close (box : Box) (i : Fin 3) :
 theorem Box.innerPt_norm_le_one (box : Box) (i : Fin 3) : ‖box.innerPt (P := P) i‖ ≤ 1 := by
   unfold Box.innerPt
   by_cases h : box.blendT i = 0
-  · simp only [h, if_true]
+  · simp only [h, ite_true]
     exact P.vertex_norm_le_one _
-  · simp only [h, if_false]
+  · simp only [h, ite_false]
     exact norm_blend_le (by exact_mod_cast box.blendT_nonneg i) (by exact_mod_cast box.blendT_le_one i)
       (P.vertex_norm_le_one _) (P.vertex_norm_le_one _)
 
@@ -888,9 +890,9 @@ theorem Box.innerPt_mem_hull (box : Box) (i : Fin 3) :
     subset_convexHull ℝ _ ⟨k, rfl⟩
   unfold Box.innerPt
   by_cases h : box.blendT i = 0
-  · simp only [h, if_true]
+  · simp only [h, ite_true]
     exact hv _
-  · simp only [h, if_false]
+  · simp only [h, ite_false]
     have h0 : (0 : ℝ) ≤ box.blendT i := by exact_mod_cast box.blendT_nonneg i
     have h1 : (box.blendT i : ℝ) ≤ 1 := by exact_mod_cast box.blendT_le_one i
     exact (convex_convexHull ℝ _) (hv _) (hv _) (by linarith) h0 (by ring)
@@ -1755,7 +1757,7 @@ theorem Box.exactContact_sub_approx_norm_le (box : Box)
         ((cross3_norm_le _ _).trans (mul_le_mul
           (box.certificate.approxEdge_norm_le i)
           (box.exactDisplacement_sub_approx_norm_le p i)
-          (norm_nonneg _) (by norm_num [RationalApprox.κ] <;> nlinarith [tightVertexErrorQ_real_nonneg])))
+          (norm_nonneg _) (by norm_num [RationalApprox.κ])))
     _ ≤ 10 * cayleyDenom p.x p.y p.z * (tightVertexErrorQ : ℝ) := by
       have hd := (cayleyDenom_pos p.x p.y p.z).le
       have hk : 0 ≤ (tightVertexErrorQ : ℝ) := tightVertexErrorQ_real_nonneg
@@ -1855,7 +1857,7 @@ theorem Box.weightedContact_error (box : Box)
         (mul_le_mul
           (box.certificate.approxWeight_abs_le box.localShell hscale i)
           (box.contactValue_error hscale i)
-          (abs_nonneg _) (by norm_num [RationalApprox.κ] <;> nlinarith [tightVertexErrorQ_real_nonneg]))
+          (abs_nonneg _) (by norm_num [RationalApprox.κ]))
     _ ≤ 100 * cayleyDenom p.x p.y p.z * (tightVertexErrorQ : ℝ) := by
       have hd := (cayleyDenom_pos p.x p.y p.z).le
       have hk : 0 ≤ (tightVertexErrorQ : ℝ) := tightVertexErrorQ_real_nonneg

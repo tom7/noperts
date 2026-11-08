@@ -400,8 +400,7 @@ theorem eval_cellPoly (st : Setup) (id : ChartId) (Gcol : Fin 3 → KVec) (y : F
 theorem trace_halfTurnMat_mul (u : Fin 3 → ℝ) (hu : rdot u u ≠ 0) (M : Matrix (Fin 3) (Fin 3) ℝ) :
     Matrix.trace (halfTurnMat u * M) = 2 * rdot u (M.mulVec u) / rdot u u - Matrix.trace M := by
   have hsum : (∑ k, u k ^ 2) = rdot u u := by simp [rdot, Fin.sum_univ_three]; ring
-  simp only [halfTurnMat, hsum, Matrix.trace, Matrix.diag, Matrix.mul_apply, Fin.sum_univ_three, Matrix.mulVec,
-    dotProduct, Matrix.one_apply, Matrix.of_apply]
+  simp only [halfTurnMat, hsum, Matrix.trace, Matrix.diag, Matrix.mul_apply, Fin.sum_univ_three]
   simp only [rdot] at hu ⊢
   have hu2 : u 0 ^ 2 + u 1 ^ 2 + u 2 ^ 2 ≠ 0 := by convert hu using 1; ring
   field_simp

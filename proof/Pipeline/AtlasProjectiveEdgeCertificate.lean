@@ -306,7 +306,7 @@ theorem Box.viewQuadratic_eval (box : Box) (j : Fin 3)
       linearValue (toReal box.triangle j)
         (box.edgeShell.approxTotalVector p) := by
   simp [Box.viewQuadratic, linearValue, toReal,
-    box.edgeShell.eval_totalQuadratic_pose, Fin.sum_univ_three]
+    box.edgeShell.eval_totalQuadratic_pose]
 
 omit [SolidModel] in
 theorem cayleyConstraintQuadratic_eval (x y z : ℝ) :

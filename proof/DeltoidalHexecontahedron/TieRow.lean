@@ -35,7 +35,7 @@ def TieClaimT (S : Set ℝ³) (x : Fin 3 → ℝ) (T : Triangle) (ρ : ℚ) : Pr
 theorem viewOf_eq_affinePoint (T : Triangle) (w : Fin 3 → ℝ) :
     viewOf T w = affinePoint (toReal T) w := by
   funext k
-  simp [viewOf, affinePoint, toReal, Fin.sum_univ_three, mul_comm]
+  simp [viewOf, affinePoint, toReal, Fin.sum_univ_three]
 
 theorem tieClaimT_of_tieClaim {S : Set ℝ³} {x : Fin 3 → ℝ} {T : Triangle} {ρ : ℚ} (h : TieClaim S x T ρ) :
     TieClaimT S x T ρ := by

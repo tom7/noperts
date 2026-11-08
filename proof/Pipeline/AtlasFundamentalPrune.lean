@@ -259,7 +259,7 @@ theorem trace_advantage_eq (chart : ChartIndex) (direction : Direction)
   rw [exactAdvantage, eval_a_eq_denom_mul, eval_b_eq_denom_mul]
   cases direction <;>
     simp [Direction.signQ, Real.cos_neg, Real.sin_neg] <;>
-    field_simp [cayleyDenom_ne] <;> ring
+    field_simp [cayleyDenom_ne]
 
 theorem positive_exactAdvantage_not_inFundamentalDomain
     {chart : ChartIndex} {direction : Direction} {x y z : ℝ}
