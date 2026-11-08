@@ -260,6 +260,12 @@ counts and the same `instantiated` line:
 search/septopert-m18/rebuild.sh --threads 56 --work work-fresh
 ```
 
+It was reproduced again on 2026-11-08, from a fresh clone of this
+repository after the renaming (commit 3d8fce61), with 60 threads on a
+shared machine: the same row counts and the same `instantiated` line,
+in 43 minutes (`rebuild.sh` now starts at the `model` stage by default,
+since a fresh clone has no `codebdd.json`).
+
 The search is multithreaded and not deterministic, so other runs may
 differ in details. Stages: `model`, `tube`, `idcap`, `tubepack`,
 `cap`, `arccert`, `search`, `pack`, `verify` (`--from STAGE`, `--only
