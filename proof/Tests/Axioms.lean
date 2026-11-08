@@ -128,6 +128,7 @@ import Minimality.Type08S.C2K17GD5C
 import Minimality.Type08S.C2K17GD5D
 import Minimality.Type08S.C2K17F1A
 import Minimality.Type08S.C2K17F2A
+import Minimality.AcuteEdge
 import ProofOfMainTheorem
 
 /-!
@@ -1132,3 +1133,8 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Type08Sp.C2.k28h5rb_hrb
 #assert_standard_axioms Minimality.Type08Sp.C2.k25_tie_cell
 #assert_standard_axioms Minimality.Type08Sp.C2.k25_tie_cell2
+#assert_standard_axioms Minimality.Split.AcuteEdge.ael_euclid
+#assert_standard_axioms Minimality.Split.AcuteEdge.ael_euclid_strict
+#assert_standard_axioms Minimality.Split.AcuteEdge.ael_cross
+#assert_standard_axioms Minimality.Split.AcuteEdge.ael_core_rupert
+#assert_standard_axioms Minimality.Split.AcuteEdge.ael_core'_rupert
