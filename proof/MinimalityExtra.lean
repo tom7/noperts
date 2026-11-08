@@ -893,10 +893,21 @@ other vertex `x i` projects into the segment `ab`, that is, lies in the slab bet
 through `a` and `b` perpendicular to `ab`: strictly on the `a` side of the plane through `b`, and
 weakly (equality allowed) on the `b` side of the plane through `a`. Then the polytope is Rupert.
 
-In words: Where two faces meet in a sharp edge and the rest of the polytope hangs over the edge, a
-view nearly along the edge, tilted slightly, lets a copy slip through. The slab condition is
-allowed to be tight at one end only. With equality at both ends, as for the edges at the cube
-corners of the Septopert, the lemma says nothing. -/
+Why: Because the dihedral is acute, there is a direction `w` perpendicular to the edge, in the plane
+of the first face, from which every vertex other than `a` and `b` lies strictly behind the line
+`ab`, so the edge is the front of the polytope. (At a right dihedral the second face is seen exactly
+edge-on, at depth zero, and this fails.) The slab condition says more: Every other vertex sits
+behind the segment `ab` itself, not beyond its ends. Look along a slight tilt of `w`. A small
+rotation about the edge's direction, with a small translation, then moves every vertex of a second
+copy strictly into the shadow of the first: A vertex `p ≠ a, b` is pushed in by the angle it makes
+with `a` and `b`, and `a`, `b` themselves by a vertex below the first plane. So the polytope is
+first-order free at that view, hence Rupert. The faces may be any polygons.
+
+The general statement is false: "Every polytope with an acute dihedral angle is Rupert" does not
+hold. `ChipM18K5`, the Septopert M18 with three vertices chipped off (six edges at 81.95°), is a
+Nopert. Its acute edges are the short edges at the cuts, and the rest of the polytope reaches far
+beyond their ends, so the slab condition fails there. Its right-angled apex edges satisfy the slab
+condition but have dihedral exactly 90°, so `⟪nF, nF'⟫ < 0` fails. Both hypotheses are needed. -/
 def AcuteEdgeLemma : Prop :=
   ∀ (n : ℕ) (x : Fin n → ℝ³) (a b : Fin n) (nF nF' : ℝ³),
     (∀ i, ⟪nF, x i - x a⟫ ≤ 0) → ⟪nF, x b - x a⟫ = 0 →
