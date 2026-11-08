@@ -23,7 +23,7 @@ public import Minimality.Type29SilE
 public import Minimality.Type29GB
 public import Minimality.Type16Arc3B
 public import Minimality.Type16GenA
-public import Minimality.Type16SAT.Final
+public import Minimality.Type16SAT.FinalW
 public import Minimality.MaxwellRadonI
 public import Minimality.SilS0XD
 public import Minimality.Type21RobA
@@ -403,8 +403,9 @@ sign-vector certificate checked in the kernel). Not formalized (`sorry`): type 2
 `C̄ ∪ Σ_B` (it is proved outside, `not_type24_outside_Cbar_of_isNopert`); for type 29 (split by
 the class of its octahedron, `Minimality.type29_cap`, `Minimality.NF29.classes`) the class K1
 and K2 on the strata `Z1 ∪ σ(Z1)`; for type 16, inside the residual `H16ArcGenResid`, only the
-bracket classes +-+-, +--- (with their sigma images) and the class boundaries (the classes ++-+,
-++--, +--+ by the sign-matrix SAT route, `Minimality.H16.SAT.isRupert_cls3`, `Minimality/Type16SAT`);
+bracket classes +-+-, +--- (with their sigma images) and the class boundaries ++-0, +0-+ (with
+images) (the classes ++-+, ++--, +--+ and the other 16 boundary sign vectors by the sign-matrix SAT
+route, `Minimality.H16.SAT.isRupert_closed`, `Minimality/Type16SAT`);
 and for every other type except 02, 05, 07, 08, 09, 12, 13, 14, 17, 18, 19, 20, 22, 23,
 25, 26, 27, 28 (type 08: `not_type08_closed`, the chain `Type08S/C2K*ZA` ending in `C2K47ZA`; the others closed completely: each of their views pairs a triangle with another facet,
 so `TriGenPar`
@@ -1008,11 +1009,11 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
           -- generic all-views route (Type16GenA: segment + line leaves at all views): `sorry` only under `H16ArcGenResid`
           by_cases hres2 : Minimality.H16A.H16ArcGenResid
               (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
-          · -- the sign-matrix SAT route (Type16SAT): classes ++-+, ++--, +--+ and their sigma images, at
-            -- every metric, by kernel-checked LRAT certificates; `sorry` only for the classes +-+-, +---,
-            -- --+-, ---- and the class boundaries
-            by_cases hcl : Minimality.H16.SAT.Cls16Closed x
-            · exact (hN.2 (Minimality.H16.SAT.isRupert_cls3
+          · -- the sign-matrix SAT route (Type16SAT): classes ++-+, ++--, +--+, the 16 class boundaries of
+            -- `Cls16ClosedW` and their sigma images, at every metric, by kernel-checked LRAT certificates;
+            -- `sorry` only for the classes +-+-, +---, --+-, ---- and the boundaries ++-0, +0-+ (and images)
+            by_cases hcl : Minimality.H16.SAT.Cls16Closed x ∨ Minimality.H16.SAT.Cls16ClosedW x
+            · exact (hN.2 (Minimality.H16.SAT.isRupert_closed
                 (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
                 hcl)).elim
             · sorry

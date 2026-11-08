@@ -129,7 +129,7 @@ import Minimality.Type08S.C2K17GD5D
 import Minimality.Type08S.C2K17F1A
 import Minimality.Type08S.C2K17F2A
 import Minimality.AcuteEdge
-import Minimality.Type16SAT.Final
+import Minimality.Type16SAT.FinalW
 import ProofOfMainTheorem
 
 /-!
@@ -1140,3 +1140,4 @@ elab "#assert_standard_axioms " id:ident : command => do
 #assert_standard_axioms Minimality.Split.AcuteEdge.ael_core_rupert
 #assert_standard_axioms Minimality.Split.AcuteEdge.ael_core'_rupert
 #assert_standard_axioms Minimality.H16.SAT.isRupert_cls3
+#assert_standard_axioms Minimality.H16.SAT.isRupert_closed

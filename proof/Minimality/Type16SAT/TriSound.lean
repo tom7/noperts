@@ -26,7 +26,7 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
     ∀ k ∈ triRoutes, Sg3 (rho g) k.2.ent (det3 (g.dv k.1.1) (g.dv k.1.2.1) (g.dv k.1.2.2)) := by
   unfold triRoutes
   simp (config := {maxSteps := 100000000}) only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq]
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · exact fac_key3 hF hO _ _ _ 0 1 2 0 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 1 3 0 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 4 0 0 _ (by decide)  -- FAC
@@ -39,28 +39,39 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact fac_key3 hF hO _ _ _ 2 1 12 0 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 13 0 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 16 0 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 0 1 2 4 5) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.lv 0 1 2 5 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.br 0 1 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 2 4 0 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 3 2 5 0 0 _ (by decide)  -- FAC
+  · exact b4_key3 hF hO _ _ _ 0 0 2 3 1 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
   · exact at_key3 _ _ _ (V.br 0 1 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact b4_key3 hF hO _ _ _ 0 0 3 5 1 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact b4_key3 hF hO _ _ _ 1 1 3 6 0 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact fac_key3 hF hO _ _ _ 0 2 11 0 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 2 13 0 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 0 1 3 2 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 2 16 0 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 3 2 17 0 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 0 1 3 5 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact b4_key3 hF hO _ _ _ 5 1 4 5 0 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact fac_key3 hF hO _ _ _ 4 3 5 0 0 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 2 0 2 4 1 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact at_key3 _ _ _ (V.br 0 1 3 4) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
   · exact b4_key3 hF hO _ _ _ 5 1 4 5 0 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact b4_key3 hF hO _ _ _ 4 0 4 6 1 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact fac_key3 hF hO _ _ _ 2 3 12 0 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 4 3 19 0 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 0 1 4 5 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact b4_key3 hF hO _ _ _ 1 1 5 6 0 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact b4_key3 hF hO _ _ _ 5 1 4 5 0 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
+  · exact fac_key3 hF hO _ _ _ 0 4 11 0 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 4 13 0 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 4 16 0 0 _ (by decide)  -- FAC
+  · exact b4_key3 hF hO _ _ _ 5 1 4 5 0 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact b4_key3 hF hO _ _ _ 1 1 5 6 0 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact at_key3 _ _ _ (V.br 0 1 2 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact b4_key3 hF hO _ _ _ 1 1 3 6 0 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
@@ -68,29 +79,39 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact b4_key3 hF hO _ _ _ 1 1 5 6 0 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
   · exact at_key3 _ _ _ (V.lv 0 1 6 2 4) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.br 0 1 2 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 3 5 17 0 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 0 1 6 4 5) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 4 5 19 0 0 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 1 1 5 6 0 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact b4_key3 hF hO _ _ _ 0 0 2 3 1 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact b4_key3 hF hO _ _ _ 2 0 2 4 1 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact b4_key3 hF hO _ _ _ 0 0 2 5 1 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact at_key3 _ _ _ (V.br 0 1 2 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
+  · exact b4_key3 hF hO _ _ _ 0 0 2 3 1 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact b4_key3 hF hO _ _ _ 2 0 2 4 1 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact at_key3 _ _ _ (V.br 0 1 2 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.br 0 1 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 1 7 9 0 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 7 10 0 0 _ (by decide)  -- FAC
+  · exact b4_key3 hF hO _ _ _ 0 0 2 3 1 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact at_key3 _ _ _ (V.lv 0 1 3 2 4) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.lv 0 1 3 2 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.br 0 1 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 1 7 16 0 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 7 17 0 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 7 20 0 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 8 9 0 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 8 10 0 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 0 1 4 2 3) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact b4_key3 hF hO _ _ _ 2 0 2 4 1 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact at_key3 _ _ _ (V.lv 0 1 4 2 5) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.br 0 1 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.lv 0 1 4 3 5) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.lv 0 1 4 3 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 5 8 18 0 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 8 19 0 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 0 1 4 5 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 1 9 10 0 0 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.lv 0 1 5 2 4) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 1 9 16 0 0 _ (by decide)  -- FAC
@@ -108,6 +129,7 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact fac_key3 hF hO _ _ _ 0 11 16 0 0 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.lv 2 4 6 0 1) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 13 16 0 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.mv 0 13 17) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.mv 0 14 18) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.lv 2 4 6 0 1) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.lv 3 4 5 0 1) 1 (by simp [rho]) (by ent_ring)  -- AT
@@ -125,6 +147,7 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact fac_key3 hF hO _ _ _ 0 1 2 8 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 2 9 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 2 10 2 _ (by decide)  -- FAC
+  · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
   · exact fac_key3 hF hO _ _ _ 0 1 2 12 2 _ (by decide)  -- FAC
   · exact zq_key3 hF _ _ _ 0 (by decide) (by decide)  -- ZQ
   · exact fac_key3 hF hO _ _ _ 0 1 2 14 2 _ (by decide)  -- FAC
@@ -133,60 +156,94 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact fac_key3 hF hO _ _ _ 0 1 2 17 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 2 18 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 2 19 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 1 2 20 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 4 3 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 1 3 5 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 2 1 3 6 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 2 1 3 7 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 1 3 8 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 2 1 3 9 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 1 3 10 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 1 11 3 1 _ (by decide)  -- FAC
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
+  · exact fac_key3 hF hO _ _ _ 0 1 13 3 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 2 1 3 14 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 2 1 3 15 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 16 3 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 1 3 17 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 1 3 18 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 1 3 19 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 2 1 3 20 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 4 5 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 1 4 8 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 4 9 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 4 10 2 _ (by decide)  -- FAC
+  · exact zq_key3 hF _ _ _ 0 (by decide) (by decide)  -- ZQ
+  · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
+  · exact fac_key3 hF hO _ _ _ 0 1 4 15 2 _ (by decide)  -- FAC
   · exact zq_key3 hF _ _ _ 0 (by decide) (by decide)  -- ZQ
   · exact fac_key3 hF hO _ _ _ 0 1 4 17 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 4 18 2 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.br 0 1 2 6) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.lv 0 2 6 1 4) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.lv 0 2 6 1 5) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.br 0 1 2 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 2 1 12 5 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 13 5 1 _ (by decide)  -- FAC
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
+  · exact at_key3 _ _ _ (V.lv 0 2 6 3 4) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 1 16 5 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 3 5 17 1 0 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.lv 0 2 6 4 5) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 4 5 19 1 0 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 0 0 2 5 6 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact b4_key3 hF hO _ _ _ 0 0 2 3 1 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact b4_key3 hF hO _ _ _ 2 0 2 4 1 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact b4_key3 hF hO _ _ _ 0 0 2 5 1 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact at_key3 _ _ _ (V.br 0 1 2 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 0 1 11 6 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 1 12 6 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 13 6 1 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.br 0 1 2 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 1 16 6 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 0 1 2 4 5) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.lv 0 1 2 4 6) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 1 7 9 1 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 7 10 1 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 1 11 7 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 2 1 12 7 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 1 13 7 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 16 7 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 7 17 1 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 7 20 1 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 8 9 1 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 8 10 1 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 1 11 8 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 1 12 8 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 13 8 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 0 2 6 1 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 1 16 8 1 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.mv 1 8 17) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 5 8 18 1 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 6 8 19 1 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 9 10 1 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 1 11 9 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 1 12 9 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 13 9 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 0 2 6 1 5) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 1 16 9 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 9 17 1 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 9 18 1 0 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.mv 1 9 19) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 1 9 20 1 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 1 11 10 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 1 12 10 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 13 10 1 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.br 0 1 2 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.mv 1 10 15) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 1 16 10 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 10 17 1 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.mv 1 10 18) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 6 10 19 1 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 10 20 1 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 11 12 2 _ (by decide)  -- FAC
@@ -195,6 +252,7 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact fac_key3 hF hO _ _ _ 0 1 11 15 2 _ (by decide)  -- FAC
   · exact zq_key3 hF _ _ _ 0 (by decide) (by decide)  -- ZQ
   · exact fac_key3 hF hO _ _ _ 0 1 11 17 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 1 11 18 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 13 12 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 1 12 14 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 1 12 15 2 _ (by decide)  -- FAC
@@ -202,17 +260,22 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact fac_key3 hF hO _ _ _ 2 1 12 17 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 1 12 18 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 1 12 19 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 2 1 12 20 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 13 14 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 1 13 15 2 _ (by decide)  -- FAC
   · exact zq_key3 hF _ _ _ 0 (by decide) (by decide)  -- ZQ
   · exact fac_key3 hF hO _ _ _ 0 1 13 17 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 13 18 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 13 19 2 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 0 2 6 3 4) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 1 16 14 1 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 0 0 2 3 6 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact at_key3 _ _ _ (V.lv 0 2 6 4 5) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact b4_key3 hF hO _ _ _ 2 0 2 4 6 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact fac_key3 hF hO _ _ _ 0 1 16 15 1 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.lv 3 4 6 0 2) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.lv 3 4 5 0 2) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.lv 3 4 6 0 2) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 1 16 17 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 16 18 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 1 16 19 2 _ (by decide)  -- FAC
@@ -224,9 +287,14 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact fac_key3 hF hO _ _ _ 0 2 4 3 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 3 2 5 3 1 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.br 0 1 3 4) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.br 0 1 3 4) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.lv 0 3 4 1 5) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.lv 0 3 4 1 6) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 0 2 11 3 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 3 12 2 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 2 13 3 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 0 3 4 2 6) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
   · exact fac_key3 hF hO _ _ _ 0 2 16 3 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 3 2 17 3 1 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 0 0 3 5 4 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
@@ -236,45 +304,79 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact fac_key3 hF hO _ _ _ 0 2 4 8 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 2 4 9 2 _ (by decide)  -- FAC
   · exact zq_key3 hF _ _ _ 0 (by decide) (by decide)  -- ZQ
+  · exact zq_key3 hF _ _ _ 0 (by decide) (by decide)  -- ZQ
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
+  · exact fac_key3 hF hO _ _ _ 0 2 4 18 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 2 4 19 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 2 4 20 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 3 2 5 6 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 3 2 5 7 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 3 2 5 8 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 3 2 5 9 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 3 2 5 10 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 3 2 5 12 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 2 13 5 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 3 2 5 14 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 3 2 5 15 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 2 16 5 1 _ (by decide)  -- FAC
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
   · exact fac_key3 hF hO _ _ _ 3 2 5 18 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 3 2 5 19 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 3 2 5 20 2 _ (by decide)  -- FAC
+  · exact b4_key3 hF hO _ _ _ 0 0 2 3 1 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact at_key3 _ _ _ (V.lv 1 2 4 0 3) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.lv 1 2 5 0 3) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 0 2 11 6 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 1 2 4 0 3) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 2 16 6 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 3 2 17 6 1 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.br 0 1 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 1 7 9 2 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 7 10 2 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 2 11 7 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 0 1 3 2 4) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 0 2 13 7 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 0 1 3 2 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.br 0 1 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 2 16 7 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 7 17 2 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 7 20 2 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 8 9 2 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 8 10 2 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 2 11 8 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 1 2 4 0 3) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 2 13 8 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.mv 2 8 14) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.br 0 1 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 2 16 8 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 3 2 17 8 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 8 18 2 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 8 19 2 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 9 10 2 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 2 11 9 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 2 13 9 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.mv 2 9 14) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 2 16 9 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 9 17 2 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 9 18 2 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.mv 2 9 19) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 1 9 20 2 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 2 11 10 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.mv 2 10 12) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 0 2 13 10 1 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.lv 0 3 4 1 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 2 16 10 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 10 17 2 0 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.mv 2 10 18) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 6 10 19 2 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 10 20 2 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 2 11 12 2 _ (by decide)  -- FAC
   · exact zq_key3 hF _ _ _ 0 (by decide) (by decide)  -- ZQ
+  · exact fac_key3 hF hO _ _ _ 0 2 11 14 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 2 11 15 2 _ (by decide)  -- FAC
+  · exact zq_key3 hF _ _ _ 0 (by decide) (by decide)  -- ZQ
   · exact fac_key3 hF hO _ _ _ 0 2 11 17 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 2 11 18 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 2 11 19 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 2 11 20 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 2 13 12 1 _ (by decide)  -- FAC
@@ -284,10 +386,13 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact fac_key3 hF hO _ _ _ 3 2 17 12 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 7 12 18 2 0 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.lv 2 4 6 0 3) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 0 2 13 14 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 2 13 15 2 _ (by decide)  -- FAC
   · exact zq_key3 hF _ _ _ 0 (by decide) (by decide)  -- ZQ
   · exact fac_key3 hF hO _ _ _ 0 2 13 17 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 2 13 18 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 2 13 19 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 2 13 20 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 2 16 14 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 3 2 17 14 1 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.lv 2 4 6 0 3) 1 (by simp [rho]) (by ent_ring)  -- AT
@@ -301,29 +406,45 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact fac_key3 hF hO _ _ _ 0 2 16 20 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 3 2 17 18 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 3 2 17 19 2 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 4 5 6 0 3) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.lv 4 5 6 0 3) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.lv 4 5 6 0 3) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 4 3 5 4 1 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 5 1 4 5 0 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact b4_key3 hF hO _ _ _ 5 1 4 5 0 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact at_key3 _ _ _ (V.lv 0 4 5 1 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 2 3 12 4 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 4 13 3 0 _ (by decide)  -- FAC
+  · exact b4_key3 hF hO _ _ _ 0 0 3 5 4 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact fac_key3 hF hO _ _ _ 0 4 16 3 0 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.lv 0 4 5 3 6) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 4 3 19 4 1 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 4 0 4 6 5 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact fac_key3 hF hO _ _ _ 4 3 5 6 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 4 3 5 7 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 4 3 5 8 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 4 3 5 9 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 4 3 5 10 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 4 3 5 11 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 3 12 5 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 4 3 5 13 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 4 3 5 14 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 4 3 5 15 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 4 3 5 16 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 3 5 17 3 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 4 3 5 18 2 _ (by decide)  -- FAC
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
   · exact fac_key3 hF hO _ _ _ 4 3 5 20 2 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 1 2 3 0 4) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact b4_key3 hF hO _ _ _ 2 0 2 4 1 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact at_key3 _ _ _ (V.br 0 1 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 1 7 9 3 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 7 10 3 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 2 3 12 7 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.br 0 1 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 1 7 16 3 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 7 17 3 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 7 20 3 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 8 9 3 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 8 10 3 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 3 12 8 1 _ (by decide)  -- FAC
@@ -335,26 +456,40 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact fac_key3 hF hO _ _ _ 4 3 19 8 1 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.lv 0 1 4 5 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 1 9 10 3 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.mv 3 9 11) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 2 3 12 9 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 9 16 3 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 9 17 3 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 9 18 3 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 4 3 19 9 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 9 20 3 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 3 12 10 1 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.mv 3 10 13) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.lv 0 3 4 1 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 1 10 16 3 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 10 17 3 0 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.lv 0 4 5 1 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 4 3 19 10 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 10 20 3 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 2 3 12 11 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 11 13 3 0 _ (by decide)  -- FAC
+  · exact b4_key3 hF hO _ _ _ 0 0 2 3 4 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact fac_key3 hF hO _ _ _ 0 11 16 3 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 2 3 6 0 4) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 2 3 12 13 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 2 3 12 14 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 3 12 15 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 3 12 16 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 3 12 17 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 3 12 18 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 3 12 19 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 2 3 12 20 2 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 0 3 4 2 5) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 13 16 3 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 7 13 18 3 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 4 3 19 13 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 0 3 4 2 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 4 3 19 14 1 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 0 0 3 5 4 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact b4_key3 hF hO _ _ _ 3 0 3 6 4 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact b4_key3 hF hO _ _ _ 0 0 3 5 4 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
@@ -378,18 +513,27 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
   · exact b4_key3 hF hO _ _ _ 0 0 2 5 1 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact fac_key3 hF hO _ _ _ 0 4 11 6 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 7 10 4 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 4 11 7 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 4 13 7 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 7 17 4 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 8 9 4 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 8 10 4 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 4 16 8 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 5 8 18 4 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 9 10 4 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 4 11 9 1 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.lv 0 1 5 2 4) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 4 13 9 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 4 16 9 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 9 18 4 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 9 20 4 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 4 13 10 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 4 16 10 1 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.lv 0 4 5 1 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
+  · exact zq_key3 hF _ _ _ 0 (by decide) (by decide)  -- ZQ
+  · exact zq_key3 hF _ _ _ 0 (by decide) (by decide)  -- ZQ
+  · exact fac_key3 hF hO _ _ _ 0 4 11 17 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 4 13 12 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 4 16 12 1 _ (by decide)  -- FAC
   · exact zq_key3 hF _ _ _ 0 (by decide) (by decide)  -- ZQ
@@ -410,13 +554,17 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact at_key3 _ _ _ (V.mv 5 6 16) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 3 5 17 6 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 4 5 19 6 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 1 3 4 0 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 1 7 9 5 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 7 10 5 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 7 16 5 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 8 9 5 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 8 10 5 0 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.lv 1 2 4 0 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.mv 5 8 16) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 3 5 17 8 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 8 18 5 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 4 5 19 8 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 9 10 5 0 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.lv 0 2 6 1 5) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 1 9 16 5 0 _ (by decide)  -- FAC
@@ -435,6 +583,7 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact at_key3 _ _ _ (V.lv 2 3 4 0 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 11 13 5 0 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.lv 2 3 4 0 6) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 0 11 16 5 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 3 5 17 11 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 7 12 13 5 0 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 2 0 2 4 6 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
@@ -468,79 +617,169 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact fac_key3 hF hO _ _ _ 4 5 19 18 1 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 4 0 4 6 5 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact fac_key3 hF hO _ _ _ 4 5 19 20 2 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.br 1 2 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 1 7 9 6 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 7 10 6 0 _ (by decide)  -- FAC
+  · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
+  · exact at_key3 _ _ _ (V.br 1 2 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
+  · exact b4_key3 hF hO _ _ _ 0 2 3 5 1 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact b4_key3 hF hO _ _ _ 1 1 3 6 2 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact at_key3 _ _ _ (V.br 1 2 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 1 7 16 6 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 7 17 6 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 8 9 6 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 8 10 6 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.br 1 2 3 4) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
+  · exact b4_key3 hF hO _ _ _ 5 1 4 5 2 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact b4_key3 hF hO _ _ _ 6 1 4 6 2 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact at_key3 _ _ _ (V.lv 1 2 4 3 5) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 5 8 18 6 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 6 8 19 6 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 9 10 6 0 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 0 2 3 5 1 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact b4_key3 hF hO _ _ _ 5 1 4 5 2 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact b4_key3 hF hO _ _ _ 1 1 5 6 2 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact at_key3 _ _ _ (V.lv 1 2 5 3 4) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 1 9 16 6 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 9 18 6 0 _ (by decide)  -- FAC
+  · exact b4_key3 hF hO _ _ _ 1 1 3 6 2 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact b4_key3 hF hO _ _ _ 6 1 4 6 2 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact b4_key3 hF hO _ _ _ 1 1 5 6 2 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact fac_key3 hF hO _ _ _ 1 10 16 6 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 10 17 6 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 10 19 6 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.br 1 2 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 0 11 13 6 0 _ (by decide)  -- FAC
+  · exact b4_key3 hF hO _ _ _ 1 1 3 6 2 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact at_key3 _ _ _ (V.br 1 2 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 11 16 6 0 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 1 1 3 6 2 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact fac_key3 hF hO _ _ _ 7 12 13 6 0 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 6 1 4 6 2 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact at_key3 _ _ _ (V.br 1 2 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.lv 1 2 4 3 5) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.lv 1 2 4 3 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 7 12 18 6 0 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 6 1 4 6 2 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact b4_key3 hF hO _ _ _ 1 1 5 6 2 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact at_key3 _ _ _ (V.lv 1 2 5 3 4) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 7 13 18 6 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 1 2 5 4 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact b4_key3 hF hO _ _ _ 1 1 5 6 2 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact b4_key3 hF hO _ _ _ 1 1 3 6 2 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact at_key3 _ _ _ (V.lv 1 2 6 4 5) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact b4_key3 hF hO _ _ _ 6 1 4 6 2 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact b4_key3 hF hO _ _ _ 1 1 5 6 2 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact at_key3 _ _ _ (V.lv 3 4 6 1 2) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.lv 3 4 6 1 2) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 1 16 17 6 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 7 9 8 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 7 10 8 1 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.br 1 2 3 4) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.br 1 2 3 4) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.lv 1 3 4 2 5) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.lv 1 3 4 2 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
   · exact fac_key3 hF hO _ _ _ 1 7 16 8 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 7 17 8 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 8 18 7 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 8 19 7 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 7 20 8 1 _ (by decide)  -- FAC
   · exact zq_key3 hF _ _ _ 1 (by decide) (by decide)  -- ZQ
+  · exact fac_key3 hF hO _ _ _ 1 7 9 11 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 7 9 12 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 7 9 13 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 7 9 14 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 7 9 15 2 _ (by decide)  -- FAC
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
+  · exact zq_key3 hF _ _ _ 1 (by decide) (by decide)  -- ZQ
+  · exact fac_key3 hF hO _ _ _ 1 7 9 19 2 _ (by decide)  -- FAC
+  · exact zq_key3 hF _ _ _ 1 (by decide) (by decide)  -- ZQ
+  · exact fac_key3 hF hO _ _ _ 1 7 10 11 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 7 10 12 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 7 10 13 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 7 10 15 2 _ (by decide)  -- FAC
   · exact zq_key3 hF _ _ _ 1 (by decide) (by decide)  -- ZQ
+  · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
   · exact fac_key3 hF hO _ _ _ 1 7 10 18 2 _ (by decide)  -- FAC
+  · exact zq_key3 hF _ _ _ 1 (by decide) (by decide)  -- ZQ
+  · exact at_key3 _ _ _ (V.br 1 2 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 0 11 13 7 0 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 1 1 3 6 2 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact at_key3 _ _ _ (V.br 1 2 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 11 16 7 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 7 17 11 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 7 12 13 7 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 2 4 6 1 3) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.br 1 2 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 1 7 16 12 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 7 17 12 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 7 12 18 7 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 2 4 6 1 3) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 1 7 20 12 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 1 3 4 2 5) (-1) (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 1 7 17 13 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 1 3 4 2 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 1 7 16 14 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 7 16 15 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 7 17 15 1 _ (by decide)  -- FAC
+  · exact b4_key3 hF hO _ _ _ 1 1 3 5 4 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact b4_key3 hF hO _ _ _ 1 1 3 6 4 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact fac_key3 hF hO _ _ _ 1 7 20 15 1 _ (by decide)  -- FAC
   · exact zq_key3 hF _ _ _ 1 (by decide) (by decide)  -- ZQ
+  · exact fac_key3 hF hO _ _ _ 1 7 16 18 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 7 16 19 2 _ (by decide)  -- FAC
   · exact zq_key3 hF _ _ _ 1 (by decide) (by decide)  -- ZQ
   · exact zq_key3 hF _ _ _ 1 (by decide) (by decide)  -- ZQ
+  · exact fac_key3 hF hO _ _ _ 1 7 20 19 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 9 10 8 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 5 8 9 11 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 8 9 12 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 8 9 13 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 5 8 9 14 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 8 9 15 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 9 16 8 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 9 17 8 0 _ (by decide)  -- FAC
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
   · exact fac_key3 hF hO _ _ _ 5 8 9 19 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 6 8 10 11 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 8 10 12 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 8 10 13 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 6 8 10 14 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 6 8 10 15 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 10 16 8 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 10 17 8 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 8 18 10 1 _ (by decide)  -- FAC
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
+  · exact fac_key3 hF hO _ _ _ 1 10 20 8 0 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.br 1 2 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 11 13 8 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 2 3 6 1 4) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.br 1 2 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 11 16 8 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 2 3 6 1 4) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 5 8 18 11 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 6 8 19 11 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 7 12 13 8 0 _ (by decide)  -- FAC
+  · exact b4_key3 hF hO _ _ _ 6 1 4 6 2 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact at_key3 _ _ _ (V.br 1 2 3 4) (-1) (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.lv 1 2 4 3 5) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.lv 1 2 4 3 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 5 8 18 12 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 8 19 12 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 1 3 4 2 5) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 13 16 8 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 8 18 13 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 8 19 13 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 2 3 6 1 4) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 5 8 18 14 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 6 8 19 14 1 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 1 1 3 5 4 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact b4_key3 hF hO _ _ _ 1 1 3 6 4 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact fac_key3 hF hO _ _ _ 5 8 18 15 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 8 19 15 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 1 3 4 5 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 1 16 17 8 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 8 18 16 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 8 19 16 1 _ (by decide)  -- FAC
@@ -551,35 +790,53 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact fac_key3 hF hO _ _ _ 5 8 18 19 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 8 18 20 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 8 19 20 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 9 10 12 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 9 10 13 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 9 10 15 2 _ (by decide)  -- FAC
   · exact zq_key3 hF _ _ _ 1 (by decide) (by decide)  -- ZQ
   · exact zq_key3 hF _ _ _ 1 (by decide) (by decide)  -- ZQ
   · exact fac_key3 hF hO _ _ _ 1 9 10 18 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 9 10 19 2 _ (by decide)  -- FAC
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
+  · exact at_key3 _ _ _ (V.lv 2 3 4 1 5) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.lv 2 3 6 1 5) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact at_key3 _ _ _ (V.lv 2 3 4 1 5) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 0 11 16 9 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 7 12 13 9 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 2 4 6 1 5) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 1 9 16 12 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 9 18 12 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 2 4 6 1 5) 1 (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 1 9 20 12 1 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 1 1 5 6 2 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact fac_key3 hF hO _ _ _ 0 13 16 9 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 5 9 18 13 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.lv 1 2 5 4 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 1 9 20 13 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 9 16 14 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 9 17 14 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 5 9 18 14 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 9 16 15 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 9 17 15 1 _ (by decide)  -- FAC
   · exact zq_key3 hF _ _ _ 1 (by decide) (by decide)  -- ZQ
   · exact fac_key3 hF hO _ _ _ 1 9 16 18 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 9 16 19 2 _ (by decide)  -- FAC
   · exact zq_key3 hF _ _ _ 1 (by decide) (by decide)  -- ZQ
   · exact fac_key3 hF hO _ _ _ 5 9 18 19 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 9 20 18 1 _ (by decide)  -- FAC
+  · exact b4_key3 hF hO _ _ _ 1 1 3 6 2 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact fac_key3 hF hO _ _ _ 1 10 17 11 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 6 10 19 11 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 7 12 13 10 0 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 6 1 4 6 2 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact fac_key3 hF hO _ _ _ 1 10 16 12 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 10 17 12 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 7 12 18 10 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 10 19 12 1 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 1 1 5 6 2 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact at_key3 _ _ _ (V.mv 10 13 15) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 13 16 10 0 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 10 17 13 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 7 13 18 10 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 6 10 19 13 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 10 16 14 1 _ (by decide)  -- FAC
@@ -591,24 +848,36 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact fac_key3 hF hO _ _ _ 6 10 19 15 1 _ (by decide)  -- FAC
   · exact zq_key3 hF _ _ _ 1 (by decide) (by decide)  -- ZQ
   · exact fac_key3 hF hO _ _ _ 1 10 16 18 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 10 16 19 2 _ (by decide)  -- FAC
   · exact zq_key3 hF _ _ _ 1 (by decide) (by decide)  -- ZQ
   · exact fac_key3 hF hO _ _ _ 1 10 17 18 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 10 17 19 2 _ (by decide)  -- FAC
   · exact zq_key3 hF _ _ _ 1 (by decide) (by decide)  -- ZQ
   · exact fac_key3 hF hO _ _ _ 6 10 19 18 1 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 1 10 20 18 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 10 20 19 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 11 13 12 1 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.br 2 3 4 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
   · exact fac_key3 hF hO _ _ _ 0 11 16 12 1 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.br 2 3 4 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 7 12 18 11 0 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.br 2 3 4 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
+  · exact fac_key3 hF hO _ _ _ 0 11 13 14 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 11 13 15 2 _ (by decide)  -- FAC
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
   · exact fac_key3 hF hO _ _ _ 0 11 13 17 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 11 13 19 2 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.br 2 3 4 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 11 16 14 1 _ (by decide)  -- FAC
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
+  · exact at_key3 _ _ _ (V.br 2 3 4 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 11 16 15 1 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.br 2 3 4 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
+  · exact b4_key3 hF hO _ _ _ 0 2 3 5 4 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact at_key3 _ _ _ (V.br 2 3 4 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 11 16 17 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 11 16 18 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 11 16 20 2 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.br 2 3 4 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 7 12 13 14 2 _ (by decide)  -- FAC
@@ -616,6 +885,8 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact fac_key3 hF hO _ _ _ 0 13 16 12 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 7 12 13 17 2 _ (by decide)  -- FAC
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
+  · exact fac_key3 hF hO _ _ _ 7 12 13 19 2 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.br 2 3 4 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact at_key3 _ _ _ (V.br 2 3 4 6) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 7 12 18 14 1 _ (by decide)  -- FAC
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
@@ -623,6 +894,7 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact b4_key3 hF hO _ _ _ 0 2 3 5 4 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact at_key3 _ _ _ (V.br 2 3 4 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 7 12 18 15 1 _ (by decide)  -- FAC
+  · exact at_key3 _ _ _ (V.br 2 3 4 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 1 16 17 12 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 7 12 18 16 1 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 1 16 20 12 0 _ (by decide)  -- FAC
@@ -630,16 +902,20 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact at_key3 _ _ _ (V.br 2 3 4 6) (-1) (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 1 17 20 12 0 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 7 12 18 19 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 7 12 18 20 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 13 16 14 1 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 0 2 3 5 6 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact fac_key3 hF hO _ _ _ 7 13 18 14 1 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 7 2 4 5 6 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
+  · exact fac_key3 hF hO _ _ _ 0 13 16 15 1 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.lv 3 4 6 2 5) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 7 13 18 15 1 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.lv 3 4 6 2 5) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 0 13 16 17 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 13 16 18 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 0 13 16 19 2 _ (by decide)  -- FAC
+  · exact fac_key3 hF hO _ _ _ 0 13 16 20 2 _ (by decide)  -- FAC
   · exact fac_key3 hF hO _ _ _ 7 13 18 17 1 _ (by decide)  -- FAC
   · exact at_key3 _ _ _ (V.lv 3 4 6 2 5) 1 (by simp [rho]) (by ent_ring)  -- AT
   · exact fac_key3 hF hO _ _ _ 1 17 20 13 0 _ (by decide)  -- FAC
@@ -659,6 +935,9 @@ theorem triRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :
   · exact b4_key3 hF hO _ _ _ 1 3 5 6 4 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact fac_key3 hF hO _ _ _ 1 16 20 15 0 _ (by decide)  -- FAC
   · exact b4_key3 hF hO _ _ _ 1 3 5 6 4 1 (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
+  · exact entry_zero (rho_proper g) (by ent_ring)  -- ZC
+  · exact fac_key3 hF hO _ _ _ 1 17 20 15 0 _ (by decide)  -- FAC
+  · exact b4_key3 hF hO _ _ _ 1 3 5 6 4 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact b4_key3 hF hO _ _ _ 1 3 5 6 4 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact b4_key3 hF hO _ _ _ 1 3 5 6 4 (-1) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide) (by ent_ring)  -- B4
   · exact fac_key3 hF hO _ _ _ 1 16 17 18 2 _ (by decide)  -- FAC
