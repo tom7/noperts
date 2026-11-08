@@ -204,9 +204,6 @@ theorem rimE2b_cyc (tm hm tp hp sp kp sm km ap am d1 d3 : ℝ)
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
     | (left; nlinarith [mul_pos htm hap, mul_pos htm ham, mul_pos htp hap, mul_pos htp ham, mul_pos hsp htp, mul_pos hsm htp, mul_pos a1 htm, mul_pos a2 htp, mul_pos a5 htp, mul_pos a4 htm, mul_pos a4 hsm, mul_pos a6 htp, mul_pos a6 hsp, mul_pos a3 htp, mul_pos a3 ham, mul_pos a3 hap])
-    | (right; constructor
-       · ring1
-       · nlinarith [mul_pos a1 a7, mul_pos a2 a7, mul_pos htp a7, a7, a8, mul_pos hsp a8, mul_pos hsm a8, mul_pos a2 a8, mul_pos htm a8, mul_pos htp a8, mul_pos a1 a8, mul_pos a3 a8, mul_pos a5 a8, mul_pos hap a8, mul_pos ham a8])
 
 set_option maxHeartbeats 2000000 in
 theorem rimE2b_rest (tm hm tp hp sp kp sm km ap am d1 d3 : ℝ)
@@ -755,7 +752,7 @@ theorem rimA_restA (tp tm hm ρ b : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (htm : 0
   obtain ⟨b0, b1, b2, b3⟩ := zmod4_add_one
   intro i
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
-  · simp only [CaseC09.ST, Dc, Dc_uF, crF, scF, C3.sub, uF, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
+  · simp only [CaseC09.ST, Dc, C3.sub, uF, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
     | (left; nlinarith [mul_pos hρ hhm, mul_pos hρ (mul_pos hb a2), mul_pos hb a1, hhm])
     | (right; refine ⟨by ring, by nlinarith⟩)
@@ -1242,8 +1239,6 @@ theorem rimFA_restW (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam p
   all_goals
     first
     | assumption
-    | (apply Lx_rot; assumption)
-    | (apply Lx_rot; apply Lx_rot; assumption)
 
 theorem rimFA_restN (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam pV (pM tm hm) (pN sm km)) (hz : Lx ρ b lam (pM tm hm) pB (pN sm km))
     (hw : Lx ρ b lam (pU tp b) pV (pW sp kp)) :
@@ -1393,8 +1388,6 @@ theorem rimFB_restW (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (p
   all_goals
     first
     | assumption
-    | (apply Lx_rot; assumption)
-    | (apply Lx_rot; apply Lx_rot; assumption)
 
 theorem rimFB_restM (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM tm hm) (pN sm km) < 0) (hz : Lx ρ b lam (pN sm km) pB (pM tm hm))
     (hw : Lx ρ b lam (pU tp b) pV (pW sp kp)) :
@@ -1546,8 +1539,6 @@ theorem rimFC_restW (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam p
   all_goals
     first
     | assumption
-    | (apply Lx_rot; assumption)
-    | (apply Lx_rot; apply Lx_rot; assumption)
 
 theorem rimFC_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam pV (pM tm hm) (pN sm km)) (hz : Lx ρ b lam (pM tm hm) (pN sm km) pB)
     (hw : Lx ρ b lam (pU tp b) pV (pW sp kp)) :
@@ -1664,8 +1655,6 @@ theorem rimFD_restW (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (p
   all_goals
     first
     | assumption
-    | (apply Lx_rot; assumption)
-    | (apply Lx_rot; apply Lx_rot; assumption)
 
 theorem rimFD_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM tm hm) (pN sm km) < 0) (hz : Lx ρ b lam (pM tm hm) pB (pN sm km))
     (hw : Lx ρ b lam (pU tp b) pV (pW sp kp)) :
@@ -3349,7 +3338,7 @@ theorem rimFA2_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
       have hU : F.fMu = F.fG * (F.S.bp * (1 - F.S.tp)) * F.S.bp - F.S.tp := by
         unfold fMu; rw [← hhp]
       rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
-        simp only [quad_0, quad_1, quad_2, quad_3, pV, pM, pB, pU, pN, pW, pA] <;> (try rw [hU]) <;> ring
+        simp only [quad_0, quad_1, quad_2, quad_3, pV, pM, pB, pU] <;> (try rw [hU]) <;> ring
     rw [e]
     refine robust_smul_pos (robust_quad_of_nws ?_ ?_) (mul_pos hA11 hρ)
     · exact Or.inr (Or.inl hmu)
@@ -3398,7 +3387,7 @@ theorem rimFB_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
       have hU : F.fMu = F.fG * (F.S.bp * (1 - F.S.tp)) * F.S.bp - F.S.tp := by
         unfold fMu; rw [← hhp]
       rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
-        simp only [quad_0, quad_1, quad_2, quad_3, pV, pM, pB, pU, pN, pW, pA] <;> (try rw [hU]) <;> ring
+        simp only [quad_0, quad_1, quad_2, quad_3, pV, pB, pU, pN] <;> (try rw [hU]) <;> ring
     rw [e]
     refine robust_smul_pos (robust_quad_of_nws ?_ ?_) (mul_pos hA11 hρ)
     · exact Or.inr (Or.inl hmu)
@@ -3444,7 +3433,7 @@ theorem rimFC_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
       have hU : F.fMu = F.fG * (F.S.bp * (1 - F.S.tp)) * F.S.bp - F.S.tp := by
         unfold fMu; rw [← hhp]
       rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
-        simp only [quint_0, quint_1, quint_2, quint_3, quint_4, pV, pM, pB, pU, pN, pW, pA] <;> (try rw [hU]) <;> ring
+        simp only [quint_0, quint_1, quint_2, quint_3, quint_4, pV, pM, pB, pU, pN] <;> (try rw [hU]) <;> ring
     rw [e]
     refine robust_smul_pos (robust_cycF5 ?_ hzN1 hmu) (mul_pos hA11 hρ)
     have := mul_pos hG (mul_pos F.S.bp_pos F.S.hm_pos)
@@ -3500,7 +3489,7 @@ theorem rimFD_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
       have hU : F.fMu = F.fG * (F.S.bp * (1 - F.S.tp)) * F.S.bp - F.S.tp := by
         unfold fMu; rw [← hhp]
       rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
-        simp only [quint_0, quint_1, quint_2, quint_3, quint_4, pV, pM, pB, pU, pN, pW, pA] <;> (try rw [hU]) <;> ring
+        simp only [quint_0, quint_1, quint_2, quint_3, quint_4, pV, pM, pB, pU, pN] <;> (try rw [hU]) <;> ring
     rw [e]
     refine robust_smul_pos (robust_cycF5 hzN0 ?_ hmu) (mul_pos hA11 hρ)
     have := mul_pos hG (mul_pos F.S.bp_pos F.S.hm_pos)
@@ -3608,7 +3597,7 @@ theorem rimFAP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
       quint pV (pM F.S.tm F.S.hm) pB (pU F.S.tp F.S.bp) (pW F.S.sp F.S.kp) i := by
     intro i
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
-      simp [quint_0, quint_1, quint_2, quint_3, quint_4, F.ptC_5, F.ptC_6, F.ptC_4, F.ptC_0, F.ptC_1, pB, pM, pN, pU, pV, pW, hhp]
+      simp [quint_0, quint_1, quint_2, quint_3, quint_4, F.ptC_5, F.ptC_6, F.ptC_4, F.ptC_0, F.ptC_1, pB, pM, pU, pV, pW, hhp]
   refine F.toFrame7.rupert_rim_rob (k := 5) (by norm_num) (quint (5 : Fin 7) 6 4 0 1) (-1)
     (Or.inr rfl) (uF F.fRho F.S.bp) (dF lam) (Or.inr (Or.inl (by simp [uF]))) ?_ ?_ ?_
   · intro i j h1 h2
@@ -3633,7 +3622,7 @@ theorem rimFAP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
       have hU : F.fMu = F.fG * (F.S.bp * (1 - F.S.tp)) * F.S.bp - F.S.tp := by
         unfold fMu; rw [← hhp]
       rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
-        simp only [quint_0, quint_1, quint_2, quint_3, quint_4, pV, pM, pB, pU, pN, pW, pA] <;> (try rw [hU]) <;> ring
+        simp only [quint_0, quint_1, quint_2, quint_3, quint_4, pV, pM, pB, pU, pW] <;> (try rw [hU]) <;> ring
     rw [e]
     refine robust_smul_pos (robust_cycP5 (by have := mul_pos hG (mul_pos F.S.bp_pos F.S.hm_pos); nlinarith [F.S.tm_pos]) hw0 hwm) (mul_pos hA11 hρ)
 
@@ -3659,7 +3648,7 @@ theorem rimFBP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
       quint pV (pN F.S.sm F.S.km) pB (pU F.S.tp F.S.bp) (pW F.S.sp F.S.kp) i := by
     intro i
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
-      simp [quint_0, quint_1, quint_2, quint_3, quint_4, F.ptC_5, F.ptC_2, F.ptC_4, F.ptC_0, F.ptC_1, pB, pM, pN, pU, pV, pW, hhp]
+      simp [quint_0, quint_1, quint_2, quint_3, quint_4, F.ptC_5, F.ptC_2, F.ptC_4, F.ptC_0, F.ptC_1, pB, pN, pU, pV, pW, hhp]
   refine F.toFrame7.rupert_rim_rob (k := 5) (by norm_num) (quint (5 : Fin 7) 2 4 0 1) (-1)
     (Or.inr rfl) (uF F.fRho F.S.bp) (dF lam) (Or.inr (Or.inl (by simp [uF]))) ?_ ?_ ?_
   · intro i j h1 h2
@@ -3684,7 +3673,7 @@ theorem rimFBP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
       have hU : F.fMu = F.fG * (F.S.bp * (1 - F.S.tp)) * F.S.bp - F.S.tp := by
         unfold fMu; rw [← hhp]
       rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
-        simp only [quint_0, quint_1, quint_2, quint_3, quint_4, pV, pM, pB, pU, pN, pW, pA] <;> (try rw [hU]) <;> ring
+        simp only [quint_0, quint_1, quint_2, quint_3, quint_4, pV, pB, pU, pN, pW] <;> (try rw [hU]) <;> ring
     rw [e]
     refine robust_smul_pos (robust_cycP5 (F.fzN0 heq h22 hg hb hx) hw0 hwm) (mul_pos hA11 hρ)
 
@@ -3734,7 +3723,7 @@ theorem rimFCP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
       have hU : F.fMu = F.fG * (F.S.bp * (1 - F.S.tp)) * F.S.bp - F.S.tp := by
         unfold fMu; rw [← hhp]
       rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
-        simp only [hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5, pV, pM, pB, pU, pN, pW, pA] <;> (try rw [hU]) <;> ring
+        simp only [hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5, pV, pM, pB, pU, pN, pW] <;> (try rw [hU]) <;> ring
     rw [e]
     refine robust_smul_pos (robust_cycP6 (by have := mul_pos hG (mul_pos F.S.bp_pos F.S.hm_pos); nlinarith [F.S.tm_pos]) hzN1 hw0 hwm) (mul_pos hA11 hρ)
 
@@ -3784,7 +3773,7 @@ theorem rimFDP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
       have hU : F.fMu = F.fG * (F.S.bp * (1 - F.S.tp)) * F.S.bp - F.S.tp := by
         unfold fMu; rw [← hhp]
       rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
-        simp only [hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5, pV, pM, pB, pU, pN, pW, pA] <;> (try rw [hU]) <;> ring
+        simp only [hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5, pV, pM, pB, pU, pN, pW] <;> (try rw [hU]) <;> ring
     rw [e]
     refine robust_smul_pos (robust_cycP6 (F.fzN0 heq h22 hg hb hx) (by have := mul_pos hG (mul_pos F.S.bp_pos F.S.hm_pos); nlinarith [F.S.tm_pos]) hw0 hwm) (mul_pos hA11 hρ)
 
@@ -4112,7 +4101,7 @@ theorem lemmaD {tp tm γ lam : ℝ} (h : EFam F tp tm γ lam) (c : ℝ × ℝ) (
   have hGW : F.GG ⟨0, tm / (tp + tm), -1⟩ ⟨0, tm / (tp + tm), -1⟩ ≠ 0 := by
     have := F.GG_self_pos ⟨0, tm / (tp + tm), -1⟩ (Or.inr (Or.inr (by norm_num)))
     exact this.ne'
-  simp only [Frame7.crossC, Frame7.screenW, Frame7.zetaW, Frame7.kjW, Prod.smul_mk, Prod.mk_add_mk, smul_eq_mul]
+  simp only [Frame7.crossC, Frame7.screenW, Frame7.zetaW, Frame7.kjW, Prod.smul_mk, smul_eq_mul]
   refine Prod.ext ?_ ?_
   all_goals
     simp only [Frame7.GG, Gf, h.ha11, h.ha12, h.ha22, h.hgg, Prod.fst_add, Prod.snd_add, Prod.smul_fst, Prod.smul_snd, smul_eq_mul]
@@ -4261,112 +4250,112 @@ theorem eStar_cert {tp tm γ lam : ℝ} (h : EFam F tp tm γ lam) :
     rw [h.p2, h.p5]; simp [C3.sub]
   have g53 : Good ⟨0, tm / (tp + tm), -1⟩ ⟨-(τ1 / 2), 0, 1⟩ ((F.ptC 5).sub (F.ptC 1)) (F.velC ωc ⟨τ1, 0, -1⟩ (F.ptC 5)) := by
     refine good_pos htp htm ?_
-    simp only [sc_sub, scp0, scp1, scp2, scp3, scp4, scp5, scp6, v5, v2, v6, v3, v0, v1, cr, Prod.mk_sub_mk]
+    simp only [sc_sub, scp1, scp5, v5, cr, Prod.mk_sub_mk]
     have hR : 0 < (tp + tm) / tm * τ1 := by positivity
     refine lt_of_lt_of_eq hR ?_
     field_simp
     ring
   have g22 : Good ⟨0, tm / (tp + tm), -1⟩ ⟨-(τ1 / 2), 0, 1⟩ ((F.ptC 6).sub (F.ptC 2)) (F.velC ωc ⟨τ1, 0, -1⟩ (F.ptC 2)) := by
     refine good_pos htp htm ?_
-    simp only [sc_sub, scp0, scp1, scp2, scp3, scp4, scp5, scp6, v5, v2, v6, v3, v0, v1, cr, Prod.mk_sub_mk]
+    simp only [sc_sub, scp2, scp6, v2, cr, Prod.mk_sub_mk]
     have hR : 0 < s := hs0
     refine lt_of_lt_of_eq hR ?_
     field_simp
     ring
   have g61 : Good ⟨0, tm / (tp + tm), -1⟩ ⟨-(τ1 / 2), 0, 1⟩ ((F.ptC 3).sub (F.ptC 6)) ((F.ptC 2).sub (F.ptC 6)) := by
     refine good_pos htp htm ?_
-    simp only [sc_sub, scp0, scp1, scp2, scp3, scp4, scp5, scp6, v5, v2, v6, v3, v0, v1, cr, Prod.mk_sub_mk]
+    simp only [sc_sub, scp2, scp3, scp6, cr, Prod.mk_sub_mk]
     have hR : (0:ℝ) < 1 := one_pos
     refine lt_of_lt_of_eq hR ?_
     field_simp
     ring
   have g62 : Good ⟨0, tm / (tp + tm), -1⟩ ⟨-(τ1 / 2), 0, 1⟩ ((F.ptC 3).sub (F.ptC 6)) (F.velC ωc ⟨τ1, 0, -1⟩ (F.ptC 6)) := by
     refine good_pos htp htm ?_
-    simp only [sc_sub, scp0, scp1, scp2, scp3, scp4, scp5, scp6, v5, v2, v6, v3, v0, v1, cr, Prod.mk_sub_mk]
+    simp only [sc_sub, scp3, scp6, v6, cr, Prod.mk_sub_mk]
     have hR : 0 < (1 - tm) * (a * (κ * tm - 1 / tm)) + s * (-1) := hC1
     refine lt_of_lt_of_eq hR ?_
     field_simp
     ring
   have g63 : Good ⟨0, tm / (tp + tm), -1⟩ ⟨-(τ1 / 2), 0, 1⟩ ((F.ptC 6).sub (F.ptC 2)) (F.velC ωc ⟨τ1, 0, -1⟩ (F.ptC 6)) := by
     refine good_pos htp htm ?_
-    simp only [sc_sub, scp0, scp1, scp2, scp3, scp4, scp5, scp6, v5, v2, v6, v3, v0, v1, cr, Prod.mk_sub_mk]
+    simp only [sc_sub, scp2, scp6, v6, cr, Prod.mk_sub_mk]
     have hR : 0 < tm * (a * (κ * tm - 1 / tm)) + s := by positivity
     refine lt_of_lt_of_eq hR ?_
     field_simp
     ring
   have g31 : Good ⟨0, tm / (tp + tm), -1⟩ ⟨-(τ1 / 2), 0, 1⟩ ((F.ptC 0).sub (F.ptC 3)) ((F.ptC 6).sub (F.ptC 3)) := by
     refine good_pos htp htm ?_
-    simp only [sc_sub, scp0, scp1, scp2, scp3, scp4, scp5, scp6, v5, v2, v6, v3, v0, v1, cr, Prod.mk_sub_mk]
+    simp only [sc_sub, scp0, scp3, scp6, cr, Prod.mk_sub_mk]
     have hR : 0 < 2 - (tp + tm) := by linarith
     refine lt_of_lt_of_eq hR ?_
     field_simp
     ring
   have g32 : Good ⟨0, tm / (tp + tm), -1⟩ ⟨-(τ1 / 2), 0, 1⟩ ((F.ptC 0).sub (F.ptC 3)) (F.velC ωc ⟨τ1, 0, -1⟩ (F.ptC 3)) := by
     refine good_pos htp htm ?_
-    simp only [sc_sub, scp0, scp1, scp2, scp3, scp4, scp5, scp6, v5, v2, v6, v3, v0, v1, cr, Prod.mk_sub_mk]
+    simp only [sc_sub, scp0, scp3, v3, cr, Prod.mk_sub_mk]
     have hR : 0 < a * (2 - (tp + tm)) / tm + s * (-1) := hC2
     refine lt_of_lt_of_eq hR ?_
     field_simp
     ring
   have g33 : Good ⟨0, tm / (tp + tm), -1⟩ ⟨-(τ1 / 2), 0, 1⟩ ((F.ptC 3).sub (F.ptC 6)) (F.velC ωc ⟨τ1, 0, -1⟩ (F.ptC 3)) := by
     refine good_pos htp htm ?_
-    simp only [sc_sub, scp0, scp1, scp2, scp3, scp4, scp5, scp6, v5, v2, v6, v3, v0, v1, cr, Prod.mk_sub_mk]
+    simp only [sc_sub, scp3, scp6, v3, cr, Prod.mk_sub_mk]
     have hR : 0 < a * (2 - (tp + tm)) / tm + s * (-1) := hC2
     refine lt_of_lt_of_eq hR ?_
     field_simp
     ring
   have g01 : Good ⟨0, tm / (tp + tm), -1⟩ ⟨-(τ1 / 2), 0, 1⟩ ((F.ptC 1).sub (F.ptC 0)) ((F.ptC 3).sub (F.ptC 0)) := by
     refine good_pos htp htm ?_
-    simp only [sc_sub, scp0, scp1, scp2, scp3, scp4, scp5, scp6, v5, v2, v6, v3, v0, v1, cr, Prod.mk_sub_mk]
+    simp only [sc_sub, scp0, scp1, scp3, cr, Prod.mk_sub_mk]
     have hR : 0 < tp * (tp + tm - 1) / tm := div_pos (mul_pos htp (by linarith)) htm
     refine lt_of_lt_of_eq hR ?_
     field_simp
     ring
   have g02 : Good ⟨0, tm / (tp + tm), -1⟩ ⟨-(τ1 / 2), 0, 1⟩ ((F.ptC 1).sub (F.ptC 0)) (F.velC ωc ⟨τ1, 0, -1⟩ (F.ptC 0)) := by
     refine good_pos htp htm ?_
-    simp only [sc_sub, scp0, scp1, scp2, scp3, scp4, scp5, scp6, v5, v2, v6, v3, v0, v1, cr, Prod.mk_sub_mk]
+    simp only [sc_sub, scp0, scp1, v0, cr, Prod.mk_sub_mk]
     have hR : 0 < tp / tm * (tm * B + s * (-1)) := mul_pos (by positivity) hC4
     refine lt_of_lt_of_eq hR ?_
     field_simp
     ring
   have g03 : Good ⟨0, tm / (tp + tm), -1⟩ ⟨-(τ1 / 2), 0, 1⟩ ((F.ptC 0).sub (F.ptC 3)) (F.velC ωc ⟨τ1, 0, -1⟩ (F.ptC 0)) := by
     refine good_pos htp htm ?_
-    simp only [sc_sub, scp0, scp1, scp2, scp3, scp4, scp5, scp6, v5, v2, v6, v3, v0, v1, cr, Prod.mk_sub_mk]
+    simp only [sc_sub, scp0, scp3, v0, cr, Prod.mk_sub_mk]
     have hR : 0 < (1 - tp) * B + s * (-1) := hC3
     refine lt_of_lt_of_eq hR ?_
     field_simp
     ring
   have g11 : Good ⟨0, tm / (tp + tm), -1⟩ ⟨-(τ1 / 2), 0, 1⟩ ((F.ptC 5).sub (F.ptC 1)) ((F.ptC 0).sub (F.ptC 1)) := by
     refine good_pos htp htm ?_
-    simp only [sc_sub, scp0, scp1, scp2, scp3, scp4, scp5, scp6, v5, v2, v6, v3, v0, v1, cr, Prod.mk_sub_mk]
+    simp only [sc_sub, scp0, scp1, scp5, cr, Prod.mk_sub_mk]
     have hR : 0 < (tp + tm) / tm * tp := by positivity
     refine lt_of_lt_of_eq hR ?_
     field_simp
     ring
   have g12 : Good ⟨0, tm / (tp + tm), -1⟩ ⟨-(τ1 / 2), 0, 1⟩ ((F.ptC 5).sub (F.ptC 1)) (F.velC ωc ⟨τ1, 0, -1⟩ (F.ptC 1)) := by
     refine good_pos htp htm ?_
-    simp only [sc_sub, scp0, scp1, scp2, scp3, scp4, scp5, scp6, v5, v2, v6, v3, v0, v1, cr, Prod.mk_sub_mk]
+    simp only [sc_sub, scp1, scp5, v1, cr, Prod.mk_sub_mk]
     have hR : 0 < (tp + tm) / tm * s := by positivity
     refine lt_of_lt_of_eq hR ?_
     field_simp
     ring
   have g13 : Good ⟨0, tm / (tp + tm), -1⟩ ⟨-(τ1 / 2), 0, 1⟩ ((F.ptC 1).sub (F.ptC 0)) (F.velC ωc ⟨τ1, 0, -1⟩ (F.ptC 1)) := by
     refine good_pos htp htm ?_
-    simp only [sc_sub, scp0, scp1, scp2, scp3, scp4, scp5, scp6, v5, v2, v6, v3, v0, v1, cr, Prod.mk_sub_mk]
+    simp only [sc_sub, scp0, scp1, v1, cr, Prod.mk_sub_mk]
     have hR : 0 < tp / tm * ((tm - a * (tp + tm) / tm) + s * (-1)) := mul_pos (by positivity) hC5
     refine lt_of_lt_of_eq hR ?_
     field_simp
     ring
   have g41 : Good ⟨0, tm / (tp + tm), -1⟩ ⟨-(τ1 / 2), 0, 1⟩ ((F.ptC 0).sub (F.ptC 5)) ((F.ptC 1).sub (F.ptC 5)) := by
     refine good_pos htp htm ?_
-    simp only [sc_sub, scp0, scp1, scp2, scp3, scp4, scp5, scp6, v5, v2, v6, v3, v0, v1, cr, Prod.mk_sub_mk]
+    simp only [sc_sub, scp0, scp1, scp5, cr, Prod.mk_sub_mk]
     have hR : 0 < tp * (tp + tm) / tm := by positivity
     refine lt_of_lt_of_eq hR ?_
     field_simp
     ring
   have g42 : Good ⟨0, tm / (tp + tm), -1⟩ ⟨-(τ1 / 2), 0, 1⟩ ((F.ptC 0).sub (F.ptC 5)) ((F.ptC 4).sub (F.ptC 5)) := by
     refine good_pos htp htm ?_
-    simp only [sc_sub, scp0, scp1, scp2, scp3, scp4, scp5, scp6, v5, v2, v6, v3, v0, v1, cr, Prod.mk_sub_mk]
+    simp only [sc_sub, scp0, scp4, scp5, cr, Prod.mk_sub_mk]
     have hR : 0 < tp * (tp + tm) / tm := by positivity
     refine lt_of_lt_of_eq hR ?_
     field_simp
@@ -4397,7 +4386,7 @@ theorem eStar_cert {tp tm γ lam : ℝ} (h : EFam F tp tm γ lam) :
       nlinarith
   have g43 : Good ⟨0, tm / (tp + tm), -1⟩ ⟨-(τ1 / 2), 0, 1⟩ ((F.ptC 1).sub (F.ptC 0)) ((F.ptC 4).sub (F.ptC 0)) := by
     right
-    exact ⟨by simp only [Dc, C3.sub, h.p1, h.p0, h.p4, h.p5]; field_simp; ring, by simp only [Dc, C3.sub, h.p1, h.p0, h.p4, h.p5]; exact lt_of_lt_of_eq (mul_pos (by positivity : 0 < tp / (tp + tm)) (by linarith : 0 < tm - τ1 / 2)) (by field_simp; ring)⟩
+    exact ⟨by simp only [Dc, C3.sub, h.p1, h.p0, h.p4]; field_simp; ring, by simp only [Dc, C3.sub, h.p1, h.p0, h.p4]; exact lt_of_lt_of_eq (mul_pos (by positivity : 0 < tp / (tp + tm)) (by linarith : 0 < tm - τ1 / 2)) (by field_simp; ring)⟩
   have g44 : Good ⟨0, tm / (tp + tm), -1⟩ ⟨-(τ1 / 2), 0, 1⟩ ((F.ptC 5).sub (F.ptC 1)) ((F.ptC 4).sub (F.ptC 1)) := by
     right
     exact ⟨by simp only [Dc, C3.sub, h.p1, h.p5, h.p4]; field_simp; ring, by simp only [Dc, C3.sub, h.p1, h.p5, h.p4]; exact lt_of_lt_of_eq (half_pos hτpos) (by field_simp; ring)⟩

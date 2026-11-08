@@ -20,7 +20,7 @@ theorem k54L_conv0 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (h
   have hpos : 0 < (m^2 * 3 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 4*σ^2 + 4)^1) / (2*(σ^2 + 1)) := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p0,k54L_p4,k54L_p5,k54L_w,det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two]
   field_simp
   ring
 
@@ -32,7 +32,7 @@ theorem k54L_row0 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (he
   have hpos : 0 < m^2 * (l^2*σ/(2*(σ^2 + 1))) * 80 * (σ^2 + 1)^1 * (-(2*σ - 1)) * (2*σ + 1)^1 * (σ)^1 * (3*σ^2*(l^2) + 12*σ^2 - 2*(l^2) + 12) * (5*σ^2*(l^2) + 12*σ^2 + 12)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^3 := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p0,k54L_p4,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
   field_simp
   ring
 
@@ -44,7 +44,7 @@ theorem k54L_row1 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (he
   have hpos : 0 < m^2 * (l^2*σ/(2*(σ^2 + 1))) * 5 * (σ)^1 * (3*σ^2*(l^2) + 12*σ^2 - 2*(l^2) + 12) * (5*σ^2*(l^2) + 12*σ^2 + 12)^1 * (-16*σ^6*(l^2) - 64*σ^6 - 21*σ^4*(l^2) - 160*σ^4 + 30*σ^3*(l^2) + 96*σ^3 + 10*σ^2*(l^2) - 56*σ^2 + 96*σ + 40) * (σ^2*(l^2) + 4*σ^2 + 4)^2 := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p0,k54L_p5,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
   field_simp
   ring
 
@@ -54,7 +54,7 @@ theorem k54L_conv1 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (h
   have hpos : 0 < (m^2 * 1 * (σ^2 + 1)^1 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 2*σ^2 + 2)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^1) / (4*(σ^2 + 1)^3) := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p0,k54L_p2,k54L_p4,k54L_w,det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two]
   field_simp
   ring
 
@@ -65,7 +65,7 @@ theorem k54L_row2 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (he
   have hpos : 0 < m^2 * (l^2*(l^2*σ^2 + 2*σ^2 + 2)/(8*(σ^2 + 1)^3)) * 20 * (σ^2 + 1)^1 * (σ)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^1 * (5*σ^2*(l^2) + 12*σ^2 + 12)^1 * (-320*σ^11*(l^2)^3 - 2880*σ^11*(l^2)^2 - 8320*σ^11*(l^2) - 7680*σ^11 - 168*σ^9*(l^2)^3 - 4540*σ^9*(l^2)^2 - 21976*σ^9*(l^2) - 28416*σ^9 + 40*σ^8*(l^2)^2 - 112*σ^8*(l^2) - 768*σ^8 + 209*σ^7*(l^2)^3 - 18*σ^7*(l^2)^2 - 14912*σ^7*(l^2) - 35904*σ^7 + 150*σ^6*(l^2)^3 + 1324*σ^6*(l^2)^2 + 3360*σ^6*(l^2) + 768*σ^6 - 18*σ^5*(l^2)^3 + 1534*σ^5*(l^2)^2 + 2680*σ^5*(l^2) - 14016*σ^5 + 1268*σ^4*(l^2)^2 + 6992*σ^4*(l^2) + 6912*σ^4 - 108*σ^3*(l^2)^2 + 3792*σ^3*(l^2) + 4416*σ^3 - 16*σ^2*(l^2)^2 + 3456*σ^2*(l^2) + 8448*σ^2 - 144*σ*(l^2) + 3264*σ - 64*(l^2) + 3072) := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p2,k54L_p4,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
   field_simp
   ring
 
@@ -76,7 +76,7 @@ theorem k54L_row3 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (he
   have hpos : 0 < m^2 * (l^2/(4*(σ^2 + 1)^2)) * 32 * (σ^2 + 1)^1 * (σ)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^1 * (5*σ^2*(l^2) + 12*σ^2 + 12)^1 * (-160*σ^11*(l^2)^3 - 1440*σ^11*(l^2)^2 - 4160*σ^11*(l^2) - 3840*σ^11 - 90*σ^9*(l^2)^3 - 2330*σ^9*(l^2)^2 - 11180*σ^9*(l^2) - 14400*σ^9 + 44*σ^8*(l^2)^2 + 136*σ^8*(l^2) + 110*σ^7*(l^2)^3 - 30*σ^7*(l^2)^2 - 7760*σ^7*(l^2) - 18480*σ^7 + 75*σ^6*(l^2)^3 + 664*σ^6*(l^2)^2 + 1952*σ^6*(l^2) + 1440*σ^6 - 10*σ^5*(l^2)^3 + 800*σ^5*(l^2)^2 + 1300*σ^5*(l^2) - 7440*σ^5 + 616*σ^4*(l^2)^2 + 3480*σ^4*(l^2) + 4320*σ^4 - 60*σ^3*(l^2)^2 + 1960*σ^3*(l^2) + 2160*σ^3 - 4*σ^2*(l^2)^2 + 1648*σ^2*(l^2) + 4320*σ^2 - 80*σ*(l^2) + 1680*σ - 16*(l^2) + 1440) := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p0,k54L_p4,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
   field_simp
   ring
 
@@ -86,7 +86,7 @@ theorem k54L_conv2 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (h
   have hpos : 0 < (m^2 * 5 * (σ^2 + 1)^3 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 2*σ^2 + 2)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^2) / (8*(σ^2 + 1)^6) := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p2,k54L_p3,k54L_p4,k54L_w,det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two]
   field_simp
   ring
 
@@ -98,7 +98,7 @@ theorem k54L_row4 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (he
   have hpos : 0 < m^2 * (l^2*(l^2*σ^2 + 4*σ^2 + 4)/(8*(σ^2 + 1)^3)) * 80 * (σ^2 + 1)^1 * (-(2*σ - 1)) * (2*σ + 1)^1 * (σ)^1 * (3*σ^2*(l^2) + 12*σ^2 - 2*(l^2) + 12) * (5*σ^2*(l^2) + 12*σ^2 + 12)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^3 := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p2,k54L_p3,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
   field_simp
   ring
 
@@ -110,7 +110,7 @@ theorem k54L_row5 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (he
   have hpos : 0 < m^2 * (l^2*(l^2*σ^2 + 2*σ^2 + 2)/(8*(σ^2 + 1)^3)) * 80 * (σ^2 + 1)^1 * (-(2*σ - 1)) * (2*σ + 1)^1 * (σ)^1 * (3*σ^2*(l^2) + 12*σ^2 - 2*(l^2) + 12) * (5*σ^2*(l^2) + 12*σ^2 + 12)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^3 := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p2,k54L_p4,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
   field_simp
   ring
 
@@ -120,7 +120,7 @@ theorem k54L_conv3 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (h
   have hpos : 0 < (m^2 * 5 * (σ^2 + 1)^3 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 2*σ^2 + 2)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^2) / (8*(σ^2 + 1)^6) := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p2,k54L_p3,k54L_p5,k54L_w,det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two]
   field_simp
   ring
 
@@ -132,7 +132,7 @@ theorem k54L_row6 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (he
   have hpos : 0 < m^2 * (l^2*σ*(l^2*σ^2 + 2*σ^2 + 2)/(8*(σ^2 + 1)^3)) * 80 * (σ^2 + 1)^1 * (-(2*σ - 1)) * (2*σ + 1)^1 * (σ)^1 * (3*σ^2*(l^2) + 12*σ^2 - 2*(l^2) + 12) * (5*σ^2*(l^2) + 12*σ^2 + 12)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^3 := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p3,k54L_p5,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
   field_simp
   ring
 
@@ -143,7 +143,7 @@ theorem k54L_row7 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (he
   have hpos : 0 < m^2 * (l^2*σ*(l^2*σ^2 + 4*σ^2 + 4)/(8*(σ^2 + 1)^3)) * 20 * (σ^2 + 1)^1 * (5*σ^2*(l^2) + 12*σ^2 + 12)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^2 * (80*σ^11*(l^2)^2 + 320*σ^11*(l^2) + 65*σ^9*(l^2)^2 + 560*σ^9*(l^2) - 6*σ^8*(l^2)^2 - 64*σ^8*(l^2) - 94*σ^7*(l^2)^2 + 8*σ^7*(l^2) + 576*σ^7 - 32*σ^6*(l^2)^2 - 96*σ^6*(l^2) + 384*σ^6 - 53*σ^5*(l^2)^2 - 280*σ^5*(l^2) + 1728*σ^5 + 74*σ^4*(l^2)^2 + 640*σ^4*(l^2) + 2112*σ^4 + 26*σ^3*(l^2)^2 + 56*σ^3*(l^2) + 1728*σ^3 + 672*σ^2*(l^2) + 3072*σ^2 + 104*σ*(l^2) + 576*σ + 1344) := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p2,k54L_p3,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
   field_simp
   ring
 
@@ -153,7 +153,7 @@ theorem k54L_conv4 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (h
   have hpos : 0 < (m^2 * 1 * (σ^2 + 1)^1 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 2*σ^2 + 2)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^1) / (4*(σ^2 + 1)^3) := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p0,k54L_p3,k54L_p5,k54L_w,det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two]
   field_simp
   ring
 
@@ -164,7 +164,7 @@ theorem k54L_row8 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (he
   have hpos : 0 < m^2 * (l^2*σ/(4*(σ^2 + 1)^2)) * 4 * (σ^2 + 1)^1 * (σ)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^1 * (5*σ^2*(l^2) + 12*σ^2 + 12)^1 * (-160*σ^12*(l^2)^2 - 640*σ^12*(l^2) - 320*σ^10*(l^2)^3 - 3170*σ^10*(l^2)^2 - 10080*σ^10*(l^2) - 7680*σ^10 + 12*σ^9*(l^2)^2 + 128*σ^9*(l^2) - 360*σ^8*(l^2)^3 - 6690*σ^8*(l^2)^2 - 31560*σ^8*(l^2) - 40320*σ^8 + 212*σ^7*(l^2)^2 + 976*σ^7*(l^2) + 385*σ^6*(l^2)^3 - 420*σ^6*(l^2)^2 - 27360*σ^6*(l^2) - 70080*σ^6 + 150*σ^5*(l^2)^3 + 1248*σ^5*(l^2)^2 + 3360*σ^5*(l^2) - 50*σ^4*(l^2)^3 + 2860*σ^4*(l^2)^2 + 2040*σ^4*(l^2) - 45120*σ^4 + 1048*σ^3*(l^2)^2 + 4304*σ^3*(l^2) - 400*σ^2*(l^2)^2 + 6480*σ^2*(l^2) - 2880*σ^2 + 1792*σ*(l^2) - 800*(l^2) + 4800) := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p0,k54L_p5,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
   field_simp
   ring
 
@@ -176,7 +176,7 @@ theorem k54L_row9 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (he
   have hpos : 0 < m^2 * (l^2*σ*(l^2*σ^2 + 2*σ^2 + 2)/(8*(σ^2 + 1)^3)) * 80 * (σ^2 + 1)^1 * (-(2*σ - 1)) * (2*σ + 1)^1 * (σ)^1 * (3*σ^2*(l^2) + 12*σ^2 - 2*(l^2) + 12) * (5*σ^2*(l^2) + 12*σ^2 + 12)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^3 := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p3,k54L_p5,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
   field_simp
   ring
 
@@ -186,7 +186,7 @@ theorem k54L_int1tri {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) 
   have hpos : 0 < (m^2 * 1 * (σ^2 + 1)^3 * (σ)^1 * (l)^2 * (5*σ^2*(l^2) + 16*σ^2 + 16)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^2) / (8*(σ^2 + 1)^6) := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p0,k54L_p2,k54L_p3,k54L_w,det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two]
   field_simp
   ring
 
@@ -196,7 +196,7 @@ theorem k54L_int1e1 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (
   have hpos : 0 < (m^2 * 1 * (σ^2 + 1)^1 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 4*σ^2 + 4)^2) / (4*(σ^2 + 1)^3) := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_w,det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two]
   field_simp
   ring
 
@@ -206,7 +206,7 @@ theorem k54L_int1e2 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (
   have hpos : 0 < (m^2 * 1 * (σ^2 + 1)^3 * (σ)^1 * (l)^2 * (5*σ^2*(l^2) + 12*σ^2 + 12)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^2) / (8*(σ^2 + 1)^6) := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p1,k54L_p2,k54L_p3,k54L_w,det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two]
   field_simp
   ring
 
@@ -216,7 +216,7 @@ theorem k54L_int1e3 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (
   have hpos : 0 < (m^2 * 1 * (σ^2 + 1)^1 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 4*σ^2 + 4)^2) / (4*(σ^2 + 1)^3) := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p0,k54L_p1,k54L_p3,k54L_w,det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two]
   field_simp
   ring
 
@@ -226,7 +226,7 @@ theorem k54L_int6tri {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) 
   have hpos : 0 < (m^2 * 1 * (σ^2 + 1)^3 * (σ)^1 * (l)^2 * (5*σ^2*(l^2) + 16*σ^2 + 16)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^2) / (8*(σ^2 + 1)^6) := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p0,k54L_p2,k54L_p3,k54L_w,det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two]
   field_simp
   ring
 
@@ -236,7 +236,7 @@ theorem k54L_int6e1 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (
   have hpos : 0 < (m^2 * 3 * (σ^2 + 1)^3 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 4*σ^2 + 4)^3) / (16*(σ^2 + 1)^6) := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p0,k54L_p2,k54L_p6,k54L_w,det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two]
   field_simp
   ring
 
@@ -246,7 +246,7 @@ theorem k54L_int6e2 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (
   have hpos : 0 < (m^2 * 1 * (σ^2 + 1)^3 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 2*σ^2 + 2)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^2) / (4*(σ^2 + 1)^6) := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p2,k54L_p3,k54L_p6,k54L_w,det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two]
   field_simp
   ring
 
@@ -256,7 +256,7 @@ theorem k54L_int6e3 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (
   have hpos : 0 < (m^2 * 3 * (σ^2 + 1)^3 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 4*σ^2 + 4)^3) / (16*(σ^2 + 1)^6) := by positivity
   refine lt_of_lt_of_eq hpos ?_
   subst hea
-  simp only [k54L_p0,k54L_p1,k54L_p2,k54L_p3,k54L_p4,k54L_p5,k54L_p6,k54L_om,k54L_ta,k54L_w,k54L_c1,k54L_c2,k54L_c3,k54L_c4,k54L_c5, det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two, cross_apply_zero, cross_apply_one, cross_apply_two]
+  simp only [k54L_p0,k54L_p3,k54L_p6,k54L_w,det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul, pt_zero, pt_one, pt_two]
   field_simp
   ring
 
