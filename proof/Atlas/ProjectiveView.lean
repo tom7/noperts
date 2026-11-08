@@ -170,7 +170,7 @@ private theorem corner_two {triangle : Triangle ℚ} {point : Vector ℝ}
     nlinarith
 
 private theorem central {triangle : Triangle ℚ} {point : Vector ℝ}
-    {weight : Vector ℝ} (hnonneg : ∀ i, 0 ≤ weight i)
+    {weight : Vector ℝ} (_hnonneg : ∀ i, 0 ≤ weight i)
     (hsum : (∑ i, weight i) = 1)
     (hsmall0 : weight 0 ≤ 1 / 2) (hsmall1 : weight 1 ≤ 1 / 2)
     (hsmall2 : weight 2 ≤ 1 / 2)

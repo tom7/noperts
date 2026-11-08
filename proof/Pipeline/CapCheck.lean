@@ -77,7 +77,7 @@ theorem rootLoHi_zero (st : Setup) (pr : Params) (id : ChartId) : rootLoHi st pr
   rw [rootLoHi_std' st pr id 0 (tieLoHiOf_of_v st id 0 (by norm_num))]; unfold rootLoHiStd; simp [baseLoHi]
 
 theorem rootLoHi_two_cone (st : Setup) (pr : Params) (id : ChartId) (hk : id.kind = .cone ∨ id.kind = .mcone)
-    (hax : id.axis < 3) : rootLoHi st pr id 2 = (0, pr.coneT id.kind) := by
+    (_hax : id.axis < 3) : rootLoHi st pr id 2 = (0, pr.coneT id.kind) := by
   have hnfe : id.kind ≠ .fe := by rcases hk with h | h <;> rw [h] <;> simp
   have hnw : ¬ IsWeakP st id 0 := by
     rintro ⟨i, -, -, hi⟩; have := pvarOf_ne_zero_of_ne_fe id hnfe hi; omega

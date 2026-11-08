@@ -67,7 +67,7 @@ structure Fits (β f t b x y z ν : ℝ) : Prop where
   h3 : |z - t * x| ≤ 128 * ν ^ 2 * t ^ 2
 
 /-- The weighted cube of a fitting pose: a point of the boundary of the cube at a radius μ ≤ ν. -/
-theorem fit_cube {β f t b x y z ν : ℝ} (hβ : 0 < β) (ht : 0 < t) (hν : 0 ≤ ν) (hF : Fits β f t b x y z ν) :
+theorem fit_cube {β f t b x y z ν : ℝ} (hβ : 0 < β) (ht : 0 < t) (_hν : 0 ≤ ν) (hF : Fits β f t b x y z ν) :
     ∃ μ al s1 s2 s3 : ℝ, 0 ≤ μ ∧ μ ≤ ν ∧ |al| ≤ 1 ∧ |s1| ≤ 3 ∧ |s2| ≤ 32 ∧ |s3| ≤ 128 ∧
       (|al| = 1 ∨ |s1| = 3 ∨ |s2| = 32 ∨ |s3| = 128) ∧
       b = β * (μ * al) ∧ 2 * x = μ * t * s1 ∧ 2 * y - f * (2 * x) = μ ^ 2 * t * s2 ∧

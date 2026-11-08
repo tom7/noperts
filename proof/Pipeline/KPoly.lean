@@ -181,7 +181,7 @@ def const : (k : ℕ) → K → KPoly K k
   | 0, c => c
   | k + 1, c => [const k c]
 
-theorem eval_const [ExactScalarVal K] [ExactScalarVal K] : ∀ (k : ℕ) (c : K) (y : Fin k → ℝ),
+theorem eval_const [ExactScalarVal K] : ∀ (k : ℕ) (c : K) (y : Fin k → ℝ),
     eval k (const k c) y = ExactScalarVal.val c
   | 0, _, _ => rfl
   | k + 1, c, y => by

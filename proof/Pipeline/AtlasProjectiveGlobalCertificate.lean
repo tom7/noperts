@@ -1606,9 +1606,11 @@ theorem Box.adjustedDisplacementBall_holds (box : Box)
                 (RatBall.holds_add (RatBall.holds_add h0 h1) h2) h3) h4) h5)
             h6) h7) h8) h9
   rw [← box.reconstructedDisplacement_eq_approx p]
-  convert hsum using 1 <;>
-    simp only [Box.adjustedDisplacementBall, Box.reconstructedDisplacement,
-      value, n] <;> push_cast <;> ring
+  convert hsum using 1
+  all_goals simp only [Box.adjustedDisplacementBall, Box.reconstructedDisplacement,
+    value, n]
+  all_goals push_cast
+  all_goals ring
 
 omit [SolidModel] in
 private theorem abs_le_endpointAbsBound {lo hi : ℚ} {x : ℝ}

@@ -51,7 +51,7 @@ def witData (c : CapCert) (id : ChartId) (wi : ℕ) : Option WitData :=
     | none => none
   | none => none
 
-def leafCheck (c : CapCert) (id : ChartId) (cache : Array (Option WitData)) (wi : ℕ) (box : Box) : Bool :=
+def leafCheck (_c : CapCert) (_id : ChartId) (cache : Array (Option WitData)) (wi : ℕ) (box : Box) : Bool :=
   match cache[wi]? with
   | some (some d) => d.dok && boxOk d.Q box
   | _ => false

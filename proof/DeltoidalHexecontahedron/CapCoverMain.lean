@@ -143,8 +143,8 @@ def TieOK (st : Setup) (pr : Params) (zOf : Kind × ℕ × ℕ × Bool → ℕ) 
 /-- The covering of the cap domain by the charts. -/
 theorem cap_cover (st : Setup) (pr : Params) (zOf : Kind × ℕ × ℕ × Bool → ℕ) (hz : ∀ b, 0 < zOf b)
     (htie : TieOK st pr zOf)
-    (hF : FrameOK st) (hS : 2 ≤ st.strongScale) (hmcm : 1 ≤ st.mcm) (ht0 : 0 ≤ (pr.t0 : ℝ))
-    (ht0m : 0 ≤ (pr.t0m : ℝ))
+    (hF : FrameOK st) (hS : 2 ≤ st.strongScale) (hmcm : 1 ≤ st.mcm) (_ht0 : 0 ≤ (pr.t0 : ℝ))
+    (_ht0m : 0 ≤ (pr.t0m : ℝ))
     (wmax : ℝ) (hw0 : 0 ≤ wmax) (hw1 : wmax ≤ 2 * pr.mu0) (hw2 : wmax ≤ st.strongScale * (pr.mu0 : ℝ) ^ 2)
     (t₁ t₂ : ℝ) (ht₁ : |t₁| ≤ pr.mu0) (ht₂ : |t₂| ≤ pr.mu0) (w : Fin 3 → ℝ) (hw : rdot w w ≤ wmax ^ 2) :
     ∃ id ∈ chartList st pr zOf, ∃ y, InBoxR (rootBox st pr id) y ∧
@@ -223,7 +223,10 @@ theorem cap_cover (st : Setup) (pr : Params) (zOf : Kind × ℕ × ℕ × Bool �
     rw [hrange i]
     split_ifs with h1
     · rw [h1, pow_one]; push_cast; linarith
-    · have h2 : wt i = 2 := by rcases hwt i with h | h; exact absurd h h1; exact h
+    · have h2 : wt i = 2 := by
+        rcases hwt i with h | h
+        · exact absurd h h1
+        · exact h
       rw [h2]; linarith
   obtain ⟨μ, e, sv, hμ0, hμ1, he0, he1, hme, hωs, hcase⟩ :=
     weighted_cube wt hwt (fun i => (st.range i : ℝ)) hR pr.mu0 m hm0 hm1 ω hωb

@@ -64,7 +64,7 @@ theorem goodP_zero (V : Array (KCap.KVec K)) (fr : Frame K) (t α s1 s2 s3 : ℝ
 the cube, at a radius ν ≤ ν₀, is good. -/
 theorem goodP_of_cube (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params)
     (hg : ∀ k ∈ pKinds, ∀ y, KPoly.InBox (rootBox pr (.p k)) y → PointGood V fr pr (.p k) y)
-    (hthi : 0 < (pr.thi : ℝ)) (hZ : 0 < (pr.Z : ℝ)) (hR1 : 0 < (pr.R1 : ℝ)) (hR2 : 0 < (pr.R2 : ℝ))
+    (_hthi : 0 < (pr.thi : ℝ)) (hZ : 0 < (pr.Z : ℝ)) (hR1 : 0 < (pr.R1 : ℝ)) (hR2 : 0 < (pr.R2 : ℝ))
     (hR3 : 0 < (pr.R3 : ℝ))
     {ν p α s1 s2 s3 : ℝ} (hν0 : 0 ≤ ν) (hν1 : ν ≤ pr.nu0) (hp0 : 0 ≤ p) (hp1 : p ≤ 1)
     (hal : |α| ≤ 1) (h1 : |s1| ≤ pr.R1) (h2 : |s2| ≤ pr.R2) (h3 : |s3| ≤ pr.R3)

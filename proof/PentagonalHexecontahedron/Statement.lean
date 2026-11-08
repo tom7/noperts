@@ -749,7 +749,7 @@ theorem pairOK_of {j k : Nat} (hj : j < 60) (hk : k < 60) : pairOK j k = true :=
   rw [show (60 * j + k) / 60 = j by omega, show (60 * j + k) % 60 = k by omega] at this
   exact this
 
-theorem faceVertexOK_spec {o h a m : Nat} (ho : o < 3) (hh : h < 60) (ha : a < 60)
+theorem faceVertexOK_spec {o h a m : Nat} (ho : o < 3) (hh : h < 60) (_ha : a < 60)
     (hok : faceVertexOK o h a m = true) :
     ⟪snubV a, (wiki h).toEuclideanLin (basePole o)⟫ = 1 := by
   simp only [faceVertexOK, Bool.and_eq_true, List.contains_iff_mem, decide_eq_true_eq] at hok
