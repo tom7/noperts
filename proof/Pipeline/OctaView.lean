@@ -97,7 +97,7 @@ theorem wall_dot (i : Fin 3) (w : Fin 3 → ℝ) :
       ![2 * w 1, 2 * (w 0 - w 1), 3 * (w 2 - w 0)] i := by
   rw [octaMatrix_octaWall]
   fin_cases i <;>
-    simp [octaWallMatrix, octaViewCenter, Matrix.mulVec, dotProduct, Fin.sum_univ_three] <;> ring
+    simp [octaWallMatrix, octaViewCenter, dotProduct, Fin.sum_univ_three] <;> ring
 
 /-! ### The Dirichlet choice over Oh -/
 

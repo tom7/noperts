@@ -27,7 +27,7 @@ theorem proj_inner_smul (p : MatrixPose) (s : ℝ) (hs : s ≠ 0) (v : ℝ³) :
 theorem innerShadow_smul (p : MatrixPose) (S : Set ℝ³) (s : ℝ) (hs : s ≠ 0) :
     innerShadow p (s • S) = s • innerShadow ({ p with innerOffset := s⁻¹ • p.innerOffset } : MatrixPose) S := by
   ext y
-  simp only [innerShadow, Set.mem_setOf_eq, Set.mem_smul_set]
+  simp only [innerShadow, Set.mem_ofPred_eq, Set.mem_smul_set]
   constructor
   · rintro ⟨_, ⟨v, hv, rfl⟩, rfl⟩
     exact ⟨_, ⟨v, hv, rfl⟩, (proj_inner_smul p s hs v).symm⟩
@@ -37,7 +37,7 @@ theorem innerShadow_smul (p : MatrixPose) (S : Set ℝ³) (s : ℝ) (hs : s ≠ 
 theorem outerShadow_smul (p : MatrixPose) (S : Set ℝ³) (s : ℝ) :
     outerShadow p (s • S) = s • outerShadow ({ p with innerOffset := s⁻¹ • p.innerOffset } : MatrixPose) S := by
   ext y
-  simp only [outerShadow, Set.mem_setOf_eq, Set.mem_smul_set]
+  simp only [outerShadow, Set.mem_ofPred_eq, Set.mem_smul_set]
   constructor
   · rintro ⟨_, ⟨v, hv, rfl⟩, rfl⟩
     exact ⟨_, ⟨v, hv, rfl⟩, by simp [PoseLike.outer, map_smul]⟩

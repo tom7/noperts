@@ -876,9 +876,9 @@ theorem AxisCertificate.supportCross_tight_error (box : Box)
         ((cross3_norm_le _ _).trans (mul_le_mul
           (cert.approxEdge_norm_le i)
           (cert.exactDelta_sub_approx_tight_norm_le box i k) (norm_nonneg _)
-          (by norm_num [RationalApprox.κ] <;> nlinarith [tightVertexErrorQ_real_nonneg])))
+          (by norm_num [RationalApprox.κ])))
     _ ≤ 10 * (tightVertexErrorQ : ℝ) := by
-      norm_num [RationalApprox.κ] <;> nlinarith [tightVertexErrorQ_real_nonneg]
+      norm_num [RationalApprox.κ]; nlinarith [tightVertexErrorQ_real_nonneg]
 
 theorem AxisCertificate.supportCross_error (box : Box)
     (cert : AxisCertificate) (i : Fin 3) (k : VertexIndex) :
@@ -1251,9 +1251,9 @@ theorem AxisCertificate.crossEdge_tight_error (cert : AxisCertificate)
         ((cross3_norm_le _ _).trans (mul_le_mul
           (cert.approxEdge_norm_le i)
           (cert.exactEdge_sub_approx_tight_norm_le j) (norm_nonneg _)
-          (by norm_num [RationalApprox.κ] <;> nlinarith [tightVertexErrorQ_real_nonneg])))
+          (by norm_num [RationalApprox.κ])))
     _ ≤ 10 * (tightVertexErrorQ : ℝ) := by
-      norm_num [RationalApprox.κ] <;> nlinarith [tightVertexErrorQ_real_nonneg]
+      norm_num [RationalApprox.κ]; nlinarith [tightVertexErrorQ_real_nonneg]
 
 theorem AxisCertificate.exactWeight_sub_approx_abs_le (box : Box)
     (cert : AxisCertificate) {p : AtlasPose ℝ}
@@ -1617,7 +1617,7 @@ theorem AxisCertificate.variation_error (box : Box)
         _ ≤ 50 * RationalApprox.κ := by
           norm_num [RationalApprox.κ]
     _ = (variationError : ℝ) := by
-      simp [Fin.sum_univ_three, variationError]
+      simp [variationError]
       norm_num [RationalApprox.κ, RationalApprox.κℚ]
 
 def Box.variationCenterQ (box : Box) (j : Fin 4) : VectorQ :=
@@ -1984,7 +1984,6 @@ theorem Box.valid_defect_budget (box : Box)
     _ ≤ (D j : ℝ) := by
       have hchecked : (∑ i, box.weightUpper j i * defect j i : ℝ) ≤ (D j : ℝ) := by
         exact_mod_cast h_defect_budget j
-      push_cast at hchecked
       exact hchecked
 
 theorem Box.valid_budget (box : Box) (h : box.Valid)

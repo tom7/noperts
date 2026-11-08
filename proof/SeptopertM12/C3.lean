@@ -34,7 +34,7 @@ theorem c3Mat_mem (k : Fin 3) : c3Mat k ∈ SO3 := by
 noncomputable def c3SO3 (k : Fin 3) : SO3 := ⟨c3Mat k, c3Mat_mem k⟩
 
 theorem c3_mul_c3 (k k' : Fin 3) : c3Mat k * c3Mat k' = c3Mat (k + k') := by
-  fin_cases k <;> fin_cases k' <;> simp only [Fin.reduceAdd, Fin.isValue] <;> ext a b <;>
+  fin_cases k <;> fin_cases k' <;> simp only <;> ext a b <;>
     fin_cases a <;> fin_cases b <;> simp [c3Mat, Matrix.mul_apply, Fin.sum_univ_three, Matrix.one_apply]
 
 end SeptopertM12

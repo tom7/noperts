@@ -77,7 +77,7 @@ theorem rootLoHi_zero (st : Setup) (pr : Params) (id : ChartId) : rootLoHi st pr
   rw [rootLoHi_std' st pr id 0 (tieLoHiOf_of_v st id 0 (by norm_num))]; unfold rootLoHiStd; simp [baseLoHi]
 
 theorem rootLoHi_two_cone (st : Setup) (pr : Params) (id : ChartId) (hk : id.kind = .cone ∨ id.kind = .mcone)
-    (hax : id.axis < 3) : rootLoHi st pr id 2 = (0, pr.coneT id.kind) := by
+    (_hax : id.axis < 3) : rootLoHi st pr id 2 = (0, pr.coneT id.kind) := by
   have hnfe : id.kind ≠ .fe := by rcases hk with h | h <;> rw [h] <;> simp
   have hnw : ¬ IsWeakP st id 0 := by
     rintro ⟨i, -, -, hi⟩; have := pvarOf_ne_zero_of_ne_fe id hnfe hi; omega
@@ -400,8 +400,7 @@ theorem eval_cellPoly (st : Setup) (id : ChartId) (Gcol : Fin 3 → KVec) (y : F
 theorem trace_halfTurnMat_mul (u : Fin 3 → ℝ) (hu : rdot u u ≠ 0) (M : Matrix (Fin 3) (Fin 3) ℝ) :
     Matrix.trace (halfTurnMat u * M) = 2 * rdot u (M.mulVec u) / rdot u u - Matrix.trace M := by
   have hsum : (∑ k, u k ^ 2) = rdot u u := by simp [rdot, Fin.sum_univ_three]; ring
-  simp only [halfTurnMat, hsum, Matrix.trace, Matrix.diag, Matrix.mul_apply, Fin.sum_univ_three, Matrix.mulVec,
-    dotProduct, Matrix.one_apply, Matrix.of_apply]
+  simp only [halfTurnMat, hsum, Matrix.trace, Matrix.diag, Matrix.mul_apply, Fin.sum_univ_three]
   simp only [rdot] at hu ⊢
   have hu2 : u 0 ^ 2 + u 1 ^ 2 + u 2 ^ 2 ≠ 0 := by convert hu using 1; ring
   field_simp

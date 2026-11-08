@@ -115,7 +115,8 @@ page with its statement, trust model and reproduction steps:
     axis and P cap certificates), and likewise `constructSeptopertM12`, `checkSeptopertM12Arc`,
     `checkSeptopertM12Axis`, `checkSeptopertM12PCap`; `constructSeptopertM18` (checks the SeptopertM18's certificate
     data), `checkSeptopertM18Cap` and `checkSeptopertM18Arc` (check only its cap and
-    arc cap certificates), `constructSeptopertClassic` (checks Septopert Classic's certificate
+    arc cap certificates), `constructChippedM18` (checks the Chipped M18's certificate data), `checkChippedM18Cap` and `checkChippedM18Arc`
+    (check only its cap and arc cap certificates), `constructSeptopertClassic` (checks Septopert Classic's certificate
     data), `checkSeptopertClassicCap` (checks only its cap certificate),
     `constructDeltoidalHexecontahedron` (checks the deltoidal
     hexecontahedron's certificate data), `constructPentagonalHexecontahedron`
@@ -134,8 +135,8 @@ page with its statement, trust model and reproduction steps:
   - `search/common/`: the code the searches share (the identity tube, the
     identity blow-up certificates `idcap.cc` with `kpoly.h`, the 5D search
     and packing, `codebdd`, unit tests) and their build rules, `common.mk`.
-  - `search/septopert/`, `search/septopert-m12/`, `search/septopert-m18/`, `search/septopert-classic/`, `search/dh/`, `search/ph/`, `search/sd/`,
-    `search/sc/`, `search/nopert231/`: the searches for the Septopert, SeptopertM12, SeptopertM18, Septopert Classic, the
+  - `search/septopert/`, `search/septopert-m12/`, `search/septopert-m18/`, `search/chipped-m18/`, `search/septopert-classic/`, `search/dh/`, `search/ph/`, `search/sd/`,
+    `search/sc/`, `search/nopert231/`: the searches for the Septopert, SeptopertM12, SeptopertM18, Chipped M18, Septopert Classic, the
     deltoidal hexecontahedron, the pentagonal hexecontahedron, the snub
     dodecahedron, the snub cube and candidate #231, each with its `rebuild.sh` (see the result's page),
     model files, Lean data generators, own tools, and `solid.h` (the
@@ -220,6 +221,34 @@ without them.
 The rebuild scripts append each stage's wall time to `WORK/stages.log` and
 build the Lean checker in the background while the C++ stages run (log
 `WORK/lean_build.log`), waiting for it before the verify stage.
+
+### Some planned improvements
+
+The pipeline leaves much of a large machine idle for long stretches, and
+a few simple changes should help. We plan to make them before the next
+full reproduction, which would then double as their test (they change
+the construct executables, so every solid has to be verified again).
+
+- The rebuild scripts run their stages one after another, but the cap
+  certificate stages (`cap`, `arccert`, `axiscert`, `pcapcert`) do not
+  depend on the tube, idcap, search and pack stages, or the other way
+  around. They could run side by side, joining before `verify`.
+- The construct executables check their cap certificates one after
+  another, and only then the tables. The checks are independent, so they
+  could run as concurrent tasks.
+- The cap certificate checks split each chart's tree into parallel tasks
+  at a fixed depth (`Pipeline/ArcCapDecode.lean`). For SeptopertM12's P cap
+  one chart's subtrees are so uneven that most of the check runs on a single
+  thread. A deeper or adaptive split would fix that.
+
+Together these would bring SeptopertM12's rebuild (2 h 36 min on 60
+threads) to well under an hour. Two larger ones: the 5D search's work
+units can end in a long serial tail (one big subtree near the identity),
+and single slow codes or charts dominate `idcap` and some cap
+certificate searches. Both want finer or adaptive splitting of the work.
+
+The solids' rebuilds can also run at the same time, each with part of the
+machine (`--threads`, `--mem_gb`).
 
 ## Former names
 

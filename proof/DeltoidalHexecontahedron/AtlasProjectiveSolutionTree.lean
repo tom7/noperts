@@ -209,7 +209,7 @@ theorem inTriangle_of_cornerInWith {outer : Triangle}
   obtain ⟨hs, hu, hsum, heq⟩ := h
   refine ⟨![((1 - su.1 - su.2 : ℚ) : ℝ), (su.1 : ℝ), (su.2 : ℝ)], ?_, ?_, ?_⟩
   · intro i
-    fin_cases i <;> simp <;> norm_cast <;> linarith
+    fin_cases i <;> simp <;> norm_cast; linarith
   · simp [Fin.sum_univ_three]
     ring
   · funext c

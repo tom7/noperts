@@ -315,7 +315,7 @@ theorem not_rupertPose_of_decomposed_two_zone
             (fun j => (inner_B j : ℝ)) j⟫) ∨
         exceptional axis)
     -- Exceptional obstruction hypothesis on the inner core
-    (hexceptional : ∀ (p : AtlasPose ℝ) (hp : p ∈ outerBox.interval.toReal) (offset : ℝ²),
+    (hexceptional : ∀ (p : AtlasPose ℝ) (_hp : p ∈ outerBox.interval.toReal) (offset : ℝ²),
       1 ≤ viewScale outerBox.root p →
       InTriangle (toReal outerBox.triangle) (AtlasProjectiveView.normalizedView outerBox.root p) →
       ∀ a : AxisAngle
@@ -327,7 +327,7 @@ theorem not_rupertPose_of_decomposed_two_zone
           (p.matrixPoseWithOffset outerBox.chart offset) outerBox.symmetryIndex) - 1‖ ≤ (r0 : ℝ) →
       exceptional a.signedAxis →
       ¬ RupertPose (p.matrixPoseWithOffset outerBox.chart offset) P.polyhedron.hull) :
-    ∀ {p : AtlasPose ℝ} (hp : p ∈ outerBox.interval.toReal) (offset : ℝ²),
+    ∀ {p : AtlasPose ℝ} (_hp : p ∈ outerBox.interval.toReal) (offset : ℝ²),
       1 ≤ viewScale outerBox.root p →
       InTriangle (toReal outerBox.triangle)
         (AtlasProjectiveView.normalizedView outerBox.root p) →
@@ -450,7 +450,7 @@ theorem not_rupertPose_of_exceptional_cone_certificate
     (defect : Fin 4 → Fin 3 → ℚ) (D : Fin 4 → ℚ)
     (hB_pos : ∀ j, 0 < (box.certificate j).B)
     (hdelta_nonneg : 0 ≤ box.δ)
-    (hD_nonneg : ∀ j, 0 ≤ D j)
+    (_hD_nonneg : ∀ j, 0 ≤ D j)
     (hdefect_nonneg : ∀ j i, 0 ≤ defect j i)
     (hvariation : ∀ j, box.variationRadiusSum j + 3 * variationError ≤
       (box.certificate j).B * box.δ)
@@ -463,7 +463,7 @@ theorem not_rupertPose_of_exceptional_cone_certificate
     (c_cone : ℚ)
     (exceptional : ℝ³ → Prop)
     (hexc_def : ∀ axis, exceptional axis ↔ (c_cone : ℝ) ≤ inner ℝ axis (toR3 (box.approxNormalizedCenter j)))
-    {p : AtlasPose ℝ} (hp : p ∈ box.interval.toReal) (offset : ℝ²)
+    {p : AtlasPose ℝ} (_hp : p ∈ box.interval.toReal) (offset : ℝ²)
     (hscale : 1 ≤ viewScale box.root p)
     (hmem : InTriangle (toReal box.triangle)
       (AtlasProjectiveView.normalizedView box.root p))
@@ -710,7 +710,7 @@ theorem valid_imp_not_translated_rupert_of_three_way_split
     (box : Box)
     (r_min : ℚ)
     (exceptional : ℝ³ → Prop)
-    (h_annular_cone : ∀ {p : AtlasPose ℝ} (hp : p ∈ box.interval.toReal) (offset : ℝ²),
+    (h_annular_cone : ∀ {p : AtlasPose ℝ} (_hp : p ∈ box.interval.toReal) (offset : ℝ²),
       1 ≤ viewScale box.root p →
       InTriangle (toReal box.triangle) (AtlasProjectiveView.normalizedView box.root p) →
       ∀ a : AxisAngle
@@ -722,7 +722,7 @@ theorem valid_imp_not_translated_rupert_of_three_way_split
             (p.matrixPoseWithOffset box.chart offset) box.symmetryIndex) - 1‖ →
         exceptional a.signedAxis →
         ¬ RupertPose (p.matrixPoseWithOffset box.chart offset) P.polyhedron.hull)
-    (h_complement : ∀ {p : AtlasPose ℝ} (hp : p ∈ box.interval.toReal) (offset : ℝ²),
+    (h_complement : ∀ {p : AtlasPose ℝ} (_hp : p ∈ box.interval.toReal) (offset : ℝ²),
       1 ≤ viewScale box.root p →
       InTriangle (toReal box.triangle) (AtlasProjectiveView.normalizedView box.root p) →
       ∀ a : AxisAngle
@@ -731,7 +731,7 @@ theorem valid_imp_not_translated_rupert_of_three_way_split
             (p.matrixPoseWithOffset box.chart offset) box.symmetryIndex)),
         ¬ exceptional a.signedAxis →
         ¬ RupertPose (p.matrixPoseWithOffset box.chart offset) P.polyhedron.hull)
-    (h_inner_core : ∀ {p : AtlasPose ℝ} (hp : p ∈ box.interval.toReal) (offset : ℝ²),
+    (h_inner_core : ∀ {p : AtlasPose ℝ} (_hp : p ∈ box.interval.toReal) (offset : ℝ²),
       1 ≤ viewScale box.root p →
       InTriangle (toReal box.triangle) (AtlasProjectiveView.normalizedView box.root p) →
       ∀ a : AxisAngle
@@ -743,7 +743,7 @@ theorem valid_imp_not_translated_rupert_of_three_way_split
             (p.matrixPoseWithOffset box.chart offset) box.symmetryIndex) - 1‖ ≤ (r_min : ℝ) →
         exceptional a.signedAxis →
         ¬ RupertPose (p.matrixPoseWithOffset box.chart offset) P.polyhedron.hull) :
-    ∀ {p : AtlasPose ℝ} (hp : p ∈ box.interval.toReal) (offset : ℝ²),
+    ∀ {p : AtlasPose ℝ} (_hp : p ∈ box.interval.toReal) (offset : ℝ²),
       1 ≤ viewScale box.root p →
       InTriangle (toReal box.triangle) (AtlasProjectiveView.normalizedView box.root p) →
       ¬ RupertPose (p.matrixPoseWithOffset box.chart offset) P.polyhedron.hull := by

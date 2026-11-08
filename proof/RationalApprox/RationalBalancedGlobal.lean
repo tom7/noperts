@@ -18,7 +18,7 @@ global theorem.
 namespace RationalApprox.GlobalTheorem
 
 open Noperts.BalancedSupport
-open GlobalTheorem
+open _root_.RationalApprox.GlobalTheorem
 
 /-- Rational data checked for one balanced global box. -/
 structure RationalBalancedGlobalPrecondition

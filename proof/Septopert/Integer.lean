@@ -47,8 +47,7 @@ theorem simM_mem : simM ∈ Matrix.orthogonalGroup (Fin 3) ℝ := by
 theorem simMap_intVertex (i : Fin 7) : simMap (toR3 (intVertexQ i)) = toR3 (vertexQ i) := by
   ext k
   fin_cases i <;> fin_cases k <;>
-    simp [simMap, simM, toR3, intVertexQ, vertexQ, Matrix.toEuclideanLin, Matrix.vecHead, Matrix.vecTail,
-      Matrix.mulVec, dotProduct, Fin.sum_univ_three] <;> norm_num
+    simp [simMap, simM, toR3, intVertexQ, vertexQ, Matrix.toEuclideanLin, dotProduct, Fin.sum_univ_three] <;> norm_num
 
 theorem intVerts_image_eq : intVerts.image simMap = verts := by
   unfold intVerts verts

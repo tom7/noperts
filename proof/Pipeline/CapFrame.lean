@@ -34,7 +34,7 @@ theorem decomp_orthonormal {a b c : Fin 3 → ℝ} (h : Orthonormal3 a b c) (w :
     ext i j
     simp only [rdot] at haa hbb hcc hab hac hbc
     fin_cases i <;> fin_cases j <;>
-      simp [F, Matrix.mul_apply, Fin.sum_univ_three, Matrix.one_apply] <;> linarith
+      simp [F, Matrix.mul_apply, Fin.sum_univ_three] <;> linarith
   have hFtF : F.transpose * F = 1 := mul_eq_one_comm.mp hFF
   funext k
   have hk := congrFun (congrFun hFtF k)

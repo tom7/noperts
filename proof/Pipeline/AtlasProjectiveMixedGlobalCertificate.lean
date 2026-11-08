@@ -450,7 +450,7 @@ theorem Box.valid_imp_not_translated_rupert (box : Box) (h : box.Valid) :
     simpa [component, Box.componentBox] using hmem
   have hscaleNe : viewScale component.root p ≠ 0 :=
     (lt_of_lt_of_le (by norm_num : (0 : ℝ) < 1) hscale').ne'
-  rw [component.actualClearedDisplacement_eq_pose offset hscaleNe] at hactual
+  rw [component.actualClearedDisplacement_eq_pose (P := P) offset hscaleNe] at hactual
   apply AtlasProjectiveGlobalRigidity.not_rupertPose_of_projective_global_certificate_with_defect_points
     component.root p component.chart offset
     (fun i => component.certificate.exactEdge (P := P) i)

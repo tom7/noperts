@@ -84,10 +84,10 @@ theorem comb_apply {g : ℕ} {ps : Equiv.Perm (Fin 3) × (Fin 3 → Bool)} (h : 
   ext r
   simp only [Matrix.toLpLin_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_three, octaMatrix,
     Matrix.of_apply, PiLp.toLp_apply, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
-    Matrix.head_cons, Matrix.tail_cons, WithLp.ofLp_toLp]
+    Matrix.head_cons, Matrix.tail_cons]
   rw [h r 0, h r 1, h r 2]
   rcases hσ : ps.1 r with ⟨k, hk⟩
-  interval_cases k <;> cases ps.2 r <;> simp [hσ] <;> ring
+  interval_cases k <;> cases ps.2 r <;> simp
 
 /-! ### The exact snub cube as an `OModel` -/
 
@@ -186,7 +186,7 @@ theorem snubV0_eq : snubV0 = ((snubScale : ℝ) * tribonacci) •
     WithLp.toLp 2 ![wikiBase 0, wikiBase 1, -wikiBase 2] := by
   have ht := tribonacci_pos
   ext r
-  fin_cases r <;> simp [snubV0, wikiBase] <;> field_simp <;> ring
+  fin_cases r <;> simp [snubV0, wikiBase] <;> field_simp
 
 theorem snubOModel_vertex (i : VertexIndex) (ps : Equiv.Perm (Fin 3) × (Fin 3 → Bool))
     (h : combCheck (slotElemData.getD i.val 0) ps = true) :
@@ -219,7 +219,7 @@ theorem kval_octaApplyT (g : ℕ) (hg : g < 24) (v : KVec TribQ) :
     Cap.toEuc (kval (octaApplyT g v)) = (octaMatrix ⟨g, hg⟩).toEuclideanLin (Cap.toEuc (kval v)) := by
   ext r
   simp only [Cap.toEuc, kval, octaApplyT, Matrix.toLpLin_apply, Matrix.mulVec, dotProduct,
-    Fin.sum_univ_three, octaMatrix, Matrix.of_apply, WithLp.ofLp_toLp, PiLp.toLp_apply]
+    Fin.sum_univ_three, octaMatrix, Matrix.of_apply, PiLp.toLp_apply]
   rw [show ExactScalarOps.add = TribQ.add from rfl, show ExactScalarOps.scale = TribQ.scale from rfl,
     show TribQ.add = (· + ·) from rfl]
   simp [ExactScalarVal.val, TribQ.val_add, TribQ.val_scale]
@@ -229,7 +229,7 @@ theorem snubOModel_orbit (i : VertexIndex) :
       (snubScale : ℝ) • Cap.toEuc (kval (scVerts.getD i.val (fun _ => TribQ.zero))) := by
   have hi : i.val < scVerts.size := by simp [scVerts]
   have hget : scVerts.getD i.val (fun _ => TribQ.zero) = octaApplyT (slotElemData.getD i.val 0) seedT := by
-    simp [scVerts, Array.getD, hi]
+    simp [scVerts, Array.getD]
   rw [OModel.toC4_vertex, OModel.orbit, hget,
     kval_octaApplyT (slotElemData.getD i.val 0) (by exact slotIdx_lt i.isLt), kval_seedT]
   change (octaMatrix (slotOcta i)).toEuclideanLin snubV0 = _
@@ -245,11 +245,11 @@ theorem snubOModel_hull (c : KCert TribQ) (hV : c.V = scVerts) :
   congr 1
   ext v
   simp only [CyclicModel.verts, Finset.coe_image, Finset.coe_univ, Set.image_univ, Set.mem_range,
-    Set.mem_smul_set, Set.mem_setOf_eq, List.mem_map, hV]
+    Set.mem_smul_set, Set.mem_ofPred_eq, List.mem_map, hV]
   constructor
   · rintro ⟨i, rfl⟩
     refine ⟨_, ⟨kval (scVerts.getD i.val (fun _ => TribQ.zero)), ⟨_, ?_, rfl⟩, rfl⟩, (snubOModel_orbit i).symm⟩
-    simp only [Array.getD, scVerts, Array.mem_toList_iff, Array.getElem_mem]
+    simp only [Array.getD, scVerts, Array.mem_toList_iff]
     simp
     exact ⟨i.val, i.isLt, rfl⟩
   · rintro ⟨_, ⟨_, ⟨vj, hvj, rfl⟩, rfl⟩, rfl⟩

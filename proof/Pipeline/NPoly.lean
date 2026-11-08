@@ -93,7 +93,7 @@ theorem horner_ladd {α : Type} (v : α → ℝ) (x : ℝ) (f : α → α → α
 
 theorem eval_add : ∀ (k : ℕ) (a b : NPoly k) (y : Fin k → ℝ), eval k (add k a b) y = eval k a y + eval k b y
   | 0, a, b, _ => IcoQ.val_add a b
-  | k + 1, a, b, y => horner_ladd _ _ _ (fun p q => eval_add k p q _) _ _
+  | k + 1, _, _, _ => horner_ladd _ _ _ (fun p q => eval_add k p q _) _ _
 
 theorem eval_scale : ∀ (k : ℕ) (q : ℚ) (a : NPoly k) (y : Fin k → ℝ), eval k (scale k q a) y = q * eval k a y
   | 0, q, a, _ => IcoQ.val_scale q a
@@ -176,7 +176,7 @@ theorem horner_mulL {α : Type} (v : α → ℝ) (x : ℝ) (addf mulf : α → �
 
 theorem eval_mul : ∀ (k : ℕ) (a b : NPoly k) (y : Fin k → ℝ), eval k (mul k a b) y = eval k a y * eval k b y
   | 0, a, b, _ => IcoQ.val_mul a b
-  | k + 1, a, b, y =>
+  | k + 1, _, _, _ =>
     horner_mulL _ _ _ _ _ (fun p q => eval_add k p q _) (fun p q => eval_mul k p q _) (eval_zero k _) _ _
 
 def sub (k : ℕ) (a b : NPoly k) : NPoly k := add k a (scale k (-1) b)

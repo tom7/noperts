@@ -239,7 +239,7 @@ theorem capLeaf_sound (S : Set ℝ³) (bases : Array CapBase)
     nlinarith
   -- Apply the image claim.
   apply hclaims b hb pose hx (hcone _ fun c => (hc c).2.1)
-    (hcone _ fun c => (hc c).2.2) (by push_cast at htr ⊢; exact htr)
+    (hcone _ fun c => (hc c).2.2) (by exact htr)
   intro G₀ hG₀
   rcases hpr : b.prune with _ | g₀
   · rw [hpr] at hG₀; simp at hG₀

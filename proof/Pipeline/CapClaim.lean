@@ -33,7 +33,7 @@ def CapClaim (S : Set ℝ³) (x e1 e2 : Fin 3 → ℝ) (mu0 τ : ℝ) (G : Optio
       Matrix.trace p.relativeRotation) →
     ¬ RupertPose p S
 
-theorem rdot_cayley_bound {w : Fin 3 → ℝ} {wmax : ℝ} (hw0 : 0 ≤ wmax)
+theorem rdot_cayley_bound {w : Fin 3 → ℝ} {wmax : ℝ} (_hw0 : 0 ≤ wmax)
     (h : (3 - wmax ^ 2) / (1 + wmax ^ 2) ≤ Matrix.trace (cayleyMatrix (w 0) (w 1) (w 2))) :
     rdot w w ≤ wmax ^ 2 := by
   rw [trace_cayleyMatrix] at h

@@ -550,14 +550,14 @@ theorem rootBox_width {pr : Params} (hp : pr.Ok) (id : ChartId) : ∀ i, 0 ≤ (
   | u side k =>
     cases k <;> fin_cases i <;> simp [rootBox, h1, h2, h3, hS, (hf _).1, (hf _).2]
   | w π k =>
-    cases k <;> fin_cases i <;> simp [rootBox, h4, h5, h6, h7, hS, hx] <;> first | exact hp1 π | skip
+    cases k <;> fin_cases i <;> simp [rootBox, h4, h5, h6, h7, hS, hx] <;> first | exact hp1 π
   | pu side k =>
     cases k <;> fin_cases i <;> simp [rootBox, h1, h2, h3, hS, (hf _).1, (hf _).2]
   | p k =>
     cases k with
     | face2 m sg =>
-      fin_cases i <;> simp only [rootBox] <;> split_ifs <;> simp [h4, h5, h6, h7, h8, hS]
-    | _ => fin_cases i <;> simp [rootBox, h4, h5, h6, h7, h8, hS]
+      fin_cases i <;> simp only [rootBox] <;> split_ifs <;> simp [h4, h5, h6, h8, hS]
+    | _ => fin_cases i <;> simp [rootBox, h4, h5, h6, h7, hS]
 
 theorem rootBox_red {pr : Params} (id : ChartId) (y : Fin 5 → ℝ) (hy : KPoly.InBox (rootBox pr id) y) :
     ∀ i ∈ redVars id, 0 ≤ y i := by
@@ -595,12 +595,11 @@ theorem rootBox_red {pr : Params} (id : ChartId) (y : Fin 5 → ℝ) (hy : KPoly
     cases k <;> simp [redVars] at hi <;> rcases hi with rfl | rfl <;> first | exact h0 | exact h2c _ _ _ rfl
   | w π k =>
     cases π <;> cases k <;> simp [redVars] at hi <;> (try rcases hi with rfl | rfl | rfl) <;>
-      (try rcases hi with rfl | rfl) <;> (try subst hi) <;>
       first | exact h0 | exact h2w _ _ _ _ rfl | exact h1w _ _ (by simp) rfl
   | pu side k =>
     cases k <;> simp [redVars] at hi <;> rcases hi with rfl | rfl <;> first | exact h0 | exact h2pc _ _ _ rfl
   | p k =>
-    cases k <;> simp [redVars] at hi <;> (try rcases hi with rfl | rfl | rfl) <;> (try rcases hi with rfl | rfl) <;>
+    cases k <;> simp [redVars] at hi <;> (try rcases hi with rfl | rfl | rfl) <;>
       first | exact h0 | exact h2p _ _ _ rfl | exact h1p _ rfl
 
 theorem chart_leaf_good (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (id : ChartId) (l : Leaf) (box : Box)

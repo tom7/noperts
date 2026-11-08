@@ -119,12 +119,12 @@ theorem sinH_close (k : OrbitIndex) :
   · norm_num [sinH]
     rw [show 2 * π * (3 : ℝ) / 5 = 2 * π - 4 * π / 5 by ring, Real.sin_two_pi_sub]
     calc
-      _ = |Real.sin (4 * π / 5) - ((sin144H : ℚ) : ℝ)| := by congr 1 <;> ring
+      _ = |Real.sin (4 * π / 5) - ((sin144H : ℚ) : ℝ)| := by congr 1; ring
       _ ≤ _ := sin144_close
   · norm_num [sinH]
     rw [show 2 * π * (4 : ℝ) / 5 = 2 * π - 2 * π / 5 by ring, Real.sin_two_pi_sub]
     calc
-      _ = |Real.sin (2 * π / 5) - ((sin72H : ℚ) : ℝ)| := by congr 1 <;> ring
+      _ = |Real.sin (2 * π / 5) - ((sin72H : ℚ) : ℝ)| := by congr 1; ring
       _ ≤ _ := sin72_close.trans (by norm_num [err72Q, trigErrQ])
 
 /-! ### The planar height of seed 1 -/

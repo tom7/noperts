@@ -41,13 +41,12 @@ theorem proj_halfTurnZ (v : ℝ³) :
     proj_xyL (halfTurnZMat.toEuclideanLin v) = -proj_xyL v := by
   ext i
   fin_cases i <;>
-    simp [proj_xyL, proj_xy_mat, halfTurnZMat, Matrix.toLpLin_apply, Matrix.mulVec,
+    simp [proj_xyL, proj_xy_mat, halfTurnZMat, Matrix.toLpLin_apply,
       dotProduct, Fin.sum_univ_three]
 
 theorem proj_inject_xy (w : ℝ²) : proj_xyL (inject_xy w) = w := by
   ext i
-  fin_cases i <;> simp [proj_xyL, proj_xy_mat, inject_xy, Matrix.toLpLin_apply, Matrix.mulVec,
-    dotProduct, Fin.sum_univ_three]
+  fin_cases i <;> simp [proj_xyL, proj_xy_mat, inject_xy, Matrix.toLpLin_apply]
 
 /-- The half-turn about the line through `u` (for u ≠ 0). -/
 noncomputable def halfTurnMat (u : Fin 3 → ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
@@ -78,7 +77,7 @@ theorem halfTurnMat_mul_self (u : Fin 3 → ℝ) (hu : ∑ k, u k ^ 2 ≠ 0) :
   ext i j
   simp only [halfTurnMat, Matrix.mul_apply, Fin.sum_univ_three, Matrix.one_apply] at hu ⊢
   field_simp
-  fin_cases i <;> fin_cases j <;> simp <;> ring_nf <;> nlinarith [hu]
+  fin_cases i <;> fin_cases j <;> simp <;> ring_nf
 
 /-- H_u depends only on the line through u. -/
 theorem halfTurnMat_smul (κ : ℝ) (hκ : κ ≠ 0) (u : Fin 3 → ℝ) : halfTurnMat (κ • u) = halfTurnMat u := by

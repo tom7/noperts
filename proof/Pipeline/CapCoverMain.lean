@@ -44,7 +44,7 @@ def FrameOK (st : Setup) : Prop := st.aniso = false ∧ Orthogonal3 (kv st.e1) (
 theorem frameAB_val (st : Setup) (side : ℕ) (hside : side < 4) :
     kv (st.frameAB side).1 = (sideA side).1 • kv st.e1 + (sideA side).2 • kv st.e2 ∧
       kv (st.frameAB side).2 = (sideB side).1 • kv st.e1 + (sideB side).2 • kv st.e2 := by
-  interval_cases side <;> simp [Setup.frameAB, sideA, sideB, kval_kneg] <;> funext i <;> simp
+  interval_cases side <;> simp [Setup.frameAB, sideA, sideB, kval_kneg]
 
 theorem mem_chartList (st : Setup) (pr : Params) (zOf : Kind × ℕ × ℕ × Bool → ℕ)
     {b : Kind × ℕ × ℕ × Bool} (hb : b ∈ baseCharts pr) {id : ChartId} (hid : id ∈ expandChart st pr zOf b) :

@@ -179,6 +179,7 @@ theorems that turn valid tables into `¬ IsRupert`.
 | [Septopert](septopert.md) | exact (rational) | yes | yes | at the mirror normal | mirror ties | C3, mirror-tie; plus arc, axis and P caps |
 | [SeptopertM12](septopert-m12.md) | exact (rational) | yes | yes | at the mirror normal | mirror ties | C3, mirror-tie; plus arc, axis and P caps |
 | [SeptopertM18](septopert-m18.md) | exact (rational) | yes | yes | at the mirror normal | mirror ties | C3, mirror-tie; plus an arc cap |
+| [Chipped M18](chipped-m18.md) | exact (rational) | yes | yes | at the mirror normal | mirror ties | C3, mirror-tie; plus an arc cap (as SeptopertM18) |
 | [SeptopertClassic](septopert-classic.md) | exact (rational) | yes | yes | at the mirror normal | mirror ties | C3, mirror-tie |
 | [Snub cube](snub-cube.md) | `OModel` | yes | | at the zero-margin view | one tie, in the cap | octahedral |
 | [Snub dodecahedron](snub-dodecahedron.md) | `IModel` | yes | | | | icosahedral, fivefold |

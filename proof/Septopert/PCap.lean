@@ -80,7 +80,7 @@ theorem kval_q (v : KCap.KVec ℚ) (i : Fin 3) : KCap.PVec.kval v i = (v i : ℝ
 theorem pFrame_ok : FrameOkP pFrame (15 / 2) 6 5 (49 / 50) (24 / 25) (48 / 49) := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, by norm_num, by norm_num, by norm_num, ?_, ?_, ?_, ?_, ?_, ?_,
     by norm_num, by norm_num, by norm_num, ?_, ?_, ?_⟩ <;>
-    simp [pFrame, rdot, kval_q, Fin.sum_univ_three] <;> norm_num
+    simp [pFrame, rdot, kval_q] <;> norm_num
 
 theorem hull_pVerts : hull pVerts = solid := by
   unfold hull solid poly Polyhedron.hull
@@ -106,11 +106,11 @@ def InP (v : Fin 3 → ℝ) : Prop :=
 theorem inP_square {v : Fin 3 → ℝ} (h : InP v) : InSquare pFrame (15 / 2) 6 5 (((1 / 8 : ℚ)) : ℝ) v := by
   obtain ⟨h0, h1, h2⟩ := h
   have e1 : rdot v (KCap.PVec.kval pFrame.E1) = -(-v 0 + 2 * v 1 + 5 * v 2) / 2 := by
-    simp [pFrame, rdot, kval_q, Fin.sum_univ_three]; ring
+    simp [pFrame, rdot, kval_q]; ring
   have e2 : rdot v (KCap.PVec.kval pFrame.E2) = v 0 - 2 * v 1 + v 2 := by
-    simp [pFrame, rdot, kval_q, Fin.sum_univ_three]; ring
+    simp [pFrame, rdot, kval_q]; ring
   have ex : rdot v (KCap.PVec.kval pFrame.X) = 2 * v 0 + v 1 := by
-    simp [pFrame, rdot, kval_q, Fin.sum_univ_three]; ring
+    simp [pFrame, rdot, kval_q]; ring
   refine ⟨by rw [ex]; exact h0, ?_, ?_⟩
   · rw [e1, ex, abs_div, abs_neg, abs_two]; push_cast; linarith
   · rw [e2, ex]; push_cast; linarith

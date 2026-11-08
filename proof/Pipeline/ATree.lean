@@ -113,7 +113,7 @@ theorem inv_apply_eq (m m' : AffMap) (z : Fin 5 → ℝ) (i : Fin 5) :
     m'.inv (m.apply z) i = (∑ j, (coverM m m' i j : ℝ) * z j) + coverD m m' i := by
   simp only [AffMap.inv, AffMap.apply, coverM, coverD]
   push_cast
-  simp only [Finset.mul_sum, Finset.sum_mul]
+  simp only [Finset.sum_mul]
   have : ∀ k, (m'.B i k : ℝ) * ((∑ j, (m.A k j : ℝ) * z j) + m.c k - m'.c k) =
       (∑ j, (m'.B i k : ℝ) * m.A k j * z j) + m'.B i k * (m.c k - m'.c k) := by
     intro k
@@ -147,9 +147,9 @@ theorem coverOk_sound {m m' : AffMap} {box box' : Box} (h : coverOk m m' box box
     apply add_le_add (Finset.sum_le_sum ?_) le_rfl
     intro j _
     by_cases hM : 0 ≤ coverM m m' i j
-    · rw [if_pos hM, Rat.cast_mul]
+    · rw [ite_eq_left hM, Rat.cast_mul]
       exact mul_le_mul_of_nonneg_left (hz j).1 (by exact_mod_cast hM)
-    · rw [if_neg hM, Rat.cast_mul]
+    · rw [ite_eq_right hM, Rat.cast_mul]
       have : ((coverM m m' i j : ℚ) : ℝ) ≤ 0 := by exact_mod_cast le_of_lt (not_le.mp hM)
       push_cast
       exact mul_le_mul_of_nonpos_left (hz j).2 this
@@ -159,10 +159,10 @@ theorem coverOk_sound {m m' : AffMap} {box box' : Box} (h : coverOk m m' box box
     apply add_le_add (Finset.sum_le_sum ?_) le_rfl
     intro j _
     by_cases hM : 0 ≤ coverM m m' i j
-    · rw [if_pos hM, Rat.cast_mul]
+    · rw [ite_eq_left hM, Rat.cast_mul]
       push_cast
       exact mul_le_mul_of_nonneg_left (hz j).2 (by exact_mod_cast hM)
-    · rw [if_neg hM, Rat.cast_mul]
+    · rw [ite_eq_right hM, Rat.cast_mul]
       have : ((coverM m m' i j : ℚ) : ℝ) ≤ 0 := by exact_mod_cast le_of_lt (not_le.mp hM)
       exact mul_le_mul_of_nonpos_left (hz j).1 this
   constructor
@@ -216,6 +216,7 @@ def ATree.checkPar (leafOk : ChartData K → Leaf → Box → Bool) (chartOf : A
       else (ATree.split a l r).check leafOk chartOf cd m box
   | cd, m, t, box => t.check leafOk chartOf cd m box
 
+omit [ExactScalarOps K] in
 theorem ATree.checkPar_eq (leafOk : ChartData K → Leaf → Box → Bool) (chartOf : AffMap → ChartData K)
     (grain : ℕ) : ∀ (t : ATree) (cd : ChartData K) (m : AffMap) (box : Box),
       t.checkPar leafOk chartOf grain cd m box = t.check leafOk chartOf cd m box
@@ -230,6 +231,7 @@ theorem ATree.checkPar_eq (leafOk : ChartData K → Leaf → Box → Bool) (char
   | .affine m' b t, cd, m, box => rfl
   | .fail, cd, m, box => rfl
 
+omit [ExactScalarOps K] in
 theorem ATree.check_sound (leafOk : ChartData K → Leaf → Box → Bool) (chartOf : AffMap → ChartData K)
     (Good : (Fin 5 → ℝ) → Prop) (Inv : ChartData K → AffMap → Prop)
     (hleaf : ∀ cd m l box, Inv cd m → (∀ z, m.apply z 0 = z 0) → (∀ i, 0 ≤ (box i).2) →

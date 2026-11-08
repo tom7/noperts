@@ -91,7 +91,7 @@ noncomputable def pole (a b c : ℝ³) : ℝ³ :=
 theorem pole_level {a b c : ℝ³} (hd : det3 a b c ≠ 0) :
     ⟪a, pole a b c⟫ = 1 ∧ ⟪b, pole a b c⟫ = 1 ∧ ⟪c, pole a b c⟫ = 1 := by
   refine ⟨?_, ?_, ?_⟩ <;>
-  · simp only [pole, inner_smul_right, inner_eq3, PiLp.toLp_apply, Matrix.cons_val_zero,
+  · simp only [pole, inner_smul_right, inner_eq3, Matrix.cons_val_zero,
       Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons, Matrix.tail_cons]
     rw [inv_mul_eq_one₀ hd]
     simp only [det3]
@@ -129,7 +129,7 @@ theorem affineIndependent_of_det {a b c : ℝ³} (hd : det3 a b c ≠ 0) :
 theorem inner_toEuclideanLin (A : Matrix (Fin 3) (Fin 3) ℝ) (x y : ℝ³) :
     ⟪x, A.toEuclideanLin y⟫ = ⟪Aᵀ.toEuclideanLin x, y⟫ := by
   simp only [inner_eq3, Matrix.toLpLin_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_three,
-    Matrix.transpose_apply, PiLp.toLp_apply, WithLp.ofLp_toLp]
+    Matrix.transpose_apply]
   ring
 
 /-- An orthogonal map preserving S (with its transpose) preserves its facet poles. -/

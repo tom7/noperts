@@ -30,13 +30,13 @@ def solid : Set ℝ³ := poly.hull
 theorem c3Mat_vertex (k : Fin 3) (i : Fin 7) :
     (c3Mat k).toEuclideanLin (toR3 (vertexQ i)) = toR3 (vertexQ (c3Perm k i)) := by
   fin_cases k <;> fin_cases i <;> ext j <;> fin_cases j <;>
-    simp [c3Mat, vertexQ, c3Perm, toR3, Matrix.toLpLin_apply, Matrix.mulVec, dotProduct,
+    simp [c3Mat, vertexQ, c3Perm, toR3, Matrix.toLpLin_apply, dotProduct,
       Fin.sum_univ_three]
 
 theorem mirrorMat_vertex (i : Fin 3) (a : Fin 7) :
     (mirrorMat i).toEuclideanLin (toR3 (vertexQ a)) = toR3 (vertexQ (mirrorPerm i a)) := by
   fin_cases i <;> fin_cases a <;> ext j <;> fin_cases j <;>
-    simp [mirrorMat, vertexQ, mirrorPerm, toR3, Matrix.toLpLin_apply, Matrix.mulVec, dotProduct,
+    simp [mirrorMat, vertexQ, mirrorPerm, toR3, Matrix.toLpLin_apply, dotProduct,
       Fin.sum_univ_three]
 
 /-- A matrix permuting the vertices maps the solid into itself. -/

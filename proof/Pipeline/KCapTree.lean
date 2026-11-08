@@ -293,17 +293,20 @@ def PointGood (c : KCert K) (id : ChartId) (y : Fin 5 → ℝ) : Prop :=
     p.relativeRotation = cayleyMatrix ((chartW c.fr c.pr id).eval y 0) ((chartW c.fr c.pr id).eval y 1)
       ((chartW c.fr c.pr id).eval y 2) → ¬ RupertPose p c.hull
 
+omit [ExactScalarOps K] [ExactScalarVal K] in
 theorem paramsOk_sound {c : KCert K} (h : c.paramsOk = true) :
     0 < c.pr.R ∧ 0 ≤ c.pr.t0 ∧ 0 ≤ c.pr.tieT0 ∧ 0 ≤ c.mu0 ∧ c.mu0 ≤ c.tieMu0 ∧ c.pr.tieSide = 1 := by
   simp only [KCert.paramsOk, Bool.and_eq_true, decide_eq_true_eq] at h
   tauto
 
+omit [ExactScalarOps K] [ExactScalarVal K] in
 theorem rootBox_width {c : KCert K} (h : c.paramsOk = true) (id : ChartId) : ∀ i, 0 ≤ (rootBox c id i).2 := by
   obtain ⟨hR, ht0, hT, hm, hmT, -⟩ := paramsOk_sound h
   intro i
   unfold rootBox
   cases hk : id.kind <;> fin_cases i <;> simp <;> linarith
 
+omit [ExactScalarOps K] [ExactScalarVal K] in
 theorem rootBox_lo (c : KCert K) (id : ChartId) (y : Fin 5 → ℝ) (hy : KPoly.InBox (rootBox c id) y) :
     0 ≤ y 0 ∧ (id.kind = .tcone → 0 ≤ y 1) ∧ (id.kind = .cone → 0 ≤ y 2) := by
   have h0 := (hy 0).1
@@ -315,6 +318,7 @@ theorem rootBox_lo (c : KCert K) (id : ChartId) (y : Fin 5 → ℝ) (hy : KPoly.
   · simp only [hk] at h1; simpa using h1
   · simp only [hk] at h2; simpa using h2
 
+omit [ExactScalarVal K] in
 theorem hasChart_sound {c : KCert K} {id : ChartId} (h : c.hasChart id = true) :
     ∃ t : KTree, c.chartCheck id t = true := by
   unfold KCert.hasChart at h
@@ -387,7 +391,7 @@ theorem side_of_required {id : ChartId} (h : id ∈ requiredCharts) : id.side < 
   rcases h with ⟨side, hs, h⟩ | ⟨axis, -, sign, -, rfl⟩
   · rcases h with rfl | ⟨axis, -, sign, -, h⟩
     · exact hs
-    · simp only [List.mem_cons, List.not_mem_nil, or_false] at h
+    · simp only [List.not_mem_nil, or_false] at h
       rcases h with rfl | rfl <;> exact hs
   · show 1 < 4; norm_num
 

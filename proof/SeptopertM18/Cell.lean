@@ -34,14 +34,14 @@ def negIdx : Fin 3 → Fin 3
   | 2 => 1
 
 theorem mirrorQ_mul_c3 (i k : Fin 3) : mirrorQMat i * c3Mat k = mirrorQMat (i + negIdx k) := by
-  fin_cases i <;> fin_cases k <;> simp only [negIdx, Fin.reduceAdd, Fin.isValue] <;> ext a b <;>
+  fin_cases i <;> fin_cases k <;> simp only [negIdx, Fin.isValue] <;> ext a b <;>
     fin_cases a <;> fin_cases b <;>
     simp [c3Mat, mirrorQMat, mirrorMat, Matrix.mul_apply, Fin.sum_univ_three, Matrix.one_apply]
 
 theorem mirrorQ_mul_mirrorQ (i j : Fin 3) : mirrorQMat i * mirrorQMat j = c3Mat (i + negIdx j) := by
-  fin_cases i <;> fin_cases j <;> simp only [negIdx, Fin.reduceAdd, Fin.isValue] <;> ext a b <;>
+  fin_cases i <;> fin_cases j <;> simp only [negIdx, Fin.isValue] <;> ext a b <;>
     fin_cases a <;> fin_cases b <;>
-    simp [c3Mat, mirrorQMat, mirrorMat, Matrix.mul_apply, Fin.sum_univ_three, Matrix.one_apply]
+    simp [c3Mat, mirrorQMat, mirrorMat, Matrix.mul_apply, Fin.sum_univ_three]
 
 /-- The cell: no candidate has a larger trace. -/
 def InC3vCell (u : Fin 3 → ℝ) (R : Matrix (Fin 3) (Fin 3) ℝ) : Prop :=

@@ -1,0 +1,240 @@
+solid chipped-m18
+  facet normal -0.140028008 0.700140042 0.700140042
+    outer loop
+      vertex -1494 1524 936
+      vertex -2299 1188 1111
+      vertex -2354 1144 1144
+    endloop
+  endfacet
+  facet normal -0.140028008 0.700140042 0.700140042
+    outer loop
+      vertex -1494 1524 936
+      vertex -2354 1144 1144
+      vertex -2299 1111 1188
+    endloop
+  endfacet
+  facet normal -0.140028008 0.700140042 0.700140042
+    outer loop
+      vertex -1494 1524 936
+      vertex -2299 1111 1188
+      vertex -1494 936 1524
+    endloop
+  endfacet
+  facet normal -0.666666667 -0.666666667 0.333333333
+    outer loop
+      vertex 1144 -2354 1144
+      vertex 1111 -2299 1188
+      vertex -2299 1111 1188
+    endloop
+  endfacet
+  facet normal -0.666666667 -0.666666667 0.333333333
+    outer loop
+      vertex 1144 -2354 1144
+      vertex -2299 1111 1188
+      vertex -2354 1144 1144
+    endloop
+  endfacet
+  facet normal -0.666666667 -0.666666667 0.333333333
+    outer loop
+      vertex 1144 -2354 1144
+      vertex -2354 1144 1144
+      vertex -1188 -1188 -1188
+    endloop
+  endfacet
+  facet normal -0.666666667 0.333333333 -0.666666667
+    outer loop
+      vertex -1188 -1188 -1188
+      vertex -2354 1144 1144
+      vertex -2299 1188 1111
+    endloop
+  endfacet
+  facet normal -0.666666667 0.333333333 -0.666666667
+    outer loop
+      vertex -1188 -1188 -1188
+      vertex -2299 1188 1111
+      vertex 1111 1188 -2299
+    endloop
+  endfacet
+  facet normal -0.666666667 0.333333333 -0.666666667
+    outer loop
+      vertex -1188 -1188 -1188
+      vertex 1111 1188 -2299
+      vertex 1144 1144 -2354
+    endloop
+  endfacet
+  facet normal -0.425797036 -0.425797036 0.798369443
+    outer loop
+      vertex 396 396 2244
+      vertex -1494 936 1524
+      vertex -2299 1111 1188
+    endloop
+  endfacet
+  facet normal -0.425797036 -0.425797036 0.798369443
+    outer loop
+      vertex 396 396 2244
+      vertex -2299 1111 1188
+      vertex 1111 -2299 1188
+    endloop
+  endfacet
+  facet normal -0.425797036 -0.425797036 0.798369443
+    outer loop
+      vertex 396 396 2244
+      vertex 1111 -2299 1188
+      vertex 936 -1494 1524
+    endloop
+  endfacet
+  facet normal -0.425797036 0.798369443 -0.425797036
+    outer loop
+      vertex 936 1524 -1494
+      vertex 1111 1188 -2299
+      vertex -2299 1188 1111
+    endloop
+  endfacet
+  facet normal -0.425797036 0.798369443 -0.425797036
+    outer loop
+      vertex 936 1524 -1494
+      vertex -2299 1188 1111
+      vertex -1494 1524 936
+    endloop
+  endfacet
+  facet normal -0.425797036 0.798369443 -0.425797036
+    outer loop
+      vertex 936 1524 -1494
+      vertex -1494 1524 936
+      vertex 396 2244 396
+    endloop
+  endfacet
+  facet normal -0.067191314 0.705508798 0.705508798
+    outer loop
+      vertex 396 2244 396
+      vertex -1494 1524 936
+      vertex -1494 936 1524
+    endloop
+  endfacet
+  facet normal -0.067191314 0.705508798 0.705508798
+    outer loop
+      vertex 396 2244 396
+      vertex -1494 936 1524
+      vertex 396 396 2244
+    endloop
+  endfacet
+  facet normal 0.333333333 -0.666666667 -0.666666667
+    outer loop
+      vertex 1188 -2299 1111
+      vertex 1144 -2354 1144
+      vertex -1188 -1188 -1188
+    endloop
+  endfacet
+  facet normal 0.333333333 -0.666666667 -0.666666667
+    outer loop
+      vertex 1188 -2299 1111
+      vertex -1188 -1188 -1188
+      vertex 1144 1144 -2354
+    endloop
+  endfacet
+  facet normal 0.333333333 -0.666666667 -0.666666667
+    outer loop
+      vertex 1188 -2299 1111
+      vertex 1144 1144 -2354
+      vertex 1188 1111 -2299
+    endloop
+  endfacet
+  facet normal 0.577350269 0.577350269 0.577350269
+    outer loop
+      vertex 396 2244 396
+      vertex 396 396 2244
+      vertex 2244 396 396
+    endloop
+  endfacet
+  facet normal 0.705508798 -0.067191314 0.705508798
+    outer loop
+      vertex 2244 396 396
+      vertex 396 396 2244
+      vertex 936 -1494 1524
+    endloop
+  endfacet
+  facet normal 0.705508798 -0.067191314 0.705508798
+    outer loop
+      vertex 2244 396 396
+      vertex 936 -1494 1524
+      vertex 1524 -1494 936
+    endloop
+  endfacet
+  facet normal 0.705508798 0.705508798 -0.067191314
+    outer loop
+      vertex 1524 936 -1494
+      vertex 936 1524 -1494
+      vertex 396 2244 396
+    endloop
+  endfacet
+  facet normal 0.705508798 0.705508798 -0.067191314
+    outer loop
+      vertex 1524 936 -1494
+      vertex 396 2244 396
+      vertex 2244 396 396
+    endloop
+  endfacet
+  facet normal 0.700140042 -0.140028008 0.700140042
+    outer loop
+      vertex 1524 -1494 936
+      vertex 936 -1494 1524
+      vertex 1111 -2299 1188
+    endloop
+  endfacet
+  facet normal 0.700140042 -0.140028008 0.700140042
+    outer loop
+      vertex 1524 -1494 936
+      vertex 1111 -2299 1188
+      vertex 1144 -2354 1144
+    endloop
+  endfacet
+  facet normal 0.700140042 -0.140028008 0.700140042
+    outer loop
+      vertex 1524 -1494 936
+      vertex 1144 -2354 1144
+      vertex 1188 -2299 1111
+    endloop
+  endfacet
+  facet normal 0.700140042 0.700140042 -0.140028008
+    outer loop
+      vertex 1188 1111 -2299
+      vertex 1144 1144 -2354
+      vertex 1111 1188 -2299
+    endloop
+  endfacet
+  facet normal 0.700140042 0.700140042 -0.140028008
+    outer loop
+      vertex 1188 1111 -2299
+      vertex 1111 1188 -2299
+      vertex 936 1524 -1494
+    endloop
+  endfacet
+  facet normal 0.700140042 0.700140042 -0.140028008
+    outer loop
+      vertex 1188 1111 -2299
+      vertex 936 1524 -1494
+      vertex 1524 936 -1494
+    endloop
+  endfacet
+  facet normal 0.798369443 -0.425797036 -0.425797036
+    outer loop
+      vertex 2244 396 396
+      vertex 1524 -1494 936
+      vertex 1188 -2299 1111
+    endloop
+  endfacet
+  facet normal 0.798369443 -0.425797036 -0.425797036
+    outer loop
+      vertex 2244 396 396
+      vertex 1188 -2299 1111
+      vertex 1188 1111 -2299
+    endloop
+  endfacet
+  facet normal 0.798369443 -0.425797036 -0.425797036
+    outer loop
+      vertex 2244 396 396
+      vertex 1188 1111 -2299
+      vertex 1524 936 -1494
+    endloop
+  endfacet
+endsolid chipped-m18

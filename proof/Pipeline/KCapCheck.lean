@@ -251,6 +251,7 @@ theorem Leaf.checkPar_eq (cd : ChartData K) (id : ChartId) (box : Box) :
     l.checkPar V cd id box = l.check V cd id box :=
   l.checkParBy_eq V _ cd box
 
+omit [ExactScalarOps K] in
 theorem lookupD_eq (L : List (ℕ × KPoly K 5)) (f : ℕ → KPoly K 5) (hL : ∀ p ∈ L, p.2 = f p.1) (i : ℕ) :
     lookupD L i (f i) = f i := by
   induction L with
@@ -267,6 +268,7 @@ theorem lookupD_eq (L : List (ℕ × KPoly K 5)) (f : ℕ → KPoly K 5) (hL : �
       simp only [this]
       exact ih (fun p hp => hL p (by simp [hp]))
 
+omit [ExactScalarOps K] in
 theorem cache_getD (n : ℕ) (g : ℕ → List ℕ) (f : ℕ → ℕ → KPoly K 5) (k : ℕ) :
     ∀ p ∈ ((List.range n).map fun k => (g k).map fun i => (i, f k i)).getD k [], p.2 = f k p.1 := by
   intro p hp
@@ -276,7 +278,7 @@ theorem cache_getD (n : ℕ) (g : ℕ → List ℕ) (f : ℕ → ℕ → KPoly K
     obtain ⟨i, -, rfl⟩ := hp
     rfl
   · have : ((List.range n).map fun k => (g k).map fun i => (i, f k i))[k]? = none := by
-      simp [List.getElem?_eq_none, hk]
+      simp [hk]
     rw [this] at hp
     simp at hp
 
@@ -403,20 +405,20 @@ theorem eval_innerNumOf (u w : PVec K) (V : Array (KVec K)) (l : Leaf) (i : ℕ)
     (l.innerNum V (chartDataOf u w V) i).eval y = rcayleyNum (w.eval y) (l.innerPt V i) := by
   unfold Leaf.innerNum Leaf.innerPt
   by_cases h : i < V.size
-  · simp only [h, if_true]
+  · simp only [h, ite_true]
     exact eval_numAtOf u w V i h y
   · have hb := hv.resolve_left h
-    simp only [h, if_false, PVec.eval_add, PVec.eval_smul, eval_pconst]
+    simp only [h, ite_false, PVec.eval_add, PVec.eval_smul, eval_pconst]
     rw [eval_numAtOf u w V _ hb.1 y, eval_numAtOf u w V _ hb.2.1 y, rcayleyNum_combo]
 
 theorem innerPt_mem (V : Array (KVec K)) (l : Leaf) (i : ℕ) (hv : l.innerValid V i) :
     Cap.toEuc (l.innerPt V i) ∈ convexHull ℝ {v | ∃ vj ∈ V.toList.map kval, v = Cap.toEuc vj} := by
   unfold Leaf.innerPt
   by_cases h : i < V.size
-  · simp only [h, if_true]
+  · simp only [h, ite_true]
     exact subset_convexHull ℝ _ ⟨_, kval_vertex_mem V i h, rfl⟩
   · obtain ⟨ha, hc, ht0, ht1⟩ := hv.resolve_left h
-    simp only [h, if_false]
+    simp only [h, ite_false]
     have hA := subset_convexHull ℝ {v | ∃ vj ∈ V.toList.map kval, v = Cap.toEuc vj}
       ⟨_, kval_vertex_mem V _ ha, rfl⟩
     have hC := subset_convexHull ℝ {v | ∃ vj ∈ V.toList.map kval, v = Cap.toEuc vj}
@@ -435,6 +437,7 @@ theorem Leaf.blend_mem (l : Leaf) (b : ℕ) (h : b < l.blends.length) : l.blend 
   rw [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem h, Option.getD_some]
   exact List.getElem_mem h
 
+omit [ExactScalarVal K] in
 theorem Ls_getD (V : Array (KVec K)) (l : Leaf) (cd : ChartData K) (n k : ℕ) (hk : k < n) :
     ((List.range n).map (l.L V cd)).getD k (fun _ => KPoly.zero 5) = l.L V cd k := by
   rw [List.getD_eq_getElem?_getD]
@@ -594,7 +597,7 @@ theorem Leaf.checkBy_soundOf (uP wP : PVec K) (red : KPoly K 5 → KPoly K 5) (V
     simp only [Bool.or_eq_true, Bool.and_eq_true, decide_eq_true_eq] at hshape
     rcases hshape with ⟨h2', he⟩ | h3'
     · have hl1 : ∀ k, lamR k = 1 := by
-        intro k; simp only [lamR, Leaf.lam]; rw [if_pos (by omega)]; exact eval_kOne y
+        intro k; simp only [lamR, Leaf.lam]; rw [ite_eq_left (by omega)]; exact eval_kOne y
       have hc1 : c 1 = -c 0 := by
         simp only [c, kval_dir, he]; abel
       rw [← hn] at h2'
@@ -604,7 +607,7 @@ theorem Leaf.checkBy_soundOf (uP wP : PVec K) (red : KPoly K 5 → KPoly K 5) (V
     · have hl3 : ∀ k, lamR k = l.s * rdot (rcross (c ((k + 1) % 3)) (c ((k + 2) % 3))) u := by
         intro k
         have hn2 : ¬ l.n = 2 := by omega
-        simp only [lamR, Leaf.lam, hn2, if_false, KPoly.eval_scale, PVec.eval_dot, PVec.eval_const, kval_vcross]
+        simp only [lamR, Leaf.lam, hn2, ite_false, KPoly.eval_scale, PVec.eval_dot, PVec.eval_const, kval_vcross]
         rw [show cd.u.eval y = u from rfl]
       rw [← hn] at h3'
       rw [h3']
@@ -615,7 +618,7 @@ theorem Leaf.checkBy_soundOf (uP wP : PVec K) (red : KPoly K 5 → KPoly K 5) (V
     have hp := eval_lowerDeg_pos hposck hw hy
     rw [eval_foldr_add] at hp
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have hzero : ∀ k : Fin n, KPoly.eval 5 (PVec.dot (((List.range n).map (l.L V cd)).getD k
         (fun _ => KPoly.zero 5)) (l.d V cd k)) y = 0 := by
       intro k
@@ -638,7 +641,7 @@ theorem Leaf.checkBy_soundOf (uP wP : PVec K) (red : KPoly K 5 → KPoly K 5) (V
     rw [e]
     exact this
   · have e : ∀ k : Fin n, (if h : (k : ℕ) < n then jm ⟨k, h⟩ else 0) = jm k := fun k => by
-      rw [dif_pos k.isLt]
+      rw [dite_eq_left k.isLt]
     simp only [e] at hP0
     exact hP0
 
