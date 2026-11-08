@@ -1,0 +1,17 @@
+{
+  "name": "septopert-m18 (best-possible exact rational export)",
+  "num_vertices": 7,
+  "num_seeds": 0,
+  "power_of_two_denominator": true,
+  "base_quantization_bits": 52,
+  "exact_quad_coplanarity": true,
+  "vertices": [
+    {"index": 0, "x": "-9/16", "y": "9/32", "z": "9/32", "double": [-0.5625, 0.28125, 0.28125]},
+    {"index": 1, "x": "9/32", "y": "-9/16", "z": "9/32", "double": [0.28125, -0.5625, 0.28125]},
+    {"index": 2, "x": "9/32", "y": "9/32", "z": "-9/16", "double": [0.28125, 0.28125, -0.5625]},
+    {"index": 3, "x": "17/32", "y": "3/32", "z": "3/32", "double": [0.53125, 0.09375, 0.09375]},
+    {"index": 4, "x": "3/32", "y": "17/32", "z": "3/32", "double": [0.09375, 0.53125, 0.09375]},
+    {"index": 5, "x": "3/32", "y": "3/32", "z": "17/32", "double": [0.09375, 0.09375, 0.53125]},
+    {"index": 6, "x": "-9/32", "y": "-9/32", "z": "-9/32", "double": [-0.28125, -0.28125, -0.28125]}
+  ]
+}

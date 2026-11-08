@@ -1,7 +1,7 @@
 module
 
 public import Septopert.ViewReduce
-public import Septopert.Model
+public import Septopert.SymModel
 public import Pipeline.AtlasPose
 public import Pipeline.TightApproximation
 public import Atlas.Tightening

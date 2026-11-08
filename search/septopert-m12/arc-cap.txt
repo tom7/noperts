@@ -1,0 +1,12 @@
+# EXPERIMENT for M12 (not certificates yet): stand-in caps, all with Cayley radius 1/46.
+# Cap 1: M18's arc cap polygon (the cube-corner arc from U; M12's arc ends at tan(phi) = 5/14 < 13/32).
+cap 1/2116
+piece 2 2 -1 5/4 -7/4 -17/8 -3/4 9/4 15/8 -7/4 5/4 -17/8 9/4 -3/4 15/8 3 -3 0
+piece 2 2 -1 -15/8 3/4 -9/4 17/8 -5/4 7/4 -3/16 45/16 51/32
+# Cap 2: the axis view (1,1,1) (exact Triforce): |u.(1,-1,0)| <= (1/64) u.(1,1,1), |u.(1,1,-2)| <= (1/36) u.(1,1,1).
+cap 1/2116
+piece 1 1 1 -63/64 65/64 1/64 65/64 -63/64 1/64 -35/36 -35/36 73/36 37/36 37/36 -71/36
+# Cap 3: face 024's edge-on circle from P = (2,1,0), psi in [-.02, .152] (the zero stretch ends between .104 and .152):
+# |u.(1,-2,1)| <= (1/32) u.(2,1,0), -(1/20) u.(2,1,0) <= u.(-1,2,5) <= (3/8) u.(2,1,0).
+cap 1/2116
+piece 2 1 0 -15/16 65/32 -1 17/16 -63/32 1 -9/10 41/20 5 7/4 -13/8 -5

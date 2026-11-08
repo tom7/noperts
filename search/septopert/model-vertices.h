@@ -13,24 +13,24 @@ inline constexpr int NUM_VERTICES_MODEL = 7;
 inline constexpr bool MODEL_EXACT = true;
 
 inline constexpr double VERTICES_MODEL[NUM_VERTICES_MODEL][3] = {
-  { -5.62500000000000000e-01,  2.81250000000000000e-01,  2.81250000000000000e-01 },
-  {  2.81250000000000000e-01, -5.62500000000000000e-01,  2.81250000000000000e-01 },
-  {  2.81250000000000000e-01,  2.81250000000000000e-01, -5.62500000000000000e-01 },
-  {  5.31250000000000000e-01,  9.37500000000000000e-02,  9.37500000000000000e-02 },
-  {  9.37500000000000000e-02,  5.31250000000000000e-01,  9.37500000000000000e-02 },
-  {  9.37500000000000000e-02,  9.37500000000000000e-02,  5.31250000000000000e-01 },
-  { -2.81250000000000000e-01, -2.81250000000000000e-01, -2.81250000000000000e-01 }
+  { -4.21875000000000000e-01,  2.34375000000000000e-01,  2.34375000000000000e-01 },
+  {  2.34375000000000000e-01, -4.21875000000000000e-01,  2.34375000000000000e-01 },
+  {  2.34375000000000000e-01,  2.34375000000000000e-01, -4.21875000000000000e-01 },
+  {  4.21875000000000000e-01,  9.37500000000000000e-02,  9.37500000000000000e-02 },
+  {  9.37500000000000000e-02,  4.21875000000000000e-01,  9.37500000000000000e-02 },
+  {  9.37500000000000000e-02,  9.37500000000000000e-02,  4.21875000000000000e-01 },
+  { -2.03125000000000000e-01, -2.03125000000000000e-01, -2.03125000000000000e-01 }
 };
 
 inline BigVecQ3 VertexQModel(size_t i) {
   static const BigVecQ3 v[7] = {
-    BigVecQ3(BigRat(BigInt("-9"), BigInt("16")), BigRat(BigInt("9"), BigInt("32")), BigRat(BigInt("9"), BigInt("32"))),
-    BigVecQ3(BigRat(BigInt("9"), BigInt("32")), BigRat(BigInt("-9"), BigInt("16")), BigRat(BigInt("9"), BigInt("32"))),
-    BigVecQ3(BigRat(BigInt("9"), BigInt("32")), BigRat(BigInt("9"), BigInt("32")), BigRat(BigInt("-9"), BigInt("16"))),
-    BigVecQ3(BigRat(BigInt("17"), BigInt("32")), BigRat(BigInt("3"), BigInt("32")), BigRat(BigInt("3"), BigInt("32"))),
-    BigVecQ3(BigRat(BigInt("3"), BigInt("32")), BigRat(BigInt("17"), BigInt("32")), BigRat(BigInt("3"), BigInt("32"))),
-    BigVecQ3(BigRat(BigInt("3"), BigInt("32")), BigRat(BigInt("3"), BigInt("32")), BigRat(BigInt("17"), BigInt("32"))),
-    BigVecQ3(BigRat(BigInt("-9"), BigInt("32")), BigRat(BigInt("-9"), BigInt("32")), BigRat(BigInt("-9"), BigInt("32")))
+    BigVecQ3(BigRat(BigInt("-27"), BigInt("64")), BigRat(BigInt("15"), BigInt("64")), BigRat(BigInt("15"), BigInt("64"))),
+    BigVecQ3(BigRat(BigInt("15"), BigInt("64")), BigRat(BigInt("-27"), BigInt("64")), BigRat(BigInt("15"), BigInt("64"))),
+    BigVecQ3(BigRat(BigInt("15"), BigInt("64")), BigRat(BigInt("15"), BigInt("64")), BigRat(BigInt("-27"), BigInt("64"))),
+    BigVecQ3(BigRat(BigInt("27"), BigInt("64")), BigRat(BigInt("3"), BigInt("32")), BigRat(BigInt("3"), BigInt("32"))),
+    BigVecQ3(BigRat(BigInt("3"), BigInt("32")), BigRat(BigInt("27"), BigInt("64")), BigRat(BigInt("3"), BigInt("32"))),
+    BigVecQ3(BigRat(BigInt("3"), BigInt("32")), BigRat(BigInt("3"), BigInt("32")), BigRat(BigInt("27"), BigInt("64"))),
+    BigVecQ3(BigRat(BigInt("-13"), BigInt("64")), BigRat(BigInt("-13"), BigInt("64")), BigRat(BigInt("-13"), BigInt("64")))
   };
   return v[i];
 }

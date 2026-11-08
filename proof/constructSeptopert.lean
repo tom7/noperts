@@ -1,41 +1,27 @@
-import Septopert
+import Septopert.IsNopert
+import Septopert.Integer
+import Septopert.PCap
 import Septopert.NativeExecutable
 import Septopert.PackedSolutionTree
 
 /-!
-Native executable that checks the Septopert's certificate data and, if it is
-all valid, constructs `IsNopert septopert`: not coplanar (a Lean proof) and
-not Rupert (`¬ IsRupert Septopert.verts`, from the checked data), as in
-`Septopert.isNopert_of_certificatesValid`.
+Native executable that checks Septopert's certificate data and constructs
+`IsNopert verts`, as in `Septopert.isNopert_of_certificatesValid` (cap 3 is certified by the P cap
+certificate of `Septopert.PCap`, checked natively; no assumption remains).
 
 Usage:
-  constructSeptopert <tube manifest.txt> <chart directory> <cap.cert> <arc.cert>
-    Checks everything: the cap certificate, the arc cap certificate, every tube
-    table and all four chart tables. On success it prints
-      instantiated: IsNopert septopert (the Septopert is a Nopert: not Rupert)
-    This is the verification of the result; the other modes are diagnostics.
+  constructSeptopert <tube manifest.txt> <chart directory> <cap.cert> <arc.cert> <axis.cert> <pcap-wp.cert> <pcap-u.cert>
+    Checks everything: the cap certificate (mirror normal), the arc cap certificate (cap 1), the
+    axis cap certificate (cap 2), the P cap certificate (cap 3: the two files are concatenated), every
+    tube table and all four chart tables, and prints
+      constructed: CapOk → ArcOk → AxisOk → PCapClaim → ¬ IsRupert verts
+      instantiated: IsNopert Septopert.intVerts (...)
   constructSeptopert chart <tube manifest.txt> <chart directory> <chart>
-    Checks one chart's table (all its rows and its root), without the tube
-    tables.
   constructSeptopert local <tube manifest.txt> <index>
-    Checks one tube table.
   constructSeptopert rows <tube manifest.txt> <chart> <job pack> [locals]
-    Checks every row of one search job's pack (row 0 is the job's root);
-    with `locals`, also the tube tables that its rows use.
+    As `constructSeptopertM18`'s diagnostic modes.
 
-The arguments: `manifest.txt` lists one tube pack per code triangle (in
-`ViewCover.codeTriangles` order), next to the packs; the chart directory holds
-`c<C>/t<T>.pack` (chart C = 0..3, code T = 0..21); `cap.cert` is the cap
-certificate, `arc.cert` the arc cap certificate. How to produce or obtain the data, and the running time and
-memory needed: see `septopert.md` and `BUILDING.md` at the root of the
-repository.
-
-The data is untrusted: it is decoded and checked natively, in parallel. Each
-chart pack is kept as bytes with an index and its rows are decoded on demand
-(`PackedSolutionTree.decodeCodeTablesLazy`); the charts are loaded, checked
-and dropped one at a time. Worker threads: the runtime's default (hardware
-threads); set `LEAN_NUM_THREADS` to use fewer. Each table is checked in 256
-row chunks.
+The data is untrusted and checked natively, in parallel (see `constructSeptopertM18.lean`).
 -/
 
 open Noperts.Pipeline
@@ -43,9 +29,6 @@ open Septopert
 open Septopert.SolutionTree
 open Septopert.NativeExecutable
 
-/-- Row chunks per table: many more than worker threads, so that expensive
-subtrees (contiguous row ranges) do not leave threads idle. The number of
-worker threads is the runtime's (hardware threads, or `LEAN_NUM_THREADS`). -/
 private def chunks : Nat := 256
 
 def readLocalTables (manifestPath : String) : IO SharedLocalTables := do
@@ -135,21 +118,35 @@ def chartMode (manifestPath directory : String) (chart : CayleyAtlas.ChartIndex)
     log s!"chart {chart}: all {table.size} rows valid (and the root)"
   else throw (IO.userError "invalid chart table")
 
-def fullMode (manifestPath directory capPath arcPath : String) : IO Unit := do
+def fullMode (manifestPath directory capPath arcPath axisPath pwpPath puPath : String) : IO Unit := do
   let cap := decodeCert (← IO.FS.lines capPath)
   log s!"cap: {cap.charts.length} charts"
   let capOk ← checkCap cap
   let arc := Noperts.Pipeline.ArcCap.decodeCert arcBlends (← IO.FS.lines arcPath)
   log s!"arc cap: {arc.length} charts"
   let arcOk ← checkArc arc
+  let axis := Noperts.Pipeline.ArcCap.decodeCert arcBlends (← IO.FS.lines axisPath)
+  log s!"axis cap: {axis.length} charts"
+  let axisOk ← checkAxis axis
+  let pcap := Noperts.Pipeline.ArcCap.decodeCert arcBlends ((← IO.FS.lines pwpPath) ++ (← IO.FS.lines puPath))
+  log s!"P cap (cap 3): {pcap.length} charts"
+  let t0 ← IO.monoMsNow
+  let pcapOk : PLift PCapOk ←
+    if h : pcapCertOkPar pcap = true then do
+      log s!"valid P cap certificate: {(← IO.monoMsNow) - t0} ms"
+      pure ⟨⟨pcap, pcapCertOk_of_par pcap h⟩⟩
+    else throw (IO.userError "the P cap certificate is not valid")
   let localTables ← readLocalTables manifestPath
   unless localTables.size = ViewCover.codeTriangles.size do
     throw (IO.userError s!"{localTables.size} tube tables for {ViewCover.codeTriangles.size} code triangles")
   let checked ← constructProof chunks chunks localTables
     (loadChart directory localTables.size)
-  let notRupert : ¬ IsRupert verts := checked.down capOk.down arcOk.down
-  let _nopert : IsNopert septopert := ⟨not_coplanar_septopert, septopert_eq_verts ▸ notRupert⟩
-  IO.println "instantiated: IsNopert septopert (the Septopert is a Nopert: not Rupert)"
+  let _notRupert : CapOk → ArcOk → AxisOk → PCapClaim → ¬ IsRupert verts := checked.down
+  let _fromCaps : PCapClaim → ¬ IsRupert verts := _notRupert capOk.down arcOk.down axisOk.down
+  IO.println "constructed: CapOk → ArcOk → AxisOk → PCapClaim → ¬ IsRupert verts"
+  let _nopert : IsNopert intVerts :=
+    isNopert_intVerts_of_not_isRupert_verts (_fromCaps (pCapClaim_of_ok pcapOk.down))
+  IO.println "instantiated: IsNopert Septopert.intVerts (CapOk, ArcOk, AxisOk, PCapOk checked natively; tube and chart tables checked)"
 
 def main (args : List String) : IO Unit := do
   match args with
@@ -163,9 +160,9 @@ def main (args : List String) : IO Unit := do
         log s!"tube table {k} valid"
       else throw (IO.userError "no such table")
   | ["chart", m, d, c] => chartMode m d (Fin.ofNat 4 c.toNat!)
-  | [m, d, cap, arc] => fullMode m d cap arc
+  | [m, d, cap, arc, axis, pwp, pu] => fullMode m d cap arc axis pwp pu
   | _ => throw (IO.userError <| "usage:\n" ++
-      "  constructSeptopert <tube manifest.txt> <chart directory> <cap.cert> <arc.cert>   (checks everything)\n" ++
+      "  constructSeptopert <tube manifest.txt> <chart directory> <cap.cert> <arc.cert> <axis.cert> <pcap-wp.cert> <pcap-u.cert>   (checks everything)\n" ++
       "  constructSeptopert chart <tube manifest.txt> <chart directory> <chart>\n" ++
       "  constructSeptopert local <tube manifest.txt> <index>\n" ++
       "  constructSeptopert rows <tube manifest.txt> <chart> <job pack> [locals]")

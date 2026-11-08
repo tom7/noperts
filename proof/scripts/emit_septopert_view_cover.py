@@ -9,8 +9,8 @@ s = AtlasProjectiveView.rootSign root (root 0: (1,1,1), root 1: (1,1,-1)):
 `empty` and `leaf` certificates use s in place of (1,1,1), and leaves only
 name triangles of the same root.
 
-Usage: emit_septopert_view_cover.py --bdd <codebdd.json> [--solid Septopert]
-       [--model_file septopert-model.txt] <output.lean>
+Usage: emit_septopert_view_cover.py --bdd <codebdd.json> [--solid SeptopertM18]
+       [--model_file septopert-m18-model.txt] <output.lean>
 (defaults: SeptopertClassic, septopert-classic-model.txt)
 """
 
@@ -93,7 +93,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--bdd", type=Path, required=True)
     parser.add_argument("--solid", default="SeptopertClassic",
-                        help="Lean namespace / module of the solid (SeptopertClassic or Septopert)")
+                        help="Lean namespace / module of the solid (SeptopertClassic or SeptopertM18)")
     parser.add_argument("--model_file", default="septopert-classic-model.txt",
                         help="model file given to codebdd (recorded in the header)")
     parser.add_argument("output", type=Path)

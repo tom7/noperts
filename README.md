@@ -34,37 +34,40 @@ The nopert verifications involve a huge case analysis. So when I say "verificati
 ![The Septopert, spinning around with confidence](septopert.gif)
 
 This is the Septopert, a minimal Nopert by vertex count (seven). It has
-nice integer coordinates:
+very nice integer coordinates:
 
 ```
-(-18,   9,   9)
-(  9, -18,   9)
-(  9,   9, -18)
-( 17,   3,   3)
-(  3,  17,   3)
-(  3,   3,  17)
-( -9,  -9,  -9)
+(-7,  7,  7)
+( 7, -7,  7)
+( 7,  7, -7)
+( 3, -4, -4)
+(-4,  3, -4)
+(-4, -4,  3)
+( 7,  7,  7)
 ```
 
 It has three-fold symmetry, so you see the same numbers over and over.
+And they are all 7s (3 + 4 = 7)!
 
-In the proof (`proof/Septopert.lean`) we divide everything by 32 so
-that the radius of the solid is below 1. Rupertness is invariant under
-scale and rigid transformations, of course. Since the denominator is a
-small power of 2, the float32 vertices in the [STL file](septopert.stl)
-are exact.
+The Lean statement (`proof/Septopert/Integer.lean`) is about exactly these
+points, and the vertices in the [STL file](septopert.stl) are exact.
 
-- Symmetry: C3v, with the 3-fold axis along (1,1,1).
+- Symmetry: C3v, with the 3-fold axis along (1, 1, 1).
 - Combinatorics: 10 triangular faces, vertex degrees 5,5,5 (0–2), 4,4,4
   (3–5) and 3 (vertex 6). Using the terminology of Johnson solids (though
   it is not one), it is a gyroelongated triangular pyramid (by analogy with
   J10 and J11).
-- Viewed down the axis from the small face: A Triforce. Triangle 3-4-5
-  projects to within 3.7% of the medial triangle of 0-1-2 (exactly: its
-  vertices are at 14/27 of the distance instead of 1/2), and vertex 6 is
-  hidden behind the center.
+- Viewed down the axis from the small face: A Triforce, exactly. Triangle
+  3-4-5 projects onto the medial triangle of 0-1-2, and vertex 6 is hidden
+  behind the center.
 - The apex, vertex 6, is a cube corner: its three edges are exactly
   perpendicular.
+- Its integer coordinates are the smallest possible for a Nopert of this
+  form: no member of the family can have all its integer coordinates in [-6, 6].
+
+See the [Septopert page](septopert.md) for details. Other members of the
+family we proved Nopert: [Septopert Classic](septopert-classic.md),
+[SeptopertM18](septopert-m18.md) and [SeptopertM12](septopert-m12.md).
 
 ## Prints Nopert
 
@@ -78,7 +81,7 @@ AI: Embarrassingly much AI is involved here. David did the initial attempt at pr
 
 Meanwhile we learned that earlier this year, Tony Zeng [proposed](https://arxiv.org/pdf/2604.26531) a much smaller solid (8 vertices) as a candidate Nopert. David was able to [verify it](https://github.com/dwrensha/StellatedTetrahedron/tree/main) in Lean using the improved machinery. 
 
-This stood as the smallest proven Nopert for about one day. I had been simultaneously racing to verify a 7-vertex shape, the Septopert described above, that I found with computer search using my adversarial solvers. It is only just barely Nopert, so the proof requires a large certificate (7 gigabytes of packed data). I verified that on Oct 9, taking about 4 hours on a 64-core behemoth. This shape belongs to a small family; the first one we found is called the [Septopert Classic](septopert-classic.md). About a month later I found a member with small integer coordinates at a special position and proved that nopert as well, which is now the canonical Septopert.
+This stood as the smallest proven Nopert for about one day. I had been simultaneously racing to verify a 7-vertex shape, now called [Septopert Classic](septopert-classic.md), that I found with computer search using my adversarial solvers. It is only just barely Nopert, so the proof requires a large certificate (7 gigabytes of packed data). I verified that on Oct 9, taking about 4 hours on a 64-core behemoth. This shape belongs to a small family, the Septopert family. About a month later I found a member with small integer coordinates at a special position and proved that nopert as well ([SeptopertM18](septopert-m18.md)). Then a census of the whole family by integer height turned up an even smaller one, made of 7s, in a doubly special position. That one is now the canonical Septopert.
 
 The natural question is then: Can we find a six-vertex Nopert? Or maybe we could prove that every tetrahedron is Rupert? Or every five-vertex solid? Starting from some ideas of Jason's from 2025 and I like to think some wise guidance from its academic advisor and taskmaster (me), Opus 5.5 was able to [prove this](minimality.md) in about a day (Lean kernel-only proof): All convex solids with six or fewer vertices are Rupert. That means that the Septopert is a minimal Nopert (by vertex count).
 

@@ -1,12 +1,23 @@
-# search/septopert: the Septopert's certificate search
+# search/septopert: the Septopert's certificate search (draft)
 
 The C++ search that produced the Septopert's certificate data (see
 [`../../septopert.md`](../../septopert.md)). The code it shares with the other
 solids' searches is in [`../common/`](../common/); this directory has the
 Septopert's model, its own tools and its rebuild script.
 
-Main entry: `rebuild.sh` (model, tube, tubepack, cap, search, pack, verify;
-the last stage runs the Lean checker in `../../proof`). Its output goes to
+Main entry: `rebuild.sh`. Its stages are model, tube, idcap, tubepack, cap,
+arccert, axiscert, pcapcert, search, pack and verify. The three cap stages
+regenerate the extra cap certificates from scratch with `capcert-m12.exe`
+(`--solid m7`): `arccert` (cap 1, the cube-corner arc and U cap, 146
+charts), `axiscert` (cap 2, the axis cap at (1,1,1), 52 charts) and `pcapcert`
+(cap 3, the P cap at P = (2,1,0): wedge WP, 26 charts, and U cap, 52 charts,
+turned into Lean trees by `../common/leaf2cert.py`). The last stage runs the
+Lean checker in `../../proof` on the **regenerated** certificates in the work
+directory (`arc.cert`, `axis-cap.cert`, `pcap-wp.cert`, `pcap-u.cert`); the
+copies committed in `../../proof/Septopert/data/` are reference copies (the search is
+multithreaded and need not reproduce them byte for byte). The separate
+checkers `checkSeptopertM12*` / `checkSeptopert{Arc,Axis,PCap}` take any one
+certificate file. Its output goes to
 `../../work/` (`--work DIR` moves it).
 
 Build with `make` (after `../../get-cc-lib.sh`; see `../../BUILDING.md`):
@@ -26,9 +37,10 @@ tool and test.
 - `export-codetrees-pack.exe`: tube trees to Lean packs.
 - `capcert-septopert.exe` (`capcert-septopert.cc`, the Septopert's own):
   cap certificate at the mirror normal.
-- `capcert-neo.exe` (`capcert-neo.cc`): the arc cap certificate, near the view
-  (2, 2, -1)/3 and the arc from it towards the mirror normal.
-  `arc-cap.txt`: the views and rotations the arc cap claims (`tubecode` and
+- `capcert-m12.exe` (`capcert-m12.cc`, multi-solid: `--solid m7|m12`): the arc,
+  axis and P cap certificates (stages arccert, axiscert, pcapcert).
+- `capcert-neo.exe` (`capcert-neo.cc`): the earlier arc cap tool (M18 constants).
+- `arc-cap.txt`: the views near (2, 2, -1)/3 and the arc towards the mirror normal: the views and rotations the arc cap claims (`tubecode` and
   `search5d --piece_caps`; Lean: `Septopert.arcLeafOk`).
 - `search5d.exe`: parallel journaled 5D search.
 - `pack5d.exe`: 5D journals to per-code Lean packs.

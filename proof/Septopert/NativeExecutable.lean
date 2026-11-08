@@ -12,7 +12,7 @@ public import Pipeline.SparseLocalViewTree
 The DH's `NativeExecutable` re-targeted to the Septopert: a release-mode program
 checks the shared identity-tube tables and the four chart tables in parallel
 (data-only, untrusted decoders) and keeps the semantic validity proofs in `PLift`;
-`constructProof` returns `CapOk → ArcOk → ¬ IsRupert verts`, and the certificate
+`constructProof` returns `CapOk → ArcOk → AxisOk → PCapClaim → ¬ IsRupert verts`, and the certificate
 checks supply the hypotheses: the cap's (`CapsNative.certOkPar`, `certOk_of_par`)
 `CapOk`, the arc cap's (`arcCertOkPar`, `arcCertOk_of_par`) `ArcOk`. The view
 cover needs no native check (`ViewCover.coverValid_eq` is kernel-checked).
@@ -138,8 +138,9 @@ structure CheckedChartTables where
   valid : ∀ chart, (tables chart).Valid
 
 theorem CheckedChartTables.notRupert (checked : CheckedChartTables) :
-    CapOk → ArcOk → ¬ IsRupert verts :=
-  fun hcap harc => not_rupert_of_valid_tables checked.tables checked.charts checked.valid hcap harc
+    CapOk → ArcOk → AxisOk → PCapClaim → ¬ IsRupert verts :=
+  fun hcap harc haxis hpc =>
+    not_rupert_of_valid_tables checked.tables checked.charts checked.valid hcap harc haxis hpc
 
 /-- Check one chart's table and keep only the fact that a valid table for
 the chart exists (so the table's data can be freed before the next chart). -/
@@ -153,7 +154,7 @@ def checkChart (taskCount : Nat) (shared : SharedLocalTables)
   let valid ← checkGlobal s!"{chart}" taskCount table.1 hs
   pure ⟨⟨table.1, table.2.1, valid.down⟩⟩
 
-/-- Check all tables and construct `CapOk → ArcOk → ¬ IsRupert verts`. The chart
+/-- Check all tables and construct `CapOk → ArcOk → AxisOk → PCapClaim → ¬ IsRupert verts`. The chart
 tables are loaded one at a time, as a function of the checked shared-local
 tables; the two equations keep a loader from checking rows under the wrong
 chart or tubes. Each chart's data is dropped once it is checked. -/
@@ -161,7 +162,7 @@ def constructProof (localTaskCount globalTaskCount : Nat)
     (localTables : SharedLocalTables)
     (loadChart : (shared : SharedLocalTables) → (chart : CayleyAtlas.ChartIndex) →
       IO {table : SolutionTree.Table // table.chart = chart ∧ table.sharedLocal = shared}) :
-    IO (PLift (CapOk → ArcOk → ¬ IsRupert verts)) := do
+    IO (PLift (CapOk → ArcOk → AxisOk → PCapClaim → ¬ IsRupert verts)) := do
   let checkedLocal ← checkLocalAll localTaskCount localTables
   let shared := localTables
   have sharedValid : SharedLocalValid shared := checkedLocal.down
@@ -169,7 +170,7 @@ def constructProof (localTaskCount globalTaskCount : Nat)
   let valid1 ← checkChart globalTaskCount shared sharedValid 1 (← loadChart shared 1)
   let valid2 ← checkChart globalTaskCount shared sharedValid 2 (← loadChart shared 2)
   let valid3 ← checkChart globalTaskCount shared sharedValid 3 (← loadChart shared 3)
-  have notRupert : CapOk → ArcOk → ¬ IsRupert verts := by
+  have notRupert : CapOk → ArcOk → AxisOk → PCapClaim → ¬ IsRupert verts := by
     obtain ⟨t0, c0, v0⟩ := valid0.down
     obtain ⟨t1, c1, v1⟩ := valid1.down
     obtain ⟨t2, c2, v2⟩ := valid2.down
@@ -191,10 +192,10 @@ def constructProof (localTaskCount globalTaskCount : Nat)
         · exact v2
         · exact v3 }
     exact checked.notRupert
-  log "constructed: CapOk → ArcOk → ¬ IsRupert verts"
+  log "constructed: CapOk → ArcOk → AxisOk → PCapClaim → ¬ IsRupert verts"
   pure ⟨notRupert⟩
 
-/-- Check a cap certificate (`capcert-septopert.exe --export`) natively and return `CapOk`. -/
+/-- Check a cap certificate (`capcert-m7.exe --export`) natively and return `CapOk`. -/
 def checkCap (c : Cap.CapCert) : IO (PLift CapOk) := do
   let t0 ← IO.monoMsNow
   if h : certOkPar c = true then
@@ -212,5 +213,14 @@ def checkArc (c : ArcCap.Cert) : IO (PLift ArcOk) := do
     pure ⟨⟨c, arcCertOk_of_par c h⟩⟩
   else
     throw (IO.userError "the arc cap certificate is not valid")
+
+/-- Check an axis cap certificate (`exportaxis.sh`) natively and return `AxisOk`. -/
+def checkAxis (c : ArcCap.Cert) : IO (PLift AxisOk) := do
+  let t0 ← IO.monoMsNow
+  if h : axisCertOkPar c = true then
+    log s!"valid axis cap certificate: {(← IO.monoMsNow) - t0} ms"
+    pure ⟨⟨c, axisCertOk_of_par c h⟩⟩
+  else
+    throw (IO.userError "the axis cap certificate is not valid")
 
 end Septopert.NativeExecutable

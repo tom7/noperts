@@ -1,10 +1,11 @@
 name = "noperts"
-defaultTargets = ["Noperts", "SeptopertClassic", "Septopert", "Minimality", "ProofOfMainTheorem",
+defaultTargets = ["Noperts", "SeptopertClassic", "SeptopertM18", "Minimality", "ProofOfMainTheorem",
   "MinimalityExtra", "ProofOfMinimalityExtra",
   "DeltoidalHexecontahedron", "PentagonalHexecontahedron", "SnubDodecahedron", "SnubCube", "Nopert231",
-  "constructSeptopertClassic", "checkSeptopertClassicCap", "constructSeptopert", "checkSeptopertCap", "checkSeptopertArc", "constructDeltoidalHexecontahedron",
+  "constructSeptopertClassic", "checkSeptopertClassicCap", "constructSeptopertM18", "checkSeptopertM18Cap", "checkSeptopertM18Arc", "checkSeptopertM12Arc", "checkSeptopertM12Axis", "checkSeptopertM12PCap", "constructSeptopertM12", "checkSeptopertArc", "checkSeptopertAxis", "checkSeptopertPCap", "constructSeptopert", "constructDeltoidalHexecontahedron",
   "constructPentagonalHexecontahedron", "constructSnubDodecahedron", "constructSnubCube",
   "checkSnubCubeCap", "constructNopert231",
+  "SeptopertFamily", "checkSeptopertFamily",
   "Tests"]
 
 [leanOptions]
@@ -55,12 +56,20 @@ name = "SeptopertClassic"
 globs = ["SeptopertClassic", "SeptopertClassic.+"]
 
 [[lean_lib]]
-name = "Septopert"
-globs = ["Septopert", "Septopert.+"]
+name = "SeptopertM18"
+globs = ["SeptopertM18", "SeptopertM18.+"]
 
 [[lean_lib]]
 name = "Minimality"
 globs = ["Minimality", "Minimality.+"]
+
+[[lean_lib]]
+name = "SeptopertM12"
+globs = ["SeptopertM12", "SeptopertM12.+"]
+
+[[lean_lib]]
+name = "Septopert"
+globs = ["Septopert", "Septopert.+"]
 
 [[lean_lib]]
 name = "ProofOfMainTheorem"
@@ -98,6 +107,10 @@ globs = ["SnubDodecahedron", "SnubDodecahedron.+"]
 name = "Nopert231"
 globs = ["Nopert231", "Nopert231.+"]
 
+[[lean_lib]]
+name = "SeptopertFamily"
+globs = ["SeptopertFamily", "SeptopertFamily.+"]
+
 [[lean_exe]]
 name = "checkSeptopertClassicCap"
 root = "checkSeptopertClassicCap"
@@ -119,18 +132,58 @@ root = "constructSeptopertClassic"
 buildType = "release"
 
 [[lean_exe]]
+name = "constructSeptopertM18"
+root = "constructSeptopertM18"
+buildType = "release"
+
+[[lean_exe]]
+name = "checkSeptopertM18Cap"
+root = "checkSeptopertM18Cap"
+buildType = "release"
+
+[[lean_exe]]
+name = "checkSeptopertM18Arc"
+root = "checkSeptopertM18Arc"
+buildType = "release"
+
+[[lean_exe]]
+name = "constructSeptopertM12"
+root = "constructSeptopertM12"
+buildType = "release"
+
+[[lean_exe]]
+name = "checkSeptopertM12Arc"
+root = "checkSeptopertM12Arc"
+buildType = "release"
+
+[[lean_exe]]
+name = "checkSeptopertM12Axis"
+root = "checkSeptopertM12Axis"
+buildType = "release"
+
+[[lean_exe]]
 name = "constructSeptopert"
 root = "constructSeptopert"
 buildType = "release"
 
 [[lean_exe]]
-name = "checkSeptopertCap"
-root = "checkSeptopertCap"
+name = "checkSeptopertArc"
+root = "checkSeptopertArc"
 buildType = "release"
 
 [[lean_exe]]
-name = "checkSeptopertArc"
-root = "checkSeptopertArc"
+name = "checkSeptopertAxis"
+root = "checkSeptopertAxis"
+buildType = "release"
+
+[[lean_exe]]
+name = "checkSeptopertM12PCap"
+root = "checkSeptopertM12PCap"
+buildType = "release"
+
+[[lean_exe]]
+name = "checkSeptopertPCap"
+root = "checkSeptopertPCap"
 buildType = "release"
 
 [[lean_exe]]
@@ -151,4 +204,9 @@ buildType = "release"
 [[lean_exe]]
 name = "constructNopert231"
 root = "constructNopert231"
+buildType = "release"
+
+[[lean_exe]]
+name = "checkSeptopertFamily"
+root = "checkSeptopertFamily"
 buildType = "release"

@@ -1,72 +1,72 @@
 solid septopert
-  facet normal -0.425797036 -0.425797036 0.798369443
+  facet normal -0.408248290 -0.408248290 0.816496581
     outer loop
-      vertex -0.5625 0.28125 0.28125
-      vertex 0.28125 -0.5625 0.28125
-      vertex 0.09375 0.09375 0.53125
+      vertex -7 7 7
+      vertex -4 -4 3
+      vertex 7 -7 7
     endloop
   endfacet
-  facet normal -0.666666667 -0.666666667 0.333333333
+  facet normal -0.000000000 0.000000000 1.000000000
     outer loop
-      vertex -0.5625 0.28125 0.28125
-      vertex -0.28125 -0.28125 -0.28125
-      vertex 0.28125 -0.5625 0.28125
+      vertex -7 7 7
+      vertex 7 -7 7
+      vertex 7 7 7
     endloop
   endfacet
-  facet normal -0.425797036 0.798369443 -0.425797036
+  facet normal -0.408248290 0.816496581 -0.408248290
     outer loop
-      vertex -0.5625 0.28125 0.28125
-      vertex 0.09375 0.53125 0.09375
-      vertex 0.28125 0.28125 -0.5625
+      vertex -7 7 7
+      vertex 7 7 -7
+      vertex -4 3 -4
     endloop
   endfacet
-  facet normal -0.666666667 0.333333333 -0.666666667
+  facet normal -0.000000000 1.000000000 -0.000000000
     outer loop
-      vertex -0.5625 0.28125 0.28125
-      vertex 0.28125 0.28125 -0.5625
-      vertex -0.28125 -0.28125 -0.28125
+      vertex -7 7 7
+      vertex 7 7 7
+      vertex 7 7 -7
     endloop
   endfacet
-  facet normal -0.0671913141 0.705508798 0.705508798
+  facet normal -0.962250449 -0.192450090 -0.192450090
     outer loop
-      vertex -0.5625 0.28125 0.28125
-      vertex 0.09375 0.09375 0.53125
-      vertex 0.09375 0.53125 0.09375
+      vertex -7 7 7
+      vertex -4 3 -4
+      vertex -4 -4 3
     endloop
   endfacet
-  facet normal 0.798369443 -0.425797036 -0.425797036
+  facet normal 0.816496581 -0.408248290 -0.408248290
     outer loop
-      vertex 0.28125 -0.5625 0.28125
-      vertex 0.28125 0.28125 -0.5625
-      vertex 0.53125 0.09375 0.09375
+      vertex 7 -7 7
+      vertex 3 -4 -4
+      vertex 7 7 -7
     endloop
   endfacet
-  facet normal 0.333333333 -0.666666667 -0.666666667
+  facet normal 1.000000000 -0.000000000 0.000000000
     outer loop
-      vertex 0.28125 -0.5625 0.28125
-      vertex -0.28125 -0.28125 -0.28125
-      vertex 0.28125 0.28125 -0.5625
+      vertex 7 -7 7
+      vertex 7 7 -7
+      vertex 7 7 7
     endloop
   endfacet
-  facet normal 0.705508798 -0.0671913141 0.705508798
+  facet normal -0.192450090 -0.962250449 -0.192450090
     outer loop
-      vertex 0.28125 -0.5625 0.28125
-      vertex 0.53125 0.09375 0.09375
-      vertex 0.09375 0.09375 0.53125
+      vertex 7 -7 7
+      vertex -4 -4 3
+      vertex 3 -4 -4
     endloop
   endfacet
-  facet normal 0.705508798 0.705508798 -0.0671913141
+  facet normal -0.192450090 -0.192450090 -0.962250449
     outer loop
-      vertex 0.28125 0.28125 -0.5625
-      vertex 0.09375 0.53125 0.09375
-      vertex 0.53125 0.09375 0.09375
+      vertex 7 7 -7
+      vertex 3 -4 -4
+      vertex -4 3 -4
     endloop
   endfacet
-  facet normal 0.577350269 0.577350269 0.577350269
+  facet normal -0.577350269 -0.577350269 -0.577350269
     outer loop
-      vertex 0.53125 0.09375 0.09375
-      vertex 0.09375 0.53125 0.09375
-      vertex 0.09375 0.09375 0.53125
+      vertex 3 -4 -4
+      vertex -4 -4 3
+      vertex -4 3 -4
     endloop
   endfacet
 endsolid septopert

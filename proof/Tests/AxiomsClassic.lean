@@ -3,7 +3,7 @@ import SeptopertClassic
 /-!
 # Septopert Classic uses only the standard axioms
 
-Septopert Classic cannot be imported together with the Septopert (both define
+Septopert Classic cannot be imported together with the SeptopertM18 (both define
 `MatrixPose.mirrorTie`), so its check is in its own file; see `Tests/Axioms.lean`
 for the others.
 -/

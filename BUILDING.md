@@ -4,7 +4,10 @@ How the repository is laid out and how to build it. Each result has its own
 page with its statement, trust model and reproduction steps:
 
 - [septopert.md](septopert.md): the Septopert, a 7-vertex nopert (a Lean
-  verification backed by certificate data);
+  verification backed by certificate data; `proof/Septopert/`, the witness of
+  `ProofOfMainTheorem`);
+- [septopert-m12.md](septopert-m12.md) and [septopert-m18.md](septopert-m18.md):
+  SeptopertM12 and SeptopertM18, two more 7-vertex noperts of the family (likewise);
 - [septopert-classic.md](septopert-classic.md): Septopert Classic, the first
   7-vertex nopert (likewise);
 - [deltoidal-hexecontahedron.md](deltoidal-hexecontahedron.md): the deltoidal
@@ -45,9 +48,13 @@ page with its statement, trust model and reproduction steps:
     domain of `Pipeline/FivefoldReduction.lean`. The snub dodecahedron
     and #231 check identity-tube rows against tangent-cone generators
     (`Pipeline/SparseSupport.lean`).
-  - `Septopert`: entry point `proof/Septopert.lean`, details in
-    `proof/Septopert/`. Built like Septopert Classic below, with one more
-    certificate, the arc cap (`Septopert/ArcCap.lean`, `Septopert/ArcLeaf.lean`;
+  - `Septopert`: entry point `proof/Septopert.lean`, details in `proof/Septopert/`
+    (headline `Septopert/IsNopert.lean`). Built like SeptopertM18 below, with two more
+    cap certificates (the axis cap, `Septopert/AxisCap.lean`, and the P cap, `Septopert/PCap.lean`).
+    `SeptopertM12` (`proof/SeptopertM12.lean`, `proof/SeptopertM12/`) is a sibling solid with the same structure.
+  - `SeptopertM18`: entry point `proof/SeptopertM18.lean`, details in
+    `proof/SeptopertM18/`. Built like Septopert Classic below, with one more
+    certificate, the arc cap (`SeptopertM18/ArcCap.lean`, `SeptopertM18/ArcLeaf.lean`;
     `Pipeline/ArcCap*.lean`).
   - `SeptopertClassic`: entry point `proof/SeptopertClassic.lean`, details in
     `proof/SeptopertClassic/` (its model, `SolidModel.lean`; its own solution tree,
@@ -92,11 +99,22 @@ page with its statement, trust model and reproduction steps:
     `proof/Nopert231/` (its model, `SolidModel.lean`; its data, tangent cones
     and view cover; idealized #231, `Ideal231.lean`; and its own solution
     tree, with the fivefold reduction).
+  - `SeptopertFamily`: entry point `proof/SeptopertFamily.lean`, details in
+    `proof/SeptopertFamily/`: no integer member of the Septopert family of
+    height below 7 is a nopert (`not_isNopert_of_familyHeight_lt_seven`),
+    given that its certificate table (`SeptopertFamily/data/leastheight.txt`)
+    passes the integer check of `SeptopertFamily/Check.lean`
+    (`LeastHeightValid`). Each tuple is coplanar, has a point in the hull of
+    the others (then at most 6 points span it: `isRupert_of_card_le_six`), or
+    has an explicit rational Rupert passage.
   - `Tests`: checks that run at build time: every headline uses only the
     standard axioms, no solid's model is in scope without opening its
     namespace, and the chart-3 table is valid for each solid that uses it.
-  - Executables: `constructSeptopert` (checks the Septopert's certificate
-    data), `checkSeptopertCap` and `checkSeptopertArc` (check only its cap and
+  - Executables: `constructSeptopert` (checks the Septopert's certificate data),
+    `checkSeptopertArc`, `checkSeptopertAxis` and `checkSeptopertPCap` (check only its arc,
+    axis and P cap certificates), and likewise `constructSeptopertM12`, `checkSeptopertM12Arc`,
+    `checkSeptopertM12Axis`, `checkSeptopertM12PCap`; `constructSeptopertM18` (checks the SeptopertM18's certificate
+    data), `checkSeptopertM18Cap` and `checkSeptopertM18Arc` (check only its cap and
     arc cap certificates), `constructSeptopertClassic` (checks Septopert Classic's certificate
     data), `checkSeptopertClassicCap` (checks only its cap certificate),
     `constructDeltoidalHexecontahedron` (checks the deltoidal
@@ -104,7 +122,10 @@ page with its statement, trust model and reproduction steps:
     (checks the pentagonal hexecontahedron's), `constructSnubDodecahedron`
     (checks the snub dodecahedron's), `constructSnubCube` (checks the snub
     cube's, including its cap certificate), `checkSnubCubeCap` (checks only
-    the cap certificate) and `constructNopert231` (checks candidate #231's).
+    the cap certificate), `constructNopert231` (checks candidate #231's) and
+    `checkSeptopertFamily` (checks the Septopert family table, in about 5 s:
+    `lake exe checkSeptopertFamily SeptopertFamily/data/leastheight.txt` in
+    `proof/`).
 
   License: Apache-2.0 (`proof/LICENSE`). Derived from the
   [Noperthedron](https://github.com/jcreedcmu/Noperthedron) formalization,
@@ -113,8 +134,8 @@ page with its statement, trust model and reproduction steps:
   - `search/common/`: the code the searches share (the identity tube, the
     identity blow-up certificates `idcap.cc` with `kpoly.h`, the 5D search
     and packing, `codebdd`, unit tests) and their build rules, `common.mk`.
-  - `search/septopert/`, `search/septopert-classic/`, `search/dh/`, `search/ph/`, `search/sd/`,
-    `search/sc/`, `search/nopert231/`: the searches for the Septopert, Septopert Classic, the
+  - `search/septopert/`, `search/septopert-m12/`, `search/septopert-m18/`, `search/septopert-classic/`, `search/dh/`, `search/ph/`, `search/sd/`,
+    `search/sc/`, `search/nopert231/`: the searches for the Septopert, SeptopertM12, SeptopertM18, Septopert Classic, the
     deltoidal hexecontahedron, the pentagonal hexecontahedron, the snub
     dodecahedron, the snub cube and candidate #231, each with its `rebuild.sh` (see the result's page),
     model files, Lean data generators, own tools, and `solid.h` (the
@@ -149,7 +170,7 @@ page with its statement, trust model and reproduction steps:
 - Linux
 - elan (the toolchain is pinned in `proof/lean-toolchain`, v4.34.1, with Mathlib v4.34.1)
 - for `search/`: clang, GMP, svn, python3 (python3 regenerates Lean data
-  files in the model stages: the Septopert's and Septopert Classic's view covers with
+  files in the model stages: the SeptopertM18's and Septopert Classic's view covers with
   `proof/scripts/emit_septopert_view_cover.py`, the other solids' data with
   the scripts in their `search/<solid>/` directories)
 - optionally `systemd-run --user`, which the rebuild scripts use to cap

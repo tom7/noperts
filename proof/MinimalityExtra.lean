@@ -1526,7 +1526,7 @@ def ExistsOpenFamilyWithoutUnimodalView : Prop :=
 with the exact integer coordinates of `septopert-classic.md` (the scale is `2^20` times that of the
 main development). Every neighborhood of them contains seven different points that are Rupert. So
 Septopert Classic is not in the interior of the set of Noperts. (Nothing is claimed here about the
-Septopert, M18.) The nearby shapes move the last vertex in
+other proved members of the family, the Septopert (M7) and SeptopertM18.) The nearby shapes move the last vertex in
 the first coordinate. -/
 def SeptopertClassicIsLimitOfRupert : Prop :=
   ∀ ε : ℝ, 0 < ε → ∃ x : Fin 7 → ℝ³,

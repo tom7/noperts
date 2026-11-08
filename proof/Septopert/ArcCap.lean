@@ -1,21 +1,21 @@
 module
 
 public import Septopert.Model
-public import Pipeline.ArcCapDecode
+public import Septopert.ArcClaim
 public import Pipeline.IdCap
 
 @[expose] public section
 
 /-!
-# The arc cap of the 7-vertex solid (M18)
+# The arc cap of Septopert (cap 1: U and the arc)
 
-Near the view U = (2, 2, −1) and the arc of views from U in the direction −E₁ the solid has
-near-identity poses that no width closes (`capcert-neo`). `arcCertOk`: an arc cap certificate
-(`Pipeline.ArcCapDecode`) over ℚ, for this solid's vertices, the apex frame E₁ = (−1, 2, 2),
-E₂ = (2, −1, 2), X = (2, 2, −1) and `ArcCap.neoParams`.
+`arcCertOk`: an arc cap certificate (`Pipeline.ArcCapDecode`) over ℚ for Septopert's vertices, the
+apex frame E₁ = (−1, 2, 2), E₂ = (2, −1, 2), X = (2, 2, −1) (the cube corner at v₆: v₀ − v₆, v₁ − v₆,
+v₂ − v₆ = (14/64) E₁, E₂, X) and `m7Params`. The certificate is exported by
+`m7cap/exportm7.sh` (`capcert-m7 --export`).
 
 `arc_not_rupert`: a checked certificate rules out every pose (any offset) with view in the
-polygon `InArc` and a rotation within 1/46 in Cayley coordinates.
+polygon `InArc` (the half square and the wedge) and a rotation within 1/46 in Cayley coordinates.
 -/
 
 namespace Septopert
@@ -25,18 +25,15 @@ open Noperts.Pipeline
 open Noperts.Pipeline.ArcCap
 open Noperts.Pipeline.KCap
 
-/-- The apex frame. -/
-def apexFrame : ArcCap.Frame ℚ := ⟨![-1, 2, 2], ![2, -1, 2], ![2, 2, -1]⟩
+/-- The apex frame (as for M18). -/
+def apexFrame : ArcCap.Frame ℚ := { E1 := ![-1, 2, 2], E2 := ![2, -1, 2], X := ![2, 2, -1], k1 := 1 / 3, k2 := 1 / 3, k3 := 1 / 3 }
 
 /-- The solid's vertices. -/
 def arcVerts : Array (KCap.KVec ℚ) := Array.ofFn fun i : Fin 7 => fun j => vertexQ i j
 
-/-- Blend of the certificate: v₄'s image on the segment v₀ v₅ at t*. -/
-def arcBlends : List (ℕ × ℕ × ℚ) := [(0, 5, 11 / 32)]
+def arcCertOk (c : ArcCap.Cert) : Bool := certCheck arcVerts apexFrame m7Params c
 
-def arcCertOk (c : ArcCap.Cert) : Bool := certCheck arcVerts apexFrame neoParams c
-
-def arcCertOkPar (c : ArcCap.Cert) : Bool := certCheckPar arcVerts apexFrame neoParams c
+def arcCertOkPar (c : ArcCap.Cert) : Bool := certCheckPar arcVerts apexFrame m7Params c
 
 theorem arcCertOk_of_par (c : ArcCap.Cert) (h : arcCertOkPar c = true) : arcCertOk c = true :=
   certCheck_of_par _ _ _ c h
@@ -70,9 +67,9 @@ theorem arc_not_rupert (c : ArcCap.Cert) (hc : arcCertOk c = true) (p : MatrixPo
     (w : Fin 3 → ℝ) (hR : p.relativeRotation = cayleyMatrix (w 0) (w 1) (w 2))
     (hw : rdot w w ≤ (1 / 46) ^ 2) : ¬ RupertPose p solid := by
   rw [← hull_arcVerts]
-  exact arc_not_rupert_of_norm hc apexFrame_ok p hv w hR hw
+  exact arc_not_rupert_of_norm_m7 hc apexFrame_ok p hv w hR hw
 
-/-- The claim of an arc cap, for the solution tree. -/
+/-- The claim of the arc cap. -/
 def ArcHolds : Prop :=
   ∀ (p : MatrixPose), InArc p.view → ∀ w : Fin 3 → ℝ,
     p.relativeRotation = cayleyMatrix (w 0) (w 1) (w 2) → rdot w w ≤ (1 / 46) ^ 2 → ¬ RupertPose p solid

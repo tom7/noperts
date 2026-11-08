@@ -1,7 +1,7 @@
 module
 
 public import Pipeline.CapClaim
-public import Septopert.Model
+public import Septopert.SymModel
 
 @[expose] public section
 
@@ -11,7 +11,7 @@ public import Septopert.Model
 Near the mirror normal x = (1, 0, −1) (the normal of the mirror swapping the
 first and third coordinates) the mirror tie H_u R Q (Q = `mirrorQMat 1` = H_x)
 approaches the identity, so poses there are certified by a cap certificate
-(`capcert-septopert.cc --export`, the isotropic (u0) charts of the
+(`capcert-m7.cc --export`, the isotropic (u0) charts of the
 deltoidal hexecontahedron's caps over ℚ, with two-sided width witnesses).
 The frame is rational and unnormalized: x = (1, 0, −1), e₁ = (0, 1, 0),
 e₂ = (1, 0, 1).

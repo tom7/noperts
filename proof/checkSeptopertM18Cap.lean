@@ -1,23 +1,23 @@
-import Septopert.CapsNative
+import SeptopertM18.CapsNative
 
 /-!
-Diagnostic: checks only the Septopert's cap certificate and instantiates the
-cap theorem (`Septopert.capHolds_of_cert`; the region form is
-`Septopert.cap_not_rupert`). The full verification, `constructSeptopert`,
+Diagnostic: checks only the SeptopertM18's cap certificate and instantiates the
+cap theorem (`SeptopertM18.capHolds_of_cert`; the region form is
+`SeptopertM18.cap_not_rupert`). The full verification, `constructSeptopertM18`,
 checks the cap certificate too.
 
-Usage: `checkSeptopertCap <cap.cert> [diag]` (`diag`: per-chart results).
+Usage: `checkSeptopertM18Cap <cap.cert> [diag]` (`diag`: per-chart results).
 -/
 
 open Noperts.Pipeline
 open Noperts.Pipeline.Cap
-open Septopert
+open SeptopertM18
 
 def main (args : List String) : IO Unit := do
   let (file, diag) ← match args with
     | [f] => pure (f, false)
     | [f, "diag"] => pure (f, true)
-    | _ => throw (IO.userError "usage: checkSeptopertCap <cap.cert> [diag]")
+    | _ => throw (IO.userError "usage: checkSeptopertM18Cap <cap.cert> [diag]")
   let c := decodeCert (← IO.FS.lines file)
   IO.println s!"cap: {c.charts.length} charts, {c.verts.size} vertices, {c.wits.size} witnesses, mu0 {c.pr.mu0}"
   if diag then
@@ -30,6 +30,6 @@ def main (args : List String) : IO Unit := do
   if h : certOkPar c = true then
     IO.println s!"valid cap certificate: {(← IO.monoMsNow) - t0} ms"
     let _holds : CapHolds := capHolds_of_cert c (certOk_of_par c h)
-    IO.println "instantiated: CapHolds (Septopert.capHolds_of_cert)"
+    IO.println "instantiated: CapHolds (SeptopertM18.capHolds_of_cert)"
   else
     throw (IO.userError s!"the cap certificate is not valid ({(← IO.monoMsNow) - t0} ms)")

@@ -12,7 +12,7 @@ public import Pipeline.KCapDecode
 the pieces): per chart a line `chart u <side> <kind> <axis> <sign>` or
 `chart w <piece> <kind> <a> <b> <c>`, then the tree in preorder as for
 `KCap.parseTree`. Nothing here is trusted: `certCheckPar` is `certCheck` with the
-frontier subtrees of every chart as native tasks (`certCheck_of_par`).
+frontier subtrees (depth 20) of every chart as native tasks (`certCheck_of_par`).
 -/
 
 namespace Noperts.Pipeline
@@ -28,31 +28,34 @@ def entry (c : Cert) (id : ChartId) : Option KTree :=
   (c.find? fun e => decide (e.1 = id)).map (·.2)
 
 /-- The work items: per required chart its data, computed once, and the frontier of its tree. -/
-def items (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (c : Cert) :
+def items (req : List ChartId) (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (c : Cert) :
     Array (ChartId × ChartData K × KTree × Box) :=
-  (requiredCharts.flatMap fun id =>
+  (req.flatMap fun id =>
     match entry c id with
     | some t =>
       let cd := chartCd V fr pr id
-      (t.frontier 12 (rootBox pr id)).map fun e => (id, cd, e.1, e.2)
+      (t.frontier 20 (rootBox pr id)).map fun e => (id, cd, e.1, e.2)
     | none => []).toArray
 
 def itemOk (V : Array (KCap.KVec K)) (pr : Params) (it : ChartId × ChartData K × KTree × Box) : Bool :=
   it.2.2.1.check (fun l b => l.checkBy V (red it.1) it.2.1 b) (coneOk pr it.1) it.2.2.2
 
-def certCheckPar (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (c : Cert) : Bool :=
-  let its := items V fr pr c
-  requiredCharts.all (fun id => (entry c id).isSome) &&
+def certCheckParOn (req : List ChartId) (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (c : Cert) : Bool :=
+  let its := items req V fr pr c
+  req.all (fun id => (entry c id).isSome) &&
     ParallelBool.allParB (fun i => match its[i]? with
       | some it => itemOk V pr it
       | none => true) its.size 512
 
-theorem certCheck_of_par (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (c : Cert)
-    (h : certCheckPar V fr pr c = true) : certCheck V fr pr c = true := by
-  simp only [certCheckPar, Bool.and_eq_true, List.all_eq_true] at h
+def certCheckPar (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (c : Cert) : Bool :=
+  certCheckParOn requiredCharts V fr pr c
+
+theorem certCheckOn_of_par (req : List ChartId) (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (c : Cert)
+    (h : certCheckParOn req V fr pr c = true) : certCheckOn req V fr pr c = true := by
+  simp only [certCheckParOn, Bool.and_eq_true, List.all_eq_true] at h
   obtain ⟨hsome, hpar⟩ := h
   have hall := ParallelBool.all_of_parB hpar
-  simp only [certCheck, List.all_eq_true]
+  simp only [certCheckOn, List.all_eq_true]
   intro id hid
   obtain ⟨t, ht⟩ := Option.isSome_iff_exists.mp (hsome id hid)
   have hent : ∃ e ∈ c, e.1 = id ∧ e.2 = t := by
@@ -66,19 +69,23 @@ theorem certCheck_of_par (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) 
   refine ⟨he1, ?_⟩
   rw [he2]
   unfold chartCheck
-  apply KTree.check_of_frontier _ _ 12
+  apply KTree.check_of_frontier _ _ 20
   intro f hf
-  have hmem : (id, chartCd V fr pr id, f.1, f.2) ∈ (items V fr pr c).toList := by
+  have hmem : (id, chartCd V fr pr id, f.1, f.2) ∈ (items req V fr pr c).toList := by
     simp only [items, List.toList_toArray, List.mem_flatMap]
     exact ⟨id, hid, by rw [ht]; exact List.mem_map.mpr ⟨f, hf, rfl⟩⟩
   obtain ⟨i, hi, hfi⟩ := List.getElem_of_mem hmem
-  have hi' : i < (items V fr pr c).size := by simpa using hi
+  have hi' : i < (items req V fr pr c).size := by simpa using hi
   have := hall i hi'
-  have hget : (items V fr pr c)[i]? = some (id, chartCd V fr pr id, f.1, f.2) := by
+  have hget : (items req V fr pr c)[i]? = some (id, chartCd V fr pr id, f.1, f.2) := by
     rw [Array.getElem?_eq_getElem hi', ← hfi]
     simp
   rw [hget] at this
   exact this
+
+theorem certCheck_of_par (V : Array (KCap.KVec K)) (fr : Frame K) (pr : Params) (c : Cert)
+    (h : certCheckPar V fr pr c = true) : certCheck V fr pr c = true :=
+  certCheckOn_of_par _ V fr pr c h
 
 /-! ### Untrusted decoding -/
 
@@ -103,10 +110,24 @@ def parseId (t : Array String) : ChartId :=
   let n : ℕ → ℕ := fun i => t[i]!.toNat!
   let b : ℕ → Bool := fun i => n i == 1
   if t[1]! == "u" then
-    .u (b 2) (match n 3 with
+    -- the side: 1 and 0 are the sides 0 and 3 of `capcert-neo`, 2 and 3 the sides 1 and 2
+    .u (match n 2 with | 1 => 0 | 0 => 3 | 2 => 1 | _ => 2) (match n 3 with
       | 0 => .fe
       | 1 => .face (n 4) (b 5)
       | _ => .cone (n 4) (b 5))
+  else if t[1]! == "pu" then
+    -- the U charts of the P cap: the same line as `u`
+    .pu (match n 2 with | 1 => 0 | 0 => 3 | 2 => 1 | _ => 2) (match n 3 with
+      | 0 => .fe
+      | 1 => .face (n 4) (b 5)
+      | _ => .cone (n 4) (b 5))
+  else if t[1]! == "p" then
+    -- the wedge of the P cap: `p 0 al k sg` (fp), `p 1 sg` (face0), `p 2 sg` (face1), `p 3 m sg` (face2)
+    .p (match n 2 with
+      | 0 => .fp (b 3) (n 4) (b 5)
+      | 1 => .face0 (b 3)
+      | 2 => .face1 (b 3)
+      | _ => .face2 (n 3) (b 4))
   else
     .w (pieceOfNat (n 2)) (match n 3 with
       | 0 => .fe (b 4) (b 5)

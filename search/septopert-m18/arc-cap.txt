@@ -1,0 +1,7 @@
+# The arc cap of M18 (tubecode, search5d --piece_caps): Lean SeptopertM18/ArcLeaf.lean's arcLeafOk.
+# E1 = (-1,2,2), E2 = (2,-1,2), X = (2,2,-1). Rotations |w|^2 <= (1/46)^2.
+cap 1/2116
+# Half square (inHalf): 0 < X.P, |E1.P| <= X.P/8, |E2.P| <= X.P/8, E1.P <= E2.P.
+piece 2 2 -1 5/4 -7/4 -17/8 -3/4 9/4 15/8 -7/4 5/4 -17/8 9/4 -3/4 15/8 3 -3 0
+# Wedge (inWedge): 0 < X.P, |E2.P| <= -E1.P/8, -E1.P <= 13/32 X.P.
+piece 2 2 -1 -15/8 3/4 -9/4 17/8 -5/4 7/4 -3/16 45/16 51/32

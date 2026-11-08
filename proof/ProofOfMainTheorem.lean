@@ -29,8 +29,8 @@ theorem notExistsNonRupertPolyhedronBelowSizeSeven :
 
 It actually has exactly 7, but this conveniently dodges having to prove uniqueness. -/
 theorem card_septopert_le_seven : septopert.card ≤ 7 := by
-  rw [septopert_eq_verts, verts]
-  calc (Finset.univ.image fun i : Fin 7 => toR3 (vertexQ i)).card
+  unfold septopert intVerts
+  calc (Finset.univ.image fun i : Fin 7 => toR3 (intVertexQ i)).card
       ≤ (Finset.univ : Finset (Fin 7)).card := Finset.card_image_le
     _ = 7 := by simp
 
@@ -39,8 +39,8 @@ valid certificate data: the Septopert. -/
 theorem existsNonRupertPolyhedronSizeSeven_of_certificatesValid (h : CertificatesValid) :
     ExistsNonRupertPolyhedronSizeSeven :=
   ⟨septopert, card_septopert_le_seven,
-    (isNopert_of_certificatesValid h).interior_nonempty,
-    not_isRupert_of_certificatesValid h⟩
+    (isNopert_intVerts h).interior_nonempty,
+    (isNopert_intVerts h).2⟩
 
 /-- **Seven vertices is the smallest a nopert can be**, given valid
 certificate data. -/
