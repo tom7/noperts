@@ -69,7 +69,7 @@ theorem v12_cycA (pb : 0 < -(k * vx + vz)) (pd : 0 < l * (1 - tm) * vx + tm * vz
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
     first | exact absurd rfl h1 | exact absurd (by decide) h2 | skip
   all_goals (
-    simp only [CaseC09.ST, Dc, C3.sub, Pt_0, Pt_1, Pt_2, Pt_3, Pt_4, Pt_5, Pt_6, b0, b1, b2, b3, b4,
+    simp only [CaseC09.ST, Dc, C3.sub, Pt_0, Pt_1, Pt_2, Pt_4, Pt_6, b0, b1, b2, b3, b4,
       vA_0, vA_1, vA_2, vA_3, vA_4]
     first
     | (left; linarith)
@@ -111,7 +111,7 @@ theorem v12_cycB (pb : 0 < k * vx + vz) (pd : 0 < l * (1 - tm) * vx + tm * vz) (
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
     first | exact absurd rfl h1 | exact absurd (by decide) h2 | skip
   all_goals (
-    simp only [CaseC09.ST, Dc, C3.sub, Pt_0, Pt_1, Pt_2, Pt_3, Pt_4, Pt_5, Pt_6, b0, b1, b2, b3, b4,
+    simp only [CaseC09.ST, Dc, C3.sub, Pt_0, Pt_2, Pt_3, Pt_4, Pt_6, b0, b1, b2, b3, b4,
       vB_0, vB_1, vB_2, vB_3, vB_4]
     first
     | (left; linarith)
@@ -153,7 +153,7 @@ theorem v12_cycC (pb : 0 < -(k * vx + vz)) (pd : 0 < -(l * (1 - tm) * vx) - tm *
   rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;> rcases zmod6_cases j with rfl | rfl | rfl | rfl | rfl | rfl <;>
     first | exact absurd rfl h1 | exact absurd (by decide) h2 | skip
   all_goals (
-    simp only [CaseC09.ST, Dc, C3.sub, Pt_0, Pt_1, Pt_2, Pt_3, Pt_4, Pt_5, Pt_6, b0, b1, b2, b3, b4, b5,
+    simp only [CaseC09.ST, Dc, C3.sub, Pt_0, Pt_1, Pt_2, Pt_4, Pt_5, Pt_6, b0, b1, b2, b3, b4, b5,
       vC_0, vC_1, vC_2, vC_3, vC_4, vC_5]
     first
     | (left; linarith)
@@ -275,7 +275,7 @@ theorem v12_mA (hr : gA12 x = gA11 x) (hA : F.S.tp = F.S.sp) (hB : F.S.tm = F.S.
       funext i
       rw [F.GG_u hr, hP]
       rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
-        simp [vA_0, vA_1, vA_2, vA_3, vA_4, Pt_0, Pt_1, Pt_2, Pt_3, Pt_4, Pt_5, Pt_6]
+        simp [vA_0, vA_1, vA_2, vA_3, vA_4, Pt_0, Pt_1, Pt_2, Pt_4, Pt_6]
     rw [e]
     exact rob5 (mul_pos F.S.tm_pos hD) (by nlinarith [mul_pos a3 hD]) (by nlinarith [mul_pos a1 hD])
       (mul_pos F.S.tp_pos hD)
@@ -314,14 +314,14 @@ theorem v12_mB (hr : gA12 x = gA11 x) (hA : F.S.tp = F.S.sp) (hB : F.S.tm = F.S.
     intro i hi
     simp only [F.GG_u hr, GG_v F hr, hP]
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl
-    · simp only [b0, b1, b2, b3, b4, c0, c1, c2, c3, c4, vB_0, vB_1, vB_2, vB_3, vB_4, Pt_0, Pt_1, Pt_2, Pt_3, Pt_4, Pt_5, Pt_6]
+    · simp only [b0, c0, vB_0, vB_1, vB_4, Pt_0, Pt_2, Pt_6]
       right; left; have := mul_pos F.S.tm_pos hD; linarith
-    · simp only [b0, b1, b2, b3, b4, c0, c1, c2, c3, c4, vB_0, vB_1, vB_2, vB_3, vB_4, Pt_0, Pt_1, Pt_2, Pt_3, Pt_4, Pt_5, Pt_6]
+    · simp only [b1, c1, vB_0, vB_1, vB_2, Pt_2, Pt_4, Pt_6]
       right; left; nlinarith [mul_pos a3 hD]
     · exact absurd rfl hi
-    · simp only [b0, b1, b2, b3, b4, c0, c1, c2, c3, c4, vB_0, vB_1, vB_2, vB_3, vB_4, Pt_0, Pt_1, Pt_2, Pt_3, Pt_4, Pt_5, Pt_6]
+    · simp only [b3, c3, vB_2, vB_3, vB_4, Pt_0, Pt_3, Pt_4]
       left; left; linarith
-    · simp only [b0, b1, b2, b3, b4, c0, c1, c2, c3, c4, vB_0, vB_1, vB_2, vB_3, vB_4, Pt_0, Pt_1, Pt_2, Pt_3, Pt_4, Pt_5, Pt_6]
+    · simp only [b4, c4, vB_0, vB_3, vB_4, Pt_0, Pt_2, Pt_3]
       rcases hR with h | h
       · left; right; exact ⟨trivial, by linarith⟩
       · right; right; exact ⟨trivial, by linarith⟩
@@ -354,7 +354,7 @@ theorem v12_mC (hr : gA12 x = gA11 x) (hA : F.S.tp = F.S.sp) (hB : F.S.tm = F.S.
     intro i hi
     simp only [F.GG_u hr, GG_v F hr, hP]
     rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl
-    all_goals simp only [b0, b1, b2, b3, b4, b5, c0, c1, c2, c3, c4, c5, vC_0, vC_1, vC_2, vC_3, vC_4, vC_5, Pt_0, Pt_1, Pt_2, Pt_3, Pt_4, Pt_5, Pt_6]
+    all_goals simp only [b0, b1, b2, b3, b4, b5, c0, c1, c2, c3, c4, c5, vC_0, vC_1, vC_2, vC_3, vC_4, vC_5, Pt_0, Pt_1, Pt_2, Pt_4, Pt_5, Pt_6]
     · rcases hR with h | h
       · left; right; exact ⟨trivial, by linarith⟩
       · right; right; exact ⟨trivial, by linarith⟩
@@ -645,19 +645,19 @@ theorem v12_inner {k l : ℝ} (h1 : F.S.hp = k * (1 - F.S.tp)) (h3 : F.S.hm = l 
   generalize x 3 - x 2 = u at *
   refine ⟨?_, ?_, ?_, ?_⟩
   · rw [e20, e30]
-    simp only [inner_add_left, inner_add_right, inner_sub_left, inner_sub_right, inner_neg_left,
+    simp only [inner_add_left, inner_sub_right, inner_neg_left,
       inner_smul_left, inner_smul_right, hue, heu, RCLike.conj_to_real]
     rw [h1]; ring
   · rw [e25, e35]
-    simp only [inner_add_left, inner_add_right, inner_sub_left, inner_sub_right, inner_neg_left,
+    simp only [inner_add_right, inner_sub_left, inner_neg_left,
       inner_smul_left, inner_smul_right, hue, heu, RCLike.conj_to_real]
     rw [h3]; ring
   · rw [e0, e5]
-    simp only [inner_add_left, inner_add_right, inner_sub_left, inner_sub_right,
+    simp only [inner_add_left, inner_sub_right,
       inner_smul_left, inner_smul_right, hue, heu, RCLike.conj_to_real]
     rw [h1, h3]; ring
   · rw [e03, e53]
-    simp only [inner_add_left, inner_add_right, inner_sub_left, inner_sub_right,
+    simp only [inner_add_left, inner_sub_right,
       inner_smul_left, inner_smul_right, hue, heu, RCLike.conj_to_real]
     rw [h1, h3]; ring
 

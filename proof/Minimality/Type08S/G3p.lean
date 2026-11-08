@@ -293,7 +293,7 @@ theorem exists_nf08 {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) :
   have hWc : gWc ![p, q, r, s, t, u] ≠ 0 := by intro h; rw [h] at hκc; simp at hκc
   have hE := hdet
   obtain ⟨f1, f2, f3, f4⟩ := fc08_d ![p, q, r, s, t, u]
-  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons] at f1 f2 f3 f4
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at f1 f2 f3 f4
   have n1 : fc08 ![p, q, r, s, t, u] 0 3 5 6 ≠ 0 := by rw [f1]; positivity
   have n2 : fc08 ![p, q, r, s, t, u] 1 2 5 6 ≠ 0 := by rw [f2]; positivity
   have n3 : fc08 ![p, q, r, s, t, u] 1 3 4 6 ≠ 0 := by rw [f3]; positivity
@@ -360,7 +360,7 @@ theorem covView_zero08 : CovView (fun _ : Fin 7 → ℝ³ => (0 : ℝ³)) :=
 theorem covView_test08 (i : Fin 3) (s j : Bool) : CovView (test08 i s j).view := by
   fin_cases i <;> cases s <;> cases j <;>
     simp [test08, grp08, ViewGroup.tests, LabTest.neg, LabTest.quad] <;>
-    first | exact covView_diff08 _ _ | exact covView_neg08 (covView_diff08 _ _) | exact covView_zero08
+    first | exact covView_diff08 _ _
 
 /-! ### Convex position -/
 
@@ -516,7 +516,7 @@ theorem fc08_coord (θ : Fin 6 → ℝ) :
     (fc08 θ 1 2 4 0 = (1 - θ 4 - θ 5) * 1 ∧ fc08 θ 1 2 4 3 = (1 - θ 4 - θ 5) * θ 2 ∧
       fc08 θ 1 2 4 5 = (1 - θ 4 - θ 5) * θ 0) := by
   refine ⟨⟨?_, ?_, ?_⟩, ⟨?_, ?_, ?_⟩, ⟨?_, ?_, ?_⟩, ⟨?_, ?_, ?_⟩⟩ <;>
-    (simp only [fc08, cdet, cp08]; simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons]; ring)
+    (simp only [fc08, cdet, cp08]; simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]; ring)
 
 set_option maxHeartbeats 2000000 in
 theorem fpos08 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) :
@@ -533,7 +533,7 @@ theorem fpos08 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) :
   have p6 : 0 < θ 0 + θ 1 - 1 := hθ 6
   have p7 : 0 < θ 2 + θ 3 - 1 := hθ 7
   have p8 : 0 < θ 4 + θ 5 - 1 := hθ 8
-  simp only [ineq08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons] at p0 p1 p2 p3 p4 p5
+  simp only [ineq08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at p0 p1 p2 p3 p4 p5
   have nc : (1 - θ 0 - θ 1) ≠ 0 := by intro h; linarith
   have nb : (1 - θ 2 - θ 3) ≠ 0 := by intro h; linarith
   have na : (1 - θ 4 - θ 5) ≠ 0 := by intro h; linarith
@@ -589,7 +589,7 @@ theorem fpos08 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) :
 theorem fc08_d0 (θ : Fin 6 → ℝ) :
     fc08 θ 0 2 5 6 = 0 ∧ fc08 θ 0 3 4 6 = 0 ∧ fc08 θ 1 2 4 6 = 0 ∧ fc08 θ 0 2 4 6 = -1 := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    (simp only [fc08, cdet, cp08]; simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons]; ring)
+    (simp only [fc08, cdet, cp08]; simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]; ring)
 
 theorem hneg08 {o E₁ E₂ E₃ : ℝ³} (hE : det3 E₁ E₂ E₃ ≠ 0) {θ : Fin 6 → ℝ} (i j k r : Fin 7) (S : Finset (Fin 7))
     (hS : ∀ u ∈ S, ∀ v ∈ S, 0 < fc08 θ i j k u * fc08 θ i j k v) (hr : r ∈ S)
@@ -641,7 +641,7 @@ theorem lk08_eq {x : Fin 6 → ℝ³} (hx : Function.Injective x) (v : Fin 6 →
     lk08 x v (x i) = v i := by
   have h : ∃ j, x j = x i := ⟨i, rfl⟩
   unfold lk08
-  rw [dif_pos h]
+  rw [dite_eq_left h]
   congr 1
   exact hx h.choose_spec
 
@@ -653,8 +653,8 @@ theorem dv08_sum (θ : Fin 6 → ℝ) (X Y Z : ℝ)
     (h : (1 - θ 4 - θ 5) * X + (1 - θ 2 - θ 3) * Y + (1 - θ 0 - θ 1) * Z = 0) :
     dv08 θ X Y Z 0 + dv08 θ X Y Z 1 + dv08 θ X Y Z 2 + dv08 θ X Y Z 3 + dv08 θ X Y Z 4 +
       dv08 θ X Y Z 5 = 0 := by
-  simp only [dv08, Matrix.cons_val_zero, Matrix.cons_val_succ, Matrix.cons_val_one,
-    Matrix.head_cons, Matrix.cons_val]
+  simp only [dv08, Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.cons_val]
   linarith
 
 theorem dv08_vsum (o E₁ E₂ E₃ : ℝ³) (θ : Fin 6 → ℝ) (X Y Z : ℝ)
@@ -668,15 +668,15 @@ theorem dv08_vsum (o E₁ E₂ E₃ : ℝ³) (θ : Fin 6 → ℝ) (X Y Z : ℝ)
   have c : ∀ i : Fin 7, nfShape08 o E₁ E₂ E₃ θ i = o + cp08 θ i 0 • E₁ + cp08 θ i 1 • E₂ + cp08 θ i 2 • E₃ :=
     nf08_coord o E₁ E₂ E₃ θ
   rw [c 0, c 1, c 2, c 3, c 4, c 5]
-  simp only [dv08, cp08, Matrix.cons_val_zero, Matrix.cons_val_succ, Matrix.cons_val_one,
-    Matrix.head_cons, Matrix.cons_val] at e ⊢
+  simp only [dv08, cp08, Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.cons_val] at e ⊢
   linear_combination (norm := module) e
 
 theorem nf_inj6 {o E₁ E₂ E₃ : ℝ³} (hE : det3 E₁ E₂ E₃ ≠ 0) {θ : Fin 6 → ℝ}
     (hθ : ∀ k, 0 < ineq08 θ k) :
     Function.Injective (fun i : Fin 6 => nfShape08 o E₁ E₂ E₃ θ i.castSucc) := by
   have p0 := hθ 0; have p1 := hθ 1; have p2 := hθ 2; have p3 := hθ 3; have p4 := hθ 4; have p5 := hθ 5
-  simp only [ineq08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons] at p0 p1 p2 p3 p4 p5
+  simp only [ineq08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at p0 p1 p2 p3 p4 p5
   intro i j h
   by_contra hne
   have key := nfinj08 hE (θ := θ) i.castSucc j.castSucc h
@@ -698,7 +698,7 @@ theorem gale_of_nf08 {o E₁ E₂ E₃ : ℝ³} (hE : det3 E₁ E₂ E₃ ≠ 0)
   have hinj := nf_inj6 (o := o) hE hθ
   set xs : Fin 6 → ℝ³ := fun i => nfShape08 o E₁ E₂ E₃ θ i.castSucc with hxs
   have q6 := hθ 6; have q7 := hθ 7; have q8 := hθ 8; have q9 := hθ 9; have q10 := hθ 10; have q11 := hθ 11
-  simp only [ineq08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons]
+  simp only [ineq08, Matrix.cons_val]
     at q6 q7 q8 q9 q10 q11
   have hnb : 1 - θ 2 - θ 3 < 0 := by linarith
   have hnc : 1 - θ 0 - θ 1 < 0 := by linarith
@@ -744,8 +744,8 @@ theorem gale_of_nf08 {o E₁ E₂ E₃ : ℝ³} (hE : det3 E₁ E₂ E₃ ≠ 0)
     change α * lk08 xs _ (xs 1) + β * lk08 xs _ (xs 1) = 0 at h1
     change α * lk08 xs _ (xs 5) + β * lk08 xs _ (xs 5) = 0 at h5
     rw [a1, b1] at h1; rw [a5, b5] at h5
-    simp only [dv08, Matrix.cons_val_zero, Matrix.cons_val_succ, Matrix.cons_val_one,
-      Matrix.head_cons, Matrix.cons_val] at h1 h5
+    simp only [dv08, Matrix.cons_val_zero, Matrix.cons_val_one,
+      Matrix.cons_val] at h1 h5
     have hα : α * X1 = 0 := by linarith
     have hβ : β * X1 = 0 := by linarith
     exact ⟨(mul_eq_zero.mp hα).resolve_right hnb.ne, (mul_eq_zero.mp hβ).resolve_right hnb.ne⟩
@@ -758,8 +758,8 @@ theorem gale_of_nf08 {o E₁ E₂ E₃ : ℝ³} (hE : det3 E₁ E₂ E₃ ≠ 0)
   have kB := gd (dv08 θ X1 (-na) 0) (dv08 θ 0 nc (-X1)) 2 3
   have kC := gd (dv08 θ X1 (-na) 0) (dv08 θ 0 nc (-X1)) 4 5
   have kU := gd (dv08 θ X1 (-na) 0) (dv08 θ 0 nc (-X1)) 2 4
-  simp only [dv08, Matrix.cons_val_zero, Matrix.cons_val_succ, Matrix.cons_val_one,
-    Matrix.head_cons, Matrix.cons_val] at kA kB kC kU
+  simp only [dv08, Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.cons_val] at kA kB kC kU
   set Lf := lk08 xs (dv08 θ X1 (-na) 0) with hLf
   set Mf := lk08 xs (dv08 θ 0 nc (-X1)) with hMf
   have wA : galeD Lf Mf (nfShape08 o E₁ E₂ E₃ θ 0) (nfShape08 o E₁ E₂ E₃ θ 1) = X1 * gWa θ :=
@@ -823,18 +823,18 @@ theorem norm08_of_nf {o E₁ E₂ E₃ : ℝ³} (hE : det3 E₁ E₂ E₃ ≠ 0)
   obtain ⟨G, g1, g2, g3, g4⟩ := gale_of_nf08 (o := o) hE hθ
   have hinj := fun i j (h : x i = x j) => nfinj08 hE (θ := θ) i j h
   have p0 := hθ 0; have p1 := hθ 1; have p2 := hθ 2; have p3 := hθ 3; have p4 := hθ 4; have p5 := hθ 5
-  simp only [ineq08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons] at p0 p1 p2 p3 p4 p5
-  have n01 : x 0 ≠ x 1 := fun h => by have := hinj 0 1 h 0; simp [cp08] at this; try linarith
-  have n02 : x 0 ≠ x 2 := fun h => by have := hinj 0 2 h 0; simp [cp08] at this; try linarith
+  simp only [ineq08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at p0 p1 p2 p3 p4 p5
+  have n01 : x 0 ≠ x 1 := fun h => by have := hinj 0 1 h 0; simp [cp08] at this
+  have n02 : x 0 ≠ x 2 := fun h => by have := hinj 0 2 h 0; simp [cp08] at this
   have n03 : x 0 ≠ x 3 := fun h => by have := hinj 0 3 h 2; simp [cp08] at this; try linarith
-  have n04 : x 0 ≠ x 4 := fun h => by have := hinj 0 4 h 0; simp [cp08] at this; try linarith
+  have n04 : x 0 ≠ x 4 := fun h => by have := hinj 0 4 h 0; simp [cp08] at this
   have n05 : x 0 ≠ x 5 := fun h => by have := hinj 0 5 h 1; simp [cp08] at this; try linarith
   have n12 : x 1 ≠ x 2 := fun h => by have := hinj 1 2 h 2; simp [cp08] at this; try linarith
   have n13 : x 1 ≠ x 3 := fun h => by have := hinj 1 3 h 0; simp [cp08] at this; try linarith
   have n14 : x 1 ≠ x 4 := fun h => by have := hinj 1 4 h 1; simp [cp08] at this; try linarith
   have n15 : x 1 ≠ x 5 := fun h => by have := hinj 1 5 h 0; simp [cp08] at this; try linarith
   have n23 : x 2 ≠ x 3 := fun h => by have := hinj 2 3 h 0; simp [cp08] at this; try linarith
-  have n24 : x 2 ≠ x 4 := fun h => by have := hinj 2 4 h 1; simp [cp08] at this; try linarith
+  have n24 : x 2 ≠ x 4 := fun h => by have := hinj 2 4 h 1; simp [cp08] at this
   have n25 : x 2 ≠ x 5 := fun h => by have := hinj 2 5 h 0; simp [cp08] at this; try linarith
   have n34 : x 3 ≠ x 4 := fun h => by have := hinj 3 4 h 0; simp [cp08] at this; try linarith
   have n35 : x 3 ≠ x 5 := fun h => by have := hinj 3 5 h 1; simp [cp08] at this; try linarith
@@ -909,15 +909,15 @@ theorem facts08 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) :
   have h15 := hθ 15; have h16 := hθ 16; have h17 := hθ 17
   have h18 := hθ 18; have h19 := hθ 19; have h20 := hθ 20
   have h21 := hθ 21; have h22 := hθ 22; have h23 := hθ 23
-  simp only [ineq08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons] at p0 p1 p2 p3 p4 p5 p6 p7 p8 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21 h22 h23
+  simp only [ineq08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at p0 p1 p2 p3 p4 p5 p6 p7 p8 h12 h13 h14 h15 h16 h17 h18 h19 h20 h21 h22 h23
   have d1 : fc08 θ 0 3 5 6 = θ 1 * θ 3 := by
-    simp only [fc08, cdet, cp08]; simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons]; ring
+    simp only [fc08, cdet, cp08]; simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]; ring
   have d2 : fc08 θ 1 2 5 6 = θ 0 * θ 5 := by
-    simp only [fc08, cdet, cp08]; simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons]; ring
+    simp only [fc08, cdet, cp08]; simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]; ring
   have d3 : fc08 θ 1 3 4 6 = θ 2 * θ 4 := by
-    simp only [fc08, cdet, cp08]; simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons]; ring
+    simp only [fc08, cdet, cp08]; simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]; ring
   have d4 : fc08 θ 1 3 5 6 = -(θ 0 * θ 3 * θ 4 + θ 1 * θ 2 * θ 5) := by
-    simp only [fc08, cdet, cp08]; simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons]; ring
+    simp only [fc08, cdet, cp08]; simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]; ring
   have e1 : 0 < fc08 θ 0 3 5 6 := by rw [d1]; positivity
   have e2 : 0 < fc08 θ 1 2 5 6 := by rw [d2]; positivity
   have e3 : 0 < fc08 θ 1 3 4 6 := by rw [d3]; positivity
@@ -935,45 +935,45 @@ theorem facts08 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) :
 theorem polyA (a1 b1 a4 g4 b6 g6 : ℝ) (p0 : 0 < a1) (p1 : 0 < b1) (p2 : 0 < a4) (p3 : 0 < g4) (p4 : 0 < b6) (p5 : 0 < g6) (e1 : 0 < a1 + b1 - 1) (e2 : 0 < a4 + g4 - 1) (e3 : 0 < b6 + g6 - 1) (dA : 0 < -1 + g6) (dB : 0 < -1 + a1) (ga : 0 < -a1 + a1 * g4 - b1 * a4 + a4) (gb : 0 < a1 * b6 + b1 - b1 * g6 - b6) (f1 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f2 : 0 < a1 * g4 + b1 * g4 - g4) (f3 : 0 < -b1 + b1 * a4 + b1 * g4) (f4 : 0 < a1 * g6 + b1 * g6 - g6) (f5 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f6 : 0 < -a1 + a1 * b6 + a1 * g6) (f7 : 0 < a4 * b6 + g4 * b6 - b6) (f8 : 0 < -a4 + a4 * b6 + a4 * g6) (f9 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) (f10 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f11 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f12 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) :
     0 < -a1 + a1 * b6 + a1 * g6 ∧ 0 < -a4 + a4 * b6 + a4 * g6 ∧ 0 < -1 + b6 + g6 ∧ 0 < -a1 + a1 * g4 * b6 + a1 * g6 - b1 * a4 + b1 * a4 * g6 + a4 - a4 * g6 ∧ 0 < 1 - a1 + a1 * g6 - b1 + b1 * g6 - g6 ∧ 0 < -a1 + a1 * g6 ∧ 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6 ∧ 0 < a1 * g4 * b6 + b1 - b1 * a4 + b1 * a4 * g6 - b1 * g6 - g4 * b6 ∧ 0 < a1 * g4 * b6 - b1 * a4 + b1 * a4 * g6 ∧ 0 < a4 * b6 + g4 * b6 - b6 ∧ 0 < a4 * b6 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · first | linarith [mul_pos p0 p4, mul_pos p0 dA] | nlinarith [mul_pos p0 p4, mul_pos p0 dA]
-  · first | linarith [mul_pos p2 dA, mul_pos p2 p4] | nlinarith [mul_pos p2 dA, mul_pos p2 p4]
-  · first | linarith [p4, dA] | nlinarith [p4, dA]
-  · first | linarith [ga, f11] | nlinarith [ga, f11]
-  · first | linarith [mul_pos dA dB, mul_pos p1 dA] | nlinarith [mul_pos dA dB, mul_pos p1 dA]
-  · first | linarith [mul_pos p0 dA] | nlinarith [mul_pos p0 dA]
-  · first | linarith [mul_pos p4 ga, mul_pos (mul_pos p1 p2) p4, mul_pos (mul_pos p1 p2) dA] | nlinarith [mul_pos p4 ga, mul_pos (mul_pos p1 p2) p4, mul_pos (mul_pos p1 p2) dA]
-  · first | linarith [mul_pos f3 dA, mul_pos p3 gb] | nlinarith [mul_pos f3 dA, mul_pos p3 gb]
-  · first | linarith [mul_pos (mul_pos p0 p3) p4, mul_pos (mul_pos p1 p2) dA] | nlinarith [mul_pos (mul_pos p0 p3) p4, mul_pos (mul_pos p1 p2) dA]
-  · first | linarith [mul_pos p4 e2] | nlinarith [mul_pos p4 e2]
-  · first | linarith [mul_pos p2 p4] | nlinarith [mul_pos p2 p4]
+  · first | linarith [mul_pos p0 p4, mul_pos p0 dA]
+  · first | linarith [mul_pos p2 dA, mul_pos p2 p4]
+  · first | linarith [p4, dA]
+  · first | linarith [ga, f11]
+  · first | linarith [mul_pos dA dB, mul_pos p1 dA]
+  · first | linarith [mul_pos p0 dA]
+  · first | linarith [mul_pos p4 ga, mul_pos (mul_pos p1 p2) p4, mul_pos (mul_pos p1 p2) dA]
+  · first | linarith [mul_pos f3 dA, mul_pos p3 gb]
+  · first | linarith [mul_pos (mul_pos p0 p3) p4, mul_pos (mul_pos p1 p2) dA]
+  · first | linarith [mul_pos p4 e2]
+  · first | linarith [mul_pos p2 p4]
 
 theorem polyB (a1 b1 a4 g4 b6 g6 : ℝ) (p0 : 0 < a1) (p1 : 0 < b1) (p2 : 0 < a4) (p3 : 0 < g4) (p4 : 0 < b6) (p5 : 0 < g6) (e1 : 0 < a1 + b1 - 1) (e2 : 0 < a4 + g4 - 1) (e3 : 0 < b6 + g6 - 1) (dA : 0 < 1 - g6) (dB : 0 < -1 + a1) (ga : 0 < -a1 + a1 * g4 - b1 * a4 + a4) (gb : 0 < a1 * b6 + b1 - b1 * g6 - b6) (f1 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f2 : 0 < a1 * g4 + b1 * g4 - g4) (f3 : 0 < -b1 + b1 * a4 + b1 * g4) (f4 : 0 < a1 * g6 + b1 * g6 - g6) (f5 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f6 : 0 < -a1 + a1 * b6 + a1 * g6) (f7 : 0 < a4 * b6 + g4 * b6 - b6) (f8 : 0 < -a4 + a4 * b6 + a4 * g6) (f9 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) (f10 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f11 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f12 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) :
     0 < a1 * g4 ∧ 0 < a1 ∧ 0 < a1 * g6 ∧ 0 < -a1 + a1 * g4 + a4 ∧ 0 < a1 * g4 - g4 ∧ 0 < a1 * g4 - a1 * g6 + a4 * g6 ∧ 0 < a4 ∧ 0 < -1 + a4 + g4 ∧ 0 < a4 - a4 * g6 ∧ 0 < 1 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · first | linarith [mul_pos p0 p3] | nlinarith [mul_pos p0 p3]
-  · first | linarith [p0] | nlinarith [p0]
-  · first | linarith [mul_pos p0 p5] | nlinarith [mul_pos p0 p5]
-  · first | linarith [mul_pos (mul_pos p5 p5) ga, mul_pos p1 p2, mul_pos (mul_pos dA dA) ga, mul_pos (mul_pos p5 dA) ga] | nlinarith [mul_pos (mul_pos p5 p5) ga, mul_pos p1 p2, mul_pos (mul_pos dA dA) ga, mul_pos (mul_pos p5 dA) ga]
-  · first | linarith [mul_pos p3 dB] | nlinarith [mul_pos p3 dB]
-  · first | linarith [mul_pos p5 ga, mul_pos (mul_pos p0 p3) dA, mul_pos (mul_pos p1 p2) p5] | nlinarith [mul_pos p5 ga, mul_pos (mul_pos p0 p3) dA, mul_pos (mul_pos p1 p2) p5]
-  · first | linarith [p2] | nlinarith [p2]
-  · first | linarith [e2] | nlinarith [e2]
-  · first | linarith [mul_pos p2 dA] | nlinarith [mul_pos p2 dA]
-  · first | linarith [p5, dA] | nlinarith [p5, dA]
+  · first | linarith [mul_pos p0 p3]
+  · first | linarith [p0]
+  · first | linarith [mul_pos p0 p5]
+  · first | linarith [mul_pos (mul_pos p5 p5) ga, mul_pos p1 p2, mul_pos (mul_pos dA dA) ga, mul_pos (mul_pos p5 dA) ga]
+  · first | linarith [mul_pos p3 dB]
+  · first | linarith [mul_pos p5 ga, mul_pos (mul_pos p0 p3) dA, mul_pos (mul_pos p1 p2) p5]
+  · first | linarith [p2]
+  · first | linarith [e2]
+  · first | linarith [mul_pos p2 dA]
+  · first | linarith [p5, dA]
 
 theorem polyC (a1 b1 a4 g4 b6 g6 : ℝ) (p0 : 0 < a1) (p1 : 0 < b1) (p2 : 0 < a4) (p3 : 0 < g4) (p4 : 0 < b6) (p5 : 0 < g6) (e1 : 0 < a1 + b1 - 1) (e2 : 0 < a4 + g4 - 1) (e3 : 0 < b6 + g6 - 1) (dA : 0 < 1 - g6) (dB : 0 < 1 - a1) (ga : 0 < -a1 + a1 * g4 - b1 * a4 + a4) (gb : 0 < a1 * b6 + b1 - b1 * g6 - b6) (f1 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f2 : 0 < a1 * g4 + b1 * g4 - g4) (f3 : 0 < -b1 + b1 * a4 + b1 * g4) (f4 : 0 < a1 * g6 + b1 * g6 - g6) (f5 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f6 : 0 < -a1 + a1 * b6 + a1 * g6) (f7 : 0 < a4 * b6 + g4 * b6 - b6) (f8 : 0 < -a4 + a4 * b6 + a4 * g6) (f9 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) (f10 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f11 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f12 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) :
     0 < g4 ∧ 0 < 1 ∧ 0 < g6 ∧ 0 < -1 + a4 + g4 ∧ 0 < a4 * g6 + g4 - g6 ∧ 0 < -a1 * g4 + g4 ∧ 0 < a4 ∧ 0 < a4 - a4 * g6 ∧ 0 < -a1 + a1 * g4 + a4 ∧ 0 < a1 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · first | linarith [p3] | nlinarith [p3]
-  · first | linarith [p5, dA] | nlinarith [p5, dA]
-  · first | linarith [p5] | nlinarith [p5]
-  · first | linarith [mul_pos (mul_pos (mul_pos p0 e2) dA) dB, mul_pos (mul_pos (mul_pos e2 dA) dB) dB, mul_pos (mul_pos (mul_pos p5 p5) e2) dB, mul_pos p0 e2, mul_pos (mul_pos (mul_pos p5 e2) dA) dB] | nlinarith [mul_pos (mul_pos (mul_pos p0 e2) dA) dB, mul_pos (mul_pos (mul_pos e2 dA) dB) dB, mul_pos (mul_pos (mul_pos p5 p5) e2) dB, mul_pos p0 e2, mul_pos (mul_pos (mul_pos p5 e2) dA) dB]
-  · first | linarith [mul_pos (mul_pos (mul_pos p3 dA) dB) dB, mul_pos (mul_pos (mul_pos p0 p3) dA) dB, mul_pos (mul_pos p5 p5) e2, mul_pos (mul_pos p5 e2) dA, mul_pos (mul_pos p0 p3) dA] | nlinarith [mul_pos (mul_pos (mul_pos p3 dA) dB) dB, mul_pos (mul_pos (mul_pos p0 p3) dA) dB, mul_pos (mul_pos p5 p5) e2, mul_pos (mul_pos p5 e2) dA, mul_pos (mul_pos p0 p3) dA]
-  · first | linarith [mul_pos p3 dB] | nlinarith [mul_pos p3 dB]
-  · first | linarith [p2] | nlinarith [p2]
-  · first | linarith [mul_pos p2 dA] | nlinarith [mul_pos p2 dA]
-  · first | linarith [mul_pos (mul_pos (mul_pos p0 p0) e2) dB, mul_pos (mul_pos (mul_pos p0 e2) dB) dB, mul_pos (mul_pos (mul_pos p0 p0) p0) e2, mul_pos (mul_pos (mul_pos p2 dA) dB) dB, mul_pos (mul_pos (mul_pos p0 p2) dA) dB, mul_pos (mul_pos p2 p5) dB] | nlinarith [mul_pos (mul_pos (mul_pos p0 p0) e2) dB, mul_pos (mul_pos (mul_pos p0 e2) dB) dB, mul_pos (mul_pos (mul_pos p0 p0) p0) e2, mul_pos (mul_pos (mul_pos p2 dA) dB) dB, mul_pos (mul_pos (mul_pos p0 p2) dA) dB, mul_pos (mul_pos p2 p5) dB]
-  · first | linarith [p0] | nlinarith [p0]
+  · first | linarith [p3]
+  · first | linarith [p5, dA]
+  · first | linarith [p5]
+  · first | linarith [mul_pos (mul_pos (mul_pos p0 e2) dA) dB, mul_pos (mul_pos (mul_pos e2 dA) dB) dB, mul_pos (mul_pos (mul_pos p5 p5) e2) dB, mul_pos p0 e2, mul_pos (mul_pos (mul_pos p5 e2) dA) dB]
+  · first | linarith [mul_pos (mul_pos (mul_pos p3 dA) dB) dB, mul_pos (mul_pos (mul_pos p0 p3) dA) dB, mul_pos (mul_pos p5 p5) e2, mul_pos (mul_pos p5 e2) dA, mul_pos (mul_pos p0 p3) dA]
+  · first | linarith [mul_pos p3 dB]
+  · first | linarith [p2]
+  · first | linarith [mul_pos p2 dA]
+  · first | linarith [mul_pos (mul_pos (mul_pos p0 p0) e2) dB, mul_pos (mul_pos (mul_pos p0 e2) dB) dB, mul_pos (mul_pos (mul_pos p0 p0) p0) e2, mul_pos (mul_pos (mul_pos p2 dA) dB) dB, mul_pos (mul_pos (mul_pos p0 p2) dA) dB, mul_pos (mul_pos p2 p5) dB]
+  · first | linarith [p0]
 
 
 theorem common08 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) :
@@ -981,13 +981,12 @@ theorem common08 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) :
   obtain ⟨p0, p1, p2, p3, p4, p5, q6, q7, q8, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12⟩ :=
     facts08 θ hθ
   have h9 := hθ 9
-  simp only [ineq08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons] at h9
-  simp only [fc08, cdet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val,
-    Matrix.head_cons] at f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
+  simp only [ineq08, Matrix.cons_val] at h9
+  simp only [fc08, cdet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
   have hU : gWU θ < 0 := by unfold gWU; nlinarith [f10]
   have hga : 0 < gWa θ := (pos_iff_pos_of_mul_pos (show 0 < gWa θ * (-gWU θ) by linarith)).mpr (by linarith)
   have h10 := hθ 10
-  simp only [ineq08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons] at h10
+  simp only [ineq08, Matrix.cons_val] at h10
   have hgb : 0 < gWb θ := (pos_iff_pos_of_mul_pos (show 0 < gWb θ * (-gWU θ) by linarith)).mpr (by linarith)
   unfold gWa at hga; unfold gWb at hgb
   refine ⟨p0, p1, p2, p3, p4, p5, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith⟩
@@ -1176,24 +1175,24 @@ theorem poly08 (o E₁ E₂ E₃ : ℝ³) (hE : det3 E₁ E₂ E₃ ≠ 0) (θ :
     · obtain ⟨s, c, hc0, hsg⟩ := exists_sign08 hE (-1) (Or.inr rfl)
       refine ⟨2, s, Or.inr (Or.inr ⟨rfl, h5, h0⟩), ?_⟩
       intro j
-      cases s <;> cases j <;> simp only [Bool.false_eq_true, if_false, if_true] at hsg <;>
+      cases s <;> cases j <;> simp only [Bool.false_eq_true, ite_false, ite_true] at hsg <;>
         exact rimGeom_of_crim (by norm_num) (crimC1 θ hθ h5 h0) hc0 hsg (by simp [test08, grp08, ViewGroup.tests, LabTest.quad, LabTest.neg])
     · obtain ⟨s, c, hc0, hsg⟩ := exists_sign08 hE (-1) (Or.inr rfl)
       refine ⟨1, s, Or.inr (Or.inl ⟨rfl, h5, h0⟩), ?_⟩
       intro j
-      cases s <;> cases j <;> simp only [Bool.false_eq_true, if_false, if_true] at hsg
+      cases s <;> cases j <;> simp only [Bool.false_eq_true, ite_false, ite_true] at hsg
       · exact rimGeom_of_crim (by norm_num) (crimB2 θ hθ h5 h0) hc0 hsg (by simp [test08, grp08, ViewGroup.tests, LabTest.quad, LabTest.neg])
       · exact rimGeom_of_crim (by norm_num) (crimB1 θ hθ h5 h0) hc0 hsg (by simp [test08, grp08, ViewGroup.tests, LabTest.quad, LabTest.neg])
-      · exact rimGeom_of_crim (by norm_num) (crimB2 θ hθ h5 h0) hc0 hsg (by simp [test08, grp08, ViewGroup.tests, LabTest.quad, LabTest.neg])
-      · exact rimGeom_of_crim (by norm_num) (crimB1 θ hθ h5 h0) hc0 hsg (by simp [test08, grp08, ViewGroup.tests, LabTest.quad, LabTest.neg])
+      · exact rimGeom_of_crim (by norm_num) (crimB2 θ hθ h5 h0) hc0 hsg (by simp [test08, grp08, ViewGroup.tests, LabTest.quad])
+      · exact rimGeom_of_crim (by norm_num) (crimB1 θ hθ h5 h0) hc0 hsg (by simp [test08, grp08, ViewGroup.tests, LabTest.quad])
   · obtain ⟨s, c, hc0, hsg⟩ := exists_sign08 hE 1 (Or.inl rfl)
     refine ⟨0, s, Or.inl ⟨rfl, h5⟩, ?_⟩
     intro j
-    cases s <;> cases j <;> simp only [Bool.false_eq_true, if_false, if_true] at hsg
+    cases s <;> cases j <;> simp only [Bool.false_eq_true, ite_false, ite_true] at hsg
     · exact rimGeom_of_crim (by norm_num) (crimA2 θ hθ h5) hc0 hsg (by simp [test08, grp08, ViewGroup.tests, LabTest.quad, LabTest.neg])
     · exact rimGeom_of_crim (by norm_num) (crimA1 θ hθ h5) hc0 hsg (by simp [test08, grp08, ViewGroup.tests, LabTest.quad, LabTest.neg])
-    · exact rimGeom_of_crim (by norm_num) (crimA2 θ hθ h5) hc0 hsg (by simp [test08, grp08, ViewGroup.tests, LabTest.quad, LabTest.neg])
-    · exact rimGeom_of_crim (by norm_num) (crimA1 θ hθ h5) hc0 hsg (by simp [test08, grp08, ViewGroup.tests, LabTest.quad, LabTest.neg])
+    · exact rimGeom_of_crim (by norm_num) (crimA2 θ hθ h5) hc0 hsg (by simp [test08, grp08, ViewGroup.tests, LabTest.quad])
+    · exact rimGeom_of_crim (by norm_num) (crimA1 θ hθ h5) hc0 hsg (by simp [test08, grp08, ViewGroup.tests, LabTest.quad])
 
 
 theorem inner_lt08 {v w : ℝ³} (h : v ≠ w) : ⟪w, v - w⟫ < ⟪v, v - w⟫ := by
@@ -1206,7 +1205,7 @@ theorem ord08 {o E₁ E₂ E₃ : ℝ³} (hE : det3 E₁ E₂ E₃ ≠ 0) {θ : 
     (grp08 i).Ordered (nfShape08 o E₁ E₂ E₃ θ) := by
   have hinj := nf_inj6 (o := o) hE hθ
   have p1 := hθ 1; have p5 := hθ 5
-  simp only [ineq08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons] at p1 p5
+  simp only [ineq08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at p1 p5
   fin_cases i
   · exact inner_lt08 (fun h => absurd (hinj (a₁ := 4) (a₂ := 1) h) (by decide))
   · refine inner_lt08 (fun h => ?_)
@@ -1242,11 +1241,11 @@ theorem mf08_Q (o E₁ E₂ E₃ : ℝ³) (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 <
       ((test08 2 s j).depth (mapShape L (nfShape08 o E₁ E₂ E₃ θ)))) :
     ∃ j, IsCyclicUnimodal ((test08 2 s j).depth (mapShape L (nfShape08 o E₁ E₂ E₃ θ))) := by
   have p2 := hθ 2; have p3 := hθ 3; have p7 := hθ 7
-  simp only [ineq08, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons] at p2 p3 p7
+  simp only [ineq08, Matrix.cons_val] at p2 p3 p7
   set y := mapShape L (nfShape08 o E₁ E₂ E₃ θ) with hy
   have rel : y 3 = y 6 + θ 2 • (y 0 - y 6) + θ 3 • (y 4 - y 6) := by
-    simp only [hy, mapShape, nfShape08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val,
-      Matrix.head_cons, map_add, map_smul]
+    simp only [hy, mapShape, nfShape08, Matrix.cons_val_zero, Matrix.cons_val,
+      map_add, map_smul]
     module
   have hQ : ∀ u : ℝ³, Function.Injective (fun i : ZMod 4 => ⟪y ((![6, 0, 3, 4] : Fin 4 → Fin 7) i), u⟫) →
       IsCyclicUnimodal (fun i : ZMod 4 => ⟪y ((![6, 0, 3, 4] : Fin 4 → Fin 7) i), u⟫) := by
@@ -1342,23 +1341,20 @@ theorem T4_core (o E₁ E₂ E₃ : ℝ³) (hE : det3 E₁ E₂ E₃ ≠ 0) (θ 
   set x := nfShape08 (L o) (L E₁) (L E₂) (L E₃) θ with hx
   obtain ⟨p0, p1, p2, p3, p4, p5, -, -, -, hga, -⟩ := common08 θ hθ
   have hb' : x 3 = x 6 + θ 2 • (x 0 - x 6) + θ 3 • (x 4 - x 6) := by
-    simp only [hx, nfShape08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val,
-      Matrix.head_cons]; module
+    simp only [hx, nfShape08, Matrix.cons_val_zero, Matrix.cons_val]; module
   have hc' : x 5 = x 6 + θ 0 • (x 0 - x 6) + θ 1 • (x 2 - x 6) := by
-    simp only [hx, nfShape08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val,
-      Matrix.head_cons]; module
+    simp only [hx, nfShape08, Matrix.cons_val_zero, Matrix.cons_val]; module
   have ha' : x 1 = x 6 + θ 4 • (x 2 - x 6) + θ 5 • (x 4 - x 6) := by
-    simp only [hx, nfShape08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val,
-      Matrix.head_cons]; module
+    simp only [hx, nfShape08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]; module
   have hEd : det3 (x 0 - x 6) (x 4 - x 6) (x 2 - x 6) ≠ 0 := by
     have d : det3 (x 0 - x 6) (x 4 - x 6) (x 2 - x 6) = _ := det3_nf08 (L o) (L E₁) (L E₂) (L E₃) θ 6 0 4 2
     rw [d]
-    have : fc08 θ 6 0 4 2 = -1 := by simp only [fc08, cdet, cp08]; simp <;> ring
+    have : fc08 θ 6 0 4 2 = -1 := by simp only [fc08, cdet, cp08]; simp 
     rw [this]; simpa using hE'
   have hopp : det3 (x 2 - x 6) (x 3 - x 6) (x 4 - x 6) * det3 (x 2 - x 6) (x 3 - x 6) (x 5 - x 6) < 0 := by
     have d1 : det3 (x 2 - x 6) (x 3 - x 6) (x 4 - x 6) = _ := det3_nf08 (L o) (L E₁) (L E₂) (L E₃) θ 6 2 3 4
     have d2 : det3 (x 2 - x 6) (x 3 - x 6) (x 5 - x 6) = _ := det3_nf08 (L o) (L E₁) (L E₂) (L E₃) θ 6 2 3 5
-    have c1 : fc08 θ 6 2 3 4 = -θ 2 := by simp only [fc08, cdet, cp08]; simp <;> ring
+    have c1 : fc08 θ 6 2 3 4 = -θ 2 := by simp only [fc08, cdet, cp08]; simp 
     have c2 : fc08 θ 6 2 3 5 = θ 0 * θ 3 := by simp only [fc08, cdet, cp08]; simp; ring
     rw [d1, d2, c1, c2]
     have := mul_pos (mul_pos p2 p0) p3
@@ -1478,13 +1474,13 @@ theorem grpS_view (i : Fin 3) (s : Bool) : (grpS i s).view = (test08 i s true).v
 
 theorem test_mem_grpS (i : Fin 3) (s : Bool) (j : Bool) : test08 i s j ∈ (grpS i s).tests := by
   fin_cases i <;> cases s <;> cases j <;>
-    (simp only [grpS, grp08, ViewGroup.tests, List.mem_cons, List.mem_singleton, List.not_mem_nil, or_false]
-     first | exact Or.inl rfl | exact Or.inr rfl | exact Or.inr (Or.inl rfl) | rfl)
+    (simp only [grpS, grp08, ViewGroup.tests, List.mem_cons, List.not_mem_nil, or_false]
+     first | exact Or.inl rfl | exact Or.inr rfl | rfl)
 
 theorem grpS_tests (i : Fin 3) (s : Bool) : ∀ T ∈ (grpS i s).tests, ∃ j, T = test08 i s j := by
   intro T hT
   fin_cases i <;> cases s <;>
-    (simp only [grpS, grp08, ViewGroup.tests, List.mem_cons, List.mem_singleton, List.not_mem_nil, or_false] at hT
+    (simp only [grpS, grp08, ViewGroup.tests, List.mem_cons, List.not_mem_nil, or_false] at hT
      first
        | (rcases hT with rfl | rfl
           · first | exact ⟨true, rfl⟩ | exact ⟨false, rfl⟩
@@ -2224,9 +2220,8 @@ theorem isRupert_or_hdn_of_generic_cert_free {m n q : ℕ} {ι : Type*} [Finite 
 theorem grp_tests_view (i : Fin 3) : ∀ T ∈ (grp08 i).tests, T.view = (grp08 i).view := by
   intro T hT
   fin_cases i <;>
-    (simp only [grp08, ViewGroup.tests, ViewGroup.view, List.mem_cons, List.mem_singleton,
-      List.not_mem_nil, or_false] at hT ⊢
-     first | (rcases hT with rfl | rfl <;> rfl) | (subst hT; rfl))
+    (simp only [grp08, ViewGroup.tests, ViewGroup.view, List.mem_cons, List.not_mem_nil, or_false] at hT ⊢
+     first | (rcases hT with rfl | rfl <;> rfl))
 
 theorem test08_eq (i : Fin 3) (s j : Bool) : ∃ T ∈ (grp08 i).tests,
     test08 i s j = T ∨ test08 i s j = T.neg := by

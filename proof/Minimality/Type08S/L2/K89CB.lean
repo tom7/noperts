@@ -68,7 +68,7 @@ theorem k89c_conv0 (t : ℝ) (ht1 : 1 < t) (ht2 : t ≤ 5/3) : 0 < k89c_d3 (k89c
   have h0 : t ≠ 0 := by intro h; linarith
 
   have key : k89c_d3 (k89c_sub (k89c_P t 1) (k89c_P t 0)) (k89c_sub (k89c_P t 3) (k89c_P t 0)) k89c_w0 = (8) / (1) := by
-    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_e, k89c_u, k89c_w0]
+    simp only [k89c_d3, k89c_sub, k89c_P, k89c_w0]
     field_simp
     ring
   rw [key]
@@ -83,7 +83,7 @@ theorem k89c_rA0 (t : ℝ) (ht1 : 1 < t) (ht2 : t ≤ 5/3) : 0 < k89c_d3 (k89c_s
   have hf2 : 0 < 25*t - 7 := by linarith
   have hf3 : 0 < -924*t^4 + 1173*t^3 + 1452*t^2 - 497*t - 28 := k89c_hq0 t ht1 ht2
   have key : k89c_d3 (k89c_sub (k89c_P t 1) (k89c_P t 0)) (k89c_vel t (k89c_P t 0)) k89c_w0 = (((((8) * (t + 1)) * (5*t - 3)) * (25*t - 7)) * (-924*t^4 + 1173*t^3 + 1452*t^2 - 497*t - 28)) / (1) := by
-    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_e, k89c_u, k89c_w0]
+    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_u, k89c_w0]
     field_simp
     ring
   rw [key]
@@ -101,7 +101,7 @@ theorem k89c_rB0 (t : ℝ) (ht1 : 1 < t) (ht2 : t ≤ 5/3) : 0 < k89c_d3 (k89c_s
   have hf5 : 0 < 21 - 11*t := by linarith
   have hf6 : 0 < 25*t - 7 := by linarith
   have key : k89c_d3 (k89c_sub (k89c_P t 0) (k89c_P t 3)) (k89c_vel t (k89c_P t 0)) k89c_w0 = ((((((((64) * (t)) * (t + 1)) * (3*t - 1)) * (5*t - 3)) * (9*t - 7)) * (21 - 11*t)) * (25*t - 7)) / (1) := by
-    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_e, k89c_u, k89c_w0]
+    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_u, k89c_w0]
     field_simp
     ring
   rw [key]
@@ -114,7 +114,7 @@ theorem k89c_conv1 (t : ℝ) (ht1 : 1 < t) (ht2 : t ≤ 5/3) : 0 < k89c_d3 (k89c
   have hf0 : 0 < t + 1 := by linarith
   have hf1 : 0 < 3 - t := by linarith
   have key : k89c_d3 (k89c_sub (k89c_P t 6) (k89c_P t 1)) (k89c_sub (k89c_P t 0) (k89c_P t 1)) k89c_w0 = ((7) * (t + 1)) / ((1) * (3 - t)) := by
-    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_e, k89c_u, k89c_w0]
+    simp only [k89c_d3, k89c_sub, k89c_P, k89c_e, k89c_w0]
     field_simp
     ring
   rw [key]
@@ -146,7 +146,7 @@ theorem k89c_rB1 (t : ℝ) (ht1 : 1 < t) (ht2 : t ≤ 5/3) : 0 < k89c_d3 (k89c_s
   have hf1 : 0 < 3*t - 1 := by linarith
   have hf2 : 0 < -277200*t^4 + 694206*t^3 - 328661*t^2 + 37072*t + 1715 := k89c_hq3 t ht1 ht2
   have key : k89c_d3 (k89c_sub (k89c_P t 1) (k89c_P t 0)) (k89c_vel t (k89c_P t 1)) k89c_w0 = ((((4) * (t + 1)) * (3*t - 1)) * (-277200*t^4 + 694206*t^3 - 328661*t^2 + 37072*t + 1715)) / (1) := by
-    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_e, k89c_u, k89c_w0]
+    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_u, k89c_w0]
     field_simp
     ring
   rw [key]
@@ -160,7 +160,7 @@ theorem k89c_conv2 (t : ℝ) (ht1 : 1 < t) (ht2 : t ≤ 5/3) : 0 < k89c_d3 (k89c
   have hf1 : 0 < 25*t - 7 := by linarith
   have hf2 : 0 < 3 - t := by linarith
   have key : k89c_d3 (k89c_sub (k89c_P t 4) (k89c_P t 6)) (k89c_sub (k89c_P t 1) (k89c_P t 6)) k89c_w0 = (((1) * (t + 1)) * (25*t - 7)) / ((1) * (3 - t)^2) := by
-    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_e, k89c_u, k89c_w0]
+    simp only [k89c_d3, k89c_sub, k89c_P, k89c_e, k89c_w0]
     field_simp
     ring
   rw [key]
@@ -208,7 +208,7 @@ theorem k89c_conv3 (t : ℝ) (ht1 : 1 < t) (ht2 : t ≤ 5/3) : 0 < k89c_d3 (k89c
   have hf1 : 0 < 25*t - 7 := by linarith
   have hf2 : 0 < 3 - t := by linarith
   have key : k89c_d3 (k89c_sub (k89c_P t 3) (k89c_P t 4)) (k89c_sub (k89c_P t 6) (k89c_P t 4)) k89c_w0 = (((1) * (t + 1)) * (25*t - 7)) / ((1) * (3 - t)^2) := by
-    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_e, k89c_u, k89c_w0]
+    simp only [k89c_d3, k89c_sub, k89c_P, k89c_e, k89c_w0]
     field_simp
     ring
   rw [key]
@@ -257,7 +257,7 @@ theorem k89c_conv4 (t : ℝ) (ht1 : 1 < t) (ht2 : t ≤ 5/3) : 0 < k89c_d3 (k89c
   have hf0 : 0 < t + 1 := by linarith
   have hf1 : 0 < 3 - t := by linarith
   have key : k89c_d3 (k89c_sub (k89c_P t 0) (k89c_P t 3)) (k89c_sub (k89c_P t 4) (k89c_P t 3)) k89c_w0 = ((2) * (t + 1)) / ((1) * (3 - t)) := by
-    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_e, k89c_u, k89c_w0]
+    simp only [k89c_d3, k89c_sub, k89c_P, k89c_e, k89c_w0]
     field_simp
     ring
   rw [key]
@@ -271,7 +271,7 @@ theorem k89c_rA4 (t : ℝ) (ht1 : 1 < t) (ht2 : t ≤ 5/3) : 0 < k89c_d3 (k89c_s
   have hf1 : 0 < 9*t - 7 := by linarith
   have hf2 : 0 < 66000*t^5 - 443055*t^4 + 785791*t^3 - 357691*t^2 + 46057*t + 546 := k89c_hq8 t ht1 ht2
   have key : k89c_d3 (k89c_sub (k89c_P t 0) (k89c_P t 3)) (k89c_vel t (k89c_P t 3)) k89c_w0 = ((((4) * (3*t - 1)) * (9*t - 7)) * (66000*t^5 - 443055*t^4 + 785791*t^3 - 357691*t^2 + 46057*t + 546)) / (1) := by
-    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_e, k89c_u, k89c_w0]
+    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_u, k89c_w0]
     field_simp
     ring
   rw [key]
@@ -300,7 +300,7 @@ theorem k89c_ia1 (t : ℝ) (ht1 : 1 < t) (ht2 : t ≤ 5/3) : 0 < k89c_d3 (k89c_s
   have hf0 : 0 < t + 1 := by linarith
   have hf1 : 0 < 3 - t := by linarith
   have key : k89c_d3 (k89c_sub (k89c_P t 1) (k89c_P t 0)) (k89c_sub (k89c_P t 4) (k89c_P t 0)) k89c_w0 = ((15) * (t + 1)) / ((1) * (3 - t)) := by
-    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_e, k89c_u, k89c_w0]
+    simp only [k89c_d3, k89c_sub, k89c_P, k89c_e, k89c_w0]
     field_simp
     ring
   rw [key]
@@ -312,7 +312,7 @@ theorem k89c_ia2 (t : ℝ) (ht1 : 1 < t) (ht2 : t ≤ 5/3) : 0 < k89c_d3 (k89c_s
   have h0 : t ≠ 0 := by intro h; linarith
 
   have key : k89c_d3 (k89c_sub (k89c_P t 1) (k89c_P t 0)) (k89c_sub (k89c_P t 2) (k89c_P t 0)) k89c_w0 = (7) / (1) := by
-    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_e, k89c_u, k89c_w0]
+    simp only [k89c_d3, k89c_sub, k89c_P, k89c_w0]
     field_simp
     ring
   rw [key]
@@ -325,7 +325,7 @@ theorem k89c_ia3 (t : ℝ) (ht1 : 1 < t) (ht2 : t ≤ 5/3) : 0 < k89c_d3 (k89c_s
   have hf0 : 0 < 5*t - 2 := by linarith
   have hf1 : 0 < 3 - t := by linarith
   have key : k89c_d3 (k89c_sub (k89c_P t 4) (k89c_P t 1)) (k89c_sub (k89c_P t 2) (k89c_P t 1)) k89c_w0 = ((4) * (5*t - 2)) / ((1) * (3 - t)) := by
-    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_e, k89c_u, k89c_w0]
+    simp only [k89c_d3, k89c_sub, k89c_P, k89c_e, k89c_w0]
     field_simp
     ring
   rw [key]
@@ -338,7 +338,7 @@ theorem k89c_ia4 (t : ℝ) (ht1 : 1 < t) (ht2 : t ≤ 5/3) : 0 < k89c_d3 (k89c_s
   have hf0 : 0 < t + 1 := by linarith
   have hf1 : 0 < 3 - t := by linarith
   have key : k89c_d3 (k89c_sub (k89c_P t 0) (k89c_P t 4)) (k89c_sub (k89c_P t 2) (k89c_P t 4)) k89c_w0 = ((2) * (t + 1)) / ((1) * (3 - t)) := by
-    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_e, k89c_u, k89c_w0]
+    simp only [k89c_d3, k89c_sub, k89c_P, k89c_e, k89c_w0]
     field_simp
     ring
   rw [key]
@@ -351,7 +351,7 @@ theorem k89c_ib1 (t : ℝ) (ht1 : 1 < t) (ht2 : t ≤ 5/3) : 0 < k89c_d3 (k89c_s
   have hf0 : 0 < t + 1 := by linarith
   have hf1 : 0 < 3 - t := by linarith
   have key : k89c_d3 (k89c_sub (k89c_P t 6) (k89c_P t 0)) (k89c_sub (k89c_P t 4) (k89c_P t 0)) k89c_w0 = ((17) * (t + 1)^2) / ((1) * (3 - t)^2) := by
-    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_e, k89c_u, k89c_w0]
+    simp only [k89c_d3, k89c_sub, k89c_P, k89c_e, k89c_w0]
     field_simp
     ring
   rw [key]
@@ -364,7 +364,7 @@ theorem k89c_ib2 (t : ℝ) (ht1 : 1 < t) (ht2 : t ≤ 5/3) : 0 < k89c_d3 (k89c_s
   have hf0 : 0 < t + 1 := by linarith
   have hf1 : 0 < 3 - t := by linarith
   have key : k89c_d3 (k89c_sub (k89c_P t 6) (k89c_P t 0)) (k89c_sub (k89c_P t 5) (k89c_P t 0)) k89c_w0 = ((3) * (t + 1)^2) / ((1) * (3 - t)^2) := by
-    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_e, k89c_u, k89c_w0]
+    simp only [k89c_d3, k89c_sub, k89c_P, k89c_e, k89c_w0]
     field_simp
     ring
   rw [key]
@@ -377,7 +377,7 @@ theorem k89c_ib3 (t : ℝ) (ht1 : 1 < t) (ht2 : t ≤ 5/3) : 0 < k89c_d3 (k89c_s
   have hf0 : 0 < t + 1 := by linarith
   have hf1 : 0 < 3 - t := by linarith
   have key : k89c_d3 (k89c_sub (k89c_P t 4) (k89c_P t 6)) (k89c_sub (k89c_P t 5) (k89c_P t 6)) k89c_w0 = ((1) * (t + 1)^2) / ((1) * (3 - t)^2) := by
-    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_e, k89c_u, k89c_w0]
+    simp only [k89c_d3, k89c_sub, k89c_P, k89c_e, k89c_w0]
     field_simp
     ring
   rw [key]
@@ -390,7 +390,7 @@ theorem k89c_ib4 (t : ℝ) (ht1 : 1 < t) (ht2 : t ≤ 5/3) : 0 < k89c_d3 (k89c_s
   have hf0 : 0 < t + 1 := by linarith
   have hf1 : 0 < 3 - t := by linarith
   have key : k89c_d3 (k89c_sub (k89c_P t 0) (k89c_P t 4)) (k89c_sub (k89c_P t 5) (k89c_P t 4)) k89c_w0 = ((13) * (t + 1)^2) / ((1) * (3 - t)^2) := by
-    simp only [k89c_d3, k89c_sub, k89c_vel, k89c_add, k89c_cr, k89c_g, k89c_om, k89c_ta, k89c_o1, k89c_o2, k89c_o3, k89c_ta1, k89c_ta3, k89c_P, k89c_e, k89c_u, k89c_w0]
+    simp only [k89c_d3, k89c_sub, k89c_P, k89c_e, k89c_w0]
     field_simp
     ring
   rw [key]

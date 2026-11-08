@@ -155,7 +155,7 @@ theorem inner_x0x5 : ⟪x 0 - x 2, x 5 - x 2⟫ =
   rw [hA]
   generalize x 3 - x 2 = u at *
   rw [e0, e5]
-  simp only [inner_add_left, inner_add_right, inner_sub_left, inner_sub_right,
+  simp only [inner_add_left, inner_sub_right,
     inner_smul_left, inner_smul_right, hue, heu, RCLike.conj_to_real]
   ring
 
@@ -215,15 +215,15 @@ theorem X1_Q (a a22 g t k sm δ : ℝ) (ha : 0 < a) (ht : 0 < t) (ht1 : t < 1) (
   have p4 := mul_pos (mul_pos ha hδ) ht
   refine Q6x_eventually (z := fun i => Gf a a a22 g (cX1 t k sm i) ⟨-t, 0, -(k * t)⟩)
     (w := fun i => Gf a a a22 g (cX1 t k sm i) ⟨-1, 1, k * δ⟩) ?_ ?_ ?_ ?_ ?_
-  · right; simp only [cX1, sext_0, sext_1, sext_2, sext_3, sext_4, sext_5, Gf]
+  · right; simp only [cX1, sext_4, sext_5, Gf]
     exact ⟨by ring, by nlinarith⟩
-  · right; simp only [cX1, sext_0, sext_1, sext_2, sext_3, sext_4, sext_5, Gf]
+  · right; simp only [cX1, sext_0, sext_5, Gf]
     exact ⟨by linear_combination (-t) * hmet, by nlinarith⟩
-  · left; simp only [cX1, sext_0, sext_1, sext_2, sext_3, sext_4, sext_5, Gf]
+  · left; simp only [cX1, sext_0, sext_1, Gf]
     nlinarith
-  · left; simp only [cX1, sext_0, sext_1, sext_2, sext_3, sext_4, sext_5, Gf]
+  · left; simp only [cX1, sext_1, sext_2, Gf]
     nlinarith
-  · left; simp only [cX1, sext_0, sext_1, sext_2, sext_3, sext_4, sext_5, Gf]
+  · left; simp only [cX1, sext_1, sext_3, Gf]
     nlinarith
 
 namespace Frame02
@@ -725,18 +725,18 @@ theorem wedge_rupert (ρ : ℝ) (hρ : 0 < ρ) (hρ1 : ρ < 1) (h12 : G.a12 = 0)
   intro j
   rcases fin7_cases j with rfl | rfl | rfl | rfl | rfl | rfl | rfl
   · obtain ⟨k1, k2, k3⟩ := wrow0 ρ G.a11 G.a22 γ 1 s (G.a11 / 4) ha hb hρ hρ1' hγ one_pos hs0 hr hsb hP hf5
-      (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 0)) (by rw [(hv _).1]; norm_num [wpts] <;> ring)
-      (by rw [(hv _).2]; norm_num [wpts] <;> ring)
+      (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 0)) (by rw [(hv _).1]; norm_num [wpts] )
+      (by rw [(hv _).2]; norm_num [wpts] )
     rw [← hpt] at k1 k2 k3
     exact G.ev_corner _ _ _ _ 0 2 1 k1 k2 k3
   · obtain ⟨k1, k2, k3⟩ := wrow1 ρ G.a11 G.a22 γ 1 s (G.a11 / 4) ha hb hρ hρ1' hγ one_pos hs0 hr hsb hP hf5
       (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 1)) (by rw [(hv _).1]; norm_num [wpts] <;> ring)
-      (by rw [(hv _).2]; norm_num [wpts] <;> ring)
+      (by rw [(hv _).2]; norm_num [wpts] )
     rw [← hpt] at k1 k2 k3
     exact G.ev_corner _ _ _ _ 1 0 4 k1 k2 k3
   · obtain ⟨k1, k2, k3⟩ := wrow2 ρ G.a11 G.a22 γ 1 s (G.a11 / 4) ha hb hρ hρ1' hγ one_pos hs0 hr hsb hP hf5
-      (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 2)) (by rw [(hv _).1]; norm_num [wpts] <;> ring)
-      (by rw [(hv _).2]; norm_num [wpts] <;> ring)
+      (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 2)) (by rw [(hv _).1]; norm_num [wpts] )
+      (by rw [(hv _).2]; norm_num [wpts] )
     rw [← hpt] at k1 k2 k3
     exact G.ev_corner _ _ _ _ 2 5 0 k1 k2 k3
   · obtain ⟨k0, k1, k2, k3⟩ := wtri ρ G.a11 G.a22 γ 1 ha hb hρ hρ1' hγ one_pos hγ hγ hγ hγ hγ
@@ -748,13 +748,13 @@ theorem wedge_rupert (ρ : ℝ) (hρ : 0 < ρ) (hρ1 : ρ < 1) (h12 : G.a12 = 0)
     rw [← hpt] at k1 k2 k3
     exact G.ev_corner _ _ _ _ 4 1 6 k1 k2 k3
   · obtain ⟨k1, k2, k3⟩ := wrow5 ρ G.a11 G.a22 γ 1 s (G.a11 / 4) ha hb hρ hρ1' hγ one_pos hs0 hr hsb hP hf5
-      (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 5)) (by rw [(hv _).1]; norm_num [wpts] <;> ring)
-      (by rw [(hv _).2]; norm_num [wpts] <;> ring)
+      (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 5)) (by rw [(hv _).1]; norm_num [wpts] )
+      (by rw [(hv _).2]; norm_num [wpts] )
     rw [← hpt] at k1 k2 k3
     exact G.ev_corner _ _ _ _ 5 6 2 k1 k2 k3
   · obtain ⟨k1, k2, k3⟩ := wrow6 ρ G.a11 G.a22 γ 1 s (G.a11 / 4) ha hb hρ hρ1' hγ one_pos hs0 hr hsb hP hf5
       (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 6)) (by rw [(hv _).1]; norm_num [wpts] <;> ring)
-      (by rw [(hv _).2]; norm_num [wpts] <;> ring)
+      (by rw [(hv _).2]; norm_num [wpts] )
     rw [← hpt] at k1 k2 k3
     exact G.ev_corner _ _ _ _ 6 4 5 k1 k2 k3
 
@@ -767,7 +767,7 @@ theorem orth3 (U W E : ℝ³) (t h : ℝ) (hUE : ⟪U, E⟫ = 0) (hWE : ⟪W, E�
   have hEW : ⟪E, W⟫ = 0 := by rw [real_inner_comm]; exact hWE
   have hWU : ⟪W, U⟫ = ⟪U, U⟫ := by rw [real_inner_comm]; exact hUW
   constructor <;>
-  · simp only [inner_add_left, inner_add_right, inner_sub_left, inner_sub_right,
+  · simp only [inner_add_left, inner_sub_left, inner_sub_right,
       inner_smul_left, inner_smul_right, hUE, hWE, hEU, hEW, hUW, hWU, RCLike.conj_to_real]
     ring
 

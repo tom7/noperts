@@ -34,18 +34,18 @@ theorem k92_Av (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k9
     k92G u v x y 1 0 0 (-(u+1)) ((v+1)*m) (1+u*m-(v+1)) = k92Ac u v m x y := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
-  simp only [k92Rin, k92G, k91G, k92pp, k92qr, k92Ac, k92Bc]
+  simp only [k92G, k91G, k92pp, k92qr, k92Ac]
   field_simp
-  simp only [k92Wn, k92Pm, k92K, k92l, k92M3, k92Nbv, k92TB, k92TP, k92Q]
+  simp only [k92Wn, k92Pm]
   ring
 
 theorem k92_Bv (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
     k92G u v x y 0 1 0 (-(u+1)) ((v+1)*m) (1+u*m-(v+1)) = k92Bc u v m x y := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
-  simp only [k92Rin, k92G, k91G, k92pp, k92qr, k92Ac, k92Bc]
+  simp only [k92G, k91G, k92pp, k92qr, k92Bc]
   field_simp
-  simp only [k92Wn, k92Pm, k92K, k92l, k92M3, k92Nbv, k92TB, k92TP, k92Q]
+  simp only [k92Wn, k92Nbv]
   ring
 
 theorem k92_F1 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
@@ -54,7 +54,7 @@ theorem k92_F1 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k9
   have hv' : v ≠ 0 := hv.ne'
   simp only [k92Rin, k92G, k91G, k92pp, k92qr, k92Ac, k92Bc]
   field_simp
-  simp only [k92Wn, k92Pm, k92K, k92l, k92M3, k92Nbv, k92TB, k92TP, k92Q]
+  simp only [k92Wn, k92Pm, k92Nbv]
   ring
 
 theorem k92_F2 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
@@ -63,7 +63,7 @@ theorem k92_F2 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k9
   have hv' : v ≠ 0 := hv.ne'
   simp only [k92Rin, k92G, k91G, k92pp, k92qr, k92Ac, k92Bc]
   field_simp
-  simp only [k92Wn, k92Pm, k92K, k92l, k92M3, k92Nbv, k92TB, k92TP, k92Q]
+  simp only [k92Wn, k92Pm, k92Nbv]
   ring
 
 theorem k92_zA (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
@@ -72,7 +72,7 @@ theorem k92_zA (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k9
   have hv' : v ≠ 0 := hv.ne'
   simp only [k92Rin, k92G, k91G, k92pp, k92qr, k92Ac, k92Bc]
   field_simp
-  simp only [k92Wn, k92Pm, k92K, k92l, k92M3, k92Nbv, k92TB, k92TP, k92Q]
+  simp only [k92Wn, k92Pm, k92Nbv]
   ring
 
 theorem k92_zB (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
@@ -81,7 +81,7 @@ theorem k92_zB (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k9
   have hv' : v ≠ 0 := hv.ne'
   simp only [k92Rin, k92G, k91G, k92pp, k92qr, k92Ac, k92Bc]
   field_simp
-  simp only [k92Wn, k92Pm, k92K, k92l, k92M3, k92Nbv, k92TB, k92TP, k92Q]
+  simp only [k92Wn, k92Pm, k92Nbv]
   ring
 
 theorem k92_zab (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
@@ -90,70 +90,70 @@ theorem k92_zab (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k
   have hv' : v ≠ 0 := hv.ne'
   simp only [k92Rin, k92G, k91G, k92pp, k92qr, k92Ac, k92Bc]
   field_simp
-  simp only [k92Wn, k92Pm, k92K, k92l, k92M3, k92Nbv, k92TB, k92TP, k92Q]
+  simp only [k92Wn, k92Pm, k92K, k92l, k92Nbv]
   ring
 
 theorem k92_DP (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
     k92G u v x y u 0 (v+1) 1 0 0 = (u+v+1)*k92K u v x y/k92Wn u v x y := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
-  simp only [k92Rin, k92G, k91G, k92pp, k92qr, k92Ac, k92Bc]
+  simp only [k92G, k91G, k92pp, k92qr]
   field_simp
-  simp only [k92Wn, k92Pm, k92K, k92l, k92M3, k92Nbv, k92TB, k92TP, k92Q]
+  simp only [k92Wn, k92K]
   ring
 
 theorem k92_PB (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
     -u*k92Ac u v m x y - (v+1)*k92Bc u v m x y = (v^2*y*k92l u v x y*k92K u v x y - k92Wn u v x y*k92TB u v x y*m)/(v*(x+y)*k92Wn u v x y) := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
-  simp only [k92Rin, k92G, k91G, k92pp, k92qr, k92Ac, k92Bc]
+  simp only [k92Ac, k92Bc]
   field_simp
-  simp only [k92Wn, k92Pm, k92K, k92l, k92M3, k92Nbv, k92TB, k92TP, k92Q]
+  simp only [k92Wn, k92Pm, k92K, k92l, k92Nbv, k92TB]
   ring
 
 theorem k92_PC (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
     (u+1)*k92Ac u v m x y + v*k92Bc u v m x y = (-v*y*k92Q u v x y + v*x*k92l u v x y*k92Wn u v x y*m)/((x+y)*k92Wn u v x y) := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
-  simp only [k92Rin, k92G, k91G, k92pp, k92qr, k92Ac, k92Bc]
+  simp only [k92Ac, k92Bc]
   field_simp
-  simp only [k92Wn, k92Pm, k92K, k92l, k92M3, k92Nbv, k92TB, k92TP, k92Q]
+  simp only [k92Wn, k92Pm, k92l, k92Nbv, k92Q]
   ring
 
 theorem k92_Q1 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
     k92G u v x y (u+1) (-((v+1)*m)) (v+1-(1+u*m)) 0 0 1 = (v^2*y^2 - m*k92Wn u v x y)/(v*(x+y)) := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
-  simp only [k92Rin, k92G, k91G, k92pp, k92qr, k92Ac, k92Bc]
+  simp only [k92G, k91G, k92pp, k92qr]
   field_simp
-  simp only [k92Wn, k92Pm, k92K, k92l, k92M3, k92Nbv, k92TB, k92TP, k92Q]
+  simp only [k92Wn]
   ring
 
 theorem k92_X3 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
     k92G u v x y (-u) (-(v+1)) 0 (-u) 0 (-(v+1)) = k92K u v x y*k92M3 u v x y/(v*(x+y)*k92Wn u v x y) := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
-  simp only [k92Rin, k92G, k91G, k92pp, k92qr, k92Ac, k92Bc]
+  simp only [k92G, k91G, k92pp, k92qr]
   field_simp
-  simp only [k92Wn, k92Pm, k92K, k92l, k92M3, k92Nbv, k92TB, k92TP, k92Q]
+  simp only [k92Wn, k92K, k92M3]
   ring
 
 theorem k92_X4 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
     k92G u v x y u (v+1) 0 (u+1) 0 v = v*y*k92l u v x y*k92K u v x y/((x+y)*k92Wn u v x y) := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
-  simp only [k92Rin, k92G, k91G, k92pp, k92qr, k92Ac, k92Bc]
+  simp only [k92G, k91G, k92pp, k92qr]
   field_simp
-  simp only [k92Wn, k92Pm, k92K, k92l, k92M3, k92Nbv, k92TB, k92TP, k92Q]
+  simp only [k92Wn, k92K, k92l]
   ring
 
 theorem k92_H (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
     k92G u v x y (u+1) (v+1-(v+1)*m) (-(1+u*m)) (u+1) 0 v = v*y*k92l u v x y*k92Pm u v m x y/((x+y)*k92Wn u v x y) := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
-  simp only [k92Rin, k92G, k91G, k92pp, k92qr, k92Ac, k92Bc]
+  simp only [k92G, k91G, k92pp, k92qr]
   field_simp
-  simp only [k92Wn, k92Pm, k92K, k92l, k92M3, k92Nbv, k92TB, k92TP, k92Q]
+  simp only [k92Wn, k92Pm, k92l]
   ring
 
 end Minimality.Type08Sp.C2

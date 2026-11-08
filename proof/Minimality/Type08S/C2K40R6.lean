@@ -397,27 +397,27 @@ theorem k28b2_R16 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     · exact (hyx 5 (by rw [hY5, E4])).elim
     · exact ⟨_, rfl, TS.2 _ (by simp)⟩
   · simp only [lexgRow, List.map_cons, List.map_nil, lexk_inner_F, lxe0, lxe1, lxe2, lxe3, lxe4, lxe5, lxf0, lxf1, lxf2, lxf3, lxf4, lxf5, hY0, hY1, hY2, hY3, hY4, hY5, inner_sub_left]
-    first | (exact lexkPos_head (by linarith)) | (refine lexkPos_tail (by linarith) ?_; exact lexkPos_head (by linarith)) | (refine lexkPos_tail (by linarith) ?_; refine lexkPos_tail (by linarith) ?_; exact lexkPos_head (by linarith)) | lexk_row
+    first | (exact lexkPos_head (by linarith))
   · simp only [lexgRow, List.map_cons, List.map_nil, lexk_inner_F, lxe0, lxe1, lxe2, lxe3, lxe4, lxe5, lxf0, lxf1, lxf2, lxf3, lxf4, lxf5, hY0, hY1, hY2, hY3, hY4, hY5, inner_sub_left]
-    first | (exact lexkPos_head (by linarith)) | (refine lexkPos_tail (by linarith) ?_; exact lexkPos_head (by linarith)) | (refine lexkPos_tail (by linarith) ?_; refine lexkPos_tail (by linarith) ?_; exact lexkPos_head (by linarith)) | lexk_row
+    first | (exact lexkPos_head (by linarith))
   · intro i h1
     rcases k28b2_R16_cases i with rfl | rfl | rfl | rfl | rfl | rfl
     · exact absurd rfl h1
     · left
       simp only [lexgRow, List.map_cons, List.map_nil, lexk_inner_F, lxe0, lxe1, lxe2, lxe3, lxe4, lxe5, lxf0, lxf1, lxf2, lxf3, lxf4, lxf5, hY0, hY1, hY2, hY3, hY4, hY5, inner_sub_left]
-      first | (exact lexkPos_head (by linarith)) | (refine lexkPos_tail (by linarith) ?_; exact lexkPos_head (by linarith)) | (refine lexkPos_tail (by linarith) ?_; refine lexkPos_tail (by linarith) ?_; exact lexkPos_head (by linarith)) | lexk_row
+      first | (exact lexkPos_head (by linarith))
     · left
       simp only [lexgRow, List.map_cons, List.map_nil, lexk_inner_F, lxe0, lxe1, lxe2, lxe3, lxe4, lxe5, lxf0, lxf1, lxf2, lxf3, lxf4, lxf5, hY0, hY1, hY2, hY3, hY4, hY5, inner_sub_left]
-      first | (exact lexkPos_head (by linarith)) | (refine lexkPos_tail (by linarith) ?_; exact lexkPos_head (by linarith)) | (refine lexkPos_tail (by linarith) ?_; refine lexkPos_tail (by linarith) ?_; exact lexkPos_head (by linarith)) | lexk_row
+      first | (refine lexkPos_tail (by linarith) ?_; exact lexkPos_head (by linarith))
     · left
       simp only [lexgRow, List.map_cons, List.map_nil, lexk_inner_F, lxe0, lxe1, lxe2, lxe3, lxe4, lxe5, lxf0, lxf1, lxf2, lxf3, lxf4, lxf5, hY0, hY1, hY2, hY3, hY4, hY5, inner_sub_left]
-      first | (exact lexkPos_head (by linarith)) | (refine lexkPos_tail (by linarith) ?_; exact lexkPos_head (by linarith)) | (refine lexkPos_tail (by linarith) ?_; refine lexkPos_tail (by linarith) ?_; exact lexkPos_head (by linarith)) | lexk_row
+      first | (refine lexkPos_tail (by linarith) ?_; exact lexkPos_head (by linarith))
     · left
       simp only [lexgRow, List.map_cons, List.map_nil, lexk_inner_F, lxe0, lxe1, lxe2, lxe3, lxe4, lxe5, lxf0, lxf1, lxf2, lxf3, lxf4, lxf5, hY0, hY1, hY2, hY3, hY4, hY5, inner_sub_left]
-      first | (exact lexkPos_head (by linarith)) | (refine lexkPos_tail (by linarith) ?_; exact lexkPos_head (by linarith)) | (refine lexkPos_tail (by linarith) ?_; refine lexkPos_tail (by linarith) ?_; exact lexkPos_head (by linarith)) | lexk_row
+      first | (exact lexkPos_head (by linarith))
     · right
       simp only [lexgRow, List.map_cons, List.map_nil, lexk_inner_F, lxe0, lxe1, lxe2, lxe3, lxe4, lxe5, lxf0, lxf1, lxf2, lxf3, lxf4, lxf5, hY0, hY1, hY2, hY3, hY4, hY5, inner_sub_left]
-      first | (exact lexkPos_head (by linarith)) | (refine lexkPos_tail (by linarith) ?_; exact lexkPos_head (by linarith)) | (refine lexkPos_tail (by linarith) ?_; refine lexkPos_tail (by linarith) ?_; exact lexkPos_head (by linarith)) | lexk_row
+      first | (exact lexkPos_head (by linarith))
 
 #print axioms k28b2_R16
 

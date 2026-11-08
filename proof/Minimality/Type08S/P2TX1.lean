@@ -121,19 +121,19 @@ theorem qtop4_ev {z0 z1 z2 z3 δ0 δ1 δ2 δ3 : ℝ} (hrob : ¬ Sep z0 z2 z1 z3)
     left
     simp only [max_le_iff, le_min_iff]
     refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> by_contra hc <;> push Not at hc
-    · first | linarith [a01 hc] | linarith [b01 hc] | linarith [a02 hc] | linarith [b02 hc] | linarith [a03 hc] | linarith [b03 hc] | linarith [a12 hc] | linarith [b12 hc] | linarith [a13 hc] | linarith [b13 hc] | linarith [a23 hc] | linarith [b23 hc]
-    · first | linarith [a01 hc] | linarith [b01 hc] | linarith [a02 hc] | linarith [b02 hc] | linarith [a03 hc] | linarith [b03 hc] | linarith [a12 hc] | linarith [b12 hc] | linarith [a13 hc] | linarith [b13 hc] | linarith [a23 hc] | linarith [b23 hc]
-    · first | linarith [a01 hc] | linarith [b01 hc] | linarith [a02 hc] | linarith [b02 hc] | linarith [a03 hc] | linarith [b03 hc] | linarith [a12 hc] | linarith [b12 hc] | linarith [a13 hc] | linarith [b13 hc] | linarith [a23 hc] | linarith [b23 hc]
-    · first | linarith [a01 hc] | linarith [b01 hc] | linarith [a02 hc] | linarith [b02 hc] | linarith [a03 hc] | linarith [b03 hc] | linarith [a12 hc] | linarith [b12 hc] | linarith [a13 hc] | linarith [b13 hc] | linarith [a23 hc] | linarith [b23 hc]
+    · first | linarith [a01 hc]
+    · first | linarith [a03 hc]
+    · first | linarith [b12 hc]
+    · first | linarith [a23 hc]
   · rintro ⟨p1, p2, p3, p4⟩
     apply hrob
     right
     simp only [max_le_iff, le_min_iff]
     refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> by_contra hc <;> push Not at hc
-    · first | linarith [a01 hc] | linarith [b01 hc] | linarith [a02 hc] | linarith [b02 hc] | linarith [a03 hc] | linarith [b03 hc] | linarith [a12 hc] | linarith [b12 hc] | linarith [a13 hc] | linarith [b13 hc] | linarith [a23 hc] | linarith [b23 hc]
-    · first | linarith [a01 hc] | linarith [b01 hc] | linarith [a02 hc] | linarith [b02 hc] | linarith [a03 hc] | linarith [b03 hc] | linarith [a12 hc] | linarith [b12 hc] | linarith [a13 hc] | linarith [b13 hc] | linarith [a23 hc] | linarith [b23 hc]
-    · first | linarith [a01 hc] | linarith [b01 hc] | linarith [a02 hc] | linarith [b02 hc] | linarith [a03 hc] | linarith [b03 hc] | linarith [a12 hc] | linarith [b12 hc] | linarith [a13 hc] | linarith [b13 hc] | linarith [a23 hc] | linarith [b23 hc]
-    · first | linarith [a01 hc] | linarith [b01 hc] | linarith [a02 hc] | linarith [b02 hc] | linarith [a03 hc] | linarith [b03 hc] | linarith [a12 hc] | linarith [b12 hc] | linarith [a13 hc] | linarith [b13 hc] | linarith [a23 hc] | linarith [b23 hc]
+    · first | linarith [b01 hc]
+    · first | linarith [a12 hc]
+    · first | linarith [b03 hc]
+    · first | linarith [b23 hc]
 
 end Type08Sp
 end Minimality

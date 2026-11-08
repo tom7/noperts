@@ -120,7 +120,6 @@ theorem tB_cyc (S : Shape18) (B2 : S.hm * S.tp < S.hp * (1 - S.tm)) (B3 : S.km *
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
     | (left; linarith [a1, a2, a3, a4, a5])
-    | (right; refine ⟨by ring, by linarith [a1, a2, a3, a4, a5]⟩)
 
 theorem tB_rest2 (S : Shape18) (B2 : S.hm * S.tp < S.hp * (1 - S.tm)) (B3 : S.km * S.tp < S.hp * (1 - S.sm)) :
     ∀ i : ZMod 4,
@@ -141,7 +140,6 @@ theorem tB_rest2 (S : Shape18) (B2 : S.hm * S.tp < S.hp * (1 - S.tm)) (B3 : S.km
   · simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
     | (left; linarith [a1, a2, a3, a4, a5, a6])
-    | (right; refine ⟨by ring, by linarith [a1, a2, a3, a4, a5, a6]⟩)
 
 theorem tB_rest5 (S : Shape18) (B2 : S.hm * S.tp < S.hp * (1 - S.tm)) (B3 : S.km * S.tp < S.hp * (1 - S.sm)) :
     ∀ i : ZMod 4,
@@ -255,7 +253,6 @@ theorem t31a_cyc (S : Shape18) (Hp : S.kp * S.tp < S.hp * S.sp) (Hm : S.km * S.t
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
     | (left; linarith [a1, a2, a3, a4, a5, a6])
-    | (right; refine ⟨by ring, by linarith [a1, a2, a3, a4, a5, a6]⟩)
 
 theorem t31a_rest1 (S : Shape18) (Hp : S.kp * S.tp < S.hp * S.sp) (Hm : S.km * S.tm < S.hm * S.sm) :
     ∀ i : ZMod 4,
@@ -276,7 +273,6 @@ theorem t31a_rest1 (S : Shape18) (Hp : S.kp * S.tp < S.hp * S.sp) (Hm : S.km * S
   · simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
     | (left; linarith [a1, a2, a3, a4, a5, a6])
-    | (right; refine ⟨by ring, by linarith [a1, a2, a3, a4, a5, a6]⟩)
 
 theorem t31a_rest2 (S : Shape18) (Hp : S.kp * S.tp < S.hp * S.sp) (Hm : S.km * S.tm < S.hm * S.sm) :
     ∀ i : ZMod 4,
@@ -297,7 +293,6 @@ theorem t31a_rest2 (S : Shape18) (Hp : S.kp * S.tp < S.hp * S.sp) (Hm : S.km * S
   · simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
     | (left; linarith [a1, a2, a3, a4, a5, a6])
-    | (right; refine ⟨by ring, by linarith [a1, a2, a3, a4, a5, a6]⟩)
 
 theorem t31a_rest4 (S : Shape18) (Hp : S.kp * S.tp < S.hp * S.sp) (Hm : S.km * S.tm < S.hm * S.sm) :
     ∀ i : ZMod 4,
@@ -393,7 +388,6 @@ theorem t31b_cyc (S : Shape18) (Hp : S.hp * S.sp < S.kp * S.tp) (Hm : S.km * S.t
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
     | (left; linarith [a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16])
-    | (right; refine ⟨by ring, by linarith [a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16]⟩)
 
 theorem t31b_rest2 (S : Shape18) (Hp : S.hp * S.sp < S.kp * S.tp) (Hm : S.km * S.tm < S.hm * S.sm) (hts : S.sp < S.tp) :
     ∀ i : ZMod 5,
@@ -417,7 +411,6 @@ theorem t31b_rest2 (S : Shape18) (Hp : S.hp * S.sp < S.kp * S.tp) (Hm : S.km * S
   · simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
     | (left; linarith [a1, a2, a3, a4, a5, a6, a7, a8, a9])
-    | (right; refine ⟨by ring, by linarith [a1, a2, a3, a4, a5, a6, a7, a8, a9]⟩)
 
 theorem t31b_rest4 (S : Shape18) (Hp : S.hp * S.sp < S.kp * S.tp) (Hm : S.km * S.tm < S.hm * S.sm) (hts : S.sp < S.tp) :
     ∀ i : ZMod 5,
@@ -528,7 +521,6 @@ theorem tA1_cyc (S : Shape18) (A1 : S.hm * (1 - S.tp) < S.hp * S.tm) :
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
     | (left; linarith [a1, a2, a3, a4])
-    | (right; refine ⟨by ring, by linarith [a1, a2, a3, a4]⟩)
 
 theorem tA1_rest1 (S : Shape18) (A1 : S.hm * (1 - S.tp) < S.hp * S.tm) :
     ∀ i : ZMod 4,
@@ -549,7 +541,6 @@ theorem tA1_rest1 (S : Shape18) (A1 : S.hm * (1 - S.tp) < S.hp * S.tm) :
   · simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
     | (left; linarith [a1, a2, a3, a4, a5, a6])
-    | (right; refine ⟨by ring, by linarith [a1, a2, a3, a4, a5, a6]⟩)
 
 theorem tA1_rest3 (S : Shape18) (A1 : S.hm * (1 - S.tp) < S.hp * S.tm) :
     ∀ i : ZMod 4,
@@ -679,7 +670,6 @@ theorem tA2_cyc (S : Shape18) {b : ℝ} (hb : 0 < b) (A1 : S.hm * (1 - S.tp) < S
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
     | (left; linarith [a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17])
-    | (right; refine ⟨by ring, by linarith [a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17]⟩)
 
 theorem tA2_rest2 (S : Shape18) {b : ℝ} (hb : 0 < b) (A1 : S.hm * (1 - S.tp) < S.hp * S.tm) (A2 : S.km * S.tm < S.sm * (S.hp * S.tm + S.tp * S.hm)) (A3 : S.km * (1 - S.tm) < S.hp * S.sm * (1 - S.tm) + S.hm * (1 - S.tp * S.sm)) :
     ∀ i : ZMod 5,
@@ -702,7 +692,6 @@ theorem tA2_rest2 (S : Shape18) {b : ℝ} (hb : 0 < b) (A1 : S.hm * (1 - S.tp) <
   · simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
     | (left; linarith [a1, a2, a3, a4, a5, a6, a7, a8])
-    | (right; refine ⟨by ring, by linarith [a1, a2, a3, a4, a5, a6, a7, a8]⟩)
 
 theorem tA2_rest4 (S : Shape18) {b : ℝ} (hb : 0 < b) (A1 : S.hm * (1 - S.tp) < S.hp * S.tm) (A2 : S.km * S.tm < S.sm * (S.hp * S.tm + S.tp * S.hm)) (A3 : S.km * (1 - S.tm) < S.hp * S.sm * (1 - S.tm) + S.hm * (1 - S.tp * S.sm)) :
     ∀ i : ZMod 5,
@@ -971,16 +960,16 @@ theorem rupert_of_F2_view (hx : Function.Injective x) (α γ : ℝ)
     rcases hj with rfl | rfl | rfl | rfl <;> simp [q5, q1, q4, q2]
   · intro i hi
     fin_cases i
-    · exact F.cross_F2 hx 0 (τ := -F.S.tp) (by rw [q0]; simp) (by rw [q0]; simp <;> linarith)
-        (by rw [q0]; simp <;> linarith) h0
+    · exact F.cross_F2 hx 0 (τ := -F.S.tp) (by rw [q0]; simp) (by rw [q0]; simp )
+        (by rw [q0]; simp ) h0
     · exact absurd (by decide) hi
     · exact absurd (by decide) hi
     · exact F.cross_F2 hx 3 (τ := -1) (by rw [q3]; simp) (by rw [q3]; simp)
         (by rw [q3]; simp) h3
     · exact absurd (by decide) hi
     · exact absurd (by decide) hi
-    · exact F.cross_F2 hx 6 (τ := -F.S.tm) (by rw [q6]; simp) (by rw [q6]; simp <;> linarith)
-        (by rw [q6]; simp <;> linarith) h6
+    · exact F.cross_F2 hx 6 (τ := -F.S.tm) (by rw [q6]; simp) (by rw [q6]; simp )
+        (by rw [q6]; simp ) h6
 
 end Frame18
 
