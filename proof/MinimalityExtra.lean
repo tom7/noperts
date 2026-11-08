@@ -903,11 +903,12 @@ copy strictly into the shadow of the first: A vertex `p ≠ a, b` is pushed in b
 with `a` and `b`, and `a`, `b` themselves by a vertex below the first plane. So the polytope is
 first-order free at that view, hence Rupert. The faces may be any polygons.
 
-The general statement is false: "Every polytope with an acute dihedral angle is Rupert" does not
-hold. `ChipM18K5`, the Septopert M18 with three vertices chipped off (six edges at 81.95°), is a
-Nopert. Its acute edges are the short edges at the cuts, and the rest of the polytope reaches far
-beyond their ends, so the slab condition fails there. Its right-angled apex edges satisfy the slab
-condition but have dihedral exactly 90°, so `⟪nF, nF'⟫ < 0` fails. Both hypotheses are needed. -/
+Note that the general statement is false: "Every polytope with an acute dihedral angle is
+Rupert" does not hold. `ChipM18K5`, the Septopert M18 with three vertices chipped off (six
+edges at 81.95°), is a Nopert. Its acute edges are the short edges at the cuts, and the rest
+of the polytope reaches far beyond their ends, so the slab condition fails there. Its
+right-angled apex edges satisfy the slab condition but have dihedral exactly 90°, so
+`⟪nF, nF'⟫ < 0` fails. Both hypotheses are needed. -/
 def AcuteEdgeLemma : Prop :=
   ∀ (n : ℕ) (x : Fin n → ℝ³) (a b : Fin n) (nF nF' : ℝ³),
     (∀ i, ⟪nF, x i - x a⟫ ≤ 0) → ⟪nF, x b - x a⟫ = 0 →
