@@ -54,7 +54,7 @@ theorem close_hdn_pers {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
     (hSN2 : RegN2 N.F → SC2N2 a a' b b' c c' d) (hST4 : RegT4 N.F → SC2Kb a a' b b' c c' d ∧ SC2K2 a a' b b' c c' d) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   obtain ⟨i, s, j⟩ := t
-  simp only [SC08, Set.mem_setOf_eq] at ht
+  simp only [SC08, Set.mem_ofPred_eq] at ht
   dsimp only at ht hreg hrim hrob hp
   rcases hreg with ⟨rfl, hr⟩ | ⟨rfl, hr⟩
   · -- N2 `K_c`

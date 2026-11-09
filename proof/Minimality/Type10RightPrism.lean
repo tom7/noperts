@@ -205,7 +205,7 @@ theorem t10_sign2 {D T ρ g : ℝ} (hρ : 0 < ρ) (hD : 0 < D * D) (h : D * g = 
   linarith
 
 theorem affine_linear_sub (φ : ℝ³ →ᵃ[ℝ] ℝ) (a b : ℝ³) : φ.linear (a - b) = φ a - φ b := by
-  simpa using φ.linearMap_vsub a b
+  simpa using φ.linear_apply_vsub a b
 
 /-- **The capped right prism of type 10 is Rupert.**  The apex `x 0` lies strictly on the
 inner side of the three lateral facets `1245`, `1346`, `2356`, so it projects (along the

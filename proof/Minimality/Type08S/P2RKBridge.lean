@@ -65,11 +65,11 @@ theorem tilt_orient {k : ℕ} [NeZero k] (V : Finset ℝ³) (x : ZMod k → ℝ�
     (∀ i j, j ≠ i → j ≠ i + 1 → TiltSign (orient σ x (i + 1) - orient σ x i) (orient σ x j - orient σ x i) u₀ v) ∧
     (∀ y ∈ V, (∀ j, y ≠ orient σ x j) → ∀ i, TiltSign (orient σ x (i + 1) - orient σ x i) (y - orient σ x i) u₀ v) := by
   rcases hσ with rfl | rfl
-  · simp only [orient, if_true]
+  · simp only [orient, ite_true]
     exact ⟨fun i j hi hj => by simpa [TiltSignS, TiltSign] using hcyc i j hi hj,
       fun y hy hyx i => by simpa [TiltSignS, TiltSign] using hrest y hy hyx i⟩
   · have hne : (-1 : ℝ) ≠ 1 := by norm_num
-    simp only [orient, hne, if_false]
+    simp only [orient, hne, ite_false]
     have key : ∀ i : ZMod k, ∀ w : ℝ³, ∀ u : ℝ³,
         det3 (x (-(i + 1)) - x (-i)) (w - x (-i)) u =
           -det3 (x (-(i + 1) + 1) - x (-(i + 1))) (w - x (-(i + 1))) u := by
