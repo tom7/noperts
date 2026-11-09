@@ -87,7 +87,7 @@ theorem isRupert_of_box_rule (V : Finset ℝ³)
   have h := hcorner s t hs ht
   have e1 : {q : ℝ² | ∃ p ∈ convexHull ℝ (V : Set ℝ³), proj_xy (R₂.toEuclideanLin p) = q} =
       (projL ∘ₗ R₂.toEuclideanLin) '' convexHull ℝ (V : Set ℝ³) := by
-    ext q; simp only [Set.mem_setOf_eq, Set.mem_image, LinearMap.comp_apply]; rfl
+    ext q; simp only [Set.mem_ofPred_eq, Set.mem_image, LinearMap.comp_apply]; rfl
   rw [e1] at h
   obtain ⟨μ', h1, h2, h3⟩ := posComb_of_mem_interior V (projL ∘ₗ R₂.toEuclideanLin) _ h
   exact ⟨μ', h1, h2, h3⟩

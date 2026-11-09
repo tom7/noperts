@@ -136,12 +136,12 @@ lemma exists_sep {k : ℕ} [NeZero k] (x : ZMod k → Fin 3 → ℝ)
   have gv : ∀ i : Fin 4, g ((emb i : ℕ) : ZMod k) = if emb i = a ∨ emb i = c then 1 else 0 := by
     intro i
     simp only [g, ZMod.val_natCast_of_lt (hlt i)]
-  have ga : g (a : ZMod k) = 1 := by rw [gv 0]; exact if_pos (Or.inl rfl)
-  have gc : g (c : ZMod k) = 1 := by rw [gv 2]; exact if_pos (Or.inr rfl)
+  have ga : g (a : ZMod k) = 1 := by rw [gv 0]; exact ite_eq_left (Or.inl rfl)
+  have gc : g (c : ZMod k) = 1 := by rw [gv 2]; exact ite_eq_left (Or.inr rfl)
   have gb : g (b : ZMod k) = 0 := by
-    rw [gv 1]; exact if_neg (by show ¬(b = a ∨ b = c); omega)
+    rw [gv 1]; exact ite_eq_right (by show ¬(b = a ∨ b = c); omega)
   have gd : g (d : ZMod k) = 0 := by
-    rw [gv 3]; exact if_neg (by show ¬(d = a ∨ d = c); omega)
+    rw [gv 3]; exact ite_eq_right (by show ¬(d = a ∨ d = c); omega)
   refine ⟨a, b, c, d, hab, hbc, hcd, hdk, n, ?_, ?_, ?_, ?_⟩
   · rw [key 1, key 0, gb, ga]; linarith
   · rw [key 1, key 2, gb, gc]; linarith

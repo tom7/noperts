@@ -397,11 +397,11 @@ theorem splitRows_of_isDepthSeparatedAt {n k : ℕ} [NeZero k] (hk : 3 ≤ k) (x
         · rw [hi]
         · exact (hmin' i hi).le
       · intro q1 hq1 q2 hq2 s t hs ht hst
-        simp only [Set.mem_setOf_eq, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul] at *
+        simp only [Set.mem_ofPred_eq, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul] at *
         have e : s * p c 0 + t * p c 0 = p c 0 := by rw [← add_mul, hst, one_mul]
         nlinarith [mul_le_mul_of_nonneg_left hq1 hs, mul_le_mul_of_nonneg_left hq2 ht]
     have := hS hq
-    simp only [Set.mem_setOf_eq] at this
+    simp only [Set.mem_ofPred_eq] at this
     rw [hon]
     simp [PiLp.inner_apply, Fin.sum_univ_two]
     nlinarith

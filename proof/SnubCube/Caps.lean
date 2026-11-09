@@ -12,7 +12,7 @@ public import SnubCube.SolidModel
 # The snub cube's caps
 
 The cap at the zero-margin view u* = x/|x|, x = (1, 0, t²), and the tube
-around the exact tie that continues from it (`nopert229/notes/SNUB-CUBE.md`,
+around the exact tie that continues from it (`snub-cube.md`,
 `search/sc/sccapcert.cc`), over the field ℚ(t) (`TribQ`):
 
 * `template`: the exact frames (x, e₁, e₂ = L₂ e_y with L₂ = (4 − 4t + 12t²)/7;

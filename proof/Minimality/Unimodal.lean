@@ -52,9 +52,23 @@ theorem isCompact_convexHull_of_isCompact {E : Type*} [NormedAddCommGroup E] [No
   set n := Module.finrank ℝ E + 1
   let Φ : (Fin n → ℝ) × (Fin n → E) → E := fun wz => ∑ j, wz.1 j • wz.2 j
   have hΦ : Continuous Φ := by fun_prop
-  have hD : IsCompact (stdSimplex ℝ (Fin n) ×ˢ Set.univ.pi (fun _ : Fin n => A)) :=
-    IsCompact.prod (isCompact_stdSimplex ℝ (Fin n)) (isCompact_univ_pi fun _ => hA)
-  suffices h : convexHull ℝ A = Φ '' (stdSimplex ℝ (Fin n) ×ˢ Set.univ.pi (fun _ => A)) by
+  let S : Set (Fin n → ℝ) := {w | (∀ i, 0 ≤ w i) ∧ ∑ i, w i = 1}
+  have hS : IsCompact S := by
+    refine (isCompact_univ_pi fun _ : Fin n => isCompact_Icc (a := (0 : ℝ)) (b := 1)).of_isClosed_subset
+      ?_ ?_
+    · have h1 : IsClosed {w : Fin n → ℝ | ∀ i, 0 ≤ w i} :=
+        by simpa only [Set.ofPred_forall] using
+          isClosed_iInter fun i : Fin n => isClosed_le continuous_const (continuous_apply i)
+      have h2 : IsClosed {w : Fin n → ℝ | ∑ i, w i = 1} :=
+        isClosed_eq (continuous_finsetSum _ fun i _ => continuous_apply i) continuous_const
+      exact h1.inter h2
+    · rintro w ⟨hw0, hw1⟩ i -
+      refine ⟨hw0 i, ?_⟩
+      rw [← hw1]
+      exact Finset.single_le_sum (fun j _ => hw0 j) (Finset.mem_univ i)
+  have hD : IsCompact (S ×ˢ Set.univ.pi (fun _ : Fin n => A)) :=
+    IsCompact.prod hS (isCompact_univ_pi fun _ => hA)
+  suffices h : convexHull ℝ A = Φ '' (S ×ˢ Set.univ.pi (fun _ => A)) by
     rw [h]; exact hD.image hΦ
   apply le_antisymm
   · intro x hx
