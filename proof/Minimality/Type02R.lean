@@ -325,7 +325,7 @@ theorem right_A1B6_pf (F : Frame02 x) (hr : gA12 x = gA11 x)
     refine robust_quad_of_nws ?_ ?_
     · left; simp only [zero_mul]; exact mul_pos F.S.sm_pos hD
     · right; right; left
-      simp only [Pt_6, one_mul]; nlinarith [F.S.sm_lt]
+      simp only [one_mul]; nlinarith [F.S.sm_lt]
 /-- `(A,B) = (1,5)`: `Σ_W = (5,6,4,1,2)`, one level edge `2–5`. (0,6) = α. -/
 theorem right_A1B5_pf (F : Frame02 x) (hr : gA12 x = gA11 x)
     (hA : F.S.sp < F.S.tp) (hB : F.S.tm < F.S.sm) : IsRupert (Finset.univ.image x) := by
@@ -343,7 +343,7 @@ theorem right_A1B5_pf (F : Frame02 x) (hr : gA12 x = gA11 x)
     exact rest_A1B5 _ _ _ _ k l F.S.tp_pos F.S.sp_pos F.S.tm_pos F.S.sm_pos hk hl a1 a2 a3 a4 hA hB j' hj i
   · rw [Qn_y]
     simp only [Pt_1, Pt_2, Pt_4, Pt_5, Pt_6]
-    exact rob5 (by simp only [zero_mul, one_mul]; exact mul_pos F.S.sm_pos hD)
+    exact rob5 (by simp only [zero_mul]; exact mul_pos F.S.sm_pos hD)
       (by nlinarith [F.S.sm_lt]) (by nlinarith [F.S.sp_lt]) (by simp only [zero_mul]; exact mul_pos F.S.sp_pos hD)
 
 /-- `A` vertical, `B = 6`. -/
@@ -363,7 +363,7 @@ theorem right_V1B6_pf (F : Frame02 x) (hr : gA12 x = gA11 x)
     exact rest_V1B6 _ _ _ _ k l F.S.tp_pos F.S.sp_pos F.S.tm_pos F.S.sm_pos hk hl a1 a2 a3 a4 hA.symm hB j' hj i
   · rw [Qn_y]
     simp only [Pt_0, Pt_1, Pt_2, Pt_4, Pt_6]
-    exact rob5 (by simp only [zero_mul, one_mul]; exact mul_pos F.S.sm_pos hD)
+    exact rob5 (by simp only [zero_mul]; exact mul_pos F.S.sm_pos hD)
       (by nlinarith [F.S.sm_lt]) (by nlinarith [F.S.sp_lt]) (by simp only [zero_mul]; exact mul_pos F.S.sp_pos hD)
 /-- `(A,B) = (0,5)`: the rim is the face `F1 = (5,3,0,2)` itself, all depths 0; Lemma FN (iii). -/
 theorem right_A0B5_pf (F : Frame02 x) (hr : gA12 x = gA11 x)
@@ -391,7 +391,7 @@ theorem right_A0B5_pf (F : Frame02 x) (hr : gA12 x = gA11 x)
       intro P
       have : F.toFrame7.GG P ⟨1, 0, 0⟩ = Gf (gA11 x) (gA12 x) (gA22 x) F.toFrame7.gg P ⟨1, 0, 0⟩ := rfl
       rw [this]; simp only [Gf]; rw [hr]; ring
-    simp only [e, e2, Pt_5, Pt_3, Pt_0, Pt_2, quad_0, quad_1, quad_2, quad_3]
+    simp only [e, e2, Pt_5, Pt_3, Pt_0, Pt_2]
     have hz0 : ∀ i : ZMod 4, (quad (⟨F.S.tm, 0, -(l * (1 - F.S.tm))⟩ : C3) ⟨1, 0, 0⟩
         ⟨F.S.tp, 0, k * (1 - F.S.tp)⟩ ⟨0, 0, 0⟩ i).y = 0 := by
       intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rfl

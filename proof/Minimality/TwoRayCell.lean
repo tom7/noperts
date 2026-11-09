@@ -138,7 +138,7 @@ theorem v1_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r �
     by_cases hi : i = 0
     · subst hi
       right
-      simp only [zero_add, hY1, hY0, d3, Prod.mk_sub_mk, Prod.fst_sub, Prod.snd_sub]
+      simp only [zero_add, hY1, hY0, d3, Prod.mk_sub_mk]
       refine ⟨by ring, ?_⟩
       nlinarith [mul_pos hD (neg_pos.2 hz)]
     · refine tsc_of_cross hD (mix_inside Y hconv 0 1 i ?_ _ hs0 hs1 ?_ ?_)
@@ -153,7 +153,7 @@ theorem v1_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r �
     by_cases hi : i = -1
     · subst hi
       right
-      simp only [neg_add_cancel, hYm, hY0, d3, Prod.mk_sub_mk, Prod.fst_sub, Prod.snd_sub]
+      simp only [neg_add_cancel, hYm, hY0, d3, Prod.mk_sub_mk]
       refine ⟨by ring, ?_⟩
       have hl : 0 < 1 + lam / 2 := by linarith
       nlinarith [mul_pos (mul_pos hD (neg_pos.2 hz)) hl]
@@ -191,7 +191,7 @@ theorem lexUni_three (z : ZMod 3 → ℝ) (hinj : ∀ i j, z i = z j → i = j) 
     lexLt_iff h12.symm]
   rcases lt_or_gt_of_ne h01 with a | a <;> rcases lt_or_gt_of_ne h02 with b | b <;>
     rcases lt_or_gt_of_ne h12 with c | c <;>
-    simp [a, b, c, a.le, b.le, c.le, not_lt.2 a.le, not_lt.2 b.le, not_lt.2 c.le] <;> linarith
+    simp [a, b, c, not_lt.2 a.le, not_lt.2 b.le, not_lt.2 c.le] <;> linarith
 
 set_option maxHeartbeats 1600000 in
 /-- **V1 for `k = 3`** (triangle `w, far_P, far_Q`): no unimodality hypothesis; depths of the three corners distinct. -/

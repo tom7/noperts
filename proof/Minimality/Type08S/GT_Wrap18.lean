@@ -37,14 +37,14 @@ theorem n2e_f2 (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : zw < 0)
   obtain ⟨b0, b1', b2', b3, b4⟩ := zmod5_add_one
   intro i
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl
-  · simp only [h5Pts, b0, b1', b2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest, tst, hdet]
+  · simp only [h5Pts, b0, quint_0, quint_1, LexTest, tst, hdet]
     first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩)
-  · simp only [h5Pts, b0, b1', b2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest, tst, hdet]
+  · simp only [h5Pts, b1', quint_1, quint_2, LexTest, tst, hdet]
     first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩)
   · exact hrow2
-  · simp only [h5Pts, b0, b1', b2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest, tst, hdet]
+  · simp only [h5Pts, b3, quint_3, quint_4, LexTest, tst, hdet]
     first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩)
-  · simp only [h5Pts, b0, b1', b2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest, tst, hdet]
+  · simp only [h5Pts, b4, quint_0, quint_4, LexTest, tst, hdet]
     first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩)
 
 end Type08Sp
@@ -87,7 +87,7 @@ theorem propH_n2_ge_eq2 {V : Finset ℝ³} {cP mP fP rP gP wP aP : ℝ³}
   have c20 := hcv 2 0 (by decide) (by decide) (by decide)
   have c21 := hcv 2 1 (by decide) (by decide) (by decide)
   obtain ⟨b0, b1', b2', b3, b4⟩ := zmod5_add_one
-  simp only [h5Pts, b2', quint_0, quint_1, quint_2, quint_3, quint_4, b3] at c20 c21
+  simp only [h5Pts, b2', quint_0, quint_1, quint_2, quint_3] at c20 c21
   have hmaG := cross_comb_axis (gx := A) hzv hzw c20 c21
   exact Fr.n2_core hV hc hm ha hr hw Φc Φm Φf Φr Φg Φw Φa hA hs0 hs1 hzv hzw hb2 hz2 hr1 ha3 hxa tt htt0
     (fun i j h1 h2 => by

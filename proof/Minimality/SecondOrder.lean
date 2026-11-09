@@ -41,8 +41,7 @@ theorem eventually_neg_of_lex (a0 a1 a2 : ℝ) (G : ℝ → ℝ) (hG : Continuou
   · have hc : ContinuousAt (fun s => a2 + s * G s) 0 := by
       fun_prop (disch := exact hG)
     have ht := hc.tendsto.mono_left (nhdsWithin_le_nhds (s := Set.Ioi (0:ℝ)))
-    simp only [mul_zero, add_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true,
-      zero_pow, zero_mul] at ht
+    simp only [add_zero, zero_mul] at ht
     filter_upwards [ht.eventually_lt_const h, hpos] with s hs hs0
     have : s ^ 2 * (a2 + s * G s) < 0 := mul_neg_of_pos_of_neg (by positivity) hs
     nlinarith
@@ -62,19 +61,19 @@ noncomputable def secOffset (τ β : ℝ³) (s : ℝ) : ℝ² := s • proj_xy �
 theorem crossMatrix_add_apply (a b x : ℝ³) :
     (crossMatrix (a + b)).toEuclideanLin x =
       (crossMatrix a).toEuclideanLin x + (crossMatrix b).toEuclideanLin x := by
-  ext i; fin_cases i <;> simp [crossMatrix, Matrix.toLpLin_apply, Matrix.mulVec, dotProduct,
+  ext i; fin_cases i <;> simp [crossMatrix, Matrix.toLpLin_apply, dotProduct,
     Fin.sum_univ_three] <;> ring
 
 theorem crossMatrix_smul_apply (t : ℝ) (a x : ℝ³) :
     (crossMatrix (t • a)).toEuclideanLin x = t • (crossMatrix a).toEuclideanLin x := by
-  ext i; fin_cases i <;> simp [crossMatrix, Matrix.toLpLin_apply, Matrix.mulVec, dotProduct,
+  ext i; fin_cases i <;> simp [crossMatrix, Matrix.toLpLin_apply, dotProduct,
     Fin.sum_univ_three] <;> ring
 
 theorem cayley_apply (c x : ℝ³) :
     (cayley c).toEuclideanLin x = x + (2 * (cayleyDen c)⁻¹) •
       ((crossMatrix c).toEuclideanLin x + (crossMatrix c).toEuclideanLin ((crossMatrix c).toEuclideanLin x)) := by
   have hd := (cayleyDen_pos c).ne'
-  ext i; fin_cases i <;> simp [cayley, crossMatrix, Matrix.toLpLin_apply, Matrix.mulVec, dotProduct,
+  ext i; fin_cases i <;> simp [cayley, crossMatrix, Matrix.toLpLin_apply, dotProduct,
     Fin.sum_univ_three] <;> field_simp <;> simp only [cayleyDen] <;> ring
 
 /-- `w(s) = |d|²/D`, `d = (ω + sγ)/2`. -/
@@ -126,7 +125,7 @@ theorem secondOrder_expansion (n : ℝ²) (ω γ τ β v : ℝ³) :
       rw [cayley_apply, hq]
       simp only [secOffset, secCayleyVec, crossMatrix_add_apply, crossMatrix_smul_apply,
         map_add, map_smul, proj_xy_add', proj_xy_smul', inner_add_right, inner_smul_right,
-        hp1, hp2, hp3, hp4, hp5, smul_eq_mul]
+        hp1, hp2, hp3, hp4, hp5]
       ring
     have e1 : ⟪n, screenVel ω τ v⟫ = p1 + ⟪n, proj_xy τ⟫ := by
       simp [screenVel, proj_xy_add', inner_add_right, hp1]

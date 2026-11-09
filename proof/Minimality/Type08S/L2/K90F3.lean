@@ -94,10 +94,10 @@ theorem k90_F3 (s pp qq qr rr m al be : ℝ) (hs : 0 < s) (hpp : 0 < pp) (hm : 0
     rw [eq_div_iff (by positivity)]
     rw [← mul_div_assoc, div_eq_one_iff_eq hD.ne'] at hmα
     exact hmα
-  have a_G : (al-1)*m = (-y+2*k*u+k)/(2*Sv) := by (try simp only [hαe, hβe, hme]); field_simp; try (subst hDv hSv hMv; ring)
+  have a_G : (al-1)*m = (-y+2*k*u+k)/(2*Sv) := by (try simp only [hαe, hme]); field_simp; try (subst hDv hSv hMv; ring)
   have a_Av : (-al*(pp) - (be*m)*(u*pp) + be*(u*pp) - (1+(al-1)*m)*(u*pp)) = -(k*pp*(u+1)*(y^2*u + 2*y^2 - y*k*u + y*u^3 + y*u^2 - k*u^3 - k*u^2))/(Sv*Dv) := by (try simp only [hαe, hβe, hme]); field_simp; try (subst hDv hSv hMv; ring)
   have a_S : (be*m + (1+(al-1)*m)) - be = (k*(y+k)*(u+1)*(y + u^2 - u))/(Sv*Dv) := by (try simp only [hαe, hβe, hme]); field_simp; try (subst hDv hSv hMv; ring)
-  have a_X : (al^2*pp - 2*al*be*(u*pp) - al*pp + al*(u*pp) + be^2*(pp*(u^2+y-k)) - be*(pp*(u^2+y-k)) + be*(u*pp) - (u*pp)) = (2*k*pp*(u+1)*(y+u^2+u)*Sv*(k-y))/(Dv^2) := by (try simp only [hαe, hβe, hme]); field_simp; try (subst hDv hSv hMv; ring)
+  have a_X : (al^2*pp - 2*al*be*(u*pp) - al*pp + al*(u*pp) + be^2*(pp*(u^2+y-k)) - be*(pp*(u^2+y-k)) + be*(u*pp) - (u*pp)) = (2*k*pp*(u+1)*(y+u^2+u)*Sv*(k-y))/(Dv^2) := by (try simp only [hαe, hβe]); field_simp; try (subst hDv hSv hMv; ring)
 
   have hG1 : 0 < -y+2*k*u+k := by
     have h : 0 < (al-1)*m := by linarith
@@ -115,13 +115,13 @@ theorem k90_F3 (s pp qq qr rr m al be : ℝ) (hs : 0 < s) (hpp : 0 < pp) (hm : 0
     exact k90_nonneg_of _ _ _ (by positivity) (by positivity) h
   have hN4 : 0 < -y^2 + 2*y*k*u^2 + 5*y*k*u + y*k + k^2*u + 2*k*u^4 + 4*k*u^3 + 2*k*u^2 := by
     linear_combination 2 * (mul_pos (mul_pos hu hu) hk) + 5 * (mul_pos (mul_pos hu hy) hy) + 1 * (mul_pos (mul_pos hu hk) hk) + 4 * (mul_pos (mul_pos (mul_pos hu hu) hu) hk) + 2 * (mul_pos (mul_pos (mul_pos hu hu) hy) hk) + 2 * (mul_pos (mul_pos (mul_pos (mul_pos hu hu) hu) hu) hy) + 1 * (mul_nonneg (hy).le hGH) + 5 * (mul_nonneg ((mul_pos hu hy)).le hGH) + 2 * (mul_nonneg ((mul_pos (mul_pos (mul_pos hu hu) hu) hu)).le hGH)
-  have e_B : (pp + 2*(u*pp) + pp*(u^2+y+k)) = (1)*pp^1*(k + u^2 + 2*u + y + 1)^1 := by (try simp only [hαe, hβe, hme]); field_simp; try (subst hDv hSv hMv; ring)
+  have e_B : (pp + 2*(u*pp) + pp*(u^2+y+k)) = (1)*pp^1*(k + u^2 + 2*u + y + 1)^1 := by field_simp; try (subst hDv hSv hMv; ring)
   have p_B : 0 < (1)*pp^1*(k + u^2 + 2*u + y + 1)^1 := by positivity
   have r_B : 0 < (pp + 2*(u*pp) + pp*(u^2+y+k)) := by rw [e_B]; exact p_B
-  have e_dx : ((u*pp)+pp) = (1)*pp^1*(u + 1)^1 := by (try simp only [hαe, hβe, hme]); field_simp; try (subst hDv hSv hMv; ring)
+  have e_dx : ((u*pp)+pp) = (1)*pp^1*(u + 1)^1 := by field_simp
   have p_dx : 0 < (1)*pp^1*(u + 1)^1 := by positivity
   have r_dx : 0 < ((u*pp)+pp) := by rw [e_dx]; exact p_dx
-  have e_Bdx : ((pp + 2*(u*pp) + pp*(u^2+y+k)) - ((u*pp)+pp)) = (1)*pp^1*(k + u^2 + u + y)^1 := by (try simp only [hαe, hβe, hme]); field_simp; try (subst hDv hSv hMv; ring)
+  have e_Bdx : ((pp + 2*(u*pp) + pp*(u^2+y+k)) - ((u*pp)+pp)) = (1)*pp^1*(k + u^2 + u + y)^1 := by field_simp; try (subst hDv hSv hMv; ring)
   have p_Bdx : 0 < (1)*pp^1*(k + u^2 + u + y)^1 := by positivity
   have r_Bdx : 0 < ((pp + 2*(u*pp) + pp*(u^2+y+k)) - ((u*pp)+pp)) := by rw [e_Bdx]; exact p_Bdx
   have e_in3 : ((1+(al-1)*m)*(pp + 2*(u*pp) + pp*(u^2+y+k)) - (1+(al-1)*m)*(pp + 2*(u*pp) + pp*(u^2+y-k)) - ((pp + 2*(u*pp) + pp*(u^2+y+k)) - ((be*m)*(pp*(u^2+y+k)+(u*pp)) + (1+(al-1)*m)*(pp*(u^2+y-k)+(u*pp)) + (u*pp) + pp))) = ((1)*k^1*pp^1*(u + 1)^1*(k + u^2 + u + y)^1)/((Sv)^1) := by (try simp only [hαe, hβe, hme]); field_simp; try (subst hDv hSv hMv; ring)
@@ -130,13 +130,13 @@ theorem k90_F3 (s pp qq qr rr m al be : ℝ) (hs : 0 < s) (hpp : 0 < pp) (hm : 0
   have e_in4 : (((be*m)*(pp*(u^2+y+k)+(u*pp)) + (1+(al-1)*m)*(pp*(u^2+y-k)+(u*pp)) + (u*pp) + pp)*be - (-(al-1)*((u*pp)+pp) + be*(pp*(u^2+y-k)+(u*pp)))*(1+(al-1)*m) - (be-(1+(al-1)*m))*(pp + 2*(u*pp) + pp*(u^2+y-k)) - (((be*m)*(pp*(u^2+y+k)+(u*pp)) + (1+(al-1)*m)*(pp*(u^2+y-k)+(u*pp)) + (u*pp) + pp) - (-(al-1)*((u*pp)+pp) + be*(pp*(u^2+y-k)+(u*pp))))) = ((1)*k^1*pp^1*(u + 1)^1*(-y^2 + 2*y*k*u^2 + 5*y*k*u + y*k + k^2*u + 2*k*u^4 + 4*k*u^3 + 2*k*u^2)^1)/((Sv)^1*(Dv)^1) := by (try simp only [hαe, hβe, hme]); field_simp; try (subst hDv hSv hMv; ring)
   have p_in4 : 0 < ((1)*k^1*pp^1*(u + 1)^1*(-y^2 + 2*y*k*u^2 + 5*y*k*u + y*k + k^2*u + 2*k*u^4 + 4*k*u^3 + 2*k*u^2)^1)/((Sv)^1*(Dv)^1) := by positivity
   have r_in4 : 0 < (((be*m)*(pp*(u^2+y+k)+(u*pp)) + (1+(al-1)*m)*(pp*(u^2+y-k)+(u*pp)) + (u*pp) + pp)*be - (-(al-1)*((u*pp)+pp) + be*(pp*(u^2+y-k)+(u*pp)))*(1+(al-1)*m) - (be-(1+(al-1)*m))*(pp + 2*(u*pp) + pp*(u^2+y-k)) - (((be*m)*(pp*(u^2+y+k)+(u*pp)) + (1+(al-1)*m)*(pp*(u^2+y-k)+(u*pp)) + (u*pp) + pp) - (-(al-1)*((u*pp)+pp) + be*(pp*(u^2+y-k)+(u*pp))))) := by rw [e_in4]; exact p_in4
-  have e_in5 : (be*(pp + 2*(u*pp) + pp*(u^2+y-k)) - (-(al-1)*((u*pp)+pp) + be*(pp*(u^2+y-k)+(u*pp)))) = ((2)*k^1*pp^1*(u + 1)^2*(u^2 + u + y)^1)/((Dv)^1) := by (try simp only [hαe, hβe, hme]); field_simp; try (subst hDv hSv hMv; ring)
+  have e_in5 : (be*(pp + 2*(u*pp) + pp*(u^2+y-k)) - (-(al-1)*((u*pp)+pp) + be*(pp*(u^2+y-k)+(u*pp)))) = ((2)*k^1*pp^1*(u + 1)^2*(u^2 + u + y)^1)/((Dv)^1) := by (try simp only [hαe, hβe]); field_simp; try (subst hDv hSv hMv; ring)
   have p_in5 : 0 < ((2)*k^1*pp^1*(u + 1)^2*(u^2 + u + y)^1)/((Dv)^1) := by positivity
   have r_in5 : 0 < (be*(pp + 2*(u*pp) + pp*(u^2+y-k)) - (-(al-1)*((u*pp)+pp) + be*(pp*(u^2+y-k)+(u*pp)))) := by rw [e_in5]; exact p_in5
   have e_PB : (((be*m)*(pp*(u^2+y+k)+(u*pp)) + (1+(al-1)*m)*(pp*(u^2+y-k)+(u*pp)) + (u*pp) + pp) - (pp + 2*(u*pp) + pp*(u^2+y+k))) = ((1)*k^1*pp^1*u^1*(k + u^2 + 2*u + y + 1)^1)/((Sv)^1) := by (try simp only [hαe, hβe, hme]); field_simp; try (subst hDv hSv hMv; ring)
   have p_PB : 0 < ((1)*k^1*pp^1*u^1*(k + u^2 + 2*u + y + 1)^1)/((Sv)^1) := by positivity
   have r_PB : 0 < (((be*m)*(pp*(u^2+y+k)+(u*pp)) + (1+(al-1)*m)*(pp*(u^2+y-k)+(u*pp)) + (u*pp) + pp) - (pp + 2*(u*pp) + pp*(u^2+y+k))) := by rw [e_PB]; exact p_PB
-  have e_W : -(-(al-1)*((u*pp)+pp) + be*(pp*(u^2+y-k)+(u*pp))) = ((1)*pp^1*(k - y)^1*(u^2 + u + y)^1*(k + u^2 + 2*u + y + 1)^1)/((Dv)^1) := by (try simp only [hαe, hβe, hme]); field_simp; try (subst hDv hSv hMv; ring)
+  have e_W : -(-(al-1)*((u*pp)+pp) + be*(pp*(u^2+y-k)+(u*pp))) = ((1)*pp^1*(k - y)^1*(u^2 + u + y)^1*(k + u^2 + 2*u + y + 1)^1)/((Dv)^1) := by (try simp only [hαe, hβe]); field_simp; try (subst hDv hSv hMv; ring)
   have p_W : 0 ≤ ((1)*pp^1*(k - y)^1*(u^2 + u + y)^1*(k + u^2 + 2*u + y + 1)^1)/((Dv)^1) := by positivity
   have p_Wneg : 0 < k - y → 0 < ((1)*pp^1*(k - y)^1*(u^2 + u + y)^1*(k + u^2 + 2*u + y + 1)^1)/((Dv)^1) := fun hGHp => by positivity
   have e_Wz : k - y = 0 → (-(al-1)*((u*pp)+pp) + be*(pp*(u^2+y-k)+(u*pp))) = 0 := fun h => by

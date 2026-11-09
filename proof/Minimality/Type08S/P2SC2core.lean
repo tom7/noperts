@@ -147,36 +147,36 @@ theorem sc5_core2 (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
     · simp only [add_sub_add_left_eq_sub, pc_sub]
       refine ts2_static hF σ S _ _ _ _ _ _ ?_
       right; exact ⟨by ring, by nlinarith⟩
-    · exact ts2_gen hF o σ S 0 0 zp _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub, sub_zero, zero_sub, sub_self]) r1
-    · exact ts2_gen hF o σ S 0 0 zp _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub, sub_zero, zero_sub, sub_self]) r2
+    · exact ts2_gen hF o σ S 0 0 zp _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub, sub_zero, sub_self]) r1
+    · exact ts2_gen hF o σ S 0 0 zp _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub, sub_self]) r2
   · -- x
     refine Or.inl ⟨_, m5, _, m1, ?_, ?_, ?_⟩
     · simp only [add_sub_add_left_eq_sub, pc_sub]
       refine ts2_static hF σ S _ _ _ _ _ _ ?_
       right; exact ⟨by ring, by nlinarith⟩
-    · exact ts2_gen hF o σ S 0 0 zx _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub, sub_zero, zero_sub, sub_self]) r3
-    · exact ts2_gen hF o σ S 0 0 zx _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub, sub_zero, zero_sub, sub_self]) r4
+    · exact ts2_gen hF o σ S 0 0 zx _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub, sub_self]) r3
+    · exact ts2_gen hF o σ S 0 0 zx _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub, zero_sub]) r4
   · -- f
     refine Or.inl ⟨_, m1, _, m4, ?_, ?_, ?_⟩
     · simp only [add_sub_add_left_eq_sub, pc_sub]
       refine ts2_static hF σ S _ _ _ _ _ _ ?_
       left; nlinarith
-    · exact ts2_gen hF o σ S L 0 zf _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub, sub_zero, zero_sub, sub_self]) r5
-    · exact ts2_gen hF o σ S L 0 zf _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub, sub_zero, zero_sub, sub_self]) r6
+    · exact ts2_gen hF o σ S L 0 zf _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub, sub_zero]) r5
+    · exact ts2_gen hF o σ S L 0 zf _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub, sub_zero, sub_self]) r6
   · -- r
     refine Or.inl ⟨_, m3, _, m5, ?_, ?_, ?_⟩
     · simp only [add_sub_add_left_eq_sub, pc_sub]
       refine ts2_static hF σ S _ _ _ _ _ _ ?_
       left; nlinarith
-    · exact ts2_gen hF o σ S Xr Yr zr _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub, sub_zero, zero_sub, sub_self]) r7
-    · exact ts2_gen hF o σ S Xr Yr zr _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub, sub_zero, zero_sub, sub_self]) r8
+    · exact ts2_gen hF o σ S Xr Yr zr _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub]) r7
+    · exact ts2_gen hF o σ S Xr Yr zr _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub, sub_zero]) r8
   · -- g
     refine Or.inl ⟨_, m4, _, m2, ?_, ?_, ?_⟩
     · simp only [add_sub_add_left_eq_sub, pc_sub]
       refine ts2_static hF σ S _ _ _ _ _ _ ?_
       left; nlinarith
-    · exact ts2_gen hF o σ S Xg Yg zg _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub, sub_zero, zero_sub, sub_self]) r9
-    · exact ts2_gen hF o σ S Xg Yg zg _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub, sub_zero, zero_sub, sub_self]) r10
+    · exact ts2_gen hF o σ S Xg Yg zg _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub, zero_sub]) r9
+    · exact ts2_gen hF o σ S Xg Yg zg _ _ _ m m' _ (by simp only [add_sub_add_left_eq_sub, pc_sub]) r10
   · exact Or.inr (triCert_to_2 (hE x hx))
 
 end Type08Sp

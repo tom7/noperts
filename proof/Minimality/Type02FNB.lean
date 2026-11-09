@@ -295,7 +295,7 @@ theorem rimR1 (F : Frame02 x) (hr : gA12 x = gA11 x)
   · intro i hi
     obtain ⟨b0, b1, b2, b3, b4, b5⟩ := zmod6_add_one
     obtain ⟨d0, d1, d2, d3, d4, d5⟩ := zmod6_sub_one
-    rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;> simp only [Pt_0, Pt_1, Pt_2, Pt_3, Pt_4, Pt_5, Pt_6, c1_0, c1_1, c1_2, c1_3, c1_4, c1_5, b0, b1, b2, b3, b4, b5, d0, d1, d2, d3, d4, d5] at hi ⊢ <;>
+    rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;> simp only [Pt_0, Pt_1, Pt_2, Pt_3, Pt_4, Pt_5, c1_0, c1_1, c1_2, c1_3, c1_4, c1_5, b0, b1, b2, b3, b4, b5, d0, d1, d2, d3, d4, d5] at hi ⊢ <;>
       first | exact absurd rfl hi | skip
     all_goals lexclose
 
@@ -325,7 +325,7 @@ theorem rimR2 (F : Frame02 x) (hr : gA12 x = gA11 x)
   · intro i hi
     obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
     obtain ⟨d0, d1, d2, d3, d4⟩ := zmod5_sub_one
-    rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> simp only [Pt_0, Pt_1, Pt_2, Pt_3, Pt_4, Pt_5, Pt_6, c2_0, c2_1, c2_2, c2_3, c2_4, b0, b1, b2, b3, b4, d0, d1, d2, d3, d4] at hi ⊢ <;>
+    rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> simp only [Pt_1, Pt_2, Pt_3, Pt_4, Pt_5, c2_0, c2_1, c2_2, c2_3, c2_4, b0, b1, b2, b3, b4, d0, d1, d2, d3, d4] at hi ⊢ <;>
       first | exact absurd rfl hi | skip
     all_goals lexclose
 
@@ -355,7 +355,7 @@ theorem rimR3 (F : Frame02 x) (hr : gA12 x = gA11 x)
   · intro i hi
     obtain ⟨b0, b1, b2, b3, b4, b5⟩ := zmod6_add_one
     obtain ⟨d0, d1, d2, d3, d4, d5⟩ := zmod6_sub_one
-    rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;> simp only [Pt_0, Pt_1, Pt_2, Pt_3, Pt_4, Pt_5, Pt_6, c3_0, c3_1, c3_2, c3_3, c3_4, c3_5, b0, b1, b2, b3, b4, b5, d0, d1, d2, d3, d4, d5] at hi ⊢ <;>
+    rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;> simp only [Pt_0, Pt_1, Pt_2, Pt_4, Pt_5, Pt_6, c3_0, c3_1, c3_2, c3_3, c3_4, c3_5, b0, b1, b2, b3, b4, b5, d0, d1, d2, d3, d4, d5] at hi ⊢ <;>
       first | exact absurd rfl hi | skip
     all_goals lexclose
 
@@ -539,7 +539,7 @@ theorem rect_of_data (F : Frame02 x) (h1 : F.S.tm = 1 - F.S.tp) (h2 : F.S.hm = F
   refine ⟨?_, ?_⟩
   · rw [e0, e5, h1, h2]; module
   · rw [e0, e5]
-    simp only [inner_add_left, inner_add_right, inner_sub_left, inner_sub_right,
+    simp only [inner_add_left, inner_sub_right,
       inner_smul_left, inner_smul_right, hue, heu, RCLike.conj_to_real, ← ha_def, ← hg_def]
     linarith
 

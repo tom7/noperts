@@ -64,7 +64,7 @@ theorem peaks5_eq_one (a b c d e : ℝ) (hab : a ≠ b) (hbc : b ≠ c) (hcd : c
     first
       | (exfalso; linarith)
       | (exfalso; simp_all; done)
-      | (simp [a1, a2, a3, a4, a5, a1.le, a2.le, a3.le, a4.le, a5.le, not_lt.2 a1.le, not_lt.2 a2.le,
+      | (simp [a1, a2, a3, a4, a5, not_lt.2 a1.le, not_lt.2 a2.le,
           not_lt.2 a3.le, not_lt.2 a4.le, not_lt.2 a5.le]; done)
 
 /-- The pentagon cycle. -/

@@ -71,11 +71,11 @@ theorem eqV_iff : ∀ (a b : V), eqV a b = true ↔ a = b := by
   | kv t e f => intro w; cases w <;> simp [eqV, and_assoc]
   | ng a iha => intro w; cases w <;> simp [eqV, iha]
   | gate sa a sb b iha ihb => intro w; cases w <;> simp [eqV, iha, ihb, and_assoc]
-  | tp e f => intro w; cases w <;> simp [eqV, and_assoc]
-  | tq e f => intro w; cases w <;> simp [eqV, and_assoc]
+  | tp e f => intro w; cases w <;> simp [eqV]
+  | tq e f => intro w; cases w <;> simp [eqV]
   | tpv e m s => intro w; cases w <;> simp [eqV, and_assoc]
   | yv e p1 p2 q1 q2 => intro w; cases w <;> simp [eqV, and_assoc]
-  | fail e c => intro w; cases w <;> simp [eqV, eqNL_iff, and_assoc]
+  | fail e c => intro w; cases w <;> simp [eqV, eqNL_iff]
   | ltl e d ep p q => intro w; cases w <;> simp [eqV, and_assoc]
   | yl e d ep c p1 p2 q1 q2 => intro w; cases w <;> simp [eqV, eqNL_iff, and_assoc]
   | faill e d ep c => intro w; cases w <;> simp [eqV, eqNL_iff, and_assoc]
@@ -94,7 +94,7 @@ def coversF (cl s : List Lit) : Bool := s.all fun l => eqL l lfalse || cl.any (e
 /-- `coversF` is `covers`. -/
 theorem coversF_eq (cl s : List Lit) : coversF cl s = covers cl s := by
   rw [Bool.eq_iff_iff]
-  simp [coversF, covers, List.all_eq_true, List.any_eq_true, eqL_iff, List.contains_iff_mem]
+  simp [coversF, covers, List.all_eq_true, List.any_eq_true, eqL_iff]
 
 /-- Some clause of the list is covered. -/
 def anyCov (cl : List Lit) (S : List (List Lit)) : Bool := S.any (coversF cl)

@@ -33,7 +33,7 @@ theorem cycF_B (vx vz : ℝ) :
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
     first | exact absurd rfl h1 | exact absurd (by decide) h2 | skip
   all_goals (
-    simp only [CaseC09.ST, Dc, C3.sub, Qd, Pt_0, Pt_1, Pt_2, Pt_3, Pt_4, Pt_5, Pt_6, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
+    simp only [CaseC09.ST, Dc, C3.sub, Qd, Pt_0, Pt_2, Pt_3, Pt_5, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     left
     nlinarith [mul_pos ha1 hk, mul_pos ha1 hl, mul_pos ha3 hk, mul_pos ha3 hl, mul_pos ha1 ha3, mul_pos a1 a3,
       mul_pos (mul_pos ha1 hk) a1, mul_pos (mul_pos ha3 hl) a3, mul_pos (mul_pos ha1 hl) a3, mul_pos (mul_pos ha3 hk) a1,
@@ -104,7 +104,7 @@ theorem fnB_I (F : Frame02 x) (hr : gA12 x = gA11 x)
       nlinarith [mul_pos ha (mul_pos F.S.tp_pos a3), mul_pos hg (mul_pos hvz (mul_pos hl a3))]
     · right; right; right; right
       refine ⟨by simp only [hz0], ?_⟩
-      simp only [quad_0, quad_1, quad_2, quad_3, hP5, hP0]
+      simp only [quad_2, quad_3, hP5, hP0]
       nlinarith [mul_pos ha F.S.tp_pos, mul_pos hg (mul_pos hvz (mul_pos hk a1)), mul_pos ha (mul_pos F.S.tp_pos F.S.tp_pos)]
 end rows
 end Frame02

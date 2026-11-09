@@ -72,25 +72,25 @@ theorem fup3_sound {g : Geo} (hF : FacOK g) (t p q : Nat) (hp : p < 7) (hq : q <
   unfold fup3
   by_cases hip : inF t p = true
   · by_cases hiq : inF t q = true
-    · simp only [hip, hiq, if_true]
+    · simp only [hip, hiq, ite_true]
       exact Sg3_zero_of hP (hF.zero t p q hip hiq)
     · have hiq' : inF t q = false := by simpa using hiq
-      simp only [hip, hiq, if_true, if_false]
+      simp only [hip, hiq, ite_true, ite_false]
       have := hF.pos t p q hq hip hiq'
       have := Sg3_of_mulpos hP (n := 1) (r := ⟪g.N t, g.x p - g.x q⟫) (by simpa using this)
       simpa [cS, ltrue, lfalse, zeroS] using this
   · have hip' : inF t p = false := by simpa using hip
     by_cases hiq : inF t q = true
-    · simp only [hip, hiq, if_true, if_false]
+    · simp only [hip, hiq, ite_true, ite_false]
       have := hF.pos t q p hp hiq hip'
       have := Sg3_of_mulpos hP (n := -1) (r := ⟪g.N t, g.x p - g.x q⟫)
         (by rw [e1 p q]; push_cast; linarith)
       simpa [cS, ltrue, lfalse, zeroS] using this
-    · simp only [hip, hiq, if_false]
+    · simp only [hip, hiq, ite_false]
       by_cases hpq : p < q
-      · simp only [hpq, if_true]
+      · simp only [hpq, ite_true]
         exact Sg3_atomG g (v := V.fv t p q) (by simp [rho])
-      · simp only [hpq, if_false]
+      · simp only [hpq, ite_false]
         have := (Sg3_atomG g (v := V.fv t q p) (by simp [rho])).neg
         rw [e1 p q]; exact this
 
@@ -151,12 +151,12 @@ theorem A_diag {g : Geo} (hO : OriOK g) (T x y : Nat) (h : AconstD T x y ≠ 0) 
   unfold AconstD at h ⊢
   simp only at h ⊢
   by_cases hc : oriv T (EB x) (EB y) (EA y) == oriv T (EB y) (EA x) (EA y)
-  · simp only [hc, if_true] at h ⊢
+  · simp only [hc, ite_true] at h ⊢
     have hc' := beq_iff_eq.mp hc
     have o1 := oriv_sound hO T (EB x) (EB y) (EA y) h
     have o2 := oriv_sound hO T (EB y) (EA x) (EA y) (by rwa [← hc'])
     rw [← hc'] at o2
-    rw [e]; push_cast; nlinarith
+    rw [e]; nlinarith
   · simp [hc] at h
 
 /-- The difference of an edge at a shared vertex `v`, as a signed difference from `v`. -/
@@ -164,11 +164,11 @@ theorem dv_shared (g : Geo) (x v : Nat) (hv : v = EA x ∨ v = EB x) :
     g.dv x = (((if EA x == v then (-1 : Int) else 1 : Int) : ℝ)) •
       (g.x (if EA x == v then EB x else EA x) - g.x v) := by
   by_cases hA : EA x = v
-  · simp only [beq_self_eq_true, hA, if_true, Geo.dv]
-    ext i; simp [hA]
+  · simp only [beq_self_eq_true, hA, ite_true, Geo.dv]
+    ext i; simp
   · have hB : v = EB x := by tauto
     have hn : ¬ (EA x == v) = true := by simpa using hA
-    rw [if_neg hn, if_neg hn]
+    rw [ite_eq_right hn, ite_eq_right hn]
     unfold Geo.dv
     rw [hB]; simp
 
@@ -200,10 +200,10 @@ theorem facS_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) (T x y o : Nat) (hT :
   have hv : ⟪g.N T, g.dv y⟫ = 0 := hF.zero T _ _ hyi.1 hyi.2
   refine fac_core3 (rho_proper g) (rho_gateOK g) hu hv (hF.nn T hT) ?_ (fup3_sound hF T _ _ hp hq)
   by_cases ho : oppSides T x y = true
-  · simp only [ho, if_true]
+  · simp only [ho, ite_true]
     exact Sg3_atomG g (v := V.kv T x y) (by simp [rho])
   · have ho' : oppSides T x y = false := by simpa using ho
-    simp only [ho', Bool.false_eq_true, if_false]
+    simp only [ho', Bool.false_eq_true, ite_false]
     exact Sg3_of_mulpos (rho_proper g) (Aconst_sound hO T x y (hA0 ho'))
 
 /-- The check of a facet-route key. -/

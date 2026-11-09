@@ -1114,8 +1114,7 @@ theorem pQuintLabels16_sigma : ∀ q ∈ pQuintLabels16, (sigmaView16 q.1, (sigm
   intro q hq
   simp only [pQuintLabels16, Finset.mem_insert, Finset.mem_singleton] at hq ⊢
   rcases hq with rfl | rfl | rfl | rfl | rfl | rfl <;>
-    simp only [sigmaView16, sigma16, Prod.mk.injEq, Sum.inl.injEq, reduceCtorEq, and_false,
-      false_or, or_false] <;> decide
+    simp only [sigmaView16, sigma16, Prod.mk.injEq, Sum.inl.injEq, reduceCtorEq] <;> decide
 
 theorem comp_sigma16_sigma16 (x : Fin 7 → ℝ³) : (x ∘ sigma16) ∘ sigma16 = x := by
   funext i; fin_cases i <;> rfl

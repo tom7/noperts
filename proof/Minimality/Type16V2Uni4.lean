@@ -45,8 +45,8 @@ theorem lexUni4_of (z : ZMod 4 → ℝ) (hinj : ∀ i j, z i = z j → i = j) (h
   have d13 : z 1 ≠ z 3 := hne _ _ (by decide)
   have d23 : z 2 ≠ z 3 := hne _ _ (by decide)
   rw [e0, e1, e2, e3, f0, f1, f2, f3]
-  simp only [lexLt_iff d01, lexLt_iff d01.symm, lexLt_iff d02, lexLt_iff d02.symm, lexLt_iff d03, lexLt_iff d03.symm,
-    lexLt_iff d12, lexLt_iff d12.symm, lexLt_iff d13, lexLt_iff d13.symm, lexLt_iff d23, lexLt_iff d23.symm]
+  simp only [lexLt_iff d01, lexLt_iff d01.symm, lexLt_iff d03, lexLt_iff d03.symm,
+    lexLt_iff d12, lexLt_iff d12.symm, lexLt_iff d23, lexLt_iff d23.symm]
   unfold peaks4 at h
   convert h using 3
 
@@ -75,7 +75,7 @@ theorem pop_choice (dw dA dB du dd : ℝ)
     first
       | (exfalso; rcases F1 with F | F <;> linarith)
       | (exfalso; rcases F2 with F | F <;> linarith)
-      | (left; simp [a1, a2, a3, a4, a5, a1.le, a2.le, a3.le, a4.le, a5.le, not_lt.2 a1.le, not_lt.2 a2.le,
+      | (left; simp [a2, a3, a4, a5, not_lt.2 a2.le,
           not_lt.2 a3.le, not_lt.2 a4.le, not_lt.2 a5.le]; done)
-      | (right; simp [a1, a2, a3, a7, a8, a1.le, a2.le, a3.le, a7.le, a8.le, not_lt.2 a1.le, not_lt.2 a2.le,
+      | (right; simp [a2, a3, a7, a8, not_lt.2 a2.le,
           not_lt.2 a3.le, not_lt.2 a7.le, not_lt.2 a8.le]; done)

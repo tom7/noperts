@@ -139,7 +139,7 @@ lemma facing_E : ∃ l : ℝ, 0 < l ∧ ∀ q : C3,
   refine ⟨(0 - FF.f 4 (x 5)) / F.S.hp, div_pos (by linarith) hp0, fun q => ?_⟩
   rw [fv, core_a F.S.hp F.S.hp (1 - F.S.tp) (0 - FF.f 4 (x 5)) (0 - FF.f 4 (x 5)) ⟪FF.N 4, F.e⟫ hp0.ne'
     (by ring) (by linear_combination c0) q]
-  simp only [nf, Matrix.cons_val, Matrix.head_cons] <;> ring
+  simp only [nf, Matrix.cons_val] 
 
 lemma facing_F : ∃ l : ℝ, 0 < l ∧ ∀ q : C3,
     ⟪FF.N 5, F.toFrame7.fvC q⟫ = l * nf F.S q 5 := by
@@ -155,7 +155,7 @@ lemma facing_F : ∃ l : ℝ, 0 < l ∧ ∀ q : C3,
   rw [fv, core_b (F.S.kp - F.S.hp * (1 - F.S.sp)) (F.S.kp * F.S.tp) (F.S.tp * (1 - F.S.sp))
     (FF.f 5 (x 1) - FF.f 5 (x 5)) (0 - FF.f 5 (x 5)) ⟪FF.N 5, F.e⟫ (by positivity)
     (by linear_combination F.S.kp * c0 - F.S.hp * c2) (by linear_combination (F.S.tp) * c2) q]
-  simp only [nf, Matrix.cons_val, Matrix.head_cons] <;> ring
+  simp only [nf, Matrix.cons_val] 
 
 lemma facing_G : ∃ l : ℝ, 0 < l ∧ ∀ q : C3,
     ⟪FF.N 6, F.toFrame7.fvC q⟫ = l * nf F.S q 6 := by
@@ -170,7 +170,7 @@ lemma facing_G : ∃ l : ℝ, 0 < l ∧ ∀ q : C3,
   refine ⟨(0 - FF.f 6 (x 5)) / F.S.km, div_pos (by linarith) km0, fun q => ?_⟩
   rw [fv, core_a F.S.km F.S.km (F.S.sm - 1) (0 - FF.f 6 (x 5)) (0 - FF.f 6 (x 5)) ⟪FF.N 6, F.e⟫ km0.ne'
     (by ring) (by linear_combination (-1) * c4) q]
-  simp only [nf, Matrix.cons_val, Matrix.head_cons] <;> ring
+  simp only [nf, Matrix.cons_val] 
 
 lemma facing_H : ∃ l : ℝ, 0 < l ∧ ∀ q : C3,
     ⟪FF.N 7, F.toFrame7.fvC q⟫ = l * nf F.S q 7 := by
@@ -186,7 +186,7 @@ lemma facing_H : ∃ l : ℝ, 0 < l ∧ ∀ q : C3,
     have : F.S.kp * ⟪FF.N 7, F.e⟫ = 0 := by linarith
     exact (mul_eq_zero.1 this).resolve_left kp0.ne'
   refine ⟨(FF.f 7 (x 1)) / (-F.S.kp), div_pos_of_neg_of_neg n1 (by linarith), fun q => ?_⟩
-  rw [fv, hd]; simp only [nf, Matrix.cons_val, Matrix.head_cons]
+  rw [fv, hd]; simp only [nf, Matrix.cons_val]
   field_simp
   try ring
 
@@ -330,7 +330,7 @@ theorem robUni5_t {z : ZMod 5 → ℝ} (h04 : z 0 < z 4) (h43 : z 4 < z 3) (h32 
   have hb4 : b < 5 := by omega
   have hc4 : c < 5 := by omega
   obtain ⟨e01, e02, e03, e04, e11, e12, e13, e14, e21, e22, e23, e24, e31, e32, e33, e34, e41, e42, e43, e44⟩ := zmod5_sums
-  interval_cases b <;> interval_cases c <;> (try omega) <;> interval_cases d <;> (try omega) <;>
+  interval_cases b <;> interval_cases c <;> (try omega) <;> interval_cases d  <;>
   rcases hB with rfl | rfl | rfl | rfl | rfl <;>
   · rintro ⟨a1, a2, a3, a4⟩
     revert a1 a2 a3 a4
@@ -346,7 +346,7 @@ theorem robUni5_u {z : ZMod 5 → ℝ} (h01 : z 0 = z 1) (h12 : z 2 < z 1) (h23 
   have hb4 : b < 5 := by omega
   have hc4 : c < 5 := by omega
   obtain ⟨e01, e02, e03, e04, e11, e12, e13, e14, e21, e22, e23, e24, e31, e32, e33, e34, e41, e42, e43, e44⟩ := zmod5_sums
-  interval_cases b <;> interval_cases c <;> (try omega) <;> interval_cases d <;> (try omega) <;>
+  interval_cases b <;> interval_cases c <;> (try omega) <;> interval_cases d  <;>
   rcases hB with rfl | rfl | rfl | rfl | rfl <;>
   · rintro ⟨a1, a2, a3, a4⟩
     revert a1 a2 a3 a4
@@ -402,7 +402,7 @@ theorem robUni6_a {z : ZMod 6 → ℝ} (h12 : z 2 < z 1) (h23 : z 3 < z 2) (h34 
   have hb4 : b < 6 := by omega
   have hc4 : c < 6 := by omega
   obtain ⟨e01, e02, e03, e04, e05, e11, e12, e13, e14, e15, e21, e22, e23, e24, e25, e31, e32, e33, e34, e35, e41, e42, e43, e44, e45, e51, e52, e53, e54, e55⟩ := zmod6_sums
-  interval_cases b <;> interval_cases c <;> (try omega) <;> interval_cases d <;> (try omega) <;>
+  interval_cases b <;> interval_cases c <;> (try omega) <;> interval_cases d  <;>
   rcases hB with rfl | rfl | rfl | rfl | rfl | rfl <;>
   · rintro ⟨a1, a2, a3, a4⟩
     revert a1 a2 a3 a4

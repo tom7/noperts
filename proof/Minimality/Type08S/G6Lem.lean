@@ -75,12 +75,12 @@ theorem lemma08S_core (hF : Fr e1 e2 e3) (o : ℝ³)
   · -- a
     refine Or.inr ⟨pt e1 e2 e3 o L 0 B, by simp, pt e1 e2 e3 o X1 h R, by simp,
       pt e1 e2 e3 o 0 0 C, by simp, ?_, ?_, ?_, ?_⟩ <;>
-    · simp only [TiltSign, pt, hω, hτ, vel_pc hF, add_sub_add_left_eq_sub, pc_sub, det3_pc hF]
+    · simp only [TiltSign, pt, add_sub_add_left_eq_sub, pc_sub, det3_pc hF]
       rowt
   · -- a'
     refine Or.inr ⟨pt e1 e2 e3 o 0 0 C, by simp, pt e1 e2 e3 o L 0 W, by simp,
       pt e1 e2 e3 o X0 h P, by simp, ?_, ?_, ?_, ?_⟩ <;>
-    · simp only [TiltSign, pt, hω, hτ, vel_pc hF, add_sub_add_left_eq_sub, pc_sub, det3_pc hF]
+    · simp only [TiltSign, pt, add_sub_add_left_eq_sub, pc_sub, det3_pc hF]
       rowt
   · -- b: y0 = 2, y1 = c'
     refine Or.inl ⟨pt e1 e2 e3 o L 0 W, by simp, pt e1 e2 e3 o X1 h R, by simp, ?_, ?_, ?_⟩ <;>

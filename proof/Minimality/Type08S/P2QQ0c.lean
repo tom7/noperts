@@ -50,7 +50,7 @@ theorem nf08w_core {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) :
     ⟨hb'c, hb'c'⟩, hcc', -⟩ := hnd
   have hE := hdet
   obtain ⟨f1, f2, f3, f4⟩ := fc08_d ![p, q, r, s, t, u]
-  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons] at f1 f2 f3 f4
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at f1 f2 f3 f4
   have n1 : fc08 ![p, q, r, s, t, u] 0 3 5 6 ≠ 0 := by rw [f1]; positivity
   have n2 : fc08 ![p, q, r, s, t, u] 1 2 5 6 ≠ 0 := by rw [f2]; positivity
   have n3 : fc08 ![p, q, r, s, t, u] 1 3 4 6 ≠ 0 := by rw [f3]; positivity
@@ -116,7 +116,7 @@ theorem nf_inj6_w {o E₁ E₂ E₃ : ℝ³} (hE : det3 E₁ E₂ E₃ ≠ 0) {�
   have p3 := hθ.pos 3 (by decide) (by decide) (by decide)
   have p4 := hθ.pos 4 (by decide) (by decide) (by decide)
   have p5 := hθ.pos 5 (by decide) (by decide) (by decide)
-  simp only [ineq08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons] at p0 p1 p2 p3 p4 p5
+  simp only [ineq08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at p0 p1 p2 p3 p4 p5
   intro i j h
   by_contra hne
   have key := nfinj08 hE (θ := θ) i.castSucc j.castSucc h
@@ -129,7 +129,7 @@ theorem ord08_w {o E₁ E₂ E₃ : ℝ³} (hE : det3 E₁ E₂ E₃ ≠ 0) {θ 
   have hinj := nf_inj6_w (o := o) hE hθ
   have p1 := hθ.pos 1 (by decide) (by decide) (by decide)
   have p5 := hθ.pos 5 (by decide) (by decide) (by decide)
-  simp only [ineq08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons] at p1 p5
+  simp only [ineq08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at p1 p5
   fin_cases i
   · exact inner_lt08 (fun h => absurd (hinj (a₁ := 4) (a₂ := 1) h) (by decide))
   · refine inner_lt08 (fun h => ?_)

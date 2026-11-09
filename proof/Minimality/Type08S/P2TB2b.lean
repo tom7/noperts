@@ -55,7 +55,7 @@ theorem extra_K2T {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (hT :
     have h2 := det3_nfd d E₁ E₂ E₃ θ 2 6 2 5 2 3
     have hq : ddet (fun k => cp08 θ 6 k - cp08 θ 2 k) (fun k => cp08 θ 5 k - cp08 θ 2 k)
         (fun k => cp08 θ 3 k - cp08 θ 2 k) = θ 0 * θ 3 := by
-      simp [ddet, cp08]; try ring
+      simp [ddet, cp08]
     rw [hq, h66] at h2
     simp only [sub_self, inner_zero_left, sub_zero, hf2, zero_mul] at h1
     refine kD_pos hκ (L := ⟪(nfShape08 d E₁ E₂ E₃ θ 5) - (nfShape08 d E₁ E₂ E₃ θ 2), e1⟫) (Y := ⟪(nfShape08 d E₁ E₂ E₃ θ 3) - (nfShape08 d E₁ E₂ E₃ θ 2), e2⟫) (P := θ 0 * θ 3) ?_ hL hr
@@ -63,7 +63,7 @@ theorem extra_K2T {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (hT :
     linear_combination h2 - h1
   -- Y_g > 0
   have T1 := tgt_eq (e1 := e1) (e2 := e2) (e3 := e3) d E₁ E₂ E₃ θ hF hu ((nfShape08 d E₁ E₂ E₃ θ 2)) 2 5 2 4 (θ 0)
-    (by simp [ddet, cp08]; try ring)
+    (by simp [ddet, cp08])
   simp only [h66, sub_self, inner_zero_left, sub_zero, hf2, zero_mul, mul_zero] at T1
   have hLg : 0 < ⟪(nfShape08 d E₁ E₂ E₃ θ 5) - (nfShape08 d E₁ E₂ E₃ θ 2), e1⟫ * ⟪(nfShape08 d E₁ E₂ E₃ θ 4) - (nfShape08 d E₁ E₂ E₃ θ 2), e2⟫ := by
     refine sign_transfer hκ hkD (T := ⟪(nfShape08 d E₁ E₂ E₃ θ 5) - (nfShape08 d E₁ E₂ E₃ θ 2), e1⟫ * ⟪(nfShape08 d E₁ E₂ E₃ θ 4) - (nfShape08 d E₁ E₂ E₃ θ 2), e2⟫) (Q := θ 0) ?_ p0
@@ -82,7 +82,7 @@ theorem extra_K2T {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (hT :
     exact (mul_eq_zero.mp this).resolve_left p0.ne'
   -- the G-middle
   have T3 := tgt_eq (e1 := e1) (e2 := e2) (e3 := e3) d E₁ E₂ E₃ θ hF hu ((nfShape08 d E₁ E₂ E₃ θ 2)) 2 5 2 1 (θ 0 * θ 5)
-    (by simp [ddet, cp08]; try ring)
+    (by simp [ddet, cp08])
   simp only [h66, sub_self, inner_zero_left, sub_zero, hf2, zero_mul, mul_zero] at T3
   have hLq : 0 < ⟪(nfShape08 d E₁ E₂ E₃ θ 5) - (nfShape08 d E₁ E₂ E₃ θ 2), e1⟫ * ⟪(nfShape08 d E₁ E₂ E₃ θ 1) - (nfShape08 d E₁ E₂ E₃ θ 2), e2⟫ := by
     refine sign_transfer hκ hkD (T := ⟪(nfShape08 d E₁ E₂ E₃ θ 5) - (nfShape08 d E₁ E₂ E₃ θ 2), e1⟫ * ⟪(nfShape08 d E₁ E₂ E₃ θ 1) - (nfShape08 d E₁ E₂ E₃ θ 2), e2⟫) (Q := θ 0 * θ 5) ?_ (mul_pos p0 p5)
@@ -93,7 +93,7 @@ theorem extra_K2T {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (hT :
   have hcn := det3_nfd d E₁ E₂ E₃ θ 2 1 2 4 2 6
   have hq0 : ddet (fun k => cp08 θ 1 k - cp08 θ 2 k) (fun k => cp08 θ 4 k - cp08 θ 2 k)
       (fun k => cp08 θ 6 k - cp08 θ 2 k) = 0 := by
-    simp [ddet, cp08]; try ring
+    simp [ddet, cp08]
   rw [hq0, h66] at hcn
   rw [hcop3] at hcn
   simp only [hd1, hd2, hd3, sub_self, inner_zero_left, sub_zero, zero_mul, mul_zero, add_zero,
@@ -108,7 +108,7 @@ theorem extra_K2T {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (hT :
     have hn := det3_nfd d E₁ E₂ E₃ θ 6 5 6 0 6 3
     have hq : ddet (fun k => cp08 θ 5 k - cp08 θ 6 k) (fun k => cp08 θ 0 k - cp08 θ 6 k)
         (fun k => cp08 θ 3 k - cp08 θ 6 k) = - (θ 1 * θ 3) := by
-      simp [ddet, cp08]; try ring
+      simp [ddet, cp08]
     rw [hq] at hn
     simp only [h66] at hn
     rw [hdet] at hn

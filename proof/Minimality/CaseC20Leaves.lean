@@ -124,7 +124,6 @@ theorem Frame20.om1p {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
   all_goals
     obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
     simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_6, Shape20.u_tANR, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
   · linarith only [mul_nonneg (F.S.tp_pos).le (sub_nonneg.2 n1_2), mul_nonneg (htp1).le (sub_nonneg.2 n1_2), mul_pos ((mul_pos htp1 F.S.tm_pos)) hal, mul_pos ((mul_pos htp1 htm1)) hal]
   · linarith only [(sub_nonneg.2 n1_4), mul_pos F.S.sp_pos hom, mul_pos hsp1 hom]
@@ -159,7 +158,6 @@ theorem Frame20.om1n {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
   all_goals
     obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
     simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_6, Shape20.u_tANR, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
   · linarith only [(sub_nonneg.2 n1_2), mul_pos ((mul_pos htp1 F.S.tm_pos)) hal, mul_pos ((mul_pos htp1 htm1)) hal]
   · linarith only [mul_nonneg (htp1).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n0_3), mul_pos F.S.sp_pos hom, mul_pos hsp1 hom, mul_nonneg htt hom.le]
@@ -194,7 +192,6 @@ theorem Frame20.om1z1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
   all_goals
     obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
     simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_6, Shape20.u_tANR, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
   · linarith only [mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n1_2), mul_nonneg (htm1).le (sub_nonneg.2 n1_2), mul_pos ((mul_pos htp1 F.S.sm_pos)) hal, mul_pos ((mul_pos htp1 hsm1)) hal]
   · linarith only [mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n1_3), mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n1_4), mul_pos htm1 hl, mul_nonneg htt hl.le]
@@ -229,7 +226,6 @@ theorem Frame20.om1z2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
   all_goals
     obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
     simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_6, Shape20.u_tANR, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
   · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n1_1), mul_pos htm1 hl, mul_nonneg htt hl.le, mul_pos ((mul_pos htp1 F.S.km_pos)) hal]
   · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n1_4), mul_pos htm1 hl, mul_nonneg htt hl.le]
@@ -264,7 +260,6 @@ theorem Frame20.om2a {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
   all_goals
     obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
     simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
   · linarith only [mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n0_3), mul_nonneg (hsm1).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.hp_pos F.S.km_pos)) hde]
   · linarith only [mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n0_3), mul_nonneg (hsm1).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.hp_pos F.S.km_pos)) hde]
@@ -299,7 +294,6 @@ theorem Frame20.om2b {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
   all_goals
     obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
     simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_tA, Shape20.u_vN4] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
   · linarith only [mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n0_4), mul_nonneg (htm1).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos htp1 F.S.sm_pos)) hga, mul_pos ((mul_pos F.S.hp_pos F.S.km_pos)) hde]
   · linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n0_4), mul_nonneg (hsp1).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos htp1 F.S.sm_pos)) hga, mul_pos ((mul_pos F.S.hp_pos F.S.km_pos)) hde]
@@ -619,7 +613,6 @@ theorem Frame20.famA1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
   rcases o0 with n0 | n0
   all_goals
     obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4
     simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_tA] at n0_1 n0_2 n0_3 n0_4
   · linarith only [mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n0_3), mul_nonneg (hsm1).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.hp_pos F.S.km_pos)) hde]
   · linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hsp1).le (sub_nonneg.2 n0_1), mul_pos F.S.tm_pos hg, mul_pos htm1 hg]
@@ -647,7 +640,6 @@ theorem Frame20.famA2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
   rcases o0 with n0 | n0 | n0 | n0 | n0
   all_goals
     obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4
     simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_5, Shape20.u_yT2] at n0_1 n0_2 n0_3 n0_4
   · linarith only [mul_nonneg ((mul_pos F.S.tp_pos F.S.tm_pos)).le (sub_nonneg.2 n0_2), mul_nonneg ((mul_pos F.S.tp_pos htm1)).le (sub_nonneg.2 n0_2), mul_nonneg (htp1).le (sub_nonneg.2 n0_3), mul_pos ((mul_pos (mul_pos htp1 F.S.tm_pos) F.S.sp_pos)) hbe, mul_pos ((mul_pos (mul_pos htp1 htm1) F.S.sp_pos)) hbe, mul_pos ((mul_pos (mul_pos htp1 htp1) F.S.sp_pos)) hga, mul_pos ((mul_pos (mul_pos F.S.tm_pos F.S.hp_pos) rp)) hde, mul_pos ((mul_pos (mul_pos htm1 F.S.hp_pos) rp)) hde, mul_pos ((mul_pos (mul_pos F.S.sp_pos F.S.hp_pos) F.S.hp_pos)) hde]
   · linarith only [mul_nonneg (htp1).le (sub_nonneg.2 n0_4), mul_nonneg (F.S.tm_pos).le hg, mul_pos ((mul_pos F.S.hp_pos hA1)) hde]
@@ -678,7 +670,6 @@ theorem Frame20.famE {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
   rcases o0 with n0 | n0
   all_goals
     obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4
     simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_eXb] at n0_1 n0_2 n0_3 n0_4
   · linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n0_3), mul_pos ((mul_pos F.S.sm_pos F.S.hp_pos)) hbe]
   · linarith only [mul_nonneg (F.S.kp_pos).le (sub_nonneg.2 n0_2), mul_nonneg (rp).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.tp_pos F.S.kp_pos)) hal, mul_pos ((mul_pos F.S.tp_pos rp)) hal, mul_pos ((mul_pos F.S.tp_pos F.S.kp_pos)) hbe, mul_pos ((mul_pos hsp1 F.S.hp_pos)) hbe]

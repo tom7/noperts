@@ -71,13 +71,13 @@ noncomputable def arc : Arc V where
     intro y hy hyM hyx i
     simp only [V, mem_insert, mem_singleton] at hy hyM
     rcases hy with rfl | rfl | rfl | rfl | rfl | rfl | rfl
-    · exact (hyx 0 (by simp [X, quad_0, quad_1, quad_2, quad_3])).elim
+    · exact (hyx 0 (by simp [X, quad_0])).elim
     · exact absurd rfl hyM
     · rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> simp only [a0, a1, a2, a3] <;> numtac
-    · exact (hyx 2 (by simp [X, quad_0, quad_1, quad_2, quad_3])).elim
+    · exact (hyx 2 (by simp [X, quad_2])).elim
     · rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> simp only [a0, a1, a2, a3] <;> numtac
-    · exact (hyx 1 (by simp [X, quad_0, quad_1, quad_2, quad_3])).elim
-    · exact (hyx 3 (by simp [X, quad_0, quad_1, quad_2, quad_3])).elim
+    · exact (hyx 1 (by simp [X, quad_1])).elim
+    · exact (hyx 3 (by simp [X, quad_3])).elim
   hfront := by numtac
   hmid := by
     obtain ⟨a0, a1, a2, a3⟩ := zmod4_add_one

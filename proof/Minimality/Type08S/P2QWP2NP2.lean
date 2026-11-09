@@ -76,13 +76,13 @@ theorem extra_Kb {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg
     have h2 := det3_nfd d E₁ E₂ E₃ θ 6 2 6 4 6 3
     have hq : ddet (fun k => cp08 θ 2 k - cp08 θ 6 k) (fun k => cp08 θ 4 k - cp08 θ 6 k)
         (fun k => cp08 θ 3 k - cp08 θ 6 k) = θ 2 := by
-      simp [ddet, cp08]; try ring
+      simp [ddet, cp08]
     rw [hq, h66] at h2
     simp only [sub_self, inner_zero_left, sub_zero, hf2, zero_mul] at h1
     refine kD_pos hκ (L := ⟪(nfShape08 d E₁ E₂ E₃ θ 4) - d, e1⟫) (Y := ⟪(nfShape08 d E₁ E₂ E₃ θ 3) - d, e2⟫) (P := θ 2) ?_ hL hr p2
     linear_combination h2 - h1
   -- Y_g > 0
-  have T1 := tgt_nf d E₁ E₂ E₃ θ hF hκ hkD hu d 6 4 6 5 (θ 0) (by simp [ddet, cp08]; try ring) p0
+  have T1 := tgt_nf d E₁ E₂ E₃ θ hF hκ hkD hu d 6 4 6 5 (θ 0) (by simp [ddet, cp08]) p0
   simp only [h66, sub_self, inner_zero_left, sub_zero, hf2, zero_mul, mul_zero] at T1
   have hYg : 0 < ⟪(nfShape08 d E₁ E₂ E₃ θ 5) - d, e2⟫ := pos_of_mul_pos_right (by linarith) hL.le
   -- Y_p = 0
@@ -97,7 +97,7 @@ theorem extra_Kb {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg
     simp only [inner_add_left, real_inner_smul_left, hb2, hf2, mul_zero, add_zero] at this
     exact this
   -- the G-middle
-  have T3 := tgt_eq d E₁ E₂ E₃ θ hF hu d 6 4 6 0 1 (by simp [ddet, cp08]; try ring)
+  have T3 := tgt_eq d E₁ E₂ E₃ θ hF hu d 6 4 6 0 1 (by simp [ddet, cp08])
   simp only [h66, sub_self, inner_zero_left, sub_zero, hf2, zero_mul, mul_zero] at T3
   have hLa : 0 < ⟪(nfShape08 d E₁ E₂ E₃ θ 4) - d, e1⟫ * ⟪(nfShape08 d E₁ E₂ E₃ θ 0) - d, e2⟫ := by
     refine sign_transfer hκ hkD (T := ⟪(nfShape08 d E₁ E₂ E₃ θ 4) - d, e1⟫ * ⟪(nfShape08 d E₁ E₂ E₃ θ 0) - d, e2⟫) (Q := 1) ?_ one_pos
@@ -111,7 +111,7 @@ theorem extra_Kb {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg
   have hcn := det3_nfd d E₁ E₂ E₃ θ 6 0 6 5 6 2
   have hq0 : ddet (fun k => cp08 θ 0 k - cp08 θ 6 k) (fun k => cp08 θ 5 k - cp08 θ 6 k)
       (fun k => cp08 θ 2 k - cp08 θ 6 k) = 0 := by
-    simp [ddet, cp08]; try ring
+    simp [ddet, cp08]
   rw [hq0, h66] at hcn
   rw [hcop3] at hcn
   simp only [h66, sub_self, inner_zero_left, sub_zero, hb1, hb2, hb3, zero_mul, mul_zero, add_zero,

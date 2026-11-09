@@ -51,7 +51,7 @@ theorem witness_bicappedTetrahedron : IsBicappedTetrahedron !₂[0, 0, 0] !₂[4
   · apply affineIndependent_of_det3
     simp only [det3, cross, PiLp.inner_apply, Fin.sum_univ_three, PiLp.sub_apply,
       RCLike.inner_apply, conj_trivial]
-    simp [Matrix.cons_val] <;> norm_num
+    simp [Matrix.cons_val] 
   · refine ⟨affOf !₂[-1, 0, -3] (0), by wnum, by wnum, by wnum, ?_⟩
     intro x hx h1 h2 h3
     simp only [Finset.mem_insert, Finset.mem_singleton] at hx
@@ -89,7 +89,7 @@ theorem witness_bicappedTetrahedron : IsBicappedTetrahedron !₂[0, 0, 0] !₂[4
 theorem witness_cappedSquarePyramid : IsCappedSquarePyramid !₂[1, 1, 4] !₂[0, 0, 0] !₂[4, 0, 0] !₂[3, 3, 0] !₂[0, 2, 0] !₂[1, -4, 1] := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · apply List.Nodup.of_map (fun v : ℝ³ => (v 0, v 1, v 2))
-    simp [List.nodup_cons, Matrix.cons_val] <;> norm_num
+    simp [List.nodup_cons, Matrix.cons_val] 
   · apply affineIndependent_of_det3
     simp only [det3, cross, PiLp.inner_apply, Fin.sum_univ_three, PiLp.sub_apply,
       RCLike.inner_apply, conj_trivial]
@@ -136,7 +136,7 @@ theorem witness_cappedSquarePyramid : IsCappedSquarePyramid !₂[1, 1, 4] !₂[0
 theorem witness_cappedSquarePyramid_parallel : IsCappedSquarePyramid !₂[2, 2, 4] !₂[0, 0, 0] !₂[4, 0, 0] !₂[4, 4, 0] !₂[0, 4, 0] !₂[1, -4, 1] := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · apply List.Nodup.of_map (fun v : ℝ³ => (v 0, v 1, v 2))
-    simp [List.nodup_cons, Matrix.cons_val] <;> norm_num
+    simp [List.nodup_cons, Matrix.cons_val] 
   · apply affineIndependent_of_det3
     simp only [det3, cross, PiLp.inner_apply, Fin.sum_univ_three, PiLp.sub_apply,
       RCLike.inner_apply, conj_trivial]
@@ -183,11 +183,11 @@ theorem witness_cappedSquarePyramid_parallel : IsCappedSquarePyramid !₂[2, 2, 
 theorem witness_T4 : IsT4 !₂[0, 0, 0] !₂[4, 0, 0] !₂[0, 4, 0] !₂[0, 0, 4] !₂[-8, 4, 2] !₂[4, -2, 1] := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · apply List.Nodup.of_map (fun v : ℝ³ => (v 0, v 1, v 2))
-    simp [List.nodup_cons, Matrix.cons_val] <;> norm_num
+    simp [List.nodup_cons, Matrix.cons_val] 
   · apply affineIndependent_of_det3
     simp only [det3, cross, PiLp.inner_apply, Fin.sum_univ_three, PiLp.sub_apply,
       RCLike.inner_apply, conj_trivial]
-    simp [Matrix.cons_val] <;> norm_num
+    simp [Matrix.cons_val] 
   · refine ⟨affOf !₂[-1, -2, 0] (0), ?_, ?_⟩
     · intro x hx
       simp only [Finset.mem_insert, Finset.mem_singleton] at hx
@@ -230,11 +230,11 @@ theorem witness_T4 : IsT4 !₂[0, 0, 0] !₂[4, 0, 0] !₂[0, 4, 0] !₂[0, 0, 4
 theorem witness_T3 : IsT3 !₂[2, 0, 0] !₂[0, 2, 0] !₂[0, 0, 0] !₂[1, 0, 4] !₂[0, 4, 2] !₂[0, 0, 2] := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · apply List.Nodup.of_map (fun v : ℝ³ => (v 0, v 1, v 2))
-    simp [List.nodup_cons, Matrix.cons_val] <;> norm_num
+    simp [List.nodup_cons, Matrix.cons_val] 
   · apply affineIndependent_of_det3
     simp only [det3, cross, PiLp.inner_apply, Fin.sum_univ_three, PiLp.sub_apply,
       RCLike.inner_apply, conj_trivial]
-    simp [Matrix.cons_val] <;> norm_num
+    simp [Matrix.cons_val] 
   · refine ⟨affOf !₂[0, -1, 0] (0), ?_, ?_⟩
     · intro x hx
       simp only [Finset.mem_insert, Finset.mem_singleton] at hx
@@ -282,11 +282,11 @@ theorem witness_T3 : IsT3 !₂[2, 0, 0] !₂[0, 2, 0] !₂[0, 0, 0] !₂[1, 0, 4
 theorem witness_T3_parallel : IsT3 !₂[2, 0, 0] !₂[0, 2, 0] !₂[0, 0, 0] !₂[1, 0, 4] !₂[0, 2, 2] !₂[0, 0, 2] := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · apply List.Nodup.of_map (fun v : ℝ³ => (v 0, v 1, v 2))
-    simp [List.nodup_cons, Matrix.cons_val] <;> norm_num
+    simp [List.nodup_cons, Matrix.cons_val] 
   · apply affineIndependent_of_det3
     simp only [det3, cross, PiLp.inner_apply, Fin.sum_univ_three, PiLp.sub_apply,
       RCLike.inner_apply, conj_trivial]
-    simp [Matrix.cons_val] <;> norm_num
+    simp [Matrix.cons_val] 
   · refine ⟨affOf !₂[0, -1, 0] (0), ?_, ?_⟩
     · intro x hx
       simp only [Finset.mem_insert, Finset.mem_singleton] at hx

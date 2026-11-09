@@ -73,8 +73,8 @@ theorem allsep_false {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
   rw [eb, eb', ec, ec'] at h1
   rw [eb', ec, ec'] at h2
   rw [eb, eb', ea', ec'] at hX
-  exact allsep_real (A := α * ⟪a - d, b - d⟫) hu hb1 hb14 hb6 (by convert h1 using 2 <;> ring_nf)
-    (by convert h2 using 2 <;> ring_nf) (by convert hX using 2 <;> ring_nf)
+  exact allsep_real (A := α * ⟪a - d, b - d⟫) hu hb1 hb14 hb6 (by convert h1 using 2 )
+    (by convert h2 using 2 ) (by convert hX using 2 )
 
 end Type08Sp
 end Minimality

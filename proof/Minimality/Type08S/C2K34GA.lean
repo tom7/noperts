@@ -75,7 +75,7 @@ theorem k32g_keysP {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     simp only [inner_smul_left, inner_sub_left, inner_add_left, conj_trivial, hPR, hRP, hPQ] <;> ring
   have em3 : ⟪c' - a', R⟫ = α1 * ⟪P, Q⟫ + (β1 - 1) * ⟪Q, R⟫ - γ6 * ⟪R, R⟫ := by
     rw [e1]
-    simp only [inner_smul_left, inner_sub_left, inner_add_left, conj_trivial, hPR, hRP, hPQ, hRQ] <;> ring
+    simp only [inner_smul_left, inner_sub_left, inner_add_left, conj_trivial, hPR, hRP, hPQ, hRQ] 
   have hm1p : 0 < α1 * ⟪P, P⟫ + (β1 - 1 - γ6) * ⟪P, Q⟫ := by
     nlinarith [mul_pos (by linarith : (0:ℝ) < α1) hPP, mul_nonneg (by linarith : (0:ℝ) ≤ γ6 + 1 - β1) (by linarith : (0:ℝ) ≤ -⟪P, Q⟫)]
   have hm3n : α1 * ⟪P, Q⟫ + (β1 - 1) * ⟪Q, R⟫ - γ6 * ⟪R, R⟫ < 0 := by

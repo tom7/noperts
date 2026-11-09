@@ -25,13 +25,13 @@ theorem sat_neg (ρ : Nat → Bool) (l : Nat) : Sat ρ (neg l) ↔ ¬ Sat ρ l :
   by_cases h : l % 2 = 0
   · have h1 : (l + 1) % 2 = 1 := by omega
     have h2 : (l + 1) / 2 = l / 2 := by omega
-    rw [if_pos (by simp [h])]
+    rw [ite_eq_left (by simp [h])]
     simp only [h, h1, h2]
     cases ρ (l / 2) <;> simp
   · have h0 : l % 2 = 1 := by omega
     have h1 : (l - 1) % 2 = 0 := by omega
     have h2 : (l - 1) / 2 = l / 2 := by omega
-    rw [if_neg (by simp [h0])]
+    rw [ite_eq_right (by simp [h0])]
     simp only [h0, h1, h2]
     cases ρ (l / 2) <;> simp
 
@@ -88,17 +88,17 @@ theorem ins_sound (P : Cl → Prop) : ∀ (f : Nat) (t : Tr) (k : Nat) (c : Cl),
     cases t with
     | nil =>
       by_cases hk : k % 2 == 0
-      · simp only [ins, hk, ite_true, AllT]; exact ⟨ih _ _ _ (by cases f <;> simp [AllT]) hc, by cases f <;> simp [AllT]⟩
-      · simp only [ins, hk, AllT]; exact ⟨by cases f <;> simp [AllT], ih _ _ _ (by cases f <;> simp [AllT]) hc⟩
+      · simp only [ins, hk, ite_true, AllT]; exact ⟨ih _ _ _ (by cases f <;> simp [AllT]) hc, by cases f <;> simp⟩
+      · simp only [ins, hk]; exact ⟨by cases f <;> simp [AllT], ih _ _ _ (by cases f <;> simp [AllT]) hc⟩
     | cl c' =>
       by_cases hk : k % 2 == 0
-      · simp only [ins, hk, ite_true, AllT]; exact ⟨ih _ _ _ (by cases f <;> simp [AllT]) hc, by cases f <;> simp [AllT]⟩
-      · simp only [ins, hk, AllT]; exact ⟨by cases f <;> simp [AllT], ih _ _ _ (by cases f <;> simp [AllT]) hc⟩
+      · simp only [ins, hk, ite_true, AllT]; exact ⟨ih _ _ _ (by cases f <;> simp [AllT]) hc, by cases f <;> simp⟩
+      · simp only [ins, hk]; exact ⟨by cases f <;> simp [AllT], ih _ _ _ (by cases f <;> simp [AllT]) hc⟩
     | br a b =>
       simp only [AllT] at h
       by_cases hk : k % 2 == 0
       · simp only [ins, hk, ite_true, AllT]; exact ⟨ih _ _ _ h.1 hc, h.2⟩
-      · simp only [ins, hk, AllT]; exact ⟨h.1, ih _ _ _ h.2 hc⟩
+      · simp only [ins, hk]; exact ⟨h.1, ih _ _ _ h.2 hc⟩
 
 theorem nil_allT (P : Cl → Prop) (f : Nat) : AllT P f Tr.nil := by cases f <;> simp [AllT]
 

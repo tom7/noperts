@@ -72,15 +72,15 @@ theorem n2_eq (F : OctFacets a a' b b' c c') (hd : IsCap F d)
     simp only [Finset.mem_insert, Finset.mem_singleton] at hy
     tauto
   · intro tt htt
-    simp only [h5Pts, b0, b1', r2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
+    simp only [h5Pts, r2', quint_2, quint_3, quint_4]
     exact lex_of_tilt (crossYZ_planar FQab _ _ _ cfg.Qab_M cfg.Qab_A cfg.Qab_R hQa hγ.ne')
       (tilt_pos FQab _ _ _ cfg.Qab_M cfg.Qab_A cfg.Qab_R hβ hγ htt c4)
   · intro tt htt
-    simp only [h5Pts, b0, b1', r2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
+    simp only [h5Pts, b3, quint_2, quint_3, quint_4]
     exact lex_of_tilt (crossYZ_planar FQab _ _ _ cfg.Qab_A cfg.Qab_R cfg.Qab_M hQa hγ.ne')
       (tilt_pos FQab _ _ _ cfg.Qab_A cfg.Qab_R cfg.Qab_M hβ hγ htt c5)
   · intro tt htt
-    simp only [h5Pts, b0, b1', r2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
+    simp only [h5Pts, r2', quint_2, quint_3]
     exact lex_of_tilt (crossYZ_planar FQab _ _ _ cfg.Qab_M cfg.Qab_A cfg.Qab_B hQa hγ.ne')
       (tilt_pos FQab _ _ _ cfg.Qab_M cfg.Qab_A cfg.Qab_B hβ hγ htt c3)
 

@@ -74,7 +74,7 @@ theorem exists_hasUnimodalView : ∃ x : Fin 7 → ℝ³, HasUnimodalView x := b
         first | rfl | (exfalso; rw [v0] at h <;> norm_num [v1, v2] at h) | (exfalso; norm_num [v0, v1, v2] at h)
     · ext i
       rcases all3 i with rfl | rfl | rfl <;>
-        simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton, e01, e12, e20, f0, f1, f2, v0, v1, v2] <;> norm_num <;> decide
+        simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton, e01, e12, e20, f0, f1, f2] <;> norm_num <;> decide
 end MinimalityExtra
 
 #print axioms MinimalityExtra.NoUni.exists_strictRim

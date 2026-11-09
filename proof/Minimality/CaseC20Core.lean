@@ -340,7 +340,6 @@ theorem Frame20.ra4_A_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
   all_goals
     obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
     simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_tA] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
   · linarith only [mul_nonneg (F.S.sm_pos).le (sub_nonneg.2 n1_3), mul_nonneg (hsm1).le (sub_nonneg.2 n1_4), mul_pos ((mul_pos F.S.hp_pos F.S.km_pos)) hde]
   · linarith only [(sub_nonneg.2 n0_2), mul_nonneg (hsp1).le (sub_nonneg.2 n1_1), mul_pos ((mul_pos htp1 hsp1)) hga, mul_pos ((mul_pos F.S.hp_pos F.S.kp_pos)) hde]
@@ -376,7 +375,6 @@ theorem Frame20.ra4_Y_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
   all_goals
     obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
     simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_yY] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
   · linarith only [(sub_nonneg.2 n0_4), mul_pos ((mul_pos F.S.tp_pos hsp1)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos hsp1) hsm1)) hga, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.km_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos htp1 F.S.km_pos) hQ)) hde, mul_pos ((mul_pos (mul_pos F.S.tm_pos F.S.km_pos) rp)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htm1).le hD) (hA1r).le) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le hW) (hA1r).le) (hde).le)]
   · linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n1_1), (sub_nonneg.2 n1_2), mul_pos ((mul_pos F.S.tp_pos F.S.sp_pos)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.tm_pos)) hbe, mul_pos ((mul_pos F.S.tm_pos htm1)) hbe, mul_pos ((mul_pos htm1 htm1)) hbe, mul_pos ((mul_pos htp1 hsp1)) hga, mul_pos ((mul_pos F.S.hp_pos F.S.kp_pos)) hde]
@@ -418,7 +416,6 @@ theorem Frame20.ra4_X_cc {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.In
   all_goals
     obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
     simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_2, F.ptC_3, F.ptC_4, F.ptC_5, F.ptC_6, Shape20.u_vRa4, Shape20.u_xX] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4
   · linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n1_1), mul_nonneg (hsp1).le (sub_nonneg.2 n1_1), mul_pos ((mul_pos F.S.tp_pos hA1r)) hal, mul_pos ((mul_pos htp1 hA1r)) hal, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hal, (mul_nonneg (mul_nonneg (htm1).le hCm) (hal).le), mul_pos ((mul_pos htp1 rm)) hbe, mul_pos ((mul_pos F.S.tm_pos F.S.hp_pos)) hbe, (mul_nonneg (mul_nonneg (htm1).le hCm) (hbe).le), mul_pos ((mul_pos F.S.sm_pos hA1r)) hbe, mul_pos ((mul_pos hsm1 hA1r)) hbe]
   · linarith only [mul_nonneg ((mul_pos F.S.tm_pos htm1)).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos F.S.tm_pos F.S.sp_pos)).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos F.S.tm_pos hsp1)).le (sub_nonneg.2 n0_4), mul_nonneg ((mul_pos htm1 htm1)).le (sub_nonneg.2 n0_4), mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.tm_pos) hsp1)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos htm1) hsp1)) hal, mul_pos ((mul_pos (mul_pos F.S.tp_pos hsp1) hsm1)) hga, (mul_nonneg (mul_nonneg (hQ).le hCm) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tp_pos).le (F.S.hm_pos).le) hD) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (htp1).le (rm).le) hW) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (F.S.tm_pos).le (F.S.km_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos F.S.sm_pos F.S.hm_pos) rp)) hde, mul_pos ((mul_pos (mul_pos F.S.sm_pos F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (F.S.sm_pos).le hW) hA3) (hde).le), (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le (F.S.hm_pos).le) hW) (hde).le), mul_pos ((mul_pos (mul_pos hsm1 F.S.km_pos) hQ)) hde, (mul_nonneg (mul_nonneg (mul_nonneg (hsm1).le hW) hA3) (hde).le)]

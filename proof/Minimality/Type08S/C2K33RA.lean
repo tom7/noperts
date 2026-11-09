@@ -313,15 +313,15 @@ theorem k28b2r_min (a e b6 g6 w M rho kap up uq ur : ℝ) (ha : 0 < a) (he : 0 <
       first
       | exact absurd rfl h1
       | exact (h2 (by decide)).elim
-      | (simp only [k28b2rY_0, k28b2rY_1, k28b2rY_2, k28b2rY_3, k28b2rY_4, m0, m1, m2, m3, m4, p0, p1, p2, p3, p4,
-          Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
+      | (simp only [k28b2rY_0, k28b2rY_1, k28b2rY_2, k28b2rY_3, k28b2rY_4, p0, p1, p2, p3, p4,
+          Prod.mk_sub_mk]
          linarith [k28b2r_F_a_b1_d', k28b2r_F_a_a1_d', k28b2r_F_a_b_d', k28b2r_F_a_c1_d', k28b2r_F_a_c_d', k28b2r_F_a_b1_a1', k28b2r_F_a_b1_b', k28b2r_F_a_b1_c1', k28b2r_F_a_b1_c', k28b2r_F_a1_d_b1', k28b2r_F_a1_b_b1', k28b2r_F_a1_c1_b1', k28b2r_F_a1_b_d', k28b2r_F_a_a1_b', k28b2r_F_a1_b_c', k28b2r_F_b_d_b1', k28b2r_F_b_d_c1', k28b2r_F_b_d_c', k28b2r_F_a1_c_b1', k28b2r_F_a1_b_c1'])
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl <;>
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
-      (simp only [k28b2rYc', k28b2rYc, k28b2rY_0, k28b2rY_1, k28b2rY_2, k28b2rY_3, k28b2rY_4, m0, m1, m2, m3, m4, p0, p1, p2, p3, p4,
-          Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
+      (simp only [k28b2rYc', k28b2rYc, k28b2rY_0, k28b2rY_1, k28b2rY_2, k28b2rY_3, k28b2rY_4, p0, p1, p2, p3, p4,
+          Prod.mk_sub_mk]
        linarith [k28b2r_F_a_b1_d', k28b2r_F_a_a1_d', k28b2r_F_a_b_d', k28b2r_F_a_c1_d', k28b2r_F_a_c_d', k28b2r_F_a_b1_a1', k28b2r_F_a_b1_b', k28b2r_F_a_b1_c1', k28b2r_F_a_b1_c', k28b2r_F_a1_d_b1', k28b2r_F_a1_b_b1', k28b2r_F_a1_c1_b1', k28b2r_F_a1_b_d', k28b2r_F_a_a1_b', k28b2r_F_a1_b_c', k28b2r_F_b_d_b1', k28b2r_F_b_d_c1', k28b2r_F_b_d_c', k28b2r_F_a1_c_b1', k28b2r_F_a1_b_c1'])
 
 end C2

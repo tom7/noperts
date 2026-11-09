@@ -55,7 +55,7 @@ theorem h16u_ev1_cell_gen (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r
   · by_cases hi : i = 0
     · subst hi
       right
-      simp only [zero_add, hY1, hY0, d3, Prod.mk_sub_mk, Prod.fst_sub, Prod.snd_sub]
+      simp only [zero_add, hY1, hY0, d3, Prod.mk_sub_mk]
       refine ⟨by ring, ?_⟩
       nlinarith [mul_pos hD (neg_pos.2 hz)]
     · refine tsc_of_cross hD (mix_inside Y hconv 0 1 i ?_ _ hs0 hs1 ?_ ?_)
@@ -69,7 +69,7 @@ theorem h16u_ev1_cell_gen (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r
   · by_cases hi : i = -1
     · subst hi
       right
-      simp only [neg_add_cancel, hYm, hY0, d3, Prod.mk_sub_mk, Prod.fst_sub, Prod.snd_sub]
+      simp only [neg_add_cancel, hYm, hY0, d3, Prod.mk_sub_mk]
       refine ⟨by ring, ?_⟩
       have hl : 0 < 1 + lam / 2 := by linarith
       nlinarith [mul_pos (mul_pos hD (neg_pos.2 hz)) hl]
@@ -85,13 +85,13 @@ theorem h16u_ev1_cell_gen (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r
     by_cases hi : i = 0
     · subst hi
       right
-      simp only [zero_add, hY1, hY0, d3, Prod.mk_sub_mk, Prod.fst_sub, Prod.snd_sub]
+      simp only [zero_add, hY1, hY0, d3, Prod.mk_sub_mk]
       refine ⟨by ring, ?_⟩
       nlinarith [mul_pos hD (neg_pos.2 hzP)]
     · by_cases hi' : i = -1
       · subst hi'
         right
-        simp only [neg_add_cancel, hYm, hY0, d3, Prod.mk_sub_mk, Prod.fst_sub, Prod.snd_sub]
+        simp only [neg_add_cancel, hYm, hY0, d3, Prod.mk_sub_mk]
         refine ⟨by ring, ?_⟩
         have hl : 0 < 1 + lam / 2 := by linarith
         nlinarith [mul_pos (mul_pos hD (neg_pos.2 hzQ)) hl]

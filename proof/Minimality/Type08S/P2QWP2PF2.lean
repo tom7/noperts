@@ -64,16 +64,16 @@ theorem pic_Kb {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg :
     have h2 := det3_nfd d E₁ E₂ E₃ θ 6 2 6 4 6 3
     have hq : ddet (fun k => cp08 θ 2 k - cp08 θ 6 k) (fun k => cp08 θ 4 k - cp08 θ 6 k)
         (fun k => cp08 θ 3 k - cp08 θ 6 k) = θ 2 := by
-      simp [ddet, cp08]; try ring
+      simp [ddet, cp08]
     rw [hq, h66] at h2
-    simp only [sub_self, inner_zero_left, sub_zero, hf2, zero_mul, mul_zero] at h1
+    simp only [sub_self, inner_zero_left, sub_zero, hf2, zero_mul] at h1
     refine kD_pos hκ (L := ⟪(nfShape08 d E₁ E₂ E₃ θ 4) - d, e1⟫) (Y := ⟪(nfShape08 d E₁ E₂ E₃ θ 3) - d, e2⟫) (P := θ 2) ?_ hL hr p2
     linear_combination h2 - h1
   have T1 := tgt_nf d E₁ E₂ E₃ θ hF hκ hkD hu d 3 5 3 4 _ (by simp [ddet, cp08]; try ring) t3
   have T2 := tgt_nf d E₁ E₂ E₃ θ hF hκ hkD hu d 6 3 6 5 _ (by simp [ddet, cp08]; try ring) t0
-  have T3 := tgt_eq d E₁ E₂ E₃ θ hF hu d 6 4 6 0 1 (by simp [ddet, cp08]; try ring)
-  have T4 := tgt_eq d E₁ E₂ E₃ θ hF hu d 6 4 6 5 (θ 0) (by simp [ddet, cp08]; try ring)
-  simp only [h66, sub_self, inner_zero_left, sub_zero, hf2, zero_mul, mul_zero] at T1 T2 T3 T4
+  have T3 := tgt_eq d E₁ E₂ E₃ θ hF hu d 6 4 6 0 1 (by simp [ddet, cp08])
+  have T4 := tgt_eq d E₁ E₂ E₃ θ hF hu d 6 4 6 5 (θ 0) (by simp [ddet, cp08])
+  simp only [h66, sub_self, inner_zero_left, sub_zero, hf2, zero_mul] at T1 T2 T3 T4
   -- F-middle
   have hvec : nfShape08 d E₁ E₂ E₃ θ 1 - d = θ 4 • ((nfShape08 d E₁ E₂ E₃ θ 2) - d) + θ 5 • ((nfShape08 d E₁ E₂ E₃ θ 4) - d) := by
     simp only [nfShape08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]

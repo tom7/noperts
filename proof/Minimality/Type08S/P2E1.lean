@@ -309,11 +309,11 @@ theorem r2t_kill_c {n : ℕ} (y : Fin n → ℝ³) (u : (Fin n → ℝ³) → �
   rcases hMF L hdet hiv hiw with h | h
   · rw [hdepth] at h
     have := (nws_of_unimodal4 h).1
-    simp only [quad, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at this
+    simp only [quad, Matrix.cons_val] at this
     rcases this with h' | h' | h' | h' <;> linarith
   · rw [hdepth] at h
     have := (nws_of_unimodal4 h).1
-    simp only [quad, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at this
+    simp only [quad, Matrix.cons_val] at this
     rcases this with h' | h' | h' | h' <;> linarith
 
 theorem covView_neg {n : ℕ} {u : (Fin n → ℝ³) → ℝ³} (h : CovView u) : CovView (fun y => -u y) :=

@@ -272,10 +272,10 @@ lemma exists_two_peak_functional (x : ZMod 4 → Fin 3 → ℝ) (v : Fin 3 → �
         rw [hδ, div_mul_eq_mul_div, one_mul, div_lt_iff₀ (by positivity)]; nlinarith
   -- the perturbed functional
   have hpert : ∀ ε : ℝ, |ε| = δ → (l0 + ε • Pi.single j 1) ⬝ᵥ v = l0 ⬝ᵥ v + ε * v j := by
-    intro ε _; simp [dotProduct_add, dotProduct_smul, dotProduct_single, mul_comm]
+    intro ε _; simp [mul_comm]
   have hval : ∀ (ε : ℝ) (p : ZMod 4), (l0 + ε • Pi.single j 1) ⬝ᵥ x p =
       l0 ⬝ᵥ x p + ε * x p j := by
-    intro ε p; simp [dotProduct_add, dotProduct_smul, dotProduct_single, mul_comm]
+    intro ε p; simp [mul_comm]
   have hε : ∃ ε : ℝ, |ε| = δ ∧ l0 ⬝ᵥ v + ε * v j ≠ 0 := by
     by_cases hc : l0 ⬝ᵥ v + δ * v j = 0
     · refine ⟨-δ, by rw [abs_neg, abs_of_pos hδ0], ?_⟩

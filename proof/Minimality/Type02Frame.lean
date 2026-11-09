@@ -220,21 +220,21 @@ theorem beta_spec (F : Frame02 x) : ∃ G : Frame02 (x ∘ permBeta),
     · simpa using this 1
     · simpa using this 0
     · simpa using this 2
-  · simp only [h0, h1, h2, h3, h4, h5, h6]; show _ = _ + F.S.sp • _ + F.S.kp • F.e
+  · simp only [h0, h2, h3]; show _ = _ + F.S.sp • _ + F.S.kp • F.e
     rw [F.x1_eq]
-  · simp only [h0, h1, h2, h3, h4, h5, h6]; show _ = _ + F.S.sm • _ - F.S.km • F.e
+  · simp only [h2, h3, h5]; show _ = _ + F.S.sm • _ - F.S.km • F.e
     rw [F.x6_eq]
-  · simp only [h0, h1, h2, h3, h4, h5, h6]; show _ = _ + F.S.tp • _ + F.S.hp • F.e
+  · simp only [h1, h2, h4]; show _ = _ + F.S.tp • _ + F.S.hp • F.e
     rw [F.x0_eq]
-  · simp only [h0, h1, h2, h3, h4, h5, h6]; show _ = _ + F.S.tm • _ - F.S.hm • F.e
+  · simp only [h2, h4, h6]; show _ = _ + F.S.tm • _ - F.S.hm • F.e
     rw [F.x5_eq]
   · rw [h2, h3]; exact F.inner_u2_e
   · rw [h2, h4]; exact F.inner_u1_e
   · rw [h2, h3, h4, real_inner_comm]; exact F.A12_pos
   · rw [h2, h3, h4, real_inner_comm]; exact F.A12_le_A22
   · rw [h2, h3, h4, real_inner_comm]; exact F.A12_le_A11
-  · simp [gA11, gA22, Function.comp, pB2, pB3, pB4]
-  · simp [gA11, gA22, Function.comp, pB2, pB3, pB4]
+  · simp [gA11, gA22, Function.comp, pB2, pB3]
+  · simp [gA11, gA22, Function.comp, pB2, pB4]
   · simp [gA12, Function.comp, pB2, pB3, pB4, real_inner_comm]
 
 /-- `F1Rect`, `X2Set` are invariant under α (the swap `0 ↔ 5` exchanges the two clauses). -/
@@ -314,7 +314,7 @@ theorem f1Rect_of_X2_pf (F : Frame02 x) (hX : X2Set x) (h0 : ⟪x 0 - x 2, x 5 -
     have : F.S.tm = 1 - F.S.tp := by linarith
     rw [← hh, this]; module
   · rw [e0, e5]
-    simp only [inner_add_left, inner_add_right, inner_sub_left, inner_sub_right,
+    simp only [inner_add_left, inner_sub_right,
       inner_smul_left, inner_smul_right, hue, heu, RCLike.conj_to_real, ← ha_def, ← hg_def]
     linarith
 

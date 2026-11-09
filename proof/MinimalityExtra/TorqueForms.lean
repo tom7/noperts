@@ -34,8 +34,8 @@ theorem torqueTerm_smul_x (c : ℝ) (x f : Fin 2 → ℝ) :
 theorem sum_torqueTerm_f {n : ℕ} (x : Fin 2 → ℝ) (g : Fin n → Fin 2 → ℝ) :
     ∑ i, torqueTerm x (g i) = torqueTerm x (∑ i, g i) := by
   ext r s; fin_cases r <;> fin_cases s <;>
-    simp [torqueTerm, Matrix.sum_apply, Finset.sum_add_distrib, Finset.sum_div, Finset.mul_sum,
-      Finset.sum_mul, Fin.sum_univ_two, mul_comm] <;>
+    simp [torqueTerm, Matrix.sum_apply, Finset.mul_sum,
+      mul_comm] <;>
     (try rw [← Finset.sum_add_distrib, Finset.sum_div])
 
 theorem torqueTerm_smul_f (c : ℝ) (x f : Fin 2 → ℝ) :
@@ -49,7 +49,7 @@ theorem torqueForm_symm {n : ℕ} (x f : Fin n → Fin 2 → ℝ) : (torqueForm 
   ext i j
   simp only [torqueForm, Matrix.transpose_apply, Matrix.sum_apply]
   refine Finset.sum_congr rfl fun k _ => ?_
-  fin_cases i <;> fin_cases j <;> simp [torqueTerm] <;> ring
+  fin_cases i <;> fin_cases j <;> simp [torqueTerm] 
 
 theorem torqueForm_shear {n : ℕ} (x f : Fin n → Fin 2 → ℝ) (z : Fin n → ℝ)
     (h1 : ∑ i, f i = 0) (h2 : ∑ i, z i • f i = 0) (a b : Fin 2 → ℝ) :
@@ -70,7 +70,7 @@ theorem term_b (A : Matrix (Fin 2) (Fin 2) ℝ) (hA : A.det ≠ 0) (x f : Fin 2 
     ext i j; fin_cases i <;> fin_cases j <;> simp
   rw [hT, inv2 _ _ _ _ hd, inv2 _ _ _ _ hd']
   simp [tfDet, torqueTerm, tfJ, Matrix.trace_fin_two, Matrix.mulVec, dotProduct, Fin.sum_univ_two,
-    Matrix.mul_apply, Matrix.det_fin_two_of]
+    Matrix.det_fin_two_of]
   field_simp
   ring
 
@@ -119,7 +119,7 @@ theorem parallel_ray (nn q c : Fin 2 → ℝ) (m : ℝ) (hm : m ≠ 0) (hn : nn 
     have key : (!![s / (p * s - r' * r'), -r' / (p * s - r' * r'); -r' / (p * s - r' * r'), p / (p * s - r' * r')]
           * (torqueTerm q (m • nn) + torqueTerm c ((-m) • nn))).trace =
         (-m / (p * s - r' * r')) * (tfJ nn ⬝ᵥ (!![p, r'; r', s] *ᵥ (q - c))) := by
-      simp [torqueTerm, tfJ, Matrix.trace_fin_two, Matrix.mul_apply, Fin.sum_univ_two,
+      simp [torqueTerm, tfJ, Matrix.trace_fin_two, Fin.sum_univ_two,
         Matrix.mulVec, dotProduct]
       field_simp
       ring

@@ -80,7 +80,7 @@ theorem exists_refinement_ranks {k : ℕ} [NeZero k] (z : ZMod k → ℝ) (ps : 
   have hτ : ∀ i, τ (ps i) = r i := by
     intro i
     have h : ∃ j, ps j = ps i := ⟨i, rfl⟩
-    simp only [τ, dif_pos h]
+    simp only [τ, dite_eq_left h]
     rw [hps h.choose_spec]
   obtain ⟨z', hz', htb⟩ := exists_refinement_tb z τ
   refine ⟨z', hz', fun i j hij => ?_⟩
@@ -98,8 +98,7 @@ theorem zig_exists (w0 w1 w2 w3 t : ℝ) (s : Fin 4)
   have h1 := h 1
   have h2 := h 2
   have h3 := h 3
-  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Fin.isValue,
-    Matrix.cons_val_succ] at h0 h1 h2 h3
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Fin.isValue] at h0 h1 h2 h3
   fin_cases s <;> simp at h0 h1 h2 h3
   · by_cases hx : t < w0
     · refine ⟨![3,0,2,1], ?_, Or.inl (by simp)⟩
@@ -440,7 +439,7 @@ theorem exists_collapse {n : ℕ} (E : List (Fin n × Fin n)) :
       rcases List.mem_cons.1 he' with rfl | he'
       · by_cases h : ψ e'.2 = ψ e'.1
         · simp [φ, h]
-        · simp [φ, h]
+        · simp [φ]
       · simp [hψ e' he']
     · intro S
       have h1 := hc S
@@ -674,7 +673,7 @@ theorem exists_label_extension {ι : Type*} {n : ℕ} (lab : ι → Fin n) (hinj
   classical
   refine ⟨fun ℓ => if h : ∃ i, lab i = ℓ then ζ h.choose else 0, fun i => ?_⟩
   have h : ∃ j, lab j = lab i := ⟨i, rfl⟩
-  simp only [dif_pos h]
+  simp only [dite_eq_left h]
   rw [hinj h.choose_spec]
 
 
@@ -823,7 +822,7 @@ theorem robust_corner_rim_of_MF {n q : ℕ} {A : Type*} [Fintype A]
       have hh : ∀ i, ψ (plab i) = h (ζ i) := by
         intro i
         have hr : ∃ j, ζ j = ζ i := ⟨i, rfl⟩
-        simp only [h, dif_pos hr]
+        simp only [h, dite_eq_left hr]
         exact (hfac _ _ hr.choose_spec).symm
       have h2 : (univ.image (ψ ∘ plab)).card ≤ (univ.image ζ).card := by
         have : univ.image (ψ ∘ plab) = (univ.image ζ).image h := by

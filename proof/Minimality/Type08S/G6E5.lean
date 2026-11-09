@@ -62,8 +62,7 @@ theorem poly_rupert_H1 {a a' b b' c c' d x0 x0' y0 y0' : ℝ³} (N : Norm08 a a'
     simp only [mem_insert, mem_singleton] at hv'
     rcases hx with ⟨h1, h2⟩ | ⟨h1, h2⟩ <;> rcases hy with ⟨h3, h4⟩ | ⟨h3, h4⟩ <;>
       rcases hv' with h | h | h | h | h | h | h <;>
-      simp only [h, haa, hb', hc', ← h1, ← h2, ← h3, ← h4, hx0, hx0', hy0, hy0', hd, hb, hc, ha',
-        true_or, or_true]
+      simp only [h, haa, hb', hc', ← h1, ← h2, ← h3, ← h4, hx0, hx0', hy0, hy0', true_or, or_true]
   · rw [← hx0]; apply hmem; rcases hx with ⟨h1, -⟩ | ⟨h1, -⟩ <;> simp [h1]
   · rw [← hy0]; apply hmem; rcases hy with ⟨h1, -⟩ | ⟨h1, -⟩ <;> simp [h1]
   · rw [← hb']; apply hmem; simp

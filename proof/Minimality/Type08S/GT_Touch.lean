@@ -472,7 +472,7 @@ theorem propH_n2_ge {V : Finset ℝ³} {cP mP fP rP gP wP aP : ℝ³}
   have c21 := hcv 2 1 (by decide) (by decide)
   have c24 := hcv 2 4 (by decide) (by decide)
   obtain ⟨b0, b1', b2', b3, b4⟩ := zmod5_add_one
-  simp only [h5Pts, b2', quint_0, quint_1, quint_2, quint_3, quint_4, b3] at c20 c21 c24
+  simp only [h5Pts, b2', quint_0, quint_1, quint_2, quint_3, quint_4] at c20 c21 c24
   have hmaG := cross_comb_axis (gx := A) hzv hzw c20 c21
   have hmaF := cross_comb_row (fx := b1) hb2 hrb hmaG c24
   set tt : ℝ := z2 / (2 * (s * b2)) with htt

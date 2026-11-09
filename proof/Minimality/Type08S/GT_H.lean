@@ -267,10 +267,10 @@ theorem h4_a {a1 a2 a3 : ℝ}
   obtain ⟨b0, b1', b2', b3⟩ := zmod4_add_one
   intro i
   rcases zmod4_cases i with rfl | rfl | rfl | rfl
-  · rw [b0]; left; simp only [LexTest, tst, hdet, crossYZ] at u0 ⊢; nlinarith
-  · rw [b1']; left; simp only [LexTest, tst, hdet, crossYZ] at u1 ⊢; nlinarith
-  · rw [b2']; left; simp only [LexTest, tst, hdet, crossYZ] at u2 ⊢; nlinarith
-  · rw [b3]; left; simp only [LexTest, tst, hdet, crossYZ] at u3 ⊢; nlinarith
+  · rw [b0]; left; simp only [tst, hdet, crossYZ] at u0 ⊢; nlinarith
+  · rw [b1']; left; simp only [tst, hdet, crossYZ] at u1 ⊢; nlinarith
+  · rw [b2']; left; simp only [tst, hdet, crossYZ] at u2 ⊢; nlinarith
+  · rw [b3]; left; simp only [tst, hdet, crossYZ] at u3 ⊢; nlinarith
 
 end N2lt
 

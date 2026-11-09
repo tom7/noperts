@@ -43,17 +43,17 @@ theorem n2g_g0 (hA : 0 < A) (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : 
   obtain ⟨b0, b1', b2', b3, b4⟩ := zmod5_add_one
   intro i
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl
-  · simp only [h5Pts, b0, b1', b2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest, tst, hdet]
+  · simp only [h5Pts, b0, quint_0, quint_1, LexTest, tst, hdet]
     right; refine ⟨by ring, by nlinarith⟩
-  · simp only [h5Pts, b0, b1', b2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest, tst, hdet]
+  · simp only [h5Pts, b1', quint_1, quint_2, LexTest, tst, hdet]
     rcases lt_or_eq_of_le hzv with hz | hz
     · left; nlinarith [mul_pos (mul_pos hs0 hb2) hz]
     · subst hz
       right; refine ⟨by ring, by nlinarith⟩
   · exact hrow2
-  · simp only [h5Pts, b0, b1', b2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest, tst, hdet]
+  · simp only [h5Pts, b3, quint_3, quint_4, LexTest, tst, hdet]
     left; nlinarith
-  · simp only [h5Pts, b0, b1', b2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest, tst, hdet]
+  · simp only [h5Pts, b4, quint_0, quint_4, LexTest, tst, hdet]
     left; nlinarith
 
 end G0

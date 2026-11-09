@@ -194,7 +194,7 @@ theorem rimA : ∃ lab : ZMod 4 → Fin 4, Function.Injective lab ∧ StrictRimN
     rcases all4z i with rfl | rfl | rfl | rfl <;> fin_cases m <;>
       first | exact absurd rfl h1 | exact absurd rfl h2 | skip
     all_goals norm_num [det3, TX, WA]
-  all_goals (simp [TX, WA, PiLp.inner_apply, Fin.sum_univ_three] <;> norm_num)
+  all_goals (simp [TX, WA, PiLp.inner_apply, Fin.sum_univ_three] )
 
 theorem rimB : ∃ lab : ZMod 4 → Fin 4, Function.Injective lab ∧ StrictRimN TX WB lab ∧
     IsCyclicTwoPeaked (fun i => ⟪TX (lab i), WB⟫) := by

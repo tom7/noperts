@@ -161,8 +161,7 @@ theorem wstraddle_N2 {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (h
     (hpts : pts08 a a' b b' c c' d = nfShape08 o E₁ E₂ E₃ θ)
     (h : WStraddle (pts08 a a' b b' c c' d) (grp08 0)) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
-  simp only [grp08, WStraddle, pts08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val,
-    Matrix.head_cons] at h
+  simp only [grp08, WStraddle, pts08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at h
   obtain ⟨h1, h2, h3, h4⟩ := h
   have hu : c - a' ≠ 0 := by
     have := pts08_inj N
@@ -181,8 +180,7 @@ theorem wstraddle_N2 {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (h
     have e : fc08 θ 1 2 5 3 = -fc08 θ 1 3 5 2 := by
       simp only [fc08, cdet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]; ring
     have p22 := hθ 22
-    simp only [ineq08, Matrix.cons_val, Matrix.cons_val_zero, Matrix.cons_val_one,
-      Matrix.head_cons] at p22
+    simp only [ineq08, Matrix.cons_val] at p22
     have hne : fc08 θ 1 3 5 2 ≠ 0 := by
       intro h0; rw [h0, zero_mul] at p22; exact lt_irrefl _ p22
     rw [d1, e] at hz
@@ -193,8 +191,7 @@ theorem wstraddle_T4 {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (h
     (hpts : pts08 a a' b b' c c' d = nfShape08 o E₁ E₂ E₃ θ)
     (h : WStraddle (pts08 a a' b b' c c' d) (grp08 1)) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
-  simp only [grp08, WStraddle, pts08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val,
-    Matrix.head_cons] at h
+  simp only [grp08, WStraddle, pts08, Matrix.cons_val] at h
   obtain ⟨h1, h2, h3, h4⟩ := h
   have hu : b - d ≠ 0 := by
     have := pts08_inj N
@@ -212,8 +209,7 @@ theorem wstraddle_T4 {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (h
     have e : fc08 θ 6 5 3 4 = -(θ 1 * θ 2) := by
       simp only [fc08, cdet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]; ring
     have p1 := hθ 1; have p2 := hθ 2
-    simp only [ineq08, Matrix.cons_val, Matrix.cons_val_zero, Matrix.cons_val_one,
-      Matrix.head_cons] at p1 p2
+    simp only [ineq08, Matrix.cons_val, Matrix.cons_val_zero, Matrix.cons_val_one] at p1 p2
     rw [d1, e] at hz
     exact (mul_ne_zero hE (neg_ne_zero.mpr (mul_pos p1 p2).ne')) hz
 

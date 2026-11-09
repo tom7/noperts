@@ -77,8 +77,7 @@ theorem peaks4_eq_one (a b c d : ℝ) (hab : a ≠ b) (hac : a ≠ c) (had : a �
       | (exfalso; linarith)
       | (exfalso; exact h1 ⟨by linarith, by linarith, by linarith, by linarith⟩)
       | (exfalso; exact h2 ⟨by linarith, by linarith, by linarith, by linarith⟩)
-      | (simp [a1, a2, a3, a4, a5, a6, a1.le, a2.le, a3.le, a4.le, a5.le, a6.le, not_lt.2 a1.le, not_lt.2 a2.le,
-          not_lt.2 a3.le, not_lt.2 a4.le, not_lt.2 a5.le, not_lt.2 a6.le]; done)
+      | (simp [a1, a3, a4, a6, not_lt.2 a1.le, not_lt.2 a3.le, not_lt.2 a4.le, not_lt.2 a6.le]; done)
 
 set_option maxHeartbeats 1600000 in
 /-- **EV1 on the quadrilateral cycle** (strict depths: distinct, no alternating pattern). -/

@@ -33,8 +33,7 @@ theorem touchT_of_wstraddle_w {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' 
       ⟪pts08 a a' b b' c c' d 3, pts08 a a' b b' c c' d 2 - pts08 a a' b b' c c' d 6⟫ ≤
         ⟪pts08 a a' b b' c c' d 2, pts08 a a' b b' c c' d 2 - pts08 a a' b b' c c' d 6⟫) :
     TouchT b b' c c' d := by
-  simp only [pts08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val,
-    Matrix.head_cons] at h
+  simp only [pts08, Matrix.cons_val] at h
   obtain ⟨h1, h2, h3, h4⟩ := h
   have hu : b - d ≠ 0 := by
     have := W4.pts08_inj N
@@ -52,8 +51,7 @@ theorem touchT_of_wstraddle_w {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' 
     have e : fc08 θ 6 5 3 4 = -(θ 1 * θ 2) := by
       simp only [fc08, cdet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]; ring
     have p1 := hθ.pos 1 (by decide) (by decide) (by decide); have p2 := hθ.pos 2 (by decide) (by decide) (by decide)
-    simp only [ineq08, Matrix.cons_val, Matrix.cons_val_zero, Matrix.cons_val_one,
-      Matrix.head_cons] at p1 p2
+    simp only [ineq08, Matrix.cons_val, Matrix.cons_val_zero, Matrix.cons_val_one] at p1 p2
     rw [d1, e] at hz
     exact (mul_ne_zero hE (neg_ne_zero.mpr (mul_pos p1 p2).ne')) hz
 

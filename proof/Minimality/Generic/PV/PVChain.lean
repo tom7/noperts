@@ -77,7 +77,7 @@ theorem CU_chain_V : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
     have hdel := CU_del_mid [] a0 y z (A2 ++ B ++ R) (by simpa using hnd)
       (by first | exact Or.inl ⟨by linarith, by linarith⟩ | exact Or.inr ⟨by linarith, by linarith⟩)
     have hsub : (a0 :: z :: A2).Sublist (a0 :: y :: z :: A2) :=
-      List.Sublist.cons₂ a0 (List.Sublist.cons y (List.Sublist.refl _))
+      List.Sublist.cons_cons a0 (List.Sublist.cons y (List.Sublist.refl _))
     have hey : e ≠ y := by
       intro h; subst h
       have := hmin z (by simp); linarith
@@ -85,7 +85,7 @@ theorem CU_chain_V : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
       (hA.sublist hsub) hB (by
         refine List.Nodup.sublist ?_ hnd
         simp only [List.cons_append, List.append_assoc]
-        exact List.Sublist.cons₂ a0 (List.Sublist.cons y (List.Sublist.refl _)))
+        exact List.Sublist.cons_cons a0 (List.Sublist.cons y (List.Sublist.refl _)))
       (by simp at hn ⊢; omega) (by simpa using ha)
       (by simpa [List.getLast?_cons_cons] using hc)
       (by
@@ -111,7 +111,7 @@ theorem CU_chain_V : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
     have hdel := CU_del_mid A b1 y z (B2 ++ R) (by simpa using hnd)
       (by first | exact Or.inl ⟨by linarith, by linarith⟩ | exact Or.inr ⟨by linarith, by linarith⟩)
     have hsub : (b1 :: z :: B2).Sublist (b1 :: y :: z :: B2) :=
-      List.Sublist.cons₂ b1 (List.Sublist.cons y (List.Sublist.refl _))
+      List.Sublist.cons_cons b1 (List.Sublist.cons y (List.Sublist.refl _))
     have hey : e ≠ y := by
       intro h; subst h
       have := hmin b1 (by simp); linarith
@@ -120,7 +120,7 @@ theorem CU_chain_V : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
         refine List.Nodup.sublist ?_ hnd
         simp only [List.append_assoc]
         exact List.Sublist.append (List.Sublist.refl _) (List.Sublist.append
-          (List.Sublist.cons₂ b1 (List.Sublist.cons y (List.Sublist.refl _))) (List.Sublist.refl _)))
+          (List.Sublist.cons_cons b1 (List.Sublist.cons y (List.Sublist.refl _))) (List.Sublist.refl _)))
       (by simp at hn ⊢; omega) (by simpa [List.head?_append] using ha)
       (by simpa [List.getLast?_append, List.getLast?_cons_cons] using hc)
       (by
@@ -136,7 +136,7 @@ theorem CU_chain_V : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
         apply hmin
         simp only [List.mem_append, List.mem_cons] at hx ⊢
         tauto)
-    simp only [List.cons_append, List.append_assoc, List.nil_append] at hdel this ⊢
+    simp only [List.cons_append, List.append_assoc] at hdel this ⊢
     exact hdel.trans this
   -- base cases: |A|, |B| ≤ 2
   rcases A with _ | ⟨a0, _ | ⟨p, _ | ⟨_, _⟩⟩⟩ <;> rcases B with _ | ⟨q, _ | ⟨c', _ | ⟨_, _⟩⟩⟩
@@ -225,7 +225,7 @@ theorem CU_chain_L : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
     have hdel := CU_del_mid [] a0 y z (A2 ++ B ++ R) (by simpa using hnd)
       (by first | exact Or.inl ⟨by linarith, by linarith⟩ | exact Or.inr ⟨by linarith, by linarith⟩)
     have hsub : (a0 :: z :: A2).Sublist (a0 :: y :: z :: A2) :=
-      List.Sublist.cons₂ a0 (List.Sublist.cons y (List.Sublist.refl _))
+      List.Sublist.cons_cons a0 (List.Sublist.cons y (List.Sublist.refl _))
     have hey : e ≠ y := by
       intro h; subst h
       have := hmin z (by simp); linarith
@@ -233,7 +233,7 @@ theorem CU_chain_L : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
       (hA.sublist hsub) hB (by
         refine List.Nodup.sublist ?_ hnd
         simp only [List.cons_append, List.append_assoc]
-        exact List.Sublist.cons₂ a0 (List.Sublist.cons y (List.Sublist.refl _)))
+        exact List.Sublist.cons_cons a0 (List.Sublist.cons y (List.Sublist.refl _)))
       (by simp at hn ⊢; omega) (by simpa using ha)
       (by simpa [List.getLast?_cons_cons] using hc)
       (by
@@ -259,7 +259,7 @@ theorem CU_chain_L : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
     have hdel := CU_del_mid A b1 y z (B2 ++ R) (by simpa using hnd)
       (by first | exact Or.inl ⟨by linarith, by linarith⟩ | exact Or.inr ⟨by linarith, by linarith⟩)
     have hsub : (b1 :: z :: B2).Sublist (b1 :: y :: z :: B2) :=
-      List.Sublist.cons₂ b1 (List.Sublist.cons y (List.Sublist.refl _))
+      List.Sublist.cons_cons b1 (List.Sublist.cons y (List.Sublist.refl _))
     have hey : e ≠ y := by
       intro h; subst h
       have := hmin b1 (by simp); linarith
@@ -268,7 +268,7 @@ theorem CU_chain_L : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
         refine List.Nodup.sublist ?_ hnd
         simp only [List.append_assoc]
         exact List.Sublist.append (List.Sublist.refl _) (List.Sublist.append
-          (List.Sublist.cons₂ b1 (List.Sublist.cons y (List.Sublist.refl _))) (List.Sublist.refl _)))
+          (List.Sublist.cons_cons b1 (List.Sublist.cons y (List.Sublist.refl _))) (List.Sublist.refl _)))
       (by simp at hn ⊢; omega) (by simpa [List.head?_append] using ha)
       (by simpa [List.getLast?_append, List.getLast?_cons_cons] using hc)
       (by
@@ -284,7 +284,7 @@ theorem CU_chain_L : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
         apply hmin
         simp only [List.mem_append, List.mem_cons] at hx ⊢
         tauto)
-    simp only [List.cons_append, List.append_assoc, List.nil_append] at hdel this ⊢
+    simp only [List.cons_append, List.append_assoc] at hdel this ⊢
     exact hdel.trans this
   -- base cases: |A|, |B| ≤ 2
   rcases A with _ | ⟨a0, _ | ⟨p, _ | ⟨_, _⟩⟩⟩ <;> rcases B with _ | ⟨q, _ | ⟨c', _ | ⟨_, _⟩⟩⟩

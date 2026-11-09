@@ -134,24 +134,24 @@ theorem det_ne08 {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) :
     intro i j k w; rw [hpts]; exact det3_nf08 o E1 E2 E3 θ i j k w
   obtain ⟨p0, p1, p2, p3, p4, p5, -⟩ := facts08 θ hθ
   have q9 := hθ 8
-  simp only [ineq08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons] at q9
+  simp only [ineq08, Matrix.cons_val] at q9
   refine ⟨?_, ?_, ?_⟩
   · have h := key 1 5 4 2
     have e : fc08 θ 1 5 4 2 = θ 0 * (θ 4 + θ 5 - 1) := by
-      simp only [fc08, cdet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons]; ring
-    simp only [pts08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons] at h
+      simp only [fc08, cdet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]; ring
+    simp only [pts08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at h
     rw [e] at h; rw [h]
     exact mul_ne_zero hE (mul_pos p0 q9).ne'
   · have h := key 6 3 2 4
     have e : fc08 θ 6 3 2 4 = θ 2 := by
-      simp only [fc08, cdet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons]; ring
-    simp only [pts08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons] at h
+      simp only [fc08, cdet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]; ring
+    simp only [pts08, Matrix.cons_val] at h
     rw [e] at h; rw [h]
     exact mul_ne_zero hE p2.ne'
   · have h := key 2 3 6 5
     have e : fc08 θ 2 3 6 5 = θ 3 * θ 0 := by
-      simp only [fc08, cdet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons]; ring
-    simp only [pts08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons] at h
+      simp only [fc08, cdet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]; ring
+    simp only [pts08, Matrix.cons_val] at h
     rw [e] at h; rw [h]
     exact mul_ne_zero hE (mul_pos p3 p0).ne'
 

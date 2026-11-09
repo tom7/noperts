@@ -113,10 +113,10 @@ theorem witness1 (F : S0xFac m S x) (M sg : Fin m → Bool) (d : ℝ³) (eps : �
   · subst e
     cases hs0 : sg t with
     | true =>
-      simp only [inner_smul_right, hz, hs0, if_true, mul_zero, neg_zero]
+      simp only [inner_smul_right, hz, ite_true, mul_zero, neg_zero]
       exact ⟨fun _ => Or.inr ⟨rfl, hpos⟩, fun h => absurd h (by simp)⟩
     | false =>
-      simp only [inner_smul_right, hz, hs0, Bool.false_eq_true, if_false, inner_neg_right, mul_zero,
+      simp only [inner_smul_right, hz, Bool.false_eq_true, ite_false, inner_neg_right, mul_zero,
         neg_zero, neg_neg]
       exact ⟨fun h => absurd h (by simp), fun _ => Or.inr ⟨rfl, hpos⟩⟩
   · obtain ⟨h1, h2⟩ := hs t ht e
@@ -137,10 +137,10 @@ theorem witness2 (F : S0xFac m S x) (M sg : Fin m → Bool) (d : ℝ³) (eps : �
   · subst e0
     cases hs0 : sg t with
     | true =>
-      simp only [inner_smul_right, hz0, hs0, if_true, mul_zero, neg_zero]
+      simp only [inner_smul_right, hz0, ite_true, mul_zero, neg_zero]
       exact ⟨fun _ => Or.inr ⟨rfl, hN⟩, fun h => absurd h (by simp)⟩
     | false =>
-      simp only [inner_smul_right, hz0, hs0, Bool.false_eq_true, if_false, inner_neg_right, mul_zero,
+      simp only [inner_smul_right, hz0, Bool.false_eq_true, ite_false, inner_neg_right, mul_zero,
         neg_zero, neg_neg]
       exact ⟨fun h => absurd h (by simp), fun _ => Or.inr ⟨rfl, hN⟩⟩
   by_cases e1 : t = t1
@@ -149,11 +149,11 @@ theorem witness2 (F : S0xFac m S x) (M sg : Fin m → Bool) (d : ℝ³) (eps : �
     cases hs0 : sg t0 with
     | true =>
       have : sg t = false := by simpa [hs0] using h1'
-      simp only [inner_smul_right, hz1, hs0, if_true, mul_zero, neg_zero]
+      simp only [inner_smul_right, hz1, ite_true, mul_zero, neg_zero]
       exact ⟨fun h => absurd h (by simp [this]), fun _ => Or.inr ⟨rfl, by linarith⟩⟩
     | false =>
       have : sg t = true := by simpa [hs0] using h1'
-      simp only [inner_smul_right, hz1, hs0, Bool.false_eq_true, if_false, inner_neg_right,
+      simp only [inner_smul_right, hz1, Bool.false_eq_true, ite_false, inner_neg_right,
         mul_zero, neg_zero, neg_neg]
       exact ⟨fun _ => Or.inr ⟨rfl, by linarith⟩, fun h => absurd h (by simp [this])⟩
   · obtain ⟨q1, q2⟩ := hs t ht e0 e1
