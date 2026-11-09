@@ -118,7 +118,7 @@ theorem split0OK_sound {x : Fin 7 → ℝ³} (F : S0xFac 8 V2.fIdx x) (hx : Func
   have hlen := cycChk_len hcyc2
   have : NeZero (sfOf cl 0 e 0 0).length := ⟨by omega⟩
   obtain ⟨a, cc, σ, hca, hca1, -, hrows⟩ := hC
-  rw [if_pos rfl] at hrows
+  rw [ite_eq_left rfl] at hrows
   obtain ⟨h3, hinj, hcycOK⟩ := cycFacts (k := (sfOf cl 0 e 0 0).length) rfl hcyc2
   rw [cycX_geoF F (cycChk_lt7 hcyc2), geoF_vv] at hrows
   exact Minimality.Split.split_tope_rupert' F hx (noBetween16 F) hinj h3 hcycOK ht a cc σ hca hca1 hrows
@@ -169,10 +169,10 @@ theorem dv_edE (g : Geo) {x y : Nat} (hx : x < 7) (hy : y < 7) (hxy : x ≠ y) :
     g.x y - g.x x = (if edP x y then (1 : ℝ) else -1) • g.dv (edE x y) := by
   unfold edP edE
   by_cases h : y < x
-  · simp only [h, decide_true, if_true, one_smul]
+  · simp only [h, decide_true, ite_true, one_smul]
     rw [dv_EI g hy hx h]
   · have h' : x < y := by omega
-    simp only [h, decide_false, if_false, Bool.false_eq_true]
+    simp only [h, decide_false, ite_false, Bool.false_eq_true]
     rw [dv_EI g hx hy h', neg_smul, one_smul, neg_sub]
 
 theorem edE_lt {x y : Nat} (hx : x < 7) (hy : y < 7) (hxy : x ≠ y) : edE x y < 21 := by
@@ -248,15 +248,15 @@ theorem dltW_sound {g : Geo} (hG : GeoOK g) {kind view f e1 e2 : Nat} (hkind : k
     SgW (rhoW g) (dltW kind view f e1 e2) (det3 (g.dv e1) (g.dv e2) (leafU g kind view f)) := by
   unfold dltW leafU
   by_cases h0 : kind = 0 ∧ view < 21
-  · rw [if_pos h0, if_pos h0.1, vv_lt g h0.2]
+  · rw [ite_eq_left h0, ite_eq_left h0.1, vv_lt g h0.2]
     have hk' : entK e1 e2 view = true := by simpa [dltK, h0] using hk
     exact sgW_rho_lift (entS_sound hG hk')
-  · rw [if_neg h0]
+  · rw [ite_eq_right h0]
     by_cases h1 : kind = 0
-    · rw [if_pos h1, if_pos h1]
+    · rw [ite_eq_left h1, ite_eq_left h1]
       have := SgW_Q g 0 view e1 e2
       simpa [Qv, qvVec] using this
-    · rw [if_neg h1, if_neg h1]
+    · rw [ite_eq_right h1, ite_eq_right h1]
       have hf : f < 21 := by omega
       have := SgW_Q g 1 (32 * view + f) e1 e2
       have e1' : (32 * view + f) / 32 = view := by omega
@@ -287,19 +287,19 @@ theorem dDW_sound {g : Geo} (hG : GeoOK g) {kind view f x y p q : Nat} (hkind : 
   rw [dv_edE g hx hy hxy, dv_edE g hp hq hpq, det3_smul12]
   unfold dDW
   by_cases he : edE x y = edE p q
-  · rw [if_pos he, he, show det3 (g.dv (edE p q)) (g.dv (edE p q)) (leafU g kind view f) = 0 by
+  · rw [ite_eq_left he, he, show det3 (g.dv (edE p q)) (g.dv (edE p q)) (leafU g kind view f) = 0 by
       simp only [det3_expand]; ring, mul_zero]
     exact SgW_zero (rhoW_proper g)
-  · rw [if_neg he]
+  · rw [ite_eq_right he]
     have hk' : (if edE x y < edE p q then dltK kind view (edE x y) (edE p q)
         else dltK kind view (edE p q) (edE x y)) = true := by simpa [dKey, he] using hk
     have hr : SgW (rhoW g) (if edE x y < edE p q then dltW kind view f (edE x y) (edE p q)
         else negSW (dltW kind view f (edE p q) (edE x y)))
         (det3 (g.dv (edE x y)) (g.dv (edE p q)) (leafU g kind view f)) := by
       by_cases hl : edE x y < edE p q
-      · rw [if_pos hl] at hk' ⊢
+      · rw [ite_eq_left hl] at hk' ⊢
         exact dltW_sound hG hkind hk'
-      · rw [if_neg hl] at hk' ⊢
+      · rw [ite_eq_right hl] at hk' ⊢
         rw [show det3 (g.dv (edE x y)) (g.dv (edE p q)) (leafU g kind view f) =
           -det3 (g.dv (edE p q)) (g.dv (edE x y)) (leafU g kind view f) by simp only [det3_expand]; ring]
         exact (dltW_sound hG hkind hk').neg
@@ -359,7 +359,7 @@ theorem mem_certRows {kind view f sd a cc sg : Nat} {cyc : List Nat} {i j : Nat}
       (cv cyc ((a + 1) % cyc.length)) ∈ certRows kind view f sd a cc sg cyc := by
   simp only [certRows, List.mem_flatMap, List.mem_range]
   refine ⟨i, hi, ?_⟩
-  rw [if_neg hia]
+  rw [ite_eq_right hia]
   refine List.mem_map.mpr ⟨j, List.mem_filter.mpr ⟨?_, by simpa using hjc⟩, rfl⟩
   rcases hj with rfl | rfl <;> simp
 
@@ -452,7 +452,7 @@ theorem certOK_sound {g : Geo} (hG : GeoOK g) {kind view f sd a cc sg : Nat} {cy
   · rcases hkind with hk0 | ⟨hk1, hf⟩
     · -- kind 0: SplitRows at the menu view
       subst hk0
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       intro i j hi hj hjc
       obtain ⟨hl, hJ, hC, hI, hI1, hA, hA1, hJC, hII, hAA, hdk⟩ := rowfacts i j hi hj hjc
       have hD := dDW_sound (f := f) hG (Or.inl rfl) hI hI1 hA hA1 hII hAA hdk
@@ -471,7 +471,7 @@ theorem certOK_sound {g : Geo} (hG : GeoOK g) {kind view f sd a cc sg : Nat} {cy
       · have := hM.2.mp hl; linarith
     · -- kind 1: LexRows at the tie view
       subst hk1
-      rw [if_neg (by norm_num)]
+      rw [ite_eq_right (by norm_num)]
       intro i j hi hj hjc
       obtain ⟨hl, hJ, hC, hI, hI1, hA, hA1, hJC, hII, hAA, hdk⟩ := rowfacts i j hi hj hjc
       have hD := dDW_sound (f := f) hG (Or.inr ⟨rfl, hf⟩) hI hI1 hA hA1 hII hAA hdk
@@ -561,7 +561,7 @@ theorem chk42_sound {g : Geo} (hG : GeoOK g) {key e1 e2 : Nat} {cl : List LitW} 
     ((FdW_sound (t := (lines.getD (key - 21) (0, 0)).2) hG h1).mul3 hP hGt
       (FdW_sound (t := (lines.getD (key - 21) (0, 0)).1) hG h2)).neg
     (SgW_zero hP) ?_
-  rw [Qv, qvVec, if_pos rfl, hv, binet_Q, real_inner_comm (g.dv e1) (g.N (lines.getD (key - 21) (0, 0)).1),
+  rw [Qv, qvVec, ite_eq_left rfl, hv, binet_Q, real_inner_comm (g.dv e1) (g.N (lines.getD (key - 21) (0, 0)).1),
     real_inner_comm (g.dv e1) (g.N (lines.getD (key - 21) (0, 0)).2),
     real_inner_comm (g.dv e2) (g.N (lines.getD (key - 21) (0, 0)).2)]
   ring
@@ -586,7 +586,7 @@ theorem chk43_sound {g : Geo} (hG : GeoOK g) {key e1 e2 : Nat} {cl : List LitW} 
   have hGt := rhoW_gateOK g
   refine z4W_sound (SgW_Q g 1 key e1 e2).neg ((FdW_sound (t := key / 32) hG h1).mul3 hP hGt (TW_sound hG h2 hf))
     ((TW_sound hG h1 hf).mul3 hP hGt (FdW_sound (t := key / 32) hG h2)).neg (SgW_zero hP) ?_
-  rw [Qv, qvVec, if_neg (by norm_num), if_pos rfl, wf, binet_Q, real_inner_comm (g.dv e2) (g.N (key / 32))]
+  rw [Qv, qvVec, ite_eq_right (by norm_num), ite_eq_left rfl, wf, binet_Q, real_inner_comm (g.dv e2) (g.N (key / 32))]
   ring
 
 /-- Family 44 (tag `44 kind key e1 e2`): `{-Q.p, -Q.q}`. -/

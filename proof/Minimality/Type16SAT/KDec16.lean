@@ -74,9 +74,9 @@ theorem rowSplit_holds (F : S0xFac 8 V2.fIdx x) (hx : Function.Injective x)
   simp only [Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq] at h
   rcases h with (((⟨-, h0⟩ | ⟨-, h1⟩) | ⟨-, h2⟩) | ⟨-, h3⟩) | ⟨-, h4⟩
   · by_cases hk : p.getD 0 0 = 0
-    · rw [if_pos (by simpa using hk)] at h0
+    · rw [ite_eq_left (by simpa using hk)] at h0
       exact split0OK_sound F hx hNR hG h0
-    · rw [if_neg (by simpa using hk)] at h0
+    · rw [ite_eq_right (by simpa using hk)] at h0
       exact split1OK_sound F hx hNR hG h0
   · exact certOK_sound hG h1
   · exact chk42_sound hG h2

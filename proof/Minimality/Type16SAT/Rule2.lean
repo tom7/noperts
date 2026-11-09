@@ -264,7 +264,7 @@ theorem rule_core {x : Fin 7 → ℝ³} (F : S0xFac 8 V2.fIdx x) (hx : Function.
       have hm : ((true, V.fail e cyc) : Lit) ∈ ruleLits e pp mask sigp cyc := by
         have hf' : 3 < (patCyc.getD pp []).length := hf
         simp only [ruleLits, List.mem_append]
-        right; rw [if_pos hf']; exact List.mem_singleton_self _
+        right; rw [ite_eq_left hf']; exact List.mem_singleton_self _
       have := hno _ hm
       have hrf : rho (geoF F) (V.fail e cyc) = false := by simpa [evalL] using this
       have hk3 : (L.length == 3) = false := by simpa using h3'
