@@ -1,0 +1,76 @@
+import ProofOfMinimalityExtra
+
+/-!
+# The results of `MinimalityExtra.lean` use only the standard axioms
+
+This file fails to build unless each proof of a statement in `MinimalityExtra.lean` depends on
+exactly `propext`, `Classical.choice` and `Quot.sound`.
+-/
+
+open Lean Elab Command in
+elab "#assert_standard_axioms " id:ident : command => do
+  let name ← liftCoreM <| realizeGlobalConstNoOverloadWithInfo id
+  let axioms ← liftCoreM <| collectAxioms name
+  let expected := #[``propext, ``Classical.choice, ``Quot.sound]
+  unless axioms.qsort Name.lt == expected.qsort Name.lt do
+    throwError "{name} depends on {axioms}"
+
+open MinimalityExtra
+
+#assert_standard_axioms MinimalityExtra.existsMetricWithPrescribedDepth
+#assert_standard_axioms MinimalityExtra.twoPeakedDepthsAtSomeMetric
+#assert_standard_axioms MinimalityExtra.coplanarRimDepthUnimodal
+#assert_standard_axioms MinimalityExtra.coplanarConvexQuadrilateralNeverTwoPeaked
+#assert_standard_axioms MinimalityExtra.freeB
+#assert_standard_axioms MinimalityExtra.existsTetrahedronViewsIndependent
+#assert_standard_axioms MinimalityExtra.existsMetricChangingFreedom
+#assert_standard_axioms MinimalityExtra.chirotopeDoesNotDetermineSilhouette
+#assert_standard_axioms MinimalityExtra.arrangementVerticesSuffice
+#assert_standard_axioms MinimalityExtra.arrangementVerticesSufficeSpan
+#assert_standard_axioms MinimalityExtra.arrangementVerticesSufficeLex
+#assert_standard_axioms MinimalityExtra.chamberNeedsRank
+#assert_standard_axioms MinimalityExtra.boxesHaveNoUnimodalView
+#assert_standard_axioms MinimalityExtra.existsLimitRowsUndercount
+#assert_standard_axioms MinimalityExtra.hdnEquation
+#assert_standard_axioms MinimalityExtra.singleViewFarkas
+#assert_standard_axioms MinimalityExtra.circleReduction
+#assert_standard_axioms MinimalityExtra.circleReductionExists
+#assert_standard_axioms MinimalityExtra.mergeLemma
+#assert_standard_axioms MinimalityExtra.rupertSandwich
+#assert_standard_axioms MinimalityExtra.cylinderExtension
+#assert_standard_axioms MinimalityExtra.angleLemma
+#assert_standard_axioms MinimalityExtra.invisibilitySign
+#assert_standard_axioms MinimalityExtra.invisibilitySignPair
+#assert_standard_axioms MinimalityExtra.invisibilityEdge
+#assert_standard_axioms MinimalityExtra.invisibilityFlat
+#assert_standard_axioms MinimalityExtra.twoInteriorCornersNeverMetricFree
+#assert_standard_axioms MinimalityExtra.unimodalViewIsRupert
+#assert_standard_axioms MinimalityExtra.coplanarSilhouetteIsRupert
+#assert_standard_axioms MinimalityExtra.triangleShadowIsRupert
+#assert_standard_axioms MinimalityExtra.coplanarSilhouetteIff
+#assert_standard_axioms MinimalityExtra.gramExtensionTwoViews
+#assert_standard_axioms MinimalityExtra.gramExtensionOneView
+#assert_standard_axioms MinimalityExtra.thmFBijection
+#assert_standard_axioms MinimalityExtra.anchorCore
+#assert_standard_axioms MinimalityExtra.anchorWidth
+#assert_standard_axioms MinimalityExtra.inwardMotionHasSpin
+#assert_standard_axioms MinimalityExtra.twoPeakedRimOpenSetOfMetrics
+#assert_standard_axioms MinimalityExtra.noIsometricCopyInInterior
+#assert_standard_axioms MinimalityExtra.noOppositeViewPassage
+#assert_standard_axioms MinimalityExtra.type24FacePairViewsRigid
+#assert_standard_axioms MinimalityExtra.flatMetricsUnimodal
+#assert_standard_axioms MinimalityExtra.defeatCellCriterion
+#assert_standard_axioms MinimalityExtra.silhouetteCodeCounts
+#assert_standard_axioms MinimalityExtra.torqueForms
+#assert_standard_axioms MinimalityExtra.vertexOverBoundaryOnFaceAlongView
+#assert_standard_axioms MinimalityExtra.faceNormalHalfPlane
+#assert_standard_axioms MinimalityExtra.passageSymmetry
+#assert_standard_axioms MinimalityExtra.mirrorFourPassages
+#assert_standard_axioms MinimalityExtra.existsOpenFamilyWithoutUnimodalView
+#assert_standard_axioms MinimalityExtra.septopertClassicIsLimitOfRupert
+#assert_standard_axioms MinimalityExtra.noEqualWidthPassage
+#assert_standard_axioms MinimalityExtra.pictureSymmetricPoseNoPassage
+#assert_standard_axioms MinimalityExtra.chiWitness_same
+#assert_standard_axioms MinimalityExtra.existsFirstOrderPassageWithoutUnimodalView
+#assert_standard_axioms MinimalityExtra.HasFirstOrderPassage.isRupert
+#assert_standard_axioms MinimalityExtra.FreeAt.isRupert
