@@ -57,14 +57,14 @@ theorem vertexOverBoundaryOnFaceAlongView : VertexOverBoundaryOnFaceAlongView :=
   by_cases hc : P y ∈ (P '' K).extremePoints ℝ
   · -- another vertex lies over `P y`
     have h2 : ¬ ∀ y' ∈ K.extremePoints ℝ, P y' = P y → y' = y := fun h => hnot ⟨hc, h⟩
-    push_neg at h2
+    push Not at h2
     obtain ⟨y', hy', hPy', hne⟩ := h2
     refine key y' hy'.1 ?_ hne hPy'
     rw [← hPn y', hPy', hPn]
   · -- `P y` is not a corner of the shadow
     have hPy : P y ∈ P '' K := ⟨y, hyK, rfl⟩
     rw [mem_extremePoints] at hc
-    push_neg at hc
+    push Not at hc
     obtain ⟨a, ha, b, hb, hab, hne⟩ := hc hPy
     obtain ⟨x1, hx1, rfl⟩ := ha
     obtain ⟨x2, hx2, rfl⟩ := hb

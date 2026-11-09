@@ -264,7 +264,7 @@ theorem exists_normal_of_affine (f : ℝ³ →ᵃ[ℝ] ℝ) : ∃ N : ℝ³, ∀
   refine ⟨(InnerProductSpace.toDual ℝ ℝ³).symm (LinearMap.toContinuousLinearMap f.linear),
     fun y z => ?_⟩
   rw [InnerProductSpace.toDual_symm_apply, LinearMap.coe_toContinuousLinearMap']
-  rw [← vsub_eq_sub y z, f.linearMap_vsub]; rfl
+  rw [← vsub_eq_sub y z, f.linear_apply_vsub]; rfl
 
 /-- At a view along `d = a - a'`, a front facet `auv` and a back facet `a'uv`
 combine into a normal of the projected edge `uv`, negative at the projected

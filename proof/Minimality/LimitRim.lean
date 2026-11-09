@@ -648,7 +648,7 @@ theorem isRupert_or_rimHDN_of_tendsto_geom {n : ℕ} (x : Fin n → ℝ³)
       intro z hz
       have hconv : Convex ℝ {z : ℝ² | ⟪ν, z - p 0⟫ = 0} := by
         have : {z : ℝ² | ⟪ν, z - p 0⟫ = 0} = {z : ℝ² | ⟪ν, z⟫ = ⟪ν, p 0⟫} := by
-          ext z; simp only [Set.mem_setOf_eq, inner_sub_right, sub_eq_zero]
+          ext z; simp only [Set.mem_ofPred_eq, inner_sub_right, sub_eq_zero]
         rw [this]
         exact convex_hyperplane (innerₛₗ ℝ ν).isLinear _
       refine convexHull_min ?_ hconv hz

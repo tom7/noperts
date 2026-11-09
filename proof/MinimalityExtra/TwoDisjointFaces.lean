@@ -153,16 +153,16 @@ theorem q_ends {F : Finset ℝ³} {n a b u : ℝ³} (hnu : ⟪n, u⟫ = 0) (ha :
         rw [e]; nlinarith
 
 theorem q_sgn_neg {k x : ℝ} (hk : k < 0) (h : 0 < k * x) : x < 0 := by
-  by_contra hx; push_neg at hx; nlinarith
+  by_contra hx; push Not at hx; nlinarith
 
 theorem q_sgn_pos {k x : ℝ} (hk : 0 < k) (h : 0 < k * x) : 0 < x := by
-  by_contra hx; push_neg at hx; nlinarith
+  by_contra hx; push Not at hx; nlinarith
 
 theorem q_ord_neg {k x m : ℝ} (hk : k < 0) (hm : 0 < m) (h : 0 < k * (x * m)) : x < 0 := by
-  by_contra hx; push_neg at hx; nlinarith [mul_nonneg hx hm.le]
+  by_contra hx; push Not at hx; nlinarith [mul_nonneg hx hm.le]
 
 theorem q_ord_pos {k x m : ℝ} (hk : 0 < k) (hm : 0 < m) (h : 0 < k * (x * m)) : 0 < x := by
-  by_contra hx; push_neg at hx; nlinarith [mul_nonneg (neg_nonneg.2 hx) hm.le]
+  by_contra hx; push Not at hx; nlinarith [mul_nonneg (neg_nonneg.2 hx) hm.le]
 
 theorem q_pcA {a b c e : ℝ} (hp : 0 < (a - b) * (c - e)) (h1 : c < e) (h2 : b < a) : False := by
   nlinarith
