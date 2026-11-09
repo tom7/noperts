@@ -59,7 +59,7 @@ theorem close_hdn_np {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
         ((test08 t.1 t.2.1 t.2.2).view (pts08 a a' b b' c c' d)) (eF a a' b b' c c' d t)) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   obtain ⟨i, s, j⟩ := t
-  simp only [SC08, Set.mem_setOf_eq] at ht
+  simp only [SC08, Set.mem_ofPred_eq] at ht
   dsimp only at ht hreg hrim hrob hnp
   rcases hreg with ⟨rfl, hr⟩ | ⟨rfl, hr⟩
   · -- N2 `K_c`

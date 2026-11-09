@@ -895,7 +895,7 @@ theorem force_eq_zero_of_left {k : ℕ} [NeZero k] (hk : 3 ≤ k) (x : ZMod k �
   have hN : f ∈ normalConeAt (convexHull ℝ (Set.range fun i => P (x i))) (P y) := by
     intro s hs
     have := hsub hs
-    simp only [Set.mem_setOf_eq] at this
+    simp only [Set.mem_ofPred_eq] at this
     rw [inner_sub_right]; linarith
   have hf0 := normalConeAt_eq_zero_of_mem_interior hint hN
   have : g F = 0 := by

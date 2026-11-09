@@ -141,7 +141,7 @@ theorem isOpen_nmSeq (m n : ℕ) (s : ℝ) : IsOpen {z | NmSeq m n s z} := by
       ({z : ZMod (m + n + 3) → ℝ | s * z (1 : ZMod (m + n + 3)) < s * z (0 : ZMod (m + n + 3))} ∪
         {z | s * z ((m + n + 2 : ℕ) : ZMod (m + n + 3)) < s * z (0 : ZMod (m + n + 3))})))) := by
     ext z
-    simp only [NmSeq, Set.mem_setOf_eq, Set.mem_inter_iff, Set.mem_iInter, Set.mem_union]
+    simp only [NmSeq, Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iInter, Set.mem_union]
   rw [e]
   refine (isOpen_biInter_finset fun l _ => ?_).inter
     ((isOpen_lt (c _) (c _)).inter ((isOpen_lt (c _) (c _)).inter
@@ -519,7 +519,7 @@ theorem isRupert_triShadow_nm (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) {m n : 
         hZ1 1 (by omega), hZ1 0 (Nat.zero_le _), hZpos (m + n + 2) (by omega)]
       rw [show triZN m n cz dz zM1 zM2 (m + n + 2) = dz 1 by
         unfold triZN
-        rw [if_neg (by omega), if_neg (by omega), if_neg (by omega),
+        rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_right (by omega),
           show m + n + 3 - (m + n + 2) = 1 by omega]]
       rw [hdz0] at hapex
       exact hapex

@@ -62,7 +62,7 @@ theorem k20_pick_v (o s t e : ℝ²) (hccw : 0 < cross2 (s - o) (t - o)) (hE : 0
         {x : ℝ | ⟪u, p q.1.1 - p q.1.2⟫ * x + ⟪v0, p q.1.1 - p q.1.2⟫ = 0}).Finite :=
     (Set.finite_iUnion fun i => finite_affine_zero (Or.inl (hu1 i))).union
       (Set.finite_iUnion fun q => finite_affine_zero (Or.inl (hu2 q)))
-  obtain ⟨x, hx, hxB⟩ := ((Set.Ioo_infinite (lt_min hδ1 hδ2)).diff hfin).nonempty
+  obtain ⟨x, hx, hxB⟩ := ((Set.Ioo_infinite (lt_min hδ1 hδ2)).sdiff hfin).nonempty
   simp only [Set.mem_union, Set.mem_iUnion, Set.mem_ofPred_eq, not_or, not_exists] at hxB
   obtain ⟨hx0, hx1⟩ := hx
   refine ⟨v0 + x • u, fun i h => hxB.1 i ?_, fun i j hij h => hxB.2 ⟨(i, j), hij⟩ ?_, ?_, ?_⟩
