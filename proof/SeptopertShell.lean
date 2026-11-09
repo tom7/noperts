@@ -7,6 +7,8 @@ public import SeptopertShell.IPoly
 public import SeptopertShell.Slab
 public import SeptopertShell.Closure
 public import SeptopertShell.ClosurePar
+public import SeptopertShell.Parse
+public import SeptopertShell.Data
 
 /-!
 # A watertight shell of Rupert shapes around the Septopert island
@@ -35,7 +37,8 @@ Rupert shapes.
    With `classicParams ∈ D` and `outsideParams ∉ D`, `separates_of_frontier_subset` gives the theorem.
 
 Status (2026-11-09): done. `islandEnclosed_of_closureData` (standard axioms) and the native check
-`checkSeptopertShell SeptopertShell/data/shell` (27 slabs and the closure, 0.2 MB: integer condition polynomials and
+`checkSeptopertShell` on the inlined certificate `SeptopertShell.shellText` (`data/shell.txt`, 27 slabs and the
+closure, 0.2 MB: integer condition polynomials and
 centred-form subdivision trees; 4 min on 32 tasks; it prints "instantiated: IslandEnclosed"). The data is untrusted and
 regenerable: nopert229 `out/bottleneck/famcensus/islandmap/bnd/shell_build.sh` (witness fits with the C++ polish,
 exact C++ certificates with centred bounds, closure.py --lean).
