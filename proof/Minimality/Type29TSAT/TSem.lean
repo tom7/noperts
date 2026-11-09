@@ -258,8 +258,8 @@ theorem SgW_RH_on {g : Geo} {t f : Nat} (hz : Z0 g t f) (q : Nat) :
 /-- `RH` with the convention, both branches in one statement. -/
 theorem SgW_RH (g : Geo) (t f q : Nat) : SgW (rhoW g) (RS t f q) (Rtie g t f q) := by
   by_cases hz : Z0 g t f
-  · simp only [Rtie, hz, if_true]; exact SgW_RH_on hz q
-  · simp only [Rtie, hz, if_false]; exact SgW_RH_off hz q
+  · simp only [Rtie, hz, ite_true]; exact SgW_RH_on hz q
+  · simp only [Rtie, hz, ite_false]; exact SgW_RH_off hz q
 
 /-- Off `Z0`: `KA` has the sign of `K(s)`. -/
 theorem SgW_KA_off {g : Geo} {t f : Nat} (hz : ¬ Z0 g t f) (s : Nat) :
@@ -274,8 +274,8 @@ theorem SgW_KA_on {g : Geo} {t f : Nat} (hz : Z0 g t f) (s : Nat) :
 /-- `KA` with the convention, both branches in one statement. -/
 theorem SgW_KA (g : Geo) (t f s : Nat) : SgW (rhoW g) (KS t f s) (Ktie g t f s) := by
   by_cases hz : Z0 g t f
-  · simp only [Ktie, hz, if_true]; exact SgW_KA_on hz s
-  · simp only [Ktie, hz, if_false]; exact SgW_KA_off hz s
+  · simp only [Ktie, hz, ite_true]; exact SgW_KA_on hz s
+  · simp only [Ktie, hz, ite_false]; exact SgW_KA_off hz s
 
 /-- The guard literal is true iff `Z0`. -/
 theorem evalW_Z0L (g : Geo) (t f : Nat) : evalW (rhoW g) (Z0L t f) = true ↔ Z0 g t f := by

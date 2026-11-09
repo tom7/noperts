@@ -78,31 +78,31 @@ theorem nEnt3_sound {g : Geo} (hG : GeoOK g) {a b c : Nat} (ha : a < 9) (hb : b 
   have E := hG.eok
   unfold nEnt3
   by_cases hz : a = b ∨ b = c ∨ a = c
-  · rw [if_pos hz]
+  · rw [ite_eq_left hz]
     have : det3 (g.N a) (g.N b) (g.N c) = 0 := by
       rcases hz with rfl | rfl | rfl <;> simp only [det3_expand] <;> ring
     rw [this]; exact Sg3_zeroG g
-  · rw [if_neg hz]
+  · rw [ite_eq_right hz]
     have n1 : a ≠ b := fun h => hz (Or.inl h)
     have n2 : b ≠ c := fun h => hz (Or.inr (Or.inl h))
     have n3 : a ≠ c := fun h => hz (Or.inr (Or.inr h))
     by_cases p1 : a < b
-    · rw [if_pos p1]
+    · rw [ite_eq_left p1]
       by_cases p2 : b < c
-      · rw [if_pos p2]; exact E.nl a b c (nl_keys a ha b hb c hc p1 p2)
-      · rw [if_neg p2]
+      · rw [ite_eq_left p2]; exact E.nl a b c (nl_keys a ha b hb c hc p1 p2)
+      · rw [ite_eq_right p2]
         have p2' : c < b := by omega
         by_cases p3 : a < c
-        · rw [if_pos p3, sw23]; exact (E.nl a c b (nl_keys a ha c hc b hb p3 p2')).neg
-        · rw [if_neg p3, cyc]; exact E.nl c a b (nl_keys c hc a ha b hb (by omega) p1)
-    · rw [if_neg p1]
+        · rw [ite_eq_left p3, sw23]; exact (E.nl a c b (nl_keys a ha c hc b hb p3 p2')).neg
+        · rw [ite_eq_right p3, cyc]; exact E.nl c a b (nl_keys c hc a ha b hb (by omega) p1)
+    · rw [ite_eq_right p1]
       have p1' : b < a := by omega
       by_cases p3 : a < c
-      · rw [if_pos p3, sw12]; exact (E.nl b a c (nl_keys b hb a ha c hc p1' p3)).neg
-      · rw [if_neg p3]
+      · rw [ite_eq_left p3, sw12]; exact (E.nl b a c (nl_keys b hb a ha c hc p1' p3)).neg
+      · rw [ite_eq_right p3]
         by_cases p2 : b < c
-        · rw [if_pos p2, cyc, cyc]; exact E.nl b c a (nl_keys b hb c hc a ha p2 (by omega))
-        · rw [if_neg p2, show det3 (g.N a) (g.N b) (g.N c) = -det3 (g.N c) (g.N b) (g.N a) by
+        · rw [ite_eq_left p2, cyc, cyc]; exact E.nl b c a (nl_keys b hb c hc a ha p2 (by omega))
+        · rw [ite_eq_right p2, show det3 (g.N a) (g.N b) (g.N c) = -det3 (g.N c) (g.N b) (g.N a) by
             simp only [det3_expand]; ring]
           exact (E.nl c b a (nl_keys c hc b hb a ha (by omega) p1')).neg
 
@@ -119,9 +119,9 @@ theorem Fe_sound {g : Geo} (hG : GeoOK g) {e t : Nat} (he : e < 43) (ht : t < 9)
     Sg3 (rho g) (Fe e t) ⟪g.N t, g.vv e⟫ := by
   unfold Fe
   by_cases h21 : e < 21
-  · rw [if_pos h21, vv_lt g h21]
+  · rw [ite_eq_left h21, vv_lt g h21]
     exact fup3_sound hG.hF t _ _ (EAB_lt e h21).1 (EAB_lt e h21).2
-  · rw [if_neg h21]
+  · rw [ite_eq_right h21]
     have hlm : lineOf e ∈ lines := by
       unfold lineOf
       have : e - 21 < lines.length := by simp [lines]; omega

@@ -83,17 +83,17 @@ theorem link_sound {g : Geo} (hG : GeoOK g) {t e1 e2 f h : Nat} {kap : Int}
   have SPk : SgW (rhoW g) (kapSW kap (PW t f h)) (A / ⟪g.N t, g.N t⟫ * Pp g t f h) := by
     unfold kapSW PW
     by_cases hk1 : 0 < kap
-    · rw [if_pos hk1]
+    · rw [ite_eq_left hk1]
       have hApos : 0 < A := by
         have : (0 : ℝ) < kap := by exact_mod_cast hk1
         exact (pos_iff_pos_of_mul_pos hA).mp this
       exact SP.scale (div_pos hApos NN)
-    · rw [if_neg hk1]
+    · rw [ite_eq_right hk1]
       have hkn : (kap : ℝ) < 0 := by
         have : kap < 0 := lt_of_le_of_ne (not_lt.mp hk1) hk0
         exact_mod_cast this
       have hAneg : A < 0 := by
-        by_contra hh; push_neg at hh
+        by_contra hh; push Not at hh
         nlinarith
       have := (SP.neg).scale (c := -A / ⟪g.N t, g.N t⟫) (div_pos (by linarith) NN)
       have e : -A / ⟪g.N t, g.N t⟫ * -Pp g t f h = A / ⟪g.N t, g.N t⟫ * Pp g t f h := by ring
@@ -165,14 +165,14 @@ theorem lfun_sound {g : Geo} (hG : GeoOK g) {t kind x view : Nat} {k : Int}
     ∃ l : ℝ³, ⟪l, g.N t⟫ = 0 ∧ ∀ w, w < 21 → SgW (rhoW g) (lfunS kind view k x w) ⟪l, g.dv w⟫ := by
   unfold lfunS
   by_cases h0 : kind = 0
-  · rw [if_pos h0] at hc
-    simp only [if_pos h0, Bool.and_eq_true, decide_eq_true_eq] at hc ⊢
+  · rw [ite_eq_left h0] at hc
+    simp only [ite_eq_left h0, Bool.and_eq_true, decide_eq_true_eq] at hc ⊢
     obtain ⟨hx, hi⟩ := hc
     have hi' := Bool.and_eq_true_iff.mp hi
     refine ⟨g.dv x, ?_, fun w hw => TW_sound hG hx hw⟩
     rw [real_inner_comm]; exact hG.hF.zero _ _ _ hi'.1 hi'.2
-  · rw [if_neg h0] at hc
-    simp only [if_neg h0, Bool.and_eq_true, decide_eq_true_eq] at hc ⊢
+  · rw [ite_eq_right h0] at hc
+    simp only [ite_eq_right h0, Bool.and_eq_true, decide_eq_true_eq] at hc ⊢
     obtain ⟨⟨-, -⟩, hl⟩ := hc
     exact ⟨cross (g.N t) (g.N x), cross_inner_self_left _ _, fun w hw => ls_sound hG.hF hG.hO hl hw⟩
 
@@ -210,13 +210,13 @@ theorem oW_sound {g : Geo} (t f : Nat) {a b : Nat} (hab : a ≠ b) (ha : a < 7) 
     decide +kernel
   unfold oW
   by_cases h : a < b
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     obtain ⟨-, h2, h3⟩ := key a ha b hb h
     have := SgW_P g t f (EI a b)
     have hd : g.dv (EI a b) = g.x a - g.x b := by simp only [Geo.dv, h2, h3]
     simp only [Pp, hd] at this
     exact this
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     have hlt : b < a := by omega
     obtain ⟨-, h2, h3⟩ := key b hb a ha hlt
     have := (SgW_P g t f (EI b a)).neg
