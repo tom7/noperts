@@ -352,7 +352,7 @@ theorem ker_eq_span_pair (L : ℝ³ →ₗ[ℝ] ℝ) (t : ℝ³) (ht : L t ≠ 0
   exact ⟨a, b, hab.symm⟩
 
 theorem aff_lin (f : ℝ³ →ᵃ[ℝ] ℝ) (a b : ℝ³) : f.linear (a - b) = f a - f b := by
-  have := f.linearMap_vsub a b
+  have := f.linear_apply_vsub a b
   simpa using this
 
 /-- **A1** (linear algebra): the common direction of two distinct planes through `v`.  If `w` lies in

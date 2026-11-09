@@ -735,7 +735,7 @@ theorem tie_no_forces_right (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 
     refine (eventually_all_finset J).2 fun j hj => ?_
     by_cases h0 : 0 < ⟪tgen nb0 nb1 ez j, p⟫
     · refine (ev_half (B := ⟪tgen' nb0 nb1 v j, p⟫) h0).mono fun ε h => Or.inl ?_
-      have := hc2le j hj; simp only [h0, if_true] at this
+      have := hc2le j hj; simp only [h0, ite_true] at this
       rw [hgenε]; linarith
     · have hT0 := (hsplit j hj).resolve_left h0
       have hcont := (continuous_tgen_torque_at nb0 nb1 v b j).continuousAt (x := 0)
@@ -902,7 +902,7 @@ theorem tie_no_forces_right_neg (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (
     refine (eventually_all_finset J).2 fun j hj => ?_
     by_cases h0 : 0 < ⟪tgen nb0 nb1 ez j, p⟫
     · refine (ev_half (B := ⟪tgen' nb0 nb1 v j, p⟫) h0).mono fun ε h => Or.inl ?_
-      have := hc2le j hj; simp only [h0, if_true] at this
+      have := hc2le j hj; simp only [h0, ite_true] at this
       rw [hgenε]; linarith
     · have hT0 := (hsplit j hj).resolve_left h0
       have hcont := (continuous_tgen_torque_at nb0 nb1 v a j).neg.continuousAt (x := 0)

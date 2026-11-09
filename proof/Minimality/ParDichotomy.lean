@@ -1021,8 +1021,8 @@ theorem EdgeRect.labels {x : Fin 7 → ℝ³} (hx : Function.Injective x) (A B :
 /-- An affine functional takes equal increments on equal vector differences. -/
 theorem aff_parallelogram (f : ℝ³ →ᵃ[ℝ] ℝ) {p p' q q' : ℝ³} (h : p' - p = q' - q) :
     f p' - f p = f q' - f q := by
-  have h1 := f.linearMap_vsub p' p
-  have h2 := f.linearMap_vsub q' q
+  have h1 := f.linear_apply_vsub p' p
+  have h2 := f.linear_apply_vsub q' q
   simp only [vsub_eq_sub] at h1 h2
   rw [← h1, ← h2, h]
 

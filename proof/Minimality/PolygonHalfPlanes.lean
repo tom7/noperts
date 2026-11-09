@@ -129,7 +129,7 @@ theorem halfPlanes_of_ccwPolygon {k : ℕ} [NeZero k] (c : ZMod k → ℝ²) (hk
         constructor <;> intros <;> simp [inner_add_right, inner_smul_right]) _
     have hsub : Set.range c ⊆ {z : ℝ² | ⟪-rot90 (c (i + 1) - c i), z⟫ ≤ ⟪-rot90 (c (i + 1) - c i), c i⟫} := by
       rintro _ ⟨j, rfl⟩
-      rw [Set.mem_setOf_eq]
+      rw [Set.mem_ofPred_eq]
       by_cases h1 : j = i
       · rw [h1]
       by_cases h2 : j = i + 1
