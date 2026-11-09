@@ -91,13 +91,13 @@ theorem h21b_exists_v {k : ℕ} [NeZero k] (F : Fac8 x) (hx : Function.Injective
       intro t ht; subst ht
       obtain ⟨a, -⟩ := hvO
       constructor
-      · intro h; rw [hsX, if_pos h] at a; linarith
-      · intro h; rw [hsX, if_neg (by simp [h])] at a; linarith
+      · intro h; rw [hsX, ite_eq_left h] at a; linarith
+      · intro h; rw [hsX, ite_eq_right (by simp [h])] at a; linarith
     have hposY : (pat Y = true → 0 < ⟪F.N Y, v⟫) ∧ (pat Y = false → ⟪F.N Y, v⟫ < 0) := by
       obtain ⟨-, b⟩ := hvO
       constructor
-      · intro h; rw [hsY, if_pos h] at b; linarith
-      · intro h; rw [hsY, if_neg (by simp [h])] at b; linarith
+      · intro h; rw [hsY, ite_eq_left h] at b; linarith
+      · intro h; rw [hsY, ite_eq_right (by simp [h])] at b; linarith
     intro t
     by_cases htX : t = X
     · subst htX

@@ -59,7 +59,7 @@ theorem Sg3_scaleS {ρ : V → Bool} (hP : Proper ρ) {t : S3} {r : ℝ} (c : In
     simp only [lt_irrefl, ite_false, Int.cast_zero, zero_mul]
     exact Sg3_zero hP
   · have hc' : (0 : ℝ) < (c : ℝ) := by exact_mod_cast hc
-    simp only [hc, if_true]
+    simp only [hc, ite_true]
     exact Sg3.scale hc' h
 
 /-- A determinant equal to an integer multiple of an atom (routes BR, L, M, B4): the entry is `scaleS c (atomS v)`. -/

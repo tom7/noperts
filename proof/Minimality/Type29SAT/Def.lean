@@ -103,8 +103,8 @@ theorem Sg3_ordE (g : Geo) (d ep p q : Nat) (hv : d < 21 → g.vv d ≠ 0) (hab 
   have s := Sg3_ordS g d p q hv hab hp hq hd
   unfold ordE epR
   by_cases h : ep = 1
-  · simp only [h, if_true, one_mul]; exact s
-  · simp only [h, if_false]
+  · simp only [h, ite_true, one_mul]; exact s
+  · simp only [h, ite_false]
     have := s.neg
     simpa using this
 
