@@ -123,13 +123,13 @@ theorem tt_gen (V : Finset ℝ³) (fP fQ f3P f3Q : ℝ³ → ℝ) (NP NQ N3P N3Q
       nlinarith
     intro i
     rcases zmod3_cases i with rfl | rfl | rfl
-    · simp only [cross2, hY0, hY1, show (0 : ZMod 3) + 1 = 1 from rfl, Prod.mk_sub_mk]
+    · simp only [hY0, hY1, show (0 : ZMod 3) + 1 = 1 from rfl, Prod.mk_sub_mk]
       simp only [TwoRay.cross2]
       linarith
-    · simp only [cross2, hY1, hY2, show (1 : ZMod 3) + 1 = 2 from rfl, Prod.mk_sub_mk]
+    · simp only [hY1, hY2, show (1 : ZMod 3) + 1 = 2 from rfl, Prod.mk_sub_mk]
       simp only [TwoRay.cross2]
       linarith
-    · simp only [cross2, hY2, hY0, show (2 : ZMod 3) + 1 = 0 from rfl, Prod.mk_sub_mk]
+    · simp only [hY2, hY0, show (2 : ZMod 3) + 1 = 0 from rfl, Prod.mk_sub_mk]
       simp only [TwoRay.cross2]
       linarith
   · right; left
@@ -140,7 +140,7 @@ theorem tt_gen (V : Finset ℝ³) (fP fQ f3P f3Q : ℝ³ → ℝ) (NP NQ N3P N3Q
       have hz : f3P y = zz * f3P (w + r) := by rw [this]; simp [c1, h3PA]
       have hc : f3P (w + r) ≠ 0 := by
         intro h0; rw [h0, mul_zero] at hz; linarith
-      rw [hσPdef, if_neg hc, ← hz]; exact c4
+      rw [hσPdef, ite_eq_right hc, ← hz]; exact c4
   · right; right
     refine ⟨fP y / fP B, zz, ?_, div_pos_of_neg_of_neg c3 hPB, ?_, ?_⟩
     · simp [c1]
@@ -149,7 +149,7 @@ theorem tt_gen (V : Finset ℝ³) (fP fQ f3P f3Q : ℝ³ → ℝ) (NP NQ N3P N3Q
       have hz : f3Q y = zz * f3Q (w + r) := by rw [this]; simp [c1, h3QB]
       have hc : f3Q (w + r) ≠ 0 := by
         intro h0; rw [h0, mul_zero] at hz; linarith
-      rw [hσQdef, if_neg hc, ← hz]; exact c4
+      rw [hσQdef, ite_eq_right hc, ← hz]; exact c4
 
 
 end V2

@@ -91,7 +91,7 @@ theorem extra_N2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg
   have hn := det3_nfd d E₁ E₂ E₃ θ 4 2 4 6 4 5
   have hq : ddet (fun k => cp08 θ 2 k - cp08 θ 4 k) (fun k => cp08 θ 6 k - cp08 θ 4 k)
       (fun k => cp08 θ 5 k - cp08 θ 4 k) = - θ 0 := by
-    simp [ddet, cp08]; try ring
+    simp [ddet, cp08]
   rw [hq, hdet] at hn
   have h66 : nfShape08 d E₁ E₂ E₃ θ 6 = d := rfl
   simp only [h66] at hn

@@ -88,7 +88,7 @@ theorem exists_seq_T4side (θ : Fin 6 → ℝ) :
       simp only [hc, Pi.sub_apply, Pi.smul_apply, smul_eq_mul]
       by_cases hi : i = 5
       · subst hi; simp [abs_of_nonneg (show (0:ℝ) ≤ ((n:ℝ)+1) by positivity)]
-      · simp [Pi.single_apply, hi]; positivity
+      · simp [hi]; positivity
     have h4 : 1 / (2 * ((n : ℝ) + 1)) ≤ 1 / ((n : ℝ) + 1) := by
       apply one_div_le_one_div_of_le (by positivity); nlinarith [(Nat.cast_nonneg n : (0:ℝ) ≤ n)]
     have := abs_sub_le (θs n i) (c n i) (θ i)

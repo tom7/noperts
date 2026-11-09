@@ -96,7 +96,7 @@ theorem metricSplit_surjective (v : Fin 3 → ℝ) (hv : v ≠ 0) : Function.Sur
     ext i j
     have h1 := hM (Pi.single i 1) (Pi.single j 1)
     have h2 := hM (Pi.single j 1) (Pi.single i 1)
-    simp [Matrix.mulVec_single_one] at h1 h2
+    simp at h1 h2
     simp only [Matrix.transpose_apply]
     rw [h1, h2, hBs]
   have hMpd : M.PosDef := by
@@ -113,7 +113,7 @@ theorem metricSplit_surjective (v : Fin 3 → ℝ) (hv : v ≠ 0) : Function.Sur
           rw [hp] at this
           simp only [projAnn, h0, zero_div, zero_smul, sub_zero] at this
           simpa using this.symm
-        rw [hp]; simp only [map_zero, LinearMap.zero_apply, zero_add]
+        rw [hp]; simp only [map_zero, zero_add]
         exact div_pos (mul_self_pos.mpr hx0) hl
       · have := hpos _ hp
         linarith
@@ -122,7 +122,7 @@ theorem metricSplit_surjective (v : Fin 3 → ℝ) (hv : v ≠ 0) : Function.Sur
       intro y
       have hπl : πL l = 0 := Subtype.ext (by rw [hπ]; simp [projAnn, div_self hs])
       rw [hM, hB, hπl]
-      simp only [map_zero, LinearMap.zero_apply, zero_add]
+      simp only [map_zero, zero_add]
       field_simp
     funext i
     simpa using this (Pi.single i 1)
@@ -257,7 +257,7 @@ theorem inwardMotionHasSpin : InwardMotionHasSpin := by
       apply convexHull_min
       · rintro _ ⟨j, rfl⟩; exact hmax j
       · intro a ha b hb p q hp hq hpq
-        simp only [Set.mem_setOf_eq, dotProduct_add, dotProduct_smul, smul_eq_mul] at *
+        simp only [Set.mem_ofPred_eq, dotProduct_add, dotProduct_smul, smul_eq_mul] at *
         have e : s * (p * (n ⬝ᵥ a) + q * (n ⬝ᵥ b)) = p * (s * (n ⬝ᵥ a)) + q * (s * (n ⬝ᵥ b)) := by ring
         have e2 : s * (n ⬝ᵥ x i) = (p + q) * (s * (n ⬝ᵥ x i)) := by rw [hpq]; ring
         rw [e]
@@ -270,7 +270,7 @@ theorem inwardMotionHasSpin : InwardMotionHasSpin := by
         simpa using (this.tendsto 0).mono_left nhdsWithin_le_nhds
       obtain ⟨δ, hδ, hδpos⟩ := ((hc.eventually hnh).and self_mem_nhdsWithin).exists
       have := hsub (interior_subset hδ)
-      simp only [Set.mem_setOf_eq, dotProduct_add, dotProduct_smul, smul_eq_mul] at this
+      simp only [Set.mem_ofPred_eq, dotProduct_add, dotProduct_smul, smul_eq_mul] at this
       have hδ0 : 0 < δ := hδpos
       have hss : 0 < s * s := mul_self_pos.mpr hs
       have : 0 < δ * (s * s * (n ⬝ᵥ n)) := by positivity

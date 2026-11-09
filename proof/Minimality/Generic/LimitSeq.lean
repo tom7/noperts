@@ -180,7 +180,7 @@ theorem exists_limit_rimCert_aux {n : ℕ} (x : Fin n → ℝ³)
       intro z hz
       have hconv : Convex ℝ {z : ℝ² | ⟪ν, z - p 0⟫ = 0} := by
         have : {z : ℝ² | ⟪ν, z - p 0⟫ = 0} = {z : ℝ² | ⟪ν, z⟫ = ⟪ν, p 0⟫} := by
-          ext z; simp only [Set.mem_setOf_eq, inner_sub_right, sub_eq_zero]
+          ext z; simp only [Set.mem_ofPred_eq, inner_sub_right, sub_eq_zero]
         rw [this]
         exact convex_hyperplane (innerₛₗ ℝ ν).isLinear _
       refine convexHull_min ?_ hconv hz
@@ -259,7 +259,7 @@ theorem contDiff_detC : ContDiff ℝ 1 detC := by
   convert h2 using 1
   funext K
   have := LinearMap.det_toMatrix b (K : ℝ³ →ₗ[ℝ] ℝ³)
-  simp only [detC, Function.comp, T, LinearMap.coe_comp, LinearEquiv.coe_coe, ContinuousLinearMap.coeLM_apply]
+  simp only [detC, Function.comp, T]
   rw [← this]; rfl
 
 /-- The tie functionals as a linear map `(ℝ³ →L ℝ³) → ℝ^q`. -/
@@ -384,8 +384,8 @@ theorem hasDerivAt_tie_line (d u : ℝ³) (h0 : ⟪d, u⟫ = 0) (K : ℝ³ →L[
       fun s : ℝ => (lamC (s • K) * lamC (s • K)) *
         (⟪d, u⟫ + s * (⟪K d, u⟫ + ⟪d, K u⟫) + s ^ 2 * ⟪K d, K u⟫) := by
     funext s
-    simp only [Lm, ContinuousLinearMap.smul_apply, ContinuousLinearMap.add_apply,
-      ContinuousLinearMap.one_apply, ContinuousLinearMap.smul_apply, inner_smul_left, inner_smul_right,
+    simp only [Lm, smul_apply, add_apply,
+      one_apply_eq_self, smul_apply, inner_smul_left, inner_smul_right,
       inner_add_left, inner_add_right, RCLike.conj_to_real]
     ring
   rw [hfun]

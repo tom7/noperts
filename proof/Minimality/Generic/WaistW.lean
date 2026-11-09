@@ -49,7 +49,7 @@ lemma waistW_reduce (B P Q W Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hQ : 0 
     rcases zc4 i with rfl | rfl | rfl | rfl <;> rcases zc4 j with rfl | rfl | rfl | rfl <;>
       first | (exfalso; apply h1; rfl) | (exfalso; apply h2; decide) | skip
     all_goals
-      simp [cross2, z01, z12, z23, z30, cc0, cc1, cc2, cc3]
+      simp [cross2, z12, z23, z30, cc0, cc1, cc2, cc3]
       nlinarith [mul_pos hB hQ, mul_pos hP hY, mul_pos hY hB, mul_nonneg (neg_nonneg.2 hW) hQ.le,
         mul_nonneg (sub_nonneg.2 hBP) hY.le, mul_nonneg (sub_nonneg.2 hBP) hQ.le, mul_nonneg (neg_nonneg.2 hW) hY.le,
         mul_pos hP hQ]
@@ -69,7 +69,7 @@ lemma waistW_reduce (B P Q W Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hQ : 0 
     apply hsub; apply hp1
     intro i
     have := hy (i : Fin 4)
-    rcases zc4 i with rfl | rfl | rfl | rfl <;> simp [nq, hq, rot90, z01, z12, z23, z30, cc0, cc1, cc2, cc3, PiLp.inner_apply, Fin.sum_univ_two] at this ⊢ <;> linarith
+    rcases zc4 i with rfl | rfl | rfl | rfl <;> simp [nq, hq, rot90, z12, z23, z30, cc0, cc1, cc2, cc3, PiLp.inner_apply, Fin.sum_univ_two] at this ⊢ <;> linarith
   refine isRupert_of_cayleyPolyJet _ (nq B P Q W Y) (hq B P Q W Y) hpoly ![0, X, C z * X^2]
     ![C t2 * X^2 + C 0 * X^3 + C 0 * X^4, C u2 * X^2 + C 0 * X^3 + C 0 * X^4] ?_
   intro v hv e

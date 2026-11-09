@@ -144,13 +144,13 @@ theorem row_bridge₁ (P : IsPrismPair V F₁ F₂ H n₁ n₂ h₁ h₂) (E : P
   · have ha := P.on₁ _ hF
     have hb := E.B₁_far _ hF h1
     rw [det3_pair]
-    simp only [inner_sub_left, inner_sub_right, real_inner_comm n₁, real_inner_comm n₂]
+    simp only [inner_sub_right, real_inner_comm n₁, real_inner_comm n₂]
     rw [ha, hB1a, hB2b]
     nlinarith [mul_pos (sub_pos.mpr hB2a) (sub_pos.mpr hb)]
   · have hb := P.on₂ _ hF
     have ha := E.B₂_far _ hF h2
     rw [det3_pair]
-    simp only [inner_sub_left, inner_sub_right, real_inner_comm n₁, real_inner_comm n₂]
+    simp only [inner_sub_right, real_inner_comm n₁, real_inner_comm n₂]
     rw [hb, hB1a, hB2b]
     nlinarith [mul_pos (sub_pos.mpr hB1b) (sub_pos.mpr ha)]
   · have := (hH y hHH).2.1
@@ -168,13 +168,13 @@ theorem row_bridge₂ (P : IsPrismPair V F₁ F₂ H n₁ n₂ h₁ h₂) (E : P
   · have ha := P.on₁ _ hF
     have hb := E.A₁_near _ hF h2
     rw [det3_pair]
-    simp only [inner_sub_left, inner_sub_right, real_inner_comm n₁, real_inner_comm n₂]
+    simp only [inner_sub_right, real_inner_comm n₁, real_inner_comm n₂]
     rw [ha, hA1a, hA2b]
     nlinarith [mul_pos (sub_pos.mpr hA2a) (sub_pos.mpr hb)]
   · have hb := P.on₂ _ hF
     have ha := E.A₂_near _ hF h1
     rw [det3_pair]
-    simp only [inner_sub_left, inner_sub_right, real_inner_comm n₁, real_inner_comm n₂]
+    simp only [inner_sub_right, real_inner_comm n₁, real_inner_comm n₂]
     rw [hb, hA1a, hA2b]
     nlinarith [mul_pos (sub_pos.mpr hA1b) (sub_pos.mpr ha)]
   · have := (hH y hHH).2.2.2

@@ -1209,7 +1209,7 @@ theorem tiltSign_pA {h : ℝ} {atop p y v : ℝ³} (hz : atop 2 = h) (hph : p 2 
       nlinarith
   · right
     refine ⟨?_, ?_⟩
-    · rw [det3_ey]; simp [ey]; try ring
+    · rw [det3_ey]; simp [ey]
     · rw [det3_gen]; simp [ey, hv1, hv2, hz]; nlinarith [mul_pos hlam hCA]
 
 set_option maxHeartbeats 1000000 in

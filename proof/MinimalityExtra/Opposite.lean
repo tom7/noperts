@@ -81,7 +81,7 @@ theorem rotNorm {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R ∈ Matrix.specialOrtho
 
 theorem normsq_proj_xy (v : ℝ³) : ‖proj_xy v‖ ^ 2 = ‖v‖ ^ 2 - (v 2) ^ 2 := by
   rw [EuclideanSpace.norm_sq_eq, EuclideanSpace.norm_sq_eq]
-  simp [proj_xy, Fin.sum_univ_succ, Fin.sum_univ_two]
+  simp [proj_xy, Fin.sum_univ_succ]
   ring
 
 theorem proj_xy_sub (v w : ℝ³) : proj_xy (v - w) = proj_xy v - proj_xy w := by

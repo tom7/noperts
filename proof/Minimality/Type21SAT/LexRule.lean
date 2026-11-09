@@ -165,7 +165,7 @@ theorem exists_w {x : Fin 7 → ℝ³} (F : S0xFac 8 S21 x) {q : ℝ} (hq : q < 
     · intro h; rw [hw3]; simp [h]
     · intro h; rw [hw3]; simp [h]
   · rw [hw7, hw3]
-    cases h3' : b3 <;> cases h7' : b7 <;> simp_all <;> nlinarith
+    cases h3' : b3 <;> cases h7' : b7 <;> simp_all 
   · intro t ht
     rw [hwz t ht]
     constructor

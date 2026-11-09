@@ -125,21 +125,21 @@ theorem evalL_andL {ρ : V → Bool} (hP : Proper ρ) (hG : GateOK ρ) (a b : Li
   have ht : evalL ρ ltrue = true := by simp [ltrue, evalL, e]
   unfold andL
   by_cases h1 : a = lfalse ∨ b = lfalse
-  · rw [if_pos h1]
+  · rw [ite_eq_left h1]
     rcases h1 with rfl | rfl <;> simp [hf]
-  · rw [if_neg h1]
+  · rw [ite_eq_right h1]
     by_cases h2 : a = ltrue
-    · rw [if_pos h2]; subst h2; simp [ht]
-    · rw [if_neg h2]
+    · rw [ite_eq_left h2]; subst h2; simp [ht]
+    · rw [ite_eq_right h2]
       by_cases h3 : b = ltrue
-      · rw [if_pos h3]; subst h3; simp [ht]
-      · rw [if_neg h3]
+      · rw [ite_eq_left h3]; subst h3; simp [ht]
+      · rw [ite_eq_right h3]
         by_cases h4 : a = b
-        · rw [if_pos h4]; subst h4; simp
-        · rw [if_neg h4]
+        · rw [ite_eq_left h4]; subst h4; simp
+        · rw [ite_eq_right h4]
           by_cases h5 : a = b.neg
-          · rw [if_pos h5]; rw [h5, evalL_neg, hf]; cases evalL ρ b <;> simp
-          · rw [if_neg h5]
+          · rw [ite_eq_left h5]; rw [h5, evalL_neg, hf]; cases evalL ρ b <;> simp
+          · rw [ite_eq_right h5]
             split_ifs
             · have := hG b.1 b.2 a.1 a.2
               simp only [evalL] at this ⊢
@@ -199,7 +199,7 @@ theorem Sg3_cS {ρ : V → Bool} (hP : Proper ρ) (c : Int) {r : ℝ}
     subst h
     simp [Sg3, zeroS, lfalse, evalL, e, this]
   · have := hr.1 h
-    simp [h, not_lt.mpr h.le, Sg3, ltrue, lfalse, evalL, e, this, not_lt.mpr this.le]
+    simp [h, Sg3, ltrue, lfalse, evalL, e, this, not_lt.mpr this.le]
 
 /-- Zero is the sign of 0. -/
 theorem Sg3_zero {ρ : V → Bool} (hP : Proper ρ) : Sg3 ρ zeroS 0 := by

@@ -53,7 +53,7 @@ lemma qL_nf (S : Shape20) :
   · simp only [nf_E]; ring
   · simp only [nf_F]; ring
   · simp only [nf_G]; ring
-  · simp only [nf_H]; try ring
+  · simp only [nf_H]
 
 /-- Depths at `qL`: `z1, z2, z0, z3, z5, z6`. -/
 lemma qL_dep :

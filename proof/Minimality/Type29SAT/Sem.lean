@@ -130,20 +130,20 @@ theorem Sg3_Tt (g : Geo) (e f : Nat) (hv : e = f → e < 21 → g.vv e ≠ 0) : 
   unfold Tt
   by_cases h1 : e = f
   · subst h1
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     by_cases h21 : e < 21
-    · rw [if_pos h21]
+    · rw [ite_eq_left h21]
       have : 0 < ⟪g.vv e, g.vv e⟫ := real_inner_self_pos.mpr (hv rfl h21)
       have h3 : ¬ ⟪g.vv e, g.vv e⟫ < 0 := not_lt.mpr this.le
       simp only [Sg3, ltrue, lfalse, evalL, rho, this, h3, iff_true, iff_false]
       simp
-    · rw [if_neg h21]
+    · rw [ite_eq_right h21]
       have h3 : ¬ ⟪g.vv e, g.vv e⟫ < 0 := not_lt.mpr real_inner_self_nonneg
-      simp [Sg3, lfalse, evalL, rho, h3]
-  · rw [if_neg h1]
+      simp [Sg3, lfalse, evalL, rho]
+  · rw [ite_eq_right h1]
     by_cases h2 : e < f
-    · rw [if_pos h2]; simp [Sg3, evalL, rho]
-    · rw [if_neg h2]
+    · rw [ite_eq_left h2]; simp [Sg3, evalL, rho]
+    · rw [ite_eq_right h2]
       have := real_inner_comm (g.vv e) (g.vv f)
       simp [Sg3, evalL, rho, this]
 

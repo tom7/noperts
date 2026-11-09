@@ -348,7 +348,7 @@ theorem exists_good_pair {V : Finset ℝ³} {u u' : ℝ³} {k k' m m' : ℕ} [Ne
           · simp [t, ho]
         · show ⟪u', X q.1.1 - X q.1.2⟫ = ⟪u, t • u⟫
           rw [real_inner_smul_right]
-          simp only [t, ho, if_true]
+          simp only [t, ho, ite_true]
           field_simp
       have := LinearMap.congr_fun h0 ⟨_, hmem⟩
       simp only [ℓ, LinearMap.comp_apply, Submodule.subtype_apply, innerₛₗ_apply_apply,
@@ -367,7 +367,7 @@ theorem exists_good_pair {V : Finset ℝ³} {u u' : ℝ³} {k k' m m' : ℕ} [Ne
           · simp [t, ho]
         · show ⟪u', t • u'⟫ = ⟪u, X' q.1.1 - X' q.1.2⟫
           rw [real_inner_smul_right]
-          simp only [t, ho, if_true]
+          simp only [t, ho, ite_true]
           field_simp
       have := LinearMap.congr_fun h0 ⟨_, hmem⟩
       simp only [ℓ, LinearMap.comp_apply, Submodule.subtype_apply, innerₛₗ_apply_apply,
@@ -541,7 +541,7 @@ theorem exists_symm_clm {u u' A B : ℝ³} (hu : u ≠ 0) (hind : ∀ t : ℝ, u
       (M11 * ⟪a, x⟫) • a - (M12 * ⟪a', x⟫) • a - (M12 * ⟪a, x⟫) • a' - (M22 * ⟪a', x⟫) • a' := by
     intro x
     simp only [H, sub_apply, add_apply,
-      ContinuousLinearMap.smul_apply, ContinuousLinearMap.smulRight_apply, innerSL_apply_apply,
+      smul_apply, ContinuousLinearMap.smulRight_apply, innerSL_apply_apply,
       smul_smul]
   refine ⟨H, ?_, ?_, ?_⟩
   · intro x y
@@ -549,8 +549,7 @@ theorem exists_symm_clm {u u' A B : ℝ³} (hu : u ≠ 0) (hind : ∀ t : ℝ, u
     rw [hH, hH]
     simp only [inner_add_left, inner_sub_left, inner_add_right, inner_sub_right,
       real_inner_smul_left, real_inner_smul_right]
-    simp only [real_inner_comm A, real_inner_comm B, real_inner_comm a, real_inner_comm a',
-      real_inner_comm x y]
+    simp only [real_inner_comm A, real_inner_comm B, real_inner_comm a, real_inner_comm a']
     ring
   · rw [hH]
     have hAu : ⟪A, u⟫ = M11 := real_inner_comm _ _

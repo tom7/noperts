@@ -53,8 +53,7 @@ theorem det3_nfd (o E₁ E₂ E₃ : ℝ³) (θ : Fin 6 → ℝ) (i1 j1 i2 j2 i3
       (nfShape08 o E₁ E₂ E₃ θ j3 - nfShape08 o E₁ E₂ E₃ θ i3) =
     det3 E₁ E₂ E₃ * ddet (fun k => cp08 θ j1 k - cp08 θ i1 k) (fun k => cp08 θ j2 k - cp08 θ i2 k)
       (fun k => cp08 θ j3 k - cp08 θ i3 k) := by
-  simp only [nf08_coord, frame_diff, det3_expand, ddet, PiLp.add_apply, PiLp.sub_apply,
-    PiLp.smul_apply, smul_eq_mul]
+  simp only [nf08_coord, frame_diff, det3_expand, ddet, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]
   ring
 
 theorem kD_pos {κ D P L Y : ℝ} (hk : κ ≠ 0) (h : κ * (L * Y) = D * P) (hL : 0 < L) (hY : 0 < Y)

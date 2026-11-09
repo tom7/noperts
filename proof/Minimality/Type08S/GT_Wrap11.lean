@@ -57,7 +57,7 @@ theorem t4_a0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
       (by simp only [crossYZ]; nlinarith [mul_pos hr2 (show 0 < za - zw by linarith)])
       (by simp only [Phi]; nlinarith [mul_neg_of_neg_of_pos cfg.T3_W hT4, mul_pos_of_neg_of_neg cfg.T4_W hT3])
       (by simp only [Phi]; nlinarith [mul_neg_of_neg_of_pos cfg.T3_A hT4, mul_pos_of_neg_of_neg cfg.T4_A hT3])
-  · simp only [t5aPts, quint_3, quint_4, quint_0, quint_2]
+  · simp only [t5aPts, quint_3, quint_4, quint_0]
     have hub : ua * b2 < r2 := by nlinarith
     exact cross_neg_of_planes FT1 FQac ⟨r1, r2, 0⟩ ⟨ua * b1, ua * b2, a3⟩ ⟨t * A, 0, za⟩ ⟨0, 0, zw⟩
       cfg.T1_R cfg.T1_A cfg.Qac_R cfg.Qac_A
@@ -113,7 +113,7 @@ theorem t4_b0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
       (by simp only [crossYZ]; nlinarith [mul_pos hb2 (show 0 < za - zw by linarith)])
       (by simp only [Phi]; nlinarith [mul_neg_of_neg_of_pos cfg.T2_W hT3, mul_nonneg_of_nonpos_of_nonpos cfg.T3_W.le hT2])
       (by simp only [Phi]; nlinarith [mul_neg_of_neg_of_pos cfg.T2_A hT3, mul_nonneg_of_nonpos_of_nonpos cfg.T3_A.le hT2])
-  · simp only [t5aPts, quint_3, quint_4, quint_0, quint_2]
+  · simp only [t5aPts, quint_3, quint_4, quint_0]
     exact cross_neg_of_planes FH FT1 ⟨b1, b2, 0⟩ ⟨ua * b1, ua * b2, a3⟩ ⟨t * A, 0, za⟩ ⟨0, 0, zw⟩
       cfg.H_B cfg.H_A cfg.T1_B cfg.T1_A
       (by simp only [crossYZ]; nlinarith [mul_pos (mul_pos (sub_pos.2 hs1) hb2) hza0, mul_neg_of_pos_of_neg hb2 ha3])

@@ -33,7 +33,7 @@ theorem cayleyJet_eval (n : ℝ²) (h : ℝ) (c : Fin 3 → ℝ[X]) (τ : Fin 2 
   have hd := (cayleyDen_pos (cayleyJetC c s)).ne'
   rw [cayley_apply]
   simp only [cayleyJetN, cayleyJetC, cayleyJetT, cayleyDen, crossMatrix, inner_add_right,
-    Matrix.toLpLin_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_three] at *
+    Matrix.toLpLin_apply] at *
   simp [proj_xy, PiLp.inner_apply, Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.vecHead, Matrix.vecTail] at *
   field_simp
   ring

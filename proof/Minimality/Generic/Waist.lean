@@ -54,7 +54,7 @@ lemma waist_reduce (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P
     rcases zc4 i with rfl | rfl | rfl | rfl <;> rcases zc4 j with rfl | rfl | rfl | rfl <;>
       first | (exfalso; apply h1; rfl) | (exfalso; apply h2; decide) | skip
     all_goals
-      simp [cross2, z01, z12, z23, z30, cc0, cc1, cc2, cc3]
+      simp [cross2, z12, z23, z30, cc0, cc1, cc2, cc3]
       nlinarith [mul_pos hB hQ, mul_pos hP hY, mul_pos hY hB]
   obtain ⟨hp1, -⟩ := halfPlanes_of_ccwPolygon (cc B P Q Y) (by norm_num) hccw
   have hsub : convexHull ℝ (Set.range (cc B P Q Y)) ⊆
@@ -72,7 +72,7 @@ lemma waist_reduce (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P
     apply hsub; apply hp1
     intro i
     have := hy (i : Fin 4)
-    rcases zc4 i with rfl | rfl | rfl | rfl <;> simp [nq, hq, rot90, z01, z12, z23, z30, cc0, cc1, cc2, cc3, PiLp.inner_apply, Fin.sum_univ_two] at this ⊢ <;> linarith
+    rcases zc4 i with rfl | rfl | rfl | rfl <;> simp [nq, hq, rot90, z12, z23, z30, cc0, cc1, cc2, cc3, PiLp.inner_apply, Fin.sum_univ_two] at this ⊢ <;> linarith
   refine isRupert_of_cayleyPolyJet _ (nq B P Q Y) (hq B P Q Y) hpoly ![0, X, C z * X^2]
     ![C t2 * X^2 + C t3 * X^3 + C t4 * X^4, C u2 * X^2 + C u3 * X^3 + C u4 * X^4] ?_
   intro v hv e

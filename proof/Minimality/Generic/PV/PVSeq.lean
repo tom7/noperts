@@ -107,7 +107,7 @@ theorem vshaped_lists {n : ℕ} (f : Fin n → ℝ) (hv : VShapedSeq f) :
       split_ifs with h
       · simp
       · simp only [List.length_ofFn] at h
-        simp only [List.getElem_ofFn, List.length_ofFn]
+        simp only [List.length_ofFn]
         congr 1; ext; simp; omega
   · rw [List.pairwise_ofFn]
     intro i j hij

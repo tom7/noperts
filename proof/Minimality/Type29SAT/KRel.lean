@@ -145,8 +145,8 @@ theorem krel_sign2 {g : Geo} (hF : FacOK g) (hO : OriOK g) (F I X Y s' r' : Nat)
   have SD := Sg3_of_mulpos (rho_proper g) (n := (oriv F (EA Y) (EB Y) s')) (r := - det3 (g.N F) (g.N I) (g.dv Y))
     (by
       have K'' : 0 < -((oriv F (EA Y) (EB Y) s' : Int) : ℝ) * det3 (g.N F) (g.N I) (g.dv Y) := by
-        push_cast at K'; exact K'
-      push_cast; nlinarith [K''])
+        exact K'
+      nlinarith [K''])
   have P := Sg3.mul3 (rho_proper g) (rho_gateOK g) SK SD
   have ee : 0 < ⟪g.dv Y, g.dv Y⟫ := dd
   have pos : 0 < ⟪g.N F, g.N F⟫ * ⟪g.dv Y, g.dv Y⟫ := mul_pos nn ee

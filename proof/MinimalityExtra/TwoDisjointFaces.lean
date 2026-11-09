@@ -88,7 +88,7 @@ theorem q_convPos {V F : Finset ℝ³} {n : ℝ³} {h : ℝ} (hn : n ≠ 0)
     intro x hx
     have hc : Convex ℝ {x : ℝ³ | ⟪n, x⟫ = h} := by
       intro a ha b hb s t hs ht hst
-      simp only [Set.mem_setOf_eq] at ha hb ⊢
+      simp only [Set.mem_ofPred_eq] at ha hb ⊢
       rw [inner_add_right, inner_smul_right, inner_smul_right, ha, hb, ← add_mul, hst, one_mul]
     refine convexHull_min ?_ hc hx
     intro y hy
@@ -203,7 +203,7 @@ theorem lemmaQ_twoDisjointFaces : LemmaQTwoDisjointFaces := by
       (⟪n₁, b⟫ - ⟪n₁, a⟫) * (⟪n₂, p⟫ - ⟪n₂, a⟫) - (⟪n₂, b⟫ - ⟪n₂, a⟫) * (⟪n₁, p⟫ - ⟪n₁, a⟫) := by
     intro a b p
     rw [hdd, Minimality.det3_pair]
-    simp only [inner_sub_left, real_inner_comm n₁, real_inner_comm n₂, inner_sub_right]
+    simp only [real_inner_comm n₁, real_inner_comm n₂, inner_sub_right]
   obtain ⟨q1, q2, q3, q4, q5, q6, q7, q8⟩ := hq
   simp only [rowC, rowF] at q1 q2 q3 q4 q5 q6 q7 q8
   have a1₁ := on₁ _ ha₁

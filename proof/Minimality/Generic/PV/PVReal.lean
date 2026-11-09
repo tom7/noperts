@@ -217,7 +217,7 @@ theorem pv_skeleton_unimodal (a₁ b₁ a₂ b₂ lo₁ hi₁ lo₂ hi₂ : ℝ)
   -- cross-face distinctness for the chosen extremes
   have hmem : ∀ (a e b l h : ℝ), e ∈ [l, h] → ∀ x ∈ [a, e, b], x ∈ [a, b, l, h] := by
     intro a e b l h he x hx'
-    simp only [List.mem_cons, List.mem_singleton, List.not_mem_nil, or_false] at hx' he ⊢
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hx' he ⊢
     rcases hx' with rfl | rfl | rfl <;> rcases he with rfl | rfl <;> simp
   have hxe : ∀ e₁ ∈ [lo₁, hi₁], ∀ e₂ ∈ [lo₂, hi₂],
       ∀ x ∈ [a₁, e₁, b₁], ∀ y ∈ [a₂, e₂, b₂], x ≠ y := fun e₁ he₁ e₂ he₂ x hx' y hy' =>

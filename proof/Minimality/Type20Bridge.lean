@@ -101,7 +101,7 @@ theorem robUni5_a {z : ZMod 5 → ℝ} (h43 : z 4 < z 3) (h32 : z 3 < z 2) (h20 
   have hb4 : b < 5 := by omega
   have hc4 : c < 5 := by omega
   obtain ⟨e01, e02, e03, e04, e11, e12, e13, e14, e21, e22, e23, e24, e31, e32, e33, e34, e41, e42, e43, e44⟩ := zmod5_sums
-  interval_cases b <;> interval_cases c <;> (try omega) <;> interval_cases d <;> (try omega) <;>
+  interval_cases b <;> interval_cases c <;> (try omega) <;> interval_cases d  <;>
   rcases hB with rfl | rfl | rfl | rfl | rfl <;>
   · rintro ⟨a1, a2, a3, a4⟩
     revert a1 a2 a3 a4
@@ -117,7 +117,7 @@ theorem robUni5_b {z : ZMod 5 → ℝ} (h43 : z 3 < z 4) (h32 : z 2 < z 3) (h20 
   have hb4 : b < 5 := by omega
   have hc4 : c < 5 := by omega
   obtain ⟨e01, e02, e03, e04, e11, e12, e13, e14, e21, e22, e23, e24, e31, e32, e33, e34, e41, e42, e43, e44⟩ := zmod5_sums
-  interval_cases b <;> interval_cases c <;> (try omega) <;> interval_cases d <;> (try omega) <;>
+  interval_cases b <;> interval_cases c <;> (try omega) <;> interval_cases d  <;>
   rcases hB with rfl | rfl | rfl | rfl | rfl <;>
   · rintro ⟨a1, a2, a3, a4⟩
     revert a1 a2 a3 a4
@@ -261,7 +261,7 @@ theorem robUni5_c {z : ZMod 5 → ℝ} (h04 : z 0 < z 4) (h43 : z 4 < z 3) (h32 
   have hb4 : b < 5 := by omega
   have hc4 : c < 5 := by omega
   obtain ⟨e01, e02, e03, e04, e11, e12, e13, e14, e21, e22, e23, e24, e31, e32, e33, e34, e41, e42, e43, e44⟩ := zmod5_sums
-  interval_cases b <;> interval_cases c <;> (try omega) <;> interval_cases d <;> (try omega) <;>
+  interval_cases b <;> interval_cases c <;> (try omega) <;> interval_cases d  <;>
   rcases hB with rfl | rfl | rfl | rfl | rfl <;>
   · rintro ⟨a1, a2, a3, a4⟩
     revert a1 a2 a3 a4

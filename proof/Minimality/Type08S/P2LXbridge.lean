@@ -52,7 +52,7 @@ theorem bary_id (e a b c y w x0 : ℝ³) :
 
 theorem plucker_id (e p q r w : ℝ³) :
     det3 p q w * det3 e r w = det3 e q w * det3 p r w - det3 e p w * det3 q r w := by
-  simp only [det3_expand, PiLp.sub_apply]; ring
+  simp only [det3_expand]; ring
 
 
 theorem hrest_of_tri (V : Finset ℝ³) (u v : ℝ³) (x : ZMod 5 → ℝ³) (hxV : ∀ i, x i ∈ V)

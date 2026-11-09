@@ -117,9 +117,9 @@ theorem tope_single (F : S0xFac m S x) (M sg : Fin m → Bool) (t0 : Fin m)
   have := hM t ht
   subst this
   cases hs : sg t
-  · simp only [hs, if_false, Bool.false_eq_true, inner_neg_right]
+  · simp only [ite_false, Bool.false_eq_true, inner_neg_right]
     exact ⟨fun h => absurd h (by simp), fun _ => by linarith⟩
-  · simp only [hs, if_true]
+  · simp only [ite_true]
     exact ⟨fun _ => hpos, fun h => absurd h (by simp)⟩
 
 /-- **The rule, ready for the row soundness.**  State, `TpSem` and a robust cycle give Rupert. -/

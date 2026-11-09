@@ -71,7 +71,7 @@ def Mx : Matrix (Fin 3) (Fin 3) ℝ := !![1, 0, 0; 0, 1, 0; 0, 0, -1]
 /-- The matrix acts as `mir`. -/
 theorem Mx_lin (v : ℝ³) : Mx.toEuclideanLin v = mir v := by
   ext i; fin_cases i <;>
-    simp [Mx, Matrix.toLpLin_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_three, mir]
+    simp [Mx, Matrix.toLpLin_apply, dotProduct, Fin.sum_univ_three, mir]
 
 /-- The matrix is orthogonal. -/
 theorem Mx_mem : Mx ∈ Matrix.orthogonalGroup (Fin 3) ℝ := by

@@ -197,7 +197,7 @@ theorem face : ∃ n : ℝ³, ∃ h : ℝ, n ≠ 0 ∧
   · intro i hi
     fin_cases i <;> simp_all [PiLp.inner_apply, Fin.sum_univ_three, vx, xN, pt, ptl]
   · intro i hi
-    fin_cases i <;> simp_all [PiLp.inner_apply, Fin.sum_univ_three, vx, xN, pt, ptl] <;> norm_num
+    fin_cases i <;> simp_all [PiLp.inner_apply, Fin.sum_univ_three, vx, xN, pt, ptl] 
 
 theorem vw_ne_zero : vw ≠ 0 := by
   intro h

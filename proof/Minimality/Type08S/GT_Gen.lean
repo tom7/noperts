@@ -81,7 +81,7 @@ theorem fv_depth (c : V3) : ∃ K : ℝ, ∀ P : ℝ³,
     rw [inner_neg_right, ← h2, inner_sub_left]; ring
   have e3 : ⟪P, u0⟫ = ⟪P - g, u0⟫ + ⟪g, u0⟫ := by
     rw [← inner_add_left]; congr 1; abel
-  simp only [fv, lin, hfΦ, inner_add_right, real_inner_smul_right, e1, e2, e3, inner_neg_right]
+  simp only [fv, lin, hfΦ, inner_add_right, real_inner_smul_right, e1, e2, e3]
   ring
 
 /-- **Generic lexicographic tilt, frame form.** -/

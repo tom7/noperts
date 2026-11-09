@@ -44,7 +44,7 @@ theorem mem_normalConeAt_of_vertices {k : ℕ} (p : ZMod k → ℝ²) (n : ℝ²
     · exact ⟨fun x y => inner_add_right _ _ _, fun c x => by simp [real_inner_smul_right]⟩
   have := hsub hq
   rw [inner_sub_right]
-  simp only [Set.mem_setOf_eq] at this
+  simp only [Set.mem_ofPred_eq] at this
   linarith
 
 theorem sum_zmod3_of_distinct {M : Type*} [AddCommMonoid M] (g : ZMod 3 → M) (i j l : ZMod 3)

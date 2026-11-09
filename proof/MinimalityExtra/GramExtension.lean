@@ -148,13 +148,11 @@ theorem gram_sufficient (u1 u2 w1 w2 : Fin 3 → ℝ) (hli : LinearIndependent �
   · rw [Matrix.conjTranspose_eq_transpose_of_trivial]
     refine gen (Pi.single 0 1) u1 w1 ?_ ?_
     · ext i; fin_cases i <;> simp [hC, hB]
-    · ext i; fin_cases i <;> simp [hMdef, hB, Matrix.mulVec, dotProduct, Fin.sum_univ_three,
-        dotProduct_comm] <;> linarith
+    · ext i; fin_cases i <;> simp [hMdef, hB, Matrix.mulVec, dotProduct, Fin.sum_univ_three] <;> linarith
   · rw [Matrix.conjTranspose_eq_transpose_of_trivial]
     refine gen (Pi.single 1 1) u2 w2 ?_ ?_
     · ext i; fin_cases i <;> simp [hC, hB]
-    · ext i; fin_cases i <;> simp [hMdef, hB, Matrix.mulVec, dotProduct, Fin.sum_univ_three,
-        dotProduct_comm] <;> linarith
+    · ext i; fin_cases i <;> simp [hMdef, hB, Matrix.mulVec, dotProduct, Fin.sum_univ_three] <;> linarith
 
 theorem one_view_sufficient (u w : Fin 3 → ℝ) (hu : u ≠ 0) (hs0 : 0 < w ⬝ᵥ u) :
     ∃ G : Matrix (Fin 3) (Fin 3) ℝ, G.PosDef ∧ G *ᵥ u = w := by

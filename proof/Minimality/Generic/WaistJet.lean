@@ -27,7 +27,7 @@ noncomputable def jc (n0 n1 h v0 v1 v2 z t2 t3 t4 u2 u3 u4 : ℝ) : ℕ → ℝ 
 noncomputable def pj (a : ℕ → ℝ) : ℝ[X] := ∑ k ∈ Finset.range 9, C (a k) * X^k
 
 lemma pj_coeff (a : ℕ → ℝ) (j : ℕ) : (pj a).coeff j = if j < 9 then a j else 0 := by
-  simp [pj, finset_sum_coeff, coeff_C_mul, coeff_X_pow]
+  simp [pj, coeff_C_mul, coeff_X_pow]
 
 lemma pj_tc (a : ℕ → ℝ) (m : ℕ) (hm : m < 9) (h0 : ∀ i < m, a i = 0) (hneg : a m < 0) :
     (pj a).trailingCoeff < 0 := by

@@ -80,13 +80,13 @@ theorem u_free (ε : ℝ) (h0 : 0 < ε) (h1 : ε < 1 / 4) : FreeAt (univ.image U
   have m : ∀ i, UX i ∈ univ.image UX := fun i => Finset.mem_image_of_mem _ (Finset.mem_univ i)
   rcases all4' i with rfl | rfl | rfl | rfl
   · left
-    exact ⟨UX 2, m _, UX 1, m _, by simp [UX, UU, UD, det3, cross]; nlinarith,
+    exact ⟨UX 2, m _, UX 1, m _, by simp [UX, UU, UD, det3]; nlinarith,
       by simp [UX, UU, UD, det3, cross]; nlinarith, by simp [UX, UU, UD, det3, cross]; nlinarith⟩
   · left
-    exact ⟨UX 0, m _, UX 2, m _, by simp [UX, UU, UD, det3, cross]; nlinarith,
+    exact ⟨UX 0, m _, UX 2, m _, by simp [UX, UU, UD, det3]; nlinarith,
       by simp [UX, UU, UD, det3, cross]; nlinarith, by simp [UX, UU, UD, det3, cross]; nlinarith⟩
   · left
-    exact ⟨UX 1, m _, UX 0, m _, by simp [UX, UU, UD, det3, cross]; nlinarith,
+    exact ⟨UX 1, m _, UX 0, m _, by simp [UX, UU, UD, det3]; nlinarith,
       by simp [UX, UU, UD, det3, cross]; nlinarith, by simp [UX, UU, UD, det3, cross]; nlinarith⟩
   · right
     exact ⟨UX 1, m _, UX 2, m _, UX 0, m _, by simp [UX, UU, UD, det3]; nlinarith,

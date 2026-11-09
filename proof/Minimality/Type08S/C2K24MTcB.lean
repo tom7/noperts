@@ -55,7 +55,7 @@ theorem k24mtc_core {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ} (hC : K6m
   have Eb : fpoint P q r d (0, γ6, 0) = b := by rw [k17f_fp, hb2]; module
   have Ec : fpoint P q r d (0, 1 - β6, -1) = c := by rw [k17f_fp, hc2]; module
   have Ea' : fpoint P q r d (0, γ6, -γ6) = a' := by rw [k17f_fp, ha'2]; module
-  have Eb' : fpoint P q r d (α1, β1 * (1 - β6), -β1) = b' := by rw [k17f_fp, hb'2]; try module
+  have Eb' : fpoint P q r d (α1, β1 * (1 - β6), -β1) = b' := by rw [k17f_fp, hb'2]
   have Ec' : fpoint P q r d (α1, β1 * γ6, 0) = c' := by rw [k17f_fp, hc'2]; module
   -- metric facts
   have hF1 : ⟪a', r⟫ < ⟪c, r⟫ := by

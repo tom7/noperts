@@ -56,8 +56,8 @@ theorem prop33_3_inner_identity (ea eb ec X3 X5 : ℝ³) (a3 b3 c3 a5 b5 c5 W A 
   have c2 : ⟪ec, ea⟫ = ⟪ea, ec⟫ := real_inner_comm _ _
   have c3' : ⟪ec, eb⟫ = ⟪eb, ec⟫ := real_inner_comm _ _
   subst hX3 hX5 hF hN hW hA hD
-  simp only [inner_sub_left, inner_sub_right, inner_add_left, inner_add_right,
-    real_inner_smul_left, real_inner_smul_right, c1, c2, c3']
+  simp only [inner_sub_left, inner_add_left, inner_add_right,
+    real_inner_smul_left, real_inner_smul_right, c1, c2]
   ring
 
 /-- **Proposition 33.3 (type 24, the arc of 016, closed obtuse octant).**

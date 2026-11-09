@@ -109,7 +109,7 @@ theorem skel1_nodup {a e b : ℝ} (h : a ≠ b) : (skel1 a e b).Nodup := by
   split_ifs with hc
   · simp [h]
   · push Not at hc
-    simp [h, hc.1, hc.2, Ne.symm hc.1, Ne.symm hc.2]
+    simp [h, hc.2, Ne.symm hc.1]
 
 theorem skel1_mem {a e b x : ℝ} {L : List ℝ} (ha : a ∈ L) (he : e ∈ L) (hb : b ∈ L)
     (hx : x ∈ skel1 a e b) : x ∈ L := by

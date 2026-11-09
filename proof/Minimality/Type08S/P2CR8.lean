@@ -55,11 +55,11 @@ theorem close_core (hF : Fr e1 e2 e3) (O w : ℝ³)
   · rcases lt_or_gt_of_ne hκv with hn | hp
     · obtain ⟨c, hc⟩ := hneg hn
       have := robust_of_reflect (z := fun j : ZMod 4 => ⟪Qg e1 e2 e3 O κ L zf Xr Yr zr Xg Yg zg j, κv • e3⟫) c
-        (by convert hzR using 2 with i; rw [hc i]; try rfl)
+        (by convert hzR using 2 with i; rw [hc i])
       exact this
     · obtain ⟨c, hc⟩ := hpos hp
       have := robust_of_shift (z := fun j : ZMod 4 => ⟪Qg e1 e2 e3 O κ L zf Xr Yr zr Xg Yg zg j, κv • e3⟫) c
-        (by convert hzR using 2 with i; rw [hc i]; try rfl)
+        (by convert hzR using 2 with i; rw [hc i])
       exact this
   · have h' := noPersist_smul' hbadR hlam
     rw [hsm] at h'

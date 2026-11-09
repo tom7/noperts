@@ -64,7 +64,7 @@ theorem h2_select {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
   have key := h2_real (z0 := ⟪d, b - d⟫) (q := ⟪c - d, b - d⟫) hs hu hb1 hb11 hb6
   simp only [u]
   rw [eb, eb', ec, ec', ea']
-  convert key using 4 <;> ring_nf
+  convert key using 4 
 
 end Type08Sp
 end Minimality

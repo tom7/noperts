@@ -104,21 +104,21 @@ theorem evalW_andW {ρ : W → Bool} (hP : ProperW ρ) (hG : GateOKW ρ) (a b : 
   have ht : evalW ρ ltrueW = true := by simp [ltrueW, evalW, e]
   unfold andW
   by_cases h1 : a = lfalseW ∨ b = lfalseW
-  · rw [if_pos h1]
+  · rw [ite_eq_left h1]
     rcases h1 with rfl | rfl <;> simp [hf]
-  · rw [if_neg h1]
+  · rw [ite_eq_right h1]
     by_cases h2 : a = ltrueW
-    · rw [if_pos h2]; subst h2; simp [ht]
-    · rw [if_neg h2]
+    · rw [ite_eq_left h2]; subst h2; simp [ht]
+    · rw [ite_eq_right h2]
       by_cases h3 : b = ltrueW
-      · rw [if_pos h3]; subst h3; simp [ht]
-      · rw [if_neg h3]
+      · rw [ite_eq_left h3]; subst h3; simp [ht]
+      · rw [ite_eq_right h3]
         by_cases h4 : a = b
-        · rw [if_pos h4]; subst h4; simp
-        · rw [if_neg h4]
+        · rw [ite_eq_left h4]; subst h4; simp
+        · rw [ite_eq_right h4]
           by_cases h5 : a = b.neg
-          · rw [if_pos h5]; rw [h5, evalW_neg, hf]; cases evalW ρ b <;> simp
-          · rw [if_neg h5]
+          · rw [ite_eq_left h5]; rw [h5, evalW_neg, hf]; cases evalW ρ b <;> simp
+          · rw [ite_eq_right h5]
             split_ifs
             · have := hG b.1 b.2 a.1 a.2
               simp only [evalW] at this ⊢

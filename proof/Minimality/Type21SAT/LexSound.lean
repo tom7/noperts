@@ -99,14 +99,14 @@ theorem lex_core {x : Fin 7 → ℝ³} (F : S0xFac 8 S21 x) (hx : Function.Injec
     have a1 := neg_false _ (hno _ (hmem _ rfl))
     by_cases hep : ep = 1
     · cases hb : pp.testBit t.val
-      · simp only [hep, decide_true, hb, beq_self_eq_true, Bool.false_eq_true, beq_iff_eq, ite_false] at a1
+      · simp only [hep, decide_true, hb, Bool.false_eq_true, beq_iff_eq, ite_false] at a1
         have := (FS t).2.mp a1
         simp [bits, hb, epR, hep, this]
-      · simp only [hep, decide_true, hb, beq_self_eq_true, if_true] at a1
+      · simp only [hep, decide_true, hb, beq_self_eq_true, ite_true] at a1
         have := (FS t).1.mp a1
         simp [bits, hb, epR, hep, this]
     · cases hb : pp.testBit t.val
-      · simp only [hep, decide_false, hb, beq_self_eq_true, if_true] at a1
+      · simp only [hep, decide_false, hb, beq_self_eq_true, ite_true] at a1
         have := (FS t).1.mp a1
         simp [bits, hb, epR, hep, this]
       · simp only [hep, decide_false, hb, Bool.true_eq_false, beq_iff_eq, ite_false] at a1

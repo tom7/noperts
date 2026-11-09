@@ -319,7 +319,7 @@ theorem CU_del_run (r : ℝ → ℝ → Prop)
     have hnd' : (p ++ a :: (S' ++ c :: t)).Nodup := by
       refine hnd.sublist ?_
       exact List.Sublist.append (List.Sublist.refl p)
-        (List.Sublist.cons₂ a (List.Sublist.append (List.sublist_cons_self b S') (List.Sublist.refl _)))
+        (List.Sublist.cons_cons a (List.Sublist.append (List.sublist_cons_self b S') (List.Sublist.refl _)))
     cases S' with
     | nil =>
       have hbc : r b c := by
@@ -349,9 +349,9 @@ theorem CU_del_Vrun (p D U t : List ℝ) (a m c : ℝ)
       have : (p ++ a :: m :: (U ++ c :: t)).Nodup := by
         refine hnd.sublist ?_
         exact List.Sublist.append (List.Sublist.refl p)
-          (List.Sublist.cons₂ a (List.sublist_append_right D _))
+          (List.Sublist.cons_cons a (List.sublist_append_right D _))
       simpa using this) hU
-  simp only [List.append_assoc, List.singleton_append, List.cons_append] at h1 h2 ⊢
+  simp only [List.append_assoc, List.cons_append] at h1 h2 ⊢
   exact h1.trans h2
 
 /-- Λ-run: strictly increasing `a, …, M` then strictly decreasing `M, …, c`. -/
@@ -366,9 +366,9 @@ theorem CU_del_Lrun (p D U t : List ℝ) (a M c : ℝ)
       have : (p ++ a :: M :: (U ++ c :: t)).Nodup := by
         refine hnd.sublist ?_
         exact List.Sublist.append (List.Sublist.refl p)
-          (List.Sublist.cons₂ a (List.sublist_append_right D _))
+          (List.Sublist.cons_cons a (List.sublist_append_right D _))
       simpa using this) hU
-  simp only [List.append_assoc, List.singleton_append, List.cons_append] at h1 h2 ⊢
+  simp only [List.append_assoc, List.cons_append] at h1 h2 ⊢
   exact h1.trans h2
 
 /-- Bridge to the tree's predicate: a `ZMod k` cycle is the list of its values at `0, …, k-1`. -/

@@ -109,7 +109,7 @@ theorem rotInner {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R ∈ Matrix.specialOrth
   rw [h', h]
 
 theorem inner_proj_xy (a b : ℝ³) : inner ℝ (proj_xy a) (proj_xy b) = inner ℝ a b - a 2 * b 2 := by
-  simp [proj_xy, PiLp.inner_apply, Fin.sum_univ_succ, Fin.sum_univ_two, Fin.sum_univ_three]
+  simp [proj_xy, PiLp.inner_apply, Fin.sum_univ_succ]
   ring
 
 /-- If `‖R n‖ = 1` and the third coordinate of `R n` is `±1`, then the third coordinate of `R w`

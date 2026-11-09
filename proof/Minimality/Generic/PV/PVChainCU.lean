@@ -12,7 +12,7 @@ open Finset
 
 theorem ofFn_head? {m : ℕ} (hm : 0 < m) (g : Fin m → ℝ) : (List.ofFn g).head? = some (g ⟨0, hm⟩) := by
   rw [List.head?_eq_getElem?]
-  simp [List.getElem?_ofFn, hm]
+  simp [hm]
 
 theorem ofFn_getLast? {m : ℕ} (hm : 0 < m) (g : Fin m → ℝ) :
     (List.ofFn g).getLast? = some (g ⟨m - 1, by omega⟩) := by

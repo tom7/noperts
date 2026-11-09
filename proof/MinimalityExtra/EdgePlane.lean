@@ -91,10 +91,10 @@ theorem exists_motion_of_edgePlane {n k : ℕ} [NeZero k] (hk : 3 ≤ k) (x : Fi
       by_cases hi : i = a
       · subst hi
         right
-        refine ⟨?_, by simp only [Ed, ← hd]; rw [hdN]; exact hNN⟩
+        refine ⟨?_, by simp only [Ed]; rw [hdN]; exact hNN⟩
         cases b
-        · simp only [J, Ed, ← hd, Bool.false_eq_true, ite_false]; exact hXa
-        · simp only [J, Ed, ← hd, ite_true]; exact hXa1
+        · simp only [J, Ed, Bool.false_eq_true, ite_false]; exact hXa
+        · simp only [J, Ed, ite_true]; exact hXa1
       · left
         have hj : J (i, b) = i ∨ J (i, b) = i + 1 := by
           cases b
@@ -172,7 +172,7 @@ theorem freeAt_of_edgePlane_vertex {n k : ℕ} [NeZero k] (hk : 3 ≤ k) (x : Fi
           cases b
           · exact Or.inl rfl
           · exact Or.inr rfl
-        simp only [hi, if_false]
+        simp only [hi, ite_false]
         by_cases h1 : (i, J (i, b)) = (i₁, j₁)
         · obtain ⟨e1, e2⟩ := Prod.mk.inj h1
           right
@@ -193,7 +193,7 @@ theorem freeAt_of_edgePlane_vertex {n k : ℕ} [NeZero k] (hk : 3 ≤ k) (x : Fi
     · exact ⟨true, rfl⟩
   obtain ⟨b, rfl⟩ := hb
   have := hL (i, b)
-  simp only [hi, if_false] at this
+  simp only [hi, ite_false] at this
   have e : ((L * α + da) + (L * μ + dm) * Z (J (i, b))) * A i + (L * s) * S i (J (i, b)) =
       L * ((α + μ * Z (J (i, b))) * A i + s * S i (J (i, b))) +
         (da + dm * Z (J (i, b))) * A i := by ring

@@ -312,7 +312,7 @@ theorem defeatCellCriterion : DefeatCellCriterion := by
       have hQscale : ∀ l ∈ Q, ∀ t : ℝ, 0 < t → t • l ∈ Q := by
         intro l hl t ht i j hij
         have := hl i j hij
-        simp only [Pi.smul_apply, smul_dotProduct, smul_eq_mul]
+        simp only [smul_dotProduct, smul_eq_mul]
         exact mul_lt_mul_of_pos_left this ht
       have hCscale : ∀ l ∈ C, ∀ t : ℝ, 0 < t → t • l ∈ C := by
         rintro l ⟨a, ha, rfl⟩ t ht
@@ -362,7 +362,7 @@ theorem defeatCellCriterion : DefeatCellCriterion := by
             split_ifs <;> linarith
           · symm
             simp only [add_smul, Finset.sum_add_distrib, ite_smul, one_smul, zero_smul,
-              Finset.sum_ite_eq', Finset.mem_univ, if_true, ← Finset.smul_sum, hS]
+              Finset.sum_ite_eq', Finset.mem_univ, ite_true, ← Finset.smul_sum, hS]
         have := hfC0 _ hmem
         rw [map_add, map_smul, smul_eq_mul] at this
         have h3 : δ * f S ≤ δ * |f S| := mul_le_mul_of_nonneg_left (le_abs_self _) hδpos.le

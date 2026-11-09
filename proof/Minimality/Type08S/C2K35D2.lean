@@ -49,7 +49,7 @@ theorem k28h5b_hd2 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have c1 : ⟪q,p⟫ = ⟪p,q⟫ := real_inner_comm _ _
   have c2 : ⟪r,p⟫ = ⟪p,r⟫ := real_inner_comm _ _
   have c3 : ⟪r,q⟫ = ⟪q,r⟫ := real_inner_comm _ _
-  simp only [inner_add_left, inner_add_right, inner_sub_left, inner_sub_right, inner_neg_left, inner_neg_right, real_inner_smul_left, real_inner_smul_right, c1, c2, c3] at hpq hcb hbc hg hr1 hr2 hT ⊢
+  simp only [inner_add_left, inner_add_right, inner_sub_right, inner_neg_right, real_inner_smul_left, real_inner_smul_right, c1, c2, c3] at hpq hcb hbc hg hr1 hr2 hT ⊢
   have hpr : ⟪p, r⟫ = ⟪p, q⟫ := by linarith
   simp only [hpr] at hcb hbc hg hr1 hr2 hT ⊢
   generalize ⟪p, p⟫ = pp at *

@@ -73,8 +73,7 @@ theorem T4cl_of_TTp {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d)
   have gb := hθ.2.2
   have p1 := hθ.pos 1 (by decide) (by decide) (by decide)
   have p4 := hθ.pos 4 (by decide) (by decide) (by decide)
-  simp only [ineq08, Matrix.cons_val, Matrix.cons_val_zero, Matrix.cons_val_one,
-    Matrix.head_cons] at p1 p4
+  simp only [ineq08, Matrix.cons_val, Matrix.cons_val_zero, Matrix.cons_val_one] at p1 p4
   simp only [gWb] at gb
   unfold T4cl
   rcases hTT with hT | hT'

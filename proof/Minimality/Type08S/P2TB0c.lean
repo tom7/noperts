@@ -77,10 +77,8 @@ theorem caseB_Xba {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (hT :
       θ 4 • (pts08 a a' b b' c c' d 2 - pts08 a a' b b' c c' d 6) +
       θ 5 • (pts08 a a' b b' c c' d 4 - pts08 a a' b b' c c' d 6) := by
     rw [hpts]
-    simp only [nfShape08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val,
-      Matrix.head_cons]; module
-  simp only [pts08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val,
-    Matrix.head_cons] at key
+    simp only [nfShape08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]; module
+  simp only [pts08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at key
   rw [h5] at key
   have hu : c - a' = (-θ 4) • (b - d) := by rw [key]; module
   set k : ℝ := -θ 4 with hk
@@ -127,8 +125,7 @@ theorem caseB_Xba {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (hT :
       simp only [Sep, max_le_iff, le_min_iff] at hsep ⊢
       tauto
   · right
-    simp only [grp08, WStraddle, pts08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val,
-      Matrix.head_cons] at hw
+    simp only [grp08, WStraddle, pts08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at hw
     obtain ⟨h1, h2, h3, h4⟩ := hw
     simp only [hin] at h1 h2 h3 h4
     rw [neg_mul_le_iff hk0] at h3 h4

@@ -79,7 +79,7 @@ theorem isRupert_slideA (E : VtxConf V u v a c b p q n Na Nb κa κb)
           have e1 : det3 (v - b) (v + sn • (b - v) + δn • u - b) ((-δn) • (a - v)) =
               (δn * δn) * det3 (v - b) (a - v) u := by
             simp only [det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply,
-              PiLp.neg_apply, smul_eq_mul]; ring
+              smul_eq_mul]; ring
           rw [e1]
           exact mul_pos (mul_self_pos.mpr hδn) E.dba_pos
       · exact Or.inl (by rw [one_mul]; exact E.det_b_pos hy hyv hyb hyn)

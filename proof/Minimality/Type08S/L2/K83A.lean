@@ -189,7 +189,7 @@ theorem k83_r0_gWb {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ} (W : Norm0
   have hkb := W.hκb
   rw [hμU] at hUle hbc
   rw [hμb] at hkb
-  simp only [gWU, gWb, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val, Matrix.head_cons] at hUle hbc hkb
+  simp only [gWU, gWb, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at hUle hbc hkb
   have hneg : β1 * (β6 * (1 - α1 - β1) + γ6 * (1 - α1 - β1) - β1 * (1 - β6 - γ6)) < 0 := by
     have h1 : 0 < (α1 - 1) * (β6 + γ6) + β1 := by
       have : 0 < (α1 - 1) * (β6 + γ6) := mul_pos (by linarith) (by linarith)

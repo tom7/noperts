@@ -142,7 +142,6 @@ theorem k28l2_Bp {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     have e : ⟪(α1 - 1) • P + β1 • Q, (α1 - 1) • P + β1 • Q⟫ = (α1 - 1) * m1 + β1 * m2 := by
       rw [hm1d, hm2d, w3]
       simp only [inner_smul_right, inner_add_left, inner_add_right, inner_smul_left, conj_trivial]
-      try ring
     rw [e] at hpos; exact hpos
   have Ea : fpoint P Q r d (1, 0, 0) = a := by rw [k17f_fp, ha2]; module
   have Ed : fpoint P Q r d (0, 0, 0) = d := by rw [k17f_fp]; module

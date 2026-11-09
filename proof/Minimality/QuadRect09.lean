@@ -541,7 +541,7 @@ theorem det3_ne_planes (L1 L2 : ℝ³ →ₗ[ℝ] ℝ) (A B e : ℝ³) (he : e �
   intro h0
   have hc := congrArg L1 (det3_cramer A B e (cross e A))
   simp only [map_add, map_sub, map_smul, hA1, he1, h0, zero_smul, map_zero, smul_eq_mul,
-    mul_zero, add_zero, zero_add] at hc
+    mul_zero, add_zero] at hc
   have h3 : det3 A e (cross e A) * L1 B = 0 := by linarith
   have h4 : det3 A e (cross e A) = 0 := (mul_eq_zero.mp h3).resolve_right hB1
   have h5 : det3 e A (cross e A) = 0 := by rw [det3_swap, h4]; simp

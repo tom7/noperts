@@ -202,13 +202,13 @@ theorem lemmaPV (P : IsPrismPair V F₁ F₂ H n₁ n₂ h₁ h₂) (E : PVEnds 
       have m1 : ∀ r ∈ [pvDepth n₁ n₂ E.A₁, pvDepth n₁ n₂ E.B₁, pvDepth n₁ n₂ l₁, pvDepth n₁ n₂ u₁],
           ∃ p ∈ F₁, pvDepth n₁ n₂ p = r := by
         intro r hr
-        simp only [List.mem_cons, List.mem_singleton, List.not_mem_nil, or_false] at hr
+        simp only [List.mem_cons, List.not_mem_nil, or_false] at hr
         rcases hr with rfl | rfl | rfl | rfl
         exacts [⟨_, E.A₁_mem, rfl⟩, ⟨_, E.B₁_mem, rfl⟩, ⟨_, hl₁, rfl⟩, ⟨_, hu₁, rfl⟩]
       have m2 : ∀ r ∈ [pvDepth n₁ n₂ E.A₂, pvDepth n₁ n₂ E.B₂, pvDepth n₁ n₂ l₂, pvDepth n₁ n₂ u₂],
           ∃ p ∈ F₂, pvDepth n₁ n₂ p = r := by
         intro r hr
-        simp only [List.mem_cons, List.mem_singleton, List.not_mem_nil, or_false] at hr
+        simp only [List.mem_cons, List.not_mem_nil, or_false] at hr
         rcases hr with rfl | rfl | rfl | rfl
         exacts [⟨_, E.A₂_mem, rfl⟩, ⟨_, E.B₂_mem, rfl⟩, ⟨_, hl₂, rfl⟩, ⟨_, hu₂, rfl⟩]
       intro x hx y hy

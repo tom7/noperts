@@ -78,7 +78,7 @@ theorem t4_eq (F : OctFacets a a' b b' c c') (hd : IsCap F d)
       (by simp only [crossYZ]; nlinarith [mul_pos hr2 (show 0 < za - zw by linarith)])
       (by simp only [Phi]; rw [hT3]; nlinarith [mul_neg_of_neg_of_pos cfg.T3_W hT4])
       (by simp only [Phi]; rw [hT3]; nlinarith [mul_neg_of_neg_of_pos cfg.T3_A hT4])
-  · simp only [t5aPts, quint_3, quint_4, quint_0, quint_2]
+  · simp only [t5aPts, quint_3, quint_4, quint_0]
     subst hrb
     have hub : ua * r2 < r2 := by nlinarith
     exact cross_neg_of_planes FT1 FQac ⟨r1, r2, 0⟩ ⟨ua * b1, ua * r2, a3⟩ ⟨t * A, 0, za⟩ ⟨0, 0, zw⟩

@@ -147,8 +147,7 @@ theorem T2_nws4 {x : Fin 7 → ℝ³} (N : NF16 x) (hf15 : 0 < N.d * N.q - (N.g 
       simp only [NF16.vT2, NF16.f15, NF16.t0146v]
       nf_simp N
       ext k
-      simp only [nfP, nfV, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply, PiLp.neg_apply,
-        smul_eq_mul]
+      simp only [nfP, nfV, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]
       field_simp
       ring
   have e2 : ⟪N.vT2, (x 5 - x 3)⟫ = -N.f15 * (⟪x 4, (x 5 - x 3)⟫ - ⟪x 1, (x 5 - x 3)⟫) +

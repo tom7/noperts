@@ -220,7 +220,7 @@ theorem propH_n2_ge_eq {V : Finset ℝ³} {cP mP fP rP gP wP aP : ℝ³}
   have c20 := hcv 2 0 (by decide) (by decide)
   have c21 := hcv 2 1 (by decide) (by decide)
   obtain ⟨b0, b1', b2', b3, b4⟩ := zmod5_add_one
-  simp only [h5Pts, b2', quint_0, quint_1, quint_2, quint_3, quint_4, b3] at c20 c21 c24
+  simp only [h5Pts, b2', quint_0, quint_1, quint_2, quint_3, quint_4] at c20 c21 c24
   have hmaG := cross_comb_axis (gx := A) hzv hzw c20 c21
   exact Fr.n2_core hV hc hm ha hr hw Φc Φm Φf Φr Φg Φw Φa hA hs0 hs1 hzv hzw hb2 hz2 hr1 ha3 hxa tt htt0
     (fun i j h1 h2 => lex_of_cross _ (hcv i j h1 h2))

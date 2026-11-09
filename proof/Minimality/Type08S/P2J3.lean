@@ -33,7 +33,7 @@ theorem normalCone_of_far (S : Set ℝ²) {u t : ℝ²} (hfar : ∀ m ∈ S, ‖
     exact this
   have hconv : Convex ℝ {q : ℝ² | ⟪t - u, q - t⟫ ≤ 0} := by
     have : {q : ℝ² | ⟪t - u, q - t⟫ ≤ 0} = {q : ℝ² | ⟪t - u, q⟫ ≤ ⟪t - u, t⟫} := by
-      ext q; simp only [Set.mem_setOf_eq, inner_sub_right]; constructor <;> intro h <;> linarith
+      ext q; simp only [Set.mem_ofPred_eq, inner_sub_right]; constructor <;> intro h <;> linarith
     rw [this]
     exact convex_halfSpace_le (f := fun q : ℝ² => ⟪t - u, q⟫) ⟨fun x y => inner_add_right _ _ _,
       fun c x => inner_smul_right _ _ _⟩ _

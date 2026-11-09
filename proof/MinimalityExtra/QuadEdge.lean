@@ -128,7 +128,7 @@ theorem c5_fail {b m f c g : ℝ} (h : ¬ RobUni (c5 b m f c g)) :
   obtain ⟨e01, e02, e03, e04, e11, e12, e13, e14, e21, e22, e23, e24, e31, e32, e33, e34, e41, e42, e43, e44⟩ := zmod5_sums_
   have hb4 : b' < 5 := by omega
   have hc4 : c' < 5 := by omega
-  interval_cases b' <;> interval_cases c' <;> (try omega) <;> interval_cases d <;> (try omega) <;>
+  interval_cases b' <;> interval_cases c' <;> (try omega) <;> interval_cases d  <;>
   rcases hB with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [Nat.cast_ofNat, Nat.cast_one, e01, e02, e03, e04, e11, e12, e13, e14, e21, e22, e23, e24, e31, e32, e33, e34, e41, e42, e43, e44] at h
     simp [c5] at h

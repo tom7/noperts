@@ -34,13 +34,12 @@ theorem inner_pt_1 (hF : Fr e1 e2 e3) (o : ℝ³) (X Y z : ℝ) :
 theorem inner_pt_2 (hF : Fr e1 e2 e3) (o : ℝ³) (X Y z : ℝ) :
     ⟪pt e1 e2 e3 o X Y z, e2⟫ = ⟪o, e2⟫ + Y := by
   simp only [pt, pc, inner_add_left, real_inner_smul_left, hF.n22, hF.n12, hF.n23,
-    real_inner_comm e1 e2, real_inner_comm e2 e3]
+    real_inner_comm e2 e3]
   ring
 
 theorem inner_pt_3 (hF : Fr e1 e2 e3) (o : ℝ³) (X Y z : ℝ) :
     ⟪pt e1 e2 e3 o X Y z, e3⟫ = ⟪o, e3⟫ + z := by
-  simp only [pt, pc, inner_add_left, real_inner_smul_left, hF.n33, hF.n13, hF.n23,
-    real_inner_comm e1 e3, real_inner_comm e2 e3]
+  simp only [pt, pc, inner_add_left, real_inner_smul_left, hF.n33, hF.n13, hF.n23]
   ring
 
 /-- The reflection in the plane `⟂ e1` in frame coordinates: `X ↦ -X`. -/

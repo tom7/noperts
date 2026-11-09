@@ -139,8 +139,8 @@ theorem dv_ne {g : Geo} (hG : GeoOK g) {f : Nat} (hf : f < 21) : g.dv f ≠ 0 :=
 theorem Rff_pos {g : Geo} {t f : Nat} (hv : g.dv f ≠ 0) : 0 < Rtie g t f f := by
   unfold Rtie
   by_cases hz : Z0 g t f
-  · simp only [hz, if_true]; exact real_inner_self_pos.mpr hv
-  · simp only [hz, if_false]; rw [R_self]; exact wf_pos hz
+  · simp only [hz, ite_true]; exact real_inner_self_pos.mpr hv
+  · simp only [hz, ite_false]; rw [R_self]; exact wf_pos hz
 
 theorem evalW_ltrueW (g : Geo) : evalW (rhoW g) ltrueW = true := by
   simp [evalW, ltrueW, rhoW, rho]
@@ -161,7 +161,7 @@ theorem DpW_lex {g : Geo} {t f : Nat} (hv : g.dv f ≠ 0) (sd q : Nat) :
     · simp [LexSg, hs, h21b_LP, evalW_ltrueW g, evalW_lfalseW g]
     · simp [LexSg, hs, h21b_LP, evalW_ltrueW g, evalW_lfalseW g]
   · unfold DpW
-    rw [if_neg hq]
+    rw [ite_eq_right hq]
     have hb := (kSW_sg sd (SgW_RH g t f q)).scale (c := (Rtie g t f f)⁻¹) (inv_pos.mpr hR)
     exact lexS_sound (rhoW_proper g) (rhoW_gateOK g) (SgW_P g t f q) hb
 
@@ -171,11 +171,11 @@ theorem ordDW_lex {g : Geo} {t f : Nat} (hv : g.dv f ≠ 0) (sd : Nat) {a b : Na
       ((Rtie g t f f)⁻¹ * (sdR sd * ⟪Gv g t f, g.x a - g.x b⟫)) := by
   unfold ordDW
   by_cases h : a < b
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     have := DpW_lex (t := t) hv sd (EI a b)
     rw [P_eq, Rtie_eq g t f (EI a b), dv_EI g ha hb h] at this
     exact this
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     have hba : b < a := by omega
     have := LexSg_neg (DpW_lex (t := t) hv sd (EI b a))
     rw [P_eq, Rtie_eq g t f (EI b a), dv_EI g hb ha hba] at this
@@ -276,7 +276,7 @@ theorem forceL_sound {ρ : W → Bool} {b : List LitW} {x : S3W} {r : ℝ} (sg :
   by_cases hh : HoldsW ρ b
   · have hb' : ∀ l, HoldsW ρ (b ++ [l]) := fun l => HoldsW_append.mpr (Or.inl hh)
     simp only [forceL] at hc
-    split_ifs at hc <;> simp only [List.mem_cons, List.mem_singleton, List.not_mem_nil, or_false] at hc
+    split_ifs at hc <;> simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
     · subst hc; exact hb' _
     · subst hc; exact hb' _
     · rcases hc with rfl | rfl <;> exact hb' _
@@ -284,7 +284,7 @@ theorem forceL_sound {ρ : W → Bool} {b : List LitW} {x : S3W} {r : ℝ} (sg :
     have mk : ∀ l, evalW ρ l = true → HoldsW ρ (b ++ [l]) := fun l e =>
       HoldsW_append.mpr (Or.inr ⟨l, by simp, e⟩)
     simp only [forceL] at hc
-    split_ifs at hc with h1 h2 <;> simp only [List.mem_cons, List.mem_singleton, List.not_mem_nil, or_false] at hc
+    split_ifs at hc with h1 h2 <;> simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
     · subst hc; exact mk _ (hx.1.mpr (p1 h1))
     · subst hc; exact mk _ (hx.2.mpr (p2 h2))
     · have h0 : sg = 0 := by omega
@@ -339,7 +339,7 @@ theorem z0_rows (g : Geo) (t f b : Nat) :
     ∀ c ∈ [[(Z0L t f).neg, (liftS (PS t f b)).1.neg], [(Z0L t f).neg, (liftS (PS t f b)).2.neg]],
       HoldsW (rhoW g) c := by
   intro c hc
-  simp only [List.mem_cons, List.mem_singleton, List.not_mem_nil, or_false] at hc
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hc
   by_cases hz : Z0 g t f
   · have h0 := P_of_Z0 hz b
     have hP := SgW_P g t f b
@@ -444,25 +444,25 @@ theorem fam35_sound {g : Geo} (hG : GeoOK g) {kind t f x b : Nat} {s1 s2 : Int} 
   unfold cands35 at hc
   unfold ok35 at hok
   by_cases k0 : kind = 0
-  · rw [if_pos k0] at hc
+  · rw [ite_eq_left k0] at hc
     exact z0_rows g t f b c hc
-  rw [if_neg k0] at hc hok
+  rw [ite_eq_right k0] at hc hok
   by_cases k1 : kind = 1
-  · rw [if_pos k1] at hc hok
+  · rw [ite_eq_left k1] at hc hok
     simp only [Bool.and_eq_true, Bool.or_eq_true, beq_iff_eq] at hok
     exact rh_rows t f x b hok.1 (by rcases hok.2 with (h | h) | h <;> simp [h]) c hc
-  rw [if_neg k1] at hc hok
+  rw [ite_eq_right k1] at hc hok
   by_cases k2 : kind = 2
-  · rw [if_pos k2] at hc hok
+  · rw [ite_eq_left k2] at hc hok
     simp only [Bool.and_eq_true, Bool.or_eq_true, beq_iff_eq, decide_eq_true_eq] at hok
     obtain ⟨⟨⟨⟨hf, hb⟩, hs1⟩, hs2⟩, hl⟩ := hok
     exact ka_rows hG hf hb hl hs1 (by rcases hs2 with (h | h) | h <;> simp [h]) c hc
-  rw [if_neg k2] at hc hok
+  rw [ite_eq_right k2] at hc hok
   by_cases k3 : kind = 3
-  · rw [if_pos k3] at hc
+  · rw [ite_eq_left k3] at hc
     simp only [List.mem_singleton] at hc
     subst hc; exact rh_excl g t f x
-  · rw [if_neg k3] at hc
+  · rw [ite_eq_right k3] at hc
     have k4 : kind = 4 := by
       simp only [decide_eq_true_eq] at hok
       omega
