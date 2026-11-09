@@ -45,17 +45,21 @@ def parsePoly (fs : List String) : IO SeptopertShell.Poly := do
     rest := rest.drop 4
   pure p.reverse
 
-partial def parseTree (fs : List String) : IO (SplitTree × List String) := do
-  match fs with
-  | "L" :: rest => pure (.leaf, rest)
-  | "S" :: d :: m :: rest =>
-    let dim ← parseNat d
+/-- A split tree in preorder: `L` (leaf), `S dim point`, `s dim` (split at the midpoint of the current box) or `g`
+(shellcert4's geometric split in the third coordinate e = d - dc: the point 2 e_lo + dc). The points are recomputed
+from the box `lo`, `hi` (untrusted parsing: `checkTree` checks every split point lies in its box). -/
+partial def parseTree (lo hi : Array ℚ) (dc : ℚ) (fs : List String) : IO (SplitTree × List String) := do
+  let sub (dim : ℕ) (mid : ℚ) (rest : List String) : IO (SplitTree × List String) := do
     if h : dim < 3 then
-      let mid ← parseRat m
-      let (l, r1) ← parseTree rest
-      let (r, r2) ← parseTree r1
+      let (l, r1) ← parseTree lo (hi.set! dim mid) dc rest
+      let (r, r2) ← parseTree (lo.set! dim mid) hi dc r1
       pure (.split ⟨dim, h⟩ mid l r, r2)
     else throw (IO.userError s!"bad split dimension {dim}")
+  match fs with
+  | "L" :: rest => pure (.leaf, rest)
+  | "S" :: d :: m :: rest => do let dim ← parseNat d; sub dim (← parseRat m) rest
+  | "s" :: d :: rest => do let dim ← parseNat d; sub dim ((lo[dim]! + hi[dim]!) / 2) rest
+  | "g" :: rest => sub 2 (2 * lo[2]! + dc) rest
   | _ => throw (IO.userError "bad tree")
 
 def fin3 (n : ℕ) : IO (Fin 3) := if h : n < 3 then pure ⟨n, h⟩ else throw (IO.userError s!"not < 3: {n}")
@@ -82,7 +86,7 @@ def parseSlab (path : String) : IO SlabData := do
     throw (IO.userError s!"{path}: bad sizes")
   let certs ← conds.mapM fun fs => do
     let mm ← parseNat (fs.getD 0 ""); let dc ← parseRat (fs.getD 1 "")
-    let (t, rest) ← parseTree (fs.drop 2)
+    let (t, rest) ← parseTree #[-box[0]!, -box[1]!, box[2]! - dc] #[box[0]!, box[1]!, box[3]! - dc] dc (fs.drop 2)
     unless rest.isEmpty do throw (IO.userError s!"{path}: trailing tree tokens")
     pure ({ m := mm, dc := dc, tree := t } : Cert)
   let triF ← (List.range 7).toArray.mapM fun k => do

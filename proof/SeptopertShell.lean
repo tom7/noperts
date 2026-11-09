@@ -34,7 +34,7 @@ Rupert shapes.
    With `classicParams ∈ D` and `outsideParams ∉ D`, `separates_of_frontier_subset` gives the theorem.
 
 Status (2026-11-09): done. `islandEnclosed_of_closureData` (standard axioms) and the native check
-`checkSeptopertShell SeptopertShell/data/shell` (27 slabs and the closure, 28 min on 32 tasks; it prints
+`checkSeptopertShell SeptopertShell/data/shell` (27 slabs and the closure, 1.0 MB, 30 min on 32 tasks; it prints
 "instantiated: IslandEnclosed"). The data is untrusted and regenerable: nopert229
 `out/bottleneck/famcensus/islandmap/bnd/shell_build.sh` (witness fits, exact C++ certificates, closure.py --lean).
 -/
