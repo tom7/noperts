@@ -169,7 +169,7 @@ theorem boxesHaveNoUnimodalView : BoxesHaveNoUnimodalView := by
   have hS : ∀ i : ZMod k, Sok e0 e1 e2 (lab i) (lab (i + 1)) := by
     intro i M M' hM1 hM2 hM'1 hM'2
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     obtain ⟨c0, c1, c2⟩ := hcon
     have d1 := hrim M i hM1 hM2
     have d2 := hrim M' i hM'1 hM'2
@@ -197,7 +197,7 @@ theorem boxesHaveNoUnimodalView : BoxesHaveNoUnimodalView := by
   by_cases hz : e0 = 0 ∨ e1 = 0 ∨ e2 = 0
   · exact C0 e0 (sgR_mem _) e1 (sgR_mem _) e2 (sgR_mem _) hz (xs 0) (xs 1) (xs 2)
       (hne1 0).symm (hne1 1).symm (hne2 0) (hx 0) (hx 1)
-  push_neg at hz
+  push Not at hz
   obtain ⟨z0, z1, z2⟩ := hz
   have m0 : e0 ∈ sl' := by have := sgR_mem (u 0); simp [sl, sl'] at this ⊢; omega
   have m1 : e1 ∈ sl' := by have := sgR_mem (u 1); simp [sl, sl'] at this ⊢; omega

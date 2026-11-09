@@ -74,7 +74,7 @@ end Frame09
 theorem exists_Ioo_avoid {lo hi : ℝ} (h : lo < hi) (a b : ℝ) :
     ∃ D, lo < D ∧ D < hi ∧ D ≠ a ∧ D ≠ b := by
   have hinf : (Set.Ioo lo hi).Infinite := Set.Ioo_infinite h
-  obtain ⟨D, hD, hD'⟩ := (hinf.diff (Set.toFinite ({a, b} : Set ℝ))).nonempty
+  obtain ⟨D, hD, hD'⟩ := (hinf.sdiff (Set.toFinite ({a, b} : Set ℝ))).nonempty
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at hD'
   exact ⟨D, hD.1, hD.2, hD'.1, hD'.2⟩
 

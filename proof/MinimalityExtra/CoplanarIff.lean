@@ -238,7 +238,7 @@ theorem hyp_to_shadow (V : Finset ℝ³)
   have hUopen : IsOpen U := by
     have : U = {u | f u ≠ 0} ∩ ⋂ v ∈ V.filter (· ∉ W), ({u | f u ≠ 0} ∩ q v ⁻¹' O) := by
       ext u
-      simp only [U, Set.mem_setOf_eq, Set.mem_inter_iff, Set.mem_iInter, Set.mem_preimage,
+      simp only [U, Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_iInter, Set.mem_preimage,
         Finset.mem_filter]
       constructor
       · rintro ⟨h1, h2⟩
@@ -330,7 +330,7 @@ theorem shadow_to_hyp (V : Finset ℝ³) (h : CoplanarShadowCorners V) :
   let W : Finset ℝ³ := V.filter (fun v => π v ∈ Set.extremePoints ℝ S)
   have hWmem : ∀ v, v ∈ W ↔ v ∈ V ∧ π v ∈ Set.extremePoints ℝ S := fun v => Finset.mem_filter
   have hWs : (W : Set ℝ³) = ShadowCorners V π := by
-    ext v; simp only [Finset.mem_coe, hWmem, ShadowCorners, Set.mem_setOf_eq]; exact Iff.rfl
+    ext v; simp only [Finset.mem_coe, hWmem, ShadowCorners, Set.mem_ofPred_eq]; exact Iff.rfl
   have hextsub : Set.extremePoints ℝ S ⊆ π '' (V : Set ℝ³) := by
     rw [hSimg]; exact extremePoints_convexHull_subset
   have hextW : Set.extremePoints ℝ S = π '' (W : Set ℝ³) := by

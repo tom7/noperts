@@ -393,11 +393,11 @@ theorem closeVerticesRupert : CloseVerticesRupert := by
   have hπ : ∀ p ∈ V, π p ∈ W ∧ dist p (π p) ≤ ε / 2 := by
     intro p hp
     by_cases h : p = x ∨ p = y
-    · simp only [π, if_pos h, hW, Finset.mem_insert, true_or, true_and]
+    · simp only [π, ite_eq_left h, hW, Finset.mem_insert, true_or, true_and]
       rcases h with rfl | rfl
       · exact hdx
       · exact hdy
-    · simp only [π, if_neg h, hW, Finset.mem_insert]
+    · simp only [π, ite_eq_right h, hW, Finset.mem_insert]
       push Not at h
       refine ⟨Or.inr (Finset.mem_erase.2 ⟨h.2, Finset.mem_erase.2 ⟨h.1, hp⟩⟩), ?_⟩
       simp; positivity
