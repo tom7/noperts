@@ -3,6 +3,7 @@ module
 public import SeptopertShell.Watertight
 public import SeptopertShell.View
 public import SeptopertShell.Poly
+public import SeptopertShell.Slab
 
 /-!
 # A watertight shell of Rupert shapes around the Septopert island
