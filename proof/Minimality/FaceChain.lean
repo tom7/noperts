@@ -7,7 +7,7 @@ public import Minimality.Tilt
 /-!
 # The lower chain of a planar point set seen edge-on
 
-Tools for Theorem A of `FEWER-FACES-PROOFS.md` (a face with 5 or 6 vertices):
+Tools for Theorem A (a face with 5 or 6 vertices):
 at a view in the plane of a face, the face is seen edge-on, and tilting the
 view shows its *lower chain* (Lemma 8.0).  In the plane coordinates
 `(x, y) = (s 0, s 1)` (the view along `y`):

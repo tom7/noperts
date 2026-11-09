@@ -10,7 +10,7 @@ public import Nopert
 /-!
 # Theorem A: seven points with a face of five or six of them
 
-Notes: `FEWER-FACES-PROOFS.md`, §2B (the constructive version of Theorem A).
+The constructive version of Theorem A.
 
 * `isOpen_isCyclicUnimodal`: cyclic unimodality is an open condition.
 * `det3_ey`, `det3_ez`: triple products with the coordinate views.
@@ -87,7 +87,7 @@ theorem fin_val_add_one_of_lt {n : ℕ} (j : Fin (n + 1)) (hj : j.val < n) :
   · exact absurd (h ▸ hj) (by simp)
   · rfl
 
-/-- **The edge-on lemma** (standard frame; FEWER-FACES-PROOFS.md §2B).  The face
+/-- **The edge-on lemma** (standard frame; §2B).  The face
 `Q = V ∩ {z = h}` is in strictly convex position with distinct `x` and distinct
 `y`, `A`, `B` are its `x`-extremes, `V` lies in `z ≤ h`, and every point below
 the face other than `p` projects (along `y`) strictly inside the triangle
@@ -745,7 +745,7 @@ theorem det3_self_right (v w : ℝ³) : det3 v w v = 0 := by
 theorem det3_self_right' (v w : ℝ³) : det3 v w w = 0 := by
   simp [det3, cross, PiLp.inner_apply, Fin.sum_univ_three]; ring
 
-/-- **Case I** (FEWER-FACES-PROOFS.md §2B): the face `Q = V ∩ {z = h}` has at
+/-- **Case I** (§2B): the face `Q = V ∩ {z = h}` has at
 least three points, in strictly convex position; below it are exactly two
 points `p`, `q`, with `q` higher.  Then `V` is Rupert. -/
 theorem isRupert_caseI (V : Finset ℝ³) (h : ℝ) (p q : ℝ³) (hV : ∀ y ∈ V, y 2 ≤ h)
@@ -1886,7 +1886,7 @@ theorem fallback_witness (aL aH bL bH C : ℝ²) {lam : ℝ} (hlam : 0 < lam)
       have : (1 - ε) * (αA + αB) ≤ (1 - ε) * 1 := mul_le_mul_of_nonneg_left (by linarith) (by linarith)
       nlinarith
 
-/-- **The fallback of case II** (FEWER-FACES-PROOFS.md §2B): both `x`-ends of
+/-- **The fallback of case II** (§2B): both `x`-ends of
 the face carry a point at least as deep as `p` and a point at most as deep as
 `q`.  Then Theorem 5 (the waist lemma) applies with the face as the waist. -/
 theorem isRupert_caseII_fallback (V : Finset ℝ³) (h : ℝ) (p q : ℝ³) {lam : ℝ} (hlam : 0 < lam)
@@ -2299,7 +2299,7 @@ theorem convPos_of_extreme_plane {P : Finset ℝ³} {h : ℝ} (hP : ∀ w ∈ P,
     · rintro ⟨hx, hxw⟩; exact ⟨x, ⟨hx, hxw⟩, hLp x hx⟩
   rwa [hid] at hmem'
 
-/-- **Theorem A** (FEWER-FACES-PROOFS.md §2): seven points with a solid hull,
+/-- **Theorem A** (§2): seven points with a solid hull,
 of which at least five, but not all, lie on a facet, are Rupert. -/
 theorem isRupert_of_card_seven_of_facet (V F : Finset ℝ³) (hcard : V.card = 7)
     (hint : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) (hFV : F ⊂ V) (hF : 5 ≤ F.card)

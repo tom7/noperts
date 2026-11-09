@@ -588,7 +588,7 @@ theorem cross_sub_right (ν y C : ℝ³) : cross ν (y - C) = cross ν y + -cros
 /-- **Pivot Lemma.**  If rotating about the pivot axis at `c` (with sign `σ`) moves both ends of
 every rim edge not at `c` strictly inward, the view is free.  On a two-peaked 4-corner rim, with
 `c` the sharp corner, the four numbers are the torques of the two level tripods at the ends of
-their private edges (SPEC.md). -/
+their private edges. -/
 theorem freeAt_of_pivot {n k : ℕ} [NeZero k] (hk : 3 ≤ k) (x : Fin n → ℝ³) (w : ℝ³)
     (lab : ZMod k → Fin n) (hinj : Function.Injective lab) (hrim : StrictRimN x w lab)
     (hhid : HiddenInTriangles x w lab) (c : ZMod k) (σ : ℝ)

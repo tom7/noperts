@@ -7,7 +7,7 @@ public import Minimality.Chords
 /-!
 # Edge crossings: Theorem 8.9 (Lemma T over an edge with any far chain)
 
-FEWER-FACES-PROOFS.md, Theorem 8.9 with Lemma F. Two faces share the edge `vw`
+Theorem 8.9 with Lemma F. Two faces share the edge `vw`
 and `u₀` is the view along it: `w = v − h u₀`, `h ≠ 0`, so `v` and `w` have
 one screen position `p`. The faces project to the sides `[p, a]` and `[b, p]`
 of the shadow (counterclockwise `p, a, …, b`); `A`, `B` are their *far ends*
@@ -244,7 +244,7 @@ theorem edge_middle_sign {e G P h k δ : ℝ} (hδ : δ ≠ 0) (he : e ≠ 0) (h
         linarith
   · exact Or.inl hp
 
-/-- A middle of an edge crossing (FEWER-FACES-PROOFS.md Theorem 8.9): on the face
+/-- A middle of an edge crossing (Theorem 8.9): on the face
 over `[p, a]` (far end `A`) it is `c + s (A − c) + δ u₀`, on the face over
 `[b, p]` (far end `B`) it is `B + s (c − B) + δ u₀`, where `c` is the axle end of
 its chain: `v`, or `w` with `δ h < 0` (`w = v − h u₀`). -/

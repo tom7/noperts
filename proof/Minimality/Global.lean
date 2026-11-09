@@ -13,8 +13,8 @@ from the identity pose, or a crossing). This file is the generic global
 form: a pose `(R₁, o, R₂)` is a passage as soon as every rotated, translated
 inner vertex is a combination of the outer projected vertices with all
 weights positive. It is the exact (LP) formulation of a passage at a fixed
-pose, with no convex hull computed: anchored poses such as the corner
-placement (FEWER-FACES.md, "Anchored global passages") produce such weights.
+pose, with no convex hull computed: anchored poses, such as the corner
+placement, produce such weights.
 -/
 
 namespace Minimality

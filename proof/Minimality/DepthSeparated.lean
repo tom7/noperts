@@ -7,7 +7,7 @@ public import Minimality.UnimodalCert
 /-!
 # Depth-separated parallel pairs (Theorem 8.10)
 
-FEWER-FACES-PROOFS.md Theorem 8.10 (CRIT5-WRITEUP.md §3), which generalizes
+Theorem 8.10, which generalizes
 Theorem 7.3.  Let `p` be a strictly convex counterclockwise polygon with corner
 depths `z`, `e = [p a, p (a + 1)]` an edge with outward normal `n_e` and `c` a
 corner with `−n_e ∈ N_c` (`c` minimizes `⟪n_e, ·⟫`).  Removing `c` and the open

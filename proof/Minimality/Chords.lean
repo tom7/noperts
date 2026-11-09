@@ -8,7 +8,7 @@ public import Mathlib.GroupTheory.CosetCover
 /-!
 # Faces seen edge-on cost nothing: Proposition 8.8 (the flat-corner lemma)
 
-FEWER-FACES-PROOFS.md, Proposition 8.8. At a view `u₀` along some faces' planes,
+Proposition 8.8. At a view `u₀` along some faces' planes,
 each face projects to a segment (its *chord*, between two points `a`, `b`); its
 other points (the *middles*) project into the open chord. A middle `m` is
 `a + s (b − a) + δ u₀` with `0 < s < 1`: it differs from the point of the 3D

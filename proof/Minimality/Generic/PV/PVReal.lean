@@ -6,7 +6,7 @@ public import Minimality.Thm73
 @[expose] public section
 
 
-/-! Task 2: the pure-real skeleton lemma of Lemma PV (paper §3 "Same signs" / "Mixed"). -/
+/-! The pure-real skeleton lemma of Lemma PV ("Same signs" / "Mixed"). -/
 
 namespace Minimality
 open Finset
@@ -193,7 +193,7 @@ theorem skel_VV_plus (a1 e1 b1 b2 e2 a2 : ℝ)
   all_goals (first | (intro h; linarith) | (exfalso; linarith) | cu_any)
 
 
-/-- **The pure-real skeleton lemma of Lemma PV** (paper §3).  `aᵢ, bᵢ` are the near/far end depths of
+/-- **The pure-real skeleton lemma of Lemma PV**.  `aᵢ, bᵢ` are the near/far end depths of
 face `Fᵢ`, `loᵢ, hiᵢ` its extreme depths (so `loᵢ ≤ aᵢ, bᵢ ≤ hiᵢ`); depths of the two faces are
 distinct (`hx`), the ends of each face differ.  If neither (M−) nor (M+) holds, one of the four
 skeletons `(A₁, eᵢ, B₁, B₂, e₂, A₂)` is cyclically unimodal.

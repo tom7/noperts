@@ -15,8 +15,8 @@ for every `y ∈ V` (so `F v` lies in the normal cone of the shadow at the
 image of `v`; points inside the shadow get `F v = 0`), in equilibrium:
 `Σ F v = 0`, `Σ ⟪v, w⟫ F v = 0` and the torque about `w`,
 `Σ ⟪v × F v, w⟫`, vanishes. If every such system is zero, `V` is Rupert
-(first-order free at `w`). Arguments by force estimates (as in "Lemma T at
-the tie, robust form" of `FEWER-FACES-PROOFS.md` §7) only need these
+(first-order free at `w`). Arguments by force estimates (as in the robust form of
+Lemma T at a tie) only need these
 inequalities at test points of `V`.
 -/
 
