@@ -39,6 +39,9 @@ public import MinimalityExtra.EdgePlane
 public import MinimalityExtra.StrictSeptRupert
 public import MinimalityExtra.BoxShadow
 public import MinimalityExtra.FaceCircleSkeleton
+public import MinimalityExtra.AcuteEdge
+public import MinimalityExtra.PatchEdge
+public import MinimalityExtra.TwoDisjointFaces
 public import Minimality.Tilt
 public import Minimality.Thm73
 public import Minimality.Crossing

@@ -80,3 +80,7 @@ open MinimalityExtra
 #assert_standard_axioms MinimalityExtra.boxRule
 #assert_standard_axioms MinimalityExtra.skeletonLemma
 #assert_standard_axioms MinimalityExtra.faceCircleSkeleton
+#assert_standard_axioms MinimalityExtra.acuteEdgeLemma
+#assert_standard_axioms MinimalityExtra.patchEdgeBeyondPlane
+#assert_standard_axioms Minimality.patchEdge_isRupert
+#assert_standard_axioms MinimalityExtra.lemmaQ_twoDisjointFaces

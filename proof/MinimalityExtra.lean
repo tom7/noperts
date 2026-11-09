@@ -758,6 +758,44 @@ def CoplanarSilhouetteIff : Prop :=
 
 end Core
 
+
+/-- **The Acute Edge Lemma.**  Let the points `x 0, …, x (n-1)` be the vertices of a polytope, and
+let `ab` be an edge at which two supporting planes meet at an *acute dihedral angle*: `nF` and `nF'`
+are normals of two planes through `a` and `b`, with every point on the side `⟪nF, x i - x a⟫ ≤ 0`
+and `⟪nF', x i - x a⟫ ≤ 0`, and the outward normals make an obtuse angle, `⟪nF, nF'⟫ < 0`. Only `a`
+and `b` lie on both planes, and some point lies strictly inside the first half-space. Suppose every
+other vertex `x i` projects into the segment `ab`, that is, lies in the slab between the planes
+through `a` and `b` perpendicular to `ab`: strictly on the `a` side of the plane through `b`, and
+weakly (equality allowed) on the `b` side of the plane through `a`. Then the polytope is Rupert.
+
+Why: Because the dihedral is acute, there is a direction `w` perpendicular to the edge, in the plane
+of the first face, from which every vertex other than `a` and `b` lies strictly behind the line
+`ab`, so the edge is the front of the polytope. (At a right dihedral the second face is seen exactly
+edge-on, at depth zero, and this fails.) The slab condition says more: Every other vertex sits
+behind the segment `ab` itself, not beyond its ends. Look along a slight tilt of `w`. A small
+rotation about the edge's direction, with a small translation, then moves every vertex of a second
+copy strictly into the shadow of the first: A vertex `p ≠ a, b` is pushed in by the angle it makes
+with `a` and `b`, and `a`, `b` themselves by a vertex below the first plane. So the polytope is
+first-order free at that view, hence Rupert. The faces may be any polygons.
+
+Note that the general statement is false: "Every polytope with an acute dihedral angle is
+Rupert" does not hold. `ChipM18K5`, the Septopert M18 with three vertices chipped off (six
+edges at 81.95°), is a Nopert. Its acute edges are the short edges at the cuts, and the rest
+of the polytope reaches far beyond their ends, so the slab condition fails there. Its
+right-angled apex edges satisfy the slab condition but have dihedral exactly 90°, so
+`⟪nF, nF'⟫ < 0` fails. Both hypotheses are needed. -/
+def AcuteEdgeLemma : Prop :=
+  ∀ (n : ℕ) (x : Fin n → ℝ³) (a b : Fin n) (nF nF' : ℝ³),
+    (∀ i, ⟪nF, x i - x a⟫ ≤ 0) → ⟪nF, x b - x a⟫ = 0 →
+    (∀ i, ⟪nF', x i - x a⟫ ≤ 0) → ⟪nF', x b - x a⟫ = 0 →
+    ⟪nF, nF'⟫ < 0 → (∃ q, ⟪nF, x q - x a⟫ < 0) →
+    (∀ i, i ≠ a → i ≠ b → 0 ≤ ⟪x i - x a, x b - x a⟫) →
+    (∀ i, i ≠ a → i ≠ b → 0 < ⟪x i - x b, x a - x b⟫) →
+    (∀ i, i ≠ a → i ≠ b → ⟪nF, x i - x a⟫ < 0 ∨ ⟪nF', x i - x a⟫ < 0) →
+    IsRupert (Finset.univ.image x)
+
+
+
 /-! ## Gram extension -/
 
 section GramExtension
@@ -978,6 +1016,19 @@ def Strict7SeptIsRupert : Prop :=
 
 end ExplicitShapes
 
+
+/-- **Patch-edge lemma, geometric part.** Look along the segment from `v` to `w`. Suppose that
+`v a c` is a supporting plane of `V` with `w` strictly off it, and that `b` is off it too. Then `v`
+lies strictly beyond the plane `a b c`. How `w` sits relative to that plane is a hypothesis of the
+edge pair theorem (Lemma E), not something this lemma decides. -/
+def PatchEdgeBeyondPlane : Prop :=
+  ∀ (V : Finset ℝ³) (v w a b c : ℝ³), v ∈ V → w ∈ V → a ∈ V → b ∈ V → c ∈ V →
+    0 < det3 (a - v) (c - v) (w - v) →
+    ((∀ z ∈ V, 0 ≤ det3 (a - v) (c - v) (z - v)) ∨
+      (∀ z ∈ V, det3 (a - v) (c - v) (z - v) ≤ 0)) →
+    det3 (a - v) (c - v) (b - v) ≠ 0 →
+    0 < det3 (b - a) (c - a) (v - a)
+
 section BoxRule
 
 /-- **Box rule (Lemma R).** A thin body passes through a wide shadow of itself. If `V` fits in a
@@ -1185,6 +1236,37 @@ def TorqueForms : Prop :=
         tfJ nn ⬝ᵥ (g *ᵥ (q - c)) = 0))
 
 end TorqueForms
+
+
+/-- **Two disjoint faces (Lemma Q).** Look along the line where the planes of two disjoint faces
+meet. Both faces are then edge-on. Suppose the shadow is a strictly convex quadrilateral with these
+two faces as opposite sides, a single vertex over each corner, the other vertices of the faces over
+the open sides, and every remaining vertex strictly inside. If the depths are distinct and the same
+face is the deeper one across both remaining sides, then `V` is Rupert. The sign `σ = ±1` is the
+orientation of the cycle `xa₁ xa₂ xb₂ xb₁`. -/
+def LemmaQTwoDisjointFaces : Prop :=
+  ∀ (V F₁ F₂ : Finset ℝ³) (n₁ n₂ u₀ : ℝ³) (h₁ h₂ σ : ℝ) (xa₁ xa₂ xb₁ xb₂ : ℝ³),
+    (∀ p ∈ V, p ∉ convexHull ℝ ((V.erase p : Finset ℝ³) : Set ℝ³)) →
+    F₁ ⊆ V → F₂ ⊆ V → Disjoint F₁ F₂ → 3 ≤ F₁.card → 3 ≤ F₂.card →
+    (∀ p ∈ V, ⟪n₁, p⟫ ≤ h₁ ∧ (⟪n₁, p⟫ = h₁ ↔ p ∈ F₁)) →
+    (∀ p ∈ V, ⟪n₂, p⟫ ≤ h₂ ∧ (⟪n₂, p⟫ = h₂ ↔ p ∈ F₂)) →
+    cross n₁ n₂ ≠ 0 → u₀ ≠ 0 → ⟪n₁, u₀⟫ = 0 → ⟪n₂, u₀⟫ = 0 →
+    xa₁ ∈ F₁ → xa₂ ∈ F₁ → xb₁ ∈ F₂ → xb₂ ∈ F₂ →
+    (∀ y ∈ F₁, y ≠ xa₁ → y ≠ xa₂ →
+      ∃ t s : ℝ, 0 < t ∧ t < 1 ∧ y = xa₁ + t • (xa₂ - xa₁) + s • u₀) →
+    (∀ y ∈ F₂, y ≠ xb₁ → y ≠ xb₂ →
+      ∃ t s : ℝ, 0 < t ∧ t < 1 ∧ y = xb₁ + t • (xb₂ - xb₁) + s • u₀) →
+    (σ = 1 ∨ σ = -1) →
+    (0 < σ * det3 (xa₂ - xa₁) (xb₂ - xa₁) u₀ ∧ 0 < σ * det3 (xa₂ - xa₁) (xb₁ - xa₁) u₀ ∧
+     0 < σ * det3 (xb₂ - xa₂) (xb₁ - xa₂) u₀ ∧ 0 < σ * det3 (xb₂ - xa₂) (xa₁ - xa₂) u₀ ∧
+     0 < σ * det3 (xb₁ - xb₂) (xa₁ - xb₂) u₀ ∧ 0 < σ * det3 (xb₁ - xb₂) (xa₂ - xb₂) u₀ ∧
+     0 < σ * det3 (xa₁ - xb₁) (xa₂ - xb₁) u₀ ∧ 0 < σ * det3 (xa₁ - xb₁) (xb₂ - xb₁) u₀) →
+    (∀ p ∈ V, p ∉ F₁ → p ∉ F₂ →
+      0 < σ * det3 (xa₂ - xa₁) (p - xa₁) u₀ ∧ 0 < σ * det3 (xb₂ - xa₂) (p - xa₂) u₀ ∧
+      0 < σ * det3 (xb₁ - xb₂) (p - xb₂) u₀ ∧ 0 < σ * det3 (xa₁ - xb₁) (p - xb₁) u₀) →
+    Set.InjOn (fun x => ⟪u₀, x⟫) (V : Set ℝ³) →
+    0 < (⟪u₀, xa₁⟫ - ⟪u₀, xb₁⟫) * (⟪u₀, xa₂⟫ - ⟪u₀, xb₂⟫) →
+    IsRupert V
 
 /-! ## Vertices over the boundary of a shadow -/
 
