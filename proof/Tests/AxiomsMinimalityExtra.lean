@@ -74,3 +74,9 @@ open MinimalityExtra
 #assert_standard_axioms MinimalityExtra.existsFirstOrderPassageWithoutUnimodalView
 #assert_standard_axioms MinimalityExtra.HasFirstOrderPassage.isRupert
 #assert_standard_axioms MinimalityExtra.FreeAt.isRupert
+#assert_standard_axioms MinimalityExtra.depthSeparatedViewIsFree
+#assert_standard_axioms MinimalityExtra.edgePlaneFreedom
+#assert_standard_axioms MinimalityExtra.strict7SeptIsRupert
+#assert_standard_axioms MinimalityExtra.boxRule
+#assert_standard_axioms MinimalityExtra.skeletonLemma
+#assert_standard_axioms MinimalityExtra.faceCircleSkeleton

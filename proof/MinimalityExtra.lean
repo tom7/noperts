@@ -363,7 +363,18 @@ def BoxesHaveNoUnimodalView : Prop :=
 
 end Box
 
-/-! ## Hidden points -/
+/-!
+## Free views that are not unimodal
+
+Two criteria for freedom at a single view that allow any number of peaks.
+-/
+
+section DepthSeparated
+
+/-- The point at the depth of the corner `c` on the line through the edge `a`. Its chord to `c` is
+horizontal. -/
+noncomputable def levelPoint {k : ℕ} (X : ZMod k → ℝ³) (w : ℝ³) (a c : ZMod k) : ℝ³ :=
+  X a + (⟪X c - X a, w⟫ / ⟪X (a + 1) - X a, w⟫) • (X (a + 1) - X a)
 
 /-- Every point off the rim `lab` lies strictly inside a projected triangle of points, as `TiltCert`
 asks of a hidden point. Only a hidden point on the boundary of every such triangle fails this, a
@@ -372,6 +383,52 @@ def HiddenInTriangles {n k : ℕ} (x : Fin n → ℝ³) (w : ℝ³) (lab : ZMod 
   ∀ m, (∀ i, m ≠ lab i) → ∃ p ∈ Finset.univ.image x, ∃ q ∈ Finset.univ.image x, ∃ r ∈ Finset.univ.image x,
     0 < det3 (q - p) (r - p) w ∧ 0 < det3 (q - p) (x m - p) w ∧
     0 < det3 (r - q) (x m - q) w ∧ 0 < det3 (p - r) (x m - r) w
+
+/-- (Edge `a`, corner `c`) is a *split antipodal level pair* of the cycle `X` at the view `w`: `c`
+is the unique corner farthest across from the edge `a`, so the support lines at the two are
+parallel, and the level of `c` splits the rim. The corners on the arc from `c` to `a` lie on one
+side of that level, and those on the arc from `a + 1` back to `c` on the other. This is
+`Minimality.IsDepthSeparatedPair`, without a frame and with a strict antipode. -/
+def IsDepthSeparatedAt {k : ℕ} (X : ZMod k → ℝ³) (w : ℝ³) (a c : ZMod k) : Prop :=
+  (∀ i, i ≠ c → det3 (X (a + 1) - X a) w (X c) < det3 (X (a + 1) - X a) w (X i)) ∧
+    (((∀ s : ℕ, 0 < s → s ≤ (a - c).val → ⟪X c, w⟫ < ⟪X (c + s), w⟫) ∧
+        ∀ s : ℕ, (a - c).val < s → s < k → ⟪X (c + s), w⟫ < ⟪X c, w⟫) ∨
+      ((∀ s : ℕ, 0 < s → s ≤ (a - c).val → ⟪X (c + s), w⟫ < ⟪X c, w⟫) ∧
+        ∀ s : ℕ, (a - c).val < s → s < k → ⟪X c, w⟫ < ⟪X (c + s), w⟫))
+
+/-- **Depth-separated views are free (Theorem 8.10).** A rim can have any number of peaks: The view
+is free as soon as an edge and its antipodal corner split the rim by depth and the horizontal chord
+between them is not a double normal. On a unimodal rim every level splits the rim like this. The
+version in a frame is `Minimality.exists_tiltCert_of_depthSeparated`. -/
+def DepthSeparatedViewIsFree : Prop :=
+  ∀ (n k : ℕ) [NeZero k] (x : Fin n → ℝ³) (w : ℝ³) (lab : ZMod k → Fin n) (a c : ZMod k),
+    3 ≤ k → Function.Injective lab → StrictRimN x w lab → HiddenInTriangles x w lab →
+    IsDepthSeparatedAt (fun i => x (lab i)) w a c →
+    ⟪levelPoint (fun i => x (lab i)) w a c - x (lab c), x (lab (a + 1)) - x (lab a)⟫ ≠ 0 →
+    FreeAt (Finset.univ.image x) w
+
+/-- The spin part of a row of the Edge-Plane Lemma, for the end `X j` of the edge `i`: The rotation
+about the vertical through `X a`, corrected so that the edge `a` keeps its line. -/
+noncomputable def edgePlaneSpin {k : ℕ} (X : ZMod k → ℝ³) (w : ℝ³) (a i j : ZMod k) : ℝ :=
+  det3 (X (i + 1) - X i) (cross w (X j - X a)) w +
+    (⟪X j - X a, w⟫ / ⟪X (a + 1) - X a, w⟫) *
+      det3 (X (i + 1) - X i) (cross (X (a + 1) - X a) w) w
+
+/-- **Edge-Plane Lemma.** One way to show that a view is free is to turn about an axis in the plane
+through a rim edge `a` normal to its support plane. Such motions have three parameters `(α, μ, s)`,
+and the condition at each other edge asks the line `ρ = α + μ z` to separate two point sets in a
+plane. If some choice of parameters meets all these conditions, the view is free. -/
+def EdgePlaneFreedom : Prop :=
+  ∀ (n k : ℕ) [NeZero k], 3 ≤ k → ∀ (x : Fin n → ℝ³) (w : ℝ³) (lab : ZMod k → Fin n),
+    Function.Injective lab → StrictRimN x w lab → HiddenInTriangles x w lab →
+    ∀ (a : ZMod k) (s α μ : ℝ), ⟪x (lab (a + 1)) - x (lab a), w⟫ ≠ 0 →
+    (∀ i j : ZMod k, i ≠ a → (j = i ∨ j = i + 1) →
+      0 < (α + μ * ⟪x (lab j) - x (lab a), w⟫) *
+          det3 (x (lab (i + 1)) - x (lab i)) (x (lab (a + 1)) - x (lab a)) w +
+        s * edgePlaneSpin (fun i => x (lab i)) w a i j) →
+    FreeAt (Finset.univ.image x) w
+
+end DepthSeparated
 
 /-! ## Limit rows -/
 
@@ -911,7 +968,35 @@ def Type24FacePairViewsRigid : Prop :=
     (∀ t, (T t).1 < (T t).2.1 ∧
       ¬ FreeAt ((T t).2.2.image x) (cross (N (T t).1) (N (T t).2.1)))
 
+/-- **A neighbor of Septopert Classic is Rupert, by an explicit pose.** Septopert Classic is a
+simplicial polytope with no generic unimodal view. These seven points are the simplicial shape
+near Septopert Classic but without its symmetry, rounded to three
+decimals. The passage is tight, with clearance `0.0036`, about `0.4` percent of the diameter.
+Nothing is claimed about first-order rigidity or about other views. -/
+def Strict7SeptIsRupert : Prop :=
+  IsRupert (Finset.univ.image (![!₂[(-112/125 : ℝ), (157/500 : ℝ), (311/1000 : ℝ)], !₂[(157/500 : ℝ), (-179/200 : ℝ), (39/125 : ℝ)], !₂[(63/200 : ℝ), (31/100 : ℝ), (-897/1000 : ℝ)], !₂[(331/500 : ℝ), (47/1000 : ℝ), (11/200 : ℝ)], !₂[(1/25 : ℝ), (329/500 : ℝ), (29/500 : ℝ)], !₂[(11/250 : ℝ), (53/1000 : ℝ), (327/500 : ℝ)], !₂[(-477/1000 : ℝ), (-487/1000 : ℝ), (-123/250 : ℝ)]] : Fin 7 → ℝ³))
+
 end ExplicitShapes
+
+section BoxRule
+
+/-- **Box rule (Lemma R).** A thin body passes through a wide shadow of itself. If `V` fits in a
+`μ × w` box in two perpendicular directions `e`, `n`, and some shadow of `V` contains the corners of
+a rectangle at least that large in its interior, then `V` is Rupert. The inner view looks along
+`e × n`, edge-on to both widths, and only the outer view needs a check. This rule is behind the
+closed-form passages of thin shapes. `V` is assumed solid. -/
+def BoxRule : Prop :=
+  ∀ (V : Finset ℝ³), (interior (convexHull ℝ (V : Set ℝ³))).Nonempty →
+    ∀ (e n : ℝ³), ⟪e, e⟫ = 1 → ⟪n, n⟫ = 1 → ⟪e, n⟫ = 0 →
+    ∀ (R₂ : Matrix (Fin 3) (Fin 3) ℝ), R₂ ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ →
+    ∀ (a b μ w c₀ c₁ L H : ℝ), 0 < L → 0 < H → μ ≤ L → w ≤ H →
+    (∀ v ∈ V, a ≤ ⟪e, v⟫ ∧ ⟪e, v⟫ ≤ a + μ ∧ b ≤ ⟪n, v⟫ ∧ ⟪n, v⟫ ≤ b + w) →
+    (∀ s t : ℝ, (s = 0 ∨ s = 1) → (t = 0 ∨ t = 1) →
+      !₂[c₀ + s * L, c₁ + t * H] ∈
+        interior { proj_xy (R₂.toEuclideanLin p) | p ∈ convexHull ℝ (V : Set ℝ³) }) →
+    IsRupert V
+
+end BoxRule
 
 /-! ## Flat metrics and defeat sets -/
 
@@ -1116,6 +1201,54 @@ def VertexOverBoundaryOnFaceAlongView : Prop :=
        ∀ y' ∈ (convexHull ℝ (V : Set ℝ³)).extremePoints ℝ,
           y' - (⟪y', u⟫ / ⟪u, u⟫) • u = y - (⟪y, u⟫ / ⟪u, u⟫) • u → y' = y) →
     u ∈ vectorSpan ℝ {x ∈ convexHull ℝ (V : Set ℝ³) | ⟪n, x⟫ = ⟪n, y⟫}
+
+section Skeleton
+
+/-- `IsCyclicUnimodal` for a nonempty list read as a cycle. -/
+def ListCyclicUnimodal (L : List ℝ) : Prop :=
+  ∃ h : L.length ≠ 0, @IsCyclicUnimodal L.length ⟨h⟩ (fun i => L.getD i.val 0)
+
+/-- The skeleton of a chain from `a` to `c` with extreme entry `e`: the list `a, e, c`, with `e`
+omitted when it equals an end. -/
+noncomputable def chainSkeleton (a e c : ℝ) : List ℝ := if e = a ∨ e = c then [a, c] else [a, e, c]
+
+/-- **Skeletons (Lemma SK).** A run of a cyclic sequence that goes down then up, or up then down,
+can be shortened to its first, extreme and last entries without changing whether the cycle is
+unimodal. -/
+def SkeletonLemma : Prop :=
+  ∀ (A B R : List ℝ) (a e c : ℝ), (A ++ B ++ R).Nodup → 2 ≤ (A ++ B).length →
+    (A ++ B).head? = some a → (A ++ B).getLast? = some c → e ∈ A ++ B →
+    ((A.Pairwise (· > ·) ∧ B.Pairwise (· < ·) ∧ ∀ x ∈ A ++ B, e ≤ x) ∨
+     (A.Pairwise (· < ·) ∧ B.Pairwise (· > ·) ∧ ∀ x ∈ A ++ B, x ≤ e)) →
+    (ListCyclicUnimodal (A ++ B ++ R) ↔ ListCyclicUnimodal (chainSkeleton a e c ++ R))
+
+/-- **Face circle criterion (Corollary FC).** A view `u₀` parallel to a face sees it edge-on, and a
+small tilt `v` opens a chain of its vertices on the rim. Those vertices share a line of the shadow
+at `u₀`, so the rim is decided by the tilt, and the depths along the chain need not be checked one
+by one: If they are V- or Λ-shaped and the rim with the chain replaced by its skeleton is unimodal,
+then `V` is Rupert. The other rim edges pass the orientation test at `u₀` or, if edge-on there, at
+the tilt. The sign `σ = ±1` is the orientation. -/
+def FaceCircleSkeleton : Prop :=
+  ∀ (V : Finset ℝ³) (n u₀ v : ℝ³) (h σ : ℝ), (σ = 1 ∨ σ = -1) → n ≠ 0 → u₀ ≠ 0 →
+    ⟪n, u₀⟫ = 0 → (∀ y ∈ V, ⟪n, y⟫ ≤ h) →
+    ∀ (N m : ℕ), 2 ≤ m → m ≤ N → ∀ (x : ZMod (N + 1) → ℝ³), (∀ i, x i ∈ V) →
+    (∀ i : ZMod (N + 1), i.val < m → ⟪n, x i⟫ = h) →
+    (∀ i : ZMod (N + 1), i.val + 1 < m → 0 < σ * det3 n (x (i + 1) - x i) u₀) →
+    (∀ i : ZMod (N + 1), i.val + 1 < m → ∀ y ∈ V, ⟪n, y⟫ = h → y ≠ x i → y ≠ x (i + 1) →
+      0 < σ * ⟪n, v⟫ * det3 (x (i + 1) - x i) (y - x i) n) →
+    (∀ i : ZMod (N + 1), m ≤ i.val + 1 → ∀ y ∈ V, y ≠ x i → y ≠ x (i + 1) →
+      (0 < σ * det3 (x (i + 1) - x i) (y - x i) u₀ ∨
+       (det3 (x (i + 1) - x i) (y - x i) u₀ = 0 ∧ 0 < σ * det3 (x (i + 1) - x i) (y - x i) v))) →
+    Function.Injective (fun i => ⟪x i, u₀⟫) →
+    ∀ (A B R : List ℝ) (a e c : ℝ),
+      List.ofFn (fun i : Fin (N + 1) => ⟪x ((i : ℕ) : ZMod (N + 1)), u₀⟫) = A ++ B ++ R →
+      A.length + B.length = m → (A ++ B).head? = some a → (A ++ B).getLast? = some c →
+      e ∈ A ++ B →
+      ((A.Pairwise (· > ·) ∧ B.Pairwise (· < ·) ∧ ∀ y ∈ A ++ B, e ≤ y) ∨
+       (A.Pairwise (· < ·) ∧ B.Pairwise (· > ·) ∧ ∀ y ∈ A ++ B, y ≤ e)) →
+      ListCyclicUnimodal (chainSkeleton a e c ++ R) → IsRupert V
+
+end Skeleton
 
 /-- **Face-normal views (Lemma FN (iii), the half-plane case).** Look straight at a face, placed at
 depth `0`: Its vertices form the polygon, and the remaining vertices have positive depth and project

@@ -34,6 +34,11 @@ public import MinimalityExtra.NoUnimodalOpenCheck
 public import MinimalityExtra.FacePairRigid
 public import MinimalityExtra.NoUnimodalData
 public import MinimalityExtra.NoUnimodalOpenData
+public import MinimalityExtra.DepthSeparated
+public import MinimalityExtra.EdgePlane
+public import MinimalityExtra.StrictSeptRupert
+public import MinimalityExtra.BoxShadow
+public import MinimalityExtra.FaceCircleSkeleton
 public import Minimality.Tilt
 public import Minimality.Thm73
 public import Minimality.Crossing
