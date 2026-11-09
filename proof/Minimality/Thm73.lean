@@ -43,7 +43,7 @@ def HasHorizontalDoubleNormal {k : ℕ} (p : ZMod k → ℝ²) (z : ZMod k → �
 
 /-- An interior maximum over a window of the cycle is a strict local maximum. -/
 theorem exists_localMax_window {k : ℕ} (z : ZMod k → ℝ) (hz : Function.Injective z)
-    (B : ZMod k) (L : ℕ) (hL : L < k) (u : ℕ) (hu0 : 0 < u) (huL : u < L)
+    (B : ZMod k) (L : ℕ) (hL : L < k) (u : ℕ) (_hu0 : 0 < u) (huL : u < L)
     (h0 : z B < z (B + u)) (hL' : z (B + L) < z (B + u)) :
     ∃ p : ℕ, 0 < p ∧ p < L ∧ z (B + p - 1) < z (B + p) ∧ z (B + p + 1) < z (B + p) := by
   obtain ⟨p, hp, hmax⟩ := (range (L + 1)).exists_max_image (fun q : ℕ => z (B + q))
@@ -75,7 +75,7 @@ theorem exists_localMax_window {k : ℕ} (z : ZMod k → ℝ) (hz : Function.Inj
     rw [Nat.cast_succ, ← add_assoc] at h2
     exact h2 this
 
-theorem natCast_mod_two {k : ℕ} {x y : ℕ} (hk : 0 < k) (hx : x < k) (hy : y < 2 * k)
+theorem natCast_mod_two {k : ℕ} {x y : ℕ} (hx : x < k) (hy : y < 2 * k)
     (h : (x : ZMod k) = (y : ZMod k)) : x = y ∨ x + k = y := by
   rw [ZMod.natCast_eq_natCast_iff', Nat.mod_eq_of_lt hx] at h
   by_cases hyk : y < k
@@ -129,7 +129,7 @@ theorem IsCyclicUnimodal.noZig {k : ℕ} [NeZero k] {z : ZMod k → ℝ} (hz : I
     have heq := hz.eq_of_localMax ⟨hl1, hr1⟩ ⟨hl2, hr2⟩
     have : ((a + p1 : ℕ) : ZMod k) = ((c + p2 : ℕ) : ZMod k) := by
       push_cast; linear_combination heq
-    rcases natCast_mod_two hk0 (by omega) (by omega) this with h | h <;> omega
+    rcases natCast_mod_two (by omega) (by omega) this with h | h <;> omega
   rintro (⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4⟩)
   · exact key a b c d hab hbc hcd hdk h1 h2 h3 h4
   · -- rotate the pattern: windows around `c` and around `a`
@@ -152,7 +152,7 @@ theorem IsCyclicUnimodal.noZig {k : ℕ} [NeZero k] {z : ZMod k → ℝ} (hz : I
     have heq := hz.eq_of_localMax ⟨hl1, hr1⟩ ⟨hl2, hr2⟩
     have : ((b + p1 : ℕ) : ZMod k) = ((d + p2 : ℕ) : ZMod k) := by
       push_cast; linear_combination heq
-    rcases natCast_mod_two hk0 (by omega) (by omega) this with h | h <;> omega
+    rcases natCast_mod_two (by omega) (by omega) this with h | h <;> omega
 
 /-- Sums over `ZMod k` read linearly from any base point. -/
 theorem sum_zmod_eq_sum_range {k : ℕ} [NeZero k] {M : Type*} [AddCommMonoid M]

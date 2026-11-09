@@ -235,7 +235,7 @@ theorem IsT3.exists_normalForm {A B C A' B' C' : ℝ³} (h : IsT3 A B C A' B' C'
       A' = C + cmb (A - C) (B - C) (C' - C) α 0 α' ∧
       B' = C + cmb (A - C) (B - C) (C' - C) 0 β β' := by
   have hnd := h.nodup
-  simp only [List.nodup_cons, List.mem_cons, List.mem_singleton, List.not_mem_nil, or_false,
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd
   obtain ⟨⟨hAB, hAC, hAA', hAB', hAC'⟩, ⟨hBC, hBA', hBB', hBC'⟩, ⟨hCA', hCB', hCC'⟩,
     ⟨hA'B', hA'C'⟩, hB'C', -⟩ := hnd
@@ -378,7 +378,7 @@ theorem isRupert_T3_i {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) �
   refine isRupert_of_tilted_three V u₀ (σ • cmb f₁ f₂ f₃ (-1 / 2) (-β / 2) (-β' / 2)) hu₀0
     (tri (P 1 0 0) (P 0 1 0) (P 0 0 0)) ?_ ?_ ?_
   · intro i; rcases zmod3_cases i with rfl | rfl | rfl <;>
-      simp [hV, a0, a1, a2, tri_0, tri_1, tri_2]
+      simp [hV, tri_0, tri_1, tri_2]
   · intro i j hi hj
     rcases zmod3_pairs i j hi hj with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
     simp only [a0, a1, a2, tri_0, tri_1, tri_2, hP, add_cmb_sub, hu₀] <;>
@@ -449,7 +449,7 @@ theorem isRupert_T3_ii {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) �
   refine isRupert_of_tilted_three V u₀ (σ • cmb f₁ f₂ f₃ (1 / 2) (β / 2) (β' / 2)) hu₀0
     (tri (P α 0 α') (P 0 β β') (P 0 0 1)) ?_ ?_ ?_
   · intro i; rcases zmod3_cases i with rfl | rfl | rfl <;>
-      simp [hV, a0, a1, a2, tri_0, tri_1, tri_2]
+      simp [hV, tri_0, tri_1, tri_2]
   · intro i j hi hj
     rcases zmod3_pairs i j hi hj with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
     simp only [a0, a1, a2, tri_0, tri_1, tri_2, hP, add_cmb_sub, hu₀] <;>
@@ -537,7 +537,7 @@ theorem isRupert_T3_iii {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) 
         simp only [quad_0, quad_1, quad_2, quad_3, hdepth] <;> ring
     refine isRupert_of_tilted_NWS4 V u₀ (σ • cmb f₁ f₂ f₃ 1 (-β / 2) (-β' / 2)) hu₀0 (quad (P 1 0 0) (P 0 β β') (P 0 0 1) (P 0 0 0)) ?_ ?_ ?_ hQ
     · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
-        simp [hV, a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3]
+        simp [hV, quad_0, quad_1, quad_2, quad_3]
     · intro i j hi hj
       rcases zmod4_pairs i j hi hj with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
         ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
@@ -570,7 +570,7 @@ theorem isRupert_T3_iii {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) 
         simp only [quad_0, quad_1, quad_2, quad_3, hdepth] <;> ring
     refine isRupert_of_tilted_NWS4 V u₀ (σ • cmb f₁ f₂ f₃ (1 / 2) (β / 2) (β' / 2)) hu₀0 (quad (P 1 0 0) (P 0 β β') (P 0 0 1) (P α 0 α')) ?_ ?_ ?_ hQ
     · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
-        simp [hV, a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3]
+        simp [hV, quad_0, quad_1, quad_2, quad_3]
     · intro i j hi hj
       rcases zmod4_pairs i j hi hj with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
         ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
@@ -603,7 +603,7 @@ theorem isRupert_T3_iii {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) 
         simp only [quad_0, quad_1, quad_2, quad_3, hdepth] <;> ring
     refine isRupert_of_tilted_NWS4 V u₀ (σ • cmb f₁ f₂ f₃ (-1 / 2) (-β / 2) (-β' / 2)) hu₀0 (quad (P 1 0 0) (P 0 β β') (P 0 1 0) (P 0 0 0)) ?_ ?_ ?_ hQ
     · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
-        simp [hV, a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3]
+        simp [hV, quad_0, quad_1, quad_2, quad_3]
     · intro i j hi hj
       rcases zmod4_pairs i j hi hj with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
         ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
@@ -686,7 +686,7 @@ theorem isRupert_T3_b1 {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) �
         simp only [quad_0, quad_1, quad_2, quad_3, hdepth] <;> ring
     refine isRupert_of_tilted_NWS4 V u₀ (σ • cmb f₁ f₂ f₃ (-1 / 2) (-1 / 2) (-β' / 2)) hu₀0 (quad (P 1 0 0) (P 0 1 β') (P 0 1 0) (P 0 0 0)) ?_ ?_ ?_ hQ
     · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
-        simp [hV, a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3]
+        simp [hV, quad_0, quad_1, quad_2, quad_3]
     · intro i j hi hj
       rcases zmod4_pairs i j hi hj with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
         ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
@@ -719,7 +719,7 @@ theorem isRupert_T3_b1 {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) �
         simp only [quad_0, quad_1, quad_2, quad_3, hdepth] <;> ring
     refine isRupert_of_tilted_NWS4 V u₀ (σ • cmb f₁ f₂ f₃ (1 / 2) (-1) (-β')) hu₀0 (quad (P 1 0 0) (P 0 1 β') (P 0 0 1) (P 0 0 0)) ?_ ?_ ?_ hQ
     · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
-        simp [hV, a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3]
+        simp [hV, quad_0, quad_1, quad_2, quad_3]
     · intro i j hi hj
       rcases zmod4_pairs i j hi hj with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
         ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
@@ -755,7 +755,7 @@ theorem isRupert_T3_b1 {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) �
       (fun z => Q5a z ∨ Q5a fun i => -z i) isOpen_Q5a (fun z c hc hz => Q5a_scale hc hz) hQ
       (fun z hz hQ => isCyclicUnimodal_Q5a hz hQ)
     · intro i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
-        simp [hV, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
+        simp [hV, quint_0, quint_1, quint_2, quint_3, quint_4]
     · intro i j hi hj
       rcases zmod5_pairs i j hi hj with ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ |
         ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ <;>
@@ -839,7 +839,7 @@ theorem isRupert_T3_a1 {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) �
         simp only [quad_0, quad_1, quad_2, quad_3, hdepth] <;> ring
     refine isRupert_of_tilted_NWS4 V u₀ (σ • cmb f₁ f₂ f₃ 1 (-β / 2) (-β' / 2)) hu₀0 (quad (P 1 0 0) (P 0 β β') (P 0 0 1) (P 0 0 0)) ?_ ?_ ?_ hQ
     · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
-        simp [hV, a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3]
+        simp [hV, quad_0, quad_1, quad_2, quad_3]
     · intro i j hi hj
       rcases zmod4_pairs i j hi hj with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
         ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
@@ -872,7 +872,7 @@ theorem isRupert_T3_a1 {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) �
         simp only [quad_0, quad_1, quad_2, quad_3, hdepth] <;> ring
     refine isRupert_of_tilted_NWS4 V u₀ (σ • cmb f₁ f₂ f₃ (1 / 2) (β / 2) (β' / 2)) hu₀0 (quad (P 1 0 0) (P 0 β β') (P 0 0 1) (P 1 0 α')) ?_ ?_ ?_ hQ
     · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
-        simp [hV, a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3]
+        simp [hV, quad_0, quad_1, quad_2, quad_3]
     · intro i j hi hj
       rcases zmod4_pairs i j hi hj with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
         ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
@@ -908,7 +908,7 @@ theorem isRupert_T3_a1 {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) �
       (fun z => Q5b z ∨ Q5b fun i => -z i) isOpen_Q5b (fun z c hc hz => Q5b_scale hc hz) hQ
       (fun z hz hQ => isCyclicUnimodal_Q5b hz hQ)
     · intro i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
-        simp [hV, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
+        simp [hV, quint_0, quint_1, quint_2, quint_3, quint_4]
     · intro i j hi hj
       rcases zmod5_pairs i j hi hj with ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ |
         ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ <;>

@@ -212,10 +212,13 @@ theorem rightPrism_tri (a b c : ℝ²) (h : ℝ) :
   · rintro ((h | h | h) | (h | h | h)) <;> rw [← h] <;> simp [tri]
   · rintro (h | h | h | h | h | h) <;> subst h <;> simp [tri]
 
-/-- **Theorem 8.1.**  Every right prism over a strictly convex polygon is
-Rupert. -/
-theorem isRupert_rightPrism {k : ℕ} [NeZero k] (p : ZMod k → ℝ²) (hp : IsCcwPolygon p) {h : ℝ}
-    (hh : 0 < h) : IsRupert (rightPrism p h) := by
+/-- **Theorem 8.1, general form.**  The right prism `rightPrism p h` inside a larger finite set `V`
+is Rupert provided the extra points of `V` have tilt certificates at the chosen (generic) direction
+and spin, `hex`, whatever the direction `v` and the data `ω, τ` are. -/
+theorem isRupert_rightPrism_gen {k : ℕ} [NeZero k] (p : ZMod k → ℝ²) (hp : IsCcwPolygon p) {h : ℝ}
+    (hh : 0 < h) (V : Finset ℝ³) (hV : rightPrism p h ⊆ V)
+    (hex : ∀ (v : ℝ²) (ω τ : ℝ³), ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ y ∈ V \ rightPrism p h,
+      TiltCert V (ez + ε • liftPt v 0) ω τ y) : IsRupert V := by
   classical
   have hk := hp.1
   -- a generic tilt direction
@@ -330,19 +333,19 @@ theorem isRupert_rightPrism {k : ℕ} [NeZero k] (p : ZMod k → ℝ²) (hp : Is
   have htop : ∀ i j, 0 < s i →
       0 < cross2 (p (i + 1) - p i) (proj_xy (cross ω (liftPt (p j) h) + τ)) := by
     intro i j hi; rw [hνe]; have := hκ i j hi; nlinarith
-  have hmemb : ∀ j, liftPt (p j) 0 ∈ rightPrism p h := fun j =>
-    (mem_rightPrism p h _).mpr (Or.inl ⟨j, rfl⟩)
-  have hmemt : ∀ j, liftPt (p j) h ∈ rightPrism p h := fun j =>
-    (mem_rightPrism p h _).mpr (Or.inr ⟨j, rfl⟩)
-  have hmemt' : ∀ j, liftPt (p j) (0 + h) ∈ rightPrism p h := fun j => by
+  have hmemb : ∀ j, liftPt (p j) 0 ∈ V := fun j =>
+    hV ((mem_rightPrism p h _).mpr (Or.inl ⟨j, rfl⟩))
+  have hmemt : ∀ j, liftPt (p j) h ∈ V := fun j =>
+    hV ((mem_rightPrism p h _).mpr (Or.inr ⟨j, rfl⟩))
+  have hmemt' : ∀ j, liftPt (p j) (0 + h) ∈ V := fun j => by
     rw [zero_add]; exact hmemt j
-  have hmemb' : ∀ j, liftPt (p j) (h + -h) ∈ rightPrism p h := fun j => by
+  have hmemb' : ∀ j, liftPt (p j) (h + -h) ∈ V := fun j => by
     rw [add_neg_cancel]; exact hmemb j
   have hsj : ∀ j, s (j - 1) = cross2 (p j - p (j - 1)) v := fun j => by simp [s]
   -- certificates at every vertex
   have key : ∀ j, ∀ᶠ ε in 𝓝[>] (0 : ℝ),
-      TiltCert (rightPrism p h) (ez + ε • liftPt v 0) ω τ (liftPt (p j) 0) ∧
-      TiltCert (rightPrism p h) (ez + ε • liftPt v 0) ω τ (liftPt (p j) h) := by
+      TiltCert V (ez + ε • liftPt v 0) ω τ (liftPt (p j) 0) ∧
+      TiltCert V (ez + ε • liftPt v 0) ω τ (liftPt (p j) h) := by
     intro j
     have hE := hp.cross2_edge_pos j
     have bm : ∀ z, cross2 (p j - p (j - 1)) (proj_xy (cross ω (liftPt (p j) z) + τ)) =
@@ -386,14 +389,23 @@ theorem isRupert_rightPrism {k : ℕ} [NeZero k] (p : ZMod k → ℝ²) (hp : Is
         (cert_flat _ v ω τ (hmemt _) (hmemt _) hE (htop j j h2) (htm h1))
       · nlinarith
       · nlinarith
-  obtain ⟨ε, hε⟩ := (eventually_all.2 key).exists
+  obtain ⟨ε, hε, hεy⟩ := ((eventually_all.2 key).and (hex v ω τ)).exists
   refine isRupert_of_tiltCert _ (ez + ε • liftPt v 0) ?_ ω τ fun x hx => ?_
   · intro h0
     have := congrArg (· 2) h0
     simp [ez, liftPt] at this
-  · rcases (mem_rightPrism p h x).mp hx with ⟨j, rfl⟩ | ⟨j, rfl⟩
-    · exact (hε j).1
-    · exact (hε j).2
+  · by_cases hxp : x ∈ rightPrism p h
+    · rcases (mem_rightPrism p h x).mp hxp with ⟨j, rfl⟩ | ⟨j, rfl⟩
+      · exact (hε j).1
+      · exact (hε j).2
+    · exact hεy x (Finset.mem_sdiff.mpr ⟨hx, hxp⟩)
+
+/-- **Theorem 8.1.**  Every right prism over a strictly convex polygon is
+Rupert. -/
+theorem isRupert_rightPrism {k : ℕ} [NeZero k] (p : ZMod k → ℝ²) (hp : IsCcwPolygon p) {h : ℝ}
+    (hh : 0 < h) : IsRupert (rightPrism p h) :=
+  isRupert_rightPrism_gen p hp hh _ subset_rfl fun _ _ _ =>
+    Eventually.of_forall fun _ _y hy => absurd (Finset.mem_sdiff.mp hy).1 (Finset.mem_sdiff.mp hy).2
 
 /-- Right translation prisms over a triangle, in any position. -/
 theorem isRupert_translationPrism_right (A B C w : ℝ³)

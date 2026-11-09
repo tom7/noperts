@@ -241,7 +241,7 @@ theorem IsBicappedTetrahedron.exists_normalForm {A B C T K₁ K₂ : ℝ³}
       a₁ - β₁ + c₁ + t₁ = 1 ∧ a₂ + b₂ - γ₂ + t₂ = 1 ∧ β₁ * γ₂ < c₁ * b₂ ∧
       K₁ = a₁ • A - β₁ • B + c₁ • C + t₁ • T ∧ K₂ = a₂ • A + b₂ • B - γ₂ • C + t₂ • T := by
   have hnd := h.nodup
-  simp only [List.nodup_cons, List.mem_cons, List.mem_singleton, List.not_mem_nil, or_false,
+  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false,
     not_or, List.nodup_nil, and_true] at hnd
   obtain ⟨⟨hAB, hAC, hAT, hAK₁, hAK₂⟩, ⟨hBC, hBT, hBK₁, hBK₂⟩, ⟨hCT, hCK₁, hCK₂⟩,
     ⟨hTK₁, hTK₂⟩, hK₁K₂, -⟩ := hnd

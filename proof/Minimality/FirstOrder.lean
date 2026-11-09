@@ -198,7 +198,7 @@ theorem rotCurve_zero (ω : ℝ³) : rotCurve ω 0 = 1 := by
 
 /-- A rational function `c + (s a + s² b) / (1 + s² q)` has derivative `a`
 at `0`. -/
-theorem hasDerivAt_rat_aux (a b c q : ℝ) (hq : 0 ≤ q) :
+theorem hasDerivAt_rat_aux (a b c q : ℝ) :
     HasDerivAt (fun s : ℝ => c + (s * a + s ^ 2 * b) / (1 + s ^ 2 * q)) a 0 := by
   have h1 : HasDerivAt (fun s : ℝ => s * a + s ^ 2 * b) (1 * a + (2 * (0:ℝ) ^ 1 * 1) * b) 0 :=
     ((hasDerivAt_id' (0 : ℝ)).mul_const a).add (((hasDerivAt_id' (0 : ℝ)).pow 2).mul_const b)
@@ -221,7 +221,7 @@ theorem rotCurve_apply (ω : ℝ³) (s : ℝ) (i j : Fin 3) :
 theorem hasDerivAt_rotCurve (ω : ℝ³) (i j : Fin 3) :
     HasDerivAt (fun s => rotCurve ω s i j) (crossMatrix ω i j) 0 := by
   have h := hasDerivAt_rat_aux (crossMatrix ω i j) ((crossMatrix ω * crossMatrix ω) i j / 2)
-    ((1 : Matrix (Fin 3) (Fin 3) ℝ) i j) ((ω 0 ^ 2 + ω 1 ^ 2 + ω 2 ^ 2) / 4) (by positivity)
+    ((1 : Matrix (Fin 3) (Fin 3) ℝ) i j) ((ω 0 ^ 2 + ω 1 ^ 2 + ω 2 ^ 2) / 4)
   have hfun : (fun s => rotCurve ω s i j) = fun s : ℝ => (1 : Matrix (Fin 3) (Fin 3) ℝ) i j +
       (s * crossMatrix ω i j + s ^ 2 * ((crossMatrix ω * crossMatrix ω) i j / 2)) /
         (1 + s ^ 2 * ((ω 0 ^ 2 + ω 1 ^ 2 + ω 2 ^ 2) / 4)) := funext fun s => rotCurve_apply ω s i j

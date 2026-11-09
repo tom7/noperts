@@ -13,12 +13,14 @@ https://github.com/google-deepmind/formal-conjectures/blob/main/FormalConjecture
 
 @[expose] public section
 
+local notation "ℝ³" => EuclideanSpace ℝ (Fin 3)
+
 /-- Projects a vector from 3-space to 2-space by dropping the third coordinate. -/
 def proj_xy {k : Type} (v : EuclideanSpace k (Fin 3)) : EuclideanSpace k (Fin 2) :=
   !₂[v 0, v 1]
 
 /-- The Rupert Property for a convex polyhedron given as a finite set of vertices. -/
-def IsRupert (vertices : Finset (EuclideanSpace ℝ (Fin 3))) : Prop :=
+def IsRupert (vertices : Finset ℝ³) : Prop :=
    ∃ inner_rotation ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ,
    ∃ inner_offset : EuclideanSpace ℝ (Fin 2),
    ∃ outer_rotation ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ,
