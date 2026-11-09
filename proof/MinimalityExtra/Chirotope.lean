@@ -63,7 +63,7 @@ theorem chiWitness_same : SameChirotope chiWitnessX chiWitnessY := by
     fin_cases i <;> fin_cases j <;> fin_cases k <;> fin_cases l <;>
     norm_num [tripleProduct, chiWitnessX, chiWitnessY]
 
-/-- The chirotope does not determine the silhouette (see the statement in `Statements.lean`). -/
+/-- The chirotope does not determine the silhouette (see the statement in `MinimalityExtra.lean`). -/
 theorem chirotopeDoesNotDetermineSilhouette : ChirotopeDoesNotDetermineSilhouette := by
   refine ⟨chiWitnessX, chiWitnessY, chiWitnessX_generic, chiWitnessY_generic, chiWitness_same,
     0, 2, by decide, by decide, by decide, ?_, ?_⟩
