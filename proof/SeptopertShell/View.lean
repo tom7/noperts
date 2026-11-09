@@ -6,7 +6,8 @@ public import SeptopertFamily.Geometry
 /-!
 # Rupert passages from a view direction
 
-The certificate form of the shell (nopert229 `islandmap/bnd/shellcert4.cc`): a view `v` with `0 < v 2`, an inner
+The certificate form of the shell (nopert229 `islandmap/bnd/shellcert4.cc`): a view `v` (`ViewOk v`: not a
+nonpositive multiple of `e_z`), an inner
 rotation `Q` and a translation `t`; every inner vertex `w = Q x + t` lies, seen along `v`, strictly inside a
 triangle of outer vertices, i.e. three triple products `v · ((b − w) × (c − w))` are positive. The outer rotation
 is built from `v`: the quaternion `(|v| + v₂, v₁, −v₀, 0)` turns `v` to `|v| e_z`, and the third row of its matrix is
@@ -27,8 +28,22 @@ def triple (v a b : ℝ³) : ℝ :=
 noncomputable def viewQuat (v : ℝ³) : Fin 4 → ℝ :=
   ![√(v 0 ^ 2 + v 1 ^ 2 + v 2 ^ 2) + v 2, v 1, -v 0, 0]
 
-theorem viewQuat_norm_pos {v : ℝ³} (hv : 0 < v 2) : 0 < quatNorm (viewQuat v) := by
-  have hs := Real.sqrt_nonneg (v 0 ^ 2 + v 1 ^ 2 + v 2 ^ 2)
+/-- The view condition: `v` is not a nonpositive multiple of `e_z`. -/
+def ViewOk (v : ℝ³) : Prop := 0 < v 2 ∨ v 0 ≠ 0 ∨ v 1 ≠ 0
+
+theorem viewOk_sqrt_add_pos {v : ℝ³} (hv : ViewOk v) : 0 < √(v 0 ^ 2 + v 1 ^ 2 + v 2 ^ 2) + v 2 := by
+  rcases hv with h | h
+  · have := Real.sqrt_nonneg (v 0 ^ 2 + v 1 ^ 2 + v 2 ^ 2); linarith
+  · have h01 : 0 < v 0 ^ 2 + v 1 ^ 2 := by
+      rcases h with h | h
+      · have := pow_pos (abs_pos.mpr h) 2; rw [sq_abs] at this; nlinarith [sq_nonneg (v 1)]
+      · have := pow_pos (abs_pos.mpr h) 2; rw [sq_abs] at this; nlinarith [sq_nonneg (v 0)]
+    have : |v 2| < √(v 0 ^ 2 + v 1 ^ 2 + v 2 ^ 2) := by
+      rw [Real.lt_sqrt (abs_nonneg _), sq_abs]; linarith
+    linarith [neg_abs_le (v 2)]
+
+theorem viewQuat_norm_pos {v : ℝ³} (hv : ViewOk v) : 0 < quatNorm (viewQuat v) := by
+  have hs := viewOk_sqrt_add_pos hv
   simp only [quatNorm, viewQuat, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
     Matrix.cons_val_three, Matrix.head_cons, Matrix.tail_cons]
   nlinarith [sq_nonneg (v 1), sq_nonneg (v 0)]
@@ -66,7 +81,7 @@ theorem cross2_proj_viewRot (v X Y : ℝ³) :
     _ = 2 * (s + v 2) / N * triple v X Y := by rw [key]; field_simp
 
 /-- **A Rupert passage seen along a view `v`.** -/
-theorem isRupert_of_view (V : Finset ℝ³) (v : ℝ³) (hv : 0 < v 2) {Q : Matrix (Fin 3) (Fin 3) ℝ}
+theorem isRupert_of_view (V : Finset ℝ³) (v : ℝ³) (hv : ViewOk v) {Q : Matrix (Fin 3) (Fin 3) ℝ}
     (hQ : Q ∈ SO3) (t : ℝ³)
     (h : ∀ x ∈ V, ∃ a ∈ V, ∃ b ∈ V, ∃ c ∈ V,
       0 < triple v (b - (Q.toEuclideanLin x + t)) (c - (Q.toEuclideanLin x + t)) ∧
@@ -78,7 +93,7 @@ theorem isRupert_of_view (V : Finset ℝ³) (v : ℝ³) (hv : 0 < v 2) {Q : Matr
   have hRo : Ro ∈ SO3 := quatRot_mem_SO3 _ hN.ne'
   have hRi : Ro * Q ∈ SO3 := Submonoid.mul_mem _ hRo hQ
   have hk : 0 < 2 * (√(v 0 ^ 2 + v 1 ^ 2 + v 2 ^ 2) + v 2) / quatNorm (viewQuat v) := by
-    have := Real.sqrt_nonneg (v 0 ^ 2 + v 1 ^ 2 + v 2 ^ 2); positivity
+    have := viewOk_sqrt_add_pos hv; positivity
   have hlin : ∀ X Y : ℝ³, proj_xy (Ro.toEuclideanLin X) - proj_xy (Ro.toEuclideanLin Y) =
       proj_xy (Ro.toEuclideanLin (X - Y)) := by
     intro X Y; ext r; fin_cases r <;> simp [proj_xy, map_sub]
