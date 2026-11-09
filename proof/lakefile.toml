@@ -211,6 +211,11 @@ name = "checkSeptopertShellSlab"
 root = "checkSeptopertShellSlab"
 buildType = "release"
 
+[[lean_exe]]
+name = "checkSeptopertShell"
+root = "checkSeptopertShell"
+buildType = "release"
+
 [[lean_lib]]
 name = "ChippedM18"
 globs = ["ChippedM18", "ChippedM18.+"]
