@@ -139,7 +139,7 @@ theorem mem_tieLits_ctx {t f sd pp zs1 : Nat} {cyc : List Nat} {l : LitW} (hl : 
 theorem mem_tieLits_fail {t f sd pp zs1 : Nat} {cyc : List Nat} (h : 3 < (patCyc.getD pp []).length) :
     ((true, W.tfail t f sd cyc) : LitW) ∈ tieLits t f sd pp zs1 cyc := by
   unfold tieLits
-  rw [if_pos h]
+  rw [ite_eq_left h]
   exact List.mem_append_right _ (List.mem_singleton_self _)
 
 /-! ### The facings at the tie leaf -/
@@ -172,11 +172,11 @@ theorem tie_hfac {x : Fin 7 → ℝ³} (F : S0xFac 8 V2.fIdx x) (hG : GeoOK (geo
     · intro hb
       have hb' : pp.testBit t = true := hb
       refine lp3_of_zero a0 b0 ?_
-      rw [ec]; simp only [tauR, hb', if_true, one_mul]; exact nn
+      rw [ec]; simp only [tauR, hb', ite_true, one_mul]; exact nn
     · intro hb
       have hb' : pp.testBit t = false := hb
       refine lp3_of_zero (by rw [a0]; ring) (by rw [b0]; ring) ?_
-      rw [ec]; simp only [tauR, hb', Bool.false_eq_true, if_false]; linarith
+      rw [ec]; simp only [tauR, hb', Bool.false_eq_true, ite_false]; linarith
   · have hts : t ≠ r.val := fun e => hrt e.symm
     have hlex := FpT_lex hG ht r.isLt hts hf sd
     have hKt : Ktie g t f r.val = Kk g t f r.val := by simp [Ktie, hZ]
@@ -214,12 +214,12 @@ theorem tie_hfac {x : Fin 7 → ℝ³} (F : S0xFac 8 V2.fIdx x) (hG : GeoOK (geo
         have hb' : pp.testBit r.val = true := hb
         have ht' : pp.testBit t = false := by rw [hb'] at hbit; simpa using hbit
         refine lp3_of_zero a0 b0 ?_
-        rw [c0]; simp only [tauR, ht', Bool.false_eq_true, if_false]; linarith
+        rw [c0]; simp only [tauR, ht', Bool.false_eq_true, ite_false]; linarith
       · intro hb
         have hb' : pp.testBit r.val = false := hb
         have ht' : pp.testBit t = true := by rw [hb'] at hbit; simpa using hbit
         refine lp3_of_zero (by rw [a0]; ring) (by rw [b0]; ring) ?_
-        rw [c0]; simp only [tauR, ht', if_true, one_mul]; linarith
+        rw [c0]; simp only [tauR, ht', ite_true, one_mul]; linarith
     · -- a strict facet
       constructor
       · intro hb
@@ -503,7 +503,7 @@ theorem fam36_rhoW {x : Fin 7 → ℝ³} (F : S0xFac 8 V2.fIdx x) (hG : GeoOK (g
     · have : Z0 g t f := hz
       simp [Ktie, this]
     · have : ¬ Z0 g t f := hz
-      simp only [Ktie, this, if_false]; rw [K_expand]; rfl
+      simp only [Ktie, this, ite_false]; rw [K_expand]; rfl
   have hcl := fam36_sound F (sdR_pm sd) hok fp hfp
   refine HoldsW.of_covers (rhoW_proper g) hcov ?_
   simp only [cl36, Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq, fp] at hcl

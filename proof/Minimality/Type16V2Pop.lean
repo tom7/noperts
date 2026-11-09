@@ -189,7 +189,7 @@ theorem pop_aux (V : Finset ℝ³) (fP fQ f3Q G : ℝ³ → ℝ) (NP NQ N3Q NG :
         have hz : f3Q y = zz * f3Q (w + r) := by rw [this]; simp [c1, h3QB]
         have hc : f3Q (w + r) ≠ 0 := by
           intro h0; rw [h0, mul_zero] at hz; linarith
-        rw [hσQdef, if_neg hc, ← hz]; exact c4
+        rw [hσQdef, ite_eq_right hc, ← hz]; exact c4
 
 theorem depth_eq (w A B m r : ℝ³) (s z : ℝ) (hz : m = w + s • (A - w) + (0 : ℝ) • (B - w) + z • (w + r - w)) :
     ⟪m, r⟫ = ⟪w, r⟫ + s * (⟪A, r⟫ - ⟪w, r⟫) + z * ⟪r, r⟫ := by

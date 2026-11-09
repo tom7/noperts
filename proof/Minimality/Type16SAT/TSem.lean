@@ -261,13 +261,13 @@ def PS (t f q : Nat) : S3 :=
 theorem Sg_P (g : Geo) (t f q : Nat) : Sg3 (rho g) (PS t f q) (Pp g t f q) := by
   unfold PS
   by_cases h1 : f < q
-  · rw [if_pos h1]
+  · rw [ite_eq_left h1]
     exact Sg3_atomG g (v := V.kv t f q) (by simp [rho])
-  · rw [if_neg h1]
+  · rw [ite_eq_right h1]
     by_cases h2 : q < f
-    · rw [if_pos h2, P_swap]
+    · rw [ite_eq_left h2, P_swap]
       exact (Sg3_atomG g (v := V.kv t q f) (by simp [rho])).neg
-    · rw [if_neg h2]
+    · rw [ite_eq_right h2]
       have : f = q := by omega
       subst this
       rw [P_self]; exact Sg3_zeroG g
@@ -295,8 +295,8 @@ theorem SgW_RH_on {g : Geo} {t f : Nat} (hz : Z0 g t f) (q : Nat) :
 /-- `RH` with the convention, both branches in one statement. -/
 theorem SgW_RH (g : Geo) (t f q : Nat) : SgW (rhoW g) (RS t f q) (Rtie g t f q) := by
   by_cases hz : Z0 g t f
-  · simp only [Rtie, hz, if_true]; exact SgW_RH_on hz q
-  · simp only [Rtie, hz, if_false]; exact SgW_RH_off hz q
+  · simp only [Rtie, hz, ite_true]; exact SgW_RH_on hz q
+  · simp only [Rtie, hz, ite_false]; exact SgW_RH_off hz q
 
 /-- Off `Z0`: `KA` has the sign of `K(s)`. -/
 theorem SgW_KA_off {g : Geo} {t f : Nat} (hz : ¬ Z0 g t f) (s : Nat) :
@@ -311,8 +311,8 @@ theorem SgW_KA_on {g : Geo} {t f : Nat} (hz : Z0 g t f) (s : Nat) :
 /-- `KA` with the convention, both branches in one statement. -/
 theorem SgW_KA (g : Geo) (t f s : Nat) : SgW (rhoW g) (KS t f s) (Ktie g t f s) := by
   by_cases hz : Z0 g t f
-  · simp only [Ktie, hz, if_true]; exact SgW_KA_on hz s
-  · simp only [Ktie, hz, if_false]; exact SgW_KA_off hz s
+  · simp only [Ktie, hz, ite_true]; exact SgW_KA_on hz s
+  · simp only [Ktie, hz, ite_false]; exact SgW_KA_off hz s
 
 /-- The guard literal is true iff `Z0`. -/
 theorem evalW_Z0L (g : Geo) (t f : Nat) : evalW (rhoW g) (Z0L t f) = true ↔ Z0 g t f := by
@@ -367,19 +367,19 @@ theorem ls_line_sound (g : Geo) {t s view : Nat} {k : Int} (h : lsLineChk t s vi
   simp only [lsLineChk, Bool.and_eq_true, Bool.or_eq_true, decide_eq_true_eq] at h
   obtain ⟨h21, h⟩ := h
   have hvv : g.vv view = cross (g.N (lines.getD (view - 21) (0, 0)).1) (g.N (lines.getD (view - 21) (0, 0)).2) := by
-    unfold Geo.vv; rw [if_neg (by omega)]
-  have hx' : g.vv x = g.dv x := by unfold Geo.vv; rw [if_pos hx]
+    unfold Geo.vv; rw [ite_eq_right (by omega)]
+  have hx' : g.vv x = g.dv x := by unfold Geo.vv; rw [ite_eq_left hx]
   have T := Sg3_Tt g view x (fun h' h'' => by omega)
   rw [hvv, hx'] at T
   unfold lsS
   rcases h with ⟨hp, hk⟩ | ⟨hp, hk⟩
   · rw [hp] at T
     have : (0 : Int) < k := by omega
-    rw [if_pos this]
+    rw [ite_eq_left this]
     simpa [Ls_eq_inner] using T
   · rw [hp] at T
     have : ¬ (0 : Int) < k := by omega
-    rw [if_neg this]
+    rw [ite_eq_right this]
     have T' := T.neg
     have e : -⟪cross (g.N s) (g.N t), g.dv x⟫ = Ls g t s x := by unfold Ls; vec_ring
     rw [e] at T'
@@ -412,8 +412,8 @@ theorem ls_adj_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) {t s view : Nat} {k
   have hq7 : q < 7 := (EA_EB_lt7 view hv21).2
   have hdq : g.x p - g.x q ≠ 0 := dne hF p q f hq7 (by simpa using hf.1) (by simpa using hf.2)
   have hDe : g.dv view = g.x p - g.x q := rfl
-  have hvv : g.vv view = g.dv view := by unfold Geo.vv; rw [if_pos hv21]
-  have hx' : g.vv x = g.dv x := by unfold Geo.vv; rw [if_pos hx]
+  have hvv : g.vv view = g.dv view := by unfold Geo.vv; rw [ite_eq_left hv21]
+  have hx' : g.vv x = g.dv x := by unfold Geo.vv; rw [ite_eq_left hx]
   have hnz : g.vv view ≠ 0 := by rw [hvv, hDe]; exact hdq
   have T := Sg3_Tt g view x (fun _ _ => hnz)
   rw [hvv, hx'] at T
@@ -431,7 +431,7 @@ theorem ls_adj_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) {t s view : Nat} {k
   unfold lsS
   rcases hk with ⟨hk1, ho⟩ | ⟨hk1, ho⟩
   · have hk0 : (0 : Int) < k := by omega
-    rw [if_pos hk0]
+    rw [ite_eq_left hk0]
     have hc : 0 < det3 (g.N t) (g.N s) (g.dv view) := by
       have : (0 : ℝ) < -(oriv t p q s' : ℝ) := by
         have : (oriv t p q s' : ℝ) < 0 := by exact_mod_cast ho
@@ -443,7 +443,7 @@ theorem ls_adj_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) {t s view : Nat} {k
       have := T.scale hc
       simpa using this)
   · have hk0 : ¬ (0 : Int) < k := by omega
-    rw [if_neg hk0]
+    rw [ite_eq_right hk0]
     have hc : det3 (g.N t) (g.N s) (g.dv view) < 0 := by
       have h0 : (0 : ℝ) < oriv t p q s' := by exact_mod_cast ho
       rw [hDe]

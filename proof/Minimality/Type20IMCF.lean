@@ -222,12 +222,12 @@ theorem leaf_Wt {q tm sp sm kk B : ℝ} (h : Hy q tm sp sm kk B) (hK : Kc q tm s
   have hQ := h.hQ
   have pd : 0 < sm - tm := by linarith
   have p3 : 0 < tm - q*tm*sm*(1+tm-sm) := by
-    have a1 : q*sm < 1 := mul_lt_one_of_nonneg_of_lt_one_left q0.le hq1 h.sm_lt.le
-    have a2 : q*sm*(1+tm-sm) < 1 := mul_lt_one_of_nonneg_of_lt_one_left (by positivity) a1 g1'.le
+    have a1 : q*sm < 1 := by nlinarith [mul_nonneg q0.le (sub_nonneg.2 hq1.le)]
+    have a2 : q*sm*(1+tm-sm) < 1 := by nlinarith [mul_nonneg (by positivity : 0 ≤ q*sm) (sub_nonneg.2 a1.le)]
     have := mul_pos tm0 (sub_pos.2 a2)
     linarith
   have pT : 0 < 1 - q*tm*sm := by
-    have := mul_lt_one_of_nonneg_of_lt_one_left (mul_pos q0 tm0).le (by linarith : q*tm < 1) h.sm_lt.le
+    have := (by nlinarith [mul_nonneg (mul_pos q0 tm0).le (sub_nonneg.2 h.sm_lt.le)] : q*tm*sm < 1)
     linarith
   have hBs : (1-sm)*B = (1-sm)*tm*(1-q*tm) + sm*(1-tm)*(q*tm) := by
     have : sp * ((1-sm)*B - ((1-sm)*tm*(1-q*tm) + sm*(1-tm)*(q*tm))) = 0 := by
