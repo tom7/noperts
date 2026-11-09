@@ -4,6 +4,7 @@ public import SeptopertShell.Watertight
 public import SeptopertShell.View
 public import SeptopertShell.Poly
 public import SeptopertShell.Slab
+public import SeptopertShell.Closure
 
 /-!
 # A watertight shell of Rupert shapes around the Septopert island
@@ -44,6 +45,12 @@ namespace SeptopertShell
 /-- **The Septopert island is enclosed by Rupert shapes.** -/
 def IslandEnclosed : Prop :=
   ∃ W : Set ℝ³, (∀ p ∈ W, IsRupert (shellVerts p)) ∧ Separates W classicParams outsideParams
+
+/-- **The island is enclosed, given checked closure data** (the slab certificates are checked inside
+`ClosureData.check`). The executable `checkSeptopertShell` evaluates the checks natively on the certificate files. -/
+theorem islandEnclosed_of_closureData (C : ClosureData) (h : C.check = true) (hin : C.classicOk = true) :
+    IslandEnclosed :=
+  islandEnclosed_of_check C h hin
 
 end SeptopertShell
 
