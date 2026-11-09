@@ -4,6 +4,7 @@ public import SeptopertShell.Watertight
 public import SeptopertShell.View
 public import SeptopertShell.Poly
 public import SeptopertShell.IPoly
+public import SeptopertShell.Bern
 public import SeptopertShell.Slab
 public import SeptopertShell.Closure
 public import SeptopertShell.ClosurePar
@@ -37,11 +38,13 @@ Rupert shapes.
    With `classicParams ∈ D` and `outsideParams ∉ D`, `separates_of_frontier_subset` gives the theorem.
 
 Status (2026-11-09): done. `islandEnclosed_of_closureData` (standard axioms) and the native check
-`checkSeptopertShell` on the inlined certificate `SeptopertShell.shellText` (`data/shell.txt`, 51 KB: six slabs (one
-box per face, the slanted face in two) and the closure; integer condition polynomials and centred-form subdivision
-trees; 2 min; it prints "instantiated: IslandEnclosed"). The data is untrusted and regenerable: nopert229
-`out/bottleneck/famcensus/islandmap/bnd/build3/run.sh` (witness fits with the C++ polish, exact C++ certificates with
-centred bounds, closure.py --lean).
+`checkSeptopertShell` on the inlined certificate `SeptopertShell.shellText` (`data/shell.txt`, 43 KB: six slabs (one
+box per face, the slanted face in two) and the closure; integer condition polynomials, centred-form subdivision
+trees with Bernstein leaves (`SeptopertShell.Bern`) where the centred form would need deep trees; 8 s; it prints
+"instantiated: IslandEnclosed"). `SeptopertShellNative.lean` proves `SeptopertShell.islandEnclosed : IslandEnclosed`
+from the same certificate by `native_decide` (about 75 s of `lake build`; standard axioms plus `native_decide`'s).
+The data is untrusted and regenerable: nopert229 `out/bottleneck/famcensus/islandmap/bnd/build3/run.sh` (witness
+fits with the C++ polish, exact C++ certificates with centred and Bernstein bounds, closure.py --lean).
 -/
 
 @[expose] public section

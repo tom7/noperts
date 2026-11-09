@@ -9,8 +9,8 @@ The certificate data is untrusted text (written by nopert229 `islandmap/bnd/clos
 parsers turn it into `ClosureData` (`parseShell`) or one `SlabData` (`parseSlab`). Nothing here needs to be correct for
 soundness: the theorems only use `ClosureData.check` on whatever the parser produced. Format: `slabdata K` blocks (one
 slab each: `box`, the polynomials `s y z v0 v1 v2 c0 c1 c2 t0 t1`, `N0`, `m0`, `tri`, `view`, 22 `cond` lines
-`m dc [C] TREE`, trees in preorder with `L`, `S dim point`, `s dim` (midpoint), `g` (geometric split in e)), then
-`shell` and `B0`, `dm`, the `g` polynomials, per face `face ...`, three `chart` lines, `slab K a0 a1` lines and a cover
+`m dc [C] TREE`, trees in preorder with `L`, `B m` (Bernstein leaf), `S dim point`, `s dim` (midpoint), `g`
+(geometric split in e)), then `shell` and `B0`, `dm`, the `g` polynomials, per face `face ...`, three `chart` lines, `slab K a0 a1` lines and a cover
 `tree` (`B j`, `H k`, `S dim point`, `s dim`), then six `b0tree` lines.
 -/
 
@@ -49,7 +49,7 @@ def parsePoly (fs : List String) : Except String SeptopertShell.Poly := do
     rest := rest.drop 4
   pure p.reverse
 
-/-- A split tree in preorder: `L` (leaf), `S dim point`, `s dim` (split at the midpoint of the current box) or `g`
+/-- A split tree in preorder: `L` (leaf), `B m` (Bernstein leaf, relative bound `m`), `S dim point`, `s dim` (split at the midpoint of the current box) or `g`
 (shellcert4's geometric split in the third coordinate e = d - dc: the point 2 e_lo + dc). The points are recomputed
 from the box `lo`, `hi` (untrusted parsing: `checkTree` checks every split point lies in its box). -/
 partial def parseTree (lo hi : Array ℚ) (dc : ℚ) (fs : List String) : Except String (SplitTree × List String) := do
@@ -61,6 +61,7 @@ partial def parseTree (lo hi : Array ℚ) (dc : ℚ) (fs : List String) : Except
     else throw (s!"bad split dimension {dim}")
   match fs with
   | "L" :: rest => pure (.leaf, rest)
+  | "B" :: m :: rest => do pure (.bern (← parseRat m), rest)
   | "S" :: d :: m :: rest => do let dim ← parseNat d; sub dim (← parseRat m) rest
   | "s" :: d :: rest => do let dim ← parseNat d; sub dim ((lo[dim]! + hi[dim]!) / 2) rest
   | "g" :: rest => sub 2 (2 * lo[2]! + dc) rest

@@ -3,6 +3,7 @@ module
 public import SeptopertShell.View
 public import SeptopertShell.Poly
 public import SeptopertShell.IPoly
+public import SeptopertShell.Bern
 public import Cayley
 
 /-!
@@ -154,36 +155,6 @@ The conditions are recomputed over `ℤ`, after clearing denominators (`Poly.cle
 `m0 = m0n / m0d`, `dI = Dc² + ci·ci` and `Λ = Dc² Dn Dp m0d Dt`, `κ = Dn Dt m0n`: `Xo_b = κ dI Pi_b / Λ`,
 `W_k = WI_k / Λ`, and `cond = condI / (Dv Λ²)` where
 `condI = κ dI (κ dI vi·(Pi_b × Pi_c) − WI·(vi × (Pi_b − Pi_c)))`. -/
-
-namespace Poly
-
-/-- Multiply by the natural number `D` and take numerators (exact if `D` clears the denominators). -/
-def clear (D : ℕ) (p : Poly) : IPoly := p.map fun t => (t.1, (t.2 * (D : ℚ)).num)
-
-/-- Check that `D` clears all denominators. -/
-def clearOk (D : ℕ) (p : Poly) : Bool := p.all fun t => decide ((t.2 * (D : ℚ)).den = 1)
-
-theorem eval_clear {D : ℕ} {p : Poly} (h : clearOk D p = true) (x : Fin 3 → ℝ) :
-    (clear D p).eval x = D * p.eval x := by
-  induction p with
-  | nil => simp [clear]
-  | cons t p ih =>
-    simp only [clearOk, List.all_cons, Bool.and_eq_true, decide_eq_true_eq] at h
-    have ih' := ih (by simpa [clearOk] using h.2)
-    have hn : (((t.2 * D).num : ℤ) : ℚ) = t.2 * D := Rat.coe_int_num_of_den_eq_one h.1
-    have hnR : (((t.2 * D).num : ℤ) : ℝ) = (t.2 : ℝ) * D := by
-      have := congrArg (Rat.cast : ℚ → ℝ) hn
-      push_cast at this; exact this
-    simp only [clear, List.map_cons, IPoly.eval_cons] at ih' ⊢
-    rw [ih', hnR, eval_cons]
-    simp only [termEval]; ring
-
-end Poly
-
-/-- Least common multiple of a list. -/
-def lcmList (l : List ℕ) : ℕ := l.foldl Nat.lcm 1
-
-def polyDens (p : Poly) : List ℕ := p.map fun t => t.2.den
 
 /-- Shared data of the integer computation (computed once per slab). -/
 structure ICore where

@@ -460,8 +460,11 @@ theorem lowerBound_le_eval (p : Poly) (B : Box) (x : Fin 3 → ℝ) (hx : B.mem 
 
 /-! ### Subdivision certificates -/
 
+/-- Subdivision certificates. `bern m` is a Bernstein leaf (`Bern.bernOk`, centred trees only), with the lower
+bound `m` the certificate claims. -/
 inductive SplitTree
   | leaf
+  | bern (m : ℚ)
   | split (dim : Fin 3) (mid : ℚ) (l r : SplitTree)
 
 def Box.setHi (B : Box) (d : Fin 3) (m : ℚ) : Box := { B with hi := Function.update B.hi d m }
@@ -469,6 +472,7 @@ def Box.setLo (B : Box) (d : Fin 3) (m : ℚ) : Box := { B with lo := Function.u
 
 def checkTree (p : Poly) : Box → SplitTree → Bool
   | B, .leaf => decide (0 < lowerBound p B)
+  | _, .bern _ => false
   | B, .split d m l r =>
     decide (B.lo d ≤ m ∧ m ≤ B.hi d) && checkTree p (B.setHi d m) l && checkTree p (B.setLo d m) r
 
@@ -494,6 +498,7 @@ theorem pos_of_checkTree {p : Poly} {t : SplitTree} {B : Box} (h : checkTree p B
     have := lowerBound_le_eval p B x hx
     have h' : (0 : ℝ) < lowerBound p B := by exact_mod_cast h
     linarith
+  | bern _ => simp [checkTree] at h
   | split d m l r ihl ihr =>
     simp only [checkTree, Bool.and_eq_true, decide_eq_true_eq] at h
     obtain ⟨⟨_, hl⟩, hr⟩ := h
@@ -603,53 +608,6 @@ theorem centredBound_le (p : Poly) (r : Fin 3 → ℚ) (h : Fin 3 → ℝ) (hr :
       linarith [neg_abs_le (termEval ((i, j, k), c) h)]
 
 end Poly
-
-/-- Subdivision certificate checker in centred form: `p` is the polynomial in the local coordinates
-`h = x - (lo + hi)/2` of the box `[lo, hi]`. -/
-def checkTreeC (p : Poly) (lo hi : Fin 3 → ℚ) : SplitTree → Bool
-  | .leaf => decide (0 < Poly.centredBound p fun i => (hi i - lo i) / 2)
-  | .split d m l r =>
-    decide (lo d ≤ m ∧ m ≤ hi d) &&
-      checkTreeC (Poly.shiftVar p d ((m - hi d) / 2)) lo (Function.update hi d m) l &&
-      checkTreeC (Poly.shiftVar p d ((m - lo d) / 2)) (Function.update lo d m) hi r
-
-theorem pos_of_checkTreeC {t : SplitTree} : ∀ {p : Poly} {lo hi : Fin 3 → ℚ}, checkTreeC p lo hi t = true →
-    ∀ {x : Fin 3 → ℝ}, (∀ i, (lo i : ℝ) ≤ x i ∧ x i ≤ hi i) →
-      0 < p.eval (fun i => x i - (((lo i + hi i) / 2 : ℚ) : ℝ)) := by
-  induction t with
-  | leaf =>
-    intro p lo hi h x hx
-    simp only [checkTreeC, decide_eq_true_eq] at h
-    have h' : (0 : ℝ) < Poly.centredBound p (fun i => (hi i - lo i) / 2) := by exact_mod_cast h
-    refine lt_of_lt_of_le h' (Poly.centredBound_le _ _ _ fun i => ?_)
-    obtain ⟨a, b⟩ := hx i
-    push_cast
-    rw [abs_le]; constructor <;> linarith
-  | split d m l r ihl ihr =>
-    intro p lo hi h x hx
-    simp only [checkTreeC, Bool.and_eq_true, decide_eq_true_eq] at h
-    obtain ⟨⟨_, hl⟩, hr⟩ := h
-    rcases le_total (x d) m with hd | hd
-    · have := ihl hl (x := x) (fun i => by
-        by_cases hi : i = d
-        · subst hi; simp [hd, (hx i).1]
-        · simp [Function.update_of_ne hi, hx i])
-      rw [Poly.eval_shiftVar] at this
-      convert this using 2
-      ext i
-      by_cases hi : i = d
-      · subst hi; simp; ring
-      · simp [Function.update_of_ne hi]
-    · have := ihr hr (x := x) (fun i => by
-        by_cases hi : i = d
-        · subst hi; simp [hd, (hx i).2]
-        · simp [Function.update_of_ne hi, hx i])
-      rw [Poly.eval_shiftVar] at this
-      convert this using 2
-      ext i
-      by_cases hi : i = d
-      · subst hi; simp; ring
-      · simp [Function.update_of_ne hi]
 
 end SeptopertShell
 

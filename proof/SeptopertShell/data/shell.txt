@@ -20,14 +20,14 @@ cond 1 3/2000 C L
 cond 0 3/2000 C L
 cond 1 3/2000 C s 0 s 1 L s 2 L L s 1 s 2 L L s 2 s 0 L L L
 cond 0 3/2000 C L
-cond 1 3/2000 C s 0 s 1 s 2 s 0 s 1 s 2 s 0 s 1 L L s 1 L L s 0 L L s 2 s 0 s 1 L L s 1 L L L s 1 s 2 s 0 s 1 L L s 1 L L s 0 L L s 2 s 0 s 1 L L s 1 L L L s 0 s 1 s 2 L L L s 1 s 2 L L s 2 L L s 2 s 0 s 1 s 2 s 0 L L L s 2 s 0 s 1 L L L s 0 L L s 1 L s 2 s 0 L s 1 L L L s 0 s 1 L s 2 s 0 L L s 0 s 1 L L s 1 L L s 1 L s 2 L s 0 s 1 L L s 1 L L s 1 s 2 s 0 s 1 s 2 s 0 L L L L s 1 s 2 s 0 L L s 0 L L s 2 s 0 L s 1 L L L s 0 s 1 L L s 1 s 2 L s 0 L L L s 2 s 0 s 1 L s 2 s 0 s 1 L s 2 s 0 L L L s 1 L s 2 s 0 s 1 L L s 1 L L L s 0 L s 1 L L s 1 s 2 s 0 L s 1 L L s 0 L s 1 L L s 2 s 0 s 1 s 2 L L s 2 s 0 s 1 L L s 1 L L s 0 L L s 1 s 2 s 0 L L L s 2 s 0 s 1 L L s 1 L L s 0 L L s 0 s 1 L s 2 L L s 1 L s 2 L L s 0 s 1 s 2 L s 0 L L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 1 s 2 s 0 L s 1 L L s 0 s 1 L L s 1 L L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L
-cond 1 3/2000 C s 0 s 1 s 2 s 0 s 1 s 2 L L s 2 L L s 1 s 2 L L s 2 L L s 0 s 1 L L s 1 L L s 2 s 0 s 1 s 2 L L s 2 s 0 L L L s 1 L s 2 L L s 0 s 1 L L s 1 L L s 1 s 2 s 0 s 1 s 2 L L L s 1 L L s 0 s 1 L L s 1 L L s 2 s 0 s 1 L s 2 s 0 s 1 L L s 1 L L s 0 L s 1 L L s 1 s 2 L L s 2 s 0 s 1 L s 2 s 0 L L L s 1 s 2 L L s 2 s 0 L L L s 0 s 1 L L s 1 L L s 0 s 1 L s 2 s 0 L s 1 L L s 0 L s 1 L L s 1 L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L
+cond 1 3/2000 C B 1/8
+cond 1 3/2000 C B 1/4
 cond 1 3/2000 C s 0 s 1 L L s 1 L s 2 L L
-cond 1 3/2000 C s 0 s 1 s 2 s 0 L L s 0 s 1 L L s 1 L L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L s 2 L L s 1 L s 2 L L s 1 s 2 s 0 L L s 0 s 1 L L s 1 L L s 2 s 0 s 1 L L s 1 L s 2 L L s 0 s 1 L s 2 L L s 1 L s 2 L L
+cond 1 3/2000 C B 1/2
 cond 0 3/2000 C L
 cond 0 3/2000 C L
-cond 1 3/2000 C s 0 s 1 s 2 L L s 2 s 0 L L L s 1 s 2 L L s 2 s 0 L L L
-cond 1 3/2000 C s 0 s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 2 s 0 s 1 s 2 L L s 2 s 0 s 1 L L s 1 L L s 0 L L s 1 s 2 L L s 2 s 0 s 1 L L s 1 L L s 0 L L s 0 s 1 L s 2 L L s 1 L s 2 L L s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 s 2 L L L s 2 s 0 s 1 s 2 L L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 1 s 2 s 0 L s 1 L L L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 0 s 1 L s 2 L L s 1 L s 2 L L
+cond 1 3/2000 C B 1/4
+cond 1 3/2000 C B 1/4
 cond 0 3/2000 C L
 cond 0 3/2000 C L
 cond 0 3/2000 C L
@@ -98,10 +98,10 @@ cond 1 3/2000 C s 0 s 1 L L L
 cond 1 3/2000 C L
 cond 1 3/2000 C s 0 L L
 cond 1 3/2000 C s 0 s 1 s 2 L L s 2 s 0 L L s 0 L L s 1 L L
-cond 1 3/2000 C s 0 s 1 s 2 s 0 s 1 s 2 s 0 s 1 s 2 s 0 L L L L s 1 s 2 s 0 L L L L s 0 s 1 L L s 1 L L L s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L L s 0 s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L L s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L L L s 1 s 2 s 0 s 1 s 2 L L L L s 0 s 1 s 2 L s 0 L L L s 1 L L L
+cond 1 3/2000 C B 1/64
 cond 0 3/2000 C L
 cond 1 3/2000 C L
-cond 1 3/2000 C s 0 s 1 s 2 s 0 s 1 s 2 L L L s 1 L L s 0 s 1 L L s 1 L L s 2 s 0 s 1 L L s 1 L L s 0 L L s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 2 s 0 L s 1 L L s 0 L L
+cond 1 3/2000 C B 1/4
 cond 0 3/2000 C L
 cond 1 3/2000 C s 0 s 1 L L s 1 L L
 cond 0 3/2000 C L
@@ -112,7 +112,7 @@ cond 1 3/2000 C L
 cond 0 3/2000 C L
 cond 0 3/2000 C L
 cond 0 3/2000 C L
-cond 1 3/2000 C s 0 s 1 s 2 s 0 s 1 s 2 s 0 s 1 s 2 s 0 s 1 s 2 s 0 s 1 L L L s 0 L L L s 1 s 2 s 0 L L s 0 L L L s 0 s 1 s 2 s 0 L L s 0 L L L s 1 s 2 s 0 L L s 0 L L L L s 1 s 2 s 0 s 1 s 2 s 0 L L s 0 L L L s 1 s 2 s 0 L L L L s 0 s 1 s 2 s 0 L L s 0 L L L s 1 s 2 L L L L s 0 s 1 s 2 s 0 s 1 s 2 s 0 L L s 0 L L L s 1 s 2 s 0 L L s 0 L L L s 0 s 1 s 2 s 0 L L s 0 L L L s 1 s 2 s 0 L L s 0 L L L L s 1 s 2 s 0 s 1 s 2 s 0 L L s 0 L L L s 1 L L s 0 s 1 s 2 s 0 L L L L s 1 L L L L s 1 s 2 s 0 s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L L s 1 s 2 s 0 s 1 L L L s 0 s 1 L L L L s 0 s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L L s 1 s 2 s 0 s 1 L L L s 0 s 1 L L L L s 2 s 0 L s 1 L L s 0 L s 1 L L s 0 s 1 s 2 s 0 s 1 s 2 s 0 s 1 s 2 s 0 L L s 0 L L L s 1 s 2 s 0 L L L L s 0 s 1 s 2 s 0 L L s 0 L L L s 1 s 2 L L L L s 1 s 2 s 0 s 1 s 2 L L L s 1 L L s 0 s 1 L L s 1 L L L s 0 s 1 s 2 s 0 s 1 s 2 s 0 L L s 0 L L L s 1 s 2 L L L s 0 s 1 s 2 s 0 L L s 0 L L L s 1 s 2 s 0 L L s 0 L L L L s 1 s 2 s 0 s 1 s 2 L L L s 1 L L s 0 s 1 s 2 L L L s 1 L L L L s 1 s 2 s 0 s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L L s 1 s 2 s 0 s 1 L L L s 0 s 1 L L L L s 0 s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L L s 1 s 2 s 0 s 1 L L L s 0 s 1 L L L L s 2 s 0 L s 1 L L s 0 L s 1 L s 2 L s 0 L L s 2 s 0 s 1 s 2 s 0 L s 1 L s 2 s 0 L L s 0 L L s 0 s 1 L L s 1 L s 2 s 0 L L s 0 L L s 2 s 0 s 1 s 2 s 0 L L s 0 L L s 2 s 0 L L s 0 L L s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 2 s 0 L s 1 L L s 0 L s 1 L L s 0 s 1 s 2 s 0 L L s 0 L L s 2 s 0 L L s 0 s 1 L L L s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 2 s 0 L s 1 L L s 0 L s 1 L L s 1 s 2 s 0 s 1 s 2 L L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 1 s 2 s 0 L s 1 L L s 0 L s 1 L L s 2 s 0 s 1 L s 2 s 0 L L L s 1 s 2 s 0 L L L L s 0 s 1 L L s 1 L L s 0 s 1 s 2 s 0 L L s 0 L L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 1 s 2 s 0 L s 1 L L s 0 L s 1 L L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 2 s 0 s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 1 s 2 s 0 s 1 s 2 L L L s 1 s 2 s 0 L L L L s 0 s 1 L L s 1 L L s 2 s 0 L L s 0 L L s 0 s 1 s 2 s 0 L s 1 L L s 0 L s 1 L L s 2 s 0 s 1 L L L s 0 s 1 L L L s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 2 L L s 0 s 1 s 2 s 0 s 1 L L s 1 L s 2 s 0 L s 1 L L s 0 L s 1 L L s 0 s 1 L s 2 L s 0 L L s 1 L s 2 s 0 L s 1 L L s 0 s 1 L L s 1 L L s 2 s 0 s 1 s 2 s 0 L s 1 L L s 0 L s 1 L L s 2 s 0 s 1 L L L s 0 s 1 L L L s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 0 s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 2 s 0 s 1 L L s 1 L L s 0 s 1 s 2 L L L s 1 L L s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 s 2 L L L s 1 L L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 1 s 2 s 0 s 1 s 2 s 0 L L s 0 L L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 2 s 0 L s 1 L L s 0 L s 1 L L s 0 s 1 s 2 s 0 L s 1 L L s 0 L s 1 L L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L s 2 L L s 1 L L s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 2 s 0 s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 2 s 0 s 1 L L L s 0 s 1 L L L s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L L L s 0 s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 2 s 0 s 1 L L L s 0 s 1 L L L s 1 s 2 s 0 s 1 L L L s 0 s 1 L L L L s 1 s 2 s 0 s 1 s 2 s 0 s 1 s 2 s 0 L L s 0 L L L s 1 s 2 s 0 L L s 0 L L L s 0 s 1 s 2 s 0 L L s 0 L L L s 1 s 2 s 0 L L s 0 L L L s 2 s 0 s 1 L s 2 s 0 L L s 0 L L s 1 L s 2 s 0 L s 1 L L s 0 L L s 0 s 1 L s 2 s 0 L L s 0 L L s 1 L s 2 L L s 1 s 2 s 0 s 1 s 2 s 0 L L s 0 L L L s 1 s 2 s 0 L L s 0 L L L s 0 s 1 s 2 s 0 L L s 0 L L L s 1 s 2 s 0 L L L L s 2 s 0 s 1 L s 2 s 0 s 1 L L s 1 L L L s 1 s 2 s 0 L L L s 2 s 0 L s 1 L L s 0 L L s 0 s 1 L L s 1 L s 2 L L s 0 s 1 s 2 s 0 s 1 s 2 s 0 L L s 0 L L L s 1 s 2 s 0 L L s 0 L L L s 0 s 1 s 2 s 0 L L s 0 L L L s 1 s 2 s 0 L L L L s 2 s 0 s 1 L s 2 s 0 L L s 0 L L s 1 L L s 0 s 1 L s 2 s 0 L L s 0 L L s 1 L L s 1 s 2 s 0 s 1 s 2 s 0 L L L L s 1 L L s 0 s 1 L L L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 2 s 0 s 1 s 2 s 0 s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 2 s 0 s 1 L s 2 s 0 L L L s 1 s 2 L L s 2 L L s 0 s 1 L L s 1 L L s 1 s 2 s 0 s 1 L L s 1 L L s 0 L L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L L s 0 s 1 s 2 s 0 s 1 L L L s 0 L L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 1 s 2 s 0 L L s 0 L L s 2 s 0 s 1 L L L s 0 L L s 2 s 0 s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L L L s 1 L L s 0 s 1 s 2 s 0 L L s 0 L L L s 1 L L s 1 s 2 s 0 s 1 s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L L s 2 s 0 L L L s 1 s 2 s 0 s 1 L L s 1 L L L L s 0 s 1 s 2 s 0 L L L L s 1 L L s 2 s 0 s 1 L L s 1 L L s 0 L L s 0 s 1 s 2 s 0 s 1 s 2 s 0 L L L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L L s 1 s 2 s 0 L L s 0 L L s 2 L L s 0 s 1 s 2 L s 0 L L s 2 s 0 s 1 L L L s 0 s 1 L L L s 1 s 2 s 0 L L s 0 L L L s 2 s 0 s 1 s 2 L L L L s 0 s 1 L L L s 1 s 2 s 0 s 1 s 2 L L L s 1 L L s 0 s 1 L L L s 2 L L
+cond 1 3/2000 C s 0 s 1 B 1/64 B 1/16 s 1 B 1/16 B 1/64
 cond 1 3/2000 C L
 cond 1 3/2000 C L
 slabdata 3
@@ -134,14 +134,14 @@ tri 6 5 0 3 2 1 6 2 1 3 2 1 5 0 2 5 3 1 4 0 2
 view 1 -1
 cond 0 3/2000 C L
 cond 1 3/2000 C s 0 s 1 L s 2 L L s 1 s 2 s 0 L L L L
-cond 1 3/2000 C s 0 s 1 s 2 s 0 L L L s 2 s 0 s 1 L L s 1 L L s 0 L L s 1 s 2 s 0 s 1 L L s 1 L L L s 2 s 0 s 1 L L L L
+cond 1 3/2000 C B 1/4
 cond 0 3/2000 C L
 cond 1 3/2000 C s 0 s 1 L L s 1 L L
 cond 1 3/2000 C s 0 s 1 s 2 L L L s 1 s 2 L L L
 cond 1 3/2000 C L
 cond 1 3/2000 C s 0 s 1 L L s 1 L L
 cond 0 3/2000 C L
-cond 1 3/2000 C s 0 s 1 s 2 s 0 s 1 s 2 s 0 s 1 L L s 1 L L L L s 1 s 2 s 0 s 1 L L s 1 s 2 s 0 L L L L L L L s 2 L L s 1 s 2 s 0 s 1 s 2 s 0 s 1 L L s 1 L L L L s 1 s 2 L L L s 0 L L s 2 s 0 L L s 0 L s 1 L L
+cond 1 3/2000 C B 1/64
 cond 1 3/2000 C s 0 s 1 L s 2 s 0 L L L s 1 L s 2 L L
 cond 1 3/2000 C L
 cond 1 3/2000 C L
@@ -149,7 +149,7 @@ cond 0 3/2000 C L
 cond 0 3/2000 C L
 cond 0 3/2000 C L
 cond 0 3/2000 C L
-cond 1 3/2000 C s 0 s 1 L s 2 s 0 s 1 L s 2 s 0 s 1 L L s 1 L s 2 s 0 L s 1 L L L s 0 s 1 L L s 1 L L s 1 L s 2 s 0 s 1 L s 2 s 0 s 1 L L s 1 L L L s 1 L s 2 s 0 s 1 L L s 1 L L s 0 L L s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L s 2 s 0 s 1 L L s 1 L L L s 1 L s 2 s 0 s 1 L s 2 s 0 s 1 L s 2 s 0 s 1 L L s 1 L L L s 1 L s 2 s 0 s 1 L L L L s 0 s 1 L L s 1 L L s 1 L s 2 s 0 s 1 L L s 1 L L s 0 s 1 L L s 1 L L s 0 s 1 L s 2 s 0 s 1 L L s 1 L L L s 1 L s 2 s 0 L L L
+cond 1 3/2000 C B 1/256
 cond 1 3/2000 C s 0 L L
 cond 0 3/2000 C L
 cond 0 3/2000 C L
@@ -176,7 +176,7 @@ cond 1 3/2000 C s 0 s 1 L s 2 L L s 1 L L
 cond 0 3/2000 C L
 cond 1 3/2000 C L
 cond 1 3/2000 C L
-cond 1 3/2000 C s 0 s 1 s 2 s 0 L s 1 L L s 0 L L s 2 s 0 L L s 0 L L s 1 s 2 s 0 s 1 L L s 1 s 2 L L L s 0 L L s 2 s 0 s 1 L L s 1 s 2 L L s 2 s 0 L L s 0 L L s 0 s 1 L L s 1 L s 2 L L
+cond 1 3/2000 C B 1/4
 cond 2 3/2000 C L
 cond 1 3/2000 C s 0 L L
 cond 1 3/2000 C s 0 s 1 L L s 1 L L
@@ -184,7 +184,7 @@ cond 0 3/2000 C L
 cond 0 3/2000 C L
 cond 0 3/2000 C L
 cond 0 3/2000 C L
-cond 1 3/2000 C s 0 s 1 s 2 s 0 L L L s 2 s 0 s 1 L L s 1 L L L s 1 L s 2 s 0 L L L
+cond 1 3/2000 C B 1/2
 cond 0 3/2000 C L
 cond 1 3/2000 C L
 cond 0 3/2000 C L
