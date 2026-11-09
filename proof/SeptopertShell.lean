@@ -33,10 +33,10 @@ Rupert shapes.
    of those pieces lies in the slab of face `i` (a polynomial covering condition, certified the same way).
    With `classicParams ∈ D` and `outsideParams ∉ D`, `separates_of_frontier_subset` gives the theorem.
 
-Status: the statement; the topological criterion (`SeptopertShell.Watertight`); the passage criterion along a
-view (`SeptopertShell.View`). To do: the rational
-polynomial type with its evaluation homomorphism and box bound (soundness proofs, native checks), the
-slab certificates in this form, the covering conditions.
+Status (2026-11-09): done. `islandEnclosed_of_closureData` (standard axioms) and the native check
+`checkSeptopertShell SeptopertShell/data/shell` (27 slabs and the closure, 28 min on 32 tasks; it prints
+"instantiated: IslandEnclosed"). The data is untrusted and regenerable: nopert229
+`out/bottleneck/famcensus/islandmap/bnd/shell_build.sh` (witness fits, exact C++ certificates, closure.py --lean).
 -/
 
 @[expose] public section

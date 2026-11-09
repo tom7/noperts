@@ -7,7 +7,7 @@ continuous path in the parameter space (P/A, C/A, E/A) from the Septopert Classi
 shapes.
 
 Usage:
-  checkSeptopertShell DIR      (DIR/shell.txt and the slab files it names, written by nopert229
+  checkSeptopertShell SeptopertShell/data/shell      (DIR/shell.txt and the slab files it names, written by nopert229
                                 islandmap/bnd/closure.py --lean DIR)
 
 The data is untrusted. shell.txt: `B0` (s_lo s_hi y_lo y_hi z_lo z_hi), `dm`, the `g` polynomials (one per face, in
