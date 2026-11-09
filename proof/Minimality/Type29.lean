@@ -5,7 +5,7 @@ public import Minimality.Type29Lift
 @[expose] public section
 
 /-!
-# Type 29: Theorem P of §12 (`FEWER-FACES-PROOFS.md` §12), partial
+# Type 29: Theorem P of §12, partial
 
 Labels of §12 with `a, a', b, b', c, c', d = 0, 4, 1, 3, 2, 5, 6`: the octahedron
 `O = K − 6` has the opposite pairs `(0, 4)`, `(1, 3)`, `(2, 5)` (`F : OctFacets a a' b b' c c'`),

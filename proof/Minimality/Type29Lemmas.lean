@@ -5,7 +5,7 @@ public import Minimality.Type08
 @[expose] public section
 
 /-!
-# Type 29: the reusable lemmas of Theorem P of §12 (`FEWER-FACES-PROOFS.md` §12)
+# Type 29: the reusable lemmas of Theorem P of §12
 
 Two lemmas about an octahedron `O` with opposite pairs `(x, x')`, `(y, y')`,
 `(p, p')` and one more point `m` (in type 29, `O = K − m` for `m = 6`, `5` or `4`).

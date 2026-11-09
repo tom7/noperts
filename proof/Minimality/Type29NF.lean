@@ -6,7 +6,7 @@ public import Minimality.Type29
 @[expose] public section
 
 /-!
-# Type 29: normal coordinates (`FEWER-FACES-PROOFS.md` §21.0)
+# Type 29: normal coordinates
 
 Lemma 21.1: an affine map fixing the plane `H = aff(1, 4, 5)` puts `1 = (0, 0, 0)`,
 `4 = (1, 0, 0)`, `5 = (0, 1, 0)`, `3 = (0, 0, −1)`, `0 = (a0, b0, −h0)`, `2 = (a2, b2, −h2)` and
@@ -208,7 +208,7 @@ theorem isRupert_vtriσ (V M : Finset ℝ³) {u : ℝ³} (hu : u ≠ 0) {σ : �
     · exact ⟨1, s, δ, hs0, hs1, hδ, by simp only [a1, tri_1, tri_2]; exact h⟩
     · exact ⟨2, s, δ, hs0, hs1, hδ, by simp only [a2, tri_2, tri_0]; exact h⟩
 
-/-! ### Certificate forms of the tests (`FEWER-FACES-PROOFS.md` §18.2, §21.15)
+/-! ### Certificate forms of the tests
 
 A test of type 29 ends in a rim at its named view.  `RimThen V u y H` records the two things
 the tests deliver: the rim `y` as a certificate `RimCertPts` at the view `σ u` (the part that

@@ -6,7 +6,7 @@ public import Minimality.EdgePair
 @[expose] public section
 
 /-!
-# The uniform tilt: Lemmas 16.27 and 16.27′ (`FEWER-FACES-PROOFS.md` §16, part K)
+# The uniform tilt: Lemmas 16.27 and 16.27′
 
 Theorems 8.8 and 8.9 with the single tilt `ω × u₀`.  An edge crossing along `vw`
 (`w = v − h u₀`, far ends `A`, `B`) whose reduced polytope `K_v` is first-order free at `u₀`
@@ -24,7 +24,7 @@ The apex test in a mixed sector is the screen Plücker identity `det3_plucker_sc
   over one of its sides).  The pieces: `eventually_chord_choice` (one middle),
   `eventually_axle_uniform` (the axle, four sectors), the identities `det3_plucker_screen`,
   `det3_side_tilt`, `det3_apex_tilt`.
-* **Lemma 16.27′ (doubles; referee)** — the axle argument uses of `v` only its corner
+* **Lemma 16.27′ (doubles)** — the axle argument uses of `v` only its corner
   certificate, so any finite set `D` of vertices over certified corners costs nothing:
   `isRupert_of_uniform_doubles`, `isRupert_of_uniform_doubles_unimodal`.  16.27 is the case
   `D = {w}`.
@@ -315,7 +315,7 @@ theorem isRupert_of_edgeChords_uniform_unimodal (V M : Finset ℝ³) (R : Matrix
     det3_corner_pos hR hr hRu hp i, (hedge i).1, (hedge i).2⟩
 
 
-/-! ### Referee addition (Lemma 16.27′): doubles over any certified corner
+/-! ### Addition (Lemma 16.27′): doubles over any certified corner
 
 The axle argument of `eventually_axle_uniform` uses of `v` only its corner certificate
 at `u₀`. So every vertex `y = x − h u₀` lying over a vertex `x` that moves strictly into

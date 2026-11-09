@@ -7,7 +7,7 @@ public import Minimality.EdgeView
 @[expose] public section
 
 /-!
-# Sliding along a face circle (`FEWER-FACES-PROOFS.md` §10 addendum, (T1) and Lemma C)
+# Sliding along a face circle
 
 At an edge view `u₀` of an edge crossing, a depth tie or a horizontal double normal
 of the named reduced polygon `K_v` blocks Theorem 7.3.  The addendum moves the view

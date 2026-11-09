@@ -7,7 +7,6 @@ public import Minimality.DepthSeparated
 
 /-!
 # Sliding along a face circle: depth-separated pairs and persistent double normals
-(`FEWER-FACES-PROOFS.md` §10 addendum, Lemma H (c), Lemma X; Theorem 8.10)
 
 `Slide.lean` slides the view along a face circle with a rim that is unimodal along the
 slide (Theorem 7.3), and excludes horizontal double normals through the bad directions of

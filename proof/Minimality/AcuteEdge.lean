@@ -14,15 +14,15 @@ proved from `ael_euclid` here. Uses
 
 ## Contents
 
-* `ael_core` (normal form, PROOF.md §2): `x a = 0`, `x b = (L, 0, 0)`, every other point has
+* `ael_core` (normal form): `x a = 0`, `x b = (L, 0, 0)`, every other point has
   `0 < x₀ < L` (slab) and `x₁ > 0` (depth), every point has `x₂ ≤ 0` (the plane of `F` supports),
   some point has `x₂ < 0`.  Then for all small `s > 0` the view `U s = (s, 1, s³)` is free, with
   the motion `ω = (1, 0, s)`, `τ = (s² L / 2, 0, -s³)`; the row of a point other than `a`, `b` uses
   the angle `(b, p, a)`, the rows of `a` and `b` use a point `q` strictly below the plane of `F`.
   `ael_core_rupert`: hence `IsRupert`.
-* `ael_core'`, `ael_core'_rupert` (PROOF.md §4): the same with `0 ≤ x₀` (points over `a` allowed),
+* `ael_core'`, `ael_core'_rupert` : the same with `0 ≤ x₀` (points over `a` allowed),
   at the mirrored view `U' s = (-s, 1, s³)`, `ω' = (1, 0, -s)`, same `τ`.
-* `ael_euclid` (PROOF.md §3): sign-fact form in any Euclidean position: supporting normals
+* `ael_euclid` : sign-fact form in any Euclidean position: supporting normals
   `nF`, `nF'` of two planes through `a`, `b` with `⟪nF, nF'⟫ < 0`, the slab T-signs (weak at `a`,
   strict at `b`), only `a`, `b` on both planes, a point strictly below `nF`'s plane ⇒ `IsRupert`.
   Reduction to `ael_core'` by an orthonormal frame (`isRupert_of_frame_image`).
@@ -194,7 +194,7 @@ theorem ael_core_rupert {n : ℕ} (x : Fin n → ℝ³) (a b : Fin n) (L : ℝ) 
   exact FreeAt.isRupert (U_ne s) hs
 
 
-/-! ### One-sided equality in (S): points over `a` (PROOF.md §4)
+/-! ### One-sided equality in (S): points over `a`
 
 The mirrored family `U' s = (-s, 1, s³)`, `ω' = (1, 0, -s)`, the same `τ`, allows `x₀ = 0`. -/
 
@@ -353,7 +353,7 @@ theorem frame_unit {v : ℝ³} (hv : v ≠ 0) : ⟪‖v‖⁻¹ • v, ‖v‖�
 
 /-- **Acute Edge Lemma, sign-fact form.**  `nF`, `nF'`: normals of two planes through `x a`, `x b`
 supporting the points (`⟪nF, x i - x a⟫ ≤ 0`); (A) `⟪nF, nF'⟫ < 0`; (S) the slab T-signs, strict at
-`b`, weak at `a` (one-sided equality allowed, PROOF.md §4); only `a`, `b` lie on both planes; some
+`b`, weak at `a` (one-sided equality allowed); only `a`, `b` lie on both planes; some
 point lies strictly below the first plane.  The strict (S) of the lemma is the special case
 `ael_euclid_strict`. -/
 theorem ael_euclid {n : ℕ} (x : Fin n → ℝ³) (a b : Fin n) (nF nF' : ℝ³)

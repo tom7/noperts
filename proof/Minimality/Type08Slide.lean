@@ -7,7 +7,6 @@ public import Minimality.Type08
 
 /-!
 # Type 08: the cases of Theorem 10.1 by sliding along a face circle
-(`FEWER-FACES-PROOFS.md` §10 addendum, Lemma C)
 
 Theorem 10.1 (`Type08.lean`) ends each case in a reduced polygon `K_v` that is
 unimodal at the view `u₀` along an edge, and needs strict depths and no horizontal

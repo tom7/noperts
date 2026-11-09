@@ -7,7 +7,6 @@ public import Minimality.Type08Cases
 
 /-!
 # A level triangle always has a horizontal double normal; rim-only HDN hypotheses
-(`FEWER-FACES-PROOFS.md` §18.3)
 
 * `hasHorizontalDoubleNormal_of_level_triangle`: a strictly convex triangle whose three corners
   have one depth has a horizontal double normal (the altitude from the vertex of the largest angle).

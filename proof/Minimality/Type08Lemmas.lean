@@ -6,7 +6,7 @@ public import Minimality.UnimodalCert
 @[expose] public section
 
 /-!
-# Type 08: the lemmas of `FEWER-FACES-PROOFS.md` §10
+# Type 08: the lemmas for Theorem 10.1
 
 Type 08 is the octahedron `O = K − 2` with a *cap* `2` (here `d`): with `O`'s
 opposite pairs `(a, a')`, `(b, b')`, `(c, c')`, the cap is the common point of the

@@ -7,8 +7,7 @@ public import Minimality.Type29
 /-!
 # Two-test certificates: the angle lemma and the octahedral axis lemma (§13)
 
-`FEWER-FACES-PROOFS.md` §13, in Euclidean form: the metric is the one of `ℝ³` (the paper's
-"for every metric" is not needed, since a point set's own inner product is one metric), and
+In Euclidean form: the metric is the one of `ℝ³` (a statement "for every metric" is not needed, since a point set's own inner product is one metric), and
 the depth along a view `u` is `⟪·, u⟫`.  `[s t] = galeD G.l G.m s t` for Gale data `G`.
 
 * **The angle lemma** (Lemma 13.2 and Corollary 13.3, for 4-corner rims): with distinct

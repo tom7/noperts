@@ -5,7 +5,7 @@ public import Minimality.Type16NF
 @[expose] public section
 
 /-!
-# Type 16: the Lemma E cover (`FEWER-FACES-PROOFS.md` §19.0–19.2)
+# Type 16: the Lemma E cover
 
 In the normal form `NF16` (§19.0), each step of Theorem 19.2 names an edge crossing whose
 two closings satisfy Lemma E (`rimCert_edgePairσ_robust`: Lemma E with ties), or a triangle

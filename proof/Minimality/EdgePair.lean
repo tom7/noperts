@@ -8,7 +8,7 @@ public import Minimality.OctAxis
 /-!
 # Edge pairs: Lemma E (§14)
 
-`FEWER-FACES-PROOFS.md` §14, in Euclidean form (as §13 in `OctAxis.lean`): the paper's "at
+Lemma E, in Euclidean form (as the angle lemma in `OctAxis.lean`): the usual "at
 every metric" becomes a statement about the inner product of `ℝ³`, which is one metric, so
 the depth along the view `u = w − v` is `⟪·, u⟫`.
 

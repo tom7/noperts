@@ -8,7 +8,7 @@ public import Minimality.EdgeView
 # Four quadrilateral facets on seven points
 
 Toward "a 7-point nopert has at most three quadrilateral facets"
-(FEWER-FACES.md, "Bridge plan"): two facets of a set of extreme points share at
+(a bridge to the classification of seven-point sets by facet type): two facets of a set of extreme points share at
 most two points, and when they share exactly two, these span a side of each.
 -/
 

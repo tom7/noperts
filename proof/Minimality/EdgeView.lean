@@ -8,7 +8,7 @@ public import Minimality.FaceFive
 /-!
 # The view along an edge between two quadrilaterals (Theorems B and B′)
 
-Tools for Theorems B and B′ of `FEWER-FACES-PROOFS.md` §4–5 (types 02 and 05:
+Tools for Theorems B and B′ (types 02 and 05:
 the view along an edge shared by two quadrilaterals, tilted into the dihedral
 wedge `W` or into `-W`).
 
@@ -106,7 +106,7 @@ theorem isCyclicUnimodal_of_localMin_unique {k : ℕ} [NeZero k] (hk : 2 ≤ k) 
 A plane through a vertex `b` (depth `zb`) and points at oblique coordinates
 `(T1, 0)` and `(0, T2)` (depths `x`, `y`) gives the depth `c` of a point at
 `(S, U)` by `T1 T2 (c - zb) = S T2 (x - zb) + U T1 (y - zb)`; this is (Q3)
-or (Q4) of `FEWER-FACES-PROOFS.md` §4 with denominators cleared. -/
+or (Q4) of the argument with denominators cleared. -/
 
 /-- Both coefficients negative: the point is below `zb`. -/
 theorem plane_below {T1 T2 S U zb x y c : ℝ} (hT1 : 0 < T1) (hT2 : 0 < T2) (hS : 0 < S)
@@ -1157,7 +1157,7 @@ theorem rupert02_M_A0B5 (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2)
     (fun z c hc hz => isCyclicUnimodal_smul hc hz)
     (eventually_unimodal_tilt (k := 4) x ez (oblPt 0 r1 r2 (-1) (-1) 0) hu0) (fun z _ h => h)
 
-/-- **Theorem B, frame form** (FEWER-FACES-PROOFS.md §4, under (G) and (Z)):
+/-- **Theorem B, frame form** (under (G) and (Z)):
 seven points in the frame of the edge 34 (vertical, `z3 < z4`), with the quads
 0134 and 3456 convex in their planes, the planes of 0235 and 1246 through 2
 ((Q3), (Q4)), 2 beyond the chord of the far vertices, the edges 01 and 56 not
@@ -1690,7 +1690,7 @@ theorem isRupert_type02_vertical (y : Fin 7 → ℝ³)
     rw [E0, E 1, E 2, E3, E4, E5, E 6] at key
     rw [univ_image_fin7]; exact key
 
-/-- **Theorem B** (FEWER-FACES-PROOFS.md §4, generic case): seven points
+/-- **Theorem B** (generic case): seven points
 labelled as type 02, with the quadrilaterals 0134, 3456, 0235, 1246 as facets
 (given by their supporting affine functions), 2 not in the hull of 0, 1, 5, 6,
 the edges 01 and 56 not parallel to 34 (G), and distinct depths along 34 (Z),
@@ -2091,7 +2091,7 @@ theorem sheet_of_plane {T1 T2 s4 u4 z2 z4 zy1 zy2 α β : ℝ} (hs4 : 0 < s4) (h
   have b := mul_le_mul_of_nonneg_left h2 (mul_pos hu4 hT1).le
   rw [h4]; nlinarith
 
-/-- **Theorem B′, frame form** (FEWER-FACES-PROOFS.md §5, under (G′), (Z′)):
+/-- **Theorem B′, frame form** (under (G′), (Z′)):
 the edge 12 vertical (`z1 < z2`), the quads 1032 and 6512 convex in their
 planes, the plane of 0145 through 4 ((P)), an upper plane through 2 and 4 on
 or above 0, 3, 5, 6 (the triangles 234, 246), 4 beyond the chords. -/
@@ -2617,7 +2617,7 @@ theorem isRupert_type05_vertical (y : Fin 7 → ℝ³)
     rw [E0, E1, E2, E 3, E 4, E5, E 6] at key
     rw [univ_image_fin7]; exact key
 
-/-- **Theorem B′** (FEWER-FACES-PROOFS.md §5, general position): seven points
+/-- **Theorem B′** (general position): seven points
 labelled as type 05, with the quadrilaterals 1032, 6512, 0145 and the
 triangles 234, 246 as facets (given by their supporting affine functions), 4
 not in the hull of 0, 3, 5, 6, the edges 03 and 56 not parallel to 12 (G′),

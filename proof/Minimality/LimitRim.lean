@@ -7,7 +7,7 @@ public import Minimality.Perturb
 @[expose] public section
 
 /-!
-# The limit lemma with lost corners (`FEWER-FACES-PROOFS.md` §18.2 (a), (c))
+# The limit lemma with lost corners
 
 `LimitCert.lean` passes a labelled rim to the limit when the corner rim of the limit shape is
 given.  Here the corner rim is constructed: the shapes `K_t → K` (points `xs t : Fin n → ℝ³`)

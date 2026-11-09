@@ -5,7 +5,7 @@ public import Minimality.RobustAxis
 @[expose] public section
 
 /-!
-# Lemma E with ties, and general position up to single ties (`FEWER-FACES-PROOFS.md` §14, §18)
+# Lemma E with ties, and general position up to single ties
 
 Lemma E (`edgePair_not_both`, `EdgePair.lean`) says that at an edge crossing along `v w` whose
 closings have the 4-corner rims `(v, a, c, b)`, `(w, a, c, b)`, with `[a b c v] [a b c w] ≤ 0`,

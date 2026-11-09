@@ -5,7 +5,7 @@ public import Minimality.Type29
 @[expose] public section
 
 /-!
-# Type 16: Lemma 11.U, the test at `35` (`FEWER-FACES-PROOFS.md` §11 addendum)
+# Type 16: Lemma 11.U, the test at `35`
 
 Type 16 (labels of `typeb_lib.load('16-8f')`): the quadrilaterals `0235` (cyclic
 `2, 0, 3, 5`) and `1356` (cyclic `3, 6, 1, 5`), the triangles `024`, `036`, `046`,

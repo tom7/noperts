@@ -6,7 +6,7 @@ public import Minimality.Type16Rims
 @[expose] public section
 
 /-!
-# Type 16: the pairs and the triple on `Ω` (`FEWER-FACES-PROOFS.md` §19.3–19.5)
+# Type 16: the pairs and the triple on `Ω`
 
 On the residual `Ω` of Theorem 19.2 no edge certificate of the named edges applies; each part of
 `Ω` is certified by two or three tests whose failures force opposite signs of an inner product

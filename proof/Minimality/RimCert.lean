@@ -6,7 +6,7 @@ public import Minimality.RobustEdge
 @[expose] public section
 
 /-!
-# Rim certificates in point form (`FEWER-FACES-PROOFS.md` §18.2)
+# Rim certificates in point form
 
 The crossing tests of the tier proofs end in a rim that is strictly convex and counterclockwise
 at the view, with robustly unimodal depths, every other point inside, over a side (a middle) or

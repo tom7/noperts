@@ -7,7 +7,7 @@ public import Minimality.Type08Slide
 @[expose] public section
 
 /-!
-# Type 08: `R_d` is Rupert (`FEWER-FACES-PROOFS.md` §10 addendum, A.10)
+# Type 08: `R_d` is Rupert
 
 Lemma H of the addendum closes a one-circle closing `K_v` that has a horizontal double
 normal perpendicular to its only realizing face `F_j` by sliding along the other face

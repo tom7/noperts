@@ -5,7 +5,7 @@ public import Minimality.Unimodal
 @[expose] public section
 
 /-!
-# Theorem 7.3 with ties: robustly unimodal rims (`FEWER-FACES-PROOFS.md` §18.3)
+# Theorem 7.3 with ties: robustly unimodal rims
 
 Theorem 7.3 (`hasHorizontalDoubleNormal_of_forces`) asks for *distinct* cyclically unimodal
 corner depths.  Theorem 18.3 allows ties, as long as the depths are *robustly unimodal*: every

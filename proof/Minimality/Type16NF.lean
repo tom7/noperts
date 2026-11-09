@@ -7,7 +7,7 @@ public import Minimality.RimCert
 @[expose] public section
 
 /-!
-# Type 16: the normal form (`FEWER-FACES-PROOFS.md` §19.0)
+# Type 16: the normal form
 
 The affine normal form of §19.0: `3 = 0`, `0 = e₁`, `5 = e₂`, `6 = e₃`, `2 = (a, b, 0)`,
 `1 = (0, g, d)`, `4 = (p, q, r)`.  Rupertness is not affine-invariant, so the frame is kept:

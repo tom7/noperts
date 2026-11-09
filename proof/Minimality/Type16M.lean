@@ -5,7 +5,7 @@ public import Minimality.Type16
 @[expose] public section
 
 /-!
-# Type 16: Theorem M, the octahedral region (`FEWER-FACES-PROOFS.md` §11)
+# Type 16: Theorem M, the octahedral region
 
 On the *octahedral region* `O = K − 5` is an octahedron: `12` is an edge of `conv O`,
 with the faces `123`, `124` (`Oct16`).  Its opposite pairs are `(1, 0)`, `(2, 6)`,
@@ -1285,7 +1285,7 @@ def Type16Clause (x : Fin 7 → ℝ³) : Prop :=
         galeD G.l G.m (x 2) (x 3) * galeD G.l G.m (x 2) (x 6) < 0 ∧
         galeD G.l G.m (x 3) (x 4) ≠ 0 ∧ MidOf (x 2) (x 5) (x 0) (x 3))
 
-/-- **Theorem M′ of `FEWER-FACES-PROOFS.md` §11 (conditional).**  A type-16 point set
+/-- **Theorem M′ (conditional).**  A type-16 point set
 (`Type16`: the facets `0235`, `1356`, `024`, `036`, `046`, `145`, `146`, `245`) in general
 position (`GenPos`, `NoPlaneParallel`), without horizontal double normals at the views
 along its segments (`NoHDNAt`), for which one of the proved clauses of Theorem M and its

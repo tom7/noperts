@@ -6,7 +6,7 @@ public import Minimality.QuadFacets
 @[expose] public section
 
 /-!
-# Type 08: Theorem 10.1 (`FEWER-FACES-PROOFS.md` §10)
+# Type 08: Theorem 10.1
 
 A type-08 point set is an octahedron `O` (opposite pairs `(a, a')`, `(b, b')`,
 `(c, c')`) with a cap `d` (`IsCap`): `d` lies on the planes of `abc'`, `ab'c`,

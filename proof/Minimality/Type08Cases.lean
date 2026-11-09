@@ -6,7 +6,7 @@ public import Minimality.L8T3
 @[expose] public section
 
 /-!
-# Type 08: the cases of Theorem 10.1 (`FEWER-FACES-PROOFS.md` §10)
+# Type 08: the cases of Theorem 10.1
 
 `K = O ∪ {d}`: the octahedron `O` with opposite pairs `(a, a')`, `(b, b')`,
 `(c, c')` and the cap `d` (`IsCap`, `Type08Lemmas.lean`).  Each case of Theorem 10.1

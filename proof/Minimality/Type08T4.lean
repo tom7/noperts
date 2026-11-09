@@ -5,7 +5,7 @@ public import Minimality.Type08Cases
 @[expose] public section
 
 /-!
-# Type 08: the T4 case of Theorem 10.1 (Lemma 5 of `FEWER-FACES-PROOFS.md` §10)
+# Type 08: the T4 case of Theorem 10.1
 
 At the view along the QQ edge `d b`, with far ends `c'` (of `Q_ab`) and `c` (of
 `Q_bc`), the middles are `a` and `a'`, and `K_v ⊂ K − a` (a T4).  In the frame
