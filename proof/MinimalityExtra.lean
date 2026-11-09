@@ -536,12 +536,54 @@ def MergeLemma : Prop :=
 end Identities
 
 /-!
-## Sandwiching
+## Stability of the Rupert property
 
-If one polytope passes through another, so does everything between them.
+A passage survives small changes of the hull, at a rate given by its clearance.
 -/
 
 section Stable
+
+/-- `W` has a passage with *clearance* `δ`: A closed `δ`-ball about each point of the inner shadow
+lies in the outer shadow. -/
+def HasClearance (W : Finset ℝ³) (δ : ℝ) : Prop :=
+  ∃ inner_rotation ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ,
+  ∃ inner_offset : EuclideanSpace ℝ (Fin 2),
+  ∃ outer_rotation ∈ Matrix.specialOrthogonalGroup (Fin 3) ℝ,
+  ∀ p ∈ convexHull ℝ (W : Set ℝ³),
+    Metric.closedBall (inner_offset + proj_xy (inner_rotation.toEuclideanLin p)) δ ⊆
+      { proj_xy (outer_rotation.toEuclideanLin q) | q ∈ convexHull ℝ (W : Set ℝ³) }
+
+/-- **Clearance is stable.** A passage of `W` with clearance `δ` gives a passage of any `V` that
+differs from `W` by less than `δ`, where the difference is the sum of the two one-sided distances
+between the point sets and the hulls. -/
+def ClearanceStable : Prop :=
+  ∀ (V W : Finset ℝ³) (δ ε₁ ε₂ : ℝ), HasClearance W δ →
+    (∀ v ∈ V, ∃ q ∈ convexHull ℝ (W : Set ℝ³), dist v q ≤ ε₁) →
+    (∀ w ∈ W, ∃ q ∈ convexHull ℝ (V : Set ℝ³), dist w q ≤ ε₂) →
+    ε₁ + ε₂ < δ → IsRupert V
+
+/-- **A Rupert passage has positive clearance.** The inner shadow is compact and lies in the open
+interior of the outer shadow. -/
+def RupertHasClearance : Prop :=
+  ∀ W : Finset ℝ³, IsRupert W → ∃ δ > 0, HasClearance W δ
+
+/-- **Rupert near few points.** Every finite set Hausdorff-close to a set of at most six points is
+Rupert, whatever its size, unless those points are close to collinear. The distance `ε` depends only
+on `r`, a lower bound on twice the area of a triangle of `W`, for `W` in the unit ball. -/
+def RupertNearFewPoints : Prop :=
+  ∀ r : ℝ, 0 < r → ∃ ε : ℝ, 0 < ε ∧ ∀ V W : Finset ℝ³, W.card ≤ 6 → (∀ w ∈ W, ‖w‖ ≤ 1) →
+    (∃ a ∈ W, ∃ b ∈ W, ∃ c ∈ W, r ≤ ‖cross (b - a) (c - a)‖) →
+    (∀ v ∈ V, ∃ q ∈ convexHull ℝ (W : Set ℝ³), dist v q ≤ ε) →
+    (∀ w ∈ W, ∃ q ∈ convexHull ℝ (V : Set ℝ³), dist w q ≤ ε) → IsRupert V
+
+/-- **Close vertices make a 7-vertex polytope Rupert.** Merging two nearly equal vertices leaves at
+most six points, so `RupertNearFewPoints` applies. Hence a 7-vertex Nopert in the unit ball that
+contains a triangle of area at least `r / 2` has all its vertices at least `ε(r)` apart. The bound
+comes from compactness and is not explicit. -/
+def CloseVerticesRupert : Prop :=
+  ∀ r : ℝ, 0 < r → ∃ ε : ℝ, 0 < ε ∧ ∀ V : Finset ℝ³, V.card ≤ 7 → (∀ v ∈ V, ‖v‖ ≤ 1) →
+    (∃ a ∈ V, ∃ b ∈ V, ∃ c ∈ V, r ≤ ‖cross (b - a) (c - a)‖) →
+    (∃ x ∈ V, ∃ y ∈ V, x ≠ y ∧ dist x y < ε) → IsRupert V
 
 /-- `L` *passes through* `W`: Some pose puts the shadow of `conv L` inside the interior of a shadow
 of `conv W`. `IsRupert` is the case `L = W`. -/

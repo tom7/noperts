@@ -84,3 +84,7 @@ open MinimalityExtra
 #assert_standard_axioms MinimalityExtra.patchEdgeBeyondPlane
 #assert_standard_axioms Minimality.patchEdge_isRupert
 #assert_standard_axioms MinimalityExtra.lemmaQ_twoDisjointFaces
+#assert_standard_axioms MinimalityExtra.clearanceStable'
+#assert_standard_axioms MinimalityExtra.rupertHasClearance
+#assert_standard_axioms RupertStab.rupertNearFewPoints
+#assert_standard_axioms RupertStab.closeVerticesRupert

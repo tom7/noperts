@@ -2,6 +2,7 @@ module
 
 public import MinimalityExtra.ShadowMap
 public import MinimalityExtra.Sandwich
+public import MinimalityExtra.RupertStable
 public import MinimalityExtra.Chirotope
 public import MinimalityExtra.Sanity
 public import MinimalityExtra.VertexOverBoundary
