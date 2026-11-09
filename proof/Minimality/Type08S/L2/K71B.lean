@@ -13,7 +13,7 @@ open scoped RealInnerProductSpace
 namespace Minimality.Type08Sp.C2
 
 set_option maxHeartbeats 6400000 in
-theorem k71_c_fAv (pp s qq qr rr al be m : ℝ) (hs : 0 < s) (hpp : 0 < pp) (hal : 1 < al) (hbe : 1 < be) (hm : 0 < m) (hqx : qr < qq) (hqy : qr < rr) (hrel : al * s * (qq + rr - 2 * qr) = (be - 1) * (qq * rr - qr ^ 2)) (hppE : pp * ((al - 1) * rr + be * qr) = s * ((al + be - 1) * s + be * (rr - qr))) (hW : 0 < (al - 1) * rr + be * qr) (hD : 0 < qq * rr - qr ^ 2) (hdet : 0 < pp * (qq * rr - qr ^ 2) - s ^ 2 * (qq + rr - 2 * qr)) (hD2 : s ^ 2 < pp * qq) :
+theorem k71_c_fAv (pp s qq qr rr al be m : ℝ) (hs : 0 < s) (hal : 1 < al) (hbe : 1 < be) (hm : 0 < m) (hrel : al * s * (qq + rr - 2 * qr) = (be - 1) * (qq * rr - qr ^ 2)) (hD : 0 < qq * rr - qr ^ 2) (hdet : 0 < pp * (qq * rr - qr ^ 2) - s ^ 2 * (qq + rr - 2 * qr)) :
     0 < al * m * s + be * m * s + al * pp - be * s - m * s + s := by
   (refine pos_of_mul_pos_right ?_ (hD).le; linear_combination 1 * (mul_pos (mul_pos hs hm) hD) + 1 * (mul_pos (mul_pos (mul_pos hs (sub_pos.2 hal)) hm) hD) + 1 * (mul_pos (mul_pos (mul_pos hs (sub_pos.2 hbe)) hm) hD) + 1 * hdet + 1 * (mul_pos (sub_pos.2 hal) hdet) + (-s) * hrel)
 
@@ -96,7 +96,7 @@ theorem k71_facts {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hC' := hC
   obtain ⟨-, hc', hb', ha', -⟩ := hC'
   constructor
-  · have core := k71_c_fAv pp s qq qr rr α1 β1 m hs hpp hα1 hβ1 hm hqx hqy hrel' hppE hW hD hdet hD2
+  · have core := k71_c_fAv pp s qq qr rr α1 β1 m hs hα1 hβ1 hm hrel' hD hdet
     have e : a' - b' = (-α1) • (a - d) + β6 • (b - d) + (γ6 - β1) • (c - d) := by rw [ha', hb']; module
     have e1 : a - d = (1:ℝ) • (a - d) + (0:ℝ) • (b - d) + (0:ℝ) • (c - d) := by module
     rw [e]

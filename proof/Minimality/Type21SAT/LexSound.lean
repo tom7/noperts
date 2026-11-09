@@ -21,7 +21,7 @@ namespace Minimality.H21.SAT
 theorem lex_core {x : Fin 7 → ℝ³} (F : S0xFac 8 S21 x) (hx : Function.Injective x) (hG : GeoOK (geoF F))
     (hpar : ∃ r : ℝ, F.N 3 = r • F.N 7)
     (e pp mask d ep zi : Nat) (cyc : List Nat) (he : e < 36) (hd : d < 21) (hmask : mask < 255)
-    (h3 : mask.testBit 3 = true) (h7 : mask.testBit 7 = true) (hpp : pp.testBit 3 ≠ pp.testBit 7)
+    (hpp : pp.testBit 3 ≠ pp.testBit 7)
     (hzi : zi = 999 ∨ ((zi = 0 ∨ zi = 1 ∨ zi = 2 ∨ zi = 4 ∨ zi = 5 ∨ zi = 6) ∧ mask.testBit zi = true))
     (hdin : dinDH d = true) (hcyc : cycChk pp (patCyc.getD pp []) = true)
     (hlen : 3 < (patCyc.getD pp []).length) (halt : altChk (patCyc.getD pp []) cyc = true)
@@ -193,7 +193,7 @@ theorem lexOK_sound {x : Fin 7 → ℝ³} (F : S0xFac 8 S21 x) (hx : Function.In
   simp only [Bool.and_eq_true, decide_eq_true_eq] at h
   obtain ⟨⟨⟨⟨⟨he, hpp, hmask, hd, h3, h7, hpd, hzi, hlen⟩, hdin⟩, hcyc⟩, halt⟩, hcov⟩ := h
   refine lex_core F hx hG hpar (prm p 0) (prm p 1) (prm p 5) (prm p 2) (if prm p 3 = 1 then 1 else 0) (prm p 4)
-    (failLOf cl (prm p 0) (prm p 2) (if prm p 3 = 1 then 1 else 0)) he hd hmask h3 h7 hpd hzi hdin hcyc hlen halt ?_
+    (failLOf cl (prm p 0) (prm p 2) (if prm p 3 = 1 then 1 else 0)) he hd hmask hpd hzi hdin hcyc hlen halt ?_
   intro l hl
   rw [coversF_eq] at hcov
   have := List.all_eq_true.mp hcov l hl

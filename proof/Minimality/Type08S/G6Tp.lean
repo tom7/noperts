@@ -71,7 +71,7 @@ theorem thm08Tp_core (hF : Fr e1 e2 e3) (o : ℝ³)
   have e2' := ev_aff h (-X0) hh
   obtain ⟨k, hk5, hk4, hk3, hk1, hk2⟩ := (e5.and (e4.and (e3'.and (e1'.and e2')))).exists
   exact lemma08S_core hF o (f0 := (P - κ * X0 - η)) (f1 := -1) (θ := κ) (k := k)
-    hL hh hX hWB hCA ht0 ht1 hza F1 F2 F3 F4 F5 F6 F7 F8 (by linarith) (by linarith)
+    hL hh hX hWB hCA ht0 ht1 hza F1 F2 F5 F6 F7 (by linarith) (by linarith)
     (by linarith) (by linarith) (by linarith)
 
 end Type08Sp

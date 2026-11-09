@@ -260,8 +260,8 @@ theorem t5_cyc (hA : 0 < A) (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (hzv : 0 �
 
 /-- The axis point `g` (screen `(0,0)`) is hidden. -/
 theorem t5_g (hA : 0 < A) (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (ht1 : t < 1) (hzv : 0 ≤ zv)
-    (hzw : zw < 0) (hza : za < (1 - s) * zw) (hza' : (1 - t) * zv < za') (hzz : zv ≤ za')
-    (hb2 : 0 < b2) (hsr : s * b2 < r2) (hq0 : 0 < q) :
+    (hzw : zw < 0) (hza : za < (1 - s) * zw) (hza' : (1 - t) * zv < za')
+    (hb2 : 0 < b2) (hsr : s * b2 < r2) :
     ∀ i : ZMod 5,
       LexTest (-1) ⟨1, 0, 0⟩ ⟨0, -1, q⟩ (t5aPts zv zw s t A b1 b2 za' za r1 r2 i)
         (t5aPts zv zw s t A b1 b2 za' za r1 r2 (i + 1)) ⟨A, 0, 0⟩ := by
@@ -293,7 +293,7 @@ theorem t5_g (hA : 0 < A) (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (ht1 : t < 1
 /-- A hidden point strictly inside the screen row `z = 0` (screen `(y0, 0)`, `0 < y0 < r2`). -/
 theorem t5_row {x0 y0 : ℝ} (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (ht1 : t < 1) (hA : 0 < A)
     (hzv : 0 ≤ zv) (hzw : zw < 0) (hza : za < (1 - s) * zw) (hza' : (1 - t) * zv < za')
-    (hzz : zv ≤ za') (hb2 : 0 < b2) (hsr : s * b2 < r2) (hq0 : 0 < q) (hy0 : 0 < y0)
+    (hzz : zv ≤ za') (hb2 : 0 < b2) (hy0 : 0 < y0)
     (hyr : y0 < r2) (hqy : zv < za' ∨ q * y0 < za')
     (hq2 : crossYZ (t5aPts zv zw s t A b1 b2 za' za r1 r2 3) (t5aPts zv zw s t A b1 b2 za' za r1 r2 4)
       (t5aPts zv zw s t A b1 b2 za' za r1 r2 0) < 0) :
@@ -359,8 +359,8 @@ theorem n2_core {V : Finset ℝ³} {cP mP fP rP gP wP aP : ℝ³}
     (Φf : hfΦ vb g u0 fG fP = ⟨b1, b2, 0⟩) (Φr : hfΦ vb g u0 fG rP = ⟨r1, r2, 0⟩)
     (Φg : hfΦ vb g u0 fG gP = ⟨A, 0, 0⟩) (Φw : hfΦ vb g u0 fG wP = ⟨0, 0, zw⟩)
     (Φa : hfΦ vb g u0 fG aP = ⟨a1, a2, a3⟩)
-    (hA : 0 < A) (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : zw < 0) (hb2 : 0 < b2)
-    (hz2 : (1 - s) * zv < z2) (hr1 : 0 < r1) (ha3 : 0 < a3) (hxa : s * b1 < a1)
+    (hzv : 0 ≤ zv) (hzw : zw < 0)
+    (hr1 : 0 < r1) (hxa : s * b1 < a1)
     (tt : ℝ) (htt0 : 0 < tt)
     (hcyc : ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       LexTest (-1) ⟨1, 0, 0⟩ ⟨0, -1, -tt⟩ (h5Pts zv zw s b1 b2 z2 a1 a2 a3 r1 r2 i)
@@ -480,7 +480,7 @@ theorem propH_n2_ge {V : Finset ℝ³} {cP mP fP rP gP wP aP : ℝ³}
   have htt1 : tt * (s * b2) < z2 := by
     have : tt * (s * b2) = z2 / 2 := by rw [htt]; field_simp
     rw [this]; linarith
-  exact Fr.n2_core hV hc hm ha hr hw Φc Φm Φf Φr Φg Φw Φa hA hs0 hs1 hzv hzw hb2 hz2 hr1 ha3 hxa tt htt0
+  exact Fr.n2_core hV hc hm ha hr hw Φc Φm Φf Φr Φg Φw Φa hzv hzw hr1 hxa tt htt0
     (fun i j h1 h2 => lex_of_cross _ (hcv i j h1 h2))
     (n2g_f hs0 hs1 hzv hzw hb2 hrb ha3 hz2 hmaF) (n2g_g hA hs0 hs1 hzv hzw hb2 hr2 ha3 hz2 htt1 hmaG)
 
@@ -518,8 +518,8 @@ theorem t4a_core {V : Finset ℝ³} {bP aP' fP rP gP wP aP : ℝ³}
     (Φg : hfΦ vb g u0 fG gP = ⟨A, 0, 0⟩) (Φw : hfΦ vb g u0 fG wP = ⟨0, 0, zw⟩)
     (Φa : hfΦ vb g u0 fG aP = ⟨s * b1, s * b2, za⟩)
     (hA : 0 < A) (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (ht1 : t < 1) (hzv : 0 ≤ zv)
-    (hzw : zw < 0) (hza : za < (1 - s) * zw) (hza' : (1 - t) * zv < za') (hzz : zv < za')
-    (hb2 : 0 < b2) (hr1 : A ≤ r1) (hr1b : b1 ≤ r1)
+    (hzw : zw < 0)
+    (hr1 : A ≤ r1) (hr1b : b1 ≤ r1)
     (q : ℝ) (hq0 : 0 < q)
     (hcyc : ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       LexTest (-1) ⟨1, 0, 0⟩ ⟨0, -1, q⟩ (t5aPts zv zw s t A b1 b2 za' za r1 r2 i)
@@ -622,10 +622,10 @@ theorem propH_t4_a {V : Finset ℝ³} {bP aP' fP rP gP wP aP : ℝ³}
   have hsr : s * b2 < r2 := by nlinarith
   have hD : zw < zv := by linarith
   have htA : 0 < t * A := mul_pos ht0 hA
-  exact Fr.t4a_core hV hw hb ha' hr ha Φb Φa' Φf Φr Φg Φw Φa hA hs0 hs1 ht0 ht1 hzv hzw hza hza' hzz hb2 hr1 hr1b
+  exact Fr.t4a_core hV hw hb ha' hr ha Φb Φa' Φf Φr Φg Φw Φa hA hs0 hs1 ht0 ht1 hzv hzw hr1 hr1b
     1 one_pos (t5_cyc hA hs0 hs1 ht0 hzv hzw hza hzz.le hb2 hsr one_pos (Or.inl hzz) hq1 hq2)
-    (t5_row hs0 hs1 ht0 ht1 hA hzv hzw hza hza' hzz.le hb2 hsr one_pos hb2 hrb (Or.inl hzz) hq2)
-    (t5_g hA hs0 hs1 ht0 ht1 hzv hzw hza hza' hzz.le hb2 hsr one_pos)
+    (t5_row hs0 hs1 ht0 ht1 hA hzv hzw hza hza' hzz.le hb2 hb2 hrb (Or.inl hzz) hq2)
+    (t5_g hA hs0 hs1 ht0 ht1 hzv hzw hza hza' hb2 hsr)
 
 /-- **Proposition H, T4, `z_a' ≥ z_v`, `b2 > r2`** (cycle `(2, b, a', c', a)`, `QT5b`, `b1 > 0`).
 Same picture hypotheses as `propH_t4_a` for the screen quadrilateral `(2, a', c', a)`
@@ -686,8 +686,8 @@ theorem propH_t4_b {V : Finset ℝ³} {bP aP' fP rP gP wP aP : ℝ³}
     · exact absurd h (hyx 2)
     · exact absurd h (hyx 3)
     · rw [h, Φr]
-      exact t5_row hs0 hs1 ht0 ht1 hA hzv hzw hza hza' hzz hb2 hsr hq0 hr2 hbr (Or.inr hqr) hq2 i
-    · rw [h, Φg]; exact t5_g hA hs0 hs1 ht0 ht1 hzv hzw hza hza' hzz hb2 hsr hq0 i
+      exact t5_row hs0 hs1 ht0 ht1 hA hzv hzw hza hza' hzz hb2 hr2 hbr (Or.inr hqr) hq2 i
+    · rw [h, Φg]; exact t5_g hA hs0 hs1 ht0 ht1 hzv hzw hza hza' hb2 hsr i
     · exact absurd h (hyx 0)
     · exact absurd h (hyx 4)
   · set E := ⟪hfE vb g u0, hfE vb g u0⟫ with hEd

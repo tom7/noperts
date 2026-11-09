@@ -1976,7 +1976,7 @@ theorem rimK2T1p (H1 : F.S.am = F.S.bp) (H2 : F.S.bp = F.S.sp * F.S.A2) (hts : F
         F.a12 * F.S.tm * F.S.sp - F.gg * F.S.hm * F.S.kp, F.a12 * F.S.tm,
         F.a12 * F.S.tm * F.S.sm + F.gg * F.S.hm * F.S.km] i := funext hz
     rw [hz']
-    have hz40 := t1_z4_lt_z0 (g := F.gg) hA hA11 htm htm1 hsm1 hts hhm F.Km_eq hS
+    have hz40 := t1_z4_lt_z0 (g := F.gg) hA11 htm hsm1 hts F.Km_eq hS
     have m1 := mul_pos hA htm
     have m2 := mul_pos hg hhm
     have m3 := mul_pos m2 hkp

@@ -100,8 +100,8 @@ theorem witness_prop33_3 (hnd : arc.NoHDNNearEnds) :
         ⟪ea, eb⟫ = 0 ∧ ⟪eb, ec⟫ = 0 ∧ (1 < (9/10 : ℝ) + 19/10 + 4/5 → ⟪ea, ec⟫ = 0)) := by
   refine prop33_3 (V := V) ea eb ec P3 P5 (1/5) (107/10) 8 (9/10) (19/10) (4/5) (177/10) (9/5)
     (-317/10) (13/2) (-423/20) (by simp [P3, fp]) (by simp [P5, fp]) (by norm_num) (by norm_num)
-    (by norm_num) (by norm_num) (by norm_num) arc arc_x rfl rfl rfl (by norm_num) (by norm_num)
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) ?_ ?_ ?_
+    (by norm_num) (by norm_num) (by norm_num) arc arc_x rfl rfl
+    (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) ?_ ?_ ?_
     hnd
   all_goals simp [ea, eb, ec, PiLp.inner_apply, Fin.sum_univ_three] <;> norm_num
 

@@ -81,10 +81,9 @@ theorem prop33_3 {V : Finset ℝ³} (ea eb ec X3 X5 : ℝ³) (a3 b3 c3 a5 b5 c5 
     -- (a): the arc of 016
     (Ar : Arc V) (hx : Ar.x = ![ea, X5, X3, ec])
     (hda : Ar.da = a3 • ea + W • ec) (hdb : Ar.db = A • ea + c5 • ec)
-    (hn : Ar.n = cross ea ec)
     -- (b)
-    (ha3 : 0 < a3) (hW0 : 0 < W) (hA0 : 0 < A) (hc5 : 0 < c5)
-    (hF0 : F < 0) (hD0 : 0 < D) (hb : b5 < b3) (hs : 1 ≤ a5 + b5 + c5) (hN0 : N ≤ 0)
+    (hA0 : 0 < A) (hc5 : 0 < c5)
+    (hF0 : F < 0) (hD0 : 0 < D) (hb : b5 < b3) (hN0 : N ≤ 0)
     -- closed obtuse octant
     (hab : ⟪ea, eb⟫ ≤ 0) (hac : ⟪ea, ec⟫ ≤ 0) (hbc : ⟪eb, ec⟫ ≤ 0)
     -- (E2)

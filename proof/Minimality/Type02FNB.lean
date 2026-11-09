@@ -442,7 +442,7 @@ theorem caseIII (p q k l tp tm lam : ℝ) (hp : 0 < p) (hq : 0 < q) (hk : 0 < k)
   · left; refine ⟨?_, hsb, hsc, hL1, hL2⟩; nlinarith
 
 theorem caseIV (p q k l tp tm : ℝ) (hp : 0 < p) (hq : 0 < q) (hk : 0 < k) (hl : 0 < l)
-    (ha1 : 0 < tp) (a1 : 0 < 1 - tp) (ha3 : 0 < tm) (a3 : 0 < 1 - tm)
+    (ha1 : 0 < tp) (ha3 : 0 < tm) (a3 : 0 < 1 - tm)
     (e1 : q = l * k * p) (e2 : l * tp = k * (1 - tp)) (hρ : k * tm - l * (1 - tm) ≠ 0) :
     GRany p q k l tp tm := by
   refine ⟨-l * (1 - tm) - k, -tm - 1, ?_⟩
@@ -495,7 +495,7 @@ theorem exists_GR (p q k l tp tm : ℝ) (hp : 0 < p) (hq : 0 < q) (hk : 0 < k) (
         have h5 : 0 ≤ tp * (q - l * k * p) := by nlinarith
         have h6 := (mul_nonneg_iff_of_pos_left ha1).1 h5
         linarith
-      refine caseIV p q k l tp tm hp hq hk hl ha1 a1 ha3 a3 e1 e2 ?_
+      refine caseIV p q k l tp tm hp hq hk hl ha1 ha3 a3 e1 e2 ?_
       intro hρ
       apply hnr
       have h7 : (tm - (1 - tp)) * (k * l) = 0 := by

@@ -18,7 +18,7 @@ namespace Type08Sp
 variable {a a' b b' c c' d : ℝ³}
 
 /-- Not strictly-not-beyond is weakly beyond (frame form, `g = (E, 0)`). -/
-theorem weak_of_not_nb {E M b1 b2 r1 r2 : ℝ} (hE : 0 < E) (hM : 0 < M)
+theorem weak_of_not_nb {E M b1 b2 r1 r2 : ℝ}
     (h : ¬ NotBeyondW E M b1 b2 r1 r2 E 0) : WeakBeyond E M b1 b2 r1 r2 := by
   simp only [NotBeyondW, not_or, not_lt] at h
   obtain ⟨h1, h2, h3, h4⟩ := h

@@ -661,8 +661,8 @@ theorem v12_inner {k l : ℝ} (h1 : F.S.hp = k * (1 - F.S.tp)) (h3 : F.S.hm = l 
       inner_smul_left, inner_smul_right, hue, heu, RCLike.conj_to_real]
     rw [h1, h3]; ring
 
-theorem v12_noall {tp tm k l α g : ℝ} (hp : 0 < tp) (hm : 0 < tm) (hk : 0 < k) (hl : 0 < l)
-    (hg : 0 < g) (a1 : 0 < 1 - tp) (a3 : 0 < 1 - tm)
+theorem v12_noall {tp tm k l α g : ℝ} (hp : 0 < tp) (hk : 0 < k) (hl : 0 < l)
+    (hg : 0 < g) (a3 : 0 < 1 - tm)
     (h12 : 0 ≤ g * l * k - α) (h23 : 0 ≤ α * tp - g * k * (k * (1 - tp)))
     (h34 : 0 ≤ g * (k * (1 - tp)) * (l * (1 - tm)) - α * tp * tm)
     (h41 : 0 ≤ α * tm - g * l * (l * (1 - tm))) :
@@ -788,7 +788,7 @@ theorem right_V12_pf (hr : gA12 x = gA11 x)
         (gA11 x * F.S.tm - F.toFrame7.gg * l * (l * (1 - F.S.tm)))) a3
     have hW : 0 ≤ F.toFrame7.gg * (k * (1 - F.S.tp)) * (l * (1 - F.S.tm)) - gA11 x * F.S.tp * F.S.tm := by
       rw [i2] at c2; linarith
-    obtain ⟨hx, hy⟩ := v12_noall F.S.tp_pos F.S.tm_pos hk hl hg a1 a3 hZ hX hW hY
+    obtain ⟨hx, hy⟩ := v12_noall F.S.tp_pos hk hl hg a3 hZ hX hW hY
     rcases hlt with h | h
     · rw [i0, hx] at h; simp at h
     · rw [i5, hy] at h; simp at h

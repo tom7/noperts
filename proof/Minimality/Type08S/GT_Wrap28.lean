@@ -31,7 +31,7 @@ theorem gt_far_N2'' (N : Norm08 a a' b b' c c' d)
   · have hwb : WeakBeyond E ⟪N.F.a'b'c.N, N.F.a'b'c.N⟫ b1 b2 r1 r2 := by
       rw [P.hAE] at hnb
       have hE' : 0 < E := by rw [hE]; exact Fr.hee
-      exact weak_of_not_nb hE' Fr.hNN hnb
+      exact weak_of_not_nb hnb
     rcases P.cfg.hzv.lt_or_eq with hz | hz
     · rcases lt_trichotomy r2 b2 with hrb | hrb | hrb
       · exact n2_lt N.F N.hd P hE hz hwb hrb

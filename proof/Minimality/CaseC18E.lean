@@ -627,7 +627,7 @@ theorem hc_of_lt (h : S.cm < S.A1 * S.tp) : S.tm * S.km < S.sm * (S.tm * S.hp + 
 end Shape18
 
 /-- The tilt of sector `Q_H`: `D1a = D1b' = 1`. -/
-theorem exists_tiltH (tp hp sp kp : ℝ) (htp1 : tp < 1) (hsp1 : sp < 1)
+theorem exists_tiltH (tp hp sp kp : ℝ)
     (hroof : kp * (1 - tp) < hp * (1 - sp)) :
     ∃ d1 d3 : ℝ, 0 < -hp * d1 - (1 - tp) * d3 ∧
       0 < -((kp - hp * (1 - sp)) * d1 + tp * (1 - sp) * d3) := by
@@ -2423,7 +2423,7 @@ theorem thmE (hi : F.a11 * F.S.tp - F.gg * F.S.am * F.S.hp > F.a12)
       -F.S.sp * (F.a22 - F.a12 * F.S.tp) + F.gg * F.S.hp * F.S.kp)
     (hiii : F.S.cm < F.S.A1 * F.S.tp) :
     IsRupert (Finset.univ.image x) := by
-  obtain ⟨d1, d3, hDa, hDb⟩ := exists_tiltH F.S.tp F.S.hp F.S.sp F.S.kp F.S.tp_lt F.S.sp_lt
+  obtain ⟨d1, d3, hDa, hDb⟩ := exists_tiltH F.S.tp F.S.hp F.S.sp F.S.kp
     F.S.roof_p_poly
   have hg := F.g_pos
   have hm := F.S.am_mul
@@ -2688,7 +2688,7 @@ theorem thmE2 (hL : F.LMp) (heq : F.S.cm = F.S.dp) :
     rw [hmet1]; exact mul_pos (mul_pos hg F.S.dm_pos) F.S.hp_pos
   have hpos : 0 < F.gg * F.S.hp * F.S.dp := mul_pos (mul_pos hg F.S.hp_pos) F.S.dp_pos
   have hsm1 := sub_pos.2 F.S.sm_lt
-  obtain ⟨d1, d3, hDa, hDb⟩ := exists_tiltH F.S.tp F.S.hp F.S.sp F.S.kp F.S.tp_lt F.S.sp_lt
+  obtain ⟨d1, d3, hDa, hDb⟩ := exists_tiltH F.S.tp F.S.hp F.S.sp F.S.kp
     F.S.roof_p_poly
   rcases lt_or_gt_of_ne hs with hlt | hgt
   · have hm2p : 0 < -F.S.sp * (F.a22 - F.a12 * F.S.tp) + F.gg * F.S.hp * F.S.kp := by

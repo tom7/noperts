@@ -54,8 +54,8 @@ lemma A2_pos : 0 < S.A2 := add_pos S.cp_pos S.cm_pos
 /-- **27.59 (d), the affine system** over the reals: with `α₀ = lo = A1/A2` and
 `γ(α) = ((c+ - c-) α + a- - a+)/2`, the twelve inequalities of the three crossings hold at
 `α = lo + ε` for small `ε > 0`. -/
-theorem view_aff {ap am cp cm tp tm lo mup mum : ℝ} (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm)
-    (htm1 : tm < 1) (hap : 0 < ap) (ham : 0 < am) (hcp : 0 < cp) (hcm : 0 < cm) (hlo0 : 0 < lo)
+theorem view_aff {ap am cp cm tp tm lo mup mum : ℝ} (htp : 0 < tp) (htm : 0 < tm)
+    (hap : 0 < ap) (ham : 0 < am) (hcp : 0 < cp) (hcm : 0 < cm) (hlo0 : 0 < lo)
     (hl : (cp + cm) * lo = ap + am) (hlo1 : lo * (tp + tm) ≤ 1)
     (hmup : 0 < mup) (hmum : 0 < mum)
     (s2' : (mup * tp - cm) * lo < mup - (ap + am)) (s6' : (mum * tm - cp) * lo < mum - (ap + am))
@@ -189,7 +189,7 @@ theorem exists_view_F2 (hVp : S.A1 * S.tp < S.dp) (hVm : S.A1 * S.tm < S.dm)
   have F1 : S.mup < S.mup * S.tp + S.ap := by have := S.mup_lt; rwa [← g1] at this
   have F2 : S.mum < S.mum * S.tm + S.am := by have := S.mum_lt; rwa [← g2] at this
   obtain ⟨α, γ, ⟨a1, a2, a3, a4⟩, ⟨b1, b2, b3, b4⟩, ⟨c1, c2, c3, c4⟩⟩ :=
-    view_aff htp htp1 htm htm1 S.ap_pos S.am_pos S.cp_pos S.cm_pos hlo0 hl hlo1 hmp hmm s2' s6'
+    view_aff htp htm S.ap_pos S.am_pos S.cp_pos S.cm_pos hlo0 hl hlo1 hmp hmm s2' s6'
       F1 F2
   refine ⟨α, γ, ⟨a1, ?_, a3, ?_⟩, ⟨?_, ?_, ?_, ?_⟩, ⟨?_, ?_, ?_, ?_⟩⟩
   · rw [← g1]; exact a2

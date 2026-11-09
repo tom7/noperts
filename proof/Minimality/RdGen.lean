@@ -192,7 +192,7 @@ theorem isRupert_rdG_std (V M : Finset ℝ³) {sm tm sf tf s1 t1 s2 t2 h ρ θ M
     (hgf : pt s2 t2 (-h) ∈ V) (hgv : pt s1 t1 (-h) ∈ V)
     (hh : 0 < h) (hsm : 0 < sm) (hmf : sm < sf) (h12 : s1 < s2)
     (htm : 0 < tm) (ht1 : 0 < t1) (htf : tf < 0) (ht2 : t2 < 0)
-    (hρ : ρ * (t2 - t1) = s2 - s1) (hθ : 0 < θ) (hM' : 0 < M')
+    (hρ : ρ * (t2 - t1) = s2 - s1)
     (W1 : 0 < sm * (-(s1 - ρ * t1) - θ) + M' * θ * (sm - ρ * tm))
     (W2 : 0 < sm * ((sm - (s1 - ρ * t1) - ρ * tm) - θ) + M' * (tm + θ) * (sm - ρ * tm))
     (W3 : 0 < (sf - sm) * ((sm - (s1 - ρ * t1) - ρ * tm) - θ) +
@@ -364,8 +364,8 @@ theorem isRupert_rdG (V M : Finset ℝ³) {v m f gf gv S T N : ℝ³}
   have Φgf : Φ gf = pt s2 t2 (-h) := by rw [hΦx, cgf.1, cgf.2.1, cgf.2.2]
   have Φgv : Φ gv = pt s1 t1 (-h) := by rw [hΦx, cgv.1, cgv.2.1, cgv.2.2]
   refine isRupert_rdG_std (V.image Φ) (M.image Φ) (Φv ▸ mem v hv) (Φm ▸ mem m hm)
-    (Φf ▸ mem f hf) (Φgf ▸ mem gf hgf) (Φgv ▸ mem gv hgv) hh hsm hmf h12 htm ht1 htf ht2 hρ hθ
-    hM' W1 W2 W3 W4 W5 W6 W7 W8 W9 ?_ ?_
+    (Φf ▸ mem f hf) (Φgf ▸ mem gf hgf) (Φgv ▸ mem gv hgv) hh hsm hmf h12 htm ht1 htf ht2 hρ
+    W1 W2 W3 W4 W5 W6 W7 W8 W9 ?_ ?_
   · intro y hy
     obtain ⟨x, hx, rfl⟩ := mem_image.mp hy
     obtain ⟨p, q, rfl, hq, hp⟩ := hM x hx

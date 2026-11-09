@@ -162,7 +162,7 @@ theorem tp_far_T4 (N : Norm08 a a' b b' c c' d)
     · have hwb : WeakBeyond E ⟪N.F.a'bc.N, N.F.a'bc.N⟫ b1 b2 r1 r2 := by
         rw [P.hAE] at hnb
         have hE' : 0 < E := by rw [hE]; exact Fr.hee
-        exact weak_of_not_nb hE' Fr.hNN hnb
+        exact weak_of_not_nb hnb
       exact tp_far_C N P hxt hrb hE hwb
 
 /-- **`Tp_far`** (the residual package of the type-08 `T'` case, `TpFarH`). -/

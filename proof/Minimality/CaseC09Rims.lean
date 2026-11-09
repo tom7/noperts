@@ -341,8 +341,8 @@ end Frame09
 
 /-- `T1`: the last depth comparison.  If `g h- k- > A12 t- (1 - s-)`, `A12 ≤ A11`,
 `t- < s-` and `k-(1 - t-) = (1 - s-)h-`, then `D(m2-) < D(m1-)`. -/
-theorem t1_z4_lt_z0 {A11 A12 g tm sm hm km : ℝ} (hA : 0 < A12) (hA11 : A12 ≤ A11)
-    (htm : 0 < tm) (htm1 : tm < 1) (hsm1 : sm < 1) (hts : tm < sm) (hhm : 0 < hm)
+theorem t1_z4_lt_z0 {A11 A12 g tm sm hm km : ℝ} (hA11 : A12 ≤ A11)
+    (htm : 0 < tm) (hsm1 : sm < 1) (hts : tm < sm)
     (hrel : km * (1 - tm) = (1 - sm) * hm) (hS : A12 * tm * (1 - sm) < g * hm * km) :
     A12 * tm * sm + g * hm * km < A11 * tm * tm + g * hm * hm := by
   have h1 : 0 < 1 - tm := by linarith
@@ -405,7 +405,7 @@ theorem rimT1 (hts : F.S.tm < F.S.sm) (H1 : F.S.hp * F.S.tm + F.S.hm * F.S.tp < 
       simp only [hzz, t1P, GG, Gf, quint_3]; ring
     have e4 : zz 4 = F.a12 * F.S.tm * F.S.sm + F.gg * F.S.hm * F.S.km := by
       simp only [hzz, t1P, GG, Gf, quint_4]; ring
-    have hz40 := t1_z4_lt_z0 (g := F.gg) hA hA11 htm htm1 hsm1 hts hhm F.Km_eq hS
+    have hz40 := t1_z4_lt_z0 (g := F.gg) hA11 htm hsm1 hts F.Km_eq hS
     have m1 := mul_pos hA htm
     have m2 := mul_pos hg hhm
     have m3 := mul_pos m2 hkp

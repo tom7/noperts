@@ -83,8 +83,8 @@ theorem k28h5rb_hrb {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have key := k28h5rb_core pp (-pq) (qq - qr) (rr - qr) qr (α1 - 1) (β1 - 1) (1 - β6) (1 - γ6)
     (β6 + γ6 - β1) β6 γ6 α1 β1 ((α1 - 1) * pp + β1 * pq)
     (γ6 * qr - (1 - β6) * (qq - qr + qr)) (α1 * pq + (β1 - β6) * qq - γ6 * qr)
-    (by linarith) (by linarith) (by linarith) (by linarith) (by linarith) (by linarith) (by linarith)
-    (by linarith) hβ1p hu1 hu2 ht (by linarith) (by nlinarith) (by nlinarith)
+    (by linarith) (by linarith) (by linarith) (by linarith) (by linarith) (by linarith)
+    (by linarith) hβ1p hu1 (by linarith) (by nlinarith) (by nlinarith)
     (by ring) (by ring) (by ring) (by ring) (by ring) (by ring) (by ring) (by ring)
     (by nlinarith)
   subst hg

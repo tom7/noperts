@@ -170,7 +170,7 @@ theorem t2_rest1E (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) 
 
 theorem t1_cycD (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1)
     (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km)
-    (H2 : hm * (1 - sp) < tm * kp) (dx : ℝ) (hl : -(tm * km) < dx * (sm * hm)) (hr : dx * (sp * hm) < tm * kp - hm) :
+    (H2 : hm * (1 - sp) < tm * kp) (dx : ℝ) :
     ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       ST (-1) ⟨tm, 0, -hm⟩ ⟨dx, 1, 0⟩
         ((t1P tm hm sp kp sm km (i + 1)).sub (t1P tm hm sp kp sm km i))
@@ -312,7 +312,7 @@ theorem rimT1_sector_dp (hts : F.S.tm < F.S.sm) (H1 : F.S.bp < F.S.am)
       simp only [hzz, t1P, GG, Gf, quint_3]; ring
     have e4 : zz 4 = F.a12 * F.S.tm * F.S.sm + F.gg * F.S.hm * F.S.km := by
       simp only [hzz, t1P, GG, Gf, quint_4]; ring
-    have hz40 := t1_z4_lt_z0 (g := F.gg) hA hA11 htm htm1 hsm1 hts hhm F.Km_eq hS
+    have hz40 := t1_z4_lt_z0 (g := F.gg) hA11 htm hsm1 hts F.Km_eq hS
     have m1 := mul_pos hA htm
     have m2 := mul_pos hg hhm
     have m3 := mul_pos m2 hkp
@@ -362,7 +362,7 @@ theorem rimT1_sector_bp (hts : F.S.tm < F.S.sm) (H1 : F.S.am = F.S.bp)
   refine F.rupert_rim5t 4 3 2 5 6 ⟨F.S.tm, 0, -F.S.hm⟩ ⟨1, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩ ⟨0, 1, 0⟩
     ⟨0, F.S.sm, -F.S.km⟩ p4 p3 p2 p5 p6 (-1) (Or.inr rfl) ⟨F.S.tm, 0, -F.S.hm⟩ ⟨dx, 1, 0⟩
     (Or.inl (ne_of_gt htm)) ?_ ?_ ?_
-  · exact t1_cycD hsp hsp1 hkp htm htm1 hhm hsm hsm1 hkm H2' dx hl hr
+  · exact t1_cycD hsp hsp1 hkp htm htm1 hhm hsm hsm1 hkm H2' dx
   · intro j' h4 h3 h2 h5 h6 i
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · rw [p0]; exact t1_rest0D hsp hsp1 hkp htm htm1 hhm hsm hsm1 hkm dx hl i
@@ -387,7 +387,7 @@ theorem rimT1_sector_bp (hts : F.S.tm < F.S.sm) (H1 : F.S.am = F.S.bp)
       simp only [hzz, t1P, GG, Gf, quint_3]; ring
     have e4 : zz 4 = F.a12 * F.S.tm * F.S.sm + F.gg * F.S.hm * F.S.km := by
       simp only [hzz, t1P, GG, Gf, quint_4]; ring
-    have hz40 := t1_z4_lt_z0 (g := F.gg) hA hA11 htm htm1 hsm1 hts hhm F.Km_eq hS
+    have hz40 := t1_z4_lt_z0 (g := F.gg) hA11 htm hsm1 hts F.Km_eq hS
     have m1 := mul_pos hA htm
     have m2 := mul_pos hg hhm
     have m3 := mul_pos m2 hkp

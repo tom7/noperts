@@ -10,9 +10,9 @@ set_option relaxedAutoImplicit true
 
 set_option maxHeartbeats 1000000 in
 theorem k28h5rb_core (P t u1 u2 M al be ob og sg b g A B T L2 L3 : ℝ)
-    (hal : 0 < al) (hbe : 0 < be) (hob : 0 < ob) (hog : 0 < og) (hsg : 0 < sg)
+    (hal : 0 < al) (hbe : 0 < be) (hob : 0 < ob) (hsg : 0 < sg)
     (hb : 0 < b) (hg : 0 < g) (hA : 0 < A) (hB : 0 < B)
-    (hu1 : 0 < u1) (hu2 : 0 < u2) (ht : 0 < t)
+    (hu1 : 0 < u1)
     (hT0 : 0 ≤ T) (hL20 : 0 ≤ L2) (hL30 : 0 ≤ L3)
     (eb : b = 1 - ob) (eg : g = 1 - og) (eA : A = 1 + al) (eB : B = 1 + be)
     (esg : sg = 1 - ob - og - be)

@@ -108,7 +108,7 @@ theorem n2_gt0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
     (cP := c) (mP := d) (fP := b) (rP := c') (gP := b') (wP := a') (aP := a)
     (by intro y hy; simp only [Finset.mem_insert, Finset.mem_singleton] at hy; tauto)
     (by simp) (by simp) (by simp) (by simp) (by simp)
-    P.Φc P.Φd P.Φb P.Φc' P.Φb' P.Φa' P.Φa cfg.hA hs0 hs1 hz.ge hzw hb2 P.hm hr1 ha3 hxa tt htt0 hcyc
+    P.Φc P.Φd P.Φb P.Φc' P.Φb' P.Φa' P.Φa hz.ge hzw hr1 hxa tt htt0 hcyc
     (n2g_f hs0 hs1 hz.ge hzw hb2 hrb ha3 P.hm hma)
     (n2g_g0 cfg.hA hs0 hs1 hz.ge hzw hb2 cfg.hr2 ha3 P.hm htt1 rowg)
 

@@ -100,7 +100,7 @@ theorem n2_eq0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
     (cP := c) (mP := d) (fP := b) (rP := c') (gP := b') (wP := a') (aP := a)
     (by intro y hy; simp only [Finset.mem_insert, Finset.mem_singleton] at hy; tauto)
     (by simp) (by simp) (by simp) (by simp) (by simp)
-    P.Φc P.Φd P.Φb Φr' P.Φb' P.Φa' Φa' cfg.hA hs0 hs1 le_rfl hzw hb2 P.hm hr1 hm3 hxa tt htt0
+    P.Φc P.Φd P.Φb Φr' P.Φb' P.Φa' Φa' le_rfl hzw hr1 hxa tt htt0
     (n2f_cyc hs0 hzw hb2 hm3 hsr' hxa htt1 htt0) (n2f_fe hs1 hzw hb2 hm3 hd1 hxa htt0 htt2)
     (n2f_g cfg.hA hs0 hzw hb2 hm3 hsr' hxa htt1)
 

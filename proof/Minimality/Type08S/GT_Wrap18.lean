@@ -89,7 +89,7 @@ theorem propH_n2_ge_eq2 {V : Finset ℝ³} {cP mP fP rP gP wP aP : ℝ³}
   obtain ⟨b0, b1', b2', b3, b4⟩ := zmod5_add_one
   simp only [h5Pts, b2', quint_0, quint_1, quint_2, quint_3] at c20 c21
   have hmaG := cross_comb_axis (gx := A) hzv hzw c20 c21
-  exact Fr.n2_core hV hc hm ha hr hw Φc Φm Φf Φr Φg Φw Φa hA hs0 hs1 hzv hzw hb2 hz2 hr1 ha3 hxa tt htt0
+  exact Fr.n2_core hV hc hm ha hr hw Φc Φm Φf Φr Φg Φw Φa hzv hzw hr1 hxa tt htt0
     (fun i j h1 h2 => by
       by_cases hsp : (i = 2 ∧ j = 4) ∨ (i = 3 ∧ j = 2)
       · rcases hsp with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩

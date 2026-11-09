@@ -135,7 +135,7 @@ theorem gt_far_T4 (N : Norm08 a a' b b' c c' d)
   · have hwb : WeakBeyond E ⟪N.F.a'bc.N, N.F.a'bc.N⟫ b1 b2 r1 r2 := by
       rw [P.hAE] at hnb
       have hE' : 0 < E := by rw [hE]; exact Fr.hee
-      exact weak_of_not_nb hE' Fr.hNN hnb
+      exact weak_of_not_nb hnb
     rcases lt_trichotomy r2 b2 with hrb | hrb | hrb
     · rcases lt_or_ge za zv with hzz | hzz
       · exact Or.inl (t4_c N.F N.hd P hE hwb hrb hzz)

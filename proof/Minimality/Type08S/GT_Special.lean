@@ -24,8 +24,8 @@ variable {zv zw s t A b1 b2 z2 za' za r1 r2 a1 a2 a3 q tt : ℝ}
 
 /-! ### T4, `r2 = b2` -/
 
-theorem t5_fr (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (ht1 : t < 1) (hA : 0 < A)
-    (hzv : 0 ≤ zv) (hzw : zw < 0) (hza : za < (1 - s) * zw) (hza' : (1 - t) * zv < za')
+theorem t5_fr (hs1 : s < 1)
+    (hzv : 0 ≤ zv) (hzw : zw < 0) (hza : za < (1 - s) * zw)
     (hzz : zv < za') (hr2 : 0 < r2) (hsr : s * r2 < r2) (hq0 : 0 < q) (hqr : q * r2 < za')
     (hbr : b1 < r1)
     (hq2 : crossYZ (t5aPts zv zw s t A b1 r2 za' za r1 r2 3) (t5aPts zv zw s t A b1 r2 za' za r1 r2 4)
@@ -222,7 +222,7 @@ theorem propH_n2_ge_eq {V : Finset ℝ³} {cP mP fP rP gP wP aP : ℝ³}
   obtain ⟨b0, b1', b2', b3, b4⟩ := zmod5_add_one
   simp only [h5Pts, b2', quint_0, quint_1, quint_2, quint_3, quint_4] at c20 c21 c24
   have hmaG := cross_comb_axis (gx := A) hzv hzw c20 c21
-  exact Fr.n2_core hV hc hm ha hr hw Φc Φm Φf Φr Φg Φw Φa hA hs0 hs1 hzv hzw hb2 hz2 hr1 ha3 hxa tt htt0
+  exact Fr.n2_core hV hc hm ha hr hw Φc Φm Φf Φr Φg Φw Φa hzv hzw hr1 hxa tt htt0
     (fun i j h1 h2 => lex_of_cross _ (hcv i j h1 h2))
     (n2e_f hs0 hs1 hzv hzw hb2 ha3 hz2 hd htt2 htt3 c24)
     (n2g_g hA hs0 hs1 hzv hzw hb2 hb2 ha3 hz2 htt1 hmaG)
@@ -249,8 +249,7 @@ theorem propH_n2_flat {V : Finset ℝ³} {cP mP fP rP gP wP aP : ℝ³}
   have htt1 : tt * (s * b2) < z2 := by
     have : tt * (s * b2) = z2 / 2 := by rw [htt]; field_simp
     rw [this]; linarith
-  exact Fr.n2_core hV hc hm ha hr hw Φc Φm Φf Φr Φg Φw Φa hA hs0 hs1 le_rfl hzw hb2
-    (by simpa using hz2) hr1 hz2 hxa tt htt0
+  exact Fr.n2_core hV hc hm ha hr hw Φc Φm Φf Φr Φg Φw Φa le_rfl hzw hr1 hxa tt htt0
     (n2f_cyc hs0 hzw hb2 hz2 hsr hxa htt1 htt0) (n2f_f hs1 hzw hb2 hz2 hrb hxa htt0)
     (n2f_g hA hs0 hzw hb2 hz2 hsr hxa htt1)
 
@@ -281,11 +280,11 @@ theorem propH_t4_a_eq {V : Finset ℝ³} {bP aP' fP rP gP wP aP : ℝ³}
     have : q * b2 = za' / 2 := by rw [hqd]; field_simp
     have h' : 0 < za' := by nlinarith [mul_nonneg (sub_pos.mpr ht1).le hzv]
     rw [this]; linarith
-  exact Fr.t4a_core hV hw hb ha' hr ha Φb Φa' Φf Φr Φg Φw Φa hA hs0 hs1 ht0 ht1 hzv hzw hza hza' hzz hb2
+  exact Fr.t4a_core hV hw hb ha' hr ha Φb Φa' Φf Φr Φg Φw Φa hA hs0 hs1 ht0 ht1 hzv hzw
     hr1 hd.le q hq0
     (t5_cyc hA hs0 hs1 ht0 hzv hzw hza hzz.le hb2 hsr hq0 (Or.inl hzz) hq1 hq2)
-    (t5_fr hs0 hs1 ht0 ht1 hA hzv hzw hza hza' hzz hb2 (by nlinarith) hq0 hqb hd hq2)
-    (t5_g hA hs0 hs1 ht0 ht1 hzv hzw hza hza' hzz.le hb2 hsr hq0)
+    (t5_fr hs1 hzv hzw hza hzz hb2 (by nlinarith) hq0 hqb hd hq2)
+    (t5_g hA hs0 hs1 ht0 ht1 hzv hzw hza hza' hb2 hsr)
 
 end HFrame
 end Minimality

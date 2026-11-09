@@ -23,11 +23,11 @@ theorem k90_nonneg_of (a b c : ℝ) (ha : 0 < a) (hc : 0 < c) (h : 0 ≤ a*b/c) 
   linarith
 
 theorem k90_F3 (s pp qq qr rr m al be : ℝ) (hs : 0 < s) (hpp : 0 < pp) (hm : 0 < m) (hqx : qr < qq)
-    (hal : 1 < al) (hbe : 1 < be)
+    (hbe : 1 < be)
     (hrel : al*s*(qq+rr-2*qr) = (be-1)*(qq*rr-qr^2))
     (hppE : pp*((al-1)*rr+be*qr) = s*((al+be-1)*s+be*(rr-qr)))
     (hdet : 0 < pp*(qq*rr-qr^2) - s^2*(qq+rr-2*qr))
-    (hb6 : 1 < be*m) (hg6 : 1 < 1+(al-1)*m) (hσ : be < be*m + (1+(al-1)*m))
+    (hg6 : 1 < 1+(al-1)*m) (hσ : be < be*m + (1+(al-1)*m))
     (hAv : -al*pp - (be*m)*s + be*s - (1+(al-1)*m)*s < 0)
     (hX4 : 0 ≤ al^2*pp - 2*al*be*s - al*pp + al*s + be^2*qr - be*qr + be*s - s)
     (hcx0 : 0 < -(al-1)*(s+pp) + be*(qq+s)) (hcxB : -(al-1)*(s+pp) + be*(qq+s) < pp + 2*s + qq)
