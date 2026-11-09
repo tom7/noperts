@@ -228,7 +228,7 @@ theorem TiltTest.isRupert_of_freq {V : Finset ℝ³} {u : ℝ³} {k k' : ℕ} [N
     {X : ZMod k → ℝ³} {σ : ZMod k' → ZMod k} {Θ : Set ℝ³} (T : TiltTest V u X σ Θ) {d : ℝ³}
     (hd : d ∈ Θ) (h : ∃ᶠ ε in 𝓝[>] (0 : ℝ), IsCyclicUnimodal fun i => ⟪X i, u + ε • d⟫) :
     IsRupert V :=
-  isRupert_of_tilted_unimodal_freq V u d T.ne_zero T.three (fun i => X (σ i)) (fun i => T.mem _)
+  isRupert_of_tilted_unimodal_freq V u d T.ne_zero T.three (fun i => X (σ i)) (fun _i => T.mem _)
     (T.cyc d hd) (T.rest d hd)
     (h.mono fun _ hε => isCyclicUnimodal_comp T.three hε σ T.σinj T.σcyc)
 

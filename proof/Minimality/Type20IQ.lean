@@ -246,7 +246,7 @@ theorem iq_S1 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces 
       nlinarith [mul_pos this tm1]
 
 /-- Facings at `q01 = x1 - x0 = (1-tp, 0, -hp)` and the tilt `v14 = (1,-sm,km)`, depths at `q01`. -/
-lemma q01_data (hA : True) :
+lemma q01_data :
     nf F.S ⟨1 - F.S.tp, 0, -F.S.hp⟩ 0 = F.S.sm*(F.S.hm*(1-F.S.tp) + F.S.hp*(1-F.S.tm)) ∧
     nf F.S ⟨1 - F.S.tp, 0, -F.S.hp⟩ 1 = -(F.S.hp*F.S.sp) ∧
     nf F.S ⟨1 - F.S.tp, 0, -F.S.hp⟩ 2 = 0 ∧
@@ -273,7 +273,7 @@ theorem iq_C1 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces 
   have tm1 := F.S.tm1; have rp := F.S.rhop_pos
   have ha : 0 < F.a12 := F.A12_pos; have hg : 0 < F.gg := F.g_pos
   have W0 := F.S.W_pos
-  obtain ⟨uA, uB, uC, uD, uE, uF, uG, uH⟩ := q01_data F trivial
+  obtain ⟨uA, uB, uC, uD, uE, uF, uG, uH⟩ := q01_data F
   have vC : nf F.S ⟨1, -F.S.sm, F.S.km⟩ 2 = F.S.sm*(F.S.hm*F.S.tp+F.S.hp*F.S.tm) := by simp only [nf_C]; ring
   have vE : nf F.S ⟨1, -F.S.sm, F.S.km⟩ 4 = F.S.hp*(1-F.S.sm) + (1-F.S.tp)*F.S.km := by simp only [nf_E]; ring
   have z0 : F.dep ⟨1 - F.S.tp, 0, -F.S.hp⟩ 0 = F.a11*F.S.tp*(1-F.S.tp) - F.gg*F.S.hp^2 := by rw [Frame20.dep_0]; ring
@@ -313,7 +313,7 @@ theorem iq_C3 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces 
   have ha : 0 < F.a12 := F.A12_pos; have hg : 0 < F.gg := F.g_pos
   have h11 : F.a12 ≤ F.a11 := F.A12_le_A11
   have W0 := F.S.W_pos
-  obtain ⟨uA, uB, uC, uD, uE, uF, uG, uH⟩ := q01_data F trivial
+  obtain ⟨uA, uB, uC, uD, uE, uF, uG, uH⟩ := q01_data F
   have vC : nf F.S ⟨1, -F.S.sm, F.S.km⟩ 2 = F.S.sm*(F.S.hm*F.S.tp+F.S.hp*F.S.tm) := by simp only [nf_C]; ring
   have vD : nf F.S ⟨1, -F.S.sm, F.S.km⟩ 3 = -(F.S.hm*F.S.sm) := by simp only [nf_D]; ring
   have vE : nf F.S ⟨1, -F.S.sm, F.S.km⟩ 4 = F.S.hp*(1-F.S.sm) + (1-F.S.tp)*F.S.km := by simp only [nf_E]; ring

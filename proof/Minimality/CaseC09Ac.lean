@@ -135,7 +135,7 @@ theorem t31IB_rest3_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp 
     | (right; refine ⟨by linarith, by nlinarith⟩)
 
 theorem t31IB_rest4_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
-    (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1)
+    (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm) (hsm : 0 < sm) 
     (hkm : 0 < km) (hst : sm < tm) (Km : km * (1 - tm) = (1 - sm) * hm)
     (roof : hp * (1 - sp) < kp * (1 - tp)) (H31 : hp * sp = kp * tp) :
     ∀ i : ZMod 5,
@@ -218,7 +218,7 @@ theorem t095_cyc5_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 
 
 theorem t095_rest3_5_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm)
-    (roof : hp * (1 - sp) < kp * (1 - tp)) (H : hp * sp = kp * tp) (h1 : hm * ds < tm) (h2 : 1 - sp < kp * ds) :
+    (roof : hp * (1 - sp) < kp * (1 - tp)) (h1 : hm * ds < tm) (h2 : 1 - sp < kp * ds) :
     ∀ i : ZMod 5,
       ST 1 ⟨1, -1, 0⟩ ⟨ds, 0, -1⟩
         ((quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ (i + 1)).sub (quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ i))
@@ -390,7 +390,7 @@ theorem t31IB_eq (hA1 : F.a12 ≤ F.a11) (hA2 : F.a12 < F.a22) (hst : F.S.sm < F
     · exact absurd rfl h1
     · exact absurd rfl h2
     · rw [p3]; exact t31IB_rest3_eq hsp hsp1 htp htp1 hhp hkp hsm hsm1 hkm roof H31 i
-    · rw [p4]; exact t31IB_rest4_eq hsp hsp1 htp htp1 hhp hkp htm htm1 hhm hsm hsm1 hkm hst Km
+    · rw [p4]; exact t31IB_rest4_eq hsp hsp1 htp htp1 hhp hkp htm htm1 hhm hsm hkm hst Km
         roof H31 i
     · exact absurd rfl h5
     · exact absurd rfl h6
@@ -445,7 +445,7 @@ theorem t095_5_eq (hA : F.a12 < F.a22) (hts : F.S.tm = F.S.sm) (hda : F.S.am < F
     · exact absurd rfl h0
     · exact absurd rfl h1
     · exact absurd rfl h2
-    · rw [p3]; exact t095_rest3_5_eq hsp hsp1 htp htp1 hhp hkp htm htm1 hhm roof H31 hd1 hd2 i
+    · rw [p3]; exact t095_rest3_5_eq hsp hsp1 htp htp1 hhp hkp htm htm1 hhm roof hd1 hd2 i
     · rw [p4]; exact t095_rest4_5_eq hsp hsp1 htp htp1 hhp hkp htm htm1 hhm roof H31 hd1 hd2 i
     · exact absurd rfl h5
     · exact absurd rfl h6

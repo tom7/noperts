@@ -559,7 +559,7 @@ theorem gt_min_ends_of_conc {f : ℕ → ℝ} {m : ℕ}
 
 /-- A tilt `(α, β)` for the robust tie exists unless the far triangle has a
 right angle at `a` or at `b`. -/
-theorem exists_tie_tilt (O r1 r2 : ℝ²) (A B : ℝ)
+theorem exists_tie_tilt (r1 r2 : ℝ²) (A B : ℝ)
     (ha : r1 0 * (B * r2 0 - A * r1 0) + r1 1 * (B * r2 1 - A * r1 1) ≠ 0)
     (hb : r2 0 * (A * r1 0 - B * r2 0) + r2 1 * (A * r1 1 - B * r2 1) ≠ 0) :
     ∃ α β : ℝ, 0 < α ∧ 0 < β ∧
@@ -600,7 +600,7 @@ theorem exists_tie_tilt (O r1 r2 : ℝ²) (A B : ℝ)
 
 /-- A tilt `(α, β)` for the robust tie always exists: `⟪b - a, α r1 + β r2⟫ ≠ 0`
 for `(1, 1)` or `(1, 2)`, since `b - a` is not orthogonal to both `r1` and `r2`. -/
-theorem exists_tie_tilt' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (A B : ℝ) (hB : 0 < B) :
+theorem exists_tie_tilt' (r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (A B : ℝ) (hB : 0 < B) :
     ∃ α β : ℝ, 0 < α ∧ 0 < β ∧ (0 < ⟪oblPt 0 r1 r2 (-A) B 0, oblPt 0 r1 r2 α β 0⟫ ∨
       ⟪oblPt 0 r1 r2 (-A) B 0, oblPt 0 r1 r2 α β 0⟫ < 0) := by
   set p1 := r1 0 * (B * r2 0 - A * r1 0) + r1 1 * (B * r2 1 - A * r1 1)
@@ -720,7 +720,7 @@ theorem isRupert_vertex_frame_robust (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) 
       rw [C2'.start.2, ← htie, e1.2]; linarith
     simp only [min_eq_right h0.le] at hc
     rw [htie]; linarith
-  obtain ⟨α, β, hα, hβ, hcase⟩ := exists_tie_tilt' O r1 r2 hρ (ca m) (cb n) hB0
+  obtain ⟨α, β, hα, hβ, hcase⟩ := exists_tie_tilt' r1 r2 hρ (ca m) (cb n) hB0
   refine isRupert_triShadow_robust O r1 r2 hρ C1.one_le C2.one_le s hs t ht hα hβ ca cz cb dz
     c10.1 c20.1 (by rw [c10.2, c20.2]) C1.inc C2.inc V (fun l hl => hV1 _ _ (C1.mem l hl))
     (fun l hl => hV2 _ _ (C2.mem l hl)) ?_ rfl hsol htie hz1 hz2 hcase
@@ -1541,7 +1541,7 @@ theorem edge_robust_core (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ
     have h0 : s * dz n < s * dz 0 := by rw [c20.2, ← htie]; linarith
     simp only [min_eq_right h0.le] at hc
     rw [htie]; linarith
-  obtain ⟨α, β, hα, hβ, hcase⟩ := exists_tie_tilt' O r1 r2 hρ (ca m) (cb n) C2.far_pos
+  obtain ⟨α, β, hα, hβ, hcase⟩ := exists_tie_tilt' r1 r2 hρ (ca m) (cb n) C2.far_pos
   refine isRupert_triShadow_robust O r1 r2 hρ C1.one_le C2.one_le s hs (-s) hns hα hβ ca cz
     cb dz c10.1 c20.1 (by rw [c10.2, c20.2]) C1.inc C2.inc V (fun l hl => hV1 _ _ (C1.mem l hl))
     (fun l hl => hV2 _ _ (C2.mem l hl)) ?_ rfl hsol htie hz1 hz2 hcase
@@ -2125,7 +2125,7 @@ theorem isRupert_facets_edge_vertical_lt_tieR (V Q1 Q2 : Finset ℝ³) (v w : �
       hb1 hb1' ha2 ha2' ⟨p1, hp1, hp12⟩ ⟨p2, hp2, hp21⟩ hcol hmid hfar' hin' hsol
 
 /-- **Lemma T over an edge, the edge vertical.** -/
-theorem isRupert_facets_edge_vertical_tieR (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : v ≠ w)
+theorem isRupert_facets_edge_vertical_tieR (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) 
     (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hint : Q1 ∩ Q2 = {v, w}) (f1 f2 : ℝ³ →ᵃ[ℝ] ℝ)
     (z1 : ∀ p ∈ Q1, f1 p = 0) (n1 : ∀ p ∈ V, p ∉ Q1 → f1 p < 0)
     (z2 : ∀ p ∈ Q2, f2 p = 0) (n2 : ∀ p ∈ V, p ∉ Q2 → f2 p < 0)
@@ -2218,7 +2218,6 @@ theorem isRupert_facets_edge_tieR (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : 
   have allg : ∀ (S : Finset ℝ³) (P : ℝ³ → Prop), (∀ p ∈ S, P (g p)) → ∀ q ∈ S.image g, P q := by
     intro S P h q hq; obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp hq; exact h p hp
   refine isRupert_facets_edge_vertical_tieR (V.image g) (Q1.image g) (Q2.image g) (g v) (g w)
-    (fun h => hvw (hginj h))
     (Finset.image_subset_image h1V) (Finset.image_subset_image h2V)
     (by rw [← Finset.image_inter _ _ hginj, hint, Finset.image_insert, Finset.image_singleton]) F1 F2
     (allg Q1 _ (fun p hp => by rw [tF1]; exact z1 p hp))

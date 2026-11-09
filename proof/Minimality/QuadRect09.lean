@@ -496,7 +496,7 @@ theorem quadFace_coords {V Q1 : Finset ℝ³} {v p p' e : ℝ³} (f1 f2 : ℝ³ 
     rw [hr1eq, h]; simp
   exact ⟨l, α, ζ, hpl, hα0, lt_of_le_of_ne hα1 hα1', hζ, by rw [hQ1, hr1eq]⟩
 
-theorem face_ne_v {Q : Finset ℝ³} {v a : ℝ³} (fb : ℝ³ →ᵃ[ℝ] ℝ) (hc : Q.card = 4) (hvQ : v ∈ Q)
+theorem face_ne_v {Q : Finset ℝ³} {v a : ℝ³} (fb : ℝ³ →ᵃ[ℝ] ℝ) (hc : Q.card = 4) 
     (hfbv : fb v = 0) (hfar : ∀ x ∈ Q, x ≠ v → fb x < 0) (ham : ∀ x ∈ Q, fb a ≤ fb x) :
     (∃ x ∈ Q, x ≠ v) ∧ a ≠ v := by
   have hx : ∃ x ∈ Q, x ≠ v := by
@@ -515,7 +515,7 @@ theorem minimizer_dir {V Q : Finset ℝ³} {v e a b : ℝ³} (fa fb : ℝ³ →�
     (hz : ∃ z ∈ V, fa z < 0) (ha : a ∈ Q) (hb : b ∈ Q) (ham : ∀ x ∈ Q, fb a ≤ fb x)
     (hbm : ∀ x ∈ Q, fb b ≤ fb x) : ∃ c : ℝ, b - a = c • e := by
   obtain ⟨z, -, hz⟩ := hz
-  obtain ⟨-, hav⟩ := face_ne_v fb hc hvQ hfbv hfar ham
+  obtain ⟨-, hav⟩ := face_ne_v fb hc hfbv hfar ham
   exact eq_smul_of_ker_both fa fb v e (b - a) a z he (hfa v hvQ) hfbv hea heb
     (by rw [aff_lin, hfa a ha, hfa b hb]; simp)
     (by rw [aff_lin, le_antisymm (hbm a ha) (ham b hb)]; simp)
@@ -592,8 +592,8 @@ theorem prismShape_of_quadTripleRect {V Q1 Q2 : Finset ℝ³} {v : ℝ³}
     hf2n x (h1V hx) (fun h => hxv (hmem x hx h))
   have hfar2 : ∀ x ∈ Q2, x ≠ v → f1 x < 0 := fun x hx hxv =>
     hf1n x (h2V hx) (fun h => hxv (hmem x h hx))
-  obtain ⟨⟨x1, hx1, hx1v⟩, -⟩ := face_ne_v (a := p) f2 hc1 hvQ1 hf2v hfar1 hpm
-  obtain ⟨⟨x2, hx2, hx2v⟩, -⟩ := face_ne_v (a := q) f1 hc2 hvQ2 hf1v hfar2 hqm
+  obtain ⟨⟨x1, hx1, hx1v⟩, -⟩ := face_ne_v (a := p) f2 hc1 hf2v hfar1 hpm
+  obtain ⟨⟨x2, hx2, hx2v⟩, -⟩ := face_ne_v (a := q) f1 hc2 hf1v hfar2 hqm
   have hz1 : ∃ z ∈ V, f1 z < 0 := ⟨x2, h2V hx2, hfar2 x2 hx2 hx2v⟩
   have hz2 : ∃ z ∈ V, f2 z < 0 := ⟨x1, h1V hx1, hfar1 x1 hx1 hx1v⟩
   have hy1 : ∃ y, f1 y = 0 ∧ f2 y < 0 := ⟨x1, hf1 x1 hx1, hfar1 x1 hx1 hx1v⟩
@@ -646,8 +646,8 @@ theorem prismShape_of_quadTripleRect {V Q1 Q2 : Finset ℝ³} {v : ℝ³}
   have hr1Q : v + α • (a - v) + ζ • e ∈ Q1 := by rw [hQ1e]; simp
   have hr2Q : v + β • (c - v) + ζ' • e ∈ Q2 := by rw [hQ2e]; simp
   -- the planes are independent
-  have hav0 : a ≠ v := (face_ne_v f2 hc1 hvQ1 hf2v hfar1 ham).2
-  have hcv0 : c ≠ v := (face_ne_v f1 hc2 hvQ2 hf1v hfar2 hcm).2
+  have hav0 : a ≠ v := (face_ne_v f2 hc1 hf2v hfar1 ham).2
+  have hcv0 : c ≠ v := (face_ne_v f1 hc2 hf1v hfar2 hcm).2
   have hLe1 : f1.linear e = 0 := by
     have := aff_lin f1 (v + e) v; rw [add_sub_cancel_left, he1, hf1v] at this; simpa using this
   have hLe2 : f2.linear e = 0 := by

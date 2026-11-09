@@ -665,7 +665,7 @@ theorem classH_depth_trichotomy (hH : F.ClassH) :
     constructor <;> linarith
 
 /-- `v` is strictly shallower than `xb` at `uV`: `dV 5 = 0 < a12 · ux = dV 4`. -/
-theorem dV_v_lt_xb (hV : 0 < F.S.Vp) : F.dV 5 < F.dV 4 := by
+theorem dV_v_lt_xb : F.dV 5 < F.dV 4 := by
   have h5 : F.dV 5 = 0 := by simp only [dV, ptC_5, GG_eq, Shape18.uV]; ring
   have hux : 0 < F.S.tp * (1 - F.S.sp) := mul_pos F.S.tp_pos (sub_pos.2 F.S.sp_lt)
   rw [h5, F.dV_4, show -F.S.sp * F.S.tp + F.S.tp = F.S.tp * (1 - F.S.sp) by ring]

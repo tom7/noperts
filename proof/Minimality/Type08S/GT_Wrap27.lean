@@ -23,7 +23,7 @@ section Fe
 variable {zw s b1 b2 z2 r1 a1 tt : ℝ}
 
 /-- `b` over `c'` for the flat pentagon at `r2 = b2`. -/
-theorem n2f_fe (hs0 : 0 < s) (hs1 : s < 1) (hzw : zw < 0) (hb2 : 0 < b2) (hz2 : 0 < z2)
+theorem n2f_fe (hs1 : s < 1) (hzw : zw < 0) (hb2 : 0 < b2) (hz2 : 0 < z2)
     (hd : b1 < r1) (hxa : s * b1 < a1) (htt0 : 0 < tt) (hbr : tt * b2 < -zw) :
     ∀ i : ZMod 5,
       LexTest (-1) ⟨1, 0, 0⟩ ⟨0, -1, -tt⟩ (h5Pts 0 zw s b1 b2 z2 a1 (s * b2) z2 r1 b2 i)
@@ -101,7 +101,7 @@ theorem n2_eq0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
     (by intro y hy; simp only [Finset.mem_insert, Finset.mem_singleton] at hy; tauto)
     (by simp) (by simp) (by simp) (by simp) (by simp)
     P.Φc P.Φd P.Φb Φr' P.Φb' P.Φa' Φa' cfg.hA hs0 hs1 le_rfl hzw hb2 P.hm hr1 hm3 hxa tt htt0
-    (n2f_cyc hs0 hzw hb2 hm3 hsr' hxa htt1 htt0) (n2f_fe hs0 hs1 hzw hb2 hm3 hd1 hxa htt0 htt2)
+    (n2f_cyc hs0 hzw hb2 hm3 hsr' hxa htt1 htt0) (n2f_fe hs1 hzw hb2 hm3 hd1 hxa htt0 htt2)
     (n2f_g cfg.hA hs0 hzw hb2 hm3 hsr' hxa htt1)
 
 end Type08Sp

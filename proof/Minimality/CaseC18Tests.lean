@@ -121,7 +121,7 @@ theorem tB_cyc (S : Shape18) (B2 : S.hm * S.tp < S.hp * (1 - S.tm)) (B3 : S.km *
     first
     | (left; linarith [a1, a2, a3, a4, a5])
 
-theorem tB_rest2 (S : Shape18) (B2 : S.hm * S.tp < S.hp * (1 - S.tm)) (B3 : S.km * S.tp < S.hp * (1 - S.sm)) :
+theorem tB_rest2 (S : Shape18) (B3 : S.km * S.tp < S.hp * (1 - S.sm)) :
     ∀ i : ZMod 4,
       ST 1 ⟨S.tp, 0, S.hp⟩ ⟨-2 * S.tp + 1, S.sp, -2 * S.hp + S.kp⟩
         ((quad (⟨S.tp, 0, S.hp⟩ : C3) ⟨1, 0, 0⟩ ⟨0, 1, 0⟩ ⟨0, S.sp, S.kp⟩ (i + 1)).sub
@@ -159,7 +159,7 @@ theorem tB_rest5 (S : Shape18) (B2 : S.hm * S.tp < S.hp * (1 - S.tm)) (B3 : S.km
     | (left; linarith [a1, a2, a3])
     | (right; refine ⟨by ring, by linarith [a1, a2, a3]⟩)
 
-theorem tB_rest6 (S : Shape18) (B2 : S.hm * S.tp < S.hp * (1 - S.tm)) (B3 : S.km * S.tp < S.hp * (1 - S.sm)) :
+theorem tB_rest6 (S : Shape18) (B2 : S.hm * S.tp < S.hp * (1 - S.tm)) :
     ∀ i : ZMod 4,
       ST 1 ⟨S.tp, 0, S.hp⟩ ⟨-2 * S.tp + 1, S.sp, -2 * S.hp + S.kp⟩
         ((quad (⟨S.tp, 0, S.hp⟩ : C3) ⟨1, 0, 0⟩ ⟨0, 1, 0⟩ ⟨0, S.sp, S.kp⟩ (i + 1)).sub
@@ -210,11 +210,11 @@ theorem tB (hA : F.a12 < F.a11) (B2 : F.S.hm * F.S.tp < F.S.hp * (1 - F.S.tm))
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · exact absurd rfl h0
     · exact absurd rfl h3
-    · rw [p2]; exact tB_rest2 F.S B2 B3 i
+    · rw [p2]; exact tB_rest2 F.S B3 i
     · exact absurd rfl h1
     · exact absurd rfl h2
     · rw [p5]; exact tB_rest5 F.S B2 B3 i
-    · rw [p6]; exact tB_rest6 F.S B2 B3 i
+    · rw [p6]; exact tB_rest6 F.S B2 i
   · set Pq : ZMod 4 → C3 := quad ⟨F.S.tp, 0, F.S.hp⟩ ⟨1, 0, 0⟩ ⟨0, 1, 0⟩ ⟨0, F.S.sp, F.S.kp⟩ with hPq
     set zz : ZMod 4 → ℝ := fun i => F.toFrame7.GG (Pq i) ⟨F.S.tp, 0, F.S.hp⟩ with hzz
     set ww : ZMod 4 → ℝ := fun i => F.toFrame7.GG (Pq i) ⟨-2 * F.S.tp + 1, F.S.sp, -2 * F.S.hp + F.S.kp⟩ with hww
@@ -901,7 +901,7 @@ lemma quad2_weights (S : Shape18) {Y Z : ℝ} (h : InQuad2 S Y Z) :
 namespace Frame18
 variable {x : Fin 7 → ℝ³} (F : Frame18 x)
 
-lemma cross_F2 (hx : Function.Injective x) (i : Fin 7) {τ p q r Y Z : ℝ}
+lemma cross_F2 (i : Fin 7) {τ p q r Y Z : ℝ}
     (hp : (F.toFrame7.ptC i).x + τ * p = 0)
     (hY : (F.toFrame7.ptC i).y + τ * q = Y) (hZ : (F.toFrame7.ptC i).z + τ * r = Z)
     (hin : InQuad2 F.S Y Z) :
@@ -960,15 +960,15 @@ theorem rupert_of_F2_view (hx : Function.Injective x) (α γ : ℝ)
     rcases hj with rfl | rfl | rfl | rfl <;> simp [q5, q1, q4, q2]
   · intro i hi
     fin_cases i
-    · exact F.cross_F2 hx 0 (τ := -F.S.tp) (by rw [q0]; simp) (by rw [q0]; simp )
+    · exact F.cross_F2 0 (τ := -F.S.tp) (by rw [q0]; simp) (by rw [q0]; simp )
         (by rw [q0]; simp ) h0
     · exact absurd (by decide) hi
     · exact absurd (by decide) hi
-    · exact F.cross_F2 hx 3 (τ := -1) (by rw [q3]; simp) (by rw [q3]; simp)
+    · exact F.cross_F2 3 (τ := -1) (by rw [q3]; simp) (by rw [q3]; simp)
         (by rw [q3]; simp) h3
     · exact absurd (by decide) hi
     · exact absurd (by decide) hi
-    · exact F.cross_F2 hx 6 (τ := -F.S.tm) (by rw [q6]; simp) (by rw [q6]; simp )
+    · exact F.cross_F2 6 (τ := -F.S.tm) (by rw [q6]; simp) (by rw [q6]; simp )
         (by rw [q6]; simp ) h6
 
 end Frame18

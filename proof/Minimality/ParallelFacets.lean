@@ -1605,7 +1605,7 @@ theorem isRupert_facets_edge_vertical_lt_par (V Q1 Q2 : Finset ℝ³) (v w : ℝ
 
 /-- **Lemma T over an edge, the edge vertical, segments parallel to it
 allowed, with no unique-far-end condition.** -/
-theorem isRupert_facets_edge_vertical_par' (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : v ≠ w)
+theorem isRupert_facets_edge_vertical_par' (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) 
     (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hint : Q1 ∩ Q2 = {v, w}) (f1 f2 : ℝ³ →ᵃ[ℝ] ℝ)
     (z1 : ∀ p ∈ Q1, f1 p = 0) (n1 : ∀ p ∈ V, p ∉ Q1 → f1 p < 0)
     (z2 : ∀ p ∈ Q2, f2 p = 0) (n2 : ∀ p ∈ V, p ∉ Q2 → f2 p < 0)
@@ -1657,7 +1657,7 @@ theorem isRupert_facets_edge_vertical_par (V Q1 Q2 : Finset ℝ³) (v w : ℝ³)
       (∀ q ∈ Q2, ∀ q' ∈ Q2, (∀ q'' ∈ Q2, f1 q ≤ f1 q'') → f1 q' = f1 q → q' = q))
     (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
       ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V :=
-  isRupert_facets_edge_vertical_par' V Q1 Q2 v w hvw h1V h2V hint f1 f2 z1 n1 z2 n2 e1 e2 hne1 hne2
+  isRupert_facets_edge_vertical_par' V Q1 Q2 v w h1V h2V hint f1 f2 z1 n1 z2 n2 e1 e2 hne1 hne2
     hcol hvw2 (FarDepthOK.of_ne hfarZ) hin
 
 set_option maxHeartbeats 4000000 in
@@ -1709,7 +1709,6 @@ theorem isRupert_facets_edge_par' (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : 
   have allg : ∀ (S : Finset ℝ³) (P : ℝ³ → Prop), (∀ p ∈ S, P (g p)) → ∀ q ∈ S.image g, P q := by
     intro S P h q hq; obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp hq; exact h p hp
   refine isRupert_facets_edge_vertical_par' (V.image g) (Q1.image g) (Q2.image g) (g v) (g w)
-    (fun h => hvw (hginj h))
     (Finset.image_subset_image h1V) (Finset.image_subset_image h2V)
     (by rw [← Finset.image_inter _ _ hginj, hint, Finset.image_insert, Finset.image_singleton]) F1 F2
     (allg Q1 _ (fun p hp => by rw [tF1]; exact z1 p hp))

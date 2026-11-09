@@ -16,7 +16,7 @@ open Finset Filter
 namespace Minimality
 namespace Type08Sp
 
-theorem n2_t1_pos' {zv b1 b2 t1 t2 t3 α1 β1 γ1 δ1 α2 β2 γ2 δ2 : ℝ} (hzv : 0 < zv) (hb2 : 0 < b2)
+theorem n2_t1_pos' {zv b1 b2 t1 t2 t3 α1 β1 γ1 δ1 α2 β2 γ2 δ2 : ℝ} (hzv : 0 < zv) 
     (d1 : δ1 < 0) (d2 : δ2 < 0) (hα1 : 0 < α1) (hα2 : α2 < 0) (hγ1 : 0 < γ1) (hγ2 : 0 < γ2)
     (hβ1 : β1 < 0) (hβ2 : 0 ≤ β2)
     (Qac_C : α1 * 0 + β1 * 0 + γ1 * zv + δ1 = 0)
@@ -115,7 +115,7 @@ theorem _root_.Minimality.N2Cfg.xa (h : N2Cfg E U zv zw A b1 b2 r1 r2 s m3 a1 a2
       have : FH.a * (s * b1) + FH.b * (s * b2) = 0 := by linear_combination s * e
       linarith
     exact n2_edgeH h.hb2 hHα e hh
-  have := n2_t1_pos' h.hzv h.hb2 d1 d2 hα1 hα2 hγ1 hγ2 hβ1 hβ2 Qac_C Qac_B Qab_B Qab_C E1 E2 hH
+  have := n2_t1_pos' h.hzv d1 d2 hα1 hα2 hγ1 hγ2 hβ1 hβ2 Qac_C Qac_B Qab_B Qab_C E1 E2 hH
   linarith
 
 end Type08Sp

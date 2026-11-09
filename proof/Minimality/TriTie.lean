@@ -29,7 +29,7 @@ open scoped RealInnerProductSpace
 /-- **One concave run.** Positions `0, …, L` of a cyclic sequence form a run
 with no interior local minimum, and every other position has a strictly larger
 neighbour. Then the sequence has at most one strict local maximum. -/
-theorem localMax_unique_of_run {K L : ℕ} [NeZero K] (hL : L < K) (w : ZMod K → ℝ)
+theorem localMax_unique_of_run {K L : ℕ} [NeZero K] (w : ZMod K → ℝ)
     (hout : ∀ l : ℕ, L < l → l < K →
       w (l : ZMod K) < w ((l - 1 : ℕ) : ZMod K) ∨ w (l : ZMod K) < w ((l + 1 : ℕ) : ZMod K))
     (hconc : ∀ l : ℕ, 1 ≤ l → l < L →
@@ -102,7 +102,7 @@ theorem localMax_unique_of_run_shift {K L : ℕ} [NeZero K] (hL : L < K) (c : �
     intro l hl; rw [shift]; congr 2; omega
   have shiftp : ∀ l : ℕ, w' ((l + 1 : ℕ) : ZMod K) = w ((c + l + 1 : ℕ) : ZMod K) := by
     intro l; rw [shift]; congr 2
-  have h := localMax_unique_of_run hL w'
+  have h := localMax_unique_of_run w'
     (fun l h1 h2 => by rw [shiftm l (by omega), shiftp, shift]; exact hout l h1 h2)
     (fun l h1 h2 => by rw [shiftm l h1, shiftp, shift]; exact hconc l h1 h2)
   intro a b ha1 ha2 hb1 hb2
@@ -2453,7 +2453,7 @@ theorem isRupert_facets_edge_vertical_lt_tie (V Q1 Q2 : Finset ℝ³) (v w : ℝ
       hb1 hb1' ha2 ha2' ⟨p1, hp1, hp12⟩ ⟨p2, hp2, hp21⟩ hcol hinjv hinjw hfar' hin'
 
 /-- **Lemma T over an edge, the edge vertical.** -/
-theorem isRupert_facets_edge_vertical_tie (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : v ≠ w)
+theorem isRupert_facets_edge_vertical_tie (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) 
     (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hint : Q1 ∩ Q2 = {v, w}) (f1 f2 : ℝ³ →ᵃ[ℝ] ℝ)
     (z1 : ∀ p ∈ Q1, f1 p = 0) (n1 : ∀ p ∈ V, p ∉ Q1 → f1 p < 0)
     (z2 : ∀ p ∈ Q2, f2 p = 0) (n2 : ∀ p ∈ V, p ∉ Q2 → f2 p < 0)
@@ -2542,7 +2542,6 @@ theorem isRupert_facets_edge_tie (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : v
   have allg : ∀ (S : Finset ℝ³) (P : ℝ³ → Prop), (∀ p ∈ S, P (g p)) → ∀ q ∈ S.image g, P q := by
     intro S P h q hq; obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp hq; exact h p hp
   refine isRupert_facets_edge_vertical_tie (V.image g) (Q1.image g) (Q2.image g) (g v) (g w)
-    (fun h => hvw (hginj h))
     (Finset.image_subset_image h1V) (Finset.image_subset_image h2V)
     (by rw [← Finset.image_inter _ _ hginj, hint, Finset.image_insert, Finset.image_singleton]) F1 F2
     (allg Q1 _ (fun p hp => by rw [tF1]; exact z1 p hp))

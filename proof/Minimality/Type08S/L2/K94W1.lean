@@ -12,9 +12,9 @@ set_option maxHeartbeats 40000000
 
 noncomputable def k94_kap (e qr rr : ℝ) : ℝ := e*(qr+rr)
 noncomputable def k94_lam (e s rr : ℝ) : ℝ := e*(rr-s)
-noncomputable def k94_sA (pp s qq qr rr e : ℝ) : ℝ :=
+noncomputable def k94_sA (_pp s qq qr rr e : ℝ) : ℝ :=
   (e*(qr+rr))*(e^2*(qr+rr-2*s)) - (e*(rr-s))*(e^2*(qq+2*qr+rr))
-noncomputable def k94_zb (pp s qq qr rr e : ℝ) : ℝ :=
+noncomputable def k94_zb (pp s _qq qr rr e : ℝ) : ℝ :=
   (e*(qr+rr))*(e^2*(pp-2*s+rr)) - (e*(rr-s))*(e^2*(qr+rr-2*s))
 noncomputable def k94_zc (pp s qq qr rr e : ℝ) : ℝ :=
   (e*(qr+rr))*(e^2*(pp-2*s+qr)) - (e*(rr-s))*(e^2*(qq+qr-2*s))

@@ -311,7 +311,7 @@ theorem tie_no_forces_at_neg (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (nb0
     (hconva : 0 < det3 (b - a) (a0 - a) w) (hconvb : 0 < det3 (b1 - b) (a - b) w)
     (hin : ∀ y ∈ V, y ∉ X → y ≠ a → y ≠ b → ∀ G : ℝ³, ⟪G, w⟫ = 0 →
       (∀ q ∈ V, ⟪G, q - y⟫ ≤ 0) → G = 0)
-    (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (κ η Z K L c3 c : ℝ)
+    (σ : ℝ) (κ η Z K L c3 c : ℝ)
     (hκ : 0 < κ) (hη : 0 < η) (hc3 : 0 < c3) (hc : 0 < c) (hL : 0 ≤ L) (hZ : 0 ≤ Z)
     (hδ : 0 < σ * ⟪a - b, w⟫)
     (hM : ∀ j ∈ X ×ˢ (univ : Finset Bool), κ ≤ ⟪tgen nb0 nb1 w j, m⟫)
@@ -784,7 +784,7 @@ theorem tie_no_forces_neg (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 nb
   have wK1 : ∀ {x : ℝ}, x ≤ K1 → x ≤ K := fun h => by rw [hKdef]; linarith
   intro F hF
   refine tie_no_forces_at_neg V X (tw v ε) a b a0 b1 m p nb0 nb1 hXV ha hb hab haX hbX ha0 hb1 hnb0
-    hnb1 hcX hca hcb hIn σ hσ κ η Z K L c3 c hκ hη hc3 hc hL hZ (by rw [hδε]; positivity) hMε
+    hnb1 hcX hca hcb hIn σ κ η Z K L c3 c hκ hη hc3 hc hL hZ (by rw [hδε]; positivity) hMε
     (fun y hy => (hζε' y hy).1) (fun y hy => (hζε' y hy).2) ?_ (fun j hj => wK1 (hJε j hj).1)
     (fun j hj => wK1 (hJε j hj).2.1) (fun j hj => wK1 (hJε j hj).2.2.1)
     (fun j hj => wK1 (hJε j hj).2.2.2)

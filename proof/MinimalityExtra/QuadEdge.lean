@@ -281,7 +281,7 @@ variable {a b m f c g : ℝ}
 
 /-- The cone `B6` under `H2` (`(1-t)((1-s)-ga) ≤ al u`: c is no higher than f over the plane bgm).
 It is empty unless `z_b = z_g = z_m`, which needs equality in `H2`. -/
-theorem b6H2 (S : QS a b m f c g) (hgb : b ≤ g) (hgc : c ≤ g) (hfa : a ≤ f) (hfc : c ≤ f)
+theorem b6H2 (S : QS a b m f c g) (hgb : b ≤ g) (hgc : c ≤ g) (hfc : c ≤ f)
     (hmb : b ≤ m) (hmc : c ≤ m)
     (hH : (1 - S.t) * ((1 - S.s) - S.ga) ≤ S.al * S.u) :
     ((1 - S.t) * ((1 - S.s) - S.ga) < S.al * S.u → False) ∧ b = g ∧ g = m := by
@@ -395,7 +395,7 @@ theorem core (S : QS a b m f c g)
   rcases hH with h | h
   · obtain ⟨-, e1, e2⟩ := b6H1 S hgb hgc hfa hfc h
     exact Or.inr (Or.inl ⟨by linarith, by linarith⟩)
-  · obtain ⟨-, e1, e2⟩ := b6H2 S hgb hgc hfa hfc hmb hmc h
+  · obtain ⟨-, e1, e2⟩ := b6H2 S hgb hgc hfc hmb hmc h
     exact Or.inr (Or.inr ⟨e1, e2⟩)
 
 /-- **Numeric core, strict form**: with strict `H1` or `H2` the only exception is `z_c = z_f = z_g`. -/
@@ -405,7 +405,7 @@ theorem core_strict (S : QS a b m f c g)
   have key := core_main S (c = f ∧ f = g) (fun hgb hgc hfa hfc hmb hmc => by
     rcases hH with h | h
     · exact ((b6H1 S hgb hgc hfa hfc h.le).1 h).elim
-    · exact ((b6H2 S hgb hgc hfa hfc hmb hmc h.le).1 h).elim) id
+    · exact ((b6H2 S hgb hgc hfc hmb hmc h.le).1 h).elim) id
   rcases key with h | h | h
   · exact Or.inl h
   · exact Or.inr h

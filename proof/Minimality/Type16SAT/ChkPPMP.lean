@@ -75,7 +75,7 @@ theorem allOKPPMP : ∀ ch ∈ rowsPPMP, ∀ n ∈ ch, allDPPMP n = true := by
 variable {x : Fin 7 → ℝ³}
 
 /-- The class literals of core PPMP are true when the four class brackets have the signs `++-+`. -/
-theorem unitsPPMP_true (F : S0xFac 8 V2.fIdx x) (h0 : 0 < det3 (x 1 - x 0) (x 2 - x 0) (x 6 - x 0)) (h1 : 0 < det3 (x 1 - x 0) (x 3 - x 0) (x 4 - x 0)) (h2 : det3 (x 2 - x 1) (x 3 - x 1) (x 4 - x 1) < 0) (h3 : 0 < det3 (x 3 - x 2) (x 4 - x 2) (x 6 - x 2)) :
+theorem unitsPPMP_true (F : S0xFac 8 V2.fIdx x) (h0 : 0 < det3 (x 1 - x 0) (x 2 - x 0) (x 6 - x 0)) (h1 : 0 < det3 (x 1 - x 0) (x 3 - x 0) (x 4 - x 0)) (h3 : 0 < det3 (x 3 - x 2) (x 4 - x 2) (x 6 - x 2)) :
     ∀ l ∈ unitsPPMP, evalW (rhoW (geoF F)) l = true := by
   intro l hl
   have e0 : (geoF F).x 0 = x 0 := geoF_x F 0
@@ -98,6 +98,6 @@ theorem rupert_of_core_dataPPMP (hU : CoreUnsat rowsPPMP) : Core16 1 1 (-1) 1 :=
   intro y F hC h1 h2 h3 h4
   exact caseS_of_unsat chunksPPMP rowsPPMP unitsPPMP hU allOKPPMP F hC
     (unitsPPMP_true F (by simp only [br16] at h1 h2 h3 h4; linarith) (by simp only [br16] at h1 h2 h3 h4; linarith)
-      (by simp only [br16] at h1 h2 h3 h4; linarith) (by simp only [br16] at h1 h2 h3 h4; linarith))
+      (by simp only [br16] at h1 h2 h3 h4; linarith))
 
 end Minimality.H16K.SAT

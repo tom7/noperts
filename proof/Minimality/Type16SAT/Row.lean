@@ -133,7 +133,7 @@ theorem EAB_lt : ∀ e < 21, EA e < 7 ∧ EB e < 7 := by decide +kernel
 /-- Table of the tables: `tab3` keys. -/
 abbrev EOK (g : Geo) : Prop :=
   EntOK tab3 g (fun a b c => hasKey3 triRoutes a b c = true) (fun a b c => hasKey3 nlRoutes a b c = true)
-    (fun t p q => p < 7 ∧ q < 7)
+    (fun _t p q => p < 7 ∧ q < 7)
 
 /-- The tables tell the truth for a shape with `GeoOK`. -/
 theorem GeoOK.eok {g : Geo} (h : GeoOK g) : EOK g := entOK_tab3 h.hF h.hO

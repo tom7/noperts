@@ -403,7 +403,7 @@ theorem close_slideQ {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
     (h : Single08 a a' b b' c c' d .slideQ) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) :=
   isRupert_type08_noQ_normalized N.F.isOctahedron N.F N.hd N.G N.hκa N.hκb N.hκc N.hU
-    (noQ_of_FP fun f h1 h2 => h.2.2.2 f h2)
+    (noQ_of_FP fun f _h1 h2 => h.2.2.2 f h2)
 
 /-- **G5a, `slideN2a'`**: the closing `K_{a'}` of case N2 is realized on both circles, so form U
 (`isRupert_quad_edge_middle_x_formU`) applies with any horizontal double normal; `slideQ` and
@@ -412,7 +412,7 @@ theorem close_slideN2a' {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
     (h : Single08 a a' b b' c c' d .slideN2a') :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) :=
   isRupert_type08_noQA_normalized N.F.isOctahedron N.F N.hd N.G N.hκa N.hκb N.hκc N.hU
-    (noQA_of_FP fun f h1 h2 h3 => h.2.2.2 f h3)
+    (noQA_of_FP fun f _h1 _h2 h3 => h.2.2.2 f h3)
 
 end Type08Sp
 

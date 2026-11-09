@@ -203,7 +203,7 @@ end Frame02
 /-! ### X1: the depth condition and the theorem -/
 
 set_option maxHeartbeats 1000000 in
-theorem X1_Q (a a22 g t k sm δ : ℝ) (ha : 0 < a) (ht : 0 < t) (ht1 : t < 1) (hk : 0 < k) (hδ : 0 < δ)
+theorem X1_Q (a a22 g t k sm δ : ℝ) (ha : 0 < a) (ht : 0 < t) (ht1 : t < 1) (hδ : 0 < δ)
     (hs : 1 - t < sm) (hs1 : sm < 1) (hmet : g * k ^ 2 * t = (1 - t) * a) (hd : 2 * a * δ = a22 - a) :
     ∀ᶠ s in 𝓝[>] (0 : ℝ), Q6x fun i => Gf a a a22 g (cX1 t k sm i) ⟨-t, 0, -(k * t)⟩ +
       s * Gf a a a22 g (cX1 t k sm i) ⟨-1, 1, k * δ⟩ := by
@@ -289,7 +289,7 @@ theorem right_X1_pf (hr : gA12 x = gA11 x)
     · exact absurd rfl (hj' 0)
     · exact absurd rfl (hj' 2)
     · exact absurd rfl (hj' 1)
-  · have := X1_Q (gA11 x) (gA22 x) ⟪F.e, F.e⟫ F.S.tp k F.S.sm δ ha ht ht1 hk hδ (by linarith) hsm1 hmet hd
+  · have := X1_Q (gA11 x) (gA22 x) ⟪F.e, F.e⟫ F.S.tp k F.S.sm δ ha ht ht1 hδ (by linarith) hsm1 hmet hd
     refine this.mono fun s hs => ?_
     have hG : ∀ i p, F.toFrame7.GG (F.toFrame7.ptC (sext (4 : Fin 7) 6 5 2 0 1 i)) p =
         Gf (gA11 x) (gA11 x) (gA22 x) ⟪F.e, F.e⟫ (cX1 F.S.tp k F.S.sm i) p := by

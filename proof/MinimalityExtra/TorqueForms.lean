@@ -17,7 +17,7 @@ namespace MinimalityExtra
 
 open Matrix
 
-theorem inv2 (a b c d : ℝ) (h : a * d - b * c ≠ 0) :
+theorem inv2 (a b c d : ℝ) :
     (!![a, b; c, d] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ =
       !![d / (a * d - b * c), -b / (a * d - b * c); -c / (a * d - b * c), a / (a * d - b * c)] := by
   rw [Matrix.inv_def, Matrix.adjugate_fin_two_of, Matrix.det_fin_two_of, Ring.inverse_eq_inv']
@@ -68,7 +68,7 @@ theorem term_b (A : Matrix (Fin 2) (Fin 2) ℝ) (hA : A.det ≠ 0) (x f : Fin 2 
   have hd' : a * d - c * b ≠ 0 := by rwa [mul_comm c b]
   have hT : (!![a, b; c, d] : Matrix (Fin 2) (Fin 2) ℝ)ᵀ = !![a, c; b, d] := by
     ext i j; fin_cases i <;> fin_cases j <;> simp
-  rw [hT, inv2 _ _ _ _ hd, inv2 _ _ _ _ hd']
+  rw [hT, inv2 _ _ _ _, inv2 _ _ _ _]
   simp [tfDet, torqueTerm, tfJ, Matrix.trace_fin_two, Matrix.mulVec, dotProduct, Fin.sum_univ_two,
     Matrix.det_fin_two_of]
   field_simp
@@ -115,7 +115,7 @@ theorem parallel_ray (nn q c : Fin 2 → ℝ) (m : ℝ) (hm : m ≠ 0) (hn : nn 
     simp only [Matrix.det_fin_two_of] at hD
     have hD' : p * s - r' * r' ≠ 0 := hD.ne'
     have hD'' : p * s - r' * r' ≠ 0 := hD'
-    rw [inv2 _ _ _ _ (by simpa [mul_comm] using hD')]
+    rw [inv2 _ _ _ _]
     have key : (!![s / (p * s - r' * r'), -r' / (p * s - r' * r'); -r' / (p * s - r' * r'), p / (p * s - r' * r')]
           * (torqueTerm q (m • nn) + torqueTerm c ((-m) • nn))).trace =
         (-m / (p * s - r' * r')) * (tfJ nn ⬝ᵥ (!![p, r'; r', s] *ᵥ (q - c))) := by

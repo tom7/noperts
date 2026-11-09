@@ -166,7 +166,7 @@ lemma iv_S2 (hV : ((1-S.sp)*(S.hm*S.tp+S.hp*S.tm)-S.kp*S.tm) = 0) : (1-S.sp)*S.h
   linarith
 
 /-- S3: outside the quadrant `A06 > 0, D06 > 0`, `kap > 0` and `km > sm hp`. -/
-lemma iv_S3 (hV : ((1-S.sp)*(S.hm*S.tp+S.hp*S.tm)-S.kp*S.tm) = 0) (h : ¬ (0 < (S.hm*(1-S.sm*S.tp)-S.km*(1-S.tm)+S.hp*S.sm*(1-S.tm)) ∧ 0 < (S.sm*(S.hm*S.tp+S.hp*S.tm)-S.tm*S.km))) : 0 < (S.hm-(S.sm*(S.hm*S.tp+S.hp*S.tm)-S.tm*S.km)) ∧ S.sm * S.hp < S.km := by
+lemma iv_S3 (h : ¬ (0 < (S.hm*(1-S.sm*S.tp)-S.km*(1-S.tm)+S.hp*S.sm*(1-S.tm)) ∧ 0 < (S.sm*(S.hm*S.tp+S.hp*S.tm)-S.tm*S.km))) : 0 < (S.hm-(S.sm*(S.hm*S.tp+S.hp*S.tm)-S.tm*S.km)) ∧ S.sm * S.hp < S.km := by
   have tm1 := S.tm1; have tp0 := S.tp_pos; have tm0 := S.tm_pos; have sm0 := S.sm_pos
   have hm0 := S.hm_pos; have hp0 := S.hp_pos; have sm1 := S.sm1
   have hsmtp : S.sm * S.tp < 1 := by nlinarith [S.sm_lt, S.tp_lt]
@@ -743,7 +743,7 @@ lemma iv_Psi_nonneg (hA : (F.S.km*F.S.sp-F.S.kp*(1-F.S.sm)) = 0) (hP : 0 ≤ (F.
   exact nonneg_of_mul_nonneg_right h1 F.S.sm1
 
 /-- The facings at `u = x5 - x2 = (0, -sp, -kp)` shared by C7' and C2'. -/
-lemma iv_tilt_u (hA : (F.S.km*F.S.sp-F.S.kp*(1-F.S.sm)) = 0) (hA06 : (F.S.sp*(F.S.hm-F.S.km*(1-F.S.tm))-F.S.kp*F.S.sm*(1-F.S.tm)) < 0) :
+lemma iv_tilt_u (hA : (F.S.km*F.S.sp-F.S.kp*(1-F.S.sm)) = 0) :
     nf F.S ⟨0, -F.S.sp, -F.S.kp⟩ 0 = -(F.S.sp*(F.S.hm-F.S.km*(1-F.S.tm))-F.S.kp*F.S.sm*(1-F.S.tm)) ∧ nf F.S ⟨0, -F.S.sp, -F.S.kp⟩ 1 = 0 ∧
     nf F.S ⟨0, -F.S.sp, -F.S.kp⟩ 2 = F.S.sp * (F.S.hm*F.S.tp+F.S.hp*F.S.tm) ∧ nf F.S ⟨0, -F.S.sp, -F.S.kp⟩ 3 = F.S.tm*(F.S.km*F.S.sp + F.S.sm*F.S.kp) ∧
     nf F.S ⟨0, -F.S.sp, -F.S.kp⟩ 4 = -(F.S.hp*F.S.sp + (1-F.S.tp)*F.S.kp) ∧ nf F.S ⟨0, -F.S.sp, -F.S.kp⟩ 5 = -(F.S.kp*F.S.tp) ∧
@@ -771,7 +771,7 @@ theorem iv_C7p (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
   have ha : 0 < F.a12 := F.A12_pos; have hg : 0 < F.gg := F.g_pos; have h22 : F.a12 ≤ F.a22 := F.A12_le_A22
   have s4 := F.S.iv_S4 hA.le
   have Psi0 := iv_Psi_nonneg F hA hP
-  obtain ⟨uA, uB, uC, uD, uE, uF, uG, uH⟩ := iv_tilt_u F hA s4
+  obtain ⟨uA, uB, uC, uD, uE, uF, uG, uH⟩ := iv_tilt_u F hA
   have vB : nf F.S ⟨-1, 0, 0⟩ 1 = F.S.hp*F.S.sp := by simp only [nf_B]; ring
   have vG : nf F.S ⟨-1, 0, 0⟩ 6 = -F.S.km := by simp only [nf_G]; ring
   have vH : nf F.S ⟨-1, 0, 0⟩ 7 = F.S.kp := by simp only [nf_H]; ring
@@ -870,7 +870,7 @@ theorem iv_C2p (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
   have ha : 0 < F.a12 := F.A12_pos; have hg : 0 < F.gg := F.g_pos; have h22 : F.a12 ≤ F.a22 := F.A12_le_A22
   have s4 := F.S.iv_S4 hA.le
   have Psi0 := iv_Psi_nonneg F hA hP
-  obtain ⟨uA, uB, uC, uD, uE, uF, uG, uH⟩ := iv_tilt_u F hA s4
+  obtain ⟨uA, uB, uC, uD, uE, uF, uG, uH⟩ := iv_tilt_u F hA
   have vB : nf F.S ⟨F.S.tp*(1-F.S.sm), 0, F.S.hp*(1-F.S.sm) + F.S.tp*F.S.km⟩ 1 = F.S.sp*F.S.tp^2*F.S.km := by
     simp only [nf_B]; ring
   have vG : nf F.S ⟨F.S.tp*(1-F.S.sm), 0, F.S.hp*(1-F.S.sm) + F.S.tp*F.S.km⟩ 6 = -((1-F.S.sm)^2*F.S.hp) := by
@@ -955,7 +955,7 @@ theorem isRupert_IV (hx : Function.Injective x) (hR : RealizesFaces x (sevenType
   · by_cases hL : ((1-F.S.tp)*(F.a11*F.S.tp-F.a12)-F.gg*F.S.hp^2) < 0
     · exact IVT.iv_C1 F hx hR hV' hL
     · exact IVT.iv_C5 F hx hR hV' T1.1 T1.2 (not_lt.1 hL)
-  obtain ⟨hK, hkm⟩ := F.S.iv_S3 hV' T1
+  obtain ⟨hK, hkm⟩ := F.S.iv_S3 T1
   rcases lt_trichotomy (F.S.km*F.S.sp-F.S.kp*(1-F.S.sm)) 0 with hA | hA | hA
   · -- A2 < 0
     by_cases hP : (F.gg*F.S.hm*F.S.km-F.a12*F.S.tm*(1-F.S.sm)) < 0

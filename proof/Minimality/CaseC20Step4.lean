@@ -53,7 +53,7 @@ def eD : C3 := ⟨S.tp, -1, S.hp⟩
 /-- `T_A`'s slide direction on `016`'s circle: `xb - m1+` (hides `xa` exactly). -/
 def eT : C3 := ⟨-S.tp, 1, -S.hp⟩
 
-theorem D2n_pos (hV : 0 < S.Vq) (hVW : 0 < S.VWq) : 0 < S.D2n := by
+theorem D2n_pos (hVW : 0 < S.VWq) : 0 < S.D2n := by
   have htp := S.tp_pos; have htm := S.tm_pos; have hsp := S.sp_pos; have hsm := S.sm_pos
   have htm1 : 0 < 1 - S.tm := sub_pos.2 S.tm_lt
   have hsp1 : 0 < 1 - S.sp := sub_pos.2 S.sp_lt
@@ -85,7 +85,7 @@ theorem N4D_cyc_ev_S (hV : 0 < S.Vq) (hVW : 0 < S.VWq) :
   have hV' : 0 < (1 - S.sp) * (S.hp * S.tm + S.hm * S.tp) - S.kp * S.tm := by
     have := hV; unfold Shape20.Vq at this; linarith
   have hD2 : 0 < -S.hm * S.sm * S.sp * S.tp - S.hp * S.sm * S.sp * S.tm + S.hm * S.sm * S.tp + S.hm * S.sp * S.tp + S.hp * S.sm * S.tm + S.hp * S.sp * S.tm - S.km * S.sp * S.tp - S.kp * S.sm * S.tm - S.hm * S.tp - S.hp * S.tm + S.km * S.tp + S.kp * S.tm := by
-    have := S.D2n_pos hV hVW; unfold Shape20.D2n at this; linarith
+    have := S.D2n_pos hVW; unfold Shape20.D2n at this; linarith
   have hsp' : 0 < 1 - S.sp := sub_pos.2 hsp1
   have hsm' : 0 < 1 - S.sm := sub_pos.2 hsm1
   have f1 : 0 < S.sm * S.tp * S.kp := by positivity
@@ -141,7 +141,7 @@ theorem N4D_rest_ev_S (hV : 0 < S.Vq) (hVW : 0 < S.VWq) :
   have hV' : 0 < (1 - S.sp) * (S.hp * S.tm + S.hm * S.tp) - S.kp * S.tm := by
     have := hV; unfold Shape20.Vq at this; linarith
   have hD2 : 0 < -S.hm * S.sm * S.sp * S.tp - S.hp * S.sm * S.sp * S.tm + S.hm * S.sm * S.tp + S.hm * S.sp * S.tp + S.hp * S.sm * S.tm + S.hp * S.sp * S.tm - S.km * S.sp * S.tp - S.kp * S.sm * S.tm - S.hm * S.tp - S.hp * S.tm + S.km * S.tp + S.kp * S.tm := by
-    have := S.D2n_pos hV hVW; unfold Shape20.D2n at this; linarith
+    have := S.D2n_pos hVW; unfold Shape20.D2n at this; linarith
   have hsp' : 0 < 1 - S.sp := sub_pos.2 hsp1
   have hsm' : 0 < 1 - S.sm := sub_pos.2 hsm1
   have f5 : 0 < ((1 - S.sp) * (S.hp * S.tm + S.hm * S.tp) - S.kp * S.tm) + S.kp * S.tp := by

@@ -405,7 +405,7 @@ Rupert. -/
 theorem isRupert_rightPrism {k : ℕ} [NeZero k] (p : ZMod k → ℝ²) (hp : IsCcwPolygon p) {h : ℝ}
     (hh : 0 < h) : IsRupert (rightPrism p h) :=
   isRupert_rightPrism_gen p hp hh _ subset_rfl fun _ _ _ =>
-    Eventually.of_forall fun _ y hy => absurd (Finset.mem_sdiff.mp hy).1 (Finset.mem_sdiff.mp hy).2
+    Eventually.of_forall fun _ _y hy => absurd (Finset.mem_sdiff.mp hy).1 (Finset.mem_sdiff.mp hy).2
 
 /-- Right translation prisms over a triangle, in any position. -/
 theorem isRupert_translationPrism_right (A B C w : ℝ³)

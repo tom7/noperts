@@ -488,7 +488,7 @@ theorem t31IA_rest3 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (hsm : 0 < sm)
     | (right; refine ⟨by ring, by nlinarith⟩)
 
 theorem t31IA_rest4 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1)
-    (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1)
+    (hhm : 0 < hm) (hsm : 0 < sm) 
     (hkm : 0 < km) (hst : sm < tm) (Km : km * (1 - tm) = (1 - sm) * hm) :
     ∀ i : ZMod 4,
       ST 1 ⟨1, -1, 0⟩ ⟨1, 0, 0⟩
@@ -761,7 +761,7 @@ theorem am1_rest5 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (
     | (right; refine ⟨by ring, by nlinarith⟩)
 
 theorem am1_rest6 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1)
-    (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km)
+    (hhm : 0 < hm) (hsm1 : sm < 1) (hkm : 0 < km)
     (A1 : (1 - sp) * km < sm * kp) :
     ∀ i : ZMod 4,
       ST 1 ⟨0, sp - 1, kp⟩ ⟨1, -2 * sp, -2 * kp⟩
@@ -794,7 +794,7 @@ theorem am1_rest6 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (
 
 /-- `T2`: the edge crossing at `m2+ xa`, view `u₂ = m2+ - xa`, rim `(m2+, m1+, v, m2-, xb)`; the
 tilt `(xb - m2+) + b (m1+ - m2+)`. -/
-theorem am2_cyc {b : ℝ} (hb : 0 < b) (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp)
+theorem am2_cyc {b : ℝ} (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp)
     (htp1 : tp < 1) (hhp : 0 < hp) (hkp : 0 < kp) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km)
     (roof : hp * (1 - sp) < kp * (1 - tp)) :
     ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
@@ -879,7 +879,7 @@ theorem am2_rest3 {b : ℝ} (hb : 0 < b) (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0
     | (left; nlinarith)
     | (right; refine ⟨by ring, by nlinarith⟩)
 
-theorem am2_rest4 {b : ℝ} (hb : 0 < b) (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp)
+theorem am2_rest4 {b : ℝ} (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp)
     (htp1 : tp < 1) (hhp : 0 < hp) (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm)
     (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km)
     (roof : hp * (1 - sp) < kp * (1 - tp))
@@ -1348,7 +1348,7 @@ theorem t32_rest0 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) 
     | (right; refine ⟨by ring, by nlinarith⟩)
 
 /-- `m1-` is strictly inside the shadow (needs `c+ > b-`). -/
-theorem t32_rest4 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
+theorem t32_rest4 (hsp : 0 < sp) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm)
     (H32 : hm * sp < kp * (1 - tm)) :
     ∀ i : ZMod 4,
@@ -1510,7 +1510,7 @@ theorem t32M (hA : F.a12 < F.a22) (h : F.S.bm < F.S.cp) :
     · exact absurd rfl h1
     · exact absurd rfl h2
     · exact absurd rfl h3
-    · rw [p4]; exact t32_rest4 hsp hsp1 htp htp1 hhp hkp htm htm1 hhm H32 i
+    · rw [p4]; exact t32_rest4 hsp htp htp1 hhp hkp htm htm1 hhm H32 i
     · exact absurd rfl h5
     · rw [p6]; exact t32_rest6 hsp hsp1 htp htp1 hhp hkp hsm hsm1 hkm hy6 i
   · have hA22 : 0 < F.a22 := lt_of_lt_of_le F.A12_pos F.A12_le_A22
@@ -1614,7 +1614,7 @@ theorem t31IA (hA2 : F.a12 < F.a22) (hst : F.S.sm < F.S.tm) (hac : F.S.ap < F.S.
     · rw [p1]; exact t31IA_rest1 hsp hsp1 htp htp1 hhp hkp hsm hsm1 hkm roof H31 i
     · exact absurd rfl h2
     · rw [p3]; exact t31IA_rest3 hsp hsp1 hkp hsm hsm1 hkm i
-    · rw [p4]; exact t31IA_rest4 hsp hsp1 hkp htm htm1 hhm hsm hsm1 hkm hst Km i
+    · rw [p4]; exact t31IA_rest4 hsp hsp1 hkp htm htm1 hhm hsm hkm hst Km i
     · exact absurd rfl h5
     · exact absurd rfl h6
   · set Pq : ZMod 4 → C3 := quad ⟨0, 0, 0⟩ ⟨0, F.S.sm, -F.S.km⟩ ⟨0, 1, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
@@ -1734,7 +1734,7 @@ theorem amT1 (hg : 0 < F.g12) (A1 : F.S.cm < F.S.dp) :
     · exact absurd rfl h3
     · exact absurd rfl h4
     · rw [p5]; exact am1_rest5 hsp hsp1 hkp htm htm1 hhm i
-    · rw [p6]; exact am1_rest6 hsp hsp1 hkp htm htm1 hhm hsm hsm1 hkm A1' i
+    · rw [p6]; exact am1_rest6 hsp hsp1 hkp htm htm1 hhm hsm1 hkm A1' i
   · set Pq : ZMod 4 → C3 := quad ⟨0, 0, 0⟩ ⟨F.S.tm, 0, -F.S.hm⟩ ⟨1, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
       with hPq
     set zz : ZMod 4 → ℝ := fun i => F.GG (Pq i) ⟨0, F.S.sp - 1, F.S.kp⟩ with hzz
@@ -1812,14 +1812,14 @@ theorem amT2 (hg : F.g12 ≤ 0) (A1 : F.S.cm < F.S.dp)
     ⟨0, F.S.sm, -F.S.km⟩ ⟨0, 1, 0⟩ p2 p1 p0 p6 p5 (-1) (Or.inr rfl) ⟨-1, F.S.sp, F.S.kp⟩
     ⟨b * F.S.tp, (1 - F.S.sp) - b * F.S.sp, -F.S.kp + b * (F.S.hp - F.S.kp)⟩
     (Or.inr (Or.inl (by linarith))) ?_ ?_ ?_
-  · exact am2_cyc hb hsp hsp1 htp htp1 hhp hkp hsm hsm1 hkm roof
+  · exact am2_cyc hsp hsp1 htp htp1 hhp hkp hsm hsm1 hkm roof
   · intro j' h2 h1 h0 h6 h5 i
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · exact absurd rfl h0
     · exact absurd rfl h1
     · exact absurd rfl h2
     · rw [p3]; exact am2_rest3 hb hsp hsp1 htp htp1 hhp hkp hsm hsm1 hkm roof i
-    · rw [p4]; exact am2_rest4 hb hsp hsp1 htp htp1 hhp hkp htm htm1 hhm hsm hsm1 hkm roof A2' A3' i
+    · rw [p4]; exact am2_rest4 hsp hsp1 htp htp1 hhp hkp htm htm1 hhm hsm hsm1 hkm roof A2' A3' i
     · exact absurd rfl h5
     · exact absurd rfl h6
   · set Pq : ZMod 5 → C3 := quint ⟨0, F.S.sp, F.S.kp⟩ ⟨F.S.tp, 0, F.S.hp⟩ ⟨0, 0, 0⟩

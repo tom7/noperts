@@ -97,7 +97,7 @@ theorem cm_eq_am_of_eq (hts : S.tm = S.sm) : S.cm = S.am := by
   linarith
 
 /-- On `K2` (`a- = b+ ∧ b+ = s+A2`): `c- < d+` (the roof). -/
-theorem cm_lt_dp_of_K2 (H1 : S.am = S.bp) (H2 : S.bp = S.sp * S.A2) : S.cm < S.dp := by
+theorem cm_lt_dp_of_K2 (H2 : S.bp = S.sp * S.A2) : S.cm < S.dp := by
   have h3 : S.bp = S.kp + S.sp * S.cm := by rw [H2, S.sp_A2]
   have hr := S.bp_lt_dp
   have hd := S.dp_mul
@@ -107,7 +107,7 @@ theorem cm_lt_dp_of_K2 (H1 : S.am = S.bp) (H2 : S.bp = S.sp * S.A2) : S.cm < S.d
 
 /-- On `K2`: `c- < a-`, hence `t- < s-` (the roof is `t- < s-`, Lemma K2.0). -/
 theorem tm_lt_sm_of_K2 (H1 : S.am = S.bp) (H2 : S.bp = S.sp * S.A2) : S.tm < S.sm := by
-  have hcd := S.cm_lt_dp_of_K2 H1 H2
+  have hcd := S.cm_lt_dp_of_K2 H2
   have h3 : S.bp = S.kp + S.sp * S.cm := by rw [H2, S.sp_A2]
   have hd := S.dp_mul
   have hsp1 := S.sp_lt
@@ -212,7 +212,7 @@ theorem rimW_rest5 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) 
     | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
 theorem rimW_rest6 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1)
-    (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (H : km * (1 - sp) < kp * sm) :
+    (hhm : 0 < hm) (hsm1 : sm < 1) (hkm : 0 < km) (H : km * (1 - sp) < kp * sm) :
     ∀ i : ZMod 4,
       ST 1 ⟨0, 1 - sp, -kp⟩ ⟨-1, 2, 0⟩
         ((quad (⟨0, sp, kp⟩ : C3) ⟨1, 0, 0⟩ ⟨tm, 0, -hm⟩ ⟨0, 0, 0⟩ (i + 1)).sub
@@ -590,7 +590,7 @@ theorem rimW (hdc : F.S.cm < F.S.dp) (hA : F.a22 * F.S.sp ≤ F.a12) :
     · exact absurd rfl h3
     · exact absurd rfl h4
     · rw [p5]; exact rimW_rest5 hsp hsp1 hkp htm htm1 hhm i
-    · rw [p6]; exact rimW_rest6 hsp hsp1 hkp htm htm1 hhm hsm hsm1 hkm H i
+    · rw [p6]; exact rimW_rest6 hsp hsp1 hkp htm htm1 hhm hsm1 hkm H i
   · set zz : ZMod 4 → ℝ := fun i => F.GG (quad (⟨0, F.S.sp, F.S.kp⟩ : C3) ⟨1, 0, 0⟩
       ⟨F.S.tm, 0, -F.S.hm⟩ ⟨0, 0, 0⟩ i) ⟨0, 1 - F.S.sp, -F.S.kp⟩ with hzz
     set ww : ZMod 4 → ℝ := fun i => F.GG (quad (⟨0, F.S.sp, F.S.kp⟩ : C3) ⟨1, 0, 0⟩
@@ -1014,7 +1014,7 @@ theorem rimK1b_rest6 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) 
 
 set_option maxHeartbeats 4000000 in
 theorem rimK1b_rest1 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (ht1 : t < 1)
-    (hh : 0 < h) (hkc : kp * t = h * (1 - sp)) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
+    (hh : 0 < h) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (R : hp * (1 - sp) < kp * (1 - tp)) :
     ∀ i : ZMod 5,
       ST 1 ⟨0, 1 - sp, -kp⟩ ⟨-1, 0, 0⟩
@@ -1171,7 +1171,7 @@ theorem rimK1b (hts : F.S.tm = F.S.sm) (hdp : F.S.am = F.S.dp) (hΔ : F.K1Delta 
   · intro j' h0 h2 h5 h3 h4 i
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · exact absurd rfl h0
-    · rw [p1]; exact rimK1b_rest1 hsp hsp1 hkp htm htm1 hhm hkc htp htp1 hhp R i
+    · rw [p1]; exact rimK1b_rest1 hsp hsp1 hkp htm htm1 hhm htp htp1 hhp R i
     · exact absurd rfl h2
     · exact absurd rfl h3
     · exact absurd rfl h4
@@ -1471,7 +1471,7 @@ theorem rimK1c_eq5_rest6 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 <
 
 set_option maxHeartbeats 4000000 in
 theorem rimK1c_eq4_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (ht1 : t < 1)
-    (hh : 0 < h) (hkc : kp * t = h * (1 - sp)) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
+    (hh : 0 < h) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hab : hp * (1 - t) = tp * h) (hneg : l * h * sp - (1 - t) * kp < 0) (R : hp * (1 - sp) < kp * (1 - tp)) (hl : 1 < l) :
     ∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
       ST 1 ⟨1 - t, 0, h⟩ ⟨-l, 1, 0⟩
@@ -1574,7 +1574,7 @@ theorem k1c_gt_ST (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (ht
 theorem k1c_eq4_ST (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (ht1 : t < 1)
     (hh : 0 < h) (hkc : kp * t = h * (1 - sp)) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hab : hp * (1 - t) = tp * h) (hneg : l * h * sp - (1 - t) * kp < 0) (R : hp * (1 - sp) < kp * (1 - tp)) (hl : 1 < l) : K1c4ST t h sp kp tp hp l :=
-  ⟨rimK1c_eq4_cyc hsp hsp1 hkp ht ht1 hh hkc htp htp1 hhp hab hneg R hl,
+  ⟨rimK1c_eq4_cyc hsp hsp1 hkp ht ht1 hh htp htp1 hhp hab hneg R hl,
    fun q hq => rimK1c_eq4_rest hsp hsp1 hkp ht ht1 hh hkc htp htp1 hhp hab hneg R hl q hq⟩
 
 end G3
@@ -1591,7 +1591,7 @@ variable {x : Fin 7 → ℝ³} (F : Frame09 x)
 /-- Core of the five-corner rim of K1 (c): given the ST tables, the depths work for any tilt
 `1 < l < A22/A12` (`z(m2+) = z(xb)` is a tie broken by `w`). -/
 theorem k1c_core5 (hts : F.S.tm = F.S.sm) (hdp : F.S.am = F.S.dp) (hΔ : F.K1Delta = 0)
-    (l : ℝ) (hl1 : 1 < l) (hl2 : l * F.a12 < F.a22)
+    (l : ℝ) (hl2 : l * F.a12 < F.a22)
     (hST : K1c5ST F.S.tm F.S.hm F.S.sp F.S.kp F.S.tp F.S.hp l) :
     IsRupert (Finset.univ.image x) := by
   obtain ⟨hkm, hkc, R⟩ := F.k1_facts hts hdp
@@ -1654,7 +1654,7 @@ theorem k1c_core5 (hts : F.S.tm = F.S.sm) (hdp : F.S.am = F.S.dp) (hΔ : F.K1Del
 
 /-- Core of the four-corner rim of K1 (c). -/
 theorem k1c_core4 (hts : F.S.tm = F.S.sm) (hdp : F.S.am = F.S.dp) (hΔ : F.K1Delta = 0)
-    (l : ℝ) (hl1 : 1 < l) (hl2 : l * F.a12 < F.a22)
+    (l : ℝ) (hl2 : l * F.a12 < F.a22)
     (hST : K1c4ST F.S.tm F.S.hm F.S.sp F.S.kp F.S.tp F.S.hp l) :
     IsRupert (Finset.univ.image x) := by
   obtain ⟨hkm, hkc, R⟩ := F.k1_facts hts hdp
@@ -1753,7 +1753,7 @@ theorem rimK1c_lt (hts : F.S.tm = F.S.sm) (hdp : F.S.am = F.S.dp) (hA : F.a12 < 
   have htp := F.S.tp_pos; have htp1 := F.S.tp_lt; have hhp := F.S.hp_pos
   have htm := F.S.tm_pos; have htm1 := F.S.tm_lt; have hhm := F.S.hm_pos
   obtain ⟨l, hl1, hl2, -⟩ := F.k1c_tilt hA 0
-  exact F.k1c_core5 hts hdp hΔ l hl1 hl2
+  exact F.k1c_core5 hts hdp hΔ l hl2
     (k1c_lt_ST hsp hsp1 hkp htm htm1 hhm hkc htp htp1 hhp (F.k1c_hab_lt hab) hl1)
 
 /-- **K1 (c), `a+ > b-`**: rim `(m1+, xa, xb, m2+) = (1, 3, 5, 2)`, rest `{v, m1-, m2-}`; `rupert_rim4`,
@@ -1765,7 +1765,7 @@ theorem rimK1c_gt (hts : F.S.tm = F.S.sm) (hdp : F.S.am = F.S.dp) (hA : F.a12 < 
   have htp := F.S.tp_pos; have htp1 := F.S.tp_lt; have hhp := F.S.hp_pos
   have htm := F.S.tm_pos; have htm1 := F.S.tm_lt; have hhm := F.S.hm_pos
   obtain ⟨l, hl1, hl2, -⟩ := F.k1c_tilt hA 0
-  exact F.k1c_core4 hts hdp hΔ l hl1 hl2
+  exact F.k1c_core4 hts hdp hΔ l hl2
     (k1c_gt_ST hsp hsp1 hkp htm htm1 hhm hkc htp htp1 hhp (F.k1c_hab_gt hab) R hl1)
 
 /-- **K1 (c), `a+ = b-`**: `m1+` is a double over the corner `v`; with `p = (h+/h)(λ h s+ - (1-t)k+)`
@@ -1786,9 +1786,9 @@ theorem rimK1c_eq (hts : F.S.tm = F.S.sm) (hdp : F.S.am = F.S.dp) (hA : F.a12 < 
     rw [eq_div_iff (mul_pos hhm hsp).ne']
     linarith
   rcases lt_or_gt_of_ne hne with hneg | hpos
-  · exact F.k1c_core4 hts hdp hΔ l hl1 hl2
+  · exact F.k1c_core4 hts hdp hΔ l hl2
       (k1c_eq4_ST hsp hsp1 hkp htm htm1 hhm hkc htp htp1 hhp hab' (by linarith) R hl1)
-  · exact F.k1c_core5 hts hdp hΔ l hl1 hl2
+  · exact F.k1c_core5 hts hdp hΔ l hl2
       (k1c_eq5_ST hsp hsp1 hkp htm htm1 hhm hkc htp htp1 hhp hab' (by linarith) hl1)
 
 end Frame09
@@ -1861,7 +1861,7 @@ theorem t1pST_cyc {tm hm tp hp sp kp sm km : ℝ} (hsp : 0 < sp) (hsp1 : sp < 1)
 
 set_option linter.unusedTactic false in
 theorem t1pST_rest {tm hm tp hp sp kp sm km : ℝ} (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp)
-    (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km)
+    (htm : 0 < tm) (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km)
     (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hH : hp * tm = (1 - tp) * hm) (hE : tm * kp < hm) (hD : hm * (1 - sp) < tm * kp)
     (hts : tm < sm) :
@@ -1954,7 +1954,7 @@ theorem rimK2T1p (H1 : F.S.am = F.S.bp) (H2 : F.S.bp = F.S.sp * F.S.A2) (hts : F
   · intro j' hj' i
     simp only [hc]
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
-    · rw [p0]; exact t1pST_rest hsp hsp1 hkp htm htm1 hhm hsm hsm1 hkm htp htp1 hhp hH hE hD hts i
+    · rw [p0]; exact t1pST_rest hsp hsp1 hkp htm hhm hsm hsm1 hkm htp htp1 hhp hH hE hD hts i
     · exact absurd rfl (hj' 2)
     · exact absurd rfl (hj' 3)
     · exact absurd rfl (hj' 1)
@@ -2000,7 +2000,7 @@ variable {x : Fin 7 → ℝ³} (F : Frame09 x)
 theorem rupert_K2 (H1 : F.S.am = F.S.bp) (H2 : F.S.bp = F.S.sp * F.S.A2) :
     IsRupert (Finset.univ.image x) := by
   have hts := F.S.tm_lt_sm_of_K2 H1 H2
-  have H4 := F.S.cm_lt_dp_of_K2 H1 H2
+  have H4 := F.S.cm_lt_dp_of_K2 H2
   have hA : 0 < F.a12 := F.A12_pos
   by_cases hS : F.a12 * F.S.tm * (1 - F.S.sm) < F.gg * F.S.hm * F.S.km
   · exact F.rimK2T1p H1 H2 hts hS

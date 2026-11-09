@@ -478,7 +478,7 @@ theorem exists_firstOrderInward_of_depthSeparated_torque (V : Finset ℝ³) {k :
     (hτ : pairTorque (fun i => proj_xy (x i)) (fun i => x i 2) a c ≠ 0) :
     ∃ ω τ : ℝ³, FirstOrderInward V ω τ :=
   exists_firstOrderInward_of_forces_zero V x hxV hp hin
-    (fun f hf h1 h2 h3 => no_balanced_zeroTorque_of_depthSeparated hp hds hint hτ hf h1 h2 h3)
+    (fun _f hf h1 h2 h3 => no_balanced_zeroTorque_of_depthSeparated hp hds hint hτ hf h1 h2 h3)
 
 /-- **Theorem 8.10 with torque, rotated view.**  As
 `exists_firstOrderInward_image_of_depthSeparated` with `¬HasHorizontalDoubleNormal`

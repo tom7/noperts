@@ -19,7 +19,7 @@ namespace Shape20
 def w_T1 (_ : Shape20) (θ : ℝ) : C3 := ⟨0, θ, -1⟩
 end Shape20
 
-theorem pent1_cyc (S : Shape20) (θ : ℝ) (hθ0 : 0 < θ) (hθ1 : θ * S.hp < 1 - S.tp) (hθ2 : θ * S.km < S.sm)
+theorem pent1_cyc (S : Shape20) (θ : ℝ) (hθ0 : 0 < θ) (hθ2 : θ * S.km < S.sm)
     (hA : S.hm*S.tp - S.hm + S.hp*S.tm ≤ 0) :
     Cyc5 (-1) S.u_tA (S.w_T1 θ) (⟨0, 0, 0⟩ : C3) ⟨S.tm, 0, -S.hm⟩ ⟨0, S.sm, -S.km⟩ ⟨0, 1, 0⟩ ⟨S.tp, 0, S.hp⟩ := by
   have htp := S.tp_pos; have htm := S.tm_pos; have hsp := S.sp_pos; have hsm := S.sm_pos
@@ -69,7 +69,7 @@ theorem pent1_cyc (S : Shape20) (θ : ℝ) (hθ0 : 0 < θ) (hθ1 : θ * S.hp < 1
   · simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_tA, Shape20.w_T1]
     left; linarith [hhp]
 
-theorem pent1_rest1 (S : Shape20) (θ : ℝ) (hθ0 : 0 < θ) (hθ1 : θ * S.hp < 1 - S.tp) (hθ2 : θ * S.km < S.sm) :
+theorem pent1_rest1 (S : Shape20) (θ : ℝ) (hθ0 : 0 < θ) (hθ1 : θ * S.hp < 1 - S.tp) :
     Rest5 (-1) S.u_tA (S.w_T1 θ) (⟨0, 0, 0⟩ : C3) ⟨S.tm, 0, -S.hm⟩ ⟨0, S.sm, -S.km⟩ ⟨0, 1, 0⟩ ⟨S.tp, 0, S.hp⟩
       ⟨1, 0, 0⟩ := by
   have htp := S.tp_pos; have htm := S.tm_pos; have hsp := S.sp_pos; have hsm := S.sm_pos
@@ -150,11 +150,11 @@ theorem Frame20.pent1 {x : Fin 7 → ℝ³} (F : Frame20 x) (θ : ℝ) (hθ0 : 0
     Or.inr (Or.inr (Or.inl hD1))
   refine F.toFrame7.rim5p 5 3 4 6 0 _ _ _ _ _ (F.ptC_5) (F.ptC_3) (F.ptC_4) (F.ptC_6) (F.ptC_0) (-1) (Or.inr rfl)
     F.S.u_tA (F.S.w_T1 θ) (Or.inl (by simp only [Shape20.u_tA]; intro h; linarith [htp1, h]))
-    (pent1_cyc F.S θ hθ0 hθ1 hθ2 hA) ?_ ?_ ?_ ?_ ?_ ?_
+    (pent1_cyc F.S θ hθ0 hθ2 hA) ?_ ?_ ?_ ?_ ?_ ?_
   · intro j' h0 h1 h2 h3 h4
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · exact absurd rfl h4
-    · rw [F.ptC_1]; exact pent1_rest1 F.S θ hθ0 hθ1 hθ2
+    · rw [F.ptC_1]; exact pent1_rest1 F.S θ hθ0 hθ1
     · rw [F.ptC_2]; exact pent1_rest2 F.S θ hθ0 hθ1 hθ2 hA
     · exact absurd rfl h1
     · exact absurd rfl h2

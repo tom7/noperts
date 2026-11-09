@@ -305,7 +305,7 @@ theorem tie_no_forces_at_right (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³) (n
     (hconva : 0 < det3 (b - a) (a0 - a) w) (hconvb : 0 < det3 (b1 - b) (a - b) w)
     (hin : ∀ y ∈ V, y ∉ X → y ≠ a → y ≠ b → ∀ G : ℝ³, ⟪G, w⟫ = 0 →
       (∀ q ∈ V, ⟪G, q - y⟫ ≤ 0) → G = 0)
-    (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (κ η Z K L c3 c c1 c2 : ℝ)
+    (σ : ℝ) (κ η Z K L c3 c c1 c2 : ℝ)
     (hκ : 0 < κ) (hη : 0 < η) (hc3 : 0 < c3) (hc : 0 < c) (hc1 : 0 < c1) (hc2 : 0 < c2)
     (hL : 0 ≤ L) (hZ : 0 ≤ Z)
     (hδ : 0 < σ * ⟪b - a, w⟫)
@@ -462,7 +462,7 @@ theorem tie_no_forces_at_right_neg (V X : Finset ℝ³) (w a b a0 b1 m p : ℝ³
     (hconva : 0 < det3 (b - a) (a0 - a) w) (hconvb : 0 < det3 (b1 - b) (a - b) w)
     (hin : ∀ y ∈ V, y ∉ X → y ≠ a → y ≠ b → ∀ G : ℝ³, ⟪G, w⟫ = 0 →
       (∀ q ∈ V, ⟪G, q - y⟫ ≤ 0) → G = 0)
-    (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (κ η Z K L c3 c c1 c2 : ℝ)
+    (σ : ℝ) (κ η Z K L c3 c c1 c2 : ℝ)
     (hκ : 0 < κ) (hη : 0 < η) (hc3 : 0 < c3) (hc : 0 < c) (hc1 : 0 < c1) (hc2 : 0 < c2)
     (hL : 0 ≤ L) (hZ : 0 ≤ Z)
     (hδ : 0 < σ * ⟪a - b, w⟫)
@@ -755,7 +755,7 @@ theorem tie_no_forces_right (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (nb0 
   have hδpos : 0 < σ * ⟪b - a, tw v ε⟫ := by rw [hδε]; positivity
   intro F hF
   refine tie_no_forces_at_right V X (tw v ε) a b a0 b1 m p nb0 nb1 hXV ha hb hab haX hbX ha0 hb1
-    hnb0 hnb1 hcX hca hcb hIn σ hσ κ η Z K L c3 c c1 c2 hκ hη hc3 hc hc1 hc2 hL hZ hδpos hMε
+    hnb0 hnb1 hcX hca hcb hIn σ κ η Z K L c3 c c1 c2 hκ hη hc3 hc hc1 hc2 hL hZ hδpos hMε
     (fun y hy => (hζε' y hy).1) (fun y hy => (hζε' y hy).2) ?_ (fun j hj => wK1 (hJε j hj).1)
     (fun j hj => wK1 (hJε j hj).2.1) (fun j hj => wK1 (hJε j hj).2.2.1)
     (fun j hj => wK3 (hTε j hj)) ?_
@@ -923,7 +923,7 @@ theorem tie_no_forces_right_neg (V X : Finset ℝ³) (v a b a0 b1 m p : ℝ³) (
   have hδpos : 0 < σ * ⟪a - b, tw v ε⟫ := by rw [hδε]; positivity
   intro F hF
   refine tie_no_forces_at_right_neg V X (tw v ε) a b a0 b1 m p nb0 nb1 hXV ha hb hab haX hbX ha0 hb1
-    hnb0 hnb1 hcX hca hcb hIn σ hσ κ η Z K L c3 c c1 c2 hκ hη hc3 hc hc1 hc2 hL hZ hδpos hMε
+    hnb0 hnb1 hcX hca hcb hIn σ κ η Z K L c3 c c1 c2 hκ hη hc3 hc hc1 hc2 hL hZ hδpos hMε
     (fun y hy => (hζε' y hy).1) (fun y hy => (hζε' y hy).2) ?_ (fun j hj => wK1 (hJε j hj).1)
     (fun j hj => wK1 (hJε j hj).2.1) (fun j hj => wK1 (hJε j hj).2.2.1)
     (fun j hj => wK3 (by rw [inner_cross_sub_swap, abs_neg]; exact hTε j hj)) ?_

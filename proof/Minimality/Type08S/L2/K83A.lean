@@ -70,7 +70,7 @@ theorem k41_c2_split {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
 /-- Pure real core: on the R0 locus (X4 = 0, H = 0, X3 < 0, z(c) <= z(a')) one has
 `β6 (α1-1) <= β1 (γ6-1)`. -/
 theorem k58_core (α β b g pp s qq qr rr : ℝ) (hα : 1 < α) (hβ : 1 < β) (hg : 0 < g)
-    (hqq : qr < qq) (hrr : qr < rr) (hD : 0 < qq * rr - qr ^ 2)
+    (hqq : qr < qq) (hrr : qr < rr) 
     (hrel : α * s * (qq + rr - 2 * qr) = -(β - 1) * (qq * rr - qr ^ 2))
     (hX4 : k32e_G pp s qq qr rr (α - 1) β 0 α 0 (β - 1) = 0)
     (hH : k32e_G pp s qq qr rr α (β - b) (-g) α 0 (β - 1) = 0)
@@ -180,7 +180,7 @@ theorem k83_r0_gWb {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ} (W : Norm0
     have := pos_of_mul_pos_right this hβpos.le
     linarith
   have hcore := k58_core α1 β1 β6 γ6 ⟪a - d, a - d⟫ ⟪a - d, b - d⟫ ⟪b - d, b - d⟫ ⟪b - d, c - d⟫
-    ⟪c - d, c - d⟫ hα hβ (by linarith) hqq1 hrr1 hrel.2 hrel.1 h4 hH hX3 hzc'
+    ⟪c - d, c - d⟫ hα hβ (by linarith) hqq1 hrr1 hrel.1 h4 hH hX3 hzc'
   -- Gale
   obtain ⟨μ, hμ0, -, hμb, -, hμU⟩ := gale_nf08w W.G (p := α1) (q := β1) (r := α1) (s := β1)
     (t := β6) (u := γ6) hdet hc' hb' ha' (by linarith)

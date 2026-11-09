@@ -100,7 +100,7 @@ theorem v12_restA (pb : 0 < -(k * vx + vz)) (pd : 0 < l * (1 - tm) * vx + tm * v
 
 set_option maxHeartbeats 4000000 in
 include ha1 ha3 hk hl a1 a3 pa pc in
-theorem v12_cycB (pb : 0 < k * vx + vz) (pd : 0 < l * (1 - tm) * vx + tm * vz) (hvz : 0 < vz) :
+theorem v12_cycB (pb : 0 < k * vx + vz) (pd : 0 < l * (1 - tm) * vx + tm * vz) :
     ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       ST (-1) ⟨-1, 1, 0⟩ ⟨vx, 0, vz⟩
         ((Pt tp tp tm tm k l (vB (i + 1))).sub (Pt tp tp tm tm k l (vB i)))
@@ -121,7 +121,7 @@ theorem v12_cycB (pb : 0 < k * vx + vz) (pd : 0 < l * (1 - tm) * vx + tm * vz) (
 
 set_option maxHeartbeats 4000000 in
 include ha1 ha3 hk hl a1 a3 pa pc in
-theorem v12_restB (pb : 0 < k * vx + vz) (pd : 0 < l * (1 - tm) * vx + tm * vz) (hvz : 0 < vz)
+theorem v12_restB (pb : 0 < k * vx + vz) (pd : 0 < l * (1 - tm) * vx + tm * vz) 
     (j' : Fin 7) (hj : j' = 1 ∨ j' = 5) :
     ∀ i : ZMod 5,
       ST (-1) ⟨-1, 1, 0⟩ ⟨vx, 0, vz⟩
@@ -305,10 +305,10 @@ theorem v12_mB (hr : gA12 x = gA11 x) (hA : F.S.tp = F.S.sp) (hB : F.S.tm = F.S.
   refine F.v12_rimT (by norm_num) vB ⟨vx, 0, vz⟩ ?_ ?_ 2 ?_
   · intro i j hi hj
     rw [hP]
-    exact v12_cycB _ _ _ _ _ _ F.S.tp_pos F.S.tm_pos hk hl a1 a3 pa pc pb pd hvz i j hi hj
+    exact v12_cycB _ _ _ _ _ _ F.S.tp_pos F.S.tm_pos hk hl a1 a3 pa pc pb pd i j hi hj
   · intro j' hj' i
     rw [hP]
-    exact v12_restB _ _ _ _ _ _ F.S.tp_pos F.S.tm_pos hk hl a1 a3 pa pc pb pd hvz j' (v12_hjB j' hj') i
+    exact v12_restB _ _ _ _ _ _ F.S.tp_pos F.S.tm_pos hk hl a1 a3 pa pc pb pd j' (v12_hjB j' hj') i
   · obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
     obtain ⟨c0, c1, c2, c3, c4⟩ := zmod5_sub_one'
     intro i hi

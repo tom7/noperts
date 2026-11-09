@@ -165,7 +165,7 @@ theorem n2f_g (hA : 0 < A) (hs0 : 0 < s) (hzw : zw < 0) (hb2 : 0 < b2) (hz2 : 0 
     | (left; nlinarith)
     | (right; refine ⟨by ring, by nlinarith⟩)
 
-theorem n2f_f (hs0 : 0 < s) (hs1 : s < 1) (hzw : zw < 0) (hb2 : 0 < b2) (hz2 : 0 < z2)
+theorem n2f_f (hs1 : s < 1) (hzw : zw < 0) (hb2 : 0 < b2) (hz2 : 0 < z2)
     (hbr : b2 < r2) (hxa : s * b1 < a1) (htt0 : 0 < tt) :
     ∀ i : ZMod 5,
       LexTest (-1) ⟨1, 0, 0⟩ ⟨0, -1, -tt⟩ (h5Pts 0 zw s b1 b2 z2 a1 (s * b2) z2 r1 r2 i)
@@ -251,7 +251,7 @@ theorem propH_n2_flat {V : Finset ℝ³} {cP mP fP rP gP wP aP : ℝ³}
     rw [this]; linarith
   exact Fr.n2_core hV hc hm ha hr hw Φc Φm Φf Φr Φg Φw Φa hA hs0 hs1 le_rfl hzw hb2
     (by simpa using hz2) hr1 hz2 hxa tt htt0
-    (n2f_cyc hs0 hzw hb2 hz2 hsr hxa htt1 htt0) (n2f_f hs0 hs1 hzw hb2 hz2 hrb hxa htt0)
+    (n2f_cyc hs0 hzw hb2 hz2 hsr hxa htt1 htt0) (n2f_f hs1 hzw hb2 hz2 hrb hxa htt0)
     (n2f_g hA hs0 hzw hb2 hz2 hsr hxa htt1)
 
 /-- **Proposition H, T4, `r2 = b2`** (special position; `c'` over `b'`, `b1 < r1` by (B1′)): the

@@ -426,7 +426,7 @@ theorem isRupert_facets_edge_vertical_lt (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) 
       hb1 hb1' ha2 ha2' ⟨p1, hp1, hp12⟩ ⟨p2, hp2, hp21⟩ hcol hinjv hinjw hfar' hin'
 
 /-- **Lemma T over an edge, the edge vertical.** -/
-theorem isRupert_facets_edge_vertical (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : v ≠ w)
+theorem isRupert_facets_edge_vertical (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) 
     (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hint : Q1 ∩ Q2 = {v, w}) (f1 f2 : ℝ³ →ᵃ[ℝ] ℝ)
     (z1 : ∀ p ∈ Q1, f1 p = 0) (n1 : ∀ p ∈ V, p ∉ Q1 → f1 p < 0)
     (z2 : ∀ p ∈ Q2, f2 p = 0) (n2 : ∀ p ∈ V, p ∉ Q2 → f2 p < 0)
@@ -514,7 +514,6 @@ theorem isRupert_facets_edge (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : v ≠
   have allg : ∀ (S : Finset ℝ³) (P : ℝ³ → Prop), (∀ p ∈ S, P (g p)) → ∀ q ∈ S.image g, P q := by
     intro S P h q hq; obtain ⟨p, hp, rfl⟩ := Finset.mem_image.mp hq; exact h p hp
   refine isRupert_facets_edge_vertical (V.image g) (Q1.image g) (Q2.image g) (g v) (g w)
-    (fun h => hvw (hginj h))
     (Finset.image_subset_image h1V) (Finset.image_subset_image h2V)
     (by rw [← Finset.image_inter _ _ hginj, hint, Finset.image_insert, Finset.image_singleton]) F1 F2
     (allg Q1 _ (fun p hp => by rw [tF1]; exact z1 p hp))

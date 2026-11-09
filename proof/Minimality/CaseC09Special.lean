@@ -207,7 +207,7 @@ theorem t1_cycD (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (ht
     | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
 theorem t1_rest0D (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1)
-    (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (dx : ℝ) (hl : -(tm * km) < dx * (sm * hm)) (hr : dx * (sp * hm) < tm * kp - hm) :
+    (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (dx : ℝ) (hl : -(tm * km) < dx * (sm * hm)) :
     ∀ i : ZMod 5,
       ST (-1) ⟨tm, 0, -hm⟩ ⟨dx, 1, 0⟩
         ((t1P tm hm sp kp sm km (i + 1)).sub (t1P tm hm sp kp sm km i))
@@ -232,7 +232,7 @@ theorem t1_rest0D (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (
 
 theorem t1_rest1D (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1)
-    (hkm : 0 < km) (H1 : hp * tm + hm * tp = hm) (H2 : hm * (1 - sp) < tm * kp) (dx : ℝ) (hl : -(tm * km) < dx * (sm * hm)) (hr : dx * (sp * hm) < tm * kp - hm) :
+    (hkm : 0 < km) (H1 : hp * tm + hm * tp = hm) (H2 : hm * (1 - sp) < tm * kp) (dx : ℝ) (hr : dx * (sp * hm) < tm * kp - hm) :
     ∀ i : ZMod 5,
       ST (-1) ⟨tm, 0, -hm⟩ ⟨dx, 1, 0⟩
         ((t1P tm hm sp kp sm km (i + 1)).sub (t1P tm hm sp kp sm km i))
@@ -365,8 +365,8 @@ theorem rimT1_sector_bp (hts : F.S.tm < F.S.sm) (H1 : F.S.am = F.S.bp)
   · exact t1_cycD hsp hsp1 hkp htm htm1 hhm hsm hsm1 hkm H2' dx hl hr
   · intro j' h4 h3 h2 h5 h6 i
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
-    · rw [p0]; exact t1_rest0D hsp hsp1 hkp htm htm1 hhm hsm hsm1 hkm dx hl hr i
-    · rw [p1]; exact t1_rest1D hsp hsp1 htp htp1 hhp hkp htm htm1 hhm hsm hsm1 hkm H1e H2' dx hl hr i
+    · rw [p0]; exact t1_rest0D hsp hsp1 hkp htm htm1 hhm hsm hsm1 hkm dx hl i
+    · rw [p1]; exact t1_rest1D hsp hsp1 htp htp1 hhp hkp htm htm1 hhm hsm hsm1 hkm H1e H2' dx hr i
     · exact absurd rfl h2
     · exact absurd rfl h3
     · exact absurd rfl h4

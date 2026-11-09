@@ -44,7 +44,7 @@ theorem allOKPPZP : ∀ ch ∈ rowsPPZP, ∀ n ∈ ch, allDPPZP n = true := by
 variable {x : Fin 7 → ℝ³}
 
 /-- The class literals of core PPZP are true when the four class brackets have the signs `++0+`. -/
-theorem unitsPPZP_true (F : S0xFac 8 V2.fIdx x) (h0 : 0 < det3 (x 1 - x 0) (x 2 - x 0) (x 6 - x 0)) (h1 : 0 < det3 (x 1 - x 0) (x 3 - x 0) (x 4 - x 0)) (h2 : det3 (x 2 - x 1) (x 3 - x 1) (x 4 - x 1) = 0) (h3 : 0 < det3 (x 3 - x 2) (x 4 - x 2) (x 6 - x 2)) :
+theorem unitsPPZP_true (F : S0xFac 8 V2.fIdx x) (h1 : 0 < det3 (x 1 - x 0) (x 3 - x 0) (x 4 - x 0)) (h2 : det3 (x 2 - x 1) (x 3 - x 1) (x 4 - x 1) = 0) (h3 : 0 < det3 (x 3 - x 2) (x 4 - x 2) (x 6 - x 2)) :
     ∀ l ∈ unitsPPZP, evalW (rhoW (geoF F)) l = true := by
   intro l hl
   have e0 : (geoF F).x 0 = x 0 := geoF_x F 0
@@ -68,7 +68,7 @@ theorem unitsPPZP_true (F : S0xFac 8 V2.fIdx x) (h0 : 0 < det3 (x 1 - x 0) (x 2 
 theorem rupert_of_core_dataPPZP (hU : CoreUnsat rowsPPZP) : Core16W 1 1 0 1 := by
   intro y F hC h1 h2 h3 h4
   exact caseS_of_unsat chunksPPZP rowsPPZP unitsPPZP hU allOKPPZP F hC
-    (unitsPPZP_true F (by simp only [br16, SgnP] at h1 h2 h3 h4; norm_num at h1 h2 h3 h4; linarith) (by simp only [br16, SgnP] at h1 h2 h3 h4; norm_num at h1 h2 h3 h4; linarith)
+    (unitsPPZP_true F (by simp only [br16, SgnP] at h1 h2 h3 h4; norm_num at h1 h2 h3 h4; linarith)
       (by simp only [br16, SgnP] at h1 h2 h3 h4; norm_num at h1 h2 h3 h4; linarith) (by simp only [br16, SgnP] at h1 h2 h3 h4; norm_num at h1 h2 h3 h4; linarith))
 
 end Minimality.H16K.SAT

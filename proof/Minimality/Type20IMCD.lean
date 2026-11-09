@@ -602,7 +602,7 @@ lemma zt_sp_tp {hp tp sp kp : ℝ} (hp0 : 0 < hp) (tp0 : 0 < tp) (tp1 : tp < 1)
 
 /-- The facing `G` at the view `x0 - x2` is positive (`B16 <= 0`, `sm + sp > 1`). -/
 lemma zt_G {hp hm tp tm sp sm km kp : ℝ} (hp0 : 0 < hp) (hm0 : 0 < hm) (tp0 : 0 < tp)
-    (tm0 : 0 < tm) (sp0 : 0 < sp) (sm1 : sm < 1) (hs : 1 < sm + sp) (hsptp : sp < tp)
+    (tm0 : 0 < tm) (sm1 : sm < 1) (hs : 1 < sm + sp) (hsptp : sp < tp)
     (hkm : km * tm = sm * (hm * tp + hp * tm)) (hkp : kp * tm = (1 - sp) * (hm * tp + hp * tm))
     (hB16 : hp * sp - kp * tp ≤ 0) :
     0 < km * tp + km * (-sp) + (sm - 1) * (hp - kp) := by
@@ -825,7 +825,7 @@ theorem imc_ZT (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
   have htm := zt_tm hm0 tm0 Z.hkm hK
   have hsptp := zt_sp_tp hp0 tp0 tp1 hB16 roof
   have uA := zt_A hm0 tm0 sp1 Z.hkm Z.hkp htm
-  have uG := zt_G hp0 hm0 tp0 tm0 sp0 sm1 hs hsptp Z.hkm Z.hkp hB16
+  have uG := zt_G hp0 hm0 tp0 tm0 sm1 hs hsptp Z.hkm Z.hkp hB16
   obtain ⟨h3, h34, h46, h2⟩ := zt_depths hp0 hm0 tm0 sp0 sp1 sm0 sm1 km0 hden lroof Z.tie Z.hkm Z.hkp hK htm tp0 hs hpsi
   set qu := uT F.S with hqu
   set qv : C3 := ⟨2 * F.S.tp, -1, 2 * F.S.hp⟩ with hqv

@@ -107,7 +107,7 @@ theorem gram_necessary (u1 u2 w1 w2 : Fin 3 → ℝ) (hli : LinearIndependent �
 
 /-- Sufficiency direction. -/
 theorem gram_sufficient (u1 u2 w1 w2 : Fin 3 → ℝ) (hli : LinearIndependent ℝ ![u1, u2])
-    (hc : w1 ⬝ᵥ u2 = w2 ⬝ᵥ u1) (ha : 0 < w1 ⬝ᵥ u1) (hb : 0 < w2 ⬝ᵥ u2)
+    (hc : w1 ⬝ᵥ u2 = w2 ⬝ᵥ u1) (ha : 0 < w1 ⬝ᵥ u1) 
     (hd : (w1 ⬝ᵥ u2) ^ 2 < (w1 ⬝ᵥ u1) * (w2 ⬝ᵥ u2)) :
     ∃ G : Matrix (Fin 3) (Fin 3) ℝ, G.PosDef ∧ G *ᵥ u1 = w1 ∧ G *ᵥ u2 = w2 := by
   set n : Fin 3 → ℝ := crossProduct u1 u2 with hn
@@ -224,7 +224,7 @@ theorem gramExtensionTwoViews : GramExtensionTwoViews := by
   · rintro ⟨G, hG, h1, h2⟩
     exact gram_necessary u₁ u₂ w₁ w₂ hli G hG h1 h2
   · rintro ⟨hc, ha, hb, hd⟩
-    exact gram_sufficient u₁ u₂ w₁ w₂ hli hc ha hb hd
+    exact gram_sufficient u₁ u₂ w₁ w₂ hli hc ha hd
 
 /-- Proof of `GramExtensionOneView`. -/
 theorem gramExtensionOneView : GramExtensionOneView := by

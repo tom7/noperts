@@ -191,7 +191,7 @@ theorem Q5n_unimodal {z : ZMod 5 → ℝ} (hinj : Function.Injective z) (h : Q5n
 section TTests
 variable {σ px py s t zv zw m mp f1 f2 r1 r2 g1 g2 : ℝ}
 
-theorem st_cyc (hs0 : 0 < s) (hs1 : s < 1) (hzw : zw < 0) (hm : m < (1 - s) * zw)
+theorem st_cyc (hs0 : 0 < s) (hs1 : s < 1) (hm : m < (1 - s) * zw)
     (t1 : σ * (py * f1 - px * f2) < 0)
     (q1 : 0 < σ * (f1 * r2 - f2 * r1))
     (q2 : 0 < σ * ((r1 - f1) * (g2 - f2) - (r2 - f2) * (g1 - f1)))
@@ -482,7 +482,7 @@ theorem sminus_t4 {V : Finset ℝ³} {bP aP' fP rP gP wP aP : ℝ³}
     exacts [hw, ha, hf, hr, hg]
   · intro i j h1 h2
     rw [himg i, himg (i + 1), himg j]
-    exact st_cyc hs0 hs1 hzw hm t1 q1 q2 q3 q4 i j h1 h2
+    exact st_cyc hs0 hs1 hm t1 q1 q2 q3 q4 i j h1 h2
   · intro y hy hyx i
     rw [himg i, himg (i + 1)]
     rcases hV y hy with h | h | h | h | h | h | h
