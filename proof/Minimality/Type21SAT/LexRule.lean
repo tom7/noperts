@@ -95,7 +95,7 @@ theorem no_par {x : Fin 7 → ℝ³} (F : S0xFac 8 S21 x) {t0 t1 : Fin 8} (r : �
   have n0 := F.neg t0 i hi0
   have hr : 0 < r := by
     by_contra hr
-    push_neg at hr
+    push Not at hr
     nlinarith
   exact no_same_dir F hr hN ⟨j, hj0⟩ hsub
 
@@ -119,7 +119,7 @@ theorem dh_neg {x : Fin 7 → ℝ³} (F : S0xFac 8 S21 x) (hpar : ∃ r : ℝ, F
   have hpos : 0 < ⟪F.N 3, F.N 3⟫ := (real_inner_self_pos.2 h3)
   refine ⟨r⁻¹, ?_, hq⟩
   by_contra hc
-  push_neg at hc
+  push Not at hc
   nlinarith
 
 /-- A tilt `w` with prescribed signs on `D`, `H` (opposite) and on a facet `zi` among 0, 1, 2, 4, 5, 6. -/

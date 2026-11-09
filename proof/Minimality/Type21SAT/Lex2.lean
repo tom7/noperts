@@ -53,7 +53,7 @@ theorem lexLE_ev {k : ℕ} [NeZero k] (z y : ZMod k → ℝ) :
   · exact Eventually.of_forall fun _ _ => h
   · have h' : z j < z i ∨ (z j = z i ∧ y j < y i) := by
       unfold LexLE at h
-      push_neg at h
+      push Not at h
       rcases lt_or_eq_of_le h.1 with h1 | h1
       · exact Or.inl h1
       · exact Or.inr ⟨h1, h.2 h1.symm⟩
