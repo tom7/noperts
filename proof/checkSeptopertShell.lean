@@ -18,7 +18,7 @@ order), then per face `face gi i0 i1 o0 o1 lo0 hi0 lo1 hi1`, three `chart` polyn
 open SeptopertShell
 
 instance : Inhabited SplitTree := ⟨.leaf⟩
-instance : Inhabited Cert := ⟨{ m := 0, dc := 0, tree := .leaf }⟩
+instance : Inhabited Cert := ⟨{ m := 0, dc := 0, tree := .leaf, centred := false }⟩
 instance : Inhabited CoverTree := ⟨.pos 0⟩
 
 def parseRat (s : String) : IO ℚ :=
@@ -89,9 +89,10 @@ def parseSlab (path : String) : IO SlabData := do
     throw (IO.userError s!"{path}: bad sizes")
   let certs ← conds.mapM fun fs => do
     let mm ← parseNat (fs.getD 0 ""); let dc ← parseRat (fs.getD 1 "")
-    let (t, rest) ← parseTree #[-box[0]!, -box[1]!, box[2]! - dc] #[box[0]!, box[1]!, box[3]! - dc] dc (fs.drop 2)
+    let cen := fs.getD 2 "" == "C"   -- `cond m dc C TREE`: centred form
+    let (t, rest) ← parseTree #[-box[0]!, -box[1]!, box[2]! - dc] #[box[0]!, box[1]!, box[3]! - dc] dc (fs.drop (if cen then 3 else 2))
     unless rest.isEmpty do throw (IO.userError s!"{path}: trailing tree tokens")
-    pure ({ m := mm, dc := dc, tree := t } : Cert)
+    pure ({ m := mm, dc := dc, tree := t, centred := cen } : Cert)
   let triF ← (List.range 7).toArray.mapM fun k => do
     pure (← fin7 tri[3 * k]!, ← fin7 tri[3 * k + 1]!, ← fin7 tri[3 * k + 2]!)
   let n0a := n0.toArray; let ca := certs

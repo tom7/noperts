@@ -3,6 +3,7 @@ module
 public import SeptopertShell.Watertight
 public import SeptopertShell.View
 public import SeptopertShell.Poly
+public import SeptopertShell.IPoly
 public import SeptopertShell.Slab
 public import SeptopertShell.Closure
 public import SeptopertShell.ClosurePar

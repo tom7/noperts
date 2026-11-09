@@ -16,7 +16,7 @@ with `S dim point` and `L`).
 open SeptopertShell
 
 instance : Inhabited SplitTree := ⟨.leaf⟩
-instance : Inhabited Cert := ⟨{ m := 0, dc := 0, tree := .leaf }⟩
+instance : Inhabited Cert := ⟨{ m := 0, dc := 0, tree := .leaf, centred := false }⟩
 
 def parseRat (s : String) : IO ℚ :=
   match s.splitOn "/" with
@@ -86,9 +86,10 @@ def parseSlab (path : String) : IO SlabData := do
     throw (IO.userError s!"{path}: bad sizes")
   let certs ← conds.mapM fun fs => do
     let mm ← parseNat (fs.getD 0 ""); let dc ← parseRat (fs.getD 1 "")
-    let (t, rest) ← parseTree #[-box[0]!, -box[1]!, box[2]! - dc] #[box[0]!, box[1]!, box[3]! - dc] dc (fs.drop 2)
+    let cen := fs.getD 2 "" == "C"   -- `cond m dc C TREE`: centred form
+    let (t, rest) ← parseTree #[-box[0]!, -box[1]!, box[2]! - dc] #[box[0]!, box[1]!, box[3]! - dc] dc (fs.drop (if cen then 3 else 2))
     unless rest.isEmpty do throw (IO.userError s!"{path}: trailing tree tokens")
-    pure ({ m := mm, dc := dc, tree := t } : Cert)
+    pure ({ m := mm, dc := dc, tree := t, centred := cen } : Cert)
   let triF ← (List.range 7).toArray.mapM fun k => do
     pure (← fin7 tri[3 * k]!, ← fin7 tri[3 * k + 1]!, ← fin7 tri[3 * k + 2]!)
   let n0a := n0.toArray; let ca := certs
@@ -105,7 +106,39 @@ def parseSlab (path : String) : IO SlabData := do
     vj := vj, vs := vs
     vcert := ca[0]!, tcert := fun k e => ca[1 + 3 * k.val + e.val]! }
 
+/-- `--profile FILE`: time the parts of the check (the integer data, the condition polynomials, then the bounds). -/
+def profile (path : String) : IO Unit := do
+  let D ← parseSlab path
+  let t0 ← IO.monoMsNow
+  let C := D.core
+  let w := (List.finRange 7).map fun k => ((List.finRange 3).map fun i => (D.WI C k i).length).foldl (· + ·) 0
+  let w := w.foldl (· + ·) 0
+  IO.println s!"integer data, WI terms {w}  ({(← IO.monoMsNow) - t0} ms)"
+  let t1 ← IO.monoMsNow
+  let cs := (List.finRange 7).flatMap fun k =>
+    let Wk := D.WI C k
+    (List.finRange 3).map fun e => D.condI C Wk k e
+  let n := (cs.map List.length).foldl (· + ·) 0
+  IO.println s!"21 conditions, {n} terms, built in {(← IO.monoMsNow) - t1} ms"
+  let t2 ← IO.monoMsNow
+  let ok := D.check
+  IO.println s!"full check (rebuild + certify): {ok} in {(← IO.monoMsNow) - t2} ms"
+  -- per-certificate timing: the root shift, then the whole certificate
+  for k in List.finRange 7 do
+    let Wk := D.WI C k
+    for e in List.finRange 3 do
+      let p := (D.condI C Wk k e).toPoly
+      let c := D.tcert k e
+      let t3 ← IO.monoMsNow
+      let q := (SeptopertShell.Poly.divX2 p c.m).getD []
+      let sh := SeptopertShell.Poly.shiftX2 q c.dc
+      let n := sh.length
+      let t4 ← IO.monoMsNow
+      let r := SeptopertShell.checkCert D.H0 D.H1 D.D0 D.D1 p c
+      IO.println s!"  cert {k} {e}: {p.length} terms, root shift -> {n} terms in {t4 - t3} ms, whole cert {r} in {(← IO.monoMsNow) - t4} ms"
+
 def main (args : List String) : IO UInt32 := do
+  if args.headD "" = "--profile" then profile (args.getD 1 ""); return 0
   let mut bad := 0
   for path in args do
     let t0 ← IO.monoMsNow

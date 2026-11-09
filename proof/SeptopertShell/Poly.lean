@@ -507,6 +507,151 @@ theorem pos_of_divX2 {p q : Poly} {m : ℕ} (hd : Poly.divX2 p m = some q) {t : 
   rw [Poly.eval_divX2 hd]
   exact mul_pos (pow_pos h2 m) (pos_of_checkTree h hx)
 
+/-! ### Centred form -/
+
+namespace Poly
+
+/-- Exponent of variable `d`. -/
+def monoGet (m : Mono) (d : Fin 3) : ℕ := if d = 0 then m.1 else if d = 1 then m.2.1 else m.2.2
+
+/-- Replace the exponent of variable `d`. -/
+def monoSet (m : Mono) (d : Fin 3) (l : ℕ) : Mono :=
+  if d = 0 then (l, m.2) else if d = 1 then (m.1, l, m.2.2) else (m.1, m.2.1, l)
+
+/-- The binomial expansion of one term under `x_d ↦ h_d + a`. -/
+def expandTerm (t : Mono × ℚ) (d : Fin 3) (a : ℚ) : Poly :=
+  (List.range (monoGet t.1 d + 1)).map fun l =>
+    (monoSet t.1 d l, t.2 * ((monoGet t.1 d).choose l : ℚ) * a ^ (monoGet t.1 d - l))
+
+/-- `p(h + a e_d)`. -/
+def shiftVar (p : Poly) (d : Fin 3) (a : ℚ) : Poly := normalize (p.flatMap fun t => expandTerm t d a)
+
+theorem sum_range_list (f : ℕ → ℝ) (n : ℕ) :
+    ((List.range n).map f).sum = ∑ i ∈ Finset.range n, f i := by
+  induction n with
+  | zero => simp
+  | succ n ih => rw [List.range_succ, List.map_append, List.sum_append, ih, Finset.sum_range_succ]; simp
+
+theorem eval_expandTerm (t : Mono × ℚ) (d : Fin 3) (a : ℚ) (h : Fin 3 → ℝ) :
+    (expandTerm t d a).eval h = termEval t (Function.update h d (h d + a)) := by
+  obtain ⟨⟨i, j, k⟩, c⟩ := t
+  unfold expandTerm eval
+  rw [List.map_map]
+  rw [sum_range_list (fun l => _)]
+  fin_cases d
+  · simp only [monoGet, monoSet, Function.comp_def, termEval]
+    simp only [Fin.zero_eta, ite_true]
+    have e0 : Function.update h 0 (h 0 + a) 0 = h 0 + a := by simp
+    have e1 : Function.update h 0 (h 0 + a) 1 = h 1 := by simp
+    have e2 : Function.update h 0 (h 0 + a) 2 = h 2 := by simp
+    rw [e0, e1, e2, add_pow, Finset.mul_sum, Finset.sum_mul, Finset.sum_mul]
+    refine Finset.sum_congr rfl fun l _ => ?_
+    push_cast; ring
+  · simp only [monoGet, monoSet, Function.comp_def, termEval]
+    simp only [Fin.mk_one, Fin.isValue, ite_true, one_ne_zero, ite_false]
+    have e0 : Function.update h 1 (h 1 + a) 0 = h 0 := by simp
+    have e1 : Function.update h 1 (h 1 + a) 1 = h 1 + a := by simp
+    have e2 : Function.update h 1 (h 1 + a) 2 = h 2 := by simp
+    rw [e0, e1, e2, add_pow, Finset.mul_sum, Finset.sum_mul]
+    refine Finset.sum_congr rfl fun l _ => ?_
+    push_cast; ring
+  · simp only [monoGet, monoSet, Function.comp_def, termEval]
+    simp
+    rw [add_pow, Finset.mul_sum]
+    refine Finset.sum_congr rfl fun l _ => ?_
+    push_cast; ring
+
+theorem eval_shiftVar (p : Poly) (d : Fin 3) (a : ℚ) (h : Fin 3 → ℝ) :
+    (shiftVar p d a).eval h = p.eval (Function.update h d (h d + a)) := by
+  unfold shiftVar
+  rw [eval_normalize]
+  induction p with
+  | nil => simp
+  | cons t p ih => rw [List.flatMap_cons, eval_append, ih, eval_expandTerm, eval_cons]
+
+/-- Lower bound on `|h i| ≤ r i`, with the constant term kept exactly and every other term bounded by its
+absolute value. -/
+def centredBound (p : Poly) (r : Fin 3 → ℚ) : ℚ :=
+  (p.map fun t => if t.1 = (0, 0, 0) then t.2 else -|t.2| * (r 0 ^ t.1.1 * r 1 ^ t.1.2.1 * r 2 ^ t.1.2.2)).sum
+
+theorem centredBound_le (p : Poly) (r : Fin 3 → ℚ) (h : Fin 3 → ℝ) (hr : ∀ i, |h i| ≤ r i) :
+    (centredBound p r : ℝ) ≤ p.eval h := by
+  induction p with
+  | nil => simp [centredBound]
+  | cons t p ih =>
+    simp only [centredBound, List.map_cons, List.sum_cons] at ih ⊢
+    rw [eval_cons, Rat.cast_add]
+    refine add_le_add ?_ ih
+    obtain ⟨⟨i, j, k⟩, c⟩ := t
+    by_cases h0 : (i, j, k) = (0, 0, 0)
+    · obtain ⟨rfl, rfl, rfl⟩ : i = 0 ∧ j = 0 ∧ k = 0 := by simpa using h0
+      simp [termEval]
+    · simp only [h0, ite_false]
+      push_cast
+      have b0 : |h 0| ^ i ≤ (r 0 : ℝ) ^ i := pow_le_pow_left₀ (abs_nonneg _) (hr 0) i
+      have b1 : |h 1| ^ j ≤ (r 1 : ℝ) ^ j := pow_le_pow_left₀ (abs_nonneg _) (hr 1) j
+      have b2 : |h 2| ^ k ≤ (r 2 : ℝ) ^ k := pow_le_pow_left₀ (abs_nonneg _) (hr 2) k
+      have hab : |termEval ((i, j, k), c) h| ≤ |(c : ℝ)| * ((r 0 : ℝ) ^ i * (r 1 : ℝ) ^ j * (r 2 : ℝ) ^ k) := by
+        simp only [termEval, abs_mul, abs_pow]
+        have p0 := abs_nonneg (h 0); have p1 := abs_nonneg (h 1); have p2 := abs_nonneg (h 2)
+        have e : |(c : ℝ)| * |h 0| ^ i * |h 1| ^ j * |h 2| ^ k = |(c : ℝ)| * (|h 0| ^ i * |h 1| ^ j * |h 2| ^ k) := by ring
+        rw [e]
+        refine mul_le_mul_of_nonneg_left ?_ (abs_nonneg _)
+        exact mul_le_mul (mul_le_mul b0 b1 (by positivity) (le_trans (by positivity) b0)) b2 (by positivity)
+          (by have := le_trans (abs_nonneg (h 0)) (hr 0); have := le_trans (abs_nonneg (h 1)) (hr 1); positivity)
+      rw [neg_mul]
+      linarith [neg_abs_le (termEval ((i, j, k), c) h)]
+
+end Poly
+
+/-- Subdivision certificate checker in centred form: `p` is the polynomial in the local coordinates
+`h = x - (lo + hi)/2` of the box `[lo, hi]`. -/
+def checkTreeC (p : Poly) (lo hi : Fin 3 → ℚ) : SplitTree → Bool
+  | .leaf => decide (0 < Poly.centredBound p fun i => (hi i - lo i) / 2)
+  | .split d m l r =>
+    decide (lo d ≤ m ∧ m ≤ hi d) &&
+      checkTreeC (Poly.shiftVar p d ((m - hi d) / 2)) lo (Function.update hi d m) l &&
+      checkTreeC (Poly.shiftVar p d ((m - lo d) / 2)) (Function.update lo d m) hi r
+
+theorem pos_of_checkTreeC {t : SplitTree} : ∀ {p : Poly} {lo hi : Fin 3 → ℚ}, checkTreeC p lo hi t = true →
+    ∀ {x : Fin 3 → ℝ}, (∀ i, (lo i : ℝ) ≤ x i ∧ x i ≤ hi i) →
+      0 < p.eval (fun i => x i - (((lo i + hi i) / 2 : ℚ) : ℝ)) := by
+  induction t with
+  | leaf =>
+    intro p lo hi h x hx
+    simp only [checkTreeC, decide_eq_true_eq] at h
+    have h' : (0 : ℝ) < Poly.centredBound p (fun i => (hi i - lo i) / 2) := by exact_mod_cast h
+    refine lt_of_lt_of_le h' (Poly.centredBound_le _ _ _ fun i => ?_)
+    obtain ⟨a, b⟩ := hx i
+    push_cast
+    rw [abs_le]; constructor <;> linarith
+  | split d m l r ihl ihr =>
+    intro p lo hi h x hx
+    simp only [checkTreeC, Bool.and_eq_true, decide_eq_true_eq] at h
+    obtain ⟨⟨_, hl⟩, hr⟩ := h
+    rcases le_total (x d) m with hd | hd
+    · have := ihl hl (x := x) (fun i => by
+        by_cases hi : i = d
+        · subst hi; simp [hd, (hx i).1]
+        · simp [Function.update_of_ne hi, hx i])
+      rw [Poly.eval_shiftVar] at this
+      convert this using 2
+      ext i
+      by_cases hi : i = d
+      · subst hi; simp; push_cast; ring
+      · simp [Function.update_of_ne hi]
+    · have := ihr hr (x := x) (fun i => by
+        by_cases hi : i = d
+        · subst hi; simp [hd, (hx i).2]
+        · simp [Function.update_of_ne hi, hx i])
+      rw [Poly.eval_shiftVar] at this
+      convert this using 2
+      ext i
+      by_cases hi : i = d
+      · subst hi; simp; push_cast; ring
+      · simp [Function.update_of_ne hi]
+
 end SeptopertShell
+
 
 end
