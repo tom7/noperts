@@ -115,11 +115,11 @@ theorem eval_mergeAdj (l : Poly) (x : Fin 3 → ℝ) : (mergeAdj l).eval x = l.e
   | case1 => simp [mergeAdj]
   | case2 t => simp [mergeAdj]
   | case3 t u rest h ih =>
-    rw [mergeAdj, if_pos h, ih]
+    rw [mergeAdj, ite_eq_left h, ih]
     simp only [eval_cons, termEval]
     rw [← h]; push_cast; ring
   | case4 t u rest h ih =>
-    rw [mergeAdj, if_neg h]
+    rw [mergeAdj, ite_eq_right h]
     simp only [eval_cons, ih]
 
 theorem eval_dropZero (l : Poly) (x : Fin 3 → ℝ) :
@@ -333,13 +333,13 @@ theorem powRange_spec (lo hi : ℚ) (k : ℕ) (t : ℝ) (h1 : (lo : ℝ) ≤ t) 
   unfold powRange
   by_cases hk : k = 0
   · simp [hk]
-  · rw [if_neg hk]
+  · rw [ite_eq_right hk]
     by_cases hc : k % 2 = 0 ∧ lo < 0 ∧ 0 < hi
-    · rw [if_pos hc]
+    · rw [ite_eq_left hc]
       have he : Even k := Nat.even_iff.mpr hc.1
       have := pow_straddle_real lo hi t k h1 h2 he
       simpa using this
-    · rw [if_neg hc]
+    · rw [ite_eq_right hc]
       have hs : ¬ (Even k ∧ (lo : ℝ) < 0 ∧ 0 < (hi : ℝ)) := by
         rintro ⟨he, a, b⟩
         exact hc ⟨Nat.even_iff.mp he, by exact_mod_cast a, by exact_mod_cast b⟩

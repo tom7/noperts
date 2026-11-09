@@ -81,12 +81,12 @@ theorem checkCover_sound {slabOk posOk : ℕ → ℚ → ℚ → ℚ → ℚ →
   | split d m l r ihl ihr =>
     intro a0 b0 a1 b1 x0 x1 h h1 h2 h3 h4
     by_cases hd : d = 0
-    · simp only [checkCover, hd, if_true, Bool.and_eq_true, decide_eq_true_eq] at h
+    · simp only [checkCover, hd, ite_true, Bool.and_eq_true, decide_eq_true_eq] at h
       obtain ⟨⟨_, hl⟩, hr⟩ := h
       rcases le_total x0 (m : ℝ) with hm | hm
       · exact ihl _ _ _ _ _ _ hl h1 hm h3 h4
       · exact ihr _ _ _ _ _ _ hr hm h2 h3 h4
-    · simp only [checkCover, hd, if_false, Bool.and_eq_true, decide_eq_true_eq] at h
+    · simp only [checkCover, hd, ite_false, Bool.and_eq_true, decide_eq_true_eq] at h
       obtain ⟨⟨_, hl⟩, hr⟩ := h
       rcases le_total x1 (m : ℝ) with hm | hm
       · exact ihl _ _ _ _ _ _ hl h1 h2 h3 hm
@@ -282,14 +282,14 @@ theorem frontier_cases {p : ℝ³} (hp : p ∈ frontier C.D) :
   refine ⟨(⋂ k : Fin 3, {p : ℝ³ | (C.B0lo k : ℝ) < p k} ∩ {p : ℝ³ | p k < C.B0hi k}) ∩
       ⋂ g ∈ C.gs, {p : ℝ³ | g.eval (fun i => p i) < C.dm}, ?_, ?_, ?_⟩
   · intro q hq
-    simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_setOf_eq] at hq
+    simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_ofPred_eq] at hq
     exact ⟨fun k => ⟨(hq.1 k).1.le, (hq.1 k).2.le⟩, fun g hg => (hq.2 g hg).le⟩
   · refine IsOpen.inter (isOpen_iInter_of_finite fun k => IsOpen.inter ?_ ?_) ?_
     · exact isOpen_lt continuous_const (hc k)
     · exact isOpen_lt (hc k) continuous_const
     · exact (List.finite_toSet C.gs).isOpen_biInter fun g _ =>
         isOpen_lt (Poly.continuous_eval g) continuous_const
-  · simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_setOf_eq]
+  · simp only [Set.mem_inter_iff, Set.mem_iInter, Set.mem_ofPred_eq]
     refine ⟨fun k => ⟨?_, ?_⟩, fun g hg => ?_⟩
     · exact lt_of_le_of_ne (hpD.1 k).1 (fun h => hne1 k |>.1 h.symm)
     · exact lt_of_le_of_ne (hpD.1 k).2 (hne1 k).2
@@ -471,7 +471,7 @@ theorem islandEnclosed_of_check (C : ClosureData) (h : C.check = true) (hin : C.
       · have cast : ∀ (a : ℚ), ((a : ℚ) : ℝ) = a := fun a => rfl
         have hq : (fun i => classicParams i) = fun i =>
             ((![426431 / 1268289, 376317 / 1268289, -279863 / 1268289] : Fin 3 → ℚ) i : ℝ) := by
-          funext i; fin_cases i <;> simp [classicParams] <;> norm_num
+          funext i; fin_cases i <;> simp [classicParams]
         refine ⟨fun k => ?_, fun g hg' => ?_⟩
         · have := hb k
           have e : classicParams k = (((![426431 / 1268289, 376317 / 1268289, -279863 / 1268289] :
