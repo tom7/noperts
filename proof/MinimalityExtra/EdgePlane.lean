@@ -6,7 +6,8 @@ public import MinimalityExtra.DepthSeparated
 # The Edge-Plane Lemma
 
 Rotations whose axis lies in the plane through a rim edge normal to its support plane: freedom of
-this form is the separation of two point sets in a plane. Theorem 8.10 is its steep case.
+this form is the separation of two point sets in a plane. The depth-separated view theorem
+(`DepthSeparatedViewIsFree`) is its steep case.
 -/
 
 @[expose] public section
@@ -16,7 +17,7 @@ namespace MinimalityExtra
 open scoped RealInnerProductSpace
 open Finset
 
-/-! ## The Edge-Plane Lemma: axis in the plane of an edge (SPEC.md §8) -/
+/-! ## The Edge-Plane Lemma: axis in the plane of an edge -/
 
 /-- **Edge-Plane Lemma, explicit motion.**  The rows are affine in `(α, μ)`: each row asks the
 line `ρ = α + μ z` to pass on one side of a point of the `(z, ρ)` plane.  Geometrically the axis

@@ -10,7 +10,7 @@ The tetrahedron `TX` of `TetraViews` with its free two-peaked view `WB = (-7,4,6
 `TY = AM TX` with view `WY = AM WB = (-26,7,3)` has the same rim `0,1,2,3` and depths
 `0,109,57,58` in the same order as `0,11,9,10`, but is rigid: a certificate at a vertex gives
 the two true rim inequalities (case split), and a positive combination of six of them
-vanishes (weights from `witnesses.py`, found by `linarith`).
+vanishes (the weights were found by an LP, closed by `linarith`).
 -/
 
 @[expose] public section

@@ -12,7 +12,7 @@ public import Minimality.OctaTools
 `xa₁ xa₂ xb₂ xb₁`; in the coordinates `(⟪n₁,·⟫, ⟪n₂,·⟫)` the corners are `(h₁, α₁), (h₁, α₂),
 (β₂, h₂), (β₁, h₂)` and the orientation `σ c` (where `u₀ = c • (n₁ × n₂)`) decides which end of each
 face is near the other plane.  Then `Minimality.lemmaPV` applies; the sign condition rules out both
-mixed cases.  Draft, not yet refereed (PROOFS §7).
+mixed cases.
 -/
 
 @[expose] public section

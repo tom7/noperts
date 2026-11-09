@@ -3,9 +3,9 @@ module
 public import MinimalityExtra
 
 /-!
-# The chirotope does not determine the silhouette: proof (Result B)
+# The chirotope does not determine the silhouette: proof
 
-The witness is found by `witness.py` (small integer points, verified by `verify_witness.py`).
+The witness was found by a small exhaustive search over integer points (checked afterwards by an independent exact computation).
 The sign equalities are checked by brute force over all index quadruples in `Fin 5`.
 -/
 

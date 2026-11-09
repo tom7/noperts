@@ -63,8 +63,8 @@ A *type* is one of the combinatorial types of 7-vertex polytopes, in the numberi
   silhouettes.
 
 Results appear in short sections by topic, not in order of importance, and each definition comes
-just before its first use. Tags in parentheses, such as (Theorem U), are the names used in the
-project's notes.
+just before its first use. Tags in parentheses, such as (Theorem U), are mere labels for
+cross-reference.
 -/
 
 @[expose] public section
@@ -1110,7 +1110,7 @@ section ExplicitShapes
 
 /-- **All face-pair views of an explicit type 24 polytope are rigid.** A *face-pair view* looks
 along the line where two facet planes meet, so that both facets are edge-on. There are seven points
-(the shape `fpfail_24_r1`, with an exactly planar quadrilateral and integer coordinates) with nine
+(a rationalized shape, with an exactly planar quadrilateral and integer coordinates) with nine
 listed facets, every face-pair view of which is first-order rigid. So are the 50 reduced tests `T`,
 which keep only part of the points: They drop the middle vertices of the two edge-on faces and, for
 a shared edge, one end of it, with one test per facet pair sharing at most a vertex and two per pair
@@ -1131,8 +1131,8 @@ def Type24FacePairViewsRigid : Prop :=
       ¬ FreeAt ((T t).2.2.image x) (cross (N (T t).1) (N (T t).2.1)))
 
 /-- **A neighbor of Septopert Classic is Rupert, by an explicit pose.** Septopert Classic is a
-simplicial polytope with no generic unimodal view. These seven points are the simplicial shape `strict7_sept`
-(`data/hard/strict7_sept.xyz`), near Septopert Classic but without its symmetry, rounded to three
+simplicial polytope with no generic unimodal view. These seven points are the simplicial shape
+near Septopert Classic but without its symmetry, rounded to three
 decimals. The passage is tight, with clearance `0.0036`, about `0.4` percent of the diameter.
 Nothing is claimed about first-order rigidity or about other views. -/
 def Strict7SeptIsRupert : Prop :=

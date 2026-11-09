@@ -9,7 +9,7 @@ public import Mathlib.Algebra.Order.Star.Real
 /-!
 # Metric-uniform unimodality: proofs
 
-Proofs of the statements in `MetricStatements.lean` (Mathlib only; `MinimalityExtra` is used for
+Proofs of the metric-uniform statements of `MinimalityExtra.lean` (Mathlib only; `MinimalityExtra` is used for
 `IsCyclicUnimodal`).
 -/
 

@@ -13,7 +13,7 @@ Farkas weights on the six limit rows at `UU`: `1` on the `next` row at vertex `1
 at vertex `2`, `2` on both rows at vertex `0` (positions `0, 1, 2` of `Ulab = ![1, 2, 0]`).  The
 motion `ω = (-6, 4, -2) + ε (1, 2, 2)`, `τ = (4, 8, 0) + ε (3, 0, 2)` is free for the tilted views,
 `ε < 1/4`: the leading term is a limit motion with all rows `≥ 0` (zero on the four rows with
-positive weight), the order `ε` term makes those four rows positive.  Found by `side4/*.py`.
+positive weight), the order `ε` term makes those four rows positive.  The motion was found by a small LP search over integer vectors.
 -/
 
 @[expose] public section

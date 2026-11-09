@@ -8,11 +8,11 @@ public import MinimalityExtra
 Proof of `MinimalityExtra.ExistsTetrahedronViewsIndependent` (see `MinimalityExtra.lean`).
 Tetrahedron `TX` with vertices `(0,0,0), (1,0,3), (1,1,2), (0,1,1)`; views
 `WA = (0,0,1)` (unimodal rim, horizontal double normal, rigid), `WB = (-7,4,6)` (two-peaked, free),
-`WC = (-1,0,-2)` (two-peaked, rigid).  Witnesses found by `witnesses.py`.
+`WC = (-1,0,-2)` (two-peaked, rigid).  The views were found by a small search over integer vectors.
 
 Rigidity is proved by: a certificate at a vertex gives the two inequalities of the true rim
 (`cert*`, by finite case analysis on the choices `y₀, y₁` or the triangle), then a Farkas
-combination of four of them (found by `witnesses.py`, closed by `linarith`).
+combination of four of them (weights found by an LP, closed by `linarith`).
 -/
 
 @[expose] public section
@@ -96,7 +96,7 @@ theorem rigidA : ¬ FreeAt (univ.image TX) WA := by
   linarith
 
 /-- Rigid at `WC`: Farkas weights `1` on next-side at vertices 0, 3 (indices in the rim order
-`0,1,3,2`: positions 0 and 2) and previous-side at the other two, found by `witnesses.py`. -/
+`0,1,3,2`: positions 0 and 2) and previous-side at the other two, found by an LP. -/
 theorem rigidC : ¬ FreeAt (univ.image TX) WC := by
   rintro ⟨ω, τ, h⟩
   have m : ∀ i, TX i ∈ univ.image TX := fun i => Finset.mem_image_of_mem _ (Finset.mem_univ i)
