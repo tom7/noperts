@@ -334,7 +334,7 @@ theorem checkCert_pos {H0 H1 D0 D1 : ℚ} {p : Poly} {c : Cert}
       obtain ⟨a0, a1⟩ := abs_le.mp h0
       obtain ⟨b0, b1⟩ := abs_le.mp h1
       by_cases hc : c.centred = true
-      · rw [if_pos hc] at h
+      · rw [ite_eq_left hc] at h
         simp only [Bool.and_eq_true, decide_eq_true_eq] at h
         obtain ⟨hs, h⟩ := h
         have hsR : (D0 : ℝ) + D1 = 2 * c.dc := by exact_mod_cast hs
@@ -343,8 +343,8 @@ theorem checkCert_pos {H0 H1 D0 D1 : ℚ} {p : Poly} {c : Cert}
           fin_cases i <;> simp <;> constructor <;> linarith)
         convert this using 2
         ext i
-        fin_cases i <;> simp <;> linarith
-      · rw [if_neg hc] at h
+        fin_cases i <;> simp; linarith
+      · rw [ite_eq_right hc] at h
         have hb : Box.mem { lo := ![-H0, -H1, D0 - c.dc], hi := ![H0, H1, D1 - c.dc] }
             ![x 0, x 1, x 2 - c.dc] := by
           intro i
@@ -563,7 +563,7 @@ theorem matApplyI_ev (hd : D.denomsOk) (u : IV) (w : PV) (lam : ℝ)
   simp only [matApplyI, IPoly.eval_madd, IPoly.eval_scale, PV.eval_matApply, h, N0i_ev hd]
   ring
 
-theorem m0_ev (hm : 0 < D.m0) : (D.m0 : ℝ) = (D.m0n : ℝ) / D.m0d := by
+theorem m0_ev (_hm : 0 < D.m0) : (D.m0 : ℝ) = (D.m0n : ℝ) / D.m0d := by
   have h : D.m0 = (D.m0n : ℚ) / (D.m0d : ℚ) := by
     simp only [m0n, m0d]; push_cast
     exact (Rat.num_div_den D.m0).symm
@@ -579,7 +579,7 @@ theorem Lam_ev : (D.Lam : ℝ) = (D.Dc : ℝ) ^ 2 * D.Dn * D.Dp * D.m0d * D.Dt :
 
 theorem kap_ev : (D.kap : ℝ) = (D.Dn : ℝ) * D.Dt * D.m0n := by simp [kap]
 
-theorem Lam_pos (hd : D.denomsOk) (hm : 0 < D.m0) : (0 : ℝ) < D.Lam := by
+theorem Lam_pos (hd : D.denomsOk) (_hm : 0 < D.m0) : (0 : ℝ) < D.Lam := by
   obtain ⟨h1, -, h3, h4, h5, -⟩ := hd
   rw [Lam_ev]
   have := m0d_pos (D := D)

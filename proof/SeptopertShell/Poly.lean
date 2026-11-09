@@ -559,7 +559,7 @@ theorem eval_expandTerm (t : Mono × ℚ) (d : Fin 3) (a : ℚ) (h : Fin 3 → �
     simp
     rw [add_pow, Finset.mul_sum]
     refine Finset.sum_congr rfl fun l _ => ?_
-    push_cast; ring
+    ring
 
 theorem eval_shiftVar (p : Poly) (d : Fin 3) (a : ℚ) (h : Fin 3 → ℝ) :
     (shiftVar p d a).eval h = p.eval (Function.update h d (h d + a)) := by
@@ -638,7 +638,7 @@ theorem pos_of_checkTreeC {t : SplitTree} : ∀ {p : Poly} {lo hi : Fin 3 → �
       convert this using 2
       ext i
       by_cases hi : i = d
-      · subst hi; simp; push_cast; ring
+      · subst hi; simp; ring
       · simp [Function.update_of_ne hi]
     · have := ihr hr (x := x) (fun i => by
         by_cases hi : i = d
@@ -648,7 +648,7 @@ theorem pos_of_checkTreeC {t : SplitTree} : ∀ {p : Poly} {lo hi : Fin 3 → �
       convert this using 2
       ext i
       by_cases hi : i = d
-      · subst hi; simp; push_cast; ring
+      · subst hi; simp; ring
       · simp [Function.update_of_ne hi]
 
 end SeptopertShell

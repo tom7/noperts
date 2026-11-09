@@ -67,7 +67,7 @@ theorem eval_madd (p q : IPoly) (x : Fin 3 → ℝ) : eval (madd p q) x = eval p
     rw [ih]; ring
   | case6 a p b q h1 h2 ih =>
     rw [madd]; simp only [h1, ite_false]
-    rw [if_neg (by simpa using h2)]
+    rw [ite_eq_right (by simpa using h2)]
     simp only [eval_cons] at ih ⊢
     rw [ih]; ring
 
