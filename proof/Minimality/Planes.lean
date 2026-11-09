@@ -53,7 +53,7 @@ theorem coplanar_of_plane {S : Set ℝ³} {N : ℝ³} (hN : N ≠ 0) {c : ℝ}
     rw [SetLike.mem_coe, Submodule.mem_orthogonal_singleton_iff_inner_right]
     show ⟪N, x - y⟫ = 0
     rw [inner_sub_right, h x hx, h y hy, sub_self]
-  haveI : Fact (finrank ℝ ℝ³ = 2 + 1) := ⟨by simp⟩
+  have : Fact (finrank ℝ ℝ³ = 2 + 1) := ⟨by simp⟩
   have h2 : finrank ℝ (ℝ ∙ N)ᗮ = 2 := Submodule.finrank_orthogonal_span_singleton hN
   unfold Coplanar
   calc Module.rank ℝ (vectorSpan ℝ S) ≤ Module.rank ℝ (ℝ ∙ N)ᗮ := Submodule.rank_mono hle

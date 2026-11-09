@@ -43,7 +43,7 @@ def HasHorizontalDoubleNormal {k : ℕ} (p : ZMod k → ℝ²) (z : ZMod k → �
 
 /-- An interior maximum over a window of the cycle is a strict local maximum. -/
 theorem exists_localMax_window {k : ℕ} (z : ZMod k → ℝ) (hz : Function.Injective z)
-    (B : ZMod k) (L : ℕ) (hL : L < k) (u : ℕ) (hu0 : 0 < u) (huL : u < L)
+    (B : ZMod k) (L : ℕ) (hL : L < k) (u : ℕ) (_hu0 : 0 < u) (huL : u < L)
     (h0 : z B < z (B + u)) (hL' : z (B + L) < z (B + u)) :
     ∃ p : ℕ, 0 < p ∧ p < L ∧ z (B + p - 1) < z (B + p) ∧ z (B + p + 1) < z (B + p) := by
   obtain ⟨p, hp, hmax⟩ := (range (L + 1)).exists_max_image (fun q : ℕ => z (B + q))

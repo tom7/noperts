@@ -158,7 +158,7 @@ theorem rotZ_mem_SO3 {c s : ℝ} (h : c ^ 2 + s ^ 2 = 1) : rotZ c s ∈ SO3 := b
   · ext i j
     fin_cases i <;> fin_cases j <;>
       simp [rotZ, Matrix.mul_apply, Fin.sum_univ_three] <;>
-        first | ring1 | linear_combination h | linear_combination -h
+        first | ring1 | linear_combination h
   · simp [rotZ, Matrix.det_fin_three]; linear_combination h
 
 theorem rotX_mem_SO3 {c s : ℝ} (h : c ^ 2 + s ^ 2 = 1) : rotX c s ∈ SO3 := by
@@ -167,7 +167,7 @@ theorem rotX_mem_SO3 {c s : ℝ} (h : c ^ 2 + s ^ 2 = 1) : rotX c s ∈ SO3 := b
   · ext i j
     fin_cases i <;> fin_cases j <;>
       simp [rotX, Matrix.mul_apply, Fin.sum_univ_three] <;>
-        first | ring1 | linear_combination h | linear_combination -h
+        first | ring1 | linear_combination h
   · simp [rotX, Matrix.det_fin_three]; linear_combination h
 
 /-- Every nonzero direction is taken to the standard view axis by some

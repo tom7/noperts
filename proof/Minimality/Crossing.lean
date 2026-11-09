@@ -257,7 +257,7 @@ theorem isRupert_of_admissibleViews_nonempty (V W : Finset ℝ³) (hWV : W ⊆ V
     rw [SetLike.mem_coe, Submodule.mem_orthogonal_singleton_iff_inner_right]
     show ⟪N, x - y⟫ = 0
     rw [inner_sub_right, hNc x hx, hNc y hy, sub_self]
-  haveI : Fact (finrank ℝ ℝ³ = 2 + 1) := ⟨by simp⟩
+  have : Fact (finrank ℝ ℝ³ = 2 + 1) := ⟨by simp⟩
   have h2 : finrank ℝ (ℝ ∙ N)ᗮ = 2 := Submodule.finrank_orthogonal_span_singleton hN
   have hge : 2 ≤ finrank ℝ (vectorSpan ℝ (W : Set ℝ³)) := by
     by_contra hc; push Not at hc

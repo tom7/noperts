@@ -10,6 +10,7 @@ public import Minimality.Type08S.L2.K93LexTw
 
 set_option maxHeartbeats 1000000
 
+set_option linter.unusedVariables false
 set_option autoImplicit true
 set_option relaxedAutoImplicit true
 open scoped RealInnerProductSpace

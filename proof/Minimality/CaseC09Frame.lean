@@ -587,7 +587,6 @@ theorem q1_side_contra {Q1 : Finset ℝ³} {f1 f2 : ℝ³ →ᵃ[ℝ] ℝ} {v p 
     rw [hw, zero_div, zero_mul, add_zero, hφv, hφp] at this
     linarith
   obtain ⟨o1, o2⟩ := two_sided_of_not_oneSided hQ hos
-  beta_reduce at o1 o2
   have key : ∀ w, ⟪v, e⟫ ≤ ⟪w, e⟫ → 0 ≤ ⟪w - v, e⟫ / ⟪e, e⟫ := fun w hw => by
     rw [inner_sub_left]; exact div_nonneg (by linarith) hee.le
   have key' : ∀ w, ⟪w, e⟫ ≤ ⟪v, e⟫ → ⟪w - v, e⟫ / ⟪e, e⟫ ≤ 0 := fun w hw => by

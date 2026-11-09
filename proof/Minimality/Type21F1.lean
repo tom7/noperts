@@ -200,8 +200,8 @@ theorem type21_Y_robust {z0 z6 z2 z5 z1 α β p q A B : ℝ} (hα : 0 < α) (hβ
   first
     | exact absurd rfl hab
     | exact ⟨_, by simp only [quint_0, quint_1, quint_2, quint_3, quint_4]; intro h; linarith, D1⟩
-    | exact ⟨_, by simp only [quint_0, quint_1, quint_2, quint_3, quint_4]; intro h; linarith, D5⟩
-    | exact ⟨_, by simp only [quint_0, quint_1, quint_2, quint_3, quint_4]; intro h; linarith, D0⟩
+    | exact ⟨_, by simp only [quint_0, quint_1, quint_2, quint_3]; intro h; linarith, D5⟩
+    | exact ⟨_, by simp only [quint_0, quint_1]; intro h; linarith, D0⟩
 
 /-! ### A five-corner edge view -/
 
