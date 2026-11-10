@@ -1197,7 +1197,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
   · -- type 29: the octahedron `O = K − 6` with the cap `6` (`Minimality.type29_cap`) has the normal
     -- form `N` (Lemma 21.1); its class (Lemma 21.2) is the sign pattern of `(a2, b0, V)`. Classes K3
     -- and K4 are closed by the sign-matrix SAT route (`NF29.isRupert_K3a_closed`, …, Type29SAT/; no
-    -- general-position hypothesis). The class boundaries are closed by the SAT route with tie views (`NF29.isRupert_boundary`, Type29TSAT/), and K2 off `Z1` (`NF29.isRupert_K2_offZ1`, Type29KSAT/). Open in Lean: K2 on `Z1` with `x1 - x4` orthogonal to the plane of the facet `015`, K1
+    -- general-position hypothesis). The class boundaries are closed by the SAT route with tie views (`NF29.isRupert_boundary`, Type29TSAT/), and K2 off `Z1` (`NF29.isRupert_K2_offZ1`, Type29KSAT/). Open in Lean: K2 on `Z1` with `x1 - x4` orthogonal to the plane of the facet `015` (and its `σ`-image), K1
     obtain ⟨F, hd⟩ := Minimality.type29_cap hx hvert hR
     set N := Minimality.IsCap29.toNF29 hx F hd
     rcases N.classes with hbd | hK2 | hK1 | ⟨ha2, hb0, hV⟩ | ⟨ha2, hb0, hV⟩ | ⟨ha2, hb0, hV⟩ |
@@ -1206,7 +1206,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
       exact hnR (N.isRupert_boundary hbd)
     · -- class K2 (`a2, b0 < 0`): closed by the SAT route with tie views off the strata `Z1` (for `V < 0`) and `σ(Z1)`
       -- (for `0 < V`), `V = 0` being a class boundary (`NF29.isRupert_K2_offZ1`); on `Z1` and `σ(Z1)` it is closed when the
-      -- edge `x1 - x4` (resp. `x1 - x5`) is not orthogonal to the plane of the facet `015` (`NF29.isRupert_K2a_Z1_caseA`,
+      -- edge `x1 - x4` (resp. `x1 - x5`) is not orthogonal to the plane of the facet `015` (resp. `124`) (`NF29.isRupert_K2a_Z1_caseA`,
       -- `NF29.isRupert_K2b_Z1_caseA`); the residual is that orthogonal case
       obtain ⟨ha2, hb0⟩ := hK2
       by_cases hZ : (N.V < 0 ∧ N.s = 1 ∧ N.t = 1 ∧ N.a0 + N.h0 = 0) ∨ (0 < N.V ∧ N.t = 1 ∧ N.s = 1 ∧ N.b2 + N.h2 = 0)
@@ -1219,7 +1219,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
           · exact hnR (N.isRupert_K2b_Z1_caseA ha2 hb0 hV hZ1 hA)
         · exact byThm5Faces hx hN _ h3 (fun _ => by
             by_cases hres : Minimality.H29S.H29GenResid N.facets
-            · sorry  -- class K2 on `Z1` or `σ(Z1)` with the edge `x1 - x4` (resp. `x1 - x5`) orthogonal to the plane of the facet `015`
+            · sorry  -- class K2 on `Z1` or `σ(Z1)` with the edge `x1 - x4` (resp. `x1 - x5`) orthogonal to the plane of the facet `015` (resp. `124`)
             · exact (Minimality.H29S.h29g_rule_false hN _ hres).elim)
       · exact hnR (N.isRupert_K2_offZ1 ha2 hb0 hZ)
     · exact byThm5Faces hx hN _ h3 (fun _ => by
