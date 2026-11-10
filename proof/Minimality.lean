@@ -22,6 +22,7 @@ public import Minimality.Type16Arc3B
 public import Minimality.Type16GenA
 public import Minimality.Type16SAT.FinalW
 public import Minimality.Type16SAT.FinalA16
+public import Minimality.Type16SAT.FinalZS16
 public import Minimality.SilS0XD
 public import Minimality.Type20IMA
 public import Minimality.Type20IV
@@ -985,8 +986,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
               (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
           · -- the sign-matrix SAT route (Type16SAT): classes ++-+, ++--, +--+, the 16 class boundaries of
             -- `Cls16ClosedW` and their sigma images, at every metric, by kernel-checked LRAT certificates;
-            -- `sorry` only for the classes +-+-, --+-, the class +--- (and ----) with both inner products zero, and the
-            -- boundaries ++-0, +0-+ (and images)
+            -- `sorry` only for the classes +-+-, --+-, the class +--- (and ----) with both inner products zero and the Z shape
+            -- equations, and the boundaries ++-0, +0-+ (and images)
             by_cases hcl : Minimality.H16.SAT.Cls16Closed x ∨ Minimality.H16.SAT.Cls16ClosedW x
             · exact (hN.2 (Minimality.H16.SAT.isRupert_closed
                 (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
@@ -997,8 +998,15 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
               · exact (hN.2 (Minimality.H16.SAT.isRupert_cls16A
                   (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
                   hA)).elim
-              · -- residual: `+---` / `----` with both inner products zero (the edge `x1 - x6` orthogonal to `x0 - x3`, `x0 - x6`)
-                sorry
+              · -- the class `+---` (and `----`) with one of the 18 shape entries of the stratum `Z` nonzero: one kernel-checked
+                -- SAT core (`isRupert_cls16Z`, Type16SAT/FinalZS16)
+                by_cases hZ : Minimality.H16.SAT.Cls16Z x
+                    (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
+                · exact (hN.2 (Minimality.H16.SAT.isRupert_cls16Z
+                    (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
+                    hZ)).elim
+                · -- residual: `+---` / `----` with both inner products zero and the Z shape equations
+                  sorry
           · exact (Minimality.H16A.h16g_arcgen_rule_false hN _ hres2).elim
         · exact Minimality.H16U.h16v_rule_false hN _ hres)))
   · -- type 17: `not_type17_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
