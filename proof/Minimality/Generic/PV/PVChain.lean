@@ -18,7 +18,7 @@ def VShapedSeq {n : ℕ} (f : Fin n → ℝ) : Prop :=
 
 theorem vshaped_of_nolocmax {n : ℕ} (f : Fin n → ℝ) (hn : 0 < n) (hinj : Function.Injective f)
     (h : ∀ i j l : Fin n, i < j → j < l → f j < max (f i) (f l)) : VShapedSeq f := by
-  haveI : Nonempty (Fin n) := ⟨⟨0, hn⟩⟩
+  have : Nonempty (Fin n) := ⟨⟨0, hn⟩⟩
   obtain ⟨m, hm⟩ := Finite.exists_min f
   have hlt : ∀ i, i ≠ m → f m < f i := fun i hi =>
     lt_of_le_of_ne (hm i) (fun e => hi (hinj e.symm))
@@ -310,7 +310,7 @@ theorem CU_chain_L : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
       have hdel := CU_del_mid [] e q c' R (by simpa using hnd)
         (by first | exact Or.inl ⟨by linarith, by linarith⟩ | exact Or.inr ⟨by linarith, by linarith⟩)
       rw [skel1_end_l]; simpa using hdel
-    · exact absurd (by first | exact h | exact h.symm) hne
+    · exact absurd (by first | exact h.symm) hne
     · have : e = q := by rcases he with h1 | h1 | h1 <;> first | exact h1 | (exfalso; linarith)
       subst this
       rw [skel1_mid (by intro h'; linarith) (by intro h'; linarith)]; simp
@@ -346,11 +346,11 @@ theorem CU_chain_L : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
       have hdel := CU_del_mid [a0] e q c' R (by simpa using hnd)
         (by first | exact Or.inl ⟨by linarith, by linarith⟩ | exact Or.inr ⟨by linarith, by linarith⟩)
       rw [skel1_mid (by intro h'; linarith) (by intro h'; linarith)]; simpa using hdel
-    · exact absurd (by first | exact h | exact h.symm) hne
+    · exact absurd (by first | exact h.symm) hne
     · have : e = q := by rcases he with h1 | h1 | h1 | h1 <;> first | exact h1 | (exfalso; linarith)
       subst this
       have hdel := CU_del_mid [] a0 p e (c' :: R) (by simpa using hnd)
-        (by first | exact Or.inl ⟨by linarith, by linarith⟩ | exact Or.inr ⟨by linarith, by linarith⟩)
+        (by first | exact Or.inl ⟨by linarith, by linarith⟩)
       rw [skel1_mid (by intro h'; linarith) (by intro h'; linarith)]; simpa using hdel
 
 end Minimality

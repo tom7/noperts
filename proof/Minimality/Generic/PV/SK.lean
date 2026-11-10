@@ -96,7 +96,7 @@ lemma lm_iff (hm : 2 ≤ m) (z : ZMod (m + 1) → ℝ) (i : ZMod (m + 1))
     (j : ZMod m) :
     (z (phi i (j - 1)) < z (phi i j) ∧ z (phi i (j + 1)) < z (phi i j)) ↔
     (z (phi i j - 1) < z (phi i j) ∧ z (phi i j + 1) < z (phi i j)) := by
-  haveI : Fact (1 < m) := ⟨by omega⟩
+  have : Fact (1 < m) := ⟨by omega⟩
   have hn : (0 : ZMod m) ≠ -1 := by
     intro h; apply one_ne_zero (α := ZMod m); simpa using h.symm
   have e1 : z (i - 1) < z (i + 1) ↔ z i < z (i + 1) := by
@@ -192,7 +192,7 @@ lemma CUn_rot (k : ℕ) (f : ℕ → ℝ) : CUn k f ↔ CUn k (fun i => f ((i + 
   by_cases hk : k = 0
   · simp [hk]
   · simp only [ne_eq, hk, not_false_eq_true, exists_true_left]
-    haveI : NeZero k := ⟨hk⟩
+    have : NeZero k := ⟨hk⟩
     have := isCyclicUnimodal_shift (fun i : ZMod k => f i.val) 1
     refine this.trans ?_
     have h : (fun i : ZMod k => f (i + 1).val) = fun i : ZMod k => f ((i.val + 1) % k) := by
@@ -205,7 +205,7 @@ lemma CUn_congr {k : ℕ} {f g : ℕ → ℝ} (h : ∀ i < k, f i = g i) : CUn k
   unfold CUn
   by_cases hk : k = 0
   · simp [hk]
-  · haveI : NeZero k := ⟨hk⟩
+  · have : NeZero k := ⟨hk⟩
     have : (fun i : ZMod k => f i.val) = fun i : ZMod k => g i.val := by
       funext i; exact h _ i.val_lt
     simp only [ne_eq, hk, not_false_eq_true, exists_true_left, this]
@@ -241,7 +241,7 @@ lemma CU_cons_iff (b : ℝ) (q : List ℝ) (hq : 2 ≤ q.length) (hnd : (b :: q)
   have h1 : (b :: q).length ≠ 0 := by simp
   have h2 : q.length ≠ 0 := by omega
   simp only [ne_eq, h1, h2, not_false_eq_true, exists_true_left]
-  haveI : NeZero q.length := ⟨h2⟩
+  have : NeZero q.length := ⟨h2⟩
   set m := q.length with hmdef
   let z : ZMod (m + 1) → ℝ := fun i => (b :: q).getD i.val 0
   have hinj : Function.Injective z := by

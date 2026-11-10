@@ -729,7 +729,7 @@ theorem meet_of_smul {d₀ d₁ e₀ e₁ v : ℝ³} {K s t l : ℝ} (hK : K ≠
     (e₀ + (t / K) • (e₁ - e₀)) - (d₀ + (s / K) • (d₁ - d₀)) = (l / K) • v := by
   have h2 : (e₀ + (t / K) • (e₁ - e₀)) - (d₀ + (s / K) • (d₁ - d₀)) - (l / K) • v =
       K⁻¹ • (K • (e₀ - d₀) + t • (e₁ - e₀) - s • (d₁ - d₀) - l • v) := by
-    match_scalars <;> field_simp <;> ring
+    match_scalars <;> field_simp ; ring
   rw [h, sub_self, smul_zero] at h2
   exact sub_eq_zero.mp h2
 
@@ -906,14 +906,14 @@ theorem rimCert_edgePairσ_robust {v w a b c : ℝ³} (V : Finset ℝ³) {σ : �
 
 /-- **`rimCert_edgeTri_robust` in either orientation**. -/
 theorem rimCert_edgeTriσ_robust {v w a b : ℝ³} (V : Finset ℝ³) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
-    (hvV : v ∈ V) (hwV : w ∈ V) (haV : a ∈ V) (hbV : b ∈ V)
+    (hvV : v ∈ V) /- (hwV : w ∈ V) -/ (haV : a ∈ V) (hbV : b ∈ V)
     (hT : 0 < σ * det3 (a - v) (b - v) (w - v))
     (hz : ¬ (⟪v, w - v⟫ = ⟪a, w - v⟫ ∧ ⟪a, w - v⟫ = ⟪b, w - v⟫))
     (hV : ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ EdgeMid v w a b z ∨
       TriHiddenσ σ (w - v) v a b z) : RimCert V (w - v) := by
   rcases hσ with rfl | rfl
   · simp only [one_mul] at hT
-    refine rimCert_edgeTri_robust V hvV hwV haV hbV hT hz (fun z hz' => ?_)
+    refine rimCert_edgeTri_robust V hvV haV hbV hT hz (fun z hz' => ?_)
     rcases hV z hz' with h | h | h | h | h | ⟨h1, h2, h3⟩
     · exact Or.inl h
     · exact Or.inr (Or.inl h)
@@ -924,7 +924,7 @@ theorem rimCert_edgeTriσ_robust {v w a b : ℝ³} (V : Finset ℝ³) {σ : ℝ}
       exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨h1, h2, h3⟩))))
   · have e : det3 (b - v) (a - v) (w - v) = -det3 (a - v) (b - v) (w - v) := by
       simp only [det3_expand, PiLp.sub_apply]; ring
-    refine rimCert_edgeTri_robust (a := b) (b := a) V hvV hwV hbV haV (by rw [e]; linarith)
+    refine rimCert_edgeTri_robust (a := b) (b := a) V hvV hbV haV (by rw [e]; linarith)
       (fun h => hz ⟨h.1.trans h.2, h.2.symm⟩) (fun z hz' => ?_)
     rcases hV z hz' with h | h | h | h | h | ⟨h1, h2, h3⟩
     · exact Or.inl h
@@ -1078,7 +1078,7 @@ theorem Cert16.toN {x : Fin 7 → ℝ³} (h : Cert16 x) : CertN16 x := by
     ⟨v, w, a, b, -, σ, hσ, hT, hz, hV⟩ | ⟨v, l, -, -, c, hc, hr⟩ | ⟨v, l, -, c, hc, hr⟩
   · exact ⟨_, named16_seg v w, rimCert_edgePairσ_robust _ hσ (mem_image7 v) (mem_image7 w)
       (mem_image7 a) (mem_image7 b) (mem_image7 c) q₁ q₂ q₃ q₄ hE h3 hV⟩
-  · exact ⟨_, named16_seg v w, rimCert_edgeTriσ_robust _ hσ (mem_image7 v) (mem_image7 w)
+  · exact ⟨_, named16_seg v w, rimCert_edgeTriσ_robust _ hσ (mem_image7 v)
       (mem_image7 a) (mem_image7 b) hT hz hV⟩
   · exact ⟨_, ⟨v, c, hc, rfl⟩, hr.rimCert (Or.inr (Or.inl rfl))⟩
   · exact ⟨_, ⟨v, c, hc, rfl⟩, hr.rimCert (Or.inr (Or.inr rfl))⟩

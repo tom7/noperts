@@ -327,7 +327,7 @@ theorem det3_rot (D d w : ℝ³) : det3 D d w = det3 d w D := by
 
 theorem val_succ_sub {k : ℕ} [NeZero k] (hk : 3 ≤ k) (i c : ZMod k) (h : i + 1 ≠ c) :
     (i + 1 - c).val = (i - c).val + 1 ∧ (i - c).val + 1 < k := by
-  haveI : Fact (1 < k) := ⟨by omega⟩
+  have : Fact (1 < k) := ⟨by omega⟩
   have e : i + 1 - c = (i - c) + 1 := by ring
   have hne : (i + 1 - c).val ≠ 0 := fun h0 => h (by
     have := (ZMod.val_eq_zero _).1 h0; exact sub_eq_zero.1 this)

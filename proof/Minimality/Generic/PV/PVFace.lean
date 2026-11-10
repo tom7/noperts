@@ -17,7 +17,7 @@ open Finset Filter
 noncomputable def chartS (s : ℝ) (n d : ℝ³) (p : ℝ³) : ℝ² := !₂[⟪cross n d, p⟫, s * ⟪d, p⟫]
 
 theorem chartS_sub (s : ℝ) (n d p q : ℝ³) : chartS s n d p - chartS s n d q = chartS s n d (p - q) := by
-  ext i; fin_cases i <;> simp [chartS, inner_sub_right] <;> ring
+  ext i; fin_cases i <;> simp [chartS, inner_sub_right] ; ring
 
 theorem chartS_zero (s : ℝ) (n d p : ℝ³) : chartS s n d p 0 = ⟪cross n d, p⟫ := by simp [chartS]
 theorem chartS_one (s : ℝ) (n d p : ℝ³) : chartS s n d p 1 = s * ⟪d, p⟫ := by simp [chartS]

@@ -26,7 +26,7 @@ theorem xr_ge [NeZero (m₁ + m₂)] (c₁ : Fin m₁ → α) (c₂ : Fin m₂ �
 
 theorem zmod_succ_val {k : ℕ} [NeZero k] (hk : 2 ≤ k) (i : ZMod k) (h : i.val + 1 < k) :
     (i + 1).val = i.val + 1 := by
-  haveI : Fact (1 < k) := ⟨by omega⟩
+  have : Fact (1 < k) := ⟨by omega⟩
   rw [ZMod.val_add_of_lt (by rw [ZMod.val_one]; exact h), ZMod.val_one]
 
 theorem zmod_succ_last {k : ℕ} [NeZero k] (i : ZMod k) (h : i.val + 1 = k) : i + 1 = 0 := by
