@@ -27,6 +27,8 @@ public import Minimality.Type16SAT.FinalZS16
 public import Minimality.Type16SAT.PLSlide16
 public import Minimality.Type16SAT.FinalPMPM16
 public import Minimality.Type16SAT.GPDead16
+public import Minimality.Type16SAT.FinalW16Y
+public import Minimality.Type16SAT.ResW16
 public import Minimality.SilS0XD
 public import Minimality.Type20IMA
 public import Minimality.Type20IV
@@ -990,8 +992,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
               (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
           · -- the sign-matrix SAT route (Type16SAT): classes ++-+, ++--, +--+, the 16 class boundaries of
             -- `Cls16ClosedW` and their sigma images, at every metric, by kernel-checked LRAT certificates;
-            -- `sorry` only for the boundaries ++-0, +0-+ and the other one-zero vectors next to the open classes, and 7
-            -- vectors with two or more zeros (and their images)
+            -- `sorry` only for the one-zero vectors 0-+-, 0--- (zero at [0126]) and 7 vectors with two or more zeros
+            -- (and their images)
             by_cases hcl : Minimality.H16.SAT.Cls16Closed x ∨ Minimality.H16.SAT.Cls16ClosedW x
             · exact (hN.2 (Minimality.H16.SAT.isRupert_closed
                 (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
@@ -1036,9 +1038,23 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
                       · exact (Minimality.H16.SAT.not_cls16Dead
                           (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
                           hDead).elim
-                      · -- residual: the boundaries ++-0, +0-+ and the other one-zero vectors next to the open classes,
-                        -- and the 7 vectors with two or more zeros and `C [1234] < 0` (and images)
-                        sorry
+                      · -- the one-zero vectors with the zero at `[0134]` or `[2346]`: `+0-+`, `-0-+`,
+                        -- `+0--`, `-0--` (two kernel-checked cores each, T case and Z case; on `PL` at `r = 1` the Slide
+                        -- Lemma if `⟪x 0 - x 3, x 6 - x 3⟫ ≠ 0`, else a split leaf next to an edge view), `+0+-`, `-0+-`
+                        -- (one plain wall core each) and the boundary `+-0-` (two cores and `isRupert_PL16`), all with
+                        -- their `sigma16` images (`isRupert_wallR_all`, `isRupert_wallX_all`, `isRupert_pmzm`;
+                        -- Type16SAT/FinalW16, FinalW16X, FinalW16Y, ResW16)
+                        by_cases hW : Minimality.H16.SAT.Cls16WallR x ∨ Minimality.H16.SAT.Cls16WallX x ∨
+                            (Minimality.H16.SAT.Vec16 1 (-1) 0 (-1) x ∨ Minimality.H16.SAT.Vec16 (-1) (-1) 0 (-1) x)
+                        · have T :=
+                            Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH
+                          rcases hW with hW | hW | hW
+                          · exact (hN.2 (Minimality.H16.SAT.isRupert_wallR_all T hW)).elim
+                          · exact (hN.2 (Minimality.H16.SAT.isRupert_wallX_all T hW)).elim
+                          · exact (hN.2 (Minimality.H16.SAT.isRupert_pmzm T hW)).elim
+                        · -- residual: the one-zero vectors `0-+-`, `0---` (zero at `[0126]`) and the 7 vectors with two
+                          -- or more zeros and `C [1234] < 0` (and images)
+                          sorry
           · exact (Minimality.H16A.h16g_arcgen_rule_false hN _ hres2).elim
         · exact Minimality.H16U.h16v_rule_false hN _ hres)))
   · -- type 17: `not_type17_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
