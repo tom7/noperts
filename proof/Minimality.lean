@@ -21,6 +21,7 @@ public import Minimality.Type16VW
 public import Minimality.Type16Arc3B
 public import Minimality.Type16GenA
 public import Minimality.Type16SAT.FinalW
+public import Minimality.Type16SAT.FinalA16
 public import Minimality.SilS0XD
 public import Minimality.Type20IMA
 public import Minimality.Type20IV
@@ -984,12 +985,20 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
               (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
           · -- the sign-matrix SAT route (Type16SAT): classes ++-+, ++--, +--+, the 16 class boundaries of
             -- `Cls16ClosedW` and their sigma images, at every metric, by kernel-checked LRAT certificates;
-            -- `sorry` only for the classes +-+-, +---, --+-, ---- and the boundaries ++-0, +0-+ (and images)
+            -- `sorry` only for the classes +-+-, --+-, the class +--- (and ----) with both inner products zero, and the
+            -- boundaries ++-0, +0-+ (and images)
             by_cases hcl : Minimality.H16.SAT.Cls16Closed x ∨ Minimality.H16.SAT.Cls16ClosedW x
             · exact (hN.2 (Minimality.H16.SAT.isRupert_closed
                 (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
                 hcl)).elim
-            · sorry
+            · -- the class `+---` (and its sigma image `----`) with `T(d03, d16)` or `T(d06, d16)` nonzero: one kernel-checked
+              -- SAT core (`isRupert_cls16A`, Type16SAT/FinalA16)
+              by_cases hA : Minimality.H16.SAT.Cls16A x
+              · exact (hN.2 (Minimality.H16.SAT.isRupert_cls16A
+                  (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
+                  hA)).elim
+              · -- residual: `+---` / `----` with both inner products zero (the edge `x1 - x6` orthogonal to `x0 - x3`, `x0 - x6`)
+                sorry
           · exact (Minimality.H16A.h16g_arcgen_rule_false hN _ hres2).elim
         · exact Minimality.H16U.h16v_rule_false hN _ hres)))
   · -- type 17: `not_type17_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
