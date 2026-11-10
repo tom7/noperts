@@ -51,8 +51,6 @@ theorem sum_zmod3_of_distinct {M : Type*} [AddCommMonoid M] (g : ZMod 3 → M) (
   have h3 : ∑ x, g x = g 0 + g 1 + g 2 := by
     first
       | exact Fin.sum_univ_three g
-      | (rw [show (Finset.univ : Finset (ZMod 3)) = {0, 1, 2} from by decide]
-         simp [add_assoc])
   have hc : ∀ i : ZMod 3, i = 0 ∨ i = 1 ∨ i = 2 := by decide
   rw [h3]
   rcases hc i with rfl | rfl | rfl <;> rcases hc j with rfl | rfl | rfl <;>

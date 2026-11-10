@@ -47,7 +47,7 @@ theorem affineIndependent_of_det3 {a b c d : ℝ³} (h : det3 (b - a) (c - a) (d
 theorem witness_bicappedTetrahedron : IsBicappedTetrahedron !₂[0, 0, 0] !₂[4, 0, 0] !₂[0, 4, 0] !₂[0, 0, 4] !₂[-3, 2, 1] !₂[2, -1, 1] := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · apply List.Nodup.of_map (fun v : ℝ³ => (v 0, v 1, v 2))
-    simp [List.nodup_cons, Matrix.cons_val] <;> norm_num
+    simp [List.nodup_cons, Matrix.cons_val] ; norm_num
   · apply affineIndependent_of_det3
     simp only [det3, cross, PiLp.inner_apply, Fin.sum_univ_three, PiLp.sub_apply,
       RCLike.inner_apply, conj_trivial]
@@ -93,7 +93,7 @@ theorem witness_cappedSquarePyramid : IsCappedSquarePyramid !₂[1, 1, 4] !₂[0
   · apply affineIndependent_of_det3
     simp only [det3, cross, PiLp.inner_apply, Fin.sum_univ_three, PiLp.sub_apply,
       RCLike.inner_apply, conj_trivial]
-    simp [Matrix.cons_val] <;> norm_num
+    simp [Matrix.cons_val] ; norm_num
   · refine ⟨affOf !₂[0, 0, -1] (0), ?_, ?_⟩
     · intro x hx
       simp only [Finset.mem_insert, Finset.mem_singleton] at hx
@@ -140,7 +140,7 @@ theorem witness_cappedSquarePyramid_parallel : IsCappedSquarePyramid !₂[2, 2, 
   · apply affineIndependent_of_det3
     simp only [det3, cross, PiLp.inner_apply, Fin.sum_univ_three, PiLp.sub_apply,
       RCLike.inner_apply, conj_trivial]
-    simp [Matrix.cons_val] <;> norm_num
+    simp [Matrix.cons_val] ; norm_num
   · refine ⟨affOf !₂[0, 0, -1] (0), ?_, ?_⟩
     · intro x hx
       simp only [Finset.mem_insert, Finset.mem_singleton] at hx
@@ -334,7 +334,7 @@ theorem witness_T3_parallel : IsT3 !₂[2, 0, 0] !₂[0, 2, 0] !₂[0, 0, 0] !�
 theorem witness_octahedron : IsOctahedron !₂[0, 0, 10] !₂[0, 0, -10] !₂[10, 0, 1] !₂[-10, 0, -1] !₂[0, 10, 1] !₂[0, -10, -1] := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · apply List.Nodup.of_map (fun v : ℝ³ => (v 0, v 1, v 2))
-    simp [List.nodup_cons, Matrix.cons_val] <;> norm_num
+    simp [List.nodup_cons, Matrix.cons_val] ; norm_num
   · refine ⟨affOf !₂[9, 9, 10] (-100), by wnum, by wnum, by wnum, ?_⟩
     intro x hx h1 h2 h3
     simp only [Finset.mem_insert, Finset.mem_singleton] at hx

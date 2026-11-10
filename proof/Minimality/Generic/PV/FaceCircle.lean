@@ -101,7 +101,7 @@ theorem isRupert_of_rim_key (V : Finset ℝ³) (u₀ v : ℝ³) (hu₀ : u₀ �
 
 theorem zmod_val_add_one {N : ℕ} (hN : 1 ≤ N) (i : ZMod (N + 1)) (hi : i.val < N) :
     (i + 1).val = i.val + 1 := by
-  haveI : Fact (1 < N + 1) := ⟨by omega⟩
+  have : Fact (1 < N + 1) := ⟨by omega⟩
   rw [ZMod.val_add, ZMod.val_one, Nat.mod_eq_of_lt (by omega)]
 
 /-- **The one-face rim lemma (Corollary FC, exact form).**  `F` is a face in the plane

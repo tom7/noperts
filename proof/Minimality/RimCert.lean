@@ -263,7 +263,7 @@ theorem rimCert_edgePair_robust {v w a b c : ℝ³} (V : Finset ℝ³)
 /-- **A triangle closing, certificate form** (`isRupert_edgeTri_robust` without the horizontal
 double normal). -/
 theorem rimCert_edgeTri_robust {v w a b : ℝ³} (V : Finset ℝ³)
-    (hvV : v ∈ V) (hwV : w ∈ V) (haV : a ∈ V) (hbV : b ∈ V)
+    (hvV : v ∈ V) (haV : a ∈ V) (hbV : b ∈ V)
     (hT : 0 < det3 (a - v) (b - v) (w - v))
     (hz : ¬ (⟪v, w - v⟫ = ⟪a, w - v⟫ ∧ ⟪a, w - v⟫ = ⟪b, w - v⟫))
     (hV : ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ EdgeMid v w a b z ∨

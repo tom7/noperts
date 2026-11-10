@@ -16,8 +16,8 @@ open Finset
 /-- The linear map `(x, y) ↦ (x, s y)`. -/
 noncomputable def reflS (s : ℝ) : ℝ² →ₗ[ℝ] ℝ² where
   toFun x := !₂[x 0, s * x 1]
-  map_add' x y := by ext i; fin_cases i <;> simp <;> ring
-  map_smul' c x := by ext i; fin_cases i <;> simp <;> ring
+  map_add' x y := by ext i; fin_cases i <;> simp ; ring
+  map_smul' c x := by ext i; fin_cases i <;> simp ; ring
 
 theorem convPos_chartS {s : ℝ} (hs : s = 1 ∨ s = -1) {n d : ℝ³} {F : Finset ℝ³}
     (h : ConvPos (F.image (planeChart n d))) : ConvPos (F.image (chartS s n d)) := by
@@ -77,7 +77,7 @@ theorem lemmaPV_core (P : IsPrismPair V F₁ F₂ H n₁ n₂ h₁ h₂) (E : PV
     (fun y hy hne => face2_lt P.n₂_ne (P.on₂ _ E.A₂_mem) (P.on₂ y hy) (E.A₂_near y hy hne))
   have hm₁ := hc₁.two
   have hm₂ := hc₂.two
-  haveI : NeZero (m₁ + m₂) := ⟨by omega⟩
+  have : NeZero (m₁ + m₂) := ⟨by omega⟩
   set v : ℝ³ := σ₁ • cross n₂ (cross n₁ n₂) + σ₂ • cross (cross n₁ n₂) n₁ with hv
   have hnv₁ : ⟪n₁, v⟫ = σ₁ * ⟪d, d⟫ := by
     rw [hv, inner_add_right, inner_smul_right, inner_smul_right, inner_v1, inner_v2']; ring
