@@ -779,7 +779,7 @@ theorem isRupert_of_cert_seq_edge {x : Fin 7 → ℝ³} (T : Type16 x)
         obtain ⟨-, hd, hti⟩ := hn
         refine ⟨⟨1, one_ne_zero, ?_⟩, hti⟩
         rw [one_smul]
-        exact rimCert_edgeTriσ_robust _ hd.1 (mem_image7 v) (mem_image7 w) (mem_image7 a)
+        exact rimCert_edgeTriσ_robust _ hd.1 (mem_image7 v) (mem_image7 a)
           (mem_image7 b) hd.2.1 hd.2.2.1 hd.2.2.2
     have hd' := hq'.mono fun n hn => hn.2.1
     have cls := eTri_cls _ ht
