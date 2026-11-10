@@ -5,7 +5,7 @@ defaultTargets = ["Noperts", "SeptopertClassic", "SeptopertM18", "ChippedM18", "
   "constructSeptopertClassic", "checkSeptopertClassicCap", "constructSeptopertM18", "checkSeptopertM18Cap", "checkSeptopertM18Arc", "constructChippedM18", "checkChippedM18Cap", "checkChippedM18Arc", "checkSeptopertM12Arc", "checkSeptopertM12Axis", "checkSeptopertM12PCap", "constructSeptopertM12", "checkSeptopertArc", "checkSeptopertAxis", "checkSeptopertPCap", "constructSeptopert", "constructDeltoidalHexecontahedron",
   "constructPentagonalHexecontahedron", "constructSnubDodecahedron", "constructSnubCube",
   "checkSnubCubeCap", "constructNopert231",
-  "SeptopertFamily", "checkSeptopertFamily",
+  "SeptopertFamily", "checkSeptopertFamily", "SeptopertShell", "SeptopertShellNative",
   "Tests"]
 
 [leanOptions]
@@ -70,6 +70,14 @@ globs = ["SeptopertM12", "SeptopertM12.+"]
 [[lean_lib]]
 name = "Septopert"
 globs = ["Septopert", "Septopert.+"]
+
+[[lean_lib]]
+name = "SeptopertShell"
+globs = ["SeptopertShell", "SeptopertShell.+"]
+
+[[lean_lib]]
+name = "SeptopertShellNative"
+globs = ["SeptopertShellNative"]
 
 [[lean_lib]]
 name = "ProofOfMainTheorem"
@@ -209,6 +217,16 @@ buildType = "release"
 [[lean_exe]]
 name = "checkSeptopertFamily"
 root = "checkSeptopertFamily"
+buildType = "release"
+
+[[lean_exe]]
+name = "checkSeptopertShellSlab"
+root = "checkSeptopertShellSlab"
+buildType = "release"
+
+[[lean_exe]]
+name = "checkSeptopertShell"
+root = "checkSeptopertShell"
 buildType = "release"
 
 [[lean_lib]]
