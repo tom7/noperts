@@ -25,6 +25,7 @@ public import Minimality.Type16SAT.FinalW
 public import Minimality.Type16SAT.FinalA16
 public import Minimality.Type16SAT.FinalZS16
 public import Minimality.Type16SAT.PLSlide16
+public import Minimality.Type16SAT.FinalPMPM16
 public import Minimality.SilS0XD
 public import Minimality.Type20IMA
 public import Minimality.Type20IV
@@ -988,7 +989,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
               (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
           · -- the sign-matrix SAT route (Type16SAT): classes ++-+, ++--, +--+, the 16 class boundaries of
             -- `Cls16ClosedW` and their sigma images, at every metric, by kernel-checked LRAT certificates;
-            -- `sorry` only for the classes +-+-, --+- and the boundaries ++-0, +0-+ (and images)
+            -- `sorry` only for the boundaries ++-0, +0-+ (and images)
             by_cases hcl : Minimality.H16.SAT.Cls16Closed x ∨ Minimality.H16.SAT.Cls16ClosedW x
             · exact (hN.2 (Minimality.H16.SAT.isRupert_closed
                 (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
@@ -1013,8 +1014,21 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
                   · exact (hN.2 (Minimality.H16.SAT.isRupert_cls16M_resid
                       (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
                       hM hA hZ)).elim
-                  · -- residual: the classes +-+-, --+- and the boundaries ++-0, +0-+ (and images)
-                    sorry
+                  · -- the classes `+-+-` and `--+-`: off PL two kernel-checked SAT cores (T case and Z case), on PL the
+                    -- Slide Lemma (`isRupert_clsPMPM`, Type16SAT/FinalPMPM16)
+                    by_cases hP : (0 < Minimality.H16.SAT.C16 x * Minimality.H16.SAT.br16 x 0 1 2 6 ∧
+                        Minimality.H16.SAT.C16 x * Minimality.H16.SAT.br16 x 0 1 3 4 < 0 ∧
+                        0 < Minimality.H16.SAT.C16 x * Minimality.H16.SAT.br16 x 1 2 3 4 ∧
+                        Minimality.H16.SAT.C16 x * Minimality.H16.SAT.br16 x 2 3 4 6 < 0) ∨
+                      (Minimality.H16.SAT.C16 x * Minimality.H16.SAT.br16 x 0 1 2 6 < 0 ∧
+                        Minimality.H16.SAT.C16 x * Minimality.H16.SAT.br16 x 0 1 3 4 < 0 ∧
+                        0 < Minimality.H16.SAT.C16 x * Minimality.H16.SAT.br16 x 1 2 3 4 ∧
+                        Minimality.H16.SAT.C16 x * Minimality.H16.SAT.br16 x 2 3 4 6 < 0)
+                    · exact (hN.2 (Minimality.H16.SAT.isRupert_clsPMPM
+                        (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
+                        hP)).elim
+                    · -- residual: the boundaries ++-0, +0-+ (and images)
+                      sorry
           · exact (Minimality.H16A.h16g_arcgen_rule_false hN _ hres2).elim
         · exact Minimality.H16U.h16v_rule_false hN _ hres)))
   · -- type 17: `not_type17_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
