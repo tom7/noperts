@@ -1120,6 +1120,28 @@ def ClusterLimitLemma : Prop :=
     ∃ ρ : ℝ, 0 < ρ ∧ ∀ V : Finset ℝ³, x₀ ∈ V → x₁ ∈ V → x₂ ∈ V →
       (∀ v ∈ V, v ≠ x₀ → v ≠ x₁ → v ≠ x₂ → dist v p < ρ) → IsRupert V
 
+/-- **The Wall View Lemma.** Look along `n ≠ 0`. Let `x₀ … x_{k-1}` be the rim of the shadow of
+`V`, listed counterclockwise (strictly convex shadow corners; every other point of `V` strictly
+left of every edge), starting at the lowest run, with levels `⟪xᵢ, n⟫` constant on `0 … s`,
+strictly increasing on `s … r`, constant on `r … r'`, and strictly decreasing on `r' … k`
+(position `k` is position `0`). Then `V` is Rupert.
+
+Why: Tilt the view slightly by a vector `w` normal to the chord of the floor run (or of the
+ceiling run). Ordering the rim corners by level, then by `w`, is an open condition that makes the
+depths cyclically unimodal; a linear function on a strictly convex polygon has no non-global local
+maximum, so the floor and ceiling runs cause no extra peaks. -/
+def WallViewLemma : Prop :=
+  ∀ (V : Finset ℝ³) (n : ℝ³), n ≠ 0 → ∀ (k : ℕ) [NeZero k], 3 ≤ k → ∀ x : ZMod k → ℝ³,
+    (∀ i, x i ∈ V) →
+    (∀ i j, j ≠ i → j ≠ i + 1 → 0 < det3 (x (i + 1) - x i) (x j - x i) n) →
+    (∀ y ∈ V, (∀ j, y ≠ x j) → ∀ i, 0 < det3 (x (i + 1) - x i) (y - x i) n) →
+    ∀ s r r' : ℕ, s < r → r ≤ r' → r' < k →
+      (∀ t : ℕ, t < s → ⟪x t, n⟫ = ⟪x (t + 1), n⟫) →
+      (∀ t : ℕ, s ≤ t → t < r → ⟪x t, n⟫ < ⟪x (t + 1), n⟫) →
+      (∀ t : ℕ, r ≤ t → t < r' → ⟪x t, n⟫ = ⟪x (t + 1), n⟫) →
+      (∀ t : ℕ, r' ≤ t → t < k → ⟪x (t + 1), n⟫ < ⟪x t, n⟫) →
+      IsRupert V
+
 /-! ## Gram extension -/
 
 section GramExtension

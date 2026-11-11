@@ -45,6 +45,7 @@ public import MinimalityExtra.LevelCorner
 public import MinimalityExtra.HiddenEnd
 public import MinimalityExtra.HiddenCap
 public import MinimalityExtra.ClusterLimit
+public import MinimalityExtra.WallView
 public import MinimalityExtra.GramExtension
 public import Minimality.Tilt
 public import Minimality.Thm73
@@ -217,6 +218,7 @@ theorem type29Faces_agree :
 #print axioms hiddenEndLemma
 #print axioms hiddenCapLemma
 #print axioms clusterLimitLemma
+#print axioms wallViewLemma
 
 end MinimalityExtra
 
