@@ -10,6 +10,7 @@ The clause database is a binary trie keyed by clause id (depth `D`).  The partia
 unit propagation is a Nat bitmask over literal codes (bit `l` set = literal `l` is true).
 -/
 set_option autoImplicit false
+set_option linter.unusedVariables false
 
 namespace Minimality.H29.SAT.K29
 
@@ -53,7 +54,7 @@ def get : Nat → Tr → Nat → Option Cl
   | 0, Tr.cl c, _ => some c
   | 0, _, _ => none
   | f + 1, Tr.br a b, k => if k % 2 == 0 then get f a (k / 2) else get f b (k / 2)
-  | f + 1, _, _ => none
+  | _ + 1, _, _ => none
 
 /-- Every clause stored in the trie satisfies `P`. -/
 def AllT (P : Cl → Prop) : Nat → Tr → Prop
