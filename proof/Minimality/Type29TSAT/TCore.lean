@@ -26,7 +26,11 @@ open Minimality.H29.SAT
 /-- A CNF variable of the tie file.  `rh t f q pos`: sign of `RH(t,f,q)` (`pos`: the "> 0" Boolean, else "< 0");
 `ka t f s pos` likewise for `KA(t,f,s)`; `z0 t f` is the guard `D_f // N_t`; `ty t f sd p1 p2 q1 q2` the
 alternation gate of a tie rule (`sd = 1` for side `+`); `tfail t f sd c` the failure of the cycle `c`;
-`wgate sa a sb b` an AND gate with a non-`base` operand. -/
+`wgate sa a sb b` an AND gate with a non-`base` operand.
+Split additions: `qv kind key e1 e2 pos` is the sign of `Q = det3 D_e1 D_e2 v` (kind 0: line view, `key` = the
+view number e in 21..42, `v = vv e = N_A x N_B` for `lines[e - 21] = (A,B)`; kind 1: tie view, `key = 32 t + f`, `v = wf t f`); `pos` as for `rh`.
+`sf kind view f sd cyc` is the split flag: no split certificate `(a, cc, sigma)` exists for the cycle `cyc` (kind 0: at
+the menu view `view`; kind 1: at the tie view `(t, f, sd) = (view, f, sd)`). -/
 inductive W where
   | base (v : V)
   | rh (t f q : Nat) (pos : Bool)
@@ -35,6 +39,8 @@ inductive W where
   | ty (t f sd p1 p2 q1 q2 : Nat)
   | tfail (t f sd : Nat) (c : List Nat)
   | wgate (sa : Bool) (a : W) (sb : Bool) (b : W)
+  | qv (kind key e1 e2 : Nat) (pos : Bool)
+  | sf (kind view f sd : Nat) (cyc : List Nat)
   deriving DecidableEq
 
 /-- Injective code, used only to order gate operands.  `base v` is `0 :: v.key`, so that the order of two
@@ -47,6 +53,8 @@ def W.key : W → List Nat
   | .ty t f sd p1 p2 q1 q2 => [103, t, f, sd, p1, p2, q1, q2]
   | .tfail t f sd c => [104, t, f, sd, c.length] ++ c
   | .wgate sa a sb b => [105, sa.toNat, (a.key).length] ++ a.key ++ [sb.toNat] ++ b.key
+  | .qv k key e1 e2 p => [106, k, key, e1, e2, p.toNat]
+  | .sf k v f sd c => [107, k, v, f, sd, c.length] ++ c
 
 /-- A literal over `W`. -/
 abbrev LitW := Bool × W

@@ -13,7 +13,8 @@ The leaf of `(t, f, sd)` (DESIGN 2): `u = wf = N_t x D_f`, tie-break `d = sigma 
 facet (`tie_hfac`; the zero facet `zs` is antiparallel to `t` by T5's `zero_facet_antipar`), the failure literal
 gives `RobUniL` along the rim (`robUniL_of_altT`), and `s0x_lex2_rupert` (Type21SAT/Lex2) makes the shape Rupert.
 So a checked tie rule holds under `rhoW (geoF F)` of any shape that is not Rupert (`tieOK_sound`); under `Z0`
-it holds by its guard literal.
+it holds by its guard literal.  The prefix of `tie_core` up to the facings and the cycle facts is `tie_ctx` (on the
+context literals `tieCtxLits`: state and `Z0`, no `tfail`), for the tie split rule (SSplit, family 40 kind 1).
 
 The `lineS` functional of `(t, s)` is read from the table `lsTab` (the vmap's `LS` lines of the B0 dump), checked
 once against T2's `lsOK` (`lsT_ok`), so the checkers need no `LS` data.
@@ -89,10 +90,15 @@ def stLits (t f sd pp zs1 s : Nat) : List LitW :=
   else if s + 1 = zs1 then [(FpT t f sd s).1, (FpT t f sd s).2]
   else if pp.testBit s then [(FpT t f sd s).1.neg] else [(FpT t f sd s).2.neg]
 
+/-- The context literals of the tie leaf `(t, f, sd, pp, zs1)`: the state of every facet and the guard `Z0(t,f)`, no failure
+literal.  Shared by the tie rule (23) and the tie split rule (40, kind 1), as `ctxLits` of the menu rules (Rule2). -/
+def tieCtxLits (t f sd pp zs1 : Nat) : List LitW :=
+  ((List.range 9).flatMap fun s => stLits t f sd pp zs1 s) ++ [Z0L t f]
+
 /-- The clause of the tie rule `(t, f, sd, pp, zs1)` (`zs1 = zs + 1`, `0` for no zero facet), with the cycle `cyc` of
 its failure variable: the state, the guard `Z0(t,f)`, and `tfail` if the rim has more than three vertices. -/
 def tieLits (t f sd pp zs1 : Nat) (cyc : List Nat) : List LitW :=
-  ((List.range 9).flatMap fun s => stLits t f sd pp zs1 s) ++ [Z0L t f] ++
+  tieCtxLits t f sd pp zs1 ++
   (if 3 < (patCyc.getD pp []).length then [(true, W.tfail t f sd cyc)] else [])
 
 /-- The cycle of the clause's failure variable (first `tfail t f sd _` literal). -/
@@ -116,14 +122,19 @@ def tieOK (t f sd pp zs1 : Nat) (cl : List LitW) : Bool :=
   decide (tieParOK t f sd pp zs1) && cycChk pp L && (L.length == 3 || altChk L cyc) &&
     coversW cl (tieLits t f sd pp zs1 cyc)
 
-theorem mem_tieLits_st {t f sd pp zs1 s : Nat} {cyc : List Nat} {l : LitW} (hs : s < 9)
-    (hl : l ∈ stLits t f sd pp zs1 s) : l ∈ tieLits t f sd pp zs1 cyc := by
-  unfold tieLits
-  exact List.mem_append_left _ (List.mem_append_left _ (List.mem_flatMap.mpr ⟨s, List.mem_range.mpr hs, hl⟩))
+theorem mem_tieCtx_st {t f sd pp zs1 s : Nat} {l : LitW} (hs : s < 9)
+    (hl : l ∈ stLits t f sd pp zs1 s) : l ∈ tieCtxLits t f sd pp zs1 := by
+  unfold tieCtxLits
+  exact List.mem_append_left _ (List.mem_flatMap.mpr ⟨s, List.mem_range.mpr hs, hl⟩)
 
-theorem mem_tieLits_z0 {t f sd pp zs1 : Nat} {cyc : List Nat} : Z0L t f ∈ tieLits t f sd pp zs1 cyc := by
+theorem mem_tieCtx_z0 {t f sd pp zs1 : Nat} : Z0L t f ∈ tieCtxLits t f sd pp zs1 := by
+  unfold tieCtxLits
+  exact List.mem_append_right _ (List.mem_singleton_self _)
+
+theorem mem_tieLits_ctx {t f sd pp zs1 : Nat} {cyc : List Nat} {l : LitW} (hl : l ∈ tieCtxLits t f sd pp zs1) :
+    l ∈ tieLits t f sd pp zs1 cyc := by
   unfold tieLits
-  exact List.mem_append_left _ (List.mem_append_right _ (List.mem_singleton_self _))
+  exact List.mem_append_left _ hl
 
 theorem mem_tieLits_fail {t f sd pp zs1 : Nat} {cyc : List Nat} (h : 3 < (patCyc.getD pp []).length) :
     ((true, W.tfail t f sd cyc) : LitW) ∈ tieLits t f sd pp zs1 cyc := by
@@ -137,8 +148,8 @@ theorem mem_tieLits_fail {t f sd pp zs1 : Nat} {cyc : List Nat} (h : 3 < (patCyc
 `u = wf`, `d = sigma dplus`, `w = tau N_t`: `t` by the tilt, a strict facet by `Fp`, the zero facet `zs` because it is
 antiparallel to `t` (T5) and has the opposite sign in the pattern. -/
 theorem tie_hfac {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S29 x) (hG : GeoOK (geoF F)) {t f sd pp zs1 : Nat}
-    {cyc : List Nat} (hp : tieParOK t f sd pp zs1) (hZ : ¬ Z0 (geoF F) t f)
-    (hno : ∀ l ∈ tieLits t f sd pp zs1 cyc, evalW (rhoW (geoF F)) l = false) (r : Fin 9) :
+    (hp : tieParOK t f sd pp zs1) (hZ : ¬ Z0 (geoF F) t f)
+    (hno : ∀ l ∈ tieCtxLits t f sd pp zs1, evalW (rhoW (geoF F)) l = false) (r : Fin 9) :
     (bits pp r = true → LP3 ⟪F.N r, wf (geoF F) t f⟫ ⟪F.N r, sdR sd • dplus (geoF F) t f⟫
         ⟪F.N r, tauR pp t • F.N ⟨t, hp.1⟩⟫) ∧
     (bits pp r = false → LP3 (-⟪F.N r, wf (geoF F) t f⟫) (-⟪F.N r, sdR sd • dplus (geoF F) t f⟫)
@@ -174,8 +185,8 @@ theorem tie_hfac {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S29 x) (hG : GeoOK (geo
     · -- the zero facet
       have hst : stLits t f sd pp zs1 r.val = [(FpT t f sd r.val).1, (FpT t f sd r.val).2] := by
         simp [stLits, hrt, hz]
-      have a1 := hno (FpT t f sd r.val).1 (mem_tieLits_st (cyc := cyc) r.isLt (by rw [hst]; simp))
-      have a2 := hno (FpT t f sd r.val).2 (mem_tieLits_st (cyc := cyc) r.isLt (by rw [hst]; simp))
+      have a1 := hno (FpT t f sd r.val).1 (mem_tieCtx_st r.isLt (by rw [hst]; simp))
+      have a2 := hno (FpT t f sd r.val).2 (mem_tieCtx_st r.isLt (by rw [hst]; simp))
       have n1 : ¬ h21b_LP (-Ls g t r.val f) (sdR sd * Kk g t f r.val) := fun h => by
         rw [hlex.1.mpr h] at a1; exact absurd a1 (by simp)
       have n2 : ¬ h21b_LP (-(-Ls g t r.val f)) (-(sdR sd * Kk g t f r.val)) := fun h => by
@@ -215,7 +226,7 @@ theorem tie_hfac {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S29 x) (hG : GeoOK (geo
         have hb' : pp.testBit r.val = true := hb
         have hst : stLits t f sd pp zs1 r.val = [(FpT t f sd r.val).1.neg] := by
           simp [stLits, hrt, hz, hb']
-        have a1 := hno (FpT t f sd r.val).1.neg (mem_tieLits_st (cyc := cyc) r.isLt (by rw [hst]; simp))
+        have a1 := hno (FpT t f sd r.val).1.neg (mem_tieCtx_st r.isLt (by rw [hst]; simp))
         rw [evalW_neg] at a1
         have := hlex.1.mp (by simpa using a1)
         rw [ea, eb]; exact lp3_of_lp this
@@ -223,7 +234,7 @@ theorem tie_hfac {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S29 x) (hG : GeoOK (geo
         have hb' : pp.testBit r.val = false := hb
         have hst : stLits t f sd pp zs1 r.val = [(FpT t f sd r.val).2.neg] := by
           simp [stLits, hrt, hz, hb']
-        have a1 := hno (FpT t f sd r.val).2.neg (mem_tieLits_st (cyc := cyc) r.isLt (by rw [hst]; simp))
+        have a1 := hno (FpT t f sd r.val).2.neg (mem_tieCtx_st r.isLt (by rw [hst]; simp))
         rw [evalW_neg] at a1
         have := hlex.2.mp (by simpa using a1)
         rw [ea, eb]; exact lp3_of_lp this
@@ -271,21 +282,43 @@ theorem robUniL_of_altT {k : ℕ} [NeZero k] (g : Geo) {x : Fin 7 → ℝ³} (hx
 
 /-! ### Soundness of the tie rule -/
 
-/-- **The core of the tie rule soundness**: all literals of the tie rule clause false gives a Rupert shape. -/
+/-- **`tie_ctx`, the shared prefix of the tie leaves** (the tie rule 23 here, the tie split rule 40 kind 1 in SSplit):
+all context literals false (state of every facet and the guard `Z0`) give the cycle facts of the pattern's silhouette,
+`Z0` false (so `u = wf != 0`), and the lex facings `LP3` of every facet at `u = wf`, `d = sigma dplus`, `w = tau N_t`
+(the `hfac` of `s0x_lex2_rupert` and `split_lex2_rupert`). -/
+theorem tie_ctx {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S29 x) (hG : GeoOK (geoF F))
+    {t f sd pp zs1 : Nat} (hp : tieParOK t f sd pp zs1)
+    (hcyc : cycChk pp (patCyc.getD pp []) = true)
+    (hno : ∀ l ∈ tieCtxLits t f sd pp zs1, evalW (rhoW (geoF F)) l = false) :
+    ∃ _ : NeZero (patCyc.getD pp []).length, 3 ≤ (patCyc.getD pp []).length ∧
+      Function.Injective (cOf (k := (patCyc.getD pp []).length) (patCyc.getD pp [])) ∧
+      S0xCycOK s0x_S29 (cOf (k := (patCyc.getD pp []).length) (patCyc.getD pp [])) (bits pp) ∧
+      ¬ Z0 (geoF F) t f ∧
+      ∀ r : Fin 9,
+        (bits pp r = true → LP3 ⟪F.N r, wf (geoF F) t f⟫ ⟪F.N r, sdR sd • dplus (geoF F) t f⟫
+          ⟪F.N r, tauR pp t • F.N ⟨t, hp.1⟩⟫) ∧
+        (bits pp r = false → LP3 (-⟪F.N r, wf (geoF F) t f⟫) (-⟪F.N r, sdR sd • dplus (geoF F) t f⟫)
+          (-⟪F.N r, tauR pp t • F.N ⟨t, hp.1⟩⟫)) := by
+  have hlen := cycChk_len hcyc
+  haveI hne : NeZero (patCyc.getD pp []).length := ⟨by omega⟩
+  obtain ⟨h3, hinj, hcycOK⟩ := cycFacts (k := (patCyc.getD pp []).length) rfl hcyc
+  have hZ : ¬ Z0 (geoF F) t f := by
+    intro hz
+    have := hno _ mem_tieCtx_z0
+    rw [(evalW_Z0L _ t f).mpr hz] at this
+    exact absurd this (by simp)
+  exact ⟨hne, h3, hinj, hcycOK, hZ, tie_hfac F hG hp hZ hno⟩
+
+/-- **The core of the tie rule soundness**: all literals of the tie rule clause false gives a Rupert shape
+(`tie_ctx`, the rim by `tfail`, then `s0x_lex2_rupert`). -/
 theorem tie_core {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S29 x) (hx : Function.Injective x) (hG : GeoOK (geoF F))
     {t f sd pp zs1 : Nat} {cyc : List Nat} (hp : tieParOK t f sd pp zs1)
     (hcyc : cycChk pp (patCyc.getD pp []) = true)
     (halt : ((patCyc.getD pp []).length == 3 || altChk (patCyc.getD pp []) cyc) = true)
     (hno : ∀ l ∈ tieLits t f sd pp zs1 cyc, evalW (rhoW (geoF F)) l = false) :
     IsRupert (univ.image x) := by
-  have hlen := cycChk_len hcyc
-  haveI : NeZero (patCyc.getD pp []).length := ⟨by omega⟩
-  obtain ⟨h3, hinj, hcycOK⟩ := cycFacts (k := (patCyc.getD pp []).length) rfl hcyc
-  have hZ : ¬ Z0 (geoF F) t f := by
-    intro hz
-    have := hno _ mem_tieLits_z0
-    rw [(evalW_Z0L _ t f).mpr hz] at this
-    exact absurd this (by simp)
+  obtain ⟨hne, h3, hinj, hcycOK, hZ, hfac⟩ :=
+    tie_ctx F hG hp hcyc (fun l hl => hno l (mem_tieLits_ctx hl))
   have hune : wf (geoF F) t f ≠ 0 := hZ
   have hU : RobUniL (fun a : ZMod (patCyc.getD pp []).length => ⟪x (cOf (patCyc.getD pp []) a), wf (geoF F) t f⟫)
       (fun a => ⟪x (cOf (patCyc.getD pp []) a), sdR sd • dplus (geoF F) t f⟫) := by
@@ -302,7 +335,7 @@ theorem tie_core {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S29 x) (hx : Function.I
         simp only [Bool.and_eq_true, List.all_eq_true, decide_eq_true_eq] at hcyc
         exact fun v hv => hcyc.1.1.2 v hv
       exact robUniL_of_altT (geoF F) (geoF_x F) hA hZ hrf
-  exact s0x_lex2_rupert F hx hinj h3 hcycOK hune (tie_hfac F hG hp hZ hno) hU
+  exact s0x_lex2_rupert F hx hinj h3 hcycOK hune hfac hU
 
 /-- **A tie rule row that passes the check is true of the real data, if the shape is not Rupert.** -/
 theorem tieOK_sound {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S29 x) (hx : Function.Injective x)

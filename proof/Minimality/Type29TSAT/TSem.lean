@@ -2,6 +2,7 @@ module
 
 public import Minimality.Type29TSAT.TCore
 public import Minimality.Type29SAT.Ent3
+public import Minimality.SplitLeaf
 
 @[expose] public section
 
@@ -167,6 +168,27 @@ noncomputable def lexLtT (g : Geo) (t f sd p q : Nat) : Prop :=
 noncomputable def yT (g : Geo) (t f sd p1 p2 q1 q2 : Nat) : Bool :=
   decide (¬ lexLtT g t f sd p1 q1 ∧ ¬ lexLtT g t f sd p1 q2 ∧ ¬ lexLtT g t f sd p2 q1 ∧ ¬ lexLtT g t f sd p2 q2)
 
+/-- The vector `v` of a `qv` variable: kind 0 (line view, `key` = the VIEW number `e` in `21 .. 42`, as the encoder's
+`Qget(0, e, ..)` with `LA[e], LB[e]`): the view `vv e = N_A x N_B` for `lines[e - 21] = (A, B)` (J5 fix: J3a had the line
+index); kind 1 (tie view, `key = 32 t + f`): `wf t f` (so `Q = 0` under `Z0`); other kinds: `0`. -/
+noncomputable def qvVec (g : Geo) (kind key : Nat) : ℝ³ :=
+  if kind = 0 then g.vv key
+  else if kind = 1 then wf g (key / 32) (key % 32) else 0
+
+/-- `Q = det(D_e1, D_e2, v)`. -/
+noncomputable def Qv (g : Geo) (kind key e1 e2 : Nat) : ℝ := det3 (g.dv e1) (g.dv e2) (qvVec g kind key)
+
+/-- The vertex cycle of a split flag, as a function on `ZMod cyc.length`. -/
+noncomputable def cycX (g : Geo) (cyc : List Nat) : ZMod cyc.length → ℝ³ := fun i => g.x (cyc.getD i.val 0)
+
+/-- **The split flag.**  A split certificate for the cycle `cyc` exists: `(a, cc, sigma)` with `cc != a, a + 1`,
+`sigma = +-1`, and the rows `SplitRows` at the menu view `vv view` (kind 0), resp. `LexRows` at the tie view
+`(wf t f, sdR sd * dplus t f)`, `t = view` (kind 1).  The flag `sf` is the negation: no certificate. -/
+def SplitCert (g : Geo) (kind view f sd : Nat) (cyc : List Nat) : Prop :=
+  ∃ (a cc : ZMod cyc.length) (σ : ℝ), cc ≠ a ∧ cc ≠ a + 1 ∧ (σ = 1 ∨ σ = -1) ∧
+    (if kind = 0 then Minimality.Split.SplitRows (cycX g cyc) (g.vv view) a cc σ
+     else Minimality.Split.LexRows (cycX g cyc) (wf g view f) (sdR sd • dplus g view f) a cc σ)
+
 /-- **The truth assignment of the tie file.**  `base` is `Sem.rho`; under `Z0`: `RH := sign <D_f, D_q>`,
 `KA := +`, `ty = tfail = false`. -/
 noncomputable def rhoW (g : Geo) : W → Bool
@@ -181,11 +203,26 @@ noncomputable def rhoW (g : Geo) : W → Bool
   | .ty t f sd p1 p2 q1 q2 => !decide (Z0 g t f) && yT g t f sd p1 p2 q1 q2
   | .tfail t f sd c => !decide (Z0 g t f) && (alts c).any fun a => yT g t f sd a.1 a.2.1 a.2.2.1 a.2.2.2
   | .wgate sa a sb b => (sa == rhoW g a) && (sb == rhoW g b)
+  | .qv kind key e1 e2 pos =>
+    if pos then decide (0 < Qv g kind key e1 e2) else decide (Qv g kind key e1 e2 < 0)
+  | .sf kind view f sd cyc => decide (¬ SplitCert g kind view f sd cyc)
 
 theorem rhoW_base (g : Geo) (v : V) : rhoW g (W.base v) = rho g v := rfl
 theorem rhoW_wgate (g : Geo) (sa : Bool) (a : W) (sb : Bool) (b : W) :
     rhoW g (W.wgate sa a sb b) = (evalW (rhoW g) (sa, a) && evalW (rhoW g) (sb, b)) := rfl
 theorem rhoW_z0 (g : Geo) (t f : Nat) : rhoW g (W.z0 t f) = decide (Z0 g t f) := rfl
+
+theorem rhoW_qv (g : Geo) (kind key e1 e2 : Nat) (pos : Bool) :
+    rhoW g (W.qv kind key e1 e2 pos) =
+      (if pos then decide (0 < Qv g kind key e1 e2) else decide (Qv g kind key e1 e2 < 0)) := rfl
+theorem rhoW_sf (g : Geo) (kind view f sd : Nat) (cyc : List Nat) :
+    rhoW g (W.sf kind view f sd cyc) = decide (¬ SplitCert g kind view f sd cyc) := rfl
+
+/-- The signs of `Q`: a three valued sign built from the two `qv` variables. -/
+def QS (kind key e1 e2 : Nat) : S3W := ((true, W.qv kind key e1 e2 true), (true, W.qv kind key e1 e2 false))
+
+theorem SgW_Q (g : Geo) (kind key e1 e2 : Nat) : SgW (rhoW g) (QS kind key e1 e2) (Qv g kind key e1 e2) := by
+  simp [SgW, QS, evalW, rhoW]
 
 theorem rhoW_proper (g : Geo) : ProperW (rhoW g) := by simp [ProperW, rhoW, rho]
 

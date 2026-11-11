@@ -2,6 +2,7 @@ module
 
 public import Minimality.Type29TSAT.TLink
 public import Minimality.Type29TSAT.TRule
+public import Minimality.Type29TSAT.SSplit
 public import Minimality.Type29SAT.Top
 
 @[expose] public section
@@ -21,6 +22,9 @@ eight parameters, the clause over `W`):
 * tie families 23 (rule, `tieOK`), 30 to 36, 38, 39 to the checkers of T3 to T6.  Negative parameters are stored `+1000`
   (`toI`); the `lineS` data `(view, k)` of families 32 (kind 1) and 35 (kind 2) is `p8 = 2 view + (1 if k < 0)`;
   family 39 reads the cycle off the clause's `tfail` literal (`tfailVarOf`; `tfailOf` of TRule is for the positive literal of rule rows).
+* split families 40 (tie split rule, kind 1 only: `p = [1, 32 t + f, side, pp, 0, aux]`, `aux` the zero facet of the sibling
+  tie rule), 41 (certificate; the cycle is read off the clause's `sf` literal, `sfCycOf`) and 43 (tie `Q` zero sums), the
+  checkers of SSplit.
 
 `rowWc_holds`: a checked row holds under `rhoW (geoF F)` of every non-Rupert type 29 shape with `GeoOK`.
 -/
@@ -112,6 +116,12 @@ def tfailVarOf (cl : List LitW) (t f sd : Nat) : List Nat :=
     | (_, .tfail t' f' sd' c) => if t' == t && f' == f && sd' == sd then some c else none
     | _ => none).getD []
 
+/-- The cycle of the flag `sf kind view f sd _` of a family 41 row (its literal there is negative: `-sf`). -/
+def sfCycOf (cl : List LitW) (kind view f sd : Nat) : List Nat :=
+  (cl.findSome? fun l => match l with
+    | (_, .sf k' v' f' sd' c) => if k' == kind && v' == view && f' == f && sd' == sd then some c else none
+    | _ => none).getD []
+
 /-- **The check of a decoded row** (family, the eight parameters, the clause over `W`); `U` is the class unit list. -/
 def rowWc (U : List LitW) (fam : Nat) (p : List Nat) (cl : List LitW) : Bool :=
   (rowOK3 fam p (cl.map unliftL) && cl.all isBaseW) ||
@@ -137,7 +147,16 @@ def rowWc (U : List LitW) (fam : Nat) (p : List Nat) (cl : List LitW) : Bool :=
       (toI (p.getD 6 0)) (if p.getD 0 0 == 2 then lsView (p.getD 7 0) else 0) (if p.getD 0 0 == 2 then lsK (p.getD 7 0) else 0) cl) ||
   ((fam == 36 && chk36 (p.getD 0 0) (p.getD 1 0) (p.getD 2 0) (p.getD 3 0) (p.getD 4 0) (p.getD 5 0) cl) ||
   ((fam == 38 && chk38 (p.getD 1 0) (p.getD 2 0) (p.getD 3 0) (p.getD 4 0) (p.getD 5 0) (p.getD 6 0) (p.getD 7 0) cl) ||
-  (fam == 39 && chk39 (p.getD 1 0) (p.getD 2 0) (p.getD 3 0) (tfailVarOf cl (p.getD 1 0) (p.getD 2 0) (p.getD 3 0)) cl)
+  ((fam == 39 && chk39 (p.getD 1 0) (p.getD 2 0) (p.getD 3 0) (tfailVarOf cl (p.getD 1 0) (p.getD 2 0) (p.getD 3 0)) cl) ||
+  ((fam == 40 && (p.getD 0 0 == 1 &&
+      split1OK (p.getD 1 0 / 32) (p.getD 1 0 % 32) (p.getD 2 0) (p.getD 3 0) (zs1Of (p.getD 5 0)) cl)) ||
+  ((fam == 41 &&
+    (let kind := p.getD 1 0
+     let view := if kind == 0 then p.getD 2 0 else p.getD 2 0 / 32
+     let f := if kind == 0 then 0 else p.getD 2 0 % 32
+     certOK kind view f (p.getD 3 0) (p.getD 4 0) (p.getD 5 0) (if toI (p.getD 6 0) == 1 then 1 else 0)
+       (sfCycOf cl kind view f (p.getD 3 0)) cl)) ||
+  (fam == 43 && chk43 (p.getD 0 0) (p.getD 1 0) (p.getD 2 0) cl))))
   )))))))))))))))
 
 /-- The check of a packed row. -/
@@ -153,7 +172,7 @@ theorem rowWc_holds (U : List LitW) (F : S0xFac 9 s0x_S29 x) (hx : Function.Inje
   unfold rowWc at h
   simp only [Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq] at h
   rcases h with ⟨h1, hb⟩ | ⟨-, h2, hb⟩ | ⟨-, h3, hb⟩ | ⟨-, h4, hb⟩ | ⟨-, h5, hb⟩ | ⟨-, h6⟩ | ⟨-, h7, h7'⟩ | ⟨-, h8⟩ |
-    ⟨-, h9, h9'⟩ | ⟨-, h10, h10'⟩ | ⟨-, h11, h11'⟩ | ⟨-, h12, h12'⟩ | ⟨-, h13⟩ | ⟨-, h14⟩ | ⟨-, h15⟩ | ⟨-, h16⟩ | ⟨-, h17⟩
+    ⟨-, h9, h9'⟩ | ⟨-, h10, h10'⟩ | ⟨-, h11, h11'⟩ | ⟨-, h12, h12'⟩ | ⟨-, h13⟩ | ⟨-, h14⟩ | ⟨-, h15⟩ | ⟨-, h16⟩ | ⟨-, h17⟩ | ⟨-, -, h18⟩ | ⟨-, h19⟩ | ⟨-, h20⟩
   · exact holdsW_of_base _ hb (rowOK3_sound hG h1)
   · exact holdsW_of_base _ hb (ruleOK_sound F hx hNR hG h2)
   · exact holdsW_of_base _ hb (witOK_sound F hG h3)
@@ -175,5 +194,8 @@ theorem rowWc_holds (U : List LitW) (F : S0xFac 9 s0x_S29 x) (hx : Function.Inje
   · exact fam36_rhoW F hG h15
   · exact fam38_sound hG h16
   · exact fam39_sound hG h17
+  · exact split1OK_sound F hx hNR hG h18
+  · exact certOK_sound hG h19
+  · exact chk43_sound hG h20
 
 end Minimality.H29T.SAT
