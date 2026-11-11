@@ -1,6 +1,6 @@
 module
 
-public import Minimality.Type16SAT.PLSlideW16
+public import Minimality.Type16SAT.PLSlide16
 public import Minimality.Type16SAT.Cls16WC
 public import Minimality.Type16SAT.LinkPZMPU
 public import Minimality.Type16SAT.LinkPZMPZ

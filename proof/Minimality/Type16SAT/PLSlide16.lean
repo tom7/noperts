@@ -21,8 +21,10 @@ lie before the plane through `x 5`: the slab hypothesis of the Slide Lemma holds
 the (K) condition holds at one of the two walls by `kdich`.
 
 * `NF16.pl_data`: the coordinate tables on `PL`.
-* `NF16.isRupert_PL_slide`: a normal form on `PL` with `r < 1` is Rupert (no other hypothesis;
-  `a, p, r > 0` and `b < 1` come from the normal form).
+* `NF16.isRupert_PL_slide_le`: a normal form on `PL` with `r ≤ 1` and (`r < 1` or `c ≠ 0`) is Rupert (no other
+  hypothesis; `a, p, r > 0` and `b < 1` come from the normal form); at `r = 1` the residue of the wall is `c = 0`.
+  Only the coordinate `X_4 = (1 - r) ℓ - p c` of the case `c ≤ 0` needs `r < 1`; at `r = 1` it is `-p c > 0` for `c < 0`.
+* `NF16.isRupert_PL_slide`: the case `r < 1`.
 * `NF16.zshape_nf`, `NF16.r_lt_one`: `ZShape16` gives `g = d = q = 1`; `C [0134] < 0` gives `r < 1`.
 * `H16.SAT.isRupert_PL16`, `isRupert_PL16_sigma`: the leaf for a type 16 shape (and its `sigma16`
   image) with `C [0134] < 0` (resp. `C [2346] < 0`), both inner products zero and `ZShape16`.  This
@@ -122,16 +124,11 @@ macro "pl_close" : tactic => `(tactic| first
   | (rcases h2 with h' | h' <;> (have := k2 (by linarith); linarith)))
 
 set_option maxHeartbeats 1000000 in
-/-- **Type 16 on `PL`, by the Slide Lemma.**  A type 16 normal form on the stratum `Z`
-(`g = d = q = 1`: `x 1 - x 3 = (x 5 - x 3) + (x 6 - x 3)` and `x 4 - x 5` parallel to the plane of
-`036`) whose edge `x 1 - x 6` is orthogonal to `x 0 - x 3` and to `x 0 - x 6` (so that `1356` is a
-rectangle orthogonal to the parallel facets `036` and `145`), with `r < 1`, is Rupert.  By the sign
-of `c = ⟪x 0 - x 3, x 6 - x 3⟫` the deep vertices `0, 2, 4` lie all beyond `x 1` (`c ≤ 0`) or all
-before `x 5` (`0 < c`) along the edge `15`; (K) holds at the wall `145` (edge `15`) or at the wall `036`
-(edge `63`) by `kdich`; the four normal forms are `slide_tab` at `(1,5,6,3)`, `(6,3,1,5)` and
-`(5,1,3,6)`, `(3,6,5,1)`. -/
-theorem isRupert_PL_slide (N : NF16 x) (hg : N.g = 1) (hd : N.d = 1) (hq : N.q = 1)
-    (h1 : ⟪x 0 - x 3, x 1 - x 6⟫ = 0) (h2 : ⟪x 0 - x 6, x 1 - x 6⟫ = 0) (hr1 : N.r < 1) :
+/-- **Type 16 on `PL` with `r ≤ 1`, by the Slide Lemma**: the Slide Lemma leaf with `r ≤ 1` and (`r < 1` or
+`⟪x 0 - x 3, x 6 - x 3⟫ ≠ 0`, `c ≠ 0`); at `r = 1` the residue is `c = 0`. -/
+theorem isRupert_PL_slide_le (N : NF16 x) (hg : N.g = 1) (hd : N.d = 1) (hq : N.q = 1)
+    (h1 : ⟪x 0 - x 3, x 1 - x 6⟫ = 0) (h2 : ⟪x 0 - x 6, x 1 - x 6⟫ = 0) (hr1 : N.r ≤ 1)
+    (hc0 : N.r < 1 ∨ ⟪x 0 - x 3, x 6 - x 3⟫ ≠ 0) :
     IsRupert (univ.image x) := by
   obtain ⟨ℓ, h, c, ω, W, hℓ, hh, hω, hW0, hE20, hE30, eℓ, eh, e23, w2, w3, tA, tB, tY⟩ :=
     pl_data N hg hd hq h1 h2
@@ -171,7 +168,14 @@ theorem isRupert_PL_slide (N : NF16 x) (hg : N.g = 1) (hd : N.d = 1) (hq : N.q =
   · -- `c ≤ 0`: the deep vertices beyond `x1` (σ = +1)
     have P0 : 0 < -(c - ℓ) := by linarith
     have P2 : 0 < -(N.a * c - ℓ) := by nlinarith
-    have P4 : 0 < -(N.p * c - (1 - N.r) * ℓ) := by nlinarith
+    have P4 : 0 < -(N.p * c - (1 - N.r) * ℓ) := by
+      rcases hc0 with hr' | hc'
+      · nlinarith
+      · have hcc : ⟪x 0 - x 3, x 6 - x 3⟫ = c := by
+          rw [v63, hsh 0 3, tA 0, tA 3]
+          simp only [Matrix.cons_val]; ring
+        have hcn : c < 0 := lt_of_le_of_ne hc (fun e => hc' (by rw [hcc, e]))
+        nlinarith [mul_pos hp (neg_pos.2 hcn), mul_nonneg (sub_nonneg.2 hr1) hℓ.le]
     rcases Minimality.Split.Slide.kdich hℓ P4 P0 qp hω with ⟨κ, k1, k2⟩ | ⟨κ, k1, k2⟩
     · -- wall `F = 145`, edge `15`: `(a, b, a', b') = (1, 5, 6, 3)`
       refine Minimality.Split.Slide.slide_tab
@@ -242,6 +246,12 @@ theorem isRupert_PL_slide (N : NF16 x) (hg : N.g = 1) (hd : N.d = 1) (hq : N.q =
       · simp [tB, nh]
       · intro i h1 h2; fin_cases i <;> simp [tA, tY, tB, nh] at h1 h2 ⊢ <;> pl_close
       · intro i h1 h2 h3; fin_cases i <;> simp [tA, tY, tB, nℓ] at h1 h2 h3 ⊢ <;> pl_close
+
+/-- **Type 16 on `PL` with `r < 1`**, a special case of `isRupert_PL_slide_le`. -/
+theorem isRupert_PL_slide (N : NF16 x) (hg : N.g = 1) (hd : N.d = 1) (hq : N.q = 1)
+    (h1 : ⟪x 0 - x 3, x 1 - x 6⟫ = 0) (h2 : ⟪x 0 - x 6, x 1 - x 6⟫ = 0) (hr1 : N.r < 1) :
+    IsRupert (univ.image x) :=
+  isRupert_PL_slide_le N hg hd hq h1 h2 hr1.le (Or.inl hr1)
 
 /-- **The stratum `Z` from the shape entries.**  Three of the 18 entries of `ZShape16` give
 `g = d = q = 1`: `[0 1 5 | 3 6] = (1 - g) D`, `[0 1 6 | 3 5] = (d - 1) D`, and the facet `036` takes
