@@ -21,6 +21,7 @@ public import Minimality.Type16UW
 public import Minimality.Type16VW
 public import Minimality.Type16Arc3B
 public import Minimality.Type16GenA
+public import Minimality.Type16SAT.Main16
 public import Minimality.Type16SAT.FinalW
 public import Minimality.Type16SAT.FinalA16
 public import Minimality.Type16SAT.FinalZS16
@@ -968,12 +969,9 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     have hgen := noThreeCollinear_seven x hN hx
     exact quadPairPar14 hx hN rfl hR (Minimality.not_quadTripleRect_type14 hx hgen hR)
   · exact big {0, 1, 4, 5, 6} (by decide) (by decide) (by decide)  -- type 15: Theorem A
-  · -- type 16: `not_type16_of_multiView16` (Theorem 24.3: ties at a family of tilt tests with
-    -- realizing tilts, `Minimality.MultiView16`; the cover is affine-invariant, so metric-free), where
-    -- it holds; else `not_type16_of_isNopert_ties` (Type16Ties: several independent ties, restored along
-    -- the approximating sequence); its general position (4 HDN hypotheses and `OneTie16 ∨ TwoTie16`) is
-    -- asked. Open in Lean: an HDN item failing, two tied pairs at one segment view or at `v_A`/`σ v_A`,
-    -- dependent ties
+  · -- type 16: the sign-matrix SAT route (Type16SAT/Main16): at every metric the sign vector of the brackets
+    -- of the normal form is closed by a kernel-checked LRAT core, a sign relation or the exhaustion `cls16_exhaust`;
+    -- no tie, lex cell or arc cell is needed, only the eight facets of the type (`h16w_mkType16`)
     obtain ⟨fA, hfA⟩ := hR {0, 2, 3, 5} (by decide)
     obtain ⟨fB, hfB⟩ := hR {1, 3, 5, 6} (by decide)
     obtain ⟨fC, hfC⟩ := hR {0, 2, 4} (by decide)
@@ -982,97 +980,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fF, hfF⟩ := hR {1, 4, 5} (by decide)
     obtain ⟨fG, hfG⟩ := hR {1, 4, 6} (by decide)
     obtain ⟨fH, hfH⟩ := hR {2, 4, 5} (by decide)
-    exact byGen1 (not_type16_of_multiView16 x hN hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF
-      hfG hfH) (fun _ => byGen5 (fun h35 hEd hQ hV htie => not_type16_of_isNopert_ties x hN hx fA
-        fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH h35 hEd hQ hV htie)
-      (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
-        -- the sigma-symmetric lex-cell rule (Type16U*, Type16UW); its leftover by the routes below
-        by_cases hres : Minimality.H16U.H16VResid
-            (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
-        · -- arc cells at views between two menu views (Type16ArcA/B, Type16Arc2A/B, Arc3B: 35 robust leaves) and the
-          -- generic all-views route (Type16GenA: segment + line leaves at all views); `H16ArcGenResid` by the SAT route
-          by_cases hres2 : Minimality.H16A.H16ArcGenResid
-              (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
-          · -- the sign-matrix SAT route (Type16SAT): classes ++-+, ++--, +--+, the 16 class boundaries of
-            -- `Cls16ClosedW` and their sigma images, at every metric, by kernel-checked LRAT certificates;
-            -- every sign vector is closed (`cls16_exhaust`), no `sorry`
-            by_cases hcl : Minimality.H16.SAT.Cls16Closed x ∨ Minimality.H16.SAT.Cls16ClosedW x
-            · exact (hN.2 (Minimality.H16.SAT.isRupert_closed
-                (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
-                hcl)).elim
-            · -- the class `+---` (and its sigma image `----`) with `T(d03, d16)` or `T(d06, d16)` nonzero: one kernel-checked
-              -- SAT core (`isRupert_cls16A`, Type16SAT/FinalA16)
-              by_cases hA : Minimality.H16.SAT.Cls16A x
-              · exact (hN.2 (Minimality.H16.SAT.isRupert_cls16A
-                  (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
-                  hA)).elim
-              · -- the class `+---` (and `----`) with one of the 18 shape entries of the stratum `Z` nonzero: one kernel-checked
-                -- SAT core (`isRupert_cls16Z`, Type16SAT/FinalZS16)
-                by_cases hZ : Minimality.H16.SAT.Cls16Z x
-                    (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
-                · exact (hN.2 (Minimality.H16.SAT.isRupert_cls16Z
-                    (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
-                    hZ)).elim
-                · -- the class `+---` (and `----`) with both inner products zero and the Z shape equations (the
-                  -- stratum PL: `1356` a rectangle between the parallel facets `036`, `145`): the Slide Lemma
-                  -- (`isRupert_cls16M_resid`, Type16SAT/PLSlide16)
-                  by_cases hM : Minimality.H16.SAT.Cls16M x
-                  · exact (hN.2 (Minimality.H16.SAT.isRupert_cls16M_resid
-                      (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
-                      hM hA hZ)).elim
-                  · -- the classes `+-+-` and `--+-`: off PL two kernel-checked SAT cores (T case and Z case), on PL the
-                    -- Slide Lemma (`isRupert_clsPMPM`, Type16SAT/FinalPMPM16)
-                    by_cases hP : (0 < Minimality.H16.SAT.C16 x * Minimality.H16.SAT.br16 x 0 1 2 6 ∧
-                        Minimality.H16.SAT.C16 x * Minimality.H16.SAT.br16 x 0 1 3 4 < 0 ∧
-                        0 < Minimality.H16.SAT.C16 x * Minimality.H16.SAT.br16 x 1 2 3 4 ∧
-                        Minimality.H16.SAT.C16 x * Minimality.H16.SAT.br16 x 2 3 4 6 < 0) ∨
-                      (Minimality.H16.SAT.C16 x * Minimality.H16.SAT.br16 x 0 1 2 6 < 0 ∧
-                        Minimality.H16.SAT.C16 x * Minimality.H16.SAT.br16 x 0 1 3 4 < 0 ∧
-                        0 < Minimality.H16.SAT.C16 x * Minimality.H16.SAT.br16 x 1 2 3 4 ∧
-                        Minimality.H16.SAT.C16 x * Minimality.H16.SAT.br16 x 2 3 4 6 < 0)
-                    · exact (hN.2 (Minimality.H16.SAT.isRupert_clsPMPM
-                        (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
-                        hP)).elim
-                    · -- the sign vectors with `C [1234] ≥ 0` and `C [0134] ≥ 0` or `C [2346] ≥ 0` do not occur (one sign
-                      -- relation of the brackets in the normal form: `not_cls16Dead`, Type16SAT/GPDead16); this removes the
-                      -- 6 strict vectors excluded by general position and 26 of the vectors with two or more zeros
-                      by_cases hDead : Minimality.H16.SAT.Cls16Dead x
-                      · exact (Minimality.H16.SAT.not_cls16Dead
-                          (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
-                          hDead).elim
-                      · -- the one-zero vectors with the zero at `[0134]` or `[2346]`: `+0-+`, `-0-+`,
-                        -- `+0--`, `-0--` (two kernel-checked cores each, T case and Z case; on `PL` at `r = 1` the Slide
-                        -- Lemma if `⟪x 0 - x 3, x 6 - x 3⟫ ≠ 0`, else a split leaf next to an edge view), `+0+-`, `-0+-`
-                        -- (one plain wall core each) and the boundary `+-0-` (two cores and `isRupert_PL16`), all with
-                        -- their `sigma16` images (`isRupert_wallR_all`, `isRupert_wallX_all`, `isRupert_pmzm`;
-                        -- Type16SAT/FinalW16, FinalW16X, FinalW16Y, ResW16)
-                        by_cases hW : Minimality.H16.SAT.Cls16WallR x ∨ Minimality.H16.SAT.Cls16WallX x ∨
-                            (Minimality.H16.SAT.Vec16 1 (-1) 0 (-1) x ∨ Minimality.H16.SAT.Vec16 (-1) (-1) 0 (-1) x)
-                        · have T :=
-                            Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH
-                          rcases hW with hW | hW | hW
-                          · exact (hN.2 (Minimality.H16.SAT.isRupert_wallR_all T hW)).elim
-                          · exact (hN.2 (Minimality.H16.SAT.isRupert_wallX_all T hW)).elim
-                          · exact (hN.2 (Minimality.H16.SAT.isRupert_pmzm T hW)).elim
-                        · -- the vectors `00-+`, `00--` and their `sigma16` images `0+-0`, `0--0`: two kernel-checked cores
-                          -- each, then on `PL` (`a = r = 1`) the Slide Lemma off `⟪x 0 - x 3, x 6 - x 3⟫ = 0`
-                          -- (`isRupert_z2`, Type16SAT/FinalZ216)
-                          by_cases hZ2 : Minimality.H16.SAT.Cls16Z2 x ∧ ¬ Minimality.H16.SAT.Z2Res16 x
-                          · exact (hN.2 (Minimality.H16.SAT.isRupert_z2
-                              (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
-                              hZ2.1 hZ2.2)).elim
-                          · -- the residue `Z2Res16` (`PL`, `a = r = 1`, `⟪x 0 - x 3, x 6 - x 3⟫ = 0`: split leaves next to
-                            -- edge views, `NF16.isRupert_PL_res1`) and the last vectors `0-+-`, `0---`, `0-0-`, `00-0`, `+0-0`,
-                            -- `-0-0` (the case split CaseT16 / on Z / the same for `x ∘ sigma16` / off Z and off its image:
-                            -- eleven kernel-checked cores; `isRupert_z2_all`, `isRupert_last`, Type16SAT/FinalLast16); no
-                            -- other sign vector is left (`cls16_exhaust`, Type16SAT/Exh16)
-                            have T :=
-                              Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH
-                            rcases Minimality.H16.SAT.cls16_exhaust x hcl hM hP hDead hW with h | h
-                            · exact (hN.2 (Minimality.H16.SAT.isRupert_z2_all T h)).elim
-                            · exact (hN.2 (Minimality.H16.SAT.isRupert_last T h)).elim
-          · exact (Minimality.H16A.h16g_arcgen_rule_false hN _ hres2).elim
-        · exact Minimality.H16U.h16v_rule_false hN _ hres)))
+    exact (hN.2 (Minimality.H16.SAT.isRupert_type16
+      (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH))).elim
   · -- type 17: `not_type17_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
     -- special value of Lemma T′ (settled there, 26.8). Both views have the triangle `136`, so
     -- `TriGenPar` or `TriGenFarP` always holds (`triGenPar_or_farP_idx`): closed
