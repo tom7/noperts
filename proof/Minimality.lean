@@ -30,6 +30,8 @@ public import Minimality.Type16SAT.GPDead16
 public import Minimality.Type16SAT.FinalW16Y
 public import Minimality.Type16SAT.ResW16
 public import Minimality.Type16SAT.FinalZ216
+public import Minimality.Type16SAT.FinalLast16
+public import Minimality.Type16SAT.Exh16
 public import Minimality.SilS0XD
 public import Minimality.Type20IMA
 public import Minimality.Type20IV
@@ -384,10 +386,10 @@ classification into the 29 types (`Minimality.exists_sevenType`, `Minimality/Cla
 sign-vector certificate checked in the kernel). Not formalized (`sorry`): type 24 inside
 `C̄ ∪ Σ_B` (it is proved outside, `not_type24_outside_Cbar_of_isNopert`); for type 29 (split by
 the class of its octahedron, `Minimality.type29_cap`, `Minimality.NF29.classes`) the class K1
-and K2 on the strata `Z1 ∪ σ(Z1)`; for type 16, inside the residual `H16ArcGenResid`, only the
-bracket classes +-+-, +--- (with their sigma images) and the class boundaries ++-0, +0-+ (with
-images) (the classes ++-+, ++--, +--+ and the other 16 boundary sign vectors by the sign-matrix SAT
-route, `Minimality.H16.SAT.isRupert_closed`, `Minimality/Type16SAT`);
+(K2 is closed, on the strata `Z1 ∪ σ(Z1)` by a metric case split and the Slide Lemma at a right
+dihedral, `NF29.isRupert_K2a_Z1_caseB`); type 16 is closed (every bracket sign vector,
+`Minimality.H16.SAT.cls16_exhaust`, by the sign-matrix SAT route and the Slide Lemma on its
+special positions, `Minimality/Type16SAT`);
 and for every other type except 02, 05, 07, 08, 09, 12, 13, 14, 17, 18, 19, 20, 22, 23,
 25, 26, 27, 28 (type 08: `not_type08_closed`, the chain `Type08S/C2K*ZA` ending in `C2K47ZA`; the others closed completely: each of their views pairs a triangle with another facet,
 so `TriGenPar`
@@ -984,17 +986,16 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
       hfG hfH) (fun _ => byGen5 (fun h35 hEd hQ hV htie => not_type16_of_isNopert_ties x hN hx fA
         fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH h35 hEd hQ hV htie)
       (fun _ => byThm5Faces hx hN _ h3 (fun _ => by
-        -- the sigma-symmetric lex-cell rule (Type16U*, Type16UW): `sorry` only under its leftover
+        -- the sigma-symmetric lex-cell rule (Type16U*, Type16UW); its leftover by the routes below
         by_cases hres : Minimality.H16U.H16VResid
             (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
         · -- arc cells at views between two menu views (Type16ArcA/B, Type16Arc2A/B, Arc3B: 35 robust leaves) and the
-          -- generic all-views route (Type16GenA: segment + line leaves at all views): `sorry` only under `H16ArcGenResid`
+          -- generic all-views route (Type16GenA: segment + line leaves at all views); `H16ArcGenResid` by the SAT route
           by_cases hres2 : Minimality.H16A.H16ArcGenResid
               (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
           · -- the sign-matrix SAT route (Type16SAT): classes ++-+, ++--, +--+, the 16 class boundaries of
             -- `Cls16ClosedW` and their sigma images, at every metric, by kernel-checked LRAT certificates;
-            -- `sorry` only for the one-zero vectors 0-+-, 0--- (zero at [0126]), the vectors 00-0, +0-0, -0-0 and a residue
-            -- of 00-+, 00-- (and their images)
+            -- every sign vector is closed (`cls16_exhaust`), no `sorry`
             by_cases hcl : Minimality.H16.SAT.Cls16Closed x ∨ Minimality.H16.SAT.Cls16ClosedW x
             · exact (hN.2 (Minimality.H16.SAT.isRupert_closed
                 (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
@@ -1060,10 +1061,16 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
                           · exact (hN.2 (Minimality.H16.SAT.isRupert_z2
                               (Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH)
                               hZ2.1 hZ2.2)).elim
-                          · -- residual: the one-zero vectors `0-+-`, `0---` (zero at `[0126]`), the residue `Z2Res16`
-                            -- (`PL`, `a = r = 1`, `⟪x 0 - x 3, x 6 - x 3⟫ = 0`) and the multi-zero vectors `00-0`, `+0-0`,
-                            -- `-0-0` (and images)
-                            sorry
+                          · -- the residue `Z2Res16` (`PL`, `a = r = 1`, `⟪x 0 - x 3, x 6 - x 3⟫ = 0`: split leaves next to
+                            -- edge views, `NF16.isRupert_PL_res1`) and the last vectors `0-+-`, `0---`, `0-0-`, `00-0`, `+0-0`,
+                            -- `-0-0` (the case split CaseT16 / on Z / the same for `x ∘ sigma16` / off Z and off its image:
+                            -- eleven kernel-checked cores; `isRupert_z2_all`, `isRupert_last`, Type16SAT/FinalLast16); no
+                            -- other sign vector is left (`cls16_exhaust`, Type16SAT/Exh16)
+                            have T :=
+                              Minimality.H16U.h16w_mkType16 hx fA fB fC fD fE fF fG fH hfA hfB hfC hfD hfE hfF hfG hfH
+                            rcases Minimality.H16.SAT.cls16_exhaust x hcl hM hP hDead hW with h | h
+                            · exact (hN.2 (Minimality.H16.SAT.isRupert_z2_all T h)).elim
+                            · exact (hN.2 (Minimality.H16.SAT.isRupert_last T h)).elim
           · exact (Minimality.H16A.h16g_arcgen_rule_false hN _ hres2).elim
         · exact Minimality.H16U.h16v_rule_false hN _ hres)))
   · -- type 17: `not_type17_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
