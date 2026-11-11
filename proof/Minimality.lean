@@ -7,6 +7,7 @@ public import Minimality.Type29TSAT.FinalBoundary
 public import Minimality.Type29KSAT.FinalK2
 public import Minimality.Type29KSAT.FinalZA
 public import Minimality.Type29KSAT.FinalCaseB
+public import Minimality.Type29KSAT.FinalK1
 public import Minimality.Type08S.C2K2E
 public import Minimality.Type08S.C2K9K
 public import Minimality.Type08S.C2K5ZE
@@ -1186,7 +1187,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
   · -- type 29: the octahedron `O = K − 6` with the cap `6` (`Minimality.type29_cap`) has the normal
     -- form `N` (Lemma 21.1); its class (Lemma 21.2) is the sign pattern of `(a2, b0, V)`. Classes K3
     -- and K4 are closed by the sign-matrix SAT route (`NF29.isRupert_K3a_closed`, …, Type29SAT/; no
-    -- general-position hypothesis). The class boundaries are closed by the SAT route with tie views (`NF29.isRupert_boundary`, Type29TSAT/), and K2 off `Z1` (`NF29.isRupert_K2_offZ1`, Type29KSAT/) and on `Z1` and `σ(Z1)` (case A by the SAT route, case B by the Slide Lemma and a residue core). Open in Lean: K1
+    -- general-position hypothesis). The class boundaries are closed by the SAT route with tie views (`NF29.isRupert_boundary`, Type29TSAT/), and K2 off `Z1` (`NF29.isRupert_K2_offZ1`, Type29KSAT/) and on `Z1` and `σ(Z1)` (case A by the SAT route, case B by the Slide Lemma and a residue core); K1 on the corner stratum `Z` (`NF29.isRupert_K1_Z`). Open in Lean: K1 off `Z` (vertex 6 trirectangular)
     obtain ⟨F, hd⟩ := Minimality.type29_cap hx hvert hR
     set N := Minimality.IsCap29.toNF29 hx F hd
     rcases N.classes with hbd | hK2 | hK1 | ⟨ha2, hb0, hV⟩ | ⟨ha2, hb0, hV⟩ | ⟨ha2, hb0, hV⟩ |
@@ -1216,10 +1217,16 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
               by_contra hc; exact hA (Or.inr ⟨hV, hZ1, not_and_or.1 hc⟩)
             exact hnR (N.isRupert_K2b_Z1_caseB ha2 hb0 hV hZ1 hB)
       · exact hnR (N.isRupert_K2_offZ1 ha2 hb0 hZ)
-    · exact byThm5Faces hx hN _ h3 (fun _ => by
-        by_cases hres : Minimality.H29S.H29GenResid N.facets
-        · sorry
-        · exact (Minimality.H29S.h29g_rule_false hN _ hres).elim)  -- class K1: `a2 < 0 < b0`, `V < 0` (K1a), or `a2 > 0 > b0`, `V > 0` (K1b)
+    · -- class K1: `a2 < 0 < b0`, `V < 0` (K1a), or `a2 > 0 > b0`, `V > 0` (K1b)
+      by_cases hZ : inner ℝ (x 3 - x 6) (x 4 - x 6) = 0 ∧ inner ℝ (x 3 - x 6) (x 5 - x 6) = 0 ∧
+          inner ℝ (x 4 - x 6) (x 5 - x 6) = 0
+      · -- on the corner stratum `Z` (vertex 6 trirectangular): the SAT route with the Corner Slide and Level Corner
+        -- Slide clauses (`NF29.isRupert_K1_Z`; K1b as the sigma image of K1a)
+        exact hnR (N.isRupert_K1_Z hK1 hZ)
+      · exact byThm5Faces hx hN _ h3 (fun _ => by
+          by_cases hres : Minimality.H29S.H29GenResid N.facets
+          · sorry  -- class K1 off the corner stratum `Z`: open
+          · exact (Minimality.H29S.h29g_rule_false hN _ hres).elim)
     · -- class K3a: the SAT route (`NF29.isRupert_K3a_closed`)
       exact hnR (N.isRupert_K3a_closed ha2 hb0 hV)
     · -- class K3b: the SAT route (`NF29.isRupert_K3b_closed`)
