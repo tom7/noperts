@@ -989,6 +989,68 @@ def SlideLemmaTriangularWalls : Prop :=
       (∀ i, 0 < ⟪x i - x a, nQ⟫ → ⟪x i - x a, e⟫ < ⟪e, e⟫)) →
     IsRupert (Finset.univ.image x)
 
+/-- **The Corner Slide Lemma.** Let the points `x 0, …, x (n-1)` be the vertices of a polytope with a
+corner `c` and two of its edge ends `J`, `M`, where `e = x J - x c` and `f = x M - x c` are nonzero and
+orthogonal, and `g ≠ 0` is orthogonal to both (the inner normal of the face `c J M`). Measure each
+vertex `y` by its depth `⟪y - x c, g⟫` and its coordinates `⟪y - x c, e⟫`, `⟪y - x c, f⟫` along the
+two edges. Suppose every vertex other than `c`, `J`, `M` has positive depth; every vertex has both
+coordinates nonnegative; no vertex other than `J` reaches `⟪y - x c, e⟫ = ⟪e, e⟫`; and some vertex lies
+beyond `⟪y - x c, f⟫ = ⟪f, f⟫`. Then the polytope is Rupert.
+
+Why: In the frame `(g, e, f)` normalized and centered at `x c`, the right-angled corner with legs `e`
+and `f` slides through the polytope along a first-order motion that tips the corner into the region
+of positive depth. The slope that makes the two legs compatible exists because the far vertex beyond
+`⟪f, f⟫` leaves room on the `f` side, while on the `e` side only `J` reaches the end of the leg. -/
+def CornerSlideLemma : Prop :=
+  ∀ (n : ℕ) (x : Fin n → ℝ³) (c J M : Fin n) (e f g : ℝ³),
+    x J - x c = e → x M - x c = f → e ≠ 0 → f ≠ 0 → g ≠ 0 →
+    ⟪e, f⟫ = 0 → ⟪e, g⟫ = 0 → ⟪f, g⟫ = 0 →
+    (∀ i, i ≠ c → i ≠ J → i ≠ M → 0 < ⟪x i - x c, g⟫) →
+    (∀ i, 0 ≤ ⟪x i - x c, e⟫ ∧ 0 ≤ ⟪x i - x c, f⟫) →
+    (∀ i, i ≠ J → ⟪x i - x c, e⟫ < ⟪e, e⟫) →
+    (∃ q, ⟪f, f⟫ < ⟪x q - x c, f⟫) →
+    IsRupert (Finset.univ.image x)
+
+/-- `(A, B, C)` is lexicographically positive: `A + s B + s² C > 0` for all small `s > 0`. -/
+def LexPos3 (A B C : ℝ) : Prop := 0 < A ∨ (A = 0 ∧ (0 < B ∨ (B = 0 ∧ 0 < C)))
+
+/-- `TiltCert` along the one-parameter family of views `u + s v₁ + s² v₂`, for small `s > 0`: Every
+determinant of `TiltCert` is required to be lexicographically positive, as a polynomial in `s`
+(`LexPos3` of its three coefficients), instead of positive. -/
+def LexTiltCert (V : Finset ℝ³) (u v₁ v₂ ω τ x : ℝ³) : Prop :=
+  (∃ y₀ ∈ V, ∃ y₁ ∈ V,
+      LexPos3 (det3 (y₁ - x) (y₀ - x) u) (det3 (y₁ - x) (y₀ - x) v₁) (det3 (y₁ - x) (y₀ - x) v₂) ∧
+      LexPos3 (det3 (y₁ - x) (cross ω x + τ) u) (det3 (y₁ - x) (cross ω x + τ) v₁)
+        (det3 (y₁ - x) (cross ω x + τ) v₂) ∧
+      LexPos3 (det3 (x - y₀) (cross ω x + τ) u) (det3 (x - y₀) (cross ω x + τ) v₁)
+        (det3 (x - y₀) (cross ω x + τ) v₂)) ∨
+  (∃ a ∈ V, ∃ b ∈ V, ∃ c ∈ V,
+      LexPos3 (det3 (b - a) (c - a) u) (det3 (b - a) (c - a) v₁) (det3 (b - a) (c - a) v₂) ∧
+      LexPos3 (det3 (b - a) (x - a) u) (det3 (b - a) (x - a) v₁) (det3 (b - a) (x - a) v₂) ∧
+      LexPos3 (det3 (c - b) (x - b) u) (det3 (c - b) (x - b) v₁) (det3 (c - b) (x - b) v₂) ∧
+      LexPos3 (det3 (a - c) (x - c) u) (det3 (a - c) (x - c) v₁) (det3 (a - c) (x - c) v₂))
+
+/-- **The Hidden-End Lemma.** Let the points `x 0, …, x (n-1)` be the vertices of a polytope, `c` one
+of them, and `K`, `J`, `M` three more (the ends of three edges at `c` in the applications), oriented
+so that `D = det3 (x J - x c) (x M - x c) (x K - x c) > 0`. Consider the views
+`u s = (x K - x c) - s (α j + β m) - s² (γ j + δ m)` with `j = x J - x c`, `m = x M - x c`, where
+`(α, γ)` and `(β, δ)` are lexicographically positive pairs (`0 < α` or `α = 0 < γ`, and the same for
+`β`, `δ`). Suppose one motion `(ω, τ)` has a lexicographic `TiltCert` (`LexTiltCert`) at every vertex
+other than `K`, for these views. Then the polytope is Rupert. The vertex `K` needs no certificate.
+
+Why: Along the views the vertex `K` projects into the interior of the triangle `c J M` (it is hidden
+behind `c`), so it is hidden for all small `s > 0`. At every other vertex each determinant of the
+certificate is a quadratic in `s` that is positive for small `s` by lexicographic positivity of its
+coefficients; hence some view is free, and a free view gives a Rupert passage. -/
+def HiddenEndLemma : Prop :=
+  ∀ (n : ℕ) (x : Fin n → ℝ³) (c K J M : Fin n) (α β γ δ : ℝ) (ω τ : ℝ³),
+    0 < det3 (x J - x c) (x M - x c) (x K - x c) →
+    (0 < α ∨ (α = 0 ∧ 0 < γ)) → (0 < β ∨ (β = 0 ∧ 0 < δ)) →
+    (∀ i, i ≠ K →
+      LexTiltCert (Finset.univ.image x) (x K - x c)
+        (-(α • (x J - x c) + β • (x M - x c))) (-(γ • (x J - x c) + δ • (x M - x c))) ω τ (x i)) →
+    IsRupert (Finset.univ.image x)
+
 
 /-! ## Gram extension -/
 
