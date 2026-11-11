@@ -43,6 +43,8 @@ public import MinimalityExtra.Slide
 public import MinimalityExtra.CornerSlide
 public import MinimalityExtra.LevelCorner
 public import MinimalityExtra.HiddenEnd
+public import MinimalityExtra.HiddenCap
+public import MinimalityExtra.ClusterLimit
 public import MinimalityExtra.GramExtension
 public import Minimality.Tilt
 public import Minimality.Thm73
@@ -213,6 +215,8 @@ theorem type29Faces_agree :
 #print axioms cornerSlideLemma
 #print axioms levelCornerSlideLemma
 #print axioms hiddenEndLemma
+#print axioms hiddenCapLemma
+#print axioms clusterLimitLemma
 
 end MinimalityExtra
 

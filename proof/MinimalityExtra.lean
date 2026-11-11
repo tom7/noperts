@@ -1078,6 +1078,48 @@ def HiddenEndLemma : Prop :=
     IsRupert (Finset.univ.image x)
 
 
+/-- **The Hidden-Cap Lemma.** Let `O` be a finite set of points (the vertices of a polytope) and `v` a
+vertex, with three more points `a, b, c ∈ O` whose edge vectors `a - v`, `b - v`, `c - v` from `v` are
+linearly independent and pairwise non-acute. Let `n 0, n 1, n 2` be the (outer) normals of three
+facets at `v` in the incidence form: every `n i` has non-positive inner product with each of the three
+edge vectors, and each edge vector has a strictly negative inner product with some `n i`. Then every
+positive combination `u = ∑ αᵢ nᵢ` hides `v`: Along the view `u`, the projection of `v` lies strictly
+inside every supporting line of the shadow of `O`. A supporting line is given by two points `A`, `B`
+of `O` such that every `z ∈ O` has `0 ≤ det3 (B - A) (z - A) u`, and some `z ∈ O` has strict
+inequality; "`v` lies strictly inside" is then `0 < det3 (B - A) (v - A) u`. (For a polygonal shadow
+this says that the image of `v` is in the interior of the shadow.)
+
+Why: The inner products `⟪u, e_k⟫` are all negative. For pairwise non-acute independent edges, the
+Gram system shows `-u` is a positive combination of the three edge vectors, so the view lies in the
+open cone of the edges and the shadow of `v` is a positive combination of the shadows of `a, b, c`
+seen from `v`; hence it cannot be on or outside a supporting line of the shadow of `O`. -/
+def HiddenCapLemma : Prop :=
+  ∀ (O : Finset ℝ³) (v a b c : ℝ³), a ∈ O → b ∈ O → c ∈ O →
+    LinearIndependent ℝ ![a - v, b - v, c - v] →
+    ⟪a - v, b - v⟫ ≤ 0 → ⟪a - v, c - v⟫ ≤ 0 → ⟪b - v, c - v⟫ ≤ 0 →
+    ∀ (n : Fin 3 → ℝ³) (α : Fin 3 → ℝ), (∀ i, 0 < α i) →
+    (∀ i k, ⟪n i, ![a - v, b - v, c - v] k⟫ ≤ 0) →
+    (∀ k, ∃ i, ⟪n i, ![a - v, b - v, c - v] k⟫ < 0) →
+    ∀ A ∈ O, ∀ B ∈ O,
+      (∀ z ∈ O, 0 ≤ det3 (B - A) (z - A) (∑ i, α i • n i)) →
+      (∃ z ∈ O, 0 < det3 (B - A) (z - A) (∑ i, α i • n i)) →
+      0 < det3 (B - A) (v - A) (∑ i, α i • n i)
+
+/-- **The Cluster Limit Lemma.** Let `x₀, x₁, x₂` be three points and `p` a point off their plane
+(`det3 (x₁ - x₀) (x₂ - x₀) (p - x₀) ≠ 0`). Then there is a radius `ρ > 0` such that every finite set
+`V` of points that contains `x₀, x₁, x₂` and whose other points all lie within distance `ρ` of `p` is
+Rupert. The radius depends only on the four points, not on `V`.
+
+Why: Look along `u = g - p`, with `g` the centroid of `x₀ x₁ x₂`. Then `p` and `g` have the same
+shadow, which lies strictly inside the triangle of the shadows of `x₀, x₁, x₂`, at a positive
+distance `ρ` from its edge lines. Projection is 1-Lipschitz, so all other points of `V` project
+strictly inside that triangle, the shadow of `V` is a triangle, and a triangle shadow is always
+unimodal; so `V` is Rupert by the open unimodal criterion. -/
+def ClusterLimitLemma : Prop :=
+  ∀ x₀ x₁ x₂ p : ℝ³, det3 (x₁ - x₀) (x₂ - x₀) (p - x₀) ≠ 0 →
+    ∃ ρ : ℝ, 0 < ρ ∧ ∀ V : Finset ℝ³, x₀ ∈ V → x₁ ∈ V → x₂ ∈ V →
+      (∀ v ∈ V, v ≠ x₀ → v ≠ x₁ → v ≠ x₂ → dist v p < ρ) → IsRupert V
+
 /-! ## Gram extension -/
 
 section GramExtension
