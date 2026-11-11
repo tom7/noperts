@@ -1,7 +1,10 @@
 module
 
 public import Minimality.Type16SAT.Last16
-public import Minimality.Type16SAT.FinalZ216
+public import Minimality.Type16SAT.LinkZZMPU
+public import Minimality.Type16SAT.LinkZZMPZ
+public import Minimality.Type16SAT.LinkZZMMU
+public import Minimality.Type16SAT.LinkZZMMZ
 public import Minimality.Type16SAT.LinkZMPMU
 public import Minimality.Type16SAT.LinkZMMMU
 public import Minimality.Type16SAT.LinkZZMZU
@@ -24,7 +27,7 @@ Eleven kernel-checked cores and the hand modules `Last16`, `ResA16`:
   `Z` and off its `sigma16` image `ZMPMZZ`, `ZMMMZZ`, `ZMZMZZ`, `ZZMZZZ` (`Core16ZZW`), and the leaves on `PL` (`isRupert_fix_of`).
 * `+0-0`, `-0-0`: the cores on `Z` with `CaseT16` `PZMZT`, `MZMZT` (`Core16ZTW`), the core `PZMZZZ` (`Core16ZZW`) and the
   leaves on `PL` (`isRupert_pzmz_of`, `isRupert_mzmz_of`).
-* `00-+`, `00--` and images (`Cls16Z2`): the cores of `FinalZ216` and `isRupert_wall0_res` (the residue `a = r = 1`,
+* `00-+`, `00--` and images (`Cls16Z2`): the cores `ZZMPU`, `ZZMMU`, `ZZMPZ`, `ZZMMZ` and `isRupert_wall0_res` (the residue `a = r = 1`,
   `c = 0` by `NF16.isRupert_PL_res1`).
 -/
 
@@ -37,6 +40,11 @@ open Minimality Minimality.H21 Minimality.H29.SAT
 namespace Minimality.H16.SAT
 
 open Minimality.H16K.SAT
+
+/-- The four vectors with two zero brackets `[0126] = [0134] = 0` (`00-+`, `00--`) or `[0126] = [2346] = 0` (`0+-0`,
+`0--0`, the `sigma16` images). -/
+def Cls16Z2 (x : Fin 7 → ℝ³) : Prop :=
+  Vec16 0 0 (-1) 1 x ∨ Vec16 0 0 (-1) (-1) x ∨ Vec16 0 1 (-1) 0 x ∨ Vec16 0 (-1) (-1) 0 x
 
 /-- **Type 16, the vectors `00-+`, `00--`, `0+-0`, `0--0` with their residue.** -/
 theorem isRupert_z2_all {x : Fin 7 → ℝ³} (T : Type16 x) (h : Cls16Z2 x) : IsRupert (univ.image x) := by

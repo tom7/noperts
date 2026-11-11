@@ -2,6 +2,7 @@ module
 
 public import Minimality.Type16SAT.FinalW16X
 public import Minimality.Type16SAT.SSplit
+public import Minimality.Type16SAT.GPDead16
 
 @[expose] public section
 

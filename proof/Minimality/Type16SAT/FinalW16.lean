@@ -79,24 +79,4 @@ theorem isRupert_wall0_sigma_of {e1 e3 e4 : ℝ} (hT : Core16TW e1 0 e3 e4) (hZ 
 def Cls16WallR (x : Fin 7 → ℝ³) : Prop :=
   Vec16 1 0 (-1) 1 x ∨ Vec16 (-1) 0 (-1) 1 x ∨ Vec16 (-1) 1 (-1) 0 x ∨ Vec16 1 1 (-1) 0 x
 
-/-- The residue of the walls: `⟪x 0 - x 3, x 6 - x 3⟫ = 0` on `+0-+`, `-0-+`, the same for `x ∘ sigma16` on `-+-0`, `++-0`. -/
-def WallRes16 (x : Fin 7 → ℝ³) : Prop :=
-  ((Vec16 1 0 (-1) 1 x ∨ Vec16 (-1) 0 (-1) 1 x) ∧ ⟪x 0 - x 3, x 6 - x 3⟫ = 0) ∨
-  ((Vec16 (-1) 1 (-1) 0 x ∨ Vec16 1 1 (-1) 0 x) ∧
-    ⟪(x ∘ sigma16) 0 - (x ∘ sigma16) 3, (x ∘ sigma16) 6 - (x ∘ sigma16) 3⟫ = 0)
-
-/-- **Type 16, the walls `+0-+`, `-0-+`, `-+-0`, `++-0` off the residue `WallRes16`**: kernel-checked cores (four) and the
-Slide Lemma. -/
-theorem isRupert_wallR {x : Fin 7 → ℝ³} (T : Type16 x) (h : Cls16WallR x) (hr : ¬ WallRes16 x) :
-    IsRupert (univ.image x) := by
-  simp only [WallRes16, not_or, not_and] at hr
-  obtain ⟨hr1, hr2⟩ := hr
-  rcases h with h | h | h | h
-  · exact isRupert_wall0_of rupert_of_corePZMPU rupert_of_corePZMPZ T h (hr1 (Or.inl h))
-  · exact isRupert_wall0_of rupert_of_coreMZMPU rupert_of_coreMZMPZ T h (hr1 (Or.inr h))
-  · exact isRupert_wall0_sigma_of rupert_of_corePZMPU rupert_of_corePZMPZ T h
-      (hr2 (Or.inl h))
-  · exact isRupert_wall0_sigma_of rupert_of_coreMZMPU rupert_of_coreMZMPZ T (by rw [neg_neg]; exact h)
-      (hr2 (Or.inr h))
-
 end Minimality.H16.SAT

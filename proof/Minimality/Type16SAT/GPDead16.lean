@@ -98,9 +98,4 @@ theorem cls16Dead_of_vec {e1 e2 e3 e4 : ℝ} {x : Fin 7 → ℝ³} (hv : Vec16 e
   · exact Or.inr (key _ _ (Or.inl h) s4)
   · exact Or.inr (key _ _ (Or.inr h) s4)
 
-/-- The six GP-dead strict vectors (bracket order `[0126] [0134] [1234] [2346]`) are in `Cls16Dead`. -/
-theorem not_gpdead16 {x : Fin 7 → ℝ³} (T : Type16 x) :
-    ¬ ((0 < C16 x * br16 x 1 2 3 4) ∧ (0 < C16 x * br16 x 0 1 3 4 ∨ 0 < C16 x * br16 x 2 3 4 6)) :=
-  fun h => not_cls16Dead T ⟨h.1.le, h.2.imp le_of_lt le_of_lt⟩
-
 end Minimality.H16.SAT

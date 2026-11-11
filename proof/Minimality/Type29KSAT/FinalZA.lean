@@ -12,7 +12,7 @@ public import Minimality.Type29TSAT.FinalBoundary
 On the stratum `Z1 = {s = t = 1, a0 + h0 = 0}` (the quadrilateral `1456` a parallelogram and the facets `015`, `346`
 parallel), every normal form of class K2a (`a2 < 0`, `b0 < 0`, `V < 0`) in which the edge direction `x1 - x4` is not
 orthogonal to the plane of the facet `B = 015` is Rupert.  Here "not orthogonal to both of the edges `x0 - x1` and
-`x0 - x5` of that facet" is the hypothesis `CaseA`; its geometric form is that `x1 - x4` is not parallel to the facet
+`x0 - x5` of that facet" is the hypothesis `CaseA`; it says that `x1 - x4` is not parallel to the facet
 normal.  The proof is the kernel-checked unsatisfiability of a trimmed core of 1,012 clauses of the tie view encoding,
 with the stratum `Z1` and the case clause "`<x0 - x1, x1 - x4>` or `<x0 - x5, x1 - x4>` is nonzero" as class literals
 (`rupert_of_coreZA`).  The core was found by CaDiCaL on the sign encoding and shrunk; every row is checked here.
@@ -74,14 +74,6 @@ theorem Minimality.NF29.isRupert_K2a_Z1_caseA {x : Fin 7 → EuclideanSpace ℝ 
     (fun F h0 h1 h2 h3 hz hA => Minimality.H29K.SAT.rupert_of_coreZA Minimality.H29K.SAT.coreUnsatZA F h0 h1 h2 h3 hz hA)
     N ha2 hb0 hV hZ hA
 
-/-- **Case A in geometric form.**  The same, with the hypothesis that the edge direction `x1 - x4` is not parallel to the
-normal of the facet `B = 015` (that is, not orthogonal to the plane of `B`). -/
-theorem Minimality.NF29.isRupert_K2a_Z1_caseA_geom {x : Fin 7 → EuclideanSpace ℝ (Fin 3)} (N : NF29 x)
-    (ha2 : N.a2 < 0) (hb0 : N.b0 < 0) (hV : N.V < 0) (hZ : N.s = 1 ∧ N.t = 1 ∧ N.a0 + N.h0 = 0)
-    (hA : ¬ ∃ c : ℝ, x 1 - x 4 = c • (s0x_fac29 N.facets).N 1) :
-    IsRupert (Finset.univ.image x) :=
-  N.isRupert_K2a_Z1_caseA ha2 hb0 hV hZ (Minimality.H29K.SAT.caseA_of_not_parallel N _ hA)
-
 /-- **Class K2b on `σ(Z1)`, case A, is closed** (the `σ`-image of K2a: `σ = (0 2)(4 5)`).  Every normal form with
 `a2 < 0`, `b0 < 0`, `0 < V` on `t = 1 ∧ s = 1 ∧ b2 + h2 = 0` in which `x1 - x5` is not orthogonal to both `x2 - x1` and
 `x2 - x4` is Rupert. -/
@@ -94,5 +86,4 @@ theorem Minimality.NF29.isRupert_K2b_Z1_caseA {x : Fin 7 → EuclideanSpace ℝ 
   rwa [image_sigma29] at this
 
 #print axioms Minimality.NF29.isRupert_K2a_Z1_caseA
-#print axioms Minimality.NF29.isRupert_K2a_Z1_caseA_geom
 #print axioms Minimality.NF29.isRupert_K2b_Z1_caseA

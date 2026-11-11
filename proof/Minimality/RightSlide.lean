@@ -9,7 +9,7 @@ public import Minimality.AcuteEdge
 
 The analogue of the Acute Edge Lemma (`Minimality.AcuteEdge`) at a right dihedral: there the rotation about
 the edge fails, and the first-order motion slides the rectangle `Q` along the edge instead.  Proved for
-`σ = +1` and, by the reflection `x₀ ↦ L - x₀`, for `σ = -1`.
+`σ = +1`; the case `σ = -1` is the reflection `x₀ ↦ L - x₀` (the Slide Lemma callers use the mirrored corner labels).
 
 Normal form: `a = 0`, `b = (L,0,0)`, `a' = (0,0,-h)`, `b' = (L,0,-h)`; `F ⊂ {z = 0}`,
 `Q = F' ⊂ {y = 0}` is the rectangle `a b b' a'`, `H ⊂ {z = -h}`; every point lies in the slab
@@ -282,48 +282,6 @@ theorem slide_core_rupert {n : ℕ} (x : Fin n → ℝ³) (a b a' b' : Fin n) (L
   obtain ⟨s, hs⟩ := (slide_core x a b a' b' L h hL hh ha hb ha' hb' hD hZ hSl hR hK).exists
   exact FreeAt.isRupert (U_ne s) hs
 
-
-/-! ### The mirror σ = -1 -/
-
-/-- **Slide Lemma, normal form (σ = -1).**  As `slide_core_rupert` with (Sl₋) deep points have
-`x < L` and (K₋) some `κ` with `y < κ (L - x)` for every deep point of `H` and `κ (-x) < y` for
-every deep point of `F` beyond `a` (`x < 0`).  Reduction: the reflection `x ↦ L - x`. -/
-theorem slide_core_rupert_neg {n : ℕ} (x : Fin n → ℝ³) (a b a' b' : Fin n) (L h : ℝ)
-    (hL : 0 < L) (hh : 0 < h) (ha : x a = pt 0 0 0) (hb : x b = pt L 0 0)
-    (ha' : x a' = pt 0 0 (-h)) (hb' : x b' = pt L 0 (-h))
-    (hD : ∀ i, i ≠ a → i ≠ b → i ≠ a' → i ≠ b' → 0 < x i 1)
-    (hZ : ∀ i, -h ≤ x i 2 ∧ x i 2 ≤ 0)
-    (hSl : ∀ i, 0 < x i 1 → x i 0 < L)
-    (hR : ∃ q, 0 < x q 1 ∧ x q 2 = -h)
-    (hK : ∃ κ : ℝ, (∀ i, 0 < x i 1 → x i 2 = -h → x i 1 < κ * (L - x i 0)) ∧
-      (∀ i, 0 < x i 1 → x i 2 = 0 → x i 0 < 0 → κ * (-x i 0) < x i 1)) :
-    IsRupert (univ.image x) := by
-  classical
-  set c : Fin n → ℝ³ := fun i => pt (L - x i 0) (x i 1) (x i 2) with hc
-  have hcR : IsRupert (univ.image c) := by
-    obtain ⟨κ, hKH, hKF⟩ := hK
-    refine slide_core_rupert c b a b' a' L h hL hh ?_ ?_ ?_ ?_ (fun i h1 h2 h3 h4 =>
-      hD i h2 h1 h4 h3) (fun i => hZ i)
-      (fun i hi => by simp only [hc, pt_zero]; linarith [hSl i hi])
-      hR ⟨κ, fun i h1 h2 => ?_, fun i h1 h2 h3 => ?_⟩
-    · simp only [hc, hb, pt_zero, pt_one, pt_two]; ext j; fin_cases j <;> simp
-    · simp only [hc, ha, pt_zero, pt_one, pt_two]; ext j; fin_cases j <;> simp
-    · simp only [hc, hb', pt_zero, pt_one, pt_two]; ext j; fin_cases j <;> simp
-    · simp only [hc, ha', pt_zero, pt_one, pt_two]; ext j; fin_cases j <;> simp
-    · simp only [hc, pt_zero, pt_one, pt_two] at h1 h2 ⊢; exact hKH i h1 h2
-    · simp only [hc, pt_zero, pt_one, pt_two] at h1 h2 h3 ⊢
-      have := hKF i h1 h2 (by linarith); linarith
-  have hFr : IsFrame (pt (-1) 0 0) (pt 0 1 0) (pt 0 0 1) := by
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> simp only [inner3, pt_zero, pt_one, pt_two] <;> norm_num
-  apply isRupert_of_frame_image (univ.image x) (v := pt L 0 0) hFr
-  rw [Finset.image_image]
-  convert hcR using 2
-  funext i
-  simp only [Function.comp_apply, orthoFrameMat_apply, hc, inner3, PiLp.sub_apply, pt_zero,
-    pt_one, pt_two]
-  congr 1 <;> ring
-
 end Minimality.Split.Slide
 
 #print axioms Minimality.Split.Slide.slide_core_rupert
-#print axioms Minimality.Split.Slide.slide_core_rupert_neg

@@ -30,7 +30,6 @@ public import Minimality.Type16SAT.FinalPMPM16
 public import Minimality.Type16SAT.GPDead16
 public import Minimality.Type16SAT.FinalW16Y
 public import Minimality.Type16SAT.ResW16
-public import Minimality.Type16SAT.FinalZ216
 public import Minimality.Type16SAT.FinalLast16
 public import Minimality.Type16SAT.Exh16
 public import Minimality.SilS0XD

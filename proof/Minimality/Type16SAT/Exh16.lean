@@ -1,7 +1,7 @@
 module
 
 public import Minimality.Type16SAT.Last16
-public import Minimality.Type16SAT.FinalZ216
+public import Minimality.Type16SAT.FinalLast16
 public import Minimality.Type16SAT.GPDead16
 
 @[expose] public section
