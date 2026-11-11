@@ -8,11 +8,7 @@ public import Minimality.Type29NF
 /-!
 # Type 29, class K2a on `Z1`, case B: the Slide Lemma leaf
 
-* `Minimality.Split.Slide.slide_tab` / `slide_euclid`: the Slide Lemma (σ = +1) in any Euclidean
-  position.  `e = x b - x a`, `g = x a' - x a`, `x b' - x a = e + g`, `nQ` a normal of the rectangle
-  `Q = a b b' a'`; the coordinates `X = ⟪· - x a, e⟫`, `Y = ⟪· - x a, nQ⟫`, `G = ⟪· - x a, g⟫`.
-  Reduced to `slide_core_rupert` by the orthonormal frame `e/‖e‖, nQ/‖nQ‖, -g/‖g‖`.
-* `Minimality.Split.Slide.kdich`: the (K) dichotomy between the two walls.
+* `Minimality.NF29.caseB_data`: the coordinate tables of the rectangle `1456`.
 * `Minimality.NF29.isRupert_Z1_caseB_slide`: on `Z1` with the edge `14` orthogonal to the facet
   `015` (case B), the slab hypothesis at one end of the edge `15` gives Rupert.
 -/
@@ -20,166 +16,6 @@ public import Minimality.Type29NF
 set_option autoImplicit false
 open scoped RealInnerProductSpace
 open Finset
-
-namespace Minimality.Split.Slide
-open Minimality (pt pt_zero pt_one pt_two IsFrame orthoFrameMat orthoFrameMat_apply
-  isRupert_of_frame_image)
-
-/-- **Slide Lemma (σ = +1), Euclidean form with coordinate tables.**  `a, b, a', b'` the corners
-of the rectangle `Q` (`e = x b - x a ⟂ g = x a' - x a`, `x b' - x a = e + g`), `nQ ≠ 0` a normal
-of `Q`.  With `X i = ⟪x i - x a, e⟫`, `Y i = ⟪x i - x a, nQ⟫`, `G i = ⟪x i - x a, g⟫`:
-(hD) every point other than the corners is deep (`Y > 0`); (hZ) `0 ≤ G ≤ ⟪g, g⟫` (the planes of
-`F ∋ a, b` and `H ∋ a', b'`, both orthogonal to `g`, support); (Sl₊) deep points have `X > 0`;
-(R) a deep point lies on `H`; (K₊) some `κ` with `Y < κ X` on the deep points of `H` and
-`κ (X - ⟪e, e⟫) < Y` on the deep points of `F` beyond `b`. -/
-theorem slide_tab {n : ℕ} (x : Fin n → ℝ³) (a b a' b' : Fin n) (e g nQ : ℝ³)
-    (X Y G : Fin n → ℝ)
-    (hX : ∀ i, ⟪x i - x a, e⟫ = X i) (hY : ∀ i, ⟪x i - x a, nQ⟫ = Y i)
-    (hG : ∀ i, ⟪x i - x a, g⟫ = G i)
-    (he : x b - x a = e) (hg : x a' - x a = g) (hb' : x b' - x a = e + g)
-    (he0 : e ≠ 0) (hg0 : g ≠ 0) (hn0 : nQ ≠ 0)
-    (heg : ⟪e, g⟫ = 0) (hen : ⟪e, nQ⟫ = 0) (hgn : ⟪g, nQ⟫ = 0)
-    (hD : ∀ i, i ≠ a → i ≠ b → i ≠ a' → i ≠ b' → 0 < Y i)
-    (hZ : ∀ i, 0 ≤ G i ∧ G i ≤ ⟪g, g⟫)
-    (hSl : ∀ i, 0 < Y i → 0 < X i)
-    (hR : ∃ q, 0 < Y q ∧ G q = ⟪g, g⟫)
-    (hK : ∃ κ : ℝ, (∀ i, 0 < Y i → G i = ⟪g, g⟫ → Y i < κ * X i) ∧
-      (∀ i, 0 < Y i → G i = 0 → ⟪e, e⟫ < X i → κ * (X i - ⟪e, e⟫) < Y i)) :
-    IsRupert (univ.image x) := by
-  classical
-  have hL : 0 < ‖e‖ := norm_pos_iff.2 he0
-  have hh : 0 < ‖g‖ := norm_pos_iff.2 hg0
-  have hn : 0 < ‖nQ‖ := norm_pos_iff.2 hn0
-  have hee : ⟪e, e⟫ = ‖e‖ ^ 2 := real_inner_self_eq_norm_sq e
-  have hgg : ⟪g, g⟫ = ‖g‖ ^ 2 := real_inner_self_eq_norm_sq g
-  have hLn : ‖e‖ ≠ 0 := hL.ne'
-  have hhn : ‖g‖ ≠ 0 := hh.ne'
-  have hnn : ‖nQ‖ ≠ 0 := hn.ne'
-  set S : ℝ³ := ‖e‖⁻¹ • e with hS
-  set T : ℝ³ := ‖nQ‖⁻¹ • nQ with hT
-  set Nn : ℝ³ := ‖-g‖⁻¹ • (-g) with hN
-  have hFr : IsFrame S T Nn := by
-    refine ⟨AcuteEdge.frame_unit he0, AcuteEdge.frame_unit hn0,
-      AcuteEdge.frame_unit (neg_ne_zero.2 hg0), ?_, ?_, ?_⟩
-    · rw [hS, hT, real_inner_smul_left, real_inner_smul_right, hen]; ring
-    · rw [hS, hN, real_inner_smul_left, real_inner_smul_right, inner_neg_right, heg]; ring
-    · rw [hT, hN, real_inner_smul_left, real_inner_smul_right, inner_neg_right,
-        real_inner_comm, hgn]; ring
-  set c : Fin n → ℝ³ := fun i => pt (‖e‖⁻¹ * X i) (‖nQ‖⁻¹ * Y i) (-(‖g‖⁻¹ * G i)) with hc
-  have hXa : X a = 0 := by rw [← hX a, sub_self, inner_zero_left]
-  have hYa : Y a = 0 := by rw [← hY a, sub_self, inner_zero_left]
-  have hGa : G a = 0 := by rw [← hG a, sub_self, inner_zero_left]
-  have hcR : IsRupert (univ.image c) := by
-    obtain ⟨q, hqY, hqG⟩ := hR
-    obtain ⟨κ, hKH, hKF⟩ := hK
-    refine slide_core_rupert c a b a' b' ‖e‖ ‖g‖ hL hh ?_ ?_ ?_ ?_ ?_ ?_ ?_ ⟨q, ?_, ?_⟩
-      ⟨κ * ‖e‖ / ‖nQ‖, ?_, ?_⟩
-    · simp only [hc, hXa, hYa, hGa, mul_zero, neg_zero]
-    · simp only [hc, ← hX, ← hY, ← hG, he, hen, heg, hee, mul_zero, neg_zero]
-      congr 1; field_simp
-    · simp only [hc, ← hX, ← hY, ← hG, hg, real_inner_comm e g, heg, hgn, hgg, mul_zero]
-      congr 1; field_simp
-    · simp only [hc, ← hX, ← hY, ← hG, hb', inner_add_left, hen, hgn, heg,
-        real_inner_comm e g, hee, hgg, add_zero, zero_add, mul_zero]
-      congr 1 <;> field_simp
-    · intro i h1 h2 h3 h4
-      simp only [hc, pt_one]
-      exact mul_pos (inv_pos.2 hn) (hD i h1 h2 h3 h4)
-    · intro i
-      simp only [hc, pt_two]
-      obtain ⟨h1, h2⟩ := hZ i
-      rw [hgg] at h2
-      constructor
-      · have : ‖g‖⁻¹ * G i ≤ ‖g‖ := by
-          rw [inv_mul_le_iff₀ hh]; nlinarith
-        linarith
-      · have : 0 ≤ ‖g‖⁻¹ * G i := mul_nonneg (inv_nonneg.2 hh.le) h1
-        linarith
-    · intro i hi
-      simp only [hc, pt_zero, pt_one] at hi ⊢
-      have hYi : 0 < Y i := (mul_pos_iff_of_pos_left (inv_pos.2 hn)).1 hi
-      exact mul_pos (inv_pos.2 hL) (hSl i hYi)
-    · simp only [hc, pt_one]; exact mul_pos (inv_pos.2 hn) hqY
-    · simp only [hc, pt_two, hqG, hgg]; field_simp
-    · intro i h1 h2
-      simp only [hc, pt_zero, pt_one, pt_two] at h1 h2 ⊢
-      have hYi : 0 < Y i := (mul_pos_iff_of_pos_left (inv_pos.2 hn)).1 h1
-      have hGi : G i = ⟪g, g⟫ := by
-        rw [hgg]; field_simp at h2; linarith
-      have hk := hKH i hYi hGi
-      have : κ * ‖e‖ / ‖nQ‖ * (‖e‖⁻¹ * X i) = ‖nQ‖⁻¹ * (κ * X i) := by field_simp
-      rw [this]; exact mul_lt_mul_of_pos_left hk (inv_pos.2 hn)
-    · intro i h1 h2 h3
-      simp only [hc, pt_zero, pt_one, pt_two] at h1 h2 h3 ⊢
-      have hYi : 0 < Y i := (mul_pos_iff_of_pos_left (inv_pos.2 hn)).1 h1
-      have hGi : G i = 0 := by
-        have : ‖g‖⁻¹ * G i = 0 := by linarith
-        rcases mul_eq_zero.1 this with h | h
-        · exact absurd h (inv_ne_zero hhn)
-        · exact h
-      have hXi : ⟪e, e⟫ < X i := by
-        rw [hee]; rw [lt_inv_mul_iff₀ hL] at h3; nlinarith
-      have hk := hKF i hYi hGi hXi
-      have : κ * ‖e‖ / ‖nQ‖ * (‖e‖⁻¹ * X i - ‖e‖) = ‖nQ‖⁻¹ * (κ * (X i - ⟪e, e⟫)) := by
-        rw [hee]; field_simp
-      rw [this]; exact mul_lt_mul_of_pos_left hk (inv_pos.2 hn)
-  apply isRupert_of_frame_image (univ.image x) (v := x a) hFr
-  rw [Finset.image_image]
-  convert hcR using 2
-  funext i
-  simp only [Function.comp_apply, orthoFrameMat_apply, hc, hS, hT, hN, real_inner_smul_right,
-    inner_neg_right, norm_neg, hX, hY, hG]
-  congr 1; ring
-
-/-- **Slide Lemma (σ = +1), Euclidean form.**  `slide_tab` with the coordinates spelled out. -/
-theorem slide_euclid {n : ℕ} (x : Fin n → ℝ³) (a b a' b' : Fin n) (e g nQ : ℝ³)
-    (he : x b - x a = e) (hg : x a' - x a = g) (hb' : x b' - x a = e + g)
-    (he0 : e ≠ 0) (hg0 : g ≠ 0) (hn0 : nQ ≠ 0)
-    (heg : ⟪e, g⟫ = 0) (hen : ⟪e, nQ⟫ = 0) (hgn : ⟪g, nQ⟫ = 0)
-    (hD : ∀ i, i ≠ a → i ≠ b → i ≠ a' → i ≠ b' → 0 < ⟪x i - x a, nQ⟫)
-    (hZ : ∀ i, 0 ≤ ⟪x i - x a, g⟫ ∧ ⟪x i - x a, g⟫ ≤ ⟪g, g⟫)
-    (hSl : ∀ i, 0 < ⟪x i - x a, nQ⟫ → 0 < ⟪x i - x a, e⟫)
-    (hR : ∃ q, 0 < ⟪x q - x a, nQ⟫ ∧ ⟪x q - x a, g⟫ = ⟪g, g⟫)
-    (hK : ∃ κ : ℝ, (∀ i, 0 < ⟪x i - x a, nQ⟫ → ⟪x i - x a, g⟫ = ⟪g, g⟫ →
-        ⟪x i - x a, nQ⟫ < κ * ⟪x i - x a, e⟫) ∧
-      (∀ i, 0 < ⟪x i - x a, nQ⟫ → ⟪x i - x a, g⟫ = 0 → ⟪e, e⟫ < ⟪x i - x a, e⟫ →
-        κ * (⟪x i - x a, e⟫ - ⟪e, e⟫) < ⟪x i - x a, nQ⟫)) :
-    IsRupert (univ.image x) :=
-  slide_tab x a b a' b' e g nQ _ _ _ (fun _ => rfl) (fun _ => rfl) (fun _ => rfl) he hg hb' he0
-    hg0 hn0 heg hen hgn hD hZ hSl hR hK
-
-/-- **The (K) dichotomy**.  Two walls share the slab `X > 0` (lengths along the
-edge, `ℓ` the edge length squared in the units of `X`) and the depth `Y > 0`; the deep point of `H`
-is `3` at wall `B` and `0` at wall `H`, and conversely on `F`.  Then (K₊) holds at one of the two
-walls.  If it failed at both, `Y₃ (X₀ - ℓ) ≥ Y₀ X₃ > Y₀ (X₃ - ℓ) ≥ Y₃ X₀ > Y₃ (X₀ - ℓ)`. -/
-theorem kdich {ℓ X0 X3 Y0 Y3 : ℝ} (hℓ : 0 < ℓ) (hX0 : 0 < X0) (hX3 : 0 < X3) (hY0 : 0 < Y0)
-    (hY3 : 0 < Y3) :
-    (∃ κ : ℝ, Y3 < κ * X3 ∧ (ℓ < X0 → κ * (X0 - ℓ) < Y0)) ∨
-      (∃ κ : ℝ, Y0 < κ * X0 ∧ (ℓ < X3 → κ * (X3 - ℓ) < Y3)) := by
-  by_cases h0 : X0 ≤ ℓ
-  · left
-    refine ⟨(Y3 + 1) / X3, ?_, fun h => absurd h (not_lt.2 h0)⟩
-    rw [div_mul_cancel₀ _ hX3.ne']; linarith
-  by_cases h3 : X3 ≤ ℓ
-  · right
-    refine ⟨(Y0 + 1) / X0, ?_, fun h => absurd h (not_lt.2 h3)⟩
-    rw [div_mul_cancel₀ _ hX0.ne']; linarith
-  rw [not_le] at h0 h3
-  have p0 : 0 < X0 - ℓ := sub_pos.2 h0
-  have p3 : 0 < X3 - ℓ := sub_pos.2 h3
-  by_cases hc : Y3 * (X0 - ℓ) < Y0 * X3
-  · left
-    obtain ⟨κ, h1, h2⟩ := exists_between
-      (show Y3 / X3 < Y0 / (X0 - ℓ) by rw [div_lt_div_iff₀ hX3 p0]; linarith)
-    exact ⟨κ, (div_lt_iff₀ hX3).1 h1, fun _ => (lt_div_iff₀ p0).1 h2⟩
-  · right
-    rw [not_lt] at hc
-    have hc' : Y0 * (X3 - ℓ) < Y3 * X0 := by nlinarith [mul_pos hY0 hℓ, mul_pos hY3 hℓ]
-    obtain ⟨κ, h1, h2⟩ := exists_between
-      (show Y0 / X0 < Y3 / (X3 - ℓ) by rw [div_lt_div_iff₀ hX0 p3]; linarith)
-    exact ⟨κ, (div_lt_iff₀ hX0).1 h1, fun _ => (lt_div_iff₀ p3).1 h2⟩
-
-end Minimality.Split.Slide
 
 namespace Minimality.NF29
 
@@ -285,9 +121,8 @@ in which the edge `x1 - x4` is orthogonal to the facet `015` (both inner product
 `1456` is a rectangle orthogonal to both facets) is Rupert as soon as the deep vertices `0, 2, 3`
 all lie strictly beyond the plane through `x1` orthogonal to the edge `15`, or all strictly before
 the plane through `x5` orthogonal to it.  (K) holds at the wall `015` (edge `15`) or at the wall
-`346` (edge `46`) by `kdich`; the four normal forms are `slide_tab` at `(1,5,4,6)`, `(4,6,1,5)`
-(σ = +1) and `(5,1,6,4)`, `(6,4,5,1)` (σ = -1, as σ = +1 with the edge reversed).  No class
-hypothesis (`a2`, `b0`, `V`) is used. -/
+`346` (edge `46`) by `kdich`; all of it is `Slide.slide_walls` with the walls `015` (deep vertex `0`)
+and `346` (deep vertex `3`).  No class hypothesis (`a2`, `b0`, `V`) is used. -/
 theorem isRupert_Z1_caseB_slide (N : NF29 x) (hZ : N.s = 1 ∧ N.t = 1 ∧ N.a0 + N.h0 = 0)
     (hB : ⟪x 1 - x 4, x 0 - x 1⟫ = 0 ∧ ⟪x 1 - x 4, x 0 - x 5⟫ = 0)
     (hSl : (∀ p ∈ ({0, 2, 3} : Finset (Fin 7)), 0 < ⟪x p - x 1, x 5 - x 1⟫) ∨
@@ -316,102 +151,37 @@ theorem isRupert_Z1_caseB_slide (N : NF29 x) (hZ : N.s = 1 ∧ N.t = 1 ∧ N.a0 
   have v41 : x 4 - x 1 = N.E₁ := by rw [N.x4, N.x1]; simp only [nfP]; module
   have v51 : x 5 - x 1 = N.E₂ := by rw [N.x5, N.x1]; simp only [nfP]; module
   have v61 : x 6 - x 1 = N.E₂ + N.E₁ := by rw [N.x6, N.x1, hs, ht]; simp only [nfP]; module
-  have v64 : x 6 - x 4 = N.E₂ := by rw [N.x6, N.x4, hs, ht]; simp only [nfP]; module
   have v14 : x 1 - x 4 = -N.E₁ := by rw [N.x1, N.x4]; simp only [nfP]; module
-  have v54 : x 5 - x 4 = N.E₂ + -N.E₁ := by rw [N.x5, N.x4]; simp only [nfP]; module
   have v15 : x 1 - x 5 = -N.E₂ := by rw [N.x1, N.x5]; simp only [nfP]; module
-  have v65 : x 6 - x 5 = N.E₁ := by rw [N.x6, N.x5, hs, ht]; simp only [nfP]; module
-  have v45 : x 4 - x 5 = -N.E₂ + N.E₁ := by rw [N.x4, N.x5]; simp only [nfP]; module
-  have v46 : x 4 - x 6 = -N.E₂ := by rw [N.x4, N.x6, hs, ht]; simp only [nfP]; module
-  have v56 : x 5 - x 6 = -N.E₁ := by rw [N.x5, N.x6, hs, ht]; simp only [nfP]; module
-  have v16 : x 1 - x 6 = -N.E₂ + -N.E₁ := by rw [N.x1, N.x6, hs, ht]; simp only [nfP]; module
   have e21 : ⟪N.E₂, N.E₁⟫ = 0 := by rw [real_inner_comm]; exact e12
   have nk : ‖N.E₁‖ ^ 2 = k := by rw [← real_inner_self_eq_norm_sq]; exact ek
-  have nℓ : ‖N.E₂‖ ^ 2 = ℓ := by rw [← real_inner_self_eq_norm_sq]; exact eℓ
-  have nE1 : -N.E₁ ≠ 0 := neg_ne_zero.2 hE10
-  have nE2 : -N.E₂ ≠ 0 := neg_ne_zero.2 hE20
-  rcases hSl with hP | hM
-  · -- σ = +1: the deep vertices beyond `x1`
-    have P0 := hP 0 (by simp)
-    have P2 := hP 2 (by simp)
-    have P3 := hP 3 (by simp)
-    rw [v51, tX] at P0 P2 P3
-    simp only [Matrix.cons_val] at P0 P2 P3
-    rcases Minimality.Split.Slide.kdich hℓ P0 P3 q0 hω with ⟨κ, k1, k2⟩ | ⟨κ, k1, k2⟩
-    · -- wall `B = 015`, edge `15`: `(a, b, a', b') = (1, 5, 4, 6)`
-      refine Minimality.Split.Slide.slide_tab
-        x 1 5 4 6 N.E₂ N.E₁ W (fun i => ⟪x i - x 1, N.E₂⟫)
-        (fun i => ⟪x i - x 1, W⟫) (fun i => ⟪x i - x 1, N.E₁⟫) (fun _ => rfl) (fun _ => rfl)
-        (fun _ => rfl) v51 v41 v61 hE20 hE10 hW0 e21 w2 w1 ?_ ?_ ?_ ⟨3, ?_, ?_⟩ ⟨κ, ?_, ?_⟩
-      · intro i h1 h2 h3 h4; fin_cases i <;> simp [tY] at h1 h2 h3 h4 ⊢ <;> cb_close
-      · intro i; fin_cases i <;> simp [tG, nk] <;> cb_close
-      · intro i h; fin_cases i <;> simp [tX, tY] at h ⊢ <;> cb_close
-      · simp [tY]; cb_close
-      · simp [tG, nk]
-      · intro i h1 h2; fin_cases i <;> simp [tX, tY, tG, nk] at h1 h2 ⊢ <;> cb_close
-      · intro i h1 h2 h3; fin_cases i <;> simp [tX, tY, tG, nℓ] at h1 h2 h3 ⊢ <;> cb_close
-    · -- wall `H = 346`, edge `46`: `(a, b, a', b') = (4, 6, 1, 5)`
-      refine Minimality.Split.Slide.slide_tab
-        x 4 6 1 5 N.E₂ (-N.E₁) W (fun i => ⟪x i - x 1, N.E₂⟫)
-        (fun i => ⟪x i - x 1, W⟫) (fun i => k - ⟪x i - x 1, N.E₁⟫) ?_ ?_ ?_ v64 v14 v54 hE20 nE1
-        hW0 (by rw [inner_neg_right, e21, neg_zero]) w2 (by rw [inner_neg_left, w1, neg_zero])
-        ?_ ?_ ?_ ⟨0, ?_, ?_⟩ ⟨κ, ?_, ?_⟩
-      · intro i; rw [hsh i 4, tX 4]; simp only [Matrix.cons_val]; ring
-      · intro i; rw [hsh i 4, tY 4]; simp only [Matrix.cons_val]; ring
-      · intro i
-        rw [hsh i 4, inner_neg_right, inner_neg_right, tG 4]; simp only [Matrix.cons_val]; ring
-      · intro i h1 h2 h3 h4; fin_cases i <;> simp [tY] at h1 h2 h3 h4 ⊢ <;> cb_close
-      · intro i; fin_cases i <;> simp [tG, nk] <;> cb_close
-      · intro i h; fin_cases i <;> simp [tX, tY] at h ⊢ <;> cb_close
-      · simp [tY]; cb_close
-      · simp [tG, nk]
-      · intro i h1 h2; fin_cases i <;> simp [tX, tY, tG, nk] at h1 h2 ⊢ <;> cb_close
-      · intro i h1 h2 h3; fin_cases i <;> simp [tX, tY, tG, nℓ] at h1 h2 h3 ⊢ <;> cb_close
-  · -- σ = -1: the deep vertices before `x5`
-    have M0 := hM 0 (by simp)
-    have M2 := hM 2 (by simp)
-    have M3 := hM 3 (by simp)
-    rw [hsh _ 5, v15, v51, inner_neg_right, inner_neg_right, tX, eℓ] at M0 M2 M3
-    simp only [Matrix.cons_val] at M0 M2 M3
-    have M0' : 0 < ℓ - (N.b0 * ℓ - N.h0 * m) := by linarith
-    have M3' : 0 < ℓ - -m := by linarith
-    rcases Minimality.Split.Slide.kdich hℓ M0' M3' q0 hω with ⟨κ, k1, k2⟩ | ⟨κ, k1, k2⟩
-    · -- wall `B = 015`, edge `51`: `(a, b, a', b') = (5, 1, 6, 4)`
-      refine Minimality.Split.Slide.slide_tab
-        x 5 1 6 4 (-N.E₂) N.E₁ W (fun i => ℓ - ⟪x i - x 1, N.E₂⟫)
-        (fun i => ⟪x i - x 1, W⟫) (fun i => ⟪x i - x 1, N.E₁⟫) ?_ ?_ ?_ v15 v65 v45 nE2 hE10
-        hW0 (by rw [inner_neg_left, e21, neg_zero]) (by rw [inner_neg_left, w2, neg_zero]) w1
-        ?_ ?_ ?_ ⟨3, ?_, ?_⟩ ⟨κ, ?_, ?_⟩
-      · intro i
-        rw [hsh i 5, inner_neg_right, inner_neg_right, tX 5]; simp only [Matrix.cons_val]; ring
-      · intro i; rw [hsh i 5, tY 5]; simp only [Matrix.cons_val]; ring
-      · intro i; rw [hsh i 5, tG 5]; simp only [Matrix.cons_val]; ring
-      · intro i h1 h2 h3 h4; fin_cases i <;> simp [tY] at h1 h2 h3 h4 ⊢ <;> cb_close
-      · intro i; fin_cases i <;> simp [tG, nk] <;> cb_close
-      · intro i h; fin_cases i <;> simp [tX, tY] at h ⊢ <;> cb_close
-      · simp [tY]; cb_close
-      · simp [tG, nk]
-      · intro i h1 h2; fin_cases i <;> simp [tX, tY, tG, nk] at h1 h2 ⊢ <;> cb_close
-      · intro i h1 h2 h3; fin_cases i <;> simp [tX, tY, tG, nℓ] at h1 h2 h3 ⊢ <;> cb_close
-    · -- wall `H = 346`, edge `64`: `(a, b, a', b') = (6, 4, 5, 1)`
-      refine Minimality.Split.Slide.slide_tab
-        x 6 4 5 1 (-N.E₂) (-N.E₁) W (fun i => ℓ - ⟪x i - x 1, N.E₂⟫)
-        (fun i => ⟪x i - x 1, W⟫) (fun i => k - ⟪x i - x 1, N.E₁⟫) ?_ ?_ ?_ v46 v56 v16 nE2 nE1
-        hW0 (by rw [inner_neg_left, inner_neg_right, e21, neg_zero, neg_zero])
-        (by rw [inner_neg_left, w2, neg_zero]) (by rw [inner_neg_left, w1, neg_zero])
-        ?_ ?_ ?_ ⟨0, ?_, ?_⟩ ⟨κ, ?_, ?_⟩
-      · intro i
-        rw [hsh i 6, inner_neg_right, inner_neg_right, tX 6]; simp only [Matrix.cons_val]; ring
-      · intro i; rw [hsh i 6, tY 6]; simp only [Matrix.cons_val]; ring
-      · intro i
-        rw [hsh i 6, inner_neg_right, inner_neg_right, tG 6]; simp only [Matrix.cons_val]; ring
-      · intro i h1 h2 h3 h4; fin_cases i <;> simp [tY] at h1 h2 h3 h4 ⊢ <;> cb_close
-      · intro i; fin_cases i <;> simp [tG, nk] <;> cb_close
-      · intro i h; fin_cases i <;> simp [tX, tY] at h ⊢ <;> cb_close
-      · simp [tY]; cb_close
-      · simp [tG, nk]
-      · intro i h1 h2; fin_cases i <;> simp [tX, tY, tG, nk] at h1 h2 ⊢ <;> cb_close
-      · intro i h1 h2 h3; fin_cases i <;> simp [tX, tY, tG, nℓ] at h1 h2 h3 ⊢ <;> cb_close
+  refine Minimality.Split.Slide.slide_walls x 1 5 4 6 0 3 N.E₂ N.E₁ W (fun i => ⟪x i - x 1, N.E₂⟫)
+    (fun i => ⟪x i - x 1, W⟫) (fun i => ⟪x i - x 1, N.E₁⟫) (fun _ => rfl) (fun _ => rfl)
+    (fun _ => rfl) v51 v41 v61 hE20 hE10 hW0 e21 w2 w1 ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
+  · intro i h1 h2 h3 h4; fin_cases i <;> simp [tY] at h1 h2 h3 h4 ⊢ <;> cb_close
+  · intro i; fin_cases i <;> simp [tG, nk] <;> cb_close
+  · simp [tY]; cb_close
+  · simp [tG]
+  · intro i h1 h2; fin_cases i <;> simp [tY, tG] at h1 h2 ⊢ <;> cb_close
+  · simp [tY]; cb_close
+  · simp [tG, nk]
+  · intro i h1 h2; fin_cases i <;> simp [tY, tG, nk] at h1 h2 ⊢ <;> cb_close
+  · rcases hSl with hP | hM
+    · left
+      have P0 := hP 0 (by simp)
+      have P2 := hP 2 (by simp)
+      have P3 := hP 3 (by simp)
+      rw [v51, tX] at P0 P2 P3
+      simp only [Matrix.cons_val] at P0 P2 P3
+      intro i hi; fin_cases i <;> simp [tX, tY] at hi ⊢ <;> cb_close
+    · right
+      have M0 := hM 0 (by simp)
+      have M2 := hM 2 (by simp)
+      have M3 := hM 3 (by simp)
+      rw [hsh _ 5, v15, v51, inner_neg_right, inner_neg_right, tX, eℓ] at M0 M2 M3
+      simp only [Matrix.cons_val] at M0 M2 M3
+      rw [eℓ]
+      intro i hi; fin_cases i <;> simp [tX, tY] at hi ⊢ <;> cb_close
 
 /-- **The `σ`-image** (`σ = (0 2)(4 5)`, class K2b on `σ(Z1)`): on `t = 1 ∧ s = 1 ∧ b2 + h2 = 0`
 with `x1 - x5` orthogonal to `x2 - x1` and `x2 - x4` (the facet `124`), the slab at one end of the
@@ -437,7 +207,5 @@ theorem isRupert_sZ1_caseB_slide (N : NF29 x) (hZ : N.t = 1 ∧ N.s = 1 ∧ N.b2
 
 end Minimality.NF29
 
-#print axioms Minimality.Split.Slide.slide_tab
-#print axioms Minimality.Split.Slide.kdich
 #print axioms Minimality.NF29.isRupert_Z1_caseB_slide
 #print axioms Minimality.NF29.isRupert_sZ1_caseB_slide

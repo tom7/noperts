@@ -920,6 +920,76 @@ def AcuteEdgeLemma : Prop :=
     IsRupert (Finset.univ.image x)
 
 
+/-- **The Slide Lemma.** Let the points `x 0, …, x (n-1)` be the vertices of a polytope with a
+rectangular facet `a b b' a'`: `e = x b - x a` and `g = x a' - x a` are orthogonal, `x b' - x a = e + g`,
+and `nQ` is orthogonal to both (a normal of the rectangle). Every other vertex lies strictly on the
+positive side of the rectangle's plane (`⟪x i - x a, nQ⟫ > 0`, the vertices *in front of* the
+rectangle). Every vertex lies in the slab between the two planes through `a b` and through `a' b'`
+orthogonal to `g` (these are the two supporting planes at the long sides of the rectangle, so the
+facet stands perpendicular between two parallel walls, and the polytope is flat in the direction `g`).
+Every vertex in front of the rectangle lies strictly beyond the plane through `a` orthogonal to `e`
+(the slab hypothesis, here at the end `a`; the end `b` is the mirror image, by relabelling). Some vertex
+in front lies on the far wall (the plane through `a'`). Finally there is a slope `κ` separating the
+two walls: On the far wall every vertex in front lies strictly below the line of slope `κ` through the
+origin of the coordinates `(⟪x i - x a, e⟫, ⟪x i - x a, nQ⟫)`, and on the near wall every vertex in front
+beyond the plane through `b` lies strictly above the line of slope `κ` through `b`. Then the polytope is
+Rupert.
+
+Why: This is the companion of the Acute Edge Lemma at a *right* dihedral angle. There the rotation
+about the edge fails (the second face is seen exactly edge-on), and instead the first-order motion
+*slides* the rectangle along its long edge: In the view `(s, 1, s²)` in coordinates
+(along `e`, in front of the rectangle, along `-g`), a small rotation about the axis `(κ s², -s², 1)` combined with a small
+translation along `e` pushes every vertex of a second copy strictly into the shadow of the first.
+The slope `κ` is what makes the vertices of the two walls compatible; the hypothesis of the
+rectangle is essential: For right dihedrals whose second face is a general polygon, numerical
+searches find exact rigid examples (every nearby view is blocked at both faces), so the statement is
+false without it. See `SlideLemmaTriangularWalls` for a version without the slope. -/
+def SlideLemma : Prop :=
+  ∀ (n : ℕ) (x : Fin n → ℝ³) (a b a' b' : Fin n) (e g nQ : ℝ³),
+    x b - x a = e → x a' - x a = g → x b' - x a = e + g → e ≠ 0 → g ≠ 0 → nQ ≠ 0 →
+    ⟪e, g⟫ = 0 → ⟪e, nQ⟫ = 0 → ⟪g, nQ⟫ = 0 →
+    (∀ i, i ≠ a → i ≠ b → i ≠ a' → i ≠ b' → 0 < ⟪x i - x a, nQ⟫) →
+    (∀ i, 0 ≤ ⟪x i - x a, g⟫ ∧ ⟪x i - x a, g⟫ ≤ ⟪g, g⟫) →
+    (∀ i, 0 < ⟪x i - x a, nQ⟫ → 0 < ⟪x i - x a, e⟫) →
+    (∃ q, 0 < ⟪x q - x a, nQ⟫ ∧ ⟪x q - x a, g⟫ = ⟪g, g⟫) →
+    (∃ κ : ℝ, (∀ i, 0 < ⟪x i - x a, nQ⟫ → ⟪x i - x a, g⟫ = ⟪g, g⟫ →
+        ⟪x i - x a, nQ⟫ < κ * ⟪x i - x a, e⟫) ∧
+      (∀ i, 0 < ⟪x i - x a, nQ⟫ → ⟪x i - x a, g⟫ = 0 → ⟪e, e⟫ < ⟪x i - x a, e⟫ →
+        κ * (⟪x i - x a, e⟫ - ⟪e, e⟫) < ⟪x i - x a, nQ⟫)) →
+    IsRupert (Finset.univ.image x)
+
+/-- **The Slide Lemma with triangular walls** (no slope hypothesis). The setting of `SlideLemma`: A
+rectangular facet `a b b' a'` (`e = x b - x a ⟂ g = x a' - x a`, `x b' - x a = e + g`, normal `nQ`) with
+every other vertex strictly in front of its plane, and every vertex in the slab between the planes
+through `a b` and `a' b'` orthogonal to `g`. Now each of the two parallel walls has exactly one vertex
+in front of the rectangle: `p` on the plane through `a` and `q` on the plane through `a'` (a rectangle
+standing perpendicular between two parallel triangular facets, together with whatever lies strictly
+between the walls). Suppose all vertices in front lie strictly beyond the plane through `a`
+orthogonal to `e`, or all lie strictly before the plane through `b` orthogonal to `e`. Then the
+polytope is Rupert.
+
+Why: The slope of `SlideLemma` is not needed: Of the two walls, one admits a slope `κ` by an
+elementary two-line dichotomy (if the slope fails at both walls, then multiplying the four failing
+inequalities gives `Y₃ (X₀ - ℓ) ≥ Y₀ X₃ > Y₀ (X₃ - ℓ) ≥ Y₃ X₀ > Y₃ (X₀ - ℓ)`, a contradiction, where
+`(Xᵢ, Yᵢ)` are the coordinates along `e` and in front of the deep vertices and `ℓ = ⟪e, e⟫`), and the
+other wall is the same configuration viewed from the other side (`g ↦ -g`); the second slab case is the
+first with the edge reversed (`e ↦ -e`). With quadrilateral walls (two vertices in front on a wall) the
+slope can fail at both walls; the lemma is not claimed there. -/
+def SlideLemmaTriangularWalls : Prop :=
+  ∀ (n : ℕ) (x : Fin n → ℝ³) (a b a' b' p q : Fin n) (e g nQ : ℝ³),
+    x b - x a = e → x a' - x a = g → x b' - x a = e + g → e ≠ 0 → g ≠ 0 → nQ ≠ 0 →
+    ⟪e, g⟫ = 0 → ⟪e, nQ⟫ = 0 → ⟪g, nQ⟫ = 0 →
+    (∀ i, i ≠ a → i ≠ b → i ≠ a' → i ≠ b' → 0 < ⟪x i - x a, nQ⟫) →
+    (∀ i, 0 ≤ ⟪x i - x a, g⟫ ∧ ⟪x i - x a, g⟫ ≤ ⟪g, g⟫) →
+    0 < ⟪x p - x a, nQ⟫ → ⟪x p - x a, g⟫ = 0 →
+    (∀ i, 0 < ⟪x i - x a, nQ⟫ → ⟪x i - x a, g⟫ = 0 → i = p) →
+    0 < ⟪x q - x a, nQ⟫ → ⟪x q - x a, g⟫ = ⟪g, g⟫ →
+    (∀ i, 0 < ⟪x i - x a, nQ⟫ → ⟪x i - x a, g⟫ = ⟪g, g⟫ → i = q) →
+    ((∀ i, 0 < ⟪x i - x a, nQ⟫ → 0 < ⟪x i - x a, e⟫) ∨
+      (∀ i, 0 < ⟪x i - x a, nQ⟫ → ⟪x i - x a, e⟫ < ⟪e, e⟫)) →
+    IsRupert (Finset.univ.image x)
+
+
 /-! ## Gram extension -/
 
 section GramExtension
