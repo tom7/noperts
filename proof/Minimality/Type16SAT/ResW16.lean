@@ -160,8 +160,9 @@ edge `15`, corner `4`, rim `4 1 5 3 0`: the view next to the edge view `d15 = d3
 def lF1 (p e h L : ℝ) : Fin 3 → ℝ :=
   ![-(p - 1) * L, -2 * L, e * p * (p - 1) + 2 * h + 2 * L]
 
-theorem rimF1 (a b p e h L : ℝ) (ha : 0 < a) (hb : 0 < b) (hb1 : 0 < 1 - b) (he : 0 < e) (hh : 0 < h)
-    (hL : 0 < L) (ha1 : 0 < 1 - a) (hp : 0 < p) (hp1 : 0 < p - 1) :
+/-- The rim tests of the leaf `F1`; they need only `a ≤ 1` (so also serve `a = 1`, `ResA16`). -/
+theorem rimF1le (a b p e h L : ℝ) (ha : 0 < a) (hb : 0 < b) (hb1 : 0 < 1 - b) (he : 0 < e) (hh : 0 < h)
+    (hL : 0 < L) (ha1 : 0 ≤ 1 - a) (hp : 0 < p) (hp1 : 0 < p - 1) :
     RimOK a b p [(4, 1), (1, 5), (5, 3), (3, 0), (0, 4)] (lF1 p e h L) := by
   have c410 : 0 < resDet (resY a b p 1 - resY a b p 4) (resY a b p 0 - resY a b p 4) (lF1 p e h L) :=
     lt_of_lt_of_eq (by positivity : (0 : ℝ) <
@@ -1258,7 +1259,7 @@ theorem isRupert_PL_res (N : NF16 x) (F : H21.S0xFac 8 Minimality.V2.fIdx x)
     · exact isRupert_res_split N F hg hd hq hr h1 h2 hc (k := 5) (by norm_num) labF1 (by decide) 1 0
         (by decide) (by decide) 1 (lF1 N.p ⟪N.E₁, N.E₁⟫ ⟪N.E₂, N.E₂⟫ ⟪N.E₃, N.E₃⟫)
         [(4, 1), (1, 5), (5, 3), (3, 0), (0, 4)] (by decide)
-        (rimF1 _ _ _ _ _ _ ha hb hb1 he hh hL ha1' hp (by linarith)) 4 1 5 (by decide) (by decide) (by decide)
+        (rimF1le _ _ _ _ _ _ ha hb hb1 he hh hL ha1'.le hp (by linarith)) 4 1 5 (by decide) (by decide) (by decide)
         [(4, 1, 1), (5, 3, 5), (5, 3, 3), (3, 0, 3), (3, 0, 0), (0, 4, 0)] rlF1
         (rowsF1 _ _ _ _ _ _ he hh hL hp (by linarith))
   · exact isRupert_res_split N F hg hd hq hr h1 h2 hc (k := 6) (by norm_num) labF4 (by decide) 1 4
