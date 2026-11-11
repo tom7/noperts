@@ -203,7 +203,7 @@ theorem clause2PZMZZZ_true (F : S0xFac 8 V2.fIdx x) (h : ¬ ZShape16 (x ∘ sigm
     intro h0
     apply hne
     have ha : (geoF F).atom (V.lv 2 5 6 0 3) = det3 (x 5 - x 2) (x 6 - x 2) (x 0 - x 3) := by
-      simp [Minimality.H16.SAT.Geo.atom, Minimality.H16.SAT.Geo.dv, Minimality.H16.SAT.EA, Minimality.H16.SAT.EB, Minimality.H16.SAT.edges, e0, e1, e2, e3, e4, e5, e6, n0, n1, n2, n3, n4, n5, n6, n7]
+      simp [Minimality.H16.SAT.Geo.atom, Minimality.H16.SAT.Geo.dv, Minimality.H16.SAT.EA, Minimality.H16.SAT.EB, Minimality.H16.SAT.edges, e0, e1, e2, e3, e4, e5, e6, n0, n1, n2, n4, n5, n6, n7]
     rw [ha] at h0
     show det3 (x 2 - x 6) (x 5 - x 6) (x 3 - x 0) = 0
     (simp only [det3_expand, PiLp.sub_apply] at h0 ⊢; linear_combination (-1) * h0)
@@ -347,7 +347,7 @@ theorem clause2PZMZZZ_true (F : S0xFac 8 V2.fIdx x) (h : ¬ ZShape16 (x ∘ sigm
     intro h0
     apply hne
     have ha : (geoF F).atom (V.lv 3 4 5 0 2) = det3 (x 4 - x 3) (x 5 - x 3) (x 0 - x 2) := by
-      simp [Minimality.H16.SAT.Geo.atom, Minimality.H16.SAT.Geo.dv, Minimality.H16.SAT.EA, Minimality.H16.SAT.EB, Minimality.H16.SAT.edges, e0, e1, e2, e3, e4, e5, e6, n0, n1, n2, n3, n4, n5, n6, n7]
+      simp [Minimality.H16.SAT.Geo.atom, e0, e2, e3, e4, e5]
     rw [ha] at h0
     show det3 (x 4 - x 3) (x 5 - x 3) (x 2 - x 0) = 0
     (simp only [det3_expand, PiLp.sub_apply] at h0 ⊢; linear_combination (-1) * h0)
@@ -356,10 +356,10 @@ theorem clause2PZMZZZ_true (F : S0xFac 8 V2.fIdx x) (h : ¬ ZShape16 (x ∘ sigm
     intro h0
     apply hne
     have ha : (geoF F).atom (V.nv 3 6 7) = det3 (F.N 3) (F.N 6) (F.N 7) := by
-      simp [Minimality.H16.SAT.Geo.atom, Minimality.H16.SAT.Geo.dv, Minimality.H16.SAT.EA, Minimality.H16.SAT.EB, Minimality.H16.SAT.edges, e0, e1, e2, e3, e4, e5, e6, n0, n1, n2, n3, n4, n5, n6, n7]
+      simp [Minimality.H16.SAT.Geo.atom, n3, n6, n7]
     rw [ha] at h0
     show det3 (F.N 6) (F.N 3) (F.N 7) = 0
-    (simp only [det3_expand, PiLp.sub_apply] at h0 ⊢; linear_combination (-1) * h0)
+    (simp only [det3_expand] at h0 ⊢; linear_combination (-1) * h0)
 
 /-- **Core PZMZZZ gives Rupert**, from the unsatisfiability of its numbered clauses: in the shape of `Core16ZZW`. -/
 theorem rupert_of_core_dataPZMZZZ (hU : CoreUnsat rowsPZMZZZ) : Core16ZZW 1 0 (-1) 0 := by
