@@ -103,7 +103,6 @@ theorem frameMat_mem_SO3 (e n : ℝ³) (hee : ⟪e, e⟫ = 1) (hnn : ⟪n, n⟫ 
           | linear_combination hnn
           | linear_combination hen
           | linear_combination hc
-          | skip
   · exact hd
 
 /-- **Lemma R (box lemma), frame form.** `e, n` orthonormal with all vertices in the box

@@ -109,7 +109,7 @@ theorem chainOK_ccw1_lo {z0 a1 z1 a2 z2 a3 z3 : ℝ} (h1 : 0 < a1) (h2 : 0 < a2)
     ChainOK (QuadPt z0 a1 z1 a2 z2 a3 z3) z0 (-1) 1 (chain1 0 a1) (chain1 z0 z1) := by
   obtain ⟨⟨q1a, q1b⟩, ⟨q2a, q2b⟩, ⟨q3a, q3b⟩, ⟨q4a, q4b⟩⟩ := hQ
   refine ⟨by norm_num, by simp [chain1], ?_, ?_, ?_, ?_⟩
-  · intro l hl; interval_cases l <;> simp [chain1] <;> nlinarith
+  · intro l hl; interval_cases l <;> simp [chain1] ; nlinarith
   · intro l hl; interval_cases l <;> simp [chain1, QuadPt]
   · intro a z hq hne
     rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [chain1] at hne ⊢ <;>
