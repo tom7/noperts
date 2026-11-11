@@ -1011,6 +1011,32 @@ def CornerSlideLemma : Prop :=
     (∃ q, ⟪f, f⟫ < ⟪x q - x c, f⟫) →
     IsRupert (Finset.univ.image x)
 
+/-- **The Level Corner Slide Lemma.** Let the points `x 0, …, x (n-1)` be the vertices of a polytope
+with a corner `c` and two of its edge ends `J`, `M`, where `e = x J - x c` and `f = x M - x c` are
+nonzero and orthogonal, and `g ≠ 0` is orthogonal to both (the inner normal of the face `c J M`).
+Measure each vertex `y` by its depth `⟪y - x c, g⟫` and its coordinates `⟪y - x c, e⟫`, `⟪y - x c, f⟫`
+along the two edges. Suppose every vertex other than `c`, `J`, `M` has positive depth and every vertex
+has both coordinates nonnegative. Suppose one vertex `P` is level with `J` (`⟪x P - x c, e⟫ = ⟪e, e⟫`)
+and off the wall `⟪y - x c, f⟫ = 0`, and every vertex other than `J`, `P` is short of `J`. Suppose one
+vertex `W` lies on the wall `⟪y - x c, e⟫ = 0` beyond `M` (`⟪x W - x c, f⟫ > ⟪f, f⟫`), and no other
+vertex on that wall is beyond `M`. Then the polytope is Rupert.
+
+Why: The view is the Corner Slide Lemma's `e_k - ψ e_j - ψ² e_m` (`e_k` along `g`). The motion is
+mainly a rotation about the `e` axis, so every deep vertex slides straight down the screen, towards
+the edge `c J`, at a speed equal to its depth; a small in-plane turn and a small tilt, chosen in a
+window that is never empty, push `P` past the edge `J P` and keep `W` inside the edge `W M`. -/
+def LevelCornerSlideLemma : Prop :=
+  ∀ (n : ℕ) (x : Fin n → ℝ³) (c J M P W : Fin n) (e f g : ℝ³),
+    x J - x c = e → x M - x c = f → e ≠ 0 → f ≠ 0 → g ≠ 0 →
+    ⟪e, f⟫ = 0 → ⟪e, g⟫ = 0 → ⟪f, g⟫ = 0 →
+    (∀ i, i ≠ c → i ≠ J → i ≠ M → 0 < ⟪x i - x c, g⟫) →
+    (∀ i, 0 ≤ ⟪x i - x c, e⟫ ∧ 0 ≤ ⟪x i - x c, f⟫) →
+    ⟪x P - x c, e⟫ = ⟪e, e⟫ → 0 < ⟪x P - x c, f⟫ →
+    (∀ i, i ≠ J → i ≠ P → ⟪x i - x c, e⟫ < ⟪e, e⟫) →
+    ⟪x W - x c, e⟫ = 0 → ⟪f, f⟫ < ⟪x W - x c, f⟫ →
+    (∀ i, i ≠ W → ⟪x i - x c, e⟫ = 0 → ⟪x i - x c, f⟫ ≤ ⟪f, f⟫) →
+    IsRupert (Finset.univ.image x)
+
 /-- `(A, B, C)` is lexicographically positive: `A + s B + s² C > 0` for all small `s > 0`. -/
 def LexPos3 (A B C : ℝ) : Prop := 0 < A ∨ (A = 0 ∧ (0 < B ∨ (B = 0 ∧ 0 < C)))
 

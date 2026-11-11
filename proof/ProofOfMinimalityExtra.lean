@@ -41,6 +41,7 @@ public import MinimalityExtra.QuadEdge
 public import MinimalityExtra.AcuteEdge
 public import MinimalityExtra.Slide
 public import MinimalityExtra.CornerSlide
+public import MinimalityExtra.LevelCorner
 public import MinimalityExtra.HiddenEnd
 public import MinimalityExtra.GramExtension
 public import Minimality.Tilt
@@ -210,6 +211,7 @@ theorem type29Faces_agree :
 #print axioms slideLemma
 #print axioms slideLemmaTriangularWalls
 #print axioms cornerSlideLemma
+#print axioms levelCornerSlideLemma
 #print axioms hiddenEndLemma
 
 end MinimalityExtra
