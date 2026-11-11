@@ -1,8 +1,7 @@
 module
 
 public import Minimality.Type16SAT.FinalW16
-public import Minimality.Type16SAT.LinkPZPM
-public import Minimality.Type16SAT.LinkMZPM
+public import Minimality.Type16SAT.GPDead16
 public import Minimality.Type16SAT.LinkPZMMU
 public import Minimality.Type16SAT.LinkPZMMZ
 public import Minimality.Type16SAT.LinkMZMMU
@@ -13,7 +12,7 @@ public import Minimality.Type16SAT.LinkMZMMZ
 /-!
 # Type 16: the one-zero vectors next to the open classes with the zero at `[0134]` or `[2346]`
 
-* `+0+-`, `-0+-` and their `sigma16` images `--+0`, `+-+0`: one plain wall core each (`Core16W`, `PZPM`, `MZPM`).
+* `+0+-`, `-0+-` and their `sigma16` images `--+0`, `+-+0`: not Rupert-closed by a core: they do not occur (`not_cls16Dead`, `GPDead16`).
 * `+0--`, `-0--` and their images `---0`, `+--0`: as the walls of `FinalW16` (`r = 1` on `Z`), two case cores each
   (`PZMMU`/`PZMMZ`, `MZMMU`/`MZMMZ`) and the Slide Lemma at `r = 1`, off the residue `⟪x 0 - x 3, x 6 - x 3⟫ = 0`.
 -/
@@ -45,10 +44,10 @@ theorem isRupert_wallX {x : Fin 7 → ℝ³} (T : Type16 x) (h : Cls16WallX x) (
   simp only [WallResX16, not_or, not_and] at hr
   obtain ⟨hr1, hr2⟩ := hr
   rcases h with h | h | h | h | h | h | h | h
-  · exact rupert_wall rupert_of_corePZPM T h
-  · exact rupert_wall_sigma rupert_of_corePZPM T h (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  · exact rupert_wall rupert_of_coreMZPM T h
-  · exact rupert_wall_sigma rupert_of_coreMZPM T h (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+  · exact (not_cls16Dead T (cls16Dead_of_vec h (by norm_num) (by norm_num))).elim
+  · exact (not_cls16Dead T (cls16Dead_of_vec h (by norm_num) (by norm_num))).elim
+  · exact (not_cls16Dead T (cls16Dead_of_vec h (by norm_num) (by norm_num))).elim
+  · exact (not_cls16Dead T (cls16Dead_of_vec h (by norm_num) (by norm_num))).elim
   · exact isRupert_wall0_of rupert_of_corePZMMU rupert_of_corePZMMZ T h (hr1 (Or.inl h))
   · exact isRupert_wall0_sigma_of rupert_of_corePZMMU rupert_of_corePZMMZ T h (hr2 (Or.inl h))
   · exact isRupert_wall0_of rupert_of_coreMZMMU rupert_of_coreMZMMZ T h (hr1 (Or.inr h))

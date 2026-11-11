@@ -1,6 +1,6 @@
 module
 
-public import Minimality.Type16SAT.Cls16
+public import Minimality.Type16SAT.Cls16W
 public import Minimality.Type16NF
 
 @[expose] public section
@@ -81,6 +81,22 @@ theorem not_cls16Dead {x : Fin 7 → ℝ³} (T : Type16 x) (h : Cls16Dead x) : F
   obtain ⟨h3, h24⟩ := h
   obtain ⟨n2, n4⟩ := cls16_s3_nonneg T h3
   rcases h24 with h | h <;> linarith
+
+/-- A sign vector with `C * [1234]` zero or positive and `C * [0134]` or `C * [2346]` zero or positive is in `Cls16Dead`. -/
+theorem cls16Dead_of_vec {e1 e2 e3 e4 : ℝ} {x : Fin 7 → ℝ³} (hv : Vec16 e1 e2 e3 e4 x)
+    (h3 : e3 = 0 ∨ e3 = 1) (h24 : e2 = 0 ∨ e2 = 1 ∨ e4 = 0 ∨ e4 = 1) : Cls16Dead x := by
+  have key : ∀ (e b : ℝ), (e = 0 ∨ e = 1) → SgnP e b → 0 ≤ b := by
+    intro e b he h
+    rcases he with rfl | rfl <;> simp [SgnP] at h
+    · exact h.ge
+    · exact h.le
+  obtain ⟨-, s2, s3, s4⟩ := hv
+  refine ⟨key _ _ h3 s3, ?_⟩
+  rcases h24 with h | h | h | h
+  · exact Or.inl (key _ _ (Or.inl h) s2)
+  · exact Or.inl (key _ _ (Or.inr h) s2)
+  · exact Or.inr (key _ _ (Or.inl h) s4)
+  · exact Or.inr (key _ _ (Or.inr h) s4)
 
 /-- The six GP-dead strict vectors (bracket order `[0126] [0134] [1234] [2346]`) are in `Cls16Dead`. -/
 theorem not_gpdead16 {x : Fin 7 → ℝ³} (T : Type16 x) :

@@ -1320,10 +1320,10 @@ theorem isRupert_wallR_all {x : Fin 7 → ℝ³} (T : Type16 x) (h : Cls16WallR 
 /-- **Type 16, the eight vectors of `Cls16WallX`**, with the residue of `+0--`, `-0--` and their images. -/
 theorem isRupert_wallX_all {x : Fin 7 → ℝ³} (T : Type16 x) (h : Cls16WallX x) : IsRupert (univ.image x) := by
   rcases h with h | h | h | h | h | h | h | h
-  · exact rupert_wall rupert_of_corePZPM T h
-  · exact rupert_wall_sigma rupert_of_corePZPM T h (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  · exact rupert_wall rupert_of_coreMZPM T h
-  · exact rupert_wall_sigma rupert_of_coreMZPM T h (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+  · exact (not_cls16Dead T (cls16Dead_of_vec h (by norm_num) (by norm_num))).elim
+  · exact (not_cls16Dead T (cls16Dead_of_vec h (by norm_num) (by norm_num))).elim
+  · exact (not_cls16Dead T (cls16Dead_of_vec h (by norm_num) (by norm_num))).elim
+  · exact (not_cls16Dead T (cls16Dead_of_vec h (by norm_num) (by norm_num))).elim
   · exact isRupert_wall0_all rupert_of_corePZMMU rupert_of_corePZMMZ one_ne_zero T h
   · exact isRupert_wall0_sigma_all rupert_of_corePZMMU rupert_of_corePZMMZ one_ne_zero T h
   · exact isRupert_wall0_all rupert_of_coreMZMMU rupert_of_coreMZMMZ (by norm_num) T h
