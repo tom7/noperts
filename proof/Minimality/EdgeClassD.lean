@@ -354,7 +354,7 @@ theorem isRupert_classD (E : EdgeConf V u v w a b c h Na Nb κa κb Ma Mb) {m : 
     · rw [hdiff, inner_neg_left, real_inner_smul_left, hvw, real_inner_smul_right, E.Na_u]
       ring
     · rw [hdiff, inner_neg_left, real_inner_smul_left, E.Na_av]; ring
-  have hR := rdRim_of_H hm' hs0 hs1 hδ' hoff horient hpar' (hE hKw) hH1' hfeet
+  have hR := rdRim_of_H hm' hs0 hs1 hoff horient hpar' (hE hKw) hH1' hfeet
   have hne : v - w ≠ 0 := by rw [hvw]; exact smul_ne_zero (neg_ne_zero.mpr hh) E.hu
   refine isRupert_of_rdRim V (insert w Mb) hR hne E.hv (E.hMa hm) E.ha E.hc E.hb ?_ ?_
   · intro x hx

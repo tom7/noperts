@@ -109,12 +109,13 @@ theorem rd_coords' {sm tm sf tf s1 t1 s2 t2 lam mu : ℝ}
 
 set_option maxHeartbeats 1000000 in
 /-- **A.10's conditions from Theorem 22.8's hypotheses.**  `m = v + s (f − v) + δ (v − w)`
-(`0 < s < 1`, `δ > 0`: the middle of `F_j` above the chord, in the orientation `v − w` with
+(`0 < s < 1`: the middle of `F_j` above the chord, in the orientation `v − w` with
 the kept apex `v` on top), `g_v` off `F_j`'s plane, the rim `v f g_f g_v` oriented, the far edge
 `g ∥ F_j`, Lemma E strict (`v`, `w` on opposite sides of the plane `f g_f g_v`), (H1) along
-`v − w`, and the foot of the double normal on the open chord `(v, f)`.  Then `RdRim`. -/
+`v − w`, and the foot of the double normal on the open chord `(v, f)`.  Then `RdRim`.
+Note: This used to require `0 < δ`, but it wasn't actually used. -tom7 -/
 theorem rdRim_of_H {v m f gf gv w : ℝ³} {s δ : ℝ}
-    (hm : m = v + s • (f - v) + δ • (v - w)) (hs0 : 0 < s) (hs1 : s < 1) (hδ : 0 < δ)
+    (hm : m = v + s • (f - v) + δ • (v - w)) (hs0 : 0 < s) (hs1 : s < 1)
     (hoff : det3 (v - w) (f - v) (gv - v) ≠ 0)
     (horient : 0 < det3 (f - v) (gf - v) (v - w) * det3 (gv - gf) (v - gf) (v - w))
     (hpar : det3 (v - w) (f - v) (gf - gv) = 0)

@@ -316,7 +316,7 @@ theorem rdRimG_vtx (E : VtxConf V u v a c b p q n Na Nb κa κb) {m : ℝ³} {s 
         simp only [Dv, Du, det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]; ring
       rw [e, hL', div_mul_cancel₀ _ hDu]
       nlinarith [mul_self_pos.mpr hDv]
-    have hR := rdRim_of_H f1 hs0 hs1 f2 f3 f4 f5 hE f6 f7
+    have hR := rdRim_of_H f1 hs0 hs1 f3 f4 f5 hE f6 f7
     rw [sub_sub_cancel] at hR
     exact ⟨L', hL'0, hsg, hR.toG⟩
   · -- Lemma 22.10
