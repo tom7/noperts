@@ -104,8 +104,7 @@ theorem k3q2pCyc_inj {γ4 β1 β6 γ6 : ℝ} (hγ4 : 0 < γ4) (hβ1 : 0 < β1) (
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
     simp only [k3q2pCyc, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
+    first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2])
 
 set_option maxHeartbeats 3200000 in
 /-- **The cell `Q2⁺`** (frame form): `β6 > 1`, `C = ⟪q, r⟫ = 0`, `s₁ = γ6 A - B > 0`. -/
@@ -226,8 +225,7 @@ theorem k3q2mCyc_inj {γ4 β1 β6 γ6 : ℝ} (hγ4 : 0 < γ4) (hβ1 : 0 < β1) (
   rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
     rcases z6_cases j with rfl | rfl | rfl | rfl | rfl | rfl <;>
     simp only [k3q2mCyc, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
+    first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2])
 
 set_option maxHeartbeats 3200000 in
 /-- **The cell `Q2⁻`** (frame form): `β6 < 1`, `C = ⟪q, r⟫ = 0`, `s₂ = -B > 0`. -/

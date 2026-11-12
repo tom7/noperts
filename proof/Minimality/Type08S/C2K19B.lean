@@ -223,8 +223,7 @@ theorem k19HexX_inj {β1 β6 γ6 : ℝ} (hβ1 : 0 < β1) (hβ6 : 0 < β6) (hγ6 
   rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
     rcases z6_cases j with rfl | rfl | rfl | rfl | rfl | rfl <;>
     simp only [k19HexX, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; linarith) | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h; done) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
+    first | rfl | (exfalso; linarith)
 
 set_option maxHeartbeats 12800000 in
 /-- **β1 < 1**: the hexagon `(b,a',c,b',a,c')` at `d - b`, peak `a`. -/

@@ -116,7 +116,7 @@ theorem k86_c1c_ts {α1 β1 β6 γ6 ν : ℝ} (hα1 : 1 < α1) (hβ1 : 1 < β1) 
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxe4, lxf0, lxf1, lxf2, lxf3, lxf4, k86_c1c_Y_0, k86_c1c_Y_1, k86_c1c_Y_2, k86_c1c_Y_3, k86_c1c_Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
         lexk_row
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxe4, lxf0, lxf1, lxf2, lxf3, lxf4, k86_c1c_Y_0, k86_c1c_Y_1, k86_c1c_Y_2, k86_c1c_Y_3, k86_c1c_Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
-        (rcases hlit.lt_or_eq with lxh | lxh <;> first | lexk_row | (subst lxh; lexk_row))
+        (rcases hlit.lt_or_eq with lxh | lxh <;> lexk_row)
 
 theorem k86_c1c_inj {α1 β1 β6 γ6 ν : ℝ} (hα1 : 1 < α1) (hβ1 : 1 < β1) (hν : α1 - 1 < ν) (L : ℝ) (hL : L = α1 * β1 - (β1 - 1) * ν) (hlit : 0 ≤ L) (hc : β1 * (γ6 - 1) < β6 * (α1 - 1)) (hb6 : 1 < β6) (hg6 : 1 < γ6) (hσ : β1 < β6 + γ6) : ∀ i j, k86_c1c_Y α1 β1 β6 γ6 ν i = k86_c1c_Y α1 β1 β6 γ6 ν j → i = j := by
   intro i j h

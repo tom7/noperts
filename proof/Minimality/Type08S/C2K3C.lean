@@ -131,8 +131,7 @@ theorem k3q1mCyc_inj {β1 β6 γ6 : ℝ} (hβ1 : 0 < β1) (hβ6 : 0 < β6) (hβ6
   rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
     rcases z6_cases j with rfl | rfl | rfl | rfl | rfl | rfl <;>
     simp only [k3q1mCyc, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
+    first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h)
 
 set_option maxHeartbeats 1600000 in
 /-- **The cell `Q1⁻`** (frame form): `β6 < 1`, `C = ⟪q, r⟫ > 0`, `s₂ = (1 - β1) C - B > 0`. -/

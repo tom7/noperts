@@ -55,9 +55,7 @@ theorem k24mtcY_inj {α1 β1 β6 γ6 : ℝ} (hα1 : 1 < α1) (hβ1 : 0 < β1) (h
   rcases k19_z4_cases i with rfl | rfl | rfl | rfl <;>
     rcases k19_z4_cases j with rfl | rfl | rfl | rfl <;>
     simp only [k24mtcY_0, k24mtcY_1, k24mtcY_2, k24mtcY_3, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; linarith) | (exfalso; linarith [h.1, h.2.1, h.2.2]) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith)
+    first | rfl | (exfalso; linarith)
 
 set_option maxHeartbeats 12800000 in
 theorem k24mtc_tsc {D α1 β1 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 < α1) (hβ1 : 1 < β1) (hβ6 : 1 < β6)

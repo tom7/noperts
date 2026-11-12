@@ -65,8 +65,7 @@ theorem k5f_C2_frame (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r ≠ 
     rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
       simp only [k5fC2Cyc, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4, Prod.mk.injEq] at h <;>
-      first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h) |
-        (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith)
+      first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2])
   refine cyc_cell V p q r d hΔ (k := 5) (by norm_num) (k5fC2Cyc α1 β1 β6 α4 γ4) hinjX hmem
     [(0, 0, 0), (0, 1, 0)] ?_ (u1 := 1) (u2 := 1) (t1 := 1) (t2 := 0) (lo := 0) (hi := 1)
     (by norm_num) (by norm_num) (fun v1 v2 => 0 < v1 ∧ 0 < v2) ?_ ?_ ?_

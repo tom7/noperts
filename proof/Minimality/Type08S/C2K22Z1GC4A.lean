@@ -36,8 +36,7 @@ theorem k22z1gc4Y_inj {w k : ℝ} (hw : 0 < w) (hk : 0 < k) :
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
     simp only [k22z1gc4Y_0, k22z1gc4Y_1, k22z1gc4Y_2, k22z1gc4Y_3, k22z1gc4Y_4, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; linarith) | (exfalso; linarith [h.1, h.2.1, h.2.2]) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith)
+    first | rfl | (exfalso; linarith)
 
 set_option maxHeartbeats 12800000 in
 theorem k22z1gc4_tsc {D w k s1 s2 : ℝ} (hD : 0 < D) (hw : 0 < w) (hk : 0 < k)

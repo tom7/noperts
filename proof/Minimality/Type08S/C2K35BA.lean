@@ -45,8 +45,7 @@ theorem k28h5bY_inj {a1 b1 b6 g6 Ez Fz : ℝ} (ha1 : 1 < a1) (hb1 : 1 < b1) (hg6
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
     simp only [k28h5bY_0, k28h5bY_1, k28h5bY_2, k28h5bY_3, k28h5bY_4, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; linarith) | (exfalso; linarith [h.1, h.2.1, h.2.2]) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith) | (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith)
+    first | rfl | (exfalso; linarith)
 
 set_option maxHeartbeats 12800000 in
 theorem k28h5b_tsc {D a1 b1 b6 g6 Ez Fz v1 v2 : ℝ} (hD : 0 < D) (ha1 : 1 < a1) (hb1 : 1 < b1)

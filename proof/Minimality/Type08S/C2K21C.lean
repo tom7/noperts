@@ -43,8 +43,7 @@ theorem k21Pent_inj {α1 β1 γ4 β6 : ℝ} (hβ1 : 0 < β1) (hγ4 : 0 < γ4) (h
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
     simp only [k21Pent_0, k21Pent_1, k21Pent_2, k21Pent_3, k21Pent_4, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; linarith) | (exfalso; linarith [h.1, h.2.1, h.2.2]) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith) | (exfalso; norm_num at h)
+    first | rfl | (exfalso; linarith)
 
 set_option maxHeartbeats 6400000 in
 theorem k21_pent_tsc {D α1 β1 γ4 β6 v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 < α1) (hβ1 : 0 < β1) (hγ4 : 0 < γ4)

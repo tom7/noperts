@@ -43,7 +43,7 @@ theorem k28h5aY_inj {A B β γ g κ ζ : ℝ} (hA : 1 < A) (hγ : 0 < γ) (hγ1 
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
     simp only [k28h5aY_0, k28h5aY_1, k28h5aY_2, k28h5aY_3, k28h5aY_4, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; linarith) | (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith)
+    first | rfl | (exfalso; linarith)
 
 set_option maxHeartbeats 12800000 in
 theorem k28h5a_tsc {D A B β γ g κ ζ v1 v2 : ℝ} (hD : 0 < D) (hA : 1 < A) (hB : 1 < B) (hβ : 0 < β)

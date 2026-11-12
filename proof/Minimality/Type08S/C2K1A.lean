@@ -81,8 +81,7 @@ theorem k1Cyc_inj {β6 α4 : ℝ} (hβ6 : 0 < β6) (hα4 : 0 < α4) :
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
     simp only [k1Cyc, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; linarith [h]) | (exfalso; norm_num at h) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
+    first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; linarith [h])
 
 end C2
 end Type08Sp

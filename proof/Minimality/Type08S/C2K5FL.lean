@@ -33,8 +33,7 @@ theorem k5f_E1_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠ 
     rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
       simp only [k5fE1Cyc, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4, Prod.mk.injEq] at h <;>
-      first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h) |
-        (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith)
+      first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h)
   refine cyc_cell V P Q R d hΔ (k := 5) (by norm_num) (k5fE1Cyc m k t α4 γ4) hinjX hmem
     [(1, 0, -1), (0, 1, 0)] ?_ (u1 := -1) (u2 := 1) (t1 := 1) (t2 := 0) (lo := 0) (hi := 1)
     (by norm_num) (by norm_num) (fun v1 v2 => v1 < 0 ∧ 0 < v2) ?_ ?_ ?_
@@ -71,8 +70,7 @@ theorem k5f_E2_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠ 
     rcases z4_cases i with rfl | rfl | rfl | rfl <;>
       rcases z4_cases j with rfl | rfl | rfl | rfl <;>
       simp only [k5fE2Cyc_0, k5fE2Cyc_1, k5fE2Cyc_2, k5fE2Cyc_3, Prod.mk.injEq] at h <;>
-      first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h) |
-        (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith)
+      first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2])
   refine cyc_cell V P Q R d hΔ (k := 4) (by norm_num) (k5fE2Cyc m k t α4 γ4) hinjX hmem
     [(1, 0, 0), (0, 0, 0), (0, 1, 0)] ?_ (u1 := 1) (u2 := -1) (t1 := -1) (t2 := 0) (lo := 0) (hi := 1)
     (by norm_num) (by norm_num) (fun v1 v2 => 0 < v1 ∧ v2 < 0) ?_ ?_ ?_

@@ -37,8 +37,7 @@ theorem k22z1gc2Y_inj {w k : ℝ} (hw : 0 < w) (hk : 0 < k) :
   rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
     rcases z6_cases j with rfl | rfl | rfl | rfl | rfl | rfl <;>
     simp only [k22z1gc2Y_0, k22z1gc2Y_1, k22z1gc2Y_2, k22z1gc2Y_3, k22z1gc2Y_4, k22z1gc2Y_5, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; linarith) | (exfalso; linarith [h.1, h.2.1, h.2.2]) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith)
+    first | rfl | (exfalso; linarith)
 
 theorem k22z1gc2_tsc_of {D : ℝ} {e f v : ℝ × ℝ × ℝ} (hD : 0 < D)
     (h : 0 < d3 e.1 e.2.1 e.2.2 f.1 f.2.1 f.2.2 0 0 1 ∨

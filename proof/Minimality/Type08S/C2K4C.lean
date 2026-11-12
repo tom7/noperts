@@ -87,8 +87,7 @@ theorem k4bCyc_inj {β1 γ6 : ℝ} (hβ1 : 0 < β1) (hγ6 : 0 < γ6) :
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
     simp only [k4bCyc, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; linarith) | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
+    first | rfl | (exfalso; linarith)
 
 set_option maxHeartbeats 1600000 in
 /-- **The 5-cycle cell at the base view `r`** (frame form), `β6 = 1`, `α4 < 1`, `⟪q, r⟫ > 0`. -/

@@ -24,8 +24,7 @@ theorem kCyc_inj {β6 γ6 α4 : ℝ} (hβ6 : 0 < β6) (hγ6 : 0 < γ6) :
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
     simp only [kCyc, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
+    first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h)
 
 set_option maxHeartbeats 1600000 in
 /-- **The 5-cycle cell `(a, d, b, a', b')` at the base view `r = a - d`** (frame form), `γ4 = 1`,

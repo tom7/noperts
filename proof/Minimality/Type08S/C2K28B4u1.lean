@@ -37,8 +37,7 @@ theorem k28b4uY_inj {α1 β1 γ6 μ : ℝ} (hα1 : 1 < α1) (hβ1 : 1 < β1) (h�
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
     simp only [k28b4uY_0, k28b4uY_1, k28b4uY_2, k28b4uY_3, k28b4uY_4, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith)
+    first | rfl | (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
 
 set_option maxHeartbeats 12800000 in
 theorem k28b4u_tsc {D α1 β1 γ6 μ v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 < α1) (hβ1 : 1 < β1)

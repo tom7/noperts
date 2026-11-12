@@ -35,9 +35,7 @@ theorem k24h1bY_inj {b1 s h6 g : ℝ} (hb1 : 1 < b1) (hs : 0 < s) (hg : 0 < g) (
   rcases k19_z4_cases i with rfl | rfl | rfl | rfl <;>
     rcases k19_z4_cases j with rfl | rfl | rfl | rfl <;>
     simp only [k24h1bY_0, k24h1bY_1, k24h1bY_2, k24h1bY_3, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; linarith) | (exfalso; linarith [h.1, h.2.1, h.2.2]) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith [mul_pos hb1.le hs])
+    first | rfl | (exfalso; linarith)
 
 set_option maxHeartbeats 12800000 in
 theorem k24h1b_tsc {D b1 s h6 g v1 v2 : ℝ} (hD : 0 < D) (hb1 : 1 < b1) (hs : 0 < s) (hg : 0 < g)

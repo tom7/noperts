@@ -99,8 +99,7 @@ theorem k19HexZ_inj {α4 β1 γ4 β6 γ6 : ℝ} (hα4 : 0 < α4) (hβ1 : 0 < β1
   rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
     rcases z6_cases j with rfl | rfl | rfl | rfl | rfl | rfl <;>
     simp only [k19HexZ, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; linarith) | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h; done) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
+    first | rfl | (exfalso; linarith)
 
 set_option maxHeartbeats 12800000 in
 /-- `β1 < 1`: the hexagon `(b,a',c,b',a,c')` at `d - b`. -/
@@ -276,8 +275,7 @@ theorem k19Tri_inj {α4 β1 γ4 : ℝ} (hβ1 : 0 < β1) (hγ4 : 0 < γ4) :
   rcases k19_z3_cases i with rfl | rfl | rfl <;>
     rcases k19_z3_cases j with rfl | rfl | rfl <;>
     simp only [k19Tri_0, k19Tri_1, k19Tri_2, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; linarith) | (exfalso; linarith [h.1, h.2.1, h.2.2]) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
+    first | rfl | (exfalso; linarith)
 
 /-- Quadrilateral `a (0,0,1), c' (β1,0,1), a' (β6,γ6,0), b' (0,γ4,α4)`. -/
 def k19Qd (α4 β1 γ4 β6 γ6 : ℝ) : ZMod 4 → ℝ × ℝ × ℝ := ![(0, 0, 1), (β1, 0, 1), (β6, γ6, 0), (0, γ4, α4)]
@@ -349,8 +347,7 @@ theorem k19Qd_inj {α4 β1 γ4 β6 γ6 : ℝ} (hα4 : 0 < α4) (hα41 : α4 < 1)
   rcases k19_z4_cases i with rfl | rfl | rfl | rfl <;>
     rcases k19_z4_cases j with rfl | rfl | rfl | rfl <;>
     simp only [k19Qd_0, k19Qd_1, k19Qd_2, k19Qd_3, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; linarith) | (exfalso; linarith [h.1, h.2.1, h.2.2]) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
+    first | rfl | (exfalso; linarith)
 
 set_option maxHeartbeats 12800000 in
 /-- `β1 > 1`: triangle `(a,c',b')` (a' inside) or quadrilateral `(a,c',a',b')` (a' outside) at `a - d`. -/

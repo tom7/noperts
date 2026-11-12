@@ -92,8 +92,7 @@ theorem k19Hex3_inj {β1 β6 γ6 : ℝ} (hβ1 : 1 < β1) (hβ6 : 0 < β6) (hγ6 
   rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
     rcases z6_cases j with rfl | rfl | rfl | rfl | rfl | rfl <;>
     simp only [k19Hex3, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; linarith) | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h; done) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
+    first | rfl | (exfalso; linarith)
 
 set_option maxHeartbeats 12800000 in
 /-- **U3 on the tie** `pq = qr = 0` with `pr ≠ 0`: X1 hexagon or U3b pentagon at `d - b`. -/
