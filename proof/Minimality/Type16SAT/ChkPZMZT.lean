@@ -59,17 +59,17 @@ theorem unitsPZMZT_true (F : S0xFac 8 V2.fIdx x) (h0 : 0 < det3 (x 1 - x 0) (x 2
   simp only [unitsPZMZT, List.mem_cons, List.not_mem_nil, or_false] at hl
   rcases hl with rfl | rfl | rfl | rfl | rfl | rfl | rfl
   · show evalL (Minimality.H16.SAT.rho (geoF F)) (false, V.kv 1 9 17) = true
-    simp [evalL, Minimality.H16.SAT.rho, Minimality.H16.SAT.Geo.atom, Minimality.H16.SAT.Geo.dv, Minimality.H16.SAT.EA, Minimality.H16.SAT.EB, Minimality.H16.SAT.edges, e0, e1, e2, e3, e4, e5, e6, n0, n1, n2, n3, n5, n6, z2]
+    simp [evalL, Minimality.H16.SAT.rho, Minimality.H16.SAT.Geo.atom, Minimality.H16.SAT.Geo.dv, Minimality.H16.SAT.EA, Minimality.H16.SAT.EB, Minimality.H16.SAT.edges, e1, e3, e5, e6, n1, z2]
   · show evalL (Minimality.H16.SAT.rho (geoF F)) (false, V.ng (V.kv 1 9 17)) = true
-    simp [evalL, Minimality.H16.SAT.rho, Minimality.H16.SAT.Geo.atom, Minimality.H16.SAT.Geo.dv, Minimality.H16.SAT.EA, Minimality.H16.SAT.EB, Minimality.H16.SAT.edges, e0, e1, e2, e3, e4, e5, e6, n0, n1, n2, n3, n5, n6, z2]
+    simp [evalL, Minimality.H16.SAT.rho, Minimality.H16.SAT.Geo.atom, Minimality.H16.SAT.Geo.dv, Minimality.H16.SAT.EA, Minimality.H16.SAT.EB, Minimality.H16.SAT.edges, e1, e3, e5, e6, n1, z2]
   · show evalL (Minimality.H16.SAT.rho (geoF F)) (false, V.kv 1 10 16) = true
-    simp [evalL, Minimality.H16.SAT.rho, Minimality.H16.SAT.Geo.atom, Minimality.H16.SAT.Geo.dv, Minimality.H16.SAT.EA, Minimality.H16.SAT.EB, Minimality.H16.SAT.edges, e0, e1, e2, e3, e4, e5, e6, n0, n1, n2, n3, n5, n6, z3]
+    simp [evalL, Minimality.H16.SAT.rho, Minimality.H16.SAT.Geo.atom, Minimality.H16.SAT.Geo.dv, Minimality.H16.SAT.EA, Minimality.H16.SAT.EB, Minimality.H16.SAT.edges, e1, e3, e5, e6, n1, z3]
   · show evalL (Minimality.H16.SAT.rho (geoF F)) (false, V.ng (V.kv 1 10 16)) = true
-    simp [evalL, Minimality.H16.SAT.rho, Minimality.H16.SAT.Geo.atom, Minimality.H16.SAT.Geo.dv, Minimality.H16.SAT.EA, Minimality.H16.SAT.EB, Minimality.H16.SAT.edges, e0, e1, e2, e3, e4, e5, e6, n0, n1, n2, n3, n5, n6, z3]
+    simp [evalL, Minimality.H16.SAT.rho, Minimality.H16.SAT.Geo.atom, Minimality.H16.SAT.Geo.dv, Minimality.H16.SAT.EA, Minimality.H16.SAT.EB, Minimality.H16.SAT.edges, e1, e3, e5, e6, n1, z3]
   · show evalL (Minimality.H16.SAT.rho (geoF F)) (false, V.fv 3 1 4) = true
-    simp [evalL, Minimality.H16.SAT.rho, Minimality.H16.SAT.Geo.atom, Minimality.H16.SAT.Geo.dv, Minimality.H16.SAT.EA, Minimality.H16.SAT.EB, Minimality.H16.SAT.edges, e0, e1, e2, e3, e4, e5, e6, n0, n1, n2, n3, n5, n6, z5]
+    simp [evalL, Minimality.H16.SAT.rho, Minimality.H16.SAT.Geo.atom, e1, e4, n3, z5]
   · show evalL (Minimality.H16.SAT.rho (geoF F)) (false, V.ng (V.fv 3 1 4)) = true
-    simp [evalL, Minimality.H16.SAT.rho, Minimality.H16.SAT.Geo.atom, Minimality.H16.SAT.Geo.dv, Minimality.H16.SAT.EA, Minimality.H16.SAT.EB, Minimality.H16.SAT.edges, e0, e1, e2, e3, e4, e5, e6, n0, n1, n2, n3, n5, n6, z5]
+    simp [evalL, Minimality.H16.SAT.rho, Minimality.H16.SAT.Geo.atom, e1, e4, n3, z5]
   · show evalL (Minimality.H16.SAT.rho (geoF F)) (true, V.br 0 1 2 6) = true
     simp [evalL, Minimality.H16.SAT.rho, Minimality.H16.SAT.Geo.atom, e0, e1, e2, e6, h0]
 

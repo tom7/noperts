@@ -682,7 +682,7 @@ theorem pcPpmmm (x2a x2b x2c x6a x6b x6c al be : ℝ)
     (hc25 : 0 < x2c - x2b - x2a)
     : False := by
   have e0 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g0Ppmmm = x6c + 1 := by
-    simp only [g0Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g0Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast]; ring
   have e1 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g1Ppmmm = x2c * be - x2c * x6b + x2b * x6c + be - x6b := by
     simp only [g1Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
   have e2 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g2Ppmmm = - be - x2c + x2b := by

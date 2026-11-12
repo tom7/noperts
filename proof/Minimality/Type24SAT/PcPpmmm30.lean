@@ -463,11 +463,11 @@ theorem pcPpmmm30 (x1a x1b x1c x6a x6b x6c p4a p4b : ℝ)
   have e7 : peval 64 [x1a, x1b, x1c, x6a, x6b, x6c, p4a, p4b] g7Ppmmm30 = - p4a + 1 := by
     simp only [g7Ppmmm30, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
   have e8 : peval 64 [x1a, x1b, x1c, x6a, x6b, x6c, p4a, p4b] g8Ppmmm30 = - p4b := by
-    simp only [g8Ppmmm30, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g8Ppmmm30, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.cast_negSucc]; ring
   have e9 : peval 64 [x1a, x1b, x1c, x6a, x6b, x6c, p4a, p4b] g9Ppmmm30 = x1c - 1 := by
     simp only [g9Ppmmm30, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
   have e10 : peval 64 [x1a, x1b, x1c, x6a, x6b, x6c, p4a, p4b] g10Ppmmm30 = x6c := by
-    simp only [g10Ppmmm30, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g10Ppmmm30, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast]; ring
   have e11 : peval 64 [x1a, x1b, x1c, x6a, x6b, x6c, p4a, p4b] g11Ppmmm30 = - x1c * p4a - x1a + 1 := by
     simp only [g11Ppmmm30, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
   have e12 : peval 64 [x1a, x1b, x1c, x6a, x6b, x6c, p4a, p4b] g12Ppmmm30 = - x6a * x6c * p4b + x6a * x6b * p4a - x6a^2 * p4b - x6b * p4a + x6a * p4b := by

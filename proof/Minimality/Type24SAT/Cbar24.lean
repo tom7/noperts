@@ -186,34 +186,34 @@ theorem nceh_formula (h3 : 0 < omega3 y) (h4 : 0 < omega4 y) (h5 : 0 < omega5 y)
   have key := binet_cauchy (nrm (ext y) 2) (nrm (ext y) 4) (nrm (ext y) 7) (y 0 - y 1) (y 2 - y 1) (y 6 - y 1)
   have a2 : ⟪nrm (ext y) 2, y 0 - y 1⟫ = -⟪nrm (ext y) 2, ext y 1 - ext y 0⟫ := by
     simp only [inner_eq_dot, toV3_nrm]
-    simp only [pt, nrm3, toV3, fa_0, fb_0, fc_0, sg_0, fa_2, fb_2, fc_2, sg_2, fa_4, fb_4, fc_4, sg_4, fa_7, fb_7, fc_7, sg_7, V3.smul, V3.cr, V3.dot, V3.sub, e0, e1, e2, e3, e4, e5, e6, vol3, PiLp.sub_apply]
+    simp only [pt, nrm3, toV3, fa_2, fb_2, fc_2, sg_2, V3.smul, V3.cr, V3.dot, V3.sub, e0, e1, e2, e5, PiLp.sub_apply]
     push_cast
     ring
   have b2 : ⟪nrm (ext y) 2, y 2 - y 1⟫ = -⟪nrm (ext y) 2, ext y 1 - ext y 0⟫ := by
     simp only [inner_eq_dot, toV3_nrm]
-    simp only [pt, nrm3, toV3, fa_0, fb_0, fc_0, sg_0, fa_2, fb_2, fc_2, sg_2, fa_4, fb_4, fc_4, sg_4, fa_7, fb_7, fc_7, sg_7, V3.smul, V3.cr, V3.dot, V3.sub, e0, e1, e2, e3, e4, e5, e6, vol3, PiLp.sub_apply]
+    simp only [pt, nrm3, toV3, fa_2, fb_2, fc_2, sg_2, V3.smul, V3.cr, V3.dot, V3.sub, e0, e1, e2, e5, PiLp.sub_apply]
     push_cast
     ring
   have c2 : ⟪nrm (ext y) 2, y 6 - y 1⟫ = -(omega5 y * (-⟪nrm (ext y) 2, ext y 1 - ext y 0⟫)) := by
     rw [← C_val y h5]
     simp only [inner_eq_dot, toV3_nrm]
-    simp only [pt, nrm3, toV3, fa_0, fb_0, fc_0, sg_0, fa_2, fb_2, fc_2, sg_2, fa_4, fb_4, fc_4, sg_4, fa_7, fb_7, fc_7, sg_7, V3.smul, V3.cr, V3.dot, V3.sub, e0, e1, e2, e3, e4, e5, e6, vol3, PiLp.sub_apply]
+    simp only [pt, nrm3, toV3, fa_2, fb_2, fc_2, sg_2, V3.smul, V3.cr, V3.dot, V3.sub, e0, e1, e2, e5, e6, PiLp.sub_apply]
     push_cast
     ring
   have a4 : ⟪nrm (ext y) 4, y 0 - y 1⟫ = -⟪nrm (ext y) 4, ext y 1 - ext y 0⟫ := by
     simp only [inner_eq_dot, toV3_nrm]
-    simp only [pt, nrm3, toV3, fa_0, fb_0, fc_0, sg_0, fa_2, fb_2, fc_2, sg_2, fa_4, fb_4, fc_4, sg_4, fa_7, fb_7, fc_7, sg_7, V3.smul, V3.cr, V3.dot, V3.sub, e0, e1, e2, e3, e4, e5, e6, vol3, PiLp.sub_apply]
+    simp only [pt, nrm3, toV3, fa_4, fb_4, fc_4, sg_4, V3.smul, V3.cr, V3.dot, V3.sub, e0, e1, e4, e6, PiLp.sub_apply]
     push_cast
     ring
   have b4 : ⟪nrm (ext y) 4, y 2 - y 1⟫ = -(omega4 y * (-⟪nrm (ext y) 4, ext y 1 - ext y 0⟫)) := by
     rw [← E_val y h4]
     simp only [inner_eq_dot, toV3_nrm]
-    simp only [pt, nrm3, toV3, fa_0, fb_0, fc_0, sg_0, fa_2, fb_2, fc_2, sg_2, fa_4, fb_4, fc_4, sg_4, fa_7, fb_7, fc_7, sg_7, V3.smul, V3.cr, V3.dot, V3.sub, e0, e1, e2, e3, e4, e5, e6, vol3, PiLp.sub_apply]
+    simp only [pt, nrm3, toV3, fa_4, fb_4, fc_4, sg_4, V3.smul, V3.cr, V3.dot, V3.sub, e0, e1, e2, e4, e6, PiLp.sub_apply]
     push_cast
     ring
   have c4 : ⟪nrm (ext y) 4, y 6 - y 1⟫ = -⟪nrm (ext y) 4, ext y 1 - ext y 0⟫ := by
     simp only [inner_eq_dot, toV3_nrm]
-    simp only [pt, nrm3, toV3, fa_0, fb_0, fc_0, sg_0, fa_2, fb_2, fc_2, sg_2, fa_4, fb_4, fc_4, sg_4, fa_7, fb_7, fc_7, sg_7, V3.smul, V3.cr, V3.dot, V3.sub, e0, e1, e2, e3, e4, e5, e6, vol3, PiLp.sub_apply]
+    simp only [pt, nrm3, toV3, fa_4, fb_4, fc_4, sg_4, V3.smul, V3.cr, V3.dot, V3.sub, e0, e1, e4, e6, PiLp.sub_apply]
     push_cast
     ring
   have a7 : ⟪nrm (ext y) 7, y 0 - y 1⟫ = -(omega3 y * (-⟪nrm (ext y) 7, ext y 1 - ext y 2⟫)) := by
@@ -221,12 +221,12 @@ theorem nceh_formula (h3 : 0 < omega3 y) (h4 : 0 < omega4 y) (h5 : 0 < omega5 y)
     rw [show y 0 - y 1 = ext y 0 - ext y 1 from rfl, this]; ring
   have b7 : ⟪nrm (ext y) 7, y 2 - y 1⟫ = -⟪nrm (ext y) 7, ext y 1 - ext y 2⟫ := by
     simp only [inner_eq_dot, toV3_nrm]
-    simp only [pt, nrm3, toV3, fa_0, fb_0, fc_0, sg_0, fa_2, fb_2, fc_2, sg_2, fa_4, fb_4, fc_4, sg_4, fa_7, fb_7, fc_7, sg_7, V3.smul, V3.cr, V3.dot, V3.sub, e0, e1, e2, e3, e4, e5, e6, vol3, PiLp.sub_apply]
+    simp only [pt, nrm3, toV3, fa_7, fb_7, fc_7, sg_7, V3.smul, V3.cr, V3.dot, V3.sub, e1, e2, e3, e6, PiLp.sub_apply]
     push_cast
     ring
   have c7 : ⟪nrm (ext y) 7, y 6 - y 1⟫ = -⟪nrm (ext y) 7, ext y 1 - ext y 2⟫ := by
     simp only [inner_eq_dot, toV3_nrm]
-    simp only [pt, nrm3, toV3, fa_0, fb_0, fc_0, sg_0, fa_2, fb_2, fc_2, sg_2, fa_4, fb_4, fc_4, sg_4, fa_7, fb_7, fc_7, sg_7, V3.smul, V3.cr, V3.dot, V3.sub, e0, e1, e2, e3, e4, e5, e6, vol3, PiLp.sub_apply]
+    simp only [pt, nrm3, toV3, fa_7, fb_7, fc_7, sg_7, V3.smul, V3.cr, V3.dot, V3.sub, e1, e2, e3, e6, PiLp.sub_apply]
     push_cast
     ring
   rw [a2, b2, c2, a4, b4, c4, a7, b7, c7] at key
