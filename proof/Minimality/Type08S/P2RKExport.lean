@@ -50,13 +50,13 @@ theorem K_ppp {a a' b b' c c' d e1 e2 e3 o : ℝ³} {ν v1 C0 w1 ha w3 α1 α4 �
     (α1 := α1) (α4 := α4) (γ4 := γ4) (β1 := β1) (β6 := β6) hr hν hha hα hα4 hγ4 hβ1 hβ6 hE
     (by rcases hσ with rfl | rfl <;> linarith [hp1]) (by rcases hσ with rfl | rfl <;> linarith [hp3])
     (by rcases hσ with rfl | rfl <;> linarith [hp4])
-  have e_0 : d = pr e1 e2 e3 o (unm σ (kd r)) := by rw [hd]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_1 : a = pr e1 e2 e3 o (unm σ (ka r W ha w3)) := by rw [ha_]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_2 : a' = pr e1 e2 e3 o (unm σ (ka' ν β6 C0)) := by rw [ha']; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_3 : b = pr e1 e2 e3 o (unm σ (kb r ν)) := by rw [hb]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_4 : b' = pr e1 e2 e3 o (unm σ (kb' r W ha w3 C0 α4 γ4)) := by rw [hb']; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_5 : c = pr e1 e2 e3 o (unm σ (kc C0)) := by rw [hc]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_6 : c' = pr e1 e2 e3 o (unm σ (kc' r W ha w3 ν α1 β1)) := by rw [hc']; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
+  have e_0 : d = pr e1 e2 e3 o (unm σ (kd r)) := by rw [hd]; simp only [pr, unm, kd]; ring_nf
+  have e_1 : a = pr e1 e2 e3 o (unm σ (ka r W ha w3)) := by rw [ha_]; simp only [pr, unm, ka]; ring_nf
+  have e_2 : a' = pr e1 e2 e3 o (unm σ (ka' ν β6 C0)) := by rw [ha']; simp only [pr, unm, ka']; ring_nf
+  have e_3 : b = pr e1 e2 e3 o (unm σ (kb r ν)) := by rw [hb]; simp only [pr, unm, kb]; ring_nf
+  have e_4 : b' = pr e1 e2 e3 o (unm σ (kb' r W ha w3 C0 α4 γ4)) := by rw [hb']; simp only [pr, unm, kb']; ring_nf
+  have e_5 : c = pr e1 e2 e3 o (unm σ (kc C0)) := by rw [hc]; simp only [pr, unm, kc]; ring_nf
+  have e_6 : c' = pr e1 e2 e3 o (unm σ (kc' r W ha w3 ν α1 β1)) := by rw [hc']; simp only [pr, unm, kc']; ring_nf
   rw [hu]
   subst e_0 e_1 e_2 e_3 e_4 e_5 e_6
   refine wrapK hF o hσ hν t1 t2 t3 (cyc5 (kd r) (ka r W ha w3) (kc' r W ha w3 ν α1 β1) (kb' r W ha w3 C0 α4 γ4) (kc C0)) _ (fun i => ?_) _ core.1 ?_
@@ -90,13 +90,13 @@ theorem K_mmm {a a' b b' c c' d e1 e2 e3 o : ℝ³} {ν v1 C0 w1 ha w3 α1 α4 �
     (α1 := α1) (α4 := α4) (γ4 := γ4) (β1 := β1) (β6 := β6) hr hν hha hα hα4 hγ4 hβ1 hβ6 hE
     (by rcases hσ with rfl | rfl <;> linarith [hp1]) (by rcases hσ with rfl | rfl <;> linarith [hp3])
     (by rcases hσ with rfl | rfl <;> linarith [hp4])
-  have e_0 : d = pr e1 e2 e3 o (unm σ (kd r)) := by rw [hd]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_1 : a = pr e1 e2 e3 o (unm σ (ka r W ha w3)) := by rw [ha_]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_2 : a' = pr e1 e2 e3 o (unm σ (ka' ν β6 C0)) := by rw [ha']; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_3 : b = pr e1 e2 e3 o (unm σ (kb r ν)) := by rw [hb]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_4 : b' = pr e1 e2 e3 o (unm σ (kb' r W ha w3 C0 α4 γ4)) := by rw [hb']; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_5 : c = pr e1 e2 e3 o (unm σ (kc C0)) := by rw [hc]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_6 : c' = pr e1 e2 e3 o (unm σ (kc' r W ha w3 ν α1 β1)) := by rw [hc']; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
+  have e_0 : d = pr e1 e2 e3 o (unm σ (kd r)) := by rw [hd]; simp only [pr, unm, kd]; ring_nf
+  have e_1 : a = pr e1 e2 e3 o (unm σ (ka r W ha w3)) := by rw [ha_]; simp only [pr, unm, ka]; ring_nf
+  have e_2 : a' = pr e1 e2 e3 o (unm σ (ka' ν β6 C0)) := by rw [ha']; simp only [pr, unm, ka']; ring_nf
+  have e_3 : b = pr e1 e2 e3 o (unm σ (kb r ν)) := by rw [hb]; simp only [pr, unm, kb]; ring_nf
+  have e_4 : b' = pr e1 e2 e3 o (unm σ (kb' r W ha w3 C0 α4 γ4)) := by rw [hb']; simp only [pr, unm, kb']; ring_nf
+  have e_5 : c = pr e1 e2 e3 o (unm σ (kc C0)) := by rw [hc]; simp only [pr, unm, kc]; ring_nf
+  have e_6 : c' = pr e1 e2 e3 o (unm σ (kc' r W ha w3 ν α1 β1)) := by rw [hc']; simp only [pr, unm, kc']; ring_nf
   rw [hu]
   subst e_0 e_1 e_2 e_3 e_4 e_5 e_6
   refine wrapK hF o hσ hν t1 t2 t3 (cyc4 (kb r ν) (kc' r W ha w3 ν α1 β1) (kb' r W ha w3 C0 α4 γ4) (ka' ν β6 C0)) _ (fun i => ?_) _ core.1 ?_
@@ -130,13 +130,13 @@ theorem K_pmp {a a' b b' c c' d e1 e2 e3 o : ℝ³} {ν v1 C0 w1 ha w3 α1 α4 �
     (α1 := α1) (α4 := α4) (γ4 := γ4) (β1 := β1) (β6 := β6) hr hν hha hα hα4 hγ4 hβ1 hβ6 hE
     (by rcases hσ with rfl | rfl <;> linarith [hp1]) (by rcases hσ with rfl | rfl <;> linarith [hp3])
     (by rcases hσ with rfl | rfl <;> linarith [hp4])
-  have e_0 : d = pr e1 e2 e3 o (unm σ (kd r)) := by rw [hd]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_1 : a = pr e1 e2 e3 o (unm σ (ka r W ha w3)) := by rw [ha_]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_2 : a' = pr e1 e2 e3 o (unm σ (ka' ν β6 C0)) := by rw [ha']; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_3 : b = pr e1 e2 e3 o (unm σ (kb r ν)) := by rw [hb]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_4 : b' = pr e1 e2 e3 o (unm σ (kb' r W ha w3 C0 α4 γ4)) := by rw [hb']; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_5 : c = pr e1 e2 e3 o (unm σ (kc C0)) := by rw [hc]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_6 : c' = pr e1 e2 e3 o (unm σ (kc' r W ha w3 ν α1 β1)) := by rw [hc']; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
+  have e_0 : d = pr e1 e2 e3 o (unm σ (kd r)) := by rw [hd]; simp only [pr, unm, kd]; ring_nf
+  have e_1 : a = pr e1 e2 e3 o (unm σ (ka r W ha w3)) := by rw [ha_]; simp only [pr, unm, ka]; ring_nf
+  have e_2 : a' = pr e1 e2 e3 o (unm σ (ka' ν β6 C0)) := by rw [ha']; simp only [pr, unm, ka']; ring_nf
+  have e_3 : b = pr e1 e2 e3 o (unm σ (kb r ν)) := by rw [hb]; simp only [pr, unm, kb]; ring_nf
+  have e_4 : b' = pr e1 e2 e3 o (unm σ (kb' r W ha w3 C0 α4 γ4)) := by rw [hb']; simp only [pr, unm, kb']; ring_nf
+  have e_5 : c = pr e1 e2 e3 o (unm σ (kc C0)) := by rw [hc]; simp only [pr, unm, kc]; ring_nf
+  have e_6 : c' = pr e1 e2 e3 o (unm σ (kc' r W ha w3 ν α1 β1)) := by rw [hc']; simp only [pr, unm, kc']; ring_nf
   rw [hu]
   subst e_0 e_1 e_2 e_3 e_4 e_5 e_6
   refine wrapK hF o hσ hν t1 t2 t3 (cyc6 (kd r) (ka r W ha w3) (kc' r W ha w3 ν α1 β1) (kb' r W ha w3 C0 α4 γ4) (ka' ν β6 C0) (kc C0)) _ (fun i => ?_) _ core.1 ?_
@@ -170,13 +170,13 @@ theorem K_pmm {a a' b b' c c' d e1 e2 e3 o : ℝ³} {ν v1 C0 w1 ha w3 α1 α4 �
     (α1 := α1) (α4 := α4) (γ4 := γ4) (β1 := β1) (β6 := β6) hr hν hha hα hα4 hγ4 hβ1 hβ6 hE
     (by rcases hσ with rfl | rfl <;> linarith [hp1]) (by rcases hσ with rfl | rfl <;> linarith [hp3])
     (by rcases hσ with rfl | rfl <;> linarith [hp4])
-  have e_0 : d = pr e1 e2 e3 o (unm σ (kd r)) := by rw [hd]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_1 : a = pr e1 e2 e3 o (unm σ (ka r W ha w3)) := by rw [ha_]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_2 : a' = pr e1 e2 e3 o (unm σ (ka' ν β6 C0)) := by rw [ha']; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_3 : b = pr e1 e2 e3 o (unm σ (kb r ν)) := by rw [hb]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_4 : b' = pr e1 e2 e3 o (unm σ (kb' r W ha w3 C0 α4 γ4)) := by rw [hb']; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_5 : c = pr e1 e2 e3 o (unm σ (kc C0)) := by rw [hc]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_6 : c' = pr e1 e2 e3 o (unm σ (kc' r W ha w3 ν α1 β1)) := by rw [hc']; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
+  have e_0 : d = pr e1 e2 e3 o (unm σ (kd r)) := by rw [hd]; simp only [pr, unm, kd]; ring_nf
+  have e_1 : a = pr e1 e2 e3 o (unm σ (ka r W ha w3)) := by rw [ha_]; simp only [pr, unm, ka]; ring_nf
+  have e_2 : a' = pr e1 e2 e3 o (unm σ (ka' ν β6 C0)) := by rw [ha']; simp only [pr, unm, ka']; ring_nf
+  have e_3 : b = pr e1 e2 e3 o (unm σ (kb r ν)) := by rw [hb]; simp only [pr, unm, kb]; ring_nf
+  have e_4 : b' = pr e1 e2 e3 o (unm σ (kb' r W ha w3 C0 α4 γ4)) := by rw [hb']; simp only [pr, unm, kb']; ring_nf
+  have e_5 : c = pr e1 e2 e3 o (unm σ (kc C0)) := by rw [hc]; simp only [pr, unm, kc]; ring_nf
+  have e_6 : c' = pr e1 e2 e3 o (unm σ (kc' r W ha w3 ν α1 β1)) := by rw [hc']; simp only [pr, unm, kc']; ring_nf
   rw [hu]
   subst e_0 e_1 e_2 e_3 e_4 e_5 e_6
   refine wrapK hF o hσ hν t1 t2 t3 (cyc6 (ka' ν β6 C0) (kb r ν) (kd r) (ka r W ha w3) (kc' r W ha w3 ν α1 β1) (kb' r W ha w3 C0 α4 γ4)) _ (fun i => ?_) _ core.1 ?_
@@ -210,13 +210,13 @@ theorem K_mpp {a a' b b' c c' d e1 e2 e3 o : ℝ³} {ν v1 C0 w1 ha w3 α1 α4 �
     (α1 := α1) (α4 := α4) (γ4 := γ4) (β1 := β1) (β6 := β6) hr hν hha hα hα4 hγ4 hβ1 hβ6 hE
     (by rcases hσ with rfl | rfl <;> linarith [hp1]) (by rcases hσ with rfl | rfl <;> linarith [hp3])
     (by rcases hσ with rfl | rfl <;> linarith [hp4])
-  have e_0 : d = pr e1 e2 e3 o (unm σ (kd r)) := by rw [hd]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_1 : a = pr e1 e2 e3 o (unm σ (ka r W ha w3)) := by rw [ha_]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_2 : a' = pr e1 e2 e3 o (unm σ (ka' ν β6 C0)) := by rw [ha']; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_3 : b = pr e1 e2 e3 o (unm σ (kb r ν)) := by rw [hb]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_4 : b' = pr e1 e2 e3 o (unm σ (kb' r W ha w3 C0 α4 γ4)) := by rw [hb']; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_5 : c = pr e1 e2 e3 o (unm σ (kc C0)) := by rw [hc]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_6 : c' = pr e1 e2 e3 o (unm σ (kc' r W ha w3 ν α1 β1)) := by rw [hc']; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
+  have e_0 : d = pr e1 e2 e3 o (unm σ (kd r)) := by rw [hd]; simp only [pr, unm, kd]; ring_nf
+  have e_1 : a = pr e1 e2 e3 o (unm σ (ka r W ha w3)) := by rw [ha_]; simp only [pr, unm, ka]; ring_nf
+  have e_2 : a' = pr e1 e2 e3 o (unm σ (ka' ν β6 C0)) := by rw [ha']; simp only [pr, unm, ka']; ring_nf
+  have e_3 : b = pr e1 e2 e3 o (unm σ (kb r ν)) := by rw [hb]; simp only [pr, unm, kb]; ring_nf
+  have e_4 : b' = pr e1 e2 e3 o (unm σ (kb' r W ha w3 C0 α4 γ4)) := by rw [hb']; simp only [pr, unm, kb']; ring_nf
+  have e_5 : c = pr e1 e2 e3 o (unm σ (kc C0)) := by rw [hc]; simp only [pr, unm, kc]; ring_nf
+  have e_6 : c' = pr e1 e2 e3 o (unm σ (kc' r W ha w3 ν α1 β1)) := by rw [hc']; simp only [pr, unm, kc']; ring_nf
   rw [hu]
   subst e_0 e_1 e_2 e_3 e_4 e_5 e_6
   refine wrapK hF o hσ hν t1 t2 t3 (cyc5 (kb r ν) (kc' r W ha w3 ν α1 β1) (kb' r W ha w3 C0 α4 γ4) (kc C0) (kd r)) _ (fun i => ?_) _ core.1 ?_
@@ -250,13 +250,13 @@ theorem K_mpm {a a' b b' c c' d e1 e2 e3 o : ℝ³} {ν v1 C0 w1 ha w3 α1 α4 �
     (α1 := α1) (α4 := α4) (γ4 := γ4) (β1 := β1) (β6 := β6) hr hν hha hα hα4 hγ4 hβ1 hβ6 hE
     (by rcases hσ with rfl | rfl <;> linarith [hp1]) (by rcases hσ with rfl | rfl <;> linarith [hp3])
     (by rcases hσ with rfl | rfl <;> linarith [hp4])
-  have e_0 : d = pr e1 e2 e3 o (unm σ (kd r)) := by rw [hd]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_1 : a = pr e1 e2 e3 o (unm σ (ka r W ha w3)) := by rw [ha_]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_2 : a' = pr e1 e2 e3 o (unm σ (ka' ν β6 C0)) := by rw [ha']; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_3 : b = pr e1 e2 e3 o (unm σ (kb r ν)) := by rw [hb]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_4 : b' = pr e1 e2 e3 o (unm σ (kb' r W ha w3 C0 α4 γ4)) := by rw [hb']; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_5 : c = pr e1 e2 e3 o (unm σ (kc C0)) := by rw [hc]; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
-  have e_6 : c' = pr e1 e2 e3 o (unm σ (kc' r W ha w3 ν α1 β1)) := by rw [hc']; simp only [pr, unm, kd, kb, kc, ka, ka', kb', kc']; ring_nf
+  have e_0 : d = pr e1 e2 e3 o (unm σ (kd r)) := by rw [hd]; simp only [pr, unm, kd]; ring_nf
+  have e_1 : a = pr e1 e2 e3 o (unm σ (ka r W ha w3)) := by rw [ha_]; simp only [pr, unm, ka]; ring_nf
+  have e_2 : a' = pr e1 e2 e3 o (unm σ (ka' ν β6 C0)) := by rw [ha']; simp only [pr, unm, ka']; ring_nf
+  have e_3 : b = pr e1 e2 e3 o (unm σ (kb r ν)) := by rw [hb]; simp only [pr, unm, kb]; ring_nf
+  have e_4 : b' = pr e1 e2 e3 o (unm σ (kb' r W ha w3 C0 α4 γ4)) := by rw [hb']; simp only [pr, unm, kb']; ring_nf
+  have e_5 : c = pr e1 e2 e3 o (unm σ (kc C0)) := by rw [hc]; simp only [pr, unm, kc]; ring_nf
+  have e_6 : c' = pr e1 e2 e3 o (unm σ (kc' r W ha w3 ν α1 β1)) := by rw [hc']; simp only [pr, unm, kc']; ring_nf
   rw [hu]
   subst e_0 e_1 e_2 e_3 e_4 e_5 e_6
   refine wrapK hF o hσ hν t1 t2 t3 (cyc5 (kb r ν) (kc' r W ha w3 ν α1 β1) (kb' r W ha w3 C0 α4 γ4) (kc C0) (ka' ν β6 C0)) _ (fun i => ?_) _ core.1 ?_
