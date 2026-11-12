@@ -17,47 +17,47 @@ set_option maxHeartbeats 4000000 in
 theorem polyAw (a1 b1 a4 g4 b6 g6 : ℝ) (p0 : 0 < a1) (p1 : 0 < b1) (p2 : 0 < a4) (p3 : 0 < g4) (p4 : 0 < b6) (p5 : 0 < g6) (e1 : 0 < a1 + b1 - 1) (e2 : 0 < a4 + g4 - 1) (e3 : 0 < b6 + g6 - 1) (dA : 0 < -1 + g6) (dB : 0 < -1 + a1) (ga : 0 ≤ -a1 + a1 * g4 - b1 * a4 + a4) (gb : 0 ≤ a1 * b6 + b1 - b1 * g6 - b6) (f1 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f2 : 0 < a1 * g4 + b1 * g4 - g4) (f3 : 0 < -b1 + b1 * a4 + b1 * g4) (f4 : 0 < a1 * g6 + b1 * g6 - g6) (f5 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f6 : 0 < -a1 + a1 * b6 + a1 * g6) (f7 : 0 < a4 * b6 + g4 * b6 - b6) (f8 : 0 < -a4 + a4 * b6 + a4 * g6) (f9 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) (f10 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f11 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f12 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) :
     0 < -a1 + a1 * b6 + a1 * g6 ∧ 0 < -a4 + a4 * b6 + a4 * g6 ∧ 0 < -1 + b6 + g6 ∧ 0 < -a1 + a1 * g4 * b6 + a1 * g6 - b1 * a4 + b1 * a4 * g6 + a4 - a4 * g6 ∧ 0 < 1 - a1 + a1 * g6 - b1 + b1 * g6 - g6 ∧ 0 < -a1 + a1 * g6 ∧ 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6 ∧ 0 < a1 * g4 * b6 + b1 - b1 * a4 + b1 * a4 * g6 - b1 * g6 - g4 * b6 ∧ 0 < a1 * g4 * b6 - b1 * a4 + b1 * a4 * g6 ∧ 0 < a4 * b6 + g4 * b6 - b6 ∧ 0 < a4 * b6 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · first | linarith [mul_pos p0 p4, mul_pos p0 dA]
-  · first | linarith [mul_pos p2 dA, mul_pos p2 p4]
-  · first | linarith [p4, dA]
-  · first | linarith [ga, f11]
-  · first | linarith [mul_pos dA dB, mul_pos p1 dA]
-  · first | linarith [mul_pos p0 dA]
-  · first | linarith [mul_nonneg (p4).le ga, mul_pos (mul_pos p1 p2) p4, mul_pos (mul_pos p1 p2) dA]
-  · first | linarith [mul_pos f3 dA, mul_nonneg (p3).le gb]
-  · first | linarith [mul_pos (mul_pos p0 p3) p4, mul_pos (mul_pos p1 p2) dA]
-  · first | linarith [mul_pos p4 e2]
-  · first | linarith [mul_pos p2 p4]
+  · linarith [mul_pos p0 p4, mul_pos p0 dA]
+  · linarith [mul_pos p2 dA, mul_pos p2 p4]
+  · linarith [p4, dA]
+  · linarith [ga, f11]
+  · linarith [mul_pos dA dB, mul_pos p1 dA]
+  · linarith [mul_pos p0 dA]
+  · linarith [mul_nonneg (p4).le ga, mul_pos (mul_pos p1 p2) p4, mul_pos (mul_pos p1 p2) dA]
+  · linarith [mul_pos f3 dA, mul_nonneg (p3).le gb]
+  · linarith [mul_pos (mul_pos p0 p3) p4, mul_pos (mul_pos p1 p2) dA]
+  · linarith [mul_pos p4 e2]
+  · linarith [mul_pos p2 p4]
 
 set_option maxHeartbeats 4000000 in
 theorem polyBw (a1 b1 a4 g4 b6 g6 : ℝ) (p0 : 0 < a1) (p1 : 0 < b1) (p2 : 0 < a4) (p3 : 0 < g4) (p4 : 0 < b6) (p5 : 0 < g6) (e1 : 0 < a1 + b1 - 1) (e2 : 0 < a4 + g4 - 1) (e3 : 0 < b6 + g6 - 1) (dA : 0 < 1 - g6) (dB : 0 < -1 + a1) (ga : 0 ≤ -a1 + a1 * g4 - b1 * a4 + a4) (gb : 0 ≤ a1 * b6 + b1 - b1 * g6 - b6) (f1 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f2 : 0 < a1 * g4 + b1 * g4 - g4) (f3 : 0 < -b1 + b1 * a4 + b1 * g4) (f4 : 0 < a1 * g6 + b1 * g6 - g6) (f5 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f6 : 0 < -a1 + a1 * b6 + a1 * g6) (f7 : 0 < a4 * b6 + g4 * b6 - b6) (f8 : 0 < -a4 + a4 * b6 + a4 * g6) (f9 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) (f10 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f11 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f12 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) :
     0 < a1 * g4 ∧ 0 < a1 ∧ 0 < a1 * g6 ∧ 0 < -a1 + a1 * g4 + a4 ∧ 0 < a1 * g4 - g4 ∧ 0 < a1 * g4 - a1 * g6 + a4 * g6 ∧ 0 < a4 ∧ 0 < -1 + a4 + g4 ∧ 0 < a4 - a4 * g6 ∧ 0 < 1 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · first | linarith [mul_pos p0 p3]
-  · first | linarith [p0]
-  · first | linarith [mul_pos p0 p5]
-  · first | linarith [mul_nonneg ((mul_pos p5 p5)).le ga, mul_pos p1 p2, mul_nonneg ((mul_pos dA dA)).le ga, mul_nonneg ((mul_pos p5 dA)).le ga]
-  · first | linarith [mul_pos p3 dB]
-  · first | linarith [mul_nonneg (p5).le ga, mul_pos (mul_pos p0 p3) dA, mul_pos (mul_pos p1 p2) p5]
-  · first | linarith [p2]
-  · first | linarith [e2]
-  · first | linarith [mul_pos p2 dA]
-  · first | linarith [p5, dA]
+  · linarith [mul_pos p0 p3]
+  · linarith [p0]
+  · linarith [mul_pos p0 p5]
+  · linarith [mul_nonneg ((mul_pos p5 p5)).le ga, mul_pos p1 p2, mul_nonneg ((mul_pos dA dA)).le ga, mul_nonneg ((mul_pos p5 dA)).le ga]
+  · linarith [mul_pos p3 dB]
+  · linarith [mul_nonneg (p5).le ga, mul_pos (mul_pos p0 p3) dA, mul_pos (mul_pos p1 p2) p5]
+  · linarith [p2]
+  · linarith [e2]
+  · linarith [mul_pos p2 dA]
+  · linarith [p5, dA]
 
 set_option maxHeartbeats 4000000 in
 theorem polyCw (a1 b1 a4 g4 b6 g6 : ℝ) (p0 : 0 < a1) (p1 : 0 < b1) (p2 : 0 < a4) (p3 : 0 < g4) (p4 : 0 < b6) (p5 : 0 < g6) (e1 : 0 < a1 + b1 - 1) (e2 : 0 < a4 + g4 - 1) (e3 : 0 < b6 + g6 - 1) (dA : 0 < 1 - g6) (dB : 0 < 1 - a1) (ga : 0 ≤ -a1 + a1 * g4 - b1 * a4 + a4) (gb : 0 ≤ a1 * b6 + b1 - b1 * g6 - b6) (f1 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f2 : 0 < a1 * g4 + b1 * g4 - g4) (f3 : 0 < -b1 + b1 * a4 + b1 * g4) (f4 : 0 < a1 * g6 + b1 * g6 - g6) (f5 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f6 : 0 < -a1 + a1 * b6 + a1 * g6) (f7 : 0 < a4 * b6 + g4 * b6 - b6) (f8 : 0 < -a4 + a4 * b6 + a4 * g6) (f9 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) (f10 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f11 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f12 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) :
     0 < g4 ∧ 0 < 1 ∧ 0 < g6 ∧ 0 < -1 + a4 + g4 ∧ 0 < a4 * g6 + g4 - g6 ∧ 0 < -a1 * g4 + g4 ∧ 0 < a4 ∧ 0 < a4 - a4 * g6 ∧ 0 < -a1 + a1 * g4 + a4 ∧ 0 < a1 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · first | linarith [p3]
-  · first | linarith [p5, dA]
-  · first | linarith [p5]
-  · first | linarith [mul_pos (mul_pos (mul_pos p0 e2) dA) dB, mul_pos (mul_pos (mul_pos e2 dA) dB) dB, mul_pos (mul_pos (mul_pos p5 p5) e2) dB, mul_pos p0 e2, mul_pos (mul_pos (mul_pos p5 e2) dA) dB]
-  · first | linarith [mul_pos (mul_pos (mul_pos p3 dA) dB) dB, mul_pos (mul_pos (mul_pos p0 p3) dA) dB, mul_pos (mul_pos p5 p5) e2, mul_pos (mul_pos p5 e2) dA, mul_pos (mul_pos p0 p3) dA]
-  · first | linarith [mul_pos p3 dB]
-  · first | linarith [p2]
-  · first | linarith [mul_pos p2 dA]
-  · first | linarith [mul_pos (mul_pos (mul_pos p0 p0) e2) dB, mul_pos (mul_pos (mul_pos p0 e2) dB) dB, mul_pos (mul_pos (mul_pos p0 p0) p0) e2, mul_pos (mul_pos (mul_pos p2 dA) dB) dB, mul_pos (mul_pos (mul_pos p0 p2) dA) dB, mul_pos (mul_pos p2 p5) dB]
-  · first | linarith [p0]
+  · linarith [p3]
+  · linarith [p5, dA]
+  · linarith [p5]
+  · linarith [mul_pos (mul_pos (mul_pos p0 e2) dA) dB, mul_pos (mul_pos (mul_pos e2 dA) dB) dB, mul_pos (mul_pos (mul_pos p5 p5) e2) dB, mul_pos p0 e2, mul_pos (mul_pos (mul_pos p5 e2) dA) dB]
+  · linarith [mul_pos (mul_pos (mul_pos p3 dA) dB) dB, mul_pos (mul_pos (mul_pos p0 p3) dA) dB, mul_pos (mul_pos p5 p5) e2, mul_pos (mul_pos p5 e2) dA, mul_pos (mul_pos p0 p3) dA]
+  · linarith [mul_pos p3 dB]
+  · linarith [p2]
+  · linarith [mul_pos p2 dA]
+  · linarith [mul_pos (mul_pos (mul_pos p0 p0) e2) dB, mul_pos (mul_pos (mul_pos p0 e2) dB) dB, mul_pos (mul_pos (mul_pos p0 p0) p0) e2, mul_pos (mul_pos (mul_pos p2 dA) dB) dB, mul_pos (mul_pos (mul_pos p0 p2) dA) dB, mul_pos (mul_pos p2 p5) dB]
+  · linarith [p0]
 
 
 set_option maxHeartbeats 4000000 in
