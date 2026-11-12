@@ -449,7 +449,7 @@ theorem exists_L_prescribed_ties_core {q : ℕ} (d u : Fin q → ℝ³) (h0 : �
     refine ⟨(K, (a, b)), Prod.ext ?_ rfl⟩
     show D1 (K, (a, b)) = w
     rw [hsplit, map_add, hKK]; abel
-  haveI : CompleteSpace X := by unfold X; infer_instance
+  have : CompleteSpace X := by unfold X; infer_instance
   have hmap := hF.map_nhds_eq_of_surj hsurj
   -- the neighbourhood N of x0
   have hdet0 : ContinuousAt (fun x : X => detC (1 + x.1)) x0 :=

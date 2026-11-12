@@ -148,7 +148,7 @@ theorem det3_pos_or_neg {Δ : ℝ} (h : Δ ≠ 0) : ∃ σ : ℝ, (σ = 1 ∨ σ
 /-- **T5 with `S₁S₄ ∥ S₂S₃`** (the L6 exceptions), in normal form:
 `S₄ = S₁ + k (S₃ - S₂)` and `K = a₁ E - β₁ S₃ + c₁ S₂ + t₁ S₁`. -/
 theorem isRupert_T5_parallel {E S₁ S₂ S₃ : ℝ³} (hΔ : det3 (S₁ - E) (S₂ - E) (S₃ - E) ≠ 0)
-    {k a₁ β₁ c₁ t₁ : ℝ} (hk : 0 < k) (ha₁ : 0 < a₁) (hβ₁ : 0 < β₁) (hc₁ : 0 < c₁)
+    {k a₁ β₁ c₁ t₁ : ℝ} (hk : 0 < k) (ha₁ : 0 < a₁) (hβ₁ : 0 < β₁)
     (ht₁ : 0 < t₁) (hs : a₁ - β₁ + c₁ + t₁ = 1) (hbc : β₁ < c₁) :
     IsRupert {E, S₁, S₂, S₃, S₁ + k • (S₃ - S₂), a₁ • E - β₁ • S₃ + c₁ • S₂ + t₁ • S₁} := by
   classical
@@ -220,9 +220,9 @@ theorem isRupert_T5_parallel {E S₁ S₂ S₃ : ℝ³} (hΔ : det3 (S₁ - E) (
       first
         | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
             (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
-            (by simp only [detc]; clear * - hk ha₁ hβ₁ hc₁ ht₁ hs hbc hpos hpos2 hpos3 hpos4; nlinarith)
+            (by simp only [detc]; clear * - hk ha₁ hβ₁ ht₁ hs hbc hpos hpos2 hpos3 hpos4; nlinarith)
         | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
-            (by simp only [detc]; clear * - hk ha₁ hβ₁ hc₁ ht₁ hs hbc hpos hpos2 hpos3 hpos4; nlinarith)
+            (by simp only [detc]; clear * - hk ha₁ hβ₁ ht₁ hs hbc hpos hpos2 hpos3 hpos4; nlinarith)
     · intro y hy hyx i
       have hx0 := hyx 0; have hx1 := hyx 1; have hx2 := hyx 2; have hx3 := hyx 3
       simp only [quad_0, quad_1, quad_2, quad_3] at hx0 hx1 hx2 hx3
@@ -235,9 +235,9 @@ theorem isRupert_T5_parallel {E S₁ S₂ S₃ : ℝ³} (hΔ : det3 (S₁ - E) (
         first
           | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
               (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
-              (by simp only [detc]; clear * - hk ha₁ hβ₁ hc₁ ht₁ hs hbc hpos hpos2 hpos3 hpos4; nlinarith)
+              (by simp only [detc]; clear * - hk ha₁ hβ₁ ht₁ hs hbc hpos hpos2 hpos3 hpos4; nlinarith)
           | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
-              (by simp only [detc]; clear * - hk ha₁ hβ₁ hc₁ ht₁ hs hbc hpos hpos2 hpos3 hpos4; nlinarith)
+              (by simp only [detc]; clear * - hk ha₁ hβ₁ ht₁ hs hbc hpos hpos2 hpos3 hpos4; nlinarith)
   · -- otherwise `F3 = (E, S₁, S₄, S₃)` is not weakly separated
     have h3 : NWS4 (quad (0 : ℝ) ⟪f₁, d⟫ (⟪f₁, d⟫ + k * ⟪d, d⟫) (⟪f₂, d⟫ + ⟪d, d⟫)) := by
       simp only [NWS4, quad_0, quad_1, quad_2, quad_3] at h5 ⊢
@@ -261,9 +261,9 @@ theorem isRupert_T5_parallel {E S₁ S₂ S₃ : ℝ³} (hΔ : det3 (S₁ - E) (
       first
         | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
             (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
-            (by simp only [detc]; clear * - hk ha₁ hβ₁ hc₁ ht₁ hs hbc hpos hpos2 hpos3 hpos4; nlinarith)
+            (by simp only [detc]; clear * - hk ha₁ hβ₁ ht₁ hs hbc hpos hpos2 hpos3 hpos4; nlinarith)
         | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
-            (by simp only [detc]; clear * - hk ha₁ hβ₁ hc₁ ht₁ hs hbc hpos hpos2 hpos3 hpos4; nlinarith)
+            (by simp only [detc]; clear * - hk ha₁ hβ₁ ht₁ hs hbc hpos hpos2 hpos3 hpos4; nlinarith)
     · intro y hy hyx i
       have hx0 := hyx 0; have hx1 := hyx 1; have hx2 := hyx 2; have hx3 := hyx 3
       simp only [quad_0, quad_1, quad_2, quad_3] at hx0 hx1 hx2 hx3
@@ -276,9 +276,9 @@ theorem isRupert_T5_parallel {E S₁ S₂ S₃ : ℝ³} (hΔ : det3 (S₁ - E) (
         first
           | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
               (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
-              (by simp only [detc]; clear * - hk ha₁ hβ₁ hc₁ ht₁ hs hbc hpos hpos2 hpos3 hpos4; nlinarith)
+              (by simp only [detc]; clear * - hk ha₁ hβ₁ ht₁ hs hbc hpos hpos2 hpos3 hpos4; nlinarith)
           | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
-              (by simp only [detc]; clear * - hk ha₁ hβ₁ hc₁ ht₁ hs hbc hpos hpos2 hpos3 hpos4; nlinarith)
+              (by simp only [detc]; clear * - hk ha₁ hβ₁ ht₁ hs hbc hpos hpos2 hpos3 hpos4; nlinarith)
 
 /-- **Theorem 8.2.**  Every T5 (capped square pyramid) is Rupert, including the
 L6 exceptions `S₁S₄ ∥ S₂S₃`. -/
@@ -313,7 +313,7 @@ theorem isRupert_cappedSquarePyramid_all {E S₁ S₂ S₃ S₄ K : ℝ³}
   have hbc : β₁ < c₁ := by rw [hγ] at hconv; exact lt_of_mul_lt_mul_right hconv hb₂.le
   have hS' : S₄ = S₁ + b₂ • (S₃ - S₂) := by rw [← hk]; abel
   rw [hS', hK]
-  exact isRupert_T5_parallel hΔ hb₂ ha₁ hβ₁ hc₁ ht₁ hs₁ hbc
+  exact isRupert_T5_parallel hΔ hb₂ ha₁ hβ₁ ht₁ hs₁ hbc
 
 end Minimality
 
