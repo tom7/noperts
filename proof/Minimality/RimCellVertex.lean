@@ -3,6 +3,7 @@ module
 public import Mathlib
 public import Minimality.RimCellView
 public import Minimality.Perturb
+public import Minimality.Sector
 
 @[expose] public section
 
@@ -126,6 +127,98 @@ theorem isRupert_of_rimCell_vertex {k : ℕ} [NeZero k] (hk : 3 ≤ k)
     isOpen_setOf_isCyclicUnimodal.preimage hcont
   obtain ⟨c, hcU, hcA⟩ := mem_closure_iff.mp hg _ hU hz
   refine isRupert_of_rimCell_zmod hk E hE y hy Y hyY c ?_ (hcell c hcA) hcU
+  intro h0
+  have h2 : y 2 ≠ y 0 := fun h => by
+    have := zmod_add_ne (k := k) (a := 2) (b := 0) (by omega) (by omega) (by omega) 0
+    simp at this
+    exact this (hy h)
+  have h3 : y 2 ≠ y (0 + 1) := fun h => by
+    rw [zero_add] at h
+    have := zmod_add_ne (k := k) (a := 2) (b := 1) (by omega) (by omega) (by omega) 0
+    simp at this
+    exact this (hy h)
+  have := hcell c hcA 0 _ (hyY _) h2 h3
+  rw [h0] at this
+  simp [Matrix.det_fin_three] at this
+
+open MeasureTheory
+/-- Depth ties are null sets: for invertible `E` and injective `y`, the set of views with
+`z i = z j` (`i ≠ j`) has measure zero. -/
+theorem volume_tie_eq_zero (E : Matrix (Fin 3) (Fin 3) ℝ) (hE : 0 < E.det)
+    (p q : Fin 3 → ℝ) (hpq : p ≠ q) :
+    volume {c : Fin 3 → ℝ | ((Eᵀ * E) *ᵥ c) ⬝ᵥ p = ((Eᵀ * E) *ᵥ c) ⬝ᵥ q} = 0 := by
+  let L : (Fin 3 → ℝ) →ₗ[ℝ] ℝ :=
+    { toFun := fun c => ((Eᵀ * E) *ᵥ c) ⬝ᵥ (p - q)
+      map_add' := fun a b => by simp [Matrix.mulVec_add, add_dotProduct, dotProduct_sub]; ring
+      map_smul' := fun r a => by simp [Matrix.mulVec_smul, smul_dotProduct, dotProduct_sub]; ring }
+  have hdet : IsUnit (Eᵀ * E).det := by
+    rw [Matrix.det_mul, Matrix.det_transpose]
+    exact (mul_pos hE hE).ne'.isUnit
+  have hne : LinearMap.ker L ≠ ⊤ := by
+    intro h
+    have hw : p - q ≠ 0 := sub_ne_zero.mpr hpq
+    have h1 : L ((Eᵀ * E)⁻¹ *ᵥ (p - q)) = 0 := by
+      have : ((Eᵀ * E)⁻¹ *ᵥ (p - q)) ∈ LinearMap.ker L := h ▸ Submodule.mem_top
+      exact this
+    simp only [L, LinearMap.coe_mk, AddHom.coe_mk, Matrix.mulVec_mulVec,
+      Matrix.mul_nonsing_inv _ hdet, Matrix.one_mulVec] at h1
+    exact hw (dotProduct_self_eq_zero.mp h1)
+  have h0 := Measure.addHaar_submodule volume (LinearMap.ker L) hne
+  convert h0 using 2
+  ext c
+  simp [L, dotProduct_sub, sub_eq_zero]
+
+/-- **The vertex leaf, robust form.**  As `isRupert_of_rimCell_vertex`, but the depths at `g` need
+only be robustly unimodal (`IsRobustUnimodal`: ties allowed, no alternating quartet; implied by
+the strict quartet condition `max (z b) (z d) > min (z a) (z c)` and `max (z a) (z c) >
+min (z b) (z d)` on cyclically ordered quadruples), and `g` lies in the closure of the
+*interior* of `A` (needed to find a view with injective depths).  Any `k ≥ 3`. -/
+theorem isRupert_of_rimCell_vertex_robust {k : ℕ} [NeZero k] (hk : 3 ≤ k)
+    (E : Matrix (Fin 3) (Fin 3) ℝ) (hE : 0 < E.det)
+    (y : ZMod k → Fin 3 → ℝ) (hy : Function.Injective y) (Y : Finset (Fin 3 → ℝ))
+    (hyY : ∀ i, y i ∈ Y) {A : Set (Fin 3 → ℝ)}
+    (hcell : ∀ c ∈ A, ∀ i : ZMod k, ∀ v ∈ Y, v ≠ y i → v ≠ y (i + 1) →
+      0 < (Matrix.of ![y (i + 1) - y i, v - y i, c]).det)
+    {g : Fin 3 → ℝ} (hg : g ∈ closure (interior A))
+    (hz : IsRobustUnimodal (fun i => ((Eᵀ * E) *ᵥ g) ⬝ᵥ y i)) :
+    IsRupert (Y.image (emb E)) := by
+  set Z : (Fin 3 → ℝ) → ZMod k → ℝ := fun c i => ((Eᵀ * E) *ᵥ c) ⬝ᵥ y i with hZ
+  have hcont : ∀ i, Continuous fun c : Fin 3 → ℝ => Z c i := by
+    intro i
+    simp only [hZ, dotProduct, Matrix.mulVec]
+    fun_prop
+  have hev : ∀ᶠ c in 𝓝 g, ∀ i j, Z g i < Z g j → Z c i < Z c j := by
+    refine Filter.eventually_all.mpr fun i => Filter.eventually_all.mpr fun j => ?_
+    by_cases h : Z g i < Z g j
+    · exact ((hcont i).continuousAt.tendsto.eventually_lt (hcont j).continuousAt.tendsto h).mono
+        fun c hc _ => hc
+    · exact Filter.Eventually.of_forall fun c h' => absurd h' h
+  obtain ⟨U, hUs, hUo, hgU⟩ := mem_nhds_iff.mp hev
+  obtain ⟨c0, hc0U, hc0A⟩ := mem_closure_iff.mp hg U hUo hgU
+  -- an open set W of good views
+  have hW : IsOpen (U ∩ interior A) := hUo.inter isOpen_interior
+  have hpos : 0 < volume (U ∩ interior A) := hW.measure_pos volume ⟨c0, hc0U, hc0A⟩
+  -- avoid ties
+  have hnull : volume (⋃ (ij : {ij : ZMod k × ZMod k // ij.1 ≠ ij.2}),
+      {c : Fin 3 → ℝ | Z c ij.1.1 = Z c ij.1.2}) = 0 := by
+    refine (measure_iUnion_null fun ij => ?_)
+    exact volume_tie_eq_zero E hE _ _ (fun h => ij.2 (hy h))
+  obtain ⟨c, hcW, hcn⟩ : ∃ c ∈ U ∩ interior A,
+      c ∉ ⋃ (ij : {ij : ZMod k × ZMod k // ij.1 ≠ ij.2}),
+        {c : Fin 3 → ℝ | Z c ij.1.1 = Z c ij.1.2} := by
+    by_contra hcon
+    push Not at hcon
+    have : volume (U ∩ interior A) ≤ 0 :=
+      hnull ▸ measure_mono (fun c hc => hcon c hc)
+    exact absurd hpos (not_lt.mpr this)
+  have hinj : Function.Injective (Z c) := by
+    intro i j hij
+    by_contra hne
+    exact hcn (Set.mem_iUnion.mpr ⟨⟨(i, j), hne⟩, hij⟩)
+  have hord : ∀ i j, Z g i < Z g j → Z c i < Z c j := hUs hcW.1
+  have hcA : c ∈ A := interior_subset hcW.2
+  have hU := hz.isCyclicUnimodal_of_order hk hord hinj
+  refine isRupert_of_rimCell_zmod hk E hE y hy Y hyY c ?_ (hcell c hcA) hU
   intro h0
   have h2 : y 2 ≠ y 0 := fun h => by
     have := zmod_add_ne (k := k) (a := 2) (b := 0) (by omega) (by omega) (by omega) 0
