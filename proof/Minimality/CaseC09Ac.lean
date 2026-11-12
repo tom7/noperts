@@ -332,7 +332,7 @@ theorem t31II_eq (hA1 : F.a12 ≤ F.a11) (hts : F.S.tm < F.S.sm) (hac : F.S.ap =
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   refine F.rupert_rim4 0 4 3 2 ⟨0, 0, 0⟩ ⟨F.S.tm, 0, -F.S.hm⟩ ⟨1, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
     p0 p4 p3 p2 1 (Or.inl rfl) ⟨1, -1, 0⟩ ⟨-1, 0, 0⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
-  · exact t31II_cyc hsp hsp1 htp htp1 hhp hkp htm htm1 hhm
+  · exact t31II_cyc hsp hsp1 hkp htm htm1 hhm
   · intro j' h0 h4 h3 h2 i
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · exact absurd rfl h0
@@ -340,8 +340,8 @@ theorem t31II_eq (hA1 : F.a12 ≤ F.a11) (hts : F.S.tm < F.S.sm) (hac : F.S.ap =
     · exact absurd rfl h2
     · exact absurd rfl h3
     · exact absurd rfl h4
-    · rw [p5]; exact t31II_rest5 hsp hsp1 htp htp1 hhp hkp htm htm1 hhm i
-    · rw [p6]; exact t31II_rest6 hsp hsp1 htp htp1 hhp hkp htm htm1 hhm hsm hsm1 hkm hts Km i
+    · rw [p5]; exact t31II_rest5 hsp hsp1 hkp htm htm1 hhm i
+    · rw [p6]; exact t31II_rest6 hsp hsp1 hkp htm htm1 hhm hsm hsm1 hkm hts Km i
   · set Pq : ZMod 4 → C3 := quad ⟨0, 0, 0⟩ ⟨F.S.tm, 0, -F.S.hm⟩ ⟨1, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
       with hPq
     set zz : ZMod 4 → ℝ := fun i => F.GG (Pq i) ⟨1, -1, 0⟩ with hzz

@@ -39,7 +39,7 @@ theorem rupert_rim_rob {k : ℕ} [NeZero k] (hk : 3 ≤ k) (c : ZMod k → Fin 7
       ST σ u v ((F.ptC (c (i + 1))).sub (F.ptC (c i))) ((F.ptC j').sub (F.ptC (c i))))
     (hz : IsRobustUnimodal fun i => F.GG (F.ptC (c i)) u) :
     IsRupert (Finset.univ.image x) := by
-  refine F.rupert_rim hk c σ hσ u v hu hcyc hrest QRob QRob_open (fun z a ha => QRob_smul ha)
+  refine F.rupert_rim hk c σ u v hu hcyc hrest QRob QRob_open (fun z a ha => QRob_smul ha)
     (fun z a => QRob_shift a) ?_ (fun z hz hq => QRob_unimodal hz hq)
   have hQ : QRob fun i => F.GG (F.ptC (c i)) u := QRob_of_robust (by omega) hz
   have hcont : Continuous fun s : ℝ =>

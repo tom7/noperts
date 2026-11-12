@@ -125,7 +125,7 @@ coordinates, the determinant tests `ST` for the cycle and for the remaining poin
 frame coordinates), and an open, positively homogeneous, shift-invariant depth condition `Q`
 holding eventually at the tilted depths and forcing unimodality. -/
 theorem rupert_rim {k : ℕ} [NeZero k] (hk : 3 ≤ k) (c : ZMod k → Fin 7) (σ : ℝ)
-    (hσ : σ = 1 ∨ σ = -1) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
+    (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
     (hcyc : ∀ i j : ZMod k, j ≠ i → j ≠ i + 1 →
       ST σ u v ((F.ptC (c (i + 1))).sub (F.ptC (c i))) ((F.ptC (c j)).sub (F.ptC (c i))))
     (hrest : ∀ j' : Fin 7, (∀ jj, j' ≠ c jj) → ∀ i : ZMod k,
@@ -264,7 +264,7 @@ theorem Q4_unimodal {z : ZMod 4 → ℝ} (hinj : Function.Injective z) (h : Q4 z
 section T31
 variable {tp hp tm hm sp kp sm km : ℝ}
 
-theorem t31II_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
+theorem t31II_cyc (hsp : 0 < sp) (hsp1 : sp < 1)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm) :
     ∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
       ST 1 ⟨1, -1, 0⟩ ⟨-1, 0, 0⟩
@@ -292,9 +292,7 @@ theorem t31II_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) 
     | skip
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
-    first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    (left; nlinarith)
 
 /-- The three remaining points in case II, one lemma for each. -/
 theorem t31II_rest1 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
@@ -327,11 +325,9 @@ theorem t31II_rest1 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1
   intro i
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
-    first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    (left; nlinarith)
 
-theorem t31II_rest5 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
+theorem t31II_rest5 (hsp : 0 < sp) (hsp1 : sp < 1)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm) :
     ∀ i : ZMod 4,
       ST 1 ⟨1, -1, 0⟩ ⟨-1, 0, 0⟩
@@ -357,7 +353,7 @@ theorem t31II_rest5 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1
     | (left; nlinarith)
     | (right; refine ⟨by ring, by nlinarith⟩)
 
-theorem t31II_rest6 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
+theorem t31II_rest6 (hsp : 0 < sp) (hsp1 : sp < 1)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1)
     (hkm : 0 < km) (hts : tm < sm) (Km : km * (1 - tm) = (1 - sm) * hm) :
     ∀ i : ZMod 4,
@@ -427,9 +423,7 @@ theorem t31IA_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (hsm : 0 < sm) (
     | skip
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
-    first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    (left; nlinarith)
 
 theorem t31IA_rest1 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km)
@@ -457,9 +451,7 @@ theorem t31IA_rest1 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1
   intro i
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
-    first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    (left; nlinarith)
 
 theorem t31IA_rest3 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (hsm : 0 < sm) (hsm1 : sm < 1)
     (hkm : 0 < km) :
@@ -568,9 +560,7 @@ theorem t31IB_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) 
     | skip
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
-    first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    (left; nlinarith)
 
 theorem t31IB_rest3 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km)
@@ -611,7 +601,7 @@ theorem t31IB_rest3 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1
     | (right; refine ⟨by ring, by nlinarith⟩)
 
 theorem t31IB_rest4 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
-    (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1)
+    (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm) (hsm : 0 < sm)
     (hkm : 0 < km) (hst : sm < tm) (Km : km * (1 - tm) = (1 - sm) * hm)
     (roof : hp * (1 - sp) < kp * (1 - tp)) (H31 : kp * tp < hp * sp) :
     ∀ i : ZMod 5,
@@ -692,9 +682,7 @@ theorem am1_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (ht
     | skip
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
-    first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    (left; nlinarith)
 
 theorem am1_rest1 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm)
@@ -728,9 +716,7 @@ theorem am1_rest1 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) 
   intro i
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
-    first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    (left; nlinarith)
 
 theorem am1_rest5 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1)
     (hhm : 0 < hm) :
@@ -833,9 +819,7 @@ theorem am2_cyc {b : ℝ} (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp)
     | skip
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
-    first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    (left; nlinarith)
 
 theorem am2_rest3 {b : ℝ} (hb : 0 < b) (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp)
     (htp1 : tp < 1) (hhp : 0 < hp) (hkp : 0 < kp) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km)
@@ -929,9 +913,7 @@ theorem am2_rest4 {b : ℝ} (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp)
   intro i
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
-    first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    (left; nlinarith)
 
 /-- The three impossible double peaks of `T2` (`FEWER-FACES-PROOFS.md` 27.27, translated by `M`):
 the depths are `z = c₀ ζ + c₂ Y + c₃ Z` on the screen coordinates `(Y, Z, ζ)`. -/
@@ -974,10 +956,10 @@ theorem am2_pair14 {c0 c2 c3 z0 z1 z2 z3 z4 : ℝ} (hc0 : 0 < c0) (htp : 0 < tp)
     mul_pos hc0 (add_pos (mul_pos htp hm1) (mul_pos htp hm2))]
 
 theorem am2_pair24 {c0 c2 c3 z0 z1 z2 z3 z4 : ℝ} (hc3 : 0 < c3) (hsm : 0 < sm) (hsm1 : sm < 1)
-    (hkm : 0 < km) (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp)
+    (hkm : 0 < km) (hsp1 : sp < 1) (hkp : 0 < kp)
     (A1 : (1 - sp) * km < sm * kp)
     (e0 : z0 = c2 * sp + c3 * kp) (e1 : z1 = -c0 * tp + c2 * sp * tp + c3 * (hp + kp * tp))
-    (e2 : z2 = 0) (e3 : z3 = c2 * sm - c3 * km) (e4 : z4 = c2) (hc0 : 0 < c0) (htp : 0 < tp) :
+    (e2 : z2 = 0) (e3 : z3 = c2 * sm - c3 * km) (e4 : z4 = c2) :
     z2 < z1 ∨ z2 < z3 ∨ z4 < z3 ∨ z4 < z0 := by
   by_contra hc
   push Not at hc
@@ -1051,7 +1033,7 @@ theorem rupert_rim4 (c0 c1 c2 c3 : Fin 7) (P0 P1 P2 P3 : C3)
   have hc : ∀ i, F.ptC (quad c0 c1 c2 c3 i) = quad P0 P1 P2 P3 i := by
     intro i
     rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> simp [quad_0, quad_1, quad_2, quad_3, e0, e1, e2, e3]
-  refine F.rupert_rim (k := 4) (by norm_num) (quad c0 c1 c2 c3) σ hσ u v hu ?_ ?_ Q4 Q4_open
+  refine F.rupert_rim (k := 4) (by norm_num) (quad c0 c1 c2 c3) σ u v hu ?_ ?_ Q4 Q4_open
     (fun z a ha => Q4_smul ha) (fun z a => Q4_shift a) ?_ (fun z hz hq => Q4_unimodal hz hq)
   · intro i j h1 h2
     simp only [hc]
@@ -1132,7 +1114,7 @@ theorem rupert_rim5 (c0 c1 c2 c3 c4 : Fin 7) (P0 P1 P2 P3 P4 : C3)
     intro i
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       simp [quint_0, quint_1, quint_2, quint_3, quint_4, e0, e1, e2, e3, e4]
-  refine F.rupert_rim (k := 5) (by norm_num) (quint c0 c1 c2 c3 c4) σ hσ u v hu ?_ ?_ Q5c
+  refine F.rupert_rim (k := 5) (by norm_num) (quint c0 c1 c2 c3 c4) σ u v hu ?_ ?_ Q5c
     Q5c_open (fun z a ha => Q5c_smul ha) (fun z a => Q5c_shift a) ?_
     (fun z hz hq => Q5c_unimodal hz hq)
   · intro i j h1 h2
@@ -1270,7 +1252,7 @@ theorem rupert_rim5p (c0 c1 c2 c3 c4 : Fin 7) (P0 P1 P2 P3 P4 : C3)
     intro i
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       simp [quint_0, quint_1, quint_2, quint_3, quint_4, e0, e1, e2, e3, e4]
-  refine F.rupert_rim (k := 5) (by norm_num) (quint c0 c1 c2 c3 c4) σ hσ u v hu ?_ ?_ Q5p
+  refine F.rupert_rim (k := 5) (by norm_num) (quint c0 c1 c2 c3 c4) σ u v hu ?_ ?_ Q5p
     Q5p_open (fun z a ha => Q5p_smul ha) (fun z a => Q5p_shift a) ?_
     (fun z hz hq => Q5p_unimodal hz hq)
   · intro i j h1 h2
@@ -1319,9 +1301,7 @@ theorem t32_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (h
     | skip
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
-    first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    (left; nlinarith)
 
 theorem t32_rest0 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) :
@@ -1375,9 +1355,7 @@ theorem t32_rest4 (hsp : 0 < sp) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
   intro i
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
-    first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    (left; nlinarith)
 
 /-- `m2-` lies on the side `[m2+, xb]` of the shadow (the face `0256` is seen edge-on). -/
 theorem t32_rest6 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
@@ -1558,7 +1536,7 @@ theorem t31II (hA1 : F.a12 ≤ F.a11) (hts : F.S.tm < F.S.sm) (hac : F.S.ap < F.
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   refine F.rupert_rim4 0 4 3 2 ⟨0, 0, 0⟩ ⟨F.S.tm, 0, -F.S.hm⟩ ⟨1, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
     p0 p4 p3 p2 1 (Or.inl rfl) ⟨1, -1, 0⟩ ⟨-1, 0, 0⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
-  · exact t31II_cyc hsp hsp1 htp htp1 hhp hkp htm htm1 hhm
+  · exact t31II_cyc hsp hsp1 hkp htm htm1 hhm
   · intro j' h0 h4 h3 h2 i
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · exact absurd rfl h0
@@ -1566,8 +1544,8 @@ theorem t31II (hA1 : F.a12 ≤ F.a11) (hts : F.S.tm < F.S.sm) (hac : F.S.ap < F.
     · exact absurd rfl h2
     · exact absurd rfl h3
     · exact absurd rfl h4
-    · rw [p5]; exact t31II_rest5 hsp hsp1 htp htp1 hhp hkp htm htm1 hhm i
-    · rw [p6]; exact t31II_rest6 hsp hsp1 htp htp1 hhp hkp htm htm1 hhm hsm hsm1 hkm hts Km i
+    · rw [p5]; exact t31II_rest5 hsp hsp1 hkp htm htm1 hhm i
+    · rw [p6]; exact t31II_rest6 hsp hsp1 hkp htm htm1 hhm hsm hsm1 hkm hts Km i
   · set Pq : ZMod 4 → C3 := quad ⟨0, 0, 0⟩ ⟨F.S.tm, 0, -F.S.hm⟩ ⟨1, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
       with hPq
     set zz : ZMod 4 → ℝ := fun i => F.GG (Pq i) ⟨1, -1, 0⟩ with hzz
@@ -1655,7 +1633,7 @@ theorem t31IB (hA1 : F.a12 ≤ F.a11) (hA2 : F.a12 < F.a22) (hst : F.S.sm < F.S.
     · exact absurd rfl h1
     · exact absurd rfl h2
     · rw [p3]; exact t31IB_rest3 hsp hsp1 htp htp1 hhp hkp hsm hsm1 hkm roof H31 i
-    · rw [p4]; exact t31IB_rest4 hsp hsp1 htp htp1 hhp hkp htm htm1 hhm hsm hsm1 hkm hst Km
+    · rw [p4]; exact t31IB_rest4 hsp hsp1 htp htp1 hhp hkp htm htm1 hhm hsm hkm hst Km
         roof H31 i
     · exact absurd rfl h5
     · exact absurd rfl h6
@@ -1854,7 +1832,7 @@ theorem amT2 (hg : F.g12 ≤ 0) (A1 : F.S.cm < F.S.dp)
         · linarith
     refine Q5p_eventually (z := zz) (w := ww) (Or.inl hz04) ?_ ?_ (Or.inr (Or.inr (Or.inl hz04))) ?_
     · exact lex_wrap (am2_pair13 hc0 htp htp1 hhp hsm1 hsm hkm e0 e1 e2 e3 e4)
-    · exact lex_wrap (am2_pair24 hc3 hsm hsm1 hkm hsp hsp1 hkp A1' e0 e1 e2 e3 e4 hc0 htp)
+    · exact lex_wrap (am2_pair24 hc3 hsm hsm1 hkm hsp1 hkp A1' e0 e1 e2 e3 e4)
     · exact lex_wrap (am2_pair14 hc0 htp htp1 hhp hsp hsp1 roof e0 e1 e2 e3 e4)
 
 /-- **Corollary 27.29, row `A^M`** (type 09): at the frame's metric, the pair of tests at `m2+`

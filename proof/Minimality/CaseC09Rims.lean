@@ -321,7 +321,7 @@ theorem rupert_rim5t (c0 c1 c2 c3 c4 : Fin 7) (P0 P1 P2 P3 P4 : C3)
     intro i
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       simp [quint_0, quint_1, quint_2, quint_3, quint_4, e0, e1, e2, e3, e4]
-  refine F.rupert_rim (k := 5) (by norm_num) (quint c0 c1 c2 c3 c4) σ hσ u v hu ?_ ?_ Q5t
+  refine F.rupert_rim (k := 5) (by norm_num) (quint c0 c1 c2 c3 c4) σ u v hu ?_ ?_ Q5t
     Q5t_open (fun z a ha => Q5t_smul ha) (fun z a => Q5t_shift a) ?_
     (fun z hz hq => Q5t_unimodal hz hq)
   · intro i j h1 h2
