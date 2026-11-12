@@ -36,25 +36,25 @@ theorem cell_mmm {r W T1 t2 w3 C0 ν ha α1 α4 γ4 β1 β6 : ℝ}
       first
       | exact absurd rfl h1
       | exact (h2' (by decide)).elim
-      | (simp only [LT, ori, fo, kd, kb, kc, ka, ka', kb', kc', s0, s1, s2, s3, c4_0, c4_1, c4_2, c4_3]
+      | (simp only [LT, ori, fo, kb, ka', kb', kc', s0, s1, s2, s3, c4_0, c4_1, c4_2, c4_3]
          first
          | (left; linarith)
          | (right; refine ⟨by ring, by linarith⟩))
   · intro i
     rcases z4c i with rfl | rfl | rfl | rfl <;>
-      (simp only [LT, ori, fo, kd, kb, kc, ka, ka', kb', kc', s0, s1, s2, s3, c4_0, c4_1, c4_2, c4_3]
+      (simp only [LT, ori, fo, kd, kb, ka', kb', kc', s0, s1, s2, s3, c4_0, c4_1, c4_2, c4_3]
        first
        | (left; linarith)
        | (right; refine ⟨by ring, by linarith⟩))
   · intro i
     rcases z4c i with rfl | rfl | rfl | rfl <;>
-      (simp only [LT, ori, fo, kd, kb, kc, ka, ka', kb', kc', s0, s1, s2, s3, c4_0, c4_1, c4_2, c4_3]
+      (simp only [LT, ori, fo, kb, ka, ka', kb', kc', s0, s1, s2, s3, c4_0, c4_1, c4_2, c4_3]
        first
        | (left; linarith)
        | (right; refine ⟨by ring, by linarith⟩))
   · intro i
     rcases z4c i with rfl | rfl | rfl | rfl <;>
-      (simp only [LT, ori, fo, kd, kb, kc, ka, ka', kb', kc', s0, s1, s2, s3, c4_0, c4_1, c4_2, c4_3]
+      (simp only [LT, ori, fo, kb, kc, ka', kb', kc', s0, s1, s2, s3, c4_0, c4_1, c4_2, c4_3]
        first
        | (left; linarith)
        | (right; refine ⟨by ring, by linarith⟩))

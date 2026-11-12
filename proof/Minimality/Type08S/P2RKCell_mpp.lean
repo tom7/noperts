@@ -35,19 +35,19 @@ theorem cell_mpp {r W T1 t2 w3 C0 ν ha α1 α4 γ4 β1 β6 : ℝ}
       first
       | exact absurd rfl h1
       | exact (h2' (by decide)).elim
-      | (simp only [LT, ori, fo, kd, kb, kc, ka, ka', kb', kc', s0, s1, s2, s3, s4, c5_0, c5_1, c5_2, c5_3, c5_4]
+      | (simp only [LT, ori, fo, kd, kb, kc, kb', kc', s0, s1, s2, s3, s4, c5_0, c5_1, c5_2, c5_3, c5_4]
          first
          | (left; linarith)
          | (right; refine ⟨by ring, by linarith⟩))
   · intro i
     rcases z5c i with rfl | rfl | rfl | rfl | rfl <;>
-      (simp only [LT, ori, fo, kd, kb, kc, ka, ka', kb', kc', s0, s1, s2, s3, s4, c5_0, c5_1, c5_2, c5_3, c5_4]
+      (simp only [LT, ori, fo, kd, kb, kc, ka, kb', kc', s0, s1, s2, s3, s4, c5_0, c5_1, c5_2, c5_3, c5_4]
        first
        | (left; linarith)
        | (right; refine ⟨by ring, by linarith⟩))
   · intro i
     rcases z5c i with rfl | rfl | rfl | rfl | rfl <;>
-      (simp only [LT, ori, fo, kd, kb, kc, ka, ka', kb', kc', s0, s1, s2, s3, s4, c5_0, c5_1, c5_2, c5_3, c5_4]
+      (simp only [LT, ori, fo, kd, kb, kc, ka', kb', kc', s0, s1, s2, s3, s4, c5_0, c5_1, c5_2, c5_3, c5_4]
        first
        | (left; linarith)
        | (right; refine ⟨by ring, by linarith⟩))
