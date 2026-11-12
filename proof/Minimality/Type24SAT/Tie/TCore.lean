@@ -332,7 +332,7 @@ theorem andW_lift (a b : Lit) : andW (liftL a) (liftL b) = liftL (andL a b) := b
   have l1 : (liftL a).1 = a.1 := rfl
   have l2 : (liftL b).1 = b.1 := rfl
   simp only [← liftL_true, ← liftL_false, liftL_inj, ← liftL_neg, hk, hk', cmpKey_zero_cons, l1, l2]
-  split_ifs <;> first | rfl | simp [liftL, gateW]
+  split_ifs <;> first | rfl
 
 theorem orW_lift (a b : Lit) : orW (liftL a) (liftL b) = liftL (orL a b) := by
   unfold orW orL
