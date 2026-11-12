@@ -3105,7 +3105,7 @@ theorem rimBe_rupert (hab : F.S.am = F.S.bp) (P q : ℝ) (hP : P < 0)
   have hV := F.S.hVs_of_eq hab
   refine F.toFrame7.rupert_rim4 5 2 4 0 ⟨0, 0, 0⟩ ⟨0, F.S.sm, -F.S.km⟩ ⟨0, 1, 0⟩ ⟨F.S.tp, 0, F.S.hp⟩
     F.ptC_5 F.ptC_2 F.ptC_4 F.ptC_0 1 (Or.inl rfl) ⟨F.S.tm, 0, -F.S.hm⟩ ⟨q, P, 0⟩
-    (Or.inl F.S.tm_pos.ne') (rimB_cyc F.S P q hP hV1) ?_ hQe
+    (Or.inl F.S.tm_pos.ne') (rimB_cyc F.S P q) ?_ hQe
   intro j' h0 h1 h2 h3 i
   rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
   · exact absurd rfl h3

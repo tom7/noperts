@@ -603,7 +603,7 @@ end Shape18
 
 /-! rim B: `(v, m2-, xb, m1+)` -/
 set_option maxHeartbeats 1000000 in
-theorem rimB_cyc (S : Shape18) (P q : ℝ) (hP : P < 0) (hV1 : S.sm * S.hm * q + S.tm * S.km * P < 0) :
+theorem rimB_cyc (S : Shape18) (P q : ℝ) :
     ∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
       ST 1 ⟨S.tm, 0, -S.hm⟩ ⟨q, P, 0⟩
         ((quad (⟨0, 0, 0⟩ : C3) ⟨0, S.sm, -S.km⟩ ⟨0, 1, 0⟩ ⟨S.tp, 0, S.hp⟩ (i + 1)).sub
@@ -633,7 +633,6 @@ theorem rimB_cyc (S : Shape18) (P q : ℝ) (hP : P < 0) (hV1 : S.sm * S.hm * q +
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
     | (left; nlinarith [mul_pos a11 a7, mul_pos a11 a9, mul_pos a11 a10, mul_pos a5 a9, mul_pos a5 a7])
-    | (right; refine ⟨by ring, by nlinarith [mul_pos a1 (neg_pos.2 hP), mul_pos a9 (neg_pos.2 hP)]⟩)
 
 set_option maxHeartbeats 1000000 in
 theorem rimB_rest (S : Shape18) (P q : ℝ) (hP : P < 0) (hV1 : S.sm * S.hm * q + S.tm * S.km * P < 0)
@@ -685,7 +684,7 @@ theorem rimB_rest (S : Shape18) (P q : ℝ) (hP : P < 0) (hV1 : S.sm * S.hm * q 
 
 
 set_option maxHeartbeats 1000000 in
-theorem rimC_cyc (S : Shape18) (P q : ℝ) (hP : 0 < P) (hV1 : 0 < S.sm * S.hm * q + S.tm * S.km * P)
+theorem rimC_cyc (S : Shape18) (P q : ℝ) (hP : 0 < P)
     (hX : S.hm * (1 - S.tp) < S.tm * S.hp) :
     ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       ST 1 ⟨S.tm, 0, -S.hm⟩ ⟨q, P, 0⟩
@@ -788,7 +787,7 @@ theorem zmod6_cases (i : ZMod 6) : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4
 
 /-! rim (C+) `(m1-, m2-, xb, m2+, m1+, xa)` at `u0`, `dp = A1 tp`, tilt `(q, P, 0)` -/
 set_option maxHeartbeats 2000000 in
-theorem rimCp_cyc (S : Shape18) (P q : ℝ) (hP : 0 < P) (hV1 : 0 < S.sm * S.hm * q + S.tm * S.km * P)
+theorem rimCp_cyc (S : Shape18) (P q : ℝ) (hP : 0 < P)
     (hX : S.hm * (1 - S.tp) < S.tm * S.hp)
     (hVe : S.tm * S.kp = (S.hm * S.tp + S.tm * S.hp) * (1 - S.sp))
     (hM2 : 0 < S.hm * q + (S.hm * S.tp + S.tm * S.hp) * P) :
@@ -836,11 +835,6 @@ theorem rimCp_cyc (S : Shape18) (P q : ℝ) (hP : 0 < P) (hV1 : 0 < S.sm * S.hm 
        · nlinarith [mul_pos a1 hP, mul_pos a9 hP, mul_pos a2 hP, mul_pos a10 hP, mul_pos a7 hP, mul_pos a14 hP, mul_pos (mul_pos a1 a12) hP, mul_pos (mul_pos a2 a13) hP])
     | (right; constructor
        · linear_combination hVe
-       · by_contra hc
-         push Not at hc
-         nlinarith [mul_nonneg a3.le (neg_nonneg.2 hc)])
-    | (right; constructor
-       · linear_combination (-1 : ℝ) * hVe
        · by_contra hc
          push Not at hc
          nlinarith [mul_nonneg a3.le (neg_nonneg.2 hc)])
@@ -1001,7 +995,7 @@ theorem rimM_rest (S : Shape18) (P q : ℝ) (hP : 0 < P) (hV1 : S.sm * S.hm * q 
 
 set_option maxHeartbeats 1000000 in
 theorem rimBp_cyc (sm km tm hm h q P : ℝ) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (htm : 0 < tm)
-    (hhm : 0 < hm) (hh : h < 0) (htp : 0 < 1 + h * tm) (hP : P < 0) (hV1 : sm * hm * q + tm * km * P < 0)
+    (hhm : 0 < hm) (hh : h < 0) (hP : P < 0) (hV1 : sm * hm * q + tm * km * P < 0)
     (hQ : q + P < 0) :
     ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       ST 1 ⟨tm, 0, -hm⟩ ⟨q, P, 0⟩
@@ -1035,7 +1029,7 @@ theorem rimBp_cyc (sm km tm hm h q P : ℝ) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm 
 set_option maxHeartbeats 1000000 in
 theorem rimBp_rest (sm km sp kp tm hm h q P : ℝ) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (htm : 0 < tm)
     (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (hV : tm * kp < hm * (1 - sp))
-    (hhm : 0 < hm) (hh : h < 0) (htp : 0 < 1 + h * tm) (hP : P < 0) (hV1 : sm * hm * q + tm * km * P < 0)
+    (hhm : 0 < hm) (hh : h < 0) (hP : P < 0) (hV1 : sm * hm * q + tm * km * P < 0)
     (hQ : q + P < 0) (w : C3) (hw : w = ⟨0, sp, kp⟩ ∨ w = ⟨tm, 0, -hm⟩) :
     ∀ i : ZMod 5,
       ST 1 ⟨tm, 0, -hm⟩ ⟨q, P, 0⟩
@@ -1184,7 +1178,7 @@ theorem rimDp_rest (sm km sp kp tm hm h q P : ℝ) (hsm : 0 < sm) (hsm1 : sm < 1
        · ring1
        · nlinarith [mul_pos a12 hP, mul_pos (mul_pos a12 hhm) hP, mul_pos (mul_pos a12 hhm) a14, mul_pos a12 a14, mul_pos (mul_pos a12 hhm) a15,mul_pos a12 a15, mul_pos (mul_pos a12 a11) a14, mul_pos (mul_pos a12 hhm) a11, mul_pos (mul_pos a12 a7) hP, mul_pos (mul_pos a12 htm) hP, mul_pos (mul_pos a12 htm) a14, mul_pos hsp (mul_pos a12 a14), mul_pos (mul_pos a12 hsp) hP, mul_pos (mul_pos a12 a16) hP, mul_pos (mul_pos a12 hhm) (mul_pos a17 hP)])
 
-theorem exists_h_of_double {tm hm tp hp : ℝ} (htm : 0 < tm) (hhm : 0 < hm) (hhp : 0 < hp) (htp : 0 < tp)
+theorem exists_h_of_double {tm hm tp hp : ℝ} (hhm : 0 < hm) (hhp : 0 < hp) (htp : 0 < tp)
     (hE : hm * (1 - tp) = tm * hp) :
     ∃ h : ℝ, h < 0 ∧ 0 < 1 + h * tm ∧ (⟨tp, 0, hp⟩ : C3) = ⟨1 + h * tm, 0, -h * hm⟩ := by
   have hm0 : hm ≠ 0 := hhm.ne'
@@ -1205,9 +1199,9 @@ theorem rimBp_cyc' (sm km tm hm tp hp q P : ℝ) (hsm : 0 < sm) (hsm1 : sm < 1) 
           (quint (⟨0, 0, 0⟩ : C3) ⟨0, sm, -km⟩ ⟨0, 1, 0⟩ ⟨1, 0, 0⟩ ⟨tp, 0, hp⟩ i))
         ((quint (⟨0, 0, 0⟩ : C3) ⟨0, sm, -km⟩ ⟨0, 1, 0⟩ ⟨1, 0, 0⟩ ⟨tp, 0, hp⟩ j).sub
           (quint (⟨0, 0, 0⟩ : C3) ⟨0, sm, -km⟩ ⟨0, 1, 0⟩ ⟨1, 0, 0⟩ ⟨tp, 0, hp⟩ i)) := by
-  obtain ⟨h, hh, htp', e⟩ := exists_h_of_double htm hhm hhp htp hE
+  obtain ⟨h, hh, -, e⟩ := exists_h_of_double hhm hhp htp hE
   rw [e]
-  exact rimBp_cyc sm km tm hm h q P hsm hsm1 hkm htm hhm hh htp' hP hV1 hQ
+  exact rimBp_cyc sm km tm hm h q P hsm hsm1 hkm htm hhm hh hP hV1 hQ
 
 theorem rimBp_rest' (sm km sp kp tm hm tp hp q P : ℝ) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km)
     (htm : 0 < tm) (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (hV : tm * kp < hm * (1 - sp))
@@ -1219,9 +1213,9 @@ theorem rimBp_rest' (sm km sp kp tm hm tp hp q P : ℝ) (hsm : 0 < sm) (hsm1 : s
         ((quint (⟨0, 0, 0⟩ : C3) ⟨0, sm, -km⟩ ⟨0, 1, 0⟩ ⟨1, 0, 0⟩ ⟨tp, 0, hp⟩ (i + 1)).sub
           (quint (⟨0, 0, 0⟩ : C3) ⟨0, sm, -km⟩ ⟨0, 1, 0⟩ ⟨1, 0, 0⟩ ⟨tp, 0, hp⟩ i))
         (w.sub (quint (⟨0, 0, 0⟩ : C3) ⟨0, sm, -km⟩ ⟨0, 1, 0⟩ ⟨1, 0, 0⟩ ⟨tp, 0, hp⟩ i)) := by
-  obtain ⟨h, hh, htp', e⟩ := exists_h_of_double htm hhm hhp htp hE
+  obtain ⟨h, hh, -, e⟩ := exists_h_of_double hhm hhp htp hE
   rw [e]
-  exact rimBp_rest sm km sp kp tm hm h q P hsm hsm1 hkm htm hsp hsp1 hkp hV hhm hh htp' hP hV1 hQ w hw
+  exact rimBp_rest sm km sp kp tm hm h q P hsm hsm1 hkm htm hsp hsp1 hkp hV hhm hh hP hV1 hQ w hw
 
 theorem rimCe_cyc' (sm km tm hm tp hp q P : ℝ) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (htm : 0 < tm)
     (hhm : 0 < hm) (hhp : 0 < hp) (htp : 0 < tp) (hE : hm * (1 - tp) = tm * hp)
@@ -1232,7 +1226,7 @@ theorem rimCe_cyc' (sm km tm hm tp hp q P : ℝ) (hsm : 0 < sm) (hsm1 : sm < 1) 
           (quint (⟨tm, 0, -hm⟩ : C3) ⟨0, sm, -km⟩ ⟨0, 1, 0⟩ ⟨tp, 0, hp⟩ ⟨1, 0, 0⟩ i))
         ((quint (⟨tm, 0, -hm⟩ : C3) ⟨0, sm, -km⟩ ⟨0, 1, 0⟩ ⟨tp, 0, hp⟩ ⟨1, 0, 0⟩ j).sub
           (quint (⟨tm, 0, -hm⟩ : C3) ⟨0, sm, -km⟩ ⟨0, 1, 0⟩ ⟨tp, 0, hp⟩ ⟨1, 0, 0⟩ i)) := by
-  obtain ⟨h, hh, htp', e⟩ := exists_h_of_double htm hhm hhp htp hE
+  obtain ⟨h, hh, htp', e⟩ := exists_h_of_double hhm hhp htp hE
   rw [e]
   exact rimCe_cyc sm km tm hm h q P hsm hsm1 hkm htm hhm hh htp' hP hV1 hQ
 
@@ -1246,7 +1240,7 @@ theorem rimCe_rest' (sm km sp kp tm hm tp hp q P : ℝ) (hsm : 0 < sm) (hsm1 : s
         ((quint (⟨tm, 0, -hm⟩ : C3) ⟨0, sm, -km⟩ ⟨0, 1, 0⟩ ⟨tp, 0, hp⟩ ⟨1, 0, 0⟩ (i + 1)).sub
           (quint (⟨tm, 0, -hm⟩ : C3) ⟨0, sm, -km⟩ ⟨0, 1, 0⟩ ⟨tp, 0, hp⟩ ⟨1, 0, 0⟩ i))
         (w.sub (quint (⟨tm, 0, -hm⟩ : C3) ⟨0, sm, -km⟩ ⟨0, 1, 0⟩ ⟨tp, 0, hp⟩ ⟨1, 0, 0⟩ i)) := by
-  obtain ⟨h, hh, htp', e⟩ := exists_h_of_double htm hhm hhp htp hE
+  obtain ⟨h, hh, htp', e⟩ := exists_h_of_double hhm hhp htp hE
   rw [e]
   exact rimCe_rest sm km sp kp tm hm h q P hsm hsm1 hkm htm hsp hsp1 hkp hV hhm hh htp' hP hV1 hQ w hw
 
@@ -1259,7 +1253,7 @@ theorem rimDp_cyc' (sm km tm hm tp hp q P : ℝ) (hsm : 0 < sm) (hsm1 : sm < 1) 
           (quint (⟨1, 0, 0⟩ : C3) ⟨tm, 0, -hm⟩ ⟨0, 0, 0⟩ ⟨0, sm, -km⟩ ⟨0, 1, 0⟩ i))
         ((quint (⟨1, 0, 0⟩ : C3) ⟨tm, 0, -hm⟩ ⟨0, 0, 0⟩ ⟨0, sm, -km⟩ ⟨0, 1, 0⟩ j).sub
           (quint (⟨1, 0, 0⟩ : C3) ⟨tm, 0, -hm⟩ ⟨0, 0, 0⟩ ⟨0, sm, -km⟩ ⟨0, 1, 0⟩ i)) := by
-  obtain ⟨h, hh, htp', e⟩ := exists_h_of_double htm hhm hhp htp hE
+  obtain ⟨h, hh, htp', e⟩ := exists_h_of_double hhm hhp htp hE
   exact rimDp_cyc sm km tm hm h q P hsm hsm1 hkm htm hhm hh htp' hP hV1 hQ
 
 theorem rimDp_rest' (sm km sp kp tm hm tp hp q P : ℝ) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km)
@@ -1272,7 +1266,7 @@ theorem rimDp_rest' (sm km sp kp tm hm tp hp q P : ℝ) (hsm : 0 < sm) (hsm1 : s
         ((quint (⟨1, 0, 0⟩ : C3) ⟨tm, 0, -hm⟩ ⟨0, 0, 0⟩ ⟨0, sm, -km⟩ ⟨0, 1, 0⟩ (i + 1)).sub
           (quint (⟨1, 0, 0⟩ : C3) ⟨tm, 0, -hm⟩ ⟨0, 0, 0⟩ ⟨0, sm, -km⟩ ⟨0, 1, 0⟩ i))
         (w.sub (quint (⟨1, 0, 0⟩ : C3) ⟨tm, 0, -hm⟩ ⟨0, 0, 0⟩ ⟨0, sm, -km⟩ ⟨0, 1, 0⟩ i)) := by
-  obtain ⟨h, hh, htp', e⟩ := exists_h_of_double htm hhm hhp htp hE
+  obtain ⟨h, hh, htp', e⟩ := exists_h_of_double hhm hhp htp hE
   rw [e] at hw
   exact rimDp_rest sm km sp kp tm hm h q P hsm hsm1 hkm htm hsp hsp1 hkp hV hhm hh htp' hP hV1 hQ w hw
 
@@ -1338,11 +1332,7 @@ theorem rimS1_cyc (sm km tm hm P q : ℝ) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 
     | skip
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
-    first
-    | (left; nlinarith [mul_pos a11 a7, mul_pos htm a8, mul_pos a7 hP, mul_pos htm hP, mul_pos hhm hP, mul_pos a11 hP, mul_pos a11 (mul_pos htm hP), mul_pos a11 (mul_pos hhm hP)])
-    | (right; constructor
-       · ring1
-       · nlinarith [mul_pos hhm hP, mul_pos htm hP, mul_pos a11 hP, mul_pos (mul_pos hhm a11) hP, mul_pos (mul_pos htm hhm) hP, mul_pos hhm hV1, mul_pos htm hV1, mul_pos a11 hV1])
+    (left; nlinarith [mul_pos a11 a7, mul_pos htm a8, mul_pos a7 hP, mul_pos htm hP, mul_pos hhm hP, mul_pos a11 hP, mul_pos a11 (mul_pos htm hP), mul_pos a11 (mul_pos hhm hP)])
 
 set_option maxHeartbeats 1000000 in
 theorem rimS1_rest (sm km sp kp tm hm tp hp P q : ℝ) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km)
@@ -1557,7 +1547,7 @@ theorem rimB_rupert (P q : ℝ) (hP : P < 0) (hV1 : F.S.sm * F.S.hm * q + F.S.tm
     IsRupert (Finset.univ.image x) := by
   refine F.toFrame7.rupert_rim4 5 2 4 0 ⟨0, 0, 0⟩ ⟨0, F.S.sm, -F.S.km⟩ ⟨0, 1, 0⟩ ⟨F.S.tp, 0, F.S.hp⟩
     F.ptC_5 F.ptC_2 F.ptC_4 F.ptC_0 1 (Or.inl rfl) ⟨F.S.tm, 0, -F.S.hm⟩ ⟨q, P, 0⟩
-    (Or.inl F.S.tm_pos.ne') (rimB_cyc F.S P q hP hV1) ?_ hQe
+    (Or.inl F.S.tm_pos.ne') (rimB_cyc F.S P q) ?_ hQe
   intro j' h0 h1 h2 h3 i
   rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
   · exact absurd rfl h3
@@ -1588,7 +1578,7 @@ theorem rimC_rupert (P q : ℝ) (hP : 0 < P) (hV1 : 0 < F.S.sm * F.S.hm * q + F.
     ⟨F.S.tm, 0, -F.S.hm⟩ ⟨q, P, 0⟩ (Or.inl F.S.tm_pos.ne') ?_ ?_ ?_
   · intro i j h1 h2
     simp only [hc]
-    exact rimC_cyc F.S P q hP hV1 hX i j h1 h2
+    exact rimC_cyc F.S P q hP hX i j h1 h2
   · intro j' hj' i
     simp only [hc]
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -1628,7 +1618,7 @@ theorem rimCp_rupert (P q : ℝ) (hP : 0 < P) (hV1 : 0 < F.S.sm * F.S.hm * q + F
     ⟨F.S.tm, 0, -F.S.hm⟩ ⟨q, P, 0⟩ (Or.inl F.S.tm_pos.ne') ?_ ?_ ?_
   · intro i j h1 h2
     simp only [hc]
-    exact rimCp_cyc F.S P q hP hV1 hX hVe hM2 i j h1 h2
+    exact rimCp_cyc F.S P q hP hX hVe hM2 i j h1 h2
   · intro j' hj' i
     simp only [hc]
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
