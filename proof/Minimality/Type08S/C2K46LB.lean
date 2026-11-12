@@ -15,7 +15,7 @@ namespace Minimality.Type08Sp.C2
 
 
 set_option maxHeartbeats 8000000 in
-theorem k54L_conv0 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) (hR1 : l^2*(1-σ^2) ≤ 4*(1+σ^2)) (hR2 : l^2*σ^2*(σ^2-1) < 4*(1+σ^2)) (hp : 9 * σ^2 ≤ 2) :
+theorem k54L_conv0 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) :
     0 < det3 ((k54L_p4 σ l m ea) - (k54L_p0 m)) ((k54L_p5 σ l m ea) - (k54L_p0 m)) (k54L_w σ l ea) := by
   have hpos : 0 < (m^2 * 3 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 4*σ^2 + 4)^1) / (2*(σ^2 + 1)) := by positivity
   refine lt_of_lt_of_eq hpos ?_
@@ -49,7 +49,7 @@ theorem k54L_row1 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (he
   ring
 
 set_option maxHeartbeats 8000000 in
-theorem k54L_conv1 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) (hR1 : l^2*(1-σ^2) ≤ 4*(1+σ^2)) (hR2 : l^2*σ^2*(σ^2-1) < 4*(1+σ^2)) (hp : 9 * σ^2 ≤ 2) :
+theorem k54L_conv1 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) :
     0 < det3 ((k54L_p2 σ l m ea) - (k54L_p4 σ l m ea)) ((k54L_p0 m) - (k54L_p4 σ l m ea)) (k54L_w σ l ea) := by
   have hpos : 0 < (m^2 * 1 * (σ^2 + 1)^1 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 2*σ^2 + 2)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^1) / (4*(σ^2 + 1)^3) := by positivity
   refine lt_of_lt_of_eq hpos ?_
@@ -81,7 +81,7 @@ theorem k54L_row3 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (he
   ring
 
 set_option maxHeartbeats 8000000 in
-theorem k54L_conv2 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) (hR1 : l^2*(1-σ^2) ≤ 4*(1+σ^2)) (hR2 : l^2*σ^2*(σ^2-1) < 4*(1+σ^2)) (hp : 9 * σ^2 ≤ 2) :
+theorem k54L_conv2 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) :
     0 < det3 ((k54L_p3 σ l m ea) - (k54L_p2 σ l m ea)) ((k54L_p4 σ l m ea) - (k54L_p2 σ l m ea)) (k54L_w σ l ea) := by
   have hpos : 0 < (m^2 * 5 * (σ^2 + 1)^3 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 2*σ^2 + 2)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^2) / (8*(σ^2 + 1)^6) := by positivity
   refine lt_of_lt_of_eq hpos ?_
@@ -115,7 +115,7 @@ theorem k54L_row5 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (he
   ring
 
 set_option maxHeartbeats 8000000 in
-theorem k54L_conv3 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) (hR1 : l^2*(1-σ^2) ≤ 4*(1+σ^2)) (hR2 : l^2*σ^2*(σ^2-1) < 4*(1+σ^2)) (hp : 9 * σ^2 ≤ 2) :
+theorem k54L_conv3 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) :
     0 < det3 ((k54L_p5 σ l m ea) - (k54L_p3 σ l m ea)) ((k54L_p2 σ l m ea) - (k54L_p3 σ l m ea)) (k54L_w σ l ea) := by
   have hpos : 0 < (m^2 * 5 * (σ^2 + 1)^3 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 2*σ^2 + 2)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^2) / (8*(σ^2 + 1)^6) := by positivity
   refine lt_of_lt_of_eq hpos ?_
@@ -148,7 +148,7 @@ theorem k54L_row7 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (he
   ring
 
 set_option maxHeartbeats 8000000 in
-theorem k54L_conv4 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) (hR1 : l^2*(1-σ^2) ≤ 4*(1+σ^2)) (hR2 : l^2*σ^2*(σ^2-1) < 4*(1+σ^2)) (hp : 9 * σ^2 ≤ 2) :
+theorem k54L_conv4 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) :
     0 < det3 ((k54L_p0 m) - (k54L_p5 σ l m ea)) ((k54L_p3 σ l m ea) - (k54L_p5 σ l m ea)) (k54L_w σ l ea) := by
   have hpos : 0 < (m^2 * 1 * (σ^2 + 1)^1 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 2*σ^2 + 2)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^1) / (4*(σ^2 + 1)^3) := by positivity
   refine lt_of_lt_of_eq hpos ?_
@@ -181,7 +181,7 @@ theorem k54L_row9 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (he
   ring
 
 set_option maxHeartbeats 8000000 in
-theorem k54L_int1tri {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) (hR1 : l^2*(1-σ^2) ≤ 4*(1+σ^2)) (hR2 : l^2*σ^2*(σ^2-1) < 4*(1+σ^2)) (hp : 9 * σ^2 ≤ 2) :
+theorem k54L_int1tri {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) :
     0 < det3 ((k54L_p2 σ l m ea) - (k54L_p0 m)) ((k54L_p3 σ l m ea) - (k54L_p0 m)) (k54L_w σ l ea) := by
   have hpos : 0 < (m^2 * 1 * (σ^2 + 1)^3 * (σ)^1 * (l)^2 * (5*σ^2*(l^2) + 16*σ^2 + 16)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^2) / (8*(σ^2 + 1)^6) := by positivity
   refine lt_of_lt_of_eq hpos ?_
@@ -191,7 +191,7 @@ theorem k54L_int1tri {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) 
   ring
 
 set_option maxHeartbeats 8000000 in
-theorem k54L_int1e1 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) (hR1 : l^2*(1-σ^2) ≤ 4*(1+σ^2)) (hR2 : l^2*σ^2*(σ^2-1) < 4*(1+σ^2)) (hp : 9 * σ^2 ≤ 2) :
+theorem k54L_int1e1 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) :
     0 < det3 ((k54L_p2 σ l m ea) - (k54L_p0 m)) ((k54L_p1 m ea) - (k54L_p0 m)) (k54L_w σ l ea) := by
   have hpos : 0 < (m^2 * 1 * (σ^2 + 1)^1 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 4*σ^2 + 4)^2) / (4*(σ^2 + 1)^3) := by positivity
   refine lt_of_lt_of_eq hpos ?_
@@ -201,7 +201,7 @@ theorem k54L_int1e1 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (
   ring
 
 set_option maxHeartbeats 8000000 in
-theorem k54L_int1e2 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) (hR1 : l^2*(1-σ^2) ≤ 4*(1+σ^2)) (hR2 : l^2*σ^2*(σ^2-1) < 4*(1+σ^2)) (hp : 9 * σ^2 ≤ 2) :
+theorem k54L_int1e2 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) :
     0 < det3 ((k54L_p3 σ l m ea) - (k54L_p2 σ l m ea)) ((k54L_p1 m ea) - (k54L_p2 σ l m ea)) (k54L_w σ l ea) := by
   have hpos : 0 < (m^2 * 1 * (σ^2 + 1)^3 * (σ)^1 * (l)^2 * (5*σ^2*(l^2) + 12*σ^2 + 12)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^2) / (8*(σ^2 + 1)^6) := by positivity
   refine lt_of_lt_of_eq hpos ?_
@@ -211,7 +211,7 @@ theorem k54L_int1e2 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (
   ring
 
 set_option maxHeartbeats 8000000 in
-theorem k54L_int1e3 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) (hR1 : l^2*(1-σ^2) ≤ 4*(1+σ^2)) (hR2 : l^2*σ^2*(σ^2-1) < 4*(1+σ^2)) (hp : 9 * σ^2 ≤ 2) :
+theorem k54L_int1e3 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) :
     0 < det3 ((k54L_p0 m) - (k54L_p3 σ l m ea)) ((k54L_p1 m ea) - (k54L_p3 σ l m ea)) (k54L_w σ l ea) := by
   have hpos : 0 < (m^2 * 1 * (σ^2 + 1)^1 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 4*σ^2 + 4)^2) / (4*(σ^2 + 1)^3) := by positivity
   refine lt_of_lt_of_eq hpos ?_
@@ -221,7 +221,7 @@ theorem k54L_int1e3 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (
   ring
 
 set_option maxHeartbeats 8000000 in
-theorem k54L_int6tri {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) (hR1 : l^2*(1-σ^2) ≤ 4*(1+σ^2)) (hR2 : l^2*σ^2*(σ^2-1) < 4*(1+σ^2)) (hp : 9 * σ^2 ≤ 2) :
+theorem k54L_int6tri {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) :
     0 < det3 ((k54L_p2 σ l m ea) - (k54L_p0 m)) ((k54L_p3 σ l m ea) - (k54L_p0 m)) (k54L_w σ l ea) := by
   have hpos : 0 < (m^2 * 1 * (σ^2 + 1)^3 * (σ)^1 * (l)^2 * (5*σ^2*(l^2) + 16*σ^2 + 16)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^2) / (8*(σ^2 + 1)^6) := by positivity
   refine lt_of_lt_of_eq hpos ?_
@@ -231,7 +231,7 @@ theorem k54L_int6tri {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) 
   ring
 
 set_option maxHeartbeats 8000000 in
-theorem k54L_int6e1 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) (hR1 : l^2*(1-σ^2) ≤ 4*(1+σ^2)) (hR2 : l^2*σ^2*(σ^2-1) < 4*(1+σ^2)) (hp : 9 * σ^2 ≤ 2) :
+theorem k54L_int6e1 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) :
     0 < det3 ((k54L_p2 σ l m ea) - (k54L_p0 m)) ((k54L_p6 σ l m ea) - (k54L_p0 m)) (k54L_w σ l ea) := by
   have hpos : 0 < (m^2 * 3 * (σ^2 + 1)^3 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 4*σ^2 + 4)^3) / (16*(σ^2 + 1)^6) := by positivity
   refine lt_of_lt_of_eq hpos ?_
@@ -241,7 +241,7 @@ theorem k54L_int6e1 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (
   ring
 
 set_option maxHeartbeats 8000000 in
-theorem k54L_int6e2 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) (hR1 : l^2*(1-σ^2) ≤ 4*(1+σ^2)) (hR2 : l^2*σ^2*(σ^2-1) < 4*(1+σ^2)) (hp : 9 * σ^2 ≤ 2) :
+theorem k54L_int6e2 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) :
     0 < det3 ((k54L_p3 σ l m ea) - (k54L_p2 σ l m ea)) ((k54L_p6 σ l m ea) - (k54L_p2 σ l m ea)) (k54L_w σ l ea) := by
   have hpos : 0 < (m^2 * 1 * (σ^2 + 1)^3 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 2*σ^2 + 2)^1 * (σ^2*(l^2) + 4*σ^2 + 4)^2) / (4*(σ^2 + 1)^6) := by positivity
   refine lt_of_lt_of_eq hpos ?_
@@ -251,7 +251,7 @@ theorem k54L_int6e2 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (
   ring
 
 set_option maxHeartbeats 8000000 in
-theorem k54L_int6e3 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) (hR1 : l^2*(1-σ^2) ≤ 4*(1+σ^2)) (hR2 : l^2*σ^2*(σ^2-1) < 4*(1+σ^2)) (hp : 9 * σ^2 ≤ 2) :
+theorem k54L_int6e3 {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) :
     0 < det3 ((k54L_p0 m) - (k54L_p3 σ l m ea)) ((k54L_p6 σ l m ea) - (k54L_p3 σ l m ea)) (k54L_w σ l ea) := by
   have hpos : 0 < (m^2 * 3 * (σ^2 + 1)^3 * (σ)^1 * (l)^2 * (σ^2*(l^2) + 4*σ^2 + 4)^3) / (16*(σ^2 + 1)^6) := by positivity
   refine lt_of_lt_of_eq hpos ?_
@@ -289,18 +289,18 @@ theorem a2mc_L {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea :
     simp only [V8, Finset.mem_insert, Finset.mem_singleton] at hx
     rcases hx with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · left
-      exact ⟨(k54L_p5 σ l m ea), by simp [V8], (k54L_p4 σ l m ea), by simp [V8], k54L_conv0 hσ hl hm hea hr1 hr2 hp, k54L_row0 hσ hl hm hea hr1 hr2 hp, k54L_row1 hσ hl hm hea hr1 hr2 hp⟩
+      exact ⟨(k54L_p5 σ l m ea), by simp [V8], (k54L_p4 σ l m ea), by simp [V8], k54L_conv0 hσ hl hm hea, k54L_row0 hσ hl hm hea hr1 hr2 hp, k54L_row1 hσ hl hm hea hr1 hr2 hp⟩
     · right
-      exact ⟨(k54L_p0 m), by simp [V8], (k54L_p2 σ l m ea), by simp [V8], (k54L_p3 σ l m ea), by simp [V8], k54L_int1tri hσ hl hm hea hr1 hr2 hp, k54L_int1e1 hσ hl hm hea hr1 hr2 hp, k54L_int1e2 hσ hl hm hea hr1 hr2 hp, k54L_int1e3 hσ hl hm hea hr1 hr2 hp⟩
+      exact ⟨(k54L_p0 m), by simp [V8], (k54L_p2 σ l m ea), by simp [V8], (k54L_p3 σ l m ea), by simp [V8], k54L_int1tri hσ hl hm hea, k54L_int1e1 hσ hl hm hea, k54L_int1e2 hσ hl hm hea, k54L_int1e3 hσ hl hm hea⟩
     · right
-      exact ⟨(k54L_p0 m), by simp [V8], (k54L_p2 σ l m ea), by simp [V8], (k54L_p3 σ l m ea), by simp [V8], k54L_int6tri hσ hl hm hea hr1 hr2 hp, k54L_int6e1 hσ hl hm hea hr1 hr2 hp, k54L_int6e2 hσ hl hm hea hr1 hr2 hp, k54L_int6e3 hσ hl hm hea hr1 hr2 hp⟩
+      exact ⟨(k54L_p0 m), by simp [V8], (k54L_p2 σ l m ea), by simp [V8], (k54L_p3 σ l m ea), by simp [V8], k54L_int6tri hσ hl hm hea, k54L_int6e1 hσ hl hm hea, k54L_int6e2 hσ hl hm hea, k54L_int6e3 hσ hl hm hea⟩
     · left
-      exact ⟨(k54L_p0 m), by simp [V8], (k54L_p2 σ l m ea), by simp [V8], k54L_conv1 hσ hl hm hea hr1 hr2 hp, k54L_row2 hσ hl hm hea hr1 hr2 hp, k54L_row3 hσ hl hm hea hr1 hr2 hp⟩
+      exact ⟨(k54L_p0 m), by simp [V8], (k54L_p2 σ l m ea), by simp [V8], k54L_conv1 hσ hl hm hea, k54L_row2 hσ hl hm hea hr1 hr2 hp, k54L_row3 hσ hl hm hea hr1 hr2 hp⟩
     · left
-      exact ⟨(k54L_p2 σ l m ea), by simp [V8], (k54L_p5 σ l m ea), by simp [V8], k54L_conv3 hσ hl hm hea hr1 hr2 hp, k54L_row6 hσ hl hm hea hr1 hr2 hp, k54L_row7 hσ hl hm hea hr1 hr2 hp⟩
+      exact ⟨(k54L_p2 σ l m ea), by simp [V8], (k54L_p5 σ l m ea), by simp [V8], k54L_conv3 hσ hl hm hea, k54L_row6 hσ hl hm hea hr1 hr2 hp, k54L_row7 hσ hl hm hea hr1 hr2 hp⟩
     · left
-      exact ⟨(k54L_p3 σ l m ea), by simp [V8], (k54L_p0 m), by simp [V8], k54L_conv4 hσ hl hm hea hr1 hr2 hp, k54L_row8 hσ hl hm hea hr1 hr2 hp, k54L_row9 hσ hl hm hea hr1 hr2 hp⟩
+      exact ⟨(k54L_p3 σ l m ea), by simp [V8], (k54L_p0 m), by simp [V8], k54L_conv4 hσ hl hm hea, k54L_row8 hσ hl hm hea hr1 hr2 hp, k54L_row9 hσ hl hm hea hr1 hr2 hp⟩
     · left
-      exact ⟨(k54L_p4 σ l m ea), by simp [V8], (k54L_p3 σ l m ea), by simp [V8], k54L_conv2 hσ hl hm hea hr1 hr2 hp, k54L_row4 hσ hl hm hea hr1 hr2 hp, k54L_row5 hσ hl hm hea hr1 hr2 hp⟩
+      exact ⟨(k54L_p4 σ l m ea), by simp [V8], (k54L_p3 σ l m ea), by simp [V8], k54L_conv2 hσ hl hm hea, k54L_row4 hσ hl hm hea hr1 hr2 hp, k54L_row5 hσ hl hm hea hr1 hr2 hp⟩
 
 end Minimality.Type08Sp.C2
