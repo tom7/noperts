@@ -109,13 +109,13 @@ theorem chainOK_ccw1_lo {z0 a1 z1 a2 z2 a3 z3 : ℝ} (h1 : 0 < a1) (h2 : 0 < a2)
     ChainOK (QuadPt z0 a1 z1 a2 z2 a3 z3) z0 (-1) 1 (chain1 0 a1) (chain1 z0 z1) := by
   obtain ⟨⟨q1a, q1b⟩, ⟨q2a, q2b⟩, ⟨q3a, q3b⟩, ⟨q4a, q4b⟩⟩ := hQ
   refine ⟨by norm_num, by simp [chain1], ?_, ?_, ?_, ?_⟩
-  · intro l hl; interval_cases l <;> simp [chain1] ; nlinarith
+  · intro l hl; interval_cases l ; simp [chain1] ; nlinarith
   · intro l hl; interval_cases l <;> simp [chain1, QuadPt]
   · intro a z hq hne
     rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [chain1] at hne ⊢ <;>
       nlinarith
   · intro a z hq l hl hn1 hn2
-    interval_cases l <;>
+    interval_cases l
     rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
     simp [chain1] at hn1 hn2 ⊢ <;> nlinarith
 
@@ -126,13 +126,13 @@ theorem chainOK_ccw3_up {z0 a1 z1 a2 z2 a3 z3 : ℝ} (h1 : 0 < a1) (h2 : 0 < a2)
     ChainOK (QuadPt z0 a1 z1 a2 z2 a3 z3) z0 1 1 (chain1 0 a3) (chain1 z0 z3) := by
   obtain ⟨⟨q1a, q1b⟩, ⟨q2a, q2b⟩, ⟨q3a, q3b⟩, ⟨q4a, q4b⟩⟩ := hQ
   refine ⟨by norm_num, by simp [chain1], ?_, ?_, ?_, ?_⟩
-  · intro l hl; interval_cases l <;> simp [chain1] <;> nlinarith
+  · intro l hl; interval_cases l ; simp [chain1] ; nlinarith
   · intro l hl; interval_cases l <;> simp [chain1, QuadPt]
   · intro a z hq hne
     rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [chain1] at hne ⊢ <;>
       nlinarith
   · intro a z hq l hl hn1 hn2
-    interval_cases l <;>
+    interval_cases l
     rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
     simp [chain1] at hn1 hn2 ⊢ <;> nlinarith
 
@@ -548,8 +548,8 @@ theorem tri_chain {z0 a1 z1 a2 z2 : ℝ} (h1 : 0 < a1) (h2 : 0 < a2) (h12 : a1 �
          rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [chain1] at hne ⊢ <;> linarith
        · intro a z hq l hl hn1 hn2
          interval_cases l
-         rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
-         simp [chain1] at hn1 hn2 ⊢ <;> nlinarith)
+         rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> simp [chain1] at hn1 hn2 ⊢
+         nlinarith)
     | (refine ⟨2, chain2 0 a1 a2, chain2 z0 z1 z2, by norm_num, by simp [chain2], ?_, ?_, ?_, ?_⟩
        · intro l hl; interval_cases l <;> simp [chain2] <;> linarith
        · intro l hl; interval_cases l <;> simp [chain2, TriPt]
@@ -567,7 +567,7 @@ theorem tri_chain {z0 a1 z1 a2 z2 : ℝ} (h1 : 0 < a1) (h2 : 0 < a2) (h12 : a1 �
        · intro a z hq l hl hn1 hn2
          interval_cases l
          rcases hq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
-         simp [chain1] at hn1 hn2 ⊢ <;> nlinarith)
+         simp [chain1] at hn1 hn2 ⊢ ; nlinarith)
     | (refine ⟨2, chain2 0 a2 a1, chain2 z0 z2 z1, by norm_num, by simp [chain2], ?_, ?_, ?_, ?_⟩
        · intro l hl; interval_cases l <;> simp [chain2] <;> linarith
        · intro l hl; interval_cases l <;> simp [chain2, TriPt]

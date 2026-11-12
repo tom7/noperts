@@ -1899,7 +1899,6 @@ theorem t1pST_rest {tm hm tp hp sp kp sm km : ℝ} (hsp : 0 < sp) (hsp1 : sp < 1
     | (right; refine ⟨by linear_combination (-1 : ℝ) * hH, by nlinarith⟩)
 
 
-
 namespace Frame09
 variable {x : Fin 7 → ℝ³} (F : Frame09 x)
 
