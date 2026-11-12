@@ -926,16 +926,6 @@ theorem rimM_cyc (S : Shape18) (P q : ℝ) (hP : 0 < P) (hV1 : S.sm * S.hm * q +
     | (right; constructor
        · ring1
        · nlinarith [mul_pos a1 hP, mul_pos a9 hP, mul_pos a2 hP, mul_pos a10 hP, mul_pos a7 hP, mul_pos a14 hP, mul_pos (mul_pos a1 a12) hP, mul_pos (mul_pos a2 a13) hP, mul_pos a3 hP, mul_pos a15 hP, mul_pos a2 nV, mul_pos a11 nV, mul_pos a3 nV, mul_pos a5 nV, mul_pos a10 nV])
-    | (right; constructor
-       · linear_combination (-1 : ℝ) * hVe
-       · by_contra hc
-         push Not at hc
-         nlinarith [mul_nonneg a3.le (neg_nonneg.2 hc)])
-    | (right; constructor
-       · linear_combination hVe
-       · by_contra hc
-         push Not at hc
-         nlinarith [mul_nonneg a3.le (neg_nonneg.2 hc)])
 
 set_option maxHeartbeats 2000000 in
 theorem rimM_rest (S : Shape18) (P q : ℝ) (hP : 0 < P) (hV1 : S.sm * S.hm * q + S.tm * S.km * P < 0)
@@ -982,11 +972,6 @@ theorem rimM_rest (S : Shape18) (P q : ℝ) (hP : 0 < P) (hV1 : S.sm * S.hm * q 
        · nlinarith [mul_pos a1 hP, mul_pos a9 hP, mul_pos a2 hP, mul_pos a10 hP, mul_pos a7 hP, mul_pos a14 hP, mul_pos (mul_pos a1 a12) hP, mul_pos (mul_pos a2 a13) hP, mul_pos a3 hP, mul_pos a15 hP, mul_pos a2 nV, mul_pos a11 nV, mul_pos a3 nV, mul_pos a5 nV, mul_pos a10 nV])
     | (right; constructor
        · linear_combination (-1 : ℝ) * hVe
-       · by_contra hc
-         push Not at hc
-         nlinarith [mul_nonneg a3.le (neg_nonneg.2 hc)])
-    | (right; constructor
-       · linear_combination hVe
        · by_contra hc
          push Not at hc
          nlinarith [mul_nonneg a3.le (neg_nonneg.2 hc)])
@@ -1679,7 +1664,7 @@ theorem rimM_rupert (P q : ℝ) (hP : 0 < P) (hV1 : F.S.sm * F.S.hm * q + F.S.tm
 /-- Sector (B): rim `(v, m2-, xb, m1+)` = `(5,2,4,0)`, tilt `(P, Q) = (-1, -1)`, i.e.
 `d = (-1/hm, -1, 0)`; `m2+` strictly inside or hidden (`M2 = Q + H P < 0`).  Lemma Q: robust iff
 `min(Z1, Z2) < X`.  Covers `Z2 < X` and `Z2 = X, Z1 < X` (Theorem M steps 1, 3). -/
-theorem tM_B (hα : F.a12 < F.a11) (hab : F.S.am < F.S.bp) (hV : F.S.dp ≤ F.S.A1 * F.S.tp)
+theorem tM_B (hab : F.S.am < F.S.bp) (hV : F.S.dp ≤ F.S.A1 * F.S.tp)
     (h : F.gg * F.S.am * F.S.dm < F.a12 ∨ F.a11 * F.S.tp - F.gg * F.S.am * F.S.hp < F.a12) :
     IsRupert (Finset.univ.image x) := by
   have htm := F.S.tm_pos; have hhm := F.S.hm_pos; have hkm := F.S.km_pos; have hsm := F.S.sm_pos
@@ -1731,8 +1716,8 @@ theorem tM_C (hα : F.a12 < F.a11) (hab : F.S.am < F.S.bp) (hV : F.S.dp < F.S.A1
 /-- Step 5 (`Z2 = Z1 = X`): sector (B) with the tilt `P = -1`, `Q` very negative so that
 `L2 = <d, xb - m1+>_G > 0` (metric dependent: `Q = -(1 + tm (|a22 - a12 tp| + 1)/(gg hp))`);
 `Q4` with the lex alternative `w(m1+) < w(xb)`.  Covers `dp ≤ A1 tp`. -/
-theorem tM_B_tie (hα : F.a12 < F.a11) (hab : F.S.am < F.S.bp) (hV : F.S.dp ≤ F.S.A1 * F.S.tp)
-    (h2 : F.gg * F.S.am * F.S.dm = F.a12) (h1 : F.a11 * F.S.tp - F.gg * F.S.am * F.S.hp = F.a12) :
+theorem tM_B_tie (hab : F.S.am < F.S.bp) (hV : F.S.dp ≤ F.S.A1 * F.S.tp)
+    (h1 : F.a11 * F.S.tp - F.gg * F.S.am * F.S.hp = F.a12) :
     IsRupert (Finset.univ.image x) := by
   have htm := F.S.tm_pos; have hhm := F.S.hm_pos; have hkm := F.S.km_pos; have hsm := F.S.sm_pos
   have hhp := F.S.hp_pos; have htp := F.S.tp_pos; have hg := F.g_pos
@@ -1807,8 +1792,8 @@ theorem tM_C_hid (hα : F.a12 < F.a11) (hab : F.S.am < F.S.bp) (hV : F.S.dp = F.
 
 /-- Step 6, `a22 am < a12 cm`: sector (B), `m2+` hidden, with the level edge `(m2-, xb)` broken
 by `L1 > 0` (`A22 hm/A12 < Q' < min(H, tm cm)` for `P = -1`, `Q = Q'`): `Q4` lex. -/
-theorem tM_B_L1 (hα : F.a12 < F.a11) (hab : F.S.am < F.S.bp) (hV : F.S.dp = F.S.A1 * F.S.tp)
-    (h2 : F.gg * F.S.am * F.S.dm = F.a12) (h1 : F.a12 < F.a11 * F.S.tp - F.gg * F.S.am * F.S.hp)
+theorem tM_B_L1 (hab : F.S.am < F.S.bp) (hV : F.S.dp = F.S.A1 * F.S.tp)
+    (h2 : F.gg * F.S.am * F.S.dm = F.a12)
     (hL : F.a22 * F.S.am < F.a12 * F.S.cm) (hL' : F.a22 * F.S.am < F.a12 * F.S.dp) :
     IsRupert (Finset.univ.image x) := by
   have htm := F.S.tm_pos; have hhm := F.S.hm_pos; have hkm := F.S.km_pos; have hsm := F.S.sm_pos
@@ -1866,7 +1851,7 @@ theorem tM_B_L1 (hα : F.a12 < F.a11) (hab : F.S.am < F.S.bp) (hV : F.S.dp = F.S
 /-- The Remark (mixed sector, `P > 0`, `V1 < 0`): rim `(xa, m1-, v, m2-, xb, m1+)` = `(3,6,5,2,4,0)`,
 `M2 < 0`, `L1 > 0`: `-(a22 hm/a12) P < Q < -max(tm cm, H) P`; depths `(T, R, 0, X, X+, Z1)`
 rising from `v` (6-cycle lex pattern). -/
-theorem tM_mixed (hα : F.a12 < F.a11) (hab : F.S.am < F.S.bp) (hV : F.S.dp = F.S.A1 * F.S.tp)
+theorem tM_mixed (hab : F.S.am < F.S.bp) (hV : F.S.dp = F.S.A1 * F.S.tp)
     (h2 : F.gg * F.S.am * F.S.dm = F.a12) (h1 : F.a12 < F.a11 * F.S.tp - F.gg * F.S.am * F.S.hp)
     (hL : F.a12 * F.S.cm < F.a22 * F.S.am) (hL' : F.a12 * F.S.dp < F.a22 * F.S.am) :
     IsRupert (Finset.univ.image x) := by
@@ -1968,19 +1953,19 @@ theorem thmM (hα : F.a12 < F.a11) (hab : F.S.am < F.S.bp) (hV : F.S.dp ≤ F.S.
         F.a12 * F.S.cm ≤ F.a22 * F.S.am ∧ F.a22 * F.S.am ≤ F.a12 * F.S.dp) := by
   have hA12 : 0 < F.a12 := F.A12_pos
   rcases lt_trichotomy (F.gg * F.S.am * F.S.dm) F.a12 with hZ | hZ | hZ
-  · exact Or.inl (F.tM_B hα hab hV (Or.inl hZ))
+  · exact Or.inl (F.tM_B hab hV (Or.inl hZ))
   · rcases lt_trichotomy (F.a11 * F.S.tp - F.gg * F.S.am * F.S.hp) F.a12 with hY | hY | hY
-    · exact Or.inl (F.tM_B hα hab hV (Or.inr hY))
-    · exact Or.inl (F.tM_B_tie hα hab hV hZ hY)
+    · exact Or.inl (F.tM_B hab hV (Or.inr hY))
+    · exact Or.inl (F.tM_B_tie hab hV hY)
     · rcases hV.lt_or_eq with hV' | hV'
       · exact Or.inl (F.tM_C hα hab hV' (Or.inr ⟨hZ, hY⟩))
       · rcases lt_or_ge F.S.dp F.S.cm with hc | hc
         · exact Or.inl (F.tM_C_hid hα hab hV' hc (Or.inr ⟨hZ, hY⟩))
         · have hmul : F.a12 * F.S.cm ≤ F.a12 * F.S.dp := mul_le_mul_of_nonneg_left hc hA12.le
           rcases lt_or_ge (F.a22 * F.S.am) (F.a12 * F.S.cm) with hL | hL
-          · exact Or.inl (F.tM_B_L1 hα hab hV' hZ hY hL (lt_of_lt_of_le hL hmul))
+          · exact Or.inl (F.tM_B_L1 hab hV' hZ hL (lt_of_lt_of_le hL hmul))
           · rcases lt_or_ge (F.a12 * F.S.dp) (F.a22 * F.S.am) with hL' | hL'
-            · exact Or.inl (F.tM_mixed hα hab hV' hZ hY (lt_of_le_of_lt hmul hL') hL')
+            · exact Or.inl (F.tM_mixed hab hV' hZ hY (lt_of_le_of_lt hmul hL') hL')
             · exact Or.inr ⟨hV', hZ, hY, hL, hL'⟩
   · rcases hV.lt_or_eq with hV' | hV'
     · exact Or.inl (F.tM_C hα hab hV' (Or.inl hZ))
@@ -2551,7 +2536,7 @@ theorem tLV (heq : F.a12 = F.a11) (T : ℝ) (h1 : F.S.mum - F.S.am < T) (h2 : -F
       funext i
       rw [hc]
       rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
-        simp only [quad_0, quad_1, quad_2, quad_3, F.GG_eq] <;> first | (rw [heq]; ring) | ring
+        simp only [quad_0, quad_1, quad_2, quad_3, F.GG_eq] <;> (rw [heq]; ring)
     rw [this]
     rcases le_or_gt 0 T with hT | hT
     · refine robust_quad_of_nws (Or.inr (Or.inr (Or.inl ?_))) (Or.inr (Or.inl ?_))
