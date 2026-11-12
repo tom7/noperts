@@ -32,7 +32,7 @@ variable {x : Fin 7 → ℝ³} (F : Frame09 x)
 /-- `rupert_rim` with a robustly unimodal limit depth cycle, for `Frame09` (copy of
 `Frame7.rupert_rim_rob`, `CaseC18M.lean`). -/
 theorem rupert_rim_rob {k : ℕ} [NeZero k] (hk : 3 ≤ k) (c : ZMod k → Fin 7) (σ : ℝ)
-    (hσ : σ = 1 ∨ σ = -1) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
+    (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
     (hcyc : ∀ i j : ZMod k, j ≠ i → j ≠ i + 1 →
       ST σ u v ((F.ptC (c (i + 1))).sub (F.ptC (c i))) ((F.ptC (c j)).sub (F.ptC (c i))))
     (hrest : ∀ j' : Fin 7, (∀ jj, j' ≠ c jj) → ∀ i : ZMod k,
@@ -579,7 +579,7 @@ theorem rimW (hdc : F.S.cm < F.S.dp) (hA : F.a22 * F.S.sp ≤ F.a12) :
     linarith
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   refine F.rupert_rim4 2 3 4 0 ⟨0, F.S.sp, F.S.kp⟩ ⟨1, 0, 0⟩ ⟨F.S.tm, 0, -F.S.hm⟩ ⟨0, 0, 0⟩
-    p2 p3 p4 p0 1 (Or.inl rfl) ⟨0, 1 - F.S.sp, -F.S.kp⟩ ⟨-1, 2, 0⟩
+    p2 p3 p4 p0 1 ⟨0, 1 - F.S.sp, -F.S.kp⟩ ⟨-1, 2, 0⟩
     (Or.inr (Or.inl (by linarith))) ?_ ?_ ?_
   · exact rimW_cyc hsp hsp1 hkp htm htm1 hhm
   · intro j' h2 h3 h4 h0 i
@@ -642,7 +642,7 @@ theorem rimT2p (hA : F.a12 = F.a22) (hdc : F.S.dp < F.S.cm) :
     linarith
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   refine F.rupert_rim4 5 3 4 6 ⟨0, 1, 0⟩ ⟨1, 0, 0⟩ ⟨F.S.tm, 0, -F.S.hm⟩ ⟨0, F.S.sm, -F.S.km⟩
-    p5 p3 p4 p6 1 (Or.inl rfl) ⟨0, F.S.sm, -F.S.km⟩ ⟨1, 0, 0⟩
+    p5 p3 p4 p6 1 ⟨0, F.S.sm, -F.S.km⟩ ⟨1, 0, 0⟩
     (Or.inr (Or.inl (ne_of_gt hsm))) ?_ ?_ ?_
   · exact rimT2p_cyc hsm hsm1 hkm htm htm1 hhm
   · intro j' h5 h3 h4 h6 i
@@ -729,7 +729,7 @@ theorem rimWpp_core (hA : F.a12 = F.a22) (hdc : F.S.dp = F.S.cm) (hamd : F.S.am 
   have Km := F.Km_eq
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   refine F.rupert_rim5p 0 2 3 4 6 ⟨0, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩ ⟨1, 0, 0⟩ ⟨F.S.tm, 0, -F.S.hm⟩
-    ⟨0, F.S.sm, -F.S.km⟩ p0 p2 p3 p4 p6 1 (Or.inl rfl) ⟨0, 1 - F.S.sp, -F.S.kp⟩ ⟨-1, 0, D⟩
+    ⟨0, F.S.sm, -F.S.km⟩ p0 p2 p3 p4 p6 1 ⟨0, 1 - F.S.sp, -F.S.kp⟩ ⟨-1, 0, D⟩
     (Or.inr (Or.inl (by linarith))) ?_ ?_ ?_
   · exact rimWpp_cyc hsp hsp1 hkp htm htm1 hhm hsm hsm1 hkm hkc hD1 hD2
   · intro j' h0 h2 h3 h4 h6 i
@@ -1098,7 +1098,7 @@ theorem rimK1a (hts : F.S.tm = F.S.sm) (hdp : F.S.am = F.S.dp) (hΔ : 0 < F.K1De
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   have p6' : F.ptC 6 = ⟨0, F.S.tm, -F.S.hm⟩ := by rw [p6, ← hts, hkm]
   refine F.rupert_rim5p 6 5 2 3 4 ⟨0, F.S.tm, -F.S.hm⟩ ⟨0, 1, 0⟩ ⟨0, F.S.sp, F.S.kp⟩ ⟨1, 0, 0⟩
-    ⟨F.S.tm, 0, -F.S.hm⟩ p6' p5 p2 p3 p4 1 (Or.inl rfl) ⟨0, 1 - F.S.sp, -F.S.kp⟩ ⟨1, 0, 0⟩
+    ⟨F.S.tm, 0, -F.S.hm⟩ p6' p5 p2 p3 p4 1 ⟨0, 1 - F.S.sp, -F.S.kp⟩ ⟨1, 0, 0⟩
     (Or.inr (Or.inl (by linarith))) ?_ ?_ ?_
   · exact rimK1a_cyc hsp hsp1 hkp htm htm1 hhm hkc
   · intro j' h6 h5 h2 h3 h4 i
@@ -1165,7 +1165,7 @@ theorem rimK1b (hts : F.S.tm = F.S.sm) (hdp : F.S.am = F.S.dp) (hΔ : F.K1Delta 
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   have p6' : F.ptC 6 = ⟨0, F.S.tm, -F.S.hm⟩ := by rw [p6, ← hts, hkm]
   refine F.rupert_rim5p 0 2 5 3 4 ⟨0, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩ ⟨0, 1, 0⟩ ⟨1, 0, 0⟩
-    ⟨F.S.tm, 0, -F.S.hm⟩ p0 p2 p5 p3 p4 1 (Or.inl rfl) ⟨0, 1 - F.S.sp, -F.S.kp⟩ ⟨-1, 0, 0⟩
+    ⟨F.S.tm, 0, -F.S.hm⟩ p0 p2 p5 p3 p4 1 ⟨0, 1 - F.S.sp, -F.S.kp⟩ ⟨-1, 0, 0⟩
     (Or.inr (Or.inl (by linarith))) ?_ ?_ ?_
   · exact rimK1b_cyc hsp hsp1 hkp htm htm1 hhm hkc
   · intro j' h0 h2 h5 h3 h4 i
@@ -1606,7 +1606,7 @@ theorem k1c_core5 (hts : F.S.tm = F.S.sm) (hdp : F.S.am = F.S.dp) (hΔ : F.K1Del
   have p6' : F.ptC 6 = ⟨0, F.S.tm, -F.S.hm⟩ := by rw [p6, ← hts, hkm]
   obtain ⟨hc, hr⟩ := hST
   refine F.rupert_rim5p 0 1 3 5 2 ⟨0, 0, 0⟩ ⟨F.S.tp, 0, F.S.hp⟩ ⟨1, 0, 0⟩ ⟨0, 1, 0⟩
-    ⟨0, F.S.sp, F.S.kp⟩ p0 p1 p3 p5 p2 1 (Or.inl rfl) ⟨1 - F.S.tm, 0, F.S.hm⟩ ⟨-l, 1, 0⟩
+    ⟨0, F.S.sp, F.S.kp⟩ p0 p1 p3 p5 p2 1 ⟨1 - F.S.tm, 0, F.S.hm⟩ ⟨-l, 1, 0⟩
     (Or.inl ht1.ne') hc ?_ ?_
   · intro j' h0 h1 h3 h5 h2 i
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -1669,7 +1669,7 @@ theorem k1c_core4 (hts : F.S.tm = F.S.sm) (hdp : F.S.am = F.S.dp) (hΔ : F.K1Del
   have p6' : F.ptC 6 = ⟨0, F.S.tm, -F.S.hm⟩ := by rw [p6, ← hts, hkm]
   obtain ⟨hc, hr⟩ := hST
   refine F.rupert_rim4 1 3 5 2 ⟨F.S.tp, 0, F.S.hp⟩ ⟨1, 0, 0⟩ ⟨0, 1, 0⟩
-    ⟨0, F.S.sp, F.S.kp⟩ p1 p3 p5 p2 1 (Or.inl rfl) ⟨1 - F.S.tm, 0, F.S.hm⟩ ⟨-l, 1, 0⟩
+    ⟨0, F.S.sp, F.S.kp⟩ p1 p3 p5 p2 1 ⟨1 - F.S.tm, 0, F.S.hm⟩ ⟨-l, 1, 0⟩
     (Or.inl ht1.ne') hc ?_ ?_
   · intro j' h1 h3 h5 h2 i
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -1945,7 +1945,7 @@ theorem rimK2T1p (H1 : F.S.am = F.S.bp) (H2 : F.S.bp = F.S.sp * F.S.A2) (hts : F
     intro i
     rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
       simp [c, hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5, p4, p3, p1, p2, p5, p6]
-  refine F.rupert_rim_rob (k := 6) (by norm_num) c (-1) (Or.inr rfl)
+  refine F.rupert_rim_rob (k := 6) (by norm_num) c (-1)
     ⟨F.S.tm, 0, -F.S.hm⟩ ⟨0, 1, 0⟩ (Or.inl (ne_of_gt htm)) ?_ ?_ ?_
   · intro i j h1 h2
     simp only [hc]

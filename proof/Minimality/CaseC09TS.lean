@@ -433,7 +433,7 @@ theorem t095_4 (hA : F.a12 < F.a22) (hts : F.S.tm = F.S.sm) (hda : F.S.am < F.S.
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   rw [← hts, hkm] at p6
   refine F.rupert_rim4 0 6 5 2 ⟨0, 0, 0⟩ ⟨0, F.S.tm, -F.S.hm⟩ ⟨0, 1, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
-    p0 p6 p5 p2 1 (Or.inl rfl) ⟨1, -1, 0⟩ ⟨ds, 0, -1⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
+    p0 p6 p5 p2 1 ⟨1, -1, 0⟩ ⟨ds, 0, -1⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
   · exact t095_cyc4 hsp hsp1 htp htp1 hhp hkp htm htm1 hhm roof H31 hd1 hd2
   · intro j' h0 h6 h5 h2 i
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -472,7 +472,7 @@ theorem t095_5 (hA : F.a12 < F.a22) (hts : F.S.tm = F.S.sm) (hda : F.S.am < F.S.
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   rw [← hts, hkm] at p6
   refine F.rupert_rim5p 0 6 5 2 1 ⟨0, 0, 0⟩ ⟨0, F.S.tm, -F.S.hm⟩ ⟨0, 1, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
-    ⟨F.S.tp, 0, F.S.hp⟩ p0 p6 p5 p2 p1 1 (Or.inl rfl) ⟨1, -1, 0⟩ ⟨ds, 0, -1⟩
+    ⟨F.S.tp, 0, F.S.hp⟩ p0 p6 p5 p2 p1 1 ⟨1, -1, 0⟩ ⟨ds, 0, -1⟩
     (Or.inl one_ne_zero) ?_ ?_ ?_
   · exact t095_cyc5 hsp hsp1 htp htp1 hhp hkp htm htm1 hhm roof H31 hd1 hd2
   · intro j' h0 h6 h5 h2 h1 i

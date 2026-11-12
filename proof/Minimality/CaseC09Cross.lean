@@ -1020,7 +1020,7 @@ variable {x : Fin 7 → ℝ³} (F : Frame09 x)
 /-- The bridge for four-corner rims, with the corners' frame coordinates `P₀ … P₃`. -/
 theorem rupert_rim4 (c0 c1 c2 c3 : Fin 7) (P0 P1 P2 P3 : C3)
     (e0 : F.ptC c0 = P0) (e1 : F.ptC c1 = P1) (e2 : F.ptC c2 = P2) (e3 : F.ptC c3 = P3)
-    (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
+    (σ : ℝ) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
     (hcyc : ∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
       ST σ u v ((quad P0 P1 P2 P3 (i + 1)).sub (quad P0 P1 P2 P3 i))
         ((quad P0 P1 P2 P3 j).sub (quad P0 P1 P2 P3 i)))
@@ -1100,7 +1100,7 @@ variable {x : Fin 7 → ℝ³} (F : Frame09 x)
 theorem rupert_rim5 (c0 c1 c2 c3 c4 : Fin 7) (P0 P1 P2 P3 P4 : C3)
     (e0 : F.ptC c0 = P0) (e1 : F.ptC c1 = P1) (e2 : F.ptC c2 = P2) (e3 : F.ptC c3 = P3)
     (e4 : F.ptC c4 = P4)
-    (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
+    (σ : ℝ) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
     (hcyc : ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       ST σ u v ((quint P0 P1 P2 P3 P4 (i + 1)).sub (quint P0 P1 P2 P3 P4 i))
         ((quint P0 P1 P2 P3 P4 j).sub (quint P0 P1 P2 P3 P4 i)))
@@ -1238,7 +1238,7 @@ variable {x : Fin 7 → ℝ³} (F : Frame09 x)
 theorem rupert_rim5p (c0 c1 c2 c3 c4 : Fin 7) (P0 P1 P2 P3 P4 : C3)
     (e0 : F.ptC c0 = P0) (e1 : F.ptC c1 = P1) (e2 : F.ptC c2 = P2) (e3 : F.ptC c3 = P3)
     (e4 : F.ptC c4 = P4)
-    (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
+    (σ : ℝ) (u v : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
     (hcyc : ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       ST σ u v ((quint P0 P1 P2 P3 P4 (i + 1)).sub (quint P0 P1 P2 P3 P4 i))
         ((quint P0 P1 P2 P3 P4 j).sub (quint P0 P1 P2 P3 P4 i)))
@@ -1479,7 +1479,7 @@ theorem t32M (hA : F.a12 < F.a22) (h : F.S.bm < F.S.cp) :
   have p6 : F.ptC 6 = ⟨0, F.S.sm, -F.S.km⟩ := by simp [ptC_eq, cx, cy, cz]
   refine F.rupert_rim4 2 5 3 1 ⟨0, F.S.sp, F.S.kp⟩ ⟨0, 1, 0⟩ ⟨1, 0, 0⟩ ⟨F.S.tp, 0, F.S.hp⟩
     (by simp [ptC_eq, cx, cy, cz]) (by simp [ptC_eq, cx, cy, cz]) (by simp [ptC_eq, cx, cy, cz])
-    (by simp [ptC_eq, cx, cy, cz]) (-1) (Or.inr rfl) ⟨0, F.S.sp, F.S.kp⟩
+    (by simp [ptC_eq, cx, cy, cz]) (-1) ⟨0, F.S.sp, F.S.kp⟩
     ⟨F.S.tp, 1 - 2 * F.S.sp, F.S.hp - 2 * F.S.kp⟩ (Or.inr (Or.inl hsp.ne')) ?_ ?_ ?_
   · exact t32_cyc hsp hsp1 htp htp1 hhp hkp roof
   · intro j' h2 h5 h3 h1 i
@@ -1535,7 +1535,7 @@ theorem t31II (hA1 : F.a12 ≤ F.a11) (hts : F.S.tm < F.S.sm) (hac : F.S.ap < F.
   have Km := F.Km_eq
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   refine F.rupert_rim4 0 4 3 2 ⟨0, 0, 0⟩ ⟨F.S.tm, 0, -F.S.hm⟩ ⟨1, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
-    p0 p4 p3 p2 1 (Or.inl rfl) ⟨1, -1, 0⟩ ⟨-1, 0, 0⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
+    p0 p4 p3 p2 1 ⟨1, -1, 0⟩ ⟨-1, 0, 0⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
   · exact t31II_cyc hsp hsp1 hkp htm htm1 hhm
   · intro j' h0 h4 h3 h2 i
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -1584,7 +1584,7 @@ theorem t31IA (hA2 : F.a12 < F.a22) (hst : F.S.sm < F.S.tm) (hac : F.S.ap < F.S.
   have Km := F.Km_eq
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   refine F.rupert_rim4 0 6 5 2 ⟨0, 0, 0⟩ ⟨0, F.S.sm, -F.S.km⟩ ⟨0, 1, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
-    p0 p6 p5 p2 1 (Or.inl rfl) ⟨1, -1, 0⟩ ⟨1, 0, 0⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
+    p0 p6 p5 p2 1 ⟨1, -1, 0⟩ ⟨1, 0, 0⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
   · exact t31IA_cyc hsp hsp1 hkp hsm hsm1 hkm
   · intro j' h0 h6 h5 h2 i
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -1624,7 +1624,7 @@ theorem t31IB (hA1 : F.a12 ≤ F.a11) (hA2 : F.a12 < F.a22) (hst : F.S.sm < F.S.
   have Km := F.Km_eq
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   refine F.rupert_rim5 0 6 5 2 1 ⟨0, 0, 0⟩ ⟨0, F.S.sm, -F.S.km⟩ ⟨0, 1, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
-    ⟨F.S.tp, 0, F.S.hp⟩ p0 p6 p5 p2 p1 1 (Or.inl rfl) ⟨1, -1, 0⟩ ⟨1, 0, 0⟩ (Or.inl one_ne_zero)
+    ⟨F.S.tp, 0, F.S.hp⟩ p0 p6 p5 p2 p1 1 ⟨1, -1, 0⟩ ⟨1, 0, 0⟩ (Or.inl one_ne_zero)
     ?_ ?_ ?_
   · exact t31IB_cyc hsp hsp1 htp htp1 hhp hkp hsm hsm1 hkm roof H31
   · intro j' h0 h6 h5 h2 h1 i
@@ -1701,7 +1701,7 @@ theorem amT1 (hg : 0 < F.g12) (A1 : F.S.cm < F.S.dp) :
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   have hg0 : 0 < F.gg := F.g_pos
   refine F.rupert_rim4 0 4 3 2 ⟨0, 0, 0⟩ ⟨F.S.tm, 0, -F.S.hm⟩ ⟨1, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
-    p0 p4 p3 p2 1 (Or.inl rfl) ⟨0, F.S.sp - 1, F.S.kp⟩ ⟨1, -2 * F.S.sp, -2 * F.S.kp⟩
+    p0 p4 p3 p2 1 ⟨0, F.S.sp - 1, F.S.kp⟩ ⟨1, -2 * F.S.sp, -2 * F.S.kp⟩
     (Or.inr (Or.inl (by linarith))) ?_ ?_ ?_
   · exact am1_cyc hsp hsp1 hkp htm htm1 hhm
   · intro j' h0 h4 h3 h2 i
@@ -1787,7 +1787,7 @@ theorem amT2 (hg : F.g12 ≤ 0) (A1 : F.S.cm < F.S.dp)
       nlinarith [abs_nonneg X]
     linarith
   refine F.rupert_rim5p 2 1 0 6 5 ⟨0, F.S.sp, F.S.kp⟩ ⟨F.S.tp, 0, F.S.hp⟩ ⟨0, 0, 0⟩
-    ⟨0, F.S.sm, -F.S.km⟩ ⟨0, 1, 0⟩ p2 p1 p0 p6 p5 (-1) (Or.inr rfl) ⟨-1, F.S.sp, F.S.kp⟩
+    ⟨0, F.S.sm, -F.S.km⟩ ⟨0, 1, 0⟩ p2 p1 p0 p6 p5 (-1) ⟨-1, F.S.sp, F.S.kp⟩
     ⟨b * F.S.tp, (1 - F.S.sp) - b * F.S.sp, -F.S.kp + b * (F.S.hp - F.S.kp)⟩
     (Or.inr (Or.inl (by linarith))) ?_ ?_ ?_
   · exact am2_cyc hsp hsp1 htp htp1 hhp hkp hsm hsm1 hkm roof

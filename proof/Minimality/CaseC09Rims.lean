@@ -429,7 +429,7 @@ theorem rimT2 (H3 : F.S.sm * F.S.hp < (F.S.km * F.S.sp + F.S.sm * F.S.kp) * (1 -
   have hg : 0 < F.gg := F.g_pos
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   refine F.rupert_rim4 0 4 3 2 ⟨0, 0, 0⟩ ⟨F.S.tm, 0, -F.S.hm⟩ ⟨1, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
-    p0 p4 p3 p2 (-1) (Or.inr rfl) ⟨0, F.S.sm, -F.S.km⟩ ⟨-1, 0, 0⟩
+    p0 p4 p3 p2 (-1) ⟨0, F.S.sm, -F.S.km⟩ ⟨-1, 0, 0⟩
     (Or.inr (Or.inl (ne_of_gt hsm))) ?_ ?_ ?_
   · exact t2_cyc hsp hsp1 hkp htm htm1 hhm hsm hsm1 hkm
   · intro j' h0 h4 h3 h2 i

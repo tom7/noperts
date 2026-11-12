@@ -331,7 +331,7 @@ theorem t31II_eq (hA1 : F.a12 ≤ F.a11) (hts : F.S.tm < F.S.sm) (hac : F.S.ap =
   have Km := F.Km_eq
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   refine F.rupert_rim4 0 4 3 2 ⟨0, 0, 0⟩ ⟨F.S.tm, 0, -F.S.hm⟩ ⟨1, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
-    p0 p4 p3 p2 1 (Or.inl rfl) ⟨1, -1, 0⟩ ⟨-1, 0, 0⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
+    p0 p4 p3 p2 1 ⟨1, -1, 0⟩ ⟨-1, 0, 0⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
   · exact t31II_cyc hsp hsp1 hkp htm htm1 hhm
   · intro j' h0 h4 h3 h2 i
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -381,7 +381,7 @@ theorem t31IB_eq (hA1 : F.a12 ≤ F.a11) (hA2 : F.a12 < F.a22) (hst : F.S.sm < F
   have Km := F.Km_eq
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   refine F.rupert_rim5 0 6 5 2 1 ⟨0, 0, 0⟩ ⟨0, F.S.sm, -F.S.km⟩ ⟨0, 1, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
-    ⟨F.S.tp, 0, F.S.hp⟩ p0 p6 p5 p2 p1 1 (Or.inl rfl) ⟨1, -1, 0⟩ ⟨1, 0, 0⟩ (Or.inl one_ne_zero)
+    ⟨F.S.tp, 0, F.S.hp⟩ p0 p6 p5 p2 p1 1 ⟨1, -1, 0⟩ ⟨1, 0, 0⟩ (Or.inl one_ne_zero)
     ?_ ?_ ?_
   · exact t31IB_cyc_eq hsp hsp1 htp htp1 hhp hkp hsm hsm1 hkm roof H31
   · intro j' h0 h6 h5 h2 h1 i
@@ -437,7 +437,7 @@ theorem t095_5_eq (hA : F.a12 < F.a22) (hts : F.S.tm = F.S.sm) (hda : F.S.am < F
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   rw [← hts, hkm] at p6
   refine F.rupert_rim5p 0 6 5 2 1 ⟨0, 0, 0⟩ ⟨0, F.S.tm, -F.S.hm⟩ ⟨0, 1, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
-    ⟨F.S.tp, 0, F.S.hp⟩ p0 p6 p5 p2 p1 1 (Or.inl rfl) ⟨1, -1, 0⟩ ⟨ds, 0, -1⟩
+    ⟨F.S.tp, 0, F.S.hp⟩ p0 p6 p5 p2 p1 1 ⟨1, -1, 0⟩ ⟨ds, 0, -1⟩
     (Or.inl one_ne_zero) ?_ ?_ ?_
   · exact t095_cyc5_eq hsp hsp1 htp htp1 hhp hkp htm htm1 hhm roof H31 hd1 hd2
   · intro j' h0 h6 h5 h2 h1 i
