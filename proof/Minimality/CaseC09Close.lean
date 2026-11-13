@@ -279,7 +279,6 @@ theorem rimW_rest1 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) 
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
     | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
 
 theorem rimT2p_cyc (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (htm : 0 < tm) (htm1 : tm < 1)
@@ -410,7 +409,6 @@ theorem rimT2p_rest1 (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (htm : 0 < tm
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
     | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
 end G1a
 
@@ -1359,7 +1357,6 @@ theorem rimK1c_gt_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t)
     simp only [ST, Dc, C3.sub, z0, z1, z2, z3, quad_0, quad_1, quad_2, quad_3]
     first
     | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
 set_option maxHeartbeats 4000000 in
 theorem rimK1c_gt_rest (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (ht1 : t < 1)
@@ -1494,7 +1491,6 @@ theorem rimK1c_eq4_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t
     simp only [ST, Dc, C3.sub, z0, z1, z2, z3, quad_0, quad_1, quad_2, quad_3]
     first
     | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
 set_option maxHeartbeats 4000000 in
 theorem rimK1c_eq4_rest (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (ht1 : t < 1)
@@ -1895,8 +1891,6 @@ theorem t1pST_rest {tm hm tp hp sp kp sm km : ℝ} (hsp : 0 < sp) (hsp1 : sp < 1
     first
     | (left; nlinarith)
     | (right; refine ⟨by ring1, by nlinarith⟩)
-    | (right; refine ⟨by linear_combination hH, by nlinarith⟩)
-    | (right; refine ⟨by linear_combination (-1 : ℝ) * hH, by nlinarith⟩)
 
 
 namespace Frame09

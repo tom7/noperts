@@ -123,7 +123,6 @@ theorem isRobustUnimodal_iff {k : ℕ} (hk : 4 ≤ k) (z : ZMod k → ℝ) :
         | exact sorted3 hU hk j.val l.val i.val (by omega) (by omega) (by omega) (by linarith) (by linarith)
         | exact sorted3 hU hk l.val i.val j.val (by omega) (by omega) (by omega) (by linarith) (by linarith)
         | exact sorted3 hU hk l.val j.val i.val (by omega) (by omega) (by omega) (by linarith) (by linarith)
-        | omega
     · -- (R3) level pair inside a monotone run
       intro B a b c d hab hbc hcd hdk heq
       have rcb : B + b + ((c - b : ℕ) : ZMod k) = B + c := by

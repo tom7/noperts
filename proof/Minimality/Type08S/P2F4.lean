@@ -39,7 +39,6 @@ theorem tc1_cyc (hzv : 0 < zv) (hzw : zw < 0) (hb2 : 0 < b2) (hza : za < 0) :
     simp only [c1Pts, b0, b1', b2', b3, quad_0, quad_1, quad_2, quad_3, LexTest, tst, hdet] <;>
     first
     | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
 
 theorem tc1_c (hzv : 0 < zv) (hzw : zw < 0) (hb2 : 0 < b2) (hza : za < 0) (hA : 0 < A) :
     ∀ i : ZMod 4, LexTest (-1) ⟨1, 0, 0⟩ ⟨0, -1, 1⟩ (c1Pts zv zw b1 b2 za i)
@@ -92,7 +91,6 @@ theorem tc1_b' (hzv : 0 < zv) (hzw : zw < 0) (hb2 : 0 < b2) (hza : za < 0) (hr2 
     simp only [c1Pts, b0, b1', b2', b3, quad_0, quad_1, quad_2, quad_3, LexTest, tst, hdet] <;>
     first
     | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
 
 end C1Tests
 

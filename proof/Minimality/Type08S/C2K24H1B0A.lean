@@ -71,7 +71,6 @@ theorem k24h1b0_tsc {D b1 s h6 g v1 v2 : ℝ} (hD : 0 < D) (hb1 : 1 < b1) (hs : 
             Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
          | (left; ring_nf; positivity)
-         | (left; nlinarith)
          | (right; refine ⟨by ring, by nlinarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
