@@ -79,8 +79,6 @@ theorem t4_b0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
   have cfg := P.cfg
   have hxt := P.hxt
   subst hxt
-  have hB1 := weakBeyond_B1 Fr.hee Fr.hNN hwb (fun h => by linarith [h.2])
-  have hA' : A ≤ r1 := by rw [P.hAE]; exact hB1.1
   have hb1 : 0 < b1 := weakBeyond_B2 Fr.hee Fr.hNN cfg.hb2 hwb hrb
   have hT3 := cfg.T3_a_pos_of hrb
   have hT1 := cfg.T1_a_pos_of hrb
@@ -103,7 +101,7 @@ theorem t4_b0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
   refine Fr.propH_t4_b (V := insert d ({a, a', b, b', c, c'} : Finset ℝ³))
     (bP := b) (aP' := a') (fP := c') (rP := b') (gP := c) (wP := d) (aP := a) ?_ (by simp) (by simp)
     (by simp) (by simp) (by simp) P.Φb P.Φa' P.Φc' P.Φb' P.Φc P.Φd P.Φa cfg.hA hs0 hs1 P.ht0 P.ht1
-    cfg.hzv hzw P.hm P.hmp hzz hb2 hrb hb1 hr2 hA' hB1.2.1 ?_ ?_
+    cfg.hzv hzw P.hm P.hmp hzz hb2 hrb hb1 hr2 ?_ ?_
   · intro y hy
     simp only [Finset.mem_insert, Finset.mem_singleton] at hy
     tauto
