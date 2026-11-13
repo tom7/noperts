@@ -726,11 +726,6 @@ open scoped RealInnerProductSpace
 namespace Minimality.CaseC20
 namespace Cor
 
-/-- Five-cycle shape of T. -/
-theorem ruT {z : ZMod 5 → ℝ} (h12 : z 1 < z 2) (h32 : z 3 < z 2) (h43 : z 4 < z 3)
-    (h0 : z 0 < z 1 ∨ z 0 < z 4) : RobUni z := by
-  rcases h0 with h0 | h0 <;> robuni5
-
 /-- `Bd <= 0` forces the facing value of `G` at the view of T to be positive. -/
 lemma Gs_pos {q tm sp sm kk B : ℝ} (h : Hy q tm sp sm kk B) (hBd : Bd q tm sp sm kk ≤ 0) :
     0 < (1-sp) - q*(1+tm-sm) + (1-sm)*kk := by

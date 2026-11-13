@@ -479,7 +479,7 @@ theorem ia_S15 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
   have nF : nf F.S ⟨1, 0, 0⟩ 5 < 0 := by
     have e : nf F.S ⟨1, 0, 0⟩ 5 = -((1-F.S.sp)*(1-F.S.tp)-F.S.kp) := by simp only [nf_F, hN.2]; ring
     rw [e]; linarith
-  refine seg_leaf F (h20s_fac hR) hx ias_S15 ias_S15_good ⟨1, 0, 0⟩
+  refine seg_leaf F (h20s_fac hR) hx h20s_s15 h20s_s15_good ⟨1, 0, 0⟩
     (seg_vec F 5 1 _ (by rw [F.ptC_1, F.ptC_5]; simp only [C3.sub]; congr 1 <;> ring)) (by ia_lits) ?_
   have z0 : F.dep ⟨1, 0, 0⟩ 0 = F.a11 * F.S.tp := by rw [Frame20.dep_0]; ring
   have z1 : F.dep ⟨1, 0, 0⟩ 1 = F.a11 := by rw [Frame20.dep_1]; ring

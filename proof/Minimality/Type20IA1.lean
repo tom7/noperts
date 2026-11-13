@@ -371,17 +371,9 @@ def ias_C6 : S0xSeg 7 8 5 where
   pat := ![true, true, true, false, true, true, true, false]
   c := ![4, 6, 2, 5, 3]
 
-/-- S15: `s51:01346`, up `A E G`. -/
-def ias_S15 : S0xSeg 7 8 5 where
-  i := 5
-  j := 1
-  pat := ![true, false, false, false, true, false, true, false]
-  c := ![0, 1, 3, 4, 6]
-
 theorem ias_S45_good : ias_S45.Good h20s_S := by decide
 theorem ias_S56_good : ias_S56.Good h20s_S := by decide
 theorem ias_C6_good : ias_C6.Good h20s_S := by decide
-theorem ias_S15_good : ias_S15.Good h20s_S := by decide
 
 end Minimality.H20S
 

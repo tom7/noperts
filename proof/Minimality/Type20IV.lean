@@ -56,13 +56,6 @@ def ivs_C7 : S0xSeg 7 8 5 where
   pat := ![true, true, true, true, false, false, false, true]
   c := ![0, 1, 4, 6, 2]
 
-/-- C8: `s16:0145`, up `B E F G H`, down `A C D`. -/
-def ivs_C8 : S0xSeg 7 8 4 where
-  i := 1
-  j := 6
-  pat := ![false, true, false, false, true, true, true, true]
-  c := ![0, 1, 4, 5]
-
 /-- C9: `s25:0162`, up `A B C D G H`, down `E F`. -/
 def ivs_C9 : S0xSeg 7 8 4 where
   i := 2
@@ -74,7 +67,6 @@ theorem ivs_C5_good : ivs_C5.Good h20s_S := by decide
 theorem ivs_C2_good : ivs_C2.Good h20s_S := by decide
 theorem ivs_C6_good : ivs_C6.Good h20s_S := by decide
 theorem ivs_C7_good : ivs_C7.Good h20s_S := by decide
-theorem ivs_C8_good : ivs_C8.Good h20s_S := by decide
 theorem ivs_C9_good : ivs_C9.Good h20s_S := by decide
 
 end Minimality.H20S
@@ -562,7 +554,7 @@ theorem iv_C8 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces 
   have nD : nf F.S ⟨-1, 1, 0⟩ 3 < 0 := by
     have e : nf F.S ⟨-1, 1, 0⟩ 3 = F.S.hm*F.S.sm - F.S.tm*F.S.km := by simp only [nf_D]; ring
     rw [e]; linarith
-  refine seg_leaf F (h20s_fac hR) hx ivs_C8 ivs_C8_good ⟨-1, 1, 0⟩
+  refine seg_leaf F (h20s_fac hR) hx h20s_s16 h20s_s16_good ⟨-1, 1, 0⟩
     (seg_vec F 1 6 _ (by rw [F.ptC_6, F.ptC_1]; simp only [C3.sub]; congr 1 <;> ring)) (by iv_lits) ?_
   have z0 : F.dep ⟨-1, 1, 0⟩ 0 = -(F.a11 - F.a12)*F.S.tp := by rw [Frame20.dep_0]; ring
   have z1 : F.dep ⟨-1, 1, 0⟩ 1 = -(F.a11 - F.a12) := by rw [Frame20.dep_1]; ring
