@@ -682,57 +682,57 @@ theorem pcPpmmm (x2a x2b x2c x6a x6b x6c al be : ℝ)
     (hc25 : 0 < x2c - x2b - x2a)
     : False := by
   have e0 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g0Ppmmm = x6c + 1 := by
-    simp only [g0Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast]; ring
+    simp only [g0Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast]; ring
   have e1 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g1Ppmmm = x2c * be - x2c * x6b + x2b * x6c + be - x6b := by
-    simp only [g1Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g1Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e2 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g2Ppmmm = - be - x2c + x2b := by
-    simp only [g2Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g2Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e3 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g3Ppmmm = - x2c * al + x2c * x6a - x2a * x6c - al + x6a := by
-    simp only [g3Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g3Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e4 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g4Ppmmm = x2c * x6b * al - x2c * x6a * be - x2b * x6c * al + x2a * x6c * be + x6b * al - x6a * be - x2c * al - al := by
-    simp only [g4Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g4Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e5 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g5Ppmmm = x2c * x6b + x2c * x6a - x2b * x6c - x2a * x6c + x6b + x6a := by
-    simp only [g5Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g5Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e6 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g6Ppmmm = - x2b * x6a + x2a * x6b + x2b := by
-    simp only [g6Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g6Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e7 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g7Ppmmm = - x6c * be - x6b * al + x6a * be + al + x6b - 1 := by
-    simp only [g7Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g7Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e8 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g8Ppmmm = x6c * be + x6b * al - x6a * be - al - x6c + x6a := by
-    simp only [g8Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g8Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e9 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g9Ppmmm = x6c * al - x6b * al + x6a * be + al - x6a := by
-    simp only [g9Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g9Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e10 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g10Ppmmm = - x2c * x6a + x2b * x6a + x2a * x6c - x2a * x6b - x6c + x6b + x2c - x2b := by
-    simp only [g10Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g10Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e11 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g11Ppmmm = - x2c * x6b * al + x2c * x6a * be + x2b * x6c * al - x2a * x6c * be + x6c * be + x2c * al - x2b * x6a + x2a * x6b - x6b - x2a + 1 := by
-    simp only [g11Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g11Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e12 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g12Ppmmm = be - x2b := by
-    simp only [g12Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g12Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e13 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g13Ppmmm = x2c * x6b * al - x2c * x6a * be - x2b * x6c * al + x2a * x6c * be - x6c * be - x2c * al + x2c * x6a - x2a * x6c + x6c := by
-    simp only [g13Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g13Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e14 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g14Ppmmm = - x2c * x6b^2 * al + x2c * x6a * x6b * be - x2c * x6a * x6b * al + x2c * x6a^2 * be + x2b * x6b * x6c * al + x2b * x6a * x6c * al - x2a * x6b * x6c * be - x2a * x6a * x6c * be + x6b * x6c * be + x6a * x6c * be + x2c * x6b * al + x2c * x6b^2 - x2c * x6a * be + x2c * x6a * x6b - x2b * x6b * x6c - x2b * x6a * x6c - x2c * x6b := by
-    simp only [g14Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g14Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e15 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g15Ppmmm = x2c^2 * x6a * x6b * al - x2c^2 * x6a^2 * be - x2b * x2c * x6a * x6c * al - x2a * x2c * x6b * x6c * al + 2 * x2a * x2c * x6a * x6c * be + x2a * x2b * x6c^2 * al - x2a^2 * x6c^2 * be + x2c * x6b * x6c * al - x2c * x6a * x6c * be + x2c^2 * x6a * be - x2b * x6c^2 * al + x2a * x6c^2 * be - x2a * x2c * x6c * be := by
-    simp only [g15Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g15Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e16 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g16Ppmmm = - x2c^2 * x6b^2 * al + x2c^2 * x6a * x6b * be - x2c^2 * x6a * x6b * al + x2c^2 * x6a^2 * be + 2 * x2b * x2c * x6b * x6c * al - x2b * x2c * x6a * x6c * be + x2b * x2c * x6a * x6c * al - x2b^2 * x6c^2 * al - x2a * x2c * x6b * x6c * be + x2a * x2c * x6b * x6c * al - 2 * x2a * x2c * x6a * x6c * be + x2a * x2b * x6c^2 * be - x2a * x2b * x6c^2 * al + x2a^2 * x6c^2 * be - x2c * x6b^2 * al + x2c * x6a * x6b * be - x2c * x6a * x6b * al + x2c * x6a^2 * be + x2c^2 * x6b * al - x2c^2 * x6a * be + x2b * x6b * x6c * al + x2b * x6a * x6c * al - x2b * x2c * x6c * al + x2b * x2c * x6b * al + x2b * x2c * x6a * al - x2b^2 * x6c * al - x2a * x6b * x6c * be - x2a * x6a * x6c * be + x2a * x2c * x6c * be - x2a * x2c * x6b * be - x2a * x2c * x6a * be + x2a * x2b * x6c * be - x2a * x2b * x6c * al + x2a^2 * x6c * be + x2c * x6b * al - x2c * x6a * be - x2b * x2c * al + x2a * x2c * be := by
-    simp only [g16Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g16Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e17 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g17Ppmmm = al - 1 := by
-    simp only [g17Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g17Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e18 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g18Ppmmm = - x6b * al + x6a * be - x2b * x6a + x2a * x6b := by
-    simp only [g18Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g18Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e19 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g19Ppmmm = x6b * al - x6a * be - x6b := by
-    simp only [g19Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g19Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e20 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g20Ppmmm = x2b * al - x2a * be - al + x2a := by
-    simp only [g20Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g20Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e21 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g21Ppmmm = x6b * al - x6a * be - x2b * al + x2b * x6a + x2a * be - x2a * x6b := by
-    simp only [g21Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g21Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e22 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g22Ppmmm = be + al - x2b - x2a := by
-    simp only [g22Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g22Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e23 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g23Ppmmm = x2c * x6a - x2a * x6c - x2a := by
-    simp only [g23Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g23Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e24 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g24Ppmmm = x2c * x6b * al - x2c * x6a * be - x2b * x6c * al + x2a * x6c * be + x2c * x6a - x2a * x6c := by
-    simp only [g24Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g24Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   have e25 : peval 64 [x2a, x2b, x2c, x6a, x6b, x6c, al, be] g25Ppmmm = x2c - x2b - x2a := by
-    simp only [g25Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_coe, Int.cast_natCast, Int.cast_negSucc]; ring
+    simp only [g25Ppmmm, peval, evk, Nat.reduceMod, Nat.reduceDiv, Int.ofNat_eq_natCast, Int.cast_natCast, Int.cast_negSucc]; ring
   refine check_sound (B := 64) [x2a, x2b, x2c, x6a, x6b, x6c, al, be] gsPpmmm dgPpmmm ctPpmmm ?_ chkPpmmm
   intro g hg
   simp only [gsPpmmm, List.mem_cons, List.not_mem_nil, or_false] at hg
