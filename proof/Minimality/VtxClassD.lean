@@ -126,8 +126,6 @@ theorem h1_vtx {zv zp zq za zc zb sp sq : ℝ} (hsp0 : 0 < sp) (hsp1 : sp < 1) (
      rcases hNv.2 with h | h | h | h <;> linarith)
   | (right; refine ⟨by linarith, by linarith, ?_, by linarith⟩
      rcases hNv.1 with h | h | h | h <;> linarith)
-  | (left; exact ⟨by linarith, by linarith, by linarith, by linarith⟩)
-  | (right; exact ⟨by linarith, by linarith, by linarith, by linarith⟩)
 
 namespace VtxConf
 

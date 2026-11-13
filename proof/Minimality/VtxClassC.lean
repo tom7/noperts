@@ -218,28 +218,28 @@ theorem isRupert_classC (E : VtxConf V u v a c b p q n Na Nb κa κb)
         rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
         simp only [quint_0, quint_1, quint_2, quint_3, quint_4, v3.1, v3.2.1, v3.2.2.1,
           v3.2.2.2] at hv hj' ⊢ <;>
-        first | exact absurd rfl hj' | omega | linarith
+        first | exact absurd rfl hj' | omega
     · have l4 := hbF.1 ⟨l1, l2⟩
       refine ⟨0, 3, depthSepAt_quint (fun j hj' => det0 j (hj j hj'))
         (Or.inr ⟨fun j hj' hv => ?_, fun j hj' hv => ?_⟩)⟩ <;>
         rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
         simp only [quint_0, quint_1, quint_2, quint_3, quint_4, v3.1, v3.2.1, v3.2.2.1,
           v3.2.2.2] at hv hj' ⊢ <;>
-        first | exact absurd rfl hj' | omega | linarith
+        first | exact absurd rfl hj' | omega
     · have l4 := hbF.2 ⟨l1, l2⟩
       refine ⟨0, 3, depthSepAt_quint (fun j hj' => det0 j (hj j hj'))
         (Or.inl ⟨fun j hj' hv => ?_, fun j hj' hv => ?_⟩)⟩ <;>
         rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
         simp only [quint_0, quint_1, quint_2, quint_3, quint_4, v3.1, v3.2.1, v3.2.2.1,
           v3.2.2.2] at hv hj' ⊢ <;>
-        first | exact absurd rfl hj' | omega | linarith
+        first | exact absurd rfl hj' | omega
     · have l4 := hbF.2 ⟨l1, l2⟩
       refine ⟨1, 3, depthSepAt_quint (fun j hj' => det1 j (hj j hj'))
         (Or.inl ⟨fun j hj' hv => ?_, fun j hj' hv => ?_⟩)⟩ <;>
         rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
         simp only [quint_0, quint_1, quint_2, quint_3, quint_4, v3.1, v3.2.1, v3.2.2.1,
           v3.2.2.2] at hv hj' ⊢ <;>
-        first | exact absurd rfl hj' | omega | linarith
+        first | exact absurd rfl hj' | omega
   · -- `F = b`, the vertex `4`
     subst hFb
     have hj : ∀ j : ZMod 5, j ≠ 4 → quint v m a c F j ≠ F := fun j hj e =>
@@ -258,28 +258,28 @@ theorem isRupert_classC (E : VtxConf V u v a c b p q n Na Nb κa κb)
         rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
         simp only [quint_0, quint_1, quint_2, quint_3, quint_4, v4.1, v4.2.1, v4.2.2.1,
           v4.2.2.2] at hv hj' ⊢ <;>
-        first | exact absurd rfl hj' | omega | linarith
+        first | exact absurd rfl hj' | omega
     · have l4 := hcF.1 ⟨l1, l2⟩
       refine ⟨0, 4, depthSepAt_quint (fun j hj' => det0 j (hj j hj'))
         (Or.inr ⟨fun j hj' hv => ?_, fun j hj' hv => ?_⟩)⟩ <;>
         rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
         simp only [quint_0, quint_1, quint_2, quint_3, quint_4, v4.1, v4.2.1, v4.2.2.1,
           v4.2.2.2] at hv hj' ⊢ <;>
-        first | exact absurd rfl hj' | omega | linarith
+        first | exact absurd rfl hj' | omega
     · have l4 := hcF.2 ⟨l1, l2⟩
       refine ⟨0, 4, depthSepAt_quint (fun j hj' => det0 j (hj j hj'))
         (Or.inl ⟨fun j hj' hv => ?_, fun j hj' hv => ?_⟩)⟩ <;>
         rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
         simp only [quint_0, quint_1, quint_2, quint_3, quint_4, v4.1, v4.2.1, v4.2.2.1,
           v4.2.2.2] at hv hj' ⊢ <;>
-        first | exact absurd rfl hj' | omega | linarith
+        first | exact absurd rfl hj' | omega
     · have l4 := hcF.2 ⟨l1, l2⟩
       refine ⟨1, 4, depthSepAt_quint (fun j hj' => det1 j (hj j hj'))
         (Or.inl ⟨fun j hj' hv => ?_, fun j hj' hv => ?_⟩)⟩ <;>
         rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
         simp only [quint_0, quint_1, quint_2, quint_3, quint_4, v4.1, v4.2.1, v4.2.2.1,
           v4.2.2.2] at hv hj' ⊢ <;>
-        first | exact absurd rfl hj' | omega | linarith
+        first | exact absurd rfl hj' | omega
 
 end VtxConf
 
