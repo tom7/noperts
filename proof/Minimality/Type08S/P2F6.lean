@@ -52,8 +52,6 @@ theorem tc3_cyc (hA : 0 < A) (ht0 : 0 < t) (hzv : 0 ≤ zv) (hzw : zw < 0) (hza 
     first
     | (left; linarith)
     | (right; refine ⟨by ring, by linarith⟩)
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
 
 theorem tc3_f (hA : 0 < A) (ht0 : 0 < t) (hzv : 0 ≤ zv) (hzw : zw < 0) (hza : za < 0)
     (hzz : zv < za') (hb2 : 0 < b2) (hq0 : 0 < q) (hqr : q * b2 < za') (hbr : b1 < r1) :
@@ -100,8 +98,6 @@ theorem tc3_g (hA : 0 < A) (ht0 : 0 < t) (ht1 : t < 1) (hzv : 0 ≤ zv) (hzw : z
     first
     | (left; linarith)
     | (right; refine ⟨by ring, by linarith⟩)
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
 
 end C3Tests
 

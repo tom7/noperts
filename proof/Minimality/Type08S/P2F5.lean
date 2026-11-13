@@ -53,8 +53,6 @@ theorem tc2_cyc (hA : 0 < A) (ht0 : 0 < t) (hzv : 0 ≤ zv) (hzw : zw < 0) (hza 
       first
       | (left; linarith)
       | (right; refine ⟨by ring, by linarith⟩)
-      | (left; nlinarith)
-      | (right; refine ⟨by ring, by nlinarith⟩)
   · subst hz
     have hqr : q * b2 < zv := by
       rcases hqq with h | h
@@ -99,8 +97,6 @@ theorem tc2_g (hA : 0 < A) (ht0 : 0 < t) (ht1 : t < 1) (hzv : 0 ≤ zv) (hzw : z
     first
     | (left; linarith)
     | (right; refine ⟨by ring, by linarith⟩)
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
 
 theorem tc2_row {x0 y0 : ℝ} (ht0 : 0 < t) (ht1 : t < 1) (hA : 0 < A)
     (hzv : 0 ≤ zv) (hzw : zw < 0) (hza : za < 0) (hza' : (1 - t) * zv < za')
@@ -126,9 +122,6 @@ theorem tc2_row {x0 y0 : ℝ} (ht0 : 0 < t) (ht1 : t < 1) (hA : 0 < A)
         tst, hdet] <;>
       first
       | (left; linarith)
-      | (right; refine ⟨by ring, by linarith⟩)
-      | (left; nlinarith)
-      | (right; refine ⟨by ring, by nlinarith⟩)
   · subst hz
     have hqr : q * y0 < zv := by
       rcases hqy with h | h
@@ -141,8 +134,6 @@ theorem tc2_row {x0 y0 : ℝ} (ht0 : 0 < t) (ht1 : t < 1) (hA : 0 < A)
       first
       | (left; linarith)
       | (right; refine ⟨by ring, by linarith⟩)
-      | (left; nlinarith)
-      | (right; refine ⟨by ring, by nlinarith⟩)
 
 end C2Tests
 
