@@ -493,17 +493,6 @@ theorem isRupert_of_slide' (V M : Finset ℝ³) (u₀ e : ℝ³) (hu₀ : u₀ �
   filter_upwards [h1, h2, h3, hz] with t ht1 ht2 ht3 ht4
   exact ⟨ht1, fun y hy hyM hyx i => ht2 y hy i hyM hyx, ht3, ht4⟩
 
-theorem image_quad (p₀ p₁ p₂ p₃ : ℝ³) :
-    (univ.image (quad p₀ p₁ p₂ p₃) : Finset ℝ³) = {p₀, p₁, p₂, p₃} := by
-  classical
-  ext z
-  simp only [mem_image, mem_univ, true_and, mem_insert, mem_singleton]
-  constructor
-  · rintro ⟨i, rfl⟩
-    rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> simp [quad_0, quad_1, quad_2, quad_3]
-  · rintro (rfl | rfl | rfl | rfl)
-    exacts [⟨0, rfl⟩, ⟨1, rfl⟩, ⟨2, rfl⟩, ⟨3, rfl⟩]
-
 /-- **Strictly unimodal**: neighbouring values differ and there is exactly one local
 maximum.  This is an open condition on the values. -/
 def StrictUnimodal {k : ℕ} [NeZero k] (z : ZMod k → ℝ) : Prop :=
@@ -551,7 +540,6 @@ theorem eventually_unimodal_of_strict {k : ℕ} [NeZero k] (x : ZMod k → ℝ³
     rw [sub_add_cancel] at e1
     rw [e1, e2]
   rw [hfe]; exact hcard
-
 
 /-- **`isRupert_of_slide'` with the cycle's own tests allowed to vanish at `u₀`** (with
 a positive derivative along `e`): a vertex that is a middle at `u₀` and pokes out

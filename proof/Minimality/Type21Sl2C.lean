@@ -77,25 +77,5 @@ theorem h21b_core_pos (hc : Function.Injective c) (hk : 3 ≤ k) (D : h21b_SilDa
     obtain ⟨m, -, rfl⟩ := mem_image.1 hy
     exact P i m (fun h => hne i (by rw [h])) (fun h => hne (i + 1) (by rw [h]))
 
-/-- **The lex silhouette cell** (S0 with edge-on facets): the facings are lex at `(u₀, v)`, and `v`
-separates the cycle points. -/
-theorem h21b_sil_cell (hk : 3 ≤ k) (hx : Function.Injective x) (hc : Function.Injective c)
-    (D : h21b_SilDataL k x c u₀ v) (hv : ∀ i j : ZMod k, i ≠ j → ⟪x (c i), v⟫ ≠ ⟪x (c j), v⟫)
-    (hU : Uni (fun i => ⟪x (c i), u₀⟫)) :
-    HasLexCellAt (univ.image x) u₀ := by
-  have hL : LexUni (fun i => ⟪x (c i), u₀⟫) (fun i => ⟪x (c i), v⟫) :=
-    lexUni_of_uni hU _ (fun i j _ h => by_contra fun hij => hv i j hij h)
-  choose μ hμ0 hd using h21b_exists_mu hk hx hc D
-  rcases h21b_sign_agree hk hx hc D μ hμ0 hd with hp | hn
-  · exact h21b_core_pos hc hk D μ hp hd hL
-  · refine h21b_core_pos (c := fun i => c (-i)) (fun i j h => neg_injective (hc h)) hk D.rev
-      (fun i => - μ (-i - 1)) (fun i => by linarith [hn (-i - 1)]) ?_ (Type08Sp.lexUni_neg hL)
-    intro i
-    have := hd (-i - 1)
-    rw [sub_add_cancel] at this
-    show x (c (-(i + 1))) - x (c (-i)) = (-μ (-i - 1)) • cross (D.A (-i - 1)) (D.B (-i - 1))
-    rw [show -(i + 1) = -i - 1 by ring, neg_smul, ← this]
-    abel
-
 end H21
 end Minimality

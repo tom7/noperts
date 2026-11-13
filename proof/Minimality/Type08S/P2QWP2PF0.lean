@@ -73,13 +73,7 @@ theorem sign_transfer {κ D T Q : ℝ} (hk : κ ≠ 0) (hD : 0 < κ * D) (h : κ
     rw [this]; exact mul_pos hD hQ
   exact (pos_of_mul_pos_right h1 (by positivity))
 
-theorem sign_transfer_neg {κ D T Q : ℝ} (hk : κ ≠ 0) (hD : 0 < κ * D) (h : κ * T = D * Q)
-    (hQ : Q < 0) : T < 0 := by
-  have := sign_transfer (T := -T) (Q := -Q) hk hD (by linarith) (by linarith)
-  linarith
-
 namespace W5
-
 
 theorem region_gamma6 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) {o E₁ E₂ E₃ : ℝ³}
     {θ : Fin 6 → ℝ} (hE : det3 E₁ E₂ E₃ ≠ 0) (hθ : Ineq08w θ)
@@ -119,7 +113,6 @@ theorem region_alpha1 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) 
   have hD : det3 E₁ E₂ E₃ * (1 - θ 4 - θ 5) ≠ 0 := mul_ne_zero hE (by linarith)
   rw [hA, hB] at hp
   apply mul_right_cancel₀ hD; linear_combination hp
-
 
 /-- The region parameters: N2 has `γ₆ > 1`. -/
 theorem theta_N2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) {o E₁ E₂ E₃ : ℝ³}

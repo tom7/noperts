@@ -741,57 +741,6 @@ theorem isRupert_type16_35 {x : Fin 7 → ℝ³} (T : Type16 x) (hgen : GenPos (
   · exact key _ _ _ _ (Or.inr ⟨rfl, rfl⟩) (Or.inr ⟨rfl, rfl⟩) h0 h1
   · exact key _ _ _ _ (Or.inr ⟨rfl, rfl⟩) (Or.inl ⟨rfl, rfl⟩) h0 h1
 
-/-- **Corollary 11.Ua.**  If some far end at the view along `35` (of either
-quadrilateral) is above `3` (`z A > z 3`), then `35` is not bad. -/
-theorem type16_not_bad35_of_far {x : Fin 7 → ℝ³} (T : Type16 x)
-    (h : ∃ A m : ℝ³, ((A = x 0 ∧ m = x 2) ∨ (A = x 2 ∧ m = x 0) ∨ (A = x 1 ∧ m = x 6) ∨
-      (A = x 6 ∧ m = x 1)) ∧ MidOf (x 3) (x 5) A m ∧ ⟪x 3, x 5 - x 3⟫ < ⟪A, x 5 - x 3⟫) :
-    ¬ Type16Bad35 x := by
-  obtain ⟨A, m, hlab, hmid, hz⟩ := h
-  rintro ⟨A', m', B', mB', hA', hB', hmA', hmB', -, hlt⟩
-  simp only [max_lt_iff, lt_min_iff] at hlt
-  have L1 := fun {P m : ℝ³} (h : MidOf (x 3) (x 5) P m) (hP : T.q1356.f P < 0) =>
-    h.lt T.q1356.hN (T.q1356.zero 3 (by decide)) (T.q1356.zero 5 (by decide)) hP
-  have L2 := fun {P m : ℝ³} (h : MidOf (x 3) (x 5) P m) (hP : T.q0235.f P < 0) =>
-    h.lt T.q0235.hN (T.q0235.zero 3 (by decide)) (T.q0235.zero 5 (by decide)) hP
-  rcases hlab with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
-    rcases hA' with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> rcases hB' with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
-    first
-      | linarith
-      | linarith [L1 hmid (T.q1356.neg _ (by decide)), L1 hmA' (T.q1356.neg _ (by decide))]
-      | linarith [L2 hmid (T.q0235.neg _ (by decide)), L2 hmB' (T.q0235.neg _ (by decide))]
-
-/-- **Corollary 11.Ua, angle form.**  An acute angle at `3` of the quadrilateral
-`0235` (`⟪x 0 − x 3, x 5 − x 3⟫ > 0`) or of `1356` (`⟪x 6 − x 3, x 5 − x 3⟫ > 0`) puts
-both of its other vertices above `3`, so `35` is not bad. -/
-theorem type16_not_bad35_of_acute {x : Fin 7 → ℝ³} (T : Type16 x)
-    (h : 0 < ⟪x 0 - x 3, x 5 - x 3⟫ ∨ 0 < ⟪x 6 - x 3, x 5 - x 3⟫) : ¬ Type16Bad35 x := by
-  have hov : x 3 ≠ x 5 := T.inj.ne (by decide)
-  have hU : 0 < ⟪x 5 - x 3, x 5 - x 3⟫ := real_inner_self_pos.mpr (sub_ne_zero.mpr (Ne.symm hov))
-  rintro ⟨A', m', B', mB', hA', hB', -, -, -, hlt⟩
-  simp only [max_lt_iff, lt_min_iff] at hlt
-  rcases h with h | h
-  · obtain ⟨hα, hβ, -, h2⟩ := T.coords0235
-    have e : ⟪x 2 - x 3, x 5 - x 3⟫ = (T.q1356.f (x 2) / T.q1356.f (x 0)) *
-        ⟪x 0 - x 3, x 5 - x 3⟫ + (T.t036.f (x 2) / T.t036.f (x 5)) * ⟪x 5 - x 3, x 5 - x 3⟫ := by
-      have e2 : x 2 - x 3 = (T.q1356.f (x 2) / T.q1356.f (x 0)) • (x 0 - x 3) + (T.t036.f (x 2) / T.t036.f (x 5)) • (x 5 - x 3) := by
-        conv_lhs => rw [h2]
-        abel
-      rw [e2, inner_add_left, real_inner_smul_left, real_inner_smul_left]
-    have h2' : 0 < ⟪x 2 - x 3, x 5 - x 3⟫ := by rw [e]; positivity
-    rw [inner_sub_left] at h h2'
-    rcases hA' with ⟨rfl, -⟩ | ⟨rfl, -⟩ <;> linarith
-  · obtain ⟨hα, hβ, -, h1⟩ := T.coords1356
-    have e : ⟪x 1 - x 3, x 5 - x 3⟫ = (T.q0235.f (x 1) / T.q0235.f (x 6)) *
-        ⟪x 6 - x 3, x 5 - x 3⟫ + (T.t036.f (x 1) / T.t036.f (x 5)) * ⟪x 5 - x 3, x 5 - x 3⟫ := by
-      have e2 : x 1 - x 3 = (T.q0235.f (x 1) / T.q0235.f (x 6)) • (x 6 - x 3) + (T.t036.f (x 1) / T.t036.f (x 5)) • (x 5 - x 3) := by
-        conv_lhs => rw [h1]
-        abel
-      rw [e2, inner_add_left, real_inner_smul_left, real_inner_smul_left]
-    have h1' : 0 < ⟪x 1 - x 3, x 5 - x 3⟫ := by rw [e]; positivity
-    rw [inner_sub_left] at h h1'
-    rcases hB' with ⟨rfl, -⟩ | ⟨rfl, -⟩ <;> linarith
-
 end Minimality
 
 end

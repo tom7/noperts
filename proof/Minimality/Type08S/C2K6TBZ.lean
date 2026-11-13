@@ -37,9 +37,6 @@ def K6tLeftPa (a a' b b' c c' d : ℝ³) : Prop :=
   (det3 (b' - a) (b - d) (c - d) = 0 ∧ 0 ≤ det3 (a - d) (c' - b) (c - d) * det3 (a - d) (b - d) (c - d) ∧
     (det3 (a - d) (c' - b) (c - d) * det3 (a - d) (b - d) (c - d) = 0 ∨ 0 ≤ ⟪b' - c, d - b⟫))
 
-/-- **Leftover of QPc** (`α1 = α4 = β6 = 1`, view `c - a'`): the whole slice (not formalized; see HANDOFF). -/
-def K6tLeftPc (a a' b b' c c' d : ℝ³) : Prop := K5ZsPc a a' b b' c c' d
-
 open C2 in
 /-- **QTT wrapper.** -/
 theorem k6t2_TT {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K5ZsTT a a' b b' c c' d) :
@@ -98,10 +95,6 @@ theorem k6t2_Pa {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (hfar 
             · exact Or.inr (Or.inr (Or.inl ⟨hbc, hn, hb, Or.inr (not_lt.1 hu)⟩))
           · exact Or.inr (Or.inr (Or.inl ⟨hbc, hn, hb, Or.inl hb0.symm⟩))
         · exact Or.inl (k5c_qpc_gt_hasLexCell W hT' hfar hp)
-
-/-- **QPc wrapper** (whole slice left). -/
-theorem k6t2_Pc {a a' b b' c c' d : ℝ³} (h : K5ZsPc a a' b b' c c' d) :
-    HasLexCell (V8 a a' b b' c c' d) ∨ K6tLeftPc a a' b b' c c' d := Or.inr h
 
 end Type08Sp
 end Minimality

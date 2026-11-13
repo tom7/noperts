@@ -1,6 +1,6 @@
 module
 
-public import Minimality.TriFaces
+public import Minimality.TriQuad
 public import Minimality.TriShadow2Chord
 
 @[expose] public section

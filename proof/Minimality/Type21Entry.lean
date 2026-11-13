@@ -193,22 +193,10 @@ theorem affine_linear_eq (f : ℝ³ →ᵃ[ℝ] ℝ) {g : ℝ³ → ℝ} {N : �
   rw [hg, sub_zero, e] at k
   linarith
 
-/-- **The special positions of `T1` along a vertex crossing** given by two faces `fP`, `fQ`
-through the apex: at every direction `u ≠ 0` of their line, `T1Gen` (the antipode off the far
-side, only the ties of `QuadTie` among the depths of the rim corners, no horizontal double
-normal). -/
-def T1View (V : Finset ℝ³) (fP fQ : ℝ³ →ᵃ[ℝ] ℝ) (a a' b b' : ℝ³) : Prop :=
-  ∀ u : ℝ³, u ≠ 0 → fP.linear u = 0 → fQ.linear u = 0 →
-    det3 (b - b') (a' - b') u ≠ 0 ∧ QuadTie ⟪a, u⟫ ⟪b', u⟫ ⟪a', u⟫ ⟪b, u⟫ ∧ NoHDNAt V u
-
 /-- **`T1View` with any condition `L` on the views** in place of "no horizontal double normal"
 (for the certificate form: `L` names the view). -/
 def T1ViewL (K : Finset ℝ³) (L : ℝ³ → Prop) (fP fQ : ℝ³ →ᵃ[ℝ] ℝ) (a a' b b' : ℝ³) : Prop :=
   ∀ u : ℝ³, u ≠ 0 → fP.linear u = 0 → fQ.linear u = 0 → T1Gen K L a a' b b' u
-
-theorem T1View.toL {V : Finset ℝ³} {fP fQ : ℝ³ →ᵃ[ℝ] ℝ} {a a' b b' : ℝ³}
-    (h : T1View V fP fQ a a' b b') : T1ViewL V (NoHDNAt V) fP fQ a a' b b' :=
-  fun u hu h1 h2 => ⟨(h u hu h1 h2).1, Or.inl (h u hu h1 h2).2.1, fun _ => (h u hu h1 h2).2.2⟩
 
 end Minimality
 

@@ -184,131 +184,15 @@ theorem isRupert_of_cert_seq21_sec {x : Fin 7 → ℝ³} (T : Facets21 x)
   · exact isRupert_of_certL_seq21_sec T hnd K hK v hu ε lab hq
   · exact isRupert_of_certL_seq21_sec T hnd K hK v hu ε lab hq
 
-
 /-! ### Type 21 outside the HDN set at its one-circle views and codimension 2 -/
-
-/-- **§18.6 step 2 for type 21 with Proposition 22.2**: a type-21 shape with at most one tie at
-its named views is Rupert if at each named view there is no horizontal double normal or `Sec21`
-holds (a two-triangle view with (G1)). -/
-theorem isRupert_type21_limit_sec {x : Fin 7 → ℝ³} (T : Facets21 x)
-    (hnd : ∀ v, UsedV21 v → view21 x v ≠ 0 → NoHDNAt (univ.image x) (view21 x v) ∨ Sec21 x v)
-    (htie : OneTie21 x) : IsRupert (univ.image x) := by
-  obtain ⟨K, hK, hc⟩ := exists_certSeq21 T htie
-  exact isRupert_of_cert_seq21_sec T hnd K hK (hc.mono fun n hn => ⟨hn.1.toCert21, hn.2⟩)
 
 /-- The two-triangle edges of type 21 as pairs. -/
 def triEdgeSet21 : Finset (Finset (Fin 7)) := {{0, 1}, {0, 4}, {1, 4}, {1, 5}, {1, 3}, {3, 5}}
-
-/-- The seven edges of type 21 at a quadrilateral: `05`, `06`, `25`, `26` (the ridge), `46`,
-`34`, `23`. -/
-def quadEdgeSet21 : Finset (Finset (Fin 7)) := {{0, 5}, {0, 6}, {2, 5}, {2, 6}, {4, 6}, {3, 4},
-  {2, 3}}
-
-theorem edgeSet21_cases (s : Finset (Fin 7)) (h : s ∈ edgeSet21) :
-    s ∈ triEdgeSet21 ∨ s ∈ quadEdgeSet21 := by
-  simp only [edgeSet21, Finset.mem_insert, Finset.mem_singleton] at h
-  rcases h with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-    decide
 
 theorem triEdgeSet21_mem : ∀ i j : Fin 7, ({i, j} : Finset (Fin 7)) ∈ triEdgeSet21 →
     ∃ e : Fin 6, ((triEdge21 e).1 = i ∧ (triEdge21 e).2.1 = j) ∨
       ((triEdge21 e).1 = j ∧ (triEdge21 e).2.1 = i) := by
   decide
-
-/-- **Type 21 with Proposition 22.2, from the facets**: seven points labelled so that `014`,
-`015`, `0256`, `046`, `134`, `135`, `2346`, `235` are facets (functionals negative off them) are
-Rupert if, at the named views, there is no horizontal double normal or (G1) holds at a view
-between two triangles: along each segment other than the six two-triangle edges no horizontal
-double normal of the closing (`hnd`); along the edges `01`, `04`, `14`, `15`, `13`, `35` no
-horizontal double normal or (G1) (`hEd`); along the lines of `014/0256`, `014/2346`, `135/0256`,
-`135/2346` no horizontal double normal, along those of `046/134`, `046/015`, `235/134`,
-`235/015` no horizontal double normal or (G1) (`hV`); and at most one tie at these views
-(`OneTie21`). -/
-theorem isRupert_type21_limit_facets_sec (x : Fin 7 → ℝ³) (hx : Function.Injective x)
-    (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
-    (hA : ∀ i, (i ∈ ({0, 1, 4} : Finset (Fin 7)) → fA (x i) = 0) ∧
-      (i ∉ ({0, 1, 4} : Finset (Fin 7)) → fA (x i) < 0))
-    (hB : ∀ i, (i ∈ ({0, 1, 5} : Finset (Fin 7)) → fB (x i) = 0) ∧
-      (i ∉ ({0, 1, 5} : Finset (Fin 7)) → fB (x i) < 0))
-    (hC : ∀ i, (i ∈ ({0, 2, 5, 6} : Finset (Fin 7)) → fC (x i) = 0) ∧
-      (i ∉ ({0, 2, 5, 6} : Finset (Fin 7)) → fC (x i) < 0))
-    (hD : ∀ i, (i ∈ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) = 0) ∧
-      (i ∉ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) < 0))
-    (hE : ∀ i, (i ∈ ({1, 3, 4} : Finset (Fin 7)) → fE (x i) = 0) ∧
-      (i ∉ ({1, 3, 4} : Finset (Fin 7)) → fE (x i) < 0))
-    (hF : ∀ i, (i ∈ ({1, 3, 5} : Finset (Fin 7)) → fF (x i) = 0) ∧
-      (i ∉ ({1, 3, 5} : Finset (Fin 7)) → fF (x i) < 0))
-    (hG : ∀ i, (i ∈ ({2, 3, 4, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
-      (i ∉ ({2, 3, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
-    (hH : ∀ i, (i ∈ ({2, 3, 5} : Finset (Fin 7)) → fH (x i) = 0) ∧
-      (i ∉ ({2, 3, 5} : Finset (Fin 7)) → fH (x i) < 0))
-    (hnd : ∀ i j : Fin 7, i ≠ j → ({i, j} : Finset (Fin 7)) ∈ quadEdgeSet21 →
-      NoHDNAt ((univ.image x).erase (x j)) (x j - x i))
-    (hEd : HDNOrG1Edge (univ.image x) (x 0) (x 1) (x 4) (x 5) ∧
-      HDNOrG1Edge (univ.image x) (x 0) (x 4) (x 1) (x 6) ∧
-      HDNOrG1Edge (univ.image x) (x 1) (x 4) (x 0) (x 3) ∧
-      HDNOrG1Edge (univ.image x) (x 1) (x 5) (x 0) (x 3) ∧
-      HDNOrG1Edge (univ.image x) (x 1) (x 3) (x 4) (x 5) ∧
-      HDNOrG1Edge (univ.image x) (x 3) (x 5) (x 1) (x 2))
-    (hV : NoHDNAff (univ.image x) fA fC ∧ NoHDNAff (univ.image x) fA fG ∧
-      NoHDNAff (univ.image x) fF fC ∧ NoHDNAff (univ.image x) fF fG ∧
-      HDNOrG1Aff (univ.image x) fD fE (x 4) (x 0) (x 6) (x 4) (x 3) (x 1) ∧
-      HDNOrG1Aff (univ.image x) fD fB (x 0) (x 4) (x 6) (x 0) (x 5) (x 1) ∧
-      HDNOrG1Aff (univ.image x) fH fE (x 3) (x 5) (x 2) (x 3) (x 4) (x 1) ∧
-      HDNOrG1Aff (univ.image x) fH fB (x 5) (x 3) (x 2) (x 5) (x 0) (x 1))
-    (htie : OneTie21 x) : IsRupert (univ.image x) := by
-  let T := Facets21.ofAffine x hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG hH
-  have hE' : ∀ e : Fin 6, HDNOrG1Edge (univ.image x) (x (triEdge21 e).1) (x (triEdge21 e).2.1)
-      (x (triEdge21 e).2.2.1) (x (triEdge21 e).2.2.2) := by
-    obtain ⟨e0, e1, e2, e3, e4, e5⟩ := hEd
-    intro e; fin_cases e
-    exacts [e0, e1, e2, e3, e4, e5]
-  refine isRupert_type21_limit_sec T (fun v hu hv => ?_) htie
-  rcases v with ⟨i, j⟩ | t
-  · have hij : i ≠ j := fun h => hv (by simp [view21, h])
-    by_cases hmem : ({i, j} : Finset (Fin 7)) ∈ triEdgeSet21
-    · obtain ⟨e, he⟩ := triEdgeSet21_mem i j hmem
-      rcases hE' e with h | h
-      · left
-        rcases he with ⟨e1, e2⟩ | ⟨e1, e2⟩
-        · show NoHDNAt _ (x j - x i)
-          rw [← e1, ← e2]; exact h
-        · show NoHDNAt _ (x j - x i)
-          rw [← e1, ← e2, ← neg_sub]; exact h.neg
-      · exact Or.inr ⟨e, he, h⟩
-    · left
-      have hq : ({i, j} : Finset (Fin 7)) ∈ quadEdgeSet21 :=
-        (edgeSet21_cases _ hu).resolve_left hmem
-      have hji : ({j, i} : Finset (Fin 7)) ∈ quadEdgeSet21 := by rwa [Finset.pair_comm]
-      exact noHDNAt_of_erase (hx.ne hij) (hnd i j hij hq)
-        (by simpa only [neg_sub] using (hnd j i (Ne.symm hij) hji).neg)
-  · obtain ⟨V1, V2, V3, V4, V5, V6, V7, V8⟩ := hV
-    fin_cases t
-    · exact Or.inl (V1 _ hv (affine_planeLine_perp fA hA (by decide) (by decide) (by decide))
-        (affine_planeLine_perp' fC hC (by decide) (by decide) (by decide)))
-    · exact Or.inl (V2 _ hv (affine_planeLine_perp fA hA (by decide) (by decide) (by decide))
-        (affine_planeLine_perp' fG hG (by decide) (by decide) (by decide)))
-    · exact Or.inl (V3 _ hv (affine_planeLine_perp fF hF (by decide) (by decide) (by decide))
-        (affine_planeLine_perp' fC hC (by decide) (by decide) (by decide)))
-    · exact Or.inl (V4 _ hv (affine_planeLine_perp fF hF (by decide) (by decide) (by decide))
-        (affine_planeLine_perp' fG hG (by decide) (by decide) (by decide)))
-    · rcases V5 _ hv (affine_planeLine_perp fD hD (by decide) (by decide) (by decide))
-        (affine_planeLine_perp' fE hE (by decide) (by decide) (by decide)) with h | h
-      · exact Or.inl h
-      · exact Or.inr ⟨Or.inl rfl, h⟩
-    · rcases V6 _ hv (affine_planeLine_perp fD hD (by decide) (by decide) (by decide))
-        (affine_planeLine_perp' fB hB (by decide) (by decide) (by decide)) with h | h
-      · exact Or.inl h
-      · exact Or.inr ⟨Or.inr (Or.inl rfl), h⟩
-    · rcases V7 _ hv (affine_planeLine_perp fH hH (by decide) (by decide) (by decide))
-        (affine_planeLine_perp' fE hE (by decide) (by decide) (by decide)) with h | h
-      · exact Or.inl h
-      · exact Or.inr ⟨Or.inr (Or.inr (Or.inl rfl)), h⟩
-    · rcases V8 _ hv (affine_planeLine_perp fH hH (by decide) (by decide) (by decide))
-        (affine_planeLine_perp' fB hB (by decide) (by decide) (by decide)) with h | h
-      · exact Or.inl h
-      · exact Or.inr ⟨Or.inr (Or.inr (Or.inr rfl)), h⟩
-
 
 end Minimality
 

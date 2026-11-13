@@ -173,15 +173,6 @@ theorem IsCap.tieT'_geom {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c
   generalize F.ab'c.f c' / F.ab'c.f b = k at hc'
   exact ⟨k, by rw [hc']; module⟩
 
-/-- The signs of `β − 1` and `α − 1` as determinants (which of `a'`, `a` is hidden at the
-ties). -/
-theorem tie_beta_dets {a b b' c d : ℝ³} {α β : ℝ} (hb' : b' = d + α • (a - d) + β • (c - d)) :
-    det3 (a - d) (b' - c) (b - d) = (β - 1) * det3 (a - d) (c - d) (b - d) ∧
-    det3 (b' - a) (c - d) (b - d) = (α - 1) * det3 (a - d) (c - d) (b - d) := by
-  subst hb'
-  simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]
-  constructor <;> ring
-
 /-- A cyclic 5-sequence rising from `z₀` to its unique peak `z₃` (`z₀ < z₁ < z₂ < z₃`,
 `z₄ < z₃`, neighbours distinct) is strictly unimodal. -/
 theorem strictUnimodal_quint_of {z₀ z₁ z₂ z₃ z₄ : ℝ} (h01 : z₀ < z₁) (h12 : z₁ < z₂)
@@ -203,43 +194,6 @@ theorem strictUnimodal_quint_of {z₀ z₁ z₂ z₃ z₄ : ℝ} (h01 : z₀ < z
     · exact ⟨fun h => absurd h.2 (not_lt.mpr h23.le), fun h => absurd h (by decide)⟩
     · exact ⟨fun _ => trivial, fun _ => ⟨h23, h43⟩⟩
     · exact ⟨fun h => absurd h.1 (not_lt.mpr h43.le), fun h => absurd h (by decide)⟩
-
-/-- The same sequence negated (one valley at `z₃`) is strictly unimodal too: its peak is
-the larger of `−z₀`, `−z₄`. -/
-theorem strictUnimodal_quint_neg {z₀ z₁ z₂ z₃ z₄ : ℝ} (h01 : z₀ < z₁) (h12 : z₁ < z₂)
-    (h23 : z₂ < z₃) (h43 : z₄ < z₃) (h40 : z₄ ≠ z₀) :
-    StrictUnimodal (quint (-z₀) (-z₁) (-z₂) (-z₃) (-z₄)) := by
-  classical
-  obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
-  obtain ⟨s0, s1, s2, s3, s4⟩ := zmod5_sub_one
-  refine ⟨fun i => ?_, ?_⟩
-  · rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
-      simp only [b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, ne_eq,
-        neg_inj]
-    exacts [h01.ne, h12.ne, h23.ne, h43.ne', h40]
-  rcases lt_or_gt_of_ne h40 with h | h
-  · refine Finset.card_eq_one.mpr ⟨4, ?_⟩
-    ext i
-    simp only [mem_filter, mem_univ, true_and, mem_singleton]
-    rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
-      simp only [b0, b1, b2, b3, b4, s0, s1, s2, s3, s4, quint_0, quint_1, quint_2, quint_3,
-        quint_4, neg_lt_neg_iff]
-    · exact ⟨fun h' => absurd h'.1 (not_lt.mpr h.le), fun h' => absurd h' (by decide)⟩
-    · exact ⟨fun h' => absurd h'.1 (not_lt.mpr h01.le), fun h' => absurd h' (by decide)⟩
-    · exact ⟨fun h' => absurd h'.1 (not_lt.mpr h12.le), fun h' => absurd h' (by decide)⟩
-    · exact ⟨fun h' => absurd h'.1 (not_lt.mpr h23.le), fun h' => absurd h' (by decide)⟩
-    · exact ⟨fun _ => trivial, fun _ => ⟨h43, h⟩⟩
-  · refine Finset.card_eq_one.mpr ⟨0, ?_⟩
-    ext i
-    simp only [mem_filter, mem_univ, true_and, mem_singleton]
-    rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
-      simp only [b0, b1, b2, b3, b4, s0, s1, s2, s3, s4, quint_0, quint_1, quint_2, quint_3,
-        quint_4, neg_lt_neg_iff]
-    · exact ⟨fun _ => trivial, fun _ => ⟨h, h01⟩⟩
-    · exact ⟨fun h' => absurd h'.1 (not_lt.mpr h01.le), fun h' => absurd h' (by decide)⟩
-    · exact ⟨fun h' => absurd h'.1 (not_lt.mpr h12.le), fun h' => absurd h' (by decide)⟩
-    · exact ⟨fun h' => absurd h'.1 (not_lt.mpr h23.le), fun h' => absurd h' (by decide)⟩
-    · exact ⟨fun h' => absurd h'.2 (not_lt.mpr h.le), fun h' => absurd h' (by decide)⟩
 
 /-- **T4–`K_d` on the type-(d) surface, the depths** (see `t4d_five_strict`): `d < a < c'
 < b'` and `c < b'`. -/
@@ -289,47 +243,6 @@ theorem t4d_five_strict {a b b' c c' d : ℝ³} {α α₁ β₁ : ℝ}
   obtain ⟨h1, h2, h3, h4⟩ := t4d_five_depths hb' hc' hdb hα hα₁ hβ₁ hgood hNb n0 n2 n3
   rw [quint_inner_eq]
   exact strictUnimodal_quint_of h1 h2 h3 h4 n4
-
-/-- **`R_d` is empty for T4–`K_d`** (A.10, "T4–K_2"): in the T4 frame (`E ≠ 0`, `α > 0`,
-`α₁ > 1`, `β₁ > 0`), with the edge `d → b` not bad and a weak saddle of `K_b`, the
-five-corner rim `d a c' b' c` along `Q_bc` is never in `R_d` (`RdCond` for `v, m, f, g_f,
-g_v, w = d, a, c', b', c, b`): its first condition, `g = b'c` parallel to `Q_ab`, is
-`β = 1`, and then the rim is strictly unimodal (`t4d_five_strict`). -/
-theorem t4d_rd_empty {a b b' c c' d : ℝ³} {α β α₁ β₁ : ℝ}
-    (hb' : b' = d + α • (a - d) + β • (c - d)) (hc' : c' = d + α₁ • (a - d) + β₁ • (b - d))
-    (hdb : d ≠ b) (hE : det3 (a - d) (c - d) (b - d) ≠ 0)
-    (hα : 0 < α) (hα₁ : 1 < α₁) (hβ₁ : 0 < β₁)
-    (hgood : ¬ max ⟪b, b - d⟫ ⟪b', b - d⟫ ≤ min ⟪c, b - d⟫ ⟪c', b - d⟫)
-    (hNb : ¬ NWS4 (quad ⟪b, b - d⟫ ⟪c', b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫)) :
-    ¬ RdCond d a c' b' c b := by
-  rintro ⟨hpar, -, -, hinj, h5⟩
-  have hβ : β = 1 := by
-    have e : det3 (d - b) (c' - d) (b' - c) = -(α₁ * (β - 1)) * det3 (a - d) (c - d) (b - d) := by
-      rw [hb', hc']; simp only [det3_expand, PiLp.add_apply, PiLp.sub_apply, PiLp.smul_apply,
-        smul_eq_mul]; ring
-    rw [e] at hpar
-    have := (mul_eq_zero.mp hpar).resolve_right hE
-    have h2 : α₁ * (β - 1) = 0 := by linarith
-    have := (mul_eq_zero.mp h2).resolve_left (by linarith)
-    linarith
-  rw [hβ, one_smul] at hb'
-  obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
-  have key : ∀ i : ZMod 5, i ≠ i + 1 := by decide
-  have hne : ∀ i, ⟪quint d a c' b' c i, b - d⟫ ≠ ⟪quint d a c' b' c (i + 1), b - d⟫ := by
-    intro i h
-    apply key i (hinj _)
-    simp only [← neg_sub b d, inner_neg_right, h]
-  have n0 := hne 0; have n2 := hne 2; have n3 := hne 3; have n4 := hne 4
-  simp only [b0, b2, b3, b4, quint_0, quint_2, quint_3, quint_4] at n0 n2 n3 n4
-  obtain ⟨h1, h2, h3, h4⟩ := t4d_five_depths hb' hc' hdb hα hα₁ hβ₁ hgood hNb n0 n2 n3
-  apply h5
-  have e : (fun i => ⟪quint d a c' b' c i, d - b⟫) =
-      quint (-⟪d, b - d⟫) (-⟪a, b - d⟫) (-⟪c', b - d⟫) (-⟪b', b - d⟫) (-⟪c, b - d⟫) := by
-    funext i
-    rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
-      simp only [quint_0, quint_1, quint_2, quint_3, quint_4, ← neg_sub b d, inner_neg_right]
-  rw [e]
-  exact strictUnimodal_quint_neg h1 h2 h3 h4 n4
 
 /-- **`slideT4d`'s type-(d) alternative gives Lemma H's.**  On the type-(d) surface of
 `K_d` (`det3 (d − b) (c' − d) (b' − c) = 0`: the far edge `b'c` parallel to `Q_ab`), with a
@@ -441,11 +354,6 @@ structure Type08Gen (a a' b b' c c' d : ℝ³) : Prop where
     ¬ (⟪b, c - a'⟫ = ⟪b', c - a'⟫ ∧ ⟪c, c - a'⟫ = ⟪c', c - a'⟫)
   flatT4 : det3 (c - b) (b' - b) (c' - b) = 0 →
     ¬ (⟪b, b - d⟫ = ⟪b', b - d⟫ ∧ ⟪c, b - d⟫ = ⟪c', b - d⟫)
-
-/-- `Type08Gen` in all six labellings (the `S3` symmetry of type 08 permutes the pairs). -/
-def Type08GenAll (a a' b b' c c' d : ℝ³) : Prop :=
-  Type08Gen a a' b b' c c' d ∧ Type08Gen b b' a a' c c' d ∧ Type08Gen a a' c c' b b' d ∧
-    Type08Gen c c' a a' b b' d ∧ Type08Gen b b' c c' a a' d ∧ Type08Gen c c' b b' a a' d
 
 /-- **Theorem 10.1 by slides, the case analysis.**  Given the two inputs that Theorem
 10.1 takes from the Gale diagram (in the labelling of Lemma 6): in case N2 (the far end
@@ -615,105 +523,6 @@ theorem isRupert_type08_slide_normalized {a a' b b' c c' d : ℝ³} (h : IsOctah
     (fun _ _ => type08_t4_not_bad h F hd G hκa hκb hκc hU hd.t4_opp)
     (type08_T_far F G hκb hκc hU) (type08_T'_far F G hκb hκc hU)
     (fun _ => type08_t4_not_bad h F hd G hκa hκb hκc hU hd.t4_opp) hsides.1.le hsides.2.le hgen
-
-/-- **Theorem 10.1′ (type 08), Gale form**: as `isRupert_type08_slide`, with `κ ≠ 0` for the
-three pairs of `O` in place of the planar-equator determinants. -/
-theorem isRupert_type08_slide_gale {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
-    (hd : IsCap F d) (G : GaleData a a' b b' c c') (hκa : galeD G.l G.m a a' ≠ 0)
-    (hκb : galeD G.l G.m b b' ≠ 0) (hκc : galeD G.l G.m c c' ≠ 0)
-    (hgen : Type08GenAll a a' b b' c c' d) :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
-  classical
-  have h := F.isOctahedron
-  obtain ⟨-, -, hA⟩ := pole_signs F (G.hl.galeD G.hm a) (galeD_self _ _ a) hκa
-  obtain ⟨-, -, hB⟩ := pole_signs F.perm₁₂ (G.hl.galeD G.hm b).perm₁₂ (galeD_self _ _ b) hκb
-  obtain ⟨-, -, hC⟩ := pole_signs F.perm₂₃.perm₁₂ (G.hl.galeD G.hm c).perm₂₃.perm₁₂
-    (galeD_self _ _ c) hκc
-  obtain ⟨σ, hσ, hcases⟩ := type08_lemma6 hκa hκb hκc hA hB hC
-  obtain ⟨G', hG'⟩ : ∃ G' : GaleData a a' b b' c c',
-      ∀ s t, galeD G'.l G'.m s t = σ * galeD G.l G.m s t := by
-    rcases hσ with rfl | rfl
-    · exact ⟨G, fun s t => (one_mul _).symm⟩
-    · exact ⟨G.mirror, fun s t => by rw [G.galeD_mirror]; ring⟩
-  have hne : ∀ s t, galeD G.l G.m s t ≠ 0 → galeD G'.l G'.m s t ≠ 0 := by
-    intro s t hst; rw [hG']; rcases hσ with rfl | rfl <;> simpa using hst
-  have hpos : ∀ s t, 0 < σ * galeD G.l G.m s t → 0 < galeD G'.l G'.m s t := by
-    intro s t h; rwa [hG']
-  have hneg : ∀ s t, σ * galeD G.l G.m s t < 0 → galeD G'.l G'.m s t < 0 := by
-    intro s t h; rwa [hG']
-  obtain ⟨g1, g2, g3, g4, g5, g6⟩ := hgen
-  have e := type08_set_perm a a' b b' c c' d
-  rcases hcases with ⟨h1, h2, h3⟩ | ⟨h1, h2, h3⟩ | ⟨h1, h2, h3⟩ | ⟨h1, h2, h3⟩ | ⟨h1, h2, h3⟩ |
-    ⟨h1, h2, h3⟩
-  · exact isRupert_type08_slide_normalized h F hd G' (hpos _ _ h1) (hpos _ _ h2) (hne _ _ hκc)
-      (hneg _ _ h3) g1
-  · rw [← e.2.1]
-    exact isRupert_type08_slide_normalized h.perm₁₂ F.perm₁₂ hd.perm₁₂ G'.perm₁₂ (hpos _ _ h1)
-      (hpos _ _ h2) (hne _ _ hκc) (hneg _ _ h3) g2
-  · rw [← e.2.2.1]
-    exact isRupert_type08_slide_normalized h.perm₂₃ F.perm₂₃ hd.perm₂₃ G'.perm₂₃ (hpos _ _ h1)
-      (hpos _ _ h2) (hne _ _ hκb) (hneg _ _ h3) g3
-  · rw [← e.2.2.2.1]
-    exact isRupert_type08_slide_normalized h.perm₂₃.perm₁₂ F.perm₂₃.perm₁₂ hd.perm₂₃.perm₁₂
-      G'.perm₂₃.perm₁₂ (hpos _ _ h1) (hpos _ _ h2) (hne _ _ hκb) (hneg _ _ h3) g4
-  · rw [← e.2.2.2.2.1]
-    exact isRupert_type08_slide_normalized h.perm₁₂.perm₂₃ F.perm₁₂.perm₂₃ hd.perm₁₂.perm₂₃
-      G'.perm₁₂.perm₂₃ (hpos _ _ h1) (hpos _ _ h2) (hne _ _ hκa) (hneg _ _ h3) g5
-  · rw [← e.2.2.2.2.2]
-    exact isRupert_type08_slide_normalized h.perm₁₂.perm₂₃.perm₁₂ F.perm₁₂.perm₂₃.perm₁₂
-      hd.perm₁₂.perm₂₃.perm₁₂ G'.perm₁₂.perm₂₃.perm₁₂ (hpos _ _ h1) (hpos _ _ h2) (hne _ _ hκa)
-      (hneg _ _ h3) g6
-
-/-- **Theorem 10.1′ (type 08), Lean form: no general position, no exclusion of
-horizontal double normals at the edge views.**  An octahedron `O` with opposite pairs
-`(a, a')`, `(b, b')`, `(c, c')` and a cap `d` (`IsCap`; type 08) is Rupert, provided `O`
-has no planar equator and `Type08Gen` holds in each of the six labellings
-(`Type08GenAll`): no far-end tie `T`, `T'`, no touching (codimension 2), and the slides
-of Lemma C along the face circles at the named crossings meet depth ties and
-horizontal double normals only at isolated views (`NoBadNormal`). -/
-theorem isRupert_type08_slide {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
-    (hd : IsCap F d)
-    (heqA : det3 (c - b) (b' - b) (c' - b) ≠ 0) (heqB : det3 (c - a) (a' - a) (c' - a) ≠ 0)
-    (heqC : det3 (b - a) (a' - a) (b' - a) ≠ 0)
-    (hgen : Type08GenAll a a' b b' c c' d) :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
-  obtain ⟨G⟩ := F.nonempty_galeData
-  exact isRupert_type08_slide_gale F hd G (fun h0 => heqA (G.planar_of_kappa h0))
-    (fun h0 => heqB (G.perm₁₂.planar_of_kappa h0))
-    (fun h0 => heqC (G.perm₂₃.perm₁₂.planar_of_kappa h0)) hgen
-
-
-/-- **Theorem 10.1′, facet form (type 08).**  Seven points labelled as type 08
-(`typeb_lib.load('08-7f')`: the quadrilaterals `0123`, `0245`, `2356` and the triangles
-`014`, `136`, `146`, `456` are facets), with no planar equator of the octahedron
-`x 0, …, x 6` without `x 2` and `Type08GenAll` for its pairs `(0, 6)`, `(3, 4)`, `(5, 1)`
-and the cap `x 2`, are Rupert. -/
-theorem isRupert_type08_slide_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
-    (fA fB fC fD fE fF fG : ℝ³ →ᵃ[ℝ] ℝ)
-    (hA : ∀ i, (i ∈ ({0, 1, 2, 3} : Finset (Fin 7)) → fA (x i) = 0) ∧
-      (i ∉ ({0, 1, 2, 3} : Finset (Fin 7)) → fA (x i) < 0))
-    (hB : ∀ i, (i ∈ ({0, 2, 4, 5} : Finset (Fin 7)) → fB (x i) = 0) ∧
-      (i ∉ ({0, 2, 4, 5} : Finset (Fin 7)) → fB (x i) < 0))
-    (hC : ∀ i, (i ∈ ({2, 3, 5, 6} : Finset (Fin 7)) → fC (x i) = 0) ∧
-      (i ∉ ({2, 3, 5, 6} : Finset (Fin 7)) → fC (x i) < 0))
-    (hD : ∀ i, (i ∈ ({0, 1, 4} : Finset (Fin 7)) → fD (x i) = 0) ∧
-      (i ∉ ({0, 1, 4} : Finset (Fin 7)) → fD (x i) < 0))
-    (hE : ∀ i, (i ∈ ({1, 3, 6} : Finset (Fin 7)) → fE (x i) = 0) ∧
-      (i ∉ ({1, 3, 6} : Finset (Fin 7)) → fE (x i) < 0))
-    (hF : ∀ i, (i ∈ ({1, 4, 6} : Finset (Fin 7)) → fF (x i) = 0) ∧
-      (i ∉ ({1, 4, 6} : Finset (Fin 7)) → fF (x i) < 0))
-    (hG : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
-      (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fG (x i) < 0))
-    (heq₁ : det3 (x 5 - x 3) (x 4 - x 3) (x 1 - x 3) ≠ 0)
-    (heq₂ : det3 (x 5 - x 0) (x 6 - x 0) (x 1 - x 0) ≠ 0)
-    (heq₃ : det3 (x 3 - x 0) (x 6 - x 0) (x 4 - x 0) ≠ 0)
-    (hgen : Type08GenAll (x 0) (x 6) (x 3) (x 4) (x 5) (x 1) (x 2)) :
-    IsRupert (univ.image x) := by
-  classical
-  obtain ⟨-, eV⟩ := image_seven x
-  rw [eV]
-  obtain ⟨F, hcap⟩ := exists_type08_cap x hx fA fB fC fD fE fF fG hA hB hC hD hE hF hG
-  exact isRupert_type08_slide F hcap heq₁ heq₂ heq₃ hgen
 
 end Minimality
 

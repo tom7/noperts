@@ -30,7 +30,6 @@ open Finset Filter
 namespace Minimality
 namespace Type08Sp
 
-
 /-! ## Assembly (proved) -/
 
 /-- **The planar pipeline in one labelling.** -/
@@ -161,36 +160,6 @@ theorem type08_rupert_or_resid_ptsI {a a' b b' c c' d : ℝ³} (F : OctFacets a 
     rcases type08_rupert_or_residP6 F hd G with h | h
     · exact Or.inl h
     · exact Or.inr (Or.inl ⟨hpl, h⟩)
-
-/-- **Facet form** (the integration point; same hypotheses as `type08_rupert_or_residH`). -/
-theorem type08_rupert_or_residI (x : Fin 7 → ℝ³) (hx : Function.Injective x)
-    (fA fB fC fD fE fF fG : ℝ³ →ᵃ[ℝ] ℝ)
-    (hA : ∀ i, (i ∈ ({0, 1, 2, 3} : Finset (Fin 7)) → fA (x i) = 0) ∧
-      (i ∉ ({0, 1, 2, 3} : Finset (Fin 7)) → fA (x i) < 0))
-    (hB : ∀ i, (i ∈ ({0, 2, 4, 5} : Finset (Fin 7)) → fB (x i) = 0) ∧
-      (i ∉ ({0, 2, 4, 5} : Finset (Fin 7)) → fB (x i) < 0))
-    (hC : ∀ i, (i ∈ ({2, 3, 5, 6} : Finset (Fin 7)) → fC (x i) = 0) ∧
-      (i ∉ ({2, 3, 5, 6} : Finset (Fin 7)) → fC (x i) < 0))
-    (hD : ∀ i, (i ∈ ({0, 1, 4} : Finset (Fin 7)) → fD (x i) = 0) ∧
-      (i ∉ ({0, 1, 4} : Finset (Fin 7)) → fD (x i) < 0))
-    (hE : ∀ i, (i ∈ ({1, 3, 6} : Finset (Fin 7)) → fE (x i) = 0) ∧
-      (i ∉ ({1, 3, 6} : Finset (Fin 7)) → fE (x i) < 0))
-    (hF : ∀ i, (i ∈ ({1, 4, 6} : Finset (Fin 7)) → fF (x i) = 0) ∧
-      (i ∉ ({1, 4, 6} : Finset (Fin 7)) → fF (x i) < 0))
-    (hG : ∀ i, (i ∈ ({4, 5, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
-      (i ∉ ({4, 5, 6} : Finset (Fin 7)) → fG (x i) < 0)) :
-    IsRupert (univ.image x) ∨ Resid08FinalI (x 0) (x 6) (x 3) (x 4) (x 5) (x 1) (x 2) := by
-  classical
-  obtain ⟨-, eV⟩ := image_seven x
-  rw [eV]
-  obtain ⟨F, hcap⟩ := exists_type08_cap x hx fA fB fC fD fE fF fG hA hB hC hD hE hF hG
-  exact type08_rupert_or_resid_ptsI F hcap
-
-/-- The new target implies the tree's (`Resid08FinalI ⊆ Resid08FinalH`). -/
-theorem type08_rupert_or_residI_imp_H (x : Fin 7 → ℝ³) {V : Finset ℝ³}
-    (h : IsRupert V ∨ Resid08FinalI (x 0) (x 6) (x 3) (x 4) (x 5) (x 1) (x 2)) :
-    IsRupert V ∨ Resid08FinalH (x 0) (x 6) (x 3) (x 4) (x 5) (x 1) (x 2) :=
-  h.imp id resid08FinalI_imp_H
 
 end Type08Sp
 end Minimality

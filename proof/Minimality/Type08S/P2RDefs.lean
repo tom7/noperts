@@ -74,9 +74,6 @@ def Al4Lt (a b' c d : ℝ³) : Prop := ∃ α4 γ4 : ℝ, b' = d + α4 • (a - 
 /-- `α4 = 1` at `T'` (the `det` item of `S4TpG2`). -/
 def Al4One (a b b' c d : ℝ³) : Prop := det3 (b' - a) (c - d) (b - d) = 0
 
-/-- `T'`, level face of `Q_ac` (all `α4`; `α4 < 1` is the tree's `Tp_level_sep`). -/
-def StLevTp (a b c' c d : ℝ³) : Prop := IsT' a b c' d ∧ LevelQac a b c d
-
 /-- `T'`, `QacTop` through the tie `D_a = D_d` (tpq's P3), off the level face. -/
 def StP3Tp (a b b' c c' d : ℝ³) : Prop :=
   IsT' a b c' d ∧ QacTop a b b' c d ∧ ⟪a, b - d⟫ = ⟪d, b - d⟫ ∧ ¬ LevelQac a b c d
@@ -132,37 +129,6 @@ def Resid08FinalJ (a a' b b' c c' d : ℝ³) : Prop :=
   ResidNJ c c' a a' b b' d ∨ ResidNJ b b' c c' a a' d ∨ ResidNJ c c' b b' a a' d
 
 /-! ## `J ⊆ I` (proved) -/
-
-theorem S4TR_imp {a a' b b' c c' d : ℝ³} (h : S4TR a a' b b' c c' d) : S4T2 a a' b b' c c' d := by
-  obtain ⟨hT, ⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4, h5, h6⟩⟩ := h
-  · exact Or.inl ⟨hT, Or.inr (Or.inl ⟨h1, h3, h4⟩)⟩
-  · exact Or.inr ⟨hT, h1, Or.inr (Or.inl ⟨h2, h3, h4⟩)⟩
-  · exact Or.inr ⟨hT, h1, Or.inr (Or.inr ⟨h2, h3, h4, h5, h6⟩)⟩
-
-theorem S4TpR_imp {a a' b b' c c' d : ℝ³} (h : S4TpR a a' b b' c c' d) : S4TpG2 a a' b b' c c' d := by
-  obtain ⟨hT', hq, -, -, -, hX, h2, hA⟩ := h
-  exact ⟨hT', hq, Or.inr ⟨hX, Or.inl h2, hA⟩⟩
-
-theorem TpA1ii_imp {a a' b b' c c' d : ℝ³} (h : TpA1ii a a' b b' c c' d) : S4TpG2 a a' b b' c c' d := by
-  obtain ⟨hT', hq, h1, -, hX, hA⟩ := h
-  exact ⟨hT', hq, Or.inr ⟨hX, Or.inr h1, hA⟩⟩
-
-theorem P3Tpii_imp {a a' b b' c c' d : ℝ³} (h : P3Tpii a a' b b' c c' d) : S4TpG2 a a' b b' c c' d := by
-  obtain ⟨⟨hT', hq, -, -⟩, -, -, hX, h2, hA⟩ := h
-  exact ⟨hT', hq, Or.inr ⟨hX, Or.inl h2, hA⟩⟩
-
-theorem resid08FinalJ_imp_I {a a' b b' c c' d : ℝ³} (h : Resid08FinalJ a a' b b' c c' d) :
-    Resid08FinalI a a' b b' c c' d := by
-  have g : ∀ {p p' q q' r r' : ℝ³}, ResidNJ p p' q q' r r' d → ResidNH p p' q q' r r' d :=
-    fun ⟨N, h1, h2, _⟩ => ⟨N, h1, h2.imp S4TR_imp (fun h => h.elim S4TpR_imp (fun h => h.elim TpA1ii_imp P3Tpii_imp))⟩
-  rcases h with ⟨hp, hr, -⟩ | h | h | h | h | h | h
-  · exact Or.inl ⟨hp, hr⟩
-  · exact Or.inr (Or.inl (g h))
-  · exact Or.inr (Or.inr (Or.inl (g h)))
-  · exact Or.inr (Or.inr (Or.inr (Or.inl (g h))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (g h)))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (g h))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (g h))))))
 
 end Type08Sp
 end Minimality

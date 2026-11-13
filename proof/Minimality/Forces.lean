@@ -31,9 +31,6 @@ theorem inner_liftH (n : ℝ²) (x : ℝ³) : ⟪liftH n, x⟫ = ⟪n, proj_xy x
 theorem proj_liftH (n : ℝ²) : proj_xy (liftH n) = n := by
   ext i; fin_cases i <;> simp [liftH, proj_xy]
 
-theorem inner_liftH_ez (n : ℝ²) : ⟪liftH n, ez⟫ = 0 := by
-  rw [inner_ez]; simp [liftH]
-
 /-- A solid has a shadow with nonempty interior at every rotation. -/
 theorem interior_proj_convexHull_nonempty (V : Finset ℝ³) {R : Matrix (Fin 3) (Fin 3) ℝ}
     (hR : R ∈ SO3) (hsol : (interior (convexHull ℝ (V : Set ℝ³))).Nonempty) :
@@ -77,31 +74,6 @@ theorem det3_smul_eq (a b w F : ℝ³) :
     det3 a b w • F = ⟪F, a⟫ • cross b w + ⟪F, b⟫ • cross w a + ⟪F, w⟫ • cross a b := by
   ext i; fin_cases i <;>
     simp [det3, cross, PiLp.inner_apply, Fin.sum_univ_three] <;> ring
-
-/-- **A point inside the shadow carries no force.** If `v` projects (along
-`w`) strictly inside the triangle `a b c` (counterclockwise), a force `F ⊥ w`
-with `⟪F, y - v⟫ ≤ 0` at the three test points `y = a, b, c` is zero. -/
-theorem force_eq_zero_of_inside {a b c v w F : ℝ³} (ha : 0 < det3 (b - v) (c - v) w)
-    (hb : 0 < det3 (c - v) (a - v) w) (hc : 0 < det3 (a - v) (b - v) w)
-    (hw : ⟪F, w⟫ = 0) (fa : ⟪F, a - v⟫ ≤ 0) (fb : ⟪F, b - v⟫ ≤ 0) (fc : ⟪F, c - v⟫ ≤ 0) :
-    F = 0 := by
-  have key := congrArg (fun z => ⟪F, z⟫) (det3_cramer (a - v) (b - v) (c - v) w)
-  simp only [inner_add_right, inner_sub_right, real_inner_smul_right, hw, mul_zero] at key
-  have hb' : det3 (a - v) (c - v) w = -det3 (c - v) (a - v) w := det3_swap _ _ _
-  rw [hb'] at key
-  rw [inner_sub_right] at fa fb fc
-  have p1 : det3 (b - v) (c - v) w * (⟪F, a⟫ - ⟪F, v⟫) ≤ 0 := mul_nonpos_of_nonneg_of_nonpos ha.le fa
-  have p2 : det3 (c - v) (a - v) w * (⟪F, b⟫ - ⟪F, v⟫) ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hb.le fb
-  have p3 : det3 (a - v) (b - v) w * (⟪F, c⟫ - ⟪F, v⟫) ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hc.le fc
-  have q1 : det3 (b - v) (c - v) w * (⟪F, a⟫ - ⟪F, v⟫) = 0 := by linarith
-  have q2 : det3 (c - v) (a - v) w * (⟪F, b⟫ - ⟪F, v⟫) = 0 := by linarith
-  have e1 : ⟪F, a - v⟫ = 0 := by
-    rw [inner_sub_right]; exact (mul_eq_zero.mp q1).resolve_left ha.ne'
-  have e2 : ⟪F, b - v⟫ = 0 := by
-    rw [inner_sub_right]; exact (mul_eq_zero.mp q2).resolve_left hb.ne'
-  have h := det3_smul_eq (a - v) (b - v) w F
-  rw [e1, e2, hw, zero_smul, zero_smul, zero_smul, add_zero, add_zero] at h
-  exact (smul_eq_zero.mp h).resolve_left hc.ne'
 
 /-- **A force at a corner lies in its normal cone.** At a convex corner `v`
 with neighbours `y₀` (before) and `y₁` (after) in the projection along `w`

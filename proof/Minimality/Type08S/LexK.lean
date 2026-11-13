@@ -28,7 +28,6 @@ def lexkPos : List ℝ → Prop
   | [] => False
   | b :: l => 0 < b ∨ (b = 0 ∧ lexkPos l)
 
-@[simp] theorem lexkPos_nil : lexkPos [] ↔ False := Iff.rfl
 @[simp] theorem lexkPos_cons (b : ℝ) (l : List ℝ) : lexkPos (b :: l) ↔ 0 < b ∨ (b = 0 ∧ lexkPos l) := Iff.rfl
 
 theorem lexkPos_head {b : ℝ} {l : List ℝ} (h : 0 < b) : lexkPos (b :: l) := Or.inl h
@@ -128,7 +127,6 @@ def lexkChain {α : Type*} (R : α → α → Prop) : List α → Prop
   | a :: b :: l => R a b ∧ lexkChain R (b :: l)
   | _ => True
 
-@[simp] theorem lexkChain_nil {α : Type*} (R : α → α → Prop) : lexkChain R [] ↔ True := Iff.rfl
 @[simp] theorem lexkChain_one {α : Type*} (R : α → α → Prop) (a : α) : lexkChain R [a] ↔ True := Iff.rfl
 @[simp] theorem lexkChain_cons2 {α : Type*} (R : α → α → Prop) (a b : α) (l : List α) :
     lexkChain R (a :: b :: l) ↔ R a b ∧ lexkChain R (b :: l) := Iff.rfl
@@ -270,16 +268,6 @@ theorem lexk_dep_of_chain (u₀ : ℝ³) (vs : List ℝ³) {k : ℕ} [NeZero k] 
   refine (lexk_chain_ev (fun a b h => lexk_dep_ev h) s hchain).mono fun δ hδ a b hab => ?_
   exact lexk_idx_rel hs (lexk_pairwise (R := fun a b => LexLt (⟪x a, u₀⟫, ⟪x a, lexkVec vs δ⟫)
     (⟪x b, u₀⟫, ⟪x b, lexkVec vs δ⟫)) (fun _ _ _ h1 h2 => lexk_lt_trans h1 h2) s hδ) a b hab
-
-/-- **k-level lex cell (ℝ³ form, ccw).** -/
-theorem lexk_cell (V : Finset ℝ³) (u₀ : ℝ³) (vs : List ℝ³) {k : ℕ} [NeZero k] (hk : 3 ≤ k)
-    (x : ZMod k → ℝ³) (hmem : ∀ i, x i ∈ V)
-    (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → lexkPos ((u₀ :: vs).map (det3 (x (i + 1) - x i) (x j - x i))))
-    (hrest : ∀ y ∈ V, (∀ j, y ≠ x j) → ∀ i, lexkPos ((u₀ :: vs).map (det3 (x (i + 1) - x i) (y - x i))))
-    (s : List (ZMod k)) (hs : ∀ i, i ∈ s) (hchain : lexkChain (fun i j => LexkDep u₀ vs (x i) (x j)) s)
-    (hpeak : lexkPeak s) : HasLexCellAt V u₀ :=
-  have h := lexk_dep_of_chain u₀ vs x s hs hchain
-  lexk_core V u₀ vs hk x hmem hcyc hrest (fun i => s.idxOf i) h.1 h.2 hpeak
 
 /-- Frame row: `d3 e f v` as a function of the frame vector `v`. -/
 def lexkD3 (e f v : ℝ × ℝ × ℝ) : ℝ := d3 e.1 e.2.1 e.2.2 f.1 f.2.1 f.2.2 v.1 v.2.1 v.2.2

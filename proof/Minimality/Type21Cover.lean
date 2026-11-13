@@ -224,43 +224,9 @@ theorem type21_id_F6 {a a' b b' c c' : ℝ³} {l m : ℝ³ → ℝ}
       galeD l m a' b) := by
   type21_ring hl hm
 
-theorem type21_id_s4 {a a' b b' c c' : ℝ³} {l m : ℝ³ → ℝ}
-    (hl : IsDep a a' b b' c c' l) (hm : IsDep a a' b b' c c' m) :
-    galeD l m b c' = galeD l m a b + galeD l m b' b - galeD l m b c + galeD l m a' b := by
-  type21_ring hl hm
-
-theorem type21_id_s3 {a a' b b' c c' : ℝ³} {l m : ℝ³ → ℝ}
-    (hl : IsDep a a' b b' c c' l) (hm : IsDep a a' b b' c c' m) :
-    galeD l m c' a' - galeD l m a' b = galeD l m a' a + galeD l m a' b' - galeD l m c a' := by
-  type21_ring hl hm
-
-theorem type21_id_s0 {a a' b b' c c' : ℝ³} {l m : ℝ³ → ℝ}
-    (hl : IsDep a a' b b' c c' l) (hm : IsDep a a' b b' c c' m) :
-    galeD l m a b + galeD l m a b' = galeD l m a' a + galeD l m c a + galeD l m c' a := by
-  type21_ring hl hm
-
 theorem type21_id_s1 {a a' b b' c c' : ℝ³} {l m : ℝ³ → ℝ}
     (hl : IsDep a a' b b' c c' l) (hm : IsDep a a' b b' c c' m) :
     galeD l m c a - galeD l m b' c - galeD l m c' c = galeD l m b c - galeD l m c a' := by
-  type21_ring hl hm
-
-theorem type21_id_P4 {a a' b b' c c' : ℝ³} {l m : ℝ³ → ℝ}
-    (_hl : IsDep a a' b b' c c' l) (_hm : IsDep a a' b b' c c' m) :
-    galeD l m c a' * galeD l m a b = galeD l m b c * galeD l m a' a + galeD l m c a *
-      galeD l m a' b := by
-  simp only [galeD]; ring
-
-theorem type21_id_P5 {a a' b b' c c' : ℝ³} {l m : ℝ³ → ℝ}
-    (hl : IsDep a a' b b' c c' l) (hm : IsDep a a' b b' c c' m) :
-    galeD l m c a' * galeD l m b' c' = galeD l m c' c * galeD l m a' b' + galeD l m b' c *
-      galeD l m c' a' := by
-  type21_ring hl hm
-
-theorem type21_id_A1 {a a' b b' c c' : ℝ³} {l m : ℝ³ → ℝ}
-    (hl : IsDep a a' b b' c c' l) (hm : IsDep a a' b b' c c' m) :
-    galeD l m b' c * galeD l m c' a - galeD l m c a * galeD l m b' c' + galeD l m c a *
-      galeD l m a b' - galeD l m b' c * galeD l m a b' = -((galeD l m c a' - galeD l m b c) *
-      galeD l m a b') := by
   type21_ring hl hm
 
 theorem type21_id_D135 {a a' b b' c c' : ℝ³} {l m : ℝ³ → ℝ}

@@ -147,9 +147,5 @@ theorem norm08_nonplanar {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d
     nlinarith [h0]
   exact N.hκa.ne' (kappa_planar N.G.hl N.G.hm hD hp)
 
-theorem norm08_flat {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) :
-    FP a a' b b' c c' d .flatN2 ∧ FP a a' b b' c c' d .flatT4 :=
-  ⟨fun h => absurd h (norm08_nonplanar N), fun h => absurd h (norm08_nonplanar N)⟩
-
 end Type08Sp
 end Minimality

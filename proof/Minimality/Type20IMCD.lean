@@ -202,17 +202,6 @@ lemma zB_u1 {r B : ℝ} (Z : ZCtx F r B) :
       (F.S.hm * F.S.tp + F.S.hp * F.S.tm) * (1 - F.S.sm - F.S.sp) := by
   linear_combination (1 - F.S.sm) * Z.hkp - F.S.sp * Z.hkm
 
-/-- Order of the polynomial depths at `u1` (scaled by `hm`), the facts shared by ZW, ZWt, ZY. -/
-lemma zu1_01 {r B : ℝ} (Z : ZCtx F r B) : F.Dd B (u1 F.S) 0 < F.Dd B (u1 F.S) 1 := by
-  obtain ⟨c0p, hden, -, -, -⟩ := zbasic F Z
-  obtain ⟨d0, d1, -⟩ := zdd_u1 F B Z.tie Z.hkm Z.hkp
-  have hm0 := F.S.hm_pos; have hp0 := F.S.hp_pos; have sm1 := F.S.sm_lt
-  have s1 : 0 < 1 - F.S.sm := by linarith
-  have key := mul_pos (mul_pos (mul_pos hp0 hden) s1) Z.hA
-  have : F.S.hm * F.Dd B (u1 F.S) 0 < F.S.hm * F.Dd B (u1 F.S) 1 := by
-    rw [d0, d1]; nlinarith [key]
-  exact lt_of_mul_lt_mul_left this hm0.le
-
 /-- Facing values at `u1 = x4 - x6` that need no case split. -/
 lemma zf_u1 (S : Shape20) :
     nf S (u1 S) 0 = S.km * (1 - S.tm) - S.hm * (1 - S.sm) ∧
@@ -937,7 +926,6 @@ theorem imc_L10b (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFac
         linarith
       exact absurd a1 (not_le.2 key)
 
-
 end Frame20
 end Minimality.CaseC20
 
@@ -954,25 +942,6 @@ open scoped RealInnerProductSpace
 
 namespace Minimality.CaseC20
 namespace IMCT
-
-/-- COVER chain (a): `K = 0` and `Q >= 0` force `VM > 0` (hence `K = 0` never reaches `VM <= 0`). -/
-theorem K0_VM_pos (S : Shape20) (hK : Kq S = 0) (hQ : 0 ≤ Qq S) : 0 < VM S := by
-  unfold Kq at hK; unfold Qq at hQ; unfold VM Vq Mq
-  have tp0 := S.tp_pos; have tm0 := S.tm_pos; have sp0 := S.sp_pos; have sm0 := S.sm_pos
-  have hp0 := S.hp_pos; have hm0 := S.hm_pos; have kp0 := S.kp_pos; have sp1 := S.sp_lt
-  have tm1 := S.tm_lt
-  have hkm : S.km = S.hm := by linarith
-  rw [hkm] at hQ ⊢
-  have h1 : 0 < S.hp * S.sm * (1 - S.tm) := by
-    have : 0 < 1 - S.tm := by linarith
-    positivity
-  have h2 : 0 < S.hm * (S.sm * S.tp - S.tm) := by nlinarith
-  have h3 : 0 < S.sm * S.tp - S.tm := pos_of_mul_pos_right h2 hm0.le
-  have h4 : 0 < (1 - S.sp) * S.hp * S.tm := by
-    have : 0 < 1 - S.sp := by linarith
-    positivity
-  have h5 : 0 < S.kp * (S.sm * S.tp - S.tm) := mul_pos kp0 h3
-  nlinarith [h4, h5]
 
 end IMCT
 

@@ -4,7 +4,6 @@ public import Minimality.Type08S.C2K5LM
 
 @[expose] public section
 
-
 /-!
 # K5L / N: lex-plane algebra, rotations of `lexUni5_two`, and the lex proofs of the two QTc `α4 > 1` cells
 -/
@@ -49,11 +48,6 @@ theorem LP_add_e {x y x' y' : ℝ} (h : LP x y) (h' : LPe x' y') : LP (x + x') (
   · exact LP_add h h'
   · rw [h1, h2, add_zero, add_zero]; exact h
 
-theorem LPe_add {x y x' y' : ℝ} (h : LPe x y) (h' : LPe x' y') : LPe (x + x') (y + y') := by
-  rcases h with h | ⟨h1, h2⟩
-  · exact Or.inl (LP_add_e h h')
-  · rw [h1, h2, zero_add, zero_add]; exact h'
-
 theorem LP_smul {c x y : ℝ} (hc : 0 < c) (h : LP x y) : LP (c * x) (c * y) := by
   unfold LP at *
   rcases h with h | ⟨h1, h2⟩
@@ -72,12 +66,6 @@ theorem LP_ne_zero {x y : ℝ} (h : LP x y) : ¬ (x = 0 ∧ y = 0) := by
 
 theorem LP_nonneg {x y : ℝ} (h : LP x y) : 0 ≤ x := by
   rcases h with h | ⟨h, -⟩ <;> linarith
-
-theorem LP_neg_not {x y : ℝ} (h : LP x y) : ¬ LP (-x) (-y) := by
-  intro h'
-  have := LP_add h h'
-  simp only [add_neg_cancel] at this
-  exact LP_ne_zero this ⟨rfl, rfl⟩
 
 theorem lexUni_shift_k {k : ℕ} [NeZero k] {z w : ZMod k → ℝ} (n : ZMod k)
     (h : LexUni (fun i => z (i + n)) (fun i => w (i + n))) : LexUni z w := by

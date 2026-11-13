@@ -368,12 +368,6 @@ theorem witness_octahedron : IsOctahedron !₂[0, 0, 10] !₂[0, 0, -10] !₂[10
     simp only [Finset.mem_insert, Finset.mem_singleton] at hx
     rcases hx with rfl | rfl | rfl | rfl | rfl | rfl <;> first | exact absurd rfl ‹_› | wnum
 
-/-- Theorem 9.9 applied to the witness octahedron. -/
-theorem witness_octahedron_rupert :
-    IsRupert {!₂[0, 0, 10], !₂[0, 0, -10], !₂[10, 0, 1], !₂[-10, 0, -1], !₂[0, 10, 1],
-      !₂[0, -10, -1]} :=
-  isRupert_octahedron witness_octahedron
-
 /-- Condition A holds for `witness_octahedron`. -/
 theorem witness_conditionA :
     let a : ℝ³ := !₂[0, 0, 10]; let a' : ℝ³ := !₂[0, 0, -10]
@@ -390,11 +384,6 @@ theorem witness_conditionA :
   simp only [b, b', c, c']
   simp [Matrix.cons_val]
 
-/-- The witness T5 of the exceptional case has `S₁S₄ ∥ S₂S₃`. -/
-theorem witness_cappedSquarePyramid_parallel_par :
-    (!₂[0, 4, 0] : ℝ³) - !₂[0, 0, 0] = (1 : ℝ) • ((!₂[4, 4, 0] : ℝ³) - !₂[4, 0, 0]) := by
-  ext i; fin_cases i <;> wnum
-
 /-- The witness T5 of the generic case has `S₁S₄ ∦ S₂S₃`. -/
 theorem witness_cappedSquarePyramid_not_par (k : ℝ) :
     (!₂[0, 2, 0] : ℝ³) - !₂[0, 0, 0] ≠ k • ((!₂[3, 3, 0] : ℝ³) - !₂[4, 0, 0]) := by
@@ -404,11 +393,6 @@ theorem witness_cappedSquarePyramid_not_par (k : ℝ) :
   rcases h0 with h0 | h0
   · norm_num [h0] at h1
   · norm_num at h0
-
-/-- The witness T3 of the degenerate case has `BB' ∥ CC'`. -/
-theorem witness_T3_parallel_par :
-    (!₂[0, 2, 2] : ℝ³) - !₂[0, 2, 0] = (1 : ℝ) • ((!₂[0, 0, 2] : ℝ³) - !₂[0, 0, 0]) := by
-  ext i; fin_cases i <;> wnum
 
 /-! The headline theorems apply to the witnesses. -/
 

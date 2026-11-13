@@ -46,26 +46,6 @@ theorem NoHDNAt.smul_view {V : Finset ℝ³} {u : ℝ³} (h : NoHDNAt V u) {c : 
         rw [smul_smul, inv_mul_cancel₀ hc, one_smul]
     _ = (r / c) • ez := by rw [e, smul_smul, div_eq_inv_mul]
 
-/-- No horizontal double normal at the view `w − v` without `w` and without `v` is no horizontal
-double normal at all: a strictly convex silhouette never contains both ends of the view. -/
-theorem noHDNAt_of_erase {V : Finset ℝ³} {v w : ℝ³} (hvw : v ≠ w)
-    (h1 : NoHDNAt (V.erase w) (w - v)) (h2 : NoHDNAt (V.erase v) (w - v)) :
-    NoHDNAt V (w - v) := by
-  intro R hR r hr hRu k y hyV hp
-  by_cases hw : ∃ i, y i = w
-  · obtain ⟨i, hi⟩ := hw
-    refine h2 R hR r hr hRu k y (fun j => mem_erase.mpr ⟨fun hj => ?_, hyV j⟩) hp
-    have hP : proj_xy (R.toEuclideanLin (y j)) = proj_xy (R.toEuclideanLin (y i)) := by
-      have e : w = v + (w - v) := by abel
-      rw [hj, hi, e, map_add, hRu, proj_xy_add', proj_xy_smul']
-      have : proj_xy ez = 0 := by ext j; fin_cases j <;> simp [proj_xy, ez]
-      rw [this, smul_zero, add_zero]
-    have := hp.injective hP
-    rw [this, hi] at hj
-    exact hvw hj.symm
-  · push Not at hw
-    exact h1 R hR r hr hRu k y (fun j => mem_erase.mpr ⟨hw j, hyV j⟩) hp
-
 /-- The line of two planes is orthogonal to the normal of the first plane: `planeLine` is also
 `[C D A] B − [C D B] A`. -/
 theorem planeLine_alt (p₀ p₁ p₂ q₀ q₁ q₂ : ℝ³) :
@@ -157,72 +137,6 @@ horizontal double normals are checked where the certificate is used (`Cert16`). 
 structure Views (N : NF16 x) : Prop where
   vA : N.vA ≠ 0 → OneTieAt (univ.image x) N.vA
 
-theorem nodup5_sub4 {z₀ z₁ z₂ z₃ z₄ : ℝ} (h : [z₀, z₁, z₂, z₃, z₄].Nodup) :
-    [z₀, z₁, z₂, z₄].Nodup := by
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true] at h ⊢
-  tauto
-
-/-- **The residual `Ω`** (Lemmas 19.3, 19.4, 19.5; §19.6). -/
-theorem cert_omega (N : NF16 x) (O : Omega N) (G : Gen N) (W : Views N)
-    (hgt : TieSeg (univ.image x)) : Cert16 x := by
-  have O' := O
-  obtain ⟨hR1, hR2, hD, hqg, hg1, hqb, hc, nD2, nD3, nD4, nD6, nD7⟩ := O'
-  have hf15 : 0 < N.d * N.q - (N.g - 1) * (N.p + N.r - 1) := by
-    rcases lt_or_gt_of_ne G.f15 with h | h <;> [linarith; linarith [nD6]]
-  rcases lt_or_gt_of_ne G.d1 with hd1 | hd1
-  · -- `d < 1`
-    have hd1' : 0 < 1 - N.d := by linarith
-    have hf03 : 0 < -(N.q * (1 - N.d) + N.g * (N.r - 1)) := by
-      rcases lt_or_gt_of_ne G.b1 with hb | hb
-      · have h25 := nD3 (by linarith)
-        refine pos_of_mul_pos_r N.ha ?_
-        nlinarith [mul_pos (mul_pos (show 0 < 1 - N.b by linarith) hd1') N.hp]
-      · have := nD4 (by linarith)
-        rcases lt_or_gt_of_ne G.f03 with h | h <;> [linarith; linarith]
-    have hvA0 : N.vA ≠ 0 := by
-      simp only [vA]; exact nfV_ne_zero N.hD (Or.inl (ne_of_gt (mul_pos N.hg N.hp)))
-    have hvA := W.vA hvA0
-    have F1s : 0 < -((N.b - 1) * N.g * N.p * N.r + (N.q * (1 - N.d) + N.g * (N.r - 1)) *
-        (N.a * (N.q - 1) - (N.b - 1) * N.p)) → Cert16 x := fun h =>
-      cert_F1s N O hd1' hf03 h hgt
-    rcases lt_or_gt_of_ne G.b1 with hb | hb
-    · refine F1s ?_
-      have hq1 : 0 < N.q - 1 := by linarith
-      nlinarith [mul_pos (mul_pos (mul_pos (show 0 < 1 - N.b by linarith) N.hg) N.hp) N.hr,
-        mul_pos hf03 (show 0 < N.a * (N.q - 1) - (N.b - 1) * N.p by
-          nlinarith [mul_pos N.ha hq1, mul_pos (show 0 < 1 - N.b by linarith) N.hp])]
-    rcases lt_or_gt_of_ne G.HA with hA | hA
-    · exact F1s (by linarith)
-    · have hpr : 0 < N.p + N.r - 1 := by
-        rcases lt_or_gt_of_ne G.a1 with ha | ha
-        · have := nD7 (by linarith) hd1'
-          rcases lt_or_gt_of_ne G.pr with h | h <;> [linarith; linarith]
-        · nlinarith [N.t0246, mul_pos (sub_pos.mpr ha) N.hq, N.hb]
-      exact cert_T6 N O hd1' (by linarith) G.a1 hf03 hA hf15 hpr G.T5 hgt hvA
-  · -- `d > 1`
-    exact cert_F3 N O (by linarith) G.a1 hf15 hgt
-
-/-- **Theorem 19.6 in `R1`.** -/
-theorem cert_R1 (N : NF16 x) (hR1 : 0 < N.R1) (G : Gen N) (W : Views N)
-    (hg : TieSeg (univ.image x)) : Cert16 x :=
-  cert_R1_or_omega N hR1 G hg fun O => cert_omega N O G W hg
-
-/-- **Theorem 19.6 (the cover), normal form, certificate form**: off the special positions,
-every type-16 normal form has a certificate `Cert16` (a rim certificate at a named view): off
-`R1 ∪ R2` the pair at `06`, in `R1` by `cert_R1`, in `R2` by `cert_R1` for `x ∘ σ`.  No
-horizontal double normal is assumed. -/
-theorem cert_nf (N : NF16 x) (G : Gen N) (Gσ : Gen N.sigma) (W : Views N)
-    (Wσ : Views N.sigma) (h1 : N.R1 ≠ 0) (h2 : N.R2 ≠ 0) (hg : TieSeg (univ.image x)) :
-    Cert16 x := by
-  rcases lt_or_gt_of_ne h1 with hR1 | hR1
-  · rcases lt_or_gt_of_ne h2 with hR2 | hR2
-    · exact cert_E06 N hR1 hR2 hg
-    · exact (cert_R1 N.sigma (by rw [sigma_R1]; exact hR2) Gσ Wσ
-        (by rw [image_sigma16]; exact hg)).sigma
-  · exact cert_R1 N hR1 G W hg
-
-
 /-! ### The special positions from the points -/
 
 /-- An affine function constant on a plane through `P, Q, R` (with `S` off it) has its linear part
@@ -244,13 +158,6 @@ theorem inner_zero_of_plane {f : ℝ³ → ℝ} {Nf : ℝ³} (hf : ∀ y z, f y 
 normal. -/
 def ViewGen16 (V : Finset ℝ³) (NP NQ : ℝ³) : Prop :=
   ∀ u : ℝ³, u ≠ 0 → ⟪NP, u⟫ = 0 → ⟪NQ, u⟫ = 0 → OneTieAt V u ∧ NoHDNAt V u
-
-theorem nodup_depths {x : Fin 7 → ℝ³} (hx : Function.Injective x) {u : ℝ³}
-    (h : ∀ y ∈ univ.image x, ∀ z ∈ univ.image x, y ≠ z → ⟪y, u⟫ ≠ ⟪z, u⟫) (l : List (Fin 7))
-    (hl : l.Nodup) : (l.map fun i => ⟪x i, u⟫).Nodup := by
-  refine hl.map_on fun i _ j _ e => ?_
-  by_contra hij
-  exact h _ (mem_image i) _ (mem_image j) (hx.ne hij) e
 
 /-- The vertex view `v_A` of Lemma 19.5 is special only where `ViewGen16` fails. -/
 theorem Views.of (T : Type16 x) (N : NF16 x)
@@ -343,110 +250,8 @@ theorem Gen.of (T : Type16 x) (N : NF16 x) (hg : GenPosTie (univ.image x))
   · apply P (i := 0) (j := 2) (k := 4) (l := 1) (m := 5) (by decide)
     nf_simp N; simp only [det3c]; linear_combination (-D) * e
 
-theorem R_ne (N : NF16 x) (hpp : NoPlaneParallel (univ.image x)) : N.R1 ≠ 0 ∧ N.R2 ≠ 0 := by
-  constructor <;> intro e <;> simp only [R1, R2] at e
-  · apply npp_idx N.inj hpp (i := 1) (j := 4) (k := 5) (l := 0) (m := 6) (by decide)
-    nf_simp N; simp only [det3c]; linear_combination (-det3 N.E₁ N.E₂ N.E₃) * e
-  · apply npp_idx N.inj hpp (i := 2) (j := 4) (k := 5) (l := 0) (m := 6) (by decide)
-    nf_simp N; simp only [det3c]; linear_combination (-det3 N.E₁ N.E₂ N.E₃) * e
-
-
 theorem det3_cyc (a b c : ℝ³) : det3 c a b = det3 a b c := by
   simp only [det3_expand]; ring
-
-/-- No horizontal double normal at the views along the line of two planes (normals `NP`, `NQ`). -/
-def _root_.Minimality.NoHDNLine16 (V : Finset ℝ³) (NP NQ : ℝ³) : Prop :=
-  ∀ u : ℝ³, u ≠ 0 → ⟪NP, u⟫ = 0 → ⟪NQ, u⟫ = 0 → NoHDNAt V u
-
-/-- **No horizontal double normal at the named views**, from the facets: at the views along
-the segments, and along the lines of the six pairs of facets `046/145`, `036/146`, `0235/046`,
-`046/245`, `036/024`, `1356/046`. -/
-theorem _root_.Minimality.Type16.noHDN_views (T : Type16 x) (hnd : NoHDNEdges16 x)
-    (V1 : NoHDNLine16 (univ.image x) T.t046.N T.t145.N)
-    (V2 : NoHDNLine16 (univ.image x) T.t036.N T.t146.N)
-    (V3 : NoHDNLine16 (univ.image x) T.q0235.N T.t046.N)
-    (V1σ : NoHDNLine16 (univ.image x) T.t046.N T.t245.N)
-    (V2σ : NoHDNLine16 (univ.image x) T.t036.N T.t024.N)
-    (V3σ : NoHDNLine16 (univ.image x) T.q1356.N T.t046.N) :
-    ∀ v, view16 x v ≠ 0 → NoHDNAt (univ.image x) (view16 x v) := by
-  rintro (⟨i, j⟩ | t) hv
-  · have hij : i ≠ j := fun h => hv (by simp [view16, h])
-    exact noHDNAt_of_erase (T.inj.ne hij) (hnd.fwd T.toNF hij) (hnd.bwd T.toNF hij)
-  fin_cases t
-  · change planeLine (x 0) (x 4) (x 6) (x 1) (x 4) (x 5) ≠ 0 at hv
-    change NoHDNAt _ (planeLine (x 0) (x 4) (x 6) (x 1) (x 4) (x 5))
-    exact V1 _ hv (inner_planeLine_left (T.t046.inner_sub (by decide) (by decide))
-      (T.t046.inner_sub (by decide) (by decide)))
-      (inner_planeLine_right (T.t145.inner_sub (by decide) (by decide))
-        (T.t145.inner_sub (by decide) (by decide)))
-  · change planeLine (x 0) (x 3) (x 6) (x 1) (x 4) (x 6) ≠ 0 at hv
-    change NoHDNAt _ (planeLine (x 0) (x 3) (x 6) (x 1) (x 4) (x 6))
-    exact V2 _ hv (inner_planeLine_left (T.t036.inner_sub (by decide) (by decide))
-      (T.t036.inner_sub (by decide) (by decide)))
-      (inner_planeLine_right (T.t146.inner_sub (by decide) (by decide))
-        (T.t146.inner_sub (by decide) (by decide)))
-  · change planeLine (x 0) (x 3) (x 5) (x 0) (x 4) (x 6) ≠ 0 at hv
-    change NoHDNAt _ (planeLine (x 0) (x 3) (x 5) (x 0) (x 4) (x 6))
-    exact V3 _ hv (inner_planeLine_left (T.q0235.inner_sub (by decide) (by decide))
-      (T.q0235.inner_sub (by decide) (by decide)))
-      (inner_planeLine_right (T.t046.inner_sub (by decide) (by decide))
-        (T.t046.inner_sub (by decide) (by decide)))
-  · change planeLine (x 6) (x 4) (x 0) (x 2) (x 4) (x 5) ≠ 0 at hv
-    change NoHDNAt _ (planeLine (x 6) (x 4) (x 0) (x 2) (x 4) (x 5))
-    exact V1σ _ hv (inner_planeLine_left (T.t046.inner_sub (by decide) (by decide))
-      (T.t046.inner_sub (by decide) (by decide)))
-      (inner_planeLine_right (T.t245.inner_sub (by decide) (by decide))
-        (T.t245.inner_sub (by decide) (by decide)))
-  · change planeLine (x 6) (x 3) (x 0) (x 2) (x 4) (x 0) ≠ 0 at hv
-    change NoHDNAt _ (planeLine (x 6) (x 3) (x 0) (x 2) (x 4) (x 0))
-    exact V2σ _ hv (inner_planeLine_left (T.t036.inner_sub (by decide) (by decide))
-      (T.t036.inner_sub (by decide) (by decide)))
-      (inner_planeLine_right (T.t024.inner_sub (by decide) (by decide))
-        (T.t024.inner_sub (by decide) (by decide)))
-  · change planeLine (x 6) (x 3) (x 5) (x 6) (x 4) (x 0) ≠ 0 at hv
-    change NoHDNAt _ (planeLine (x 6) (x 3) (x 5) (x 6) (x 4) (x 0))
-    exact V3σ _ hv (inner_planeLine_left (T.q1356.inner_sub (by decide) (by decide))
-      (T.q1356.inner_sub (by decide) (by decide)))
-      (inner_planeLine_right (T.t046.inner_sub (by decide) (by decide))
-        (T.t046.inner_sub (by decide) (by decide)))
-
-
-
-/-- **Theorem 19.6 for type 16**, from the facets (`Type16`): off the special positions — general
-position up to single ties (`GenPosTie`), no plane through three points parallel to a segment of two others
-(`NoPlaneParallel`), no horizontal double normal at the edge views (`NoHDNEdges16`), the
-coplanarities `0134`, `2346`, the lines `036 ∩ 146` and `036 ∩ 024` not parallel to the planes
-`245`, `145` (`H_A ≠ 0` and its `σ`-image), and `ViewGen16` at the six vertex views
-`046/145`, `036/146`, `0235/046` and their `σ`-images `046/245`, `036/024`, `1356/046` — a
-type-16 point set is Rupert. -/
-theorem isRupert_type16 (T : Type16 x) (hg : GenPosTie (univ.image x))
-    (hpp : NoPlaneParallel (univ.image x)) (hnd : NoHDNEdges16 x)
-    (h0134 : det3 (x 0 - x 3) (x 1 - x 3) (x 4 - x 3) ≠ 0)
-    (h2346 : det3 (x 2 - x 3) (x 4 - x 3) (x 6 - x 3) ≠ 0)
-    (hHA : ∀ u : ℝ³, u ≠ 0 → ⟪T.t036.N, u⟫ = 0 → ⟪T.t146.N, u⟫ = 0 →
-      det3 (x 4 - x 2) (x 5 - x 2) u ≠ 0)
-    (hHAσ : ∀ u : ℝ³, u ≠ 0 → ⟪T.t036.N, u⟫ = 0 → ⟪T.t024.N, u⟫ = 0 →
-      det3 (x 4 - x 1) (x 5 - x 1) u ≠ 0)
-    (V1 : ViewGen16 (univ.image x) T.t046.N T.t145.N)
-    (V2 : ViewGen16 (univ.image x) T.t036.N T.t146.N)
-    (V3 : ViewGen16 (univ.image x) T.q0235.N T.t046.N)
-    (V1σ : ViewGen16 (univ.image x) T.t046.N T.t245.N)
-    (V2σ : ViewGen16 (univ.image x) T.t036.N T.t024.N)
-    (V3σ : ViewGen16 (univ.image x) T.q1356.N T.t046.N) : IsRupert (univ.image x) := by
-  set N := T.toNF
-  have eσ := image_sigma16 x
-  have d1 : det3 (x 6 - x 3) (x 2 - x 3) (x 4 - x 3) ≠ 0 := by rwa [det3_cyc]
-  have d2 : det3 (x 1 - x 3) (x 4 - x 3) (x 0 - x 3) ≠ 0 := by rwa [← det3_cyc]
-  have hc := cert_nf N (Gen.of T N hg hpp h0134 h2346 hHA)
-    (Gen.of T.sigma N.sigma (by rw [eσ]; exact hg) (by rw [eσ]; exact hpp) d1 d2 hHAσ)
-    (Views.of T N V2) (Views.of T.sigma N.sigma (by rw [eσ]; exact V2σ))
-    (R_ne N hpp).1 (R_ne N hpp).2 hg.toTieSeg
-  refine hc.isRupert T.noSeg ⟨3, 0, 5, 6, ?_⟩ ?_
-  · nf_simp N; simp only [det3c]; norm_num; exact N.hD
-  exact T.noHDN_views hnd (fun u hu h1 h2 => (V1 u hu h1 h2).2) (fun u hu h1 h2 => (V2 u hu h1 h2).2)
-    (fun u hu h1 h2 => (V3 u hu h1 h2).2) (fun u hu h1 h2 => (V1σ u hu h1 h2).2)
-    (fun u hu h1 h2 => (V2σ u hu h1 h2).2) (fun u hu h1 h2 => (V3σ u hu h1 h2).2)
-
 
 end NF16
 
@@ -459,70 +264,6 @@ theorem Face16.ofAffine_inner {x : Fin 7 → ℝ³} {S : Finset (Fin 7)} (f : �
   have k := (Face16.ofAffine f h).hN u 0
   simp only [Face16.ofAffine, sub_zero] at k ⊢
   linarith
-
-/-- **The special positions of a vertex view**, for affine face functions: at every direction
-`u ≠ 0` of the line of the two planes, at most one pair of points at the same depth
-(`OneTieAt`), and no horizontal double normal. -/
-def ViewAff16 (V : Finset ℝ³) (fP fQ : ℝ³ →ᵃ[ℝ] ℝ) : Prop :=
-  ∀ u : ℝ³, u ≠ 0 → fP.linear u = 0 → fQ.linear u = 0 → OneTieAt V u ∧ NoHDNAt V u
-
-/-- The line of the planes of `fP`, `fQ` is not parallel to the plane `a b c`. -/
-def LineAff16 (fP fQ : ℝ³ →ᵃ[ℝ] ℝ) (a b c : ℝ³) : Prop :=
-  ∀ u : ℝ³, u ≠ 0 → fP.linear u = 0 → fQ.linear u = 0 → det3 (b - a) (c - a) u ≠ 0
-
-/-- **Type 16 from its facets** (Theorem 19.6): seven points labelled so that `0235`, `1356`
-(quadrilaterals), `024`, `036`, `046`, `145`, `146`, `245` are facets (functionals negative off
-them) are Rupert, off the special positions of `NF16.isRupert_type16`. -/
-theorem isRupert_type16_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
-    (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
-    (hA : ∀ i, (i ∈ ({0, 2, 3, 5} : Finset (Fin 7)) → fA (x i) = 0) ∧
-      (i ∉ ({0, 2, 3, 5} : Finset (Fin 7)) → fA (x i) < 0))
-    (hB : ∀ i, (i ∈ ({1, 3, 5, 6} : Finset (Fin 7)) → fB (x i) = 0) ∧
-      (i ∉ ({1, 3, 5, 6} : Finset (Fin 7)) → fB (x i) < 0))
-    (hC : ∀ i, (i ∈ ({0, 2, 4} : Finset (Fin 7)) → fC (x i) = 0) ∧
-      (i ∉ ({0, 2, 4} : Finset (Fin 7)) → fC (x i) < 0))
-    (hD : ∀ i, (i ∈ ({0, 3, 6} : Finset (Fin 7)) → fD (x i) = 0) ∧
-      (i ∉ ({0, 3, 6} : Finset (Fin 7)) → fD (x i) < 0))
-    (hE : ∀ i, (i ∈ ({0, 4, 6} : Finset (Fin 7)) → fE (x i) = 0) ∧
-      (i ∉ ({0, 4, 6} : Finset (Fin 7)) → fE (x i) < 0))
-    (hF : ∀ i, (i ∈ ({1, 4, 5} : Finset (Fin 7)) → fF (x i) = 0) ∧
-      (i ∉ ({1, 4, 5} : Finset (Fin 7)) → fF (x i) < 0))
-    (hG : ∀ i, (i ∈ ({1, 4, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
-      (i ∉ ({1, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
-    (hH : ∀ i, (i ∈ ({2, 4, 5} : Finset (Fin 7)) → fH (x i) = 0) ∧
-      (i ∉ ({2, 4, 5} : Finset (Fin 7)) → fH (x i) < 0))
-    (hg : GenPosTie (univ.image x)) (hpp : NoPlaneParallel (univ.image x))
-    (hnd : ∀ v ∈ univ.image x, ∀ w ∈ univ.image x, v ≠ w →
-      NoHDNAt ((univ.image x).erase w) (w - v))
-    (h0134 : det3 (x 0 - x 3) (x 1 - x 3) (x 4 - x 3) ≠ 0)
-    (h2346 : det3 (x 2 - x 3) (x 4 - x 3) (x 6 - x 3) ≠ 0)
-    (hL : LineAff16 fD fG (x 2) (x 4) (x 5) ∧ LineAff16 fD fC (x 1) (x 4) (x 5))
-    (hV : ViewAff16 (univ.image x) fE fF ∧ ViewAff16 (univ.image x) fD fG ∧
-      ViewAff16 (univ.image x) fA fE ∧ ViewAff16 (univ.image x) fE fH ∧
-      ViewAff16 (univ.image x) fD fC ∧ ViewAff16 (univ.image x) fB fE) :
-    IsRupert (univ.image x) := by
-  let T : Type16 x := ⟨hx, Face16.ofAffine fA hA, Face16.ofAffine fB hB, Face16.ofAffine fC hC,
-    Face16.ofAffine fD hD, Face16.ofAffine fE hE, Face16.ofAffine fF hF, Face16.ofAffine fG hG,
-    Face16.ofAffine fH hH⟩
-  have V : ∀ {fP fQ : ℝ³ →ᵃ[ℝ] ℝ} {SP SQ : Finset (Fin 7)}
-      (hP : ∀ i, (i ∈ SP → fP (x i) = 0) ∧ (i ∉ SP → fP (x i) < 0))
-      (hQ : ∀ i, (i ∈ SQ → fQ (x i) = 0) ∧ (i ∉ SQ → fQ (x i) < 0)),
-      ViewAff16 (univ.image x) fP fQ →
-        NF16.ViewGen16 (univ.image x) (Face16.ofAffine fP hP).N (Face16.ofAffine fQ hQ).N := by
-    intro fP fQ SP SQ hP hQ h u hu h1 h2
-    rw [Face16.ofAffine_inner] at h1 h2
-    exact h u hu h1 h2
-  have L : ∀ {fP fQ : ℝ³ →ᵃ[ℝ] ℝ} {SP SQ : Finset (Fin 7)}
-      (hP : ∀ i, (i ∈ SP → fP (x i) = 0) ∧ (i ∉ SP → fP (x i) < 0))
-      (hQ : ∀ i, (i ∈ SQ → fQ (x i) = 0) ∧ (i ∉ SQ → fQ (x i) < 0)) {a b c : ℝ³},
-      LineAff16 fP fQ a b c → ∀ u : ℝ³, u ≠ 0 → ⟪(Face16.ofAffine fP hP).N, u⟫ = 0 →
-        ⟪(Face16.ofAffine fQ hQ).N, u⟫ = 0 → det3 (b - a) (c - a) u ≠ 0 := by
-    intro fP fQ SP SQ hP hQ a b c h u hu h1 h2
-    rw [Face16.ofAffine_inner] at h1 h2
-    exact h u hu h1 h2
-  exact NF16.isRupert_type16 T hg hpp hnd h0134 h2346 (L hD hG hL.1) (L hD hC hL.2)
-    (V hE hF hV.1) (V hD hG hV.2.1) (V hA hE hV.2.2.1) (V hE hH hV.2.2.2.1)
-    (V hD hC hV.2.2.2.2.1) (V hB hE hV.2.2.2.2.2)
 
 namespace NF16
 end NF16

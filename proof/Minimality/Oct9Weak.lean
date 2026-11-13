@@ -443,9 +443,6 @@ theorem weak_tau3 {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
 theorem det3_neg_mid (a b c : ℝ³) : det3 a (-b) c = -det3 a b c := by
   simp only [det3_expand, PiLp.neg_apply]; ring
 
-theorem det3_sub_mid (a b c : ℝ³) : det3 a (a - b) c = -det3 a b c := by
-  simp only [det3_expand, PiLp.sub_apply]; ring
-
 /-- **Lemma 9.11, the 4-cycle `(y, p, y', p')`** (closing by `y`, lower chain on
 the top face), for a tilt `v` with the three sign conditions. -/
 theorem isRupert_weak_cycle4 {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')

@@ -148,26 +148,6 @@ theorem isRobustUnimodal_of_single_tie {k : ℕ} {z zp zm : ZMod k → ℝ} {i j
       · exact hp.noPeaks B a b c d hab hbc hcd hdk ⟨(hpres _ _ h1).1, hp1, (hpres _ _ h3).1,
           (hpres _ _ h2).1⟩
 
-/-- **Robust unimodality in the limit, distinct depths.**  If `z` has distinct entries and is a
-limit of sequences that are robustly unimodal frequently (for instance unimodal: the corner
-depths at nearby shapes or views), it is robustly unimodal.  Lemma 18.2 (b) at the shape's own
-metric. -/
-theorem isRobustUnimodal_of_tendsto {k : ℕ} {ι : Type*} {l : Filter ι}
-    {zs : ι → ZMod k → ℝ} {z : ZMod k → ℝ}
-    (hlim : ∀ i, Filter.Tendsto (fun n => zs n i) l (nhds (z i)))
-    (hrob : ∃ᶠ n in l, IsRobustUnimodal (zs n)) (hz : Function.Injective z) :
-    IsRobustUnimodal z where
-  noPeaks B a b c d hab hbc hcd hdk h := by
-    obtain ⟨h1, h2, h3, h4⟩ := h
-    have ev : ∀ x y : ZMod k, z x < z y → ∀ᶠ n in l, zs n x < zs n y := fun x y hxy =>
-      (hlim x).eventually_lt (hlim y) hxy
-    obtain ⟨n, hn, e1, e2, e3, e4⟩ := (hrob.and_eventually ((ev _ _ h1).and ((ev _ _ h2).and
-      ((ev _ _ h3).and (ev _ _ h4))))).exists
-    exact hn.noPeaks B a b c d hab hbc hcd hdk ⟨e1, e2, e3, e4⟩
-  noTriple _ _ _ hij _ _ h _ := hij (hz h)
-  noLevelRun B a b c d hab hbc hcd hdk h :=
-    absurd (hz h) (zmod_add_ne (by omega) (by omega) hbc.ne B)
-
 /-- Strict comparisons survive in the limit, all at once. -/
 theorem eventually_strict_order {k : ℕ} [NeZero k] {ι : Type*} {l : Filter ι}
     {zs : ι → ZMod k → ℝ} {z : ZMod k → ℝ}
@@ -359,87 +339,7 @@ theorem IsCcwPolygon.cross2_pos_of_cycBetween {k : ℕ} [NeZero k] {p : ZMod k �
   have := hp.cross2_fan_pos i h.1 h.2 (ZMod.val_lt _)
   simpa only [ZMod.natCast_zmod_val, add_sub_cancel] using this
 
-/-- The orientation of three distinct corners decides their cyclic order. -/
-theorem IsCcwPolygon.cycBetween_of_cross2_pos {k : ℕ} [NeZero k] {p : ZMod k → ℝ²}
-    (hp : IsCcwPolygon p) {i j l : ZMod k} (hij : i ≠ j) (hjl : j ≠ l) (hil : i ≠ l)
-    (h : 0 < cross2 (p j - p i) (p l - p i)) : CycBetween i j l := by
-  rcases cycBetween_or hij hjl hil with h' | h'
-  · exact h'
-  · have := hp.cross2_pos_of_cycBetween h'
-    rw [cross2_comm] at this; linarith
-
 /-! ### Planar rims -/
-
-/-- The affine dependency of four points in the plane, applied to a linear functional:
-`[BCD] A − [ACD] B + [ABD] C − [ABC] D = 0` (`[XYZ] = cross2 (Y − X) (Z − X)`), and the
-coefficients sum to zero. -/
-theorem four_point_identity (A B C D e : ℝ²) (c : ℝ) :
-    cross2 (C - B) (D - B) * (⟪e, A⟫ + c) - cross2 (C - A) (D - A) * (⟪e, B⟫ + c) +
-      cross2 (B - A) (D - A) * (⟪e, C⟫ + c) - cross2 (B - A) (C - A) * (⟪e, D⟫ + c) = 0 := by
-  simp only [cross2, PiLp.sub_apply, PiLp.inner_apply, Fin.sum_univ_two, RCLike.inner_apply,
-    conj_trivial]
-  ring
-
-theorem cross2_eq_zero_of_inner {e x y : ℝ²} (he : e ≠ 0) (hx : ⟪e, x⟫ = 0) (hy : ⟪e, y⟫ = 0) :
-    cross2 x y = 0 := by
-  simp only [PiLp.inner_apply, Fin.sum_univ_two, RCLike.inner_apply, conj_trivial] at hx hy
-  have h0 : e 0 * cross2 x y = 0 := by simp only [cross2]; linear_combination y 1 * hx - x 1 * hy
-  have h1 : e 1 * cross2 x y = 0 := by simp only [cross2]; linear_combination -(y 0) * hx + x 0 * hy
-  by_contra hc
-  apply he
-  ext i; fin_cases i
-  · exact (mul_eq_zero.mp h0).resolve_right hc
-  · exact (mul_eq_zero.mp h1).resolve_right hc
-
-/-- **Planar rims are robustly unimodal** (Lemma 18.4, "planar and triangle rims"): on a
-strictly convex polygon, a nonconstant affine depth `⟪e, p i⟫ + c` is robustly unimodal.  A
-level pair lies on a level line, which can only support the polygon (no level edge inside a
-run), and no three corners are collinear. -/
-theorem IsCcwPolygon.isRobustUnimodal_affine {k : ℕ} [NeZero k] {p : ZMod k → ℝ²}
-    (hp : IsCcwPolygon p) {e : ℝ²} (he : e ≠ 0) (c : ℝ) :
-    IsRobustUnimodal (fun i => ⟪e, p i⟫ + c) := by
-  -- the four triangles of four corners in cyclic order are positive
-  have hpos : ∀ (B : ZMod k) (a b c d : ℕ), a < b → b < c → c < d → d < k →
-      0 < cross2 (p (B + c) - p (B + b)) (p (B + d) - p (B + b)) ∧
-      0 < cross2 (p (B + c) - p (B + a)) (p (B + d) - p (B + a)) ∧
-      0 < cross2 (p (B + b) - p (B + a)) (p (B + d) - p (B + a)) ∧
-      0 < cross2 (p (B + b) - p (B + a)) (p (B + c) - p (B + a)) :=
-    fun B a b c d hab hbc hcd hdk =>
-      ⟨hp.cross2_pos_of_cycBetween (cycBetween_of_lt B hbc hcd hdk),
-        hp.cross2_pos_of_cycBetween (cycBetween_of_lt B (hab.trans hbc) hcd hdk),
-        hp.cross2_pos_of_cycBetween (cycBetween_of_lt B hab (hbc.trans hcd) hdk),
-        hp.cross2_pos_of_cycBetween (cycBetween_of_lt B hab hbc (hcd.trans hdk))⟩
-  refine ⟨fun B a b c' d hab hbc hcd hdk h => ?_, fun i j l hij hjl hil e1 e2 => ?_,
-    fun B a b c' d hab hbc hcd hdk hbc' => ?_⟩
-  · obtain ⟨t1, t2, t3, t4⟩ := hpos B a b c' d hab hbc hcd hdk
-    have id := four_point_identity (p (B + a)) (p (B + b)) (p (B + c')) (p (B + d)) e
-      (c - (⟪e, p (B + b)⟫ + c) ⊔ (⟪e, p (B + d)⟫ + c))
-    obtain ⟨h1, h2, h3, h4⟩ := h
-    set m := (⟪e, p (B + b)⟫ + c) ⊔ (⟪e, p (B + d)⟫ + c)
-    have hb : ⟪e, p (B + b)⟫ + c ≤ m := le_sup_left
-    have hd : ⟪e, p (B + d)⟫ + c ≤ m := le_sup_right
-    have hA : 0 < ⟪e, p (B + a)⟫ + (c - m) := by
-      rcases max_cases (⟪e, p (B + b)⟫ + c) (⟪e, p (B + d)⟫ + c) with ⟨hm, -⟩ | ⟨hm, -⟩ <;>
-        simp only [m, hm] <;> linarith
-    have hC : 0 < ⟪e, p (B + c')⟫ + (c - m) := by
-      rcases max_cases (⟪e, p (B + b)⟫ + c) (⟪e, p (B + d)⟫ + c) with ⟨hm, -⟩ | ⟨hm, -⟩ <;>
-        simp only [m, hm] <;> linarith
-    nlinarith [mul_pos t1 hA, mul_pos t3 hC, mul_nonneg t2.le (show 0 ≤ m - (⟪e, p (B + b)⟫ + c)
-      by linarith), mul_nonneg t4.le (show 0 ≤ m - (⟪e, p (B + d)⟫ + c) by linarith)]
-  · have hx : ⟪e, p j - p i⟫ = 0 := by rw [inner_sub_right]; linarith
-    have hy : ⟪e, p l - p i⟫ = 0 := by rw [inner_sub_right]; linarith
-    have h0 := cross2_eq_zero_of_inner he hx hy
-    rcases cycBetween_or hij hjl hil with h | h
-    · have := hp.cross2_pos_of_cycBetween h; linarith
-    · have := hp.cross2_pos_of_cycBetween h; rw [cross2_comm] at this; linarith
-  · obtain ⟨t1, t2, t3, t4⟩ := hpos B a b c' d hab hbc hcd hdk
-    have id := four_point_identity (p (B + a)) (p (B + b)) (p (B + c')) (p (B + d)) e
-      (c - (⟪e, p (B + b)⟫ + c))
-    refine ⟨fun ⟨h1, h2⟩ => ?_, fun ⟨h1, h2⟩ => ?_⟩
-    · nlinarith [mul_pos t1 (show 0 < (⟪e, p (B + b)⟫ + c) - (⟪e, p (B + a)⟫ + c) by linarith),
-        mul_pos t4 (show 0 < (⟪e, p (B + d)⟫ + c) - (⟪e, p (B + c')⟫ + c) by linarith)]
-    · nlinarith [mul_pos t1 (show 0 < (⟪e, p (B + a)⟫ + c) - (⟪e, p (B + b)⟫ + c) by linarith),
-        mul_pos t4 (show 0 < (⟪e, p (B + c')⟫ + c) - (⟪e, p (B + d)⟫ + c) by linarith)]
 
 /-! ### Steps 2–4 with weakly monotone runs -/
 
@@ -1119,26 +1019,6 @@ theorem exists_firstOrderInward_of_robustUnimodal (V : Finset ℝ³) {k : ℕ} [
   · rw [← hred f (fun v h => h)]; exact hE1
   · rw [← hred (fun v => v 2 • f v) (fun v h => by simp [h])]; exact hE2
   · rw [← hred (fun v => cross2 (proj_xy v) (f v)) (fun v h => by simp [h, cross2])]; exact hE3
-
-/-- **Theorem 18.3, Rupert form, at the view of a rotation `R`.** -/
-theorem isRupert_of_robustUnimodalView (V : Finset ℝ³) (R : Matrix (Fin 3) (Fin 3) ℝ) (hR : R ∈ SO3)
-    {k : ℕ} [NeZero k] (x : ZMod k → ℝ³) (hxV : ∀ i, x i ∈ V)
-    (hp : IsCcwPolygon (fun i => proj_xy (R.toEuclideanLin (x i))))
-    (hin : ∀ v ∈ V, (∀ i, v ≠ x i) → proj_xy (R.toEuclideanLin v) ∈
-      interior (convexHull ℝ (Set.range fun i => proj_xy (R.toEuclideanLin (x i)))))
-    (hz : IsRobustUnimodal (fun i => (R.toEuclideanLin (x i)) 2))
-    (hnd : ¬ HasHorizontalDoubleNormal (fun i => proj_xy (R.toEuclideanLin (x i)))
-      (fun i => (R.toEuclideanLin (x i)) 2)) :
-    IsRupert V := by
-  classical
-  obtain ⟨ω, τ, h⟩ := exists_firstOrderInward_of_robustUnimodal (V.image R.toEuclideanLin)
-    (fun i => R.toEuclideanLin (x i)) (fun i => mem_image_of_mem _ (hxV i)) hp
-    (by
-      intro w hw hc
-      obtain ⟨v, hv, rfl⟩ := mem_image.mp hw
-      exact hin v hv fun i h => hc i (by rw [h]))
-    hz hnd
-  exact isRupert_of_firstOrderInward_image V R hR ω τ h
 
 end Minimality
 

@@ -567,16 +567,6 @@ theorem rim_mem_V {P : ℝ³} (h : c.IsRim P) : P ∈ c.V := by
   unfold V
   rcases h with rfl | rfl | rfl | rfl | rfl <;> simp
 
-theorem v_mem_V : c.v ∈ c.V := by
-  classical
-  unfold V
-  simp
-
-theorem pP_mem_V : c.pP ∈ c.V := by
-  classical
-  unfold V
-  simp
-
 theorem rim_ne_v {P : ℝ³} (h : c.IsRim P) : P ≠ c.v := by
   intro hP
   have hv := c.v_eq
@@ -1341,7 +1331,6 @@ def TriGenTieON (V Q1 Q2 : Finset ℝ³) (v : ℝ³) : Prop :=
       ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
         TieHT Q1 Q2 v p q (fun x => ⟪x, e⟫) ∨
           (⟪p, e⟫ = ⟪q, e⟫ ∧ ⟪v, e⟫ = ⟪p, e⟫ ∧ ⟪p - v, q - v⟫ ≤ 0)
-
 
 /-- **General position for Lemma T at the line of the planes of two facets, the triple tie
 settled including a right or obtuse apex** (Theorems 24.5 and 24.8 of

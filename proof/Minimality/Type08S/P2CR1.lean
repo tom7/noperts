@@ -38,14 +38,6 @@ theorem pc_smul_e3 (hF : Fr e1 e2 e3) (κ : ℝ) : κ • e3 = pc e1 e2 e3 0 0 �
 theorem pc_smul_e1 (c : ℝ) : c • e1 = pc e1 e2 e3 c 0 0 := by
   simp [pc]
 
-theorem pc_add (X Y z X' Y' z' : ℝ) :
-    pc e1 e2 e3 X Y z + pc e1 e2 e3 X' Y' z' = pc e1 e2 e3 (X + X') (Y + Y') (z + z') := by
-  simp only [pc]; module
-
-theorem pc_smul (c X Y z : ℝ) :
-    c • pc e1 e2 e3 X Y z = pc e1 e2 e3 (c * X) (c * Y) (c * z) := by
-  simp only [pc]; module
-
 theorem inner_pc_e1 (hF : Fr e1 e2 e3) (X Y z : ℝ) : ⟪pc e1 e2 e3 X Y z, e1⟫ = X := by
   have := inner_pc hF X Y z 1 0 0
   have h1 : e1 = pc e1 e2 e3 1 0 0 := by simp [pc]

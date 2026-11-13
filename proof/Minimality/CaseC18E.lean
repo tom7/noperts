@@ -96,7 +96,6 @@ theorem robust_cycH {a1 a2 a3 a4 : ℝ} (h1 : 0 < a1) (h2 : a1 < a2) (h4 : a4 < 
   · intro B a b c d hab hbc hcd hdk e
     interval_cases d <;> interval_cases c <;> (try omega) <;> interval_cases b <;> (try omega) <;> interval_cases a <;> (try omega) <;> rcases hB B with rfl | rfl | rfl | rfl | rfl <;> norm_num at e ⊢ <;> intros <;> skip <;> constructor <;> intro hh <;> linarith
 
-
 set_option maxHeartbeats 2000000 in
 theorem rimE2a_cyc (tm hm tp hp sp kp sm km ap am d1 d3 : ℝ) (htm : 0 < tm) (htp : 0 < tp)
     (htp1 : tp < 1) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1) (hsm : 0 < sm) (hsm1 : sm < 1)
@@ -648,7 +647,6 @@ theorem exists_tiltH (tp hp sp kp : ℝ)
         show -((kp - hp * (1 - sp)) * ((1 - tp) - tp * (1 - sp)) + tp * (1 - sp) * ((kp - hp * (1 - sp)) - hp)) = (hp * (1 - sp) - (1 - tp) * kp) by ring, div_self hne]
     rw [this]; exact one_pos
 
-
 /-! ### Group E-F: Theorem F (view `u' = (-(β+D), D, b+ β)`, normalised by `1/D`; PROOFS 37.4) -/
 
 /-- The F view (normalised): screen `(x + (1+ρ) y, z - ρ b y)`. -/
@@ -769,8 +767,6 @@ theorem robust_smul_pos {k : ℕ} {z : ZMod k → ℝ} (hz : IsRobustUnimodal z)
     noLevelRun := fun B a' b c' d hab hbc hcd hdk e => by
       have := hz.noLevelRun B a' b c' d hab hbc hcd hdk (mul_left_cancel₀ hc.ne' e)
       simp only [key]; exact this }
-
-
 
 /-! ### Group E-F2: rims B, C, D and the lexicographic tilt `d = (-1,-1,-λ)` -/
 
@@ -1749,7 +1745,6 @@ theorem lam_choice {tp tm hm sp kp sm km ρ b lam1 : ℝ}
     · exact Or.inl (Or.inl ⟨hz.ge, fun _ => hT⟩)
   · exact Or.inl (Or.inl (Lx_of_pos hz))
 
-
 /-! ### Group E-F3: the rims with `m2+` shown (`oW < 0`): A+, B+, C+, D+ (PROOFS 37.4)
 
 The rims `V M B U W`, `V N B U W`, `V M N B U W`, `V N M B U W` (`m2+` inserted after `m1+`); strict `oW < 0`
@@ -2474,7 +2469,6 @@ theorem hii_of_LMp (hL : F.LMp) :
     linear_combination this
   linarith
 
-
 /-- **Corollary E1** (`L_M'` with `c- < d+`): (i), (iii) are given; (ii) by the computation of
 PROOFS 37.1 (uses `Z1 > X`, `dp = A1 tp`, `A22 > A12 tp`). -/
 theorem thmE1 (hL : F.LMp) (hlt : F.S.cm < F.S.dp) : IsRupert (Finset.univ.image x) := by
@@ -2545,7 +2539,6 @@ theorem depth_basic (hi : F.a11 * F.S.tp - F.gg * F.S.am * F.S.hp > F.a12) :
     nlinarith [mul_pos hg (mul_pos F.S.hp_pos F.S.hm_pos), mul_nonneg F.S.tm_pos.le (neg_nonneg.2 hh)]
   refine ⟨by linarith, ?_⟩
   nlinarith [mul_pos hg (mul_pos F.S.hp_pos F.S.hm_pos), F.S.tm_lt]
-
 
 /-- Rim `(v, m2-, m1-, xa, m1+, m2+) = (5,2,6,3,0,1)` at `u1` with tilt `(d1, 0, d3)` on `Q_H`
 at the window end `c- = d+`, robust depths. -/
@@ -3173,7 +3166,6 @@ theorem thmRp (heq : F.a12 = F.a11) (hb : F.S.am = F.S.bp) :
     rw [hXT]
     exact robust_cycCT F.u0Z1_lt_T (F.u0_R_gt_T_of_ge heq hT) hTZ
 
-
 /-- `g = gg / a11` (the normalisation `A11 = 1`). -/
 noncomputable def fG : ℝ := F.gg / F.a11
 /-- `μ = g h+ b+ - t+`. -/
@@ -3217,8 +3209,6 @@ theorem fData (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
   simp only
   rw [h22', hgg]
   ring
-
-
 
 /-- Screen orientation numbers of the F view (all `crF` of screen differences, `hp` eliminated):
 `oN1 = O(v, m1-, m2-)`, `oN2 = O(m1-, xb, m2-)`, `oW = O(m1+, v, m2+)`. -/
@@ -3495,7 +3485,6 @@ theorem rimFD_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     have := mul_pos hG (mul_pos F.S.bp_pos F.S.hm_pos)
     nlinarith [F.S.tm_pos]
 
-
 theorem oW_eq : F.oW = Ot F.fRho F.S.bp (pU F.S.tp F.S.bp) pV (pW F.S.sp F.S.kp) := by
   simp only [oW, Ot, crF, scF, C3.sub, pU, pV, pW]; ring
 
@@ -3518,7 +3507,6 @@ theorem rimF_lam (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
   · rcases hz with hz | hz
     · exact F.rimFD_rupert heq h22 hg hb hl hlW hx hz hW
     · exact F.rimFB_rupert heq h22 hg hb hl hlW hx hz hW
-
 
 theorem fW_lt (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (hg : F.gg * F.S.ap * F.S.dp = F.a11) (hc : F.a11 * F.S.cp ≤ F.a22 * F.S.ap) (hW : F.oW < 0) :
@@ -3573,7 +3561,6 @@ theorem fzN0 (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     nlinarith [mul_pos F.S.bp_pos F.S.tp_pos, mul_pos F.S.sm_pos (mul_pos F.S.bp_pos F.S.tp_pos)]
   rw [hU]
   nlinarith [mul_pos hG (mul_pos F.S.bp_pos (sub_pos.2 h2)), mul_pos F.S.tp_pos F.S.sm_pos]
-
 
 theorem rimFAP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (hg : F.gg * F.S.ap * F.S.dp = F.a11) (hc : F.a11 * F.S.cp ≤ F.a22 * F.S.ap) (hb : F.S.bp ≤ F.S.am) {lam : ℝ} (hl : 0 < lam)
@@ -3777,7 +3764,6 @@ theorem rimFDP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     rw [e]
     refine robust_smul_pos (robust_cycP6 (F.fzN0 heq h22 hg hb hx) (by have := mul_pos hG (mul_pos F.S.bp_pos F.S.hm_pos); nlinarith [F.S.tm_pos]) hw0 hwm) (mul_pos hA11 hρ)
 
-
 theorem rimF_lamP (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (hg : F.gg * F.S.ap * F.S.dp = F.a11) (hc : F.a11 * F.S.cp ≤ F.a22 * F.S.ap) (hb : F.S.bp ≤ F.S.am) {lam : ℝ} (hl : 0 < lam)
     (hlW : lam * F.S.tp * F.S.sp < F.S.bp * (1 - F.S.tp) * F.S.sp + F.S.tp * F.S.kp)
@@ -3796,7 +3782,6 @@ theorem rimF_lamP (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
   · rcases hz with hz | hz
     · exact F.rimFDP_rupert heq h22 hg hc hb hl hlW hW hx hz
     · exact F.rimFBP_rupert heq h22 hg hc hb hl hlW hW hx hz
-
 
 /-- **`thmF_rest3`**: the rims with `m2+` shown (`oW < 0`), rims A+, B+, C+, D+. -/
 theorem thmF_rest3 (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
@@ -3852,7 +3837,6 @@ theorem thmF_rest (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
       have hl2W := H2.lam_lt
       have hw2 : 0 ≤ Ot F.fRho F.S.bp (pU F.S.tp F.S.bp) pV (pW F.S.sp F.S.kp) := hw
       exact F.rimF_lam heq h22 hg hb hl2 hl2W hw2 (le_or_gt _ _) (Or.inr hz)
-
 
 /-- **Theorem F** (`A12 = A11 < A22`, `TF+`: `g a+ d+ = A11`, `A22 a+ ≥ A11 c+`, and `b+ ≤ a-`):
 the view `u' = (-(β + D), D, b+ β)` (`A11 = 1`: `β = A22/A11 - 1`, `g` replaced by `gg/a11`,
@@ -3910,9 +3894,6 @@ noncomputable def T (tp tm : ℝ) : ℝ := tp + tm
 
 /-- `κ = T/(γ t-) - 1/(t+ t-)` of Lemma D. -/
 noncomputable def kappa (tp tm γ : ℝ) : ℝ := (tp + tm) / (γ * tm) - 1 / (tp * tm)
-
-/-- `a = (T - 1)/(T κ)` (the spin). -/
-noncomputable def spin (tp tm γ : ℝ) : ℝ := (tp + tm - 1) / ((tp + tm) * kappa tp tm γ)
 
 /-- `B = 1 - t+ (T-1)/T - (T-1)/(T κ t-)`. -/
 noncomputable def bB (tp tm γ : ℝ) : ℝ :=

@@ -21,7 +21,6 @@ lemma cc0 : cc B P Q W Y 0 = !₂[0,0] := rfl
 lemma cc1 : cc B P Q W Y 1 = !₂[B,0] := rfl
 lemma cc2 : cc B P Q W Y 2 = !₂[P,Q] := rfl
 lemma cc3 : cc B P Q W Y 3 = !₂[W,Y] := rfl
-lemma z01 : (0 : ZMod 4) + 1 = 1 := by decide
 lemma z12 : (1 : ZMod 4) + 1 = 2 := by decide
 lemma z23 : (2 : ZMod 4) + 1 = 3 := by decide
 lemma z30 : (3 : ZMod 4) + 1 = 0 := by decide
@@ -145,7 +144,6 @@ lemma waistW_core (B P Q W Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hQ : 0 < 
   · tcm 0 [hin3]
   · tcm 0 [hin4]
   · tcm 0 [hin5]
-
 
 lemma k84_exist (P Q Y W : ℝ) (hP : 0 < P) (hQ : 0 < Q) (hY : Q < Y) (hW : W < 0) :
     ∃ z eps : ℝ, 0 < z ∧ 0 < eps ∧ z * (W^2 + Y^2) < -W * Y ∧

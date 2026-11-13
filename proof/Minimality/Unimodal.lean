@@ -435,19 +435,6 @@ theorem isRupert_of_unimodalView (V : Finset ℝ³) (R : Matrix (Fin 3) (Fin 3) 
     hz hnd
   exact isRupert_of_firstOrderInward_image V R hR ω τ h
 
-/-- **Lemma 7.4 (exceptional views).**  Horizontal double normals occur only
-for views `u = Rᵀ e_z` on finitely many great circles `l ⟂ u`, determined by `V`
-alone (`badDirs V`, `BadViews.lean`).  Stated without (G1)/(G2): any closed
-cycle of points of `V` with a horizontal double normal is covered. -/
-theorem exists_badPlanes (V : Finset ℝ³) :
-    ∃ Λ : Finset ℝ³, (∀ l ∈ Λ, l ≠ 0) ∧
-      ∀ R ∈ SO3, ∀ (k : ℕ) (x : ZMod k → ℝ³), (∀ i, x i ∈ V) →
-        HasHorizontalDoubleNormal (fun i => proj_xy (R.toEuclideanLin (x i)))
-          (fun i => (R.toEuclideanLin (x i)) 2) →
-        ∃ l ∈ Λ, (R.toEuclideanLin l) 2 = 0 :=
-  ⟨badDirs V, fun _ hl => ne_zero_of_mem_badDirs hl,
-    fun R hR _ x hxV h => exists_badDir_of_hdn V R hR x hxV h⟩
-
 /-- **Theorem 7.5, robust form.**  If every view near `R₀` (rotation or not)
 that avoids the great circles of a finite set `Λ₀` has the silhouette `x` with
 the other points inside and a unimodal silhouette, then `V` is Rupert.  (Used

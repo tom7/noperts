@@ -5,7 +5,6 @@ public import Minimality.Type29Faces
 
 @[expose] public section
 
-
 /-!
 # S0X-D: demonstration, a type-29 edge-view leaf through the type-free interface
 
@@ -48,32 +47,7 @@ noncomputable def s0x_fac29 {x : Fin 7 → ℝ³} (T : Facets29 x) : S0xFac 9 s0
     exacts [T.f012.neg, T.f015.neg, T.f023.neg, T.f035.neg, T.f124.neg, T.f1456.neg,
       T.f234.neg, T.f346.neg, T.f356.neg]
 
-/-- The leaf `s05:1235[BvDv]`. -/
-def s0x_L29s05 : S0xSeg 7 9 4 where
-  i := 0
-  j := 5
-  pat := ![false, false, false, false, true, true, true, true, true]
-  c := ![1, 2, 3, 5]
-
-theorem s0x_L29s05_good : s0x_L29s05.Good s0x_S29 := by decide
-
 variable {x : Fin 7 → ℝ³}
-
-/-- **Type 29, edge view s05** (B, D edge-on): literals `E+ G+ H+` and robust unimodal depths along
-`1 2 3 5` give `IsRupert`. -/
-theorem s0x_29_s05 (T : Facets29 x) (hE : 0 < T.f124.f (x 5) - T.f124.f (x 0))
-    (hG : 0 < T.f234.f (x 5) - T.f234.f (x 0)) (hH : 0 < T.f346.f (x 5) - T.f346.f (x 0))
-    (hU : RobUni (fun a : ZMod 4 => ⟪x (s0x_L29s05.c a), x 5 - x 0⟫)) :
-    IsRupert (univ.image x) := by
-  refine s0x_seg_rupert (s0x_fac29 T) T.inj s0x_L29s05 s0x_L29s05_good ⟨?_, hU⟩
-  intro t h0 h5
-  fin_cases t
-  all_goals first
-    | exact absurd h0 (by decide)
-    | exact absurd h5 (by decide)
-    | exact ⟨fun _ => hE, fun h => absurd h (by decide)⟩
-    | exact ⟨fun _ => hG, fun h => absurd h (by decide)⟩
-    | exact ⟨fun _ => hH, fun h => absurd h (by decide)⟩
 
 end H21
 end Minimality

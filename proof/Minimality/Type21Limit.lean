@@ -113,73 +113,6 @@ noncomputable def Facets21.ofAffine (x : Fin 7 → ℝ³) (hx : Function.Injecti
 
 /-! ### From a certificate to Rupertness -/
 
-/-- **A rim certificate at a view without horizontal double normal** makes a point set in convex
-position, not in a plane, Rupert (Theorem 18.1 with 18.3, at the shape itself). -/
-theorem isRupert_of_rimCert {n : ℕ} (x : Fin n → ℝ³)
-    (hseg : ∀ i j m : Fin n, x m ≠ x i → x m ≠ x j → ∀ s : ℝ, 0 < s → s < 1 →
-      x m ≠ x i + s • (x j - x i))
-    (hsp : ∃ i j l m : Fin n, det3 (x j - x i) (x l - x i) (x m - x i) ≠ 0) {u : ℝ³}
-    (hnd : NoHDNAt (univ.image x) u) (h : RimCert (univ.image x) u) : IsRupert (univ.image x) := by
-  obtain ⟨k, hk, y, hy⟩ := h
-  obtain ⟨lab, -, hat⟩ := hy.toAt
-  have hk0 : NeZero k := ⟨by rcases hk with rfl | rfl | rfl <;> norm_num⟩
-  exact isRupert_of_tendsto_rimCert x hseg hsp lab hat.ne_zero hnd (l := (⊤ : Filter Unit))
-    (fun _ => x) (fun _ => u) (fun _ => tendsto_const_nhds) tendsto_const_nhds
-    (Filter.frequently_top.mpr ⟨(), hat, fun _ _ h => h⟩)
-
-/-- **Type 21 from its facets (Theorem 16.26)**, with the explicit special positions of
-`not_type21_of_isNopert`: `NoPlaneParallel`, `GenPosTie`, no horizontal double normal at the
-edge views, the five planar equators `{4, 5, 1, 6}`, `{0, 3, 1, 6}`, `{0, 3, 4, 5}`,
-`{0, 3, 1, 2}`, `{4, 5, 1, 2}`, the special positions of `T1` at the four vertex crossings
-(`T1View`) and those of the vertex tests of F2 in the four labellings (`F2Views`).  From the
-certificate form `cert_type21_facets` (a rim certificate at a named view) with Theorems 18.1 and
-18.3 at the shape itself. -/
-theorem isRupert_type21_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
-    (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
-    (hA : ∀ i, (i ∈ ({0, 1, 4} : Finset (Fin 7)) → fA (x i) = 0) ∧
-      (i ∉ ({0, 1, 4} : Finset (Fin 7)) → fA (x i) < 0))
-    (hB : ∀ i, (i ∈ ({0, 1, 5} : Finset (Fin 7)) → fB (x i) = 0) ∧
-      (i ∉ ({0, 1, 5} : Finset (Fin 7)) → fB (x i) < 0))
-    (hC : ∀ i, (i ∈ ({0, 2, 5, 6} : Finset (Fin 7)) → fC (x i) = 0) ∧
-      (i ∉ ({0, 2, 5, 6} : Finset (Fin 7)) → fC (x i) < 0))
-    (hD : ∀ i, (i ∈ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) = 0) ∧
-      (i ∉ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) < 0))
-    (hE : ∀ i, (i ∈ ({1, 3, 4} : Finset (Fin 7)) → fE (x i) = 0) ∧
-      (i ∉ ({1, 3, 4} : Finset (Fin 7)) → fE (x i) < 0))
-    (hF : ∀ i, (i ∈ ({1, 3, 5} : Finset (Fin 7)) → fF (x i) = 0) ∧
-      (i ∉ ({1, 3, 5} : Finset (Fin 7)) → fF (x i) < 0))
-    (hG : ∀ i, (i ∈ ({2, 3, 4, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
-      (i ∉ ({2, 3, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
-    (hH : ∀ i, (i ∈ ({2, 3, 5} : Finset (Fin 7)) → fH (x i) = 0) ∧
-      (i ∉ ({2, 3, 5} : Finset (Fin 7)) → fH (x i) < 0))
-    (hpp : NoPlaneParallel (univ.image x)) (hgen : GenPosTie (univ.image x))
-    (hnd : ∀ v ∈ univ.image x, ∀ w ∈ univ.image x, v ≠ w →
-      NoHDNAt ((univ.image x).erase w) (w - v))
-    (hEq : det3 (x 5 - x 4) (x 1 - x 4) (x 6 - x 4) ≠ 0 ∧
-      det3 (x 3 - x 0) (x 1 - x 0) (x 6 - x 0) ≠ 0 ∧
-      det3 (x 3 - x 0) (x 4 - x 0) (x 5 - x 0) ≠ 0 ∧
-      det3 (x 0 - x 3) (x 1 - x 3) (x 2 - x 3) ≠ 0 ∧
-      det3 (x 4 - x 5) (x 1 - x 5) (x 2 - x 5) ≠ 0)
-    (hT1 : T1View (univ.image x) fA fC (x 0) (x 3) (x 4) (x 5) ∧
-      T1View (univ.image x) fA fG (x 4) (x 5) (x 0) (x 3) ∧
-      T1View (univ.image x) fF fC (x 5) (x 4) (x 3) (x 0) ∧
-      T1View (univ.image x) fF fG (x 3) (x 0) (x 5) (x 4))
-    (hF2 : F2Views (univ.image x) (x 0) (x 3) (x 4) (x 5) (x 1) (x 6) (x 2) ∧
-      F2Views (univ.image x) (x 4) (x 5) (x 0) (x 3) (x 1) (x 6) (x 2) ∧
-      F2Views (univ.image x) (x 5) (x 4) (x 3) (x 0) (x 1) (x 2) (x 6) ∧
-      F2Views (univ.image x) (x 3) (x 0) (x 5) (x 4) (x 1) (x 2) (x 6)) :
-    IsRupert (univ.image x) := by
-  let T := Facets21.ofAffine x hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG hH
-  obtain ⟨u, hu, hcert⟩ := cert_type21_facets (L := NoHDNAt (univ.image x)) x hx fA fB fC fD fE
-    fF fG fH hA hB hC hD hE hF hG hH hpp hgen hEq
-    ⟨hT1.1.toL, hT1.2.1.toL, hT1.2.2.1.toL, hT1.2.2.2.toL⟩
-    ⟨hF2.1.toL, hF2.2.1.toL, hF2.2.2.1.toL, hF2.2.2.2.toL⟩
-  refine isRupert_of_rimCert x T.noSeg ⟨2, 0, 3, 6, T.det_ne⟩ ?_ hcert
-  rcases hu with h | ⟨v, hv, w, hw, hvw, -, rfl⟩
-  · exact h
-  · exact noHDNAt_of_erase hvw (hnd v hv w hw hvw)
-      (by simpa only [neg_sub] using (hnd w hw v hv (Ne.symm hvw)).neg)
-
 /-! ### Normal-form shapes from parameters -/
 
 /-- **The normal-form coordinates of type 21** over a commutative ring, in the frame
@@ -648,9 +581,6 @@ noncomputable def detAff (κ : ℝ) (P Q R : ℝ³) : ℝ³ →ᵃ[ℝ] ℝ wher
 theorem detAff_apply (κ : ℝ) (P Q R y : ℝ³) :
     detAff κ P Q R y = κ * det3 (Q - P) (R - P) (y - P) := rfl
 
-theorem detAff_linear (κ : ℝ) (P Q R u : ℝ³) :
-    (detAff κ P Q R).linear u = κ * det3 (Q - P) (R - P) u := rfl
-
 /-- **A facet function is a multiple of the determinant** through three non-collinear points of
 the facet. -/
 theorem Face16.eq_det {x : Fin 7 → ℝ³} {S : Finset (Fin 7)} (F : Face16 x S) {P Q R : Fin 7}
@@ -787,9 +717,6 @@ def UsedV21 : (Fin 7 × Fin 7) ⊕ Fin 8 → Prop
 def NamedP21 (P : (Fin 7 × Fin 7) ⊕ Fin 8 → Prop) (x : Fin 7 → ℝ³) (u : ℝ³) : Prop :=
   ∃ v : (Fin 7 × Fin 7) ⊕ Fin 8, P v ∧ ∃ c : ℝ, c ≠ 0 ∧ u = c • view21 x v
 
-/-- `u` is a nonzero multiple of a named view used by the cover. -/
-abbrev Named21 (x : Fin 7 → ℝ³) (u : ℝ³) : Prop := NamedP21 UsedV21 x u
-
 /-- **The edges of the cap labelling are the thirteen edges.** -/
 theorem edge21_labels {x : Fin 7 → ℝ³} (hx : Function.Injective x) {i j : Fin 7}
     (h : Edge21 (x 0) (x 3) (x 4) (x 5) (x 1) (x 6) (x 2) (x i) (x j)) :
@@ -893,10 +820,6 @@ theorem isRupert_of_cert_seq21 {x : Fin 7 → ℝ³} (T : Facets21 x)
 
 /-! ### The cover at a generic normal-form shape -/
 
-/-- The named vertex crossings of `y`, as a condition on views. -/
-def NamedVtx21 (y : Fin 7 → ℝ³) (u : ℝ³) : Prop :=
-  ∃ t : Fin 8, ∃ c : ℝ, c ≠ 0 ∧ u = c • vtxView21 y t
-
 theorem pair_eq_pair21 {a b i j : Fin 7} (h : ({i, j} : Finset (Fin 7)) = {a, b}) :
     (i = a ∧ j = b) ∨ (i = b ∧ j = a) := by
   have h' := congrArg (fun s : Finset (Fin 7) => (s : Set (Fin 7))) h
@@ -917,11 +840,6 @@ def UsedX21 : (Fin 7 × Fin 7) ⊕ Fin 8 → Prop
   | .inl (i, j) => ({i, j} : Finset (Fin 7)) ∈ edgeSet21 ∧ ({i, j} : Finset (Fin 7)) ∉ qEdgeSet21 ∧
       ({i, j} : Finset (Fin 7)) ∉ wEdgeSet21
   | .inr t => 4 ≤ t.val
-
-theorem UsedX21.used {v : (Fin 7 × Fin 7) ⊕ Fin 8} (h : UsedX21 v) : UsedV21 v := by
-  rcases v with ⟨i, j⟩ | t
-  · exact h.1
-  · trivial
 
 /-- **Tier Q's data at the edge `P C'`** in labels (`QEdge21` in both directions). -/
 def QE21 (y : Fin 7 → ℝ³) (P P' R R' D C' : Fin 7) : Prop :=
@@ -1041,20 +959,6 @@ theorem REdge21.rimCert {K : Finset ℝ³} {a a' b b' c v w : ℝ³} (h : REdge2
   obtain ⟨A, B, -, -, h | h | h | h⟩ := h
   exacts [h.rimCert, h.rimCert, h.rimCert3, h.rimCert3]
 
-/-- A rim certificate at a segment view of an edge. -/
-theorem cert21_seg {y : Fin 7 → ℝ³} {i j : Fin 7} (he : ({i, j} : Finset (Fin 7)) ∈ edgeSet21)
-    (h : RimCert (univ.image y) (y j - y i)) : Cert21 y :=
-  ⟨_, ⟨.inl (i, j), he, 1, one_ne_zero, (one_smul _ _).symm⟩, h⟩
-
-theorem CertW21.cert21 {y : Fin 7 → ℝ³} (h : CertW21 y) : Cert21 y := by
-  rcases h with (h | h) | (h | h) | (h | h)
-  · exact cert21_seg (by decide) h.rimCert
-  · exact cert21_seg (i := 5) (j := 0) (by decide) h.rimCert
-  · exact cert21_seg (i := 4) (j := 3) (by decide) h.rimCert
-  · exact cert21_seg (i := 3) (j := 4) (by decide) h.rimCert
-  · exact cert21_seg (i := 6) (j := 2) (by decide) h.rimCert
-  · exact cert21_seg (i := 2) (j := 6) (by decide) h.rimCert
-
 theorem QEdge21.rimCert {K : Finset ℝ³} {P P' R R' c D C' v w : ℝ³}
     (h : QEdge21 K P P' R R' c D C' v w) : RimCert K (w - v) := by
   have qa : ∀ {a b c' : ℝ³}, QAData K v w a b c' → RimCert K (w - v) := fun h' => by
@@ -1062,24 +966,6 @@ theorem QEdge21.rimCert {K : Finset ℝ³} {P P' R R' c D C' v w : ℝ³}
     exacts [h''.2.rimCert4, h''.2.rimCert4]
   rcases h with ⟨-, -, h | h⟩ | ⟨-, -, h | h | h | h⟩
   exacts [qa h, qa h, qa h, qa h, h.rimCert4, h.rimCert4]
-
-theorem QE21.cert21 {y : Fin 7 → ℝ³} {P P' R R' D C' : Fin 7} (h : QE21 y P P' R R' D C')
-    (he : ({P, C'} : Finset (Fin 7)) ∈ edgeSet21) : Cert21 y := by
-  rcases h with h | h
-  · exact ⟨_, ⟨.inl (P, C'), he, 1, one_ne_zero, (one_smul _ _).symm⟩, h.rimCert⟩
-  · refine ⟨_, ⟨.inl (C', P), ?_, 1, one_ne_zero, (one_smul _ _).symm⟩, h.rimCert⟩
-    show ({C', P} : Finset (Fin 7)) ∈ edgeSet21
-    rwa [Finset.pair_comm]
-
-/-- Every certificate with data is a certificate at a named view. -/
-theorem CertX21.toCert21 {y : Fin 7 → ℝ³} (h : CertX21 y) : Cert21 y := by
-  rcases h with ⟨u, ⟨v, hv, c, hc, rfl⟩, hr⟩ | h | h | ⟨t, ht, c, hc, h⟩
-  · exact ⟨_, ⟨v, hv.used, c, hc, rfl⟩, hr⟩
-  · rcases h with h | h | h | h
-    exacts [h.cert21 (by decide), h.cert21 (by decide), h.cert21 (by decide),
-      h.cert21 (by decide)]
-  · exact h.cert21
-  · exact ⟨_, ⟨.inr t, trivial, c, hc, rfl⟩, h.rimCert ht⟩
 
 theorem Cert21.of_certV {y : Fin 7 → ℝ³} (hy : Function.Injective y)
     (h : CertV (univ.image y) (VtxL21 y)
@@ -1699,22 +1585,6 @@ theorem exists_certSeq21 {x : Fin 7 → ℝ³} (T : Facets21 x) (htie : OneTie21
       IndepF.of_noTie (noTieAt_or htie hsubK (by decide) (hv 3) (hv 6)),
       IndepF.of_noTie (noTieAt_or htie hsubK (by decide) (hv 2) (hv 7))⟩
 
-
-/-- **Type 21 outside the HDN set and codimension 2** (§18.6 step 2).  A type-21 shape `x`
-(facets `T`) with at most one tie at its named views (`OneTie21`: the segments and the eight
-vertex crossings of the cover) and no horizontal double normal at them is Rupert.  No general
-position, no sign condition or Gale equality of the cover, no (G1), no planar equator, no switch
-surface: `x` is a limit of shapes `K_n` off the special positions of the cover (`genPoly21`) with
-the same tie as `x` (restored by a unimodular shear), each `K_n` has a certificate
-(`cert21_of_generic`: at most one tie at each named view, no tie along `a − b` if `a, b` tie at a
-view of `T1`, a tie at no more than one view of F2), a subsequence carries one labelled
-certificate, and the limit lemma applies. -/
-theorem isRupert_type21_limit {x : Fin 7 → ℝ³} (T : Facets21 x)
-    (hnd : ∀ v, UsedV21 v → view21 x v ≠ 0 → NoHDNAt (univ.image x) (view21 x v))
-    (htie : OneTie21 x) : IsRupert (univ.image x) := by
-  obtain ⟨K, hK, hc⟩ := exists_certSeq21 T htie
-  exact isRupert_of_cert_seq21 T hnd K hK (hc.mono fun n hn => ⟨hn.1.toCert21, hn.2⟩)
-
 /-- The two facet normals at a vertex crossing are orthogonal to its view. -/
 theorem vtxView21_perp {x : Fin 7 → ℝ³} {SP SQ : Finset (Fin 7)} (FP : Face16 x SP)
     (FQ : Face16 x SQ) (t : Fin 8) (h0 : (vtx21 t).1.1 ∈ SP) (h1 : (vtx21 t).1.2.1 ∈ SP)
@@ -1723,79 +1593,6 @@ theorem vtxView21_perp {x : Fin 7 → ℝ³} {SP SQ : Finset (Fin 7)} (FP : Face
     ⟪FP.N, vtxView21 x t⟫ = 0 ∧ ⟪FQ.N, vtxView21 x t⟫ = 0 :=
   ⟨inner_planeLine_left (FP.inner_sub h1 h0) (FP.inner_sub h2 h0),
     inner_planeLine_right (FQ.inner_sub k1 k0) (FQ.inner_sub k2 k0)⟩
-
-/-- **Type 21 outside the HDN set and codimension 2, from the facets**: seven points labelled so
-that `014, 015, 0256, 046, 134, 135, 2346, 235` are facets (functionals negative off them) are
-Rupert, if there is no horizontal double normal at the view along any segment and along the
-lines of the eight facet pairs `014/0256`, `014/2346`, `135/0256`, `135/2346`, `046/134`,
-`046/015`, `235/134`, `235/015`, and at most one tie at these views (`OneTie21`). -/
-theorem isRupert_type21_limit_facets (x : Fin 7 → ℝ³) (hx : Function.Injective x)
-    (fA fB fC fD fE fF fG fH : ℝ³ →ᵃ[ℝ] ℝ)
-    (hA : ∀ i, (i ∈ ({0, 1, 4} : Finset (Fin 7)) → fA (x i) = 0) ∧
-      (i ∉ ({0, 1, 4} : Finset (Fin 7)) → fA (x i) < 0))
-    (hB : ∀ i, (i ∈ ({0, 1, 5} : Finset (Fin 7)) → fB (x i) = 0) ∧
-      (i ∉ ({0, 1, 5} : Finset (Fin 7)) → fB (x i) < 0))
-    (hC : ∀ i, (i ∈ ({0, 2, 5, 6} : Finset (Fin 7)) → fC (x i) = 0) ∧
-      (i ∉ ({0, 2, 5, 6} : Finset (Fin 7)) → fC (x i) < 0))
-    (hD : ∀ i, (i ∈ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) = 0) ∧
-      (i ∉ ({0, 4, 6} : Finset (Fin 7)) → fD (x i) < 0))
-    (hE : ∀ i, (i ∈ ({1, 3, 4} : Finset (Fin 7)) → fE (x i) = 0) ∧
-      (i ∉ ({1, 3, 4} : Finset (Fin 7)) → fE (x i) < 0))
-    (hF : ∀ i, (i ∈ ({1, 3, 5} : Finset (Fin 7)) → fF (x i) = 0) ∧
-      (i ∉ ({1, 3, 5} : Finset (Fin 7)) → fF (x i) < 0))
-    (hG : ∀ i, (i ∈ ({2, 3, 4, 6} : Finset (Fin 7)) → fG (x i) = 0) ∧
-      (i ∉ ({2, 3, 4, 6} : Finset (Fin 7)) → fG (x i) < 0))
-    (hH : ∀ i, (i ∈ ({2, 3, 5} : Finset (Fin 7)) → fH (x i) = 0) ∧
-      (i ∉ ({2, 3, 5} : Finset (Fin 7)) → fH (x i) < 0))
-    (hnd : ∀ v ∈ univ.image x, ∀ w ∈ univ.image x, v ≠ w →
-      NoHDNAt ((univ.image x).erase w) (w - v))
-    (hV : NoHDNAff (univ.image x) fA fC ∧ NoHDNAff (univ.image x) fA fG ∧
-      NoHDNAff (univ.image x) fF fC ∧ NoHDNAff (univ.image x) fF fG ∧
-      NoHDNAff (univ.image x) fD fE ∧ NoHDNAff (univ.image x) fD fB ∧
-      NoHDNAff (univ.image x) fH fE ∧ NoHDNAff (univ.image x) fH fB)
-    (htie : OneTie21 x) : IsRupert (univ.image x) := by
-  let T := Facets21.ofAffine x hx fA fB fC fD fE fF fG fH hA hB hC hD hE hF hG hH
-  refine isRupert_type21_limit T (fun v _ hv => ?_) htie
-  rcases v with ⟨i, j⟩ | t
-  · have hij : x i ≠ x j := fun h => hv (by simp [view21, h])
-    have mi := mem_image_of_mem x (mem_univ i)
-    have mj := mem_image_of_mem x (mem_univ j)
-    exact noHDNAt_of_erase hij (hnd _ mi _ mj hij)
-      (by simpa only [neg_sub] using (hnd _ mj _ mi (Ne.symm hij)).neg)
-  · obtain ⟨V1, V2, V3, V4, V5, V6, V7, V8⟩ := hV
-    fin_cases t
-    · obtain ⟨p, q⟩ := vtxView21_perp (x := x) T.f014 T.f0256 0 (by decide) (by decide)
-        (by decide) (by decide) (by decide) (by decide)
-      exact V1 _ hv (by rw [← Face16.ofAffine_inner fA hA]; exact p)
-        (by rw [← Face16.ofAffine_inner fC hC]; exact q)
-    · obtain ⟨p, q⟩ := vtxView21_perp (x := x) T.f014 T.f2346 1 (by decide) (by decide)
-        (by decide) (by decide) (by decide) (by decide)
-      exact V2 _ hv (by rw [← Face16.ofAffine_inner fA hA]; exact p)
-        (by rw [← Face16.ofAffine_inner fG hG]; exact q)
-    · obtain ⟨p, q⟩ := vtxView21_perp (x := x) T.f135 T.f0256 2 (by decide) (by decide)
-        (by decide) (by decide) (by decide) (by decide)
-      exact V3 _ hv (by rw [← Face16.ofAffine_inner fF hF]; exact p)
-        (by rw [← Face16.ofAffine_inner fC hC]; exact q)
-    · obtain ⟨p, q⟩ := vtxView21_perp (x := x) T.f135 T.f2346 3 (by decide) (by decide)
-        (by decide) (by decide) (by decide) (by decide)
-      exact V4 _ hv (by rw [← Face16.ofAffine_inner fF hF]; exact p)
-        (by rw [← Face16.ofAffine_inner fG hG]; exact q)
-    · obtain ⟨p, q⟩ := vtxView21_perp (x := x) T.f046 T.f134 4 (by decide) (by decide)
-        (by decide) (by decide) (by decide) (by decide)
-      exact V5 _ hv (by rw [← Face16.ofAffine_inner fD hD]; exact p)
-        (by rw [← Face16.ofAffine_inner fE hE]; exact q)
-    · obtain ⟨p, q⟩ := vtxView21_perp (x := x) T.f046 T.f015 5 (by decide) (by decide)
-        (by decide) (by decide) (by decide) (by decide)
-      exact V6 _ hv (by rw [← Face16.ofAffine_inner fD hD]; exact p)
-        (by rw [← Face16.ofAffine_inner fB hB]; exact q)
-    · obtain ⟨p, q⟩ := vtxView21_perp (x := x) T.f235 T.f134 6 (by decide) (by decide)
-        (by decide) (by decide) (by decide) (by decide)
-      exact V7 _ hv (by rw [← Face16.ofAffine_inner fH hH]; exact p)
-        (by rw [← Face16.ofAffine_inner fE hE]; exact q)
-    · obtain ⟨p, q⟩ := vtxView21_perp (x := x) T.f235 T.f015 7 (by decide) (by decide)
-        (by decide) (by decide) (by decide) (by decide)
-      exact V8 _ hv (by rw [← Face16.ofAffine_inner fH hH]; exact p)
-        (by rw [← Face16.ofAffine_inner fB hB]; exact q)
 
 end Minimality
 

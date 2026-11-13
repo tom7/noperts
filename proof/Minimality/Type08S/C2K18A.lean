@@ -4,7 +4,6 @@ public import Minimality.Type08S.C2K17F2A
 
 @[expose] public section
 
-
 /-!
 # K18 / A: the general tie-break lemmas (cone cells with a ray witness)
 
@@ -124,29 +123,6 @@ theorem k18_cone_cell (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r ≠
     subst e
     exact hlex _ _ (hseg lam h0 h1) hinj
 
-/-- **One cell at a tie**: the cone list is `m :: L` (`m` the tie functional, cell needs `m·v > 0`); the ray witness
-only has to make `m` lex positive at the ray, the rest of `L` as usual. -/
-theorem k18_tie_one (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r ≠ 0) {k : ℕ} [NeZero k] (hk : 3 ≤ k)
-    (Y : ZMod k → ℝ × ℝ × ℝ) (hYinj : ∀ i j, Y i = Y j → i = j) (hmem : ∀ i, fpoint p q r d (Y i) ∈ V)
-    (m : ℝ × ℝ) (L : List (ℝ × ℝ))
-    (hcyc : ∀ v1 v2 : ℝ, k18Cone (m :: L) v1 v2 → ∀ D : ℝ, 0 < D → ∀ i j : ZMod k, j ≠ i → j ≠ i + 1 →
-      TSc D (Y (i + 1) - Y i) (Y j - Y i) (v1, v2, 0))
-    (hrest : ∀ y ∈ V, (∀ j, y ≠ fpoint p q r d (Y j)) → ∃ t, y = fpoint p q r d t ∧
-      ∀ v1 v2 : ℝ, k18Cone (m :: L) v1 v2 → ∀ D : ℝ, 0 < D → ∀ i, TSc D (Y (i + 1) - Y i) (t - Y i) (v1, v2, 0))
-    (hlex : ∀ v1 v2 : ℝ, k18Cone (m :: L) v1 v2 →
-      (∀ i j, ⟪fpoint p q r d (Y i), r⟫ = ⟪fpoint p q r d (Y j), r⟫ →
-        ⟪fpoint p q r d (Y i), fcomb p q r v1 v2 0⟫ = ⟪fpoint p q r d (Y j), fcomb p q r v1 v2 0⟫ → i = j) →
-      LexUni (fun i => ⟪fpoint p q r d (Y i), r⟫) (fun i => ⟪fpoint p q r d (Y i), fcomb p q r v1 v2 0⟫))
-    {ρ1 ρ2 δ1 δ2 : ℝ} (hm : k18LexPos (m.1 * ρ1 + m.2 * ρ2) (m.1 * δ1 + m.2 * δ2))
-    (hray : ∀ l ∈ L, k18LexPos (l.1 * ρ1 + l.2 * ρ2) (l.1 * δ1 + l.2 * δ2)) :
-    HasLexCellAt V r :=
-  k18_cone_cell V p q r d hΔ hk Y hYinj hmem (m :: L) (List.cons_ne_nil _ _) hcyc hrest hlex
-    (by
-      intro l hl
-      rcases List.mem_cons.1 hl with rfl | hl
-      · exact hm
-      · exact hray l hl)
-
 /-- Data of one frame cone cell at the view `r` (for the two-cell lemmas). -/
 structure K18Cell (V : Finset ℝ³) (p q r d : ℝ³) (C : ℝ → ℝ → Prop) : Prop where
   cell : ∀ {ρ1 ρ2 δ1 δ2 : ℝ} (L : List (ℝ × ℝ)), (∀ v1 v2, k18Cone L v1 v2 → C v1 v2) → L ≠ [] →
@@ -192,31 +168,6 @@ theorem k18_tie_two {V : Finset ℝ³} {p q r d : ℝ³} {m : ℝ × ℝ} {L1 L2
     rcases List.mem_cons.1 hl with rfl | hl
     · exact Or.inl hpos
     · exact hr1 l hl
-
-/-- **Second order at the shared ray**: if `m·ρ = 0`, the two directions decide (`m·δ1 > 0` gives cell 1,
-`m·ε2 < 0` gives cell 2).  With `δ1 = -ε2` (cones on the two sides of `ρ`), `m·δ1 ≠ 0` suffices. -/
-theorem k18_tie_two' {V : Finset ℝ³} {p q r d : ℝ³} {m : ℝ × ℝ} {L1 L2 : List (ℝ × ℝ)}
-    (h1 : K18Cell V p q r d (k18Cone (m :: L1))) (h2 : K18Cell V p q r d (k18Cone ((-m.1, -m.2) :: L2)))
-    {ρ1 ρ2 δ1 δ2 ε1 ε2 : ℝ}
-    (hr1 : ∀ l ∈ L1, k18LexPos (l.1 * ρ1 + l.2 * ρ2) (l.1 * δ1 + l.2 * δ2))
-    (hr2 : ∀ l ∈ L2, k18LexPos (l.1 * ρ1 + l.2 * ρ2) (l.1 * ε1 + l.2 * ε2))
-    (hm : k18LexPos (m.1 * ρ1 + m.2 * ρ2) (m.1 * δ1 + m.2 * δ2) ∨
-      k18LexPos (-(m.1 * ρ1 + m.2 * ρ2)) (-(m.1 * ε1 + m.2 * ε2))) : HasLexCellAt V r := by
-  rcases hm with hm | hm
-  · refine h1.cell (ρ1 := ρ1) (ρ2 := ρ2) (δ1 := δ1) (δ2 := δ2) (m :: L1) (fun _ _ h => h) (List.cons_ne_nil _ _) ?_
-    intro l hl
-    rcases List.mem_cons.1 hl with rfl | hl
-    · exact hm
-    · exact hr1 l hl
-  · refine h2.cell (ρ1 := ρ1) (ρ2 := ρ2) (δ1 := ε1) (δ2 := ε2) ((-m.1, -m.2) :: L2) (fun _ _ h => h) (List.cons_ne_nil _ _) ?_
-    intro l hl
-    rcases List.mem_cons.1 hl with rfl | hl
-    · simp only; convert hm using 2 <;> ring
-    · exact hr2 l hl
-
-/-- Lex order from a depth tie and the tilt weights. -/
-theorem k18_lexLt_tie {z1 z2 w1 w2 : ℝ} (hz : z1 = z2) (hw : w1 < w2) : LexLt (z1, w1) (z2, w2) :=
-  Or.inr ⟨hz, hw⟩
 
 /-- The tie functional of a frame-point pair: `w(s) - w(t) = m · v` with `m = (⟪s-t, p⟫, ⟪s-t, q⟫)`. -/
 theorem k18_wdiff (p q r d : ℝ³) (s t : ℝ × ℝ × ℝ) (v1 v2 : ℝ) :

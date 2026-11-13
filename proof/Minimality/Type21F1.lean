@@ -205,63 +205,6 @@ theorem type21_Y_robust {z0 z6 z2 z5 z1 α β p q A B : ℝ} (hα : 0 < α) (hβ
 
 /-! ### A five-corner edge view -/
 
-/-- **Theorem 8.9 with Theorem 7.3 for a five-corner rim, in either orientation**: the rim
-`x₀ … x₄` passes the fifteen determinant tests at `u` with the sign `σ`, every other point
-except `w = x₀ − h u` is strictly inside, the depths are unimodal and there is no horizontal
-double normal: `V` is Rupert (`isRupert_of_edgeView`, at `u` or `−u`). -/
-theorem isRupert_quint_rim (V : Finset ℝ³) (u : ℝ³) (hu : u ≠ 0) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
-    {x₀ x₁ x₂ x₃ x₄ w : ℝ³} {h : ℝ} (hh : h ≠ 0) (hw : w = x₀ - h • u) (hwV : w ∈ V)
-    (hxV : ∀ i, quint x₀ x₁ x₂ x₃ x₄ i ∈ V)
-    (hcyc : ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 → 0 < σ * det3
-      (quint x₀ x₁ x₂ x₃ x₄ (i + 1) - quint x₀ x₁ x₂ x₃ x₄ i)
-      (quint x₀ x₁ x₂ x₃ x₄ j - quint x₀ x₁ x₂ x₃ x₄ i) u)
-    (hrest : ∀ y ∈ V, y ≠ w → (∀ j, y ≠ quint x₀ x₁ x₂ x₃ x₄ j) → ∀ i, 0 < σ * det3
-      (quint x₀ x₁ x₂ x₃ x₄ (i + 1) - quint x₀ x₁ x₂ x₃ x₄ i) (y - quint x₀ x₁ x₂ x₃ x₄ i) u)
-    (hz : IsCyclicUnimodal fun i => ⟪quint x₀ x₁ x₂ x₃ x₄ i, u⟫) (hnd : NoHDNAt (V.erase w) u) :
-    IsRupert V := by
-  rcases hσ with rfl | rfl
-  · simp only [one_mul] at hcyc hrest
-    exact isRupert_of_edgeView V ∅ u hu (k := 5) (by norm_num) (quint x₀ x₁ x₂ x₃ x₄) 0 w h hwV
-      hw hh hxV (fun _ => notMem_empty _) hcyc (fun y hy _ hyw hyx => hrest y hy hyw hyx) hz hnd
-      (fun m hm => absurd hm (notMem_empty m))
-  · refine isRupert_of_edgeView V ∅ (-u) (neg_ne_zero.mpr hu) (k := 5) (by norm_num)
-      (quint x₀ x₁ x₂ x₃ x₄) 0 w (-h) hwV (by rw [hw, neg_smul_neg]; rfl) (neg_ne_zero.mpr hh)
-      hxV (fun _ => notMem_empty _) (fun i j hi hj => ?_) (fun y hy _ hyw hyx i => ?_) ?_
-      hnd.neg (fun m hm => absurd hm (notMem_empty m))
-    · have := hcyc i j hi hj; rw [det3_neg_right]; linarith
-    · have := hrest y hy hyw hyx i; rw [det3_neg_right]; linarith
-    · simp only [inner_neg_right]
-      refine isCyclicUnimodal_of_localMin_unique (by norm_num) _ (fun a b e => hz.1 (neg_injective e)) ?_
-      intro a b h1 h2 h3 h4
-      have hc := Finset.card_le_one.mp hz.2.le
-      exact hc a (by simp only [Finset.mem_filter, Finset.mem_univ, true_and]; constructor <;> linarith)
-        b (by simp only [Finset.mem_filter, Finset.mem_univ, true_and]; constructor <;> linarith)
-
-/-- **`isRupert_quint_rim` with ties** (Theorem 18.3): a robustly unimodal five-corner rim. -/
-theorem isRupert_quint_rim_robust (V : Finset ℝ³) (u : ℝ³) (hu : u ≠ 0) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
-    {x₀ x₁ x₂ x₃ x₄ w : ℝ³} {h : ℝ} (hh : h ≠ 0) (hw : w = x₀ - h • u) (hwV : w ∈ V)
-    (hxV : ∀ i, quint x₀ x₁ x₂ x₃ x₄ i ∈ V)
-    (hcyc : ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 → 0 < σ * det3
-      (quint x₀ x₁ x₂ x₃ x₄ (i + 1) - quint x₀ x₁ x₂ x₃ x₄ i)
-      (quint x₀ x₁ x₂ x₃ x₄ j - quint x₀ x₁ x₂ x₃ x₄ i) u)
-    (hrest : ∀ y ∈ V, y ≠ w → (∀ j, y ≠ quint x₀ x₁ x₂ x₃ x₄ j) → ∀ i, 0 < σ * det3
-      (quint x₀ x₁ x₂ x₃ x₄ (i + 1) - quint x₀ x₁ x₂ x₃ x₄ i) (y - quint x₀ x₁ x₂ x₃ x₄ i) u)
-    (hz : IsRobustUnimodal fun i => ⟪quint x₀ x₁ x₂ x₃ x₄ i, u⟫) (hnd : NoHDNAt (V.erase w) u) :
-    IsRupert V := by
-  rcases hσ with rfl | rfl
-  · simp only [one_mul] at hcyc hrest
-    exact isRupert_of_edgeView_robust V ∅ u hu (k := 5) (by norm_num) (quint x₀ x₁ x₂ x₃ x₄) 0 w h hwV
-      hw hh hxV (fun _ => notMem_empty _) hcyc (fun y hy _ hyw hyx => hrest y hy hyw hyx) hz hnd
-      (fun m hm => absurd hm (notMem_empty m))
-  · refine isRupert_of_edgeView_robust V ∅ (-u) (neg_ne_zero.mpr hu) (k := 5) (by norm_num)
-      (quint x₀ x₁ x₂ x₃ x₄) 0 w (-h) hwV (by rw [hw, neg_smul_neg]; rfl) (neg_ne_zero.mpr hh)
-      hxV (fun _ => notMem_empty _) (fun i j hi hj => ?_) (fun y hy _ hyw hyx i => ?_) ?_
-      hnd.neg (fun m hm => absurd hm (notMem_empty m))
-    · have := hcyc i j hi hj; rw [det3_neg_right]; linarith
-    · have := hrest y hy hyw hyx i; rw [det3_neg_right]; linarith
-    · simp only [inner_neg_right]
-      exact hz.neg
-
 /-- **`isRupert_quint_rim_robust` in certificate form**: a rim certificate at `σ u`. -/
 theorem rimCert_quint_rim_robust (V : Finset ℝ³) (u : ℝ³) (hu : u ≠ 0) {σ : ℝ}
     (hσ : σ = 1 ∨ σ = -1)

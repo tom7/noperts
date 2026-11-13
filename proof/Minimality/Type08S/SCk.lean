@@ -1,6 +1,6 @@
 module
 
-public import Minimality.Type08S.SCi
+public import Minimality.Type08S.SCh
 
 @[expose] public section
 
@@ -57,70 +57,7 @@ theorem frame_ex_pos {w u v : ℝ³} (hdet : det3 w u v ≠ 0) :
     · simpa using h
   · exact ⟨e1, e2, e3, ⟪u, e3⟫, hF, hu3.ne', hu, hv2, h, hw2⟩
 
-/-- Inequality part of `SCfN2` (frame numbers). -/
-def N2Nums (σ L zp zx zf Xr Yr zr Xg Yg zg Xd zd Xa Ya za : ℝ) : Prop :=
-  0 < L ∧ 0 < σ * (zx - zp) ∧
-    0 < (Xg - Xr) * (-Yr) - (Yg - Yr) * (L - Xr) ∧ 0 < Yr ∧ 0 < Yg ∧
-    0 < Yg * Xr - Xg * Yr ∧ ClassC5 L zx zf Xr Yr zr Xg Yg zg ∧
-    0 < Xd ∧ Xd < L ∧ 0 < σ * (L * (zd - zp) - (zf - zp) * Xd) ∧
-    0 < L * Yg ∧ 0 < L * Ya ∧ 0 < (Xg - L) * Ya - Yg * (Xa - L) ∧
-    0 < -Xg * (Ya - Yg) + Yg * (Xa - Xg)
-
-/-- **Frame dictionary for N2 `K_c`** (item 1a): in any right-handed frame with `u = κ e3`, the
-seven points have coordinates `⟪· - a', e_i⟫` (so `a'` is the origin, `zp = 0`), and `SCfN2`
-holds as soon as the inequalities `N2Nums` hold for these coordinates. -/
-theorem SCfN2_of_frame {u a a' b b' c c' d : ℝ³} (hF : Fr e1 e2 e3) {κ : ℝ} (hκ : κ ≠ 0)
-    (hu : u = κ • e3) (σ : ℝ)
-    (H : N2Nums σ ⟪b - a', e1⟫ 0 ⟪c - a', e3⟫ ⟪b - a', e3⟫ ⟪c' - a', e1⟫ ⟪c' - a', e2⟫ ⟪c' - a', e3⟫
-      ⟪b' - a', e1⟫ ⟪b' - a', e2⟫ ⟪b' - a', e3⟫ ⟪d - a', e1⟫ ⟪d - a', e3⟫ ⟪a - a', e1⟫
-      ⟪a - a', e2⟫ ⟪a - a', e3⟫)
-    (hc0 : ⟪c - a', e1⟫ = 0) (hc2 : ⟪c - a', e2⟫ = 0) (hb2 : ⟪b - a', e2⟫ = 0)
-    (hd2 : ⟪d - a', e2⟫ = 0) :
-    SCfN2 u a a' b b' c c' d := by
-  refine ⟨e1, e2, e3, a', σ, ⟪b - a', e1⟫, 0, ⟪c - a', e3⟫, ⟪b - a', e3⟫, ⟪c' - a', e1⟫, ⟪c' - a', e2⟫,
-    ⟪c' - a', e3⟫, ⟪b' - a', e1⟫, ⟪b' - a', e2⟫, ⟪b' - a', e3⟫, ⟪d - a', e1⟫, ⟪d - a', e3⟫,
-    ⟪a - a', e1⟫, ⟪a - a', e2⟫, ⟪a - a', e3⟫, κ, hF, hκ, hu, ?_, ?_, ?_, ?_, ?_, ?_, ?_, H⟩
-  · have := pc_coords hF a' a'; simp at this; simp [pc]
-  · have := pc_coords hF a' c; rw [hc0, hc2] at this; exact this
-  · have := pc_coords hF a' b; rw [hb2] at this; exact this
-  · exact pc_coords hF a' c'
-  · exact pc_coords hF a' b'
-  · have := pc_coords hF a' d; rw [hd2] at this; exact this
-  · exact pc_coords hF a' a
-
-/-- Inequality part of `SCfT4` (frame numbers). -/
-def T4Nums (σ L zp zx zf Xr Yr zr Xg Yg zg Xd zd lam za : ℝ) : Prop :=
-  0 < L ∧ 0 < σ * (zx - zp) ∧
-    0 < (Xg - Xr) * (-Yr) - (Yg - Yr) * (L - Xr) ∧ 0 < Yr ∧ 0 < Yg ∧
-    0 < Yg * Xr - Xg * Yr ∧ ClassC5 L zx zf Xr Yr zr Xg Yg zg ∧
-    0 < Xd ∧ Xd < L ∧ 0 < σ * (L * (zd - zp) - (zf - zp) * Xd) ∧
-    0 < lam ∧ lam < 1 ∧ σ * (za - ((1 - lam) * zx + lam * zg)) < 0
-
-/-- **Frame dictionary for T4 (`K_b`, `K_2`)**: origin `xp`, coordinates `⟪· - xp, e_i⟫`; `x - xp`
-is along `e3`, `f - xp` and `p - xp` are edge-on (`e2`-coordinate 0), and the G-middle `q` lies
-over the point `lam * (g - xp)` of the screen. -/
-theorem SCfT4_of_frame {u xp x f r g p q : ℝ³} (hF : Fr e1 e2 e3) {κ : ℝ} (hκ : κ ≠ 0)
-    (hu : u = κ • e3) (σ lam : ℝ)
-    (H : T4Nums σ ⟪f - xp, e1⟫ 0 ⟪x - xp, e3⟫ ⟪f - xp, e3⟫ ⟪r - xp, e1⟫ ⟪r - xp, e2⟫ ⟪r - xp, e3⟫
-      ⟪g - xp, e1⟫ ⟪g - xp, e2⟫ ⟪g - xp, e3⟫ ⟪p - xp, e1⟫ ⟪p - xp, e3⟫ lam ⟪q - xp, e3⟫)
-    (hx1 : ⟪x - xp, e1⟫ = 0) (hx2 : ⟪x - xp, e2⟫ = 0) (hf2 : ⟪f - xp, e2⟫ = 0)
-    (hp2 : ⟪p - xp, e2⟫ = 0) (hq1 : ⟪q - xp, e1⟫ = lam * ⟪g - xp, e1⟫)
-    (hq2 : ⟪q - xp, e2⟫ = lam * ⟪g - xp, e2⟫) :
-    SCfT4 u xp x f r g p q := by
-  refine ⟨e1, e2, e3, xp, σ, ⟪f - xp, e1⟫, 0, ⟪x - xp, e3⟫, ⟪f - xp, e3⟫, ⟪r - xp, e1⟫, ⟪r - xp, e2⟫,
-    ⟪r - xp, e3⟫, ⟪g - xp, e1⟫, ⟪g - xp, e2⟫, ⟪g - xp, e3⟫, ⟪p - xp, e1⟫, ⟪p - xp, e3⟫, lam,
-    ⟪q - xp, e3⟫, κ, hF, hκ, hu, ?_, ?_, ?_, ?_, ?_, ?_, ?_, H⟩
-  · have := pc_coords hF xp xp; simp at this; simp [pc]
-  · have := pc_coords hF xp x; rw [hx1, hx2] at this; exact this
-  · have := pc_coords hF xp f; rw [hf2] at this; exact this
-  · exact pc_coords hF xp r
-  · exact pc_coords hF xp g
-  · have := pc_coords hF xp p; rw [hp2] at this; exact this
-  · have := pc_coords hF xp q; rw [hq1, hq2] at this; exact this
-
 end Type08Sp
 end Minimality
 
-#print axioms Minimality.Type08Sp.SCfN2_of_frame
 #print axioms Minimality.Type08Sp.frame_ex_pos
-#print axioms Minimality.Type08Sp.SCfT4_of_frame

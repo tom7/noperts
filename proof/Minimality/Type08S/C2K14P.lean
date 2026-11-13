@@ -4,7 +4,6 @@ public import Minimality.Type08S.C2K17F0A
 
 @[expose] public section
 
-
 /-!
 # K14 / P: composition.  `K14Slice`, `Resid08FinalK14`, `resid08FinalK12_imp_K14` (and the M-only `resid08FinalK13_imp_K14M`).
 -/
@@ -155,71 +154,6 @@ theorem resid08FinalK12_imp_K14 {a a' b b' c c' d : ℝ³}
     · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr h))))
 
 /-! ### The M-only step from `Resid08FinalK13` (Pa and Ta pieces need `hT'`/`hfar`, dropped at K13) -/
-
-def K14MSlice {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) : Prop :=
-  K6t3LeftTT a a' b b' c c' d ∨ K6t3LeftPa a a' b b' c c' d ∨ K6t3LeftPc a a' b b' c c' d ∨
-  K6tLeftTa' a a' b b' c c' d ∨ K6tLeftTc' a a' b b' c c' d ∨
-  K14LeftMN2 a a' b b' c c' d ∨ K6sDN2one a a' b b' c c' d ∨ K14LeftMKb a a' b b' c c' d
-
-theorem k14_mslice_step {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K8Slice W) :
-    HasLexCell (V8 a a' b b' c c' d) ∨ K14MSlice W := by
-  rcases h with h | h | h | h | h | h | h | h
-  · exact Or.inr (Or.inl h)
-  · exact Or.inr (Or.inr (Or.inl h))
-  · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))
-  · rcases k14_MN2 h with h | h
-    · exact Or.inl h
-    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))))
-  · rcases k14_MKb h with h | h
-    · exact Or.inl h
-    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr h)))))))
-
-def K14MResidP (a a' b b' c c' d : ℝ³) : Prop :=
-  ∃ W : Norm08w a a' b b' c c' d, ResP W.F d ∧ K14MSlice W
-
-def K14MResidP6 (a a' b b' c c' d : ℝ³) : Prop :=
-  K14MResidP a a' b b' c c' d ∨ K14MResidP b b' a a' c c' d ∨ K14MResidP a a' c c' b b' d ∨
-  K14MResidP c c' a a' b b' d ∨ K14MResidP b b' c c' a a' d ∨ K14MResidP c c' b b' a a' d
-
-/-- `Resid08FinalK13` with only the M pieces shrunk (K13 → K14M). -/
-def Resid08FinalK14M (a a' b b' c c' d : ℝ³) : Prop :=
-  (PlanarTwo a a' b b' c c' ∨ PlanarGen a a' b b' c c' d) ∧ K14MResidP6 a a' b b' c c' d ∧
-    ¬ HasLexCell (V8 a a' b b' c c' d)
-
-theorem k14_mresidP_step {p p' q q' r r' d : ℝ³} (h : K8ResidP p p' q q' r r' d) :
-    HasLexCell (V8 p p' q q' r r' d) ∨ K14MResidP p p' q q' r r' d := by
-  obtain ⟨W, hR, hs⟩ := h
-  rcases k14_mslice_step W hs with h | h
-  · exact Or.inl h
-  · exact Or.inr ⟨W, hR, h⟩
-
-theorem resid08FinalK13_imp_K14M {a a' b b' c c' d : ℝ³}
-    (h : Resid08FinalK13 a a' b b' c c' d) : Resid08FinalK14M a a' b b' c c' d := by
-  obtain ⟨hpl, h6, hno⟩ := h
-  have e := type08_set_perm a a' b b' c c' d
-  refine ⟨hpl, ?_, hno⟩
-  rcases h6 with h | h | h | h | h | h
-  · rcases k14_mresidP_step h with h | h
-    · exact (hno h).elim
-    · exact Or.inl h
-  · rcases k14_mresidP_step h with h | h
-    · exact (hno (by rw [V8, ← e.2.1]; exact h)).elim
-    · exact Or.inr (Or.inl h)
-  · rcases k14_mresidP_step h with h | h
-    · exact (hno (by rw [V8, ← e.2.2.1]; exact h)).elim
-    · exact Or.inr (Or.inr (Or.inl h))
-  · rcases k14_mresidP_step h with h | h
-    · exact (hno (by rw [V8, ← e.2.2.2.1]; exact h)).elim
-    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
-  · rcases k14_mresidP_step h with h | h
-    · exact (hno (by rw [V8, ← e.2.2.2.2.1]; exact h)).elim
-    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
-  · rcases k14_mresidP_step h with h | h
-    · exact (hno (by rw [V8, ← e.2.2.2.2.2]; exact h)).elim
-    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr h))))
 
 end Type08Sp
 end Minimality

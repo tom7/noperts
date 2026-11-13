@@ -75,18 +75,6 @@ def FP (a a' b b' c c' d : ℝ³) : F08 → Prop
   | .flatT4 => det3 (c - b) (b' - b) (c' - b) = 0 →
       ¬ (⟪b, b - d⟫ = ⟪b', b - d⟫ ∧ ⟪c, b - d⟫ = ⟪c', b - d⟫)
 
-/-- `Type08Gen` is the conjunction of its 14 fields. -/
-theorem gen_iff (a a' b b' c c' d : ℝ³) :
-    Type08Gen a a' b b' c c' d ↔ ∀ f, FP a a' b b' c c' d f :=
-  ⟨fun g f => match f with
-    | .tieTT => g.tieTT' | .routeT => g.routeT | .routeT' => g.routeT' | .touchN2 => g.touchN2
-    | .touchT4 => g.touchT4 | .touchTie => g.touchTie | .levelQ => g.levelQ
-    | .slideN2c => g.slideN2c | .slideN2a' => g.slideN2a' | .slideQ => g.slideQ
-    | .slideT4b => g.slideT4b | .slideT4d => g.slideT4d | .flatN2 => g.flatN2
-    | .flatT4 => g.flatT4,
-   fun h => ⟨h .tieTT, h .routeT, h .routeT', h .touchN2, h .touchT4, h .touchTie, h .levelQ,
-      h .slideN2c, h .slideN2a', h .slideQ, h .slideT4b, h .slideT4d, h .flatN2, h .flatT4⟩⟩
-
 /-! ### The special positions T, T' and their companions at the view `ℓ` along `b - d` -/
 
 /-- `T`: `a' c ∥ d b`. -/
@@ -131,45 +119,13 @@ def PolyHDN2 (a' b b' c c' d : ℝ³) : Prop :=
     S₂ ∈ ({{b, c', b', c}, {d, c', b', c}, {b, c', b', a'}, {d, c', b', a'}} : Finset (Finset ℝ³)) ∧
     ¬ NoHDNAt S₁ (b - d) ∧ ¬ NoHDNAt S₂ (b - d))
 
-/-- **Companion conditions at `T`** (the exception list `E` of §41 together with the codimension-3
-items of Theorem 29.14 for `T`): a depth tie among the six; `H1 ∩ H2`; `T'`; an HDN of a corner
-polygon that is not a class-(d) HDN with interior feet.  COARSE: see `handoff_lean.md`, doubt D2. -/
-def CoT (a a' b b' c c' d : ℝ³) : Prop :=
-  Tie6 a' b b' c c' d ∨ (H1 b b' c c' d ∧ H2 a b b' c d) ∨ IsT' a b c' d ∨
-    (PolyHDN a' b b' c c' d ∧ ¬ (ClassD1 b b' c c' d ∨ ClassD2 a b b' c c' d)) ∨
-    PolyHDN2 a' b b' c c' d ∨ det3 (a - d) (b' - c) (b - d) = 0 ∨
-    (⟪a - d, b - d⟫ = 0 ∧ ⟪c - d, b - d⟫ = 0)
-
-/-- **Companion conditions at `T'`** (29.13: codimension 3).  COARSE, doubt D3. -/
-def CoT' (a a' b b' c c' d : ℝ³) : Prop :=
-  Tie6 a' b b' c c' d ∨ IsT a' b c d ∨
-    ¬ NoHDNAt ({d, a, b', c} : Finset ℝ³) (b - d) ∨ det3 (b' - a) (c - d) (b - d) = 0 ∨
-    (⟪a - d, b - d⟫ = 0 ∧ ⟪c - d, b - d⟫ = 0)
-
 /-! ### The residual set -/
-
-/-- Two distinct fields of `Type08Gen` fail (Theorem 29.14: two ties with an HDN, two HDNs,
-touching with anything else, ... ; codimension >= 3). -/
-def RTwo (a a' b b' c c' d : ℝ³) : Prop :=
-  ∃ f₁ f₂ : F08, f₁ ≠ f₂ ∧ ¬ FP a a' b b' c c' d f₁ ∧ ¬ FP a a' b b' c c' d f₂
 
 /-- A far triple tie of a named closing that Proposition 30.4 does not close: `Touch30N2`,
 `Touch30T4` fail, or touching together with `T`, `T'` (`Σ₃′`'s touching part). -/
 def RTouch (a a' b b' c c' d : ℝ³) : Prop :=
   ¬ FP a a' b b' c c' d .touchN2 ∨ ¬ FP a a' b b' c c' d .touchT4 ∨
     ¬ FP a a' b b' c c' d .touchTie
-
-/-- `T` together with a companion condition (`E` of §41 and the `T` items of `Σ_3`). -/
-def RT (a a' b b' c c' d : ℝ³) : Prop := IsT a' b c d ∧ CoT a a' b b' c c' d
-
-/-- `T'` together with a companion condition. -/
-def RT' (a a' b b' c c' d : ℝ³) : Prop := IsT' a b c' d ∧ CoT' a a' b b' c c' d
-
-/-- **The residual of type 08 in the used labelling.**  Contained in `Σ₃′ ∪ E` plus the coarse
-supersets documented above; the planar-equator quadruple tie `S2` is in the flat statement
-(`G1_Sel`), not here, since `Norm08` has `κ_a > 0`. -/
-def Resid08 (a a' b b' c c' d : ℝ³) : Prop :=
-  RTwo a a' b b' c c' d ∨ RTouch a a' b b' c c' d ∨ RT a a' b b' c c' d ∨ RT' a a' b b' c c' d
 
 end Type08Sp
 end Minimality

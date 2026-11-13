@@ -190,11 +190,5 @@ theorem type08_rupert_or_residJ (x : Fin 7 → ℝ³) (hx : Function.Injective x
   obtain ⟨F, hcap⟩ := exists_type08_cap x hx fA fB fC fD fE fF fG hA hB hC hD hE hF hG
   exact type08_rupert_or_resid_ptsJ F hcap
 
-/-- The new target implies the tree's (`Resid08FinalJ ⊆ Resid08FinalI`). -/
-theorem type08_rupert_or_residJ_imp_I (x : Fin 7 → ℝ³) {V : Finset ℝ³}
-    (h : IsRupert V ∨ Resid08FinalJ (x 0) (x 6) (x 3) (x 4) (x 5) (x 1) (x 2)) :
-    IsRupert V ∨ Resid08FinalI (x 0) (x 6) (x 3) (x 4) (x 5) (x 1) (x 2) :=
-  h.imp id resid08FinalJ_imp_I
-
 end Type08Sp
 end Minimality

@@ -310,33 +310,6 @@ theorem isRupert_of_waist (P Q : Finset ℝ³) (hP : ∀ p ∈ P, p 2 = 0)
         (inner_ne_zero_of_badNormals hP u hgen_t _ hδ'))
   exact isRupert_of_firstOrderInward_image V R hR ω τ hfo
 
-/-- **Bipyramid theorem** (Tom's challenge; Cor. 5.4 with the waist in
-`z = 0`).  `P` is a finite set in the plane `z = 0`, `D` is above and `E`
-below it, and the point `X = D + (D₂ / (D₂ - E₂)) (E - D)` where the segment
-`DE` crosses the plane projects into the interior of the waist polygon
-`conv (proj_xy P)`.  Then `insert D (insert E P)` is Rupert, for any number of
-waist points.  (The view `E - D` itself may be face-on, `g = 0`; the proof
-uses a slightly tilted generic view `E - D + t ζ`.) -/
-theorem isRupert_bipyramid (P : Finset ℝ³) (hP : ∀ p ∈ P, p 2 = 0) (D E : ℝ³)
-    (hD : 0 < D 2) (hE : E 2 < 0)
-    (hX : proj_xy (D + (D 2 / (D 2 - E 2)) • (E - D)) ∈
-      interior (convexHull ℝ ((P.image proj_xy : Finset ℝ²) : Set ℝ²))) :
-    IsRupert (insert D (insert E P)) := by
-  classical
-  have hne : E 2 - D 2 ≠ 0 := by linarith
-  have hne' : -E 2 + D 2 ≠ 0 := by linarith
-  have hne'' : D 2 - E 2 ≠ 0 := by linarith
-  have hu2 : (E - D) 2 = E 2 - D 2 := by simp
-  have hV : insert D (insert E P) = P ∪ {D, E} := by
-    ext x; simp only [Finset.mem_insert, Finset.mem_union, Finset.mem_singleton]; tauto
-  rw [hV]
-  refine isRupert_of_waist P {D, E} hP ⟨_, hX⟩ (E - D) (by rw [hu2]; exact hne) ?_
-  intro q hq
-  rw [Finset.mem_insert, Finset.mem_singleton] at hq
-  convert hX using 2
-  rcases hq with rfl | rfl <;>
-    (rw [hu2]; ext i; fin_cases i <;> simp <;> field_simp <;> ring)
-
 end Minimality
 
 end

@@ -80,9 +80,6 @@ theorem affine_nfP {f : ℝ³ → ℝ} {N : ℝ³} (hf : ∀ y z, f y - f z = �
 theorem nf_pos {σ D X P : ℝ} (hσD : 0 < σ * D) (hP : 0 < P) (e : X = P) : 0 < σ * (X * D) := by
   rw [e, show σ * (P * D) = P * (σ * D) by ring]; exact mul_pos hP hσD
 
-theorem nf_neg {σ D X P : ℝ} (hσD : 0 < σ * D) (hP : 0 < P) (e : X = -P) : σ * (X * D) < 0 := by
-  rw [e, show σ * (-P * D) = -(P * (σ * D)) by ring]; linarith [mul_pos hP hσD]
-
 /-! ### The normal form -/
 
 /-- **The normal form of type 16** (§19.0) in the frame `o; E₁, E₂, E₃` (`D ≠ 0`):
@@ -138,20 +135,6 @@ def R1 (N : NF16 x) : ℝ := (N.g - 1) * (N.p + N.r) - N.d * (N.q - 1)
 /-- `R2 = σ R1`: `2` is a shadow corner at the view along `06`. -/
 def R2 (N : NF16 x) : ℝ := (N.b - 1) * (N.p + N.r) - N.a * (N.q - 1)
 
-/-- **R1 and R2 exclude each other** (§19.0): `(p + r) [B125] + a r R1 + d p R2 = 0`. -/
-theorem R2_neg_of_R1 (N : NF16 x) (h : 0 ≤ N.R1) : N.R2 < 0 := by
-  have e : (N.p + N.r) * (N.a * N.d * (N.q - 1) - N.d * N.p * (N.b - 1) -
-      N.a * N.r * (N.g - 1)) + N.a * N.r * N.R1 + N.d * N.p * N.R2 = 0 := by
-    simp only [R1, R2]; ring
-  have h1 := mul_pos (add_pos N.hp N.hr) N.tB125
-  have h2 := mul_nonneg (mul_pos N.ha N.hr).le h
-  have h3 := mul_pos N.hd N.hp
-  by_contra hc; push Not at hc
-  nlinarith [mul_nonneg h3.le hc]
-
-theorem not_R1_R2 (N : NF16 x) : ¬ (0 ≤ N.R1 ∧ 0 ≤ N.R2) := fun h =>
-  absurd h.2 (not_le.mpr (N.R2_neg_of_R1 h.1))
-
 /-- The orientation of the frame. -/
 noncomputable def D (N : NF16 x) : ℝ := det3 N.E₁ N.E₂ N.E₃
 
@@ -205,12 +188,6 @@ def sigma (N : NF16 x) : NF16 (x ∘ sigma16) where
   t245_6 := by linarith [N.t145_0]
   t145_0 := by linarith [N.t245_6]
   tB125 := by linarith [N.tB125]
-
-theorem sigma_R1 (N : NF16 x) : N.sigma.R1 = N.R2 := by
-  simp only [R1, R2, sigma]; ring
-
-theorem sigma_D (N : NF16 x) : N.sigma.D = -N.D := by
-  simp only [D, sigma, det3_expand]; ring
 
 end NF16
 
@@ -425,7 +402,6 @@ noncomputable def Type16.toNF {x : Fin 7 → ℝ³} (T : Type16 x) : NF16 x :=
     t145_0 := H.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1,
     tB125 := H.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2 }
 
-
 /-! ### Certificates in either orientation
 
 The frame orientation `σ = sign D` is not fixed, so each certificate is stated with the sign
@@ -448,263 +424,12 @@ theorem EdgeMid.swap {v w a b m : ℝ³} (h : EdgeMid v w a b m) : EdgeMid v w b
   · exact ⟨1 - s, δ, by linarith, by linarith, hδ, Or.inr (Or.inr (Or.inr (by rw [h]; module)))⟩
   · exact ⟨1 - s, δ, by linarith, by linarith, hδ, Or.inr (Or.inr (Or.inl (by rw [h]; module)))⟩
 
-theorem nodup4_rev {z₀ z₁ z₂ z₃ : ℝ} (h : [z₀, z₁, z₂, z₃].Nodup) : [z₀, z₃, z₂, z₁].Nodup := by
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true] at h ⊢
-  obtain ⟨⟨h1, h2, h3⟩, ⟨h4, h5⟩, h6, -⟩ := h
-  exact ⟨⟨h3, h2, h1⟩, ⟨Ne.symm h6, Ne.symm h5⟩, Ne.symm h4, not_false⟩
-
-theorem nodup3_rev {z₀ z₁ z₂ : ℝ} (h : [z₀, z₁, z₂].Nodup) : [z₀, z₂, z₁].Nodup := by
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true] at h ⊢
-  obtain ⟨⟨h1, h2⟩, h3, -⟩ := h
-  exact ⟨⟨h2, h1⟩, Ne.symm h3, not_false⟩
-
-/-- A unimodal cyclic sequence stays unimodal when negated. -/
-theorem IsCyclicUnimodal.neg16 {k : ℕ} [NeZero k] (hk : 2 ≤ k) {z : ZMod k → ℝ}
-    (hz : IsCyclicUnimodal z) : IsCyclicUnimodal (fun i => -z i) := by
-  classical
-  refine isCyclicUnimodal_of_localMin_unique hk _ (fun a b e => hz.1 (neg_injective e)) ?_
-  intro a b h1 h2 h3 h4
-  have hc := Finset.card_le_one.mp hz.2.le
-  exact hc a (by simp only [Finset.mem_filter, Finset.mem_univ, true_and]; constructor <;> linarith)
-    b (by simp only [Finset.mem_filter, Finset.mem_univ, true_and]; constructor <;> linarith)
-
-/-- **Corollary 14.1 in either orientation** (`isRupert_edgePair` with the far path read
-`a, c, b` for `σ = 1` and `b, c, a` for `σ = −1`). -/
-theorem isRupert_edgePairσ {v w a b c : ℝ³} (V : Finset ℝ³) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
-    (hvV : v ∈ V) (hwV : w ∈ V) (haV : a ∈ V) (hbV : b ∈ V) (hcV : c ∈ V)
-    (q₁ : 0 < σ * det3 (a - v) (c - v) (w - v)) (q₂ : 0 < σ * det3 (c - a) (b - a) (w - v))
-    (q₃ : 0 < σ * det3 (b - c) (v - c) (w - v)) (q₄ : 0 < σ * det3 (v - b) (a - b) (w - v))
-    (hE : det3 (b - a) (c - a) (v - a) * det3 (b - a) (c - a) (w - a) ≤ 0)
-    (hz₁ : [⟪v, w - v⟫, ⟪a, w - v⟫, ⟪c, w - v⟫, ⟪b, w - v⟫].Nodup)
-    (hz₂ : [⟪w, w - v⟫, ⟪a, w - v⟫, ⟪c, w - v⟫, ⟪b, w - v⟫].Nodup)
-    (hV : ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ z = c ∨ EdgeMid v w a b z ∨
-      EdgeHiddenσ σ (w - v) v a c b z)
-    (hnd₁ : NoHDNAt (V.erase w) (w - v)) (hnd₂ : NoHDNAt (V.erase v) (w - v)) :
-    IsRupert V := by
-  rcases hσ with rfl | rfl
-  · simp only [one_mul] at q₁ q₂ q₃ q₄
-    refine isRupert_edgePair V hvV hwV haV hbV hcV q₁ q₂ q₃ q₄ hE hz₁ hz₂ (fun z hz => ?_)
-      hnd₁ hnd₂
-    rcases hV z hz with h | h | h | h | h | h | ⟨h1, h2, h3, h4⟩
-    · exact Or.inl h
-    · exact Or.inr (Or.inl h)
-    · exact Or.inr (Or.inr (Or.inl h))
-    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
-    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
-    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))
-    · simp only [one_mul] at h1 h2 h3 h4
-      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨h1, h2, h3, h4⟩)))))
-  · have e1 : det3 (b - v) (c - v) (w - v) = -det3 (b - c) (v - c) (w - v) := by
-      simp only [det3_expand, PiLp.sub_apply]; ring
-    have e2 : det3 (c - b) (a - b) (w - v) = -det3 (c - a) (b - a) (w - v) := by
-      simp only [det3_expand, PiLp.sub_apply]; ring
-    have e3 : det3 (a - c) (v - c) (w - v) = -det3 (a - v) (c - v) (w - v) := by
-      simp only [det3_expand, PiLp.sub_apply]; ring
-    have e4 : det3 (v - a) (b - a) (w - v) = -det3 (v - b) (a - b) (w - v) := by
-      simp only [det3_expand, PiLp.sub_apply]; ring
-    have eE : ∀ y, det3 (a - b) (c - b) (y - b) = -det3 (b - a) (c - a) (y - a) := by
-      intro y; simp only [det3_expand, PiLp.sub_apply]; ring
-    refine isRupert_edgePair (a := b) (b := a) V hvV hwV hbV haV hcV (by rw [e1]; linarith)
-      (by rw [e2]; linarith) (by rw [e3]; linarith) (by rw [e4]; linarith)
-      (by rw [eE, eE]; linarith) ?_ ?_ (fun z hz => ?_) hnd₁ hnd₂
-    · exact nodup4_rev hz₁
-    · exact nodup4_rev hz₂
-    rcases hV z hz with h | h | h | h | h | h | ⟨h1, h2, h3, h4⟩
-    · exact Or.inl h
-    · exact Or.inr (Or.inl h)
-    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
-    · exact Or.inr (Or.inr (Or.inl h))
-    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
-    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h.swap)))))
-    · refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨?_, ?_, ?_, ?_⟩)))))
-      · rw [det3_rev]; linarith
-      · rw [det3_rev]; linarith
-      · rw [det3_rev]; linarith
-      · rw [det3_rev]; linarith
-
-/-- **A triangle closing in either orientation** (`isRupert_edgeTri`). -/
-theorem isRupert_edgeTriσ {v w a b : ℝ³} (V : Finset ℝ³) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
-    (hvV : v ∈ V) (hwV : w ∈ V) (haV : a ∈ V) (hbV : b ∈ V)
-    (hT : 0 < σ * det3 (a - v) (b - v) (w - v))
-    (hz : [⟪v, w - v⟫, ⟪a, w - v⟫, ⟪b, w - v⟫].Nodup)
-    (hV : ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ EdgeMid v w a b z ∨
-      TriHiddenσ σ (w - v) v a b z)
-    (hnd : NoHDNAt (V.erase w) (w - v)) : IsRupert V := by
-  rcases hσ with rfl | rfl
-  · simp only [one_mul] at hT
-    refine isRupert_edgeTri V hvV hwV haV hbV hT hz (fun z hz' => ?_) hnd
-    rcases hV z hz' with h | h | h | h | h | ⟨h1, h2, h3⟩
-    · exact Or.inl h
-    · exact Or.inr (Or.inl h)
-    · exact Or.inr (Or.inr (Or.inl h))
-    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
-    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
-    · simp only [one_mul] at h1 h2 h3
-      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨h1, h2, h3⟩))))
-  · have e : det3 (b - v) (a - v) (w - v) = -det3 (a - v) (b - v) (w - v) := by
-      simp only [det3_expand, PiLp.sub_apply]; ring
-    refine isRupert_edgeTri (a := b) (b := a) V hvV hwV hbV haV (by rw [e]; linarith) ?_
-      (fun z hz' => ?_) hnd
-    · exact nodup3_rev hz
-    rcases hV z hz' with h | h | h | h | h | ⟨h1, h2, h3⟩
-    · exact Or.inl h
-    · exact Or.inr (Or.inl h)
-    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
-    · exact Or.inr (Or.inr (Or.inl h))
-    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h.swap))))
-    · refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨?_, ?_, ?_⟩))))
-      · rw [det3_rev]; linarith
-      · rw [det3_rev]; linarith
-      · rw [det3_rev]; linarith
-
-/-- **`isRupert_edgePairσ` with ties** (Lemma E with ties): only the three far depths not all
-equal. -/
-theorem isRupert_edgePairσ_robust {v w a b c : ℝ³} (V : Finset ℝ³) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
-    (hvV : v ∈ V) (hwV : w ∈ V) (haV : a ∈ V) (hbV : b ∈ V) (hcV : c ∈ V)
-    (q₁ : 0 < σ * det3 (a - v) (c - v) (w - v)) (q₂ : 0 < σ * det3 (c - a) (b - a) (w - v))
-    (q₃ : 0 < σ * det3 (b - c) (v - c) (w - v)) (q₄ : 0 < σ * det3 (v - b) (a - b) (w - v))
-    (hE : det3 (b - a) (c - a) (v - a) * det3 (b - a) (c - a) (w - a) ≤ 0)
-    (h3 : ¬ (⟪a, w - v⟫ = ⟪c, w - v⟫ ∧ ⟪c, w - v⟫ = ⟪b, w - v⟫))
-    (hV : ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ z = c ∨ EdgeMid v w a b z ∨
-      EdgeHiddenσ σ (w - v) v a c b z)
-    (hnd₁ : NoHDNAt (V.erase w) (w - v)) (hnd₂ : NoHDNAt (V.erase v) (w - v)) :
-    IsRupert V := by
-  rcases hσ with rfl | rfl
-  · simp only [one_mul] at q₁ q₂ q₃ q₄
-    refine isRupert_edgePair_robust V hvV hwV haV hbV hcV q₁ q₂ q₃ q₄ hE h3 (fun z hz => ?_)
-      hnd₁ hnd₂
-    rcases hV z hz with h | h | h | h | h | h | ⟨h1, h2, h3, h4⟩
-    · exact Or.inl h
-    · exact Or.inr (Or.inl h)
-    · exact Or.inr (Or.inr (Or.inl h))
-    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
-    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
-    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))
-    · simp only [one_mul] at h1 h2 h3 h4
-      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨h1, h2, h3, h4⟩)))))
-  · have e1 : det3 (b - v) (c - v) (w - v) = -det3 (b - c) (v - c) (w - v) := by
-      simp only [det3_expand, PiLp.sub_apply]; ring
-    have e2 : det3 (c - b) (a - b) (w - v) = -det3 (c - a) (b - a) (w - v) := by
-      simp only [det3_expand, PiLp.sub_apply]; ring
-    have e3 : det3 (a - c) (v - c) (w - v) = -det3 (a - v) (c - v) (w - v) := by
-      simp only [det3_expand, PiLp.sub_apply]; ring
-    have e4 : det3 (v - a) (b - a) (w - v) = -det3 (v - b) (a - b) (w - v) := by
-      simp only [det3_expand, PiLp.sub_apply]; ring
-    have eE : ∀ y, det3 (a - b) (c - b) (y - b) = -det3 (b - a) (c - a) (y - a) := by
-      intro y; simp only [det3_expand, PiLp.sub_apply]; ring
-    refine isRupert_edgePair_robust (a := b) (b := a) V hvV hwV hbV haV hcV (by rw [e1]; linarith)
-      (by rw [e2]; linarith) (by rw [e3]; linarith) (by rw [e4]; linarith)
-      (by rw [eE, eE]; linarith) (fun h => h3 ⟨h.2.symm, h.1.symm⟩) (fun z hz => ?_) hnd₁ hnd₂
-    rcases hV z hz with h | h | h | h | h | h | ⟨h1, h2, h3, h4⟩
-    · exact Or.inl h
-    · exact Or.inr (Or.inl h)
-    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
-    · exact Or.inr (Or.inr (Or.inl h))
-    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
-    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h.swap)))))
-    · refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨?_, ?_, ?_, ?_⟩)))))
-      · rw [det3_rev]; linarith
-      · rw [det3_rev]; linarith
-      · rw [det3_rev]; linarith
-      · rw [det3_rev]; linarith
-
-/-- **`isRupert_edgeTriσ` with ties**: only the three depths of the rim not all equal. -/
-theorem isRupert_edgeTriσ_robust {v w a b : ℝ³} (V : Finset ℝ³) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
-    (hvV : v ∈ V) (hwV : w ∈ V) (haV : a ∈ V) (hbV : b ∈ V)
-    (hT : 0 < σ * det3 (a - v) (b - v) (w - v))
-    (hz : ¬ (⟪v, w - v⟫ = ⟪a, w - v⟫ ∧ ⟪a, w - v⟫ = ⟪b, w - v⟫))
-    (hV : ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ EdgeMid v w a b z ∨
-      TriHiddenσ σ (w - v) v a b z)
-    (hnd : NoHDNAt (V.erase w) (w - v)) : IsRupert V := by
-  rcases hσ with rfl | rfl
-  · simp only [one_mul] at hT
-    refine isRupert_edgeTri_robust V hvV hwV haV hbV hT hz (fun z hz' => ?_) hnd
-    rcases hV z hz' with h | h | h | h | h | ⟨h1, h2, h3⟩
-    · exact Or.inl h
-    · exact Or.inr (Or.inl h)
-    · exact Or.inr (Or.inr (Or.inl h))
-    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
-    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
-    · simp only [one_mul] at h1 h2 h3
-      exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨h1, h2, h3⟩))))
-  · have e : det3 (b - v) (a - v) (w - v) = -det3 (a - v) (b - v) (w - v) := by
-      simp only [det3_expand, PiLp.sub_apply]; ring
-    refine isRupert_edgeTri_robust (a := b) (b := a) V hvV hwV hbV haV (by rw [e]; linarith)
-      (fun h => hz ⟨h.1.trans h.2, h.2.symm⟩) (fun z hz' => ?_) hnd
-    rcases hV z hz' with h | h | h | h | h | ⟨h1, h2, h3⟩
-    · exact Or.inl h
-    · exact Or.inr (Or.inl h)
-    · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
-    · exact Or.inr (Or.inr (Or.inl h))
-    · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h.swap))))
-    · refine Or.inr (Or.inr (Or.inr (Or.inr (Or.inr ⟨?_, ?_, ?_⟩))))
-      · rw [det3_rev]; linarith
-      · rw [det3_rev]; linarith
-      · rw [det3_rev]; linarith
-
-/-- **Theorem 8.9 with Theorem 7.3 at an edge view, in either orientation**
-(`isRupert_of_edgeView`, at `u` or `−u`). -/
-theorem isRupert_of_edgeViewσ (V M : Finset ℝ³) (u : ℝ³) (hu : u ≠ 0) {σ : ℝ}
-    (hσ : σ = 1 ∨ σ = -1) {k : ℕ} [NeZero k] (hk : 3 ≤ k) (x : ZMod k → ℝ³) (i₀ : ZMod k)
-    (w : ℝ³) (h : ℝ) (hwV : w ∈ V) (hw : w = x i₀ - h • u) (hh : h ≠ 0) (hxV : ∀ i, x i ∈ V)
-    (hxM : ∀ i, x i ∉ M)
-    (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → 0 < σ * det3 (x (i + 1) - x i) (x j - x i) u)
-    (hrest : ∀ y ∈ V, y ∉ M → y ≠ w → (∀ j, y ≠ x j) → ∀ i,
-      0 < σ * det3 (x (i + 1) - x i) (y - x i) u)
-    (hz : IsRobustUnimodal (fun i => ⟪x i, u⟫)) (hnd : NoHDNAt (V.erase w) u)
-    (hM : ∀ m ∈ M, EdgeMiddle u (x i₀) w (x (i₀ + 1)) (x (i₀ - 1)) h m) : IsRupert V := by
-  rcases hσ with rfl | rfl
-  · simp only [one_mul] at hcyc hrest
-    exact isRupert_of_edgeView_robust V M u hu hk x i₀ w h hwV hw hh hxV hxM hcyc hrest hz hnd hM
-  · refine isRupert_of_edgeView_robust V M (-u) (neg_ne_zero.mpr hu) hk x i₀ w (-h) hwV
-      (by rw [hw, neg_smul_neg]) (neg_ne_zero.mpr hh) hxV hxM (fun i j hi hj => ?_)
-      (fun y hy hyM hyw hyx i => ?_) ?_ hnd.neg (fun m hm => ?_)
-    · have := hcyc i j hi hj; rw [det3_neg_right]; linarith
-    · have := hrest y hy hyM hyw hyx i; rw [det3_neg_right]; linarith
-    · simp only [inner_neg_right]; exact hz.neg
-    · obtain ⟨c, s, δ, hc, hs0, hs1, hδ, hm'⟩ := hM m hm
-      refine ⟨c, s, -δ, ?_, hs0, hs1, neg_ne_zero.mpr hδ, ?_⟩
-      · rcases hc with hc | ⟨hc, hδh⟩
-        · exact Or.inl hc
-        · exact Or.inr ⟨hc, by linarith [show -δ * -h = δ * h by ring]⟩
-      · rcases hm' with hm' | hm'
-        · exact Or.inl (by rw [hm', neg_smul_neg])
-        · exact Or.inr (by rw [hm', neg_smul_neg])
-
-/-- **Proposition 8.8 with Theorem 18.3 at a vertex view, in either orientation**
-(`isRupert_of_vertexView`, at `u` or `−u`). -/
-theorem isRupert_of_vertexViewσ (V M : Finset ℝ³) (u : ℝ³) (hu : u ≠ 0) {σ : ℝ}
-    (hσ : σ = 1 ∨ σ = -1) {k : ℕ} [NeZero k] (hk : 3 ≤ k) (x : ZMod k → ℝ³)
-    (hxV : ∀ i, x i ∈ V) (hxM : ∀ i, x i ∉ M)
-    (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → 0 < σ * det3 (x (i + 1) - x i) (x j - x i) u)
-    (hrest : ∀ y ∈ V, y ∉ M → (∀ j, y ≠ x j) → ∀ i,
-      0 < σ * det3 (x (i + 1) - x i) (y - x i) u)
-    (hz : IsRobustUnimodal (fun i => ⟪x i, u⟫)) (hnd : NoHDNAt V u)
-    (hM : ∀ m ∈ M, ∃ i : ZMod k, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
-      m = x i + s • (x (i + 1) - x i) + δ • u) : IsRupert V := by
-  rcases hσ with rfl | rfl
-  · simp only [one_mul] at hcyc hrest
-    exact isRupert_of_vertexView_robust V M u hu hk x hxV hxM hcyc hrest hz hnd hM
-  · refine isRupert_of_vertexView_robust V M (-u) (neg_ne_zero.mpr hu) hk x hxV hxM
-      (fun i j hi hj => ?_) (fun y hy hyM hyx i => ?_) ?_ hnd.neg (fun m hm => ?_)
-    · have := hcyc i j hi hj; rw [det3_neg_right]; linarith
-    · have := hrest y hy hyM hyx i; rw [det3_neg_right]; linarith
-    · simp only [inner_neg_right]; exact hz.neg
-    · obtain ⟨i, s, δ, hs0, hs1, hδ, hm'⟩ := hM m hm
-      exact ⟨i, s, -δ, hs0, hs1, neg_ne_zero.mpr hδ, by rw [hm', neg_smul_neg]⟩
-
-
 /-! ### Tools for the certificates -/
 
 theorem exists_sign {D : ℝ} (hD : D ≠ 0) : ∃ σ : ℝ, (σ = 1 ∨ σ = -1) ∧ 0 < σ * D := by
   rcases lt_or_gt_of_ne hD with h | h
   · exact ⟨-1, Or.inr rfl, by linarith⟩
   · exact ⟨1, Or.inl rfl, by linarith⟩
-
-theorem pos_of_mul_pos_r {T m : ℝ} (hm : 0 < m) (h : 0 < T * m) : 0 < T := by
-  by_contra hc; push Not at hc; linarith [mul_nonpos_of_nonpos_of_nonneg hc hm.le]
 
 theorem nfV_ne_zero {E₁ E₂ E₃ : ℝ³} {α β γ : ℝ} (hD : det3 E₁ E₂ E₃ ≠ 0)
     (h : α ≠ 0 ∨ β ≠ 0 ∨ γ ≠ 0) : nfV E₁ E₂ E₃ α β γ ≠ 0 := by
@@ -713,93 +438,6 @@ theorem nfV_ne_zero {E₁ E₂ E₃ : ℝ³} {α β γ : ℝ} (hD : det3 E₁ E�
   refine det3_eq_zero_of_lin (α := α) (β := β) (γ := γ) h0 ?_
   rintro ⟨h1, h2, h3⟩
   rcases h with h | h | h <;> contradiction
-
-/-- A point given by a combination with a common denominator. -/
-theorem eq_comb_div {m X Y U : ℝ³} {D₀ α β : ℝ} (hD : D₀ ≠ 0)
-    (h : D₀ • (m - X) = α • (Y - X) + β • U) : m = X + (α / D₀) • (Y - X) + (β / D₀) • U := by
-  have : m - X = (α / D₀) • (Y - X) + (β / D₀) • U := by
-    rw [div_eq_inv_mul, div_eq_inv_mul, mul_smul, mul_smul, ← smul_add, ← h, smul_smul,
-      inv_mul_cancel₀ hD, one_smul]
-  rw [add_assoc, ← this]; abel
-
-set_option linter.unnecessarySeqFocus false in
-/-- A crossing of two segments with a common denominator. -/
-theorem meet_of_smul {d₀ d₁ e₀ e₁ v : ℝ³} {K s t l : ℝ} (hK : K ≠ 0)
-    (h : K • (e₀ - d₀) + t • (e₁ - e₀) - s • (d₁ - d₀) = l • v) :
-    (e₀ + (t / K) • (e₁ - e₀)) - (d₀ + (s / K) • (d₁ - d₀)) = (l / K) • v := by
-  have h2 : (e₀ + (t / K) • (e₁ - e₀)) - (d₀ + (s / K) • (d₁ - d₀)) - (l / K) • v =
-      K⁻¹ • (K • (e₀ - d₀) + t • (e₁ - e₀) - s • (d₁ - d₀) - l • v) := by
-    match_scalars <;> field_simp ; ring
-  rw [h, sub_self, smul_zero] at h2
-  exact sub_eq_zero.mp h2
-
-theorem nf_E_le {D X₁ X₂ P₁ P₂ : ℝ} (e₁ : X₁ = P₁) (e₂ : X₂ = P₂) (h : P₁ * P₂ ≤ 0) :
-    X₁ * D * (X₂ * D) ≤ 0 := by
-  rw [e₁, e₂, show P₁ * D * (P₂ * D) = (P₁ * P₂) * (D * D) by ring]
-  exact mul_nonpos_of_nonpos_of_nonneg h (mul_self_nonneg D)
-
-/-- Distinct depths along an edge `v w` of seven points in general position. -/
-theorem depth_ne {x : Fin 7 → ℝ³} (hx : Function.Injective x) (hg : GenPos (univ.image x))
-    {i j v w : Fin 7} (hij : i ≠ j) (hvw : v ≠ w) (h : (j ≠ v ∧ j ≠ w) ∨ (i ≠ w ∧ j ≠ w)) :
-    ⟪x i, x w - x v⟫ ≠ ⟪x j, x w - x v⟫ := by
-  have hm : ∀ k, x k ∈ univ.image x := fun k => mem_image_of_mem x (mem_univ k)
-  refine hg.inner_ne_of_ne (hm i) (hm j) (hm v) (hm w) (hx.ne hij) (hx.ne hvw) ?_
-  rcases h with ⟨h1, h2⟩ | ⟨h1, h2⟩
-  · exact Or.inl ⟨hx.ne h1, hx.ne h2⟩
-  · exact Or.inr ⟨hx.ne h1, hx.ne h2⟩
-
-/-- The depth lists of the two closings at an edge `v w` with far path `a, c, b`. -/
-theorem depth_nodup4 {x : Fin 7 → ℝ³} (hx : Function.Injective x) (hg : GenPos (univ.image x))
-    {v w a b c : Fin 7} (h : [v, w, a, b, c].Nodup) :
-    [⟪x v, x w - x v⟫, ⟪x a, x w - x v⟫, ⟪x c, x w - x v⟫, ⟪x b, x w - x v⟫].Nodup ∧
-      [⟪x w, x w - x v⟫, ⟪x a, x w - x v⟫, ⟪x c, x w - x v⟫, ⟪x b, x w - x v⟫].Nodup := by
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true] at h ⊢
-  obtain ⟨⟨h1, h2, h3, h4⟩, ⟨h5, h6, h7⟩, ⟨h8, h9⟩, h10, -⟩ := h
-  have D := fun {i j : Fin 7} (hij : i ≠ j) (hh : (j ≠ v ∧ j ≠ w) ∨ (i ≠ w ∧ j ≠ w)) =>
-    depth_ne (v := v) (w := w) hx hg hij h1 hh
-  refine ⟨⟨⟨D h2 (Or.inr ⟨h1, Ne.symm h5⟩), D h4 (Or.inr ⟨h1, Ne.symm h7⟩),
-    D h3 (Or.inr ⟨h1, Ne.symm h6⟩)⟩, ⟨D h9 (Or.inr ⟨Ne.symm h5, Ne.symm h7⟩),
-    D h8 (Or.inr ⟨Ne.symm h5, Ne.symm h6⟩)⟩, D (Ne.symm h10) (Or.inr ⟨Ne.symm h7, Ne.symm h6⟩),
-    not_false⟩, ⟨⟨D h5 (Or.inl ⟨Ne.symm h2, Ne.symm h5⟩), D h7 (Or.inl ⟨Ne.symm h4, Ne.symm h7⟩),
-    D h6 (Or.inl ⟨Ne.symm h3, Ne.symm h6⟩)⟩, ⟨D h9 (Or.inr ⟨Ne.symm h5, Ne.symm h7⟩),
-    D h8 (Or.inr ⟨Ne.symm h5, Ne.symm h6⟩)⟩, D (Ne.symm h10) (Or.inr ⟨Ne.symm h7, Ne.symm h6⟩),
-    not_false⟩⟩
-
-/-- The depth list of a triangle closing at an edge `v w`. -/
-theorem depth_nodup3 {x : Fin 7 → ℝ³} (hx : Function.Injective x) (hg : GenPos (univ.image x))
-    {v w a b : Fin 7} (h : [v, w, a, b].Nodup) :
-    [⟪x v, x w - x v⟫, ⟪x a, x w - x v⟫, ⟪x b, x w - x v⟫].Nodup := by
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true] at h ⊢
-  obtain ⟨⟨h1, h2, h3⟩, ⟨h5, h6⟩, h8, -⟩ := h
-  have D := fun {i j : Fin 7} (hij : i ≠ j) (hh : (j ≠ v ∧ j ≠ w) ∨ (i ≠ w ∧ j ≠ w)) =>
-    depth_ne (v := v) (w := w) hx hg hij h1 hh
-  exact ⟨⟨D h2 (Or.inr ⟨h1, Ne.symm h5⟩), D h3 (Or.inr ⟨h1, Ne.symm h6⟩)⟩,
-    D h8 (Or.inr ⟨Ne.symm h5, Ne.symm h6⟩), not_false⟩
-
-/-- The far depths of an edge pair at an edge `v w` (far path `a, c, b`) are not all equal
-(`GenPosTie`: two ties at one edge view). -/
-theorem depth_far3 {x : Fin 7 → ℝ³} (hx : Function.Injective x) (hg : TieSeg (univ.image x))
-    {v w a b c : Fin 7} (h : [v, w, a, b, c].Nodup) :
-    ¬ (⟪x a, x w - x v⟫ = ⟪x c, x w - x v⟫ ∧ ⟪x c, x w - x v⟫ = ⟪x b, x w - x v⟫) := by
-  have hm : ∀ k, x k ∈ univ.image x := fun k => mem_image_of_mem x (mem_univ k)
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true] at h
-  obtain ⟨⟨h1, h2, h3, h4⟩, ⟨h5, h6, h7⟩, ⟨h8, h9⟩, h10, -⟩ := h
-  exact hg.noTriple (hm v) (hm w) (hm a) (hm c) (hm b) (hx.ne h1) (hx.ne h9) (hx.ne (Ne.symm h10))
-    (hx.ne h8)
-
-/-- The depths of a triangle closing `v, a, b` at an edge `v w` are not all equal. -/
-theorem depth_tri3 {x : Fin 7 → ℝ³} (hx : Function.Injective x) (hg : TieSeg (univ.image x))
-    {v w a b : Fin 7} (h : [v, w, a, b].Nodup) :
-    ¬ (⟪x v, x w - x v⟫ = ⟪x a, x w - x v⟫ ∧ ⟪x a, x w - x v⟫ = ⟪x b, x w - x v⟫) := by
-  have hm : ∀ k, x k ∈ univ.image x := fun k => mem_image_of_mem x (mem_univ k)
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true] at h
-  obtain ⟨⟨h1, h2, h3⟩, ⟨h5, h6⟩, h8, -⟩ := h
-  exact hg.noTriple (hm v) (hm w) (hm v) (hm a) (hm b) (hx.ne h1) (hx.ne h2) (hx.ne h8) (hx.ne h3)
-
 
 /-! ### Certificates (§18.2): named views and rim certificates -/
 
@@ -952,12 +590,6 @@ def ePairList16 : Finset (Fin 7 × Fin 7 × Fin 7 × Fin 7 × Fin 7) :=
 def eTriList16 : Finset (Fin 7 × Fin 7 × Fin 7 × Fin 7) :=
   {(1, 6, 5, 4), (3, 5, 6, 0), (1, 5, 4, 6), (2, 0, 5, 4), (3, 5, 0, 6), (2, 5, 4, 0)}
 
-/-- The named views of the pair certificates of Lemmas 19.3–19.5 (`35`, `15`, `36`, the three
-vertex crossings) and their images under `σ`. -/
-def pairsViews16 : Finset ((Fin 7 × Fin 7) ⊕ Fin 6) :=
-  {.inl (3, 5), .inl (1, 5), .inl (2, 5), .inl (3, 6), .inl (3, 0), .inr 0, .inr 1, .inr 2,
-    .inr 3, .inr 4, .inr 5}
-
 /-- The hypotheses of `rimCert_edgePairσ_robust` (an edge pair of Lemma E). -/
 def EPairData (V : Finset ℝ³) (σ : ℝ) (v w a b c : ℝ³) : Prop :=
   (σ = 1 ∨ σ = -1) ∧ 0 < σ * det3 (a - v) (c - v) (w - v) ∧
@@ -1029,45 +661,6 @@ def CertP16 (x : Fin 7 → ℝ³) : Prop :=
 of Lemmas 19.3–19.5.  Every step of the cover (§19.2–19.5) ends in one; each is a rim certificate
 at a named view (`Cert16.toN`), and the families record the data that §22 uses at the limit. -/
 def Cert16 (x : Fin 7 → ℝ³) : Prop := CertE16 x ∨ CertT16 x ∨ CertP16 x
-
-theorem cert16_ePair {x : Fin 7 → ℝ³} (v w a b c : Fin 7) (ht : (v, w, a, b, c) ∈ ePairList16)
-    {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
-    (q₁ : 0 < σ * det3 (x a - x v) (x c - x v) (x w - x v))
-    (q₂ : 0 < σ * det3 (x c - x a) (x b - x a) (x w - x v))
-    (q₃ : 0 < σ * det3 (x b - x c) (x v - x c) (x w - x v))
-    (q₄ : 0 < σ * det3 (x v - x b) (x a - x b) (x w - x v))
-    (hE : det3 (x b - x a) (x c - x a) (x v - x a) * det3 (x b - x a) (x c - x a) (x w - x a) ≤ 0)
-    (h3 : ¬ (⟪x a, x w - x v⟫ = ⟪x c, x w - x v⟫ ∧ ⟪x c, x w - x v⟫ = ⟪x b, x w - x v⟫))
-    (hV : ∀ z ∈ univ.image x, z = x v ∨ z = x w ∨ z = x a ∨ z = x b ∨ z = x c ∨
-      EdgeMid (x v) (x w) (x a) (x b) z ∨ EdgeHiddenσ σ (x w - x v) (x v) (x a) (x c) (x b) z) :
-    Cert16 x :=
-  Or.inl ⟨v, w, a, b, c, ht, σ, hσ, q₁, q₂, q₃, q₄, hE, h3, hV⟩
-
-theorem cert16_eTri {x : Fin 7 → ℝ³} (v w a b : Fin 7) (ht : (v, w, a, b) ∈ eTriList16)
-    {σ : ℝ} (hσ : σ = 1 ∨ σ = -1) (hT : 0 < σ * det3 (x a - x v) (x b - x v) (x w - x v))
-    (hz : ¬ (⟪x v, x w - x v⟫ = ⟪x a, x w - x v⟫ ∧ ⟪x a, x w - x v⟫ = ⟪x b, x w - x v⟫))
-    (hV : ∀ z ∈ univ.image x, z = x v ∨ z = x w ∨ z = x a ∨ z = x b ∨
-      EdgeMid (x v) (x w) (x a) (x b) z ∨ TriHiddenσ σ (x w - x v) (x v) (x a) (x b) z) :
-    Cert16 x :=
-  Or.inr (Or.inl ⟨v, w, a, b, ht, σ, hσ, hT, hz, hV⟩)
-
-theorem Cert16.mkPQ {x : Fin 7 → ℝ³} (v : (Fin 7 × Fin 7) ⊕ Fin 6) (i₀ i₁ i₂ i₃ : Fin 7)
-    (hm : (v, (i₀, i₁, i₂, i₃)) ∈ pQuadLabels16) (hx : PX16 x v (i₀, i₁, i₂, i₃)) {u : ℝ³}
-    (hn : ∃ c : ℝ, c ≠ 0 ∧ u = c • view16 x v)
-    (h : RimCertPts (univ.image x) u (quad (x i₀) (x i₁) (x i₂) (x i₃))) : Cert16 x := by
-  obtain ⟨c, hc, rfl⟩ := hn
-  exact Or.inr (Or.inr (Or.inl ⟨v, (i₀, i₁, i₂, i₃), hm, hx, c, hc, h⟩))
-
-theorem Cert16.mkPQ5 {x : Fin 7 → ℝ³} (v : (Fin 7 × Fin 7) ⊕ Fin 6) (i₀ i₁ i₂ i₃ i₄ : Fin 7)
-    (hm : (v, (i₀, i₁, i₂, i₃, i₄)) ∈ pQuintLabels16) {u : ℝ³}
-    (hn : ∃ c : ℝ, c ≠ 0 ∧ u = c • view16 x v)
-    (h : RimCertPts (univ.image x) u (quint (x i₀) (x i₁) (x i₂) (x i₃) (x i₄))) : Cert16 x := by
-  obtain ⟨c, hc, rfl⟩ := hn
-  exact Or.inr (Or.inr (Or.inr ⟨v, (i₀, i₁, i₂, i₃, i₄), hm, c, hc, h⟩))
-
-theorem namedAt16_seg {x : Fin 7 → ℝ³} (i j : Fin 7) {σ : ℝ} (hσ : σ = 1 ∨ σ = -1) :
-    ∃ c : ℝ, c ≠ 0 ∧ σ • (x j - x i) = c • view16 x (.inl (i, j)) :=
-  ⟨σ, by rcases hσ with rfl | rfl <;> norm_num, rfl⟩
 
 theorem mem_image7 {x : Fin 7 → ℝ³} (i : Fin 7) : x i ∈ univ.image x :=
   Finset.mem_image_of_mem x (mem_univ i)

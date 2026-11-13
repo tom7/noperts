@@ -35,11 +35,6 @@ def GenSel {a a' b b' c c' : ℝ³} (G : GaleData a a' b b' c c') (d : ℝ³) : 
     (LabSign (galeD G.l G.m) σ b b' c c' a → Type08Gen b b' c c' a a' d) ∧
     (LabSign (galeD G.l G.m) σ c c' b b' a → Type08Gen c c' b b' a a' d)
 
-theorem GenSel.of_all {a a' b b' c c' d : ℝ³} (G : GaleData a a' b b' c c')
-    (h : Type08GenAll a a' b b' c c' d) : GenSel G d := fun _ _ =>
-  ⟨fun _ => h.1, fun _ => h.2.1, fun _ => h.2.2.1, fun _ => h.2.2.2.1, fun _ => h.2.2.2.2.1,
-    fun _ => h.2.2.2.2.2⟩
-
 /-- **Theorem 10.1′, Gale form, labelling-in-use version** (planar equators excluded). -/
 theorem isRupert_type08_slide_gale_sel {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap F d) (G : GaleData a a' b b' c c') (hκa : galeD G.l G.m a a' ≠ 0)
@@ -102,11 +97,6 @@ def GenSelFlat {a a' b b' c c' : ℝ³} (G : GaleData a a' b b' c c') (d : ℝ³
     (WS (σ * galeD G.l G.m c c') (σ * galeD G.l G.m a a') → Type08Gen c c' a a' b b' d) ∧
     (WS (σ * galeD G.l G.m b b') (σ * galeD G.l G.m c c') → Type08Gen b b' c c' a a' d) ∧
     (WS (σ * galeD G.l G.m c c') (σ * galeD G.l G.m b b') → Type08Gen c c' b b' a a' d)
-
-theorem GenSelFlat.of_all {a a' b b' c c' d : ℝ³} (G : GaleData a a' b b' c c')
-    (h : Type08GenAll a a' b b' c c' d) : GenSelFlat G d := fun _ _ =>
-  ⟨fun _ => h.1, fun _ => h.2.1, fun _ => h.2.2.1, fun _ => h.2.2.2.1, fun _ => h.2.2.2.2.1,
-    fun _ => h.2.2.2.2.2⟩
 
 theorem isRupert_type08_flat_sel {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
     (hd : IsCap F d)

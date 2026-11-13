@@ -51,24 +51,6 @@ theorem suppIn_quint {u v m a c b z : ℝ³} (h : SuppIn u (quad v a c b) z) :
   rcases zmod4_cases i with rfl | rfl | rfl | rfl
   exacts [⟨0, hi⟩, ⟨2, hi⟩, ⟨3, hi⟩, ⟨4, hi⟩]
 
-theorem suppIn_quint' {u v m a c b z : ℝ³} (h : SuppIn u (quad v a c b) z) :
-    SuppIn u (quint v a c b m) z := by
-  intro ℓ hℓ
-  obtain ⟨i, hi⟩ := h ℓ hℓ
-  rcases zmod4_cases i with rfl | rfl | rfl | rfl
-  exacts [⟨0, hi⟩, ⟨1, hi⟩, ⟨2, hi⟩, ⟨3, hi⟩]
-
-/-- The depth part of a depth-separated pair of a five-corner rim, read off at explicit
-positions: `c'` the vertex, the corners `c' + 1, …, a'` on one side of its depth, the others
-on the other side. -/
-theorem depthSep_part {x : ZMod 5 → ℝ³} {u : ℝ³} {a' c' : ZMod 5}
-    (h : (∀ s : ℕ, 0 < s → s ≤ (a' - c').val → ⟪x c', u⟫ < ⟪x (c' + s), u⟫) ∧
-      ∀ s : ℕ, (a' - c').val < s → s < 5 → ⟪x (c' + s), u⟫ < ⟪x c', u⟫) :
-    ((∀ s : ℕ, 0 < s → s ≤ (a' - c').val → ⟪x c', u⟫ < ⟪x (c' + s), u⟫) ∧
-      ∀ s : ℕ, (a' - c').val < s → s < 5 → ⟪x (c' + s), u⟫ < ⟪x c', u⟫) ∨
-    ((∀ s : ℕ, 0 < s → s ≤ (a' - c').val → ⟪x (c' + s), u⟫ < ⟪x c', u⟫) ∧
-      ∀ s : ℕ, (a' - c').val < s → s < 5 → ⟪x c', u⟫ < ⟪x (c' + s), u⟫) := Or.inl h
-
 /-- **Depth-separated pairs of `v m a c b`** at the vertex `c'` (`3` or `4`) and the edge `a'`
 (`0` or `1`), from the four or five depth comparisons. -/
 theorem depthSepAt_quint {x : ZMod 5 → ℝ³} {u : ℝ³} {a' c' : ZMod 5}

@@ -76,26 +76,6 @@ theorem resid08FinalJ_imp_K {a a' b b' c c' d : ℝ³} (h : Resid08FinalJ a a' b
   · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (g h))))))
   · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (g h))))))
 
-/-- `K ⊆ J` (for the record). -/
-theorem resid08FinalK_imp_J {a a' b b' c c' d : ℝ³} (h : Resid08FinalK a a' b b' c c' d) :
-    Resid08FinalJ a a' b b' c c' d := by
-  have g : ∀ {p p' q q' r r' : ℝ³}, ResidNK p p' q q' r r' d → ResidNJ p p' q q' r r' d := by
-    rintro p p' q q' r r' ⟨N, h1, h2, h3⟩
-    refine ⟨N, h1, ?_, h3⟩
-    rcases h2 with h | h | h | h
-    · exact Or.inl h.1
-    · exact Or.inr (Or.inl h.1)
-    · exact Or.inr (Or.inr (Or.inl h))
-    · exact Or.inr (Or.inr (Or.inr h))
-  rcases h with h | h | h | h | h | h | h
-  · exact Or.inl h
-  · exact Or.inr (Or.inl (g h))
-  · exact Or.inr (Or.inr (Or.inl (g h)))
-  · exact Or.inr (Or.inr (Or.inr (Or.inl (g h))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (g h)))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (g h))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (g h))))))
-
 end Type08Sp
 end Minimality
 

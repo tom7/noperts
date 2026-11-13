@@ -287,7 +287,6 @@ theorem isRupert_of_tendsto_rimCert_or {n : ℕ} (x : Fin n → ℝ³) (hx : Fun
   obtain ⟨m, -, rfl⟩ := mem_image.mp hz
   exact hleft m i
 
-
 /-! ### Two triangles seen edge-on: the tilt exists (Proposition 22.2 for triangles) -/
 
 /-- `z` is a vertex of the triangle `p q r`. -/
@@ -317,9 +316,6 @@ theorem inTri_no_four {p q r a b c d : ℝ³} (ha : InTri p q r a) (hb : InTri p
   unfold InTri at *
   rcases ha with rfl | rfl | rfl <;> rcases hb with rfl | rfl | rfl <;>
     rcases hc with rfl | rfl | rfl <;> rcases hd with rfl | rfl | rfl <;> simp_all
-
-theorem cross_tri_rot (a b y : ℝ³) : cross (b - a) (y - a) = cross (y - b) (a - b) := by
-  ext j; fin_cases j <;> simp [cross] <;> ring
 
 /-- The cross product of a triangle's two edges at a vertex is `± (q − p) × (r − p)`. -/
 theorem cross_inTri {p q r a b y : ℝ³} (ha : InTri p q r a) (hb : InTri p q r b)
@@ -462,7 +458,6 @@ theorem exists_tiltHides_tri (V : Finset ℝ³) (u : ℝ³) {p₁ q₁ r₁ p₂
   · exact ⟨1, one_pos, Or.inl (by rw [one_smul]; exact hc₁ i z a1 a2 a3 h1 h2)⟩
   · exact ⟨1, one_pos, Or.inr (by rw [one_smul]; exact hc₂ i z a1 a2 a3 h1 h2)⟩
 
-
 /-! ### (G1) at a view: invariance and the sides of the rim -/
 
 /-- **No two points over one point, except `e₁, e₂`** (the axle of an edge view; `e₁ = e₂`
@@ -561,7 +556,6 @@ theorem cross_cross_common (A B C : ℝ³) :
     cross (cross A B) (cross A C) = det3 A B C • A := by
   ext j; fin_cases j <;> simp [cross, det3_expand] <;> ring
 
-
 /-- Three distinct points of a set in convex position (no point inside a segment of two others)
 are not collinear. -/
 theorem cross_ne_zero_of_noSeg {n : ℕ} {x : Fin n → ℝ³} (hx : Function.Injective x)
@@ -592,7 +586,6 @@ theorem cross_ne_zero_of_noSeg {n : ℕ} {x : Fin n → ℝ³} (hx : Function.In
       rw [ha, add_sub_cancel_left, smul_smul, one_div, inv_mul_cancel₀ h.ne', one_smul]
       abel
 
-
 /-- **No two points over one point** at the view `u` (no segment parallel to `u`). -/
 def NoParAt (V : Finset ℝ³) (u : ℝ³) : Prop :=
   ∀ y ∈ V, ∀ y' ∈ V, y ≠ y' → cross (y' - y) u ≠ 0
@@ -611,7 +604,6 @@ one point, and every point over a support line lies with the line's ends on one 
 triangles. -/
 def G1Vtx (V : Finset ℝ³) (u p₀ p₁ p₂ q₀ q₁ q₂ : ℝ³) : Prop :=
   NoParAt V u ∧ G1Tri V u p₀ p₁ p₂ q₀ q₁ q₂
-
 
 end Minimality
 

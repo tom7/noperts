@@ -54,9 +54,6 @@ theorem cross2_sub_right (a b c : ℝ²) : cross2 a (b - c) = cross2 a b - cross
 theorem cross2_smul_right (a b : ℝ²) (r : ℝ) : cross2 a (r • b) = r * cross2 a b := by
   simp [cross2]; ring
 
-theorem cross2_smul_left (a b : ℝ²) (r : ℝ) : cross2 (r • a) b = r * cross2 a b := by
-  simp [cross2]; ring
-
 theorem cross2_neg_right (a b : ℝ²) : cross2 a (-b) = -cross2 a b := by simp [cross2]; ring
 
 theorem cross2_comm (a b : ℝ²) : cross2 a b = -cross2 b a := by simp [cross2]; ring

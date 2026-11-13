@@ -5,7 +5,6 @@ public import Minimality.Type08S.C2K18A
 
 @[expose] public section
 
-
 /-!
 # K18 / E: the S1.5 tie `⟪a-d,a-c'⟫ = 0` (Pa(3), `α4 = β1 = 1`) by the two-cell tie lemma (L7)
 
@@ -27,12 +26,6 @@ open Finset Filter
 namespace Minimality
 namespace Type08Sp
 namespace C2
-
-theorem k18_cone2 {a b v1 v2 : ℝ} {m : ℝ × ℝ} (h : k18Cone (m :: [(a, b)]) v1 v2) :
-    0 < m.1 * v1 + m.2 * v2 ∧ 0 < a * v1 + b * v2 := by
-  constructor
-  · exact h m List.mem_cons_self
-  · exact h (a, b) (by simp)
 
 theorem k18_cone3 {a b a' b' v1 v2 : ℝ} {m : ℝ × ℝ} (h : k18Cone (m :: [(a, b), (a', b')]) v1 v2) :
     0 < m.1 * v1 + m.2 * v2 ∧ 0 < a * v1 + b * v2 ∧ 0 < a' * v1 + b' * v2 := by

@@ -67,30 +67,7 @@ theorem resid08FinalK_imp_K2 {a a' b b' c c' d : ℝ³} (h : Resid08FinalK a a' 
   · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (g h))))))
   · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (g h))))))
 
-/-- `K2 ⊆ K` (for the record). -/
-theorem resid08FinalK2_imp_K {a a' b b' c c' d : ℝ³} (h : Resid08FinalK2 a a' b b' c c' d) :
-    Resid08FinalK a a' b b' c c' d := by
-  have g : ∀ {p p' q q' r r' : ℝ³}, ResidNK2 p p' q q' r r' d → ResidNK p p' q q' r r' d := by
-    rintro p p' q q' r r' ⟨N, h1, h2, h3⟩
-    refine ⟨N, h1, ?_, h3⟩
-    rcases h2 with ⟨hT, hL, hdet⟩ | h | h
-    · refine Or.inl ⟨⟨hT, ?_⟩, hdet⟩
-      rcases hL with hL | hL
-      · exact Or.inr (Or.inl hL)
-      · exact Or.inr (Or.inr hL)
-    · exact Or.inr (Or.inl h)
-    · exact Or.inr (Or.inr (Or.inl h))
-  rcases h with h | h | h | h | h | h | h
-  · exact Or.inl h
-  · exact Or.inr (Or.inl (g h))
-  · exact Or.inr (Or.inr (Or.inl (g h)))
-  · exact Or.inr (Or.inr (Or.inr (Or.inl (g h))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (g h)))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl (g h))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (g h))))))
-
 end Type08Sp
 end Minimality
 
 #print axioms Minimality.Type08Sp.resid08FinalK_imp_K2
-#print axioms Minimality.Type08Sp.resid08FinalK2_imp_K

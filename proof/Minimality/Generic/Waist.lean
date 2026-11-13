@@ -21,7 +21,6 @@ lemma cc0 : cc B P Q Y 0 = !₂[0,0] := rfl
 lemma cc1 : cc B P Q Y 1 = !₂[B,0] := rfl
 lemma cc2 : cc B P Q Y 2 = !₂[P,Q] := rfl
 lemma cc3 : cc B P Q Y 3 = !₂[0,Y] := rfl
-lemma z01 : (0 : ZMod 4) + 1 = 1 := by decide
 lemma z12 : (1 : ZMod 4) + 1 = 2 := by decide
 lemma z23 : (2 : ZMod 4) + 1 = 3 := by decide
 lemma z30 : (3 : ZMod 4) + 1 = 0 := by decide
@@ -34,8 +33,6 @@ noncomputable def hq (B P Q Y : ℝ) : Fin 4 → ℝ := ![0, Q*B, P*Y, 0]
 
 noncomputable def vA : ℝ³ := !₂[0,0,0]
 noncomputable def vB (B : ℝ) : ℝ³ := !₂[B,0,0]
-noncomputable def vA' (P Q : ℝ) : ℝ³ := !₂[P,Q,0]
-noncomputable def vB' (Y : ℝ) : ℝ³ := !₂[0,Y,0]
 
 open Classical in
 noncomputable def VV (B P Q Y dx dz cx cz ex ey ez : ℝ) : Finset ℝ³ :=
@@ -78,7 +75,6 @@ lemma waist_reduce (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P
   intro v hv e
   rw [N_eq]
   exact hlex v hv e
-
 
 syntax "tcm " num " [" term,* "]" : tactic
 macro_rules
@@ -146,7 +142,6 @@ lemma waist_core1 (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P)
   · tcm 0 [hin4]
   · tcm 0 [mul_pos hY hin2]
 
-
 syntax "tcz " num " [" term,* "]" : tactic
 macro_rules
   | `(tactic| tcz $m [$ts,*]) => `(tactic|
@@ -165,64 +160,6 @@ macro_rules
          simp [jc, nq, hq]
          field_simp <;> ring
        exact div_neg_of_neg_of_pos (by nlinarith [$ts,*]) hD))
-
-set_option maxHeartbeats 32000000 in
-lemma waist_core2 (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P) (hQ : 0 < Q) (hY : 0 < Y)
-    (hYQ : Y < Q) (hBP : B < P) (hBP2 : Y * (Q - Y) < B * P)
-    (hd0 : 0 < dx) (hd1 : dx < B) (hc0 : 0 < cx) (hc1 : cx < B)
-    (hin1 : 0 < ey) (hin2 : 0 < ex) (hin3 : Q * ex + (B - P) * ey < Q * B)
-    (hin4 : (Y - Q) * ex + P * ey < P * Y) :
-    IsRupert (VV B P Q Y dx dz cx cz ex ey ez) := by
-  have hK : 0 < Q - Y := by linarith
-  have hPY := mul_pos hP hY
-  have hBY := mul_pos hB hY
-  have hBQ := mul_pos hB hQ
-  have hconv : B * (Y - Q) < P * Y := by nlinarith [mul_pos hB hK]
-  have hD : 0 < P^2 + (Q-Y)^2 := by positivity
-  have hc2 : 0 < B*Q - B*Y + P*Y := by nlinarith [mul_pos hB hK]
-  refine waist_reduce B P Q Y dx dz cx cz ex ey ez hB hP hQ hY hconv
-    (-P*(Q-Y)/(P^2+(Q-Y)^2)) (2*P*(B*P-Y*(Q-Y))/(P^2+(Q-Y)^2)) (2*P) 0
-    (2*B*P*(Q-Y)/(P^2+(Q-Y)^2)) (Q-Y) 0 ?_
-  intro v hv e
-  simp only [VV, Finset.mem_insert, Finset.mem_singleton] at hv
-  have hBd := mul_pos (mul_pos (mul_pos hB hP) (sub_pos.2 hd1)) hK
-  have hBc := mul_pos (mul_pos (mul_pos hB hP) (sub_pos.2 hc1)) hK
-  rcases hv with rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> fin_cases e
-  -- a
-  · tcd 2 [-2*B^2*P*(Q-Y)] [mul_pos (mul_pos (mul_pos hB hB) hP) hK]
-  · tcz 0 [hBQ]
-  · tcz 0 [hPY]
-  · tcd 2 [-2*P*Y*(B*P - Q*Y + Y^2)] [mul_pos hPY (by nlinarith : 0 < B*P - Q*Y + Y^2)]
-  -- b
-  · tcz 3 [mul_pos hB hK]
-  · tcd 2 [-2*Q*(Q-Y)*(B*Q-B*Y+P*Y)] [mul_pos (mul_pos hQ hK) hc2]
-  · tcz 0 [hconv]
-  · tcz 0 [hBY]
-  -- a'
-  · tcz 0 [hBQ]
-  · tcd 2 [2*P*(B-P)*(B*Q-B*Y+P*Y)] [mul_pos (mul_pos hP (sub_pos.2 hBP)) hc2]
-  · tcz 3 [mul_pos hP hK]
-  · tcz 0 [hPY]
-  -- b'
-  · tcz 0 [hBY]
-  · tcz 0 [hconv]
-  · tcz 3 [mul_pos hP hK]
-  · tcd 2 [-2*B*P^2*Y] [mul_pos (mul_pos hB (mul_pos hP hP)) hY]
-  -- d
-  · tcd 2 [-2*B*P*(B-dx)*(Q-Y)] [hBd]
-  · tcz 0 [mul_pos hQ (sub_pos.2 hd1)]
-  · tcz 0 [mul_pos hK hd0]
-  · tcz 0 [mul_pos hY hd0]
-  -- c'
-  · tcd 2 [-2*B*P*(B-cx)*(Q-Y)] [hBc]
-  · tcz 0 [mul_pos hQ (sub_pos.2 hc1)]
-  · tcz 0 [mul_pos hK hc0]
-  · tcz 0 [mul_pos hY hc0]
-  -- c
-  · tcz 0 [mul_pos hB hin1]
-  · tcz 0 [hin3]
-  · tcz 0 [hin4]
-  · tcz 0 [mul_pos hY hin2]
 
 lemma z_aux (a b z : ℝ) (hz : 0 < z) (hm : z ≤ b / (|a| + 1)) : z * a < b := by
   have hp : 0 < |a| + 1 := by positivity
@@ -256,13 +193,5 @@ theorem waist_thm1 (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P
     by_contra hc; push Not at hc; nlinarith
   exact waist_core1 B P Q Y dx dz cx cz ex ey ez hB hP hQ hY hYQ hconv hd0 hd1 hc0 hc1 hin1 hin2 hin3 hin4
     z eps hz heps hepos h1 h2 h3
-
-theorem waist_thm2 (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P) (hQ : 0 < Q) (hY : 0 < Y)
-    (hYQ : Y < Q) (hBP : B < P) (hBP2 : Y * (Q - Y) < B * P)
-    (hd0 : 0 < dx) (hd1 : dx < B) (hc0 : 0 < cx) (hc1 : cx < B)
-    (hin1 : 0 < ey) (hin2 : 0 < ex) (hin3 : Q * ex + (B - P) * ey < Q * B)
-    (hin4 : (Y - Q) * ex + P * ey < P * Y) :
-    IsRupert (VV B P Q Y dx dz cx cz ex ey ez) :=
-  waist_core2 B P Q Y dx dz cx cz ex ey ez hB hP hQ hY hYQ hBP hBP2 hd0 hd1 hc0 hc1 hin1 hin2 hin3 hin4
 
 end Waist

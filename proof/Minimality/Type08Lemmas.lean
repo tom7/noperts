@@ -212,13 +212,6 @@ theorem not_bad_of_inTri {x y y' p p' : ℝ³} {g : ℝ³ → ℝ} {N : ℝ³}
 
 /-! ### Lemma 4: the cap in the axis view -/
 
-/-- The Plücker relation for orientations seen from `c` in a projection along `e`. -/
-theorem det3_plucker_e (c e a b d a' : ℝ³) :
-    det3 (a - c) (b - c) e * det3 (d - c) (a' - c) e =
-      det3 (a - c) (d - c) e * det3 (b - c) (a' - c) e +
-      det3 (a - c) (a' - c) e * det3 (d - c) (b - c) e := by
-  simp only [det3_expand, PiLp.sub_apply]; ring
-
 /-- **Lemma 4 of §10, `B C D` form.**  Project along `e` and write
 `S X Y = det3 (X − c) (Y − c) e` (the orientation of the images of `X`, `Y` seen
 from the image `O` of `c`).  Let `C, D, A, B` (the images of `a, b, a', b'`)
@@ -236,28 +229,6 @@ theorem inTri_cap_BD {c e a b a' b' d : ℝ³}
   rw [det3_swap12]
   have := neg_of_mul_neg_pos hii hba'
   linarith
-
-/-- **Lemma 4 of §10, `A B C` form.**  As `inTri_cap_BD`, with also (i) `C*`, `B`
-on opposite sides of the line `C O`: if `O ∈ int conv (A, B, C)`, then
-`O ∈ int conv (A, B, C*)`. -/
-theorem inTri_cap_AB {c e a b a' b' d : ℝ³}
-    (hab : 0 < det3 (a - c) (b - c) e) (hba' : 0 < det3 (b - c) (a' - c) e)
-    (ha'b' : 0 < det3 (a' - c) (b' - c) e) (hb'a : 0 < det3 (b' - c) (a - c) e)
-    (hi : det3 (a - c) (d - c) e * det3 (a - c) (b' - c) e < 0)
-    (hii : det3 (b - c) (d - c) e * det3 (b - c) (a' - c) e < 0)
-    (hiii : 0 < det3 (b' - c) (d - c) e * det3 (b' - c) (a - c) e)
-    (hABC : 0 < det3 (a - c) (a' - c) e) :
-    0 < det3 (a' - c) (b' - c) e ∧ 0 < det3 (b' - c) (d - c) e ∧
-      0 < det3 (d - c) (a' - c) e := by
-  refine ⟨ha'b', pos_of_mul_pos_pos (by rwa [mul_comm] at hiii) hb'a, ?_⟩
-  have had : 0 < det3 (a - c) (d - c) e :=
-    pos_of_mul_neg_neg hi (by rw [det3_swap12]; linarith)
-  have hdb : 0 < det3 (d - c) (b - c) e := by
-    rw [det3_swap12]; have := neg_of_mul_neg_pos hii hba'; linarith
-  have hpl := det3_plucker_e c e a b d a'
-  have : 0 < det3 (a - c) (b - c) e * det3 (d - c) (a' - c) e := by
-    rw [hpl]; positivity
-  exact pos_of_mul_pos_pos this hab
 
 /-- A linear relation among four vectors passes to `det3 (·) W e`. -/
 theorem det3_lin_left {X₁ X₂ X₃ X₄ : ℝ³} {α₁ α₂ α₃ α₄ : ℝ}
@@ -329,19 +300,6 @@ theorem far_end_Qbc_iff {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c')
   have hne : galeD G.l G.m b' a' ≠ 0 := by intro h; rw [h, mul_zero] at d1; exact lt_irrefl _ d1
   exact facet_lt_iff_of_dep (G.hl.galeD G.hm b').swap₁.perm₂₃ (F.swap₁.perm₂₃).a'b'c
     (by simp) (by simp) (F.swap₁.perm₂₃).nodup (galeD_self _ _ b') hne
-
-/-- **Lemma 1 (b) of §10, Gale form.**  At the view along `d b`, the far end of
-`Q_ab` is `c'` (rather than `a`) iff `|[b' a]| > |[b' c']|`. -/
-theorem far_end_Qab_iff {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c')
-    (G : GaleData a a' b b' c c') (hκb : galeD G.l G.m b b' ≠ 0) :
-    F.a'bc.f c' < F.a'bc.f a ↔
-      galeD G.l G.m b' c' * (galeD G.l G.m b' c' + galeD G.l G.m b' a) < 0 := by
-  obtain ⟨-, d2, -⟩ := pole_signs F.perm₁₂.swap₁ (G.hl.galeD G.hm b').perm₁₂.swap₁
-    (galeD_self _ _ b') (by rw [galeD_anti]; exact neg_ne_zero.mpr hκb)
-  have hne : galeD G.l G.m b' c' ≠ 0 := by intro h; rw [h, mul_zero] at d2; exact lt_irrefl _ d2
-  exact facet_lt_iff_of_dep (G.hl.galeD G.hm b').perm₂₃.perm₁₂.swap₁
-    (F.perm₂₃.perm₁₂.swap₁).a'b'c (by simp) (by simp) (F.perm₂₃.perm₁₂.swap₁).nodup
-    (galeD_self _ _ b') hne
 
 /-! ### The normalized labelling (Lemma 6) and the Gale chain (Lemma 7) -/
 
@@ -628,14 +586,6 @@ theorem nws4_of_planar_quad {P₀ P₁ P₂ P₃ u : ℝ³} {α β : ℝ} (hα :
       mul_nonneg hβ.le (show 0 ≤ ⟪P₃, u⟫ - ⟪P₂, u⟫ by linarith),
       mul_pos (sub_pos.mpr hαβ) (mul_pos hα hw1),
       mul_nonneg (sub_pos.mpr hαβ).le (mul_nonneg hβ.le (show 0 ≤ ⟪P₃, u⟫ - ⟪P₀, u⟫ by linarith))]
-
-/-- **Lemma 1 (c) of §10.**  The rim `d, a, b', c` of `K_d` (the face `Q_ac`) is
-unimodal at every view unless an edge of `Q_ac` is level (here: unless `d`, `a`
-are at one depth). -/
-theorem IsCap.Qac_nws4 {a a' b b' c c' d : ℝ³} {F : OctFacets a a' b b' c c'} (hd : IsCap F d)
-    (u : ℝ³) (h : ⟪d, u⟫ ≠ ⟪a, u⟫) : NWS4 (quad ⟪d, u⟫ ⟪a, u⟫ ⟪b', u⟫ ⟪c, u⟫) := by
-  obtain ⟨α, β, hα, hβ, hαβ, hb'⟩ := hd.Qac_coords
-  exact nws4_of_planar_quad hα hβ hαβ hb' h
 
 /-- The facts (i)–(iii) of the proof of Lemma 4, for any projection direction
 `e`: in the plane of `Q_ac` the diagonal `a c` separates `d` from `b'` (i) and

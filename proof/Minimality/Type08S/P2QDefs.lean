@@ -79,18 +79,5 @@ def Resid08FinalI (a a' b b' c c' d : ℝ³) : Prop :=
   ResidNH a a' b b' c c' d ∨ ResidNH b b' a a' c c' d ∨ ResidNH a a' c c' b b' d ∨
   ResidNH c c' a a' b b' d ∨ ResidNH b b' c c' a a' d ∨ ResidNH c c' b b' a a' d
 
-/-- `I ⊆ H`. -/
-theorem resid08FinalI_imp_H {a a' b b' c c' d : ℝ³} (h : Resid08FinalI a a' b b' c c' d) :
-    Resid08FinalH a a' b b' c c' d := by
-  rcases h with ⟨hp | hp, -⟩ | h | h | h | h | h | h
-  · exact Or.inl hp
-  · exact Or.inr (Or.inl hp)
-  · exact Or.inr (Or.inr (Or.inl h))
-  · exact Or.inr (Or.inr (Or.inr (Or.inl h)))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))))
-  · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr h))))))
-
 end Type08Sp
 end Minimality

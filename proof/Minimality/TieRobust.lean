@@ -56,9 +56,6 @@ theorem cross_tw_left (v d : ℝ³) (ε : ℝ) : cross (tw v ε) d = cross ez d 
 theorem cross_tw_right (v d : ℝ³) (ε : ℝ) : cross d (tw v ε) = cross d ez + ε • cross d v := by
   ext i; fin_cases i <;> simp [tw, cross, ez] <;> ring
 
-theorem cross_swap (a b : ℝ³) : cross a b = -cross b a := by
-  ext i; fin_cases i <;> simp [cross] <;> ring
-
 theorem cross_neg_sub (w a b : ℝ³) : cross w (a - b) = cross (b - a) w := by
   ext i; fin_cases i <;> simp [cross] <;> ring
 
@@ -70,16 +67,6 @@ theorem inner_gen_left (v d x : ℝ³) (ε : ℝ) :
 theorem inner_gen_right (v d x : ℝ³) (ε : ℝ) :
     ⟪cross d (tw v ε), x⟫ = ⟪cross d ez, x⟫ + ε * ⟪cross d v, x⟫ := by
   rw [cross_tw_right, inner_add_left, real_inner_smul_left]
-
-/-- Torques of tilted generators are quadratic in `ε`. -/
-theorem torque_quad (y G0 G1 v : ℝ³) (ε : ℝ) :
-    ⟪cross y (G0 + ε • G1), ez + ε • v⟫ =
-      ⟪cross y G0, ez⟫ + ε * (⟪cross y G1, ez⟫ + ⟪cross y G0, v⟫) + ε ^ 2 * ⟪cross y G1, v⟫ := by
-  have : cross y (G0 + ε • G1) = cross y G0 + ε • cross y G1 := by
-    ext i; fin_cases i <;> simp [cross] <;> ring
-  rw [this]
-  simp only [inner_add_left, inner_add_right, real_inner_smul_left, real_inner_smul_right]
-  ring
 
 /-- A force system at the view `w` (`isRupert_of_no_forces`). -/
 def IsForceSys (V : Finset ℝ³) (w : ℝ³) (F : ℝ³ → ℝ³) : Prop :=
@@ -463,11 +450,6 @@ theorem farDet_zero_neg (v a0 a b b1 : ℝ³) :
       farDet (cross (b1 - b) ez) (cross (b - a) ez) (cross ez (a0 - a)) b a ez := by
   simp [tw]
 
-/-- Single terms of a sum of nonnegative terms are bounded by the sum. -/
-theorem le_sum_of_nonneg' {α : Type*} {s : Finset α} {f : α → ℝ} (hf : ∀ x ∈ s, 0 ≤ f x)
-    {x : α} (hx : x ∈ s) : f x ≤ ∑ y ∈ s, f y :=
-  single_le_sum hf hx
-
 theorem ev_abs_le {f : ℝ → ℝ} (hf : Continuous f) :
     ∀ᶠ ε in 𝓝[>] (0 : ℝ), |f ε| ≤ |f 0| + 1 := by
   have h : ∀ᶠ ε in 𝓝 (0 : ℝ), |f ε| < |f 0| + 1 :=
@@ -509,7 +491,6 @@ theorem continuous_torque (y d v : ℝ³) :
 theorem continuous_torque' (y d v : ℝ³) :
     Continuous fun ε : ℝ => ⟪cross y (cross (tw v ε) d), tw v ε⟫ := by
   simp only [cross, tw, PiLp.inner_apply, Fin.sum_univ_three]; fun_prop
-
 
 /-- Eventual bounds for the far quantities, with an opaque constant. -/
 theorem ev_far_bounds (v a b a0 b1 m : ℝ³) : ∃ K0 : ℝ, 0 ≤ K0 ∧ ∀ᶠ ε in 𝓝[>] (0 : ℝ),

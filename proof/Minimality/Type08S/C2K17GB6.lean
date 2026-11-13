@@ -4,7 +4,6 @@ public import Minimality.Type08S.C2K17GB5
 
 @[expose] public section
 
-
 /-!
 # K17GB / GB6: S1.8a cell and theorem.
 -/
@@ -171,28 +170,6 @@ theorem k17gb_s18a_cell {a a' b b' c c' d : ℝ³} {α1 β1 α4 γ4 β6 : ℝ}
     · rw [hw, hw]
       simp only [k17gbY8a, pc5_2, pc5_3, hwx, hQR]
       nlinarith [mul_pos (mul_pos hQQ hPQ) (sub_pos.2 h1)]
-
-/-- **S1.8a**: `K14TaC` (with `¬ T'`), `⟪a-d,b-d⟫ = 0`: a lex cell unless `ζ_{a-c'}(a,b') ≤ 0`. -/
-theorem k17gb_s18a {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (hT' : ¬ IsT' a b c' d)
-    (h : K14TaC a a' b b' c c' d) (hpq : ⟪a - d, b - d⟫ = 0) :
-    HasLexCell (V8 a a' b b' c c' d) ∨ ⟪a - b', a - c'⟫ ≤ 0 := by
-  obtain ⟨α1, α4, β1, γ4, β6, hdet, hc', hb', ha', hα1, hβ1, hα4, hα41, hγ4, hβ6, hpl, hqr, hL⟩ :=
-    k17gb_tac_frame W hT' h hpq
-  by_cases hle : ⟪a - b', a - c'⟫ ≤ 0
-  · exact Or.inr hle
-  · push Not at hle
-    left
-    have hpp : 0 < ⟪a - d, a - d⟫ := by
-      apply real_inner_self_pos.2
-      intro h0; apply hdet; rw [h0]; simp [det3_expand]
-    have hpr : 0 < ⟪a - d, c - d⟫ := by
-      rw [hL] at hle
-      by_contra hh; push Not at hh
-      have h1 : 0 < α1 - 1 := by linarith
-      have h2 : γ4 * ⟪a - d, c - d⟫ - (1 - α4) * ⟪a - d, a - d⟫ ≤ 0 := by
-        nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ γ4) (neg_nonneg.2 hh), mul_pos (sub_pos.2 hα41) hpp]
-      nlinarith [mul_nonneg h1.le (neg_nonneg.2 h2)]
-    exact k17gb_s18a_cell hdet hc' hb' ha' hα1 hβ1 hα4 hα41 hγ4 hβ6 hqr hpq hpr
 
 end C2
 end Type08Sp

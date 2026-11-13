@@ -20,19 +20,6 @@ FEWER-FACES.md §11.
 
 namespace Minimality
 
-/-- **Lemma T over a vertex, either general position.** -/
-theorem isRupert_of_facets_vertex_tie_or (V : Finset ℝ³) (hgen : NoThreeCollinear V)
-    (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (h1f : IsFacet V Q1) (h2f : IsFacet V Q2)
-    (v : ℝ³) (hint : Q1 ∩ Q2 = {v}) (hne1 : ∃ p ∈ Q1, p ≠ v) (hne2 : ∃ p ∈ Q2, p ≠ v)
-    (hT : TriGenTie V Q1 Q2 v ∨ TriGenFarP V Q1 Q2 v)
-    (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧ ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ,
-      (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
-      (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
-      ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V := by
-  rcases hT with hT | hT
-  · exact isRupert_of_facets_vertex_tie V hgen Q1 Q2 h1V h2V h1f h2f v hint hne1 hne2 hT hin
-  · exact isRupert_of_facets_vertex_par V hgen Q1 Q2 h1V h2V h1f h2f v hint hne1 hne2 hT hin
-
 /-- **Lemma T over an edge, either general position.** -/
 theorem isRupert_of_facets_edge_tieR_or (V : Finset ℝ³) (hgen : NoThreeCollinear V)
     (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (h1f : IsFacet V Q1) (h2f : IsFacet V Q2)

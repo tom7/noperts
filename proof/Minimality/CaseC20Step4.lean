@@ -296,9 +296,6 @@ lemma dV_0 : F.dV 0 = F.a11 * (F.S.tp * (-F.S.sp * F.S.tp + F.S.tp)) +
 lemma dV_3 : F.dV 3 = F.a11 * (F.S.tm * (-F.S.sp * F.S.tp + F.S.tp)) +
     F.gg * (-F.S.hm * (-F.S.hp * F.S.sp + F.S.hp - F.S.kp)) := by
   simp only [dV, dep, ptC_3, GG_eq, Shape20.u_vN4]; ring
-lemma dV_4 : F.dV 4 = F.a12 * (F.S.sm * (-F.S.sp * F.S.tp + F.S.tp)) +
-    F.gg * (-F.S.km * (-F.S.hp * F.S.sp + F.S.hp - F.S.kp)) := by
-  simp only [dV, dep, ptC_4, GG_eq, Shape20.u_vN4]; ring
 lemma dV_6 : F.dV 6 = F.a12 * (-F.S.sp * F.S.tp + F.S.tp) := by
   simp only [dV, dep, ptC_6, GG_eq, Shape20.u_vN4]; ring
 
@@ -306,8 +303,6 @@ lemma dT_0 : F.dT 0 = F.a11 * (F.S.tp * (F.S.tp - 1)) + F.gg * (F.S.hp * F.S.hp)
   simp only [dT, dep, ptC_0, GG_eq, Shape20.u_tANR]; ring
 lemma dT_3 : F.dT 3 = F.a11 * (F.S.tm * (F.S.tp - 1)) + F.gg * (-F.S.hm * F.S.hp) := by
   simp only [dT, dep, ptC_3, GG_eq, Shape20.u_tANR]; ring
-lemma dT_4 : F.dT 4 = F.a12 * (F.S.sm * (F.S.tp - 1)) + F.gg * (-F.S.km * F.S.hp) := by
-  simp only [dT, dep, ptC_4, GG_eq, Shape20.u_tANR]; ring
 lemma dT_6 : F.dT 6 = F.a12 * (F.S.tp - 1) := by
   simp only [dT, dep, ptC_6, GG_eq, Shape20.u_tANR]; ring
 lemma dT_5 : F.dT 5 = 0 := by

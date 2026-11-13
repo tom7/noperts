@@ -299,16 +299,6 @@ theorem isRupert_type08_limit_hdnR' {a a' b b' c c' d : ℝ³} (N : Norm08 a a' 
       rw [← hpts] at hr
       exact rupert_of_free_limit_rim N hT hT' (i, s, j) ht σ hr
 
-/-- **The `P2Pkg` statement** (`isRupert_type08_limit_hdnR`), now proved; its hypotheses `hties`, `hN2`,
-`hT4` are not used. -/
-theorem isRupert_type08_limit_hdnR {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
-    (hT : ¬ IsT a' b c d) (hT' : ¬ IsT' a b c' d) (hQ : ¬ RegQ N.F)
-    (hties : (RegN2 N.F → TieOKG 0 a a' b b' c c' d) ∧ (RegT4 N.F → TieOKG 1 a a' b b' c c' d))
-    (hN2 : ¬ (TieN2 a a' b b' c c' ∧ N2Closable N)) (hT4 : ¬ (TieT4 b b' c c' d ∧ T4Closable N)) :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) ∨
-      ∃ t ∈ SC08, ((t.1 = 0 ∧ RegN2 N.F) ∨ (t.1 = 1 ∧ RegT4 N.F)) ∧ RobHDN a a' b b' c c' d t :=
-  isRupert_type08_limit_hdnR' N hT hT' hQ
-
 end Type08Sp
 end Minimality
 
@@ -316,4 +306,3 @@ end Minimality
 #print axioms Minimality.Type08Sp.wstraddle_N2
 #print axioms Minimality.Type08Sp.wstraddle_T4
 #print axioms Minimality.Type08Sp.isRupert_type08_limit_hdnR'
-#print axioms Minimality.Type08Sp.isRupert_type08_limit_hdnR

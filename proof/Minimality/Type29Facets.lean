@@ -1,6 +1,6 @@
 module
 
-public import Minimality.Type29Cover
+public import Minimality.Type29K3
 public import Minimality.Type21Switch
 
 @[expose] public section
@@ -19,7 +19,6 @@ namespace Minimality
 
 open scoped RealInnerProductSpace
 open Finset
-
 
 /-- The ratio of a facet function at two points is the ratio of the determinants with the facet. -/
 theorem facet_ratio {V : Finset ℝ³} {P Q R : ℝ³} (FF : FacetFn V P Q R) (y y' : ℝ³) :
@@ -434,34 +433,6 @@ noncomputable def IsCap29.toNF29 {x : Fin 7 → ℝ³} (hx : Function.Injective 
     hst := H.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1, d023 := H.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1,
     d035 := H.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1,
     d234 := H.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2 }
-
-/-- **Type 29, class K4 (§21.1 with Theorem P), from the facets.**  Let `x 0, …, x 6` be a type-29
-point set: `O = K − 6` an octahedron (`F`, opposite pairs `(0, 4)`, `(1, 3)`, `(2, 5)`) with the
-cap `6` (`IsCap29`).  If its normal form (Lemma 21.1; all normal forms of `x` agree) is of class
-K4 (`a2, b0 > 0`, `V ≠ 0`), off the special positions and with the genericity of the named tests
-(`K4Gen`, `K4C1Gen` for K4a, their `σ`-images for K4b), then `K` is Rupert. -/
-theorem isRupert_type29_K4 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
-    (F : OctFacets (x 0) (x 4) (x 1) (x 3) (x 2) (x 5)) (hd : IsCap29 F (x 6))
-    (h : ∀ N : NF29 x, 0 < N.a2 ∧ 0 < N.b0 ∧
-      ((N.h0 * (1 - N.a2 - N.b2) - N.h2 * (1 - N.a0 - N.b0) < 0 ∧ K4Gen N ∧ K4C1Gen N) ∨
-       (0 < N.h0 * (1 - N.a2 - N.b2) - N.h2 * (1 - N.a0 - N.b0) ∧ K4Gen N.sigma ∧
-        K4C1Gen N.sigma))) : IsRupert (univ.image x) := by
-  obtain ⟨ha2, hb0, ⟨hV, G, G1⟩ | ⟨hV, G, G1⟩⟩ := h (IsCap29.toNF29 hx F hd)
-  · exact NF29.isRupert_K4a_all _ ha2 hb0 hV G G1
-  · exact NF29.isRupert_K4b_all _ ha2 hb0 hV G G1
-
-/-- **Type 29, class K3 (§21.2 with Theorem P), from the facets.**  As `isRupert_type29_K4`, for
-the class K3: K3a (`a2 < 0 < b0`, `V > 0`) or K3b (`a2 > 0 > b0`, `V < 0`). -/
-theorem isRupert_type29_K3 {x : Fin 7 → ℝ³} (hx : Function.Injective x)
-    (F : OctFacets (x 0) (x 4) (x 1) (x 3) (x 2) (x 5)) (hd : IsCap29 F (x 6))
-    (h : ∀ N : NF29 x,
-      (N.a2 < 0 ∧ 0 < N.b0 ∧ 0 < N.h0 * (1 - N.a2 - N.b2) - N.h2 * (1 - N.a0 - N.b0) ∧
-        K3Gen N ∧ K3C1Gen N) ∨
-      (0 < N.a2 ∧ N.b0 < 0 ∧ N.h0 * (1 - N.a2 - N.b2) - N.h2 * (1 - N.a0 - N.b0) < 0 ∧
-        K3Gen N.sigma ∧ K3C1Gen N.sigma)) : IsRupert (univ.image x) := by
-  obtain ⟨ha2, hb0, hV, G, G1⟩ | ⟨ha2, hb0, hV, G, G1⟩ := h (IsCap29.toNF29 hx F hd)
-  · exact NF29.isRupert_K3a_all _ ha2 hb0 hV G G1
-  · exact NF29.isRupert_K3b_all _ ha2 hb0 hV G G1
 
 end Minimality
 

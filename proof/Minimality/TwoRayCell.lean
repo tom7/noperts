@@ -166,7 +166,6 @@ theorem v1_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r �
       · simp [hY0, hYm]
       · simp [hY0, hYm]
 
-
 /-- Three distinct depths on a triangle are automatically cyclically unimodal. -/
 theorem lexUni_three (z : ZMod 3 → ℝ) (hinj : ∀ i j, z i = z j → i = j) : LexUni z (fun _ => 0) := by
   classical
@@ -214,11 +213,6 @@ theorem v1_k3 (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r ≠ 0)
     first | exact absurd rfl hji | exact absurd (by decide) hj |
     (simp only [cross2, hY0, hY1, hYm, show (0 : ZMod 3) + 1 = 1 from rfl, show (1 : ZMod 3) + 1 = 2 from rfl,
       show (2 : ZMod 3) + 1 = 0 from rfl, Prod.fst_sub, Prod.snd_sub]; norm_num)
-
-/-- **V1 to Rupert**. -/
-theorem v1_isRupert (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r ≠ 0) (h : HasLexCellAt V r) : IsRupert V := by
-  have hr0 : r ≠ 0 := by intro h; rw [h] at hΔ; simp [det3_expand] at hΔ
-  exact isRupert_of_hasLexCell V ⟨r, hr0, h⟩
 
 end TwoRay
 end Minimality

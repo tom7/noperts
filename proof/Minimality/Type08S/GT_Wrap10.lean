@@ -1,6 +1,6 @@
 module
 
-public import Minimality.Type08S.GT_Wrap9
+public import Minimality.Type08S.GT_Wrap8
 
 @[expose] public section
 

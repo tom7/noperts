@@ -46,22 +46,6 @@ Same hyperplane for `V` and for `T_A` (Lemma 27.71a). -/
 def ClassH : Prop :=
   F.a12 * (F.S.hp + F.S.hm) = F.a11 * (F.S.tp * F.S.hm + F.S.tm * F.S.hp)
 
-/-- The `R`-image hyperplane, in the variables of `F` (corner `xa`): `A12 (k+ + k-) = A22 (s+ k- + s- k+)`,
-i.e. `A12/A22 = rho*' = (s- k+ + s+ k-)/(k+ + k-)`. -/
-def ClassHR : Prop :=
-  F.a12 * (F.S.kp + F.S.km) = F.a22 * (F.S.sp * F.S.km + F.S.sm * F.S.kp)
-
-/-- `V^R`'s and `T_A^R`'s hyperplane is `ClassHR`. -/
-theorem classH_rFrame_iff : F.rFrame.ClassH ↔ F.ClassHR := by
-  have e12 : F.rFrame.a12 = F.a12 := by
-    show ⟪x 6 - x 5, x 1 - x 5⟫ = _
-    exact real_inner_comm _ _
-  have e11 : F.rFrame.a11 = F.a22 := rfl
-  unfold ClassH ClassHR
-  rw [e12, e11]
-  show F.a12 * (F.S.km + F.S.kp) = F.a22 * (F.S.sm * F.S.kp + F.S.sp * F.S.km) ↔ _
-  constructor <;> intro h <;> linarith
-
 /-! ### The persistent-pair classification -/
 
 /-- The `y`-coordinate (frame) of the rim corners `m1+, m1-, m2-, xb`. -/

@@ -128,45 +128,6 @@ theorem isRupert_of_edgeChords_robustUnimodal (V M : Finset ℝ³) (R : Matrix (
         obtain ⟨hvw, hv'⟩ := mem_erase.mp hv
         exact hin v (mem_sdiff.mp hv').1 (mem_sdiff.mp hv').2 hvw hvx) hz hnd) hM
 
-/-- **Lemma 16.27 with a robustly unimodal `K_v` (Theorem 18.3).** The view `u₀`
-(`R u₀ = r e_z`, `r > 0`) runs along the edge `vw`, `v = x i₀`, `w = v − h u₀`. The silhouette
-of `K_v` (the hull without the middles and `w`) is the strictly convex counterclockwise polygon
-`x` (every other point of `K_v` strictly inside), with robustly unimodal depths and no
-horizontal double normal. Each middle lies over a side `[x i, x (i + 1)]` of that polygon,
-at a depth offset `δ ≠ 0`: the sides at `v` carry the middles of the two faces at `vw`
-(chords from `v`), the other sides those of further faces seen edge-on. Then `V` is
-Rupert. -/
-theorem isRupert_of_edgeChords_uniform_robustUnimodal (V M : Finset ℝ³)
-    (R : Matrix (Fin 3) (Fin 3) ℝ)
-    (hR : R ∈ SO3) {u₀ : ℝ³} {r : ℝ} (hr : 0 < r) (hRu : R.toEuclideanLin u₀ = r • ez)
-    {k : ℕ} [NeZero k] (x : ZMod k → ℝ³) (i₀ : ZMod k) (w : ℝ³) (h : ℝ)
-    (hw : w = x i₀ - h • u₀) (hh : h ≠ 0) (hxV : ∀ i, x i ∈ V) (hxM : ∀ i, x i ∉ M)
-    (hp : IsCcwPolygon (fun i => proj_xy (R.toEuclideanLin (x i))))
-    (hin : ∀ v ∈ V, v ∉ M → v ≠ w → (∀ i, v ≠ x i) → proj_xy (R.toEuclideanLin v) ∈
-      interior (convexHull ℝ (Set.range fun i => proj_xy (R.toEuclideanLin (x i)))))
-    (hz : IsRobustUnimodal (fun i => (R.toEuclideanLin (x i)) 2))
-    (hnd : ¬ HasHorizontalDoubleNormal (fun i => proj_xy (R.toEuclideanLin (x i)))
-      (fun i => (R.toEuclideanLin (x i)) 2))
-    (hM : ∀ m ∈ M, ∃ i : ZMod k, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
-      m = x i + s • (x (i + 1) - x i) + δ • u₀) : IsRupert V := by
-  classical
-  have hu₀ := ne_zero_of_rot_eq hr hRu
-  have hxw : ∀ i, x i ≠ w := corner_ne_axle hr hRu hp hw hh
-  obtain ⟨ω, τ, hcert, hedge⟩ := exists_tiltCert_of_robustUnimodal ((V \ M).erase w) R hR hr hRu x
-    (fun i => mem_erase.mpr ⟨hxw i, mem_sdiff.mpr ⟨hxV i, hxM i⟩⟩) hp
-    (fun v hv hvx => by
-      obtain ⟨hvw, hv'⟩ := mem_erase.mp hv
-      exact hin v (mem_sdiff.mp hv').1 (mem_sdiff.mp hv').2 hvw hvx) hz hnd
-  have hB := hedge (i₀ - 1)
-  rw [sub_add_cancel] at hB
-  refine isRupert_of_edgeChords_uniform V M u₀ ω τ (x i₀) w (x (i₀ + 1)) (x (i₀ - 1)) h hu₀
-    (hxV _) (hxV _) (hxV _) hw hh (det3_corner_pos hR hr hRu hp i₀) (hedge i₀).1 hB.2
-    (fun y hy hyM _ hyw => (hcert y (mem_erase.mpr ⟨hyw, mem_sdiff.mpr ⟨hy, hyM⟩⟩)).mono
-      ((erase_subset _ _).trans sdiff_subset)) fun m hm => ?_
-  obtain ⟨i, s, δ, hs0, hs1, hδ, rfl⟩ := hM m hm
-  exact ⟨x i, hxV i, x (i + 1), hxV _, x (i - 1), hxV _, s, δ, hs0, hs1, hδ, rfl,
-    det3_corner_pos hR hr hRu hp i, (hedge i).1, (hedge i).2⟩
-
 /-- **Theorem 18.1, tie form** (Lemma 16.27′ with Theorem 18.3; §18.3 after the proof of
 Theorem 18.3).  One vertex `x i` over each corner of the shadow; the silhouette of
 `V ∖ (M ∪ D)` at `u₀` is the strictly convex counterclockwise polygon `x` with robustly
@@ -243,38 +204,6 @@ theorem isRupert_of_edgeView_robust (V M : Finset ℝ³) (u₀ : ℝ³) (hu₀ :
   · simp only [hdepth]; exact hz.smul (inv_pos.mpr hr)
   · exact hnd R hR r hr.ne' hRu k x
       (fun i => mem_erase.mpr ⟨corner_ne_axle hr hRu hp hw hh i, hxV i⟩) hp
-
-/-- **Proposition 8.8 with Theorem 18.3, at a view given by determinant tests** (no rotation
-in the statement; the vertex-crossing analogue of `isRupert_of_edgeView_robust`).  The cycle `x`
-passes all determinant tests at `u₀` (strictly convex, counterclockwise), every point of `V`
-other than the corners and the middles `M` is strictly inside, the depths `⟪x i, u₀⟫` are
-robustly unimodal, there is no horizontal double normal, and each middle lies over a side:
-`m = x i + s (x (i + 1) − x i) + δ u₀`, `0 < s < 1`, `δ ≠ 0`.  Then `V` is Rupert. -/
-theorem isRupert_of_vertexView_robust (V M : Finset ℝ³) (u₀ : ℝ³) (hu₀ : u₀ ≠ 0) {k : ℕ} [NeZero k]
-    (hk : 3 ≤ k) (x : ZMod k → ℝ³) (hxV : ∀ i, x i ∈ V) (hxM : ∀ i, x i ∉ M)
-    (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → 0 < det3 (x (i + 1) - x i) (x j - x i) u₀)
-    (hrest : ∀ y ∈ V, y ∉ M → (∀ j, y ≠ x j) → ∀ i,
-      0 < det3 (x (i + 1) - x i) (y - x i) u₀)
-    (hz : IsRobustUnimodal (fun i => ⟪x i, u₀⟫)) (hnd : NoHDNAt V u₀)
-    (hM : ∀ m ∈ M, ∃ i : ZMod k, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
-      m = x i + s • (x (i + 1) - x i) + δ • u₀) : IsRupert V := by
-  obtain ⟨R, hR, r, hr, hRu⟩ := exists_rotation_to_ez_pos u₀ hu₀
-  have hp : IsCcwPolygon (fun i => proj_xy (R.toEuclideanLin (x i))) := by
-    refine ⟨hk, fun i j hi hj => ?_⟩
-    simp only [proj_rot_sub]
-    exact cross2_proj_rot_pos hR hr hRu (hcyc i j hi hj)
-  have hdepth : ∀ y, (R.toEuclideanLin y) 2 = r⁻¹ * ⟪y, u₀⟫ := by
-    intro y
-    have : r * (R.toEuclideanLin y) 2 = ⟪y, u₀⟫ := by
-      rw [← inner_ez, ← real_inner_smul_right, ← hRu, inner_toEuclideanLin_SO3 hR]
-    rw [← this]; field_simp
-  refine isRupert_of_chords_robustUnimodal V M R hR hr hRu x hxV hxM hp ?_ ?_ ?_ hM
-  · intro y hy hyM hyx
-    refine hp.mem_interior_of_left fun i => ?_
-    simp only [proj_rot_sub]
-    exact cross2_proj_rot_pos hR hr hRu (hrest y hy hyM hyx i)
-  · simp only [hdepth]; exact hz.smul (inv_pos.mpr hr)
-  · exact hnd R hR r hr.ne' hRu k x hxV hp
 
 /-- **Lemma 16.27′ at an edge view given by determinant tests.**  The cycle `x` passes all
 triple tests at `u₀` (strictly convex, counterclockwise), every other point except the middles

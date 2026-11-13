@@ -141,7 +141,6 @@ theorem min_unique (hp : IsCcwPolygon p) {a c : ZMod k} (h : PairInterior p a c)
 
 end PairInterior
 
-
 variable {k : ℕ} [NeZero k] {p : ZMod k → ℝ²} {a c : ZMod k}
 
 /-- The depths at the ends of `e` and at `c`: `z c` is strictly between. -/
@@ -268,7 +267,6 @@ theorem forces_supported_of_depthSeparated
   refine ⟨-l c, l a, l (a + 1), by linarith, hla, hlb, by linarith, by linarith, ?_, hfl a, hfl _, hsupp⟩
   rw [hfl c, neg_smul]; simp [neg_smul]
 
-
 theorem sum_support {M : Type*} [AddCommMonoid M] (hint : PairInterior p a c) (g : ZMod k → M)
     (hg : ∀ i, i ≠ c → i ≠ a → i ≠ a + 1 → g i = 0) (hp : IsCcwPolygon p) :
     ∑ i, g i = g a + g (a + 1) + g c := by
@@ -341,84 +339,6 @@ theorem no_balanced_zeroTorque_of_depthSeparated {z : ZMod k → ℝ}
   · subst h3; rw [hfb, hb0]; simp
   exact hsupp i h1 h2 h3
 
-
-/-- Converse: zero torque of a depth-separated pair is a horizontal double
-normal (`y = (q, z_c)`, `y' = (p c, z_c)`).  So `pairTorque ≠ 0` is implied by the
-old hypothesis `¬HasHorizontalDoubleNormal`. -/
-theorem hasHorizontalDoubleNormal_of_pairTorque_eq_zero {z : ZMod k → ℝ}
-    (hp : IsCcwPolygon p) (hds : IsDepthSeparatedPair p z a c) (hint : PairInterior p a c)
-    (hτ : pairTorque p z a c = 0) : HasHorizontalDoubleNormal p z := by
-  have hc := hds.1
-  have hn0 := PairInterior.outNormal_ne_zero hp a
-  have hD : z (a + 1) - z a ≠ 0 := by
-    rcases hint.depth_between hds with ⟨u, v⟩ | ⟨u, v⟩ <;> intro h <;> linarith
-  set n := outNormal (p a) (p (a + 1)) with hn
-  set d := p (a + 1) - p a with hd
-  set t := (z c - z a) / (z (a + 1) - z a) with ht
-  have ht0 : 0 < t := by
-    rcases hint.depth_between hds with ⟨u, v⟩ | ⟨u, v⟩
-    · exact div_pos_of_neg_of_neg (by linarith) (by linarith)
-    · exact div_pos (by linarith) (by linarith)
-  have ht1 : t < 1 := by
-    rcases hint.depth_between hds with ⟨u, v⟩ | ⟨u, v⟩
-    · rw [ht, div_lt_one_of_neg (by linarith)]; linarith
-    · rw [ht, div_lt_one (by linarith)]; linarith
-  have htD : t * (z (a + 1) - z a) = z c - z a := by rw [ht]; field_simp
-  set q := p a + t • d with hq
-  have hhull : ∀ r ∈ convexHull ℝ (Set.range p), ⟪n, r⟫ ≤ ⟪n, p a⟫ := by
-    intro r hr
-    have : convexHull ℝ (Set.range p) ⊆ {r | ⟪n, r⟫ ≤ ⟪n, p a⟫} :=
-      convexHull_min (by rintro _ ⟨j, rfl⟩; exact hp.inner_outNormal_le a j)
-        (convex_halfSpace_le (innerₛₗ ℝ n).isLinear _)
-    exact this hr
-  have hnq : ⟪n, q⟫ = ⟪n, p a⟫ := by
-    have : ⟪n, d⟫ = 0 := PairInterior.inner_outNormal_self _ _
-    rw [hq, inner_add_right, inner_smul_right, this]; ring
-  have hlt : ⟪n, p c⟫ < ⟪n, p a⟫ := by
-    have := PairInterior.min_unique hp hint hc a hint.ne_a.symm
-    exact this
-  set w := p c - q with hw
-  have hwd : ⟪w, d⟫ = 0 := by rw [hw, hq]; exact hτ
-  have hwn : cross2 w n = 0 := by
-    rw [hn, cross2_outNormal]; rw [← hd]; rw [hwd]; simp
-  have hwmu := norm_sq_smul_of_cross2 hwn
-  have hnw : ⟪n, w⟫ < 0 := by
-    rw [hw, inner_sub_right, hnq]; linarith
-  have hnpos : 0 < ‖n‖ ^ 2 := by have := norm_pos_iff.mpr hn0; positivity
-  set μ := ⟪n, w⟫ / ‖n‖ ^ 2 with hμ
-  have hμneg : μ < 0 := div_neg_of_neg_of_pos hnw hnpos
-  have hwμ : w = μ • n := by
-    apply smul_right_injective ℝ² hnpos.ne'
-    simp only [hμ]; rw [hwmu, smul_smul, mul_div_cancel₀ _ hnpos.ne']
-  have hqc : q ≠ p c := by
-    intro h
-    have h1 := hp.2 a c hint.ne_a hint.ne_a_succ
-    rw [← hd] at h1
-    have : p c - p a = t • d := by rw [← h, hq]; abel
-    rw [this, cross2_smul_right, cross2_self] at h1; simp at h1
-  refine ⟨liftPt q (z c), liftPt (p c) (z c), ⟨a, ?_⟩, ⟨c, left_mem_segment ℝ _ _⟩, ?_, ?_, ?_, ?_⟩
-  · refine ⟨1 - t, t, by linarith, ht0.le, by ring, ?_⟩
-    ext i; fin_cases i
-    · simp [liftPt, hq, hd]; ring
-    · simp [liftPt, hq, hd]; ring
-    · simp [liftPt]; linarith
-  · simp [liftPt]
-  · rw [proj_xy_liftPt, proj_xy_liftPt]; exact hqc
-  · rw [proj_xy_liftPt, proj_xy_liftPt]
-    intro r hr
-    rw [← hw, hwμ, inner_smul_left, conj_trivial]
-    have := hc r hr
-    rw [inner_neg_left] at this
-    nlinarith
-  · rw [proj_xy_liftPt, proj_xy_liftPt]
-    intro r hr
-    have h2 : q - p c = -w := by rw [hw]; abel
-    rw [h2, hwμ, inner_neg_left, inner_smul_left, conj_trivial]
-    have := hhull r hr
-    rw [inner_sub_right, hnq]
-    nlinarith
-
-
 /-- **Lemma 7.1 glue, zero-system form.**  As `exists_firstOrderInward_of_forces_hdn`, but
 the criterion is directly that every balanced zero-torque system of corner forces
 in the normal cones vanishes (no horizontal-double-normal hypothesis). -/
@@ -466,7 +386,6 @@ theorem exists_firstOrderInward_of_forces_zero (V : Finset ℝ³) {k : ℕ} [NeZ
   by_cases hc : ∃ i, v₀ = x i
   · obtain ⟨i, rfl⟩ := hc; exact hf₀ (hall i)
   · push Not at hc; exact hf₀ (hzero v₀ hv₀ hc)
-
 
 /-- **Theorem 8.10 with torque, standard view.** -/
 theorem exists_firstOrderInward_of_depthSeparated_torque (V : Finset ℝ³) {k : ℕ} [NeZero k]

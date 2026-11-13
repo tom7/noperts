@@ -31,9 +31,6 @@ theorem det3_coord (p q r : ℝ³) (x1 y1 z1 x2 y2 z2 x3 y3 z3 : ℝ) :
       det3 p q r * d3 x1 y1 z1 x2 y2 z2 x3 y3 z3 := by
   simp only [fcomb, d3, det3_expand, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; ring
 
-
-theorem fcomb_zero (p q r : ℝ³) : fcomb p q r 0 0 0 = 0 := by simp [fcomb]
-
 theorem fcomb_sub (p q r : ℝ³) (x y z x' y' z' : ℝ) :
     fcomb p q r x y z - fcomb p q r x' y' z' = fcomb p q r (x - x') (y - y') (z - z') := by
   simp only [fcomb]; module
@@ -121,7 +118,6 @@ theorem lexUni_four (z w : ZMod 4 → ℝ) (hz : ∀ i j, z i = z j) (hw : ∀ i
       h23, (not_lt_of_gt h23)]; done)
   | (exfalso; simp [h01, (not_lt_of_gt h01), h02, (not_lt_of_gt h02), h03, (not_lt_of_gt h03), h12, (not_lt_of_gt h12), h13,
       (not_lt_of_gt h13), h23, (not_lt_of_gt h23)] at hna1 hna2)
-
 
 end Type08Sp
 end Minimality

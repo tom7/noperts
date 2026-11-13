@@ -5,7 +5,6 @@ public import Minimality.Type08S.C2K17F0A
 
 @[expose] public section
 
-
 /-!
 # K17GB / GB0: lex-unimodality toolkit for the Bundle B cells (keys: `exists_key` reduces every lex statement to reals)
 -/
@@ -63,82 +62,6 @@ theorem k17gb_lex5_plat01 (z w : ZMod 5 → ℝ) (hinj : ∀ i j, z i = z j → 
     · simp only [t2, s2]; rintro ⟨a, b⟩; linarith
     · simp only [t3, s3]; rintro ⟨a, b⟩; linarith
     · exact absurd rfl hi
-
-/-- `x1 > x2 > x3 > x4` (lex): unimodal whatever `x0` is. -/
-theorem k17gb_lex5_desc (z w : ZMod 5 → ℝ) (hinj : ∀ i j, z i = z j → w i = w j → i = j)
-    (h21 : LexLt (z 2, w 2) (z 1, w 1)) (h32 : LexLt (z 3, w 3) (z 2, w 2))
-    (h43 : LexLt (z 4, w 4) (z 3, w 3)) : LexUni z w := by
-  refine k17gb_uni5 z w hinj (fun key hk => ?_)
-  obtain ⟨s0, s1, s2, s3, s4⟩ := z5_add_one
-  obtain ⟨t0, t1, t2, t3, t4⟩ := k17f_zsub
-  have k21 := (hk _ _).1 h21
-  have k32 := (hk _ _).1 h32
-  have k43 := (hk _ _).1 h43
-  by_cases h01 : key 1 < key 0
-  · refine ⟨0, ?_, fun i hi => ?_⟩
-    · simp only [t0, s0]; exact ⟨by linarith, h01⟩
-    · rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
-      · exact absurd rfl hi
-      · simp only [t1, s1]; rintro ⟨a, b⟩; linarith
-      · simp only [t2, s2]; rintro ⟨a, b⟩; linarith
-      · simp only [t3, s3]; rintro ⟨a, b⟩; linarith
-      · simp only [t4, s4]; rintro ⟨a, b⟩; linarith
-  · push Not at h01
-    have hlt : key 0 < key 1 := by
-      rcases h01.lt_or_eq with h | h
-      · exact h
-      · exfalso
-        have hn : (z 0, w 0) ≠ (z 1, w 1) := fun h' => by
-          have := hinj 0 1 (congrArg Prod.fst h') (congrArg Prod.snd h'); exact absurd this (by decide)
-        rcases lexLt_total hn with h' | h'
-        · have := (hk _ _).1 h'; linarith
-        · have := (hk _ _).1 h'; linarith
-    refine ⟨1, ?_, fun i hi => ?_⟩
-    · simp only [t1, s1]; exact ⟨hlt, k21⟩
-    · rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
-      · simp only [t0, s0]; rintro ⟨a, b⟩; linarith
-      · exact absurd rfl hi
-      · simp only [t2, s2]; rintro ⟨a, b⟩; linarith
-      · simp only [t3, s3]; rintro ⟨a, b⟩; linarith
-      · simp only [t4, s4]; rintro ⟨a, b⟩; linarith
-
-/-- `x2 > x3 > x4` (lex) and `x0 < x4`: unimodal whatever `x1` is. -/
-theorem k17gb_lex5_low0 (z w : ZMod 5 → ℝ) (hinj : ∀ i j, z i = z j → w i = w j → i = j)
-    (h32 : LexLt (z 3, w 3) (z 2, w 2)) (h43 : LexLt (z 4, w 4) (z 3, w 3))
-    (h04 : LexLt (z 0, w 0) (z 4, w 4)) : LexUni z w := by
-  refine k17gb_uni5 z w hinj (fun key hk => ?_)
-  obtain ⟨s0, s1, s2, s3, s4⟩ := z5_add_one
-  obtain ⟨t0, t1, t2, t3, t4⟩ := k17f_zsub
-  have k32 := (hk _ _).1 h32
-  have k43 := (hk _ _).1 h43
-  have k04 := (hk _ _).1 h04
-  by_cases h12 : key 2 < key 1
-  · refine ⟨1, ?_, fun i hi => ?_⟩
-    · simp only [t1, s1]; exact ⟨by linarith, h12⟩
-    · rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
-      · simp only [t0, s0]; rintro ⟨a, b⟩; linarith
-      · exact absurd rfl hi
-      · simp only [t2, s2]; rintro ⟨a, b⟩; linarith
-      · simp only [t3, s3]; rintro ⟨a, b⟩; linarith
-      · simp only [t4, s4]; rintro ⟨a, b⟩; linarith
-  · push Not at h12
-    have hlt : key 1 < key 2 := by
-      rcases h12.lt_or_eq with h | h
-      · exact h
-      · exfalso
-        have hn : (z 1, w 1) ≠ (z 2, w 2) := fun h' => by
-          have := hinj 1 2 (congrArg Prod.fst h') (congrArg Prod.snd h'); exact absurd this (by decide)
-        rcases lexLt_total hn with h' | h'
-        · have := (hk _ _).1 h'; linarith
-        · have := (hk _ _).1 h'; linarith
-    refine ⟨2, ?_, fun i hi => ?_⟩
-    · simp only [t2, s2]; exact ⟨hlt, k32⟩
-    · rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
-      · simp only [t0, s0]; rintro ⟨a, b⟩; linarith
-      · simp only [t1, s1]; rintro ⟨a, b⟩; linarith
-      · exact absurd rfl hi
-      · simp only [t3, s3]; rintro ⟨a, b⟩; linarith
-      · simp only [t4, s4]; rintro ⟨a, b⟩; linarith
 
 /-- Plateau `x1,x2,x3` with `w3 < w2` (`x2` not a w-valley), flanks `z0 < z4 < z1`. -/
 theorem k17gb_lex5_plat123 (z w : ZMod 5 → ℝ) (hinj : ∀ i j, z i = z j → w i = w j → i = j)

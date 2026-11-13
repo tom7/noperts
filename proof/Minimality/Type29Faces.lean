@@ -46,14 +46,6 @@ noncomputable def Face16.ofPoly {S : Finset (Fin 7)} (N : NF29 x) (P Q R : Fin 7
     have hD : 0 < N.D ^ 2 := by positivity
     nlinarith
 
-/-- The value of `Face16.ofPoly` at a vertex. -/
-theorem Face16.ofPoly_f {S : Finset (Fin 7)} (N : NF29 x) (P Q R : Fin 7) (σ : ℝ)
-    (p : Fin 7 → ℝ) (hp : ∀ i, det3 (x Q - x P) (x R - x P) (x i - x P) = p i * N.D)
-    (h0 : ∀ i ∈ S, p i = 0) (h1 : ∀ i ∉ S, 0 < σ * p i) (i : Fin 7) :
-    (Face16.ofPoly N P Q R σ p hp h0 h1).f (x i) = (-σ * N.D) * (p i * N.D) := by
-  show (-σ * N.D) * det3 (x Q - x P) (x R - x P) (x i - x P) = _
-  rw [hp]
-
 /-- The determinant of a facet's three points with a point of the shape. -/
 macro "face29_det " N:term:max : tactic =>
   `(tactic| (
@@ -161,23 +153,6 @@ noncomputable def NF29.f356 (N : NF29 x) : Face16 x {3, 5, 6} :=
     (by intro i; fin_cases i <;> face29_det N)
     (by intro i hi; fin_cases i <;> face29_zero hi)
     (by intro i hi; fin_cases i <;> face29_pos N hi)
-
-/-- Two vertices at the same height over the quadrilateral `1456` have equal frame heights. -/
-theorem NF29.f1456_eq (N : NF29 x) {i j : Fin 7}
-    (h : ⟪N.f1456.N, x i⟫ = ⟪N.f1456.N, x j⟫) :
-    ![-N.h0, 0, -N.h2, -1, 0, 0, 0] i = ![-N.h0, 0, -N.h2, -1, 0, 0, 0] j := by
-  have k := N.f1456.hN (x i) (x j)
-  rw [inner_sub_right, h, sub_self] at k
-  have fi : N.f1456.f (x i) = (-(-1 : ℝ) * N.D) * (![-N.h0, 0, -N.h2, -1, 0, 0, 0] i * N.D) :=
-    Face16.ofPoly_f N 1 4 5 (-1) _ _ _ _ i
-  have fj : N.f1456.f (x j) = (-(-1 : ℝ) * N.D) * (![-N.h0, 0, -N.h2, -1, 0, 0, 0] j * N.D) :=
-    Face16.ofPoly_f N 1 4 5 (-1) _ _ _ _ j
-  rw [fi, fj] at k
-  have hD : N.D ^ 2 ≠ 0 := pow_ne_zero 2 N.hD
-  have : N.D ^ 2 * (![-N.h0, 0, -N.h2, -1, 0, 0, 0] i - ![-N.h0, 0, -N.h2, -1, 0, 0, 0] j) = 0 := by
-    linear_combination k
-  have := (mul_eq_zero.mp this).resolve_left hD
-  linarith
 
 /-- **The facets of a type-29 shape**: seven distinct points with the nine facets of type 29. -/
 structure Facets29 (x : Fin 7 → ℝ³) where

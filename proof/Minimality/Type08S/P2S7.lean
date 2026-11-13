@@ -50,12 +50,6 @@ def S4TpG (a a' b b' c c' d : ℝ³) : Prop :=
      (¬ NoHDNAt ({d, a, b', c} : Finset ℝ³) (b - d) ∧
        (TpHDN2 a b b' c c' d ∨ det3 (b' - a) (c - d) (b - d) = 0)))
 
-theorem S4TpG_imp (h : S4TpG a a' b b' c c' d) : S4Tp a a' b b' c c' d := by
-  obtain ⟨h1, h2, h3 | ⟨h3, h4 | h4⟩⟩ := h
-  · exact ⟨h1, h2, Or.inl ⟨h3.1, h3.2.1⟩⟩
-  · exact ⟨h1, h2, Or.inr ⟨h3, Or.inl h4⟩⟩
-  · exact ⟨h1, h2, Or.inr ⟨h3, Or.inr (Or.inl h4)⟩⟩
-
 /-- The `QacTop` core: no `R4ppEnd`, no `TpPokedH`, no `TpFarH`. -/
 theorem close_Tp_hdn_caseG (N : Norm08 a a' b b' c c' d) (hT' : IsT' a b c' d)
     (hq : QacTop a b b' c d)
@@ -110,4 +104,3 @@ end Type08Sp
 end Minimality
 
 #print axioms Minimality.Type08Sp.close_T'_sig4G
-#print axioms Minimality.Type08Sp.S4TpG_imp

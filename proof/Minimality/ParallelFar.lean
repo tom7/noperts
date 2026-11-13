@@ -60,10 +60,6 @@ structure ChainOKc (Q : ℝ → ℝ → Prop) (z0 s : ℝ) (m : ℕ) (ca cz : �
   side : ∀ a z, Q a z → ∀ l, l < m → ¬ (a = ca l ∧ z = cz l) → ¬ (a = ca (l + 1) ∧ z = cz (l + 1)) →
     s * ((ca (l + 1) - ca l) * (z - cz l) - (cz (l + 1) - cz l) * (a - ca l)) < 0
 
-theorem ChainOK.toC {Q : ℝ → ℝ → Prop} {z0 s : ℝ} {m : ℕ} {ca cz : ℕ → ℝ}
-    (C : ChainOK Q z0 s m ca cz) : ChainOKc Q z0 s m ca cz :=
-  ⟨C.one_le, C.start, C.inc, C.mem, fun a z hq hn => Or.inl (C.far a z hq hn), C.side⟩
-
 /-- **Chains when several points share a vertical.** As `exists_chainOK`,
 without distinct `a`: build the chain on the top point (in the `s` sense) of
 each vertical and lift; the lower points of a vertical are strictly on the

@@ -165,7 +165,6 @@ theorem t31c_le (hα : F.a12 < F.a11) (Hp : F.S.hm * F.S.sm < F.S.km * F.S.tm)
     (Hm : F.S.kp * F.S.tp < F.S.hp * F.S.sp) : IsRupert (Finset.univ.image x) :=
   rupert_of_z (F.zFrame.t31b_le hα Hp Hm)
 
-
 /-! ### Group 1 helper lemmas: the ST tests of C4 (`a+ = c+`) -/
 
 theorem C4_cyc (S : Shape18) (Hpe : S.hp * S.sp = S.kp * S.tp) (Hm : S.km * S.tm < S.hm * S.sm) (hts : S.sp < S.tp) :
@@ -653,7 +652,6 @@ theorem G2_C5z_rest4 (tp tm sp sm hp hm kp km r q e : ℝ)
     | (left; linarith [(mul_pos (mul_pos hr htm) hsp), (mul_pos (mul_pos he htm) hsp), (mul_pos (mul_pos hq htm) hsp), (mul_pos (mul_pos hr htp) htm), (mul_pos (mul_pos hq htp) htm), (mul_pos hq htm), (mul_pos hr hsp), (mul_pos he hsp), (mul_pos (mul_pos hr hsp) hsm), (mul_pos (mul_pos he hsp) hsm), (mul_pos (mul_pos hq hsp) hsm), (mul_pos (mul_pos hq htm) hT), (mul_pos htm hR), (mul_pos (mul_pos (mul_pos he hsp) htp) him), hR, (mul_pos (mul_pos hq hsm) hT), (mul_pos hsm hR), (mul_pos (mul_pos (mul_pos he hsp) htp) hism), (mul_pos (mul_pos hr htp) him), (mul_pos (mul_pos hq htm) hip), (mul_pos hr htp), (mul_pos (mul_pos hr htp) hism), (mul_pos (mul_pos hq hsm) hip), (mul_pos (mul_pos hr hsp) him), (mul_pos (mul_pos he hsp) him), (mul_pos (mul_pos hq htm) his), (mul_pos hq hM), (mul_pos (mul_pos he htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hr) htp) htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hq) htp) htp) hsp), (mul_pos (mul_pos (mul_pos hr hq) htp) hsp), (mul_pos (mul_pos (mul_pos hq htm) hsm) hB), (mul_pos (mul_pos hr htp) hB), (mul_pos (mul_pos (mul_pos hr hq) htp) him), (mul_pos (mul_pos hr hq) htp), (mul_pos (mul_pos (mul_pos hq hq) htm) hip)])
     | (right; refine ⟨by ring, by linarith [(mul_pos (mul_pos hr htm) hsp), (mul_pos (mul_pos he htm) hsp), (mul_pos (mul_pos hq htm) hsp), (mul_pos (mul_pos hr htp) htm), (mul_pos (mul_pos hq htp) htm), (mul_pos hq htm), (mul_pos hr hsp), (mul_pos he hsp), (mul_pos (mul_pos hr hsp) hsm), (mul_pos (mul_pos he hsp) hsm), (mul_pos (mul_pos hq hsp) hsm), (mul_pos (mul_pos hq htm) hT), (mul_pos htm hR), (mul_pos (mul_pos (mul_pos he hsp) htp) him), hR, (mul_pos (mul_pos hq hsm) hT), (mul_pos hsm hR), (mul_pos (mul_pos (mul_pos he hsp) htp) hism), (mul_pos (mul_pos hr htp) him), (mul_pos (mul_pos hq htm) hip), (mul_pos hr htp), (mul_pos (mul_pos hr htp) hism), (mul_pos (mul_pos hq hsm) hip), (mul_pos (mul_pos hr hsp) him), (mul_pos (mul_pos he hsp) him), (mul_pos (mul_pos hq htm) his), (mul_pos hq hM), (mul_pos (mul_pos he htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hr) htp) htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hq) htp) htp) hsp), (mul_pos (mul_pos (mul_pos hr hq) htp) hsp), (mul_pos (mul_pos (mul_pos hq htm) hsm) hB), (mul_pos (mul_pos hr htp) hB), (mul_pos (mul_pos (mul_pos hr hq) htp) him), (mul_pos (mul_pos hr hq) htp), (mul_pos (mul_pos (mul_pos hq hq) htm) hip)]⟩)
 
-
 /-! ### Group 2: Theorem 2, C5 and C6 -/
 
 /-- **C5^Z** (`a- = c-`, `a+ < c+`, `a- < b+`): tilt `Z`-image of `d = (p, 0, -1)`,
@@ -754,11 +752,6 @@ theorem t31_C6 (hα : F.a12 < F.a11) (hp : F.S.ap = F.S.cp) (hm : F.S.am = F.S.c
       simp only [hzz, hPq, GG_eq, quint_0, quint_4]
       nlinarith [mul_pos (sub_pos.2 htm1) (sub_pos.2 hα)]
     exact Q5v_eventually (z := zz) (w := ww) (Or.inl e1) (Or.inl e3) (Or.inl e4) (Or.inl e5)
-
-/-- **C6^Z** (`a+ = c+`, `a- = c-`, `a+ < b-`). -/
-theorem t31_C6z (hα : F.a12 < F.a11) (hp : F.S.ap = F.S.cp) (hm : F.S.am = F.S.cm)
-    (hb : F.S.ap < F.S.bm) : IsRupert (Finset.univ.image x) :=
-  rupert_of_z (F.zFrame.t31_C6 hα hm hp hb)
 
 /-! ### Group 3: Theorem 3 (parallel edges, merged view) -/
 

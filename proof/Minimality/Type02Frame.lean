@@ -246,16 +246,7 @@ theorem F1Rect_alpha (x : Fin 7 → ℝ³) : F1Rect (x ∘ permAlpha) ↔ F1Rect
   simp only [F1Rect, h0, h2, h3, h5]
   rw [add_comm (x 5 - x 2), real_inner_comm (x 0 - x 2)]
 
-theorem X2Set_alpha (x : Fin 7 → ℝ³) : X2Set (x ∘ permAlpha) ↔ X2Set x := by
-  have h2 : (x ∘ permAlpha) 2 = x 2 := by simp [Function.comp, pA2]
-  have h3 : (x ∘ permAlpha) 3 = x 3 := by simp [Function.comp, pA3]
-  have h0 : (x ∘ permAlpha) 0 = x 5 := by simp [Function.comp, pA0]
-  have h5 : (x ∘ permAlpha) 5 = x 0 := by simp [Function.comp, pA5]
-  simp only [X2Set, h0, h2, h3, h5]
-  rw [real_inner_comm (x 0 - x 2)]; tauto
-
 end Frame02
-
 
 namespace Frame02
 variable {x : Fin 7 → ℝ³}

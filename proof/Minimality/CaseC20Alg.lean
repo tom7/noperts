@@ -63,8 +63,6 @@ lemma ap_pos : 0 < S.ap := div_pos S.hp_pos S.tp_pos
 lemma am_pos : 0 < S.am := div_pos S.hm_pos S.tm_pos
 lemma bp_pos : 0 < S.bp := div_pos S.hp_pos (by linarith [S.tp_lt])
 lemma bm_pos : 0 < S.bm := div_pos S.hm_pos (by linarith [S.tm_lt])
-lemma cp_pos : 0 < S.cp := div_pos S.kp_pos S.sp_pos
-lemma cm_pos : 0 < S.cm := div_pos S.km_pos S.sm_pos
 lemma dp_pos : 0 < S.dp := div_pos S.kp_pos (by linarith [S.sp_lt])
 lemma dm_pos : 0 < S.dm := div_pos S.km_pos (by linarith [S.sm_lt])
 

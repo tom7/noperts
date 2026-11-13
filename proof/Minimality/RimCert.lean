@@ -294,8 +294,6 @@ the parallel clause). -/
 structure TieSeg (V : Finset ℝ³) : Prop where
   tie : ∀ v ∈ V, ∀ w ∈ V, v ≠ w → OneTieAt V (w - v)
 
-theorem GenPosTie.toTieSeg {V : Finset ℝ³} (h : GenPosTie V) : TieSeg V := ⟨h.tie⟩
-
 /-- `TieSeg`: at an edge view, no three points have equal depths (as `GenPosTie.noTriple`). -/
 theorem TieSeg.noTriple {V : Finset ℝ³} (hg : TieSeg V) {v w s t r : ℝ³} (hv : v ∈ V)
     (hw : w ∈ V) (hs : s ∈ V) (ht : t ∈ V) (hr : r ∈ V) (hvw : v ≠ w) (hst : s ≠ t)
@@ -305,7 +303,6 @@ theorem TieSeg.noTriple {V : Finset ℝ³} (hg : TieSeg V) {v w s t r : ℝ³} (
   · exact hst h1
   · exact hsr h1
 
-
 /-! ### Orientation signs -/
 
 theorem IsRobustUnimodal.sigma {k : ℕ} {z : ZMod k → ℝ} {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
@@ -313,22 +310,6 @@ theorem IsRobustUnimodal.sigma {k : ℕ} {z : ZMod k → ℝ} {σ : ℝ} (hσ : 
   rcases hσ with rfl | rfl
   · simpa using hz
   · simpa using hz.neg
-
-/-- A point over a closed side at the view `u` is over a closed side at `σ u` (`σ = ±1`). -/
-theorem class_sigma {k : ℕ} {y : ZMod k → ℝ³} {u z : ℝ³} {σ : ℝ} (hσσ : σ * σ = 1)
-    (h : ∃ j₁ j₂ : ZMod k, ∃ s δ : ℝ, 0 ≤ s ∧ s ≤ 1 ∧ z = y j₁ + s • (y j₂ - y j₁) + δ • u) :
-    ∃ j₁ j₂ : ZMod k, ∃ s δ : ℝ, 0 ≤ s ∧ s ≤ 1 ∧
-      z = y j₁ + s • (y j₂ - y j₁) + δ • (σ • u) := by
-  obtain ⟨j₁, j₂, s, δ, hs0, hs1, rfl⟩ := h
-  refine ⟨j₁, j₂, s, σ * δ, hs0, hs1, ?_⟩
-  rw [smul_smul, show σ * δ * σ = δ * (σ * σ) by ring, hσσ, mul_one]
-
-theorem sigma_ne_zero {σ : ℝ} (hσ : σ = 1 ∨ σ = -1) : σ ≠ 0 := by
-  rcases hσ with rfl | rfl <;> norm_num
-
-theorem det3_sigma (a b u : ℝ³) (σ : ℝ) : σ * det3 a b u = det3 a b (σ • u) :=
-  (det3_smul_right a b u σ).symm
-
 
 end Minimality
 

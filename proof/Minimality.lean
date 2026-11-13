@@ -14,11 +14,9 @@ public import Minimality.Type08S.C2K9K
 public import Minimality.Type08S.C2K5ZE
 public import Minimality.Type08S.C2K6PZ
 public import Minimality.Type08S.C2K6MZ
-public import Minimality.Type08S.C2K6TZ
 public import Minimality.Type08S.C2K14P
 public import Minimality.Type08S.C2K47ZA
 public import Minimality.Type08S.C2FC1
-public import Minimality.Type16Ties
 public import Minimality.Type16UW
 public import Minimality.Type16VW
 public import Minimality.Type16Arc3B

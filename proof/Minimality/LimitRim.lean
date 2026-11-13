@@ -79,11 +79,6 @@ theorem le_of_tendsto_frequently {ι : Type*} {l : Filter ι} {f g : ι → ℝ}
   push Not at hc
   exact h ((hg.eventually_lt hf hc).mono fun t ht ht' => absurd ht' (not_le.mpr ht))
 
-theorem eq_of_tendsto_frequently {ι : Type*} {l : Filter ι} {f g : ι → ℝ} {a b : ℝ}
-    (hf : Tendsto f l (𝓝 a)) (hg : Tendsto g l (𝓝 b)) (h : ∃ᶠ t in l, f t = g t) : a = b :=
-  le_antisymm (le_of_tendsto_frequently hf hg (h.mono fun _ e => e.le))
-    (le_of_tendsto_frequently hg hf (h.mono fun _ e => e.ge))
-
 theorem Tendsto.det3' {ι : Type*} {l : Filter ι} {a b c : ι → ℝ³} {a₀ b₀ c₀ : ℝ³}
     (ha : Tendsto a l (𝓝 a₀)) (hb : Tendsto b l (𝓝 b₀)) (hc : Tendsto c l (𝓝 c₀)) :
     Tendsto (fun t => det3 (a t) (b t) (c t)) l (𝓝 (det3 a₀ b₀ c₀)) := by
@@ -220,7 +215,6 @@ theorem cyc_nonneg_of_tendsto {n k : ℕ} [NeZero k] {ι : Type*} {l : Filter ι
   le_of_tendsto_frequently tendsto_const_nhds
     (Tendsto.det3' ((hxs _).sub (hxs _)) ((hxs _).sub (hxs _)) hus)
     (h.mono fun _ ht => (ht.cyc_all hc).le)
-
 
 /-! ### Cyclic order by values, and enumerations -/
 
@@ -488,7 +482,6 @@ theorem eq_smul_of_proj_rot_eq_zero {R : Matrix (Fin 3) (Fin 3) ℝ} (hR : R ∈
   have h1 := congrFun (congrArg (fun z : ℝ² => (z : Fin 2 → ℝ)) hv) 1
   simp only [proj_xy] at h0 h1
   ext i; fin_cases i <;> simp_all [ez]
-
 
 theorem inner_rot_eq_cross2 (d e : ℝ²) : ⟪!₂[-(d 1), d 0], e⟫ = cross2 d e := by
   simp [PiLp.inner_apply, Fin.sum_univ_two, cross2]; ring
@@ -761,7 +754,6 @@ theorem isRupert_or_rimHDN_of_tendsto_geom {n : ℕ} (x : Fin n → ℝ³)
       rw [proj_rot_sub, proj_rot_sub] at this
       rw [← cross2_proj_rot hR hRu]
       exact mul_nonneg hr.le this
-
 
 /-- **The limit lemma, with the corner rim constructed** (Lemma 18.2 (a)–(c) with Theorems 18.1
 and 18.3).  Shapes `xs t → x` carry one labelled rim certificate (`RimCertAt`, views

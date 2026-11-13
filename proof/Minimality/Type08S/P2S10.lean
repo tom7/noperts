@@ -32,11 +32,6 @@ def S4TpG2 (a a' b b' c c' d : ℝ³) : Prop :=
      (¬ NoHDNAt ({d, a, b', c} : Finset ℝ³) (b - d) ∧
        (TpHDN2 a b b' c c' d ∨ det3 (b' - a) (c - d) (b - d) = 0) ∧ ¬ CaseATp a b b' c d))
 
-theorem S4TpG2_imp (h : S4TpG2 a a' b b' c c' d) : S4TpG a a' b b' c c' d := by
-  obtain ⟨h1, h2, h3 | ⟨h3, h4, -⟩⟩ := h
-  · exact ⟨h1, h2, Or.inl h3⟩
-  · exact ⟨h1, h2, Or.inr ⟨h3, h4⟩⟩
-
 theorem close_T'_sig4G2 (N : Norm08 a a' b b' c c' d) (hT' : IsT' a b c' d) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) ∨ S4TpG2 a a' b b' c c' d := by
   rcases close_T'_sig4G N hT' with h | ⟨h1, h2, h3 | ⟨h3, h4⟩⟩

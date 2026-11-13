@@ -36,32 +36,16 @@ def kc' (r W ha w3 ν α1 β1 : ℝ) : P3 := (r + α1 * W, α1 * ha, α1 * w3 + 
 
 def cyc4 {α : Type*} (p0 p1 p2 p3 : α) : ZMod 4 → α := ![p0, p1, p2, p3]
 def cyc5 {α : Type*} (p0 p1 p2 p3 p4 : α) : ZMod 5 → α := ![p0, p1, p2, p3, p4]
-def cyc6 {α : Type*} (p0 p1 p2 p3 p4 p5 : α) : ZMod 6 → α := ![p0, p1, p2, p3, p4, p5]
 
-theorem z4c (i : ZMod 4) : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 := by revert i; decide
 theorem z5c (i : ZMod 5) : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 := by revert i; decide
-theorem z6c (i : ZMod 6) : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 ∨ i = 5 := by revert i; decide
-theorem z4s : (0 : ZMod 4) + 1 = 1 ∧ (1 : ZMod 4) + 1 = 2 ∧ (2 : ZMod 4) + 1 = 3 ∧ (3 : ZMod 4) + 1 = 0 := by decide
 theorem z5s : (0 : ZMod 5) + 1 = 1 ∧ (1 : ZMod 5) + 1 = 2 ∧ (2 : ZMod 5) + 1 = 3 ∧ (3 : ZMod 5) + 1 = 4 ∧
     (4 : ZMod 5) + 1 = 0 := by decide
-theorem z6s : (0 : ZMod 6) + 1 = 1 ∧ (1 : ZMod 6) + 1 = 2 ∧ (2 : ZMod 6) + 1 = 3 ∧ (3 : ZMod 6) + 1 = 4 ∧
-    (4 : ZMod 6) + 1 = 5 ∧ (5 : ZMod 6) + 1 = 0 := by decide
 
-theorem c4_0 {α : Type*} {p0 p1 p2 p3 : α} : cyc4 p0 p1 p2 p3 0 = p0 := rfl
-theorem c4_1 {α : Type*} {p0 p1 p2 p3 : α} : cyc4 p0 p1 p2 p3 1 = p1 := rfl
-theorem c4_2 {α : Type*} {p0 p1 p2 p3 : α} : cyc4 p0 p1 p2 p3 2 = p2 := rfl
-theorem c4_3 {α : Type*} {p0 p1 p2 p3 : α} : cyc4 p0 p1 p2 p3 3 = p3 := rfl
 theorem c5_0 {α : Type*} {p0 p1 p2 p3 p4 : α} : cyc5 p0 p1 p2 p3 p4 0 = p0 := rfl
 theorem c5_1 {α : Type*} {p0 p1 p2 p3 p4 : α} : cyc5 p0 p1 p2 p3 p4 1 = p1 := rfl
 theorem c5_2 {α : Type*} {p0 p1 p2 p3 p4 : α} : cyc5 p0 p1 p2 p3 p4 2 = p2 := rfl
 theorem c5_3 {α : Type*} {p0 p1 p2 p3 p4 : α} : cyc5 p0 p1 p2 p3 p4 3 = p3 := rfl
 theorem c5_4 {α : Type*} {p0 p1 p2 p3 p4 : α} : cyc5 p0 p1 p2 p3 p4 4 = p4 := rfl
-theorem c6_0 {α : Type*} {p0 p1 p2 p3 p4 p5 : α} : cyc6 p0 p1 p2 p3 p4 p5 0 = p0 := rfl
-theorem c6_1 {α : Type*} {p0 p1 p2 p3 p4 p5 : α} : cyc6 p0 p1 p2 p3 p4 p5 1 = p1 := rfl
-theorem c6_2 {α : Type*} {p0 p1 p2 p3 p4 p5 : α} : cyc6 p0 p1 p2 p3 p4 p5 2 = p2 := rfl
-theorem c6_3 {α : Type*} {p0 p1 p2 p3 p4 p5 : α} : cyc6 p0 p1 p2 p3 p4 p5 3 = p3 := rfl
-theorem c6_4 {α : Type*} {p0 p1 p2 p3 p4 p5 : α} : cyc6 p0 p1 p2 p3 p4 p5 4 = p4 := rfl
-theorem c6_5 {α : Type*} {p0 p1 p2 p3 p4 p5 : α} : cyc6 p0 p1 p2 p3 p4 p5 5 = p5 := rfl
 
 /- Positive facts (names are used by the cell proofs): the strict-convexity table of the screen quadrilateral
 `(q, c̄', b̄', q')` with `ā` on `(q, c̄')` (Lemma G′), and products of the three side signs `p1 p3 p4 > 0` with the

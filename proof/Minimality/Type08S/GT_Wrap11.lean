@@ -120,36 +120,5 @@ theorem t4_b0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
       (by simp only [Phi]; nlinarith [mul_neg_of_neg_of_pos cfg.H_P hT1, mul_pos_of_neg_of_neg cfg.T1_P hH])
       (by simp only [Phi]; rw [cfg.H_W]; nlinarith [mul_pos_of_neg_of_neg cfg.T1_W hH])
 
-/-- **The far triple tie, T4** (`z_w < tie <= z_v`; `z_v = 0` is S2): Rupert, or `PicFailT4`
-(`r2 = b2`). -/
-theorem gt_far_T4 (N : Norm08 a a' b b' c c' d)
-    (hfc : N.F.abc'.f c < N.F.abc'.f a') (hfc' : N.F.a'bc.f c' < N.F.a'bc.f a)
-    (htouch : ⟪c, b - d⟫ = ⟪b', b - d⟫ ∧ ⟪c', b - d⟫ = ⟪b', b - d⟫)
-    (hzw0 : ⟪d, b - d⟫ < ⟪c, b - d⟫) (hzv0 : ⟪c, b - d⟫ ≤ ⟪b, b - d⟫) :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) ∨ PicFailT4 N.F d := by
-  obtain ⟨E, U, zv, zw, A, b1, b2, r1, r2, xa, za, ua, a3, t, FH, FQac, FT1, FT2, FT3, FT4, P, hE⟩ :=
-    t4_pic N.F N.hd hfc hfc' htouch hzw0 hzv0
-  have Fr := t4_frame N.F N.hd
-  by_cases hnb : NotBeyondW E ⟪N.F.a'bc.N, N.F.a'bc.N⟫ b1 b2 r1 r2 A 0
-  · exact Or.inl (t4_sminus N.F N.hd P hE hnb)
-  · have hwb : WeakBeyond E ⟪N.F.a'bc.N, N.F.a'bc.N⟫ b1 b2 r1 r2 := by
-      rw [P.hAE] at hnb
-      have hE' : 0 < E := by rw [hE]; exact Fr.hee
-      exact weak_of_not_nb hnb
-    rcases lt_trichotomy r2 b2 with hrb | hrb | hrb
-    · rcases lt_or_ge za zv with hzz | hzz
-      · exact Or.inl (t4_c N.F N.hd P hE hwb hrb hzz)
-      · exact Or.inl (t4_b0 N.F N.hd P hE hwb hrb hzz)
-    · exact Or.inr ⟨E, U, zv, zw, A, b1, b2, r1, r2, xa, za, ua, a3, t, FH, FQac, FT1, FT2, FT3, FT4,
-        P, hE, hwb, hrb⟩
-    · have hzz : zv < za := by
-        rcases P.cfg.hzv.lt_or_eq with hz | hz
-        · have cfg := P.cfg.toCfg hz
-          exact cfg.T2_a_neg_iff.mp (cfg.T2_a_neg_of hrb)
-        · have := P.hmp
-          rw [← hz] at this ⊢
-          linarith
-      exact Or.inl (t4_a0 N.F N.hd P hE hwb hrb hzz)
-
 end Type08Sp
 end Minimality

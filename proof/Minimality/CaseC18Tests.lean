@@ -183,7 +183,6 @@ theorem tB_rest6 (S : Shape18) (B2 : S.hm * S.tp < S.hp * (1 - S.tm)) :
     | (left; linarith [a1, a2, a3, a4, a5, a6, a7, a8, a9])
     | (right; refine ⟨by ring, by linarith [a1, a2, a3, a4, a5, a6, a7, a8, a9]⟩)
 
-
 namespace Frame18
 variable {x : Fin 7 → ℝ³} (F : Frame18 x)
 
@@ -313,7 +312,6 @@ theorem t31a_rest4 (S : Shape18) (_Hp : S.kp * S.tp < S.hp * S.sp) (_Hm : S.km *
     | (left; linarith [a1, a2, a3, a4])
     | (right; refine ⟨by ring, by linarith [a1, a2, a3, a4]⟩)
 
-
 namespace Frame18
 variable {x : Fin 7 → ℝ³} (F : Frame18 x)
 
@@ -431,7 +429,6 @@ theorem t31b_rest4 (S : Shape18) (_Hp : S.hp * S.sp < S.kp * S.tp) (_Hm : S.km *
     first
     | (left; linarith [a1, a2, a3, a4, a5])
     | (right; refine ⟨by ring, by linarith [a1, a2, a3, a4, a5]⟩)
-
 
 namespace Frame18
 variable {x : Fin 7 → ℝ³} (F : Frame18 x)
@@ -583,7 +580,6 @@ theorem tA1_rest6 (S : Shape18) (A1 : S.hm * (1 - S.tp) < S.hp * S.tm) :
     | (left; linarith [a1, a2, a3, a4, a5, a6, a7])
     | (right; refine ⟨by ring, by linarith [a1, a2, a3, a4, a5, a6, a7]⟩)
 
-
 namespace Frame18
 variable {x : Fin 7 → ℝ³} (F : Frame18 x)
 
@@ -715,25 +711,8 @@ theorem tA2_rest4 (S : Shape18) {b : ℝ} (hb : 0 < b) (A1 : S.hm * (1 - S.tp) <
     | (left; linarith [a1, a2, a3, a4, a5, a6, a7])
     | (right; refine ⟨by ring, by linarith [a1, a2, a3, a4, a5, a6, a7]⟩)
 
-
 namespace Frame18
 variable {x : Fin 7 → ℝ³} (F : Frame18 x)
-
-lemma A2_of (h : F.S.km < F.S.sm * (F.S.hp + F.S.tp * F.S.am)) :
-    F.S.km * F.S.tm < F.S.sm * (F.S.hp * F.S.tm + F.S.tp * F.S.hm) := by
-  have e := F.S.am_mul
-  have := mul_lt_mul_of_pos_right h F.S.tm_pos
-  have e' : F.S.sm * (F.S.hp + F.S.tp * F.S.am) * F.S.tm =
-      F.S.sm * (F.S.hp * F.S.tm + F.S.tp * F.S.hm) := by rw [← e]; ring
-  linarith
-
-lemma A3_of (h : F.S.km < F.S.hp * F.S.sm + F.S.bm * (1 - F.S.tp * F.S.sm)) :
-    F.S.km * (1 - F.S.tm) < F.S.hp * F.S.sm * (1 - F.S.tm) + F.S.hm * (1 - F.S.tp * F.S.sm) := by
-  have e := F.S.bm_mul
-  have := mul_lt_mul_of_pos_right h (sub_pos.2 F.S.tm_lt)
-  have e' : (F.S.hp * F.S.sm + F.S.bm * (1 - F.S.tp * F.S.sm)) * (1 - F.S.tm) =
-      F.S.hp * F.S.sm * (1 - F.S.tm) + F.S.hm * (1 - F.S.tp * F.S.sm) := by rw [← e]; ring
-  linarith
 
 lemma A1_of (h : F.S.am < F.S.bp) : F.S.hm * (1 - F.S.tp) < F.S.hp * F.S.tm := by
   have e1 := F.S.am_mul; have e2 := F.S.bp_mul
@@ -972,7 +951,6 @@ theorem rupert_of_F2_view (hx : Function.Injective x) (α γ : ℝ)
         (by rw [q6]; simp ) h6
 
 end Frame18
-
 
 end Minimality.CaseC18
 

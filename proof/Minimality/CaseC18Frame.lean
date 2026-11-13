@@ -40,12 +40,6 @@ structure Frame18 (x : Fin 7 → ℝ³) where
 section Alg
 variable {t u s h z4 z2 : ℝ}
 
-/-- A facet through `xa`, `xb` and one middle, with the other one off it: the roof. -/
-lemma roof_of' {χ0 a b c : ℝ} (hs1 : s < 1) (ht1 : t < 1) (hh : 0 < h) (hz2 : 0 < z2)
-    (hχ0 : χ0 < 0) (f3 : χ0 + a = 0) (f5 : χ0 + b = 0) (f2 : χ0 + b * s + c * z2 = 0)
-    (f1 : χ0 + a * t + c * h < 0) : h / (1 - t) < z2 / (1 - s) :=
-  roof_of hs1 ht1 hh hz2 hχ0 f3 f5 f2 f1
-
 end Alg
 
 /-- **The frame from the triple-tie data** (core). -/

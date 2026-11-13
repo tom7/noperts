@@ -24,13 +24,11 @@ theorem parseval_w (e u p q : ℝ³) (he : ⟪e, u⟫ = 0) :
     (p 0 * e 0 + p 1 * e 1 + p 2 * e 2) * (q 0 * u 0 + q 1 * u 1 + q 2 * u 2) -
     (p 0 * u 0 + p 1 * u 1 + p 2 * u 2) * (q 0 * e 0 + q 1 * e 1 + q 2 * e 2)) * he
 
-
 theorem hdet_inner (e n u p q w : ℝ³) :
     hdet ⟪e, p⟫ ⟪n, p⟫ ⟪u, p⟫ ⟪e, q⟫ ⟪n, q⟫ ⟪u, q⟫ ⟪e, w⟫ ⟪n, w⟫ ⟪u, w⟫ =
       det3 e n u * det3 p q w := by
   simp only [hdet, det3_expand, inner_eq3]
   ring
-
 
 /-! ### The frame of a horizontal end -/
 
@@ -100,7 +98,6 @@ theorem parseval (p q : ℝ³) :
   field_simp
   linear_combination ⟪N, N⟫ * h1 + key
 
-
 theorem ev_hfΦ {f : ℝ³ → ℝ} {Nf : ℝ³} (hf : ∀ y z, f y - f z = ⟪Nf, y - z⟫) (x : ℝ³) :
     (hfFc v g u0 N f Nf).ev (hfΦ v g u0 fG x) = f x := by
   have hp := F.parseval Nf (x - v)
@@ -140,15 +137,11 @@ theorem tst_hfΦ (δ : ℝ) (P Q S : ℝ³) :
     real_inner_comm (Q - P) (-N), real_inner_comm (S - P) (-N),
     real_inner_comm (Q - P) u0, real_inner_comm (S - P) u0]
 
-
 theorem hfΦ_x_sub (R T : ℝ³) : (hfΦ v g u0 fG R).x - (hfΦ v g u0 fG T).x = ⟪R - T, hfE v g u0⟫ := by
   simp only [hfΦ]; rw [← inner_sub_left]; congr 1; abel
 
 theorem hfΦ_y_sub (R T : ℝ³) : (hfΦ v g u0 fG R).y - (hfΦ v g u0 fG T).y = ⟪-N, R - T⟫ := by
   simp only [hfΦ]; rw [inner_neg_left, ← F.hN]; ring
-
-theorem hfΦ_z_sub (R T : ℝ³) : (hfΦ v g u0 fG R).z - (hfΦ v g u0 fG T).z = ⟪R - T, u0⟫ := by
-  simp only [hfΦ]; rw [← inner_sub_left]; congr 1; abel
 
 /-- `D₀² = E · ⟪N,N⟫ · U ≠ 0`. -/
 theorem D0_sq : det3 (hfE v g u0) (-N) u0 * det3 (hfE v g u0) (-N) u0 =
@@ -188,7 +181,6 @@ theorem det3_u0_coord (P Q S : ℝ³) :
   simp only [real_inner_comm (hfE v g u0) (Q - P), real_inner_comm (hfE v g u0) (S - P)]
   linear_combination -h
 
-
 theorem shadow_sign (P Q S P' Q' S' : ℝ³)
     (h : 0 < det3 (Q - P) (S - P) u0 * det3 (Q' - P') (S' - P') u0) :
     0 < crossXY (hfΦ v g u0 fG P) (hfΦ v g u0 fG Q) (hfΦ v g u0 fG S) *
@@ -210,7 +202,6 @@ theorem shadow_sign (P Q S P' Q' S' : ℝ³)
   rw [hD] at key
   have : 0 < (⟪u0, u0⟫ * ⟪u0, u0⟫) * (c1 * c2) := by rw [← key]; exact mul_pos hpos h
   exact pos_of_mul_pos_right this (mul_pos hU hU).le
-
 
 /-- The frame coordinates determine the point. -/
 theorem hfΦ_inj {P Q : ℝ³} (h : hfΦ v g u0 fG P = hfΦ v g u0 fG Q) : P = Q := by

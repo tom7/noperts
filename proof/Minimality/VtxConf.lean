@@ -80,12 +80,6 @@ theorem inner_Na_v (E : VtxConf V u v a c b p q n Na Nb κa κb) : ⟪Na, v⟫ =
 theorem inner_Na_a (E : VtxConf V u v a c b p q n Na Nb κa κb) : ⟪Na, a⟫ = κa :=
   (E.faceA a E.ha).mp (Or.inr (Or.inl rfl))
 
-theorem inner_Na_p (E : VtxConf V u v a c b p q n Na Nb κa κb) : ⟪Na, p⟫ = κa :=
-  (E.faceA p E.hp).mp (Or.inr (Or.inr (Or.inl rfl)))
-
-theorem inner_Na_q (E : VtxConf V u v a c b p q n Na Nb κa κb) : ⟪Na, q⟫ = κa :=
-  (E.faceA q E.hq).mp (Or.inr (Or.inr (Or.inr rfl)))
-
 theorem inner_Nb_v (E : VtxConf V u v a c b p q n Na Nb κa κb) : ⟪Nb, v⟫ = κb :=
   (E.faceB v E.hv).mp (Or.inl rfl)
 

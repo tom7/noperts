@@ -10,7 +10,6 @@ public import Minimality.Type20IV
 
 section
 
-
 /-!
 # I_A, step 0: the rescaled frame
 
@@ -94,18 +93,12 @@ noncomputable def rescale (F : Frame20 x) (r : ℝ) (hr : 0 < r) : Frame20 x whe
 
 variable (F : Frame20 x) (r : ℝ) (hr : 0 < r)
 
-lemma rescale_S : (F.rescale r hr).S = F.S.rescale r hr := rfl
-lemma rescale_a11 : (F.rescale r hr).a11 = F.a11 := rfl
-lemma rescale_a12 : (F.rescale r hr).a12 = F.a12 := rfl
-lemma rescale_a22 : (F.rescale r hr).a22 = F.a22 := rfl
-
 end Frame20
 end Minimality.CaseC20
 
 end
 
 section
-
 
 /-!
 # I_A: shared helpers (lex helpers, RobUni shapes H1-H9, shape/metric lemmas S1-S5 in the normal form)
@@ -159,7 +152,6 @@ namespace IAT
 open IVT
 variable {x : Fin 7 → ℝ³} (F : Frame20 x)
 
-
 /-- Normal form: `hm = tm`, `hp = 1 - tp`. -/
 def NF (S : Shape20) : Prop := S.hm = S.tm ∧ S.hp = 1 - S.tp
 
@@ -179,7 +171,6 @@ end Minimality.CaseC20
 end
 
 section
-
 
 /-!
 # I_A, leaf K (tilt, `u0 = (1,0,-1)`): needs only `Phi < 0`.  Closes m1'.
@@ -252,7 +243,6 @@ end Minimality.CaseC20
 end
 
 section
-
 
 /-!
 # I_A: the normal-form frame of an `A1 = 0` frame, and the consequences of leaf K for m1', m2'
@@ -339,7 +329,6 @@ end Minimality.CaseC20
 end
 
 section
-
 
 /-!
 # I_A: shape/metric lemmas S1-S5 of COVER.md in the normal form, the Std segment cells, literal macro
@@ -443,24 +432,12 @@ lemma S4 (hN : NF F.S) (hY : (F.a11*(1-F.S.tm)-F.gg*F.S.tm) = 0) (hZ : (F.a12*F.
   have := mul_pos hg hc
   linarith
 
-/-- S5: `X = 0` forces `A56 < 0`. -/
-lemma S5 (hN : NF F.S) (hX : ((1-F.S.tm)*F.S.sm*F.a12+F.gg*(F.S.km*(1-F.S.tm)-F.S.tm)) = 0) : (F.S.km*(1-F.S.tm)-F.S.tm) < 0 := by
-  have hg : 0 < F.gg := F.g_pos
-  have ha : 0 < F.a12 := F.A12_pos
-  have tm1 := F.S.tm1; have sm0 := F.S.sm_pos
-  have h1 : 0 < (1-F.S.tm)*F.S.sm*F.a12 := by positivity
-  by_contra hc
-  push Not at hc
-  have := mul_nonneg hg.le hc
-  nlinarith
-
 end IAT
 end Minimality.CaseC20
 
 end
 
 section
-
 
 /-!
 # I_A, leaves S45, C2a, C2b
@@ -478,7 +455,6 @@ def c2b_pat : Fin 8 → Bool := ![false, false, false, false, true, true, true, 
 def c2b_c : ZMod 5 → Fin 7 := ![0, 1, 4, 5, 2]
 theorem c2b_cyc : S0xCycOK h20s_S c2b_c c2b_pat := by decide
 theorem c2b_inj : Function.Injective c2b_c := by decide
-
 
 /-- S45: segment view `x4 - x5`, cycle `1346`; needs `sm < km` and `a12 < a22`. -/
 theorem ia_S45 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces 19))

@@ -158,23 +158,6 @@ theorem isRupert_of_pyramid (V : Finset ℝ³) (E : ℝ³)
   · rw [Finset.sum_const, nsmul_eq_mul]; field_simp
   · rw [hvE, one_smul, add_sub_cancel]
 
-/-- The view `u = c - E` from the apex through a relative-interior point `c`
-of the base is admissible. -/
-theorem sub_mem_admissibleViews_of_pyramid (V : Finset ℝ³) (E : ℝ³)
-    (hE : E ∉ affineSpan ℝ ((V.erase E : Finset ℝ³) : Set ℝ³)) (c : ℝ³)
-    (hc : c ∈ intrinsicInterior ℝ (convexHull ℝ ((V.erase E : Finset ℝ³) : Set ℝ³))) :
-    c - E ∈ admissibleViews V (V.erase E) := by
-  have hcA : c ∈ affineSpan ℝ ((V.erase E : Finset ℝ³) : Set ℝ³) := by
-    have := subset_affineSpan ℝ _ (intrinsicInterior_subset hc)
-    rwa [affineSpan_convexHull] at this
-  refine ⟨fun h => hE ?_, fun v hv hvW => ⟨1, ?_⟩⟩
-  · have := AffineSubspace.vadd_mem_of_mem_direction (Submodule.neg_mem _ h) hcA
-    simpa [vadd_eq_add] using this
-  · have hvE : v = E := by
-      by_contra h; exact hvW (Finset.mem_erase.mpr ⟨h, hv⟩)
-    rw [hvE, one_smul, add_sub_cancel]
-    exact hc
-
 /-- A point of the relative interior of a polytope is a combination of all its
 points with positive weights. -/
 theorem exists_pos_weights_of_mem_intrinsicInterior (W : Finset ℝ³) {x : ℝ³}
@@ -275,30 +258,6 @@ theorem isRupert_of_admissibleViews_nonempty (V W : Finset ℝ³) (hWV : W ⊆ V
   obtain ⟨t, ht⟩ := hcross v hv hvW
   obtain ⟨μ, hμ, hμ1, hx⟩ := exists_pos_weights_of_mem_intrinsicInterior W ht
   exact ⟨t, μ, hμ, hμ1, hx⟩
-
-/-- **Corollary 5.4 (bipyramid lemma), crossing form.** If every point of
-`V \ W` is `D` or `E`, `D` is off the plane of `W`, and the segment `DE` meets
-`relint (conv W)`, then `u = E - D` is admissible and `V` is Rupert. -/
-theorem isRupert_of_segment_crossing (V W : Finset ℝ³) (D E : ℝ³) (hWV : W ⊆ V)
-    (hVW : ∀ v ∈ V, v ∉ W → v = D ∨ v = E) (hW : ¬ Collinear ℝ (W : Set ℝ³))
-    (hD : D ∉ affineSpan ℝ (W : Set ℝ³))
-    (hX : (segment ℝ D E ∩ intrinsicInterior ℝ (convexHull ℝ (W : Set ℝ³))).Nonempty) :
-    IsRupert V := by
-  obtain ⟨X, hXs, hXi⟩ := hX
-  rw [segment_eq_image'] at hXs
-  obtain ⟨s, -, rfl⟩ := hXs
-  have hXA : D + s • (E - D) ∈ affineSpan ℝ (W : Set ℝ³) := by
-    have := subset_affineSpan ℝ _ (intrinsicInterior_subset hXi)
-    rwa [affineSpan_convexHull] at this
-  refine isRupert_of_admissibleViews_nonempty V W hWV hW ⟨E - D, fun h => hD ?_, fun v hv hvW => ?_⟩
-  · have := AffineSubspace.vadd_mem_of_mem_direction (Submodule.smul_mem _ (-s) h) hXA
-    convert this using 1
-    rw [vadd_eq_add]; module
-  · rcases hVW v hv hvW with rfl | rfl
-    · exact ⟨s, hXi⟩
-    · exact ⟨s - 1, by convert hXi using 1; module⟩
-
-
 
 end Minimality
 

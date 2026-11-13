@@ -739,9 +739,6 @@ theorem det3_add_right (v w x y : ℝ³) : det3 v w (x + y) = det3 v w x + det3 
 theorem det3_smul_right (v w x : ℝ³) (c : ℝ) : det3 v w (c • x) = c * det3 v w x := by
   simp [det3, real_inner_smul_right]
 
-theorem det3_self_right (v w : ℝ³) : det3 v w v = 0 := by
-  simp [det3, cross, PiLp.inner_apply, Fin.sum_univ_three]; ring
-
 theorem det3_self_right' (v w : ℝ³) : det3 v w w = 0 := by
   simp [det3, cross, PiLp.inner_apply, Fin.sum_univ_three]; ring
 
@@ -1068,9 +1065,6 @@ theorem isRupert_cycle_edgeOn (V : Finset ℝ³) (v p : ℝ³) {m : ℕ} (hm : 2
     (fun y hy hyx i => key i y hy (hyx i) (hyx (i + 1)))
     (fun z => IsCyclicUnimodal z) isOpen_isCyclicUnimodal
     (fun z c hc hz => isCyclicUnimodal_smul hc hz) hev (fun z _ hz => hz)
-
-theorem det3_ey_mid (w v : ℝ³) : det3 w ey v = -w 2 * v 0 + w 0 * v 2 := by
-  simp [det3, cross, ey, PiLp.inner_apply, Fin.sum_univ_three]; ring
 
 /-- Points of the face with a common `x`: at most two (strict convex position). -/
 theorem ConvPos.eq_of_same_x {S : Finset ℝ²} (hS : ConvPos S) {a b c : ℝ²} (ha : a ∈ S)

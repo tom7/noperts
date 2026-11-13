@@ -49,11 +49,6 @@ theorem det3_cyc (A B C u : ℝ³) : det3 (C - B) (A - B) u = det3 (B - A) (C - 
   simp only [det3_expand, PiLp.sub_apply]
   ring
 
-theorem det3_shift (A B C u : ℝ³) (s : ℝ) :
-    det3 (B - A) (C - (A + s • u)) u = det3 (B - A) (C - A) u := by
-  simp only [det3_expand, PiLp.sub_apply, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]
-  ring
-
 /-- **Determinant tests from facet combinations.**  `f₁`, `f₂` are affine
 (with linear parts `N₁`, `N₂`) and vanish at `P`, `Q`; the combination
 `g = α f₁ + β f₂` is constant along `u`.  Then the tests
@@ -74,23 +69,6 @@ theorem det3_pos_of_combo {f₁ f₂ : ℝ³ → ℝ} {N₁ N₂ : ℝ³}
   have key := det3_mul_inner_eq (w := w - P) (w' := r - P) hNe hNu
   rw [hg, hg] at key
   nlinarith
-
-theorem det3_zero_of_combo {f₁ f₂ : ℝ³ → ℝ} {N₁ N₂ : ℝ³}
-    (h₁ : ∀ y z, f₁ y - f₁ z = ⟪N₁, y - z⟫) (h₂ : ∀ y z, f₂ y - f₂ z = ⟪N₂, y - z⟫)
-    {P Q u : ℝ³} (h1P : f₁ P = 0) (h1Q : f₁ Q = 0) (h2P : f₂ P = 0) (h2Q : f₂ Q = 0)
-    {α β : ℝ} (hαβ : α * ⟪N₁, u⟫ + β * ⟪N₂, u⟫ = 0) {r w : ℝ³}
-    (hgr : α * f₁ r + β * f₂ r ≠ 0) (hgw : α * f₁ w + β * f₂ w = 0) :
-    det3 (Q - P) (w - P) u = 0 := by
-  set N := α • N₁ + β • N₂
-  have hg : ∀ z, ⟪N, z - P⟫ = α * f₁ z + β * f₂ z := by
-    intro z
-    simp only [N, inner_add_left, real_inner_smul_left, ← h₁, ← h₂, h1P, h2P, sub_zero]
-  have hNe : ⟪N, Q - P⟫ = 0 := by rw [hg, h1Q, h2Q]; ring
-  have hNu : ⟪N, u⟫ = 0 := by
-    simp only [N, inner_add_left, real_inner_smul_left]; linarith
-  have key := det3_mul_inner_eq (w := w - P) (w' := r - P) hNe hNu
-  rw [hg, hg, hgw, mul_zero] at key
-  exact (mul_eq_zero.mp key).resolve_right hgr
 
 /-- **Four points modulo a direction.**  `S_BCD A - S_ACD B + S_ABD C - S_ABC D`
 is parallel to `u` (`S_XYZ := det3 (Y - X) (Z - X) u`); its coefficients sum to

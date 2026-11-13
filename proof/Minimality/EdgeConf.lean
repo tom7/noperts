@@ -78,12 +78,6 @@ namespace EdgeConf
 variable {V : Finset ℝ³} {u v w a b c : ℝ³} {h : ℝ} {Na Nb : ℝ³} {κa κb : ℝ}
   {Ma Mb : Finset ℝ³}
 
-theorem det3_sub_left_self (A X U : ℝ³) (t : ℝ) : det3 A (X + t • A) U = det3 A X U := by
-  simp only [det3_expand, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; ring
-
-theorem det3_shift_u (A X U : ℝ³) (t : ℝ) : det3 A (X + t • U) U = det3 A X U := by
-  simp only [det3_expand, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]; ring
-
 theorem det3_self_left (A U : ℝ³) : det3 A A U = 0 := by
   simp only [det3_expand]; ring
 
@@ -434,9 +428,6 @@ def RealB (v w b : ℝ³) (Mb : Finset ℝ³) : Prop :=
 
 theorem cross_smul_left'' (k : ℝ) (A B : ℝ³) : cross (k • A) B = k • cross A B := by
   ext j; fin_cases j <;> simp [cross] <;> ring
-
-theorem cross_cross_u (A B U : ℝ³) : cross (cross A U) (cross B U) = det3 A B U • U := by
-  ext j; fin_cases j <;> simp [cross, det3_expand] <;> ring
 
 /-- **Proposition 22.2 for a four-corner closing at an edge view** (two realizing circles): with
 the middles of each face on `w`'s side of its chord (`RealA`, `RealB`) and `K_v` robustly

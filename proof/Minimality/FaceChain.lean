@@ -106,13 +106,6 @@ theorem ConvPos.not_mem_hull4 {S : Finset ℝ²} (hS : ConvPos S) {s a b a' b' :
   rcases hx with rfl | rfl | rfl | rfl
   exacts [⟨ha, h1.symm⟩, ⟨hb, h2.symm⟩, ⟨ha', h3.symm⟩, ⟨hb', h4.symm⟩]
 
-/-- The orientation of a triangle is invariant under cyclic shifts. -/
-theorem cross2_cyc (a b c : ℝ²) : cross2 (b - a) (c - a) = cross2 (c - b) (a - b) := by
-  simp only [cross2, PiLp.sub_apply]; ring
-
-theorem cross2_swap (a b c : ℝ²) : cross2 (b - a) (c - a) = -cross2 (c - a) (b - a) := by
-  simp only [cross2, PiLp.sub_apply]; ring
-
 /-- **The lower chain's edges.**  `A`, `B` are the `x`-extremes of `S` (distinct
 `x`), `c, c'` are on or below the chord `AB`, with no point of `S` on or below
 the chord strictly between them in `x`.  Then every other point of `S` is

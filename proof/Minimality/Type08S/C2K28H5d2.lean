@@ -19,16 +19,6 @@ namespace Minimality
 namespace Type08Sp
 namespace C2
 
-theorem k28h5d2_gram (p q r : ℝ³) (x1 x2 x3 y1 y2 y3 : ℝ) :
-    ⟪x1 • p + x2 • q + x3 • r, y1 • p + y2 • q + y3 • r⟫ =
-      x1*y1*⟪p,p⟫ + (x1*y2 + x2*y1)*⟪p,q⟫ + (x1*y3 + x3*y1)*⟪p,r⟫ + x2*y2*⟪q,q⟫
-        + (x2*y3 + x3*y2)*⟪q,r⟫ + x3*y3*⟪r,r⟫ := by
-  have h1 : ⟪q,p⟫ = ⟪p,q⟫ := real_inner_comm _ _
-  have h2 : ⟪r,p⟫ = ⟪p,r⟫ := real_inner_comm _ _
-  have h3 : ⟪r,q⟫ = ⟪q,r⟫ := real_inner_comm _ _
-  simp only [inner_add_left, inner_add_right, real_inner_smul_left, real_inner_smul_right, h1, h2, h3]
-  ring
-
 set_option maxHeartbeats 4000000 in
 theorem k28h5a_hD2 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     (hC : K6mCoords a a' b b' c c' d α1 β1 β6 γ6) (hM : K6sM a a' b b' c c' d)

@@ -30,15 +30,7 @@ theorem pic_Kb {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (hreg : 
       (⟪a - d, e2⟫ / ⟪c' - d, e2⟫) :=
   W5.pic_Kb N.toW hreg hF hκ hxe hf2 hL hr
 
-theorem ClsT4_Kb_of_top {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (hreg : RegT4 N.F)
-    (hF : Fr e1 e2 e3) {κ : ℝ} (hκ : κ ≠ 0) (hxe : b - d = κ • e3) (hf2 : ⟪c - d, e2⟫ = 0)
-    (hL : 0 < ⟪c - d, e1⟫) (hr : 0 < ⟪b' - d, e2⟫)
-    (htop : TopP 0 ⟪c - d, e1⟫ ⟪b - d, e3⟫ ⟪c - d, e3⟫ ⟪b' - d, e1⟫ ⟪b' - d, e2⟫ ⟪b' - d, e3⟫
-      ⟪c' - d, e1⟫ ⟪c' - d, e2⟫ ⟪c' - d, e3⟫) : ClsT4 d b c b' c' a' a :=
-  W5.ClsT4_Kb_of_top N.toW hreg hF hκ hxe hf2 hL hr htop
-
 end Type08Sp
 end Minimality
 
 #print axioms Minimality.Type08Sp.pic_Kb
-#print axioms Minimality.Type08Sp.ClsT4_Kb_of_top

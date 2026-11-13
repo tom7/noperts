@@ -24,21 +24,6 @@ open Finset Filter
 namespace Minimality
 namespace Type08Sp
 
-/-- The four corner polygons at `ℓ` (R1, R2', X_ba', X_2a'): each is `Sep` (weakly two-peaked,
-not robust) or has a horizontal double normal.  This is the one configuration of `T ∩ H1` that
-the 18.1 route does not reach (it needs the paper's order Claim for `X_2a'` / Theorem 29.15 on a
-non-robust polygon). -/
-def OpenB (a' b b' c c' d : ℝ³) : Prop :=
-  (¬ NoHDNAt ({b, c', b', c} : Finset ℝ³) (b - d) ∨ Sep ⟪b, b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫ ⟪c', b - d⟫) ∧
-  (¬ NoHDNAt ({d, c', b', c} : Finset ℝ³) (b - d) ∨ Sep ⟪d, b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫ ⟪c', b - d⟫) ∧
-  (¬ NoHDNAt ({b, c', b', a'} : Finset ℝ³) (b - d) ∨ Sep ⟪b, b - d⟫ ⟪b', b - d⟫ ⟪a', b - d⟫ ⟪c', b - d⟫) ∧
-  (¬ NoHDNAt ({d, c', b', a'} : Finset ℝ³) (b - d) ∨ Sep ⟪d, b - d⟫ ⟪b', b - d⟫ ⟪a', b - d⟫ ⟪c', b - d⟫)
-
-/-- Case A of `T ∩ H1` (Theorem 08.T'): R1 with a class-(d) HDN, robust; R2', X_ba' not robust. -/
-def CaseA (b b' c c' d a' : ℝ³) : Prop :=
-  ClassD1 b b' c c' d ∧ ¬ Sep ⟪b, b - d⟫ ⟪b', b - d⟫ ⟪c, b - d⟫ ⟪c', b - d⟫ ∧
-  Sep ⟪d, b - d⟫ ⟪b', b - d⟫ ⟪c', b - d⟫ ⟪c, b - d⟫ ∧ Sep ⟪b, b - d⟫ ⟪b', b - d⟫ ⟪c', b - d⟫ ⟪a', b - d⟫
-
 theorem b_ne_d {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
     (hT : IsT a' b c d) (hH : H1 b b' c c' d) : b ≠ d := by
   obtain ⟨e1, e2, e3, o, ν, v1, C0, w1, ha, w3, α, β1, γ4, β6, hF, hν, -, -, -, -, -, -, hu, -⟩ :=
@@ -126,7 +111,6 @@ theorem close_T_H1 {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
         · exact key hx1 hy2 hX nX
       · exact key hx2 hy1 h2 n2
     · exact key hx1 hy1 h1 n1
-
 
 #print axioms Minimality.Type08Sp.close_T_H1
 #print axioms Minimality.Type08Sp.classD1_hdn

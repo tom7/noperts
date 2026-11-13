@@ -27,11 +27,6 @@ open Finset Filter
 
 variable {L : ℝ³ → Prop}
 
-/-- `x → y` is a quad edge in Gale form (Lemma 16.1 (i)), the third pair being `p, p'`. -/
-def GaleQuad (l m : ℝ³ → ℝ) (x y p p' : ℝ³) : Prop :=
-  galeD l m p x * (galeD l m p x + galeD l m p y) < 0 ∧
-  galeD l m p' x * (galeD l m p' x + galeD l m p' y) < 0
-
 /-- **Step 1 of Theorem 9.9 in Gale form** (`κ_A, κ_B, κ_C > 0`, `W = C` admissible,
 `[c a] > 0`): `b → a` and `a' → b'` are quad edges. -/
 theorem step1_gale_pos {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c')

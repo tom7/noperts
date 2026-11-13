@@ -45,22 +45,6 @@ theorem polyBw (a1 b1 a4 g4 b6 g6 : ℝ) (p0 : 0 < a1) (p1 : 0 < b1) (p2 : 0 < a
   · linarith [p5, dA]
 
 set_option maxHeartbeats 4000000 in
-theorem polyCw (a1 b1 a4 g4 b6 g6 : ℝ) (p0 : 0 < a1) (p1 : 0 < b1) (p2 : 0 < a4) (p3 : 0 < g4) (p4 : 0 < b6) (p5 : 0 < g6) (e1 : 0 < a1 + b1 - 1) (e2 : 0 < a4 + g4 - 1) (e3 : 0 < b6 + g6 - 1) (dA : 0 < 1 - g6) (dB : 0 < 1 - a1) (ga : 0 ≤ -a1 + a1 * g4 - b1 * a4 + a4) (gb : 0 ≤ a1 * b6 + b1 - b1 * g6 - b6) (f1 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f2 : 0 < a1 * g4 + b1 * g4 - g4) (f3 : 0 < -b1 + b1 * a4 + b1 * g4) (f4 : 0 < a1 * g6 + b1 * g6 - g6) (f5 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f6 : 0 < -a1 + a1 * b6 + a1 * g6) (f7 : 0 < a4 * b6 + g4 * b6 - b6) (f8 : 0 < -a4 + a4 * b6 + a4 * g6) (f9 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) (f10 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f11 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f12 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) :
-    0 < g4 ∧ 0 < 1 ∧ 0 < g6 ∧ 0 < -1 + a4 + g4 ∧ 0 < a4 * g6 + g4 - g6 ∧ 0 < -a1 * g4 + g4 ∧ 0 < a4 ∧ 0 < a4 - a4 * g6 ∧ 0 < -a1 + a1 * g4 + a4 ∧ 0 < a1 := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · linarith [p3]
-  · linarith [p5, dA]
-  · linarith [p5]
-  · linarith [mul_pos (mul_pos (mul_pos p0 e2) dA) dB, mul_pos (mul_pos (mul_pos e2 dA) dB) dB, mul_pos (mul_pos (mul_pos p5 p5) e2) dB, mul_pos p0 e2, mul_pos (mul_pos (mul_pos p5 e2) dA) dB]
-  · linarith [mul_pos (mul_pos (mul_pos p3 dA) dB) dB, mul_pos (mul_pos (mul_pos p0 p3) dA) dB, mul_pos (mul_pos p5 p5) e2, mul_pos (mul_pos p5 e2) dA, mul_pos (mul_pos p0 p3) dA]
-  · linarith [mul_pos p3 dB]
-  · linarith [p2]
-  · linarith [mul_pos p2 dA]
-  · linarith [mul_pos (mul_pos (mul_pos p0 p0) e2) dB, mul_pos (mul_pos (mul_pos p0 e2) dB) dB, mul_pos (mul_pos (mul_pos p0 p0) p0) e2, mul_pos (mul_pos (mul_pos p2 dA) dB) dB, mul_pos (mul_pos (mul_pos p0 p2) dA) dB, mul_pos (mul_pos p2 p5) dB]
-  · linarith [p0]
-
-
-set_option maxHeartbeats 4000000 in
 theorem facts08w0 (θ : Fin 6 → ℝ) (hθ : ∀ k, k ≠ 9 → k ≠ 10 → k ≠ 11 → 0 < ineq08 θ k) :
     0 < θ 0 ∧ 0 < θ 1 ∧ 0 < θ 2 ∧ 0 < θ 3 ∧ 0 < θ 4 ∧ 0 < θ 5 ∧ 1 < θ 0 + θ 1 ∧ 1 < θ 2 + θ 3 ∧ 1 < θ 4 + θ 5 ∧
     0 < fc08 θ 0 3 5 1 ∧ 0 < fc08 θ 0 3 5 2 ∧ 0 < fc08 θ 0 3 5 4 ∧
@@ -109,16 +93,6 @@ theorem gWU_neg_w0 (θ : Fin 6 → ℝ) (hθ : ∀ k, k ≠ 9 → k ≠ 10 → k
   simp only [fc08, cdet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at f10
   unfold gWU; nlinarith [f10]
 
-/-- The strict region `∀ k, 0 < ineq08 θ k` lies in the closure region `Ineq08w`. -/
-theorem Ineq08w.of_pos {θ : Fin 6 → ℝ} (h : ∀ k, 0 < ineq08 θ k) : Ineq08w θ := by
-  have hU := gWU_neg_w0 θ (fun k _ _ _ => h k)
-  have h9 : 0 < -(gWa θ * gWU θ) := h 9
-  have h10 : 0 < -(gWb θ * gWU θ) := h 10
-  refine ⟨fun k _ _ _ => h k, ?_, ?_⟩
-  · by_contra hc; push Not at hc; nlinarith [mul_pos_of_neg_of_neg hc hU]
-  · by_contra hc; push Not at hc; nlinarith [mul_pos_of_neg_of_neg hc hU]
-
-
 set_option maxHeartbeats 4000000 in
 theorem common08w (θ : Fin 6 → ℝ) (hθ : ∀ k, k ≠ 9 → k ≠ 10 → k ≠ 11 → 0 < ineq08 θ k) (hga : 0 ≤ gWa θ) (hgb : 0 ≤ gWb θ) :
     0 < (θ 0) ∧ 0 < (θ 1) ∧ 0 < (θ 2) ∧ 0 < (θ 3) ∧ 0 < (θ 4) ∧ 0 < (θ 5) ∧ 0 < (θ 0) + (θ 1) - 1 ∧ 0 < (θ 2) + (θ 3) - 1 ∧ 0 < (θ 4) + (θ 5) - 1 ∧ 0 ≤ -(θ 0) + (θ 0) * (θ 3) - (θ 1) * (θ 2) + (θ 2) ∧ 0 ≤ (θ 0) * (θ 4) + (θ 1) - (θ 1) * (θ 5) - (θ 4) ∧ 0 < (θ 0) * (θ 3) * (θ 4) + (θ 1) * (θ 2) * (θ 5) + (θ 1) * (θ 3) - (θ 1) * (θ 5) - (θ 3) * (θ 4) ∧ 0 < (θ 0) * (θ 3) + (θ 1) * (θ 3) - (θ 3) ∧ 0 < -(θ 1) + (θ 1) * (θ 2) + (θ 1) * (θ 3) ∧ 0 < (θ 0) * (θ 5) + (θ 1) * (θ 5) - (θ 5) ∧ 0 < -(θ 0) * (θ 3) + (θ 0) * (θ 3) * (θ 4) + (θ 0) * (θ 5) + (θ 1) * (θ 2) * (θ 5) - (θ 2) * (θ 5) ∧ 0 < -(θ 0) + (θ 0) * (θ 4) + (θ 0) * (θ 5) ∧ 0 < (θ 2) * (θ 4) + (θ 3) * (θ 4) - (θ 4) ∧ 0 < -(θ 2) + (θ 2) * (θ 4) + (θ 2) * (θ 5) ∧ 0 < (θ 0) * (θ 3) * (θ 4) - (θ 0) * (θ 4) - (θ 1) * (θ 2) + (θ 1) * (θ 2) * (θ 5) + (θ 2) * (θ 4) ∧ 0 < (θ 0) * (θ 3) * (θ 4) + (θ 1) * (θ 2) * (θ 5) + (θ 1) * (θ 3) - (θ 1) * (θ 5) - (θ 3) * (θ 4) ∧ 0 < -(θ 0) * (θ 3) + (θ 0) * (θ 3) * (θ 4) + (θ 0) * (θ 5) + (θ 1) * (θ 2) * (θ 5) - (θ 2) * (θ 5) ∧ 0 < (θ 0) * (θ 3) * (θ 4) - (θ 0) * (θ 4) - (θ 1) * (θ 2) + (θ 1) * (θ 2) * (θ 5) + (θ 2) * (θ 4) := by
@@ -127,7 +101,6 @@ theorem common08w (θ : Fin 6 → ℝ) (hθ : ∀ k, k ≠ 9 → k ≠ 10 → k 
   simp only [fc08, cdet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
   unfold gWa at hga; unfold gWb at hgb
   refine ⟨p0, p1, p2, p3, p4, p5, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith⟩
-
 
 set_option maxHeartbeats 4000000 in
 theorem q2polyw (θ : Fin 6 → ℝ) (hθ : ∀ k, k ≠ 9 → k ≠ 10 → k ≠ 11 → 0 < ineq08 θ k) (hga : 0 ≤ gWa θ) (hgb : 0 ≤ gWb θ) (h6 : 1 < θ 5) :
@@ -140,24 +113,6 @@ theorem q2polyw (θ : Fin 6 → ℝ) (hθ : ∀ k, k ≠ 9 → k ≠ 10 → k �
     linarith [(pos_iff_pos_of_mul_pos h).mp p4]
   nlinarith [mul_pos p3 p4, mul_pos (mul_pos p3 p4) dB, mul_pos p1 dA, mul_pos p2 p1,
     mul_pos (mul_pos p1 p2) dA, mul_pos p1 dA, mul_pos p0 dA, mul_pos p3 dA, mul_pos p4 dA]
-
-
-
-/-- The density curve `θ + t (e₃ − e₅)`: `κ_a`, `κ_b` grow linearly, so a weak point is a limit of strict ones. -/
-def curve08 (θ : Fin 6 → ℝ) (t : ℝ) : Fin 6 → ℝ := fun k => if k = 3 then θ 3 + t else if k = 5 then θ 5 - t else θ k
-
-theorem gWa_curve (θ : Fin 6 → ℝ) (t : ℝ) : gWa (curve08 θ t) = gWa θ + t * θ 0 := by
-  simp [gWa, curve08]; ring
-
-theorem gWb_curve (θ : Fin 6 → ℝ) (t : ℝ) : gWb (curve08 θ t) = gWb θ + t * θ 1 := by
-  simp [gWb, curve08]; ring
-
-/-- `[b c] < 0` is automatic in the normal form (from the facets alone). -/
-theorem gWU_neg_w (θ : Fin 6 → ℝ) (hθ : ∀ k, k ≠ 9 → k ≠ 10 → k ≠ 11 → 0 < ineq08 θ k)
-    (hga : 0 ≤ gWa θ) (hgb : 0 ≤ gWb θ) : gWU θ < 0 := by
-  obtain ⟨-, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, f10, -, -⟩ := facts08w θ hθ hga hgb
-  simp only [fc08, cdet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at f10
-  unfold gWU; nlinarith [f10]
 
 end Type08Sp
 end Minimality

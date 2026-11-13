@@ -4,7 +4,6 @@ public import Minimality.Type21SilE
 
 @[expose] public section
 
-
 set_option autoImplicit true
 set_option linter.unusedVariables false
 set_option linter.unusedSectionVars false
@@ -58,47 +57,6 @@ theorem Fac8.up (F : Fac8 x) (t : Fin 8) {i j : Fin 7} (hj : j ∈ h21S t) (hi :
 theorem Fac8.dn (F : Fac8 x) (t : Fin 8) {i j : Fin 7} (hi : i ∈ h21S t) (hj : j ∉ h21S t) :
     F.f t (x j) - F.f t (x i) < 0 := by
   rw [F.zero t i hi]; linarith [F.neg t j hj]
-
-/-- Build the silhouette data from facet indices `ea` (up), `eb` (down) per edge, at the segment
-view `u₀ = x j - x i` (facings given as `f(x j) - f(x i)` signs). -/
-noncomputable def Fac8.sil {k : ℕ} (F : Fac8 x) (c : ZMod k → Fin 7) (ea eb : ZMod k → Fin 8)
-    (i0 j0 : Fin 7)
-    (h0 : ∀ i, c i ∈ h21S (ea i) ∧ c i ∈ h21S (eb i))
-    (h1 : ∀ i, c (i + 1) ∈ h21S (ea i) ∧ c (i + 1) ∈ h21S (eb i))
-    (hs : ∀ i m, m ≠ c i → m ≠ c (i + 1) → m ∉ h21S (ea i) ∨ m ∉ h21S (eb i))
-    (hup : ∀ i, 0 < F.f (ea i) (x j0) - F.f (ea i) (x i0))
-    (hdn : ∀ i, F.f (eb i) (x j0) - F.f (eb i) (x i0) < 0) :
-    SilData k x c (x j0 - x i0) where
-  A i := F.N (ea i)
-  B i := F.N (eb i)
-  fA i := F.f (ea i)
-  fB i := F.f (eb i)
-  hA i := F.hN (ea i)
-  hB i := F.hN (eb i)
-  zA0 i := F.zero _ _ (h0 i).1
-  zA1 i := F.zero _ _ (h1 i).1
-  zB0 i := F.zero _ _ (h0 i).2
-  zB1 i := F.zero _ _ (h1 i).2
-  nA i m := F.le _ m
-  nB i m := F.le _ m
-  strict i m a b := by
-    rcases hs i m a b with h | h
-    · exact Or.inl (F.neg _ _ h)
-    · exact Or.inr (F.neg _ _ h)
-  up i := by rw [← F.hN]; exact hup i
-  dn i := by rw [← F.hN]; exact hdn i
-
-/-- **The leaf shape**: a silhouette cycle `c` on `ZMod k` at the segment view `x j0 - x i0`. -/
-theorem leaf_gen {k : ℕ} [NeZero k] (T : Facets21 x) (hk : 3 ≤ k) (c : ZMod k → Fin 7)
-    (hc : Function.Injective c) (ea eb : ZMod k → Fin 8) (i0 j0 : Fin 7)
-    (h0 : ∀ i, c i ∈ h21S (ea i) ∧ c i ∈ h21S (eb i))
-    (h1 : ∀ i, c (i + 1) ∈ h21S (ea i) ∧ c (i + 1) ∈ h21S (eb i))
-    (hs : ∀ i m, m ≠ c i → m ≠ c (i + 1) → m ∉ h21S (ea i) ∨ m ∉ h21S (eb i))
-    (hup : ∀ i, 0 < (fac8 T).f (ea i) (x j0) - (fac8 T).f (ea i) (x i0))
-    (hdn : ∀ i, (fac8 T).f (eb i) (x j0) - (fac8 T).f (eb i) (x i0) < 0)
-    (hU : Uni (fun i => ⟪x (c i), x j0 - x i0⟫)) :
-    IsRupert (univ.image x) :=
-  h21_sil_isRupert hk T.inj hc ((fac8 T).sil c ea eb i0 j0 h0 h1 hs hup hdn) hU
 
 end H21
 end Minimality

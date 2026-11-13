@@ -169,19 +169,6 @@ theorem RectOK.congr {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ → P
     · exact Or.inl ⟨p, hp, (h1 p hp).mpr f, e⟩
     · exact Or.inr ⟨q, hq, (h2 q hq).mpr f, e⟩
 
-theorem RectOK.neg_depth {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {d d' : ℝ³ → ℝ}
-    (h : RectOK Q1 Q2 far1 far2 d) (hd : ∀ p, d' p = -d p) : RectOK Q1 Q2 far1 far2 d' := by
-  rcases h with h | h | ⟨c1, c2, c3⟩
-  · exact Or.inl h
-  · exact Or.inr (Or.inl h)
-  · refine Or.inr (Or.inr ⟨c1, c2, fun w hw hp => ?_⟩)
-    have hp' : (∃ p ∈ Q1, far1 p ∧ d p = d w) ∨ (∃ q ∈ Q2, far2 q ∧ d q = d w) := by
-      rcases hp with ⟨p, hp, f, e⟩ | ⟨q, hq, f, e⟩
-      · rw [hd, hd] at e; exact Or.inl ⟨p, hp, f, neg_inj.mp e⟩
-      · rw [hd, hd] at e; exact Or.inr ⟨q, hq, f, neg_inj.mp e⟩
-    obtain ⟨⟨x, hx, hxl⟩, ⟨y, hy, hyl⟩⟩ := c3 w hw hp'
-    exact ⟨⟨y, hy, by rw [hd, hd]; linarith⟩, ⟨x, hx, by rw [hd, hd]; linarith⟩⟩
-
 theorem RectOK.map {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ → Prop} {d d' : ℝ³ → ℝ}
     (g : ℝ³ → ℝ³) (hg : Function.Injective g) (c : ℝ) (hc : c ≠ 0)
     (h : RectOK Q1 Q2 far1 far2 d) (hf1 : ∀ p ∈ Q1, far1' (g p) ↔ far1 p)
@@ -276,32 +263,6 @@ theorem FarDepthOKT.congr {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ 
     · exact Or.inl fun p'' hp'' f'' dp q'' hq'' g'' dq nq =>
         k p'' hp'' ((h1 p'' hp'').mpr f'') dp q'' hq'' ((h2 q'' hq'').mpr g'') dq nq
     · exact Or.inr (k.congr h1 h2)
-
-/-- `FarDepthOKT` for the opposite depth (the view line reversed). -/
-theorem FarDepthOKT.neg_depth {Q1 Q2 : Finset ℝ³} {far1 far2 : ℝ³ → Prop} {d d' : ℝ³ → ℝ}
-    (h : FarDepthOKT Q1 Q2 far1 far2 d) (hd : ∀ p, d' p = -d p) :
-    FarDepthOKT Q1 Q2 far1 far2 d' := by
-  intro p hp q hq hpq f1 f2 e
-  rw [hd, hd] at e
-  rcases h p hp q hq hpq f1 f2 (neg_inj.mp e) with ⟨⟨p', hp', f', ne⟩, k⟩ |
-      ⟨k, ⟨q', hq', f', ne⟩⟩ | ⟨⟨p', hp', f', ne⟩, ⟨q', hq', f'', ne'⟩, k⟩
-  · refine Or.inl ⟨⟨p', hp', f', ?_⟩, fun q'' hq'' f => ?_⟩
-    · rw [hd, hd]; exact fun e => ne (neg_inj.mp e)
-    · rw [hd, hd, k q'' hq'' f]
-  · refine Or.inr (Or.inl ⟨fun p'' hp'' f => ?_, ⟨q', hq', f', ?_⟩⟩)
-    · rw [hd, hd, k p'' hp'' f]
-    · rw [hd, hd]; exact fun e => ne (neg_inj.mp e)
-  · refine Or.inr (Or.inr ⟨⟨p', hp', f', ?_⟩, ⟨q', hq', f'', ?_⟩, ?_⟩)
-    · rw [hd, hd]; exact fun e => ne (neg_inj.mp e)
-    · rw [hd, hd]; exact fun e => ne' (neg_inj.mp e)
-    · rcases k with k | k
-      · left
-        intro p'' hp'' f dp q'' hq'' g dq nq
-        have dp' : d p'' ≠ d p := fun e' => dp (by rw [hd, hd, e'])
-        have dq' : d q'' ≠ d q := fun e' => dq (by rw [hd, hd, e'])
-        rw [hd, hd]
-        exact fun e => k p'' hp'' f dp' q'' hq'' g dq' nq (neg_inj.mp e)
-      · exact Or.inr (k.neg_depth hd)
 
 /-- `FarDepthOKT` transported by an injective map, the depth rescaled by a nonzero factor. -/
 theorem FarDepthOKT.map {Q1 Q2 : Finset ℝ³} {far1 far2 far1' far2' : ℝ³ → Prop}
@@ -775,27 +736,6 @@ theorem isRupert_vertex_coords_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (
     linarith
 
 set_option maxHeartbeats 4000000 in
-/-- **Lemma T over a vertex in coordinates, segments parallel to the view
-line allowed.** As `isRupert_vertex_coords_par'` with the extra hypothesis that one of the two
-faces has a single vertex of largest `a` (resp. `b`), which is not needed. -/
-theorem isRupert_vertex_coords_par (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V Q1 Q2 : Finset ℝ³)
-    (v : ℝ³) (a b : ℝ³ → ℝ) (hy : ∀ p ∈ V, p = oblPt O r1 r2 (a p) (b p) (p 2))
-    (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hint : Q1 ∩ Q2 = {v})
-    (hb1 : ∀ p ∈ Q1, b p = 0) (hb1' : ∀ p ∈ V, p ∉ Q1 → 0 < b p)
-    (ha2 : ∀ p ∈ Q2, a p = 0) (ha2' : ∀ p ∈ V, p ∉ Q2 → 0 < a p)
-    (hne1 : ∃ p ∈ Q1, p ≠ v) (hne2 : ∃ p ∈ Q2, p ≠ v)
-    (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, a p' ≤ a p) → (∀ q' ∈ Q2, b q' ≤ b q) →
-      p 2 ≠ q 2)
-    (_hone : (∀ p ∈ Q1, ∀ p' ∈ Q1, (∀ p'' ∈ Q1, a p'' ≤ a p) → a p' = a p → p' = p) ∨
-      (∀ q ∈ Q2, ∀ q' ∈ Q2, (∀ q'' ∈ Q2, b q'' ≤ b q) → b q' = b q → q' = q))
-    (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧
-      ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → a y / a xa + b y / b xb < 1) : IsRupert V :=
-  isRupert_vertex_coords_par' O r1 r2 hρ V Q1 Q2 v a b hy h1V h2V hint hb1 hb1' ha2 ha2' hne1 hne2
-    hcol (FarDepthOKT.of_ne hfarZ) hin
-
-
-set_option maxHeartbeats 4000000 in
 /-- **Lemma T over a vertex, the planes vertical, segments parallel to the
 view line allowed** (as `isRupert_facets_vertex_vertical` without `hpar`), with no
 unique-far-end condition (`isRupert_vertex_coords_par'`). -/
@@ -912,25 +852,6 @@ theorem isRupert_facets_vertex_vertical_par' (V Q1 Q2 : Finset ℝ³) (v : ℝ³
   · exact isRupert_vertex_coords_par' O r1 r2 hpos V Q1 Q2 v a b (fun p _ => hy p) h1V h2V hint
       hb1 hb1' ha2 ha2' ⟨p1, hp1, hp1v⟩ ⟨p2, hp2, hp2v⟩ hcol hfar' hin'
 
-/-- **Lemma T over a vertex, the planes vertical, segments parallel to the
-view line allowed**, as `isRupert_facets_vertex_vertical_par'` with the (unneeded) hypothesis
-that one facet has a single point where the other's functional is least. -/
-theorem isRupert_facets_vertex_vertical_par (V Q1 Q2 : Finset ℝ³) (v : ℝ³)
-    (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hint : Q1 ∩ Q2 = {v}) (f1 f2 : ℝ³ →ᵃ[ℝ] ℝ)
-    (z1 : ∀ p ∈ Q1, f1 p = 0) (n1 : ∀ p ∈ V, p ∉ Q1 → f1 p < 0)
-    (z2 : ∀ p ∈ Q2, f2 p = 0) (n2 : ∀ p ∈ V, p ∉ Q2 → f2 p < 0)
-    (e1 : f1 (v + ez) = 0) (e2 : f2 (v + ez) = 0)
-    (hne1 : ∃ p ∈ Q1, p ≠ v) (hne2 : ∃ p ∈ Q2, p ≠ v)
-    (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
-      p 2 ≠ q 2)
-    (_hone : (∀ p ∈ Q1, ∀ p' ∈ Q1, (∀ p'' ∈ Q1, f2 p ≤ f2 p'') → f2 p' = f2 p → p' = p) ∨
-      (∀ q ∈ Q2, ∀ q' ∈ Q2, (∀ q'' ∈ Q2, f1 q ≤ f1 q'') → f1 q' = f1 q → q' = q))
-    (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧
-      ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V :=
-  isRupert_facets_vertex_vertical_par' V Q1 Q2 v h1V h2V hint f1 f2 z1 n1 z2 n2 e1 e2 hne1 hne2
-    hcol (FarDepthOKT.of_ne hfarZ) hin
-
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over a vertex, any frame, segments parallel to the view line
 allowed** (as `isRupert_facets_vertex` without `hpar`), with no unique-far-end condition. -/
@@ -1013,26 +934,6 @@ theorem isRupert_facets_vertex_par' (V Q1 Q2 : Finset ℝ³) (v : ℝ³)
       fun e => hxav (hginj e), fun e => hxbv (hginj e), allg V _ (fun y hy hy1 hy2 => ?_)⟩
     rw [tF1, tF1, tF2, tF2]
     exact h y hy (fun h => hy1 ((memg Q1 y).mpr h)) (fun h => hy2 ((memg Q2 y).mpr h))
-
-
-/-- **Lemma T over a vertex, any frame, segments parallel to the view line
-allowed**, as `isRupert_facets_vertex_par'` with the (unneeded) hypothesis that one facet has
-a single point where the other's functional is least. -/
-theorem isRupert_facets_vertex_par (V Q1 Q2 : Finset ℝ³) (v : ℝ³)
-    (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hint : Q1 ∩ Q2 = {v}) (f1 f2 : ℝ³ →ᵃ[ℝ] ℝ)
-    (z1 : ∀ p ∈ Q1, f1 p = 0) (n1 : ∀ p ∈ V, p ∉ Q1 → f1 p < 0)
-    (z2 : ∀ p ∈ Q2, f2 p = 0) (n2 : ∀ p ∈ V, p ∉ Q2 → f2 p < 0)
-    (e : ℝ³) (he : e ≠ 0) (e1 : f1 (v + e) = 0) (e2 : f2 (v + e) = 0)
-    (hne1 : ∃ p ∈ Q1, p ≠ v) (hne2 : ∃ p ∈ Q2, p ≠ v)
-    (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
-      ⟪p, e⟫ ≠ ⟪q, e⟫)
-    (_hone : (∀ p ∈ Q1, ∀ p' ∈ Q1, (∀ p'' ∈ Q1, f2 p ≤ f2 p'') → f2 p' = f2 p → p' = p) ∨
-      (∀ q ∈ Q2, ∀ q' ∈ Q2, (∀ q'' ∈ Q2, f1 q ≤ f1 q'') → f1 q' = f1 q → q' = q))
-    (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧
-      ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V :=
-  isRupert_facets_vertex_par' V Q1 Q2 v h1V h2V hint f1 f2 z1 n1 z2 n2 e he e1 e2 hne1 hne2 hcol
-    (FarDepthOKT.of_ne hfarZ) hin
 
 /-- The former general position `TriGenFarPU`, kept for reference: distinct depths at the far
 ends (as `TriGenFar`) and, in addition, one facet with a single point where the other's
@@ -1156,19 +1057,6 @@ theorem isRupert_of_facets_vertex_par (V : Finset ℝ³) (hgen : NoThreeCollinea
     ⟨p1, hp1, hp1v⟩ ⟨p2, hp2, hp2v⟩ ?_ hfarZ
     ⟨xa, hxa, xb, hxb, hxav, hxbv, hin' f1 f2 z1 n1 z2 n2⟩
   exact hgen
-
-
-/-- **Lemma T over a vertex, facet form, segments parallel to the view line
-allowed** (`TriGenFarPU` in place of `TriGenFar`); implied by `isRupert_of_facets_vertex_par`. -/
-theorem isRupert_of_facets_vertex_parU (V : Finset ℝ³) (hgen : NoThreeCollinear V)
-    (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (h1f : IsFacet V Q1) (h2f : IsFacet V Q2)
-    (v : ℝ³) (hint : Q1 ∩ Q2 = {v}) (hne1 : ∃ p ∈ Q1, p ≠ v) (hne2 : ∃ p ∈ Q2, p ≠ v)
-    (hT : TriGenFarPU V Q1 Q2 v)
-    (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ≠ v ∧ xb ≠ v ∧ ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ,
-      (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
-      (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
-      ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V :=
-  isRupert_of_facets_vertex_par V hgen Q1 Q2 h1V h2V h1f h2f v hint hne1 hne2 hT.weaken hin
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over an edge in coordinates, segments parallel to the view line
@@ -1453,26 +1341,6 @@ theorem isRupert_edge_coords_par' (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V 
     rw [div_add_div _ _ hA.ne' hB.ne', div_lt_one (mul_pos hA hB)] at this
     linarith
 
-/-- **Lemma T over an edge in coordinates, segments parallel to the view line
-allowed**, as `isRupert_edge_coords_par'` with the (unneeded) hypothesis that one face has a
-single vertex of largest `a`, resp. `b`. -/
-theorem isRupert_edge_coords_par (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (V Q1 Q2 : Finset ℝ³)
-    (v w : ℝ³) (hvw : v 2 < w 2) (a b : ℝ³ → ℝ)
-    (hy : ∀ p ∈ V, p = oblPt O r1 r2 (a p) (b p) (p 2))
-    (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hint : Q1 ∩ Q2 = {v, w})
-    (hb1 : ∀ p ∈ Q1, b p = 0) (hb1' : ∀ p ∈ V, p ∉ Q1 → 0 < b p)
-    (ha2 : ∀ p ∈ Q2, a p = 0) (ha2' : ∀ p ∈ V, p ∉ Q2 → 0 < a p)
-    (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
-    (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, a p' ≤ a p) → (∀ q' ∈ Q2, b q' ≤ b q) →
-      p 2 ≠ q 2)
-    (_hone : (∀ p ∈ Q1, ∀ p' ∈ Q1, (∀ p'' ∈ Q1, a p'' ≤ a p) → a p' = a p → p' = p) ∨
-      (∀ q ∈ Q2, ∀ q' ∈ Q2, (∀ q'' ∈ Q2, b q'' ≤ b q) → b q' = b q → q' = q))
-    (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
-      ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → a y / a xa + b y / b xb < 1) : IsRupert V :=
-  isRupert_edge_coords_par' O r1 r2 hρ V Q1 Q2 v w hvw a b hy h1V h2V hint hb1 hb1' ha2 ha2'
-    hne1 hne2 hcol (FarDepthOK.of_ne hfarZ) hin
-
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over an edge, the edge vertical (`v` below `w`), segments parallel
 to it allowed** (as `isRupert_facets_edge_vertical_lt` without `hpar`), with no
@@ -1584,25 +1452,6 @@ theorem isRupert_facets_edge_vertical_lt_par' (V Q1 Q2 : Finset ℝ³) (v w : �
   · exact isRupert_edge_coords_par' O r1 r2 hpos V Q1 Q2 v w hvw a b (fun p _ => hy p) h1V h2V hint
       hb1 hb1' ha2 ha2' ⟨p1, hp1, hp12⟩ ⟨p2, hp2, hp21⟩ hcol hfar' hin'
 
-/-- **Lemma T over an edge, the edge vertical (`v` below `w`), segments parallel
-to it allowed** as `isRupert_facets_edge_vertical_lt_par'` with the (unneeded)
-hypothesis that one facet has a single point where the other's functional is least. -/
-theorem isRupert_facets_edge_vertical_lt_par (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : v 2 < w 2)
-    (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hint : Q1 ∩ Q2 = {v, w}) (f1 f2 : ℝ³ →ᵃ[ℝ] ℝ)
-    (z1 : ∀ p ∈ Q1, f1 p = 0) (n1 : ∀ p ∈ V, p ∉ Q1 → f1 p < 0)
-    (z2 : ∀ p ∈ Q2, f2 p = 0) (n2 : ∀ p ∈ V, p ∉ Q2 → f2 p < 0)
-    (e1 : f1 (v + ez) = 0) (e2 : f2 (v + ez) = 0)
-    (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
-    (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
-      p 2 ≠ q 2)
-    (_hone : (∀ p ∈ Q1, ∀ p' ∈ Q1, (∀ p'' ∈ Q1, f2 p ≤ f2 p'') → f2 p' = f2 p → p' = p) ∨
-      (∀ q ∈ Q2, ∀ q' ∈ Q2, (∀ q'' ∈ Q2, f1 q ≤ f1 q'') → f1 q' = f1 q → q' = q))
-    (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
-      ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V :=
-  isRupert_facets_edge_vertical_lt_par' V Q1 Q2 v w hvw h1V h2V hint f1 f2 z1 n1 z2 n2 e1 e2 hne1
-    hne2 hcol (FarDepthOK.of_ne hfarZ) hin
-
 /-- **Lemma T over an edge, the edge vertical, segments parallel to it
 allowed, with no unique-far-end condition.** -/
 theorem isRupert_facets_edge_vertical_par' (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) 
@@ -1638,27 +1487,6 @@ theorem isRupert_facets_edge_vertical_par' (V Q1 Q2 : Finset ℝ³) (v w : ℝ³
       (by rw [Finset.pair_comm]; exact hint) f1 f2 z1 n1 z2 n2
       (hw f1 (z1 v hv1) e1 (z1 w hw1)) (hw f2 (z2 v hv2) e2 (z2 w hw2)) hne1 hne2 hcol
       hfarZ hin
-
-
-/-- **Lemma T over an edge, the edge vertical, segments parallel to it
-allowed**, as `isRupert_facets_edge_vertical_par'` with the (unneeded)
-hypothesis that one facet has a single point where the other's functional is least. -/
-theorem isRupert_facets_edge_vertical_par (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : v ≠ w)
-    (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hint : Q1 ∩ Q2 = {v, w}) (f1 f2 : ℝ³ →ᵃ[ℝ] ℝ)
-    (z1 : ∀ p ∈ Q1, f1 p = 0) (n1 : ∀ p ∈ V, p ∉ Q1 → f1 p < 0)
-    (z2 : ∀ p ∈ Q2, f2 p = 0) (n2 : ∀ p ∈ V, p ∉ Q2 → f2 p < 0)
-    (e1 : f1 (v + ez) = 0) (e2 : f2 (v + ez) = 0)
-    (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
-    (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hvw2 : v 2 ≠ w 2)
-    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
-      p 2 ≠ q 2)
-    (_hone : (∀ p ∈ Q1, ∀ p' ∈ Q1, (∀ p'' ∈ Q1, f2 p ≤ f2 p'') → f2 p' = f2 p → p' = p) ∨
-      (∀ q ∈ Q2, ∀ q' ∈ Q2, (∀ q'' ∈ Q2, f1 q ≤ f1 q'') → f1 q' = f1 q → q' = q))
-    (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
-      ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V :=
-  isRupert_facets_edge_vertical_par' V Q1 Q2 v w h1V h2V hint f1 f2 z1 n1 z2 n2 e1 e2 hne1 hne2
-    hcol hvw2 (FarDepthOK.of_ne hfarZ) hin
 
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over an edge, any frame, segments parallel to the edge allowed**
@@ -1751,24 +1579,6 @@ theorem isRupert_facets_edge_par' (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : 
     rw [tF1, tF1, tF2, tF2]
     exact h y hy (fun h => hy1 ((memg Q1 y).mpr h)) (fun h => hy2 ((memg Q2 y).mpr h))
 
-/-- **Lemma T over an edge, any frame, segments parallel to the edge allowed**
-as `isRupert_facets_edge_par'` with the (unneeded) hypothesis that one facet has a single
-point where the other's functional is least. -/
-theorem isRupert_facets_edge_par (V Q1 Q2 : Finset ℝ³) (v w : ℝ³) (hvw : v ≠ w)
-    (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (hint : Q1 ∩ Q2 = {v, w}) (f1 f2 : ℝ³ →ᵃ[ℝ] ℝ)
-    (z1 : ∀ p ∈ Q1, f1 p = 0) (n1 : ∀ p ∈ V, p ∉ Q1 → f1 p < 0)
-    (z2 : ∀ p ∈ Q2, f2 p = 0) (n2 : ∀ p ∈ V, p ∉ Q2 → f2 p < 0)
-    (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
-    (hcol : ∀ p ∈ V, ∀ q ∈ V, ∀ r ∈ V, p ≠ q → p ≠ r → q ≠ r → ∀ c : ℝ, r - p ≠ c • (q - p))
-    (hfarZ : ∀ p ∈ Q1, ∀ q ∈ Q2, p ≠ q → (∀ p' ∈ Q1, f2 p ≤ f2 p') → (∀ q' ∈ Q2, f1 q ≤ f1 q') →
-      ⟪p, w - v⟫ ≠ ⟪q, w - v⟫)
-    (_hone : (∀ p ∈ Q1, ∀ p' ∈ Q1, (∀ p'' ∈ Q1, f2 p ≤ f2 p'') → f2 p' = f2 p → p' = p) ∨
-      (∀ q ∈ Q2, ∀ q' ∈ Q2, (∀ q'' ∈ Q2, f1 q ≤ f1 q'') → f1 q' = f1 q → q' = q))
-    (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧
-      ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V :=
-  isRupert_facets_edge_par' V Q1 Q2 v w hvw h1V h2V hint f1 f2 z1 n1 z2 n2 hne1 hne2 hcol
-    (FarDepthOK.of_ne hfarZ) hin
-
 /-- The former general position `EdgeFarPU`, kept for reference: distinct far depths along the
 edge (as `EdgeFar`) and, in addition, one facet with a single point where the other's functional
 is least.  `EdgeFarPU.weaken` gives `EdgeFarP`. -/
@@ -1837,19 +1647,6 @@ theorem isRupert_of_facets_edge_par (V : Finset ℝ³) (hgen : NoThreeCollinear 
   have hfar := hfarZ f1 f2 z1 n1 z2 n2
   exact isRupert_facets_edge_par' V Q1 Q2 v w hvw h1V h2V hint f1 f2 z1 n1 z2 n2 hne1 hne2 hgen
     hfar ⟨xa, hxa, xb, hxb, hxa2, hxb1, hin' f1 f2 z1 n1 z2 n2⟩
-
-/-- **Lemma T over an edge, facet form, segments parallel to the edge
-allowed** (`EdgeFarPU` in place of `EdgeFar`); implied by `isRupert_of_facets_edge_par`. -/
-theorem isRupert_of_facets_edge_parU (V : Finset ℝ³) (hgen : NoThreeCollinear V)
-    (Q1 Q2 : Finset ℝ³) (h1V : Q1 ⊆ V) (h2V : Q2 ⊆ V) (h1f : IsFacet V Q1) (h2f : IsFacet V Q2)
-    (v w : ℝ³) (hvw : v ≠ w) (hint : Q1 ∩ Q2 = {v, w})
-    (hne1 : ∃ p ∈ Q1, p ∉ Q2) (hne2 : ∃ p ∈ Q2, p ∉ Q1)
-    (hfarZ : EdgeFarPU V Q1 Q2 v w)
-    (hin : ∃ xa ∈ Q1, ∃ xb ∈ Q2, xa ∉ Q2 ∧ xb ∉ Q1 ∧ ∀ f1 f2 : ℝ³ →ᵃ[ℝ] ℝ,
-      (∀ p ∈ Q1, f1 p = 0) → (∀ p ∈ V, p ∉ Q1 → f1 p < 0) →
-      (∀ p ∈ Q2, f2 p = 0) → (∀ p ∈ V, p ∉ Q2 → f2 p < 0) →
-      ∀ y ∈ V, y ∉ Q1 → y ∉ Q2 → f2 y / f2 xa + f1 y / f1 xb < 1) : IsRupert V :=
-  isRupert_of_facets_edge_par V hgen Q1 Q2 h1V h2V h1f h2f v w hvw hint hne1 hne2 hfarZ.weaken hin
 
 end Minimality
 

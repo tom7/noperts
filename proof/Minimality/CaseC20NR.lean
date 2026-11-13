@@ -96,56 +96,6 @@ open Minimality.CaseC20 Minimality.CaseC09 Filter
 open scoped Topology
 variable {x : Fin 7 → ℝ³} (F : Frame7 x)
 
-/-- **The vertex bridge for four-corner rims** (Theorem 18.1 in its tie form at a view in frame
-coordinates, `Frame7.rupert_vertex`), from the explicit strict tests. -/
-theorem vertex4 (hx : Function.Injective x) (c0 c1 c2 c3 : Fin 7) (P0 P1 P2 P3 : C3)
-    (e0 : F.ptC c0 = P0) (e1 : F.ptC c1 = P1) (e2 : F.ptC c2 = P2) (e3 : F.ptC c3 = P3)
-    (M : Finset (Fin 7)) (hMc : ∀ m ∈ M, m ≠ c0 ∧ m ≠ c1 ∧ m ≠ c2 ∧ m ≠ c3)
-    (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u : C3) (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0)
-    (hc : PCyc4 σ u P0 P1 P2 P3)
-    (hr : ∀ j' : Fin 7, j' ∉ M → j' ≠ c0 → j' ≠ c1 → j' ≠ c2 → j' ≠ c3 →
-      PRest4 σ u P0 P1 P2 P3 (F.ptC j'))
-    (hz : IsRobustUnimodal (quad (F.GG P0 u) (F.GG P1 u) (F.GG P2 u) (F.GG P3 u)))
-    (hnd : NoHDNAt (Finset.univ.image x) (F.fvC u))
-    (hM : ∀ m ∈ M, ∃ i : ZMod 4, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
-      (F.ptC m).x = (quad P0 P1 P2 P3 i).x + s * ((quad P0 P1 P2 P3 (i + 1)).x -
-        (quad P0 P1 P2 P3 i).x) + δ * u.x ∧
-      (F.ptC m).y = (quad P0 P1 P2 P3 i).y + s * ((quad P0 P1 P2 P3 (i + 1)).y -
-        (quad P0 P1 P2 P3 i).y) + δ * u.y ∧
-      (F.ptC m).z = (quad P0 P1 P2 P3 i).z + s * ((quad P0 P1 P2 P3 (i + 1)).z -
-        (quad P0 P1 P2 P3 i).z) + δ * u.z) :
-    IsRupert (Finset.univ.image x) := by
-  have hc' : ∀ i, F.ptC (quad c0 c1 c2 c3 i) = quad P0 P1 P2 P3 i := by
-    intro i
-    rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
-      simp [quad_0, quad_1, quad_2, quad_3, e0, e1, e2, e3]
-  refine F.rupert_vertex hx (k := 4) (by norm_num) (quad c0 c1 c2 c3) M σ hσ u hu ?_ ?_ ?_ ?_ hnd ?_
-  · intro m hm i
-    obtain ⟨a0, a1, a2, a3⟩ := hMc m hm
-    rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
-      simp [quad_0, quad_1, quad_2, quad_3, a0, a1, a2, a3]
-  · intro i j h1 h2
-    simp only [hc']
-    exact hc.all i j h1 h2
-  · intro j' hj' hjc i
-    simp only [hc']
-    refine (hr j' hj' ?_ ?_ ?_ ?_).all i
-    · exact fun h => hjc 0 (by simp [quad_0, h])
-    · exact fun h => hjc 1 (by simp [quad_1, h])
-    · exact fun h => hjc 2 (by simp [quad_2, h])
-    · exact fun h => hjc 3 (by simp [quad_3, h])
-  · have : (fun i : ZMod 4 => F.GG (F.ptC (quad c0 c1 c2 c3 i)) u) =
-        quad (F.GG P0 u) (F.GG P1 u) (F.GG P2 u) (F.GG P3 u) := by
-      funext i
-      rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> simp [quad_0, quad_1, quad_2, quad_3, e0, e1, e2, e3]
-    rw [this]; exact hz
-  · intro m hm
-    obtain ⟨i, s, δ, hs0, hs1, hδ, ex, ey, ez⟩ := hM m hm
-    refine ⟨i, s, δ, hs0, hs1, hδ, ?_, ?_, ?_⟩
-    · rw [hc' i, hc' (i + 1)]; exact ex
-    · rw [hc' i, hc' (i + 1)]; exact ey
-    · rw [hc' i, hc' (i + 1)]; exact ez
-
 end Minimality.CaseC18.Frame7
 
 end

@@ -279,23 +279,6 @@ theorem ridgeData (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ → ℝ}
         · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))
         · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))
 
-/-- **A ridge view, certificate form** (`ridgeData`). -/
-theorem rimCert_ridge (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ → ℝ} {NA NB : ℝ³}
-    (hfA : ∀ y z, fA y - fA z = ⟪NA, y - z⟫) (hfB : ∀ y z, fB y - fB z = ⟪NB, y - z⟫)
-    (hAv : fA v = 0) (hAw : fA w = 0) (hAA : fA A = 0) (hAB : fA B < 0) (hAC : fA C < 0)
-    (hBv : fB v = 0) (hBw : fB w = 0) (hBB : fB B = 0) (hBA : fB A < 0) (hBC : fB C < 0)
-    (hT : det3 (A - v) (B - v) (w - v) ≠ 0)
-    (hvK : v ∈ K) (hwK : w ∈ K) (hAK : A ∈ K) (hBK : B ∈ K) (hCK : C ∈ K)
-    (hK : ∀ z ∈ K, z = v ∨ z = w ∨ z = A ∨ z = B ∨ z = C ∨ EdgeMid v w A B z)
-    (hcase : 0 < det3 (B - A) (C - A) (w - v) * det3 (B - A) (v - A) (w - v) ∨
-      (det3 (B - A) (C - A) (w - v) * det3 (B - A) (v - A) (w - v) < 0 ∧
-        det3 (B - A) (C - A) (v - A) * det3 (B - A) (C - A) (w - A) ≤ 0))
-    (htri : ¬ (⟪v, w - v⟫ = ⟪A, w - v⟫ ∧ ⟪A, w - v⟫ = ⟪B, w - v⟫))
-    (h3 : ¬ (⟪A, w - v⟫ = ⟪C, w - v⟫ ∧ ⟪C, w - v⟫ = ⟪B, w - v⟫)) :
-    RimCert K (w - v) :=
-  (ridgeData K hfA hfB hAv hAw hAA hAB hAC hBv hBw hBB hBA hBC hT hvK hwK hAK hBK hCK hK hcase htri
-    h3).rimCert
-
 /-! ### Lemma 16.5 for type 21 -/
 
 /-- One quadrant of the ridge view of type 21: the far ends `A ∈ {0, 5}` of `0256` and

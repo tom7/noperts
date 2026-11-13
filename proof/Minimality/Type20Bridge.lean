@@ -50,27 +50,6 @@ theorem robUni4 {z : ZMod 4 → ℝ}
   · exact fun h => h1 ⟨h.2.2.2, h.2.2.1, h.2.1, h.1⟩
   · exact fun h => h2 ⟨h.2.1, h.1, h.2.2.2, h.2.2.1⟩
 
-/-- On a 4-cycle, `RobUni` is invariant under negating all depths. -/
-theorem robUni4_neg {z : ZMod 4 → ℝ} (h : RobUni z) : RobUni (fun i => - z i) := by
-  have h1 := h 0 1 2 3 (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  have h2 := h 1 1 2 3 (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  have e : ∀ a b : ZMod 4, a = b → z a = z b := fun a b h => by rw [h]
-  refine robUni4 ?_ ?_
-  · rintro ⟨a, b, c, d⟩
-    apply h2
-    have e1 : (1:ZMod 4) + ((1:ℕ):ZMod 4) = 2 := by decide
-    have e2 : (1:ZMod 4) + ((2:ℕ):ZMod 4) = 3 := by decide
-    have e3 : (1:ZMod 4) + ((3:ℕ):ZMod 4) = 0 := by decide
-    rw [e1, e2, e3]
-    exact ⟨by linarith, by linarith, by linarith, by linarith⟩
-  · rintro ⟨a, b, c, d⟩
-    apply h1
-    have e1 : (0:ZMod 4) + ((1:ℕ):ZMod 4) = 1 := by decide
-    have e2 : (0:ZMod 4) + ((2:ℕ):ZMod 4) = 2 := by decide
-    have e3 : (0:ZMod 4) + ((3:ℕ):ZMod 4) = 3 := by decide
-    rw [e1, e2, e3]
-    exact ⟨by linarith, by linarith, by linarith, by linarith⟩
-
 /-- Sums in `ZMod 5`, for rewriting cycle positions. -/
 theorem zmod5_sums : ((0:ZMod 5) + 1 = 1) ∧
     ((0:ZMod 5) + 2 = 2) ∧

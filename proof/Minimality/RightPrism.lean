@@ -39,14 +39,6 @@ theorem tilt_test {a b : ℝ³} (v : ℝ²)
     ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < det3 a b (ez + ε • liftPt v 0) := by
   simp only [det3_tilt]; exact eventually_pos_affine h
 
-theorem proj_liftPt_sub (q₁ q₂ : ℝ²) (z₁ z₂ : ℝ) :
-    proj_xy (liftPt q₁ z₁ - liftPt q₂ z₂) = q₁ - q₂ := by
-  rw [proj_xy_sub', proj_xy_liftPt, proj_xy_liftPt]
-
-theorem liftPt_sub_two (q₁ q₂ : ℝ²) (z₁ z₂ : ℝ) :
-    (liftPt q₁ z₁ - liftPt q₂ z₂) 2 = z₁ - z₂ := by
-  rw [PiLp.sub_apply, liftPt_two, liftPt_two]
-
 theorem finite_affine_zero {a b : ℝ} (h : a ≠ 0 ∨ b ≠ 0) : {t : ℝ | a * t + b = 0}.Finite := by
   by_cases ha : a = 0
   · have hb : b ≠ 0 := h.resolve_left (not_not.mpr ha)

@@ -170,7 +170,6 @@ theorem lemmaE_far21 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c') (
   push Not at hc
   linarith [mul_pos hc hAB]
 
-
 /-- **Tier Q of §16** for an octahedron labelled like `O = K − 2` (pairs `(a, a') = (0, 3)`,
 `(b, b') = (4, 5)`, `(c, c') = (1, 6)`): one of the eight directed K-quad edges
 `0→5, 5→0, 0→6, 6→0, 4→3, 3→4, 4→6, 6→4` is an E-good quad edge (`EGoodQuad`). -/
@@ -280,17 +279,6 @@ theorem cert_type21_H {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
       (rimCert_quad_edge_lift_tie F' h1 h2 h3 (Or.inr hhid)
       ⟨hdc, hdc', hdb', hdb, hda, hda'⟩
       (hgen.touch_oct F'))
-
-/-- **Tier H for `O2 = K − 6`** (`1 → 4` or `1 → 0`, the images of `1 → 3`, `1 → 5` under
-`σ2`): the cap `6` is hidden, and `K` has a rim certificate (`CertV`). -/
-theorem cert_type21_H2 {a a' b b' c c' d : ℝ³} (F : OctFacets a a' b b' c c')
-    (hd : IsCap21 F d) (G2 : GaleData b' b a' a c d)
-    (hgen : GenPosTie (insert d ({a, a', b, b', c, c'} : Finset ℝ³)))
-    (hH : Type21H G2.l G2.m b' b a' a c d) :
-    CertV (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) L
-      (SegOK21 (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) a a' b b' c c' d) := by
-  rw [← type21_set_O2] at hgen ⊢
-  exact (cert_type21_H hd.O2 hd.sigma2 G2 hgen hH).monoE fun _ _ h => h.sigma2
 
 end Minimality
 

@@ -114,31 +114,6 @@ theorem rimCertPts_of_vertexView_robust (V M : Finset ℝ³) (u₀ : ℝ³) (_hu
     exact Or.inl ⟨i, i + 1, s, δ, hs0.le, hs1.le, hm⟩
   · exact Or.inr (hrest z hz hzM hc)
 
-/-- **`isRupert_of_edgeView_uniform_robust` in certificate form.** -/
-theorem rimCertPts_of_edgeView_uniform_robust (V M D W : Finset ℝ³) (u₀ : ℝ³) (_hu₀ : u₀ ≠ 0)
-    {k : ℕ} [NeZero k] (hk : 3 ≤ k) (x : ZMod k → ℝ³) (hxV : ∀ i, x i ∈ V)
-    (_hxM : ∀ i, x i ∉ M)
-    (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → 0 < det3 (x (i + 1) - x i) (x j - x i) u₀)
-    (hrest : ∀ y ∈ V, y ∉ M → y ∉ D → (∀ j, y ≠ x j) → ∀ i,
-      0 < det3 (x (i + 1) - x i) (y - x i) u₀)
-    (hz : IsRobustUnimodal (fun i => ⟪x i, u₀⟫)) (_hxW : ∀ i, x i ∈ W)
-    (hM : ∀ m ∈ M, ∃ i : ZMod k, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
-      m = x i + s • (x (i + 1) - x i) + δ • u₀)
-    (hD : ∀ y ∈ D, ∃ i : ZMod k, ∃ h : ℝ, h ≠ 0 ∧ y = x i - h • u₀) : RimCertPts V u₀ x := by
-  classical
-  refine rimCertPts_of_class V u₀ hk x hxV hcyc (fun z hz => ?_) hz
-  by_cases hc : ∃ j, z = x j
-  · obtain ⟨j, rfl⟩ := hc
-    exact Or.inl (class_corner j)
-  push Not at hc
-  by_cases hzM : z ∈ M
-  · obtain ⟨i, s, δ, hs0, hs1, -, hm⟩ := hM z hzM
-    exact Or.inl ⟨i, i + 1, s, δ, hs0.le, hs1.le, hm⟩
-  by_cases hzD : z ∈ D
-  · obtain ⟨i, h, -, hy⟩ := hD z hzD
-    exact Or.inl (class_double i (-h) (by rw [hy]; module))
-  · exact Or.inr (hrest z hz hzM hzD hc)
-
 /-- A 4-corner certificate is a rim certificate. -/
 theorem RimCertPts.rimCert4 {V : Finset ℝ³} {u : ℝ³} {y : ZMod 4 → ℝ³} (h : RimCertPts V u y) :
     RimCert V u := h.rimCert (by norm_num)
@@ -318,19 +293,6 @@ theorem rimCertPts_quad_edge_lift_core_tie {x x' y y' p p' m : ℝ³} (F : OctFa
     · rw [zmod4_zero_add_one, zmod4_zero_sub_one]
       exact hEM x y (-1) (Or.inr ⟨rfl, rfl, rfl⟩)
 
-theorem rimCert_quad_edge_lift_core_tie {x x' y y' p p' m : ℝ³} (F : OctFacets x x' y y' p p')
-    (hq₁ : F.a'b'c.f x < F.a'b'c.f y) (hq₂ : F.a'b'c'.f x < F.a'b'c'.f y)
-    (hor : 0 < det3 (p - y) (p' - y) (y - x))
-    (hgood : ¬ max ⟪y, y - x⟫ ⟪y', y - x⟫ ≤ min ⟪p, y - x⟫ ⟪p', y - x⟫)
-    (M : Finset ℝ³) (hMm : M ⊆ {m}) (hmid : m ∈ M → QuadMiddle x y p p' m)
-    (hhid : m ∉ M → QuadHidden x y y' p p' m)
-    (hmO : m ≠ x ∧ m ≠ x' ∧ m ≠ y ∧ m ≠ y' ∧ m ≠ p ∧ m ≠ p')
-    (htouch : ¬ (⟪p, y - x⟫ = ⟪y', y - x⟫ ∧ ⟪p', y - x⟫ = ⟪y', y - x⟫)) :
-    RimCert (insert m {x, x', y, y', p, p'}) (y - x) := by
-  rcases rimCertPts_quad_edge_lift_core_tie F hq₁ hq₂ hor hgood M hMm hmid hhid hmO htouch with
-    ⟨-, h⟩ | ⟨-, h⟩
-  exacts [h.rimCert4, h.rimCert4]
-
 /-- **Lemma 2 of §12 with ties, labelled certificate form**: the rim at the view along `x y` is
 `(y, q, y', q')` (`K_y`, without weak saddle) or `(x, q, y', q')` (`K_x`), with `{q, q'} = {p, p'}`
 in the counterclockwise order. -/
@@ -375,120 +337,6 @@ theorem rimCert_quad_edge_lift_tie {x x' y y' p p' m : ℝ³} (F : OctFacets x x
     RimCert (insert m {x, x', y, y', p, p'}) (y - x) := by
   obtain ⟨q, q', -, h | h⟩ := rimCertPts_quad_edge_lift_tie F hq₁ hq₂ hgood hm hmO htouch
   exacts [h.2.rimCert4, h.2.rimCert4]
-
-/-- **`isRupert_quad_uniform_nws` in certificate form.** -/
-theorem rimCert_quad_uniform_nws (V M : Finset ℝ³) {u y o a b c : ℝ³} {h : ℝ} (hh : h ≠ 0)
-    (ho : o = y - h • u) (hu : u ≠ 0) (hyV : y ∈ V) (haV : a ∈ V) (hbV : b ∈ V)
-    (hcV : c ∈ V) (hyM : y ∉ M) (haM : a ∉ M) (hbM : b ∉ M) (hcM : c ∉ M)
-    (q₁ : 0 < det3 (a - y) (c - y) u) (q₂ : 0 < det3 (c - a) (b - a) u)
-    (q₃ : 0 < det3 (b - c) (y - c) u) (q₄ : 0 < det3 (y - b) (a - b) u)
-    (hrest : ∀ z ∈ V, z ∉ M → z ≠ o → z ≠ y → z ≠ a → z ≠ c → z ≠ b → EdgeHidden u y a c b z)
-    (hN : NWS4 (quad ⟪y, u⟫ ⟪a, u⟫ ⟪c, u⟫ ⟪b, u⟫))
-    (hM : ∀ m ∈ M, ∃ i : ZMod 4, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
-      m = quad y a c b i + s • (quad y a c b (i + 1) - quad y a c b i) + δ • u) :
-    RimCert V u := by
-  have i2 : det3 (a - y) (b - y) u = det3 (y - b) (a - b) u := by
-    simp only [det3_expand, PiLp.sub_apply]; ring
-  have i4 : det3 (c - a) (y - a) u = det3 (a - y) (c - y) u := by
-    simp only [det3_expand, PiLp.sub_apply]; ring
-  have i6 : det3 (b - c) (a - c) u = det3 (c - a) (b - a) u := by
-    simp only [det3_expand, PiLp.sub_apply]; ring
-  have i8 : det3 (y - b) (c - b) u = det3 (b - c) (y - c) u := by
-    simp only [det3_expand, PiLp.sub_apply]; ring
-  -- the corners are not the other axle end
-  have hoy : y ≠ o := by
-    intro e
-    have h2 : y - h • u = y := by rw [ho] at e; exact e.symm
-    have : h • u = 0 := by
-      calc h • u = y - (y - h • u) := by abel
-        _ = 0 := by rw [h2, sub_self]
-    exact (smul_ne_zero hh hu) this
-  have hoa : a ≠ o := by
-    intro e
-    have : det3 (a - y) (c - y) u = 0 := by
-      rw [e, ho]; simp only [det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]; ring
-    linarith
-  have hoc : c ≠ o := by
-    intro e
-    have : det3 (b - c) (y - c) u = 0 := by
-      rw [e, ho]; simp only [det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]; ring
-    linarith
-  have hob : b ≠ o := by
-    intro e
-    have : det3 (y - b) (a - b) u = 0 := by
-      rw [e, ho]; simp only [det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]; ring
-    linarith
-  obtain ⟨a0, a1, a2, a3⟩ := zmod4_add_one
-  refine (rimCertPts_of_edgeView_uniform_robust V M {o} (V.erase o) u hu (k := 4) (by norm_num)
-    (quad y a c b) ?_ ?_ ?_ ?_ ?_ ?_ hM ?_).rimCert4
-  · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl
-    exacts [hyV, haV, hcV, hbV]
-  · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl
-    exacts [hyM, haM, hcM, hbM]
-  · intro i j hi hj
-    rcases zmod4_pairs i j hi hj with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
-      ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
-    simp only [a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3]
-    exacts [q₁, by rw [i2]; exact q₄, q₂, by rw [i4]; exact q₁, q₃, by rw [i6]; exact q₂, q₄,
-      by rw [i8]; exact q₃]
-  · intro z hz hzM hzD hzx i
-    have hzo : z ≠ o := fun e => hzD (by rw [e]; exact mem_singleton_self o)
-    obtain ⟨r1, r2, r3, r4⟩ := hrest z hz hzM hzo (hzx 0) (hzx 1) (hzx 2) (hzx 3)
-    rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
-      simp only [a0, a1, a2, a3, quad_0, quad_1, quad_2, quad_3]
-    exacts [r1, r2, r3, r4]
-  · rw [quad_inner]; exact hN.isRobustUnimodal
-  · intro i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
-      simp only [quad_0, quad_1, quad_2, quad_3, mem_erase]
-    exacts [⟨hoy, hyV⟩, ⟨hoa, haV⟩, ⟨hoc, hcV⟩, ⟨hob, hbV⟩]
-  · intro z hz
-    rw [mem_singleton.mp hz]
-    exact ⟨0, h, hh, by rw [quad_0]; exact ho⟩
-
-/-- **Corollary 14.1 with the uniform tilt and ties, certificate form**
-(`isRupert_edgePair_uniform_robust` without the horizontal double normal). -/
-theorem rimCert_edgePair_uniform_robust {v w a b c : ℝ³} (V M : Finset ℝ³)
-    (hvV : v ∈ V) (hwV : w ∈ V) (haV : a ∈ V) (hbV : b ∈ V) (hcV : c ∈ V)
-    (hvM : v ∉ M) (hwM : w ∉ M) (haM : a ∉ M) (hbM : b ∉ M) (hcM : c ∉ M)
-    (q₁ : 0 < det3 (a - v) (c - v) (w - v)) (q₂ : 0 < det3 (c - a) (b - a) (w - v))
-    (q₃ : 0 < det3 (b - c) (v - c) (w - v)) (q₄ : 0 < det3 (v - b) (a - b) (w - v))
-    (hE : det3 (b - a) (c - a) (v - a) * det3 (b - a) (c - a) (w - a) ≤ 0)
-    (h3 : ¬ (⟪a, w - v⟫ = ⟪c, w - v⟫ ∧ ⟪c, w - v⟫ = ⟪b, w - v⟫))
-    (hV : ∀ z ∈ V, z ∉ M → z = v ∨ z = w ∨ z = a ∨ z = b ∨ z = c ∨
-      EdgeHidden (w - v) v a c b z)
-    (hM₁ : ∀ m ∈ M, ∃ i : ZMod 4, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
-      m = quad v a c b i + s • (quad v a c b (i + 1) - quad v a c b i) + δ • (w - v))
-    (hM₂ : ∀ m ∈ M, ∃ i : ZMod 4, ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
-      m = quad w a c b i + s • (quad w a c b (i + 1) - quad w a c b i) + δ • (w - v)) :
-    RimCert V (w - v) := by
-  have hu : w - v ≠ 0 := by
-    intro h0; rw [h0] at q₁; simp only [det3, inner_zero_right, lt_irrefl] at q₁
-  rcases edgePair_nws q₁ q₂ q₃ q₄ hE h3 with hN | hN
-  · -- `K_v`
-    refine rimCert_quad_uniform_nws V M (y := v) (o := w) (h := -1) (by norm_num)
-      (by rw [neg_one_smul, sub_neg_eq_add]; abel) hu hvV haV hbV hcV hvM haM hbM hcM q₁ q₂
-      q₃ q₄ ?_ hN hM₁
-    intro z hz hzM h1 h2 h3 h4 h5
-    rcases hV z hz hzM with e | e | e | e | e | hid
-    · exact absurd e h2
-    · exact absurd e h1
-    · exact absurd e h3
-    · exact absurd e h5
-    · exact absurd e h4
-    · exact hid
-  · -- `K_w`
-    refine rimCert_quad_uniform_nws V M (y := w) (o := v) (h := 1) one_ne_zero
-      (by rw [one_smul]; abel) hu hwV haV hbV hcV hwM haM hbM hcM
-      (by rw [det3_vw_both]; exact q₁) q₂ (by rw [det3_vw_right]; exact q₃)
-      (by rw [det3_vw_left]; exact q₄) ?_ hN hM₂
-    intro z hz hzM h1 h2 h3 h4 h5
-    rcases hV z hz hzM with e | e | e | e | e | hid
-    · exact absurd e h1
-    · exact absurd e h2
-    · exact absurd e h3
-    · exact absurd e h5
-    · exact absurd e h4
-    · exact hid.shift
 
 /-! ### The vertex crossing of Theorem 13.7 -/
 
@@ -652,19 +500,6 @@ theorem rimCert_axisTest_core_gen {a a' b b' u : ℝ³} {σ : ℝ} (hσ : σ = 1
   obtain ⟨K1, K2⟩ := rimCertPts_axisTest_core_gen hσ hT hΓ hB htri V ha ha' hb hb' hV
   exact ⟨fun h => (K1 h).rimCert3, fun h hr => (K2 h hr).rimCert4⟩
 
-/-- **`isRupert_axisTest_core_robust` in certificate form** (the ties of `QuadTie`). -/
-theorem rimCert_axisTest_core_robust {a a' b b' u : ℝ³} {σ : ℝ} (hσ : σ = 1 ∨ σ = -1)
-    (hT : 0 < σ * det3 (b - a') (b' - a') u) (hΓ : 0 < σ * det3 (b - a') (a - a') u)
-    (hB : 0 < σ * det3 (a - a') (b' - a') u)
-    (hz : QuadTie ⟪a', u⟫ ⟪b, u⟫ ⟪a, u⟫ ⟪b', u⟫)
-    (V : Finset ℝ³) (ha : a ∈ V) (ha' : a' ∈ V) (hb : b ∈ V) (hb' : b' ∈ V)
-    (hV : ∀ v ∈ V, v = a ∨ v = a' ∨ v = b ∨ v = b' ∨ AxisExtra a a' b b' u v) :
-    (0 < σ * det3 (b' - b) (a - b) u → RimCert V (σ • u)) ∧
-    (σ * det3 (b' - b) (a - b) u < 0 → ¬ DepthSep a' a b b' u → RimCert V (σ • u)) := by
-  obtain ⟨K1, K2⟩ := rimCert_axisTest_core_gen hσ hT hΓ hB hz.2.1 V ha ha' hb hb' hV
-  exact ⟨K1, fun hα hsep => K2 hα
-    (isRobustUnimodal_quad hz (fun h => hsep (Or.inr h)) (fun h => hsep (Or.inl h)))⟩
-
 /-- **One test of Theorem 13.7, labelled certificate form**: the point certificate of the
 quadrilateral `a' b a b'` or the triangle `a' b b'` at `±u₁`, or the rim
 is the quadrilateral `a' b a b'` with depths that are not robustly unimodal, and the projections
@@ -714,50 +549,6 @@ theorem rimCertPts_axisTest_gen {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b
       exact Or.inr ⟨m1, m2, hR⟩
   · exact Or.inl ⟨σ, hσ, Or.inr (K1 hα)⟩
 
-/-- **One test of Theorem 13.7, certificate form** (`isRupert_axisTest_robust` without the
-horizontal double normal, with any robustness criterion): the certificate at `±u₁`, or the rim
-is the quadrilateral `a' b a b'` with depths that are not robustly unimodal, and the projections
-of `[a', a]` and `[b, b']`, and those of `[a', a]` and `[c, c']`, meet along `u₁`. -/
-theorem rimCert_axisTest_gen {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c')
-    (G : GaleData a a' b b' c c')
-    (hfar₁ : |galeD G.l G.m a b| < |galeD G.l G.m a c|)
-    (hfar₂ : |galeD G.l G.m a b'| < |galeD G.l G.m a c'|)
-    (hP : det3 (b' - b) (a - b) (axisView G.l G.m a a' b c) ≠ 0)
-    (htri : ¬ (⟪a', axisView G.l G.m a a' b c⟫ = ⟪b, axisView G.l G.m a a' b c⟫ ∧
-      ⟪b, axisView G.l G.m a a' b c⟫ = ⟪b', axisView G.l G.m a a' b c⟫))
-    (V : Finset ℝ³) (hO : ({a, a', b, b', c, c'} : Finset ℝ³) ⊆ V)
-    (hV : ∀ v ∈ V, v ∈ ({a, a', b, b', c, c'} : Finset ℝ³) ∨
-      AxisExtra a a' b b' (axisView G.l G.m a a' b c) v) :
-    (∃ σ : ℝ, (σ = 1 ∨ σ = -1) ∧ RimCert V (σ • axisView G.l G.m a a' b c)) ∨
-      (SegMeet a' a b b' (axisView G.l G.m a a' b c) ∧
-        SegMeet a' a c c' (axisView G.l G.m a a' b c) ∧
-        ¬ IsRobustUnimodal (quad ⟪a', axisView G.l G.m a a' b c⟫ ⟪b, axisView G.l G.m a a' b c⟫
-          ⟪a, axisView G.l G.m a a' b c⟫ ⟪b', axisView G.l G.m a a' b c⟫)) :=
-  (rimCertPts_axisTest_gen F G hfar₁ hfar₂ hP htri V hO hV).imp_left fun ⟨σ, hσ, h⟩ =>
-    ⟨σ, hσ, h.elim (·.rimCert4) (·.rimCert3)⟩
-
-/-- **`isRupert_axisTest_robust` in certificate form** (the ties of `QuadTie`). -/
-theorem rimCert_axisTest_robust {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c')
-    (G : GaleData a a' b b' c c')
-    (hfar₁ : |galeD G.l G.m a b| < |galeD G.l G.m a c|)
-    (hfar₂ : |galeD G.l G.m a b'| < |galeD G.l G.m a c'|)
-    (hP : det3 (b' - b) (a - b) (axisView G.l G.m a a' b c) ≠ 0)
-    (hz : QuadTie ⟪a', axisView G.l G.m a a' b c⟫ ⟪b, axisView G.l G.m a a' b c⟫
-      ⟪a, axisView G.l G.m a a' b c⟫ ⟪b', axisView G.l G.m a a' b c⟫)
-    (V : Finset ℝ³) (hO : ({a, a', b, b', c, c'} : Finset ℝ³) ⊆ V)
-    (hV : ∀ v ∈ V, v ∈ ({a, a', b, b', c, c'} : Finset ℝ³) ∨
-      AxisExtra a a' b b' (axisView G.l G.m a a' b c) v) :
-    (∃ σ : ℝ, (σ = 1 ∨ σ = -1) ∧ RimCert V (σ • axisView G.l G.m a a' b c)) ∨
-      (SegMeet a' a b b' (axisView G.l G.m a a' b c) ∧
-        SegMeet a' a c c' (axisView G.l G.m a a' b c) ∧
-        DepthSep a' a b b' (axisView G.l G.m a a' b c)) := by
-  rcases rimCert_axisTest_gen F G hfar₁ hfar₂ hP hz.2.1 V hO hV with h | ⟨m1, m2, hR⟩
-  · exact Or.inl h
-  · refine Or.inr ⟨m1, m2, ?_⟩
-    by_contra hsep
-    exact hR (isRobustUnimodal_quad hz (fun h => hsep (Or.inr h)) (fun h => hsep (Or.inl h)))
-
-
 /-! ### Weak separations with one tie -/
 
 /-- At most one tied pair among four values. -/
@@ -805,16 +596,6 @@ theorem weakSep_of_not_robust {z₀ z₁ z₂ z₃ : ℝ} (hone : OneTie4 ![z₀
       (le_min (by linarith) (by linarith)))⟩
     (fun h' => lt_asymm h' hcA) (fun h' => lt_asymm h' hcB)
 
-/-- With distinct values, a weak separation is strict. -/
-theorem lt_of_le_of_nodup4 {z₀ z₁ z₂ z₃ : ℝ} (hd : [z₀, z₁, z₂, z₃].Nodup)
-    (h : max z₁ z₃ ≤ min z₀ z₂) : max z₁ z₃ < min z₀ z₂ := by
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true] at hd
-  obtain ⟨⟨h01, h02, h03⟩, ⟨h12, h13⟩, h23, -⟩ := hd
-  refine lt_of_le_of_ne h fun e => ?_
-  rcases max_choice z₁ z₃ with m | m <;> rcases min_choice z₀ z₂ with n | n <;> rw [m, n] at e
-  exacts [h01 e.symm, h12 e, h03 e.symm, h23 e.symm]
-
 /-- At most one tie at `u` among four distinct points of `V`. -/
 theorem OneTieAt.oneTie4 {V : Finset ℝ³} {u : ℝ³} (h : OneTieAt V u) {p₀ p₁ p₂ p₃ : ℝ³}
     (h₀ : p₀ ∈ V) (h₁ : p₁ ∈ V) (h₂ : p₂ ∈ V) (h₃ : p₃ ∈ V) (hd : [p₀, p₁, p₂, p₃].Nodup) :
@@ -835,16 +616,6 @@ theorem OneTieAt.oneTie4 {V : Finset ℝ³} {u : ℝ³} (h : OneTieAt V u) {p₀
     ⟨h1, h2⟩ | ⟨h1, h2⟩
   · exact Or.inl ⟨hinj h1, hinj h2⟩
   · exact Or.inr ⟨hinj h1, hinj h2⟩
-
-/-- No tie at `u` among four distinct points: their depths are distinct. -/
-theorem NoTieAt.nodup4 {V : Finset ℝ³} {u : ℝ³} (h : NoTieAt V u) {p₀ p₁ p₂ p₃ : ℝ³}
-    (h₀ : p₀ ∈ V) (h₁ : p₁ ∈ V) (h₂ : p₂ ∈ V) (h₃ : p₃ ∈ V) (hd : [p₀, p₁, p₂, p₃].Nodup) :
-    [⟪p₀, u⟫, ⟪p₁, u⟫, ⟪p₂, u⟫, ⟪p₃, u⟫].Nodup := by
-  simp only [List.nodup_cons, List.mem_cons, List.not_mem_nil, or_false, not_or,
-    List.nodup_nil, and_true] at hd ⊢
-  obtain ⟨⟨h01, h02, h03⟩, ⟨h12, h13⟩, h23, -⟩ := hd
-  exact ⟨⟨h _ h₀ _ h₁ h01, h _ h₀ _ h₂ h02, h _ h₀ _ h₃ h03⟩, ⟨h _ h₁ _ h₂ h12, h _ h₁ _ h₃ h13⟩,
-    h _ h₂ _ h₃ h23, not_false⟩
 
 /-- With no tie at `u`, a weak separation of two pairs is strict. -/
 theorem lt_of_le_of_noTie {V : Finset ℝ³} {u : ℝ³} (h : NoTieAt V u) {p q r s : ℝ³}

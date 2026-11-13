@@ -132,13 +132,6 @@ theorem Qab_bnn (hb : b1 ≤ r1) : 0 ≤ FQab.b := by
   by_contra hc; push Not at hc
   nlinarith [mul_pos (neg_pos.mpr hc) hS3, mul_nonneg (neg_pos.mpr d2).le (sub_nonneg.mpr hb)]
 
-theorem Qab_bpos (hb : b1 < r1) : 0 < FQab.b := by
-  have Qab_R := h.Qab_R; have Qab_B := h.Qab_B; simp only [Fc.ev] at Qab_R Qab_B
-  have hS3 := h.S3_pos; have d2 := h.Qab_d hz
-  have hβ2S : FQab.b * (r1 * b2 - r2 * b1) = (-FQab.d) * (r1 - b1) := by
-    linear_combination (-b1) * Qab_R + r1 * Qab_B
-  exact n2_pos_of_mul hS3 (by rw [hβ2S]; exact mul_pos (neg_pos.mpr d2) (sub_pos.mpr hb))
-
 /-- Collinearity on the screen of `c, 2, a`. -/
 theorem col : a2 * m3 = s * b2 * a3 := by
   have Qac_M := h.Qac_M; have Qac_A := h.Qac_A; have d := h.Qac_d hz; have a := h.Qac_a hz

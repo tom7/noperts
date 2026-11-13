@@ -54,9 +54,6 @@ theorem gram_pos : 0 < F.a11 * F.a22 - F.a12 ^ 2 := by
 lemma fvC_add (a b : C3) : F.fvC (a.add b) = F.fvC a + F.fvC b := by
   simp only [fvC, C3.add]; module
 
-lemma fvC_sub (a b : C3) : F.fvC (a.sub b) = F.fvC a - F.fvC b := by
-  simp only [fvC, C3.sub]; module
-
 /-- Frame coordinates of `ω × p` for `ω = fvC ωc`, `p` given in frame coordinates:
 `κ · G⁻¹ (ωc × p)` with `G = diag-block(a11 a12; a12 a22, gg)` and `κ = det (u₁, u₂, e)`. -/
 noncomputable def crossC (ωc p : C3) : C3 :=
@@ -221,9 +218,6 @@ noncomputable def scaleE (c : ℝ) (hc : 0 < c) : Frame7 x where
 
 theorem scaleE_ptC (c : ℝ) (hc : 0 < c) (j : Fin 7) :
     (F.scaleE c hc).ptC j = ⟨(F.ptC j).x, (F.ptC j).y, (F.ptC j).z / c⟩ := rfl
-theorem scaleE_a11 (c : ℝ) (hc : 0 < c) : (F.scaleE c hc).a11 = F.a11 := rfl
-theorem scaleE_a12 (c : ℝ) (hc : 0 < c) : (F.scaleE c hc).a12 = F.a12 := rfl
-theorem scaleE_a22 (c : ℝ) (hc : 0 < c) : (F.scaleE c hc).a22 = F.a22 := rfl
 theorem scaleE_gg (c : ℝ) (hc : 0 < c) : (F.scaleE c hc).gg = c ^ 2 * F.gg := by
   show ⟪c • F.e, c • F.e⟫ = c ^ 2 * ⟪F.e, F.e⟫
   rw [real_inner_smul_left, real_inner_smul_right]; ring

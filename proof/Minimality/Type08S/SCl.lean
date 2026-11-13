@@ -236,12 +236,6 @@ theorem SCfN2_of_cls {a a' b b' c c' d u : ℝ³} (N : Norm08 a a' b b' c c' d)
   · exact mul_pos hL hYg
   · exact mul_pos hL hYa
 
-theorem frame_N2 {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) :
-    ∃ (e1 e2 e3 : ℝ³) (κ : ℝ), Fr e1 e2 e3 ∧ κ ≠ 0 ∧ c - a' = κ • e3 ∧ ⟪b - a', e2⟫ = 0 ∧
-      0 < ⟪b - a', e1⟫ ∧ 0 < ⟪c' - a', e2⟫ := by
-  obtain ⟨e1, e2, e3, κ, hF, hκ, hu, hv2, hv1, hw2⟩ := frame_ex_pos (det_ne08 N).1
-  exact ⟨e1, e2, e3, κ, hF, hκ, hu, hv2, hv1, hw2⟩
-
 theorem sub_eq_pc (hF : Fr e1 e2 e3) (xp q : ℝ³) :
     q - xp = pc e1 e2 e3 ⟪q - xp, e1⟫ ⟪q - xp, e2⟫ ⟪q - xp, e3⟫ := by
   rw [pc]; exact hF.expand _

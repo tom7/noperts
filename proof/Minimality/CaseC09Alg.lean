@@ -175,7 +175,6 @@ lemma cm_mul' : S.cm * S.sm = S.bm * (1 - S.sm) := by rw [S.cm_mul, S.km_eq]
 
 lemma bp_lt_dp : S.bp < S.dp := S.roof
 
-
 /-! ### The three failing hypotheses of "27.34 fails" in closed form -/
 
 /-- Proposition 27.17 for `W = F1`: Theorem 5 holds with `W = F1` iff some `α` satisfies these
@@ -211,7 +210,6 @@ lemma f1_pos : 0 < S.f1 := by
 lemma f2_pos : 0 < S.f2 := by
   unfold f2; have := S.sp_lt; have := S.dp_pos; have := S.bm_pos
   exact mul_pos (by linarith) (by linarith)
-
 
 /-- The nine comparisons of 27.57: `t- N < M`. -/
 lemma tm_N57_lt_M57 (hts : S.tm ≤ S.sm) (had : S.dp < S.am) : S.tm * S.N57 < S.M57 := by
@@ -516,75 +514,12 @@ theorem t48_T2_m1p_below :
     rw [← h1, ← h2]; ring
   rw [← sub_pos, key, mul_pos_iff_of_pos_left (mul_pos hsm (sub_pos.2 htp)), sub_pos]
 
-/-- 27.48, `h- > k-` (from `t- < s-`, type 09). -/
-theorem km_lt_hm (hts : S.tm < S.sm) : S.km < S.hm := by
-  have h := S.km_eq; have h2 := S.bm_mul
-  have := S.bm_pos; have := S.sm_lt; have := S.tm_lt
-  nlinarith [mul_pos S.bm_pos (sub_pos.2 hts)]
-
-/-- 27.48, "T1 fails ⇒ D(xb) ≥ D(m2-)", the valley analysis.  With the depths scaled so that
-`D(xb) = 1`, `D(xa) = x > 1`, `ζ = g h- / (A12 t-) > 0`: `D(m1-) = t- x + h- ζ`,
-`D(m2+) = s+ - k+ ζ`, `D(m2-) = s- + k- ζ`.  A second valley besides `m2+` is `m2-` (needs
-`D(m2-) ≤ 1`) or `m1-` (needs `D(m1-) ≤ D(xa) = x` and `D(m1-) ≤ D(m2-)`).  Conclusion:
-`D(m2-) ≤ 1`, i.e. `s- + k- ζ ≤ 1`. -/
-theorem t48_T1_valley (hts : S.tm < S.sm) {x ζ : ℝ} (hx : 1 < x)
-    (hv : S.sm + S.km * ζ ≤ 1 ∨
-      (S.tm * x + S.hm * ζ ≤ x ∧ S.tm * x + S.hm * ζ ≤ S.sm + S.km * ζ)) :
-    S.sm + S.km * ζ ≤ 1 := by
-  rcases hv with h | ⟨-, h2⟩
-  · exact h
-  · by_contra hh
-    rw [not_le] at hh
-    have hk := S.km_pos
-    have hkh := S.km_lt_hm hts
-    have hkm := S.km_eq; have hbm := S.bm_mul
-    -- ζ > (1 - s-)/k-
-    have hζ1 : (1 - S.sm) < S.km * ζ := by linarith
-    -- t- x ≤ s- - (h- - k-) ζ < t-
-    have e : S.hm * (1 - S.sm) = S.km * (1 - S.tm) := by
-      rw [← hbm, hkm]; ring
-    have h3 : S.tm * x < S.tm := by
-      have : (S.hm - S.km) * ζ * S.km > (S.hm - S.km) * (1 - S.sm) := by
-        nlinarith [mul_lt_mul_of_pos_left hζ1 (sub_pos.2 hkh)]
-      nlinarith
-    nlinarith [S.tm_pos]
-
-/-- 27.48: with `ζ = g h- / (A12 t-)`, `s- + k- ζ ≤ 1` is `g h- k- ≤ A12 t-(1 - s-)`. -/
-theorem t48_T1_fail {A12 g : ℝ} (hA : 0 < A12)
-    (h : S.sm + S.km * (g * S.hm / (A12 * S.tm)) ≤ 1) :
-    g * S.hm * S.km ≤ A12 * S.tm * (1 - S.sm) := by
-  have htm := S.tm_pos
-  have hd : 0 < A12 * S.tm := mul_pos hA htm
-  have : S.km * (g * S.hm / (A12 * S.tm)) = g * S.hm * S.km / (A12 * S.tm) := by ring
-  rw [this] at h
-  have h' : g * S.hm * S.km / (A12 * S.tm) ≤ 1 - S.sm := by linarith
-  rw [div_le_iff₀ hd] at h'
-  linarith
-
-/-- 27.48, "T2 fails ⇒ E(m1-) ≥ E(xa)", `E = ⟨m2-, ·⟩_G`: `E(m1-) = A12 s- t- + g k- h-`,
-`E(xa) = A12 s-`.  Equivalent: `A12 s-(t- - 1) + g k- h- ≥ 0`. -/
-theorem t48_T2_fail {A12 g : ℝ}
-    (h : A12 * S.sm ≤ A12 * S.sm * S.tm + g * S.km * S.hm) :
-    0 ≤ A12 * S.sm * (S.tm - 1) + g * S.km * S.hm := by
-  linarith
-
 /-- **27.48, the contradiction.**  The two failure inequalities of T1 and T2 sum to
 `A12 (t- - s-) ≥ 0`, against `t- < s-`. -/
 theorem t48_contra {A12 g : ℝ} (hA : 0 < A12) (hts : S.tm < S.sm)
     (h1 : g * S.hm * S.km ≤ A12 * S.tm * (1 - S.sm))
     (h2 : 0 ≤ A12 * S.sm * (S.tm - 1) + g * S.km * S.hm) : False := by
   nlinarith [mul_pos hA (sub_pos.2 hts)]
-
-/-- **Theorem 27.48, the algebra of the proof in one statement.**  With `A12, g > 0` and the
-depth scaling of the proof (`D(xb) = 1`, `D(xa) = x > 1`, `ζ = g h- / (A12 t-)`), if T1 fails
-(a second valley: the disjunction `hv`) and T2 fails (`E(m1-) ≥ E(xa)`), then `False`, given
-`t- < s-`. -/
-theorem thm_27_48_contra {A12 g x : ℝ} (hA : 0 < A12) (hts : S.tm < S.sm) (hx : 1 < x)
-    (hv : S.sm + S.km * (g * S.hm / (A12 * S.tm)) ≤ 1 ∨
-      (S.tm * x + S.hm * (g * S.hm / (A12 * S.tm)) ≤ x ∧
-        S.tm * x + S.hm * (g * S.hm / (A12 * S.tm)) ≤ S.sm + S.km * (g * S.hm / (A12 * S.tm))))
-    (hE : A12 * S.sm ≤ A12 * S.sm * S.tm + g * S.km * S.hm) : False :=
-  S.t48_contra hA hts (S.t48_T1_fail hA (S.t48_T1_valley hts hx hv)) (S.t48_T2_fail hE)
 
 end Shape09
 end Minimality.CaseC09

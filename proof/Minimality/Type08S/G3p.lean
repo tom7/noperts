@@ -51,10 +51,6 @@ theorem image_pts08 (a a' b b' c c' d : ℝ³) :
 /-- Closings realized on one face circle only (HDN matters): N2 `K_c`, T4 `K_b`, `K_2`. -/
 def SC08 : Set (Fin 3 × Bool × Bool) := {t | t.1 = 0 ∧ t.2.2 = true ∨ t.1 = 1}
 
-
-
-
-
 /-- The type-08 shape in the frame `o; E₁, E₂, E₃` (culJ normal form, `d = o`, `a = o + E₁`, `b = o + E₂`,
 `c = o + E₃`), with `θ = (α₁, β₁, α₄, γ₄, β₆, γ₆)`:
 `c' = o + α₁E₁ + β₁E₂`, `b' = o + α₄E₁ + γ₄E₃`, `a' = o + β₆E₂ + γ₆E₃`. -/
@@ -235,7 +231,6 @@ theorem gale_nf08 {a a' b b' c c' d : ℝ³} (G : GaleData a a' b b' c c')
 
 macro "ne_tac" : tactic => `(tactic| first | assumption | (apply Ne.symm; assumption))
 
-
 theorem fc08_d (θ : Fin 6 → ℝ) :
     fc08 θ 0 3 5 6 = θ 3 * θ 1 ∧ fc08 θ 1 2 5 6 = θ 0 * θ 5 ∧ fc08 θ 1 3 4 6 = θ 2 * θ 4 ∧
       fc08 θ 1 3 5 6 = -(θ 4 * θ 3 * θ 0 + θ 5 * θ 2 * θ 1) := by
@@ -349,14 +344,6 @@ theorem covView_diff08 (p q : Fin 7) : CovView (fun y : Fin 7 → ℝ³ => y p -
   intro L y _
   simp [mapShape]
 
-theorem covView_neg08 {view : (Fin 7 → ℝ³) → ℝ³} (h : CovView view) : CovView (fun y => -view y) := by
-  refine ⟨h.1.neg, ?_⟩
-  intro L y hL
-  simp [h.2 L y hL]
-
-theorem covView_zero08 : CovView (fun _ : Fin 7 → ℝ³ => (0 : ℝ³)) :=
-  ⟨continuous_const, fun L y _ => by simp⟩
-
 theorem covView_test08 (i : Fin 3) (s j : Bool) : CovView (test08 i s j).view := by
   fin_cases i <;> cases s <;> cases j <;>
     simp [test08, grp08, ViewGroup.tests, LabTest.neg, LabTest.quad] <;>
@@ -459,25 +446,7 @@ theorem seg08 {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) :
   · intro m w hw
     fin_cases m <;> fin_cases w <;> first | exact absurd rfl hw | (simp only [x, pts08]; simp; linarith)
 
-
-/-- **Doubt 5 resolved:** a straddling far triple of a group is a touching (so `hnoStraddle` follows from
-`¬ Touch`, no extra hypothesis).  N2: `z_b = z_c' = z_b'` along `c - a'`; T4: `z_c' = z_b' = z_c`
-along `b - d`; the single group never straddles. -/
-theorem straddle_touch08 {a a' b b' c c' d : ℝ³} (i : Fin 3)
-    (h : (grp08 i).Straddle (pts08 a a' b b' c c' d)) : Touch a a' b b' c c' d := by
-  fin_cases i
-  · simp only [grp08, ViewGroup.Straddle, pts08] at h
-    obtain ⟨h1, h2, -, -⟩ := h
-    left
-    exact ⟨h1, h2.symm⟩
-  · simp only [grp08, ViewGroup.Straddle, pts08] at h
-    obtain ⟨h1, h2, -, -⟩ := h
-    right
-    exact ⟨h2.symm, h1⟩
-  · exact h.elim
-
 /-! ### Region ⇒ `Norm08` (converse of `exists_nf08`) -/
-
 
 /-- A facet function from a reference vertex: `f y = - D(ref) * D(y)` with `D y = det3 (Q-P) (R-P) (y-P)`. -/
 noncomputable def mkF08 (V : Finset ℝ³) (P Q R ref : ℝ³)
@@ -879,7 +848,6 @@ theorem norm08_of_nf {o E₁ E₂ E₃ : ℝ³} (hE : det3 E₁ E₂ E₃ ≠ 0)
   · change -(det3 (x 3 - x 1) (x 5 - x 1) (x 0 - x 1)) * det3 (x 3 - x 1) (x 5 - x 1) (x 6 - x 1) < 0
     rw [hx, det3_nf08, det3_nf08]; nlinarith [mul_pos hsq h21]
 
-
 /-! ### Part B: the certificates of generic shapes -/
 
 /-- The affine polygon part of a rim certificate (`RimCertAt` without robustness). -/
@@ -931,7 +899,6 @@ theorem facts08 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) :
     (pos_iff_pos_of_mul_pos h20).mpr e3, (neg_iff_neg_of_mul_pos h21).mpr e4,
     (neg_iff_neg_of_mul_pos h22).mpr e4, (neg_iff_neg_of_mul_pos h23).mpr e4⟩
 
-
 theorem polyA (a1 b1 a4 g4 b6 g6 : ℝ) (p0 : 0 < a1) (p1 : 0 < b1) (p2 : 0 < a4) (p3 : 0 < g4) (p4 : 0 < b6) (p5 : 0 < g6) (e1 : 0 < a1 + b1 - 1) (e2 : 0 < a4 + g4 - 1) (e3 : 0 < b6 + g6 - 1) (dA : 0 < -1 + g6) (dB : 0 < -1 + a1) (ga : 0 < -a1 + a1 * g4 - b1 * a4 + a4) (gb : 0 < a1 * b6 + b1 - b1 * g6 - b6) (f1 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f2 : 0 < a1 * g4 + b1 * g4 - g4) (f3 : 0 < -b1 + b1 * a4 + b1 * g4) (f4 : 0 < a1 * g6 + b1 * g6 - g6) (f5 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f6 : 0 < -a1 + a1 * b6 + a1 * g6) (f7 : 0 < a4 * b6 + g4 * b6 - b6) (f8 : 0 < -a4 + a4 * b6 + a4 * g6) (f9 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) (f10 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f11 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f12 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) :
     0 < -a1 + a1 * b6 + a1 * g6 ∧ 0 < -a4 + a4 * b6 + a4 * g6 ∧ 0 < -1 + b6 + g6 ∧ 0 < -a1 + a1 * g4 * b6 + a1 * g6 - b1 * a4 + b1 * a4 * g6 + a4 - a4 * g6 ∧ 0 < 1 - a1 + a1 * g6 - b1 + b1 * g6 - g6 ∧ 0 < -a1 + a1 * g6 ∧ 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6 ∧ 0 < a1 * g4 * b6 + b1 - b1 * a4 + b1 * a4 * g6 - b1 * g6 - g4 * b6 ∧ 0 < a1 * g4 * b6 - b1 * a4 + b1 * a4 * g6 ∧ 0 < a4 * b6 + g4 * b6 - b6 ∧ 0 < a4 * b6 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
@@ -975,7 +942,6 @@ theorem polyC (a1 b1 a4 g4 b6 g6 : ℝ) (p0 : 0 < a1) (p1 : 0 < b1) (p2 : 0 < a4
   · first | linarith [mul_pos (mul_pos (mul_pos p0 p0) e2) dB, mul_pos (mul_pos (mul_pos p0 e2) dB) dB, mul_pos (mul_pos (mul_pos p0 p0) p0) e2, mul_pos (mul_pos (mul_pos p2 dA) dB) dB, mul_pos (mul_pos (mul_pos p0 p2) dA) dB, mul_pos (mul_pos p2 p5) dB]
   · first | linarith [p0]
 
-
 theorem common08 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) :
     0 < (θ 0) ∧ 0 < (θ 1) ∧ 0 < (θ 2) ∧ 0 < (θ 3) ∧ 0 < (θ 4) ∧ 0 < (θ 5) ∧ 0 < (θ 0) + (θ 1) - 1 ∧ 0 < (θ 2) + (θ 3) - 1 ∧ 0 < (θ 4) + (θ 5) - 1 ∧ 0 < -(θ 0) + (θ 0) * (θ 3) - (θ 1) * (θ 2) + (θ 2) ∧ 0 < (θ 0) * (θ 4) + (θ 1) - (θ 1) * (θ 5) - (θ 4) ∧ 0 < (θ 0) * (θ 3) * (θ 4) + (θ 1) * (θ 2) * (θ 5) + (θ 1) * (θ 3) - (θ 1) * (θ 5) - (θ 3) * (θ 4) ∧ 0 < (θ 0) * (θ 3) + (θ 1) * (θ 3) - (θ 3) ∧ 0 < -(θ 1) + (θ 1) * (θ 2) + (θ 1) * (θ 3) ∧ 0 < (θ 0) * (θ 5) + (θ 1) * (θ 5) - (θ 5) ∧ 0 < -(θ 0) * (θ 3) + (θ 0) * (θ 3) * (θ 4) + (θ 0) * (θ 5) + (θ 1) * (θ 2) * (θ 5) - (θ 2) * (θ 5) ∧ 0 < -(θ 0) + (θ 0) * (θ 4) + (θ 0) * (θ 5) ∧ 0 < (θ 2) * (θ 4) + (θ 3) * (θ 4) - (θ 4) ∧ 0 < -(θ 2) + (θ 2) * (θ 4) + (θ 2) * (θ 5) ∧ 0 < (θ 0) * (θ 3) * (θ 4) - (θ 0) * (θ 4) - (θ 1) * (θ 2) + (θ 1) * (θ 2) * (θ 5) + (θ 2) * (θ 4) ∧ 0 < (θ 0) * (θ 3) * (θ 4) + (θ 1) * (θ 2) * (θ 5) + (θ 1) * (θ 3) - (θ 1) * (θ 5) - (θ 3) * (θ 4) ∧ 0 < -(θ 0) * (θ 3) + (θ 0) * (θ 3) * (θ 4) + (θ 0) * (θ 5) + (θ 1) * (θ 2) * (θ 5) - (θ 2) * (θ 5) ∧ 0 < (θ 0) * (θ 3) * (θ 4) - (θ 0) * (θ 4) - (θ 1) * (θ 2) + (θ 1) * (θ 2) * (θ 5) + (θ 2) * (θ 4) := by
   obtain ⟨p0, p1, p2, p3, p4, p5, q6, q7, q8, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12⟩ :=
@@ -990,7 +956,6 @@ theorem common08 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) :
   have hgb : 0 < gWb θ := (pos_iff_pos_of_mul_pos (show 0 < gWb θ * (-gWU θ) by linarith)).mpr (by linarith)
   unfold gWa at hga; unfold gWb at hgb
   refine ⟨p0, p1, p2, p3, p4, p5, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith⟩
-
 
 set_option maxHeartbeats 4000000 in
 theorem crimA1 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) (h6 : 1 < θ 5) :
@@ -1109,7 +1074,6 @@ theorem crimC1 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) (h6 : θ 5 < 
       norm_num [fc08, cdet, cp08]
       try linarith
 
-
 /-! ### From coordinates to `RimGeom` -/
 
 theorem det3_view08 (o E₁ E₂ E₃ : ℝ³) (θ : Fin 6 → ℝ) (i j k p q : Fin 7) (ε : ℝ) :
@@ -1155,7 +1119,6 @@ theorem exists_sign08 {d : ℝ} (hd : d ≠ 0) (σ : ℝ) (hσ : σ = 1 ∨ σ =
   · exact ⟨true, d, h, by simp⟩
   · exact ⟨false, d, h, by simp⟩
 
-
 theorem sel08 (θ : Fin 6 → ℝ) (hg : MvPolynomial.eval θ genPoly08 ≠ 0) : θ 5 ≠ 1 ∧ θ 0 ≠ 1 := by
   simp only [genPoly08, map_mul, map_sub, MvPolynomial.eval_X, map_one, ne_eq, mul_eq_zero, not_or] at hg
   obtain ⟨⟨⟨⟨⟨h5, h0⟩, -⟩, -⟩, -⟩, -⟩ := hg
@@ -1193,7 +1156,6 @@ theorem poly08 (o E₁ E₂ E₃ : ℝ³) (hE : det3 E₁ E₂ E₃ ≠ 0) (θ :
     · exact rimGeom_of_crim (by norm_num) (crimA1 θ hθ h5) hc0 hsg (by simp [test08, grp08, ViewGroup.tests, LabTest.quad, LabTest.neg])
     · exact rimGeom_of_crim (by norm_num) (crimA2 θ hθ h5) hc0 hsg (by simp [test08, grp08, ViewGroup.tests, LabTest.quad])
     · exact rimGeom_of_crim (by norm_num) (crimA1 θ hθ h5) hc0 hsg (by simp [test08, grp08, ViewGroup.tests, LabTest.quad])
-
 
 theorem inner_lt08 {v w : ℝ³} (h : v ≠ w) : ⟪w, v - w⟫ < ⟪v, v - w⟫ := by
   rw [← sub_pos, ← inner_sub_left, real_inner_self_eq_norm_sq]
@@ -1272,13 +1234,10 @@ theorem mf08_Q (o E₁ E₂ E₃ : ℝ³) (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 <
     rw [show test08 2 true true = LabTest.quad (fun y => y 2 - y 6) 6 0 3 4 from rfl] at h ⊢
     exact hQ _ h
 
-
 theorem depth_neg08 (i : Fin 3) (j : Bool) (y : Fin 7 → ℝ³) :
     (test08 i false j).depth y = fun k => -(test08 i true j).depth y k := by
   funext k
   simp [test08, LabTest.depth, LabTest.neg]
-
-
 
 theorem N2_core (o E₁ E₂ E₃ : ℝ³) (hE : det3 E₁ E₂ E₃ ≠ 0) (θ : Fin 6 → ℝ)
     (hθ : ∀ k, 0 < ineq08 θ k) (h6 : 1 < θ 5) (L : ℝ³ →L[ℝ] ℝ³)
@@ -1327,8 +1286,6 @@ theorem N2_core (o E₁ E₂ E₃ : ℝ³) (hE : det3 E₁ E₂ E₃ ≠ 0) (θ 
     have := hi0 (a₁ := (1 : ZMod 4)) (a₂ := 2) (by simpa [quad] using h.1)
     exact absurd this (by decide : ¬ ((1 : ZMod 4) = 2))
   exact isCyclicUnimodal_of_NWS4 hi1 (nws4_closing_oct N.F.swap₁.perm₂₃ hfar hq₂ hN hgood htouch)
-
-
 
 theorem T4_core (o E₁ E₂ E₃ : ℝ³) (hE : det3 E₁ E₂ E₃ ≠ 0) (θ : Fin 6 → ℝ)
     (hθ : ∀ k, 0 < ineq08 θ k) (L : ℝ³ →L[ℝ] ℝ³)
@@ -1380,7 +1337,6 @@ theorem T4_core (o E₁ E₂ E₃ : ℝ³) (hE : det3 E₁ E₂ E₃ ≠ 0) (θ 
     exact absurd this (by decide : ¬ ((3 : ZMod 4) = 2))
   have hκ : 0 < θ 2 + θ 0 * (θ 3 - 1) := by nlinarith [mul_pos p1 p2]
   exact isCyclicUnimodal_of_NWS4 hi1 (t4_closing hb' hc' ha' N.hd.ne.2.2.1 hEd p2 p3 p0 p1 hκ hgood htouch hN)
-
 
 /-- **MF for N2** (proved: `N2_core`): `norm08_of_nf` on `mapShape L (nfShape08 ..)` (frame `L o, L E_i`),
 `type08_lemma7` + `nws4_closing_oct`, and NWS4 ⇔ unimodal for distinct depths. -/
@@ -1492,9 +1448,6 @@ theorem grpS_true (i : Fin 3) : grpS i true = grp08 i := by fin_cases i <;> rfl
 theorem grpS_false_view (i : Fin 3) (y : Fin 7 → ℝ³) : (grpS i false).view y = -(grp08 i).view y := by
   fin_cases i <;> rfl
 
-theorem test08_neg (i : Fin 3) (j : Bool) : test08 i false j = (test08 i true j).neg := by
-  simp [test08]
-
 theorem test_mem_grp08 (i : Fin 3) (j : Bool) : test08 i true j ∈ (grp08 i).tests := by
   have := test_mem_grpS i true j
   rwa [grpS_true] at this
@@ -1577,7 +1530,6 @@ theorem tieIndep_neg08 {q : ℕ} {d u : Fin q → ℝ³} (h : TieIndep d u) : Ti
   simp only [map_neg, inner_neg_right, inner_neg_left] at this
   rw [← neg_eq_zero, ← this, ← Finset.sum_neg_distrib]
   exact Finset.sum_congr rfl (fun t _ => by ring)
-
 
 /-- **B2 (certificate of a generic shape with ≤ 2 ties).**  Combine B1 with R2T
 (`robust_corner_rim_of_MF`, applied to the group `i`, signs absorbed): the polygon part plus a robust
@@ -2049,7 +2001,6 @@ theorem nfN2_of_rim {o E₁ E₂ E₃ : ℝ³} (hE : det3 E₁ E₂ E₃ ≠ 0) 
   · exact nfN2_nws4 hE hθ h6 (-1) (by norm_num) σ (by rw [neg_one_smul]; exact h)
   · exact nfN2_nws4 hE hθ h6 1 one_ne_zero σ (by rw [one_smul]; exact h)
 
-
 /-- **Free closings need no HDN hypothesis** (consolidation §1.5 (1); this is the core of G5a's
 `slideN2a'`/`slideQ`, stated at a rim certificate of the limit): if the limit has a robust corner
 rim of N2's `K_{a'}` or Q's `K_d` (polygon + robust depths, labels a cyclic subsequence), then the
@@ -2112,110 +2063,7 @@ theorem rupert_of_free_limit_rim {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b
       · exact absurd (Or.inr rfl) ht
       · exact (impQ_T4 hE hθ h0 s j σ hrim).elim
 
-
 /-! ### Part D: the theorem -/
-
-/-- `isRupert_or_hdn_of_generic_cert`, refined: the "free" tests need no HDN hypothesis. -/
-theorem isRupert_or_hdn_of_generic_cert_free {m n q : ℕ} {ι : Type*} [Finite ι] (free : ι → Prop)
-    (shape : (Fin m → ℝ) → Fin n → ℝ³) (hshape : Continuous shape)
-    (P : MvPolynomial (Fin m) ℝ) (hP : P ≠ 0) (θ : Fin m → ℝ)
-    (T : ι → LabTest n) (hT : ∀ c, CovView (T c).view)
-    (hseg : ∀ i j m' : Fin n, shape θ m' ≠ shape θ i → shape θ m' ≠ shape θ j →
-      ∀ s : ℝ, 0 < s → s < 1 → shape θ m' ≠ shape θ i + s • (shape θ j - shape θ i))
-    (hsp : ∃ i j l m' : Fin n,
-      det3 (shape θ j - shape θ i) (shape θ l - shape θ i) (shape θ m' - shape θ i) ≠ 0)
-    (hview0 : ∀ c, (T c).view (shape θ) ≠ 0)
-    (ties : Fin q → ι × Fin n × Fin n)
-    (hties : ∀ t, ⟪shape θ (ties t).2.1 - shape θ (ties t).2.2, (T (ties t).1).view (shape θ)⟫ = 0)
-    (hind : TieIndep (fun t => shape θ (ties t).2.1 - shape θ (ties t).2.2)
-      (fun t => (T (ties t).1).view (shape θ)))
-    -- every tie of every test's rim at the limit follows from the listed ties, at any shape
-    (hcover : ∀ y : Fin n → ℝ³, (∀ t, ⟪y (ties t).2.1 - y (ties t).2.2, (T (ties t).1).view y⟫ = 0) →
-      ∀ c (i j : ZMod (T c).k),
-        ⟪shape θ ((T c).lab i), (T c).view (shape θ)⟫ = ⟪shape θ ((T c).lab j), (T c).view (shape θ)⟫ →
-        ⟪y ((T c).lab i), (T c).view y⟫ = ⟪y ((T c).lab j), (T c).view y⟫)
-    -- generic certificates (the geometry; MF + R2T inside)
-    (hcert : ∀ᶠ p in 𝓝 (θ, (1 : ℝ³ →L[ℝ] ℝ³)), MvPolynomial.eval p.1 P ≠ 0 →
-      LinearMap.det (p.2 : ℝ³ →ₗ[ℝ] ℝ³) = 1 →
-      -- the listed ties stay independent at `p` (open condition, `TieIndep.eventually`)
-      TieIndep (fun t => mapShape p.2 (shape p.1) (ties t).2.1 - mapShape p.2 (shape p.1) (ties t).2.2)
-        (fun t => (T (ties t).1).view (mapShape p.2 (shape p.1))) →
-      -- no new rim ties: a tie of a rim at `p` is a tie of the limit (closed condition; the proof
-      -- of this theorem gets it eventually along the sequence from continuity)
-      (∀ c (i j : ZMod (T c).k),
-        ⟪mapShape p.2 (shape p.1) ((T c).lab i), (T c).view (mapShape p.2 (shape p.1))⟫ =
-          ⟪mapShape p.2 (shape p.1) ((T c).lab j), (T c).view (mapShape p.2 (shape p.1))⟫ →
-        ⟪shape θ ((T c).lab i), (T c).view (shape θ)⟫ = ⟪shape θ ((T c).lab j), (T c).view (shape θ)⟫) →
-      (∀ t, ⟪mapShape p.2 (shape p.1) (ties t).2.1 - mapShape p.2 (shape p.1) (ties t).2.2,
-        (T (ties t).1).view (mapShape p.2 (shape p.1))⟫ = 0) →
-      ∃ c, (T c).Cert (mapShape p.2 (shape p.1)))
-    (hfreeR : ∀ c, free c → (∃ (k' : ℕ) (_ : NeZero k') (σ : ZMod k' → ZMod (T c).k),
-      RimCertAt (shape θ) ((T c).view (shape θ)) ((T c).lab ∘ σ)) → IsRupert (univ.image (shape θ))) :
-    IsRupert (univ.image (shape θ)) ∨ ∃ c, ¬ free c ∧ ¬ NoHDNAt (univ.image (shape θ)) ((T c).view (shape θ)) := by
-  obtain ⟨θs, L, hθs, hL, hPs, hdet, hrest⟩ := exists_seq_restore_ties shape hshape P hP θ
-    (fun t => (ties t).2) (fun t => (T (ties t).1).view) (fun t => hT _) hties hind
-  let K : ℕ → Fin n → ℝ³ := fun j => mapShape (L j) (shape (θs j))
-  have hev : Continuous (fun p : (ℝ³ →L[ℝ] ℝ³) × ℝ³ => p.1 p.2) := continuous_fst.clm_apply continuous_snd
-  have hKt : ∀ i, Tendsto (fun j => K j i) atTop (𝓝 (shape θ i)) := by
-    intro i
-    have h1 : Tendsto (fun j => shape (θs j) i) atTop (𝓝 (shape θ i)) :=
-      ((continuous_apply i).comp hshape |>.tendsto θ).comp hθs
-    have := (hev.tendsto (1, shape θ i)).comp (hL.prodMk_nhds h1)
-    exact this
-  have hvt : ∀ c, Tendsto (fun j => (T c).view (K j)) atTop (𝓝 ((T c).view (shape θ))) := by
-    intro c
-    have h1 : Tendsto (fun j => (T c).view (shape (θs j))) atTop (𝓝 ((T c).view (shape θ))) :=
-      (((hT c).1.comp hshape).tendsto θ).comp hθs
-    have := (hev.tendsto (1, (T c).view (shape θ))).comp (hL.prodMk_nhds h1)
-    exact Tendsto.congr (fun j => ((hT c).2 (L j) (shape (θs j)) (hdet j)).symm) this
-  have hpt : Tendsto (fun j => (θs j, L j)) atTop (𝓝 (θ, (1 : ℝ³ →L[ℝ] ℝ³))) :=
-    hθs.prodMk_nhds hL
-  have hcert' := hpt.eventually hcert
-  -- independence along the sequence
-  have hdv : Tendsto (fun j => ((fun t => K j (ties t).2.1 - K j (ties t).2.2),
-      (fun t => (T (ties t).1).view (K j)))) atTop
-      (𝓝 ((fun t => shape θ (ties t).2.1 - shape θ (ties t).2.2),
-        (fun t => (T (ties t).1).view (shape θ)))) := by
-    refine Tendsto.prodMk_nhds ?_ ?_
-    · exact tendsto_pi_nhds.2 fun t => (hKt _).sub (hKt _)
-    · exact tendsto_pi_nhds.2 fun t => hvt _
-  have hind' := hdv.eventually hind.eventually
-  -- no new rim ties along the sequence
-  have hnew : ∀ᶠ j in atTop, ∀ c (i j' : ZMod (T c).k),
-      ⟪K j ((T c).lab i), (T c).view (K j)⟫ = ⟪K j ((T c).lab j'), (T c).view (K j)⟫ →
-      ⟪shape θ ((T c).lab i), (T c).view (shape θ)⟫ = ⟪shape θ ((T c).lab j'), (T c).view (shape θ)⟫ := by
-    rw [Filter.eventually_all]; intro c
-    rw [Filter.eventually_all]; intro i
-    rw [Filter.eventually_all]; intro j'
-    by_cases h : ⟪shape θ ((T c).lab i), (T c).view (shape θ)⟫ =
-        ⟪shape θ ((T c).lab j'), (T c).view (shape θ)⟫
-    · exact Filter.Eventually.of_forall fun _ _ => h
-    · have t1 := Tendsto.inner' (hKt ((T c).lab i)) (hvt c)
-      have t2 := Tendsto.inner' (hKt ((T c).lab j')) (hvt c)
-      have := (t1.sub t2).eventually_ne (sub_ne_zero.2 h)
-      exact this.mono fun j hj heq => absurd (sub_eq_zero.2 heq) hj
-  have hfreq : ∃ᶠ j in atTop, ∃ c, (T c).Cert (K j) ∧
-      ∀ i j' : ZMod (T c).k, ⟪shape θ ((T c).lab i), (T c).view (shape θ)⟫ =
-        ⟪shape θ ((T c).lab j'), (T c).view (shape θ)⟫ →
-        ⟪K j ((T c).lab i), (T c).view (K j)⟫ = ⟪K j ((T c).lab j'), (T c).view (K j)⟫ := by
-    refine ((hcert'.and (hind'.and hnew)).frequently).mono ?_
-    rintro j ⟨hc, hi, hn⟩
-    have hties' := hrest j
-    obtain ⟨c, hcC⟩ := hc (hPs j) (hdet j) hi hn hties'
-    exact ⟨c, hcC, fun i j' h => hcover (K j) hties' c i j' h⟩
-  obtain ⟨c, hcf⟩ := frequently_exists_of_finite hfreq
-  by_cases hf : free c
-  · left
-    obtain ⟨k', hk, σ, hrim⟩ := exists_limit_rimCert T (shape θ) hsp (hview0) K hKt hvt c hcf
-    exact hfreeR c hf ⟨k', hk, σ, hrim⟩
-  · by_cases hN : NoHDNAt (univ.image (shape θ)) ((T c).view (shape θ))
-    · left
-      exact isRupert_of_tendsto_rimCert (shape θ) hseg hsp (T c).lab (hview0 c) hN
-        K (fun j => (T c).view (K j)) hKt (hvt c) hcf
-    · right; exact ⟨c, hf, hN⟩
-
-
-
 
 theorem grp_tests_view (i : Fin 3) : ∀ T ∈ (grp08 i).tests, T.view = (grp08 i).view := by
   intro T hT
@@ -2239,7 +2087,6 @@ theorem continuous_nf08 (o E₁ E₂ E₃ : ℝ³) : Continuous (nfShape08 o E�
 theorem continuous_ineq08 (k : Fin 24) : Continuous (fun θ : Fin 6 → ℝ => ineq08 θ k) := by
   fin_cases k <;>
     simp [ineq08, fc08, cdet, cp08, gWa, gWb, gWc, gWU] <;> fun_prop
-
 
 theorem view_test08_true (i : Fin 3) : (test08 i true true).view = (grp08 i).view := by
   have := grpS_view i true
@@ -2280,7 +2127,6 @@ theorem cover_transfer {q : ℕ} {ties : Fin q → Fin 3 × Fin 7 × Fin 7} {x y
     have := eqv_depth hy h
     simp only [LabTest.neg, hv, inner_neg_right, this]
 
-
 theorem grp_view_ne {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (i : Fin 3) :
     (grp08 i).view (pts08 a a' b b' c c' d) ≠ 0 := by
   have hnd := N.F.nodup
@@ -2299,159 +2145,6 @@ theorem view0_test08 {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (c
   obtain ⟨T, hT, h | h⟩ := test08_eq c0.1 c0.2.1 c0.2.2
   · rw [h, grp_tests_view _ T hT]; exact grp_view_ne N _
   · rw [h]; simp only [LabTest.neg, grp_tests_view _ T hT, neg_ne_zero]; exact grp_view_ne N _
-
-
-
-theorem noHDN_SC08 {a a' b b' c c' d : ℝ³} (t : Fin 3 × Bool × Bool) (ht : t ∈ SC08)
-    (hhdn : ∀ u, Named08 a a' b b' c c' d u →
-      NoHDNAt (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) u) :
-    NoHDNAt (insert d ({a, a', b, b', c, c'} : Finset ℝ³))
-      ((test08 t.1 t.2.1 t.2.2).view (pts08 a a' b b' c c' d)) := by
-  have h0 : Named08 a a' b b' c c' d (c - a') := Or.inl ⟨2, 0, true, false, by decide, by simp⟩
-  have h1 : Named08 a a' b b' c c' d (b - d) := Or.inr ⟨1, true, by simp⟩
-  obtain ⟨i, s, j⟩ := t
-  have hi : (i = 0 ∧ j = true) ∨ i = 1 := ht
-  obtain ⟨T, hT, h | h⟩ := test08_eq i s j
-  · rw [h, grp_tests_view _ T hT]
-    rcases hi with ⟨rfl, -⟩ | rfl
-    · exact hhdn _ h0
-    · exact hhdn _ h1
-  · rw [h]; simp only [LabTest.neg, grp_tests_view _ T hT]
-    rcases hi with ⟨rfl, -⟩ | rfl
-    · have := (hhdn _ h0).neg
-      simpa [grp08, ViewGroup.view, pts08] using this
-    · have := (hhdn _ h1).neg
-      simpa [grp08, ViewGroup.view, pts08] using this
-
-
-
-/-- **Theorem 29.1, Lean form G3'.**  A type-08 shape in the used labelling with at most two
-independent ties at the certificate views (`ties`, which cover all rim ties of N2, T4 and Q), no
-touching, is Rupert unless a **single-circle closing** (N2's `K_c`, T4's `K_b` or `K_2`) has an HDN
-at its view.  No `NoHDNAt` at the other named views, no `FewTies` at all 18 named views.
-
-Proof: `exists_nf08`, `isRupert_or_hdn_of_generic_cert` with `shape = nfShape08 o E` in the frame
-parameters `θ` (the linear maps `L` of the lemma are absorbed in the frame by
-`mapShape_nfShape08`; so `hcert` is `cert08_generic` at `(L o, L E)`), `seg08`; if the HDN
-disjunct is for a closing `t ∉ SC08`, use `exists_limit_rimCert` and `rupert_of_free_limit_rim`. -/
-theorem isRupert_type08_limit_hdn {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
-    {q : ℕ} (hq : q ≤ 2) (ties : Fin q → Fin 3 × Fin 7 × Fin 7)
-    (hties : ∀ t, ⟪pts08 a a' b b' c c' d (ties t).2.1 - pts08 a a' b b' c c' d (ties t).2.2,
-      (grp08 (ties t).1).view (pts08 a a' b b' c c' d)⟫ = 0)
-    (hind : TieIndep (fun t => pts08 a a' b b' c c' d (ties t).2.1 - pts08 a a' b b' c c' d (ties t).2.2)
-      (fun t => (grp08 (ties t).1).view (pts08 a a' b b' c c' d)))
-    (hcover : ∀ i, ∀ T ∈ (grp08 i).tests, ∀ u v : ZMod T.k,
-      T.depth (pts08 a a' b b' c c' d) u = T.depth (pts08 a a' b b' c c' d) v →
-      Relation.EqvGen (fun p p' => ∃ t, (ties t).1 = i ∧ (ties t).2 = (p, p')) (T.lab u) (T.lab v))
-    (hnt : ¬ Touch a a' b b' c c' d)
-    (hTco : IsT a' b c d → ¬ CoT2 a a' b b' c c' d)
-    (hT'co : IsT' a b c' d → ¬ CoT'2 a a' b b' c c' d) :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) ∨
-      ∃ t ∈ SC08, ¬ NoHDNAt (insert d ({a, a', b, b', c, c'} : Finset ℝ³))
-        ((test08 t.1 t.2.1 t.2.2).view (pts08 a a' b b' c c' d)) := by
-  classical
-  have hnR : ¬ RTouch a a' b b' c c' d := by
-    rintro (h | h | h)
-    · exact h (fun ht => absurd (Or.inl ht) hnt)
-    · exact h (fun ht => absurd (Or.inr ht) hnt)
-    · exact h (fun ht => absurd (Or.inr ht) hnt)
-  by_cases hT : IsT a' b c d
-  · exact Or.inl (close_T2_final N hT (hTco hT) hnR)
-  by_cases hT' : IsT' a b c' d
-  · exact Or.inl (close_T'2_final N hT' (hT'co hT') hnR)
-  obtain ⟨o, E₁, E₂, E₃, θ, hE, hθ, hpts⟩ := exists_nf08 N
-  obtain ⟨hseg, hsp⟩ := seg08 N
-  have hview0 := view0_test08 N
-  simp only [hpts] at hseg hsp hview0 hties hind hcover
-  rw [← image_pts08, hpts]
-  let tI : Fin q → (Fin 3 × Bool × Bool) × Fin 7 × Fin 7 := fun t => (((ties t).1, true, true), (ties t).2)
-  have hvt : ∀ i y, (test08 i true true).view y = (grp08 i).view y := fun i y => by rw [view_test08_true]
-  have key : IsRupert (univ.image (nfShape08 o E₁ E₂ E₃ θ)) ∨ ∃ c : Fin 3 × Bool × Bool, ¬ (c ∉ SC08) ∧
-      ¬ NoHDNAt (univ.image (nfShape08 o E₁ E₂ E₃ θ))
-        ((test08 c.1 c.2.1 c.2.2).view (nfShape08 o E₁ E₂ E₃ θ)) := by
-    refine isRupert_or_hdn_of_generic_cert_free (m := 6) (n := 7) (q := q)
-      (ι := Fin 3 × Bool × Bool) (fun c => c ∉ SC08) (nfShape08 o E₁ E₂ E₃) (continuous_nf08 o E₁ E₂ E₃)
-      genPoly08 genPoly08_ne_zero θ (fun c => test08 c.1 c.2.1 c.2.2) (fun c => covView_test08 _ _ _)
-      hseg hsp hview0 tI (by simpa [tI, hvt] using hties) (by simpa [tI, hvt] using hind)
-      ?_ ?_ ?_
-    · intro y hy c i j hij
-      obtain ⟨T, hT, h⟩ := test08_eq c.1 c.2.1 c.2.2
-      refine cover_transfer hcover ?_ hT (h.imp Eq.symm Eq.symm) i j hij
-      intro t
-      simpa [tI, hvt] using hy t
-    · have hineq : ∀ᶠ p in 𝓝 (θ, (1 : ℝ³ →L[ℝ] ℝ³)), ∀ k, 0 < ineq08 p.1 k := by
-        rw [Filter.eventually_all]
-        intro k
-        exact ((continuous_ineq08 k).comp continuous_fst).continuousAt.eventually (lt_mem_nhds (hθ k))
-      filter_upwards [hineq] with p hp hg hdet hind' hnew hties'
-      simp only [mapShape_nfShape08] at hind' hnew hties' ⊢
-      have hE' : det3 (p.2 E₁) (p.2 E₂) (p.2 E₃) ≠ 0 := by
-        rw [det3_map, detMap_eq_det, hdet, one_mul]; exact hE
-      set Y := nfShape08 (p.2 o) (p.2 E₁) (p.2 E₂) (p.2 E₃) p.1 with hY
-      have hnew' : ∀ c : Fin 3 × Bool × Bool, ∀ i j : ZMod (test08 c.1 c.2.1 c.2.2).k,
-          ⟪Y ((test08 c.1 c.2.1 c.2.2).lab i), (test08 c.1 c.2.1 c.2.2).view Y⟫ =
-            ⟪Y ((test08 c.1 c.2.1 c.2.2).lab j), (test08 c.1 c.2.1 c.2.2).view Y⟫ →
-          ⟪nfShape08 o E₁ E₂ E₃ θ ((test08 c.1 c.2.1 c.2.2).lab i),
-            (test08 c.1 c.2.1 c.2.2).view (nfShape08 o E₁ E₂ E₃ θ)⟫ =
-          ⟪nfShape08 o E₁ E₂ E₃ θ ((test08 c.1 c.2.1 c.2.2).lab j),
-            (test08 c.1 c.2.1 c.2.2).view (nfShape08 o E₁ E₂ E₃ θ)⟫ := hnew
-      have hties'' : ∀ t, ⟪Y (ties t).2.1 - Y (ties t).2.2, (grp08 (ties t).1).view Y⟫ = 0 := by
-        intro t; simpa [tI, hvt] using hties' t
-      have hind'' : TieIndep (fun t => Y (ties t).2.1 - Y (ties t).2.2)
-          (fun t => (grp08 (ties t).1).view Y) := by simpa [tI, hvt] using hind'
-      have hcov : ∀ i, ∀ T ∈ (grp08 i).tests, ∀ u v : ZMod T.k, T.depth Y u = T.depth Y v →
-          Relation.EqvGen (fun p p' => ∃ t, (ties t).1 = i ∧ (ties t).2 = (p, p')) (T.lab u) (T.lab v) := by
-        intro i T hT u v huv
-        have hT' := hT
-        rw [← grpS_true] at hT'
-        obtain ⟨j, rfl⟩ := grpS_tests i true T hT'
-        exact hcover i _ hT u v (hnew' (i, true, j) u v huv)
-      have hno : ∀ i, ¬ (grp08 i).Straddle Y := by
-        intro i hst
-        fin_cases i
-        all_goals first | exact hst.elim | skip
-        all_goals apply hnt
-        · simp only [grp08, ViewGroup.Straddle] at hst
-          obtain ⟨h1, h2, -, -⟩ := hst
-          have e1 := hnew' (0, true, true) 1 2 h1
-          have e2 := hnew' (0, true, true) 2 3 h2
-          rw [← hpts] at e1 e2
-          exact Or.inl ⟨e1, e2.symm⟩
-        · simp only [grp08, ViewGroup.Straddle] at hst
-          obtain ⟨h1, h2, -, -⟩ := hst
-          have e1 := hnew' (1, true, true) 1 2 h1
-          have e2 := hnew' (1, true, true) 2 3 h2
-          rw [← hpts] at e1 e2
-          exact Or.inr ⟨e2.symm, e1⟩
-      obtain ⟨i, s, j, hC⟩ := cert08_generic (p.2 o) (p.2 E₁) (p.2 E₂) (p.2 E₃) hE' p.1 hp hg hq ties
-        hties'' hind'' hcov hno
-      exact ⟨(i, s, j), hC⟩
-    · intro c hc hrim
-      obtain ⟨k', hk, σ, hr⟩ := hrim
-      rw [← hpts] at hr
-      rw [← hpts, image_pts08]
-      exact rupert_of_free_limit_rim N hT hT' c hc σ hr
-  exact key.imp id (fun ⟨c, hc, hn⟩ => ⟨c, not_not.1 hc, hn⟩)
-
-/-- The old G3 conclusion follows (all named views `NoHDNAt`): the new statement with `hhdn`. -/
-theorem isRupert_type08_limit_norm_of_hdn {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
-    {q : ℕ} (hq : q ≤ 2) (ties : Fin q → Fin 3 × Fin 7 × Fin 7)
-    (hties : ∀ t, ⟪pts08 a a' b b' c c' d (ties t).2.1 - pts08 a a' b b' c c' d (ties t).2.2,
-      (grp08 (ties t).1).view (pts08 a a' b b' c c' d)⟫ = 0)
-    (hind : TieIndep (fun t => pts08 a a' b b' c c' d (ties t).2.1 - pts08 a a' b b' c c' d (ties t).2.2)
-      (fun t => (grp08 (ties t).1).view (pts08 a a' b b' c c' d)))
-    (hcover : ∀ i, ∀ T ∈ (grp08 i).tests, ∀ u v : ZMod T.k,
-      T.depth (pts08 a a' b b' c c' d) u = T.depth (pts08 a a' b b' c c' d) v →
-      Relation.EqvGen (fun p p' => ∃ t, (ties t).1 = i ∧ (ties t).2 = (p, p')) (T.lab u) (T.lab v))
-    (hnt : ¬ Touch a a' b b' c c' d)
-    (hTco : IsT a' b c d → ¬ CoT2 a a' b b' c c' d)
-    (hT'co : IsT' a b c' d → ¬ CoT'2 a a' b b' c c' d)
-    (hhdn : ∀ u, Named08 a a' b b' c c' d u →
-      NoHDNAt (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) u) :
-    IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
-  rcases isRupert_type08_limit_hdn N hq ties hties hind hcover hnt hTco hT'co with h | ⟨t, ht, hn⟩
-  · exact h
-  · exact absurd (noHDN_SC08 t ht hhdn) hn
 
 end Type08Sp
 end Minimality

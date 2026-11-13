@@ -78,19 +78,6 @@ theorem k28h5b_H23 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
       (by linarith) (by linarith)
     nlinarith [this]
 
-theorem k28h5b_H2 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
-    (hC : K6mCoords a a' b b' c c' d α1 β1 β6 γ6) (hM : K6sM a a' b b' c c' d)
-    (hrel : K16Rel a b c d α1 β1) (h5 : K20mH5c a a' b b' c c' d α1 β1 β6 γ6) :
-    0 < γ6 * ⟪c' - a, b' - a⟫ + ⟪c' - a, c' - a⟫ * (γ6 * (α1 - 1) + α1 * β6) :=
-  (k28h5b_H23 hC hM hrel h5).1
-
-theorem k28h5b_H3 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
-    (hC : K6mCoords a a' b b' c c' d α1 β1 β6 γ6) (hM : K6sM a a' b b' c c' d)
-    (hrel : K16Rel a b c d α1 β1) (h5 : K20mH5c a a' b b' c c' d α1 β1 β6 γ6) :
-    0 < ⟪c' - a, c' - a⟫ * β6 * (β1 + α1 - 1) + ⟪c' - a, b' - a⟫ *
-      (β6 * (1 - β1 - α1) + α1 * β1 * (β6 + γ6 - 1)) :=
-  (k28h5b_H23 hC hM hrel h5).2
-
 end C2
 end Type08Sp
 end Minimality

@@ -74,31 +74,6 @@ lemma imc_den_pos (hE1 : (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp 
   push Not at hc
   nlinarith [mul_nonneg (mul_nonneg hp.le hg.le) (neg_nonneg.2 hc)]
 
-/-- On I_MC, `a11 den = a12 hm sm`, hence `a12 < a11`. -/
-lemma imc_a12_lt (hE1 : (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp - F.S.sm) * F.a12 +
-      (F.S.hm*F.S.hp + F.S.hp*F.S.km*F.S.tm - F.S.hp*F.S.km) * F.gg = 0)
-    (hE2 : (F.S.tm*F.S.tp - F.S.tm - F.S.tp + 1) * (F.a11 - F.a12) +
-      (F.S.tm*F.S.tp - F.S.tm - F.S.tp + 1) * F.a12 + (-F.S.hm*F.S.hp) * F.gg = 0) :
-    F.a12 < F.a11 := by
-  have hden := imc_den_pos F hE1
-  have m1 := imc_M1 F hE2
-  have m2 := imc_M2 F hE1
-  have t1 : 0 < 1 - F.S.tp := by linarith [F.S.tp_lt]
-  have t4 : 0 < 1 - F.S.tm := by linarith [F.S.tm_lt]
-  have hc : 0 < (1 - F.S.tm) * (1 - F.S.tp) := mul_pos t4 t1
-  have key : F.a11 * (F.S.hm + F.S.km*F.S.tm - F.S.km) = F.a12 * (F.S.hm * F.S.sm) := by
-    have : (1 - F.S.tm) * (1 - F.S.tp) * (F.a11 * (F.S.hm + F.S.km*F.S.tm - F.S.km)) =
-        (1 - F.S.tm) * (1 - F.S.tp) * (F.a12 * (F.S.hm * F.S.sm)) := by
-      linear_combination (F.S.hm + F.S.km*F.S.tm - F.S.km) * m1 - F.S.hm * m2
-    exact mul_left_cancel₀ hc.ne' this
-  have hl := F.S.roof_m'
-  have h12 : 0 < F.a12 := F.A12_pos
-  by_contra hcon
-  push Not at hcon
-  have : F.a11 * (F.S.hm + F.S.km*F.S.tm - F.S.km) ≤ F.a12 * (F.S.hm + F.S.km*F.S.tm - F.S.km) :=
-    mul_le_mul_of_nonneg_right hcon hden.le
-  nlinarith [mul_pos h12 (show 0 < F.S.km * (1 - F.S.tm) - F.S.hm * (1 - F.S.sm) by linarith)]
-
 end IMCT
 end Minimality.CaseC20
 
@@ -347,7 +322,6 @@ lemma nrm_H : F.Nrm FF 7 (-F.S.kp) 0 0 := by
 end Frame20
 end Minimality.CaseC20
 
-
 /-!
 # G0b: shared tools for the I_MC generic leaves
 
@@ -399,7 +373,6 @@ theorem robUni5_L7 {z : ZMod 5 → ℝ} (h01 : z 0 = z 1) (h21 : z 2 < z 1) (h32
     (h41 : z 4 < z 1) : RobUni z := by robuni5
 
 end Minimality.H20S
-
 
 /-!
 # G0c: the I_MC equations, the parametrization, facings and line views
@@ -501,7 +474,6 @@ lemma hp_dep {r B : ℝ} (h11 : F.a11 = r * (F.S.hm * F.S.sm))
     simp only [dep_5, Dd]; ring
   · show F.S.hp * F.dep q 6 = r * F.Dd B q 6
     simp only [dep_6, h12, h22, Dd]; ring
-
 
 /-- Bundled I_MC parametrization. -/
 structure Par (r B : ℝ) : Prop where
@@ -693,7 +665,6 @@ lemma line_view (X Y : Fin 8) {aX bX dX aY bY dY wx wy wz κ : ℝ}
 
 end Frame20
 end Minimality.CaseC20
-
 
 /-!
 # G0d: small shared facts for the I_MC leaves (positivity of the roofs, `1 - t`, ...)

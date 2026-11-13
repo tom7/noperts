@@ -34,9 +34,6 @@ theorem cert_vec {p q r d X Y : ℝ³} {x y : ℝ × ℝ × ℝ} (hX : fpoint p 
   obtain ⟨x1, x2, x3⟩ := x; obtain ⟨y1, y2, y3⟩ := y
   simp only [k17f_fp, Prod.mk_sub_mk]; module
 
-theorem cert_vec_r (p q r : ℝ³) : r = (0, 0, 1).1 • p + ((0:ℝ), (0:ℝ), (1:ℝ)).2.1 • q + ((0:ℝ), (0:ℝ), (1:ℝ)).2.2 • r := by
-  simp
-
 /-- `⟪X - Y, Z - W⟫` in the Gram entries of the frame. -/
 theorem cert_ipd {p q r d X Y Z W : ℝ³} {x y z w : ℝ × ℝ × ℝ} (hX : fpoint p q r d x = X)
     (hY : fpoint p q r d y = Y) (hZ : fpoint p q r d z = Z) (hW : fpoint p q r d w = W) :
@@ -48,11 +45,6 @@ theorem cert_ipd_r {p q r d X Y : ℝ³} {x y : ℝ × ℝ × ℝ} (hX : fpoint 
     (hY : fpoint p q r d y = Y) :
     ⟪X - Y, r⟫ = certG (x - y) (0, 0, 1) ⟪p, p⟫ ⟪p, q⟫ ⟪p, r⟫ ⟪q, q⟫ ⟪q, r⟫ ⟪r, r⟫ := by
   rw [cert_vec hX hY, ← cert_ip_lin]; congr 1; simp
-
-theorem cert_ip_r_d {p q r d X Y : ℝ³} {x y : ℝ × ℝ × ℝ} (hX : fpoint p q r d x = X)
-    (hY : fpoint p q r d y = Y) :
-    ⟪r, X - Y⟫ = certG (x - y) (0, 0, 1) ⟪p, p⟫ ⟪p, q⟫ ⟪p, r⟫ ⟪q, q⟫ ⟪q, r⟫ ⟪r, r⟫ := by
-  rw [real_inner_comm]; exact cert_ipd_r hX hY
 
 /-- The Gram matrix of a frame with `det3 p q r ≠ 0` is positive definite (principal minors). -/
 theorem cert_gram_pd {p q r : ℝ³} (h : det3 p q r ≠ 0) :

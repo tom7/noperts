@@ -287,17 +287,6 @@ theorem isInwardAt_of_forall_normal {E : Type*} [NormedAddCommGroup E]
     rw [inner_sub_right]; linarith)
   linarith
 
-/-- `IsInwardAt` is the interior of the tangent cone, described by normals:
-for a convex set with nonempty interior in a finite-dimensional space and
-`p ∈ closure S`, `d` is inward at `p` iff `⟪n, d⟫ < 0` for every nonzero
-`n ∈ N_S(p)`. (For a polygon `N_S(p)` is spanned by the outward normals of
-the one or two edges at `p`, so this is the open tangent cone `int T_S(p)`.) -/
-theorem isInwardAt_iff_forall_normal {E : Type*} [NormedAddCommGroup E]
-    [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] {S : Set E} (hS : Convex ℝ S)
-    (hint : (interior S).Nonempty) {p : E} (hp : p ∈ closure S) (d : E) :
-    IsInwardAt S p d ↔ ∀ n : E, n ≠ 0 → (∀ q ∈ S, ⟪n, q - p⟫ ≤ 0) → ⟪n, d⟫ < 0 :=
-  ⟨fun h _ hn hN => h.inner_neg hn hN, isInwardAt_of_forall_normal hS hint hp d⟩
-
 /-- Once some step along `d` enters the interior, all smaller steps do. -/
 theorem IsInwardAt.eventually {E : Type*} [AddCommGroup E] [Module ℝ E] [TopologicalSpace E]
     [IsTopologicalAddGroup E] [ContinuousSMul ℝ E] {S : Set E} (hS : Convex ℝ S) {p d : E}

@@ -36,21 +36,6 @@ the standard-view shadow `proj_xy '' conv V`. -/
 def FirstOrderInward (V : Finset ℝ³) (ω τ : ℝ³) : Prop :=
   ∀ v ∈ V, IsInwardAt (proj_xy '' convexHull ℝ (V : Set ℝ³)) (proj_xy v) (screenVel ω τ v)
 
-/-- Only the boundary points `V_∂ = {v ∈ V : Pv ∈ ∂S}` matter. -/
-theorem firstOrderInward_iff_frontier (V : Finset ℝ³) (ω τ : ℝ³) :
-    FirstOrderInward V ω τ ↔
-      ∀ v ∈ V, proj_xy v ∈ frontier (proj_xy '' convexHull ℝ (V : Set ℝ³)) →
-        IsInwardAt (proj_xy '' convexHull ℝ (V : Set ℝ³)) (proj_xy v) (screenVel ω τ v) := by
-  refine ⟨fun h v hv _ => h v hv, fun h v hv => ?_⟩
-  by_cases hf : proj_xy v ∈ frontier (proj_xy '' convexHull ℝ (V : Set ℝ³))
-  · exact h v hv hf
-  · apply isInwardAt_of_mem_interior
-    have hmem : proj_xy v ∈ closure (proj_xy '' convexHull ℝ (V : Set ℝ³)) :=
-      subset_closure ⟨v, subset_convexHull ℝ _ hv, rfl⟩
-    rw [frontier, Set.mem_sdiff] at hf
-    by_contra hni
-    exact hf ⟨hmem, hni⟩
-
 /-- **Lemma 1 (analytic core).** Points of a convex set moving with a
 one-sided first derivative that is strictly inward at time `0` are eventually
 in the interior, uniformly over a finite family. -/
@@ -85,7 +70,6 @@ theorem eventually_forall_mem_interior {ι : Type*} (s : Finset ι) {S : Set ℝ
   rw [← hcomb]
   exact hS.combo_closure_interior_mem_interior (h0 i hi) hyin
     (by rw [sub_nonneg, div_le_one hε]; exact htε.le) (div_pos ht0 hε) (by ring)
-
 
 /-- The screen trajectory of a point under a matrix curve has the screen
 velocity as derivative. -/

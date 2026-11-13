@@ -80,37 +80,6 @@ theorem det3_map_det (L : ℝ³ →L[ℝ] ℝ³) (u v w : ℝ³) :
 
 /-! ### Gale data and axis views are equivariant (transport by precomposition with `L⁻¹`) -/
 
-/-- Precompose a functional with `L⁻¹`. -/
-noncomputable def precompInv (L : ℝ³ →L[ℝ] ℝ³) (h : LinearMap.det (L : ℝ³ →ₗ[ℝ] ℝ³) ≠ 0)
-    (l : ℝ³ → ℝ) : ℝ³ → ℝ := fun y => l ((LinearMap.equivOfDetNeZero _ h).symm y)
-
-theorem precompInv_apply (L : ℝ³ →L[ℝ] ℝ³) (h : LinearMap.det (L : ℝ³ →ₗ[ℝ] ℝ³) ≠ 0)
-    (l : ℝ³ → ℝ) (s : ℝ³) : precompInv L h l (L s) = l s := by
-  have : (LinearMap.equivOfDetNeZero _ h).symm (L s) = s :=
-    (LinearEquiv.symm_apply_eq _).2 rfl
-  simp [precompInv, this]
-
-theorem galeD_map {l m l' m' : ℝ³ → ℝ} (L : ℝ³ →L[ℝ] ℝ³) (hl : ∀ s, l' (L s) = l s)
-    (hm : ∀ s, m' (L s) = m s) (s t : ℝ³) : galeD l' m' (L s) (L t) = galeD l m s t := by
-  simp only [galeD, hl, hm]
-
-/-- `axisView` is equivariant: the view of the mapped octahedron is the image of the view. -/
-theorem axisView_map {l m l' m' : ℝ³ → ℝ} (L : ℝ³ →L[ℝ] ℝ³) (hl : ∀ s, l' (L s) = l s)
-    (hm : ∀ s, m' (L s) = m s) (a a' b c : ℝ³) :
-    axisView l' m' (L a) (L a') (L b) (L c) = L (axisView l m a a' b c) := by
-  simp only [axisView, galeD_map L hl hm, map_add, map_smul, map_sub]
-
-/-- Gale data transports to the mapped points. -/
-noncomputable def galeDataMap {a a' b b' c c' : ℝ³} (G : GaleData a a' b b' c c') (L : ℝ³ →L[ℝ] ℝ³)
-    (h : LinearMap.det (L : ℝ³ →ₗ[ℝ] ℝ³) ≠ 0) : GaleData (L a) (L a') (L b) (L b') (L c) (L c') where
-  l := precompInv L h G.l
-  m := precompInv L h G.m
-  hl := ⟨by simp only [precompInv_apply]; exact G.hl.sum, by
-    simp only [precompInv_apply, ← map_smul, ← map_add]; rw [G.hl.vsum, map_zero]⟩
-  hm := ⟨by simp only [precompInv_apply]; exact G.hm.sum, by
-    simp only [precompInv_apply, ← map_smul, ← map_add]; rw [G.hm.vsum, map_zero]⟩
-  indep := by simp only [precompInv_apply]; exact G.indep
-
 theorem segMeet_map {d₀ d₁ e₀ e₁ u : ℝ³} (L : ℝ³ →L[ℝ] ℝ³) (h : SegMeet d₀ d₁ e₀ e₁ u) :
     SegMeet (L d₀) (L d₁) (L e₀) (L e₁) (L u) := by
   obtain ⟨s, t, μ, hs, hs1, ht, ht1, e⟩ := h
@@ -343,14 +312,6 @@ theorem pairGroup_lab_inj (fu fv : (Fin 7 → ℝ³) → ℝ³) {d₀ d₁ e₀ 
 
 /-! ### Scalings of the views and two independent ties -/
 
-theorem robust_quad_smul (y : Fin 7 → ℝ³) {u w : ℝ³} {l : ℝ} (hl : l ≠ 0) (hu : u = l • w)
-    (p q r s : Fin 7) (h : IsRobustUnimodal (quad ⟪y p, w⟫ ⟪y q, w⟫ ⟪y r, w⟫ ⟪y s, w⟫)) :
-    IsRobustUnimodal (quad ⟪y p, u⟫ ⟪y q, u⟫ ⟪y r, u⟫ ⟪y s, u⟫) := by
-  have e : quad ⟪y p, u⟫ ⟪y q, u⟫ ⟪y r, u⟫ ⟪y s, u⟫ =
-      fun i => l * quad ⟪y p, w⟫ ⟪y q, w⟫ ⟪y r, w⟫ ⟪y s, w⟫ i := by
-    rw [← quad_smul, hu]; simp only [real_inner_smul_right]
-  rw [e]; exact robust_mul_ne_zero h hl
-
 /-- Two tied pairs, one at each of two views, independent: `IndepF` and no `NoTieAt` give them. -/
 theorem exists_ties_of_indepF {y : Fin 7 → ℝ³} {u v : ℝ³} (hI : IndepF (Finset.univ.image y) u v)
     (h : ¬ (NoTieAt (Finset.univ.image y) u ∨ NoTieAt (Finset.univ.image y) v)) :
@@ -413,41 +374,5 @@ theorem hdet_smul {u v p q r s : ℝ³} {l1 l2 : ℝ} (hl1 : l1 ≠ 0) (hl2 : l2
   exact neg_of_mul_neg_right h this.le
 
 /-! ### Unimodular images of a pentagon test -/
-
-theorem depthSep_smul {a b e f w : ℝ³} {c : ℝ} (hc : c ≠ 0) (h : DepthSep a b e f (c • w)) :
-    DepthSep a b e f w := by
-  simp only [DepthSep, max_lt_iff, lt_min_iff, real_inner_smul_right] at h ⊢
-  rcases lt_or_gt_of_ne hc with hn | hp
-  · rcases h with ⟨⟨h1, h2⟩, h3, h4⟩ | ⟨⟨h1, h2⟩, h3, h4⟩
-    · right; refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> nlinarith
-    · left; refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> nlinarith
-  · rcases h with ⟨⟨h1, h2⟩, h3, h4⟩ | ⟨⟨h1, h2⟩, h3, h4⟩
-    · left; refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> nlinarith
-    · right; refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> nlinarith
-
-/-- A pentagon `(a,b,c,d,e)` at the view `f`. -/
-noncomputable def pentagonTest (f : (Fin 7 → ℝ³) → ℝ³) (a b c d e : Fin 7) : LabTest 7 :=
-  ⟨5, f, fun i => ![a, b, c, d, e] i⟩
-
-theorem depth_pentagon_map {f : (Fin 7 → ℝ³) → ℝ³} (hf : CovView f) (L : ℝ³ →L[ℝ] ℝ³) (y : Fin 7 → ℝ³)
-    (hL : LinearMap.det (L : ℝ³ →ₗ[ℝ] ℝ³) = 1) (a b c d e : Fin 7) :
-    (pentagonTest f a b c d e).depth (mapShape L y) =
-      quint ⟪L (y a), L (f y)⟫ ⟪L (y b), L (f y)⟫ ⟪L (y c), L (f y)⟫ ⟪L (y d), L (f y)⟫
-        ⟪L (y e), L (f y)⟫ := by
-  rw [← hf.2 L y hL]
-  funext i
-  fin_cases i <;> rfl
-
-theorem depth_pentagon (f : (Fin 7 → ℝ³) → ℝ³) (y : Fin 7 → ℝ³) (a b c d e : Fin 7) :
-    (pentagonTest f a b c d e).depth y = quint ⟪y a, f y⟫ ⟪y b, f y⟫ ⟪y c, f y⟫ ⟪y d, f y⟫ ⟪y e, f y⟫ := by
-  funext i; fin_cases i <;> rfl
-
-theorem eq_zero_of_map_eq_zero_of_det_one {L : ℝ³ →L[ℝ] ℝ³} (hL : LinearMap.det (L : ℝ³ →ₗ[ℝ] ℝ³) = 1) {v : ℝ³}
-    (h : L v = 0) : v = 0 := by
-  by_contra hv
-  have : LinearMap.det (L : ℝ³ →ₗ[ℝ] ℝ³) = 0 :=
-    LinearMap.det_eq_zero_iff_ker_ne_bot.mpr (by
-      rw [Submodule.ne_bot_iff]; exact ⟨v, by simpa using h, hv⟩)
-  rw [hL] at this; exact one_ne_zero this
 
 end Minimality

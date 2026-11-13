@@ -5,7 +5,6 @@ public import Minimality.Type08S.C2K19C
 
 @[expose] public section
 
-
 /-!
 # K25 tie lemma (design sketch; see HANDOFF.md)
 
@@ -43,29 +42,6 @@ theorem k25_step_lexLt {p q r d : ℝ³} {L : List (ℝ × ℝ)} {s t : ℝ × �
     have := h.2 h1 v1 v2 hv
     simp only
     linarith
-
-/-- Supplying a tie: the tie functional is a positive multiple of a cone functional `l ∈ L`. -/
-theorem k25_tie_of_mem {L : List (ℝ × ℝ)} {l : ℝ × ℝ} (hl : l ∈ L) {c m1 m2 : ℝ} (hc : 0 < c)
-    (h1 : m1 = c * l.1) (h2 : m2 = c * l.2) : ∀ v1 v2 : ℝ, k18Cone L v1 v2 → 0 < m1 * v1 + m2 * v2 := by
-  intro v1 v2 hv
-  have := hv l hl
-  rw [h1, h2, show c * l.1 * v1 + c * l.2 * v2 = c * (l.1 * v1 + l.2 * v2) by ring]
-  exact mul_pos hc this
-
-/-- Weak tilt test: first-order term `≥ 0`; at `0` the (linear) tilt term is positive. -/
-theorem k25_tsc_weak {D : ℝ} {e f : ℝ × ℝ × ℝ} {v1 v2 : ℝ}
-    (h0 : 0 ≤ D * d3 e.1 e.2.1 e.2.2 f.1 f.2.1 f.2.2 0 0 1)
-    (h1 : D * d3 e.1 e.2.1 e.2.2 f.1 f.2.1 f.2.2 0 0 1 = 0 →
-      0 < D * ((e.2.1 * f.2.2 - e.2.2 * f.2.1) * v1 + (e.2.2 * f.1 - e.1 * f.2.2) * v2)) :
-    TSc D e f (v1, v2, 0) := by
-  unfold TSc
-  rcases h0.lt_or_eq with h | h
-  · exact Or.inl h
-  · refine Or.inr ⟨h.symm, ?_⟩
-    have e3 : d3 e.1 e.2.1 e.2.2 f.1 f.2.1 f.2.2 (v1, v2, (0:ℝ)).1 (v1, v2, (0:ℝ)).2.1 (v1, v2, (0:ℝ)).2.2 =
-        (e.2.1 * f.2.2 - e.2.2 * f.2.1) * v1 + (e.2.2 * f.1 - e.1 * f.2.2) * v2 := by
-      simp only [d3]; ring
-    rw [e3]; exact h1 h.symm
 
 /-- **Tie cell (peak form).**  `k18_cone_cell` with `hlex` replaced by a weak-depth peak certificate: peak `i0`
 above both neighbours, every other vertex below one neighbour, each step a `K25Step` (depth `≤`, ties broken by the

@@ -137,7 +137,6 @@ theorem view_aff {ap am cp cm tp tm lo mup mum : ℝ} (htp : 0 < tp) (htm : 0 < 
   refine ⟨lo + ε, ((cp - cm) * (lo + ε) + am - ap) / 2, ⟨?_, ?_, ?_, ?_⟩, ⟨?_, ?_, ?_, ?_⟩,
     ⟨?_, ?_, ?_, ?_⟩⟩ <;> linarith
 
-
 /-- **27.59 (d)**: with `A1 < μ±` and the failures `c- ≥ h+ + t+ a-`, `c+ ≥ h- + t- a+` of families
 `A`, `A^Z`, a view `(α, γ)` puts `xa, m1+, m1-` into the open quad of `F2`. -/
 theorem exists_view_F2 (hVp : S.A1 * S.tp < S.dp) (hVm : S.A1 * S.tm < S.dm)
@@ -206,9 +205,6 @@ theorem exists_view_F2 (hVp : S.A1 * S.tp < S.dp) (hVm : S.A1 * S.tm < S.dm)
 /-- Cross-multiplication of two slopes. -/
 lemma slope_lt {a b c d : ℝ} (hb : 0 < b) (hd : 0 < d) (h : a / b < c / d) : a * d < c * b :=
   (div_lt_div_iff₀ hb hd).1 h
-
-lemma slope_lt' {a b c d : ℝ} (hb : 0 < b) (hd : 0 < d) (h : a * d < c * b) : a / b < c / d :=
-  (div_lt_div_iff₀ hb hd).2 h
 
 /-- `¬(A2 ∧ A3)` of family `A` gives `c- ≥ h+ + t+ a-` (27.59 (d); uses `s- < t-`). -/
 theorem cm_ge (hst : S.sm < S.tm)

@@ -289,22 +289,6 @@ theorem type21_set_O21 (a a' b b' c c' d : ℝ³) :
     insert c' ({a', a, b', b, c, d} : Finset ℝ³) = insert d {a, a', b, b', c, c'} := by
   ext z; simp only [Finset.mem_insert, Finset.mem_singleton]; tauto
 
-/-- **The special positions of the two vertex tests of F2** in one labelling (vertex `b`), with
-the ties of `QuadTie` and no horizontal double normal of `V`: at every direction `u ≠ 0` of the
-line `abc ∩ a'bc'` (`V = 014/2346`, rim `b, d, b', c`) and of `abc' ∩ a'bc` (`V′ = 046/134`, rim
-`b, a', b', a`).  The planes are given by determinants. -/
-def F2Views (V : Finset ℝ³) (a a' b b' c c' d : ℝ³) : Prop :=
-  (∀ u : ℝ³, u ≠ 0 → det3 (a - b) (c - b) u = 0 → det3 (a' - b) (c' - b) u = 0 →
-    det3 (c - d) (b' - d) u ≠ 0 ∧ QuadTie ⟪b, u⟫ ⟪d, u⟫ ⟪b', u⟫ ⟪c, u⟫ ∧ NoHDNAt V u) ∧
-  (∀ u : ℝ³, u ≠ 0 → det3 (a - b) (c' - b) u = 0 → det3 (a' - b) (c - b) u = 0 →
-    det3 (a - a') (b' - a') u ≠ 0 ∧ QuadTie ⟪b, u⟫ ⟪a', u⟫ ⟪b', u⟫ ⟪a, u⟫ ∧ NoHDNAt V u)
-
-theorem F2Views.toL {V : Finset ℝ³} {a a' b b' c c' d : ℝ³} (h : F2Views V a a' b b' c c' d) :
-    F2ViewsL V (NoHDNAt V) a a' b b' c c' d :=
-  ⟨fun u hu h1 h2 => ⟨(h.1 u hu h1 h2).1, fun _ => (h.1 u hu h1 h2).2.2⟩,
-    fun v hv h1 h2 => ⟨(h.2 v hv h1 h2).1, (h.2 v hv h1 h2).2.2⟩,
-    fun u v hu h1 h2 hv h3 h4 => Or.inl (Or.inl ⟨(h.1 u hu h1 h2).2.1, (h.2 v hv h3 h4).2.1⟩)⟩
-
 /-- The special positions of the other classes for one labelling `F` of `K − 2` with the cap
 `d`: those of the two vertex tests of F2 (`F2Views`).  (The switch surface `H⁻_c` of class (c) is
 a `NoPlaneParallel` position.) -/

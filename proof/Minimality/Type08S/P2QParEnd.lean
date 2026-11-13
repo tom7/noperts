@@ -47,10 +47,6 @@ def ParEndK2 (b b' c c' d : ℝ³) : Prop :=
     ParEnd5 ⟪c' - b, e1⟫ κ ⟪c' - b, e3⟫ ⟪b' - b, e1⟫ ⟪b' - b, e2⟫ ⟪b' - b, e3⟫ ⟪c - b, e1⟫ ⟪c - b, e2⟫
       ⟪c - b, e3⟫
 
-/-- **`ParEnd`** (one of the three closings).  Used with `κ_a = 0` (`det3 (c - b) (b' - b) (c' - b) = 0`). -/
-def ParEnd (a a' b b' c c' d : ℝ³) : Prop :=
-  ParEndN2 a a' b b' c c' ∨ ParEndKb b b' c c' d ∨ ParEndK2 b b' c c' d
-
 /-- `ParEnd`, each disjunct recorded together with the facet region under which the pipeline excludes it
 (`RegN2` for `ParEndN2`, the strict T4 region `RegT4` for `ParEndKb`, `ParEndK2`). -/
 def ParEndR {a a' b b' c c' : ℝ³} (F : OctFacets a a' b b' c c') (d : ℝ³) : Prop :=

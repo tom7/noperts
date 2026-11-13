@@ -94,7 +94,6 @@ theorem mem_interior_tri {a b c q : ℝ²} (h0 : 0 < cross2 (b - a) (c - a))
   rcases hcase i with rfl | rfl | rfl
   exacts [h1, h2, h3]
 
-
 theorem eventually_pos_affine {A B : ℝ} (h : 0 < A ∨ (A = 0 ∧ 0 < B)) :
     ∀ᶠ ε in 𝓝[>] (0 : ℝ), 0 < A + ε * B := by
   rcases h with h | ⟨rfl, h⟩
@@ -198,29 +197,6 @@ theorem eventually_tilted_dets (V : Finset ℝ³) (u₀ v : ℝ³) {k : ℕ} [Ne
   · by_cases hy' : ∀ j, y ≠ x j
     · exact (eventually_all.2 fun i => (hrest y hy hy' i).eventually).mono fun _ h _ => h
     · exact Eventually.of_forall fun _ h => absurd h hy'
-
-/-- **Lemma 8.0, instance-wise (determinant form).**  If the predicted cycle
-`x` passes every determinant test in the limit (`D0 ≥ 0`, and `D1 > 0` when
-`D0 = 0`), then for all small `ε > 0` it is the silhouette at the view
-`u₀ + εv`: strictly convex, counterclockwise, with every other point of `V`
-strictly inside (in particular (G1)). -/
-theorem eventually_tilted_cycle (V : Finset ℝ³) (u₀ v : ℝ³) {k : ℕ} [NeZero k] (hk : 3 ≤ k)
-    (x : ZMod k → ℝ³)
-    (hcyc : ∀ i j, j ≠ i → j ≠ i + 1 → TiltSign (x (i + 1) - x i) (x j - x i) u₀ v)
-    (hrest : ∀ y ∈ V, (∀ j, y ≠ x j) → ∀ i, TiltSign (x (i + 1) - x i) (y - x i) u₀ v) :
-    ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ R ∈ SO3, ∀ r : ℝ, 0 < r → R.toEuclideanLin (u₀ + ε • v) = r • ez →
-      IsCcwPolygon (fun i => proj_xy (R.toEuclideanLin (x i))) ∧
-      ∀ y ∈ V, (∀ j, y ≠ x j) → proj_xy (R.toEuclideanLin y) ∈
-        interior (convexHull ℝ (Set.range fun i => proj_xy (R.toEuclideanLin (x i)))) := by
-  filter_upwards [eventually_tilted_dets V u₀ v x hcyc hrest] with ε ⟨h1, h2⟩
-  intro R hR r hr hRw
-  have hp : IsCcwPolygon (fun i => proj_xy (R.toEuclideanLin (x i))) := by
-    refine ⟨hk, fun i j hi hj => ?_⟩
-    simp only [proj_rot_sub]
-    exact cross2_proj_rot_pos hR hr hRw (h1 i j hi hj)
-  refine ⟨hp, fun y hy hyx => hp.mem_interior_of_left fun i => ?_⟩
-  simp only [proj_rot_sub]
-  exact cross2_proj_rot_pos hR hr hRw (h2 y hy hyx i)
 
 /-- **Corollary 8.0′, eventual form.**  As Corollary 8.0′, but the depth
 condition `Q` is only required at the tilted views `u₀ + εv` for all small

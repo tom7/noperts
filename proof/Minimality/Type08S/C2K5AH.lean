@@ -4,7 +4,6 @@ public import Minimality.Type08S.C2K5AB
 
 @[expose] public section
 
-
 /-!
 # K5a / H: P0-Kb and P0-N2: `ParEndKb` / `ParEndN2` (with `κ_a = 0`) ⟹ `α4 = α1`, `γ4 = β1` and, in the frame of the
 `ParEnd`, `Coll5 ∧ PersF` (CEf5 branch: `Coll5` from the vector identity `w ∥ e2`, `PersF` with `s = 1`;
@@ -28,8 +27,6 @@ def P0Coords {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (α1 α4 
       a' = d + β6 • (b - d) + γ6 • (c - d) ∧
       0 < α1 ∧ 0 < β1 ∧ 1 < α1 + β1 ∧ 0 < α4 ∧ 0 < γ4 ∧ 1 < α4 + γ4 ∧ 0 < β6 ∧ 0 < γ6 ∧ 1 < β6 + γ6 ∧
       (W.F.abc'.f c < W.F.abc'.f a' → γ6 < 1) ∧ (W.F.a'bc.f c' < W.F.a'bc.f a → 1 < α1)
-
-theorem p0_inner_sub (e : ℝ³) (x y : ℝ³) : ⟪x - y, e⟫ = ⟪x, e⟫ - ⟪y, e⟫ := inner_sub_left x y e
 
 theorem p0_comb_e (e x y w : ℝ³) (s t : ℝ) :
     ⟪s • x + t • y - w, e⟫ = s * ⟪x, e⟫ + t * ⟪y, e⟫ - ⟪w, e⟫ := by

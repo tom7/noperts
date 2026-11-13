@@ -4,7 +4,6 @@ public import Minimality.Type08S.C2K21ZA
 
 @[expose] public section
 
-
 /-!
 # K22A1 / A1: the whole `β1 = 1` piece of the M boundary (`K17cLeft`, all three disjuncts) is Rupert.
 
@@ -66,20 +65,6 @@ theorem k22a1_kb {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
   have hm0 := k17c_m_zero hα1' hrel
   have hpr := (k17c_gram hdet hc' hb' hs.2.2 hm0).1
   exact k22a1_core hdet hc' hb' ha' hα1' h3 hm0 hpr
-
-/-- **The corner** (`K17cLeft`'s second disjunct at `β1 = 1`), stratum M / N2: Rupert. -/
-theorem k22a1_close_n2 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
-    (hs : K6sMN2 a a' b b' c c' d) {α1 β1 β6 γ6 : ℝ} (hC : K6mCoords a a' b b' c c' d α1 β1 β6 γ6)
-    (h : β1 = 1 ∧ α1 = 1 ∧ γ6 ≤ 1 ∧ 0 ≤ ⟪b - d, c - d⟫ ∧ ⟪b - a', a - c'⟫ < 0) :
-    HasLexCell (V8 a a' b b' c c' d) ∨ IsRupert (V8 a a' b b' c c' d) :=
-  Or.inr (k22a1_n2 W hs hC h.1)
-
-/-- **The corner**, stratum M / Kb: Rupert. -/
-theorem k22a1_close_kb {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
-    (hs : K6sMKb a a' b b' c c' d) {α1 β1 β6 γ6 : ℝ} (hC : K6mCoords a a' b b' c c' d α1 β1 β6 γ6)
-    (h : β1 = 1 ∧ α1 = 1 ∧ γ6 ≤ 1 ∧ 0 ≤ ⟪b - d, c - d⟫ ∧ ⟪b - a', a - c'⟫ < 0) :
-    HasLexCell (V8 a a' b b' c c' d) ∨ IsRupert (V8 a a' b b' c c' d) :=
-  Or.inr (k22a1_kb W hs hC h.1)
 
 /-- `K17mBoundary` without its `β1 = 1` disjunct (all of `K17cLeft` is Rupert). -/
 def K22mBoundary (reg : Prop) (a a' b c c' d : ℝ³) (α1 β1 β6 γ6 : ℝ) : Prop :=

@@ -55,12 +55,6 @@ theorem tendsto_view21 {ι : Type*} {l : Filter ι} {K : ι → Fin 7 → ℝ³}
     Tendsto (fun n => view21 (K n) v) l (𝓝 (view21 x v)) :=
   by rw [view21_eq_namedView]; exact tendsto_namedView vtx21 hK v
 
-theorem view21_map (M : ℝ³ →L[ℝ] ℝ³) (y : Fin 7 → ℝ³) (v : (Fin 7 × Fin 7) ⊕ Fin 8) :
-    ∃ c : ℝ, (c = 1 ∨ c = detMap M) ∧ view21 (fun l => M (y l)) v = c • M (view21 y v) := by
-  rcases v with ⟨i, j⟩ | t
-  · exact ⟨1, Or.inl rfl, by rw [one_smul]; simp [view21]⟩
-  · exact ⟨detMap M, Or.inr rfl, planeLine_map M _ _ _ _ _ _⟩
-
 /-- The named views are covariant. -/
 theorem covView_view21 (v : (Fin 7 × Fin 7) ⊕ Fin 8) :
     CovView (fun y : Fin 7 → ℝ³ => view21 y v) :=
@@ -116,7 +110,6 @@ theorem eq_smul_view21_four {y : Fin 7 → ℝ³} {u : ℝ³} (hu : u ≠ 0)
   rw [view21_four_eq_cross] at hw ⊢
   obtain ⟨lam, h⟩ := eq_smul_cross_cross h1 h2 hw
   exact ⟨lam, fun e => hu (by rw [h, e, zero_smul]), h⟩
-
 
 /-! ### Step 2: the weak/weak F2 certificate -/
 
@@ -271,8 +264,6 @@ theorem cert_type21_F2_weak_core {a a' b b' c c' d : ℝ³} (F : OctFacets a a' 
         rw [← quad_smul, hv1, hb, ha', hb', ha]
         simp only [real_inner_smul_right]
       rw [e]; exact robust_mul_ne_zero R hl2
-
-
 
 /-- **The weak tie hypothesis of F2** (labels as in `F2ViewsL`): one tie at each view, the two
 diagonals non-coplanar, the tied pairs independent, and the seven points distinct. -/
