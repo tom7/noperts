@@ -11,9 +11,12 @@ On `R` (`05 ⊥ 23`, `05 ⊥ 06`: `D` a rectangle perpendicular to `E` and `G`) 
 `R''` is `X 2 ≤ 0` and `|e|² ≤ X 6` (the front vertices overhang both ends of `04`; `1` never decides).
 With `T = ⟪x 3 - x 6, x 2 - x 0⟫`:
 * `X 2 < 0`, `T > 0`: leaf V12536 at `x 0 - x 2` (the view along `02`): depths `z 2 < z 5 < z 3 < z 6`.
-* `T ≤ 0`, not both `X 2 = 0` and `X 6 = |e|²`: leaf P0264 (Q4) at the view `u_CH` along the line `C ∩ H`,
-  `u_CH = α (x 2 - x 5) + β (x 0 - x 5)`, `α = f_H 5 - f_H 0`, `β = -f_H 5`, where `z 0 - z 2 < 0`;
-  the positive diagonal form is at any point of the open cell.
+* `T ≤ 0` or `X 2 = 0`, not both `X 2 = 0` and `X 6 = |e|²`: leaf P0264 (Q4); its closed cell contains the view
+  `u_CH` along the line `C ∩ H`, `u_CH = α (x 2 - x 5) + β (x 0 - x 5)`, `α = f_H 5 - f_H 0`, `β = -f_H 5`.
+  Negative diagonal form: `z 0 - z 2` at `u_CH` (`T ≤ 0`), or `z 0 - z 4` on the open cell (`X 2 = 0`: then
+  `N_C` is a negative multiple of `e`); the positive one is at any point of the open cell.
+* The box corner `X 2 = 0`, `X 6 = |e|²` with `T > 0` is `C ∥ I` (`box_ci`) outside that stratum's exclusion.
+What remains (`isRupert_eg_par`): the box corner with `T ≤ 0`, `R₄'`.
 -/
 
 set_option autoImplicit false
@@ -281,11 +284,14 @@ theorem isRupert_eg_R2v (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
 
 set_option maxHeartbeats 1000000 in
 open Minimality.RimCell in
-/-- **`R''`, `T ≤ 0`, not the box corner: leaf P0264 (Q4) at the view `u_CH` along `C ∩ H`.** -/
+/-- **`R''`, `T ≤ 0` or `X 2 = 0`, not the box corner: leaf P0264 (Q4).**  The closed cell contains the view
+`u_CH` along `C ∩ H`; for `T ≤ 0` the negative diagonal form is `z 0 - z 2` at `u_CH`, for `X 2 = 0` it is
+`z 0 - z 4` on the whole open cell (`N_C` is then a negative multiple of `e`). -/
 theorem isRupert_eg_R2c (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
     (hE : ⟪F.N 4, x 2 - x 3⟫ = 0) (hw : ⟪x 5 - x 0, x 2 - x 3⟫ = 0)
     (hs : ⟪x 5 - x 0, x 6 - x 0⟫ = 0) (h2 : ⟪x 2 - x 0, x 4 - x 0⟫ ≤ 0)
-    (h6 : ⟪x 4 - x 0, x 4 - x 0⟫ ≤ ⟪x 6 - x 0, x 4 - x 0⟫) (hT : ⟪x 3 - x 6, x 2 - x 0⟫ ≤ 0)
+    (h6 : ⟪x 4 - x 0, x 4 - x 0⟫ ≤ ⟪x 6 - x 0, x 4 - x 0⟫)
+    (hT : ⟪x 3 - x 6, x 2 - x 0⟫ ≤ 0 ∨ ⟪x 2 - x 0, x 4 - x 0⟫ = 0)
     (hnb : ⟪x 2 - x 0, x 4 - x 0⟫ < 0 ∨ ⟪x 4 - x 0, x 4 - x 0⟫ < ⟪x 6 - x 0, x 4 - x 0⟫) :
     IsRupert (univ.image x) := by
   have IS := F.inner_sub
@@ -411,7 +417,8 @@ theorem isRupert_eg_R2c (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
     have : 0 < m' * F.f 5 (x 3) := mul_pos_of_neg_of_neg (by linarith) hF3
     exact mul_pos (neg_pos.2 hH5) this
   -- the negative diagonal form `z 0 - z 2` at `u`
-  have hf1 : ⟪x 0 - x 2, u⟫ < 0 := by
+  have hf1 : ⟪x 3 - x 6, x 2 - x 0⟫ ≤ 0 → ⟪x 0 - x 2, u⟫ < 0 := by
+    intro hT
     have q1 : x 0 - x 2 = -(p + g) := by rw [hp_def, hg_def]; abel
     have q2 : x 0 - x 5 = -g := by rw [hg_def]; abel
     have pg : ⟪p, g⟫ = 0 := o25
@@ -512,9 +519,8 @@ theorem isRupert_eg_R2c (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
   have c1 : c0264 1 = 2 := rfl
   have c2 : c0264 2 = 6 := rfl
   have c3 : c0264 3 = 4 := rfl
-  refine isRupert_of_closedCell_q4 F hx (by decide) cyc0264 ha hcl ha.cellLe ⟨(0, 1), by decide, ?_⟩ ?_
-  · simp only [c0, c1]; exact hf1
-  · have hDa : ⟪F.N 3, a⟫ < 0 := ha.2 3 (by simp [D0264])
+  have hpos : ∃ q ∈ diagPairs, 0 < ⟪x (c0264 q.1) - x (c0264 q.2), a⟫ := by
+    have hDa : ⟪F.N 3, a⟫ < 0 := ha.2 3 (by simp [D0264])
     by_cases h04 : 0 < ⟪x 0 - x 4, a⟫
     · exact ⟨(0, 3), by decide, by simp only [c0, c3]; exact h04⟩
     · push Not at h04
@@ -525,15 +531,68 @@ theorem isRupert_eg_R2c (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
       have hea : 0 ≤ ⟪e, a⟫ := by
         rw [he_def, show x 4 - x 0 = -(x 0 - x 4) by abel, inner_neg_left]; linarith
       rw [h1]; linarith [mul_nonneg hlam hea, mul_pos_of_neg_of_neg hnu hDa]
+  rcases hT with hT | h20
+  · exact isRupert_of_closedCell_q4 F hx (by decide) cyc0264 ha hcl ha.cellLe
+      ⟨(0, 1), by decide, by simp only [c0, c1]; exact hf1 hT⟩ hpos
+  -- `X 2 = 0`: `N_C = aC e + bC N_D` with `bC = 0` (from `f_C 2 = 0`) and `aC < 0`, so `z 0 < z 4` on the cell
+  obtain ⟨aC, bC, hCab⟩ := orth_decomp he0 hn3 hg0 hen heg hng hCg
+  have eC : ∀ v, ⟪F.N 2, v⟫ = aC * ⟪e, v⟫ + bC * ⟪F.N 3, v⟫ := by
+    intro v; rw [hCab, inner_add_left, real_inner_smul_left, real_inner_smul_left]
+  have hbC : bC = 0 := by
+    have h1 := eC (x 2 - x 0)
+    rw [ip, ip, zC2, zC0, real_inner_comm (x 2 - x 0) e, h20, zD0] at h1
+    have : bC * F.f 3 (x 2) = 0 := by linarith
+    rcases mul_eq_zero.1 this with h | h
+    · exact h
+    · linarith
+  have haC : aC < 0 := by
+    have h1 := eC e
+    have r1 : ⟪F.N 2, e⟫ = F.f 2 (x 4) := by rw [he_def, ip, zC0, sub_zero]
+    rw [hbC, zero_mul, add_zero, r1] at h1
+    by_contra h; push Not at h; linarith [mul_nonneg h hee.le]
+  have hCa : ⟪F.N 2, a⟫ < 0 := ha.2 2 (by simp [D0264])
+  rw [eC, hbC, zero_mul, add_zero] at hCa
+  have hea : 0 < ⟪e, a⟫ := by
+    by_contra h; push Not at h; linarith [mul_nonneg_of_nonpos_of_nonpos haC.le h]
+  refine isRupert_of_closedCell_q4 F hx (by decide) cyc0264 ha ha.cellLe ha.cellLe
+    ⟨(0, 3), by decide, ?_⟩ hpos
+  simp only [c0, c3]
+  rw [show x 0 - x 4 = -e by rw [he_def]; abel, inner_neg_left]; linarith
 
-/-- **The stratum `D` parallelogram, `E ∥ G`**, every case except two boundary pieces of `R''`, both inside
-`R ∩ {X 2 = 0}` (`2` level with `0` along `04`, i.e. `C ⊥ D`): `R₃ = {T > 0}` and `R₄ = {X 6 = |e|²}` (the box
-corner, `C ∥ I`). -/
-theorem isRupert_eg_par (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
+/-- **The box corner gives `C ∥ I`**: on `R` with `X 2 = 0` and `X 6 = |e|²`, `⟪N_C, x 6 - x 3⟫ = 0`
+(`N_C = a e + b N_D` with `b = 0`, and `⟪e, x 6 - x 3⟫ = X 6 - |e|² = 0`). -/
+theorem box_ci (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
+    (hE : ⟪F.N 4, x 2 - x 3⟫ = 0) (hw : ⟪x 5 - x 0, x 2 - x 3⟫ = 0)
+    (hs : ⟪x 5 - x 0, x 6 - x 0⟫ = 0) (h2 : ⟪x 2 - x 0, x 4 - x 0⟫ = 0)
+    (h6 : ⟪x 6 - x 0, x 4 - x 0⟫ = ⟪x 4 - x 0, x 4 - x 0⟫) :
+    ⟪F.N 2, x 6 - x 3⟫ = 0 := by
+  obtain ⟨heg, hen, hng, hCg, -⟩ := rect_frame F hP hE hw hs
+  have IS := F.inner_sub
+  have hx := Minimality.H24.SAT.inj_of_fac F
+  have he : x 4 - x 0 ≠ 0 := fun h => absurd (hx (sub_eq_zero.1 h)) (by decide)
+  have hg : x 5 - x 0 ≠ 0 := fun h => absurd (hx (sub_eq_zero.1 h)) (by decide)
+  have hD2 := F.neg 3 2 (by decide)
+  have hn : F.N 3 ≠ 0 := by
+    intro h; have := IS 3 2 0; rw [h, inner_zero_left, F.zero 3 0 (by decide)] at this; linarith
+  obtain ⟨a, b, hab⟩ := orth_decomp he hn hg hen heg hng hCg
+  have e2 := congrArg (fun y => ⟪y, x 2 - x 0⟫) hab
+  simp only [inner_add_left, real_inner_smul_left] at e2
+  rw [IS 2 2 0, IS 3 2 0, F.zero 2 2 (by decide), F.zero 2 0 (by decide), F.zero 3 0 (by decide),
+    real_inner_comm (x 2 - x 0) (x 4 - x 0), h2] at e2
+  have hb : b = 0 := by
+    have : b * F.f 3 (x 2) = 0 := by linarith
+    rcases mul_eq_zero.1 this with h | h
+    · exact h
+    · linarith
+  rw [hab, hb, zero_smul, add_zero, real_inner_smul_left,
+    show x 6 - x 3 = (x 6 - x 0) - (x 4 - x 0) - (x 5 - x 0) by rw [hP]; abel,
+    inner_sub_right, inner_sub_right, heg, real_inner_comm (x 6 - x 0) (x 4 - x 0), h6]; ring
+
+/-- The stratum `D` parallelogram, `E ∥ G`, outside the box corner `R₄` (`R ∩ {X 2 = 0, X 6 = |e|²}`). -/
+theorem isRupert_eg_par4 (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
     (hE : ⟪F.N 4, x 2 - x 3⟫ = 0)
     (hR : ¬ (⟪x 5 - x 0, x 2 - x 3⟫ = 0 ∧ ⟪x 5 - x 0, x 6 - x 0⟫ = 0 ∧ 0 ≤ ⟪x 6 - x 0, x 2 - x 3⟫ ∧
-      ⟪x 2 - x 0, x 4 - x 0⟫ = 0 ∧ ⟪x 4 - x 0, x 4 - x 0⟫ ≤ ⟪x 6 - x 0, x 4 - x 0⟫ ∧
-      (0 < ⟪x 3 - x 6, x 2 - x 0⟫ ∨ ⟪x 6 - x 0, x 4 - x 0⟫ = ⟪x 4 - x 0, x 4 - x 0⟫))) :
+      ⟪x 2 - x 0, x 4 - x 0⟫ = 0 ∧ ⟪x 6 - x 0, x 4 - x 0⟫ = ⟪x 4 - x 0, x 4 - x 0⟫)) :
     IsRupert (univ.image x) := by
   by_cases hR2 : ⟪x 5 - x 0, x 2 - x 3⟫ = 0 ∧ ⟪x 5 - x 0, x 6 - x 0⟫ = 0 ∧ 0 ≤ ⟪x 6 - x 0, x 2 - x 3⟫ ∧
       ⟪x 2 - x 0, x 4 - x 0⟫ ≤ 0 ∧ ⟪x 4 - x 0, x 4 - x 0⟫ ≤ ⟪x 6 - x 0, x 4 - x 0⟫
@@ -543,20 +602,56 @@ theorem isRupert_eg_par (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
   rcases h2.lt_or_eq with h2 | h2
   · by_cases hT : 0 < ⟪x 3 - x 6, x 2 - x 0⟫
     · exact isRupert_eg_R2v F hP hE hw hs h2 h6 hT
-    · exact isRupert_eg_R2c F hP hE hw hs h2.le h6 (not_lt.1 hT) (Or.inl h2)
+    · exact isRupert_eg_R2c F hP hE hw hs h2.le h6 (Or.inl (not_lt.1 hT)) (Or.inl h2)
   · rcases h6.lt_or_eq with h6' | h6'
-    · by_cases hT : 0 < ⟪x 3 - x 6, x 2 - x 0⟫
-      · exact absurd ⟨hw, hs, hh, h2, h6, Or.inl hT⟩ hR
-      · exact isRupert_eg_R2c F hP hE hw hs h2.le h6 (not_lt.1 hT) (Or.inr h6')
-    · exact absurd ⟨hw, hs, hh, h2, h6, Or.inr h6'.symm⟩ hR
+    · exact isRupert_eg_R2c F hP hE hw hs h2.le h6 (Or.inr h2) (Or.inr h6')
+    · exact absurd ⟨hw, hs, hh, h2, h6'.symm⟩ hR
 
-/-- **The `E ∥ G` stratum from the SAT-level facts**: `KD0435 = KD0534 = 0` and `E:23 = 0`, outside `R₃ ∪ R₄`. -/
+open Minimality.H24K.SAT in
+/-- The image of `isRupert_eg_par4` under `σ = (2 6)(4 5)`. -/
+theorem isRupert_ci_par4 (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
+    (hC : ⟪F.N 2, x 6 - x 3⟫ = 0)
+    (hR : ¬ (⟪x 4 - x 0, x 6 - x 3⟫ = 0 ∧ ⟪x 4 - x 0, x 2 - x 0⟫ = 0 ∧ 0 ≤ ⟪x 2 - x 0, x 6 - x 3⟫ ∧
+      ⟪x 6 - x 0, x 5 - x 0⟫ = 0 ∧ ⟪x 2 - x 0, x 5 - x 0⟫ = ⟪x 5 - x 0, x 5 - x 0⟫)) :
+    IsRupert (univ.image x) := by
+  have h := isRupert_eg_par4 (facSig F) (x := x ∘ wallSig)
+    (by show x 3 = x 5 + x 4 - x 0; rw [hP]; abel) hC hR
+  have e : Finset.univ.image (x ∘ wallSig) = Finset.univ.image x := by
+    ext y
+    simp only [Finset.mem_image, Finset.mem_univ, true_and, Function.comp]
+    constructor
+    · rintro ⟨i, rfl⟩; exact ⟨_, rfl⟩
+    · rintro ⟨i, rfl⟩; exact ⟨wallSig i, by rw [wallSig_invol]⟩
+  rwa [e] at h
+
+/-- **The stratum `D` parallelogram, `E ∥ G`**, every case except the box corner with `T ≤ 0`:
+`R₄' = R ∩ {X 2 = 0, X 6 = |e|², T ≤ 0}` (`D` a rectangle, `C ∥ I` and `E ∥ G` both perpendicular to `D`).
+On the box corner with `T > 0` the corner is `C ∥ I` (`box_ci`) outside that stratum's exclusion. -/
+theorem isRupert_eg_par (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
+    (hE : ⟪F.N 4, x 2 - x 3⟫ = 0)
+    (hR : ¬ (⟪x 5 - x 0, x 2 - x 3⟫ = 0 ∧ ⟪x 5 - x 0, x 6 - x 0⟫ = 0 ∧ 0 ≤ ⟪x 6 - x 0, x 2 - x 3⟫ ∧
+      ⟪x 2 - x 0, x 4 - x 0⟫ = 0 ∧ ⟪x 6 - x 0, x 4 - x 0⟫ = ⟪x 4 - x 0, x 4 - x 0⟫ ∧
+      ⟪x 3 - x 6, x 2 - x 0⟫ ≤ 0)) :
+    IsRupert (univ.image x) := by
+  by_cases h4 : ⟪x 5 - x 0, x 2 - x 3⟫ = 0 ∧ ⟪x 5 - x 0, x 6 - x 0⟫ = 0 ∧ 0 ≤ ⟪x 6 - x 0, x 2 - x 3⟫ ∧
+      ⟪x 2 - x 0, x 4 - x 0⟫ = 0 ∧ ⟪x 6 - x 0, x 4 - x 0⟫ = ⟪x 4 - x 0, x 4 - x 0⟫
+  swap
+  · exact isRupert_eg_par4 F hP hE h4
+  obtain ⟨hw, hs, hh, h2, h6⟩ := h4
+  have hT : 0 < ⟪x 3 - x 6, x 2 - x 0⟫ := by
+    by_contra hT; exact hR ⟨hw, hs, hh, h2, h6, not_lt.1 hT⟩
+  refine isRupert_ci_par4 F hP (box_ci F hP hE hw hs h2 h6) fun h => ?_
+  have : ⟪x 2 - x 0, x 6 - x 3⟫ = -⟪x 3 - x 6, x 2 - x 0⟫ := by
+    rw [real_inner_comm, show x 6 - x 3 = -(x 3 - x 6) by abel, inner_neg_left]
+  linarith [h.2.2.1]
+
+/-- **The `E ∥ G` stratum from the SAT-level facts**: `KD0435 = KD0534 = 0` and `E:23 = 0`, outside `R₄'`. -/
 theorem isRupert_parEG (F : S0xFac 9 s0x_S24 x)
     (hD : det3 (x 0 - x 4) (x 3 - x 5) (F.N 3) = 0 ∧ det3 (x 0 - x 5) (x 3 - x 4) (F.N 3) = 0)
     (hEG : ⟪F.N 4, x 2 - x 3⟫ = 0)
     (hR : ¬ (⟪x 5 - x 0, x 2 - x 3⟫ = 0 ∧ ⟪x 5 - x 0, x 6 - x 0⟫ = 0 ∧ 0 ≤ ⟪x 6 - x 0, x 2 - x 3⟫ ∧
-      ⟪x 2 - x 0, x 4 - x 0⟫ = 0 ∧ ⟪x 4 - x 0, x 4 - x 0⟫ ≤ ⟪x 6 - x 0, x 4 - x 0⟫ ∧
-      (0 < ⟪x 3 - x 6, x 2 - x 0⟫ ∨ ⟪x 6 - x 0, x 4 - x 0⟫ = ⟪x 4 - x 0, x 4 - x 0⟫))) :
+      ⟪x 2 - x 0, x 4 - x 0⟫ = 0 ∧ ⟪x 6 - x 0, x 4 - x 0⟫ = ⟪x 4 - x 0, x 4 - x 0⟫ ∧
+      ⟪x 3 - x 6, x 2 - x 0⟫ ≤ 0)) :
     IsRupert (univ.image x) :=
   isRupert_eg_par F (par_of_KD F hD) hEG hR
 
@@ -565,8 +660,8 @@ open Minimality.H24K.SAT in
 theorem isRupert_ci_par (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
     (hC : ⟪F.N 2, x 6 - x 3⟫ = 0)
     (hR : ¬ (⟪x 4 - x 0, x 6 - x 3⟫ = 0 ∧ ⟪x 4 - x 0, x 2 - x 0⟫ = 0 ∧ 0 ≤ ⟪x 2 - x 0, x 6 - x 3⟫ ∧
-      ⟪x 6 - x 0, x 5 - x 0⟫ = 0 ∧ ⟪x 5 - x 0, x 5 - x 0⟫ ≤ ⟪x 2 - x 0, x 5 - x 0⟫ ∧
-      (0 < ⟪x 3 - x 2, x 6 - x 0⟫ ∨ ⟪x 2 - x 0, x 5 - x 0⟫ = ⟪x 5 - x 0, x 5 - x 0⟫))) :
+      ⟪x 6 - x 0, x 5 - x 0⟫ = 0 ∧ ⟪x 2 - x 0, x 5 - x 0⟫ = ⟪x 5 - x 0, x 5 - x 0⟫ ∧
+      ⟪x 3 - x 2, x 6 - x 0⟫ ≤ 0)) :
     IsRupert (univ.image x) := by
   have h := isRupert_eg_par (facSig F) (x := x ∘ wallSig)
     (by show x 3 = x 5 + x 4 - x 0; rw [hP]; abel) hC hR
@@ -579,13 +674,13 @@ theorem isRupert_ci_par (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
   rwa [e] at h
 
 /-- **The `C ∥ I` stratum from the SAT-level facts**: `KD0435 = KD0534 = 0` and `C:36 = 0`, outside the image
-of `R₃ ∪ R₄`. -/
+of `R₄'`. -/
 theorem isRupert_parCI (F : S0xFac 9 s0x_S24 x)
     (hD : det3 (x 0 - x 4) (x 3 - x 5) (F.N 3) = 0 ∧ det3 (x 0 - x 5) (x 3 - x 4) (F.N 3) = 0)
     (hCI : ⟪F.N 2, x 3 - x 6⟫ = 0)
     (hR : ¬ (⟪x 4 - x 0, x 6 - x 3⟫ = 0 ∧ ⟪x 4 - x 0, x 2 - x 0⟫ = 0 ∧ 0 ≤ ⟪x 2 - x 0, x 6 - x 3⟫ ∧
-      ⟪x 6 - x 0, x 5 - x 0⟫ = 0 ∧ ⟪x 5 - x 0, x 5 - x 0⟫ ≤ ⟪x 2 - x 0, x 5 - x 0⟫ ∧
-      (0 < ⟪x 3 - x 2, x 6 - x 0⟫ ∨ ⟪x 2 - x 0, x 5 - x 0⟫ = ⟪x 5 - x 0, x 5 - x 0⟫))) :
+      ⟪x 6 - x 0, x 5 - x 0⟫ = 0 ∧ ⟪x 2 - x 0, x 5 - x 0⟫ = ⟪x 5 - x 0, x 5 - x 0⟫ ∧
+      ⟪x 3 - x 2, x 6 - x 0⟫ ≤ 0)) :
     IsRupert (univ.image x) :=
   isRupert_ci_par F (par_of_KD F hD)
     (by rw [show x 6 - x 3 = -(x 3 - x 6) by abel, inner_neg_right, hCI, neg_zero]) hR
