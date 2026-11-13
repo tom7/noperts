@@ -6,7 +6,7 @@ public import SeptopertFamily.Geometry
 /-!
 # Rupert passages from a view direction
 
-The certificate form of the shell (nopert229 `islandmap/bnd/shellcert4.cc`): a view `v` (`ViewOk v`: not a
+The certificate form of the shell (written by an external C++ certificate generator): a view `v` (`ViewOk v`: not a
 nonpositive multiple of `e_z`), an inner
 rotation `Q` and a translation `t`; every inner vertex `w = Q x + t` lies, seen along `v`, strictly inside a
 triangle of outer vertices, i.e. three triple products `v · ((b − w) × (c − w))` are positive. The outer rotation

@@ -7,7 +7,7 @@ each valid one, instantiates `SeptopertShell.SlabData.isRupert_of_check`: every 
 Usage:
   checkSeptopertShellSlab FILE...
 
-Each FILE is the untrusted data written by nopert229 `islandmap/bnd/shellcert4.cc` (environment `SC_LEAN=FILE`): one
+Each FILE is the untrusted data written by an external C++ certificate generator: one
 item per line (`box`, the polynomials `s y z v0 v1 v2 c0 c1 c2 t0 t1`, `N0`, `m0`, `tri`, `view`, then 22 `cond` lines:
 the view condition, then the triangle conditions of the inner vertices 0..6, each `m dc tree`, the tree in preorder
 with `S dim point` and `L`).

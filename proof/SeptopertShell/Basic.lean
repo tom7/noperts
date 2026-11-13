@@ -16,7 +16,7 @@ parameters `p = (P/A, C/A, E/A) ∈ ℝ³`, and for them the representative with
 
 where `(s, y, z) = (p 0, p 1, p 2)`. In these coordinates the *Septopert island* is the region of shapes
 without a Rupert passage around the Septopert Classic, `(1268289, 426431, 376317, −279863)`; numerically
-(nopert229, `notes/SEPTOPERT-ISLAND.md`) it is a curved tetrahedron bounded by the cube-corner wall `s = 1/3`, the
+(from external numerics) it is a curved tetrahedron bounded by the cube-corner wall `s = 1/3`, the
 exact-Triforce plane `y − z = 1/2`, two curved local-passage faces and a facet cut by a global passage family.
 -/
 

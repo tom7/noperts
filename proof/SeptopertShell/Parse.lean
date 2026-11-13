@@ -5,7 +5,7 @@ public import SeptopertShell.ClosurePar
 /-!
 # Parsing the shell certificate
 
-The certificate data is untrusted text (written by nopert229 `islandmap/bnd/closure.py --lean`); these computable
+The certificate data is untrusted text (written by an external certificate generator); these computable
 parsers turn it into `ClosureData` (`parseShell`) or one `SlabData` (`parseSlab`). Nothing here needs to be correct for
 soundness: the theorems only use `ClosureData.check` on whatever the parser produced. Format: `slabdata K` blocks (one
 slab each: `box`, the polynomials `s y z v0 v1 v2 c0 c1 c2 t0 t1`, `N0`, `m0`, `tri`, `view`, 22 `cond` lines

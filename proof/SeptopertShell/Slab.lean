@@ -9,7 +9,7 @@ public import Cayley
 /-!
 # Slab certificates
 
-A computable checker for one slab of the shell (nopert229 `islandmap/bnd/shellcert4.cc`): all data are rational
+A computable checker for one slab of the shell (its data come from an external C++ certificate generator): all data are rational
 polynomials in `(x₀, x₁, x₂)` (a box `|x₀| ≤ H₀, |x₁| ≤ H₁, D₀ ≤ x₂ ≤ D₁`), and the soundness theorem
 `SlabData.isRupert_of_check` says that if `check` returns `true` then the Septopert-family shape
 `(s, y, z)(x)` is Rupert for every `x` in the box.

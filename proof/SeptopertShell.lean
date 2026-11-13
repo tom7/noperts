@@ -19,7 +19,7 @@ such that every shape in `W` is Rupert, and every continuous path from the Septo
 outside meets `W`: the island of shapes around the Classic without a passage is enclosed by certified
 Rupert shapes.
 
-**Proof** (numerics and certificate generation: nopert229, `out/bottleneck/famcensus/islandmap/`). The entry point,
+**Proof** (numerics and certificate generation: an external C++ certificate generator whose output is untrusted and checked here). The entry point,
 with a plain-language description of the result and of what is trusted, is `SeptopertShellNative.lean`.
 
 1. *Faces and charts.* The island is bounded by five surfaces: the cube-corner wall `s = 1/3`, the exact
@@ -44,8 +44,8 @@ box per face, the slanted face in two) and the closure; integer condition polyno
 trees with Bernstein leaves (`SeptopertShell.Bern`) where the centred form would need deep trees; 8 s; it prints
 "instantiated: IslandEnclosed"). `SeptopertShellNative.lean` proves `SeptopertShell.islandEnclosed : IslandEnclosed`
 from the same certificate by `native_decide` (about 75 s of `lake build`; standard axioms plus `native_decide`'s).
-The data is untrusted and regenerable: nopert229 `out/bottleneck/famcensus/islandmap/bnd/repro.sh` (witness
-fits with the C++ polish, exact C++ certificates with centred and Bernstein bounds, closure.py --lean).
+The data is untrusted and regenerable: the external generator pipeline (witness
+fits with a C++ polish, exact C++ certificates with centred and Bernstein bounds, export to Lean text).
 -/
 
 @[expose] public section
