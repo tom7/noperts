@@ -539,11 +539,6 @@ lemma Par.dep_eq {r B : ℝ} (P : F.Par r B) (q : C3) {i j : Fin 7}
   have : F.S.hp * F.dep q i = F.S.hp * F.dep q j := by rw [a, b, h]
   exact mul_left_cancel₀ hp.ne' this
 
-/-- Segment view `x j - x i = fvC q` from the frame coordinates of the endpoints. -/
-lemma seg_vec (i j : Fin 7) (q : C3) (hq : q = (F.toFrame7.ptC j).sub (F.toFrame7.ptC i)) :
-    x j - x i = F.toFrame7.fvC q := by
-  rw [hq]; exact F.toFrame7.x_sub j i
-
 end Frame20
 end Minimality.CaseC20
 

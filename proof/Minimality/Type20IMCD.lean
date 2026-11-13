@@ -912,7 +912,7 @@ theorem imc_L10b (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFac
   have ht := F.one_sub_tm_pos; have ht' := F.one_sub_tp_pos
   have tp := F.S.tp_pos; have tm := F.S.tm_pos; have hm := F.S.hm_pos; have hp := F.S.hp_pos
   have sm := F.S.sm_pos; have lroof := F.lroof_pos
-  have hq := F.seg_vec 1 6 ⟨-1, 1, 0⟩ (by rw [F.ptC_1, F.ptC_6]; simp [C3.sub])
+  have hq := IVT.seg_vec F 1 6 ⟨-1, 1, 0⟩ (by rw [F.ptC_1, F.ptC_6]; simp [C3.sub])
   refine h20s_I_s16 FF hx ?_ ?_ ?_
   · refine (F.nrm_B FF).seg_pos hq ?_
     simp only; linarith

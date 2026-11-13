@@ -32,9 +32,6 @@ theorem w1_inj : Function.Injective w1_c := by decide
 theorem w2_cyc : S0xCycOK h20s_S w2_c w2_pat := by decide
 theorem w2_inj : Function.Injective w2_c := by decide
 
-lemma eq_pos {a b : ℝ} (h : a = b) (hb : 0 < b) : 0 < a := h ▸ hb
-lemma eq_neg {a b : ℝ} (h : a = b) (hb : b < 0) : a < 0 := h ▸ hb
-
 /-- The facing values at the line view `qL = (1-sm, 0, km)`. -/
 lemma qL_nf (S : Shape20) :
     nf S ⟨1 - S.sm, 0, S.km⟩ 0 = -S.sm * (S.km*(1-S.tm) - S.hm*(1-S.sm)) ∧

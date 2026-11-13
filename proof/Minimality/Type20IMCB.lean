@@ -36,7 +36,7 @@ theorem imc_L1 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
   have tp := F.S.tp_pos; have tm := F.S.tm_pos; have hm := F.S.hm_pos; have hp := F.S.hp_pos
   have km := F.S.km_pos; have sm := F.S.sm_pos; have kp := F.S.kp_pos
   have roof := F.roof_pos; have lroof := F.lroof_pos
-  have hq := F.seg_vec 3 5 ⟨-F.S.tm, 0, F.S.hm⟩ (by rw [F.ptC_3, F.ptC_5]; simp [C3.sub])
+  have hq := IVT.seg_vec F 3 5 ⟨-F.S.tm, 0, F.S.hm⟩ (by rw [F.ptC_3, F.ptC_5]; simp [C3.sub])
   refine h20s_I_s35 FF hx ?_ ?_ ?_ ?_
   · exact (F.nrm_E FF).seg_pos hq (by simp only; linarith)
   · refine (F.nrm_F FF).seg_pos hq ?_
@@ -97,7 +97,7 @@ theorem imc_L2 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
   have ht' := F.one_sub_tp_pos
   have tp := F.S.tp_pos; have tm := F.S.tm_pos; have hm := F.S.hm_pos; have hp := F.S.hp_pos
   have km := F.S.km_pos; have sm := F.S.sm_pos; have kp := F.S.kp_pos
-  have hq := F.seg_vec 0 1 ⟨1 - F.S.tp, 0, -F.S.hp⟩ (by rw [F.ptC_0, F.ptC_1]; simp [C3.sub])
+  have hq := IVT.seg_vec F 0 1 ⟨1 - F.S.tp, 0, -F.S.hp⟩ (by rw [F.ptC_0, F.ptC_1]; simp [C3.sub])
   refine h20s_I_s01 FF hx ?_ ?_ ?_
   · refine (F.nrm_D FF).seg_pos hq ?_
     simp only
@@ -744,7 +744,7 @@ theorem imc_L10 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFace
     exact pos_of_mul_pos' sm this
   have hD := F.S.alg_D16 hA hK hV hVM
   have hB16 := F.S.alg_B16 hD hE0 hLG
-  have hq := F.seg_vec 1 6 ⟨-1, 1, 0⟩ (by rw [F.ptC_1, F.ptC_6]; simp [C3.sub])
+  have hq := IVT.seg_vec F 1 6 ⟨-1, 1, 0⟩ (by rw [F.ptC_1, F.ptC_6]; simp [C3.sub])
   refine h20s_I_s16 FF hx ?_ ?_ ?_
   · refine (F.nrm_B FF).seg_pos hq ?_
     simp only; linarith
@@ -857,7 +857,7 @@ theorem imc_L4 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
     exact pos_of_mul_pos' sm this
   have hR1 : 0 < ((1-F.S.sp)*(F.S.hm*F.S.tp-F.S.hp*(1-F.S.tm))+(1-F.S.tm)*F.S.kp) := by
     have := mul_pos hs hE0; have := mul_pos ht kp; linarith
-  have hq := F.seg_vec 1 3 ⟨-(1-F.S.tm), 0, -F.S.hm⟩ (by rw [F.ptC_1, F.ptC_3]; simp [C3.sub])
+  have hq := IVT.seg_vec F 1 3 ⟨-(1-F.S.tm), 0, -F.S.hm⟩ (by rw [F.ptC_1, F.ptC_3]; simp [C3.sub])
   refine h20s_I_s13 FF hx ?_ ?_ ?_ ?_
   · refine (F.nrm_B FF).seg_neg hq ?_
     simp only
@@ -920,7 +920,7 @@ theorem imc_L5 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
   have hW : 0 < ((F.S.km*(1-F.S.tm)-F.S.hm*(1-F.S.sm*F.S.tp)-F.S.hp*F.S.sm*(1-F.S.tm))+F.S.hp*F.S.sm*(1-F.S.tm)) := by
     have : 0 < F.S.hp * F.S.sm * (1-F.S.tm) := mul_pos (mul_pos hp sm) ht
     linarith
-  have hq := F.seg_vec 5 1 ⟨1, 0, 0⟩ (by rw [F.ptC_5, F.ptC_1]; simp [C3.sub])
+  have hq := IVT.seg_vec F 5 1 ⟨1, 0, 0⟩ (by rw [F.ptC_5, F.ptC_1]; simp [C3.sub])
   refine h20s_I_s15 FF hx ?_ ?_
   · refine (F.nrm_F FF).seg_neg hq ?_
     simp only; linarith

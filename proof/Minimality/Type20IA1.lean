@@ -159,13 +159,6 @@ namespace IAT
 open IVT
 variable {x : Fin 7 → ℝ³} (F : Frame20 x)
 
-lemma lp_pos {a b : ℝ} (h : 0 < a) : h21b_LP a b := Or.inl h
-lemma lp_zero {a b : ℝ} (h : a = 0) (h2 : 0 < b) : h21b_LP a b := Or.inr ⟨h, h2⟩
-lemma lpn_pos {a b : ℝ} (h : a < 0) : h21b_LP (-a) (-b) := Or.inl (neg_pos.2 h)
-lemma lpn_zero {a b : ℝ} (h : a = 0) (h2 : b < 0) : h21b_LP (-a) (-b) :=
-  Or.inr ⟨by rw [h, neg_zero], neg_pos.2 h2⟩
-lemma eq_pos {a b : ℝ} (h : a = b) (hb : 0 < b) : 0 < a := h ▸ hb
-lemma eq_neg {a b : ℝ} (h : a = b) (hb : b < 0) : a < 0 := h ▸ hb
 
 /-- Normal form: `hm = tm`, `hp = 1 - tp`. -/
 def NF (S : Shape20) : Prop := S.hm = S.tm ∧ S.hp = 1 - S.tp

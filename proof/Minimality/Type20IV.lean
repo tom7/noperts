@@ -656,6 +656,8 @@ lemma lp_zero {a b : ℝ} (h : a = 0) (h2 : 0 < b) : h21b_LP a b := Or.inr ⟨h,
 lemma lpn_pos {a b : ℝ} (h : a < 0) : h21b_LP (-a) (-b) := Or.inl (neg_pos.2 h)
 lemma lpn_zero {a b : ℝ} (h : a = 0) (h2 : b < 0) : h21b_LP (-a) (-b) :=
   Or.inr ⟨by rw [h, neg_zero], neg_pos.2 h2⟩
+lemma eq_pos {a b : ℝ} (h : a = b) (hb : 0 < b) : 0 < a := h ▸ hb
+lemma eq_neg {a b : ℝ} (h : a = b) (hb : b < 0) : a < 0 := h ▸ hb
 
 def ivt_K1_pat : Fin 8 → Bool := ![false, true, false, false, false, true, false, true]
 def ivt_K1_c : ZMod 4 → Fin 7 := ![0, 5, 4, 6]
