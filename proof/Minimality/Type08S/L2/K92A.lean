@@ -30,7 +30,7 @@ noncomputable def k92Bc (u v m x y : ℝ) : ℝ := k92Nbv u v m x y/(v*(x+y))
 /-- Rin X = <X, (-Bv) A + Av B> -/
 noncomputable def k92Rin (u v m x y : ℝ) (x1 x2 x3 : ℝ) : ℝ := k92G u v x y x1 x2 x3 (-k92Bc u v m x y) (k92Ac u v m x y) 0
 
-theorem k92_Av (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
+theorem k92_Av (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (_hP : k92Pm u v m x y ≠ 0) :
     k92G u v x y 1 0 0 (-(u+1)) ((v+1)*m) (1+u*m-(v+1)) = k92Ac u v m x y := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
@@ -39,7 +39,7 @@ theorem k92_Av (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k9
   simp only [k92Wn, k92Pm]
   ring
 
-theorem k92_Bv (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
+theorem k92_Bv (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (_hP : k92Pm u v m x y ≠ 0) :
     k92G u v x y 0 1 0 (-(u+1)) ((v+1)*m) (1+u*m-(v+1)) = k92Bc u v m x y := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
@@ -48,7 +48,7 @@ theorem k92_Bv (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k9
   simp only [k92Wn, k92Nbv]
   ring
 
-theorem k92_F1 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
+theorem k92_F1 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (_hP : k92Pm u v m x y ≠ 0) :
     k92Rin u v m x y u (v+1) 0 = -((u+v+1)*(m*u^2*v*x^2 + m*u^2*v*x*y + m*u^2*x^2 + 2*m*u^2*x*y + m*u^2*y^2 + m*u*v^2*x^2 + m*u*v^2*x*y + 2*m*u*v*x^2 + 3*m*u*v*x*y + m*u*v*y^2 + m*u*x^2 + 2*m*u*x*y + m*u*y^2 + u*x*y + u*y^2 + v^3*x^2*y + 2*v^2*x^2*y + v*x^2*y + v*x*y + v*y^2 + x*y + y^2)/k92Wn u v x y) := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
@@ -57,7 +57,7 @@ theorem k92_F1 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k9
   simp only [k92Wn, k92Pm, k92Nbv]
   ring
 
-theorem k92_F2 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
+theorem k92_F2 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (_hP : k92Pm u v m x y ≠ 0) :
     k92Rin u v m x y (u+1) v 0 = -((u+v+1)*(m*u^2*v*x^2 + m*u^2*v*x*y + m*u^2*x*y + m*u^2*y^2 + m*u*v^2*x^2 + m*u*v^2*x*y + 2*m*u*v*x^2 - m*u*v*x*y^2 + 3*m*u*v*x*y + m*u*v*y^2 + 2*m*u*x*y + 2*m*u*y^2 + m*v^2*x^2*y + m*v^2*x^2 + m*v^2*x*y + m*v*x^2*y + m*v*x^2 + 2*m*v*x*y + m*v*y^2 + m*x*y + m*y^2 + v^3*x^2*y + v^2*x^2*y + v^2*x*y^2)/k92Wn u v x y) := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
@@ -66,7 +66,7 @@ theorem k92_F2 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k9
   simp only [k92Wn, k92Pm, k92Nbv]
   ring
 
-theorem k92_zA (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
+theorem k92_zA (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (_hP : k92Pm u v m x y ≠ 0) :
     k92Rin u v m x y 1 0 0 = -((m*u^2*x*y + m*u^2*y^2 + m*u*v^2*x^2 - m*u*v^2*x*y^2 + m*u*v^2*x*y + m*u*v*x^2 - m*u*v*x*y^2 + 3*m*u*v*x*y + 2*m*u*v*y^2 + 2*m*u*x*y + 2*m*u*y^2 + m*v^3*x^2*y + m*v^3*x^2 + m*v^3*x*y + 2*m*v^2*x^2*y + 2*m*v^2*x^2 + 3*m*v^2*x*y + m*v^2*y^2 + m*v*x^2*y + m*v*x^2 + 3*m*v*x*y + 2*m*v*y^2 + m*x*y + m*y^2 - u*v*x*y - u*v*y^2 + v^3*x*y^2 + v^2*x*y^2 - v^2*x*y - v^2*y^2 - v*x*y - v*y^2)/k92Wn u v x y) := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
@@ -75,7 +75,7 @@ theorem k92_zA (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k9
   simp only [k92Wn, k92Pm, k92Nbv]
   ring
 
-theorem k92_zB (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
+theorem k92_zB (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (_hP : k92Pm u v m x y ≠ 0) :
     k92Rin u v m x y 0 1 0 = -((m*u^3*x^2 + m*u^3*x*y + m*u^2*v*x^2 + m*u^2*v*x*y^2 + m*u^2*v*x*y + 2*m*u^2*x^2 + 2*m*u^2*x*y - m*u*v^2*x^2*y - m*u*v*x^2*y + m*u*v*x^2 + m*u*v*x*y + m*u*x^2 + m*u*x*y + u^2*x*y + u^2*y^2 + u*v^2*x^2*y - u*v^2*x*y^2 + u*v*x^2*y + u*v*x*y + u*v*y^2 + 2*u*x*y + 2*u*y^2 + v^3*x^2*y + 2*v^2*x^2*y + v*x^2*y + v*x*y + v*y^2 + x*y + y^2)/k92Wn u v x y) := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
@@ -84,7 +84,7 @@ theorem k92_zB (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k9
   simp only [k92Wn, k92Pm, k92Nbv]
   ring
 
-theorem k92_zab (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
+theorem k92_zab (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (_hP : k92Pm u v m x y ≠ 0) :
     k92Rin u v m x y (-u) 0 (-(v+1)) = (u+v+1)*(m*k92l u v x y - y)*k92K u v x y/k92Wn u v x y := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
@@ -93,7 +93,7 @@ theorem k92_zab (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k
   simp only [k92Wn, k92Pm, k92K, k92l, k92Nbv]
   ring
 
-theorem k92_DP (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
+theorem k92_DP (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (_hP : k92Pm u v m x y ≠ 0) :
     k92G u v x y u 0 (v+1) 1 0 0 = (u+v+1)*k92K u v x y/k92Wn u v x y := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
@@ -102,7 +102,7 @@ theorem k92_DP (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k9
   simp only [k92Wn, k92K]
   ring
 
-theorem k92_PB (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
+theorem k92_PB (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (_hP : k92Pm u v m x y ≠ 0) :
     -u*k92Ac u v m x y - (v+1)*k92Bc u v m x y = (v^2*y*k92l u v x y*k92K u v x y - k92Wn u v x y*k92TB u v x y*m)/(v*(x+y)*k92Wn u v x y) := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
@@ -111,7 +111,7 @@ theorem k92_PB (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k9
   simp only [k92Wn, k92Pm, k92K, k92l, k92Nbv, k92TB]
   ring
 
-theorem k92_PC (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
+theorem k92_PC (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (_hP : k92Pm u v m x y ≠ 0) :
     (u+1)*k92Ac u v m x y + v*k92Bc u v m x y = (-v*y*k92Q u v x y + v*x*k92l u v x y*k92Wn u v x y*m)/((x+y)*k92Wn u v x y) := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
@@ -120,7 +120,7 @@ theorem k92_PC (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k9
   simp only [k92Wn, k92Pm, k92l, k92Nbv, k92Q]
   ring
 
-theorem k92_Q1 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
+theorem k92_Q1 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (_hP : k92Pm u v m x y ≠ 0) :
     k92G u v x y (u+1) (-((v+1)*m)) (v+1-(1+u*m)) 0 0 1 = (v^2*y^2 - m*k92Wn u v x y)/(v*(x+y)) := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
@@ -129,7 +129,7 @@ theorem k92_Q1 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k9
   simp only [k92Wn]
   ring
 
-theorem k92_X3 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
+theorem k92_X3 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (_hP : k92Pm u v m x y ≠ 0) :
     k92G u v x y (-u) (-(v+1)) 0 (-u) 0 (-(v+1)) = k92K u v x y*k92M3 u v x y/(v*(x+y)*k92Wn u v x y) := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
@@ -138,7 +138,7 @@ theorem k92_X3 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k9
   simp only [k92Wn, k92K, k92M3]
   ring
 
-theorem k92_X4 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
+theorem k92_X4 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (_hP : k92Pm u v m x y ≠ 0) :
     k92G u v x y u (v+1) 0 (u+1) 0 v = v*y*k92l u v x y*k92K u v x y/((x+y)*k92Wn u v x y) := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'
@@ -147,7 +147,7 @@ theorem k92_X4 (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k9
   simp only [k92Wn, k92K, k92l]
   ring
 
-theorem k92_H (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (hP : k92Pm u v m x y ≠ 0) :
+theorem k92_H (u v m x y : ℝ) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y) (hW : k92Wn u v x y ≠ 0) (_hP : k92Pm u v m x y ≠ 0) :
     k92G u v x y (u+1) (v+1-(v+1)*m) (-(1+u*m)) (u+1) 0 v = v*y*k92l u v x y*k92Pm u v m x y/((x+y)*k92Wn u v x y) := by
   have hxy : x + y ≠ 0 := by positivity
   have hv' : v ≠ 0 := hv.ne'

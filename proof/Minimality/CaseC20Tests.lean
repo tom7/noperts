@@ -247,7 +247,7 @@ def w_vTri : C3 := ⟨-3*S.tp, 1, -3*S.hp⟩
 
 end Shape20
 
-theorem vTri_cyc (S : Shape20) (hW : 0 < -S.hp*S.sp + S.hp - S.kp) (hQ : 0 < S.hm*S.sp*S.tp - S.hm*S.tp + S.hp*S.sp*S.tm - S.hp*S.sp - S.hp*S.tm + S.hp + S.kp*S.tm - S.kp) (hD : 0 < S.hp*S.sm*S.sp - S.hp*S.sm - S.hp*S.sp + S.hp + S.km*S.sp*S.tp - S.km*S.tp + S.kp*S.sm - S.kp) :
+theorem vTri_cyc (S : Shape20) (_hW : 0 < -S.hp*S.sp + S.hp - S.kp) (_hQ : 0 < S.hm*S.sp*S.tp - S.hm*S.tp + S.hp*S.sp*S.tm - S.hp*S.sp - S.hp*S.tm + S.hp + S.kp*S.tm - S.kp) (_hD : 0 < S.hp*S.sm*S.sp - S.hp*S.sm - S.hp*S.sp + S.hp + S.km*S.sp*S.tp - S.km*S.tp + S.kp*S.sm - S.kp) :
     Cyc3 (-1) S.u_vTri S.w_vTri (⟨S.tp, 0, S.hp⟩ : C3) ⟨0, 1, 0⟩ ⟨1, 0, 0⟩ := by
   have htp := S.tp_pos; have htm := S.tm_pos; have hsp := S.sp_pos; have hsm := S.sm_pos
   have hhp := S.hp_pos; have hhm := S.hm_pos; have hkp := S.kp_pos; have hkm := S.km_pos
@@ -261,7 +261,7 @@ theorem vTri_cyc (S : Shape20) (hW : 0 < -S.hp*S.sp + S.hp - S.kp) (hQ : 0 < S.h
     (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_vTri, Shape20.w_vTri]; left; linarith [rp]),
     (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_vTri, Shape20.w_vTri]; left; linarith [rp])⟩
 
-theorem vTri_rest4 (S : Shape20) (hW : 0 < -S.hp*S.sp + S.hp - S.kp) (hQ : 0 < S.hm*S.sp*S.tp - S.hm*S.tp + S.hp*S.sp*S.tm - S.hp*S.sp - S.hp*S.tm + S.hp + S.kp*S.tm - S.kp) (hD : 0 < S.hp*S.sm*S.sp - S.hp*S.sm - S.hp*S.sp + S.hp + S.km*S.sp*S.tp - S.km*S.tp + S.kp*S.sm - S.kp) :
+theorem vTri_rest4 (S : Shape20) (_hW : 0 < -S.hp*S.sp + S.hp - S.kp) (_hQ : 0 < S.hm*S.sp*S.tp - S.hm*S.tp + S.hp*S.sp*S.tm - S.hp*S.sp - S.hp*S.tm + S.hp + S.kp*S.tm - S.kp) (hD : 0 < S.hp*S.sm*S.sp - S.hp*S.sm - S.hp*S.sp + S.hp + S.km*S.sp*S.tp - S.km*S.tp + S.kp*S.sm - S.kp) :
     Rest3 (-1) S.u_vTri S.w_vTri (⟨S.tp, 0, S.hp⟩ : C3) ⟨0, 1, 0⟩ ⟨1, 0, 0⟩ ⟨0, S.sm, -S.km⟩ := by
   have htp := S.tp_pos; have htm := S.tm_pos; have hsp := S.sp_pos; have hsm := S.sm_pos
   have hhp := S.hp_pos; have hhm := S.hm_pos; have hkp := S.kp_pos; have hkm := S.km_pos
@@ -275,7 +275,7 @@ theorem vTri_rest4 (S : Shape20) (hW : 0 < -S.hp*S.sp + S.hp - S.kp) (hQ : 0 < S
     (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_vTri, Shape20.w_vTri]; left; linarith [hD]),
     (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_vTri, Shape20.w_vTri]; left; linarith [(mul_pos S.sm_pos rp)])⟩
 
-theorem vTri_rest5 (S : Shape20) (hW : 0 < -S.hp*S.sp + S.hp - S.kp) (hQ : 0 < S.hm*S.sp*S.tp - S.hm*S.tp + S.hp*S.sp*S.tm - S.hp*S.sp - S.hp*S.tm + S.hp + S.kp*S.tm - S.kp) (hD : 0 < S.hp*S.sm*S.sp - S.hp*S.sm - S.hp*S.sp + S.hp + S.km*S.sp*S.tp - S.km*S.tp + S.kp*S.sm - S.kp) :
+theorem vTri_rest5 (S : Shape20) (hW : 0 < -S.hp*S.sp + S.hp - S.kp) (_hQ : 0 < S.hm*S.sp*S.tp - S.hm*S.tp + S.hp*S.sp*S.tm - S.hp*S.sp - S.hp*S.tm + S.hp + S.kp*S.tm - S.kp) (_hD : 0 < S.hp*S.sm*S.sp - S.hp*S.sm - S.hp*S.sp + S.hp + S.km*S.sp*S.tp - S.km*S.tp + S.kp*S.sm - S.kp) :
     Rest3 (-1) S.u_vTri S.w_vTri (⟨S.tp, 0, S.hp⟩ : C3) ⟨0, 1, 0⟩ ⟨1, 0, 0⟩ ⟨0, 0, 0⟩ := by
   have htp := S.tp_pos; have htm := S.tm_pos; have hsp := S.sp_pos; have hsm := S.sm_pos
   have hhp := S.hp_pos; have hhm := S.hm_pos; have hkp := S.kp_pos; have hkm := S.km_pos
@@ -303,7 +303,7 @@ theorem vTri_rest3 (S : Shape20) (hW : 0 < -S.hp*S.sp + S.hp - S.kp) (hQ : 0 < S
     (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_vTri, Shape20.w_vTri]; left; linarith [hQ]),
     (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_vTri, Shape20.w_vTri]; right; refine ⟨by ring, ?_⟩; linarith [(mul_pos htp1 S.hm_pos), (mul_pos htm1 S.hp_pos)])⟩
 
-theorem vTri_rest2 (S : Shape20) (hW : 0 < -S.hp*S.sp + S.hp - S.kp) (hQ : 0 < S.hm*S.sp*S.tp - S.hm*S.tp + S.hp*S.sp*S.tm - S.hp*S.sp - S.hp*S.tm + S.hp + S.kp*S.tm - S.kp) (hD : 0 < S.hp*S.sm*S.sp - S.hp*S.sm - S.hp*S.sp + S.hp + S.km*S.sp*S.tp - S.km*S.tp + S.kp*S.sm - S.kp) :
+theorem vTri_rest2 (S : Shape20) (_hW : 0 < -S.hp*S.sp + S.hp - S.kp) (_hQ : 0 < S.hm*S.sp*S.tp - S.hm*S.tp + S.hp*S.sp*S.tm - S.hp*S.sp - S.hp*S.tm + S.hp + S.kp*S.tm - S.kp) (_hD : 0 < S.hp*S.sm*S.sp - S.hp*S.sm - S.hp*S.sp + S.hp + S.km*S.sp*S.tp - S.km*S.tp + S.kp*S.sm - S.kp) :
     Rest3 (-1) S.u_vTri S.w_vTri (⟨S.tp, 0, S.hp⟩ : C3) ⟨0, 1, 0⟩ ⟨1, 0, 0⟩ ⟨0, S.sp, S.kp⟩ := by
   have htp := S.tp_pos; have htm := S.tm_pos; have hsp := S.sp_pos; have hsm := S.sm_pos
   have hhp := S.hp_pos; have hhm := S.hm_pos; have hkp := S.kp_pos; have hkm := S.km_pos
@@ -464,7 +464,7 @@ def w_tB (_ : Shape20) : C3 := ⟨0, 1, 0⟩
 
 end Shape20
 
-theorem tB_cyc (S : Shape20) (hB2 : 0 < -S.hm*S.tp - S.hp*S.tm + S.hp) (hB3 : 0 < -S.hp*S.sm + S.hp - S.km*S.tp) :
+theorem tB_cyc (S : Shape20) (_hB2 : 0 < -S.hm*S.tp - S.hp*S.tm + S.hp) (_hB3 : 0 < -S.hp*S.sm + S.hp - S.km*S.tp) :
     Cyc4 1 S.u_tB S.w_tB (⟨S.tp, 0, S.hp⟩ : C3) ⟨1, 0, 0⟩ ⟨0, 1, 0⟩ ⟨0, S.sp, S.kp⟩ := by
   have htp := S.tp_pos; have htm := S.tm_pos; have hsp := S.sp_pos; have hsm := S.sm_pos
   have hhp := S.hp_pos; have hhm := S.hm_pos; have hkp := S.kp_pos; have hkm := S.km_pos
@@ -498,7 +498,7 @@ theorem tB_rest4 (S : Shape20) (hB3 : 0 < -S.hp*S.sm + S.hp - S.km*S.tp) :
     (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_tB, Shape20.w_tB]; left; linarith [(mul_pos (mul_pos S.tp_pos hsp1) S.km_pos), (mul_pos (mul_pos S.tp_pos hsm1) S.kp_pos)]),
     (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_tB, Shape20.w_tB]; left; linarith [(mul_pos (mul_pos S.tp_pos S.sp_pos) S.km_pos), (mul_pos (mul_pos S.tp_pos S.sm_pos) S.kp_pos)])⟩
 
-theorem tB_rest5 (S : Shape20) (hB2 : 0 < -S.hm*S.tp - S.hp*S.tm + S.hp) (hB3 : 0 < -S.hp*S.sm + S.hp - S.km*S.tp) :
+theorem tB_rest5 (S : Shape20) (_hB2 : 0 < -S.hm*S.tp - S.hp*S.tm + S.hp) (_hB3 : 0 < -S.hp*S.sm + S.hp - S.km*S.tp) :
     Rest4 1 S.u_tB S.w_tB (⟨S.tp, 0, S.hp⟩ : C3) ⟨1, 0, 0⟩ ⟨0, 1, 0⟩ ⟨0, S.sp, S.kp⟩ ⟨0, 0, 0⟩ := by
   have htp := S.tp_pos; have htm := S.tm_pos; have hsp := S.sp_pos; have hsm := S.sm_pos
   have hhp := S.hp_pos; have hhm := S.hm_pos; have hkp := S.kp_pos; have hkm := S.km_pos
@@ -663,7 +663,7 @@ def w_yY (_ : Shape20) : C3 := ⟨0, 1, 0⟩
 
 end Shape20
 
-theorem yY_cyc (S : Shape20) (hA2 : 0 < S.hm*S.sm*S.tp + S.hp*S.sm*S.tm - S.km*S.tm) (hA3 : 0 < -S.hm*S.sm*S.tp + S.hm - S.hp*S.sm*S.tm + S.hp*S.sm + S.km*S.tm - S.km) :
+theorem yY_cyc (S : Shape20) (_hA2 : 0 < S.hm*S.sm*S.tp + S.hp*S.sm*S.tm - S.km*S.tm) (_hA3 : 0 < -S.hm*S.sm*S.tp + S.hm - S.hp*S.sm*S.tm + S.hp*S.sm + S.km*S.tm - S.km) :
     Cyc5 1 S.u_yY S.w_yY (⟨1, 0, 0⟩ : C3) ⟨0, 1, 0⟩ ⟨0, S.sp, S.kp⟩ ⟨0, 0, 0⟩ ⟨S.tm, 0, -S.hm⟩ := by
   have htp := S.tp_pos; have htm := S.tm_pos; have hsp := S.sp_pos; have hsm := S.sm_pos
   have hhp := S.hp_pos; have hhm := S.hm_pos; have hkp := S.kp_pos; have hkm := S.km_pos
@@ -689,7 +689,7 @@ theorem yY_cyc (S : Shape20) (hA2 : 0 < S.hm*S.sm*S.tp + S.hp*S.sm*S.tm - S.km*S
     (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_yY, Shape20.w_yY]; left; linarith [(mul_pos htp1 S.hm_pos), (mul_pos htm1 S.kp_pos), (mul_pos (mul_pos S.tp_pos hsp1) S.hm_pos), (mul_pos (mul_pos htm1 S.sp_pos) S.hp_pos)]),
     (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_yY, Shape20.w_yY]; left; linarith [S.hm_pos])⟩
 
-theorem yY_rest0 (S : Shape20) (hA2 : 0 < S.hm*S.sm*S.tp + S.hp*S.sm*S.tm - S.km*S.tm) (hA3 : 0 < -S.hm*S.sm*S.tp + S.hm - S.hp*S.sm*S.tm + S.hp*S.sm + S.km*S.tm - S.km) :
+theorem yY_rest0 (S : Shape20) (_hA2 : 0 < S.hm*S.sm*S.tp + S.hp*S.sm*S.tm - S.km*S.tm) (_hA3 : 0 < -S.hm*S.sm*S.tp + S.hm - S.hp*S.sm*S.tm + S.hp*S.sm + S.km*S.tm - S.km) :
     Rest5 1 S.u_yY S.w_yY (⟨1, 0, 0⟩ : C3) ⟨0, 1, 0⟩ ⟨0, S.sp, S.kp⟩ ⟨0, 0, 0⟩ ⟨S.tm, 0, -S.hm⟩ ⟨S.tp, 0, S.hp⟩ := by
   have htp := S.tp_pos; have htm := S.tm_pos; have hsp := S.sp_pos; have hsm := S.sm_pos
   have hhp := S.hp_pos; have hhm := S.hm_pos; have hkp := S.kp_pos; have hkm := S.km_pos
@@ -761,7 +761,7 @@ def w_yT2 (_ : Shape20) : C3 := ⟨0, -3, 0⟩
 
 end Shape20
 
-theorem yT2_cyc (S : Shape20) (hA2 : 0 < S.hm*S.sm*S.tp + S.hp*S.sm*S.tm - S.km*S.tm) (hA3 : 0 < -S.hm*S.sm*S.tp + S.hm - S.hp*S.sm*S.tm + S.hp*S.sm + S.km*S.tm - S.km) :
+theorem yT2_cyc (S : Shape20) (_hA2 : 0 < S.hm*S.sm*S.tp + S.hp*S.sm*S.tm - S.km*S.tm) (_hA3 : 0 < -S.hm*S.sm*S.tp + S.hm - S.hp*S.sm*S.tm + S.hp*S.sm + S.km*S.tm - S.km) :
     Cyc5 1 S.u_yT2 S.w_yT2 (⟨1, 0, 0⟩ : C3) ⟨S.tp, 0, S.hp⟩ ⟨0, S.sp, S.kp⟩ ⟨0, 0, 0⟩ ⟨S.tm, 0, -S.hm⟩ := by
   have htp := S.tp_pos; have htm := S.tm_pos; have hsp := S.sp_pos; have hsm := S.sm_pos
   have hhp := S.hp_pos; have hhm := S.hm_pos; have hkp := S.kp_pos; have hkm := S.km_pos
@@ -787,7 +787,7 @@ theorem yT2_cyc (S : Shape20) (hA2 : 0 < S.hm*S.sm*S.tp + S.hp*S.sm*S.tm - S.km*
     (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_yT2, Shape20.w_yT2]; left; linarith [(mul_pos htp1 S.hm_pos), (mul_pos htm1 S.kp_pos), (mul_pos (mul_pos S.tp_pos hsp1) S.hm_pos), (mul_pos (mul_pos htm1 S.sp_pos) S.hp_pos)]),
     (by simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_yT2, Shape20.w_yT2]; left; linarith [S.hm_pos])⟩
 
-theorem yT2_rest6 (S : Shape20) (hA2 : 0 < S.hm*S.sm*S.tp + S.hp*S.sm*S.tm - S.km*S.tm) (hA3 : 0 < -S.hm*S.sm*S.tp + S.hm - S.hp*S.sm*S.tm + S.hp*S.sm + S.km*S.tm - S.km) :
+theorem yT2_rest6 (S : Shape20) (_hA2 : 0 < S.hm*S.sm*S.tp + S.hp*S.sm*S.tm - S.km*S.tm) (_hA3 : 0 < -S.hm*S.sm*S.tp + S.hm - S.hp*S.sm*S.tm + S.hp*S.sm + S.km*S.tm - S.km) :
     Rest5 1 S.u_yT2 S.w_yT2 (⟨1, 0, 0⟩ : C3) ⟨S.tp, 0, S.hp⟩ ⟨0, S.sp, S.kp⟩ ⟨0, 0, 0⟩ ⟨S.tm, 0, -S.hm⟩ ⟨0, 1, 0⟩ := by
   have htp := S.tp_pos; have htm := S.tm_pos; have hsp := S.sp_pos; have hsm := S.sm_pos
   have hhp := S.hp_pos; have hhm := S.hm_pos; have hkp := S.kp_pos; have hkm := S.km_pos

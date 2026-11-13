@@ -633,7 +633,7 @@ theorem propH_t4_b {V : Finset ℝ³} {bP aP' fP rP gP wP aP : ℝ³}
     (Φa : hfΦ vb g u0 fG aP = ⟨s * b1, s * b2, za⟩)
     (hA : 0 < A) (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (ht1 : t < 1) (hzv : 0 ≤ zv)
     (hzw : zw < 0) (hza : za < (1 - s) * zw) (hza' : (1 - t) * zv < za') (hzz : zv ≤ za')
-    (hb2 : 0 < b2) (hbr : r2 < b2) (hb1 : 0 < b1) (hr2 : 0 < r2) (hr1 : A ≤ r1) (hr1b : b1 ≤ r1)
+    (hb2 : 0 < b2) (hbr : r2 < b2) (hb1 : 0 < b1) (hr2 : 0 < r2) (_hr1 : A ≤ r1) (_hr1b : b1 ≤ r1)
     (hq1 : crossYZ (t5aPts zv zw s t A b1 b2 za' za b1 b2 2) (t5aPts zv zw s t A b1 b2 za' za b1 b2 3)
       (t5aPts zv zw s t A b1 b2 za' za b1 b2 4) < 0)
     (hq2 : crossYZ (t5aPts zv zw s t A b1 b2 za' za b1 b2 3) (t5aPts zv zw s t A b1 b2 za' za b1 b2 4)
