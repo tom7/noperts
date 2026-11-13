@@ -32,6 +32,7 @@ public import Minimality.Type16SAT.FinalW16Y
 public import Minimality.Type16SAT.ResW16
 public import Minimality.Type16SAT.FinalLast16
 public import Minimality.Type16SAT.Exh16
+public import Minimality.Type24SAT.K24.Wire24
 public import Minimality.SilS0XD
 public import Minimality.Type20IMA
 public import Minimality.Type20IV
@@ -384,7 +385,9 @@ vertices (Theorem A, `facet_card_le_four_of_isNopert`), and that a 2-dimensional
 a facet (`Minimality.exists_facet_of_isExtreme`, `Minimality/FaceBridge.lean`), and the
 classification into the 29 types (`Minimality.exists_sevenType`, `Minimality/Classify.lean`: a
 sign-vector certificate checked in the kernel). Not formalized (`sorry`): type 24 inside
-`C̄ ∪ Σ_B` (it is proved outside, `not_type24_outside_Cbar_of_isNopert`); for type 29 (split by
+`C̄ ∪ Σ_B` (it is proved outside, `not_type24_outside_Cbar_of_isNopert`) and in `Minimality.T24.Resid24`:
+on the obtuse corner `OB1`, with a zero class bracket, or in the classes `mpppp`, `mpppm` (off it the sign-matrix
+SAT route closes it, `Minimality.T24.rupert_or_resid24`, `Minimality/Type24SAT/K24`); for type 29 (split by
 the class of its octahedron, `Minimality.type29_cap`, `Minimality.NF29.classes`) the class K1
 (K2 is closed, on the strata `Z1 ∪ σ(Z1)` by a metric case split and the Slide Lemma at a right
 dihedral, `NF29.isRupert_K2a_Z1_caseB`); type 16 is closed (every bracket sign vector,
@@ -1098,15 +1101,25 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
         (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)))
       (fun _ => (Minimality.triGenPar_or_farP_idx hx hgen {0, 3, 4, 5} {1, 2, 5} 5
         (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)))
-  · -- type 24: `not_type24_outside_Cbar_of_isNopert`; proved outside C̄ ∪ Σ_B
+  · -- type 24: `not_type24_outside_Cbar_of_isNopert`; proved outside C̄ ∪ Σ_B. The sign-matrix SAT route
+    -- (Type24SAT/K24) closes it off the obtuse corner `OB1` (all face angles at vertex 1 non-acute) in ten of
+    -- the twelve classes of the class bracket signs, and every nonzero sign vector is a class
+    -- (`Minimality.T24.rupert_or_resid24`, `Minimality.T24.cls12_of_ne`); `Minimality.T24.Resid24` is the rest
     obtain ⟨fA, hfA⟩ := hR {0, 1, 2} (by decide)
     obtain ⟨fB, hfB⟩ := hR {0, 1, 6} (by decide)
     obtain ⟨fC, hfC⟩ := hR {1, 2, 6} (by decide)
     obtain ⟨fD, hfD⟩ := hR {2, 3, 6} (by decide)
     obtain ⟨fE, hfE⟩ := hR {0, 4, 6} (by decide)
     obtain ⟨fF, hfF⟩ := hR {0, 2, 5} (by decide)
+    obtain ⟨fG, hfG⟩ := hR {0, 3, 4, 5} (by decide)
+    obtain ⟨fH, hfH⟩ := hR {2, 3, 5} (by decide)
+    obtain ⟨fI, hfI⟩ := hR {3, 4, 6} (by decide)
+    rcases Minimality.T24.rupert_or_resid24 fA fB fC fD fE fF fG fH fI hfA hfB hfC hfD hfE hfF hfG hfH hfI with
+      hRup | hres
+    · exact hnR hRup
     -- the sorry: type 24 inside C̄ = {ω3, ω4, ω5 > 0, Δ ≥ 0} (open), or in Σ_B without a free side
-    -- crossing
+    -- crossing, and in `Resid24` (`hres`): on the obtuse corner `OB1`, or a class bracket
+    -- `[1234] [1245] [1356] [1456] [2456]` is zero, or the class is `mpppp` or `mpppm`
     exact byGen2
       (not_type24_outside_Cbar_of_isNopert x hN fA fB fC fD fE fF hfA hfB hfC hfD hfE hfF)
       (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
