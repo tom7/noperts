@@ -155,7 +155,7 @@ theorem n2g_g (hA : 0 < A) (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : z
   · left; nlinarith
   · left; nlinarith
 
-theorem n2g_f (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : zw < 0)
+theorem n2g_f (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : zw < 0)
     (hb2 : 0 < b2) (hbr : b2 < r2) (ha3 : 0 < a3) (hz2 : (1 - s) * zv < z2)
     (hma : crossYZ ⟨s * b1, s * b2, z2⟩ ⟨a1, a2, a3⟩ ⟨b1, b2, 0⟩ < 0) :
     ∀ i : ZMod 5,
@@ -233,8 +233,6 @@ theorem t5_cyc (hA : 0 < A) (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (hzv : 0 �
       first
       | (left; linarith)
       | (right; refine ⟨by ring, by linarith⟩)
-      | (left; nlinarith)
-      | (right; refine ⟨by ring, by nlinarith⟩)
   · subst hz
     have hqr : q * r2 < zv := by
       rcases hqq with h | h
@@ -255,8 +253,6 @@ theorem t5_cyc (hA : 0 < A) (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (hzv : 0 �
       first
       | (left; linarith)
       | (right; refine ⟨by ring, by linarith⟩)
-      | (left; nlinarith)
-      | (right; refine ⟨by ring, by nlinarith⟩)
 
 /-- The axis point `g` (screen `(0,0)`) is hidden. -/
 theorem t5_g (hA : 0 < A) (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (ht1 : t < 1) (hzv : 0 ≤ zv)
@@ -287,8 +283,6 @@ theorem t5_g (hA : 0 < A) (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (ht1 : t < 1
     first
     | (left; linarith)
     | (right; refine ⟨by ring, by linarith⟩)
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
 
 /-- A hidden point strictly inside the screen row `z = 0` (screen `(y0, 0)`, `0 < y0 < r2`). -/
 theorem t5_row {x0 y0 : ℝ} (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (ht1 : t < 1) (hA : 0 < A)
@@ -325,7 +319,6 @@ theorem t5_row {x0 y0 : ℝ} (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (ht1 : t 
       | (left; linarith)
       | (right; refine ⟨by ring, by linarith⟩)
       | (left; nlinarith)
-      | (right; refine ⟨by ring, by nlinarith⟩)
   · subst hz
     have hqr : q * y0 < zv := by
       rcases hqy with h | h
@@ -339,7 +332,6 @@ theorem t5_row {x0 y0 : ℝ} (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (ht1 : t 
       | (left; linarith)
       | (right; refine ⟨by ring, by linarith⟩)
       | (left; nlinarith)
-      | (right; refine ⟨by ring, by nlinarith⟩)
 
 end T4gen
 end Type08Sp
@@ -482,7 +474,7 @@ theorem propH_n2_ge {V : Finset ℝ³} {cP mP fP rP gP wP aP : ℝ³}
     rw [this]; linarith
   exact Fr.n2_core hV hc hm ha hr hw Φc Φm Φf Φr Φg Φw Φa hzv hzw hr1 hxa tt htt0
     (fun i j h1 h2 => lex_of_cross _ (hcv i j h1 h2))
-    (n2g_f hs0 hs1 hzv hzw hb2 hrb ha3 hz2 hmaF) (n2g_g hA hs0 hs1 hzv hzw hb2 hr2 ha3 hz2 htt1 hmaG)
+    (n2g_f hs1 hzv hzw hb2 hrb ha3 hz2 hmaF) (n2g_g hA hs0 hs1 hzv hzw hb2 hr2 ha3 hz2 htt1 hmaG)
 
 end HFrame
 

@@ -52,8 +52,6 @@ theorem face_lexUni {z w : ZMod 4 → ℝ} {w0 P Q B : ℝ}
       | (simp only [quad4_0, quad4_1, quad4_2, quad4_3] at h
          first
          | exact hP (by linarith) | exact hQ (by linarith) | exact hPQ (by linarith)
-         | exact hB (by linarith) | exact hBP (by linarith) | exact hBQ (by linarith)
-         | exact hP (by linarith) | exact hQ (by linarith) | exact hPQ (by linarith)
          | exact hB (by linarith) | exact hBP (by linarith) | exact hBQ (by linarith))
   · simp only [quad4_0, quad4_1, quad4_2, quad4_3]
     intro h
