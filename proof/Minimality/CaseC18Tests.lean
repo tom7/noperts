@@ -96,7 +96,7 @@ theorem A_lex4 {z w : ZMod 4 → ℝ} {p q r s : ℝ} (hp : 0 < p) (hq : 0 < q) 
 lemma fin7_cases (j : Fin 7) : j = 0 ∨ j = 1 ∨ j = 2 ∨ j = 3 ∨ j = 4 ∨ j = 5 ∨ j = 6 := by
   revert j; decide
 
-theorem tB_cyc (S : Shape18) (B2 : S.hm * S.tp < S.hp * (1 - S.tm)) (B3 : S.km * S.tp < S.hp * (1 - S.sm)) :
+theorem tB_cyc (S : Shape18) (_B2 : S.hm * S.tp < S.hp * (1 - S.tm)) (_B3 : S.km * S.tp < S.hp * (1 - S.sm)) :
     ∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
       ST 1 ⟨S.tp, 0, S.hp⟩ ⟨-2 * S.tp + 1, S.sp, -2 * S.hp + S.kp⟩
         ((quad (⟨S.tp, 0, S.hp⟩ : C3) ⟨1, 0, 0⟩ ⟨0, 1, 0⟩ ⟨0, S.sp, S.kp⟩ (i + 1)).sub
@@ -141,7 +141,7 @@ theorem tB_rest2 (S : Shape18) (B3 : S.km * S.tp < S.hp * (1 - S.sm)) :
     first
     | (left; linarith [a1, a2, a3, a4, a5, a6])
 
-theorem tB_rest5 (S : Shape18) (B2 : S.hm * S.tp < S.hp * (1 - S.tm)) (B3 : S.km * S.tp < S.hp * (1 - S.sm)) :
+theorem tB_rest5 (S : Shape18) (_B2 : S.hm * S.tp < S.hp * (1 - S.tm)) (_B3 : S.km * S.tp < S.hp * (1 - S.sm)) :
     ∀ i : ZMod 4,
       ST 1 ⟨S.tp, 0, S.hp⟩ ⟨-2 * S.tp + 1, S.sp, -2 * S.hp + S.kp⟩
         ((quad (⟨S.tp, 0, S.hp⟩ : C3) ⟨1, 0, 0⟩ ⟨0, 1, 0⟩ ⟨0, S.sp, S.kp⟩ (i + 1)).sub
@@ -228,7 +228,7 @@ theorem tB (hA : F.a12 < F.a11) (B2 : F.S.hm * F.S.tp < F.S.hp * (1 - F.S.tm))
 
 end Frame18
 
-theorem t31a_cyc (S : Shape18) (Hp : S.kp * S.tp < S.hp * S.sp) (Hm : S.km * S.tm < S.hm * S.sm) :
+theorem t31a_cyc (S : Shape18) (_Hp : S.kp * S.tp < S.hp * S.sp) (_Hm : S.km * S.tm < S.hm * S.sm) :
     ∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
       ST (-1) ⟨1, -1, 0⟩ ⟨S.tm + S.tp - 2, 0, -S.hm + S.hp⟩
         ((quad (⟨0, 0, 0⟩ : C3) ⟨S.tp, 0, S.hp⟩ ⟨1, 0, 0⟩ ⟨S.tm, 0, -S.hm⟩ (i + 1)).sub
@@ -254,7 +254,7 @@ theorem t31a_cyc (S : Shape18) (Hp : S.kp * S.tp < S.hp * S.sp) (Hm : S.km * S.t
     first
     | (left; linarith [a1, a2, a3, a4, a5, a6])
 
-theorem t31a_rest1 (S : Shape18) (Hp : S.kp * S.tp < S.hp * S.sp) (Hm : S.km * S.tm < S.hm * S.sm) :
+theorem t31a_rest1 (S : Shape18) (Hp : S.kp * S.tp < S.hp * S.sp) (_Hm : S.km * S.tm < S.hm * S.sm) :
     ∀ i : ZMod 4,
       ST (-1) ⟨1, -1, 0⟩ ⟨S.tm + S.tp - 2, 0, -S.hm + S.hp⟩
         ((quad (⟨0, 0, 0⟩ : C3) ⟨S.tp, 0, S.hp⟩ ⟨1, 0, 0⟩ ⟨S.tm, 0, -S.hm⟩ (i + 1)).sub
@@ -274,7 +274,7 @@ theorem t31a_rest1 (S : Shape18) (Hp : S.kp * S.tp < S.hp * S.sp) (Hm : S.km * S
     first
     | (left; linarith [a1, a2, a3, a4, a5, a6])
 
-theorem t31a_rest2 (S : Shape18) (Hp : S.kp * S.tp < S.hp * S.sp) (Hm : S.km * S.tm < S.hm * S.sm) :
+theorem t31a_rest2 (S : Shape18) (_Hp : S.kp * S.tp < S.hp * S.sp) (Hm : S.km * S.tm < S.hm * S.sm) :
     ∀ i : ZMod 4,
       ST (-1) ⟨1, -1, 0⟩ ⟨S.tm + S.tp - 2, 0, -S.hm + S.hp⟩
         ((quad (⟨0, 0, 0⟩ : C3) ⟨S.tp, 0, S.hp⟩ ⟨1, 0, 0⟩ ⟨S.tm, 0, -S.hm⟩ (i + 1)).sub
@@ -294,7 +294,7 @@ theorem t31a_rest2 (S : Shape18) (Hp : S.kp * S.tp < S.hp * S.sp) (Hm : S.km * S
     first
     | (left; linarith [a1, a2, a3, a4, a5, a6])
 
-theorem t31a_rest4 (S : Shape18) (Hp : S.kp * S.tp < S.hp * S.sp) (Hm : S.km * S.tm < S.hm * S.sm) :
+theorem t31a_rest4 (S : Shape18) (_Hp : S.kp * S.tp < S.hp * S.sp) (_Hm : S.km * S.tm < S.hm * S.sm) :
     ∀ i : ZMod 4,
       ST (-1) ⟨1, -1, 0⟩ ⟨S.tm + S.tp - 2, 0, -S.hm + S.hp⟩
         ((quad (⟨0, 0, 0⟩ : C3) ⟨S.tp, 0, S.hp⟩ ⟨1, 0, 0⟩ ⟨S.tm, 0, -S.hm⟩ (i + 1)).sub
@@ -353,7 +353,7 @@ theorem t31a (hα : F.a12 < F.a11) (Hp : F.S.kp * F.S.tp < F.S.hp * F.S.sp)
     exact Q4_eventually (z := zz) (w := ww) (Or.inl (Or.inl e1)) (Or.inr (Or.inr (Or.inl (Or.inl e2))))
 
 end Frame18
-theorem t31b_cyc (S : Shape18) (Hp : S.hp * S.sp < S.kp * S.tp) (Hm : S.km * S.tm < S.hm * S.sm) (hts : S.sp < S.tp) :
+theorem t31b_cyc (S : Shape18) (Hp : S.hp * S.sp < S.kp * S.tp) (_Hm : S.km * S.tm < S.hm * S.sm) (hts : S.sp < S.tp) :
     ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       ST (-1) ⟨1, -1, 0⟩ ⟨S.tm + S.tp - 2, 0, -S.hm + S.hp⟩
         ((quint (⟨S.tm, 0, -S.hm⟩ : C3) ⟨0, 0, 0⟩ ⟨0, S.sp, S.kp⟩ ⟨S.tp, 0, S.hp⟩ ⟨1, 0, 0⟩ (i + 1)).sub
@@ -412,7 +412,7 @@ theorem t31b_rest2 (S : Shape18) (Hp : S.hp * S.sp < S.kp * S.tp) (Hm : S.km * S
     first
     | (left; linarith [a1, a2, a3, a4, a5, a6, a7, a8, a9])
 
-theorem t31b_rest4 (S : Shape18) (Hp : S.hp * S.sp < S.kp * S.tp) (Hm : S.km * S.tm < S.hm * S.sm) (hts : S.sp < S.tp) :
+theorem t31b_rest4 (S : Shape18) (_Hp : S.hp * S.sp < S.kp * S.tp) (_Hm : S.km * S.tm < S.hm * S.sm) (_hts : S.sp < S.tp) :
     ∀ i : ZMod 5,
       ST (-1) ⟨1, -1, 0⟩ ⟨S.tm + S.tp - 2, 0, -S.hm + S.hp⟩
         ((quint (⟨S.tm, 0, -S.hm⟩ : C3) ⟨0, 0, 0⟩ ⟨0, S.sp, S.kp⟩ ⟨S.tp, 0, S.hp⟩ ⟨1, 0, 0⟩ (i + 1)).sub
@@ -498,7 +498,7 @@ theorem t31c (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (Hp : F.S.hm * F.S.sm <
 
 end Frame18
 
-theorem tA1_cyc (S : Shape18) (A1 : S.hm * (1 - S.tp) < S.hp * S.tm) :
+theorem tA1_cyc (S : Shape18) (_A1 : S.hm * (1 - S.tp) < S.hp * S.tm) :
     ∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
       ST 1 ⟨S.tp - 1, 0, S.hp⟩ ⟨-2 * S.tp, 1, -2 * S.hp⟩
         ((quad (⟨S.tp, 0, S.hp⟩ : C3) ⟨0, 1, 0⟩ ⟨0, S.sm, -S.km⟩ ⟨0, 0, 0⟩ (i + 1)).sub
@@ -522,7 +522,7 @@ theorem tA1_cyc (S : Shape18) (A1 : S.hm * (1 - S.tp) < S.hp * S.tm) :
     first
     | (left; linarith [a1, a2, a3, a4])
 
-theorem tA1_rest1 (S : Shape18) (A1 : S.hm * (1 - S.tp) < S.hp * S.tm) :
+theorem tA1_rest1 (S : Shape18) (_A1 : S.hm * (1 - S.tp) < S.hp * S.tm) :
     ∀ i : ZMod 4,
       ST 1 ⟨S.tp - 1, 0, S.hp⟩ ⟨-2 * S.tp, 1, -2 * S.hp⟩
         ((quad (⟨S.tp, 0, S.hp⟩ : C3) ⟨0, 1, 0⟩ ⟨0, S.sm, -S.km⟩ ⟨0, 0, 0⟩ (i + 1)).sub
@@ -542,7 +542,7 @@ theorem tA1_rest1 (S : Shape18) (A1 : S.hm * (1 - S.tp) < S.hp * S.tm) :
     first
     | (left; linarith [a1, a2, a3, a4, a5, a6])
 
-theorem tA1_rest3 (S : Shape18) (A1 : S.hm * (1 - S.tp) < S.hp * S.tm) :
+theorem tA1_rest3 (S : Shape18) (_A1 : S.hm * (1 - S.tp) < S.hp * S.tm) :
     ∀ i : ZMod 4,
       ST 1 ⟨S.tp - 1, 0, S.hp⟩ ⟨-2 * S.tp, 1, -2 * S.hp⟩
         ((quad (⟨S.tp, 0, S.hp⟩ : C3) ⟨0, 1, 0⟩ ⟨0, S.sm, -S.km⟩ ⟨0, 0, 0⟩ (i + 1)).sub
@@ -634,7 +634,7 @@ theorem tA1 (A1 : F.S.hm * (1 - F.S.tp) < F.S.hp * F.S.tm) (hg : 0 < F.g12) :
     nlinarith [mul_pos (mul_pos F.S.km_pos htp) (add_pos (mul_pos (mul_pos (sub_pos.2 htp1) (sub_pos.2 htp1)) hA11) (mul_pos (mul_pos hhp hhp) hgg))]
 
 end Frame18
-theorem tA2_cyc (S : Shape18) {b : ℝ} (hb : 0 < b) (A1 : S.hm * (1 - S.tp) < S.hp * S.tm) (A2 : S.km * S.tm < S.sm * (S.hp * S.tm + S.tp * S.hm)) (A3 : S.km * (1 - S.tm) < S.hp * S.sm * (1 - S.tm) + S.hm * (1 - S.tp * S.sm)) :
+theorem tA2_cyc (S : Shape18) {b : ℝ} (_hb : 0 < b) (A1 : S.hm * (1 - S.tp) < S.hp * S.tm) (_A2 : S.km * S.tm < S.sm * (S.hp * S.tm + S.tp * S.hm)) (_A3 : S.km * (1 - S.tm) < S.hp * S.sm * (1 - S.tm) + S.hm * (1 - S.tp * S.sm)) :
     ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       ST 1 ⟨S.tp, -1, S.hp⟩ ⟨-b * S.tp - S.tp + 1, b * S.sp, -b * S.hp + b * S.kp - S.hp⟩
         ((quint (⟨S.tp, 0, S.hp⟩ : C3) ⟨0, S.sp, S.kp⟩ ⟨0, 0, 0⟩ ⟨S.tm, 0, -S.hm⟩ ⟨1, 0, 0⟩ (i + 1)).sub
@@ -671,7 +671,7 @@ theorem tA2_cyc (S : Shape18) {b : ℝ} (hb : 0 < b) (A1 : S.hm * (1 - S.tp) < S
     first
     | (left; linarith [a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17])
 
-theorem tA2_rest2 (S : Shape18) {b : ℝ} (hb : 0 < b) (A1 : S.hm * (1 - S.tp) < S.hp * S.tm) (A2 : S.km * S.tm < S.sm * (S.hp * S.tm + S.tp * S.hm)) (A3 : S.km * (1 - S.tm) < S.hp * S.sm * (1 - S.tm) + S.hm * (1 - S.tp * S.sm)) :
+theorem tA2_rest2 (S : Shape18) {b : ℝ} (_hb : 0 < b) (_A1 : S.hm * (1 - S.tp) < S.hp * S.tm) (A2 : S.km * S.tm < S.sm * (S.hp * S.tm + S.tp * S.hm)) (A3 : S.km * (1 - S.tm) < S.hp * S.sm * (1 - S.tm) + S.hm * (1 - S.tp * S.sm)) :
     ∀ i : ZMod 5,
       ST 1 ⟨S.tp, -1, S.hp⟩ ⟨-b * S.tp - S.tp + 1, b * S.sp, -b * S.hp + b * S.kp - S.hp⟩
         ((quint (⟨S.tp, 0, S.hp⟩ : C3) ⟨0, S.sp, S.kp⟩ ⟨0, 0, 0⟩ ⟨S.tm, 0, -S.hm⟩ ⟨1, 0, 0⟩ (i + 1)).sub
@@ -693,7 +693,7 @@ theorem tA2_rest2 (S : Shape18) {b : ℝ} (hb : 0 < b) (A1 : S.hm * (1 - S.tp) <
     first
     | (left; linarith [a1, a2, a3, a4, a5, a6, a7, a8])
 
-theorem tA2_rest4 (S : Shape18) {b : ℝ} (hb : 0 < b) (A1 : S.hm * (1 - S.tp) < S.hp * S.tm) (A2 : S.km * S.tm < S.sm * (S.hp * S.tm + S.tp * S.hm)) (A3 : S.km * (1 - S.tm) < S.hp * S.sm * (1 - S.tm) + S.hm * (1 - S.tp * S.sm)) :
+theorem tA2_rest4 (S : Shape18) {b : ℝ} (hb : 0 < b) (A1 : S.hm * (1 - S.tp) < S.hp * S.tm) (_A2 : S.km * S.tm < S.sm * (S.hp * S.tm + S.tp * S.hm)) (_A3 : S.km * (1 - S.tm) < S.hp * S.sm * (1 - S.tm) + S.hm * (1 - S.tp * S.sm)) :
     ∀ i : ZMod 5,
       ST 1 ⟨S.tp, -1, S.hp⟩ ⟨-b * S.tp - S.tp + 1, b * S.sp, -b * S.hp + b * S.kp - S.hp⟩
         ((quint (⟨S.tp, 0, S.hp⟩ : C3) ⟨0, S.sp, S.kp⟩ ⟨0, 0, 0⟩ ⟨S.tm, 0, -S.hm⟩ ⟨1, 0, 0⟩ (i + 1)).sub
