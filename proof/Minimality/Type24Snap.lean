@@ -266,6 +266,33 @@ theorem isRupert_type24_snap (d : Fin 3 → ℝ) {k : ℕ} [NeZero k]
   · rintro ⟨⟨u1, u2⟩, u3, u4⟩
     rcases p2 with k | k | k | k <;> linarith [T.depth_lt_of_snapAbove hn k]
 
+/-- **Theorem 17.12 with any item.**  Let the three cosines at `1` be below `δ` in absolute
+value, the rims of both cap-edge crossings given by `CapRim` at `δ`, and let a test at the
+oblique view `d` with a certified rim (`k ≥ 4`) break every failure pattern at the snap with
+octant margin `δ`.  Then `K` is Rupert: on the obtuse octant by the test (17.1′), elsewhere by
+`E_2` or `E_6` (17.10). -/
+theorem isRupert_generalKenobi (d : Fin 3 → ℝ) {k : ℕ} [NeZero k]
+    (hk : 4 ≤ k) {r : ZMod k → Fin 7}
+    (hR : RimTestR (univ.image x) (viewOf x d) fun i => x (r i)) {δ : ℝ}
+    {k₂ k₆ : ℕ} [NeZero k₂] [NeZero k₆] {r₂ : ZMod k₂ → Fin 7} {r₆ : ZMod k₆ → Fin 7}
+    (h₂ : CapRim x 2 0 6 (oblX2 x) (oblX0 x) (oblX6 x) δ k₂ r₂)
+    (h₆ : CapRim x 6 2 0 (oblX6 x) (oblX2 x) (oblX0 x) δ k₆ r₆)
+    (hcab : |⟪x 0 - x 1, x 2 - x 1⟫| < δ * (‖x 0 - x 1‖ * ‖x 2 - x 1‖))
+    (hcac : |⟪x 0 - x 1, x 6 - x 1⟫| < δ * (‖x 0 - x 1‖ * ‖x 6 - x 1‖))
+    (hcbc : |⟪x 2 - x 1, x 6 - x 1⟫| < δ * (‖x 2 - x 1‖ * ‖x 6 - x 1‖))
+    (hpat : ∀ (B : ZMod k) (a b c e : ℕ), a < b → b < c → c < e → e < k →
+      (SnapAbove x d δ (r (B + b)) (r (B + a)) ∨ SnapAbove x d δ (r (B + b)) (r (B + c)) ∨
+        SnapAbove x d δ (r (B + e)) (r (B + a)) ∨ SnapAbove x d δ (r (B + e)) (r (B + c))) ∧
+      (SnapAbove x d δ (r (B + a)) (r (B + b)) ∨ SnapAbove x d δ (r (B + a)) (r (B + e)) ∨
+        SnapAbove x d δ (r (B + c)) (r (B + b)) ∨ SnapAbove x d δ (r (B + c)) (r (B + e)))) :
+    IsRupert (univ.image x) := by
+  by_cases hobt : ⟪x 0 - x 1, x 2 - x 1⟫ ≤ 0 ∧ ⟪x 0 - x 1, x 6 - x 1⟫ ≤ 0 ∧
+      ⟪x 2 - x 1, x 6 - x 1⟫ ≤ 0
+  · obtain ⟨nab, nac, nbc⟩ := hobt
+    have kk : ∀ {h r : ℝ}, |h| < δ * r → -h ≤ δ * r := fun hh => (neg_le_abs _).trans hh.le
+    exact T.isRupert_type24_snap d hk hR ⟨nab, nac, nbc, kk hcab, kk hcac, kk hcbc⟩ hpat
+  · exact isRupert_type24_capEdge T h₂ h₆ hcab hcac hcbc hobt
+
 end Type24
 
 end Minimality
