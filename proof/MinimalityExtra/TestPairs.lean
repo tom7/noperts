@@ -233,7 +233,7 @@ lemma two_peaks {k : ℕ} [NeZero k] (hk : 4 ≤ k) (z : ZMod k → ℝ) (hz : F
     (p0 q : ZMod k) (c : ℝ) (h1 : z (p0 - 1) < c) (h2 : z (p0 + 1) < c) (h3 : c < z p0)
     (hq : c < z q) (hq1 : q ≠ p0 - 1) (hq2 : q ≠ p0) (hq3 : q ≠ p0 + 1) :
     2 ≤ (Finset.univ.filter (fun j : ZMod k => z (j - 1) < z j ∧ z (j + 1) < z j)).card := by
-  haveI : Nontrivial (ZMod k) := ZMod.nontrivial_iff.2 (by omega)
+  have : Nontrivial (ZMod k) := ZMod.nontrivial_iff.2 (by omega)
   set S : Finset (ZMod k) := Finset.univ.filter (fun j => j ≠ p0 - 1 ∧ j ≠ p0 ∧ j ≠ p0 + 1)
     with hS
   have hqS : q ∈ S := by simp [hS, hq1, hq2, hq3]
@@ -276,7 +276,7 @@ lemma two_peaks {k : ℕ} [NeZero k] (hk : 4 ≤ k) (z : ZMod k → ℝ) (hz : F
 lemma perturb {ι κ : Type} [Finite ι] [Finite κ] (ψ u : Fin 3 → ℝ) (v : ι → Fin 3 → ℝ)
     (d : κ → Fin 3 → ℝ) (hd : ∀ q, d q ≠ 0) (hψ : ∀ m, 0 < ψ ⬝ᵥ v m) :
     ∃ φ : Fin 3 → ℝ, (∀ m, 0 < φ ⬝ᵥ v m) ∧ ∀ q, φ ⬝ᵥ d q ≠ 0 := by
-  haveI := Fintype.ofFinite κ
+  have := Fintype.ofFinite κ
   let f : κ → Module.Dual ℝ (Fin 3 → ℝ) := fun q =>
     { toFun := fun w => d q ⬝ᵥ w
       map_add' := fun a b => by simp [dotProduct_add]
@@ -323,7 +323,7 @@ lemma core {k : ℕ} [NeZero k] (hk : 4 ≤ k) (p : ZMod k → Fin 3 → ℝ) (u
   let v : Fin 5 → Fin 3 → ℝ := ![u, p p0 - p (p0 - 1), p p0 - p (p0 + 1),
     p q - p (p0 - 1), p q - p (p0 + 1)]
   let d : {r : ZMod k × ZMod k // r.1 ≠ r.2} → Fin 3 → ℝ := fun r => p r.1.1 - p r.1.2
-  haveI : Finite {r : ZMod k × ZMod k // r.1 ≠ r.2} := inferInstance
+  have : Finite {r : ZMod k × ZMod k // r.1 ≠ r.2} := inferInstance
   obtain ⟨φ, hφ, hφd⟩ := perturb ψ u v d (fun r h => by
       apply r.2; apply hinj; exact sub_eq_zero.1 h) (fun m => by
     fin_cases m
