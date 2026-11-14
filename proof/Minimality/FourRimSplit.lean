@@ -69,6 +69,43 @@ theorem fourRim_unimodal_of_depthSeparated (p : ZMod 4 → ℝ²) (z : ZMod 4 �
      simp only [Nat.cast_ofNat, Nat.cast_one, show ((0:ZMod 4)+1)=1 from by decide, show ((0:ZMod 4)+2)=2 from by decide, show ((0:ZMod 4)+3)=3 from by decide, show ((1:ZMod 4)+1)=2 from by decide, show ((1:ZMod 4)+2)=3 from by decide, show ((1:ZMod 4)+3)=0 from by decide, show ((2:ZMod 4)+1)=3 from by decide, show ((2:ZMod 4)+2)=0 from by decide, show ((2:ZMod 4)+3)=1 from by decide, show ((3:ZMod 4)+1)=0 from by decide, show ((3:ZMod 4)+2)=1 from by decide, show ((3:ZMod 4)+3)=2 from by decide] at * <;> linarith)
 
 
+/-- In a ccw polygon a depth-separated pair `(a, c)` has `c` not an end of the edge `[a, a+1]`:
+the normal-cone conjunct already excludes it. -/
+theorem IsDepthSeparatedPair.ne_ends_of_ccw {k : ℕ} {p : ZMod k → ℝ²} {z : ZMod k → ℝ}
+    {a c : ZMod k} (hp : IsCcwPolygon p) (h : IsDepthSeparatedPair p z a c) :
+    c ≠ a ∧ c ≠ a + 1 := by
+  obtain ⟨hk, hc⟩ := hp
+  have hn : ∀ m : ℕ, 0 < m → m < k → (m : ZMod k) ≠ 0 := by
+    intro m hm hmk h0
+    have := Nat.le_of_dvd hm ((ZMod.natCast_eq_zero_iff m k).1 h0)
+    omega
+  have h1 : (1 : ZMod k) ≠ 0 := by simpa using hn 1 (by norm_num) (by omega)
+  have h2 : (2 : ZMod k) ≠ 0 := by simpa using hn 2 (by norm_num) (by omega)
+  have hj1 : a + 2 ≠ a := fun h => h2 (by linear_combination h)
+  have hj2 : a + 2 ≠ a + 1 := fun h => h1 (by linear_combination h)
+  have hcr := hc a (a + 2) hj1 hj2
+  set e := p (a + 1) - p a with he
+  set n := outNormal (p a) (p (a + 1)) with hn'
+  have hin : ∀ w : ℝ², ⟪-n, w⟫ = cross2 e w := by
+    intro w
+    simp [hn', he, outNormal, cross2, PiLp.inner_apply, Fin.sum_univ_two]; ring
+  have hne : ⟪-n, e⟫ = 0 := by rw [hin]; simp [cross2]; ring
+  have hmem : p (a + 2) ∈ convexHull ℝ (Set.range p) := subset_convexHull ℝ _ ⟨_, rfl⟩
+  have hcone := h.1 _ hmem
+  constructor
+  · rintro rfl
+    rw [hin] at hcone; linarith
+  · rintro rfl
+    have : p (a + 2) - p (a + 1) = (p (a + 2) - p a) - e := by rw [he]; abel
+    rw [this, inner_sub_right, hne, hin] at hcone
+    linarith
+
+/-- Lemma A for a ccw 4-rim: the end conditions `c ≠ a`, `c ≠ a + 1` are automatic. -/
+theorem fourRim_unimodal_of_depthSeparated_ccw (p : ZMod 4 → ℝ²) (z : ZMod 4 → ℝ)
+    (hp : IsCcwPolygon p) (hinj : Function.Injective z) {a c : ZMod 4}
+    (h : IsDepthSeparatedPair p z a c) : IsCyclicUnimodal z :=
+  fourRim_unimodal_of_depthSeparated p z hinj (h.ne_ends_of_ccw hp).1 (h.ne_ends_of_ccw hp).2 h
+
 /-- **Lemma B (triangle face, end condition is automatic).**  A triangle face with chord ends of
 depths `a`, `b` and middle vertex of depth `m` (pairwise distinct): its lowest depth `lo` and
 highest depth `hi` are among `a, b, m` and bound them; then `lo` or `hi` is an end. -/
