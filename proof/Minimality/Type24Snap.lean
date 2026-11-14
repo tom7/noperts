@@ -140,6 +140,132 @@ theorem isRupert_type24_snap4 (d : Fin 3 → ℝ) {y a c b : Fin 7}
     · linarith [T.depth_lt_of_snapAbove hn k]
     · linarith [T.depth_lt_of_snapAbove hn k]
 
+omit T in
+/-- Four reals with three equal are never weakly diagonal-separated either way. -/
+theorem four_three_equal {w0 w1 w2 w3 : ℝ}
+    (h1 : ¬ max w1 w3 ≤ min w0 w2) (h2 : ¬ max w0 w2 ≤ min w1 w3)
+    (h : (w0 = w1 ∧ w1 = w2) ∨ (w0 = w1 ∧ w1 = w3) ∨ (w0 = w2 ∧ w2 = w3) ∨
+      (w1 = w2 ∧ w2 = w3)) : False := by
+  rcases h with ⟨a, b⟩ | ⟨a, b⟩ | ⟨a, b⟩ | ⟨a, b⟩ <;>
+  rcases le_total w0 w1 with c1 | c1 <;> rcases le_total w0 w2 with c2 | c2 <;>
+  rcases le_total w0 w3 with c3 | c3 <;> rcases le_total w1 w2 with c4 | c4 <;>
+  rcases le_total w1 w3 with c5 | c5 <;> rcases le_total w2 w3 with c6 | c6 <;>
+  first
+  | (refine absurd ?_ h1; simp only [max_le_iff, le_min_iff]
+     refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> linarith)
+  | (refine absurd ?_ h2; simp only [max_le_iff, le_min_iff]
+     refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> linarith)
+
+omit T in
+/-- **No closed failure pattern** (§17.0, 17.1′): no two interleaved pairs of positions of the
+cyclic sequence are weakly depth-separated, in either orientation.  `B + a, B + b, B + c, B + e`
+with `a < b < c < e < k` are four positions in cyclic order. -/
+def NoWeakSep {k : ℕ} (z : ZMod k → ℝ) : Prop :=
+  ∀ (B : ZMod k) (a b c e : ℕ), a < b → b < c → c < e → e < k →
+    ¬ (max (z (B + b)) (z (B + e)) ≤ min (z (B + a)) (z (B + c))) ∧
+      ¬ (max (z (B + a)) (z (B + c)) ≤ min (z (B + b)) (z (B + e)))
+
+omit T in
+theorem NoWeakSep.key {k : ℕ} {z : ZMod k → ℝ} (h : NoWeakSep z) (i : ZMod k)
+    {p q r : ℕ} (hpq : p < q) (hqr : q < r) (hrk : r < k) (hp : 0 < p)
+    (u1 u2 u3 : ZMod k) (e1 : i + (p : ZMod k) = u1) (e2 : i + (q : ZMod k) = u2)
+    (e3 : i + (r : ZMod k) = u3)
+    (hz : (z i = z u1 ∧ z u1 = z u2) ∨ (z i = z u1 ∧ z u1 = z u3) ∨
+      (z i = z u2 ∧ z u2 = z u3) ∨ (z u1 = z u2 ∧ z u2 = z u3)) : False := by
+  obtain ⟨n1, n2⟩ := h i 0 p q r hp hpq hqr hrk
+  simp only [Nat.cast_zero, add_zero, e1, e2, e3] at n1 n2
+  exact four_three_equal n1 n2 hz
+
+omit T in
+/-- **A rim with no closed failure pattern is robustly unimodal** (`k ≥ 4`; ties allowed). -/
+theorem NoWeakSep.isRobustUnimodal {k : ℕ} [NeZero k] (hk : 4 ≤ k) {z : ZMod k → ℝ}
+    (h : NoWeakSep z) : IsRobustUnimodal z where
+  noPeaks B a b c d hab hbc hcd hdk hh := by
+    obtain ⟨n1, -⟩ := h B a b c d hab hbc hcd hdk
+    obtain ⟨h1, h2, h3, h4⟩ := hh
+    exact n1 (by simp only [max_le_iff, le_min_iff]; refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> linarith)
+  noLevelRun B a b c d hab hbc hcd hdk he := by
+    obtain ⟨n1, n2⟩ := h B a b c d hab hbc hcd hdk
+    constructor
+    · rintro ⟨h1, h2⟩
+      exact n2 (by simp only [max_le_iff, le_min_iff]; refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> linarith)
+    · rintro ⟨h1, h2⟩
+      exact n1 (by simp only [max_le_iff, le_min_iff]; refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> linarith)
+  noTriple i j l hij hjl hil h1 h2 := by
+    obtain ⟨m, hmi, hmj, hml⟩ : ∃ m : ZMod k, m ≠ i ∧ m ≠ j ∧ m ≠ l := by
+      by_contra hcon
+      push Not at hcon
+      have hsub : (Finset.univ : Finset (ZMod k)) ⊆ {i, j, l} := by
+        intro m _
+        by_cases a : m = i
+        · simp [a]
+        by_cases b : m = j
+        · simp [b]
+        simp [hcon m a b]
+      have := (Finset.card_le_card hsub).trans Finset.card_le_three
+      simp [ZMod.card] at this
+      omega
+    have hv : ∀ x : ZMod k, i + (((x - i).val : ℕ) : ZMod k) = x := by
+      intro x; rw [ZMod.natCast_zmod_val]; ring
+    have hv0 : ∀ x : ZMod k, x ≠ i → 0 < (x - i).val := fun x hx =>
+      ZMod.val_pos.mpr (sub_ne_zero.mpr hx)
+    have hvne : ∀ x y : ZMod k, x ≠ y → (x - i).val ≠ (y - i).val := by
+      intro x y hxy hh
+      apply hxy
+      have := congrArg (fun n : ℕ => i + (n : ZMod k)) hh
+      simpa [hv] using this
+    have hlt : ∀ x : ZMod k, (x - i).val < k := fun x => ZMod.val_lt _
+    have c := h1.trans h2
+    have n1 := hvne j l hjl
+    have n2 := hvne j m (Ne.symm hmj)
+    have n3 := hvne l m (Ne.symm hml)
+    have p1 := hv0 j (Ne.symm hij)
+    have p2 := hv0 l (Ne.symm hil)
+    have p3 := hv0 m hmi
+    have q1 := hlt j
+    have q2 := hlt l
+    have q3 := hlt m
+    rcases lt_or_gt_of_ne n1 with a | a <;> rcases lt_or_gt_of_ne n2 with b | b <;>
+      rcases lt_or_gt_of_ne n3 with d | d
+    · -- j < l < m
+      exact h.key i (by omega) (by omega) q3 p1 j l m (hv j) (hv l) (hv m) (Or.inl ⟨h1, h2⟩)
+    · -- j < m < l
+      exact h.key i (by omega) (by omega) q2 p1 j m l (hv j) (hv m) (hv l) (Or.inr (Or.inl ⟨h1, h2⟩))
+    · omega
+    · -- m < j < l
+      exact h.key i (by omega) (by omega) q2 p3 m j l (hv m) (hv j) (hv l) (Or.inr (Or.inr (Or.inl ⟨h1, h2⟩)))
+    · -- l < j < m
+      exact h.key i (by omega) (by omega) q3 p2 l j m (hv l) (hv j) (hv m) (Or.inl ⟨c, h2.symm⟩)
+    · omega
+    · -- l < m < j
+      exact h.key i (by omega) (by omega) q1 p2 l m j (hv l) (hv m) (hv j) (Or.inr (Or.inl ⟨c, h2.symm⟩))
+    · -- m < l < j
+      exact h.key i (by omega) (by omega) q1 p3 m l j (hv m) (hv l) (hv j)
+        (Or.inr (Or.inr (Or.inl ⟨c, h2.symm⟩)))
+
+/-- **A test strictly good at the snap certifies every solid on the obtuse octant within its
+radius** (Fact 17.0 with Corollary 17.1′, any rim with `k ≥ 4` corners): for every failure
+pattern of the rim some pair breaks it at the snap with octant margin `δ`. -/
+theorem isRupert_type24_snap (d : Fin 3 → ℝ) {k : ℕ} [NeZero k]
+    (hk : 4 ≤ k) {r : ZMod k → Fin 7}
+    (hR : RimTestR (univ.image x) (viewOf x d) fun i => x (r i)) {δ : ℝ}
+    (hn : ObtuseNear x δ)
+    (hpat : ∀ (B : ZMod k) (a b c e : ℕ), a < b → b < c → c < e → e < k →
+      (SnapAbove x d δ (r (B + b)) (r (B + a)) ∨ SnapAbove x d δ (r (B + b)) (r (B + c)) ∨
+        SnapAbove x d δ (r (B + e)) (r (B + a)) ∨ SnapAbove x d δ (r (B + e)) (r (B + c))) ∧
+      (SnapAbove x d δ (r (B + a)) (r (B + b)) ∨ SnapAbove x d δ (r (B + a)) (r (B + e)) ∨
+        SnapAbove x d δ (r (B + c)) (r (B + b)) ∨ SnapAbove x d δ (r (B + c)) (r (B + e)))) :
+    IsRupert (univ.image x) := by
+  refine hR.isRupert (NoWeakSep.isRobustUnimodal hk ?_)
+  intro B a b c e h1 h2 h3 h4
+  obtain ⟨p1, p2⟩ := hpat B a b c e h1 h2 h3 h4
+  simp only [max_le_iff, le_min_iff]
+  constructor
+  · rintro ⟨⟨u1, u2⟩, u3, u4⟩
+    rcases p1 with k | k | k | k <;> linarith [T.depth_lt_of_snapAbove hn k]
+  · rintro ⟨⟨u1, u2⟩, u3, u4⟩
+    rcases p2 with k | k | k | k <;> linarith [T.depth_lt_of_snapAbove hn k]
+
 end Type24
 
 end Minimality
