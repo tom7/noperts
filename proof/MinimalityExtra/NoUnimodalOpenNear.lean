@@ -235,6 +235,8 @@ theorem chkC_ev (p : List ℕ) (cl : Closure) (hc : chkC ok0 p cl = true) :
   | rim c => exact h _ _ _ hc
   | pats cs => exact chkPats_ev F ok0 okX h p _ cs hc
 
+-- `chkF_ev` uses `h` only via `chkT_ev` (a fixed parameter in the mutual block), which the linter misses.
+set_option linter.unusedSectionVars false in
 mutual
 theorem chkT_ev : ∀ (t : Tree) (p : List ℕ), chkT ok0 p t = true →
     ∀ᶠ x in F, chkT (okX x) p t = true
