@@ -112,10 +112,7 @@ theorem tB_cyc (S : Shape18) (_B2 : S.hm * S.tp < S.hp * (1 - S.tm)) (_B3 : S.km
   intro i j h1 h2
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-    first
-    | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
@@ -244,10 +241,7 @@ theorem t31a_cyc (S : Shape18) (_Hp : S.kp * S.tp < S.hp * S.sp) (_Hm : S.km * S
   intro i j h1 h2
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-    first
-    | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
@@ -378,10 +372,7 @@ theorem t31b_cyc (S : Shape18) (Hp : S.hp * S.sp < S.kp * S.tp) (_Hm : S.km * S.
   intro i j h1 h2
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
-    | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
@@ -510,10 +501,7 @@ theorem tA1_cyc (S : Shape18) (_A1 : S.hm * (1 - S.tp) < S.hp * S.tm) :
   intro i j h1 h2
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-    first
-    | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
@@ -658,10 +646,7 @@ theorem tA2_cyc (S : Shape18) {b : ℝ} (_hb : 0 < b) (A1 : S.hm * (1 - S.tp) < 
   intro i j h1 h2
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
-    | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first

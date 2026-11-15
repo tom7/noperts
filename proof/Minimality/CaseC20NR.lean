@@ -40,10 +40,7 @@ theorem PCyc4.all {σ : ℝ} {u P0 P1 P2 P3 : C3} (h : PCyc4 σ u P0 P1 P2 P3) :
   intro i j hi hj
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-    first
-    | exact absurd rfl hi
-    | exact absurd (by decide) hj
-    | skip
+    try (first | exact absurd rfl hi | exact absurd (by decide) hj)
   all_goals
     simp only [b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     assumption

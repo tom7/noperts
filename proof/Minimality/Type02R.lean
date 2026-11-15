@@ -184,7 +184,7 @@ theorem cyc_A1B6 (hA : sp < tp) (hB : sm < tm) :
   obtain ⟨b0, b1, b2, b3⟩ := zmod4_add_one
   intro i j h1 h2
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-    first | exact absurd rfl h1 | exact absurd (by decide) h2 | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals (rowtac4)
 
 
@@ -215,7 +215,7 @@ theorem cyc_A1B5 (hA : sp < tp) (hB : tm < sm) :
   obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
   intro i j h1 h2
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first | exact absurd rfl h1 | exact absurd (by decide) h2 | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals rowtac5
 
 set_option maxHeartbeats 4000000 in
@@ -245,7 +245,7 @@ theorem cyc_V1B6 (hA : sp = tp) (hB : sm < tm) :
   obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
   intro i j h1 h2
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first | exact absurd rfl h1 | exact absurd (by decide) h2 | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals rowtac5
 
 set_option maxHeartbeats 4000000 in
@@ -275,7 +275,7 @@ theorem cyc_A0B5 (hA : tp < sp) (hB : tm < sm) :
   obtain ⟨b0, b1, b2, b3⟩ := zmod4_add_one
   intro i j h1 h2
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-    first | exact absurd rfl h1 | exact absurd (by decide) h2 | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals rowtac4
 
 set_option maxHeartbeats 4000000 in

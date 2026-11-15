@@ -31,7 +31,7 @@ theorem cycF_B (vx vz : ℝ) :
   obtain ⟨b0, b1, b2, b3⟩ := zmod4_add_one
   intro i j h1 h2
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-    first | exact absurd rfl h1 | exact absurd (by decide) h2 | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals (
     simp only [CaseC09.ST, Dc, C3.sub, Qd, Pt_0, Pt_2, Pt_3, Pt_5, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     left

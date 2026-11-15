@@ -41,10 +41,7 @@ theorem Cyc3.all {σ : ℝ} {u v P0 P1 P2 : C3} (h : Cyc3 σ u v P0 P1 P2) :
   intro i j hi hj
   rcases zmod3_cases i with rfl | rfl | rfl <;>
     rcases zmod3_cases j with rfl | rfl | rfl <;>
-    first
-    | exact absurd rfl hi
-    | exact absurd (by decide) hj
-    | skip
+    try (first | exact absurd rfl hi | exact absurd (by decide) hj)
   all_goals
     simp only [b0, b1, b2, tri_0, tri_1, tri_2]
     assumption
@@ -80,10 +77,7 @@ theorem Cyc4.all {σ : ℝ} {u v P0 P1 P2 P3 : C3} (h : Cyc4 σ u v P0 P1 P2 P3)
   intro i j hi hj
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-    first
-    | exact absurd rfl hi
-    | exact absurd (by decide) hj
-    | skip
+    try (first | exact absurd rfl hi | exact absurd (by decide) hj)
   all_goals
     simp only [b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     assumption
@@ -126,10 +120,7 @@ theorem Cyc5.all {σ : ℝ} {u v P0 P1 P2 P3 P4 : C3} (h : Cyc5 σ u v P0 P1 P2 
   intro i j hi hj
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
-    | exact absurd rfl hi
-    | exact absurd (by decide) hj
-    | skip
+    try (first | exact absurd rfl hi | exact absurd (by decide) hj)
   all_goals
     simp only [b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     assumption
