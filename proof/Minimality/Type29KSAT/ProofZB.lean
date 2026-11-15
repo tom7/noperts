@@ -6,6 +6,7 @@ public import Minimality.Type29KSAT.LratZB
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
 namespace Minimality.H29.SAT.K29
+open Minimality.SAT.Checker
 def ZBC0 : List Step := ZBS0 ++ ZBS1 ++ ZBS2 ++ ZBS3
 theorem ZBok0 : chkChunk 15 ZBCnf ([]) ZBC0 = true := by decide +kernel
 theorem ZBfinal : OKs 15 ZBCnf [] [ZBC0] :=

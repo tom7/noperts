@@ -6,6 +6,7 @@ public import Minimality.Type16SAT.LratMZMZT
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
 namespace Minimality.H29.SAT.K29
+open Minimality.SAT.Checker
 def MZMZTC0 : List Step := MZMZTS0 ++ MZMZTS1 ++ MZMZTS2 ++ MZMZTS3
 def MZMZTC1 : List Step := MZMZTS4
 theorem MZMZTok0 : chkChunk 15 MZMZTCnf ([]) MZMZTC0 = true := by decide +kernel

@@ -17,7 +17,7 @@ open Minimality Minimality.H21
 
 namespace Minimality.H16K.SAT
 
-open Minimality.H29.SAT.K29
+open Minimality.SAT.Checker Minimality.H29.SAT.K29
 
 theorem ZZMMUe0 : (ZZMMUCnf.drop (0)).take rowsZZMMU0.length = cnfOfRows16 [rowsZZMMU0] := by decide +kernel
 theorem ZZMMUe1 : (ZZMMUCnf.drop (0 + rowsZZMMU0.length)).take rowsZZMMU1.length = cnfOfRows16 [rowsZZMMU1] := by decide +kernel

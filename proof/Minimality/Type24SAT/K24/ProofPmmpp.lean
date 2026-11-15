@@ -5,7 +5,7 @@ public import Minimality.Type24SAT.K24.LratPmmpp
 @[expose] public section
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
-open Minimality.H29.SAT.K29
+open Minimality.SAT.Checker
 namespace Minimality.H24.SAT.K24
 def PmmppC0 : List Step := PmmppS0 ++ PmmppS1 ++ PmmppS2 ++ PmmppS3
 def PmmppC1 : List Step := PmmppS4 ++ PmmppS5 ++ PmmppS6 ++ PmmppS7

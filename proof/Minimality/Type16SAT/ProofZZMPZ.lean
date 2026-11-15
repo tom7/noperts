@@ -6,6 +6,7 @@ public import Minimality.Type16SAT.LratZZMPZ
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
 namespace Minimality.H29.SAT.K29
+open Minimality.SAT.Checker
 def ZZMPZC0 : List Step := ZZMPZS0 ++ ZZMPZS1 ++ ZZMPZS2 ++ ZZMPZS3
 def ZZMPZC1 : List Step := ZZMPZS4 ++ ZZMPZS5 ++ ZZMPZS6 ++ ZZMPZS7
 def ZZMPZC2 : List Step := ZZMPZS8 ++ ZZMPZS9 ++ ZZMPZS10

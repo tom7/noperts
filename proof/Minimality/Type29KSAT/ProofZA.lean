@@ -6,6 +6,7 @@ public import Minimality.Type29KSAT.LratZA
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
 namespace Minimality.H29.SAT.K29
+open Minimality.SAT.Checker
 def ZAC0 : List Step := ZAS0 ++ ZAS1 ++ ZAS2 ++ ZAS3
 def ZAC1 : List Step := ZAS4 ++ ZAS5
 theorem ZAok0 : chkChunk 15 ZACnf ([]) ZAC0 = true := by decide +kernel

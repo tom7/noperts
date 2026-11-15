@@ -1,11 +1,12 @@
 module
 
-public import Minimality.Type21SAT.Checker
+public import Minimality.SAT.Checker
 
 @[expose] public section
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
 namespace Minimality.H21.SAT.K3
+open Minimality.SAT.Checker
 def ACnf : List Cl := [
 [7,9],
 [11,13],

@@ -1,10 +1,11 @@
 module
 
-public import Minimality.Type21SAT.Checker
+public import Minimality.SAT.Checker
 
 @[expose] public section
 set_option maxRecDepth 100000
 namespace Minimality.H21.SAT.K3
+open Minimality.SAT.Checker
 def BS0 : List Step := [
 (2458,[2135,1010,1012,1014,1018,1022,1026,1028],[1507,1510,1513,1517]),
 (2459,[2137,1030,1032,1034,1036,1038,1042,1044,1046,1050,1054,1056,1058,1062,1066,1070,1072,1074,1076,1078,1080,1082,1084,1086,1088],[1523,1527,1529,1533,1535,1537,1548]),

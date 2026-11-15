@@ -11,6 +11,7 @@ public import Minimality.Type21SAT.LratACnf
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
 namespace Minimality.H21.SAT.K3
+open Minimality.SAT.Checker
 def AC0 : List Step := AS0 ++ AS1 ++ AS2 ++ AS3 ++ AS4 ++ AS5 ++ AS6
 def AC1 : List Step := AS7 ++ AS8 ++ AS9 ++ AS10 ++ AS11 ++ AS12 ++ AS13
 def AC2 : List Step := AS14 ++ AS15 ++ AS16 ++ AS17 ++ AS18 ++ AS19 ++ AS20

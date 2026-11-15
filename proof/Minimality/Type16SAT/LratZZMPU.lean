@@ -1,10 +1,11 @@
 module
 
-public import Minimality.Type29SAT.Checker
+public import Minimality.SAT.Checker
 
 @[expose] public section
 set_option maxRecDepth 100000
 namespace Minimality.H29.SAT.K29
+open Minimality.SAT.Checker
 def ZZMPUS0 : List Step := [
 (3159,[926,3311],[188,1860]),
 (3160,[3347,730],[189,1892]),

@@ -13,6 +13,7 @@ set_option maxRecDepth 100000
 set_option maxHeartbeats 0
 
 namespace Minimality.H29.SAT.K29
+open Minimality.SAT.Checker
 
 open Minimality.H29.SAT
 

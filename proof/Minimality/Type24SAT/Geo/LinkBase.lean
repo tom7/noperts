@@ -1,6 +1,6 @@
 module
 
-public import Minimality.Type29SAT.Checker
+public import Minimality.SAT.Checker
 public import Minimality.Type24SAT.Geo.Dec
 
 @[expose] public section
@@ -15,7 +15,7 @@ are consecutive slices of `c` starting at offset `o`; one `decide +kernel` per c
 -/
 
 open Minimality.H29.SAT
-open Minimality.H29.SAT.K29 (Cl)
+open Minimality.SAT.Checker (Cl)
 
 namespace Minimality.H24.SAT.K24
 

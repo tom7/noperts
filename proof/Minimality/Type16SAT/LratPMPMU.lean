@@ -1,10 +1,11 @@
 module
 
-public import Minimality.Type29SAT.Checker
+public import Minimality.SAT.Checker
 
 @[expose] public section
 set_option maxRecDepth 100000
 namespace Minimality.H29.SAT.K29
+open Minimality.SAT.Checker
 def PMPMUS0 : List Step := [
 (3826,[632,438],[240,1901]),
 (3827,[1214,598],[241,2030]),

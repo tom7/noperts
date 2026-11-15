@@ -6,6 +6,7 @@ public import Minimality.Type16SAT.LratPPMM
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
 namespace Minimality.H29.SAT.K29
+open Minimality.SAT.Checker
 def PPMMC0 : List Step := PPMMS0 ++ PPMMS1 ++ PPMMS2 ++ PPMMS3
 def PPMMC1 : List Step := PPMMS4 ++ PPMMS5 ++ PPMMS6 ++ PPMMS7
 def PPMMC2 : List Step := PPMMS8 ++ PPMMS9 ++ PPMMS10 ++ PPMMS11

@@ -6,6 +6,7 @@ public import Minimality.Type21SAT.LratB
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
 namespace Minimality.H21.SAT.K3
+open Minimality.SAT.Checker
 def BC0 : List Step := BS0 ++ BS1 ++ BS2
 def BC1 : List Step := BS3 ++ BS4 ++ BS5
 def BC2 : List Step := BS6 ++ BS7 ++ BS8

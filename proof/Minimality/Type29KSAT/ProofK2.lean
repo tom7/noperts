@@ -6,6 +6,7 @@ public import Minimality.Type29KSAT.LratK2
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
 namespace Minimality.H29.SAT.K29
+open Minimality.SAT.Checker
 def K2C0 : List Step := K2S0 ++ K2S1 ++ K2S2 ++ K2S3
 def K2C1 : List Step := K2S4 ++ K2S5 ++ K2S6 ++ K2S7
 def K2C2 : List Step := K2S8 ++ K2S9 ++ K2S10 ++ K2S11

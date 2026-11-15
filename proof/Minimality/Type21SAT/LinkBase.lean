@@ -1,6 +1,6 @@
 module
 
-public import Minimality.Type21SAT.Checker
+public import Minimality.SAT.Checker
 public import Minimality.Type21SAT.RowA
 
 @[expose] public section
@@ -15,6 +15,7 @@ are consecutive slices of `c` starting at offset `o`; one `decide +kernel` per c
 -/
 
 namespace Minimality.H21.SAT.K3
+open Minimality.SAT.Checker
 
 open Minimality.H21.SAT
 

@@ -17,7 +17,7 @@ open Minimality Minimality.H21
 
 namespace Minimality.H16K.SAT
 
-open Minimality.H29.SAT.K29
+open Minimality.SAT.Checker Minimality.H29.SAT.K29
 
 theorem PMPMUe0 : (PMPMUCnf.drop (0)).take rowsPMPMU0.length = cnfOfRows16 [rowsPMPMU0] := by decide +kernel
 theorem PMPMUe1 : (PMPMUCnf.drop (0 + rowsPMPMU0.length)).take rowsPMPMU1.length = cnfOfRows16 [rowsPMPMU1] := by decide +kernel

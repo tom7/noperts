@@ -16,6 +16,7 @@ open Finset
 open Minimality Minimality.H21
 
 namespace Minimality.H29.SAT.K29
+open Minimality.SAT.Checker
 
 open Minimality.H29.SAT Minimality.H29T.SAT
 

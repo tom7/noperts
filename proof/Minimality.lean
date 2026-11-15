@@ -1068,7 +1068,7 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
           exact hN.2 (F.isRupert_of_not_special'' hx hrest)))
   · -- type 21: closed by the sign-matrix SAT route (`Minimality.H21.SAT.type21_isRupert`, Type21SAT/):
     -- every shape realizing the faces of type 21 is Rupert, with no general-position hypothesis. The sign
-    -- cover is a kernel-checked LRAT proof (Type21SAT/Checker, `check_sound`).
+    -- cover is a kernel-checked LRAT proof (SAT/Checker, `check_sound`).
     exact hN.2 (Minimality.H21.SAT.type21_isRupert x hR)
   · -- type 22: `not_type22_of_isNopert_sv`; its general position (2 hypotheses) is asked off the
     -- special value of Lemma T′ (settled there, 24.15). Both views have the triangle `246`, so

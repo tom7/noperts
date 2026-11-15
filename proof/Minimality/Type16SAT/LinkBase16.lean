@@ -1,6 +1,6 @@
 module
 
-public import Minimality.Type29SAT.Checker
+public import Minimality.SAT.Checker
 public import Minimality.Type16SAT.Dec
 
 @[expose] public section
@@ -17,7 +17,7 @@ chunk by chunk, are consecutive slices of `c` starting at offset `o`; one `decid
 
 namespace Minimality.H16K.SAT
 
-open Minimality.H29.SAT.K29
+open Minimality.SAT.Checker
 
 /-- The CNF of a core as the checker sees it: the decoded rows (type 16 decoder), in order. -/
 def cnfOfRows16 (rows : List (List Nat)) : List Cl :=

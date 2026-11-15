@@ -6,6 +6,7 @@ public import Minimality.Type16SAT.LratZPMP
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
 namespace Minimality.H29.SAT.K29
+open Minimality.SAT.Checker
 def ZPMPC0 : List Step := ZPMPS0 ++ ZPMPS1 ++ ZPMPS2 ++ ZPMPS3
 def ZPMPC1 : List Step := ZPMPS4 ++ ZPMPS5 ++ ZPMPS6 ++ ZPMPS7
 theorem ZPMPok0 : chkChunk 15 ZPMPCnf ([]) ZPMPC0 = true := by decide +kernel

@@ -3,7 +3,7 @@ module
 
 @[expose] public section
 /-!
-# KERNEL29: a small verified RUP (LRAT-hint) checker, plain structural Lean, no imports
+# a small verified RUP (LRAT-hint) checker, shared by all SAT routes
 
 Literal code `c`: variable `c / 2`, positive iff `c % 2 = 0`.  A clause is a `List Nat`.
 The clause database is a binary trie keyed by clause id (depth `D`).  The partial assignment during
@@ -12,7 +12,7 @@ unit propagation is a Nat bitmask over literal codes (bit `l` set = literal `l` 
 set_option autoImplicit false
 set_option linter.unusedVariables false
 
-namespace Minimality.H29.SAT.K29
+namespace Minimality.SAT.Checker
 
 abbrev Cl := List Nat
 
@@ -323,5 +323,5 @@ theorem chunks_sound (D : Nat) (cnf : List Cl) (cs : List (List Step))
   | nil => rw [hc] at hl; simp at hl
   | cons a b => rw [hc] at he; simp at he
 
-end Minimality.H29.SAT.K29
+end Minimality.SAT.Checker
 

@@ -1,11 +1,12 @@
 module
 
-public import Minimality.Type21SAT.Checker
+public import Minimality.SAT.Checker
 
 @[expose] public section
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
 namespace Minimality.H21.SAT.K3
+open Minimality.SAT.Checker
 def AS74 : List Step := [
 (14657,[402,3],[14387,5944]),
 (14658,[6,89,102,105,78,688,501,474,388,3,872,738,93,25],[12005,2099,2958,14657,418,5902,11894,14655,1496,10533,2717,10631,1567,9870,4249,559,4253,4258,4263,1815,14656,13015,10587,14446,12001,397,9886,9688,13003,14080,14372,12422,11899,2509,13192]),

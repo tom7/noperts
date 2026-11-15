@@ -1,10 +1,11 @@
 module
 
-public import Minimality.Type29SAT.Checker
+public import Minimality.SAT.Checker
 
 @[expose] public section
 set_option maxRecDepth 100000
 namespace Minimality.H29.SAT.K29
+open Minimality.SAT.Checker
 def K2S25 : List Step := [
 (8316,[7380,7378,7382,3349],[8315,4764]),
 (8325,[6952,2824,6966,6968,6970,6972,6974,6976,6978,6982],[4613,8238]),
