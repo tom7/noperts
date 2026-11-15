@@ -227,10 +227,7 @@ theorem C4_cyc (S : Shape18) (Hpe : S.hp * S.sp = S.kp * S.tp) (Hm : S.km * S.tm
   intro i j h1 h2
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
-    | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
@@ -458,10 +455,7 @@ theorem G2_C6_cyc (tp tm sp sm hp hm kp km r q : ℝ)
   intro i j h1 h2
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
-    | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
@@ -571,10 +565,7 @@ theorem G2_C5z_cyc (tp tm sp sm hp hm kp km r q e : ℝ)
   intro i j h1 h2
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
-    | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
@@ -780,10 +771,7 @@ theorem G3_cyc (tp tm sp sm hp hm kp km r e : ℝ)
   intro i j h1 h2
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-    first
-    | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first

@@ -126,7 +126,7 @@ theorem cyc_R1 (hsa : 0 < l * vx - vz) (hsb : 0 < -(k * vx + vz)) (hsc : 0 < tp 
   obtain ⟨b0, b1, b2, b3, b4, b5⟩ := zmod6_add_one
   intro i j h1 h2
   rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;> rcases zmod6_cases j with rfl | rfl | rfl | rfl | rfl | rfl <;>
-    first | exact absurd rfl h1 | exact absurd (by decide) h2 | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals rowfnb
 
 set_option maxHeartbeats 4000000 in
@@ -160,7 +160,7 @@ theorem cyc_R2 (hsa : 0 < l * vx - vz) (hsb : 0 < -(k * vx + vz)) (hsc : 0 < -(t
   have b5 : (0:ℕ) = 0 := rfl
   intro i j h1 h2
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first | exact absurd rfl h1 | exact absurd (by decide) h2 | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals rowfnb
 
 set_option maxHeartbeats 4000000 in
@@ -194,7 +194,7 @@ theorem cyc_R3 (hsa : 0 < -(l * vx - vz)) (hsb : 0 < -(k * vx + vz)) (hsc : 0 < 
   obtain ⟨b0, b1, b2, b3, b4, b5⟩ := zmod6_add_one
   intro i j h1 h2
   rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;> rcases zmod6_cases j with rfl | rfl | rfl | rfl | rfl | rfl <;>
-    first | exact absurd rfl h1 | exact absurd (by decide) h2 | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals rowfnb
 
 set_option maxHeartbeats 4000000 in
@@ -296,7 +296,7 @@ theorem rimR1 (F : Frame02 x) (hr : gA12 x = gA11 x)
     obtain ⟨b0, b1, b2, b3, b4, b5⟩ := zmod6_add_one
     obtain ⟨d0, d1, d2, d3, d4, d5⟩ := zmod6_sub_one
     rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;> simp only [Pt_0, Pt_1, Pt_2, Pt_3, Pt_4, Pt_5, c1_0, c1_1, c1_2, c1_3, c1_4, c1_5, b0, b1, b2, b3, b4, b5, d0, d1, d2, d3, d4, d5] at hi ⊢ <;>
-      first | exact absurd rfl hi | skip
+      try exact absurd rfl hi
     all_goals lexclose
 
 set_option maxHeartbeats 4000000 in
@@ -326,7 +326,7 @@ theorem rimR2 (F : Frame02 x) (hr : gA12 x = gA11 x)
     obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
     obtain ⟨d0, d1, d2, d3, d4⟩ := zmod5_sub_one
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> simp only [Pt_1, Pt_2, Pt_3, Pt_4, Pt_5, c2_0, c2_1, c2_2, c2_3, c2_4, b0, b1, b2, b3, b4, d0, d1, d2, d3, d4] at hi ⊢ <;>
-      first | exact absurd rfl hi | skip
+      try exact absurd rfl hi
     all_goals lexclose
 
 set_option maxHeartbeats 4000000 in
@@ -356,7 +356,7 @@ theorem rimR3 (F : Frame02 x) (hr : gA12 x = gA11 x)
     obtain ⟨b0, b1, b2, b3, b4, b5⟩ := zmod6_add_one
     obtain ⟨d0, d1, d2, d3, d4, d5⟩ := zmod6_sub_one
     rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;> simp only [Pt_0, Pt_1, Pt_2, Pt_4, Pt_5, Pt_6, c3_0, c3_1, c3_2, c3_3, c3_4, c3_5, b0, b1, b2, b3, b4, b5, d0, d1, d2, d3, d4, d5] at hi ⊢ <;>
-      first | exact absurd rfl hi | skip
+      try exact absurd rfl hi
     all_goals lexclose
 
 
@@ -442,13 +442,12 @@ theorem caseIII (p q k l tp tm lam : ℝ) (hp : 0 < p) (hq : 0 < q) (hk : 0 < k)
   · left; refine ⟨?_, hsb, hsc, hL1, hL2⟩; nlinarith
 
 theorem caseIV (p q k l tp tm : ℝ) (hp : 0 < p) (hq : 0 < q) (hk : 0 < k) (hl : 0 < l)
-    (ha1 : 0 < tp) (ha3 : 0 < tm) (a3 : 0 < 1 - tm)
+    (ha1 : 0 < tp) (a3 : 0 < 1 - tm)
     (e1 : q = l * k * p) (e2 : l * tp = k * (1 - tp)) (hρ : k * tm - l * (1 - tm) ≠ 0) :
     GRany p q k l tp tm := by
   refine ⟨-l * (1 - tm) - k, -tm - 1, ?_⟩
   have hsb : 0 < -(k * (-l * (1 - tm) - k) * p + (-tm - 1) * q) := by
-    rw [e1]; nlinarith [mul_pos (mul_pos hk hp) hl, mul_pos (mul_pos hk hp) hk, mul_pos (mul_pos (mul_pos hk hp) hl) ha3,
-      mul_pos (mul_pos (mul_pos hk hp) hl) a3]
+    rw [e1]; nlinarith [mul_pos (mul_pos hk hp) hl, mul_pos (mul_pos hk hp) hk, mul_pos (mul_pos (mul_pos hk hp) hl) a3]
   have ea : l * (-l * (1 - tm) - k) * p - (-tm - 1) * q = l * p * (k * tm - l * (1 - tm)) := by rw [e1]; ring
   have ec : tp * (-tm - 1) * q - k * (1 - tp) * (-l * (1 - tm) - k) * p =
       -(tp * (l * p * (k * tm - l * (1 - tm)))) := by rw [e1, ← e2]; ring
@@ -495,7 +494,7 @@ theorem exists_GR (p q k l tp tm : ℝ) (hp : 0 < p) (hq : 0 < q) (hk : 0 < k) (
         have h5 : 0 ≤ tp * (q - l * k * p) := by nlinarith
         have h6 := (mul_nonneg_iff_of_pos_left ha1).1 h5
         linarith
-      refine caseIV p q k l tp tm hp hq hk hl ha1 ha3 a3 e1 e2 ?_
+      refine caseIV p q k l tp tm hp hq hk hl ha1 a3 e1 e2 ?_
       intro hρ
       apply hnr
       have h7 : (tm - (1 - tp)) * (k * l) = 0 := by
