@@ -971,7 +971,7 @@ theorem crimA1 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) (h6 : 1 < θ 
   constructor
   · intro i j hi hj
     rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-      first | exact absurd rfl hi | exact absurd (by decide) hj | skip
+      try (first | exact absurd rfl hi | exact absurd (by decide) hj)
     all_goals
       norm_num [fc08, cdet, cp08]
       try linarith
@@ -995,7 +995,7 @@ theorem crimA2 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) (h6 : 1 < θ 
   constructor
   · intro i j hi hj
     rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-      first | exact absurd rfl hi | exact absurd (by decide) hj | skip
+      try (first | exact absurd rfl hi | exact absurd (by decide) hj)
     all_goals
       norm_num [fc08, cdet, cp08]
       try linarith
@@ -1018,7 +1018,7 @@ theorem crimB1 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) (h6 : θ 5 < 
   constructor
   · intro i j hi hj
     rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-      first | exact absurd rfl hi | exact absurd (by decide) hj | skip
+      try (first | exact absurd rfl hi | exact absurd (by decide) hj)
     all_goals
       norm_num [fc08, cdet, cp08]
       try linarith
@@ -1041,7 +1041,7 @@ theorem crimB2 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) (h6 : θ 5 < 
   constructor
   · intro i j hi hj
     rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-      first | exact absurd rfl hi | exact absurd (by decide) hj | skip
+      try (first | exact absurd rfl hi | exact absurd (by decide) hj)
     all_goals
       norm_num [fc08, cdet, cp08]
       try linarith
@@ -1064,7 +1064,7 @@ theorem crimC1 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) (h6 : θ 5 < 
   constructor
   · intro i j hi hj
     rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-      first | exact absurd rfl hi | exact absurd (by decide) hj | skip
+      try (first | exact absurd rfl hi | exact absurd (by decide) hj)
     all_goals
       norm_num [fc08, cdet, cp08]
       try linarith

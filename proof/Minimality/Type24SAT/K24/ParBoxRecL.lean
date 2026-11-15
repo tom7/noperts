@@ -128,17 +128,17 @@ theorem recL_pt1t {L c y xi ze b p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy :
       !₂[-1, p, q] !₂[-1, -(r/2) - c, -1] (boxCfg L c y y xi ze b 1) := by
   apply tri_cert L r _ _ _ _ (boxCfg L c y y xi ze b 0) (boxCfg L c y y xi ze b 2) (boxCfg L c y y xi ze b 6)
     (Finset.mem_image_of_mem _ (mem_univ _)) (Finset.mem_image_of_mem _ (mem_univ _)) (Finset.mem_image_of_mem _ (mem_univ _))
-  · simp [boxCfg, Minimality.cross]
+  · simp [boxCfg]
     left
     positivity
-  · simp [boxCfg, Minimality.cross]
+  · simp [boxCfg]
     left
     nlinarith [mul_pos hy hxi, mul_pos hL hc, mul_pos (mul_pos hL hc) (mul_pos hy hxi), mul_pos (mul_pos hL hc) (sub_pos.2 hlo)]
-  · simp [boxCfg, Minimality.cross]
+  · simp [boxCfg]
     left
     have : 0 < y - b := by linarith
     nlinarith [mul_pos (mul_pos hL hc) this]
-  · simp [boxCfg, Minimality.cross]
+  · simp [boxCfg]
     left
     positivity
 
@@ -155,7 +155,7 @@ theorem recL_pt1b {L c y xi ze p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 0
     linear_combination xi * hqL
   apply cone_cert L r _ _ _ _ (boxCfg L c y y xi ze y 2) (boxCfg L c y y xi ze y 6)
     (Finset.mem_image_of_mem _ (mem_univ _)) (Finset.mem_image_of_mem _ (mem_univ _))
-  · simp [boxCfg, Minimality.cross]
+  · simp [boxCfg]
     right
     refine ⟨rfl, ?_⟩
     nlinarith [mul_pos (mul_pos (mul_pos hr hL) hc) hxz]

@@ -152,7 +152,7 @@ theorem isRupert_type08_limit_hdn_rim {a a' b b' c c' d : ℝ³} (N : Norm08 a a
   by_cases hT : IsT a' b c d
   · exact Or.inl (close_T2_final N hT (hTco hT) hnR)
   by_cases hT' : IsT' a b c' d
-  · exact Or.inl (close_T'2_final N hT' (hT'co hT') hnR)
+  · exact Or.inl (close_T'2_final N hT' (hT'co hT'))
   obtain ⟨o, E₁, E₂, E₃, θ, hE, hθ, hpts⟩ := exists_nf08 N
   obtain ⟨hseg, hsp⟩ := seg08 N
   have hview0 := view0_test08 N
@@ -206,7 +206,7 @@ theorem isRupert_type08_limit_hdn_rim {a a' b b' c c' d : ℝ³} (N : Norm08 a a
       have hno : ∀ i, ¬ (grp08 i).Straddle Y := by
         intro i hst
         fin_cases i
-        all_goals first | exact hst.elim | skip
+        all_goals try exact hst.elim
         all_goals apply hnt
         · simp only [grp08, ViewGroup.Straddle] at hst
           obtain ⟨h1, h2, -, -⟩ := hst

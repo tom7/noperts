@@ -45,9 +45,9 @@ theorem iv_c5 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) 
     LexTiltCert (univ.image (boxCfg L c y2 y6 xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[1, p, q] !₂[0, c0z, -c0y] ((boxCfg L c y2 y6 xi ze b) 5) := by
   refine cone_cert L r _ _ _ _ ((boxCfg L c y2 y6 xi ze b) 3) ((boxCfg L c y2 y6 xi ze b) 2) (by simp) (by simp) ?_ ?_ ?_
-  · right; refine ⟨by simp [boxCfg, Minimality.cross] <;> ring, ?_⟩; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos hy2 hL]
+  · right; refine ⟨by simp [boxCfg, Minimality.cross], ?_⟩; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos hy2 hL]
   · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos (mul_pos hL hy2) h1]
-  · right; refine ⟨by simp [boxCfg, Minimality.cross] <;> ring, ?_⟩; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos hL h2]
+  · right; refine ⟨by simp [boxCfg, Minimality.cross], ?_⟩; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos hL h2]
 
 theorem iv_c6 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6) (hy2 : 0 < y2)
     (hxi : 0 < xi) (hb0 : 0 < b) (hd : 0 < ze * c) (hcd : 0 < c - ze * c) (hr : 0 < r) (hby : y2 ≤ b)

@@ -34,7 +34,7 @@ noncomputable def frameMat (f1 f2 f3 : ℝ³) : Matrix (Fin 3) (Fin 3) ℝ :=
 theorem frameMat_apply (f1 f2 f3 p : ℝ³) :
     (frameMat f1 f2 f3).toEuclideanLin p = !₂[⟪f1, p⟫, ⟪f2, p⟫, ⟪f3, p⟫] := by
   ext i
-  fin_cases i <;> simp [frameMat, Matrix.toLpLin_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_three, inner3] <;> ring
+  fin_cases i <;> simp [frameMat, Matrix.toLpLin_apply, dotProduct, Fin.sum_univ_three, inner3]
 
 theorem frameMat_orth {f1 f2 f3 : ℝ³} (h11 : ⟪f1, f1⟫ = 1) (h22 : ⟪f2, f2⟫ = 1) (h33 : ⟪f3, f3⟫ = 1)
     (h12 : ⟪f1, f2⟫ = 0) (h13 : ⟪f1, f3⟫ = 0) (h23 : ⟪f2, f3⟫ = 0) :
@@ -42,8 +42,8 @@ theorem frameMat_orth {f1 f2 f3 : ℝ³} (h11 : ⟪f1, f1⟫ = 1) (h22 : ⟪f2, 
   rw [Matrix.mem_orthogonalGroup_iff]
   rw [inner3] at h11 h22 h33 h12 h13 h23
   ext i j
-  fin_cases i <;> fin_cases j <;> simp [frameMat, Matrix.mul_apply, Fin.sum_univ_three, Matrix.one_apply] <;>
-    first | linarith | (rw [← h11]; ring) | skip
+  fin_cases i <;> fin_cases j <;> simp [frameMat, Matrix.mul_apply, Fin.sum_univ_three] <;>
+    try linarith
 
 /-- Completeness: `⟪a, b⟫ = Σ ⟪fₖ, a⟫ ⟪fₖ, b⟫` for an orthonormal frame. -/
 theorem frame_inner {f1 f2 f3 : ℝ³} (h11 : ⟪f1, f1⟫ = 1) (h22 : ⟪f2, f2⟫ = 1) (h33 : ⟪f3, f3⟫ = 1)
@@ -55,7 +55,7 @@ theorem frame_inner {f1 f2 f3 : ℝ³} (h11 : ⟪f1, f1⟫ = 1) (h22 : ⟪f2, f2
     intro i j; rw [hQt]
   have e00 := e 0 0; have e01 := e 0 1; have e02 := e 0 2
   have e11 := e 1 1; have e12 := e 1 2; have e22 := e 2 2
-  simp [frameMat, Matrix.mul_apply, Fin.sum_univ_three, Matrix.one_apply] at e00 e01 e02 e11 e12 e22
+  simp [frameMat, Matrix.mul_apply, Fin.sum_univ_three] at e00 e01 e02 e11 e12 e22
   simp only [inner3]
   have e10 : f1 1 * f1 0 + f2 1 * f2 0 + f3 1 * f3 0 = 0 := by linarith
   have e20 : f1 2 * f1 0 + f2 2 * f2 0 + f3 2 * f3 0 = 0 := by linarith
@@ -189,7 +189,7 @@ theorem swapXZ_mem : swapXZ ∈ Matrix.orthogonalGroup (Fin 3) ℝ := by
   ext i j; fin_cases i <;> fin_cases j <;> simp [swapXZ, Matrix.mul_apply, Fin.sum_univ_three]
 
 theorem swapXZ_apply (p : ℝ³) : swapXZ.toEuclideanLin p = !₂[p 2, p 1, p 0] := by
-  ext i; fin_cases i <;> simp [swapXZ, Matrix.toLpLin_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_three]
+  ext i; fin_cases i <;> simp [swapXZ, Matrix.toLpLin_apply, dotProduct, Fin.sum_univ_three]
 
 theorem box_swap {L c y2 y6 xi ze b : ℝ} :
     (univ.image (boxCfg c L y6 y2 ze xi b)).image (fun p => (0 : ℝ³) + (1 : ℝ) • swapXZ.toEuclideanLin p) =
@@ -198,7 +198,7 @@ theorem box_swap {L c y2 y6 xi ze b : ℝ} :
   have hσ : ∀ i, (0 : ℝ³) + (1 : ℝ) • swapXZ.toEuclideanLin (boxCfg c L y6 y2 ze xi b i) =
       boxCfg L c y2 y6 xi ze b (σ i) := by
     intro i
-    fin_cases i <;> (simp only [swapXZ_apply]; ext j; fin_cases j <;> simp [boxCfg, σ]) <;> ring
+    fin_cases i <;> (simp only [swapXZ_apply]; ext j; fin_cases j <;> simp [boxCfg, σ])
   rw [Finset.image_image]
   have : ((fun p : ℝ³ => (0 : ℝ³) + (1 : ℝ) • swapXZ.toEuclideanLin p) ∘ boxCfg c L y6 y2 ze xi b) =
       boxCfg L c y2 y6 xi ze b ∘ σ := funext hσ

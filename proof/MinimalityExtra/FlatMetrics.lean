@@ -97,7 +97,7 @@ theorem flatMetricsUnimodal : FlatMetricsUnimodal := by
         intro e; have := hinj e
         have : (1 : ZMod k) = 0 := by
           have h3 : (a + 2) - (a + 1) = 0 := by rw [this]; ring
-          simpa [show (a + 2) - (a + 1) = 1 by ring] using h3
+          simp [show (a + 2) - (a + 1) = 1 by ring] at h3
         exact one_ne_zero this
       have := hrim (lab (a + 2)) a hm1 hm2
       have e : x (lab (a + 1)) - x (lab a) = (-t) • w := by

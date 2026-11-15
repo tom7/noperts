@@ -19,7 +19,7 @@ def LexQ {k : ℕ} (z w : ZMod k → ℝ) (z' : ZMod k → ℝ) : Prop :=
 
 theorem LexQ_open {k : ℕ} [NeZero k] (z w : ZMod k → ℝ) : IsOpen {z' | LexQ z w z'} := by
   classical
-  haveI : Fintype (ZMod k) := ZMod.fintype k
+  have : Fintype (ZMod k) := ZMod.fintype k
   have : {z' : ZMod k → ℝ | LexQ z w z'} =
       ⋂ i, ⋂ j, {z' | LexLt (z i, w i) (z j, w j) → z' i < z' j} := by
     ext z'; simp [LexQ]

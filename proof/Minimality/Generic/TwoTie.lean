@@ -358,7 +358,7 @@ theorem lemma292 (z : Fin 5 → ℝ) (hvw : z 1 < z 0) (hcard : 3 ≤ (univ.imag
           intro x hx
           simp only [mem_image, mem_univ, true_and] at hx
           obtain ⟨i, rfl⟩ := hx
-          fin_cases i <;> simp <;> first | (right; linarith [g.1, g.2.1, h.1, h.2.1, g.2.2.1, g.2.2.2, h.2.2.1, h.2.2.2]) | (left; linarith [g.1, g.2.1, h.1, h.2.1, g.2.2.1, g.2.2.2, h.2.2.1, h.2.2.2])
+          fin_cases i <;> simp <;> (right; linarith [g.1, g.2.1, h.1, h.2.1, g.2.2.1, g.2.2.2, h.2.2.1, h.2.2.2])
         have := (card_le_card this).trans (card_insert_le _ _)
         simp at this; omega
       · by_contra hc
@@ -366,7 +366,7 @@ theorem lemma292 (z : Fin 5 → ℝ) (hvw : z 1 < z 0) (hcard : 3 ≤ (univ.imag
           intro x hx
           simp only [mem_image, mem_univ, true_and] at hx
           obtain ⟨i, rfl⟩ := hx
-          fin_cases i <;> simp <;> first | (right; linarith [g.1, g.2.1, h.1, h.2.1, g.2.2.1, g.2.2.2, h.2.2.1, h.2.2.2]) | (left; linarith [g.1, g.2.1, h.1, h.2.1, g.2.2.1, g.2.2.2, h.2.2.1, h.2.2.2])
+          fin_cases i <;> simp <;> (right; linarith [g.1, g.2.1, h.1, h.2.1, g.2.2.1, g.2.2.2, h.2.2.1, h.2.2.2])
         have := (card_le_card this).trans (card_insert_le _ _)
         simp at this; omega
   · exact (c2 h).elim

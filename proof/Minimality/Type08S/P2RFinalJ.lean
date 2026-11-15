@@ -76,9 +76,9 @@ theorem s4T2_rupert_or_R {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d
     fun hT hB hw hang => rupert_of_at N (lexCell_N2WS N ⟨hT, hB, hw⟩ hang)
   rcases h with ⟨hT, ⟨h1, heq⟩ | ⟨h1, h2, h3⟩ | ⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4, h5⟩⟩ |
       ⟨hT, hB, ⟨h1, h2, h3⟩ | ⟨h1, h2, h3⟩ | ⟨h1, h2, h3, h4, h5⟩⟩
-  · exact (touchT_eq_false N hT h1 heq).elim
+  · exact (touchT_eq_false N h1 heq).elim
   · rcases (h1.2.2).eq_or_lt with heq | hlt
-    · exact (touchT_eq_false N hT h1 heq).elim
+    · exact (touchT_eq_false N h1 heq).elim
     · exact Or.inr ⟨hT, Or.inl ⟨h1, hlt, h2, h3⟩⟩
   · rcases caseB_Xba N hT h1 with hX | hw
     · exact absurd hX h3

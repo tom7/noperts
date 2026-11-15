@@ -382,12 +382,8 @@ theorem isRupert_T3_i {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) �
   · intro i j hi hj
     rcases zmod3_pairs i j hi hj with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
     simp only [a0, a1, a2, tri_0, tri_1, tri_2, hP, add_cmb_sub, hu₀] <;>
-    first
-      | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
-          (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
-          (by simp only [detc]; clear * - hα hα' hβ hβ' h1α h1β Pαβ; linarith)
-      | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
-          (by simp only [detc]; clear * - hα hα' hβ hβ' h1α h1β Pαβ; linarith)
+    exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
+      (by simp only [detc]; clear * - hα hα' hβ hβ' h1α h1β Pαβ; linarith)
   · intro z hz hzx i
     have hx0 := hzx 0; have hx1 := hzx 1; have hx2 := hzx 2
     simp only [tri_0, tri_1, tri_2] at hx0 hx1 hx2
