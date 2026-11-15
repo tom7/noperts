@@ -216,7 +216,7 @@ theorem isRupert_quad_edge_middle_core {x x' y y' p p' m : ℝ³} (F : OctFacets
     have hS₃ : 0 < det3 (p - x) (p' - x) u := by rw [det3_shift_xy]; exact hor
     have hS₄ : 0 < det3 (p - x) (y' - x) u := by
       rw [det3_shift_xy]; exact E1 y' my' (Ne.symm hyy') hy'p (Ne.symm hxy')
-    have hlow := quad_edge_lower F hS₁ hS₂ hS₃ hS₄
+    have hlow := quad_edge_lower F /- hS₁ hS₂ hS₃ -/ hS₄
     have hsum := four_point_sum x p y' p' u
     have htouch : ⟪p, u⟫ ≠ ⟪p', u⟫ := hpp'u
     have hN' : NWS4 (quad ⟪x, u⟫ ⟪p, u⟫ ⟪y', u⟫ ⟪p', u⟫) := by

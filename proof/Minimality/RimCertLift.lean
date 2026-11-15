@@ -240,7 +240,7 @@ theorem rimCertPts_quad_edge_lift_core_tie {x x' y y' p p' m : ℝ³} (F : OctFa
     have hS₃ : 0 < det3 (p - x) (p' - x) (y - x) := by rw [det3_shift_xy]; exact hor
     have hS₄ : 0 < det3 (p - x) (y' - x) (y - x) := by
       rw [det3_shift_xy]; exact E1 y' my' (Ne.symm hyy') hy'p (Ne.symm hxy')
-    have hN' := nws4_closing_x_tie hS₁ hS₂ hS₃ hS₄ (quad_edge_lower F hS₁ hS₂ hS₃ hS₄) hN hgood
+    have hN' := nws4_closing_x_tie hS₁ hS₂ hS₃ hS₄ (quad_edge_lower F /- hS₁ hS₂ hS₃ -/ hS₄) hN hgood
       htouch
     refine Or.inr ⟨hN', rimCertPts_of_edgeView_robust V M (y - x) hu (k := 4) (by norm_num)
       (quad x p y' p') 0 y (-1) (by simp [V])

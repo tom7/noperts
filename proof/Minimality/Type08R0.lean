@@ -502,7 +502,7 @@ theorem quad_edge_claim {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
     have hS₄ : 0 < det3 (p - x) (y' - x) (y - x) := by
       rw [det3_shift_xy]; exact E1 y' (by simp) (Ne.symm hyy') hy'p (Ne.symm hxy')
     have hsum := four_point_sum x p y' p' (y - x)
-    exact ⟨_, _, _, _, hS₁, hS₃, hS₂, hS₄, by linarith, quad_edge_lower F hS₁ hS₂ hS₃ hS₄⟩
+    exact ⟨_, _, _, _, hS₁, hS₃, hS₂, hS₄, by linarith, quad_edge_lower F /- hS₁ hS₂ hS₃ -/ hS₄⟩
   rcases lt_or_gt_of_ne (quad_orient_ne F) with hn | hp
   · obtain ⟨A, B, C, E, hA, hB, hC, hE, hs, hl⟩ :=
       key F.swap₃ hq₂ hq₁ (by rw [det3_swap12]; linarith)
