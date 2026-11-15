@@ -206,7 +206,7 @@ theorem isRupert_type08_limit_hdn_rim {a a' b b' c c' d : ℝ³} (N : Norm08 a a
       have hno : ∀ i, ¬ (grp08 i).Straddle Y := by
         intro i hst
         fin_cases i
-        all_goals first | exact hst.elim | skip
+        all_goals try exact hst.elim
         all_goals apply hnt
         · simp only [grp08, ViewGroup.Straddle] at hst
           obtain ⟨h1, h2, -, -⟩ := hst
