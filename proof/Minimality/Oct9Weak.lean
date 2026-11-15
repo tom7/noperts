@@ -697,8 +697,7 @@ theorem isRupert_weak_cycle5b {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' 
 
 /-- `quad_edge_lower` with an orientation factor `σ`. -/
 theorem quad_edge_lower_σ {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p') {σ : ℝ}
-    /- (hS₁ : 0 < σ * det3 (y' - p) (p' - p) (y - x)) (hS₂ : 0 < σ * det3 (y' - x) (p' - x) (y - x))
-    (hS₃ : 0 < σ * det3 (p - x) (p' - x) (y - x)) -/ (hS₄ : 0 < σ * det3 (p - x) (y' - x) (y - x)) :
+  (hS₄ : 0 < σ * det3 (p - x) (y' - x) (y - x)) :
     σ * (det3 (y' - p) (p' - p) (y - x) * ⟪x, y - x⟫ +
       det3 (p - x) (p' - x) (y - x) * ⟪y', y - x⟫) <
     σ * (det3 (y' - x) (p' - x) (y - x) * ⟪p, y - x⟫ +
@@ -838,7 +837,7 @@ theorem isRupert_weak_edge_σ {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' 
   have hS₂ : 0 < σ * det3 (y' - x) (p' - x) (y - x) := by rw [← det3_cyc x y' p']; exact e3x
   have hS₃ : 0 < σ * det3 (p - x) (p' - x) (y - x) := by rw [det3_shift_xy]; exact hor
   have hS₄ : 0 < σ * det3 (p - x) (y' - x) (y - x) := by rw [det3_shift_xy]; exact e1y'
-  have hlow := quad_edge_lower_σ F /- e2p' hS₂ hS₃ -/ hS₄
+  have hlow := quad_edge_lower_σ F hS₄
   have hsum := four_point_sum x p y' p' (y - x)
   have hx_lt : a < b ∨ a < e := by
     by_contra hc; push Not at hc

@@ -406,7 +406,7 @@ theorem isRupert_T3_i {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) �
 set_option maxHeartbeats 4000000 in
 /-- **T3, case `(X, Y) = (A', B')`**: the silhouette is the face `A'B'C'`. -/
 theorem isRupert_T3_ii {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) ≠ 0)
-    {α α' β β' : ℝ} (hα : 0 < α) (hα' : 0 < α') (hβ : 0 < β) (hβ' : 0 < β')
+    {α α' β β' : ℝ} (hα : 0 < α) (hβ : 0 < β) (hβ' : 0 < β')
     (h1α : 1 < α) (h1β : 1 < β) (haa : 1 < α + α') (hbb : 1 < β + β') :
     IsRupert {A, B, C, C + cmb (A - C) (B - C) (C' - C) α 0 α',
       C + cmb (A - C) (B - C) (C' - C) 0 β β', C'} := by
@@ -455,7 +455,7 @@ theorem isRupert_T3_ii {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) �
     simp only [a0, a1, a2, tri_0, tri_1, tri_2, hP, add_cmb_sub, hu₀] <;>
     first
       | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
-          (by simp only [detc]; clear * - hα hα' hβ hβ' Q1 Q2 Q3 hbb Q4; linarith)
+          (by simp only [detc]; clear * - hα hβ hβ' Q1 Q2 Q3 hbb Q4; linarith)
   · intro z hz hzx i
     have hx0 := hzx 0; have hx1 := hzx 1; have hx2 := hzx 2
     simp only [tri_0, tri_1, tri_2] at hx0 hx1 hx2
@@ -467,9 +467,9 @@ theorem isRupert_T3_ii {A B C C' : ℝ³} (hΔ : det3 (A - C) (B - C) (C' - C) �
       first
         | exact tiltSign_zero hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
             (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _) (by simp only [detc]; ring1)
-            (by simp only [detc]; clear * - hα hα' hβ hβ' Q1 Q2 Q3 hbb Q4; linarith)
+            (by simp only [detc]; clear * - hα hβ hβ' Q1 Q2 Q3 hbb Q4; linarith)
         | exact tiltSign_pos hD (det3_cmb _ _ _ _ _ _ _ _ _ _ _ _ _)
-            (by simp only [detc]; clear * - hα hα' hβ hβ' Q1 Q2 Q3 hbb Q4; linarith)
+            (by simp only [detc]; clear * - hα hβ hβ' Q1 Q2 Q3 hbb Q4; linarith)
 
 set_option maxHeartbeats 4000000 in
 /-- **T3, case `(X, Y) = (A, B')`**: one of `LU`, `UU`, `LL` is robustly unimodal. -/
@@ -955,7 +955,7 @@ theorem isRupert_T3 {A B C A' B' C' : ℝ³} (h : IsT3 A B C A' B' C') :
   · have h2 : 1 < β := by
       by_contra hc; push Not at hc
       nlinarith [mul_nonneg hα'.le (sub_nonneg.mpr hc), mul_pos hβ' (sub_pos.mpr h1)]
-    exact isRupert_T3_ii hΔ hα hα' hβ hβ' h1 h2 haa hbb
+    exact isRupert_T3_ii hΔ hα hβ hβ' h1 h2 haa hbb
 
 end Minimality
 

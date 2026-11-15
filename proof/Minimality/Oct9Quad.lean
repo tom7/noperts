@@ -142,8 +142,7 @@ theorem det3_self_left (a b : ℝ³) : det3 a a b = 0 := by
 Lemma 9.3): a point of the edge `x y'` lies strictly below the point of the
 segment `p p'` over the crossing of the diagonals of the shadow. -/
 theorem quad_edge_lower {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
-    /- (hS₁ : 0 < det3 (y' - p) (p' - p) (y - x)) (hS₂ : 0 < det3 (y' - x) (p' - x) (y - x))
-    (hS₃ : 0 < det3 (p - x) (p' - x) (y - x)) -/ (hS₄ : 0 < det3 (p - x) (y' - x) (y - x)) :
+    (hS₄ : 0 < det3 (p - x) (y' - x) (y - x)) :
     det3 (y' - p) (p' - p) (y - x) * ⟪x, y - x⟫ + det3 (p - x) (p' - x) (y - x) * ⟪y', y - x⟫ <
       det3 (y' - x) (p' - x) (y - x) * ⟪p, y - x⟫ + det3 (p - x) (y' - x) (y - x) * ⟪p', y - x⟫ := by
   have hnd := F.nodup
@@ -265,7 +264,7 @@ theorem isRupert_quad_edge_core {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y
     have hS₃ : 0 < det3 (p - x) (p' - x) u := by rw [det3_shift_xy]; exact hor
     have hS₄ : 0 < det3 (p - x) (y' - x) u := by
       rw [det3_shift_xy]; exact E1 y' my' (Ne.symm hyy') hy'p (Ne.symm hxy')
-    have hlow := quad_edge_lower F /- hS₁ hS₂ hS₃ -/ hS₄
+    have hlow := quad_edge_lower F hS₄
     have hsum := four_point_sum x p y' p' u
     have hN' : NWS4 (quad ⟪x, u⟫ ⟪p, u⟫ ⟪y', u⟫ ⟪p', u⟫) := by
       simp only [NWS4, quad_0, quad_1, quad_2, quad_3] at hN ⊢

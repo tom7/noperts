@@ -162,7 +162,7 @@ theorem nws4_closing_oct {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p')
     have hS₃ : 0 < det3 (p - x) (p' - x) (y - x) := by rw [det3_shift_xy]; exact hor
     have hS₄ : 0 < det3 (p - x) (y' - x) (y - x) := by
       rw [det3_shift_xy]; exact E1 y' (by simp) (Ne.symm hyy') hy'p (Ne.symm hxy')
-    exact nws4_closing_x' hS₁ hS₂ hS₃ hS₄ (quad_edge_lower F /- hS₁ hS₂ hS₃ -/ hS₄) hN hgood htouch
+    exact nws4_closing_x' hS₁ hS₂ hS₃ hS₄ (quad_edge_lower F hS₄) hN hgood htouch
   rcases lt_or_gt_of_ne (quad_orient_ne F) with hn | hp
   · refine NWS4_quad_swap (key F.swap₃ hq₂ hq₁ (by rw [det3_swap12]; linarith)
       (fun h => hN (NWS4_quad_swap h)) (by rwa [min_comm]) (fun h => htouch ⟨h.2, h.1⟩))
