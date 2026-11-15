@@ -5,14 +5,17 @@ import Septopert.NativeExecutable
 import Septopert.PackedSolutionTree
 
 /-!
-Native executable that checks Septopert's certificate data and constructs
-`IsNopert verts`, as in `Septopert.isNopert_of_certificatesValid` (cap 3 is certified by the P cap
-certificate of `Septopert.PCap`, checked natively; no assumption remains).
+Native executable that checks Septopert's certificate data and
+constructs `IsNopert verts`, as in
+`Septopert.isNopert_of_certificatesValid` (cap 3 is certified by the P
+cap certificate of `Septopert.PCap`, checked natively; no assumption
+remains).
 
 Usage:
   constructSeptopert <tube manifest.txt> <chart directory> <cap.cert> <arc.cert> <axis.cert> <pcap-wp.cert> <pcap-u.cert>
-    Checks everything: the cap certificate (mirror normal), the arc cap certificate (cap 1), the
-    axis cap certificate (cap 2), the P cap certificate (cap 3: the two files are concatenated), every
+    Checks everything: the cap certificate (mirror normal), the arc cap
+    certificate (cap 1), the axis cap certificate (cap 2), the P cap
+    certificate (cap 3: the two files are concatenated), every
     tube table and all four chart tables, and prints
       constructed: CapOk → ArcOk → AxisOk → PCapClaim → ¬ IsRupert verts
       instantiated: IsNopert Septopert.intVerts (...)
@@ -21,7 +24,8 @@ Usage:
   constructSeptopert rows <tube manifest.txt> <chart> <job pack> [locals]
     As `constructSeptopertM18`'s diagnostic modes.
 
-The data is untrusted and checked natively, in parallel (see `constructSeptopertM18.lean`).
+The data is untrusted and checked natively, in parallel (see
+`constructSeptopertM18.lean`).
 -/
 
 open Noperts.Pipeline
@@ -42,13 +46,21 @@ def readLocalTables (manifestPath : String) : IO SharedLocalTables := do
   pure localTables
 
 def rowKind : Row → String
-  | .cayleySplit .. => "cayleySplit" | .viewSplit .. => "viewSplit"
-  | .projective .. => "projective" | .projectiveGlobal .. => "projectiveGlobal"
-  | .projectiveMixedGlobal .. => "projectiveMixedGlobal" | .symmetryLocal .. => "symmetryLocal"
-  | .projectiveLocal .. => "projectiveLocal" | .symmetryTube .. => "symmetryTube"
-  | .codeRoot .. => "codeRoot" | .radiusPrune .. => "radiusPrune" | .c3Prune .. => "c3Prune"
-  | .regionRelax .. => "regionRelax" | .cayleySplitAt .. => "cayleySplitAt"
-  | .mirrorPrune .. => "mirrorPrune" | .capLeaf .. => "capLeaf"
+  | .cayleySplit .. => "cayleySplit"
+  | .viewSplit .. => "viewSplit"
+  | .projective .. => "projective"
+  | .projectiveGlobal .. => "projectiveGlobal"
+  | .projectiveMixedGlobal .. => "projectiveMixedGlobal"
+  | .symmetryLocal .. => "symmetryLocal"
+  | .projectiveLocal .. => "projectiveLocal"
+  | .symmetryTube .. => "symmetryTube"
+  | .codeRoot .. => "codeRoot"
+  | .radiusPrune .. => "radiusPrune"
+  | .c3Prune .. => "c3Prune"
+  | .regionRelax .. => "regionRelax"
+  | .cayleySplitAt .. => "cayleySplitAt"
+  | .mirrorPrune .. => "mirrorPrune"
+  | .capLeaf .. => "capLeaf"
 
 /-- Smoke test: check every row of one decoded job pack. -/
 def rowsMode (manifestPath : String) (chart : CayleyAtlas.ChartIndex) (packPath : String)

@@ -12,15 +12,17 @@ The Septopert family (`SeptopertFamily.familyVerts`): for integers
 
 **Theorem** (`SeptopertFamily.not_isNopert_of_familyHeight_lt_seven`): no
 member of height below 7 is a nopert, given the certificate check
-`LeastHeightValid`. With M7, a Septopert of height 7, this makes height 7 the
-least height of an integer nopert of the family.
+`LeastHeightValid`. The bound is achieved by the canonical Septopert
+(M7), which has a height of 7. So the height of the minimal integral
+Septopert is exactly 7.
 
-Every tuple is reduced to one with minimum 0 by a translation along `(1, 1, 1)`,
-then to a primitive tuple by a scaling and, possibly, to its reflection
-`max − x` (all similarities, which preserve being a nopert). Each of the 55,651
-remaining tuples has a certificate: its points are coplanar (161 tuples), one point
-lies in the hull of the others, so at most 6 points span the solid, and every
-solid with at most 6 points is Rupert (25,932), or an explicit rational Rupert
+Every tuple is reduced to one with minimum 0 by a translation along
+`(1, 1, 1)`, then to a primitive tuple by a scaling and, possibly, to
+its reflection `max − x` (all similarities, which preserve being a
+nopert). Each of the 55,651 remaining tuples has a certificate: its
+points are coplanar (161 tuples), one point lies in the hull of the
+others, so at most 6 points span the solid, and every solid with at
+most 6 points is Rupert (25,932), or an explicit rational Rupert
 passage (29,558). See `SeptopertFamily/Check.lean` for the check and
 `checkSeptopertFamily.lean` for the native executable that runs it on
 `SeptopertFamily/data/leastheight.txt`.

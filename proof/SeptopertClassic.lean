@@ -8,9 +8,10 @@ public import Nopert
 /-!
 # Septopert Classic is not Rupert
 
-The **SeptopertClassic** is the convex polyhedron whose vertices are the seven points
-`septopertClassic` below. This file is the entry point for its result: it states
-exactly what Lean has checked about it.
+The **SeptopertClassic** is the convex polyhedron whose vertices are
+the seven points `septopertClassic` below. This file is the entry
+point for its result: it states exactly what Lean has checked about
+it.
 
 ## What `IsRupert` means
 
@@ -25,38 +26,41 @@ through one copy that the other copy can pass through.
 The result has two parts, and they are trusted differently.
 
 1. **A Lean proof** (`isNopert_of_certificatesValid` below): *if* the
-   certificate data is valid, *then* Septopert Classic is a nopert: a genuine
-   solid (its points are not all in one plane, which is proved outright)
-   that is not Rupert. The data is a large table that splits up every way
-   the solid could be rotated and records, for each piece, why no passage
-   exists there. This part is checked by Lean's kernel in the usual way.
-   It depends only on the standard axioms (`propext`, `Classical.choice`,
-   `Quot.sound`) and on nothing about how the data was produced.
+   certificate data is valid, *then* Septopert Classic is a nopert: a
+   genuine solid (its points are not all in one plane, which is proved
+   outright) that is not Rupert. The data is a large table that splits
+   up every way the solid could be rotated and records, for each
+   piece, why no passage exists there. This part is checked by Lean's
+   kernel in the usual way. It depends only on the standard axioms
+   (`propext`, `Classical.choice`, `Quot.sound`) and on nothing about
+   how the data was produced.
 
-2. **A Lean verification** that the data is valid. The data is about 85
-   million table rows (6.7 GB), far too much for the kernel to check directly.
-   Instead, the program `constructSeptopertClassic` (in `constructSeptopertClassic.lean`)
-   reads the data, runs Lean's own validity checks on every row as compiled
-   code, and, only if every check passes, uses part 1 to build a value of type
-   `IsNopert septopertClassic` and prints
+2. **A Lean verification** that the data is valid. The data is about
+   85 million table rows (6.7 GB), far too much for the kernel to
+   check directly. Instead, the program `constructSeptopertClassic`
+   (in `constructSeptopertClassic.lean`) reads the data, runs Lean's
+   own validity checks on every row as compiled code, and, only if
+   every check passes, uses part 1 to build a value of type `IsNopert
+   septopertClassic` and prints
 
-       instantiated: IsNopert septopertClassic (Septopert Classic is a Nopert: not Rupert)
+       instantiated: IsNopert septopertClassic (Septopert Classic is a
+       Nopert: not Rupert)
 
-   Trusting this part means trusting that Lean's compiler and runtime evaluate
-   the check functions correctly. That is the same trust that `native_decide`
-   asks for, although no `native_decide` is used. The check functions
-   themselves are ordinary Lean definitions, and the kernel proves (part 1)
-   that if they return true, the conclusion follows.
+   Trusting this part means trusting that Lean's compiler and runtime
+   evaluate the check functions correctly. That is the same trust that
+   `native_decide` asks for, although no `native_decide` is used. The
+   check functions themselves are ordinary Lean definitions, and the
+   kernel proves (part 1) that if they return true, the conclusion
+   follows.
 
-The program that *found* the data (the C++ in `search/septopert-classic/`) does not
-need to be trusted at all: a mistake there can only produce data that fails
-the checks.
-That said, it does its own checking, and might be considered its own independent
+The program that *found* the data (the C++ in
+`search/septopert-classic/`) does not need to be trusted at all: a
+mistake there can only produce data that fails the checks. That said,
+it does its own checking, and might be considered its own independent
 verification of the result.
 
-See `septopert-classic.md` at the top of the repository for how to obtain the data,
-rerun the verification, and the times it takes.
--/
+See `septopert-classic.md` at the top of the repository for how to
+obtain the data, rerun the verification, and the times it takes. -/
 
 namespace SeptopertClassic
 

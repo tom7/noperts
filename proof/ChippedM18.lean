@@ -8,57 +8,61 @@ public import Nopert
 /-!
 # The Chipped M18 is not Rupert
 
-The **Chipped M18** is the SeptopertM18 with its three vertices (-18,9,9)/32 (and C3
-images) cut off by the planes (-1,5,5).x = 209/64 (and C3 images): the convex
-polyhedron whose vertices are the 19 points `chippedM18` below. It has C3v
-symmetry and six acute dihedral edges of 81.95 degrees. This file is the entry point for its result: it states
-exactly what Lean has checked about it.
+The **Chipped M18** is the Septopert M18 with its three vertices
+(-18,9,9)/32 (and C3 images) cut off by the planes (-1,5,5).x = 209/64
+(and C3 images): the convex polyhedron whose vertices are the 19
+points `chippedM18` below. It has C3v symmetry and six acute dihedral
+edges of 81.95 degrees. This file is the entry point for its result:
+it states exactly what Lean has checked about it.
 
 ## What `IsRupert` means
 
-`IsRupert` (in `MainTheorem.lean`) says that two copies of the solid, each
-rotated arbitrarily, can be placed so that the shadow of one (projected
-straight down onto the plane, and slid sideways by any amount) lies strictly
-inside the shadow of the other. That is the same as cutting a straight hole
-through one copy that the other copy can pass through.
+`IsRupert` (in `MainTheorem.lean`) says that two copies of the solid,
+each rotated arbitrarily, can be placed so that the shadow of one
+(projected straight down onto the plane, and slid sideways by any
+amount) lies strictly inside the shadow of the other. That is the same
+as cutting a straight hole through one copy that the other copy can
+pass through.
 
 ## What Lean proved, and what it verified
 
 The result has two parts, and they are trusted differently.
 
 1. **A Lean proof** (`isNopert_of_certificatesValid` below): *if* the
-   certificate data is valid, *then* the ChippedM18 is a nopert: a genuine
-   solid (its points are not all in one plane, which is proved outright)
-   that is not Rupert. The data is a large table that splits up every way
-   the solid could be rotated and records, for each piece, why no passage
-   exists there. This part is checked by Lean's kernel in the usual way.
-   It depends only on the standard axioms (`propext`, `Classical.choice`,
-   `Quot.sound`) and on nothing about how the data was produced.
+   certificate data is valid, *then* the ChippedM18 is a nopert: a
+   genuine solid (its points are not all in one plane, which is proved
+   outright) that is not Rupert. The data is a large table that splits
+   up every way the solid could be rotated and records, for each
+   piece, why no passage exists there. This part is checked by Lean's
+   kernel in the usual way. It depends only on the standard axioms
+   (`propext`, `Classical.choice`, `Quot.sound`) and on nothing about
+   how the data was produced.
 
-2. **A Lean verification** that the data is valid. The data is about 850
-   thousand table rows (45 MB) and two cap certificates (1.1 MB), too much for
-   the kernel to check directly.
-   Instead, the program `constructChippedM18` (in `constructChippedM18.lean`)
-   reads the data, runs Lean's own validity checks on every row as compiled
-   code, and, only if every check passes, uses part 1 to build a value of type
-   `IsNopert chippedM18` and prints
+2. **A Lean verification** that the data is valid. The data is about
+   850 thousand table rows (45 MB) and two cap certificates (1.1 MB),
+   too much for the kernel to check directly. Instead, the program
+   `constructChippedM18` (in `constructChippedM18.lean`) reads the
+   data, runs Lean's own validity checks on every row as compiled
+   code, and, only if every check passes, uses part 1 to build a value
+   of type `IsNopert chippedM18` and prints
 
-       instantiated: IsNopert chippedM18 (the Chipped M18 is a Nopert: not Rupert)
+       instantiated: IsNopert chippedM18 (the Chipped M18 is a Nopert:
+       not Rupert)
 
-   Trusting this part means trusting that Lean's compiler and runtime evaluate
-   the check functions correctly. That is the same trust that `native_decide`
-   asks for, although no `native_decide` is used. The check functions
-   themselves are ordinary Lean definitions, and the kernel proves (part 1)
-   that if they return true, the conclusion follows.
+   Trusting this part means trusting that Lean's compiler and runtime
+   evaluate the check functions correctly. That is the same trust that
+   `native_decide` asks for, although no `native_decide` is used. The
+   check functions themselves are ordinary Lean definitions, and the
+   kernel proves (part 1) that if they return true, the conclusion
+   follows.
 
-The program that *found* the data (the C++ in `search/chipped-m18/`) does not
-need to be trusted at all: a mistake there can only produce data that fails
-the checks.
-That said, it does its own checking, and might be considered its own independent
-verification of the result.
+The program that *found* the data (the C++ in `search/chipped-m18/`)
+does not need to be trusted at all: a mistake there can only produce
+data that fails the checks. That said, it does its own checking, and
+might be considered its own independent verification of the result.
 
-See `chipped-m18.md` at the top of the repository for how to obtain the data,
-rerun the verification, and the times it takes.
+See `chipped-m18.md` at the top of the repository for how to obtain
+the data, rerun the verification, and the times it takes.
 -/
 
 namespace ChippedM18
