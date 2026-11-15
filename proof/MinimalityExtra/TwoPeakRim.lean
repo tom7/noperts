@@ -187,7 +187,7 @@ lemma arc_peak {k : ℕ} [NeZero k] (hk : 2 ≤ k) (z : ZMod k → ℝ) (hz : Fu
     rw [← e] at this
     have h2 : (1 : ZMod k) = 0 := by
       have := congrArg (fun t => (j : ZMod k) - t) this
-      simpa using this
+      simp at this
     exact h10 h2
   · have e : ((j : ZMod k) + 1) = ((j + 1 : ℕ) : ZMod k) := by simp
     show z ((j : ZMod k) + 1) < z (j : ZMod k)
@@ -198,7 +198,7 @@ lemma arc_peak {k : ℕ} [NeZero k] (hk : 2 ≤ k) (z : ZMod k → ℝ) (hz : Fu
     rw [← e] at this
     have h2 : (1 : ZMod k) = 0 := by
       have := congrArg (fun t => t - (j : ZMod k)) this
-      simpa using this
+      simp at this
     exact h10 h2
 
 /-- two interleaved high/low pairs on a cycle give two peaks -/

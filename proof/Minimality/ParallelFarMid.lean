@@ -60,8 +60,8 @@ theorem tiltOK_farQ {s A B zp zq zy α β : ℝ} (hc : 0 < s * (zq - zy)) (hr : 
 
 /-- The vertical cycle edge `P → M` over the first ray (sector `B α < A β`): every point of the
 shadow triangle off that vertical passes the test. -/
-theorem tiltOK_vertA {s α β A B zP zM a b z : ℝ} (hα : 0 < α) (hβ : 0 < β) (hB : 0 < B)
-    (hr : B * α < A * β) (hz : s * (zM - zP) < 0) (ha : 0 ≤ a) (hb : 0 ≤ b)
+theorem tiltOK_vertA {s α β A B zP zM a b z : ℝ} (hα : 0 < α) (hB : 0 < B)
+    (hr : B * α < A * β) (hz : s * (zM - zP) < 0) (ha : 0 ≤ a)
     (hy : a * B + b * A ≤ A * B) (hne : a < A) :
     TiltOK A 0 zP A 0 zM a b z (-s * α) (s * β) := by
   right
@@ -72,8 +72,7 @@ theorem tiltOK_vertA {s α β A B zP zM a b z : ℝ} (hα : 0 < α) (hβ : 0 < �
       (s * (zM - zP)) * (β * (a - A) + α * b) := by ring
   rw [e]
   refine mul_pos_of_neg_of_neg hz ?_
-  nlinarith [mul_pos (sub_pos.mpr hne) (sub_pos.mpr hr), mul_pos hα hB, mul_pos hα hA,
-    mul_nonneg hα.le hb]
+  nlinarith [mul_pos (sub_pos.mpr hne) (sub_pos.mpr hr), mul_pos hα hB, mul_pos hα hA]
 
 /-- The first face's far end tested against the edge `M → Q` (sector `B α < A β`, `M` on the
 vertical of `P`). -/
@@ -284,11 +283,11 @@ theorem vertex_core_tail1 (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : �
       · exact ⟨Or.inr (Or.inl rfl), Or.inl (tiltOK_farComp1' (by linarith) hr)⟩
       · exact ⟨Or.inr (Or.inr rfl), Or.inr (Or.inl rfl)⟩
     · have hlt : a < ca m := lt_of_le_of_ne hale ha
-      exact ⟨Or.inl (tiltOK_vertA hα hβ hB0 hr hPz (hpos1 a z hq) le_rfl (by nlinarith) hlt),
+      exact ⟨Or.inl (tiltOK_vertA hα hB0 hr hPz (hpos1 a z hq) (by nlinarith) hlt),
         Or.inl (far_tiltOK (by nlinarith))⟩
   · intro b z hq
     have hble := C2.a_le hq
-    refine ⟨Or.inl (tiltOK_vertA hα hβ hB0 hr hPz le_rfl (hpos2 b z hq) (by nlinarith) hA0), ?_⟩
+    refine ⟨Or.inl (tiltOK_vertA hα hB0 hr hPz le_rfl (by nlinarith) hA0), ?_⟩
     by_cases h : b = cb n ∧ z = dz n
     · exact Or.inr (Or.inr (by rw [h.1, h.2]))
     left
@@ -298,7 +297,7 @@ theorem vertex_core_tail1 (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : �
       exact tiltOK_farComp2 (by linarith) hr
   · intro a b z ha hb hin
     have hlt : a < ca m := by nlinarith
-    exact ⟨Or.inl (tiltOK_vertA hα hβ hB0 hr hPz ha.le hb.le (by nlinarith) hlt),
+    exact ⟨Or.inl (tiltOK_vertA hα hB0 hr hPz ha.le (by nlinarith) hlt),
       Or.inl (far_tiltOK hin)⟩
 set_option maxHeartbeats 4000000 in
 /-- **Lemma T over an edge, cycle with a middle vertex, from the tests** (as `vertex_core_mid`
@@ -494,11 +493,11 @@ theorem edge_core_tail1 (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ 
       · exact ⟨Or.inr (Or.inl rfl), Or.inl (tiltOK_farComp1' (by linarith) hr)⟩
       · exact ⟨Or.inr (Or.inr rfl), Or.inr (Or.inl rfl)⟩
     · have hlt : a < ca m := lt_of_le_of_ne hale ha
-      exact ⟨Or.inl (tiltOK_vertA hα hβ hB0 hr hPz (hpos1 a z hq) le_rfl (by nlinarith) hlt),
+      exact ⟨Or.inl (tiltOK_vertA hα hB0 hr hPz (hpos1 a z hq) (by nlinarith) hlt),
         Or.inl (far_tiltOK (by nlinarith))⟩
   · intro b z hq
     have hble := C2.a_le hq
-    refine ⟨Or.inl (tiltOK_vertA hα hβ hB0 hr hPz le_rfl (hpos2 b z hq) (by nlinarith) hA0), ?_⟩
+    refine ⟨Or.inl (tiltOK_vertA hα hB0 hr hPz le_rfl (by nlinarith) hA0), ?_⟩
     by_cases h : b = cb n ∧ z = dz n
     · exact Or.inr (Or.inr (by rw [h.1, h.2]))
     left
@@ -508,7 +507,7 @@ theorem edge_core_tail1 (O r1 r2 : ℝ²) (hρ : 0 < cross2 r1 r2) (Q1 Q2 : ℝ 
       exact tiltOK_farComp2 (by linarith) hr
   · intro a b z ha hb hin
     have hlt : a < ca m := by nlinarith
-    exact ⟨Or.inl (tiltOK_vertA hα hβ hB0 hr hPz ha.le hb.le (by nlinarith) hlt),
+    exact ⟨Or.inl (tiltOK_vertA hα hB0 hr hPz ha.le (by nlinarith) hlt),
       Or.inl (far_tiltOK hin)⟩
 
 /-- An upper chain ends above a lower one. -/
