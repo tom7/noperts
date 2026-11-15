@@ -20,6 +20,7 @@ public import MinimalityExtra.Sandwich
 public import MinimalityExtra.CoplanarIff
 public import MinimalityExtra.TwoPeakRim
 public import MinimalityExtra.Opposite
+public import MinimalityExtra.WallViewEG
 public import MinimalityExtra.FacePairRigid
 public import MinimalityExtra.StrictSeptRupert
 public import MinimalityExtra.PatchEdge

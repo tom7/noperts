@@ -1551,6 +1551,33 @@ def SilhouetteCodeCounts : Prop :=
 
 end SilhouetteCodes
 
+/-! ## Lemma WV on type 24 -/
+
+section WallViewType24
+
+/-- **Lemma WV on type 24, the parallel facets `E ∥ G`, acute at the floor edge `06`.** Take a
+7-vertex polytope `x` of type 24, with facet `t` the supporting plane `⟪N t, ·⟫ = c t` (outward
+normal `N t`) through the vertices of `type24Faces t` and strictly below it at the others. Facet `E`
+(index 4, vertices `0 4 6`) is parallel to the segments `23` and `25`, so to `G` (index 6, vertices
+`2 3 5`); the dihedral angle at the edge `06` between `B` (index 1) and `E` is acute (`⟪N 1, N 4⟫
+< 0`); and none of the six lateral facets `A C D F H I` (indices `0 2 3 5 7 8`) is edge-on at the
+view along `N 4`. Then the polytope is Rupert.
+
+This is Lemma `WallViewLemma` applied to the view along the wall normal `N 4`: An acute dihedral at
+`06` forces the floor vertices `0 4 6` to form one run on the rim, which makes the rim levels
+wall-shaped. The statement does not claim the converse, nor anything when the dihedral is
+obtuse or a lateral facet is edge-on. -/
+def WallViewTypeEG : Prop :=
+  ∀ (x : Fin 7 → ℝ³) (N : Fin 9 → ℝ³) (c : Fin 9 → ℝ),
+    (∀ t, ∀ i, i ∈ type24Faces t → ⟪N t, x i⟫ = c t) →
+    (∀ t, ∀ i, i ∉ type24Faces t → ⟪N t, x i⟫ < c t) →
+    ⟪N 4, x 2 - x 3⟫ = 0 → ⟪N 4, x 2 - x 5⟫ = 0 →
+    ⟪N 1, N 4⟫ < 0 →
+    (∀ t ∈ ({0, 2, 3, 5, 7, 8} : Finset (Fin 9)), ⟪N t, N 4⟫ ≠ 0) →
+    IsRupert (Finset.univ.image x)
+
+end WallViewType24
+
 /-! ## Torque forms -/
 
 section TorqueForms
