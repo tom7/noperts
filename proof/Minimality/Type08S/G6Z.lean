@@ -31,7 +31,7 @@ theorem close_T2_final {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
 
 /-- **T' closing** (29.13). -/
 theorem close_T'2_final {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
-    (hT' : IsT' a b c' d) (hco : ¬ CoT'2 a a' b b' c c' d) (hnt : ¬ RTouch a a' b b' c c' d) :
+    (hT' : IsT' a b c' d) (hco : ¬ CoT'2 a a' b b' c c' d) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) :=
   close_T'2' N hT' hco
 

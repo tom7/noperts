@@ -27,7 +27,7 @@ theorem det3_orth {x y z l : ℝ³} (hx : ⟪x, l⟫ = 0) (hy : ⟪y, l⟫ = 0) 
   · exact (mul_eq_zero.mp e1).resolve_left hne
   · exact (mul_eq_zero.mp e2).resolve_left hne
 
-theorem touchT_eq_false {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (hT : IsT a' b c d)
+theorem touchT_eq_false {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
     (h : TouchT b b' c c' d) (heq : ⟪c, b - d⟫ = ⟪b, b - d⟫) : False := by
   obtain ⟨⟨h1, h2⟩, -, -⟩ := h
   have hl : b - d ≠ 0 := sub_ne_zero.mpr (Ne.symm N.hd.ne.2.2.1)

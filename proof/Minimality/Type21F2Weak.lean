@@ -231,7 +231,7 @@ theorem cert_type21_F2_weak_core {a a' b b' c c' d : ℝ³} (F : OctFacets a a' 
     have m1v' := segMeet_smul hl2 (by rw [← hv1]; exact hmeet)
     have m2v' := segMeet_smul hl2 (by rw [← hv1]; exact m2v)
     have m2u' := segMeet_smul hl1 (by rw [← hu1]; exact m2u)
-    simp only [← ha, ← ha', ← hb, ← hb', ← hc, ← hc', ← hd] at hdet' m1u' m1v' m2v' m2u'
+    simp only [← ha, ← ha', ← hb, ← hb', ← hc, ← hd] at hdet' m1u' m1v' m2v' m2u'
     have oo : ∀ x : Bool, OneTieAt (Finset.univ.image y) ((f2Group x).view y) := by
       rw [← image_eq_insert_21 y ha ha' hb hb' hc hc' hd]
       intro x; cases x
