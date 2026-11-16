@@ -233,6 +233,82 @@ theorem isRupert_of_eq_cert_posDef (L : ι → EQLeaf Y) (hS : (certMatrix L).Po
     ring
   rwa [this] at hP
 
+
+/-- A point is in the closure of `S` if the segment from it towards `q₀` enters `S` immediately. -/
+theorem mem_closure_of_segment {S : Set (Fin 3 → ℝ)} {ρ q₀ : Fin 3 → ℝ}
+    (h : ∀ t : ℝ, 0 < t → t ≤ 1 → (1 - t) • ρ + t • q₀ ∈ S) : ρ ∈ closure S := by
+  have hc : Continuous fun t : ℝ => (1 - t) • ρ + t • q₀ := by fun_prop
+  have h0 : Filter.Tendsto (fun t : ℝ => (1 - t) • ρ + t • q₀) (nhdsWithin 0 (Set.Ioi 0))
+      (nhds ρ) := by
+    have := hc.tendsto 0
+    simp only [sub_zero, one_smul, zero_smul, add_zero] at this
+    exact this.mono_left nhdsWithin_le_nhds
+  refine mem_closure_of_tendsto h0 ?_
+  filter_upwards [self_mem_nhdsWithin, Ioo_mem_nhdsGT zero_lt_one] with t ht ht1
+  exact h t ht ht1.2.le
+
+theorem mem_closure_cellSet {k : ℕ} {Y : Finset (Fin 3 → ℝ)} {y : ZMod k → Fin 3 → ℝ}
+    {ρ q₀ : Fin 3 → ℝ} (hq : q₀ ∈ cellSet Y y)
+    (hρ : ∀ i : ZMod k, ∀ v ∈ Y, v ≠ y i → v ≠ y (i + 1) →
+      0 ≤ (Matrix.of ![y (i + 1) - y i, v - y i, ρ]).det) : ρ ∈ closure (cellSet Y y) := by
+  refine mem_closure_of_segment (q₀ := q₀) fun t ht0 ht1 i v hv h1 h2 => ?_
+  have e := omega_comb (1 - t) t ρ q₀ (y (i + 1) - y i) (v - y i)
+  simp only [omega] at e
+  rw [e]
+  have h3 := hq i v hv h1 h2
+  have h4 := hρ i v hv h1 h2
+  have h5 : 0 < t * (Matrix.of ![y (i + 1) - y i, v - y i, q₀]).det := mul_pos ht0 h3
+  have h6 := mul_nonneg (sub_nonneg.2 ht1) h4
+  linarith
+
+theorem mem_closure_convSet {k : ℕ} {y : ZMod k → Fin 3 → ℝ} {σ q₀ : Fin 3 → ℝ}
+    (hq : q₀ ∈ convSet y)
+    (hσ : ∀ i : ZMod k, 0 ≤ omega σ (y (i + 1) - y i) (y (i + 2) - y i)) :
+    σ ∈ closure (convSet y) := by
+  refine mem_closure_of_segment (q₀ := q₀) fun t ht0 ht1 i => ?_
+  rw [omega_comb]
+  have h3 := hq i
+  have h4 := hσ i
+  have h5 := mul_pos ht0 h3
+  have h6 := mul_nonneg (sub_nonneg.2 ht1) h4
+  linarith
+
+/-- Build a leaf from nonstrict inequalities: `ρ` satisfies the cell rows of `y` weakly, `σ` the
+convexity rows weakly, and `q₀` is a point strictly inside the cell (closure membership of `ρ`, `σ`
+via the segment towards `q₀`; `σ` uses `cellSet ⊆ convSet`). -/
+noncomputable def EQLeaf.ofNonstrict {Y : Finset (Fin 3 → ℝ)} {k : ℕ} (hk : 3 ≤ k)
+    (y : ZMod k → Fin 3 → ℝ) (hy : Function.Injective y) (hyY : ∀ j, y j ∈ Y)
+    (q₀ : Fin 3 → ℝ) (hq : q₀ ∈ cellSet Y y) (ρ σ : Fin 3 → ℝ)
+    (hρ : ∀ i : ZMod k, ∀ v ∈ Y, v ≠ y i → v ≠ y (i + 1) →
+      0 ≤ (Matrix.of ![y (i + 1) - y i, v - y i, ρ]).det)
+    (hσ : ∀ i : ZMod k, 0 ≤ omega σ (y (i + 1) - y i) (y (i + 2) - y i))
+    (lam : ℝ) (hlam : 0 ≤ lam) : EQLeaf Y :=
+  haveI : NeZero k := ⟨by omega⟩
+  { k := k, hk := hk, y := y, hy := hy, hyY := hyY, ρ := ρ, σ := σ,
+    hρ := mem_closure_cellSet hq hρ,
+    hσ := mem_closure_convSet (cellSet_subset_convSet hk hy hyY hq) hσ,
+    lam := lam, hlam := hlam }
+
+/-- Sqrt-free form of the strict off-diagonal condition of Lemma D: `S_ab ≤ 0` or
+`S_ab² < S_aa S_bb` (with `S_aa, S_bb > 0`) gives `S_ab < √S_aa √S_bb`. -/
+theorem lt_sqrt_mul_of_sq {s a b : ℝ} (ha : 0 < a) (hb : 0 < b) (h : s ≤ 0 ∨ s ^ 2 < a * b) :
+    s < √a * √b := by
+  rcases h with h | h
+  · exact lt_of_le_of_lt h (mul_pos (Real.sqrt_pos.2 ha) (Real.sqrt_pos.2 hb))
+  · rw [← Real.sqrt_mul ha.le]
+    exact Real.lt_sqrt_of_sq_lt h
+
+/-- **EQ certificate schema, sqrt-free form.**  The Lemma D conditions on `S = certMatrix L` as
+`S_aa > 0` and `S_ab ≤ 0 ∨ S_ab² < S_aa S_bb`: polynomial, decidable by `norm_num`. -/
+theorem isRupert_of_eq_cert_sqfree (L : ι → EQLeaf Y)
+    (hSd : ∀ a, 0 < certMatrix L a a)
+    (hSo : ∀ a b, a ≠ b → certMatrix L a b ≤ 0 ∨
+      certMatrix L a b ^ 2 < certMatrix L a a * certMatrix L b b)
+    (E : Matrix (Fin 3) (Fin 3) ℝ) (hE : 0 < E.det)
+    (hGo : ∀ a b, a ≠ b → (Eᵀ * E) a b ≤ 0) :
+    IsRupert (Y.image (emb E)) :=
+  isRupert_of_eq_cert L hSd (fun a b h => lt_sqrt_mul_of_sq (hSd a) (hSd b) (hSo a b h)) E hE hGo
+
 end Schema
 
 end
