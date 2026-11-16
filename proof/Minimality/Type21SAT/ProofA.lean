@@ -10,7 +10,7 @@ public import Minimality.Type21SAT.LratACnf
 @[expose] public section
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
-namespace Minimality.H21.SAT.K3
+namespace Minimality.H21.SAT.Lrat
 open Minimality.SAT.Checker
 def AC0 : List Step := AS0 ++ AS1 ++ AS2 ++ AS3 ++ AS4 ++ AS5 ++ AS6
 def AC1 : List Step := AS7 ++ AS8 ++ AS9 ++ AS10 ++ AS11 ++ AS12 ++ AS13
@@ -40,4 +40,4 @@ theorem Afinal : OKs 15 ACnf [] [AC0,AC1,AC2,AC3,AC4,AC5,AC6,AC7,AC8,AC9,AC10,AC
   ⟨Aok0, ⟨Aok1, ⟨Aok2, ⟨Aok3, ⟨Aok4, ⟨Aok5, ⟨Aok6, ⟨Aok7, ⟨Aok8, ⟨Aok9, ⟨Aok10, ⟨Aok11, trivial⟩⟩⟩⟩⟩⟩⟩⟩⟩⟩⟩⟩
 theorem Aempty : [AC0,AC1,AC2,AC3,AC4,AC5,AC6,AC7,AC8,AC9,AC10,AC11].flatten.any (fun s => s.2.1.isEmpty) = true := by decide +kernel
 theorem Aunsat : ∀ ρ : Nat → Bool, ¬ ∀ c ∈ ACnf, SatCl ρ c := chunks_sound 15 ACnf _ Afinal Aempty
-end Minimality.H21.SAT.K3
+end Minimality.H21.SAT.Lrat

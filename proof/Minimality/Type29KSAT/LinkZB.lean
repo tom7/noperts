@@ -15,7 +15,7 @@ open scoped RealInnerProductSpace
 open Finset
 open Minimality Minimality.H21
 
-namespace Minimality.H29.SAT.K29
+namespace Minimality.H29.SAT.Lrat
 open Minimality.SAT.Checker
 
 open Minimality.H29.SAT Minimality.H29T.SAT
@@ -29,7 +29,7 @@ theorem cnf_eqZB : cnfOfRows rowsZB = ZBCnf := by
   have h := cnfOfRows_of_chkAt rowsZB ZBCnf 0 ⟨ZBe0, ZBe1, ZBeEnd⟩
   simpa using h
 
-end Minimality.H29.SAT.K29
+end Minimality.H29.SAT.Lrat
 
 namespace Minimality.H29K.SAT
 open Minimality.H29.SAT Minimality.H29T.SAT
@@ -37,11 +37,11 @@ open Minimality.H29.SAT Minimality.H29T.SAT
 /-- **The numbered clauses of core ZB are unsatisfiable**, from the kernel-checked LRAT certificate. -/
 theorem coreUnsatZB : CoreUnsat rowsZB := by
   intro ρ hρ
-  have h := K29.ZBunsat ρ
+  have h := Minimality.H29.SAT.Lrat.ZBunsat ρ
   apply h
   intro c hc
-  rw [← K29.cnf_eqZB] at hc
-  simp only [K29.cnfOfRows, List.mem_flatMap, List.mem_map] at hc
+  rw [← Minimality.H29.SAT.Lrat.cnf_eqZB] at hc
+  simp only [Minimality.H29.SAT.Lrat.cnfOfRows, List.mem_flatMap, List.mem_map] at hc
   obtain ⟨ch, hch, n, hn, rfl⟩ := hc
   obtain ⟨l, hl, hs⟩ := hρ ch hch n hn
   exact ⟨l, hl, hs⟩

@@ -5,7 +5,7 @@ public import Minimality.Type16SAT.LratPPMM
 @[expose] public section
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
-namespace Minimality.H29.SAT.K29
+namespace Minimality.H29.SAT.Lrat
 open Minimality.SAT.Checker
 def PPMMC0 : List Step := PPMMS0 ++ PPMMS1 ++ PPMMS2 ++ PPMMS3
 def PPMMC1 : List Step := PPMMS4 ++ PPMMS5 ++ PPMMS6 ++ PPMMS7
@@ -17,4 +17,4 @@ theorem PPMMfinal : OKs 15 PPMMCnf [] [PPMMC0,PPMMC1,PPMMC2] :=
   ⟨PPMMok0, ⟨PPMMok1, ⟨PPMMok2, trivial⟩⟩⟩
 theorem PPMMempty : [PPMMC0,PPMMC1,PPMMC2].flatten.any (fun s => s.2.1.isEmpty) = true := by decide +kernel
 theorem PPMMunsat : ∀ ρ : Nat → Bool, ¬ ∀ c ∈ PPMMCnf, SatCl ρ c := chunks_sound 15 PPMMCnf _ PPMMfinal PPMMempty
-end Minimality.H29.SAT.K29
+end Minimality.H29.SAT.Lrat

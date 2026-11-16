@@ -4,7 +4,7 @@ public import Minimality.SAT.Checker
 
 @[expose] public section
 set_option maxRecDepth 100000
-namespace Minimality.H29.SAT.K29
+namespace Minimality.H29.SAT.Lrat
 open Minimality.SAT.Checker
 def ZZMPZS0 : List Step := [
 (3301,[3297,430],[214,1860]),
@@ -4380,4 +4380,4 @@ def ZZMPZCnf : List Cl := [
 [1104],
 [1008,1010,1020,1022,50,52,14,16,24,26,74,76,46,48,78,80,140,142,114,116,1084,1086,1088,1090,58,60,62,64,1092,1094,1096,1098,1100,1102,196,198]
 ]
-end Minimality.H29.SAT.K29
+end Minimality.H29.SAT.Lrat

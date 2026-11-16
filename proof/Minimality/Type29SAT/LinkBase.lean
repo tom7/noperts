@@ -14,7 +14,7 @@ set_option maxHeartbeats 0
 are consecutive slices of `c` starting at offset `o`; one `decide +kernel` per chunk keeps the kernel's cache small.
 -/
 
-namespace Minimality.H29.SAT.K29
+namespace Minimality.H29.SAT.Lrat
 open Minimality.SAT.Checker
 
 open Minimality.H29.SAT
@@ -36,4 +36,4 @@ theorem cnfOfRows_of_chkAt : ∀ (rs : List (List Nat)) (c : List Cl) (o : Nat),
     rw [e, ih, ← h1, show List.drop (o + r.length) c = (List.drop o c).drop r.length from (List.drop_drop ..).symm]
     exact List.take_append_drop _ _
 
-end Minimality.H29.SAT.K29
+end Minimality.H29.SAT.Lrat

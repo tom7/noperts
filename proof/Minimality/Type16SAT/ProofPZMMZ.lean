@@ -5,7 +5,7 @@ public import Minimality.Type16SAT.LratPZMMZ
 @[expose] public section
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
-namespace Minimality.H29.SAT.K29
+namespace Minimality.H29.SAT.Lrat
 open Minimality.SAT.Checker
 def PZMMZC0 : List Step := PZMMZS0 ++ PZMMZS1 ++ PZMMZS2 ++ PZMMZS3
 def PZMMZC1 : List Step := PZMMZS4 ++ PZMMZS5 ++ PZMMZS6 ++ PZMMZS7
@@ -19,4 +19,4 @@ theorem PZMMZfinal : OKs 15 PZMMZCnf [] [PZMMZC0,PZMMZC1,PZMMZC2,PZMMZC3] :=
   ⟨PZMMZok0, ⟨PZMMZok1, ⟨PZMMZok2, ⟨PZMMZok3, trivial⟩⟩⟩⟩
 theorem PZMMZempty : [PZMMZC0,PZMMZC1,PZMMZC2,PZMMZC3].flatten.any (fun s => s.2.1.isEmpty) = true := by decide +kernel
 theorem PZMMZunsat : ∀ ρ : Nat → Bool, ¬ ∀ c ∈ PZMMZCnf, SatCl ρ c := chunks_sound 15 PZMMZCnf _ PZMMZfinal PZMMZempty
-end Minimality.H29.SAT.K29
+end Minimality.H29.SAT.Lrat

@@ -15,7 +15,7 @@ open scoped RealInnerProductSpace
 open Finset
 open Minimality Minimality.H21
 
-namespace Minimality.H24.SAT.K24
+namespace Minimality.H24.SAT.Lrat
 
 open Minimality.H24T.SAT
 
@@ -30,7 +30,7 @@ theorem cnf_eqMpmmmPq : cnfOfRows rowsMpmmmPq = MpmmmPqCnf := by
   have h := cnfOfRows_of_chkAt rowsMpmmmPq MpmmmPqCnf 0 ⟨MpmmmPqe0, MpmmmPqe1, MpmmmPqe2, MpmmmPqe3, MpmmmPqeEnd⟩
   simpa using h
 
-end Minimality.H24.SAT.K24
+end Minimality.H24.SAT.Lrat
 
 namespace Minimality.H24K.SAT
 open Minimality.H24T.SAT
@@ -38,11 +38,11 @@ open Minimality.H24T.SAT
 /-- **The numbered clauses of core MpmmmPq are unsatisfiable**, from the kernel-checked LRAT certificate. -/
 theorem coreUnsatMpmmmPq : Minimality.H24.SAT.CoreUnsat rowsMpmmmPq := by
   intro ρ hρ
-  have h := Minimality.H24.SAT.K24.MpmmmPqunsat ρ
+  have h := Minimality.H24.SAT.Lrat.MpmmmPqunsat ρ
   apply h
   intro c hc
-  rw [← Minimality.H24.SAT.K24.cnf_eqMpmmmPq] at hc
-  simp only [Minimality.H24.SAT.K24.cnfOfRows, List.mem_flatMap, List.mem_map] at hc
+  rw [← Minimality.H24.SAT.Lrat.cnf_eqMpmmmPq] at hc
+  simp only [Minimality.H24.SAT.Lrat.cnfOfRows, List.mem_flatMap, List.mem_map] at hc
   obtain ⟨ch, hch, n, hn, rfl⟩ := hc
   obtain ⟨l, hl, hs⟩ := hρ ch hch n hn
   exact ⟨l, hl, hs⟩

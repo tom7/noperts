@@ -24,7 +24,7 @@ set_option autoImplicit false
 open scoped RealInnerProductSpace
 open Minimality.H29.SAT
 
-namespace Minimality.SATFormal
+namespace Minimality.SAT.Formal
 
 /-! ### Real level -/
 
@@ -255,4 +255,4 @@ theorem r646_sound {ρ : V → Bool} (hP : Proper ρ) (X : ℕ) (c : Cfg) (hc : 
     Holds ρ (znNeg (fun i => scaleS ((r646 X).get i).w (S i)) k) :=
   formalP_sound hP _ (r646_formal X) c hc S hS k
 
-end Minimality.SATFormal
+end Minimality.SAT.Formal

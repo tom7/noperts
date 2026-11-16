@@ -17,7 +17,7 @@ open Minimality Minimality.H21
 
 namespace Minimality.H16K.SAT
 
-open Minimality.SAT.Checker Minimality.H29.SAT.K29
+open Minimality.SAT.Checker Minimality.H29.SAT.Lrat
 
 theorem PPMMe0 : (PPMMCnf.drop (0)).take rowsPPMM0.length = cnfOfRows16 [rowsPPMM0] := by decide +kernel
 theorem PPMMe1 : (PPMMCnf.drop (0 + rowsPPMM0.length)).take rowsPPMM1.length = cnfOfRows16 [rowsPPMM1] := by decide +kernel
@@ -41,7 +41,7 @@ theorem cnf_eqPPMM : cnfOfRows16 rowsPPMM = PPMMCnf := by
 /-- **The numbered clauses of core PPMM are unsatisfiable**, from the kernel-checked LRAT certificate. -/
 theorem coreUnsatPPMM : Minimality.H16.SAT.CoreUnsat rowsPPMM := by
   intro ρ hρ
-  have h := Minimality.H29.SAT.K29.PPMMunsat ρ
+  have h := Minimality.H29.SAT.Lrat.PPMMunsat ρ
   apply h
   intro c hc
   rw [← cnf_eqPPMM] at hc

@@ -12,7 +12,7 @@ public import Minimality.Type21SAT.Top
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
 
-namespace Minimality.H21.SAT.K3
+namespace Minimality.H21.SAT.Lrat
 open Minimality.SAT.Checker
 
 open Minimality.H21.SAT
@@ -38,18 +38,18 @@ theorem cnf_eqA : cnfOfRows rowsA = ACnf := by
   have h := cnfOfRows_of_chkAt rowsA ACnf 0 ⟨Ae0, Ae1, Ae2, Ae3, Ae4, Ae5, Ae6, Ae7, Ae8, Ae9, Ae10, Ae11, Ae12, Ae13, AeEnd⟩
   simpa using h
 
-end Minimality.H21.SAT.K3
+end Minimality.H21.SAT.Lrat
 
 namespace Minimality.H21.SAT
 
 /-- **Core B is unsatisfiable**, from the kernel-checked LRAT certificate. -/
 theorem coreUnsatA : CoreUnsatA := by
   intro ρ hρ
-  have h := K3.Aunsat ρ
+  have h := Minimality.H21.SAT.Lrat.Aunsat ρ
   apply h
   intro c hc
-  rw [← K3.cnf_eqA] at hc
-  simp only [K3.cnfOfRows, List.mem_flatMap, List.mem_map] at hc
+  rw [← Minimality.H21.SAT.Lrat.cnf_eqA] at hc
+  simp only [Minimality.H21.SAT.Lrat.cnfOfRows, List.mem_flatMap, List.mem_map] at hc
   obtain ⟨ch, hch, n, hn, rfl⟩ := hc
   obtain ⟨l, hl, hs⟩ := hρ ch hch n hn
   exact ⟨l, hl, hs⟩

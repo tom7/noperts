@@ -5,7 +5,7 @@ public import Minimality.Type29KSAT.LratK1aOB
 @[expose] public section
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
-namespace Minimality.H29.SAT.K29
+namespace Minimality.H29.SAT.Lrat
 open Minimality.SAT.Checker
 def K1aOBC0 : List Step := K1aOBS0 ++ K1aOBS1 ++ K1aOBS2 ++ K1aOBS3
 def K1aOBC1 : List Step := K1aOBS4 ++ K1aOBS5 ++ K1aOBS6 ++ K1aOBS7
@@ -31,4 +31,4 @@ theorem K1aOBfinal : OKs 15 K1aOBCnf [] [K1aOBC0,K1aOBC1,K1aOBC2,K1aOBC3,K1aOBC4
   ⟨K1aOBok0, ⟨K1aOBok1, ⟨K1aOBok2, ⟨K1aOBok3, ⟨K1aOBok4, ⟨K1aOBok5, ⟨K1aOBok6, ⟨K1aOBok7, ⟨K1aOBok8, ⟨K1aOBok9, trivial⟩⟩⟩⟩⟩⟩⟩⟩⟩⟩
 theorem K1aOBempty : [K1aOBC0,K1aOBC1,K1aOBC2,K1aOBC3,K1aOBC4,K1aOBC5,K1aOBC6,K1aOBC7,K1aOBC8,K1aOBC9].flatten.any (fun s => s.2.1.isEmpty) = true := by decide +kernel
 theorem K1aOBunsat : ∀ ρ : Nat → Bool, ¬ ∀ c ∈ K1aOBCnf, SatCl ρ c := chunks_sound 15 K1aOBCnf _ K1aOBfinal K1aOBempty
-end Minimality.H29.SAT.K29
+end Minimality.H29.SAT.Lrat

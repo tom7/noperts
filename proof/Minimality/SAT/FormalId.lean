@@ -21,15 +21,15 @@ the SAT clauses on the three valued signs (`zn_sound`).
 * `dE`, `nF`, `bt`, `gm`: the generators the expansion lemmas are written in (differences, facet normals, point brackets `[0 a b e]` and Gram
   entries `Gamma(d_0p, d_0q)`).
 
-`formalId_sound` subsumes `Minimality.SATFormal.formalP_sound`: take `Adm c := c.G.IsSymm`, the atom list
+`formalId_sound` subsumes `Minimality.SAT.Formal.formalP_sound`: take `Adm c := c.G.IsSymm`, the atom list
 `A = ts.map (pval ...)` and every `j = none`; `FormalP` is kept for its users.
 -/
 
 set_option autoImplicit false
 open scoped RealInnerProductSpace
-open Minimality.H29.SAT Minimality.SATFormal
+open Minimality.H29.SAT Minimality.SAT.Formal
 
-namespace Minimality.SATFormalId
+namespace Minimality.SAT.FormalId
 
 open Minimality (det3 cross)
 
@@ -95,4 +95,4 @@ theorem formalId_sound {ρ : V → Bool} (hP : Proper ρ) (hG : GateOK ρ) {Adm 
   · have := hF c hc
     rw [sum_get]; exact this
 
-end Minimality.SATFormalId
+end Minimality.SAT.FormalId

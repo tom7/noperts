@@ -6,7 +6,7 @@ public import Minimality.Type24SAT.K24.LratPpppm
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
 open Minimality.SAT.Checker
-namespace Minimality.H24.SAT.K24
+namespace Minimality.H24.SAT.Lrat
 def PpppmC0 : List Step := PpppmS0 ++ PpppmS1 ++ PpppmS2 ++ PpppmS3
 def PpppmC1 : List Step := PpppmS4 ++ PpppmS5 ++ PpppmS6 ++ PpppmS7
 def PpppmC2 : List Step := PpppmS8 ++ PpppmS9
@@ -17,4 +17,4 @@ theorem Ppppmfinal : OKs 15 PpppmCnf [] [PpppmC0,PpppmC1,PpppmC2] :=
   ⟨Ppppmok0, ⟨Ppppmok1, ⟨Ppppmok2, trivial⟩⟩⟩
 theorem Ppppmempty : [PpppmC0,PpppmC1,PpppmC2].flatten.any (fun s => s.2.1.isEmpty) = true := by decide +kernel
 theorem Ppppmunsat : ∀ ρ : Nat → Bool, ¬ ∀ c ∈ PpppmCnf, SatCl ρ c := chunks_sound 15 PpppmCnf _ Ppppmfinal Ppppmempty
-end Minimality.H24.SAT.K24
+end Minimality.H24.SAT.Lrat

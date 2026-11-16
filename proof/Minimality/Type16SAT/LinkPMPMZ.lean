@@ -17,7 +17,7 @@ open Minimality Minimality.H21
 
 namespace Minimality.H16K.SAT
 
-open Minimality.SAT.Checker Minimality.H29.SAT.K29
+open Minimality.SAT.Checker Minimality.H29.SAT.Lrat
 
 theorem PMPMZe0 : (PMPMZCnf.drop (0)).take rowsPMPMZ0.length = cnfOfRows16 [rowsPMPMZ0] := by decide +kernel
 theorem PMPMZe1 : (PMPMZCnf.drop (0 + rowsPMPMZ0.length)).take rowsPMPMZ1.length = cnfOfRows16 [rowsPMPMZ1] := by decide +kernel
@@ -42,7 +42,7 @@ theorem cnf_eqPMPMZ : cnfOfRows16 rowsPMPMZ = PMPMZCnf := by
 /-- **The numbered clauses of core PMPMZ are unsatisfiable**, from the kernel-checked LRAT certificate. -/
 theorem coreUnsatPMPMZ : Minimality.H16.SAT.CoreUnsat rowsPMPMZ := by
   intro ρ hρ
-  have h := Minimality.H29.SAT.K29.PMPMZunsat ρ
+  have h := Minimality.H29.SAT.Lrat.PMPMZunsat ρ
   apply h
   intro c hc
   rw [← cnf_eqPMPMZ] at hc

@@ -17,7 +17,7 @@ open Minimality Minimality.H21
 
 namespace Minimality.H16K.SAT
 
-open Minimality.SAT.Checker Minimality.H29.SAT.K29
+open Minimality.SAT.Checker Minimality.H29.SAT.Lrat
 
 theorem MZMMUe0 : (MZMMUCnf.drop (0)).take rowsMZMMU0.length = cnfOfRows16 [rowsMZMMU0] := by decide +kernel
 theorem MZMMUe1 : (MZMMUCnf.drop (0 + rowsMZMMU0.length)).take rowsMZMMU1.length = cnfOfRows16 [rowsMZMMU1] := by decide +kernel
@@ -41,7 +41,7 @@ theorem cnf_eqMZMMU : cnfOfRows16 rowsMZMMU = MZMMUCnf := by
 /-- **The numbered clauses of core MZMMU are unsatisfiable**, from the kernel-checked LRAT certificate. -/
 theorem coreUnsatMZMMU : Minimality.H16.SAT.CoreUnsat rowsMZMMU := by
   intro ρ hρ
-  have h := Minimality.H29.SAT.K29.MZMMUunsat ρ
+  have h := Minimality.H29.SAT.Lrat.MZMMUunsat ρ
   apply h
   intro c hc
   rw [← cnf_eqMZMMU] at hc

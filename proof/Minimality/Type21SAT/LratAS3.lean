@@ -5,7 +5,7 @@ public import Minimality.SAT.Checker
 @[expose] public section
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
-namespace Minimality.H21.SAT.K3
+namespace Minimality.H21.SAT.Lrat
 open Minimality.SAT.Checker
 def AS64 : List Step := [
 (13547,[477,5345,99,23],[3773,1668,10583,3777]),
@@ -1027,4 +1027,4 @@ def AS73 : List Step := [
 (14655,[487,3499,89,102,105,688,388,872,93],[12005,553,14546,6428,14387,14112,4930,14515,10587,5707,64,11808]),
 (14656,[65,483,490,6,102,565,583,105,78,501,3],[64,13001,10983,10108,13971,131,129,7621,10778,10209,11088,14311,3817,3816,11855,1356,564,1839,1851,13339,563,7602,11515,12940])
 ]
-end Minimality.H21.SAT.K3
+end Minimality.H21.SAT.Lrat

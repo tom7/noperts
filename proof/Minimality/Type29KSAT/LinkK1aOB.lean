@@ -15,7 +15,7 @@ open scoped RealInnerProductSpace
 open Finset
 open Minimality Minimality.H21
 
-namespace Minimality.H29.SAT.K29
+namespace Minimality.H29.SAT.Lrat
 open Minimality.SAT.Checker
 
 open Minimality.H29.SAT Minimality.H29T.SAT
@@ -37,7 +37,7 @@ theorem cnf_eqK1aOB : cnfOfRows rowsK1aOB = K1aOBCnf := by
   have h := cnfOfRows_of_chkAt rowsK1aOB K1aOBCnf 0 ⟨K1aOBe0, K1aOBe1, K1aOBe2, K1aOBe3, K1aOBe4, K1aOBe5, K1aOBe6, K1aOBe7, K1aOBe8, K1aOBe9, K1aOBeEnd⟩
   simpa using h
 
-end Minimality.H29.SAT.K29
+end Minimality.H29.SAT.Lrat
 
 namespace Minimality.H29K.SAT
 open Minimality.H29.SAT Minimality.H29T.SAT
@@ -45,11 +45,11 @@ open Minimality.H29.SAT Minimality.H29T.SAT
 /-- **The numbered clauses of core K1aOB are unsatisfiable**, from the kernel-checked LRAT certificate. -/
 theorem coreUnsatK1aOB : CoreUnsat rowsK1aOB := by
   intro ρ hρ
-  have h := K29.K1aOBunsat ρ
+  have h := Minimality.H29.SAT.Lrat.K1aOBunsat ρ
   apply h
   intro c hc
-  rw [← K29.cnf_eqK1aOB] at hc
-  simp only [K29.cnfOfRows, List.mem_flatMap, List.mem_map] at hc
+  rw [← Minimality.H29.SAT.Lrat.cnf_eqK1aOB] at hc
+  simp only [Minimality.H29.SAT.Lrat.cnfOfRows, List.mem_flatMap, List.mem_map] at hc
   obtain ⟨ch, hch, n, hn, rfl⟩ := hc
   obtain ⟨l, hl, hs⟩ := hρ ch hch n hn
   exact ⟨l, hl, hs⟩

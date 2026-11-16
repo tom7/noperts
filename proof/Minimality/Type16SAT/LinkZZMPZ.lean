@@ -17,7 +17,7 @@ open Minimality Minimality.H21
 
 namespace Minimality.H16K.SAT
 
-open Minimality.SAT.Checker Minimality.H29.SAT.K29
+open Minimality.SAT.Checker Minimality.H29.SAT.Lrat
 
 theorem ZZMPZe0 : (ZZMPZCnf.drop (0)).take rowsZZMPZ0.length = cnfOfRows16 [rowsZZMPZ0] := by decide +kernel
 theorem ZZMPZe1 : (ZZMPZCnf.drop (0 + rowsZZMPZ0.length)).take rowsZZMPZ1.length = cnfOfRows16 [rowsZZMPZ1] := by decide +kernel
@@ -40,7 +40,7 @@ theorem cnf_eqZZMPZ : cnfOfRows16 rowsZZMPZ = ZZMPZCnf := by
 /-- **The numbered clauses of core ZZMPZ are unsatisfiable**, from the kernel-checked LRAT certificate. -/
 theorem coreUnsatZZMPZ : Minimality.H16.SAT.CoreUnsat rowsZZMPZ := by
   intro ρ hρ
-  have h := Minimality.H29.SAT.K29.ZZMPZunsat ρ
+  have h := Minimality.H29.SAT.Lrat.ZZMPZunsat ρ
   apply h
   intro c hc
   rw [← cnf_eqZZMPZ] at hc

@@ -12,7 +12,7 @@ public import Minimality.Type29SAT.ChkK3a
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
 
-namespace Minimality.H29.SAT.K29
+namespace Minimality.H29.SAT.Lrat
 open Minimality.SAT.Checker
 
 open Minimality.H29.SAT
@@ -36,18 +36,18 @@ theorem cnf_eqK3a : cnfOfRows rowsK3a = K3aCnf := by
   have h := cnfOfRows_of_chkAt rowsK3a K3aCnf 0 ⟨K3ae0, K3ae1, K3ae2, K3ae3, K3ae4, K3ae5, K3ae6, K3ae7, K3ae8, K3ae9, K3ae10, K3ae11, K3aeEnd⟩
   simpa using h
 
-end Minimality.H29.SAT.K29
+end Minimality.H29.SAT.Lrat
 
 namespace Minimality.H29.SAT
 
 /-- **The numbered clauses of core K3a are unsatisfiable**, from the kernel-checked LRAT certificate. -/
 theorem coreUnsatK3a : CoreUnsat rowsK3a := by
   intro ρ hρ
-  have h := K29.K3aunsat ρ
+  have h := Minimality.H29.SAT.Lrat.K3aunsat ρ
   apply h
   intro c hc
-  rw [← K29.cnf_eqK3a] at hc
-  simp only [K29.cnfOfRows, List.mem_flatMap, List.mem_map] at hc
+  rw [← Minimality.H29.SAT.Lrat.cnf_eqK3a] at hc
+  simp only [Minimality.H29.SAT.Lrat.cnfOfRows, List.mem_flatMap, List.mem_map] at hc
   obtain ⟨ch, hch, n, hn, rfl⟩ := hc
   obtain ⟨l, hl, hs⟩ := hρ ch hch n hn
   exact ⟨l, hl, hs⟩

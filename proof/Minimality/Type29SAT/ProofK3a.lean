@@ -5,7 +5,7 @@ public import Minimality.Type29SAT.LratK3a
 @[expose] public section
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
-namespace Minimality.H29.SAT.K29
+namespace Minimality.H29.SAT.Lrat
 open Minimality.SAT.Checker
 def K3aC0 : List Step := K3aS0 ++ K3aS1 ++ K3aS2 ++ K3aS3
 def K3aC1 : List Step := K3aS4 ++ K3aS5 ++ K3aS6 ++ K3aS7
@@ -21,4 +21,4 @@ theorem K3afinal : OKs 15 K3aCnf [] [K3aC0,K3aC1,K3aC2,K3aC3,K3aC4] :=
   ⟨K3aok0, ⟨K3aok1, ⟨K3aok2, ⟨K3aok3, ⟨K3aok4, trivial⟩⟩⟩⟩⟩
 theorem K3aempty : [K3aC0,K3aC1,K3aC2,K3aC3,K3aC4].flatten.any (fun s => s.2.1.isEmpty) = true := by decide +kernel
 theorem K3aunsat : ∀ ρ : Nat → Bool, ¬ ∀ c ∈ K3aCnf, SatCl ρ c := chunks_sound 15 K3aCnf _ K3afinal K3aempty
-end Minimality.H29.SAT.K29
+end Minimality.H29.SAT.Lrat

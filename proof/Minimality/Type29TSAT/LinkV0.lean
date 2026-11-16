@@ -12,7 +12,7 @@ public import Minimality.Type29TSAT.ChkV0
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
 
-namespace Minimality.H29.SAT.K29
+namespace Minimality.H29.SAT.Lrat
 open Minimality.SAT.Checker
 
 open Minimality.H29.SAT
@@ -34,18 +34,18 @@ theorem cnf_eqV0 : cnfOfRows rowsV0 = V0Cnf := by
   have h := cnfOfRows_of_chkAt rowsV0 V0Cnf 0 ⟨V0e0, V0e1, V0e2, V0e3, V0e4, V0e5, V0e6, V0e7, V0e8, V0e9, V0eEnd⟩
   simpa using h
 
-end Minimality.H29.SAT.K29
+end Minimality.H29.SAT.Lrat
 
 namespace Minimality.H29.SAT
 
 /-- **The numbered clauses of core V0 are unsatisfiable**, from the kernel-checked LRAT certificate. -/
 theorem coreUnsatV0 : CoreUnsat rowsV0 := by
   intro ρ hρ
-  have h := K29.V0unsat ρ
+  have h := Minimality.H29.SAT.Lrat.V0unsat ρ
   apply h
   intro c hc
-  rw [← K29.cnf_eqV0] at hc
-  simp only [K29.cnfOfRows, List.mem_flatMap, List.mem_map] at hc
+  rw [← Minimality.H29.SAT.Lrat.cnf_eqV0] at hc
+  simp only [Minimality.H29.SAT.Lrat.cnfOfRows, List.mem_flatMap, List.mem_map] at hc
   obtain ⟨ch, hch, n, hn, rfl⟩ := hc
   obtain ⟨l, hl, hs⟩ := hρ ch hch n hn
   exact ⟨l, hl, hs⟩

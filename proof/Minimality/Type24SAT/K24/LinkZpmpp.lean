@@ -15,7 +15,7 @@ open scoped RealInnerProductSpace
 open Finset
 open Minimality Minimality.H21
 
-namespace Minimality.H24.SAT.K24
+namespace Minimality.H24.SAT.Lrat
 
 open Minimality.H24T.SAT
 
@@ -34,7 +34,7 @@ theorem cnf_eqZpmpp : cnfOfRows rowsZpmpp = ZpmppCnf := by
   have h := cnfOfRows_of_chkAt rowsZpmpp ZpmppCnf 0 ⟨Zpmppe0, Zpmppe1, Zpmppe2, Zpmppe3, Zpmppe4, Zpmppe5, Zpmppe6, Zpmppe7, ZpmppeEnd⟩
   simpa using h
 
-end Minimality.H24.SAT.K24
+end Minimality.H24.SAT.Lrat
 
 namespace Minimality.H24K.SAT
 open Minimality.H24T.SAT
@@ -42,11 +42,11 @@ open Minimality.H24T.SAT
 /-- **The numbered clauses of core Zpmpp are unsatisfiable**, from the kernel-checked LRAT certificate. -/
 theorem coreUnsatZpmpp : Minimality.H24.SAT.CoreUnsat rowsZpmpp := by
   intro ρ hρ
-  have h := Minimality.H24.SAT.K24.Zpmppunsat ρ
+  have h := Minimality.H24.SAT.Lrat.Zpmppunsat ρ
   apply h
   intro c hc
-  rw [← Minimality.H24.SAT.K24.cnf_eqZpmpp] at hc
-  simp only [Minimality.H24.SAT.K24.cnfOfRows, List.mem_flatMap, List.mem_map] at hc
+  rw [← Minimality.H24.SAT.Lrat.cnf_eqZpmpp] at hc
+  simp only [Minimality.H24.SAT.Lrat.cnfOfRows, List.mem_flatMap, List.mem_map] at hc
   obtain ⟨ch, hch, n, hn, rfl⟩ := hc
   obtain ⟨l, hl, hs⟩ := hρ ch hch n hn
   exact ⟨l, hl, hs⟩

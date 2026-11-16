@@ -5,7 +5,7 @@ public import Minimality.SAT.Checker
 @[expose] public section
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
-namespace Minimality.H21.SAT.K3
+namespace Minimality.H21.SAT.Lrat
 open Minimality.SAT.Checker
 def ACnf : List Cl := [
 [7,9],
@@ -5316,4 +5316,4 @@ def ACnf : List Cl := [
 [1336],
 [14,16,10,12]
 ]
-end Minimality.H21.SAT.K3
+end Minimality.H21.SAT.Lrat

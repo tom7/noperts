@@ -5,7 +5,7 @@ public import Minimality.SAT.Checker
 @[expose] public section
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
-namespace Minimality.H21.SAT.K3
+namespace Minimality.H21.SAT.Lrat
 open Minimality.SAT.Checker
 def AS74 : List Step := [
 (14657,[402,3],[14387,5944]),
@@ -959,4 +959,4 @@ def AS83 : List Step := [
 (15866,[89],[15842,15776,15792,15837,15799,15777,15779,15735]),
 (15872,[],[15866,15843,15708,180])
 ]
-end Minimality.H21.SAT.K3
+end Minimality.H21.SAT.Lrat

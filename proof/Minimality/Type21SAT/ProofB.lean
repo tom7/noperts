@@ -5,7 +5,7 @@ public import Minimality.Type21SAT.LratB
 @[expose] public section
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
-namespace Minimality.H21.SAT.K3
+namespace Minimality.H21.SAT.Lrat
 open Minimality.SAT.Checker
 def BC0 : List Step := BS0 ++ BS1 ++ BS2
 def BC1 : List Step := BS3 ++ BS4 ++ BS5
@@ -19,4 +19,4 @@ theorem Bfinal : OKs 15 BCnf [] [BC0,BC1,BC2,BC3] :=
   ⟨Bok0, ⟨Bok1, ⟨Bok2, ⟨Bok3, trivial⟩⟩⟩⟩
 theorem Bempty : [BC0,BC1,BC2,BC3].flatten.any (fun s => s.2.1.isEmpty) = true := by decide +kernel
 theorem Bunsat : ∀ ρ : Nat → Bool, ¬ ∀ c ∈ BCnf, SatCl ρ c := chunks_sound 15 BCnf _ Bfinal Bempty
-end Minimality.H21.SAT.K3
+end Minimality.H21.SAT.Lrat

@@ -5,7 +5,7 @@ public import Minimality.Type29KSAT.LratK2S1
 
 @[expose] public section
 set_option maxRecDepth 100000
-namespace Minimality.H29.SAT.K29
+namespace Minimality.H29.SAT.Lrat
 open Minimality.SAT.Checker
 def K2Steps : List Step := K2S0 ++ K2S1 ++ K2S2 ++ K2S3 ++ K2S4 ++ K2S5 ++ K2S6 ++ K2S7 ++ K2S8 ++ K2S9 ++ K2S10 ++ K2S11 ++ K2S12 ++ K2S13 ++ K2S14 ++ K2S15 ++ K2S16 ++ K2S17 ++ K2S18 ++ K2S19 ++ K2S20 ++ K2S21 ++ K2S22 ++ K2S23 ++ K2S24 ++ K2S25 ++ K2S26 ++ K2S27 ++ K2S28 ++ K2S29 ++ K2S30 ++ K2S31 ++ K2S32 ++ K2S33 ++ K2S34 ++ K2S35 ++ K2S36 ++ K2S37 ++ K2S38 ++ K2S39 ++ K2S40 ++ K2S41 ++ K2S42 ++ K2S43 ++ K2S44 ++ K2S45 ++ K2S46 ++ K2S47 ++ K2S48
 def K2Cnf : List Cl := [
@@ -4898,4 +4898,4 @@ def K2Cnf : List Cl := [
 [1200],
 [7427,7429,7425]
 ]
-end Minimality.H29.SAT.K29
+end Minimality.H29.SAT.Lrat

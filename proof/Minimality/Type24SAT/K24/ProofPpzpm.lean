@@ -6,7 +6,7 @@ public import Minimality.Type24SAT.K24.LratPpzpm
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
 open Minimality.SAT.Checker
-namespace Minimality.H24.SAT.K24
+namespace Minimality.H24.SAT.Lrat
 def PpzpmC0 : List Step := PpzpmS0 ++ PpzpmS1 ++ PpzpmS2 ++ PpzpmS3
 def PpzpmC1 : List Step := PpzpmS4 ++ PpzpmS5 ++ PpzpmS6 ++ PpzpmS7
 def PpzpmC2 : List Step := PpzpmS8 ++ PpzpmS9 ++ PpzpmS10 ++ PpzpmS11
@@ -17,4 +17,4 @@ theorem Ppzpmfinal : OKs 15 PpzpmCnf [] [PpzpmC0,PpzpmC1,PpzpmC2] :=
   ⟨Ppzpmok0, ⟨Ppzpmok1, ⟨Ppzpmok2, trivial⟩⟩⟩
 theorem Ppzpmempty : [PpzpmC0,PpzpmC1,PpzpmC2].flatten.any (fun s => s.2.1.isEmpty) = true := by decide +kernel
 theorem Ppzpmunsat : ∀ ρ : Nat → Bool, ¬ ∀ c ∈ PpzpmCnf, SatCl ρ c := chunks_sound 15 PpzpmCnf _ Ppzpmfinal Ppzpmempty
-end Minimality.H24.SAT.K24
+end Minimality.H24.SAT.Lrat
