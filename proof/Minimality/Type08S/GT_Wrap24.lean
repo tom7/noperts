@@ -95,7 +95,7 @@ theorem propH_n2_lt0 {V : Finset ℝ³} {cP mP fP rP gP wP aP : ℝ³}
     · exact absurd h (hyx 1)
     · exact absurd h (hyx 2)
     · exact absurd h (hyx 3)
-    · rw [h, Φr]; exact h4_cp hs0 hs1 hzv hzw hb2 hr2 hrb hz2 i
+    · rw [h, Φr]; exact h4_cp hs0 hs1 hzv hzw hr2 hrb hz2 i
     · rw [h, Φg]; exact h4_bp hA hs0 hs1 hzv hzw hb2 hz2 htt1 i
     · exact absurd h (hyx 0)
     · rw [h, Φa]; exact h4_a0 u0' (hrow1 _ htt0 htt1) u2 u3 i
