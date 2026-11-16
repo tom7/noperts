@@ -71,7 +71,7 @@ theorem exists_hasUnimodalView : ∃ x : Fin 7 → ℝ³, HasUnimodalView x := b
     refine ⟨?_, Finset.card_eq_one.2 ⟨2, ?_⟩⟩
     · intro a b h
       rcases all3 a with rfl | rfl | rfl <;> rcases all3 b with rfl | rfl | rfl <;>
-        first | rfl | (exfalso; rw [v0] at h <;> norm_num [v1, v2] at h) | (exfalso; norm_num [v0, v1, v2] at h)
+        first | rfl | (exfalso; norm_num [v1, v2] at h)
     · ext i
       rcases all3 i with rfl | rfl | rfl <;>
         simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton, e01, e12, e20, f0, f1, f2] <;> norm_num <;> decide

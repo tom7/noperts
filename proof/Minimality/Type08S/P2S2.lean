@@ -60,7 +60,7 @@ theorem Tp_sep_core (d A B C : ℝ³) {α4 β1 γ4 β6 γ6 : ℝ}
         ⟪A, B⟫ * ⟪B, (α4 - 1) • A + (s + γ4) • C⟫ with hNdef
   have hN : 0 < N * N := mul_self_pos.2 hNs
   obtain ⟨w, hw⟩ : ∃ w : ℝ³, w = (α4 - 1) • A + (s + γ4) • C := ⟨_, rfl⟩
-  have key := Tp_sep_rows d A B C w (κ := N) hw hH hα4 hα hγ4 hαγ hβ1 hβ6 hγ6 hγ61 hs hN hz0 hDa hDb'
+  have key := Tp_sep_rows d A B C w (κ := N) hw hH hα4 hα hαγ hβ1 hβ6 hγ6 hγ61 hs hN hz0 hDa hDb'
     hDc hDb hDc'
   have hv0 : ∀ x : ℝ³, cross (cross B w) x + (-(cross (cross B w) d) - ζ • w) =
       (⟪x - d, B⟫ - ζ) • w - ⟪w, x - d⟫ • B := by

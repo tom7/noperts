@@ -18,8 +18,8 @@ namespace Minimality
 namespace Type08Sp
 variable {s zv zw b1 b2 z2 A r1 a1 a2 a3 tt : ℝ}
 
-theorem n2e_f2 (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : zw < 0)
-    (hb2 : 0 < b2) (ha3 : 0 < a3) (hz2 : (1 - s) * zv < z2) (hd : b1 < r1)
+theorem n2e_f2 (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : zw < 0)
+    (hb2 : 0 < b2) (hz2 : (1 - s) * zv < z2) (hd : b1 < r1)
     (hbr : tt * b2 < -zw) (hta : 0 < a3 + tt * (b2 - a2))
     (hrow2 : LexTest (-1) ⟨1, 0, 0⟩ ⟨0, -1, -tt⟩ (h5Pts zv zw s b1 b2 z2 a1 a2 a3 r1 b2 2)
         (h5Pts zv zw s b1 b2 z2 a1 a2 a3 r1 b2 (2 + 1)) ⟨b1, b2, 0⟩) :
@@ -38,14 +38,14 @@ theorem n2e_f2 (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : zw < 0)
   intro i
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl
   · simp only [h5Pts, b0, quint_0, quint_1, LexTest, tst, hdet]
-    first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩)
+    left; nlinarith
   · simp only [h5Pts, b1', quint_1, quint_2, LexTest, tst, hdet]
-    first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩)
+    left; nlinarith
   · exact hrow2
   · simp only [h5Pts, b3, quint_3, quint_4, LexTest, tst, hdet]
-    first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩)
+    right; refine ⟨by ring, by nlinarith⟩
   · simp only [h5Pts, b4, quint_0, quint_4, LexTest, tst, hdet]
-    first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩)
+    right; refine ⟨by ring, by nlinarith⟩
 
 end Type08Sp
 
@@ -96,7 +96,7 @@ theorem propH_n2_ge_eq2 {V : Finset ℝ³} {cP mP fP rP gP wP aP : ℝ³}
         · exact hl24 tt htt0
         · exact hl32 tt htt0
       · exact lex_of_cross _ (hcv i j h1 h2 hsp))
-    (n2e_f2 hs0 hs1 hzv hzw hb2 ha3 hz2 hd htt2 htt3 (hlb tt htt0))
+    (n2e_f2 hs1 hzv hzw hb2 hz2 hd htt2 htt3 (hlb tt htt0))
     (n2g_g hA hs0 hs1 hzv hzw hb2 hb2 ha3 hz2 htt1 hmaG)
 
 end HFrame

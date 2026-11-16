@@ -38,10 +38,7 @@ theorem tb_cyc (hm : m < 0) (t1 : 0 < py * b1 - px * b2) (t2 : 0 < -(py * A))
   obtain ⟨b0, b1', b2', b3, b4⟩ := zmod5_add_one
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
-    | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals
     simp only [bPts, b0, b1', b2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest,
       tst, hdet]

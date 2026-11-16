@@ -29,7 +29,7 @@ macro "ex" : tactic => `(tactic| (simp only [det3_expand, cross_apply_zero, cros
 theorem Tp_sep_rows (d A B C w : ℝ³) {α4 β1 γ4 β6 γ6 s ζ : ℝ} (κ : ℝ)
     (hw : w = (α4 - 1) • A + (s + γ4) • C)
     (hH : 0 < det3 A C B)
-    (hα4 : 0 < α4) (hα : α4 < 1) (hγ4 : 0 < γ4) (hαγ : 1 < α4 + γ4) (hβ1 : 0 < β1)
+    (hα4 : 0 < α4) (hα : α4 < 1) (hαγ : 1 < α4 + γ4) (hβ1 : 0 < β1)
     (hβ6 : 0 < β6) (hγ6 : 0 < γ6) (hγ61 : γ6 < 1) (hs : 0 < s)
     (hN : 0 < κ * (⟪B, B⟫ * ⟪A, (α4 - 1) • A + (s + γ4) • C⟫ -
         ⟪A, B⟫ * ⟪B, (α4 - 1) • A + (s + γ4) • C⟫))

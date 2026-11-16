@@ -223,10 +223,7 @@ theorem t5_cyc (hA : 0 < A) (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (hzv : 0 �
     have c2 := mul_pos (sub_pos.mpr hz) hsb
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-      first
-      | exact absurd rfl h1
-      | exact absurd (by decide) h2
-      | skip
+      try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
     all_goals
       simp only [t5aPts, b0, b1', b2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest,
         tst, hdet]
@@ -243,10 +240,7 @@ theorem t5_cyc (hA : 0 < A) (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (hzv : 0 �
     have c2 := mul_pos htA (show 0 < zv - za - q * (s * b2) by linarith)
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-      first
-      | exact absurd rfl h1
-      | exact absurd (by decide) h2
-      | skip
+      try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
     all_goals
       simp only [t5aPts, b0, b1', b2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest,
         tst, hdet]
@@ -317,7 +311,6 @@ theorem t5_row {x0 y0 : ℝ} (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (ht1 : t 
         tst, hdet] <;>
       first
       | (left; linarith)
-      | (right; refine ⟨by ring, by linarith⟩)
       | (left; nlinarith)
   · subst hz
     have hqr : q * y0 < zv := by

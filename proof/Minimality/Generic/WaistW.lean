@@ -46,7 +46,7 @@ lemma waistW_reduce (B P Q W Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hQ : 0 
       0 < cross2 (cc B P Q W Y (i + 1) - cc B P Q W Y i) (cc B P Q W Y j - cc B P Q W Y i) := by
     intro i j h1 h2
     rcases zc4 i with rfl | rfl | rfl | rfl <;> rcases zc4 j with rfl | rfl | rfl | rfl <;>
-      first | (exfalso; apply h1; rfl) | (exfalso; apply h2; decide) | skip
+      try (first | (exfalso; apply h1; rfl) | (exfalso; apply h2; decide))
     all_goals
       simp [cross2, z12, z23, z30, cc0, cc1, cc2, cc3]
       nlinarith [mul_pos hB hQ, mul_pos hP hY, mul_pos hY hB, mul_nonneg (neg_nonneg.2 hW) hQ.le,
@@ -223,7 +223,7 @@ theorem waistW_thmB (B P Q W Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hQ : 0 
 noncomputable def DD (B p w Y m : ℝ) : ℝ := p*(B+p+w)+(Y+m)*m
 noncomputable def zA (B p w Y m e : ℝ) : ℝ :=
   -m*p/DD B p w Y m - e*(B*m + (B+p)*Y + (Y+m)*w + 2*(Y+m) - Y)/(2*(Y+m)*DD B p w Y m)
-noncomputable def tA (B p w Y m e : ℝ) : ℝ := 2*B + e*(p-1)/(Y+m)
+noncomputable def tA (B p _w Y m e : ℝ) : ℝ := 2*B + e*(p-1)/(Y+m)
 noncomputable def uA (B p w Y m e : ℝ) : ℝ := e - 2*B*zA B p w Y m e
 
 lemma ev_lt (f : ℝ → ℝ) (hf : Continuous f) (h : f 0 < 0) : ∀ᶠ e in 𝓝[>] (0:ℝ), f e < 0 :=
