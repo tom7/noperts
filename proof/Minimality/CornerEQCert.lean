@@ -178,20 +178,27 @@ theorem gram_symm (E : Matrix (Fin 3) (Fin 3) ℝ) (a b : Fin 3) :
   simp only [Matrix.mul_apply, Matrix.transpose_apply]
   exact sum_congr rfl fun c _ => mul_comm _ _
 
-/-- From a positive pairing to a leaf with `(G σ_i) ⬝ ρ_i < 0`, hence to Rupert. -/
-theorem isRupert_of_neg_leaf (L : ι → EQLeaf Y) (E : Matrix (Fin 3) (Fin 3) ℝ)
-    (hE : 0 < E.det) (hpos : 0 < ∑ a, ∑ b, certMatrix L a b * (Eᵀ * E) a b) :
-    IsRupert (Y.image (emb E)) := by
-  rw [pairing_certMatrix L _ (gram_symm E)] at hpos
-  obtain ⟨i, hi⟩ : ∃ i, (L i).lam * (((Eᵀ * E) *ᵥ (L i).σ) ⬝ᵥ (L i).ρ) < 0 := by
+/-- A positive pairing `∑ S_ab G_ab` of the certificate matrix with a symmetric `G` gives a leaf with
+`(G σ_i) ⬝ᵥ ρ_i < 0`. -/
+theorem exists_neg_leaf (L : ι → EQLeaf Y)
+    (G : Matrix (Fin 3) (Fin 3) ℝ) (hsym : ∀ a b, G a b = G b a)
+    (hpos : 0 < ∑ a, ∑ b, certMatrix L a b * G a b) : ∃ i, (G *ᵥ (L i).σ) ⬝ᵥ (L i).ρ < 0 := by
+  rw [pairing_certMatrix L G hsym] at hpos
+  obtain ⟨i, hi⟩ : ∃ i, (L i).lam * ((G *ᵥ (L i).σ) ⬝ᵥ (L i).ρ) < 0 := by
     by_contra hc
     push Not at hc
     have := sum_nonneg fun i (_ : i ∈ (univ : Finset ι)) => hc i
     linarith
-  have hneg : ((Eᵀ * E) *ᵥ (L i).σ) ⬝ᵥ (L i).ρ < 0 := by
-    by_contra hc
-    push Not at hc
-    exact absurd hi (not_lt.2 (mul_nonneg (L i).hlam hc))
+  refine ⟨i, ?_⟩
+  by_contra hc
+  push Not at hc
+  exact absurd hi (not_lt.2 (mul_nonneg (L i).hlam hc))
+
+/-- From a positive pairing to a leaf with `(G σ_i) ⬝ ρ_i < 0`, hence to Rupert. -/
+theorem isRupert_of_neg_leaf (L : ι → EQLeaf Y) (E : Matrix (Fin 3) (Fin 3) ℝ)
+    (hE : 0 < E.det) (hpos : 0 < ∑ a, ∑ b, certMatrix L a b * (Eᵀ * E) a b) :
+    IsRupert (Y.image (emb E)) := by
+  obtain ⟨i, hneg⟩ := exists_neg_leaf L (Eᵀ * E) (gram_symm E) hpos
   have : NeZero (L i).k := ⟨by have := (L i).hk; omega⟩
   exact isRupert_of_conv_pair_closure (L i).hk E hE (L i).y (L i).hy Y (L i).hyY (L i).hρ
     (L i).hσ hneg

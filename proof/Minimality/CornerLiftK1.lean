@@ -19,7 +19,7 @@ other two (`4, 5`); `a b c` pairwise distinct, so they list `Fin 3`.  `G` is the
 * `r2_max_cc` (`G_ca = G_cb = 0`): maximal for every `ν ≥ 0`, `ν ≠ 0`; this is `lift_two_zeros` with the
   roles `(c, a, b)`.  The plane constraint `ν_c = 0` is NOT needed (exactness of R1), so it is dropped.
 * `r2_not_max` (`G_ab < 0`, `G_ca = 0 > G_cb`): `ν = ε e_b` (so `ν_c = 0` holds since `b ≠ c`) makes all
-  three off-diagonals `G'_ab, G'_ca, G'_cb` negative; this is `lift_one_zero` with the roles `(c, a, b)`.
+  three off-diagonals `G'_ab, G'_ca, G'_cb` negative; this is `lift_one_nonpos` with the roles `(c, a, b)`.
   Only symmetry of `G` is used (not positive definiteness).  The case with `a, b` exchanged is the same
   statement with the names swapped.
 -/
@@ -101,7 +101,7 @@ theorem r2_not_max (G : Matrix (Fin 3) (Fin 3) ℝ) (hG : G.IsSymm) {a b c : Fin
       ((liftM (Pi.single b ε))ᵀ * G * liftM (Pi.single b ε)) a b < 0 ∧
       ((liftM (Pi.single b ε))ᵀ * G * liftM (Pi.single b ε)) c a < 0 ∧
       ((liftM (Pi.single b ε))ᵀ * G * liftM (Pi.single b ε)) c b < 0 := by
-  obtain ⟨ε, he, x1, x2, x3⟩ := lift_one_zero G hG h0 h1 h2
+  obtain ⟨ε, he, x1, x2, x3⟩ := lift_one_nonpos G hG h0.le h1 h2
   exact ⟨ε, he, by simp [hbc], x3, x1, x2⟩
 
 end

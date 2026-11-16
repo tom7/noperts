@@ -18,9 +18,9 @@ a lex cell of the Euclidean point set `p + E Y` (`lexCell_of_frameCell`, base vi
 the rim avoids the apex (`(L i).y j ≠ 0`) the lex cell has rim in `O = p + E (Y \ {0})` avoiding `p`, i.e.
 `CornerLeaf O z p` (`cornerLeaf_of_eq_cert`).
 
-* `exists_unimodal_of_conv_pair(_closure)`: the open-cell unimodal view inside `isRupert_of_conv_pair(_closure)`
-  (the proof of `RimCellConv` repeated up to its last line, so that `RimCellConv` stays untouched).
-* `exists_neg_leaf`: a positive pairing gives a leaf with `(G σ) ⬝ᵥ ρ < 0`.
+* `exists_unimodal_of_conv_pair(_closure)` (now in `RimCellConv`, namespace `Minimality.RimCell`): the
+  open-cell unimodal view inside `isRupert_of_conv_pair(_closure)`.
+* `exists_neg_leaf` (now in `CornerEQCert`): a positive pairing gives a leaf with `(G σ) ⬝ᵥ ρ < 0`.
 * `lexCell_of_frameCell`: frame cell with unimodal depths to `LexCell` (translation by `p`).
 -/
 
@@ -33,116 +33,6 @@ open Minimality.RimCell
 open scoped RealInnerProductSpace
 
 @[expose] public section
-
-/-- The open-cell unimodal view of `isRupert_of_conv_pair`: a point `q` of the cell `A` whose depths
-`((Eᵀ E) q) ⬝ᵥ y i` are cyclically unimodal. -/
-theorem exists_unimodal_of_conv_pair {k : ℕ} [NeZero k] (hk : 3 ≤ k)
-    (E : Matrix (Fin 3) (Fin 3) ℝ) (hE : 0 < E.det)
-    (y : ZMod k → Fin 3 → ℝ) (hy : Function.Injective y) (Y : Finset (Fin 3 → ℝ))
-    (hyY : ∀ i, y i ∈ Y) {A : Set (Fin 3 → ℝ)} (hA : A ⊆ cellSet Y y)
-    {p c : Fin 3 → ℝ} (hp : p ∈ interior A) (hc : c ∈ convSet y)
-    (hperp : ((Eᵀ * E) *ᵥ c) ⬝ᵥ p = 0) :
-    ∃ q ∈ cellSet Y y, IsCyclicUnimodal (fun i => ((Eᵀ * E) *ᵥ q) ⬝ᵥ y i) := by
-  set G := Eᵀ * E with hG
-  have hpA : p ∈ cellSet Y y := hA (interior_subset hp)
-  have hp0 : p ≠ 0 := ne_zero_of_edge hk y p (edge_of_cell hy hyY hpA)
-  have hden : 0 < (G *ᵥ p) ⬝ᵥ p := gram_pos E hE hp0
-  let f : (Fin 3 → ℝ) → (Fin 3 → ℝ) := fun q => c - (((G *ᵥ c) ⬝ᵥ q) / ((G *ᵥ q) ⬝ᵥ q)) • q
-  have hfc : ContinuousAt f p := by
-    have : ContinuousAt (fun q : Fin 3 → ℝ => ((G *ᵥ c) ⬝ᵥ q) / ((G *ᵥ q) ⬝ᵥ q)) p := by
-      refine ContinuousAt.div ?_ ?_ hden.ne'
-      · refine Continuous.continuousAt ?_
-        show Continuous fun q : Fin 3 → ℝ => (G *ᵥ c) ⬝ᵥ q
-        simp only [dotProduct]; fun_prop
-      · refine Continuous.continuousAt ?_
-        simp only [dotProduct, Matrix.mulVec]; fun_prop
-    exact continuousAt_const.sub (this.smul continuousAt_id)
-  have hfp : f p = c := by
-    simp only [f]; rw [hperp]; simp
-  have ev1 : ∀ᶠ q in 𝓝 p, f q ∈ convSet y := by
-    refine hfc.eventually_mem ?_
-    rw [hfp]; exact (isOpen_convSet y).mem_nhds hc
-  have ev2 : ∀ᶠ q in 𝓝 p, q ∈ interior A := isOpen_interior.mem_nhds hp
-  obtain ⟨U, hUs, hUo, hpU⟩ := mem_nhds_iff.mp (ev1.and ev2)
-  have hpos : 0 < volume U := hUo.measure_pos volume ⟨p, hpU⟩
-  have hnull : volume (⋃ (ij : {ij : ZMod k × ZMod k // ij.1 ≠ ij.2}),
-      {c : Fin 3 → ℝ | (G *ᵥ c) ⬝ᵥ y ij.1.1 = (G *ᵥ c) ⬝ᵥ y ij.1.2}) = 0 := by
-    refine (measure_iUnion_null fun ij => ?_)
-    exact volume_tie_eq_zero E hE _ _ (fun h => ij.2 (hy h))
-  obtain ⟨q, hqU, hqn⟩ : ∃ q ∈ U, q ∉ ⋃ (ij : {ij : ZMod k × ZMod k // ij.1 ≠ ij.2}),
-      {c : Fin 3 → ℝ | (G *ᵥ c) ⬝ᵥ y ij.1.1 = (G *ᵥ c) ⬝ᵥ y ij.1.2} := by
-    by_contra hcon
-    push Not at hcon
-    have : volume U ≤ 0 := hnull ▸ measure_mono (fun c hc => hcon c hc)
-    exact absurd hpos (not_lt.mpr this)
-  obtain ⟨hqc, hqA⟩ := hUs hqU
-  have hqA' : q ∈ cellSet Y y := hA (interior_subset hqA)
-  have hq0 : q ≠ 0 := ne_zero_of_edge hk y q (edge_of_cell hy hyY hqA')
-  have hqq : 0 < (G *ᵥ q) ⬝ᵥ q := gram_pos E hE hq0
-  have hinj : Function.Injective fun i : ZMod k => (G *ᵥ q) ⬝ᵥ y i := by
-    intro i j hij
-    by_contra hne
-    exact hqn (Set.mem_iUnion.mpr ⟨⟨(i, j), hne⟩, hij⟩)
-  -- all triples are positive along `f q`
-  have htri := strict_of_conv_path hk y q (f q) (edge_of_cell hy hyY hqA') hqc
-  have hperp' : (G *ᵥ f q) ⬝ᵥ q = 0 := by
-    simp only [f, Matrix.mulVec_sub, Matrix.mulVec_smul, sub_dotProduct, smul_dotProduct,
-      smul_eq_mul]
-    rw [dotProduct_comm (G *ᵥ c) q, div_mul_cancel₀ _ hqq.ne']
-    ring
-  have hcell' : ∀ i : ZMod k, ∀ v ∈ (Finset.univ.image y), v ≠ y i → v ≠ y (i + 1) →
-      0 < (Matrix.of ![y (i + 1) - y i, v - y i, f q]).det := by
-    intro i v hv h1 h2
-    obtain ⟨j, -, rfl⟩ := Finset.mem_image.mp hv
-    exact htri i (i + 1) j (cycBetween_succ hk i j (fun h => h1 (by rw [h])) (fun h => h2 (by rw [h])))
-  have hz := isCyclicUnimodal_perp hk E hE y hy (Finset.univ.image y)
-    (fun i => Finset.mem_image_of_mem _ (Finset.mem_univ i)) (f q) hcell' q hperp' hinj
-  exact ⟨q, hqA', hz⟩
-
-/-- The open-cell unimodal view of `isRupert_of_conv_pair_closure` (the checkable form). -/
-theorem exists_unimodal_of_conv_pair_closure {k : ℕ} [NeZero k] (hk : 3 ≤ k)
-    (E : Matrix (Fin 3) (Fin 3) ℝ) (hE : 0 < E.det)
-    (y : ZMod k → Fin 3 → ℝ) (hy : Function.Injective y) (Y : Finset (Fin 3 → ℝ))
-    (hyY : ∀ i, y i ∈ Y) {ρ σ : Fin 3 → ℝ} (hρ : ρ ∈ closure (cellSet Y y))
-    (hσ : σ ∈ closure (convSet y)) (hneg : ((Eᵀ * E) *ᵥ σ) ⬝ᵥ ρ < 0) :
-    ∃ q ∈ cellSet Y y, IsCyclicUnimodal (fun i => ((Eᵀ * E) *ᵥ q) ⬝ᵥ y i) := by
-  set G := Eᵀ * E with hG
-  let F : (Fin 3 → ℝ) × (Fin 3 → ℝ) → ℝ := fun z => (G *ᵥ z.2) ⬝ᵥ z.1
-  have hF : Continuous F := by
-    simp only [F, dotProduct, Matrix.mulVec]; fun_prop
-  have hmem : (ρ, σ) ∈ closure (cellSet Y y ×ˢ convSet y) := by
-    rw [closure_prod_eq]; exact ⟨hρ, hσ⟩
-  obtain ⟨z, hzF, hz⟩ := mem_closure_iff.mp hmem _ (isOpen_Iio.preimage hF) hneg
-  have hz1 : z.1 ∈ cellSet Y y := hz.1
-  have hz2 : z.2 ∈ convSet y := hz.2
-  have hz10 : z.1 ≠ 0 := ne_zero_of_edge hk y _ (edge_of_cell hy hyY hz1)
-  have hz1c : z.1 ∈ convSet y := cellSet_subset_convSet hk hy hyY hz1
-  let g : ℝ → ℝ := fun t => (G *ᵥ ((1 - t) • z.2 + t • z.1)) ⬝ᵥ z.1
-  have hg : Continuous g := by
-    simp only [g, dotProduct, Matrix.mulVec]; fun_prop
-  have hg0 : g 0 < 0 := by simpa [g, F] using hzF
-  have hg1 : 0 < g 1 := by
-    simpa [g] using gram_pos E hE hz10
-  obtain ⟨t, ht, hgt⟩ := intermediate_value_Icc (zero_le_one) hg.continuousOn
-    (show (0 : ℝ) ∈ Set.Icc (g 0) (g 1) from ⟨hg0.le, hg1.le⟩)
-  exact exists_unimodal_of_conv_pair hk E hE y hy Y hyY (subset_refl _)
-    (by rw [(isOpen_cellSet Y y).interior_eq]; exact hz1) (convSet_combo y hz2 hz1c ht.1 ht.2) hgt
-
-/-- A positive pairing `∑ S_ab G_ab` of the certificate matrix with a symmetric `G` gives a leaf with
-`(G σ_i) ⬝ᵥ ρ_i < 0`. -/
-theorem exists_neg_leaf {Y : Finset (Fin 3 → ℝ)} {ι : Type*} [Fintype ι] (L : ι → EQLeaf Y)
-    (G : Matrix (Fin 3) (Fin 3) ℝ) (hsym : ∀ a b, G a b = G b a)
-    (hpos : 0 < ∑ a, ∑ b, certMatrix L a b * G a b) : ∃ i, (G *ᵥ (L i).σ) ⬝ᵥ (L i).ρ < 0 := by
-  rw [pairing_certMatrix L G hsym] at hpos
-  obtain ⟨i, hi⟩ : ∃ i, (L i).lam * ((G *ᵥ (L i).σ) ⬝ᵥ (L i).ρ) < 0 := by
-    by_contra hc
-    push Not at hc
-    have := sum_nonneg fun i (_ : i ∈ (univ : Finset ι)) => hc i
-    linarith
-  refine ⟨i, ?_⟩
-  by_contra hc
-  push Not at hc
-  exact absurd hi (not_lt.2 (mul_nonneg (L i).hlam hc))
 
 theorem zmod_succ_ne {k : ℕ} (hk : 3 ≤ k) (i : ZMod k) : i + 1 ≠ i := by
   have : Fact (1 < k) := ⟨by omega⟩

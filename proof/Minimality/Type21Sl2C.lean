@@ -54,11 +54,12 @@ theorem h21b_sign_agree (hk : 3 ≤ k) (hx : Function.Injective x) (hc : Functio
     have : ¬ 0 < μ i := by rw [← ZMod.natCast_zmod_val i, all]; exact h0
     exact lt_of_le_of_ne (not_lt.1 this) (hμ0 i)
 
-theorem h21b_core_pos (hc : Function.Injective c) (hk : 3 ≤ k) (D : h21b_SilDataL k x c u₀ v)
+/-- Rim-exposing `h21b_core_pos`: the lex cell has rim `x ∘ c`. -/
+theorem h21b_core_pos_rim (hc : Function.Injective c) (hk : 3 ≤ k) (D : h21b_SilDataL k x c u₀ v)
     (μ : ZMod k → ℝ) (hμ : ∀ i, 0 < μ i)
     (hd : ∀ i, x (c (i + 1)) - x (c i) = μ i • cross (D.A i) (D.B i))
     (hL : LexUni (fun i => ⟪x (c i), u₀⟫) (fun i => ⟪x (c i), v⟫)) :
-    HasLexCellAt (univ.image x) u₀ := by
+    ∃ v' : ℝ³, LexCell (univ.image x) u₀ v' (fun i => x (c i)) := by
   have P : ∀ i m, m ≠ c i → m ≠ c (i + 1) →
       TiltSign (x (c (i + 1)) - x (c i)) (x m - x (c i)) u₀ v := by
     intro i m h0 h1
@@ -69,13 +70,20 @@ theorem h21b_core_pos (hc : Function.Injective c) (hk : 3 ≤ k) (D : h21b_SilDa
     rcases Q with Q | ⟨Q, Q'⟩
     · exact Or.inl (mul_pos (hμ i) Q)
     · right; rw [Q]; exact ⟨by ring, mul_pos (hμ i) Q'⟩
-  refine ⟨k, inferInstance, fun i => x (c i), v, hk, fun i => mem_image_of_mem _ (mem_univ _),
-    ?_, ?_, hL⟩
+  refine ⟨v, hk, fun i => mem_image_of_mem _ (mem_univ _), ?_, ?_, hL⟩
   · intro i j hji hj1
     exact P i (c j) (fun h => hji (hc h)) (fun h => hj1 (hc h))
   · intro y hy hne i
     obtain ⟨m, -, rfl⟩ := mem_image.1 hy
     exact P i m (fun h => hne i (by rw [h])) (fun h => hne (i + 1) (by rw [h]))
+
+theorem h21b_core_pos (hc : Function.Injective c) (hk : 3 ≤ k) (D : h21b_SilDataL k x c u₀ v)
+    (μ : ZMod k → ℝ) (hμ : ∀ i, 0 < μ i)
+    (hd : ∀ i, x (c (i + 1)) - x (c i) = μ i • cross (D.A i) (D.B i))
+    (hL : LexUni (fun i => ⟪x (c i), u₀⟫) (fun i => ⟪x (c i), v⟫)) :
+    HasLexCellAt (univ.image x) u₀ :=
+  let ⟨v', h⟩ := h21b_core_pos_rim hc hk D μ hμ hd hL
+  ⟨k, inferInstance, fun i => x (c i), v', h⟩
 
 end H21
 end Minimality

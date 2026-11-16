@@ -270,18 +270,15 @@ theorem cellSet_subset_convSet {k : ℕ} [NeZero k] (hk : 3 ≤ k) {Y : Finset (
     cellSet Y y ⊆ convSet y :=
   fun _ hq i => edge_of_cell hy hyY hq i (i + 2) (two_ne hk i).1 (two_ne hk i).2
 
-/-- **(2) of Lemma N, the corner-normal pair certificate.**  `p` is interior to a set `A` of views
-satisfying the orientation inequalities of the rim `y` (a cell, `k ≥ 3`); `c` turns every
-consecutive rim triple left (`c ∈ convSet y`, the open cone `Conv(R)`); the views `E p`, `E c`
-are orthogonal.  Then `E Y` is Rupert.  Only `c ∈ convSet y` is used, not that `R` is a rim
-of the polytope along `c`. -/
-theorem isRupert_of_conv_pair {k : ℕ} [NeZero k] (hk : 3 ≤ k)
+/-- The open-cell unimodal view of `isRupert_of_conv_pair`: a point `q` of the cell `A` whose depths
+`((Eᵀ E) q) ⬝ᵥ y i` are cyclically unimodal. -/
+theorem exists_unimodal_of_conv_pair {k : ℕ} [NeZero k] (hk : 3 ≤ k)
     (E : Matrix (Fin 3) (Fin 3) ℝ) (hE : 0 < E.det)
     (y : ZMod k → Fin 3 → ℝ) (hy : Function.Injective y) (Y : Finset (Fin 3 → ℝ))
     (hyY : ∀ i, y i ∈ Y) {A : Set (Fin 3 → ℝ)} (hA : A ⊆ cellSet Y y)
     {p c : Fin 3 → ℝ} (hp : p ∈ interior A) (hc : c ∈ convSet y)
     (hperp : ((Eᵀ * E) *ᵥ c) ⬝ᵥ p = 0) :
-    IsRupert (Y.image (emb E)) := by
+    ∃ q ∈ cellSet Y y, IsCyclicUnimodal (fun i => ((Eᵀ * E) *ᵥ q) ⬝ᵥ y i) := by
   set G := Eᵀ * E with hG
   have hpA : p ∈ cellSet Y y := hA (interior_subset hp)
   have hp0 : p ≠ 0 := ne_zero_of_edge hk y p (edge_of_cell hy hyY hpA)
@@ -336,8 +333,23 @@ theorem isRupert_of_conv_pair {k : ℕ} [NeZero k] (hk : 3 ≤ k)
     exact htri i (i + 1) j (cycBetween_succ hk i j (fun h => h1 (by rw [h])) (fun h => h2 (by rw [h])))
   have hz := isCyclicUnimodal_perp hk E hE y hy (Finset.univ.image y)
     (fun i => Finset.mem_image_of_mem _ (Finset.mem_univ i)) (f q) hcell' q hperp' hinj
-  exact isRupert_of_rimCell_zmod hk E hE y hy Y hyY q hq0 hqA' hz
+  exact ⟨q, hqA', hz⟩
 
+/-- **(2) of Lemma N, the corner-normal pair certificate.**  `p` is interior to a set `A` of views
+satisfying the orientation inequalities of the rim `y` (a cell, `k ≥ 3`); `c` turns every
+consecutive rim triple left (`c ∈ convSet y`, the open cone `Conv(R)`); the views `E p`, `E c`
+are orthogonal.  Then `E Y` is Rupert.  Only `c ∈ convSet y` is used, not that `R` is a rim
+of the polytope along `c`. -/
+theorem isRupert_of_conv_pair {k : ℕ} [NeZero k] (hk : 3 ≤ k)
+    (E : Matrix (Fin 3) (Fin 3) ℝ) (hE : 0 < E.det)
+    (y : ZMod k → Fin 3 → ℝ) (hy : Function.Injective y) (Y : Finset (Fin 3 → ℝ))
+    (hyY : ∀ i, y i ∈ Y) {A : Set (Fin 3 → ℝ)} (hA : A ⊆ cellSet Y y)
+    {p c : Fin 3 → ℝ} (hp : p ∈ interior A) (hc : c ∈ convSet y)
+    (hperp : ((Eᵀ * E) *ᵥ c) ⬝ᵥ p = 0) :
+    IsRupert (Y.image (emb E)) := by
+  obtain ⟨q, hqA, hz⟩ := exists_unimodal_of_conv_pair hk E hE y hy Y hyY hA hp hc hperp
+  exact isRupert_of_rimCell_zmod hk E hE y hy Y hyY q
+    (ne_zero_of_edge hk y q (edge_of_cell hy hyY hqA)) hqA hz
 
 theorem isOpen_cellSet {k : ℕ} [NeZero k] (Y : Finset (Fin 3 → ℝ)) (y : ZMod k → Fin 3 → ℝ) :
     IsOpen (cellSet Y y) := by
@@ -361,15 +373,13 @@ theorem convSet_combo {k : ℕ} (y : ZMod k → Fin 3 → ℝ) {p c : Fin 3 → 
   · rw [← h]; nlinarith
   · nlinarith [mul_pos h (hc i), mul_nonneg (sub_nonneg.mpr h1) (hp i).le]
 
-/-- **(3) of Lemma N, the checkable form.**  If `ρ` is in the closure of the cell `A` of the rim
-`y` and `σ` in the closure of the cone `Conv(R) = convSet y` with `((Eᵀ E) σ) ⬝ᵥ ρ < 0`, then
-`E Y` is Rupert. -/
-theorem isRupert_of_conv_pair_closure {k : ℕ} [NeZero k] (hk : 3 ≤ k)
+/-- The open-cell unimodal view of `isRupert_of_conv_pair_closure` (the checkable form). -/
+theorem exists_unimodal_of_conv_pair_closure {k : ℕ} [NeZero k] (hk : 3 ≤ k)
     (E : Matrix (Fin 3) (Fin 3) ℝ) (hE : 0 < E.det)
     (y : ZMod k → Fin 3 → ℝ) (hy : Function.Injective y) (Y : Finset (Fin 3 → ℝ))
     (hyY : ∀ i, y i ∈ Y) {ρ σ : Fin 3 → ℝ} (hρ : ρ ∈ closure (cellSet Y y))
     (hσ : σ ∈ closure (convSet y)) (hneg : ((Eᵀ * E) *ᵥ σ) ⬝ᵥ ρ < 0) :
-    IsRupert (Y.image (emb E)) := by
+    ∃ q ∈ cellSet Y y, IsCyclicUnimodal (fun i => ((Eᵀ * E) *ᵥ q) ⬝ᵥ y i) := by
   set G := Eᵀ * E with hG
   let F : (Fin 3 → ℝ) × (Fin 3 → ℝ) → ℝ := fun z => (G *ᵥ z.2) ⬝ᵥ z.1
   have hF : Continuous F := by
@@ -389,8 +399,21 @@ theorem isRupert_of_conv_pair_closure {k : ℕ} [NeZero k] (hk : 3 ≤ k)
     simpa [g] using gram_pos E hE hz10
   obtain ⟨t, ht, hgt⟩ := intermediate_value_Icc (zero_le_one) hg.continuousOn
     (show (0 : ℝ) ∈ Set.Icc (g 0) (g 1) from ⟨hg0.le, hg1.le⟩)
-  exact isRupert_of_conv_pair hk E hE y hy Y hyY (subset_refl _)
+  exact exists_unimodal_of_conv_pair hk E hE y hy Y hyY (subset_refl _)
     (by rw [(isOpen_cellSet Y y).interior_eq]; exact hz1) (convSet_combo y hz2 hz1c ht.1 ht.2) hgt
+
+/-- **(3) of Lemma N, the checkable form.**  If `ρ` is in the closure of the cell `A` of the rim
+`y` and `σ` in the closure of the cone `Conv(R) = convSet y` with `((Eᵀ E) σ) ⬝ᵥ ρ < 0`, then
+`E Y` is Rupert. -/
+theorem isRupert_of_conv_pair_closure {k : ℕ} [NeZero k] (hk : 3 ≤ k)
+    (E : Matrix (Fin 3) (Fin 3) ℝ) (hE : 0 < E.det)
+    (y : ZMod k → Fin 3 → ℝ) (hy : Function.Injective y) (Y : Finset (Fin 3 → ℝ))
+    (hyY : ∀ i, y i ∈ Y) {ρ σ : Fin 3 → ℝ} (hρ : ρ ∈ closure (cellSet Y y))
+    (hσ : σ ∈ closure (convSet y)) (hneg : ((Eᵀ * E) *ᵥ σ) ⬝ᵥ ρ < 0) :
+    IsRupert (Y.image (emb E)) := by
+  obtain ⟨q, hqA, hz⟩ := exists_unimodal_of_conv_pair_closure hk E hE y hy Y hyY hρ hσ hneg
+  exact isRupert_of_rimCell_zmod hk E hE y hy Y hyY q
+    (ne_zero_of_edge hk y q (edge_of_cell hy hyY hqA)) hqA hz
 
 
 end Minimality.RimCell

@@ -16,7 +16,7 @@ Source: `CORNER-EQ-IDEAS3-FABLE.md` 1.2 (the Roof Lemma), without walls.  Namesp
 * `liftM_mul` / `gram_comp`: lifting twice is lifting once, `liftM ν * liftM ν' = liftM (ν + liftM ν *ᵥ ν')`;
   the total has sum `N + (1 + N) N'` (`sum_liftTotal`).
 * `maximal_no_further_lift`: at a maximizer no `ν' ≥ 0`, `ν' ≠ 0` gives a feasible lift of `G' = Q G ν*`.
-* `lift_one_nonpos`: `lift_one_zero` with `G_ab ≤ 0` instead of `= 0` (so it also covers "no zero").
+* `lift_one_nonpos` (now in `CornerLift`): the one-zero lift with `G_ab ≤ 0` (so it also covers "no zero").
 * `lift_posDef`: `Q G ν` is positive definite for `G` positive definite, `0 ≤ ∑ ν`.
 * `exists_maximal_lift_two_zeros` (main): for `G` positive definite and obtuse there is a maximizer `ν*`
   of `N` on `liftSet G`, `G' = Q G ν*` is positive definite, and `G'` has two zero off-diagonal entries
@@ -185,41 +185,6 @@ theorem maximal_no_further_lift (G : Matrix (Fin 3) (Fin 3) ℝ) {ν : Fin 3 →
   exact (Finset.sum_eq_zero_iff_of_nonneg fun i _ => hν' i).1 h0 i (Finset.mem_univ i)
 
 /-! ### The shape at a maximum -/
-
-/-- `lift_one_zero` with `G_ab ≤ 0` in place of `G_ab = 0` (the same proof). -/
-theorem lift_one_nonpos (G : Matrix (Fin 3) (Fin 3) ℝ) (hG : G.IsSymm) {a b c : Fin 3}
-    (h0 : G a b ≤ 0) (h1 : G a c < 0) (h2 : G b c < 0) :
-    ∃ ε : ℝ, 0 < ε ∧ ((liftM (Pi.single c ε))ᵀ * G * liftM (Pi.single c ε)) a b < 0
-      ∧ ((liftM (Pi.single c ε))ᵀ * G * liftM (Pi.single c ε)) a c < 0
-      ∧ ((liftM (Pi.single c ε))ᵀ * G * liftM (Pi.single c ε)) b c < 0 := by
-  set m := -max (G a c) (G b c) with hm
-  have hm0 : 0 < m := by
-    have := max_lt h1 h2; simp only [hm]; linarith
-  have hma : G a c ≤ -m := by have := le_max_left (G a c) (G b c); simp only [hm]; linarith
-  have hmb : G b c ≤ -m := by have := le_max_right (G a c) (G b c); simp only [hm]; linarith
-  set ε := m / (|G c c| + 1) with hε
-  have hpos : 0 < |G c c| + 1 := by positivity
-  have he0 : 0 < ε := by positivity
-  have hcc : ε * |G c c| < m := by
-    rw [hε, div_mul_eq_mul_div, div_lt_iff₀ hpos]; nlinarith [abs_nonneg (G c c)]
-  have hcc'' : ε * G c c < m := by
-    have := le_abs_self (G c c); nlinarith
-  have key : ∀ i j, ((liftM (Pi.single c ε))ᵀ * G * liftM (Pi.single c ε)) i j
-      = G i j + ε * G i c + ε * G j c + ε * ε * G c c := by
-    intro i j
-    rw [lift_gram_apply G hG]
-    simp [Matrix.mulVec, dotProduct, Pi.single_apply]
-    ring
-  refine ⟨ε, he0, ?_, ?_, ?_⟩
-  · rw [key]
-    have : G a c + G b c + ε * G c c < 0 := by linarith
-    nlinarith [mul_neg_of_pos_of_neg he0 this]
-  · rw [key]
-    have : G a c + ε * G c c < 0 := by linarith
-    nlinarith [mul_neg_of_pos_of_neg (by linarith : 0 < 1 + ε) this]
-  · rw [key]
-    have : G b c + ε * G c c < 0 := by linarith
-    nlinarith [mul_neg_of_pos_of_neg (by linarith : 0 < 1 + ε) this]
 
 theorem lift_gram_symm (G : Matrix (Fin 3) (Fin 3) ℝ) (hG : G.IsSymm) (ν : Fin 3 → ℝ) (a b : Fin 3) :
     ((liftM ν)ᵀ * G * liftM ν) a b = ((liftM ν)ᵀ * G * liftM ν) b a := by

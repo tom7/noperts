@@ -102,32 +102,51 @@ theorem s0x_sep_tilt (hx : Function.Injective x) (hc : Function.Injective c)
   rw [e, e] at h
   exact h3 i j hij (by linarith)
 
+/-- Rim-exposing `s0x_sil_cell_lexUni`: the rim is `x ∘ c` or its reverse `x ∘ c ∘ neg`. -/
+theorem s0x_sil_cell_lexUni_rim (hk : 3 ≤ k) (hx : Function.Injective x) (hc : Function.Injective c)
+    (D : h21b_SilDataL k x c u₀ v)
+    (hL : LexUni (fun i => ⟪x (c i), u₀⟫) (fun i => ⟪x (c i), v⟫)) :
+    ∃ (v' : ℝ³) (y : ZMod k → ℝ³), (∀ i, ∃ j, y i = x (c j)) ∧ LexCell (univ.image x) u₀ v' y := by
+  choose μ hμ0 hd using h21b_exists_mu hk hx hc D
+  rcases h21b_sign_agree hk hx hc D μ hμ0 hd with hp | hn
+  · obtain ⟨v', h⟩ := h21b_core_pos_rim hc hk D μ hp hd hL
+    exact ⟨v', _, fun i => ⟨i, rfl⟩, h⟩
+  · have hd' : ∀ i, x (c (-(i + 1))) - x (c (-i)) =
+        (-μ (-i - 1)) • cross (D.rev.A i) (D.rev.B i) := by
+      intro i
+      have := hd (-i - 1)
+      rw [sub_add_cancel] at this
+      show x (c (-(i + 1))) - x (c (-i)) = (-μ (-i - 1)) • cross (D.A (-i - 1)) (D.B (-i - 1))
+      rw [show -(i + 1) = -i - 1 by ring, neg_smul, ← this]
+      abel
+    obtain ⟨v', h⟩ := h21b_core_pos_rim (c := fun i => c (-i)) (fun i j h => neg_injective (hc h)) hk
+      D.rev (fun i => - μ (-i - 1)) (fun i => by linarith [hn (-i - 1)]) hd' (Type08Sp.lexUni_neg hL)
+    exact ⟨v', _, fun i => ⟨-i, rfl⟩, h⟩
+
 /-- **The lex silhouette cell, general depth form**: lex data at `(u₀, v)` and lex unimodal depths
 `(⟪x (c i), u₀⟫, ⟪x (c i), v⟫)`. -/
 theorem s0x_sil_cell_lexUni (hk : 3 ≤ k) (hx : Function.Injective x) (hc : Function.Injective c)
     (D : h21b_SilDataL k x c u₀ v)
     (hL : LexUni (fun i => ⟪x (c i), u₀⟫) (fun i => ⟪x (c i), v⟫)) :
-    HasLexCellAt (univ.image x) u₀ := by
-  choose μ hμ0 hd using h21b_exists_mu hk hx hc D
-  rcases h21b_sign_agree hk hx hc D μ hμ0 hd with hp | hn
-  · exact h21b_core_pos hc hk D μ hp hd hL
-  · refine h21b_core_pos (c := fun i => c (-i)) (fun i j h => neg_injective (hc h)) hk D.rev
-      (fun i => - μ (-i - 1)) (fun i => by linarith [hn (-i - 1)]) ?_ (Type08Sp.lexUni_neg hL)
-    intro i
-    have := hd (-i - 1)
-    rw [sub_add_cancel] at this
-    show x (c (-(i + 1))) - x (c (-i)) = (-μ (-i - 1)) • cross (D.A (-i - 1)) (D.B (-i - 1))
-    rw [show -(i + 1) = -i - 1 by ring, neg_smul, ← this]
-    abel
+    HasLexCellAt (univ.image x) u₀ :=
+  let ⟨v', y, _, h⟩ := s0x_sil_cell_lexUni_rim hk hx hc D hL
+  ⟨k, inferInstance, y, v', h⟩
+
+/-- Rim-exposing `s0x_sil_cell_lex`. -/
+theorem s0x_sil_cell_lex_rim (hk : 3 ≤ k) (hx : Function.Injective x) (hc : Function.Injective c)
+    (D : h21b_SilDataL k x c u₀ v) (hU : RobUni (fun i => ⟪x (c i), u₀⟫)) :
+    ∃ (v' : ℝ³) (y : ZMod k → ℝ³), (∀ i, ∃ j, y i = x (c j)) ∧ LexCell (univ.image x) u₀ v' y := by
+  obtain ⟨v', ⟨D'⟩, hv⟩ := s0x_sep_tilt hx hc D
+  exact s0x_sil_cell_lexUni_rim hk hx hc D'
+    (s0x_lexUni_of_robUni hk hU _ fun i j _ h => by_contra fun hij => hv i j hij h)
 
 /-- **S0-lex with robust depths**: lex facings at any `(u₀, v)` (edge-on up/down facets allowed; the
 tilt need not separate depth ties) and `RobUni` of the depths along the cycle. -/
 theorem s0x_sil_cell_lex (hk : 3 ≤ k) (hx : Function.Injective x) (hc : Function.Injective c)
     (D : h21b_SilDataL k x c u₀ v) (hU : RobUni (fun i => ⟪x (c i), u₀⟫)) :
-    HasLexCellAt (univ.image x) u₀ := by
-  obtain ⟨v', ⟨D'⟩, hv⟩ := s0x_sep_tilt hx hc D
-  exact s0x_sil_cell_lexUni hk hx hc D'
-    (s0x_lexUni_of_robUni hk hU _ fun i j _ h => by_contra fun hij => hv i j hij h)
+    HasLexCellAt (univ.image x) u₀ :=
+  let ⟨v', y, _, h⟩ := s0x_sil_cell_lex_rim hk hx hc D hU
+  ⟨k, inferInstance, y, v', h⟩
 
 theorem s0x_sil_isRupert_lex (hk : 3 ≤ k) (hx : Function.Injective x) (hc : Function.Injective c)
     (hu : u₀ ≠ 0) (D : h21b_SilDataL k x c u₀ v) (hU : RobUni (fun i => ⟪x (c i), u₀⟫)) :

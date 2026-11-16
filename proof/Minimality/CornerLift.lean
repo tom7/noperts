@@ -27,7 +27,7 @@ For `ν ≥ 0` put `N = ∑ ν` and `M = liftM ν = 1 + ν 1ᵀ` (`liftM_apply`:
 ## Lemma R1 (1.2), the first-order part
 
 For symmetric `G`:
-* `lift_one_zero` (one zero): `G_ab = 0`, `G_ac < 0`, `G_bc < 0` give `ε > 0` with the three off-diagonal
+* `lift_one_nonpos` (one zero or none): `G_ab ≤ 0`, `G_ac < 0`, `G_bc < 0` give `ε > 0` with the three off-diagonal
   entries of `G'` for `ν = ε e_c` all `< 0`.  Explicit `ε`.  No distinctness of the indices is needed
   (the hypotheses already force the entries to be off-diagonal in the intended sense); here `a b c` are
   arbitrary.
@@ -234,12 +234,13 @@ theorem sum3 {a b c : Fin 3} (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) (f 
     Finset.sum_singleton]
   ring
 
-theorem lift_one_zero (G : Matrix (Fin 3) (Fin 3) ℝ) (hG : G.IsSymm) {a b c : Fin 3}
-    (h0 : G a b = 0) (h1 : G a c < 0) (h2 : G b c < 0) :
+/-- One-zero lift: `G_ab ≤ 0`, `G_ac < 0`, `G_bc < 0` give `ε > 0` making the three off-diagonal entries
+of `G` lifted by `ε e_c` all negative (`G_ab = 0` is the case used by R1). -/
+theorem lift_one_nonpos (G : Matrix (Fin 3) (Fin 3) ℝ) (hG : G.IsSymm) {a b c : Fin 3}
+    (h0 : G a b ≤ 0) (h1 : G a c < 0) (h2 : G b c < 0) :
     ∃ ε : ℝ, 0 < ε ∧ ((liftM (Pi.single c ε))ᵀ * G * liftM (Pi.single c ε)) a b < 0
       ∧ ((liftM (Pi.single c ε))ᵀ * G * liftM (Pi.single c ε)) a c < 0
       ∧ ((liftM (Pi.single c ε))ᵀ * G * liftM (Pi.single c ε)) b c < 0 := by
-  have hs : ∀ i j, G i j = G j i := fun i j => (hG.apply j i)
   set m := -max (G a c) (G b c) with hm
   have hm0 : 0 < m := by
     have := max_lt h1 h2; simp only [hm]; linarith
@@ -250,8 +251,6 @@ theorem lift_one_zero (G : Matrix (Fin 3) (Fin 3) ℝ) (hG : G.IsSymm) {a b c : 
   have he0 : 0 < ε := by positivity
   have hcc : ε * |G c c| < m := by
     rw [hε, div_mul_eq_mul_div, div_lt_iff₀ hpos]; nlinarith [abs_nonneg (G c c)]
-  have hcc' : -m < ε * G c c := by
-    have := neg_abs_le (G c c); nlinarith
   have hcc'' : ε * G c c < m := by
     have := le_abs_self (G c c); nlinarith
   have key : ∀ i j, ((liftM (Pi.single c ε))ᵀ * G * liftM (Pi.single c ε)) i j
@@ -261,7 +260,7 @@ theorem lift_one_zero (G : Matrix (Fin 3) (Fin 3) ℝ) (hG : G.IsSymm) {a b c : 
     simp [Matrix.mulVec, dotProduct, Pi.single_apply]
     ring
   refine ⟨ε, he0, ?_, ?_, ?_⟩
-  · rw [key, h0]
+  · rw [key]
     have : G a c + G b c + ε * G c c < 0 := by linarith
     nlinarith [mul_neg_of_pos_of_neg he0 this]
   · rw [key]
