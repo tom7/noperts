@@ -22,9 +22,9 @@ sign vector is one of twelve classes (`cls12_of_ne`: the other 20 vectors each v
 relation whose other brackets have signs forced by the facets; `chi24_ne`: the chirality bracket never vanishes).  Ten
 classes are closed off the obtuse corner `OB1` (all face angles at vertex `1` non-acute): `ppmmm ppmpp ppppm pmmpp
 mpmpp ppmpm` by encoder cores and `ppppp pmppp mpmpm mpmmm` by the parallelogram split
-(`Minimality.T24.isRupert_offOB1_*`).  `Resid24 x` is what is left: `OB1`, a zero class bracket, or one of the open
-classes `mpppp`, `mpppm`.  `rupert_or_resid24` takes the nine facet witnesses of the skeleton's type 24 branch
-(`RealizesFaces`) and gives Rupert or `Resid24 x`.
+(`Minimality.T24.isRupert_offOB1_*`).  `Resid24Wide x` is what is left: `OB1`, a zero class bracket, or one of the open
+classes `mpppp`, `mpppm`.  `rupert_or_resid24_wide` takes the nine facet witnesses of the skeleton's type 24 branch
+(`RealizesFaces`) and gives Rupert or `Resid24Wide x`.
 -/
 
 set_option autoImplicit false
@@ -69,7 +69,7 @@ def Cls12 (x : Fin 7 → ℝ³) : Prop :=
 
 /-- **The type 24 residual**: the obtuse corner `OB1`, a zero class bracket, or one of the open classes `mpppp`,
 `mpppm`. -/
-def Resid24 (x : Fin 7 → ℝ³) : Prop :=
+def Resid24Wide (x : Fin 7 → ℝ³) : Prop :=
   H24K.SAT.OB1 x ∨ (b1234 x = 0 ∨ b1245 x = 0 ∨ b1356 x = 0 ∨ b1456 x = 0 ∨ b2456 x = 0) ∨
     cls24 x false true true true true ∨ cls24 x false true true true false
 
@@ -648,9 +648,9 @@ theorem zero_split {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x)
 
 
 /-- Off the residual, one of the ten closed classes holds off `OB1`: Rupert. -/
-theorem isRupert_of_not_resid24 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (h : ¬ Resid24 x) :
+theorem isRupert_of_not_resid24_wide {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (h : ¬ Resid24Wide x) :
     IsRupert (univ.image x) := by
-  simp only [Resid24, not_or] at h
+  simp only [Resid24Wide, not_or] at h
   obtain ⟨hO, ⟨h0, h1, h2, h3, h4⟩, hmpppp, hmpppm⟩ := h
   rcases cls12_of_ne F h0 h1 h2 h3 h4 with h | h | h | h | h | h | h | h | h | h | h | h
   · exact isRupert_offOB1_ppmmm F h hO
@@ -677,8 +677,8 @@ noncomputable def mkFac24 {x : Fin 7 → ℝ³} (fs : Fin 9 → ℝ³ →ᵃ[ℝ
   neg t i hi := (h t i).2 hi
 
 /-- **The type 24 branch, closed off the residual**: from the nine facet witnesses (`012 016 126 236 046 025 0345 235
-346`, the skeleton's `hR`), the points are Rupert or `Resid24 x` holds. -/
-theorem rupert_or_resid24 {x : Fin 7 → ℝ³} (fA fB fC fD fE fF fG fH fI : ℝ³ →ᵃ[ℝ] ℝ)
+346`, the skeleton's `hR`), the points are Rupert or `Resid24Wide x` holds. -/
+theorem rupert_or_resid24_wide {x : Fin 7 → ℝ³} (fA fB fC fD fE fF fG fH fI : ℝ³ →ᵃ[ℝ] ℝ)
     (hA : ∀ i, (i ∈ ({0, 1, 2} : Finset (Fin 7)) → fA (x i) = 0) ∧
       (i ∉ ({0, 1, 2} : Finset (Fin 7)) → fA (x i) < 0))
     (hB : ∀ i, (i ∈ ({0, 1, 6} : Finset (Fin 7)) → fB (x i) = 0) ∧
@@ -697,10 +697,10 @@ theorem rupert_or_resid24 {x : Fin 7 → ℝ³} (fA fB fC fD fE fF fG fH fI : �
       (i ∉ ({2, 3, 5} : Finset (Fin 7)) → fH (x i) < 0))
     (hI : ∀ i, (i ∈ ({3, 4, 6} : Finset (Fin 7)) → fI (x i) = 0) ∧
       (i ∉ ({3, 4, 6} : Finset (Fin 7)) → fI (x i) < 0)) :
-    IsRupert (univ.image x) ∨ Resid24 x := by
-  by_cases hr : Resid24 x
+    IsRupert (univ.image x) ∨ Resid24Wide x := by
+  by_cases hr : Resid24Wide x
   · exact Or.inr hr
-  refine Or.inl (isRupert_of_not_resid24 (mkFac24 ![fA, fB, fF, fG, fE, fC, fH, fD, fI] ?_) hr)
+  refine Or.inl (isRupert_of_not_resid24_wide (mkFac24 ![fA, fB, fF, fG, fE, fC, fH, fD, fI] ?_) hr)
   intro t i
   fin_cases t
   exacts [hA i, hB i, hF i, hG i, hE i, hC i, hH i, hD i, hI i]

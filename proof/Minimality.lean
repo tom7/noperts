@@ -34,6 +34,7 @@ public import Minimality.Type16SAT.FinalLast16
 public import Minimality.Type16SAT.Exh16
 public import Minimality.Type24SAT.K24.Wire24
 public import Minimality.Type24SAT.K24.Wire24Zero
+public import Minimality.Type24SAT.K24.Wire24Res
 public import Minimality.SilS0XD
 public import Minimality.Type20IMA
 public import Minimality.Type20IV
@@ -387,7 +388,7 @@ a facet (`Minimality.exists_facet_of_isExtreme`, `Minimality/FaceBridge.lean`), 
 classification into the 29 types (`Minimality.exists_sevenType`, `Minimality/Classify.lean`: a
 sign-vector certificate checked in the kernel). Not formalized (`sorry`): type 24 inside
 `C̄ ∪ Σ_B` (it is proved outside, `not_type24_outside_Cbar_of_isNopert`) and in `Minimality.T24.Resid24`:
-on the obtuse corner `OB1`, with a zero class bracket, or in the classes `mpppp`, `mpppm` (off it the sign-matrix
+on the obtuse corner `OB1`, in the class `mpppz` (a zero class bracket), or in the classes `mpppp`, `mpppm` (off it the sign-matrix
 SAT route closes it, `Minimality.T24.rupert_or_resid24`, `Minimality/Type24SAT/K24`); for type 29 (split by
 the class of its octahedron, `Minimality.type29_cap`, `Minimality.NF29.classes`) the class K1
 (K2 is closed, on the strata `Z1 ∪ σ(Z1)` by a metric case split and the Slide Lemma at a right
@@ -1119,8 +1120,8 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
       hRup | hres
     · exact hnR hRup
     -- the sorry: type 24 inside C̄ = {ω3, ω4, ω5 > 0, Δ ≥ 0} (open), or in Σ_B without a free side
-    -- crossing, and in `Resid24` (`hres`): on the obtuse corner `OB1`, or a class bracket
-    -- `[1234] [1245] [1356] [1456] [2456]` is zero, or the class is `mpppp` or `mpppm`
+    -- crossing, and in `Resid24` (`hres`): on the obtuse corner `OB1`, or the class `mpppz` (`ZRes24`, the zero-bracket classes being wired in `Wire24Zero`),
+    -- or the class is `mpppp` or `mpppm`
     exact byGen2
       (not_type24_outside_Cbar_of_isNopert x hN fA fB fC fD fE fF hfA hfB hfC hfD hfE hfF)
       (fun _ => byThm5Faces hx hN _ h3 (fun _ => sorry))
