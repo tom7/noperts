@@ -16,7 +16,7 @@ public import Minimality.CornerKite
   `κ D_n + ∑ λ_ab Q_ab(n)` with `κ > 0`, `λ ≥ 0` is symmetric, obtuse, positive definite and has
   `G n = κ 1` (`footCombo_symm`, `footCombo_offdiag_nonpos`, `footCombo_posDef`, `footCombo_mulVec`).
   Positivity of `n` is needed for `D_n`; `κ` is only used through `G n = κ 1` (no positivity needed
-  for the identity).  GEN and AO of 3.1 are not done.
+  for the identity).  GEN and AO of 3.1 are in CornerFibreGen.lean.
 -/
 
 set_option autoImplicit false
