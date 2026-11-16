@@ -15,7 +15,8 @@ For `ν ≥ 0` put `N = ∑ ν` and `M = liftM ν = 1 + ν 1ᵀ` (`liftM_apply`:
 * `lift_gram_apply`: for symmetric `G`, `(Mᵀ G M)_ab = G_ab + (G ν)_a + (G ν)_b + νᵀ G ν`.
 * `liftInv`: `M⁻¹ = 1 - (1 + N)⁻¹ • ν 1ᵀ` (`liftM_mul_liftInv`, `liftInv_mul_liftM`, `liftM_inv`),
   and `1ᵀ M = (1 + N) 1ᵀ` (`one_vecMul_liftM`).
-* `liftY` (`y' = M⁻¹ y`): `y'_j = y_j - ν_j (∑ y) / (1 + N)` (`liftY_apply`) and
+* `liftY` (the map `y ↦ M⁻¹ y` on difference vectors, NOT on points; the point map is `liftPt` below):
+  `y'_j = y_j - ν_j (∑ y) / (1 + N)` (`liftY_apply`) and
   `∑ y' = ∑ y / (1 + N)` (`sum_liftY`); `liftM_mulVec_liftY` gives back `M y' = y`.
 * Cone: `ρ' ≥ 0 → M ρ' ≥ 0`, `ρ' > 0 → M ρ' > 0` (`liftM_mulVec_nonneg`, `liftM_mulVec_pos`):
   `C(x') = M (orthant) ⊆ C(x₆)`, interior into interior.
@@ -38,17 +39,13 @@ For symmetric `G`:
   needed (the identity is sign free in `G_bc`; only `ν_b, ν_c ≥ 0` and positive definiteness enter), and
   the conclusion needs only the two entries `ab`, `ac`.
 
-## Transfer (not formalized)
+## The point map and the transfer
 
-A leaf at `(O, u)` with `u` in the interior of the cone `C(x')` is a statement about the solid `O` and
-the view `u` only, and `u ∈ int C(x₆)` by `liftM_mulVec_pos`.  The transfer would use
-`Minimality.hiddenAt_of_cone` (HiddenCap.lean) at `x₆` with the cone coefficients `ρ = M ρ' > 0`
-(`u = ∑ ρ_a (x_a - x₆)`; `LinearIndependent` of the frame is `det E ≠ 0`),
-`isRupert_of_conv_pair_closure` (RimCellConv.lean) for closed-cell / closure-point leaves, and
-`freeAt_of_splitRows` (SplitRows.lean) for split-row leaves.  Missing: the statement of the leaves for
-`(O, view)` (they are stated in the corner frame at `x₆`, in terms of `G` and `y`), and the matching
-of the view coordinates `ρ` with `u = ∑ ρ_a (x_a - x₆)`; plus, for margins, that depth gaps at the view
-do not rescale (true on `O`, to be shown in the corner frame via `liftY`).
+* `liftPt ν y = M⁻¹ (y + ν)`: frame coordinates at `x'` of the point with frame coordinates `y` at `x₆`
+  (`liftPt_eq`: `liftY ν y + (1 + N)⁻¹ ν`; `liftPt_single`: fixes the unit vectors;
+  `liftM_mulVec_liftPt`: `M (liftPt ν y) = y + ν`; `lift_coords`: `x' + ∑ (M liftPt y)_b E b = x₆ + ∑ y_b E b`;
+  `lift_view`: the view `∑ ρ'_a (x_a - x')` is `∑ (M ρ')_b E b`).
+* The transfer of leaves from `x'` to `x₆` is in `CornerTransfer.lean` (`cornerLeaf_lift`).
 -/
 
 set_option autoImplicit false
@@ -66,7 +63,8 @@ def liftM (ν : Fin 3 → ℝ) : Matrix (Fin 3) (Fin 3) ℝ := 1 + vecMulVec ν 
 noncomputable def liftInv (ν : Fin 3 → ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
   1 - (1 + ∑ i, ν i)⁻¹ • vecMulVec ν (fun _ => 1)
 
-/-- The lifted point `y' = M⁻¹ y`. -/
+/-- The lift of a *difference vector*: `M⁻¹ y`.  (The lift of a *point* `y` of the frame coordinates is
+`liftPt ν y = M⁻¹ (y + ν) = liftY ν y + (1 + N)⁻¹ ν`, see below.) -/
 noncomputable def liftY (ν y : Fin 3 → ℝ) : Fin 3 → ℝ := liftInv ν *ᵥ y
 
 theorem liftM_apply (ν : Fin 3 → ℝ) (i j : Fin 3) :
@@ -176,7 +174,54 @@ theorem lift_frame (x6 : V) (E : Fin 3 → V) (ν : Fin 3 → ℝ) (a : Fin 3) :
   simp only [liftPoint, liftM_apply, add_smul, Finset.sum_add_distrib, ite_smul, one_smul, zero_smul]
   simp [Finset.sum_ite_eq']
 
+theorem lift_view (x6 : V) (E : Fin 3 → V) (ν ρ' : Fin 3 → ℝ) :
+    ∑ a, ρ' a • ((x6 + E a) - liftPoint x6 E ν) = ∑ b, (liftM ν *ᵥ ρ') b • E b := by
+  simp only [lift_frame, Finset.smul_sum, smul_smul]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun b _ => ?_
+  simp only [Matrix.mulVec, dotProduct, Finset.sum_smul]
+  exact Finset.sum_congr rfl fun a _ => by rw [mul_comm]
+
 end Geometry
+
+/-! ### The point map -/
+
+/-- The lift of a point with frame coordinates `y` (at `x₆`) to its frame coordinates at `x'`:
+`M⁻¹ (y + ν)`.  It fixes the unit vectors (`liftPt_single`: the points `x_a` are the same points). -/
+noncomputable def liftPt (ν y : Fin 3 → ℝ) : Fin 3 → ℝ := liftInv ν *ᵥ (y + ν)
+
+theorem liftPt_eq (ν y : Fin 3 → ℝ) (hν : 0 ≤ ∑ i, ν i) : liftPt ν y = liftY ν y + (1 + ∑ i, ν i)⁻¹ • ν := by
+  ext j
+  simp [liftPt, liftY, liftInv, Matrix.sub_mulVec, Matrix.smul_mulVec, vecMulVec_one_mulVec,
+    Matrix.mulVec_add]
+  have h : (1 + ∑ i, ν i) ≠ 0 := (by linarith : (0:ℝ) < 1 + ∑ i, ν i).ne'
+  field_simp
+  ring
+
+theorem liftM_mulVec_liftPt (ν y : Fin 3 → ℝ) (hν : 0 ≤ ∑ i, ν i) :
+    liftM ν *ᵥ liftPt ν y = y + ν := by
+  rw [liftPt, mulVec_mulVec, liftM_mul_liftInv ν hν, one_mulVec]
+
+theorem liftPt_single (ν : Fin 3 → ℝ) (hν : 0 ≤ ∑ i, ν i) (a : Fin 3) :
+    liftPt ν (Pi.single a 1) = Pi.single a 1 := by
+  have h2 : liftM ν *ᵥ (Pi.single a 1 : Fin 3 → ℝ) = Pi.single a 1 + ν := by
+    ext i
+    rw [liftM_mulVec]
+    simp [Pi.single_apply]
+  rw [liftPt, ← h2, mulVec_mulVec, liftInv_mul_liftM ν hν, one_mulVec]
+
+section Geometry2
+
+variable {V : Type*} [AddCommGroup V] [Module ℝ V]
+
+/-- `O` seen from `x'` (frame `E M`, coordinates `liftPt`) is `O` seen from `x₆`. -/
+theorem lift_coords (x6 : V) (E : Fin 3 → V) (ν y : Fin 3 → ℝ) (hν : 0 ≤ ∑ i, ν i) :
+    liftPoint x6 E ν + ∑ b, (liftM ν *ᵥ liftPt ν y) b • E b = x6 + ∑ b, y b • E b := by
+  rw [liftM_mulVec_liftPt ν y hν]
+  simp only [liftPoint, Pi.add_apply, add_smul, Finset.sum_add_distrib]
+  abel
+
+end Geometry2
 
 /-! ### Lemma R1 -/
 
