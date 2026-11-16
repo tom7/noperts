@@ -11,7 +11,8 @@ Closed-cell Q4 leaves on rims `0 5 2 6`, `2 5 3 6`, `0 1 6 4` of the type 24 fac
 (`S0xFac 9 s0x_S24 x`), in the form of `leaf_P0234` / `leaf_P0536` (`ParLeaves.lean`).
 Only the facets of the rim edges are constrained.  Together with `P0536`, `P0264`, `P0234` they are the
 6-leaf menu of the `mpppz` census (`p4/sat/MPPPZLEM.md`): `P0526` closes the 95.6 % level, `P2536` the
-walk endpoints, `P0164` the 13 census solids without the first four.
+walk endpoints, `P0164` the rest of the census as then tallied.  (The claim that the menu
+covers all 13 census solids was withdrawn: MPPPZLEM erratum 2026-11-15, two census solids fail all six leaves.)
 No hypothesis on the shape (`[2456] = 0`, parallelograms, OB1) is used: those only decide which leaf applies.
 -/
 

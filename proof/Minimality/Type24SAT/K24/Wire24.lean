@@ -241,7 +241,7 @@ one zero bracket (`cls18_of_one_zero`) are the 18 classes `Cls18` (the 18 neighb
 ZSTRATA24), and with two zero brackets the 8 classes `Cls8`, except that five pairs are impossible (`imp_*`): two
 zero brackets that share three points put five points on a plane that contains the plane of a facet triple.  Three
 zeros: every triple but `{[1234], [1356], [2456]}` contains an impossible pair; this triple is NOT excluded (the
-class `Cls3` is realised by a numerical solid), so it stays an explicit case of `zero_split`. -/
+class `Cls3` is realised by an exact rational solid, `data/hard/t24_cls3_zpzpz`), so it stays an explicit case of `zero_split`. -/
 
 theorem exclw_R1 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hc : chi24 x < 0) (h1 : b1245 x ≤ 0) (h0 : b1234 x ≤ 0) : False := by
   have aF0_3 : 0 < -1 * (det3 (x 1 - x 0) (x 2 - x 0) (x 3 - x 0)) := by

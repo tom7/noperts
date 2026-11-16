@@ -8,9 +8,9 @@ public import Minimality.RimCellClosed
 
 For a corner frame `e_a, e_b, e_c` with non-positive pairwise inner products (the obtuse cone `OB`
 of Gram matrices), a family of depth-difference rows `⟨G, sym(W_i D_iᵀ)⟩ ≥ 0` is infeasible as soon
-as a nonnegative combination plus `u uᵀ`, `u ≥ 0` nonzero, has non-positive diagonal and
-non-negative off-diagonal (`obtuse_farkas`).  Only `view u ≠ 0` is used, not positive definiteness
-of the whole Gram matrix.  `isRupert_corner_cell` composes it with `isRupert_of_closedCell`.
+as a nonnegative combination plus a finite sum `Σ_j u_j u_jᵀ` of rank-1 terms with some
+`view u_j ≠ 0` has non-positive diagonal and non-negative off-diagonal (`obtuse_farkas`).  Only
+`view u_j ≠ 0` for one `j` is used, not positive definiteness of the whole Gram matrix.  `isRupert_corner_cell` composes it with `isRupert_of_closedCell`.
 -/
 
 @[expose] public section
@@ -50,20 +50,21 @@ theorem Corner.norm_view_sq {ι : Type*} (C : Corner ι) (u : Fin 3 → ℝ) :
   ring
 
 /-- **Lemma OBF (obtuse Farkas).**  Frame with `⟨e_a,e_b⟩, ⟨e_a,e_c⟩, ⟨e_b,e_c⟩ ≤ 0`, rows
-`(W i, D i)`, multipliers `lam i ≥ 0` and `U` with `Σ U_a e_a ≠ 0`.  If
-`S = Σ lam_i sym(W_i D_iᵀ) + U Uᵀ` has non-positive diagonal and non-negative off-diagonal (the
-latter stated for twice the entry), some row `⟨G, sym(W_i D_iᵀ)⟩` is negative.  `U ≥ 0` is not
-needed in the proof: only the sign pattern of `S` and `‖Σ U_a e_a‖ > 0` enter. -/
-theorem obtuse_farkas {ι : Type*} (C : Corner ι) {κ : Type*} [Fintype κ]
+`(W i, D i)`, multipliers `lam i ≥ 0` and a finite family `U j` with some `Σ_a U_j,a e_a ≠ 0`.  If
+`S = Σ lam_i sym(W_i D_iᵀ) + Σ_j U_j U_jᵀ` (a positive semidefinite term of any rank) has
+non-positive diagonal and non-negative off-diagonal (the latter stated for twice the entry), some
+row `⟨G, sym(W_i D_iᵀ)⟩` is negative.  Only the sign pattern of `S` and
+`Σ_j ‖Σ_a U_j,a e_a‖² > 0` enter. -/
+theorem obtuse_farkas {ι : Type*} (C : Corner ι) {κ : Type*} [Fintype κ] {r : ℕ}
     (hab : ⟪C.ea, C.eb⟫ ≤ 0) (hac : ⟪C.ea, C.ec⟫ ≤ 0) (hbc : ⟪C.eb, C.ec⟫ ≤ 0)
-    (W D : κ → Fin 3 → ℝ) (lam : κ → ℝ) (U : Fin 3 → ℝ) (hlam : ∀ i, 0 ≤ lam i)
-    (hU : C.view U ≠ 0)
-    (h0 : ∑ i, lam i * (W i 0 * D i 0) + U 0 * U 0 ≤ 0)
-    (h1 : ∑ i, lam i * (W i 1 * D i 1) + U 1 * U 1 ≤ 0)
-    (h2 : ∑ i, lam i * (W i 2 * D i 2) + U 2 * U 2 ≤ 0)
-    (h01 : 0 ≤ ∑ i, lam i * (W i 0 * D i 1 + W i 1 * D i 0) + 2 * (U 0 * U 1))
-    (h02 : 0 ≤ ∑ i, lam i * (W i 0 * D i 2 + W i 2 * D i 0) + 2 * (U 0 * U 2))
-    (h12 : 0 ≤ ∑ i, lam i * (W i 1 * D i 2 + W i 2 * D i 1) + 2 * (U 1 * U 2)) :
+    (W D : κ → Fin 3 → ℝ) (lam : κ → ℝ) (U : Fin r → Fin 3 → ℝ) (hlam : ∀ i, 0 ≤ lam i)
+    (hU : ∃ j, C.view (U j) ≠ 0)
+    (h0 : ∑ i, lam i * (W i 0 * D i 0) + ∑ j, U j 0 * U j 0 ≤ 0)
+    (h1 : ∑ i, lam i * (W i 1 * D i 1) + ∑ j, U j 1 * U j 1 ≤ 0)
+    (h2 : ∑ i, lam i * (W i 2 * D i 2) + ∑ j, U j 2 * U j 2 ≤ 0)
+    (h01 : 0 ≤ ∑ i, lam i * (W i 0 * D i 1 + W i 1 * D i 0) + 2 * ∑ j, U j 0 * U j 1)
+    (h02 : 0 ≤ ∑ i, lam i * (W i 0 * D i 2 + W i 2 * D i 0) + 2 * ∑ j, U j 0 * U j 2)
+    (h12 : 0 ≤ ∑ i, lam i * (W i 1 * D i 2 + W i 2 * D i 1) + 2 * ∑ j, U j 1 * U j 2) :
     ∃ i, C.formRow (W i) (D i) < 0 := by
   by_contra hcon
   push Not at hcon
@@ -77,8 +78,16 @@ theorem obtuse_farkas {ι : Type*} (C : Corner ι) {κ : Type*} [Fintype κ]
       ⟪C.eb, C.ec⟫ * ∑ i, lam i * (W i 1 * D i 2 + W i 2 * D i 1) := by
     simp only [Corner.formRow, Finset.mul_sum, ← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl fun i _ => by ring
-  have hq := C.norm_view_sq U
-  have hpos : 0 < ‖C.view U‖ ^ 2 := by positivity
+  have hq : ∑ j, ‖C.view (U j)‖ ^ 2 =
+      ‖C.ea‖ ^ 2 * ∑ j, U j 0 * U j 0 + ‖C.eb‖ ^ 2 * ∑ j, U j 1 * U j 1 +
+      ‖C.ec‖ ^ 2 * ∑ j, U j 2 * U j 2 + ⟪C.ea, C.eb⟫ * (2 * ∑ j, U j 0 * U j 1) +
+      ⟪C.ea, C.ec⟫ * (2 * ∑ j, U j 0 * U j 2) + ⟪C.eb, C.ec⟫ * (2 * ∑ j, U j 1 * U j 2) := by
+    simp only [C.norm_view_sq, Finset.mul_sum, ← Finset.sum_add_distrib]
+  have hpos : 0 < ∑ j, ‖C.view (U j)‖ ^ 2 := by
+    obtain ⟨j, hj⟩ := hU
+    exact lt_of_lt_of_le (by positivity)
+      (Finset.single_le_sum (f := fun j => ‖C.view (U j)‖ ^ 2) (fun _ _ => by positivity)
+        (Finset.mem_univ j))
   nlinarith [mul_nonneg (sq_nonneg ‖C.ea‖) (neg_nonneg.2 h0),
     mul_nonneg (sq_nonneg ‖C.eb‖) (neg_nonneg.2 h1),
     mul_nonneg (sq_nonneg ‖C.ec‖) (neg_nonneg.2 h2),
@@ -89,17 +98,32 @@ theorem obtuse_farkas {ι : Type*} (C : Corner ι) {κ : Type*} [Fintype κ]
 def Corner.xdiff {ι : Type*} (C : Corner ι) (v w : ι) : Fin 3 → ℝ :=
   ![C.Xa v - C.Xa w, C.Xb v - C.Xb w, C.Xc v - C.Xc w]
 
-/-- Shape-only side of an OBF certificate: multipliers `lam ≥ 0`, a nonzero `U`, and the six sign
-conditions on `S = Σ lam_i sym(W_i D_iᵀ) + U Uᵀ`.  (`U ≥ 0` is not needed for soundness; it only
-matters for completeness.) -/
-def ObfCert {κ : Type*} [Fintype κ] (W D : κ → Fin 3 → ℝ) (lam : κ → ℝ) (U : Fin 3 → ℝ) : Prop :=
-  (∀ i, 0 ≤ lam i) ∧ U ≠ 0 ∧
-  ∑ i, lam i * (W i 0 * D i 0) + U 0 * U 0 ≤ 0 ∧
-  ∑ i, lam i * (W i 1 * D i 1) + U 1 * U 1 ≤ 0 ∧
-  ∑ i, lam i * (W i 2 * D i 2) + U 2 * U 2 ≤ 0 ∧
-  0 ≤ ∑ i, lam i * (W i 0 * D i 1 + W i 1 * D i 0) + 2 * (U 0 * U 1) ∧
-  0 ≤ ∑ i, lam i * (W i 0 * D i 2 + W i 2 * D i 0) + 2 * (U 0 * U 2) ∧
-  0 ≤ ∑ i, lam i * (W i 1 * D i 2 + W i 2 * D i 1) + 2 * (U 1 * U 2)
+/-- Shape-only side of an OBF certificate: multipliers `lam ≥ 0`, a finite family `U` of vectors
+with some `U j ≠ 0`, and the six sign conditions on `S = Σ lam_i sym(W_i D_iᵀ) + Σ_j U_j U_jᵀ`.
+(The single rank-1 term of the first version is `ObfCert.of_rank1`.) -/
+def ObfCert {κ : Type*} [Fintype κ] {r : ℕ} (W D : κ → Fin 3 → ℝ) (lam : κ → ℝ)
+    (U : Fin r → Fin 3 → ℝ) : Prop :=
+  (∀ i, 0 ≤ lam i) ∧ (∃ j, U j ≠ 0) ∧
+  ∑ i, lam i * (W i 0 * D i 0) + ∑ j, U j 0 * U j 0 ≤ 0 ∧
+  ∑ i, lam i * (W i 1 * D i 1) + ∑ j, U j 1 * U j 1 ≤ 0 ∧
+  ∑ i, lam i * (W i 2 * D i 2) + ∑ j, U j 2 * U j 2 ≤ 0 ∧
+  0 ≤ ∑ i, lam i * (W i 0 * D i 1 + W i 1 * D i 0) + 2 * ∑ j, U j 0 * U j 1 ∧
+  0 ≤ ∑ i, lam i * (W i 0 * D i 2 + W i 2 * D i 0) + 2 * ∑ j, U j 0 * U j 2 ∧
+  0 ≤ ∑ i, lam i * (W i 1 * D i 2 + W i 2 * D i 1) + 2 * ∑ j, U j 1 * U j 2
+
+/-- The rank-1 certificate `U Uᵀ` (the first form of `ObfCert`) is the one-term family. -/
+theorem ObfCert.of_rank1 {κ : Type*} [Fintype κ] {W D : κ → Fin 3 → ℝ} {lam : κ → ℝ}
+    {U : Fin 3 → ℝ} (hl : ∀ i, 0 ≤ lam i) (hU : U ≠ 0)
+    (h0 : ∑ i, lam i * (W i 0 * D i 0) + U 0 * U 0 ≤ 0)
+    (h1 : ∑ i, lam i * (W i 1 * D i 1) + U 1 * U 1 ≤ 0)
+    (h2 : ∑ i, lam i * (W i 2 * D i 2) + U 2 * U 2 ≤ 0)
+    (h01 : 0 ≤ ∑ i, lam i * (W i 0 * D i 1 + W i 1 * D i 0) + 2 * (U 0 * U 1))
+    (h02 : 0 ≤ ∑ i, lam i * (W i 0 * D i 2 + W i 2 * D i 0) + 2 * (U 0 * U 2))
+    (h12 : 0 ≤ ∑ i, lam i * (W i 1 * D i 2 + W i 2 * D i 1) + 2 * (U 1 * U 2)) :
+    ObfCert W D lam (fun _ : Fin 1 => U) := by
+  refine ⟨hl, ⟨0, hU⟩, ?_⟩
+  simpa [Fin.sum_univ_one] using And.intro h0 (And.intro h1 (And.intro h2 (And.intro h01
+    (And.intro h02 h12))))
 
 /-- A linearly independent frame has `view U ≠ 0` for `U ≠ 0`. -/
 theorem Corner.view_ne_zero {ι : Type*} {C : Corner ι} (hli : LinearIndependent ℝ ![C.ea, C.eb, C.ec])
@@ -112,12 +136,13 @@ theorem Corner.view_ne_zero {ι : Type*} {C : Corner ι} (hli : LinearIndependen
 
 /-- OBF for a certificate and a linearly independent frame. -/
 theorem obtuse_farkas_cert {ι : Type*} {C : Corner ι} (hli : LinearIndependent ℝ ![C.ea, C.eb, C.ec])
-    {κ : Type*} [Fintype κ]
+    {κ : Type*} [Fintype κ] {r : ℕ}
     (hab : ⟪C.ea, C.eb⟫ ≤ 0) (hac : ⟪C.ea, C.ec⟫ ≤ 0) (hbc : ⟪C.eb, C.ec⟫ ≤ 0)
-    {W D : κ → Fin 3 → ℝ} {lam : κ → ℝ} {U : Fin 3 → ℝ} (h : ObfCert W D lam U) :
+    {W D : κ → Fin 3 → ℝ} {lam : κ → ℝ} {U : Fin r → Fin 3 → ℝ} (h : ObfCert W D lam U) :
     ∃ i, C.formRow (W i) (D i) < 0 := by
   obtain ⟨hl, hU, h0, h1, h2, h01, h02, h12⟩ := h
-  exact obtuse_farkas C hab hac hbc W D lam U hl (C.view_ne_zero hli hU) h0 h1 h2 h01 h02 h12
+  obtain ⟨j, hj⟩ := hU
+  exact obtuse_farkas C hab hac hbc W D lam U hl ⟨j, C.view_ne_zero hli hj⟩ h0 h1 h2 h01 h02 h12
 
 end CornerSnap
 
@@ -143,13 +168,13 @@ theorem isRupert_corner_cell {k : ℕ} [NeZero k] (hk : 4 ≤ k) (F : S0xFac m S
     (hab : ⟪C.ea, C.eb⟫ ≤ 0) (hac : ⟪C.ea, C.ec⟫ ≤ 0) (hbc : ⟪C.eb, C.ec⟫ ≤ 0)
     (d₀ : Fin 3 → ℝ) (hu : CellLe F U Dn (C.view d₀))
     (hcert : ∀ (B : ZMod k) (b₁ b₂ b₃ : ℕ), 0 < b₁ → b₁ < b₂ → b₂ < b₃ → b₃ < k →
-      ∃ (lam : Fin 4 → ℝ) (V : Fin 3 → ℝ),
+      ∃ (lam : Fin 4 → ℝ) (r : ℕ) (V : Fin r → Fin 3 → ℝ),
         ObfCert (fun j => C.xdiff (c (patternPairs B b₁ b₂ b₃ j).1) (c (patternPairs B b₁ b₂ b₃ j).2))
           (fun _ => d₀) lam V) :
     IsRupert (univ.image x) := by
   refine isRupert_of_closedCell hk F hx hc hcyc ha hu ?_
   intro B b₁ b₂ b₃ h1 h2 h3 h4 ⟨e1, e2, e3, e4⟩
-  obtain ⟨lam, V, hcv⟩ := hcert B b₁ b₂ b₃ h1 h2 h3 h4
+  obtain ⟨lam, r, V, hcv⟩ := hcert B b₁ b₂ b₃ h1 h2 h3 h4
   obtain ⟨j, hj⟩ := obtuse_farkas_cert hli hab hac hbc hcv
   have key : ∀ p q : ZMod k, C.formRow (C.xdiff (c p) (c q)) d₀ =
       ⟪x (c p), C.view d₀⟫ - ⟪x (c q), C.view d₀⟫ := fun p q =>

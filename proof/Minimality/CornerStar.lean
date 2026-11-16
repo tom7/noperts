@@ -290,7 +290,7 @@ theorem isRupert_corner_os {k : ℕ} [NeZero k] (hk : 4 ≤ k) (F : S0xFac m S x
 cycle (`c₁` of length `k₁`, `c₂` of length `k₂`), a strict point and a frame-fixed closure view
 (`d₁`, `d₂`).  If for every pair of failure patterns (one per cell) the eight rows
 `⟨G, sym(W D ᵀ)⟩` (each row with its own cell's view) have an `ObfCert` (a joint Farkas
-certificate: the cone combination `x` of the first pattern, `y` of the second, and `U Uᵀ`), then
+certificate: the cone combination `x` of the first pattern, `y` of the second, and a positive semidefinite term `Σ_j U_j U_jᵀ` of any rank), then
 `x` is Rupert: at every obtuse metric one of the two tests is good. -/
 theorem isRupert_corner_cells2 {k₁ k₂ : ℕ} [NeZero k₁] [NeZero k₂] (hk₁ : 4 ≤ k₁) (hk₂ : 4 ≤ k₂)
     (F : S0xFac m S x) (hx : Function.Injective x)
@@ -304,7 +304,7 @@ theorem isRupert_corner_cells2 {k₁ k₂ : ℕ} [NeZero k₁] [NeZero k₂] (hk
     (d₁ d₂ : Fin 3 → ℝ) (hu₁ : CellLe F U₁ Dn₁ (C.view d₁)) (hu₂ : CellLe F U₂ Dn₂ (C.view d₂))
     (hcert : ∀ (B : ZMod k₁) (b₁ b₂ b₃ : ℕ), 0 < b₁ → b₁ < b₂ → b₂ < b₃ → b₃ < k₁ →
       ∀ (B' : ZMod k₂) (b₁' b₂' b₃' : ℕ), 0 < b₁' → b₁' < b₂' → b₂' < b₃' → b₃' < k₂ →
-      ∃ (lam : Fin 4 ⊕ Fin 4 → ℝ) (V : Fin 3 → ℝ),
+      ∃ (lam : Fin 4 ⊕ Fin 4 → ℝ) (r : ℕ) (V : Fin r → Fin 3 → ℝ),
         ObfCert (Sum.elim
             (fun j => C.xdiff (c₁ (patternPairs B b₁ b₂ b₃ j).1) (c₁ (patternPairs B b₁ b₂ b₃ j).2))
             (fun j => C.xdiff (c₂ (patternPairs B' b₁' b₂' b₃' j).1)
@@ -320,7 +320,7 @@ theorem isRupert_corner_cells2 {k₁ k₂ : ℕ} [NeZero k₁] [NeZero k₂] (hk
   push Not at h₁ h₂
   obtain ⟨B, b₁, b₂, b₃, g1, g2, g3, g4, hh⟩ := h₁
   obtain ⟨B', b₁', b₂', b₃', g1', g2', g3', g4', hh'⟩ := h₂
-  obtain ⟨lam, V, hv⟩ := hcert B b₁ b₂ b₃ g1 g2 g3 g4 B' b₁' b₂' b₃' g1' g2' g3' g4'
+  obtain ⟨lam, r, V, hv⟩ := hcert B b₁ b₂ b₃ g1 g2 g3 g4 B' b₁' b₂' b₃' g1' g2' g3' g4'
   obtain ⟨i, hi⟩ := obtuse_farkas_cert hli hab hac hbc hv
   have r1 := patternRows_nonneg hC c₁ d₁ B b₁ b₂ b₃ hh
   have r2 := patternRows_nonneg hC c₂ d₂ B' b₁' b₂' b₃' hh'
