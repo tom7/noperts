@@ -69,7 +69,7 @@ theorem poly_core (hF : Fr e1 e2 e3) (o : ℝ³)
   have hs0 : 0 < 1 / α := by positivity
   have hs1 : 1 / α < 1 := by rw [div_lt_one hαpos]; exact hα
   have hDx : X0q = X0p - ((zx - zx') / ν) • (ν • e3) := by
-    simp only [hX0q, hX0p, pt, pc]; match_scalars <;> field_simp <;> ring
+    simp only [hX0q, hX0p, pt, pc]; match_scalars <;> field_simp; ring
   have hDy : Y0q = Y0p - ((zy - zy') / ν) • (ν • e3) := by
     simp only [hY0q, hY0p, pt, pc]; match_scalars <;> field_simp; ring
   have hdx : (zx - zx') / ν ≠ 0 := div_ne_zero (sub_ne_zero.mpr hx.symm) hνne

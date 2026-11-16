@@ -108,7 +108,7 @@ theorem rec_III {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y
     IsRupert (univ.image (boxCfg L c y2 y6 xi ze b)) := by
   have hsum : xi + ze < 1 := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ y2 + y6) (sub_nonneg.2 hcon)]
   have hxi1 : xi < 1 := by linarith
   have hze1 : ze < 1 := by linarith
@@ -124,7 +124,7 @@ theorem rec_III {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y
   have hhi_y : hi * y6 = c := by rw [hhi_def]; field_simp
   have hlohi : lo < hi := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     have h1 : hi * y6 * (ze * c) ≤ lo * (ze * c) * y6 := by
       have := mul_le_mul_of_nonneg_right hcon (mul_pos hd hy6).le
       nlinarith
