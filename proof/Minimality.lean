@@ -33,6 +33,7 @@ public import Minimality.Type16SAT.ResW16
 public import Minimality.Type16SAT.FinalLast16
 public import Minimality.Type16SAT.Exh16
 public import Minimality.Type24SAT.K24.Wire24
+public import Minimality.Type24SAT.K24.Wire24Zero
 public import Minimality.SilS0XD
 public import Minimality.Type20IMA
 public import Minimality.Type20IV
