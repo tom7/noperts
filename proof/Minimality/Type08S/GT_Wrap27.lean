@@ -61,7 +61,7 @@ theorem n2_eq0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
   subst hE
   have Fr := n2_frame F
   have cfg := P.cfg
-  have hB1 := weakBeyond_B1 Fr.hee Fr.hNN hwb (fun h => by
+  have hB1 := weakBeyond_B1 Fr.hee hwb (fun h => by
     have h1 := cfg.H_R; have h2 := cfg.H_B; obtain ⟨e1, e2⟩ := h
     rw [e1, e2] at h1; linarith)
   have hAE := P.hAE

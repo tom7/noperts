@@ -29,7 +29,7 @@ theorem t4_a0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
   subst hE
   have Fr := t4_frame F hd
   have cfg := P.cfg
-  have hB1 := weakBeyond_B1 Fr.hee Fr.hNN hwb (fun h => by linarith [h.2])
+  have hB1 := weakBeyond_B1 Fr.hee hwb (fun h => by linarith [h.2])
   have hxt := P.hxt
   subst hxt
   have hA' : A ≤ r1 := by rw [P.hAE]; exact hB1.1

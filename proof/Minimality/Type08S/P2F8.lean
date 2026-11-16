@@ -128,7 +128,7 @@ theorem tp_far_C (N : Norm08 a a' b b' c c' d) {E U zv zw A b1 b2 r1 r2 xa za a3
       obtain ⟨e1, e2⟩ := h
       subst e1; subst e2
       linarith
-    have hB1 := weakBeyond_B1 Fr.hee Fr.hNN hwb hne
+    have hB1 := weakBeyond_B1 Fr.hee hwb hne
     have hA' : A ≤ r1 := by rw [P.hAE]; exact hB1.1
     have hd1 : b1 < r1 := hB1.2.2 hrb
     have hzz : zv < za := by

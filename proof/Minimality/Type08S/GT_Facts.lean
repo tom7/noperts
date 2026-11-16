@@ -25,7 +25,7 @@ def WeakBeyond (E M b1 b2 r1 r2 : ℝ) : Prop :=
   0 ≤ (r1 - b1) * E / E ∧ 0 ≤ (r1 - b1) * b1 / E + (r2 - b2) * b2 / M
 
 /-- **Lemma 1.1 (B1′, B2′).** -/
-theorem weakBeyond_B1 {E M b1 b2 r1 r2 : ℝ} (hE : 0 < E) (hM : 0 < M)
+theorem weakBeyond_B1 {E M b1 b2 r1 r2 : ℝ} (hE : 0 < E)
     (h : WeakBeyond E M b1 b2 r1 r2) (hne : ¬ (r1 = b1 ∧ r2 = b2)) :
     E ≤ r1 ∧ b1 ≤ r1 ∧ (r2 = b2 → b1 < r1) := by
   obtain ⟨w1, w2, w3, w4⟩ := h

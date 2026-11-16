@@ -48,7 +48,7 @@ theorem t4_eq (F : OctFacets a a' b b' c c') (hd : IsCap F d)
   subst hE
   have Fr := t4_frame F hd
   have cfg := P.cfg
-  have hB1 := weakBeyond_B1 Fr.hee Fr.hNN hwb (fun h => by have := cfg.T2_B; have := cfg.T2_R; obtain ⟨h1, h2⟩ := h; subst h1; subst h2; linarith)
+  have hB1 := weakBeyond_B1 Fr.hee hwb (fun h => by have := cfg.T2_B; have := cfg.T2_R; obtain ⟨h1, h2⟩ := h; subst h1; subst h2; linarith)
   have hxt := P.hxt
   subst hxt
   have hA' : A ≤ r1 := by rw [P.hAE]; exact hB1.1

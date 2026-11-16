@@ -50,7 +50,7 @@ theorem n2_gt0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
   subst hE
   have Fr := n2_frame F
   have cfg := P.cfg
-  obtain ⟨hAr, hbr, -⟩ := weakBeyond_B1 Fr.hee Fr.hNN hwb (fun hh => by linarith [hh.2])
+  obtain ⟨hAr, hbr, -⟩ := weakBeyond_B1 Fr.hee hwb (fun hh => by linarith [hh.2])
   have hAE := P.hAE
   have hr1 : 0 < r1 := by linarith [cfg.hA]
   have ha3 := cfg.a3pos hz
