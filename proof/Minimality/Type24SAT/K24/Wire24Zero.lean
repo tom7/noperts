@@ -35,6 +35,8 @@ public import Minimality.Type24SAT.K24.FinalPpzpzNotP
 public import Minimality.Type24SAT.K24.FinalPpzpzPq
 public import Minimality.Type24SAT.K24.FinalMpzpzNotP
 public import Minimality.Type24SAT.K24.FinalMpzpzPq
+public import Minimality.Type24SAT.K24.FinalZpzpzNotP
+public import Minimality.Type24SAT.K24.FinalZpzpzPq
 
 @[expose] public section
 
@@ -43,7 +45,8 @@ public import Minimality.Type24SAT.K24.FinalMpzpzPq
 
 `rupert_or_zres24` applies the sub-class theorems `Minimality.T24.isRupert_offOB1_<cls>[_notP|_Pq]` (via the zero
 split `zero_split` of `Wire24`) and the parallel-pair stratum `Minimality.T24.Par.isRupert_par`.  What is left is `ZRes24`:
-the three-zero class `Cls3` and the open class `mpppz` (not wired).
+the open class `mpppz` (not wired).  The three-zero class `Cls3` closes by `isRupert_offOB1_zpzpz_notP` / `_Pq` (its
+parallelogram split, as the two-zero classes).
 -/
 
 set_option autoImplicit false
@@ -73,13 +76,13 @@ theorem par_combine {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {R : Prop}
     exact hpq hD hEG hCI
   · exact hnot hD
 
-/-- What the zero-bracket wiring leaves: the three-zero class, and the open class `mpppz` (not wired: its `Pq` case
-closes in the SAT runs, its `notP` case is open). -/
+/-- What the zero-bracket wiring leaves: the open class `mpppz` (not wired: its `Pq` case closes in the SAT runs, its
+`notP` case is open). -/
 def ZRes24 (x : Fin 7 → ℝ³) : Prop :=
-  Cls3 x ∨ clsz24 x (some false) (some true) (some true) (some true) none
+  clsz24 x (some false) (some true) (some true) (some true) none
 
 /-- **The zero-bracket classes off `OB1`**: if some class bracket vanishes (and not `OB1`), the points are Rupert
-or `ZRes24` holds (the three-zero class `Cls3`, or the open class `mpppz`). -/
+or `ZRes24` holds (the open class `mpppz`). -/
 theorem rupert_or_zres24 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hO : ¬ H24K.SAT.OB1 x)
     (h : b1234 x = 0 ∨ b1245 x = 0 ∨ b1356 x = 0 ∨ b1456 x = 0 ∨ b2456 x = 0) :
     IsRupert (univ.image x) ∨ ZRes24 x := by
@@ -142,7 +145,7 @@ theorem rupert_or_zres24 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hO : ¬
       exact par_combine F (fun hD => Or.inl (Minimality.T24.isRupert_offOB1_mpmpz_notP F (by first | exact Or.inl ⟨hc, a0, a1, a2, a3⟩ | exact Or.inr ⟨hc, a0, a1, a2, a3⟩) hO a4 hD))
         (fun hD hEG hCI => Minimality.T24.isRupert_offOB1_mpmpz_Pq F (by first | exact Or.inl ⟨hc, a0, a1, a2, a3⟩ | exact Or.inr ⟨hc, a0, a1, a2, a3⟩) hO a4 hD hEG hCI)
     · -- mpppz
-      exact Or.inr (Or.inr hcase)
+      exact Or.inr hcase
   · rcases h8 with hcase | hcase | hcase | hcase | hcase | hcase | hcase | hcase
     · -- zpzpp
       rcases hcase with ⟨hc, a0, a1, a2, a3, a4⟩ | ⟨hc, a0, a1, a2, a3, a4⟩ <;>
@@ -172,6 +175,9 @@ theorem rupert_or_zres24 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hO : ¬
       rcases hcase with ⟨hc, a0, a1, a2, a3, a4⟩ | ⟨hc, a0, a1, a2, a3, a4⟩ <;>
       exact par_combine F (fun hD => Or.inl (Minimality.T24.isRupert_offOB1_mpzpz_notP F (by first | exact Or.inl ⟨hc, a0, a1, a3⟩ | exact Or.inr ⟨hc, a0, a1, a3⟩) hO a2 a4 hD))
         (fun hD hEG hCI => Minimality.T24.isRupert_offOB1_mpzpz_Pq F (by first | exact Or.inl ⟨hc, a0, a1, a3⟩ | exact Or.inr ⟨hc, a0, a1, a3⟩) hO a2 a4 hD hEG hCI)
-  · exact Or.inr (Or.inl h3)
+  · -- zpzpz (the three-zero class Cls3)
+    rcases h3 with ⟨hc, a0, a1, a2, a3, a4⟩ | ⟨hc, a0, a1, a2, a3, a4⟩ <;>
+    exact par_combine F (fun hD => Or.inl (Minimality.T24.isRupert_offOB1_zpzpz_notP F (by first | exact Or.inl ⟨hc, a1, a3⟩ | exact Or.inr ⟨hc, a1, a3⟩) hO a0 a2 a4 hD))
+      (fun hD hEG hCI => Minimality.T24.isRupert_offOB1_zpzpz_Pq F (by first | exact Or.inl ⟨hc, a1, a3⟩ | exact Or.inr ⟨hc, a1, a3⟩) hO a0 a2 a4 hD hEG hCI)
 
 end Minimality.T24
