@@ -27,7 +27,7 @@ theorem gt_far_N2'' (N : Norm08 a a' b b' c c' d)
     n2_pic N.F N.hd hfar hq₂ htouch hzw0 hzv0
   have Fr := n2_frame N.F
   by_cases hnb : NotBeyondW E ⟪N.F.a'b'c.N, N.F.a'b'c.N⟫ b1 b2 r1 r2 A 0
-  · exact n2_sminus N.F N.hd P hE hnb
+  · exact n2_sminus N.F P hE hnb
   · have hwb : WeakBeyond E ⟪N.F.a'b'c.N, N.F.a'b'c.N⟫ b1 b2 r1 r2 := by
       rw [P.hAE] at hnb
       have hE' : 0 < E := by rw [hE]; exact Fr.hee

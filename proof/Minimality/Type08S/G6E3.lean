@@ -71,7 +71,7 @@ theorem poly_core (hF : Fr e1 e2 e3) (o : ℝ³)
   have hDx : X0q = X0p - ((zx - zx') / ν) • (ν • e3) := by
     simp only [hX0q, hX0p, pt, pc]; match_scalars <;> field_simp <;> ring
   have hDy : Y0q = Y0p - ((zy - zy') / ν) • (ν • e3) := by
-    simp only [hY0q, hY0p, pt, pc]; match_scalars <;> field_simp <;> ring
+    simp only [hY0q, hY0p, pt, pc]; match_scalars <;> field_simp; ring
   have hdx : (zx - zx') / ν ≠ 0 := div_ne_zero (sub_ne_zero.mpr hx.symm) hνne
   have hdy : (zy - zy') / ν ≠ 0 := div_ne_zero (sub_ne_zero.mpr hy.symm) hνne
   have hne : X0p ≠ A ∧ Y0p ≠ A ∧ B' ≠ A ∧ C' ≠ A := by

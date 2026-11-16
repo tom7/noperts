@@ -110,7 +110,7 @@ theorem crimA2 (θ : Fin 6 → ℝ) (hθ : Ineq08w θ) (h6 : 1 < θ 5) :
   constructor
   · intro i j hi hj
     rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-      first | exact absurd rfl hi | exact absurd (by decide) hj | skip
+      try (first | exact absurd rfl hi | exact absurd (by decide) hj)
     all_goals
       norm_num [fc08, cdet, cp08]
       try linarith

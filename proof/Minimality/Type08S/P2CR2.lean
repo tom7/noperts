@@ -76,7 +76,7 @@ theorem core_hcyc (hF : Fr e1 e2 e3) (O : ℝ³) {κ κv L zf Xr Yr zr Xg Yg zg 
   have h21 : (2 : ZMod 4) + 1 = 3 := by decide
   have h31 : (3 : ZMod 4) + 1 = 0 := by decide
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-    first | exact absurd rfl hi | (exact absurd (by decide) hj) | skip
+    try (first | exact absurd rfl hi | (exact absurd (by decide) hj))
   all_goals
     simp only [h11, h21, h31, quad, Matrix.cons_val, zero_add, fpt_sub]
     refine slideTest_of_cross hF hκv _ _ _ _ _ _ ?_

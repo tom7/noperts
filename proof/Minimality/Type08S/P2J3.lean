@@ -113,7 +113,7 @@ theorem level_not_noHDN {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
     have e0' : (0 : ZMod 4) + 1 = 1 := by decide
     rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
       first | exact absurd rfl h1 | (exact absurd (by decide) h2) |
-        (simp [hs, ht, e2, e3, e0, e0'] <;> nlinarith)
+        (simp [hs, ht, e2, e3, e0, e0'] ; try nlinarith)
   have key : ∀ w : ℝ³, (w = b - d ∨ w = -(b - d)) → 0 < det3 (a - d) (c - d) w → False := by
     intro w hw hΔ
     have hw0 : w ≠ 0 := by rintro rfl; simp [det3_expand] at hΔ

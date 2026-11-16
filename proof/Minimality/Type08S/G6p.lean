@@ -87,7 +87,7 @@ planar corner polygon `X_2a = (d, a, b', c)` (one metric condition on `T'`), or 
 `Q_ac` (`a`, `c` at the depth of `d`).  The old `TwoTies`, `Tie6 ∧ HDN`, `det3 (b' - a) (c - d) (b - d) = 0`
 items are no longer needed (the planar polygon is robust unless level; a middle over `[c, d]` and
 doubles over `d`, `a` are automatic). -/
-def CoT'2 (a a' b b' c c' d : ℝ³) : Prop :=
+def CoT'2 (a _a' b b' c _c' d : ℝ³) : Prop :=
   ¬ NoHDNAt ({d, a, b', c} : Finset ℝ³) (b - d) ∨ (⟪a - d, b - d⟫ = 0 ∧ ⟪c - d, b - d⟫ = 0)
 
 end Type08Sp

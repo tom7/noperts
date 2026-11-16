@@ -24,7 +24,7 @@ theorem robust4 {z0 z1 z2 z3 : ℝ} (h : ¬ Sep z0 z2 z1 z3) :
   · unfold QuadTie
     refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> intro hh <;>
       rcases h1 with (h1 | h1) | (h1 | h1) <;> rcases h2 with (h2 | h2) | (h2 | h2) <;>
-      first | (obtain ⟨e1, e2, e3⟩ := hh; linarith) | (obtain ⟨e1, e2⟩ := hh; linarith)
+      (obtain ⟨e1, e2, e3⟩ := hh; linarith)
   · exact Or.inl (by simp only [max_le_iff, le_min_iff]; simp only [max_lt_iff, lt_min_iff] at hh; refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> linarith)
   · exact Or.inr (by simp only [max_le_iff, le_min_iff]; simp only [max_lt_iff, lt_min_iff] at hh; refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> linarith)
 

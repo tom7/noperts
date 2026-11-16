@@ -121,7 +121,7 @@ theorem nf_inj6_w {o E₁ E₂ E₃ : ℝ³} (hE : det3 E₁ E₂ E₃ ≠ 0) {�
   by_contra hne
   have key := nfinj08 hE (θ := θ) i.castSucc j.castSucc h
   have h0 := key 0; have h1 := key 1; have h2 := key 2
-  fin_cases i <;> fin_cases j <;> first | exact hne rfl | (revert h0 h1 h2; norm_num [cp08] <;> (intros; linarith))
+  fin_cases i <;> fin_cases j <;> first | exact hne rfl | (revert h0 h1 h2; norm_num [cp08]; try (intros; linarith))
 
 theorem ord08_w {o E₁ E₂ E₃ : ℝ³} (hE : det3 E₁ E₂ E₃ ≠ 0) {θ : Fin 6 → ℝ}
     (hθ : Ineq08w θ) (i : Fin 3) :
