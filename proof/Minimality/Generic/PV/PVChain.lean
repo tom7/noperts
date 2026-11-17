@@ -75,7 +75,7 @@ theorem CU_chain_V : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
     have hy : y < a0 := (List.pairwise_cons.mp hA).1 y (by simp)
     have hz : z < y := (List.pairwise_cons.mp (List.pairwise_cons.mp hA).2).1 z (by simp)
     have hdel := CU_del_mid [] a0 y z (A2 ++ B ++ R) (by simpa using hnd)
-      (by first | exact Or.inl ⟨by linarith, by linarith⟩ | exact Or.inr ⟨by linarith, by linarith⟩)
+      (by exact Or.inr ⟨by linarith, by linarith⟩)
     have hsub : (a0 :: z :: A2).Sublist (a0 :: y :: z :: A2) :=
       List.Sublist.cons_cons a0 (List.Sublist.cons y (List.Sublist.refl _))
     have hey : e ≠ y := by
@@ -109,7 +109,7 @@ theorem CU_chain_V : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
     have hy : b1 < y := (List.pairwise_cons.mp hB).1 y (by simp)
     have hz : y < z := (List.pairwise_cons.mp (List.pairwise_cons.mp hB).2).1 z (by simp)
     have hdel := CU_del_mid A b1 y z (B2 ++ R) (by simpa using hnd)
-      (by first | exact Or.inl ⟨by linarith, by linarith⟩ | exact Or.inr ⟨by linarith, by linarith⟩)
+      (by exact Or.inl ⟨by linarith, by linarith⟩)
     have hsub : (b1 :: z :: B2).Sublist (b1 :: y :: z :: B2) :=
       List.Sublist.cons_cons b1 (List.Sublist.cons y (List.Sublist.refl _))
     have hey : e ≠ y := by
@@ -160,9 +160,9 @@ theorem CU_chain_V : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
     · have : e = a0 := by rcases he with h1 | h1 | h1 <;> first | exact h1 | (exfalso; linarith)
       subst this
       have hdel := CU_del_mid [] e q c' R (by simpa using hnd)
-        (by first | exact Or.inl ⟨by linarith, by linarith⟩ | exact Or.inr ⟨by linarith, by linarith⟩)
+        (by exact Or.inl ⟨by linarith, by linarith⟩)
       rw [skel1_end_l]; simpa using hdel
-    · exact absurd (by first | exact h | exact h.symm) hne
+    · exact absurd (by exact h) hne
     · have : e = q := by rcases he with h1 | h1 | h1 <;> first | exact h1 | (exfalso; linarith)
       subst this
       rw [skel1_mid (by intro h'; linarith) (by intro h'; linarith)]; simp
@@ -181,11 +181,11 @@ theorem CU_chain_V : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
     · have : e = p := by rcases he with h1 | h1 | h1 <;> first | exact h1 | (exfalso; linarith)
       subst this
       rw [skel1_mid (by intro h'; linarith) (by intro h'; linarith)]; simp
-    · exact absurd (by first | exact h | exact h.symm) hne
+    · exact absurd (by exact h) hne
     · have : e = q := by rcases he with h1 | h1 | h1 <;> first | exact h1 | (exfalso; linarith)
       subst this
       have hdel := CU_del_mid [] a0 p e R (by simpa using hnd)
-        (by first | exact Or.inl ⟨by linarith, by linarith⟩ | exact Or.inr ⟨by linarith, by linarith⟩)
+        (by exact Or.inr ⟨by linarith, by linarith⟩)
       rw [skel1_end_r]; simpa using hdel
   · -- (2,2)
     simp at ha hc he hmin hA hB hnd ⊢
@@ -196,13 +196,13 @@ theorem CU_chain_V : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
     · have : e = p := by rcases he with h1 | h1 | h1 | h1 <;> first | exact h1 | (exfalso; linarith)
       subst this
       have hdel := CU_del_mid [a0] e q c' R (by simpa using hnd)
-        (by first | exact Or.inl ⟨by linarith, by linarith⟩ | exact Or.inr ⟨by linarith, by linarith⟩)
+        (by exact Or.inl ⟨by linarith, by linarith⟩)
       rw [skel1_mid (by intro h'; linarith) (by intro h'; linarith)]; simpa using hdel
-    · exact absurd (by first | exact h | exact h.symm) hne
+    · exact absurd (by exact h) hne
     · have : e = q := by rcases he with h1 | h1 | h1 | h1 <;> first | exact h1 | (exfalso; linarith)
       subst this
       have hdel := CU_del_mid [] a0 p e (c' :: R) (by simpa using hnd)
-        (by first | exact Or.inl ⟨by linarith, by linarith⟩ | exact Or.inr ⟨by linarith, by linarith⟩)
+        (by exact Or.inr ⟨by linarith, by linarith⟩)
       rw [skel1_mid (by intro h'; linarith) (by intro h'; linarith)]; simpa using hdel
 
 
@@ -223,7 +223,7 @@ theorem CU_chain_L : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
     have hy : a0 < y := (List.pairwise_cons.mp hA).1 y (by simp)
     have hz : y < z := (List.pairwise_cons.mp (List.pairwise_cons.mp hA).2).1 z (by simp)
     have hdel := CU_del_mid [] a0 y z (A2 ++ B ++ R) (by simpa using hnd)
-      (by first | exact Or.inl ⟨by linarith, by linarith⟩ | exact Or.inr ⟨by linarith, by linarith⟩)
+      (by exact Or.inl ⟨by linarith, by linarith⟩)
     have hsub : (a0 :: z :: A2).Sublist (a0 :: y :: z :: A2) :=
       List.Sublist.cons_cons a0 (List.Sublist.cons y (List.Sublist.refl _))
     have hey : e ≠ y := by
@@ -257,7 +257,7 @@ theorem CU_chain_L : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
     have hy : y < b1 := (List.pairwise_cons.mp hB).1 y (by simp)
     have hz : z < y := (List.pairwise_cons.mp (List.pairwise_cons.mp hB).2).1 z (by simp)
     have hdel := CU_del_mid A b1 y z (B2 ++ R) (by simpa using hnd)
-      (by first | exact Or.inl ⟨by linarith, by linarith⟩ | exact Or.inr ⟨by linarith, by linarith⟩)
+      (by exact Or.inr ⟨by linarith, by linarith⟩)
     have hsub : (b1 :: z :: B2).Sublist (b1 :: y :: z :: B2) :=
       List.Sublist.cons_cons b1 (List.Sublist.cons y (List.Sublist.refl _))
     have hey : e ≠ y := by
@@ -308,7 +308,7 @@ theorem CU_chain_L : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
     · have : e = a0 := by rcases he with h1 | h1 | h1 <;> first | exact h1 | (exfalso; linarith)
       subst this
       have hdel := CU_del_mid [] e q c' R (by simpa using hnd)
-        (by first | exact Or.inl ⟨by linarith, by linarith⟩ | exact Or.inr ⟨by linarith, by linarith⟩)
+        (by exact Or.inr ⟨by linarith, by linarith⟩)
       rw [skel1_end_l]; simpa using hdel
     · exact absurd (by first | exact h.symm) hne
     · have : e = q := by rcases he with h1 | h1 | h1 <;> first | exact h1 | (exfalso; linarith)
@@ -329,11 +329,11 @@ theorem CU_chain_L : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
     · have : e = p := by rcases he with h1 | h1 | h1 <;> first | exact h1 | (exfalso; linarith)
       subst this
       rw [skel1_mid (by intro h'; linarith) (by intro h'; linarith)]; simp
-    · exact absurd (by first | exact h | exact h.symm) hne
+    · exact absurd (by exact h.symm) hne
     · have : e = q := by rcases he with h1 | h1 | h1 <;> first | exact h1 | (exfalso; linarith)
       subst this
       have hdel := CU_del_mid [] a0 p e R (by simpa using hnd)
-        (by first | exact Or.inl ⟨by linarith, by linarith⟩ | exact Or.inr ⟨by linarith, by linarith⟩)
+        (by exact Or.inl ⟨by linarith, by linarith⟩)
       rw [skel1_end_r]; simpa using hdel
   · -- (2,2)
     simp at ha hc he hmin hA hB hnd ⊢
@@ -344,7 +344,7 @@ theorem CU_chain_L : ∀ (n : ℕ) (A B R : List ℝ) (a e c : ℝ), A.length + 
     · have : e = p := by rcases he with h1 | h1 | h1 | h1 <;> first | exact h1 | (exfalso; linarith)
       subst this
       have hdel := CU_del_mid [a0] e q c' R (by simpa using hnd)
-        (by first | exact Or.inl ⟨by linarith, by linarith⟩ | exact Or.inr ⟨by linarith, by linarith⟩)
+        (by exact Or.inr ⟨by linarith, by linarith⟩)
       rw [skel1_mid (by intro h'; linarith) (by intro h'; linarith)]; simpa using hdel
     · exact absurd (by first | exact h.symm) hne
     · have : e = q := by rcases he with h1 | h1 | h1 | h1 <;> first | exact h1 | (exfalso; linarith)
