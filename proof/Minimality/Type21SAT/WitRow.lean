@@ -20,6 +20,7 @@ open Finset
 open Minimality Minimality.H21
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- The `Tp` signature in the clause (first positive `tpv e mask _` literal). -/
 def tpvPos (cl : List Lit) (e mask : Nat) : Nat :=

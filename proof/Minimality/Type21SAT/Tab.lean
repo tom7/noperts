@@ -15,6 +15,7 @@ the facing `fup3` are computed from the key alone.
 set_option autoImplicit false
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- How the sign of the determinant of three edge differences is obtained. -/
 inductive Rt where

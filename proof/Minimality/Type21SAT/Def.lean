@@ -16,6 +16,7 @@ open scoped RealInnerProductSpace
 open Classical
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- Family 20: the three clauses of `y = a and b`, with `y = andL a b`.  Each holds. -/
 theorem gate_rows (g : Geo) (a b : Lit) :

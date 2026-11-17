@@ -16,6 +16,7 @@ Every realization of the faces of type 21 is Rupert.  Two unsatisfiability facts
 -/
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 theorem type21_isRupert (x : Fin 7 → EuclideanSpace ℝ (Fin 3))
     (hR : Minimality.RealizesFaces x (Minimality.sevenTypeFaces 20)) :

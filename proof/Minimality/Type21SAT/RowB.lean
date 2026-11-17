@@ -23,6 +23,7 @@ open Finset
 open Minimality Minimality.H21
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- The name chunks of core B (200 names each). -/
 def chunksB : List (List V) :=

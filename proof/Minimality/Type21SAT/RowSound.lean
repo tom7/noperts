@@ -13,6 +13,7 @@ open scoped RealInnerProductSpace
 open Classical
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- Swapping the factors of the cross product negates it. -/
 theorem cross_swap' (a b : ℝ³) : cross b a = -cross a b := by

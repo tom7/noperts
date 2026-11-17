@@ -18,6 +18,7 @@ set_option autoImplicit false
 open scoped RealInnerProductSpace
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- Facet vertex sets as lists. -/
 def FSl : List (List Nat) :=

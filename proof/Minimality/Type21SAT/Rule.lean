@@ -24,6 +24,7 @@ open Finset
 open Minimality Minimality.H21
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- The facet vertex sets of type 21. -/
 def S21 : Fin 8 → Finset (Fin 7) :=

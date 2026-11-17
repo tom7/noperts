@@ -21,6 +21,7 @@ set_option maxHeartbeats 0
     and a literal code is `2 i + (1 if negated)` for variable number `i` (1-based in the name chunks). -/
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 local notation:35 a:36 " AND " b:36 => V.gate true a true b
 local notation:35 a:36 " ANDNOT " b:36 => V.gate true a false b

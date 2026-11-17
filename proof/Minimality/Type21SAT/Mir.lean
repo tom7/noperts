@@ -18,6 +18,7 @@ open Finset
 open Minimality Minimality.H21
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- The reflection `diag(1, 1, -1)`. -/
 noncomputable def mir (v : ℝ³) : ℝ³ := !₂[v 0, v 1, -v 2]

@@ -20,6 +20,7 @@ open scoped RealInnerProductSpace
 open Classical
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- In-facet determinant against a facing: `det(u, v, w) |N|^2 = det(u, v, N) <N, w>` (copy of `det_perp`). -/
 theorem det_perp (u v w N : ℝ³) (hu : ⟪N, u⟫ = 0) (hv : ⟪N, v⟫ = 0) :

@@ -34,6 +34,7 @@ theorem cnf_eqB : cnfOfRows rowsB = BCnf := by
 end Minimality.H21.SAT.Lrat
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- **Core B is unsatisfiable**, from the kernel-checked LRAT certificate. -/
 theorem coreUnsatB : CoreUnsatB := by

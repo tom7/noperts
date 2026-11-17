@@ -15,6 +15,7 @@ open scoped RealInnerProductSpace
 open Classical
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- **Every route of the normal table gives the three valued sign of its determinant.** -/
 theorem nlRoutes_sound {g : Geo} (hF : FacOK g) (hO : OriOK g) :

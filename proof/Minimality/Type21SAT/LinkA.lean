@@ -41,6 +41,7 @@ theorem cnf_eqA : cnfOfRows rowsA = ACnf := by
 end Minimality.H21.SAT.Lrat
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- **Core B is unsatisfiable**, from the kernel-checked LRAT certificate. -/
 theorem coreUnsatA : CoreUnsatA := by

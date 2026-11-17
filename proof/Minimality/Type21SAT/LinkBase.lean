@@ -18,6 +18,7 @@ namespace Minimality.H21.SAT.Lrat
 open Minimality.SAT.Checker
 
 open Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- The CNF of a core as the checker sees it: the decoded rows, in order. -/
 def cnfOfRows (rows : List (List Nat)) : List Cl := rows.flatMap fun ch => ch.map fun n => (decRow n).2.2

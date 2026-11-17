@@ -18,6 +18,7 @@ open scoped RealInnerProductSpace
 open Classical
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- **Every route of the triple table gives the three valued sign of its determinant**, for a shape with the
 facet facts `FacOK` and the chirality orientations `OriOK`.  No nonzero hypothesis. -/

@@ -16,6 +16,7 @@ open scoped RealInnerProductSpace
 open Classical
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- Cyclic rotation of the three arguments of `det3`. -/
 theorem det3_cyc (a b c : ℝ³) : det3 a b c = det3 b c a := by simp only [det3_expand]; ring

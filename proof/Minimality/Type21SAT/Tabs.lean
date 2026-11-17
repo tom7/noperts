@@ -17,6 +17,7 @@ open scoped RealInnerProductSpace
 open Classical
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- The key `(a, b, c)` is in a table. -/
 def hasKey3 {α : Type} (L : List ((Nat × Nat × Nat) × α)) (a b c : Nat) : Bool :=

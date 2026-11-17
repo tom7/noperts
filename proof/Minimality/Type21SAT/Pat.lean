@@ -7,6 +7,7 @@ public import Minimality.Type21SAT.Tabs
 /-! Silhouette cycles of the 256 patterns (ST/core/w/t.map PAT lines; untrusted, checked in B3Rule). -/
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- `patCyc p` = the cycle of pattern `p` (empty if none). -/
 def patCyc : List (List Nat) := [

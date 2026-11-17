@@ -12,6 +12,7 @@ public import Minimality.Type21SAT.RowSound
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- Digits of a packed row (base 65536, low digit first). -/
 def digs : Nat → Nat → List Nat

@@ -17,6 +17,7 @@ open scoped RealInnerProductSpace
 open Classical
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- The two clauses of an `ltl` row. -/
 def ltlS (e d ep p q : Nat) : List (List Lit) :=

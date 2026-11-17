@@ -18,6 +18,7 @@ open scoped RealInnerProductSpace
 open Classical
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- The real data: seven points and eight facet normals. -/
 structure Geo where

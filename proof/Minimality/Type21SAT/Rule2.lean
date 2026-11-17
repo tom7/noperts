@@ -16,6 +16,7 @@ open Finset
 open Minimality Minimality.H21
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- **The list check gives `AltCover2` of the cycle map.** -/
 theorem altFacts {k : ℕ} [NeZero k] {L cyc : List Nat} (hk : L.length = k) (h7 : ∀ v ∈ L, v < 7)

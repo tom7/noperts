@@ -11,6 +11,7 @@ public import Minimality.Type21SAT.RowB
 set_option maxRecDepth 100000
 set_option maxHeartbeats 0
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- All rule, witness, lex rule and unit rows of core B pass their checks. -/
 theorem bspecialAll :

@@ -18,6 +18,7 @@ open Finset
 open Minimality Minimality.H21
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- **A rule row that passes the check is true of the real data, if the shape is not Rupert.** -/
 theorem ruleOK_sound {x : Fin 7 → ℝ³} (F : S0xFac 8 S21 x) (hx : Function.Injective x)

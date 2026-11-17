@@ -20,6 +20,7 @@ open Finset
 open Minimality Minimality.H21
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 variable {x : Fin 7 → ℝ³}
 

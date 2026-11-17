@@ -14,6 +14,7 @@ key such that the other two facets share the edge `p q`.  The entry is computed 
 set_option autoImplicit false
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- How the sign of `det3 Na Nb Nc` is obtained. -/
 inductive Nr where

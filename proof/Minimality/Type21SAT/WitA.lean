@@ -15,6 +15,7 @@ set_option maxHeartbeats 0
 open Minimality Minimality.H21
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- A packed row is not a witness row, or its witness check passes. -/
 def witD (n : Nat) : Bool :=

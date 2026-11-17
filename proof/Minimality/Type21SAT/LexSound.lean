@@ -16,6 +16,7 @@ open Finset
 open Minimality Minimality.H21
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- **The core of the lex rule soundness**: all literals of the lex rule clause false (with `D ∥ H`) gives a Rupert shape. -/
 theorem lex_core {x : Fin 7 → ℝ³} (F : S0xFac 8 S21 x) (hx : Function.Injective x) (hG : GeoOK (geoF F))

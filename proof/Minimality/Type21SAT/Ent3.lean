@@ -18,6 +18,7 @@ open scoped RealInnerProductSpace
 open Classical
 
 namespace Minimality.H21.SAT
+open Minimality.H29.SAT
 
 /-- The Gram identity for two normals orthogonal to `d`, against two vectors `u, v`. -/
 theorem binet (a b d u v : ℝ³) (ha : ⟪a, d⟫ = 0) (hb : ⟪b, d⟫ = 0) :
