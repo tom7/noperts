@@ -123,13 +123,13 @@ theorem app_minv (M : Mat3 ℝ) (hD : M.det ≠ 0) (v : V3 ℝ) : M.app (minv M 
     simp only [V3.dot, V3.cr, Mat3.det, V3.det] <;> ring
 
 theorem minv_c1 (M : Mat3 ℝ) (hD : M.det ≠ 0) : minv M M.c1 = ⟨1, 0, 0⟩ := by
-  apply V3.ext' <;> simp only [minv] <;> (first | rw [div_eq_iff hD] | skip) <;>
+  apply V3.ext' <;> simp only [minv] <;> rw [div_eq_iff hD] <;>
     simp only [V3.dot, V3.cr, Mat3.det, V3.det] <;> ring
 theorem minv_c2 (M : Mat3 ℝ) (hD : M.det ≠ 0) : minv M M.c2 = ⟨0, 1, 0⟩ := by
-  apply V3.ext' <;> simp only [minv] <;> (first | rw [div_eq_iff hD] | skip) <;>
+  apply V3.ext' <;> simp only [minv] <;> rw [div_eq_iff hD] <;>
     simp only [V3.dot, V3.cr, Mat3.det, V3.det] <;> ring
 theorem minv_c3 (M : Mat3 ℝ) (hD : M.det ≠ 0) : minv M M.c3 = ⟨0, 0, 1⟩ := by
-  apply V3.ext' <;> simp only [minv] <;> (first | rw [div_eq_iff hD] | skip) <;>
+  apply V3.ext' <;> simp only [minv] <;> rw [div_eq_iff hD] <;>
     simp only [V3.dot, V3.cr, Mat3.det, V3.det] <;> ring
 theorem minv_zero (M : Mat3 ℝ) : minv M ⟨0, 0, 0⟩ = ⟨0, 0, 0⟩ := by
   apply V3.ext' <;> simp [minv, V3.dot]
