@@ -31,25 +31,25 @@ def tpvPos (cl : List Lit) (e mask : Nat) : Nat :=
     | _ => none).getD 0
 
 /-- The literals of the witness clause. -/
-def witLits (e mask sigp sig d eps zero : Nat) : List Lit :=
+def witLits (e mask sigp sig d eps zr : Nat) : List Lit :=
   [(true, V.tpv e mask sigp)] ++
   (List.range 9).flatMap fun s =>
     if mask.testBit s then
-      (if zero.testBit s then [(Fe d s).1, (Fe d s).2]
+      (if zr.testBit s then [(Fe d s).1, (Fe d s).2]
        else if sig.testBit s == (eps == 1) then [(Fe d s).1.neg] else [(Fe d s).2.neg])
     else []
 
 /-- The check of a witness row. -/
 def witOK (p : List Nat) (cl : List Lit) : Bool :=
   let e := prm p 0; let mask := prm p 1; let sig := prm p 2; let d := prm p 3; let eps := prm p 4
-  let zero := prm p 5
+  let zr := prm p 5
   let sigp := tpvPos cl e mask
-  decide (e < 43 ∧ d < 43 ∧ mask < 512 ∧ sig < 512 ∧ zero < 512 ∧ (eps = 1 ∨ eps = 999)) &&
-  sigOK sig mask sigp && decide (popc zero ≤ 2) && (popc zero ≤ 1 || decide (3 ≤ popc mask)) &&
-  (List.range 9).all (fun s => !zero.testBit s || mask.testBit s) &&
+  decide (e < 43 ∧ d < 43 ∧ mask < 512 ∧ sig < 512 ∧ zr < 512 ∧ (eps = 1 ∨ eps = 999)) &&
+  sigOK sig mask sigp && decide (popc zr ≤ 2) && (popc zr ≤ 1 || decide (3 ≤ popc mask)) &&
+  (List.range 9).all (fun s => !zr.testBit s || mask.testBit s) &&
   (List.range 9).all (fun s => (List.range 9).all fun t =>
-    !zero.testBit s || !zero.testBit t || s == t || (sig.testBit s != sig.testBit t)) &&
-  coversF cl (witLits e mask sigp sig d eps zero)
+    !zr.testBit s || !zr.testBit t || s == t || (sig.testBit s != sig.testBit t)) &&
+  coversF cl (witLits e mask sigp sig d eps zr)
 
 /-- A set of at most two facets is empty, one or two facets. -/
 theorem zcase : ∀ z < 512, popc z ≤ 2 → (∀ t : Fin 9, bits z t = false) ∨
@@ -74,13 +74,13 @@ theorem facet_pair : ∀ t0 t1 : Fin 9, t0 ≠ t1 → (s0x_S24 t0).Nonempty ∧ 
 
 /-- **The core of the witness soundness**: all literals of the witness clause false is impossible. -/
 theorem wit_core {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hG : GeoOK (geoF F))
-    (e d mask sig sigp zero eps : Nat) (he : e < 43) (hd : d < 43) (hmask : mask < 512)
-    (hzero : zero < 512) (heps : eps = 1 ∨ eps = 999) (hsig : sigOK sig mask sigp = true)
-    (hz2 : popc zero ≤ 2) (hz3 : popc zero ≤ 1 ∨ 3 ≤ popc mask)
-    (hzm : ∀ s < 9, zero.testBit s = true → mask.testBit s = true)
-    (hdiff : ∀ s < 9, ∀ t < 9, zero.testBit s = true → zero.testBit t = true → s ≠ t →
+    (e d mask sig sigp zr eps : Nat) (he : e < 43) (hd : d < 43) (hmask : mask < 512)
+    (hzero : zr < 512) (heps : eps = 1 ∨ eps = 999) (hsig : sigOK sig mask sigp = true)
+    (hz2 : popc zr ≤ 2) (hz3 : popc zr ≤ 1 ∨ 3 ≤ popc mask)
+    (hzm : ∀ s < 9, zr.testBit s = true → mask.testBit s = true)
+    (hdiff : ∀ s < 9, ∀ t < 9, zr.testBit s = true → zr.testBit t = true → s ≠ t →
       sig.testBit s ≠ sig.testBit t)
-    (hno : ∀ l ∈ witLits e mask sigp sig d eps zero, evalL (rho (geoF F)) l = false) : False := by
+    (hno : ∀ l ∈ witLits e mask sigp sig d eps zr, evalL (rho (geoF F)) l = false) : False := by
   set u := (geo0 F).vv e with hu
   set w := (geo0 F).vv d with hw
   have S : ∀ t : Fin 9, Sg3 (rho (geoF F)) (Fe d t.val) ⟪F.N t, w⟫ := fun t => by
@@ -92,11 +92,11 @@ theorem wit_core {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hG : GeoOK (geo
     intro l h; rw [evalL_neg] at h; simpa using h
   obtain ⟨sg, flip, hsg, hsgdef⟩ := sig_exists hsig
   -- the signs off the zero set
-  have hs : ∀ t : Fin 9, bits mask t = true → bits zero t = false →
+  have hs : ∀ t : Fin 9, bits mask t = true → bits zr t = false →
       (sg t = true → 0 < er * ⟪F.N t, w⟫) ∧ (sg t = false → er * ⟪F.N t, w⟫ < 0) := by
     intro t ht hzt
     have ht' : mask.testBit t.val = true := ht
-    have hzt' : zero.testBit t.val = false := hzt
+    have hzt' : zr.testBit t.val = false := hzt
     have hsgt : bits sig t = sg t := hsg t ht
     have hsgt' : sig.testBit t.val = sg t := hsgt
     by_cases h1 : eps = 1
@@ -104,7 +104,7 @@ theorem wit_core {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hG : GeoOK (geo
       rw [her1]
       cases hs : sg t
       · refine ⟨fun h => absurd h (by simp), fun _ => ?_⟩
-        have hm : (Fe d t.val).2.neg ∈ witLits e mask sigp sig d eps zero := by
+        have hm : (Fe d t.val).2.neg ∈ witLits e mask sigp sig d eps zr := by
           simp only [witLits, List.mem_append, List.mem_flatMap, List.mem_range]
           refine Or.inr ⟨t.val, t.isLt, ?_⟩
           simp [ht', hzt', hsgt', hs, h1]
@@ -112,7 +112,7 @@ theorem wit_core {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hG : GeoOK (geo
         have := (S t).2.mp this
         linarith
       · refine ⟨fun _ => ?_, fun h => absurd h (by simp)⟩
-        have hm : (Fe d t.val).1.neg ∈ witLits e mask sigp sig d eps zero := by
+        have hm : (Fe d t.val).1.neg ∈ witLits e mask sigp sig d eps zr := by
           simp only [witLits, List.mem_append, List.mem_flatMap, List.mem_range]
           refine Or.inr ⟨t.val, t.isLt, ?_⟩
           simp [ht', hzt', hsgt', hs, h1]
@@ -124,7 +124,7 @@ theorem wit_core {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hG : GeoOK (geo
       rw [her1]
       cases hs : sg t
       · refine ⟨fun h => absurd h (by simp), fun _ => ?_⟩
-        have hm : (Fe d t.val).1.neg ∈ witLits e mask sigp sig d eps zero := by
+        have hm : (Fe d t.val).1.neg ∈ witLits e mask sigp sig d eps zr := by
           simp only [witLits, List.mem_append, List.mem_flatMap, List.mem_range]
           refine Or.inr ⟨t.val, t.isLt, ?_⟩
           simp [ht', hzt', hsgt', hs, h1]
@@ -132,7 +132,7 @@ theorem wit_core {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hG : GeoOK (geo
         have := (S t).1.mp this
         linarith
       · refine ⟨fun _ => ?_, fun h => absurd h (by simp)⟩
-        have hm : (Fe d t.val).2.neg ∈ witLits e mask sigp sig d eps zero := by
+        have hm : (Fe d t.val).2.neg ∈ witLits e mask sigp sig d eps zr := by
           simp only [witLits, List.mem_append, List.mem_flatMap, List.mem_range]
           refine Or.inr ⟨t.val, t.isLt, ?_⟩
           simp [ht', hzt', hsgt', hs, h1]
@@ -140,14 +140,14 @@ theorem wit_core {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hG : GeoOK (geo
         have := (S t).2.mp this
         linarith
   -- the zero set: the view is edge-on
-  have hz : ∀ t : Fin 9, bits zero t = true → ⟪F.N t, w⟫ = 0 := by
+  have hz : ∀ t : Fin 9, bits zr t = true → ⟪F.N t, w⟫ = 0 := by
     intro t ht
-    have ht' : zero.testBit t.val = true := ht
+    have ht' : zr.testBit t.val = true := ht
     have hmt : mask.testBit t.val = true := hzm t.val t.isLt ht'
-    have m1 : (Fe d t.val).1 ∈ witLits e mask sigp sig d eps zero := by
+    have m1 : (Fe d t.val).1 ∈ witLits e mask sigp sig d eps zr := by
       simp only [witLits, List.mem_append, List.mem_flatMap, List.mem_range]
       exact Or.inr ⟨t.val, t.isLt, by simp [hmt, ht']⟩
-    have m2 : (Fe d t.val).2 ∈ witLits e mask sigp sig d eps zero := by
+    have m2 : (Fe d t.val).2 ∈ witLits e mask sigp sig d eps zr := by
       simp only [witLits, List.mem_append, List.mem_flatMap, List.mem_range]
       exact Or.inr ⟨t.val, t.isLt, by simp [hmt, ht']⟩
     have a1 := hno _ m1
@@ -157,7 +157,7 @@ theorem wit_core {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hG : GeoOK (geo
     exact le_antisymm (not_lt.mp n1) (not_lt.mp n2)
   -- Tp is false
   have hTp : ¬ TpSem F u (bits mask) (bits sigp) := by
-    have hm : ((true, V.tpv e mask sigp) : Lit) ∈ witLits e mask sigp sig d eps zero := by
+    have hm : ((true, V.tpv e mask sigp) : Lit) ∈ witLits e mask sigp sig d eps zr := by
       simp [witLits]
     have := hno _ hm
     have h2 : rho (geoF F) (V.tpv e mask sigp) = false := by simpa [evalL] using this
@@ -171,29 +171,29 @@ theorem wit_core {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hG : GeoOK (geo
     · simpa using hT
     · simpa using TpSem.compl F hT
   apply hTp'
-  have hsr : ∀ t : Fin 9, bits mask t = true → bits zero t = false →
+  have hsr : ∀ t : Fin 9, bits mask t = true → bits zr t = false →
       (sg t = true → 0 < er * ⟪F.N t, w⟫) ∧ (sg t = false → er * ⟪F.N t, w⟫ < 0) := hs
   have hN : ∀ t : Fin 9, ⟪F.N t, F.N t⟫ ≠ 0 := fun t => by
     have := hG.hF.nn t.val t.isLt
     rw [geoF_N] at this
     exact this.ne'
-  rcases zcase zero hzero hz2 with h0 | ⟨t0, h1⟩ | ⟨t0, t1, hne, h2⟩
+  rcases zcase zr hzero hz2 with h0 | ⟨t0, h1⟩ | ⟨t0, t1, hne, h2⟩
   · exact tpSem_witness0 F u w (bits mask) sg er (fun t ht => hsr t ht (h0 t))
-  · have ht0 : bits zero t0 = true := (h1 t0).mpr rfl
+  · have ht0 : bits zr t0 = true := (h1 t0).mpr rfl
     have hm0 : bits mask t0 = true := hzm t0.val t0.isLt ht0
     refine tpSem_witness1 F u w (bits mask) sg er t0 hm0 (hN t0) (hz t0 ht0) ?_
     intro t ht hne
     exact hsr t ht (by
       by_contra hc
       exact hne ((h1 t).mp (by simpa using hc)))
-  · have ht0 : bits zero t0 = true := (h2 t0).mpr (Or.inl rfl)
-    have ht1 : bits zero t1 = true := (h2 t1).mpr (Or.inr rfl)
+  · have ht0 : bits zr t0 = true := (h2 t0).mpr (Or.inl rfl)
+    have ht1 : bits zr t1 = true := (h2 t1).mpr (Or.inr rfl)
     have hm0 : bits mask t0 = true := hzm t0.val t0.isLt ht0
     have hm1 : bits mask t1 = true := hzm t1.val t1.isLt ht1
     have h3 : 3 ≤ popc mask := by
       rcases hz3 with h | h
       · exfalso
-        exact absurd (popc1 zero hzero h t0 t1 ht0 ht1) hne
+        exact absurd (popc1 zr hzero h t0 t1 ht0 ht1) hne
       · exact h
     obtain ⟨s, hsm, hs0, hs1⟩ := third_facet mask hmask h3 t0 t1 hm0 hm1 hne
     have hsg01 : sg t0 ≠ sg t1 := by

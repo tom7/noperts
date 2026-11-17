@@ -156,7 +156,7 @@ theorem k34lw_Sq {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     have hg : 0 < γ6 * (⟪a - d, a - d⟫ - ⟪a - d, c - d⟫) := mul_pos hγ6 hWd
     have : γ6 * (⟪a - d, a - d⟫ - ⟪a - d, c - d⟫) * (ν * m1 + m3) < 0 := by
       have e : γ6 * (⟪a - d, a - d⟫ - ⟪a - d, c - d⟫) * (ν * m1 + m3) = γ6 * m1 * (ν * (⟪a - d, a - d⟫ - ⟪a - d, c - d⟫) - (⟪c - d, c - d⟫ - ⟪a - d, c - d⟫)) := by
-        linear_combination ν * 0 + key
+        linear_combination key
       rw [e]; exact mul_neg_of_pos_of_neg (mul_pos hγ6 k1) (by linarith)
     by_contra hn; push Not at hn
     nlinarith [mul_nonneg hg.le hn]

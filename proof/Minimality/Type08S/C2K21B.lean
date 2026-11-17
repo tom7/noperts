@@ -72,7 +72,7 @@ theorem k21_qd_tsc_tie {D α4 β1 γ4 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα4 : 
          first
          | (left; nlinarith)
          | (right; refine ⟨?_, ?_⟩
-            · first | ring1 | linear_combination D * htie | linear_combination -D * htie
+            · linear_combination D * htie
             · nlinarith))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
