@@ -102,10 +102,9 @@ theorem N4D_cyc_ev_S (hV : 0 < S.Vq) (hVW : 0 < S.VWq) :
   obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
+    try (first
     | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    | exact absurd (by decide) h2)
   all_goals
     apply PS_ev'
     simp only [b0, b1, b2, b3, b4, pent_0, pent_1, pent_2, pent_3, pent_4, Dc, C3.sub,
@@ -216,10 +215,9 @@ theorem TA_cyc_ev_S (hA1 : 0 < -S.hm*S.tp + S.hm - S.hp*S.tm) :
   obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
+    try (first
     | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    | exact absurd (by decide) h2)
   all_goals
     apply PS_ev'
     simp only [b0, b1, b2, b3, b4, pent_0, pent_1, pent_2, pent_3, pent_4, Dc, C3.sub,
@@ -465,7 +463,7 @@ theorem N4D_pair_V (hH : F.ClassH) (hV : 0 < F.S.Vq)
   rcases F.classH_depth_trichotomy_V hH with ⟨h6, h0⟩ | ⟨h0, h6⟩ | ⟨e0, e6⟩
   · -- `dV 3 < dV 6 < dV 0`: `a = m1+`, `c = xb`
     have h2 : F.dV 4 < F.dV 6 := by
-      rcases hA with h | h | h | h <;> first | linarith | skip
+      rcases hA with h | h | h | h <;> linarith
     have hv : ((0 : ZMod 5) - 4).val = 1 := by decide
     have hden : F.toFrame7.GG ((F.toFrame7.ptC (pent 0 5 3 4 6 (0 + 1))).sub
         (F.toFrame7.ptC (pent 0 5 3 4 6 0))) F.S.u_vN4 ≠ 0 := by
@@ -533,7 +531,7 @@ theorem N4D_pair_V (hH : F.ClassH) (hV : 0 < F.S.Vq)
       linarith
   · -- `dV 0 < dV 6 < dV 3`: `a = v`, `c = xb`
     have h2 : F.dV 6 < F.dV 4 := by
-      rcases hB with h | h | h | h <;> first | linarith | skip
+      rcases hB with h | h | h | h <;> linarith
     have hv : ((1 : ZMod 5) - 4).val = 2 := by decide
     have hden : F.toFrame7.GG ((F.toFrame7.ptC (pent 0 5 3 4 6 (1 + 1))).sub
         (F.toFrame7.ptC (pent 0 5 3 4 6 1))) F.S.u_vN4 ≠ 0 := by
@@ -633,7 +631,7 @@ theorem TA_pair (hH : F.ClassH) (hA1 : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.
   rcases F.classH_depth_trichotomy_T hH with ⟨h3, h0⟩ | ⟨h0, h3⟩ | ⟨e0, e3⟩
   · -- `dT 3 < dT 6 < dT 0`: `e = [m1-, v]` (`a = 3`), `c = xb` (index 1)
     have h4 : F.dT 4 < F.dT 6 := by
-      rcases hA with h | h | h | h <;> first | linarith | skip
+      rcases hA with h | h | h | h <;> linarith
     have hv : ((3 : ZMod 5) - 1).val = 2 := by decide
     have hden : F.toFrame7.GG ((F.toFrame7.ptC (pent 0 6 4 3 5 (3 + 1))).sub
         (F.toFrame7.ptC (pent 0 6 4 3 5 3))) F.S.u_tANR ≠ 0 := by
@@ -701,7 +699,7 @@ theorem TA_pair (hH : F.ClassH) (hA1 : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.
       linarith
   · -- `dT 0 < dT 6 < dT 3`: `e = [v, m1+]` (`a = 4`)
     have h4 : F.dT 6 < F.dT 4 := by
-      rcases hB with h | h | h | h <;> first | linarith | skip
+      rcases hB with h | h | h | h <;> linarith
     have hv : ((4 : ZMod 5) - 1).val = 3 := by decide
     have hden : F.toFrame7.GG ((F.toFrame7.ptC (pent 0 6 4 3 5 (4 + 1))).sub
         (F.toFrame7.ptC (pent 0 6 4 3 5 4))) F.S.u_tANR ≠ 0 := by
