@@ -61,8 +61,8 @@ theorem k17gc_lexUni4 (z w : ZMod 4 → ℝ) (hinj : ∀ i j, z i = z j → w i 
     exact lexLt_asymm this this
   rcases lexLt_total h12 with x | x <;> have ax := lexLt_asymm x <;>
     rcases lexLt_total h23 with y | y <;> have ay := lexLt_asymm y <;>
-    (try simp [x, ax, y, ay, h01, a01, h30, a30]) <;>
-    exact (hno x y).elim
+    (try simp [x, ax, y, ay, h01, a01, h30, a30])
+  exact (hno x y).elim
 
 /-- **Relation lemma, U2**: T' frame, `α4 < 1 < β1`, `γ4 = 1 + α4 (β1 - 1)`, `⟪p,q⟫ = ⟪q,r⟫ = 0`. -/
 theorem k17gc_u2_frame {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (hT' : IsT' a b c' d)
