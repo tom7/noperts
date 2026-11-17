@@ -65,7 +65,7 @@ theorem peaks5_eq_one (a b c d e : ℝ) (hab : a ≠ b) (hbc : b ≠ c) (hcd : c
       | (exfalso; linarith)
       | (exfalso; simp_all; done)
       | (simp [a1, a2, a3, a4, a5, not_lt.2 a1.le, not_lt.2 a2.le,
-          not_lt.2 a3.le, not_lt.2 a4.le, not_lt.2 a5.le]; done)
+          not_lt.2 a3.le, not_lt.2 a4.le, not_lt.2 a5.le])
 
 /-- The pentagon cycle. -/
 def cyc5 (A5 B5 z5 A2 B2 z2 : ℝ) : ZMod 5 → ℝ × ℝ × ℝ := fun i =>
