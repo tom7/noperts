@@ -59,7 +59,6 @@ theorem peak_half {zv zm za zc zb s : ℝ} (hs0 : 0 < s) (hs1 : s < 1)
     first
     | exact absurd rfl hij
     | (exfalso; linarith [hi.1, hi.2, hj.1, hj.2])
-    | (exfalso; rcases hNv.1 with h | h | h | h <;> linarith [hi.1, hi.2, hj.1, hj.2])
     | (exfalso; rcases hNv.2 with h | h | h | h <;> linarith [hi.1, hi.2, hj.1, hj.2])
     | (refine ⟨by linarith [hi.1, hi.2, hj.1, hj.2], by linarith [hi.1, hi.2, hj.1, hj.2],
         Or.inl ⟨by linarith [hi.1, hi.2, hj.1, hj.2], by linarith [hi.1, hi.2, hj.1, hj.2],
@@ -77,7 +76,6 @@ theorem peak_half {zv zm za zc zb s : ℝ} (hs0 : 0 < s) (hs1 : s < 1)
     | exact absurd rfl hij
     | (exfalso; linarith [hi.1, hi.2, hj.1, hj.2])
     | (exfalso; rcases hNv.1 with h | h | h | h <;> linarith [hi.1, hi.2, hj.1, hj.2])
-    | (exfalso; rcases hNv.2 with h | h | h | h <;> linarith [hi.1, hi.2, hj.1, hj.2])
     | (refine ⟨by linarith [hi.1, hi.2, hj.1, hj.2], by linarith [hi.1, hi.2, hj.1, hj.2],
         Or.inl ⟨by linarith [hi.1, hi.2, hj.1, hj.2], by linarith [hi.1, hi.2, hj.1, hj.2],
           by linarith [hi.1, hi.2, hj.1, hj.2]⟩⟩)
