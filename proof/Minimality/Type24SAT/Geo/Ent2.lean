@@ -75,18 +75,18 @@ theorem fup3_sound {g : Geo} (hF : FacOK g) (t p q : Nat) (hp : p < 7) (hq : q <
     · simp only [hip, hiq, ite_true]
       exact Sg3_zero_of hP (hF.zero t p q hip hiq)
     · have hiq' : inF t q = false := by simpa using hiq
-      simp only [hip, hiq, ite_true, ite_false]
+      simp only [hip, hiq, ite_true]
       have := hF.pos t p q hq hip hiq'
       have := Sg3_of_mulpos hP (n := 1) (r := ⟪g.N t, g.x p - g.x q⟫) (by simpa using this)
       simpa [cS, ltrue, lfalse, zeroS] using this
   · have hip' : inF t p = false := by simpa using hip
     by_cases hiq : inF t q = true
-    · simp only [hip, hiq, ite_true, ite_false]
+    · simp only [hip, hiq, ite_true]
       have := hF.pos t q p hp hiq hip'
       have := Sg3_of_mulpos hP (n := -1) (r := ⟪g.N t, g.x p - g.x q⟫)
         (by rw [e1 p q]; push_cast; linarith)
       simpa [cS, ltrue, lfalse, zeroS] using this
-    · simp only [hip, hiq, ite_false]
+    · simp only [hip, hiq]
       by_cases hpq : p < q
       · simp only [hpq, ite_true]
         exact Sg3_atomG g (v := V.fv t p q) (by simp [rho])
