@@ -33,12 +33,16 @@ theorem lexUni_of_uni {k : ℕ} [NeZero k] {z : ZMod k → ℝ} (hz : Uni z) (w 
   have e1 : LexLt (z (i - 1), w (i - 1)) (z i, w i) ↔ z (i - 1) < z i := by
     unfold LexLt
     constructor
-    · rintro (h | ⟨h, _⟩); exact h; exact absurd h h1
+    · rintro (h | ⟨h, _⟩)
+      · exact h
+      · exact absurd h h1
     · exact Or.inl
   have e2 : LexLt (z (i + 1), w (i + 1)) (z i, w i) ↔ z (i + 1) < z i := by
     unfold LexLt
     constructor
-    · rintro (h | ⟨h, _⟩); exact h; exact absurd h.symm h2
+    · rintro (h | ⟨h, _⟩)
+      · exact h
+      · exact absurd h.symm h2
     · exact Or.inl
   rw [e1, e2]
 

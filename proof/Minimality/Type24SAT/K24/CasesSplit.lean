@@ -128,7 +128,7 @@ theorem clausesNotP_true (F : S0xFac 9 s0x_S24 x) (hO : ¬ OB1 x)
   simp only [clausesNotP, List.mem_cons, List.not_mem_nil, or_false] at hC
   rcases hC with rfl | rfl
   · have : (geoF F).atom (V.kv 3 3 16) ≠ 0 ∨ (geoF F).atom (V.kv 3 4 15) ≠ 0 := by
-      rw [atom_KD1, atom_KD2]; by_contra hc; push_neg at hc; exact hP hc
+      rw [atom_KD1, atom_KD2]; by_contra hc; push Not at hc; exact hP hc
     rcases this with h | h
     · rcases holds_pm (geoF F) _ h (by simp [H24.SAT.rho]) with h' | h'
       · exact ⟨_, List.mem_cons_self .., h'⟩
@@ -149,7 +149,7 @@ theorem clausesPq_true (F : S0xFac 9 s0x_S24 x) (hO : ¬ OB1 x)
   · have a1 := atom_fv423 F
     have a2 := atom_fv425 F
     have : (geoF F).atom (V.fv 4 2 3) ≠ 0 ∨ (geoF F).atom (V.fv 4 2 5) ≠ 0 := by
-      rw [a1, a2]; by_contra hc; push_neg at hc; exact hEG hc
+      rw [a1, a2]; by_contra hc; push Not at hc; exact hEG hc
     rcases this with h | h
     · rcases holds_pm (geoF F) _ h (by simp [H24.SAT.rho]) with h' | h'
       · exact ⟨_, List.mem_cons_self .., h'⟩
@@ -160,7 +160,7 @@ theorem clausesPq_true (F : S0xFac 9 s0x_S24 x) (hO : ¬ OB1 x)
   · have a1 := atom_fv236 F
     have a2 := atom_fv246 F
     have : (geoF F).atom (V.fv 2 3 6) ≠ 0 ∨ (geoF F).atom (V.fv 2 4 6) ≠ 0 := by
-      rw [a1, a2]; by_contra hc; push_neg at hc; exact hCI hc
+      rw [a1, a2]; by_contra hc; push Not at hc; exact hCI hc
     rcases this with h | h
     · rcases holds_pm (geoF F) _ h (by simp [H24.SAT.rho]) with h' | h'
       · exact ⟨_, List.mem_cons_self .., h'⟩

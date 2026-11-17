@@ -58,7 +58,7 @@ theorem liftCl_unlift : ∀ {cl : List LitW}, cl.all isBaseW = true → liftCl (
   | (s, w) :: cl, h => by
     simp only [List.all_cons, Bool.and_eq_true] at h
     have ih := liftCl_unlift h.2
-    cases w <;> simp [isBaseW] at h <;> simp only [liftCl, List.map_cons, unliftL, liftL] at ih ⊢ <;> rw [ih]
+    cases w <;> simp [isBaseW] at h; simp only [liftCl, List.map_cons, unliftL, liftL] at ih ⊢; rw [ih]
 
 theorem holdsW_of_base (g : Geo) {cl : List LitW} (hb : cl.all isBaseW = true)
     (h : Holds (rho g) (cl.map unliftL)) : HoldsW (rhoW g) cl := by
