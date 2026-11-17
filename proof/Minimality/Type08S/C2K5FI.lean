@@ -129,9 +129,7 @@ theorem k5f_E2_cyc {m k t α4 γ4 v1 v2 : ℝ} (hm : 0 < m) (hk : 0 < k) (ht : 0
     | exact (h2' (by decide)).elim
     | (simp only [TSc, d3, k5fE2Cyc_0, k5fE2Cyc_1, k5fE2Cyc_2, k5fE2Cyc_3, s0, s1, s2, s3,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-       first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       left; nlinarith)
 
 set_option maxHeartbeats 1600000 in
 theorem k5f_E2_rest {m k t α4 γ4 v1 v2 : ℝ} (hm : 0 < m) (hk : 0 < k) (ht : 0 < t) (ht1 : t < 1)

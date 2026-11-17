@@ -101,9 +101,7 @@ theorem k24mtc_tsc {D α1 β1 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 < α1)
       | exact (h2' (by decide)).elim
       | (simp only [TSc, d3, e0, e1, e2, e3, f0, f1, f2, f3, k24mtcY_0, k24mtcY_1, k24mtcY_2, k24mtcY_3,
             Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-         first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         left; nlinarith)
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl <;>

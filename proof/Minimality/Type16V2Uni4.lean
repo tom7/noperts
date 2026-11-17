@@ -78,4 +78,4 @@ theorem pop_choice (dw dA dB du dd : ℝ)
       | (left; simp [a2, a3, a4, a5, not_lt.2 a2.le,
           not_lt.2 a3.le, not_lt.2 a4.le, not_lt.2 a5.le]; done)
       | (right; simp [a2, a3, a7, a8, not_lt.2 a2.le,
-          not_lt.2 a3.le, not_lt.2 a7.le, not_lt.2 a8.le]; done)
+          not_lt.2 a3.le, not_lt.2 a7.le, not_lt.2 a8.le])
