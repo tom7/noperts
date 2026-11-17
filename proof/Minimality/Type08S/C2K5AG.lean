@@ -61,7 +61,7 @@ theorem k5a_qce2_hasLexCell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c 
   have ez : ∀ x y z : ℝ, d + x • p + y • q + z • r = fpoint p q r d (x, y, z) := fun x y z => (hfp p q x y z).symm
   have hpr : ⟪p, r⟫ = ⟪r, p⟫ := real_inner_comm r p
   have hqr : ⟪q, r⟫ = ⟪r, q⟫ := real_inner_comm r q
-  have hmα1 : 1 < m + α4 := by rw [hm]; nlinarith [mul_nonneg hs0 hα4.le]
+  have hmα1 : 1 < m + α4 := by rw [hm]; linarith [mul_nonneg hs0 hα4.le]
   have P1a : fpoint p q r d (0, 0, 1) = a := by rw [hfp]; simp only [hr]; module
   have P1d : fpoint p q r d (0, 0, 0) = d := by rw [hfp]; module
   have P1b : fpoint p q r d (1, 0, 0) = b := by rw [hfp]; simp only [hp]; module
@@ -82,7 +82,7 @@ theorem k5a_qce2_hasLexCell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c 
     have hfq := hfp q p
     refine k5a_core_hasLexCellAt (V8 a a' b b' c c' d) q p r d hΔ' (α1 := α4) (α4 := α1) (β6 := γ6)
       (γ6 := β6) (m := -m) hα4 hα1 hγ6 hβ6 (by linarith) (by linarith) (by linarith) ?_ ?_ ?_ ?_
-    · nlinarith [mul_pos hγ6 (neg_pos.2 hm0), mul_pos (sub_pos.2 hα11) (by linarith : 0 < β6 + γ6)]
+    · linarith [mul_pos hγ6 (neg_pos.2 hm0), mul_pos (sub_pos.2 hα11) (by linarith : 0 < β6 + γ6)]
     · linarith
     · intro i
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
@@ -102,8 +102,8 @@ theorem k5a_qce2_hasLexCell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c 
     refine k5a_core_hasLexCellAt (V8 a a' b b' c c' d) p q r d hΔ (α1 := α1) (α4 := α4) (β6 := β6)
       (γ6 := γ6) (m := m) hα1 hα4 hβ6 hγ6 hs hm0 hmα1 ?_ ?_ ?_ ?_
     · rcases le_or_gt 1 α4 with h | h
-      · nlinarith [mul_pos hβ6 hm0, mul_nonneg (sub_nonneg.2 h) (by linarith : 0 ≤ β6 + γ6 - 1)]
-      · nlinarith [mul_pos hβ6 (sub_pos.2 hmα1), mul_pos (sub_pos.2 h) (sub_pos.2 hγ61)]
+      · linarith [mul_pos hβ6 hm0, mul_nonneg (sub_nonneg.2 h) (by linarith : 0 ≤ β6 + γ6 - 1)]
+      · linarith [mul_pos hβ6 (sub_pos.2 hmα1), mul_pos (sub_pos.2 h) (sub_pos.2 hγ61)]
     · linarith
     · intro i
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl

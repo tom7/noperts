@@ -58,19 +58,19 @@ theorem k28h5b_hd2 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   generalize ⟪q, r⟫ = qr at *
   generalize ⟪r, r⟫ = rr at *
   have hu1 : 0 < qq - qr := by
-    by_contra h; push Not at h; nlinarith [mul_nonneg hβ1p.le (neg_nonneg.2 h)]
+    by_contra h; push Not at h; linarith [mul_nonneg hβ1p.le (neg_nonneg.2 h)]
   have hu2 : 0 < rr - qr := by
-    by_contra h; push Not at h; nlinarith [mul_nonneg hβ1p.le (neg_nonneg.2 h)]
+    by_contra h; push Not at h; linarith [mul_nonneg hβ1p.le (neg_nonneg.2 h)]
   have hm2 : 0 < qq * rr - qr ^ 2 := hr2
   have ht : 0 < -pq := by
     by_contra h; push Not at h
     have h' : 0 ≤ pq := by linarith
-    nlinarith [mul_nonneg (mul_nonneg hα1p.le h') (add_pos hu1 hu2).le, mul_pos (by linarith : (0:ℝ) < β1 - 1) hm2]
-  have hy : 0 < pp*(qq*rr-qr^2) - pq^2*(qq+rr-2*qr) := by nlinarith [hg, hd2]
+    linarith [mul_nonneg (mul_nonneg hα1p.le h') (add_pos hu1 hu2).le, mul_pos (by linarith : (0:ℝ) < β1 - 1) hm2]
+  have hy : 0 < pp*(qq*rr-qr^2) - pq^2*(qq+rr-2*qr) := by linarith [hg, hd2]
   have key := k28h5bd_d2_gram pp pq qq qr rr (α1-1) (β1-1) β6 γ6 (by linarith) (by linarith) hβ6p hγ6p hβ61 hγ61 hu1 hu2 hm2 ht
     (by linear_combination hr1) hy (by linarith)
   unfold k28h5bd_G k28h5bd_ip at key
-  nlinarith [key]
+  linarith [key]
 
 end C2
 end Type08Sp

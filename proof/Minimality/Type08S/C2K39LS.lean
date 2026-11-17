@@ -112,7 +112,7 @@ theorem k34lw_Sq {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
       simp only [inner_sub_left, inner_sub_right] at hc ⊢; linarith
     by_contra hn; push Not at hn
     rw [h2, ← h3] at h1
-    nlinarith [mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hbc.le, mul_pos (by linarith : (0:ℝ) < β1 - 1) hrel.2]
+    linarith [mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hbc.le, mul_pos (by linarith : (0:ℝ) < β1 - 1) hrel.2]
   have hX : 0 ≤ ⟪a - d, R⟫ := by
     have h : 0 ≤ β1 * ⟪a - d, R⟫ := by rw [← hQRv]; exact hS
     exact (mul_nonneg_iff_of_pos_left hβ0).1 h
@@ -139,8 +139,8 @@ theorem k34lw_Sq {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hPD := (cert_gram_pd hΔ).2.2.2.1
   have hν0 : 0 < ν := by rw [hν]; exact div_pos (by linarith) hβ0
   have hν1 : ν = γ6 - 1 := hν2
-  have hWd : 0 < ⟪a - d, a - d⟫ - ⟪a - d, c - d⟫ := by rw [hpq]; nlinarith
-  have hN0 : 0 < ⟪c - d, c - d⟫ - ⟪a - d, c - d⟫ := by rw [hpq]; nlinarith
+  have hWd : 0 < ⟪a - d, a - d⟫ - ⟪a - d, c - d⟫ := by rw [hpq]; linarith
+  have hN0 : 0 < ⟪c - d, c - d⟫ - ⟪a - d, c - d⟫ := by rw [hpq]; linarith
   have k1 : 0 < m1 := by
     rw [e1]; rw [hpq]
     nlinarith [mul_pos hγ6 hqq, mul_pos (mul_pos hγ6 hγ6) hqq, mul_nonneg (by linarith : (0:ℝ) ≤ γ6 - (β1 - 1)) hX, mul_pos hγ6 hν0]
@@ -151,7 +151,7 @@ theorem k34lw_Sq {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
       rw [real_inner_comm (a - d) (c - d), hpq] at hPD
       nlinarith [mul_nonneg hX hX, mul_nonneg hX hqq.le, mul_nonneg hν0.le hX, mul_pos hν0 hqq]
     have h2' := (mul_pos_iff_of_pos_left hqq).1 h1
-    rw [hpq]; nlinarith
+    rw [hpq]; linarith
   have hnum : ν * m1 + m3 < 0 := by
     have hg : 0 < γ6 * (⟪a - d, a - d⟫ - ⟪a - d, c - d⟫) := mul_pos hγ6 hWd
     have : γ6 * (⟪a - d, a - d⟫ - ⟪a - d, c - d⟫) * (ν * m1 + m3) < 0 := by
@@ -159,7 +159,7 @@ theorem k34lw_Sq {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
         linear_combination key
       rw [e]; exact mul_neg_of_pos_of_neg (mul_pos hγ6 k1) (by linarith)
     by_contra hn; push Not at hn
-    nlinarith [mul_nonneg hg.le hn]
+    linarith [mul_nonneg hg.le hn]
   have e5 : b' - a = (α1 - 1) • (a - d) + β1 • (c - d) := by rw [hb']; module
   rw [e5, inner_add_right, inner_smul_right, inner_smul_right, ← hm1, ← hm3]
   have : α1 - 1 = β1 * ν := hνβ.symm

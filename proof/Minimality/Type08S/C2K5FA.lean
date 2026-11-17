@@ -32,7 +32,7 @@ theorem k5f_A_hasLexCell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' 
     nlinarith
   have hγ1 : γ4 < 1 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hα1.le (by linarith : 0 ≤ γ4 - 1), mul_pos hα4 (sub_pos.2 hβ11)]
+    linarith [mul_nonneg hα1.le (by linarith : 0 ≤ γ4 - 1), mul_pos hα4 (sub_pos.2 hβ11)]
   set p := b - d with hp
   set q := c - d with hq
   set r := a - d with hr

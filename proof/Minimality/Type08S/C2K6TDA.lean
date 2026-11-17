@@ -124,7 +124,7 @@ theorem k6t4_quad2_lexUni (z w : ZMod 4 → ℝ) (hinj : ∀ i j, z i = z j → 
         push Not at hG
         have p1 := mul_nonneg (mul_nonneg (sub_nonneg.2 hα1.le) (neg_nonneg.2 hκ.le)) (sub_nonneg.2 hh)
         have p2 := mul_nonneg (show (0:ℝ) ≤ 1 - κ by linarith) (neg_nonneg.2 hG)
-        nlinarith [mul_pos hA hN]
+        linarith [mul_pos hA hN]
       simp only
       linarith
   have hne : (z 2, w 2) ≠ (z 3, w 3) := fun h =>

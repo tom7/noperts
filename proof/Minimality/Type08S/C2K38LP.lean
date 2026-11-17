@@ -150,12 +150,12 @@ theorem k34lw_P {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have k1 : 0 < m1 := by
     have e : (α1 + β1 - 1) * m1 = β1 * (α1 * m1 + (β1 - 1) * m3) - (β1 - 1) * ((α1 - 1) * m1 + β1 * m3) := by ring
     have : 0 < (α1 + β1 - 1) * m1 := by
-      rw [e]; nlinarith [mul_pos (by linarith : (0:ℝ) < β1) hLp2, mul_pos (by linarith : (0:ℝ) < β1 - 1) (neg_pos.2 hLq2)]
+      rw [e]; linarith [mul_pos (by linarith : (0:ℝ) < β1) hLp2, mul_pos (by linarith : (0:ℝ) < β1 - 1) (neg_pos.2 hLq2)]
     exact (mul_pos_iff_of_pos_left hs).1 this
   have k3 : m3 < 0 := by
     have e : (α1 + β1 - 1) * (-m3) = α1 * (-((α1 - 1) * m1 + β1 * m3)) + (α1 - 1) * (α1 * m1 + (β1 - 1) * m3) := by ring
     have : 0 < (α1 + β1 - 1) * (-m3) := by
-      rw [e]; nlinarith [mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hLq2), mul_pos (by linarith : (0:ℝ) < α1 - 1) hLp2]
+      rw [e]; linarith [mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hLq2), mul_pos (by linarith : (0:ℝ) < α1 - 1) hLp2]
     have := (mul_pos_iff_of_pos_left hs).1 this
     linarith
   have hu : m3 • (a - d) - m1 • (c - d) ≠ 0 := by
@@ -221,7 +221,7 @@ theorem k34lw_P {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hgQR : 0 < ⟪a - d, R⟫ := (mul_pos_iff_of_pos_left hβ0).1 (by rw [← hQRv]; exact hS)
   have hgPR : ⟪c - d, R⟫ < 0 := by
     by_contra hn; push Not at hn
-    nlinarith [mul_nonneg k1.le hn, mul_neg_of_neg_of_pos k3 hgQR, hE]
+    linarith [mul_nonneg k1.le hn, mul_neg_of_neg_of_pos k3 hgQR, hE]
   have hgA : 0 < -β1 * ⟪c - d, R⟫ - (α1 - 1) * ⟪a - d, R⟫ := by
     have : 0 < m1 * (-β1 * ⟪c - d, R⟫ - (α1 - 1) * ⟪a - d, R⟫) := by
       have e : m1 * (-β1 * ⟪c - d, R⟫ - (α1 - 1) * ⟪a - d, R⟫) = ⟪a - d, R⟫ * (-((α1 - 1) * m1 + β1 * m3)) := by
@@ -311,10 +311,10 @@ theorem k34lw_P {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     rw [← inner_sub_left, show d - b = ν • (a - d) + R by rw [hR]; module, inner_add_left, inner_smul_left]
     simp only [conj_trivial]
     have : 0 < ⟪R, R⟫ := real_inner_self_pos.2 hR0
-    nlinarith [mul_pos hν0 hgQR]
+    linarith [mul_pos hν0 hgQR]
   have D3 : 0 < ⟪b, R⟫ - ⟪a', R⟫ := by
     rw [← inner_sub_left, show b - a' = (-γ6) • (c - d) by rw [ha']; module, inner_smul_left]
-    simp only [conj_trivial]; nlinarith [mul_pos hγ6 (neg_pos.2 hgPR)]
+    simp only [conj_trivial]; linarith [mul_pos hγ6 (neg_pos.2 hgPR)]
   have D4 : 0 < ⟪a, R⟫ - ⟪b', R⟫ := by
     rw [← inner_sub_left, show a - b' = (-β1) • (c - d) - (α1 - 1) • (a - d) by rw [hb']; module, inner_sub_left, inner_smul_left, inner_smul_left]
     simp only [conj_trivial]; linarith

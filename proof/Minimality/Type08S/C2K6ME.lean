@@ -18,7 +18,7 @@ namespace C2
 theorem k6m_gamma6_lt {α1 β1 β6 γ6 : ℝ} (hβ1 : 0 < β1) (hβ6 : 0 < β6) (hα11 : α1 < 1)
     (hg : β1 * (β6 + γ6 - 1) ≤ β6 * (α1 + β1 - 1)) : γ6 < 1 := by
   by_contra h; push Not at h
-  nlinarith [mul_pos hβ6 hβ1, mul_pos hβ6 (sub_pos.2 hα11), mul_nonneg hβ1.le (sub_nonneg.2 h)]
+  linarith [mul_pos hβ6 hβ1, mul_pos hβ6 (sub_pos.2 hα11), mul_nonneg hβ1.le (sub_nonneg.2 h)]
 
 set_option maxHeartbeats 1600000 in
 /-- **Box B** (`α1 < 1`, view `d - b`): face `Q_ac = (d,a,b',c)`, metric-free. -/

@@ -60,7 +60,7 @@ theorem k3q2p_cyc {D γ4 β1 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hγ4 : 0 < γ
     | (simp only [TSc, d3, k3q2pCyc, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
+       | (left; linarith)
        | (right; refine ⟨by ring, by nlinarith⟩))
 
 set_option maxHeartbeats 3200000 in
@@ -94,8 +94,8 @@ theorem k3q2p_rest {D γ4 β1 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hγ4 : 0 < �
     (simp only [TSc, d3, k3q2pCyc, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
-     | (right; refine ⟨by ring, by nlinarith⟩))
+     | (left; linarith)
+     | (right; refine ⟨by ring, by linarith⟩))
 
 theorem k3q2pCyc_inj {γ4 β1 β6 γ6 : ℝ} (hγ4 : 0 < γ4) (hβ1 : 0 < β1) (hβ6 : 1 < β6) (hγ6 : 0 < γ6)
     (hγ61 : γ6 < 1) :
@@ -139,8 +139,8 @@ theorem k3q2p_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q 
     · exact (hyx 0 (by simp only [hY, k3q2pCyc, pc5_0])).elim
   · intro w hw
     refine lexUni5_top _ _ hw ?_ ?_ ?_
-    · left; simp only [hY, k3q2pCyc, pc5_1, pc5_0, hz]; nlinarith [mul_pos hγ4 hA]
-    · left; simp only [hY, k3q2pCyc, pc5_2, pc5_3, hz]; nlinarith
+    · left; simp only [hY, k3q2pCyc, pc5_1, pc5_0, hz]; linarith [mul_pos hγ4 hA]
+    · left; simp only [hY, k3q2pCyc, pc5_2, pc5_3, hz]; linarith
     · left; simp only [hY, k3q2pCyc, pc5_3, pc5_4, hz]; nlinarith [mul_pos (sub_pos.2 hγ61) hA]
 
 /-- The ccw cycle `(b', a, c', b, a', c)` in the `c - d` frame. -/
@@ -182,7 +182,7 @@ theorem k3q2m_cyc {D γ4 β1 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hγ4 : 0 < γ
     | (simp only [TSc, d3, k3q2mCyc, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
+       | (left; linarith)
        | (right; refine ⟨by ring, by nlinarith⟩))
 
 set_option maxHeartbeats 3200000 in
@@ -215,8 +215,8 @@ theorem k3q2m_rest {D γ4 β1 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hγ4 : 0 < �
     (simp only [TSc, d3, k3q2mCyc, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
-     | (right; refine ⟨by ring, by nlinarith⟩))
+     | (left; linarith)
+     | (right; refine ⟨by ring, by linarith⟩))
 
 theorem k3q2mCyc_inj {γ4 β1 β6 γ6 : ℝ} (hγ4 : 0 < γ4) (hβ1 : 0 < β1) (hβ6p : 0 < β6) (hβ6 : β6 < 1)
     (hγ6 : 0 < γ6) (hγ61 : γ6 < 1) :
@@ -259,8 +259,8 @@ theorem k3q2m_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q 
     · exact (hyx 0 (by simp only [hY, k3q2mCyc, pc6_0])).elim
   · intro w hw
     refine lexUni6_top2 _ w hw ?_ ?_ ?_ ?_
-    · left; simp only [hY, k3q2mCyc, pc6_1, pc6_0, hz]; nlinarith [mul_pos hγ4 hA]
-    · left; simp only [hY, k3q2mCyc, pc6_2, pc6_3, hz]; nlinarith
+    · left; simp only [hY, k3q2mCyc, pc6_1, pc6_0, hz]; linarith [mul_pos hγ4 hA]
+    · left; simp only [hY, k3q2mCyc, pc6_2, pc6_3, hz]; linarith
     · left; simp only [hY, k3q2mCyc, pc6_3, pc6_4, hz]; nlinarith [mul_pos hγ6 hA]
     · left; left; simp only [hY, k3q2mCyc, pc6_4, pc6_5, hz]; nlinarith [mul_pos (sub_pos.2 hγ61) hA]
 

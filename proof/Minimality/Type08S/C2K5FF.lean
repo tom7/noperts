@@ -119,21 +119,21 @@ theorem k5f_C1_frame (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r ≠ 
     rcases hcase with hD | ⟨hD, hζ⟩
     · rcases lt_or_ge (⟪p, r⟫) 0 with hB | hB
       · refine k5f_lexUni5_C1b _ _ hsep ?_ ?_ ?_
-        · left; simp only [k5fC1Cyc, pc5_3, pc5_4, hz]; nlinarith
-        · left; simp only [k5fC1Cyc, pc5_2, pc5_3, hz]; nlinarith
-        · left; simp only [k5fC1Cyc, pc5_1, pc5_2, hz]; nlinarith [mul_pos (sub_pos.2 hβ6) hD]
+        · left; simp only [k5fC1Cyc, pc5_3, pc5_4, hz]; linarith
+        · left; simp only [k5fC1Cyc, pc5_2, pc5_3, hz]; linarith
+        · left; simp only [k5fC1Cyc, pc5_1, pc5_2, hz]; linarith [mul_pos (sub_pos.2 hβ6) hD]
       · refine k5f_lexUni5_C1a _ _ hsep ?_ ?_ ?_
-        · left; simp only [k5fC1Cyc, pc5_2, pc5_3, hz]; nlinarith
-        · left; simp only [k5fC1Cyc, pc5_1, pc5_2, hz]; nlinarith [mul_pos (sub_pos.2 hβ6) hD]
+        · left; simp only [k5fC1Cyc, pc5_2, pc5_3, hz]; linarith
+        · left; simp only [k5fC1Cyc, pc5_1, pc5_2, hz]; linarith [mul_pos (sub_pos.2 hβ6) hD]
         · left; simp only [k5fC1Cyc, pc5_0, pc5_4, hz]
-          nlinarith [mul_nonneg (sub_nonneg.2 hα1) hB, mul_pos hβ1 hD]
+          linarith [mul_nonneg (sub_nonneg.2 hα1) hB, mul_pos hβ1 hD]
     · have hB : 0 < ⟪p, r⟫ := by
         by_contra hh; push Not at hh
-        nlinarith [mul_nonneg (sub_nonneg.2 hα1) (neg_nonneg.2 hh), mul_pos hβ1 (neg_pos.2 hD)]
+        linarith [mul_nonneg (sub_nonneg.2 hα1) (neg_nonneg.2 hh), mul_pos hβ1 (neg_pos.2 hD)]
       refine k5f_lexUni5_C1c _ _ hsep ?_ ?_ ?_
-      · left; simp only [k5fC1Cyc, pc5_2, pc5_3, hz]; nlinarith
-      · left; simp only [k5fC1Cyc, pc5_3, pc5_4, hz]; nlinarith
-      · left; simp only [k5fC1Cyc, pc5_0, pc5_4, hz]; nlinarith
+      · left; simp only [k5fC1Cyc, pc5_2, pc5_3, hz]; linarith
+      · left; simp only [k5fC1Cyc, pc5_3, pc5_4, hz]; linarith
+      · left; simp only [k5fC1Cyc, pc5_0, pc5_4, hz]; linarith
 
 end C2
 end Type08Sp

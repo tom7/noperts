@@ -72,7 +72,7 @@ theorem k5dX4_tsc {α4 γ4 β1 β6 γ6 v1 v2 : ℝ}
       | exact absurd rfl h1
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, k5dX4_0, k5dX4_1, k5dX4_2, k5dX4_3, k5dX4_4, f0, f1, f2, f3, f4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl <;>

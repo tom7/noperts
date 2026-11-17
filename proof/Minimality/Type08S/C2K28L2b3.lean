@@ -79,10 +79,10 @@ theorem k28l2_Bp {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hr : ⟪Q, R⟫ < ⟪R, R⟫ := by
     by_contra hn; push Not at hn
     nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ β1) (sub_nonneg.2 hn)]
-  have hD'' : (1 - α1) * mp - β1 * mr ≤ 0 := by rw [hmp, hmr]; nlinarith [hD']
-  have hB'' : α1 * mp + (β1 - 1) * mr ≤ 0 := by rw [hmp, hmr]; nlinarith [hB']
+  have hD'' : (1 - α1) * mp - β1 * mr ≤ 0 := by rw [hmp, hmr]; linarith [hD']
+  have hB'' : α1 * mp + (β1 - 1) * mr ≤ 0 := by rw [hmp, hmr]; linarith [hB']
   have hBs : α1 * mp + (β1 - 1) * mr ≠ 0 := by
-    intro h; apply hB0'; rw [hmp, hmr] at h; nlinarith [h]
+    intro h; apply hB0'; rw [hmp, hmr] at h; linarith [h]
   have hne : mp ≠ 0 ∨ mr ≠ 0 := by
     by_contra hn; push Not at hn
     apply hBs; rw [hn.1, hn.2]; ring
@@ -108,7 +108,7 @@ theorem k28l2_Bp {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hzr : ⟪c, r⟫ < ⟪a', r⟫ := by
     rw [hu, hu_r, inner_smul_right, inner_smul_right] at hz
     by_contra hn; push Not at hn
-    nlinarith [mul_nonneg ht.le (sub_nonneg.2 hn)]
+    linarith [mul_nonneg ht.le (sub_nonneg.2 hn)]
   have hdac : ⟪a - c', r⟫ = 0 := by
     rw [w1, hr']
     simp only [inner_smul_right, inner_sub_right, inner_add_right, inner_smul_left, inner_sub_left,
@@ -126,7 +126,7 @@ theorem k28l2_Bp {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     rw [hm1d, w3]
     simp only [inner_smul_right, inner_sub_right, inner_add_right, inner_smul_left, inner_sub_left,
       inner_add_left, conj_trivial, hRP, hRQ, hQP]
-    nlinarith [hmp, ht]
+    linarith [hmp, ht]
   have hww : 0 < (α1 - 1) * m1 + β1 * m2 := by
     have hx0 : (α1 - 1) • P + β1 • Q ≠ 0 := by
       intro h0
@@ -160,7 +160,7 @@ theorem k28l2_Bp {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     have hv2 : v2 < 0 := by linarith
     refine ⟨hv2, ?_⟩
     by_contra hn; push Not at hn
-    nlinarith [mul_nonneg hm1p.le (neg_nonneg.2 hn), mul_pos hww (neg_pos.2 hv2), mul_pos (by linarith : (0:ℝ) < β1) h2]
+    linarith [mul_nonneg hm1p.le (neg_nonneg.2 hn), mul_pos hww (neg_pos.2 hv2), mul_pos (by linarith : (0:ℝ) < β1) h2]
   refine ⟨r, hr0, ?_⟩
   refine k25_tie_cell2 (V8 a a' b b' c c' d) P Q r d hΔ (k := 5) (by norm_num) (k28l2bY α1 β1 β6 γ6 μ)
     hYinj ?_ [((0:ℝ), (-1:ℝ)), (m1, m2)] (by simp) ?_ ?_ 1 (by decide) ?_ ?_ ?_
@@ -249,7 +249,7 @@ theorem k28l2_Bp {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
     rcases hl with rfl | rfl
     · left; simp only; linarith
-    · left; simp only; nlinarith
+    · left; simp only; linarith
 
 end C2
 end Type08Sp

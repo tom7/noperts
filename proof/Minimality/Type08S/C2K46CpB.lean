@@ -270,9 +270,9 @@ theorem k54Cp_regions {σ l ea : ℝ} (hσ : 0 < σ) (hea : ea = l^2*σ^2/(2*(1+
     push Not at h
     have h1 := mul_le_mul_of_nonneg_left hR1 (by positivity : (0:ℝ) ≤ 2*(1+σ^2))
     have h2 := mul_pos hs2 (sub_pos.2 h)
-    nlinarith
+    linarith
   · have h1 := mul_lt_mul_of_pos_left hR2 (by positivity : (0:ℝ) < 2*(1+σ^2))
-    nlinarith
+    linarith
 
 set_option maxHeartbeats 8000000 in
 theorem a2mc_Cp {σ l m ea : ℝ} (hσ : 0 < σ) (hl : 0 < l) (hm : 0 < m) (hea : ea = l^2*σ^2/(2*(1+σ^2))) (hR1 : ea ≤ σ^2 * (2 + ea)) (hR2 : ea * σ^2 < 2 + ea) (hp : 2 ≤ 3 * σ^2) (hq : σ^2 ≤ 5) :

@@ -48,8 +48,8 @@ theorem k8q1p_cyc {D β1 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hβ1 : 0 < β1) (
     | (simp only [TSc, d3, k8q1pCyc, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 1600000 in
 theorem k8q1p_rest {D β1 γ4 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hβ1 : 0 < β1) (hγ4 : 0 < γ4) (hβ6 : 1 ≤ β6)
@@ -82,7 +82,7 @@ theorem k8q1p_rest {D β1 γ4 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hβ1 : 0 < �
       (simp only [TSc, d3, k8q1pCyc, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
+       | (left; linarith)
        | (right; refine ⟨by ring, by nlinarith⟩))
   · obtain ⟨s0, s1, s2, s3, s4⟩ := z5_add
     have k1 := hD
@@ -108,7 +108,7 @@ theorem k8q1p_rest {D β1 γ4 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hβ1 : 0 < �
       (simp only [TSc, d3, k8q1pCyc, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
+       | (left; linarith)
        | (right; refine ⟨by ring, by nlinarith⟩))
 
 theorem k8q1pCyc_inj {β1 β6 γ6 : ℝ} (hβ1 : 0 < β1) (hβ6 : 1 ≤ β6) (hγ6 : 0 < γ6) :
@@ -160,12 +160,12 @@ theorem k8q1p_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q 
         exact (k8q1p_rest hD hβ1 hγ4 hβ6 hγ6 hs h1 h2 h3).2⟩
   · intro lam hl0 hl1 w hwd hw'
     refine lexUni5_top _ _ hw' ?_ ?_ ?_
-    · left; simp only [hY, k8q1pCyc, pc5_0, pc5_1, hz]; nlinarith
-    · left; simp only [hY, k8q1pCyc, pc5_2, pc5_3, hz]; nlinarith [mul_pos hβ1 hC]
+    · left; simp only [hY, k8q1pCyc, pc5_0, pc5_1, hz]; linarith
+    · left; simp only [hY, k8q1pCyc, pc5_2, pc5_3, hz]; linarith [mul_pos hβ1 hC]
     · rcases hs1.lt_or_eq with h | h
-      · left; simp only [hY, k8q1pCyc, pc5_3, pc5_4, hz]; nlinarith
+      · left; simp only [hY, k8q1pCyc, pc5_3, pc5_4, hz]; linarith
       · right; refine ⟨?_, ?_⟩
-        · simp only [hY, k8q1pCyc, pc5_3, pc5_4, hz]; nlinarith
+        · simp only [hY, k8q1pCyc, pc5_3, pc5_4, hz]; linarith
         · rw [hwd, hwd]
           have := k8_wdiff p q r d (0, β6, γ6) (1, β1, 0) (u1 + lam * t1) (u2 + lam * t2)
           simp only [hY, k8q1pCyc, pc5_3, pc5_4]

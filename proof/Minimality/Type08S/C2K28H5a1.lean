@@ -60,10 +60,10 @@ theorem k28h5a_tsc {D A B β γ g κ ζ v1 v2 : ℝ} (hD : 0 < D) (hA : 1 < A) (
   have hk1 : 0 < 1 - κ := by linarith
   have hg1 : 0 < 1 - γ := by linarith
   have hB0 : 0 < B := by linarith
-  have hm : 0 < β + γ * κ := by nlinarith [mul_pos hγ hκ]
+  have hm : 0 < β + γ * κ := by linarith [mul_pos hγ hκ]
   have hs1 : 0 < β + γ - 1 := by linarith
-  have hn : 0 < β - κ * (1 - γ) := by nlinarith [mul_pos hk1 hg1]
-  have hh : 0 < β - B * (1 - γ) := by nlinarith [mul_pos hγ (sub_pos.2 hB)]
+  have hn : 0 < β - κ * (1 - γ) := by linarith [mul_pos hk1 hg1]
+  have hh : 0 < β - B * (1 - γ) := by linarith [mul_pos hγ (sub_pos.2 hB)]
   have q1 := mul_pos ha1 hm
   have q2 := mul_pos (mul_pos hB0 hγ) hg
   have q3 := mul_pos ha1 hκ

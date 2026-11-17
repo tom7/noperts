@@ -63,14 +63,14 @@ theorem kc_tsc {m s β6 β1 α1 v1 v2 : ℝ} (hm : 1 < m) (hs : s < 0) (hb6 : 0 
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, kcCyc_0, kcCyc_1, kcCyc_2, kcCyc_3, s0, s1, s2, s3, Prod.fst_sub, Prod.snd_sub,
           Prod.mk_sub_mk]
-         (left; nlinarith))
+         (left; linarith))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl <;>
       rcases z4_cases i with rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, kcCyc_0, kcCyc_1, kcCyc_2, kcCyc_3, s0, s1, s2, s3, Prod.fst_sub, Prod.snd_sub,
           Prod.mk_sub_mk]
-       first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+       first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
 
 
 theorem kc_inj {m s β6 : ℝ} (hm : 0 < m) (hb6 : 0 < β6) : ∀ i j : ZMod 4, kcCyc m s β6 i = kcCyc m s β6 j → i = j := by

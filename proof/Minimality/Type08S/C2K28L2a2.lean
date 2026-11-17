@@ -111,7 +111,7 @@ theorem k28l2a_core {a a' b b' c c' d R : ℝ³} {α1 β1 β6 γ6 ρ mp mq : ℝ
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
     rcases hl with rfl | rfl
     · left; simp only; linarith
-    · left; simp only; nlinarith
+    · left; simp only; linarith
 
 end C2
 end Type08Sp

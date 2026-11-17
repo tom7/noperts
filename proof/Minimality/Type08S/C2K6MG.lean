@@ -52,14 +52,14 @@ theorem k6m_T_tsc {α1 β1 β6 γ6 v1 v2 : ℝ} (hα1 : 0 < α1) (hβ1 : 1 < β1
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, k6mTCyc_0, k6mTCyc_1, k6mTCyc_2, s0, s1, s2, Prod.fst_sub, Prod.snd_sub,
           Prod.mk_sub_mk]
-         (left; nlinarith))
+         (left; linarith))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl | rfl <;>
       rcases z3_cases i with rfl | rfl | rfl <;>
       (simp only [TSc, d3, k6mTCyc_0, k6mTCyc_1, k6mTCyc_2, s0, s1, s2, Prod.fst_sub, Prod.snd_sub,
           Prod.mk_sub_mk]
-       first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+       first | (left; linarith) | (right; refine ⟨by ring, by nlinarith⟩))
 
 end C2
 end Type08Sp

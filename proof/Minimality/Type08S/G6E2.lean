@@ -21,7 +21,7 @@ theorem ccw4 {p r q1 q2 s t : ℝ} (hh : s < t) (hpr : r < p) (hq : q2 < q1) :
   rcases zmod4_pairs i j hij hj with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
     ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
   simp [cross2, quad_0, quad_1, quad_2, quad_3, zmod4_add_one] <;>
-  nlinarith [mul_pos hh' (sub_pos.mpr hpr), mul_pos hh' (sub_pos.mpr hq)]
+  linarith [mul_pos hh' (sub_pos.mpr hpr), mul_pos hh' (sub_pos.mpr hq)]
 
 theorem sep_comm' (x y u v : ℝ) : Sep x y u v ↔ Sep u v x y := by unfold Sep; tauto
 theorem sep_swap (x y u v : ℝ) : Sep x y u v ↔ Sep x y v u := by

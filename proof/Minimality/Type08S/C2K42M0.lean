@@ -188,7 +188,7 @@ theorem k28b2s_R1M0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     by_contra hh; push Not at hh
     have h2 : 0 ≤ α1 * ⟪p, q⟫ * (⟪q, q⟫ + ⟪r, r⟫ - 2 * ⟪q, r⟫) :=
       mul_nonneg (mul_nonneg hα1'.le hh) hW.le
-    nlinarith [hr1]
+    linarith [hr1]
   have hLe : (1 - α1) * ⟪p, p⟫ - β1 * ⟪p, q⟫ = 0 := by
     have e : a - c' = (1 - α1) • p - β1 • q := by rw [hc', hp, hq]; module
     rw [e] at hL
@@ -196,7 +196,7 @@ theorem k28b2s_R1M0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     linarith
   have hα1 : 1 < α1 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) hpp.le, mul_pos hβ1' (neg_pos.2 hs), hLe]
+    linarith [mul_nonneg (sub_nonneg.2 hh) hpp.le, mul_pos hβ1' (neg_pos.2 hs), hLe]
   have hspr : ⟪p, r⟫ = ⟪p, q⟫ := hm1.symm
   clear_value p q r
   -- point relations
@@ -217,7 +217,7 @@ theorem k28b2s_R1M0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hw : 0 < w := by rw [hwd]; positivity
   have Epp : ⟪p, p⟫ = (1 + ee) ^ 2 * w := by rw [hwd]; field_simp
   have Es : ⟪p, q⟫ = -(ea * (1 + ee) * w) := by
-    have : (1 + ee) * ⟪p, q⟫ = (1 + ee) * (-(ea * (1 + ee) * w)) := by rw [Epp] at hLe; nlinarith [hLe]
+    have : (1 + ee) * ⟪p, q⟫ = (1 + ee) * (-(ea * (1 + ee) * w)) := by rw [Epp] at hLe; linarith [hLe]
     exact mul_left_cancel₀ hb1.ne' this
   have Es2 : ⟪p, r⟫ = -(ea * (1 + ee) * w) := by rw [hspr, Es]
   obtain ⟨Mv, hMd⟩ : ∃ Mv : ℝ, Mv = (⟪q, r⟫ * ⟪p, p⟫ - ⟪p, q⟫ ^ 2) / ⟪p, p⟫ := ⟨_, rfl⟩
@@ -245,7 +245,7 @@ theorem k28b2s_R1M0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
         rw [← hMpp, hrd]; ring
       rw [← this]; exact hΛ
     by_contra hh; push Not at hh
-    nlinarith [mul_pos hpp (neg_pos.2 hh)]
+    linarith [mul_pos hpp (neg_pos.2 hh)]
   -- the view
   obtain ⟨up, hup⟩ : ∃ up : ℝ, up = ((-1)*Mv*β6*ee*kap + (-1)*Mv*β6*ee*rho + (-1)*Mv*β6*kap + (-1)*Mv*β6*rho + (-2)*ea*ee*rho*w + (-1)*ea*ee^2*rho*w + (-1)*ea*rho*w + (-2)*ea^2*ee*rho*w + (-1)*ea^2*ee^2*rho*w + (-1)*ea^2*rho*w + (-1)*β6*ee*kap*rho + (-1)*β6*kap*rho) := ⟨_, rfl⟩
   obtain ⟨uq, huq⟩ : ∃ uq : ℝ, uq = ((-3)*Mv*ea*ee*w + (-3)*Mv*ea*ee^2*w + (-1)*Mv*ea*ee^3*w + (-1)*Mv*ea*w + (-3)*Mv*ee*w + (-3)*Mv*ee^2*w + (-1)*Mv*ee^3*w + (-1)*Mv*w + (-3)*ea*ee*rho*w + (-3)*ea*ee^2*rho*w + (-1)*ea*ee^3*rho*w + (-1)*ea*rho*w + (-3)*ee*rho*w + (-3)*ee^2*rho*w + (-1)*ee^3*rho*w + (-1)*rho*w) := ⟨_, rfl⟩
@@ -342,13 +342,13 @@ theorem k28b2s_R1M0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hbq : ι * ⟪q, u0⟫ < 0 := by
     rw [hdq]
     have : 0 < ((1 + ee - β6) * ea + (1 + ee)) := by linarith [mul_pos hg6 hea]
-    nlinarith [mul_pos (mul_pos hι0 this) DG0]
+    linarith [mul_pos (mul_pos hι0 this) DG0]
   have hz1 : ⟪b', R⟫ - ⟪a, R⟫ = 0 := by rw [zB', zA, hdp, hdr]; ring
   have hz2 : ⟪a', R⟫ - ⟪b', R⟫ = 0 := by rw [zA', zB', hdp, hdq, hdr]; ring
   have hz3 : 0 < ⟪a', R⟫ - ⟪c', R⟫ := by
     have e : ⟪a', R⟫ - ⟪c', R⟫ = ι * ((1 + ee) * (ea * β6 + (1 + ee - β6) * ea + (1 + ee)) *
         ((1 + ee) ^ 2 * w * (Mv * kap + Mv * rho + kap * rho))) := by rw [zA', zC', hdp, hdq, hdr]; ring
-    rw [e]; have : 0 < ea * β6 + (1 + ee - β6) * ea + (1 + ee) := by nlinarith [mul_pos hea hβ6', mul_pos hg6 hea]
+    rw [e]; have : 0 < ea * β6 + (1 + ee - β6) * ea + (1 + ee) := by linarith [mul_pos hea hβ6', mul_pos hg6 hea]
     positivity
   have hz4 : ⟪a, R⟫ - ⟪d, R⟫ < 0 := by linarith [zA, hap]
   have hz5 : ⟪b, R⟫ - ⟪d, R⟫ < 0 := by linarith [zB, hbq]

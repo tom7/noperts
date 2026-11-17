@@ -105,8 +105,8 @@ theorem k28h5_B {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
       ⟪fpoint P Q R d Y, u0⟫ < ⟪fpoint P Q R d X, u0⟫ → K25Step P Q R d L X Y := by
     intro L X Y h
     refine ⟨?_, fun heq => ?_⟩
-    · rw [hz, hz]; nlinarith [mul_pos hs0 (sub_pos.2 h)]
-    · exfalso; rw [hz, hz] at heq; nlinarith [mul_pos hs0 (sub_pos.2 h)]
+    · rw [hz, hz]; linarith [mul_pos hs0 (sub_pos.2 h)]
+    · exfalso; rw [hz, hz] at heq; linarith [mul_pos hs0 (sub_pos.2 h)]
   -- Gram facts
   have hfe : ⟪b' - a, c' - a⟫ = F := by rw [real_inner_comm]; exact hFd
   have hfu : ⟪b' - a, u0⟫ = F * F - E * ⟪b' - a, b' - a⟫ := by
@@ -132,7 +132,7 @@ theorem k28h5_B {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
       key2 (c' - a) (b' - a) E F _ hEd hFd rfl
     rw [e2] at hww
     exact (mul_pos_iff_of_pos_left hE).1 hww
-  have hf : ⟪b' - a, u0⟫ < 0 := by rw [hfu]; nlinarith
+  have hf : ⟪b' - a, u0⟫ < 0 := by rw [hfu]; linarith
   have heu : ⟪c' - a, u0⟫ = 0 := by
     rw [hu0d, inner_sub_right, real_inner_smul_right, real_inner_smul_right, hEd, hFd]; ring
   have d1 : ⟪fpoint P Q R d (k28h5bY α1 β1 β6 γ6 E F 0), u0⟫ <
@@ -226,10 +226,10 @@ theorem k28h5_B {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
       have e3' : a - c' = -(c' - a) := by abel
       have hWc : ⟪c' - a, P0⟫ = W := by rw [real_inner_comm]; exact hWd.symm
       simp only [e3', inner_add_right, inner_neg_left, inner_neg_right, real_inner_smul_right, hEd, hWc]
-      nlinarith [hμW]
+      linarith [hμW]
     · left
       simp only
-      nlinarith [mul_pos (mul_pos hκ hβ1p) hμ]
+      linarith [mul_pos (mul_pos hκ hβ1p) hμ]
 
 end C2
 end Type08Sp

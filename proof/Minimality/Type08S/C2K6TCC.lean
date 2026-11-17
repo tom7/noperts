@@ -55,7 +55,7 @@ theorem k6t3_tt5b_le {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (
     nlinarith
   have hF0 := k6t3_facet_a'bc' W hc' hb' ha' hβ1 hγ6 hγ6s
   rw [hg6] at hF0
-  have hF : α4 * (1 - β1) + γ4 * (1 - β6) < 1 := by nlinarith
+  have hF : α4 * (1 - β1) + γ4 * (1 - β6) < 1 := by linarith
   have hmemX : ∀ {n : ℕ} {X : ZMod n → ℝ × ℝ × ℝ}, (∀ i, X i ∈ k5dL α4 γ4 β1 β6 γ6) →
       ∀ i, fpoint (a - d) (c - d) (d - b) d (X i) ∈ V8 a a' b b' c c' d :=
     fun h i => hmem7 _ (h i)

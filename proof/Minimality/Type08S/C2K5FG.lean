@@ -46,7 +46,7 @@ theorem k5f_C_hasLexCell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' 
   have hβ61 : 1 < β6 := by nlinarith
   have hγ41 : 1 < γ4 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hα1.le (by linarith : 0 ≤ 1 - γ4), mul_pos hα4 (sub_pos.2 hβ11)]
+    linarith [mul_nonneg hα1.le (by linarith : 0 ≤ 1 - γ4), mul_pos hα4 (sub_pos.2 hβ11)]
   have hα1' : 1 ≤ α1 := (hfar' hfar).le
   set p := a - d with hp
   set q := b - d with hq

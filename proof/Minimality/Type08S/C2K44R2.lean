@@ -85,10 +85,10 @@ theorem k43r2_A {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   rw [k28bq_ori2] at hori2
   have o1 : t * (α1 * β1 * (β1 - 1) - (α1 + β1 - 1) * (β1 - β6)) + (α1 + β1 - 1) * (β1 - β6) < 0 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hκ.le hh]
+    linarith [mul_nonneg hκ.le hh]
   have o2 : t * ((α1 + β1 - 1) * β6) + α1 * β1 * (β1 - 1) - (α1 + β1 - 1) * β6 ≤ 0 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_pos hκ hh]
+    linarith [mul_pos hκ hh]
   have hb1 : 0 < β1 := by linarith
   have hdep : ∀ x y z : ℝ, ⟪fpoint P Q R a (x, y, z), R⟫ = ⟪a, R⟫ + x * e1 + z * e2 := by
     intro x y z; rw [inner_fpoint, hQR, hPR, hRR]; ring
@@ -142,23 +142,23 @@ theorem k43r2_A {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   · rw [show (3 : ZMod 4) - 1 = 2 by decide]
     refine hsub _ _ ?_
     simp only [k28bqCyc4_2, k28bqCyc4_3, hdep]
-    nlinarith
+    linarith
   · rw [show (3 : ZMod 4) + 1 = 0 by decide]
     refine hsub _ _ ?_
     simp only [k28bqCyc4_0, k28bqCyc4_3, hdep]
-    nlinarith
+    linarith
   · intro i hi
     rcases z4_cases i with rfl | rfl | rfl | rfl
     · left
       rw [show (0 : ZMod 4) - 1 = 3 by decide]
       refine hsub _ _ ?_
       simp only [k28bqCyc4_0, k28bqCyc4_3, hdep]
-      nlinarith
+      linarith
     · left
       rw [show (1 : ZMod 4) - 1 = 0 by decide]
       refine ⟨?_, fun h => ?_⟩
       · simp only [k28bqCyc4_0, k28bqCyc4_1, hdep]
-        nlinarith
+        linarith
       · intro v1 v2 hv
         have := hv (⟪a' - c, P⟫, ⟪a' - c, Q⟫) (by simp [hLdef])
         simp only [k28bqCyc4_0, k28bqCyc4_1, eA', eC]
@@ -167,7 +167,7 @@ theorem k43r2_A {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
       rw [show (2 : ZMod 4) - 1 = 1 by decide]
       refine hsub _ _ ?_
       simp only [k28bqCyc4_1, k28bqCyc4_2, hdep]
-      nlinarith
+      linarith
     · exact absurd rfl hi
   · intro l hl
     simp only [hLdef, List.mem_cons, List.not_mem_nil, or_false] at hl
@@ -243,10 +243,10 @@ theorem k43r2_B {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   rw [k28bq_ori2] at hori2
   have o1 : 0 < t * (α1 * β1 * (β1 - 1) - (α1 + β1 - 1) * (β1 - β6)) + (α1 + β1 - 1) * (β1 - β6) := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hκ.le (neg_nonneg.2 hh)]
+    linarith [mul_nonneg hκ.le (neg_nonneg.2 hh)]
   have o2 : t * ((α1 + β1 - 1) * β6) + α1 * β1 * (β1 - 1) - (α1 + β1 - 1) * β6 ≤ 0 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_pos hκ hh]
+    linarith [mul_pos hκ hh]
   have hb1 : 0 < β1 := by linarith
   have hdep : ∀ x y z : ℝ, ⟪fpoint P Q R a (x, y, z), R⟫ = ⟪a, R⟫ + x * e1 + z * e2 := by
     intro x y z; rw [inner_fpoint, hQR, hPR, hRR]; ring
@@ -301,18 +301,18 @@ theorem k43r2_B {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     rw [show (3 : ZMod 5) - 1 = 2 by decide]
     refine hsub _ _ ?_
     simp only [k28bqCyc5_2, k28bqCyc5_3, hdep]
-    nlinarith
+    linarith
   · rw [show (3 : ZMod 5) + 1 = 4 by decide]
     refine hsub _ _ ?_
     simp only [k28bqCyc5_4, k28bqCyc5_3, hdep]
-    nlinarith
+    linarith
   · intro i hi
     rcases k28bq_z5 i with rfl | rfl | rfl | rfl | rfl
     · left
       rw [show (0 : ZMod 5) - 1 = 4 by decide]
       refine ⟨?_, fun h => ?_⟩
       · simp only [k28bqCyc5_4, k28bqCyc5_0, hdep]
-        nlinarith
+        linarith
       · intro v1 v2 hv
         have := hv (⟪a' - c, P⟫, ⟪a' - c, Q⟫) (by simp [hLdef])
         simp only [k28bqCyc5_4, k28bqCyc5_0, eA', eC]
@@ -321,18 +321,18 @@ theorem k43r2_B {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
       rw [show (1 : ZMod 5) - 1 = 0 by decide]
       refine hsub _ _ ?_
       simp only [k28bqCyc5_0, k28bqCyc5_1, hdep]
-      nlinarith
+      linarith
     · right
       rw [show (2 : ZMod 5) + 1 = 3 by decide]
       refine hsub _ _ ?_
       simp only [k28bqCyc5_2, k28bqCyc5_3, hdep]
-      nlinarith
+      linarith
     · exact absurd rfl hi
     · left
       rw [show (4 : ZMod 5) - 1 = 3 by decide]
       refine hsub _ _ ?_
       simp only [k28bqCyc5_4, k28bqCyc5_3, hdep]
-      nlinarith
+      linarith
   · intro l hl
     simp only [hLdef, List.mem_cons, List.not_mem_nil, or_false] at hl
     rcases hl with rfl | rfl | rfl
@@ -363,7 +363,7 @@ theorem k43r2_inj3 {α1 β1 β6 t : ℝ} (hα : 1 < α1) (hβ1 : 1 < β1) (hb6 :
   have p3 := mul_neg_of_neg_of_pos ht (by linarith : (0:ℝ) < β1)
   have p4 := mul_neg_of_pos_of_neg hb6 ht
   rcases k43r2_z3 i with rfl | rfl | rfl <;> rcases k43r2_z3 j with rfl | rfl | rfl <;>
-    first | rfl | (exfalso; simp only [k43r2Cyc3_0, k43r2Cyc3_1, k43r2Cyc3_2] at e1 e2 e3; nlinarith)
+    first | rfl | (exfalso; simp only [k43r2Cyc3_0, k43r2Cyc3_1, k43r2Cyc3_2] at e1 e2 e3; linarith)
 
 set_option maxHeartbeats 3200000 in
 theorem k43r2_tsc3 {α1 β1 β6 t v1 v2 : ℝ} (hα : 1 < α1) (hβ1 : 1 < β1) (hb6 : 0 < β6)
@@ -430,10 +430,10 @@ theorem k43r2_C {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   rw [k28bq_ori2] at hori2
   have o1 : t * (α1 * β1 * (β1 - 1) - (α1 + β1 - 1) * (β1 - β6)) + (α1 + β1 - 1) * (β1 - β6) < 0 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hκ.le hh]
+    linarith [mul_nonneg hκ.le hh]
   have o2 : 0 < t * ((α1 + β1 - 1) * β6) + α1 * β1 * (β1 - 1) - (α1 + β1 - 1) * β6 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hκ.le (neg_nonneg.2 hh)]
+    linarith [mul_nonneg hκ.le (neg_nonneg.2 hh)]
   have hb1 : 0 < β1 := by linarith
   have hdep : ∀ x y z : ℝ, ⟪fpoint P Q R a (x, y, z), R⟫ = ⟪a, R⟫ + x * e1 + z * e2 := by
     intro x y z; rw [inner_fpoint, hQR, hPR, hRR]; ring
@@ -451,7 +451,7 @@ theorem k43r2_C {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hb1' : 0 < β1 - 1 := by linarith
   have hp1 := mul_neg_of_pos_of_neg hb1' hF
   have hp2 := mul_neg_of_pos_of_neg hb1' he1
-  have hFe : e1 < t * e1 - e2 := by nlinarith
+  have hFe : e1 < t * e1 - e2 := by linarith
   have hFe' : 0 < (t * e1 - e2) - e1 := by linarith
   have hg6' := mul_pos hg6 hFe'
   refine k25_tie_cell (V8 a a' b b' c c' d) P Q R a hdet (k := 3) (by norm_num) (k43r2Cyc3 α1 β1 β6 t)
@@ -486,23 +486,23 @@ theorem k43r2_C {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   · rw [show (2 : ZMod 3) - 1 = 1 by decide]
     refine hsub _ _ ?_
     simp only [k43r2Cyc3_1, k43r2Cyc3_2, hdep]
-    nlinarith
+    linarith
   · rw [show (2 : ZMod 3) + 1 = 0 by decide]
     refine hsub _ _ ?_
     simp only [k43r2Cyc3_0, k43r2Cyc3_2, hdep]
-    nlinarith
+    linarith
   · intro i hi
     rcases k43r2_z3 i with rfl | rfl | rfl
     · left
       rw [show (0 : ZMod 3) - 1 = 2 by decide]
       refine hsub _ _ ?_
       simp only [k43r2Cyc3_0, k43r2Cyc3_2, hdep]
-      nlinarith
+      linarith
     · right
       rw [show (1 : ZMod 3) + 1 = 2 by decide]
       refine hsub _ _ ?_
       simp only [k43r2Cyc3_1, k43r2Cyc3_2, hdep]
-      nlinarith
+      linarith
     · exact absurd rfl hi
   · intro l hl
     simp only [hLdef, List.mem_cons, List.not_mem_nil, or_false] at hl
@@ -529,7 +529,7 @@ theorem k43r2_inj4 {α1 β1 β6 t : ℝ} (hα : 1 < α1) (hβ1 : 1 < β1) (hb6 :
   have p3 := mul_neg_of_neg_of_pos ht (by linarith : (0:ℝ) < β1)
   have p4 := mul_neg_of_pos_of_neg hb6 ht
   rcases z4_cases i with rfl | rfl | rfl | rfl <;> rcases z4_cases j with rfl | rfl | rfl | rfl <;>
-    first | rfl | (exfalso; simp only [k43r2Cyc4_0, k43r2Cyc4_1, k43r2Cyc4_2, k43r2Cyc4_3] at e1 e2 e3; nlinarith)
+    first | rfl | (exfalso; simp only [k43r2Cyc4_0, k43r2Cyc4_1, k43r2Cyc4_2, k43r2Cyc4_3] at e1 e2 e3; linarith)
 
 set_option maxHeartbeats 3200000 in
 theorem k43r2_tsc4 {α1 β1 β6 t v1 v2 : ℝ} (hα : 1 < α1) (hβ1 : 1 < β1) (hb6 : 0 < β6)
@@ -597,10 +597,10 @@ theorem k43r2_D {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   rw [k28bq_ori2] at hori2
   have o1 : 0 ≤ t * (α1 * β1 * (β1 - 1) - (α1 + β1 - 1) * (β1 - β6)) + (α1 + β1 - 1) * (β1 - β6) := by
     by_contra hh; push Not at hh
-    nlinarith [mul_pos hκ (neg_pos.2 hh)]
+    linarith [mul_pos hκ (neg_pos.2 hh)]
   have o2 : 0 < t * ((α1 + β1 - 1) * β6) + α1 * β1 * (β1 - 1) - (α1 + β1 - 1) * β6 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hκ.le (neg_nonneg.2 hh)]
+    linarith [mul_nonneg hκ.le (neg_nonneg.2 hh)]
   have hb1 : 0 < β1 := by linarith
   have hdep : ∀ x y z : ℝ, ⟪fpoint P Q R a (x, y, z), R⟫ = ⟪a, R⟫ + x * e1 + z * e2 := by
     intro x y z; rw [inner_fpoint, hQR, hPR, hRR]; ring
@@ -622,7 +622,7 @@ theorem k43r2_D {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hb1' : 0 < β1 - 1 := by linarith
   have hp1 := mul_neg_of_pos_of_neg hb1' hF
   have hp2 := mul_neg_of_pos_of_neg hb1' he1
-  have hFe : e1 < t * e1 - e2 := by nlinarith
+  have hFe : e1 < t * e1 - e2 := by linarith
   have hFe' : 0 < (t * e1 - e2) - e1 := by linarith
   have hg6' := mul_pos hg6 hFe'
   have hb6' := mul_pos hb6 hFe'
@@ -658,28 +658,28 @@ theorem k43r2_D {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   · rw [show (3 : ZMod 4) - 1 = 2 by decide]
     refine hsub _ _ ?_
     simp only [k43r2Cyc4_2, k43r2Cyc4_3, hdep]
-    nlinarith
+    linarith
   · rw [show (3 : ZMod 4) + 1 = 0 by decide]
     refine hsub _ _ ?_
     simp only [k43r2Cyc4_0, k43r2Cyc4_3, hdep]
-    nlinarith
+    linarith
   · intro i hi
     rcases z4_cases i with rfl | rfl | rfl | rfl
     · left
       rw [show (0 : ZMod 4) - 1 = 3 by decide]
       refine hsub _ _ ?_
       simp only [k43r2Cyc4_0, k43r2Cyc4_3, hdep]
-      nlinarith
+      linarith
     · left
       rw [show (1 : ZMod 4) - 1 = 0 by decide]
       refine hsub _ _ ?_
       simp only [k43r2Cyc4_0, k43r2Cyc4_1, hdep]
-      nlinarith
+      linarith
     · right
       rw [show (2 : ZMod 4) + 1 = 3 by decide]
       refine hsub _ _ ?_
       simp only [k43r2Cyc4_2, k43r2Cyc4_3, hdep]
-      nlinarith
+      linarith
     · exact absurd rfl hi
   · intro l hl
     simp only [hLdef, List.mem_cons, List.not_mem_nil, or_false] at hl

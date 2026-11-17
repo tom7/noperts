@@ -174,7 +174,7 @@ theorem k32h_LzLq {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hLp' : 0 < α1 + (β1 - 1) * μ := by
     rw [hm3μ] at kp
     by_contra hn; push Not at hn
-    nlinarith [mul_nonneg (by linarith : 0 ≤ -(α1 + (β1 - 1) * μ)) k1.le]
+    linarith [mul_nonneg (by linarith : 0 ≤ -(α1 + (β1 - 1) * μ)) k1.le]
   have hLq' : α1 - 1 + β1 * μ = 0 := by
     rw [hm3μ] at kq
     have h : m1 * (α1 - 1 + β1 * μ) = 0 := by linear_combination kq
@@ -216,7 +216,7 @@ theorem k32h_LzLq {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     have hda : ⟪a - d, R⟫ < 0 := ka
     rw [inner_add_left, inner_smul_left, inner_smul_left]
     simp only [conj_trivial]
-    nlinarith [mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hda), mul_pos (sub_pos.2 hβ) (neg_pos.2 hdc)]
+    linarith [mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hda), mul_pos (sub_pos.2 hβ) (neg_pos.2 hdc)]
   refine ⟨R, hR0, ?_⟩
   obtain ⟨gPP, hgPP⟩ : ∃ x : ℝ, x = ⟪(a - d), (a - d)⟫ := ⟨_, rfl⟩
   obtain ⟨gPQ, hgPQ⟩ : ∃ x : ℝ, x = ⟪(a - d), (b - d)⟫ := ⟨_, rfl⟩
@@ -309,7 +309,7 @@ theorem k32h_LzLq {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have L2 : 0 < -m1 * (⟪a', a - d⟫ - ⟪c', a - d⟫) + -m2 * (⟪a', b - d⟫ - ⟪c', b - d⟫) := by
     have e1 : ⟪a', a - d⟫ - ⟪c', a - d⟫ = -m1 := by linarith
     have e2 : ⟪a', b - d⟫ - ⟪c', b - d⟫ = -m2 := by linarith
-    rw [e1, e2]; nlinarith [sq_nonneg m2, mul_pos k1 k1]
+    rw [e1, e2]; linarith [sq_nonneg m2, mul_pos k1 k1]
   refine lexg_cell_frame_nb _ (a - d) (b - d) R d hΔ (by norm_num) Y (k32h_LzLq_inj hα hβ hγ6 hσ hμ0 k1 hLp' hLq' hmm) [(m2, -m1, 0), (-m1, -m2, 0)] hmem TS.1 ?_ 3 ?_ ?_ ?_
   · intro y hy hyx
     have hV : y = fpoint (a - d) (b - d) R d (α1, β1, 0) ∨ y = fpoint (a - d) (b - d) R d (γ6 * μ, 1, -γ6) ∨ y = fpoint (a - d) (b - d) R d (α1 + β1 * μ, 0, -β1) ∨ y = fpoint (a - d) (b - d) R d (1, 0, 0) ∨ y = fpoint (a - d) (b - d) R d (μ, 0, -1) ∨ y = fpoint (a - d) (b - d) R d (0, 0, 0) ∨ y = fpoint (a - d) (b - d) R d (0, 1, 0) := by

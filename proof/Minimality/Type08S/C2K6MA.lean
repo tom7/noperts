@@ -44,7 +44,7 @@ theorem k6m_gWb {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) {α1 �
   have hb := hθ.2.2
   unfold gWb at hb
   rw [← u5.1, ← u5.2.1, ← u1.2.1, ← u1.2.2] at hb
-  nlinarith [hb]
+  linarith [hb]
 
 end C2
 end Type08Sp

@@ -65,7 +65,7 @@ theorem k3q4p_cyc {D γ4 β1 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hγ4 : 0 < γ
     | (simp only [TSc, d3, k3q4pCyc, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
+       | (left; linarith)
        | (right; refine ⟨by ring, by nlinarith⟩))
 
 set_option maxHeartbeats 3200000 in
@@ -95,8 +95,8 @@ theorem k3q4p_rest {D γ4 β1 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hγ4 : 0 < �
     (simp only [TSc, d3, k3q4pCyc, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
-     | (right; refine ⟨by ring, by nlinarith⟩))
+     | (left; linarith)
+     | (right; refine ⟨by ring, by linarith⟩))
 
 theorem k3q4pCyc_inj {γ4 β1 β6 γ6 : ℝ} (hγ4 : 0 < γ4) (hβ1 : 0 < β1) (hβ6 : 1 < β6) (hγ6 : 0 < γ6) :
     ∀ i j, k3q4pCyc γ4 β1 β6 γ6 i = k3q4pCyc γ4 β1 β6 γ6 j → i = j := by
@@ -145,11 +145,11 @@ theorem k3q4p_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q 
     rcases hC.lt_or_eq with hCp | hC0
     · apply lexUni_rev_shift (2 : ZMod 6)
       refine lexUni6_top2 _ _ (fun i j h1 h2 => sub_right_injective (hw _ _ h1 h2)) ?_ ?_ ?_ ?_
-      · left; simp only [m1, m0, hY, k3q4pCyc, pc6_1, pc6_2, hz]; nlinarith [mul_pos hγ4 hA]
-      · left; simp only [m2, m3, hY, k3q4pCyc, pc6_0, pc6_5, hz]; nlinarith
+      · left; simp only [m1, m0, hY, k3q4pCyc, pc6_1, pc6_2, hz]; linarith [mul_pos hγ4 hA]
+      · left; simp only [m2, m3, hY, k3q4pCyc, pc6_0, pc6_5, hz]; linarith
       · left; simp only [m3, m4, hY, k3q4pCyc, pc6_5, pc6_4, hz]
-        nlinarith [mul_pos (sub_pos.2 hβ6) hCp, mul_pos hγ6 hA]
-      · left; left; simp only [m4, m5, hY, k3q4pCyc, pc6_4, pc6_3, hz]; nlinarith
+        linarith [mul_pos (sub_pos.2 hβ6) hCp, mul_pos hγ6 hA]
+      · left; left; simp only [m4, m5, hY, k3q4pCyc, pc6_4, pc6_3, hz]; linarith
     · have t0 : (0 : ZMod 6) + 2 = 2 := by decide
       have t1 : (1 : ZMod 6) + 2 = 3 := by decide
       have t2 : (2 : ZMod 6) + 2 = 4 := by decide
@@ -160,10 +160,10 @@ theorem k3q4p_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q 
       apply lexUni_of_shift (2 : ZMod 6)
       refine lexUni6_peak0 _ _ (fun i j h1 h2 => add_right_cancel (hw _ _ h1 h2)) ?_ ?_ ?_ ?_ ?_
       · left; simp only [t1, t0, hY, k3q4pCyc, pc6_3, pc6_2, hz]; nlinarith [mul_pos hγ4 hA]
-      · left; simp only [t2, t1, hY, k3q4pCyc, pc6_3, pc6_4, hz]; nlinarith
+      · left; simp only [t2, t1, hY, k3q4pCyc, pc6_3, pc6_4, hz]; linarith
       · left; simp only [t3, t2, hY, k3q4pCyc, pc6_5, pc6_4, hz]; nlinarith [mul_pos hγ6 hA]
       · left; simp only [t4, t5, hY, k3q4pCyc, pc6_0, pc6_1, hz]; nlinarith [mul_pos hγ6 hA]
-      · left; simp only [t5, t0, hY, k3q4pCyc, pc6_1, pc6_2, hz]; nlinarith [mul_pos hγ4 hA]
+      · left; simp only [t5, t0, hY, k3q4pCyc, pc6_1, pc6_2, hz]; linarith [mul_pos hγ4 hA]
 
 end C2
 end Type08Sp

@@ -63,7 +63,7 @@ theorem kr_tsc {κ σ α1 β1 β6 v1 v2 : ℝ} (hκ : 1 < κ) (hσ : 0 < σ) (h�
   have m17 := mul_pos (mul_pos hβ1 k0) hv1
   have m18 := mul_pos hσ (mul_pos hβ1 hv1)
   have m19 := mul_pos (mul_pos hσ k0) hv1
-  have m20 : 0 < κ * (β1 + α1 - 1) * (1 - β6) := by nlinarith
+  have m20 : 0 < κ * (β1 + α1 - 1) * (1 - β6) := by linarith
   have m21 := mul_pos hσ (mul_pos hα1 hv1)
   have m22 := mul_pos (mul_pos hσ hα1) (neg_pos.2 hcone)
   have m23 := mul_pos hσ (mul_pos hb6 hv1)
@@ -85,7 +85,7 @@ theorem kr_tsc {κ σ α1 β1 β6 v1 v2 : ℝ} (hκ : 1 < κ) (hσ : 0 < σ) (h�
       rcases z4_cases i with rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, krCyc_0, krCyc_1, krCyc_2, krCyc_3, s0, s1, s2, s3, Prod.fst_sub, Prod.snd_sub,
           Prod.mk_sub_mk]
-       first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+       first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
 
 theorem kr_inj {κ σ α1 β1 : ℝ} (hκ : 0 < κ) (hα1 : 0 < α1) (hβ1 : 0 < β1) :
     ∀ i j : ZMod 4, krCyc κ σ α1 β1 i = krCyc κ σ α1 β1 j → i = j := by
@@ -132,7 +132,7 @@ theorem k5c_fcab_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R �
     refine ⟨by simp, ?_⟩
     have hq : -(κ * (1 - α1) + 1) / β1 * β1 = -(κ * (1 - α1) + 1) := div_mul_cancel₀ _ hβ1.ne'
     simp only [mul_zero, add_zero, mul_one, mul_neg]
-    nlinarith [mul_pos hβ1 h0]
+    linarith [mul_pos hβ1 h0]
   · intro v1 v2 ⟨hv1, hc⟩
     exact kr_tsc hκ hσ hα1 hβ1 hαβ hb6 hb61 hv1 hc
 

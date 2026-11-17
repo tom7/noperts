@@ -52,7 +52,7 @@ theorem k2_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r �
   set vv := fcomb p q r (0 + lam * 1) (-1 + lam * 0) 0 with hvv
   have hv1 : 0 < 0 + lam * 1 := by linarith
   have hv2 : -1 + lam * 0 < 0 := by linarith
-  have hcone : (1 - γ6) * (0 + lam * 1) + β6 * (-1 + lam * 0) < 0 := by nlinarith [mul_pos hγ6 hl0]
+  have hcone : (1 - γ6) * (0 + lam * 1) + β6 * (-1 + lam * 0) < 0 := by linarith [mul_pos hγ6 hl0]
   have hpv : ⟪p, vv⟫ = lam * ⟪p, p⟫ - ⟪q, p⟫ := by
     rw [real_inner_comm, hvv, inner_fcomb_left]; ring
   have hbd : lam * ⟪p, p⟫ - ⟪q, p⟫ < 0 := by
@@ -63,11 +63,11 @@ theorem k2_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r �
     fun t => inner_fpoint _ _ _ _ _ _
   have hlexY : LexUni (fun i => ⟪fpoint p q r d (Y i), r⟫) (fun i => ⟪fpoint p q r d (Y i), vv⟫) := by
     refine lexUni5_adj _ _ hsep ?_ ?_ ?_
-    · left; simp only [hY, kCyc, pc5_0, pc5_1, hz]; nlinarith
+    · left; simp only [hY, kCyc, pc5_0, pc5_1, hz]; linarith
     · right
       refine ⟨?_, ?_⟩
-      · simp only [hY, kCyc, pc5_2, pc5_1, hz]; nlinarith
-      · simp only [hY, kCyc, pc5_2, pc5_1, hw]; nlinarith
+      · simp only [hY, kCyc, pc5_2, pc5_1, hz]; linarith
+      · simp only [hY, kCyc, pc5_2, pc5_1, hw]; linarith
     · by_cases hC : 0 ≤ ⟪q, r⟫
       · right; left
         simp only [hY, kCyc, pc5_3, pc5_4, hz]

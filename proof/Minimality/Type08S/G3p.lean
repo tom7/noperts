@@ -188,7 +188,7 @@ theorem dep_rel08 {a a' b b' c c' d : ℝ³} {l : ℝ³ → ℝ} (hl : IsDep a a
   obtain ⟨h1, h2, h3⟩ := coef_zero08 hdet h0
   refine ⟨by linarith, by linarith, by linarith, ?_⟩
   have := hl.sum
-  nlinarith [this, h1, h2, h3]
+  linarith [this, h1, h2, h3]
 
 theorem gale_nf08 {a a' b b' c c' d : ℝ³} (G : GaleData a a' b b' c c')
     {p q r s t u : ℝ} (hdet : det3 (a - d) (b - d) (c - d) ≠ 0)
@@ -464,7 +464,7 @@ noncomputable def mkF08 (V : Finset ℝ³) (P Q R ref : ℝ³)
   hR := by simp only [det3_expand]; simp only [PiLp.sub_apply]; ring
   neg := fun w hw h1 h2 h3 => by
     have := hneg w hw h1 h2 h3
-    nlinarith
+    linarith
 
 theorem prod_pos08 {S : Finset (Fin 7)} {f : Fin 7 → ℝ} {g : ℝ} (h : ∀ w ∈ S, 0 < f w * g) :
     ∀ u ∈ S, ∀ v ∈ S, 0 < f u * f v := by
@@ -473,7 +473,7 @@ theorem prod_pos08 {S : Finset (Fin 7)} {f : Fin 7 → ℝ} {g : ℝ} (h : ∀ w
   have h2 := h v hv
   have hg : g ≠ 0 := by rintro rfl; simp at h1
   have hg2 : 0 < g ^ 2 := by positivity
-  have : 0 < g ^ 2 * (f u * f v) := by nlinarith [mul_pos h1 h2]
+  have : 0 < g ^ 2 * (f u * f v) := by linarith [mul_pos h1 h2]
   exact (mul_pos_iff_of_pos_left hg2).mp this
 
 theorem fc08_coord (θ : Fin 6 → ℝ) :
@@ -517,11 +517,11 @@ theorem fpos08 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) :
   · refine prod_pos08 (g := 1 - θ 0 - θ 1) ?_
     intro w hw
     simp only [Finset.mem_insert, Finset.mem_singleton] at hw
-    rcases hw with rfl | rfl | rfl <;> simp only [c4, c5, c6] <;> nlinarith [mul_pos sc p5, mul_pos sc p3]
+    rcases hw with rfl | rfl | rfl <;> simp only [c4, c5, c6] <;> linarith [mul_pos sc p5, mul_pos sc p3]
   · refine prod_pos08 (g := 1 - θ 2 - θ 3) ?_
     intro w hw
     simp only [Finset.mem_insert, Finset.mem_singleton] at hw
-    rcases hw with rfl | rfl | rfl <;> simp only [c7, c8, c9] <;> nlinarith [mul_pos sb p4, mul_pos sb p1]
+    rcases hw with rfl | rfl | rfl <;> simp only [c7, c8, c9] <;> linarith [mul_pos sb p4, mul_pos sb p1]
   · refine prod_pos08 (g := fc08 θ 0 3 5 6) ?_
     intro w hw
     simp only [Finset.mem_insert, Finset.mem_singleton] at hw
@@ -532,7 +532,7 @@ theorem fpos08 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) :
   · refine prod_pos08 (g := 1 - θ 4 - θ 5) ?_
     intro w hw
     simp only [Finset.mem_insert, Finset.mem_singleton] at hw
-    rcases hw with rfl | rfl | rfl <;> simp only [c10, c11, c12] <;> nlinarith [mul_pos sa p2, mul_pos sa p0]
+    rcases hw with rfl | rfl | rfl <;> simp only [c10, c11, c12] <;> linarith [mul_pos sa p2, mul_pos sa p0]
   · refine prod_pos08 (g := fc08 θ 1 2 5 6) ?_
     intro w hw
     simp only [Finset.mem_insert, Finset.mem_singleton] at hw
@@ -838,15 +838,15 @@ theorem norm08_of_nf {o E₁ E₂ E₃ : ℝ³} (hE : det3 E₁ E₂ E₃ ≠ 0)
   · change -(det3 (x 2 - x 1) (x 4 - x 1) (x 0 - x 1)) * det3 (x 2 - x 1) (x 4 - x 1) (x 6 - x 1) = 0
     rw [hx, det3_nf08, det3_nf08, d3]; ring
   · change 0 < -(det3 (x 2 - x 0) (x 4 - x 0) (x 1 - x 0)) * det3 (x 2 - x 0) (x 4 - x 0) (x 6 - x 0)
-    rw [hx, det3_nf08, det3_nf08, d4, c1]; nlinarith [mul_pos hsq h8]
+    rw [hx, det3_nf08, det3_nf08, d4, c1]; linarith [mul_pos hsq h8]
   · change -(det3 (x 3 - x 0) (x 5 - x 0) (x 1 - x 0)) * det3 (x 3 - x 0) (x 5 - x 0) (x 6 - x 0) < 0
-    rw [hx, det3_nf08, det3_nf08]; nlinarith [mul_pos hsq h12]
+    rw [hx, det3_nf08, det3_nf08]; linarith [mul_pos hsq h12]
   · change -(det3 (x 2 - x 1) (x 5 - x 1) (x 0 - x 1)) * det3 (x 2 - x 1) (x 5 - x 1) (x 6 - x 1) < 0
-    rw [hx, det3_nf08, det3_nf08]; nlinarith [mul_pos hsq h15]
+    rw [hx, det3_nf08, det3_nf08]; linarith [mul_pos hsq h15]
   · change -(det3 (x 3 - x 1) (x 4 - x 1) (x 0 - x 1)) * det3 (x 3 - x 1) (x 4 - x 1) (x 6 - x 1) < 0
-    rw [hx, det3_nf08, det3_nf08]; nlinarith [mul_pos hsq h18]
+    rw [hx, det3_nf08, det3_nf08]; linarith [mul_pos hsq h18]
   · change -(det3 (x 3 - x 1) (x 5 - x 1) (x 0 - x 1)) * det3 (x 3 - x 1) (x 5 - x 1) (x 6 - x 1) < 0
-    rw [hx, det3_nf08, det3_nf08]; nlinarith [mul_pos hsq h21]
+    rw [hx, det3_nf08, det3_nf08]; linarith [mul_pos hsq h21]
 
 /-! ### Part B: the certificates of generic shapes -/
 
@@ -949,7 +949,7 @@ theorem common08 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) :
   have h9 := hθ 9
   simp only [ineq08, Matrix.cons_val] at h9
   simp only [fc08, cdet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
-  have hU : gWU θ < 0 := by unfold gWU; nlinarith [f10]
+  have hU : gWU θ < 0 := by unfold gWU; linarith [f10]
   have hga : 0 < gWa θ := (pos_iff_pos_of_mul_pos (show 0 < gWa θ * (-gWU θ) by linarith)).mpr (by linarith)
   have h10 := hθ 10
   simp only [ineq08, Matrix.cons_val] at h10
@@ -964,7 +964,7 @@ theorem crimA1 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) (h6 : 1 < θ 
     common08 θ hθ
   have dA : 0 < -1 + (θ 5) := by linarith
   have dB : 0 < -1 + (θ 0) := by
-    have h : 0 < θ 4 * (θ 0 - 1) := by nlinarith [mul_pos p1 dA, gb]
+    have h : 0 < θ 4 * (θ 0 - 1) := by linarith [mul_pos p1 dA, gb]
     linarith [(pos_iff_pos_of_mul_pos h).mp p4]
   obtain ⟨t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10⟩ := polyA (θ 0) (θ 1) (θ 2) (θ 3) (θ 4) (θ 5) p0 p1 p2 p3 p4 p5 e1 e2 e3 dA dB ga gb
     f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
@@ -988,7 +988,7 @@ theorem crimA2 (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) (h6 : 1 < θ 
     common08 θ hθ
   have dA : 0 < -1 + (θ 5) := by linarith
   have dB : 0 < -1 + (θ 0) := by
-    have h : 0 < θ 4 * (θ 0 - 1) := by nlinarith [mul_pos p1 dA, gb]
+    have h : 0 < θ 4 * (θ 0 - 1) := by linarith [mul_pos p1 dA, gb]
     linarith [(pos_iff_pos_of_mul_pos h).mp p4]
   obtain ⟨t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10⟩ := polyA (θ 0) (θ 1) (θ 2) (θ 3) (θ 4) (θ 5) p0 p1 p2 p3 p4 p5 e1 e2 e3 dA dB ga gb
     f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
@@ -1189,13 +1189,13 @@ theorem nws_Q {zd za zb zc a g : ℝ} (ha : 0 < a) (hg : 0 < g) (hag : 1 < a + g
     push Not at h
     obtain ⟨h1', h2', h3', h4'⟩ := h
     apply h1
-    have := key (zd - za) (zd - zc) (by linarith) (by linarith) (by nlinarith) (by nlinarith)
+    have := key (zd - za) (zd - zc) (by linarith) (by linarith) (by linarith) (by linarith)
     linarith
   · by_contra h
     push Not at h
     obtain ⟨h1', h2', h3', h4'⟩ := h
     apply h1
-    have := key (za - zd) (zc - zd) (by linarith) (by linarith) (by nlinarith) (by nlinarith)
+    have := key (za - zd) (zc - zd) (by linarith) (by linarith) (by linarith) (by linarith)
     linarith
 
 theorem mf08_Q (o E₁ E₂ E₃ : ℝ³) (θ : Fin 6 → ℝ) (hθ : ∀ k, 0 < ineq08 θ k) (s : Bool)
@@ -1335,7 +1335,7 @@ theorem T4_core (o E₁ E₂ E₃ : ℝ³) (hE : det3 E₁ E₂ E₃ ≠ 0) (θ 
   have htouch : ¬ (⟪x 4, x 2 - x 6⟫ = ⟪x 3, x 2 - x 6⟫ ∧ ⟪x 5, x 2 - x 6⟫ = ⟪x 3, x 2 - x 6⟫) := fun h => by
     have := hi0 (a₁ := (3 : ZMod 4)) (a₂ := 2) (by simpa [quad] using h.1)
     exact absurd this (by decide : ¬ ((3 : ZMod 4) = 2))
-  have hκ : 0 < θ 2 + θ 0 * (θ 3 - 1) := by nlinarith [mul_pos p1 p2]
+  have hκ : 0 < θ 2 + θ 0 * (θ 3 - 1) := by linarith [mul_pos p1 p2]
   exact isCyclicUnimodal_of_NWS4 hi1 (t4_closing hb' hc' ha' N.hd.ne.2.2.1 hEd p2 p3 p0 p1 hκ hgood htouch hN)
 
 /-- **MF for N2** (proved: `N2_core`): `norm08_of_nf` on `mapShape L (nfShape08 ..)` (frame `L o, L E_i`),
@@ -1911,7 +1911,7 @@ theorem impK_T4 {o E₁ E₂ E₃ : ℝ³} (hE : det3 E₁ E₂ E₃ ≠ 0) {θ 
     all_goals
       simp only [inner_wv08]
       simp [cp08]
-      nlinarith [mul_pos hD2 (show 0 < 1 - θ 5 by linarith), mul_pos hD2 p4, mul_pos hD2 (mul_pos p4 p5),
+      linarith [mul_pos hD2 (show 0 < 1 - θ 5 by linarith), mul_pos hD2 p4, mul_pos hD2 (mul_pos p4 p5),
         mul_pos hD2 (mul_pos p1 (show 0 < 1 - θ 5 by linarith)), mul_pos hD2 (mul_pos p4 p3)]
 
 /-! ### N2: the `K_{a'}` rim -/

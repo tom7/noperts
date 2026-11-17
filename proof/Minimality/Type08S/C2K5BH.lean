@@ -66,7 +66,7 @@ theorem k5b_cond1 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) {α1
   rw [← u5.1, ← u5.2.1, ← u3.1, ← u3.2.2, ← u1.2.1, ← u1.2.2] at hU
   by_contra hc
   push Not at hc
-  nlinarith [mul_nonneg hβ1.le (neg_nonneg.2 hc)]
+  linarith [mul_nonneg hβ1.le (neg_nonneg.2 hc)]
 
 end C2
 end Type08Sp

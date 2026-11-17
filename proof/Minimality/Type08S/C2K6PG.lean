@@ -21,9 +21,9 @@ theorem k6p_interval2 {α1 β1 s : ℝ} (hα1 : 1 < α1) (hβ1 : 0 < β1) (hs : 
   have hα : 0 < α1 - 1 := by linarith
   have hα1' : 0 < α1 := by linarith
   refine ⟨?_, fun lam hl0 hl1 => ?_⟩
-  · rw [div_lt_div_iff₀ hα1' hα]; nlinarith [mul_pos hs hα]
+  · rw [div_lt_div_iff₀ hα1' hα]; linarith [mul_pos hs hα]
   · refine ⟨?_, ?_⟩
-    · have := (lt_div_iff₀ hα).1 hl1; nlinarith
+    · have := (lt_div_iff₀ hα).1 hl1; linarith
     · have := (div_lt_iff₀ hα1').1 hl0; linarith
 
 /-- Near `hi0`, the affine function `f(λ) = (α1-1)(A + λB) + β1(B + λC)` is positive when `|Δ|² > 0`. -/
@@ -44,13 +44,13 @@ theorem k6p_near_hi {α1 β1 A B C : ℝ} (hα : 0 < α1 - 1)
     rw [← fhi, hm]; ring
   rw [hexp]
   have hab : |(lam - hi) * m| ≤ (hi - lam) * |m| := by
-    rw [abs_mul, abs_of_neg (by linarith : lam - hi < 0)]; nlinarith [abs_nonneg m]
+    rw [abs_mul, abs_of_neg (by linarith : lam - hi < 0)]; linarith [abs_nonneg m]
   have hlt : (hi - lam) * |m| < F / 2 := by
     have h1 : (hi - lam) < F / (2 * (|m| + 1)) := by linarith
     have hpos : 0 < |m| + 1 := by positivity
     have : (hi - lam) * (2 * (|m| + 1)) < F := by
       have := (lt_div_iff₀ (by positivity : 0 < 2 * (|m| + 1))).1 h1; linarith
-    nlinarith [abs_nonneg m, mul_nonneg (by linarith : 0 ≤ hi - lam) (abs_nonneg m)]
+    linarith [abs_nonneg m, mul_nonneg (by linarith : 0 ≤ hi - lam) (abs_nonneg m)]
   have := neg_abs_le ((lam - hi) * m)
   linarith
 
@@ -101,8 +101,8 @@ theorem k6p_cell1_D2_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : de
   obtain ⟨hc1, hc2⟩ := hlam lam hlo' hl1
   set vv := fcomb p q r (1 + lam * 0) (0 + lam * 1) 0 with hvv
   have hv1 : 0 < 1 + lam * 0 := by linarith
-  have hc1' : 0 < β1 * (1 + lam * 0) - (α1 - 1) * (0 + lam * 1) := by nlinarith
-  have hc2' : 0 < (β6 + γ6 - β1) * (1 + lam * 0) + α1 * (0 + lam * 1) := by nlinarith
+  have hc1' : 0 < β1 * (1 + lam * 0) - (α1 - 1) * (0 + lam * 1) := by linarith
+  have hc2' : 0 < (β6 + γ6 - β1) * (1 + lam * 0) + α1 * (0 + lam * 1) := by linarith
   have hz : ∀ t : ℝ × ℝ × ℝ, ⟪fpoint p q r d t, r⟫ = ⟪d, r⟫ + t.1 * ⟪p, r⟫ + t.2.1 * ⟪q, r⟫ + t.2.2 * ⟪r, r⟫ :=
     fun t => inner_fpoint _ _ _ _ _ _
   have hlexY : LexUni (fun i => ⟪fpoint p q r d (Y i), r⟫) (fun i => ⟪fpoint p q r d (Y i), vv⟫) := by
@@ -131,8 +131,8 @@ theorem k6p_cell1_D2_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : de
       refine ⟨by rw [z0, z1], ?_⟩
       simp only
       rw [w0, w1, hpv, hqv]
-      nlinarith [hflam]
-    have L12 : LexLt (zz 1, ww 1) (zz 2, ww 2) := Or.inl (by simp only; rw [z1, z2]; nlinarith [mul_pos hβ6 hR])
+      linarith [hflam]
+    have L12 : LexLt (zz 1, ww 1) (zz 2, ww 2) := Or.inl (by simp only; rw [z1, z2]; linarith [mul_pos hβ6 hR])
     have L43 : LexLt (zz 4, ww 4) (zz 3, ww 3) := Or.inl (by simp only; rw [z4, z3]; linarith)
     exact k6p_lexUni5_excl _ _ hsep (k6p_lex_ex_of zz ww (Or.inr (Or.inl L01)) (Or.inr (Or.inl L12))
       (Or.inr (Or.inr (Or.inl L43))) (Or.inr (Or.inr (Or.inr L01))) (Or.inl L43))

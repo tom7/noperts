@@ -74,14 +74,14 @@ theorem k24b1_tsc {β1 β6 γ6 v1 v2 : ℝ} (hβ1 : 1 < β1) (hb6 : 0 < β6) (hg
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, k24b1Cyc_0, k24b1Cyc_1, k24b1Cyc_2, k24b1Cyc_3, f0, f1, f2, f3,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl <;>
       rcases z4_cases i with rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, k24b1Cyc_0, k24b1Cyc_1, k24b1Cyc_2, k24b1Cyc_3, f0, f1, f2, f3,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-       first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+       first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
 
 end C2
 end Type08Sp

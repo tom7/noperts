@@ -108,11 +108,11 @@ theorem k6t3_Pc {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K
   have hR0 : R ≠ 0 := by
     intro h0; apply hΔ; rw [h0]; simp [det3_expand]
   by_cases hc1 : 0 < ⟪P, R⟫ ∨ ⟪Q, R⟫ + ⟪R, R⟫ < 0
-  · exact Or.inl ⟨R, hR0, k6t3_pc1_frame' _ P Q R d hΔ hm0 hm1 hγ4 (mul_pos hβ1 hm0) (by nlinarith) hc1 hmem hVall⟩
+  · exact Or.inl ⟨R, hR0, k6t3_pc1_frame' _ P Q R d hΔ hm0 hm1 hγ4 (mul_pos hβ1 hm0) (by linarith) hc1 hmem hVall⟩
   · push Not at hc1
     obtain ⟨hu0, hw0⟩ := hc1
     rcases hu0.lt_or_eq with hlt | heq
-    · exact Or.inl ⟨R, hR0, k6t3_pc2_frame _ P Q R d hΔ hm0 hm1 hγ4 (mul_pos hβ1 hm0) (by nlinarith) hlt hw0 hmemY hVall⟩
+    · exact Or.inl ⟨R, hR0, k6t3_pc2_frame _ P Q R d hΔ hm0 hm1 hγ4 (mul_pos hβ1 hm0) (by linarith) hlt hw0 hmemY hVall⟩
     · refine Or.inr ⟨⟨hT', hnT, hκc, hα0⟩, ?_, ?_⟩
       · have : (1 / m) * ⟪c - a', a - d⟫ = 0 := by rw [← hu']; exact heq
         rcases mul_eq_zero.1 this with h | h

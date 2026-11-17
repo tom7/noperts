@@ -99,7 +99,7 @@ theorem pent_lexUni (z w : ZMod 5 → ℝ) (hinj : ∀ i j, z i = z j → w i = 
     have l12 : LexLt (z 1, w 1) (z 2, w 2) := by
       left
       have he : e ≤ 0 := by rcases hneg with h | ⟨h1, h2⟩ <;> linarith
-      nlinarith [mul_nonneg_of_nonpos_of_nonpos hm.le he, mul_pos hs hA]
+      linarith [mul_nonneg_of_nonpos_of_nonpos hm.le he, mul_pos hs hA]
     have hne2 : (z 4, w 4) ≠ (z 3, w 3) := by
       intro h
       have := hinj 4 3 (congrArg Prod.fst h) (congrArg Prod.snd h)

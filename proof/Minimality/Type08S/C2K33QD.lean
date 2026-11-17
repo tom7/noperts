@@ -40,10 +40,10 @@ theorem k28b2_R24 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   rw [k28bq_ori2] at hori2
   have o1 : t * (α1 * β1 * (β1 - 1) - (α1 + β1 - 1) * (β1 - β6)) + (α1 + β1 - 1) * (β1 - β6) < 0 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hκ.le hh]
+    linarith [mul_nonneg hκ.le hh]
   have o2 : t * ((α1 + β1 - 1) * β6) + α1 * β1 * (β1 - 1) - (α1 + β1 - 1) * β6 < 0 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hκ.le hh]
+    linarith [mul_nonneg hκ.le hh]
   have hb1 : 0 < β1 := by linarith
   have hdep : ∀ x y z : ℝ, ⟪fpoint P Q R a (x, y, z), R⟫ = ⟪a, R⟫ + x * e1 + z * e2 := by
     intro x y z; rw [inner_fpoint, hQR, hPR, hRR]; ring
@@ -93,23 +93,23 @@ theorem k28b2_R24 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   · rw [show (3 : ZMod 4) - 1 = 2 by decide]
     refine hsub _ _ ?_
     simp only [k28bqCyc4_2, k28bqCyc4_3, hdep]
-    nlinarith
+    linarith
   · rw [show (3 : ZMod 4) + 1 = 0 by decide]
     refine hsub _ _ ?_
     simp only [k28bqCyc4_0, k28bqCyc4_3, hdep]
-    nlinarith
+    linarith
   · intro i hi
     rcases z4_cases i with rfl | rfl | rfl | rfl
     · left
       rw [show (0 : ZMod 4) - 1 = 3 by decide]
       refine hsub _ _ ?_
       simp only [k28bqCyc4_0, k28bqCyc4_3, hdep]
-      nlinarith
+      linarith
     · left
       rw [show (1 : ZMod 4) - 1 = 0 by decide]
       refine ⟨?_, fun h => ?_⟩
       · simp only [k28bqCyc4_0, k28bqCyc4_1, hdep]
-        nlinarith
+        linarith
       · intro v1 v2 hv
         have := hv (⟪a' - c, P⟫, ⟪a' - c, Q⟫) (by simp [hLdef])
         simp only [k28bqCyc4_0, k28bqCyc4_1, eA', eC]
@@ -118,7 +118,7 @@ theorem k28b2_R24 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
       rw [show (2 : ZMod 4) - 1 = 1 by decide]
       refine hsub _ _ ?_
       simp only [k28bqCyc4_1, k28bqCyc4_2, hdep]
-      nlinarith
+      linarith
     · exact absurd rfl hi
   · intro l hl
     simp only [hLdef, List.mem_cons, List.not_mem_nil, or_false] at hl

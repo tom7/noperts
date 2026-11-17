@@ -69,13 +69,13 @@ theorem k5dX5_tsc {α4 γ4 β1 β6 γ6 v1 v2 : ℝ}
       | exact absurd rfl h1
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, k5dX5_0, k5dX5_1, k5dX5_2, k5dX5_3, k5dX5_4, f0, f1, f2, f3, f4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl <;>
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, k5dX5_0, k5dX5_1, k5dX5_2, k5dX5_3, k5dX5_4, f0, f1, f2, f3, f4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-       first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+       first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
 
 end C2
 end Type08Sp

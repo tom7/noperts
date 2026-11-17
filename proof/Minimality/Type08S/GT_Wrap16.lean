@@ -31,7 +31,7 @@ theorem _root_.Minimality.T4Cfg.T2_a_neg_of_le {E U zv zw A b1 b2 r1 r2 xa za ua
     have := mul_neg_of_pos_of_neg h.hb2 h2
     linarith
   by_contra hh; push Not at hh
-  nlinarith [mul_nonneg hh hS.le, mul_nonneg (show 0 ≤ -FT2.d by linarith) (show 0 ≤ r2 - b2 by linarith)]
+  linarith [mul_nonneg hh hS.le, mul_nonneg (show 0 ≤ -FT2.d by linarith) (show 0 ≤ r2 - b2 by linarith)]
 
 /-- **The far triple tie, T4** (`z_w < tie <= z_v`; `z_v = 0` is S2): Rupert, no residual. -/
 theorem gt_far_T4' (N : Norm08 a a' b b' c c' d)

@@ -73,7 +73,7 @@ theorem k8_eta {x y : ℝ} (hy : y ≠ 0) : ∃ η : ℝ, 0 < η ∧ 2 * η * |x
   refine ⟨|y| / (4 * (|x| + 1)), by positivity, ?_⟩
   have e : |y| / (4 * (|x| + 1)) * (4 * (|x| + 1)) = |y| := div_mul_cancel₀ _ hpos.ne'
   have hη : 0 < |y| / (4 * (|x| + 1)) := by positivity
-  nlinarith [mul_nonneg hη.le h2]
+  linarith [mul_nonneg hη.le h2]
 
 end C2
 end Type08Sp

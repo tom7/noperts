@@ -29,7 +29,7 @@ theorem k6t2_pa_faceA {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) 
   have hβ11 : β1 < 1 := by
     have : 0 < det3 (a - d) (b - d) (c - d) ^ 2 := by positivity
     nlinarith
-  have hγ1 : γ4 < 1 := by nlinarith [mul_pos hα4p (sub_pos.2 hβ11)]
+  have hγ1 : γ4 < 1 := by linarith [mul_pos hα4p (sub_pos.2 hβ11)]
   set p := b - d with hp
   set q := c - d with hq
   set r := a - d with hr
@@ -76,7 +76,7 @@ theorem k6t2_pa_p4 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (hT
   have hβ11 : 1 < β1 := by
     have : 0 < det3 (a - d) (b - d) (c - d) ^ 2 := by positivity
     nlinarith
-  have hγ41 : 1 < γ4 := by nlinarith [mul_pos hα4p (sub_pos.2 hβ11)]
+  have hγ41 : 1 < γ4 := by linarith [mul_pos hα4p (sub_pos.2 hβ11)]
   have hz3 : ⟪b' - c, d - b⟫ = α4 * ⟪a - d, d - b⟫ + γ4 * ⟪c - d, d - b⟫ - ⟪c - d, d - b⟫ := by
     rw [hb']; simp only [inner_sub_left, inner_add_left, real_inner_smul_left]; ring
   have hmemX : ∀ {n : ℕ} {X : ZMod n → ℝ × ℝ × ℝ}, (∀ i, X i ∈ k5dL α4 γ4 β1 β6 γ6) →

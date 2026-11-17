@@ -162,12 +162,12 @@ theorem k34lw_Z {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have k1 : 0 < m1 := by
     have e : (α1 + β1 - 1) * m1 = β1 * (α1 * m1 + (β1 - 1) * m3) - (β1 - 1) * ((α1 - 1) * m1 + β1 * m3) := by ring
     have : 0 < (α1 + β1 - 1) * m1 := by
-      rw [e]; nlinarith [mul_pos (by linarith : (0:ℝ) < β1) hLp2, mul_pos (by linarith : (0:ℝ) < β1 - 1) (neg_pos.2 hLq2)]
+      rw [e]; linarith [mul_pos (by linarith : (0:ℝ) < β1) hLp2, mul_pos (by linarith : (0:ℝ) < β1 - 1) (neg_pos.2 hLq2)]
     exact (mul_pos_iff_of_pos_left hs).1 this
   have k3 : m3 < 0 := by
     have e : (α1 + β1 - 1) * (-m3) = α1 * (-((α1 - 1) * m1 + β1 * m3)) + (α1 - 1) * (α1 * m1 + (β1 - 1) * m3) := by ring
     have : 0 < (α1 + β1 - 1) * (-m3) := by
-      rw [e]; nlinarith [mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hLq2), mul_pos (by linarith : (0:ℝ) < α1 - 1) hLp2]
+      rw [e]; linarith [mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hLq2), mul_pos (by linarith : (0:ℝ) < α1 - 1) hLp2]
     have := (mul_pos_iff_of_pos_left hs).1 this
     linarith
   have hu : m3 • (a - d) - m1 • (c - d) ≠ 0 := by
@@ -252,7 +252,7 @@ theorem k34lw_Z {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
       simp only [inner_sub_left, inner_sub_right] at hc ⊢; linarith
     by_contra hn; push Not at hn
     rw [h2, ← h3] at h1
-    nlinarith [mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hbc.le, mul_pos (by linarith : (0:ℝ) < β1 - 1) hrel.2]
+    linarith [mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hbc.le, mul_pos (by linarith : (0:ℝ) < β1 - 1) hrel.2]
   refine ⟨R, hR0, ?_⟩
   obtain ⟨gPP, hgPP⟩ : ∃ x : ℝ, x = ⟪(c - d), (c - d)⟫ := ⟨_, rfl⟩
   obtain ⟨gPQ, hgPQ⟩ : ∃ x : ℝ, x = ⟪(c - d), (a - d)⟫ := ⟨_, rfl⟩
@@ -347,11 +347,11 @@ theorem k34lw_Z {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     rw [← inner_sub_left, show a' - b = γ6 • (c - d) by rw [ha']; module, inner_smul_left, hPR0]; simp
   have F3 : 0 < -(⟪a', a - d⟫ - ⟪b, a - d⟫) := by
     rw [← inner_sub_left, show a' - b = γ6 • (c - d) by rw [ha']; module, inner_smul_left, real_inner_comm (a - d) (c - d)]
-    simp only [conj_trivial]; nlinarith [mul_pos hγ6 (neg_pos.2 hPQ)]
+    simp only [conj_trivial]; linarith [mul_pos hγ6 (neg_pos.2 hPQ)]
   have F4 : 0 < ⟪b', R⟫ - ⟪a', R⟫ := by
     rw [← inner_sub_left, show b' - a' = (β1 - γ6) • (c - d) + (α1 + ν) • (a - d) + R by rw [hb', ha', hR]; module,
       inner_add_left, inner_add_left, inner_smul_left, inner_smul_left, hPR0, hQR0]
-    simp only [conj_trivial]; nlinarith [real_inner_self_pos.2 hR0]
+    simp only [conj_trivial]; linarith [real_inner_self_pos.2 hR0]
   have F5 : ⟪a, R⟫ - ⟪b', R⟫ = 0 := by
     rw [← inner_sub_left, show a - b' = (-β1) • (c - d) - (α1 - 1) • (a - d) by rw [hb']; module,
       inner_sub_left, inner_smul_left, inner_smul_left, hPR0, hQR0]; simp

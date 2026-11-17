@@ -42,17 +42,17 @@ theorem k28b4_D {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hLp' : 0 < α1 + (β1 - 1) * μ := by
     rw [hm3μ] at kp
     by_contra hn; push Not at hn
-    nlinarith [mul_nonneg (by linarith : 0 ≤ -(α1 + (β1 - 1) * μ)) k1.le]
+    linarith [mul_nonneg (by linarith : 0 ≤ -(α1 + (β1 - 1) * μ)) k1.le]
   have hLq' : 0 < α1 - 1 + β1 * μ := by
     rw [hm3μ] at kq
     by_contra hn; push Not at hn
-    nlinarith [mul_nonneg (by linarith : 0 ≤ -(α1 - 1 + β1 * μ)) k1.le]
+    linarith [mul_nonneg (by linarith : 0 ≤ -(α1 - 1 + β1 * μ)) k1.le]
   obtain ⟨R, hR⟩ : ∃ R : ℝ³, R = μ • (a - d) - (c - d) := ⟨_, rfl⟩
   rw [← hR] at kc ka
   have hu0R : m3 • (a - d) - m1 • (c - d) = m1 • R := by rw [hR, hm3μ]; module
   rw [hu0R, inner_smul_right] at hLz
   have kz : 0 < ⟪c' - c, R⟫ := by
-    by_contra hn; push Not at hn; nlinarith [mul_nonneg k1.le (neg_nonneg.2 hn)]
+    by_contra hn; push Not at hn; linarith [mul_nonneg k1.le (neg_nonneg.2 hn)]
   have hΔ : det3 (a - d) (b - d) R ≠ 0 := by
     have e : det3 (a - d) (b - d) R = -det3 (a - d) (b - d) (c - d) := by
       rw [hR]; simp only [det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]; ring
@@ -80,7 +80,7 @@ theorem k28b4_D {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     have hda : ⟪a - d, R⟫ < 0 := ka
     rw [inner_add_left, inner_smul_left, inner_smul_left]
     simp only [conj_trivial]
-    nlinarith [mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hda), mul_pos (sub_pos.2 hβ) (neg_pos.2 hdc)]
+    linarith [mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hda), mul_pos (sub_pos.2 hβ) (neg_pos.2 hdc)]
   refine ⟨R, hR0, ?_⟩
   set Y := k28b4dY α1 β1 γ6 μ with hY
   have hY0 : fpoint (a - d) (b - d) R d (Y 0) = c' := Ec'
@@ -135,7 +135,7 @@ theorem k28b4_D {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
     rcases hl with rfl | rfl
     · left; simp only; linarith
-    · left; simp only; nlinarith
+    · left; simp only; linarith
   have stepLt : ∀ s t, ⟪fpoint (a - d) (b - d) R d s, R⟫ < ⟪fpoint (a - d) (b - d) R d t, R⟫ →
       K25Step (a - d) (b - d) R d [(0, -1), (m1, m2)] s t := fun s t h => ⟨h.le, fun e => absurd e h.ne⟩
   have htie : ∀ v1 v2 : ℝ, k18Cone [(0, -1), (m1, m2)] v1 v2 →

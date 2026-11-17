@@ -147,12 +147,12 @@ theorem k34lw_N {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have k1 : 0 < m1 := by
     have e : (α1 + β1 - 1) * m1 = β1 * (α1 * m1 + (β1 - 1) * m3) - (β1 - 1) * ((α1 - 1) * m1 + β1 * m3) := by ring
     have : 0 < (α1 + β1 - 1) * m1 := by
-      rw [e]; nlinarith [mul_pos (by linarith : (0:ℝ) < β1) hLp2, mul_pos (by linarith : (0:ℝ) < β1 - 1) (neg_pos.2 hLq2)]
+      rw [e]; linarith [mul_pos (by linarith : (0:ℝ) < β1) hLp2, mul_pos (by linarith : (0:ℝ) < β1 - 1) (neg_pos.2 hLq2)]
     exact (mul_pos_iff_of_pos_left hs).1 this
   have k3 : m3 < 0 := by
     have e : (α1 + β1 - 1) * (-m3) = α1 * (-((α1 - 1) * m1 + β1 * m3)) + (α1 - 1) * (α1 * m1 + (β1 - 1) * m3) := by ring
     have : 0 < (α1 + β1 - 1) * (-m3) := by
-      rw [e]; nlinarith [mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hLq2), mul_pos (by linarith : (0:ℝ) < α1 - 1) hLp2]
+      rw [e]; linarith [mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hLq2), mul_pos (by linarith : (0:ℝ) < α1 - 1) hLp2]
     have := (mul_pos_iff_of_pos_left hs).1 this
     linarith
   have hu : m3 • (a - d) - m1 • (c - d) ≠ 0 := by
@@ -210,7 +210,7 @@ theorem k34lw_N {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     have hS' : ⟪a - c', a - d⟫ < 0 := by rw [real_inner_comm]; exact hS
     have hpa : 0 < ⟪a - c', c - d⟫ := by
       by_contra hn; push Not at hn
-      nlinarith [mul_nonneg k1.le (neg_nonneg.2 hn), mul_pos_of_neg_of_neg k3 hS']
+      linarith [mul_nonneg k1.le (neg_nonneg.2 hn), mul_pos_of_neg_of_neg k3 hS']
     rw [hac, inner_smul_left, real_inner_comm] at hpa
     simp only [conj_trivial] at hpa
     exact (mul_pos_iff_of_pos_left hβ0).1 hpa

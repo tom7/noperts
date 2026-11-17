@@ -39,7 +39,7 @@ theorem k5e_gt_hasLexCell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c'
   have hw : 0 < γ4 - 1 := by
     by_contra hh
     push Not at hh
-    nlinarith [mul_nonneg hα1.le (by linarith : 0 ≤ 1 - γ4), mul_pos hα4 (sub_pos.2 hβ11)]
+    linarith [mul_nonneg hα1.le (by linarith : 0 ≤ 1 - γ4), mul_pos hα4 (sub_pos.2 hβ11)]
   obtain ⟨w, hwdef⟩ : ∃ w, w = γ4 - 1 := ⟨_, rfl⟩
   rw [← hwdef] at hw
   obtain ⟨m, hm⟩ : ∃ m, m = -α4 / w := ⟨_, rfl⟩
@@ -62,7 +62,7 @@ theorem k5e_gt_hasLexCell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c'
     exact (mul_eq_zero.mp this).resolve_right hw.ne'
   have hcR : m • p + s • R = r := by
     rw [hRv]
-    match_scalars <;> nlinarith
+    match_scalars <;> linarith
   have hΔ : det3 q p R ≠ 0 := by
     have e : det3 q p R = -w * det3 p q r := by
       rw [hRv]

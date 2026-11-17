@@ -110,14 +110,14 @@ theorem kp_tsc {m s β6 β1 α1 v1 v2 : ℝ} (hm : m < 0) (hs : 0 < s) (hb6 : 0 
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, kpCyc_0, kpCyc_1, kpCyc_2, kpCyc_3, kpCyc_4, f0, f1, f2, f3, f4, Prod.fst_sub,
           Prod.snd_sub, Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl <;>
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, kpCyc_0, kpCyc_1, kpCyc_2, kpCyc_3, kpCyc_4, f0, f1, f2, f3, f4, Prod.fst_sub,
           Prod.snd_sub, Prod.mk_sub_mk]
-       first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+       first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
 
 end C2
 end Type08Sp

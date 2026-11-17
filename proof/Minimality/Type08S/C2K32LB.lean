@@ -50,7 +50,7 @@ theorem k24b2_lt {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
       intro h0
       have : q = r := sub_eq_zero.1 h0
       rw [this] at hr2
-      nlinarith [hr2]
+      linarith [hr2]
     have := real_inner_self_pos.2 hne
     simp only [inner_sub_left, inner_sub_right, hrq] at this
     linarith
@@ -58,11 +58,11 @@ theorem k24b2_lt {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     have : ⟪p, q⟫ * (⟪q, q⟫ + ⟪r, r⟫ - 2 * ⟪q, r⟫) < 0 := by
       have h' : α1 * (⟪p, q⟫ * (⟪q, q⟫ + ⟪r, r⟫ - 2 * ⟪q, r⟫)) < 0 := by
         have := hr1
-        rw [← mul_assoc]; rw [this]; nlinarith [mul_pos (by linarith : (0:ℝ) < β1 - 1) hr2]
+        rw [← mul_assoc]; rw [this]; linarith [mul_pos (by linarith : (0:ℝ) < β1 - 1) hr2]
       by_contra hh; push Not at hh
-      nlinarith [mul_nonneg hα1'.le hh]
+      linarith [mul_nonneg hα1'.le hh]
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hh hW.le]
+    linarith [mul_nonneg hh hW.le]
   have hLs : (1 - α1) * ⟪p, p⟫ - β1 * ⟪p, q⟫ < 0 := by
     have e : a - c' = (1 - α1) • p - β1 • q := by rw [hc', hp, hq]; module
     rw [e] at hL
@@ -129,25 +129,25 @@ theorem k24b2_lt {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
       have := congrArg Prod.fst e; simp at this; linarith
     apply R2.lexUni_cyc5
     · left; show _ < _
-      rw [za, zc']; nlinarith
+      rw [za, zc']; linarith
     · left; show _ < _
-      rw [zc, zb']; nlinarith
+      rw [zc, zb']; linarith
     · left; left; show _ < _
       rw [zd, za]; linarith
     · refine R2.pair_ne fun hz => ?_
-      rw [zd, zc'] at hz; exfalso; nlinarith
+      rw [zd, zc'] at hz; exfalso; linarith
     · refine R2.pair_ne fun hz => ?_
-      rw [zd, zb'] at hz; exfalso; nlinarith
+      rw [zd, zb'] at hz; exfalso; linarith
     · refine R2.pair_ne fun hz => ?_
       rw [zd, za] at hz; exfalso; linarith
     · refine R2.pair_ne fun hz => ?_
       rw [zd, zc] at hz; exfalso; linarith
     · refine R2.pair_ne fun hz => ?_
-      rw [za, zb'] at hz; exfalso; nlinarith
+      rw [za, zb'] at hz; exfalso; linarith
     · refine R2.pair_ne fun hz => ?_
       rw [za, zc] at hz; exfalso; linarith
     · refine R2.pair_ne fun hz => ?_
-      rw [zc, zc'] at hz; exfalso; nlinarith
+      rw [zc, zc'] at hz; exfalso; linarith
     · intro e
       have h := hL' 2 3 (congrArg Prod.fst e) (congrArg Prod.snd e)
       exact absurd h (by decide)

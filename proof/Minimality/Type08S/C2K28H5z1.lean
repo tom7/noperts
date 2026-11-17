@@ -55,7 +55,7 @@ theorem k28h5a0_A {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   obtain ⟨w, hwd⟩ : ∃ w : ℝ, w = ⟪q, q - r0⟫ := ⟨_, rfl⟩
   rw [inner_add_left, real_inner_smul_left, real_inner_smul_left, hM0, ← hwd] at hM1
   have hw : 0 < w := by
-    by_contra hn; push Not at hn; nlinarith [mul_nonneg hβ1p.le (neg_nonneg.2 hn)]
+    by_contra hn; push Not at hn; linarith [mul_nonneg hβ1p.le (neg_nonneg.2 hn)]
   have hpq : ⟪p, q⟫ = ⟪p, r0⟫ := by rw [inner_sub_right] at hM0; linarith
   have c1 : ⟪q, p⟫ = ⟪p, q⟫ := real_inner_comm _ _
   have c2 : ⟪r0, p⟫ = ⟪p, r0⟫ := real_inner_comm _ _
@@ -77,7 +77,7 @@ theorem k28h5a0_A {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   obtain ⟨ζ, hζd⟩ : ∃ ζ : ℝ, ζ = 1 / (β1 * E) := ⟨_, rfl⟩
   have hκ : 0 < κ := by rw [hκd]; positivity
   have hκ1 : κ < 1 := by
-    rw [hκd, div_lt_one hE0]; nlinarith [mul_pos (mul_pos hβ1p hβ1p) hw]
+    rw [hκd, div_lt_one hE0]; linarith [mul_pos (mul_pos hβ1p hβ1p) hw]
   have hg : 0 < g := by
     rw [hgd]; exact div_pos (mul_pos (sub_pos.2 hα1) (sub_pos.2 hκ1)) hβ1p
   have hζ : 0 < ζ := by rw [hζd]; positivity
@@ -140,7 +140,7 @@ theorem k28h5a0_A {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
       rw [this, hEu, hFu]; ring
     have h2 : 0 < ⟪u0, u0⟫ := real_inner_self_pos.2 hu0ne
     by_contra hn; push Not at hn
-    nlinarith [mul_nonneg hE0.le (sub_nonneg.2 hn)]
+    linarith [mul_nonneg hE0.le (sub_nonneg.2 hn)]
   have dA : ⟪a, u0⟫ = ⟪d, u0⟫ + ⟪p, u0⟫ := by rw [ha2, inner_add_left]
   have dC : ⟪c, u0⟫ = ⟪d, u0⟫ + ⟪r0, u0⟫ := by rw [hc2, inner_add_left]
   have dA' : ⟪a', u0⟫ = ⟪d, u0⟫ + β6 * ⟪q, u0⟫ + γ6 * ⟪r0, u0⟫ := by
@@ -165,9 +165,9 @@ theorem k28h5a0_A {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     have hpos : 0 < β1 * (β6 * ⟪q, u0⟫ + (γ6 - 1) * ⟪r0, u0⟫) := by
       rw [key3]
       rw [hPneg]
-      nlinarith [mul_pos (sub_pos.2 hγ6) (sub_pos.2 hCSs)]
+      linarith [mul_pos (sub_pos.2 hγ6) (sub_pos.2 hCSs)]
     have : 0 < β6 * ⟪q, u0⟫ + (γ6 - 1) * ⟪r0, u0⟫ := by
-      by_contra hn; push Not at hn; nlinarith [mul_nonneg hβ1p.le (neg_nonneg.2 hn)]
+      by_contra hn; push Not at hn; linarith [mul_nonneg hβ1p.le (neg_nonneg.2 hn)]
     rw [dC, dA']; linarith
   -- cone and ray
   have hac : a - c' = -e := by rw [he]; abel
@@ -259,7 +259,7 @@ theorem k28h5a0_A {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
       rw [this]; exact hE0
     · left
       simp only
-      nlinarith [mul_pos hβ1p hE0]
+      linarith [mul_pos hβ1p hE0]
     · left
       simp only
       have hpp : 0 < ⟪p, p⟫ := real_inner_self_pos.2 (by

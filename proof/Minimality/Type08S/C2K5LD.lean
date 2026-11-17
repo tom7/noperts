@@ -41,7 +41,7 @@ theorem k5e_lt_hasLexCell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c'
   have hw : 0 < 1 - γ4 := by
     by_contra hh
     push Not at hh
-    nlinarith [mul_nonneg hα1.le (by linarith : 0 ≤ γ4 - 1), mul_pos hα4 (sub_pos.2 hβ11)]
+    linarith [mul_nonneg hα1.le (by linarith : 0 ≤ γ4 - 1), mul_pos hα4 (sub_pos.2 hβ11)]
   obtain ⟨w, hwdef⟩ : ∃ w, w = 1 - γ4 := ⟨_, rfl⟩
   rw [← hwdef] at hw hκ'
   obtain ⟨m, hm⟩ : ∃ m, m = α4 / w := ⟨_, rfl⟩
@@ -50,7 +50,7 @@ theorem k5e_lt_hasLexCell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c'
   have hsw : s * w = -1 := by rw [hs]; field_simp
   have hm1 : 1 < m := by
     by_contra hh; push Not at hh
-    nlinarith [mul_le_mul_of_nonneg_right hh hw.le]
+    linarith [mul_le_mul_of_nonneg_right hh hw.le]
   have hs0 : s < 0 := by rw [hs]; exact div_neg_of_neg_of_pos (by norm_num) hw
   have hα1m : α1 = m * (1 - β1) := by
     have : (α1 - m * (1 - β1)) * w = 0 := by nlinarith

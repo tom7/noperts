@@ -29,8 +29,8 @@ theorem k28bq_aux {E F c b6 b1 : ℝ} (hc : 0 < c) (hb6 : 0 < b6) (hF : F < 0) (
   have h2 : c * (E - b1 * F) < 0 := by
     have : c * (E - b1 * F) = (b6 - b1 * c) * F := by linear_combination ht
     rw [this]; exact mul_neg_of_pos_of_neg hk hF
-  exact ⟨by by_contra hh; push Not at hh; nlinarith [mul_nonneg hc.le hh],
-    by by_contra hh; push Not at hh; nlinarith [mul_nonneg hc.le (sub_nonneg.2 hh)]⟩
+  exact ⟨by by_contra hh; push Not at hh; linarith [mul_nonneg hc.le hh],
+    by by_contra hh; push Not at hh; linarith [mul_nonneg hc.le (sub_nonneg.2 hh)]⟩
 
 theorem k28bq_kpos {α1 β1 β6 pp s qr rr : ℝ} (hpp : 0 < pp)
     (hL : (α1 - 1) * pp + β1 * s = 0) (hβ1 : 0 < β1)
@@ -109,7 +109,7 @@ theorem k28bq_real {α1 β1 β6 pp s qq qr rr t : ℝ} (hα : 1 < α1) (hβ1 : 1
         (t * ((α1 - 1) ^ 2 * pp + 2 * (α1 - 1) * β1 * s + β1 ^ 2 * qr) -
       ((α1 - 1) ^ 2 * pp + 2 * (α1 - 1) * β1 * s + β1 ^ 2 * qq)) < 0 := by rw [e3]; exact hN
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hBC.le hh]
+    linarith [mul_nonneg hBC.le hh]
   have htie : (1 - (β1 - β6)) * (t * ((α1 - 1) ^ 2 * pp + 2 * (α1 - 1) * β1 * s + β1 ^ 2 * rr) -
       ((α1 - 1) ^ 2 * pp + 2 * (α1 - 1) * β1 * s + β1 ^ 2 * qr))
       = β6 * (t * ((α1 - 1) ^ 2 * pp + 2 * (α1 - 1) * β1 * s + β1 ^ 2 * qr) -

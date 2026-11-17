@@ -38,14 +38,14 @@ theorem k32e_signs (α β γ pp s qq qr rr : ℝ) (hα : 1 < α) (hβ : 1 < β) 
   have hs : s < 0 := by
     by_contra hn; push Not at hn
     have := mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α) hn) hW.le
-    nlinarith [mul_pos (sub_pos.2 hβ) hD]
+    linarith [mul_pos (sub_pos.2 hβ) hD]
   refine ⟨hs, ?_, ?_⟩
-  · nlinarith [mul_pos (by linarith : (0:ℝ) < α) hpp,
+  · linarith [mul_pos (by linarith : (0:ℝ) < α) hpp,
       mul_nonneg (by linarith : (0:ℝ) ≤ γ + 1 - β) (by linarith : (0:ℝ) ≤ -s)]
   · rcases le_or_gt 0 qr with h | h
-    · nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ γ - (β - 1)) h, mul_pos hγ (sub_pos.2 hrr),
+    · linarith [mul_nonneg (by linarith : (0:ℝ) ≤ γ - (β - 1)) h, mul_pos hγ (sub_pos.2 hrr),
         mul_pos (by linarith : (0:ℝ) < α) (neg_pos.2 hs)]
-    · nlinarith [mul_pos (sub_pos.2 hβ) (neg_pos.2 h), mul_pos hγ (by nlinarith : 0 < rr),
+    · linarith [mul_pos (sub_pos.2 hβ) (neg_pos.2 h), mul_pos hγ (by nlinarith : 0 < rr),
         mul_pos (by linarith : (0:ℝ) < α) (neg_pos.2 hs)]
 
 /-- Final inequality. -/
@@ -54,9 +54,9 @@ theorem k32e_fin (β γ u v c : ℝ) (hβ : 1 < β) (hγ : 0 < γ) (hu : 0 < u) 
     0 < γ ^ 2 * c * (u + v) + γ * (β - 1) * u * v - (β - 1) * u * (u + v)
       + γ * (γ - 1) * v * (u + v) := by
   have h1 : 0 < (γ - 1) * (u + v) - γ * u := by
-    have : 0 < v * ((γ - 1) * (u + v) - γ * u) := by nlinarith
+    have : 0 < v * ((γ - 1) * (u + v) - γ * u) := by linarith
     exact pos_of_mul_pos_right this hv.le
-  have h2 : u < (γ - 1) * v := by nlinarith
+  have h2 : u < (γ - 1) * v := by linarith
   have e : γ ^ 2 * c * (u + v) + γ * (β - 1) * u * v - (β - 1) * u * (u + v)
       + γ * (γ - 1) * v * (u + v) = γ ^ 2 * (u * v + c * (u + v)) + (β - 1) * u * (γ * v - (u + v))
       + γ * v * ((γ - 1) * (u + v) - γ * u) := by ring
@@ -104,9 +104,9 @@ theorem k32e_core_b4E (α β γ pp s qq qr rr : ℝ) (hα : 1 < α) (hβ : 1 < �
       mul_nonneg (by linarith) (by linarith)
     have h2 : 0 ≤ (α * (qq + rr - 2 * qr)) * ((α * s + (β - 1) * qr - γ * rr) * (α * pp + (β - 1) * s)
         - (α * pp + (β - 1 - γ) * s) * (α * s + β * qr - rr)) := by
-      rw [hid]; nlinarith [mul_nonneg (neg_nonneg.2 hm3.le) h1]
+      rw [hid]; linarith [mul_nonneg (neg_nonneg.2 hm3.le) h1]
     nlinarith [mul_pos (by linarith : (0:ℝ) < α) hW]
-  have hD' : 0 < (qq - qr) * (rr - qr) + qr * ((qq - qr) + (rr - qr)) := by nlinarith
+  have hD' : 0 < (qq - qr) * (rr - qr) + qr * ((qq - qr) + (rr - qr)) := by linarith
   have hf := k32e_fin β γ (qq - qr) (rr - qr) qr hβ hγ hu0 hv0 hD'
     (by have e : (qq - qr) + (rr - qr) = qq + rr - 2 * qr := by ring
         rw [e]; exact hq)

@@ -77,7 +77,7 @@ theorem poly_core (hF : Fr e1 e2 e3) (o : ℝ³)
   have hne : X0p ≠ A ∧ Y0p ≠ A ∧ B' ≠ A ∧ C' ≠ A := by
     refine ⟨hnA _ ?_, hnA _ ?_, hnA _ ?_, hnA _ ?_⟩ <;> rw [hA2] <;>
       simp only [hX0p, hY0p, hB', hC', i2] <;> intro h <;>
-      nlinarith [mul_pos (sub_pos.mpr hα) hha]
+      linarith [mul_pos (sub_pos.mpr hα) hha]
   have hz3 : ∀ (X Y z : ℝ), ⟪pt e1 e2 e3 o X Y z, e3⟫ = ⟪o, e3⟫ + z := fun X Y z => i3 X Y z
   have hnoS : ∀ x : ZMod 4 → ℝ³, (∀ i, x i ∈ S) → NoHDNAt (Finset.univ.image x) (ν • e3) :=
     fun x hx => hno.mono (fun p hp => by
@@ -112,9 +112,9 @@ theorem poly_core (hF : Fr e1 e2 e3) (o : ℝ³)
     · rw [show (fun i => (!₂[⟪(quad X0p C' B' Y0p) i, e1⟫, ⟪(quad X0p C' B' Y0p) i, e2⟫] : ℝ²)) =
           _ from funext hq]
       refine ccw4 ?_ ?_ ?_
-      · nlinarith [mul_pos hαpos hha]
+      · linarith [mul_pos hαpos hha]
       · linarith
-      · nlinarith [mul_pos (neg_pos.mpr hneg) hγ]
+      · linarith [mul_pos (neg_pos.mpr hneg) hγ]
     · rw [show (fun i => ⟪(quad X0p C' B' Y0p) i, e3⟫) = quad (⟪o, e3⟫ + zx)
           (⟪o, e3⟫ + (α * w3 + β1 * ν)) (⟪o, e3⟫ + (α * w3 + γ4 * C0)) (⟪o, e3⟫ + zy) from by
         funext i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
@@ -159,9 +159,9 @@ theorem poly_core (hF : Fr e1 e2 e3) (o : ℝ³)
     · rw [show (fun i => (!₂[⟪(quad Y0p B' C' X0p) i, e1⟫, ⟪(quad Y0p B' C' X0p) i, e2⟫] : ℝ²)) =
           _ from funext hq]
       refine ccw4 ?_ ?_ ?_
-      · nlinarith [mul_pos hαpos hha]
+      · linarith [mul_pos hαpos hha]
       · linarith
-      · nlinarith [mul_pos hpos hγ]
+      · linarith [mul_pos hpos hγ]
     · rw [show (fun i => ⟪(quad Y0p B' C' X0p) i, e3⟫) = quad (⟪o, e3⟫ + zy)
           (⟪o, e3⟫ + (α * w3 + γ4 * C0)) (⟪o, e3⟫ + (α * w3 + β1 * ν)) (⟪o, e3⟫ + zx) from by
         funext i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>

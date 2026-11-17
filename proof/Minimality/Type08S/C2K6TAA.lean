@@ -54,8 +54,8 @@ theorem k6t1_faA_rest {D β6 γ6 α1 β1 α4 γ4 v1 v2 v3 : ℝ} (hD : 0 < D) (h
     (simp only [TSc, d3, faCyc_0, faCyc_1, faCyc_2, faCyc_3, s0, s1, s2, s3, Prod.fst_sub, Prod.snd_sub,
         Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
-     | (right; refine ⟨by ring, by nlinarith⟩))
+     | (left; linarith)
+     | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 1600000 in
 /-- **Face cell of `Q_bc` at the base view `r`** (frame form).  `V` consists of the seven frame points over
@@ -77,12 +77,12 @@ theorem k6t1_faA_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p
       · have : 0 < γ6 - 1 := by linarith
         refine ⟨β6 / (γ6 - 1), β6 / (γ6 - 1) + 1, by positivity, by linarith, fun lam hl _ => ⟨fun h => by linarith, fun _ => ?_⟩⟩
         have := (div_lt_iff₀ this).1 hl
-        nlinarith
+        linarith
     · have h4 : γ4 < 1 := by rcases hone with h | h <;> [linarith; exact h]
       have : 0 < β6 - 1 := by linarith
       refine ⟨0, (β6 - 1) / γ6, le_rfl, by positivity, fun lam hl hh => ⟨fun _ => ?_, fun h => by linarith⟩⟩
       have := (lt_div_iff₀ hg).1 hh
-      nlinarith
+      linarith
   obtain ⟨lam, hl0, hl1, hL⟩ := exists_tilt_avoid p q r hΔ (lo := lo) (hi := hi) hlh
     [(1, 0), (β6, γ6), (0, 1), (β6 - 1, γ6), (-1, 1), (β6, γ6 - 1)] (by
       intro t ht

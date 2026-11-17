@@ -64,7 +64,7 @@ theorem k7_hasLexCellAt (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R �
       linear_combination Bp * hs + ⟪Q, Q⟫ * h2
     by_contra hcon
     push Not at hcon
-    nlinarith [mul_nonneg hB.le hcon, mul_neg_of_neg_of_pos ht hCS]
+    linarith [mul_nonneg hB.le hcon, mul_neg_of_neg_of_pos ht hCS]
   have hg1 : ⟪P, P⟫ + (α4 - α1) * ⟪P, Q⟫ - β1 * ⟪P, R⟫ = ⟪P, P⟫ + (β6 - 1) * ⟪P, R⟫ := by
     linear_combination (α4 - α1) * hs + (1 - β6) * h2 - t * hx
   set g2 := ⟪P, Q⟫ + (α4 - α1) * ⟪Q, Q⟫ - β1 * Bp with hg2def
@@ -77,7 +77,7 @@ theorem k7_hasLexCellAt (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R �
   set v1 := (0 : ℝ) + lam * τ with hv1def
   set v2 := (1 : ℝ) + lam * 0 with hv2def
   set vv := fcomb P Q R v1 v2 0 with hvv
-  have hv1 : 0 < v1 := by rw [hv1def]; nlinarith [mul_pos hl0 hτ]
+  have hv1 : 0 < v1 := by rw [hv1def]; linarith [mul_pos hl0 hτ]
   have hv2 : 0 < v2 := by rw [hv2def]; norm_num
   have hz : ∀ t : ℝ × ℝ × ℝ, ⟪fpoint P Q R d t, R⟫ = ⟪d, R⟫ + t.1 * ⟪P, R⟫ + t.2.1 * ⟪Q, R⟫ + t.2.2 * ⟪R, R⟫ :=
     fun t => inner_fpoint _ _ _ _ _ _
@@ -89,19 +89,19 @@ theorem k7_hasLexCellAt (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R �
     rw [hydef, hg2def]; linear_combination (-v1) * hg1
   have hneg : v1 * y + v2 * g2 < 0 := by
     have : lam * (τ * y) < τ * y := by nlinarith [mul_pos hτ (by linarith : 0 < y)]
-    rw [hv1def, hv2def]; nlinarith
+    rw [hv1def, hv2def]; linarith
   have hlexY : LexUni (fun i => ⟪fpoint P Q R d (Y i), R⟫) (fun i => ⟪fpoint P Q R d (Y i), vv⟫) := by
     refine lexUni5_v7 _ _ hsep ?_ ?_ ?_ ?_
     · right
       refine ⟨?_, ?_⟩
-      · simp only [hY, k7Cyc, pc5_0, pc5_1, hz]; nlinarith
-      · simp only [hY, k7Cyc, pc5_0, pc5_1]; nlinarith [mul_pos hv1 hy]
-    · left; simp only [hY, k7Cyc, pc5_2, pc5_1, hz]; nlinarith [mul_pos hβ6 hA]
+      · simp only [hY, k7Cyc, pc5_0, pc5_1, hz]; linarith
+      · simp only [hY, k7Cyc, pc5_0, pc5_1]; linarith [mul_pos hv1 hy]
+    · left; simp only [hY, k7Cyc, pc5_2, pc5_1, hz]; linarith [mul_pos hβ6 hA]
     · right
       refine ⟨?_, ?_⟩
-      · simp only [hY, k7Cyc, pc5_3, pc5_4, hz]; nlinarith
-      · simp only [hY, k7Cyc, pc5_3, pc5_4]; nlinarith
-    · left; simp only [hY, k7Cyc, pc5_4, pc5_0, hz]; nlinarith
+      · simp only [hY, k7Cyc, pc5_3, pc5_4, hz]; linarith
+      · simp only [hY, k7Cyc, pc5_3, pc5_4]; linarith
+    · left; simp only [hY, k7Cyc, pc5_4, pc5_0, hz]; linarith
   have n0 : -(0 : ZMod 5) = 0 := by decide
   have n1 : -(1 : ZMod 5) = 4 := by decide
   have n2 : -(2 : ZMod 5) = 3 := by decide

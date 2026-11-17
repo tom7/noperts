@@ -39,23 +39,23 @@ theorem k5x1_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r
   obtain ⟨lam, hl0, hl1, hsep⟩ := exists_sep_tilt p q r d hΔ Y (k1Cyc_inj hβ6 hα4)
     (u1 := u1) (u2 := u2) (t1 := t1) (t2 := t2) hut (lo := 0) (hi := 1) (by norm_num)
   set vv := fcomb p q r (u1 + lam * t1) (u2 + lam * t2) 0 with hvv
-  have hv1 : u1 + lam * t1 < 0 := by nlinarith [mul_pos (sub_pos.2 hl1) (neg_pos.2 hu1), mul_pos hl0 (neg_pos.2 hw1)]
-  have hv2 : u2 + lam * t2 < 0 := by nlinarith [mul_pos (sub_pos.2 hl1) (neg_pos.2 hu2), mul_pos hl0 (neg_pos.2 hw2)]
+  have hv1 : u1 + lam * t1 < 0 := by linarith [mul_pos (sub_pos.2 hl1) (neg_pos.2 hu1), mul_pos hl0 (neg_pos.2 hw1)]
+  have hv2 : u2 + lam * t2 < 0 := by linarith [mul_pos (sub_pos.2 hl1) (neg_pos.2 hu2), mul_pos hl0 (neg_pos.2 hw2)]
   have hz : ∀ t : ℝ × ℝ × ℝ, ⟪fpoint p q r d t, r⟫ = ⟪d, r⟫ + t.1 * ⟪p, r⟫ + t.2.1 * ⟪q, r⟫ + t.2.2 * ⟪r, r⟫ :=
     fun t => inner_fpoint _ _ _ _ _ _
   have hlexY : LexUni (fun i => ⟪fpoint p q r d (Y i), r⟫) (fun i => ⟪fpoint p q r d (Y i), vv⟫) := by
     refine lexUni5_two _ _ hsep ?_ ?_ ?_
     · rcases hs with hs | ⟨hs0, hs1, hs2⟩
-      · left; simp only [hY, k1Cyc, pc5_1, pc5_2, hz]; nlinarith
+      · left; simp only [hY, k1Cyc, pc5_1, pc5_2, hz]; linarith
       · right
         have hd := k5_wdiff p q r d β6 (u1 + lam * t1) (u2 + lam * t2)
         refine ⟨?_, ?_⟩
-        · simp only [hY, k1Cyc, pc5_1, pc5_2, hz]; nlinarith
+        · simp only [hY, k1Cyc, pc5_1, pc5_2, hz]; linarith
         · simp only [hY, k1Cyc, pc5_1, pc5_2]
           rw [hvv]
-          nlinarith [mul_pos (sub_pos.2 hl1) hs1, mul_pos hl0 hs2]
-    · left; simp only [hY, k1Cyc, pc5_4, pc5_3, hz]; nlinarith [mul_pos hα4 hA]
-    · left; left; simp only [hY, k1Cyc, pc5_0, pc5_1, hz]; nlinarith
+          linarith [mul_pos (sub_pos.2 hl1) hs1, mul_pos hl0 hs2]
+    · left; simp only [hY, k1Cyc, pc5_4, pc5_3, hz]; linarith [mul_pos hα4 hA]
+    · left; left; simp only [hY, k1Cyc, pc5_0, pc5_1, hz]; linarith
   have n0 : -(0 : ZMod 5) = 0 := by decide
   have n1 : -(1 : ZMod 5) = 4 := by decide
   have n2 : -(2 : ZMod 5) = 3 := by decide

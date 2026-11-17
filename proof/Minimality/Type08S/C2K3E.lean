@@ -49,7 +49,7 @@ theorem k3q4m_cyc {D γ4 β1 v1 v2 v3 : ℝ} (hD : 0 < D) (hγ4 : 0 < γ4) (hβ1
     | (simp only [TSc, d3, k3q4mCyc, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
+       | (left; linarith)
        | (right; refine ⟨by ring, by nlinarith⟩))
 
 set_option maxHeartbeats 3200000 in
@@ -81,7 +81,7 @@ theorem k3q4m_rest {D γ4 β1 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hγ4 : 0 < �
     (simp only [TSc, d3, k3q4mCyc, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
+     | (left; linarith)
      | (right; refine ⟨by ring, by nlinarith⟩))
 
 theorem k3q4mCyc_inj {γ4 β1 : ℝ} (hγ4 : 0 < γ4) (hβ1 : 0 < β1) :
@@ -132,9 +132,9 @@ theorem k3q4m_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q 
       have m4 : (2 : ZMod 5) - 4 = 3 := by decide
       apply lexUni_rev_shift (2 : ZMod 5)
       refine lexUni5_top _ _ (fun i j h1 h2 => sub_right_injective (hw _ _ h1 h2)) ?_ ?_ ?_
-      · left; simp only [m1, m0, hY, k3q4mCyc, pc5_1, pc5_2, hz]; nlinarith [mul_pos hγ4 hA]
-      · left; simp only [m2, m3, hY, k3q4mCyc, pc5_0, pc5_4, hz]; nlinarith
-      · left; simp only [m3, m4, hY, k3q4mCyc, pc5_4, pc5_3, hz]; nlinarith
+      · left; simp only [m1, m0, hY, k3q4mCyc, pc5_1, pc5_2, hz]; linarith [mul_pos hγ4 hA]
+      · left; simp only [m2, m3, hY, k3q4mCyc, pc5_0, pc5_4, hz]; linarith
+      · left; simp only [m3, m4, hY, k3q4mCyc, pc5_4, pc5_3, hz]; linarith
     · have t0 : (0 : ZMod 5) + 2 = 2 := by decide
       have t1 : (1 : ZMod 5) + 2 = 3 := by decide
       have t2 : (2 : ZMod 5) + 2 = 4 := by decide
@@ -144,7 +144,7 @@ theorem k3q4m_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q 
       apply lexUni_of_shift (2 : ZMod 5)
       refine lexUni5_adj _ _ (fun i j h1 h2 => add_right_cancel (hw _ _ h1 h2)) ?_ ?_ ?_
       · left; simp only [t1, t0, hY, k3q4mCyc, pc5_3, pc5_2, hz]; nlinarith [mul_pos hγ4 hA]
-      · left; simp only [t2, t1, hY, k3q4mCyc, pc5_4, pc5_3, hz]; nlinarith
+      · left; simp only [t2, t1, hY, k3q4mCyc, pc5_4, pc5_3, hz]; linarith
       · right; left; simp only [t3, t4, hY, k3q4mCyc, pc5_0, pc5_1, hz]; nlinarith
 
 end C2

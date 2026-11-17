@@ -40,10 +40,10 @@ theorem k28b2_R25 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   rw [k28bq_ori2] at hori2
   have o1 : 0 < t * (α1 * β1 * (β1 - 1) - (α1 + β1 - 1) * (β1 - β6)) + (α1 + β1 - 1) * (β1 - β6) := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hκ.le (neg_nonneg.2 hh)]
+    linarith [mul_nonneg hκ.le (neg_nonneg.2 hh)]
   have o2 : t * ((α1 + β1 - 1) * β6) + α1 * β1 * (β1 - 1) - (α1 + β1 - 1) * β6 < 0 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hκ.le hh]
+    linarith [mul_nonneg hκ.le hh]
   have hb1 : 0 < β1 := by linarith
   have hdep : ∀ x y z : ℝ, ⟪fpoint P Q R a (x, y, z), R⟫ = ⟪a, R⟫ + x * e1 + z * e2 := by
     intro x y z; rw [inner_fpoint, hQR, hPR, hRR]; ring
@@ -94,18 +94,18 @@ theorem k28b2_R25 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     rw [show (3 : ZMod 5) - 1 = 2 by decide]
     refine hsub _ _ ?_
     simp only [k28bqCyc5_2, k28bqCyc5_3, hdep]
-    nlinarith
+    linarith
   · rw [show (3 : ZMod 5) + 1 = 4 by decide]
     refine hsub _ _ ?_
     simp only [k28bqCyc5_4, k28bqCyc5_3, hdep]
-    nlinarith
+    linarith
   · intro i hi
     rcases k28bq_z5 i with rfl | rfl | rfl | rfl | rfl
     · left
       rw [show (0 : ZMod 5) - 1 = 4 by decide]
       refine ⟨?_, fun h => ?_⟩
       · simp only [k28bqCyc5_4, k28bqCyc5_0, hdep]
-        nlinarith
+        linarith
       · intro v1 v2 hv
         have := hv (⟪a' - c, P⟫, ⟪a' - c, Q⟫) (by simp [hLdef])
         simp only [k28bqCyc5_4, k28bqCyc5_0, eA', eC]
@@ -114,18 +114,18 @@ theorem k28b2_R25 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
       rw [show (1 : ZMod 5) - 1 = 0 by decide]
       refine hsub _ _ ?_
       simp only [k28bqCyc5_0, k28bqCyc5_1, hdep]
-      nlinarith
+      linarith
     · right
       rw [show (2 : ZMod 5) + 1 = 3 by decide]
       refine hsub _ _ ?_
       simp only [k28bqCyc5_2, k28bqCyc5_3, hdep]
-      nlinarith
+      linarith
     · exact absurd rfl hi
     · left
       rw [show (4 : ZMod 5) - 1 = 3 by decide]
       refine hsub _ _ ?_
       simp only [k28bqCyc5_4, k28bqCyc5_3, hdep]
-      nlinarith
+      linarith
   · intro l hl
     simp only [hLdef, List.mem_cons, List.not_mem_nil, or_false] at hl
     rcases hl with rfl | rfl

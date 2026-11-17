@@ -62,7 +62,7 @@ theorem k6t2_c1_pa0_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R
     dsimp only at this; linarith
   have hUT : U - β1 * B < T := by
     have := hfw (1, 0, -β1) (by simp [k5dL]) (0, 1, 0) (by simp [k5dL])
-      (by dsimp only; nlinarith [mul_pos hβ1 hA])
+      (by dsimp only; linarith [mul_pos hβ1 hA])
     dsimp only at this; linarith
   have hc : (0 < T ∧ T < α4 * U + γ4 * T ∧ U - β1 * B < α4 * U + γ4 * T) ∨
       (T < 0 ∧ α4 * U + γ4 * T < T ∧ U - β1 * B < 0 ∧ α4 * U + γ4 * T < 0) := by
@@ -71,9 +71,9 @@ theorem k6t2_c1_pa0_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R
       have h1 := hfw (α4, γ4, 0) (by simp [k5dL]) (0, 1, 0) (by simp [k5dL])
         (by dsimp only; nlinarith)
       have h2 := hfw (0, 1, 0) (by simp [k5dL]) (0, 0, 0) (by simp [k5dL])
-        (by dsimp only; nlinarith)
+        (by dsimp only; linarith)
       have h3 := hfw (1, 0, -β1) (by simp [k5dL]) (0, 0, 0) (by simp [k5dL])
-        (by dsimp only; nlinarith [mul_pos hβ1 hA])
+        (by dsimp only; linarith [mul_pos hβ1 hA])
       have h4 := hfw (α4, γ4, 0) (by simp [k5dL]) (0, 0, 0) (by simp [k5dL])
         (by dsimp only; nlinarith)
       dsimp only at h1 h2 h3 h4
@@ -82,7 +82,7 @@ theorem k6t2_c1_pa0_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R
       have h1 := hfw (0, 1, 0) (by simp [k5dL]) (α4, γ4, 0) (by simp [k5dL])
         (by dsimp only; nlinarith)
       have h2 := hfw (0, 0, 0) (by simp [k5dL]) (0, 1, 0) (by simp [k5dL])
-        (by dsimp only; nlinarith)
+        (by dsimp only; linarith)
       have h3 := hfw (1, 0, -β1) (by simp [k5dL]) (α4, γ4, 0) (by simp [k5dL])
         (by dsimp only; nlinarith [mul_pos hβ1 hA])
       dsimp only at h1 h2 h3

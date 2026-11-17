@@ -43,24 +43,24 @@ theorem k5x2_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r
   obtain ⟨lam, hl0, hl1, hsep⟩ := exists_sep_tilt p q r d hΔ Y (k1Cyc6_inj hα1 hβ1 hβ11 hβ6)
     (u1 := u1) (u2 := u2) (t1 := t1) (t2 := t2) hut (lo := 0) (hi := 1) (by norm_num)
   set vv := fcomb p q r (u1 + lam * t1) (u2 + lam * t2) 0 with hvv
-  have hv1 : u1 + lam * t1 < 0 := by nlinarith [mul_pos (sub_pos.2 hl1) (neg_pos.2 hu1), mul_pos hl0 (neg_pos.2 hw1)]
-  have hv2 : 0 < u2 + lam * t2 := by nlinarith [mul_pos (sub_pos.2 hl1) hu2, mul_pos hl0 hw2]
+  have hv1 : u1 + lam * t1 < 0 := by linarith [mul_pos (sub_pos.2 hl1) (neg_pos.2 hu1), mul_pos hl0 (neg_pos.2 hw1)]
+  have hv2 : 0 < u2 + lam * t2 := by linarith [mul_pos (sub_pos.2 hl1) hu2, mul_pos hl0 hw2]
   have hz : ∀ t : ℝ × ℝ × ℝ, ⟪fpoint p q r d t, r⟫ = ⟪d, r⟫ + t.1 * ⟪p, r⟫ + t.2.1 * ⟪q, r⟫ + t.2.2 * ⟪r, r⟫ :=
     fun t => inner_fpoint _ _ _ _ _ _
   have hlexY : LexUni (fun i => ⟪fpoint p q r d (Y i), r⟫) (fun i => ⟪fpoint p q r d (Y i), vv⟫) := by
     refine lexUni6_two _ _ hsep ?_ ?_ ?_ ?_
-    · left; simp only [hY, k1Cyc6, six_0, six_1, hz]; nlinarith [mul_nonneg hβ1.le hB.le, mul_pos (sub_pos.2 hα1) hA]
+    · left; simp only [hY, k1Cyc6, six_0, six_1, hz]; linarith [mul_nonneg hβ1.le hB.le, mul_pos (sub_pos.2 hα1) hA]
     · rcases hs with hs | ⟨hs0, hs1, hs2⟩
-      · left; simp only [hY, k1Cyc6, six_3, six_2, hz]; nlinarith
+      · left; simp only [hY, k1Cyc6, six_3, six_2, hz]; linarith
       · right
         have hd := k5_wdiff p q r d β6 (u1 + lam * t1) (u2 + lam * t2)
         refine ⟨?_, ?_⟩
-        · simp only [hY, k1Cyc6, six_3, six_2, hz]; nlinarith
+        · simp only [hY, k1Cyc6, six_3, six_2, hz]; linarith
         · simp only [hY, k1Cyc6, six_3, six_2]
           rw [hvv]
-          nlinarith [mul_pos (sub_pos.2 hl1) (neg_pos.2 hs1), mul_pos hl0 (neg_pos.2 hs2)]
-    · left; simp only [hY, k1Cyc6, six_5, six_0, hz]; nlinarith
-    · left; left; simp only [hY, k1Cyc6, six_4, six_3, hz]; nlinarith [mul_pos hβ6 hB]
+          linarith [mul_pos (sub_pos.2 hl1) (neg_pos.2 hs1), mul_pos hl0 (neg_pos.2 hs2)]
+    · left; simp only [hY, k1Cyc6, six_5, six_0, hz]; linarith
+    · left; left; simp only [hY, k1Cyc6, six_4, six_3, hz]; linarith [mul_pos hβ6 hB]
   have n0 : -(0 : ZMod 6) = 0 := by decide
   have n1 : -(1 : ZMod 6) = 5 := by decide
   have n2 : -(2 : ZMod 6) = 4 := by decide

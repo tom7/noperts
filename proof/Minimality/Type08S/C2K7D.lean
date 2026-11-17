@@ -101,11 +101,11 @@ theorem s4TRK4_hasLexCell {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' 
       have h1 : ⟪b, p⟫ = ⟪c', p⟫ := hN.1
       rw [eB, eC'] at h1
       have h2 : α1 * ⟪r, p⟫ + β1 * ⟪p, p⟫ = ⟪p, p⟫ := by linarith
-      have h3 : α4 * ⟪r, p⟫ = β6 * ⟪p, p⟫ := by nlinarith
+      have h3 : α4 * ⟪r, p⟫ = β6 * ⟪p, p⟫ := by linarith
       nlinarith [mul_pos hB hpp, mul_pos hB hB]
     · have hsep : Sep ⟪b, b - d⟫ ⟪b', b - d⟫ ⟪c', b - d⟫ ⟪c, b - d⟫ := by
         by_contra hn; exact hK (C2.robKb_of_not_sep hn)
-      have hcb' : ⟪c, p⟫ < ⟪b', p⟫ := by rw [eC, eB']; nlinarith [mul_pos hα4 hB]
+      have hcb' : ⟪c, p⟫ < ⟪b', p⟫ := by rw [eC, eB']; linarith [mul_pos hα4 hB]
       have hle : ⟪c', p⟫ ≤ ⟪b, p⟫ := by
         unfold Sep at hsep
         rcases hsep with h | h

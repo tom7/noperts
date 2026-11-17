@@ -33,10 +33,10 @@ theorem k6t2_c8_tie_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R
   dsimp only at h2
   have htu : ⟪Q, R⟫ < ⟪P, R⟫ := by nlinarith
   have h3 := hfw (0, γ6, -β6) (by simp [k5dL]) (1, 0, 0) (by simp [k5dL])
-    (by dsimp only; rw [hg6]; nlinarith [mul_pos hb6 hA])
+    (by dsimp only; rw [hg6]; linarith [mul_pos hb6 hA])
   dsimp only at h3
   have h4 := hfw (0, γ6, -β6) (by simp [k5dL]) (α4, γ4, 0) (by simp [k5dL])
-    (by dsimp only; rw [hg6]; nlinarith [mul_pos hb6 hA])
+    (by dsimp only; rw [hg6]; linarith [mul_pos hb6 hA])
   dsimp only at h4
   rw [hg6] at h3 h4
   exact k6t2_c8_real hα4 hγ4 hs hβ1 hb6 hg6 hB (by linarith) (by linarith) (by linarith) hinj
@@ -60,7 +60,7 @@ theorem k6t2_c1_tt_tie_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P 
     dsimp only at this; linarith
   have hUb : U - β1 * B < α4 * U + γ4 * T := by
     have := hfw (1, 0, -β1) (by simp [k5dL]) (α4, γ4, 0) (by simp [k5dL])
-      (by dsimp only; nlinarith [mul_pos hβ1 hA])
+      (by dsimp only; linarith [mul_pos hβ1 hA])
     dsimp only at this; linarith
   have htu : ⟪P, R⟫ < ⟪Q, R⟫ := by nlinarith
   have hUT : U < T := by

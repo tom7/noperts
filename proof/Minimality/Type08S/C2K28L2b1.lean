@@ -71,25 +71,25 @@ theorem k28l2b_tsc {D α1 β1 β6 γ6 μ v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 < �
   have nv2 : 0 < -v2 := by linarith
   -- cross products at (0,0,1)
   have c02 : 0 < (α1 - 1) * β6 + β1 * (γ6 * μ + 1) := by
-    nlinarith [mul_pos a1 hβ6p, mul_pos (mul_pos hβ hγ) hμ]
+    linarith [mul_pos a1 hβ6p, mul_pos (mul_pos hβ hγ) hμ]
   have c03 : 0 < β1 * (μ + 1) := by positivity
   have c04 : 0 < β1 := hβ
   have c0b : 0 < (α1 - 1) + β1 := by linarith
   have c13 : 0 < μ * (β1 * (γ6 - 1) + β6) + α1 * β6 := by
-    nlinarith [mul_pos hμ (mul_pos hβ g1), mul_pos hμ hβ6p, mul_pos hα hβ6p]
+    linarith [mul_pos hμ (mul_pos hβ g1), mul_pos hμ hβ6p, mul_pos hα hβ6p]
   have c14 : 0 < β1 * (γ6 * μ) + α1 * β6 := by
-    nlinarith [mul_pos hβ (mul_pos hγ hμ), mul_pos hα hβ6p]
+    linarith [mul_pos hβ (mul_pos hγ hμ), mul_pos hα hβ6p]
   have c10 : 0 < β1 * (γ6 * μ) + β6 * (α1 - 1) + β1 := by
-    nlinarith [mul_pos hβ (mul_pos hγ hμ), mul_pos hβ6p a1]
+    linarith [mul_pos hβ (mul_pos hγ hμ), mul_pos hβ6p a1]
   have c1b : 0 < γ6 * μ * (β1 - 1) + α1 * (β6 - 1) := by
-    nlinarith [mul_pos (mul_pos hγ hμ) b1, mul_pos hα c1]
+    linarith [mul_pos (mul_pos hγ hμ) b1, mul_pos hα c1]
   have c1b' : 0 < β1 * (α1 + μ * (γ6 + β6 - β1)) := by
     nlinarith [mul_pos hμ s1, mul_pos hβ (mul_pos hμ (by linarith : (0:ℝ) < γ6 + β6 - β1))]
   have c24 : 0 < β6 * μ := mul_pos hβ6p hμ
   have c20 : 0 < β6 * (1 + μ) := by positivity
   have c21 : 0 < μ * ((γ6 - 1) * β1 + β6) + α1 * β6 := by
-    nlinarith [mul_pos hμ (mul_pos g1 hβ), mul_pos hμ hβ6p, mul_pos hα hβ6p]
-  have c2b : 0 < μ * (γ6 + β6 - 1) := by nlinarith [mul_pos hμ (by linarith : (0:ℝ) < γ6 + β6 - 1)]
+    linarith [mul_pos hμ (mul_pos g1 hβ), mul_pos hμ hβ6p, mul_pos hα hβ6p]
+  have c2b : 0 < μ * (γ6 + β6 - 1) := by linarith [mul_pos hμ (by linarith : (0:ℝ) < γ6 + β6 - 1)]
   have c2b' : 0 < β6 * (α1 - (β1 - 1) * μ) := mul_pos hβ6p (by linarith)
   have c30 : 0 < μ * β1 := mul_pos hμ hβ
   have c32 : 0 < μ * β6 := mul_pos hμ hβ6p
@@ -105,7 +105,7 @@ theorem k28l2b_tsc {D α1 β1 β6 γ6 μ v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 < �
             k28l2bY_3, k28l2bY_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
          | (left; apply mul_pos hD; linarith [c02, c03, c04, c0b, c13, c14, c10, c1b, c1b', c24, c20, c21, c2b, c2b', c30, c32, c3b])
-         | (right; refine ⟨?_, ?_⟩; ring1; apply mul_pos hD; nlinarith [mul_pos hα nv2, mul_pos hβ nv2, mul_pos hβ hv3, nv2]))
+         | (right; refine ⟨?_, ?_⟩; ring1; apply mul_pos hD; linarith [mul_pos hα nv2, mul_pos hβ nv2, mul_pos hβ hv3, nv2]))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl <;>
@@ -114,10 +114,10 @@ theorem k28l2b_tsc {D α1 β1 β6 γ6 μ v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 < �
             k28l2bY_3, k28l2bY_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
        | (left; apply mul_pos hD; linarith [c02, c03, c04, c0b, c13, c14, c10, c1b, c1b', c24, c20, c21, c2b, c2b', c30, c32, c3b])
-       | (right; refine ⟨?_, ?_⟩; ring1; apply mul_pos hD; nlinarith [mul_pos hα nv2, mul_pos hβ nv2, mul_pos hβ hv3, nv2])
+       | (right; refine ⟨?_, ?_⟩; ring1; apply mul_pos hD; linarith [mul_pos hα nv2, mul_pos hβ nv2, mul_pos hβ hv3, nv2])
        | (rcases hE5.lt_or_eq with h | h
-          · left; apply mul_pos hD; nlinarith [mul_pos hβ (sub_pos.2 h)]
-          · right; refine ⟨?_, ?_⟩; linear_combination (-(D * β1)) * h; apply mul_pos hD; nlinarith [mul_pos hβ hv3]))
+          · left; apply mul_pos hD; linarith [mul_pos hβ (sub_pos.2 h)]
+          · right; refine ⟨?_, ?_⟩; linear_combination (-(D * β1)) * h; apply mul_pos hD; linarith [mul_pos hβ hv3]))
 
 end C2
 end Type08Sp

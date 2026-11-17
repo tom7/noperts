@@ -41,11 +41,11 @@ theorem k28b4_Cz0 {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hLp' : 0 < α1 + (β1 - 1) * μ := by
     rw [hm3μ] at kp
     by_contra hn; push Not at hn
-    nlinarith [mul_nonneg (by linarith : 0 ≤ -(α1 + (β1 - 1) * μ)) k1.le]
+    linarith [mul_nonneg (by linarith : 0 ≤ -(α1 + (β1 - 1) * μ)) k1.le]
   have hLq' : α1 - 1 + β1 * μ < 0 := by
     rw [hm3μ] at kq
     by_contra hn; push Not at hn
-    nlinarith [mul_nonneg hn k1.le]
+    linarith [mul_nonneg hn k1.le]
   obtain ⟨R, hR⟩ : ∃ R : ℝ³, R = μ • (a - d) - (c - d) := ⟨_, rfl⟩
   rw [← hR] at kc ka
   have hu0R : m3 • (a - d) - m1 • (c - d) = m1 • R := by rw [hR, hm3μ]; module
@@ -55,7 +55,7 @@ theorem k28b4_Cz0 {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     · exact absurd h k1.ne'
     · exact h
   have kw : 0 < ⟪a - c', R⟫ := by
-    by_contra hn; push Not at hn; nlinarith [mul_nonneg k1.le (neg_nonneg.2 hn)]
+    by_contra hn; push Not at hn; linarith [mul_nonneg k1.le (neg_nonneg.2 hn)]
   have hΔ : det3 (a - d) (b - d) R ≠ 0 := by
     have e : det3 (a - d) (b - d) R = -det3 (a - d) (b - d) (c - d) := by
       rw [hR]; simp only [det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]; ring
@@ -133,7 +133,7 @@ theorem k28b4_Cz0 {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
     rcases hl with rfl | rfl
     · left; simp only; linarith
-    · left; simp only; nlinarith [abs_nonneg m2, le_abs_self m2, neg_abs_le m2, div_mul_cancel₀ (|m2| + 1) k1.ne']
+    · left; simp only; linarith [abs_nonneg m2, le_abs_self m2, neg_abs_le m2, div_mul_cancel₀ (|m2| + 1) k1.ne']
   have stepLt : ∀ s t, ⟪fpoint (a - d) (b - d) R d s, R⟫ < ⟪fpoint (a - d) (b - d) R d t, R⟫ →
       K25Step (a - d) (b - d) R d [(0, 1), (m1, m2)] s t := fun s t h => ⟨h.le, fun e => absurd e h.ne⟩
   have S21 : K25Step (a - d) (b - d) R d [(0, 1), (m1, m2)] (Y 2) (Y 1) := by

@@ -85,7 +85,7 @@ theorem k5b_kb_rel {a b b' c c' d : ℝ³} {α1 β1 : ℝ} (hβ1 : 0 < β1)
     rw [k5b_inner_frame hF (b' - c) (b - c), k5b_inner_frame hF (b - c) (b - c), e1', e3', hbc1, hbc2, hbc3]
     have : ⟪b' - d, e3⟫ = κ + (⟪c - d, e3⟫ - κ) * τ := by linarith
     rw [hXr, this]; ring
-  · rw [k5b_inner_frame hF (b - c) (b - c), hbc1, hbc2, hbc3]; nlinarith [mul_pos hL hL, sq_nonneg (κ - ⟪c - d, e3⟫)]
+  · rw [k5b_inner_frame hF (b - c) (b - c), hbc1, hbc2, hbc3]; linarith [mul_pos hL hL, sq_nonneg (κ - ⟪c - d, e3⟫)]
 
 theorem k5b_n2_rel {a a' b b' c c' : ℝ³} {α1 β1 : ℝ} (hβ1 : 0 < β1)
     (hb' : b' = c' - β1 • (b - c))
@@ -133,7 +133,7 @@ theorem k5b_n2_rel {a a' b b' c c' : ℝ³} {α1 β1 : ℝ} (hβ1 : 0 < β1)
       rw [this, inner_sub_left, hq3]
     rw [k5b_inner_frame hF (b' - c) (b - c), k5b_inner_frame hF (b - c) (b - c), e1', e3', hbc1, hbc2, hbc3]
     rw [hXg', hzg]; ring
-  · rw [k5b_inner_frame hF (b - c) (b - c), hbc1, hbc2, hbc3]; nlinarith [mul_pos hL hL, sq_nonneg (⟪b - a', e3⟫ - κ)]
+  · rw [k5b_inner_frame hF (b - c) (b - c), hbc1, hbc2, hbc3]; linarith [mul_pos hL hL, sq_nonneg (⟪b - a', e3⟫ - κ)]
 
 end C2
 end Type08Sp

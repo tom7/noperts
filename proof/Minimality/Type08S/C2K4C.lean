@@ -48,7 +48,7 @@ theorem k4b_cyc {D β1 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hβ1 : 0 < β1) (hγ6 :
     | (simp only [TSc, d3, k4bCyc, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
+       | (left; linarith)
        | (right; refine ⟨by ring, by nlinarith⟩))
 
 set_option maxHeartbeats 1600000 in
@@ -101,7 +101,7 @@ theorem k4b_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r 
     HasLexCellAt V r := by
   set Y := k4bCyc β1 γ6 with hY
   obtain ⟨lam, hl0, hl1, hsep⟩ := exists_sep_tilt p q r d hΔ Y (k4bCyc_inj hβ1 hγ6)
-    (u1 := -1) (u2 := -(β1 + 1)) (t1 := 1) (t2 := 0) (by nlinarith) (lo := 0) (hi := 1) (by norm_num)
+    (u1 := -1) (u2 := -(β1 + 1)) (t1 := 1) (t2 := 0) (by linarith) (lo := 0) (hi := 1) (by norm_num)
   set vv := fcomb p q r (-1 + lam * 1) (-(β1 + 1) + lam * 0) 0 with hvv
   have hv1 : -1 + lam * 1 < 0 := by linarith
   have hv2 : -(β1 + 1) + lam * 0 < 0 := by linarith
@@ -118,8 +118,8 @@ theorem k4b_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r 
   have hlexX : LexUni (fun i => ⟪fpoint p q r d (Y (-i)), r⟫) (fun i => ⟪fpoint p q r d (Y (-i)), vv⟫) := by
     refine lexUni5_top _ _ (fun i j h1 h2 => neg_injective (hsep _ _ h1 h2)) ?_ ?_ ?_
     · left; simp only [n0, n1, hY, k4bCyc, pc5_0, pc5_4, hz]; nlinarith
-    · left; simp only [n2, n3, hY, k4bCyc, pc5_3, pc5_2, hz]; nlinarith
-    · left; simp only [n3, n4, hY, k4bCyc, pc5_2, pc5_1, hz]; nlinarith [mul_pos hγ6 hC]
+    · left; simp only [n2, n3, hY, k4bCyc, pc5_3, pc5_2, hz]; linarith
+    · left; simp only [n3, n4, hY, k4bCyc, pc5_2, pc5_1, hz]; linarith [mul_pos hγ6 hC]
   have hlexY : LexUni (fun i => ⟪fpoint p q r d (Y i), r⟫) (fun i => ⟪fpoint p q r d (Y i), vv⟫) := by
     simpa only [neg_neg] using lexUni_neg hlexX
   rcases hΔ.lt_or_gt with hneg | hpos

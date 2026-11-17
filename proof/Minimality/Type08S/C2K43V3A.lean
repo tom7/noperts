@@ -77,7 +77,7 @@ theorem k41dz_V3a_ts {ea ee β6 tau : ℝ} (hea : 0 < ea) (hee : 0 < ee) (hβ6 :
     rcases ht with rfl | rfl | rfl
     · rcases k41dz_V3a_cases i with rfl | rfl | rfl | rfl
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxf0, lxf1, lxf2, lxf3, k41dz_V3a_Y_0, k41dz_V3a_Y_1, k41dz_V3a_Y_2, k41dz_V3a_Y_3, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
-        first | lexk_row | (refine lexkPos_tail (by ring1) ?_; exact lexkPos_head (by nlinarith [mul_pos (mul_pos hβ6 hee) (by positivity : (0:ℝ) < (1 + ee) ^ 2), mul_pos (mul_pos hβ6 hee) (by positivity : (0:ℝ) < (1 + ee) * (1 + ea + ee))]))
+        first | lexk_row | (refine lexkPos_tail (by ring1) ?_; exact lexkPos_head (by linarith [mul_pos (mul_pos hβ6 hee) (by positivity : (0:ℝ) < (1 + ee) ^ 2), mul_pos (mul_pos hβ6 hee) (by positivity : (0:ℝ) < (1 + ee) * (1 + ea + ee))]))
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxf0, lxf1, lxf2, lxf3, k41dz_V3a_Y_0, k41dz_V3a_Y_1, k41dz_V3a_Y_2, k41dz_V3a_Y_3, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
         lexk_row
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxf0, lxf1, lxf2, lxf3, k41dz_V3a_Y_0, k41dz_V3a_Y_1, k41dz_V3a_Y_2, k41dz_V3a_Y_3, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
@@ -95,7 +95,7 @@ theorem k41dz_V3a_ts {ea ee β6 tau : ℝ} (hea : 0 < ea) (hee : 0 < ee) (hβ6 :
         lexk_row
     · rcases k41dz_V3a_cases i with rfl | rfl | rfl | rfl
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxf0, lxf1, lxf2, lxf3, k41dz_V3a_Y_0, k41dz_V3a_Y_1, k41dz_V3a_Y_2, k41dz_V3a_Y_3, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
-        first | lexk_row | (refine lexkPos_tail (by ring1) ?_; exact lexkPos_head (by nlinarith [mul_pos (mul_pos hβ6 hee) (by positivity : (0:ℝ) < (1 + ee) ^ 2), mul_pos (mul_pos hβ6 hee) (by positivity : (0:ℝ) < (1 + ee) * (1 + ea + ee))]))
+        first | lexk_row | (refine lexkPos_tail (by ring1) ?_; exact lexkPos_head (by linarith [mul_pos (mul_pos hβ6 hee) (by positivity : (0:ℝ) < (1 + ee) ^ 2), mul_pos (mul_pos hβ6 hee) (by positivity : (0:ℝ) < (1 + ee) * (1 + ea + ee))]))
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxf0, lxf1, lxf2, lxf3, k41dz_V3a_Y_0, k41dz_V3a_Y_1, k41dz_V3a_Y_2, k41dz_V3a_Y_3, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
         lexk_row
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxf0, lxf1, lxf2, lxf3, k41dz_V3a_Y_0, k41dz_V3a_Y_1, k41dz_V3a_Y_2, k41dz_V3a_Y_3, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
@@ -159,7 +159,7 @@ theorem k41dz_V3a {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     by_contra hh; push Not at hh
     have h2 : 0 ≤ α1 * ⟪p, q⟫ * (⟪q, q⟫ + ⟪r, r⟫ - 2 * ⟪q, r⟫) :=
       mul_nonneg (mul_nonneg hα1'.le hh) hW.le
-    nlinarith [hr1]
+    linarith [hr1]
   have hLe : (1 - α1) * ⟪p, p⟫ - β1 * ⟪p, q⟫ = 0 := by
     have e : a - c' = (1 - α1) • p - β1 • q := by rw [hc', hp, hq]; module
     rw [e] at hL
@@ -167,7 +167,7 @@ theorem k41dz_V3a {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     linarith
   have hα1 : 1 < α1 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) hpp.le, mul_pos hβ1' (neg_pos.2 hs), hLe]
+    linarith [mul_nonneg (sub_nonneg.2 hh) hpp.le, mul_pos hβ1' (neg_pos.2 hs), hLe]
   have hspr : ⟪p, r⟫ = ⟪p, q⟫ := hm1.symm
   have e1 : a - b = p - q := by rw [hp, hq]; abel
   have eaa : a - a' = p - β6 • q - γ6 • r := by rw [ha', hp, hq, hr]; module
@@ -190,7 +190,7 @@ theorem k41dz_V3a {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hw : 0 < w := by rw [hwd]; positivity
   have Epp : ⟪p, p⟫ = (1 + ee) ^ 2 * w := by rw [hwd]; field_simp
   have Es : ⟪p, q⟫ = -(ea * (1 + ee) * w) := by
-    have : (1 + ee) * ⟪p, q⟫ = (1 + ee) * (-(ea * (1 + ee) * w)) := by rw [Epp] at hLe; nlinarith [hLe]
+    have : (1 + ee) * ⟪p, q⟫ = (1 + ee) * (-(ea * (1 + ee) * w)) := by rw [Epp] at hLe; linarith [hLe]
     exact mul_left_cancel₀ hb1.ne' this
   have Es2 : ⟪p, r⟫ = -(ea * (1 + ee) * w) := by rw [hspr, Es]
   have Eqr : ⟪q, r⟫ = ea ^ 2 * w := by
@@ -215,7 +215,7 @@ theorem k41dz_V3a {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
         rw [hrd]; ring
       rw [← this]; exact hΛ
     by_contra hh; push Not at hh
-    nlinarith [mul_pos (mul_pos hrho hpp) (sub_pos.2 hh)]
+    linarith [mul_pos (mul_pos hrho hpp) (sub_pos.2 hh)]
   have hg6 : 0 < 1 + ee - β6 := by linarith
   have hβ6 := hβ6'
   have hSpos : 0 < 1 + ea + ee := by linarith
@@ -248,7 +248,7 @@ theorem k41dz_V3a {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
       ring
     have hFp : 0 < (1 + ea) * ee ^ 2 * (1 + ee) ^ 3 * kap * rho / (ea * (1 + ea + ee) ^ 2 * (kap + rho)) := by positivity
     by_contra hh; push Not at hh
-    nlinarith [mul_pos hFp (sub_pos.2 hh)]
+    linarith [mul_pos hFp (sub_pos.2 hh)]
   obtain ⟨tau, htaud⟩ : ∃ tau : ℝ, tau = ea + (1 + ee - β6) * rho / ((1 + ea) * (1 + ee) * w) := ⟨_, rfl⟩
   have htE : ((1 + ea) * (1 + ee) * w) * (tau - ea) = (1 + ee - β6) * rho := by
     rw [htaud]; field_simp; ring
@@ -376,7 +376,7 @@ theorem k41dz_V3a {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     have h5 := mul_le_mul_of_nonneg_left h1 (by positivity : (0:ℝ) ≤ ea * (kap + rho))
     have hc : 0 < (1 + ee) * ee * rho := by positivity
     have h6 : ((1 + ee) * ee * rho) * ((1 + ea + ee) * (1 + ea) * kap) ≤ ((1 + ee) * ee * rho) * (ea * ee * (kap + rho)) := by
-      nlinarith [h5, e]
+      linarith [h5, e]
     have := le_of_mul_le_mul_left h6 hc
     linarith
   have pk : ∀ (ea ee : ℝ), 0 < ea → 0 < ee → 1 + ea ≤ ee ^ 2 →

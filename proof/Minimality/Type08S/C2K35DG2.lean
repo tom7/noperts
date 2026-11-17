@@ -23,7 +23,7 @@ theorem k28h5bd_d2_gram (pp pq qq qr rr al be b g : ℝ) (hal : 0 < al) (hbe : 0
   have hW : 0 < qq + rr - 2*qr := by linarith
   have hA : 0 < 1 + al := by linarith
   have ht' : -pq = be*(qq*rr-qr^2)/((1+al)*((qq-qr)+(rr-qr))) := by
-    rw [eq_div_iff (by positivity)]; nlinarith
+    rw [eq_div_iff (by positivity)]; linarith
   have e1 : (-pq)^2*((qq-qr)+(rr-qr)) = pq^2*(qq+rr-2*qr) := by ring
   have e2 : ((-pq)^2*((qq-qr)+(rr-qr)) + (pp*(qq*rr-qr^2) - pq^2*(qq+rr-2*qr)))/(qq*rr-qr^2) = pp := by
     rw [e1]; field_simp; ring

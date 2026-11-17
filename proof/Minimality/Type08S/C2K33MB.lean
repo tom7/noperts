@@ -70,7 +70,7 @@ theorem k24b2m_tieM {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     by_contra hh; push Not at hh
     have h2 : 0 ≤ α1 * ⟪p, q⟫ * (⟪q, q⟫ + ⟪r, r⟫ - 2 * ⟪q, r⟫) :=
       mul_nonneg (mul_nonneg hα1'.le hh) hW.le
-    nlinarith [hr1]
+    linarith [hr1]
   have hLe : ⟪p, p⟫ - α1 * ⟪p, p⟫ - β1 * ⟪p, q⟫ = 0 := by
     have e : a - c' = (1 - α1) • p - β1 • q := by rw [hc', hp, hq]; module
     rw [e] at hL
@@ -194,7 +194,7 @@ theorem k24b2m_tieM {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
       rw [show (3 : ZMod 4) + 1 = 0 by decide]
       refine ⟨?_, fun _ v1 v2 hv => ?_⟩
       · simp only [k24b2mCyc_3, k24b2mCyc_0, inner_fpoint, hqp, hrp, hspr]
-        nlinarith
+        linarith
       · have := hv (⟪a - b', q⟫, ⟪a - b', r⟫) (by simp)
         simp only [k24b2mCyc_3, k24b2mCyc_0, eA, eB']
         simpa using this

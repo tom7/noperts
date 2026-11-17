@@ -68,14 +68,14 @@ theorem k5d_c1_tsc {α4 γ4 β1 β6 γ6 v1 v2 : ℝ} (hα4 : 0 < α4) (hγ4 : 0 
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, k5dX1_0, k5dX1_1, k5dX1_2, k5dX1_3, k5dX1_4, f0, f1, f2, f3, f4, Prod.fst_sub,
           Prod.snd_sub, Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl
     · rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, k5dX1_0, k5dX1_1, k5dX1_2, k5dX1_3, k5dX1_4, f0, f1, f2, f3, f4, Prod.fst_sub,
           Prod.snd_sub, Prod.mk_sub_mk]
-       first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+       first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
     · rcases hg6 with hg | rfl
       · have k14 := mul_pos (sub_pos.2 hg) hα4
         have k15 := mul_pos (sub_pos.2 hg) hv1
@@ -87,7 +87,7 @@ theorem k5d_c1_tsc {α4 γ4 β1 β6 γ6 v1 v2 : ℝ} (hα4 : 0 < α4) (hγ4 : 0 
       · rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
         (simp only [TSc, d3, k5dX1_0, k5dX1_1, k5dX1_2, k5dX1_3, k5dX1_4, f0, f1, f2, f3, f4, Prod.fst_sub,
           Prod.snd_sub, Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
 
 end C2
 end Type08Sp

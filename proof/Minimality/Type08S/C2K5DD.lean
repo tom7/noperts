@@ -77,10 +77,10 @@ theorem k5d_c1_real_tt {α4 γ4 β1 k0 U T B : ℝ} (hα4 : 0 < α4) (hγ4 : 0 <
     | (simp only [k5dX1_0, k5dX1_1, k5dX1_2, k5dX1_3, k5dX1_4, f0, f1, f2, f3, f4, s0, s1, s2, s3, s4]
        rintro ⟨⟨h5, h6⟩, h7, h8⟩
        first
-       | nlinarith
+       | linarith
        | (have hT0 : T < 0 := by linarith
           rcases le_total U T with hle | hle <;>
-          nlinarith [mul_nonneg hα4.le (sub_nonneg.2 hle), mul_nonneg hγ4.le (sub_nonneg.2 hle),
+          linarith [mul_nonneg hα4.le (sub_nonneg.2 hle), mul_nonneg hγ4.le (sub_nonneg.2 hle),
             mul_pos (sub_pos.2 hs) (neg_pos.2 hT0), mul_pos (sub_pos.2 hs) (neg_pos.2 hU0)]))
 
 end C2

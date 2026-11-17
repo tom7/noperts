@@ -49,9 +49,9 @@ theorem k6mh1_L4 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     rw [e2, e1, k6m_ip, ← hm1]
     rw [← hm1] at hl
     rcases le_or_gt 0 ((1 - α1) * ⟪p, q⟫ - β1 * ⟪q, q⟫) with h0 | h0
-    · nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ β6 - 1) h0, mul_nonneg (by linarith : (0:ℝ) ≤ γ6) h0,
+    · linarith [mul_nonneg (by linarith : (0:ℝ) ≤ β6 - 1) h0, mul_nonneg (by linarith : (0:ℝ) ≤ γ6) h0,
         mul_pos (by linarith : (0:ℝ) < γ6) (mul_pos (by linarith : (0:ℝ) < β1) hm2)]
-    · nlinarith [mul_pos (by linarith : (0:ℝ) < β6) (neg_pos.2 h0)]
+    · linarith [mul_pos (by linarith : (0:ℝ) < β6) (neg_pos.2 h0)]
   have := k6mh1_cell2 (a := a) (a' := a') (b := c) (b' := c') (c := b) (c' := b') (d := d)
     (α1 := α1) (β1 := β1) (β6 := γ6) (γ6 := β6) hdet' hb' hc' (by rw [ha']; abel) hα1 hβ1 hγ6 hβ6
     (k6m_M_swap ⟨m1, m2, m3⟩) hneg
