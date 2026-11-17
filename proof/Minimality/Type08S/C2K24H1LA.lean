@@ -165,8 +165,7 @@ theorem k24h1lY_inj {α β B g : ℝ} (hα : 1 < α) (hβ : 1 < β) (hB : 1 < B)
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
     simp only [k24h1lY_0, k24h1lY_1, k24h1lY_2, k24h1lY_3, k24h1lY_4, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; linarith) | (exfalso; obtain ⟨h1', h2', h3'⟩ := h; linarith) |
-      (exfalso; obtain ⟨h1', h2', h3'⟩ := h; nlinarith)
+    first | rfl | (exfalso; linarith)
 
 set_option maxHeartbeats 12800000 in
 theorem k24h1l_tsc {D α β B g v1 v2 : ℝ} (hD : 0 < D) (hα : 1 < α) (hβ : 1 < β) (hB : 1 < B) (hg : 1 < g)
@@ -218,8 +217,8 @@ theorem k24h1l_tsc {D α β B g v1 v2 : ℝ} (hD : 0 < D) (hα : 1 < α) (hβ : 
       | (simp only [TSc, d3, e0, e1, e2, e3, e4, f0, f1, f2, f3, f4, k24h1lY_0, k24h1lY_1, k24h1lY_2, k24h1lY_3,
           k24h1lY_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; first | linarith | nlinarith)
-         | (right; refine ⟨by ring, ?_⟩; first | linarith | nlinarith))
+         | (left; linarith)
+         | (right; refine ⟨by ring, ?_⟩; linarith))
   · intro t ht' i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht'
     rcases ht' with rfl | rfl <;>
@@ -227,8 +226,8 @@ theorem k24h1l_tsc {D α β B g v1 v2 : ℝ} (hD : 0 < D) (hα : 1 < α) (hβ : 
       (simp only [TSc, d3, e0, e1, e2, e3, e4, f0, f1, f2, f3, f4, k24h1lY_0, k24h1lY_1, k24h1lY_2, k24h1lY_3,
           k24h1lY_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; first | linarith | nlinarith)
-       | (right; refine ⟨by ring, ?_⟩; first | linarith | nlinarith))
+       | (left; linarith)
+       | (right; refine ⟨by ring, ?_⟩; linarith))
 
 set_option maxHeartbeats 3200000 in
 /-- Metric facts of the cell. -/
