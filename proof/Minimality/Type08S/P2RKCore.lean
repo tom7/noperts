@@ -53,8 +53,8 @@ depth coefficients of the corner-split and side lemmas. -/
 set_option hygiene false in
 macro "kfacts" : tactic => `(tactic| (
   have hα1' : (0:ℝ) < α1 - 1 := by linarith
-  have hγ4' : (0:ℝ) < α4 + α1 * (γ4 - 1) := by linarith [mul_pos hα4 hβ1]
-  have hγ4'' : (0:ℝ) < α4 + γ4 - 1 := by linarith [mul_pos hα4 hβ1, mul_pos hα1' hγ4]
+  have hγ4' : (0:ℝ) < α4 + α1 * (γ4 - 1) := by nlinarith [mul_pos hα4 hβ1]
+  have hγ4'' : (0:ℝ) < α4 + γ4 - 1 := by nlinarith [mul_pos hα4 hβ1, mul_pos hα1' hγ4]
   have hab : (0:ℝ) < α1 + β1 - 1 := by linarith
   have oA := mul_pos (mul_pos (mul_pos hr hha) hα1pos) hγ4
   have oB := mul_pos (mul_pos hr hha) hγ4'
