@@ -186,7 +186,7 @@ theorem rest_V12 (tp tm sp sm κp κm : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (htm
   rcases hw with rfl | rfl <;>
   rcases z5c i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc, C3.sub, ptv, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
-    norm_num <;>
+    norm_num;
     stfin2
 
 set_option linter.unusedTactic false in
@@ -277,7 +277,7 @@ theorem acute_V1B6_pf (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA22 x)
       funext i
       rw [hc]
       rcases z5c i with rfl | rfl | rfl | rfl | rfl <;>
-        simp [quint_0, quint_1, quint_2, quint_3, quint_4, F.GG_uA, ptv] <;> ring
+        simp [quint_0, quint_1, quint_2, quint_3, quint_4, F.GG_uA, ptv]; ring
     rw [hz]
     refine robust5_B ?_ ?_ ?_ ?_ ?_
     · nlinarith [mul_pos hα F.S.tp_pos, mul_pos hγ F.S.sp_pos]
@@ -317,7 +317,7 @@ theorem acute_V12_pf (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA22 x)
       funext i
       rw [hc]
       rcases z5c i with rfl | rfl | rfl | rfl | rfl <;>
-        simp [quint_0, quint_1, quint_2, quint_3, quint_4, F.GG_uA, ptv] <;> ring
+        simp [quint_0, quint_1, quint_2, quint_3, quint_4, F.GG_uA, ptv]; ring
     rw [hz]
     refine robust5_C ?_ ?_ ?_ ?_
     · nlinarith [mul_pos hα (sub_pos.2 F.S.tm_lt)]

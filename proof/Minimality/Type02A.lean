@@ -358,7 +358,7 @@ theorem acute_A1B6_pf (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA22 x)
       funext i
       rw [hc]
       rcases z4c i with rfl | rfl | rfl | rfl <;>
-        simp [quad_0, quad_1, quad_2, quad_3, F.GG_uA, ptv] <;> ring
+        simp [quad_0, quad_1, quad_2, quad_3, F.GG_uA, ptv]
     rw [hz]
     exact rob_A1B6 hγ F.S.sm_pos F.S.sm_lt
 
