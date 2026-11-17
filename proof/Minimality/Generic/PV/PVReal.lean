@@ -130,7 +130,7 @@ theorem skel_LV_dn (a1 e1 b1 b2 e2 a2 : ℝ)
   all_goals (try rw [skel1_mid])
   all_goals (try rw [skel1_mid])
   all_goals (try simp only [List.cons_append, List.nil_append])
-  all_goals (first | (intro h; linarith) | (exfalso; linarith) | cu_any)
+  all_goals (first | (intro h; linarith) | cu_any)
 
 theorem skel_VV_minus (a1 e1 b1 b2 e2 a2 : ℝ)
     (hs1 : (e1 = a1 ∧ a1 < b1) ∨ (e1 = b1 ∧ b1 < a1) ∨ (e1 < a1 ∧ e1 < b1))
