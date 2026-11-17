@@ -75,7 +75,7 @@ lemma facing_A : ∃ l : ℝ, 0 < l ∧ ∀ q : C3,
   rw [fv, core_a (F.S.hm * F.S.sm) (F.S.hm + F.S.km*F.S.tm - F.S.km) (-(F.S.sm*(1-F.S.tm)))
     (0 - FF.f 0 (x 5)) (FF.f 0 (x 6) - FF.f 0 (x 5)) ⟪FF.N 0, F.e⟫ (by positivity)
     (by linear_combination F.S.hm * c4 - F.S.km * c3) (by linear_combination (-F.S.sm) * c3) q]
-  simp only [nf, Matrix.cons_val_zero] <;> ring
+  simp only [nf, Matrix.cons_val_zero]; ring
 
 lemma facing_B : ∃ l : ℝ, 0 < l ∧ ∀ q : C3,
     ⟪FF.N 1, F.toFrame7.fvC q⟫ = l * nf F.S q 1 := by
@@ -230,7 +230,10 @@ lemma fvC_ne_zero (qu : C3) (t : Fin 8) (h : nf F.S qu t ≠ 0) : F.toFrame7.fvC
   obtain ⟨l, hl, hq⟩ := facing F FF t
   have := hq qu
   rw [h0, inner_zero_right] at this
-  exact h (by rcases mul_eq_zero.1 this.symm with h1 | h1; exact absurd h1 hl.ne'; exact h1)
+  exact h (by
+    rcases mul_eq_zero.1 this.symm with h1 | h1
+    · exact absurd h1 hl.ne'
+    · exact h1)
 
 include FF in
 /-- **Leaf assembly**: a cycle `c` that is a silhouette of the pattern, facings at the frame views
