@@ -44,12 +44,12 @@ theorem n2_eq (F : OctFacets a a' b b' c c') (hd : IsCap F d)
   have hs0 := cfg.hs0; have hs1 := cfg.hs1; have hb2 := cfg.hb2
   -- orientation in the plane `Q_ab`
   have c1 : 0 < cxy ⟨b1, r2, 0⟩ ⟨s * b1, s * r2, m3⟩ ⟨r1, r2, 0⟩ := by
-    simp only [cxy]; nlinarith [mul_pos (mul_pos (sub_pos.mpr hs1) hb2) (sub_pos.mpr hd1)]
+    simp only [cxy]; linarith [mul_pos (mul_pos (sub_pos.mpr hs1) hb2) (sub_pos.mpr hd1)]
   have c2 : 0 < cxy ⟨b1, r2, 0⟩ ⟨s * b1, s * r2, m3⟩ ⟨a1, a2, a3⟩ := by
     have key := plane_aff FQab FH ⟨b1, r2, 0⟩ ⟨s * b1, s * r2, m3⟩ ⟨a1, a2, a3⟩ ⟨r1, r2, 0⟩ hγ.ne'
       cfg.Qab_B cfg.Qab_M cfg.Qab_A cfg.Qab_R cfg.H_B cfg.H_M
     by_contra hc; push Not at hc
-    nlinarith [mul_nonneg_of_nonpos_of_nonpos cfg.H_R.le hc, mul_neg_of_neg_of_pos cfg.H_A c1]
+    linarith [mul_nonneg_of_nonpos_of_nonpos cfg.H_R.le hc, mul_neg_of_neg_of_pos cfg.H_A c1]
   have c3 : 0 < cxy ⟨s * b1, s * r2, m3⟩ ⟨a1, a2, a3⟩ ⟨b1, r2, 0⟩ := by
     have : cxy ⟨s * b1, s * r2, m3⟩ ⟨a1, a2, a3⟩ ⟨b1, r2, 0⟩ = cxy ⟨b1, r2, 0⟩ ⟨s * b1, s * r2, m3⟩ ⟨a1, a2, a3⟩ := by
       simp only [cxy]; ring
@@ -58,7 +58,7 @@ theorem n2_eq (F : OctFacets a a' b b' c c') (hd : IsCap F d)
     have key := plane_aff FQab FQac ⟨s * b1, s * r2, m3⟩ ⟨a1, a2, a3⟩ ⟨b1, r2, 0⟩ ⟨r1, r2, 0⟩ hγ.ne'
       cfg.Qab_M cfg.Qab_A cfg.Qab_B cfg.Qab_R cfg.Qac_M cfg.Qac_A
     by_contra hc; push Not at hc
-    nlinarith [mul_nonneg_of_nonpos_of_nonpos cfg.Qac_B.le hc, mul_neg_of_neg_of_pos cfg.Qac_R c3]
+    linarith [mul_nonneg_of_nonpos_of_nonpos cfg.Qac_B.le hc, mul_neg_of_neg_of_pos cfg.Qac_R c3]
   have c5 : 0 < cxy ⟨a1, a2, a3⟩ ⟨r1, r2, 0⟩ ⟨s * b1, s * r2, m3⟩ := by
     have : cxy ⟨a1, a2, a3⟩ ⟨r1, r2, 0⟩ ⟨s * b1, s * r2, m3⟩ = cxy ⟨s * b1, s * r2, m3⟩ ⟨a1, a2, a3⟩ ⟨r1, r2, 0⟩ := by
       simp only [cxy]; ring

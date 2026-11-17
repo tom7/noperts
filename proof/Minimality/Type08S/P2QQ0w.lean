@@ -91,7 +91,7 @@ theorem facts08w (θ : Fin 6 → ℝ) (hθ : ∀ k, k ≠ 9 → k ≠ 10 → k �
 theorem gWU_neg_w0 (θ : Fin 6 → ℝ) (hθ : ∀ k, k ≠ 9 → k ≠ 10 → k ≠ 11 → 0 < ineq08 θ k) : gWU θ < 0 := by
   obtain ⟨-, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, f10, -, -⟩ := facts08w0 θ hθ
   simp only [fc08, cdet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at f10
-  unfold gWU; nlinarith [f10]
+  unfold gWU; linarith [f10]
 
 set_option maxHeartbeats 4000000 in
 theorem common08w (θ : Fin 6 → ℝ) (hθ : ∀ k, k ≠ 9 → k ≠ 10 → k ≠ 11 → 0 < ineq08 θ k) (hga : 0 ≤ gWa θ) (hgb : 0 ≤ gWb θ) :
@@ -109,7 +109,7 @@ theorem q2polyw (θ : Fin 6 → ℝ) (hθ : ∀ k, k ≠ 9 → k ≠ 10 → k �
     common08w θ hθ hga hgb
   have dA : 0 < -1 + θ 5 := by linarith
   have dB : 0 < -1 + θ 0 := by
-    have h : 0 < θ 4 * (θ 0 - 1) := by nlinarith [mul_pos p1 dA, gb]
+    have h : 0 < θ 4 * (θ 0 - 1) := by linarith [mul_pos p1 dA, gb]
     linarith [(pos_iff_pos_of_mul_pos h).mp p4]
   nlinarith [mul_pos p3 p4, mul_pos (mul_pos p3 p4) dB, mul_pos p1 dA, mul_pos p2 p1,
     mul_pos (mul_pos p1 p2) dA, mul_pos p1 dA, mul_pos p0 dA, mul_pos p3 dA, mul_pos p4 dA]

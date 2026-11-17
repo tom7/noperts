@@ -44,17 +44,17 @@ theorem n2g_g0 (hA : 0 < A) (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : 
   intro i
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl
   · simp only [h5Pts, b0, quint_0, quint_1, LexTest, tst, hdet]
-    right; refine ⟨by ring, by nlinarith⟩
+    right; refine ⟨by ring, by linarith⟩
   · simp only [h5Pts, b1', quint_1, quint_2, LexTest, tst, hdet]
     rcases lt_or_eq_of_le hzv with hz | hz
-    · left; nlinarith [mul_pos (mul_pos hs0 hb2) hz]
+    · left; linarith [mul_pos (mul_pos hs0 hb2) hz]
     · subst hz
-      right; refine ⟨by ring, by nlinarith⟩
+      right; refine ⟨by ring, by linarith⟩
   · exact hrow2
   · simp only [h5Pts, b3, quint_3, quint_4, LexTest, tst, hdet]
-    left; nlinarith
+    left; linarith
   · simp only [h5Pts, b4, quint_0, quint_4, LexTest, tst, hdet]
-    left; nlinarith
+    left; linarith
 
 end G0
 
@@ -71,7 +71,7 @@ theorem ttc {t : ℝ} (ht : 0 < t) (htt : t * (s * b2) < m3) : t * FQac.c < -FQa
   rw [d0, a0] at Qac_M
   have hsb := mul_pos h.hs0 h.hb2
   by_contra hh; push Not at hh
-  nlinarith [mul_nonneg hsb.le (show 0 ≤ t * FQac.c + FQac.b by linarith), mul_pos hc h.hm3,
+  linarith [mul_nonneg hsb.le (show 0 ≤ t * FQac.c + FQac.b by linarith), mul_pos hc h.hm3,
     mul_pos hc (sub_pos.mpr htt)]
 
 theorem a2gt (hr : b2 < r2) (hb : b1 ≤ r1) : s * b2 < a2 := by
@@ -81,7 +81,7 @@ theorem a2gt (hr : b2 < r2) (hb : b1 ≤ r1) : s * b2 < a2 := by
   have hα := h.Qab_aneg hz hr
   have hsb := mul_pos h.hs0 h.hb2
   have : 0 < (a2 - s * b2) * (FQab.b * (s * b2) + FQab.c * m3) := by
-    rw [rel]; nlinarith [mul_pos (mul_pos (neg_pos.mpr hα) hsb) (sub_pos.mpr hxa)]
+    rw [rel]; linarith [mul_pos (mul_pos (neg_pos.mpr hα) hsb) (sub_pos.mpr hxa)]
   have := pos_of_mul_pos_left this hk.le
   linarith
 
@@ -114,23 +114,23 @@ theorem n2_hcv0 {E U zv zw A b1 b2 r1 r2 s m3 a1 a2 a3 : ℝ} {FH FQab FQac FT1 
   have ha3m : m3 < a3 := by nlinarith
   -- edge 0: `a' c`
   have k02 : crossYZ ⟨0, 0, zw⟩ ⟨0, 0, zv⟩ ⟨s * b1, s * b2, m3⟩ < 0 := by
-    simp only [crossYZ]; nlinarith [mul_pos hD hsb]
+    simp only [crossYZ]; linarith [mul_pos hD hsb]
   have k03 : crossYZ ⟨0, 0, zw⟩ ⟨0, 0, zv⟩ ⟨a1, a2, a3⟩ < 0 := by
-    simp only [crossYZ]; nlinarith [mul_pos hD ha2]
+    simp only [crossYZ]; linarith [mul_pos hD ha2]
   have k04 : crossYZ ⟨0, 0, zw⟩ ⟨0, 0, zv⟩ ⟨r1, r2, 0⟩ < 0 := by
-    simp only [crossYZ]; nlinarith [mul_pos hD hr2]
+    simp only [crossYZ]; linarith [mul_pos hD hr2]
   -- edge 1: `c 2`
   have k10 : crossYZ ⟨0, 0, zv⟩ ⟨s * b1, s * b2, m3⟩ ⟨0, 0, zw⟩ < 0 := by
     rw [← crossYZ_cyc]; exact k02
   have k14 : crossYZ ⟨0, 0, zv⟩ ⟨s * b1, s * b2, m3⟩ ⟨r1, r2, 0⟩ < 0 := by
-    simp only [crossYZ]; rw [hz]; nlinarith [mul_pos hm3 hr2]
+    simp only [crossYZ]; rw [hz]; linarith [mul_pos hm3 hr2]
   -- edge 2: `2 a`
   have k24 : crossYZ ⟨s * b1, s * b2, m3⟩ ⟨a1, a2, a3⟩ ⟨r1, r2, 0⟩ < 0 := by
     simp only [crossYZ]
-    nlinarith [mul_pos (sub_pos.mpr hg) hm3, mul_pos (sub_pos.mpr ha3m) (show 0 < r2 - s * b2 by nlinarith [mul_pos (sub_pos.mpr h.hs1) hb2])]
+    linarith [mul_pos (sub_pos.mpr hg) hm3, mul_pos (sub_pos.mpr ha3m) (show 0 < r2 - s * b2 by linarith [mul_pos (sub_pos.mpr h.hs1) hb2])]
   have k20 : crossYZ ⟨s * b1, s * b2, m3⟩ ⟨a1, a2, a3⟩ ⟨0, 0, zw⟩ < 0 := by
     simp only [crossYZ]
-    nlinarith [mul_pos (sub_pos.mpr hg) (neg_pos.mpr hzw)]
+    linarith [mul_pos (sub_pos.mpr hg) (neg_pos.mpr hzw)]
   -- edge 3: `a c'` = T1 ∩ Qab
   have p3w := phiP (F1 := FT1) (F2 := FQab) (S := ⟨0, 0, zw⟩) h.T1_W.le h.Qab_W.le hT1 hQb (Or.inl h.T1_W)
   have p3c := phiP (F1 := FT1) (F2 := FQab) (S := ⟨0, 0, zv⟩) h.T1_C.le h.Qab_C.le hT1 hQb (Or.inl h.T1_C)

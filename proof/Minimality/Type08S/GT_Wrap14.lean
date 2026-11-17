@@ -20,13 +20,13 @@ variable {a a' b b' c c' d : ℝ³}
 theorem phiN {F1 F2 : Fc} {S : V3} (h1 : F1.ev S ≤ 0) (h2 : F2.ev S ≤ 0) (a1 : F1.a < 0) (a2 : 0 < F2.a)
     (hs : F1.ev S < 0 ∨ F2.ev S < 0) : Phi F1 F2 S < 0 := by
   simp only [Phi]
-  rcases hs with h | h <;> nlinarith [mul_nonneg (neg_nonneg.mpr h1) a2.le, mul_nonneg (neg_nonneg.mpr h2) (neg_nonneg.mpr a1.le),
+  rcases hs with h | h <;> linarith [mul_nonneg (neg_nonneg.mpr h1) a2.le, mul_nonneg (neg_nonneg.mpr h2) (neg_nonneg.mpr a1.le),
     mul_pos (neg_pos.mpr h) a2, mul_pos (neg_pos.mpr h) (neg_pos.mpr a1)]
 
 theorem phiP {F1 F2 : Fc} {S : V3} (h1 : F1.ev S ≤ 0) (h2 : F2.ev S ≤ 0) (a1 : 0 < F1.a) (a2 : F2.a < 0)
     (hs : F1.ev S < 0 ∨ F2.ev S < 0) : 0 < Phi F1 F2 S := by
   simp only [Phi]
-  rcases hs with h | h <;> nlinarith [mul_nonneg (neg_nonneg.mpr h1) (neg_nonneg.mpr a2.le), mul_nonneg (neg_nonneg.mpr h2) a1.le,
+  rcases hs with h | h <;> linarith [mul_nonneg (neg_nonneg.mpr h1) (neg_nonneg.mpr a2.le), mul_nonneg (neg_nonneg.mpr h2) a1.le,
     mul_pos (neg_pos.mpr h) (neg_pos.mpr a2), mul_pos (neg_pos.mpr h) a1]
 
 theorem neg_of_prod {x y : ℝ} (h : 0 < x * y) (hy : y < 0) : x < 0 := by nlinarith
@@ -49,11 +49,11 @@ theorem n2_hcv {E U zv zw A b1 b2 r1 r2 s m3 a1 a2 a3 : ℝ} {FH FQab FQac FT1 F
   have hzz : zw < zv := h.hzw
   -- edge 0: `a' c`
   have k02 : crossYZ ⟨0, 0, zw⟩ ⟨0, 0, zv⟩ ⟨s * b1, s * b2, m3⟩ < 0 := by
-    simp only [crossYZ]; nlinarith [mul_pos (show 0 < zv - zw by linarith) hsb]
+    simp only [crossYZ]; linarith [mul_pos (show 0 < zv - zw by linarith) hsb]
   have k03 : crossYZ ⟨0, 0, zw⟩ ⟨0, 0, zv⟩ ⟨a1, a2, a3⟩ < 0 := by
-    simp only [crossYZ]; nlinarith [mul_pos (show 0 < zv - zw by linarith) ha2]
+    simp only [crossYZ]; linarith [mul_pos (show 0 < zv - zw by linarith) ha2]
   have k04 : crossYZ ⟨0, 0, zw⟩ ⟨0, 0, zv⟩ ⟨r1, r2, 0⟩ < 0 := by
-    simp only [crossYZ]; nlinarith [mul_pos (show 0 < zv - zw by linarith) hr2]
+    simp only [crossYZ]; linarith [mul_pos (show 0 < zv - zw by linarith) hr2]
   -- edge 1: `c 2` = H ∩ Qac
   have p1a := phiN (F1 := FH) (F2 := FQac) (S := ⟨a1, a2, a3⟩) h.H_A.le h.Qac_A.le hHa hQc (Or.inl h.H_A)
   have p1r := phiN (F1 := FH) (F2 := FQac) (S := ⟨r1, r2, 0⟩) h.H_R.le h.Qac_R.le hHa hQc (Or.inl h.H_R)

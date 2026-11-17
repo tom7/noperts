@@ -76,10 +76,10 @@ theorem k22z1_c3_strict {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d
   have Ec : fpoint q r R d (0, 1, 0) = c := by rw [k17f_fp, hr]; module
   have Ea : fpoint q r R d (-ℓ, 0, -ℓ) = a := by
     rw [k17f_fp, hRv]; rw [hp]
-    match_scalars <;> nlinarith [hℓu]
+    match_scalars <;> linarith [hℓu]
   have Ec' : fpoint q r R d (-ℓ, 0, -ℓ - 1) = c' := by
     rw [k17f_fp, hRv, hc', hβ11, hp, hq]
-    match_scalars <;> nlinarith [hℓu]
+    match_scalars <;> linarith [hℓu]
   have Eb' : fpoint q r R d (-α4 * ℓ, γ4, -α4 * ℓ) = b' := by
     rw [k17f_fp, hRv, hb', hp, hr]
     match_scalars <;> nlinarith [hℓu]
@@ -95,18 +95,18 @@ theorem k22z1_c3_strict {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d
     simp only [inner_sub_left, inner_sub_right, inner_smul_left, inner_smul_right, conj_trivial, hpq, hqp]
     have := ipR; rw [hRv] at this
     simp only [inner_sub_right, inner_smul_right, hpq] at this
-    nlinarith
+    linarith
   have hS2 : 0 < u * ⟪p, p⟫ - ⟪q, q⟫ := by
     have e : b - a = q - p := by rw [hp, hq]; module
     rw [e, inner_sub_left, iqR, ipR] at hS
     linarith
   have hpp : 0 < ⟪p, p⟫ := by
     by_contra hn; push Not at hn
-    nlinarith [mul_nonneg hu0.le (by linarith : 0 ≤ -⟪p, p⟫)]
+    linarith [mul_nonneg hu0.le (by linarith : 0 ≤ -⟪p, p⟫)]
   set x := ⟪r, p⟫ with hx
   set pp := ⟪p, p⟫ with hpp'
   set qq := ⟪q, q⟫ with hqq'
-  have hβ6 : β6 * γ4 = γ4 + α4 - 1 := by nlinarith
+  have hβ6 : β6 * γ4 = γ4 + α4 - 1 := by linarith
   have zb : ⟪fpoint q r R d (1, 0, 0), R⟫ = ⟪d, R⟫ - qq := by rw [hz]; simp only [iqR]; ring
   have za' : ⟪fpoint q r R d (β6, 1, 0), R⟫ = ⟪d, R⟫ - β6 * qq - u * x := by
     rw [hz]; simp only [iqR, irR]; ring
@@ -131,7 +131,7 @@ theorem k22z1_c3_strict {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d
     have h1 := hC (0, -1) (by simp)
     have h2 := hC (-γ4, -(α4 - 1) * ℓ) (by simp)
     simp only at h1 h2
-    exact (k22z1c3_tsc hD hℓ0 hα41 hγ4 hβ6 (by linarith) (by nlinarith)).1
+    exact (k22z1c3_tsc hD hℓ0 hα41 hγ4 hβ6 (by linarith) (by linarith)).1
   · intro y hy hyx
     have hV : y = fpoint q r R d (-ℓ, 0, -ℓ) ∨ y = fpoint q r R d (-ℓ, 0, -ℓ - 1) ∨
         y = fpoint q r R d (1, 0, 0) ∨ y = fpoint q r R d (β6, 1, 0) ∨
@@ -147,7 +147,7 @@ theorem k22z1_c3_strict {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d
       have h1 := hC (0, -1) (by simp)
       have h2 := hC (-γ4, -(α4 - 1) * ℓ) (by simp)
       simp only at h1 h2
-      exact (k22z1c3_tsc hD hℓ0 hα41 hγ4 hβ6 (by linarith) (by nlinarith)).2
+      exact (k22z1c3_tsc hD hℓ0 hα41 hγ4 hβ6 (by linarith) (by linarith)).2
     rcases hV with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · exact ⟨_, rfl, fun v1 v2 hC D hD i => hT v1 v2 hC D hD _ (by simp) i⟩
     · exact (hyx 3 (by rw [k22z1c3Y_3])).elim
@@ -158,17 +158,17 @@ theorem k22z1_c3_strict {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d
     · exact ⟨_, rfl, fun v1 v2 hC D hD i => hT v1 v2 hC D hD _ (by simp) i⟩
   · intro v1 v2 hC hw
     refine k22z1c3_uni _ _ hw ?_ ?_
-    · simp only [k22z1c3Y_3, k22z1c3Y_0, zb, zc']; nlinarith [mul_pos hu0 hpp, mul_pos (mul_pos hu0 hu0) hpp]
+    · simp only [k22z1c3Y_3, k22z1c3Y_0, zb, zc']; linarith [mul_pos hu0 hpp, mul_pos (mul_pos hu0 hu0) hpp]
     · simp only [k22z1c3Y_0, k22z1c3Y_1, k22z1c3Y_2, zb, za', zb']
       intro hle
       have h1 : 0 ≤ u * x + (β6 - 1) * qq := by linarith
       have h2 := mul_nonneg (sub_nonneg.2 hγ4.le) h1
       have h3 : β6 * γ4 * qq = (γ4 + α4 - 1) * qq := by rw [hβ6]
       have h4 := mul_pos (by linarith : 0 < α4) hS2
-      nlinarith
+      linarith
   · intro l hl
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
-    rcases hl with rfl | rfl <;> (left; simp <;> nlinarith [mul_pos hℓ0 (sub_pos.2 hα41), hℓ0])
+    rcases hl with rfl | rfl <;> (left; simp <;> linarith [mul_pos hℓ0 (sub_pos.2 hα41), hℓ0])
 
 end C2
 end Type08Sp

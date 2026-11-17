@@ -34,7 +34,7 @@ theorem cxyMAG : cxy ⟨s * b1, s * b2, m3⟩ ⟨a1, a2, a3⟩ ⟨A, 0, 0⟩ < 0
   rw [← e] at g
   have e1 := h.Qab_C; have e2 := h.Qab_G
   by_contra hh; push Not at hh
-  nlinarith [mul_nonneg (neg_nonneg.mpr e1.le) hh, mul_pos_of_neg_of_neg e2 g]
+  linarith [mul_nonneg (neg_nonneg.mpr e1.le) hh, mul_pos_of_neg_of_neg e2 g]
 
 end N2Cfg0
 
@@ -103,7 +103,7 @@ theorem n2_gt0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
     · exact lex_of_cross _ (n2_hcv0 cfg hz hrb hbr i j h1 h2 hx)
   have hma : crossYZ ⟨s * b1, s * b2, m3⟩ ⟨a1, a2, a3⟩ ⟨b1, b2, 0⟩ < 0 := by
     simp only [crossYZ]
-    nlinarith [mul_pos (sub_pos.mpr hg) hm3, mul_pos (sub_pos.mpr ha3m) (show 0 < b2 - s * b2 by nlinarith [mul_pos (sub_pos.mpr hs1) hb2])]
+    linarith [mul_pos (sub_pos.mpr hg) hm3, mul_pos (sub_pos.mpr ha3m) (show 0 < b2 - s * b2 by linarith [mul_pos (sub_pos.mpr hs1) hb2])]
   exact Fr.n2_core (V := insert d ({a, a', b, b', c, c'} : Finset ℝ³))
     (cP := c) (mP := d) (fP := b) (rP := c') (gP := b') (wP := a') (aP := a)
     (by intro y hy; simp only [Finset.mem_insert, Finset.mem_singleton] at hy; tauto)

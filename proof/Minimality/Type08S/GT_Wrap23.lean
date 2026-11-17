@@ -32,13 +32,13 @@ theorem n2z_t1 {α2 β1 β2 γ1 γ2 δ2 b1 b2 t1 t2 t3 : ℝ} (hb2 : 0 < b2) (h�
     (hβ1 : β1 < 0) (hβ2 : 0 ≤ β2) (d2 : δ2 < 0) (Qab_B : α2 * b1 + β2 * b2 + δ2 = 0)
     (E1 : β1 * t2 + γ1 * t3 = 0) (E2 : α2 * t1 + β2 * t2 + γ2 * t3 = 0)
     (hH : 0 < b2 * t1 - b1 * t2) : 0 < t1 := by
-  have hc2 : 0 < β2 * γ1 - γ2 * β1 := by nlinarith [mul_nonneg hβ2 hγ1.le, mul_pos hγ2 (neg_pos.mpr hβ1)]
+  have hc2 : 0 < β2 * γ1 - γ2 * β1 := by linarith [mul_nonneg hβ2 hγ1.le, mul_pos hγ2 (neg_pos.mpr hβ1)]
   have hlin : α2 * γ1 * t1 + (β2 * γ1 - γ2 * β1) * t2 = 0 := by
     linear_combination (-γ2) * E1 + γ1 * E2
   have hK : 0 < b2 * (β2 * γ1 - γ2 * β1) + b1 * (α2 * γ1) := by
     have e : b2 * (β2 * γ1 - γ2 * β1) + b1 * (α2 * γ1) = γ1 * (-δ2) - γ2 * β1 * b2 := by
       linear_combination γ1 * Qab_B
-    rw [e]; nlinarith [mul_pos hγ1 (neg_pos.mpr d2), mul_pos (mul_pos hγ2 (neg_pos.mpr hβ1)) hb2]
+    rw [e]; linarith [mul_pos hγ1 (neg_pos.mpr d2), mul_pos (mul_pos hγ2 (neg_pos.mpr hβ1)) hb2]
   have key : (b2 * (β2 * γ1 - γ2 * β1) + b1 * (α2 * γ1)) * t1 = (β2 * γ1 - γ2 * β1) * (b2 * t1 - b1 * t2) := by
     linear_combination b1 * hlin
   have : 0 < (b2 * (β2 * γ1 - γ2 * β1) + b1 * (α2 * γ1)) * t1 := by rw [key]; exact mul_pos hc2 hH
@@ -62,13 +62,13 @@ theorem Qac_b : FQac.b < 0 := by
   have := h.Qac_R; have d := h.Qac_d hz; have a := h.Qac_a hz; simp only [Fc.ev] at this
   rw [a] at this
   by_contra hb; push Not at hb
-  nlinarith [mul_nonneg hb h.hr2.le]
+  linarith [mul_nonneg hb h.hr2.le]
 
 theorem Qac_c : 0 < FQac.c := by
   have := h.Qac_W; have d := h.Qac_d hz; have a := h.Qac_a hz; simp only [Fc.ev] at this
   have hw := h.zwn hz
   by_contra hb; push Not at hb
-  nlinarith [mul_nonneg_of_nonpos_of_nonpos hb hw.le]
+  linarith [mul_nonneg_of_nonpos_of_nonpos hb hw.le]
 
 theorem Qab_d : FQab.d < 0 := by have := h.Qab_C; simp only [Fc.ev, hz] at this; linarith
 theorem T1_d : FT1.d < 0 := by have := h.T1_C; simp only [Fc.ev, hz] at this; linarith
@@ -78,12 +78,12 @@ theorem T3_d : FT3.d < 0 := by have := h.T3_C; simp only [Fc.ev, hz] at this; li
 theorem T1_apos : 0 < FT1.a := by
   have := h.T1_G; have d := h.T1_d hz; simp only [Fc.ev] at this
   by_contra hh; push Not at hh
-  nlinarith [mul_nonneg (neg_nonneg.mpr hh) h.hA.le]
+  linarith [mul_nonneg (neg_nonneg.mpr hh) h.hA.le]
 
 theorem T3_apos : 0 < FT3.a := by
   have := h.T3_G; have d := h.T3_d hz; simp only [Fc.ev] at this
   by_contra hh; push Not at hh
-  nlinarith [mul_nonneg (neg_nonneg.mpr hh) h.hA.le]
+  linarith [mul_nonneg (neg_nonneg.mpr hh) h.hA.le]
 
 omit hz in
 theorem Qab_aeq : FQab.a * (r1 * b2 - r2 * b1) = (-FQab.d) * (b2 - r2) := by
@@ -98,22 +98,22 @@ theorem T2_aeq : FT2.a * (r1 * b2 - r2 * b1) = (-FT2.d) * (b2 - r2) := by
 theorem Qab_aneg (hr : b2 < r2) : FQab.a < 0 := by
   have e := h.Qab_aeq; have hS := h.S3_pos; have hd := h.Qab_d hz
   by_contra hh; push Not at hh
-  nlinarith [mul_nonneg hh hS.le, mul_pos (show 0 < -FQab.d by linarith) (show 0 < r2 - b2 by linarith)]
+  linarith [mul_nonneg hh hS.le, mul_pos (show 0 < -FQab.d by linarith) (show 0 < r2 - b2 by linarith)]
 
 theorem T2_aneg (hr : b2 < r2) : FT2.a < 0 := by
   have e := h.T2_aeq; have hS := h.S3_pos; have hd := h.T2_d hz
   by_contra hh; push Not at hh
-  nlinarith [mul_nonneg hh hS.le, mul_pos (show 0 < -FT2.d by linarith) (show 0 < r2 - b2 by linarith)]
+  linarith [mul_nonneg hh hS.le, mul_pos (show 0 < -FT2.d by linarith) (show 0 < r2 - b2 by linarith)]
 
 theorem Qab_apos (hr : r2 < b2) : 0 < FQab.a := by
   have e := h.Qab_aeq; have hS := h.S3_pos; have hd := h.Qab_d hz
   by_contra hh; push Not at hh
-  nlinarith [mul_nonneg (neg_nonneg.mpr hh) hS.le, mul_pos (show 0 < -FQab.d by linarith) (show 0 < b2 - r2 by linarith)]
+  linarith [mul_nonneg (neg_nonneg.mpr hh) hS.le, mul_pos (show 0 < -FQab.d by linarith) (show 0 < b2 - r2 by linarith)]
 
 theorem T2_apos (hr : r2 < b2) : 0 < FT2.a := by
   have e := h.T2_aeq; have hS := h.S3_pos; have hd := h.T2_d hz
   by_contra hh; push Not at hh
-  nlinarith [mul_nonneg (neg_nonneg.mpr hh) hS.le, mul_pos (show 0 < -FT2.d by linarith) (show 0 < b2 - r2 by linarith)]
+  linarith [mul_nonneg (neg_nonneg.mpr hh) hS.le, mul_pos (show 0 < -FT2.d by linarith) (show 0 < b2 - r2 by linarith)]
 
 theorem Qab_azero (hr : r2 = b2) : FQab.a = 0 := by
   have e := h.Qab_aeq; have hS := h.S3_pos
@@ -132,7 +132,7 @@ theorem Qab_bnn (hb : b1 ≤ r1) : 0 ≤ FQab.b := by
   have hβ2S : FQab.b * (r1 * b2 - r2 * b1) = (-FQab.d) * (r1 - b1) := by
     linear_combination (-b1) * Qab_R + r1 * Qab_B
   by_contra hc; push Not at hc
-  nlinarith [mul_pos (neg_pos.mpr hc) hS3, mul_nonneg (neg_pos.mpr d2).le (sub_nonneg.mpr hb)]
+  linarith [mul_pos (neg_pos.mpr hc) hS3, mul_nonneg (neg_pos.mpr d2).le (sub_nonneg.mpr hb)]
 
 /-- Collinearity on the screen of `c, 2, a`. -/
 theorem col : a2 * m3 = s * b2 * a3 := by
@@ -150,7 +150,7 @@ theorem a3pos : 0 < a3 := by
   rw [d, a] at Qac_A
   have hb := h.Qac_b hz; have hc := h.Qac_c hz; have ha2 := h.ha2
   by_contra hh; push Not at hh
-  nlinarith [mul_nonneg hc.le (neg_nonneg.mpr hh), mul_pos (neg_pos.mpr hb) ha2]
+  linarith [mul_nonneg hc.le (neg_nonneg.mpr hh), mul_pos (neg_pos.mpr hb) ha2]
 
 /-- Lemma 1.2 at `zv = 0`. -/
 theorem xa0 (hb : b1 ≤ r1) : s * b1 < a1 := by
@@ -186,7 +186,7 @@ theorem a2rel : (a2 - s * b2) * (FQab.b * (s * b2) + FQab.c * m3) = -FQab.a * (s
 theorem kappa_pos (hb : b1 ≤ r1) : 0 < FQab.b * (s * b2) + FQab.c * m3 := by
   have := h.Qab_bnn hz hb; have := h.Qab_cpos hz
   have hsb := mul_pos h.hs0 h.hb2
-  nlinarith [mul_nonneg ‹0 ≤ FQab.b› hsb.le, mul_pos ‹0 < FQab.c› h.hm3]
+  linarith [mul_nonneg ‹0 ≤ FQab.b› hsb.le, mul_pos ‹0 < FQab.c› h.hm3]
 
 /-- `cxy (c, 2, a) < 0` (orientation in the `xy`-plane), from `Q_ac` and `H`. -/
 theorem cxyCMA : cxy ⟨0, 0, zv⟩ ⟨s * b1, s * b2, m3⟩ ⟨a1, a2, a3⟩ < 0 := by
@@ -195,7 +195,7 @@ theorem cxyCMA : cxy ⟨0, 0, zv⟩ ⟨s * b1, s * b2, m3⟩ ⟨a1, a2, a3⟩ < 
   have key := plane_aff FQac FH ⟨0, 0, 0⟩ ⟨s * b1, s * b2, m3⟩ ⟨a1, a2, a3⟩ ⟨A, 0, 0⟩ hc.ne'
     h.Qac_C h.Qac_M h.Qac_A h.Qac_G h.H_C h.H_M
   have g : cxy ⟨0, 0, 0⟩ ⟨s * b1, s * b2, m3⟩ ⟨A, 0, 0⟩ < 0 := by
-    simp only [cxy]; nlinarith [mul_pos (mul_pos h.hs0 h.hb2) h.hA]
+    simp only [cxy]; linarith [mul_pos (mul_pos h.hs0 h.hb2) h.hA]
   have e1 := h.H_A; have e2 := h.H_G
   by_contra hh; push Not at hh
   nlinarith [mul_nonneg (neg_nonneg.mpr e1.le) hh, mul_pos_of_neg_of_neg e2 g]

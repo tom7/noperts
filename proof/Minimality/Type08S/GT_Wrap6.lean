@@ -58,28 +58,28 @@ theorem n2_lt (F : OctFacets a a' b b' c c') (hd : IsCap F d)
     simp only [Finset.mem_insert, Finset.mem_singleton] at hy
     tauto
   · simp only [h4Pts, quad_0, quad_1, crossYZ]
-    nlinarith [mul_pos (show 0 < zv - zw by linarith) ha2]
+    linarith [mul_pos (show 0 < zv - zw by linarith) ha2]
   · simp only [h4Pts, quad_1, quad_2]
     have := cross_neg_of_planes FH FQac ⟨0, 0, zv⟩ ⟨s * b1, s * b2, m3⟩ ⟨0, 0, zw⟩ ⟨a1, a2, a3⟩
       cfg.H_C cfg.H_M cfg.Qac_C cfg.Qac_M
-      (by simp only [crossYZ]; nlinarith [mul_pos hs0 hb2, mul_pos (mul_pos hs0 hb2) (show 0 < zv - zw by linarith)])
-      (by simp only [Phi]; rw [cfg.H_W]; nlinarith [mul_pos_of_neg_of_neg hq1 hHa])
-      (by simp only [Phi]; rw [cfg.Qac_A]; nlinarith [mul_neg_of_neg_of_pos e1 hQc])
+      (by simp only [crossYZ]; linarith [mul_pos hs0 hb2, mul_pos (mul_pos hs0 hb2) (show 0 < zv - zw by linarith)])
+      (by simp only [Phi]; rw [cfg.H_W]; linarith [mul_pos_of_neg_of_neg hq1 hHa])
+      (by simp only [Phi]; rw [cfg.Qac_A]; linarith [mul_neg_of_neg_of_pos e1 hQc])
     linarith
   · simp only [h4Pts, quad_2, quad_3]
     have := cross_neg_of_planes FH FQab ⟨s * b1, s * b2, m3⟩ ⟨b1, b2, 0⟩ ⟨0, 0, zw⟩ ⟨a1, a2, a3⟩
       cfg.H_M cfg.H_B cfg.Qab_M cfg.Qab_B
       (by simp only [crossYZ]; nlinarith [mul_pos hb2 hm3, mul_pos hs0 hb2, mul_pos (show 0 < 1 - s by linarith) hb2,
         mul_pos (mul_pos (show 0 < 1 - s by linarith) hb2) (show 0 < m3 - zw by linarith)])
-      (by simp only [Phi]; rw [cfg.H_W]; nlinarith [mul_pos_of_neg_of_neg hq2 hHa])
-      (by simp only [Phi]; rw [cfg.Qab_A]; nlinarith [mul_neg_of_neg_of_pos e1 hQb])
+      (by simp only [Phi]; rw [cfg.H_W]; linarith [mul_pos_of_neg_of_neg hq2 hHa])
+      (by simp only [Phi]; rw [cfg.Qab_A]; linarith [mul_neg_of_neg_of_pos e1 hQb])
     linarith
   · simp only [h4Pts, quad_3, quad_0]
     have := cross_neg_of_planes FH FT2 ⟨b1, b2, 0⟩ ⟨0, 0, zw⟩ ⟨0, 0, zv⟩ ⟨a1, a2, a3⟩
       cfg.H_B cfg.H_W cfg.T2_B cfg.T2_W
-      (by simp only [crossYZ]; nlinarith [mul_pos hb2 (show 0 < zv - zw by linarith)])
-      (by simp only [Phi]; rw [cfg.H_C]; nlinarith [mul_pos_of_neg_of_neg hq3 hHa])
-      (by simp only [Phi]; nlinarith [mul_neg_of_neg_of_pos e1 hT2, mul_pos_of_neg_of_neg e4 hHa])
+      (by simp only [crossYZ]; linarith [mul_pos hb2 (show 0 < zv - zw by linarith)])
+      (by simp only [Phi]; rw [cfg.H_C]; linarith [mul_pos_of_neg_of_neg hq3 hHa])
+      (by simp only [Phi]; linarith [mul_neg_of_neg_of_pos e1 hT2, mul_pos_of_neg_of_neg e4 hHa])
     linarith
 
 end Type08Sp

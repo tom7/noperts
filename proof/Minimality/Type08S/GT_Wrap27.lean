@@ -34,9 +34,9 @@ theorem n2f_fe (hs1 : s < 1) (hzw : zw < 0) (hb2 : 0 < b2) (hz2 : 0 < z2)
   have p1 := mul_pos hb2 hw
   have p2 := mul_pos hb2 hz2
   have tc := mul_pos hd1 (show 0 < z2 + tt * ((1 - s) * b2) by
-    nlinarith [mul_pos htt0 (mul_pos (sub_pos.mpr hs1) hb2)])
+    linarith [mul_pos htt0 (mul_pos (sub_pos.mpr hs1) hb2)])
   have t3 := mul_pos hd2 (show 0 < z2 + tt * ((1 - s) * b2) by
-    nlinarith [mul_pos htt0 (mul_pos (sub_pos.mpr hs1) hb2)])
+    linarith [mul_pos htt0 (mul_pos (sub_pos.mpr hs1) hb2)])
   have t4 := mul_pos hd2 (show 0 < -zw - tt * b2 by linarith)
   obtain ⟨b0, b1', b2', b3, b4⟩ := zmod5_add_one
   intro i
@@ -44,8 +44,8 @@ theorem n2f_fe (hs1 : s < 1) (hzw : zw < 0) (hb2 : 0 < b2) (hz2 : 0 < z2)
     simp only [h5Pts, b0, b1', b2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest,
       tst, hdet] <;>
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 end Fe
 
@@ -80,7 +80,7 @@ theorem n2_eq0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
   have hzw := P.hzw0
   have Φr' : hfΦ c b' (c - a') F.a'b'c.f c' = ⟨r1, b2, 0⟩ := by rw [P.Φc', hrb]
   have Φa' : hfΦ c b' (c - a') F.a'b'c.f a = ⟨a1, s * b2, m3⟩ := by rw [P.Φa, ha2e, ha3e]
-  have hsr : s * b2 < r2 := by rw [hrb]; nlinarith [mul_pos (sub_pos.mpr hs1) hb2]
+  have hsr : s * b2 < r2 := by rw [hrb]; linarith [mul_pos (sub_pos.mpr hs1) hb2]
   obtain ⟨tt, htt0, htt1, htt2⟩ : ∃ tt : ℝ, 0 < tt ∧ tt * (s * b2) < m3 ∧ tt * b2 < -zw := by
     refine ⟨min (m3 / (2 * (s * b2))) (-zw / (2 * b2)), lt_min (by positivity) (by
       have : 0 < -zw := neg_pos.mpr hzw
@@ -95,7 +95,7 @@ theorem n2_eq0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
       have : 0 < -zw := neg_pos.mpr hzw
       linarith
   subst hz
-  have hsr' : s * b2 < b2 := by nlinarith [mul_pos (sub_pos.mpr hs1) hb2]
+  have hsr' : s * b2 < b2 := by linarith [mul_pos (sub_pos.mpr hs1) hb2]
   exact Fr.n2_core (V := insert d ({a, a', b, b', c, c'} : Finset ℝ³))
     (cP := c) (mP := d) (fP := b) (rP := c') (gP := b') (wP := a') (aP := a)
     (by intro y hy; simp only [Finset.mem_insert, Finset.mem_singleton] at hy; tauto)

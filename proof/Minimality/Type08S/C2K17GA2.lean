@@ -142,7 +142,7 @@ theorem k17ga_r3_cell {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ} (hd
   have hpR : a - d = (-τ) • R + (-(β1 * τ)) • P := by
     rw [hRv, hP]
     have : a - d = (a - d) := rfl
-    match_scalars <;> nlinarith
+    match_scalars <;> linarith
   have hΔ : det3 P Q R ≠ 0 := by
     have e : det3 P Q R = (1 - α1) * det3 (a - d) (b - d) (c - d) := by
       rw [hRv, hP, hQ]
@@ -185,7 +185,7 @@ theorem k17ga_r3_cell {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ} (hd
     have : 0 ≤ (α4 - 1) * β1 * τ * lam := by
       have := mul_nonneg (mul_nonneg (sub_nonneg.2 hα4) hβ1.le) hτ.le
       exact mul_nonneg this h0.le
-    nlinarith
+    linarith
   · intro y hy hyx
     have hV : y = fpoint P Q R d (-(β1 * τ), 0, -τ) ∨ y = fpoint P Q R d (0, 0, 0) ∨ y = fpoint P Q R d (1, 0, 0) ∨
         y = fpoint P Q R d (β6, 1, 0) ∨ y = fpoint P Q R d (-(α4 * β1 * τ), γ4, -(α4 * τ)) ∨
@@ -196,7 +196,7 @@ theorem k17ga_r3_cell {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ} (hd
     have hc1 : ∀ lam : ℝ, 0 < lam → lam < 1 → 0 < γ4 * (1 + lam * 0) + (α4 - 1) * β1 * τ * (0 + lam * 1) := by
       intro lam h0 h1
       have := mul_nonneg (mul_nonneg (sub_nonneg.2 hα4) hβ1.le) hτ.le
-      nlinarith [mul_nonneg this h0.le]
+      linarith [mul_nonneg this h0.le]
     rcases hV with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · exact (hyx 0 (by simp only [k17gaR3, pc5_0])).elim
     · exact (hyx 1 (by simp only [k17gaR3, pc5_1])).elim
@@ -211,8 +211,8 @@ theorem k17ga_r3_cell {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ} (hd
         simpa using hc1 lam h0 h1)).2 i
   · intro w hw
     refine k17ga_lexUni5_R3 _ w hw ?_ ?_ ?_
-    · left; simp only [k17gaR3, pc5_1, pc5_2, hz']; nlinarith
-    · left; simp only [k17gaR3, pc5_2, pc5_3, hz']; nlinarith
+    · left; simp only [k17gaR3, pc5_1, pc5_2, hz']; linarith
+    · left; simp only [k17gaR3, pc5_2, pc5_3, hz']; linarith
     · left; simp only [k17gaR3, pc5_4, pc5_0, hz']; nlinarith
 
 end C2

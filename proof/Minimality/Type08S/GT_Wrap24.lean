@@ -31,10 +31,10 @@ theorem h4_a0
   obtain ⟨b0, b1', b2', b3⟩ := zmod4_add_one
   intro i
   rcases zmod4_cases i with rfl | rfl | rfl | rfl
-  · rw [b0]; left; simp only [tst, hdet, crossYZ] at u0 ⊢; nlinarith
+  · rw [b0]; left; simp only [tst, hdet, crossYZ] at u0 ⊢; linarith
   · exact r1
-  · rw [b2']; left; simp only [tst, hdet, crossYZ] at u2 ⊢; nlinarith
-  · rw [b3]; left; simp only [tst, hdet, crossYZ] at u3 ⊢; nlinarith
+  · rw [b2']; left; simp only [tst, hdet, crossYZ] at u2 ⊢; linarith
+  · rw [b3]; left; simp only [tst, hdet, crossYZ] at u3 ⊢; linarith
 
 end N2lt0
 end Type08Sp
@@ -185,7 +185,7 @@ theorem n2_lt0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
     simp only [Finset.mem_insert, Finset.mem_singleton] at hy
     tauto
   · simp only [h4Pts, quad_0, quad_1, crossYZ]
-    nlinarith [mul_pos (show 0 < zv - zw by linarith [cfg.hzw]) ha2]
+    linarith [mul_pos (show 0 < zv - zw by linarith [cfg.hzw]) ha2]
   · intro t ht htt
     obtain ⟨b0, b1', b2', b3⟩ := zmod4_add_one
     simp only [h4Pts, b1', quad_1, quad_2]
@@ -196,7 +196,7 @@ theorem n2_lt0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
     have hb : t * FQac.c < -FQac.b := by
       have hsb := mul_pos hs0 hb2
       by_contra hh; push Not at hh
-      nlinarith [mul_nonneg hsb.le (show 0 ≤ t * FQac.c + FQac.b by linarith), mul_pos hc hm3,
+      linarith [mul_nonneg hsb.le (show 0 ≤ t * FQac.c + FQac.b by linarith), mul_pos hc hm3,
         mul_pos hc (sub_pos.mpr htt)]
     subst hz
     exact lex_of_tilt (crossYZ_planar FQac _ _ _ cfg.Qac_C cfg.Qac_M cfg.Qac_A (cfg.Qac_a rfl) hc.ne')
@@ -206,15 +206,15 @@ theorem n2_lt0 (F : OctFacets a a' b b' c c') (hd : IsCap F d)
       cfg.H_M cfg.H_B cfg.Qab_M cfg.Qab_B
       (by simp only [crossYZ]; nlinarith [mul_pos hb2 hm3, mul_pos hs0 hb2, mul_pos (show 0 < 1 - s by linarith) hb2,
         mul_pos (mul_pos (show 0 < 1 - s by linarith) hb2) (show 0 < m3 - zw by linarith)])
-      (by simp only [Phi]; rw [cfg.H_W]; nlinarith [mul_pos_of_neg_of_neg hq2 hHa])
-      (by simp only [Phi]; rw [cfg.Qab_A]; nlinarith [mul_neg_of_neg_of_pos e1 hQb])
+      (by simp only [Phi]; rw [cfg.H_W]; linarith [mul_pos_of_neg_of_neg hq2 hHa])
+      (by simp only [Phi]; rw [cfg.Qab_A]; linarith [mul_neg_of_neg_of_pos e1 hQb])
     linarith
   · simp only [h4Pts, quad_3, quad_0]
     have := cross_neg_of_planes FH FT2 ⟨b1, b2, 0⟩ ⟨0, 0, zw⟩ ⟨0, 0, zv⟩ ⟨a1, a2, a3⟩
       cfg.H_B cfg.H_W cfg.T2_B cfg.T2_W
-      (by simp only [crossYZ]; nlinarith [mul_pos hb2 (show 0 < zv - zw by linarith [cfg.hzw])])
-      (by simp only [Phi]; rw [cfg.H_C]; nlinarith [mul_pos_of_neg_of_neg hq3 hHa])
-      (by simp only [Phi]; nlinarith [mul_neg_of_neg_of_pos e1 hT2, mul_pos_of_neg_of_neg cfg.T2_A hHa])
+      (by simp only [crossYZ]; linarith [mul_pos hb2 (show 0 < zv - zw by linarith [cfg.hzw])])
+      (by simp only [Phi]; rw [cfg.H_C]; linarith [mul_pos_of_neg_of_neg hq3 hHa])
+      (by simp only [Phi]; linarith [mul_neg_of_neg_of_pos e1 hT2, mul_pos_of_neg_of_neg cfg.T2_A hHa])
     linarith
 
 end Type08Sp
