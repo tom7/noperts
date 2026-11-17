@@ -36,7 +36,7 @@ theorem recI_core {L c y2 y6 xi ze b r dl M : ℝ} (hL : 0 < L) (hc : 0 < c) (hy
     IsRupert (univ.image (boxCfg L c y2 y6 xi ze b)) := by
   have hy2 : 0 < y2 := by linarith
   have hM0' : 0 < M := by linarith
-  have hb2 : 0 < b - ze * y2 := by nlinarith [mul_pos hy6 hxi]
+  have hb2 : 0 < b - ze * y2 := by linarith [mul_pos hy6 hxi]
   refine box_hel hL hc hy6 hr (!₂[1, (-M - (y2 + dl)) / L, ((c + 2 * r * M) - (c - r * y2)) / L])
     (!₂[0, c - r * y2, -(y2 + dl)]) ?_
   intro i hi
@@ -130,10 +130,10 @@ theorem rec_I {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6)
   have hsum : xi + ze < 1 := by
     by_contra h
     push Not at h
-    nlinarith [mul_pos hy2 hy6, mul_nonneg hy2.le (sub_nonneg.2 h), mul_nonneg hy6.le (sub_nonneg.2 h)]
+    linarith [mul_pos hy2 hy6, mul_nonneg hy2.le (sub_nonneg.2 h), mul_nonneg hy6.le (sub_nonneg.2 h)]
   have hcd : 0 < c - ze * c := by nlinarith
   have hd : 0 < ze * c := mul_pos hze hc
-  have hb0 : 0 < b := by nlinarith [mul_pos hy6 hxi, mul_pos hy2 hze]
+  have hb0 : 0 < b := by linarith [mul_pos hy6 hxi, mul_pos hy2 hze]
   have hyb : 0 < y2 - b := by linarith
   have hdy : 0 < y2 - y6 := by linarith
   obtain ⟨r, hr, hr1, hr2, hr3⟩ : ∃ r : ℝ, 0 < r ∧ 3 * r * c ≤ y2 - y6 ∧ 3 * r * (c - ze * c) ≤ y2 - b ∧
@@ -146,17 +146,17 @@ theorem rec_I {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6)
     have h1 := (le_div_iff₀ hc).1 m1
     have h2 := (le_div_iff₀ hcd).1 m2
     have h3 := (le_div_iff₀ hd).1 m3
-    refine ⟨m / 3, by positivity, ?_, ?_, ?_⟩ <;> nlinarith
+    refine ⟨m / 3, by positivity, ?_, ?_, ?_⟩ <;> linarith
   have hdl : 0 < r * c * y2 / (2 * (y2 - y6)) := by positivity
   obtain ⟨dl, hdl_eq⟩ : ∃ dl, dl = r * c * y2 / (2 * (y2 - y6)) := ⟨_, rfl⟩
   have hdl' : 0 < dl := hdl_eq ▸ hdl
   have hdl2 : 2 * (y2 - y6) * dl = r * c * y2 := by
     rw [hdl_eq]; field_simp
-  have hD6 : 0 < (y2 - y6) - 2 * r * c := by nlinarith
+  have hD6 : 0 < (y2 - y6) - 2 * r * c := by linarith
   have hD0 : 0 < xi * (b - ze * c * 2 * r) := by
-    apply mul_pos hxi; nlinarith
+    apply mul_pos hxi; linarith
   have hD2 : 0 < xi * ((y2 - b) - (c - ze * c) * 2 * r) := by
-    apply mul_pos hxi; nlinarith
+    apply mul_pos hxi; linarith
   obtain ⟨M, hM, hM6, hM0, hM2⟩ := recI_exM (g1 := c ^ 2 - (y2 - y6) * y6) hD6
     (g2 := (1 - xi) * (b * (y2 + dl) + ze * c * (c - r * y2)) + xi * (ze * c * c) - (b * b + ze * c * (ze * c))) hD0
     (g3 := (1 - xi) * ((y2 - b) * (y2 + dl) + (c - ze * c) * (c - r * y2)) + xi * ((c - ze * c) * c)

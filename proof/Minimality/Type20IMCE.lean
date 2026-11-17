@@ -338,7 +338,7 @@ lemma Hy.pf {q tm sp sm kk B : ℝ} (h : Hy q tm sp sm kk B) :
       0 < 1 - sm ∧ 0 < 1 - q ∧ tm < sm := by
   have sm0 : 0 < sm := by linarith [h.tm_pos, h.tm_sm]
   have hq : 0 < 1 - q := by
-    have : 0 < sm * (1 - q) := by nlinarith [h.hQ, h.tm_pos]
+    have : 0 < sm * (1 - q) := by linarith [h.hQ, h.tm_pos]
     exact pos_of_mul_pos_right this sm0.le
   exact ⟨h.tm_pos, sm0, h.sp_pos, h.q_pos, h.tp_pos, h.kk_pos, by linarith [h.tm_sm, h.sm_lt],
     by linarith [h.sp_lt], by linarith [h.sm_lt], hq, h.tm_sm⟩
@@ -390,7 +390,7 @@ theorem leaf_L6K {q tm sp sm kk B : ℝ} (h : Hy q tm sp sm kk B) (hK : Kc q tm 
       · rw [v5]; have := mul_pos tp0 (pow_pos r1 2); linarith
     · refine ⟨fun _ => lp1 ?_, fun h => absurd h (by decide)⟩
       rw [e6]; have : 0 < (1-q*tm)*(1-sp) := mul_pos tp0 r1
-      nlinarith [mul_nonneg s1.le hkF]
+      linarith [mul_nonneg s1.le hkF]
     · refine ⟨fun h => absurd h (by decide), fun _ => lp1 ?_⟩
       rw [e7]; have := mul_pos tp0 r1; have := mul_pos kk0 this; linarith
   · -- depths
@@ -526,7 +526,7 @@ theorem leaf_W {q tm sp sm kk B : ℝ} (h : Hy q tm sp sm kk B) (hK : 0 ≤ Kc q
       have k0 : Kc q tm sp sm kk = 0 := by
         have := mul_nonneg r1.le (sub_nonneg.2 c0)
         have := mul_nonneg sp0.le (sub_nonneg.2 c6)
-        nlinarith
+        linarith
       refine ⟨k0, ?_⟩
       have hh : (1-sp)*(zN q tm sp sm kk B 0 (-(1-sm)) (-1) 2 - zN q tm sp sm kk B 0 (-(1-sm)) (-1) 0)
           + sp*(zN q tm sp sm kk B 0 (-(1-sm)) (-1) 2 - zN q tm sp sm kk B 0 (-(1-sm)) (-1) 6) = 0 := by
@@ -670,12 +670,12 @@ theorem leaf_X {q tm sp sm kk B : ℝ} (h : Hy q tm sp sm kk B) (hX : 0 < Bd q t
     have n3 : 0 < (1-q*tm)*(1-sp)*(sm-tm) := by positivity
     by_cases hc : 0 ≤ tm - (1-q*tm)*sm*(1+tm-sm)
     · have h1 := mul_nonneg (by linarith : 0 ≤ (1-sp) - kk*tm) hc
-      have h2 : tm * NN q tm sp sm kk tm (-(sm*(1+tm-sm))) (tm - sm) 5 < 0 := by nlinarith
+      have h2 : tm * NN q tm sp sm kk tm (-(sm*(1+tm-sm))) (tm - sm) 5 < 0 := by linarith
       by_contra hn; push Not at hn
       nlinarith
     · push Not at hc
       have := mul_pos kk0 (neg_pos.2 hc)
-      rw [key2]; nlinarith
+      rw [key2]; linarith
   have e6 : NN q tm sp sm kk tm (-(sm*(1+tm-sm))) (tm - sm) 6 = 0 := by rw [NN_6]; ring
   have e7 : NN q tm sp sm kk tm (-(sm*(1+tm-sm))) (tm - sm) 7 = -(kk*tm) := by rw [NN_7]; ring
   have v3 : NN q tm sp sm kk (-(1-tm)) 0 (-1) 3 = sm := by rw [NN_3]; ring
@@ -735,7 +735,7 @@ lemma Gs_pos {q tm sp sm kk B : ℝ} (h : Hy q tm sp sm kk B) (hBd : Bd q tm sp 
   push Not at hc
   have g1 : 0 < 1 + tm - sm := by linarith
   have hkq : kk < q := by
-    have : kk * (1+tm-sm) < q * (1+tm-sm) := by nlinarith
+    have : kk * (1+tm-sm) < q * (1+tm-sm) := by linarith
     exact lt_of_mul_lt_mul_right this g1.le
   have hqg : q*(1+tm-sm) < 1 := by nlinarith
   have hP0 : 0 < q*tm + (1-q*tm)*(sm-tm) := by
@@ -761,10 +761,10 @@ lemma Gs_pos {q tm sp sm kk B : ℝ} (h : Hy q tm sp sm kk B) (hBd : Bd q tm sp 
     have e1 := mul_pos hL0 (sub_pos.2 hkq)
     have e2 := mul_pos hLq kk0
     have : 0 < q * ((q*tm + (1-q*tm)*(sm-tm)) * (1 - q*(1+tm-sm) + (1-sm)*kk)
-      - kk*(1-q*tm)*sm*(1+tm-sm)) := by rw [key]; nlinarith
+      - kk*(1-q*tm)*sm*(1+tm-sm)) := by rw [key]; linarith
     exact pos_of_mul_pos_right this q0.le
   unfold Bd at hBd
-  nlinarith
+  linarith
 
 end Cor
 end Minimality.CaseC20

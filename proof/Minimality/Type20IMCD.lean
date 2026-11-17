@@ -134,7 +134,7 @@ theorem cycZY_inj : Function.Injective cycZY := by decide
 lemma zc_01 {hp hm s1 den c0 d0 d1 : ℝ} (hp0 : 0 < hp) (hm0 : 0 < hm) (s10 : 0 < s1) (hden : 0 < den)
     (hA : 0 < c0 - hm) (e0 : hm * d0 = -(hp * den * s1 * c0)) (e1 : d1 = -(hp * den * s1)) : d0 < d1 := by
   have key := mul_pos (mul_pos (mul_pos hp0 hden) s10) hA
-  have : hm * d0 < hm * d1 := by rw [e0, e1]; nlinarith [key]
+  have : hm * d0 < hm * d1 := by rw [e0, e1]; linarith [key]
   exact lt_of_mul_lt_mul_left this hm0.le
 
 /-- Pure-real: `d6 < d4`. -/
@@ -142,7 +142,7 @@ lemma zc_46 {hp hm s1 sm den c0 B d4 d6 : ℝ} (hp0 : 0 < hp) (hm0 : 0 < hm) (s1
     (hden : 0 < den) (c0p : 0 < c0) (hB : 0 < B) (e4 : hm * d4 = hp * s1 * sm * (den * c0 - hm * B))
     (e6 : d6 = -(hp * B * s1)) (sm1 : sm < 1) : d6 < d4 := by
   have key := mul_pos (mul_pos hp0 s10) (add_pos (mul_pos sm0 (mul_pos hden c0p)) (mul_pos (sub_pos.2 sm1) (mul_pos hm0 hB)))
-  have : hm * d6 < hm * d4 := by rw [e4, e6]; nlinarith [key]
+  have : hm * d6 < hm * d4 := by rw [e4, e6]; linarith [key]
   exact lt_of_mul_lt_mul_left this hm0.le
 
 /-- Pure-real: `d2` is strictly between `d0` and `d6` when `hm B != den c0`. -/
@@ -160,18 +160,18 @@ lemma zc_2 {hp hm s1 sp den c0 B d0 d2 d6 : ℝ} (hp0 : 0 < hp) (hm0 : 0 < hm) (
     have g3 := mul_pos q2 g1
     refine ⟨?_, ?_⟩
     · refine lt_of_mul_lt_mul_left (a := hm) ?_ hm0.le
-      rw [e2, e0]; nlinarith [g2]
+      rw [e2, e0]; linarith [g2]
     · refine lt_of_mul_lt_mul_left (a := hm) ?_ hm0.le
-      rw [e2, e6]; nlinarith [g3]
+      rw [e2, e6]; linarith [g3]
   · right
     have g1 : 0 < B * hm - den * c0 := by linarith
     have g2 := mul_pos q1 g1
     have g3 := mul_pos q2 g1
     refine ⟨?_, ?_⟩
     · refine lt_of_mul_lt_mul_left (a := hm) ?_ hm0.le
-      rw [e2, e6]; nlinarith [g3]
+      rw [e2, e6]; linarith [g3]
     · refine lt_of_mul_lt_mul_left (a := hm) ?_ hm0.le
-      rw [e2, e0]; nlinarith [g2]
+      rw [e2, e0]; linarith [g2]
 
 variable {x : Fin 7 → ℝ³} (F : Frame20 x)
 
@@ -193,7 +193,7 @@ lemma zbasic {r B : ℝ} (Z : ZCtx F r B) :
   refine ⟨by positivity, hden, by linarith [Z.P.hB], hE0, ?_⟩
   have lroof := F.lroof_pos
   have h1 : F.S.hm * (F.S.hp * (1 - F.S.sm)) < F.S.hm * (F.S.km * F.S.tp) := by
-    nlinarith [mul_pos hp0 lroof, mul_pos km0 (mul_pos tm0 hE0), mul_pos km0 hE0]
+    linarith [mul_pos hp0 lroof, mul_pos km0 (mul_pos tm0 hE0), mul_pos km0 hE0]
   exact lt_of_mul_lt_mul_left h1 hm0.le
 
 /-- Facing sign of `B` at `u1`: `tm * (kp (1-sm) - sp km) = c0 (1 - sm - sp)`. -/
@@ -323,7 +323,7 @@ lemma zc_14 {hp hm s1 sm den c0 B d1 d4 : ℝ} (hp0 : 0 < hp) (hm0 : 0 < hm) (s1
     (e1 : d1 = -(hp * den * s1)) (e4 : hm * d4 = hp * s1 * sm * (den * c0 - hm * B))
     (hB : sm * B * hm < den * (sm * c0 + hm)) : d1 < d4 := by
   have key := mul_pos (mul_pos hp0 s10) (sub_pos.2 hB)
-  have : hm * d1 < hm * d4 := by rw [e4, e1]; nlinarith [key]
+  have : hm * d1 < hm * d4 := by rw [e4, e1]; linarith [key]
   exact lt_of_mul_lt_mul_left this hm0.le
 
 variable {x : Fin 7 → ℝ³} (F : Frame20 x)
@@ -552,7 +552,7 @@ lemma zt_K {hp hm tp tm sm km : ℝ}
 lemma zt_tm {hp hm tp tm sm km : ℝ} (hm0 : 0 < hm) (tm0 : 0 < tm)
     (hkm : km * tm = sm * (hm * tp + hp * tm)) (hK : sm * hp ≤ km - hm) : tm ≤ sm * tp := by
   have h := mul_le_mul_of_nonneg_left hK tm0.le
-  have : 0 ≤ hm * (sm * tp - tm) := by nlinarith [h, hkm]
+  have : 0 ≤ hm * (sm * tp - tm) := by linarith [h, hkm]
   have := nonneg_of_mul_nonneg_right this hm0
   linarith
 
@@ -566,7 +566,7 @@ lemma zt_A {hp hm tp tm sp sm km kp : ℝ} (hm0 : 0 < hm) (tm0 : 0 < tm) (sp1 : 
     linear_combination (sp - sp * tm) * hkm + (sm - sm * tm) * hkp
   have h1 : 0 < hm * (sm * tp - sp * tm) := by
     have := mul_pos tm0 (sub_pos.2 sp1)
-    exact mul_pos hm0 (by nlinarith)
+    exact mul_pos hm0 (by linarith)
   rw [← e] at h1
   exact pos_of_mul_pos_right h1 tm0.le
 
@@ -582,12 +582,12 @@ lemma zt_sp_tp {hp tp sp kp : ℝ} (hp0 : 0 < hp) (tp0 : 0 < tp) (tp1 : tp < 1)
   by_contra hc
   push Not at hc
   have h1 : hp * tp ≤ hp * sp := mul_le_mul_of_nonneg_left hc hp0.le
-  have h2 : 0 ≤ tp * (kp - hp) := by nlinarith
+  have h2 : 0 ≤ tp * (kp - hp) := by linarith
   have h3 : hp ≤ kp := by
     have := nonneg_of_mul_nonneg_right h2 tp0
     linarith
   have h4 : hp * (1 - tp) ≤ kp * (1 - tp) := mul_le_mul_of_nonneg_right h3 (by linarith)
-  nlinarith
+  linarith
 
 /-- The facing `G` at the view `x0 - x2` is positive (`B16 <= 0`, `sm + sp > 1`). -/
 lemma zt_G {hp hm tp tm sp sm km kp : ℝ} (hp0 : 0 < hp) (hm0 : 0 < hm) (tp0 : 0 < tp)
@@ -611,15 +611,15 @@ lemma zt_G {hp hm tp tm sp sm km kp : ℝ} (hp0 : 0 < hp) (hm0 : 0 < hm) (tp0 : 
       have hb : hp * tm * sp ≤ (1 - sp) * tp * (hm * tp + hp * tm) := by
         have := mul_le_mul_of_nonneg_right hB16 tm0.le
         nlinarith [this, hkp]
-      have hD : 0 < sp - (1 - sp) * tp := by nlinarith [mul_pos tp0 (show 0 < sm - (1 - sp) by linarith)]
-      have hslack : 0 ≤ (1 - sp) * tp * (hm * tp) - (sp - (1 - sp) * tp) * (hp * tm) := by nlinarith [hb]
+      have hD : 0 < sp - (1 - sp) * tp := by linarith [mul_pos tp0 (show 0 < sm - (1 - sp) by linarith)]
+      have hslack : 0 ≤ (1 - sp) * tp * (hm * tp) - (sp - (1 - sp) * tp) * (hp * tm) := by linarith [hb]
       have h1 := mul_nonneg (sub_pos.2 h).le hslack
       have hf : 0 < (hm * tp) * ((sm + sp - 1) * (tp - sp)) :=
         mul_pos hY (mul_pos (by linarith) (by linarith))
       by_contra hc
       push Not at hc
       have h2 := mul_nonneg hD.le (neg_nonneg.2 hc)
-      nlinarith [h1, hf, h2]
+      linarith [h1, hf, h2]
   rw [← e] at key
   exact pos_of_mul_pos_right key tm0.le
 
@@ -663,7 +663,7 @@ lemma zt_z2 {hp hm sm sp den Cc P d2 d6 : ℝ} (hp0 : 0 < hp) (hm0 : 0 < hm) (hd
       have : hm * sm * d2 < 0 := by
         rw [e2]
         refine mul_neg_of_pos_of_neg hp0 ?_
-        nlinarith [mul_le_mul_of_nonneg_left h3 sp0.le]
+        linarith [mul_le_mul_of_nonneg_left h3 sp0.le]
       exact neg_of_mul_neg_right this hms.le
     · right
       have hm' : 0 < den * (-Cc) := mul_pos hden (by linarith)
@@ -672,7 +672,7 @@ lemma zt_z2 {hp hm sm sp den Cc P d2 d6 : ℝ} (hp0 : 0 < hp) (hm0 : 0 < hm) (hd
         have e : hm * sm * d6 = sm * (hp * (-(den * Cc) - P * sp)) := by rw [← e6]; ring
         rw [e2, e]
         have := mul_pos (mul_pos hp0 (sub_pos.2 sp1)) (sub_pos.2 h3)
-        nlinarith [this]
+        linarith [this]
       exact lt_of_mul_lt_mul_left this hms.le
 
 /-- Cancelled forms of the three identities of Zt4. -/
@@ -718,7 +718,7 @@ theorem zt_depths {hp hm tp tm sp sm km kp B : ℝ} (hp0 : 0 < hp) (hm0 : 0 < hm
   have c0p : 0 < hm*tp+hp*tm := by positivity
   have hP : 0 < B*hm-(hm+km*tm-km)*(hm*tp+hp*tm) := by
     have h1 : 0 < (hm+km*tm-km) * hm := mul_pos hden hm0
-    have h2 : (hm+km*tm-km) * hm ≤ sm * (B*hm-(hm+km*tm-km)*(hm*tp+hp*tm)) := by nlinarith [hpsi]
+    have h2 : (hm+km*tm-km) * hm ≤ sm * (B*hm-(hm+km*tm-km)*(hm*tp+hp*tm)) := by linarith [hpsi]
     have : 0 < sm * (B*hm-(hm+km*tm-km)*(hm*tp+hp*tm)) := lt_of_lt_of_le h1 h2
     exact pos_of_mul_pos_right this sm0.le
   have h6 : ddT6 hp hm tp tm sp km B < ddT4 hp hm tp tm sp sm km kp B := by
@@ -732,9 +732,9 @@ theorem zt_depths {hp hm tp tm sp sm km kp B : ℝ} (hp0 : 0 < hp) (hm0 : 0 < hm
       refine mul_pos hp0 ?_
       have a1 : 0 < (hm+km*tm-km) * km * (sm * tp - tm * sp) := by
         refine mul_pos (mul_pos hden km0) ?_
-        have := mul_pos tm0 (sub_pos.2 sp1); nlinarith
+        have := mul_pos tm0 (sub_pos.2 sp1); linarith
       have a2 : 0 < sm*tp*(km-hm)*(km*(1-tm)-hm*(1-sm)) := by positivity
-      nlinarith [a1, a2]
+      linarith [a1, a2]
     exact pos_of_mul_pos_right this (mul_pos sm0 km0).le
   refine ⟨h3, ?_, h6, ?_⟩
   · have key : sm*km*hm*(ddT3 hp hm tp tm sp sm km kp - ddT4 hp hm tp tm sp sm km kp B) =

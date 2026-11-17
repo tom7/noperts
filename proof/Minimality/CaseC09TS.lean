@@ -27,7 +27,7 @@ theorem Shape09.q3456_of_eq (S : Shape09) (hts : S.tm = S.sm) (had : S.dp < S.am
   have hε2 : ε ≤ (M - S.tm * N) / 2 := min_le_right _ _
   refine ⟨M - 2 * ε, ε, by linarith, hε0, by linarith, ?_⟩
   rw [← hts, ← add_div, lt_div_iff₀ htm]
-  nlinarith
+  linarith
 
 /-- **09.5, part A** (`t- = s-`, `d+ < a-`): Theorem 5 with `W = 3456` holds. -/
 theorem Frame09.rupert_of_tm_eq_sm_lt {x : Fin 7 → ℝ³} (F : Frame09 x)
@@ -70,12 +70,12 @@ theorem Shape09.exists_ds (S : Shape09) (hts : S.tm = S.sm) (hda : S.am < S.dp) 
       rw [div_lt_div_iff₀ hkp hhm]; linarith
     have h3 : S.hm * (S.tm / S.hm) = S.tm := by field_simp
     have h4 : S.hm * ((1 - S.sp) / S.kp) < S.hm * (S.tm / S.hm) := mul_lt_mul_of_pos_left this hhm
-    nlinarith
+    linarith
   · have : (1 - S.sp) / S.kp < S.tm / S.hm := by
       rw [div_lt_div_iff₀ hkp hhm]; linarith
     have h3 : S.kp * ((1 - S.sp) / S.kp) = 1 - S.sp := by field_simp
     have h4 : S.kp * ((1 - S.sp) / S.kp) < S.kp * (S.tm / S.hm) := mul_lt_mul_of_pos_left this hkp
-    nlinarith
+    linarith
 
 section T095
 variable {tp hp tm hm sp kp ds : ℝ}
@@ -129,7 +129,7 @@ theorem t095_rest3_5 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 
         ((quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ (i + 1)).sub (quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ i))
         ((⟨1, 0, 0⟩ : C3).sub (quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ i)) := by
   have hds : 0 < ds := by
-    by_contra hn; push Not at hn; nlinarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
+    by_contra hn; push Not at hn; linarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
   have hsm' : 0 < 1 - tm := by linarith
   have hsp' : 0 < 1 - sp := by linarith
   have htm' : 0 < 1 - tm := by linarith
@@ -165,8 +165,8 @@ theorem t095_rest3_5 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 theorem t095_rest4_5 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm)
@@ -176,7 +176,7 @@ theorem t095_rest4_5 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 
         ((quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ (i + 1)).sub (quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ i))
         ((⟨tm, 0, -hm⟩ : C3).sub (quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ i)) := by
   have hds : 0 < ds := by
-    by_contra hn; push Not at hn; nlinarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
+    by_contra hn; push Not at hn; linarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
   have hsm' : 0 < 1 - tm := by linarith
   have hsp' : 0 < 1 - sp := by linarith
   have htm' : 0 < 1 - tm := by linarith
@@ -212,6 +212,7 @@ theorem t095_rest4_5 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
+    | (left; linarith)
     | (left; nlinarith)
     | (right; refine ⟨by ring, by nlinarith⟩)
 
@@ -223,7 +224,7 @@ theorem t095_cyc4 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) 
         ((quad (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ (i + 1)).sub (quad (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ i))
         ((quad (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ j).sub (quad (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ i)) := by
   have hds : 0 < ds := by
-    by_contra hn; push Not at hn; nlinarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
+    by_contra hn; push Not at hn; linarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
   have hsm' : 0 < 1 - tm := by linarith
   have hsp' : 0 < 1 - sp := by linarith
   have htm' : 0 < 1 - tm := by linarith
@@ -261,7 +262,7 @@ theorem t095_cyc4 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) 
     try (first | exact absurd rfl h1' | exact absurd (by decide) h2')
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
-    left; nlinarith
+    left; linarith
 
 theorem t095_rest1_4 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm)
@@ -271,7 +272,7 @@ theorem t095_rest1_4 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 
         ((quad (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ (i + 1)).sub (quad (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ i))
         ((⟨tp, 0, hp⟩ : C3).sub (quad (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ i)) := by
   have hds : 0 < ds := by
-    by_contra hn; push Not at hn; nlinarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
+    by_contra hn; push Not at hn; linarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
   have hsm' : 0 < 1 - tm := by linarith
   have hsp' : 0 < 1 - sp := by linarith
   have htm' : 0 < 1 - tm := by linarith
@@ -306,7 +307,7 @@ theorem t095_rest1_4 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 
   intro i
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
-    left; nlinarith
+    left; linarith
 
 theorem t095_rest3_4 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm)
@@ -316,7 +317,7 @@ theorem t095_rest3_4 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 
         ((quad (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ (i + 1)).sub (quad (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ i))
         ((⟨1, 0, 0⟩ : C3).sub (quad (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ i)) := by
   have hds : 0 < ds := by
-    by_contra hn; push Not at hn; nlinarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
+    by_contra hn; push Not at hn; linarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
   have hsm' : 0 < 1 - tm := by linarith
   have hsp' : 0 < 1 - sp := by linarith
   have htm' : 0 < 1 - tm := by linarith
@@ -352,8 +353,8 @@ theorem t095_rest3_4 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 theorem t095_rest4_4 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm)
@@ -363,7 +364,7 @@ theorem t095_rest4_4 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 
         ((quad (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ (i + 1)).sub (quad (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ i))
         ((⟨tm, 0, -hm⟩ : C3).sub (quad (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ i)) := by
   have hds : 0 < ds := by
-    by_contra hn; push Not at hn; nlinarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
+    by_contra hn; push Not at hn; linarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
   have hsm' : 0 < 1 - tm := by linarith
   have hsp' : 0 < 1 - sp := by linarith
   have htm' : 0 < 1 - tm := by linarith
@@ -399,7 +400,7 @@ theorem t095_rest4_4 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
-    | (left; nlinarith)
+    | (left; linarith)
     | (right; refine ⟨by ring, by nlinarith⟩)
 
 
@@ -441,10 +442,10 @@ theorem t095_4 (hA : F.a12 < F.a22) (hts : F.S.tm = F.S.sm) (hda : F.S.am < F.S.
       (Or.inl (Or.inl ?_))
     · -- z 2 < z 1: `-be < -be t`
       simp only [hzz, hPq, GG, Gf, quad_1, quad_2]
-      nlinarith [mul_pos (sub_pos.2 htm1) hd]
+      linarith [mul_pos (sub_pos.2 htm1) hd]
     · -- z 1 < z 0: `-be t < 0`
       simp only [hzz, hPq, GG, Gf, quad_0, quad_1]
-      nlinarith [mul_pos htm hd]
+      linarith [mul_pos htm hd]
 
 /-- **09.5, case `d+ > a-`, `m1+` a corner** (`c+ < a+`, hence `t+ < s+`): the sector rim
 `(v, m2-, xb, m2+, m1+)`, `Q5p` with all-strict witnesses (valid also at `A12 = A11`). -/
@@ -485,15 +486,15 @@ theorem t095_5 (hA : F.a12 < F.a22) (hts : F.S.tm = F.S.sm) (hda : F.S.am < F.S.
       (Or.inr (Or.inr (Or.inl (Or.inl ?_)))) (Or.inl (Or.inl ?_)) (Or.inl (Or.inl ?_))
       (Or.inr (Or.inl (Or.inl ?_))) (Or.inr (Or.inr (Or.inl (Or.inl ?_))))
     · simp only [hzz, hPq, GG, Gf, quint_1, quint_2]
-      nlinarith [mul_pos (sub_pos.2 htm1) hd2']
+      linarith [mul_pos (sub_pos.2 htm1) hd2']
     · simp only [hzz, hPq, GG, Gf, quint_0, quint_1]
-      nlinarith [mul_pos htm hd2']
+      linarith [mul_pos htm hd2']
     · simp only [hzz, hPq, GG, Gf, quint_1, quint_2]
-      nlinarith [mul_pos (sub_pos.2 htm1) hd2']
+      linarith [mul_pos (sub_pos.2 htm1) hd2']
     · simp only [hzz, hPq, GG, Gf, quint_3, quint_4]
-      nlinarith [mul_pos hsp hd2', mul_nonneg htp.le hd1']
+      linarith [mul_pos hsp hd2', mul_nonneg htp.le hd1']
     · simp only [hzz, hPq, GG, Gf, quint_0, quint_1]
-      nlinarith [mul_pos htm hd2']
+      linarith [mul_pos htm hd2']
 
 /-- **09.5, case `t- = s-`, `d+ > a-`** (part B): Rupert, at every metric of `𝒞 ∪ 𝒞₁`
 (`A12 < A22`, `A12 ≤ A11`), off `a+ = c+` (that case is not

@@ -182,9 +182,9 @@ theorem rect_fC (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
   · have hb' : 0 < b := by
       by_contra h'; push Not at h'
       have : b = 0 := le_antisymm h' hb
-      rw [this, zero_mul, add_zero] at e2; nlinarith [mul_pos_of_neg_of_neg ha h]
-    nlinarith [mul_nonneg_of_nonpos_of_nonpos ha.le (sub_nonpos.2 h6), mul_pos hb' (neg_pos.2 hD6)]
-  · nlinarith [mul_pos_of_neg_of_neg ha (sub_neg.2 h), mul_nonneg hb (neg_nonneg.2 hD6.le)]
+      rw [this, zero_mul, add_zero] at e2; linarith [mul_pos_of_neg_of_neg ha h]
+    linarith [mul_nonneg_of_nonpos_of_nonpos ha.le (sub_nonpos.2 h6), mul_pos hb' (neg_pos.2 hD6)]
+  · linarith [mul_pos_of_neg_of_neg ha (sub_neg.2 h), mul_nonneg hb (neg_nonneg.2 hD6.le)]
 
 /-- Facts on `R`: `x 2 - x 5 ⊥ g`, `⟪x 2 - x 0, x 2 - x 3⟫ = |x 2 - x 5|² - X 2`. -/
 theorem rect_p2 (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
@@ -217,7 +217,7 @@ theorem isRupert_eg_R2v (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - x 0)
   have hpp : 0 < ⟪x 2 - x 5, x 2 - x 5⟫ := real_inner_self_pos.2 hp
   have hD2 := F.neg 3 2 (by decide)
   have hI : 0 < F.f 8 (x 0) - F.f 8 (x 2) := by
-    rw [eI]; nlinarith [mul_pos_of_neg_of_neg (neg_neg_of_pos haI) h2, mul_nonneg hbI (neg_nonneg.2 hD2.le)]
+    rw [eI]; linarith [mul_pos_of_neg_of_neg (neg_neg_of_pos haI) h2, mul_nonneg hbI (neg_nonneg.2 hD2.le)]
   have s02 : ∀ t, ⟪F.N t, x 0 - x 2⟫ = F.f t (x 0) - F.f t (x 2) := fun t => IS t 0 2
   have s03 : ∀ t, ⟪F.N t, x 0 - x 3⟫ = F.f t (x 0) - F.f t (x 3) := fun t => IS t 0 3
   have zA0 := F.zero 0 0 (by decide); have zA2 := F.zero 0 2 (by decide)

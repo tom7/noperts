@@ -51,7 +51,7 @@ theorem t31II_rest1_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp 
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
-    | (left; nlinarith)
+    | (left; linarith)
     | (right; refine ⟨by linarith, by nlinarith⟩)
 
 theorem t31IB_cyc_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
@@ -93,8 +93,9 @@ theorem t31IB_cyc_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
-    | (right; refine ⟨by linarith, by nlinarith⟩)
 
 theorem t31IB_rest3_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km)
@@ -130,8 +131,8 @@ theorem t31IB_rest3_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp 
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by linarith, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
 
 theorem t31IB_rest4_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm) (hsm : 0 < sm) 
@@ -171,8 +172,9 @@ theorem t31IB_rest4_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp 
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
-    | (right; refine ⟨by linarith, by nlinarith⟩)
 
 theorem t095_cyc5_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm)
@@ -211,6 +213,7 @@ theorem t095_cyc5_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
+    | (left; linarith)
     | (left; nlinarith)
     | (right; refine ⟨by linarith, by nlinarith⟩)
 
@@ -222,7 +225,7 @@ theorem t095_rest3_5_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp
         ((quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ (i + 1)).sub (quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ i))
         ((⟨1, 0, 0⟩ : C3).sub (quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ i)) := by
   have hds : 0 < ds := by
-    by_contra hn; push Not at hn; nlinarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
+    by_contra hn; push Not at hn; linarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
   have hsm' : 0 < 1 - tm := by linarith
   have hsp' : 0 < 1 - sp := by linarith
   have htm' : 0 < 1 - tm := by linarith
@@ -257,8 +260,8 @@ theorem t095_rest3_5_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by linarith, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
 
 theorem t095_rest4_5_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm)
@@ -268,7 +271,7 @@ theorem t095_rest4_5_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp
         ((quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ (i + 1)).sub (quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ i))
         ((⟨tm, 0, -hm⟩ : C3).sub (quint (⟨0, 0, 0⟩ : C3) ⟨0, tm, -hm⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ ⟨tp, 0, hp⟩ i)) := by
   have hds : 0 < ds := by
-    by_contra hn; push Not at hn; nlinarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
+    by_contra hn; push Not at hn; linarith [mul_nonpos_of_nonneg_of_nonpos hkp.le hn]
   have hsm' : 0 < 1 - tm := by linarith
   have hsp' : 0 < 1 - sp := by linarith
   have htm' : 0 < 1 - tm := by linarith
@@ -303,6 +306,7 @@ theorem t095_rest4_5_eq (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
+    | (left; linarith)
     | (left; nlinarith)
     | (right; refine ⟨by linarith, by nlinarith⟩)
 
@@ -350,9 +354,9 @@ theorem t31II_eq (hA1 : F.a12 ≤ F.a11) (hts : F.S.tm < F.S.sm) (hac : F.S.ap =
       refine Q4_eventually (z := zz) (w := ww) (Or.inl (Or.inl ?_))
         (Or.inr (Or.inr (Or.inl (Or.inl ?_))))
       · simp only [hzz, hPq, GG, Gf, quad_0, quad_1]
-        nlinarith [mul_pos htm hd]
+        linarith [mul_pos htm hd]
       · simp only [hzz, hPq, GG, Gf, quad_1, quad_2]
-        nlinarith [mul_pos (sub_pos.2 htm1) hd]
+        linarith [mul_pos (sub_pos.2 htm1) hd]
     · -- a right angle at `xa`: the ties are broken by the tilt `-u₁`
       have hz : F.a11 - F.a12 = 0 := by linarith
       refine Q4_eventually (z := zz) (w := ww) (Or.inr (Or.inr (Or.inl (Or.inr ⟨?_, ?_⟩))))
@@ -360,11 +364,11 @@ theorem t31II_eq (hA1 : F.a12 ≤ F.a11) (hts : F.S.tm < F.S.sm) (hac : F.S.ap =
       · simp only [hzz, hPq, GG, Gf, quad_1, quad_2]
         linear_combination (1 - F.S.tm) * hz
       · simp only [hww, hPq, GG, Gf, quad_1, quad_2]
-        nlinarith [mul_pos h11 (sub_pos.2 htm1)]
+        linarith [mul_pos h11 (sub_pos.2 htm1)]
       · simp only [hzz, hPq, GG, Gf, quad_0, quad_1]
         linear_combination F.S.tm * hz
       · simp only [hww, hPq, GG, Gf, quad_0, quad_1]
-        nlinarith [mul_pos h11 htm]
+        linarith [mul_pos h11 htm]
 
 
 
@@ -401,24 +405,24 @@ theorem t31IB_eq (hA1 : F.a12 ≤ F.a11) (hA2 : F.a12 < F.a22) (hst : F.S.sm < F
     have hd2 : 0 < F.a22 - F.a12 := sub_pos.2 hA2
     refine Q5c_eventually (z := zz) (w := ww) (Or.inl ?_) (Or.inl ?_) (Or.inl ?_) (Or.inl ?_) ?_
     · simp only [hzz, hPq, GG, Gf, quint_0, quint_1]
-      nlinarith [mul_pos hsm hd2]
+      linarith [mul_pos hsm hd2]
     · simp only [hzz, hPq, GG, Gf, quint_1, quint_2]
-      nlinarith [mul_pos (sub_pos.2 hsm1) hd2]
+      linarith [mul_pos (sub_pos.2 hsm1) hd2]
     · simp only [hzz, hPq, GG, Gf, quint_2, quint_3]
-      nlinarith [mul_pos (sub_pos.2 hsp1) hd2]
+      linarith [mul_pos (sub_pos.2 hsp1) hd2]
     · simp only [hzz, hPq, GG, Gf, quint_3, quint_4]
-      nlinarith [mul_pos hsp hd2, mul_nonneg htp.le hd1]
+      linarith [mul_pos hsp hd2, mul_nonneg htp.le hd1]
     · rcases lt_or_eq_of_le hA1 with hlt | heq
       · left
         simp only [hzz, hPq, GG, Gf, quint_0, quint_4]
-        nlinarith [mul_pos htp (sub_pos.2 hlt)]
+        linarith [mul_pos htp (sub_pos.2 hlt)]
       · right
         have hz : F.a11 - F.a12 = 0 := by linarith
         constructor
         · simp only [hzz, hPq, GG, Gf, quint_0, quint_4]
           linear_combination (-F.S.tp) * hz
         · simp only [hww, hPq, GG, Gf, quint_0, quint_4]
-          nlinarith [mul_pos h11 htp]
+          linarith [mul_pos h11 htp]
 
 
 /-- **09.A, case (iii)** (`t- = s-`, `a- < d+`, `a+ = c+`): `t095_5` with `m1+` shown on the side. -/
@@ -460,15 +464,15 @@ theorem t095_5_eq (hA : F.a12 < F.a22) (hts : F.S.tm = F.S.sm) (hda : F.S.am < F
       (Or.inr (Or.inr (Or.inl (Or.inl ?_)))) (Or.inl (Or.inl ?_)) (Or.inl (Or.inl ?_))
       (Or.inr (Or.inl (Or.inl ?_))) (Or.inr (Or.inr (Or.inl (Or.inl ?_))))
     · simp only [hzz, hPq, GG, Gf, quint_1, quint_2]
-      nlinarith [mul_pos (sub_pos.2 htm1) hd2']
+      linarith [mul_pos (sub_pos.2 htm1) hd2']
     · simp only [hzz, hPq, GG, Gf, quint_0, quint_1]
-      nlinarith [mul_pos htm hd2']
+      linarith [mul_pos htm hd2']
     · simp only [hzz, hPq, GG, Gf, quint_1, quint_2]
-      nlinarith [mul_pos (sub_pos.2 htm1) hd2']
+      linarith [mul_pos (sub_pos.2 htm1) hd2']
     · simp only [hzz, hPq, GG, Gf, quint_3, quint_4]
-      nlinarith [mul_pos hsp hd2', mul_nonneg htp.le hd1']
+      linarith [mul_pos hsp hd2', mul_nonneg htp.le hd1']
     · simp only [hzz, hPq, GG, Gf, quint_0, quint_1]
-      nlinarith [mul_pos htm hd2']
+      linarith [mul_pos htm hd2']
 
 
 /-- Type 09, acute case (c), off the shrunken special set (`a+ = c+` is now handled: Theorem 09.A). -/

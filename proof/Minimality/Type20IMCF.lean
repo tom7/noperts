@@ -63,7 +63,7 @@ lemma z2_lt (sp kk sm t z e : ℝ) (sp0 : 0 < sp) (sp1 : sp < 1) (kk0 : 0 < kk) 
     have h5 : sm*t*(-e) < (1-sm)*(-z) := by linarith
     have h6 : kk*(sm*t*(-e)) < kk*((1-sm)*(-z)) := mul_lt_mul_of_pos_left h5 kk0
     have h9 : 0 < (sp - kk*(1-sm)) * (-z) := mul_pos (by linarith) (by linarith)
-    nlinarith
+    linarith
 
 /-- **Leaf T**: view `u = (tp, -sp, q - kk)` (`x0 - x2`), tilt `(2 tp, -1, 2 q)`. -/
 theorem leaf_T {q tm sp sm kk B : ℝ} (h : Hy q tm sp sm kk B) (hK : 0 ≤ Kc q tm sp sm kk)
@@ -124,7 +124,7 @@ theorem leaf_T {q tm sp sm kk B : ℝ} (h : Hy q tm sp sm kk B) (hK : 0 ≤ Kc q
     · show zN q tm sp sm kk B _ _ _ 4 < zN q tm sp sm kk B _ _ _ 3
       have : 0 < (B*sm - tm^2)*sp := by
         have : 0 < B*sm - tm^2 := by
-          nlinarith [mul_le_mul_of_nonneg_right hBt sm0.le, mul_pos tm0 (sub_pos.2 tmsm)]
+          linarith [mul_le_mul_of_nonneg_right hBt sm0.le, mul_pos tm0 (sub_pos.2 tmsm)]
         positivity
       linarith
     · show zN q tm sp sm kk B _ _ _ 6 < zN q tm sp sm kk B _ _ _ 4
@@ -222,12 +222,12 @@ theorem leaf_Wt {q tm sp sm kk B : ℝ} (h : Hy q tm sp sm kk B) (hK : Kc q tm s
   have hQ := h.hQ
   have pd : 0 < sm - tm := by linarith
   have p3 : 0 < tm - q*tm*sm*(1+tm-sm) := by
-    have a1 : q*sm < 1 := by nlinarith [mul_nonneg q0.le (sub_nonneg.2 hq1.le)]
+    have a1 : q*sm < 1 := by linarith [mul_nonneg q0.le (sub_nonneg.2 hq1.le)]
     have a2 : q*sm*(1+tm-sm) < 1 := by nlinarith [mul_nonneg (by positivity : 0 ≤ q*sm) (sub_nonneg.2 a1.le)]
     have := mul_pos tm0 (sub_pos.2 a2)
     linarith
   have pT : 0 < 1 - q*tm*sm := by
-    have := (by nlinarith [mul_nonneg (mul_pos q0 tm0).le (sub_nonneg.2 h.sm_lt.le)] : q*tm*sm < 1)
+    have := (by linarith [mul_nonneg (mul_pos q0 tm0).le (sub_nonneg.2 h.sm_lt.le)] : q*tm*sm < 1)
     linarith
   have hBs : (1-sm)*B = (1-sm)*tm*(1-q*tm) + sm*(1-tm)*(q*tm) := by
     have : sp * ((1-sm)*B - ((1-sm)*tm*(1-q*tm) + sm*(1-tm)*(q*tm))) = 0 := by
@@ -288,7 +288,7 @@ theorem leaf_Wt {q tm sp sm kk B : ℝ} (h : Hy q tm sp sm kk B) (hK : Kc q tm s
     · show zN q tm sp sm kk B _ _ _ 0 < zN q tm sp sm kk B _ _ _ 1
       have : 0 < q*tm*((sm-tm)*(1-q*tm*sm)) := by
         have : 0 < sm - tm := by linarith
-        have : 0 < 1 - q*tm*sm := by nlinarith
+        have : 0 < 1 - q*tm*sm := by linarith
         positivity
       linarith
     · show zN q tm sp sm kk B _ _ _ 5 < zN q tm sp sm kk B _ _ _ 4

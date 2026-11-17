@@ -275,7 +275,7 @@ theorem v12_mA (hr : gA12 x = gA11 x) (hA : F.S.tp = F.S.sp) (hB : F.S.tm = F.S.
       rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
         simp [vA_0, vA_1, vA_2, vA_3, vA_4, Pt_0, Pt_1, Pt_2, Pt_4, Pt_6]
     rw [e]
-    exact rob5 (mul_pos F.S.tm_pos hD) (by nlinarith [mul_pos a3 hD]) (by nlinarith [mul_pos a1 hD])
+    exact rob5 (mul_pos F.S.tm_pos hD) (by linarith [mul_pos a3 hD]) (by linarith [mul_pos a1 hD])
       (mul_pos F.S.tp_pos hD)
 
 
@@ -295,7 +295,7 @@ theorem v12_mB (hr : gA12 x = gA11 x) (hA : F.S.tp = F.S.sp) (hB : F.S.tm = F.S.
   have a3 := sub_pos.2 F.S.tm_lt
   have hD := F.D_pos hr
   have hvz : 0 < vz := by
-    have : 0 < (k + l) * vz := by nlinarith [mul_pos hl pb, mul_pos hk pa]
+    have : 0 < (k + l) * vz := by linarith [mul_pos hl pb, mul_pos hk pa]
     exact (mul_pos_iff_of_pos_left (add_pos hk hl)).1 this
   refine F.v12_rimT (by norm_num) vB ⟨vx, 0, vz⟩ ?_ ?_ 2 ?_
   · intro i j hi hj
@@ -312,7 +312,7 @@ theorem v12_mB (hr : gA12 x = gA11 x) (hA : F.S.tp = F.S.sp) (hB : F.S.tm = F.S.
     · simp only [b0, c0, vB_0, vB_1, vB_4, Pt_0, Pt_2, Pt_6]
       right; left; have := mul_pos F.S.tm_pos hD; linarith
     · simp only [b1, c1, vB_0, vB_1, vB_2, Pt_2, Pt_4, Pt_6]
-      right; left; nlinarith [mul_pos a3 hD]
+      right; left; linarith [mul_pos a3 hD]
     · exact absurd rfl hi
     · simp only [b3, c3, vB_2, vB_3, vB_4, Pt_0, Pt_3, Pt_4]
       left; left; linarith
@@ -354,9 +354,9 @@ theorem v12_mC (hr : gA12 x = gA11 x) (hA : F.S.tp = F.S.sp) (hB : F.S.tm = F.S.
       · left; right; exact ⟨trivial, by linarith⟩
       · right; right; exact ⟨trivial, by linarith⟩
     · right; left; have := mul_pos F.S.tm_pos hD; linarith
-    · right; left; nlinarith [mul_pos a3 hD]
+    · right; left; linarith [mul_pos a3 hD]
     · exact absurd rfl hi
-    · left; left; nlinarith [mul_pos a1 hD]
+    · left; left; linarith [mul_pos a1 hD]
     · left; left; have := mul_pos F.S.tp_pos hD; linarith
 
 end Frame02
@@ -385,17 +385,17 @@ theorem v12_good_of_u {tp tm k l α g : ℝ} (hα : 0 < α) (hg : 0 < g) (ux uz 
       (s2 < 0 ∧ 0 < s4 ∧ (0 < tp * ux + k * (1 - tp) * uz ∨ 0 < tm * ux + -(l * (1 - tm)) * uz))) :
     V12Good tp tm k l α g := by
   have hag : 0 < α * g := mul_pos hα hg
-  refine ⟨g * ux, α * uz, by nlinarith, by nlinarith, ?_⟩
+  refine ⟨g * ux, α * uz, by linarith, by linarith, ?_⟩
   rcases H with ⟨h2, h4⟩ | ⟨h2, h4, hR⟩ | ⟨h2, h4, hR⟩
-  · exact Or.inl ⟨by nlinarith, by nlinarith⟩
-  · refine Or.inr (Or.inl ⟨by nlinarith, by nlinarith, ?_⟩)
+  · exact Or.inl ⟨by linarith, by linarith⟩
+  · refine Or.inr (Or.inl ⟨by linarith, by linarith, ?_⟩)
     rcases hR with hR | hR
-    · left; nlinarith [mul_lt_mul_of_pos_left hR hag]
-    · right; nlinarith [mul_lt_mul_of_pos_left hR hag]
-  · refine Or.inr (Or.inr ⟨by nlinarith, by nlinarith, ?_⟩)
+    · left; linarith [mul_lt_mul_of_pos_left hR hag]
+    · right; linarith [mul_lt_mul_of_pos_left hR hag]
+  · refine Or.inr (Or.inr ⟨by linarith, by linarith, ?_⟩)
     rcases hR with hR | hR
-    · left; nlinarith [mul_pos hag hR]
-    · right; nlinarith [mul_pos hag hR]
+    · left; linarith [mul_pos hag hR]
+    · right; linarith [mul_pos hag hR]
 
 set_option maxHeartbeats 1000000 in
 /-- Leaf 1: `G34 < 0` (angle at `x2` acute): `u = Q44 m3 + μ m4`, cells A (`μ = -G34/2`) or B (`μ = -G34/4`). -/
@@ -411,8 +411,8 @@ theorem v12_ex1 {tp tm k l α g : ℝ} (hp : 0 < tp) (a1 : 0 < 1 - tp) (hm : 0 <
   obtain ⟨G24, hG24⟩ : ∃ G : ℝ, G = -(g * k * (l * (1 - tm))) - α * tm := ⟨_, rfl⟩
   have hG' : G34 < 0 := by rw [hG34]; exact hG
   have hQ44p : 0 < Q44 := by rw [hQ44]; positivity
-  have hG13n : G13 < 0 := by rw [hG13]; nlinarith [mul_pos (mul_pos hg hk) (mul_pos a1 hl), mul_pos hα hp]
-  have hG24n : G24 < 0 := by rw [hG24]; nlinarith [mul_pos (mul_pos hg hk) (mul_pos a3 hl), mul_pos hα hm]
+  have hG13n : G13 < 0 := by rw [hG13]; linarith [mul_pos (mul_pos hg hk) (mul_pos a1 hl), mul_pos hα hp]
+  have hG24n : G24 < 0 := by rw [hG24]; linarith [mul_pos (mul_pos hg hk) (mul_pos a3 hl), mul_pos hα hm]
   have lag3 : Q44 * Q33 - G34 ^ 2 = α * g * (k * (1 - tp) * tm + tp * l * (1 - tm)) ^ 2 := by
     rw [hQ44, hQ33, hG34]; ring
   have lag1 : Q44 * G13 - G41 * G34 = -(α * g * l * (k * (1 - tp) * tm + tp * l * (1 - tm))) := by
@@ -444,7 +444,7 @@ theorem v12_ex1 {tp tm k l α g : ℝ} (hp : 0 < tp) (a1 : 0 < 1 - tp) (hm : 0 <
           Q44 * Q33 + μ * G34 := by rw [hQ33, hG34]; ring
       rw [e]
       have := mul_pos (sub_pos.2 hμ2) (neg_pos.2 hG')
-      nlinarith [this, hlag3]
+      linarith [this, hlag3]
     · have e : -(g * (l * (1 - tm) * (Q44 * -(k * (1 - tp)) + μ * -(l * (1 - tm))))) - α * (tm * (Q44 * tp + μ * -tm)) =
           Q44 * (G34 + μ) := by rw [hQ44, hG34]; ring
       rw [e]; exact mul_neg_of_pos_of_neg hQ44p (by linarith)
@@ -455,7 +455,7 @@ theorem v12_ex1 {tp tm k l α g : ℝ} (hp : 0 < tp) (a1 : 0 < 1 - tp) (hm : 0 <
   · push Not at hc
     obtain ⟨t1, t2, t3, t4, f1, f2, f3, f4, k1, k3, k4, ks2⟩ := fam (-G34 / 4) (by linarith) (by linarith)
     have h2 : 0 < t2 := by
-      rw [ks2]; rw [hs2] at hc; nlinarith [mul_pos_of_neg_of_neg hG' hG24n]
+      rw [ks2]; rw [hs2] at hc; linarith [mul_pos_of_neg_of_neg hG' hG24n]
     refine v12_good_of_u hα hg _ _ t1 t2 t3 t4 f1 f2 f3 f4 k1 k3 (Or.inr (Or.inl ⟨h2, k4, Or.inr ?_⟩))
     have : tp * (Q44 * -(k * (1 - tp)) + (-G34 / 4) * -(l * (1 - tm))) + k * (1 - tp) * (Q44 * tp + (-G34 / 4) * -tm) =
         -((-G34 / 4) * (l * (1 - tm) * tp + k * (1 - tp) * tm)) := by ring
@@ -478,8 +478,8 @@ theorem v12_ex2 {tp tm k l α g : ℝ} (hp : 0 < tp) (a1 : 0 < 1 - tp) (hm : 0 <
   obtain ⟨G24, hG24⟩ : ∃ G : ℝ, G = -(g * k * (l * (1 - tm))) - α * tm := ⟨_, rfl⟩
   have hG' : G23 < 0 := by rw [hG23]; exact hG
   have hQ22p : 0 < Q22 := by rw [hQ22]; positivity
-  have hG13n : G13 < 0 := by rw [hG13]; nlinarith [mul_pos (mul_pos hg hk) (mul_pos a1 hl), mul_pos hα hp]
-  have hG24n : G24 < 0 := by rw [hG24]; nlinarith [mul_pos (mul_pos hg hk) (mul_pos a3 hl), mul_pos hα hm]
+  have hG13n : G13 < 0 := by rw [hG13]; linarith [mul_pos (mul_pos hg hk) (mul_pos a1 hl), mul_pos hα hp]
+  have hG24n : G24 < 0 := by rw [hG24]; linarith [mul_pos (mul_pos hg hk) (mul_pos a3 hl), mul_pos hα hm]
   have lag3 : Q22 * Q33 - G23 ^ 2 = α * g * k ^ 2 := by rw [hQ22, hQ33, hG23]; ring
   have lag1 : Q22 * G13 - G12 * G23 = -(α * g * k * (k + l)) := by rw [hQ22, hG13, hG12, hG23]; ring
   have hlag3 : 0 < Q22 * Q33 - G23 ^ 2 := by rw [lag3]; positivity
@@ -508,7 +508,7 @@ theorem v12_ex2 {tp tm k l α g : ℝ} (hp : 0 < tp) (a1 : 0 < 1 - tp) (hm : 0 <
           Q22 * Q33 + μ * G23 := by rw [hQ33, hG23]; ring
       rw [e]
       have := mul_pos (sub_pos.2 hμ2) (neg_pos.2 hG')
-      nlinarith [this, hlag3]
+      linarith [this, hlag3]
     · have e : g * (k * (Q22 * -(k * (1 - tp)) + μ * k)) + α * (Q22 * tp + μ * 1) =
           Q22 * (G23 + μ) := by rw [hQ22, hG23]; ring
       rw [e]; exact mul_neg_of_pos_of_neg hQ22p (by linarith)
@@ -519,7 +519,7 @@ theorem v12_ex2 {tp tm k l α g : ℝ} (hp : 0 < tp) (a1 : 0 < 1 - tp) (hm : 0 <
   · push Not at hc
     obtain ⟨t1, t2, t3, t4, f1, f2, f3, f4, k1, k3, k2, kt4⟩ := fam (-G23 / 4) (by linarith) (by linarith)
     have h4 : 0 < t4 := by
-      rw [kt4]; rw [hs4] at hc; nlinarith [mul_pos_of_neg_of_neg hG' hG24n]
+      rw [kt4]; rw [hs4] at hc; linarith [mul_pos_of_neg_of_neg hG' hG24n]
     refine v12_good_of_u hα hg _ _ t1 t2 t3 t4 f1 f2 f3 f4 k1 k3 (Or.inr (Or.inr ⟨k2, h4, Or.inl ?_⟩))
     have : tp * (Q22 * -(k * (1 - tp)) + (-G23 / 4) * k) + k * (1 - tp) * (Q22 * tp + (-G23 / 4) * 1) =
         (-G23 / 4) * k := by ring
@@ -543,14 +543,14 @@ theorem v12_ex5 {tp tm k l α g : ℝ} (hp : 0 < tp) (a1 : 0 < 1 - tp) (hm : 0 <
   have hG23p : 0 < G23 := by rw [hG23]; exact h23
   have hG41p : 0 ≤ G41 := by rw [hG41]; exact h41
   have hQ11p : 0 < Q11 := by rw [hQ11]; positivity
-  have hG13n : G13 < 0 := by rw [hG13]; nlinarith [mul_pos (mul_pos hg hk) (mul_pos a1 hl), mul_pos hα hp]
-  have hG24n : G24 < 0 := by rw [hG24]; nlinarith [mul_pos (mul_pos hg hk) (mul_pos a3 hl), mul_pos hα hm]
+  have hG13n : G13 < 0 := by rw [hG13]; linarith [mul_pos (mul_pos hg hk) (mul_pos a1 hl), mul_pos hα hp]
+  have hG24n : G24 < 0 := by rw [hG24]; linarith [mul_pos (mul_pos hg hk) (mul_pos a3 hl), mul_pos hα hm]
   have lag2 : Q11 * Q22 - G12 ^ 2 = α * g * (k + l) ^ 2 := by rw [hQ11, hQ22, hG12]; ring
   have hlag2 : 0 < Q11 * Q22 - G12 ^ 2 := by rw [lag2]; positivity
   have hB1 : 0 < -G12 := by linarith
   have hN3 : 0 < Q11 * G23 := mul_pos hQ11p hG23p
   have hC3 : 0 < -G13 := by linarith
-  have hN4 : 0 < -(Q11 * G24) := by nlinarith [mul_pos hQ11p (neg_pos.2 hG24n)]
+  have hN4 : 0 < -(Q11 * G24) := by linarith [mul_pos hQ11p (neg_pos.2 hG24n)]
   have hT : 0 < 1 / (-G12) + (-G13) / (Q11 * G23) + G41 / (-(Q11 * G24)) := by
     have := div_pos hC3 hN3
     have := div_nonneg hG41p hN4.le
@@ -564,13 +564,13 @@ theorem v12_ex5 {tp tm k l α g : ℝ} (hp : 0 < tp) (a1 : 0 < 1 - tp) (hm : 0 <
   have c3 : 0 < μ * ((-G13) / (Q11 * G23)) := mul_pos hμp (div_pos hC3 hN3)
   have c4 : 0 ≤ μ * (G41 / (-(Q11 * G24))) := mul_nonneg hμp.le (div_nonneg hG41p hN4.le)
   have hμ1 : μ < -G12 := by
-    have : μ * (1 / (-G12)) < 1 := by nlinarith
+    have : μ * (1 / (-G12)) < 1 := by linarith
     rw [mul_one_div, div_lt_one hB1] at this; exact this
   have hμ3 : μ * (-G13) < Q11 * G23 := by
-    have : μ * ((-G13) / (Q11 * G23)) < 1 := by nlinarith
+    have : μ * ((-G13) / (Q11 * G23)) < 1 := by linarith
     rw [← mul_div_assoc, div_lt_one hN3] at this; exact this
   have hμ4 : μ * G41 < -(Q11 * G24) := by
-    have : μ * (G41 / (-(Q11 * G24))) < 1 := by nlinarith
+    have : μ * (G41 / (-(Q11 * G24))) < 1 := by linarith
     rw [← mul_div_assoc, div_lt_one hN4] at this; exact this
   refine v12_good_of_u hα hg (Q11 * k + μ * l) (Q11 * 1 + μ * -1) (Q11 * (G12 + μ)) (Q11 * Q22 + μ * G12)
     (Q11 * G23 + μ * G13) (Q11 * G24 + μ * G41) ?_ ?_ ?_ ?_ ?_ ?_ (Or.inr (Or.inl ⟨?_, ?_, Or.inl ?_⟩))
@@ -579,10 +579,10 @@ theorem v12_ex5 {tp tm k l α g : ℝ} (hp : 0 < tp) (a1 : 0 < 1 - tp) (hm : 0 <
   · rw [hG23, hG13, hQ11]; ring
   · rw [hG24, hG41, hQ11]; ring
   · exact mul_neg_of_pos_of_neg hQ11p (by linarith)
-  · nlinarith
+  · linarith
   · have := mul_pos (sub_pos.2 hμ1) hB1
-    nlinarith [this, hlag2]
-  · nlinarith
+    linarith [this, hlag2]
+  · linarith
   · have : (Q11 * k + μ * l) - (tp * (Q11 * k + μ * l) + k * (1 - tp) * (Q11 * 1 + μ * -1)) =
         (1 - tp) * (μ * (k + l)) := by ring
     have h2 : 0 < (1 - tp) * (μ * (k + l)) := by positivity

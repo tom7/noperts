@@ -240,11 +240,11 @@ theorem acute_V1B5_pf (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA22 x)
         simp [quint_0, quint_1, quint_2, quint_3, quint_4, F.GG_uA, ptv] <;> ring
     rw [hz]
     refine robust5_A ?_ ?_ ?_ ?_ ?_
-    · nlinarith [mul_pos hα (sub_pos.2 F.S.tm_lt)]
-    · nlinarith [mul_pos hα F.S.tm_pos]
-    · nlinarith [mul_pos hγ F.S.sp_pos]
-    · nlinarith [mul_pos hα (sub_pos.2 F.S.tp_lt)]
-    · nlinarith [mul_pos hα F.S.tp_pos, mul_pos hγ F.S.sp_pos]
+    · linarith [mul_pos hα (sub_pos.2 F.S.tm_lt)]
+    · linarith [mul_pos hα F.S.tm_pos]
+    · linarith [mul_pos hγ F.S.sp_pos]
+    · linarith [mul_pos hα (sub_pos.2 F.S.tp_lt)]
+    · linarith [mul_pos hα F.S.tp_pos, mul_pos hγ F.S.sp_pos]
 
 theorem acute_V1B6_pf (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA22 x)
     (hA : F.S.tp = F.S.sp) (hB : F.S.sm < F.S.tm) : IsRupert (Finset.univ.image x) := by
@@ -280,11 +280,11 @@ theorem acute_V1B6_pf (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA22 x)
         simp [quint_0, quint_1, quint_2, quint_3, quint_4, F.GG_uA, ptv]; ring
     rw [hz]
     refine robust5_B ?_ ?_ ?_ ?_ ?_
-    · nlinarith [mul_pos hα F.S.tp_pos, mul_pos hγ F.S.sp_pos]
-    · nlinarith [mul_pos hγ (sub_pos.2 F.S.sp_lt)]
-    · nlinarith [mul_pos hα F.S.tp_pos]
-    · nlinarith [mul_pos hγ F.S.sm_pos]
-    · nlinarith [mul_pos hγ (sub_pos.2 F.S.sm_lt)]
+    · linarith [mul_pos hα F.S.tp_pos, mul_pos hγ F.S.sp_pos]
+    · linarith [mul_pos hγ (sub_pos.2 F.S.sp_lt)]
+    · linarith [mul_pos hα F.S.tp_pos]
+    · linarith [mul_pos hγ F.S.sm_pos]
+    · linarith [mul_pos hγ (sub_pos.2 F.S.sm_lt)]
 
 theorem acute_V12_pf (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA22 x)
     (hA : F.S.tp = F.S.sp) (hB : F.S.tm = F.S.sm) : IsRupert (Finset.univ.image x) := by
@@ -320,10 +320,10 @@ theorem acute_V12_pf (h1 : gA12 x < gA11 x) (h2 : gA12 x < gA22 x)
         simp [quint_0, quint_1, quint_2, quint_3, quint_4, F.GG_uA, ptv]; ring
     rw [hz]
     refine robust5_C ?_ ?_ ?_ ?_
-    · nlinarith [mul_pos hα (sub_pos.2 F.S.tm_lt)]
-    · nlinarith [mul_pos hα F.S.tm_pos]
-    · nlinarith [mul_pos hγ F.S.sp_pos]
-    · nlinarith [mul_pos hγ (sub_pos.2 F.S.sp_lt)]
+    · linarith [mul_pos hα (sub_pos.2 F.S.tm_lt)]
+    · linarith [mul_pos hα F.S.tm_pos]
+    · linarith [mul_pos hγ F.S.sp_pos]
+    · linarith [mul_pos hγ (sub_pos.2 F.S.sp_lt)]
 
 end Frame02
 

@@ -43,7 +43,7 @@ theorem Shape09.thm_27_58' (S : Shape09) (hts : S.tm < S.sm) (hca : S.cp < S.ap)
   have hamm : S.am * S.tm = S.hm := S.am_mul
   have hAM3 : S.hm < S.kp * S.tm + S.dm * (1 - S.sp * S.tm) := by
     rw [S.dm_eq]
-    nlinarith [mul_pos hkp htm, mul_pos (mul_pos hbm htm) (sub_pos.2 hsp1)]
+    linarith [mul_pos hkp htm, mul_pos (mul_pos hbm htm) (sub_pos.2 hsp1)]
   -- a case (III) contradiction when `b+ > s+A2` and `a- ≤ b+`
   have caseIII : S.am ≤ S.bp → S.sp * S.A2 < S.bp → False := by
     intro h h3
@@ -101,8 +101,9 @@ theorem t1_cycE (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (ht
     simp only [ST, Dc, C3.sub, t1P, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3,
       quint_4]
     first
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
 theorem t1_rest1E (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1)
@@ -135,8 +136,8 @@ theorem t1_rest1E (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) 
   · simp only [ST, Dc, C3.sub, t1P, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3,
       quint_4]
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
 
 theorem t2_rest1E (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1)
@@ -164,8 +165,8 @@ theorem t2_rest1E (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) 
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, t2P, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by nlinarith⟩)
 
 theorem t1_cycD (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1)
     (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km)
@@ -200,7 +201,7 @@ theorem t1_cycD (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (ht
   all_goals
     simp only [ST, Dc, C3.sub, t1P, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3,
       quint_4]
-    left; nlinarith
+    left; linarith
 
 theorem t1_rest0D (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1)
     (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (dx : ℝ) (hl : -(tm * km) < dx * (sm * hm)) :
@@ -223,8 +224,8 @@ theorem t1_rest0D (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (
   · simp only [ST, Dc, C3.sub, t1P, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3,
       quint_4]
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
 
 theorem t1_rest1D (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1)
@@ -255,6 +256,8 @@ theorem t1_rest1D (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) 
   · simp only [ST, Dc, C3.sub, t1P, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3,
       quint_4]
     first
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
     | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
@@ -315,10 +318,10 @@ theorem rimT1_sector_dp (hts : F.S.tm < F.S.sm) (H1 : F.S.bp < F.S.am)
     have m4 := mul_pos m1 hsp
     have m5 := mul_nonneg m1.le (sub_nonneg.2 hA11)
     refine Q5t_eventually (z := zz) (w := ww) ?_ ?_ ?_ ?_
-    · rw [e1, e2]; nlinarith [mul_pos m1 (sub_pos.2 hsp1), mul_le_mul_of_nonneg_left hA11 htm.le]
-    · rw [e2, e3]; nlinarith [mul_pos m1 (sub_pos.2 hsp1)]
-    · rw [e3, e4]; nlinarith
-    · rw [e4, e0]; nlinarith
+    · rw [e1, e2]; linarith [mul_pos m1 (sub_pos.2 hsp1), mul_le_mul_of_nonneg_left hA11 htm.le]
+    · rw [e2, e3]; linarith [mul_pos m1 (sub_pos.2 hsp1)]
+    · rw [e3, e4]; linarith
+    · rw [e4, e0]; linarith
 
 /-- **09.3 `T1` sector at `a- = b+`** (`b+ < s+A2`): `m1+` is a double over the corner `xa`;
 the sector at `d = (d_x, 1, 0)`, `d_x` in an interval nonempty iff `a- < s+A2`. -/
@@ -390,10 +393,10 @@ theorem rimT1_sector_bp (hts : F.S.tm < F.S.sm) (H1 : F.S.am = F.S.bp)
     have m4 := mul_pos m1 hsp
     have m5 := mul_nonneg m1.le (sub_nonneg.2 hA11)
     refine Q5t_eventually (z := zz) (w := ww) ?_ ?_ ?_ ?_
-    · rw [e1, e2]; nlinarith [mul_pos m1 (sub_pos.2 hsp1), mul_le_mul_of_nonneg_left hA11 htm.le]
-    · rw [e2, e3]; nlinarith [mul_pos m1 (sub_pos.2 hsp1)]
-    · rw [e3, e4]; nlinarith
-    · rw [e4, e0]; nlinarith
+    · rw [e1, e2]; linarith [mul_pos m1 (sub_pos.2 hsp1), mul_le_mul_of_nonneg_left hA11 htm.le]
+    · rw [e2, e3]; linarith [mul_pos m1 (sub_pos.2 hsp1)]
+    · rw [e3, e4]; linarith
+    · rw [e4, e0]; linarith
 
 /-- **09.2 `T2` sector at `b+ = s+A2`**: `m1+` lies on the side `(m2+, xa)`; the sector at
 `d = -e_x` hides `m1+`.  Unimodal when `g h- k- < A12 s- (1 - t-)`. -/
@@ -439,7 +442,7 @@ theorem rimT2_sector (H3 : F.S.bp = F.S.sp * F.S.A2) (H4 : F.S.cm < F.S.dp)
     refine Q4_eventually (z := zz) (w := ww) (Or.inl (Or.inl ?_))
       (Or.inr (Or.inr (Or.inl (Or.inl ?_))))
     · rw [e0, e1]; linarith
-    · rw [e1, e2]; nlinarith
+    · rw [e1, e2]; linarith
 
 /-- **09.1-09.3 and fix 1, combined**: under the non-strict conclusion of
 `Shape09.thm_27_58'` and off the corner `a- = b+ ∧ b+ = s+A2`, one of the tests
@@ -477,7 +480,7 @@ theorem rupert_of_27_48_special (hts : F.S.tm < F.S.sm) (h1 : F.S.bp ≤ F.S.am)
   · refine T2 ?_
     by_contra hn
     refine F.S.t48_contra hA hts (not_lt.mp hc1) ?_
-    nlinarith [not_lt.mp hn]
+    linarith [not_lt.mp hn]
 
 /-- **`rupert_or_27_48'` with the special positions relaxed** (the flow of 27.58 with
 `Shape09.thm_27_58'`): off `t- = s-` and `a+ = c+`, either `V` is Rupert or the non-strict

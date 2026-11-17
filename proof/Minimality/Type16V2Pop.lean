@@ -146,7 +146,7 @@ theorem pop_aux (V : Finset ℝ³) (fP fQ f3Q G : ℝ³ → ℝ) (NP NQ N3Q NG :
         | (simp only [TwoRay.cross2, hY0, hY1, hY2, hY3, show (0 : ZMod 4) + 1 = 1 from rfl,
             show (1 : ZMod 4) + 1 = 2 from rfl, show (2 : ZMod 4) + 1 = 3 from rfl,
             show (3 : ZMod 4) + 1 = 0 from rfl, Prod.mk_sub_mk]
-           nlinarith)
+           linarith)
   · intro y hy hyx
     have hyw : y ≠ w := fun h => hyx 0 (by rw [e0]; exact h)
     have hym : y ≠ m := fun h => hyx 1 (by rw [e1]; exact h)
@@ -169,7 +169,7 @@ theorem pop_aux (V : Finset ℝ³) (fP fQ f3Q G : ℝ³ → ℝ) (NP NQ N3Q NG :
       have ht : 0 < fP y / fP B := div_pos_of_neg_of_neg c2 hPB
       have hst : fQ y / fQ A + fP y / fP B < 1 := by
         rw [div_add_div _ _ hQA.ne hPB.ne, div_lt_one (mul_pos_of_neg_of_neg hQA hPB)]
-        nlinarith
+        linarith
       intro i
       rcases zmod4_cases i with rfl | rfl | rfl | rfl
       · simp only [TwoRay.cross2, hY0, hY1, show (0 : ZMod 4) + 1 = 1 from rfl, Prod.mk_sub_mk]
@@ -266,16 +266,16 @@ theorem pop_gen (V : Finset ℝ³) (fP fQ f3Q g : ℝ³ → ℝ) (NP NQ N3Q Ng :
   · -- c < 0: z1 > 0 (m1 up), z2 < 0 (m2 down)
     have hz1 : 0 < z1 := by nlinarith
     have hz2 : z2 < 0 := by nlinarith
-    have hu : (1 - s1) * ⟪w, r⟫ + s1 * ⟪A, r⟫ < ⟪m1, r⟫ := by rw [d1]; nlinarith [mul_pos hz1 hrr]
-    have hd : ⟪m2, r⟫ < (1 - s2) * ⟪w, r⟫ + s2 * ⟪A, r⟫ := by rw [d2]; nlinarith [mul_neg_of_neg_of_pos hz2 hrr]
+    have hu : (1 - s1) * ⟪w, r⟫ + s1 * ⟪A, r⟫ < ⟪m1, r⟫ := by rw [d1]; linarith [mul_pos hz1 hrr]
+    have hd : ⟪m2, r⟫ < (1 - s2) * ⟪w, r⟫ + s2 * ⟪A, r⟫ := by rw [d2]; linarith [mul_neg_of_neg_of_pos hz2 hrr]
     rcases pop_choice _ _ ⟪B, r⟫ _ _ hwA hwB hAB hw1.symm hA1.symm hw2.symm hA2.symm
       (chord_above _ _ _ s1 hs1 hs1' hu) (chord_below _ _ _ s2 hs2 hs2' hd) with h | h
     · exact aux1 h
     · exact aux2 h
   · have hz2 : 0 < z2 := by nlinarith
     have hz1 : z1 < 0 := by nlinarith
-    have hu : (1 - s2) * ⟪w, r⟫ + s2 * ⟪A, r⟫ < ⟪m2, r⟫ := by rw [d2]; nlinarith [mul_pos hz2 hrr]
-    have hd : ⟪m1, r⟫ < (1 - s1) * ⟪w, r⟫ + s1 * ⟪A, r⟫ := by rw [d1]; nlinarith [mul_neg_of_neg_of_pos hz1 hrr]
+    have hu : (1 - s2) * ⟪w, r⟫ + s2 * ⟪A, r⟫ < ⟪m2, r⟫ := by rw [d2]; linarith [mul_pos hz2 hrr]
+    have hd : ⟪m1, r⟫ < (1 - s1) * ⟪w, r⟫ + s1 * ⟪A, r⟫ := by rw [d1]; linarith [mul_neg_of_neg_of_pos hz1 hrr]
     rcases pop_choice _ _ ⟪B, r⟫ _ _ hwA hwB hAB hw2.symm hA2.symm hw1.symm hA1.symm
       (chord_above _ _ _ s2 hs2 hs2' hu) (chord_below _ _ _ s1 hs1 hs1' hd) with h | h
     · exact aux2 h

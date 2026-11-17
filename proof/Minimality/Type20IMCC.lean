@@ -433,7 +433,7 @@ theorem imc_L9p (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFace
     · exact ⟨fun _ => Or.inl (by rw [vE]; linarith), fun h => absurd h (by decide)⟩
     · exact ⟨fun _ => Or.inl (by rw [vF]; positivity), fun h => absurd h (by decide)⟩
     · exact ⟨fun _ => Or.inl (by rw [vG]; linarith), fun h => absurd h (by decide)⟩
-    · exact ⟨fun h => absurd h (by decide), fun _ => Or.inl (by rw [vH]; nlinarith [mul_pos kp0 (mul_pos tm0 (mul_pos tp0 hkap))])⟩
+    · exact ⟨fun h => absurd h (by decide), fun _ => Or.inl (by rw [vH]; linarith [mul_pos kp0 (mul_pos tm0 (mul_pos tp0 hkap))])⟩
 
 end IMCT
 end Minimality.CaseC20
@@ -550,8 +550,8 @@ theorem imc_L11 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFace
     unfold E0 at hE0
     unfold Aq at hA
     have hd : 0 ≤ 1 - F.S.tm - F.S.tp := by linarith
-    have h1 : 0 < (F.S.hm - F.S.hp) * F.S.tp := by nlinarith [mul_nonneg hp0.le hd]
-    have h2 : 0 < (F.S.hp - F.S.hm) * F.S.tm := by nlinarith [mul_nonneg hm0.le hd]
+    have h1 : 0 < (F.S.hm - F.S.hp) * F.S.tp := by linarith [mul_nonneg hp0.le hd]
+    have h2 : 0 < (F.S.hp - F.S.hm) * F.S.tm := by linarith [mul_nonneg hm0.le hd]
     have h3 := pos_of_mul_pos_left h1 tp0.le
     have h4 := pos_of_mul_pos_left h2 tm0.le
     linarith
@@ -708,7 +708,7 @@ lemma A_pos_of_Vq (hV : Vq S ≤ 0) : 0 < Aq S := by
   have h1 := S.tp1; have h2 := S.roofP; have h3 := S.tm_pos; have h4 := S.sp1; have h5 := S.tp_pos
   by_contra hA
   push Not at hA
-  nlinarith [mul_pos h3 h2, mul_nonneg (mul_pos h4 h5).le (neg_nonneg.2 hA),
+  linarith [mul_pos h3 h2, mul_nonneg (mul_pos h4 h5).le (neg_nonneg.2 hA),
     mul_nonneg h1.le (neg_nonneg.2 hV)]
 
 /-- If `K = 0` and `Q >= 0` then `VM > 0` (so the tree never reaches `VM <= 0` with `K = 0`). -/
@@ -718,15 +718,15 @@ lemma VM_pos_of_K0 (hK : Kq S = 0) (hQ : 0 ≤ Qq S) : 0 < VM S := by
   have hsm := S.sm_pos; have hhp := S.hp_pos; have hkp := S.kp_pos; have hkm0 := S.km_pos
   have ht := S.tm1
   have hq : S.hp * S.sm * (1 - S.tm) ≤ S.km * (S.sm * S.tp - S.tm) := by
-    unfold Qq at hQ; rw [hkm] at hQ ⊢; nlinarith
+    unfold Qq at hQ; rw [hkm] at hQ ⊢; linarith
   have hpos : 0 < S.sm * S.tp - S.tm := by
     by_contra hc
     push Not at hc
-    nlinarith [mul_pos (mul_pos hhp hsm) ht, mul_nonneg hkm0.le (neg_nonneg.2 hc)]
+    linarith [mul_pos (mul_pos hhp hsm) ht, mul_nonneg hkm0.le (neg_nonneg.2 hc)]
   have e : VM S = (1 - S.sp) * S.hp * S.tm + S.kp * (S.tp * S.sm - S.tm) := by
     unfold VM Vq Mq; rw [hkm]; ring
   rw [e]
-  nlinarith [mul_pos (mul_pos h4 hhp) h3, mul_pos hkp hpos]
+  linarith [mul_pos (mul_pos h4 hhp) h3, mul_pos hkp hpos]
 
 /-- `E0 > 0` follows from `Q >= 0` and `den > 0`, since `Q = sm E0 - den`. -/
 lemma E0_pos (hden : 0 < S.hm + S.km * S.tm - S.km) (hQ : 0 ≤ Qq S) :
@@ -736,7 +736,7 @@ lemma E0_pos (hden : 0 < S.hm + S.km * S.tm - S.km) (hQ : 0 ≤ Qq S) :
   have hsm := S.sm_pos
   by_contra hc
   push Not at hc
-  nlinarith [mul_nonneg hsm.le (neg_nonneg.2 hc)]
+  linarith [mul_nonneg hsm.le (neg_nonneg.2 hc)]
 
 end IMCT
 open IMCT

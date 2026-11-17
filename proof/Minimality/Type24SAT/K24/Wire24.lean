@@ -102,7 +102,7 @@ theorem excl_R1 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hc : chi24 x < 0
   have ab1234 : 0 < -1 * (b1234 x) := by linarith
   have gp : (1) * (det3 (x 1 - x 0) (x 2 - x 0) (x 3 - x 0)) * (b1245 x) + (1) * (det3 (x 1 - x 0) (x 2 - x 0) (x 4 - x 0)) * (det3 (x 3 - x 2) (x 5 - x 2) (x 1 - x 2)) + (1) * (det3 (x 1 - x 0) (x 2 - x 0) (x 5 - x 0)) * (b1234 x) = 0 := by
     simp only [b1234, b1245, det3_expand, PiLp.sub_apply]; ring
-  nlinarith [mul_pos aF0_3 ab1245, mul_pos aF0_4 aF6_1, mul_pos aF0_5 ab1234]
+  linarith [mul_pos aF0_3 ab1245, mul_pos aF0_4 aF6_1, mul_pos aF0_5 ab1234]
 
 theorem excl_RA {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hc : chi24 x < 0) (h4 : b2456 x < 0) (h1 : b1245 x < 0) : False := by
   have aF0_4 : 0 < -1 * (det3 (x 1 - x 0) (x 2 - x 0) (x 4 - x 0)) := by
@@ -121,7 +121,7 @@ theorem excl_RA {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hc : chi24 x < 0
   have ab1245 : 0 < -1 * (b1245 x) := by linarith
   have gp : (1) * (det3 (x 1 - x 0) (x 2 - x 0) (x 4 - x 0)) * (b2456 x) + (-1) * (det3 (x 2 - x 0) (x 5 - x 0) (x 4 - x 0)) * (det3 (x 2 - x 1) (x 6 - x 1) (x 4 - x 1)) + (1) * (det3 (x 4 - x 0) (x 6 - x 0) (x 2 - x 0)) * (b1245 x) = 0 := by
     simp only [b1245, b2456, det3_expand, PiLp.sub_apply]; ring
-  nlinarith [mul_pos aF0_4 ab2456, mul_pos aF2_4 aF5_4, mul_pos aF4_2 ab1245]
+  linarith [mul_pos aF0_4 ab2456, mul_pos aF2_4 aF5_4, mul_pos aF4_2 ab1245]
 
 theorem excl_RB {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hc : chi24 x < 0) (h3 : b1456 x < 0) (h2 : 0 < b1356 x) : False := by
   have aF1_3 : 0 < 1 * (det3 (x 1 - x 0) (x 6 - x 0) (x 3 - x 0)) := by
@@ -140,7 +140,7 @@ theorem excl_RB {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hc : chi24 x < 0
     linarith
   have gp : (1) * (det3 (x 1 - x 0) (x 6 - x 0) (x 3 - x 0)) * (b1456 x) + (-1) * (det3 (x 1 - x 0) (x 6 - x 0) (x 4 - x 0)) * (b1356 x) + (-1) * (det3 (x 1 - x 0) (x 6 - x 0) (x 5 - x 0)) * (det3 (x 4 - x 3) (x 6 - x 3) (x 1 - x 3)) = 0 := by
     simp only [b1356, b1456, det3_expand, PiLp.sub_apply]; ring
-  nlinarith [mul_pos aF1_3 ab1456, mul_pos aF1_4 ab1356, mul_pos aF1_5 aF8_1]
+  linarith [mul_pos aF1_3 ab1456, mul_pos aF1_4 ab1356, mul_pos aF1_5 aF8_1]
 
 theorem excl_RC {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hc : chi24 x < 0) (h4 : 0 < b2456 x) (h3 : b1456 x < 0) : False := by
   have aF1_4 : 0 < 1 * (det3 (x 1 - x 0) (x 6 - x 0) (x 4 - x 0)) := by
@@ -159,7 +159,7 @@ theorem excl_RC {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hc : chi24 x < 0
     linarith
   have gp : (1) * (det3 (x 1 - x 0) (x 6 - x 0) (x 4 - x 0)) * (b2456 x) + (1) * (det3 (x 4 - x 0) (x 6 - x 0) (x 2 - x 0)) * (b1456 x) + (-1) * (det3 (x 4 - x 0) (x 6 - x 0) (x 5 - x 0)) * (det3 (x 2 - x 1) (x 6 - x 1) (x 4 - x 1)) = 0 := by
     simp only [b1456, b2456, det3_expand, PiLp.sub_apply]; ring
-  nlinarith [mul_pos aF1_4 ab2456, mul_pos aF4_2 ab1456, mul_pos aF4_5 aF5_4]
+  linarith [mul_pos aF1_4 ab2456, mul_pos aF4_2 ab1456, mul_pos aF4_5 aF5_4]
 
 
 private theorem det3_mul_det3' (N₀ N₁ N₂ e₀ e₁ e₂ : ℝ³) :
@@ -185,7 +185,7 @@ theorem chi24_ne {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) : chi24 x ≠ 0 
     z 0 2 0 (by decide) (by decide), z 1 1 0 (by decide) (by decide), z 1 6 0 (by decide) (by decide),
     z 2 2 0 (by decide) (by decide)] at key
   have := mul_neg_of_pos_of_neg (mul_pos_of_neg_of_neg ha hb) hc
-  nlinarith
+  linarith
 
 /-- A bracket of the mirror image is minus the bracket. -/
 theorem mdet24 (a b c d : ℝ³) :
@@ -260,7 +260,7 @@ theorem exclw_R1 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hc : chi24 x < 
   have ab1234 : 0 ≤ -1 * (b1234 x) := by linarith
   have gp : (1) * (det3 (x 1 - x 0) (x 2 - x 0) (x 3 - x 0)) * (b1245 x) + (1) * (det3 (x 1 - x 0) (x 2 - x 0) (x 4 - x 0)) * (det3 (x 3 - x 2) (x 5 - x 2) (x 1 - x 2)) + (1) * (det3 (x 1 - x 0) (x 2 - x 0) (x 5 - x 0)) * (b1234 x) = 0 := by
     simp only [b1234, b1245, det3_expand, PiLp.sub_apply]; ring
-  nlinarith [mul_nonneg aF0_3.le ab1245, mul_pos aF0_4 aF6_1, mul_nonneg aF0_5.le ab1234]
+  linarith [mul_nonneg aF0_3.le ab1245, mul_pos aF0_4 aF6_1, mul_nonneg aF0_5.le ab1234]
 
 theorem exclw_RA {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hc : chi24 x < 0) (h4 : b2456 x ≤ 0) (h1 : b1245 x ≤ 0) : False := by
   have aF0_4 : 0 < -1 * (det3 (x 1 - x 0) (x 2 - x 0) (x 4 - x 0)) := by
@@ -279,7 +279,7 @@ theorem exclw_RA {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hc : chi24 x < 
   have ab1245 : 0 ≤ -1 * (b1245 x) := by linarith
   have gp : (1) * (det3 (x 1 - x 0) (x 2 - x 0) (x 4 - x 0)) * (b2456 x) + (-1) * (det3 (x 2 - x 0) (x 5 - x 0) (x 4 - x 0)) * (det3 (x 2 - x 1) (x 6 - x 1) (x 4 - x 1)) + (1) * (det3 (x 4 - x 0) (x 6 - x 0) (x 2 - x 0)) * (b1245 x) = 0 := by
     simp only [b1245, b2456, det3_expand, PiLp.sub_apply]; ring
-  nlinarith [mul_nonneg aF0_4.le ab2456, mul_pos aF2_4 aF5_4, mul_nonneg aF4_2.le ab1245]
+  linarith [mul_nonneg aF0_4.le ab2456, mul_pos aF2_4 aF5_4, mul_nonneg aF4_2.le ab1245]
 
 theorem exclw_RB {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hc : chi24 x < 0) (h3 : b1456 x ≤ 0) (h2 : 0 ≤ b1356 x) : False := by
   have aF1_3 : 0 < 1 * (det3 (x 1 - x 0) (x 6 - x 0) (x 3 - x 0)) := by
@@ -298,7 +298,7 @@ theorem exclw_RB {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hc : chi24 x < 
     linarith
   have gp : (1) * (det3 (x 1 - x 0) (x 6 - x 0) (x 3 - x 0)) * (b1456 x) + (-1) * (det3 (x 1 - x 0) (x 6 - x 0) (x 4 - x 0)) * (b1356 x) + (-1) * (det3 (x 1 - x 0) (x 6 - x 0) (x 5 - x 0)) * (det3 (x 4 - x 3) (x 6 - x 3) (x 1 - x 3)) = 0 := by
     simp only [b1356, b1456, det3_expand, PiLp.sub_apply]; ring
-  nlinarith [mul_nonneg aF1_3.le ab1456, mul_nonneg aF1_4.le ab1356, mul_pos aF1_5 aF8_1]
+  linarith [mul_nonneg aF1_3.le ab1456, mul_nonneg aF1_4.le ab1356, mul_pos aF1_5 aF8_1]
 
 theorem exclw_RC {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hc : chi24 x < 0) (h4 : 0 ≤ b2456 x) (h3 : b1456 x ≤ 0) : False := by
   have aF1_4 : 0 < 1 * (det3 (x 1 - x 0) (x 6 - x 0) (x 4 - x 0)) := by
@@ -317,7 +317,7 @@ theorem exclw_RC {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hc : chi24 x < 
     linarith
   have gp : (1) * (det3 (x 1 - x 0) (x 6 - x 0) (x 4 - x 0)) * (b2456 x) + (1) * (det3 (x 4 - x 0) (x 6 - x 0) (x 2 - x 0)) * (b1456 x) + (-1) * (det3 (x 4 - x 0) (x 6 - x 0) (x 5 - x 0)) * (det3 (x 2 - x 1) (x 6 - x 1) (x 4 - x 1)) = 0 := by
     simp only [b1456, b2456, det3_expand, PiLp.sub_apply]; ring
-  nlinarith [mul_nonneg aF1_4.le ab2456, mul_nonneg aF4_2.le ab1456, mul_pos aF4_5 aF5_4]
+  linarith [mul_nonneg aF1_4.le ab2456, mul_nonneg aF4_2.le ab1456, mul_pos aF4_5 aF5_4]
 
 theorem exclw_R1' {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) (hc : 0 < chi24 x) (h1 : 0 ≤ b1245 x)
     (h0 : 0 ≤ b1234 x) : False :=

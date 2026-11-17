@@ -65,15 +65,15 @@ theorem pos_of_gram_solve (g11 g12 g13 g22 g23 g33 c1 c2 c3 w1 w2 w3 : ℝ)
   -- positive 2x2 minors
   have m23 : 0 < g22 * g33 - g23 ^ 2 := by
     have := hQ 0 g23 (-g22) (Or.inr (Or.inr (by simpa using p22.ne')))
-    have h2 : 0 < g22 * (g22 * g33 - g23 ^ 2) := by nlinarith
+    have h2 : 0 < g22 * (g22 * g33 - g23 ^ 2) := by linarith
     exact pos_of_mul_pos_right h2 p22.le
   have m13 : 0 < g11 * g33 - g13 ^ 2 := by
     have := hQ g13 0 (-g11) (Or.inr (Or.inr (by simpa using p11.ne')))
-    have h2 : 0 < g11 * (g11 * g33 - g13 ^ 2) := by nlinarith
+    have h2 : 0 < g11 * (g11 * g33 - g13 ^ 2) := by linarith
     exact pos_of_mul_pos_right h2 p11.le
   have m12 : 0 < g11 * g22 - g12 ^ 2 := by
     have := hQ g12 (-g11) 0 (Or.inr (Or.inl (by simpa using p11.ne')))
-    have h2 : 0 < g11 * (g11 * g22 - g12 ^ 2) := by nlinarith
+    have h2 : 0 < g11 * (g11 * g22 - g12 ^ 2) := by linarith
     exact pos_of_mul_pos_right h2 p11.le
   -- the determinant
   set D := g11 * (g22 * g33 - g23 ^ 2) - g12 * (g12 * g33 - g13 * g23)
@@ -81,7 +81,7 @@ theorem pos_of_gram_solve (g11 g12 g13 g22 g23 g33 c1 c2 c3 w1 w2 w3 : ℝ)
   have hDpos : 0 < D := by
     have := hQ (g22 * g33 - g23 ^ 2) (g13 * g23 - g12 * g33) (g12 * g23 - g13 * g22)
       (Or.inl m23.ne')
-    have h2 : 0 < D * (g22 * g33 - g23 ^ 2) := by rw [hD]; nlinarith
+    have h2 : 0 < D * (g22 * g33 - g23 ^ 2) := by rw [hD]; linarith
     exact pos_of_mul_pos_left h2 m23.le
   have a1 : D * c1 = (g22 * g33 - g23 ^ 2) * w1 + (g13 * g23 - g12 * g33) * w2
       + (g12 * g23 - g13 * g22) * w3 := by
@@ -93,13 +93,13 @@ theorem pos_of_gram_solve (g11 g12 g13 g22 g23 g33 c1 c2 c3 w1 w2 w3 : ℝ)
       + (g11 * g22 - g12 ^ 2) * w3 := by
     rw [hD, ← e1, ← e2, ← e3]; ring
   have o12 : 0 ≤ g13 * g23 - g12 * g33 := by
-    nlinarith [mul_nonneg (neg_nonneg.2 h13) (neg_nonneg.2 h23),
+    linarith [mul_nonneg (neg_nonneg.2 h13) (neg_nonneg.2 h23),
       mul_nonneg (neg_nonneg.2 h12) p33.le]
   have o13 : 0 ≤ g12 * g23 - g13 * g22 := by
-    nlinarith [mul_nonneg (neg_nonneg.2 h12) (neg_nonneg.2 h23),
+    linarith [mul_nonneg (neg_nonneg.2 h12) (neg_nonneg.2 h23),
       mul_nonneg (neg_nonneg.2 h13) p22.le]
   have o23 : 0 ≤ g12 * g13 - g11 * g23 := by
-    nlinarith [mul_nonneg (neg_nonneg.2 h12) (neg_nonneg.2 h13),
+    linarith [mul_nonneg (neg_nonneg.2 h12) (neg_nonneg.2 h13),
       mul_nonneg (neg_nonneg.2 h23) p11.le]
   have t1 := mul_pos m23 hw1
   have t2 := mul_pos m13 hw2

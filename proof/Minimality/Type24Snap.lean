@@ -148,8 +148,7 @@ theorem four_three_equal {w0 w1 w2 w3 : ℝ}
       (w1 = w2 ∧ w2 = w3)) : False := by
   rcases h with ⟨a, b⟩ | ⟨a, b⟩ | ⟨a, b⟩ | ⟨a, b⟩ <;>
   rcases le_total w0 w1 with c1 | c1 <;> rcases le_total w0 w2 with c2 | c2 <;>
-  rcases le_total w0 w3 with c3 | c3 <;> rcases le_total w1 w2 with c4 | c4 <;>
-  rcases le_total w1 w3 with c5 | c5 <;> rcases le_total w2 w3 with c6 | c6 <;>
+  rcases le_total w0 w3 with c3 | c3 <;>
   first
   | (refine absurd ?_ h1; simp only [max_le_iff, le_min_iff]
      refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> linarith)

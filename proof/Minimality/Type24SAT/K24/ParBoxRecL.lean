@@ -101,7 +101,7 @@ theorem recL_pt5 {L c y xi ze b p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 
     positivity
   · simp [boxCfg, Minimality.cross]
     right
-    refine ⟨rfl, by nlinarith [mul_pos hL hr]⟩
+    refine ⟨rfl, by linarith [mul_pos hL hr]⟩
 
 theorem recL_pt2 {L c y xi ze b p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 0 < y) (hr : 0 < r)
     (hB4 : 0 < B4) (hBy : 0 < B4 - y) (hpL : p * L = -(1 + B4)) (hqL : q * L = r / 2 + c) (hrB : r * B4 < c)
@@ -119,7 +119,7 @@ theorem recL_pt2 {L c y xi ze b p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 
     positivity
   · simp [boxCfg, Minimality.cross]
     left
-    nlinarith [mul_pos hL hy, mul_pos (mul_pos hL hy) hy]
+    linarith [mul_pos hL hy, mul_pos (mul_pos hL hy) hy]
 
 theorem recL_pt1t {L c y xi ze b p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 0 < y) (hr : 0 < r)
     (hB4 : 0 < B4) (hpL : p * L = -(1 + B4)) (hqL : q * L = r / 2 + c)
@@ -133,11 +133,11 @@ theorem recL_pt1t {L c y xi ze b p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy :
     positivity
   · simp [boxCfg]
     left
-    nlinarith [mul_pos hy hxi, mul_pos hL hc, mul_pos (mul_pos hL hc) (mul_pos hy hxi), mul_pos (mul_pos hL hc) (sub_pos.2 hlo)]
+    linarith [mul_pos hy hxi, mul_pos hL hc, mul_pos (mul_pos hL hc) (mul_pos hy hxi), mul_pos (mul_pos hL hc) (sub_pos.2 hlo)]
   · simp [boxCfg]
     left
     have : 0 < y - b := by linarith
-    nlinarith [mul_pos (mul_pos hL hc) this]
+    linarith [mul_pos (mul_pos hL hc) this]
   · simp [boxCfg]
     left
     positivity
@@ -150,7 +150,7 @@ theorem recL_pt1b {L c y xi ze p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 0
   have hxi1 : xi < 1 := by linarith
   have hze1 : ze < 1 := by linarith
   have hP : 0 < (1 - xi) * (r / 2 + c) - ze * c := by
-    nlinarith [mul_pos hxz hc, mul_pos hr (sub_pos.2 hxi1)]
+    linarith [mul_pos hxz hc, mul_pos hr (sub_pos.2 hxi1)]
   have hX : q * (xi * L) + ze * c + (-(r / 2) - c) = -((1 - xi) * (r / 2 + c) - ze * c) := by
     linear_combination xi * hqL
   apply cone_cert L r _ _ _ _ (boxCfg L c y y xi ze y 2) (boxCfg L c y y xi ze y 6)
@@ -158,15 +158,15 @@ theorem recL_pt1b {L c y xi ze p q r B4 : ℝ} (hL : 0 < L) (hc : 0 < c) (hy : 0
   · simp [boxCfg]
     right
     refine ⟨rfl, ?_⟩
-    nlinarith [mul_pos (mul_pos (mul_pos hr hL) hc) hxz]
+    linarith [mul_pos (mul_pos (mul_pos hr hL) hc) hxz]
   · simp [boxCfg, Minimality.cross]
     left
     rw [hX]
-    nlinarith [mul_pos (mul_pos hL (mul_pos hze hc)) hP]
+    linarith [mul_pos (mul_pos hL (mul_pos hze hc)) hP]
   · simp [boxCfg, Minimality.cross]
     left
     rw [hX]
-    nlinarith [mul_pos (mul_pos hL (mul_pos hc (sub_pos.2 hze1))) hP]
+    linarith [mul_pos (mul_pos hL (mul_pos hc (sub_pos.2 hze1))) hP]
 
 
 /-- Recipe L: `y2 = y6`, `b ≤ y2`. -/
@@ -205,7 +205,7 @@ theorem rec_L {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6)
   have hxz : 0 < 1 - xi - ze := by
     by_contra hcon
     push Not at hcon
-    nlinarith [mul_nonneg hy6.le (neg_nonneg.2 hcon)]
+    linarith [mul_nonneg hy6.le (neg_nonneg.2 hcon)]
   refine box_hel (r := r) hL hc hy6 hr !₂[-1, p, q] !₂[-1, -(r/2) - c, -1] ?_
   intro i hi
   fin_cases i

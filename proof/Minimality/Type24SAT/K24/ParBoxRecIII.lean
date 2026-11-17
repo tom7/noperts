@@ -29,7 +29,7 @@ theorem iii_row4 {L c y2 y6 xi ze b r c0y c0z c1y c1z : ℝ} (hL : 0 < L) (hc : 
   refine cone_cert L r _ _ _ _ (boxCfg L c y2 y6 xi ze b 6) (boxCfg L c y2 y6 xi ze b 3)
     (iii_mem L c y2 y6 xi ze b 6) (iii_mem L c y2 y6 xi ze b 3) ?_ ?_ ?_
   · left; simp [boxCfg]; positivity
-  · left; simp [boxCfg]; field_simp; nlinarith [mul_pos (mul_pos hL hc) he]
+  · left; simp [boxCfg]; field_simp; linarith [mul_pos (mul_pos hL hc) he]
   · left; simp [boxCfg]; field_simp; nlinarith [mul_pos (mul_pos hL hy6) (sub_pos.2 hm)]
 
 /-- row at 3: cone (4,5). -/
@@ -41,8 +41,8 @@ theorem iii_row3 {L c y2 y6 xi ze b r c0y c0z c1y c1z : ℝ} (hL : 0 < L) (hc : 
     (iii_mem L c y2 y6 xi ze b 4) (iii_mem L c y2 y6 xi ze b 5) ?_ ?_ ?_
   · right; refine ⟨by simp [boxCfg], ?_⟩; simp [boxCfg]; positivity
   · right; refine ⟨by simp [boxCfg], ?_⟩; simp [boxCfg]; field_simp
-    nlinarith [mul_pos hL (sub_pos.2 h3)]
-  · left; simp [boxCfg]; field_simp; nlinarith [mul_pos (mul_pos hL hc) (by linarith : 0 < c - c1z)]
+    linarith [mul_pos hL (sub_pos.2 h3)]
+  · left; simp [boxCfg]; field_simp; linarith [mul_pos (mul_pos hL hc) (by linarith : 0 < c - c1z)]
 
 /-- row at 5: cone (3,2). -/
 theorem iii_row5 {L c y2 y6 xi ze b r c0y c0z c1y c1z : ℝ} (hL : 0 < L) (hy6 : 0 < y6)
@@ -53,9 +53,9 @@ theorem iii_row5 {L c y2 y6 xi ze b r c0y c0z c1y c1z : ℝ} (hL : 0 < L) (hy6 :
   refine cone_cert L r _ _ _ _ (boxCfg L c y2 y6 xi ze b 3) (boxCfg L c y2 y6 xi ze b 2)
     (iii_mem L c y2 y6 xi ze b 3) (iii_mem L c y2 y6 xi ze b 2) ?_ ?_ ?_
   · right; refine ⟨by simp [boxCfg], ?_⟩; simp [boxCfg]; positivity
-  · left; simp [boxCfg]; field_simp; nlinarith [mul_pos (mul_pos hL hy2) (neg_pos.2 hc0y)]
+  · left; simp [boxCfg]; field_simp; linarith [mul_pos (mul_pos hL hy2) (neg_pos.2 hc0y)]
   · right; refine ⟨by simp [boxCfg], ?_⟩; simp [boxCfg]; field_simp
-    nlinarith [mul_pos hL h5]
+    linarith [mul_pos hL h5]
 
 /-- row at 2: cone (5,1). -/
 theorem iii_row2 {L c y2 y6 xi ze b r c0y c0z c1y c1z : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6)
@@ -66,11 +66,11 @@ theorem iii_row2 {L c y2 y6 xi ze b r c0y c0z c1y c1z : ℝ} (hL : 0 < L) (hc : 
   have hcd : 0 < c - ze * c := by nlinarith
   refine cone_cert L r _ _ _ _ (boxCfg L c y2 y6 xi ze b 5) (boxCfg L c y2 y6 xi ze b 1)
     (iii_mem L c y2 y6 xi ze b 5) (iii_mem L c y2 y6 xi ze b 1) ?_ ?_ ?_
-  · left; simp [boxCfg]; nlinarith [mul_pos (mul_pos hL hy2) hcd]
+  · left; simp [boxCfg]; linarith [mul_pos (mul_pos hL hy2) hcd]
   · left; simp [boxCfg]; field_simp
-    nlinarith [mul_nonneg hL.le (mul_nonneg (sub_nonneg.2 hb) (by linarith : (0:ℝ) ≤ y2 - c0y)),
+    linarith [mul_nonneg hL.le (mul_nonneg (sub_nonneg.2 hb) (by linarith : (0:ℝ) ≤ y2 - c0y)),
       mul_pos hL (mul_pos (sub_pos.2 hc0z) hcd)]
-  · left; simp [boxCfg]; field_simp; nlinarith [mul_pos (mul_pos hL hy2) (by linarith : (0:ℝ) < y2 - c0y)]
+  · left; simp [boxCfg]; field_simp; linarith [mul_pos (mul_pos hL hy2) (by linarith : (0:ℝ) < y2 - c0y)]
 
 /-- row at 6: cone (1,4). -/
 theorem iii_row6 {L c y2 y6 xi ze b r c0y c0z c1y c1z : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6)
@@ -79,9 +79,9 @@ theorem iii_row6 {L c y2 y6 xi ze b r c0y c0z c1y c1z : ℝ} (hL : 0 < L) (hc : 
       !₂[-1, -(c1y - c0y)/L, -(c1z-c0z)/L] !₂[0, -c0z, c0y] (boxCfg L c y2 y6 xi ze b 6) := by
   refine cone_cert L r _ _ _ _ (boxCfg L c y2 y6 xi ze b 1) (boxCfg L c y2 y6 xi ze b 4)
     (iii_mem L c y2 y6 xi ze b 1) (iii_mem L c y2 y6 xi ze b 4) ?_ ?_ ?_
-  · left; simp [boxCfg]; nlinarith [mul_pos (mul_pos hL hy6) (mul_pos hze hc)]
-  · left; simp [boxCfg]; field_simp; nlinarith [mul_pos (mul_pos hL hy6) (sub_pos.2 hm)]
-  · left; simp [boxCfg]; field_simp; nlinarith [mul_pos hL h6]
+  · left; simp [boxCfg]; linarith [mul_pos (mul_pos hL hy6) (mul_pos hze hc)]
+  · left; simp [boxCfg]; field_simp; linarith [mul_pos (mul_pos hL hy6) (sub_pos.2 hm)]
+  · left; simp [boxCfg]; field_simp; linarith [mul_pos hL h6]
 
 /-- row at 1: cone (2,6). -/
 theorem iii_row1 {L c y2 y6 xi ze b r c0y c0z c1y c1z : ℝ} (hL : 0 < L) (hc : 0 < c)
@@ -94,10 +94,10 @@ theorem iii_row1 {L c y2 y6 xi ze b r c0y c0z c1y c1z : ℝ} (hL : 0 < L) (hc : 
   refine cone_cert L r _ _ _ _ (boxCfg L c y2 y6 xi ze b 2) (boxCfg L c y2 y6 xi ze b 6)
     (iii_mem L c y2 y6 xi ze b 2) (iii_mem L c y2 y6 xi ze b 6) ?_ ?_ ?_
   · left; simp [boxCfg]
-    nlinarith [mul_nonneg hL.le (mul_nonneg (sub_nonneg.2 hb) (mul_pos hze hc).le), mul_nonneg hL.le (mul_nonneg hcd.le (sub_pos.2 hby).le),
+    linarith [mul_nonneg hL.le (mul_nonneg (sub_nonneg.2 hb) (mul_pos hze hc).le), mul_nonneg hL.le (mul_nonneg hcd.le (sub_pos.2 hby).le),
       mul_pos hL (mul_pos hcd (sub_pos.2 hby))]
-  · left; simp [boxCfg]; field_simp; nlinarith [mul_pos hL hE1]
-  · left; simp [boxCfg]; field_simp; nlinarith [mul_pos hL hE2]
+  · left; simp [boxCfg]; field_simp; linarith [mul_pos hL hE1]
+  · left; simp [boxCfg]; field_simp; linarith [mul_pos hL hE2]
 
 set_option maxHeartbeats 1000000 in
 /-- Recipe III: `y6 ≤ y2 ≤ b`, `b (b - y6) ≤ d (c - d)` with `d = ze c`; also `y6 < b`
@@ -109,7 +109,7 @@ theorem rec_III {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y
   have hsum : xi + ze < 1 := by
     by_contra hcon
     push Not at hcon
-    nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ y2 + y6) (sub_nonneg.2 hcon)]
+    linarith [mul_nonneg (by linarith : (0:ℝ) ≤ y2 + y6) (sub_nonneg.2 hcon)]
   have hxi1 : xi < 1 := by linarith
   have hze1 : ze < 1 := by linarith
   have ht1 : 0 < 1 - xi := by linarith
@@ -127,9 +127,9 @@ theorem rec_III {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y
     push Not at hcon
     have h1 : hi * y6 * (ze * c) ≤ lo * (ze * c) * y6 := by
       have := mul_le_mul_of_nonneg_right hcon (mul_pos hd hy6).le
-      nlinarith
+      linarith
     rw [hhi_y, hlo_d] at h1
-    nlinarith [mul_nonneg hbd.le (sub_nonneg.2 (le_trans hy hb)), mul_pos hd hd]
+    linarith [mul_nonneg hbd.le (sub_nonneg.2 (le_trans hy hb)), mul_pos hd hd]
   obtain ⟨k, hk_def⟩ : ∃ k, k = (2 * lo + hi) / 3 := ⟨_, rfl⟩
   obtain ⟨r, hr_def⟩ : ∃ r, r = (lo + 2 * hi) / 3 := ⟨_, rfl⟩
   have hlok : lo < k := by rw [hk_def]; linarith
@@ -141,7 +141,7 @@ theorem rec_III {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y
   have hry : r * y6 < c := by nlinarith
   obtain ⟨m, hm_def⟩ : ∃ m, m = (c / r - y6) / 2 := ⟨_, rfl⟩
   have hrc : r * (c / r) = c := by field_simp
-  have hrm : r * m * 2 = c - r * y6 := by rw [hm_def]; nlinarith
+  have hrm : r * m * 2 = c - r * y6 := by rw [hm_def]; linarith
   have hm0 : 0 < m := by nlinarith
   obtain ⟨eps, he_def⟩ : ∃ eps, eps = (b - y6) * m / (2 * (ze * c)) := ⟨_, rfl⟩
   have hde : 2 * (ze * c) * eps = (b - y6) * m := by rw [he_def]; field_simp
@@ -175,14 +175,14 @@ theorem rec_III {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y
       (by rw [show (b - y2) * (b - ((1 - xi) * -M + xi * (y6 + m))) + (c - ze * c) * ((1 - xi) * (c + k * M) + xi * -eps - ze * c)
             = M * h2 + g2 by rw [hh2, hg2]; ring]; linarith)
   · exact iii_row2 (c0y := -M) (c0z := c + k * M) (c1y := y6 + m) (c1z := -eps) hL hc hy6 hy hze1 hb
-      (by linarith) (by nlinarith [mul_pos hk0 hM0])
+      (by linarith) (by linarith [mul_pos hk0 hM0])
   · exact iii_row3 (c0y := -M) (c0z := c + k * M) (c1y := y6 + m) (c1z := -eps) hL hc hr0
-      (by linarith) (by nlinarith)
+      (by linarith) (by linarith)
   · exact iii_row4 (c0y := -M) (c0z := c + k * M) (c1y := y6 + m) (c1z := -eps) hL hc hy6
       (by linarith) (by linarith)
   · exact iii_row5 (c0y := -M) (c0z := c + k * M) (c1y := y6 + m) (c1z := -eps) hL hy6 hy
-      (by linarith) (by nlinarith [mul_pos (sub_pos.2 hkr) hM0])
+      (by linarith) (by linarith [mul_pos (sub_pos.2 hkr) hM0])
   · exact iii_row6 (c0y := -M) (c0z := c + k * M) (c1y := y6 + m) (c1z := -eps) hL hc hy6 hze
-      (by linarith) (by nlinarith [mul_pos hm0 hbd])
+      (by linarith) (by linarith [mul_pos hm0 hbd])
 
 end Minimality.T24.Par

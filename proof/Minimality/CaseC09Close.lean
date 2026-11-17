@@ -61,7 +61,7 @@ theorem a12_lt_a11_of_eq (hA : F.a12 = F.a22) : F.a12 < F.a11 := by
   by_contra hn
   have : F.a11 = F.a12 := le_antisymm (not_lt.1 hn) h1
   rw [this] at h2
-  nlinarith
+  linarith
 
 /-- The `K1` discriminant `Δ = g k+ h - A12 (1 - s+)(1 - t)` (`t = t- = s-`, `h = h- = k-`);
 its sign is that of `g k+ d- - A12 (1 - s+)`. -/
@@ -102,7 +102,7 @@ theorem cm_lt_dp_of_K2 (H2 : S.bp = S.sp * S.A2) : S.cm < S.dp := by
   have hr := S.bp_lt_dp
   have hd := S.dp_mul
   have hsp := S.sp_pos
-  have : S.sp * S.cm < S.sp * S.dp := by nlinarith
+  have : S.sp * S.cm < S.sp * S.dp := by linarith
   exact lt_of_mul_lt_mul_left this hsp.le
 
 /-- On `K2`: `c- < a-`, hence `t- < s-` (the roof is `t- < s-`, Lemma K2.0). -/
@@ -180,7 +180,7 @@ theorem rimW_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (h
     | exact absurd (by decide) h2)
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
-    left; nlinarith
+    left; linarith
 
 
 theorem rimW_rest5 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1)
@@ -207,8 +207,8 @@ theorem rimW_rest5 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) 
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
 
 theorem rimW_rest6 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1)
     (hhm : 0 < hm) (hsm1 : sm < 1) (hkm : 0 < km) (H : km * (1 - sp) < kp * sm) :
@@ -238,8 +238,9 @@ theorem rimW_rest6 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) 
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
 theorem rimW_rest1 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1)
     (hhm : 0 < hm) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp) (R : hp * (1 - sp) < kp * (1 - tp)) :
@@ -277,6 +278,7 @@ theorem rimW_rest1 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) 
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
+    | (left; linarith)
     | (left; nlinarith)
 
 
@@ -307,7 +309,7 @@ theorem rimT2p_cyc (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (htm : 0 < tm) 
     | exact absurd (by decide) h2)
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
-    left; nlinarith
+    left; linarith
 
 theorem rimT2p_rest0 (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (htm : 0 < tm) (htm1 : tm < 1)
     (hhm : 0 < hm)  :
@@ -332,8 +334,8 @@ theorem rimT2p_rest0 (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (htm : 0 < tm
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
 
 theorem rimT2p_rest2 (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (htm : 0 < tm) (htm1 : tm < 1)
     (hhm : 0 < hm) (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (H : kp * sm < km * (1 - sp)) :
@@ -367,8 +369,9 @@ theorem rimT2p_rest2 (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (htm : 0 < tm
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
 theorem rimT2p_rest1 (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (htm : 0 < tm) (htm1 : tm < 1)
     (hhm : 0 < hm) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp) (hsp1 : sp < 1) (H : kp * sm < km * (1 - sp)) (R : hp * (1 - sp) < kp * (1 - tp)) :
@@ -392,7 +395,7 @@ theorem rimT2p_rest1 (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (htm : 0 < tm
   have q2 := sub_pos.2 R
   have S1 : hp * sm < km * (1 - tp) := by
     refine lt_of_mul_lt_mul_right (a := 1 - sp) ?_ hsp'.le
-    nlinarith [mul_lt_mul_of_pos_left H htp', mul_lt_mul_of_pos_left R hsm]
+    linarith [mul_lt_mul_of_pos_left H htp', mul_lt_mul_of_pos_left R hsm]
   have c1 := mul_pos hsm q2
   have c2 := mul_pos hkm htp
   have c3 := mul_pos hkm htp'
@@ -406,6 +409,7 @@ theorem rimT2p_rest1 (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (htm : 0 < tm
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
+    | (left; linarith)
     | (left; nlinarith)
 
 end G1a
@@ -458,6 +462,8 @@ theorem rimWpp_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) 
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
     | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
@@ -495,8 +501,8 @@ theorem rimWpp_rest5 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
 set_option maxHeartbeats 4000000 in
 theorem rimWpp_rest1 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1)
@@ -541,6 +547,7 @@ theorem rimWpp_rest1 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
+    | (left; linarith)
     | (left; nlinarith)
     | (right; refine ⟨by nlinarith, by nlinarith⟩)
 end G1b
@@ -569,7 +576,7 @@ theorem rimW (hdc : F.S.cm < F.S.dp) (hA : F.a22 * F.S.sp ≤ F.a12) :
     have h1 := F.S.bp_mul; have h2 := F.S.dp_mul
     have : F.S.bp * (1 - F.S.tp) * (1 - F.S.sp) < F.S.dp * (1 - F.S.sp) * (1 - F.S.tp) := by
       have := mul_lt_mul_of_pos_right F.S.bp_lt_dp (mul_pos (sub_pos.2 htp1) (sub_pos.2 hsp1))
-      nlinarith
+      linarith
     rw [h1, h2] at this
     linarith
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
@@ -604,7 +611,7 @@ theorem rimW (hdc : F.S.cm < F.S.dp) (hA : F.a22 * F.S.sp ≤ F.a12) :
     have m4 := mul_pos (mul_pos hg hhm) hkp
     refine Q4_eventually (z := zz) (w := ww) (Or.inl (Or.inl ?_))
       (Or.inr (Or.inr (Or.inr (Or.inl ?_))))
-    · rw [e0, e1]; nlinarith [mul_le_mul_of_nonneg_right hA (sub_pos.2 hsp1).le]
+    · rw [e0, e1]; linarith [mul_le_mul_of_nonneg_right hA (sub_pos.2 hsp1).le]
     · rw [e3, e2]; linarith
 
 /-- **Lemma T2'** (§39.3, with the referee's tie), the edge view `u2 = m2- - v = (0, s-, -k-)`,
@@ -625,14 +632,14 @@ theorem rimT2p (hA : F.a12 = F.a22) (hdc : F.S.dp < F.S.cm) :
     have h1 := F.S.cm_mul; have h2 := F.S.dp_mul
     have : F.S.dp * (1 - F.S.sp) * F.S.sm < F.S.cm * F.S.sm * (1 - F.S.sp) := by
       have := mul_lt_mul_of_pos_right hdc (mul_pos hsm (sub_pos.2 hsp1))
-      nlinarith
+      linarith
     rw [h1, h2] at this
     linarith
   have R : F.S.hp * (1 - F.S.sp) < F.S.kp * (1 - F.S.tp) := by
     have h1 := F.S.bp_mul; have h2 := F.S.dp_mul
     have : F.S.bp * (1 - F.S.tp) * (1 - F.S.sp) < F.S.dp * (1 - F.S.sp) * (1 - F.S.tp) := by
       have := mul_lt_mul_of_pos_right F.S.bp_lt_dp (mul_pos (sub_pos.2 htp1) (sub_pos.2 hsp1))
-      nlinarith
+      linarith
     rw [h1, h2] at this
     linarith
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
@@ -710,15 +717,15 @@ theorem rimWpp_core (hA : F.a12 = F.a22) (hdc : F.S.dp = F.S.cm) (hamd : F.S.am 
     rw [← h1, ← h2, hdc]; ring
   have hD1 : F.S.kp < (1 - F.S.sp) * D := by
     have h2 := F.S.dp_mul
-    nlinarith [mul_pos (sub_pos.2 hD) hsp']
+    linarith [mul_pos (sub_pos.2 hD) hsp']
   have hD2 : F.S.hm < F.S.tm * D := by
     have h1 := F.S.am_mul
-    nlinarith [mul_pos (sub_pos.2 (lt_of_le_of_lt hamd hD)) htm]
+    linarith [mul_pos (sub_pos.2 (lt_of_le_of_lt hamd hD)) htm]
   have R : F.S.hp * (1 - F.S.sp) < F.S.kp * (1 - F.S.tp) := by
     have h1 := F.S.bp_mul; have h2 := F.S.dp_mul
     have : F.S.bp * (1 - F.S.tp) * (1 - F.S.sp) < F.S.dp * (1 - F.S.sp) * (1 - F.S.tp) := by
       have := mul_lt_mul_of_pos_right F.S.bp_lt_dp (mul_pos (sub_pos.2 htp1) (sub_pos.2 hsp1))
-      nlinarith
+      linarith
     rw [h1, h2] at this
     linarith
   have Km := F.Km_eq
@@ -759,7 +766,7 @@ theorem rimWpp_core (hA : F.a12 = F.a22) (hdc : F.S.dp = F.S.cm) (hamd : F.S.am 
     have z4pos : 0 < zz 4 := by
       rw [e4]; have := mul_pos (mul_pos hA0 hsm) hsp'; have := mul_pos (mul_pos hg hkm) hkp; linarith
     have z12 : zz 1 < zz 2 := by
-      rw [e1, e2]; nlinarith [mul_pos hA0 (mul_pos hsp' hsp'), mul_pos hg (mul_pos hkp hkp)]
+      rw [e1, e2]; linarith [mul_pos hA0 (mul_pos hsp' hsp'), mul_pos hg (mul_pos hkp hkp)]
     set Θ := F.K1Delta with hΘ
     have eΘ : Θ = F.gg * F.S.kp * F.S.hm - F.a12 * (1 - F.S.sp) * (1 - F.S.tm) := rfl
     have d3 : zz 3 - zz 2 = Θ := by rw [e3, e2, eΘ]; ring
@@ -878,8 +885,9 @@ theorem rimK1a_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (h
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
 set_option maxHeartbeats 4000000 in
 theorem rimK1a_rest0 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (ht1 : t < 1)
@@ -905,8 +913,8 @@ theorem rimK1a_rest0 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) 
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by nlinarith, by linarith⟩)
 
 set_option maxHeartbeats 4000000 in
 theorem rimK1a_rest1 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (ht1 : t < 1)
@@ -940,6 +948,7 @@ theorem rimK1a_rest1 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) 
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
+    | (left; linarith)
     | (left; nlinarith)
     | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
@@ -975,8 +984,8 @@ theorem rimK1b_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (h
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
 
 set_option maxHeartbeats 4000000 in
 theorem rimK1b_rest6 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (ht1 : t < 1)
@@ -1002,6 +1011,8 @@ theorem rimK1b_rest6 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) 
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
     | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
@@ -1037,6 +1048,7 @@ theorem rimK1b_rest1 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) 
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
+    | (left; linarith)
     | (left; nlinarith)
     | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
@@ -1069,7 +1081,7 @@ theorem k1_facts (hts : F.S.tm = F.S.sm) (hdp : F.S.am = F.S.dp) :
     have h1 := F.S.bp_mul; have h2 := F.S.dp_mul
     have : F.S.bp * (1 - F.S.tp) * (1 - F.S.sp) < F.S.dp * (1 - F.S.sp) * (1 - F.S.tp) := by
       have := mul_lt_mul_of_pos_right F.S.bp_lt_dp (mul_pos (sub_pos.2 htp) (sub_pos.2 hsp1))
-      nlinarith
+      linarith
     rw [h1, h2] at this
     linarith
 
@@ -1123,14 +1135,14 @@ theorem rimK1a (hts : F.S.tm = F.S.sm) (hdp : F.S.am = F.S.dp) (hΔ : 0 < F.K1De
       simp only [hww, hPq, GG, Gf, quint_4]; ring
     have eΔ : F.K1Delta = F.gg * F.S.kp * F.S.hm - F.a12 * (1 - F.S.sp) * (1 - F.S.tm) := rfl
     have z21 : zz 2 < zz 1 := by
-      rw [e1, e2]; nlinarith [mul_pos (lt_of_lt_of_le hA0 hA22) (mul_pos hsp' hsp'),
+      rw [e1, e2]; linarith [mul_pos (lt_of_lt_of_le hA0 hA22) (mul_pos hsp' hsp'),
         mul_pos hg (mul_pos hkp hkp)]
-    have z34 : zz 3 < zz 4 := by rw [e3, e4]; nlinarith
+    have z34 : zz 3 < zz 4 := by rw [e3, e4]; linarith
     have hΔ' : 0 < F.gg * F.S.hm * F.S.kp - F.a12 * (1 - F.S.sp) * (1 - F.S.tm) := by
-      rw [eΔ] at hΔ; nlinarith
+      rw [eΔ] at hΔ; linarith
     rcases hA22.eq_or_lt with hb | hb
     · have z10 : zz 1 < zz 0 := by
-        rw [e1, e0, ← hb]; nlinarith
+        rw [e1, e0, ← hb]; linarith
       exact Q5p_eventually (z := zz) (w := ww) (Or.inr (Or.inr (Or.inl (Or.inl z21))))
         (Or.inr (Or.inr (Or.inr (Or.inl z34)))) (Or.inl (Or.inl z21))
         (Or.inr (Or.inl (Or.inl z34))) (Or.inr (Or.inr (Or.inl (Or.inl z10))))
@@ -1186,11 +1198,11 @@ theorem rimK1b (hts : F.S.tm = F.S.sm) (hdp : F.S.am = F.S.dp) (hΔ : F.K1Delta 
       simp only [hzz, hPq, GG, Gf, quint_4]; ring
     have eΔ : F.K1Delta = F.gg * F.S.kp * F.S.hm - F.a12 * (1 - F.S.sp) * (1 - F.S.tm) := rfl
     have z12 : zz 1 < zz 2 := by
-      rw [e1, e2]; nlinarith [mul_pos (lt_of_lt_of_le hA0 hA22) (mul_pos hsp' hsp'),
+      rw [e1, e2]; linarith [mul_pos (lt_of_lt_of_le hA0 hA22) (mul_pos hsp' hsp'),
         mul_pos hg (mul_pos hkp hkp)]
     have z04 : zz 0 < zz 4 := by
-      rw [e0, e4]; nlinarith [mul_pos (mul_pos hA0 hsp') htm, mul_pos (mul_pos hg hhm) hkp]
-    have z43 : zz 4 < zz 3 := by rw [e4, e3]; rw [eΔ] at hΔ; nlinarith
+      rw [e0, e4]; linarith [mul_pos (mul_pos hA0 hsp') htm, mul_pos (mul_pos hg hhm) hkp]
+    have z43 : zz 4 < zz 3 := by rw [e4, e3]; rw [eΔ] at hΔ; linarith
     exact Q5p_eventually (z := zz) (w := ww) (Or.inl (Or.inl z04))
       (Or.inr (Or.inl (Or.inl z12))) (Or.inr (Or.inr (Or.inl (Or.inl z43))))
       (Or.inr (Or.inr (Or.inl (Or.inl z04)))) (Or.inl (Or.inl z43))
@@ -1283,8 +1295,9 @@ theorem rimK1c_lt_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t)
   all_goals
     simp only [ST, Dc, C3.sub, z0, z1, z2, z3, z4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
 set_option maxHeartbeats 4000000 in
 theorem rimK1c_lt_rest4 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (ht1 : t < 1)
@@ -1302,8 +1315,9 @@ theorem rimK1c_lt_rest4 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < 
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, z0, z1, z2, z3, z4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
 set_option maxHeartbeats 4000000 in
 theorem rimK1c_lt_rest6 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (ht1 : t < 1)
@@ -1321,8 +1335,8 @@ theorem rimK1c_lt_rest6 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < 
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, z0, z1, z2, z3, z4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
 set_option maxHeartbeats 4000000 in
 theorem rimK1c_gt_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (ht1 : t < 1)
@@ -1348,6 +1362,7 @@ theorem rimK1c_gt_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t)
   all_goals
     simp only [ST, Dc, C3.sub, z0, z1, z2, z3, quad_0, quad_1, quad_2, quad_3]
     first
+    | (left; linarith)
     | (left; nlinarith)
 
 set_option maxHeartbeats 4000000 in
@@ -1370,8 +1385,9 @@ theorem rimK1c_gt_rest (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, z0, z1, z2, z3, quad_0, quad_1, quad_2, quad_3]
     first
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
 set_option maxHeartbeats 4000000 in
 theorem rimK1c_eq5_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (ht1 : t < 1)
     (hh : 0 < h) (hkc : kp * t = h * (1 - sp)) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
@@ -1415,6 +1431,8 @@ theorem rimK1c_eq5_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t
   all_goals
     simp only [ST, Dc, C3.sub, z0, z1, z2, z3, z4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
     | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
@@ -1434,8 +1452,9 @@ theorem rimK1c_eq5_rest4 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 <
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, z0, z1, z2, z3, z4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
-    | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
 set_option maxHeartbeats 4000000 in
 theorem rimK1c_eq5_rest6 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (ht1 : t < 1)
@@ -1453,6 +1472,7 @@ theorem rimK1c_eq5_rest6 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 <
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, z0, z1, z2, z3, z4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
     | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
@@ -1479,7 +1499,7 @@ theorem rimK1c_eq4_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t
   all_goals
     simp only [ST, Dc, C3.sub, z0, z1, z2, z3, quad_0, quad_1, quad_2, quad_3]
     first
-    | (left; nlinarith)
+    | (left; linarith)
 
 set_option maxHeartbeats 4000000 in
 theorem rimK1c_eq4_rest (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (ht1 : t < 1)
@@ -1500,6 +1520,8 @@ theorem rimK1c_eq4_rest (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < 
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, z0, z1, z2, z3, quad_0, quad_1, quad_2, quad_3]
     first
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
     | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
@@ -1628,7 +1650,7 @@ theorem k1c_core5 (hts : F.S.tm = F.S.sm) (hdp : F.S.am = F.S.dp) (hΔ : F.K1Del
       have h2 : 0 < F.a11 * (F.S.kp * (1 - F.S.tp)) - F.a12 * (F.S.hp * (1 - F.S.sp)) := by
         have := sub_pos.2 R
         have h3 : 0 < F.S.kp * (1 - F.S.tp) := mul_pos hkp (sub_pos.2 F.S.tp_lt)
-        nlinarith [mul_nonneg (sub_nonneg.2 hA11) h3.le, mul_pos hA0 this]
+        linarith [mul_nonneg (sub_nonneg.2 hA11) h3.le, mul_pos hA0 this]
       have := mul_pos ht1 h2
       rw [← h1] at this
       have := (mul_pos_iff_of_pos_left hkp).1 this
@@ -1689,7 +1711,7 @@ theorem k1c_core4 (hts : F.S.tm = F.S.sm) (hdp : F.S.am = F.S.dp) (hΔ : F.K1Del
       have h2 : 0 < F.a11 * (F.S.kp * (1 - F.S.tp)) - F.a12 * (F.S.hp * (1 - F.S.sp)) := by
         have := sub_pos.2 R
         have h3 : 0 < F.S.kp * (1 - F.S.tp) := mul_pos hkp (sub_pos.2 F.S.tp_lt)
-        nlinarith [mul_nonneg (sub_nonneg.2 hA11) h3.le, mul_pos hA0 this]
+        linarith [mul_nonneg (sub_nonneg.2 hA11) h3.le, mul_pos hA0 this]
       have := mul_pos ht1 h2
       rw [← h1] at this
       have := (mul_pos_iff_of_pos_left hkp).1 this
@@ -1831,9 +1853,9 @@ theorem t1pST_cyc {tm hm tp hp sp kp sm km : ℝ} (hsp : 0 < sp) (hsp1 : sp < 1)
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, b5, hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5]
     first
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
-    | (right; refine ⟨by ring1, by nlinarith⟩)
-    | (right; refine ⟨by linear_combination (-1 : ℝ) * hH, by nlinarith⟩)
     | (right; refine ⟨by linear_combination (-sp) * hH, by nlinarith⟩)
     | (right; refine ⟨by linear_combination (-sm) * hH, by nlinarith⟩)
 
@@ -1871,8 +1893,9 @@ theorem t1pST_rest {tm hm tp hp sp kp sm km : ℝ} (hsp : 0 < sp) (hsp1 : sp < 1
   rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, b5, hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5]
     first
+    | (left; linarith)
+    | (right; refine ⟨by linarith, by linarith⟩)
     | (left; nlinarith)
-    | (right; refine ⟨by ring1, by nlinarith⟩)
 
 
 namespace Frame09
@@ -1904,14 +1927,14 @@ theorem rimK2T1p (H1 : F.S.am = F.S.bp) (H2 : F.S.bp = F.S.sp * F.S.A2) (hts : F
     have h3 : F.S.bp = F.S.kp + F.S.sp * F.S.cm := by rw [H2, F.S.sp_A2]
     rw [← e2, H1, h3]; ring
   have hE : F.S.tm * F.S.kp < F.S.hm := by
-    rw [hmeq]; nlinarith [mul_pos (mul_pos htm hsp) hcm]
+    rw [hmeq]; linarith [mul_pos (mul_pos htm hsp) hcm]
   have hD : F.S.hm * (1 - F.S.sp) < F.S.tm * F.S.kp := by
     have e2 := F.S.am_mul; have e3 := F.S.dp_mul
     have hr := F.S.bp_lt_dp
     rw [← H1] at hr
     have : F.S.am * F.S.tm * (1 - F.S.sp) < F.S.dp * (1 - F.S.sp) * F.S.tm := by
       have := mul_lt_mul_of_pos_right hr (mul_pos htm (sub_pos.2 hsp1))
-      nlinarith
+      linarith
     rw [e2, e3] at this; linarith
   obtain ⟨p0, p1, p2, p3, p4, p5, p6⟩ := F.ptC_pts
   let c : ZMod 6 → Fin 7 := ![4, 3, 1, 2, 5, 6]
@@ -1959,10 +1982,10 @@ theorem rimK2T1p (H1 : F.S.am = F.S.bp) (H2 : F.S.bp = F.S.sp * F.S.A2) (hts : F
     have m5 := mul_pos (mul_pos hg hhp) hhm
     have m6 := mul_nonneg (mul_nonneg hA.le htm.le) (sub_nonneg.2 hA11)
     refine robust_cycT1p ?_ ?_ ?_ (Or.inr ?_)
-    · nlinarith [mul_pos (mul_pos (by linarith : 0 < F.a11) htm) (sub_pos.2 htp1)]
-    · nlinarith [mul_pos m1 (sub_pos.2 hsp1)]
-    · nlinarith
-    · nlinarith
+    · linarith [mul_pos (mul_pos (by linarith : 0 < F.a11) htm) (sub_pos.2 htp1)]
+    · linarith [mul_pos m1 (sub_pos.2 hsp1)]
+    · linarith
+    · linarith
 end Frame09
 
 /-! ### The case tree (proved from the pieces above) -/
@@ -1985,7 +2008,7 @@ theorem rupert_K2 (H1 : F.S.am = F.S.bp) (H2 : F.S.bp = F.S.sp * F.S.A2) :
     have hq : F.a12 * (F.S.sm * (1 - F.S.tm) - F.S.tm * (1 - F.S.sm)) > 0 := by
       have : F.S.sm * (1 - F.S.tm) - F.S.tm * (1 - F.S.sm) = F.S.sm - F.S.tm := by ring
       rw [this]; exact mul_pos hA (sub_pos.2 hts)
-    nlinarith
+    linarith
 
 /-- **Theorem K1** (§40.3): every frame shape on `t- = s- ∧ a- = d+` is Rupert at its metric. -/
 theorem rupert_K1 (hts : F.S.tm = F.S.sm) (hdp : F.S.am = F.S.dp) :

@@ -72,7 +72,7 @@ theorem t1_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (htm
   all_goals
     simp only [ST, Dc, C3.sub, t1P, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3,
       quint_4]
-    (left; nlinarith)
+    (left; linarith)
 
 theorem t1_rest0 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1)
     (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) :
@@ -95,8 +95,8 @@ theorem t1_rest0 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (h
   · simp only [ST, Dc, C3.sub, t1P, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3,
       quint_4]
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 theorem t1_rest1 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1)
@@ -130,8 +130,8 @@ theorem t1_rest1 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (
   · simp only [ST, Dc, C3.sub, t1P, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3,
       quint_4]
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 theorem t2_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1)
     (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) :
@@ -154,7 +154,7 @@ theorem t2_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (htm
     try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals
     simp only [ST, Dc, C3.sub, t2P, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
-    (left; nlinarith)
+    (left; linarith)
 
 theorem t2_rest1 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp)
     (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1) (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1)
@@ -182,7 +182,7 @@ theorem t2_rest1 (hsp : 0 < sp) (hsp1 : sp < 1) (htp : 0 < tp) (htp1 : tp < 1) (
   intro i
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, t2P, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
-    (left; nlinarith)
+    (left; linarith)
 
 theorem t2_rest5 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1)
     (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km)
@@ -207,8 +207,8 @@ theorem t2_rest5 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (h
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, t2P, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 theorem t2_rest6 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (htm1 : tm < 1)
     (hhm : 0 < hm) (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) :
@@ -229,8 +229,8 @@ theorem t2_rest6 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (h
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [ST, Dc, C3.sub, t2P, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 end T48
 
@@ -349,7 +349,7 @@ theorem t1_z4_lt_z0 {A11 A12 g tm sm hm km : ℝ} (hA11 : A12 ≤ A11)
     rw [e]
     exact mul_pos (sub_pos.2 hts) (sub_pos.2 key)
   have R' := (mul_pos_iff_of_pos_right h1).1 R
-  nlinarith [mul_nonneg (mul_nonneg htm.le htm.le) (sub_nonneg.2 hA11)]
+  linarith [mul_nonneg (mul_nonneg htm.le htm.le) (sub_nonneg.2 hA11)]
 
 namespace Frame09
 variable {x : Fin 7 → ℝ³} (F : Frame09 x)
@@ -400,10 +400,10 @@ theorem rimT1 (hts : F.S.tm < F.S.sm) (H1 : F.S.hp * F.S.tm + F.S.hm * F.S.tp < 
     have m4 := mul_pos m1 hsp
     have m5 := mul_nonneg m1.le (sub_nonneg.2 hA11)
     refine Q5t_eventually (z := zz) (w := ww) ?_ ?_ ?_ ?_
-    · rw [e1, e2]; nlinarith [mul_pos m1 (sub_pos.2 hsp1), mul_le_mul_of_nonneg_left hA11 htm.le]
-    · rw [e2, e3]; nlinarith [mul_pos m1 (sub_pos.2 hsp1)]
-    · rw [e3, e4]; nlinarith
-    · rw [e4, e0]; nlinarith
+    · rw [e1, e2]; linarith [mul_pos m1 (sub_pos.2 hsp1), mul_le_mul_of_nonneg_left hA11 htm.le]
+    · rw [e2, e3]; linarith [mul_pos m1 (sub_pos.2 hsp1)]
+    · rw [e3, e4]; linarith
+    · rw [e4, e0]; linarith
 
 /-- **`T2` is unimodal** when `g h- k- < A12 s- (1 - t-)`. -/
 theorem rimT2 (H3 : F.S.sm * F.S.hp < (F.S.km * F.S.sp + F.S.sm * F.S.kp) * (1 - F.S.tp))
@@ -444,7 +444,7 @@ theorem rimT2 (H3 : F.S.sm * F.S.hp < (F.S.km * F.S.sp + F.S.sm * F.S.kp) * (1 -
     refine Q4_eventually (z := zz) (w := ww) (Or.inl (Or.inl ?_))
       (Or.inr (Or.inr (Or.inl (Or.inl ?_))))
     · rw [e0, e1]; linarith
-    · rw [e1, e2]; nlinarith
+    · rw [e1, e2]; linarith
 
 /-- **Theorem 27.48 (P09; type 09) in the frame, at the frame's own metric.**  If
 `t- < s-`, `b+ < a- < d+`, `c- < d+` and `b+ < s+ A2`, then one of the tests `T1`, `T2` is
@@ -463,7 +463,7 @@ theorem rupert_of_27_48 (hts : F.S.tm < F.S.sm) (h1 : F.S.bp < F.S.am) (h2 : F.S
   · refine F.rimT2 H3 H4 ?_
     by_contra hn
     refine F.S.t48_contra hA hts (not_lt.mp hc) ?_
-    nlinarith [not_lt.mp hn]
+    linarith [not_lt.mp hn]
 
 /-- **Type 09, acute case (c), in the frame**: at the frame's own metric, off the special
 positions, with the far angle at `xb` acute, the shape is Rupert. -/

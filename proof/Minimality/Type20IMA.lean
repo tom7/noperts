@@ -63,12 +63,12 @@ lemma lit_A_seg (hD : F.S.tp * F.S.km < F.S.hp * (1 - F.S.sm)) :
   have hQ : F.S.tp * F.S.hm - F.S.hp * (1 - F.S.tm) < 0 := by
     by_contra hc
     push Not at hc
-    nlinarith [mul_nonneg hs.le hc]
+    linarith [mul_nonneg hs.le hc]
   have h5 : -FF.f 0 (x 5) * (F.S.tp * F.S.hm - F.S.hp * (1 - F.S.tm)) < 0 :=
     mul_neg_of_pos_of_neg (by linarith) hQ
   by_contra hc
   push Not at hc
-  nlinarith [mul_nonneg hm.le (show 0 ≤ FF.f 0 (x 0) - FF.f 0 (x 5) by linarith)]
+  linarith [mul_nonneg hm.le (show 0 ≤ FF.f 0 (x 0) - FF.f 0 (x 5) by linarith)]
 
 /-- Segment view, literal for facet G (`146`): `G+` is exactly `D1 < 0`. -/
 lemma lit_G_seg (hD : F.S.tp * F.S.km < F.S.hp * (1 - F.S.sm)) :
@@ -87,7 +87,7 @@ lemma lit_G_seg (hD : F.S.tp * F.S.km < F.S.hp * (1 - F.S.sm)) :
     mul_neg_of_pos_of_neg (by linarith) (by linarith)
   by_contra hc
   push Not at hc
-  nlinarith [mul_nonneg F.S.km_pos.le (show 0 ≤ FF.f 6 (x 0) - FF.f 6 (x 5) by linarith)]
+  linarith [mul_nonneg F.S.km_pos.le (show 0 ≤ FF.f 6 (x 0) - FF.f 6 (x 5) by linarith)]
 
 /-- The coordinate form of the line view `qL = (1 - sm, 0, km)` against a facet. -/
 lemma facet_val_L (t : Fin 8) :
@@ -111,7 +111,7 @@ lemma lcg_A : ⟪FF.N 0, F.toFrame7.fvC ⟨1 - F.S.sm, 0, F.S.km⟩⟫ < 0 := by
     mul_neg_of_neg_of_pos n5 (by linarith [F.S.roof_m'])
   by_contra hc
   push Not at hc
-  nlinarith [mul_nonneg F.S.hm_pos.le hc]
+  linarith [mul_nonneg F.S.hm_pos.le hc]
 
 /-- Line view `L_CG`, facet B is above exactly when `D1 > 0`. -/
 lemma lcg_B (hD : F.S.hp * (1 - F.S.sm) < F.S.tp * F.S.km) :
@@ -130,7 +130,7 @@ lemma lcg_B (hD : F.S.hp * (1 - F.S.sm) < F.S.tp * F.S.km) :
     mul_pos (by linarith) (by linarith)
   by_contra hc
   push Not at hc
-  nlinarith [mul_nonneg F.S.hp_pos.le (show 0 ≤ -((1 - F.S.sm) * (FF.f 1 (x 1) - 0) +
+  linarith [mul_nonneg F.S.hp_pos.le (show 0 ≤ -((1 - F.S.sm) * (FF.f 1 (x 1) - 0) +
     F.S.km * ⟪FF.N 1, F.e⟫) by linarith)]
 
 /-- Line view `L_CG`, facet D is below. -/
@@ -151,7 +151,7 @@ lemma lcg_D : ⟪FF.N 3, F.toFrame7.fvC ⟨1 - F.S.sm, 0, F.S.km⟩⟫ < 0 := by
       positivity)
   by_contra hc
   push Not at hc
-  nlinarith [mul_nonneg F.S.hm_pos.le hc]
+  linarith [mul_nonneg F.S.hm_pos.le hc]
 
 /-- Line view `L_CG`, facet E is above. -/
 lemma lcg_E : 0 < ⟪FF.N 4, F.toFrame7.fvC ⟨1 - F.S.sm, 0, F.S.km⟩⟫ := by
@@ -173,7 +173,7 @@ lemma lcg_E : 0 < ⟪FF.N 4, F.toFrame7.fvC ⟨1 - F.S.sm, 0, F.S.km⟩⟫ := by
       positivity)
   by_contra hc
   push Not at hc
-  nlinarith [mul_nonneg F.S.hp_pos.le (show 0 ≤ -((1 - F.S.sm) * (0 - FF.f 4 (x 5)) +
+  linarith [mul_nonneg F.S.hp_pos.le (show 0 ≤ -((1 - F.S.sm) * (0 - FF.f 4 (x 5)) +
     F.S.km * ⟪FF.N 4, F.e⟫) by linarith)]
 
 /-- Line view `L_CG`, facet F is above exactly under `D1 > 0` (together with the roofs). -/
@@ -203,7 +203,7 @@ lemma lcg_F (hD : F.S.hp * (1 - F.S.sm) < F.S.tp * F.S.km) :
       positivity)
   by_contra hc
   push Not at hc
-  nlinarith [mul_nonneg (mul_pos F.S.tp_pos F.S.kp_pos).le (show 0 ≤ -((1 - F.S.sm) *
+  linarith [mul_nonneg (mul_pos F.S.tp_pos F.S.kp_pos).le (show 0 ≤ -((1 - F.S.sm) *
     (FF.f 5 (x 1) - FF.f 5 (x 5)) + F.S.km * ⟪FF.N 5, F.e⟫) by linarith)]
 
 /-- Line view `L_CG`, facet H is below. -/
@@ -225,7 +225,7 @@ lemma lcg_H : ⟪FF.N 7, F.toFrame7.fvC ⟨1 - F.S.sm, 0, F.S.km⟩⟫ < 0 := by
                               positivity) n1
   by_contra hc
   push Not at hc
-  nlinarith [mul_nonneg F.S.kp_pos.le hc]
+  linarith [mul_nonneg F.S.kp_pos.le hc]
 
 end Frame20
 end Minimality.CaseC20
@@ -275,7 +275,7 @@ lemma cross_CG : ∃ l : ℝ, l ≠ 0 ∧
     rw [← FF.hN, ← FF.hN, ← FF.hN, ← FF.hN, a1, a5, b1, b6]
     have : (FF.f 2 (x 6) - 0) * (0 - FF.f 6 (x 5)) < 0 :=
       mul_neg_of_neg_of_pos (by linarith) (by linarith)
-    intro h; nlinarith
+    intro h; linarith
   have hcr := Frame20.cross_ne_zero _ _ hne
   obtain ⟨q, hq, e1, e2⟩ := F.cross_coords (FF.N 2) (FF.N 6)
   rw [← FF.hN, ← FF.hN, a1, a5, dC] at e1
@@ -377,7 +377,7 @@ lemma lcg_depth_order
   refine ⟨?_, ?_, ?_, ?_⟩
   · have p1 := mul_pos ha (mul_pos F.S.sp_pos s1)
     have p2 := mul_pos hg (mul_pos F.S.kp_pos F.S.km_pos)
-    nlinarith [p1, p2]
+    linarith [p1, p2]
   · have key : F.S.hp * (F.a12 * (1 - F.S.sm) - F.a12 * (F.S.sp * (1 - F.S.sm)) +
         (-(F.gg * (F.S.kp * F.S.km)))) =
         F.a12 * (1 - F.S.sm) * (F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp)) := by
@@ -391,13 +391,13 @@ lemma lcg_depth_order
       linear_combination (-1 : ℝ) * hO
     have h5 : 0 < (1 - F.S.sm) * F.S.tp * (F.a11 - F.a12) :=
       mul_pos (mul_pos s1 F.S.tp_pos) (by linarith)
-    nlinarith [key, h5]
+    linarith [key, h5]
   · have key : F.a11 * (1 - F.S.sm) - (F.a11 * (F.S.tp * (1 - F.S.sm)) + F.gg * (F.S.hp * F.S.km)) =
         (1 - F.S.sm) * (1 - F.S.tp) * (F.a11 - F.a12) := by
       linear_combination hO
     have h5 : 0 < (1 - F.S.sm) * (1 - F.S.tp) * (F.a11 - F.a12) :=
       mul_pos (mul_pos s1 t1) (by linarith)
-    nlinarith [key, h5]
+    linarith [key, h5]
 
 end Frame20
 end Minimality.CaseC20
@@ -530,7 +530,7 @@ lemma s05_no_low_d0
     have h1 := mul_lt_mul_of_pos_left hD F.S.sp_pos
     have h2 := mul_pos s1 (show 0 < F.S.hp * (1 - F.S.sp) - F.S.kp * (1 - F.S.tp) by
       linarith [F.S.roof_p'])
-    nlinarith [h1, h2]
+    linarith [h1, h2]
   have h3 : (1 - F.S.tp) * F.a12 * (F.S.sp * F.S.tp * F.S.km -
         (1 - F.S.sm) * (F.S.hp - F.S.kp * (1 - F.S.tp))) < 0 :=
     mul_neg_of_pos_of_neg (mul_pos t1 ha) hb
@@ -559,7 +559,7 @@ theorem isRupert_IMA_neg (hx : Function.Injective x) (hR : RealizesFaces x (seve
     have e2 : h20s_s05.c (2 : ZMod 4) = 6 := rfl
     have e3 : h20s_s05.c (3 : ZMod 4) = 2 := rfl
     simp only [e0, e1, e2, e3, dep_0, dep_1, dep_2, dep_6] at a1 a2 a3 a4
-    exact F.s05_no_low_d0 hO hD (by nlinarith) (by nlinarith)
+    exact F.s05_no_low_d0 hO hD (by linarith) (by linarith)
   · rintro ⟨a1, a2, a3, a4⟩
     have e0 : h20s_s05.c (0 : ZMod 4) = 0 := rfl
     have e1 : h20s_s05.c (1 : ZMod 4) = 1 := rfl
@@ -567,7 +567,7 @@ theorem isRupert_IMA_neg (hx : Function.Injective x) (hR : RealizesFaces x (seve
     have e3 : h20s_s05.c (3 : ZMod 4) = 2 := rfl
     simp only [e0, e1, e2, e3, dep_0, dep_1, dep_2, dep_6] at a1 a2 a3 a4
     have := mul_pos F.S.tp_pos (sub_pos.2 h11)
-    nlinarith
+    linarith
 
 end Frame20
 end Minimality.CaseC20
@@ -650,12 +650,12 @@ lemma lit_A_seg_le (hD : F.S.tp * F.S.km ≤ F.S.hp * (1 - F.S.sm)) :
   have hQ : F.S.tp * F.S.hm - F.S.hp * (1 - F.S.tm) < 0 := by
     by_contra hc
     push Not at hc
-    nlinarith [mul_nonneg hs.le hc]
+    linarith [mul_nonneg hs.le hc]
   have h5 : -FF.f 0 (x 5) * (F.S.tp * F.S.hm - F.S.hp * (1 - F.S.tm)) < 0 :=
     mul_neg_of_pos_of_neg (by linarith) hQ
   by_contra hc
   push Not at hc
-  nlinarith [mul_nonneg hm.le (show 0 ≤ FF.f 0 (x 0) - FF.f 0 (x 5) by linarith)]
+  linarith [mul_nonneg hm.le (show 0 ≤ FF.f 0 (x 0) - FF.f 0 (x 5) by linarith)]
 
 /-- At `D1 = 0`, facet `G` is edge-on at the segment view: its values at `x0` and `x5` agree. -/
 lemma G_edge_on (hD : F.S.tp * F.S.km = F.S.hp * (1 - F.S.sm)) :
@@ -783,7 +783,7 @@ lemma s05t_robUni
   have h16 : 0 < F.a11 * F.S.tp - F.a12 * F.S.tp := by nlinarith
   have h31 : 0 < F.a11 * F.S.tp - (F.a11 * (F.S.tm * F.S.tp) - F.gg * (F.S.hm * F.S.hp)) := by
     have : 0 < F.a11 := by linarith
-    nlinarith [mul_pos hg (mul_pos F.S.hm_pos F.S.hp_pos), mul_pos (mul_pos this F.S.tp_pos) (show 0 < 1 - F.S.tm by linarith)]
+    linarith [mul_pos hg (mul_pos F.S.hm_pos F.S.hp_pos), mul_pos (mul_pos this F.S.tp_pos) (show 0 < 1 - F.S.tm by linarith)]
   have e0 : h20s_s05t_c (0 : ZMod 5) = 1 := rfl
   have e1 : h20s_s05t_c (1 : ZMod 5) = 3 := rfl
   have e2 : h20s_s05t_c (2 : ZMod 5) = 5 := rfl
@@ -792,13 +792,13 @@ lemma s05t_robUni
   rw [F.x5_sub_x0]
   refine F.robUni_of_dep _ _ (robUni5_c ?_ ?_ ?_ ?_)
   · show F.dep _ (h20s_s05t_c 0) < F.dep _ (h20s_s05t_c 4)
-    rw [e0, e4]; simp only [dep_1, dep_6]; nlinarith
+    rw [e0, e4]; simp only [dep_1, dep_6]; linarith
   · show F.dep _ (h20s_s05t_c 4) < F.dep _ (h20s_s05t_c 3)
-    rw [e4, e3]; simp only [dep_6, dep_2]; nlinarith
+    rw [e4, e3]; simp only [dep_6, dep_2]; linarith
   · show F.dep _ (h20s_s05t_c 3) < F.dep _ (h20s_s05t_c 2)
-    rw [e3, e2]; simp only [dep_2, dep_5]; nlinarith
+    rw [e3, e2]; simp only [dep_2, dep_5]; linarith
   · show F.dep _ (h20s_s05t_c 0) < F.dep _ (h20s_s05t_c 1)
-    rw [e0, e1]; simp only [dep_1, dep_3]; nlinarith
+    rw [e0, e1]; simp only [dep_1, dep_3]; linarith
 
 /-- **I_MA at the special position `D1 = 0`**: the tilted segment leaf `s05:13526[BvCvG^]`. -/
 theorem isRupert_IMA_zero (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces 19))

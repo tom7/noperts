@@ -72,7 +72,7 @@ lemma imc_den_pos (hE1 : (-F.S.sm*F.S.tm*F.S.tp + F.S.sm*F.S.tm + F.S.sm*F.S.tp 
   have hp := F.S.hp_pos
   by_contra hc
   push Not at hc
-  nlinarith [mul_nonneg (mul_nonneg hp.le hg.le) (neg_nonneg.2 hc)]
+  linarith [mul_nonneg (mul_nonneg hp.le hg.le) (neg_nonneg.2 hc)]
 
 end IMCT
 end Minimality.CaseC20
@@ -124,7 +124,7 @@ lemma nrm_A : F.Nrm FF 0 (F.S.hm * F.S.sm) (F.S.hm + F.S.km * F.S.tm - F.S.km)
       (F.S.hm * F.S.sm) := by
     rw [eq_div_iff (mul_pos hm hs).ne']
     field_simp at c4
-    nlinarith [c4]
+    linarith [c4]
   refine nrm_of (s := F.S.hm * F.S.sm) (m := -FF.f 0 (x 5)) (mul_pos hm hs) (by linarith) ?_ ?_ ?_
   · rw [eα]; ring
   · rw [eβ]; field_simp
@@ -152,7 +152,7 @@ lemma nrm_B : F.Nrm FF 1 (-(F.S.hp * F.S.sp)) (-(F.S.kp * F.S.tp)) (F.S.sp * F.S
   have eβ : ⟪FF.N 1, x 6 - x 5⟫ = F.S.kp * F.S.tp * FF.f 1 (x 1) / (F.S.sp * F.S.hp) := by
     rw [eq_div_iff (mul_pos hs hp).ne']
     field_simp at c2
-    nlinarith [c2]
+    linarith [c2]
   refine nrm_of (s := F.S.hp * F.S.sp) (m := -FF.f 1 (x 1)) (mul_pos hp hs) (by linarith) ?_ ?_ ?_
   · rw [eα]; ring
   · rw [eβ]; field_simp
@@ -208,7 +208,7 @@ lemma nrm_D : F.Nrm FF 3 (-(F.S.hm * F.S.sm)) (-(F.S.km * F.S.tm)) (-(F.S.sm * F
   have eβ : ⟪FF.N 3, x 6 - x 5⟫ = F.S.km * F.S.tm * FF.f 3 (x 1) / (F.S.hm * F.S.sm) := by
     rw [eq_div_iff (mul_pos hm hs).ne']
     field_simp at c4
-    nlinarith [c4]
+    linarith [c4]
   refine nrm_of (s := F.S.hm * F.S.sm) (m := -FF.f 3 (x 1)) (mul_pos hm hs) (by linarith) ?_ ?_ ?_
   · rw [eα]; ring
   · rw [eβ]; field_simp
@@ -262,7 +262,7 @@ lemma nrm_F : F.Nrm FF 5 (F.S.kp - F.S.hp * (1 - F.S.sp)) (F.S.kp * F.S.tp)
       (F.S.kp * F.S.tp) := by
     rw [eq_div_iff (mul_pos hk ht).ne']
     field_simp at c0
-    nlinarith [c0]
+    linarith [c0]
   refine nrm_of (s := F.S.kp * F.S.tp) (m := -FF.f 5 (x 5)) (mul_pos hk ht) (by linarith) ?_ ?_ ?_
   · rw [eα]; field_simp
   · rw [eβ]; ring
@@ -429,11 +429,11 @@ lemma par_aux (hI : F.IMC) : ∃ r B : ℝ, 0 < r ∧ 0 < F.S.hm + F.S.km * F.S.
     have h' : F.a12 ≤ F.a22 := this
     have : F.a12 / (F.S.hm + F.S.km * F.S.tm - F.S.km) * (F.S.hm + F.S.km * F.S.tm - F.S.km) =
         F.a12 := by field_simp
-    nlinarith
+    linarith
   · field_simp; linarith
   · field_simp
   · field_simp
-    nlinarith [e1]
+    linarith [e1]
   · field_simp
 
 /-- The polynomial depths: `hp * dep q j = r * Dd B q j`. -/

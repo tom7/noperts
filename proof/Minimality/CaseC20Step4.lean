@@ -168,19 +168,19 @@ theorem N4D_rest_ev_S (hV : 0 < S.Vq) (hVW : 0 < S.VWq) :
     left
     rw [S.Dc_xa_split _ _ s δ e1 e2]
     simp only [Dc, C3.sub, Shape20.u_vN4]
-    nlinarith [mul_pos hs1' f4]
+    linarith [mul_pos hs1' f4]
   · apply PS_ev'
     simp only [b3, pent_3, pent_4]
     left
     rw [S.Dc_xa_split _ _ s δ e1 e2]
     simp only [Dc, C3.sub, Shape20.u_vN4]
-    nlinarith [mul_pos hs1' f6, mul_pos hs0 hD2]
+    linarith [mul_pos hs1' f6, mul_pos hs0 hD2]
   · apply PS_ev'
     simp only [b4, pent_4, pent_0]
     left
     rw [S.Dc_xa_split _ _ s δ e1 e2]
     simp only [Dc, C3.sub, Shape20.u_vN4]
-    nlinarith [mul_pos hs0 f5]
+    linarith [mul_pos hs0 f5]
 
 /-- **T_A, pentagon `(m1+, xb, m2-, m1-, v)` along `eT`** (view `u_tANR`): all 15 tests are positive at `eta = 0`
 except `([m1-, v], m1+)` and `([v, m1+], m1-)` (F1 edge-on), whose `eta`-derivative is `hm tp + hp tm > 0`. -/
@@ -359,10 +359,10 @@ theorem classH_depth_trichotomy_V (hH : F.ClassH) :
   · right; left
     have a1 : F.dV 0 - F.dV 6 < 0 := by
       by_contra hh; push Not at hh
-      nlinarith [mul_nonneg hs.le hh, mul_pos hhp (neg_pos.2 h)]
+      linarith [mul_nonneg hs.le hh, mul_pos hhp (neg_pos.2 h)]
     have a2 : F.dV 6 - F.dV 3 < 0 := by
       by_contra hh; push Not at hh
-      nlinarith [mul_nonneg hs.le hh, mul_pos hhm (neg_pos.2 h)]
+      linarith [mul_nonneg hs.le hh, mul_pos hhm (neg_pos.2 h)]
     constructor <;> linarith
   · right; right
     rw [h] at e1 e2
@@ -380,10 +380,10 @@ theorem classH_depth_trichotomy_V (hH : F.ClassH) :
   · left
     have a1 : 0 < F.dV 0 - F.dV 6 := by
       by_contra hh; push Not at hh
-      nlinarith [mul_nonneg hs.le (neg_nonneg.2 hh), mul_pos hhp h]
+      linarith [mul_nonneg hs.le (neg_nonneg.2 hh), mul_pos hhp h]
     have a2 : 0 < F.dV 6 - F.dV 3 := by
       by_contra hh; push Not at hh
-      nlinarith [mul_nonneg hs.le (neg_nonneg.2 hh), mul_pos hhm h]
+      linarith [mul_nonneg hs.le (neg_nonneg.2 hh), mul_pos hhm h]
     constructor <;> linarith
 
 /-- **Depth order at `u_tANR` on `ClassH`.**  With `B_T = A11 (tp - 1)(tp - tm) + g hp (hp + hm) = dep 0 - dep 3`:
@@ -406,10 +406,10 @@ theorem classH_depth_trichotomy_T (hH : F.ClassH) :
   · right; left
     have a1 : F.dT 0 - F.dT 6 < 0 := by
       by_contra hh; push Not at hh
-      nlinarith [mul_nonneg hs.le hh, mul_pos hhp (neg_pos.2 h)]
+      linarith [mul_nonneg hs.le hh, mul_pos hhp (neg_pos.2 h)]
     have a2 : F.dT 6 - F.dT 3 < 0 := by
       by_contra hh; push Not at hh
-      nlinarith [mul_nonneg hs.le hh, mul_pos hhm (neg_pos.2 h)]
+      linarith [mul_nonneg hs.le hh, mul_pos hhm (neg_pos.2 h)]
     constructor <;> linarith
   · right; right
     rw [h] at e1 e2
@@ -427,10 +427,10 @@ theorem classH_depth_trichotomy_T (hH : F.ClassH) :
   · left
     have a1 : 0 < F.dT 0 - F.dT 6 := by
       by_contra hh; push Not at hh
-      nlinarith [mul_nonneg hs.le (neg_nonneg.2 hh), mul_pos hhp h]
+      linarith [mul_nonneg hs.le (neg_nonneg.2 hh), mul_pos hhp h]
     have a2 : 0 < F.dT 6 - F.dT 3 := by
       by_contra hh; push Not at hh
-      nlinarith [mul_nonneg hs.le (neg_nonneg.2 hh), mul_pos hhm h]
+      linarith [mul_nonneg hs.le (neg_nonneg.2 hh), mul_pos hhm h]
     constructor <;> linarith
 
 /-- **V: the depth-separated pair of the pentagon at `u_vN4` with nonzero torque** (copy of
@@ -476,16 +476,16 @@ theorem N4D_pair_V (hH : F.ClassH) (hV : 0 < F.S.Vq)
       rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl
       · simp only [b0, pent_0, pent_1, pent_4, F.ptC_0, F.ptC_5, F.ptC_6, Dc, C3.sub,
           Shape20.u_vN4]
-        nlinarith [mul_pos hT hT]
+        linarith [mul_pos hT hT]
       · simp only [b0, pent_0, pent_1, pent_4, F.ptC_0, F.ptC_5, F.ptC_6, Dc, C3.sub,
           Shape20.u_vN4]
-        nlinarith [mul_pos hT hT]
+        linarith [mul_pos hT hT]
       · simp only [b0, pent_0, pent_1, pent_2, pent_4, F.ptC_0, F.ptC_5, F.ptC_3, F.ptC_6, Dc,
           C3.sub, Shape20.u_vN4]
-        nlinarith [mul_pos hT hT]
+        linarith [mul_pos hT hT]
       · simp only [b0, pent_0, pent_1, pent_3, pent_4, F.ptC_0, F.ptC_5, F.ptC_4, F.ptC_6, Dc,
           C3.sub, Shape20.u_vN4]
-        nlinarith [mul_pos (mul_pos hsm' hT) hT]
+        linarith [mul_pos (mul_pos hsm' hT) hT]
       · exact absurd rfl hj
     · left
       refine ⟨fun s hs hs1 => ?_, fun s hs1 hs2 => ?_⟩
@@ -544,16 +544,16 @@ theorem N4D_pair_V (hH : F.ClassH) (hV : 0 < F.S.Vq)
       rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl
       · simp only [b1, pent_0, pent_1, pent_2, pent_4, F.ptC_0, F.ptC_5, F.ptC_3, F.ptC_6, Dc,
           C3.sub, Shape20.u_vN4]
-        nlinarith [mul_pos hVV hVV]
+        linarith [mul_pos hVV hVV]
       · simp only [b1, pent_1, pent_2, pent_4, F.ptC_5, F.ptC_3, F.ptC_6, Dc, C3.sub,
           Shape20.u_vN4]
-        nlinarith [mul_pos hVV hVV]
+        linarith [mul_pos hVV hVV]
       · simp only [b1, pent_1, pent_2, pent_4, F.ptC_5, F.ptC_3, F.ptC_6, Dc, C3.sub,
           Shape20.u_vN4]
-        nlinarith [mul_pos hVV hVV]
+        linarith [mul_pos hVV hVV]
       · simp only [b1, pent_1, pent_2, pent_3, pent_4, F.ptC_5, F.ptC_3, F.ptC_4, F.ptC_6, Dc,
           C3.sub, Shape20.u_vN4]
-        nlinarith [mul_pos (mul_pos hsm' hVV) hVV]
+        linarith [mul_pos (mul_pos hsm' hVV) hVV]
       · exact absurd rfl hj
     · right
       refine ⟨fun s hs hs1 => ?_, fun s hs1 hs2 => ?_⟩
@@ -621,7 +621,7 @@ theorem TA_pair (hH : F.ClassH) (hA1 : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.
   have hA12 : 0 < F.a12 := F.A12_pos
   have hsm' : 0 < 1 - F.S.sm := sub_pos.2 F.S.sm_lt
   have hd6 : F.dT 6 < 0 := by
-    rw [F.dT_6]; nlinarith [mul_pos hA12 (sub_pos.2 F.S.tp_lt)]
+    rw [F.dT_6]; linarith [mul_pos hA12 (sub_pos.2 F.S.tp_lt)]
   have d5 : F.dT 5 = 0 := F.dT_5
   obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
   have hAA := mul_pos hA1 hA1
@@ -644,17 +644,17 @@ theorem TA_pair (hH : F.ClassH) (hA1 : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.
       rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl
       · simp only [b3, pent_0, pent_1, pent_3, pent_4, F.ptC_0, F.ptC_3, F.ptC_5, F.ptC_6, Dc,
           C3.sub, Shape20.u_tANR]
-        nlinarith [hAA]
+        linarith [hAA]
       · exact absurd rfl hj
       · simp only [b3, pent_1, pent_2, pent_3, pent_4, F.ptC_4, F.ptC_3, F.ptC_5, F.ptC_6, Dc,
           C3.sub, Shape20.u_tANR]
-        nlinarith [hAs]
+        linarith [hAs]
       · simp only [b3, pent_1, pent_3, pent_4, F.ptC_3, F.ptC_5, F.ptC_6, Dc,
           C3.sub, Shape20.u_tANR]
-        nlinarith [hAA]
+        linarith [hAA]
       · simp only [b3, pent_1, pent_3, pent_4, F.ptC_3, F.ptC_5, F.ptC_6, Dc,
           C3.sub, Shape20.u_tANR]
-        nlinarith [hAA]
+        linarith [hAA]
     · right
       refine ⟨fun s hs hs1 => ?_, fun s hs1 hs2 => ?_⟩
       · rw [hv] at hs1
@@ -712,17 +712,17 @@ theorem TA_pair (hH : F.ClassH) (hA1 : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.
       rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl
       · simp only [b4, pent_0, pent_1, pent_4, F.ptC_0, F.ptC_5, F.ptC_6, Dc,
           C3.sub, Shape20.u_tANR]
-        nlinarith [hPP]
+        linarith [hPP]
       · exact absurd rfl hj
       · simp only [b4, pent_0, pent_1, pent_2, pent_4, F.ptC_0, F.ptC_4, F.ptC_5, F.ptC_6, Dc,
           C3.sub, Shape20.u_tANR]
-        nlinarith [hPs]
+        linarith [hPs]
       · simp only [b4, pent_0, pent_1, pent_3, pent_4, F.ptC_0, F.ptC_3, F.ptC_5, F.ptC_6, Dc,
           C3.sub, Shape20.u_tANR]
-        nlinarith [hPP]
+        linarith [hPP]
       · simp only [b4, pent_0, pent_1, pent_4, F.ptC_0, F.ptC_5, F.ptC_6, Dc,
           C3.sub, Shape20.u_tANR]
-        nlinarith [hPP]
+        linarith [hPP]
     · left
       refine ⟨fun s hs hs1 => ?_, fun s hs1 hs2 => ?_⟩
       · rw [hv] at hs1
@@ -776,7 +776,7 @@ theorem vN4_classH (hx : Function.Injective x) (hV : 0 < F.S.Vq) (hVW : 0 < F.S.
       F.dep F.S.u_vN4 3 < F.dep F.S.u_vN4 4 ∨ F.dep F.S.u_vN4 6 < F.dep F.S.u_vN4 4)
     (hH : F.ClassH) : IsRupert (Finset.univ.image x) := by
   have htp := F.S.tp_pos; have hsp1 := F.S.sp_lt
-  have ux : 0 < -F.S.sp * F.S.tp + F.S.tp := by nlinarith [mul_pos htp (sub_pos.2 hsp1)]
+  have ux : 0 < -F.S.sp * F.S.tp + F.S.tp := by linarith [mul_pos htp (sub_pos.2 hsp1)]
   have efv : ∀ η : ℝ, F.toFrame7.fvC (C3.slide F.S.u_vN4 F.S.eD η) =
       F.toFrame7.fvC F.S.u_vN4 + η • F.toFrame7.fvC F.S.eD := by
     intro η; simp only [Frame7.fvC, C3.slide]; module
@@ -796,7 +796,7 @@ theorem vN4_classH (hx : Function.Injective x) (hV : 0 < F.S.Vq) (hVW : 0 < F.S.
       ((F.S.N4D_rest_ev_S hV hVW).and (F.mid_m2p_D.and hev)))).exists
   refine F.toFrame7.rupert_vertex_torque hx (k := 5) (by norm_num) (pent 0 5 3 4 6) {2} 1
      (C3.slide F.S.u_vN4 F.S.eD η)
-    (Or.inl (ne_of_gt (by simp only [C3.slide, Shape20.u_vN4, Shape20.eD]; nlinarith [mul_pos hη0 htp]))) ?_ ?_ ?_
+    (Or.inl (ne_of_gt (by simp only [C3.slide, Shape20.u_vN4, Shape20.eD]; linarith [mul_pos hη0 htp]))) ?_ ?_ ?_
     (a := a) (c₀ := c0) ?_ ?_ ?_
   · intro m hm' i
     simp only [Finset.mem_singleton] at hm'

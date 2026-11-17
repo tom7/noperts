@@ -458,7 +458,7 @@ theorem Cq_pos (a tm tp sp sm km : ℝ) (ha : 0 < a) (htm : 0 < tm) (htp : 0 < t
     0 < a * (sp * tm + sp * tp - tp * sp * sm - sm * tp) + km * (tm - tp * sp) := by
   have hf : sm * tp < tm * (1 - sm) := by
     have h1 : tm * km < tm * (a * (1 - sm)) := mul_lt_mul_of_pos_left hr2 htm
-    have : a * (sm * tp) < a * (tm * (1 - sm)) := by nlinarith
+    have : a * (sm * tp) < a * (tm * (1 - sm)) := by linarith
     exact lt_of_mul_lt_mul_left this ha.le
   have a5 := sub_pos.2 hsm1
   rcases le_total (tp * sp) tm with h | h
@@ -466,7 +466,7 @@ theorem Cq_pos (a tm tp sp sm km : ℝ) (ha : 0 < a) (htm : 0 < tm) (htp : 0 < t
       nlinarith [mul_nonneg (sub_nonneg.2 h) (sub_nonneg.2 hc), mul_pos ha htm, mul_pos (mul_pos ha hsp) (mul_pos htm htm), mul_pos (mul_pos ha hsp) (mul_pos htm htp), mul_pos (mul_pos ha hsp) (mul_pos htp htp), mul_pos (mul_pos ha hsp) (sub_pos.2 hf), mul_pos (mul_pos ha hsp) (mul_pos htm (mul_pos htp a5))]
     exact pos_of_mul_pos_right this htm.le
   · have : 0 < a * (sp * tm + sp * tp - tp * sp * sm - sm * tp) + km * (tm - tp * sp) := by
-      nlinarith [mul_nonneg (sub_nonneg.2 h) (sub_nonneg.2 hr2.le), mul_pos ha hsp, mul_pos (mul_pos ha hsp) htm, mul_pos ha (sub_pos.2 hf), mul_pos (mul_pos ha htm) hsp]
+      linarith [mul_nonneg (sub_nonneg.2 h) (sub_nonneg.2 hr2.le), mul_pos ha hsp, mul_pos (mul_pos ha hsp) htm, mul_pos ha (sub_pos.2 hf), mul_pos (mul_pos ha htm) hsp]
     exact this
 
 set_option maxHeartbeats 4000000 in
@@ -532,10 +532,10 @@ theorem rimC6_rest (tm hm tp hp sp kp sm km a : ℝ) (htp : 0 < tp)
   rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, b5, hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5]
     first
-    | (left; nlinarith [mul_pos ha htp, mul_pos ha hsp, mul_pos htp hsp, mul_pos a6 htp, mul_pos a6 hsp, mul_pos (mul_pos ha htp) a5, mul_pos hkm htp, mul_pos hkm hsp, mul_pos hkm a1, mul_pos (mul_pos ha htp) hsm, mul_pos (mul_pos ha htp) hsp, mul_pos (mul_pos ha hsp) hsm, mul_pos (mul_pos ha hsp) a3, mul_pos (mul_pos ha a3) hsm, mul_pos (mul_pos ha a3) htp, mul_pos (mul_pos ha a3) a1, mul_pos (mul_pos ha a3) a5, mul_pos (mul_pos ha a4) hsm, mul_pos ha a4, mul_pos hkm hsm, mul_pos hkm a5, mul_pos (mul_pos hkm htp) a5, mul_pos (mul_pos hkm hsm) htp, mul_pos (mul_pos ha htp) a2, mul_pos (mul_pos ha hsp) a2, mul_pos (mul_pos ha hsp) htp])
+    | (left; linarith [mul_pos ha htp, mul_pos ha hsp, mul_pos htp hsp, mul_pos a6 htp, mul_pos a6 hsp, mul_pos (mul_pos ha htp) a5, mul_pos hkm htp, mul_pos hkm hsp, mul_pos hkm a1, mul_pos (mul_pos ha htp) hsm, mul_pos (mul_pos ha htp) hsp, mul_pos (mul_pos ha hsp) hsm, mul_pos (mul_pos ha hsp) a3, mul_pos (mul_pos ha a3) hsm, mul_pos (mul_pos ha a3) htp, mul_pos (mul_pos ha a3) a1, mul_pos (mul_pos ha a3) a5, mul_pos (mul_pos ha a4) hsm, mul_pos ha a4, mul_pos hkm hsm, mul_pos hkm a5, mul_pos (mul_pos hkm htp) a5, mul_pos (mul_pos hkm hsm) htp, mul_pos (mul_pos ha htp) a2, mul_pos (mul_pos ha hsp) a2, mul_pos (mul_pos ha hsp) htp])
     | (right; constructor
        · ring1
-       · nlinarith [mul_pos a1 a2, mul_pos htp a2, a1, a2, htp, mul_pos htp a1, mul_pos ha a1, mul_pos ha a2, mul_pos ha htp, mul_pos ha hsp, mul_pos hsp a1, mul_pos hsp a2])
+       · linarith [mul_pos a1 a2, mul_pos htp a2, a1, a2, htp, mul_pos htp a1, mul_pos ha a1, mul_pos ha a2, mul_pos ha htp, mul_pos ha hsp, mul_pos hsp a1, mul_pos hsp a2])
 
 set_option linter.unusedTactic false in
 set_option linter.unusedSimpArgs false in
@@ -623,7 +623,7 @@ theorem exists_tiltH (tp hp sp kp : ℝ)
     (hroof : kp * (1 - tp) < hp * (1 - sp)) :
     ∃ d1 d3 : ℝ, 0 < -hp * d1 - (1 - tp) * d3 ∧
       0 < -((kp - hp * (1 - sp)) * d1 + tp * (1 - sp) * d3) := by
-  have hdet : 0 < hp * (1 - sp) - (1 - tp) * kp := by nlinarith
+  have hdet : 0 < hp * (1 - sp) - (1 - tp) * kp := by linarith
   have hne := hdet.ne'
   refine ⟨((1 - tp) - tp * (1 - sp)) / (hp * (1 - sp) - (1 - tp) * kp),
     ((kp - hp * (1 - sp)) - hp) / (hp * (1 - sp) - (1 - tp) * kp), ?_, ?_⟩
@@ -661,10 +661,10 @@ theorem rimA_cyc (tp tm hm ρ b : ℝ) (d : C3) (htp : 0 < tp) (htp1 : tp < 1) (
   have a1 := sub_pos.2 htp1
   have a2 := sub_pos.2 htm1
   have f1 : 0 < hm * (1 + ρ) - ρ * b * tm := by
-    nlinarith [mul_nonneg (sub_nonneg.2 hbm) hρ.le, mul_pos hb htm]
+    linarith [mul_nonneg (sub_nonneg.2 hbm) hρ.le, mul_pos hb htm]
   have f2 : 0 < tm * (b * (1 - tp)) + hm * tp := by positivity
   have f3 : 0 < (1 + ρ - tp) * (hm + b * (1 - tm)) := by
-    apply mul_pos (by linarith) (by nlinarith)
+    apply mul_pos (by linarith) (by linarith)
   have f4 : 0 < ρ * b * tp + (1 + ρ) * (b * (1 - tp)) := by positivity
   obtain ⟨b0, b1, b2, b3⟩ := zmod4_add_one
   intro i j h1 h2
@@ -676,7 +676,7 @@ theorem rimA_cyc (tp tm hm ρ b : ℝ) (d : C3) (htp : 0 < tp) (htp1 : tp < 1) (
   all_goals
     simp only [CaseC09.ST, Dc_uF, crF, scF, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     left
-    nlinarith [f1, f2, f3, f4]
+    linarith [f1, f2, f3, f4]
 
 theorem rimA_restW (tp tm hm sp kp ρ b : ℝ) (d : C3) (htp1 : tp < 1) (htm : 0 < tm)
     (htm1 : tm < 1) (hρ : 0 < ρ) (hhm : 0 < hm) (hbm : b * tm ≤ hm)
@@ -692,7 +692,7 @@ theorem rimA_restW (tp tm hm sp kp ρ b : ℝ) (d : C3) (htp1 : tp < 1) (htm : 0
   have a2 := sub_pos.2 htm1
   have a3 := sub_pos.2 hsp1
   have f1 : 0 < hm * (1 + ρ) - ρ * b * tm := by
-    nlinarith [mul_nonneg (sub_nonneg.2 hbm) hρ.le]
+    linarith [mul_nonneg (sub_nonneg.2 hbm) hρ.le]
   have g1 : 0 < sp * (hm * (1 + ρ) - ρ * b * tm) + tm * kp := by positivity
   have g2 : 0 < (1 + ρ - tm) * kp + (1 - sp) * (hm * (1 + ρ) - ρ * b * tm) := by
     have : 0 < 1 + ρ - tm := by linarith
@@ -704,7 +704,7 @@ theorem rimA_restW (tp tm hm sp kp ρ b : ℝ) (d : C3) (htp1 : tp < 1) (htm : 0
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc_uF, crF, scF, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     left
-    nlinarith [g1, g2, g3, HW]
+    linarith [g1, g2, g3, HW]
 
 theorem rimA_restN (tp tm hm sm km ρ b : ℝ) (d : C3) (htp : 0 < tp) (htp1 : tp < 1)
  (hb : 0 < b) (hρ : 0 < ρ)
@@ -727,7 +727,7 @@ theorem rimA_restN (tp tm hm sm km ρ b : ℝ) (d : C3) (htp : 0 < tp) (htp1 : t
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc_uF, crF, scF, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     left
-    nlinarith [g3, g4, HN1, HN2]
+    linarith [g3, g4, HN1, HN2]
 
 theorem rimA_restA (tp tm hm ρ b : ℝ) (htp1 : tp < 1)
     (htm1 : tm < 1) (hb : 0 < b) (hρ : 0 < ρ) (hhm : 0 < hm) :
@@ -744,8 +744,8 @@ theorem rimA_restA (tp tm hm ρ b : ℝ) (htp1 : tp < 1)
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc, C3.sub, uF, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
-    | (left; nlinarith [mul_pos hρ hhm, mul_pos hρ (mul_pos hb a2), mul_pos hb a1, hhm])
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith [mul_pos hρ hhm, mul_pos hρ (mul_pos hb a2), mul_pos hb a1, hhm])
+    | (right; refine ⟨by ring, by linarith⟩)
 
 theorem robust_smul_pos {k : ℕ} {z : ZMod k → ℝ} (hz : IsRobustUnimodal z) {c : ℝ} (hc : 0 < c) :
     IsRobustUnimodal (fun i => c * z i) := by
@@ -1061,17 +1061,17 @@ theorem starD (H : FPar tp tm hm sp kp sm km ρ b lam)
   have hΔ : (1 + ρ) * sm - tm < 0 := by
     by_contra hcon
     have hcon := not_lt.1 hcon
-    nlinarith [mul_nonneg hkm.le hcon, mul_pos (neg_pos.2 hx) a4, mul_nonneg hsm.le hz]
+    linarith [mul_nonneg hkm.le hcon, mul_pos (neg_pos.2 hx) a4, mul_nonneg hsm.le hz]
   have hR : 0 < 1 + ρ := by linarith
   refine ⟨Lx_of_pos ?_, Lx_of_pos ?_, Lx_of_pos ?_⟩
   · refine lt_of_mul_lt_mul_left (a := 1 + ρ) ?_ hR.le
     rw [mul_zero, Ot_swap12, mul_neg, star_U]
-    nlinarith [mul_pos r1 (neg_pos.2 hx), mul_pos r1 (mul_pos hb (neg_pos.2 hΔ)), mul_nonneg htp.le hz]
+    linarith [mul_pos r1 (neg_pos.2 hx), mul_pos r1 (mul_pos hb (neg_pos.2 hΔ)), mul_nonneg htp.le hz]
   · rw [Ot_swap12, star_W]
-    nlinarith [mul_pos a3 (neg_pos.2 hx), mul_pos hkp (neg_pos.2 hΔ), mul_nonneg hsp.le hz]
+    linarith [mul_pos a3 (neg_pos.2 hx), mul_pos hkp (neg_pos.2 hΔ), mul_nonneg hsp.le hz]
   · refine lt_of_mul_lt_mul_left (a := 1 + ρ) ?_ hR.le
     rw [mul_zero, Ot_swap12, mul_neg, star_A]
-    nlinarith [mul_pos hρ (neg_pos.2 hx), mul_pos hρ (mul_pos hb (neg_pos.2 hΔ))]
+    linarith [mul_pos hρ (neg_pos.2 hx), mul_pos hρ (mul_pos hb (neg_pos.2 hΔ))]
 
 theorem starC (H : FPar tp tm hm sp kp sm km ρ b lam)
     (hx : Lx ρ b lam pV (pM tm hm) (pN sm km)) (hy : Lx ρ b lam (pM tm hm) (pN sm km) pB) :
@@ -1088,25 +1088,25 @@ theorem starC (H : FPar tp tm hm sp kp sm km ρ b lam)
   · refine ⟨Lx_of_pos ?_, Lx_of_pos ?_, Lx_of_pos ?_⟩
     · refine lt_of_mul_lt_mul_left (a := 1 + ρ) ?_ hR.le
       rw [mul_zero, star_U, hz]
-      nlinarith [mul_nonneg r1.le hx0, mul_pos r1 (mul_pos hb hD), mul_nonneg htp.le hy0]
+      linarith [mul_nonneg r1.le hx0, mul_pos r1 (mul_pos hb hD), mul_nonneg htp.le hy0]
     · rw [star_W, hz]
-      nlinarith [mul_nonneg a3.le hx0, mul_pos hkp hD, mul_nonneg hsp.le hy0]
+      linarith [mul_nonneg a3.le hx0, mul_pos hkp hD, mul_nonneg hsp.le hy0]
     · refine lt_of_mul_lt_mul_left (a := 1 + ρ) ?_ hR.le
       rw [mul_zero, star_A, hz]
-      nlinarith [mul_nonneg hρ.le hx0, mul_pos hρ (mul_pos hb hD)]
+      linarith [mul_nonneg hρ.le hx0, mul_pos hρ (mul_pos hb hD)]
   · have hD0 : (1 + ρ) * sm - tm = 0 := by
       have h1 : km * ((1 + ρ) * sm - tm) ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hkm.le (not_lt.1 hD)
       have h2 : 0 ≤ km * ((1 + ρ) * sm - tm) := by
-        rw [rel]; nlinarith [mul_nonneg hx0 a4.le, mul_nonneg hsm.le hy0]
+        rw [rel]; linarith [mul_nonneg hx0 a4.le, mul_nonneg hsm.le hy0]
       exact (mul_eq_zero.1 (le_antisymm h1 h2)).resolve_left hkm.ne'
     rw [hD0, mul_zero] at rel
     have hx00 : Ot ρ b pV (pM tm hm) (pN sm km) = 0 := by
       have : Ot ρ b pV (pM tm hm) (pN sm km) * (1 - sm) = 0 := by
-        nlinarith [mul_nonneg hx0 a4.le, mul_nonneg hsm.le hy0]
+        linarith [mul_nonneg hx0 a4.le, mul_nonneg hsm.le hy0]
       exact (mul_eq_zero.1 this).resolve_right a4.ne'
     have hy00 : Ot ρ b (pM tm hm) (pN sm km) pB = 0 := by
       have : sm * Ot ρ b (pM tm hm) (pN sm km) pB = 0 := by
-        nlinarith [mul_nonneg hx0 a4.le, mul_nonneg hsm.le hy0]
+        linarith [mul_nonneg hx0 a4.le, mul_nonneg hsm.le hy0]
       exact (mul_eq_zero.1 this).resolve_left hsm.ne'
     have hT := hyT hy00
     have hz0 : Ot ρ b (pM tm hm) pB (pN sm km) = 0 := by rw [hz, hy00]; simp
@@ -1115,7 +1115,7 @@ theorem starC (H : FPar tp tm hm sp kp sm km ρ b lam)
     rw [hy00, hx00] at hy'
     have hhm' : hm = km + ρ * b * sm := by
       have : (1 + ρ) * (hm - km) = (1 + ρ) * (ρ * b * sm) := by
-        rw [htm'] at hy'; nlinarith
+        rw [htm'] at hy'; linarith
       have := mul_left_cancel₀ hR.ne' this
       linarith
     have eU := star_U tp tm hm sm km ρ b
@@ -1727,7 +1727,7 @@ theorem lam_choice {tp tm hm sp kp sm km ρ b lam1 : ℝ}
         nlinarith
       · rw [Tt_NBM, Tt_MBN]
         rw [Tt_MBN] at hT
-        nlinarith [mul_pos (mul_pos hl htm) a4]
+        linarith [mul_pos (mul_pos hl htm) a4]
     · exact Or.inl (Or.inl ⟨hz.ge, fun _ => hT⟩)
   · exact Or.inl (Or.inl (Lx_of_pos hz))
 
@@ -1748,7 +1748,7 @@ theorem sR_lt (H : FPar tp tm hm sp kp sm km ρ b lam)
   rw [e] at hW
   by_contra hc
   push Not at hc
-  nlinarith [mul_pos hb a1, mul_pos hb hsp, mul_nonneg hb.le (sub_nonneg.2 hc), mul_pos hb (mul_pos hsp hρ), mul_pos htp r3, mul_nonneg a1.le (mul_nonneg hb.le (sub_nonneg.2 hc))]
+  linarith [mul_pos hb a1, mul_pos hb hsp, mul_nonneg hb.le (sub_nonneg.2 hc), mul_pos hb (mul_pos hsp hρ), mul_pos htp r3, mul_nonneg a1.le (mul_nonneg hb.le (sub_nonneg.2 hc))]
 
 theorem lx_UWV (H : FPar tp tm hm sp kp sm km ρ b lam)
     (hW : Ot ρ b (pU tp b) pV (pW sp kp) < 0) : Lx ρ b lam (pU tp b) (pW sp kp) pV := by
@@ -1767,7 +1767,7 @@ theorem lx_VAW (H : FPar tp tm hm sp kp sm km ρ b lam)
   rw [e]; rw [e2] at hW
   by_contra hc
   push Not at hc
-  nlinarith [mul_pos hb a1, mul_pos hb hsp, mul_pos (mul_pos hb a1) hsp, mul_pos (mul_pos hb a1) (mul_pos hsp hρ), mul_nonneg htp.le (sub_nonneg.2 hc)]
+  linarith [mul_pos hb a1, mul_pos hb hsp, mul_pos (mul_pos hb a1) hsp, mul_pos (mul_pos hb a1) (mul_pos hsp hρ), mul_nonneg htp.le (sub_nonneg.2 hc)]
 
 theorem lx_UWA (H : FPar tp tm hm sp kp sm km ρ b lam)
     (hW : Ot ρ b (pU tp b) pV (pW sp kp) < 0) : Lx ρ b lam (pU tp b) (pW sp kp) pA := by
@@ -1791,16 +1791,16 @@ theorem lx_UWN (H : FPar tp tm hm sp kp sm km ρ b lam)
   have e2 : Ot ρ b (pU tp b) pV (pW sp kp) = b * (1 - tp) * sp * (1 + ρ) - tp * kp + tp * sp * (ρ * b) := by
     simp only [Ot, crF, scF, C3.sub, pU, pV, pW]; ring
   rw [e]; rw [e2] at hW
-  have hr : tp * (b * (1 - sp) - kp) < b * (tp - sp * (1 + ρ)) := by nlinarith
+  have hr : tp * (b * (1 - sp) - kp) < b * (tp - sp * (1 + ρ)) := by linarith
   have hd : 0 < tp - sp * (1 + ρ) := by linarith
   by_cases hc : tp ≤ sm * (1 + ρ)
-  · nlinarith [mul_pos hd (add_pos hkm (mul_pos hb a4)), mul_nonneg r3.le (sub_nonneg.2 hc)]
+  · linarith [mul_pos hd (add_pos hkm (mul_pos hb a4)), mul_nonneg r3.le (sub_nonneg.2 hc)]
   · push Not at hc
     have h1 : 0 ≤ (b * (tp - sp * (1 + ρ)) - tp * (b * (1 - sp) - kp)) * (tp - sm * (1 + ρ)) :=
       mul_nonneg (by linarith) (by linarith)
     have h2 : 0 < tp * (tp - sp * (1 + ρ)) * km + b * sm * (1 + ρ - tp) * (tp - sp * (1 + ρ)) := by positivity
     have h3 : 0 < tp * ((tp - sp * (1 + ρ)) * (km + b * (1 - sm)) + (b * (1 - sp) - kp) * (sm * (1 + ρ) - tp)) := by
-      nlinarith
+      linarith
     exact pos_of_mul_pos_right h3 htp.le
 
 theorem lx_MUW (H : FPar tp tm hm sp kp sm km ρ b lam)
@@ -1814,9 +1814,9 @@ theorem lx_MUW (H : FPar tp tm hm sp kp sm km ρ b lam)
   have e2 : Ot ρ b (pU tp b) pV (pW sp kp) = b * (1 - tp) * sp * (1 + ρ) - tp * kp + tp * sp * (ρ * b) := by
     simp only [Ot, crF, scF, C3.sub, pU, pV, pW]; ring
   rw [e]; rw [e2] at hW
-  have hr : tp * (b * (1 - sp) - kp) < b * (tp - sp * (1 + ρ)) := by nlinarith
+  have hr : tp * (b * (1 - sp) - kp) < b * (tp - sp * (1 + ρ)) := by linarith
   have hd : 0 < tp - sp * (1 + ρ) := by linarith
-  nlinarith [mul_nonneg (sub_nonneg.2 hbm) hd.le, mul_pos htm r3]
+  linarith [mul_nonneg (sub_nonneg.2 hbm) hd.le, mul_pos htm r3]
 theorem rimAP_cyc (H : FPar tp tm hm sp kp sm km ρ b lam)
     (hW : Ot ρ b (pU tp b) pV (pW sp kp) < 0) :
     ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
@@ -2411,7 +2411,7 @@ theorem thmE (hi : F.a11 * F.S.tp - F.gg * F.S.am * F.S.hp > F.a12)
   have e2 : 0 < F.a11 * F.S.tp - F.a12 := by
     by_contra hh
     push Not at hh
-    nlinarith [mul_pos hg (mul_pos F.S.hp_pos F.S.hm_pos), mul_nonneg F.S.tm_pos.le (neg_nonneg.2 hh)]
+    linarith [mul_pos hg (mul_pos F.S.hp_pos F.S.hm_pos), mul_nonneg F.S.tm_pos.le (neg_nonneg.2 hh)]
   refine F.rimH_rupert d1 d3 hDa hDb hiii (robust_cycH e1' ?_ hii)
   nlinarith [mul_pos hg (mul_pos F.S.hp_pos F.S.hm_pos), F.S.tm_lt]
 
@@ -2518,7 +2518,7 @@ theorem depth_basic (hi : F.a11 * F.S.tp - F.gg * F.S.am * F.S.hp > F.a12) :
   have e2 : 0 < F.a11 * F.S.tp - F.a12 := by
     by_contra hh
     push Not at hh
-    nlinarith [mul_pos hg (mul_pos F.S.hp_pos F.S.hm_pos), mul_nonneg F.S.tm_pos.le (neg_nonneg.2 hh)]
+    linarith [mul_pos hg (mul_pos F.S.hp_pos F.S.hm_pos), mul_nonneg F.S.tm_pos.le (neg_nonneg.2 hh)]
   refine ⟨by linarith, ?_⟩
   nlinarith [mul_pos hg (mul_pos F.S.hp_pos F.S.hm_pos), F.S.tm_lt]
 
@@ -2542,7 +2542,7 @@ theorem rimE2a_rupert (hL : F.LMp) (heq : F.S.cm = F.S.dp) (d1 d3 : ℝ)
     rw [hDeq] at hDb
     by_contra hh
     push Not at hh
-    nlinarith [mul_nonneg hc0.le hh]
+    linarith [mul_nonneg hc0.le hh]
   have hDa' : 0 < -(F.S.ap * F.S.tp) * d1 - (1 - F.S.tp) * d3 := by rw [← hhp]; exact hDa
   let c : ZMod 6 → Fin 7 := ![5, 2, 6, 3, 0, 1]
   have hc : ∀ i, F.toFrame7.ptC (c i) =
@@ -2669,14 +2669,14 @@ theorem thmE2 (hL : F.LMp) (heq : F.S.cm = F.S.dp) :
   · have hm2p : 0 < -F.S.sp * (F.a22 - F.a12 * F.S.tp) + F.gg * F.S.hp * F.S.kp := by
       by_contra hh
       push Not at hh
-      nlinarith [mul_nonneg (neg_nonneg.2 hh) hsm1.le, mul_pos hpos (sub_pos.2 (show F.S.sp + F.S.sm < 1 from hlt))]
+      linarith [mul_nonneg (neg_nonneg.2 hh) hsm1.le, mul_pos hpos (sub_pos.2 (show F.S.sp + F.S.sm < 1 from hlt))]
     have hm2m : -F.S.sm * (F.a22 - F.a12 * F.S.tp) - F.gg * F.S.hp * F.S.km < 0 := by
-      nlinarith [mul_pos F.S.sm_pos hβ, mul_pos (mul_pos hg F.S.hp_pos) F.S.km_pos]
+      linarith [mul_pos F.S.sm_pos hβ, mul_pos (mul_pos hg F.S.hp_pos) F.S.km_pos]
     exact F.rimE2a_rupert hL heq d1 d3 hDa hDb (robust_cycE6 hm2m hz1 hz2 hm2p hii)
   · have hm2p : -F.S.sp * (F.a22 - F.a12 * F.S.tp) + F.gg * F.S.hp * F.S.kp < 0 := by
       by_contra hh
       push Not at hh
-      nlinarith [mul_nonneg hh hsm1.le, mul_pos hpos (sub_pos.2 (show 1 < F.S.sp + F.S.sm from hgt))]
+      linarith [mul_nonneg hh hsm1.le, mul_pos hpos (sub_pos.2 (show 1 < F.S.sp + F.S.sm from hgt))]
     refine F.rimE2b_rupert hL heq (-d1) (-d3) (by linarith) (by linarith)
       (robust_cycE5 hz1 hz2 (neg_neg_of_pos hβ) hm2p)
 
@@ -2787,7 +2787,7 @@ theorem rimW1_rupert (hQ : F.QW) (d1 d3 : ℝ) (hd1 : d1 < 0) (hd3 : 0 < F.S.am 
         nlinarith [F.S.tp_lt, mul_pos F.S.sp_pos F.S.ap_pos, mul_pos F.S.tp_pos hM, mul_pos hz0 F.S.tp_pos]
       exact mul_lt_mul_of_pos_left this hl
     · have : F.S.am * F.S.sm < (F.S.ap + F.S.am) * F.S.tp * F.S.sm := by
-        nlinarith [mul_pos F.S.sm_pos (sub_pos.2 hr1)]
+        linarith [mul_pos F.S.sm_pos (sub_pos.2 hr1)]
       exact mul_lt_mul_of_pos_left this hl
     · exact mul_le_mul_of_nonneg_left hΔ hl.le
   refine F.toFrame7.rupert_rim_rob (k := 6) (by norm_num) c (-1) (Or.inr rfl)
@@ -2890,11 +2890,11 @@ theorem thmW (hQ : F.QW) :
   · left
     have hsmt : F.S.sm < F.S.tm := by
       have h1 : F.S.am * F.S.sm < (F.S.ap + F.S.am) * F.S.tp * F.S.sm := by
-        nlinarith [mul_pos hsm (sub_pos.2 hr1)]
+        linarith [mul_pos hsm (sub_pos.2 hr1)]
       have h2 : F.S.sm * ((F.S.ap + F.S.am) * F.S.tp) * (1 - F.S.tm) < F.S.am * F.S.tm * (1 - F.S.sm) := hr2
       by_contra hh
       push Not at hh
-      nlinarith [mul_pos (sub_pos.2 h1) (sub_pos.2 F.S.tm_lt), mul_nonneg (sub_nonneg.2 hh) ham.le]
+      linarith [mul_pos (sub_pos.2 h1) (sub_pos.2 F.S.tm_lt), mul_nonneg (sub_nonneg.2 hh) ham.le]
     exact F.rimW2_rupert hQ 1 0 one_pos (by simpa using ham) hΔ hsmt
   · push Not at hΔ
     have hA : 0 < F.S.ap + F.S.am := add_pos hap ham
@@ -2902,7 +2902,7 @@ theorem thmW (hQ : F.QW) :
       mul_le_mul_of_nonneg_left hc hA.le
     have hge : (F.S.ap + F.S.am) * F.S.sp ≤ F.S.am := by
       refine le_of_mul_le_mul_right ?_ htm
-      nlinarith
+      linarith
     by_cases hpos : 0 < F.S.am * F.S.sm - F.S.ap * F.S.sp
     · left
       exact F.rimW1_rupert hQ (-1) (F.S.am + 1) (by norm_num) (by linarith) hΔ hpos
@@ -2911,14 +2911,14 @@ theorem thmW (hQ : F.QW) :
       have hsmE : F.S.am * F.S.sm = F.S.am - F.S.am * F.S.sp := by rw [hsp]; ring
       have heq : F.S.am * F.S.sm = F.S.ap * F.S.sp := by
         apply le_antisymm (by linarith)
-        nlinarith
+        linarith
       refine ⟨heq, ?_⟩
-      have ham' : F.S.am = (F.S.ap + F.S.am) * F.S.sp := by nlinarith
+      have ham' : F.S.am = (F.S.ap + F.S.am) * F.S.sp := by linarith
       have h1 : (F.S.ap + F.S.am) * (F.S.tp * F.S.sm) = (F.S.ap + F.S.am) * (F.S.tm * F.S.sp) := by
         apply le_antisymm _ hch
         have : (F.S.ap + F.S.am) * F.S.tp * F.S.sm ≤ (F.S.ap + F.S.am) * F.S.sp * F.S.tm := by
           rw [← ham']; exact hΔ
-        nlinarith
+        linarith
       exact mul_left_cancel₀ hA.ne' h1
 
 /-! ### Group E-C: Theorem C, the corners (PROOFS 37.3)
@@ -2939,12 +2939,12 @@ theorem c_rel (hab : F.S.ap = F.S.bm) (hac : F.S.ap = F.S.cp) :
   refine ⟨hhp, hhm, hkp, ?_, ?_⟩
   · have := F.S.roof_p_poly
     rw [hkp, hhp] at this
-    exact lt_of_not_ge fun h => by nlinarith [mul_nonneg F.S.ap_pos.le (sub_nonneg.2 h)]
+    exact lt_of_not_ge fun h => by linarith [mul_nonneg F.S.ap_pos.le (sub_nonneg.2 h)]
   · have := F.S.roof_m_poly
     rw [hhm] at this
     have a3 := sub_pos.2 F.S.tm_lt
     refine lt_of_mul_lt_mul_right (a := 1 - F.S.tm) ?_ a3.le
-    nlinarith
+    linarith
 
 /-- Rim `(v, m2-, m1-, xa, m1+, m2+) = (5,2,6,3,0,1)` at `u1` with tilt `(0, 0, -1)` for the corner
 relations, `c- ≥ A1 t+` (`m2-` a corner or on the side), robust depths. -/
@@ -3049,8 +3049,8 @@ theorem thmC (hα : F.a12 < F.a11) (hab : F.S.ap = F.S.bm) (hac : F.S.ap = F.S.c
     have := pos_of_mul_pos_right this hsp.le
     linarith
   by_cases hc : F.S.cm < F.S.A1 * F.S.tp
-  · refine F.rimH_rupert 0 (-1) (by nlinarith [F.S.tp_lt]) ?_ hc (robust_cycC5 h2 h4 h5)
-    nlinarith [mul_pos htp (sub_pos.2 F.S.sp_lt)]
+  · refine F.rimH_rupert 0 (-1) (by linarith [F.S.tp_lt]) ?_ hc (robust_cycC5 h2 h4 h5)
+    linarith [mul_pos htp (sub_pos.2 F.S.sp_lt)]
   · push Not at hc
     have hb : -F.S.sm * (F.a22 - F.a12 * F.S.tp) - F.gg * F.S.hp * F.S.km < 0 := by
       have h22' : F.a22 - F.a12 * F.S.tp = F.a12 * (1 - F.S.tp) := by rw [← h22]; ring
@@ -3106,9 +3106,9 @@ theorem thmRp (heq : F.a12 = F.a11) (hb : F.S.am = F.S.bp) :
   · left
     have hZ' : F.gg * F.S.am * F.S.dm < F.a12 := by rw [heq]; exact hZ
     refine F.rimBp_rupert hb (-1) (-1) (by norm_num)
-      (by nlinarith [mul_pos hsm hhm, mul_pos htm hkm]) (by norm_num) ?_
+      (by linarith [mul_pos hsm hhm, mul_pos htm hkm]) (by norm_num) ?_
     rw [hXT]
-    exact robust_cycS2 F.u0Z2_pos (by rw [← hXT]; nlinarith [mul_pos hs (sub_pos.2 hZ')])
+    exact robust_cycS2 F.u0Z2_pos (by rw [← hXT]; linarith [mul_pos hs (sub_pos.2 hZ')])
       F.u0Z1_lt_T
   · by_cases hc : F.S.cm ≤ F.S.am
     · exact Or.inr ⟨hZ, hc⟩
@@ -3140,10 +3140,10 @@ theorem thmRp (heq : F.a12 = F.a11) (hb : F.S.am = F.S.bp) :
   · left
     have hZ' : F.a12 < F.gg * F.S.am * F.S.dm := by rw [heq]; exact hZ
     have hT : F.u0T ≤ F.u0Z2 := by
-      rw [← hXT]; nlinarith [mul_pos hs (sub_pos.2 hZ')]
+      rw [← hXT]; linarith [mul_pos hs (sub_pos.2 hZ')]
     have hTZ : F.u0T < F.u0Z2 := by
-      rw [← hXT]; nlinarith [mul_pos hs (sub_pos.2 hZ')]
-    refine F.rimCe_rupert hb 1 1 one_pos (by nlinarith [mul_pos hsm hhm, mul_pos htm hkm])
+      rw [← hXT]; linarith [mul_pos hs (sub_pos.2 hZ')]
+    refine F.rimCe_rupert hb 1 1 one_pos (by linarith [mul_pos hsm hhm, mul_pos htm hkm])
       (by norm_num) ?_
     rw [hXT]
     exact robust_cycCT F.u0Z1_lt_T (F.u0_R_gt_T_of_ge heq hT) hTZ
@@ -3255,7 +3255,7 @@ theorem rimFA_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     · exact Or.inr (Or.inl hmu)
     · left
       have := mul_pos hG (mul_pos F.S.bp_pos F.S.hm_pos)
-      nlinarith [F.S.tm_pos]
+      linarith [F.S.tm_pos]
 
 theorem fPar (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (hg : F.gg * F.S.ap * F.S.dp = F.a11) (hb : F.S.bp ≤ F.S.am) {lam : ℝ} (hl : 0 < lam)
@@ -3316,7 +3316,7 @@ theorem rimFA2_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     · exact Or.inr (Or.inl hmu)
     · left
       have := mul_pos hG (mul_pos F.S.bp_pos F.S.hm_pos)
-      nlinarith [F.S.tm_pos]
+      linarith [F.S.tm_pos]
 
 theorem rimFB_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (hg : F.gg * F.S.ap * F.S.dp = F.a11) (hb : F.S.bp ≤ F.S.am) {lam : ℝ} (hl : 0 < lam)
@@ -3328,7 +3328,7 @@ theorem rimFB_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
   have H := F.fPar heq h22 hg hb hl hlW
   have hzN1 : F.fMu * F.S.sm - F.fG * F.S.bp * F.S.km < F.fMu := by
     have := mul_pos hG (mul_pos F.S.bp_pos F.S.km_pos)
-    nlinarith [mul_pos hmu (sub_pos.2 F.S.sm_lt)]
+    linarith [mul_pos hmu (sub_pos.2 F.S.sm_lt)]
   have hcc : ∀ i, F.toFrame7.ptC (quad (5 : Fin 7) 2 4 0 i) =
       quad pV (pN F.S.sm F.S.km) pB (pU F.S.tp F.S.bp) i := by
     intro i
@@ -3375,7 +3375,7 @@ theorem rimFC_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
   have H := F.fPar heq h22 hg hb hl hlW
   have hzN1 : F.fMu * F.S.sm - F.fG * F.S.bp * F.S.km < F.fMu := by
     have := mul_pos hG (mul_pos F.S.bp_pos F.S.km_pos)
-    nlinarith [mul_pos hmu (sub_pos.2 F.S.sm_lt)]
+    linarith [mul_pos hmu (sub_pos.2 F.S.sm_lt)]
   have hcc : ∀ i, F.toFrame7.ptC (quint (5 : Fin 7) 6 2 4 0 i) =
       quint pV (pM F.S.tm F.S.hm) (pN F.S.sm F.S.km) pB (pU F.S.tp F.S.bp) i := by
     intro i
@@ -3409,7 +3409,7 @@ theorem rimFC_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     rw [e]
     refine robust_smul_pos (robust_cycF5 ?_ hzN1 hmu) (mul_pos hA11 hρ)
     have := mul_pos hG (mul_pos F.S.bp_pos F.S.hm_pos)
-    nlinarith [F.S.tm_pos]
+    linarith [F.S.tm_pos]
 
 theorem rimFD_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (hg : F.gg * F.S.ap * F.S.dp = F.a11) (hb : F.S.bp ≤ F.S.am) {lam : ℝ} (hl : 0 < lam)
@@ -3429,9 +3429,9 @@ theorem rimFD_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     have hU : F.fMu = F.fG * (F.S.bp * (1 - F.S.tp)) * F.S.bp - F.S.tp := by
       unfold fMu; rw [← hhp]
     have h2 : F.S.bp * (1 - F.S.tp) * F.S.sm < F.S.km := by
-      nlinarith [mul_pos F.S.bp_pos F.S.tp_pos, mul_pos F.S.sm_pos (mul_pos F.S.bp_pos F.S.tp_pos)]
+      linarith [mul_pos F.S.bp_pos F.S.tp_pos, mul_pos F.S.sm_pos (mul_pos F.S.bp_pos F.S.tp_pos)]
     rw [hU]
-    nlinarith [mul_pos hG (mul_pos F.S.bp_pos (sub_pos.2 h2)), mul_pos F.S.tp_pos F.S.sm_pos]
+    linarith [mul_pos hG (mul_pos F.S.bp_pos (sub_pos.2 h2)), mul_pos F.S.tp_pos F.S.sm_pos]
   have hcc : ∀ i, F.toFrame7.ptC (quint (5 : Fin 7) 2 6 4 0 i) =
       quint pV (pN F.S.sm F.S.km) (pM F.S.tm F.S.hm) pB (pU F.S.tp F.S.bp) i := by
     intro i
@@ -3465,7 +3465,7 @@ theorem rimFD_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     rw [e]
     refine robust_smul_pos (robust_cycF5 hzN0 ?_ hmu) (mul_pos hA11 hρ)
     have := mul_pos hG (mul_pos F.S.bp_pos F.S.hm_pos)
-    nlinarith [F.S.tm_pos]
+    linarith [F.S.tm_pos]
 
 theorem oW_eq : F.oW = Ot F.fRho F.S.bp (pU F.S.tp F.S.bp) pV (pW F.S.sp F.S.kp) := by
   simp only [oW, Ot, crF, scF, C3.sub, pU, pV, pW]; ring
@@ -3511,8 +3511,8 @@ theorem fW_lt (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     rw [e] at hW
     by_contra hcon
     push Not at hcon
-    nlinarith [mul_nonneg hts.le hcon]
-  have h2 : F.fRho * F.S.bp < F.fRho * (F.S.ap * F.fMu) := by nlinarith
+    linarith [mul_nonneg hts.le hcon]
+  have h2 : F.fRho * F.S.bp < F.fRho * (F.S.ap * F.fMu) := by linarith
   have h3 : F.S.bp < F.S.ap * F.fMu := lt_of_mul_lt_mul_left h2 hρ.le
   have h4 : F.fG * F.S.bp * F.S.dp < F.fMu := by
     have : (F.fG * F.S.bp * F.S.dp) * F.S.ap < F.fMu * F.S.ap := by
@@ -3540,9 +3540,9 @@ theorem fzN0 (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
   have hU : F.fMu = F.fG * (F.S.bp * (1 - F.S.tp)) * F.S.bp - F.S.tp := by
     unfold fMu; rw [← hhp]
   have h2 : F.S.bp * (1 - F.S.tp) * F.S.sm < F.S.km := by
-    nlinarith [mul_pos F.S.bp_pos F.S.tp_pos, mul_pos F.S.sm_pos (mul_pos F.S.bp_pos F.S.tp_pos)]
+    linarith [mul_pos F.S.bp_pos F.S.tp_pos, mul_pos F.S.sm_pos (mul_pos F.S.bp_pos F.S.tp_pos)]
   rw [hU]
-  nlinarith [mul_pos hG (mul_pos F.S.bp_pos (sub_pos.2 h2)), mul_pos F.S.tp_pos F.S.sm_pos]
+  linarith [mul_pos hG (mul_pos F.S.bp_pos (sub_pos.2 h2)), mul_pos F.S.tp_pos F.S.sm_pos]
 
 theorem rimFAP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (hg : F.gg * F.S.ap * F.S.dp = F.a11) (hc : F.a11 * F.S.cp ≤ F.a22 * F.S.ap) (hb : F.S.bp ≤ F.S.am) {lam : ℝ} (hl : 0 < lam)
@@ -3557,11 +3557,11 @@ theorem rimFAP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
   have hwm := F.fW_lt heq h22 hg hc hW
   have hw0 : 0 < F.fMu * F.S.sp + F.fG * F.S.bp * F.S.kp := by
     have := mul_pos hG (mul_pos F.S.bp_pos F.S.kp_pos)
-    nlinarith [mul_pos hmu F.S.sp_pos]
-  have hwm : F.fMu * F.S.sp + F.fG * F.S.bp * F.S.kp < F.fMu := by nlinarith
+    linarith [mul_pos hmu F.S.sp_pos]
+  have hwm : F.fMu * F.S.sp + F.fG * F.S.bp * F.S.kp < F.fMu := by linarith
   have hzN1 : F.fMu * F.S.sm - F.fG * F.S.bp * F.S.km < F.fMu := by
     have := mul_pos hG (mul_pos F.S.bp_pos F.S.km_pos)
-    nlinarith [mul_pos hmu (sub_pos.2 F.S.sm_lt)]
+    linarith [mul_pos hmu (sub_pos.2 F.S.sm_lt)]
   have hcc : ∀ i, F.toFrame7.ptC (quint (5 : Fin 7) 6 4 0 1 i) =
       quint pV (pM F.S.tm F.S.hm) pB (pU F.S.tp F.S.bp) (pW F.S.sp F.S.kp) i := by
     intro i
@@ -3593,7 +3593,7 @@ theorem rimFAP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
       rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
         simp only [quint_0, quint_1, quint_2, quint_3, quint_4, pV, pM, pB, pU, pW] <;> (try rw [hU]) <;> ring
     rw [e]
-    refine robust_smul_pos (robust_cycP5 (by have := mul_pos hG (mul_pos F.S.bp_pos F.S.hm_pos); nlinarith [F.S.tm_pos]) hw0 hwm) (mul_pos hA11 hρ)
+    refine robust_smul_pos (robust_cycP5 (by have := mul_pos hG (mul_pos F.S.bp_pos F.S.hm_pos); linarith [F.S.tm_pos]) hw0 hwm) (mul_pos hA11 hρ)
 
 theorem rimFBP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (hg : F.gg * F.S.ap * F.S.dp = F.a11) (hc : F.a11 * F.S.cp ≤ F.a22 * F.S.ap) (hb : F.S.bp ≤ F.S.am) {lam : ℝ} (hl : 0 < lam)
@@ -3608,11 +3608,11 @@ theorem rimFBP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
   have hwm := F.fW_lt heq h22 hg hc hW
   have hw0 : 0 < F.fMu * F.S.sp + F.fG * F.S.bp * F.S.kp := by
     have := mul_pos hG (mul_pos F.S.bp_pos F.S.kp_pos)
-    nlinarith [mul_pos hmu F.S.sp_pos]
-  have hwm : F.fMu * F.S.sp + F.fG * F.S.bp * F.S.kp < F.fMu := by nlinarith
+    linarith [mul_pos hmu F.S.sp_pos]
+  have hwm : F.fMu * F.S.sp + F.fG * F.S.bp * F.S.kp < F.fMu := by linarith
   have hzN1 : F.fMu * F.S.sm - F.fG * F.S.bp * F.S.km < F.fMu := by
     have := mul_pos hG (mul_pos F.S.bp_pos F.S.km_pos)
-    nlinarith [mul_pos hmu (sub_pos.2 F.S.sm_lt)]
+    linarith [mul_pos hmu (sub_pos.2 F.S.sm_lt)]
   have hcc : ∀ i, F.toFrame7.ptC (quint (5 : Fin 7) 2 4 0 1 i) =
       quint pV (pN F.S.sm F.S.km) pB (pU F.S.tp F.S.bp) (pW F.S.sp F.S.kp) i := by
     intro i
@@ -3659,11 +3659,11 @@ theorem rimFCP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
   have hwm := F.fW_lt heq h22 hg hc hW
   have hw0 : 0 < F.fMu * F.S.sp + F.fG * F.S.bp * F.S.kp := by
     have := mul_pos hG (mul_pos F.S.bp_pos F.S.kp_pos)
-    nlinarith [mul_pos hmu F.S.sp_pos]
-  have hwm : F.fMu * F.S.sp + F.fG * F.S.bp * F.S.kp < F.fMu := by nlinarith
+    linarith [mul_pos hmu F.S.sp_pos]
+  have hwm : F.fMu * F.S.sp + F.fG * F.S.bp * F.S.kp < F.fMu := by linarith
   have hzN1 : F.fMu * F.S.sm - F.fG * F.S.bp * F.S.km < F.fMu := by
     have := mul_pos hG (mul_pos F.S.bp_pos F.S.km_pos)
-    nlinarith [mul_pos hmu (sub_pos.2 F.S.sm_lt)]
+    linarith [mul_pos hmu (sub_pos.2 F.S.sm_lt)]
   have hcc : ∀ i, F.toFrame7.ptC (hex6 (5 : Fin 7) 6 2 4 0 1 i) =
       hex6 pV (pM F.S.tm F.S.hm) (pN F.S.sm F.S.km) pB (pU F.S.tp F.S.bp) (pW F.S.sp F.S.kp) i := by
     intro i
@@ -3694,7 +3694,7 @@ theorem rimFCP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
       rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
         simp only [hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5, pV, pM, pB, pU, pN, pW] <;> (try rw [hU]) <;> ring
     rw [e]
-    refine robust_smul_pos (robust_cycP6 (by have := mul_pos hG (mul_pos F.S.bp_pos F.S.hm_pos); nlinarith [F.S.tm_pos]) hzN1 hw0 hwm) (mul_pos hA11 hρ)
+    refine robust_smul_pos (robust_cycP6 (by have := mul_pos hG (mul_pos F.S.bp_pos F.S.hm_pos); linarith [F.S.tm_pos]) hzN1 hw0 hwm) (mul_pos hA11 hρ)
 
 theorem rimFDP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (hg : F.gg * F.S.ap * F.S.dp = F.a11) (hc : F.a11 * F.S.cp ≤ F.a22 * F.S.ap) (hb : F.S.bp ≤ F.S.am) {lam : ℝ} (hl : 0 < lam)
@@ -3709,11 +3709,11 @@ theorem rimFDP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
   have hwm := F.fW_lt heq h22 hg hc hW
   have hw0 : 0 < F.fMu * F.S.sp + F.fG * F.S.bp * F.S.kp := by
     have := mul_pos hG (mul_pos F.S.bp_pos F.S.kp_pos)
-    nlinarith [mul_pos hmu F.S.sp_pos]
-  have hwm : F.fMu * F.S.sp + F.fG * F.S.bp * F.S.kp < F.fMu := by nlinarith
+    linarith [mul_pos hmu F.S.sp_pos]
+  have hwm : F.fMu * F.S.sp + F.fG * F.S.bp * F.S.kp < F.fMu := by linarith
   have hzN1 : F.fMu * F.S.sm - F.fG * F.S.bp * F.S.km < F.fMu := by
     have := mul_pos hG (mul_pos F.S.bp_pos F.S.km_pos)
-    nlinarith [mul_pos hmu (sub_pos.2 F.S.sm_lt)]
+    linarith [mul_pos hmu (sub_pos.2 F.S.sm_lt)]
   have hcc : ∀ i, F.toFrame7.ptC (hex6 (5 : Fin 7) 2 6 4 0 1 i) =
       hex6 pV (pN F.S.sm F.S.km) (pM F.S.tm F.S.hm) pB (pU F.S.tp F.S.bp) (pW F.S.sp F.S.kp) i := by
     intro i
@@ -3744,7 +3744,7 @@ theorem rimFDP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
       rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
         simp only [hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5, pV, pM, pB, pU, pN, pW] <;> (try rw [hU]) <;> ring
     rw [e]
-    refine robust_smul_pos (robust_cycP6 (F.fzN0 heq h22 hg hb hx) (by have := mul_pos hG (mul_pos F.S.bp_pos F.S.hm_pos); nlinarith [F.S.tm_pos]) hw0 hwm) (mul_pos hA11 hρ)
+    refine robust_smul_pos (robust_cycP6 (F.fzN0 heq h22 hg hb hx) (by have := mul_pos hG (mul_pos F.S.bp_pos F.S.hm_pos); linarith [F.S.tm_pos]) hw0 hwm) (mul_pos hA11 hρ)
 
 theorem rimF_lamP (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (hg : F.gg * F.S.ap * F.S.dp = F.a11) (hc : F.a11 * F.S.cp ≤ F.a22 * F.S.ap) (hb : F.S.bp ≤ F.S.am) {lam : ℝ} (hl : 0 < lam)
@@ -3783,7 +3783,7 @@ theorem thmF_rest3 (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     have key : lam1 * (2 * (F.S.tp * F.S.sp)) =
         F.S.bp * (1 - F.S.tp) * F.S.sp + F.S.tp * F.S.kp :=
       div_mul_cancel₀ _ (by positivity)
-    nlinarith [key, hnum]
+    linarith [key, hnum]
   have H := F.fPar heq h22 hg hb hl1 hl1W
   rcases lam_choice H with hz | ⟨H2, hz⟩
   · exact F.rimF_lamP heq h22 hg hc hb hl1 hl1W h (le_or_gt _ _) hz
@@ -3809,7 +3809,7 @@ theorem thmF_rest (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
       have key : lam1 * (2 * (F.S.tp * F.S.sp)) =
           F.S.bp * (1 - F.S.tp) * F.S.sp + F.S.tp * F.S.kp :=
         div_mul_cancel₀ _ (by positivity)
-      nlinarith [key, hnum]
+      linarith [key, hnum]
     have H := F.fPar heq h22 hg hb hl1 hl1W
     have hw : 0 ≤ Ot F.fRho F.S.bp (pU F.S.tp F.S.bp) pV (pW F.S.sp F.S.kp) := by
       rw [← F.oW_eq]; exact hW0
@@ -3890,7 +3890,7 @@ theorem F1 {tp tm γ : ℝ} (htp : 0 < tp) (htm : 0 < tm) (hγ : 0 < γ) (hγ1 :
   rw [h, lt_sub_iff_add_lt, lt_div_iff₀ hγ]
   have : 1 + tm / tp = (tp + tm) / tp := by field_simp
   rw [this, div_mul_eq_mul_div, div_lt_iff₀ htp]
-  nlinarith [mul_pos htp htm, mul_pos (add_pos htp htm) (sub_pos.2 hγ1)]
+  linarith [mul_pos htp htm, mul_pos (add_pos htp htm) (sub_pos.2 hγ1)]
 
 /-- **F2** `B > 2 - T > 0` (uses F1 and `T > 1`, `t± < 1`). -/
 theorem F2 {tp tm γ : ℝ} (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm) (htm1 : tm < 1)
@@ -3910,7 +3910,7 @@ theorem F2 {tp tm γ : ℝ} (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm) (htm1 
     have : (tp + tm - 1) * (tp + tm) < (tp + tm - 1) * (tp + tm) * (kappa tp tm γ * tm ^ 2) := by
       have hp : 0 < (tp + tm - 1) * (tp + tm) := mul_pos (by linarith) hT0
       nlinarith
-    nlinarith
+    linarith
   have h2 : 1 - tp * (tp + tm - 1) / (tp + tm) - (tp + tm - 1) * tm / (tp + tm) = 2 - (tp + tm) := by
     field_simp; ring
   linarith
@@ -4126,7 +4126,7 @@ theorem eStar_cert {tp tm γ lam : ℝ} (h : EFam F tp tm γ lam) :
     refine e0.and ?_
     have hT2 : tp + tm < 2 := by linarith
     have p1 : 0 < κ * tm - 1 / tm := by
-      rw [sub_pos, div_lt_iff₀ htm]; nlinarith
+      rw [sub_pos, div_lt_iff₀ htm]; linarith
     have p3 : 0 < B := by linarith
     have p5 : 0 < tm - a * (tp + tm) / tm := by
       have : a * (tp + tm) / tm = tm * (a * (tp + tm) / tm ^ 2) := by field_simp
@@ -4206,7 +4206,7 @@ theorem eStar_cert {tp tm γ lam : ℝ} (h : EFam F tp tm γ lam) :
   have scp6 : Frame7.screenW tp tm (F.ptC 6) = (tm, -1) := by
     rw [h.p6]; simp [Frame7.screenW]
   have hκtm : 0 < κ * tm - 1 / tm := by
-    rw [sub_pos, div_lt_iff₀ htm]; nlinarith
+    rw [sub_pos, div_lt_iff₀ htm]; linarith
   have vel5 : F.velC ωc ⟨τ1, 0, -1⟩ (F.ptC 5) = ⟨τ1, 0, -1⟩ := by
     simp [Frame7.velC, Frame7.crossC, h.p5, C3.add]
   have sub25 : (F.ptC 2).sub (F.ptC 5) = ⟨0, tm / (tp + tm), -1⟩ := by

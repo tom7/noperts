@@ -45,10 +45,10 @@ theorem imc_L1 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
         -((1 - F.S.sp) * F.S.tp * (F.S.hm*F.S.tp-F.S.hm+F.S.hp*F.S.tm)) + F.S.tm * (F.S.hp*(1-F.S.sp)-F.S.kp*(1-F.S.tp)) := by ring
     apply pos_of_mul_pos' ht'
     rw [e]
-    nlinarith [mul_pos (mul_pos hs tp) (neg_pos.2 hA), mul_pos tm roof]
+    linarith [mul_pos (mul_pos hs tp) (neg_pos.2 hA), mul_pos tm roof]
   · refine (F.nrm_G FF).seg_neg hq ?_
     simp only
-    nlinarith [mul_pos tm km, mul_pos hm hs']
+    linarith [mul_pos tm km, mul_pos hm hs']
   · rw [hq]
     refine F.robUni_of_dep _ _ (robUni4 ?_ ?_)
     · rintro ⟨a1, a2, a3, a4⟩
@@ -105,7 +105,7 @@ theorem imc_L2 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
     rw [e]; exact mul_pos sm hA
   · refine (F.nrm_H FF).seg_neg hq ?_
     simp only
-    nlinarith [mul_pos ht' kp]
+    linarith [mul_pos ht' kp]
   · rw [hq]
     refine F.robUni_of_dep _ _ (robUni4 ?_ ?_)
     · rintro ⟨a1, a2, a3, a4⟩
@@ -162,9 +162,9 @@ theorem imc_L6 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
   have roof := F.roof_pos; have lroof := F.lroof_pos
   have hc0 : 0 < (F.S.hm*F.S.tp+F.S.hp*F.S.tm) := by positivity
   have hR1 : 0 < ((1-F.S.sp)*(F.S.hm*F.S.tp-F.S.hp*(1-F.S.tm))+(1-F.S.tm)*F.S.kp) := by
-    nlinarith [mul_pos (mul_pos hm tp) hs, mul_nonneg ht.le hF]
+    linarith [mul_pos (mul_pos hm tp) hs, mul_nonneg ht.le hF]
   have fG : 0 < F.S.km * (F.S.tp * (1 - F.S.sp)) + (F.S.kp-F.S.hp*(1-F.S.sp)) * (1 - F.S.sm) := by
-    nlinarith [mul_pos (mul_pos km tp) hs, mul_nonneg hs'.le hF]
+    linarith [mul_pos (mul_pos km tp) hs, mul_nonneg hs'.le hF]
   obtain ⟨ν, hν, hc⟩ := F.line_view FF 2 5 (F.nrm_C FF) (F.nrm_F FF) (κ := -(F.S.hm*F.S.tp+F.S.hp*F.S.tm))
     (wx := F.S.tp * (1 - F.S.sp)) (wy := 0) (wz := -(F.S.kp-F.S.hp*(1-F.S.sp))) (neg_ne_zero.2 hc0.ne')
     (Or.inl (mul_pos tp hs).ne') (by ring) (by ring) (by ring)
@@ -206,30 +206,30 @@ theorem imc_L6 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
   rcases lt_or_gt_of_ne hν with hneg | hpos
   · refine h20s_I_LCF FF hx ?_ ?_ ?_ ?_ ?_ ?_ hU
     · rw [hc]; refine (F.nrm_A FF).fneg' hneg ?_
-      nlinarith [mul_pos sm hR1]
+      linarith [mul_pos sm hR1]
     · rw [hc]; refine (F.nrm_B FF).fpos' hneg ?_
-      nlinarith [mul_pos (mul_pos sp tp) kp]
+      linarith [mul_pos (mul_pos sp tp) kp]
     · rw [hc]; refine (F.nrm_D FF).fpos' hneg ?_
-      nlinarith [mul_pos sm hV]
+      linarith [mul_pos sm hV]
     · rw [hc]; refine (F.nrm_E FF).fneg' hneg ?_
-      nlinarith [roof]
+      linarith [roof]
     · rw [hc]; refine (F.nrm_G FF).fneg' hneg ?_
-      nlinarith [fG]
+      linarith [fG]
     · rw [hc]; refine (F.nrm_H FF).fpos' hneg ?_
-      nlinarith [mul_pos kp (mul_pos tp hs)]
+      linarith [mul_pos kp (mul_pos tp hs)]
   · refine h20s_I_LCF' FF hx ?_ ?_ ?_ ?_ ?_ ?_ hU
     · rw [hc]; refine (F.nrm_A FF).fpos hpos ?_
-      nlinarith [mul_pos sm hR1]
+      linarith [mul_pos sm hR1]
     · rw [hc]; refine (F.nrm_B FF).fneg hpos ?_
-      nlinarith [mul_pos (mul_pos sp tp) kp]
+      linarith [mul_pos (mul_pos sp tp) kp]
     · rw [hc]; refine (F.nrm_D FF).fneg hpos ?_
-      nlinarith [mul_pos sm hV]
+      linarith [mul_pos sm hV]
     · rw [hc]; refine (F.nrm_E FF).fpos hpos ?_
-      nlinarith [roof]
+      linarith [roof]
     · rw [hc]; refine (F.nrm_G FF).fpos hpos ?_
-      nlinarith [fG]
+      linarith [fG]
     · rw [hc]; refine (F.nrm_H FF).fneg hpos ?_
-      nlinarith [mul_pos kp (mul_pos tp hs)]
+      linarith [mul_pos kp (mul_pos tp hs)]
 
 end Frame20
 end Minimality.CaseC20
@@ -268,7 +268,7 @@ theorem imc_L7 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
   have roof := F.roof_pos; have lroof := F.lroof_pos
   have hc0 : 0 < (F.S.hm*F.S.tp+F.S.hp*F.S.tm) := by positivity
   have hR1 : 0 < ((1-F.S.sp)*(F.S.hm*F.S.tp-F.S.hp*(1-F.S.tm))+(1-F.S.tm)*F.S.kp) := by
-    nlinarith [mul_pos (mul_pos hm tp) hs, mul_nonneg ht.le hF]
+    linarith [mul_pos (mul_pos hm tp) hs, mul_nonneg ht.le hF]
   have hW : 0 < ((F.S.km*(1-F.S.tm)-F.S.hm*(1-F.S.sm*F.S.tp)-F.S.hp*F.S.sm*(1-F.S.tm))+F.S.hp*F.S.sm*(1-F.S.tm)) := by
     have : 0 < F.S.hp * F.S.sm * (1-F.S.tm) := mul_pos (mul_pos hp sm) ht
     linarith
@@ -414,23 +414,23 @@ lemma alg_D16 (hA : 0 < (S.hm*S.tp-S.hm+S.hp*S.tm)) (hK : 0 ≤ (S.km-S.hm)) (hV
   have tp := S.tp_pos; have tm := S.tm_pos; have hm := S.hm_pos; have sm := S.sm_pos
   have hs := S.sp1; have ht' := S.tp1; have roof := S.roofP
   have hts : S.tm ≤ S.sm := by
-    have : S.hm * S.tm ≤ S.hm * S.sm := by nlinarith [mul_nonneg hK tm.le]
+    have : S.hm * S.tm ≤ S.hm * S.sm := by linarith [mul_nonneg hK tm.le]
     exact le_of_mul_le_mul_left this hm
   have hP1 : (S.km*S.tm-S.sm*(S.hm*S.tp+S.hp*S.tm)) < 0 := by
     have : 0 < S.sm * (S.hm*S.tp-S.hm+S.hp*S.tm) := mul_pos sm hA
-    nlinarith
+    linarith
   rcases le_or_gt S.tm (S.tp * S.sm) with h1 | h1
   · have e : S.tm * (((1-S.sp)*(S.hm*S.tp+S.hp*S.tm)-S.kp*S.tm)-S.tp*(S.km*(1-S.sp)-S.kp*S.sm)) = ((1-S.sp)*(S.hm*S.tp+S.hp*S.tm)-S.kp*S.tm) * (S.tm - S.tp * S.sm) - S.tp * (1 - S.sp) * (S.km*S.tm-S.sm*(S.hm*S.tp+S.hp*S.tm)) := by ring
     have a1 : 0 ≤ ((1-S.sp)*(S.hm*S.tp+S.hp*S.tm)-S.kp*S.tm) * (S.tm - S.tp * S.sm) := mul_nonneg_of_nonpos_of_nonpos hV (by linarith)
     have a2 : 0 < S.tp * (1 - S.sp) * (-(S.km*S.tm-S.sm*(S.hm*S.tp+S.hp*S.tm))) := mul_pos (mul_pos tp hs) (by linarith)
     have a3 : S.tm * (((1-S.sp)*(S.hm*S.tp+S.hp*S.tm)-S.kp*S.tm)-S.tp*(S.km*(1-S.sp)-S.kp*S.sm)) ≤ 0 := mul_nonpos_of_nonneg_of_nonpos tm.le hVM
-    nlinarith
+    linarith
   · have e : (1 - S.tp) * (S.tm * (((1-S.sp)*(S.hm*S.tp+S.hp*S.tm)-S.kp*S.tm)-S.tp*(S.km*(1-S.sp)-S.kp*S.sm))) = S.tm * (S.hp*(1-S.sp)-S.kp*(1-S.tp)) * (S.tm - S.tp * S.sm) +
         S.tp * (1 - S.sp) * ((S.hm*S.tp-S.hm+S.hp*S.tm) * (S.sm - S.tm) - (1 - S.tp) * (S.km*S.tm-S.hm*S.sm)) := by ring
     have a1 : 0 < S.tm * (S.hp*(1-S.sp)-S.kp*(1-S.tp)) * (S.tm - S.tp * S.sm) := mul_pos (mul_pos tm roof) (by linarith)
     have a2 : 0 ≤ S.tp * (1 - S.sp) * ((S.hm*S.tp-S.hm+S.hp*S.tm) * (S.sm - S.tm) - (1 - S.tp) * (S.km*S.tm-S.hm*S.sm)) := by
       refine mul_nonneg (mul_pos tp hs).le ?_
-      nlinarith [mul_nonneg hA.le (sub_nonneg.2 hts), mul_nonneg ht'.le (neg_nonneg.2 hD)]
+      linarith [mul_nonneg hA.le (sub_nonneg.2 hts), mul_nonneg ht'.le (neg_nonneg.2 hD)]
     have a3 : (1 - S.tp) * (S.tm * (((1-S.sp)*(S.hm*S.tp+S.hp*S.tm)-S.kp*S.tm)-S.tp*(S.km*(1-S.sp)-S.kp*S.sm))) ≤ 0 :=
       mul_nonpos_of_nonneg_of_nonpos ht'.le (mul_nonpos_of_nonneg_of_nonpos tm.le hVM)
     linarith
@@ -442,17 +442,17 @@ lemma alg_P1 (hQ : 0 ≤ (S.km*(1-S.tm)-S.hm*(1-S.sm*S.tp)-S.hp*S.sm*(1-S.tm))) 
   rcases le_or_gt (S.tp * S.sm) S.tm with h1 | h1
   · have e : (1-S.tm) * (S.km*S.tm-S.sm*(S.hm*S.tp+S.hp*S.tm)) = S.tm * (S.km*(1-S.tm)-S.hm*(1-S.sm*S.tp)-S.hp*S.sm*(1-S.tm)) + S.hm * (S.tm - S.sm * S.tp) := by ring
     have : 0 ≤ (1-S.tm) * (S.km*S.tm-S.sm*(S.hm*S.tp+S.hp*S.tm)) := by
-      rw [e]; nlinarith [mul_nonneg tm.le hQ, mul_nonneg hm.le (sub_nonneg.2 h1)]
+      rw [e]; linarith [mul_nonneg tm.le hQ, mul_nonneg hm.le (sub_nonneg.2 h1)]
     by_contra hc
     push Not at hc
-    nlinarith [mul_pos ht (neg_pos.2 hc)]
+    linarith [mul_pos ht (neg_pos.2 hc)]
   · have e : S.tm * (((1-S.sp)*(S.hm*S.tp+S.hp*S.tm)-S.kp*S.tm)-S.tp*(S.km*(1-S.sp)-S.kp*S.sm)) = ((1-S.sp)*(S.hm*S.tp+S.hp*S.tm)-S.kp*S.tm) * (S.tm - S.tp * S.sm) - S.tp * (1 - S.sp) * (S.km*S.tm-S.sm*(S.hm*S.tp+S.hp*S.tm)) := by ring
     by_contra hc
     push Not at hc
     have a1 : 0 ≤ ((1-S.sp)*(S.hm*S.tp+S.hp*S.tm)-S.kp*S.tm) * (S.tm - S.tp * S.sm) := mul_nonneg_of_nonpos_of_nonpos hV (by linarith)
     have a2 : 0 < S.tp * (1 - S.sp) * (-(S.km*S.tm-S.sm*(S.hm*S.tp+S.hp*S.tm))) := mul_pos (mul_pos tp hs) (by linarith)
     have a3 : S.tm * (((1-S.sp)*(S.hm*S.tp+S.hp*S.tm)-S.kp*S.tm)-S.tp*(S.km*(1-S.sp)-S.kp*S.sm)) ≤ 0 := mul_nonpos_of_nonneg_of_nonpos tm.le hVM
-    nlinarith
+    linarith
 
 /-- `LF = sp P1 - sm Vq > 0` off the stratum `Z` (`Vq = P1 = 0`). -/
 lemma alg_LF (hP : 0 ≤ (S.km*S.tm-S.sm*(S.hm*S.tp+S.hp*S.tm))) (hV : ((1-S.sp)*(S.hm*S.tp+S.hp*S.tm)-S.kp*S.tm) ≤ 0) (hZ : ¬ (((1-S.sp)*(S.hm*S.tp+S.hp*S.tm)-S.kp*S.tm) = 0 ∧ (S.km*S.tm-S.sm*(S.hm*S.tp+S.hp*S.tm)) = 0)) : 0 < (S.tm*(S.km*S.sp+S.kp*S.sm)-S.sm*(S.hm*S.tp+S.hp*S.tm)) := by
@@ -487,24 +487,24 @@ lemma alg_LA (hQ : 0 ≤ (S.km*(1-S.tm)-S.hm*(1-S.sm*S.tp)-S.hp*S.sm*(1-S.tm))) 
   suffices h : 0 < S.tm * (S.tp*(S.km*S.sp+S.kp*S.sm)-S.sp*(S.hm*S.tp+S.hp*S.tm)) from Frame20.pos_of_mul_pos' tm h
   rw [e]
   rcases le_or_gt (S.sp*S.tm-S.sm*S.tp) 0 with hD | hD
-  · nlinarith [mul_pos tp hLF, mul_nonneg hc0.le (neg_nonneg.2 hD)]
+  · linarith [mul_pos tp hLF, mul_nonneg hc0.le (neg_nonneg.2 hD)]
   · -- `Dl > 0`: `c0 Dl < sp tp P1`
     have e2 : (1-S.tm) * (S.km*S.tm-S.sm*(S.hm*S.tp+S.hp*S.tm)) = S.tm * (S.km*(1-S.tm)-S.hm*(1-S.sm*S.tp)-S.hp*S.sm*(1-S.tm)) + S.hm * (S.tm - S.sm * S.tp) := by ring
     have h1 : S.hm * (S.tm - S.sm * S.tp) ≤ (1-S.tm) * (S.km*S.tm-S.sm*(S.hm*S.tp+S.hp*S.tm)) := by
-      rw [e2]; nlinarith [mul_nonneg tm.le hQ]
+      rw [e2]; linarith [mul_nonneg tm.le hQ]
     have h2 : (S.hm*S.tp+S.hp*S.tm) * (1-S.tm) < S.hm * S.tp := by
-      nlinarith [mul_pos tm hE0]
+      linarith [mul_pos tm hE0]
     have h3 : (S.sp*S.tm-S.sm*S.tp) ≤ S.sp * (S.tm - S.sm * S.tp) := by
-      nlinarith [mul_pos sm tp, mul_pos (mul_pos sm tp) hs]
+      linarith [mul_pos sm tp, mul_pos (mul_pos sm tp) hs]
     have h4 : (1-S.tm) * ((S.hm*S.tp+S.hp*S.tm) * (S.sp*S.tm-S.sm*S.tp)) < (1-S.tm) * (S.sp * S.tp * (S.km*S.tm-S.sm*(S.hm*S.tp+S.hp*S.tm))) := by
       have a1 : (S.hm*S.tp+S.hp*S.tm) * (1-S.tm) * (S.sp*S.tm-S.sm*S.tp) < S.hm * S.tp * (S.sp*S.tm-S.sm*S.tp) := mul_lt_mul_of_pos_right h2 hD
       have a2 : S.tp * S.hm * (S.sp*S.tm-S.sm*S.tp) ≤ S.tp * S.hm * (S.sp * (S.tm - S.sm * S.tp)) :=
         mul_le_mul_of_nonneg_left h3 (mul_pos tp hm).le
       have a3 : S.sp * S.tp * (S.hm * (S.tm - S.sm * S.tp)) ≤ S.sp * S.tp * ((1-S.tm) * (S.km*S.tm-S.sm*(S.hm*S.tp+S.hp*S.tm))) :=
         mul_le_mul_of_nonneg_left h1 (mul_pos sp tp).le
-      nlinarith
+      linarith
     have h5 : (S.hm*S.tp+S.hp*S.tm) * (S.sp*S.tm-S.sm*S.tp) < S.sp * S.tp * (S.km*S.tm-S.sm*(S.hm*S.tp+S.hp*S.tm)) := lt_of_mul_lt_mul_left h4 ht.le
-    nlinarith [mul_nonneg sm.le (neg_nonneg.2 hV), mul_nonneg tp.le (mul_nonneg sm.le (neg_nonneg.2 hV))]
+    linarith [mul_nonneg sm.le (neg_nonneg.2 hV), mul_nonneg tp.le (mul_nonneg sm.le (neg_nonneg.2 hV))]
 
 /-- `B16 = hp sp - kp tp > 0` from `LG <= 0`, `D16 > 0`, `E0 > 0` (L10). -/
 lemma alg_B16 (hD : 0 < (S.km*S.tm-S.hm*S.sm)) (hE0 : 0 < (S.hm*S.tp-S.hp*(1-S.tm))) (hLG : (S.tp*(S.km*S.tm-S.hm*S.sm)*(S.km*S.sp+S.kp*S.sm)-(S.hp*S.km*S.sp*S.tm-S.hm*S.kp*S.sm*S.tp)) ≤ 0) : 0 < (S.hp*S.sp-S.kp*S.tp) := by
@@ -515,7 +515,7 @@ lemma alg_B16 (hD : 0 < (S.km*S.tm-S.hm*S.sm)) (hE0 : 0 < (S.hm*S.tp-S.hp*(1-S.t
     have := mul_pos km tm; have := mul_pos hm hs'; linarith
   have hkm : 0 < S.km * S.tp - S.hp * (1 - S.sm) := by
     have h1 : S.hm * (S.hp * (1 - S.sm)) < S.hm * (S.km * S.tp) := by
-      nlinarith [mul_pos hp lroof, mul_pos km (mul_pos tm hE0), mul_pos km hE0]
+      linarith [mul_pos hp lroof, mul_pos km (mul_pos tm hE0), mul_pos km hE0]
     exact Frame20.pos_of_mul_pos' hm (by linarith)
   have e : (S.tp*(S.km*S.tm-S.hm*S.sm)*(S.km*S.sp+S.kp*S.sm)-(S.hp*S.km*S.sp*S.tm-S.hm*S.kp*S.sm*S.tp)) = S.sp * (S.km*S.tm-S.hm*S.sm) * (S.km * S.tp - S.hp * (1 - S.sm)) - S.sm * (S.km*S.tm+S.hm*(1-S.sm)) * (S.hp*S.sp-S.kp*S.tp) := by ring
   by_contra hc
@@ -558,15 +558,15 @@ theorem robUni4_L9 {z : ZMod 4 → ℝ} {sp sm kp km g3 : ℝ} (hsp : 0 < sp) (h
     rintro (⟨a1, a2, a3, a4⟩ | ⟨a1, a2, a3, a4⟩)
     · rw [h0] at a1 a3; rw [h2] at a2 a4
       have b1 : 0 ≤ (km * sp + kp * sm) * z 3 := by
-        nlinarith [mul_nonneg hkm.le a1, mul_nonneg hkp.le a2]
+        linarith [mul_nonneg hkm.le a1, mul_nonneg hkp.le a2]
       have b2 : (km * (sp - 1) + kp * (sm - 1)) * z 3 ≥ 0 := by
-        nlinarith [mul_nonneg hkm.le (sub_nonneg.2 a3), mul_nonneg hkp.le (sub_nonneg.2 a4)]
+        linarith [mul_nonneg hkm.le (sub_nonneg.2 a3), mul_nonneg hkp.le (sub_nonneg.2 a4)]
       have c1 : 0 ≤ z 3 := by
         by_contra hc; push Not at hc
-        nlinarith [mul_pos (add_pos (mul_pos hkm hsp) (mul_pos hkp hsm)) (neg_pos.2 hc)]
+        linarith [mul_pos (add_pos (mul_pos hkm hsp) (mul_pos hkp hsm)) (neg_pos.2 hc)]
       have c2 : z 3 ≤ 0 := by
         by_contra hc; push Not at hc
-        nlinarith [mul_pos (show 0 < km * (1 - sp) + kp * (1 - sm) by nlinarith [mul_pos hkm (sub_pos.2 hsp1), mul_pos hkp (sub_pos.2 hsm1)]) hc]
+        linarith [mul_pos (show 0 < km * (1 - sp) + kp * (1 - sm) by linarith [mul_pos hkm (sub_pos.2 hsp1), mul_pos hkp (sub_pos.2 hsm1)]) hc]
       have c3 : z 3 = 0 := le_antisymm c2 c1
       rw [c3] at a1 a2
       have : g3 = 0 := by nlinarith
@@ -575,15 +575,15 @@ theorem robUni4_L9 {z : ZMod 4 → ℝ} {sp sm kp km g3 : ℝ} (hsp : 0 < sp) (h
       · exact h this
     · rw [h0] at a1 a2; rw [h2] at a3 a4
       have b1 : (km * sp + kp * sm) * z 3 ≤ 0 := by
-        nlinarith [mul_nonneg hkm.le (neg_nonneg.2 a1), mul_nonneg hkp.le (neg_nonneg.2 a3)]
+        linarith [mul_nonneg hkm.le (neg_nonneg.2 a1), mul_nonneg hkp.le (neg_nonneg.2 a3)]
       have b2 : (km * (sp - 1) + kp * (sm - 1)) * z 3 ≤ 0 := by
-        nlinarith [mul_nonneg hkm.le (sub_nonneg.2 a2), mul_nonneg hkp.le (sub_nonneg.2 a4)]
+        linarith [mul_nonneg hkm.le (sub_nonneg.2 a2), mul_nonneg hkp.le (sub_nonneg.2 a4)]
       have c1 : z 3 ≤ 0 := by
         by_contra hc; push Not at hc
-        nlinarith [mul_pos (add_pos (mul_pos hkm hsp) (mul_pos hkp hsm)) hc]
+        linarith [mul_pos (add_pos (mul_pos hkm hsp) (mul_pos hkp hsm)) hc]
       have c2 : 0 ≤ z 3 := by
         by_contra hc; push Not at hc
-        nlinarith [mul_pos (show 0 < km * (1 - sp) + kp * (1 - sm) by nlinarith [mul_pos hkm (sub_pos.2 hsp1), mul_pos hkp (sub_pos.2 hsm1)]) (neg_pos.2 hc)]
+        linarith [mul_pos (show 0 < km * (1 - sp) + kp * (1 - sm) by linarith [mul_pos hkm (sub_pos.2 hsp1), mul_pos hkp (sub_pos.2 hsm1)]) (neg_pos.2 hc)]
       have c3 : z 3 = 0 := le_antisymm c1 c2
       rw [c3] at a1 a3
       have : g3 = 0 := by nlinarith
@@ -861,13 +861,13 @@ theorem imc_L4 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
   refine h20s_I_s13 FF hx ?_ ?_ ?_ ?_
   · refine (F.nrm_B FF).seg_neg hq ?_
     simp only
-    nlinarith [mul_pos sp hE0]
+    linarith [mul_pos sp hE0]
   · refine (F.nrm_F FF).seg_neg hq ?_
     simp only
-    nlinarith [hR1]
+    linarith [hR1]
   · refine (F.nrm_H FF).seg_pos hq ?_
     simp only
-    nlinarith [mul_pos kp ht]
+    linarith [mul_pos kp ht]
   · rw [hq]
     refine F.robUni_of_dep _ _ (robUni5_L4 ?_ ?_ ?_ ?_)
     · show F.dep ⟨-(1-F.S.tm), 0, -F.S.hm⟩ 3 ≤ F.dep ⟨-(1-F.S.tm), 0, -F.S.hm⟩ 5
@@ -955,7 +955,7 @@ theorem imc_L5 (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
       have e : F.Dd B ⟨1, 0, 0⟩ 3 - F.Dd B ⟨1, 0, 0⟩ 4 = F.S.hp * F.S.sm * (F.S.km-F.S.hm) * (1-F.S.tm) := by
         simp only [Dd]; ring
       have := mul_nonneg (mul_pos (mul_pos hp sm) ht).le hK
-      nlinarith
+      linarith
 
 end Frame20
 end Minimality.CaseC20

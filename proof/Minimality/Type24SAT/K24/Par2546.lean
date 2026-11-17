@@ -49,16 +49,16 @@ theorem par2546_real (w0 w2 w3 w4 w5 w6 al be : ℝ) (h25 : w5 < w2) (h64 : w4 <
       obtain ⟨c1, c2, c3, c4⟩ := hc
       apply hw
       have hL : be * (w3 - w4) + al * (w3 - w5) ≤ 0 := by
-        nlinarith [mul_nonneg hbe.le (sub_nonneg.2 p4), mul_nonneg hal.le (sub_nonneg.2 c3)]
+        linarith [mul_nonneg hbe.le (sub_nonneg.2 p4), mul_nonneg hal.le (sub_nonneg.2 c3)]
       have hS : be * (w0 - w4) + al * (w0 - w5) ≤ 0 := by
-        nlinarith [mul_nonneg hbe.le (sub_nonneg.2 p2), mul_nonneg hal.le (sub_nonneg.2 c1)]
+        linarith [mul_nonneg hbe.le (sub_nonneg.2 p2), mul_nonneg hal.le (sub_nonneg.2 c1)]
       have hR : 0 ≤ (1 - al - be) * (be * (w0 - w4) + al * (w0 - w5)) :=
         mul_nonneg_of_nonpos_of_nonpos hneg.le hS
       have h0 : (1 - al - be) * (be * (w0 - w4) + al * (w0 - w5)) = 0 := by linarith
       have hS0 : be * (w0 - w4) + al * (w0 - w5) = 0 :=
         (mul_eq_zero.1 h0).resolve_left hneg.ne
       have hX : be * (w0 - w4) = 0 := by
-        nlinarith [mul_nonneg hbe.le (sub_nonneg.2 p2), mul_nonneg hal.le (sub_nonneg.2 c1)]
+        linarith [mul_nonneg hbe.le (sub_nonneg.2 p2), mul_nonneg hal.le (sub_nonneg.2 c1)]
       have hY : al * (w0 - w5) = 0 := by linarith
       have hX' := (mul_eq_zero.1 hX).resolve_left hbe.ne'
       have hY' := (mul_eq_zero.1 hY).resolve_left hal.ne'
@@ -71,10 +71,10 @@ theorem par2546_real (w0 w2 w3 w4 w5 w6 al be : ℝ) (h25 : w5 < w2) (h64 : w4 <
     simp only [not_or, not_lt] at hc
     obtain ⟨c1, c2, c3, c4⟩ := hc
     have h1 : 0 < be * (w3 - w4) + al * (w3 - w5) := by
-      nlinarith [mul_nonneg hbe.le n4, mul_pos hal (by linarith : 0 < w3 - w5)]
+      linarith [mul_nonneg hbe.le n4, mul_pos hal (by linarith : 0 < w3 - w5)]
     have h2 : (1 - al - be) * (be * (w0 - w4) + al * (w0 - w5)) < 0 :=
       mul_neg_of_neg_of_pos hneg
-        (by nlinarith [mul_nonneg hbe.le n2, mul_pos hal (by linarith : 0 < w0 - w5)])
+        (by linarith [mul_nonneg hbe.le n2, mul_pos hal (by linarith : 0 < w0 - w5)])
     linarith
 
 /-- `D` is the quadrilateral `0 4 3 5`: `x 3 - x 0 = al (x 5 - x 0) + be (x 4 - x 0)` with
@@ -107,7 +107,7 @@ theorem par2546_quad {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
     intro h
     have hb := h21_binet (F.N 3) (F.N 4) (x 5 - x 0) (x 6 - x 0)
     rw [h, inner_zero_left, IS 3 5 0, IS 4 6 0, IS 3 6 0, IS 4 5 0, zD5, zD0, zE6, zE0] at hb
-    nlinarith only [hb, mul_pos_of_neg_of_neg hD6 hE5]
+    linarith only [hb, mul_pos_of_neg_of_neg hD6 hE5]
   obtain ⟨lam, hlam⟩ := h21_mul_cross hcr
     (by rw [IS, zD4, zD0]; ring : ⟪F.N 3, x 4 - x 0⟫ = 0)
     (by rw [IS, zE4, zE0]; ring : ⟪F.N 4, x 4 - x 0⟫ = 0)
@@ -139,7 +139,7 @@ theorem par2546_quad {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) :
   rw [IS, IS, IS, zG3, zG5] at ed
   refine ⟨al, be, hal, hbe, ?_, hdec⟩
   by_contra h; push Not at h
-  nlinarith [mul_nonneg_of_nonpos_of_nonpos (sub_nonpos.2 h) hG0.le,
+  linarith [mul_nonneg_of_nonpos_of_nonpos (sub_nonpos.2 h) hG0.le,
     mul_neg_of_pos_of_neg hbe hG4]
 
 /-- Mixed diagonal signs of a 4-rim from the four pair differences. -/
@@ -196,7 +196,7 @@ theorem isRupert_par2546 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {l : ℝ
     have h1 : ⟪F.N 7, x 6 - x 4⟫ = l * ⟪F.N 7, x 5 - x 2⟫ := by rw [hl, inner_smul_right]
     rw [IS 7 6 4, IS 7 5 2, zH6, zH2] at h1
     by_contra h; push Not at h
-    nlinarith [mul_nonneg h (neg_nonneg.2 hH5.le)]
+    linarith [mul_nonneg h (neg_nonneg.2 hH5.le)]
   have hm : x 6 - x 4 = (-l) • d := by rw [hl, hd]; module
   have dinner : ∀ t, ⟪F.N t, x 6 - x 4⟫ = (-l) * ⟪F.N t, d⟫ := by
     intro t; rw [hm, inner_smul_right]
@@ -218,7 +218,7 @@ theorem isRupert_par2546 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {l : ℝ
     have h := dinner 1
     rw [IS 1 6 4, zB6] at h
     by_contra hc; push Not at hc
-    nlinarith [mul_nonneg (neg_nonneg.2 hlneg.le) (neg_nonneg.2 hc)]
+    linarith [mul_nonneg (neg_nonneg.2 hlneg.le) (neg_nonneg.2 hc)]
   -- tilts
   have tE : 0 < ⟪F.N 4, x 4 - x 2⟫ := by rw [IS, zE4]; linarith
   have tI : 0 < ⟪F.N 8, x 4 - x 2⟫ := by rw [IS, zI4]; linarith
@@ -300,7 +300,7 @@ theorem isRupert_par2546 {x : Fin 7 → ℝ³} (F : S0xFac 9 s0x_S24 x) {l : ℝ
     have e : x 5 - x 2 = -d := by rw [hd]; abel
     rw [e, inner_neg_right, inner_neg_right, inner_sub_left, inner_sub_left]
     constructor <;> linarith
-  rcases par2546_real ⟪x 0, d⟫ ⟪x 2, d⟫ ⟪x 3, d⟫ ⟪x 4, d⟫ ⟪x 5, d⟫ ⟪x 6, d⟫ al be (by linarith) (by nlinarith [mul_pos (neg_pos.2 hlneg) hdd])
+  rcases par2546_real ⟪x 0, d⟫ ⟪x 2, d⟫ ⟪x 3, d⟫ ⟪x 4, d⟫ ⟪x 5, d⟫ ⟪x 6, d⟫ al be (by linarith) (by linarith [mul_pos (neg_pos.2 hlneg) hdd])
       hal hbe hab eq3 hw' with ⟨hn, hp⟩ | ⟨hn, hp⟩
   · obtain ⟨h1, h2⟩ := par2546_diag (x := x) c0234 d hn hp
     exact leaf_P0234 F hA1 hle1 hle1 h1 h2
