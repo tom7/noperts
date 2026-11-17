@@ -56,8 +56,7 @@ theorem k8q4p_cyc {D γ4 β1 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hγ4 : 0 < γ
          first
          | (left; nlinarith)
          | (right; refine ⟨by ring, by nlinarith⟩))
-  · 
-    obtain ⟨s0, s1, s2, s3, s4, s5⟩ := z6_add_one
+  · obtain ⟨s0, s1, s2, s3, s4, s5⟩ := z6_add_one
     have k1 := hD
     have kb1 := mul_pos hD hβ1
     have kgc := mul_pos (mul_pos hD hγ6) (neg_pos.2 hcone)
@@ -119,8 +118,7 @@ theorem k8q4p_rest {D γ4 β1 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hγ4 : 0 < �
        first
        | (left; nlinarith)
        | (right; refine ⟨by ring, by nlinarith⟩))
-  · 
-    obtain ⟨s0, s1, s2, s3, s4, s5⟩ := z6_add_one
+  · obtain ⟨s0, s1, s2, s3, s4, s5⟩ := z6_add_one
     have k1 := hD
     have kb1 := mul_pos hD hβ1
     have kgc := mul_pos (mul_pos hD hγ6) (neg_pos.2 hcone)
