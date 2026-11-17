@@ -336,7 +336,7 @@ theorem isRupert_rdG (V M : Finset ℝ³) {v m f gf gv S T N : ℝ³}
     (cgv : ⟪gv - v, S⟫ = s1 ∧ ⟪gv - v, T⟫ = t1 ∧ ⟪gv - v, N⟫ = -h)
     (hh : 0 < h) (hsm : 0 < sm) (hmf : sm < sf) (h12 : s1 < s2)
     (htm : 0 < tm) (ht1 : 0 < t1) (htf : tf < 0) (ht2 : t2 < 0)
-    (hρ : ρ * (t2 - t1) = s2 - s1) (hθ : 0 < θ) (hM' : 0 < M')
+    (hρ : ρ * (t2 - t1) = s2 - s1)
     (W1 : 0 < sm * (-(s1 - ρ * t1) - θ) + M' * θ * (sm - ρ * tm))
     (W2 : 0 < sm * ((sm - (s1 - ρ * t1) - ρ * tm) - θ) + M' * (tm + θ) * (sm - ρ * tm))
     (W3 : 0 < (sf - sm) * ((sm - (s1 - ρ * t1) - ρ * tm) - θ) +
@@ -436,8 +436,8 @@ theorem isRupert_of_rdRimG (V M : Finset ℝ³) {v m f gf gv e : ℝ³} (hR : Rd
     h12, htm, ht1, htf, ht2, hρ, hθ, hM', W1, W2, W3, W4, W5, W6, W7, W8, W9⟩ := hR
   have hn : 0 < ‖e‖ := norm_pos_iff.mpr he
   have heT : e = ‖e‖ • (‖e‖⁻¹ • e) := by rw [smul_smul, mul_inv_cancel₀ hn.ne', one_smul]
-  refine isRupert_rdG V M hF hv hm hf hgf hgv cm cf cgf cgv hh hsm hmf h12 htm ht1 htf ht2 hρ hθ
-    hM' W1 W2 W3 W4 W5 W6 W7 W8 W9 ?_ ?_
+  refine isRupert_rdG V M hF hv hm hf hgf hgv cm cf cgf cgv hh hsm hmf h12 htm ht1 htf ht2 hρ
+     W1 W2 W3 W4 W5 W6 W7 W8 W9 ?_ ?_
   · intro x hx
     obtain ⟨p, q, hx, hq, hp⟩ := hM x hx
     refine ⟨p, q * ‖e‖, ?_, mul_ne_zero hq hn.ne', ?_⟩
@@ -464,7 +464,7 @@ the kept apex `v` on top), `g_v` off `F_j`'s plane, the rim `v f g_f g_v` orient
 `g ∥ F_j`, Lemma E strict (`v`, `w` on opposite sides of the plane `f g_f g_v`), (H1) along
 `v − w`, and the foot of the double normal on the open chord `(v, f)`.  Then `RdRim`. -/
 theorem rdRimG0_of_H {v m f gf gv w : ℝ³} {s δ : ℝ}
-    (hm : m = v + s • (f - v) + δ • (v - w)) (hs0 : 0 < s) (hs1 : s < 1) (hδ : 0 < δ)
+    (hm : m = v + s • (f - v) + δ • (v - w)) (hs0 : 0 < s) (hs1 : s < 1)
     (hoff : det3 (v - w) (f - v) (gv - v) ≠ 0)
     (horient : 0 < det3 (f - v) (gf - v) (v - w) * det3 (gv - gf) (v - gf) (v - w))
     (hpar : det3 (v - w) (f - v) (gf - gv) = 0)

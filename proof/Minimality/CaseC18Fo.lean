@@ -105,7 +105,7 @@ def FoCert (σ : ℝ) (u ωc m : C3) (j : Fin 7) : Prop :=
 `ω = fvC ωc`, translation `fvC m` at the base point) and a local certificate at every vertex
 give a passage.  Proof: `isRupert_of_tiltCert` with `w = ε • fvC u` (`ε = sign (σ κ)` as in
 `rupert_rim`), `ω = ε' • fvC ωc`, `τ = fvC m - cross ω base`; `det3_fvC`, `cross_fvC`. -/
-theorem rupert_of_foCert (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u ωc m : C3)
+theorem rupert_of_foCert (σ : ℝ) (u ωc m : C3)
     (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0) (h : ∀ j, F.FoCert σ u ωc m j) :
     IsRupert (Finset.univ.image x) := by
   classical
@@ -180,7 +180,7 @@ theorem rupert_of_foCert_eventually (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u d �
           (by simpa using hz)
       exact (this.filter_mono nhdsWithin_le_nhds).mono fun ε h => Or.inr (Or.inr h)
   obtain ⟨ε, hε, hne'⟩ := (h.and hne).exists
-  exact F.rupert_of_foCert σ hσ _ ωc m hne' hε
+  exact F.rupert_of_foCert σ _ ωc m hne' hε
 
 /-! ### Group F2: rescaling `e` -/
 

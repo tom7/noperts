@@ -317,7 +317,7 @@ theorem rdRimG_vtx (E : VtxConf V u v a c b p q n Na Nb κa κb) {m : ℝ³} {s 
     exact ⟨L', hL'0, hsg, hR.toG⟩
   · -- Lemma 22.10
     obtain ⟨f1, f2, f3, f4, f5, f6, f7⟩ := facts L hL Iff.rfl
-    have hR := rdRimG0_of_H f1 hs0 hs1 f2 f3 f4 f5 hD f6 f7
+    have hR := rdRimG0_of_H f1 hs0 hs1 f3 f4 f5 hD f6 f7
     rw [sub_sub_cancel] at hR
     exact ⟨L, hL, Iff.rfl, hR⟩
 

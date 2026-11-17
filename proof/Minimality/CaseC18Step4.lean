@@ -215,7 +215,7 @@ of `rupert_vertex_or_rim` is harmless, `DepthSepAt.neg`) and nonzero `torque3` (
 Proof: copy of `rupert_vertex_or_rim` replacing the last call by `isRupert_of_chordView_torque`
 (~120 lines). -/
 theorem rupert_vertex_torque (hx : Function.Injective x) {k : ℕ} [NeZero k] (hk : 3 ≤ k)
-    (c : ZMod k → Fin 7) (M : Finset (Fin 7)) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u : C3)
+    (c : ZMod k → Fin 7) (M : Finset (Fin 7)) (σ : ℝ) (u : C3)
     (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0) (hMc : ∀ m ∈ M, ∀ i, m ≠ c i)
     (hcyc : ∀ i j : ZMod k, j ≠ i → j ≠ i + 1 →
       PS σ u ((F.ptC (c (i + 1))).sub (F.ptC (c i))) ((F.ptC (c j)).sub (F.ptC (c i))))

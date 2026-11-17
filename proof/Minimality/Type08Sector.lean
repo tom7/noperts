@@ -106,6 +106,7 @@ theorem tst_gen (w P Q S : ℝ³) :
     real_inner_comm (Q - P) u0, real_inner_comm (S - P) u0, real_inner_comm w (hfE vb g u0),
     real_inner_comm w (-N), real_inner_comm w u0]
 
+omit Fr in
 /-- The depth of a point at the view `u₀` in frame coordinates. -/
 theorem inner_u0_coord (P : ℝ³) : ⟪P, u0⟫ = (hfΦ vb g u0 fG P).z + ⟪g, u0⟫ := by
   simp only [hfΦ]; rw [← inner_add_left]; congr 1; abel
@@ -229,7 +230,7 @@ theorem sector_final (V : Finset ℝ³) (x : ZMod 5 → ℝ³) (hxV : ∀ i, x i
       intro s i
       have h1 : ⟪x i, ε • u0 + s • (ε • w)⟫ = ε * (⟪x i, u0⟫ + s * ⟪x i, w⟫) := by
         rw [inner_add_right, real_inner_smul_right, real_inner_smul_right, real_inner_smul_right]; ring
-      rw [h1, ← mul_assoc, hεε, one_mul, Fr.inner_u0_coord, hw, Fr.inner_w_coord (px / E) (py / M)]
+      rw [h1, ← mul_assoc, hεε, one_mul, HFrame.inner_u0_coord, hw, Fr.inner_w_coord (px / E) (py / M)]
       simp only [hzz, hww]
       rw [← hw]; ring
     have hl : ∀ᶠ s in 𝓝[>] (0 : ℝ), (0 < zz 2 - zz 3 + s * (ww 2 - ww 3)) ∨

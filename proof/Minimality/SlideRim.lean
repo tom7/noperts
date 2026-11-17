@@ -93,7 +93,7 @@ theorem eventually_noHDNRim_slide {k : ℕ} [NeZero k] (c : ZMod k → Fin 7) (u
 /-- **Theorem 18.1 (tie form) at a vertex view in frame coordinates, rim-only**: as
 `rupert_vertex_or`, with the horizontal double normals excluded for the rim cycle only. -/
 theorem rupert_vertex_or_rim (hx : Function.Injective x) {k : ℕ} [NeZero k] (hk : 3 ≤ k)
-    (c : ZMod k → Fin 7) (M : Finset (Fin 7)) (σ : ℝ) (hσ : σ = 1 ∨ σ = -1) (u : C3)
+    (c : ZMod k → Fin 7) (M : Finset (Fin 7)) (σ : ℝ) (u : C3)
     (hu : u.x ≠ 0 ∨ u.y ≠ 0 ∨ u.z ≠ 0) (hMc : ∀ m ∈ M, ∀ i, m ≠ c i)
     (hcyc : ∀ i j : ZMod k, j ≠ i → j ≠ i + 1 →
       PS σ u ((F.ptC (c (i + 1))).sub (F.ptC (c i))) ((F.ptC (c j)).sub (F.ptC (c i))))
@@ -207,7 +207,7 @@ theorem vertex4_rim (hx : Function.Injective x) (c0 c1 c2 c3 : Fin 7) (P0 P1 P2 
     intro i
     rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
       simp [quad_0, quad_1, quad_2, quad_3, e0, e1, e2, e3]
-  refine F.rupert_vertex_or_rim hx (k := 4) (by norm_num) (quad c0 c1 c2 c3) M σ hσ u hu ?_ ?_ ?_ ?_ hnd ?_
+  refine F.rupert_vertex_or_rim hx (k := 4) (by norm_num) (quad c0 c1 c2 c3) M σ u hu ?_ ?_ ?_ ?_ hnd ?_
   · intro m hm i
     obtain ⟨a0, a1, a2, a3⟩ := hMc m hm
     rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>

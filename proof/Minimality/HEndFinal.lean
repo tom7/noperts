@@ -54,6 +54,7 @@ namespace HFrame
 variable {v g u0 N : ℝ³} {fG : ℝ³ → ℝ} (Fr : HFrame v g u0 N fG)
 include Fr
 
+omit Fr in
 /-- The depth at the view `e − δ u₀` in frame coordinates. -/
 theorem inner_uδ (δ : ℝ) (P : ℝ³) :
     ⟪P, hfE v g u0 - δ • u0⟫ = (hfΦ v g u0 fG P).x - δ * (hfΦ v g u0 fG P).z +
@@ -114,7 +115,7 @@ theorem rim_final {k : ℕ} [NeZero k] (hk : 3 ≤ k) (V M W : Finset ℝ³) (x 
   · have h1 : (fun i => ⟪x i, ε • uδ⟫) = fun i => ε * dep (fun i => hfΦ v g u0 fG (x i)) δ i +
         ε * (⟪v, e - δ • u0⟫ - δ * ⟪g - v, u0⟫) := by
       funext i
-      rw [real_inner_smul_right, Fr.inner_uδ δ (x i)]
+      rw [real_inner_smul_right, HFrame.inner_uδ δ (x i)]
       simp only [dep]; ring
     rw [h1]
     exact huni.affine_sign (by omega) hεs _

@@ -33,7 +33,7 @@ def u_vN4 : C3 := ⟨-S.sp*S.tp + S.tp, 0, -S.hp*S.sp + S.hp - S.kp⟩
 
 end Shape20
 
-theorem vN4_pcyc (S : Shape20) (hV : 0 < -S.hm*S.sp*S.tp + S.hm*S.tp - S.hp*S.sp*S.tm + S.hp*S.tm - S.kp*S.tm) (hVW : 0 < -S.hm*S.sp*S.tp + S.hm*S.tp - S.hp*S.sp*S.tm + S.hp*S.sp + S.hp*S.tm - S.hp - S.kp*S.tm + S.kp) :
+theorem vN4_pcyc (S : Shape20) (hVW : 0 < -S.hm*S.sp*S.tp + S.hm*S.tp - S.hp*S.sp*S.tm + S.hp*S.sp + S.hp*S.tm - S.hp - S.kp*S.tm + S.kp) :
     PCyc4 1 S.u_vN4 (⟨S.tp, 0, S.hp⟩ : C3) ⟨S.tm, 0, -S.hm⟩ ⟨0, S.sm, -S.km⟩ ⟨0, 1, 0⟩ := by
   have htp := S.tp_pos; have htm := S.tm_pos; have hsp := S.sp_pos; have hsm := S.sm_pos
   have hhp := S.hp_pos; have hhm := S.hm_pos; have hkp := S.kp_pos; have hkm := S.km_pos
@@ -44,12 +44,12 @@ theorem vN4_pcyc (S : Shape20) (hV : 0 < -S.hm*S.sp*S.tp + S.hm*S.tp - S.hp*S.sp
   have rp : 0 < S.hp * (1 - S.sp) - S.kp * (1 - S.tp) := sub_pos.2 S.roof_p'
   have rm : 0 < S.km * (1 - S.tm) - S.hm * (1 - S.sm) := sub_pos.2 S.roof_m'
   refine ⟨(by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; linarith [(mul_pos S.sm_pos rp), (mul_pos S.sm_pos hVW)]),
-    (by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; linarith [hV, (mul_pos S.tp_pos S.kp_pos)]),
+    (by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; linarith [ (mul_pos S.tp_pos S.kp_pos)]),
     (by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; refine pos_of_pos_mul htm1 ?_; linarith [(mul_pos (mul_pos S.tp_pos hsp1) rm), (mul_pos (mul_pos S.tm_pos hsm1) hVW)]),
     (by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; linarith [(mul_pos S.sm_pos rp), (mul_pos S.sm_pos hVW)]),
     (by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; linarith [(mul_pos (mul_pos S.tp_pos hsp1) S.km_pos), (mul_pos (mul_pos S.tp_pos hsm1) S.kp_pos)]),
     (by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; refine pos_of_pos_mul htm1 ?_; linarith [(mul_pos (mul_pos S.tp_pos hsp1) rm), (mul_pos (mul_pos S.tm_pos hsm1) hVW)]),
-    (by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; linarith [hV, (mul_pos S.tp_pos S.kp_pos)]),
+    (by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; linarith [ (mul_pos S.tp_pos S.kp_pos)]),
     (by simp only [PS, Dc, C3.sub, Shape20.u_vN4]; linarith [(mul_pos (mul_pos S.tp_pos hsp1) S.km_pos), (mul_pos (mul_pos S.tp_pos hsm1) S.kp_pos)])⟩
 
 theorem vN4_mid5 (S : Shape20) (hV : 0 < -S.hm*S.sp*S.tp + S.hm*S.tp - S.hp*S.sp*S.tm + S.hp*S.tm - S.kp*S.tm) (hVW : 0 < -S.hm*S.sp*S.tp + S.hm*S.tp - S.hp*S.sp*S.tm + S.hp*S.sp + S.hp*S.tm - S.hp - S.kp*S.tm + S.kp) :
@@ -95,7 +95,7 @@ theorem vN4_mid5 (S : Shape20) (hV : 0 < -S.hm*S.sp*S.tp + S.hm*S.tp - S.hp*S.sp
       linear_combination (-(-S.hm - S.hp)) * hs + (-(-S.hp*S.sp + S.hp - S.kp)) * hδ
     exact sub_eq_zero.mp ((mul_eq_zero.mp h).resolve_right hD0)
 
-theorem vN4_mid1 (S : Shape20) (hV : 0 < -S.hm*S.sp*S.tp + S.hm*S.tp - S.hp*S.sp*S.tm + S.hp*S.tm - S.kp*S.tm) (hVW : 0 < -S.hm*S.sp*S.tp + S.hm*S.tp - S.hp*S.sp*S.tm + S.hp*S.sp + S.hp*S.tm - S.hp - S.kp*S.tm + S.kp) :
+theorem vN4_mid1 (S : Shape20) (hVW : 0 < -S.hm*S.sp*S.tp + S.hm*S.tp - S.hp*S.sp*S.tm + S.hp*S.sp + S.hp*S.tm - S.hp - S.kp*S.tm + S.kp) :
     ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
       (⟨1, 0, 0⟩ : C3).x = (⟨S.tp, 0, S.hp⟩ : C3).x + s * ((⟨S.tm, 0, -S.hm⟩ : C3).x - (⟨S.tp, 0, S.hp⟩ : C3).x) + δ * S.u_vN4.x ∧
       (⟨1, 0, 0⟩ : C3).y = (⟨S.tp, 0, S.hp⟩ : C3).y + s * ((⟨S.tm, 0, -S.hm⟩ : C3).y - (⟨S.tp, 0, S.hp⟩ : C3).y) + δ * S.u_vN4.y ∧
@@ -108,7 +108,7 @@ theorem vN4_mid1 (S : Shape20) (hV : 0 < -S.hm*S.sp*S.tp + S.hm*S.tp - S.hp*S.sp
   have hsm1 : 0 < 1 - S.sm := sub_pos.2 S.sm_lt
   have rp : 0 < S.hp * (1 - S.sp) - S.kp * (1 - S.tp) := sub_pos.2 S.roof_p'
   have rm : 0 < S.km * (1 - S.tm) - S.hm * (1 - S.sm) := sub_pos.2 S.roof_m'
-  have hD : 0 < -S.hm*S.sp*S.tp + S.hm*S.tp - S.hp*S.sp*S.tm + S.hp*S.tm - S.kp*S.tm + S.kp*S.tp := by linarith [hV, (mul_pos S.tp_pos S.kp_pos)]
+  have hD : 0 < -S.hm*S.sp*S.tp + S.hm*S.tp - S.hp*S.sp*S.tm + S.hp*S.tm - S.kp*S.tm + S.kp*S.tp := by linarith [ (mul_pos S.tp_pos S.kp_pos)]
   have hD0 : -S.hm*S.sp*S.tp + S.hm*S.tp - S.hp*S.sp*S.tm + S.hp*S.tm - S.kp*S.tm + S.kp*S.tp ≠ 0 := hD.ne'
   have hN : 0 < -S.hp*S.sp + S.hp + S.kp*S.tp - S.kp := by linarith [rp]
   have hDN : 0 < -S.hm*S.sp*S.tp + S.hm*S.tp - S.hp*S.sp*S.tm + S.hp*S.sp + S.hp*S.tm - S.hp - S.kp*S.tm + S.kp := by linarith [hVW]

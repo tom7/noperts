@@ -94,7 +94,7 @@ theorem persist_core {k : ℕ} [NeZero k] (c : ZMod k → Fin 7)
     (hcr : ∀ i, c i = 0 ∨ c i = 3 ∨ c i = 4 ∨ c i = 6)
     (h0 : ∃ m, c m = 0) (h6 : ∃ m, c m = 6)
     (i j : ZMod k) (Y Y' : ℝ³) (hY : Y ∈ segment ℝ (x (c i)) (x (c (i + 1))))
-    (hY' : Y' ∈ segment ℝ (x (c j)) (x (c (j + 1)))) (hne : Y' ≠ Y)
+    (hY' : Y' ∈ segment ℝ (x (c j)) (x (c (j + 1))))
     (hA : ⟪Y' - Y, x 1 - x 5⟫ = 0) (hB : ⟪Y' - Y, F.e⟫ = 0)
     (hext : ∀ m, ⟪Y' - Y, x (c m) - Y'⟫ ≤ 0 ∧ ⟪Y - Y', x (c m) - Y⟫ ≤ 0)
     (hν : 0 < ⟪Y' - Y, x 6 - x 5⟫) : F.ClassH := by
@@ -219,12 +219,12 @@ theorem persist_gen {k : ℕ} [NeZero k] (c : ZMod k → Fin 7)
   have hν := F.persist_nu_ne (Y' - Y) (sub_ne_zero.2 hne) hA hB
   have hsw : Y - Y' = -(Y' - Y) := (neg_sub Y' Y).symm
   rcases lt_or_gt_of_ne hν with hneg | hpos
-  · refine hH (F.persist_core c hcr h0 h6 j i Y' Y hY' hY hne.symm ?_ ?_ ?_ ?_)
+  · refine hH (F.persist_core c hcr h0 h6 j i Y' Y hY' hY ?_ ?_ ?_ ?_)
     · rw [hsw, inner_neg_left, hA, neg_zero]
     · rw [hsw, inner_neg_left, hB, neg_zero]
     · intro m; exact (hext m).symm
     · rw [hsw, inner_neg_left]; linarith
-  · exact hH (F.persist_core c hcr h0 h6 i j Y Y' hY hY' hne hA hB hext hpos)
+  · exact hH (F.persist_core c hcr h0 h6 i j Y Y' hY hY' hA hB hext hpos)
 
 /-- `V`: a vector perpendicular to `u_vN4` and `eF1` is perpendicular to `u1` and `e` (the
 determinant is `Vp + k+ t+ > 0`). -/
@@ -352,7 +352,7 @@ theorem mid1_ev
     ∀ᶠ η in 𝓝[>] (0 : ℝ), ∃ s δ : ℝ, 0 < s ∧ s < 1 ∧ δ ≠ 0 ∧
       1 = S.tp + s * (S.tm - S.tp) + δ * (C3.slide S.u_vN4 S.eF1 η).x ∧
       0 = S.hp + s * (-S.hm - S.hp) + δ * (C3.slide S.u_vN4 S.eF1 η).z := by
-  obtain ⟨s, δ, h1, h2, h3, h4, h5, h6⟩ := vN4_mid1 S hV hVW
+  obtain ⟨s, δ, h1, h2, h3, h4, h5, h6⟩ := vN4_mid1 S hVW
   exact mid_slide_gen S.tp S.hp S.tm (-S.hm) 1 0 S.u_vN4.x S.u_vN4.z S.eF1.x S.eF1.z
     (by simpa [eF1] using S.uD_ne hV) ⟨s, δ, h1, h2, h3, h4, h6⟩
 
@@ -362,7 +362,7 @@ theorem vN4_rest_ev
     (hVW : 0 < -S.hm*S.sp*S.tp + S.hm*S.tp - S.hp*S.sp*S.tm + S.hp*S.sp + S.hp*S.tm - S.hp - S.kp*S.tm + S.kp) :
     ∀ᶠ η in 𝓝[>] (0 : ℝ), PRest4 1 (C3.slide S.u_vN4 S.eF1 η) (⟨S.tp, 0, S.hp⟩ : C3)
       ⟨S.tm, 0, -S.hm⟩ ⟨0, S.sm, -S.km⟩ ⟨0, 1, 0⟩ ⟨0, S.sp, S.kp⟩ := by
-  obtain ⟨c1, c2, c3, c4, c5, c6, c7, c8⟩ := vN4_pcyc S hV hVW
+  obtain ⟨c1, c2, c3, c4, c5, c6, c7, c8⟩ := vN4_pcyc S hVW
   have t0 : PS 1 S.u_vN4 ((⟨S.tm, 0, -S.hm⟩ : C3).sub ⟨S.tp, 0, S.hp⟩)
       ((⟨0, S.sp, S.kp⟩ : C3).sub ⟨S.tp, 0, S.hp⟩) := by
     unfold PS at c2 ⊢; rw [one_mul] at c2 ⊢
@@ -400,7 +400,7 @@ theorem vN4_slide (hx : Function.Injective x)
   have ux : 0 < -F.S.sp * F.S.tp + F.S.tp := by nlinarith [mul_pos htp (sub_pos.2 hsp1)]
   have hnp := (F.noPersistHDN_or_classH_vN4 hV).resolve_right hH
   have hnd := F.toFrame7.eventually_noHDNRim_slide (quad 0 3 4 6) F.S.u_vN4 F.S.eF1 hnp
-  have hcyc := (vN4_pcyc F.S hV hVW).ev F.S.eF1
+  have hcyc := (vN4_pcyc F.S hVW).ev F.S.eF1
   have hrest := F.S.vN4_rest_ev hV hVW
   have hmv := F.S.mid5_ev hV hVW
   have hmxa := F.S.mid1_ev hV hVW

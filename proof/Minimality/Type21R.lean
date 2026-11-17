@@ -92,7 +92,7 @@ theorem qaData_edgePair_robust {v w a b c : ℝ³} (V : Finset ℝ³)
 
 /-- **A triangle closing, data form** (`rimCert_edgeTri_robust` keeping the rim). -/
 theorem rimCertPts_edgeTri_robust {v w a b : ℝ³} (V : Finset ℝ³)
-    (hvV : v ∈ V) (hwV : w ∈ V) (haV : a ∈ V) (hbV : b ∈ V)
+    (hvV : v ∈ V) (haV : a ∈ V) (hbV : b ∈ V)
     (hT : 0 < det3 (a - v) (b - v) (w - v))
     (hz : ¬ (⟪v, w - v⟫ = ⟪a, w - v⟫ ∧ ⟪a, w - v⟫ = ⟪b, w - v⟫))
     (hV : ∀ z ∈ V, z = v ∨ z = w ∨ z = a ∨ z = b ∨ EdgeMid v w a b z ∨
@@ -192,7 +192,7 @@ theorem ridgeData (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ → ℝ}
   · -- clockwise: use `(v, B, A)`
     rcases hcase with hh | ⟨hc, hE⟩
     · have hℓn : ℓ < 0 := neg_of_mul_pos_left hh hTn.le
-      refine Or.inr (Or.inr (Or.inr (rimCertPts_edgeTri_robust K hvK hwK hBK hAK ?_
+      refine Or.inr (Or.inr (Or.inr (rimCertPts_edgeTri_robust K hvK hBK hAK ?_
         (fun h => htri ⟨h.1.trans h.2, h.2.symm⟩) (fun z hz => ?_))))
       · have : det3 (B - v) (A - v) u = -T := by
           simp only [hT_def, det3_expand, PiLp.sub_apply]; ring
@@ -244,7 +244,7 @@ theorem ridgeData (K : Finset ℝ³) {v w A B C : ℝ³} {fA fB : ℝ³ → ℝ}
   · -- counterclockwise: `(v, A, B)`
     rcases hcase with hh | ⟨hc, hE⟩
     · have hℓp : 0 < ℓ := pos_of_mul_pos_left hh hTp.le
-      refine Or.inr (Or.inr (Or.inl (rimCertPts_edgeTri_robust K hvK hwK hAK hBK hTp htri
+      refine Or.inr (Or.inr (Or.inl (rimCertPts_edgeTri_robust K hvK hAK hBK hTp htri
         (fun z hz => ?_))))
       rcases hK z hz with h | h | h | h | h | h
       · exact Or.inl h

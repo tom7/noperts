@@ -148,7 +148,7 @@ theorem N4D_rest_ev_S (hV : 0 < S.Vq) (hVW : 0 < S.VWq) :
   have f4 : 0 < S.sm * (((1 - S.sp) * (S.hp * S.tm + S.hm * S.tp) - S.kp * S.tm) + S.kp * S.tp) :=
     mul_pos hsm f5
   have f6 : 0 < S.tp * (S.km * (1 - S.sp) + S.kp * (1 - S.sm)) := by positivity
-  obtain ⟨s, δ, hs0, hs1, -, e1, -, e2⟩ := vN4_mid1 S hV hVW
+  obtain ⟨s, δ, hs0, hs1, -, e1, -, e2⟩ := vN4_mid1 S hVW
   have hs1' : 0 < 1 - s := sub_pos.2 hs1
   obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
   refine eventually_all.2 fun i => ?_
@@ -795,7 +795,7 @@ theorem vN4_classH (hx : Function.Injective x) (hV : 0 < F.S.Vq) (hVW : 0 < F.S.
     (hpos.and ((F.S.N4D_cyc_ev_S hV hVW).and
       ((F.S.N4D_rest_ev_S hV hVW).and (F.mid_m2p_D.and hev)))).exists
   refine F.toFrame7.rupert_vertex_torque hx (k := 5) (by norm_num) (pent 0 5 3 4 6) {2} 1
-    (Or.inl rfl) (C3.slide F.S.u_vN4 F.S.eD η)
+     (C3.slide F.S.u_vN4 F.S.eD η)
     (Or.inl (ne_of_gt (by simp only [C3.slide, Shape20.u_vN4, Shape20.eD]; nlinarith [mul_pos hη0 htp]))) ?_ ?_ ?_
     (a := a) (c₀ := c0) ?_ ?_ ?_
   · intro m hm' i
@@ -850,7 +850,7 @@ theorem tANR_classH (hx : Function.Injective x)
     (hpos.and ((F.S.TA_cyc_ev_S hA1).and
       ((F.S.TA_rest_ev_S hA1).and (F.mid_xa_T.and hev)))).exists
   refine F.toFrame7.rupert_vertex_torque hx (k := 5) (by norm_num) (pent 0 6 4 3 5) {1} 1
-    (Or.inl rfl) (C3.slide F.S.u_tANR F.S.eT η)
+     (C3.slide F.S.u_tANR F.S.eT η)
     (Or.inr (Or.inl (ne_of_gt (by simp only [C3.slide, Shape20.u_tANR, Shape20.eT]; linarith)))) ?_ ?_ ?_
     (a := a) (c₀ := c0) ?_ ?_ ?_
   · intro m hm' i

@@ -137,6 +137,7 @@ theorem tst_hfΦ (δ : ℝ) (P Q S : ℝ³) :
     real_inner_comm (Q - P) (-N), real_inner_comm (S - P) (-N),
     real_inner_comm (Q - P) u0, real_inner_comm (S - P) u0]
 
+omit F in
 theorem hfΦ_x_sub (R T : ℝ³) : (hfΦ v g u0 fG R).x - (hfΦ v g u0 fG T).x = ⟪R - T, hfE v g u0⟫ := by
   simp only [hfΦ]; rw [← inner_sub_left]; congr 1; abel
 
@@ -177,7 +178,7 @@ theorem det3_u0_coord (P Q S : ℝ³) :
   have e6 : ⟪-N, u0⟫ = 0 := by rw [inner_neg_left, e3]; simp
   rw [e1, e6] at h
   simp only [hdet] at h
-  simp only [crossXY, hfΦ_x_sub F, hfΦ_y_sub F]
+  simp only [crossXY, hfΦ_x_sub, hfΦ_y_sub F]
   simp only [real_inner_comm (hfE v g u0) (Q - P), real_inner_comm (hfE v g u0) (S - P)]
   linear_combination -h
 

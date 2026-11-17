@@ -426,7 +426,7 @@ theorem t31_C4z (hα : F.a12 < F.a11) (hm : F.S.am = F.S.cm) (hp : F.S.cp < F.S.
 
 theorem G2_C6_cyc (tp tm sp sm hp hm kp km r q : ℝ)
     (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1)
-    (hsm : 0 < sm) (hsm1 : sm < 1) (hr : 0 < r) (hq : 0 < q)
+ (hsm1 : sm < 1) (hr : 0 < r) (hq : 0 < q)
     (ehp : hp = r * tp) (ehm : hm = q * tm) (ekp : kp = r * sp) (ekm : km = q * sm)
     (roofp : kp * (1 - tp) < hp * (1 - sp)) (roofm : km * (1 - tm) < hm * (1 - sm))
     (hb : q * (1 - tp) < r * tp) :
@@ -459,8 +459,8 @@ theorem G2_C6_cyc (tp tm sp sm hp hm kp km r q : ℝ)
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
-    | (left; linarith [(mul_pos (mul_pos hr htm) hsp), (mul_pos (mul_pos hq htm) hsp), (mul_pos (mul_pos hr htp) htm), (mul_pos (mul_pos hq htp) htm), (mul_pos hq htm), (mul_pos hr hsp), (mul_pos (mul_pos hr hsp) hsm), (mul_pos (mul_pos hq hsp) hsm), (mul_pos (mul_pos hq htm) hT), (mul_pos htm hR), hR, (mul_pos (mul_pos hq hsm) hT), (mul_pos hsm hR), (mul_pos (mul_pos hr htp) him), (mul_pos (mul_pos hq htm) hip), (mul_pos hr htp), (mul_pos (mul_pos hr htp) hism), (mul_pos (mul_pos hq hsm) hip), (mul_pos (mul_pos hr hsp) him), (mul_pos (mul_pos hq htm) his), (mul_pos hq hM), (mul_pos (mul_pos (mul_pos (mul_pos hr hr) htp) htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hq) htp) htp) hsp), (mul_pos (mul_pos (mul_pos hr hq) htp) hsp), (mul_pos (mul_pos (mul_pos hq htm) hsm) hB), (mul_pos (mul_pos hr htp) hB), (mul_pos (mul_pos (mul_pos hr hq) htp) him), (mul_pos (mul_pos hr hq) htp), (mul_pos (mul_pos (mul_pos hq hq) htm) hip)])
-    | (right; refine ⟨by ring, by linarith [(mul_pos (mul_pos hr htm) hsp), (mul_pos (mul_pos hq htm) hsp), (mul_pos (mul_pos hr htp) htm), (mul_pos (mul_pos hq htp) htm), (mul_pos hq htm), (mul_pos hr hsp), (mul_pos (mul_pos hr hsp) hsm), (mul_pos (mul_pos hq hsp) hsm), (mul_pos (mul_pos hq htm) hT), (mul_pos htm hR), hR, (mul_pos (mul_pos hq hsm) hT), (mul_pos hsm hR), (mul_pos (mul_pos hr htp) him), (mul_pos (mul_pos hq htm) hip), (mul_pos hr htp), (mul_pos (mul_pos hr htp) hism), (mul_pos (mul_pos hq hsm) hip), (mul_pos (mul_pos hr hsp) him), (mul_pos (mul_pos hq htm) his), (mul_pos hq hM), (mul_pos (mul_pos (mul_pos (mul_pos hr hr) htp) htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hq) htp) htp) hsp), (mul_pos (mul_pos (mul_pos hr hq) htp) hsp), (mul_pos (mul_pos (mul_pos hq htm) hsm) hB), (mul_pos (mul_pos hr htp) hB), (mul_pos (mul_pos (mul_pos hr hq) htp) him), (mul_pos (mul_pos hr hq) htp), (mul_pos (mul_pos (mul_pos hq hq) htm) hip)]⟩)
+    | (left; linarith [(mul_pos (mul_pos hr htm) hsp), (mul_pos (mul_pos hq htm) hsp), (mul_pos (mul_pos hr htp) htm), (mul_pos (mul_pos hq htp) htm), (mul_pos hq htm), (mul_pos hr hsp), (mul_pos (mul_pos hq htm) hT), (mul_pos htm hR), hR, (mul_pos (mul_pos hr htp) him), (mul_pos (mul_pos hq htm) hip), (mul_pos hr htp), (mul_pos (mul_pos hr htp) hism), (mul_pos (mul_pos hr hsp) him), (mul_pos (mul_pos hq htm) his), (mul_pos hq hM), (mul_pos (mul_pos (mul_pos (mul_pos hr hr) htp) htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hq) htp) htp) hsp), (mul_pos (mul_pos (mul_pos hr hq) htp) hsp), (mul_pos (mul_pos hr htp) hB), (mul_pos (mul_pos (mul_pos hr hq) htp) him), (mul_pos (mul_pos hr hq) htp), (mul_pos (mul_pos (mul_pos hq hq) htm) hip)])
+    | (right; refine ⟨by ring, by linarith [(mul_pos (mul_pos hr htm) hsp), (mul_pos (mul_pos hq htm) hsp), (mul_pos (mul_pos hr htp) htm), (mul_pos (mul_pos hq htp) htm), (mul_pos hq htm), (mul_pos hr hsp), (mul_pos (mul_pos hq htm) hT), (mul_pos htm hR), hR, (mul_pos (mul_pos hr htp) him), (mul_pos (mul_pos hq htm) hip), (mul_pos hr htp), (mul_pos (mul_pos hr htp) hism), (mul_pos (mul_pos hr hsp) him), (mul_pos (mul_pos hq htm) his), (mul_pos hq hM), (mul_pos (mul_pos (mul_pos (mul_pos hr hr) htp) htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hq) htp) htp) hsp), (mul_pos (mul_pos (mul_pos hr hq) htp) hsp), (mul_pos (mul_pos hr htp) hB), (mul_pos (mul_pos (mul_pos hr hq) htp) him), (mul_pos (mul_pos hr hq) htp), (mul_pos (mul_pos (mul_pos hq hq) htm) hip)]⟩)
 
 theorem G2_C6_rest2 (tp tm sp sm hp hm kp km r q : ℝ)
     (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1)
@@ -499,7 +499,7 @@ theorem G2_C6_rest2 (tp tm sp sm hp hm kp km r q : ℝ)
 
 theorem G2_C6_rest4 (tp tm sp sm hp hm kp km r q : ℝ)
     (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1)
-    (hsm : 0 < sm) (hsm1 : sm < 1) (hr : 0 < r) (hq : 0 < q)
+ (hsm1 : sm < 1) (hr : 0 < r) (hq : 0 < q)
     (ehp : hp = r * tp) (ehm : hm = q * tm) (ekp : kp = r * sp) (ekm : km = q * sm)
     (roofp : kp * (1 - tp) < hp * (1 - sp)) (roofm : km * (1 - tm) < hm * (1 - sm))
     (hb : q * (1 - tp) < r * tp) :
@@ -529,12 +529,12 @@ theorem G2_C6_rest4 (tp tm sp sm hp hm kp km r q : ℝ)
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
-    | (left; linarith [(mul_pos (mul_pos hr htm) hsp), (mul_pos (mul_pos hq htm) hsp), (mul_pos (mul_pos hr htp) htm), (mul_pos (mul_pos hq htp) htm), (mul_pos hq htm), (mul_pos hr hsp), (mul_pos (mul_pos hr hsp) hsm), (mul_pos (mul_pos hq hsp) hsm), (mul_pos (mul_pos hq htm) hT), (mul_pos htm hR), hR, (mul_pos (mul_pos hq hsm) hT), (mul_pos hsm hR), (mul_pos (mul_pos hr htp) him), (mul_pos (mul_pos hq htm) hip), (mul_pos hr htp), (mul_pos (mul_pos hr htp) hism), (mul_pos (mul_pos hq hsm) hip), (mul_pos (mul_pos hr hsp) him), (mul_pos (mul_pos hq htm) his), (mul_pos hq hM), (mul_pos (mul_pos (mul_pos (mul_pos hr hr) htp) htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hq) htp) htp) hsp), (mul_pos (mul_pos (mul_pos hr hq) htp) hsp), (mul_pos (mul_pos (mul_pos hq htm) hsm) hB), (mul_pos (mul_pos hr htp) hB), (mul_pos (mul_pos (mul_pos hr hq) htp) him), (mul_pos (mul_pos hr hq) htp), (mul_pos (mul_pos (mul_pos hq hq) htm) hip)])
-    | (right; refine ⟨by ring, by linarith [(mul_pos (mul_pos hr htm) hsp), (mul_pos (mul_pos hq htm) hsp), (mul_pos (mul_pos hr htp) htm), (mul_pos (mul_pos hq htp) htm), (mul_pos hq htm), (mul_pos hr hsp), (mul_pos (mul_pos hr hsp) hsm), (mul_pos (mul_pos hq hsp) hsm), (mul_pos (mul_pos hq htm) hT), (mul_pos htm hR), hR, (mul_pos (mul_pos hq hsm) hT), (mul_pos hsm hR), (mul_pos (mul_pos hr htp) him), (mul_pos (mul_pos hq htm) hip), (mul_pos hr htp), (mul_pos (mul_pos hr htp) hism), (mul_pos (mul_pos hq hsm) hip), (mul_pos (mul_pos hr hsp) him), (mul_pos (mul_pos hq htm) his), (mul_pos hq hM), (mul_pos (mul_pos (mul_pos (mul_pos hr hr) htp) htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hq) htp) htp) hsp), (mul_pos (mul_pos (mul_pos hr hq) htp) hsp), (mul_pos (mul_pos (mul_pos hq htm) hsm) hB), (mul_pos (mul_pos hr htp) hB), (mul_pos (mul_pos (mul_pos hr hq) htp) him), (mul_pos (mul_pos hr hq) htp), (mul_pos (mul_pos (mul_pos hq hq) htm) hip)]⟩)
+    | (left; linarith [(mul_pos (mul_pos hr htm) hsp), (mul_pos (mul_pos hq htm) hsp), (mul_pos (mul_pos hr htp) htm), (mul_pos (mul_pos hq htp) htm), (mul_pos hq htm), (mul_pos hr hsp), (mul_pos (mul_pos hq htm) hT), (mul_pos htm hR), hR, (mul_pos (mul_pos hr htp) him), (mul_pos (mul_pos hq htm) hip), (mul_pos hr htp), (mul_pos (mul_pos hr htp) hism), (mul_pos (mul_pos hr hsp) him), (mul_pos (mul_pos hq htm) his), (mul_pos hq hM), (mul_pos (mul_pos (mul_pos (mul_pos hr hr) htp) htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hq) htp) htp) hsp), (mul_pos (mul_pos (mul_pos hr hq) htp) hsp), (mul_pos (mul_pos hr htp) hB), (mul_pos (mul_pos (mul_pos hr hq) htp) him), (mul_pos (mul_pos hr hq) htp), (mul_pos (mul_pos (mul_pos hq hq) htm) hip)])
+    | (right; refine ⟨by ring, by linarith [(mul_pos (mul_pos hr htm) hsp), (mul_pos (mul_pos hq htm) hsp), (mul_pos (mul_pos hr htp) htm), (mul_pos (mul_pos hq htp) htm), (mul_pos hq htm), (mul_pos hr hsp), (mul_pos (mul_pos hq htm) hT), (mul_pos htm hR), hR, (mul_pos (mul_pos hr htp) him), (mul_pos (mul_pos hq htm) hip), (mul_pos hr htp), (mul_pos (mul_pos hr htp) hism), (mul_pos (mul_pos hr hsp) him), (mul_pos (mul_pos hq htm) his), (mul_pos hq hM), (mul_pos (mul_pos (mul_pos (mul_pos hr hr) htp) htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hq) htp) htp) hsp), (mul_pos (mul_pos (mul_pos hr hq) htp) hsp), (mul_pos (mul_pos hr htp) hB), (mul_pos (mul_pos (mul_pos hr hq) htp) him), (mul_pos (mul_pos hr hq) htp), (mul_pos (mul_pos (mul_pos hq hq) htm) hip)]⟩)
 
 theorem G2_C5z_cyc (tp tm sp sm hp hm kp km r q e : ℝ)
     (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1)
-    (hsm : 0 < sm) (hsm1 : sm < 1) (hr : 0 < r) (hq : 0 < q) (he : 0 < e)
+ (hsm1 : sm < 1) (hr : 0 < r) (hq : 0 < q) (he : 0 < e)
     (ehp : hp = r * tp) (ehm : hm = q * tm) (ekp : kp = (r + e) * sp) (ekm : km = q * sm)
     (roofp : kp * (1 - tp) < hp * (1 - sp)) (roofm : km * (1 - tm) < hm * (1 - sm))
     (hb : q * (1 - tp) < r * tp) :
@@ -567,7 +567,7 @@ theorem G2_C5z_cyc (tp tm sp sm hp hm kp km r q e : ℝ)
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
-    | (left; linarith [(mul_pos (mul_pos hr htm) hsp), (mul_pos (mul_pos he htm) hsp), (mul_pos (mul_pos hq htm) hsp), (mul_pos (mul_pos hr htp) htm), (mul_pos (mul_pos hq htp) htm), (mul_pos hq htm), (mul_pos hr hsp), (mul_pos he hsp), (mul_pos (mul_pos hr hsp) hsm), (mul_pos (mul_pos he hsp) hsm), (mul_pos (mul_pos hq hsp) hsm), (mul_pos (mul_pos hq htm) hT), (mul_pos htm hR), (mul_pos (mul_pos (mul_pos he hsp) htp) him), hR, (mul_pos (mul_pos hq hsm) hT), (mul_pos hsm hR), (mul_pos (mul_pos (mul_pos he hsp) htp) hism), (mul_pos (mul_pos hr htp) him), (mul_pos (mul_pos hq htm) hip), (mul_pos hr htp), (mul_pos (mul_pos hr htp) hism), (mul_pos (mul_pos hq hsm) hip), (mul_pos (mul_pos hr hsp) him), (mul_pos (mul_pos he hsp) him), (mul_pos (mul_pos hq htm) his), (mul_pos hq hM), (mul_pos (mul_pos he htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hr) htp) htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hq) htp) htp) hsp), (mul_pos (mul_pos (mul_pos hr hq) htp) hsp), (mul_pos (mul_pos (mul_pos hq htm) hsm) hB), (mul_pos (mul_pos hr htp) hB), (mul_pos (mul_pos (mul_pos hr hq) htp) him), (mul_pos (mul_pos hr hq) htp), (mul_pos (mul_pos (mul_pos hq hq) htm) hip)])
+    | (left; linarith [(mul_pos (mul_pos hr htm) hsp), (mul_pos (mul_pos he htm) hsp), (mul_pos (mul_pos hq htm) hsp), (mul_pos (mul_pos hr htp) htm), (mul_pos (mul_pos hq htp) htm), (mul_pos hq htm), (mul_pos hr hsp), (mul_pos he hsp), (mul_pos (mul_pos hq htm) hT), (mul_pos htm hR), (mul_pos (mul_pos (mul_pos he hsp) htp) him), hR, (mul_pos (mul_pos (mul_pos he hsp) htp) hism), (mul_pos (mul_pos hr htp) him), (mul_pos (mul_pos hq htm) hip), (mul_pos hr htp), (mul_pos (mul_pos hr htp) hism), (mul_pos (mul_pos hr hsp) him), (mul_pos (mul_pos he hsp) him), (mul_pos (mul_pos hq htm) his), (mul_pos hq hM), (mul_pos (mul_pos he htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hr) htp) htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hq) htp) htp) hsp), (mul_pos (mul_pos (mul_pos hr hq) htp) hsp), (mul_pos (mul_pos hr htp) hB), (mul_pos (mul_pos (mul_pos hr hq) htp) him), (mul_pos (mul_pos hr hq) htp), (mul_pos (mul_pos (mul_pos hq hq) htm) hip)])
 
 theorem G2_C5z_rest2 (tp tm sp sm hp hm kp km r q e : ℝ)
     (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1)
@@ -606,7 +606,7 @@ theorem G2_C5z_rest2 (tp tm sp sm hp hm kp km r q e : ℝ)
 
 theorem G2_C5z_rest4 (tp tm sp sm hp hm kp km r q e : ℝ)
     (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1)
-    (hsm : 0 < sm) (hsm1 : sm < 1) (hr : 0 < r) (hq : 0 < q) (he : 0 < e)
+ (hsm1 : sm < 1) (hr : 0 < r) (hq : 0 < q) (he : 0 < e)
     (ehp : hp = r * tp) (ehm : hm = q * tm) (ekp : kp = (r + e) * sp) (ekm : km = q * sm)
     (roofp : kp * (1 - tp) < hp * (1 - sp)) (roofm : km * (1 - tm) < hm * (1 - sm))
     (hb : q * (1 - tp) < r * tp) :
@@ -636,8 +636,8 @@ theorem G2_C5z_rest4 (tp tm sp sm hp hm kp km r q e : ℝ)
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
-    | (left; linarith [(mul_pos (mul_pos hr htm) hsp), (mul_pos (mul_pos he htm) hsp), (mul_pos (mul_pos hq htm) hsp), (mul_pos (mul_pos hr htp) htm), (mul_pos (mul_pos hq htp) htm), (mul_pos hq htm), (mul_pos hr hsp), (mul_pos he hsp), (mul_pos (mul_pos hr hsp) hsm), (mul_pos (mul_pos he hsp) hsm), (mul_pos (mul_pos hq hsp) hsm), (mul_pos (mul_pos hq htm) hT), (mul_pos htm hR), (mul_pos (mul_pos (mul_pos he hsp) htp) him), hR, (mul_pos (mul_pos hq hsm) hT), (mul_pos hsm hR), (mul_pos (mul_pos (mul_pos he hsp) htp) hism), (mul_pos (mul_pos hr htp) him), (mul_pos (mul_pos hq htm) hip), (mul_pos hr htp), (mul_pos (mul_pos hr htp) hism), (mul_pos (mul_pos hq hsm) hip), (mul_pos (mul_pos hr hsp) him), (mul_pos (mul_pos he hsp) him), (mul_pos (mul_pos hq htm) his), (mul_pos hq hM), (mul_pos (mul_pos he htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hr) htp) htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hq) htp) htp) hsp), (mul_pos (mul_pos (mul_pos hr hq) htp) hsp), (mul_pos (mul_pos (mul_pos hq htm) hsm) hB), (mul_pos (mul_pos hr htp) hB), (mul_pos (mul_pos (mul_pos hr hq) htp) him), (mul_pos (mul_pos hr hq) htp), (mul_pos (mul_pos (mul_pos hq hq) htm) hip)])
-    | (right; refine ⟨by ring, by linarith [(mul_pos (mul_pos hr htm) hsp), (mul_pos (mul_pos he htm) hsp), (mul_pos (mul_pos hq htm) hsp), (mul_pos (mul_pos hr htp) htm), (mul_pos (mul_pos hq htp) htm), (mul_pos hq htm), (mul_pos hr hsp), (mul_pos he hsp), (mul_pos (mul_pos hr hsp) hsm), (mul_pos (mul_pos he hsp) hsm), (mul_pos (mul_pos hq hsp) hsm), (mul_pos (mul_pos hq htm) hT), (mul_pos htm hR), (mul_pos (mul_pos (mul_pos he hsp) htp) him), hR, (mul_pos (mul_pos hq hsm) hT), (mul_pos hsm hR), (mul_pos (mul_pos (mul_pos he hsp) htp) hism), (mul_pos (mul_pos hr htp) him), (mul_pos (mul_pos hq htm) hip), (mul_pos hr htp), (mul_pos (mul_pos hr htp) hism), (mul_pos (mul_pos hq hsm) hip), (mul_pos (mul_pos hr hsp) him), (mul_pos (mul_pos he hsp) him), (mul_pos (mul_pos hq htm) his), (mul_pos hq hM), (mul_pos (mul_pos he htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hr) htp) htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hq) htp) htp) hsp), (mul_pos (mul_pos (mul_pos hr hq) htp) hsp), (mul_pos (mul_pos (mul_pos hq htm) hsm) hB), (mul_pos (mul_pos hr htp) hB), (mul_pos (mul_pos (mul_pos hr hq) htp) him), (mul_pos (mul_pos hr hq) htp), (mul_pos (mul_pos (mul_pos hq hq) htm) hip)]⟩)
+    | (left; linarith [(mul_pos (mul_pos hr htm) hsp), (mul_pos (mul_pos he htm) hsp), (mul_pos (mul_pos hq htm) hsp), (mul_pos (mul_pos hr htp) htm), (mul_pos (mul_pos hq htp) htm), (mul_pos hq htm), (mul_pos hr hsp), (mul_pos he hsp), (mul_pos (mul_pos hq htm) hT), (mul_pos htm hR), (mul_pos (mul_pos (mul_pos he hsp) htp) him), hR, (mul_pos (mul_pos (mul_pos he hsp) htp) hism), (mul_pos (mul_pos hr htp) him), (mul_pos (mul_pos hq htm) hip), (mul_pos hr htp), (mul_pos (mul_pos hr htp) hism), (mul_pos (mul_pos hr hsp) him), (mul_pos (mul_pos he hsp) him), (mul_pos (mul_pos hq htm) his), (mul_pos hq hM), (mul_pos (mul_pos he htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hr) htp) htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hq) htp) htp) hsp), (mul_pos (mul_pos (mul_pos hr hq) htp) hsp), (mul_pos (mul_pos hr htp) hB), (mul_pos (mul_pos (mul_pos hr hq) htp) him), (mul_pos (mul_pos hr hq) htp), (mul_pos (mul_pos (mul_pos hq hq) htm) hip)])
+    | (right; refine ⟨by ring, by linarith [(mul_pos (mul_pos hr htm) hsp), (mul_pos (mul_pos he htm) hsp), (mul_pos (mul_pos hq htm) hsp), (mul_pos (mul_pos hr htp) htm), (mul_pos (mul_pos hq htp) htm), (mul_pos hq htm), (mul_pos hr hsp), (mul_pos he hsp), (mul_pos (mul_pos hq htm) hT), (mul_pos htm hR), (mul_pos (mul_pos (mul_pos he hsp) htp) him), hR, (mul_pos (mul_pos (mul_pos he hsp) htp) hism), (mul_pos (mul_pos hr htp) him), (mul_pos (mul_pos hq htm) hip), (mul_pos hr htp), (mul_pos (mul_pos hr htp) hism), (mul_pos (mul_pos hr hsp) him), (mul_pos (mul_pos he hsp) him), (mul_pos (mul_pos hq htm) his), (mul_pos hq hM), (mul_pos (mul_pos he htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hr) htp) htp) hsp), (mul_pos (mul_pos (mul_pos (mul_pos hr hq) htp) htp) hsp), (mul_pos (mul_pos (mul_pos hr hq) htp) hsp), (mul_pos (mul_pos hr htp) hB), (mul_pos (mul_pos (mul_pos hr hq) htp) him), (mul_pos (mul_pos hr hq) htp), (mul_pos (mul_pos (mul_pos hq hq) htm) hip)]⟩)
 
 /-! ### Group 2: Theorem 2, C5 and C6 -/
 
@@ -662,14 +662,14 @@ theorem t31_C5z (hα : F.a12 < F.a11) (hm : F.S.am = F.S.cm) (hp : F.S.ap < F.S.
   refine F.toFrame7.rupert_rim5v 6 5 1 0 3 ⟨F.S.tm, 0, -F.S.hm⟩ ⟨0, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩ ⟨F.S.tp, 0, F.S.hp⟩ ⟨1, 0, 0⟩
     p6 p5 p1 p0 p3 (-1) (Or.inr rfl) ⟨1, -1, 0⟩
     ⟨-(F.S.ap * F.S.tp + F.S.am * (1 - F.S.tp)), 0, 2 * F.S.am * F.S.ap * F.S.tp⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
-  · exact G2_C5z_cyc F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap F.S.am (F.S.cp - F.S.ap) F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt F.S.ap_pos F.S.am_pos (sub_pos.2 hp) F.S.ap_mul.symm F.S.am_mul.symm (by rw [add_sub_cancel]; exact F.S.cp_mul.symm) (by rw [hm]; exact F.S.cm_mul.symm) F.S.roof_p' F.S.roof_m' hb'
+  · exact G2_C5z_cyc F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap F.S.am (F.S.cp - F.S.ap) F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_lt F.S.ap_pos F.S.am_pos (sub_pos.2 hp) F.S.ap_mul.symm F.S.am_mul.symm (by rw [add_sub_cancel]; exact F.S.cp_mul.symm) (by rw [hm]; exact F.S.cm_mul.symm) F.S.roof_p' F.S.roof_m' hb'
   · intro j' h0 h1 h2 h3 h4 i
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · exact absurd rfl h3
     · exact absurd rfl h2
     · rw [p2]; exact G2_C5z_rest2 F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap F.S.am (F.S.cp - F.S.ap) F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt F.S.ap_pos F.S.am_pos (sub_pos.2 hp) F.S.ap_mul.symm F.S.am_mul.symm (by rw [add_sub_cancel]; exact F.S.cp_mul.symm) (by rw [hm]; exact F.S.cm_mul.symm) F.S.roof_p' F.S.roof_m' hb' i
     · exact absurd rfl h4
-    · rw [p4]; exact G2_C5z_rest4 F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap F.S.am (F.S.cp - F.S.ap) F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt F.S.ap_pos F.S.am_pos (sub_pos.2 hp) F.S.ap_mul.symm F.S.am_mul.symm (by rw [add_sub_cancel]; exact F.S.cp_mul.symm) (by rw [hm]; exact F.S.cm_mul.symm) F.S.roof_p' F.S.roof_m' hb' i
+    · rw [p4]; exact G2_C5z_rest4 F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap F.S.am (F.S.cp - F.S.ap) F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_lt F.S.ap_pos F.S.am_pos (sub_pos.2 hp) F.S.ap_mul.symm F.S.am_mul.symm (by rw [add_sub_cancel]; exact F.S.cp_mul.symm) (by rw [hm]; exact F.S.cm_mul.symm) F.S.roof_p' F.S.roof_m' hb' i
     · exact absurd rfl h1
     · exact absurd rfl h0
   · set Pq : ZMod 5 → C3 := quint ⟨F.S.tm, 0, -F.S.hm⟩ ⟨0, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩ ⟨F.S.tp, 0, F.S.hp⟩ ⟨1, 0, 0⟩ with hPq
@@ -713,14 +713,14 @@ theorem t31_C6 (hα : F.a12 < F.a11) (hp : F.S.ap = F.S.cp) (hm : F.S.am = F.S.c
   refine F.toFrame7.rupert_rim5v 6 5 1 0 3 ⟨F.S.tm, 0, -F.S.hm⟩ ⟨0, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩ ⟨F.S.tp, 0, F.S.hp⟩ ⟨1, 0, 0⟩
     p6 p5 p1 p0 p3 (-1) (Or.inr rfl) ⟨1, -1, 0⟩
     ⟨-(F.S.ap * F.S.tp + F.S.am * (1 - F.S.tp)), 0, 2 * F.S.am * F.S.ap * F.S.tp⟩ (Or.inl one_ne_zero) ?_ ?_ ?_
-  · exact G2_C6_cyc F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap F.S.am F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt F.S.ap_pos F.S.am_pos F.S.ap_mul.symm F.S.am_mul.symm (by rw [hp]; exact F.S.cp_mul.symm) (by rw [hm]; exact F.S.cm_mul.symm) F.S.roof_p' F.S.roof_m' hb'
+  · exact G2_C6_cyc F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap F.S.am F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_lt F.S.ap_pos F.S.am_pos F.S.ap_mul.symm F.S.am_mul.symm (by rw [hp]; exact F.S.cp_mul.symm) (by rw [hm]; exact F.S.cm_mul.symm) F.S.roof_p' F.S.roof_m' hb'
   · intro j' h0 h1 h2 h3 h4 i
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · exact absurd rfl h3
     · exact absurd rfl h2
     · rw [p2]; exact G2_C6_rest2 F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap F.S.am F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt F.S.ap_pos F.S.am_pos F.S.ap_mul.symm F.S.am_mul.symm (by rw [hp]; exact F.S.cp_mul.symm) (by rw [hm]; exact F.S.cm_mul.symm) F.S.roof_p' F.S.roof_m' hb' i
     · exact absurd rfl h4
-    · rw [p4]; exact G2_C6_rest4 F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap F.S.am F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt F.S.ap_pos F.S.am_pos F.S.ap_mul.symm F.S.am_mul.symm (by rw [hp]; exact F.S.cp_mul.symm) (by rw [hm]; exact F.S.cm_mul.symm) F.S.roof_p' F.S.roof_m' hb' i
+    · rw [p4]; exact G2_C6_rest4 F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap F.S.am F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_lt F.S.ap_pos F.S.am_pos F.S.ap_mul.symm F.S.am_mul.symm (by rw [hp]; exact F.S.cp_mul.symm) (by rw [hm]; exact F.S.cm_mul.symm) F.S.roof_p' F.S.roof_m' hb' i
     · exact absurd rfl h1
     · exact absurd rfl h0
   · set Pq : ZMod 5 → C3 := quint ⟨F.S.tm, 0, -F.S.hm⟩ ⟨0, 0, 0⟩ ⟨0, F.S.sp, F.S.kp⟩ ⟨F.S.tp, 0, F.S.hp⟩ ⟨1, 0, 0⟩ with hPq
@@ -745,8 +745,8 @@ theorem t31_C6 (hα : F.a12 < F.a11) (hp : F.S.ap = F.S.cp) (hm : F.S.am = F.S.c
 /-- Statement helper for `tB_merged`: the points of the rim and the tilt, in raw reals
 (`hp = r tp`, `hm = r (1 - tm)`, `kp = (r + e) sp`). -/
 theorem G3_cyc (tp tm sp sm hp hm kp km r e : ℝ)
-    (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1)
-    (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (hr : 0 < r) (he : 0 < e)
+    (htp : 0 < tp) (htp1 : tp < 1) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1)
+ (hsm1 : sm < 1) (hr : 0 < r) (he : 0 < e)
     (ehp : hp = r * tp) (ehm : hm = r * (1 - tm)) (ekp : kp = (r + e) * sp)
     (roofm : km * (1 - tm) < hm * (1 - sm)) :
     ∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
@@ -771,10 +771,10 @@ theorem G3_cyc (tp tm sp sm hp hm kp km r e : ℝ)
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
-    | (left; linarith [(mul_pos htp hr), (mul_pos (mul_pos htp hsp) hr), (mul_pos (mul_pos htp hsp) he), (mul_pos (mul_pos htp hsm) hr), (mul_pos htp hK), (mul_pos (mul_pos (mul_pos htp hsp) hr) hism), (mul_pos (mul_pos (mul_pos htp hsp) he) hism), (mul_pos (mul_pos htp hkm) his), (mul_pos (mul_pos (mul_pos htp hsp) hsm) hr), (mul_pos (mul_pos (mul_pos htp hsp) hsm) he), (mul_pos (mul_pos htp hsp) hkm), (mul_pos (mul_pos htp hr) hr), (mul_pos (mul_pos hr hr) him), (mul_pos (mul_pos hr he) him), (mul_pos (mul_pos (mul_pos htp hsp) hr) he), (mul_pos (mul_pos htp hsm) (mul_pos hr hr)), (mul_pos (mul_pos htp hsm) (mul_pos hr he)), (mul_pos (mul_pos htp hr) hkm), (mul_pos hr hkm), (mul_pos (mul_pos htp hr) he), (mul_pos htp (mul_pos hr hr)), (mul_pos (mul_pos htp hr) hr), (mul_pos hr hr), (mul_pos htm hr), (mul_pos (mul_pos htm hsp) (mul_pos hr he)), (mul_pos (mul_pos htm hr) he)])
+    | (left; linarith [(mul_pos htp hr), (mul_pos (mul_pos htp hsp) hr), (mul_pos (mul_pos htp hsp) he), (mul_pos htp hK), (mul_pos (mul_pos (mul_pos htp hsp) hr) hism), (mul_pos (mul_pos (mul_pos htp hsp) he) hism), (mul_pos (mul_pos htp hr) hr), (mul_pos (mul_pos hr hr) him), (mul_pos (mul_pos hr he) him), (mul_pos (mul_pos (mul_pos htp hsp) hr) he), (mul_pos (mul_pos htp hr) he), (mul_pos htp (mul_pos hr hr)), (mul_pos (mul_pos htp hr) hr), (mul_pos hr hr)])
 
 theorem G3_rest2 (tp tm sp sm hp hm kp km r e : ℝ)
-    (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1)
+    (htp : 0 < tp) (htp1 : tp < 1) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1)
     (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (hr : 0 < r) (he : 0 < e)
     (ehp : hp = r * tp) (ehm : hm = r * (1 - tm)) (ekp : kp = (r + e) * sp)
     (roofm : km * (1 - tm) < hm * (1 - sm)) :
@@ -797,11 +797,11 @@ theorem G3_rest2 (tp tm sp sm hp hm kp km r e : ℝ)
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
-    | (left; linarith [(mul_pos htp hr), (mul_pos (mul_pos htp hsp) hr), (mul_pos (mul_pos htp hsp) he), (mul_pos (mul_pos htp hsm) hr), (mul_pos htp hK), (mul_pos (mul_pos (mul_pos htp hsp) hr) hism), (mul_pos (mul_pos (mul_pos htp hsp) he) hism), (mul_pos (mul_pos htp hkm) his), (mul_pos (mul_pos (mul_pos htp hsp) hsm) hr), (mul_pos (mul_pos (mul_pos htp hsp) hsm) he), (mul_pos (mul_pos htp hsp) hkm), (mul_pos (mul_pos htp hr) hr), (mul_pos (mul_pos hr hr) him), (mul_pos (mul_pos hr he) him), (mul_pos (mul_pos (mul_pos htp hsp) hr) he), (mul_pos (mul_pos htp hsm) (mul_pos hr hr)), (mul_pos (mul_pos htp hsm) (mul_pos hr he)), (mul_pos (mul_pos htp hr) hkm), (mul_pos hr hkm), (mul_pos (mul_pos htp hr) he), (mul_pos htp (mul_pos hr hr)), (mul_pos (mul_pos htp hr) hr), (mul_pos hr hr), (mul_pos htm hr), (mul_pos (mul_pos htm hsp) (mul_pos hr he)), (mul_pos (mul_pos htm hr) he)])
+    | (left; linarith [(mul_pos htp hr), (mul_pos (mul_pos htp hsp) hr), (mul_pos (mul_pos htp hsp) he), (mul_pos (mul_pos htp hsm) hr), (mul_pos htp hK), (mul_pos (mul_pos (mul_pos htp hsp) hr) hism), (mul_pos (mul_pos (mul_pos htp hsp) he) hism), (mul_pos (mul_pos htp hkm) his), (mul_pos (mul_pos (mul_pos htp hsp) hsm) hr), (mul_pos (mul_pos (mul_pos htp hsp) hsm) he), (mul_pos (mul_pos htp hsp) hkm), (mul_pos (mul_pos htp hr) hr), (mul_pos (mul_pos hr hr) him), (mul_pos (mul_pos hr he) him), (mul_pos (mul_pos (mul_pos htp hsp) hr) he), (mul_pos (mul_pos htp hsm) (mul_pos hr hr)), (mul_pos (mul_pos htp hsm) (mul_pos hr he)), (mul_pos (mul_pos htp hr) hkm), (mul_pos hr hkm), (mul_pos (mul_pos htp hr) he), (mul_pos htp (mul_pos hr hr)), (mul_pos (mul_pos htp hr) hr), (mul_pos hr hr)])
 
 theorem G3_rest5 (tp tm sp sm hp hm kp km r e : ℝ)
-    (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1)
-    (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (hr : 0 < r) (he : 0 < e)
+    (htp : 0 < tp) (htp1 : tp < 1) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1)
+ (hsm1 : sm < 1) (hr : 0 < r) (he : 0 < e)
     (ehp : hp = r * tp) (ehm : hm = r * (1 - tm)) (ekp : kp = (r + e) * sp)
     (roofm : km * (1 - tm) < hm * (1 - sm)) :
     ∀ i : ZMod 4,
@@ -823,12 +823,12 @@ theorem G3_rest5 (tp tm sp sm hp hm kp km r e : ℝ)
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
-    | (left; linarith [(mul_pos htp hr), (mul_pos (mul_pos htp hsp) hr), (mul_pos (mul_pos htp hsp) he), (mul_pos (mul_pos htp hsm) hr), (mul_pos htp hK), (mul_pos (mul_pos (mul_pos htp hsp) hr) hism), (mul_pos (mul_pos (mul_pos htp hsp) he) hism), (mul_pos (mul_pos htp hkm) his), (mul_pos (mul_pos (mul_pos htp hsp) hsm) hr), (mul_pos (mul_pos (mul_pos htp hsp) hsm) he), (mul_pos (mul_pos htp hsp) hkm), (mul_pos (mul_pos htp hr) hr), (mul_pos (mul_pos hr hr) him), (mul_pos (mul_pos hr he) him), (mul_pos (mul_pos (mul_pos htp hsp) hr) he), (mul_pos (mul_pos htp hsm) (mul_pos hr hr)), (mul_pos (mul_pos htp hsm) (mul_pos hr he)), (mul_pos (mul_pos htp hr) hkm), (mul_pos hr hkm), (mul_pos (mul_pos htp hr) he), (mul_pos htp (mul_pos hr hr)), (mul_pos (mul_pos htp hr) hr), (mul_pos hr hr), (mul_pos htm hr), (mul_pos (mul_pos htm hsp) (mul_pos hr he)), (mul_pos (mul_pos htm hr) he)])
-    | (right; refine ⟨by ring, by linarith [(mul_pos htp hr), (mul_pos (mul_pos htp hsp) hr), (mul_pos (mul_pos htp hsp) he), (mul_pos (mul_pos htp hsm) hr), (mul_pos htp hK), (mul_pos (mul_pos (mul_pos htp hsp) hr) hism), (mul_pos (mul_pos (mul_pos htp hsp) he) hism), (mul_pos (mul_pos htp hkm) his), (mul_pos (mul_pos (mul_pos htp hsp) hsm) hr), (mul_pos (mul_pos (mul_pos htp hsp) hsm) he), (mul_pos (mul_pos htp hsp) hkm), (mul_pos (mul_pos htp hr) hr), (mul_pos (mul_pos hr hr) him), (mul_pos (mul_pos hr he) him), (mul_pos (mul_pos (mul_pos htp hsp) hr) he), (mul_pos (mul_pos htp hsm) (mul_pos hr hr)), (mul_pos (mul_pos htp hsm) (mul_pos hr he)), (mul_pos (mul_pos htp hr) hkm), (mul_pos hr hkm), (mul_pos (mul_pos htp hr) he), (mul_pos htp (mul_pos hr hr)), (mul_pos (mul_pos htp hr) hr), (mul_pos hr hr), (mul_pos htm hr), (mul_pos (mul_pos htm hsp) (mul_pos hr he)), (mul_pos (mul_pos htm hr) he)]⟩)
+    | (left; linarith [(mul_pos htp hr), (mul_pos (mul_pos htp hsp) hr), (mul_pos (mul_pos htp hsp) he), (mul_pos htp hK), (mul_pos (mul_pos (mul_pos htp hsp) hr) hism), (mul_pos (mul_pos (mul_pos htp hsp) he) hism), (mul_pos (mul_pos htp hr) hr), (mul_pos (mul_pos hr hr) him), (mul_pos (mul_pos hr he) him), (mul_pos (mul_pos (mul_pos htp hsp) hr) he), (mul_pos (mul_pos htp hr) he), (mul_pos htp (mul_pos hr hr)), (mul_pos (mul_pos htp hr) hr), (mul_pos hr hr)])
+    | (right; refine ⟨by ring, by linarith [(mul_pos htp hr), (mul_pos (mul_pos htp hsp) hr), (mul_pos (mul_pos htp hsp) he), (mul_pos htp hK), (mul_pos (mul_pos (mul_pos htp hsp) hr) hism), (mul_pos (mul_pos (mul_pos htp hsp) he) hism), (mul_pos (mul_pos htp hr) hr), (mul_pos (mul_pos hr hr) him), (mul_pos (mul_pos hr he) him), (mul_pos (mul_pos (mul_pos htp hsp) hr) he), (mul_pos (mul_pos htp hr) he), (mul_pos htp (mul_pos hr hr)), (mul_pos (mul_pos htp hr) hr), (mul_pos hr hr)]⟩)
 
 theorem G3_rest6 (tp tm sp sm hp hm kp km r e : ℝ)
-    (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1)
-    (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (hr : 0 < r) (he : 0 < e)
+    (htp : 0 < tp) (htp1 : tp < 1) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1)
+ (hsm1 : sm < 1) (hr : 0 < r) (he : 0 < e)
     (ehp : hp = r * tp) (ehm : hm = r * (1 - tm)) (ekp : kp = (r + e) * sp)
     (roofm : km * (1 - tm) < hm * (1 - sm)) :
     ∀ i : ZMod 4,
@@ -850,8 +850,8 @@ theorem G3_rest6 (tp tm sp sm hp hm kp km r e : ℝ)
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     first
-    | (left; linarith [(mul_pos htp hr), (mul_pos (mul_pos htp hsp) hr), (mul_pos (mul_pos htp hsp) he), (mul_pos (mul_pos htp hsm) hr), (mul_pos htp hK), (mul_pos (mul_pos (mul_pos htp hsp) hr) hism), (mul_pos (mul_pos (mul_pos htp hsp) he) hism), (mul_pos (mul_pos htp hkm) his), (mul_pos (mul_pos (mul_pos htp hsp) hsm) hr), (mul_pos (mul_pos (mul_pos htp hsp) hsm) he), (mul_pos (mul_pos htp hsp) hkm), (mul_pos (mul_pos htp hr) hr), (mul_pos (mul_pos hr hr) him), (mul_pos (mul_pos hr he) him), (mul_pos (mul_pos (mul_pos htp hsp) hr) he), (mul_pos (mul_pos htp hsm) (mul_pos hr hr)), (mul_pos (mul_pos htp hsm) (mul_pos hr he)), (mul_pos (mul_pos htp hr) hkm), (mul_pos hr hkm), (mul_pos (mul_pos htp hr) he), (mul_pos htp (mul_pos hr hr)), (mul_pos (mul_pos htp hr) hr), (mul_pos hr hr), (mul_pos htm hr), (mul_pos (mul_pos htm hsp) (mul_pos hr he)), (mul_pos (mul_pos htm hr) he)])
-    | (right; refine ⟨by ring, by linarith [(mul_pos htp hr), (mul_pos (mul_pos htp hsp) hr), (mul_pos (mul_pos htp hsp) he), (mul_pos (mul_pos htp hsm) hr), (mul_pos htp hK), (mul_pos (mul_pos (mul_pos htp hsp) hr) hism), (mul_pos (mul_pos (mul_pos htp hsp) he) hism), (mul_pos (mul_pos htp hkm) his), (mul_pos (mul_pos (mul_pos htp hsp) hsm) hr), (mul_pos (mul_pos (mul_pos htp hsp) hsm) he), (mul_pos (mul_pos htp hsp) hkm), (mul_pos (mul_pos htp hr) hr), (mul_pos (mul_pos hr hr) him), (mul_pos (mul_pos hr he) him), (mul_pos (mul_pos (mul_pos htp hsp) hr) he), (mul_pos (mul_pos htp hsm) (mul_pos hr hr)), (mul_pos (mul_pos htp hsm) (mul_pos hr he)), (mul_pos (mul_pos htp hr) hkm), (mul_pos hr hkm), (mul_pos (mul_pos htp hr) he), (mul_pos htp (mul_pos hr hr)), (mul_pos (mul_pos htp hr) hr), (mul_pos hr hr), (mul_pos htm hr), (mul_pos (mul_pos htm hsp) (mul_pos hr he)), (mul_pos (mul_pos htm hr) he)]⟩)
+    | (left; linarith [(mul_pos htp hr), (mul_pos (mul_pos htp hsp) hr), (mul_pos (mul_pos htp hsp) he), (mul_pos htp hK), (mul_pos (mul_pos (mul_pos htp hsp) hr) hism), (mul_pos (mul_pos (mul_pos htp hsp) he) hism), (mul_pos (mul_pos htp hr) hr), (mul_pos (mul_pos hr hr) him), (mul_pos (mul_pos hr he) him), (mul_pos (mul_pos (mul_pos htp hsp) hr) he), (mul_pos (mul_pos htp hr) he), (mul_pos htp (mul_pos hr hr)), (mul_pos (mul_pos htp hr) hr), (mul_pos hr hr)])
+    | (right; refine ⟨by ring, by linarith [(mul_pos htp hr), (mul_pos (mul_pos htp hsp) hr), (mul_pos (mul_pos htp hsp) he), (mul_pos htp hK), (mul_pos (mul_pos (mul_pos htp hsp) hr) hism), (mul_pos (mul_pos (mul_pos htp hsp) he) hism), (mul_pos (mul_pos htp hr) hr), (mul_pos (mul_pos hr hr) him), (mul_pos (mul_pos hr he) him), (mul_pos (mul_pos (mul_pos htp hsp) hr) he), (mul_pos (mul_pos htp hr) he), (mul_pos htp (mul_pos hr hr)), (mul_pos (mul_pos htp hr) hr), (mul_pos hr hr)]⟩)
 
 /-- **Theorem 3, `Z`-image form** (`a+ = b-`, `a+ < c+`): view `u = m1+ = (t+, 0, h+)` (that of `tB`),
 rim `(m1+, xa, xb, m2+)`, tilt `(-(h+ + t+ c+)/(2h+), 1, 0)` (scaled: `(-(2 a+ + e), 2 a+, 0)`,
@@ -876,16 +876,16 @@ theorem tB_merged (hα : F.a12 < F.a11) (hab : F.S.ap = F.S.bm) (hc : F.S.ap < F
   refine F.toFrame7.rupert_rim4 0 3 4 1 ⟨F.S.tp, 0, F.S.hp⟩ ⟨1, 0, 0⟩ ⟨0, 1, 0⟩ ⟨0, F.S.sp, F.S.kp⟩
     p0 p3 p4 p1 1 (Or.inl rfl) ⟨F.S.tp, 0, F.S.hp⟩
     ⟨-(2 * F.S.ap + (F.S.cp - F.S.ap)), 2 * F.S.ap, 0⟩ (Or.inl htp.ne') ?_ ?_ ?_
-  · exact G3_cyc F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap (F.S.cp - F.S.ap) F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt F.S.km_pos F.S.ap_pos (sub_pos.2 hc) F.S.ap_mul.symm ehm ekp F.S.roof_m'
+  · exact G3_cyc F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap (F.S.cp - F.S.ap) F.S.tp_pos F.S.tp_lt F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_lt F.S.ap_pos (sub_pos.2 hc) F.S.ap_mul.symm ehm ekp F.S.roof_m'
   · intro j' h0 h1 h2 h3 i
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · exact absurd rfl h0
     · exact absurd rfl h3
-    · rw [p2]; exact G3_rest2 F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap (F.S.cp - F.S.ap) F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt F.S.km_pos F.S.ap_pos (sub_pos.2 hc) F.S.ap_mul.symm ehm ekp F.S.roof_m' i
+    · rw [p2]; exact G3_rest2 F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap (F.S.cp - F.S.ap) F.S.tp_pos F.S.tp_lt F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt F.S.km_pos F.S.ap_pos (sub_pos.2 hc) F.S.ap_mul.symm ehm ekp F.S.roof_m' i
     · exact absurd rfl h1
     · exact absurd rfl h2
-    · rw [p5]; exact G3_rest5 F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap (F.S.cp - F.S.ap) F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt F.S.km_pos F.S.ap_pos (sub_pos.2 hc) F.S.ap_mul.symm ehm ekp F.S.roof_m' i
-    · rw [p6]; exact G3_rest6 F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap (F.S.cp - F.S.ap) F.S.tp_pos F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt F.S.km_pos F.S.ap_pos (sub_pos.2 hc) F.S.ap_mul.symm ehm ekp F.S.roof_m' i
+    · rw [p5]; exact G3_rest5 F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap (F.S.cp - F.S.ap) F.S.tp_pos F.S.tp_lt F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_lt F.S.ap_pos (sub_pos.2 hc) F.S.ap_mul.symm ehm ekp F.S.roof_m' i
+    · rw [p6]; exact G3_rest6 F.S.tp F.S.tm F.S.sp F.S.sm F.S.hp F.S.hm F.S.kp F.S.km F.S.ap (F.S.cp - F.S.ap) F.S.tp_pos F.S.tp_lt F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_lt F.S.ap_pos (sub_pos.2 hc) F.S.ap_mul.symm ehm ekp F.S.roof_m' i
   · set Pq : ZMod 4 → C3 := quad ⟨F.S.tp, 0, F.S.hp⟩ ⟨1, 0, 0⟩ ⟨0, 1, 0⟩ ⟨0, F.S.sp, F.S.kp⟩ with hPq
     set zz : ZMod 4 → ℝ := fun i => F.toFrame7.GG (Pq i) ⟨F.S.tp, 0, F.S.hp⟩ with hzz
     set ww : ZMod 4 → ℝ := fun i => F.toFrame7.GG (Pq i) ⟨-(2 * F.S.ap + (F.S.cp - F.S.ap)), 2 * F.S.ap, 0⟩ with hww
