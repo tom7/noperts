@@ -32,7 +32,7 @@ theorem mir_mir (v : ℝ³) : mir (mir v) = v := by
 
 /-- The reflection is additive. -/
 theorem mir_sub (a b : ℝ³) : mir (a - b) = mir a - mir b := by
-  ext i; fin_cases i <;> simp [mir] <;> ring
+  ext i; fin_cases i <;> simp [mir]; ring
 
 /-- The reflection preserves inner products. -/
 theorem mir_inner (a b : ℝ³) : ⟪mir a, mir b⟫ = ⟪a, b⟫ := by
