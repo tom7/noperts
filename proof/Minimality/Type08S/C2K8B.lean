@@ -84,8 +84,7 @@ theorem k8q1p_rest {D β1 γ4 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hβ1 : 0 < �
        first
        | (left; nlinarith)
        | (right; refine ⟨by ring, by nlinarith⟩))
-  · 
-    obtain ⟨s0, s1, s2, s3, s4⟩ := z5_add
+  · obtain ⟨s0, s1, s2, s3, s4⟩ := z5_add
     have k1 := hD
     have kb1 := mul_pos hD hβ1
     have kb6 := mul_pos hD (by linarith : (0:ℝ) < β6)

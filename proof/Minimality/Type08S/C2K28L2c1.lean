@@ -69,7 +69,6 @@ theorem k28l2a0_tsc {D α1 β1 β6 γ6 ρ v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 < 
             k28l2aY_3, k28l2aY_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
          | (left; apply mul_pos hD; nlinarith [mul_pos p1 x1, mul_pos p2 x2, mul_pos p2 hρ, mul_pos p1 hρ, mul_pos p3 hρ,  mul_pos p2 p0, mul_pos p1 p3, mul_pos (mul_pos p1 g1) hρ, mul_pos p2 x1, mul_pos p1 x2, mul_pos p1 s1, mul_pos hρ s1, mul_pos p0 B1, mul_pos B1 hρ, mul_pos (mul_pos p3 b1) hρ, mul_pos p0 a1, mul_pos a1 p2, mul_pos p1 a1])
-         | (left; nlinarith)
          | (right; refine ⟨by ring, ?_⟩; apply mul_pos hD; nlinarith [mul_pos p1 hv2, mul_pos p0 hv2, mul_pos hv2 b1])
          | (right; refine ⟨by ring, ?_⟩; apply mul_pos hD; nlinarith [mul_pos b1 gB, mul_pos (mul_pos p1 b1) gB, mul_pos b1 gA]))
   · intro t ht i
@@ -80,9 +79,7 @@ theorem k28l2a0_tsc {D α1 β1 β6 γ6 ρ v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 < 
             k28l2aY_3, k28l2aY_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
        | (left; apply mul_pos hD; nlinarith [mul_pos p1 x1, mul_pos p2 x2, mul_pos p2 hρ, mul_pos p1 hρ, mul_pos p3 hρ,  mul_pos p2 p0, mul_pos p1 p3, mul_pos (mul_pos p1 g1) hρ, mul_pos p2 x1, mul_pos p1 x2, mul_pos p1 s1, mul_pos hρ s1, mul_pos p0 B1, mul_pos B1 hρ, mul_pos (mul_pos p3 b1) hρ, mul_pos p0 a1, mul_pos a1 p2, mul_pos p1 a1])
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, ?_⟩; apply mul_pos hD; nlinarith [mul_pos p1 hv2, mul_pos p0 hv2, mul_pos hv2 b1])
-         | (right; refine ⟨by ring, ?_⟩; apply mul_pos hD; nlinarith [mul_pos b1 gB, mul_pos (mul_pos p1 b1) gB, mul_pos b1 gA]))
+       | (right; refine ⟨by ring, ?_⟩; apply mul_pos hD; nlinarith [mul_pos p1 hv2, mul_pos p0 hv2, mul_pos hv2 b1]))
 
 end C2
 end Type08Sp

@@ -163,7 +163,7 @@ theorem isRupert_box_of_facets (F : S0xFac 9 s0x_S24 x) (hP : x 3 = x 4 + x 5 - 
   convert hbox using 2
   funext i
   fin_cases i
-  · ext j; fin_cases j <;> simp [boxCfg, X0, Y0, Z0]
+  · ext j; fin_cases j <;> simp [boxCfg]
   · ext j; fin_cases j <;> simp [boxCfg, hX1, hZ1, ← hY1]
   · ext j; fin_cases j <;> simp [boxCfg, X2, Z2, ← hy2d]
   · ext j; fin_cases j <;> simp [boxCfg, X3, Y3, Z3]

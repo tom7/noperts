@@ -28,7 +28,7 @@ theorem lex_core {x : Fin 7 → ℝ³} (F : S0xFac 8 S21 x) (hx : Function.Injec
     (hno : ∀ l ∈ lexLits e pp mask d ep zi cyc, evalL (rho (geoF F)) l = false) :
     IsRupert (univ.image x) := by
   set L := patCyc.getD pp [] with hL
-  haveI : NeZero L.length := ⟨by omega⟩
+  have : NeZero L.length := ⟨by omega⟩
   obtain ⟨hk3, hinj, hcycOK⟩ := cycFacts (k := L.length) rfl hcyc
   set u := (geoF F).vv e with hu
   set δ := (geoF F).dv d with hδ

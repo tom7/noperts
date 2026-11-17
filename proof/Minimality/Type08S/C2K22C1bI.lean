@@ -64,7 +64,7 @@ theorem k22c1b_cellF2 {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 : ℝ}
         first
         | rfl
         | (exfalso
-           simp only [k22c1bF2_0, k22c1bF2_1, k22c1bF2_2, k22c1bF2_3, k22c1bF2_4, Prod.mk.injEq] at h <;>
+           simp only [k22c1bF2_0, k22c1bF2_1, k22c1bF2_2, k22c1bF2_3, k22c1bF2_4, Prod.mk.injEq] at h
            first
            | linarith
            | (obtain ⟨h1, h2, h3⟩ := h; linarith)

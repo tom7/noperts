@@ -50,14 +50,14 @@ theorem k34lw_P_ts {α1 β1 γ6 ν : ℝ} (hα1 : 1 < α1) (hβ1 : 1 < β1) (hγ
       · exact absurd rfl h1
       · exact (h2 (by decide)).elim
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxe4, lxf0, lxf1, lxf2, lxf3, lxf4, k34lw_P_Y_0, k34lw_P_Y_1, k34lw_P_Y_2, k34lw_P_Y_3, k34lw_P_Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
-        refine lexkPos_tail (by ring1) ?_; exact lexkPos_head (by linear_combination 0)
+        refine lexkPos_tail (by ring1) ?_; exact lexkPos_head (by linear_combination)
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxe4, lxf0, lxf1, lxf2, lxf3, lxf4, k34lw_P_Y_0, k34lw_P_Y_1, k34lw_P_Y_2, k34lw_P_Y_3, k34lw_P_Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
         exact lexkPos_head (by linear_combination 1 * hγ6)
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxe4, lxf0, lxf1, lxf2, lxf3, lxf4, k34lw_P_Y_0, k34lw_P_Y_1, k34lw_P_Y_2, k34lw_P_Y_3, k34lw_P_Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
         exact lexkPos_head (by linear_combination 1 * (sub_pos.2 hβ1))
     · rcases k34lw_P_cases j with rfl | rfl | rfl | rfl | rfl
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxe4, lxf0, lxf1, lxf2, lxf3, lxf4, k34lw_P_Y_0, k34lw_P_Y_1, k34lw_P_Y_2, k34lw_P_Y_3, k34lw_P_Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
-        refine lexkPos_tail (by ring1) ?_; exact lexkPos_head (by linear_combination 0)
+        refine lexkPos_tail (by ring1) ?_; exact lexkPos_head (by linear_combination)
       · exact absurd rfl h1
       · exact (h2 (by decide)).elim
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxe4, lxf0, lxf1, lxf2, lxf3, lxf4, k34lw_P_Y_0, k34lw_P_Y_1, k34lw_P_Y_2, k34lw_P_Y_3, k34lw_P_Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
@@ -96,7 +96,7 @@ theorem k34lw_P_ts {α1 β1 γ6 ν : ℝ} (hα1 : 1 < α1) (hβ1 : 1 < β1) (hγ
     rcases ht with rfl | rfl
     · rcases k34lw_P_cases i with rfl | rfl | rfl | rfl | rfl
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxe4, lxf0, lxf1, lxf2, lxf3, lxf4, k34lw_P_Y_0, k34lw_P_Y_1, k34lw_P_Y_2, k34lw_P_Y_3, k34lw_P_Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
-        exact lexkPos_head (by linear_combination 0)
+        exact lexkPos_head (by linear_combination)
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxe4, lxf0, lxf1, lxf2, lxf3, lxf4, k34lw_P_Y_0, k34lw_P_Y_1, k34lw_P_Y_2, k34lw_P_Y_3, k34lw_P_Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]
         exact lexkPos_head (by (refine pos_of_mul_pos_right ?_ ((add_pos one_pos (sub_pos.2 hβ1))).le; linear_combination 1 * (sub_pos.2 hα1) + (1) * hC5 + (-β1) * hν2))
       · simp only [lexkD3, d3, lxe0, lxe1, lxe2, lxe3, lxe4, lxf0, lxf1, lxf2, lxf3, lxf4, k34lw_P_Y_0, k34lw_P_Y_1, k34lw_P_Y_2, k34lw_P_Y_3, k34lw_P_Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, List.map_cons, List.map_nil]

@@ -730,7 +730,7 @@ theorem wedge_rupert (ρ : ℝ) (hρ : 0 < ρ) (hρ1 : ρ < 1) (h12 : G.a12 = 0)
     rw [← hpt] at k1 k2 k3
     exact G.ev_corner _ _ _ _ 0 2 1 k1 k2 k3
   · obtain ⟨k1, k2, k3⟩ := wrow1 ρ G.a11 G.a22 γ 1 s (G.a11 / 4) ha hb hρ hρ1' hγ one_pos hs0 hr hsb hP hf5
-      (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 1)) (by rw [(hv _).1]; norm_num [wpts] <;> ring)
+      (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 1)) (by rw [(hv _).1]; norm_num [wpts]; ring)
       (by rw [(hv _).2]; norm_num [wpts] )
     rw [← hpt] at k1 k2 k3
     exact G.ev_corner _ _ _ _ 1 0 4 k1 k2 k3
@@ -743,8 +743,8 @@ theorem wedge_rupert (ρ : ℝ) (hρ : 0 < ρ) (hρ1 : ρ < 1) (h12 : G.a12 = 0)
     rw [← hpt] at k0 k1 k2 k3
     exact G.ev_tri _ _ _ _ 3 2 0 4 k0 k1 k2 k3
   · obtain ⟨k1, k2, k3⟩ := wrow4 ρ G.a11 G.a22 γ 1 s (G.a11 / 4) ha hb hρ hρ1' hγ one_pos hs0 hr hsb hP hf5
-      (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 4)) (by rw [(hv _).1]; norm_num [wpts] <;> ring)
-      (by rw [(hv _).2]; norm_num [wpts] <;> ring)
+      (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 4)) (by rw [(hv _).1]; norm_num [wpts]; ring)
+      (by rw [(hv _).2]; norm_num [wpts]; ring)
     rw [← hpt] at k1 k2 k3
     exact G.ev_corner _ _ _ _ 4 1 6 k1 k2 k3
   · obtain ⟨k1, k2, k3⟩ := wrow5 ρ G.a11 G.a22 γ 1 s (G.a11 / 4) ha hb hρ hρ1' hγ one_pos hs0 hr hsb hP hf5
@@ -753,7 +753,7 @@ theorem wedge_rupert (ρ : ℝ) (hρ : 0 < ρ) (hρ1 : ρ < 1) (h12 : G.a12 = 0)
     rw [← hpt] at k1 k2 k3
     exact G.ev_corner _ _ _ _ 5 6 2 k1 k2 k3
   · obtain ⟨k1, k2, k3⟩ := wrow6 ρ G.a11 G.a22 γ 1 s (G.a11 / 4) ha hb hρ hρ1' hγ one_pos hs0 hr hsb hP hf5
-      (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 6)) (by rw [(hv _).1]; norm_num [wpts] <;> ring)
+      (G.velC ωc ⟨-γ, 2 * 1, 0⟩ (wpts ρ 6)) (by rw [(hv _).1]; norm_num [wpts]; ring)
       (by rw [(hv _).2]; norm_num [wpts] )
     rw [← hpt] at k1 k2 k3
     exact G.ev_corner _ _ _ _ 6 4 5 k1 k2 k3
@@ -835,8 +835,8 @@ theorem right_X12_pf (hr : gA12 x = gA11 x)
       (wpts F.S.tp j).z • (x 5 - x 2) := by
     intro j
     rcases fin7_cases j with rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-    · norm_num [wpts] <;>
-      simp only [F.x0_eq, F.x1_eq, F.x5_eq, F.x6_eq, htm, hhm, e2, e3, ← hA, ← hB] <;> module
+    · norm_num [wpts]
+      try (simp only [F.x0_eq, F.x1_eq, F.x5_eq, F.x6_eq, htm, hhm, e2, e3, ← hA, ← hB]; module)
   let G : Frame7 x :=
     { base := x 2, u1 := x 0 - x 2, u2 := x 4 - x 3, e := x 5 - x 2, indep := hind
       inner_u1_e := o13, inner_u2_e := o23

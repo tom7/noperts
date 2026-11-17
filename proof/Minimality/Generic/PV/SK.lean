@@ -285,7 +285,7 @@ theorem CU_del_mid (p : List ℝ) (a b c : ℝ) (t : List ℝ) (hnd : (p ++ a ::
   have hperm : (b :: (c :: t ++ (p ++ [a]))).Perm (p ++ a :: b :: c :: t) := by
     rw [e1]
     refine List.Perm.trans ?_ (List.perm_append_comm)
-    simpa using List.Perm.refl _
+    simp
   have hnd' : (b :: (c :: t ++ (p ++ [a]))).Nodup := hperm.nodup_iff.mpr hnd
   rw [e1, e2, CU_rot (p ++ [a]) (b :: c :: t), CU_rot (p ++ [a]) (c :: t)]
   have := CU_cons_iff b (c :: t ++ (p ++ [a])) (by simp; omega) (by simpa using hnd') (by
