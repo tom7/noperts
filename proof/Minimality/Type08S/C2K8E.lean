@@ -46,11 +46,11 @@ theorem k8_tilt1 {β1 : ℝ} (x y : ℝ) (hβ1 : 0 < β1) : ∃ η : ℝ, 0 < η
       have h1 : |(η + lam * η) * x| ≤ 2 * η * |x| := by
         rw [abs_mul, abs_of_pos (by nlinarith : 0 < η + lam * η)]
         have := abs_nonneg x
-        nlinarith [mul_nonneg (mul_pos hηp (sub_pos.2 hl1)).le this]
+        linarith [mul_nonneg (mul_pos hηp (sub_pos.2 hl1)).le this]
       have h2 : 2 * η * |x| ≤ 2 * η0 * |x| := by
         have := abs_nonneg x; nlinarith
       have := neg_abs_le ((η + lam * η) * x)
-      nlinarith
+      linarith
 
 /-- The mirror: `v = (-η (1 + lam), -1)` in the cone `Q4`, `x v1 + y v2 < 0` if `0 < y`. -/
 theorem k8_tilt4 {β1 : ℝ} (x y : ℝ) (hβ1 : 0 < β1) : ∃ η : ℝ, 0 < η ∧
@@ -82,12 +82,12 @@ theorem k8_tilt4 {β1 : ℝ} (x y : ℝ) (hβ1 : 0 < β1) : ∃ η : ℝ, 0 < η
       have h1 : |(-η + lam * -η) * x| ≤ 2 * η * |x| := by
         rw [abs_mul, show -η + lam * -η = -(η + lam * η) by ring, abs_neg, abs_of_pos (by nlinarith : 0 < η + lam * η)]
         have := abs_nonneg x
-        nlinarith [mul_nonneg (mul_pos hηp (sub_pos.2 hl1)).le this]
+        linarith [mul_nonneg (mul_pos hηp (sub_pos.2 hl1)).le this]
       have h2 : 2 * η * |x| ≤ 2 * η0 * |x| := by
         have := abs_nonneg x; nlinarith
       have := neg_abs_le ((-η + lam * -η) * x)
       have := le_abs_self ((-η + lam * -η) * x)
-      nlinarith
+      linarith
 
 end C2
 end Type08Sp

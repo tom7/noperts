@@ -78,7 +78,7 @@ theorem pic_KbT {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (hT : I
     common08 θ hθ
   have dB : 0 < -1 + θ 0 := by linarith
   have t0 : 0 < θ 0 * θ 3 := mul_pos p0 p3
-  have t3 : 0 < -θ 0 + θ 0 * θ 3 + θ 2 := by nlinarith [mul_pos p1 p2]
+  have t3 : 0 < -θ 0 + θ 0 * θ 3 + θ 2 := by linarith [mul_pos p1 p2]
   have hu : nfShape08 d E₁ E₂ E₃ θ 2 - nfShape08 d E₁ E₂ E₃ θ 6 = κ • e3 := hxe
   have hkD : 0 < κ * det3 E₁ E₂ E₃ := by
     have h1 := cross_pts hF hxe d ((nfShape08 d E₁ E₂ E₃ θ 4)) d ((nfShape08 d E₁ E₂ E₃ θ 3)) d
@@ -138,7 +138,7 @@ theorem pic_KbT {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (hT : I
   · rw [hYg]
     have hpos : 0 < θ 0 * ⟪(nfShape08 d E₁ E₂ E₃ θ 0) - d, e2⟫ := mul_pos p0 hYa
     rw [div_lt_one hpos]
-    nlinarith [mul_pos dB hYa]
+    linarith [mul_pos dB hYa]
 
 
 set_option maxHeartbeats 4000000 in

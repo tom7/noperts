@@ -43,7 +43,7 @@ theorem poly_rupert_H1 {a a' b b' c c' d x0 x0' y0 y0' : ℝ³} (N : Norm08 a a'
   have hzxne : zx' ≠ zx := by
     rcases hzx with ⟨h, h'⟩ | ⟨h, h'⟩ <;> rw [h, h'] <;> intro e <;> linarith
   have hzyne : zy' ≠ zy := by
-    rcases hzy with ⟨h, h'⟩ | ⟨h, h'⟩ <;> rw [h, h'] <;> intro e <;> nlinarith [mul_pos hβ6 hν]
+    rcases hzy with ⟨h, h'⟩ | ⟨h, h'⟩ <;> rw [h, h'] <;> intro e <;> linarith [mul_pos hβ6 hν]
   have hrob' : ¬ Sep zx (α * w3 + γ4 * C0) zy (α * w3 + β1 * ν) := by
     have e0 := ez x0 _ _ _ hx0
     have e1' := ez b' _ _ _ hb'

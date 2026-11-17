@@ -61,7 +61,7 @@ theorem k7_facet {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) {α1 �
     rw [this]
     have h3 : α1 * (δ + α4 * n1 + n3) = α1 * δ + α4 * (α1 * n1) + α1 * n3 := by ring
     rw [h3, hn1, hn3, hn2]; ring
-  nlinarith [mul_pos hα1 (neg_pos.2 hfb'), mul_nonneg (neg_nonneg.2 hδ.le) (sub_nonneg.2 hcon)]
+  linarith [mul_pos hα1 (neg_pos.2 hfb'), mul_nonneg (neg_nonneg.2 hδ.le) (sub_nonneg.2 hcon)]
 
 end C2
 end Type08Sp

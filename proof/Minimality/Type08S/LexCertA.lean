@@ -68,7 +68,7 @@ theorem cert_gram_pd {p q r : ℝ³} (h : det3 p q r ≠ 0) :
       ⟪p, r⟫ * (⟪p, q⟫ * ⟪q, r⟫ - ⟪q, q⟫ * ⟪p, r⟫) = det3 p q r ^ 2 := by
     simp only [PiLp.inner_apply, Fin.sum_univ_three, RCLike.inner_apply, conj_trivial, det3_expand]
     ring
-  refine ⟨hp, hq, hr, by nlinarith, by nlinarith, by nlinarith, ?_⟩
+  refine ⟨hp, hq, hr, by linarith, by linarith, by linarith, ?_⟩
   rw [hdet]; positivity
 
 -- syntax test: linear_combination on a strict inequality

@@ -40,7 +40,7 @@ theorem t5_fr (hs1 : s < 1)
   have a1 := mul_pos hD hr2
   have a2 := mul_pos (sub_pos.mpr hzz) hr2
   have a3 := mul_pos hd (sub_pos.mpr hqr)
-  have a4 := mul_pos hd (show 0 < -za + q * (r2 - s * r2) by nlinarith [mul_pos hq0 (sub_pos.mpr hsr)])
+  have a4 := mul_pos hd (show 0 < -za + q * (r2 - s * r2) by linarith [mul_pos hq0 (sub_pos.mpr hsr)])
   have a5 := neg_pos.mpr hq2
   simp only [t5aPts, quint_3, quint_4, quint_0, crossYZ] at a5
   obtain ⟨b0, b1', b2', b3, b4⟩ := zmod5_add_one
@@ -49,8 +49,8 @@ theorem t5_fr (hs1 : s < 1)
     simp only [t5aPts, b0, b1', b2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest,
       tst, hdet] <;>
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 /-! ### N2, `r2 = b2` -/
 
@@ -66,11 +66,11 @@ theorem exists_tt (hs0 : 0 < s) (hb2 : 0 < b2) (hz2 : 0 < z2) (hzw : zw < 0) (hr
   · have h : min (min (z2 / (2 * (s * b2))) ((-zw) / (2 * r2))) (a3 / (2 * (|r2 - a2| + 1))) ≤
         z2 / (2 * (s * b2)) := (min_le_left _ _).trans (min_le_left _ _)
     rw [le_div_iff₀ (by positivity)] at h
-    nlinarith
+    linarith
   · have h : min (min (z2 / (2 * (s * b2))) ((-zw) / (2 * r2))) (a3 / (2 * (|r2 - a2| + 1))) ≤
         (-zw) / (2 * r2) := (min_le_left _ _).trans (min_le_right _ _)
     rw [le_div_iff₀ (by positivity)] at h
-    nlinarith
+    linarith
   · have h : min (min (z2 / (2 * (s * b2))) ((-zw) / (2 * r2))) (a3 / (2 * (|r2 - a2| + 1))) ≤
         a3 / (2 * (|r2 - a2| + 1)) := min_le_right _ _
     rw [le_div_iff₀ (by positivity)] at h
@@ -88,7 +88,7 @@ theorem n2f_cyc (hs0 : 0 < s) (hzw : zw < 0) (hb2 : 0 < b2) (hz2 : 0 < z2) (hsr 
       LexTest (-1) ⟨1, 0, 0⟩ ⟨0, -1, -tt⟩ (h5Pts 0 zw s b1 b2 z2 a1 (s * b2) z2 r1 r2 i)
         (h5Pts 0 zw s b1 b2 z2 a1 (s * b2) z2 r1 r2 (i + 1))
         (h5Pts 0 zw s b1 b2 z2 a1 (s * b2) z2 r1 r2 j) := by
-  have hr2 : 0 < r2 := by nlinarith [mul_pos hs0 hb2]
+  have hr2 : 0 < r2 := by linarith [mul_pos hs0 hb2]
   have hsb : 0 < s * b2 := mul_pos hs0 hb2
   have hd : 0 < a1 - s * b1 := by linarith
   have hw : 0 < -zw := neg_pos.mpr hzw
@@ -99,7 +99,7 @@ theorem n2f_cyc (hs0 : 0 < s) (hzw : zw < 0) (hb2 : 0 < b2) (hz2 : 0 < z2) (hsr 
   have p5 := mul_pos (sub_pos.mpr hsr) hz2
   have p6 := mul_pos hw (sub_pos.mpr hsr)
   have tc := mul_pos hd (show 0 < z2 - tt * (s * b2) by linarith)
-  have ta := mul_pos hd (show 0 < z2 + tt * (r2 - s * b2) by nlinarith [mul_pos htt0 (sub_pos.mpr hsr)])
+  have ta := mul_pos hd (show 0 < z2 + tt * (r2 - s * b2) by linarith [mul_pos htt0 (sub_pos.mpr hsr)])
   have tw := mul_pos hd (show 0 < z2 - zw - tt * (s * b2) by linarith)
   obtain ⟨b0, b1', b2', b3, b4⟩ := zmod5_add_one
   intro i j h1 h2
@@ -110,15 +110,15 @@ theorem n2f_cyc (hs0 : 0 < s) (hzw : zw < 0) (hb2 : 0 < b2) (hz2 : 0 < z2) (hsr 
     simp only [h5Pts, b0, b1', b2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest,
       tst, hdet]
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 theorem n2f_g (hA : 0 < A) (hs0 : 0 < s) (hzw : zw < 0) (hb2 : 0 < b2) (hz2 : 0 < z2)
     (hsr : s * b2 < r2) (hxa : s * b1 < a1) (ht : tt * (s * b2) < z2) :
     ∀ i : ZMod 5,
       LexTest (-1) ⟨1, 0, 0⟩ ⟨0, -1, -tt⟩ (h5Pts 0 zw s b1 b2 z2 a1 (s * b2) z2 r1 r2 i)
         (h5Pts 0 zw s b1 b2 z2 a1 (s * b2) z2 r1 r2 (i + 1)) ⟨A, 0, 0⟩ := by
-  have hr2 : 0 < r2 := by nlinarith [mul_pos hs0 hb2]
+  have hr2 : 0 < r2 := by linarith [mul_pos hs0 hb2]
   have hd : 0 < a1 - s * b1 := by linarith
   have hw : 0 < -zw := neg_pos.mpr hzw
   have p1 := mul_pos hA hw
@@ -132,8 +132,8 @@ theorem n2f_g (hA : 0 < A) (hs0 : 0 < s) (hzw : zw < 0) (hb2 : 0 < b2) (hz2 : 0 
     simp only [h5Pts, b0, b1', b2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest,
       tst, hdet] <;>
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 end Special
 end Type08Sp
@@ -164,16 +164,16 @@ theorem propH_t4_a_eq {V : Finset ℝ³} {bP aP' fP rP gP wP aP : ℝ³}
   have hsr : s * b2 < b2 := by nlinarith
   set q : ℝ := za' / (2 * b2) with hqd
   have hq0 : 0 < q := by
-    have : 0 < za' := by nlinarith [mul_nonneg (sub_pos.mpr ht1).le hzv]
+    have : 0 < za' := by linarith [mul_nonneg (sub_pos.mpr ht1).le hzv]
     positivity
   have hqb : q * b2 < za' := by
     have : q * b2 = za' / 2 := by rw [hqd]; field_simp
-    have h' : 0 < za' := by nlinarith [mul_nonneg (sub_pos.mpr ht1).le hzv]
+    have h' : 0 < za' := by linarith [mul_nonneg (sub_pos.mpr ht1).le hzv]
     rw [this]; linarith
   exact Fr.t4a_core hV hw hb ha' hr ha Φb Φa' Φf Φr Φg Φw Φa hA hs0 hs1 ht0 ht1 hzv hzw
     hr1 hd.le q hq0
     (t5_cyc hA hs0 hs1 ht0 hzv hzw hza hzz.le hb2 hsr hq0 (Or.inl hzz) hq1 hq2)
-    (t5_fr hs1 hzv hzw hza hzz hb2 (by nlinarith) hq0 hqb hd hq2)
+    (t5_fr hs1 hzv hzw hza hzz hb2 (by linarith) hq0 hqb hd hq2)
     (t5_g hA hs0 hs1 ht0 ht1 hzv hzw hza hza' hb2 hsr)
 
 end HFrame

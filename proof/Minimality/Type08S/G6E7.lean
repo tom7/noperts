@@ -36,7 +36,7 @@ theorem classD1_hdn {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
   have hP2 : ⟪c' + s • (b' - c'), e2⟫ = ⟪o, e2⟫ + α * ha := by
     rw [inner_add_left, real_inner_smul_left, inner_sub_left, hc', hb', i2, i2]; ring
   have hlt : ⟪c + t • (b - c), e2⟫ < ⟪c' + s • (b' - c'), e2⟫ := by
-    rw [hQ2, hP2]; nlinarith [mul_pos (sub_pos.mpr hα) hha]
+    rw [hQ2, hP2]; linarith [mul_pos (sub_pos.mpr hα) hha]
   have hS : ∀ p ∈ ({b, c', b', c} : Finset ℝ³), ⟪o, e2⟫ + 0 ≤ ⟪p, e2⟫ ∧
       ⟪p, e2⟫ ≤ ⟪o, e2⟫ + α * ha := by
     intro p hp
@@ -75,9 +75,9 @@ theorem classD1_hdn {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
     · rw [show (fun i => (!₂[⟪(quad b c' b' c) i, e1⟫, ⟪(quad b c' b' c) i, e2⟫] : ℝ²)) = _ from
         funext hq]
       refine ccw4 ?_ ?_ ?_
-      · nlinarith [mul_pos (show 0 < α by linarith) hha]
+      · linarith [mul_pos (show 0 < α by linarith) hha]
       · linarith
-      · nlinarith [mul_pos (neg_pos.mpr hneg) (show 0 < γ4 by linarith)]
+      · linarith [mul_pos (neg_pos.mpr hneg) (show 0 < γ4 by linarith)]
     · simpa only [quad_1, quad_2, e01] using hseg c' b' s hs0.le hs1.le
     · simpa only [quad_3, quad_0, e31] using hseg c b t ht0.le ht1.le
     · linarith
@@ -104,9 +104,9 @@ theorem classD1_hdn {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
     · rw [show (fun i => (!₂[⟪(quad c b' c' b) i, e1⟫, ⟪(quad c b' c' b) i, e2⟫] : ℝ²)) = _ from
         funext hq]
       refine ccw4 ?_ ?_ ?_
-      · nlinarith [mul_pos (show 0 < α by linarith) hha]
+      · linarith [mul_pos (show 0 < α by linarith) hha]
       · linarith
-      · nlinarith [mul_pos hpos (show 0 < γ4 by linarith)]
+      · linarith [mul_pos hpos (show 0 < γ4 by linarith)]
     · simpa only [quad_1, quad_2, e01] using hseg' c' b' s hs0.le hs1.le
     · simpa only [quad_3, quad_0, e31] using hseg' c b t ht0.le ht1.le
     · linarith

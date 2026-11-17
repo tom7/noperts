@@ -33,7 +33,7 @@ theorem Pos2.eventually {A B C : ℝ} (h : Pos2 A B C) :
     filter_upwards [self_mem_nhdsWithin, h2] with ε hε h3
     have : (0 : ℝ) < ε := hε
     have := mul_pos this h3
-    nlinarith
+    linarith
   · filter_upwards [self_mem_nhdsWithin] with ε hε
     have : (0 : ℝ) < ε := hε
     simpa using mul_pos (pow_pos this 2) h

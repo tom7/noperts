@@ -54,12 +54,12 @@ theorem k6t3_pa_real {s b6 g6 a4 k0 U T B u t A : ℝ} (hs : 0 < s) (hb6 : 0 < b
        · have hU := htie hu'
          subst hu'
          first
-         | nlinarith [mul_pos hs (neg_pos.2 hU)]
+         | linarith [mul_pos hs (neg_pos.2 hU)]
          | (have ht : t < 0 := by
               by_contra hh
               push Not at hh
-              nlinarith [mul_nonneg g1.le hh, mul_pos ha4 hA]
-            nlinarith [mul_pos (add_pos hg6 hs) (neg_pos.2 ht)]))
+              linarith [mul_nonneg g1.le hh, mul_pos ha4 hA]
+            linarith [mul_pos (add_pos hg6 hs) (neg_pos.2 ht)]))
 
 end C2
 end Type08Sp

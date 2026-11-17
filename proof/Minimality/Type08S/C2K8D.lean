@@ -54,7 +54,7 @@ theorem k8q4p_cyc {D γ4 β1 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hγ4 : 0 < γ
       | (simp only [TSc, d3, k8q4pCyc, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
+         | (left; linarith)
          | (right; refine ⟨by ring, by nlinarith⟩))
   · obtain ⟨s0, s1, s2, s3, s4, s5⟩ := z6_add_one
     have k1 := hD
@@ -84,7 +84,7 @@ theorem k8q4p_cyc {D γ4 β1 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hγ4 : 0 < γ
       | (simp only [TSc, d3, k8q4pCyc, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
+         | (left; linarith)
          | (right; refine ⟨by ring, by nlinarith⟩))
 
 set_option maxHeartbeats 3200000 in
@@ -116,8 +116,8 @@ theorem k8q4p_rest {D γ4 β1 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hγ4 : 0 < �
       (simp only [TSc, d3, k8q4pCyc, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
   · obtain ⟨s0, s1, s2, s3, s4, s5⟩ := z6_add_one
     have k1 := hD
     have kb1 := mul_pos hD hβ1
@@ -142,8 +142,8 @@ theorem k8q4p_rest {D γ4 β1 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hγ4 : 0 < �
       (simp only [TSc, d3, k8q4pCyc, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 theorem k8q4pCyc_inj {γ4 β1 β6 γ6 : ℝ} (hγ4 : 0 < γ4) (hβ1 : 0 < β1) (hβ6 : 1 ≤ β6) (hγ6 : 0 < γ6) :
     ∀ i j, k8q4pCyc γ4 β1 β6 γ6 i = k8q4pCyc γ4 β1 β6 γ6 j → i = j := by
@@ -199,14 +199,14 @@ theorem k8q4p_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q 
     have m5 : (2 : ZMod 6) - 5 = 3 := by decide
     apply lexUni_rev_shift (2 : ZMod 6)
     refine lexUni6_top2 _ _ (fun i j h1 h2 => sub_right_injective (hw' _ _ h1 h2)) ?_ ?_ ?_ ?_
-    · left; simp only [m1, m0, hY, k8q4pCyc, pc6_1, pc6_2, hz]; nlinarith [mul_pos hγ4 hA]
-    · left; simp only [m2, m3, hY, k8q4pCyc, pc6_0, pc6_5, hz]; nlinarith
+    · left; simp only [m1, m0, hY, k8q4pCyc, pc6_1, pc6_2, hz]; linarith [mul_pos hγ4 hA]
+    · left; simp only [m2, m3, hY, k8q4pCyc, pc6_0, pc6_5, hz]; linarith
     · left; simp only [m3, m4, hY, k8q4pCyc, pc6_5, pc6_4, hz]
-      nlinarith [mul_nonneg (sub_nonneg.2 hβ6) hC.le, mul_pos hγ6 hA]
+      linarith [mul_nonneg (sub_nonneg.2 hβ6) hC.le, mul_pos hγ6 hA]
     · rcases hs1.lt_or_eq with h | h
-      · left; left; simp only [m4, m5, hY, k8q4pCyc, pc6_4, pc6_3, hz]; nlinarith
+      · left; left; simp only [m4, m5, hY, k8q4pCyc, pc6_4, pc6_3, hz]; linarith
       · left; right; refine ⟨?_, ?_⟩
-        · simp only [m4, m5, hY, k8q4pCyc, pc6_4, pc6_3, hz]; nlinarith
+        · simp only [m4, m5, hY, k8q4pCyc, pc6_4, pc6_3, hz]; linarith
         · rw [hwd, hwd]
           have := k8_wdiff p q r d (0, β6, γ6) (1, β1, 0) (u1 + lam * t1) (u2 + lam * t2)
           simp only [m4, m5, hY, k8q4pCyc, pc6_4, pc6_3]

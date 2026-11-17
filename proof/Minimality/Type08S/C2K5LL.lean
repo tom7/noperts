@@ -39,7 +39,7 @@ theorem k5c_fcab_core {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 γ6 : ℝ}
   have hσ0 : 0 < σ := by rw [hσ]; positivity
   have hκ1 : 1 < κ := by
     by_contra hh; push Not at hh
-    nlinarith [mul_le_mul_of_nonneg_right hh hw.le]
+    linarith [mul_le_mul_of_nonneg_right hh hw.le]
   have hb61 : β6 < 1 := by
     by_contra hh; push Not at hh
     nlinarith [mul_pos hγ4 (by linarith : (0:ℝ) < 1)]

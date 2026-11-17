@@ -197,9 +197,9 @@ theorem n2_pic (F : OctFacets a a' b b' c c') (hd : IsCap F d)
     rw [hm3, h1, inner_add_left, inner_add_left, real_inner_smul_left, real_inner_smul_left, h2, hzv, hU]
     ring
   have hm3gt : (1 - s) * zv < m3 := by
-    rw [hm3eq]; nlinarith [mul_pos hδ0 hUpos]
+    rw [hm3eq]; linarith [mul_pos hδ0 hUpos]
   have hm3pos : 0 < m3 := by
-    rw [hm3eq]; nlinarith [mul_pos hδ0 hUpos, mul_nonneg (show 0 ≤ 1 - s by linarith) hzvnn]
+    rw [hm3eq]; linarith [mul_pos hδ0 hUpos, mul_nonneg (show 0 ≤ 1 - s by linarith) hzvnn]
   have hb2pos : 0 < b2 := by
     rw [hb2]; have := F.a'b'c.neg b (by simp) (Ne.symm ha'b) hbb' hbc; linarith
   have hr2pos : 0 < r2 := by

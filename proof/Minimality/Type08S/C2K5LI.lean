@@ -61,14 +61,14 @@ theorem kq_tsc {α4 γ4 β1 β6 γ6 v1 v2 : ℝ} (hα4 : 1 < α4) (hγ4 : 0 < γ
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, kqCyc_0, kqCyc_1, kqCyc_2, kqCyc_3, s0, s1, s2, s3, Prod.fst_sub, Prod.snd_sub,
           Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl <;>
       rcases z4_cases i with rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, kqCyc_0, kqCyc_1, kqCyc_2, kqCyc_3, s0, s1, s2, s3, Prod.fst_sub, Prod.snd_sub,
           Prod.mk_sub_mk]
-       first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+       first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
 
 theorem kq_inj {α4 γ4 : ℝ} (hγ4 : 0 < γ4) (hα4 : 1 < α4) : ∀ i j : ZMod 4, kqCyc α4 γ4 i = kqCyc α4 γ4 j → i = j := by
   intro i j h
@@ -103,7 +103,7 @@ theorem k5c_fcac_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R �
   · intro lam h0 h1
     have hq : γ4 / (α4 - 1) * (α4 - 1) = γ4 := div_mul_cancel₀ _ a1.ne'
     have hp : 0 < γ4 / (α4 - 1) := div_pos hγ4 a1
-    refine ⟨by simp, by simp; nlinarith, ?_⟩
+    refine ⟨by simp, by simp; linarith, ?_⟩
     simp only [mul_zero, add_zero, mul_one]
     nlinarith
   · intro v1 v2 ⟨hv1, hv2, hc⟩

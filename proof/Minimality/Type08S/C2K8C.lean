@@ -53,21 +53,21 @@ theorem k8q1m_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q 
         exact k3q1m_rest hD hβ1 hγ4 hβ6p hβ6 hγ6 hs h1 h2⟩
   · intro lam hl0 hl1 w hwd hw'
     refine lexUni6_top2 _ w hw' ?_ ?_ ?_ ?_
-    · left; simp only [hY, k3q1mCyc, pc6_0, pc6_1, hz]; nlinarith
-    · left; simp only [hY, k3q1mCyc, pc6_2, pc6_3, hz]; nlinarith [mul_pos hβ1 hC]
+    · left; simp only [hY, k3q1mCyc, pc6_0, pc6_1, hz]; linarith
+    · left; simp only [hY, k3q1mCyc, pc6_2, pc6_3, hz]; linarith [mul_pos hβ1 hC]
     · rcases hs2.lt_or_eq with h | h
-      · left; simp only [hY, k3q1mCyc, pc6_3, pc6_4, hz]; nlinarith
+      · left; simp only [hY, k3q1mCyc, pc6_3, pc6_4, hz]; linarith
       · right; refine ⟨?_, ?_⟩
-        · simp only [hY, k3q1mCyc, pc6_3, pc6_4, hz]; nlinarith
+        · simp only [hY, k3q1mCyc, pc6_3, pc6_4, hz]; linarith
         · rw [hwd, hwd]
           have := k8_wdiff p q r d (0, 1, 0) (1, β1, 0) (u1 + lam * t1) (u2 + lam * t2)
           simp only [hY, k3q1mCyc, pc6_3, pc6_4]
           linarith [hw h.symm lam hl0 hl1]
     · rcases le_total ⟪q, r⟫ ⟪r, r⟫ with h | h
       · left; left; simp only [hY, k3q1mCyc, pc6_4, pc6_5, hz]
-        nlinarith [mul_pos (sub_pos.2 hs) hC, mul_nonneg hγ6.le (sub_nonneg.2 h)]
+        linarith [mul_pos (sub_pos.2 hs) hC, mul_nonneg hγ6.le (sub_nonneg.2 h)]
       · right; left; simp only [hY, k3q1mCyc, pc6_0, pc6_5, hz]
-        nlinarith [mul_pos (sub_pos.2 hs) hA, mul_nonneg hβ6p.le (sub_nonneg.2 h)]
+        linarith [mul_pos (sub_pos.2 hs) hA, mul_nonneg hβ6p.le (sub_nonneg.2 h)]
 
 set_option maxHeartbeats 3200000 in
 /-- **`Q4⁻` with a caller tilt** (`C > 0` only): `β6 < 1`, `s₂ ≤ 0`; a tie `s₂ = 0` is decided by `w(b) < w(c')`. -/
@@ -114,12 +114,12 @@ theorem k8q4m_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q 
     have m4 : (2 : ZMod 5) - 4 = 3 := by decide
     apply lexUni_rev_shift (2 : ZMod 5)
     refine lexUni5_top _ _ (fun i j h1 h2 => sub_right_injective (hw' _ _ h1 h2)) ?_ ?_ ?_
-    · left; simp only [m1, m0, hY, k3q4mCyc, pc5_1, pc5_2, hz]; nlinarith [mul_pos hγ4 hA]
-    · left; simp only [m2, m3, hY, k3q4mCyc, pc5_0, pc5_4, hz]; nlinarith
+    · left; simp only [m1, m0, hY, k3q4mCyc, pc5_1, pc5_2, hz]; linarith [mul_pos hγ4 hA]
+    · left; simp only [m2, m3, hY, k3q4mCyc, pc5_0, pc5_4, hz]; linarith
     · rcases hs2.lt_or_eq with h | h
-      · left; simp only [m3, m4, hY, k3q4mCyc, pc5_4, pc5_3, hz]; nlinarith
+      · left; simp only [m3, m4, hY, k3q4mCyc, pc5_4, pc5_3, hz]; linarith
       · right; refine ⟨?_, ?_⟩
-        · simp only [m3, m4, hY, k3q4mCyc, pc5_4, pc5_3, hz]; nlinarith
+        · simp only [m3, m4, hY, k3q4mCyc, pc5_4, pc5_3, hz]; linarith
         · rw [hwd, hwd]
           have := k8_wdiff p q r d (0, 1, 0) (1, β1, 0) (u1 + lam * t1) (u2 + lam * t2)
           simp only [m3, m4, hY, k3q4mCyc, pc5_4, pc5_3]

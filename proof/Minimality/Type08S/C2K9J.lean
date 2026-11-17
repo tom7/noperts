@@ -88,7 +88,7 @@ theorem tpA1iiK8_hasLexCell {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c
       have hβ11 : 1 ≤ β1 := by
         by_contra hcon; push Not at hcon
         have : 0 < (1 - β1) * ⟪b - d, b - d⟫ := mul_pos (by linarith) hA
-        nlinarith
+        linarith
       exact hdone (C2.k9_L2 (V8 a a' b b' c c' d) (c - d) (a - d) (b - d) d hΔ hγ4 hβ1 hγ6 hγ61 hβ6
         (σ := 0) le_rfl (by linarith) hC0 hB0 (by nlinarith) hm1 hv1)
     · exfalso; apply hX; rw [eX, heq]; ring
@@ -131,7 +131,7 @@ theorem tpA1iiK8_hasLexCell {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c
       rw [ib1] at hs
       rw [ib3] at hy
       exact hdone (C2.k9_L3b (V8 a a' b b' c c' d) (c - d) (a - d) (b - d) d hΔ hγ4 hβ1 hγ6 hγ61 hβ6 hβγ
-        hC htie (by nlinarith) (by nlinarith) hm1 hv1 hm2 hv2)
+        hC htie (by linarith) (by linarith) hm1 hv1 hm2 hv2)
     · exfalso
       have hX : det3 (a' - b) (c - d) (a - d) = 0 := by rw [eX, heq]; ring
       exact C2.k9_L1_false N hT hX
@@ -148,7 +148,7 @@ theorem tpA1iiK8_hasLexCell {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c
       rw [ia1] at hs
       rw [ia3] at hy
       exact hdone (C2.k9_L3a (V8 a a' b b' c c' d) (c - d) (a - d) (b - d) d hΔ hγ4 hβ1 hγ6 hγ61 hgt hβγ
-        hC htie (by nlinarith) (by nlinarith) hm1 hv1)
+        hC htie (by linarith) (by linarith) hm1 hv1)
 
 end Type08Sp
 end Minimality

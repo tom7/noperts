@@ -42,13 +42,13 @@ theorem tp_far_A (N : Norm08 a a' b b' c c' d) {E U zv zw A b1 b2 r1 r2 xa za a3
     (bP := b) (aP' := a') (fP := c') (rP := b') (gP := c) (wP := d) (aP := a)
     (px := -(b1 + μ * A)) (py := -b2) ?_ (by simp) (by simp) (by simp) (by simp)
     P.Φb P.Φa' P.Φc' P.Φb' P.Φc P.Φd P.Φa hA hb2 hr2 P.ht0 P.ht1 cfg.hzv P.hzw0 P.hm P.hmp hS3
-    (by nlinarith) ?_ ?_ ?_
+    (by linarith) ?_ ?_ ?_
   · intro y hy
     simp only [Finset.mem_insert, Finset.mem_singleton] at hy
     tauto
-  · nlinarith [mul_pos hμ0 (mul_pos hA hb2)]
+  · linarith [mul_pos hμ0 (mul_pos hA hb2)]
   · nlinarith
-  · nlinarith
+  · linarith
 
 
 /-- Case B: `r2 ≤ b2`, strictly not beyond. -/
@@ -86,7 +86,7 @@ theorem tp_far_B (N : Norm08 a a' b b' c c' d) {E U zv zw A b1 b2 r1 r2 xa za a3
     (bP := b) (aP' := a') (fP := c') (rP := b') (gP := c) (wP := d) (aP := a)
     (px := px) (py := py) ?_ (by simp) (by simp) (by simp) (by simp) (by simp)
     P.Φb P.Φa' P.Φc' P.Φb' P.Φc P.Φd P.Φa hA hb2 hr2 P.ht0 P.ht1 cfg.hzv P.hzw0 P.hm P.hmp hS3
-    (by nlinarith) t1' t2' t3' (by simpa using hlex)
+    (by linarith) t1' t2' t3' (by simpa using hlex)
   intro y hy
   simp only [Finset.mem_insert, Finset.mem_singleton] at hy
   tauto
@@ -189,7 +189,7 @@ theorem Tp_far (N : Norm08 a a' b b' c c' d) (hT' : IsT' a b c' d)
     have hpos : 0 < α4 * β1 * n := mul_pos (mul_pos hα4 hβ1) hn
     have hp : 0 < α4 + γ4 - 1 := by linarith
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.mpr hh) hp.le]
+    linarith [mul_nonneg (sub_nonneg.mpr hh) hp.le]
   exact tp_far_T4 N hfc hfa ⟨h2.symm, h1⟩ hzw0 (by linarith)
 
 end Type08Sp

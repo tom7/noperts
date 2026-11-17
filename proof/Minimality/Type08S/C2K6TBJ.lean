@@ -50,7 +50,7 @@ theorem k6t2_c4g_real {α4 γ4 β1 β6 γ6 k0 U T B u t A : ℝ} (hα4 : 0 < α4
       | exact (h3 (by decide)).elim
       | (simp only [k5dX4_0, k5dX4_1, k5dX4_2, k5dX4_3, k5dX4_4, f0, f1, f2, f3, f4, s0, s1, s2, s3, s4] at d5 d6 d7 d8
          first
-         | nlinarith
+         | linarith
          | nlinarith [mul_pos hα4 hg, mul_pos hg hA])
 
 end C2

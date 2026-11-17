@@ -91,7 +91,7 @@ theorem k7_cyc {D α1 β1 α4 β6 v1 v2 v3 : ℝ} (hD : 0 < D) (hα1 : 0 < α1) 
     | (simp only [TSc, d3, k7Cyc, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
+       | (left; linarith)
        | (right; refine ⟨by ring, by nlinarith⟩))
 
 set_option maxHeartbeats 3200000 in
@@ -117,8 +117,8 @@ theorem k7_rest_d {D α1 β1 α4 β6 v1 v2 v3 : ℝ} (hD : 0 < D) (hα1 : 0 < α
     (simp only [TSc, d3, k7Cyc, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
-     | (right; refine ⟨by ring, by nlinarith⟩))
+     | (left; linarith)
+     | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 3200000 in
 theorem k7_rest_a {D α1 β1 α4 β6 v1 v2 v3 : ℝ} (hD : 0 < D) (hα1 : 1 < α1) (hα4 : 0 < α4) (hβ6 : 0 < β6)
@@ -149,8 +149,8 @@ theorem k7_rest_a {D α1 β1 α4 β6 v1 v2 v3 : ℝ} (hD : 0 < D) (hα1 : 1 < α
     (simp only [TSc, d3, k7Cyc, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
-     | (right; refine ⟨by ring, by nlinarith⟩))
+     | (left; linarith)
+     | (right; refine ⟨by ring, by linarith⟩))
 
 end C2
 end Type08Sp

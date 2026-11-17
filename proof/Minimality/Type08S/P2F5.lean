@@ -74,7 +74,7 @@ theorem tc2_g (hA : 0 < A) (ht0 : 0 < t) (ht1 : t < 1) (hzv : 0 ≤ zv) (hzw : z
         (c2Pts zv zw t A b1 b2 za' za (i + 1)) ⟨A, 0, 0⟩ := by
   have hD : 0 < zv - zw := by linarith
   have ht1' : 0 < 1 - t := by linarith
-  have hza'0 : 0 < za' := by nlinarith [mul_nonneg ht1'.le hzv]
+  have hza'0 : 0 < za' := by linarith [mul_nonneg ht1'.le hzv]
   have a1 := mul_pos hA hD
   have a2 := mul_pos hA (sub_pos.mpr hza')
   have a3 := mul_pos hb2 hza'0
@@ -99,7 +99,7 @@ theorem tc2_row {x0 y0 : ℝ} (ht0 : 0 < t) (ht1 : t < 1) (hA : 0 < A)
         (c2Pts zv zw t A b1 b2 za' za (i + 1)) ⟨x0, y0, 0⟩ := by
   have hD : 0 < zv - zw := by linarith
   have ht1' : 0 < 1 - t := by linarith
-  have hza'0 : 0 < za' := by nlinarith [mul_nonneg ht1'.le hzv]
+  have hza'0 : 0 < za' := by linarith [mul_nonneg ht1'.le hzv]
   have a1 := mul_pos hD hy0
   have a2 := mul_pos hza'0 (sub_pos.mpr hyr)
   have a3 := mul_pos (neg_pos.mpr hza) (sub_pos.mpr hyr)
@@ -155,7 +155,7 @@ theorem tp_C2 {V : Finset ℝ³} {bP aP' fP rP gP wP aP : ℝ³}
   have hD : zw < zv := by linarith
   have htA : 0 < t * A := mul_pos ht0 hA
   have ht1' : 0 < 1 - t := by linarith
-  have hza'0 : 0 < za' := by nlinarith [mul_nonneg ht1'.le hzv]
+  have hza'0 : 0 < za' := by linarith [mul_nonneg ht1'.le hzv]
   set q : ℝ := za' / (2 * b2) with hqd
   have hq0 : 0 < q := by positivity
   have hqb : q * b2 < za' := by

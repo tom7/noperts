@@ -106,14 +106,14 @@ theorem k46_tie_rupert {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hea' : ea = (kk/m)^2*(rr/kk)^2/(2*(1+(rr/kk)^2)) := by
     rw [eq_div_iff (by positivity)]
     field_simp
-    nlinarith [hkr]
+    linarith [hkr]
   have hR1 : ea ≤ (rr/kk)^2 * (2 + ea) := by
     rw [div_pow, div_mul_eq_mul_div, le_div_iff₀ (by positivity)]
-    nlinarith [hO]
+    linarith [hO]
   have hR2 : ea * (rr/kk)^2 < 2 + ea := by
     have : ea * (rr/kk)^2 = ea * (rr*rr) / (kk*kk) := by field_simp
     rw [this, div_lt_iff₀ (by positivity)]
-    nlinarith [hlit]
+    linarith [hlit]
   have hfin := a2mc_all hsig hl hm hea' hR1 hR2
   refine isRupert_of_frame_image _ (v := d) (k55_isFrame G hea hm hkk hrr) ?_
   simp only [V8, Finset.image_insert, Finset.image_singleton]

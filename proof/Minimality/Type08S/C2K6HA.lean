@@ -72,7 +72,7 @@ theorem k6mh1_hc1_tsc {κ σ α1 β1 β6 γ6 v1 v2 : ℝ} (hκ : κ < 0) (hσ : 
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, k6mHCyc1_0, k6mHCyc1_1, k6mHCyc1_2, k6mHCyc1_3, k6mHCyc1_4, f0, f1, f2, f3, f4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl <;>

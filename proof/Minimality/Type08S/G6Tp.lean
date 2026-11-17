@@ -36,13 +36,13 @@ theorem thm08Tp_core (hF : Fr e1 e2 e3) (o : ℝ³)
   have hκ0 : 0 < κ := by
     by_contra hn
     push Not at hn
-    nlinarith [mul_nonneg (neg_nonneg.2 hn) (sub_pos.2 hX).le]
+    linarith [mul_nonneg (neg_nonneg.2 hn) (sub_pos.2 hX).le]
   have hX0 : X0 < 0 := by
     by_contra hn; push Not at hn
-    nlinarith [mul_nonneg hκ0.le hn]
+    linarith [mul_nonneg hκ0.le hn]
   have hX1 : L < X1 := by
     by_contra hn; push Not at hn
-    nlinarith [mul_nonneg hκ0.le (sub_nonneg.2 hn)]
+    linarith [mul_nonneg hκ0.le (sub_nonneg.2 hn)]
   have hs0 : 0 < P + κ * (0 - X0) - C := by linarith
   have hs1 : 0 < κ * (L - X0) := mul_pos hκ0 (by linarith)
   obtain ⟨η, hη0, hη1, hη2⟩ : ∃ η : ℝ, 0 < η ∧ η < P + κ * (0 - X0) - C ∧ η < κ * (L - X0) :=

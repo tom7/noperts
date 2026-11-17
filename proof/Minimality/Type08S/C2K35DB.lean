@@ -41,7 +41,7 @@ theorem k28h5bd_d2_core (u1 u2 m y al be ob og b g : ℝ) (hu1 : 0 < u1) (hu2 : 
     ring
   have h1 : 0 < ((k28h5bd_T1 u1 u2 al)) * ((m*((1+al)*(u1+u2))^2*(u1+u2)^2) * k28h5bd_G (((be*m/((1+al)*(u1+u2)))^2*(u1+u2)+y)/m) (be*m/((1+al)*(u1+u2)))
       (u1 + (m-u1*u2)/(u1+u2)) ((m-u1*u2)/(u1+u2)) (u2 + (m-u1*u2)/(u1+u2)) al be 0 (-b) og) := by
-    rw [iden]; nlinarith [mul_nonneg hc1 hTe]
+    rw [iden]; linarith [mul_nonneg hc1 hTe]
   have h2 := pos_of_mul_pos_right h1 hT1.le
   exact pos_of_mul_pos_right h2 hLam.le
 

@@ -55,7 +55,7 @@ theorem k9_setup {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (h : T
   have hβγ : β1 < γ4 := by
     have : 0 < μ * (1 - 1 * β1 - 1 + 1 * γ4) := h1 ▸ N.hκa
     have h3 : 0 < γ4 - β1 := by
-      have : 0 < μ * (γ4 - β1) := by nlinarith
+      have : 0 < μ * (γ4 - β1) := by linarith
       exact pos_of_mul_pos_right this hμ.le
     linarith
   -- the tie from `QacTop`
@@ -67,7 +67,7 @@ theorem k9_setup {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (h : T
     have ec : ⟪c, b - d⟫ = ⟪d, b - d⟫ + ⟪c - d, b - d⟫ := by
       nth_rewrite 1 [show c = d + (c - d) by abel]; rw [inner_add_left]
     unfold QacTop at hQ
-    rw [ea, eb', ec, max_eq_right (by linarith), max_eq_right (by nlinarith [mul_nonneg hγ4.le hCnn])] at hQ
+    rw [ea, eb', ec, max_eq_right (by linarith), max_eq_right (by linarith [mul_nonneg hγ4.le hCnn])] at hQ
     · linarith
   exact ⟨β1, γ4, β6, γ6, hΔ, hγ4, hβ1, hγ6, hγ61, hβ6p, hcv, hβγ, hc', hb', ha', htie⟩
 

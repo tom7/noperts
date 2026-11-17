@@ -38,14 +38,14 @@ theorem n2e_f2 (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : zw < 0)
   intro i
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl
   · simp only [h5Pts, b0, quint_0, quint_1, LexTest, tst, hdet]
-    left; nlinarith
+    left; linarith
   · simp only [h5Pts, b1', quint_1, quint_2, LexTest, tst, hdet]
-    left; nlinarith
+    left; linarith
   · exact hrow2
   · simp only [h5Pts, b3, quint_3, quint_4, LexTest, tst, hdet]
-    right; refine ⟨by ring, by nlinarith⟩
+    right; refine ⟨by ring, by linarith⟩
   · simp only [h5Pts, b4, quint_0, quint_4, LexTest, tst, hdet]
-    right; refine ⟨by ring, by nlinarith⟩
+    right; refine ⟨by ring, by linarith⟩
 
 end Type08Sp
 

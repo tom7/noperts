@@ -43,7 +43,7 @@ theorem k6m_B_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠ 0
     · exact Or.inr ⟨_, by simp, rfl⟩
     · exact Or.inr ⟨_, by simp, rfl⟩
   · intro lam h0 h1
-    refine ⟨by simp, by simp; nlinarith⟩
+    refine ⟨by simp, by simp; linarith⟩
   · intro v1 v2 ⟨hv1, hv2⟩
     exact k6m_B_tsc hα1 hα11 hβ1 hs hb6 hγ6 hγ61 hv1 hv2
 

@@ -85,7 +85,7 @@ theorem frame_exists {w u v : ℝ³} (hdet : det3 w u v ≠ 0) :
   have hu2 : ⟪u, u⟫ = ‖u‖ ^ 2 := real_inner_self_eq_norm_sq _
   have ha : ⟪e2, e2⟫ = 1 := by
     rw [he2, real_inner_smul_left, real_inner_smul_right, hn2]
-    field_simp; nlinarith [hs2]
+    field_simp; linarith [hs2]
   have hb : ⟪e3, e3⟫ = 1 := by
     rw [he3, real_inner_smul_left, real_inner_smul_right, hu2]
     field_simp

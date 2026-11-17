@@ -107,7 +107,7 @@ theorem k6t4_B11_core {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) 
     · intro lam hl0 hl1
       have := lt_of_le_of_lt (le_max_left _ _) hl0
       have := lt_of_le_of_lt (le_max_right _ _) hl0
-      refine ⟨by linarith, by linarith, by nlinarith⟩
+      refine ⟨by linarith, by linarith, by linarith⟩
     · intro lam hl0 hl1 hinj
       refine k6t4_b11_cell1_lex _ _ hinj (z := ⟪d, r⟫) (A := ⟪r, r⟫) (B := ⟪p, r⟫) (C := ⟪q, r⟫) (β6 := β6)
         (α4 := α4) hA hα4 hβ6 ?_ ?_ ?_ ?_ ?_ (Or.inl hBn)
@@ -148,7 +148,7 @@ theorem k6t4_B11_core {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) 
     · intro lam hl0 hl1
       have := lt_of_le_of_lt (le_max_left _ _) hl0
       have := lt_of_le_of_lt (le_max_right _ _) hl0
-      refine ⟨by linarith, by linarith, by nlinarith⟩
+      refine ⟨by linarith, by linarith, by linarith⟩
     · intro lam hl0 hl1 hinj
       refine k6t4_b11_cell1_lex _ _ hinj (z := ⟪d, r⟫) (A := ⟪r, r⟫) (B := ⟪p, r⟫) (C := ⟪q, r⟫) (β6 := β6)
         (α4 := α4) hA hα4 hβ6 ?_ ?_ ?_ ?_ ?_ (Or.inr ⟨hB0, ?_⟩)

@@ -30,7 +30,7 @@ theorem crossYZ_planar (F : Fc) (P Q S : V3) (hP : F.ev P = 0) (hQ : F.ev Q = 0)
 
 theorem phiP0 {F1 F2 : Fc} {S : V3} (h2 : F2.ev S < 0) (a1 : 0 < F1.a) (a2 : F2.a = 0) :
     0 < Phi F1 F2 S := by
-  simp only [Phi]; rw [a2]; nlinarith [mul_pos (neg_pos.mpr h2) a1]
+  simp only [Phi]; rw [a2]; linarith [mul_pos (neg_pos.mpr h2) a1]
 
 theorem _root_.Minimality.N2Cfg.Qab_bc {E U zv zw A b1 b2 r1 r2 s m3 a1 a2 a3 : ℝ} {FH FQab FQac FT1 FT2 FT3 : Fc}
     (h : N2Cfg E U zv zw A b1 b2 r1 r2 s m3 a1 a2 a3 FH FQab FQac FT1 FT2 FT3)
@@ -71,11 +71,11 @@ theorem n2_hcv_eq {E U zv zw A b1 b2 r1 s m3 a1 a2 a3 : ℝ} {FH FQab FQac FT1 F
   have hzw := h.hzw; have hzv := h.hzv; have hb2 := h.hb2; have ha2 := h.ha2
   have hs0 := h.hs0; have hsb := mul_pos hs0 hb2
   have k02 : crossYZ ⟨0, 0, zw⟩ ⟨0, 0, zv⟩ ⟨s * b1, s * b2, m3⟩ < 0 := by
-    simp only [crossYZ]; nlinarith [mul_pos (show 0 < zv - zw by linarith) hsb]
+    simp only [crossYZ]; linarith [mul_pos (show 0 < zv - zw by linarith) hsb]
   have k03 : crossYZ ⟨0, 0, zw⟩ ⟨0, 0, zv⟩ ⟨a1, a2, a3⟩ < 0 := by
-    simp only [crossYZ]; nlinarith [mul_pos (show 0 < zv - zw by linarith) ha2]
+    simp only [crossYZ]; linarith [mul_pos (show 0 < zv - zw by linarith) ha2]
   have k04 : crossYZ ⟨0, 0, zw⟩ ⟨0, 0, zv⟩ ⟨r1, b2, 0⟩ < 0 := by
-    simp only [crossYZ]; nlinarith [mul_pos (show 0 < zv - zw by linarith) hb2]
+    simp only [crossYZ]; linarith [mul_pos (show 0 < zv - zw by linarith) hb2]
   -- edge 1: `c 2` = H ∩ Qac
   have p1a := phiN (F1 := FH) (F2 := FQac) (S := ⟨a1, a2, a3⟩) h.H_A.le h.Qac_A.le hHa hQc (Or.inl h.H_A)
   have p1r := phiN (F1 := FH) (F2 := FQac) (S := ⟨r1, b2, 0⟩) h.H_R.le h.Qac_R.le hHa hQc (Or.inl h.H_R)

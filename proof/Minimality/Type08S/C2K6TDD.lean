@@ -47,7 +47,7 @@ theorem k6t4_Tc_zdb {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h
   have hκw : κ * w = -γ4 := by rw [hκ]; field_simp
   have hb6 : 1 < β6 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hγ4.le (by linarith : 0 ≤ 1 - β6)]
+    linarith [mul_nonneg hγ4.le (by linarith : 0 ≤ 1 - β6)]
   have hκ6 : κ * (1 - β6) = 1 := by
     have : (κ * (1 - β6) - 1) * w = 0 := by nlinarith
     exact sub_eq_zero.mp ((mul_eq_zero.mp this).resolve_right hw.ne')

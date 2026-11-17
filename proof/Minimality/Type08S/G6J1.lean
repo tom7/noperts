@@ -93,7 +93,7 @@ theorem poly_core3 (hF : Fr e1 e2 e3) (o : ℝ³)
       · exact hv1 h7
       · exact hγ4.ne' h7
     · rw [hA2]; simp only [hC', i2]; intro h
-      nlinarith [mul_pos (sub_pos.mpr hα) hha]
+      linarith [mul_pos (sub_pos.mpr hα) hha]
   have hz3 : ∀ (X Y z : ℝ), ⟪pt e1 e2 e3 o X Y z, e3⟫ = ⟪o, e3⟫ + z := fun X Y z => i3 X Y z
   have hnoS : ∀ x : ZMod 4 → ℝ³, (∀ i, x i ∈ S) → NoHDNAt (Finset.univ.image x) (ν • e3) :=
     fun x hx => hno.mono (fun p hp => by
@@ -132,7 +132,7 @@ theorem poly_core3 (hF : Fr e1 e2 e3) (o : ℝ³)
       have k2 := mul_pos (mul_pos hL hha) hαpos
       have k3 := mul_pos (mul_pos hL hha) hE
       have k4 := mul_pos (mul_pos hL hha) hγ
-      refine ccw4gen ?_ ?_ ?_ ?_ <;> nlinarith [k1, k2, k3, k4]
+      refine ccw4gen ?_ ?_ ?_ ?_ <;> linarith [k1, k2, k3, k4]
     · rw [show (fun i => ⟪(quad X0p C' B' Y0p) i, e3⟫) = quad (⟪o, e3⟫ + zx)
           (⟪o, e3⟫ + (α1 * w3 + β1 * ν)) (⟪o, e3⟫ + (α4 * w3 + γ4 * C0)) (⟪o, e3⟫ + zy) from by
         funext i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
@@ -180,7 +180,7 @@ theorem poly_core3 (hF : Fr e1 e2 e3) (o : ℝ³)
       have k2 := mul_pos (mul_pos hpos hha) hαpos
       have k3 := mul_pos (mul_pos hpos hha) hE
       have k4 := mul_pos (mul_pos hpos hha) hγ
-      refine ccw4gen ?_ ?_ ?_ ?_ <;> nlinarith [k1, k2, k3, k4]
+      refine ccw4gen ?_ ?_ ?_ ?_ <;> linarith [k1, k2, k3, k4]
     · rw [show (fun i => ⟪(quad Y0p B' C' X0p) i, e3⟫) = quad (⟪o, e3⟫ + zy)
           (⟪o, e3⟫ + (α4 * w3 + γ4 * C0)) (⟪o, e3⟫ + (α1 * w3 + β1 * ν)) (⟪o, e3⟫ + zx) from by
         funext i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>

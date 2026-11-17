@@ -32,7 +32,7 @@ theorem k6t2_x4_tsc {α4 γ4 β1 β6 γ6 v1 v2 : ℝ}
     have hg : 0 < γ4 - 1 := by linarith
     have hv1 : 0 < v1 := by
       by_contra h; push Not at h
-      nlinarith [mul_pos hα4 hv2, mul_nonneg hg.le (neg_nonneg.2 h)]
+      linarith [mul_pos hα4 hv2, mul_nonneg hg.le (neg_nonneg.2 h)]
     have hc1' : 0 < (γ4 - 1) * v1 - α4 * v2 := by linarith
     have hc2' := mul_pos hv1 hv2
     have hs' : 0 < α4 + γ4 - 1 := by linarith
@@ -60,7 +60,7 @@ theorem k6t2_x4_tsc {α4 γ4 β1 β6 γ6 v1 v2 : ℝ}
         | exact absurd rfl h1
         | exact (h2 (by decide)).elim
         | (simp only [TSc, d3, k5dX4_0, k5dX4_1, k5dX4_2, k5dX4_3, k5dX4_4, f0, f1, f2, f3, f4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-           first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+           first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
     · intro t ht i
       simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
       rcases ht with rfl | rfl <;>

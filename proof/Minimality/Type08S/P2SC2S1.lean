@@ -29,7 +29,7 @@ variable {e1 e2 e3 : ℝ³}
 theorem ev_lin' {α β : ℝ} (hα : 0 < α) : ∀ᶠ s : ℝ in atTop, 0 < α * s + β := by
   filter_upwards [eventually_gt_atTop (|β| / α)] with M hM
   have := (div_lt_iff₀ hα).1 hM
-  nlinarith [neg_abs_le β]
+  linarith [neg_abs_le β]
 
 /-- The explicit motions of SC2-S. -/
 noncomputable def moS (σ m σ0 z0 κ ρ s : ℝ) : Mo := ⟨σ, ρ * s * κ, σ * m, -(ρ * s * κ * z0), σ * σ0⟩
@@ -68,7 +68,7 @@ theorem sc2S_core (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
     have : 0 < Xg + s * Y := by linarith
     by_contra hneg; push Not at hneg
     nlinarith [mul_nonneg (by linarith : 0 ≤ -s) hY.le, hXg, hL]
-  have hDpos : 0 < DS σ L zp Y m σ0 z0 κ ρ s := by unfold DS; nlinarith [hDs]
+  have hDpos : 0 < DS σ L zp Y m σ0 z0 κ ρ s := by unfold DS; linarith [hDs]
   have hDdef : DS σ L zp Y m σ0 z0 κ ρ s = σ * κ * (ρ * s) * (σ0 - zp) * (z0 - (σ0 + m * L)) -
       L * σ ^ 2 * Y * (1 + m ^ 2) := rfl
   obtain ⟨η, hη⟩ : ∃ η, η = DS σ L zp Y m σ0 z0 κ ρ s / (2 * L) := ⟨_, rfl⟩
@@ -79,8 +79,8 @@ theorem sc2S_core (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
     rw [mo1S, hη]
   have hρs : 0 < ρ * s := mul_pos hρ hs0
   refine sc5_core2 hF o E (S := s) (moS σ m σ0 z0 κ ρ s) (mo1S σ L zp Y m σ0 z0 κ ρ s) hL hzx
-    (by nlinarith [mul_pos hY (sub_pos.2 hXg), mul_pos hY (sub_pos.2 hXr)]) hY
-    (by nlinarith [mul_pos hY (sub_pos.2 hXg), mul_pos hY (sub_pos.2 hXr)]) (by linarith)
+    (by linarith [mul_pos hY (sub_pos.2 hXg), mul_pos hY (sub_pos.2 hXr)]) hY
+    (by linarith [mul_pos hY (sub_pos.2 hXg), mul_pos hY (sub_pos.2 hXr)]) (by linarith)
     ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hEs
   all_goals simp only [Rw, L2, moS, hmo, VX, VY]
   · left; linarith [mul_pos hL hPi]

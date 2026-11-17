@@ -52,7 +52,7 @@ theorem k5x2z_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q 
   have hr0 : r ≠ 0 := by intro h; rw [h] at hΔ; simp [det3_expand] at hΔ
   have hA : 0 < ⟪r, r⟫ := real_inner_self_pos.2 hr0
   obtain ⟨lam, hl0, hl1, hsep⟩ := exists_sep_tilt p q r d hΔ Y (k1Cyc6_inj hα1 hβ1 hβ11 hβ6)
-    (u1 := -1) (u2 := δ / 2) (t1 := 0) (t2 := δ / 2) (by nlinarith) (lo := 0) (hi := 1) (by norm_num)
+    (u1 := -1) (u2 := δ / 2) (t1 := 0) (t2 := δ / 2) (by linarith) (lo := 0) (hi := 1) (by norm_num)
   set vv := fcomb p q r (-1 + lam * 0) (δ / 2 + lam * (δ / 2)) 0 with hvv
   have hv1 : -1 + lam * 0 < 0 := by linarith
   have hv2 : 0 < δ / 2 + lam * (δ / 2) := by nlinarith
@@ -64,7 +64,7 @@ theorem k5x2z_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q 
     refine lexUni6_gen _ _ hsep ?_ ?_ ?_ ?_ ?_
     · left; simp only [hY, k1Cyc6, six_0, six_1, hz]; nlinarith [mul_pos (sub_pos.2 hα1) hA]
     · left; simp only [hY, k1Cyc6, six_2, six_1, hz]; nlinarith [mul_pos (lt_trans one_pos hα1) hA]
-    · left; simp only [hY, k1Cyc6, six_5, six_0, hz]; nlinarith
+    · left; simp only [hY, k1Cyc6, six_5, six_0, hz]; linarith
     · right; right
       have hd := k5_wdiff2 p q r d β6 (-1 + lam * 0) (δ / 2 + lam * (δ / 2))
       refine ⟨?_, ?_⟩
@@ -72,14 +72,14 @@ theorem k5x2z_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q 
       · simp only [hY, k1Cyc6, six_3, six_4]
         rw [hvv]
         have : (δ / 2 + lam * (δ / 2)) * ⟪p, q⟫ < ⟪p, p⟫ := by nlinarith [mul_pos hδ (lt_trans hl0 hl1), hδ2]
-        nlinarith [mul_pos hβ6 (sub_pos.2 this)]
+        linarith [mul_pos hβ6 (sub_pos.2 this)]
     · right; right
       have hd := k5_wdiff3 p q r d (-1 + lam * 0) (δ / 2 + lam * (δ / 2))
       refine ⟨?_, ?_⟩
-      · simp only [hY, k1Cyc6, six_4, six_5, hz]; nlinarith
+      · simp only [hY, k1Cyc6, six_4, six_5, hz]; linarith
       · simp only [hY, k1Cyc6, six_4, six_5]
         rw [hvv]
-        nlinarith [mul_nonneg (sub_nonneg.2 hv2'.le) hqq]
+        linarith [mul_nonneg (sub_nonneg.2 hv2'.le) hqq]
   have n0 : -(0 : ZMod 6) = 0 := by decide
   have n1 : -(1 : ZMod 6) = 5 := by decide
   have n2 : -(2 : ZMod 6) = 4 := by decide

@@ -49,7 +49,7 @@ theorem S3_pos : 0 < r1 * b2 - r2 * b1 := by
   have hneg : FH.a * (r1 * b2 - r2 * b1) < 0 := by
     rw [e, h1]; have := mul_neg_of_pos_of_neg hb2 h2; linarith
   by_contra hh; push Not at hh
-  nlinarith [mul_nonneg_of_nonpos_of_nonpos ha.le hh]
+  linarith [mul_nonneg_of_nonpos_of_nonpos ha.le hh]
 
 end T4Cfg0
 
@@ -78,8 +78,8 @@ theorem t4_sminus (F : OctFacets a a' b b' c c') (hd : IsCap F d)
     simp only [Finset.mem_insert, Finset.mem_singleton] at hy
     tauto
   · rw [P.Φa']; simp
-  · nlinarith
-  · nlinarith
+  · linarith
+  · linarith
   · nlinarith
   · nlinarith
 

@@ -91,41 +91,41 @@ theorem k4_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r �
     · apply lexUni_of_shift (4 : ZMod 6)
       refine lexUni6_two _ _ (fun i j h1 h2 => add_right_cancel (hinj _ _ h1 h2)) ?_ ?_ ?_ ?_
       · show LexLt (zf 4, wf 4) (zf 5, wf 5)
-        left; rw [z4, z5]; nlinarith [mul_pos hα4 hA]
+        left; rw [z4, z5]; linarith [mul_pos hα4 hA]
       · show LexLt (zf 1, wf 1) (zf 0, wf 0)
         right; refine ⟨by rw [z0, z1], ?_⟩
-        rw [w0, w1]; nlinarith [mul_pos hβ1 hnwp]
+        rw [w0, w1]; linarith [mul_pos hβ1 hnwp]
       · show LexLt (zf 3, wf 3) (zf 4, wf 4)
         rcases hγ61.lt_or_eq with h | h
-        · left; rw [z3, z4]; nlinarith [mul_pos (sub_pos.2 h) hC]
+        · left; rw [z3, z4]; linarith [mul_pos (sub_pos.2 h) hC]
         · right; refine ⟨by rw [z3, z4, h]; ring, ?_⟩
-          rw [w3, w4, h]; nlinarith [mul_pos hβ6 hnwp]
+          rw [w3, w4, h]; linarith [mul_pos hβ6 hnwp]
       · show LexLt (zf 2, wf 2) (zf 1, wf 1) ∨ LexLt (zf 2, wf 2) (zf 3, wf 3)
         left; left; rw [z1, z2]; linarith
     · have hC0 : C' ≤ 0 := not_lt.1 hC
       apply lexUni_of_shift (5 : ZMod 6)
       refine lexUni6_two _ _ (fun i j h1 h2 => add_right_cancel (hinj _ _ h1 h2)) ?_ ?_ ?_ ?_
       · show LexLt (zf 5, wf 5) (zf 0, wf 0)
-        left; rw [z5, z0]; nlinarith [mul_pos (sub_pos.2 hα41) hA]
+        left; rw [z5, z0]; linarith [mul_pos (sub_pos.2 hα41) hA]
       · show LexLt (zf 2, wf 2) (zf 1, wf 1)
         left; rw [z1, z2]; linarith
       · show LexLt (zf 4, wf 4) (zf 5, wf 5)
-        left; rw [z4, z5]; nlinarith [mul_pos hα4 hA]
+        left; rw [z4, z5]; linarith [mul_pos hα4 hA]
       · show LexLt (zf 3, wf 3) (zf 2, wf 2) ∨ LexLt (zf 3, wf 3) (zf 4, wf 4)
         rcases hC0.lt_or_eq with hneg | h0
-        · left; left; rw [z3, z2]; nlinarith [mul_pos hγ6 (neg_pos.2 hneg)]
+        · left; left; rw [z3, z2]; linarith [mul_pos hγ6 (neg_pos.2 hneg)]
         · have e3 : zf 3 = zf 2 := by rw [z3, z2, h0]; ring
           have e4 : zf 4 = zf 2 := by rw [z4, z2, h0]; ring
           by_cases hq : 0 ≤ wq
           · right; right; refine ⟨by rw [e3, e4], ?_⟩
-            rw [w3, w4]; nlinarith [mul_pos hβ6 hnwp, mul_nonneg (sub_nonneg.2 hγ61) hq]
+            rw [w3, w4]; linarith [mul_pos hβ6 hnwp, mul_nonneg (sub_nonneg.2 hγ61) hq]
           · have hq' : wq < 0 := not_le.1 hq
             rcases le_or_gt wp wq with hle | hlt
             · right; right; refine ⟨by rw [e3, e4], ?_⟩
-              rw [w3, w4]; nlinarith [mul_nonneg hβ6.le (sub_nonneg.2 hle),
+              rw [w3, w4]; linarith [mul_nonneg hβ6.le (sub_nonneg.2 hle),
                 mul_pos (by linarith : 0 < β6 + γ6 - 1) (neg_pos.2 hq')]
             · left; right; refine ⟨e3, ?_⟩
-              rw [w3, w2]; nlinarith [mul_pos hγ6 (sub_pos.2 hlt),
+              rw [w3, w2]; linarith [mul_pos hγ6 (sub_pos.2 hlt),
                 mul_pos (by linarith : 0 < β6 + γ6 - 1) hnwp]
   have n0 : -(0 : ZMod 6) = 0 := by decide
   have n1 : -(1 : ZMod 6) = 5 := by decide

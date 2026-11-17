@@ -50,7 +50,7 @@ theorem k6t3_pc1_real' {m g k0 U T B u t A : ℝ} (hm : 0 < m) (hm1 : m < 1) (hg
     | (simp only [k6t3_pcX_0, k6t3_pcX_1, k6t3_pcX_2, k6t3_pcX_3, k6t3_pcX_4, f0, f1, f2, f3, f4, s0, s1, s2, s3, s4] at d5 d6 d7 d8
        rcases hu with hu | hu <;>
        first
-       | nlinarith
+       | linarith
        | (have hta : t + A < 0 := by
             by_contra hh
             push Not at hh

@@ -39,7 +39,7 @@ theorem cell_cyc {σ t1 ν v1 ha w1 w3 C0 α1 α4 γ4 β1 β6 : ℝ}
   obtain ⟨s0, s1, s2, s3⟩ := z4_add_one
   have hr : 0 < -(σ * v1) := by linarith
   have kA := mul_pos (mul_pos (mul_pos hr hha) (by linarith : (0:ℝ) < γ4)) (by linarith : (0:ℝ) < α1)
-  have kB := mul_pos (mul_pos hr hha) (by nlinarith [mul_pos hα4 hβ1] : 0 < α4 - α1 * (1 - γ4))
+  have kB := mul_pos (mul_pos hr hha) (by linarith [mul_pos hα4 hβ1] : 0 < α4 - α1 * (1 - γ4))
   have kC := mul_pos (mul_pos hr hha) hα4
   have kD := mul_pos (mul_pos hr hha) (by linarith : (0:ℝ) < α1)
   intro i j h1 h2'

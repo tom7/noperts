@@ -61,8 +61,8 @@ theorem k6p_cell2_D1_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : de
   obtain ⟨hc1, hc2⟩ := hlam lam hlo' hl1
   set vv := fcomb p q r (-1 + lam * 0) (0 + lam * -1) 0 with hvv
   have hv1 : -1 + lam * 0 < 0 := by linarith
-  have hc1' : 0 < -β1 * (-1 + lam * 0) + (α1 - 1) * (0 + lam * -1) := by nlinarith
-  have hc2' : 0 < -(β6 + γ6 - β1) * (-1 + lam * 0) - α1 * (0 + lam * -1) := by nlinarith
+  have hc1' : 0 < -β1 * (-1 + lam * 0) + (α1 - 1) * (0 + lam * -1) := by linarith
+  have hc2' : 0 < -(β6 + γ6 - β1) * (-1 + lam * 0) - α1 * (0 + lam * -1) := by linarith
   have hz : ∀ t : ℝ × ℝ × ℝ, ⟪fpoint p q r d t, r⟫ = ⟪d, r⟫ + t.1 * ⟪p, r⟫ + t.2.1 * ⟪q, r⟫ + t.2.2 * ⟪r, r⟫ :=
     fun t => inner_fpoint _ _ _ _ _ _
   have hlexY : LexUni (fun i => ⟪fpoint p q r d (Y i), r⟫) (fun i => ⟪fpoint p q r d (Y i), vv⟫) := by
@@ -92,8 +92,8 @@ theorem k6p_cell2_D1_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : de
       refine ⟨by rw [z0, z1], ?_⟩
       simp only
       rw [w0, w1, hpv, hqv, hrv]
-      nlinarith [hflam]
-    have L21 : LexLt (zz 2, ww 2) (zz 1, ww 1) := Or.inl (by simp only; rw [z1, z2]; nlinarith [mul_pos hγ6 hR])
+      linarith [hflam]
+    have L21 : LexLt (zz 2, ww 2) (zz 1, ww 1) := Or.inl (by simp only; rw [z1, z2]; linarith [mul_pos hγ6 hR])
     have L34 : LexLt (zz 3, ww 3) (zz 4, ww 4) := Or.inl (by simp only; rw [z4, z3]; linarith)
     exact k6p_lexUni5_excl _ _ hsep (k6p_lex_ex_of zz ww (Or.inr (Or.inr (Or.inl L21))) (Or.inl L10)
       (Or.inl L21) (Or.inr (Or.inl L34)) (Or.inr (Or.inr (Or.inl L10))))

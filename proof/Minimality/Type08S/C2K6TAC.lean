@@ -26,7 +26,7 @@ theorem k6t1_km1_inj {κ σ α1 β1 β6 : ℝ} (hκ : κ < 0) (hα1 : 1 < α1) (
   have e2 := congrArg (fun t => t.2.1) h
   have m1 : κ * α1 < 0 := by nlinarith
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;> rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first | rfl | (exfalso; simp only [kmCyc1_0, kmCyc1_1, kmCyc1_2, kmCyc1_3, kmCyc1_4] at e1 e2; nlinarith)
+    first | rfl | (exfalso; simp only [kmCyc1_0, kmCyc1_1, kmCyc1_2, kmCyc1_3, kmCyc1_4] at e1 e2; linarith)
 
 theorem k6t1_km2_inj {κ σ α1 β1 β6 : ℝ} (hκ : κ < 0) (hα1 : 1 < α1) (hβ1 : 0 < β1) (hb6 : 1 ≤ β6) :
     ∀ i j : ZMod 4, kmCyc2 κ σ α1 β1 β6 i = kmCyc2 κ σ α1 β1 β6 j → i = j := by
@@ -35,7 +35,7 @@ theorem k6t1_km2_inj {κ σ α1 β1 β6 : ℝ} (hκ : κ < 0) (hα1 : 1 < α1) (
   have e2 := congrArg (fun t => t.2.1) h
   have m1 : κ * α1 < 0 := by nlinarith
   rcases z4_cases i with rfl | rfl | rfl | rfl <;> rcases z4_cases j with rfl | rfl | rfl | rfl <;>
-    first | rfl | (exfalso; simp only [kmCyc2_0, kmCyc2_1, kmCyc2_2, kmCyc2_3] at e1 e2; nlinarith)
+    first | rfl | (exfalso; simp only [kmCyc2_0, kmCyc2_1, kmCyc2_2, kmCyc2_3] at e1 e2; linarith)
 
 set_option maxHeartbeats 3200000 in
 theorem k6t1_km1_tsc {κ σ α1 β1 β6 v1 v2 : ℝ} (hκ : κ < 0) (hσ : σ < 0) (hα1 : 1 < α1) (hβ1 : 0 < β1)
@@ -167,7 +167,7 @@ theorem k6t1_qtc1_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R �
   · intro lam h0 h1
     refine ⟨by simp, ?_⟩
     simp only [mul_zero, add_zero, zero_add, mul_one]
-    nlinarith [mul_pos nk a1, mul_pos hβ1 h0]
+    linarith [mul_pos nk a1, mul_pos hβ1 h0]
   · intro v1 v2 ⟨hv1, hc⟩
     exact k6t1_km1_tsc hκ hσ hα1 hβ1 hb6 hbc hE hv1 hc
   · intro v1 v2 ⟨hv1, hc⟩ hL
@@ -209,7 +209,7 @@ theorem k6t1_qtc2_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R �
   · intro lam h0 h1
     refine ⟨by simp, ?_⟩
     simp only [mul_zero, add_zero, zero_add, mul_one, mul_neg]
-    nlinarith [mul_pos nk a1, mul_pos hβ1 h0]
+    linarith [mul_pos nk a1, mul_pos hβ1 h0]
   · intro v1 v2 ⟨hv1, hc⟩
     exact k6t1_km2_tsc hκ hσ hα1 hβ1 hb6 hbc hE hv1 hc
   · intro v1 v2 ⟨hv1, hc⟩ hL

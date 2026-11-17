@@ -54,15 +54,15 @@ theorem param_core (hF : Fr e1 e2 e3) (o : ℝ³)
     rw [← hRP, ← hκ, hXX, hq]; ring
   have hq1 : q < ν - C0 := by
     by_contra hcon; push Not at hcon
-    nlinarith [mul_le_mul_of_nonneg_right hcon hγ0.le, mul_pos hν (sub_pos.mpr hγ)]
+    linarith [mul_le_mul_of_nonneg_right hcon hγ0.le, mul_pos hν (sub_pos.mpr hγ)]
   have hσL : P + κ * (L - X0) < ν := by
     have : P + κ * (L - X0) = (1 - t) * C0 + t * ν + (1 - t) * q := by
       rw [← hfoot, hq]; ring
-    rw [this]; nlinarith [mul_pos (sub_pos.mpr ht1) (sub_pos.mpr hq1)]
+    rw [this]; linarith [mul_pos (sub_pos.mpr ht1) (sub_pos.mpr hq1)]
   have hσ0 : C0 < P + κ * (0 - X0) := by
     have : P + κ * (0 - X0) = (1 - t) * C0 + t * ν - t * q := by
       rw [← hfoot, hq]; ring
-    rw [this]; nlinarith [mul_pos ht0 (sub_pos.mpr hq1)]
+    rw [this]; linarith [mul_pos ht0 (sub_pos.mpr hq1)]
   have hza : w3 < ν + (1 / α) * (R - ν) := by
     have : ν + (1 / α) * (R - ν) = w3 + (α - 1 + β1) * ν / α := by
       rw [hR]; field_simp; ring

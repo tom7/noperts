@@ -167,15 +167,15 @@ theorem k39h5_S0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have key1 : 0 < ⟪b' - c, R⟫ := by
     rw [hS, hEd, hbR, zero_smul, zero_sub, inner_neg_right, real_inner_smul_right, real_inner_smul_right] at hd1
     by_contra hn; push Not at hn
-    nlinarith [mul_pos hE hβ1p, mul_nonneg (mul_pos hE hβ1p).le (neg_nonneg.2 hn)]
+    linarith [mul_pos hE hβ1p, mul_nonneg (mul_pos hE hβ1p).le (neg_nonneg.2 hn)]
   have key2 : 0 < ⟪c - a', R⟫ := by
     rw [hS, hEd, hbR, zero_smul, zero_sub, inner_neg_right, real_inner_smul_right, real_inner_smul_right] at hd2
     by_contra hn; push Not at hn
-    nlinarith [mul_pos hE hβ1p, mul_nonneg (mul_pos hE hβ1p).le (neg_nonneg.2 hn)]
+    linarith [mul_pos hE hβ1p, mul_nonneg (mul_pos hE hβ1p).le (neg_nonneg.2 hn)]
   have key3 : 0 < ⟪b' - c', R⟫ := by
     have e : b' - c' = (b' - a) - (c' - a) := by abel
     rw [e, inner_sub_left, hcR, hbR, real_inner_smul_left]
-    nlinarith [mul_pos hβ1p hRR]
+    linarith [mul_pos hβ1p hRR]
   have Fbc : ⟪c, R⟫ < ⟪b', R⟫ := by rw [inner_sub_left] at key1; linarith
   have Fbc' : ⟪c', R⟫ < ⟪b', R⟫ := by rw [inner_sub_left] at key3; linarith
   have Fca : ⟪a', R⟫ < ⟪c, R⟫ := by rw [inner_sub_left] at key2; linarith

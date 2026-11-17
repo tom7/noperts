@@ -37,7 +37,7 @@ theorem k5d_exists_key {ι : Type*} (Z : ι → ℝ × ℝ) (L : List ι) :
       intro _
       have hz : 0 < (Z j).1 - (Z i).1 := by linarith
       rw [div_lt_iff₀ hz] at hM
-      nlinarith
+      linarith
     · exact Eventually.of_forall fun M hl => by
         rcases hl with hl | ⟨-, hl⟩
         · exact absurd h (ne_of_lt hl)

@@ -89,7 +89,7 @@ namespace Type08Sp
 /-- A strictly negative screen cross product is a (primary) lexicographic test, any tilt. -/
 theorem lex_of_cross (cw : V3) {P Q S : V3} (h : crossYZ P Q S < 0) :
     LexTest (-1) ⟨1, 0, 0⟩ cw P Q S := by
-  left; simp only [tst, hdet, crossYZ] at *; nlinarith
+  left; simp only [tst, hdet, crossYZ] at *; linarith
 
 /-- A point of the screen axis `y = 0, z = 0` between `w` (`z = zw < 0`) and `c` (`z = zv ≥ 0`) is
 strictly right of an edge if both ends are. -/
@@ -101,7 +101,7 @@ theorem cross_comb_axis {P Q : V3} {wx cx gx zv zw : ℝ} (hzv : 0 ≤ zv) (hzw 
     simp only [crossYZ]; ring
   by_contra h
   push Not at h
-  nlinarith [mul_nonneg (by linarith : 0 ≤ zv - zw) h, mul_nonneg hzv (neg_nonneg.mpr hW.le),
+  linarith [mul_nonneg (by linarith : 0 ≤ zv - zw) h, mul_nonneg hzv (neg_nonneg.mpr hW.le),
     mul_pos (neg_pos.mpr hzw) (neg_pos.mpr hC)]
 
 /-- The point `(b2, 0)` of the screen axis `z = 0` between `(0,0)` and `(r2, 0)`. -/
@@ -113,7 +113,7 @@ theorem cross_comb_row {P Q : V3} {gx fx rx b2 r2 : ℝ} (hb2 : 0 < b2) (hbr : b
     simp only [crossYZ]; ring
   by_contra h
   push Not at h
-  nlinarith [mul_nonneg (by linarith : 0 ≤ r2) h, mul_pos (sub_pos.mpr hbr) (neg_pos.mpr hG),
+  linarith [mul_nonneg (by linarith : 0 ≤ r2) h, mul_pos (sub_pos.mpr hbr) (neg_pos.mpr hG),
     mul_pos hb2 (neg_pos.mpr hR)]
 
 /-- The cycle `(a', c, 2, a, c')` of Proposition H (N2, `r2 > b2`). -/
@@ -146,14 +146,14 @@ theorem n2g_g (hA : 0 < A) (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : z
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     simp only [h5Pts, b0, b1', b2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest,
       tst, hdet]
-  · right; refine ⟨by ring, by nlinarith⟩
+  · right; refine ⟨by ring, by linarith⟩
   · rcases lt_or_eq_of_le hzv with hz | hz
-    · left; nlinarith [mul_pos (mul_pos hs0 hb2) hz]
+    · left; linarith [mul_pos (mul_pos hs0 hb2) hz]
     · subst hz
-      right; refine ⟨by ring, by nlinarith⟩
-  · left; nlinarith
-  · left; nlinarith
-  · left; nlinarith
+      right; refine ⟨by ring, by linarith⟩
+  · left; linarith
+  · left; linarith
+  · left; linarith
 
 theorem n2g_f (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : zw < 0)
     (hb2 : 0 < b2) (hbr : b2 < r2) (ha3 : 0 < a3) (hz2 : (1 - s) * zv < z2)
@@ -176,7 +176,7 @@ theorem n2g_f (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : zw < 0)
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     simp only [h5Pts, b0, b1', b2', b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest,
       tst, hdet] <;>
-    left <;> nlinarith
+    left <;> linarith
 
 end N2ge
 
@@ -261,7 +261,7 @@ theorem t5_g (hA : 0 < A) (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (ht1 : t < 1
   have hr2 : 0 < r2 := by nlinarith
   have hsb : 0 < s * b2 := mul_pos hs0 hb2
   have ht1' : 0 < 1 - t := by linarith
-  have hza'0 : 0 < za' := by nlinarith [mul_nonneg ht1'.le hzv]
+  have hza'0 : 0 < za' := by linarith [mul_nonneg ht1'.le hzv]
   have a1 := mul_pos hA hD
   have a2 := mul_pos hA (sub_pos.mpr hza')
   have a3 := mul_pos hr2 hza'0
@@ -294,7 +294,7 @@ theorem t5_row {x0 y0 : ℝ} (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (ht1 : t 
   have hr2 : 0 < r2 := by linarith
   have hsb : 0 < s * b2 := mul_pos hs0 hb2
   have ht1' : 0 < 1 - t := by linarith
-  have hza'0 : 0 < za' := by nlinarith [mul_nonneg ht1'.le hzv]
+  have hza'0 : 0 < za' := by linarith [mul_nonneg ht1'.le hzv]
   have a1 := mul_pos hD hy0
   have a2 := mul_pos hza'0 (sub_pos.mpr hyr)
   have a3 := mul_pos (neg_pos.mpr hza0) (sub_pos.mpr hyr)
@@ -636,7 +636,7 @@ theorem propH_t4_b {V : Finset ℝ³} {bP aP' fP rP gP wP aP : ℝ³}
   have hD : zw < zv := by linarith
   have htA : 0 < t * A := mul_pos ht0 hA
   have ht1' : 0 < 1 - t := by linarith
-  have hza'0 : 0 < za' := by nlinarith [mul_nonneg ht1'.le hzv]
+  have hza'0 : 0 < za' := by linarith [mul_nonneg ht1'.le hzv]
   set q : ℝ := za' / (2 * b2) with hqd
   have hq0 : 0 < q := by positivity
   have hqb : q * b2 < za' := by

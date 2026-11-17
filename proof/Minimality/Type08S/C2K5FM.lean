@@ -41,7 +41,7 @@ theorem k5f_E_hasLexCell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' 
   have hα11 : 1 < α1 := hfar' hfar
   have hγ41 : 1 < γ4 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hα1.le (by linarith : 0 ≤ 1 - γ4), mul_pos (by linarith : 0 < α4) (sub_pos.2 hβ11)]
+    linarith [mul_nonneg hα1.le (by linarith : 0 ≤ 1 - γ4), mul_pos (by linarith : 0 < α4) (sub_pos.2 hβ11)]
   have hb1 : β1 ≠ 0 := by positivity
   set p := a - d with hp
   set q := b - d with hq
@@ -86,7 +86,7 @@ theorem k5f_E_hasLexCell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' 
   refine ⟨R, hne, ?_⟩
   rcases lt_or_gt_of_ne hζ with hneg | hpos
   · refine k5f_E2_frame (V8 a a' b b' c c' d) p r R d hΔ hm hk hk1 hβ6p hβ61 hα41 hγ41 hrel ?_ ?_ ?_
-    · rw [hz] at hneg; nlinarith
+    · rw [hz] at hneg; linarith
     · intro i
       rcases z4_cases i with rfl | rfl | rfl | rfl
       · simp only [k5fE2Cyc_0, eC']; simp [V8]
@@ -98,7 +98,7 @@ theorem k5f_E_hasLexCell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' 
       simp only [V8, Finset.mem_insert, Finset.mem_singleton] at hy
       tauto
   · refine k5f_E1_frame (V8 a a' b b' c c' d) p r R d hΔ hm hk hk1 hβ6p hβ61 hα41 hγ41 hrel ?_ ?_ ?_
-    · rw [hz] at hpos; nlinarith
+    · rw [hz] at hpos; linarith
     · intro i
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
       · simp only [k5fE1Cyc, pc5_0, eA]; simp [V8]

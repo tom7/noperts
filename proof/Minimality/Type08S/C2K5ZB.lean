@@ -65,7 +65,7 @@ theorem k5z_qta_D_hasLexCell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c
   have hE : (σ - 1) * (1 - β1) ≤ α1 * (σ - κ) := by
     have : ((σ - 1) * (1 - β1) - α1 * (σ - κ)) * w ≤ 0 := by nlinarith
     by_contra hh; push Not at hh
-    nlinarith [mul_pos (sub_pos.2 hh) hw]
+    linarith [mul_pos (sub_pos.2 hh) hw]
   set p := a - d with hp
   set q := b - d with hq
   set r := c - d with hr
@@ -74,7 +74,7 @@ theorem k5z_qta_D_hasLexCell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c
     rw [hR, hb', hp, hr, hwdef]; module
   have hpR : p = σ • R + κ • r := by
     rw [hRv]
-    match_scalars <;> nlinarith
+    match_scalars <;> linarith
   have hΔ : det3 q r R ≠ 0 := by
     have e : det3 q r R = (-w) * det3 p q r := by
       rw [hRv]

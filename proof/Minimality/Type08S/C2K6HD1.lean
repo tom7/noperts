@@ -120,7 +120,7 @@ theorem k6mh1_cell1 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   set zC := (1 - α1) * ⟪p, r⟫ - β1 * ⟪r, r⟫ with hzC
   have hzC0 : zC < 0 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ β6 + γ6 - 1) hh, mul_pos (by linarith : (0:ℝ) < β6) hBC]
+    linarith [mul_nonneg (by linarith : (0:ℝ) ≤ β6 + γ6 - 1) hh, mul_pos (by linarith : (0:ℝ) < β6) hBC]
   have hA : HasLexCellAt (V8 a a' b b' c c' d) R := by
     refine k6mh1_hc1_frame (V8 a a' b b' c c' d) q r R d hΔ hκn hσn hα1 (by linarith) hβ6 hγ0 hγ6 hbc hcc haa hE
       ?_ hV ?_ ?_ ?_
@@ -134,11 +134,11 @@ theorem k6mh1_cell1 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     · rw [eA', eC]
       apply inner_lt
       have : a' - c = (0:ℝ) • p + β6 • q + (γ6 - 1) • r := by rw [ha', hp, hq, hr]; module
-      rw [this, key]; nlinarith
+      rw [this, key]; linarith
     · rw [eC, eO]
       apply inner_lt
       have : c - d = (0:ℝ) • p + (0:ℝ) • q + (1:ℝ) • r := by rw [hr]; module
-      rw [this, key]; nlinarith
+      rw [this, key]; linarith
     · rw [eC', eA, eO]
       left
       rw [inner_sub_left] at hlit3

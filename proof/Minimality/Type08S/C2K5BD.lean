@@ -36,10 +36,10 @@ theorem k5b_interval {α1 β1 s : ℝ} (hα1 : 0 < α1) (hβ1 : 0 < β1) (hs : 0
     have := (div_lt_iff₀ hα1).1 hlam1; linarith
   · have hα : 0 < α1 - 1 := by linarith
     have hlt : (β1 - s) / α1 < β1 / (α1 - 1) := by
-      rw [div_lt_div_iff₀ hα1 hα]; nlinarith [mul_pos hs hα]
+      rw [div_lt_div_iff₀ hα1 hα]; linarith [mul_pos hs hα]
     refine ⟨(β1 - s) / α1, β1 / (α1 - 1), hlt, fun lam hl0 hl1 => ?_⟩
     refine ⟨?_, ?_⟩
-    · have := (lt_div_iff₀ hα).1 hl1; nlinarith
+    · have := (lt_div_iff₀ hα).1 hl1; linarith
     · have := (div_lt_iff₀ hα1).1 hl0; linarith
 
 theorem k5b_cycN_inj {α1 β1 β6 γ6 : ℝ} (hα1 : 0 < α1) (hβ1 : 0 < β1) (hs : 1 < β6 + γ6) :
@@ -73,8 +73,8 @@ theorem k5b_cell1_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 
   obtain ⟨hc1, hc2⟩ := hlam lam hl0 hl1
   set vv := fcomb p q r (1 + lam * 0) (0 + lam * 1) 0 with hvv
   have hv1 : 0 < 1 + lam * 0 := by linarith
-  have hc1' : 0 < β1 * (1 + lam * 0) - (α1 - 1) * (0 + lam * 1) := by nlinarith
-  have hc2' : 0 < (β6 + γ6 - β1) * (1 + lam * 0) + α1 * (0 + lam * 1) := by nlinarith
+  have hc1' : 0 < β1 * (1 + lam * 0) - (α1 - 1) * (0 + lam * 1) := by linarith
+  have hc2' : 0 < (β6 + γ6 - β1) * (1 + lam * 0) + α1 * (0 + lam * 1) := by linarith
   have hz : ∀ t : ℝ × ℝ × ℝ, ⟪fpoint p q r d t, r⟫ = ⟪d, r⟫ + t.1 * ⟪p, r⟫ + t.2.1 * ⟪q, r⟫ + t.2.2 * ⟪r, r⟫ :=
     fun t => inner_fpoint _ _ _ _ _ _
   have hlexY : LexUni (fun i => ⟪fpoint p q r d (Y i), r⟫) (fun i => ⟪fpoint p q r d (Y i), vv⟫) := by
@@ -144,8 +144,8 @@ theorem k5b_cell2_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 
   obtain ⟨hc1, hc2⟩ := hlam lam hl0 hl1
   set vv := fcomb p q r (-1 + lam * 0) (0 + lam * -1) 0 with hvv
   have hv1 : -1 + lam * 0 < 0 := by linarith
-  have hc1' : 0 < -β1 * (-1 + lam * 0) + (α1 - 1) * (0 + lam * -1) := by nlinarith
-  have hc2' : 0 < -(β6 + γ6 - β1) * (-1 + lam * 0) - α1 * (0 + lam * -1) := by nlinarith
+  have hc1' : 0 < -β1 * (-1 + lam * 0) + (α1 - 1) * (0 + lam * -1) := by linarith
+  have hc2' : 0 < -(β6 + γ6 - β1) * (-1 + lam * 0) - α1 * (0 + lam * -1) := by linarith
   have hz : ∀ t : ℝ × ℝ × ℝ, ⟪fpoint p q r d t, r⟫ = ⟪d, r⟫ + t.1 * ⟪p, r⟫ + t.2.1 * ⟪q, r⟫ + t.2.2 * ⟪r, r⟫ :=
     fun t => inner_fpoint _ _ _ _ _ _
   have hlexY : LexUni (fun i => ⟪fpoint p q r d (Y i), r⟫) (fun i => ⟪fpoint p q r d (Y i), vv⟫) := by

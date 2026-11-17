@@ -340,11 +340,11 @@ theorem t4_pic_Tp (F : OctFacets a a' b b' c c') (hd : IsCap F d)
       rw [hzw, ← inner_neg_left, neg_sub]
     rw [h4, hU]; ring
   have hmlt : a3 < 0 := by
-    rw [ha3eq, hα₁1]; nlinarith [mul_pos hβ₁ hUpos]
+    rw [ha3eq, hα₁1]; linarith [mul_pos hβ₁ hUpos]
   have hmp : (1 - β₂) * zv < za := by
     rw [hZa']
     have : zv = zw + U := by linarith
-    rw [this]; nlinarith [mul_pos hUpos (show 0 < α₂ + β₂ - 1 by linarith)]
+    rw [this]; linarith [mul_pos hUpos (show 0 < α₂ + β₂ - 1 by linarith)]
   have hAt : xa = β₂ * A := hXa'
   refine ⟨E, U, zv, zw, A, b1, b2, r1, r2, xa, za, a3, β₂, _, _, _, _, _, _,
     ⟨hΦb, hΦd, hΦc, hΦc', hΦb', ?_, hΦa, hzwneg, hβ₂, hβ₂1, hmlt, hmp, hAE, hXa', cfg⟩, rfl⟩

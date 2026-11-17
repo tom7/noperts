@@ -144,8 +144,8 @@ theorem sm_m (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : zw < 0) (hm : (
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     simp only [sPts, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3, LexTest, tst, hdet] <;>
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 theorem sm_a {a1 a2 a3 : ℝ}
     (u1 : 0 < σ * (f1 * a2 - f2 * a1))
@@ -219,8 +219,8 @@ theorem st_cyc (hs0 : 0 < s) (hs1 : s < 1) (hm : m < (1 - s) * zw)
     simp only [tPts, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest,
       tst, hdet]
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 theorem st_b (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : zw < 0) (hm : m < (1 - s) * zw)
     (t1 : σ * (py * f1 - px * f2) < 0) (t2 : σ * (px * g2 - py * g1) < 0)
@@ -241,8 +241,8 @@ theorem st_b (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : zw < 0) (hm : m
     simp only [tPts, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest,
       tst, hdet] <;>
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 theorem st_a' (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (ht1 : t < 1) (hzv : 0 ≤ zv)
     (hzw : zw < 0) (hmp : (1 - t) * zv < mp)
@@ -271,8 +271,8 @@ theorem st_a' (hs0 : 0 < s) (hs1 : s < 1) (ht0 : 0 < t) (ht1 : t < 1) (hzv : 0 �
     simp only [tPts, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4, LexTest,
       tst, hdet] <;>
     first
-    | (left; nlinarith)
-    | (right; refine ⟨by ring, by nlinarith⟩)
+    | (left; linarith)
+    | (right; refine ⟨by ring, by linarith⟩)
 
 end TTests
 
@@ -313,7 +313,7 @@ theorem tilt_sminus (hE : 0 < E) (hM : 0 < M) (q4 : 0 < σ * (f1 * g2 - f2 * g1)
       ∃ px py : ℝ, σ * (py * f1 - px * f2) < 0 ∧ σ * (px * g2 - py * g1) < 0 ∧
         px / E * F1 + py / M * F2 < px / E * r1 + py / M * r2 := by
     intro F1 F2 κ hκ h
-    refine ⟨-(f1 + κ * g1), -(f2 + κ * g2), by nlinarith [mul_pos hκ q4], by nlinarith [q4], ?_⟩
+    refine ⟨-(f1 + κ * g1), -(f2 + κ * g2), by linarith [mul_pos hκ q4], by linarith [q4], ?_⟩
     have : (r1 - F1) * (f1 + κ * g1) / E + (r2 - F2) * (f2 + κ * g2) / M =
         -(((-(f1 + κ * g1)) / E * r1 + (-(f2 + κ * g2)) / M * r2) -
           ((-(f1 + κ * g1)) / E * F1 + (-(f2 + κ * g2)) / M * F2)) := by
@@ -324,7 +324,7 @@ theorem tilt_sminus (hE : 0 < E) (hM : 0 < M) (q4 : 0 < σ * (f1 * g2 - f2 * g1)
       ∃ px py : ℝ, σ * (py * f1 - px * f2) < 0 ∧ σ * (px * g2 - py * g1) < 0 ∧
         px / E * F1 + py / M * F2 < px / E * r1 + py / M * r2 := by
     intro F1 F2 κ hκ h
-    refine ⟨-(g1 + κ * f1), -(g2 + κ * f2), by nlinarith [q4], by nlinarith [mul_pos hκ q4], ?_⟩
+    refine ⟨-(g1 + κ * f1), -(g2 + κ * f2), by linarith [q4], by linarith [mul_pos hκ q4], ?_⟩
     have : (r1 - F1) * (g1 + κ * f1) / E + (r2 - F2) * (g2 + κ * f2) / M =
         -(((-(g1 + κ * f1)) / E * r1 + (-(g2 + κ * f2)) / M * r2) -
           ((-(g1 + κ * f1)) / E * F1 + (-(g2 + κ * f2)) / M * F2)) := by

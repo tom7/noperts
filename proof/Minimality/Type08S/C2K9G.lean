@@ -25,7 +25,7 @@ theorem k9_tiltM (κ1 κ2 lam : ℝ) (hκ1 : 0 < κ1) (hl0 : 0 < lam) :
     0 < (|κ2| / κ1 + 1 + lam * 1) * κ1 + (-1 + lam * 0) * κ2 := by
   have e : (|κ2| / κ1 + 1 + lam * 1) * κ1 = |κ2| + κ1 + lam * κ1 := by field_simp
   have := le_abs_self κ2
-  nlinarith [mul_pos hl0 hκ1]
+  linarith [mul_pos hl0 hκ1]
 
 set_option maxHeartbeats 1600000 in
 /-- The common tail of the `C > 0` cells with the Q/P trichotomy on `ζ = z(c') - z(b')`. -/
@@ -115,7 +115,7 @@ theorem k9_L3a (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠ 0)
   have hcb : 0 < B + (β1 - 1) * A := by
     have : 0 < γ6 * C := mul_pos hγ6 hC
     have : 0 < (β6 - 1) * A := mul_pos (by linarith) hA
-    nlinarith
+    linarith
   rcases lt_trichotomy (γ4 + γ6) 1 with hlt | heq | hgt
   · -- β: `A < C` and `ζ < 0`
     have hδpos : 0 < β6 - β1 := by
@@ -126,7 +126,7 @@ theorem k9_L3a (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠ 0)
       have h1 : 0 < 1 - γ4 := by linarith
       have h2 : (1 - γ4) * A < (β6 - β1) * A := by
         apply mul_lt_mul_of_pos_right _ hA; linarith
-      have h3 : (1 - γ4 - γ6) * C < (1 - γ4) * C := by nlinarith [mul_pos hγ6 hC]
+      have h3 : (1 - γ4 - γ6) * C < (1 - γ4) * C := by linarith [mul_pos hγ6 hC]
       have h4 : (1 - γ4) * A < (1 - γ4) * C := by linarith
       exact lt_of_mul_lt_mul_left h4 h1.le
     have hζ : -γ4 * C + β1 * A < 0 := by
@@ -144,7 +144,7 @@ theorem k9_L3a (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠ 0)
         rw [this]
         have h2 : (β6 - β1) * C * A = (1 - γ4 - γ6) * C * C := by
           linear_combination C * hδ
-        nlinarith
+        linarith
       have h3 : 0 < A * ((γ4 - 1) * G11 + G12) := by
         rw [e]; exact mul_pos (by linarith) hCS
       exact pos_of_mul_pos_right h3 hA.le
@@ -186,7 +186,7 @@ theorem k9_L3b_big (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠ 0)
         have h1 : (1 - β1) * A = (1 - γ4) * C := by linarith
         calc (1 - β1) * C * A = C * ((1 - β1) * A) := by ring
           _ = (1 - γ4) * C * C := by rw [h1]; ring
-      nlinarith
+      linarith
     have h3 : 0 < A * ((γ4 - 1) * G11 + G12) := by
       rw [e]; exact mul_pos (by linarith) hCS
     exact pos_of_mul_pos_right h3 hA.le

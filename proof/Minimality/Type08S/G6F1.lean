@@ -43,7 +43,7 @@ theorem allsep_real {z0 n q A β1 γ4 β6 : ℝ} (hn : 0 < n) (hb1 : 0 < β1) (h
       · have hq : q = n := by linarith
         have : γ4 * q = β1 * n := by linarith
         rw [hq] at this
-        nlinarith
+        linarith
   · -- {b,b'} ≤ {c,c'}: n ≤ q and γ4 q ≤ β1 n
     have : γ4 * q ≤ β1 * n := by linarith
     nlinarith

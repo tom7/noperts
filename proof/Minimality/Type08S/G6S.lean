@@ -88,7 +88,7 @@ theorem vel_pc (hF : Fr e1 e2 e3) (o : ℝ³) (w1 w2 w3 t1 t2 t3 x1 x2 x3 : ℝ)
 theorem ev_aff (a b : ℝ) (ha : 0 < a) : ∀ᶠ k in atTop, 0 < a * k + b := by
   filter_upwards [eventually_gt_atTop (-b / a)] with k hk
   have := (div_lt_iff₀ ha).1 hk
-  nlinarith
+  linarith
 
 end Type08Sp
 end Minimality

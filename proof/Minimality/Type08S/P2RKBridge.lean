@@ -54,7 +54,7 @@ theorem ts_of_LT {e1 e2 e3 : ℝ³} (hF : Fr e1 e2 e3) (o : ℝ³) {σ : ℝ} (h
     rw [det3_pc hF]; simp only [ori, fo]; ring
   simp only [TiltSignS, e0, d1, d2]
   rcases h with h | ⟨h0, h1⟩
-  · left; nlinarith [mul_pos hν h]
+  · left; linarith [mul_pos hν h]
   · right; refine ⟨by rw [h0]; ring, ?_⟩
     rw [h0]; linarith
 

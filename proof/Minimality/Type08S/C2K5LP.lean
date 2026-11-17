@@ -62,14 +62,14 @@ theorem k5c_qtc_gt_hasLexCell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' 
     exact sub_eq_zero.mp ((mul_eq_zero.mp this).resolve_right hw.ne')
   have hb6 : 1 < β6 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hγ4.le (by linarith : 0 ≤ 1 - β6)]
+    linarith [mul_nonneg hγ4.le (by linarith : 0 ≤ 1 - β6)]
   have hκ6 : κ * (1 - β6) = 1 := by
     have : (κ * (1 - β6) - 1) * w = 0 := by nlinarith
     exact sub_eq_zero.mp ((mul_eq_zero.mp this).resolve_right hw.ne')
   have hE : (σ - 1) * (1 - β1) ≤ α1 * (σ - κ) := by
     have : ((σ - 1) * (1 - β1) - α1 * (σ - κ)) * w ≤ 0 := by nlinarith
     by_contra hh; push Not at hh
-    nlinarith [mul_pos (sub_pos.2 hh) hw]
+    linarith [mul_pos (sub_pos.2 hh) hw]
   set p := a - d with hp
   set q := b - d with hq
   set r := c - d with hr
@@ -78,7 +78,7 @@ theorem k5c_qtc_gt_hasLexCell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' 
     rw [hR, hb', hp, hr, hwdef]; module
   have hpR : p = σ • R + κ • r := by
     rw [hRv]
-    match_scalars <;> nlinarith
+    match_scalars <;> linarith
   have hΔ : det3 q r R ≠ 0 := by
     have e : det3 q r R = (-w) * det3 p q r := by
       rw [hRv]

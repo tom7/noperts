@@ -63,10 +63,10 @@ theorem k6t3_facet_a'b'c' {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c'
   have e3 : X + n2 + γ6 * n3 = 0 := by linarith
   have hn3 : 0 < n3 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hγ4.le (neg_nonneg.2 hh)]
+    linarith [mul_nonneg hγ4.le (neg_nonneg.2 hh)]
   -- β1 n2 = γ4 n3 ; n2 = -X - γ6 n3 > n3 - γ6 n3
-  have hn2 : (1 - γ6) * n3 < n2 := by nlinarith
-  have : β1 * ((1 - γ6) * n3) < γ4 * n3 := by nlinarith [mul_lt_mul_of_pos_left hn2 hβ1]
+  have hn2 : (1 - γ6) * n3 < n2 := by linarith
+  have : β1 * ((1 - γ6) * n3) < γ4 * n3 := by linarith [mul_lt_mul_of_pos_left hn2 hβ1]
   nlinarith
 
 end C2

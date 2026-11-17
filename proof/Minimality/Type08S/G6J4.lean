@@ -89,7 +89,7 @@ theorem poly_rupert_off {a a' b b' c c' d x0 x0' y0 y0' : ℝ³} (N : Norm08 a a
   have hzxne : zx' ≠ zx := by
     rcases hzx with ⟨h, h'⟩ | ⟨h, h'⟩ <;> rw [h, h'] <;> intro e <;> linarith
   have hzyne : zy' ≠ zy := by
-    rcases hzy with ⟨h, h'⟩ | ⟨h, h'⟩ <;> rw [h, h'] <;> intro e <;> nlinarith [mul_pos hβ6 hν]
+    rcases hzy with ⟨h, h'⟩ | ⟨h, h'⟩ <;> rw [h, h'] <;> intro e <;> linarith [mul_pos hβ6 hν]
   have hrob' : ¬ Sep zx (α4 * w3 + γ4 * C0) zy (α1 * w3 + β1 * ν) := by
     have e0 := ez x0 _ _ _ hx0
     have e1' := ez b' _ _ _ hb'
@@ -101,7 +101,7 @@ theorem poly_rupert_off {a a' b b' c c' d x0 x0' y0 y0' : ℝ³} (N : Norm08 a a
       p ∈ insert d ({a, a', b, b', c, c'} : Finset ℝ³) := by
     intro p hp; simp only [mem_insert, mem_singleton]; tauto
   rw [hu] at hno
-  refine poly_core3 hF o (w1 := w1) (C0 := C0) hν hv1 hha hα hβ1 hα4 hγ4 (by nlinarith [mul_pos hα4 hβ1]) hzx0 hzxne hzyne hrob'
+  refine poly_core3 hF o (w1 := w1) (C0 := C0) hν hv1 hha hα hβ1 hα4 hγ4 (by linarith [mul_pos hα4 hβ1]) hzx0 hzxne hzyne hrob'
     (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) ?_ ?_ ?_ ?_ ?_ ({x0, c', b', y0} : Finset ℝ³)
     ?_ ?_ ?_ ?_ hno
   · intro v hv'

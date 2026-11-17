@@ -159,7 +159,7 @@ theorem pent1_lexUni (z w : ZMod 5 → ℝ) (hinj : ∀ i j, z i = z j → w i =
     have l_c'a : LexLt (z 1, w 1) (z 0, w 0) := by
       rw [lexLt_iff_LP]
       have := LP_add_e (LP_smul hβ1 nB) (LPe_smul (sub_nonneg.2 hα1) na)
-      convert this using 1 <;> nlinarith
+      convert this using 1 <;> linarith
     exact lexUni5_r1 z w hinj l_a'c l_ad (Or.inr l_c'a)
   · -- `d < a`
     have pa : LP (κ * cz + σ * A) (κ * cw + σ * uw) := by
@@ -223,7 +223,7 @@ theorem quad2_lexUni (z w : ZMod 4 → ℝ) (hinj : ∀ i j, z i = z j → w i =
     have l23 : LexLt (z 2, w 2) (z 3, w 3) := (hM 2 3).2 h23
     rw [lexLt_iff_LP] at l23
     have := LP_nonneg l23
-    nlinarith [mul_pos hβ6 hbz]
+    linarith [mul_pos hβ6 hbz]
 
 end C2
 end Type08Sp

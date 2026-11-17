@@ -25,8 +25,8 @@ theorem n2_t1_pos' {zv b1 b2 t1 t2 t3 α1 β1 γ1 δ1 α2 β2 γ2 δ2 : ℝ} (hz
     (Qab_C : α2 * 0 + β2 * 0 + γ2 * zv + δ2 < 0)
     (E1 : α1 * t1 + β1 * t2 + γ1 * t3 = 0) (E2 : α2 * t1 + β2 * t2 + γ2 * t3 = 0)
     (hH : b2 * t1 - b1 * t2 > 0) : 0 < t1 := by
-  have hc1 : α2 * γ1 - γ2 * α1 < 0 := by nlinarith [mul_pos hγ2 hα1, mul_neg_of_neg_of_pos hα2 hγ1]
-  have hc2 : 0 < β2 * γ1 - γ2 * β1 := by nlinarith [mul_nonneg hβ2 hγ1.le, mul_pos hγ2 (neg_pos.mpr hβ1)]
+  have hc1 : α2 * γ1 - γ2 * α1 < 0 := by linarith [mul_pos hγ2 hα1, mul_neg_of_neg_of_pos hα2 hγ1]
+  have hc2 : 0 < β2 * γ1 - γ2 * β1 := by linarith [mul_nonneg hβ2 hγ1.le, mul_pos hγ2 (neg_pos.mpr hβ1)]
   have hlin : (α2 * γ1 - γ2 * α1) * t1 + (β2 * γ1 - γ2 * β1) * t2 = 0 := by
     linear_combination (-γ2) * E1 + γ1 * E2
   have hK : 0 < b2 * (β2 * γ1 - γ2 * β1) + b1 * (α2 * γ1 - γ2 * α1) := by
@@ -59,9 +59,9 @@ theorem _root_.Minimality.N2Cfg.Qac_bc (h : N2Cfg E U zv zw A b1 b2 r1 r2 s m3 a
   have hα1 := h.Qac_a_pos; have d1 := h.delta_Qac; have hr2 := h.hr2; have hzv := h.hzv
   refine ⟨?_, ?_⟩
   · by_contra hc; push Not at hc
-    nlinarith [mul_nonneg hc hr2.le, mul_nonneg hα1.le (sub_nonneg.mpr hA)]
+    linarith [mul_nonneg hc hr2.le, mul_nonneg hα1.le (sub_nonneg.mpr hA)]
   · by_contra hc; push Not at hc
-    nlinarith [mul_nonneg (neg_nonneg.mpr hc) hzv.le]
+    linarith [mul_nonneg (neg_nonneg.mpr hc) hzv.le]
 
 theorem _root_.Minimality.N2Cfg.a3_pos (h : N2Cfg E U zv zw A b1 b2 r1 r2 s m3 a1 a2 a3 FH FQab FQac FT1 FT2 FT3)
     (hA : A ≤ r1) : 0 < a3 := by
@@ -74,10 +74,10 @@ theorem _root_.Minimality.N2Cfg.a3_pos (h : N2Cfg E U zv zw A b1 b2 r1 r2 s m3 a
   have e : FQac.c * a3 = FQac.a * (A - a1) - FQac.b * a2 := by linarith
   have h2 : 0 < r2 * (FQac.c * a3) := by
     rw [e]
-    nlinarith [mul_pos hα1 (neg_pos.mpr h1), mul_pos ha2 (show 0 < -(FQac.a * (r1 - A) + FQac.b * r2) by linarith),
+    linarith [mul_pos hα1 (neg_pos.mpr h1), mul_pos ha2 (show 0 < -(FQac.a * (r1 - A) + FQac.b * r2) by linarith),
       mul_pos ha2 hα1]
   by_contra hc; push Not at hc
-  nlinarith [mul_nonneg hγ.le (neg_nonneg.mpr hc), mul_nonneg hr2.le (mul_nonneg hγ.le (neg_nonneg.mpr hc))]
+  linarith [mul_nonneg hγ.le (neg_nonneg.mpr hc), mul_nonneg hr2.le (mul_nonneg hγ.le (neg_nonneg.mpr hc))]
 
 /-- Weak Lemma 1.2 / 30.3 (`b2 < r2`): `x_a > x_2`, with `A ≤ r1`, `b1 ≤ r1`. -/
 theorem _root_.Minimality.N2Cfg.xa (h : N2Cfg E U zv zw A b1 b2 r1 r2 s m3 a1 a2 a3 FH FQab FQac FT1 FT2 FT3)
@@ -104,7 +104,7 @@ theorem _root_.Minimality.N2Cfg.xa (h : N2Cfg E U zv zw A b1 b2 r1 r2 s m3 a1 a2
   have hβ1 : FQac.b < 0 := (h.Qac_bc hA).1
   have hβ2 : 0 ≤ FQab.b := by
     by_contra hc; push Not at hc
-    nlinarith [mul_pos (neg_pos.mpr hc) hS3, mul_nonneg (neg_pos.mpr d2).le (sub_nonneg.mpr hb)]
+    linarith [mul_pos (neg_pos.mpr hc) hS3, mul_nonneg (neg_pos.mpr d2).le (sub_nonneg.mpr hb)]
   have E1 : FQac.a * (a1 - s * b1) + FQac.b * (a2 - s * b2) + FQac.c * (a3 - m3) = 0 := by
     linear_combination Qac_A - Qac_M
   have E2 : FQab.a * (a1 - s * b1) + FQab.b * (a2 - s * b2) + FQab.c * (a3 - m3) = 0 := by

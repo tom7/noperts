@@ -42,9 +42,9 @@ theorem k6m_H2_conds {κ σ α1 β1 β6 γ6 : ℝ} (hκ : κ * (1 - α1) = β1) 
     have : 0 < β1 * α1 * (β6 - 1) + (α1 - 1) * γ6 * (β1 - 1) := by
       have := mul_pos (mul_pos (by linarith : (0:ℝ) < β1) (by linarith : (0:ℝ) < α1)) (sub_pos.2 hb6)
       have := mul_pos (mul_pos A hγ6) (sub_pos.2 hβ1)
-      nlinarith
+      linarith
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg A.le (neg_nonneg.2 hh)]
+    linarith [mul_nonneg A.le (neg_nonneg.2 hh)]
   · nlinarith [mul_pos (by linarith : (0:ℝ) < β1) hγ6, mul_pos (by linarith : (0:ℝ) < β1) (by linarith : (0:ℝ) < β1),
       mul_pos (by linarith : (0:ℝ) < β1) (by linarith : (0:ℝ) < β6)]
   · have e : (α1 - 1) * ((β6 - β1) * (1 - γ6) + β6 * (γ6 - κ * α1)) =
@@ -55,7 +55,7 @@ theorem k6m_H2_conds {κ σ α1 β1 β6 γ6 : ℝ} (hκ : κ * (1 - α1) = β1) 
         mul_pos A (by linarith : (0:ℝ) < β1), mul_pos A hγ6, mul_pos (mul_pos A (by linarith : (0:ℝ) < β1)) hγ6,
         mul_pos (mul_pos (by linarith : (0:ℝ) < β6) (by linarith : (0:ℝ) < β1)) (by linarith : (0:ℝ) < α1)]
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg A.le (neg_nonneg.2 hh)]
+    linarith [mul_nonneg A.le (neg_nonneg.2 hh)]
   · have e : (α1 - 1) * (α1 * (σ - κ) - (σ - 1) * (1 - β1)) = 0 := by
       linear_combination (α1 - (1 - β1)) * hσ' - α1 * hκ'
     have := (mul_eq_zero.1 e).resolve_left A.ne'

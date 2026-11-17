@@ -41,8 +41,8 @@ theorem k6t4_core (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r ≠ 0)
   set vv := fcomb p q r (0 + lam * 1) (-1 + lam * 0) 0 with hvv
   have hv1 : 0 < 0 + lam * 1 := by linarith
   have hv2 : -1 + lam * 0 < 0 := by linarith
-  have hcone : (1 - γ6) * (0 + lam * 1) + β6 * (-1 + lam * 0) < 0 := by nlinarith
-  have hc1 : 0 < γ6 * (0 + lam * 1) + (1 - β6) * (-1 + lam * 0) := by nlinarith
+  have hcone : (1 - γ6) * (0 + lam * 1) + β6 * (-1 + lam * 0) < 0 := by linarith
+  have hc1 : 0 < γ6 * (0 + lam * 1) + (1 - β6) * (-1 + lam * 0) := by linarith
   have hz : ∀ t : ℝ × ℝ × ℝ, ⟪fpoint p q r d t, r⟫ = ⟪d, r⟫ + t.1 * ⟪p, r⟫ + t.2.1 * ⟪q, r⟫ + t.2.2 * ⟪r, r⟫ :=
     fun t => inner_fpoint _ _ _ _ _ _
   obtain ⟨f0, f1, f2, f3, f4⟩ := z5_add

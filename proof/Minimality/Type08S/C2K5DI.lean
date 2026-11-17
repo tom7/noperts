@@ -206,7 +206,7 @@ theorem k5d_c6_core (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠ 0
     have hl : lam * (α4 + 1) < γ4 := by
       rw [lt_div_iff₀ (by linarith)] at h1; exact h1
     simp only [mul_zero, add_zero, zero_add, mul_one]
-    refine ⟨hα4, by linarith, by nlinarith, by nlinarith⟩
+    refine ⟨hα4, by linarith, by linarith, by nlinarith⟩
   · intro v1 v2 hv
     obtain ⟨hv1, hv2, hc1, hc2⟩ := hv
     exact k5dX6_tsc hα4 hγ4 hs hβ1 hb6 hg6 hv1 hv2 hc1 hc2

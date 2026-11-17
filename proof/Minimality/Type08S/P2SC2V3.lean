@@ -84,7 +84,7 @@ theorem sc2V_core_end (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
   have hgapL : 0 < (Gn - r0) / 2 := by linarith
   refine sc5_core2 hF o E (S := s) (⟨-(σ * b), M * κ, -1, -Y + η - M * κ * zf, L - σ * b * zf⟩ : Mo)
     (⟨0, 0, 0, 0, σ * (σ * b * Y + M * κ * L) - (Gn + r0) / 2⟩ : Mo)
-    hL hzx (by nlinarith [mul_pos hXL hY]) hY (by nlinarith [mul_pos hXL hY]) (by linarith)
+    hL hzx (by linarith [mul_pos hXL hY]) hY (by linarith [mul_pos hXL hY]) (by linarith)
     ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ hEs
   all_goals simp only [Rw, L2, VX, VY]
   · left; linarith [mul_pos hL hb1]

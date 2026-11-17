@@ -26,11 +26,11 @@ theorem k5_delta (g P Q : ℝ) (hg : 0 < g) (hP : 0 < P) (hQ : 0 ≤ Q) :
   · have h1 : min (g / (2 * (Q + 1))) (P / (2 * (g + 1))) ≤ g / (2 * (Q + 1)) := min_le_left _ _
     have h2 : g / (2 * (Q + 1)) * (Q + 1) = g / 2 := by field_simp
     have h3 : 0 < min (g / (2 * (Q + 1))) (P / (2 * (g + 1))) := lt_min (by positivity) (by positivity)
-    nlinarith [mul_le_mul_of_nonneg_right h1 (by linarith : (0:ℝ) ≤ Q + 1)]
+    linarith [mul_le_mul_of_nonneg_right h1 (by linarith : (0:ℝ) ≤ Q + 1)]
   · have h1 : min (g / (2 * (Q + 1))) (P / (2 * (g + 1))) ≤ P / (2 * (g + 1)) := min_le_right _ _
     have h2 : P / (2 * (g + 1)) * (g + 1) = P / 2 := by field_simp
     have h3 : 0 < min (g / (2 * (Q + 1))) (P / (2 * (g + 1))) := lt_min (by positivity) (by positivity)
-    nlinarith [mul_le_mul_of_nonneg_right h1 (by linarith : (0:ℝ) ≤ g + 1)]
+    linarith [mul_le_mul_of_nonneg_right h1 (by linarith : (0:ℝ) ≤ g + 1)]
 
 theorem k5_hasLexCell {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (h : S4TRK2 a a' b b' c c' d)
     (hs : ⟪a' - b, a - d⟫ = 0)
@@ -145,7 +145,7 @@ theorem k5_hasLexCell {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (
       have : ⟪c', p⟫ = ⟪b', p⟫ := hEq
       rw [e1, e2, hrp] at this
       have hqp : ⟪q, p⟫ = ⟪p, q⟫ := real_inner_comm _ _
-      nlinarith [mul_pos hβ1 hpp]
+      linarith [mul_pos hβ1 hpp]
     obtain ⟨δ, hδ, hδ1, hδ2⟩ := k5_delta _ _ _ hg hpp (real_inner_self_nonneg (x := q))
     refine k5x2z_hasLexCellAt (V8 a a' b b' c c' d) p q r d hΔ hα1 hβ1 hβ11 hα4 hβ6 hB0' hC0 hδ hδ1 hδ2 hg ?_ hVall
     intro i

@@ -47,8 +47,8 @@ theorem crQ_pos_iff {L Xr Yr Xg Yg : ℝ} (hL : 0 < L) (hYr : 0 < Yr) (hYg : 0 <
   rcases zmod4_cases a with rfl | rfl | rfl | rfl <;> rcases zmod4_cases b with rfl | rfl | rfl | rfl <;>
     rcases zmod4_cases c with rfl | rfl | rfl | rfl <;>
     first
-    | (refine iff_of_true ?_ (by decide); simp only [crQ, quad_0, quad_1, quad_2, quad_3]; nlinarith)
-    | (refine iff_of_false ?_ (by decide); simp only [crQ, quad_0, quad_1, quad_2, quad_3, not_lt]; nlinarith)
+    | (refine iff_of_true ?_ (by decide); simp only [crQ, quad_0, quad_1, quad_2, quad_3]; linarith)
+    | (refine iff_of_false ?_ (by decide); simp only [crQ, quad_0, quad_1, quad_2, quad_3, not_lt]; linarith)
 
 theorem crQ_neg_iff {L Xr Yr Xg Yg : ℝ} (hL : 0 < L) (hYr : 0 < Yr) (hYg : 0 < Yg)
     (hcr : 0 < (Xg - Xr) * (-Yr) - (Yg - Yr) * (L - Xr)) (hcg : 0 < Yg * Xr - Xg * Yr)

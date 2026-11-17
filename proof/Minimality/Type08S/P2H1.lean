@@ -71,9 +71,9 @@ theorem persF_core {κ L zf Xr Yr zr Xg Yg zg : ℝ} (hYr : 0 < Yr) (hYg : 0 < Y
     (hr : Yr ≤ m2 * Yr + m3 * Yg) (hg : Yg ≤ m2 * Yr + m3 * Yg) :
     PersF L κ zf Xr Yr zr Xg Yg zg := by
   have e2 : l2 = 0 := le_antisymm (by
-    by_contra hc; push Not at hc; nlinarith [mul_pos hc hYr, mul_nonneg hl3 hYg.le]) hl2
+    by_contra hc; push Not at hc; linarith [mul_pos hc hYr, mul_nonneg hl3 hYg.le]) hl2
   have e3 : l3 = 0 := le_antisymm (by
-    by_contra hc; push Not at hc; nlinarith [mul_pos hc hYg, mul_nonneg hl2 hYr.le]) hl3
+    by_contra hc; push Not at hc; linarith [mul_pos hc hYg, mul_nonneg hl2 hYr.le]) hl3
   subst e2 e3
   have hm01 : m0 + m1 = 0 := by
     rcases le_total Yg Yr with h | h
@@ -108,10 +108,10 @@ theorem inner_fpt_e (hF : Fr e1 e2 e3) (O : ℝ³) (X Y z X' Y' z' X'' Y'' z'' :
   rw [fpt_sub, fpt_sub, inner_pc hF]
 
 theorem low_of {A B : ℝ} (hlt : A < B) (h : (A - B) * (0 - A) ≤ 0) : A ≤ 0 := by
-  by_contra hc; push Not at hc; nlinarith [mul_pos (sub_pos.2 hlt) hc]
+  by_contra hc; push Not at hc; linarith [mul_pos (sub_pos.2 hlt) hc]
 
 theorem high_of {A B Ym : ℝ} (hlt : A < B) (h : (B - A) * (Ym - B) ≤ 0) : Ym ≤ B := by
-  by_contra hc; push Not at hc; nlinarith [mul_pos (sub_pos.2 hlt) (sub_pos.2 hc)]
+  by_contra hc; push Not at hc; linarith [mul_pos (sub_pos.2 hlt) (sub_pos.2 hc)]
 
 /-- **Lemma A (29.5 for the 4-cycle).**  A persistent HDN of `Qg` along the circle `(κv e3, c e1)` is `PersF`. -/
 theorem persF_of_hdn (hF : Fr e1 e2 e3) (O : ℝ³) {κ L zf Xr Yr zr Xg Yg zg κv c : ℝ}
@@ -147,7 +147,7 @@ theorem persF_of_hdn (hF : Fr e1 e2 e3) (O : ℝ³) {κ L zf Xr Yr zr Xg Yg zg �
     rw [hm', inner_fpt_e hF] at k1 k2
     rw [hX, hz] at k1
     rw [← hX, ← hz] at k2
-    constructor <;> nlinarith
+    constructor <;> linarith
   obtain ⟨vx1, vx2⟩ := hv 0 0 κ 0 rfl
   obtain ⟨vr1, vr2⟩ := hv Xr Yr zr 2 rfl
   obtain ⟨vg1, vg2⟩ := hv Xg Yg zg 3 rfl

@@ -60,7 +60,7 @@ theorem k6p_qce2z_hasLexCell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c
   have ez : ∀ x y z : ℝ, d + x • p + y • q + z • r = fpoint p q r d (x, y, z) := fun x y z => (hfp p q x y z).symm
   have hpr : ⟪p, r⟫ = ⟪r, p⟫ := real_inner_comm r p
   have hqr : ⟪q, r⟫ = ⟪r, q⟫ := real_inner_comm r q
-  have hmα1 : 1 < m + α4 := by rw [hm]; nlinarith [mul_nonneg hs0 hα4.le]
+  have hmα1 : 1 < m + α4 := by rw [hm]; linarith [mul_nonneg hs0 hα4.le]
   have P1a : fpoint p q r d (0, 0, 1) = a := by rw [hfp]; simp only [hr]; module
   have P1d : fpoint p q r d (0, 0, 0) = d := by rw [hfp]; module
   have P1b : fpoint p q r d (1, 0, 0) = b := by rw [hfp]; simp only [hp]; module
@@ -76,12 +76,12 @@ theorem k6p_qce2z_hasLexCell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c
   have P2b : fpoint q p r d (0, 1, 0) = b := by rw [hfp]; simp only [hp]; module
   have P2b' : fpoint q p r d (1, 0, α4) = b' := by rw [hfp, hb']; simp only [hr, hq]; module
   refine ⟨r, hr0, ?_⟩
-  have hα14 : α1 ≤ α4 := by nlinarith [mul_nonneg hs0 hα4.le]
+  have hα14 : α1 ≤ α4 := by linarith [mul_nonneg hs0 hα4.le]
   have hα4' : 1 < α4 := by linarith
   have hBne' : ⟪p, r⟫ ≠ 0 := by rw [hpr]; exact hBne
   refine k6p_core_hasLexCellAt (V8 a a' b b' c c' d) p q r d hΔ (α1 := α1) (α4 := α4) (β6 := β6)
     (γ6 := γ6) (m := m) hα1 hα4 hβ6 hγ6 hs hm0.ge (Or.inr hBne') (by linarith) ?_ ?_ ?_ ?_
-  · rw [hm0]; nlinarith [mul_pos (sub_pos.2 hα4') (by linarith : 0 < β6 + γ6)]
+  · rw [hm0]; linarith [mul_pos (sub_pos.2 hα4') (by linarith : 0 < β6 + γ6)]
   · linarith
   · intro i
     rcases z5_cases i with rfl | rfl | rfl | rfl | rfl

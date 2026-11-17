@@ -56,8 +56,8 @@ theorem hdn_contra (hF : Fr e1 e2 e3) {ν : ℝ} (hν : 0 < ν) (S : Finset ℝ�
       have eQ : ⟪Q, e2⟫ = a * ⟪Q, e2⟫ + b * ⟪Q, e2⟫ := by rw [← add_mul, hab, one_mul]
       have eP : ⟪P, e2⟫ = a * ⟪P, e2⟫ + b * ⟪P, e2⟫ := by rw [← add_mul, hab, one_mul]
       constructor
-      · nlinarith [mul_nonneg ha (sub_nonneg.2 hu.1), mul_nonneg hb' (sub_nonneg.2 hv.1)]
-      · nlinarith [mul_nonneg ha (sub_nonneg.2 hu.2), mul_nonneg hb' (sub_nonneg.2 hv.2)]
+      · linarith [mul_nonneg ha (sub_nonneg.2 hu.1), mul_nonneg hb' (sub_nonneg.2 hv.1)]
+      · linarith [mul_nonneg ha (sub_nonneg.2 hu.2), mul_nonneg hb' (sub_nonneg.2 hv.2)]
     have hsub : convexHull ℝ (Set.range fun i => proj_xy ((orthoFrameMat e1 e2 e3).toEuclideanLin (x i))) ⊆
         {q : ℝ² | ⟪Q, e2⟫ ≤ q 1 ∧ q 1 ≤ ⟪P, e2⟫} := by
       refine convexHull_min ?_ hconv
@@ -70,15 +70,15 @@ theorem hdn_contra (hF : Fr e1 e2 e3) {ν : ℝ} (hν : 0 < ν) (S : Finset ℝ�
     rw [key2]
     simp only [PiLp.sub_apply, Matrix.cons_val_zero, Matrix.cons_val_one]
     simp only [Set.mem_ofPred_eq] at this
-    nlinarith [mul_nonneg (sub_nonneg.2 h2.le) (sub_nonneg.2 this.1)]
+    linarith [mul_nonneg (sub_nonneg.2 h2.le) (sub_nonneg.2 this.1)]
   · have hconv : Convex ℝ {q : ℝ² | ⟪Q, e2⟫ ≤ q 1 ∧ q 1 ≤ ⟪P, e2⟫} := by
       intro u hu v hv a b ha hb' hab
       simp only [Set.mem_ofPred_eq, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul] at *
       have eQ : ⟪Q, e2⟫ = a * ⟪Q, e2⟫ + b * ⟪Q, e2⟫ := by rw [← add_mul, hab, one_mul]
       have eP : ⟪P, e2⟫ = a * ⟪P, e2⟫ + b * ⟪P, e2⟫ := by rw [← add_mul, hab, one_mul]
       constructor
-      · nlinarith [mul_nonneg ha (sub_nonneg.2 hu.1), mul_nonneg hb' (sub_nonneg.2 hv.1)]
-      · nlinarith [mul_nonneg ha (sub_nonneg.2 hu.2), mul_nonneg hb' (sub_nonneg.2 hv.2)]
+      · linarith [mul_nonneg ha (sub_nonneg.2 hu.1), mul_nonneg hb' (sub_nonneg.2 hv.1)]
+      · linarith [mul_nonneg ha (sub_nonneg.2 hu.2), mul_nonneg hb' (sub_nonneg.2 hv.2)]
     have hsub : convexHull ℝ (Set.range fun i => proj_xy ((orthoFrameMat e1 e2 e3).toEuclideanLin (x i))) ⊆
         {q : ℝ² | ⟪Q, e2⟫ ≤ q 1 ∧ q 1 ≤ ⟪P, e2⟫} := by
       refine convexHull_min ?_ hconv
@@ -91,7 +91,7 @@ theorem hdn_contra (hF : Fr e1 e2 e3) {ν : ℝ} (hν : 0 < ν) (S : Finset ℝ�
     rw [key2]
     simp only [PiLp.sub_apply, Matrix.cons_val_zero, Matrix.cons_val_one]
     simp only [Set.mem_ofPred_eq] at this
-    nlinarith [mul_nonneg (sub_nonneg.2 h2.le) (sub_nonneg.2 this.2)]
+    linarith [mul_nonneg (sub_nonneg.2 h2.le) (sub_nonneg.2 this.2)]
 
 end Type08Sp
 end Minimality

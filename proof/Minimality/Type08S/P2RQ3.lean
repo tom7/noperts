@@ -35,7 +35,7 @@ theorem r5A_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r 
   have hq : 0 < (α - 1) * μ - g * (-1) := by
     have h1 : |α - 1| * μ < g := by
       have h2 : μ * (1 + |α - 1|) < g := by rwa [lt_div_iff₀ (by positivity)] at hμM
-      nlinarith [abs_nonneg (α - 1)]
+      linarith [abs_nonneg (α - 1)]
     have := neg_abs_le (α - 1)
     nlinarith [abs_nonneg (α - 1)]
   have hr0 : r ≠ 0 := by rintro rfl; simp at hqr
@@ -60,7 +60,7 @@ theorem r5A_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r 
         simp only [r5CycA, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4] at hzij hwij <;>
         first
         | rfl
-        | (exfalso; nlinarith [mul_pos hg hB, mul_pos hβ hB, mul_neg_of_pos_of_neg hg hqr])
+        | (exfalso; linarith [mul_pos hg hB, mul_pos hβ hB, mul_neg_of_pos_of_neg hg hqr])
         | (exfalso; apply hP
            have hb : β = 1 := mul_right_cancel₀ hB.ne' (by linarith)
            subst hb; linarith)
@@ -69,9 +69,9 @@ theorem r5A_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r 
            subst hb
            have h0 : α * P = 0 := by linarith
            exact (mul_eq_zero.1 h0).resolve_left hα.ne')
-    · left; simp only [hz]; simp only [r5CycA, pc5_0, pc5_1]; nlinarith [mul_pos hβ hB, mul_neg_of_pos_of_neg hg hqr]
-    · left; simp only [hz]; simp only [r5CycA, pc5_2, pc5_3]; nlinarith
-    · left; simp only [hz]; simp only [r5CycA, pc5_3, pc5_4]; nlinarith
+    · left; simp only [hz]; simp only [r5CycA, pc5_0, pc5_1]; linarith [mul_pos hβ hB, mul_neg_of_pos_of_neg hg hqr]
+    · left; simp only [hz]; simp only [r5CycA, pc5_2, pc5_3]; linarith
+    · left; simp only [hz]; simp only [r5CycA, pc5_3, pc5_4]; linarith
   have n0 : -(0 : ZMod 5) = 0 := by decide
   have n1 : -(1 : ZMod 5) = 4 := by decide
   have n2 : -(2 : ZMod 5) = 3 := by decide

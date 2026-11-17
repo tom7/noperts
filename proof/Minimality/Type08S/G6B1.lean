@@ -55,7 +55,7 @@ theorem dep_rel {a a' b b' c c' d : ℝ³} {l : ℝ³ → ℝ} (hl : IsDep a a' 
   obtain ⟨h1, h2, h3⟩ := coef_zero hdet h0
   refine ⟨by linarith, by linarith, by linarith, ?_⟩
   have := hl.sum
-  nlinarith [this, h1, h2, h3]
+  linarith [this, h1, h2, h3]
 
 theorem gale_coords {a a' b b' c c' d : ℝ³} (G : GaleData a a' b b' c c')
     {α β1 γ4 β6 : ℝ} (hdet : det3 (a - d) (b - d) (c - d) ≠ 0)

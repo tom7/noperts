@@ -144,7 +144,7 @@ theorem norm08_nonplanar {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d
     have := frame_det_ne N.F
     intro h0; apply this
     simp only [det3_expand, PiLp.sub_apply] at h0 ⊢
-    nlinarith [h0]
+    linarith [h0]
   exact N.hκa.ne' (kappa_planar N.G.hl N.G.hm hD hp)
 
 end Type08Sp

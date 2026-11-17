@@ -55,11 +55,11 @@ theorem k8q2p_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q 
     · exact (hyx 0 (by simp only [hY, k3q2pCyc, pc5_0])).elim
   · intro lam hl0 hl1 w hwd hw'
     refine lexUni5_top _ _ hw' ?_ ?_ ?_
-    · left; simp only [hY, k3q2pCyc, pc5_1, pc5_0, hz]; nlinarith [mul_pos hγ4 hA]
+    · left; simp only [hY, k3q2pCyc, pc5_1, pc5_0, hz]; linarith [mul_pos hγ4 hA]
     · rcases hs1.lt_or_eq with h | h
-      · left; simp only [hY, k3q2pCyc, pc5_2, pc5_3, hz]; nlinarith
+      · left; simp only [hY, k3q2pCyc, pc5_2, pc5_3, hz]; linarith
       · right; refine ⟨?_, ?_⟩
-        · simp only [hY, k3q2pCyc, pc5_2, pc5_3, hz]; nlinarith
+        · simp only [hY, k3q2pCyc, pc5_2, pc5_3, hz]; linarith
         · rw [hwd, hwd]
           have := k8_wdiff p q r d (1, β1, 0) (0, β6, γ6) (u1 + lam * t1) (u2 + lam * t2)
           simp only [hY, k3q2pCyc, pc5_2, pc5_3]
@@ -111,11 +111,11 @@ theorem k8q2m_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q 
     · exact (hyx 0 (by simp only [hY, k3q2mCyc, pc6_0])).elim
   · intro lam hl0 hl1 w hwd hw'
     refine lexUni6_top2 _ w hw' ?_ ?_ ?_ ?_
-    · left; simp only [hY, k3q2mCyc, pc6_1, pc6_0, hz]; nlinarith [mul_pos hγ4 hA]
+    · left; simp only [hY, k3q2mCyc, pc6_1, pc6_0, hz]; linarith [mul_pos hγ4 hA]
     · rcases hs2.lt_or_eq with h | h
-      · left; simp only [hY, k3q2mCyc, pc6_2, pc6_3, hz]; nlinarith
+      · left; simp only [hY, k3q2mCyc, pc6_2, pc6_3, hz]; linarith
       · right; refine ⟨?_, ?_⟩
-        · simp only [hY, k3q2mCyc, pc6_2, pc6_3, hz]; nlinarith
+        · simp only [hY, k3q2mCyc, pc6_2, pc6_3, hz]; linarith
         · rw [hwd, hwd]
           have := k8_wdiff p q r d (1, β1, 0) (0, 1, 0) (u1 + lam * t1) (u2 + lam * t2)
           simp only [hY, k3q2mCyc, pc6_2, pc6_3]
@@ -144,9 +144,9 @@ theorem k8_tilt2 (x y : ℝ) (h : 0 < x ∨ 0 < y) : ∃ u1 u2 t1 t2 : ℝ, u1 *
     have h1 : |(η + lam * η) * x| ≤ 2 * η * |x| := by
       rw [abs_mul, abs_of_pos (by nlinarith : 0 < η + lam * η)]
       have := abs_nonneg x
-      nlinarith [mul_nonneg (mul_pos hη (sub_pos.2 hl1)).le this]
+      linarith [mul_nonneg (mul_pos hη (sub_pos.2 hl1)).le this]
     have := neg_abs_le ((η + lam * η) * x)
-    nlinarith
+    linarith
   · have hx : 0 < x := h.resolve_right hy
     push Not at hy
     by_cases hy0 : y = 0
@@ -163,9 +163,9 @@ theorem k8_tilt2 (x y : ℝ) (h : 0 < x ∨ 0 < y) : ∃ u1 u2 t1 t2 : ℝ, u1 *
       have h1 : |(η2 + lam * η2) * y| ≤ 2 * η2 * |y| := by
         rw [abs_mul, abs_of_pos (by nlinarith : 0 < η2 + lam * η2)]
         have := abs_nonneg y
-        nlinarith [mul_nonneg (mul_pos hη2 (sub_pos.2 hl1)).le this]
+        linarith [mul_nonneg (mul_pos hη2 (sub_pos.2 hl1)).le this]
       have := neg_abs_le ((η2 + lam * η2) * y)
-      nlinarith
+      linarith
 
 end C2
 end Type08Sp

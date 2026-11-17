@@ -62,8 +62,8 @@ theorem t4_eq (F : OctFacets a a' b b' c c') (hd : IsCap F d)
   have hs1 := cfg.hua1
   have hb2 := cfg.hb2
   have hr2 := cfg.hr2
-  have hza0 : 0 < za := by nlinarith [mul_nonneg (sub_pos.2 P.ht1).le cfg.hzv, P.hmp]
-  have ha3 : a3 < 0 := by nlinarith [P.hm, mul_pos (sub_pos.mpr hs1) (neg_pos.mpr hzw)]
+  have hza0 : 0 < za := by linarith [mul_nonneg (sub_pos.2 P.ht1).le cfg.hzv, P.hmp]
+  have ha3 : a3 < 0 := by linarith [P.hm, mul_pos (sub_pos.mpr hs1) (neg_pos.mpr hzw)]
   refine Fr.propH_t4_a_eq (V := insert d ({a, a', b, b', c, c'} : Finset ℝ³))
     (bP := b) (aP' := a') (fP := c') (rP := b') (gP := c) (wP := d) (aP := a) ?_ (by simp) (by simp)
     (by simp) (by simp) (by simp) P.Φb P.Φa' P.Φc' (hrb ▸ P.Φb') P.Φc P.Φd P.Φa cfg.hA hs0 hs1 P.ht0 P.ht1
@@ -75,17 +75,17 @@ theorem t4_eq (F : OctFacets a a' b b' c c') (hd : IsCap F d)
     subst hrb
     exact cross_neg_of_planes FT3 FT4 ⟨t * A, 0, za⟩ ⟨r1, r2, 0⟩ ⟨0, 0, zw⟩ ⟨ua * b1, ua * r2, a3⟩
       cfg.T3_P cfg.T3_R cfg.T4_P cfg.T4_R
-      (by simp only [crossYZ]; nlinarith [mul_pos hr2 (show 0 < za - zw by linarith)])
-      (by simp only [Phi]; rw [hT3]; nlinarith [mul_neg_of_neg_of_pos cfg.T3_W hT4])
-      (by simp only [Phi]; rw [hT3]; nlinarith [mul_neg_of_neg_of_pos cfg.T3_A hT4])
+      (by simp only [crossYZ]; linarith [mul_pos hr2 (show 0 < za - zw by linarith)])
+      (by simp only [Phi]; rw [hT3]; linarith [mul_neg_of_neg_of_pos cfg.T3_W hT4])
+      (by simp only [Phi]; rw [hT3]; linarith [mul_neg_of_neg_of_pos cfg.T3_A hT4])
   · simp only [t5aPts, quint_3, quint_4, quint_0]
     subst hrb
     have hub : ua * r2 < r2 := by nlinarith
     exact cross_neg_of_planes FT1 FQac ⟨r1, r2, 0⟩ ⟨ua * b1, ua * r2, a3⟩ ⟨t * A, 0, za⟩ ⟨0, 0, zw⟩
       cfg.T1_R cfg.T1_A cfg.Qac_R cfg.Qac_A
-      (by simp only [crossYZ]; nlinarith [mul_pos (sub_pos.2 hub) hza0, mul_neg_of_pos_of_neg hr2 ha3])
-      (by simp only [Phi]; rw [hT1]; nlinarith [mul_neg_of_neg_of_pos cfg.T1_P hQc])
-      (by simp only [Phi]; rw [cfg.Qac_W, hT1]; nlinarith [mul_neg_of_neg_of_pos cfg.T1_W hQc])
+      (by simp only [crossYZ]; linarith [mul_pos (sub_pos.2 hub) hza0, mul_neg_of_pos_of_neg hr2 ha3])
+      (by simp only [Phi]; rw [hT1]; linarith [mul_neg_of_neg_of_pos cfg.T1_P hQc])
+      (by simp only [Phi]; rw [cfg.Qac_W, hT1]; linarith [mul_neg_of_neg_of_pos cfg.T1_W hQc])
 
 end Type08Sp
 end Minimality

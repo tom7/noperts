@@ -51,7 +51,7 @@ theorem k6t3_pc1_frame' (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R �
   · intro lam h0 h1
     simp only [mul_zero, add_zero, zero_add, mul_one]
     refine ⟨by norm_num, ?_⟩
-    nlinarith
+    linarith
   · intro v1 v2 hv
     obtain ⟨hv1, hv2⟩ := hv
     exact k6t3_pc1_tsc hm hm1 hg he heg hv1 hv2
@@ -101,7 +101,7 @@ theorem k6t3_pc2_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R �
   · intro lam h0 h1
     simp only [mul_zero, add_zero, zero_add, mul_one]
     refine ⟨by norm_num, ?_⟩
-    nlinarith
+    linarith
   · intro v1 v2 hv
     obtain ⟨hv1, hv2⟩ := hv
     exact k6t3_pc2_tsc hm hm1 hg he heg hv1 hv2

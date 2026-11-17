@@ -22,7 +22,7 @@ theorem delta_neg0 (F : Fc) {zv zw : ℝ} (hzv : 0 ≤ zv) (hzw : zw < 0)
   have e : F.d * (zv - zw) = zv * (F.c * zw + F.d) + (-zw) * (F.c * zv + F.d) := by ring
   have hneg : F.d * (zv - zw) < 0 := by
     rw [e]
-    nlinarith [mul_nonneg hzv (show 0 ≤ -(F.c * zw + F.d) by linarith),
+    linarith [mul_nonneg hzv (show 0 ≤ -(F.c * zw + F.d) by linarith),
       mul_pos (show 0 < -zw by linarith) (show 0 < -(F.c * zv + F.d) by linarith)]
   by_contra hc; push Not at hc
   nlinarith
@@ -74,22 +74,22 @@ theorem T3_a_eq : FT3.a * (r1 * b2 - r2 * b1) = (-FT3.d) * (b2 - r2) := by
 theorem T1_a_neg_of (hr : b2 < r2) : FT1.a < 0 := by
   have e := h.T1_a_eq; have hS := h.S3_pos; have hd := h.delta_T1
   by_contra hh; push Not at hh
-  nlinarith [mul_nonneg hh hS.le, mul_pos (show 0 < -FT1.d by linarith) (show 0 < r2 - b2 by linarith)]
+  linarith [mul_nonneg hh hS.le, mul_pos (show 0 < -FT1.d by linarith) (show 0 < r2 - b2 by linarith)]
 
 theorem T3_a_neg_of (hr : b2 < r2) : FT3.a < 0 := by
   have e := h.T3_a_eq; have hS := h.S3_pos; have hd := h.delta_T3
   by_contra hh; push Not at hh
-  nlinarith [mul_nonneg hh hS.le, mul_pos (show 0 < -FT3.d by linarith) (show 0 < r2 - b2 by linarith)]
+  linarith [mul_nonneg hh hS.le, mul_pos (show 0 < -FT3.d by linarith) (show 0 < r2 - b2 by linarith)]
 
 theorem T1_a_pos_of (hr : r2 < b2) : 0 < FT1.a := by
   have e := h.T1_a_eq; have hS := h.S3_pos; have hd := h.delta_T1
   by_contra hh; push Not at hh
-  nlinarith [mul_nonneg (neg_nonneg.mpr hh) hS.le, mul_pos (show 0 < -FT1.d by linarith) (show 0 < b2 - r2 by linarith)]
+  linarith [mul_nonneg (neg_nonneg.mpr hh) hS.le, mul_pos (show 0 < -FT1.d by linarith) (show 0 < b2 - r2 by linarith)]
 
 theorem T3_a_pos_of (hr : r2 < b2) : 0 < FT3.a := by
   have e := h.T3_a_eq; have hS := h.S3_pos; have hd := h.delta_T3
   by_contra hh; push Not at hh
-  nlinarith [mul_nonneg (neg_nonneg.mpr hh) hS.le, mul_pos (show 0 < -FT3.d by linarith) (show 0 < b2 - r2 by linarith)]
+  linarith [mul_nonneg (neg_nonneg.mpr hh) hS.le, mul_pos (show 0 < -FT3.d by linarith) (show 0 < b2 - r2 by linarith)]
 
 end T4Cfg0
 end Type08Sp

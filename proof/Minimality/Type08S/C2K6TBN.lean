@@ -44,7 +44,7 @@ theorem k6t2_tt5b_gt {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (
   refine k6t2_c4g_frame _ _ _ _ _ hΔ hα4p hγ41 hαγ hβ1 hβ6 hγ6 (Or.inr hg6) (Or.inl ?_)
     (hmemX (k5dX4_mem α4 γ4 β1 β6 γ6)) hVall
   rw [hg6] at hz2
-  nlinarith [mul_pos hβ6 hA]
+  linarith [mul_pos hβ6 hA]
 
 /-- **5c**: QTT, `ζ(a,d) = 0`, `ζ(c,d) ≠ 0` (`ζ(c,d) = ⟪c - d, d - b⟫`).
 `ζ(c,d) > 0`: `(c',b',c,d,b)`; `ζ(c,d) < 0`: `γ4 > 1` the pentagon `(a,c',b',c,d)`, `γ4 ≤ 1` the pentagon `(b',a',b,d,a)`. -/

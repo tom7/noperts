@@ -29,7 +29,7 @@ theorem normalCone_of_far (S : Set ℝ²) {u t : ℝ²} (hfar : ∀ m ∈ S, ‖
     have e : m - u = (m - t) + (t - u) := by abel
     rw [e, norm_add_sq_real] at h2
     have : ⟪t - u, m - t⟫ ≤ 0 := by
-      rw [real_inner_comm]; nlinarith [sq_nonneg ‖m - t‖]
+      rw [real_inner_comm]; linarith [sq_nonneg ‖m - t‖]
     exact this
   have hconv : Convex ℝ {q : ℝ² | ⟪t - u, q - t⟫ ≤ 0} := by
     have : {q : ℝ² | ⟪t - u, q - t⟫ ≤ 0} = {q : ℝ² | ⟪t - u, q⟫ ≤ ⟪t - u, t⟫} := by
@@ -113,7 +113,7 @@ theorem level_not_noHDN {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
     have e0' : (0 : ZMod 4) + 1 = 1 := by decide
     rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
       first | exact absurd rfl h1 | (exact absurd (by decide) h2) |
-        (simp [hs, ht, e2, e3, e0, e0'] ; try nlinarith)
+        (simp [hs, ht, e2, e3, e0, e0'] ; try linarith)
   have key : ∀ w : ℝ³, (w = b - d ∨ w = -(b - d)) → 0 < det3 (a - d) (c - d) w → False := by
     intro w hw hΔ
     have hw0 : w ≠ 0 := by rintro rfl; simp [det3_expand] at hΔ

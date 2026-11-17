@@ -43,12 +43,12 @@ theorem lemE_sign {σ zp L zx zf Xr zr Xg zg : ℝ} (hσ : 0 < σ * (zx - zp)) (
   rw [hDp] at hE
   rcases lt_trichotomy (σ * Dx) 0 with h | h | h
   · exfalso
-    have h1 : σ * (Dx - (Xr - Xg) * (zx - zp)) < 0 := by nlinarith [mul_pos (sub_pos.2 hXrg) hσ]
+    have h1 : σ * (Dx - (Xr - Xg) * (zx - zp)) < 0 := by linarith [mul_pos (sub_pos.2 hXrg) hσ]
     have k1 := mul_pos (neg_pos.2 h) (neg_pos.2 h1)
     have k2 : (-(σ * Dx)) * (-(σ * (Dx - (Xr - Xg) * (zx - zp)))) =
         σ ^ 2 * (Dx * (Dx - (Xr - Xg) * (zx - zp))) := by ring
     rw [k2] at k1
-    nlinarith [mul_nonneg (sq_nonneg σ) (neg_nonneg.2 hE)]
+    linarith [mul_nonneg (sq_nonneg σ) (neg_nonneg.2 hE)]
   · exfalso
     have hσ0 : σ ≠ 0 := by rintro rfl; simp at hσ
     exact hD ((mul_eq_zero.mp h).resolve_left hσ0)
@@ -75,7 +75,7 @@ theorem classD5_of {zp L zx zf Xr Yr zr Xg Yg zg : ℝ} (hL : 0 < L) (hzp : zp <
   rw [one_mul] at hDx
   have hDp : (Xr - Xg) * (zp - zf) + L * (zr - zg) ≤ 0 := by
     unfold LemEF at hE
-    by_contra hc; push Not at hc; nlinarith [mul_pos hDx hc]
+    by_contra hc; push Not at hc; linarith [mul_pos hDx hc]
   set K := zx - zf + m * L with hK
   have hKpos : 0 < K := by
     have : (Xr - Xg) * (zx - zf) + L * (zr - zg) = (Xr - Xg) * K := by rw [hK, hm]; ring
@@ -84,7 +84,7 @@ theorem classD5_of {zp L zx zf Xr Yr zr Xg Yg zg : ℝ} (hL : 0 < L) (hzp : zp <
     have : (Xr - Xg) * (zp - zf) + L * (zr - zg) = (Xr - Xg) * (zp - (zx - K)) := by rw [hK, hm]; ring
     rw [this] at hDp
     have : zp - (zx - K) ≤ 0 := by
-      by_contra hc; push Not at hc; nlinarith [mul_pos hΔ hc]
+      by_contra hc; push Not at hc; linarith [mul_pos hΔ hc]
     linarith
   set σ0 := zg - m * Xg with hσ0
   have hσK : σ0 = zx - s * K := by
@@ -92,11 +92,11 @@ theorem classD5_of {zp L zx zf Xr Yr zr Xg Yg zg : ℝ} (hL : 0 < L) (hzp : zp <
     linear_combination (-1) * hz + m * hX - (1 - s') * hm
   set zc := zx + s * (zf - zx) with hzc
   have hσc : σ0 = zc - m * (s * L) := by rw [hσK, hzc, hK]; ring
-  have hD1 : zp < σ0 := by rw [hσK]; nlinarith [mul_pos (sub_pos.2 hs1) hKpos]
-  have hD2 : σ0 < zx := by rw [hσK]; nlinarith [mul_pos hs0 hKpos]
+  have hD1 : zp < σ0 := by rw [hσK]; linarith [mul_pos (sub_pos.2 hs1) hKpos]
+  have hD2 : σ0 < zx := by rw [hσK]; linarith [mul_pos hs0 hKpos]
   have hch : zx * L + (zf - zx) * (s * L) = (σ0 + m * (s * L)) * L := by rw [hσc, hzc]; ring
   have hX0 : 0 < s * L := by positivity
-  have hXL : s * L < L := by nlinarith [mul_pos (sub_pos.2 hs1) hL]
+  have hXL : s * L < L := by linarith [mul_pos (sub_pos.2 hs1) hL]
   clear_value σ0 zc K m
   rcases hcase with ⟨h1, h2, h3, h4⟩ | ⟨h1, h2, h3, h4⟩
   · have hmneg : m < 0 := by
@@ -133,7 +133,7 @@ theorem classD5_neg {zp L zx zf Xr Yr zr Xg Yg zg : ℝ} (hL : 0 < L) (hzp : zx 
   obtain ⟨hY, s, s', hs0, hs1, ht0, ht1, hX, hz⟩ := hd
   refine classD5_of hL (by linarith) hXrg ⟨hY, s, s', hs0, hs1, ht0, ht1, hX, by linarith⟩ ?_ hrob.neg ?_
   · rintro ⟨h1, h2⟩; exact hnc ⟨by linarith, by linarith⟩
-  · unfold LemEF at hE ⊢; nlinarith
+  · unfold LemEF at hE ⊢; linarith
 
 /-- `x ∉ Π'` sign of SC-X (`hPi`) from Lemma E, for `x̄` on the line of the top side. -/
 theorem hPi_of {σ zp L zx zf Xr zr Xg zg : ℝ} (hσ : 0 < σ * (zx - zp)) (hXr : 0 < Xr) (hXrg : Xg < Xr)
@@ -154,7 +154,7 @@ theorem hPi_of {σ zp L zx zf Xr zr Xg zg : ℝ} (hσ : 0 < σ * (zx - zp)) (hXr
     linarith
   have hs := lemE_sign hσ hXrg hE hD
   have : 0 < σ * ((zr - zx) * L - (zf - zx) * Xr) * (Xr - Xg) := by
-    rw [mul_assoc, key]; nlinarith [mul_pos hXr hs]
+    rw [mul_assoc, key]; linarith [mul_pos hXr hs]
   exact pos_of_mul_pos_left this hΔ.le
 
 /-- **Chord end at `x`: `XEnd` + Lemma E ⇒ `ClassX5`.** -/

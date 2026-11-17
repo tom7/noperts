@@ -83,9 +83,9 @@ theorem cross_neg_of_planes (F1 F2 : Fc) (P Q S0 S : V3)
       linarith
   have hT0 : 0 < T := by
     by_contra hh; push Not at hh
-    nlinarith [mul_neg_of_neg_of_pos c0 hM1, mul_nonneg_of_nonpos_of_nonpos hh f0.le]
+    linarith [mul_neg_of_neg_of_pos c0 hM1, mul_nonneg_of_nonpos_of_nonpos hh f0.le]
   by_contra hh; push Not at hh
-  nlinarith [mul_pos hT0 (neg_pos.mpr f), mul_nonneg hh hM1.le]
+  linarith [mul_pos hT0 (neg_pos.mpr f), mul_nonneg hh hM1.le]
 
 end Type08Sp
 end Minimality

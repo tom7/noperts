@@ -205,7 +205,7 @@ theorem h4_cyc (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : zw < 0) (hb2 
   rcases zmod4_pairs i j h1 h2 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ |
       ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
     simp only [h4Pts, b0, b1', b2', b3, quad_0, quad_1, quad_2, quad_3, LexTest, tst, hdet] <;>
-    left <;> nlinarith
+    left <;> linarith
 
 theorem h4_bp (hA : 0 < A) (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : zw < 0) (hb2 : 0 < b2)
     (hz2 : (1 - s) * zv < z2) (ht : t * (s * b2) < z2) :
@@ -226,15 +226,15 @@ theorem h4_bp (hA : 0 < A) (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : z
     rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
       simp only [h4Pts, b0, b1', b2', b3, quad_0, quad_1, quad_2, quad_3, LexTest, tst, hdet] <;>
       first
-      | (left; nlinarith)
-      | (right; refine ⟨by ring, by nlinarith⟩)
+      | (left; linarith)
+      | (right; refine ⟨by ring, by linarith⟩)
   · subst hz
     have a4 := mul_pos hA (sub_pos.mpr ht)
     rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
       simp only [h4Pts, b0, b1', b2', b3, quad_0, quad_1, quad_2, quad_3, LexTest, tst, hdet] <;>
       first
-      | (left; nlinarith)
-      | (right; refine ⟨by ring, by nlinarith⟩)
+      | (left; linarith)
+      | (right; refine ⟨by ring, by linarith⟩)
 
 theorem h4_cp (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : zw < 0)
     (hr2 : 0 < r2) (hrb : r2 < b2) (hz2 : (1 - s) * zv < z2) :
@@ -254,7 +254,7 @@ theorem h4_cp (hs0 : 0 < s) (hs1 : s < 1) (hzv : 0 ≤ zv) (hzw : zw < 0)
   intro i
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     simp only [h4Pts, b0, b1', b2', b3, quad_0, quad_1, quad_2, quad_3, LexTest, tst, hdet] <;>
-    left <;> nlinarith
+    left <;> linarith
 
 theorem h4_a {a1 a2 a3 : ℝ}
     (u0 : 0 < -(crossYZ (h4Pts zv zw s b1 b2 z2 0) (h4Pts zv zw s b1 b2 z2 1) ⟨a1, a2, a3⟩))
@@ -267,10 +267,10 @@ theorem h4_a {a1 a2 a3 : ℝ}
   obtain ⟨b0, b1', b2', b3⟩ := zmod4_add_one
   intro i
   rcases zmod4_cases i with rfl | rfl | rfl | rfl
-  · rw [b0]; left; simp only [tst, hdet, crossYZ] at u0 ⊢; nlinarith
-  · rw [b1']; left; simp only [tst, hdet, crossYZ] at u1 ⊢; nlinarith
-  · rw [b2']; left; simp only [tst, hdet, crossYZ] at u2 ⊢; nlinarith
-  · rw [b3]; left; simp only [tst, hdet, crossYZ] at u3 ⊢; nlinarith
+  · rw [b0]; left; simp only [tst, hdet, crossYZ] at u0 ⊢; linarith
+  · rw [b1']; left; simp only [tst, hdet, crossYZ] at u1 ⊢; linarith
+  · rw [b2']; left; simp only [tst, hdet, crossYZ] at u2 ⊢; linarith
+  · rw [b3]; left; simp only [tst, hdet, crossYZ] at u3 ⊢; linarith
 
 end N2lt
 

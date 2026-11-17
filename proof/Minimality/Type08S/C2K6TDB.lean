@@ -47,7 +47,7 @@ theorem k6t4_qtc1_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R �
   · intro lam h0 h1
     refine ⟨by simp, ?_⟩
     simp only [mul_zero, add_zero, zero_add, mul_one]
-    nlinarith [mul_pos nk a1, mul_pos hβ1 h0]
+    linarith [mul_pos nk a1, mul_pos hβ1 h0]
   · intro v1 v2 ⟨hv1, hc⟩
     exact k6t1_km1_tsc hκ hσ hα1 hβ1 hb6 hbc hE hv1 hc
   · intro v1 v2 ⟨hv1, hc⟩ hL
@@ -90,7 +90,7 @@ theorem k6t4_qtc2_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R �
   · intro lam h0 h1
     refine ⟨by simp, ?_⟩
     simp only [mul_zero, add_zero, zero_add, mul_one, mul_neg]
-    nlinarith [mul_pos nk a1, mul_pos hβ1 h0]
+    linarith [mul_pos nk a1, mul_pos hβ1 h0]
   · intro v1 v2 ⟨hv1, hc⟩
     exact k6t1_km2_tsc hκ hσ hα1 hβ1 hb6 hbc hE hv1 hc
   · intro v1 v2 ⟨hv1, hc⟩ hL
