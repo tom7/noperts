@@ -43,10 +43,9 @@ theorem rimH_cyc (tm hm tp hp sp kp d1 d3 : ℝ) (htm : 0 < tm) (hhm : 0 < hm) (
   intro i j h1 h2
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
+    try first
     | exact absurd rfl h1
     | exact absurd (by decide) h2
-    | skip
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     left
@@ -122,10 +121,9 @@ theorem rimE2a_cyc (tm hm tp hp sp kp sm km ap am d1 d3 : ℝ) (htm : 0 < tm) (h
   intro i j h1 h2
   rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod6_cases j with rfl | rfl | rfl | rfl | rfl | rfl <;>
-    first
+    try first
     | exact absurd rfl h1
     | exact absurd (by decide) h2
-    | skip
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, b5, hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5]
     first
@@ -195,10 +193,9 @@ theorem rimE2b_cyc (tm hm tp hp sp kp sm km ap am d1 d3 : ℝ)
   intro i j h1 h2
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
+    try first
     | exact absurd rfl h1
     | exact absurd (by decide) h2
-    | skip
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
@@ -318,10 +315,9 @@ theorem rimW1_cyc (tm hm tp hp sp kp sm km ap am d1 d3 : ℝ) (htm : 0 < tm) (ht
   intro i j h1 h2
   rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod6_cases j with rfl | rfl | rfl | rfl | rfl | rfl <;>
-    first
+    try first
     | exact absurd rfl h1
     | exact absurd (by decide) h2
-    | skip
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, b5, hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5]
     first
@@ -386,10 +382,9 @@ theorem rimW2_cyc (tm hm tp hp sp kp sm km ap am d1 d3 : ℝ) (htm : 0 < tm) (ht
   intro i j h1 h2
   rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod6_cases j with rfl | rfl | rfl | rfl | rfl | rfl <;>
-    first
+    try first
     | exact absurd rfl h1
     | exact absurd (by decide) h2
-    | skip
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, b5, hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5]
     first
@@ -501,10 +496,9 @@ theorem rimC6_cyc (tm hm tp hp sp kp sm km a : ℝ) (htm : 0 < tm) (htp : 0 < tp
   rcases hc.lt_or_eq with hc | hc <;>
   rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod6_cases j with rfl | rfl | rfl | rfl | rfl | rfl <;>
-    first
+    try first
     | exact absurd rfl h1
     | exact absurd (by decide) h2
-    | skip
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, b5, hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5]
     first
@@ -677,10 +671,9 @@ theorem rimA_cyc (tp tm hm sp kp sm km ρ b : ℝ) (d : C3) (htp : 0 < tp) (htp1
   intro i j h1 h2
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-    first
+    try first
     | exact absurd rfl h1
     | exact absurd (by decide) h2
-    | skip
   all_goals
     simp only [CaseC09.ST, Dc_uF, crF, scF, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     left
@@ -1191,10 +1184,9 @@ theorem rimFA_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam pV 
   apply ST_of_Lx
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-    first
+    try first
     | exact absurd rfl h1
     | exact absurd (by decide) h2
-    | skip
   all_goals simp only [b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
   all_goals
     first
@@ -1339,10 +1331,9 @@ theorem rimFB_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM 
   apply ST_of_Lx
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-    first
+    try first
     | exact absurd rfl h1
     | exact absurd (by decide) h2
-    | skip
   all_goals simp only [b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
   all_goals
     first
@@ -1602,10 +1593,9 @@ theorem rimFD_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM 
   apply ST_of_Lx
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
+    try first
     | exact absurd rfl h1
     | exact absurd (by decide) h2
-    | skip
   all_goals simp only [b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
   all_goals
     first
@@ -1863,10 +1853,9 @@ theorem rimAP_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam pV 
   apply ST_of_Lx
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
+    try first
     | exact absurd rfl h1
     | exact absurd (by decide) h2
-    | skip
   all_goals simp only [b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
   all_goals
     first
@@ -1992,10 +1981,9 @@ theorem rimBP_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM 
   apply ST_of_Lx
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
+    try first
     | exact absurd rfl h1
     | exact absurd (by decide) h2
-    | skip
   all_goals simp only [b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
   all_goals
     first
@@ -2123,10 +2111,9 @@ theorem rimCP_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam pV 
   apply ST_of_Lx
   rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod6_cases j with rfl | rfl | rfl | rfl | rfl | rfl <;>
-    first
+    try first
     | exact absurd rfl h1
     | exact absurd (by decide) h2
-    | skip
   all_goals simp only [b0, b1, b2, b3, b4, b5, hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5]
   all_goals
     first
@@ -2213,10 +2200,9 @@ theorem rimDP_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM 
   apply ST_of_Lx
   rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod6_cases j with rfl | rfl | rfl | rfl | rfl | rfl <;>
-    first
+    try first
     | exact absurd rfl h1
     | exact absurd (by decide) h2
-    | skip
   all_goals simp only [b0, b1, b2, b3, b4, b5, hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5]
   all_goals
     first
@@ -4010,11 +3996,11 @@ theorem good_pos {tp tm : ℝ} (htp : 0 < tp) (htm : 0 < tm) {d a b : C3}
 
 theorem sc_sub (tp tm : ℝ) (a b : C3) :
     Frame7.screenW tp tm (a.sub b) = Frame7.screenW tp tm a - Frame7.screenW tp tm b := by
-  simp only [Frame7.screenW, C3.sub]; ext <;> simp <;> ring
+  simp only [Frame7.screenW, C3.sub]; ext <;> simp ; ring
 
 theorem sc_add (tp tm : ℝ) (a b : C3) :
     Frame7.screenW tp tm (a.add b) = Frame7.screenW tp tm a + Frame7.screenW tp tm b := by
-  simp only [Frame7.screenW, C3.add]; ext <;> simp <;> ring
+  simp only [Frame7.screenW, C3.add]; ext <;> simp ; ring
 
 theorem zeta_formula {tp tm γ lam : ℝ} (h : EFam F tp tm γ lam) (q : C3) :
     F.zetaW tp tm q = (q.x + (tp + tm) * q.y - tp * q.z) / (tp + tm) := by

@@ -160,7 +160,7 @@ theorem k6m_hc2_tsc {κ σ α1 β1 β6 γ6 v1 v2 : ℝ} (hκ : κ < 0) (hσ : σ
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, k6mHCyc2_0, k6mHCyc2_1, k6mHCyc2_2, k6mHCyc2_3, s0, s1, s2, s3,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         left; nlinarith)
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl <;>

@@ -35,7 +35,7 @@ def hasKeyX (a b c : Nat) : Bool := hasKey3 triRoutes a b c || hasKey3 triRoutes
 /-- **The extended tables tell the truth** on the keys of both lists. -/
 theorem entOK_tab3X {g : Geo} (hF : FacOK g) (hO : OriOK g) :
     EntOK tab3X g (fun a b c => hasKeyX a b c = true) (fun a b c => hasKey3 nlRoutes a b c = true)
-      (fun t p q => p < 7 ∧ q < 7) where
+      (fun _ p q => p < 7 ∧ q < 7) where
   ent a b c h := by
     unfold hasKeyX hasKey3 at h
     cases hf : triRoutes.find? fun r => r.1 == (a, b, c) with
