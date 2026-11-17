@@ -54,7 +54,7 @@ theorem k17f_pa2_frame {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
   rw [det_alpha4 hb'] at hα
   have hα1 : α4 < 1 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
+    linarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
   have hg4 : γ4 = 1 := by
     have := (planar_a_iff hdet hc' hb').1 hκ
     linarith
@@ -105,8 +105,8 @@ theorem k17f_pent_tsc {D α4 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα4 : 0 < α4) 
     | (simp only [TSc, d3, k17fPent, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 3200000 in
 theorem k17f_pent_rest {D α4 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα4 : 0 < α4) (hβ6 : 0 < β6) (hγ6 : 0 < γ6)
@@ -134,7 +134,7 @@ theorem k17f_pent_rest {D α4 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα4 : 0 < α4)
     (simp only [TSc, d3, k17fPent, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
+     | (left; linarith)
      | (right; refine ⟨by ring, by nlinarith⟩))
 
 theorem k17fPent_inj {α4 β6 γ6 : ℝ} (hα4 : 0 < α4) (hβ6 : 0 < β6) (hγ6 : 0 < γ6) :
@@ -180,8 +180,8 @@ theorem k17f_hex_tsc {D α4 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα4 : 0 < α4) (
     | (simp only [TSc, d3, k17fHex, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 3200000 in
 theorem k17f_hex_rest {D α4 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα4 : 0 < α4) (hβ6 : 0 < β6) (hγ6 : 0 < γ6)
@@ -202,7 +202,7 @@ theorem k17f_hex_rest {D α4 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα4 : 0 < α4) 
     (simp only [TSc, d3, k17fHex, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
+     | (left; linarith)
      | (right; refine ⟨by ring, by nlinarith⟩))
 
 theorem k17fHex_inj {α4 β6 γ6 : ℝ} (hα4 : 0 < α4) (hβ6 : 0 < β6) (hγ6 : 0 < γ6) :
@@ -253,11 +253,11 @@ theorem k17f_s17_pent {a a' b b' c c' d : ℝ³} {α4 β6 γ6 : ℝ} (hdet : det
   have hlam : ∀ lam : ℝ, 0 < lam → lam < 1 → (1 - γ6) * (1 + lam * s) < β6 * (-(-1 + lam * 0)) := by
     intro lam h0 h1; nlinarith [mul_pos (sub_pos.2 hγ61) (mul_pos hs0 (sub_pos.2 h1))]
   have hlam2 : ∀ lam : ℝ, 0 < lam → lam < 1 → (1 - β6) * (-(-1 + lam * 0)) < γ6 * (1 + lam * s) := by
-    intro lam h0 h1; nlinarith [mul_pos (mul_pos hγ6 h0) hs0]
-  have hlam0 : ∀ lam : ℝ, 0 < lam → 0 < 1 + lam * s := fun lam h0 => by nlinarith [mul_pos h0 hs0]
+    intro lam h0 h1; linarith [mul_pos (mul_pos hγ6 h0) hs0]
+  have hlam0 : ∀ lam : ℝ, 0 < lam → 0 < 1 + lam * s := fun lam h0 => by linarith [mul_pos h0 hs0]
   refine ⟨R, k17f_r0 hΔ, ?_⟩
   refine k3_cell_gen (V8 a a' b b' c c' d) P Q R d hΔ (k := 5) (by norm_num) (k17fPent α4 β6 γ6)
-    (k17fPent_inj hα4 hβ6 hγ6) (u1 := 1) (u2 := -1) (t1 := s) (t2 := 0) (by nlinarith) ?_ ?_ ?_ ?_
+    (k17fPent_inj hα4 hβ6 hγ6) (u1 := 1) (u2 := -1) (t1 := s) (t2 := 0) (by linarith) ?_ ?_ ?_ ?_
   · intro i
     rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
     · simp only [k17fPent, pc5_0, Ea]; simp [V8]
@@ -288,10 +288,10 @@ theorem k17f_s17_pent {a a' b b' c c' d : ℝ³} {α4 β6 γ6 : ℝ} (hdet : det
         (hlam2 lam h0 h1)).2 i
   · intro w hw
     refine lexUni5_top _ w hw ?_ ?_ ?_
-    · left; simp only [k17fPent, pc5_0, pc5_1, hz, hPR]; nlinarith
-    · left; simp only [k17fPent, pc5_2, pc5_3, hz, hPR]; nlinarith [mul_pos hγ6 hQR]
+    · left; simp only [k17fPent, pc5_0, pc5_1, hz, hPR]; linarith
+    · left; simp only [k17fPent, pc5_2, pc5_3, hz, hPR]; linarith [mul_pos hγ6 hQR]
     · left; simp only [k17fPent, pc5_3, pc5_4, hz, hPR]
-      nlinarith [mul_pos hα4 hRR, mul_pos (sub_pos.2 hγ61) hQR]
+      linarith [mul_pos hα4 hRR, mul_pos (sub_pos.2 hγ61) hQR]
 
 set_option maxHeartbeats 3200000 in
 /-- **S1.7, `pr < 0`**: hexagon `(a,b',c,a',b,c')` at `a - d`. -/
@@ -321,7 +321,7 @@ theorem k17f_s17_hex {a a' b b' c c' d : ℝ³} {α4 β6 γ6 : ℝ} (hdet : det3
   have hRR : 0 < ⟪R, R⟫ := real_inner_self_pos.2 (k17f_r0 hΔ)
   refine ⟨R, k17f_r0 hΔ, ?_⟩
   refine k3_cell_gen (V8 a a' b b' c c' d) P Q R d hΔ (k := 6) (by norm_num) (k17fHex α4 β6 γ6)
-    (k17fHex_inj hα4 hβ6 hγ6) (u1 := γ6) (u2 := β6) (t1 := 0) (t2 := 1) (by nlinarith) ?_ ?_ ?_ ?_
+    (k17fHex_inj hα4 hβ6 hγ6) (u1 := γ6) (u2 := β6) (t1 := 0) (t2 := 1) (by linarith) ?_ ?_ ?_ ?_
   · intro i
     rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl
     · simp only [k17fHex, pc6_0, Ea]; simp [V8]
@@ -331,7 +331,7 @@ theorem k17f_s17_hex {a a' b b' c c' d : ℝ³} {α4 β6 γ6 : ℝ} (hdet : det3
     · simp only [k17fHex, pc6_4, Eb]; simp [V8]
     · simp only [k17fHex, pc6_5, Ec']; simp [V8]
   · intro lam h0 h1 D hD
-    exact k17f_hex_tsc hD hα4 hβ6 hγ6 hs hγ61 (by nlinarith) (by nlinarith) (by nlinarith)
+    exact k17f_hex_tsc hD hα4 hβ6 hγ6 hs hγ61 (by linarith) (by linarith) (by nlinarith)
   · intro y hy hyx
     have hV : y = fpoint P Q R d (0, 0, 1) ∨ y = fpoint P Q R d (1, 0, α4) ∨ y = fpoint P Q R d (1, 0, 0) ∨
         y = fpoint P Q R d (γ6, β6, 0) ∨ y = fpoint P Q R d (0, 1, 0) ∨ y = fpoint P Q R d (0, 1, 1) ∨
@@ -347,13 +347,13 @@ theorem k17f_s17_hex {a a' b b' c c' d : ℝ³} {α4 β6 γ6 : ℝ} (hdet : det3
     · exact (hyx 4 (by simp only [k17fHex, pc6_4])).elim
     · exact (hyx 5 (by simp only [k17fHex, pc6_5])).elim
     · refine ⟨_, rfl, fun lam h0 h1 D hD i => ?_⟩
-      exact k17f_hex_rest hD hα4 hβ6 hγ6 hs hγ61 (by nlinarith) (by nlinarith) (by nlinarith) i
+      exact k17f_hex_rest hD hα4 hβ6 hγ6 hs hγ61 (by linarith) (by linarith) (by nlinarith) i
   · intro w hw
     refine lexUni6_top2 _ w hw ?_ ?_ ?_ ?_
-    · left; simp only [k17fHex, pc6_0, pc6_1, hz, hQR]; nlinarith [mul_pos (sub_pos.2 hα41) hRR]
-    · left; simp only [k17fHex, pc6_2, pc6_3, hz, hQR]; nlinarith [mul_pos (sub_pos.2 hγ61) (neg_pos.2 hPR)]
-    · left; simp only [k17fHex, pc6_3, pc6_4, hz, hQR]; nlinarith [mul_pos hγ6 (neg_pos.2 hPR)]
-    · left; left; simp only [k17fHex, pc6_4, pc6_5, hz, hQR]; nlinarith
+    · left; simp only [k17fHex, pc6_0, pc6_1, hz, hQR]; linarith [mul_pos (sub_pos.2 hα41) hRR]
+    · left; simp only [k17fHex, pc6_2, pc6_3, hz, hQR]; linarith [mul_pos (sub_pos.2 hγ61) (neg_pos.2 hPR)]
+    · left; simp only [k17fHex, pc6_3, pc6_4, hz, hQR]; linarith [mul_pos hγ6 (neg_pos.2 hPR)]
+    · left; left; simp only [k17fHex, pc6_4, pc6_5, hz, hQR]; linarith
 
 /-- **S1.7** (Pa(2) with `β1 = 1`): a cell, or the leftover tie `⟪a-d,c-d⟫ = 0` (codim + 1). -/
 theorem k17f_s17 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (hT' : IsT' a b c' d)

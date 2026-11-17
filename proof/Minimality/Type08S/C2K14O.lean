@@ -146,12 +146,12 @@ theorem k14_H5_hasLexCell {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     apply inner_lt
     have : c' - a = β1 • q + (0:ℝ) • r + (α1 - 1) • p := by rw [hc', hp, hq]; module
     rw [this, key, hqp, hrp, ← hm1]
-    nlinarith
+    linarith
   · rw [eB', eA]
     apply inner_lt
     have : b' - a = (0:ℝ) • q + β1 • r + (α1 - 1) • p := by rw [hb', hp, hr]; module
     rw [this, key, hqp, hrp, ← hm1]
-    nlinarith
+    linarith
   · rw [eA', eC']
     apply inner_lt
     have : a' - c' = (β6 - β1) • q + γ6 • r + (-α1) • p := by rw [ha', hc', hp, hq, hr]; module

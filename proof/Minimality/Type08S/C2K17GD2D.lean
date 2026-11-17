@@ -25,7 +25,7 @@ theorem k17gdA_inj {α1 β1 : ℝ} (hα1 : 1 < α1) (hβ1 : 0 < β1) : ∀ i j, 
     rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
     simp only [k17gdA, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4, Prod.mk.injEq] at h <;>
     first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith)
+      (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
 
 theorem k17gdB_inj {α1 β1 γ4 : ℝ} (hα1 : 1 < α1) (hβ1 : 0 < β1) (hγ4 : 0 < γ4) :
     ∀ i j, k17gdB α1 β1 γ4 i = k17gdB α1 β1 γ4 j → i = j := by
@@ -34,7 +34,7 @@ theorem k17gdB_inj {α1 β1 γ4 : ℝ} (hα1 : 1 < α1) (hβ1 : 0 < β1) (hγ4 :
     rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
     simp only [k17gdB, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4, Prod.mk.injEq] at h <;>
     first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith)
+      (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
 
 /-- Key inequality of cell B (uses the Gale inequality `E ≥ 0`). -/
 theorem k17gdB_key {α1 β1 γ4 pq qr qq : ℝ} (hα1 : 1 < α1) (hβ1 : 0 < β1) (hγ4 : 0 < γ4)
@@ -45,8 +45,8 @@ theorem k17gdB_key {α1 β1 γ4 pq qr qq : ℝ} (hα1 : 1 < α1) (hβ1 : 0 < β1
   obtain ⟨h1, h2⟩ := hh
   have a1 := sub_pos.2 hα1
   have y0 : 0 ≤ -qr := by linarith
-  have e1 : (α1 - 1) * (-pq) ≥ γ4 * (-qr) + β1 * qq := by nlinarith
-  have e2 : (-pq) ≤ (1 - γ4) * (-qr) := by nlinarith
+  have e1 : (α1 - 1) * (-pq) ≥ γ4 * (-qr) + β1 * qq := by linarith
+  have e2 : (-pq) ≤ (1 - γ4) * (-qr) := by linarith
   have e3 : (α1 - 1) * (-pq) ≤ (α1 - 1) * ((1 - γ4) * (-qr)) := mul_le_mul_of_nonneg_left e2 a1.le
   have e4 : (-qr) * (α1 - 1 - α1 * γ4) ≤ (-qr) * (-β1) := mul_le_mul_of_nonneg_left (by linarith) y0
   nlinarith [mul_pos hβ1 hqq]
@@ -88,9 +88,9 @@ theorem k17gdA_frame (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r ≠ 
     refine ⟨by nlinarith, by norm_num, ?_⟩
     simp only [mul_zero, add_zero, neg_mul, zero_add]
     rcases le_or_gt 1 β1 with hb | hb
-    · nlinarith [mul_pos hl0 ht1, mul_nonneg (sub_nonneg.2 hb) (mul_pos hl0 ht1).le]
+    · linarith [mul_pos hl0 ht1, mul_nonneg (sub_nonneg.2 hb) (mul_pos hl0 ht1).le]
     · have : (1 - β1) * (lam * t1) < t1 := by nlinarith [mul_pos hl0 ht1]
-      nlinarith
+      linarith
   · intro v1 v2 hv
     refine ⟨k17gdA_tsc hα1 hβ1 hv.1 hv.2.1 hv.2.2, ?_⟩
     intro t ht i
@@ -112,7 +112,7 @@ theorem k17gdA_frame (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r ≠ 
     · refine k17gd_lexUni5_A z w hsep (k17gd_ll (by rw [z3, z2]; linarith)) h43 ?_
       rcases lt_or_ge ⟪p, r⟫ 0 with hp | hp
       · left; exact k17gd_ll (by rw [z0, z4]; linarith)
-      · right; exact k17gd_ll (by rw [z0, z1]; nlinarith [mul_nonneg a1.le hp, mul_pos hβ1 hq])
+      · right; exact k17gd_ll (by rw [z0, z1]; linarith [mul_nonneg a1.le hp, mul_pos hβ1 hq])
     · have h0 : LexLt (z 0, w 0) (z 4, w 4) ∨ LexLt (z 0, w 0) (z 1, w 1) := by
         rcases lt_or_gt_of_ne hp0 with hp | hp
         · left; exact k17gd_ll (by rw [z0, z4]; linarith)

@@ -170,22 +170,22 @@ theorem k19_s16w_hex {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 : ℝ} (hdet : det3
     refine k19_lexUni_nb2 _ _ hinj 0 (by decide) ?_ ?_ ?_
     · rw [e0]; right
       refine ⟨by simp only [k17gcHexC, pc6_0, pc6_5, hz, hPR]; ring, ?_⟩
-      simp only [k17gcHexC, pc6_0, pc6_5, hwx, hPR]; nlinarith
+      simp only [k17gcHexC, pc6_0, pc6_5, hwx, hPR]; linarith
     · rw [f0, f1]; right
       refine ⟨by simp only [k17gcHexC, pc6_1, pc6_2, hz, hPR, hQR]; ring, ?_⟩
-      simp only [k17gcHexC, pc6_1, pc6_2, hwx, hPR]; nlinarith
+      simp only [k17gcHexC, pc6_1, pc6_2, hwx, hPR]; linarith
     · intro i hi hi'
       rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl
       · exact absurd rfl hi
       · exact absurd rfl hi'
       · left; rw [e2]; right
         refine ⟨by simp only [k17gcHexC, pc6_1, pc6_2, hz, hPR, hQR]; ring, ?_⟩
-        simp only [k17gcHexC, pc6_1, pc6_2, hwx, hPR]; nlinarith
-      · left; rw [e3]; left; simp only [k17gcHexC, pc6_2, pc6_3, hz, hPR, hQR]; nlinarith [mul_pos hm0 hRR]
-      · right; rw [f4]; left; simp only [k17gcHexC, pc6_4, pc6_5, hz, hPR, hQR]; nlinarith [mul_pos hm0 hRR]
+        simp only [k17gcHexC, pc6_1, pc6_2, hwx, hPR]; linarith
+      · left; rw [e3]; left; simp only [k17gcHexC, pc6_2, pc6_3, hz, hPR, hQR]; linarith [mul_pos hm0 hRR]
+      · right; rw [f4]; left; simp only [k17gcHexC, pc6_4, pc6_5, hz, hPR, hQR]; linarith [mul_pos hm0 hRR]
       · right; rw [f5]; right
         refine ⟨by simp only [k17gcHexC, pc6_0, pc6_5, hz, hPR]; ring, ?_⟩
-        simp only [k17gcHexC, pc6_0, pc6_5, hwx, hPR]; nlinarith
+        simp only [k17gcHexC, pc6_0, pc6_5, hwx, hPR]; linarith
   · intro l hl
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
     rcases hl with rfl | rfl | rfl | rfl
@@ -231,7 +231,7 @@ theorem k19_s16w_pent {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 : ℝ} (hdet : det
     rw [e1, inner_sub_right, real_inner_smul_right] at hw
     have : ⟪P, R⟫ = -⟪P, b - d⟫ := by
       rw [hP, hR, show d - b = -(b - d) by abel, inner_neg_right]
-    rw [this]; nlinarith [mul_pos (sub_pos.2 hγ61) hPP]
+    rw [this]; linarith [mul_pos (sub_pos.2 hγ61) hPP]
   have hLf : ⟪b' - c, d - b⟫ = (γ4 - 1) * ⟪P, R⟫ + ⟪Q, R⟫ := by
     have e1 : b' - c = (γ4 - 1) • P + Q := by rw [hb', hP, hQ]; module
     rw [e1, inner_add_left, real_inner_smul_left]
@@ -277,15 +277,15 @@ theorem k19_s16w_pent {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 : ℝ} (hdet : det
     rw [hLf] at hL
     obtain ⟨e0, e1, e2, e3, e4, f0, f1, f2, f3, f4⟩ := k19_z5
     refine k19_lexUni_nb _ _ hinj 3 ?_ ?_ ?_
-    · rw [e3]; left; simp only [k17gcPent6, pc5_2, pc5_3, hz]; nlinarith [mul_pos hβ1 hRR]
-    · rw [f3]; left; simp only [k17gcPent6, pc5_3, pc5_4, hz]; nlinarith
+    · rw [e3]; left; simp only [k17gcPent6, pc5_2, pc5_3, hz]; linarith [mul_pos hβ1 hRR]
+    · rw [f3]; left; simp only [k17gcPent6, pc5_3, pc5_4, hz]; linarith
     · intro i hi
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
-      · left; rw [e0]; left; simp only [k17gcPent6, pc5_0, pc5_4, hz]; nlinarith
-      · left; rw [e1]; left; simp only [k17gcPent6, pc5_0, pc5_1, hz]; nlinarith
-      · right; rw [f2]; left; simp only [k17gcPent6, pc5_2, pc5_3, hz]; nlinarith [mul_pos hβ1 hRR]
+      · left; rw [e0]; left; simp only [k17gcPent6, pc5_0, pc5_4, hz]; linarith
+      · left; rw [e1]; left; simp only [k17gcPent6, pc5_0, pc5_1, hz]; linarith
+      · right; rw [f2]; left; simp only [k17gcPent6, pc5_2, pc5_3, hz]; linarith [mul_pos hβ1 hRR]
       · exact absurd rfl hi
-      · left; rw [e4]; left; simp only [k17gcPent6, pc5_3, pc5_4, hz]; nlinarith
+      · left; rw [e4]; left; simp only [k17gcPent6, pc5_3, pc5_4, hz]; linarith
   · intro l hl
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
     rcases hl with rfl | rfl <;> (left; norm_num)

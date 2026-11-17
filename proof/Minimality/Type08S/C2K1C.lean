@@ -54,8 +54,8 @@ theorem k1_cyc6 {D α1 β1 β6 v1 v2 v3 : ℝ} (hD : 0 < D) (hα1 : 1 < α1) (h�
     | (simp only [TSc, d3, k1Cyc6, s0, s1, s2, s3, s4, s5, six_0, six_1, six_2, six_3, six_4, six_5,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 3200000 in
 theorem k1_rest6 {D α1 β1 α4 β6 v1 v2 v3 : ℝ} (hD : 0 < D) (hα1 : 1 < α1) (hβ1 : 0 < β1) (hβ11 : β1 < 1)
@@ -77,8 +77,8 @@ theorem k1_rest6 {D α1 β1 α4 β6 v1 v2 v3 : ℝ} (hD : 0 < D) (hα1 : 1 < α1
     (simp only [TSc, d3, k1Cyc6, s0, s1, s2, s3, s4, s5, six_0, six_1, six_2, six_3, six_4, six_5,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
-     | (right; refine ⟨by ring, by nlinarith⟩))
+     | (left; linarith)
+     | (right; refine ⟨by ring, by linarith⟩))
 
 theorem k1Cyc6_inj {α1 β1 β6 : ℝ} (hα1 : 1 < α1) (hβ1 : 0 < β1) (hβ11 : β1 < 1) (hβ6 : 0 < β6) :
     ∀ i j, k1Cyc6 α1 β1 β6 i = k1Cyc6 α1 β1 β6 j → i = j := by

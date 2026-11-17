@@ -138,16 +138,16 @@ theorem k22c1b_edge {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
       have hlq : l * qq < E := by
         rw [hl, div_mul_eq_mul_div, div_lt_iff₀ (by linarith)]; nlinarith
       refine cellP l hl0 (Or.inl ⟨hb1, by nlinarith, ?_⟩)
-      nlinarith [mul_nonneg hl0.le hnn, mul_nonneg (mul_nonneg hl0.le hnn) (by linarith : (0:ℝ) ≤ 1 - γ6)]
+      linarith [mul_nonneg hl0.le hnn, mul_nonneg (mul_nonneg hl0.le hnn) (by linarith : (0:ℝ) ≤ 1 - γ6)]
     · by_cases hg : γ4 < 1
       · -- (v)
         left
-        refine cellP 1 one_pos (Or.inr ⟨hb1, hg, by nlinarith, by nlinarith, ?_⟩)
+        refine cellP 1 one_pos (Or.inr ⟨hb1, hg, by linarith, by linarith, ?_⟩)
         have e1 : (1 - γ6) * qr * rr ≤ qr * qr := by nlinarith
         have e2 : (1 - γ6) * qr < qq := by
           by_contra hc; push Not at hc
-          nlinarith [mul_le_mul_of_nonneg_right hc hrrp.le]
-        nlinarith
+          linarith [mul_le_mul_of_nonneg_right hc hrrp.le]
+        linarith
       · -- leftover
         right
         refine ⟨hpq, hpr, β1, γ4, γ6, hdet, hc', hb', ha', hβ1, hγ4, hγ6, hγ61, hfr, Or.inr ⟨hb1, ?_, by linarith⟩⟩
@@ -167,7 +167,7 @@ theorem k22c1b_edge {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
       have hl0 : 0 < l := by positivity
       have hlD : l * (qq - γ4 * qr) = (γ4 * rr - qr) + (qq - γ4 * qr) := by
         rw [hl, add_mul, div_mul_cancel₀ _ hD.ne']; ring
-      refine cellM l hl0 (Or.inr (Or.inr ⟨rfl, hg, by nlinarith, by nlinarith⟩))
+      refine cellM l hl0 (Or.inr (Or.inr ⟨rfl, hg, by nlinarith, by linarith⟩))
     · right
       refine ⟨hpq, hpr, 1, γ4, γ6, hdet, hc', hb', ha', hβ1, hγ4, hγ6, hγ61, hfr, Or.inl ⟨rfl, hqr ▸ hnn, ?_⟩⟩
       rcases lt_or_gt_of_ne hg1 with h' | h'
@@ -181,9 +181,9 @@ theorem k22c1b_edge {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
     have hl0 : 0 < l := div_pos hEp (by nlinarith)
     have hlq : l * (β1 * qq) < E := by
       rw [hl, div_mul_eq_mul_div, div_lt_iff₀ (by nlinarith)]
-      nlinarith [mul_pos hEp (by nlinarith : (0:ℝ) < β1 * qq + 2)]
+      linarith [mul_pos hEp (by nlinarith : (0:ℝ) < β1 * qq + 2)]
     refine cellM l hl0 (Or.inr (Or.inl ⟨hb1, by nlinarith, ?_⟩))
-    nlinarith [mul_nonneg (mul_nonneg hl0.le hnn) hγ4.le]
+    linarith [mul_nonneg (mul_nonneg hl0.le hnn) hγ4.le]
 
 end C2
 end Type08Sp

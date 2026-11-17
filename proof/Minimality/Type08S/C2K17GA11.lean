@@ -117,7 +117,7 @@ theorem k17gaA_inj {κ σ α1 β1 β6 : ℝ} (hκ : κ < 0) (hα1 : 1 < α1) (h�
   have e3 := congrArg (fun t => t.2.2) h
   have m1 : κ * α1 < 0 := by nlinarith
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;> rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first | rfl | (exfalso; simp only [k17gaA, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4] at e1 e2 e3; nlinarith)
+    first | rfl | (exfalso; simp only [k17gaA, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4] at e1 e2 e3; linarith)
 
 set_option maxHeartbeats 3200000 in
 /-- **S1.2a frame cell** `(a, b', c, a', c')` at `R = a - b'` on the Zdb(ii) tie, given `⟪P,Q⟫ > 0`. -/
@@ -138,16 +138,16 @@ theorem k17ga_s12a_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R 
   have hz : ∀ t : ℝ × ℝ × ℝ, ⟪fpoint P Q R d t, R⟫ = ⟪d, R⟫ + t.1 * ⟪P, R⟫ + t.2.1 * ⟪Q, R⟫ + t.2.2 * ⟪R, R⟫ :=
     fun t => inner_fpoint _ _ _ _ _ _
   obtain ⟨η0, hη0, hηx0⟩ := k8_eta (x := ⟪P, P⟫) (y := ⟪P, Q⟫) hL.ne'
-  have hnka : 0 < (-κ) * (α1 - 1) + 1 := by nlinarith [mul_pos nk a1]
+  have hnka : 0 < (-κ) * (α1 - 1) + 1 := by linarith [mul_pos nk a1]
   obtain ⟨η, hηdef⟩ : ∃ η, η = min η0 (β1 / ((-κ) * (α1 - 1) + 1)) := ⟨_, rfl⟩
   have hη : 0 < η := by rw [hηdef]; exact lt_min hη0 (by positivity)
   have hη1 : η ≤ η0 := by rw [hηdef]; exact min_le_left _ _
   have hη2 : η ≤ β1 / ((-κ) * (α1 - 1) + 1) := by rw [hηdef]; exact min_le_right _ _
   have hηx : 2 * η * |⟪P, P⟫| < |⟪P, Q⟫| := by
-    nlinarith [mul_le_mul_of_nonneg_right hη1 (abs_nonneg ⟪P, P⟫)]
+    linarith [mul_le_mul_of_nonneg_right hη1 (abs_nonneg ⟪P, P⟫)]
   have hη3 : η * ((-κ) * (α1 - 1)) < β1 := by
     have := (le_div_iff₀ hnka).1 hη2
-    nlinarith [mul_pos nk a1]
+    linarith [mul_pos nk a1]
   have hXabs : |⟪P, Q⟫| = ⟪P, Q⟫ := abs_of_pos hL
   have hlexC : ∀ v1 v2 : ℝ, 0 < v1 * ⟪P, P⟫ + v2 * ⟪P, Q⟫ →
       (∀ i j, ⟪fpoint P Q R d (k17gaA κ σ α1 β1 β6 i), R⟫ = ⟪fpoint P Q R d (k17gaA κ σ α1 β1 β6 j), R⟫ →
@@ -160,11 +160,11 @@ theorem k17ga_s12a_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R 
     · simp only [k17gaA, pc5_1, pc5_2, hz, hBz]; ring
     · simp only [k17gaA, pc5_4, pc5_0, hz, hBz]; nlinarith
     · simp only [k17gaA, pc5_1, pc5_0, hz, hBz]; nlinarith
-    · simp only [k17gaA, pc5_3, pc5_4, hz, hBz]; nlinarith
-    · simp only [k17gaA, pc5_2, pc5_1, k17f_wexp, hBz]; nlinarith [mul_pos (by linarith : (0:ℝ) < β6) hw]
+    · simp only [k17gaA, pc5_3, pc5_4, hz, hBz]; linarith
+    · simp only [k17gaA, pc5_2, pc5_1, k17f_wexp, hBz]; linarith [mul_pos (by linarith : (0:ℝ) < β6) hw]
   refine cyc_cell V P Q R d hΔ (k := 5) (by norm_num) (k17gaA κ σ α1 β1 β6)
     (k17gaA_inj hκ hα1 hβ1 hb6) hmem [((1 : ℝ), (0 : ℝ), (0 : ℝ)), (0, 0, 0)] ?_
-    (u1 := 0) (u2 := 1) (t1 := -η) (t2 := 0) (lo := 0) (hi := 1) (by nlinarith) (by norm_num)
+    (u1 := 0) (u2 := 1) (t1 := -η) (t2 := 0) (lo := 0) (hi := 1) (by linarith) (by norm_num)
     (fun v1 v2 => v1 < 0 ∧ κ * (α1 - 1) * v1 < β1 * v2 ∧ 0 < v1 * ⟪P, P⟫ + v2 * ⟪P, Q⟫) ?_ ?_ ?_
   · intro y hy
     rcases hVall y hy with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -176,16 +176,16 @@ theorem k17ga_s12a_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R 
     · exact Or.inr ⟨_, by simp, rfl⟩
     · exact Or.inl ⟨3, rfl⟩
   · intro lam h0 h1
-    refine ⟨by nlinarith [mul_pos h0 hη], by nlinarith [mul_lt_mul_of_pos_left hη3 h0, mul_pos h0 hη], ?_⟩
+    refine ⟨by linarith [mul_pos h0 hη], by nlinarith [mul_lt_mul_of_pos_left hη3 h0, mul_pos h0 hη], ?_⟩
     have hle : lam * η * ⟪P, P⟫ ≤ η * |⟪P, P⟫| := by
       have h2 : lam * ⟪P, P⟫ ≤ |⟪P, P⟫| := by
         rcases le_total 0 ⟪P, P⟫ with hx | hx
         · rw [abs_of_nonneg hx]; nlinarith
         · rw [abs_of_nonpos hx]; nlinarith
-      nlinarith [mul_le_mul_of_nonneg_left h2 hη.le]
+      linarith [mul_le_mul_of_nonneg_left h2 hη.le]
     have e : (0 + lam * -η) * ⟪P, P⟫ + (1 + lam * 0) * ⟪P, Q⟫ = -(lam * η * ⟪P, P⟫) + ⟪P, Q⟫ := by ring
     rw [e]; rw [hXabs] at hηx
-    nlinarith [abs_nonneg ⟪P, P⟫]
+    linarith [abs_nonneg ⟪P, P⟫]
   · rintro v1 v2 ⟨hv1, hc, -⟩
     exact k17ga_s12a_tsc hκ hσ hα1 hβ1 hb6 hbc hE hv1 hc
   · rintro v1 v2 ⟨-, -, hw⟩ hinj

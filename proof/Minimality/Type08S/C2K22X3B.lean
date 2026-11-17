@@ -113,11 +113,11 @@ theorem k22x3_cell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h 
     obtain ⟨e0, e1, e2, e3, e4, f0, f1, f2, f3, f4⟩ := k19_z5
     refine k19_lexUni_nb _ _ hw 0 ?_ ?_ ?_
     · rw [e0]; left; simp only [k22x3Y_4, k22x3Y_0, hz]; nlinarith
-    · rw [f0]; left; simp only [k22x3Y_0, k22x3Y_1, hz]; nlinarith
+    · rw [f0]; left; simp only [k22x3Y_0, k22x3Y_1, hz]; linarith
     · intro i hi
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
       · exact absurd rfl hi
-      · left; rw [e1]; left; simp only [k22x3Y_0, k22x3Y_1, hz]; nlinarith
+      · left; rw [e1]; left; simp only [k22x3Y_0, k22x3Y_1, hz]; linarith
       · left; rw [e2]; left; simp only [k22x3Y_1, k22x3Y_2, hz]; nlinarith
       · left; rw [e3]; left; simp only [k22x3Y_2, k22x3Y_3, hz]; nlinarith
       · right; rw [f4]; left; simp only [k22x3Y_4, k22x3Y_0, hz]; nlinarith

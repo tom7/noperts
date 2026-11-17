@@ -55,16 +55,16 @@ theorem k17cS36b_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R �
       right
       simp only [k17cS36bCyc, pc5_1, pc5_2, inner_fpoint, k17c_inner_fcomb_right, hPR, hPQ]
       refine ⟨by ring, ?_⟩
-      nlinarith [mul_pos a0 (mul_pos (neg_pos.2 hv1) hPP)]
+      linarith [mul_pos a0 (mul_pos (neg_pos.2 hv1) hPP)]
     · -- b < a'
       left
       simp only [k17cS36bCyc, pc5_3, pc5_4, inner_fpoint, hPR]
-      nlinarith
+      linarith
     · -- c' < b'
       left
       left
       simp only [k17cS36bCyc, pc5_0, pc5_1, inner_fpoint, hPR]
-      nlinarith
+      linarith
 
 set_option maxHeartbeats 3200000 in
 theorem k17cS34_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠ 0) {α1 β6 γ6 : ℝ}
@@ -99,16 +99,16 @@ theorem k17cS34_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠
     · -- c' < b'
       left
       simp only [k17cS34Cyc_0, k17cS34Cyc_1, inner_fpoint, hPR]
-      nlinarith
+      linarith
     · -- c' < b
       right
       simp only [k17cS34Cyc_0, k17cS34Cyc_3, inner_fpoint, k17c_inner_fcomb_right, hPR, hPQ]
       refine ⟨by ring, ?_⟩
-      nlinarith [mul_pos a0 (mul_pos (neg_pos.2 hv1) hPP)]
+      linarith [mul_pos a0 (mul_pos (neg_pos.2 hv1) hPP)]
     · -- b < a'
       left
       simp only [k17cS34Cyc_3, k17cS34Cyc_2, inner_fpoint, hPR]
-      nlinarith
+      linarith
 
 end C2
 end Type08Sp

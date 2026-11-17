@@ -116,13 +116,13 @@ theorem k22c1b_cellF1 {a a' b b' c c' d : ℝ³} {γ4 γ6 : ℝ}
       · exact (hj1 rfl).elim
       · exact (hj2 (by decide)).elim
       · left; simp only [s2]; unfold LexLt; left
-        simp only [hz, k22c1bF1_1, k22c1bF1_2]; nlinarith
+        simp only [hz, k22c1bF1_1, k22c1bF1_2]; linarith
       · right; simp only [g3]; unfold LexLt; right
         simp only [hz, hs, k22c1bF1_3, k22c1bF1_4]
         refine ⟨trivial, ?_⟩
-        nlinarith [mul_pos hv2 hqr]
+        linarith [mul_pos hv2 hqr]
       · right; simp only [g4]; unfold LexLt; left
-        simp only [hz, k22c1bF1_4, k22c1bF1_0]; nlinarith
+        simp only [hz, k22c1bF1_4, k22c1bF1_0]; linarith
   exact ⟨p, hp0, hA⟩
 
 end C2

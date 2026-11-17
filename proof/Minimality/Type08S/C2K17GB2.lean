@@ -61,7 +61,7 @@ theorem k17gb_s13b_tsc {D α1 β1 β6 v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 < α1)
     | (simp only [TSc, d3, k17gbY3, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
+       | (left; linarith)
        | (right; refine ⟨by ring, by nlinarith⟩))
 
 set_option maxHeartbeats 3200000 in
@@ -93,8 +93,8 @@ theorem k17gb_s13b_rest {D α1 β1 β6 γ4 v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 <
     (simp only [TSc, d3, k17gbY3, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
-     | (right; refine ⟨by ring, by nlinarith⟩))
+     | (left; linarith)
+     | (right; refine ⟨by ring, by linarith⟩))
 
 theorem k17gbY3_inj {α1 β1 β6 : ℝ} (hα1 : 1 < α1) (hβ1 : 0 < β1) (hβ6 : 1 < β6) :
     ∀ i j, k17gbY3 α1 β1 β6 i = k17gbY3 α1 β1 β6 j → i = j := by
@@ -144,7 +144,7 @@ theorem k17gb_s13b_cell {a a' b b' c c' d : ℝ³} {α1 β1 γ4 β6 : ℝ} (hdet
     · simp only [k17gbY3, pc5_3, Ea]; simp [V8]
     · simp only [k17gbY3, pc5_4, Ec']; simp [V8]
   · intro lam h0 h1 D hD
-    exact k17gb_s13b_tsc hD hα1 hβ1 hβ6 (by nlinarith) (by nlinarith)
+    exact k17gb_s13b_tsc hD hα1 hβ1 hβ6 (by linarith) (by linarith)
   · intro y hy hyx
     have hV : y = fpoint P Q R d (0, β6, -1) ∨ y = fpoint P Q R d (0, 0, -1) ∨ y = fpoint P Q R d (0, 0, 0) ∨
         y = fpoint P Q R d (1, 0, 0) ∨ y = fpoint P Q R d (α1, β1, 0) ∨ y = fpoint P Q R d (0, 1, 0) ∨
@@ -159,14 +159,14 @@ theorem k17gb_s13b_cell {a a' b b' c c' d : ℝ³} {α1 β1 γ4 β6 : ℝ} (hdet
     · exact (hyx 3 (by simp only [k17gbY3, pc5_3])).elim
     · exact (hyx 4 (by simp only [k17gbY3, pc5_4])).elim
     · refine ⟨_, rfl, fun lam h0 h1 D hD i => ?_⟩
-      exact (k17gb_s13b_rest hD hα1 hβ1 hβ6 hγ4 (by nlinarith) (by nlinarith)).1 i
+      exact (k17gb_s13b_rest hD hα1 hβ1 hβ6 hγ4 (by linarith) (by linarith)).1 i
     · refine ⟨_, rfl, fun lam h0 h1 D hD i => ?_⟩
-      exact (k17gb_s13b_rest hD hα1 hβ1 hβ6 hγ4 (by nlinarith) (by nlinarith)).2 i
+      exact (k17gb_s13b_rest hD hα1 hβ1 hβ6 hγ4 (by linarith) (by linarith)).2 i
   · intro w hw
     refine k17gb_lex5_plat01 _ w hw ?_ ?_ ?_ ?_
-    · simp only [k17gbY3, pc5_0, pc5_2, hz, hPR, hQR]; nlinarith
-    · simp only [k17gbY3, pc5_1, pc5_2, hz, hPR, hQR]; nlinarith
-    · simp only [k17gbY3, pc5_2, pc5_3, hz, hPR, hQR]; nlinarith
+    · simp only [k17gbY3, pc5_0, pc5_2, hz, hPR, hQR]; linarith
+    · simp only [k17gbY3, pc5_1, pc5_2, hz, hPR, hQR]; linarith
+    · simp only [k17gbY3, pc5_2, pc5_3, hz, hPR, hQR]; linarith
     · simp only [k17gbY3, pc5_3, pc5_4, hz, hPR, hQR]; nlinarith
 
 /-- **S1.3b**: `K6tTaA41` (with `¬ T'`), `ζ(d,b) = 0`, `β6 > 1`: a lex cell unless `ζ_{a-c'}(a,b') ≥ 0`. -/
@@ -184,7 +184,7 @@ theorem k17gb_s13b {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (hT
     have hΔ2 : 0 < det3 (a - d) (b - d) (c - d) * det3 (a - d) (b - d) (c - d) := mul_self_pos.2 hdet
     have hb61 : 1 < β6 := by
       by_contra hh; push Not at hh
-      nlinarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
+      linarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
     have hpr : ⟪a - d, c - d⟫ < 0 := by
       rw [hL] at hle
       by_contra hh; push Not at hh

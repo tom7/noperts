@@ -89,14 +89,14 @@ theorem k17b2_q1_tsc {xa ya za xb zb yc zc t zd v1 v2 : ℝ} (hxa : 0 < xa) (hya
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, k17b2Cy1_0, k17b2Cy1_1, k17b2Cy1_2, k17b2Cy1_3, f0, f1, f2, f3,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
   · intro p hp i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
     rcases hp with rfl | rfl | rfl <;>
       rcases z4_cases i with rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, k17b2Cy1_0, k17b2Cy1_1, k17b2Cy1_2, k17b2Cy1_3, f0, f1, f2, f3,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-       first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+       first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 3200000 in
 theorem k17b2_q1_frame (V : Finset ℝ³) (P Q R d0 : ℝ³) (hΔ : det3 P Q R ≠ 0) {xa ya za xb zb yc zc t zd : ℝ}
@@ -203,7 +203,7 @@ theorem k17b2_r1 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
       simp only [hxa, hya, hk]; field_simp
     rw [e, lt_div_iff₀ (by positivity)]
     simp only [hSdef] at hR ⊢
-    nlinarith [hR]
+    linarith [hR]
   have hb1 : 1 / β1 < 1 := by rw [div_lt_one hβ0]; exact hβ1
   have hb0 : 0 < 1 / β1 := by positivity
   have ht0 : 0 < t := by rw [ht]; positivity

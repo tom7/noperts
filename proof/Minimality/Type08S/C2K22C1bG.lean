@@ -59,14 +59,14 @@ theorem k22c1b_tscF1 {γ4 γ6 v2 : ℝ} (hγ4 : 0 < γ4) (hγ41 : γ4 < 1) (hγ6
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, k22c1bF1_0, k22c1bF1_1, k22c1bF1_2, k22c1bF1_3, k22c1bF1_4, f0, f1, f2, f3, f4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl <;>
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, k22c1bF1_0, k22c1bF1_1, k22c1bF1_2, k22c1bF1_3, k22c1bF1_4, f0, f1, f2, f3, f4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-       first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+       first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 6400000 in
 theorem k22c1b_tscF2 {β1 γ4 γ6 v1 : ℝ} (hβ1 : 0 < β1) (hβ11 : β1 ≤ 1) (hγ41 : 1 ≤ γ4) (hγ6 : 0 < γ6)
@@ -79,7 +79,7 @@ theorem k22c1b_tscF2 {β1 γ4 γ6 v1 : ℝ} (hβ1 : 0 < β1) (hβ11 : β1 ≤ 1)
   have k1 := mul_pos hγ6 hv
   have k3 : 0 < 1 - γ6 := by linarith
   have k4 := mul_pos k3 hv
-  have k5 : (1 - γ6) * v1 < 1 := by nlinarith
+  have k5 : (1 - γ6) * v1 < 1 := by linarith
   have k2 := mul_pos (by linarith : (0:ℝ) < γ4) hv
   rcases lt_or_eq_of_le hβ11 with hb | rfl <;> rcases lt_or_eq_of_le hγ41 with hg | rfl <;>
   · constructor
@@ -91,7 +91,7 @@ theorem k22c1b_tscF2 {β1 γ4 γ6 v1 : ℝ} (hβ1 : 0 < β1) (hβ11 : β1 ≤ 1)
         | exact (h2 (by decide)).elim
         | (simp only [TSc, d3, k22c1bF2_0, k22c1bF2_1, k22c1bF2_2, k22c1bF2_3, k22c1bF2_4, f0, f1, f2, f3, f4,
             Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-           first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+           first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
     · intro t ht i
       simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
       rcases ht with rfl | rfl <;>

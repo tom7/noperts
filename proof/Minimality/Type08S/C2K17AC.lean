@@ -88,8 +88,8 @@ theorem k17a_dn2_D1 {a a' b b' c c' d : ℝ³} {β1 β6 γ6 : ℝ}
     · linarith
     · exact absurd h hrr.ne'
   refine k17a_cell1_gen (u2 := β1 - (β6 + γ6)) (t2 := (β6 + γ6) - 1) hdet hc' hb' ha' one_pos hβ1 hβ6 hγ6 hs
-    (by linarith) (by nlinarith) (by linarith) ?_ ?_ ?_
-  · intro lam h0 h1; nlinarith
+    (by linarith) (by linarith) (by linarith) ?_ ?_ ?_
+  · intro lam h0 h1; linarith
   · intro lam h0 h1; nlinarith
   · intro lam h0 h1 w hw hinj'
     have hz : ∀ t : ℝ × ℝ × ℝ, ⟪fpoint (a - d) (c - d) (b - c) d t, b - c⟫ =
@@ -104,7 +104,7 @@ theorem k17a_dn2_D1 {a a' b b' c c' d : ℝ³} {β1 β6 γ6 : ℝ}
     · simp only [k5b_cyc1, pc5_3, pc5_4, hz, hρ, hq]; ring
     · rw [e3, e4, hρ, hq]
       have hpos : 0 < ⟪c - d, c - d⟫ - ⟪b - c, b - c⟫ := by linarith
-      nlinarith [mul_pos hpos (mul_pos (sub_pos.2 h1) (sub_pos.2 hs))]
+      linarith [mul_pos hpos (mul_pos (sub_pos.2 h1) (sub_pos.2 hs))]
 
 set_option maxHeartbeats 6400000 in
 theorem k17a_dn2_D2 {a a' b b' c c' d : ℝ³} {β1 β6 γ6 : ℝ}
@@ -145,9 +145,9 @@ theorem k17a_dn2_D2 {a a' b b' c c' d : ℝ³} {β1 β6 γ6 : ℝ}
     · linarith
     · exact absurd h hrr.ne'
   refine k17a_cell1_gen (u2 := β1 - 1) (t2 := 1) hdet hc' hb' ha' one_pos hβ1 hβ6 hγ6 hs
-    (by linarith) (by nlinarith) (by norm_num) ?_ ?_ ?_
-  · intro lam h0 h1; nlinarith
-  · intro lam h0 h1; nlinarith
+    (by linarith) (by linarith) (by norm_num) ?_ ?_ ?_
+  · intro lam h0 h1; linarith
+  · intro lam h0 h1; linarith
   · intro lam h0 h1 w hw hinj'
     have hz : ∀ t : ℝ × ℝ × ℝ, ⟪fpoint (a - d) (c - d) (b - c) d t, b - c⟫ =
         ⟪d, b - c⟫ + t.1 * ⟪a - d, b - c⟫ + t.2.1 * ⟪c - d, b - c⟫ + t.2.2 * ⟪b - c, b - c⟫ :=
@@ -158,7 +158,7 @@ theorem k17a_dn2_D2 {a a' b b' c c' d : ℝ³} {β1 β6 γ6 : ℝ}
     · simp only [k5b_cyc1, pc5_0, pc5_1, hz, hρ, hq]; ring
     · simp only [k5b_cyc1, pc5_0, pc5_4, hz, hρ, hq]; ring
     · simp only [k5b_cyc1, pc5_0, pc5_2, hz, hρ, hq]; nlinarith
-    · simp only [k5b_cyc1, pc5_0, pc5_3, hz, hρ, hq]; nlinarith
+    · simp only [k5b_cyc1, pc5_0, pc5_3, hz, hρ, hq]; linarith
     · rw [e0, e1, hρ, hq]
       nlinarith [mul_pos hβ1 (mul_pos hqq h0)]
 

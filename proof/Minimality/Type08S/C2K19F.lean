@@ -75,15 +75,15 @@ theorem k19_hexY_tsc {D β1 γ4 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hβ1 : 0 < β
       | (simp only [TSc, d3, k19HexY, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; linarith)
+         | (right; refine ⟨by ring, by linarith⟩))
   · intro i
     rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, k19HexY, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 theorem k19HexY_inj {β1 γ4 β6 γ6 : ℝ} (hβ1 : 0 < β1) (hγ4 : 0 < γ4) (hβ6 : 0 < β6) (hγ6 : 0 < γ6)
     (hγ61 : γ6 < 1) : ∀ i j, k19HexY β1 γ4 β6 γ6 i = k19HexY β1 γ4 β6 γ6 j → i = j := by
@@ -182,16 +182,16 @@ theorem k19_s16q_cells {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 : ℝ} (hdet : de
     · intro v1 v2 hC hinj
       obtain ⟨e0, e1, e2, e3, e4, e5, f0, f1, f2, f3, f4, f5⟩ := k19_z6
       refine k19_lexUni_nb2 _ _ hinj 2 (by decide) ?_ ?_ ?_
-      · rw [e2]; left; simp only [k19HexY, pc6_1, pc6_2, hz, hQR]; nlinarith [mul_pos hm hPR]
-      · rw [f2, f3]; left; simp only [k19HexY, pc6_3, pc6_4, hz, hQR]; nlinarith [mul_pos hγ4 hPR]
+      · rw [e2]; left; simp only [k19HexY, pc6_1, pc6_2, hz, hQR]; linarith [mul_pos hm hPR]
+      · rw [f2, f3]; left; simp only [k19HexY, pc6_3, pc6_4, hz, hQR]; linarith [mul_pos hγ4 hPR]
       · intro i hi hi'
         rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl
-        · right; rw [f0]; left; simp only [k19HexY, pc6_0, pc6_1, hz, hQR]; nlinarith [mul_pos hγ6 hPR]
-        · right; rw [f1]; left; simp only [k19HexY, pc6_1, pc6_2, hz, hQR]; nlinarith [mul_pos hm hPR]
+        · right; rw [f0]; left; simp only [k19HexY, pc6_0, pc6_1, hz, hQR]; linarith [mul_pos hγ6 hPR]
+        · right; rw [f1]; left; simp only [k19HexY, pc6_1, pc6_2, hz, hQR]; linarith [mul_pos hm hPR]
         · exact absurd rfl hi
         · exact absurd rfl hi'
-        · left; rw [e4]; left; simp only [k19HexY, pc6_3, pc6_4, hz, hQR]; nlinarith [mul_pos hγ4 hPR]
-        · left; rw [e5]; left; simp only [k19HexY, pc6_4, pc6_5, hz, hQR]; nlinarith [mul_pos hβ1 hRR]
+        · left; rw [e4]; left; simp only [k19HexY, pc6_3, pc6_4, hz, hQR]; linarith [mul_pos hγ4 hPR]
+        · left; rw [e5]; left; simp only [k19HexY, pc6_4, pc6_5, hz, hQR]; linarith [mul_pos hβ1 hRR]
     · intro l hl
       simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
       rcases hl with rfl | rfl <;> (left; norm_num)
@@ -239,19 +239,19 @@ theorem k19_s16q_cells {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 : ℝ} (hdet : de
     · intro v1 v2 hC hinj
       obtain ⟨e0, e1, e2, e3, e4, e5, f0, f1, f2, f3, f4, f5⟩ := k19_z6
       refine k19_lexUni_nb _ _ hinj 4 ?_ ?_ ?_
-      · rw [e4]; left; simp only [k19HexY, pc6_3, pc6_4, hz, hQR]; nlinarith [mul_pos hγ4 (neg_pos.2 hPR)]
-      · rw [f4]; left; simp only [k19HexY, pc6_4, pc6_5, hz, hQR]; nlinarith [mul_pos hβ1 hRR]
+      · rw [e4]; left; simp only [k19HexY, pc6_3, pc6_4, hz, hQR]; linarith [mul_pos hγ4 (neg_pos.2 hPR)]
+      · rw [f4]; left; simp only [k19HexY, pc6_4, pc6_5, hz, hQR]; linarith [mul_pos hβ1 hRR]
       · intro i hi
         rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl
         · left; rw [e0]; left; simp only [k19HexY, pc6_0, pc6_5, hz, hQR]
-          nlinarith [mul_pos (sub_pos.2 hb1) hRR]
+          linarith [mul_pos (sub_pos.2 hb1) hRR]
         · left; rw [e1]; left; simp only [k19HexY, pc6_0, pc6_1, hz, hQR]
-          nlinarith [mul_pos hγ6 (neg_pos.2 hPR)]
+          linarith [mul_pos hγ6 (neg_pos.2 hPR)]
         · right; rw [f2]; left; simp only [k19HexY, pc6_2, pc6_3, hz, hQR]
-          nlinarith [mul_pos (sub_pos.2 hg1) (neg_pos.2 hPR)]
-        · right; rw [f3]; left; simp only [k19HexY, pc6_3, pc6_4, hz, hQR]; nlinarith [mul_pos hγ4 (neg_pos.2 hPR)]
+          linarith [mul_pos (sub_pos.2 hg1) (neg_pos.2 hPR)]
+        · right; rw [f3]; left; simp only [k19HexY, pc6_3, pc6_4, hz, hQR]; linarith [mul_pos hγ4 (neg_pos.2 hPR)]
         · exact absurd rfl hi
-        · left; rw [e5]; left; simp only [k19HexY, pc6_4, pc6_5, hz, hQR]; nlinarith [mul_pos hβ1 hRR]
+        · left; rw [e5]; left; simp only [k19HexY, pc6_4, pc6_5, hz, hQR]; linarith [mul_pos hβ1 hRR]
     · intro l hl
       simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
       rcases hl with rfl | rfl <;> (left; norm_num)
@@ -307,17 +307,17 @@ theorem k19_s16q_cells {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 : ℝ} (hdet : de
           ⟪fpoint P Q R d (k17gcPent6 β1 γ4 3), fcomb P Q R v1 v2 0⟫) := by
         right
         refine ⟨by simp only [k17gcPent6, pc5_3, pc5_4, hz, hQR]; ring, ?_⟩
-        simp only [k17gcPent6, pc5_3, pc5_4, hwx, hPQ, hQR]; nlinarith [mul_pos hv2 hQQ]
+        simp only [k17gcPent6, pc5_3, pc5_4, hwx, hPQ, hQR]; linarith [mul_pos hv2 hQQ]
       refine k19_lexUni_nb _ _ hinj 3 ?_ ?_ ?_
-      · rw [e3]; left; simp only [k17gcPent6, pc5_2, pc5_3, hz, hQR]; nlinarith [mul_pos hβ1 hRR]
+      · rw [e3]; left; simp only [k17gcPent6, pc5_2, pc5_3, hz, hQR]; linarith [mul_pos hβ1 hRR]
       · rw [f3]; exact hda
       · intro i hi
         rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
-        · left; rw [e0]; left; simp only [k17gcPent6, pc5_0, pc5_4, hz, hQR]; nlinarith
+        · left; rw [e0]; left; simp only [k17gcPent6, pc5_0, pc5_4, hz, hQR]; linarith
         · rcases h12 with h | h
-          · left; rw [e1]; left; simp only [k17gcPent6, pc5_0, pc5_1, hz, hQR]; nlinarith
-          · right; rw [f1]; left; simp only [k17gcPent6, pc5_1, pc5_2, hz, hQR]; nlinarith
-        · right; rw [f2]; left; simp only [k17gcPent6, pc5_2, pc5_3, hz, hQR]; nlinarith [mul_pos hβ1 hRR]
+          · left; rw [e1]; left; simp only [k17gcPent6, pc5_0, pc5_1, hz, hQR]; linarith
+          · right; rw [f1]; left; simp only [k17gcPent6, pc5_1, pc5_2, hz, hQR]; linarith
+        · right; rw [f2]; left; simp only [k17gcPent6, pc5_2, pc5_3, hz, hQR]; linarith [mul_pos hβ1 hRR]
         · exact absurd rfl hi
         · left; rw [e4]; exact hda
     · intro l hl

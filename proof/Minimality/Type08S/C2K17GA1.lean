@@ -50,7 +50,7 @@ theorem k17ga_s11b_core {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ}
   have hE : (σ - 1) * (1 - β1) ≤ α1 * (σ - κ) := by
     have : ((σ - 1) * (1 - β1) - α1 * (σ - κ)) * w ≤ 0 := by nlinarith
     by_contra hh; push Not at hh
-    nlinarith [mul_pos (sub_pos.2 hh) hw]
+    linarith [mul_pos (sub_pos.2 hh) hw]
   set p := a - d with hp
   set q := b - d with hq
   set r := c - d with hr
@@ -59,7 +59,7 @@ theorem k17ga_s11b_core {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ}
     rw [hR, hb', hp, hr, hwdef]; module
   have hpR : p = σ • R + κ • r := by
     rw [hRv]
-    match_scalars <;> nlinarith
+    match_scalars <;> linarith
   have hΔ : det3 q r R ≠ 0 := by
     have e : det3 q r R = (-w) * det3 p q r := by
       rw [hRv]
@@ -115,7 +115,7 @@ theorem k17ga_s11b_core {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ}
       · right
         rw [hGw] at hL
         by_contra hh; push Not at hh
-        nlinarith [mul_nonneg hw.le hh]
+        linarith [mul_nonneg hw.le hh]
     · intro i
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
       · simp only [kmCyc1_0, eA]; simp [V8]
@@ -176,7 +176,7 @@ theorem k17ga_s11_ta {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (
     refine ⟨hq, ?_⟩
     rw [k17f_s11_G hc' hb' ha' hζ0 hz1] at hG
     by_contra hh; push Not at hh
-    nlinarith [mul_pos (sub_pos.2 hα41) (neg_pos.2 hh)]
+    linarith [mul_pos (sub_pos.2 hα41) (neg_pos.2 hh)]
 
 end C2
 end Type08Sp

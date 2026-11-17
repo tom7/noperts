@@ -53,7 +53,7 @@ theorem k20_r3_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠ 
     · exact Or.inr ⟨_, by simp, rfl⟩
   · intro lam h0 h1
     refine ⟨by norm_num, ?_⟩
-    nlinarith
+    linarith
   · intro v1 v2 ⟨hc1, hc2⟩
     exact k20R3_tsc hα hβ hb6 hb61 hκ hw hc1 hc2
   · intro v1 v2 ⟨hc1, hc2⟩ hL

@@ -40,7 +40,7 @@ theorem k17gbY8b_inj {m κ ρ β6 : ℝ} (hm : 0 < m) (hκ : 0 < κ) (hρ : 0 < 
   rcases z4_cases i with rfl | rfl | rfl | rfl <;>
     rcases z4_cases j with rfl | rfl | rfl | rfl <;>
     simp only [k17gbY8b_0, k17gbY8b_1, k17gbY8b_2, k17gbY8b_3, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; nlinarith [h.1, h.2.1, h.2.2, mul_pos hρ hm, mul_pos hm hκ]) | (exfalso; norm_num at h)
+    first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2, mul_pos hρ hm, mul_pos hm hκ]) | (exfalso; norm_num at h)
 
 set_option maxHeartbeats 3200000 in
 theorem k17gb_s18b_tsc {D m κ ρ β6 v1 v2 : ℝ} (hD : 0 < D) (hm : 0 < m) (hκ : 0 < κ) (hρ : 0 < ρ)
@@ -78,8 +78,8 @@ theorem k17gb_s18b_tsc {D m κ ρ β6 v1 v2 : ℝ} (hD : 0 < D) (hm : 0 < m) (h�
       | (simp only [TSc, d3, k17gbY8b_0, k17gbY8b_1, k17gbY8b_2, k17gbY8b_3, s0, s1, s2, s3,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; linarith)
+         | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl <;>
@@ -87,8 +87,8 @@ theorem k17gb_s18b_tsc {D m κ ρ β6 v1 v2 : ℝ} (hD : 0 < D) (hm : 0 < m) (h�
       (simp only [TSc, d3, k17gbY8b_0, k17gbY8b_1, k17gbY8b_2, k17gbY8b_3, s0, s1, s2, s3,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 /-- 4-cycle `(a,c',a',b')`: `z_a < z_{c'}` and `z_{b'} < z_a`. -/
 theorem k17gb_lex4c (z w : ZMod 4 → ℝ) (hinj : ∀ i j, z i = z j → w i = w j → i = j)
@@ -178,7 +178,7 @@ theorem k17gb_s18b_cell {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ}
     · simp only [k17gbY8b_2, Ea']; simp [V8]
     · simp only [k17gbY8b_3, Eb']; simp [V8]
   · intro lam h0 h1 D hD
-    exact (k17gb_s18b_tsc hD hm hκ hρ hβ6 (by nlinarith) (by nlinarith)).1
+    exact (k17gb_s18b_tsc hD hm hκ hρ hβ6 (by linarith) (by linarith)).1
   · intro y hy hyx
     have hV : y = fpoint P Q R d (-(m * κ), 0, κ) ∨ y = fpoint P Q R d (1, 0, 1) ∨ y = fpoint P Q R d (β6, 1, 0) ∨
         y = fpoint P Q R d (-(ρ * m), 1 + ρ * m, ρ) ∨ y = fpoint P Q R d (1, 0, 0) ∨
@@ -192,11 +192,11 @@ theorem k17gb_s18b_cell {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ}
     · exact (hyx 2 (by simp only [k17gbY8b_2])).elim
     · exact (hyx 3 (by simp only [k17gbY8b_3])).elim
     · refine ⟨_, rfl, fun lam h0 h1 D hD i => ?_⟩
-      exact (k17gb_s18b_tsc hD hm hκ hρ hβ6 (by nlinarith) (by nlinarith)).2 _ (by simp) i
+      exact (k17gb_s18b_tsc hD hm hκ hρ hβ6 (by linarith) (by linarith)).2 _ (by simp) i
     · refine ⟨_, rfl, fun lam h0 h1 D hD i => ?_⟩
-      exact (k17gb_s18b_tsc hD hm hκ hρ hβ6 (by nlinarith) (by nlinarith)).2 _ (by simp) i
+      exact (k17gb_s18b_tsc hD hm hκ hρ hβ6 (by linarith) (by linarith)).2 _ (by simp) i
     · refine ⟨_, rfl, fun lam h0 h1 D hD i => ?_⟩
-      exact (k17gb_s18b_tsc hD hm hκ hρ hβ6 (by nlinarith) (by nlinarith)).2 _ (by simp) i
+      exact (k17gb_s18b_tsc hD hm hκ hρ hβ6 (by linarith) (by linarith)).2 _ (by simp) i
   · intro w hw
     refine k17gb_lex4c _ w hw ?_ ?_
     · simp only [k17gbY8b_0, k17gbY8b_1, Ea, Ec']
@@ -205,7 +205,7 @@ theorem k17gb_s18b_cell {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ}
       linarith
     · simp only [k17gbY8b_3, k17gbY8b_0, Eb', Ea]
       have := mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hL)
-      nlinarith
+      linarith
 
 /-- **S1.8b**: `K14TaC` (with `¬ T'`), `⟪a-d,b-d⟫ = 0`: a lex cell unless `ζ_{a-c'}(a,b') ≥ 0`. -/
 theorem k17gb_s18b {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (hT' : ¬ IsT' a b c' d)
@@ -221,7 +221,7 @@ theorem k17gb_s18b {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (hT
     rw [hL] at hle
     by_contra hh; push Not at hh
     have h1 : 0 < α1 - 1 := by linarith
-    nlinarith [mul_nonneg h1.le hh]
+    linarith [mul_nonneg h1.le hh]
 
 end C2
 end Type08Sp

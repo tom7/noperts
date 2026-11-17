@@ -49,8 +49,8 @@ theorem fbC_cyc {D β1 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hβ1 : 0 < β1) (h�
     | (simp only [TSc, d3, fbCyc, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 1600000 in
 theorem fbC_rest {D β1 α4 γ4 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hβ1 : 0 < β1) (hα4 : 0 < α4) (hα41 : α4 < 1)
@@ -78,8 +78,8 @@ theorem fbC_rest {D β1 α4 γ4 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hβ1 : 0 <
     (simp only [TSc, d3, fbCyc, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
-     | (right; refine ⟨by ring, by nlinarith⟩))
+     | (left; linarith)
+     | (right; refine ⟨by ring, by linarith⟩))
 
 theorem fbCyc_inj {β1 β6 γ6 : ℝ} (hβ1 : 0 < β1) (hβ6 : 1 < β6) (hγ6 : 0 < γ6) :
     ∀ i j, fbCyc β1 β6 γ6 i = fbCyc β1 β6 γ6 j → i = j := by
@@ -119,8 +119,8 @@ theorem fbC_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r 
   have hlexX : LexUni (fun i => ⟪fpoint p q r d (Y (-i)), r⟫) (fun i => ⟪fpoint p q r d (Y (-i)), vv⟫) := by
     refine lexUni5_top _ _ (fun i j h1 h2 => neg_injective (hsep _ _ h1 h2)) ?_ ?_ ?_
     · left; simp only [n0, n1, hY, fbCyc, pc5_0, pc5_4, hz]; nlinarith
-    · left; simp only [n2, n3, hY, fbCyc, pc5_3, pc5_2, hz]; nlinarith
-    · left; simp only [n3, n4, hY, fbCyc, pc5_2, pc5_1, hz]; nlinarith [mul_pos (sub_pos.2 hβ6) hB, mul_pos hγ6 hC]
+    · left; simp only [n2, n3, hY, fbCyc, pc5_3, pc5_2, hz]; linarith
+    · left; simp only [n3, n4, hY, fbCyc, pc5_2, pc5_1, hz]; linarith [mul_pos (sub_pos.2 hβ6) hB, mul_pos hγ6 hC]
   have hlexY : LexUni (fun i => ⟪fpoint p q r d (Y i), r⟫) (fun i => ⟪fpoint p q r d (Y i), vv⟫) := by
     simpa only [neg_neg] using lexUni_neg hlexX
   rcases hΔ.lt_or_gt with hneg | hpos

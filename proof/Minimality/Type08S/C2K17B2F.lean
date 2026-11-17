@@ -61,7 +61,7 @@ theorem k17b2Cy13_inj {α β β6 γ6 : ℝ} (hα : 0 < α) (hβ : 1 < β) (hβ6 
   have := mul_pos hα hγ6
   have := mul_pos hα (by linarith : (0:ℝ) < β - 1 / 2)
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;> rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first | rfl | (exfalso; simp only [k17b2Cy13_0, k17b2Cy13_1, k17b2Cy13_2, k17b2Cy13_3, k17b2Cy13_4] at e1 e2 e3; nlinarith)
+    first | rfl | (exfalso; simp only [k17b2Cy13_0, k17b2Cy13_1, k17b2Cy13_2, k17b2Cy13_3, k17b2Cy13_4] at e1 e2 e3; linarith)
 
 set_option maxHeartbeats 6400000 in
 theorem k17b2_p13_tsc {α β β6 γ6 v1 v2 : ℝ} (hα : 1 < α) (hβ : 1 < β) (hβ6 : 1 < β6) (hγ6 : 1 < γ6) (hv2 : 0 < v2) :

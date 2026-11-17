@@ -32,7 +32,7 @@ theorem k17c_small {ζ L γ β6 : ℝ} (hζ : 0 < ζ) (hγ : 0 < γ) (hb : 0 < �
           mul_le_mul_of_nonneg_right (min_le_right _ _) hL
       _ ≤ ζ := by
           rw [div_mul_eq_mul_div, div_le_iff₀ (by positivity)]
-          nlinarith
+          linarith
 
 set_option maxHeartbeats 1600000 in
 /-- **S3.3**: `α1 ≥ 1`, `β1 = 1`, `⟪a-d,b-d⟫ = 0`, `γ6 > 1`, `ζ_b = (β6-1) qq + γ6 qr > 0`. -/
@@ -53,7 +53,7 @@ theorem k17c_s33_hasLexCell {a a' b b' c c' d : ℝ³} {α1 β6 γ6 : ℝ}
   · intro lam h0 h1
     have p1 : 0 < lam * ε := mul_pos h0 hε
     have p2 : 0 < (1 - lam) * ε * (1 + β6) := mul_pos (mul_pos (sub_pos.2 h1) hε) (by linarith)
-    refine ⟨by simp, by simp; nlinarith, by simp; nlinarith [mul_pos hβ6 p1], by simp; nlinarith⟩
+    refine ⟨by simp, by simp; linarith, by simp; linarith [mul_pos hβ6 p1], by simp; nlinarith⟩
   · intro lam h0 h1
     right
     have h4 : lam * ε * ((β6 - 1) * ⟪b - d, c - d⟫ + γ6 * ⟪c - d, c - d⟫) ≤
@@ -61,8 +61,8 @@ theorem k17c_s33_hasLexCell {a a' b b' c c' d : ℝ³} {α1 β6 γ6 : ℝ}
       mul_le_mul_of_nonneg_left hL (by positivity)
     have h5 : lam * ε * |(β6 - 1) * ⟪b - d, c - d⟫ + γ6 * ⟪c - d, c - d⟫| ≤
         ε * |(β6 - 1) * ⟪b - d, c - d⟫ + γ6 * ⟪c - d, c - d⟫| := by
-      nlinarith [mul_nonneg (mul_nonneg (sub_pos.2 h1).le hε.le) hLa]
-    nlinarith
+      linarith [mul_nonneg (mul_nonneg (sub_pos.2 h1).le hε.le) hLa]
+    linarith
 
 end C2
 end Type08Sp

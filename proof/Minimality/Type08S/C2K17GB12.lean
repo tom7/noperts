@@ -27,18 +27,18 @@ theorem k17gb_s19 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (hT'
   rw [det_alpha4 hb'] at hP4
   have hα4 : 1 < α4 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
+    linarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
   rw [det_beta1 hc'] at hP1
   have hβ1 : 1 < β1 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
+    linarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
   rw [k17gb_det_beta6 ha'] at hP6
   have hβ6 : β6 < 1 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
+    linarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
   have hγ4 : 1 < γ4 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) (by linarith : (0:ℝ) ≤ α1), mul_pos (by linarith : (0:ℝ) < α4) (sub_pos.2 hβ1)]
+    linarith [mul_nonneg (sub_nonneg.2 hh) (by linarith : (0:ℝ) ≤ α1), mul_pos (by linarith : (0:ℝ) < α4) (sub_pos.2 hβ1)]
   exact k17gb_s19_cell hdet hc' hb' ha' hα1 hβ1 hα4 hβ6p hβ6 hγ4 hpl hE h2
 
 end C2

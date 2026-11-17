@@ -72,7 +72,7 @@ theorem k17c_boundary_core {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c
   · -- γ6 > 1, so α1 > 1
     have hgt : 1 < α1 := by
       by_contra hcon; push Not at hcon
-      nlinarith [mul_nonneg hβ6.le (sub_nonneg.2 hcon)]
+      linarith [mul_nonneg hβ6.le (sub_nonneg.2 hcon)]
     rcases lt_trichotomy ⟪b - a', a - c'⟫ 0 with hzl | hz0 | hzg
     · exact Or.inl (k17c_s34_hasLexCell hdet hc' hb' ha' hgt hβ6 hγ61 hM hm0 (by rw [← hz]; exact hzl))
     · exact Or.inr (Or.inl hz0)

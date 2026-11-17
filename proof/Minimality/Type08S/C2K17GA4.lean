@@ -51,7 +51,7 @@ theorem k17ga_tc_coords {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d
     exact nonneg_of_mul_nonneg_right this hμ
   have hb6 : 1 < β6 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hγ4.le (by linarith : 0 ≤ 1 - β6)]
+    linarith [mul_nonneg hγ4.le (by linarith : 0 ≤ 1 - β6)]
   exact ⟨α1, α4, β1, γ4, β6, hdet, hc', hb', ha', hα11, hα41, hβ1, hγ4, hb6.le, by linarith, hE0⟩
 
 end C2

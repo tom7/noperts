@@ -54,7 +54,7 @@ theorem k19_s13a_tie {a a' b b' c c' d : ℝ³} {α1 β1 γ4 β6 : ℝ} (hdet : 
   have hRv : R = (1 - α1) • (a - d) - β1 • (b - d) := by rw [hR, hc']; module
   have hpR : a - d = (-τ) • R + (-(β1 * τ)) • P := by
     rw [hRv, hP]
-    match_scalars <;> nlinarith
+    match_scalars <;> linarith
   have hΔ : det3 P Q R ≠ 0 := by
     have e : det3 P Q R = (1 - α1) * det3 (a - d) (b - d) (c - d) := by
       rw [hRv, hP, hQ]
@@ -146,21 +146,21 @@ theorem k19_s13a_tie {a a' b b' c c' d : ℝ³} {α1 β1 γ4 β6 : ℝ} (hdet : 
       right
       refine ⟨by simp only [k17gaR3, pc5_0, pc5_4, hz, hQR]; ring, ?_⟩
       simp only [k17gaR3, pc5_0, pc5_4, hwx, hPQ, hQR]
-      nlinarith [mul_pos (mul_pos (by linarith : (0:ℝ) < γ4) hv2) hQQ]
+      linarith [mul_pos (mul_pos (by linarith : (0:ℝ) < γ4) hv2) hQQ]
     have hZ : ⟪P, R⟫ < 0 := by
       by_contra hh; push Not at hh
-      nlinarith [mul_pos hτ hRR, mul_nonneg (mul_pos hβ1 hτ).le hh]
+      linarith [mul_pos hτ hRR, mul_nonneg (mul_pos hβ1 hτ).le hh]
     refine k19_lexUni_nb _ _ hinj 4 ?_ ?_ ?_
     · rw [e4]; left; simp only [k17gaR3, pc5_3, pc5_4, hz, hQR]
-      nlinarith [mul_pos (sub_pos.2 hb6) (neg_pos.2 hZ)]
+      linarith [mul_pos (sub_pos.2 hb6) (neg_pos.2 hZ)]
     · rw [f4]; exact hab'
     · intro i hi
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
       · left; rw [e0]; exact hab'
-      · left; rw [e1]; left; simp only [k17gaR3, pc5_0, pc5_1, hz, hQR]; nlinarith
-      · left; rw [e2]; left; simp only [k17gaR3, pc5_1, pc5_2, hz, hQR]; nlinarith
+      · left; rw [e1]; left; simp only [k17gaR3, pc5_0, pc5_1, hz, hQR]; linarith
+      · left; rw [e2]; left; simp only [k17gaR3, pc5_1, pc5_2, hz, hQR]; linarith
       · left; rw [e3]; left; simp only [k17gaR3, pc5_2, pc5_3, hz, hQR]
-        nlinarith [mul_pos (sub_pos.2 hb6) (neg_pos.2 hZ)]
+        linarith [mul_pos (sub_pos.2 hb6) (neg_pos.2 hZ)]
       · exact absurd rfl hi
   · intro l hl
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
@@ -248,14 +248,14 @@ theorem k19_s13b_tie {a a' b b' c c' d : ℝ³} {α1 β1 γ4 β6 : ℝ} (hdet : 
         ⟪fpoint P Q R d (k17gbY3 α1 β1 β6 3), fcomb P Q R v1 v2 0⟫) := by
       right
       refine ⟨by simp only [k17gbY3, pc5_3, pc5_4, hz, hPR, hQR]; ring, ?_⟩
-      simp only [k17gbY3, pc5_3, pc5_4, hwx, hPR, hQR]; nlinarith
+      simp only [k17gbY3, pc5_3, pc5_4, hwx, hPR, hQR]; linarith
     refine k19_lexUni_nb2 _ _ hinj 2 (by decide) ?_ ?_ ?_
-    · rw [e2]; left; simp only [k17gbY3, pc5_1, pc5_2, hz, hPR, hQR]; nlinarith
+    · rw [e2]; left; simp only [k17gbY3, pc5_1, pc5_2, hz, hPR, hQR]; linarith
     · rw [f2, f3]; exact hc'a
     · intro i hi hi'
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
-      · left; rw [e0]; left; simp only [k17gbY3, pc5_0, pc5_4, hz, hPR, hQR]; nlinarith
-      · right; rw [f1]; left; simp only [k17gbY3, pc5_1, pc5_2, hz, hPR, hQR]; nlinarith
+      · left; rw [e0]; left; simp only [k17gbY3, pc5_0, pc5_4, hz, hPR, hQR]; linarith
+      · right; rw [f1]; left; simp only [k17gbY3, pc5_1, pc5_2, hz, hPR, hQR]; linarith
       · exact absurd rfl hi
       · exact absurd (by decide) hi'
       · left; rw [e4]; exact hc'a
@@ -277,7 +277,7 @@ theorem k19_s13_tie {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h
   have hΔ2 : 0 < det3 (a - d) (b - d) (c - d) * det3 (a - d) (b - d) (c - d) := mul_self_pos.2 hdet
   have hb61 : 1 < β6 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
+    linarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
   have hpr : ⟪a - d, c - d⟫ = 0 := by
     rw [hLf] at h0
     rcases mul_eq_zero.1 h0 with h1 | h1

@@ -116,8 +116,8 @@ theorem k17gaR2_inj {α1 β1 α4 γ4 β6 : ℝ} (hb6 : 1 ≤ β6) (hα1 : 1 < α
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
     simp only [k17gaR2, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; nlinarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith)
+    first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h) |
+      (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
 
 set_option maxHeartbeats 3200000 in
 /-- **R2 cell** `(c',b',c,a',b)` at `d - b`. -/
@@ -162,7 +162,7 @@ theorem k17ga_r2_cell {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ} (hd
     · simp only [k17gaR2, pc5_4, Eb]; simp [V8]
   · intro lam h0 h1 D hD
     exact (k17ga_r2_tsc hD hα1 hβ1 hα4 hγ4 hb6 hcv (by simp; linarith) (by simp; nlinarith)
-      (by simp; nlinarith [mul_pos hα4 hα4, mul_pos (mul_pos hα4 hα4) h0])).1
+      (by simp; linarith [mul_pos hα4 hα4, mul_pos (mul_pos hα4 hα4) h0])).1
   · intro y hy' hyx
     have hV : y = fpoint P Q R d (α1, 0, -β1) ∨ y = fpoint P Q R d (α4, γ4, 0) ∨ y = fpoint P Q R d (0, 1, 0) ∨
         y = fpoint P Q R d (0, 1, -β6) ∨ y = fpoint P Q R d (0, 0, -1) ∨
@@ -178,18 +178,18 @@ theorem k17ga_r2_cell {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ} (hd
     · exact (hyx 4 (by simp only [k17gaR2, pc5_4])).elim
     · refine ⟨_, rfl, fun lam h0 h1 D hD i => ?_⟩
       exact (k17ga_r2_tsc hD hα1 hβ1 hα4 hγ4 hb6 hcv (by simp; linarith) (by simp; nlinarith)
-        (by simp; nlinarith [mul_pos hα4 hα4, mul_pos (mul_pos hα4 hα4) h0])).2 _ (by simp) i
+        (by simp; linarith [mul_pos hα4 hα4, mul_pos (mul_pos hα4 hα4) h0])).2 _ (by simp) i
     · refine ⟨_, rfl, fun lam h0 h1 D hD i => ?_⟩
       exact (k17ga_r2_tsc hD hα1 hβ1 hα4 hγ4 hb6 hcv (by simp; linarith) (by simp; nlinarith)
-        (by simp; nlinarith [mul_pos hα4 hα4, mul_pos (mul_pos hα4 hα4) h0])).2 _ (by simp) i
+        (by simp; linarith [mul_pos hα4 hα4, mul_pos (mul_pos hα4 hα4) h0])).2 _ (by simp) i
   · intro w hw
     refine k17ga_lexUni5_R2 _ w hw ?_ ?_ ?_ ?_
     · left; simp only [k17gaR2, pc5_3, pc5_2, hz']; nlinarith
-    · left; simp only [k17gaR2, pc5_3, pc5_4, hz']; nlinarith
-    · left; simp only [k17gaR2, pc5_4, pc5_0, hz']; nlinarith
+    · left; simp only [k17gaR2, pc5_3, pc5_4, hz']; linarith
+    · left; simp only [k17gaR2, pc5_4, pc5_0, hz']; linarith
     · rcases hh with hh | hh
-      · left; left; simp only [k17gaR2, pc5_0, pc5_1, hz']; nlinarith
-      · right; left; simp only [k17gaR2, pc5_2, pc5_1, hz']; nlinarith
+      · left; left; simp only [k17gaR2, pc5_0, pc5_1, hz']; linarith
+      · right; left; simp only [k17gaR2, pc5_2, pc5_1, hz']; linarith
 
 
 end C2

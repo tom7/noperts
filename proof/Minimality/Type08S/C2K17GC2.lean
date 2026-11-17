@@ -170,8 +170,8 @@ theorem k17gc_pent6_tsc {β1 γ4 γ6 v1 v2 : ℝ} (hβ1 : 0 < β1) (hγ4 : 0 < �
       | (simp only [TSc, d3, k17gcPent6, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; linarith)
+         | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl <;>
@@ -179,7 +179,7 @@ theorem k17gc_pent6_tsc {β1 γ4 γ6 v1 v2 : ℝ} (hβ1 : 0 < β1) (hγ4 : 0 < �
       (simp only [TSc, d3, k17gcPent6, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
+       | (left; linarith)
        | (right; refine ⟨by ring, by nlinarith⟩))
 
 theorem k17gcPent6_inj {β1 γ4 : ℝ} (hβ1 : 0 < β1) (hγ4 : 0 < γ4) :
@@ -223,8 +223,8 @@ theorem k17gc_hex6_tsc {β1 γ4 γ6 v1 v2 : ℝ} (hβ1 : 0 < β1) (hγ4 : 0 < γ
       | (simp only [TSc, d3, k17gcHex6, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; linarith)
+         | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     subst ht
@@ -232,8 +232,8 @@ theorem k17gc_hex6_tsc {β1 γ4 γ6 v1 v2 : ℝ} (hβ1 : 0 < β1) (hγ4 : 0 < γ
       (simp only [TSc, d3, k17gcHex6, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 theorem k17gcHex6_inj {γ4 γ6 : ℝ} (hγ4 : 0 < γ4) (hγ6 : 0 < γ6) :
     ∀ i j, k17gcHex6 γ4 γ6 i = k17gcHex6 γ4 γ6 j → i = j := by
@@ -321,12 +321,12 @@ theorem k17gc_s16b_cells {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 : ℝ} (hdet : 
       exact k17gc_pent6_tsc hβ1 hγ4 hγ6 hγ61 hv1 hv2
     · rintro v1 v2 ⟨hv1, hv2, hL⟩ hinj
       refine k17gc_lexUni5_b _ _ hinj ?_ ?_ ?_
-      · left; simp only [k17gcPent6, pc5_2, pc5_3, hz]; nlinarith [mul_pos hβ1 hRR]
-      · left; simp only [k17gcPent6, pc5_3, pc5_4, hz]; nlinarith
+      · left; simp only [k17gcPent6, pc5_2, pc5_3, hz]; linarith [mul_pos hβ1 hRR]
+      · left; simp only [k17gcPent6, pc5_3, pc5_4, hz]; linarith
       · rcases hL with hL | hL | hL | ⟨hL, hf⟩
-        · left; left; simp only [k17gcPent6, pc5_0, pc5_4, hz]; nlinarith
-        · right; left; left; simp only [k17gcPent6, pc5_0, pc5_1, hz]; nlinarith
-        · right; right; left; simp only [k17gcPent6, pc5_1, pc5_2, hz]; nlinarith
+        · left; left; simp only [k17gcPent6, pc5_0, pc5_4, hz]; linarith
+        · right; left; left; simp only [k17gcPent6, pc5_0, pc5_1, hz]; linarith
+        · right; right; left; simp only [k17gcPent6, pc5_1, pc5_2, hz]; linarith
         · right; left; right
           simp only [k17gcPent6, pc5_0, pc5_1]
           refine ⟨by rw [hz, hz]; simp only; linarith, ?_⟩
@@ -365,13 +365,13 @@ theorem k17gc_s16b_cells {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 : ℝ} (hdet : 
       exact k17gc_hex6_tsc hβ1 hγ4 hγ6 hγ61 hv1 hv2
     · rintro v1 v2 ⟨hv1, hv2, hL⟩ hinj
       refine k17gc_lexUni6_b _ _ hinj ?_ ?_ ?_ ?_ ?_
-      · left; simp only [k17gcHex6, pc6_0, pc6_1, hz]; nlinarith
-      · left; simp only [k17gcHex6, pc6_1, pc6_2, hz]; nlinarith
+      · left; simp only [k17gcHex6, pc6_0, pc6_1, hz]; linarith
+      · left; simp only [k17gcHex6, pc6_1, pc6_2, hz]; linarith
       · left; simp only [k17gcHex6, pc6_2, pc6_3, hz]; nlinarith
       · left; simp only [k17gcHex6, pc6_0, pc6_5, hz]; nlinarith
       · rcases hL with hL | hL | ⟨hL, hf⟩
-        · left; left; simp only [k17gcHex6, pc6_3, pc6_4, hz]; nlinarith
-        · right; left; simp only [k17gcHex6, pc6_4, pc6_5, hz]; nlinarith
+        · left; left; simp only [k17gcHex6, pc6_3, pc6_4, hz]; linarith
+        · right; left; simp only [k17gcHex6, pc6_4, pc6_5, hz]; linarith
         · right; right
           simp only [k17gcHex6, pc6_4, pc6_5]
           refine ⟨by rw [hz, hz]; simp only; linarith, ?_⟩
@@ -389,7 +389,7 @@ theorem k17gc_s16b_cells {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 : ℝ} (hdet : 
   have hPR : ⟪P, R⟫ < 0 := by
     rcases c1.lt_or_eq with h | h
     · exact h
-    · rw [h] at c2; nlinarith
+    · rw [h] at c2; linarith
   by_cases c4 : (1 - γ6) * ⟪P, R⟫ < -⟪R, R⟫ ∨ ⟪P, R⟫ < γ4 * ⟪P, R⟫ + ⟪Q, R⟫
   · left
     refine hex 1 (-1) 1 0 (by norm_num) hPR (fun lam h0 h1 => ⟨by linarith, by norm_num, ?_⟩)
@@ -402,15 +402,15 @@ theorem k17gc_s16b_cells {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 : ℝ} (hdet : 
   · -- hexagon, tilt `(1, -λη)`
     left
     obtain ⟨η, hη, hηx⟩ := k8_eta (x := B) (y := A) hAn.ne
-    refine hex 1 0 0 (-η) (by nlinarith) hPR (fun lam h0 h1 => ⟨by norm_num, by nlinarith, ?_⟩)
+    refine hex 1 0 0 (-η) (by linarith) hPR (fun lam h0 h1 => ⟨by norm_num, by nlinarith, ?_⟩)
     right; right; refine ⟨htie, ?_⟩
     have hle : -(lam * η * B) ≤ η * |B| := by
       rcases le_total 0 B with hx | hx
-      · rw [abs_of_nonneg hx]; nlinarith [mul_nonneg (mul_nonneg h0.le hη.le) hx, mul_nonneg hη.le hx]
+      · rw [abs_of_nonneg hx]; linarith [mul_nonneg (mul_nonneg h0.le hη.le) hx, mul_nonneg hη.le hx]
       · rw [abs_of_nonpos hx]
-        nlinarith [mul_nonneg (mul_nonneg (sub_nonneg.2 h1.le) hη.le) (neg_nonneg.2 hx)]
+        linarith [mul_nonneg (mul_nonneg (sub_nonneg.2 h1.le) hη.le) (neg_nonneg.2 hx)]
     rw [abs_of_neg hAn] at hηx
-    nlinarith [abs_nonneg B]
+    linarith [abs_nonneg B]
   · -- leftover
     right
     refine ⟨?_, ?_⟩
@@ -423,15 +423,15 @@ theorem k17gc_s16b_cells {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 : ℝ} (hdet : 
   · -- pentagon, tilt `(1, λη)`
     left
     obtain ⟨η, hη, hηx⟩ := k8_eta (x := B) (y := A) hAp.ne'
-    refine pent 1 0 0 η (by nlinarith) (fun lam h0 h1 => ⟨by norm_num, by nlinarith, ?_⟩)
+    refine pent 1 0 0 η (by linarith) (fun lam h0 h1 => ⟨by norm_num, by nlinarith, ?_⟩)
     right; right; right; refine ⟨htie, ?_⟩
     have hle : -(lam * η * B) ≤ η * |B| := by
       rcases le_total 0 B with hx | hx
-      · rw [abs_of_nonneg hx]; nlinarith [mul_nonneg (mul_nonneg h0.le hη.le) hx, mul_nonneg hη.le hx]
+      · rw [abs_of_nonneg hx]; linarith [mul_nonneg (mul_nonneg h0.le hη.le) hx, mul_nonneg hη.le hx]
       · rw [abs_of_nonpos hx]
-        nlinarith [mul_nonneg (mul_nonneg (sub_nonneg.2 h1.le) hη.le) (neg_nonneg.2 hx)]
+        linarith [mul_nonneg (mul_nonneg (sub_nonneg.2 h1.le) hη.le) (neg_nonneg.2 hx)]
     rw [abs_of_pos hAp] at hηx
-    nlinarith [abs_nonneg B]
+    linarith [abs_nonneg B]
 
 end C2
 end Type08Sp

@@ -107,8 +107,8 @@ theorem k17gb_s14b_tsc {D α1 β1 γ4 v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 < α1)
       | (simp only [TSc, d3, k17gbY4b_0, k17gbY4b_1, k17gbY4b_2, k17gbY4b_3, s0, s1, s2, s3,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; linarith)
+         | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl <;>
@@ -116,7 +116,7 @@ theorem k17gb_s14b_tsc {D α1 β1 γ4 v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 < α1)
       (simp only [TSc, d3, k17gbY4b_0, k17gbY4b_1, k17gbY4b_2, k17gbY4b_3, s0, s1, s2, s3,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
+       | (left; linarith)
        | (right; refine ⟨by ring, by nlinarith⟩))
 
 set_option maxHeartbeats 6400000 in
@@ -156,11 +156,11 @@ theorem k17gb_s14b_cell {a a' b b' c c' d : ℝ³} {α1 β1 γ4 : ℝ} (hdet : d
   rw [abs_of_pos hQQ, abs_of_neg hPQ] at hη0x
   obtain ⟨η, hη, hηle, hηg, hηQ⟩ : ∃ η : ℝ, 0 < η ∧ η ≤ γ4 - 1 ∧ η ≤ η0 ∧ η * ⟪Q, Q⟫ < -⟪P, Q⟫ := by
     refine ⟨min η0 (γ4 - 1), lt_min hη0 (by linarith), min_le_right _ _, min_le_left _ _, ?_⟩
-    nlinarith [mul_le_mul_of_nonneg_right (min_le_left η0 (γ4 - 1)) hQQ.le, mul_pos hη0 hQQ]
+    linarith [mul_le_mul_of_nonneg_right (min_le_left η0 (γ4 - 1)) hQQ.le, mul_pos hη0 hQQ]
   refine ⟨R, k17gb_r0 hΔ, ?_⟩
   refine k8_cell_gen (V8 a a' b b' c c' d) P Q R d hΔ (k := 4) (by norm_num) (k17gbY4b α1 β1 γ4)
     (k17gbY4b_inj hα1 (by linarith) hγ4) (u1 := -1) (u2 := 0) (t1 := 0) (t2 := -η)
-    (by nlinarith) ?_ ?_ ?_ ?_
+    (by linarith) ?_ ?_ ?_ ?_
   · intro i
     rcases z4_cases i with rfl | rfl | rfl | rfl
     · simp only [k17gbY4b_0, Ec']; simp [V8]
@@ -168,7 +168,7 @@ theorem k17gb_s14b_cell {a a' b b' c c' d : ℝ³} {α1 β1 γ4 : ℝ} (hdet : d
     · simp only [k17gbY4b_2, Ea']; simp [V8]
     · simp only [k17gbY4b_3, Eb]; simp [V8]
   · intro lam h0 h1 D hD
-    exact (k17gb_s14b_tsc hD hα1 (by linarith) hγ4 (by nlinarith) (by nlinarith [mul_pos h0 hη])
+    exact (k17gb_s14b_tsc hD hα1 (by linarith) hγ4 (by linarith) (by linarith [mul_pos h0 hη])
       (by nlinarith [mul_pos h0 hη])).1
   · intro y hy hyx
     have hV : y = fpoint P Q R d (α1, 0, -β1) ∨ y = fpoint P Q R d (1, γ4, 0) ∨ y = fpoint P Q R d (0, 1, -1) ∨
@@ -183,13 +183,13 @@ theorem k17gb_s14b_cell {a a' b b' c c' d : ℝ³} {α1 β1 γ4 : ℝ} (hdet : d
     · exact (hyx 2 (by simp only [k17gbY4b_2])).elim
     · exact (hyx 3 (by simp only [k17gbY4b_3])).elim
     · refine ⟨_, rfl, fun lam h0 h1 D hD i => ?_⟩
-      exact (k17gb_s14b_tsc hD hα1 (by linarith) hγ4 (by nlinarith) (by nlinarith [mul_pos h0 hη])
+      exact (k17gb_s14b_tsc hD hα1 (by linarith) hγ4 (by linarith) (by linarith [mul_pos h0 hη])
         (by nlinarith [mul_pos h0 hη])).2 _ (by simp) i
     · refine ⟨_, rfl, fun lam h0 h1 D hD i => ?_⟩
-      exact (k17gb_s14b_tsc hD hα1 (by linarith) hγ4 (by nlinarith) (by nlinarith [mul_pos h0 hη])
+      exact (k17gb_s14b_tsc hD hα1 (by linarith) hγ4 (by linarith) (by linarith [mul_pos h0 hη])
         (by nlinarith [mul_pos h0 hη])).2 _ (by simp) i
     · refine ⟨_, rfl, fun lam h0 h1 D hD i => ?_⟩
-      exact (k17gb_s14b_tsc hD hα1 (by linarith) hγ4 (by nlinarith) (by nlinarith [mul_pos h0 hη])
+      exact (k17gb_s14b_tsc hD hα1 (by linarith) hγ4 (by linarith) (by linarith [mul_pos h0 hη])
         (by nlinarith [mul_pos h0 hη])).2 _ (by simp) i
   · intro lam h0 h1 w hw hinj
     refine k17gb_lex4b _ w hinj ?_ ?_
@@ -198,15 +198,15 @@ theorem k17gb_s14b_cell {a a' b b' c c' d : ℝ³} {α1 β1 γ4 : ℝ} (hdet : d
       · simp only [k17gbY4b_2, k17gbY4b_3, hz, hQR]; ring
       · rw [hw, hw]
         simp only [k17gbY4b_2, k17gbY4b_3, hwx, hQR]
-        nlinarith [mul_pos h0 hη, mul_pos (mul_pos h0 hη) hQQ, mul_pos (sub_pos.2 h1) (mul_pos hη hQQ)]
+        linarith [mul_pos h0 hη, mul_pos (mul_pos h0 hη) hQQ, mul_pos (sub_pos.2 h1) (mul_pos hη hQQ)]
     · by_cases hX : ⟪P, R⟫ ≤ 0
       · left
         simp only [k17gbY4b_0, k17gbY4b_1, hz, hQR]
-        nlinarith [mul_nonneg (sub_nonneg.2 hα1.le) (neg_nonneg.2 hX), mul_pos (by linarith : (0:ℝ) < β1) hRR]
+        linarith [mul_nonneg (sub_nonneg.2 hα1.le) (neg_nonneg.2 hX), mul_pos (by linarith : (0:ℝ) < β1) hRR]
       · push Not at hX
         right
         simp only [k17gbY4b_1, k17gbY4b_2, hz, hQR]
-        nlinarith
+        linarith
 
 /-- **S1.4b**: `K6tTaA41` (with `¬ T'`), `ζ(d,b) = 0`, `β6 = 1`: a lex cell unless `ζ_{a-c'}(a,b') ≥ 0`. -/
 theorem k17gb_s14b {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (hT' : ¬ IsT' a b c' d)

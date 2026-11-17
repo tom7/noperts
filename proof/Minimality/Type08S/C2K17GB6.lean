@@ -71,15 +71,15 @@ theorem k17gb_s18a_tsc {D α1 β1 α4 γ4 β6 v1 v2 : ℝ} (hD : 0 < D) (hα1 : 
       | (simp only [TSc, d3, k17gbY8a, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; linarith)
+         | (right; refine ⟨by ring, by linarith⟩))
   all_goals
     intro i
     rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     (simp only [TSc, d3, k17gbY8a, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
+     | (left; linarith)
      | (right; refine ⟨by ring, by nlinarith⟩))
 
 theorem k17gbY8a_inj {α1 β1 α4 γ4 : ℝ} (hα1 : 1 < α1) (hβ1 : 0 < β1) (hα4 : α4 < 1) (hγ4 : 1 < γ4) :
@@ -131,7 +131,7 @@ theorem k17gb_s18a_cell {a a' b b' c c' d : ℝ³} {α1 β1 α4 γ4 β6 : ℝ}
   refine ⟨R, k17gb_r0 hΔ, ?_⟩
   refine k8_cell_gen (V8 a a' b b' c c' d) P Q R d hΔ (k := 5) (by norm_num) (k17gbY8a α1 β1 α4 γ4)
     (k17gbY8a_inj hα1 (by linarith) hα41 hγ4) (u1 := ⟪Q, Q⟫) (u2 := 0) (t1 := 0) (t2 := -⟪P, Q⟫)
-    (by have := mul_pos hQQ hPQ; nlinarith) ?_ ?_ ?_ ?_
+    (by have := mul_pos hQQ hPQ; linarith) ?_ ?_ ?_ ?_
   · intro i
     rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
     · simp only [k17gbY8a, pc5_0, Ec']; simp [V8]
@@ -140,8 +140,8 @@ theorem k17gb_s18a_cell {a a' b b' c c' d : ℝ³} {α1 β1 α4 γ4 β6 : ℝ}
     · simp only [k17gbY8a, pc5_3, Ed]; simp [V8]
     · simp only [k17gbY8a, pc5_4, Eb]; simp [V8]
   · intro lam h0 h1 D hD
-    exact (k17gb_s18a_tsc hD hα1 (by linarith) hα4 hα41 hγ4 (by linarith) (by nlinarith)
-      (by nlinarith [mul_pos h0 hPQ])).1
+    exact (k17gb_s18a_tsc hD hα1 (by linarith) hα4 hα41 hγ4 (by linarith) (by linarith)
+      (by linarith [mul_pos h0 hPQ])).1
   · intro y hy hyx
     have hV : y = fpoint P Q R d (α1, 0, -β1) ∨ y = fpoint P Q R d (α4, γ4, 0) ∨ y = fpoint P Q R d (0, 1, 0) ∨
         y = fpoint P Q R d (0, 0, 0) ∨ y = fpoint P Q R d (0, 0, -1) ∨ y = fpoint P Q R d (1, 0, 0) ∨
@@ -156,20 +156,20 @@ theorem k17gb_s18a_cell {a a' b b' c c' d : ℝ³} {α1 β1 α4 γ4 β6 : ℝ}
     · exact (hyx 3 (by simp only [k17gbY8a, pc5_3])).elim
     · exact (hyx 4 (by simp only [k17gbY8a, pc5_4])).elim
     · refine ⟨_, rfl, fun lam h0 h1 D hD i => ?_⟩
-      exact (k17gb_s18a_tsc hD hα1 (by linarith) hα4 hα41 hγ4 (by linarith) (by nlinarith)
-        (by nlinarith [mul_pos h0 hPQ])).2.1 i
+      exact (k17gb_s18a_tsc hD hα1 (by linarith) hα4 hα41 hγ4 (by linarith) (by linarith)
+        (by linarith [mul_pos h0 hPQ])).2.1 i
     · refine ⟨_, rfl, fun lam h0 h1 D hD i => ?_⟩
-      exact (k17gb_s18a_tsc hD hα1 (by linarith) hα4 hα41 hγ4 (by linarith) (by nlinarith)
-        (by nlinarith [mul_pos h0 hPQ])).2.2 i
+      exact (k17gb_s18a_tsc hD hα1 (by linarith) hα4 hα41 hγ4 (by linarith) (by linarith)
+        (by linarith [mul_pos h0 hPQ])).2.2 i
   · intro lam h0 h1 w hw hinj
     refine k17gb_lex5_plat123 _ w hinj ?_ ?_ ?_ ?_ ?_
     · simp only [k17gbY8a, pc5_0, pc5_4, hz, hQR, hPR]; nlinarith
-    · simp only [k17gbY8a, pc5_4, pc5_1, hz, hQR, hPR]; nlinarith
+    · simp only [k17gbY8a, pc5_4, pc5_1, hz, hQR, hPR]; linarith
     · simp only [k17gbY8a, pc5_1, pc5_2, hz, hQR, hPR]; ring
     · simp only [k17gbY8a, pc5_2, pc5_3, hz, hQR, hPR]; ring
     · rw [hw, hw]
       simp only [k17gbY8a, pc5_2, pc5_3, hwx, hQR]
-      nlinarith [mul_pos (mul_pos hQQ hPQ) (sub_pos.2 h1)]
+      linarith [mul_pos (mul_pos hQQ hPQ) (sub_pos.2 h1)]
 
 end C2
 end Type08Sp

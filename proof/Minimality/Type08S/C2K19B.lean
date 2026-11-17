@@ -147,15 +147,15 @@ theorem k19_orth_u1b_cell {a a' b b' c c' d : ℝ³} {β1 β6 γ6 : ℝ} (hdet :
     · rw [e4]; right
       refine ⟨by simp only [k17gcPentU2, pc5_3, pc5_4, hz, hPR, hQR]; ring, ?_⟩
       simp only [k17gcPentU2, pc5_3, pc5_4, hwx, hPQ, hPR, hQR]; nlinarith
-    · rw [f4]; left; simp only [k17gcPentU2, pc5_0, pc5_4, hz, hPR, hQR]; nlinarith
+    · rw [f4]; left; simp only [k17gcPentU2, pc5_0, pc5_4, hz, hPR, hQR]; linarith
     · intro i hi
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
-      · left; rw [e0]; left; simp only [k17gcPentU2, pc5_0, pc5_4, hz, hPR, hQR]; nlinarith
+      · left; rw [e0]; left; simp only [k17gcPentU2, pc5_0, pc5_4, hz, hPR, hQR]; linarith
       · right; rw [f1]; left; simp only [k17gcPentU2, pc5_1, pc5_2, hz, hPR, hQR]
-        nlinarith [mul_pos (by linarith : (0:ℝ) < β1) hRR]
+        linarith [mul_pos (by linarith : (0:ℝ) < β1) hRR]
       · right; rw [f2]; right
         refine ⟨by simp only [k17gcPentU2, pc5_2, pc5_3, hz, hPR, hQR]; ring, ?_⟩
-        simp only [k17gcPentU2, pc5_2, pc5_3, hwx, hPQ, hPR, hQR]; nlinarith
+        simp only [k17gcPentU2, pc5_2, pc5_3, hwx, hPQ, hPR, hQR]; linarith
       · right; rw [f3]; right
         refine ⟨by simp only [k17gcPentU2, pc5_3, pc5_4, hz, hPR, hQR]; ring, ?_⟩
         simp only [k17gcPentU2, pc5_3, pc5_4, hwx, hPQ, hPR, hQR]; nlinarith
@@ -165,7 +165,7 @@ theorem k19_orth_u1b_cell {a a' b b' c c' d : ℝ³} {β1 β6 γ6 : ℝ} (hdet :
     rcases hl with rfl | rfl | rfl
     · right; norm_num
     · left; norm_num
-    · left; simp only; nlinarith [mul_pos (sub_pos.2 hβ1) hQQ]
+    · left; simp only; linarith [mul_pos (sub_pos.2 hβ1) hQQ]
 
 /-- Hexagon `(b,a',c,b',a,c')` in the frame `(c-d, a-d, d-b)`. -/
 def k19HexX (β1 β6 γ6 : ℝ) : ZMod 6 → ℝ × ℝ × ℝ :=
@@ -207,15 +207,15 @@ theorem k19_hexX_tsc {D β1 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hβ1 : 0 < β1) (
       | (simp only [TSc, d3, k19HexX, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; linarith)
+         | (right; refine ⟨by ring, by linarith⟩))
   · intro i
     rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, k19HexX, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 theorem k19HexX_inj {β1 β6 γ6 : ℝ} (hβ1 : 0 < β1) (hβ6 : 0 < β6) (hγ6 : 0 < γ6) (hγ61 : γ6 < 1) :
     ∀ i j, k19HexX β1 β6 γ6 i = k19HexX β1 β6 γ6 j → i = j := by
@@ -304,27 +304,27 @@ theorem k19_orth_x1p_cell {a a' b b' c c' d : ℝ³} {β1 β6 γ6 : ℝ} (hdet :
     refine k19_lexUni_nb _ _ hw 4 ?_ ?_ ?_
     · rw [e4]; right
       refine ⟨by simp only [k19HexX, pc6_3, pc6_4, hz, hPR, hQR]; ring, ?_⟩
-      simp only [k19HexX, pc6_3, pc6_4, hwx, hPQ, hPR, hQR]; nlinarith [mul_pos hβ1 (mul_pos (neg_pos.2 hv1) hPP)]
-    · rw [f4]; left; simp only [k19HexX, pc6_5, pc6_4, hz, hPR, hQR]; nlinarith [mul_pos hβ1 hRR]
+      simp only [k19HexX, pc6_3, pc6_4, hwx, hPQ, hPR, hQR]; linarith [mul_pos hβ1 (mul_pos (neg_pos.2 hv1) hPP)]
+    · rw [f4]; left; simp only [k19HexX, pc6_5, pc6_4, hz, hPR, hQR]; linarith [mul_pos hβ1 hRR]
     · intro i hi
       rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl
       · left; rw [e0]; left; simp only [k19HexX, pc6_0, pc6_5, hz, hPR, hQR]
-        nlinarith [mul_pos (sub_pos.2 hβ11) hRR]
-      · right; rw [f1]; left; simp only [k19HexX, pc6_1, pc6_2, hz, hPR, hQR]; nlinarith [mul_pos hβ6 hRR]
+        linarith [mul_pos (sub_pos.2 hβ11) hRR]
+      · right; rw [f1]; left; simp only [k19HexX, pc6_1, pc6_2, hz, hPR, hQR]; linarith [mul_pos hβ6 hRR]
       · right; rw [f2]; right
         refine ⟨by simp only [k19HexX, pc6_2, pc6_3, hz, hPR, hQR]; ring, ?_⟩
-        simp only [k19HexX, pc6_2, pc6_3, hwx, hPQ, hPR, hQR]; nlinarith
+        simp only [k19HexX, pc6_2, pc6_3, hwx, hPQ, hPR, hQR]; linarith
       · right; rw [f3]; right
         refine ⟨by simp only [k19HexX, pc6_3, pc6_4, hz, hPR, hQR]; ring, ?_⟩
-        simp only [k19HexX, pc6_3, pc6_4, hwx, hPQ, hPR, hQR]; nlinarith [mul_pos hβ1 (mul_pos (neg_pos.2 hv1) hPP)]
+        simp only [k19HexX, pc6_3, pc6_4, hwx, hPQ, hPR, hQR]; linarith [mul_pos hβ1 (mul_pos (neg_pos.2 hv1) hPP)]
       · exact absurd rfl hi
-      · left; rw [e5]; left; simp only [k19HexX, pc6_5, pc6_4, hz, hPR, hQR]; nlinarith [mul_pos hβ1 hRR]
+      · left; rw [e5]; left; simp only [k19HexX, pc6_5, pc6_4, hz, hPR, hQR]; linarith [mul_pos hβ1 hRR]
   · intro l hl
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
     rcases hl with rfl | rfl | rfl
     · left; norm_num
     · right; norm_num
-    · left; simp only; nlinarith [mul_pos (sub_pos.2 hβ11) hPP]
+    · left; simp only; linarith [mul_pos (sub_pos.2 hβ11) hPP]
 
 /-- **U3 closed**: `k17gc_u3`'s leftover `⟪a-d,a-c'⟫ = 0` has a cell (K19A for `pr ≠ 0`, U2b pentagon for `pr = 0`). -/
 theorem k19_u3_closed {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K5ZsPa a a' b b' c c' d)

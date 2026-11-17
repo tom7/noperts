@@ -100,9 +100,9 @@ theorem k17f_qtc1_tie_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q
   set Za := κ * ⟪Q, R⟫ + σ * ⟪R, R⟫ with hZa
   have hZa0 : Za < 0 := by
     have e : Za * (1 - κ * α1) = σ * ⟪R, R⟫ := by rw [hZa]; linear_combination κ * hζ
-    have h1 : 0 < 1 - κ * α1 := by nlinarith [mul_pos nk (by linarith : (0 : ℝ) < α1)]
+    have h1 : 0 < 1 - κ * α1 := by linarith [mul_pos nk (by linarith : (0 : ℝ) < α1)]
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hh h1.le, mul_pos (neg_pos.2 hσ) hA]
+    linarith [mul_nonneg hh h1.le, mul_pos (neg_pos.2 hσ) hA]
   have hz : ∀ t : ℝ × ℝ × ℝ, ⟪fpoint P Q R d t, R⟫ = ⟪d, R⟫ + t.1 * ⟪P, R⟫ + t.2.1 * ⟪Q, R⟫ + t.2.2 * ⟪R, R⟫ :=
     fun t => inner_fpoint _ _ _ _ _ _
   have hlexC : ∀ v1 v2 : ℝ,
@@ -116,15 +116,15 @@ theorem k17f_qtc1_tie_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q
         (fun i => ⟪fpoint P Q R d (kmCyc1 κ σ α1 β1 β6 i), fcomb P Q R v1 v2 0⟫) := by
     intro v1 v2 hw hinj
     refine k17f_lex_plateau _ _ hinj ?_ ?_ ?_ ?_ ?_ ?_
-    · simp only [kmCyc1_0, kmCyc1_1, hz, hBz]; nlinarith [mul_pos a1 (neg_pos.2 hZa0)]
-    · simp only [kmCyc1_0, kmCyc1_4, hz, hBz]; nlinarith
+    · simp only [kmCyc1_0, kmCyc1_1, hz, hBz]; linarith [mul_pos a1 (neg_pos.2 hZa0)]
+    · simp only [kmCyc1_0, kmCyc1_4, hz, hBz]; linarith
     · simp only [kmCyc1_1, kmCyc1_2, hz, hBz]; linarith
     · simp only [kmCyc1_2, kmCyc1_3, hz, hBz]; ring
-    · simp only [kmCyc1_3, kmCyc1_4, hz, hBz]; nlinarith [mul_pos (by linarith : (0 : ℝ) < α1) (neg_pos.2 hZa0)]
+    · simp only [kmCyc1_3, kmCyc1_4, hz, hBz]; linarith [mul_pos (by linarith : (0 : ℝ) < α1) (neg_pos.2 hZa0)]
     · simp only [kmCyc1_1, kmCyc1_2, kmCyc1_3, k17f_wexp, hBz]
       rcases hw with hw | hw
-      · left; nlinarith
-      · right; rw [hBz] at hw; nlinarith
+      · left; linarith
+      · right; rw [hBz] at hw; linarith
   rcases hL with hL | hL
   · -- L1 at `ρ_hi = (0,1)`: segment `(-λ ⟪P,Q⟫, ⟪P,P⟫)`
     refine cyc_cell V P Q R d hΔ (k := 5) (by norm_num) (kmCyc1 κ σ α1 β1 β6)
@@ -144,7 +144,7 @@ theorem k17f_qtc1_tie_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q
     · intro lam h0 h1
       refine ⟨by nlinarith, by nlinarith [mul_pos (mul_pos nk a1) (mul_pos h0 (neg_pos.2 hL))], ?_⟩
       have hb6p : 0 < β6 := by linarith
-      nlinarith [mul_pos (mul_pos hb6p hPP) (mul_pos (sub_pos.2 h1) (neg_pos.2 hL))]
+      linarith [mul_pos (mul_pos hb6p hPP) (mul_pos (sub_pos.2 h1) (neg_pos.2 hL))]
     · rintro v1 v2 ⟨hv1, hc, -⟩
       exact k6t1_km1_tsc hκ hσ hα1 hβ1 hb6 hbc hE hv1 hc
     · rintro v1 v2 ⟨-, -, hw⟩ hinj
@@ -170,7 +170,7 @@ theorem k17f_qtc1_tie_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q
       · exact Or.inr ⟨_, by simp, rfl⟩
       · exact Or.inr ⟨_, by simp, rfl⟩
     · intro lam h0 h1
-      refine ⟨by simpa using hβ1, by nlinarith [mul_pos hβ1 (mul_pos h0 hη)], ?_⟩
+      refine ⟨by simpa using hβ1, by linarith [mul_pos hβ1 (mul_pos h0 hη)], ?_⟩
       have hle : lam * η * X2 ≤ η * |X2| := by
         have := abs_nonneg X2
         have h2 : lam * X2 ≤ |X2| := by
@@ -180,7 +180,7 @@ theorem k17f_qtc1_tie_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q
         nlinarith
       have e : (β1 + lam * 0) * ((β6 - β1) * ⟪P, P⟫ + (1 - κ * α1) * ⟪P, Q⟫ - α1 * σ * ⟪P, R⟫) +
           (κ * (α1 - 1) + lam * η) * X2 = G + lam * η * X2 := by rw [hG]; ring
-      rw [e]; nlinarith [abs_nonneg X2]
+      rw [e]; linarith [abs_nonneg X2]
     · rintro v1 v2 ⟨hv1, hc, -⟩
       exact k6t1_km1_tsc hκ hσ hα1 hβ1 hb6 hbc hE hv1 hc
     · rintro v1 v2 ⟨-, -, hw⟩ hinj
@@ -220,7 +220,7 @@ theorem k17f_s11b_tc {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (
   have hw : 0 < w := by linarith
   have hb6 : 1 < β6 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hγ4.le (by linarith : 0 ≤ 1 - β6)]
+    linarith [mul_nonneg hγ4.le (by linarith : 0 ≤ 1 - β6)]
   obtain ⟨σ, hσ⟩ : ∃ σ, σ = -1 / w := ⟨_, rfl⟩
   obtain ⟨κ, hκ⟩ : ∃ κ, κ = -γ4 / w := ⟨_, rfl⟩
   have hσw : σ * w = -1 := by rw [hσ]; field_simp
@@ -238,7 +238,7 @@ theorem k17f_s11b_tc {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (
   have hE : (σ - 1) * (1 - β1) ≤ α1 * (σ - κ) := by
     have : ((σ - 1) * (1 - β1) - α1 * (σ - κ)) * w ≤ 0 := by nlinarith
     by_contra hh; push Not at hh
-    nlinarith [mul_pos (sub_pos.2 hh) hw]
+    linarith [mul_pos (sub_pos.2 hh) hw]
   set p := a - d with hp
   set q := b - d with hq
   set r := c - d with hr
@@ -303,7 +303,7 @@ theorem k17f_s11b_tc {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (
       · right
         rw [hGw] at hL
         by_contra hh; push Not at hh
-        nlinarith [mul_nonneg hw.le hh]
+        linarith [mul_nonneg hw.le hh]
     · intro i
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
       · simp only [kmCyc1_0, eA]; simp [V8]
@@ -345,7 +345,7 @@ theorem k17f_s11_tc {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h
     refine ⟨hq, ?_⟩
     rw [k17f_s11_G hc' hb' ha' hζ0 hz1] at hG
     by_contra hh; push Not at hh
-    nlinarith [mul_pos (sub_pos.2 hα4) (neg_pos.2 hh)]
+    linarith [mul_pos (sub_pos.2 hα4) (neg_pos.2 hh)]
 
 end C2
 end Type08Sp

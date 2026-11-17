@@ -48,8 +48,8 @@ theorem k17gdA_tsc {α1 β1 v1 v2 : ℝ} (hα1 : 1 < α1) (hβ1 : 0 < β1) (hv1 
     | (simp only [TSc, d3, k17gdA, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 3200000 in
 theorem k17gdA_rest {α1 β1 γ4 v1 v2 : ℝ} (hα1 : 1 < α1) (hβ1 : 0 < β1) (hγ4 : 0 < γ4) (hv1 : 0 < v1) (hv2 : v2 < 0)
@@ -80,8 +80,8 @@ theorem k17gdA_rest {α1 β1 γ4 v1 v2 : ℝ} (hα1 : 1 < α1) (hβ1 : 0 < β1) 
     (simp only [TSc, d3, k17gdA, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
-     | (right; refine ⟨by ring, by nlinarith⟩))
+     | (left; linarith)
+     | (right; refine ⟨by ring, by linarith⟩))
 
 end C2
 end Type08Sp

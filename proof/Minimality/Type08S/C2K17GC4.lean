@@ -81,11 +81,11 @@ theorem k17gc_u2_frame {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
   rw [det_beta1 hc'] at hβ
   have hb1 : 1 < β1 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
+    linarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
   rw [det_alpha4 hb'] at hα
   have hα1 : α4 < 1 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
+    linarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
   have hg4 : γ4 = 1 + α4 * (β1 - 1) := by
     have := (planar_a_iff hdet hc' hb').1 hκ
     linarith
@@ -156,8 +156,8 @@ theorem k17gc_pentU2_tsc {α4 β1 γ4 β6 γ6 v1 v2 : ℝ} (hα4 : 0 < α4) (hα
       | (simp only [TSc, d3, k17gcPentU2, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; linarith)
+         | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl <;>
@@ -212,11 +212,11 @@ theorem k17gc_u2b_cell {a a' b b' c c' d : ℝ³} {α4 β1 γ4 β6 γ6 : ℝ} (h
   have hQ0 : Q ≠ 0 := by intro h0; apply hΔ; rw [h0]; simp [det3_expand]
   have hQQ : 0 < ⟪Q, Q⟫ := real_inner_self_pos.2 hQ0
   set K := γ4 * ⟪Q, Q⟫ + (1 - α4) * ⟪P, Q⟫ with hK
-  have hK0 : 0 < K := by rw [hK]; nlinarith [mul_nonneg (sub_nonneg.2 hα41) hPQ.le, mul_pos hγ4 hQQ]
+  have hK0 : 0 < K := by rw [hK]; linarith [mul_nonneg (sub_nonneg.2 hα41) hPQ.le, mul_pos hγ4 hQQ]
   refine ⟨R, hR0, ?_⟩
   refine cyc_cell (V8 a a' b b' c c' d) P Q R d hΔ (k := 5) (by norm_num) (k17gcPentU2 α4 β1 γ4)
     (k17gcPentU2_inj hα4 hβ1 hγ4) ?_ [((1 : ℝ), (0 : ℝ), (0 : ℝ)), (0, γ6, -β6)] ?_ (u1 := K) (u2 := 0)
-    (t1 := 0) (t2 := -(γ4 * ⟪P, Q⟫)) (by nlinarith [mul_pos hK0 (mul_pos (by linarith : (0:ℝ) < γ4) hPQ)])
+    (t1 := 0) (t2 := -(γ4 * ⟪P, Q⟫)) (by linarith [mul_pos hK0 (mul_pos (by linarith : (0:ℝ) < γ4) hPQ)])
     (lo := 0) (hi := 1) (by norm_num)
     (fun v1 v2 => 0 < v1 ∧ v2 < 0 ∧ 0 < γ4 * v1 + (1 - α4) * v2 ∧ 0 < v1 * ⟪P, Q⟫ + v2 * ⟪Q, Q⟫) ?_ ?_ ?_
   · intro i
@@ -243,15 +243,15 @@ theorem k17gc_u2b_cell {a a' b b' c c' d : ℝ³} {α4 β1 γ4 β6 γ6 : ℝ} (h
     · exact Or.inr ⟨_, by simp, rfl⟩
   · intro lam h0 h1
     have hg0 : 0 < γ4 := hγ4
-    refine ⟨by nlinarith, by nlinarith [mul_pos (mul_pos h0 hg0) hPQ], ?_, ?_⟩
+    refine ⟨by linarith, by linarith [mul_pos (mul_pos h0 hg0) hPQ], ?_, ?_⟩
     · have e : γ4 * (K + lam * 0) + (1 - α4) * (0 + lam * -(γ4 * ⟪P, Q⟫)) =
           γ4 * (γ4 * ⟪Q, Q⟫ + (1 - lam) * (1 - α4) * ⟪P, Q⟫) := by rw [hK]; ring
       rw [e]
-      exact mul_pos hg0 (by nlinarith [mul_nonneg (mul_pos (sub_pos.2 h1) hPQ).le (sub_nonneg.2 hα41), mul_pos hg0 hQQ])
+      exact mul_pos hg0 (by linarith [mul_nonneg (mul_pos (sub_pos.2 h1) hPQ).le (sub_nonneg.2 hα41), mul_pos hg0 hQQ])
     · have e : (K + lam * 0) * ⟪P, Q⟫ + (0 + lam * -(γ4 * ⟪P, Q⟫)) * ⟪Q, Q⟫ =
           ⟪P, Q⟫ * (γ4 * (1 - lam) * ⟪Q, Q⟫ + (1 - α4) * ⟪P, Q⟫) := by rw [hK]; ring
       rw [e]
-      exact mul_pos hPQ (by nlinarith [mul_pos (mul_pos hg0 (sub_pos.2 h1)) hQQ, mul_nonneg (sub_nonneg.2 hα41) hPQ.le])
+      exact mul_pos hPQ (by linarith [mul_pos (mul_pos hg0 (sub_pos.2 h1)) hQQ, mul_nonneg (sub_nonneg.2 hα41) hPQ.le])
   · rintro v1 v2 ⟨hv1, hv2, hc, -⟩
     exact k17gc_pentU2_tsc hα4 hα41 hβ1 hγ4 hαγ hβ6 hγ6 hγ61 hv1 hv2 hc
   · rintro v1 v2 ⟨-, -, -, hf⟩ hinj
@@ -260,8 +260,8 @@ theorem k17gc_u2b_cell {a a' b b' c c' d : ℝ³} {α4 β1 γ4 β6 γ6 : ℝ} (h
     · right
       simp only [k17gcPentU2, pc5_3, pc5_4]
       refine ⟨by rw [hz, hz, hPR, hQR]; simp only; ring, ?_⟩
-      rw [k17f_wexp, k17f_wexp]; simp only; nlinarith
-    · left; simp only [k17gcPentU2, pc5_0, pc5_4, hz, hPR, hQR]; nlinarith
+      rw [k17f_wexp, k17f_wexp]; simp only; linarith
+    · left; simp only [k17gcPentU2, pc5_0, pc5_4, hz, hPR, hQR]; linarith
 
 /-! ## U2a: quadrilateral `(a,c',a',b')` at `c' - b`, frame `(b-d, c-d, c'-b)` -/
 
@@ -347,7 +347,7 @@ theorem k17gc_u2a_cell {a a' b b' c c' d : ℝ³} {α4 β1 γ4 β6 γ6 : ℝ} (h
     (hg4 : γ4 = 1 + α4 * (β1 - 1)) (hβ6 : 0 < β6) (hγ6 : 0 < γ6) (hγ61 : γ6 < 1) (hs : 1 < β6 + γ6)
     (hpq : ⟪a - d, b - d⟫ = 0) (hqr : ⟪b - d, c - d⟫ = 0) (hL : 0 < ⟪a - b', a - d⟫) :
     HasLexCell (V8 a a' b b' c c' d) := by
-  have hγ4 : 1 < γ4 := by rw [hg4]; nlinarith [mul_pos hα4 (sub_pos.2 hβ1)]
+  have hγ4 : 1 < γ4 := by rw [hg4]; linarith [mul_pos hα4 (sub_pos.2 hβ1)]
   have hzab : ⟪b', c' - b⟫ < ⟪a, c' - b⟫ := by
     have e1 : c' - b = (a - d) + (β1 - 1) • (b - d) := by rw [hc']; module
     have e2 : a - b' = (1 - α4) • (a - d) - γ4 • (c - d) := by rw [hb']; module
@@ -383,7 +383,7 @@ theorem k17gc_u2a_cell {a a' b b' c c' d : ℝ³} {α4 β1 γ4 β6 γ6 : ℝ} (h
     exact mul_pos (sub_pos.2 hβ1) (real_inner_self_pos.2 hP0)
   refine ⟨R, hR0, ?_⟩
   refine k3_cell_gen (V8 a a' b b' c c' d) P Q R d hΔ (k := 4) (by norm_num) (k17gcQ4 α4 β1 γ4 β6 γ6)
-    (k17gcQ4_inj hα4 hβ1 hγ4 hγ6) (u1 := -1) (u2 := γ6) (t1 := -1) (t2 := 0) (by nlinarith) ?_ ?_ ?_ ?_
+    (k17gcQ4_inj hα4 hβ1 hγ4 hγ6) (u1 := -1) (u2 := γ6) (t1 := -1) (t2 := 0) (by linarith) ?_ ?_ ?_ ?_
   · intro i
     rcases k17gc_z4_cases i with rfl | rfl | rfl | rfl
     · rw [k17gcQ4_0, Ea]; simp [V8]
@@ -392,7 +392,7 @@ theorem k17gc_u2a_cell {a a' b b' c c' d : ℝ³} {α4 β1 γ4 β6 γ6 : ℝ} (h
     · rw [k17gcQ4_3, Eb']; simp [V8]
   · intro lam h0 h1 D hD
     have := (k17gc_q4_tsc hα4 hα41 hβ1 hγ4 hβ6 hγ6 hγ61 hs (v1 := -1 + lam * -1) (v2 := γ6 + lam * 0)
-      (by linarith) (by nlinarith [mul_pos hγ6 (show (0:ℝ) < β6 + lam by linarith)])).1
+      (by linarith) (by linarith [mul_pos hγ6 (show (0:ℝ) < β6 + lam by linarith)])).1
     intro i j h1 h2
     exact tsc_scale hD (this i j h1 h2)
   · intro y hy hyx
@@ -404,7 +404,7 @@ theorem k17gc_u2a_cell {a a' b b' c c' d : ℝ³} {α4 β1 γ4 β6 γ6 : ℝ} (h
       tauto
     have hT := fun lam (h0 : (0:ℝ) < lam) (h1 : lam < 1) =>
       (k17gc_q4_tsc hα4 hα41 hβ1 hγ4 hβ6 hγ6 hγ61 hs (v1 := -1 + lam * -1) (v2 := γ6 + lam * 0)
-        (by linarith) (by nlinarith [mul_pos hγ6 (show (0:ℝ) < β6 + lam by linarith)])).2
+        (by linarith) (by linarith [mul_pos hγ6 (show (0:ℝ) < β6 + lam by linarith)])).2
     rcases hV with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · exact (hyx 0 (by rw [k17gcQ4_0])).elim
     · exact (hyx 1 (by rw [k17gcQ4_1])).elim
@@ -428,7 +428,7 @@ theorem k17gc_u2 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : 
   obtain ⟨hT', hnT, hκ, -⟩ := h
   obtain ⟨α4, β1, γ4, β6, γ6, hdet, hc', hb', ha', hα4, hα41, hβ1, hg4, hβ6, hγ6, hγ61, hs, hpq', hqr⟩ :=
     k17gc_u2_frame W hT' hκ (k5z_far1 W hT' hnT) h0 hα hβ hpq
-  have hγ4 : 1 < γ4 := by rw [hg4]; nlinarith [mul_pos hα4 (sub_pos.2 hβ1)]
+  have hγ4 : 1 < γ4 := by rw [hg4]; linarith [mul_pos hα4 (sub_pos.2 hβ1)]
   rcases lt_or_ge 0 ⟪a - d, c - d⟫ with hpr | hpr
   · exact k17gc_u2b_cell hdet hc' hb' ha' hα4 hα41.le (by linarith) (by linarith) (by linarith) hβ6 hγ6 hγ61
       hpq' hqr hpr
@@ -438,7 +438,7 @@ theorem k17gc_u2 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : 
     have e2 : a - b' = (1 - α4) • (a - d) - γ4 • (c - d) := by rw [hb']; module
     rw [e2, inner_sub_left, inner_smul_left, inner_smul_left, real_inner_comm (a - d) (c - d)]
     simp only [conj_trivial]
-    nlinarith [mul_pos (sub_pos.2 hα41) hpp, mul_nonneg (by linarith : (0:ℝ) ≤ γ4) (neg_nonneg.2 hpr)]
+    linarith [mul_pos (sub_pos.2 hα41) hpp, mul_nonneg (by linarith : (0:ℝ) ≤ γ4) (neg_nonneg.2 hpr)]
 
 end C2
 end Type08Sp

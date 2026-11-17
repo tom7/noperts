@@ -41,8 +41,8 @@ theorem k17c_c3 {β6 γ6 : ℝ} (hb6 : 0 < β6) (hγ6 : 0 < γ6) (hγ61 : γ6 �
     · right; exact max_eq_right h
     · left; exact max_eq_left h
   rcases h2 with h | h
-  · rw [h]; nlinarith
-  · rw [h]; nlinarith [mul_pos hb6 hγ6]
+  · rw [h]; linarith
+  · rw [h]; linarith [mul_pos hb6 hγ6]
 
 set_option maxHeartbeats 1600000 in
 theorem k17c_A_weights {a a' b b' c c' d : ℝ³} {α1 β6 γ6 : ℝ}
@@ -77,12 +77,12 @@ theorem k17c_A_weights {a a' b b' c c' d : ℝ³} {α1 β6 γ6 : ℝ}
       rcases hl1.eq_or_lt with e | e
       · have : 0 < l2 := by linarith
         nlinarith [mul_pos h0 this]
-      · nlinarith [mul_pos (sub_pos.2 h1) e, mul_nonneg h0.le hl2]
+      · linarith [mul_pos (sub_pos.2 h1) e, mul_nonneg h0.le hl2]
     have hM' : 0 < (1 - lam) * m1 + lam * m2 := by
       rcases hm1.eq_or_lt with e | e
       · have : 0 < m2 := by linarith
         nlinarith [mul_pos h0 this]
-      · nlinarith [mul_pos (sub_pos.2 h1) e, mul_nonneg h0.le hm2]
+      · linarith [mul_pos (sub_pos.2 h1) e, mul_nonneg h0.le hm2]
     have := k17c_cone_gen hβ6 hγ6 hγ61 h3 hΛ hM'
     have e1 : l1 * β6 + m1 * m4 + lam * ((l2 - l1) * β6 + (m2 - m1) * m4) =
         ((1 - lam) * l1 + lam * l2) * β6 + ((1 - lam) * m1 + lam * m2) * m4 := by ring
@@ -94,10 +94,10 @@ theorem k17c_A_weights {a a' b b' c c' d : ℝ³} {α1 β6 γ6 : ℝ}
     rcases hmet lam h0 h1 with h | h
     · left
       simp only [k17cA3, k17cA4] at h
-      nlinarith [h]
+      linarith [h]
     · right
       simp only [k17cG3, k17cG4, k17cA3, k17cA4, k17cB3, k17cB4] at h
-      nlinarith [h]
+      linarith [h]
 
 end C2
 end Type08Sp

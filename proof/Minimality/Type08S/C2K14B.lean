@@ -73,14 +73,14 @@ theorem k14_hc1_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠
   · intro lam h0 h1
     simp only [mul_zero, add_zero, zero_add, mul_one]
     refine ⟨⟨by norm_num, ?_⟩, ?_⟩
-    · nlinarith [mul_pos hβ1 h0]
+    · linarith [mul_pos hβ1 h0]
     · rw [hlin]
       set L0 := ⟪fpoint P Q R d (0, 1, 0) - fpoint P Q R d (β6, γ6, 0), fcomb P Q R 1 m0 0⟫
       have h1' : lam * (|B| + 1) < -L0 := by
         have := (lt_div_iff₀ (by positivity : (0:ℝ) < |B| + 1)).1 h1
         linarith
       have : lam * B ≤ lam * |B| := mul_le_mul_of_nonneg_left (le_abs_self B) h0.le
-      nlinarith
+      linarith
   · intro v1 v2 ⟨⟨hv1, hc⟩, hl⟩
     exact k6m_hc1_tsc hκ hσ hα1 hβ1 hb6 hγ6 hγ61 hbc hcc haa hE hv1 hc
   · intro v1 v2 ⟨⟨hv1, hc⟩, hl⟩ hL
@@ -128,7 +128,7 @@ theorem k14_hc2_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠
   · intro lam h0 h1
     refine ⟨by simp, ?_⟩
     simp only [mul_zero, add_zero, zero_add, mul_one, mul_neg]
-    nlinarith [mul_pos nk a1, mul_pos hβ1 h0]
+    linarith [mul_pos nk a1, mul_pos hβ1 h0]
   · intro v1 v2 ⟨hv1, hc⟩
     exact k6m_hc2_tsc hκ hσ hα1 hβ1 hb6 hγ6 hγ61 hbc hcc haa hE hv1 hc
   · intro v1 v2 ⟨hv1, hc⟩ hL

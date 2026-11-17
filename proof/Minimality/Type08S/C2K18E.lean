@@ -101,16 +101,16 @@ theorem k18_s15_tie_cells {a a' b b' c c' d : ℝ³} {β6 γ6 : ℝ} (hdet : det
       refine k17gc_lexUni6_a _ _ hw ?_ ?_ ?_ ?_
       · right
         refine ⟨by simp only [k17gcHex5, pc6_0, pc6_1, hz, hQR]; ring, ?_⟩
-        simp only [k17gcHex5, pc6_0, pc6_1, hwx]; nlinarith
-      · left; simp only [k17gcHex5, pc6_1, pc6_2, hz, hQR]; nlinarith
+        simp only [k17gcHex5, pc6_0, pc6_1, hwx]; linarith
+      · left; simp only [k17gcHex5, pc6_1, pc6_2, hz, hQR]; linarith
       · right
         refine ⟨by simp only [k17gcHex5, pc6_4, pc6_5, hz, hQR]; ring, ?_⟩
-        simp only [k17gcHex5, pc6_4, pc6_5, hwx]; nlinarith
+        simp only [k17gcHex5, pc6_4, pc6_5, hwx]; linarith
       · simp only [k17gcHex5, pc6_2, pc6_3, pc6_4, hz, LexLt]
         by_contra hh
         push Not at hh
         obtain ⟨⟨h2, -⟩, ⟨h4, -⟩⟩ := hh
-        nlinarith [mul_le_mul_of_nonneg_left h4 hγ6.le, mul_le_mul_of_nonneg_left h2 (sub_pos.2 hγ61).le,
+        linarith [mul_le_mul_of_nonneg_left h4 hγ6.le, mul_le_mul_of_nonneg_left h2 (sub_pos.2 hγ61).le,
           mul_pos (sub_pos.2 hs) hRR]
   -- cell 2: pentagon (S1.5b), cone v1 > 0, v2 > 0, needs m·v < 0
   have C2 : K18Cell (V8 a a' b b' c c' d) P Q R d (k18Cone ((-m.1, -m.2) :: [(1, 0), (0, 1)])) := by
@@ -151,11 +151,11 @@ theorem k18_s15_tie_cells {a a' b b' c c' d : ℝ³} {β6 γ6 : ℝ} (hdet : det
       refine lexUni5_top _ _ hw ?_ ?_ ?_
       · right
         refine ⟨by simp only [k17gcPent5, pc5_0, pc5_1, hz, hQR]; ring, ?_⟩
-        simp only [k17gcPent5, pc5_0, pc5_1, hwx]; nlinarith
-      · left; simp only [k17gcPent5, pc5_2, pc5_3, hz, hQR]; nlinarith
+        simp only [k17gcPent5, pc5_0, pc5_1, hwx]; linarith
+      · left; simp only [k17gcPent5, pc5_2, pc5_3, hz, hQR]; linarith
       · right
         refine ⟨by simp only [k17gcPent5, pc5_3, pc5_4, hz, hQR]; ring, ?_⟩
-        simp only [k17gcPent5, pc5_3, pc5_4, hwx]; nlinarith
+        simp only [k17gcPent5, pc5_3, pc5_4, hwx]; linarith
   refine ⟨R, k17gc_r0 hΔ, ?_⟩
   refine k18_tie_two C1 C2 (ρ1 := 1) (ρ2 := 0) (δ1 := 0) (δ2 := -1) (ε1 := 0) (ε2 := 1) ?_ ?_ ?_
   · intro l hl

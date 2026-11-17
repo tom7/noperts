@@ -70,10 +70,10 @@ theorem k21_qd_tsc_tie {D α4 β1 γ4 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα4 : 
       | (simp only [TSc, d3, s0, s1, s2, s3, k19Qd_0, k19Qd_1, k19Qd_2, k19Qd_3, Prod.fst_sub, Prod.snd_sub,
           Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
+         | (left; linarith)
          | (right; refine ⟨?_, ?_⟩
             · linear_combination D * htie
-            · nlinarith))
+            · linarith))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl <;>
@@ -81,7 +81,7 @@ theorem k21_qd_tsc_tie {D α4 β1 γ4 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα4 : 
       (simp only [TSc, d3, s0, s1, s2, s3, k19Qd_0, k19Qd_1, k19Qd_2, k19Qd_3, Prod.fst_sub, Prod.snd_sub,
           Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
+       | (left; linarith)
        | (right; refine ⟨by ring, by nlinarith⟩))
 
 set_option maxHeartbeats 12800000 in
@@ -92,7 +92,7 @@ theorem k21_u1l_ad_tie {a a' b b' c c' d : ℝ³} {α4 β1 γ4 β6 γ6 : ℝ} (h
     (hγ : γ4 = 1 - α4 + α4 * β1) (hβ6 : 0 < β6) (hγ6 : 0 < γ6) (hγ61 : γ6 < 1)
     (hpq : ⟪a - d, b - d⟫ = 0) (hqr : ⟪b - d, c - d⟫ = 0) (hpr : ⟪a - d, c - d⟫ = 0)
     (htie : β1 * γ6 + β6 * γ4 - β1 * γ4 = 0) : HasLexCell (V8 a a' b b' c c' d) := by
-  have hγ4 : 1 < γ4 := by rw [hγ]; nlinarith [mul_pos hα4 (sub_pos.2 hβ1)]
+  have hγ4 : 1 < γ4 := by rw [hγ]; linarith [mul_pos hα4 (sub_pos.2 hβ1)]
   set P := b - d with hP
   set Q := c - d with hQ
   set R := a - d with hR
@@ -169,17 +169,17 @@ theorem k21_u1l_ad_tie {a a' b b' c c' d : ℝ³} {α4 β1 γ4 β6 γ6 : ℝ} (h
       right
       refine ⟨by simp only [k19Qd_0, k19Qd_1, hz, hPR, hQR]; ring, ?_⟩
       simp only [k19Qd_0, k19Qd_1, hwx, hPQ, hPR, hQR]
-      nlinarith [mul_pos (mul_pos (by linarith : (0:ℝ) < β1) (by linarith : (0:ℝ) < v1)) hPP]
+      linarith [mul_pos (mul_pos (by linarith : (0:ℝ) < β1) (by linarith : (0:ℝ) < v1)) hPP]
     refine k19_lexUni_nb _ _ hw 1 ?_ ?_ ?_
     · rw [e1]; exact hac
-    · rw [s1]; left; simp only [k19Qd_1, k19Qd_2, hz, hPR, hQR]; nlinarith
+    · rw [s1]; left; simp only [k19Qd_1, k19Qd_2, hz, hPR, hQR]; linarith
     · intro i hi
       rcases k19_z4_cases i with rfl | rfl | rfl | rfl
       · right; rw [s0]; exact hac
       · exact absurd rfl hi
-      · left; rw [e2]; left; simp only [k19Qd_1, k19Qd_2, hz, hPR, hQR]; nlinarith
+      · left; rw [e2]; left; simp only [k19Qd_1, k19Qd_2, hz, hPR, hQR]; linarith
       · right; rw [s3]; left; simp only [k19Qd_0, k19Qd_3, hz, hPR, hQR]
-        nlinarith [mul_pos (sub_pos.2 hα41) hRR]
+        linarith [mul_pos (sub_pos.2 hα41) hRR]
   · intro l hl
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
     rcases hl with rfl | rfl <;> (left; norm_num)

@@ -113,7 +113,7 @@ theorem k17gb_s19_facts {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ}
     have hGY : G + β6 * Y ≤ 0 := by linarith
     have h3 : 0 ≤ h * G + (K + h * g * (1 - β6)) * Y := by
       have := mul_nonneg (mul_pos hh0 hg0).le hC0; linarith
-    nlinarith [mul_nonneg hβ6.le h3, mul_nonneg hN.le (neg_nonneg.2 hGY), mul_pos hNK hRR]
+    linarith [mul_nonneg hβ6.le h3, mul_nonneg hN.le (neg_nonneg.2 hGY), mul_pos hNK hRR]
   · by_contra hcon
     push Not at hcon
     obtain ⟨h1, h2⟩ := hcon
@@ -124,7 +124,7 @@ theorem k17gb_s19_facts {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ}
     have hX0 : ⟪a - d, b' - a'⟫ ≤ 0 := by linarith
     have hY0 : 0 ≤ Y := by nlinarith [mul_nonneg hh0.le (neg_nonneg.2 hX0)]
     have := mul_nonneg hN.le hY0
-    nlinarith [mul_pos hh0 hRR, mul_pos (mul_pos hh0 hg0) (by linarith : (0:ℝ) < 1), mul_nonpos_of_nonneg_of_nonpos (mul_pos hh0 hg0).le hC0]
+    linarith [mul_pos hh0 hRR, mul_pos (mul_pos hh0 hg0) (by linarith : (0:ℝ) < 1), mul_nonpos_of_nonneg_of_nonpos (mul_pos hh0 hg0).le hC0]
   · have := congrArg (fun v => ⟪v, a - c'⟫) vK
     simp only [inner_smul_left, inner_add_left, conj_trivial] at this
     simp only [hE2, hE2c, E1c, E1'] at this

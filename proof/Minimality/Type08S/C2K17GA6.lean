@@ -48,7 +48,7 @@ theorem k17ga_s11_r2_tc {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d
   have hw : 0 < α4 - 1 := by linarith
   have hb61 : 1 < β6 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hγ4.le (sub_nonneg.2 hh)]
+    linarith [mul_nonneg hγ4.le (sub_nonneg.2 hh)]
   -- qr = -(β6-1) pq
   have hqr : ⟪b - d, c - d⟫ = -(β6 - 1) * ⟪a - d, b - d⟫ := by
     have : γ4 * (⟪b - d, c - d⟫ + (β6 - 1) * ⟪a - d, b - d⟫) = 0 := by linear_combination hζ0 - ⟪a - d, b - d⟫ * hpl
@@ -56,11 +56,11 @@ theorem k17ga_s11_r2_tc {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d
     linarith
   have hpq : ⟪a - d, b - d⟫ < ⟪b - d, b - d⟫ := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ α1) (sub_nonneg.2 hh), mul_pos hqq (by linarith : (0:ℝ) < α1 + β1 - 1)]
-  have hcv : 0 < α4 - α1 + α1 * γ4 := by nlinarith [mul_pos (by linarith : (0:ℝ) < α4) hβ1]
+    linarith [mul_nonneg (by linarith : (0:ℝ) ≤ α1) (sub_nonneg.2 hh), mul_pos hqq (by linarith : (0:ℝ) < α1 + β1 - 1)]
+  have hcv : 0 < α4 - α1 + α1 * γ4 := by linarith [mul_pos (by linarith : (0:ℝ) < α4) hβ1]
   refine k17ga_r2_cell hdet hc' hb' ha' hα11 hβ1 (by linarith) hγ4 hb6 hcv ?_ ?_ ?_
-  · rw [i2, i3, hqr]; nlinarith [mul_pos (by linarith : (0:ℝ) < β6 - 1) (sub_pos.2 hpq)]
-  · rw [i1, i3]; nlinarith
+  · rw [i2, i3, hqr]; linarith [mul_pos (by linarith : (0:ℝ) < β6 - 1) (sub_pos.2 hpq)]
+  · rw [i1, i3]; linarith
   · rw [i1, i2, i3, hqr]
     rcases lt_or_ge ⟪a - d, b - d⟫ 0 with hh | hh
     · right; nlinarith [mul_pos (by linarith : (0:ℝ) < β6) (neg_pos.2 hh)]

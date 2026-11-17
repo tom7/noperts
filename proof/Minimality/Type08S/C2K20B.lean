@@ -129,16 +129,16 @@ theorem k20_truncPrism_gen {k : ℕ} [NeZero k] (p : ZMod k → ℝ²) (hp : IsC
     have : ⟪X - M, v⟫ = -(1 / 2) * ⟪v, Y - X⟫ := by
       rw [hM, real_inner_comm]; simp only [inner_sub_right, inner_smul_right, inner_add_right]
       simp; ring
-    rw [this]; nlinarith
+    rw [this]; linarith
   have hνY : ∀ z, cross2 (proj_xy (cross ω (liftPt Y z) + τ)) v < 0 := by
     intro z; rw [hνv]
     have : ⟪Y - M, v⟫ = (1 / 2) * ⟪v, Y - X⟫ := by
       rw [hM, real_inner_comm]; simp only [inner_sub_right, inner_smul_right, inner_add_right]
       simp; ring
-    rw [this]; nlinarith
+    rw [this]; linarith
   have hbot : ∀ i j, s i < 0 →
       0 < cross2 (p (i + 1) - p i) (proj_xy (cross ω (liftPt (p j) 0) + τ)) := by
-    intro i j hi; rw [hνe]; have := hlam i j hi; nlinarith
+    intro i j hi; rw [hνe]; have := hlam i j hi; linarith
   have htop : ∀ i j, 0 < s i →
       0 < cross2 (p (i + 1) - p i) (proj_xy (cross ω (liftPt (p j) (hz j)) + τ)) := by
     intro i j hi; rw [hνe]; have := hκ i j hi
@@ -160,7 +160,7 @@ theorem k20_truncPrism_gen {k : ℕ} [NeZero k] (p : ZMod k → ℝ²) (hp : IsC
       intro z; rw [← hνe]; simp
     have hbm : cross2 (p j - p (j - 1)) v < 0 →
         0 < cross2 (p j - p (j - 1)) (proj_xy (cross ω (liftPt (p j) 0) + τ)) := by
-      intro hc; rw [bm]; have := hlam (j - 1) j (by rw [hsj]; exact hc); nlinarith
+      intro hc; rw [bm]; have := hlam (j - 1) j (by rw [hsj]; exact hc); linarith
     have htm : 0 < cross2 (p j - p (j - 1)) v →
         0 < cross2 (p j - p (j - 1)) (proj_xy (cross ω (liftPt (p j) (hz j)) + τ)) := by
       intro hc; rw [bm]; have := hκ (j - 1) j (by rw [hsj]; exact hc)
@@ -183,15 +183,15 @@ theorem k20_truncPrism_gen {k : ℕ} [NeZero k] (p : ZMod k → ℝ²) (hp : IsC
       · rw [hrev]; nlinarith
       · rw [hj, ← hXdef]; exact mul_pos (hzp a) (hνX 0)
       · nlinarith
-      · rw [hj, ← hXdef]; nlinarith [mul_pos (hzp a) (hνX (hz a))]
+      · rw [hj, ← hXdef]; linarith [mul_pos (hzp a) (hνX (hz a))]
     · -- `Y`: the minimum of `⟪m, ·⟫`
       have hj := hY j h1 h2
       refine (k20_cert_down V v ω τ (hmemt' _) (hVb _) ?_ (hbot j j h2) ?_).and
         (k20_cert_up V v ω τ (hVt _) (hmemb' _) ?_ ?_ (htm h1))
       · nlinarith
-      · rw [hj, ← hYdef]; nlinarith [mul_pos (hzp b) (neg_pos.2 (hνY 0))]
+      · rw [hj, ← hYdef]; linarith [mul_pos (hzp b) (neg_pos.2 (hνY 0))]
       · rw [hrev]; nlinarith
-      · rw [hj, ← hYdef]; nlinarith [mul_pos (hzp b) (neg_pos.2 (hνY (hz b)))]
+      · rw [hj, ← hYdef]; linarith [mul_pos (hzp b) (neg_pos.2 (hνY (hz b)))]
     · -- both edges in `B⁻`
       refine (k20_cert_hidden V v ω τ (hVt _) (hmemt' _) (hVt _) hE ?_ ?_).and
         (k20_cert_flat V v ω τ (hVt _) (hVt _) hE (htop j j h2) (htm h1))

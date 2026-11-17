@@ -24,7 +24,7 @@ namespace C2
 theorem k17c_eps (x y : ℝ) (hx : 0 < x) : ∃ ε : ℝ, 0 < ε ∧ ε * |y| ≤ x := by
   refine ⟨x / (|y| + 1), by positivity, ?_⟩
   rw [div_mul_eq_mul_div, div_le_iff₀ (by positivity)]
-  nlinarith [abs_nonneg y]
+  linarith [abs_nonneg y]
 
 theorem k17c_lin_pos {X Y ε lam : ℝ} (hε : 0 < ε) (h0 : 0 < lam) (h1 : lam < 1) (h : ε * |Y| ≤ X) :
     0 ≤ X + lam * ε * Y := by
@@ -32,7 +32,7 @@ theorem k17c_lin_pos {X Y ε lam : ℝ} (hε : 0 < ε) (h0 : 0 < lam) (h1 : lam 
   have h3 := abs_nonneg Y
   have a : 0 ≤ lam * ε * (Y + |Y|) := mul_nonneg (mul_pos h0 hε).le (by linarith)
   have b : 0 ≤ (1 - lam) * ε * |Y| := mul_nonneg (mul_nonneg (sub_pos.2 h1).le hε.le) h3
-  nlinarith
+  linarith
 
 set_option maxHeartbeats 1600000 in
 theorem k17c_s36a_hasLexCell {a a' b b' c c' d : ℝ³} {α1 β6 γ6 : ℝ}
@@ -63,28 +63,28 @@ theorem k17c_s36a_hasLexCell {a a' b b' c c' d : ℝ³} {α1 β6 γ6 : ℝ}
     intro lam h0 h1
     right
     have := k17c_lin_pos hε h0 h1 hε2
-    nlinarith
+    linarith
   · obtain ⟨ε, hε, hε2⟩ := k17c_eps _ (k17cG3 β6 γ6 qq qr rr) h
     refine W (l1 := 0) (m1 := 1) (l2 := ε) (m2 := 1) le_rfl (by norm_num) hε.le (by norm_num)
       (by linarith) (by norm_num) (by simpa using hε.ne') ?_
     intro lam h0 h1
     right
     have := k17c_lin_pos hε h0 h1 hε2
-    nlinarith
+    linarith
   · obtain ⟨ε, hε, hε2⟩ := k17c_eps _ (k17cA4 β6 γ6 qq qr) (neg_pos.2 h)
     refine W (l1 := 1) (m1 := 0) (l2 := 1) (m2 := ε) (by norm_num) le_rfl (by norm_num) hε.le (by norm_num)
       (by linarith) (by simpa using hε.ne') ?_
     intro lam h0 h1
     left
     have := k17c_lin_pos (X := -k17cA3 β6 γ6 qq qr) (Y := -k17cA4 β6 γ6 qq qr) hε h0 h1 (by rwa [abs_neg])
-    nlinarith
+    linarith
   · obtain ⟨ε, hε, hε2⟩ := k17c_eps _ (k17cA3 β6 γ6 qq qr) (neg_pos.2 h)
     refine W (l1 := 0) (m1 := 1) (l2 := ε) (m2 := 1) le_rfl (by norm_num) hε.le (by norm_num)
       (by linarith) (by norm_num) (by simpa using hε.ne') ?_
     intro lam h0 h1
     left
     have := k17c_lin_pos (X := -k17cA4 β6 γ6 qq qr) (Y := -k17cA3 β6 γ6 qq qr) hε h0 h1 (by rwa [abs_neg])
-    nlinarith
+    linarith
 
 end C2
 end Type08Sp

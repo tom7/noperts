@@ -84,7 +84,7 @@ theorem k17cS36b_tsc {α1 β6 γ6 v1 v2 : ℝ} (hα1 : 1 < α1) (hb6 : 0 < β6) 
         rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
         (simp only [TSc, d3, k17cS36bCyc, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
             Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
 
 def k17cS34Cyc (α1 β6 γ6 : ℝ) : ZMod 4 → ℝ × ℝ × ℝ :=
   ![(α1, 0, -1), (α1, 1, 0), (0, γ6, -β6), (0, 0, -1)]

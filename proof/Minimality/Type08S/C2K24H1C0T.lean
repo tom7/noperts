@@ -73,8 +73,8 @@ theorem k24h1c0_tsc {D w β1 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hw : 0 < w) (hβ
       | (simp only [TSc, d3, e0, e1, e2, e3, e4, f0, f1, f2, f3, f4, k24h1c0Y_0, k24h1c0Y_1, k24h1c0Y_2,
             k24h1c0Y_3, k24h1c0Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; apply mul_pos hD; nlinarith [mul_pos hw px, mul_pos px py, mul_pos px pg, mul_pos hw py, mul_pos hw pg, mul_pos hw ps, mul_pos px ps, mul_pos py pg, mul_pos (mul_pos hw px) py, mul_pos (mul_pos hw px) pg, mul_pos (mul_pos hw px) px, mul_pos (mul_pos hw px) ps, mul_pos pn1 hw, mul_pos pn2 hw, mul_pos pn1 px, mul_pos pn2 px, mul_pos pn1 py, mul_pos pn2 py, mul_pos pn1 pg, mul_pos pn2 pg, mul_pos pn1 ps, mul_pos pn2 ps])
-         | (right; refine ⟨by ring, ?_⟩; apply mul_pos hD; nlinarith [mul_pos hw px, mul_pos px py, mul_pos px pg, mul_pos hw py, mul_pos hw pg, mul_pos pn1 hw, mul_pos pn2 hw, mul_pos pn1 px, mul_pos pn2 px, mul_pos pn1 py, mul_pos pn2 py, mul_pos pn1 pg, mul_pos pn2 pg, mul_pos pn1 ps, mul_pos pn2 ps, mul_pos (mul_pos hw px) pn1, mul_pos (mul_pos hw px) pn2]))
+         | (left; apply mul_pos hD; linarith [mul_pos hw px, mul_pos px py, mul_pos px pg, mul_pos hw py, mul_pos hw pg, mul_pos hw ps, mul_pos px ps, mul_pos py pg, mul_pos (mul_pos hw px) py, mul_pos (mul_pos hw px) pg, mul_pos (mul_pos hw px) px, mul_pos (mul_pos hw px) ps, mul_pos pn1 hw, mul_pos pn2 hw, mul_pos pn1 px, mul_pos pn2 px, mul_pos pn1 py, mul_pos pn2 py, mul_pos pn1 pg, mul_pos pn2 pg, mul_pos pn1 ps, mul_pos pn2 ps])
+         | (right; refine ⟨by ring, ?_⟩; apply mul_pos hD; linarith [mul_pos hw px, mul_pos px py, mul_pos px pg, mul_pos hw py, mul_pos hw pg, mul_pos pn1 hw, mul_pos pn2 hw, mul_pos pn1 px, mul_pos pn2 px, mul_pos pn1 py, mul_pos pn2 py, mul_pos pn1 pg, mul_pos pn2 pg, mul_pos pn1 ps, mul_pos pn2 ps, mul_pos (mul_pos hw px) pn1, mul_pos (mul_pos hw px) pn2]))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl <;>
@@ -82,8 +82,8 @@ theorem k24h1c0_tsc {D w β1 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hw : 0 < w) (hβ
       (simp only [TSc, d3, e0, e1, e2, e3, e4, f0, f1, f2, f3, f4, k24h1c0Y_0, k24h1c0Y_1, k24h1c0Y_2,
             k24h1c0Y_3, k24h1c0Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; apply mul_pos hD; nlinarith [mul_pos hw px, mul_pos px py, mul_pos px pg, mul_pos hw py, mul_pos hw pg, mul_pos hw ps, mul_pos px ps, mul_pos py pg, mul_pos (mul_pos hw px) py, mul_pos (mul_pos hw px) pg, mul_pos (mul_pos hw px) px, mul_pos (mul_pos hw px) ps, mul_pos pn1 hw, mul_pos pn2 hw, mul_pos pn1 px, mul_pos pn2 px, mul_pos pn1 py, mul_pos pn2 py, mul_pos pn1 pg, mul_pos pn2 pg, mul_pos pn1 ps, mul_pos pn2 ps])
-       | (right; refine ⟨by ring, ?_⟩; apply mul_pos hD; nlinarith [mul_pos hw px, mul_pos px py, mul_pos px pg, mul_pos hw py, mul_pos hw pg, mul_pos pn1 hw, mul_pos pn2 hw, mul_pos pn1 px, mul_pos pn2 px, mul_pos pn1 py, mul_pos pn2 py, mul_pos pn1 pg, mul_pos pn2 pg, mul_pos pn1 ps, mul_pos pn2 ps, mul_pos (mul_pos hw px) pn1, mul_pos (mul_pos hw px) pn2])
+       | (left; apply mul_pos hD; linarith [mul_pos hw px, mul_pos px py, mul_pos px pg, mul_pos hw py, mul_pos hw pg, mul_pos hw ps, mul_pos px ps, mul_pos py pg, mul_pos (mul_pos hw px) py, mul_pos (mul_pos hw px) pg, mul_pos (mul_pos hw px) px, mul_pos (mul_pos hw px) ps, mul_pos pn1 hw, mul_pos pn2 hw, mul_pos pn1 px, mul_pos pn2 px, mul_pos pn1 py, mul_pos pn2 py, mul_pos pn1 pg, mul_pos pn2 pg, mul_pos pn1 ps, mul_pos pn2 ps])
+       | (right; refine ⟨by ring, ?_⟩; apply mul_pos hD; linarith [mul_pos hw px, mul_pos px py, mul_pos px pg, mul_pos hw py, mul_pos hw pg, mul_pos pn1 hw, mul_pos pn2 hw, mul_pos pn1 px, mul_pos pn2 px, mul_pos pn1 py, mul_pos pn2 py, mul_pos pn1 pg, mul_pos pn2 pg, mul_pos pn1 ps, mul_pos pn2 ps, mul_pos (mul_pos hw px) pn1, mul_pos (mul_pos hw px) pn2])
        )
 
 end C2

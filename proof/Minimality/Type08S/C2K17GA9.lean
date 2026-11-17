@@ -95,10 +95,10 @@ theorem k17ga_qtc1_zd_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q
     · simp only [kmCyc1_0, kmCyc1_1, hz, hBz]; nlinarith
     · simp only [kmCyc1_2, kmCyc1_3, hz, hBz]; ring
     · simp only [kmCyc1_1, kmCyc1_2, hz, hBz]; nlinarith
-    · simp only [kmCyc1_0, kmCyc1_1, k17f_wexp, hBz]; nlinarith
+    · simp only [kmCyc1_0, kmCyc1_1, k17f_wexp, hBz]; linarith
   refine cyc_cell V P Q R d hΔ (k := 5) (by norm_num) (kmCyc1 κ σ α1 β1 β6)
     (k6t1_km1_inj hκ hα1 hβ1 hb6) hmem [((1 : ℝ), (0 : ℝ), (0 : ℝ)), (0, κ, σ - 1)] ?_
-    (u1 := 0) (u2 := 1) (t1 := η) (t2 := 0) (lo := 0) (hi := 1) (by nlinarith) (by norm_num)
+    (u1 := 0) (u2 := 1) (t1 := η) (t2 := 0) (lo := 0) (hi := 1) (by linarith) (by norm_num)
     (fun v1 v2 => 0 < v1 ∧ κ * (α1 - 1) * v1 < β1 * v2 ∧ 0 < v1 * X1 + v2 * X2) ?_ ?_ ?_
   · intro y hy
     rcases hVall y hy with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -110,15 +110,15 @@ theorem k17ga_qtc1_zd_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q
     · exact Or.inr ⟨_, by simp, rfl⟩
     · exact Or.inr ⟨_, by simp, rfl⟩
   · intro lam h0 h1
-    refine ⟨by simpa using mul_pos h0 hη, by nlinarith [mul_pos (mul_pos nk a1) (mul_pos h0 hη)], ?_⟩
+    refine ⟨by simpa using mul_pos h0 hη, by linarith [mul_pos (mul_pos nk a1) (mul_pos h0 hη)], ?_⟩
     have hle : -(η * |X1|) ≤ lam * η * X1 := by
       have h2 : -|X1| ≤ lam * X1 := by
         rcases le_total 0 X1 with hx | hx
         · rw [abs_of_nonneg hx]; nlinarith
         · rw [abs_of_nonpos hx]; nlinarith
-      nlinarith [mul_le_mul_of_nonneg_left h2 hη.le]
+      linarith [mul_le_mul_of_nonneg_left h2 hη.le]
     have e : (0 + lam * η) * X1 + (1 + lam * 0) * X2 = lam * η * X1 + X2 := by ring
-    rw [e]; rw [hXabs] at hηx; nlinarith [abs_nonneg X1]
+    rw [e]; rw [hXabs] at hηx; linarith [abs_nonneg X1]
   · rintro v1 v2 ⟨hv1, hc, -⟩
     exact k6t1_km1_tsc hκ hσ hα1 hβ1 hb6 hbc hE hv1 hc
   · rintro v1 v2 ⟨-, -, hw⟩ hinj
@@ -151,7 +151,7 @@ theorem k17ga_s12b_core {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ}
   have hE : (σ - 1) * (1 - β1) ≤ α1 * (σ - κ) := by
     have : ((σ - 1) * (1 - β1) - α1 * (σ - κ)) * w ≤ 0 := by nlinarith
     by_contra hh; push Not at hh
-    nlinarith [mul_pos (sub_pos.2 hh) hw]
+    linarith [mul_pos (sub_pos.2 hh) hw]
   set p := a - d with hp
   set q := b - d with hq
   set r := c - d with hr
@@ -160,7 +160,7 @@ theorem k17ga_s12b_core {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ}
     rw [hR, hb', hp, hr, hwdef]; module
   have hpR : p = σ • R + κ • r := by
     rw [hRv]
-    match_scalars <;> nlinarith
+    match_scalars <;> linarith
   have hΔ : det3 q r R ≠ 0 := by
     have e : det3 q r R = (-w) * det3 p q r := by
       rw [hRv]

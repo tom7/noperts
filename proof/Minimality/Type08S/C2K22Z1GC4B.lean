@@ -70,7 +70,7 @@ theorem k22z1g_c4 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h :
   rw [eR, eS] at hS3
   simp only [inner_sub_right, inner_add_left, inner_smul_left, inner_smul_right, conj_trivial, hpq', hqp, hqr,
     hrq, hrp] at hS3
-  have hS3' : 0 < -(k * ⟪q, q⟫) - u * ⟪p, r⟫ := by nlinarith
+  have hS3' : 0 < -(k * ⟪q, q⟫) - u * ⟪p, r⟫ := by linarith
   obtain ⟨P, hPq⟩ : ∃ P : ℝ³, P = q := ⟨_, rfl⟩
   obtain ⟨Q, hQr⟩ : ∃ Q : ℝ³, Q = r := ⟨_, rfl⟩
   obtain ⟨R, hRe⟩ : ∃ R : ℝ³, R = (-u) • p - q := ⟨_, rfl⟩
@@ -163,14 +163,14 @@ theorem k22z1g_c4 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h :
     obtain ⟨e0, e1, e2, e3, e4, f0, f1, f2, f3, f4⟩ := k19_z5
     refine k19_lexUni_nb _ _ hw 3 ?_ ?_ ?_
     · rw [e3]; left; simp only [k22z1gc4Y_2, k22z1gc4Y_3, z2, z3]; nlinarith
-    · rw [f3]; left; simp only [k22z1gc4Y_4, k22z1gc4Y_3, z4, z3]; nlinarith [mul_pos hu0 hpp, mul_pos hk0 (mul_pos hu0 hpp)]
+    · rw [f3]; left; simp only [k22z1gc4Y_4, k22z1gc4Y_3, z4, z3]; linarith [mul_pos hu0 hpp, mul_pos hk0 (mul_pos hu0 hpp)]
     · intro i hi
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
       · right; rw [f0]; left; simp only [k22z1gc4Y_0, k22z1gc4Y_1, z0, z1]; nlinarith [mul_pos hu0 hpp]
       · right; rw [f1]; left; simp only [k22z1gc4Y_1, k22z1gc4Y_2, z1, z2]; linarith
       · right; rw [f2]; left; simp only [k22z1gc4Y_2, k22z1gc4Y_3, z2, z3]; nlinarith
       · exact absurd rfl hi
-      · left; rw [e4]; left; simp only [k22z1gc4Y_4, k22z1gc4Y_3, z4, z3]; nlinarith [mul_pos hu0 hpp, mul_pos hk0 (mul_pos hu0 hpp)]
+      · left; rw [e4]; left; simp only [k22z1gc4Y_4, k22z1gc4Y_3, z4, z3]; linarith [mul_pos hu0 hpp, mul_pos hk0 (mul_pos hu0 hpp)]
   · intro l hl
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
     rcases hl with rfl | rfl <;> (left; norm_num)

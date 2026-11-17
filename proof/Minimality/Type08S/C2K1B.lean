@@ -41,11 +41,11 @@ theorem k1x1_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r
     fun t => inner_fpoint _ _ _ _ _ _
   have hlexY : LexUni (fun i => ⟪fpoint p q r d (Y i), r⟫) (fun i => ⟪fpoint p q r d (Y i), vv⟫) := by
     refine lexUni5_two _ _ hsep ?_ ?_ ?_
-    · left; simp only [hY, k1Cyc, pc5_1, pc5_2, hz]; nlinarith
-    · left; simp only [hY, k1Cyc, pc5_4, pc5_3, hz]; nlinarith [mul_pos hα4 hA]
+    · left; simp only [hY, k1Cyc, pc5_1, pc5_2, hz]; linarith
+    · left; simp only [hY, k1Cyc, pc5_4, pc5_3, hz]; linarith [mul_pos hα4 hA]
     · rcases hB.lt_or_eq with hB' | hB'
-      · left; left; simp only [hY, k1Cyc, pc5_0, pc5_1, hz]; nlinarith
-      · right; left; simp only [hY, k1Cyc, pc5_0, pc5_4, hz]; rw [← hB'] at hs; nlinarith
+      · left; left; simp only [hY, k1Cyc, pc5_0, pc5_1, hz]; linarith
+      · right; left; simp only [hY, k1Cyc, pc5_0, pc5_4, hz]; rw [← hB'] at hs; linarith
   have n0 : -(0 : ZMod 5) = 0 := by decide
   have n1 : -(1 : ZMod 5) = 4 := by decide
   have n2 : -(2 : ZMod 5) = 3 := by decide

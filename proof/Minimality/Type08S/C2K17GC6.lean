@@ -47,7 +47,7 @@ theorem k17gc_u1_frame {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
   rw [det_alpha4 hb'] at hα
   have hα1 : α4 ≤ 1 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_pos (sub_pos.2 hh) hΔ2]
+    linarith [mul_pos (sub_pos.2 hh) hΔ2]
   have e2 : d - b = -(b - d) := by abel
   have hpq : ⟪a - d, b - d⟫ = 0 := by
     rw [e2, inner_neg_right] at h2; linarith
@@ -103,8 +103,8 @@ theorem k17gc_pentU1_tsc {α4 β1 γ4 β6 γ6 v1 v2 : ℝ} (hα4 : 0 < α4) (hα
       | (simp only [TSc, d3, k17gcPentU1, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; linarith)
+         | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl <;>
@@ -165,7 +165,7 @@ theorem k17gc_u1a_cell {a a' b b' c c' d : ℝ³} {α4 β1 γ4 β6 γ6 : ℝ} (h
   refine cyc_cell (V8 a a' b b' c c' d) P Q R d hΔ (k := 5) (by norm_num) (k17gcPentU1 α4 β1 γ4)
     (k17gcPentU1_inj hα4 hβ1 hγ4) ?_ [((0 : ℝ), (0 : ℝ), (-1 : ℝ)), (γ6, 0, -β6)] ?_
     (u1 := ⟪P, P⟫ + ⟪Q, Q⟫) (u2 := 0) (t1 := 0) (t2 := -⟪P, Q⟫)
-    (by nlinarith [mul_pos (add_pos hPP hQQ) (neg_pos.2 hPQ)]) (lo := 0) (hi := 1) (by norm_num)
+    (by linarith [mul_pos (add_pos hPP hQQ) (neg_pos.2 hPQ)]) (lo := 0) (hi := 1) (by norm_num)
     (fun v1 v2 => 0 < v1 ∧ 0 < v2 ∧ v1 * ⟪P, Q⟫ + v2 * ⟪Q, Q⟫ < 0 ∧ 0 < v1 * ⟪P, P⟫ + v2 * ⟪P, Q⟫) ?_ ?_ ?_
   · intro i
     rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
@@ -190,18 +190,18 @@ theorem k17gc_u1a_cell {a a' b b' c c' d : ℝ³} {α4 β1 γ4 β6 γ6 : ℝ} (h
     · exact Or.inr ⟨_, by simp, rfl⟩
     · exact Or.inr ⟨_, by simp, rfl⟩
   · intro lam h0 h1
-    refine ⟨by nlinarith, by nlinarith [mul_pos h0 (neg_pos.2 hPQ)], ?_, ?_⟩
+    refine ⟨by linarith, by linarith [mul_pos h0 (neg_pos.2 hPQ)], ?_, ?_⟩
     · have e : (⟪P, P⟫ + ⟪Q, Q⟫ + lam * 0) * ⟪P, Q⟫ + (0 + lam * -⟪P, Q⟫) * ⟪Q, Q⟫ =
           ⟪P, Q⟫ * (⟪P, P⟫ + (1 - lam) * ⟪Q, Q⟫) := by ring
       rw [e]
       have k := mul_pos (sub_pos.2 h1) hQQ
-      exact mul_neg_of_neg_of_pos hPQ (by nlinarith)
+      exact mul_neg_of_neg_of_pos hPQ (by linarith)
     · have e : (⟪P, P⟫ + ⟪Q, Q⟫ + lam * 0) * ⟪P, P⟫ + (0 + lam * -⟪P, Q⟫) * ⟪P, Q⟫ =
           ⟪P, P⟫ * ⟪P, P⟫ + ⟪P, P⟫ * ⟪Q, Q⟫ - lam * (⟪P, Q⟫ * ⟪P, Q⟫) := by ring
       rw [e]
       have k := mul_pos (mul_pos (sub_pos.2 h1) hPP) hQQ
       have k2 := mul_le_mul_of_nonneg_left hCS h0.le
-      nlinarith [mul_pos hPP hPP]
+      linarith [mul_pos hPP hPP]
   · rintro v1 v2 ⟨hv1, hv2, -, -⟩
     exact k17gc_pentU1_tsc hα4 hα41 hβ1 hγ4 hαγ hβ6 hγ6 hγ61 hv1 hv2
   · rintro v1 v2 ⟨-, -, hfa, hfc⟩ hinj
@@ -209,12 +209,12 @@ theorem k17gc_u1a_cell {a a' b b' c c' d : ℝ³} {α4 β1 γ4 β6 γ6 : ℝ} (h
     · right
       simp only [k17gcPentU1, pc5_1, pc5_2]
       refine ⟨by rw [hz, hz, hPR, hQR]; simp only; ring, ?_⟩
-      rw [k17f_wexp, k17f_wexp]; simp only; nlinarith
-    · left; simp only [k17gcPentU1, pc5_3, pc5_4, hz, hPR, hQR]; nlinarith [mul_pos hβ1 hRR]
+      rw [k17f_wexp, k17f_wexp]; simp only; linarith
+    · left; simp only [k17gcPentU1, pc5_3, pc5_4, hz, hPR, hQR]; linarith [mul_pos hβ1 hRR]
     · right
       simp only [k17gcPentU1, pc5_0, pc5_1]
       refine ⟨by rw [hz, hz, hPR, hQR]; simp only; ring, ?_⟩
-      rw [k17f_wexp, k17f_wexp]; simp only; nlinarith
+      rw [k17f_wexp, k17f_wexp]; simp only; linarith
 
 /-- **U1** (`K14LeftPa` 1st disjunct: `ζ(a,c) = ζ(a,d) = 0`, `α4 ≤ 1`): a cell, or the tie `⟪a-d,c-d⟫ = 0`. -/
 theorem k17gc_u1 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K5ZsPa a a' b b' c c' d)

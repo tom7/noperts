@@ -47,7 +47,7 @@ theorem k17ga_s13a {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (hT
   have hg : 1 < γ4 := by
     subst hα41
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ α1) (sub_nonneg.2 hh)]
+    linarith [mul_nonneg (by linarith : (0:ℝ) ≤ α1) (sub_nonneg.2 hh)]
   have hUne : (α1 - 1) • (a - d) + β1 • (b - d) ≠ 0 := by
     intro h0
     have e : det3 ((α1 - 1) • (a - d) + β1 • (b - d)) (b - d) (c - d) = (α1 - 1) * det3 (a - d) (b - d) (c - d) := by
@@ -75,7 +75,7 @@ theorem k17ga_s13a {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (hT
   rw [Lh] at hl
   subst hα41
   have hqr : ⟪b - d, c - d⟫ = 0 := by
-    have : γ4 * ⟪b - d, c - d⟫ = 0 := by nlinarith [hζ0]
+    have : γ4 * ⟪b - d, c - d⟫ = 0 := by linarith [hζ0]
     exact (mul_eq_zero.1 this).resolve_left (by linarith)
   have hpr : 0 < ⟪a - d, c - d⟫ := by
     have : 0 < γ4 * ((α1 - 1) * ⟪a - d, c - d⟫) := by nlinarith [hl, hqr]
@@ -85,7 +85,7 @@ theorem k17ga_s13a {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (hT
   · rw [cr]; nlinarith
   · rw [cp, cq]
     rw [cU] at *
-    nlinarith
+    linarith
   · intro hx
     rw [cq] at hx ⊢
     rw [cr]

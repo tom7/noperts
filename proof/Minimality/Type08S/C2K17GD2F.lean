@@ -140,7 +140,7 @@ theorem k17gd_tca41 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h
         have hs0 : 0 < σ1 := by nlinarith
         have hs2 : 1 - γ4 < σ1 := by
           by_contra hh; push Not at hh
-          nlinarith [mul_nonneg hα0.le (sub_nonneg.2 hh)]
+          linarith [mul_nonneg hα0.le (sub_nonneg.2 hh)]
         refine Or.inl (cellB σ1 (max_lt hs0 hs2) (Or.inr ⟨by rw [hqr]; exact hzero, by rw [hσ1]⟩))
   · exact Or.inl (cellA (Or.inl hpos))
 

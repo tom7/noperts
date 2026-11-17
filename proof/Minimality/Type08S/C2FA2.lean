@@ -54,7 +54,7 @@ theorem faA_cyc {D β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hb : 0 < β6) (hg : 0 <
     | exact (h2 (by decide)).elim
     | (simp only [TSc, d3, faCyc_0, faCyc_1, faCyc_2, faCyc_3, s0, s1, s2, s3, Prod.fst_sub, Prod.snd_sub,
           Prod.mk_sub_mk]
-       left; nlinarith)
+       left; linarith)
 
 set_option maxHeartbeats 1600000 in
 theorem faA_rest {D β6 γ6 α1 β1 α4 γ4 v1 v2 v3 : ℝ} (hD : 0 < D) (hb : 0 < β6) (hg : 0 < γ6)
@@ -85,8 +85,8 @@ theorem faA_rest {D β6 γ6 α1 β1 α4 γ4 v1 v2 v3 : ℝ} (hD : 0 < D) (hb : 0
     (simp only [TSc, d3, faCyc_0, faCyc_1, faCyc_2, faCyc_3, s0, s1, s2, s3, Prod.fst_sub, Prod.snd_sub,
         Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
-     | (right; refine ⟨by ring, by nlinarith⟩))
+     | (left; linarith)
+     | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 1600000 in
 /-- **Face cell of `Q_bc` at the base view `r`** (frame form).  `V` consists of the seven frame points over

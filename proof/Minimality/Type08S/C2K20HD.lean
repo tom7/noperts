@@ -40,7 +40,7 @@ theorem k20R7_inj {α β β6 μ ν : ℝ} (hα : 0 < α) (hβ : 0 < β) (hb6 : 0
   have e2 := congrArg (fun t => t.2.1) h
   have e3 := congrArg (fun t => t.2.2) h
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;> rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first | rfl | (exfalso; simp only [k20R7Cyc_0, k20R7Cyc_1, k20R7Cyc_2, k20R7Cyc_3, k20R7Cyc_4] at e1 e2 e3; nlinarith)
+    first | rfl | (exfalso; simp only [k20R7Cyc_0, k20R7Cyc_1, k20R7Cyc_2, k20R7Cyc_3, k20R7Cyc_4] at e1 e2 e3; linarith)
 
 set_option maxHeartbeats 12800000 in
 theorem k20R7_tsc {α β β6 γ6 μ ν v1 v2 : ℝ} (hα : 1 < α) (hβ : 1 < β) (hb6 : 0 < β6) (hb61 : β6 < 1)

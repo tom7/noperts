@@ -34,13 +34,13 @@ theorem k17c_cone_gen {β6 γ6 Λ M : ℝ} (hb6 : 0 < β6) (hγ6 : 0 < γ6) (hγ
   set m4 := max (1 - β6) 0
   have hc3 : -β6 * γ6 + (1 - γ6) * m4 < 0 := by
     rcases h2 with h | h
-    · rw [h]; nlinarith
-    · rw [h]; nlinarith [mul_pos hb6 hγ6]
+    · rw [h]; linarith
+    · rw [h]; linarith [mul_pos hb6 hγ6]
   have hc4 : 0 ≤ γ6 * (m4 - (1 - β6)) := mul_nonneg hγ6.le (by linarith)
-  refine ⟨by nlinarith [mul_pos hΛ hb6, mul_nonneg hM.le h0], by nlinarith [mul_nonneg hΛ.le (sub_nonneg.2 hγ61), mul_pos hM hγ6],
+  refine ⟨by linarith [mul_pos hΛ hb6, mul_nonneg hM.le h0], by linarith [mul_nonneg hΛ.le (sub_nonneg.2 hγ61), mul_pos hM hγ6],
     ?_, ?_⟩
-  · nlinarith [mul_neg_of_pos_of_neg hM hc3]
-  · nlinarith [mul_pos hΛ (sub_pos.2 hs), mul_nonneg hM.le hc4]
+  · linarith [mul_neg_of_pos_of_neg hM hc3]
+  · linarith [mul_pos hΛ (sub_pos.2 hs), mul_nonneg hM.le hc4]
 
 end C2
 end Type08Sp

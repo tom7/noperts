@@ -96,7 +96,7 @@ theorem k16_r1_hasLexCell {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     exact (mul_pos_iff_of_pos_right hW).1 this
   have i3 : 0 < (β6 - 1) * R + γ6 * T := by
     rcases le_or_gt R 0 with h | h
-    · nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ 1 - β6) (by linarith : (0:ℝ) ≤ -R), mul_pos hγ6 hrr]
+    · linarith [mul_nonneg (by linarith : (0:ℝ) ≤ 1 - β6) (by linarith : (0:ℝ) ≤ -R), mul_pos hγ6 hrr]
     · nlinarith [mul_pos (by linarith : (0:ℝ) < 1 - β6) h, mul_pos hγ6 (by linarith : (0:ℝ) < T - R)]
   have i4 : 0 < T - β6 * R - γ6 * T := by
     have e : ⟪c - a', d - c⟫ = -(T - β6 * R - γ6 * T) := by

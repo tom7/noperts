@@ -56,7 +56,7 @@ theorem k18_one_ray {a b x y : ℝ} (h : k18LexPos x y) :
     have h3 : -(ε * y) ≤ ε * |y| := by
       have := neg_abs_le y
       nlinarith
-    nlinarith
+    linarith
   · exact ⟨1, one_pos, fun ε h0 _ => by rw [hx]; positivity⟩
 
 /-- **Ray witness**: every functional lex positive at `(ρ, δ)` ⇒ `ρ + ε δ` in the open cone for `0 < ε < e`. -/
@@ -88,8 +88,8 @@ theorem k18_seg_of_cone {L : List (ℝ × ℝ)} (hL : L ≠ []) {v1 v2 : ℝ} (h
   refine ⟨e / 2 * (-v2), e / 2 * v1, ?_, fun lam h0 h1 => ?_⟩
   · have hs : 0 < v1 ^ 2 + v2 ^ 2 := by
       rcases hne with h | h
-      · have := pow_pos (abs_pos.2 h) 2; rw [sq_abs] at this; nlinarith [sq_nonneg v2]
-      · have := pow_pos (abs_pos.2 h) 2; rw [sq_abs] at this; nlinarith [sq_nonneg v1]
+      · have := pow_pos (abs_pos.2 h) 2; rw [sq_abs] at this; linarith [sq_nonneg v2]
+      · have := pow_pos (abs_pos.2 h) 2; rw [sq_abs] at this; linarith [sq_nonneg v1]
     have : v1 * (e / 2 * v1) - v2 * (e / 2 * (-v2)) = e / 2 * (v1 ^ 2 + v2 ^ 2) := by ring
     rw [this]; positivity
   · have := hcone (lam * (e / 2)) (by positivity) (by nlinarith)

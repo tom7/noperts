@@ -42,13 +42,13 @@ theorem k17gdE1_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠
       rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
       simp only [k5fE1Cyc, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4, Prod.mk.injEq] at h <;>
       first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h) |
-        (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith)
+        (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
   have hb : -m * ⟪P, R⟫ - k * ⟪R, R⟫ < 0 := by
     by_contra hh; push Not at hh
-    exact k17gd_E1_real (x := ⟪P, R⟫) (y := ⟪Q, R⟫) (s := ⟪R, R⟫) hm hk hk1 ht ht1 hα4 hγ4 hrel hs hh (by nlinarith) (by nlinarith)
+    exact k17gd_E1_real (x := ⟪P, R⟫) (y := ⟪Q, R⟫) (s := ⟪R, R⟫) hm hk hk1 ht ht1 hα4 hγ4 hrel hs hh (by linarith) (by linarith)
   have hy : ⟪Q, R⟫ < 0 := by
-    have : ⟪Q, R⟫ = -(1 - t) * (m * ⟪P, R⟫ + k * ⟪R, R⟫) := by nlinarith
-    rw [this]; nlinarith [mul_pos (sub_pos.2 ht1) (show 0 < m * ⟪P, R⟫ + k * ⟪R, R⟫ by linarith)]
+    have : ⟪Q, R⟫ = -(1 - t) * (m * ⟪P, R⟫ + k * ⟪R, R⟫) := by linarith
+    rw [this]; linarith [mul_pos (sub_pos.2 ht1) (show 0 < m * ⟪P, R⟫ + k * ⟪R, R⟫ by linarith)]
   refine cyc_cell V P Q R d hΔ (k := 5) (by norm_num) (k5fE1Cyc m k t α4 γ4) hinjX hmem
     [(1, 0, -1), (0, 1, 0)] ?_ (u1 := -1) (u2 := 1) (t1 := 1) (t2 := 0) (lo := 0) (hi := 1)
     (by norm_num) (by norm_num) (fun v1 v2 => v1 < 0 ∧ 0 < v2) ?_ ?_ ?_
@@ -74,7 +74,7 @@ theorem k17gdE1_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠
       simp only [hzdef, k5fE1Cyc, pc5_2, hz]; ring
     have z3 : z 3 = ⟪d, R⟫ + (-m) * ⟪P, R⟫ + (-k) * ⟪R, R⟫ := by simp only [hzdef, k5fE1Cyc, pc5_3, hz]; ring
     have z4 : z 4 = ⟪d, R⟫ := by simp only [hzdef, k5fE1Cyc, pc5_4, hz]; ring
-    refine k17gd_lexUni5_E1 z w hsep (k17gd_ll (by rw [z3, z4]; linarith)) (k17gd_ll (by rw [z2, z1]; nlinarith)) ?_
+    refine k17gd_lexUni5_E1 z w hsep (k17gd_ll (by rw [z3, z4]; linarith)) (k17gd_ll (by rw [z2, z1]; linarith)) ?_
     rcases lt_or_ge 0 ⟪P, R⟫ with hx | hx
     · left; exact k17gd_ll (by rw [z4, z0]; linarith)
     · right; exact k17gd_ll (by rw [z1, z0]; nlinarith [mul_nonneg (sub_pos.2 hα4).le (neg_nonneg.2 hx)])
@@ -102,10 +102,10 @@ theorem k17gdE2_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠
       rcases z4_cases j with rfl | rfl | rfl | rfl <;>
       simp only [k5fE2Cyc_0, k5fE2Cyc_1, k5fE2Cyc_2, k5fE2Cyc_3, Prod.mk.injEq] at h <;>
       first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h) |
-        (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith)
+        (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
   have hc : ⟪P, R⟫ - ⟪R, R⟫ < -m * ⟪P, R⟫ - k * ⟪R, R⟫ := by
     by_contra hh; push Not at hh
-    exact k17gd_E2_real (x := ⟪P, R⟫) (y := ⟪Q, R⟫) (s := ⟪R, R⟫) hm hk hk1 ht ht1 hα4 hγ4 hrel hs (by nlinarith) hh hL
+    exact k17gd_E2_real (x := ⟪P, R⟫) (y := ⟪Q, R⟫) (s := ⟪R, R⟫) hm hk hk1 ht ht1 hα4 hγ4 hrel hs (by linarith) hh hL
   refine cyc_cell V P Q R d hΔ (k := 4) (by norm_num) (k5fE2Cyc m k t α4 γ4) hinjX hmem
     [(1, 0, 0), (0, 0, 0), (0, 1, 0)] ?_ (u1 := 1) (u2 := -1) (t1 := -1) (t2 := 0) (lo := 0) (hi := 1)
     (by norm_num) (by norm_num) (fun v1 v2 => 0 < v1 ∧ v2 < 0) ?_ ?_ ?_
@@ -130,7 +130,7 @@ theorem k17gdE2_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠
     have z2 : z 2 = ⟪d, R⟫ + (-t * m) * ⟪P, R⟫ + ⟪Q, R⟫ + (-t * k) * ⟪R, R⟫ := by
       simp only [hzdef, k5fE2Cyc_2, hz]; ring
     have z3 : z 3 = ⟪d, R⟫ + (-m) * ⟪P, R⟫ + (-k) * ⟪R, R⟫ := by simp only [hzdef, k5fE2Cyc_3, hz]; ring
-    exact k17gd_lexUni4_E2 z w hsep (k17gd_ll (by rw [z1, z2]; nlinarith)) (k17gd_ll (by rw [z0, z3]; nlinarith))
+    exact k17gd_lexUni4_E2 z w hsep (k17gd_ll (by rw [z1, z2]; linarith)) (k17gd_ll (by rw [z0, z3]; linarith))
 
 end C2
 end Type08Sp

@@ -70,7 +70,7 @@ theorem k17cA_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠ 0
     · -- d < a
       left
       simp only [k17cACyc, pc5_3, pc5_4, inner_fpoint, hPR, hQR]
-      nlinarith
+      linarith
     · -- b < a' or b < d
       unfold K17cMet at hmet
       simp only [k17c_inner_fcomb_right] at hmet

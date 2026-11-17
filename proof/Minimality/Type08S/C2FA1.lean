@@ -53,7 +53,7 @@ theorem exists_key {k : ℕ} [NeZero k] (z w : ZMod k → ℝ)
       intro _
       have hz : 0 < z j - z i := by linarith
       rw [div_lt_iff₀ hz] at hM
-      nlinarith
+      linarith
     · exact Eventually.of_forall fun M hl => by
         rcases hl with hl | ⟨-, hl⟩
         · exact absurd h (ne_of_lt hl)
@@ -81,16 +81,16 @@ theorem noAlt4 {k0 k1 k2 k3 β γ : ℝ} (hβ : 0 < β) (hγ : 0 < γ) (hs : 1 <
     obtain ⟨⟨h10, h12⟩, h30, h32⟩ := h
     -- A = k2 - k1 > 0, B = k2 - k3 > 0, U = k0 - k1 > 0
     rcases le_or_gt γ 1 with hg | hg
-    · nlinarith [mul_nonneg (sub_nonneg.2 hg) (sub_pos.2 h12).le, mul_pos hγ (sub_pos.2 h32),
+    · linarith [mul_nonneg (sub_nonneg.2 hg) (sub_pos.2 h12).le, mul_pos hγ (sub_pos.2 h32),
         mul_pos (sub_pos.2 hs) (sub_pos.2 h10)]
-    · nlinarith [mul_pos (sub_pos.2 hg) (sub_pos.2 h30), mul_pos hβ (sub_pos.2 h10)]
+    · linarith [mul_pos (sub_pos.2 hg) (sub_pos.2 h30), mul_pos hβ (sub_pos.2 h10)]
   · intro h
     rw [max_lt_iff, lt_min_iff, lt_min_iff] at h
     obtain ⟨⟨h01, h03⟩, h21, h23⟩ := h
     rcases le_or_gt γ 1 with hg | hg
-    · nlinarith [mul_nonneg (sub_nonneg.2 hg) (sub_pos.2 h21).le, mul_pos hγ (sub_pos.2 h23),
+    · linarith [mul_nonneg (sub_nonneg.2 hg) (sub_pos.2 h21).le, mul_pos hγ (sub_pos.2 h23),
         mul_pos (sub_pos.2 hs) (sub_pos.2 h01)]
-    · nlinarith [mul_pos (sub_pos.2 hg) (sub_pos.2 h03), mul_pos hβ (sub_pos.2 h01)]
+    · linarith [mul_pos (sub_pos.2 hg) (sub_pos.2 h03), mul_pos hβ (sub_pos.2 h01)]
 
 /-- **Convex 4-cycle.**  Distinct lex pairs with `P₂ - P₀ = β (P₁ - P₀) + γ (P₃ - P₀)` (both components),
 `β, γ > 0`, `β + γ > 1`, are lex unimodal. -/

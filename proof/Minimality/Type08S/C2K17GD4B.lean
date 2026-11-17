@@ -50,14 +50,14 @@ theorem k17gdC1b_frame (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r �
   obtain ⟨δ0, hδ0⟩ : ∃ δ0 : ℝ, δ0 * ⟪q, q⟫ = -⟪p, q⟫ := ⟨-⟪p, q⟫ / ⟪q, q⟫, by field_simp⟩
   have hδpos : 0 < δ0 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (neg_nonneg.2 hh) hqq.le]
+    linarith [mul_nonneg (neg_nonneg.2 hh) hqq.le]
   have hinj : ∀ i j, k17gdC1 α1 β1 β6 i = k17gdC1 α1 β1 β6 j → i = j := by
     intro i j h
     rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
       simp only [k17gdC1, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4, Prod.mk.injEq] at h <;>
       first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h) |
-        (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith)
+        (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
   refine cyc_cell V p q r d hΔ (k := 5) (by norm_num) (k17gdC1 α1 β1 β6) hinj hmem
     [(0, 0, 1), (α4, 0, γ4)] ?_ (u1 := -1) (u2 := 0) (t1 := 0) (t2 := -δ0) (lo := 0) (hi := 1)
     (by rw [show (-1:ℝ) * (-δ0) - 0 * 0 = δ0 by ring]; exact hδpos.ne') (by norm_num)
@@ -136,7 +136,7 @@ theorem k17gdD_frame (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p r q ≠ 
       rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
       simp only [k17gdD, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4, Prod.mk.injEq] at h <;>
       first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h) |
-        (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith)
+        (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
   refine cyc_cell V p r q d hΔ (k := 5) (by norm_num) (k17gdD α1 β1 α4 γ4) hinj hmem
     [(0, 0, 1), (0, 1, β6)] ?_ (u1 := -1) (u2 := 0) (t1 := 0) (t2 := -t2) (lo := 0) (hi := 1)
     (by rw [show (-1:ℝ) * (-t2) - 0 * 0 = t2 by ring]; exact ht2.ne') (by norm_num)

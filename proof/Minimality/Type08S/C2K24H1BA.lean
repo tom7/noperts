@@ -77,7 +77,7 @@ theorem k24h1b_tsc {D b1 s h6 g v1 v2 : ℝ} (hD : 0 < D) (hb1 : 1 < b1) (hs : 0
             Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
        | (left; ring_nf; positivity)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (right; refine ⟨by ring, by linarith⟩))
 
 theorem k24h1b_cs {P Q R : ℝ³} (hΔ : det3 P Q R ≠ 0) : ⟪Q, R⟫ ^ 2 < ⟪Q, Q⟫ * ⟪R, R⟫ := by
   have hR0 : R ≠ 0 := k17f_r0 hΔ
@@ -95,7 +95,7 @@ theorem k24h1b_cs {P Q R : ℝ³} (hΔ : det3 P Q R ≠ 0) : ⟪Q, R⟫ ^ 2 < �
     simp only [hu, inner_sub_left, inner_sub_right, real_inner_smul_left, real_inner_smul_right,
       real_inner_comm R Q]; ring
   rw [e] at huu
-  nlinarith [(mul_pos_iff_of_pos_left hRR).1 huu]
+  linarith [(mul_pos_iff_of_pos_left hRR).1 huu]
 
 end C2
 end Type08Sp

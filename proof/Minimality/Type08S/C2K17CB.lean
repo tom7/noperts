@@ -79,7 +79,7 @@ theorem k17cS35_tsc {α1 β6 γ6 v1 v2 : ℝ} (hα1 : 1 ≤ α1) (hb6 : 0 < β6)
         | exact (h2' (by decide)).elim
         | (simp only [TSc, d3, k17cS35Cyc, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
             Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-           first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+           first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
     · intro t ht i
       simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
       rcases ht with rfl | rfl <;>

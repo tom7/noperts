@@ -38,7 +38,7 @@ theorem k24mtc_cs {P Q R : ℝ³} (hΔ : det3 P Q R ≠ 0) : ⟪Q, R⟫ ^ 2 < �
     simp only [hu, inner_sub_left, inner_sub_right, real_inner_smul_left, real_inner_smul_right,
       real_inner_comm R Q]; ring
   rw [e] at huu
-  nlinarith [(mul_pos_iff_of_pos_left hRR).1 huu]
+  linarith [(mul_pos_iff_of_pos_left hRR).1 huu]
 
 /-- Quadrilateral `a', c, b', c'` in the frame `(a-d, (b-d)/γ6, (b-a')/γ6)`. -/
 def k24mtcY (α1 β1 β6 γ6 : ℝ) : ZMod 4 → ℝ × ℝ × ℝ :=
@@ -101,7 +101,7 @@ theorem k24mtc_tsc {D α1 β1 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 < α1)
       | exact (h2' (by decide)).elim
       | (simp only [TSc, d3, e0, e1, e2, e3, f0, f1, f2, f3, k24mtcY_0, k24mtcY_1, k24mtcY_2, k24mtcY_3,
             Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-         left; nlinarith)
+         left; linarith)
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl <;>
@@ -157,18 +157,18 @@ theorem k24mtc_keys {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hs : ⟪P, Q⟫ < 0 := by
     by_contra hn; push Not at hn
     have := mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hW.le
-    nlinarith [mul_pos (sub_pos.2 hβ1) hD]
+    linarith [mul_pos (sub_pos.2 hβ1) hD]
   have hα : 0 < α1 - 1 := by linarith
   have hσ : 0 < β6 + γ6 - 1 := by linarith
   have hg : 0 < 1 - γ6 := by linarith
   have hps : 0 < (α1 - 1) * (β6 + γ6 - 1) * (-⟪P, Q⟫) := mul_pos (mul_pos hα hσ) (by linarith)
   have hkey : 0 < β6 * ⟪Q, R⟫ - (1 - γ6) * ⟪R, R⟫ := by
-    have h1 : β1 * (β6 * ⟪Q, R⟫ - (1 - γ6) * ⟪R, R⟫) > 0 := by nlinarith
-    exact pos_of_mul_pos_right h1 (by linarith) |> fun h => by nlinarith
+    have h1 : β1 * (β6 * ⟪Q, R⟫ - (1 - γ6) * ⟪R, R⟫) > 0 := by linarith
+    exact pos_of_mul_pos_right h1 (by linarith) |> fun h => by linarith
   refine ⟨?_, by linarith, by linarith, by ring⟩
   have hq0 : 0 < ⟪Q, R⟫ := by nlinarith
   have hB : 0 < β6 - 1 := by linarith
-  nlinarith [mul_pos hB (by nlinarith : 0 < β6 * ⟪Q, Q⟫ - (1 - γ6) * ⟪Q, R⟫), mul_pos hγ6 hkey]
+  linarith [mul_pos hB (by nlinarith : 0 < β6 * ⟪Q, Q⟫ - (1 - γ6) * ⟪Q, R⟫), mul_pos hγ6 hkey]
 
 end C2
 end Type08Sp

@@ -68,8 +68,8 @@ theorem k22t1_tsc {D γ4 γ6 v1 v2 : ℝ} (hD : 0 < D) (hγ4 : 1 < γ4)
       | (simp only [TSc, d3, e0, e1, e2, e3, e4, f0, f1, f2, f3, f4, k22t1Y_0, k22t1Y_1, k22t1Y_2, k22t1Y_3,
           k22t1Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; linarith)
+         | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl <;>
@@ -77,8 +77,8 @@ theorem k22t1_tsc {D γ4 γ6 v1 v2 : ℝ} (hD : 0 < D) (hγ4 : 1 < γ4)
       (simp only [TSc, d3, e0, e1, e2, e3, e4, f0, f1, f2, f3, f4, k22t1Y_0, k22t1Y_1, k22t1Y_2, k22t1Y_3,
           k22t1Y_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 end C2
 end Type08Sp

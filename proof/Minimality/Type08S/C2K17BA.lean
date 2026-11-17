@@ -81,14 +81,14 @@ theorem k17b_tsc {κ ι β1 β6 γ6 v1 v2 : ℝ} (hκ : 0 < κ) (hκε : κ < β
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, k17bCyc_0, k17bCyc_1, k17bCyc_2, k17bCyc_3, f0, f1, f2, f3,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl <;>
       rcases z4_cases i with rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, k17bCyc_0, k17bCyc_1, k17bCyc_2, k17bCyc_3, f0, f1, f2, f3,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-       first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+       first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
 
 
 /-- Quad `(b', a, c', a')`-type unimodality, in the two rotations used by the safe sub-leaf. -/
@@ -139,7 +139,7 @@ theorem k17b_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠ 0)
   · intro lam h0 h1
     refine ⟨by simp, ?_⟩
     simp only [mul_zero, add_zero, zero_add, mul_one, mul_neg]
-    nlinarith [mul_pos hb6 h0]
+    linarith [mul_pos hb6 h0]
   · intro v1 v2 ⟨hv1, hc⟩
     exact k17b_tsc hκ hκε hι hβ1 hb6 hγ6 hv1 hc
   · intro v1 v2 ⟨hv1, hc⟩ hL
@@ -158,7 +158,7 @@ theorem k17b_psd (p q r : ℝ³) (m : ℝ) (h1 : ⟪p, q⟫ = m) (h2 : ⟪p, r�
   have e2 : ⟪p, r⟫ = ⟪r, p⟫ := real_inner_comm _ _
   rw [h1, h2] at hw
   have : 0 ≤ D * (D * ⟪p, p⟫ - m ^ 2 * (⟪q, q⟫ + ⟪r, r⟫ - 2 * ⟪q, r⟫)) := by
-    rw [hD] at hw ⊢; nlinarith [hw]
+    rw [hD] at hw ⊢; linarith [hw]
   have := (mul_nonneg_iff_of_pos_left hdet).1 this
   linarith
 
@@ -279,10 +279,10 @@ theorem k17b_safe {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     intro X Y h; rw [inner_sub_left] at h; linarith
   have hsp : ⟪p, r⟫ = ⟪p, q⟫ := hm1.symm
   have hab : ⟪a, Rv⟫ < ⟪b', Rv⟫ := by
-    apply inner_lt; rw [e1, gR]; rw [hsp] at *; nlinarith [hBA]
+    apply inner_lt; rw [e1, gR]; rw [hsp] at *; linarith [hBA]
   have hcb : ⟪c', Rv⟫ < ⟪b', Rv⟫ := by
     apply inner_lt; rw [e2, gR, hsp]
-    nlinarith [mul_pos (mul_pos (by linarith : (0:ℝ) < β1) (by linarith : (0:ℝ) < β1 - 1)) (sub_pos.2 hRT), hqr]
+    linarith [mul_pos (mul_pos (by linarith : (0:ℝ) < β1) (by linarith : (0:ℝ) < β1 - 1)) (sub_pos.2 hRT), hqr]
   have hs : ⟪c', Rv⟫ < ⟪a, Rv⟫ ∨ ⟪c', Rv⟫ < ⟪a', Rv⟫ := by
     rcases hsafe with h | h
     · left; rw [inner_sub_left] at h; linarith
@@ -402,7 +402,7 @@ theorem k17b2_tsc {x w α1 β1 β6 γ6 v1 v2 : ℝ} (hx : x < 0) (hw : 0 < w) (h
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, k17bCyc2_0, k17bCyc2_1, k17bCyc2_2, k17bCyc2_3, k17bCyc2_4, f0, f1, f2, f3, f4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl <;>
@@ -482,7 +482,7 @@ theorem k17b_S22 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 A B : ℝ}
   have hL3' : α1 * B + (β1 - 1) * A < 0 := by
     rw [hdetL] at hL3
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ γ6) hh) hD2.le]
+    linarith [mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ γ6) hh) hD2.le]
   set x : ℝ := B / A with hxdef
   set w : ℝ := 1 / A with hwdef
   have hx : x < 0 := div_neg_of_neg_of_pos hB hA
@@ -658,14 +658,14 @@ theorem k17bT_tsc {xa za xb zb yc xd yd zd v1 v2 : ℝ} (hxa : 0 < xa) (hxa1 : x
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, k17bCycT_0, k17bCycT_1, k17bCycT_2, f0, f1, f2,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl | rfl <;>
       rcases (by decide : ∀ i : ZMod 3, i = 0 ∨ i = 1 ∨ i = 2) i with rfl | rfl | rfl <;>
       (simp only [TSc, d3, k17bCycT_0, k17bCycT_1, k17bCycT_2, f0, f1, f2,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-       first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+       first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 3200000 in
 theorem k17bT_frame (V : Finset ℝ³) (P Q R d0 : ℝ³) (hΔ : det3 P Q R ≠ 0)
@@ -775,7 +775,7 @@ theorem k17b_R0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
       have := mul_pos (mul_pos hα0 hβ0) (sub_pos.2 hβ6)
       have := mul_pos hγ0 (mul_pos (sub_pos.2 hα1) (sub_pos.2 hβ1))
       linarith
-    simp only [hSdef, hσdef]; nlinarith
+    simp only [hSdef, hσdef]; linarith
   have hza0 : za < 0 := by rw [hzadef]; exact div_neg_of_neg_of_pos (by norm_num) hk
   have hxb0 : 0 < xb := by rw [hxbdef]; positivity
   have hxb1 : xb < 1 := by rw [hxbdef, div_lt_one hW]; linarith
@@ -784,17 +784,17 @@ theorem k17b_R0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hbc : xb + yc < 1 := by
     rw [hxbdef, hycdef, div_add_div _ _ hW0 hβ00, div_lt_one (mul_pos hW hβ0)]
     simp only [hTdef, hSdef, hσdef] at hR0 ⊢
-    nlinarith
+    linarith
   have hxd0 : 0 < xd := by rw [hxddef]; positivity
   have hyd0 : 0 < yd := by rw [hyddef]; positivity
   have hd : xd + yd < 1 := by
     rw [hxddef, hyddef, div_add_div _ _ hW0 (mul_ne_zero hβ00 hσ0), div_lt_one (mul_pos hW (mul_pos hβ0 hσ))]
     have h1 : (β1 - 1) * (T + S) > β1 * S := by
-      simp only [hTdef, hSdef, hσdef] at hR0 ⊢; nlinarith
+      simp only [hTdef, hSdef, hσdef] at hR0 ⊢; linarith
     have h2 : (β1 - 1) * (T + S) > β1 * β1 := by nlinarith
     have h3 : 0 < β6 - 1 := by linarith
     have h4 : γ6 < σ' := by rw [hσdef]; linarith
-    nlinarith [mul_pos hW hσ, mul_pos hσ (sub_pos.2 h4), mul_pos hW (sub_pos.2 h4), mul_pos hσ (sub_pos.2 h2)]
+    linarith [mul_pos hW hσ, mul_pos hσ (sub_pos.2 h4), mul_pos hW (sub_pos.2 h4), mul_pos hσ (sub_pos.2 h2)]
   have hmem : ∀ i : ZMod 3, fpoint P Q u cp (k17bCycT i) ∈ V8 (d + p) (d + β6 • q + γ6 • r) (d + q)
       (d + α1 • p + β1 • r) (d + r) cp d := by
     intro i

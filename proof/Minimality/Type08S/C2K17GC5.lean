@@ -88,7 +88,7 @@ theorem k17gc_u3_frame {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
   rw [det_beta1 hc'] at hβ
   have hb1 : 1 < β1 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
+    linarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
   rw [det_alpha4 hb'] at hα
   have ha1 : α4 = 1 := by
     rcases mul_eq_zero.1 hα with h | h
@@ -141,8 +141,8 @@ theorem k17gc_pentU3_tsc {β1 β6 γ6 v1 v2 : ℝ} (hβ1 : 1 < β1) (hβ6 : 0 < 
       | (simp only [TSc, d3, k17gcPentU3, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; linarith)
+         | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl <;>
@@ -150,8 +150,8 @@ theorem k17gc_pentU3_tsc {β1 β6 γ6 v1 v2 : ℝ} (hβ1 : 1 < β1) (hβ6 : 0 < 
       (simp only [TSc, d3, k17gcPentU3, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 theorem k17gcPentU3_inj {β1 : ℝ} (hβ1 : 1 < β1) :
     ∀ i j, k17gcPentU3 β1 i = k17gcPentU3 β1 j → i = j := by
@@ -227,9 +227,9 @@ theorem k17gc_u3b_cell {a a' b b' c c' d : ℝ³} {β1 β6 γ6 : ℝ} (hdet : de
     · exact ⟨_, rfl, fun lam h0 h1 D hD i => tsc_scale hD (hT lam h0 h1 _ (by simp) i)⟩
   · intro w hw
     refine lexUni5_top _ w hw ?_ ?_ ?_
-    · left; simp only [k17gcPentU3, pc5_0, pc5_1, hz]; nlinarith [mul_pos (by linarith : (0:ℝ) < β1) hRR]
-    · left; simp only [k17gcPentU3, pc5_2, pc5_3, hz]; nlinarith
-    · left; simp only [k17gcPentU3, pc5_3, pc5_4, hz]; nlinarith
+    · left; simp only [k17gcPentU3, pc5_0, pc5_1, hz]; linarith [mul_pos (by linarith : (0:ℝ) < β1) hRR]
+    · left; simp only [k17gcPentU3, pc5_2, pc5_3, hz]; linarith
+    · left; simp only [k17gcPentU3, pc5_3, pc5_4, hz]; linarith
 
 /-! ## U3a: quadrilateral `(a,c',a',b')` at `b' - c`, frame `(a-d, b-d, b'-c)` -/
 
@@ -305,7 +305,7 @@ theorem k17gcQ4b_inj {κ β1 β6 γ6 : ℝ} (hκ : 0 < κ) (hβ1 : 1 < β1) (hγ
     rcases k17gc_z4_cases j with rfl | rfl | rfl | rfl <;>
     simp only [k17gcQ4b_0, k17gcQ4b_1, k17gcQ4b_2, k17gcQ4b_3, Prod.mk.injEq] at h <;>
     first | rfl | (exfalso; linarith) | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith)
+      (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
 
 set_option maxHeartbeats 12800000 in
 /-- **U3a cell** (`pq < 0`): quadrilateral `(a,c',a',b')` at `b' - c`. -/
@@ -347,12 +347,12 @@ theorem k17gc_u3a_cell {a a' b b' c c' d : ℝ³} {β1 β6 γ6 : ℝ} (hdet : de
     rw [hRe, inner_add_right, inner_smul_right, hQ, hP, real_inner_comm]; linarith
   have hPQ : ⟪P, Q⟫ < 0 := hpq
   set K := β6 * ⟪Q, Q⟫ - κ * (1 - γ6) * ⟪P, Q⟫ with hK
-  have hK0 : 0 < K := by rw [hK]; nlinarith [mul_pos hβ6 hQQ, mul_pos (mul_pos hκ (sub_pos.2 hγ61)) (neg_pos.2 hPQ)]
+  have hK0 : 0 < K := by rw [hK]; linarith [mul_pos hβ6 hQQ, mul_pos (mul_pos hκ (sub_pos.2 hγ61)) (neg_pos.2 hPQ)]
   refine ⟨R, hR0, ?_⟩
   refine cyc_cell (V8 a a' b b' c c' d) P Q R d hΔ (k := 4) (by norm_num) (k17gcQ4b κ β1 β6 γ6)
     (k17gcQ4b_inj hκ hβ1 hγ6 hγ61) ?_ [((0 : ℝ), (0 : ℝ), (0 : ℝ)), (0, 1, 0), (-κ, 0, κ)] ?_
     (u1 := K) (u2 := 0) (t1 := 0) (t2 := β6 * -⟪P, Q⟫)
-    (by nlinarith [mul_pos hK0 (mul_pos hβ6 (neg_pos.2 hPQ))]) (lo := 0) (hi := 1) (by norm_num)
+    (by linarith [mul_pos hK0 (mul_pos hβ6 (neg_pos.2 hPQ))]) (lo := 0) (hi := 1) (by norm_num)
     (fun v1 v2 => 0 < v2 ∧ 0 < β6 * v1 - κ * (1 - γ6) * v2 ∧ v1 * ⟪P, Q⟫ + v2 * ⟪Q, Q⟫ < 0) ?_ ?_ ?_
   · intro i
     rcases k17gc_z4_cases i with rfl | rfl | rfl | rfl
@@ -376,19 +376,19 @@ theorem k17gc_u3a_cell {a a' b b' c c' d : ℝ³} {β1 β6 γ6 : ℝ} (hdet : de
     · exact Or.inr ⟨_, by simp, rfl⟩
     · exact Or.inr ⟨_, by simp, rfl⟩
   · intro lam h0 h1
-    refine ⟨by nlinarith [mul_pos (mul_pos h0 hβ6) (neg_pos.2 hPQ)], ?_, ?_⟩
+    refine ⟨by linarith [mul_pos (mul_pos h0 hβ6) (neg_pos.2 hPQ)], ?_, ?_⟩
     · have e : β6 * (K + lam * 0) - κ * (1 - γ6) * (0 + lam * (β6 * -⟪P, Q⟫)) =
           β6 * (β6 * ⟪Q, Q⟫ + κ * (1 - γ6) * (-⟪P, Q⟫) * (1 - lam)) := by rw [hK]; ring
       rw [e]
       have k1 := mul_pos hβ6 hQQ
       have k2 := mul_pos (mul_pos (mul_pos hκ (sub_pos.2 hγ61)) (neg_pos.2 hPQ)) (sub_pos.2 h1)
-      exact mul_pos hβ6 (by nlinarith)
+      exact mul_pos hβ6 (by linarith)
     · have e : (K + lam * 0) * ⟪P, Q⟫ + (0 + lam * (β6 * -⟪P, Q⟫)) * ⟪Q, Q⟫ =
           ⟪P, Q⟫ * (β6 * ⟪Q, Q⟫ * (1 - lam) + κ * (1 - γ6) * (-⟪P, Q⟫)) := by rw [hK]; ring
       rw [e]
       have k1 := mul_pos (mul_pos hβ6 hQQ) (sub_pos.2 h1)
       have k2 := mul_pos (mul_pos hκ (sub_pos.2 hγ61)) (neg_pos.2 hPQ)
-      exact mul_neg_of_neg_of_pos hPQ (by nlinarith)
+      exact mul_neg_of_neg_of_pos hPQ (by linarith)
   · rintro v1 v2 ⟨hv2, hc, -⟩
     exact k17gc_q4b_tsc hκ hβ1 hκβ hβ6 hγ6 hγ61 hs hv2 hc
   · rintro v1 v2 ⟨-, -, hf⟩ hinj
@@ -397,14 +397,14 @@ theorem k17gc_u3a_cell {a a' b b' c c' d : ℝ³} {β1 β6 γ6 : ℝ} (hdet : de
     · right
       simp only [k17gcQ4b_0, k17gcQ4b_1]
       refine ⟨by rw [hz, hz, hQR]; simp only; ring, ?_⟩
-      rw [k17f_wexp, k17f_wexp]; simp only; nlinarith [mul_pos (by linarith : (0:ℝ) < β1) (neg_pos.2 hf)]
+      rw [k17f_wexp, k17f_wexp]; simp only; linarith [mul_pos (by linarith : (0:ℝ) < β1) (neg_pos.2 hf)]
     · rcases lt_or_ge 0 (⟪R, R⟫ - ⟪P, R⟫) with hS | hS
       · left; left
         simp only [k17gcQ4b_0, k17gcQ4b_3, hz, hQR]
         nlinarith [mul_pos (mul_pos (by linarith : (0:ℝ) < β1) hκ) hS]
       · right; right; left
         simp only [k17gcQ4b_1, k17gcQ4b_2, hz, hQR]
-        nlinarith [mul_nonneg (mul_nonneg hγ6.le hκ.le) (neg_nonneg.2 hS)]
+        linarith [mul_nonneg (mul_nonneg hγ6.le hκ.le) (neg_nonneg.2 hS)]
 
 /-- **U3** (`K14LeftPa` 3rd disjunct with `β1 > 1`: `α4 = 1`, `ζ(b',c) = 0`): a cell, or the literal's tie
 `⟪a-d, a-c'⟫ = 0`. -/

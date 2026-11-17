@@ -66,9 +66,9 @@ theorem k24b1_cell {a a' b b' c c' d : ℝ³} {β1 β6 γ6 : ℝ}
       simp only [one_mul] at this
       exact this
     have : ⟪p, q⟫ * (⟪q, q⟫ + ⟪r, r⟫ - 2 * ⟪q, r⟫) < 0 := by
-      rw [e]; nlinarith [mul_pos (by linarith : (0:ℝ) < β1 - 1) hr2]
+      rw [e]; linarith [mul_pos (by linarith : (0:ℝ) < β1 - 1) hr2]
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hh hW.le]
+    linarith [mul_nonneg hh hW.le]
   have eO : fpoint q r p d (0, 0, 0) = d := by simp [fpoint, fcomb]
   have eA : fpoint q r p d (0, 0, 1) = a := by simp only [fpoint, fcomb, hp]; module
   have eB : fpoint q r p d (1, 0, 0) = b := by simp only [fpoint, fcomb, hq]; module

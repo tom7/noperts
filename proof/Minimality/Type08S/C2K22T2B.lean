@@ -141,12 +141,12 @@ theorem k22t2_cell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h 
     obtain ⟨p0, p1, p2, p3, m0, m1, m2, m3⟩ := k19_z4
     refine k19_lexUni_nb _ _ hw 0 ?_ ?_ ?_
     · rw [m0]; left; simp only [k22t2Y_3, k22t2Y_0, hz]; nlinarith
-    · rw [p0]; left; simp only [k22t2Y_0, k22t2Y_1, hz]; nlinarith
+    · rw [p0]; left; simp only [k22t2Y_0, k22t2Y_1, hz]; linarith
     · intro i hi
       rcases k19_z4_cases i with rfl | rfl | rfl | rfl
       · exact absurd rfl hi
-      · left; rw [m1]; left; simp only [k22t2Y_0, k22t2Y_1, hz]; nlinarith
-      · right; rw [p2]; left; simp only [k22t2Y_2, k22t2Y_3, hz]; nlinarith
+      · left; rw [m1]; left; simp only [k22t2Y_0, k22t2Y_1, hz]; linarith
+      · right; rw [p2]; left; simp only [k22t2Y_2, k22t2Y_3, hz]; linarith
       · right; rw [p3]; left; simp only [k22t2Y_3, k22t2Y_0, hz]; nlinarith
   · intro l hl
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hl

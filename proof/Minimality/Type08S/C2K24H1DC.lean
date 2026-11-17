@@ -55,7 +55,7 @@ theorem k24h1d_m {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hs : ⟪P, Q⟫ < 0 := by
     by_contra hn; push Not at hn
     have := mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hW.le
-    nlinarith [mul_pos (sub_pos.2 hβ1) hD]
+    linarith [mul_pos (sub_pos.2 hβ1) hD]
   have hQ0 : Q ≠ 0 := by intro h0; apply hdet; rw [h0]; simp [det3_expand]
   have hQQ : 0 < ⟪Q, Q⟫ := real_inner_self_pos.2 hQ0
   exact ⟨hs, hPR, hqq, hrr, hQQ, hr1'⟩

@@ -65,8 +65,8 @@ theorem k17gdB_restA6 {α1 β1 γ4 β6 v1 v2 : ℝ} (hα1 : 1 < α1) (hβ1 : 0 <
     (simp only [TSc, d3, k17gdB, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
-     | (right; refine ⟨by ring, by nlinarith⟩))
+     | (left; linarith)
+     | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 3200000 in
 /-- Cell B with a general rest point `a' = (0,1,β6)`: the proof of `k17gdB_frame` with `β6` in place of `1`. -/
@@ -166,7 +166,7 @@ theorem k17gdC1_frame (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r ≠
       rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
       simp only [k17gdC1, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4, Prod.mk.injEq] at h <;>
       first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2]) | (exfalso; norm_num at h) |
-        (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith)
+        (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith)
   refine cyc_cell V p q r d hΔ (k := 5) (by norm_num) (k17gdC1 α1 β1 β6) hinj hmem
     [(0, 0, 1), (1, 0, γ4)] ?_ (u1 := 0) (u2 := -1) (t1 := -t1) (t2 := 0) (lo := 0) (hi := 1)
     (by rw [show (0:ℝ) * 0 - (-1) * (-t1) = -t1 by ring]; exact (neg_ne_zero.2 ht1.ne')) (by norm_num)
@@ -181,7 +181,7 @@ theorem k17gdC1_frame (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r ≠
     · exact Or.inr ⟨_, by simp, rfl⟩
     · exact Or.inr ⟨_, by simp, rfl⟩
   · intro lam hl0 hl1
-    refine ⟨by nlinarith [mul_pos hl0 ht1], by norm_num, ?_⟩
+    refine ⟨by linarith [mul_pos hl0 ht1], by norm_num, ?_⟩
     simp only [mul_zero, add_zero, zero_add]
     nlinarith [mul_pos hl0 ht1, mul_pos hβ1 (mul_pos hl0 ht1), mul_pos hβ1 ht1, mul_pos hβ1 (mul_pos (sub_pos.2 hl1) ht1)]
   · intro v1 v2 hv
@@ -202,7 +202,7 @@ theorem k17gdC1_frame (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r ≠
     refine k17gd_lexUni5_A z w hsep (k17gd_ll (by rw [z3, z2]; nlinarith)) (k17gd_ll (by rw [z4, z3]; linarith)) ?_
     rcases lt_or_ge ⟪p, r⟫ 0 with hp | hp
     · left; exact k17gd_ll (by rw [z0, z4]; linarith)
-    · right; exact k17gd_ll (by rw [z0, z1]; nlinarith [mul_nonneg a1.le hp, mul_pos hβ1 hqr])
+    · right; exact k17gd_ll (by rw [z0, z1]; linarith [mul_nonneg a1.le hp, mul_pos hβ1 hqr])
 
 end C2
 end Type08Sp

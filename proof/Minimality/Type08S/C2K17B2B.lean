@@ -100,14 +100,14 @@ theorem k17b2_p2_tsc {xA yA zA yc zc xd zd v1 v2 : ℝ} (hxA : 1 < xA) (hyA : 0 
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, k17b2Cy2_0, k17b2Cy2_1, k17b2Cy2_2, k17b2Cy2_3, k17b2Cy2_4, f0, f1, f2, f3, f4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
   · intro p hp i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
     rcases hp with rfl | rfl <;>
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, k17b2Cy2_0, k17b2Cy2_1, k17b2Cy2_2, k17b2Cy2_3, k17b2Cy2_4, f0, f1, f2, f3, f4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-       first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+       first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
 
 
 set_option maxHeartbeats 3200000 in
@@ -202,7 +202,7 @@ theorem k17b2_r2 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     match_scalars <;> field_simp <;> ring
   have hσ1 : 0 < β6 + γ6 := by linarith
   have hxA1 : 1 < xA := by
-    rw [hxA, lt_div_iff₀ hS]; simp only [hSdef]; nlinarith [mul_pos (sub_pos.2 hα1) hσ]
+    rw [hxA, lt_div_iff₀ hS]; simp only [hSdef]; linarith [mul_pos (sub_pos.2 hα1) hσ]
   have hyA0 : 0 < yA := by rw [hyA]; positivity
   have hb1 : 1 / β1 < 1 := by rw [div_lt_one hβ0]; exact hβ1
   have hb0 : 0 < 1 / β1 := by positivity

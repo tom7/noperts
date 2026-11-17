@@ -145,15 +145,15 @@ theorem k17gc_hex5_tsc {D β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hβ6 : 0 < β6) (h�
       | (simp only [TSc, d3, k17gcHex5, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; linarith)
+         | (right; refine ⟨by ring, by linarith⟩))
   · intro i
     rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, k17gcHex5, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 theorem k17gcHex5_inj {β6 γ6 : ℝ} (hβ6 : 0 < β6) (hγ6 : 0 < γ6) :
     ∀ i j, k17gcHex5 β6 γ6 i = k17gcHex5 β6 γ6 j → i = j := by
@@ -196,16 +196,16 @@ theorem k17gc_pent5_tsc {D β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hβ6 : 0 < β6) (h
       | (simp only [TSc, d3, k17gcPent5, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; linarith)
+         | (right; refine ⟨by ring, by linarith⟩))
   all_goals
     intro i
     rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, k17gcPent5, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 theorem k17gcPent5_inj : ∀ i j, k17gcPent5 i = k17gcPent5 j → i = j := by
   intro i j h
@@ -278,15 +278,15 @@ theorem k17gc_s15_cells {a a' b b' c c' d : ℝ³} {β6 γ6 : ℝ} (hdet : det3 
     · intro w hw
       -- depths: a = Qr, d = 0, b = -RR, a' = γ6 Pr - β6 RR, c = Pr, b' = Pr + Qr
       refine k17gc_lexUni6_a _ w hw ?_ ?_ ?_ ?_
-      · left; simp only [k17gcHex5, pc6_0, pc6_1, hz]; nlinarith
-      · left; simp only [k17gcHex5, pc6_1, pc6_2, hz]; nlinarith
-      · left; simp only [k17gcHex5, pc6_4, pc6_5, hz]; nlinarith
+      · left; simp only [k17gcHex5, pc6_0, pc6_1, hz]; linarith
+      · left; simp only [k17gcHex5, pc6_1, pc6_2, hz]; linarith
+      · left; simp only [k17gcHex5, pc6_4, pc6_5, hz]; linarith
       · simp only [k17gcHex5, pc6_2, pc6_3, pc6_4, hz, LexLt]
         by_contra hh
         push Not at hh
         obtain ⟨⟨h2, -⟩, ⟨h4, -⟩⟩ := hh
         -- a' ≥ b: (1-β6) RR + γ6 Pr ≥ 0;  a' ≥ c: (γ6 - 1) Pr ≥ β6 RR
-        nlinarith [mul_le_mul_of_nonneg_left h4 hγ6.le, mul_le_mul_of_nonneg_left h2 (sub_pos.2 hγ61).le,
+        linarith [mul_le_mul_of_nonneg_left h4 hγ6.le, mul_le_mul_of_nonneg_left h2 (sub_pos.2 hγ61).le,
           mul_pos (sub_pos.2 hs) hRR]
   · -- S1.5b: pentagon
     have hQR0 : ⟪Q, R⟫ < 0 := by rw [hQR]; linarith
@@ -320,9 +320,9 @@ theorem k17gc_s15_cells {a a' b b' c c' d : ℝ³} {β6 γ6 : ℝ} (hdet : det3 
         exact (k17gc_pent5_tsc hD hβ6 hγ6 hγ61 hs (by norm_num) (by linarith)).2.2 i
     · intro w hw
       refine lexUni5_top _ w hw ?_ ?_ ?_
-      · left; simp only [k17gcPent5, pc5_0, pc5_1, hz]; nlinarith
-      · left; simp only [k17gcPent5, pc5_2, pc5_3, hz]; nlinarith
-      · left; simp only [k17gcPent5, pc5_3, pc5_4, hz]; nlinarith
+      · left; simp only [k17gcPent5, pc5_0, pc5_1, hz]; linarith
+      · left; simp only [k17gcPent5, pc5_2, pc5_3, hz]; linarith
+      · left; simp only [k17gcPent5, pc5_3, pc5_4, hz]; linarith
 
 /-- **S1.5** (`K14LeftPa` 3rd disjunct, `β1 = 1` branch: `α4 = 1`, `β1 = 1`): a cell, or the literal's tie
 `⟪a-d, a-c'⟫ = 0`. -/

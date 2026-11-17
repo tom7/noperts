@@ -53,7 +53,7 @@ theorem k32e_l2x4 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     mul_nonneg (neg_nonneg.2 hX3) hH
   rw [← hid] at this
   by_contra hn; rw [not_le] at hn
-  nlinarith [mul_pos (by linarith : (0:ℝ) < α1 + β1 - 1) (neg_pos.2 hn)]
+  linarith [mul_pos (by linarith : (0:ℝ) < α1 + β1 - 1) (neg_pos.2 hn)]
 
 theorem k32e_l2x3 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     (hC : K6mCoords a a' b b' c c' d α1 β1 β6 γ6) (hM : K6sM a a' b b' c c' d)

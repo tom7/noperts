@@ -78,14 +78,14 @@ theorem k14A1_tsc {β1 β6 γ6 v1 v2 : ℝ} (hβ1 : 1 < β1) (hb6 : 1 < β6) (h�
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, k14A1Cyc_0, k14A1Cyc_1, k14A1Cyc_2, k14A1Cyc_3, k14A1Cyc_4, f0, f1, f2, f3, f4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl <;>
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, k14A1Cyc_0, k14A1Cyc_1, k14A1Cyc_2, k14A1Cyc_3, k14A1Cyc_4, f0, f1, f2, f3, f4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-       first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+       first | (left; linarith) | (right; refine ⟨by ring, by nlinarith⟩))
 
 end C2
 end Type08Sp

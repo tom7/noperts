@@ -48,7 +48,7 @@ theorem k17b2Cy4_inj {α β β6 γ6 : ℝ} (hα : 0 < α) (hβ : 0 < β) (hβ6 :
   have := mul_pos hα hγ6
   have := mul_pos hα hβ
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;> rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first | rfl | (exfalso; simp only [k17b2Cy4_0, k17b2Cy4_1, k17b2Cy4_2, k17b2Cy4_3, k17b2Cy4_4] at e1 e2 e3; nlinarith)
+    first | rfl | (exfalso; simp only [k17b2Cy4_0, k17b2Cy4_1, k17b2Cy4_2, k17b2Cy4_3, k17b2Cy4_4] at e1 e2 e3; linarith)
 
 theorem k17b2Cy5_inj {α β β6 γ6 : ℝ} (hα : 0 < α) (hβ : 0 < β) (hβ6 : 0 < β6) (hγ6 : 0 < γ6) :
     ∀ i j : ZMod 5, k17b2Cy5 α β β6 γ6 i = k17b2Cy5 α β β6 γ6 j → i = j := by
@@ -59,7 +59,7 @@ theorem k17b2Cy5_inj {α β β6 γ6 : ℝ} (hα : 0 < α) (hβ : 0 < β) (hβ6 :
   have := mul_pos hα hγ6
   have := mul_pos hα hβ
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;> rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first | rfl | (exfalso; simp only [k17b2Cy5_0, k17b2Cy5_1, k17b2Cy5_2, k17b2Cy5_3, k17b2Cy5_4] at e1 e2 e3; nlinarith)
+    first | rfl | (exfalso; simp only [k17b2Cy5_0, k17b2Cy5_1, k17b2Cy5_2, k17b2Cy5_3, k17b2Cy5_4] at e1 e2 e3; linarith)
 
 set_option maxHeartbeats 6400000 in
 theorem k17b2_p4_tsc {α β β6 γ6 v1 v2 : ℝ} (hα : 1 < α) (hβ : 1 < β) (hβ6 : 1 < β6) (hγ6 : 1 < γ6) (hv2 : 0 < v2) :

@@ -43,12 +43,12 @@ theorem k1x2_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r
     fun t => inner_fpoint _ _ _ _ _ _
   have hlexY : LexUni (fun i => ⟪fpoint p q r d (Y i), r⟫) (fun i => ⟪fpoint p q r d (Y i), vv⟫) := by
     refine lexUni6_two _ _ hsep ?_ ?_ ?_ ?_
-    · left; simp only [hY, k1Cyc6, six_0, six_1, hz]; nlinarith [mul_nonneg hβ1.le hB, mul_pos (sub_pos.2 hα1) hA]
-    · left; simp only [hY, k1Cyc6, six_3, six_2, hz]; nlinarith
-    · left; simp only [hY, k1Cyc6, six_5, six_0, hz]; nlinarith
+    · left; simp only [hY, k1Cyc6, six_0, six_1, hz]; linarith [mul_nonneg hβ1.le hB, mul_pos (sub_pos.2 hα1) hA]
+    · left; simp only [hY, k1Cyc6, six_3, six_2, hz]; linarith
+    · left; simp only [hY, k1Cyc6, six_5, six_0, hz]; linarith
     · rcases hB.lt_or_eq with hB' | hB'
-      · left; left; simp only [hY, k1Cyc6, six_4, six_3, hz]; nlinarith [mul_pos hβ6 hB']
-      · right; left; simp only [hY, k1Cyc6, six_4, six_5, hz]; rw [← hB'] at hs; nlinarith
+      · left; left; simp only [hY, k1Cyc6, six_4, six_3, hz]; linarith [mul_pos hβ6 hB']
+      · right; left; simp only [hY, k1Cyc6, six_4, six_5, hz]; rw [← hB'] at hs; linarith
   have n0 : -(0 : ZMod 6) = 0 := by decide
   have n1 : -(1 : ZMod 6) = 5 := by decide
   have n2 : -(2 : ZMod 6) = 4 := by decide

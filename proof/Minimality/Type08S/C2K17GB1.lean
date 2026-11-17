@@ -59,10 +59,10 @@ theorem k17gb_a41_frame {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d
   rw [det_beta1 hc'] at hP1
   have hβ1 : 1 < β1 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
+    linarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
   have hγ4 : 1 < γ4 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) (by linarith : (0:ℝ) ≤ α1)]
+    linarith [mul_nonneg (sub_nonneg.2 hh) (by linarith : (0:ℝ) ≤ α1)]
   rw [k17gb_det_beta6 ha'] at hP6
   have hβ6 : 1 ≤ β6 := by
     by_contra hh; push Not at hh

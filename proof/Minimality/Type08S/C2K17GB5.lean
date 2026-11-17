@@ -39,18 +39,18 @@ theorem k17gb_tac_frame {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d
   rw [det_alpha4 hb'] at hP4
   have hα4 : α4 < 1 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
+    linarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
   rw [det_beta1 hc'] at hP1
   have hβ1 : 1 < β1 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
+    linarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
   have hγ4 : 1 < γ4 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) (by linarith : (0:ℝ) ≤ α1), mul_pos hα4p (sub_pos.2 hβ1)]
+    linarith [mul_nonneg (sub_nonneg.2 hh) (by linarith : (0:ℝ) ≤ α1), mul_pos hα4p (sub_pos.2 hβ1)]
   rw [k17gb_det_beta6 ha'] at hP6
   have hβ6 : 1 < β6 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
+    linarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
   have e1 : a - b' = (1 - α4) • (a - d) + (-γ4) • (c - d) := by rw [hb']; module
   have e3 : a - c' = (1 - α1) • (a - d) + (-β1) • (b - d) := by rw [hc']; module
   have hqr' : ⟪c - d, b - d⟫ = 0 := by rw [real_inner_comm]; exact hqr

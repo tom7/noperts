@@ -180,7 +180,7 @@ theorem k14_H2tie_hasLexCell {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
       · rw [eC, eO]
         apply inner_lt
         have : c - d = (0:ℝ) • p + (0:ℝ) • q + (1:ℝ) • r := by rw [hr]; module
-        rw [this, key]; nlinarith
+        rw [this, key]; linarith
       · rw [eC', eA, eO]
         have zA := key 1 0 0
         rcases le_or_gt ((1 - α1) * ⟪p, p⟫ - β1 * ⟪p, r⟫) 0 with hA0 | hA0
@@ -191,7 +191,7 @@ theorem k14_H2tie_hasLexCell {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
         · right
           apply inner_lt
           have : d - a = (-1:ℝ) • p + (0:ℝ) • q + (0:ℝ) • r := by rw [hp]; module
-          rw [this, key]; nlinarith
+          rw [this, key]; linarith
     exact ⟨R, hR0, hA⟩
 
 end C2

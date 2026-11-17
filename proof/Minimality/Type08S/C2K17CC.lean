@@ -56,15 +56,15 @@ theorem k17cS35_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R ≠
       right
       simp only [k17cS35Cyc, pc5_0, pc5_1, inner_fpoint, k17c_inner_fcomb_right, hPR, hPQ]
       refine ⟨by ring, ?_⟩
-      nlinarith [mul_pos a0 (mul_pos hv1 hPP)]
+      linarith [mul_pos a0 (mul_pos hv1 hPP)]
     · -- d < c
       left
       simp only [k17cS35Cyc, pc5_1, pc5_2, inner_fpoint, hPR]
-      nlinarith
+      linarith
     · -- b < d
       left; left
       simp only [k17cS35Cyc, pc5_2, pc5_3, inner_fpoint, hPR]
-      nlinarith
+      linarith
 
 end C2
 end Type08Sp

@@ -106,7 +106,7 @@ theorem k14_A1_hasLexCell {a a' b b' c c' d : ℝ³} {β1 β6 γ6 : ℝ}
       have hqr : 0 ≤ ⟪q, r⟫ := by nlinarith
       rw [hp, hq] at hm1
       have hs' : ⟪p, r⟫ < 0 := by rw [← hm1]; exact hs
-      nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ β6 - β1 + γ6) hqr, mul_pos hγ6 (by linarith : (0:ℝ) < ⟪r, r⟫ - ⟪q, r⟫)]
+      linarith [mul_nonneg (by linarith : (0:ℝ) ≤ β6 - β1 + γ6) hqr, mul_pos hγ6 (by linarith : (0:ℝ) < ⟪r, r⟫ - ⟪q, r⟫)]
   exact ⟨r, hr0, hA⟩
 
 end C2

@@ -158,7 +158,7 @@ theorem k17c_m_zero {a b c d : ℝ³} {α1 : ℝ} (hα1 : 0 < α1) (h : K16Rel a
     have h0 : ⟪b - d, b - d⟫ + ⟪c - d, c - d⟫ - 2 * ⟪b - d, c - d⟫ = 0 := le_antisymm hS this
     have hR : ⟪b - d, c - d⟫ = (⟪b - d, b - d⟫ + ⟪c - d, c - d⟫) / 2 := by linarith
     rw [hR] at h2
-    nlinarith [sq_nonneg (⟪b - d, b - d⟫ - ⟪c - d, c - d⟫)]
+    linarith [sq_nonneg (⟪b - d, b - d⟫ - ⟪c - d, c - d⟫)]
   have : α1 * ⟪a - d, b - d⟫ * (⟪b - d, b - d⟫ + ⟪c - d, c - d⟫ - 2 * ⟪b - d, c - d⟫) = 0 := by
     rw [h1]; ring
   rcases mul_eq_zero.mp this with h | h
