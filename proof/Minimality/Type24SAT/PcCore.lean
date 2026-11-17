@@ -58,7 +58,7 @@ theorem add_mod_div_of_ds {B : Nat} (hB : 0 < B) {k1 k2 : Nat} (h : k1 % B + k2 
     (k1 + k2) % B = k1 % B + k2 % B ∧ (k1 + k2) / B = k1 / B + k2 / B := by
   refine ⟨?_, ?_⟩
   · rw [Nat.add_mod, Nat.mod_eq_of_lt h]
-  · rw [Nat.add_div hB, if_neg (by omega)]; rfl
+  · rw [Nat.add_div hB, ite_eq_right_iff.mpr (fun h => absurd h (by omega))]; rfl
 
 /-- Without carries the packed sum is the product of monomials. -/
 theorem evk_add (B : Nat) (hB : 0 < B) (v : List ℝ) (k1 k2 : Nat)

@@ -63,7 +63,7 @@ theorem kc_tsc {m s β6 β1 α1 v1 v2 : ℝ} (hm : 1 < m) (hs : s < 0) (hb6 : 0 
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, kcCyc_0, kcCyc_1, kcCyc_2, kcCyc_3, s0, s1, s2, s3, Prod.fst_sub, Prod.snd_sub,
           Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         (left; nlinarith))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl <;>
@@ -104,7 +104,7 @@ theorem k5e_fcbc_frame (V : Finset ℝ³) (P Q R d : ℝ³) (hΔ : det3 P Q R �
     · exact Or.inr ⟨_, by simp, rfl⟩
     · exact Or.inr ⟨_, by simp, rfl⟩
     · exact Or.inr ⟨_, by simp, rfl⟩
-  · intro lam h0 h1; constructor <;> simp <;> linarith
+  · intro lam h0 h1; constructor <;> simp; linarith
   · intro v1 v2 ⟨hv1, hv2⟩
     exact kc_tsc hm hs hb6 hβ1 hβ11 hα1 hv1 hv2
 

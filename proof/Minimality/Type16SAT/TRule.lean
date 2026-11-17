@@ -300,7 +300,7 @@ theorem tie_ctx {x : Fin 7 → ℝ³} (F : S0xFac 8 V2.fIdx x) (hG : GeoOK (geoF
         (bits pp r = false → LP3 (-⟪F.N r, wf (geoF F) t f⟫) (-⟪F.N r, sdR sd • dplus (geoF F) t f⟫)
           (-⟪F.N r, tauR pp t • F.N ⟨t, hp.1⟩⟫)) := by
   have hlen := cycChk_len hcyc
-  haveI hne : NeZero (patCyc.getD pp []).length := ⟨by omega⟩
+  have hne : NeZero (patCyc.getD pp []).length := ⟨by omega⟩
   obtain ⟨h3, hinj, hcycOK⟩ := cycFacts (k := (patCyc.getD pp []).length) rfl hcyc
   have hZ : ¬ Z0 (geoF F) t f := by
     intro hz

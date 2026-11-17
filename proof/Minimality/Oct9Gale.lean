@@ -96,8 +96,8 @@ theorem pair_sign {L₁ L₂ f₁ f₂ : ℝ} (h : L₁ * f₁ + L₂ * f₂ = 0
     · have : 0 < L₂ := by nlinarith
       nlinarith [mul_neg_of_pos_of_neg hl h₁, mul_neg_of_pos_of_neg this h₂]
   · constructor
-    · rintro rfl; simp at h; rcases h with h | h; exact h; linarith
-    · rintro rfl; simp at h; rcases h with h | h; exact h; linarith
+    · rintro rfl; simp at h; rcases h with h | h <;> first | exact h | linarith
+    · rintro rfl; simp at h; rcases h with h | h <;> first | exact h | linarith
 
 /-- **Pole coordinates (i).**  A dependency vanishing at `t` and not at `t'`
 has, on the equator of the axis `t t'`, one strict sign on each diagonal and

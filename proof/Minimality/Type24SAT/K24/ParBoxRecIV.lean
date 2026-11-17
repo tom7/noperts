@@ -25,7 +25,7 @@ theorem iv_c4 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) 
     LexTiltCert (univ.image (boxCfg L c y2 y6 xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[1, p, q] !₂[0, c0z, -c0y] ((boxCfg L c y2 y6 xi ze b) 4) := by
   refine cone_cert L r _ _ _ _ ((boxCfg L c y2 y6 xi ze b) 6) ((boxCfg L c y2 y6 xi ze b) 3) (by simp) (by simp) ?_ ?_ ?_
-  · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos (mul_pos hL hc) hy6]
+  · left; simp [boxCfg]; nlinarith [mul_pos (mul_pos hL hc) hy6]
   · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos (mul_pos hL hc) h1]
   · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos (mul_pos hL hy6) (neg_pos.2 h2)]
 
@@ -35,8 +35,8 @@ theorem iv_c3 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) 
     LexTiltCert (univ.image (boxCfg L c y2 y6 xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[1, p, q] !₂[0, c0z, -c0y] ((boxCfg L c y2 y6 xi ze b) 3) := by
   refine cone_cert L r _ _ _ _ ((boxCfg L c y2 y6 xi ze b) 4) ((boxCfg L c y2 y6 xi ze b) 5) (by simp) (by simp) ?_ ?_ ?_
-  · right; refine ⟨by simp [boxCfg, Minimality.cross] <;> ring, ?_⟩; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos hr (mul_pos hL hc)]
-  · right; refine ⟨by simp [boxCfg, Minimality.cross] <;> ring, ?_⟩; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos hL h2]
+  · right; refine ⟨by simp [boxCfg], ?_⟩; simp [boxCfg]; nlinarith [mul_pos hr (mul_pos hL hc)]
+  · right; refine ⟨by simp [boxCfg, Minimality.cross], ?_⟩; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos hL h2]
   · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos (mul_pos hL hc) (sub_pos.2 h1)]
 
 theorem iv_c5 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6) (hy2 : 0 < y2)
@@ -45,7 +45,7 @@ theorem iv_c5 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) 
     LexTiltCert (univ.image (boxCfg L c y2 y6 xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[1, p, q] !₂[0, c0z, -c0y] ((boxCfg L c y2 y6 xi ze b) 5) := by
   refine cone_cert L r _ _ _ _ ((boxCfg L c y2 y6 xi ze b) 3) ((boxCfg L c y2 y6 xi ze b) 2) (by simp) (by simp) ?_ ?_ ?_
-  · right; refine ⟨by simp [boxCfg, Minimality.cross], ?_⟩; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos hy2 hL]
+  · right; refine ⟨by simp [boxCfg], ?_⟩; simp [boxCfg]; nlinarith [mul_pos hy2 hL]
   · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos (mul_pos hL hy2) h1]
   · right; refine ⟨by simp [boxCfg, Minimality.cross], ?_⟩; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos hL h2]
 
@@ -55,7 +55,7 @@ theorem iv_c6 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) 
     LexTiltCert (univ.image (boxCfg L c y2 y6 xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[1, p, q] !₂[0, c0z, -c0y] ((boxCfg L c y2 y6 xi ze b) 6) := by
   refine cone_cert L r _ _ _ _ ((boxCfg L c y2 y6 xi ze b) 1) ((boxCfg L c y2 y6 xi ze b) 4) (by simp) (by simp) ?_ ?_ ?_
-  · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos (mul_pos hL hy6) hd]
+  · left; simp [boxCfg]; nlinarith [mul_pos (mul_pos hL hy6) hd]
   · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos (mul_pos hL hy6) (sub_pos.2 h1)]
   · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos hL (sub_pos.2 h2)]
 
@@ -65,7 +65,7 @@ theorem iv_c2 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) 
     LexTiltCert (univ.image (boxCfg L c y2 y6 xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[1, p, q] !₂[0, c0z, -c0y] ((boxCfg L c y2 y6 xi ze b) 2) := by
   refine cone_cert L r _ _ _ _ ((boxCfg L c y2 y6 xi ze b) 5) ((boxCfg L c y2 y6 xi ze b) 1) (by simp) (by simp) ?_ ?_ ?_
-  · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos (mul_pos hL hcd) hy2]
+  · left; simp [boxCfg]; nlinarith [mul_pos (mul_pos hL hcd) hy2]
   · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos hL (neg_pos.2 h2)]
   · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos (mul_pos hL hy2) (sub_pos.2 h1)]
 
@@ -75,7 +75,7 @@ theorem iv_c1 {L c y2 y6 xi ze b r c0y c0z p q : ℝ} (hL : 0 < L) (hc : 0 < c) 
     LexTiltCert (univ.image (boxCfg L c y2 y6 xi ze b)) !₂[-L, 0, 0] !₂[0, -r, -1] 0
       !₂[1, p, q] !₂[0, c0z, -c0y] ((boxCfg L c y2 y6 xi ze b) 1) := by
   refine cone_cert L r _ _ _ _ ((boxCfg L c y2 y6 xi ze b) 2) ((boxCfg L c y2 y6 xi ze b) 0) (by simp) (by simp) ?_ ?_ ?_
-  · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos hL hy]
+  · left; simp [boxCfg]; nlinarith [mul_pos hL hy]
   · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos hL (sub_pos.2 h1)]
   · left; simp [boxCfg, Minimality.cross]; nlinarith [mul_pos hL (sub_pos.2 h2)]
 
@@ -88,7 +88,7 @@ theorem rec_IV {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6
   have hy2 : 0 < y2 := lt_of_lt_of_le hy6 hy
   have hxs : xi + ze < 1 := by
     by_contra h
-    push_neg at h
+    push Not at h
     nlinarith [mul_nonneg (add_pos hy2 hy6).le (sub_nonneg.2 h)]
   have hb0 : 0 < b := by nlinarith [mul_pos hy6 hxi, mul_pos hy2 hze]
   have hd : 0 < ze * c := mul_pos hze hc
@@ -97,16 +97,16 @@ theorem rec_IV {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6
   set d := ze * c with hd_def
   have hby6 : 0 < b - y6 := by
     by_contra h
-    push_neg at h
+    push Not at h
     nlinarith [mul_pos hd hcd, mul_nonneg hb0.le (neg_nonneg.2 h)]
   obtain ⟨u, hu⟩ : ∃ u, u * b = c - d := ⟨(c - d) / b, by field_simp⟩
   obtain ⟨v, hv⟩ : ∃ v, v * d = b - y6 := ⟨(b - y6) / d, by field_simp⟩
   have hu0 : 0 < u := by
-    by_contra h; push_neg at h; nlinarith [mul_nonneg (neg_nonneg.2 h) hb0.le]
+    by_contra h; push Not at h; nlinarith [mul_nonneg (neg_nonneg.2 h) hb0.le]
   have hv0 : 0 < v := by
-    by_contra h; push_neg at h; nlinarith [mul_nonneg (neg_nonneg.2 h) hd.le]
+    by_contra h; push Not at h; nlinarith [mul_nonneg (neg_nonneg.2 h) hd.le]
   have huv : u < v := by
-    by_contra h; push_neg at h
+    by_contra h; push Not at h
     nlinarith [mul_nonneg (sub_nonneg.2 h) (mul_pos hb0 hd).le]
   obtain ⟨r, hr⟩ : ∃ r, r = (u + v) / 2 := ⟨_, rfl⟩
   have hr0 : 0 < r := by rw [hr]; linarith
@@ -114,7 +114,7 @@ theorem rec_IV {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6
   have het0 : 0 < eta := by rw [het]; nlinarith [mul_pos hb0 (sub_pos.2 huv)]
   obtain ⟨eps, hep⟩ : ∃ eps, eps * (5 * (1 + xi)) = eta := ⟨eta / (5 * (1 + xi)), by field_simp⟩
   have hep0 : 0 < eps := by
-    by_contra h; push_neg at h; nlinarith [mul_nonneg (neg_nonneg.2 h) (by linarith : (0:ℝ) ≤ 5 * (1 + xi))]
+    by_contra h; push Not at h; nlinarith [mul_nonneg (neg_nonneg.2 h) (by linarith : (0:ℝ) ≤ 5 * (1 + xi))]
   have hDp : 0 < d * (v - u) / 2 := by nlinarith [mul_pos hd (sub_pos.2 huv)]
   obtain ⟨m, hm1, hm⟩ : ∃ m, 1 ≤ m ∧ d * c - (b - y6) * y6 + d * eps < m * (d * (v - u) / 2) := by
     refine ⟨1 + |d * c - (b - y6) * y6 + d * eps| / (d * (v - u) / 2), ?_, ?_⟩
@@ -145,14 +145,14 @@ theorem rec_IV {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6
     have h2 : d - eta - c < 0 := by nlinarith [mul_pos hb0 hu0]
     have h3 : 0 < xi * (r * m + eps) := mul_pos hxi (by nlinarith [mul_pos hr0 (by linarith : (0:ℝ) < m)])
     have h4 : (c0z - c) * (1 - xi) < 0 := by rw [h]; linarith
-    by_contra hh; push_neg at hh
+    by_contra hh; push Not at hh
     nlinarith [mul_nonneg (sub_nonneg.2 hh) hx1.le]
   have hc5 : 0 < r * c0y + c0z - c := by
     have h : (r * c0y + c0z - c) * (1 - xi) = eta - xi * eps := by
       have hbr : r * b - u * b = b * (v - u) / 2 := by rw [hr]; ring
       linear_combination r * hc0y + hc0z + hbr + hu - 2 * het
     have h2 : 0 < eta - xi * eps := by nlinarith [mul_pos hxi hep0]
-    by_contra hh; push_neg at hh
+    by_contra hh; push Not at hh
     nlinarith [mul_nonneg (neg_nonneg.2 hh) hx1.le]
   have key6 : (b - y6) * (-m) + d * (c + r * m + eps) < (b - y6) * y6 := by
     have : (b - y6) * y6 - ((b - y6) * (-m) + d * (c + r * m + eps))
