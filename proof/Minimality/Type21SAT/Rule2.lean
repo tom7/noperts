@@ -144,7 +144,7 @@ theorem rule_core {x : Fin 7 → ℝ³} (F : S0xFac 8 S21 x) (hx : Function.Inje
     IsRupert (univ.image x) := by
   set L := patCyc.getD pp [] with hL
   have hlen := cycChk_len hcyc
-  haveI : NeZero L.length := ⟨by omega⟩
+  have : NeZero L.length := ⟨by omega⟩
   obtain ⟨h3, hinj, hcycOK⟩ := cycFacts (k := L.length) rfl hcyc
   set u := (geo0 F).vv e with hu
   have S : ∀ t : Fin 8, Sg3 (rho (geoF F)) (Fe e t.val) ⟪F.N t, u⟫ := fun t => by

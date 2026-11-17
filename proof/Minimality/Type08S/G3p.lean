@@ -650,7 +650,7 @@ theorem nf_inj6 {o E₁ E₂ E₃ : ℝ³} (hE : det3 E₁ E₂ E₃ ≠ 0) {θ 
   by_contra hne
   have key := nfinj08 hE (θ := θ) i.castSucc j.castSucc h
   have h0 := key 0; have h1 := key 1; have h2 := key 2
-  fin_cases i <;> fin_cases j <;> first | exact hne rfl | (revert h0 h1 h2; norm_num [cp08] <;> (intros; linarith))
+  fin_cases i <;> fin_cases j <;> first | exact hne rfl | (revert h0 h1 h2; norm_num [cp08]; try (intros; linarith))
 
 /-- **Gale data of the normal form** (PLAN): the dependency space of the six octahedron points is spanned
 by `l, m` with `(l a', l b', l c') = (ν_b, -ν_a, 0)`, `(m a', m b', m c') = (0, ν_c, -ν_b)`

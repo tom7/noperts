@@ -72,9 +72,7 @@ theorem k22z1c3_tsc {D ℓ α4 γ4 β6 v1 v2 : ℝ} (hD : 0 < D) (hℓ : 0 < ℓ
       | exact (h2' (by decide)).elim
       | (simp only [TSc, d3, e0, e1, e2, e3, f0, f1, f2, f3, k22z1c3Y_0, k22z1c3Y_1, k22z1c3Y_2, k22z1c3Y_3,
             Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-         first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         left; nlinarith)
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl <;>

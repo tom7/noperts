@@ -256,9 +256,7 @@ theorem k19_tri_tsc {D α4 β1 γ4 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα4 : 0 <
       | exact (h2' (by decide)).elim
       | (simp only [TSc, d3, s0, s1, s2, k19Tri_0, k19Tri_1, k19Tri_2, Prod.fst_sub, Prod.snd_sub,
           Prod.mk_sub_mk]
-         first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         left; nlinarith)
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl | rfl <;>
@@ -328,9 +326,7 @@ theorem k19_qd_tsc {D α4 β1 γ4 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα4 : 0 < 
       | exact (h2' (by decide)).elim
       | (simp only [TSc, d3, s0, s1, s2, s3, k19Qd_0, k19Qd_1, k19Qd_2, k19Qd_3, Prod.fst_sub, Prod.snd_sub,
           Prod.mk_sub_mk]
-         first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         left; nlinarith)
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl <;>
