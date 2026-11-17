@@ -173,7 +173,7 @@ theorem rule_ctx {x : Fin 7 → ℝ³} (F : S0xFac 8 V2.fIdx x)
       (geo0 F).vv e ≠ 0 ∧ S0xTope F (bits pp) ((geo0 F).vv e) := by
   set L := patCyc.getD pp [] with hL
   have hlen := cycChk_len hcyc
-  haveI : NeZero L.length := ⟨by omega⟩
+  have : NeZero L.length := ⟨by omega⟩
   obtain ⟨h3, hinj, hcycOK⟩ := cycFacts (k := L.length) rfl hcyc
   set u := (geo0 F).vv e with hudef
   have S : ∀ t : Fin 8, Sg3 (rho (geoF F)) (Fe e t.val) ⟪F.N t, u⟫ := fun t => by
@@ -256,7 +256,7 @@ theorem rule_core {x : Fin 7 → ℝ³} (F : S0xFac 8 V2.fIdx x) (hx : Function.
     fun l hl => hno l (by simp only [ruleLits, List.mem_append]; exact Or.inl hl)
   obtain ⟨hne, h3, hinj, hcycOK, hu, ht⟩ := rule_ctx F hG e pp mask sigp he hmask hsig hcyc hctx
   have hlen := cycChk_len hcyc
-  haveI : NeZero L.length := hne
+  have : NeZero L.length := hne
   have hU : RobUni (fun a : ZMod L.length => ⟪x (cOf L a), (geo0 F).vv e⟫) := by
     by_cases h3' : L.length = 3
     · intro B b c d h0 h1 h2 h3'' ; omega
