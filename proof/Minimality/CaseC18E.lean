@@ -135,7 +135,7 @@ theorem rimE2a_cyc (tm hm tp hp sp kp sm km ap am d1 d3 : ℝ) (htm : 0 < tm) (h
 set_option maxHeartbeats 2000000 in
 theorem rimE2a_rest (tm hm tp hp sp kp sm km ap am d1 d3 : ℝ)
     (htm : 0 < tm) (htp : 0 < tp)
-    (htp1 : tp < 1) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1) (hsm : 0 < sm) (hsm1 : sm < 1)
+    (htp1 : tp < 1) (htm1 : tm < 1) (hsp1 : sp < 1) (hsm : 0 < sm) (hsm1 : sm < 1)
     (hap : 0 < ap) (ham : 0 < am)
     (hhp : hp = ap * tp) (hhm : hm = am * tm) (hkp : kp = (ap + am) * tp * (1 - sp))
     (hkm : km = sm * ((ap + am) * tp))
@@ -160,18 +160,17 @@ theorem rimE2a_rest (tm hm tp hp sp kp sm km ap am d1 d3 : ℝ)
   rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, b5, hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5]
     first
-    | (left; nlinarith [mul_pos htm hap, mul_pos htm ham, mul_pos htp hap, mul_pos htp ham, mul_pos hsp htp, mul_pos hsm htp, mul_pos a1 htm, mul_pos a2 htp, mul_pos a5 htp, mul_pos a4 htm, mul_pos a4 hsm, mul_pos a6 htp, mul_pos a6 hsp, mul_pos a3 htp, mul_pos a3 ham, mul_pos a3 hap])
+    | (left; nlinarith [mul_pos htm hap, mul_pos htm ham, mul_pos htp hap, mul_pos htp ham, mul_pos hsm htp, mul_pos a1 htm, mul_pos a2 htp, mul_pos a5 htp, mul_pos a4 htm, mul_pos a4 hsm, mul_pos a6 htp, mul_pos a3 htp, mul_pos a3 ham, mul_pos a3 hap])
     | (right; constructor
        · ring1
-       · nlinarith [mul_pos a1 hDa, mul_pos a2 hDa, mul_pos htp hDa, hDa, a7, mul_pos hsp a7, mul_pos hsm a7, mul_pos a2 a7, mul_pos htm a7, mul_pos htp a7, mul_pos a1 a7, mul_pos a3 a7, mul_pos a5 a7])
+       · nlinarith [mul_pos a1 hDa, mul_pos a2 hDa, mul_pos htp hDa, hDa, a7, mul_pos hsm a7, mul_pos a2 a7, mul_pos htm a7, mul_pos htp a7, mul_pos a1 a7, mul_pos a3 a7, mul_pos a5 a7])
 
 set_option maxHeartbeats 2000000 in
 theorem rimE2b_cyc (tm hm tp hp sp kp sm km ap am d1 d3 : ℝ)
     (htm : 0 < tm) (htp : 0 < tp)
-    (htp1 : tp < 1) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1) (hsm : 0 < sm) (hsm1 : sm < 1)
+    (htp1 : tp < 1) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1) (hsm1 : sm < 1)
     (hap : 0 < ap) (ham : 0 < am)
     (hhp : hp = ap * tp) (hhm : hm = am * tm) (hkp : kp = (ap + am) * tp * (1 - sp))
-    (hkm : km = sm * ((ap + am) * tp))
     (hr1 : am < (ap + am) * tp) (hr2 : sm * ((ap + am) * tp) * (1 - tm) < am * tm * (1 - sm))
     (hDa : -(ap * tp) * d1 - (1 - tp) * d3 < 0) (hDe : 0 < am * d1 + d3) :
     ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
@@ -180,7 +179,7 @@ theorem rimE2b_cyc (tm hm tp hp sp kp sm km ap am d1 d3 : ℝ)
           (quint (⟨0, 0, 0⟩ : C3) ⟨tm, 0, -hm⟩ ⟨1, 0, 0⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ i))
         ((quint (⟨0, 0, 0⟩ : C3) ⟨tm, 0, -hm⟩ ⟨1, 0, 0⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ j).sub
           (quint (⟨0, 0, 0⟩ : C3) ⟨tm, 0, -hm⟩ ⟨1, 0, 0⟩ ⟨0, 1, 0⟩ ⟨0, sp, kp⟩ i)) := by
-  subst hhp hhm hkp hkm
+  subst hhp hhm hkp
   have a1 := sub_pos.2 htp1
   have a2 := sub_pos.2 hsp1
   have a3 := sub_pos.2 htm1
@@ -199,7 +198,7 @@ theorem rimE2b_cyc (tm hm tp hp sp kp sm km ap am d1 d3 : ℝ)
   all_goals
     simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
-    | (left; nlinarith [mul_pos htm hap, mul_pos htm ham, mul_pos htp hap, mul_pos htp ham, mul_pos hsp htp, mul_pos hsm htp, mul_pos a1 htm, mul_pos a2 htp, mul_pos a5 htp, mul_pos a4 htm, mul_pos a4 hsm, mul_pos a6 htp, mul_pos a6 hsp, mul_pos a3 htp, mul_pos a3 ham, mul_pos a3 hap])
+    | (left; nlinarith [mul_pos htm hap, mul_pos htm ham, mul_pos htp hap, mul_pos htp ham, mul_pos hsp htp, mul_pos a1 htm, mul_pos a2 htp, mul_pos a5 htp, mul_pos a4 htm, mul_pos a6 htp, mul_pos a6 hsp, mul_pos a3 htp, mul_pos a3 ham, mul_pos a3 hap])
 
 set_option maxHeartbeats 2000000 in
 theorem rimE2b_rest (tm hm tp hp sp kp sm km ap am d1 d3 : ℝ)
@@ -329,7 +328,7 @@ theorem rimW1_cyc (tm hm tp hp sp kp sm km ap am d1 d3 : ℝ) (htm : 0 < tm) (ht
 set_option maxHeartbeats 4000000 in
 theorem rimW1_rest (tm hm tp hp sp kp sm km ap am d1 d3 : ℝ) (htm : 0 < tm) (htp : 0 < tp)
     (htp1 : tp < 1) (htm1 : tm < 1) (hsm : 0 < sm) (hsm1 : sm < 1)
-    (hap : 0 < ap) (ham : 0 < am) (hs : sp + sm = 1)
+ (ham : 0 < am) (hs : sp + sm = 1)
     (hhp : hp = ap * tp) (hhm : hm = am * tm) (hkp : kp = (ap + am) * tp * (1 - sp))
     (hkm : km = sm * ((ap + am) * tp))
     (hr1 : am < (ap + am) * tp)
@@ -352,7 +351,7 @@ theorem rimW1_rest (tm hm tp hp sp kp sm km ap am d1 d3 : ℝ) (htm : 0 < tm) (h
   rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, b5, hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5]
     first
-    | (left; nlinarith [mul_pos (mul_pos hsm a3) (mul_pos hap htp), mul_pos (mul_pos hsm ham) (mul_pos htm a1), mul_pos htm hap, mul_pos htm ham, mul_pos htp hap, mul_pos htp ham, mul_pos hsm htp, mul_pos a1 htm, mul_pos a5 htp, mul_pos a4 htm, mul_pos a4 hsm, mul_pos a3 htp, mul_pos a3 ham, mul_pos a3 hap, mul_pos hsm a8, mul_pos hsm hd3, mul_pos htp hd3, mul_pos htm hd3])
+    | (left; nlinarith [ mul_pos (mul_pos hsm ham) (mul_pos htm a1), mul_pos htm ham, mul_pos htp ham, mul_pos hsm htp, mul_pos a1 htm, mul_pos a5 htp, mul_pos a4 htm, mul_pos a4 hsm, mul_pos a3 htp, mul_pos a3 ham, mul_pos hsm a8, mul_pos hsm hd3, mul_pos htp hd3, mul_pos htm hd3])
     | (right; constructor
        · ring1
        · nlinarith [mul_pos hsm a8, mul_pos hsm hd3, mul_pos htp hd3, mul_pos htm hd3, mul_pos hsm htp, mul_pos htp a8, mul_pos htm a8, mul_pos a5 a8, mul_pos a5 hd3, mul_pos a1 hd3, mul_pos a3 hd3, mul_pos a1 a8, mul_pos a3 a8])
@@ -455,7 +454,7 @@ theorem robust_cycC6 {b a1 a2 a3 a4 : ℝ} (hb : b < 0) (h2 : a1 < a2) (h4 : 0 <
     interval_cases d <;> interval_cases c <;> (try omega) <;> interval_cases b <;> (try omega) <;> interval_cases a <;> (try omega) <;> rcases hB B with rfl | rfl | rfl | rfl | rfl | rfl <;> norm_num at e ⊢ <;> intros <;> skip <;> constructor <;> intro hh <;> linarith
 
 theorem Cq_pos (a tm tp sp sm km : ℝ) (ha : 0 < a) (htm : 0 < tm) (htp : 0 < tp) (hsp : 0 < sp)
-    (hsm : 0 < sm) (hsm1 : sm < 1) (hc : sm * a * tp ≤ tm * km) (hr2 : km < a * (1 - sm)) :
+ (hsm1 : sm < 1) (hc : sm * a * tp ≤ tm * km) (hr2 : km < a * (1 - sm)) :
     0 < a * (sp * tm + sp * tp - tp * sp * sm - sm * tp) + km * (tm - tp * sp) := by
   have hf : sm * tp < tm * (1 - sm) := by
     have h1 : tm * km < tm * (a * (1 - sm)) := mul_lt_mul_of_pos_left hr2 htm
@@ -490,7 +489,7 @@ theorem rimC6_cyc (tm hm tp hp sp kp sm km a : ℝ) (htm : 0 < tm) (htp : 0 < tp
   have a5 := sub_pos.2 hsm1
   have a4 := sub_pos.2 hroof
   have a6 := sub_pos.2 hr2
-  have hQ := Cq_pos a tm tp sp sm km ha htm htp hsp hsm hsm1 hc hr2
+  have hQ := Cq_pos a tm tp sp sm km ha htm htp hsp hsm1 hc hr2
   obtain ⟨b0, b1, b2, b3, b4, b5⟩ := zmod6_add_one
   intro i j h1 h2
   rcases hc.lt_or_eq with hc | hc <;>
@@ -509,7 +508,7 @@ theorem rimC6_cyc (tm hm tp hp sp kp sm km a : ℝ) (htm : 0 < tm) (htp : 0 < tp
        · nlinarith [mul_pos ha htp, mul_pos ha hsp, mul_pos ha hsm, mul_pos ha htm, mul_pos ha a1, mul_pos ha a2, mul_pos ha a3, mul_pos ha a5, mul_pos ha hkm])
 
 set_option maxHeartbeats 4000000 in
-theorem rimC6_rest (tm hm tp hp sp kp sm km a : ℝ) (htm : 0 < tm) (htp : 0 < tp)
+theorem rimC6_rest (tm hm tp hp sp kp sm km a : ℝ) (htp : 0 < tp)
     (htp1 : tp < 1) (htm1 : tm < 1) (hsp : 0 < sp) (hsp1 : sp < 1) (hsm : 0 < sm) (hsm1 : sm < 1)
     (ha : 0 < a) (hkm : 0 < km)
     (hhp : hp = a * tp) (hhm : hm = a * (1 - tm)) (hkp : kp = a * sp)
@@ -533,7 +532,7 @@ theorem rimC6_rest (tm hm tp hp sp kp sm km a : ℝ) (htm : 0 < tm) (htp : 0 < t
   rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
   · simp only [CaseC09.ST, Dc, C3.sub, b0, b1, b2, b3, b4, b5, hex6_0, hex6_1, hex6_2, hex6_3, hex6_4, hex6_5]
     first
-    | (left; nlinarith [mul_pos ha htp, mul_pos ha hsp, mul_pos htp hsp, mul_pos a6 htp, mul_pos a6 hsp, mul_pos (mul_pos ha htp) a5, mul_pos hkm htp, mul_pos hkm hsp, mul_pos hkm a1, mul_pos (mul_pos ha htp) hsm, mul_pos (mul_pos ha htp) hsp, mul_pos (mul_pos ha hsp) hsm, mul_pos (mul_pos ha hsp) a3, mul_pos (mul_pos ha a3) hsm, mul_pos (mul_pos ha a3) htp, mul_pos (mul_pos ha a3) a1, mul_pos (mul_pos ha a3) a5, mul_pos (mul_pos ha htm) a1, mul_pos (mul_pos ha htm) a5, mul_pos (mul_pos ha htm) hsm, mul_pos (mul_pos ha a4) htm, mul_pos (mul_pos ha a4) hsm, mul_pos ha a4, mul_pos hkm htm, mul_pos hkm hsm, mul_pos (mul_pos hkm htm) a1, mul_pos hkm a5, mul_pos (mul_pos hkm htp) a5, mul_pos (mul_pos hkm hsm) htp, mul_pos (mul_pos ha htp) a2, mul_pos (mul_pos ha hsp) a2, mul_pos (mul_pos ha hsp) htp])
+    | (left; nlinarith [mul_pos ha htp, mul_pos ha hsp, mul_pos htp hsp, mul_pos a6 htp, mul_pos a6 hsp, mul_pos (mul_pos ha htp) a5, mul_pos hkm htp, mul_pos hkm hsp, mul_pos hkm a1, mul_pos (mul_pos ha htp) hsm, mul_pos (mul_pos ha htp) hsp, mul_pos (mul_pos ha hsp) hsm, mul_pos (mul_pos ha hsp) a3, mul_pos (mul_pos ha a3) hsm, mul_pos (mul_pos ha a3) htp, mul_pos (mul_pos ha a3) a1, mul_pos (mul_pos ha a3) a5, mul_pos (mul_pos ha a4) hsm, mul_pos ha a4, mul_pos hkm hsm, mul_pos hkm a5, mul_pos (mul_pos hkm htp) a5, mul_pos (mul_pos hkm hsm) htp, mul_pos (mul_pos ha htp) a2, mul_pos (mul_pos ha hsp) a2, mul_pos (mul_pos ha hsp) htp])
     | (right; constructor
        · ring1
        · nlinarith [mul_pos a1 a2, mul_pos htp a2, a1, a2, htp, mul_pos htp a1, mul_pos ha a1, mul_pos ha a2, mul_pos ha htp, mul_pos ha hsp, mul_pos hsp a1, mul_pos hsp a2])
@@ -651,7 +650,7 @@ def crF (p q : ℝ × ℝ) : ℝ := p.1 * q.2 - p.2 * q.1
 theorem Dc_uF (ρ b : ℝ) (a c : C3) : Dc a c (uF ρ b) = - crF (scF ρ b a) (scF ρ b c) := by
   simp only [Dc, uF, scF, crF]; ring
 
-theorem rimA_cyc (tp tm hm sp kp sm km ρ b : ℝ) (d : C3) (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm)
+theorem rimA_cyc (tp tm hm ρ b : ℝ) (d : C3) (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm)
     (htm1 : tm < 1) (hb : 0 < b) (hρ : 0 < ρ) (hhm : 0 < hm) (hbm : b * tm ≤ hm) :
     ∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
       ST (-1) (uF ρ b) d
@@ -679,8 +678,8 @@ theorem rimA_cyc (tp tm hm sp kp sm km ρ b : ℝ) (d : C3) (htp : 0 < tp) (htp1
     left
     nlinarith [f1, f2, f3, f4]
 
-theorem rimA_restW (tp tm hm sp kp ρ b : ℝ) (d : C3) (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm)
-    (htm1 : tm < 1) (hb : 0 < b) (hρ : 0 < ρ) (hhm : 0 < hm) (hbm : b * tm ≤ hm)
+theorem rimA_restW (tp tm hm sp kp ρ b : ℝ) (d : C3) (htp1 : tp < 1) (htm : 0 < tm)
+    (htm1 : tm < 1) (hρ : 0 < ρ) (hhm : 0 < hm) (hbm : b * tm ≤ hm)
     (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (hroof : kp < b * (1 - sp))
     (HW : 0 < b * (1 - tp) * sp * (1 + ρ) - tp * kp + tp * sp * (ρ * b)) :
     ∀ i : ZMod 4,
@@ -693,7 +692,7 @@ theorem rimA_restW (tp tm hm sp kp ρ b : ℝ) (d : C3) (htp : 0 < tp) (htp1 : t
   have a2 := sub_pos.2 htm1
   have a3 := sub_pos.2 hsp1
   have f1 : 0 < hm * (1 + ρ) - ρ * b * tm := by
-    nlinarith [mul_nonneg (sub_nonneg.2 hbm) hρ.le, mul_pos hb htm]
+    nlinarith [mul_nonneg (sub_nonneg.2 hbm) hρ.le]
   have g1 : 0 < sp * (hm * (1 + ρ) - ρ * b * tm) + tm * kp := by positivity
   have g2 : 0 < (1 + ρ - tm) * kp + (1 - sp) * (hm * (1 + ρ) - ρ * b * tm) := by
     have : 0 < 1 + ρ - tm := by linarith
@@ -707,8 +706,8 @@ theorem rimA_restW (tp tm hm sp kp ρ b : ℝ) (d : C3) (htp : 0 < tp) (htp1 : t
     left
     nlinarith [g1, g2, g3, HW]
 
-theorem rimA_restN (tp tm hm sm km ρ b : ℝ) (d : C3) (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm)
-    (htm1 : tm < 1) (hb : 0 < b) (hρ : 0 < ρ) (hhm : 0 < hm) (hbm : b * tm ≤ hm)
+theorem rimA_restN (tp tm hm sm km ρ b : ℝ) (d : C3) (htp : 0 < tp) (htp1 : tp < 1)
+ (hb : 0 < b) (hρ : 0 < ρ)
     (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km)
     (HN1 : 0 < -(tm * km) - tm * sm * (ρ * b) + hm * sm * (1 + ρ))
     (HN2 : 0 < (1 + ρ - tm) * (-km - sm * (ρ * b) + hm) - (-(ρ * b) + hm) * (sm * (1 + ρ) - tm)) :
@@ -730,7 +729,7 @@ theorem rimA_restN (tp tm hm sm km ρ b : ℝ) (d : C3) (htp : 0 < tp) (htp1 : t
     left
     nlinarith [g3, g4, HN1, HN2]
 
-theorem rimA_restA (tp tm hm ρ b : ℝ) (htp : 0 < tp) (htp1 : tp < 1) (htm : 0 < tm)
+theorem rimA_restA (tp tm hm ρ b : ℝ) (htp1 : tp < 1)
     (htm1 : tm < 1) (hb : 0 < b) (hρ : 0 < ρ) (hhm : 0 < hm) :
     ∀ i : ZMod 4,
       ST (-1) (uF ρ b) ⟨0, 0, -1⟩
@@ -1154,8 +1153,8 @@ end
 section
 variable {tp tm hm sp kp sm km ρ b lam : ℝ}
 
-theorem rimFA_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam pV (pM tm hm) (pN sm km)) (hz : Lx ρ b lam (pM tm hm) pB (pN sm km))
-    (hw : Lx ρ b lam (pU tp b) pV (pW sp kp)) :
+theorem rimFA_cyc (H : FPar tp tm hm sp kp sm km ρ b lam)
+ :
     ∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
       CaseC09.ST (-1) (uF ρ b) (dF lam) (((quad pV (pM tm hm) pB (pU tp b)) (i + 1)).sub ((quad pV (pM tm hm) pB (pU tp b)) i))
         (((quad pV (pM tm hm) pB (pU tp b)) j).sub ((quad pV (pM tm hm) pB (pU tp b)) i)) := by
@@ -1194,7 +1193,7 @@ theorem rimFA_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam pV 
     | (apply Lx_rot; assumption)
     | (apply Lx_rot; apply Lx_rot; assumption)
 
-theorem rimFA_restW (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam pV (pM tm hm) (pN sm km)) (hz : Lx ρ b lam (pM tm hm) pB (pN sm km))
+theorem rimFA_restW (H : FPar tp tm hm sp kp sm km ρ b lam)
     (hw : Lx ρ b lam (pU tp b) pV (pW sp kp)) :
     ∀ i : ZMod 4,
       CaseC09.ST (-1) (uF ρ b) (dF lam) (((quad pV (pM tm hm) pB (pU tp b)) (i + 1)).sub ((quad pV (pM tm hm) pB (pU tp b)) i))
@@ -1229,7 +1228,7 @@ theorem rimFA_restW (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam p
     | assumption
 
 theorem rimFA_restN (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam pV (pM tm hm) (pN sm km)) (hz : Lx ρ b lam (pM tm hm) pB (pN sm km))
-    (hw : Lx ρ b lam (pU tp b) pV (pW sp kp)) :
+ :
     ∀ i : ZMod 4,
       CaseC09.ST (-1) (uF ρ b) (dF lam) (((quad pV (pM tm hm) pB (pU tp b)) (i + 1)).sub ((quad pV (pM tm hm) pB (pU tp b)) i))
         ((pN sm km).sub ((quad pV (pM tm hm) pB (pU tp b)) i)) := by
@@ -1264,8 +1263,8 @@ theorem rimFA_restN (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam p
     | (apply Lx_rot; assumption)
     | (apply Lx_rot; apply Lx_rot; assumption)
 
-theorem rimFA_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam pV (pM tm hm) (pN sm km)) (hz : Lx ρ b lam (pM tm hm) pB (pN sm km))
-    (hw : Lx ρ b lam (pU tp b) pV (pW sp kp)) :
+theorem rimFA_restA (H : FPar tp tm hm sp kp sm km ρ b lam)
+ :
     ∀ i : ZMod 4,
       CaseC09.ST (-1) (uF ρ b) (dF lam) (((quad pV (pM tm hm) pB (pU tp b)) (i + 1)).sub ((quad pV (pM tm hm) pB (pU tp b)) i))
         (pA.sub ((quad pV (pM tm hm) pB (pU tp b)) i)) := by
@@ -1300,8 +1299,8 @@ theorem rimFA_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam p
     | (apply Lx_rot; assumption)
     | (apply Lx_rot; apply Lx_rot; assumption)
 
-theorem rimFB_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM tm hm) (pN sm km) < 0) (hz : Lx ρ b lam (pN sm km) pB (pM tm hm))
-    (hw : Lx ρ b lam (pU tp b) pV (pW sp kp)) :
+theorem rimFB_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM tm hm) (pN sm km) < 0)
+ :
     ∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
       CaseC09.ST (-1) (uF ρ b) (dF lam) (((quad pV (pN sm km) pB (pU tp b)) (i + 1)).sub ((quad pV (pN sm km) pB (pU tp b)) i))
         (((quad pV (pN sm km) pB (pU tp b)) j).sub ((quad pV (pN sm km) pB (pU tp b)) i)) := by
@@ -1341,7 +1340,7 @@ theorem rimFB_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM 
     | (apply Lx_rot; assumption)
     | (apply Lx_rot; apply Lx_rot; assumption)
 
-theorem rimFB_restW (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM tm hm) (pN sm km) < 0) (hz : Lx ρ b lam (pN sm km) pB (pM tm hm))
+theorem rimFB_restW (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM tm hm) (pN sm km) < 0)
     (hw : Lx ρ b lam (pU tp b) pV (pW sp kp)) :
     ∀ i : ZMod 4,
       CaseC09.ST (-1) (uF ρ b) (dF lam) (((quad pV (pN sm km) pB (pU tp b)) (i + 1)).sub ((quad pV (pN sm km) pB (pU tp b)) i))
@@ -1377,7 +1376,7 @@ theorem rimFB_restW (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (p
     | assumption
 
 theorem rimFB_restM (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM tm hm) (pN sm km) < 0) (hz : Lx ρ b lam (pN sm km) pB (pM tm hm))
-    (hw : Lx ρ b lam (pU tp b) pV (pW sp kp)) :
+ :
     ∀ i : ZMod 4,
       CaseC09.ST (-1) (uF ρ b) (dF lam) (((quad pV (pN sm km) pB (pU tp b)) (i + 1)).sub ((quad pV (pN sm km) pB (pU tp b)) i))
         ((pM tm hm).sub ((quad pV (pN sm km) pB (pU tp b)) i)) := by
@@ -1413,8 +1412,8 @@ theorem rimFB_restM (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (p
     | (apply Lx_rot; assumption)
     | (apply Lx_rot; apply Lx_rot; assumption)
 
-theorem rimFB_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM tm hm) (pN sm km) < 0) (hz : Lx ρ b lam (pN sm km) pB (pM tm hm))
-    (hw : Lx ρ b lam (pU tp b) pV (pW sp kp)) :
+theorem rimFB_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM tm hm) (pN sm km) < 0)
+ :
     ∀ i : ZMod 4,
       CaseC09.ST (-1) (uF ρ b) (dF lam) (((quad pV (pN sm km) pB (pU tp b)) (i + 1)).sub ((quad pV (pN sm km) pB (pU tp b)) i))
         (pA.sub ((quad pV (pN sm km) pB (pU tp b)) i)) := by
@@ -1451,7 +1450,7 @@ theorem rimFB_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (p
     | (apply Lx_rot; apply Lx_rot; assumption)
 
 theorem rimFC_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam pV (pM tm hm) (pN sm km)) (hz : Lx ρ b lam (pM tm hm) (pN sm km) pB)
-    (hw : Lx ρ b lam (pU tp b) pV (pW sp kp)) :
+ :
     ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       CaseC09.ST (-1) (uF ρ b) (dF lam) (((quint pV (pM tm hm) (pN sm km) pB (pU tp b)) (i + 1)).sub ((quint pV (pM tm hm) (pN sm km) pB (pU tp b)) i))
         (((quint pV (pM tm hm) (pN sm km) pB (pU tp b)) j).sub ((quint pV (pM tm hm) (pN sm km) pB (pU tp b)) i)) := by
@@ -1525,7 +1524,7 @@ theorem rimFC_restW (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam p
     | assumption
 
 theorem rimFC_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam pV (pM tm hm) (pN sm km)) (hz : Lx ρ b lam (pM tm hm) (pN sm km) pB)
-    (hw : Lx ρ b lam (pU tp b) pV (pW sp kp)) :
+ :
     ∀ i : ZMod 5,
       CaseC09.ST (-1) (uF ρ b) (dF lam) (((quint pV (pM tm hm) (pN sm km) pB (pU tp b)) (i + 1)).sub ((quint pV (pM tm hm) (pN sm km) pB (pU tp b)) i))
         (pA.sub ((quint pV (pM tm hm) (pN sm km) pB (pU tp b)) i)) := by
@@ -1562,7 +1561,7 @@ theorem rimFC_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam p
     | (apply Lx_rot; apply Lx_rot; assumption)
 
 theorem rimFD_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM tm hm) (pN sm km) < 0) (hz : Lx ρ b lam (pM tm hm) pB (pN sm km))
-    (hw : Lx ρ b lam (pU tp b) pV (pW sp kp)) :
+ :
     ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       CaseC09.ST (-1) (uF ρ b) (dF lam) (((quint pV (pN sm km) (pM tm hm) pB (pU tp b)) (i + 1)).sub ((quint pV (pN sm km) (pM tm hm) pB (pU tp b)) i))
         (((quint pV (pN sm km) (pM tm hm) pB (pU tp b)) j).sub ((quint pV (pN sm km) (pM tm hm) pB (pU tp b)) i)) := by
@@ -1640,7 +1639,7 @@ theorem rimFD_restW (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (p
     | assumption
 
 theorem rimFD_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM tm hm) (pN sm km) < 0) (hz : Lx ρ b lam (pM tm hm) pB (pN sm km))
-    (hw : Lx ρ b lam (pU tp b) pV (pW sp kp)) :
+ :
     ∀ i : ZMod 5,
       CaseC09.ST (-1) (uF ρ b) (dF lam) (((quint pV (pN sm km) (pM tm hm) pB (pU tp b)) (i + 1)).sub ((quint pV (pN sm km) (pM tm hm) pB (pU tp b)) i))
         (pA.sub ((quint pV (pN sm km) (pM tm hm) pB (pU tp b)) i)) := by
@@ -1818,7 +1817,7 @@ theorem lx_MUW (H : FPar tp tm hm sp kp sm km ρ b lam)
   have hr : tp * (b * (1 - sp) - kp) < b * (tp - sp * (1 + ρ)) := by nlinarith
   have hd : 0 < tp - sp * (1 + ρ) := by linarith
   nlinarith [mul_nonneg (sub_nonneg.2 hbm) hd.le, mul_pos htm r3]
-theorem rimAP_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam pV (pM tm hm) (pN sm km)) (hz : Lx ρ b lam (pM tm hm) pB (pN sm km))
+theorem rimAP_cyc (H : FPar tp tm hm sp kp sm km ρ b lam)
     (hW : Ot ρ b (pU tp b) pV (pW sp kp) < 0) :
     ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       CaseC09.ST (-1) (uF ρ b) (dF lam) (((quint pV (pM tm hm) pB (pU tp b) (pW sp kp)) (i + 1)).sub ((quint pV (pM tm hm) pB (pU tp b) (pW sp kp)) i))
@@ -1904,7 +1903,7 @@ theorem rimAP_restN (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam p
     | (apply Lx_rot; assumption)
     | (apply Lx_rot; apply Lx_rot; assumption)
 
-theorem rimAP_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam pV (pM tm hm) (pN sm km)) (hz : Lx ρ b lam (pM tm hm) pB (pN sm km))
+theorem rimAP_restA (H : FPar tp tm hm sp kp sm km ρ b lam)
     (hW : Ot ρ b (pU tp b) pV (pW sp kp) < 0) :
     ∀ i : ZMod 5,
       CaseC09.ST (-1) (uF ρ b) (dF lam) (((quint pV (pM tm hm) pB (pU tp b) (pW sp kp)) (i + 1)).sub ((quint pV (pM tm hm) pB (pU tp b) (pW sp kp)) i))
@@ -1945,7 +1944,7 @@ theorem rimAP_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Lx ρ b lam p
     | (apply Lx_rot; assumption)
     | (apply Lx_rot; apply Lx_rot; assumption)
 
-theorem rimBP_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM tm hm) (pN sm km) < 0) (hz : Lx ρ b lam (pN sm km) pB (pM tm hm))
+theorem rimBP_cyc (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM tm hm) (pN sm km) < 0)
     (hW : Ot ρ b (pU tp b) pV (pW sp kp) < 0) :
     ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
       CaseC09.ST (-1) (uF ρ b) (dF lam) (((quint pV (pN sm km) pB (pU tp b) (pW sp kp)) (i + 1)).sub ((quint pV (pN sm km) pB (pU tp b) (pW sp kp)) i))
@@ -2033,7 +2032,7 @@ theorem rimBP_restM (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (p
     | (apply Lx_rot; assumption)
     | (apply Lx_rot; apply Lx_rot; assumption)
 
-theorem rimBP_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM tm hm) (pN sm km) < 0) (hz : Lx ρ b lam (pN sm km) pB (pM tm hm))
+theorem rimBP_restA (H : FPar tp tm hm sp kp sm km ρ b lam) (hx : Ot ρ b pV (pM tm hm) (pN sm km) < 0)
     (hW : Ot ρ b (pU tp b) pV (pW sp kp) < 0) :
     ∀ i : ZMod 5,
       CaseC09.ST (-1) (uF ρ b) (dF lam) (((quint pV (pN sm km) pB (pU tp b) (pW sp kp)) (i + 1)).sub ((quint pV (pN sm km) pB (pU tp b) (pW sp kp)) i))
@@ -2569,7 +2568,7 @@ theorem rimE2a_rupert (hL : F.LMp) (heq : F.S.cm = F.S.dp) (d1 d3 : ℝ)
     · exact absurd rfl (hj' 3)
     · rw [F.ptC_4]
       exact rimE2a_rest F.S.tm F.S.hm F.S.tp F.S.hp F.S.sp F.S.kp F.S.sm F.S.km F.S.ap F.S.am d1 d3
-        F.S.tm_pos F.S.tp_pos F.S.tp_lt F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt
+        F.S.tm_pos F.S.tp_pos F.S.tp_lt F.S.tm_lt F.S.sp_lt F.S.sm_pos F.S.sm_lt
         F.S.ap_pos F.S.am_pos hhp hhm hkp hkm hr1 hr2 hDa' hDe i
     · exact absurd rfl (hj' 0)
     · exact absurd rfl (hj' 2)
@@ -2617,8 +2616,8 @@ theorem rimE2b_rupert (hL : F.LMp) (heq : F.S.cm = F.S.dp) (d1 d3 : ℝ)
   · intro i j h1 h2
     simp only [hcc]
     exact rimE2b_cyc F.S.tm F.S.hm F.S.tp F.S.hp F.S.sp F.S.kp F.S.sm F.S.km F.S.ap F.S.am d1 d3
-      F.S.tm_pos F.S.tp_pos F.S.tp_lt F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt
-      F.S.ap_pos F.S.am_pos hhp hhm hkp hkm hr1 hr2 hDa' hDe i j h1 h2
+      F.S.tm_pos F.S.tp_pos F.S.tp_lt F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_lt
+      F.S.ap_pos F.S.am_pos hhp hhm hkp hr1 hr2 hDa' hDe i j h1 h2
   · intro j' hj' i
     simp only [hcc]
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -2807,7 +2806,7 @@ theorem rimW1_rupert (hQ : F.QW) (d1 d3 : ℝ) (hd1 : d1 < 0) (hd3 : 0 < F.S.am 
     · exact absurd rfl (hj' 2)
     · rw [F.ptC_4]
       exact rimW1_rest F.S.tm F.S.hm F.S.tp F.S.hp F.S.sp F.S.kp F.S.sm F.S.km F.S.ap F.S.am d1 d3
-        F.S.tm_pos F.S.tp_pos F.S.tp_lt F.S.tm_lt F.S.sm_pos F.S.sm_lt F.S.ap_pos F.S.am_pos hs
+        F.S.tm_pos F.S.tp_pos F.S.tp_lt F.S.tm_lt F.S.sm_pos F.S.sm_lt F.S.am_pos hs
         hhp hhm hkp hkm hr1 hd1 hd3 i
     · exact absurd rfl (hj' 5)
     · exact absurd rfl (hj' 1)
@@ -2990,7 +2989,7 @@ theorem rimC6_rupert (hab : F.S.ap = F.S.bm) (hac : F.S.ap = F.S.cp)
     · exact absurd rfl (hj' 3)
     · rw [F.ptC_4]
       exact rimC6_rest F.S.tm F.S.hm F.S.tp F.S.hp F.S.sp F.S.kp F.S.sm F.S.km F.S.ap
-        F.S.tm_pos F.S.tp_pos F.S.tp_lt F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt
+         F.S.tp_pos F.S.tp_lt F.S.tm_lt F.S.sp_pos F.S.sp_lt F.S.sm_pos F.S.sm_lt
         F.S.ap_pos F.S.km_pos hhp hhm hkp hroof hr2 hc i
     · exact absurd rfl (hj' 0)
     · exact absurd rfl (hj' 2)
@@ -3224,20 +3223,20 @@ theorem rimFA_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (uF F.fRho F.S.bp) ⟨0, 0, -1⟩ (Or.inr (Or.inl (by simp [uF]))) ?_ ?_ ?_
   · intro i j h1 h2
     simp only [hcc]
-    exact rimA_cyc F.S.tp F.S.tm F.S.hm F.S.sp F.S.kp F.S.sm F.S.km F.fRho F.S.bp _ F.S.tp_pos
+    exact rimA_cyc F.S.tp F.S.tm F.S.hm F.fRho F.S.bp _ F.S.tp_pos
       F.S.tp_lt F.S.tm_pos F.S.tm_lt F.S.bp_pos hρ F.S.hm_pos hbm i j h1 h2
   · intro j' hj' i
     simp only [hcc]
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · exact absurd (by simp [quad_3]) (hj' 3)
     · rw [F.ptC_1]
-      exact rimA_restW F.S.tp F.S.tm F.S.hm F.S.sp F.S.kp F.fRho F.S.bp _ F.S.tp_pos F.S.tp_lt
-        F.S.tm_pos F.S.tm_lt F.S.bp_pos hρ F.S.hm_pos hbm F.S.sp_pos F.S.sp_lt F.S.kp_pos hroof HW i
+      exact rimA_restW F.S.tp F.S.tm F.S.hm F.S.sp F.S.kp F.fRho F.S.bp _ F.S.tp_lt
+        F.S.tm_pos F.S.tm_lt hρ F.S.hm_pos hbm F.S.sp_pos F.S.sp_lt F.S.kp_pos hroof HW i
     · rw [F.ptC_2]
       exact rimA_restN F.S.tp F.S.tm F.S.hm F.S.sm F.S.km F.fRho F.S.bp _ F.S.tp_pos F.S.tp_lt
-        F.S.tm_pos F.S.tm_lt F.S.bp_pos hρ F.S.hm_pos hbm F.S.sm_pos F.S.sm_lt F.S.km_pos HN1 HN2 i
+         F.S.bp_pos hρ F.S.sm_pos F.S.sm_lt F.S.km_pos HN1 HN2 i
     · rw [F.ptC_3]
-      exact rimA_restA F.S.tp F.S.tm F.S.hm F.fRho F.S.bp F.S.tp_pos F.S.tp_lt F.S.tm_pos
+      exact rimA_restA F.S.tp F.S.tm F.S.hm F.fRho F.S.bp F.S.tp_lt
         F.S.tm_lt F.S.bp_pos hρ F.S.hm_pos i
     · exact absurd (by simp [quad_2]) (hj' 2)
     · exact absurd (by simp [quad_0]) (hj' 0)
@@ -3290,17 +3289,17 @@ theorem rimFA2_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (Or.inr rfl) (uF F.fRho F.S.bp) (dF lam) (Or.inr (Or.inl (by simp [uF]))) ?_ ?_ ?_
   · intro i j h1 h2
     simp only [hcc]
-    exact rimFA_cyc H hx hz hw i j h1 h2
+    exact rimFA_cyc H i j h1 h2
   · intro j' hj' i
     simp only [hcc]
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · exact absurd (by simp [quad_3]) (hj' 3)
     · rw [F.ptC_1]
-      exact rimFA_restW H hx hz hw i
+      exact rimFA_restW H hw i
     · rw [F.ptC_2]
-      exact rimFA_restN H hx hz hw i
+      exact rimFA_restN H hx hz i
     · rw [F.ptC_3]
-      exact rimFA_restA H hx hz hw i
+      exact rimFA_restA H i
     · exact absurd (by simp [quad_2]) (hj' 2)
     · exact absurd (by simp [quad_0]) (hj' 0)
     · exact absurd (by simp [quad_1]) (hj' 1)
@@ -3339,20 +3338,20 @@ theorem rimFB_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (Or.inr rfl) (uF F.fRho F.S.bp) (dF lam) (Or.inr (Or.inl (by simp [uF]))) ?_ ?_ ?_
   · intro i j h1 h2
     simp only [hcc]
-    exact rimFB_cyc H hx hz hw i j h1 h2
+    exact rimFB_cyc H hx i j h1 h2
   · intro j' hj' i
     simp only [hcc]
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · exact absurd (by simp [quad_3]) (hj' 3)
     · rw [F.ptC_1]
-      exact rimFB_restW H hx hz hw i
+      exact rimFB_restW H hx hw i
     · exact absurd (by simp [quad_1]) (hj' 1)
     · rw [F.ptC_3]
-      exact rimFB_restA H hx hz hw i
+      exact rimFB_restA H hx i
     · exact absurd (by simp [quad_2]) (hj' 2)
     · exact absurd (by simp [quad_0]) (hj' 0)
     · rw [F.ptC_6]
-      exact rimFB_restM H hx hz hw i
+      exact rimFB_restM H hx hz i
   · have e : (fun i : ZMod 4 => F.toFrame7.GG (F.toFrame7.ptC (quad (5 : Fin 7) 2 4 0 i)) (uF F.fRho F.S.bp)) =
         fun i : ZMod 4 => F.a11 * F.fRho * quad (0:ℝ) (F.fMu * F.S.sm - F.fG * F.S.bp * F.S.km) F.fMu F.fMu i := by
       funext i
@@ -3386,7 +3385,7 @@ theorem rimFC_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (Or.inr rfl) (uF F.fRho F.S.bp) (dF lam) (Or.inr (Or.inl (by simp [uF]))) ?_ ?_ ?_
   · intro i j h1 h2
     simp only [hcc]
-    exact rimFC_cyc H hx hz hw i j h1 h2
+    exact rimFC_cyc H hx hz i j h1 h2
   · intro j' hj' i
     simp only [hcc]
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -3395,7 +3394,7 @@ theorem rimFC_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
       exact rimFC_restW H hx hz hw i
     · exact absurd (by simp [quint_2]) (hj' 2)
     · rw [F.ptC_3]
-      exact rimFC_restA H hx hz hw i
+      exact rimFC_restA H hx hz i
     · exact absurd (by simp [quint_3]) (hj' 3)
     · exact absurd (by simp [quint_0]) (hj' 0)
     · exact absurd (by simp [quint_1]) (hj' 1)
@@ -3442,7 +3441,7 @@ theorem rimFD_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (Or.inr rfl) (uF F.fRho F.S.bp) (dF lam) (Or.inr (Or.inl (by simp [uF]))) ?_ ?_ ?_
   · intro i j h1 h2
     simp only [hcc]
-    exact rimFD_cyc H hx hz hw i j h1 h2
+    exact rimFD_cyc H hx hz i j h1 h2
   · intro j' hj' i
     simp only [hcc]
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -3451,7 +3450,7 @@ theorem rimFD_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
       exact rimFD_restW H hx hz hw i
     · exact absurd (by simp [quint_1]) (hj' 1)
     · rw [F.ptC_3]
-      exact rimFD_restA H hx hz hw i
+      exact rimFD_restA H hx hz i
     · exact absurd (by simp [quint_3]) (hj' 3)
     · exact absurd (by simp [quint_0]) (hj' 0)
     · exact absurd (by simp [quint_2]) (hj' 2)
@@ -3572,7 +3571,7 @@ theorem rimFAP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (Or.inr rfl) (uF F.fRho F.S.bp) (dF lam) (Or.inr (Or.inl (by simp [uF]))) ?_ ?_ ?_
   · intro i j h1 h2
     simp only [hcc]
-    exact rimAP_cyc H hx hz hW' i j h1 h2
+    exact rimAP_cyc H hW' i j h1 h2
   · intro j' hj' i
     simp only [hcc]
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -3581,7 +3580,7 @@ theorem rimFAP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     · rw [F.ptC_2]
       exact rimAP_restN H hx hz hW' i
     · rw [F.ptC_3]
-      exact rimAP_restA H hx hz hW' i
+      exact rimAP_restA H hW' i
     · exact absurd (by simp [quint_2]) (hj' 2)
     · exact absurd (by simp [quint_0]) (hj' 0)
     · exact absurd (by simp [quint_1]) (hj' 1)
@@ -3623,7 +3622,7 @@ theorem rimFBP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     (Or.inr rfl) (uF F.fRho F.S.bp) (dF lam) (Or.inr (Or.inl (by simp [uF]))) ?_ ?_ ?_
   · intro i j h1 h2
     simp only [hcc]
-    exact rimBP_cyc H hx hz hW' i j h1 h2
+    exact rimBP_cyc H hx hW' i j h1 h2
   · intro j' hj' i
     simp only [hcc]
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
@@ -3631,7 +3630,7 @@ theorem rimFBP_rupert (heq : F.a12 = F.a11) (h22 : F.a11 < F.a22)
     · exact absurd (by simp [quint_4]) (hj' 4)
     · exact absurd (by simp [quint_1]) (hj' 1)
     · rw [F.ptC_3]
-      exact rimBP_restA H hx hz hW' i
+      exact rimBP_restA H hx hW' i
     · exact absurd (by simp [quint_2]) (hj' 2)
     · exact absurd (by simp [quint_0]) (hj' 0)
     · rw [F.ptC_6]
