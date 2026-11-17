@@ -200,7 +200,7 @@ theorem cycFacts {k : ℕ} [NeZero k] {pp : Nat} {L : List Nat} (hk : L.length =
   rw [hk] at h3 hall
   have h7' : ∀ v ∈ L, v < 7 := fun v hv => by simpa using h7 v hv
   have hk1 : 1 < k := by omega
-  haveI : Fact (1 < k) := ⟨hk1⟩
+  have : Fact (1 < k) := ⟨hk1⟩
   refine ⟨h3, ?_, ?_⟩
   · intro i j hij
     have e1 := cOf_val (k := k) h7' i

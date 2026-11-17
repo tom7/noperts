@@ -49,7 +49,7 @@ lemma waist_reduce (B P Q Y dx dz cx cz ex ey ez : ℝ) (hB : 0 < B) (hP : 0 < P
       0 < cross2 (cc B P Q Y (i + 1) - cc B P Q Y i) (cc B P Q Y j - cc B P Q Y i) := by
     intro i j h1 h2
     rcases zc4 i with rfl | rfl | rfl | rfl <;> rcases zc4 j with rfl | rfl | rfl | rfl <;>
-      first | (exfalso; apply h1; rfl) | (exfalso; apply h2; decide) | skip
+      try (first | (exfalso; apply h1; rfl) | (exfalso; apply h2; decide))
     all_goals
       simp [cross2, z12, z23, z30, cc0, cc1, cc2, cc3]
       nlinarith [mul_pos hB hQ, mul_pos hP hY, mul_pos hY hB]

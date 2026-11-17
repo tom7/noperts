@@ -79,7 +79,7 @@ theorem k18_r3_gram {α1 β1 β6 w γ4 pp pq pr qq qr rr : ℝ} (hα1 : 1 < α1)
       (α1 * (α1 - 1) * pp + α1 * β1 * pq - (α1 - 1) * pr - β1 * qr)) =
       (β6 - β1) * (((α1 - 1) * γ4) * (α1 * pq - qr) + m * β1 * qq) - ((α1 - 1) * γ4) * (α1 ^ 2 * pp - 2 * α1 * pr + rr) -
       m * β1 * (α1 * pq - qr) := by
-    rw [hm]; linear_combination (β6 - β1) * (α1 - 1) * E1 - (α1 - 1) * E2 + (α1 - 1) * β1 * E1 + (α1-1) * 0
+    rw [hm]; linear_combination (β6 - β1) * (α1 - 1) * E1 - (α1 - 1) * E2 + (α1 - 1) * β1 * E1
   have hqr : qr = -(w * pq) / γ4 := by field_simp; linarith
   have hrr : rr = (α1 * (w * pp + γ4 * pr) + β1 * (w * pq + γ4 * qr) - w * pr) / γ4 := by
     field_simp; linarith

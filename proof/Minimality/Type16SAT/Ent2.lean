@@ -75,7 +75,7 @@ theorem fup3_sound {g : Geo} (hF : FacOK g) (t p q : Nat) (hp : p < 7) (hq : q <
     · simp only [hip, hiq, ite_true]
       exact Sg3_zero_of hP (hF.zero t p q hip hiq)
     · have hiq' : inF t q = false := by simpa using hiq
-      simp only [hip, hiq, ite_true, ite_false]
+      simp only [hip, hiq, ite_true]
       have := hF.pos t p q hq hip hiq'
       have := Sg3_of_mulpos hP (n := 1) (r := ⟪g.N t, g.x p - g.x q⟫) (by simpa using this)
       simpa [cS, ltrue, lfalse, zeroS] using this
