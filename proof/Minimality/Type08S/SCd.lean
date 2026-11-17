@@ -44,11 +44,11 @@ top side `rg` (`Yr = Yg`, `Xg < Xr`) whose projection line `z = σ0 + m X` cross
 `σ0`. -/
 theorem lemmaSCd_I (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
     {L zp zx zf Xr Yr zr Xg zg σ0 m Xx z0 : ℝ}
-    (hL : 0 < L) (hzx : zp < zx) (hYr : 0 < Yr) (hXrg : Xg < Xr)
+    (hL : 0 < L) (hYr : 0 < Yr) (hXrg : Xg < Xr)
     (hσ0 : σ0 = zg - m * Xg) (hm : zr - zg = m * (Xr - Xg))
     (hD1 : zp < σ0) (hD2 : σ0 < zx) (hX0 : 0 < Xx) (hXL : Xx < L)
     (hch : zx * L + (zf - zx) * Xx = (σ0 + m * Xx) * L)
-    (hz1 : zf < z0) (hz2 : zr < z0) (hz3 : z0 < zg) (hz4 : z0 < zx) (hz5 : z0 < σ0)
+    (hz1 : zf < z0) (hz2 : zr < z0) (hz3 : z0 < zg) (hz5 : z0 < σ0)
     (hE : ∀ᶠ s : ℝ in atTop, ∀ y ∈ E, TriCert (rim5 e1 e2 e3 o L zp zx zf Xr Yr zr Xg Yr zg E)
       (pc e1 e2 e3 0 0 1) (pc e1 e2 e3 (1 * s) (-1) 0) y) :
     IsRupert (rim5 e1 e2 e3 o L zp zx zf Xr Yr zr Xg Yr zg E) := by

@@ -46,7 +46,7 @@ theorem norm08_ne {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) :
 /-- **T on H1** (no extra hypothesis: the order Claim is `allsep_false`, G6F1). -/
 theorem close_T_H1 {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
     (hT : IsT a' b c d) (hH : H1 b b' c c' d) (hco : ¬ CoT2 a a' b b' c c' d)
-    (hnt : ¬ RTouch a a' b b' c c' d) :
+ :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   obtain ⟨hbc', hbb', hbc, hb'c, ha'b, ha'b', ha'c, ha'c', hcc'⟩ := norm08_ne N
   have hbd := b_ne_d N hT hH

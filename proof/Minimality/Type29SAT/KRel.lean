@@ -48,7 +48,7 @@ theorem krel_sign {g : Geo} (hF : FacOK g) (hO : OriOK g) (F I x y s' r' : Nat)
     (hp2 : inF I (EA y) = true) (hq2 : inF I (EB y) = true)
     (hrI : inF I r' = true) (hrF : inF F r' = false) (hsF : inF F s' = true) (hsI : inF I s' = false)
     (hr7 : r' < 7) (hs7 : s' < 7) (hF9 : F < 9) (ho : oriv F (EA y) (EB y) s' ≠ 0)
-    (hxA : EA x < 7) (hxB : EB x < 7) (hyB : EB y < 7)
+ (hyB : EB y < 7)
     (hf : ∃ f, inF f (EA y) = true ∧ inF f (EB y) = false) :
     Sg3 (rho g) (krelS F x y s') ⟪g.N I, g.dv x⟫ := by
   obtain ⟨f, hfA, hfB⟩ := hf
@@ -108,7 +108,7 @@ theorem krelOK1_sound {g : Geo} (hG : GeoOK g) {p : List Nat} {cl : List Lit}
   have hxAB := EAB_lt (prm p 2) hx21
   have hyAB := EAB_lt (prm p 3) hy21
   have SA := krel_sign hG.hF hG.hO (prm p 0) (prm p 1) (prm p 2) (prm p 3) (prm p 4) (prm p 5)
-    hx1 hx2 hp1 hq1 hp2 hq2 hrI hrF hsF hsI hr7 hs7 hF9 ho hxAB.1 hxAB.2 hyAB.2 ⟨f, hf⟩
+    hx1 hx2 hp1 hq1 hp2 hq2 hrI hrF hsF hsI hr7 hs7 hF9 ho hyAB.2 ⟨f, hf⟩
   have SB : Sg3 (rho g) (fup3 (prm p 1) (EA (prm p 2)) (EB (prm p 2))) ⟪g.N (prm p 1), g.dv (prm p 2)⟫ :=
     fup3_sound hG.hF (prm p 1) _ _ hxAB.1 hxAB.2
   apply anyCov_holds (rho_proper g) hc
@@ -129,7 +129,7 @@ theorem krel_sign2 {g : Geo} (hF : FacOK g) (hO : OriOK g) (F I X Y s' r' : Nat)
     (hp2 : inF I (EA Y) = true) (hq2 : inF I (EB Y) = true)
     (hrI : inF I r' = true) (hrF : inF F r' = false) (hsF : inF F s' = true) (hsI : inF I s' = false)
     (hr7 : r' < 7) (hs7 : s' < 7) (hF9 : F < 9) (ho : oriv F (EA Y) (EB Y) s' ≠ 0)
-    (hxA : EA X < 7) (hxB : EB X < 7) (hyB : EB Y < 7)
+ (hyB : EB Y < 7)
     (hf : ∃ f, inF f (EA Y) = true ∧ inF f (EB Y) = false) :
     Sg3 (rho g) (mul3 (atomS (V.kv F Y X)) (cS (oriv F (EA Y) (EB Y) s'))) ⟪g.N I, g.dv X⟫ := by
   obtain ⟨f, hfA, hfB⟩ := hf
@@ -182,7 +182,7 @@ theorem krelOK2_sound {g : Geo} (hG : GeoOK g) {p : List Nat} {cl : List Lit}
   have hxAB := EAB_lt (prm p 3) hx21
   have hyAB := EAB_lt (prm p 2) hy21
   have SA := krel_sign2 hG.hF hG.hO (prm p 0) (prm p 1) (prm p 3) (prm p 2) (prm p 4) (prm p 5)
-    hx1 hx2 hp1 hq1 hp2 hq2 hrI hrF hsF hsI hr7 hs7 hF9 ho hxAB.1 hxAB.2 hyAB.2 ⟨f, hf⟩
+    hx1 hx2 hp1 hq1 hp2 hq2 hrI hrF hsF hsI hr7 hs7 hF9 ho hyAB.2 ⟨f, hf⟩
   have SB : Sg3 (rho g) (fup3 (prm p 1) (EA (prm p 3)) (EB (prm p 3))) ⟪g.N (prm p 1), g.dv (prm p 3)⟫ :=
     fup3_sound hG.hF (prm p 1) _ _ hxAB.1 hxAB.2
   apply anyCov_holds (rho_proper g) hc

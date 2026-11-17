@@ -14,23 +14,23 @@ def Ineq08w (θ : Fin 6 → ℝ) : Prop :=
   (∀ k : Fin 24, k ≠ 9 → k ≠ 10 → k ≠ 11 → 0 < ineq08 θ k) ∧ 0 ≤ gWa θ ∧ 0 ≤ gWb θ
 
 set_option maxHeartbeats 4000000 in
-theorem polyAw (a1 b1 a4 g4 b6 g6 : ℝ) (p0 : 0 < a1) (p1 : 0 < b1) (p2 : 0 < a4) (p3 : 0 < g4) (p4 : 0 < b6) (p5 : 0 < g6) (e1 : 0 < a1 + b1 - 1) (e2 : 0 < a4 + g4 - 1) (e3 : 0 < b6 + g6 - 1) (dA : 0 < -1 + g6) (dB : 0 < -1 + a1) (ga : 0 ≤ -a1 + a1 * g4 - b1 * a4 + a4) (gb : 0 ≤ a1 * b6 + b1 - b1 * g6 - b6) (f1 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f2 : 0 < a1 * g4 + b1 * g4 - g4) (f3 : 0 < -b1 + b1 * a4 + b1 * g4) (f4 : 0 < a1 * g6 + b1 * g6 - g6) (f5 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f6 : 0 < -a1 + a1 * b6 + a1 * g6) (f7 : 0 < a4 * b6 + g4 * b6 - b6) (f8 : 0 < -a4 + a4 * b6 + a4 * g6) (f9 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) (f10 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f11 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f12 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) :
+theorem polyAw (a1 b1 a4 g4 b6 g6 : ℝ) (p0 : 0 < a1) (p1 : 0 < b1) (p2 : 0 < a4) (p3 : 0 < g4) (p4 : 0 < b6) (dA : 0 < -1 + g6) (dB : 0 < -1 + a1) (ga : 0 ≤ -a1 + a1 * g4 - b1 * a4 + a4) (gb : 0 ≤ a1 * b6 + b1 - b1 * g6 - b6) (f3 : 0 < -b1 + b1 * a4 + b1 * g4) (f5 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f6 : 0 < -a1 + a1 * b6 + a1 * g6) (f7 : 0 < a4 * b6 + g4 * b6 - b6) (f8 : 0 < -a4 + a4 * b6 + a4 * g6) (f9 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) :
     0 < -a1 + a1 * b6 + a1 * g6 ∧ 0 < -a4 + a4 * b6 + a4 * g6 ∧ 0 < -1 + b6 + g6 ∧ 0 < -a1 + a1 * g4 * b6 + a1 * g6 - b1 * a4 + b1 * a4 * g6 + a4 - a4 * g6 ∧ 0 < 1 - a1 + a1 * g6 - b1 + b1 * g6 - g6 ∧ 0 < -a1 + a1 * g6 ∧ 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6 ∧ 0 < a1 * g4 * b6 + b1 - b1 * a4 + b1 * a4 * g6 - b1 * g6 - g4 * b6 ∧ 0 < a1 * g4 * b6 - b1 * a4 + b1 * a4 * g6 ∧ 0 < a4 * b6 + g4 * b6 - b6 ∧ 0 < a4 * b6 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · linarith [mul_pos p0 p4, mul_pos p0 dA]
   · linarith [mul_pos p2 dA, mul_pos p2 p4]
   · linarith [p4, dA]
-  · linarith [ga, f11]
+  · linarith [ga]
   · linarith [mul_pos dA dB, mul_pos p1 dA]
   · linarith [mul_pos p0 dA]
   · linarith [mul_nonneg (p4).le ga, mul_pos (mul_pos p1 p2) p4, mul_pos (mul_pos p1 p2) dA]
   · linarith [mul_pos f3 dA, mul_nonneg (p3).le gb]
   · linarith [mul_pos (mul_pos p0 p3) p4, mul_pos (mul_pos p1 p2) dA]
-  · linarith [mul_pos p4 e2]
+  · linarith []
   · linarith [mul_pos p2 p4]
 
 set_option maxHeartbeats 4000000 in
-theorem polyBw (a1 b1 a4 g4 b6 g6 : ℝ) (p0 : 0 < a1) (p1 : 0 < b1) (p2 : 0 < a4) (p3 : 0 < g4) (p4 : 0 < b6) (p5 : 0 < g6) (e1 : 0 < a1 + b1 - 1) (e2 : 0 < a4 + g4 - 1) (e3 : 0 < b6 + g6 - 1) (dA : 0 < 1 - g6) (dB : 0 < -1 + a1) (ga : 0 ≤ -a1 + a1 * g4 - b1 * a4 + a4) (gb : 0 ≤ a1 * b6 + b1 - b1 * g6 - b6) (f1 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f2 : 0 < a1 * g4 + b1 * g4 - g4) (f3 : 0 < -b1 + b1 * a4 + b1 * g4) (f4 : 0 < a1 * g6 + b1 * g6 - g6) (f5 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f6 : 0 < -a1 + a1 * b6 + a1 * g6) (f7 : 0 < a4 * b6 + g4 * b6 - b6) (f8 : 0 < -a4 + a4 * b6 + a4 * g6) (f9 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) (f10 : 0 < a1 * g4 * b6 + b1 * a4 * g6 + b1 * g4 - b1 * g6 - g4 * b6) (f11 : 0 < -a1 * g4 + a1 * g4 * b6 + a1 * g6 + b1 * a4 * g6 - a4 * g6) (f12 : 0 < a1 * g4 * b6 - a1 * b6 - b1 * a4 + b1 * a4 * g6 + a4 * b6) :
+theorem polyBw (a1 b1 a4 g4 b6 g6 : ℝ) (p0 : 0 < a1) (p1 : 0 < b1) (p2 : 0 < a4) (p3 : 0 < g4) (p5 : 0 < g6) (e2 : 0 < a4 + g4 - 1) (dA : 0 < 1 - g6) (dB : 0 < -1 + a1) (ga : 0 ≤ -a1 + a1 * g4 - b1 * a4 + a4) :
     0 < a1 * g4 ∧ 0 < a1 ∧ 0 < a1 * g6 ∧ 0 < -a1 + a1 * g4 + a4 ∧ 0 < a1 * g4 - g4 ∧ 0 < a1 * g4 - a1 * g6 + a4 * g6 ∧ 0 < a4 ∧ 0 < -1 + a4 + g4 ∧ 0 < a4 - a4 * g6 ∧ 0 < 1 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · linarith [mul_pos p0 p3]
@@ -79,7 +79,7 @@ theorem facts08w0 (θ : Fin 6 → ℝ) (hθ : ∀ k, k ≠ 9 → k ≠ 10 → k 
     (pos_iff_pos_of_mul_pos h20).mpr e3, (neg_iff_neg_of_mul_pos h21).mpr e4,
     (neg_iff_neg_of_mul_pos h22).mpr e4, (neg_iff_neg_of_mul_pos h23).mpr e4⟩
 
-theorem facts08w (θ : Fin 6 → ℝ) (hθ : ∀ k, k ≠ 9 → k ≠ 10 → k ≠ 11 → 0 < ineq08 θ k) (hga : 0 ≤ gWa θ) (hgb : 0 ≤ gWb θ) :
+theorem facts08w (θ : Fin 6 → ℝ) (hθ : ∀ k, k ≠ 9 → k ≠ 10 → k ≠ 11 → 0 < ineq08 θ k) :
     0 < θ 0 ∧ 0 < θ 1 ∧ 0 < θ 2 ∧ 0 < θ 3 ∧ 0 < θ 4 ∧ 0 < θ 5 ∧ 1 < θ 0 + θ 1 ∧ 1 < θ 2 + θ 3 ∧ 1 < θ 4 + θ 5 ∧
     0 < fc08 θ 0 3 5 1 ∧ 0 < fc08 θ 0 3 5 2 ∧ 0 < fc08 θ 0 3 5 4 ∧
     0 < fc08 θ 1 2 5 0 ∧ 0 < fc08 θ 1 2 5 3 ∧ 0 < fc08 θ 1 2 5 4 ∧
@@ -97,7 +97,7 @@ set_option maxHeartbeats 4000000 in
 theorem common08w (θ : Fin 6 → ℝ) (hθ : ∀ k, k ≠ 9 → k ≠ 10 → k ≠ 11 → 0 < ineq08 θ k) (hga : 0 ≤ gWa θ) (hgb : 0 ≤ gWb θ) :
     0 < (θ 0) ∧ 0 < (θ 1) ∧ 0 < (θ 2) ∧ 0 < (θ 3) ∧ 0 < (θ 4) ∧ 0 < (θ 5) ∧ 0 < (θ 0) + (θ 1) - 1 ∧ 0 < (θ 2) + (θ 3) - 1 ∧ 0 < (θ 4) + (θ 5) - 1 ∧ 0 ≤ -(θ 0) + (θ 0) * (θ 3) - (θ 1) * (θ 2) + (θ 2) ∧ 0 ≤ (θ 0) * (θ 4) + (θ 1) - (θ 1) * (θ 5) - (θ 4) ∧ 0 < (θ 0) * (θ 3) * (θ 4) + (θ 1) * (θ 2) * (θ 5) + (θ 1) * (θ 3) - (θ 1) * (θ 5) - (θ 3) * (θ 4) ∧ 0 < (θ 0) * (θ 3) + (θ 1) * (θ 3) - (θ 3) ∧ 0 < -(θ 1) + (θ 1) * (θ 2) + (θ 1) * (θ 3) ∧ 0 < (θ 0) * (θ 5) + (θ 1) * (θ 5) - (θ 5) ∧ 0 < -(θ 0) * (θ 3) + (θ 0) * (θ 3) * (θ 4) + (θ 0) * (θ 5) + (θ 1) * (θ 2) * (θ 5) - (θ 2) * (θ 5) ∧ 0 < -(θ 0) + (θ 0) * (θ 4) + (θ 0) * (θ 5) ∧ 0 < (θ 2) * (θ 4) + (θ 3) * (θ 4) - (θ 4) ∧ 0 < -(θ 2) + (θ 2) * (θ 4) + (θ 2) * (θ 5) ∧ 0 < (θ 0) * (θ 3) * (θ 4) - (θ 0) * (θ 4) - (θ 1) * (θ 2) + (θ 1) * (θ 2) * (θ 5) + (θ 2) * (θ 4) ∧ 0 < (θ 0) * (θ 3) * (θ 4) + (θ 1) * (θ 2) * (θ 5) + (θ 1) * (θ 3) - (θ 1) * (θ 5) - (θ 3) * (θ 4) ∧ 0 < -(θ 0) * (θ 3) + (θ 0) * (θ 3) * (θ 4) + (θ 0) * (θ 5) + (θ 1) * (θ 2) * (θ 5) - (θ 2) * (θ 5) ∧ 0 < (θ 0) * (θ 3) * (θ 4) - (θ 0) * (θ 4) - (θ 1) * (θ 2) + (θ 1) * (θ 2) * (θ 5) + (θ 2) * (θ 4) := by
   obtain ⟨p0, p1, p2, p3, p4, p5, q6, q7, q8, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12⟩ :=
-    facts08w θ hθ hga hgb
+    facts08w θ hθ
   simp only [fc08, cdet, cp08, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val] at f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
   unfold gWa at hga; unfold gWb at hgb
   refine ⟨p0, p1, p2, p3, p4, p5, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith, by linarith⟩

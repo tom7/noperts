@@ -24,7 +24,7 @@ theorem close_T2_final {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d)
     (hT : IsT a' b c d) (hco : ¬ CoT2 a a' b b' c c' d) (hnt : ¬ RTouch a a' b b' c c' d) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) := by
   by_cases h1 : H1 b b' c c' d
-  · exact close_T_H1 N hT h1 hco hnt
+  · exact close_T_H1 N hT h1 hco
   · by_cases h2 : H2 a b b' c d
     · exact close_T_H2' N hT h2 hco
     · exact close_T_off' N hT h1 h2 hco

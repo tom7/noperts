@@ -15,6 +15,7 @@ namespace H21
 
 variable {n k : ℕ} [NeZero k] {x : Fin n → ℝ³} {c : ZMod k → Fin n} {u₀ : ℝ³}
 
+omit [NeZero k] in
 theorem zmod_ne (hk : 3 ≤ k) : (1 : ZMod k) ≠ 0 ∧ (2 : ZMod k) ≠ 0 := by
   constructor
   · intro h
@@ -26,6 +27,7 @@ theorem zmod_ne (hk : 3 ≤ k) : (1 : ZMod k) ≠ 0 ∧ (2 : ZMod k) ≠ 0 := by
     rw [ZMod.natCast_eq_zero_iff] at h'
     have := Nat.le_of_dvd two_pos h'; omega
 
+omit [NeZero k] in
 theorem Q_pos (D : SilData k x c u₀) (i : ZMod k) (m : Fin n) (h0 : m ≠ c i) (h1 : m ≠ c (i + 1)) :
     0 < D.fA i (x m) * ⟪D.B i, u₀⟫ - D.fB i (x m) * ⟪D.A i, u₀⟫ := by
   have a := D.nA i m
@@ -35,6 +37,7 @@ theorem Q_pos (D : SilData k x c u₀) (i : ZMod k) (m : Fin n) (h0 : m ≠ c i)
   rcases D.strict i m h0 h1 with h | h <;> nlinarith [mul_pos_of_neg_of_neg h hv, mul_nonneg_of_nonpos_of_nonpos a hv.le,
     mul_nonpos_of_nonpos_of_nonneg b hu.le, mul_neg_of_neg_of_pos h hu]
 
+omit [NeZero k] in
 theorem det_eq (D : SilData k x c u₀) (i : ZMod k) (μ : ℝ)
     (hd : x (c (i + 1)) - x (c i) = μ • cross (D.A i) (D.B i)) (m : Fin n) :
     det3 (x (c (i + 1)) - x (c i)) (x m - x (c i)) u₀ =

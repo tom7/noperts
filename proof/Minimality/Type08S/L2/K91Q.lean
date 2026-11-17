@@ -11,7 +11,7 @@ set_option relaxedAutoImplicit true
 namespace Minimality.Type08Sp.C2
 
 theorem k91_q2 {u v t x b6 g6 lam pp pq qq qr rr : ℝ}
-    (hu : 0 < u) (hv : 0 < v) (ht : 0 < t) (hx : 0 < x) (hb6 : 0 < b6) (hg6 : 0 < g6)
+    (hu : 0 < u) (hv : 0 < v) (ht : 0 < t) (hb6 : 0 < b6) (hg6 : 0 < g6)
     (W : ℝ) (hWdef : W = v*(v+1)*x - t*(u+v+1)) (hW : 0 < W)
     (hpp : pp * u = (v+1) * t) (hpq : pq = -t) (hqr : qr * (v+1) = u * t) (hqq : qq = x + qr)
     (hrr : (rr - qr) * W = t*(u+v+1)*x)

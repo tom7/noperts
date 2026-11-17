@@ -133,7 +133,7 @@ theorem isRupert_type08_limit_hdn_rim {a a' b b' c c' d : ℝ³} (N : Norm08 a a
     (hcover : ∀ i, ∀ T ∈ (grp08 i).tests, ∀ u v : ZMod T.k,
       T.depth (pts08 a a' b b' c c' d) u = T.depth (pts08 a a' b b' c c' d) v →
       Relation.EqvGen (fun p p' => ∃ t, (ties t).1 = i ∧ (ties t).2 = (p, p')) (T.lab u) (T.lab v))
-    (hnt : ¬ Touch a a' b b' c c' d)
+    (hnt : ¬ Touch a' b b' c c' d)
     (hTco : IsT a' b c d → ¬ CoT2 a a' b b' c c' d)
     (hT'co : IsT' a b c' d → ¬ CoT'2 a a' b b' c c' d) :
     IsRupert (insert d ({a, a', b, b', c, c'} : Finset ℝ³)) ∨

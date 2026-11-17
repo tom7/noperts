@@ -105,7 +105,7 @@ theorem pic_N2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (hreg :
     have h : 0 < θ 4 * (θ 0 - 1) := by nlinarith [mul_pos p1 dA, gb]
     linarith [(pos_iff_pos_of_mul_pos h).mp p4]
   obtain ⟨t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10⟩ := polyAw (θ 0) (θ 1) (θ 2) (θ 3) (θ 4) (θ 5)
-    p0 p1 p2 p3 p4 p5 e1' e2' e3' dA dB ga gb f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
+    p0 p1 p2 p3 p4 dA dB ga gb f3 f5 f6 f7 f8 f9
   have hu : (nfShape08 d E₁ E₂ E₃ θ 4) - (nfShape08 d E₁ E₂ E₃ θ 1) = κ • e3 := hce
   have hkD : 0 < κ * det3 E₁ E₂ E₃ := by
     have h1 := cross_pts hF hce ((nfShape08 d E₁ E₂ E₃ θ 1)) ((nfShape08 d E₁ E₂ E₃ θ 2)) ((nfShape08 d E₁ E₂ E₃ θ 1)) ((nfShape08 d E₁ E₂ E₃ θ 5)) ((nfShape08 d E₁ E₂ E₃ θ 1))

@@ -44,7 +44,7 @@ theorem k32e_l2x4 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   rw [e8, k32e_U, k32e_ip _ _ _ hPR]
   rw [k32e_ip _ _ _ hPR] at hH hX3 hX4
   have hW : 0 < ⟪b - d, b - d⟫ + ⟪c - d, c - d⟫ - 2 * ⟪b - d, c - d⟫ := by linarith
-  have hid := k32e_core_x4 α1 β1 β6 γ6 _ _ _ _ _ hα hβ
+  have hid := k32e_core_x4 α1 β1 β6 γ6 _ _ _ _ _ hα
     (by have := hrel.1; linarith) hW hX4
   have : 0 ≤ -(k32e_G ⟪a - d, a - d⟫ ⟪a - d, b - d⟫ ⟪b - d, b - d⟫ ⟪b - d, c - d⟫ ⟪c - d, c - d⟫
       (1 - α1) (-β1) 0 (1 - α1) 0 (-β1)) *
@@ -81,7 +81,7 @@ theorem k32e_l2x3 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   rw [e6, e7] at hX3'
   rw [k32e_ip _ _ _ hPR] at hX3'
   have hW : 0 < ⟪b - d, b - d⟫ + ⟪c - d, c - d⟫ - 2 * ⟪b - d, c - d⟫ := by linarith
-  have hid := k32e_core_x3 α1 β1 β6 γ6 _ _ _ _ _ hα hβ
+  have hid := k32e_core_x3 α1 β1 β6 γ6 _ _ _ _ _ hα
     (by have := hrel.1; linarith) hW hX3'
   have key : (α1 + β1 - 1) * ⟪c - a', k28l2aU0 a b c d α1 β1⟫ =
       -(⟪c' - a, b' - c⟫ * ⟪c - a', a - b'⟫) := by

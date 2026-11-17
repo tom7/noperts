@@ -92,7 +92,7 @@ theorem k91_facts {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 lam ν : ℝ}
     rw [inner_sub_left] at h; linarith
   · intro hg0 hcb
     have := k91_q2 (u := u) (v := v) (t := -pq) (x := qq - qr) (b6 := β6) (g6 := γ6) (lam := lam)
-      (pp := pp) (pq := pq) (qq := qq) (qr := qr) (rr := rr) hu hv ht hx (by linarith) (by linarith) _ rfl hW
+      (pp := pp) (pq := pq) (qq := qq) (qr := qr) (rr := rr) hu hv ht (by linarith) (by linarith) _ rfl hW
       hpp' (by ring) hqr' (by ring) hrel' (by linarith) (by linarith) hlam
     rw [← ipc _ _ (-(u+1)) β6 (γ6-(v+1)) 0 0 1 e_apb e_c] at this
     exact this

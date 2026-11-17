@@ -42,7 +42,7 @@ theorem k95_fQT (u v m x y : ℝ) (hu : 0 < u) (hv : 0 < v) (hm : 0 < m) (hx : 0
 
 set_option maxHeartbeats 12800000 in
 /-- fQ2T: <a'-b, c-d> > 0 whenever m l = y (zab = 0 with K != 0). -/
-theorem k95_fQ2T (u v m x y : ℝ) (hu : 0 < u) (hv : 0 < v) (hm : 0 < m) (hx : 0 < x) (hy : 0 < y)
+theorem k95_fQ2T (u v m x y : ℝ) (hu : 0 < u) (hv : 0 < v) (hx : 0 < x) (hy : 0 < y)
     (hWn : 0 < k92Wn u v x y) (hl : 0 ≤ k92l u v x y) (hml : m * k92l u v x y = y) :
     0 < k92G u v x y 0 ((v+1)*m-1) (1+u*m) 0 0 1 := by
   have hxy : 0 < x + y := by positivity

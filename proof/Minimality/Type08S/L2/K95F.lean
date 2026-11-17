@@ -237,7 +237,7 @@ theorem k95_gwb {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
         · exfalso; linarith
         · exact h
       · exact absurd h hK
-    have hq := k95_fQ2T u v m x y hu hv hm hx hy hWn hl (by linarith)
+    have hq := k95_fQ2T u v m x y hu hv hx hy hWn hl (by linarith)
     have eab' : a' - b = (0:ℝ) • (a - d) + ((v+1)*m-1) • (b - d) + (1+u*m) • (c - d) := by
       rw [ha', hb6m, hg6m, hα, hβ]; module
     rw [ipc (a' - b) (c - d) 0 ((v+1)*m-1) (1+u*m) 0 0 1 eab' eC]

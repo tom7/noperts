@@ -14,7 +14,7 @@ namespace Type08Sp
 open C2
 
 set_option maxHeartbeats 4000000 in
-theorem k32e_core_x4 (α β b g pp s qq qr rr : ℝ) (hα : 1 < α) (hβ : 1 < β)
+theorem k32e_core_x4 (α β b g pp s qq qr rr : ℝ) (hα : 1 < α)
     (hrel : α * s * (qq + rr - 2 * qr) = -(β - 1) * (qq * rr - qr ^ 2))
     (hW : 0 < qq + rr - 2 * qr)
     (hX4 : k32e_G pp s qq qr rr (α - 1) β 0 α 0 (β - 1) = 0) :
@@ -36,7 +36,7 @@ theorem k32e_core_x4 (α β b g pp s qq qr rr : ℝ) (hα : 1 < α) (hβ : 1 < �
   ring
 
 set_option maxHeartbeats 4000000 in
-theorem k32e_core_x3 (α β b g pp s qq qr rr : ℝ) (hα : 1 < α) (hβ : 1 < β)
+theorem k32e_core_x3 (α β b g pp s qq qr rr : ℝ) (hα : 1 < α)
     (hrel : α * s * (qq + rr - 2 * qr) = -(β - 1) * (qq * rr - qr ^ 2))
     (hW : 0 < qq + rr - 2 * qr)
     (hX3 : k32e_G pp s qq qr rr (1 - α) (-β) 0 (1 - α) 0 (-β) = 0) :

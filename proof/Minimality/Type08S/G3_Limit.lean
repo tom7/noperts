@@ -22,7 +22,7 @@ namespace Type08Sp
 
 /-- The far triple tie ("touching") of the named closing N2 (`z b = z c' = z b'` along
 `c - a'`) or T4 (`z c = z b' = z c'` along `b - d`) in the labelling `(a, b, c)`. -/
-def Touch (a a' b b' c c' d : ℝ³) : Prop :=
+def Touch (a' b b' c c' d : ℝ³) : Prop :=
   (⟪b, c - a'⟫ = ⟪c', c - a'⟫ ∧ ⟪b', c - a'⟫ = ⟪c', c - a'⟫) ∨
     (⟪c, b - d⟫ = ⟪b', b - d⟫ ∧ ⟪c', b - d⟫ = ⟪b', b - d⟫)
 

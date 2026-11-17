@@ -70,7 +70,7 @@ theorem det_ne08 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) :
       (pts08 a a' b b' c c' d k - pts08 a a' b b' c c' d i)
       (pts08 a a' b b' c c' d w - pts08 a a' b b' c c' d i) = det3 E1 E2 E3 * fc08 θ i j k w := by
     intro i j k w; rw [hpts]; exact det3_nf08 o E1 E2 E3 θ i j k w
-  obtain ⟨p0, p1, p2, p3, p4, p5, -⟩ := facts08w θ hθ.1 hθ.2.1 hθ.2.2
+  obtain ⟨p0, p1, p2, p3, p4, p5, -⟩ := facts08w θ hθ.1
   have q9 := hθ.1 8 (by decide) (by decide) (by decide)
   simp only [ineq08, Matrix.cons_val] at q9
   refine ⟨?_, ?_, ?_⟩

@@ -115,7 +115,7 @@ theorem k32g_hE {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   rw [hu0, e8] at hLz
   rw [e1, e9]
   simp only [inner_smul_right, inner_sub_right, inner_add_right, inner_smul_left, inner_sub_left, inner_add_left, conj_trivial, hRP, hRQ, hPQ, hPR] at hLz ⊢
-  have h := k32g_hE_real hα1 hβ1 hγ6 hm1 hm3 hm3n hLp' (by linear_combination hLz) hr1' hqq hrr hD
+  have h := k32g_hE_real hβ1 hγ6 hm1 hm3 hm3n hLp' (by linear_combination hLz) hr1' hqq hrr hD
   rw [hm3] at h
   linarith [h]
 

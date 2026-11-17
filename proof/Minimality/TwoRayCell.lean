@@ -61,6 +61,7 @@ theorem lexUni_any {k : ℕ} [NeZero k] (z w : ZMod k → ℝ) (h : LexUni z (fu
 section
 variable {k : ℕ} [NeZero k]
 
+omit [NeZero k] in
 theorem cross_nonneg (Y : ZMod k → ℝ × ℝ × ℝ)
     (hconv : ∀ i j, j ≠ i → j ≠ i + 1 → 0 < cross2 (Y (i + 1) - Y i) (Y j - Y i)) (i j : ZMod k) :
     0 ≤ cross2 (Y (i + 1) - Y i) (Y j - Y i) := by

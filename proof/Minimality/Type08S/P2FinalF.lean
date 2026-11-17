@@ -46,7 +46,7 @@ theorem norm08_rupert_or_resNC' {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b'
   · by_cases hc : T4Closable N
     · exact Or.inl (gt_far_T4' N hc.1 hc.2.1 h4 hc.2.2.1 hc.2.2.2)
     · exact Or.inr (Or.inr (Or.inl ⟨h4, hc⟩))
-  have hnt : ¬ Touch a a' b b' c c' d := by
+  have hnt : ¬ Touch a' b b' c c' d := by
     rintro (h | h)
     · exact h2 h
     · exact h4 h

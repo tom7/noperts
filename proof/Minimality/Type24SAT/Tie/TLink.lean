@@ -121,7 +121,7 @@ def plkRows (t a b c d : Nat) : List (List LitW) :=
 
 def plkChk (_t a b c d : Nat) : Bool := decide (a < b) && decide (b < c) && decide (c < d)
 
-theorem plk_sound {g : Geo} {t a b c d : Nat} (hc : plkChk t a b c d = true) :
+theorem plk_sound {g : Geo} {t a b c d : Nat} :
     ∀ cl ∈ plkRows t a b c d, HoldsW (rhoW g) cl := by
   have P := fun x y => SgW_P g t x y
   refine z4W_sound (mulW (P a b) (P c d)) (mulW (P a c) (P b d)).neg (mulW (P a d) (P b c))
@@ -132,7 +132,7 @@ theorem plk_sound {g : Geo} {t a b c d : Nat} (hc : plkChk t a b c d = true) :
 
 theorem plk_cover {g : Geo} {t a b c d : Nat} (hc : plkChk t a b c d = true) {cl : List LitW}
     (hcov : (plkRows t a b c d).any (fun s => coversW cl s) = true) : HoldsW (rhoW g) cl :=
-  holdsW_of_cover (plk_sound hc) hcov
+  holdsW_of_cover (plk_sound) hcov
 
 /-! ### Family 32: Cramer -/
 

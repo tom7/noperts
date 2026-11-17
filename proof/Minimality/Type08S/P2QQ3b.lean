@@ -105,8 +105,8 @@ theorem crimA2 (θ : Fin 6 → ℝ) (hθ : Ineq08w θ) (h6 : 1 < θ 5) :
   have dB : 0 < -1 + (θ 0) := by
     have h : 0 < θ 4 * (θ 0 - 1) := by nlinarith [mul_pos p1 dA, gb]
     linarith [(pos_iff_pos_of_mul_pos h).mp p4]
-  obtain ⟨t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10⟩ := polyAw (θ 0) (θ 1) (θ 2) (θ 3) (θ 4) (θ 5) p0 p1 p2 p3 p4 p5 e1 e2 e3 dA dB ga gb
-    f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
+  obtain ⟨t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10⟩ := polyAw (θ 0) (θ 1) (θ 2) (θ 3) (θ 4) (θ 5) p0 p1 p2 p3 p4 dA dB ga gb
+     f3 f5 f6 f7 f8 f9
   constructor
   · intro i j hi hj
     rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
@@ -234,7 +234,7 @@ theorem hq2_of_regN2 {a a' b b' c c' d : ℝ³} (N : Norm08w a a' b b' c c' d) (
   have hfac' : N.F.ab'c'.f a' * fc08 θ 0 3 5 4 = N.F.ab'c'.f c * fc08 θ 0 3 5 1 := by
     apply mul_left_cancel₀ hE; linear_combination hfac
   have h4 : 0 < fc08 θ 0 3 5 4 := by
-    have := (facts08w θ hθ.1 hθ.2.1 hθ.2.2).2.2.2.2.2.2.2.2.2.2.2.1
+    have := (facts08w θ hθ.1).2.2.2.2.2.2.2.2.2.2.2.1
     exact this
   have key : (N.F.ab'c'.f a' - N.F.ab'c'.f c) * fc08 θ 0 3 5 4 < 0 := by
     have : (N.F.ab'c'.f a' - N.F.ab'c'.f c) * fc08 θ 0 3 5 4 =

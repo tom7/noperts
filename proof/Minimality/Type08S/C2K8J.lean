@@ -18,7 +18,7 @@ namespace Minimality
 namespace Type08Sp
 
 /-- The hypotheses of `tpA1iiK_hasLexCell` (their failure is codimension 6). -/
-def K8Hyp (a a' b b' c c' d : ℝ³) : Prop :=
+def K8Hyp (a a' b c c' d : ℝ³) : Prop :=
   (⟪c - d, b - d⟫ = 0 → det3 (a' - b) (c - d) (a - d) ≠ 0) ∧
   (⟪c - d, b - d⟫ = 0 →
       (0 < det3 (a' - b) (c - d) (a - d) * det3 (b - d) (c - d) (a - d) → ⟪a' - c', c - d⟫ = 0 →
@@ -33,7 +33,7 @@ def K8Hyp (a a' b b' c c' d : ℝ³) : Prop :=
 
 /-- `TpA1iiK` off the K8 hypotheses (codimension 6). -/
 def TpA1iiK8 (a a' b b' c c' d : ℝ³) : Prop :=
-  TpA1iiK a a' b b' c c' d ∧ ¬ K8Hyp a a' b b' c c' d
+  TpA1iiK a a' b b' c c' d ∧ ¬ K8Hyp a a' b c c' d
 
 def ResNK8 {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) : Prop :=
   ResNC' N ∧ TpA1iiK8 a a' b b' c c' d ∧ ¬ HasLexCell (V8 a a' b b' c c' d)

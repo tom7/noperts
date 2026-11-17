@@ -41,7 +41,7 @@ theorem k41_Lid {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   rw [k32e_ip _ _ _ hPR] at hX4 ⊢
   rw [k32e_ip _ _ _ hPR]
   have hW : 0 < ⟪b - d, b - d⟫ + ⟪c - d, c - d⟫ - 2 * ⟪b - d, c - d⟫ := by linarith
-  have := k32e_core_x4 α1 β1 β6 γ6 _ _ _ _ _ hα hβ
+  have := k32e_core_x4 α1 β1 β6 γ6 _ _ _ _ _ hα
     (by have := hrel.1; linarith) hW hX4
   linarith
 

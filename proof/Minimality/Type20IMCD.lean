@@ -496,23 +496,23 @@ namespace IMCT
 /-- Polynomial depths `Dd 2,3,4,6` of the view `x0 - x2`, as functions of the shape and `B`. -/
 noncomputable def ddT2 (hp hm tp tm sp sm km kp B : ℝ) : ℝ := hp*(-B*sp^2 + sp*tp*(hm + km*tm - km)) + kp*(sm*((1-tm)*(1-tp)))*(hp - kp)
 
-noncomputable def ddT3 (hp hm tp tm sp sm km kp B : ℝ) : ℝ := -hm*(sm*((1-tm)*(1-tp)))*(hp - kp) + hp*(hm*sm*tm*tp - sp*tm*(hm + km*tm - km))
+noncomputable def ddT3 (hp hm tp tm sp sm km kp : ℝ) : ℝ := -hm*(sm*((1-tm)*(1-tp)))*(hp - kp) + hp*(hm*sm*tm*tp - sp*tm*(hm + km*tm - km))
 
 noncomputable def ddT4 (hp hm tp tm sp sm km kp B : ℝ) : ℝ := hp*(-B*sm*sp + sm*tp*(hm + km*tm - km)) - km*(sm*((1-tm)*(1-tp)))*(hp - kp)
 
-noncomputable def ddT6 (hp hm tp tm sp sm km kp B : ℝ) : ℝ := hp*(-B*sp + tp*(hm + km*tm - km))
+noncomputable def ddT6 (hp hm tp tm sp km B : ℝ) : ℝ := hp*(-B*sp + tp*(hm + km*tm - km))
 
 /-- Identity `hm (d4 - d6) = hp (1-sm) sp (hm B - den c0)` in stratum Z under the tie. -/
 lemma zt_I1 (hp hm tp tm sp sm km kp B : ℝ)
     (tie : sm*((1-tm)*(1-tp))*km*hm = hp*(hm+km*tm-km)*tm*(1-sm)) (hkm : km*tm = sm*(hm*tp+hp*tm)) (hkp : kp*tm = (1-sp)*(hm*tp+hp*tm)) :
-    (tm) * (hm * (ddT4 hp hm tp tm sp sm km kp B - ddT6 hp hm tp tm sp sm km kp B)) = (tm) * (hp*(1-sm)*sp*(hm*B-(hm+km*tm-km)*(hm*tp+hp*tm))) := by
+    (tm) * (hm * (ddT4 hp hm tp tm sp sm km kp B - ddT6 hp hm tp tm sp km B)) = (tm) * (hp*(1-sm)*sp*(hm*B-(hm+km*tm-km)*(hm*tp+hp*tm))) := by
   simp only [ddT4, ddT6]
   linear_combination (-hp*tm + kp*tm) * tie + (-hm*hp*sm*sp*tm*tp + hm*hp*sm*sp*tp + hm*hp*sm*tm*tp - hm*hp*sm*tp + hm*hp*sp*tm*tp - hm*hp*sp*tp - hm*hp*tm*tp + hm*hp*tp - hp^2*sm*sp*tm^2 + hp^2*sm*sp*tm + hp^2*sm*tm^2 - hp^2*sm*tm + hp^2*sp*tm^2 - hp^2*sp*tm - hp^2*tm^2 + hp^2*tm - hp*kp*sm*tm^2 + hp*kp*sm*tm + hp*kp*tm^2 - hp*kp*tm) * hkm + (-hm*hp*sm^2*tm*tp + hm*hp*sm^2*tp + hm*hp*sm*tm*tp - hm*hp*sm*tm - hm*hp*sm*tp + hm*hp*tm - hp^2*sm^2*tm^2 + hp^2*sm^2*tm + hp^2*sm*tm^2 - hp^2*sm*tm) * hkp
 
 /-- Identity `sm km d3 = hp (sm km den tp + sm tp K lroof - den km tm sp)` in stratum Z under the tie. -/
 lemma zt_I2 (hp hm tp tm sp sm km kp B : ℝ)
     (tie : sm*((1-tm)*(1-tp))*km*hm = hp*(hm+km*tm-km)*tm*(1-sm)) (hkm : km*tm = sm*(hm*tp+hp*tm)) (hkp : kp*tm = (1-sp)*(hm*tp+hp*tm)) :
-    (tm) * (sm*km*ddT3 hp hm tp tm sp sm km kp B) = (tm) * (hp*(sm*km*(hm+km*tm-km)*tp+sm*tp*(km-hm)*(km*(1-tm)-hm*(1-sm))-(hm+km*tm-km)*km*tm*sp)) := by
+    (tm) * (sm*km*ddT3 hp hm tp tm sp sm km kp) = (tm) * (hp*(sm*km*(hm+km*tm-km)*tp+sm*tp*(km-hm)*(km*(1-tm)-hm*(1-sm))-(hm+km*tm-km)*km*tm*sp)) := by
   simp only [ddT3]
   linear_combination (-hp*sm*tm + kp*sm*tm) * tie + (-hm*hp*sm^2*sp*tm*tp + hm*hp*sm^2*sp*tp + hm*hp*sm^2*tm*tp - hm*hp*sm^2*tp + hm*hp*sm*sp*tm*tp - hm*hp*sm*sp*tm - hm*hp*sm*sp*tp - hm*hp*sm*tm*tp + hm*hp*sm*tp + hm*hp*sp*tm - hp^2*sm^2*sp*tm^2 + hp^2*sm^2*sp*tm + hp^2*sm^2*tm^2 - hp^2*sm^2*tm + hp^2*sm*sp*tm^2 - hp^2*sm*sp*tm - hp^2*sm*tm^2 + hp^2*sm*tm - hp*km*sm*sp*tm^2 + hp*km*sm*sp*tm + hp*km*sp*tm^2 - hp*km*sp*tm - hp*kp*sm^2*tm^2 + hp*kp*sm^2*tm + hp*kp*sm*tm^2 - hp*kp*sm*tm) * hkm + (-hm*hp*sm^3*tm*tp + hm*hp*sm^3*tp + hm*hp*sm^2*tm*tp - hm*hp*sm^2*tm - hm*hp*sm^2*tp + hm*hp*sm*tm - hp^2*sm^3*tm^2 + hp^2*sm^3*tm + hp^2*sm^2*tm^2 - hp^2*sm^2*tm) * hkp
 
@@ -679,14 +679,14 @@ lemma zt_z2 {hp hm sm sp den Cc P d2 d6 : ℝ} (hp0 : 0 < hp) (hm0 : 0 < hm) (hd
 lemma zt_I1c {hp hm tp tm sp sm km kp B : ℝ} (tm0 : 0 < tm)
     (tie : sm*((1-tm)*(1-tp))*km*hm = hp*(hm+km*tm-km)*tm*(1-sm))
     (hkm : km*tm = sm*(hm*tp+hp*tm)) (hkp : kp*tm = (1-sp)*(hm*tp+hp*tm)) :
-    hm * (ddT4 hp hm tp tm sp sm km kp B - ddT6 hp hm tp tm sp sm km kp B) =
+    hm * (ddT4 hp hm tp tm sp sm km kp B - ddT6 hp hm tp tm sp km B) =
       hp*(1-sm)*sp*(hm*B-(hm+km*tm-km)*(hm*tp+hp*tm)) :=
   mul_left_cancel₀ tm0.ne' (zt_I1 hp hm tp tm sp sm km kp B tie hkm hkp)
 
 lemma zt_I2c {hp hm tp tm sp sm km kp B : ℝ} (tm0 : 0 < tm)
     (tie : sm*((1-tm)*(1-tp))*km*hm = hp*(hm+km*tm-km)*tm*(1-sm))
     (hkm : km*tm = sm*(hm*tp+hp*tm)) (hkp : kp*tm = (1-sp)*(hm*tp+hp*tm)) :
-    sm*km*ddT3 hp hm tp tm sp sm km kp B =
+    sm*km*ddT3 hp hm tp tm sp sm km kp =
       hp*(sm*km*(hm+km*tm-km)*tp+sm*tp*(km-hm)*(km*(1-tm)-hm*(1-sm))-(hm+km*tm-km)*km*tm*sp) :=
   mul_left_cancel₀ tm0.ne' (zt_I2 hp hm tp tm sp sm km kp B tie hkm hkp)
 
@@ -705,11 +705,11 @@ theorem zt_depths {hp hm tp tm sp sm km kp B : ℝ} (hp0 : 0 < hp) (hm0 : 0 < hm
     (hkm : km*tm = sm*(hm*tp+hp*tm)) (hkp : kp*tm = (1-sp)*(hm*tp+hp*tm))
     (hK : sm * hp ≤ km - hm) (htm : tm ≤ sm * tp) (tp0 : 0 < tp) (hs : 1 < sm + sp)
     (hpsi : (hm+km*tm-km) * (sm*(hm*tp+hp*tm) + hm) ≤ sm*B*hm) :
-    0 < ddT3 hp hm tp tm sp sm km kp B ∧
-    ddT4 hp hm tp tm sp sm km kp B < ddT3 hp hm tp tm sp sm km kp B ∧
-    ddT6 hp hm tp tm sp sm km kp B < ddT4 hp hm tp tm sp sm km kp B ∧
+    0 < ddT3 hp hm tp tm sp sm km kp ∧
+    ddT4 hp hm tp tm sp sm km kp B < ddT3 hp hm tp tm sp sm km kp ∧
+    ddT6 hp hm tp tm sp km B < ddT4 hp hm tp tm sp sm km kp B ∧
     (ddT2 hp hm tp tm sp sm km kp B < 0 ∨
-      ddT2 hp hm tp tm sp sm km kp B < ddT6 hp hm tp tm sp sm km kp B) := by
+      ddT2 hp hm tp tm sp sm km kp B < ddT6 hp hm tp tm sp km B) := by
   have I1 := zt_I1c (B := B) (kp := kp) tm0 tie hkm hkp
   have I2 := zt_I2c (B := B) (kp := kp) tm0 tie hkm hkp
   have I4 := zt_I4c (B := B) (kp := kp) tm0 km0 tie hkm hkp
@@ -721,13 +721,13 @@ theorem zt_depths {hp hm tp tm sp sm km kp B : ℝ} (hp0 : 0 < hp) (hm0 : 0 < hm
     have h2 : (hm+km*tm-km) * hm ≤ sm * (B*hm-(hm+km*tm-km)*(hm*tp+hp*tm)) := by nlinarith [hpsi]
     have : 0 < sm * (B*hm-(hm+km*tm-km)*(hm*tp+hp*tm)) := lt_of_lt_of_le h1 h2
     exact pos_of_mul_pos_right this sm0.le
-  have h6 : ddT6 hp hm tp tm sp sm km kp B < ddT4 hp hm tp tm sp sm km kp B := by
-    have : 0 < hm * (ddT4 hp hm tp tm sp sm km kp B - ddT6 hp hm tp tm sp sm km kp B) := by
+  have h6 : ddT6 hp hm tp tm sp km B < ddT4 hp hm tp tm sp sm km kp B := by
+    have : 0 < hm * (ddT4 hp hm tp tm sp sm km kp B - ddT6 hp hm tp tm sp km B) := by
       rw [I1]; exact mul_pos (mul_pos (mul_pos hp0 s1) sp0) (by linarith [hP, mul_comm B hm])
     have := pos_of_mul_pos_right this hm0.le
     linarith
-  have h3 : 0 < ddT3 hp hm tp tm sp sm km kp B := by
-    have : 0 < sm * km * ddT3 hp hm tp tm sp sm km kp B := by
+  have h3 : 0 < ddT3 hp hm tp tm sp sm km kp := by
+    have : 0 < sm * km * ddT3 hp hm tp tm sp sm km kp := by
       rw [I2]
       refine mul_pos hp0 ?_
       have a1 : 0 < (hm+km*tm-km) * km * (sm * tp - tm * sp) := by
@@ -737,7 +737,7 @@ theorem zt_depths {hp hm tp tm sp sm km kp B : ℝ} (hp0 : 0 < hp) (hm0 : 0 < hm
       nlinarith [a1, a2]
     exact pos_of_mul_pos_right this (mul_pos sm0 km0).le
   refine ⟨h3, ?_, h6, ?_⟩
-  · have key : sm*km*hm*(ddT3 hp hm tp tm sp sm km kp B - ddT4 hp hm tp tm sp sm km kp B) =
+  · have key : sm*km*hm*(ddT3 hp hm tp tm sp sm km kp - ddT4 hp hm tp tm sp sm km kp B) =
         hp*(hm*sm*tp*(km-hm)*(km*(1-tm)-hm*(1-sm)) + sm*sp*(hm+km*tm-km)*(hm*tp+hp*tm)*(km*(1-sm)-hm)
           + sm^2*km*hm*B*sp) := by
       simp only [ddT3, ddT4, ddT6] at I1 I2 ⊢
@@ -746,7 +746,7 @@ theorem zt_depths {hp hm tp tm sp sm km kp B : ℝ} (hp0 : 0 < hp) (hm0 : 0 < hm
       mul_le_mul_of_nonneg_left hpsi (by positivity)
     have t1 : 0 < hm*sm*tp*(km-hm)*(km*(1-tm)-hm*(1-sm)) := by positivity
     have t2 : 0 < sm*sp*(hm+km*tm-km)*((hm*tp+hp*tm)*(km-hm) + km*hm) := by positivity
-    have : 0 < sm*km*hm*(ddT3 hp hm tp tm sp sm km kp B - ddT4 hp hm tp tm sp sm km kp B) := by
+    have : 0 < sm*km*hm*(ddT3 hp hm tp tm sp sm km kp - ddT4 hp hm tp tm sp sm km kp B) := by
       rw [key]
       refine mul_pos hp0 ?_
       have e : hm*sm*tp*(km-hm)*(km*(1-tm)-hm*(1-sm)) + sm*sp*(hm+km*tm-km)*(hm*tp+hp*tm)*(km*(1-sm)-hm)
@@ -819,9 +819,9 @@ theorem imc_ZT (hx : Function.Injective x) (hR : RealizesFaces x (sevenTypeFaces
   set qu := uT F.S with hqu
   set qv : C3 := ⟨2 * F.S.tp, -1, 2 * F.S.hp⟩ with hqv
   have dd2 : F.Dd B qu 2 = ddT2 F.S.hp F.S.hm F.S.tp F.S.tm F.S.sp F.S.sm F.S.km F.S.kp B := by simp only [Frame20.Dd, hqu, uT, ddT2]; ring
-  have dd3 : F.Dd B qu 3 = ddT3 F.S.hp F.S.hm F.S.tp F.S.tm F.S.sp F.S.sm F.S.km F.S.kp B := by simp only [Frame20.Dd, hqu, uT, ddT3]; ring
+  have dd3 : F.Dd B qu 3 = ddT3 F.S.hp F.S.hm F.S.tp F.S.tm F.S.sp F.S.sm F.S.km F.S.kp := by simp only [Frame20.Dd, hqu, uT, ddT3]; ring
   have dd4 : F.Dd B qu 4 = ddT4 F.S.hp F.S.hm F.S.tp F.S.tm F.S.sp F.S.sm F.S.km F.S.kp B := by simp only [Frame20.Dd, hqu, uT, ddT4]; ring
-  have dd6 : F.Dd B qu 6 = ddT6 F.S.hp F.S.hm F.S.tp F.S.tm F.S.sp F.S.sm F.S.km F.S.kp B := by simp only [Frame20.Dd, hqu, uT, ddT6]; ring
+  have dd6 : F.Dd B qu 6 = ddT6 F.S.hp F.S.hm F.S.tp F.S.tm F.S.sp F.S.km B := by simp only [Frame20.Dd, hqu, uT, ddT6]; ring
   have dd5 : F.Dd B qu 5 = 0 := by simp only [Frame20.Dd]
   have z3 : 0 < F.dep qu 3 := by
     have := F.dlt Z.P qu (i := 5) (j := 3) (by rw [dd5, dd3]; exact h3)

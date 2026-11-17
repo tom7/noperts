@@ -66,7 +66,7 @@ theorem triCert_int (hF : Fr e1 e2 e3) (o : ℝ³) (V : Finset ℝ³)
     {σ L zp zf Xg Yg zg Xa Ya za s : ℝ} 
     (h1 : o + pc e1 e2 e3 0 0 zp ∈ V) (h2 : o + pc e1 e2 e3 L 0 zf ∈ V)
     (h3 : o + pc e1 e2 e3 Xg Yg zg ∈ V)
-    (hT : 0 < L * Yg) (hc1 : 0 < L * Ya) (hc2 : 0 < (Xg - L) * Ya - Yg * (Xa - L))
+ (hc1 : 0 < L * Ya) (hc2 : 0 < (Xg - L) * Ya - Yg * (Xa - L))
     (hc3 : 0 < -Xg * (Ya - Yg) + Yg * (Xa - Xg)) :
     TriCert V (pc e1 e2 e3 0 0 1) (pc e1 e2 e3 (σ * s) (-σ) 0) (o + pc e1 e2 e3 Xa Ya za) := by
   refine ⟨_, h1, _, h2, _, h3, ?_, ?_, ?_, ?_⟩ <;>

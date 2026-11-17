@@ -42,7 +42,7 @@ theorem lemmaSCtop (hF : Fr e1 e2 e3) (o : ℝ³) (E : Finset ℝ³)
   · exact lemmaSCc (σ := σ) hF o E hL hzx hcr hYr hYg hcg hc hE
   · subst hYY
     obtain ⟨h1, h2, h3, h4, h5⟩ := hz
-    exact lemmaSCd_I hF o E hL hzz hYr hXrg hσ0 hm hD1 hD2 hX0 hXL hch h1 h2 h3 h4 h5 hE
+    exact lemmaSCd_I hF o E hL hYr hXrg hσ0 hm hD1 hD2 hX0 hXL hch h1 h2 h3 h5 hE
   · subst hYY
     obtain ⟨h1, h2, h3, h4⟩ := hz
     exact lemmaSCd_II hF o E hL hzz hYr hXrg hσ0 hm hD1 hD2 hX0 hXL hch h1 h2 h3 h4 hE
@@ -73,7 +73,7 @@ theorem sc08_N2_Ktop (hF : Fr e1 e2 e3) (o : ℝ³)
   simp only [Finset.mem_insert, Finset.mem_singleton] at hy
   rcases hy with rfl | rfl
   · exact triCert_midF hF o _ hL hYg hXd0 hXdL m1 m2 m3 hd
-  · exact triCert_int hF o _ m1 m2 m3 hT hc1 hc2 hc3
+  · exact triCert_int hF o _ m1 m2 m3 hc1 hc2 hc3
 
 end
 
