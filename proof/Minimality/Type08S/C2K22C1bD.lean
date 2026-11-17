@@ -165,7 +165,7 @@ theorem k22c1b_cellM {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 l Q R : ℝ}
         · right; simp only [g0]; apply L; left
           simp only [k22c1bM_0, k22c1bM_1]; nlinarith
         · right; simp only [g1]; apply L; right
-          simp only [k22c1bM_1, k22c1bM_2]; constructor <;> norm_num <;> nlinarith [hP, real_inner_self_eq_norm_sq p]
+          simp only [k22c1bM_1, k22c1bM_2]; constructor <;> norm_num; nlinarith [hP, real_inner_self_eq_norm_sq p]
         · exact (hj1 rfl).elim
         · exact (hj2 (by decide)).elim
         · right; simp only [g4]; apply L; left

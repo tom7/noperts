@@ -82,8 +82,7 @@ theorem k28b4a_tsc {D α1 β1 γ6 μ v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 < α1) 
       | (simp only [TSc, d3, e0, e1, e2, e3, f0, f1, f2, f3, k28b4aY_0, k28b4aY_1, k28b4aY_2, k28b4aY_3,
             Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; nlinarith))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl <;>

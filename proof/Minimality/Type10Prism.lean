@@ -79,8 +79,7 @@ theorem type10_rect_facts (x : Fin 7 → ℝ³) (hN : IsNopert (Finset.univ.imag
   have f6 : fD (x 6) < 0 := (hfD 6).2 (by decide)
   rcases hA i hiA hiB with rfl | rfl <;> rcases hA i' hi'A hi'B with rfl | rfl <;>
     rcases hB j hjB hjA with rfl | rfl <;> rcases hB j' hj'B hj'A with rfl | rfl <;>
-    first | exact absurd rfl hii | exact absurd rfl hjj | linarith |
-    skip
+    try (first | exact absurd rfl hii | exact absurd rfl hjj | linarith)
   · exact ⟨hrel, t1⟩
   · refine ⟨(neg_sub (x 2) (x 5)).symm.trans ((congrArg Neg.neg hrel).trans (neg_sub _ _)), ?_⟩
     have h := congrArg (fun v => ⟪v, x 4 - x 1⟫) hrel

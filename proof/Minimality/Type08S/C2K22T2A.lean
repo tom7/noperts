@@ -79,7 +79,7 @@ theorem k22t2_tsc {D β1 γ4 γ6 v1 v2 : ℝ} (hD : 0 < D) (hβ1 : 0 < β1) (hβ
             Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
          | (left; nlinarith)
-         | (right; refine ⟨by first | ring1 | linear_combination (-D) * hout | linear_combination D * hout, by nlinarith⟩))
+         | (right; refine ⟨by linear_combination (-D) * hout, by nlinarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl <;>
@@ -88,7 +88,7 @@ theorem k22t2_tsc {D β1 γ4 γ6 v1 v2 : ℝ} (hD : 0 < D) (hβ1 : 0 < β1) (hβ
             Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
        | (left; nlinarith)
-       | (right; refine ⟨by first | ring1 | linear_combination (-D) * hout | linear_combination D * hout, by nlinarith⟩))
+       | (right; refine ⟨by ring1, by nlinarith⟩))
 
 end C2
 end Type08Sp

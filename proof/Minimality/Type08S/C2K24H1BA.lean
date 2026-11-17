@@ -68,8 +68,7 @@ theorem k24h1b_tsc {D b1 s h6 g v1 v2 : ℝ} (hD : 0 < D) (hb1 : 1 < b1) (hs : 0
       | (simp only [TSc, d3, e0, e1, e2, e3, f0, f1, f2, f3, k24h1bY_0, k24h1bY_1, k24h1bY_2, k24h1bY_3,
             Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; ring_nf; positivity)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; ring_nf; positivity))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl <;>
@@ -78,7 +77,6 @@ theorem k24h1b_tsc {D b1 s h6 g v1 v2 : ℝ} (hD : 0 < D) (hb1 : 1 < b1) (hs : 0
             Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
        | (left; ring_nf; positivity)
-       | (left; nlinarith)
        | (right; refine ⟨by ring, by nlinarith⟩))
 
 theorem k24h1b_cs {P Q R : ℝ³} (hΔ : det3 P Q R ≠ 0) : ⟪Q, R⟫ ^ 2 < ⟪Q, Q⟫ * ⟪R, R⟫ := by

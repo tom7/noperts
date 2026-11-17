@@ -140,7 +140,7 @@ theorem lemmaPV_core (P : IsPrismPair V F₁ F₂ H n₁ n₂ h₁ h₂) (E : PV
       apply hdepth
       simpa [real_inner_comm] using hij
     have h2 := congrArg ZMod.val h1
-    rw [ZMod.val_cast_of_lt (by simpa only [i.isLt]), ZMod.val_cast_of_lt (by simp only [j.isLt])] at h2
+    rw [ZMod.val_cast_of_lt (by simp only [i.isLt]), ZMod.val_cast_of_lt (by simp only [j.isLt])] at h2
     exact Fin.ext h2
   have hCU' : IsCyclicUnimodal fun i => ⟪x i, d⟫ := by
     rw [← CU_ofFn]

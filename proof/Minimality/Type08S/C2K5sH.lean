@@ -140,7 +140,7 @@ theorem k5_hasLexCell {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' d) (
       have e1 : ⟪c', p⟫ = ⟪d, p⟫ + α1 * ⟪r, p⟫ + β1 * ⟪p, p⟫ := by
         rw [hc']; simp only [inner_add_left, real_inner_smul_left] <;> ring
       have e2 : ⟪b', p⟫ = ⟪d, p⟫ + α4 * ⟪r, p⟫ + ⟪q, p⟫ := by
-        rw [hb']; simp only [inner_add_left, real_inner_smul_left] <;> ring
+        rw [hb']; simp only [inner_add_left, real_inner_smul_left] ; ring
       have hrp : ⟪r, p⟫ = 0 := by rw [real_inner_comm]; exact hB0'
       have : ⟪c', p⟫ = ⟪b', p⟫ := hEq
       rw [e1, e2, hrp] at this
