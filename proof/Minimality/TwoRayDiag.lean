@@ -83,7 +83,7 @@ theorem v1b_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r 
     by_cases h3 : i = 0 ∧ j = 2
     · obtain ⟨rfl, rfl⟩ := h3
       right
-      simp only [zero_add, hY0, hY1, hY2, d3, Prod.mk_sub_mk, Prod.fst_sub, Prod.snd_sub]
+      simp only [zero_add, hY0, hY1, hY2, d3, Prod.mk_sub_mk]
       refine ⟨by ring, ?_⟩
       nlinarith [mul_pos hD hz0]
     by_cases h4 : i = 1 ∧ j = 0
@@ -91,7 +91,7 @@ theorem v1b_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r 
       right
       have : (1 : ZMod k) + 1 = 2 := by norm_num
       rw [this]
-      simp only [hY0, hY1, hY2, d3, Prod.mk_sub_mk, Prod.fst_sub, Prod.snd_sub]
+      simp only [hY0, hY1, hY2, d3, Prod.mk_sub_mk]
       refine ⟨by ring, ?_⟩
       nlinarith [mul_pos hD hz0]
     exact tsc_of_cross hD (hconv i j a b h3 h4)
@@ -108,7 +108,7 @@ theorem v1b_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r 
     by_cases hi0 : i = 0
     · subst hi0
       right
-      simp only [zero_add, hY0, hY1, d3, Prod.mk_sub_mk, Prod.fst_sub, Prod.snd_sub]
+      simp only [zero_add, hY0, hY1, d3, Prod.mk_sub_mk]
       refine ⟨by ring, ?_⟩
       nlinarith [mul_pos hD (mul_pos hz0 hs0'), mul_pos hD (mul_pos hs0 (neg_pos.2 hz))]
     by_cases hi1 : i = 1
@@ -116,7 +116,7 @@ theorem v1b_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r 
       right
       have : (1 : ZMod k) + 1 = 2 := by norm_num
       rw [this]
-      simp only [hY1, hY2, d3, Prod.mk_sub_mk, Prod.fst_sub, Prod.snd_sub]
+      simp only [hY1, hY2, d3, Prod.mk_sub_mk]
       refine ⟨by ring, ?_⟩
       have h1s : 0 < 1 - s := by linarith
       have h1s0 : 0 < 1 - s0 := by linarith
@@ -139,7 +139,7 @@ theorem v1b_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r 
     by_cases hi : i = -1
     · subst hi
       right
-      simp only [neg_add_cancel, hYm, hY0, d3, Prod.mk_sub_mk, Prod.fst_sub, Prod.snd_sub]
+      simp only [neg_add_cancel, hYm, hY0, d3, Prod.mk_sub_mk]
       refine ⟨by ring, ?_⟩
       have hl : 0 < 1 + lam / 2 := by linarith
       nlinarith [mul_pos (mul_pos hD (neg_pos.2 hz)) hl]

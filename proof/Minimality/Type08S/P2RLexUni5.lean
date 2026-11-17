@@ -35,7 +35,7 @@ theorem z5_add : (0 : ZMod 5) + 1 = 1 ∧ (1 : ZMod 5) + 1 = 2 ∧ (2 : ZMod 5) 
     (3 : ZMod 5) + 1 = 4 ∧ (4 : ZMod 5) + 1 = 0 := by decide
 
 theorem lexLt_asymm {p q : ℝ × ℝ} (h : LexLt p q) : ¬ LexLt q p := by
-  unfold LexLt at *; rintro (h' | ⟨h1, h2⟩) <;> rcases h with h | ⟨h3, h4⟩ <;> first | linarith | skip
+  unfold LexLt at *; rintro (h' | ⟨h1, h2⟩) <;> rcases h with h | ⟨h3, h4⟩ <;> linarith
 
 theorem lexLt_total {p q : ℝ × ℝ} (h : p ≠ q) : LexLt p q ∨ LexLt q p := by
   unfold LexLt

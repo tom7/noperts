@@ -102,7 +102,7 @@ theorem isRobustUnimodal_iff {k : ℕ} (hk : 4 ≤ k) (z : ZMod k → ℝ) :
       exact this ⟨e1.le, e2.le, e3.le, e4.le⟩
     · -- (R2) three equal entries: sort the three positions by their values in ℕ
       intro i j l hij hjl hil hi hj
-      haveI : NeZero k := ⟨by omega⟩
+      have : NeZero k := ⟨by omega⟩
       have E : ∀ x y : ZMod k, z x = z y → z ((x.val : ℕ) : ZMod k) = z ((y.val : ℕ) : ZMod k) :=
         fun x y h => by rw [ZMod.natCast_zmod_val, ZMod.natCast_zmod_val]; exact h
       have dij : i.val ≠ j.val := fun h => hij (ZMod.val_injective k h)

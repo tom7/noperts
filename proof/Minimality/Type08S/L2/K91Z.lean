@@ -68,8 +68,7 @@ theorem k91_c1 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 lam ν : ℝ}
     rcases hcb' with hcb | hcb
     · left
       refine k86_cC hCC (by rw [one_smul]) hα hβ hb6 flam hg6 hσ fac hcb fpq fU1 fU2 fAv (gQ2 hg0 hcb) ?_ ?_ ?_ ?_
-      ·
-        have : ⟪c' - a', W⟫ = ⟪c' - b', W⟫ := by
+      · have : ⟪c' - a', W⟫ = ⟪c' - b', W⟫ := by
           rw [inner_sub_left, inner_sub_left, tBA]
         rw [inner_sub_left] at this fCb; linarith
       · nlinarith [eA, ec']

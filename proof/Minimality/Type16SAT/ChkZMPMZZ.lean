@@ -357,7 +357,7 @@ theorem clause2ZMPMZZ_true (F : S0xFac 8 V2.fIdx x) (h : ¬ ZShape16 (x ∘ sigm
       simp [Minimality.H16.SAT.Geo.atom, n3, n6, n7]
     rw [ha] at h0
     show det3 (F.N 6) (F.N 3) (F.N 7) = 0
-    (simp only [det3_expand, PiLp.sub_apply] at h0 ⊢; linear_combination (-1) * h0)
+    (simp only [det3_expand] at h0 ⊢; linear_combination (-1) * h0)
 
 /-- **Core ZMPMZZ gives Rupert**, from the unsatisfiability of its numbered clauses: in the shape of `Core16ZZW`. -/
 theorem rupert_of_core_dataZMPMZZ (hU : CoreUnsat rowsZMPMZZ) : Core16ZZW 0 (-1) 1 (-1) := by

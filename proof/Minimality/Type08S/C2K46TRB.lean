@@ -76,7 +76,7 @@ theorem k55_phi {p q r : ℝ³} {ea m kk rr : ℝ} (G : K55G p q r ea m kk rr)
   have hs : 0 < 2 + ea := by linarith
   rw [orthoFrameMat_apply]
   unfold k55S k55T k55N
-  simp only [inner_smul_left, inner_smul_right, RCLike.conj_to_real, k55_bil G]
+  simp only [inner_smul_right, k55_bil G]
   apply k55_pt_congr <;> field_simp <;> ring
 
 theorem k46_tie_rupert {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}

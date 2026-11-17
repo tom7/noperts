@@ -29,7 +29,7 @@ theorem exists_tilt (hx : Function.Injective x) (hc : Function.Injective c) :
       exact hne (inner_self_eq_zero.1 this))
     isOpen_univ ⟨0, trivial⟩
   refine ⟨v, fun i j hij e => hv ⟨(i, j), hij⟩ ?_⟩
-  simp [inner_sub_left, e]
+  simp [e]
 
 theorem core_pos (hc : Function.Injective c) (hk : 3 ≤ k) (D : SilData k x c u₀) (μ : ZMod k → ℝ)
     (hμ : ∀ i, 0 < μ i)

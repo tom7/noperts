@@ -914,12 +914,8 @@ theorem caseC20Special''_reduce {x : Fin 7 → ℝ³} (hx : Function.Injective x
     | exact ⟨F, Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))⟩
     | exact ⟨F, Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))⟩
     | exact ⟨F, Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))))⟩
-    | exact ⟨F, Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))))⟩
     | exact ⟨F, Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))))))⟩
-    | exact ⟨F, Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))))))⟩
-    | exact ⟨F, Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))))))))⟩
     | exact ⟨F, Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h)))))))))))⟩
-    | exact ⟨F, Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl h))))))))))))⟩
     | exact ⟨F, Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (h)))))))))))))⟩
 
 end Minimality.CaseC20

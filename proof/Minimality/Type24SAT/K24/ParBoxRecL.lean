@@ -204,7 +204,7 @@ theorem rec_L {L c y2 y6 xi ze b : ℝ} (hL : 0 < L) (hc : 0 < c) (hy6 : 0 < y6)
     linarith
   have hxz : 0 < 1 - xi - ze := by
     by_contra hcon
-    push_neg at hcon
+    push Not at hcon
     nlinarith [mul_nonneg hy6.le (neg_nonneg.2 hcon)]
   refine box_hel (r := r) hL hc hy6 hr !₂[-1, p, q] !₂[-1, -(r/2) - c, -1] ?_
   intro i hi

@@ -315,7 +315,6 @@ theorem Frame20.om3p {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
     obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_6, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
   · linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n2_2), mul_nonneg (hsp1).le (sub_nonneg.2 n2_2), mul_pos ((mul_pos F.S.tp_pos htp1)) hal, mul_pos ((mul_pos htp1 htp1)) hal]
   · linarith only [(sub_nonneg.2 n2_4), mul_pos F.S.tp_pos hom, mul_pos htp1 hom]
@@ -359,7 +358,6 @@ theorem Frame20.om3n {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
     obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_6, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
   · linarith only [(sub_nonneg.2 n2_2), mul_pos ((mul_pos F.S.tp_pos htp1)) hal, mul_pos ((mul_pos htp1 htp1)) hal]
   · linarith only [mul_nonneg (hVW).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n1_4), mul_pos hVp hom, mul_pos ((mul_pos hsm1 rp)) hga]
@@ -403,7 +401,6 @@ theorem Frame20.om3z1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
     obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_6, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
   · linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n2_2), mul_nonneg (hsp1).le (sub_nonneg.2 n2_2), mul_pos ((mul_pos F.S.tp_pos htp1)) hal, mul_pos ((mul_pos htp1 htp1)) hal]
   · linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n1_4), mul_nonneg hWp (sub_nonneg.2 n2_4), mul_pos ((mul_pos hsm1 rp)) hga]
@@ -447,7 +444,6 @@ theorem Frame20.om3z2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
     obtain ⟨n0_1, n0_2, n0_3, n0_4⟩ := n0
     obtain ⟨n1_1, n1_2, n1_3, n1_4⟩ := n1
     obtain ⟨n2_1, n2_2, n2_3, n2_4⟩ := n2
-    try simp only [rFrame_dep] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
     simp only [Frame20.dep, Frame20.GG_eq, F.ptC_0, F.ptC_1, F.ptC_3, F.ptC_4, F.ptC_6, Shape20.u_tANR, Shape20.u_vN4, Shape20.u_tP] at n0_1 n0_2 n0_3 n0_4 n1_1 n1_2 n1_3 n1_4 n2_1 n2_2 n2_3 n2_4
   · linarith only [mul_nonneg (F.S.hm_pos).le (sub_nonneg.2 n0_3), mul_nonneg (F.S.km_pos).le (sub_nonneg.2 n2_1), mul_pos htp1 hl, mul_pos ((mul_pos htp1 F.S.km_pos)) hal]
   · linarith only [mul_nonneg (F.S.hp_pos).le (sub_nonneg.2 n1_4), mul_nonneg hWp (sub_nonneg.2 n2_4), mul_pos ((mul_pos hsm1 rp)) hga]
