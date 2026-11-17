@@ -39,24 +39,24 @@ theorem k18_r3_scalar {α1 β1 β6 w γ4 A Zq ZZ YY : ℝ} (hα1 : 1 < α1) (hβ
   rw [← hm, ← hK] at hL ⊢
   have hKp : 0 < K := by rw [hK]; exact mul_pos (by linarith) hγ4
   have hmp : 0 < m := by rw [hm]; have := mul_pos hγ4 (by linarith : (0:ℝ) < α1); linarith
-  have hmK : K < m := by rw [hK, hm]; nlinarith
+  have hmK : K < m := by rw [hK, hm]; linarith
   have hM1 : 0 < K * Zq + m * β1 * A := by
     by_contra hh; push Not at hh
     have hu : m * β1 * A ≤ K * (-Zq) := by linarith
     have hupos : 0 < -Zq := by
       by_contra h2; push Not at h2
-      nlinarith [mul_pos (mul_pos hmp hβ1) hA, mul_nonneg hKp.le (by linarith : 0 ≤ Zq)]
+      linarith [mul_pos (mul_pos hmp hβ1) hA, mul_nonneg hKp.le (by linarith : 0 ≤ Zq)]
     have h1 : K * (Zq ^ 2) < K * (A * ZZ) := mul_lt_mul_of_pos_left hcs hKp
     have h3 : 0 ≤ (K * (-Zq) - m * β1 * A) * ((-Zq) - β1 * A) := by
       apply mul_nonneg (by linarith)
       nlinarith [mul_pos hβ1 hA, mul_pos hmp hβ1, mul_pos (sub_pos.2 hmK) hβ1]
-    have h2 : 0 < A * (K * ZZ + β1 * (K + m) * Zq + m * β1 ^ 2 * A) := by nlinarith
+    have h2 : 0 < A * (K * ZZ + β1 * (K + m) * Zq + m * β1 ^ 2 * A) := by linarith
     have h2' : 0 < K * ZZ + β1 * (K + m) * Zq + m * β1 ^ 2 * A := pos_of_mul_pos_right h2 hA.le
-    nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ β6) (by linarith : 0 ≤ -(K * Zq + m * β1 * A))]
+    linarith [mul_nonneg (by linarith : (0:ℝ) ≤ β6) (by linarith : 0 ≤ -(K * Zq + m * β1 * A))]
   refine ⟨hM1, ?_⟩
   have hb : 0 ≤ γ4 * α1 * (β6 - 1) - w * (1 - β1) := by linarith
   subst hm hK
-  nlinarith [mul_nonneg hw.le hL, mul_nonneg hb hM1.le,
+  linarith [mul_nonneg hw.le hL, mul_nonneg hb hM1.le,
     mul_pos (mul_pos (by linarith : (0:ℝ) < α1) (by linarith : (0:ℝ) < α1 - 1)) hYY]
 
 /-- `k17ga_r3_gram` with `hL ≥ 0` and strict Cauchy-Schwarz. -/
@@ -181,16 +181,16 @@ theorem k18_r3_core {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ} (hdet
   rw [hyy] at hYY
   obtain ⟨F1, F2, F3⟩ := k18_r3_gram (α1 := α1) (β1 := β1) (β6 := β6) (w := w) (γ4 := γ4) (pp := ⟪p, p⟫)
     (pq := ⟪p, q⟫) (pr := ⟪p, r⟫) (qq := ⟪q, q⟫) (qr := ⟪q, r⟫) (rr := ⟪r, r⟫) hα1 hβ1 hw (by linarith) hb6
-    (by rw [hwdef] at *; linarith) hqq (by linarith) (by linarith) (by nlinarith [hcs]) (by nlinarith [E1'])
-    (by nlinarith [E2']) (by nlinarith [hL'])
+    (by rw [hwdef] at *; linarith) hqq (by linarith) (by linarith) (by linarith [hcs]) (by linarith [E1'])
+    (by linarith [E2']) (by linarith [hL'])
   have c1 := k17ga_ipc p q r q (a - c') 0 1 0 (-(α1 - 1)) (-β1) 0 (by module) v1
   have c2 := k17ga_ipc p q r r (a - c') 0 0 1 (-(α1 - 1)) (-β1) 0 (by module) v1
   have c3 := k17ga_ipc p q r p (a - c') 1 0 0 (-(α1 - 1)) (-β1) 0 (by module) v1
   refine k17ga_r3_cell (a := a) (a' := a') (b := b) (b' := b') (c := c) (c' := c') (d := d) hdet hc' hb' ha'
     hα1 hβ1 hα4.le hγ4 hb6 ?_ ?_ ?_
-  · rw [← hq, c1]; nlinarith [F1]
-  · rw [← hq, ← hr, c1, c2]; nlinarith [F2]
-  · rw [← hr, ← hp, c2, c3]; rw [hwdef] at *; nlinarith [F3]
+  · rw [← hq, c1]; linarith [F1]
+  · rw [← hq, ← hr, c1, c2]; linarith [F2]
+  · rw [← hr, ← hp, c2, c3]; rw [hwdef] at *; linarith [F3]
 
 /-- **S1.1 R3, Ta, closed side** (`ζ_{a-c'}(c',a') ≥ 0`). -/
 theorem k18_s11_r3_ta {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K17fZdbTa a a' b b' c c' d)
@@ -200,9 +200,9 @@ theorem k18_s11_r3_ta {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) 
     k17ga_ta_coords W h
   have hg : 1 < γ4 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_pos (by linarith : (0:ℝ) < α4) (sub_pos.2 hβ1), mul_nonneg (by linarith : (0:ℝ) ≤ α1) (sub_nonneg.2 hh)]
+    linarith [mul_pos (by linarith : (0:ℝ) < α4) (sub_pos.2 hβ1), mul_nonneg (by linarith : (0:ℝ) ≤ α1) (sub_nonneg.2 hh)]
   exact k18_r3_core hdet hc' hb' ha' hα11 (by linarith) hα41 hg hb6
-    (by nlinarith [mul_nonneg (mul_pos hγ4 (by linarith : (0:ℝ) < α1)).le (sub_nonneg.2 hb6), mul_pos (sub_pos.2 hα41) (sub_pos.2 hβ1)])
+    (by linarith [mul_nonneg (mul_pos hγ4 (by linarith : (0:ℝ) < α1)).le (sub_nonneg.2 hb6), mul_pos (sub_pos.2 hα41) (sub_pos.2 hβ1)])
     hζ0 hz1 hL
 
 /-- **S1.1, Ta: closed.**  `K17fZdbTa` with the Zdb(i) tie `⟪c'-c, a-b'⟫ = 0` has a lex cell. -/
@@ -237,7 +237,7 @@ theorem k18_s11_r3_tc {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) 
   rw [h3'] at h3e
   have hpq : ⟪a - d, b - d⟫ ≤ 0 := by
     have hqr : ⟪b - d, c - d⟫ = -((α4 - 1) * ⟪a - d, b - d⟫) / γ4 := by
-      field_simp; rw [real_inner_comm (b - d) (a - d)] at *; nlinarith [hζ0']
+      field_simp; rw [real_inner_comm (b - d) (a - d)] at *; linarith [hζ0']
     rw [hqr] at hq
     have : 0 ≤ -((α4 - 1) * ⟪a - d, b - d⟫) := by
       by_contra hh; push Not at hh
@@ -247,12 +247,12 @@ theorem k18_s11_r3_tc {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) 
   · left
     have hβ : 1 < β1 := by
       by_contra hh; push Not at hh
-      nlinarith [mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hpq), mul_nonneg (sub_nonneg.2 hh) hqq.le]
+      linarith [mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hpq), mul_nonneg (sub_nonneg.2 hh) hqq.le]
     have hg : 1 < γ4 := by
       by_contra hh; push Not at hh
-      nlinarith [mul_pos (by linarith : (0:ℝ) < α4) (sub_pos.2 hβ), mul_nonneg (by linarith : (0:ℝ) ≤ α1) (sub_nonneg.2 hh)]
+      linarith [mul_pos (by linarith : (0:ℝ) < α4) (sub_pos.2 hβ), mul_nonneg (by linarith : (0:ℝ) ≤ α1) (sub_nonneg.2 hh)]
     exact k18_r3_core hdet hc' hb' ha' hα11 (by linarith) hα41 hg hb6
-      (by nlinarith [mul_nonneg (mul_pos hγ4 (by linarith : (0:ℝ) < α1)).le (sub_nonneg.2 hb6), mul_pos (sub_pos.2 hα41) (sub_pos.2 hβ)])
+      (by linarith [mul_nonneg (mul_pos hγ4 (by linarith : (0:ℝ) < α1)).le (sub_nonneg.2 hb6), mul_pos (sub_pos.2 hα41) (sub_pos.2 hβ)])
       hζ0 hz1 hL
   · rcases h3.lt_or_eq with h3l | h3e0
     · left
@@ -262,9 +262,9 @@ theorem k18_s11_r3_tc {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) 
         nlinarith [mul_nonneg (sub_nonneg.2 hh) hqq.le]
       have hg : 1 < γ4 := by
         by_contra hh; push Not at hh
-        nlinarith [mul_pos (by linarith : (0:ℝ) < α4) (sub_pos.2 hβ), mul_nonneg (by linarith : (0:ℝ) ≤ α1) (sub_nonneg.2 hh)]
+        linarith [mul_pos (by linarith : (0:ℝ) < α4) (sub_pos.2 hβ), mul_nonneg (by linarith : (0:ℝ) ≤ α1) (sub_nonneg.2 hh)]
       exact k18_r3_core hdet hc' hb' ha' hα11 (by linarith) hα41 hg hb6
-        (by nlinarith [mul_nonneg (mul_pos hγ4 (by linarith : (0:ℝ) < α1)).le (sub_nonneg.2 hb6), mul_pos (sub_pos.2 hα41) (sub_pos.2 hβ)])
+        (by linarith [mul_nonneg (mul_pos hγ4 (by linarith : (0:ℝ) < α1)).le (sub_nonneg.2 hb6), mul_pos (sub_pos.2 hα41) (sub_pos.2 hβ)])
         hζ0 hz1 hL
     · exact Or.inr ⟨h3e0, hpq⟩
 

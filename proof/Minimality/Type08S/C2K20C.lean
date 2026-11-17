@@ -34,7 +34,7 @@ theorem k20_affine_neg {c d : ℝ} (hc : c < 0) : ∃ δ > 0, ∀ t, 0 < t → t
   refine ⟨-c / (|d| + 1), div_pos (by linarith) (by positivity), fun t ht htδ => ?_⟩
   have h1 : t * d ≤ t * |d| := mul_le_mul_of_nonneg_left (le_abs_self d) ht.le
   have h2 : t * (|d| + 1) < -c := by rwa [lt_div_iff₀ (by positivity)] at htδ
-  nlinarith [abs_nonneg d]
+  linarith [abs_nonneg d]
 
 /-- A tilt direction generic for the triangle and pointing out at `e` (`cross2 (e-s) v < 0`, `cross2 (t-e) v < 0`). -/
 theorem k20_pick_v (o s t e : ℝ²) (hccw : 0 < cross2 (s - o) (t - o)) (hE : 0 < cross2 (e - s) (t - e)) :
@@ -93,9 +93,9 @@ theorem k20_triExt (o s t e : ℝ²) {h0 h1 h2 : ℝ} (hh0 : 0 < h0) (hh1 : 0 < 
     have ht : liftPt t 0 ∈ V := by simp [V]
     have hvel := k20_vel κ ψ lam M v e 0
     have c1 : 0 < cross2 (t - e) (proj_xy (cross (k20ω κ ψ v) (liftPt e 0) + k20τ ψ lam M v)) := by
-      rw [hvel]; simp only [cross2_add_right, cross2_sub_right, cross2_smul_right]; nlinarith
+      rw [hvel]; simp only [cross2_add_right, cross2_sub_right, cross2_smul_right]; linarith
     have c2 : 0 < cross2 (e - s) (proj_xy (cross (k20ω κ ψ v) (liftPt e 0) + k20τ ψ lam M v)) := by
-      rw [hvel]; simp only [cross2_add_right, cross2_sub_right, cross2_smul_right]; nlinarith
+      rw [hvel]; simp only [cross2_add_right, cross2_sub_right, cross2_smul_right]; linarith
     filter_upwards [k20_cert_flat V v (k20ω κ ψ v) (k20τ ψ lam M v) hs ht hE c1 c2] with ε hε y hy hb ht'
     have hb0 := hb 0; have hb1 := hb 1; have hb2 := hb 2
     have ht0 := ht' 0; have ht1 := ht' 1; have ht2 := ht' 2

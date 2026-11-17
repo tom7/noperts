@@ -53,8 +53,8 @@ theorem k17gdC1b_tsc {α1 β1 β6 v1 v2 : ℝ} (hα1 : 1 < α1) (hβ1 : 0 < β1)
     | (simp only [TSc, d3, k17gdC1, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 3200000 in
 theorem k17gdC1b_rest {α1 β1 β6 α4 γ4 v1 v2 : ℝ} (hα1 : 1 < α1) (hβ1 : 0 < β1) (hβ6 : 1 < β6) (hα4 : 0 < α4)

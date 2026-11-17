@@ -76,15 +76,15 @@ theorem k19_hex3_tsc {D β1 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hβ1 : 1 < β1) (
       | (simp only [TSc, d3, k19Hex3, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; linarith)
+         | (right; refine ⟨by ring, by linarith⟩))
   · intro i
     rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, k19Hex3, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 theorem k19Hex3_inj {β1 β6 γ6 : ℝ} (hβ1 : 1 < β1) (hβ6 : 0 < β6) (hγ6 : 0 < γ6) :
     ∀ i j, k19Hex3 β1 β6 γ6 i = k19Hex3 β1 β6 γ6 j → i = j := by
@@ -170,13 +170,13 @@ theorem k19_u3_tie_cells {a a' b b' c c' d : ℝ³} {β1 β6 γ6 : ℝ} (hdet : 
       refine k17gc_lexUni6_a _ _ hw ?_ ?_ ?_ ?_
       · right
         refine ⟨by simp only [k19Hex3, pc6_0, pc6_1, hz, hQR, hPR]; ring, ?_⟩
-        simp only [k19Hex3, pc6_0, pc6_1, hwx]; nlinarith
-      · left; simp only [k19Hex3, pc6_1, pc6_2, hz, hQR, hPR]; nlinarith
+        simp only [k19Hex3, pc6_0, pc6_1, hwx]; linarith
+      · left; simp only [k19Hex3, pc6_1, pc6_2, hz, hQR, hPR]; linarith
       · right
         refine ⟨by simp only [k19Hex3, pc6_4, pc6_5, hz, hQR, hPR]; ring, ?_⟩
         simp only [k19Hex3, pc6_4, pc6_5, hwx, hQR, hPR]
-        nlinarith [mul_pos (sub_pos.2 hβ1) hg0]
-      · right; left; simp only [k19Hex3, pc6_3, pc6_4, hz, hQR, hPR]; nlinarith [mul_pos hβ6 hRR]
+        linarith [mul_pos (sub_pos.2 hβ1) hg0]
+      · right; left; simp only [k19Hex3, pc6_3, pc6_4, hz, hQR, hPR]; linarith [mul_pos hβ6 hRR]
   -- cell 2: U3b pentagon (b',c',a,d,c), cone v1, v2 > 0, needs m·v < 0 and g·v > 0
   have C2 : K18Cell (V8 a a' b b' c c' d) P Q R d (k18Cone ((-m.1, -m.2) :: [g, (1, 0), (0, 1)])) := by
     refine k18Cell_of (V8 a a' b b' c c' d) P Q R d hΔ (k := 5) (by norm_num) (k17gcPentU3 β1)
@@ -214,13 +214,13 @@ theorem k19_u3_tie_cells {a a' b b' c c' d : ℝ³} {β1 β6 γ6 : ℝ} (hdet : 
       obtain ⟨hm0, hg0, -, -⟩ := k19_cone4 hC
       simp only [hm, hg] at hm0 hg0
       refine lexUni5_top _ _ hw ?_ ?_ ?_
-      · left; simp only [k17gcPentU3, pc5_0, pc5_1, hz, hQR, hPR]; nlinarith [mul_pos (by linarith : (0:ℝ) < β1) hRR]
+      · left; simp only [k17gcPentU3, pc5_0, pc5_1, hz, hQR, hPR]; linarith [mul_pos (by linarith : (0:ℝ) < β1) hRR]
       · right
         refine ⟨by simp only [k17gcPentU3, pc5_2, pc5_3, hz, hQR, hPR]; ring, ?_⟩
-        simp only [k17gcPentU3, pc5_2, pc5_3, hwx]; nlinarith
+        simp only [k17gcPentU3, pc5_2, pc5_3, hwx]; linarith
       · right
         refine ⟨by simp only [k17gcPentU3, pc5_3, pc5_4, hz, hQR, hPR]; ring, ?_⟩
-        simp only [k17gcPentU3, pc5_3, pc5_4, hwx]; nlinarith
+        simp only [k17gcPentU3, pc5_3, pc5_4, hwx]; linarith
   refine ⟨R, hR0, ?_⟩
   refine k18_tie_two C1 C2 (ρ1 := 1) (ρ2 := 0) (δ1 := 0) (δ2 := -1) (ε1 := 0) (ε2 := 1) ?_ ?_ ?_
   · intro l hl

@@ -77,9 +77,9 @@ theorem k4_cyc {D β1 β6 γ6 α4 v1 v2 v3 : ℝ} (hD : 0 < D) (hβ1 : 0 < β1) 
   have ka4v2 := mul_pos (mul_pos hD hα4) hv2
   have ka4b1v2 := mul_pos (mul_pos (mul_pos hD hα4) hβ1) hv2
   have kcone : 0 < D * α4 * ((1 - γ6) * v1 + β6 * v2) :=
-    mul_pos (mul_pos hD hα4) (by nlinarith [mul_nonneg (sub_nonneg.2 hγ61) hv1.le, mul_pos hβ6 hv2])
+    mul_pos (mul_pos hD hα4) (by linarith [mul_nonneg (sub_nonneg.2 hγ61) hv1.le, mul_pos hβ6 hv2])
   have kmix : 0 < D * (β6 - (1 - γ6) * β1) :=
-    mul_pos hD (by nlinarith [mul_nonneg (sub_nonneg.2 hγ61) (sub_pos.2 hβ11).le])
+    mul_pos hD (by linarith [mul_nonneg (sub_nonneg.2 hγ61) (sub_pos.2 hβ11).le])
   intro i j h1 h2'
   rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
     rcases z6_cases j with rfl | rfl | rfl | rfl | rfl | rfl <;>
@@ -112,8 +112,8 @@ theorem k4_rest {D β1 β6 γ6 α4 v1 v2 v3 : ℝ} (hD : 0 < D) (hβ1 : 0 < β1)
     (simp only [TSc, d3, k4Cyc, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
-     | (right; refine ⟨by ring, by nlinarith⟩))
+     | (left; linarith)
+     | (right; refine ⟨by ring, by linarith⟩))
 
 end C2
 end Type08Sp

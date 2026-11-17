@@ -78,7 +78,7 @@ theorem k24h1b0_tsc {D b1 s h6 g v1 v2 : ℝ} (hD : 0 < D) (hb1 : 1 < b1) (hs : 
             Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
        | (left; ring_nf; positivity)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (right; refine ⟨by ring, by linarith⟩))
 
 theorem k24h1b0_cs {P Q R : ℝ³} (hΔ : det3 P Q R ≠ 0) : ⟪Q, R⟫ ^ 2 < ⟪Q, Q⟫ * ⟪R, R⟫ := by
   have hR0 : R ≠ 0 := k17f_r0 hΔ
@@ -96,7 +96,7 @@ theorem k24h1b0_cs {P Q R : ℝ³} (hΔ : det3 P Q R ≠ 0) : ⟪Q, R⟫ ^ 2 < �
     simp only [hu, inner_sub_left, inner_sub_right, real_inner_smul_left, real_inner_smul_right,
       real_inner_comm R Q]; ring
   rw [e] at huu
-  nlinarith [(mul_pos_iff_of_pos_left hRR).1 huu]
+  linarith [(mul_pos_iff_of_pos_left hRR).1 huu]
 
 
 theorem k24h1c0_gram (A N E : ℝ³) : det3 A N E ^ 2 = ⟪A, A⟫ * ⟪N, N⟫ * ⟪E, E⟫ +
@@ -150,7 +150,7 @@ theorem k24h1b0_T {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hm : ⟪P, Q⟫ < 0 := by
     by_contra hn; push Not at hn
     have := mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hee.le
-    nlinarith [mul_pos (sub_pos.2 hβ1) hr2]
+    linarith [mul_pos (sub_pos.2 hβ1) hr2]
   have hα : 0 < α1 - 1 := by linarith
   have hT : β1 * ((1 - γ6) * ⟪R, R⟫ - β6 * ⟪Q, R⟫) = (1 - α1) * ⟪P, Q⟫ * (1 - γ6 - β6) := by
     linear_combination (-1 : ℝ) * ht1
@@ -158,15 +158,15 @@ theorem k24h1b0_T {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hrk : (1 - α1) * ⟪P, Q⟫ < β1 * ⟪R, R⟫ := by
     by_contra hn; push Not at hn
     have h1 : 0 < γ6 + β6 - 1 := by linarith
-    nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ γ6 - 1) (by linarith : (0:ℝ) ≤ (1 - α1) * ⟪P, Q⟫ - β1 * ⟪R, R⟫), mul_pos (by linarith : (0:ℝ) < β6) (by nlinarith : (0:ℝ) < (1 - α1) * ⟪P, Q⟫ - β1 * ⟪Q, R⟫)]
-  have hD : 0 < ⟪Q, Q⟫ * ⟪R, R⟫ - ⟪Q, R⟫ ^ 2 := by nlinarith
+    linarith [mul_nonneg (by linarith : (0:ℝ) ≤ γ6 - 1) (by linarith : (0:ℝ) ≤ (1 - α1) * ⟪P, Q⟫ - β1 * ⟪R, R⟫), mul_pos (by linarith : (0:ℝ) < β6) (by linarith : (0:ℝ) < (1 - α1) * ⟪P, Q⟫ - β1 * ⟪Q, R⟫)]
+  have hD : 0 < ⟪Q, Q⟫ * ⟪R, R⟫ - ⟪Q, R⟫ ^ 2 := by linarith
   have hid : ((1 - γ6) * (⟪R, R⟫ - ⟪Q, R⟫) + β6 * (⟪Q, Q⟫ - ⟪Q, R⟫)) * (β1 * ⟪R, R⟫ - (1 - α1) * ⟪P, Q⟫) =
       β6 * (⟪Q, Q⟫ * ⟪R, R⟫ - ⟪Q, R⟫ ^ 2 - ⟪P, Q⟫ * (⟪Q, Q⟫ + ⟪R, R⟫ - 2 * ⟪Q, R⟫)) := by
     linear_combination (⟪R, R⟫ - ⟪Q, R⟫) * hT + β6 * hr1'
   have hpos : 0 < β6 * (⟪Q, Q⟫ * ⟪R, R⟫ - ⟪Q, R⟫ ^ 2 - ⟪P, Q⟫ * (⟪Q, Q⟫ + ⟪R, R⟫ - 2 * ⟪Q, R⟫)) :=
     mul_pos (by linarith) (by nlinarith)
   rw [← hid] at hpos
-  exact pos_of_mul_pos_left hpos (by linarith) |> fun h => by nlinarith
+  exact pos_of_mul_pos_left hpos (by linarith) |> fun h => by linarith
 
 end C2
 end Type08Sp

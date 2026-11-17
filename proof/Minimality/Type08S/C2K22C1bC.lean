@@ -60,14 +60,14 @@ theorem k22c1b_tscP {l β1 γ4 γ6 v2 : ℝ} (hl : 0 < l) (hβ1 : 0 < β1) (hγ4
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, k22c1bP_0, k22c1bP_1, k22c1bP_2, k22c1bP_3, k22c1bP_4, k22c1bP_5,
           f0, f1, f2, f3, f4, f5, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     subst ht
     rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, k22c1bP_0, k22c1bP_1, k22c1bP_2, k22c1bP_3, k22c1bP_4, k22c1bP_5,
           f0, f1, f2, f3, f4, f5, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-       first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+       first | (left; linarith) | (right; refine ⟨by ring, by linarith⟩))
 
 end C2
 end Type08Sp

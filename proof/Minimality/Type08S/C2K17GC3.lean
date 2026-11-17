@@ -71,8 +71,8 @@ theorem k17gc_hexC_tsc {m γ4 e v1 v2 : ℝ} (hm0 : 0 < m) (hm1 : m < 1) (hγ4 :
       | (simp only [TSc, d3, k17gcHexC, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; linarith)
+         | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     subst ht
@@ -80,7 +80,7 @@ theorem k17gc_hexC_tsc {m γ4 e v1 v2 : ℝ} (hm0 : 0 < m) (hm1 : m < 1) (hγ4 :
       (simp only [TSc, d3, k17gcHexC, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
+       | (left; linarith)
        | (right; refine ⟨by ring, by nlinarith⟩))
 
 theorem k17gcHexC_inj {m γ4 : ℝ} (hm0 : 0 < m) (hm1 : m < 1) (hγ4 : 0 < γ4) :
@@ -186,7 +186,7 @@ theorem k17gc_s16a_cell {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 : ℝ} (hdet : d
     refine ⟨by nlinarith, ?_, ?_⟩
     · have : -X - (γ4 - 1) * (0 + lam * ⟪P, Q⟫) = -⟪P, P⟫ + ⟪P, Q⟫ * ((γ4 + 1) - (γ4 - 1) * lam) := by
         rw [hX]; ring
-      nlinarith [mul_pos (neg_pos.2 hPQ) hb]
+      linarith [mul_pos (neg_pos.2 hPQ) hb]
     · have : (0 + lam * ⟪P, Q⟫) * ⟪P, P⟫ + (-X + lam * 0) * ⟪P, Q⟫ =
           (-⟪P, Q⟫) * ((1 - lam) * ⟪P, P⟫ - (γ4 + 1) * ⟪P, Q⟫) := by rw [hX]; ring
       rw [this]
@@ -200,7 +200,7 @@ theorem k17gc_s16a_cell {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 : ℝ} (hdet : d
     · right
       simp only [k17gcHexC, pc6_0, pc6_5]
       refine ⟨by rw [hz, hz, hPR]; simp only; ring, ?_⟩
-      rw [k17f_wexp, k17f_wexp]; simp only; nlinarith
+      rw [k17f_wexp, k17f_wexp]; simp only; linarith
     · left; simp only [k17gcHexC, pc6_3, pc6_4, hz, hPR]; nlinarith [mul_pos hm0 hw0]
 
 set_option maxHeartbeats 3200000 in

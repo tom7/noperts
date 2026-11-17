@@ -76,7 +76,7 @@ theorem k16_r2_hasLexCell {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     linear_combination α1 * hqp - α1 * hrp + α1 * hm1 - (β1 - β6) * hrq
   have hD2 : 0 < (β1 - β6) * (⟪q, q⟫ - ⟪q, r⟫) + γ6 * (⟪r, r⟫ - ⟪q, r⟫) := by
     have h1 : 0 < β1 - β6 := by linarith
-    nlinarith [mul_pos h1 (sub_pos.2 hQR), mul_pos hγ6 (sub_pos.2 hRT)]
+    linarith [mul_pos h1 (sub_pos.2 hQR), mul_pos hγ6 (sub_pos.2 hRT)]
   have zr : ⟪r, V0⟫ < 0 := by linarith
   have i12 : 0 < ⟪b - a', V0⟫ := by
     have e : b - a' = (1 - β6) • q + (-γ6) • r := by rw [ha', hq, hr]; module
@@ -89,7 +89,7 @@ theorem k16_r2_hasLexCell {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     rw [e, inner_add_left, inner_smul_left, inner_smul_left]
     simp only [RCLike.conj_to_real]
     have : (α1 - 1) * ⟪p, V0⟫ ≤ 0 := mul_nonpos_of_nonneg_of_nonpos (by linarith) h
-    nlinarith [mul_pos (by linarith : (0:ℝ) < β1) (neg_pos.2 zr)]
+    linarith [mul_pos (by linarith : (0:ℝ) < β1) (neg_pos.2 zr)]
   -- the points
   have eO : fpoint p q V0 d (0, 0, 0) = d := by simp [fpoint, fcomb]
   have eA : fpoint p q V0 d (1, 0, 0) = a := by simp only [fpoint, fcomb, hp]; module

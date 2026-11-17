@@ -142,7 +142,7 @@ theorem k32h_LpLz {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hLq' : α1 - 1 + β1 * μ < 0 := by
     rw [hm3μ] at kq
     by_contra hn; push Not at hn
-    nlinarith [mul_nonneg hn k1.le]
+    linarith [mul_nonneg hn k1.le]
   obtain ⟨R, hR⟩ : ∃ R : ℝ³, R = μ • (a - d) - (c - d) := ⟨_, rfl⟩
   rw [← hR] at kc ka
   have hu0R : m3 • (a - d) - m1 • (c - d) = m1 • R := by rw [hR, hm3μ]; module
@@ -176,7 +176,7 @@ theorem k32h_LpLz {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     have hda : ⟪a - d, R⟫ < 0 := ka
     rw [inner_sub_left, inner_smul_left, inner_smul_left]
     simp only [conj_trivial]
-    nlinarith [mul_pos (sub_pos.2 hα) (neg_pos.2 hda), mul_pos (by linarith : (0:ℝ) < β1) (neg_pos.2 hdc)]
+    linarith [mul_pos (sub_pos.2 hα) (neg_pos.2 hda), mul_pos (by linarith : (0:ℝ) < β1) (neg_pos.2 hdc)]
   have hEv : 0 < (1 - γ6) * μ * m1 - m2 := by
     have h := k32g_hE hC0 hM hrel hα hβ hσ hLp hLz0
     have e : c - a' = (1 - γ6) • (c - d) - (b - d) := by rw [ha']; module
@@ -202,7 +202,7 @@ theorem k32h_LpLz {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hm2' : ⟪c', b - d⟫ - ⟪a', b - d⟫ = m2 := by rw [hm2, inner_sub_left]
   have L1 : m2 * (⟪c', a - d⟫ - ⟪a', a - d⟫) - m1 * (⟪c', b - d⟫ - ⟪a', b - d⟫) = 0 := by rw [hm1', hm2']; ring
   have L2 : 0 < m1 * (⟪c', a - d⟫ - ⟪a', a - d⟫) + m2 * (⟪c', b - d⟫ - ⟪a', b - d⟫) := by
-    rw [hm1', hm2']; nlinarith [sq_nonneg m2, mul_pos k1 k1]
+    rw [hm1', hm2']; linarith [sq_nonneg m2, mul_pos k1 k1]
   refine lexg_cell_frame_nb2 _ (a - d) (b - d) R d hΔ (by norm_num) Y (k32h_LpLz_inj hα hβ hγ6 hσ hμ0 k1 hLp' hLq' hE) [(m2, -m1, 0), (m1, m2, 0)] hmem TS.1 ?_ 0 (by decide) ?_ ?_ ?_
   · intro y hy hyx
     have hV : y = fpoint (a - d) (b - d) R d (α1, β1, 0) ∨ y = fpoint (a - d) (b - d) R d (γ6 * μ, 1, -γ6) ∨ y = fpoint (a - d) (b - d) R d (α1 + β1 * μ, 0, -β1) ∨ y = fpoint (a - d) (b - d) R d (1, 0, 0) ∨ y = fpoint (a - d) (b - d) R d (μ, 0, -1) ∨ y = fpoint (a - d) (b - d) R d (0, 0, 0) ∨ y = fpoint (a - d) (b - d) R d (0, 1, 0) := by

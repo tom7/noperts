@@ -82,10 +82,10 @@ theorem k21_pent_tsc {D α1 β1 γ4 β6 v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 < α
       | (simp only [TSc, d3, s0, s1, s2, s3, s4, k21Pent_0, k21Pent_1, k21Pent_2, k21Pent_3, k21Pent_4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
+         | (left; linarith)
          | (right; refine ⟨?_, ?_⟩
             · ring1
-            · nlinarith))
+            · linarith))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl <;>
@@ -93,10 +93,10 @@ theorem k21_pent_tsc {D α1 β1 γ4 β6 v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 < α
       (simp only [TSc, d3, s0, s1, s2, s3, s4, k21Pent_0, k21Pent_1, k21Pent_2, k21Pent_3, k21Pent_4,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
+       | (left; linarith)
        | (right; refine ⟨?_, ?_⟩
           · ring1
-          · nlinarith))
+          · linarith))
 
 set_option maxHeartbeats 12800000 in
 /-- **S1.3 tie, `β6 > 1`**: the pentagon `(a',c,b',a,c')` at `d - c`. -/
@@ -150,7 +150,7 @@ theorem k21_s13_pent {a a' b b' c c' d : ℝ³} {α1 β1 γ4 β6 : ℝ} (hdet : 
       have : (1 - α1) * ⟪P, P⟫ = β1 * ⟪P, Q⟫ := by linarith
       linear_combination ⟪P, Q⟫ * this
     rw [h2] at h1
-    nlinarith [mul_pos (by linarith : (0:ℝ) < β1) (sub_pos.2 hcs)]
+    linarith [mul_pos (by linarith : (0:ℝ) < β1) (sub_pos.2 hcs)]
   refine ⟨R, hR0, ?_⟩
   refine k18_cone_cell (V8 a a' b b' c c' d) P Q R d hΔ (k := 5) (by norm_num) (k21Pent α1 β1 γ4 β6)
     (k21Pent_inj (by linarith) (by linarith) (by linarith)) ?_
@@ -211,17 +211,17 @@ theorem k21_s13_pent {a a' b b' c c' d : ℝ³} {α1 β1 γ4 β6 : ℝ} (hdet : 
         ⟪fpoint P Q R d (k21Pent α1 β1 γ4 β6 2), fcomb P Q R v1 v2 0⟫)
         (⟪fpoint P Q R d (k21Pent α1 β1 γ4 β6 3), R⟫,
         ⟪fpoint P Q R d (k21Pent α1 β1 γ4 β6 3), fcomb P Q R v1 v2 0⟫) := by
-      left; simp only [k21Pent_2, k21Pent_3, hz, hPR, hQR]; nlinarith [mul_pos (by linarith : (0:ℝ) < γ4) hRR]
+      left; simp only [k21Pent_2, k21Pent_3, hz, hPR, hQR]; linarith [mul_pos (by linarith : (0:ℝ) < γ4) hRR]
     refine k19_lexUni_nb _ _ hw 3 ?_ ?_ ?_
     · rw [m3]; exact hba
     · rw [p3]; exact hca
     · intro i hi
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
-      · left; rw [m0]; left; simp only [k21Pent_0, k21Pent_4, hz, hPR, hQR]; nlinarith
+      · left; rw [m0]; left; simp only [k21Pent_0, k21Pent_4, hz, hPR, hQR]; linarith
       · left; rw [m1]; right
         refine ⟨by simp only [k21Pent_0, k21Pent_1, hz, hPR, hQR]; ring, ?_⟩
         simp only [k21Pent_0, k21Pent_1, hwx, hPR, hQR]
-        nlinarith [mul_pos (by linarith : (0:ℝ) < β6) h4]
+        linarith [mul_pos (by linarith : (0:ℝ) < β6) h4]
       · right; rw [p2]; exact hba
       · exact absurd rfl hi
       · left; rw [m4]; exact hca
@@ -230,8 +230,8 @@ theorem k21_s13_pent {a a' b b' c c' d : ℝ³} {α1 β1 γ4 β6 : ℝ} (hdet : 
     rcases hl with rfl | rfl | rfl | rfl
     · left; norm_num
     · right; norm_num
-    · left; simp only; nlinarith
-    · left; simp only; nlinarith
+    · left; simp only; linarith
+    · left; simp only; linarith
 
 /-- **Ta closed**: `K20LeftTa` has a lex cell or is Rupert. -/
 theorem k21_ta_close {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h : K20LeftTa a a' b b' c c' d) :

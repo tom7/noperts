@@ -46,7 +46,7 @@ theorem k17gd_taE {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h :
   have hα11 : 1 < α1 := hfar' hfar
   have hγ41 : 1 < γ4 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hα1.le (by linarith : 0 ≤ 1 - γ4), mul_pos (by linarith : 0 < α4) (sub_pos.2 hβ11)]
+    linarith [mul_nonneg hα1.le (by linarith : 0 ≤ 1 - γ4), mul_pos (by linarith : 0 < α4) (sub_pos.2 hβ11)]
   have hb1 : β1 ≠ 0 := by positivity
   set p := a - d with hp
   set q := b - d with hq

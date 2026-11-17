@@ -48,13 +48,13 @@ theorem k28b4_Bp0 {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hLq' : α1 - 1 + β1 * μ < 0 := by
     rw [hm3μ] at kq
     by_contra hn; push Not at hn
-    nlinarith [mul_nonneg hn k1.le]
+    linarith [mul_nonneg hn k1.le]
   obtain ⟨R, hR⟩ : ∃ R : ℝ³, R = μ • (a - d) - (c - d) := ⟨_, rfl⟩
   rw [← hR] at kc ka
   have hu0R : m3 • (a - d) - m1 • (c - d) = m1 • R := by rw [hR, hm3μ]; module
   rw [hu0R, inner_smul_right] at hLz
   have kz : 0 < ⟪c' - c, R⟫ := by
-    by_contra hn; push Not at hn; nlinarith [mul_nonneg k1.le (neg_nonneg.2 hn)]
+    by_contra hn; push Not at hn; linarith [mul_nonneg k1.le (neg_nonneg.2 hn)]
   have hΔ : det3 (a - d) (b - d) R ≠ 0 := by
     have e : det3 (a - d) (b - d) R = -det3 (a - d) (b - d) (c - d) := by
       rw [hR]; simp only [det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]; ring
@@ -82,7 +82,7 @@ theorem k28b4_Bp0 {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     have hda : ⟪a - d, R⟫ < 0 := ka
     rw [inner_add_left, inner_smul_left, inner_smul_left]
     simp only [conj_trivial]
-    nlinarith [mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hda), mul_pos (sub_pos.2 hβ) (neg_pos.2 hdc)]
+    linarith [mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hda), mul_pos (sub_pos.2 hβ) (neg_pos.2 hdc)]
   refine ⟨R, hR0, ?_⟩
   set Y := k28b4pY α1 β1 γ6 μ with hY
   have hY0 : fpoint (a - d) (b - d) R d (Y 0) = a := Ea

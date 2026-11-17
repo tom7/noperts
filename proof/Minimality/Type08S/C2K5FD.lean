@@ -87,12 +87,12 @@ theorem k5f_C2_frame (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q r ≠ 
     have hz : ∀ t : ℝ × ℝ × ℝ, ⟪fpoint p q r d t, r⟫ = ⟪d, r⟫ + t.1 * ⟪p, r⟫ + t.2.1 * ⟪q, r⟫ + t.2.2 * ⟪r, r⟫ :=
       fun t => inner_fpoint _ _ _ _ _ _
     refine k5f_lexUni5_C2 _ _ hsep ?_ ?_ ?_
-    · left; simp only [k5fC2Cyc, pc5_0, pc5_1, hz]; nlinarith
+    · left; simp only [k5fC2Cyc, pc5_0, pc5_1, hz]; linarith
     · left; simp only [k5fC2Cyc, pc5_2, pc5_3, hz]; nlinarith
     · rcases lt_or_ge (⟪p, r⟫) 0 with hB | hB
       · left; left; simp only [k5fC2Cyc, pc5_0, pc5_4, hz]
-        nlinarith [mul_pos (sub_pos.2 hα41) (neg_pos.2 hB), mul_pos (by linarith : (0:ℝ) < γ4) hA]
-      · right; left; simp only [k5fC2Cyc, pc5_3, pc5_4, hz]; nlinarith [mul_nonneg hα4.le hB, mul_pos (sub_pos.2 hγ4) hA]
+        linarith [mul_pos (sub_pos.2 hα41) (neg_pos.2 hB), mul_pos (by linarith : (0:ℝ) < γ4) hA]
+      · right; left; simp only [k5fC2Cyc, pc5_3, pc5_4, hz]; linarith [mul_nonneg hα4.le hB, mul_pos (sub_pos.2 hγ4) hA]
 
 end C2
 end Type08Sp

@@ -160,7 +160,7 @@ theorem k28b2s_R1C0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     by_contra hh; push Not at hh
     have h2 : 0 ≤ α1 * ⟪p, q⟫ * (⟪q, q⟫ + ⟪r, r⟫ - 2 * ⟪q, r⟫) :=
       mul_nonneg (mul_nonneg hα1'.le hh) hW.le
-    nlinarith [hr1]
+    linarith [hr1]
   have hLe : (1 - α1) * ⟪p, p⟫ - β1 * ⟪p, q⟫ = 0 := by
     have e : a - c' = (1 - α1) • p - β1 • q := by rw [hc', hp, hq]; module
     rw [e] at hL
@@ -168,7 +168,7 @@ theorem k28b2s_R1C0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     linarith
   have hα1 : 1 < α1 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) hpp.le, mul_pos hβ1' (neg_pos.2 hs), hLe]
+    linarith [mul_nonneg (sub_nonneg.2 hh) hpp.le, mul_pos hβ1' (neg_pos.2 hs), hLe]
   have hspr : ⟪p, r⟫ = ⟪p, q⟫ := hm1.symm
   clear_value p q r
   have ha2 : a = d + p := by rw [hp]; abel
@@ -187,7 +187,7 @@ theorem k28b2s_R1C0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hw : 0 < w := by rw [hwd]; positivity
   have Epp : ⟪p, p⟫ = (1 + ee) ^ 2 * w := by rw [hwd]; field_simp
   have Es : ⟪p, q⟫ = -(ea * (1 + ee) * w) := by
-    have : (1 + ee) * ⟪p, q⟫ = (1 + ee) * (-(ea * (1 + ee) * w)) := by rw [Epp] at hLe; nlinarith [hLe]
+    have : (1 + ee) * ⟪p, q⟫ = (1 + ee) * (-(ea * (1 + ee) * w)) := by rw [Epp] at hLe; linarith [hLe]
     exact mul_left_cancel₀ hb1.ne' this
   have Es2 : ⟪p, r⟫ = -(ea * (1 + ee) * w) := by rw [hspr, Es]
   have Eqr : ⟪q, r⟫ = ea ^ 2 * w := by
@@ -212,7 +212,7 @@ theorem k28b2s_R1C0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
         rw [hrd]; ring
       rw [← this]; exact hΛ
     by_contra hh; push Not at hh
-    nlinarith [mul_pos (mul_pos hrho hpp) (sub_pos.2 hh)]
+    linarith [mul_pos (mul_pos hrho hpp) (sub_pos.2 hh)]
   have hg6 : 0 < 1 + ee - β6 := by linarith
   obtain ⟨lam, hlamd⟩ : ∃ lam : ℝ, lam = (β6 * kap + ea * (1 + ea) * (1 + ee) * w) / ((1 + ea) * (1 + ee) ^ 2 * w) := ⟨_, rfl⟩
   have hlam : 0 < lam := by rw [hlamd]; positivity
@@ -277,23 +277,23 @@ theorem k28b2s_R1C0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have DbaP : 0 < ⟪b', p⟫ - ⟪a', p⟫ := by
     rw [← inner_sub_left, eba, ipx]
     have : 0 < (1 + ea) * (1 + ee) ^ 2 * w := by positivity
-    nlinarith [this]
+    linarith [this]
   have DacR : 0 < ⟪a, R⟫ - ⟪c', R⟫ := by
     rw [← inner_sub_left, eac, ipR, ipx, ipy]
     have : 0 < (1 + ee) * kap := by positivity
-    nlinarith [this]
+    linarith [this]
   have hle : ea < (1 + ee) * lam := by
     have h1 : 0 < (1 + ea) * (1 + ee) * w := by positivity
     have h0 : 0 < β6 * kap := by positivity
     have : (1 + ea) * (1 + ee) * w * ((1 + ee) * lam - ea) = β6 * kap := by linear_combination hlamE
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg h1.le (sub_nonneg.2 hh)]
+    linarith [mul_nonneg h1.le (sub_nonneg.2 hh)]
   have hdepR : ⟪a, R⟫ - ⟪b, R⟫ ≤ 0 := by
     rw [hLmlam, ← hR, inner_sub_left] at hdep; exact hdep
   have hqq : (ee * kap - ea * (ea + 1 + ee) * w) * rho = ea * (ea + 1 + ee) * w * kap := by linear_combination hrel'
   have hqq0 : 0 < ee * kap - ea * (ea + 1 + ee) * w := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (neg_nonneg.2 hh) hrho.le, mul_pos (mul_pos (mul_pos hea (by linarith : (0:ℝ) < ea + 1 + ee)) hw) hk]
+    linarith [mul_nonneg (neg_nonneg.2 hh) hrho.le, mul_pos (mul_pos (mul_pos hea (by linarith : (0:ℝ) < ea + 1 + ee)) hw) hk]
   have eab' : a - b = (1:ℝ) • p + (-1:ℝ) • q + (0:ℝ) • r := by rw [ha2, hb2]; module
   have hDep : ⟪a, R⟫ - ⟪b, R⟫ = kap + ea ^ 2 * w + ea * (1 + ee) * w - lam * ((1 + ee) * (1 + ea + ee) * w) := by
     rw [← inner_sub_left, eab', ipR, ipx, ipy]; ring
@@ -311,7 +311,7 @@ theorem k28b2s_R1C0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     have hnum : kap * ((1 + ea) * (1 + ee) - (1 + ea + ee) * β6) ≤ 0 := by
       by_contra hh; push Not at hh; linarith [div_pos hh hden]
     have : (1 + ea) * (1 + ee) - (1 + ea + ee) * β6 ≤ 0 := by
-      by_contra hh; push Not at hh; nlinarith [mul_pos hk hh]
+      by_contra hh; push Not at hh; linarith [mul_pos hk hh]
     by_contra hh; push Not at hh
     linarith [mul_pos hea hee, mul_nonneg hc'.le (sub_nonneg.2 hh)]
   have hqq : (ee * kap - ea * (ea + 1 + ee) * w) * rho = ea * (ea + 1 + ee) * w * kap := by linear_combination hrel'

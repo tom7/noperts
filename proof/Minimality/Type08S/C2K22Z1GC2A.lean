@@ -88,16 +88,16 @@ theorem k22z1gc2_tsc {D w k v1 v2 : ℝ} (hD : 0 < D) (hw : 0 < w) (hk : 0 < k)
          simp only [d3, a0, a1, a2, a3, a4, a5, k22z1gc2Y_0, k22z1gc2Y_1, k22z1gc2Y_2,
           k22z1gc2Y_3, k22z1gc2Y_4, k22z1gc2Y_5, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; linarith)
+         | (right; refine ⟨by ring, by linarith⟩))
   · intro i
     rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
       (apply k22z1gc2_tsc_of hD
        simp only [d3, a0, a1, a2, a3, a4, a5, k22z1gc2Y_0, k22z1gc2Y_1, k22z1gc2Y_2,
           k22z1gc2Y_3, k22z1gc2Y_4, k22z1gc2Y_5, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 end C2
 end Type08Sp

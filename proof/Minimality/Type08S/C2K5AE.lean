@@ -42,8 +42,8 @@ theorem k5a_rest0 {D α4 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hα4 : 0 < α4) (
     (simp only [TSc, d3, kCyc, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
-     | (right; refine ⟨by ring, by nlinarith⟩))
+     | (left; linarith)
+     | (right; refine ⟨by ring, by linarith⟩))
 
 /-- 5-cycle with exactly one peak, at `3`. -/
 theorem k5a_lexUni5_three (z w : ZMod 5 → ℝ) (hinj : ∀ i j, z i = z j → w i = w j → i = j)

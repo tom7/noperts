@@ -34,7 +34,7 @@ theorem k22c3_cs {P Q R : ℝ³} (hΔ : det3 P Q R ≠ 0) : ⟪Q, R⟫ ^ 2 < ⟪
     simp only [hu, inner_sub_left, inner_sub_right, real_inner_smul_left, real_inner_smul_right,
       real_inner_comm R Q]; ring
   rw [e] at huu
-  nlinarith [(mul_pos_iff_of_pos_left hRR).1 huu]
+  linarith [(mul_pos_iff_of_pos_left hRR).1 huu]
 
 set_option maxHeartbeats 12800000 in
 /-- Pc corner C3, one cell at `c - d` (pentagon `(a',c,d,a,c')`). -/
@@ -85,10 +85,10 @@ theorem k22c3_cell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h 
   have hg4 : γ4 < 1 := by
     by_contra hn; push Not at hn
     have : (1 - γ4) * ⟪R, R⟫ ≤ 0 := mul_nonpos_of_nonpos_of_nonneg (by linarith) hRR.le
-    nlinarith [mul_nonneg hg6.le (neg_nonneg.2 this)]
+    linarith [mul_nonneg hg6.le (neg_nonneg.2 this)]
   have hg4p : 0 < 1 - γ4 := by linarith
   have hQR : ⟪Q, R⟫ = (1 - γ6) * ⟪R, R⟫ := by
-    have h1 : (1 - γ4) * (⟪Q, R⟫ - (1 - γ6) * ⟪R, R⟫) = 0 := by nlinarith
+    have h1 : (1 - γ4) * (⟪Q, R⟫ - (1 - γ6) * ⟪R, R⟫) = 0 := by linarith
     rcases mul_eq_zero.1 h1 with h | h
     · linarith
     · linarith
@@ -161,12 +161,12 @@ theorem k22c3_cell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h 
     have kk3 := mul_pos hβ1 kk2
     refine k19_lexUni_nb _ _ hw 1 ?_ ?_ ?_
     · rw [e1]; right; refine ⟨?_, htie⟩; simp only [k22c3Y_0, k22c3Y_1, hz]; rw [hQR]; ring_nf
-    · rw [f1]; left; simp only [k22c3Y_1, k22c3Y_2, hz]; nlinarith
+    · rw [f1]; left; simp only [k22c3Y_1, k22c3Y_2, hz]; linarith
     · intro i hi
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
       · right; rw [f0]; right; refine ⟨?_, htie⟩; simp only [k22c3Y_0, k22c3Y_1, hz]; rw [hQR]; ring_nf
       · exact absurd rfl hi
-      · left; rw [e2]; left; simp only [k22c3Y_1, k22c3Y_2, hz]; nlinarith
+      · left; rw [e2]; left; simp only [k22c3Y_1, k22c3Y_2, hz]; linarith
       · right; rw [f3]; left; simp only [k22c3Y_3, k22c3Y_4, hz]; nlinarith
       · right; rw [f4]; left; simp only [k22c3Y_4, k22c3Y_0, hz]; nlinarith
   · intro l hl

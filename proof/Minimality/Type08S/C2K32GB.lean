@@ -68,7 +68,7 @@ theorem k24b2_ge {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     by_contra hh; push Not at hh
     have h2 : 0 ≤ α1 * ⟪p, q⟫ * (⟪q, q⟫ + ⟪r, r⟫ - 2 * ⟪q, r⟫) :=
       mul_nonneg (mul_nonneg hα1'.le hh) hW.le
-    nlinarith [hr1]
+    linarith [hr1]
   have hLe : 0 < ⟪p, p⟫ - α1 * ⟪p, p⟫ - β1 * ⟪p, q⟫ := by
     have e : a - c' = (1 - α1) • p - β1 • q := by rw [hc', hp, hq]; module
     rw [e] at hL
@@ -115,9 +115,9 @@ theorem k24b2_ge {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   · intro v1 v2 ⟨hv1, hv2⟩ hL
     refine k14_quad_uni_h5 _ _ hL ?_ ?_ ?_ ?_
     · simp only [k24b2gCyc_1, k24b2gCyc_0, inner_fpoint, hqp, hrp, hspr]
-      nlinarith
+      linarith
     · simp only [k24b2gCyc_3, k24b2gCyc_0, inner_fpoint, hqp, hrp, hspr]
-      nlinarith
+      linarith
     · simp only [k24b2gCyc_2, k24b2gCyc_1, inner_fpoint, hqp, hrp, hspr]
       nlinarith
     · simp only [k24b2gCyc_2, k24b2gCyc_3, inner_fpoint, hqp, hrp, hspr]

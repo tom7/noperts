@@ -75,7 +75,7 @@ theorem k22c1b_cellP {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 l Q R : ℝ}
            simp only [k22c1bP_0, k22c1bP_1, k22c1bP_2, k22c1bP_3, k22c1bP_4, k22c1bP_5, Prod.mk.injEq] at h
            first
            | linarith [h.1, h.2.1, h.2.2]
-           | nlinarith [h.1, h.2.1, h.2.2])
+           | linarith [h.1, h.2.1, h.2.2])
     · intro i
       rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl
       · simp only [k22c1bP_0, eB']; simp [V8]
@@ -126,7 +126,7 @@ theorem k22c1b_cellP {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 l Q R : ℝ}
         · right; simp only [g3]; apply L; left
           simp only [k22c1bP_3, k22c1bP_4]; nlinarith
         · right; simp only [g4]; apply L; left
-          simp only [k22c1bP_4, k22c1bP_5]; nlinarith
+          simp only [k22c1bP_4, k22c1bP_5]; linarith
         · exact (hj1 rfl).elim
       · refine k22c1b_uni (by decide) _ _ hinj 4 ?_
         intro j hj1 hj2

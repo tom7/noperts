@@ -97,8 +97,8 @@ theorem k24mtd_tsc {D b1 s h6 g v1 v2 : ℝ} (hD : 0 < D) (hb1 : 1 < b1) (hs : 0
       | (simp only [TSc, d3, e0, e1, e2, e3, e4, f0, f1, f2, f3, f4, k24mtdY_0, k24mtdY_1, k24mtdY_2, k24mtdY_3,
           k24mtdY_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; linarith)
+         | (right; refine ⟨by ring, by linarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl <;>
@@ -106,8 +106,8 @@ theorem k24mtd_tsc {D b1 s h6 g v1 v2 : ℝ} (hD : 0 < D) (hb1 : 1 < b1) (hs : 0
       (simp only [TSc, d3, e0, e1, e2, e3, e4, f0, f1, f2, f3, f4, k24mtdY_0, k24mtdY_1, k24mtdY_2, k24mtdY_3,
           k24mtdY_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 /-- Depth algebra in frame quantities `xr = ⟪a-d,R⟫`, `yr = ⟪b-d,R⟫`, `nr = ⟪R,R⟫`; `zr = ⟪c-d,R⟫ = -s xr - nr`. -/
 theorem k24mtd_depth {s g h6 b1 xr yr nr : ℝ} (hs : 0 < s) (hb1 : 1 < b1) (hh6 : 1 < h6) (hg : 0 < g) (hg1 : g < 1)

@@ -27,7 +27,7 @@ theorem k5a_interval {β6 γ6 : ℝ} (hβ6 : 0 < β6) (hγ6 : 0 < γ6) (hs : 1 <
     have hβγ1 : (1 - β6) / γ6 < 1 := by
       rw [div_lt_one hγ6]; linarith
     have hβγ2 : (1 - β6) / γ6 < β6 / (1 - γ6) := by
-      rw [div_lt_div_iff₀ hγ6 (by linarith)]; nlinarith
+      rw [div_lt_div_iff₀ hγ6 (by linarith)]; linarith
     refine ⟨max 0 ((1 - β6) / γ6), min 1 (β6 / (1 - γ6)),
       max_lt (lt_min one_pos hhi0) (lt_min hβγ1 hβγ2), le_max_left _ _, fun lam hl0 hl1 => ?_⟩
     have hlam0 : 0 < lam := lt_of_le_of_lt (le_max_left _ _) hl0
@@ -68,8 +68,8 @@ theorem k5a_core_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p
   set vv := fcomb p q r (0 + lam * 1) (-1 + lam * 0) 0 with hvv
   have hv1 : 0 < 0 + lam * 1 := by linarith
   have hv2 : -1 + lam * 0 < 0 := by linarith
-  have hcone : (1 - γ6) * (0 + lam * 1) + β6 * (-1 + lam * 0) < 0 := by nlinarith
-  have hc1 : 0 < γ6 * (0 + lam * 1) + (1 - β6) * (-1 + lam * 0) := by nlinarith
+  have hcone : (1 - γ6) * (0 + lam * 1) + β6 * (-1 + lam * 0) < 0 := by linarith
+  have hc1 : 0 < γ6 * (0 + lam * 1) + (1 - β6) * (-1 + lam * 0) := by linarith
   have hz : ∀ t : ℝ × ℝ × ℝ, ⟪fpoint p q r d t, r⟫ = ⟪d, r⟫ + t.1 * ⟪p, r⟫ + t.2.1 * ⟪q, r⟫ + t.2.2 * ⟪r, r⟫ :=
     fun t => inner_fpoint _ _ _ _ _ _
   obtain ⟨f0, f1, f2, f3, f4⟩ := z5_add
@@ -103,17 +103,17 @@ theorem k5a_core_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p
             rw [z0, z4] at hcon
             rw [z3, z4] at h43'
             push Not at hcon
-            have e1 : 0 ≤ -⟪p, r⟫ - (m + α4 - 1) * ⟪r, r⟫ := by nlinarith
-            nlinarith [mul_pos hA hcond, mul_nonneg (by linarith : 0 ≤ β6 + γ6 - 1) e1]
+            have e1 : 0 ≤ -⟪p, r⟫ - (m + α4 - 1) * ⟪r, r⟫ := by linarith
+            linarith [mul_pos hA hcond, mul_nonneg (by linarith : 0 ≤ β6 + γ6 - 1) e1]
           exact k5a_lexUni5_three zz ww hinj h10 h04 h23 h43
     · -- B ≥ 0: L2
       have hs1 : LexLt (zz 1, ww 1) (zz 0, ww 0) := h10
       apply lexUni_shift_k 1
       refine lexUni5_two _ _ (fun i j h1 h2 => add_right_cancel (hinj _ _ h1 h2)) ?_ ?_ ?_
       · left; simp only [f0, f1, f2, f3, f4, z2, z3]
-        nlinarith [mul_nonneg (by linarith : 0 ≤ β6 + γ6 - 1) hB, mul_pos hγ6 (mul_pos hm hA)]
+        linarith [mul_nonneg (by linarith : 0 ≤ β6 + γ6 - 1) hB, mul_pos hγ6 (mul_pos hm hA)]
       · left; simp only [f0, f1, f2, f3, f4, z0, z4]
-        nlinarith [mul_pos (by linarith : 0 < m + α4 - 1) hA]
+        linarith [mul_pos (by linarith : 0 < m + α4 - 1) hA]
       · right; simp only [f0, f1, f2, f3, f4]; exact h10
   have n0 : -(0 : ZMod 5) = 0 := by decide
   have n1 : -(1 : ZMod 5) = 4 := by decide

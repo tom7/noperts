@@ -41,11 +41,11 @@ theorem k28b4_Dz0 {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hLp' : 0 < α1 + (β1 - 1) * μ := by
     rw [hm3μ] at kp
     by_contra hn; push Not at hn
-    nlinarith [mul_nonneg (by linarith : 0 ≤ -(α1 + (β1 - 1) * μ)) k1.le]
+    linarith [mul_nonneg (by linarith : 0 ≤ -(α1 + (β1 - 1) * μ)) k1.le]
   have hLq' : 0 < α1 - 1 + β1 * μ := by
     rw [hm3μ] at kq
     by_contra hn; push Not at hn
-    nlinarith [mul_nonneg (by linarith : 0 ≤ -(α1 - 1 + β1 * μ)) k1.le]
+    linarith [mul_nonneg (by linarith : 0 ≤ -(α1 - 1 + β1 * μ)) k1.le]
   obtain ⟨g1, hg1⟩ : ∃ g1, g1 = ⟪a' - c, a - d⟫ := ⟨_, rfl⟩
   obtain ⟨g2, hg2⟩ : ∃ g2, g2 = ⟪a' - c, b - d⟫ := ⟨_, rfl⟩
   rw [← hg1] at kg
@@ -84,7 +84,7 @@ theorem k28b4_Dz0 {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     have hda : ⟪a - d, R⟫ < 0 := ka
     rw [inner_add_left, inner_smul_left, inner_smul_left]
     simp only [conj_trivial]
-    nlinarith [mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hda), mul_pos (sub_pos.2 hβ) (neg_pos.2 hdc)]
+    linarith [mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hda), mul_pos (sub_pos.2 hβ) (neg_pos.2 hdc)]
   refine ⟨R, hR0, ?_⟩
   set Y := k28b4dY α1 β1 γ6 μ with hY
   have hY0 : fpoint (a - d) (b - d) R d (Y 0) = c' := Ec'

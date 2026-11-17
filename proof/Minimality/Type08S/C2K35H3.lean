@@ -28,7 +28,7 @@ theorem k28h5h_H3 (pp pq qq qr rr a1 b1 b6 g6 : ℝ) (ha : 1 < a1) (hb : 1 < b1)
     0 < ((a1-1)^2*pp+2*(a1-1)*b1*pq+b1^2*qq)*b6*(b1+a1-1)
       + ((a1-1)^2*pp+2*(a1-1)*b1*pq+b1^2*qr)*(b6*(1-b1-a1)+a1*b1*(b6+g6-1)) := by
   have hQ := k28h5h_Q3 (qq-qr) (rr-qr) qr a1 b1 b6 g6 (by linarith) (by linarith) hb6 hg6 (by linarith) (by linarith)
-    (by linarith) hu1 hu2 (by nlinarith) (by linarith) (by linarith)
+    (by linarith) hu1 hu2 (by linarith) (by linarith) (by linarith)
   have hW : 0 < qq + rr - 2*qr := by linarith
   have hA : 0 < a1 - 1 := by linarith
   have hsg : 0 < b6 + g6 - 1 := by linarith
@@ -41,7 +41,7 @@ theorem k28h5h_H3 (pp pq qq qr rr a1 b1 b6 g6 : ℝ) (ha : 1 < a1) (hb : 1 < b1)
   have h3 : 0 < (qq+rr-2*qr) * (((a1-1)^2*pp+2*(a1-1)*b1*pq+b1^2*qq)*b6*(b1+a1-1)
       + ((a1-1)^2*pp+2*(a1-1)*b1*pq+b1^2*qr)*(b6*(1-b1-a1)+a1*b1*(b6+g6-1))) := by
     rw [key]; have : 0 < b1^2 := by positivity
-    nlinarith [mul_pos this hQ]
+    linarith [mul_pos this hQ]
   exact pos_of_mul_pos_right h3 hW.le
 
 end Minimality.Type08Sp.C2

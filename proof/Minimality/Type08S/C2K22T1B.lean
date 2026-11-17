@@ -73,7 +73,7 @@ theorem k22t1_cell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h 
   have hPQ : ⟪Q, P⟫ = ⟪P, Q⟫ := real_inner_comm _ _
   simp only [inner_smul_right, inner_sub_right, inner_add_right, inner_neg_right, inner_smul_left,
     inner_sub_left, inner_add_left, inner_neg_left, conj_trivial, hRP, hRQ, hPQ] at hlit hc2 hb2 hca
-  have hx : ⟪P, R⟫ < 0 := by nlinarith
+  have hx : ⟪P, R⟫ < 0 := by linarith
   have hy : ⟪Q, R⟫ < 0 := by nlinarith
   have hz0 : 0 < ⟪P, Q⟫ := by nlinarith
   have hγ4 : 1 < γ4 := by
@@ -123,12 +123,12 @@ theorem k22t1_cell {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h 
     obtain ⟨e0, e1, e2, e3, e4, f0, f1, f2, f3, f4⟩ := k19_z5
     refine k19_lexUni_nb _ _ hw 0 ?_ ?_ ?_
     · rw [e0]; left; simp only [k22t1Y_4, k22t1Y_0, hz]; nlinarith
-    · rw [f0]; left; simp only [k22t1Y_0, k22t1Y_1, hz]; nlinarith
+    · rw [f0]; left; simp only [k22t1Y_0, k22t1Y_1, hz]; linarith
     · intro i hi
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
       · exact absurd rfl hi
-      · left; rw [e1]; left; simp only [k22t1Y_0, k22t1Y_1, hz]; nlinarith
-      · left; rw [e2]; left; simp only [k22t1Y_1, k22t1Y_2, hz]; nlinarith
+      · left; rw [e1]; left; simp only [k22t1Y_0, k22t1Y_1, hz]; linarith
+      · left; rw [e2]; left; simp only [k22t1Y_1, k22t1Y_2, hz]; linarith
       · left; rw [e3]; left; simp only [k22t1Y_2, k22t1Y_3, hz]; nlinarith
       · right; rw [f4]; left; simp only [k22t1Y_4, k22t1Y_0, hz]; nlinarith
   · intro l hl

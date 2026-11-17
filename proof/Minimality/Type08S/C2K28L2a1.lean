@@ -72,8 +72,8 @@ theorem k28l2a_tsc {D α1 β1 β6 γ6 ρ v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 < �
       | (simp only [TSc, d3, e0, e1, e2, e3, e4, f0, f1, f2, f3, f4, k28l2aY_0, k28l2aY_1, k28l2aY_2,
             k28l2aY_3, k28l2aY_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; apply mul_pos hD; nlinarith [mul_pos p1 x1, mul_pos p2 x2, mul_pos p2 hρ, mul_pos p1 hρ, mul_pos p3 hρ,  mul_pos p2 p0, mul_pos p1 p3, mul_pos (mul_pos p1 g1) hρ, mul_pos p2 x1, mul_pos p1 x2, mul_pos p1 s1, mul_pos hρ s1, mul_pos p0 B1, mul_pos B1 hρ, mul_pos (mul_pos p3 b1) hρ, mul_pos p0 a1, mul_pos a1 p2, mul_pos p1 a1])
-         | (right; refine ⟨by ring, ?_⟩; apply mul_pos hD; nlinarith [mul_pos p1 hv2, mul_pos p0 hv2, mul_pos hv2 b1]))
+         | (left; apply mul_pos hD; linarith [mul_pos p1 x1, mul_pos p2 x2, mul_pos p2 hρ, mul_pos p1 hρ, mul_pos p3 hρ,  mul_pos p2 p0, mul_pos p1 p3, mul_pos (mul_pos p1 g1) hρ, mul_pos p2 x1, mul_pos p1 x2, mul_pos p1 s1, mul_pos hρ s1, mul_pos p0 B1, mul_pos B1 hρ, mul_pos (mul_pos p3 b1) hρ, mul_pos p0 a1, mul_pos a1 p2, mul_pos p1 a1])
+         | (right; refine ⟨by ring, ?_⟩; apply mul_pos hD; linarith [mul_pos p1 hv2, mul_pos p0 hv2, mul_pos hv2 b1]))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl <;>
@@ -81,8 +81,8 @@ theorem k28l2a_tsc {D α1 β1 β6 γ6 ρ v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 < �
       (simp only [TSc, d3, e0, e1, e2, e3, e4, f0, f1, f2, f3, f4, k28l2aY_0, k28l2aY_1, k28l2aY_2,
             k28l2aY_3, k28l2aY_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; apply mul_pos hD; nlinarith [mul_pos p1 x1, mul_pos p2 x2, mul_pos p2 hρ, mul_pos p1 hρ, mul_pos p3 hρ,  mul_pos p2 p0, mul_pos p1 p3, mul_pos (mul_pos p1 g1) hρ, mul_pos p2 x1, mul_pos p1 x2, mul_pos p1 s1, mul_pos hρ s1, mul_pos p0 B1, mul_pos B1 hρ, mul_pos (mul_pos p3 b1) hρ, mul_pos p0 a1, mul_pos a1 p2, mul_pos p1 a1])
-       | (right; refine ⟨by ring, ?_⟩; apply mul_pos hD; nlinarith [mul_pos p1 hv2, mul_pos p0 hv2, mul_pos hv2 b1]))
+       | (left; apply mul_pos hD; linarith [mul_pos p1 x1, mul_pos p2 x2, mul_pos p2 hρ, mul_pos p1 hρ, mul_pos p3 hρ,  mul_pos p2 p0, mul_pos p1 p3, mul_pos (mul_pos p1 g1) hρ, mul_pos p2 x1, mul_pos p1 x2, mul_pos p1 s1, mul_pos hρ s1, mul_pos p0 B1, mul_pos B1 hρ, mul_pos (mul_pos p3 b1) hρ, mul_pos p0 a1, mul_pos a1 p2, mul_pos p1 a1])
+       | (right; refine ⟨by ring, ?_⟩; apply mul_pos hD; linarith [mul_pos p1 hv2, mul_pos p0 hv2, mul_pos hv2 b1]))
 
 end C2
 end Type08Sp

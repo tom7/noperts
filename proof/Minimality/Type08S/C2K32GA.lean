@@ -77,14 +77,14 @@ theorem k24b2g_tsc {α1 β1 β6 γ6 v1 v2 : ℝ} (hβ1 : 1 < β1) (hb6 : 0 < β6
       | exact (h2 (by decide)).elim
       | (simp only [TSc, d3, k24b2gCyc_0, k24b2gCyc_1, k24b2gCyc_2, k24b2gCyc_3, f0, f1, f2, f3,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-         first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+         first | (left; linarith) | (right; refine ⟨by ring, by nlinarith⟩))
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl <;>
       rcases z4_cases i with rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, k24b2gCyc_0, k24b2gCyc_1, k24b2gCyc_2, k24b2gCyc_3, f0, f1, f2, f3,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-       first | (left; nlinarith) | (right; refine ⟨by ring, by nlinarith⟩))
+       first | (left; linarith) | (right; refine ⟨by ring, by nlinarith⟩))
 
 end C2
 end Type08Sp

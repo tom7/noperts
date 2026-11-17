@@ -65,7 +65,7 @@ theorem k28l2_A0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   rw [hPR] at hm1 hm2 hX3 hX4
   have hqq : ⟪Q, r⟫ < ⟪Q, Q⟫ := by nlinarith
   have hrr : ⟪Q, r⟫ < ⟪r, r⟫ := by nlinarith
-  obtain ⟨hμ, hmr, hx1, hx2, hZp, hZr⟩ := k28l2a0_alg hα1 hβ1 hpp hqq hrr hr2' hr1' (by nlinarith) (by nlinarith)
+  obtain ⟨hμ, hmr, hx1, hx2, hZp, hZr⟩ := k28l2a0_alg hα1 hβ1 hpp hqq hrr hr2' hr1' (by linarith) (by linarith)
   obtain ⟨μ, hμd⟩ : ∃ μ, μ = -((1 - α1) * ⟪P, P⟫ - β1 * ⟪P, Q⟫) := ⟨_, rfl⟩
   obtain ⟨mr, hmrd⟩ : ∃ mr, mr = (1 - α1) * ⟪P, Q⟫ - β1 * ⟪Q, r⟫ := ⟨_, rfl⟩
   rw [← hμd] at hμ hx1 hx2 hZp hZr
@@ -103,12 +103,12 @@ theorem k28l2_A0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hz1 : ⟪a, R⟫ < ⟪b', R⟫ := by
     have : 0 < ⟪b' - a, R⟫ := by
       rw [ebpa]; simp only [inner_add_left, inner_smul_left, conj_trivial]
-      nlinarith [mul_pos (sub_pos.2 hα1) hzP, mul_pos (by linarith : (0:ℝ) < β1) hzR]
+      linarith [mul_pos (sub_pos.2 hα1) hzP, mul_pos (by linarith : (0:ℝ) < β1) hzR]
     rw [inner_sub_left] at this; linarith
   have hz2 : ⟪c, R⟫ < ⟪b', R⟫ := by
     have : 0 < ⟪b' - c, R⟫ := by
       rw [ebpc]; simp only [inner_add_left, inner_smul_left, conj_trivial]
-      nlinarith [mul_pos (by linarith : (0:ℝ) < α1) hzP, mul_pos (sub_pos.2 hβ1) hzR]
+      linarith [mul_pos (by linarith : (0:ℝ) < α1) hzP, mul_pos (sub_pos.2 hβ1) hzR]
     rw [inner_sub_left] at this; linarith
   have hz3 : ⟪a', R⟫ < ⟪c', R⟫ ∨ ⟪a', R⟫ < ⟪c, R⟫ := by
     rcases hL.lt_or_eq with h | h
@@ -150,10 +150,10 @@ theorem k28l2_A0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     refine k28l2a0_core hdet hc' hb' ha' hα1 hβ1 hβ6 hγ6 hσ hρ hx1 hx2'.symm hR hmp ?_ ?_ rfl rfl hle hz1 hz2 hz3
     · rw [hmp', hmq']
       have e1 : ρ * -(-μ) = mr := by rw [neg_neg, hρμ]
-      rw [e1, hmrd]; nlinarith
+      rw [e1, hmrd]; linarith
     · rw [hmp', hmq']
       have e2 : (γ6 - 1) * ρ * -μ = -((γ6 - 1) * mr) := by linear_combination (-(γ6 - 1)) * hρμ
-      rw [e2]; nlinarith
+      rw [e2]; linarith
 
 end C2
 end Type08Sp

@@ -42,7 +42,7 @@ theorem k20R3_inj {α β κ : ℝ} (hα : 0 < α) (hβ : 0 < β) (hκ : 0 < κ) 
   have hb : 0 < β * κ := mul_pos hβ hκ
   have hab : 0 < α * (1 + β * κ) := mul_pos hα (by linarith)
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;> rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first | rfl | (exfalso; simp only [k20R3Cyc_0, k20R3Cyc_1, k20R3Cyc_2, k20R3Cyc_3, k20R3Cyc_4] at e1 e2 e3; nlinarith)
+    first | rfl | (exfalso; simp only [k20R3Cyc_0, k20R3Cyc_1, k20R3Cyc_2, k20R3Cyc_3, k20R3Cyc_4] at e1 e2 e3; linarith)
 
 set_option maxHeartbeats 6400000 in
 theorem k20R3_tsc {α β β6 w κ v1 v2 : ℝ} (hα : 1 < α) (hβ : 1 < β) (hb6 : 0 < β6) (hb61 : β6 < 1)

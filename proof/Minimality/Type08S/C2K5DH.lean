@@ -55,7 +55,7 @@ theorem k5d_c4_real {α4 γ4 β1 β6 γ6 k0 U T B : ℝ} (hα4 : 0 < α4) (hγ4 
     | (simp only [k5dX4_0, k5dX4_1, k5dX4_2, k5dX4_3, k5dX4_4, f0, f1, f2, f3, f4, s0, s1, s2, s3, s4]
        rintro ⟨⟨h5, h6⟩, h7, h8⟩
        first
-       | nlinarith
+       | linarith
        | nlinarith [mul_pos hα4 hγ4, mul_pos hα4 hB, mul_pos hγ4 hB, mul_pos hβ1 hB, mul_pos hb6 hB])
 
 set_option maxHeartbeats 6400000 in
@@ -88,7 +88,7 @@ theorem k5d_c3_real {α4 γ4 β1 β6 γ6 k0 U T B : ℝ} (hα4 : 0 < α4) (hγ4 
     | (simp only [k5dX3_0, k5dX3_1, k5dX3_2, k5dX3_3, k5dX3_4, k5dX3_5, f0, f1, f2, f3, f4, f5, s0, s1, s2, s3, s4, s5]
        rintro ⟨⟨h5, h6⟩, h7, h8⟩
        first
-       | nlinarith
+       | linarith
        | nlinarith [mul_pos hα4 hγ4, mul_pos hα4 hB, mul_pos hγ4 hB, mul_pos hβ1 hB, mul_pos hb6 hB])
 
 set_option maxHeartbeats 6400000 in
@@ -117,8 +117,8 @@ theorem k5d_c5_real {α4 γ4 β1 β6 γ6 k0 U T B : ℝ} (hα4 : 0 < α4) (hγ4 
     | (simp only [k5dX5_0, k5dX5_1, k5dX5_2, k5dX5_3, k5dX5_4, f0, f1, f2, f3, f4, s0, s1, s2, s3, s4]
        rintro ⟨⟨h5, h6⟩, h7, h8⟩
        first
-       | nlinarith
-       | nlinarith [mul_pos hα4 hγ4, mul_pos hα4 hB, mul_pos hγ4 hB, mul_pos hβ1 hB, mul_pos hb6 hB])
+       | linarith
+       | linarith [mul_pos hα4 hγ4, mul_pos hα4 hB, mul_pos hγ4 hB, mul_pos hβ1 hB, mul_pos hb6 hB])
 
 set_option maxHeartbeats 6400000 in
 theorem k5d_c8_real {α4 γ4 β1 β6 γ6 k0 U T B : ℝ} (hα4 : 0 < α4) (hγ4 : 0 < γ4) (hs : 1 < α4 + γ4) (hβ1 : 0 < β1) (hb6 : 0 < β6) (hg6 : γ6 = 1) (hB : 0 < B)
@@ -146,8 +146,8 @@ theorem k5d_c8_real {α4 γ4 β1 β6 γ6 k0 U T B : ℝ} (hα4 : 0 < α4) (hγ4 
     | (simp only [k5dX5_0, k5dX5_1, k5dX5_2, k5dX5_3, k5dX5_4, f0, f1, f2, f3, f4, s0, s1, s2, s3, s4]
        rintro ⟨⟨h5, h6⟩, h7, h8⟩
        first
-       | nlinarith
-       | nlinarith [mul_pos hα4 hγ4, mul_pos hα4 hB, mul_pos hγ4 hB, mul_pos hβ1 hB, mul_pos hb6 hB])
+       | linarith
+       | linarith [mul_pos hα4 hγ4, mul_pos hα4 hB, mul_pos hγ4 hB, mul_pos hβ1 hB, mul_pos hb6 hB])
 
 set_option maxHeartbeats 6400000 in
 theorem k5d_c6_real {α4 γ4 β1 β6 γ6 k0 U T B : ℝ} (hα4 : 0 < α4) (hγ4 : 0 < γ4) (hs : 1 < α4 + γ4) (hβ1 : 0 < β1) (hb6 : 0 < β6) (hg6 : γ6 = 1) (hB : 0 < B)
@@ -175,12 +175,12 @@ theorem k5d_c6_real {α4 γ4 β1 β6 γ6 k0 U T B : ℝ} (hα4 : 0 < α4) (hγ4 
     | (simp only [k5dX6_0, k5dX6_1, k5dX6_2, k5dX6_3, k5dX6_4, k5dX6_5, f0, f1, f2, f3, f4, f5, s0, s1, s2, s3, s4, s5]
        rintro ⟨⟨h5, h6⟩, h7, h8⟩
        first
-       | nlinarith
-       | nlinarith [mul_pos hα4 hγ4, mul_pos hα4 hB, mul_pos hγ4 hB, mul_pos hβ1 hB, mul_pos hb6 hB]
+       | linarith
+       | linarith [mul_pos hα4 hγ4, mul_pos hα4 hB, mul_pos hγ4 hB, mul_pos hβ1 hB, mul_pos hb6 hB]
        | (have hU0 : 0 < U := by linarith
           have hT0 : 0 < T := by linarith
           rcases le_total U T with hle | hle <;>
-          nlinarith [mul_nonneg hα4.le (sub_nonneg.2 hle), mul_nonneg hγ4.le (sub_nonneg.2 hle),
+          linarith [mul_nonneg hα4.le (sub_nonneg.2 hle), mul_nonneg hγ4.le (sub_nonneg.2 hle),
             mul_pos (sub_pos.2 hs) hU0, mul_pos (sub_pos.2 hs) hT0, mul_pos hb6 hB]))
 
 end C2

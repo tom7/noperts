@@ -36,7 +36,7 @@ theorem k28b4_A {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hLp' : α1 + (β1 - 1) * μ < 0 := by
     rw [hm3μ] at k4
     by_contra hn; push Not at hn
-    nlinarith [mul_nonneg hn k1.le]
+    linarith [mul_nonneg hn k1.le]
   obtain ⟨R, hR⟩ : ∃ R : ℝ³, R = μ • (a - d) - (c - d) := ⟨_, rfl⟩
   rw [← hR] at k5
   have hΔ : det3 (a - d) (b - d) R ≠ 0 := by
@@ -112,7 +112,7 @@ theorem k28b4_A {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
     rcases hl with rfl | rfl
     · left; simp only; linarith
-    · left; simp only; nlinarith
+    · left; simp only; linarith
   have stepLt : ∀ s t, ⟪fpoint (a - d) (b - d) R d s, R⟫ < ⟪fpoint (a - d) (b - d) R d t, R⟫ →
       K25Step (a - d) (b - d) R d [(0, -1), (m1, m2)] s t := fun s t h => ⟨h.le, fun e => absurd e h.ne⟩
   have htie : ∀ v1 v2 : ℝ, k18Cone [(0, -1), (m1, m2)] v1 v2 →

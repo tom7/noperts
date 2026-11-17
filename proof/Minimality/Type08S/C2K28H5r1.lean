@@ -67,6 +67,6 @@ theorem k28h5rb_core (P t u1 u2 M al be ob og sg b g A B T L2 L3 : ℝ)
     linear_combination (-1:ℝ)*e3 + (-1:ℝ)*e2
   have h2 : be * ((u1 + M) * (u1 + u2) - (u1*u2 + M*(u1+u2))) = 0 := by
     linear_combination hrel - (u1+u2)*hAt
-  have h3 : be * u1^2 = 0 := by nlinarith [h2]
+  have h3 : be * u1^2 = 0 := by linarith [h2]
   have : 0 < be * u1^2 := by positivity
   linarith

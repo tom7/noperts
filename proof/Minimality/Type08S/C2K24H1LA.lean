@@ -49,7 +49,7 @@ theorem k24h1l_cs {P Q R : ℝ³} (hΔ : det3 P Q R ≠ 0) : ⟪Q, R⟫ ^ 2 < �
     simp only [hu, inner_sub_left, inner_sub_right, real_inner_smul_left, real_inner_smul_right,
       real_inner_comm R Q]; ring
   rw [e] at huu
-  nlinarith [(mul_pos_iff_of_pos_left hRR).1 huu]
+  linarith [(mul_pos_iff_of_pos_left hRR).1 huu]
 
 /-- Positive definiteness: `σ² W < pp D` where `σ = ⟪P,Q⟫ = ⟪P,R⟫`. -/
 theorem k24h1l_pd {P Q R : ℝ³} (hΔ : det3 P Q R ≠ 0) (hPR : ⟪P, R⟫ = ⟪P, Q⟫) :
@@ -76,7 +76,7 @@ theorem k24h1l_pd {P Q R : ℝ³} (hΔ : det3 P Q R ≠ 0) (hPR : ⟪P, R⟫ = �
       D * (⟪P, P⟫ * D - ⟪P, Q⟫ ^ 2 * (⟪Q, Q⟫ + ⟪R, R⟫ - 2 * ⟪Q, R⟫)) := by
     rw [hx, hy, hDd]; ring
   rw [e] at huu
-  nlinarith [(mul_pos_iff_of_pos_left hD).1 huu]
+  linarith [(mul_pos_iff_of_pos_left hD).1 huu]
 
 /-- Real-variable core of the metric facts.  `σ = ⟪P,Q⟫ = ⟪P,R⟫`. -/
 theorem k24h1l_real {pp σ qq qr rr α β B g : ℝ} (hα : 1 < α) (hβ : 1 < β) (hB : 1 < B) (hg : 1 < g)
@@ -94,12 +94,12 @@ theorem k24h1l_real {pp σ qq qr rr α β B g : ℝ} (hα : 1 < α) (hβ : 1 < �
   have hrr0 : 0 < rr := by
     by_contra hn; push Not at hn
     rcases le_or_gt 0 qq with h | h
-    · nlinarith [mul_nonneg h (neg_nonneg.2 hn), sq_nonneg qr]
+    · linarith [mul_nonneg h (neg_nonneg.2 hn), sq_nonneg qr]
     · nlinarith [mul_pos (sub_pos.2 hqq) (sub_pos.2 hrr), mul_pos (neg_pos.2 h) (neg_pos.2 (lt_of_lt_of_le hrr hn)), sq_nonneg qr]
   have hσ : σ < 0 := by
     by_contra hn; push Not at hn
     have := mul_nonneg (mul_nonneg hα0.le hn) hW.le
-    nlinarith [mul_pos hs hD]
+    linarith [mul_pos hs hD]
   have hR : 0 < α * σ + (β - 1) * rr := by
     have e : (α * σ + (β - 1) * rr) * (qq + rr - 2 * qr) = (β - 1) * (rr - qr) ^ 2 := by
       linear_combination hrel
@@ -112,7 +112,7 @@ theorem k24h1l_real {pp σ qq qr rr α β B g : ℝ} (hα : 1 < α) (hβ : 1 < �
     have hp : 0 < (g + B - 1) * (-σ) * (α + β - 1) :=
       mul_pos (mul_pos (by linarith) (by linarith)) (by linarith)
     rw [← e] at hp
-    exact pos_of_mul_pos_right hp (by linarith) |> fun h => by nlinarith
+    exact pos_of_mul_pos_right hp (by linarith) |> fun h => by linarith
   · have e : (α * (α - 1) * pp + ((α - 1) * (β - 1) + α * β) * σ + β * (β - 1) * rr) * (qq * rr - qr ^ 2) =
         β * (qq * rr - qr ^ 2) * (α * σ + (β - 1) * rr) +
           α * (α - 1) * (pp * (qq * rr - qr ^ 2) - σ ^ 2 * (qq + rr - 2 * qr)) := by
@@ -134,16 +134,16 @@ theorem k24h1l_real {pp σ qq qr rr α β B g : ℝ} (hα : 1 < α) (hβ : 1 < �
       have hDr : qq * rr - qr ^ 2 < rr * (qq + rr - 2 * qr) := by nlinarith
       have h1 : (α - 1) * (β - 1) * (qq * rr - qr ^ 2) < β * rr * (α * (qq + rr - 2 * qr)) := by
         have := mul_lt_mul_of_pos_left hDr (mul_pos (by linarith : (0:ℝ) < α - 1) hs)
-        have hk : (α - 1) * (β - 1) < α * β := by nlinarith
+        have hk : (α - 1) * (β - 1) < α * β := by linarith
         have hk2 := mul_lt_mul_of_pos_right hk (mul_pos hrr0 hW)
-        nlinarith [this, hk2]
+        linarith [this, hk2]
       rw [← e3] at h1
       have h2 : (α - 1) * (-σ) * (α * (qq + rr - 2 * qr)) < β * rr * (α * (qq + rr - 2 * qr)) := h1
       exact lt_of_mul_lt_mul_right h2 (mul_pos hα0 hW).le
     have hC : 0 < (1 - α) * σ - β * qr := by
       have : 0 < B * ((1 - α) * σ - β * qr) := by
         rw [e2]; exact mul_pos (by linarith) (by linarith)
-      exact pos_of_mul_pos_right this (by linarith) |> fun h => by nlinarith
+      exact pos_of_mul_pos_right this (by linarith) |> fun h => by linarith
     have : 0 < α * ((α - 1) * pp + β * σ) := by rw [e1]; exact mul_pos hs hC
     exact (pos_iff_pos_of_mul_pos this).1 hα0
 
@@ -186,7 +186,7 @@ theorem k24h1l_tsc {D α β B g v1 v2 : ℝ} (hD : 0 < D) (hα : 1 < α) (hβ : 
   have hu : 0 < B + g - β := by linarith
   have hsα : 0 < β - 1 + α := by linarith
   have hnv1 : 0 < -v1 := by nlinarith [mul_pos hα0 (mul_pos hg1 hv2), mul_pos hB0 hB0]
-  have hav : 0 < α * v2 - v1 := by nlinarith [mul_pos hα0 hv2]
+  have hav : 0 < α * v2 - v1 := by linarith [mul_pos hα0 hv2]
   have x1 := mul_pos hD (mul_pos hβ0 hsα)
   have x2 := mul_pos hD (mul_pos hsα hB0)
   have x3 := mul_pos hD (mul_pos (mul_pos hsα hs) hv2)

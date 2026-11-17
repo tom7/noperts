@@ -35,7 +35,7 @@ theorem k24h1d_cs {P Q R : ℝ³} (hΔ : det3 P Q R ≠ 0) : ⟪Q, R⟫ ^ 2 < �
     simp only [hu, inner_sub_left, inner_sub_right, real_inner_smul_left, real_inner_smul_right,
       real_inner_comm R Q]; ring
   rw [e] at huu
-  nlinarith [(mul_pos_iff_of_pos_left hRR).1 huu]
+  linarith [(mul_pos_iff_of_pos_left hRR).1 huu]
 
 /-- Real core of cell D: the four depth inequalities and `U1 > 0`. -/
 theorem k24h1d_core {α1 β1 β6 γ6 pp qq rr s t : ℝ} (hα : 1 < α1) (hβ1 : 1 < β1) (hβ6 : 1 < β6)
@@ -72,10 +72,10 @@ theorem k24h1d_core {α1 β1 β6 γ6 pp qq rr s t : ℝ} (hα : 1 < α1) (hβ1 :
   · have e : -(α1 - 1) * (β6 - 1) * s - (α1 - 1) * γ6 * s - β1 * (β6 - 1) * qq - β1 * γ6 * t
         = -((β6 + γ6 - 1) * ((α1 - 1) * s + β1 * t)) - β1 * (β6 - 1) * (qq - t) := by ring
     rw [e, k1]
-    have : (γ6 - 1) * (rr - t) < (β6 - 1) * (qq - t) := by nlinarith [mul_pos (sub_pos.2 hβ1) hA']
+    have : (γ6 - 1) * (rr - t) < (β6 - 1) * (qq - t) := by linarith [mul_pos (sub_pos.2 hβ1) hA']
     nlinarith
   · have hW2 : 0 < qq + rr - 2 * t := by linarith
-    have hDlt : qq * rr - t ^ 2 < qq * (qq + rr - 2 * t) := by nlinarith [mul_pos hA' hA']
+    have hDlt : qq * rr - t ^ 2 < qq * (qq + rr - 2 * t) := by linarith [mul_pos hA' hA']
     have e : α1 * (β1 * qq + (α1 - 1) * s) * (qq + rr - 2 * t) =
         α1 * β1 * qq * (qq + rr - 2 * t) - (α1 - 1) * (β1 - 1) * (qq * rr - t ^ 2) := by
       linear_combination (α1 - 1) * hrel
@@ -84,7 +84,7 @@ theorem k24h1d_core {α1 β1 β6 γ6 pp qq rr s t : ℝ} (hα : 1 < α1) (hβ1 :
     have h3 : 0 < α1 * (β1 * qq + (α1 - 1) * s) * (qq + rr - 2 * t) := by
       rw [e]
       have : 0 < qq * (qq + rr - 2 * t) * (β1 + (α1 - 1)) := mul_pos (mul_pos hqq hW2) (by linarith)
-      nlinarith
+      linarith
     have h4 : 0 < α1 * (qq + rr - 2 * t) := mul_pos (by linarith) hW2
     nlinarith
   · have k2 : (β6 + γ6 - 1) * α1 * ((α1 - 1) * pp + β1 * s) =

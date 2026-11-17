@@ -28,8 +28,8 @@ theorem k17gbY9_inj {m κ μ lq β6 : ℝ} (hm : 0 < m) (hκ : 0 < κ) (hμ : 0 
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
     simp only [k17gbY9, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4, Prod.mk.injEq] at h <;>
-    first | rfl | (exfalso; nlinarith [h.1, h.2.1, h.2.2, mul_pos hb6 hκ]) | (exfalso; norm_num at h) |
-      (exfalso; obtain ⟨h1, h2, h3⟩ := h; nlinarith [mul_pos hb6 hκ])
+    first | rfl | (exfalso; linarith [h.1, h.2.1, h.2.2, mul_pos hb6 hκ]) | (exfalso; norm_num at h) |
+      (exfalso; obtain ⟨h1, h2, h3⟩ := h; linarith [mul_pos hb6 hκ])
 
 set_option maxHeartbeats 12800000 in
 /-- **S1.9 cell**: `(c',b',c,d,a)` at `b' - a'`, frame `(b-d, c-d, b'-a')`. -/
@@ -87,7 +87,7 @@ theorem k17gb_s19_cell {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ}
   refine ⟨b' - a', k17gb_r0 hΔ, ?_⟩
   refine k8_cell_gen (V8 a a' b b' c c' d) (b - d) (c - d) (b' - a') d hΔ (k := 5) (by norm_num)
     (k17gbY9 (β1 - 1) κ μ lq β6) (k17gbY9_inj hm hκ hμ hlq hβ6)
-    (u1 := α4 * (1 - β6)) (u2 := -α4) (t1 := δ) (t2 := 0) (by nlinarith [mul_pos (by linarith : (0:ℝ) < α4) hδ0])
+    (u1 := α4 * (1 - β6)) (u2 := -α4) (t1 := δ) (t2 := 0) (by linarith [mul_pos (by linarith : (0:ℝ) < α4) hδ0])
     ?_ ?_ ?_ ?_
   · intro i
     rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
@@ -97,12 +97,12 @@ theorem k17gb_s19_cell {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ}
     · simp only [k17gbY9, pc5_3, Ed]; simp [V8]
     · simp only [k17gbY9, pc5_4, Ea]; simp [V8]
   · intro lam h0 h1 D hD
-    refine (k17gb_s19_tsc hD hm hκ hκ1 hμ hlq hrel hβ6 hβ61 (by nlinarith) ?_).1
+    refine (k17gb_s19_tsc hD hm hκ hκ1 hμ hlq hrel hβ6 hβ61 (by linarith) ?_).1
     have key : (1 + (β1 - 1)) * (α4 * (1 - β6) + lam * δ) + (1 + (β1 - 1) + β6 * lq - β6) * (-α4 + lam * 0) =
         -β6 * (1 - lam) * (α1 + α4 * (β1 - 1)) := by
       rw [hlqdef]; linear_combination lam * hδ + (-β6 * α1) * hκα
     rw [key]
-    nlinarith [mul_pos (mul_pos hβ6 (sub_pos.2 h1)) (by nlinarith : (0:ℝ) < α1 + α4 * (β1 - 1))]
+    linarith [mul_pos (mul_pos hβ6 (sub_pos.2 h1)) (by nlinarith : (0:ℝ) < α1 + α4 * (β1 - 1))]
   · intro y hy hyx
     have hV : y = fpoint (b - d) (c - d) (b' - a') d (1 + (β1 - 1) + β6 * lq, -(β1 - 1), lq) ∨
         y = fpoint (b - d) (c - d) (b' - a') d (β6, 1, 1) ∨ y = fpoint (b - d) (c - d) (b' - a') d (0, 1, 0) ∨
@@ -118,19 +118,19 @@ theorem k17gb_s19_cell {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ}
     · exact (hyx 3 (by simp only [k17gbY9, pc5_3])).elim
     · exact (hyx 4 (by simp only [k17gbY9, pc5_4])).elim
     · refine ⟨_, rfl, fun lam h0 h1 D hD i => ?_⟩
-      refine (k17gb_s19_tsc hD hm hκ hκ1 hμ hlq hrel hβ6 hβ61 (by nlinarith) ?_).2 _ (by simp) i
+      refine (k17gb_s19_tsc hD hm hκ hκ1 hμ hlq hrel hβ6 hβ61 (by linarith) ?_).2 _ (by simp) i
       have key : (1 + (β1 - 1)) * (α4 * (1 - β6) + lam * δ) + (1 + (β1 - 1) + β6 * lq - β6) * (-α4 + lam * 0) =
           -β6 * (1 - lam) * (α1 + α4 * (β1 - 1)) := by
         rw [hlqdef]; linear_combination lam * hδ + (-β6 * α1) * hκα
       rw [key]
-      nlinarith [mul_pos (mul_pos hβ6 (sub_pos.2 h1)) (by nlinarith : (0:ℝ) < α1 + α4 * (β1 - 1))]
+      linarith [mul_pos (mul_pos hβ6 (sub_pos.2 h1)) (by nlinarith : (0:ℝ) < α1 + α4 * (β1 - 1))]
     · refine ⟨_, rfl, fun lam h0 h1 D hD i => ?_⟩
-      refine (k17gb_s19_tsc hD hm hκ hκ1 hμ hlq hrel hβ6 hβ61 (by nlinarith) ?_).2 _ (by simp) i
+      refine (k17gb_s19_tsc hD hm hκ hκ1 hμ hlq hrel hβ6 hβ61 (by linarith) ?_).2 _ (by simp) i
       have key : (1 + (β1 - 1)) * (α4 * (1 - β6) + lam * δ) + (1 + (β1 - 1) + β6 * lq - β6) * (-α4 + lam * 0) =
           -β6 * (1 - lam) * (α1 + α4 * (β1 - 1)) := by
         rw [hlqdef]; linear_combination lam * hδ + (-β6 * α1) * hκα
       rw [key]
-      nlinarith [mul_pos (mul_pos hβ6 (sub_pos.2 h1)) (by nlinarith : (0:ℝ) < α1 + α4 * (β1 - 1))]
+      linarith [mul_pos (mul_pos hβ6 (sub_pos.2 h1)) (by nlinarith : (0:ℝ) < α1 + α4 * (β1 - 1))]
   · intro lam h0 h1 w hw hinj
     refine k17gb_lex5_s19 _ w hinj ?_ ?_ ?_
     · right

@@ -54,7 +54,7 @@ theorem k24h1b_m {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   refine ⟨?_, hPR⟩
   by_contra hn; push Not at hn
   have := mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hW.le
-  nlinarith [mul_pos (sub_pos.2 hβ1) hD]
+  linarith [mul_pos (sub_pos.2 hβ1) hD]
 
 set_option maxHeartbeats 12800000 in
 /-- Type 08 M-stratum H1 tie, side `N2 = ⟪a-b', a'-c'⟫ > 0`: cell B, view `a - b'`, silhouette `(b', c', a', c)`. -/
@@ -173,7 +173,7 @@ theorem k24h1_B {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
           v1 * ⟪c - a', a - d⟫ + v2 * ⟪c - a', b - d⟫ := by
         rw [← inner_sub_left]; simp only [fcomb, inner_add_right, inner_smul_right, inner_zero_right]
         ring
-      nlinarith
+      linarith
     refine k19_lexUni_nb _ _ hw 3 ?_ ?_ ?_
     · rw [show (3 : ZMod 4) - 1 = 2 by decide]
       right; refine ⟨?_, ?_⟩

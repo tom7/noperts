@@ -87,8 +87,8 @@ theorem k17gdC1_tsc_eq {α1 β1 v1 v2 : ℝ} (hα1 : 1 < α1) (hβ1 : 0 < β1) (
     | (simp only [TSc, d3, k17gdC1, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 3200000 in
 theorem k17gdC1_rest_gt {α1 β1 γ4 v1 v2 : ℝ} {β6 : ℝ} (hα1 : 1 < α1) (hβ1 : 0 < β1) (hβ6 : 1 < β6) (hγ4 : 0 < γ4)
@@ -161,8 +161,8 @@ theorem k17gdC1_rest_eq {α1 β1 γ4 v1 v2 : ℝ} (hα1 : 1 < α1) (hβ1 : 0 < �
     (simp only [TSc, d3, k17gdC1, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
-     | (right; refine ⟨by ring, by nlinarith⟩))
+     | (left; linarith)
+     | (right; refine ⟨by ring, by linarith⟩))
 
 theorem k17gdC1_tsc {α1 β1 β6 v1 v2 : ℝ} (hα1 : 1 < α1) (hβ1 : 0 < β1) (hβ6 : 1 ≤ β6) (hv1 : v1 < 0) (hv2 : v2 < 0)
     (hc : 0 < -(α1 - 1) * v2 + β1 * v1) :

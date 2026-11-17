@@ -91,8 +91,8 @@ theorem k3q1m_cyc {D β1 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hβ1 : 0 < β1) (
     | (simp only [TSc, d3, k3q1mCyc, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 1600000 in
 theorem k3q1m_rest {D β1 γ4 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hβ1 : 0 < β1) (hγ4 : 0 < γ4) (hβ6p : 0 < β6) (hβ6 : β6 < 1)
@@ -122,7 +122,7 @@ theorem k3q1m_rest {D β1 γ4 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hβ1 : 0 < �
     (simp only [TSc, d3, k3q1mCyc, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
+     | (left; linarith)
      | (right; refine ⟨by ring, by nlinarith⟩))
 
 theorem k3q1mCyc_inj {β1 β6 γ6 : ℝ} (hβ1 : 0 < β1) (hβ6 : 0 < β6) (hβ61 : β6 < 1) (hγ6 : 0 < γ6) :
@@ -165,14 +165,14 @@ theorem k3q1m_hasLexCellAt (V : Finset ℝ³) (p q r d : ℝ³) (hΔ : det3 p q 
         k3q1m_rest hD hβ1 hγ4 hβ6p hβ6 hγ6 hs (by linarith) (by norm_num)⟩
   · intro w hw
     refine lexUni6_top2 _ w hw ?_ ?_ ?_ ?_
-    · left; simp only [hY, k3q1mCyc, pc6_0, pc6_1, hz]; nlinarith
-    · left; simp only [hY, k3q1mCyc, pc6_2, pc6_3, hz]; nlinarith [mul_pos hβ1 hC]
-    · left; simp only [hY, k3q1mCyc, pc6_3, pc6_4, hz]; nlinarith
+    · left; simp only [hY, k3q1mCyc, pc6_0, pc6_1, hz]; linarith
+    · left; simp only [hY, k3q1mCyc, pc6_2, pc6_3, hz]; linarith [mul_pos hβ1 hC]
+    · left; simp only [hY, k3q1mCyc, pc6_3, pc6_4, hz]; linarith
     · rcases le_total ⟪q, r⟫ ⟪r, r⟫ with h | h
       · left; left; simp only [hY, k3q1mCyc, pc6_4, pc6_5, hz]
-        nlinarith [mul_pos (sub_pos.2 hs) hC, mul_nonneg hγ6.le (sub_nonneg.2 h)]
+        linarith [mul_pos (sub_pos.2 hs) hC, mul_nonneg hγ6.le (sub_nonneg.2 h)]
       · right; left; simp only [hY, k3q1mCyc, pc6_0, pc6_5, hz]
-        nlinarith [mul_pos (sub_pos.2 hs) hA, mul_nonneg hβ6p.le (sub_nonneg.2 h)]
+        linarith [mul_pos (sub_pos.2 hs) hA, mul_nonneg hβ6p.le (sub_nonneg.2 h)]
 
 end C2
 end Type08Sp

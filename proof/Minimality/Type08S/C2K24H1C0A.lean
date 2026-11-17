@@ -71,12 +71,12 @@ theorem k24h1c0_keys {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hm : ⟪P, Q⟫ < 0 := by
     by_contra hn; push Not at hn
     have := mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hee.le
-    nlinarith [mul_pos (sub_pos.2 hβ1) hr2]
+    linarith [mul_pos (sub_pos.2 hβ1) hr2]
   have hqq : ⟪Q, R⟫ < ⟪R, R⟫ := by nlinarith
   have hpq : ⟪Q, R⟫ < ⟪Q, Q⟫ := by nlinarith
   -- PD: ss * Dd > m^2 ee
   have hpd : ⟪P, Q⟫ ^ 2 * (⟪Q, Q⟫ + ⟪R, R⟫ - 2 * ⟪Q, R⟫) <
-      ⟪P, P⟫ * (⟪Q, Q⟫ * ⟪R, R⟫ - ⟪Q, R⟫ ^ 2) := by nlinarith
+      ⟪P, P⟫ * (⟪Q, Q⟫ * ⟪R, R⟫ - ⟪Q, R⟫ ^ 2) := by linarith
   have hss : -(β1 - 1) * ⟪P, Q⟫ < α1 * ⟪P, P⟫ := by
     by_contra hn; push Not at hn
     have h1 := mul_le_mul_of_nonneg_right hn hr2.le
@@ -85,15 +85,15 @@ theorem k24h1c0_keys {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     have : (⟪Q, Q⟫ + ⟪R, R⟫ - 2 * ⟪Q, R⟫) * (α1 * ⟪P, Q⟫ + (β1 - 1) * ⟪R, R⟫) =
         (β1 - 1) * (⟪R, R⟫ - ⟪Q, R⟫) ^ 2 := by linear_combination hr1'
     by_contra hn; push Not at hn
-    nlinarith [mul_neg_of_pos_of_neg hee hn, mul_nonneg (sub_pos.2 hβ1).le (sq_nonneg (⟪R, R⟫ - ⟪Q, R⟫))]
+    linarith [mul_neg_of_pos_of_neg hee hn, mul_nonneg (sub_pos.2 hβ1).le (sq_nonneg (⟪R, R⟫ - ⟪Q, R⟫))]
   have hα : 0 < α1 - 1 := by linarith
   constructor
-  · nlinarith [mul_pos hα (sub_pos.2 hss), mul_nonneg (by linarith : (0:ℝ) ≤ β1) hpos]
+  · linarith [mul_pos hα (sub_pos.2 hss), mul_nonneg (by linarith : (0:ℝ) ≤ β1) hpos]
   · have hT : β1 * ((1 - γ6) * ⟪R, R⟫ - β6 * ⟪Q, R⟫) = (1 - α1) * ⟪P, Q⟫ * (1 - γ6 - β6) := by
       linear_combination (-1 : ℝ) * ht1
     have : (1 - α1) * ⟪P, Q⟫ * (1 - γ6 - β6) < 0 := by
       have : 0 < (α1 - 1) * (-⟪P, Q⟫) := mul_pos hα (by linarith)
-      nlinarith [mul_pos this (by linarith : (0:ℝ) < γ6 + β6 - 1)]
+      linarith [mul_pos this (by linarith : (0:ℝ) < γ6 + β6 - 1)]
     nlinarith
 
 
@@ -138,7 +138,7 @@ theorem k24h1c0_cc {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hm : ⟪P, Q⟫ < 0 := by
     by_contra hn; push Not at hn
     have := mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hee.le
-    nlinarith [mul_pos (sub_pos.2 hβ1) hr2]
+    linarith [mul_pos (sub_pos.2 hβ1) hr2]
   have hqq : ⟪Q, R⟫ < ⟪R, R⟫ := by nlinarith
   have hpq : ⟪Q, R⟫ < ⟪Q, Q⟫ := by nlinarith
   have hW2 : 0 < ⟪Q, Q⟫ + ⟪R, R⟫ - 2 * ⟪Q, R⟫ := hee
@@ -154,7 +154,7 @@ theorem k24h1c0_cc {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     have h1 : 0 < ⟪Q, Q⟫ - ⟪Q, R⟫ := by linarith
     have h2 : 0 < ⟪R, R⟫ - ⟪Q, R⟫ := by linarith
     have := mul_pos (mul_pos (sub_pos.2 hβ1) h1) h2
-    nlinarith [mul_pos h2 hW2]
+    linarith [mul_pos h2 hW2]
   exact pos_of_mul_pos_right hpos hW2.le
 
 end C2

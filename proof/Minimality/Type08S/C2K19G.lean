@@ -83,15 +83,15 @@ theorem k19_hexZ_tsc {D α4 β1 γ4 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα4 : 0 
       | (simp only [TSc, d3, k19HexZ, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
          first
-         | (left; nlinarith)
-         | (right; refine ⟨by ring, by nlinarith⟩))
+         | (left; linarith)
+         | (right; refine ⟨by ring, by linarith⟩))
   · intro i
     rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, k19HexZ, s0, s1, s2, s3, s4, s5, pc6_0, pc6_1, pc6_2, pc6_3, pc6_4, pc6_5,
           Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 theorem k19HexZ_inj {α4 β1 γ4 β6 γ6 : ℝ} (hα4 : 0 < α4) (hβ1 : 0 < β1) (hγ4 : 0 < γ4) (hβ6 : 0 < β6)
     (hγ6 : 0 < γ6) (hγ61 : γ6 < 1) : ∀ i j, k19HexZ α4 β1 γ4 β6 γ6 i = k19HexZ α4 β1 γ4 β6 γ6 j → i = j := by
@@ -109,9 +109,9 @@ theorem k19_u1l_hex {a a' b b' c c' d : ℝ³} {α4 β1 γ4 β6 γ6 : ℝ} (hdet
     (hγ : γ4 = 1 - α4 + α4 * β1) (hβ6 : 0 < β6) (hγ6 : 0 < γ6) (hγ61 : γ6 < 1) (hs : 1 < β6 + γ6)
     (hpq : ⟪a - d, b - d⟫ = 0) (hqr : ⟪b - d, c - d⟫ = 0) (hpr : ⟪a - d, c - d⟫ = 0) :
     HasLexCell (V8 a a' b b' c c' d) := by
-  have hγ4 : 0 < γ4 := by rw [hγ]; nlinarith [mul_pos hα4 hβ1]
-  have hαγ : 1 < α4 + γ4 := by rw [hγ]; nlinarith [mul_pos hα4 hβ1]
-  have hγg : (1 - α4) * γ6 < γ4 := by rw [hγ]; nlinarith [mul_pos hα4 hβ1, mul_pos (sub_pos.2 hα41) (sub_pos.2 hγ61)]
+  have hγ4 : 0 < γ4 := by rw [hγ]; linarith [mul_pos hα4 hβ1]
+  have hαγ : 1 < α4 + γ4 := by rw [hγ]; linarith [mul_pos hα4 hβ1]
+  have hγg : (1 - α4) * γ6 < γ4 := by rw [hγ]; linarith [mul_pos hα4 hβ1, mul_pos (sub_pos.2 hα41) (sub_pos.2 hγ61)]
   set P := c - d with hP
   set Q := a - d with hQ
   set R := d - b with hR
@@ -185,25 +185,25 @@ theorem k19_u1l_hex {a a' b b' c c' d : ℝ³} {α4 β1 γ4 β6 γ6 : ℝ} (hdet
         ⟪fpoint P Q R d (k19HexZ α4 β1 γ4 β6 γ6 3), fcomb P Q R v1 v2 0⟫) := by
       right
       refine ⟨by simp only [k19HexZ, pc6_3, pc6_4, hz, hPR, hQR]; ring, ?_⟩
-      simp only [k19HexZ, pc6_3, pc6_4, hwx, hPQ, hPR, hQR]; nlinarith
+      simp only [k19HexZ, pc6_3, pc6_4, hwx, hPQ, hPR, hQR]; linarith
     refine k19_lexUni_nb2 _ _ hw 2 (by decide) ?_ ?_ ?_
-    · rw [e2]; left; simp only [k19HexZ, pc6_1, pc6_2, hz, hPR, hQR]; nlinarith [mul_pos hβ6 hRR]
+    · rw [e2]; left; simp only [k19HexZ, pc6_1, pc6_2, hz, hPR, hQR]; linarith [mul_pos hβ6 hRR]
     · rw [f2, f3]; exact hab'
     · intro i hi hi'
       rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl
       · left; rw [e0]; left; simp only [k19HexZ, pc6_0, pc6_5, hz, hPR, hQR]
-        nlinarith [mul_pos (sub_pos.2 hβ11) hRR]
-      · right; rw [f1]; left; simp only [k19HexZ, pc6_1, pc6_2, hz, hPR, hQR]; nlinarith [mul_pos hβ6 hRR]
+        linarith [mul_pos (sub_pos.2 hβ11) hRR]
+      · right; rw [f1]; left; simp only [k19HexZ, pc6_1, pc6_2, hz, hPR, hQR]; linarith [mul_pos hβ6 hRR]
       · exact absurd rfl hi
       · exact absurd rfl hi'
       · left; rw [e4]; exact hab'
-      · left; rw [e5]; left; simp only [k19HexZ, pc6_4, pc6_5, hz, hPR, hQR]; nlinarith [mul_pos hβ1 hRR]
+      · left; rw [e5]; left; simp only [k19HexZ, pc6_4, pc6_5, hz, hPR, hQR]; linarith [mul_pos hβ1 hRR]
   · intro l hl
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
     rcases hl with rfl | rfl | rfl
     · right; norm_num
     · left; norm_num
-    · left; simp only; nlinarith [mul_pos (sub_pos.2 hα41) hQQ]
+    · left; simp only; linarith [mul_pos (sub_pos.2 hα41) hQQ]
 
 /-! ## β1 > 1: triangle / quadrilateral at `a - d` (frame `(b-d, c-d, a-d)`) -/
 
@@ -256,7 +256,7 @@ theorem k19_tri_tsc {D α4 β1 γ4 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα4 : 0 <
       | exact (h2' (by decide)).elim
       | (simp only [TSc, d3, s0, s1, s2, k19Tri_0, k19Tri_1, k19Tri_2, Prod.fst_sub, Prod.snd_sub,
           Prod.mk_sub_mk]
-         left; nlinarith)
+         left; linarith)
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl | rfl <;>
@@ -264,7 +264,7 @@ theorem k19_tri_tsc {D α4 β1 γ4 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα4 : 0 <
       (simp only [TSc, d3, s0, s1, s2, k19Tri_0, k19Tri_1, k19Tri_2, Prod.fst_sub, Prod.snd_sub,
           Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
+       | (left; linarith)
        | (right; refine ⟨by ring, by nlinarith⟩))
 
 theorem k19Tri_inj {α4 β1 γ4 : ℝ} (hβ1 : 0 < β1) (hγ4 : 0 < γ4) :
@@ -295,11 +295,11 @@ theorem k19_qd_tsc {D α4 β1 γ4 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα4 : 0 < 
   obtain ⟨s0, s1, s2, s3, -, -, -, -⟩ := k19_z4
   have hc : 0 < β1 * γ6 + β6 - β1 := by
     have k0 := mul_pos (mul_pos (by linarith : (0:ℝ) < β1) hγ6) (sub_pos.2 hγ4)
-    have : 0 < γ4 * (β1 * γ6 + β6 - β1) := by nlinarith
+    have : 0 < γ4 * (β1 * γ6 + β6 - β1) := by linarith
     exact pos_of_mul_pos_right this (by linarith)
   have hb : 0 < γ4 * (β6 - 1) + γ6 := by
     have k0 := mul_pos (mul_pos hβ6 (by linarith : (0:ℝ) < γ4)) (sub_pos.2 hβ1)
-    have : 0 < β1 * (γ4 * (β6 - 1) + γ6) := by nlinarith
+    have : 0 < β1 * (γ4 * (β6 - 1) + γ6) := by linarith
     exact pos_of_mul_pos_right this (by linarith)
   have k1 := hD
   have kb := mul_pos hD (by linarith : (0:ℝ) < β1)
@@ -326,7 +326,7 @@ theorem k19_qd_tsc {D α4 β1 γ4 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα4 : 0 < 
       | exact (h2' (by decide)).elim
       | (simp only [TSc, d3, s0, s1, s2, s3, k19Qd_0, k19Qd_1, k19Qd_2, k19Qd_3, Prod.fst_sub, Prod.snd_sub,
           Prod.mk_sub_mk]
-         left; nlinarith)
+         left; linarith)
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl | rfl <;>
@@ -334,7 +334,7 @@ theorem k19_qd_tsc {D α4 β1 γ4 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα4 : 0 < 
       (simp only [TSc, d3, s0, s1, s2, s3, k19Qd_0, k19Qd_1, k19Qd_2, k19Qd_3, Prod.fst_sub, Prod.snd_sub,
           Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
+       | (left; linarith)
        | (right; refine ⟨by ring, by nlinarith⟩))
 
 theorem k19Qd_inj {α4 β1 γ4 β6 γ6 : ℝ} (hα4 : 0 < α4) (hα41 : α4 < 1) (hβ1 : 0 < β1) (hγ4 : 0 < γ4) :
@@ -353,7 +353,7 @@ theorem k19_u1l_ad {a a' b b' c c' d : ℝ³} {α4 β1 γ4 β6 γ6 : ℝ} (hdet 
     (hγ : γ4 = 1 - α4 + α4 * β1) (hβ6 : 0 < β6) (hγ6 : 0 < γ6)
     (hpq : ⟪a - d, b - d⟫ = 0) (hqr : ⟪b - d, c - d⟫ = 0) (hpr : ⟪a - d, c - d⟫ = 0)
     (hside : β1 * γ4 - β1 * γ6 - β6 * γ4 ≠ 0) : HasLexCell (V8 a a' b b' c c' d) := by
-  have hγ4 : 1 < γ4 := by rw [hγ]; nlinarith [mul_pos hα4 (sub_pos.2 hβ1)]
+  have hγ4 : 1 < γ4 := by rw [hγ]; linarith [mul_pos hα4 (sub_pos.2 hβ1)]
   set P := b - d with hP
   set Q := c - d with hQ
   set R := a - d with hR
@@ -433,17 +433,17 @@ theorem k19_u1l_ad {a a' b b' c c' d : ℝ³} {α4 β1 γ4 β6 γ6 : ℝ} (hdet 
         right
         refine ⟨by simp only [k19Qd_0, k19Qd_1, hz, hPR, hQR]; ring, ?_⟩
         simp only [k19Qd_0, k19Qd_1, hwx, hPQ, hPR, hQR]
-        nlinarith [mul_pos (mul_pos (by linarith : (0:ℝ) < β1) (by linarith : (0:ℝ) < v1)) hPP]
+        linarith [mul_pos (mul_pos (by linarith : (0:ℝ) < β1) (by linarith : (0:ℝ) < v1)) hPP]
       refine k19_lexUni_nb _ _ hw 1 ?_ ?_ ?_
       · rw [e1]; exact hac
-      · rw [s1]; left; simp only [k19Qd_1, k19Qd_2, hz, hPR, hQR]; nlinarith
+      · rw [s1]; left; simp only [k19Qd_1, k19Qd_2, hz, hPR, hQR]; linarith
       · intro i hi
         rcases k19_z4_cases i with rfl | rfl | rfl | rfl
         · right; rw [s0]; exact hac
         · exact absurd rfl hi
-        · left; rw [e2]; left; simp only [k19Qd_1, k19Qd_2, hz, hPR, hQR]; nlinarith
+        · left; rw [e2]; left; simp only [k19Qd_1, k19Qd_2, hz, hPR, hQR]; linarith
         · right; rw [s3]; left; simp only [k19Qd_0, k19Qd_3, hz, hPR, hQR]
-          nlinarith [mul_pos (sub_pos.2 hα41) hRR]
+          linarith [mul_pos (sub_pos.2 hα41) hRR]
     · intro l hl
       simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
       rcases hl with rfl | rfl <;> (left; norm_num)
@@ -495,16 +495,16 @@ theorem k19_u1l_ad {a a' b b' c c' d : ℝ³} {α4 β1 γ4 β6 γ6 : ℝ} (hdet 
         right
         refine ⟨by simp only [k19Tri_0, k19Tri_1, hz, hPR, hQR]; ring, ?_⟩
         simp only [k19Tri_0, k19Tri_1, hwx, hPQ, hPR, hQR]
-        nlinarith [mul_pos (mul_pos (by linarith : (0:ℝ) < β1) (by linarith : (0:ℝ) < v1)) hPP]
+        linarith [mul_pos (mul_pos (by linarith : (0:ℝ) < β1) (by linarith : (0:ℝ) < v1)) hPP]
       refine k19_lexUni_nb _ _ hw 1 ?_ ?_ ?_
       · rw [e1]; exact hac
-      · rw [s1]; left; simp only [k19Tri_1, k19Tri_2, hz, hPR, hQR]; nlinarith [mul_pos (sub_pos.2 hα41) hRR]
+      · rw [s1]; left; simp only [k19Tri_1, k19Tri_2, hz, hPR, hQR]; linarith [mul_pos (sub_pos.2 hα41) hRR]
       · intro i hi
         rcases k19_z3_cases i with rfl | rfl | rfl
         · right; rw [s0]; exact hac
         · exact absurd rfl hi
         · left; rw [e2]; left; simp only [k19Tri_1, k19Tri_2, hz, hPR, hQR]
-          nlinarith [mul_pos (sub_pos.2 hα41) hRR]
+          linarith [mul_pos (sub_pos.2 hα41) hRR]
     · intro l hl
       simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
       rcases hl with rfl | rfl <;> (left; norm_num)
@@ -524,7 +524,7 @@ theorem k19_u1l_frame {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) 
   rw [det_alpha4 hb'] at hα
   have hα1 : α4 < 1 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
+    linarith [mul_nonneg (sub_nonneg.2 hh) hΔ2.le]
   have hg4 : γ4 = 1 - α4 + α4 * β1 := by
     have := (planar_a_iff hdet hc' hb').1 hκ
     linarith

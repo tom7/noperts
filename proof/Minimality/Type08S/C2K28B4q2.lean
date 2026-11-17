@@ -49,13 +49,13 @@ theorem k28b4_Cp0 {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hLq' : α1 - 1 + β1 * μ < 0 := by
     rw [hm3μ] at kq
     by_contra hn; push Not at hn
-    nlinarith [mul_nonneg hn k1.le]
+    linarith [mul_nonneg hn k1.le]
   obtain ⟨R, hR⟩ : ∃ R : ℝ³, R = μ • (a - d) - (c - d) := ⟨_, rfl⟩
   rw [← hR] at kc ka
   have hu0R : m3 • (a - d) - m1 • (c - d) = m1 • R := by rw [hR, hm3μ]; module
   rw [hu0R, inner_smul_right] at hLz
   have kz : ⟪c' - c, R⟫ < 0 := by
-    by_contra hn; push Not at hn; nlinarith [mul_nonneg k1.le hn]
+    by_contra hn; push Not at hn; linarith [mul_nonneg k1.le hn]
   have hΔ : det3 (a - d) (b - d) R ≠ 0 := by
     have e : det3 (a - d) (b - d) R = -det3 (a - d) (b - d) (c - d) := by
       rw [hR]; simp only [det3_expand, PiLp.sub_apply, PiLp.smul_apply, smul_eq_mul]; ring
@@ -133,11 +133,11 @@ theorem k28b4_Cp0 {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
     rcases hl with rfl | rfl | rfl
     · left; simp only; linarith
-    · right; simp only; constructor <;> nlinarith
+    · right; simp only; constructor <;> linarith
     · left; simp only
       have e : (1 - γ6) * μ * m1 = (1 - γ6) * m3 := by rw [hm3μ]; ring
       have h5 : 0 < -m2 + (1 - γ6) * m3 := by rw [hm2, hm3]; exact hE
-      nlinarith
+      linarith
   have stepLt : ∀ s t, ⟪fpoint (a - d) (b - d) R d s, R⟫ < ⟪fpoint (a - d) (b - d) R d t, R⟫ →
       K25Step (a - d) (b - d) R d [(0, 1), (-m1, -m2), (1, (1 - γ6) * μ)] s t := fun s t h => ⟨h.le, fun e => absurd e h.ne⟩
   have htie : ∀ v1 v2 : ℝ, k18Cone [(0, 1), (-m1, -m2), (1, (1 - γ6) * μ)] v1 v2 →

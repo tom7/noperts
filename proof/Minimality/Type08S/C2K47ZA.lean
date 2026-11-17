@@ -81,7 +81,7 @@ theorem k47_final {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
     have hgW : 0 ≤ β6 * (α1 - 1) - β1 * (γ6 - 1) := by
       obtain ⟨hdet, hc', hb', ha', -⟩ := hC
       have := k6m_gWb W hdet hc' hb' ha'
-      nlinarith
+      linarith
     have hAv := k47_av hC hM hrel hα hβ hσ
     have hlam : k61_lam a a' b b' d * ⟪a - d, a' - b'⟫ = -⟪b - d, a' - b'⟫ := by
       unfold k61_lam; field_simp [hAv.ne]

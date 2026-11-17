@@ -77,8 +77,8 @@ theorem k22z1g_c2 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h :
   rw [eR, eT] at hS3
   simp only [inner_sub_left, inner_sub_right, inner_smul_right, inner_smul_left, inner_add_left, conj_trivial, hpq', hqp,
     real_inner_comm p q, hrp, hrq, hqr] at hS2 hS3
-  have hS' : ⟪q, q⟫ < u * ⟪p, p⟫ := by nlinarith
-  have hS3' : 0 ≤ k * ⟪q, q⟫ + u * ⟪p, r⟫ := by nlinarith
+  have hS' : ⟪q, q⟫ < u * ⟪p, p⟫ := by linarith
+  have hS3' : 0 ≤ k * ⟪q, q⟫ + u * ⟪p, r⟫ := by linarith
   -- frame
   obtain ⟨P, hPq⟩ : ∃ P : ℝ³, P = q := ⟨_, rfl⟩
   obtain ⟨Q, hQr⟩ : ∃ Q : ℝ³, Q = r := ⟨_, rfl⟩
@@ -194,10 +194,10 @@ theorem k22z1g_c2 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h :
           · simp only [k22z1gc2Y_2, k22z1gc2Y_3, z2, z3]; linarith
           · simp only [k22z1gc2Y_2, k22z1gc2Y_3, k17f_fp, fcomb, inner_add_left, inner_add_right, inner_smul_left,
               inner_smul_right, conj_trivial, hPP, hQQ, hPQ, hQP, zero_smul, inner_zero_right, inner_zero_left]
-            nlinarith
+            linarith
         · left; simp only [k22z1gc2Y_2, k22z1gc2Y_3, z2, z3]; linarith
       · left; rw [e4]; left; simp only [k22z1gc2Y_3, k22z1gc2Y_4, z3, z4]
-        nlinarith [mul_pos (show 0 < 1 + k by linarith) (sub_pos.2 hS')]
+        linarith [mul_pos (show 0 < 1 + k by linarith) (sub_pos.2 hS')]
       · right; rw [f5]; left; simp only [k22z1gc2Y_5, k22z1gc2Y_0, z5, z0]; linarith
   · intro l hl
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
@@ -206,7 +206,7 @@ theorem k22z1g_c2 {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h :
     have hukw : u * (k * w) = k := by linear_combination k * hwu
     rcases hl with rfl | rfl | rfl
     · left; norm_num
-    · left; simp only; nlinarith [mul_pos hu0 hx]
+    · left; simp only; linarith [mul_pos hu0 hx]
     · left; simp only; nlinarith [mul_pos (mul_pos hk0 hqq) hw0, mul_pos hk0 hqq, mul_pos hk0 hk0]
 
 end C2

@@ -27,7 +27,7 @@ theorem k28h5h_H2 (pp pq qq qr rr a1 b1 b6 g6 : ℝ) (ha : 1 < a1) (hb : 1 < b1)
     (L1 : 0 ≤ b6*qr - (1-g6)*rr) (L2 : 0 ≤ g6*qr - (1-b6)*qq) :
     0 < g6*((a1-1)^2*pp+2*(a1-1)*b1*pq+b1^2*qr) + ((a1-1)^2*pp+2*(a1-1)*b1*pq+b1^2*qq)*(g6*(a1-1)+a1*b6) := by
   have hQ := k28h5h_Q (qq-qr) (rr-qr) qr a1 b1 b6 g6 (by linarith) (by linarith) hb6 hg6 (by linarith) (by linarith)
-    (by linarith) hu1 hu2 (by nlinarith) (by linarith) (by linarith)
+    (by linarith) hu1 hu2 (by linarith) (by linarith) (by linarith)
   have hW : 0 < qq + rr - 2*qr := by linarith
   have hA : 0 < a1 - 1 := by linarith
   have key : (qq+rr-2*qr) * (g6*((a1-1)^2*pp+2*(a1-1)*b1*pq+b1^2*qr) + ((a1-1)^2*pp+2*(a1-1)*b1*pq+b1^2*qq)*(g6*(a1-1)+a1*b6))

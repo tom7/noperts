@@ -79,7 +79,7 @@ theorem p3Tpii_hasLexCell {a a' b b' c c' d : ℝ³} (N : Norm08 a a' b b' c c' 
     have e2 : ⟪c, b - d⟫ = ⟪d, b - d⟫ + ⟪c - d, b - d⟫ := by rw [inner_sub_left]; ring
     have e3 : ⟪a, b - d⟫ = ⟪d, b - d⟫ := by rw [inner_sub_left] at hB0; linarith
     unfold QacTop at hQ
-    rw [e1, e2, e3, max_eq_right (by linarith), max_eq_right (by nlinarith [mul_pos hγ4 hDc])] at hQ
+    rw [e1, e2, e3, max_eq_right (by linarith), max_eq_right (by linarith [mul_pos hγ4 hDc])] at hQ
     have : (1 - γ4) * ⟪c - d, b - d⟫ = 0 := by linarith
     have := (mul_eq_zero.mp this).resolve_right hDc.ne'
     linarith

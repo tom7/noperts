@@ -58,7 +58,7 @@ theorem k28bq_inj5 {α1 β1 β6 t : ℝ} (hα : 1 < α1) (hβ1 : 1 < β1) (hb6 :
   have p3 := mul_neg_of_neg_of_pos ht (by linarith : (0:ℝ) < β1)
   have p4 := mul_neg_of_pos_of_neg hb6 ht
   rcases k28bq_z5 i with rfl | rfl | rfl | rfl | rfl <;> rcases k28bq_z5 j with rfl | rfl | rfl | rfl | rfl <;>
-    first | rfl | (exfalso; simp only [k28bqCyc5_0, k28bqCyc5_1, k28bqCyc5_2, k28bqCyc5_3, k28bqCyc5_4] at e1 e2 e3; nlinarith)
+    first | rfl | (exfalso; simp only [k28bqCyc5_0, k28bqCyc5_1, k28bqCyc5_2, k28bqCyc5_3, k28bqCyc5_4] at e1 e2 e3; linarith)
 
 theorem k28bq_inj4 {α1 β1 β6 t : ℝ} (hα : 1 < α1) (hβ1 : 1 < β1) (hb6 : 0 < β6) (hg6 : 0 < β1 - β6)
     (ht : t < 0) :
@@ -72,7 +72,7 @@ theorem k28bq_inj4 {α1 β1 β6 t : ℝ} (hα : 1 < α1) (hβ1 : 1 < β1) (hb6 :
   have p3 := mul_neg_of_neg_of_pos ht (by linarith : (0:ℝ) < β1)
   have p4 := mul_neg_of_pos_of_neg hb6 ht
   rcases z4_cases i with rfl | rfl | rfl | rfl <;> rcases z4_cases j with rfl | rfl | rfl | rfl <;>
-    first | rfl | (exfalso; simp only [k28bqCyc4_0, k28bqCyc4_1, k28bqCyc4_2, k28bqCyc4_3] at e1 e2 e3; nlinarith)
+    first | rfl | (exfalso; simp only [k28bqCyc4_0, k28bqCyc4_1, k28bqCyc4_2, k28bqCyc4_3] at e1 e2 e3; linarith)
 
 set_option maxHeartbeats 3200000 in
 theorem k28bq_tsc5 {α1 β1 β6 t v1 v2 : ℝ} (hα : 1 < α1) (hβ1 : 1 < β1) (hb6 : 0 < β6)

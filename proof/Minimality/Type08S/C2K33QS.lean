@@ -90,7 +90,7 @@ theorem k28bq_setup {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     by_contra hh; push Not at hh
     have h2 : 0 ≤ α1 * ⟪p, q⟫ * (⟪q, q⟫ + ⟪r, r⟫ - 2 * ⟪q, r⟫) :=
       mul_nonneg (mul_nonneg hα1'.le hh) hW.le
-    nlinarith [hr1]
+    linarith [hr1]
   have hLe : (α1 - 1) * ⟪p, p⟫ + β1 * ⟪p, q⟫ = 0 := by
     have e : a - c' = (1 - α1) • (p) - β1 • (q) := by rw [hc', hp, hq]; module
     rw [e] at hL

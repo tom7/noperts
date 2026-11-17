@@ -35,18 +35,18 @@ theorem k5b_leaf_N1
     have e1 : (1 - β1) * y + t * R ≥ α1 * (y + t * R + β1 * R) := by
       nlinarith [mul_le_mul_of_nonneg_left h2 hα1.le]
     have hm : 0 < t + β1 - 1 := by
-      have : 0 < (α1 + β1 - 1) * (y + (t + β1) * R) := mul_pos hg (by nlinarith)
+      have : 0 < (α1 + β1 - 1) * (y + (t + β1) * R) := mul_pos hg (by linarith)
       nlinarith [mul_pos hβ1 hR]
     nlinarith [mul_pos hcond (mul_pos hm hR), mul_pos hγ6 (mul_pos hg hR), mul_nonneg hs1.le (sub_nonneg.2 e1),
       mul_nonneg hg.le (sub_nonneg.2 h3)]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
     nlinarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
+    linarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
     nlinarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
+    linarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
 
 /-- Leaf `A > 0`, `ζ(c',d) < 0` (QN2): cell 1. -/
 theorem k5b_leaf_N2
@@ -61,13 +61,13 @@ theorem k5b_leaf_N2
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
     nlinarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1, mul_pos hα1 hA]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
+    linarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
+  · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
+    linarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
     nlinarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
-  · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
+    linarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
 
 /-- Leaf `A < 0`, `ζ(d,b') > 0` (QN2): cell 1. -/
 theorem k5b_leaf_N3
@@ -80,20 +80,20 @@ theorem k5b_leaf_N3
   have hs1 : 0 < β6 + γ6 - 1 := by linarith
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
+    linarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
     have e1 : (1 - β1) * y + t * R ≤ α1 * (y + t * R) := by nlinarith [mul_le_mul_of_nonneg_left h1 hα1.le]
-    have hB' : y + t * R < 0 := by nlinarith
+    have hB' : y + t * R < 0 := by linarith
     have ht : t < 0 := by nlinarith [mul_nonneg hg.le h4, mul_pos hβ1 hR]
     nlinarith [mul_pos hcond (mul_pos (neg_pos.2 ht) hR), mul_pos hβ6 (mul_pos hg hR),
       mul_nonneg hs1.le (sub_nonneg.2 e1), mul_nonneg hg.le (sub_nonneg.2 h2)]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
     nlinarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
+    linarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
     have e1 : (1 - β1) * y + t * R ≤ α1 * (y + t * R) := by nlinarith [mul_le_mul_of_nonneg_left h3 hα1.le]
-    have hB' : y + t * R < 0 := by nlinarith
+    have hB' : y + t * R < 0 := by linarith
     nlinarith [mul_pos hcond hR, mul_pos hβ6 (mul_pos hg hR), mul_nonneg hs1.le (sub_nonneg.2 e1),
       mul_nonneg hg.le (sub_nonneg.2 h4), mul_nonneg hg.le (neg_nonneg.2 h1), mul_pos hβ1 hR]
 
@@ -108,13 +108,13 @@ theorem k5b_leaf_N4
   have hs1 : 0 < β6 + γ6 - 1 := by linarith
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
+    linarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
     nlinarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
     nlinarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
+    linarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
     nlinarith [mul_pos hα1 hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1 hβ1]
 
@@ -133,7 +133,7 @@ theorem k5b_leaf_K1
   have hs1 : 0 < β6 + γ6 - 1 := by linarith
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    have hxt : (β1 - 1) * y ≤ t * R := by nlinarith [mul_nonneg hα1'.le h1]
+    have hxt : (β1 - 1) * y ≤ t * R := by linarith [mul_nonneg hα1'.le h1]
     have e1 : α1 * (y + t * R + β1 * R) < (1 - β1) * y + t * R := by
       nlinarith [mul_lt_mul_of_pos_left hC hα1']
     have hy : y < -R := by
@@ -142,7 +142,7 @@ theorem k5b_leaf_K1
       nlinarith [mul_pos hab' hR]
     nlinarith [mul_pos hs1 hR]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
+    linarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
     nlinarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
@@ -153,7 +153,7 @@ theorem k5b_leaf_K1
       mul_nonneg hs1.le (sub_nonneg.2 e1.le), mul_nonneg hg.le (sub_nonneg.2 h1), mul_nonneg hg.le h2,
       mul_nonneg (sub_nonneg.2 hγ61.le) hR.le]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
+    linarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
 
 /-- Leaf `ζ(a,c') < 0`, `A > 0` (QCEb): cell 2. -/
 theorem k5b_leaf_K2
@@ -170,15 +170,15 @@ theorem k5b_leaf_K2
   have hs1 : 0 < β6 + γ6 - 1 := by linarith
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
+    linarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
     nlinarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
+    linarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
+    linarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
+    linarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
 
 /-- Leaf `ζ(a,c') < 0`, `A < 0`, `ζ(a,b') > 0` (QCEb): cell 1. -/
 theorem k5b_leaf_K3
@@ -195,15 +195,15 @@ theorem k5b_leaf_K3
   have hs1 : 0 < β6 + γ6 - 1 := by linarith
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
+    linarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
+  · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
+    linarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
     nlinarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
+    linarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
-  · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
+    linarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
 
 /-- Leaf `ζ(a,c') < 0`, `A < 0`, `ζ(a,b') < 0` (QCEb): cell 2. -/
 theorem k5b_leaf_K4
@@ -220,7 +220,7 @@ theorem k5b_leaf_K4
   have hs1 : 0 < β6 + γ6 - 1 := by linarith
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
+    linarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
     nlinarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
@@ -231,7 +231,7 @@ theorem k5b_leaf_K4
       mul_nonneg hs1.le (sub_nonneg.2 e1.le), mul_nonneg hg.le (sub_nonneg.2 h1), mul_nonneg hg.le (neg_nonneg.2 h3),
       mul_nonneg (sub_nonneg.2 hγ61.le) hR.le]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
-    nlinarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
+    linarith [mul_pos hα1' hR, mul_pos hβ1 hR, mul_pos hβ6 hR, mul_pos hγ6 hR, mul_pos hα1' hβ1]
   · by_contra h; push Not at h; obtain ⟨h1, h2, h3, h4⟩ := h
     have e1 : (1 - β1) * y + t * R < α1 * (y + t * R) := by
       nlinarith [mul_lt_mul_of_pos_left hB hα1']

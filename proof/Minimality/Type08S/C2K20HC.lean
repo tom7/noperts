@@ -91,14 +91,14 @@ theorem k20_r3_hasLexCell {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     rw [iP] at hneg
     have hm : 0 < ⟪p, r⟫ := by
       by_contra h; push Not at h
-      nlinarith [mul_nonneg hs0.le (real_inner_self_nonneg (x := r)), mul_nonpos_of_nonneg_of_nonpos hα0.le h]
+      linarith [mul_nonneg hs0.le (real_inner_self_nonneg (x := r)), mul_nonpos_of_nonneg_of_nonpos hα0.le h]
     nlinarith [mul_pos hm hZ, mul_nonneg hs0.le hm.le, real_inner_self_nonneg (x := p), real_inner_self_nonneg (x := r)]
   have zQR : 0 < ⟪c' - b', V0⟫ := by
     have e : c' - b' = β1 • (q - r) := by rw [hc', hb', hq, hr]; module
     rw [e, inner_smul_left, inner_sub_left, iQ, iR]
     simp only [RCLike.conj_to_real]
     rw [hm1]
-    nlinarith [mul_pos (mul_pos (by linarith : (0:ℝ) < β1) hs0) (sub_pos.2 hRT)]
+    linarith [mul_pos (mul_pos (by linarith : (0:ℝ) < β1) hs0) (sub_pos.2 hRT)]
   -- the points
   have eO : fpoint p q V0 d (0, 0, 0) = d := by simp [fpoint, fcomb]
   have eA : fpoint p q V0 d (1, 0, 0) = a := by simp only [fpoint, fcomb, hp]; module

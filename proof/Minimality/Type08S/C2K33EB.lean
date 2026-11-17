@@ -56,7 +56,7 @@ theorem k32e_b4_vec (P Q R : ℝ³) (α β γ : ℝ) (hPR : ⟪P, R⟫ = ⟪P, Q
     rw [k32e_ip P Q R hPR] at h; simp only [k32e_G] at h; linear_combination h
   refine ⟨?_, fun hz => ?_⟩
   · rw [k32e_ip P Q R hPR]; simp only [k32e_G]
-    nlinarith [hLp', hm1, hm3]
+    linarith [hLp', hm1, hm3]
   · rw [em2, em3]
     rw [inner_sub_right, inner_smul_right, inner_smul_right, k32e_ipP P Q R hPR, em3,
       k32e_ipR P Q R hPR, em1] at hz

@@ -65,7 +65,7 @@ theorem k22c1b_close {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d)
     have hqr : 0 < ⟪b - d, c - d⟫ := by
       have e : c - a' = (1 - γ6) • (c - d) - (b - d) := by rw [ha']; module
       rw [e, inner_sub_right, inner_smul_right, real_inner_comm (b - d) (c - d)] at hw0
-      nlinarith [mul_pos (by linarith : (0:ℝ) < 1 - γ6) hrr]
+      linarith [mul_pos (by linarith : (0:ℝ) < 1 - γ6) hrr]
     exact k22c1b_cellF2 hpq hpr hdet hc' hb' ha' hβ1 hb1.le hg hγ6 hγ61 hqr
 
 end C2

@@ -41,7 +41,7 @@ theorem k20R8_inj {α β β6 μ ν : ℝ} (hα : 1 < α) (hβ : 0 < β) (hb6 : 0
   have e3 := congrArg (fun t => t.2.2) h
   have a1 : 0 < α - 1 := by linarith
   rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;> rcases z5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first | rfl | (exfalso; simp only [k20R8Cyc_0, k20R8Cyc_1, k20R8Cyc_2, k20R8Cyc_3, k20R8Cyc_4] at e1 e2 e3; nlinarith)
+    first | rfl | (exfalso; simp only [k20R8Cyc_0, k20R8Cyc_1, k20R8Cyc_2, k20R8Cyc_3, k20R8Cyc_4] at e1 e2 e3; linarith)
 
 set_option maxHeartbeats 12800000 in
 theorem k20R8_tsc {α β β6 γ6 μ ν v1 v2 : ℝ} (hα : 1 < α) (hβ : 1 < β) (hb6 : 0 < β6) (hb61 : β6 < 1)
@@ -66,7 +66,7 @@ theorem k20R8_tsc {α β β6 γ6 μ ν v1 v2 : ℝ} (hα : 1 < α) (hβ : 1 < β
   have hnv : 0 < -v2 := by linarith
   have hq8 : α * (1 - β6) * (μ * β) = α * (1 - β6) := by rw [hμβ]; ring
   have hl8 : 0 < γ6 * (α - 1) * (β - 1) * μ - α * (1 - β6) := by
-    nlinarith [mul_lt_mul_of_pos_right hlit hμ]
+    linarith [mul_lt_mul_of_pos_right hlit hμ]
   have hk : β * v1 - (α - 1) * v2 = β * v1 - (α - 1) * v2 := rfl
   have p1 := mul_pos a1 hμ
   have p2 := mul_pos (mul_pos a1 hμ) hγ6

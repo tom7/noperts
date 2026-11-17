@@ -63,7 +63,7 @@ theorem k28b4a_keys {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hs : ⟪P, Q⟫ < 0 := by
     by_contra hn; push Not at hn
     have := mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hW.le
-    nlinarith [mul_pos (sub_pos.2 hβ1) hD]
+    linarith [mul_pos (sub_pos.2 hβ1) hD]
   have em1 : ⟪c' - a', P⟫ = α1 * ⟪P, P⟫ + (β1 - 1 - γ6) * ⟪P, Q⟫ := by
     rw [e1]
     simp only [inner_smul_left, inner_sub_left, inner_add_left, conj_trivial, hPR, hRP, hPQ]; ring
@@ -71,23 +71,23 @@ theorem k28b4a_keys {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     rw [e1]
     simp only [inner_smul_left, inner_sub_left, inner_add_left, conj_trivial, hPR, hRP, hPQ, hRQ] 
   have hm1p : 0 < α1 * ⟪P, P⟫ + (β1 - 1 - γ6) * ⟪P, Q⟫ := by
-    nlinarith [mul_pos (by linarith : (0:ℝ) < α1) hPP, mul_nonneg (by linarith : (0:ℝ) ≤ γ6 + 1 - β1) (by linarith : (0:ℝ) ≤ -⟪P, Q⟫)]
+    linarith [mul_pos (by linarith : (0:ℝ) < α1) hPP, mul_nonneg (by linarith : (0:ℝ) ≤ γ6 + 1 - β1) (by linarith : (0:ℝ) ≤ -⟪P, Q⟫)]
   have hm3n : α1 * ⟪P, Q⟫ + (β1 - 1) * ⟪Q, R⟫ - γ6 * ⟪R, R⟫ < 0 := by
     rcases le_or_gt 0 ⟪Q, R⟫ with h | h
-    · nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ γ6 - (β1 - 1)) h, mul_pos hγ6 (sub_pos.2 hrr),
+    · linarith [mul_nonneg (by linarith : (0:ℝ) ≤ γ6 - (β1 - 1)) h, mul_pos hγ6 (sub_pos.2 hrr),
         mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hs)]
-    · nlinarith [mul_pos (sub_pos.2 hβ1) (neg_pos.2 h), mul_pos hγ6 (by nlinarith : 0 < ⟪R, R⟫),
+    · linarith [mul_pos (sub_pos.2 hβ1) (neg_pos.2 h), mul_pos hγ6 (by nlinarith : 0 < ⟪R, R⟫),
         mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hs)]
   rw [em1, em3]
   refine ⟨hm1p, hm3n, ?_, ?_⟩
-  · nlinarith
+  · linarith
   · simp only [e3, inner_smul_right, inner_smul_left, inner_add_left, inner_sub_right, inner_add_right,
       conj_trivial, hPR, hRP, hPQ, hRQ]
     have hmu : (α1 * ⟪P, Q⟫ + (β1 - 1) * ⟪Q, R⟫ - γ6 * ⟪R, R⟫) / (α1 * ⟪P, P⟫ + (β1 - 1 - γ6) * ⟪P, Q⟫) *
         (-α1 * ⟪P, P⟫ + ⟪P, Q⟫ + (γ6 - β1) * ⟪P, Q⟫) = -(α1 * ⟪P, Q⟫ + (β1 - 1) * ⟪Q, R⟫ - γ6 * ⟪R, R⟫) := by
       rw [div_mul_eq_mul_div, div_eq_iff hm1p.ne']; ring
     rw [hmu]
-    nlinarith [mul_pos (by linarith : (0:ℝ) < β1) (sub_pos.2 hrr)]
+    linarith [mul_pos (by linarith : (0:ℝ) < β1) (sub_pos.2 hrr)]
 
 end C2
 end Type08Sp

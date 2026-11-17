@@ -100,7 +100,7 @@ theorem k22c1b_cellM {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 l Q R : ℝ}
            simp only [k22c1bM_0, k22c1bM_1, k22c1bM_2, k22c1bM_3, k22c1bM_4, Prod.mk.injEq] at h
            first
            | linarith [h.1, h.2.1, h.2.2]
-           | nlinarith [h.1, h.2.1, h.2.2])
+           | linarith [h.1, h.2.1, h.2.2])
     · intro i
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
       · simp only [k22c1bM_0, eB']; simp [V8]
@@ -141,31 +141,31 @@ theorem k22c1b_cellM {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 l Q R : ℝ}
         rcases z5_cases j with rfl | rfl | rfl | rfl | rfl
         · exact (hj2 (by decide)).elim
         · left; simp only [s1]; apply L; left
-          simp only [k22c1bM_0, k22c1bM_1]; nlinarith [mul_pos hγ4 hRp, mul_neg_of_pos_of_neg hβ1 hQn]
+          simp only [k22c1bM_0, k22c1bM_1]; linarith [mul_pos hγ4 hRp, mul_neg_of_pos_of_neg hβ1 hQn]
         · right; simp only [g2]; apply L; left
-          simp only [k22c1bM_2, k22c1bM_3]; nlinarith
+          simp only [k22c1bM_2, k22c1bM_3]; linarith
         · right; simp only [g3]; apply L; left
-          simp only [k22c1bM_3, k22c1bM_4]; nlinarith
+          simp only [k22c1bM_3, k22c1bM_4]; linarith
         · exact (hj1 rfl).elim
       · refine k22c1b_uni (by decide) _ _ hinj 4 ?_
         intro j hj1 hj2
         rcases z5_cases j with rfl | rfl | rfl | rfl | rfl
         · exact (hj2 (by decide)).elim
         · left; simp only [s1]; apply L; left
-          simp only [k22c1bM_0, k22c1bM_1]; nlinarith
+          simp only [k22c1bM_0, k22c1bM_1]; linarith
         · left; simp only [s2]; apply L; left
           simp only [k22c1bM_1, k22c1bM_2]; nlinarith
         · left; simp only [s3]; apply L; left
-          simp only [k22c1bM_2, k22c1bM_3]; nlinarith
+          simp only [k22c1bM_2, k22c1bM_3]; linarith
         · exact (hj1 rfl).elim
       · subst hb1
         refine k22c1b_uni (by decide) _ _ hinj 2 ?_
         intro j hj1 hj2
         rcases z5_cases j with rfl | rfl | rfl | rfl | rfl
         · right; simp only [g0]; apply L; left
-          simp only [k22c1bM_0, k22c1bM_1]; nlinarith
+          simp only [k22c1bM_0, k22c1bM_1]; linarith
         · right; simp only [g1]; apply L; right
-          simp only [k22c1bM_1, k22c1bM_2]; constructor <;> norm_num; nlinarith [hP, real_inner_self_eq_norm_sq p]
+          simp only [k22c1bM_1, k22c1bM_2]; constructor <;> norm_num; linarith [hP, real_inner_self_eq_norm_sq p]
         · exact (hj1 rfl).elim
         · exact (hj2 (by decide)).elim
         · right; simp only [g4]; apply L; left

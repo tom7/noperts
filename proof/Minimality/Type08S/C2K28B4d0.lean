@@ -65,7 +65,7 @@ theorem k28b4d_keys {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hs : ⟪P, Q⟫ < 0 := by
     by_contra hn; push Not at hn
     have := mul_nonneg (mul_nonneg (by linarith : (0:ℝ) ≤ α1) hn) hW.le
-    nlinarith [mul_pos (sub_pos.2 hβ1) hD]
+    linarith [mul_pos (sub_pos.2 hβ1) hD]
   have em1 : ⟪c' - a', P⟫ = α1 * ⟪P, P⟫ + (β1 - 1 - γ6) * ⟪P, Q⟫ := by
     rw [e1]
     simp only [inner_smul_left, inner_sub_left, inner_add_left, conj_trivial, hPR, hRP, hPQ]; ring
@@ -73,12 +73,12 @@ theorem k28b4d_keys {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     rw [e1]
     simp only [inner_smul_left, inner_sub_left, inner_add_left, conj_trivial, hPR, hRP, hPQ, hRQ] 
   have hm1p : 0 < α1 * ⟪P, P⟫ + (β1 - 1 - γ6) * ⟪P, Q⟫ := by
-    nlinarith [mul_pos (by linarith : (0:ℝ) < α1) hPP, mul_nonneg (by linarith : (0:ℝ) ≤ γ6 + 1 - β1) (by linarith : (0:ℝ) ≤ -⟪P, Q⟫)]
+    linarith [mul_pos (by linarith : (0:ℝ) < α1) hPP, mul_nonneg (by linarith : (0:ℝ) ≤ γ6 + 1 - β1) (by linarith : (0:ℝ) ≤ -⟪P, Q⟫)]
   have hm3n : α1 * ⟪P, Q⟫ + (β1 - 1) * ⟪Q, R⟫ - γ6 * ⟪R, R⟫ < 0 := by
     rcases le_or_gt 0 ⟪Q, R⟫ with h | h
-    · nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ γ6 - (β1 - 1)) h, mul_pos hγ6 (sub_pos.2 hrr),
+    · linarith [mul_nonneg (by linarith : (0:ℝ) ≤ γ6 - (β1 - 1)) h, mul_pos hγ6 (sub_pos.2 hrr),
         mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hs)]
-    · nlinarith [mul_pos (sub_pos.2 hβ1) (neg_pos.2 h), mul_pos hγ6 (by nlinarith : 0 < ⟪R, R⟫),
+    · linarith [mul_pos (sub_pos.2 hβ1) (neg_pos.2 h), mul_pos hγ6 (by nlinarith : 0 < ⟪R, R⟫),
         mul_pos (by linarith : (0:ℝ) < α1) (neg_pos.2 hs)]
   rw [em1, em3]
   obtain ⟨m1, hm1⟩ : ∃ m1, m1 = α1 * ⟪P, P⟫ + (β1 - 1 - γ6) * ⟪P, Q⟫ := ⟨_, rfl⟩
@@ -86,7 +86,7 @@ theorem k28b4d_keys {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   rw [← hm1] at hm1p ⊢
   rw [← hm3] at hm3n ⊢
   have hs0 : ⟪P, Q⟫ < 0 := hs
-  have hLq' : 0 < (α1 - 1) * m1 + β1 * m3 := by rw [hm1, hm3]; nlinarith
+  have hLq' : 0 < (α1 - 1) * m1 + β1 * m3 := by rw [hm1, hm3]; linarith
   have hLp' : 0 < α1 * m1 + (β1 - 1) * m3 := by linarith
   have hsq : ⟪P, R⟫ ^ 2 < ⟪P, P⟫ * ⟪R, R⟫ := by
     have hd2 : det3 Q P R ≠ 0 := by
@@ -98,17 +98,17 @@ theorem k28b4d_keys {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
   have hW' : α1 * (-⟪P, Q⟫) ≤ (β1 - 1) * ⟪R, R⟫ := by
     by_contra hn; push Not at hn
     have e : ⟪R, R⟫ * (⟪Q, Q⟫ + ⟪R, R⟫ - 2 * ⟪Q, R⟫) - (⟪Q, Q⟫ * ⟪R, R⟫ - ⟪Q, R⟫ ^ 2) = (⟪R, R⟫ - ⟪Q, R⟫) ^ 2 := by ring
-    nlinarith [mul_pos (sub_pos.2 hn) hW, mul_pos (sub_pos.2 hβ1) hW, sq_nonneg (⟪R, R⟫ - ⟪Q, R⟫), mul_nonneg (sub_pos.2 hβ1).le (sq_nonneg (⟪R, R⟫ - ⟪Q, R⟫))]
+    linarith [mul_pos (sub_pos.2 hn) hW, mul_pos (sub_pos.2 hβ1) hW, sq_nonneg (⟪R, R⟫ - ⟪Q, R⟫), mul_nonneg (sub_pos.2 hβ1).le (sq_nonneg (⟪R, R⟫ - ⟪Q, R⟫))]
   have g1 : m3 * ⟪P, Q⟫ - m1 * ⟪R, R⟫ < 0 := by
     have h1 : (β1 - 1) * (m3 * ⟪P, Q⟫ - m1 * ⟪R, R⟫) < 0 := by
-      nlinarith [mul_pos (by linarith : 0 < α1 * m1 + (β1 - 1) * m3) (neg_pos.2 hs0), mul_nonneg hm1p.le (sub_nonneg.2 hW')]
+      linarith [mul_pos (by linarith : 0 < α1 * m1 + (β1 - 1) * m3) (neg_pos.2 hs0), mul_nonneg hm1p.le (sub_nonneg.2 hW')]
     by_contra h; push Not at h
-    nlinarith [mul_nonneg (sub_pos.2 hβ1).le h]
+    linarith [mul_nonneg (sub_pos.2 hβ1).le h]
   have g2 : m3 * ⟪P, P⟫ - m1 * ⟪P, Q⟫ < 0 := by
     rw [hm1, hm3]
     rcases le_or_gt 0 (⟪P, P⟫ * ⟪Q, R⟫ - ⟪P, Q⟫ ^ 2) with hX | hX
-    · nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ γ6 - (β1 - 1)) hX, mul_pos hγ6 (mul_pos hPP (sub_pos.2 hrr))]
-    · nlinarith [mul_pos (sub_pos.2 hβ1) (neg_pos.2 hX), mul_pos hγ6 (sub_pos.2 hsa)]
+    · linarith [mul_nonneg (by linarith : (0:ℝ) ≤ γ6 - (β1 - 1)) hX, mul_pos hγ6 (mul_pos hPP (sub_pos.2 hrr))]
+    · linarith [mul_pos (sub_pos.2 hβ1) (neg_pos.2 hX), mul_pos hγ6 (sub_pos.2 hsa)]
   refine ⟨hm1p, hm3n, ?_, ?_, hLp', hLq'⟩
   · simp only [inner_sub_right, inner_smul_right, inner_sub_left, conj_trivial, hPR, hRP, hPQ, hRQ]
     have : m3 / m1 * ⟪P, Q⟫ - ⟪R, R⟫ = (m3 * ⟪P, Q⟫ - m1 * ⟪R, R⟫) / m1 := by field_simp

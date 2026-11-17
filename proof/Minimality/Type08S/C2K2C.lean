@@ -54,7 +54,7 @@ theorem gale_coords_gen {a a' b b' c c' d : ℝ³} (G : GaleData a a' b b' c c')
     obtain ⟨h1, h2, h3⟩ := coef_zero hdet h0
     refine ⟨by linarith, by linarith, by linarith, ?_⟩
     have := hl.sum
-    nlinarith [this, h1, h2, h3]
+    linarith [this, h1, h2, h3]
   obtain ⟨la, lb, lc, ls⟩ := dep G.hl
   obtain ⟨ma, mb, mc, ms⟩ := dep G.hm
   set Dbc := G.l b' * G.m c' - G.m b' * G.l c' with hDbc

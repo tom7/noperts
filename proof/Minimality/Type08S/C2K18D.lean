@@ -35,8 +35,8 @@ theorem k18_s18a {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (hT' 
     rw [hL] at hle
     have h1 : 0 < α1 - 1 := by linarith
     have h2 : 0 ≤ γ4 * ⟪a - d, c - d⟫ - (1 - α4) * ⟪a - d, a - d⟫ := by
-      by_contra hh; push Not at hh; nlinarith [mul_pos h1 (neg_pos.2 hh)]
-    have h3 : 0 < γ4 * ⟪a - d, c - d⟫ := by nlinarith [mul_pos (sub_pos.2 hα41) hpp]
+      by_contra hh; push Not at hh; linarith [mul_pos h1 (neg_pos.2 hh)]
+    have h3 : 0 < γ4 * ⟪a - d, c - d⟫ := by linarith [mul_pos (sub_pos.2 hα41) hpp]
     exact pos_of_mul_pos_right h3 (by linarith)
   exact k17gb_s18a_cell hdet hc' hb' ha' hα1 hβ1 hα4 hα41 hγ4 hβ6 hqr hpq hpr
 

@@ -164,28 +164,28 @@ theorem k24mtd_core {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     have hLex : (0 : ZMod 5) + 1 + 1 = 2 := by decide
     have hne : (0 : ZMod 5) + 1 ≠ 0 := by decide
     refine k19_lexUni_nb2 _ _ hw 0 hne ?_ ?_ ?_
-    · rw [e0]; left; simp only [k24mtdY_4, k24mtdY_0, hz]; nlinarith
-    · rw [hLex, f0]; left; simp only [k24mtdY_2, k24mtdY_1, hz]; nlinarith
+    · rw [e0]; left; simp only [k24mtdY_4, k24mtdY_0, hz]; linarith
+    · rw [hLex, f0]; left; simp only [k24mtdY_2, k24mtdY_1, hz]; linarith
     · intro i hi0 hi1
       rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
       · exact absurd rfl hi0
       · exact absurd (by decide) hi1
-      · left; rw [e2]; left; simp only [k24mtdY_2, k24mtdY_1, hz]; nlinarith
+      · left; rw [e2]; left; simp only [k24mtdY_2, k24mtdY_1, hz]; linarith
       · left; rw [e3]; right
         refine ⟨?_, ?_⟩
-        · simp only [k24mtdY_3, k24mtdY_2, hz]; nlinarith
+        · simp only [k24mtdY_3, k24mtdY_2, hz]; linarith
         · rw [k24mtdY_3, k24mtdY_2, Ea', Ec']
           have : ⟪c', fcomb (a - d) (b - d) R v1 v2 0⟫ - ⟪a', fcomb (a - d) (b - d) R v1 v2 0⟫ =
               v1 * ⟪c' - a', a - d⟫ + v2 * ⟪c' - a', b - d⟫ := by
             rw [← inner_sub_left]; simp only [fcomb, inner_add_right, inner_smul_right, inner_zero_right]
             ring
-          nlinarith
-      · right; rw [f4]; left; simp only [k24mtdY_4, k24mtdY_0, hz]; nlinarith
+          linarith
+      · right; rw [f4]; left; simp only [k24mtdY_4, k24mtdY_0, hz]; linarith
   · intro l hl
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hl
     rcases hl with rfl | rfl | rfl
     · left; norm_num
-    · right; exact ⟨by ring, by nlinarith⟩
+    · right; exact ⟨by ring, by linarith⟩
     · left; simp only; linarith
 
 /-- Side 2 (mirror of `k24mt_gt`, `b <-> c`, view `a - c'`), on `L' = <c - b, c - a'> > 0`. -/

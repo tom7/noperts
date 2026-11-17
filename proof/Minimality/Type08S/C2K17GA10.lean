@@ -30,7 +30,7 @@ theorem k17ga_s12b_tc {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) 
     k17ga_tc_coords W h
   have hb61 : 1 < β6 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hγ4.le (sub_nonneg.2 hh)]
+    linarith [mul_nonneg hγ4.le (sub_nonneg.2 hh)]
   have hbc0 : 1 < β1 + (-γ4 / (α4 - 1)) * α1 * (1 - β6) := by
     have : (-γ4 / (α4 - 1)) * (1 - β6) = 1 := by
       have hne : β6 - 1 ≠ 0 := (sub_pos.2 hb61).ne'

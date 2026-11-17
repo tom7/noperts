@@ -21,7 +21,7 @@ theorem k28h5bd_d1_gram (pp pq qq qr rr al be : ℝ) (hal : 0 < al) (hbe : 0 < b
   have hW : 0 < qq + rr - 2*qr := by linarith
   have hA : 0 < 1 + al := by linarith
   have ht' : -pq = be*(qq*rr-qr^2)/((1+al)*((qq-qr)+(rr-qr))) := by
-    rw [eq_div_iff (by positivity)]; nlinarith
+    rw [eq_div_iff (by positivity)]; linarith
   have h := k28h5bd_d1_core (qq-qr) (rr-qr) (qq*rr-qr^2) (pp*(qq*rr-qr^2) - pq^2*(qq+rr-2*qr)) al be hu1 hu2 hm hy hal hbe
   rw [← ht'] at h
   have e1 : (-pq)^2*((qq-qr)+(rr-qr)) = pq^2*(qq+rr-2*qr) := by ring

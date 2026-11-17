@@ -115,7 +115,7 @@ theorem k20_r8_hasLexCell {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have iR : ⟪r, w⟫ = (α1 - 1) * ⟪p, r⟫ + β1 * ⟪r, r⟫ := by
     rw [hV]; simp only [inner_add_right, inner_smul_right, hrp]
   have zqr : ⟪q, w⟫ < ⟪r, w⟫ := by
-    rw [iQ, iR]; nlinarith [mul_pos hβ0 (sub_pos.2 hRT)]
+    rw [iQ, iR]; linarith [mul_pos hβ0 (sub_pos.2 hRT)]
   have hlit' : (1 - γ6) * ⟪r, w⟫ < β6 * ⟪q, w⟫ := by
     have e : a' - c = β6 • q + (γ6 - 1) • r := by rw [ha', hq, hr]; module
     have e2 : a' - c = -(c - a') := by abel
@@ -130,7 +130,7 @@ theorem k20_r8_hasLexCell {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     by_contra h; push Not at h
     have h1 := mul_lt_mul_of_pos_left zqr hβ6
     have h2 : 0 ≤ (β6 + γ6 - 1) * (-⟪r, w⟫) := mul_nonneg (by linarith) (by linarith)
-    nlinarith
+    linarith
   have zq : 0 < ⟪q, w⟫ := by
     have := mul_pos (by linarith : (0:ℝ) < 1 - γ6) zr
     nlinarith
@@ -194,7 +194,7 @@ theorem k20_r8_hasLexCell {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
       have : 0 < ⟪c' - a, w⟫ := by
         rw [e, inner_add_left, inner_smul_left, inner_smul_left]
         simp only [RCLike.conj_to_real]
-        nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ α1 - 1) hpw, mul_pos hβ0 zq]
+        linarith [mul_nonneg (by linarith : (0:ℝ) ≤ α1 - 1) hpw, mul_pos hβ0 zq]
       rw [inner_sub_left] at this; linarith
 
 end C2

@@ -60,8 +60,8 @@ theorem k5b_cyc1_tsc {D α1 β1 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα1 : 0 < α
     | (simp only [TSc, d3, k5b_cyc1, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 3200000 in
 theorem k5b_rest1_tsc {D α1 β1 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα1 : 0 < α1) (hβ1 : 0 < β1) (hβ6 : 0 < β6)
@@ -86,7 +86,7 @@ theorem k5b_rest1_tsc {D α1 β1 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα1 : 0 < �
     (simp only [TSc, d3, k5b_cyc1, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
+     | (left; linarith)
      | (right; refine ⟨by ring, by nlinarith⟩))
 
 set_option maxHeartbeats 3200000 in
@@ -119,8 +119,8 @@ theorem k5b_cyc2_tsc {D α1 β1 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα1 : 0 < α
     | (simp only [TSc, d3, k5b_cyc2, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 3200000 in
 theorem k5b_rest2_tsc {D α1 β1 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα1 : 0 < α1) (hβ1 : 0 < β1) (hβ6 : 0 < β6)
@@ -146,7 +146,7 @@ theorem k5b_rest2_tsc {D α1 β1 β6 γ6 v1 v2 : ℝ} (hD : 0 < D) (hα1 : 0 < �
     (simp only [TSc, d3, k5b_cyc2, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
+     | (left; linarith)
      | (right; refine ⟨by ring, by nlinarith⟩))
 
 end C2

@@ -111,22 +111,22 @@ theorem k19_s17_pent {a a' b b' c c' d : ℝ³} {α4 β6 γ6 : ℝ} (hdet : det3
     · rintro v1 v2 ⟨h1, h2, h3, h4, hc⟩ hw
       obtain ⟨e0, e1, e2, e3, e4, f0, f1, f2, f3, f4⟩ := k19_z5
       refine k19_lexUni_nb _ _ hw 0 ?_ ?_ ?_
-      · rw [e0]; left; simp only [k17fPent, pc5_4, pc5_0, hz, hPR, hQR]; nlinarith [mul_pos (sub_pos.2 hα41) hRR]
-      · rw [f0]; left; simp only [k17fPent, pc5_0, pc5_1, hz, hPR, hQR]; nlinarith
+      · rw [e0]; left; simp only [k17fPent, pc5_4, pc5_0, hz, hPR, hQR]; linarith [mul_pos (sub_pos.2 hα41) hRR]
+      · rw [f0]; left; simp only [k17fPent, pc5_0, pc5_1, hz, hPR, hQR]; linarith
       · intro i hi
         rcases z5_cases i with rfl | rfl | rfl | rfl | rfl
         · exact absurd rfl hi
-        · left; rw [e1]; left; simp only [k17fPent, pc5_0, pc5_1, hz, hPR, hQR]; nlinarith
+        · left; rw [e1]; left; simp only [k17fPent, pc5_0, pc5_1, hz, hPR, hQR]; linarith
         · rcases hc with hc | hc
           · left; rw [e2]; right
             refine ⟨by simp only [k17fPent, pc5_1, pc5_2, hz, hPR, hQR]; ring, ?_⟩
-            simp only [k17fPent, pc5_1, pc5_2, hwx, hPR, hQR]; nlinarith
+            simp only [k17fPent, pc5_1, pc5_2, hwx, hPR, hQR]; linarith
           · right; rw [f2]; right
             refine ⟨by simp only [k17fPent, pc5_2, pc5_3, hz, hPR, hQR]; ring, ?_⟩
-            simp only [k17fPent, pc5_2, pc5_3, hwx, hPR, hQR]; nlinarith
-        · right; rw [f3]; left; simp only [k17fPent, pc5_3, pc5_4, hz, hPR, hQR]; nlinarith [mul_pos hα4 hRR]
+            simp only [k17fPent, pc5_2, pc5_3, hwx, hPR, hQR]; linarith
+        · right; rw [f3]; left; simp only [k17fPent, pc5_3, pc5_4, hz, hPR, hQR]; linarith [mul_pos hα4 hRR]
         · right; rw [f4]; left; simp only [k17fPent, pc5_4, pc5_0, hz, hPR, hQR]
-          nlinarith [mul_pos (sub_pos.2 hα41) hRR]
+          linarith [mul_pos (sub_pos.2 hα41) hRR]
   refine ⟨R, k17f_r0 hΔ, ?_⟩
   rcases hcase with hc | ⟨hb, hc⟩
   · -- ray `A = (β6, γ6 - 1)`, direction `(0,-1)`; condition `w(a') > w(b)` (value `⟪A,B⟫`)
@@ -145,7 +145,7 @@ theorem k19_s17_pent {a a' b b' c c' d : ℝ³} {α4 β6 γ6 : ℝ} (hdet : det3
       · right; constructor
         · simp only; ring
         · simp only; linarith
-      · left; simp only; nlinarith
+      · left; simp only; linarith
       · left; simp only; rw [hAB] at hc; linarith
   · -- ray `-B = (1 - β6, -γ6)`, direction `(1,0)`; condition `w(b) < w(d)` (value `⟪B,q⟫`)
     refine C.cell (ρ1 := 1 - β6) (ρ2 := -γ6) (δ1 := 1) (δ2 := 0)
@@ -159,7 +159,7 @@ theorem k19_s17_pent {a a' b b' c c' d : ℝ³} {α4 β6 γ6 : ℝ} (hdet : det3
       rcases hl with rfl | rfl | rfl | rfl | rfl
       · left; simp only; linarith
       · left; simp only; linarith
-      · left; simp only; nlinarith
+      · left; simp only; linarith
       · right; constructor
         · simp only; ring
         · simp only; linarith
@@ -236,23 +236,23 @@ theorem k19_s17_hex {a a' b b' c c' d : ℝ³} {α4 β6 γ6 : ℝ} (hdet : det3 
     · rintro v1 v2 ⟨h1, h2, h3, hc⟩ hw
       obtain ⟨e0, e1, e2, e3, e4, e5, f0, f1, f2, f3, f4, f5⟩ := k19_z6
       refine k19_lexUni_nb2 _ _ hw 5 (by decide) ?_ ?_ ?_
-      · rw [e5]; left; simp only [k17fHex, pc6_4, pc6_5, hz, hPR, hQR]; nlinarith
+      · rw [e5]; left; simp only [k17fHex, pc6_4, pc6_5, hz, hPR, hQR]; linarith
       · rw [f5, f0]; left; simp only [k17fHex, pc6_0, pc6_1, hz, hPR, hQR]
-        nlinarith [mul_pos (sub_pos.2 hα41) hRR]
+        linarith [mul_pos (sub_pos.2 hα41) hRR]
       · intro i hi hi'
         rcases z6_cases i with rfl | rfl | rfl | rfl | rfl | rfl
         · exact absurd (by decide) hi'
         · left; rw [e1]; left; simp only [k17fHex, pc6_0, pc6_1, hz, hPR, hQR]
-          nlinarith [mul_pos (sub_pos.2 hα41) hRR]
-        · left; rw [e2]; left; simp only [k17fHex, pc6_1, pc6_2, hz, hPR, hQR]; nlinarith [mul_pos hα4 hRR]
+          linarith [mul_pos (sub_pos.2 hα41) hRR]
+        · left; rw [e2]; left; simp only [k17fHex, pc6_1, pc6_2, hz, hPR, hQR]; linarith [mul_pos hα4 hRR]
         · rcases hc with hc | hc
           · left; rw [e3]; right
             refine ⟨by simp only [k17fHex, pc6_2, pc6_3, hz, hPR, hQR]; ring, ?_⟩
-            simp only [k17fHex, pc6_2, pc6_3, hwx, hPR, hQR]; nlinarith
+            simp only [k17fHex, pc6_2, pc6_3, hwx, hPR, hQR]; linarith
           · right; rw [f3]; right
             refine ⟨by simp only [k17fHex, pc6_3, pc6_4, hz, hPR, hQR]; ring, ?_⟩
-            simp only [k17fHex, pc6_3, pc6_4, hwx, hPR, hQR]; nlinarith
-        · right; rw [f4]; left; simp only [k17fHex, pc6_4, pc6_5, hz, hPR, hQR]; nlinarith
+            simp only [k17fHex, pc6_3, pc6_4, hwx, hPR, hQR]; linarith
+        · right; rw [f4]; left; simp only [k17fHex, pc6_4, pc6_5, hz, hPR, hQR]; linarith
         · exact absurd rfl hi
   refine ⟨R, k17f_r0 hΔ, ?_⟩
   rcases hcase with hb | hc

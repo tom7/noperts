@@ -29,11 +29,11 @@ theorem k43b0_kb_lt {α1 β1 β6 s qq qr rr : ℝ} (hα : 1 < α1) (hβ : 1 < β
       (qq - qr) * (((β1 - β6) - 1) * (rr - qr) - β6 * (qq - qr)) := by
     linear_combination (-1) * rel
   have hn : (qq - qr) * (((β1 - β6) - 1) * (rr - qr) - β6 * (qq - qr)) < 0 :=
-    mul_neg_of_pos_of_neg (by linarith) (by nlinarith [mul_pos hb6 (sub_pos.2 hqq), mul_pos (sub_pos.2 hg1) (sub_pos.2 hrr)])
+    mul_neg_of_pos_of_neg (by linarith) (by linarith [mul_pos hb6 (sub_pos.2 hqq), mul_pos (sub_pos.2 hg1) (sub_pos.2 hrr)])
   have hX : -α1 * s - β6 * qq + (1 - (β1 - β6)) * qr < 0 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hh hW.le]
-  nlinarith [mul_neg_of_pos_of_neg (show 0 < β1 by linarith) hX]
+    linarith [mul_nonneg hh hW.le]
+  linarith [mul_neg_of_pos_of_neg (show 0 < β1 by linarith) hX]
 
 theorem k43b0_setup {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     (hC : K6mCoords a a' b b' c c' d α1 β1 β6 γ6)
@@ -93,7 +93,7 @@ theorem k43b0_setup {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     by_contra hh; push Not at hh
     have h2 : 0 ≤ α1 * ⟪p, q⟫ * (⟪q, q⟫ + ⟪r, r⟫ - 2 * ⟪q, r⟫) :=
       mul_nonneg (mul_nonneg hα1'.le hh) hW.le
-    nlinarith [hr1]
+    linarith [hr1]
   have hLe : (α1 - 1) * ⟪p, p⟫ + β1 * ⟪p, q⟫ = 0 := by
     have e : a - c' = (1 - α1) • (p) - β1 • (q) := by rw [hc', hp, hq]; module
     rw [e] at hL
@@ -268,7 +268,7 @@ theorem k43r2_B0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
   have hCpos : 0 < α1 + β1 - 1 := by linarith
   have hA1 : 0 < α1 * β1 * (β1 - 1) - (α1 + β1 - 1) * (β1 - β6) := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg (neg_nonneg.2 ht.le) (neg_nonneg.2 hh), mul_pos hCpos hg6]
+    linarith [mul_nonneg (neg_nonneg.2 ht.le) (neg_nonneg.2 hh), mul_pos hCpos hg6]
   have hcone : (α1 * β1 * (β1 - 1) - (α1 + β1 - 1) * (β1 - β6)) * ⟪a' - c, Q⟫ >
       (β1 - β6) * (β1 - 1) * ⟪a' - c, P⟫ := by
     have hb1p : 0 < β1 := by linarith
@@ -281,17 +281,17 @@ theorem k43r2_B0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     have h2 : t * κA * A1 = -(C * (β1 - β6) * κA) := by linear_combination κA * o1
     have key : A1 * sv > -((β1 - β6) * κA) := by
       by_contra hh; push Not at hh
-      nlinarith [mul_nonneg hCpos.le (sub_nonneg.2 hh)]
+      linarith [mul_nonneg hCpos.le (sub_nonneg.2 hh)]
     have h3 := mul_lt_mul_of_pos_right key e1'
     have eq1 : β1 * ((β1 - β6) * (β1 - 1) * ⟪a' - c, P⟫) = -((β1 - β6) * (β1 - 1) * κA) := by
       linear_combination (β1 - β6) * (β1 - 1) * hm1v
     have eq2 : β1 * (A1 * ⟪a' - c, Q⟫) = A1 * sv * (β1 - 1) := by
       linear_combination A1 * hm2v
     by_contra hh; push Not at hh
-    nlinarith [mul_le_mul_of_nonneg_left hh hb1p.le]
+    linarith [mul_le_mul_of_nonneg_left hh hb1p.le]
   have o2 : t * ((α1 + β1 - 1) * β6) + α1 * β1 * (β1 - 1) - (α1 + β1 - 1) * β6 ≤ 0 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_pos hκ hh]
+    linarith [mul_pos hκ hh]
   have hb1 : 0 < β1 := by linarith
   have hdep : ∀ x y z : ℝ, ⟪fpoint P Q R a (x, y, z), R⟫ = ⟪a, R⟫ + x * e1 + z * e2 := by
     intro x y z; rw [inner_fpoint, hQR, hPR, hRR]; ring
@@ -323,12 +323,12 @@ theorem k43r2_B0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     have hlo : -((β1 - β6) * (β1 - 1)) / (α1 * β1 * (β1 - 1) - (α1 + β1 - 1) * (β1 - β6)) < (β1 - 1) / (α1 + β1 - 1) :=
       lt_trans (div_neg_of_neg_of_pos (neg_neg_of_pos (mul_pos hg6 (by linarith))) hA1) (div_pos (by linarith) hCpos)
     have hlo2 : -((β1 - β6) * (β1 - 1)) / (α1 * β1 * (β1 - 1) - (α1 + β1 - 1) * (β1 - β6)) < ⟪a' - c, Q⟫ / (-⟪a' - c, P⟫) := by
-      rw [div_lt_div_iff₀ hA1 hn1]; nlinarith [hcone]
+      rw [div_lt_div_iff₀ hA1 hn1]; linarith [hcone]
     obtain ⟨s0, h1, h2⟩ := exists_between (lt_min hlo hlo2)
     have h1' := (div_lt_iff₀ hA1).1 h1
     have h2a := (lt_div_iff₀ hCpos).1 (lt_of_lt_of_le h2 (min_le_left _ _))
     have h2b := (lt_div_iff₀ hn1).1 (lt_of_lt_of_le h2 (min_le_right _ _))
-    refine ⟨s0, ?_, ?_, ?_⟩ <;> nlinarith
+    refine ⟨s0, ?_, ?_, ?_⟩ <;> linarith
   refine k25_tie_cell (V8 a a' b b' c c' d) P Q R a hdet (k := 5) (by norm_num) (k28bqCyc5 α1 β1 β6 t)
     (k28bq_inj5 hα hβ hb6 hg6 ht) ?_ L (by simp [hLdef]) ?_ ?_
     (3 : ZMod 5) ?_ ?_ ?_ (ρ1 := s0) (ρ2 := 1) (δ1 := 0) (δ2 := 0) ?_
@@ -362,18 +362,18 @@ theorem k43r2_B0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
     rw [show (3 : ZMod 5) - 1 = 2 by decide]
     refine hsub _ _ ?_
     simp only [k28bqCyc5_2, k28bqCyc5_3, hdep]
-    nlinarith
+    linarith
   · rw [show (3 : ZMod 5) + 1 = 4 by decide]
     refine hsub _ _ ?_
     simp only [k28bqCyc5_4, k28bqCyc5_3, hdep]
-    nlinarith
+    linarith
   · intro i hi
     rcases k28bq_z5 i with rfl | rfl | rfl | rfl | rfl
     · left
       rw [show (0 : ZMod 5) - 1 = 4 by decide]
       refine ⟨?_, fun h => ?_⟩
       · simp only [k28bqCyc5_4, k28bqCyc5_0, hdep]
-        nlinarith
+        linarith
       · intro v1 v2 hv
         have := hv (⟪a' - c, P⟫, ⟪a' - c, Q⟫) (by simp [hLdef])
         simp only [k28bqCyc5_4, k28bqCyc5_0, eA', eC]
@@ -382,18 +382,18 @@ theorem k43r2_B0 {a a' b b' c c' d : ℝ³} {α1 β1 β6 γ6 : ℝ}
       rw [show (1 : ZMod 5) - 1 = 0 by decide]
       refine hsub _ _ ?_
       simp only [k28bqCyc5_0, k28bqCyc5_1, hdep]
-      nlinarith
+      linarith
     · right
       rw [show (2 : ZMod 5) + 1 = 3 by decide]
       refine hsub _ _ ?_
       simp only [k28bqCyc5_2, k28bqCyc5_3, hdep]
-      nlinarith
+      linarith
     · exact absurd rfl hi
     · left
       rw [show (4 : ZMod 5) - 1 = 3 by decide]
       refine hsub _ _ ?_
       simp only [k28bqCyc5_4, k28bqCyc5_3, hdep]
-      nlinarith
+      linarith
   · intro l hl
     simp only [hLdef, List.mem_cons, List.not_mem_nil, or_false] at hl
     rcases hl with rfl | rfl | rfl | rfl

@@ -54,7 +54,7 @@ theorem k28b4a_tsc {D α1 β1 γ6 μ v1 v2 : ℝ} (hD : 0 < D) (hα1 : 1 < α1) 
   have hb0 : (0:ℝ) < β1 := by linarith
   have ha0 : (0:ℝ) < α1 := by linarith
   have hx : 0 < α1 + μ * (β1 - 1 - γ6) := by nlinarith
-  have hy : 0 < β1 * (-μ) - (α1 - 1) := by nlinarith
+  have hy : 0 < β1 * (-μ) - (α1 - 1) := by linarith
   have k0 := mul_pos hD hγ6
   have k1 := mul_pos hD a1
   have k2 := mul_pos hD b1

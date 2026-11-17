@@ -88,7 +88,7 @@ theorem k22c1b_cellF2 {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 : ℝ}
       · exact Or.inr ⟨_, by simp, eC'.symm⟩
     · intro lam h0 h1
       refine ⟨by ring, by linarith, ?_⟩
-      rw [lt_div_iff₀ (by nlinarith [hQ])] at h1
+      rw [lt_div_iff₀ (by linarith [hQ])] at h1
       linarith
     · intro v1 v2 ⟨hv, hv2, hv3⟩; subst hv
       exact k22c1b_tscF2 hβ1 hβ11 hγ41 hγ6 hγ61 hv2 (by nlinarith)
@@ -100,13 +100,13 @@ theorem k22c1b_cellF2 {a a' b b' c c' d : ℝ³} {β1 γ4 γ6 : ℝ}
       intro j hj1 hj2
       rcases z5_cases j with rfl | rfl | rfl | rfl | rfl
       · left; simp only [s0]; unfold LexLt; left
-        simp only [hz, k22c1bF2_0, k22c1bF2_4]; nlinarith
+        simp only [hz, k22c1bF2_0, k22c1bF2_4]; linarith
       · left; simp only [s1]; unfold LexLt; right
         simp only [hz, hs, k22c1bF2_1, k22c1bF2_0]
         refine ⟨trivial, ?_⟩
-        nlinarith [mul_pos hv2 hqr]
+        linarith [mul_pos hv2 hqr]
       · right; simp only [g2]; unfold LexLt; left
-        simp only [hz, k22c1bF2_2, k22c1bF2_3]; nlinarith
+        simp only [hz, k22c1bF2_2, k22c1bF2_3]; linarith
       · exact (hj1 rfl).elim
       · exact (hj2 (by decide)).elim
   exact ⟨p, hp0, hA⟩

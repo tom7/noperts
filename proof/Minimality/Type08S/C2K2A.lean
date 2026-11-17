@@ -97,8 +97,8 @@ theorem k2_cyc {D β6 γ6 α4 v1 v2 v3 : ℝ} (hD : 0 < D) (hβ6 : 0 < β6) (hγ
     | (simp only [TSc, d3, kCyc, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; nlinarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       | (left; linarith)
+       | (right; refine ⟨by ring, by linarith⟩))
 
 set_option maxHeartbeats 1600000 in
 theorem k2_rest {D α1 β1 α4 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hα1 : 0 < α1) (hβ1 : 0 < β1) (hβ11 : β1 < 1)
@@ -128,8 +128,8 @@ theorem k2_rest {D α1 β1 α4 β6 γ6 v1 v2 v3 : ℝ} (hD : 0 < D) (hα1 : 0 < 
     (simp only [TSc, d3, kCyc, s0, s1, s2, s3, s4, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4,
         Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
      first
-     | (left; nlinarith)
-     | (right; refine ⟨by ring, by nlinarith⟩))
+     | (left; linarith)
+     | (right; refine ⟨by ring, by linarith⟩))
 
 end C2
 end Type08Sp

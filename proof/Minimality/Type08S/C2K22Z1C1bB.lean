@@ -75,7 +75,7 @@ theorem k22z1_c1_le {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h
   have eS : b - a = q - p := by rw [hp, hq]; abel
   rw [eR, eS] at hS
   simp only [inner_sub_left, inner_sub_right, inner_smul_right, inner_smul_left, conj_trivial, hpq', hqp, real_inner_comm p q] at hS
-  have hS' : u * ⟪p, p⟫ ≤ ⟪q, q⟫ := by nlinarith
+  have hS' : u * ⟪p, p⟫ ≤ ⟪q, q⟫ := by linarith
   have htie : ⟪c' - c, a - b'⟫ = 0 := hz1
   have e3 : c' - c = (1 + u) • p + q - r := by rw [hc', hp, hq, hr]; module
   have e4 : a - b' = (1 - (1 + (1 + g) * k)) • p - (1 + g) • r := by rw [hb', hp, hr]; module
@@ -94,7 +94,7 @@ theorem k22z1_c1_le {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h
       · exact hdet h2
     have h2 := real_inner_self_pos.2 hv
     simp only [inner_sub_left, inner_sub_right, inner_smul_left, inner_smul_right, conj_trivial, real_inner_comm p r] at h2
-    have : 0 < ⟪p, p⟫ * (⟪p, p⟫ * ⟪r, r⟫ - ⟪p, r⟫ ^ 2) := by nlinarith
+    have : 0 < ⟪p, p⟫ * (⟪p, p⟫ * ⟪r, r⟫ - ⟪p, r⟫ ^ 2) := by linarith
     exact pos_of_mul_pos_right this hpp.le |>.trans_le le_rfl
   have hprod : (⟪p, r⟫ - (1 + u) * ⟪p, p⟫) * (⟪p, r⟫ + k * ⟪p, p⟫) < 0 := by
     have hg1 : 0 < 1 + g := by linarith
@@ -105,8 +105,8 @@ theorem k22z1_c1_le {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h
     nlinarith
   have hgr : 0 < ⟪p, r⟫ + k * ⟪p, p⟫ := by
     by_contra hh; push Not at hh
-    have f1 : ⟪p, r⟫ - (1 + u) * ⟪p, p⟫ ≤ 0 := by nlinarith [mul_pos hk0 hpp, mul_pos hu0 hpp]
-    nlinarith [mul_nonneg_of_nonpos_of_nonpos f1 hh]
+    have f1 : ⟪p, r⟫ - (1 + u) * ⟪p, p⟫ ≤ 0 := by linarith [mul_pos hk0 hpp, mul_pos hu0 hpp]
+    linarith [mul_nonneg_of_nonpos_of_nonpos f1 hh]
   -- frame
   obtain ⟨P, hPq⟩ : ∃ P : ℝ³, P = q := ⟨_, rfl⟩
   obtain ⟨Q, hQr⟩ : ∃ Q : ℝ³, Q = r := ⟨_, rfl⟩
@@ -152,12 +152,12 @@ theorem k22z1_c1_le {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h
       ⟪d, R⟫ - (1 + (1 + g) * k) * (u * ⟪p, p⟫) - (1 + g) * (u * ⟪p, r⟫) := by
     rw [hz]; simp only [hPR, hQR, hRR]
     linear_combination (-((1 + (1 + g) * k) * (u * ⟪p, p⟫))) * hwu
-  have i01 : -(u * ⟪p, p⟫) < 0 := by nlinarith [mul_pos hu0 hpp]
+  have i01 : -(u * ⟪p, p⟫) < 0 := by linarith [mul_pos hu0 hpp]
   have i21 : -⟪q, q⟫ < 0 := by linarith
   have i32 : -(1 + k) * ⟪q, q⟫ - u * ⟪p, r⟫ < -⟪q, q⟫ := by
-    nlinarith [mul_pos hu0 hgr, mul_nonneg hk0.le (sub_nonneg.2 hS')]
+    linarith [mul_pos hu0 hgr, mul_nonneg hk0.le (sub_nonneg.2 hS')]
   have i40 : -(1 + (1 + g) * k) * (u * ⟪p, p⟫) - (1 + g) * (u * ⟪p, r⟫) < -(u * ⟪p, p⟫) := by
-    nlinarith [mul_pos (mul_pos hg1 hu0) hgr]
+    linarith [mul_pos (mul_pos hg1 hu0) hgr]
   have hR0 : R ≠ 0 := k17f_r0 hΔ
   refine ⟨R, hR0, ?_⟩
   refine k18_cone_cell (V8 a a' b b' c c' d) P Q R d hΔ (k := 5) (by norm_num) (k22z1c1bY w k g)

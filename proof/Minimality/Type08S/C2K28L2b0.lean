@@ -40,7 +40,7 @@ theorem k28l2b_alg {α1 β1 pp s qq rr qr mp mr : ℝ} (hα1 : 1 < α1) (hβ1 : 
   have ht0 : 0 ≤ -mp := by
     by_contra hn; push Not at hn
     have : 0 ≤ (-mp) * (α1 + β1 - 1) := by
-      nlinarith [mul_nonneg (by linarith : (0:ℝ) ≤ β1) h6, mul_nonneg b1.le h5]
+      linarith [mul_nonneg (by linarith : (0:ℝ) ≤ β1) h6, mul_nonneg b1.le h5]
     nlinarith
   have hmp0 : mp < 0 := by
     rcases ht0.lt_or_eq with h | h
@@ -50,7 +50,7 @@ theorem k28l2b_alg {α1 β1 pp s qq rr qr mp mr : ℝ} (hα1 : 1 < α1) (hβ1 : 
       have hmr0 : mr = 0 := by
         rw [hm0] at h5 h6
         have : mr ≤ 0 := by nlinarith
-        have : 0 ≤ mr := by nlinarith
+        have : 0 ≤ mr := by linarith
         linarith
       rcases hne with h' | h' <;> contradiction
   have hmr0 : 0 < mr := by nlinarith
@@ -65,7 +65,7 @@ theorem k28l2b_alg {α1 β1 pp s qq rr qr mp mr : ℝ} (hα1 : 1 < α1) (hβ1 : 
     nlinarith
   have ht : 0 < -mp := by linarith
   have key : (β1 - 1) * (-mp * rr + mr * s) ≥ (-mp) * ((β1 - 1) * rr + α1 * s) := by
-    nlinarith [mul_nonneg (neg_nonneg.2 hs.le) h6, mul_pos ht b1]
+    linarith [mul_nonneg (neg_nonneg.2 hs.le) h6, mul_pos ht b1]
   have : 0 < (β1 - 1) * (-mp * rr + mr * s) := by
     have := mul_pos ht hX; linarith
   by_contra hn; push Not at hn

@@ -51,7 +51,7 @@ theorem k18_s12a_core {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ}
   have hE : (σ - 1) * (1 - β1) ≤ α1 * (σ - κ) := by
     have : ((σ - 1) * (1 - β1) - α1 * (σ - κ)) * w ≤ 0 := by nlinarith
     by_contra hh; push Not at hh
-    nlinarith [mul_pos (sub_pos.2 hh) hw]
+    linarith [mul_pos (sub_pos.2 hh) hw]
   set p := a - d with hp
   set q := b - d with hq
   set r := c - d with hr
@@ -60,7 +60,7 @@ theorem k18_s12a_core {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ}
     rw [hR, hb', hp, hr, hwdef]; module
   have hpR : p = σ • R + κ • r := by
     rw [hRv]
-    match_scalars <;> nlinarith
+    match_scalars <;> linarith
   have hΔ : det3 q r R ≠ 0 := by
     have e : det3 q r R = (-w) * det3 p q r := by
       rw [hRv]
@@ -116,11 +116,11 @@ theorem k18_s12a_core {a a' b b' c c' d : ℝ³} {α1 α4 β1 γ4 β6 : ℝ}
     rw [h0']; simp [det3_expand])
   have hL : 0 < ⟪q, r⟫ := by
     have hX : ⟪a - c', r⟫ ≤ 0 := by
-      by_contra hh; push Not at hh; nlinarith [mul_pos (neg_pos.2 hκ0) hh]
+      by_contra hh; push Not at hh; linarith [mul_pos (neg_pos.2 hκ0) hh]
     have hpr0 : ⟪a - d, r⟫ < 0 := by
-      by_contra hh; push Not at hh; nlinarith [mul_nonneg (neg_pos.2 hκ0).le hh]
+      by_contra hh; push Not at hh; linarith [mul_nonneg (neg_pos.2 hκ0).le hh]
     have hkey : β1 * ⟪q, r⟫ = (1 - α1) * ⟪a - d, r⟫ - ⟪a - c', r⟫ := by rw [h1, hpr]; ring
-    have : 0 < β1 * ⟪q, r⟫ := by rw [hkey]; nlinarith [mul_pos (by linarith : (0:ℝ) < α1 - 1) (neg_pos.2 hpr0)]
+    have : 0 < β1 * ⟪q, r⟫ := by rw [hkey]; linarith [mul_pos (by linarith : (0:ℝ) < α1 - 1) (neg_pos.2 hpr0)]
     exact pos_of_mul_pos_right this hβ1.le
   refine k17ga_s12a_frame (V8 a a' b b' c c' d) q r R d hΔ hκ0 hσ0 hα11 hβ1 hb6 hbc hE hB0 hZa hL ?_ ?_
   · intro i
@@ -143,7 +143,7 @@ theorem k18_s12a_tc {a a' b b' c c' d : ℝ³} (W : Norm08w a a' b b' c c' d) (h
     k17ga_tc_coords W h
   have hb61 : 1 < β6 := by
     by_contra hh; push Not at hh
-    nlinarith [mul_nonneg hγ4.le (sub_nonneg.2 hh)]
+    linarith [mul_nonneg hγ4.le (sub_nonneg.2 hh)]
   have hbc0 : 1 < β1 + (-γ4 / (α4 - 1)) * α1 * (1 - β6) := by
     have : (-γ4 / (α4 - 1)) * (1 - β6) = 1 := by
       have hne : β6 - 1 ≠ 0 := (sub_pos.2 hb61).ne'
