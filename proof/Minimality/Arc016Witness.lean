@@ -103,7 +103,7 @@ theorem witness_prop33_3 (hnd : arc.NoHDNNearEnds) :
     (by norm_num) (by norm_num) (by norm_num) arc arc_x rfl rfl
     (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num) ?_ ?_ ?_
     hnd
-  all_goals simp [ea, eb, ec, PiLp.inner_apply, Fin.sum_univ_three] <;> norm_num
+  all_goals simp [ea, eb, ec, PiLp.inner_apply, Fin.sum_univ_three]; try norm_num
 
 end Arc016Witness
 end Minimality

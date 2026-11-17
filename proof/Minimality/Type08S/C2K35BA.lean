@@ -131,9 +131,7 @@ theorem k28h5b_tsc {D a1 b1 b6 g6 Ez Fz v1 v2 : ℝ} (hD : 0 < D) (ha1 : 1 < a1)
     rcases z5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       (simp only [TSc, d3, e0, e1, e2, e3, e4, f0, f1, f2, f3, f4, k28h5bY_0, k28h5bY_1, k28h5bY_2,
             k28h5bY_3, k28h5bY_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-       first
-       | (left; linarith)
-       | (right; refine ⟨by ring, by nlinarith⟩))
+       left; linarith)
 
 end C2
 end Type08Sp

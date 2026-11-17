@@ -95,7 +95,7 @@ theorem k28h5a_tsc {D A B β γ g κ ζ v1 v2 : ℝ} (hD : 0 < D) (hA : 1 < A) (
       | exact (h2' (by decide)).elim
       | (simp only [TSc, d3, e0, e1, e2, e3, e4, f0, f1, f2, f3, f4, k28h5aY_0, k28h5aY_1, k28h5aY_2,
           k28h5aY_3, k28h5aY_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
-         left; apply mul_pos hD; first | linarith | nlinarith)
+         left; apply mul_pos hD; linarith)
   · intro t ht i
     simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
     rcases ht with rfl | rfl <;>
@@ -103,8 +103,8 @@ theorem k28h5a_tsc {D A B β γ g κ ζ v1 v2 : ℝ} (hD : 0 < D) (hA : 1 < A) (
       (simp only [TSc, d3, e0, e1, e2, e3, e4, f0, f1, f2, f3, f4, k28h5aY_0, k28h5aY_1, k28h5aY_2,
           k28h5aY_3, k28h5aY_4, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk]
        first
-       | (left; apply mul_pos hD; first | linarith | nlinarith)
-       | (right; refine ⟨by ring, mul_pos hD ?_⟩; first | linarith | nlinarith))
+       | (left; apply mul_pos hD; linarith)
+       | (right; refine ⟨by ring, mul_pos hD ?_⟩; linarith))
 
 end C2
 end Type08Sp
