@@ -340,7 +340,7 @@ theorem isRupert_caseC (E : EdgeConf V u v w a b c h Na Nb κa κb Ma Mb) {m m' 
         by_contra hne
         exact hdist _ (E.swap.quad_mem i) _ (E.swap.quad_mem j)
           (E.swap.quad_injective.ne hne) hij
-      rw [quad_inner'] at hinj ⊢
+      rw [quad_inner] at hinj ⊢
       exact (isCyclicUnimodal_of_NWS4 hinj hKw).isRobustUnimodal
   -- one of the slide rims is strictly unimodal
   have hKw' : ¬ NWS4 (quad ⟪w, -u⟫ ⟪b, -u⟫ ⟪c, -u⟫ ⟪a, -u⟫) := by
@@ -472,7 +472,7 @@ theorem isRupert_edgeClosing (E : EdgeConf V u v w a b c h Na Nb κa κb Ma Mb)
     by_contra hne
     exact hdist _ (E.quad_mem i) _ (E.quad_mem j) (E.quad_injective.ne hne) hij
   have hz : NWS4 (quad ⟪v, u⟫ ⟪a, u⟫ ⟪c, u⟫ ⟪b, u⟫) := by
-    rw [quad_inner'] at hinj hrob
+    rw [quad_inner] at hinj hrob
     have hc := hrob.isCyclicUnimodal_of_order (by norm_num) (fun i j h => h) hinj
     unfold NWS4
     set z := quad ⟪v, u⟫ ⟪a, u⟫ ⟪c, u⟫ ⟪b, u⟫ with hzdef

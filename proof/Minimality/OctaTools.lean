@@ -32,6 +32,10 @@ theorem det3_expand (a b c : ℝ³) : det3 a b c =
     cross_apply_zero, cross_apply_one, cross_apply_two]
   ring
 
+/-- Reversing an edge of the shadow reverses its test. -/
+theorem det3_rev (A B w u : ℝ³) : det3 (A - B) (w - B) u = -det3 (B - A) (w - A) u := by
+  simp only [det3_expand, PiLp.sub_apply]; ring
+
 theorem det3_mul_inner_sub (e u w w' N : ℝ³) :
     det3 e w u * ⟪N, w'⟫ - det3 e w' u * ⟪N, w⟫ =
       ⟪cross w w', e⟫ * ⟪u, N⟫ - ⟪cross w w', u⟫ * ⟪e, N⟫ := by

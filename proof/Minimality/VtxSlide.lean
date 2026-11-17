@@ -99,7 +99,7 @@ theorem isRupert_slideA (E : VtxConf V u v a c b p q n Na Nb κa κb)
     · obtain ⟨s, δ, hs0, hs1, hδ, hmeq⟩ := E.q_coords
       exact key s δ hs0 hs1 hδ.ne hmeq
   · left
-    rw [quad_inner'] at hinj ⊢
+    rw [quad_inner] at hinj ⊢
     exact strictUnimodal_of_cyclic (by norm_num) (isCyclicUnimodal_of_NWS4 hinj hz)
 
 theorem quint_mem (E : VtxConf V u v a c b p q n Na Nb κa κb) {m : ℝ³} (hm : m ∈ V)

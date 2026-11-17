@@ -27,10 +27,6 @@ open Finset Filter
 def TiltSignS (σ : ℝ) (a b u₀ v : ℝ³) : Prop :=
   0 < σ * det3 a b u₀ ∨ (det3 a b u₀ = 0 ∧ 0 < σ * det3 a b v)
 
-theorem det3_rev_edge (A B W u : ℝ³) :
-    det3 (A - B) (W - B) u = -det3 (B - A) (W - A) u := by
-  simp only [det3_expand, PiLp.sub_apply]; ring
-
 theorem IsCyclicUnimodal.of_neg {k : ℕ} [NeZero k] {z : ZMod k → ℝ}
     (h : IsCyclicUnimodal fun i => z (-i)) : IsCyclicUnimodal z := by
   classical
@@ -76,7 +72,7 @@ theorem isRupert_of_tilted_unimodal_σ (V : Finset ℝ³) (u₀ v : ℝ³) (hu�
           -det3 (x (-(i + 1) + 1) - x (-(i + 1))) (w - x (-(i + 1))) u := by
       intro i w u
       have e : -(i + 1) + 1 = -i := by ring
-      rw [e, det3_rev_edge]
+      rw [e, det3_rev]
     refine isRupert_of_tilted_unimodal' V u₀ v hu₀ hk (fun i => x (-i)) (fun i => hxV _) ?_ ?_
       (fun z => Q fun i => z (-i)) ?_ ?_ ?_ ?_
     · intro i j hi hj
@@ -521,11 +517,6 @@ theorem isRupert_weak_cycle4 {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p
     · exact absurd h h1
     · exact absurd h h3
 
-theorem weak_zmod5_pairs : ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
-    (i = 0 ∧ (j = 2 ∨ j = 3 ∨ j = 4)) ∨ (i = 1 ∧ (j = 3 ∨ j = 4 ∨ j = 0)) ∨
-    (i = 2 ∧ (j = 4 ∨ j = 0 ∨ j = 1)) ∨ (i = 3 ∧ (j = 0 ∨ j = 1 ∨ j = 2)) ∨
-    (i = 4 ∧ (j = 1 ∨ j = 2 ∨ j = 3)) := by decide
-
 theorem det3_self_left' (a b : ℝ³) : det3 a a b = 0 := by
   simp only [det3_expand]; ring
 
@@ -574,7 +565,7 @@ theorem isRupert_weak_cycle5a {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' 
   · intro i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       simp [V, quint_0, quint_1, quint_2, quint_3, quint_4]
   · intro i j hi hj
-    rcases weak_zmod5_pairs i j hi hj with ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ |
+    rcases zmod5_pairs i j hi hj with ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ |
       ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ <;>
     simp only [a0, a1, a2, a3, a4, quint_0, quint_1, quint_2, quint_3, quint_4]
     · exact Or.inl (S1 y' my' (Ne.symm hyy') hy'p (Ne.symm hxy'))
@@ -659,7 +650,7 @@ theorem isRupert_weak_cycle5b {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' 
   · intro i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
       simp [V, quint_0, quint_1, quint_2, quint_3, quint_4]
   · intro i j hi hj
-    rcases weak_zmod5_pairs i j hi hj with ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ |
+    rcases zmod5_pairs i j hi hj with ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ |
       ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ | ⟨rfl, rfl | rfl | rfl⟩ <;>
     simp only [a0, a1, a2, a3, a4, quint_0, quint_1, quint_2, quint_3, quint_4]
     · exact Or.inr ⟨z0 p, t0p⟩

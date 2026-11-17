@@ -18,10 +18,6 @@ namespace Type08Sp
 
 variable {a a' b b' c c' d : ℝ³}
 
-theorem quad_inner_fun (p0 p1 p2 p3 v : ℝ³) :
-    (fun i : ZMod 4 => ⟪quad p0 p1 p2 p3 i, v⟫) = quad ⟪p0, v⟫ ⟪p1, v⟫ ⟪p2, v⟫ ⟪p3, v⟫ := by
-  funext i; fin_cases i <;> rfl
-
 /-- **Depth lemma** (draft §3): at the tie, the separation holds.  (The weak-far alternative
 `D(c') = D(b') = D(c)` is excluded by robustness of `X_bc'` (no three equal depths), so only the
 separation remains.) -/
@@ -46,7 +42,7 @@ theorem Tp_tie_sep (N : Norm08 a a' b b' c c' d) (hT' : IsT' a b c' d)
   have e7 : ⟪c' - d, b - d⟫ = ⟪a - d, b - d⟫ + β1 * ⟪b - d, b - d⟫ := by
     have : c' - d = (a - d) + β1 • (b - d) := by rw [hc']; module
     rw [this, inner_add_left, real_inner_smul_left]
-  rw [quad_inner_fun] at hrob h2
+  rw [quad_inner] at hrob h2
   exact Tp_depth_sep hα4 hγ4 hαγ hβ1 (by linarith) (by rw [← e4, e6, e1, e2]) (by rw [← e5, e7, e1, e3]) hq hrob h2
 
 /-- `Tp_poked'`: with `QacTop` and `X_2c'` not robust, the poked case is Rupert (no `hnd`, no `R4ppEnd`). -/

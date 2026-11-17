@@ -212,9 +212,6 @@ theorem lexk_core (V : Finset ℝ³) (u₀ : ℝ³) (vs : List ℝ³) {k : ℕ} 
     simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     exact (key _ _).and (key _ _)
 
-theorem lexk_det3_rev (A B y u : ℝ³) : det3 (A - B) (y - B) u = -det3 (B - A) (y - A) u := by
-  simp only [det3_expand, PiLp.sub_apply]; ring
-
 /-- **Core, reversed orientation**: rows lex-NEGATIVE (as for a cw cycle); the cell uses the reversed cycle. -/
 theorem lexk_core_rev (V : Finset ℝ³) (u₀ : ℝ³) (vs : List ℝ³) {k : ℕ} [NeZero k] (hk : 3 ≤ k)
     (x : ZMod k → ℝ³) (hmem : ∀ i, x i ∈ V)
@@ -235,14 +232,14 @@ theorem lexk_core_rev (V : Finset ℝ³) (u₀ : ℝ³) (vs : List ℝ³) {k : �
     have e2 : -(i + 1) = -i - 1 := by ring
     rw [e1] at this
     refine lexkPos_map_of _ _ 1 one_pos (fun u => ?_) _ this
-    rw [one_mul, e2, lexk_det3_rev]
+    rw [one_mul, e2, det3_rev]
   · intro y hy hyx i
     have := hrest y hy (fun j => by simpa using hyx (-j)) (-i - 1)
     have e1 : -i - 1 + 1 = -i := by ring
     have e2 : -(i + 1) = -i - 1 := by ring
     rw [e1] at this
     refine lexkPos_map_of _ _ 1 one_pos (fun u => ?_) _ this
-    rw [one_mul, e2, lexk_det3_rev]
+    rw [one_mul, e2, det3_rev]
   · rw [← hpeak]
     refine Finset.card_nbij' (fun i => -i) (fun i => -i) ?_ ?_ ?_ ?_
     · intro i hi

@@ -160,11 +160,6 @@ theorem isCyclicUnimodal_five_dec {z : ZMod 5 → ℝ} (hinj : Function.Injectiv
   · rw [a4] at hi; rw [b0] at hj; linarith [hi.2, hj.1]
   · rfl
 
-theorem quint_inner24 (p₀ p₁ p₂ p₃ p₄ u : ℝ³) :
-    (fun i => ⟪quint p₀ p₁ p₂ p₃ p₄ i, u⟫) =
-      quint ⟪p₀, u⟫ ⟪p₁, u⟫ ⟪p₂, u⟫ ⟪p₃, u⟫ ⟪p₄, u⟫ := by
-  funext i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> rfl
-
 /-! ### WP as a Rupert item -/
 
 /-- The arc view `e_a + t e_b` of the cap face `1 0 b`. -/
@@ -257,7 +252,7 @@ theorem isRupert_wp {x : Fin 7 → ℝ³} (T : Type24 x) {b c q i : Fin 7} (hb :
     · intro y hy _ _ hyx k
       rw [hother y hy (hyx 0) (hyx 1) (hyx 2) (hyx 3) (hyx 4)]
       exact h5 k
-    · rw [quint_inner24]
+    · rw [quint_inner]
       refine isCyclicUnimodal_five_inc (quint_injective c1.ne (by linarith) (by linarith)
         (Ne.symm n1) c2.ne (by linarith) (Ne.symm n2) c3.ne (Ne.symm n3) (Ne.symm n4))
         c1 c2 c3
@@ -277,7 +272,7 @@ theorem isRupert_wp {x : Fin 7 → ℝ³} (T : Type24 x) {b c q i : Fin 7} (hb :
     · intro y hy _ _ hyx k
       rw [hother y hy (hyx 3) (hyx 2) (hyx 1) (hyx 0) (hyx 4)]
       exact h5 k
-    · rw [quint_inner24]
+    · rw [quint_inner]
       refine isCyclicUnimodal_five_dec (quint_injective c3.ne' (by linarith) (by linarith)
         (Ne.symm n4) c2.ne' (by linarith) (Ne.symm n3) c1.ne' (Ne.symm n2) (Ne.symm n1))
         c3 c2 c1
@@ -491,11 +486,6 @@ namespace Type24
 variable {x : Fin 7 → ℝ³} (T : Type24 x)
 include T
 
-theorem rep_ba (v : Fin 7) : x v = x 1 + oblX2 x v • (x 2 - x 1) + oblX0 x v • (x 0 - x 1) +
-    oblX6 x v • (x 6 - x 1) := by
-  conv_lhs => rw [T.rep v]
-  abel
-
 theorem rep_ca (v : Fin 7) : x v = x 1 + oblX6 x v • (x 6 - x 1) + oblX0 x v • (x 0 - x 1) +
     oblX2 x v • (x 2 - x 1) := by
   conv_lhs => rw [T.rep v]
@@ -521,7 +511,7 @@ theorem l7_t26 (hE : ExactCorner x) (h3 : 0 < omega3 x) {h : Fin 7}
     ¬ Fails4 (x 0) (x 3) (x 2) (x h) (viewT26 x) := by
   obtain ⟨e1, e2, e3⟩ := hE
   exact l7_frame_corner h3 T.ne_eb T.ne_ea (by rw [real_inner_comm]; exact e1) e3 e2
-    (add_sub_one' 0) (add_sub_one' 2) (T.rep_ba 3) (T.rep_ba h) (by simp only [viewT26]; abel)
+    (add_sub_one' 0) (add_sub_one' 2) (T.rep2 3) (T.rep2 h) (by simp only [viewT26]; abel)
     hb3 (T.X0_pos (v := 3) (by decide)) (T.X2_pos (mem345 h hh).2.1) hah
 
 /-- **L7 for `T′(6,2) = 016/236` at an exact corner** (the mirror): rim `(0, 6, 3, h)`,
@@ -561,7 +551,7 @@ theorem l7_t26_radius {h : Fin 7} {δ : ℝ}
       |oblX6 x 3| * (‖x 0 - x 1‖ * ‖x 6 - x 1‖)) <
         omega3 x * (oblX2 x 3 - 1) * ‖x 2 - x 1‖ ^ 2 + oblX0 x 3 * ‖x 0 - x 1‖ ^ 2) :
     ¬ Fails4 (x 0) (x 3) (x 2) (x h) (viewT26 x) :=
-  l7_frame_radius hab hbc hac (add_sub_one' 0) (add_sub_one' 2) (T.rep_ba 3) (T.rep_ba h)
+  l7_frame_radius hab hbc hac (add_sub_one' 0) (add_sub_one' 2) (T.rep2 3) (T.rep2 h)
     (by simp only [viewT26]; abel) hδh hδg
 
 end Type24

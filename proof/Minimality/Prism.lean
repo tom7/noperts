@@ -32,6 +32,14 @@ theorem quint_3 : quint p₀ p₁ p₂ p₃ p₄ 3 = p₃ := rfl
 theorem quint_4 : quint p₀ p₁ p₂ p₃ p₄ 4 = p₄ := rfl
 end quint
 
+theorem quad_inner (p₀ p₁ p₂ p₃ u : ℝ³) :
+    (fun i => ⟪quad p₀ p₁ p₂ p₃ i, u⟫) = quad ⟪p₀, u⟫ ⟪p₁, u⟫ ⟪p₂, u⟫ ⟪p₃, u⟫ := by
+  funext i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rfl
+
+theorem quint_inner (p₀ p₁ p₂ p₃ p₄ u : ℝ³) :
+    (fun i => ⟪quint p₀ p₁ p₂ p₃ p₄ i, u⟫) = quint ⟪p₀, u⟫ ⟪p₁, u⟫ ⟪p₂, u⟫ ⟪p₃, u⟫ ⟪p₄, u⟫ := by
+  funext i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> rfl
+
 /-- The open depth condition of the prism pentagon `X X' Y' Y Z`: the lifts
 `X → X'`, `Y → Y'` go up and `Z` is below `X` or `Y`. -/
 def PentaCond (z : ZMod 5 → ℝ) : Prop := z 0 < z 1 ∧ z 3 < z 2 ∧ (z 4 < z 0 ∨ z 4 < z 3)

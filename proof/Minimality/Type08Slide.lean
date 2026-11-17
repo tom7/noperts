@@ -81,13 +81,13 @@ theorem quad_edge_tests_or {x x' y y' p p' : ℝ³} (F : OctFacets x x' y y' p p
     refine ⟨fun w hw h1 h2 h3 => ?_, fun w hw h1 h2 => ?_, fun w hw h1 h2 => ?_,
       fun w hw h1 h2 h3 => ?_⟩
     · have := E4 w (hmem w hw) h2 h1 h3
-      rw [det3_rev_edge] at this; nlinarith
+      rw [det3_rev] at this; nlinarith
     · have := E3 w (hmem w hw) h2 h1
-      rw [det3_rev_edge] at this; nlinarith
+      rw [det3_rev] at this; nlinarith
     · have := E2 w (hmem w hw) h2 h1
-      rw [det3_rev_edge] at this; nlinarith
+      rw [det3_rev] at this; nlinarith
     · have := E1 w (hmem w hw) h2 h1 h3
-      rw [det3_rev_edge] at this; nlinarith
+      rw [det3_rev] at this; nlinarith
   · obtain ⟨E1, E2, E3, E4⟩ := quad_edge_tests F hq₁ hq₂ hp
     exact ⟨fun w hw h1 h2 h3 => mul_pos hp (E1 w hw h1 h2 h3),
       fun w hw h1 h2 => mul_pos hp (E2 w hw h1 h2), fun w hw h1 h2 => mul_pos hp (E3 w hw h1 h2),

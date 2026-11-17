@@ -134,7 +134,7 @@ theorem quint_ne_of {v₀ v₁ v₂ v₃ v₄ u : ℝ³}
     ∀ i, quint ⟪v₀, u⟫ ⟪v₁, u⟫ ⟪v₂, u⟫ ⟪v₃, u⟫ ⟪v₄, u⟫ i ≠
       quint ⟪v₀, u⟫ ⟪v₁, u⟫ ⟪v₂, u⟫ ⟪v₃, u⟫ ⟪v₄, u⟫ (i + 1) := by
   intro i
-  have e := congrFun (quint_inner_eq v₀ v₁ v₂ v₃ v₄ u)
+  have e := congrFun (quint_inner v₀ v₁ v₂ v₃ v₄ u)
   rw [← e i, ← e (i + 1)]
   exact h i
 
@@ -219,7 +219,7 @@ theorem isRupert_routeT {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ : �
         have k3 : ⟪d, b - d⟫ ≤ ⟪a', b - d⟫ := by nlinarith
         exact n4 (le_antisymm hc k3)
     refine isRupert_r2pp hb' hc' ha' hnd hE hα hβ hαβ hα₁ hβ₁ hα₂ hκ ?_ hR.r2pp
-    rw [quint_inner_eq]
+    rw [quint_inner]
     refine strictUnimodal_of_unique hne ?_
     intro i j hi1 hi2 hj1 hj2
     rcases hachord with h | h <;>
@@ -230,7 +230,7 @@ theorem isRupert_routeT {a a' b b' c c' d : ℝ³} {α β α₁ β₁ α₂ : �
     first | rfl | (exfalso; linarith)
   · -- R2′ with `a'` poking out
     refine isRupert_r2p hb' hc' ha' hnd hE hα hβ hβ1 hα₁.le hβ₁ hα₂ hκ ?_ (hR.r2p hF)
-    rw [quint_inner_eq]
+    rw [quint_inner]
     refine strictUnimodal_of_unique (quint_ne_of hR.poke) ?_
     intro i j hi1 hi2 hj1 hj2
     rcases hclaim with h | h <;>
@@ -328,7 +328,7 @@ theorem isRupert_routeT' {a a' b b' c c' d : ℝ³} {α β β₁ α₂ β₂ : �
         exact n0 (le_antisymm hc k3)
       · linarith
     refine isRupert_r4pp hb' hc' ha' hnd hE hα hβ hαβ hβ₁ hβ₂ hβ₂1 hαβ₂ ?_ hR.r4pp
-    rw [quint_inner_eq]
+    rw [quint_inner]
     refine strictUnimodal_of_unique hne ?_
     intro i j hi1 hi2 hj1 hj2
     rcases hchord with h | h <;>
@@ -339,7 +339,7 @@ theorem isRupert_routeT' {a a' b b' c c' d : ℝ³} {α β β₁ α₂ β₂ : �
     first | rfl | (exfalso; linarith)
   · -- R4′ with `a` poking out
     refine isRupert_r4p hb' hc' ha' hnd hE hα hα1 hβ hαβ hβ₁ hα₂ hβ₂ hβ₂1 hαβ₂ ?_ (hR.r4p hF)
-    rw [quint_inner_eq]
+    rw [quint_inner]
     refine strictUnimodal_of_unique (quint_ne_of hR.poke) ?_
     intro i j hi1 hi2 hj1 hj2
     rcases hbmin with h | h <;>

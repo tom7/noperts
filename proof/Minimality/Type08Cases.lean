@@ -94,11 +94,6 @@ theorem isRupert_of_edgeView (V M : Finset ℝ³) (u₀ : ℝ³) (hu₀ : u₀ �
 theorem zmod4_zero_add_one : (0 : ZMod 4) + 1 = 1 := by decide
 theorem zmod4_zero_sub_one : (0 : ZMod 4) - 1 = 3 := by decide
 
-/-- Depths of a 4-cycle as a `quad`. -/
-theorem quad_inner (p₀ p₁ p₂ p₃ u : ℝ³) :
-    (fun i => ⟪quad p₀ p₁ p₂ p₃ i, u⟫) = quad ⟪p₀, u⟫ ⟪p₁, u⟫ ⟪p₂, u⟫ ⟪p₃, u⟫ := by
-  funext i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rfl
-
 /-! ### Case N2: Lemma 9.3 with a middle -/
 
 /-- **Lemma 9.3 with a middle, oriented.**  At a quad edge `x → y` of an

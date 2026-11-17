@@ -241,7 +241,7 @@ theorem t4d_five_strict {a b b' c c' d : ℝ³} {α α₁ β₁ : ℝ}
   have n0 := hne 0; have n2 := hne 2; have n3 := hne 3; have n4 := hne 4
   simp only [b0, b2, b3, b4, quint_0, quint_2, quint_3, quint_4] at n0 n2 n3 n4
   obtain ⟨h1, h2, h3, h4⟩ := t4d_five_depths hb' hc' hdb hα hα₁ hβ₁ hgood hNb n0 n2 n3
-  rw [quint_inner_eq]
+  rw [quint_inner]
   exact strictUnimodal_quint_of h1 h2 h3 h4 n4
 
 /-- **`slideT4d`'s type-(d) alternative gives Lemma H's.**  On the type-(d) surface of

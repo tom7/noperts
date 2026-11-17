@@ -492,10 +492,10 @@ theorem G1At.neg {V : Finset ℝ³} {u : ℝ³} {SA SB : Finset ℝ³} (hG : G1A
     intro z hz
     have := hl z hz
     rw [det3_neg_right] at this
-    rw [det3_swap_base]; linarith
+    rw [det3_rev]; linarith
   have h0' : det3 (p - q) (y - q) u = 0 := by
     rw [det3_neg_right, neg_eq_zero] at h0
-    rw [det3_swap_base, h0, neg_zero]
+    rw [det3_rev, h0, neg_zero]
   rcases hG q hq p hp y hy hc' hl' h0' hyq hyp with ⟨a1, a2, a3⟩ | ⟨a1, a2, a3⟩
   · exact Or.inr ⟨a2, a1, a3⟩
   · exact Or.inl ⟨a2, a1, a3⟩

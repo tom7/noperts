@@ -75,7 +75,7 @@ theorem tilt_orient {k : ℕ} [NeZero k] (V : Finset ℝ³) (x : ZMod k → ℝ�
           -det3 (x (-(i + 1) + 1) - x (-(i + 1))) (w - x (-(i + 1))) u := by
       intro i w u
       have e : -(i + 1) + 1 = -i := by ring
-      rw [e, det3_rev_edge]
+      rw [e, det3_rev]
     refine ⟨?_, ?_⟩
     · intro i j hi hj
       have h1 : -j ≠ -(i + 1) := by intro h; apply hj; simpa using congrArg Neg.neg h

@@ -474,10 +474,6 @@ theorem ParOnly.smul {V : Finset ℝ³} {u e₁ e₂ : ℝ³} (h : ParOnly V u e
   rw [cross_smul_right' _ c u, smul_eq_zero] at h0
   exact h y hy y' hy' hne (h0.resolve_left hc)
 
-theorem det3_swap_base (a b z u : ℝ³) :
-    det3 (a - b) (z - b) u = -det3 (b - a) (z - a) u := by
-  simp only [det3_expand, PiLp.sub_apply]; ring
-
 theorem G1Tri.neg {V : Finset ℝ³} {u p₁ q₁ r₁ p₂ q₂ r₂ : ℝ³}
     (h : G1Tri V u p₁ q₁ r₁ p₂ q₂ r₂) : G1Tri V (-u) p₁ q₁ r₁ p₂ q₂ r₂ := by
   intro a ha b hb y hy hc hl h0 hya hyb
@@ -490,10 +486,10 @@ theorem G1Tri.neg {V : Finset ℝ³} {u p₁ q₁ r₁ p₂ q₂ r₂ : ℝ³}
     intro z hz
     have := hl z hz
     rw [det3_neg_right] at this
-    rw [det3_swap_base]; linarith
+    rw [det3_rev]; linarith
   have h0' : det3 (a - b) (y - b) u = 0 := by
     rw [det3_neg_right, neg_eq_zero] at h0
-    rw [det3_swap_base, h0, neg_zero]
+    rw [det3_rev, h0, neg_zero]
   rcases h b hb a ha y hy hc' hl' h0' hyb hya with ⟨a1, a2, a3⟩ | ⟨a1, a2, a3⟩
   · exact Or.inl ⟨a2, a1, a3⟩
   · exact Or.inr ⟨a2, a1, a3⟩

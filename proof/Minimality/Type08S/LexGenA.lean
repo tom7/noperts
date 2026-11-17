@@ -100,14 +100,14 @@ theorem lexg_core_rev (V : Finset ℝ³) (u₀ : ℝ³) (vs : List ℝ³) {k : �
     have e2 : -(i + 1) = -i - 1 := by ring
     rw [e1] at this
     refine lexkPos_map_of _ _ 1 one_pos (fun u => ?_) _ this
-    rw [one_mul, e2, lexk_det3_rev]
+    rw [one_mul, e2, det3_rev]
   · intro y hy hyx i
     have := hrest y hy (fun j => by simpa using hyx (-j)) (-i - 1)
     have e1 : -i - 1 + 1 = -i := by ring
     have e2 : -(i + 1) = -i - 1 := by ring
     rw [e1] at this
     refine lexkPos_map_of _ _ 1 one_pos (fun u => ?_) _ this
-    rw [one_mul, e2, lexk_det3_rev]
+    rw [one_mul, e2, det3_rev]
   · intro i j hij
     exact hsep (-i) (-j) (fun e => hij (neg_injective e))
   · intro z w hinj H

@@ -22,10 +22,6 @@ namespace Minimality
 open scoped RealInnerProductSpace Topology
 open Finset Filter
 
-theorem quint_inner' (p₀ p₁ p₂ p₃ p₄ u : ℝ³) :
-    (fun i => ⟪quint p₀ p₁ p₂ p₃ p₄ i, u⟫) = quint ⟪p₀, u⟫ ⟪p₁, u⟫ ⟪p₂, u⟫ ⟪p₃, u⟫ ⟪p₄, u⟫ := by
-  funext i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> rfl
-
 /-- A unimodal 4-cycle has no weak saddle. -/
 theorem nws4_of_cyclic {z : ZMod 4 → ℝ} (hc : IsCyclicUnimodal z) : NWS4 z := by
   classical
@@ -169,7 +165,7 @@ theorem isRupert_classD (E : VtxConf V u v a c b p q n Na Nb κa κb)
     rw [hpeq]; simp only [inner_add_left, inner_sub_left, real_inner_smul_left]
   have cq : ⟪q, u⟫ = ⟪v, u⟫ + sq * (⟪a, u⟫ - ⟪v, u⟫) + δq * ⟪u, u⟫ := by
     rw [hqeq]; simp only [inner_add_left, inner_sub_left, real_inner_smul_left]
-  rw [quint_inner'] at hinjp hinjq h5p h5q
+  rw [quint_inner] at hinjp hinjq h5p h5q
   have hH := h1_vtx hsp0 hsp1 hsq0 hsq1 (by rw [cp]; nlinarith [mul_pos hδp huu])
     (by rw [cq]; nlinarith [mul_neg_of_neg_of_pos hδq huu]) hz hinjp hinjq h5p h5q
   -- the foot of the double normal
@@ -283,7 +279,7 @@ theorem isRupert_vtxClosing (E : VtxConf V u v a c b p q n Na Nb κa κb)
     by_contra hne
     exact hdist _ (E.quad_mem i) _ (E.quad_mem j) (E.quad_injective.ne hne) hij
   have hz : NWS4 (quad ⟪v, u⟫ ⟪a, u⟫ ⟪c, u⟫ ⟪b, u⟫) := by
-    rw [quad_inner'] at hinj hrob
+    rw [quad_inner] at hinj hrob
     have hc := hrob.isCyclicUnimodal_of_order (by norm_num) (fun i j h => h) hinj
     exact nws4_of_cyclic hc
   by_cases hbad : NoPersistHDN (quad v a c b) u (a - v)

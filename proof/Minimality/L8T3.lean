@@ -80,11 +80,6 @@ theorem isRupert_of_tilted_three (V : Finset ℝ³) (u₀ v : ℝ³) (hu₀ : u�
   isRupert_of_tilted_unimodal V u₀ v hu₀ (le_refl _) x hxV hcyc hrest (fun _ => True)
     (by simp) (fun _ _ _ _ => trivial) trivial (fun z hz _ => isCyclicUnimodal_three hz)
 
-theorem zmod5_pairs : ∀ i j : ZMod 5, j ≠ i → j ≠ i + 1 →
-    (i = 0 ∧ (j = 2 ∨ j = 3 ∨ j = 4)) ∨ (i = 1 ∧ (j = 3 ∨ j = 4 ∨ j = 0)) ∨
-    (i = 2 ∧ (j = 4 ∨ j = 0 ∨ j = 1)) ∨ (i = 3 ∧ (j = 0 ∨ j = 1 ∨ j = 2)) ∨
-    (i = 4 ∧ (j = 1 ∨ j = 2 ∨ j = 3)) := by decide
-
 /-- The robust condition of the 5-cycle `(A, B, B', C', A')` (case `BB' ∥ CC'`). -/
 def Q5a (z : ZMod 5 → ℝ) : Prop := z 1 < z 0 ∧ z 1 < z 2 ∧ z 0 < z 4 ∧ z 2 < z 3
 

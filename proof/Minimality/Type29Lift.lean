@@ -41,10 +41,6 @@ theorem EdgeMiddle.swap {u v w A B : ℝ³} {h : ℝ} {m : ℝ³} (H : EdgeMiddl
   · right; rw [hm]; module
   · left; rw [hm]; module
 
-/-- Reversing an edge of the shadow reverses its test. -/
-theorem det3_rev (A B w u : ℝ³) : det3 (A - B) (w - B) u = -det3 (B - A) (w - A) u := by
-  simp only [det3_expand, PiLp.sub_apply]; ring
-
 /-- The barycentric identity for the affine function `det3 (D − P) (· − P) u` on the
 screen (the view along `u`). -/
 theorem det3_bary (A B C X D P u : ℝ³) :

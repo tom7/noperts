@@ -27,10 +27,6 @@ theorem strictUnimodal_of_cyclic {k : ℕ} [NeZero k] (hk : 2 ≤ k) {z : ZMod k
     (h : IsCyclicUnimodal z) : StrictUnimodal z :=
   ⟨fun i e => zmod_ne_add_one hk i (h.1 e), h.2⟩
 
-theorem quad_inner' (p₀ p₁ p₂ p₃ u : ℝ³) :
-    (fun i => ⟪quad p₀ p₁ p₂ p₃ i, u⟫) = quad ⟪p₀, u⟫ ⟪p₁, u⟫ ⟪p₂, u⟫ ⟪p₃, u⟫ := by
-  funext i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rfl
-
 /-- Eventually along `t → 0⁺`, an affine function of `t` positive at `0` stays in `(0, 1)` if
 its value at `0` is. -/
 theorem eventually_mem_Ioo_affine {s₀ B : ℝ} (h0 : 0 < s₀) (h1 : s₀ < 1) :
@@ -156,7 +152,7 @@ theorem isRupert_slideA (E : EdgeConf V u v w a b c h Na Nb κa κb Ma Mb)
     filter_upwards [E.eventually_midA m hm] with t ⟨s, δ, hs0, hs1, hδ, hmeq⟩
     exact ⟨0, s, δ, hs0, hs1, hδ, by simpa only [a0, quad_0, quad_1] using hmeq⟩
   · left
-    rw [quad_inner'] at hinj ⊢
+    rw [quad_inner] at hinj ⊢
     exact strictUnimodal_of_cyclic (by norm_num) (isCyclicUnimodal_of_NWS4 hinj hz)
 
 end EdgeConf

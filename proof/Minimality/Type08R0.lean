@@ -164,10 +164,6 @@ theorem two_peaks {z : ZMod 5 → ℝ} (hinj : Function.Injective z) (h : ¬ Str
   simp only [mem_filter, mem_univ, true_and] at hi hj
   exact ⟨i, j, hij, hi, hj⟩
 
-theorem quint_inner_eq (v m f gf gv u : ℝ³) :
-    (fun i => ⟪quint v m f gf gv i, u⟫) = quint ⟪v, u⟫ ⟪m, u⟫ ⟪f, u⟫ ⟪gf, u⟫ ⟪gv, u⟫ := by
-  funext i; rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> rfl
-
 /-- **(H1) of Lemma R0, the depths.**  Depths `z` of `v, m, f, g_f, g_v` and of the other axle
 end `w`: `m` lies over the chord `[v, f]` (`z_m = z_v + s (z_f − z_v) + D`, `0 < s < 1`,
 `D > 0`), `K_v` (`v f g_f g_v`) has no weak saddle and `K_w` (`w f g_f g_v`) has one, the claim
@@ -402,7 +398,7 @@ theorem rdRim_of_R0 {v m f gf gv w : ℝ³} {s δ : ℝ}
     linear_combination hD1
   have hmz : ⟪m, u⟫ = ⟪v, u⟫ + s * (⟪f, u⟫ - ⟪v, u⟫) + δ * ⟪u, u⟫ := by
     rw [hm]; simp only [inner_add_left, inner_sub_left, real_inner_smul_left]
-  rw [quint_inner_eq] at hinj h5
+  rw [quint_inner] at hinj h5
   obtain ⟨d1, -, d3, -, d5, d6⟩ := rd_depths hmz hs0 hs1 (mul_pos hδ huu) hNv hNw hA hB hC hE
     hsum hlo hinj h5 hl0 hl1 hmu0 hmu1 hcr
   have hLi : 0 < L⁻¹ := inv_pos.mpr hL
