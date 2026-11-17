@@ -126,7 +126,7 @@ theorem poly_core2 (hF : Fr e1 e2 e3) (o : ℝ³)
           _ from funext hq]
       have k1 := mul_pos (mul_pos hαpos hha) (neg_pos.mpr hneg)
       have k2 := mul_pos (mul_pos hγ hha) (neg_pos.mpr hneg)
-      refine ccw4gen ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;> nlinarith [k1, k2]
+      refine ccw4gen ?_ ?_ ?_ ?_ <;> nlinarith [k1, k2]
     · rw [show (fun i => ⟪(quad X0p C' B' Y0p) i, e3⟫) = quad (⟪o, e3⟫ + zx)
           (⟪o, e3⟫ + (α1 * w3 + β1 * ν)) (⟪o, e3⟫ + (α4 * w3 + C0)) (⟪o, e3⟫ + zy) from by
         funext i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
@@ -172,7 +172,7 @@ theorem poly_core2 (hF : Fr e1 e2 e3) (o : ℝ³)
           _ from funext hq]
       have k1 := mul_pos (mul_pos hαpos hha) hpos
       have k2 := mul_pos (mul_pos hγ hha) hpos
-      refine ccw4gen ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_ <;> nlinarith [k1, k2]
+      refine ccw4gen ?_ ?_ ?_ ?_ <;> nlinarith [k1, k2]
     · rw [show (fun i => ⟪(quad Y0p B' C' X0p) i, e3⟫) = quad (⟪o, e3⟫ + zy)
           (⟪o, e3⟫ + (α4 * w3 + C0)) (⟪o, e3⟫ + (α1 * w3 + β1 * ν)) (⟪o, e3⟫ + zx) from by
         funext i; rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>

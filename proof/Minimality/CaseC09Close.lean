@@ -371,7 +371,7 @@ theorem rimT2p_rest2 (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (htm : 0 < tm
     | (right; refine ⟨by nlinarith, by nlinarith⟩)
 
 theorem rimT2p_rest1 (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (htm : 0 < tm) (htm1 : tm < 1)
-    (hhm : 0 < hm) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp) (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (H : kp * sm < km * (1 - sp)) (R : hp * (1 - sp) < kp * (1 - tp)) :
+    (hhm : 0 < hm) (htp : 0 < tp) (htp1 : tp < 1) (hhp : 0 < hp) (hsp1 : sp < 1) (H : kp * sm < km * (1 - sp)) (R : hp * (1 - sp) < kp * (1 - tp)) :
     ∀ i : ZMod 4,
       ST 1 ⟨0, sm, -km⟩ ⟨1, 0, 0⟩
         ((quad (⟨0, 1, 0⟩ : C3) ⟨1, 0, 0⟩ ⟨tm, 0, -hm⟩ ⟨0, sm, -km⟩ (i + 1)).sub
@@ -643,7 +643,7 @@ theorem rimT2p (hA : F.a12 = F.a22) (hdc : F.S.dp < F.S.cm) :
   · intro j' h5 h3 h4 h6 i
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · rw [p0]; exact rimT2p_rest0 hsm hsm1 hkm htm htm1 hhm i
-    · rw [p1]; exact rimT2p_rest1 hsm hsm1 hkm htm htm1 hhm htp htp1 hhp hsp hsp1 hkp H R i
+    · rw [p1]; exact rimT2p_rest1 hsm hsm1 hkm htm htm1 hhm htp htp1 hhp hsp1 H R i
     · rw [p2]; exact rimT2p_rest2 hsm hsm1 hkm htm htm1 hhm hsp hsp1 hkp H i
     · exact absurd rfl h3
     · exact absurd rfl h4

@@ -85,36 +85,38 @@ theorem T3_apos : 0 < FT3.a := by
   by_contra hh; push Not at hh
   nlinarith [mul_nonneg (neg_nonneg.mpr hh) h.hA.le]
 
+omit hz in
 theorem Qab_aeq : FQab.a * (r1 * b2 - r2 * b1) = (-FQab.d) * (b2 - r2) := by
   have h1 := h.Qab_R; have h2 := h.Qab_B; simp only [Fc.ev] at h1 h2
   linear_combination b2 * h1 - r2 * h2
 
+omit hz in
 theorem T2_aeq : FT2.a * (r1 * b2 - r2 * b1) = (-FT2.d) * (b2 - r2) := by
   have h1 := h.T2_R; have h2 := h.T2_B; simp only [Fc.ev] at h1 h2
   linear_combination b2 * h1 - r2 * h2
 
 theorem Qab_aneg (hr : b2 < r2) : FQab.a < 0 := by
-  have e := h.Qab_aeq hz; have hS := h.S3_pos; have hd := h.Qab_d hz
+  have e := h.Qab_aeq; have hS := h.S3_pos; have hd := h.Qab_d hz
   by_contra hh; push Not at hh
   nlinarith [mul_nonneg hh hS.le, mul_pos (show 0 < -FQab.d by linarith) (show 0 < r2 - b2 by linarith)]
 
 theorem T2_aneg (hr : b2 < r2) : FT2.a < 0 := by
-  have e := h.T2_aeq hz; have hS := h.S3_pos; have hd := h.T2_d hz
+  have e := h.T2_aeq; have hS := h.S3_pos; have hd := h.T2_d hz
   by_contra hh; push Not at hh
   nlinarith [mul_nonneg hh hS.le, mul_pos (show 0 < -FT2.d by linarith) (show 0 < r2 - b2 by linarith)]
 
 theorem Qab_apos (hr : r2 < b2) : 0 < FQab.a := by
-  have e := h.Qab_aeq hz; have hS := h.S3_pos; have hd := h.Qab_d hz
+  have e := h.Qab_aeq; have hS := h.S3_pos; have hd := h.Qab_d hz
   by_contra hh; push Not at hh
   nlinarith [mul_nonneg (neg_nonneg.mpr hh) hS.le, mul_pos (show 0 < -FQab.d by linarith) (show 0 < b2 - r2 by linarith)]
 
 theorem T2_apos (hr : r2 < b2) : 0 < FT2.a := by
-  have e := h.T2_aeq hz; have hS := h.S3_pos; have hd := h.T2_d hz
+  have e := h.T2_aeq; have hS := h.S3_pos; have hd := h.T2_d hz
   by_contra hh; push Not at hh
   nlinarith [mul_nonneg (neg_nonneg.mpr hh) hS.le, mul_pos (show 0 < -FT2.d by linarith) (show 0 < b2 - r2 by linarith)]
 
 theorem Qab_azero (hr : r2 = b2) : FQab.a = 0 := by
-  have e := h.Qab_aeq hz; have hS := h.S3_pos
+  have e := h.Qab_aeq; have hS := h.S3_pos
   have e' : FQab.a * (r1 * b2 - r2 * b1) = 0 := by rw [e, hr]; ring
   exact (mul_eq_zero.mp e').resolve_right hS.ne'
 

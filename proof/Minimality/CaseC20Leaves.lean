@@ -51,8 +51,8 @@ local macro "rh " h:term : term =>
   `(by (try simp only [rFrame_S, Shape20.swap, rFrame_a11, rFrame_a22, rFrame_a12, rFrame_gg]); linarith only [$h])
 
 /-- 27.32^R (27.64 (iii)) -/
-theorem Frame20.ra4_tBR {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hCr : 0 < -F.S.hp*F.S.sm - F.S.km*F.S.tp + F.S.km)   :
+theorem Frame20.ra4_tBR {x : Fin 7 → ℝ³} (F : Frame20 x)
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hCr : 0 < -F.S.hp*F.S.sm - F.S.km*F.S.tp + F.S.km)   :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -148,7 +148,7 @@ theorem Frame20.om1n {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
 
 /-- 27.74 (i), ω = 0, off ℓ1 -/
 theorem Frame20.om1z1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (htt : 0 ≤ F.S.tm - F.S.tp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.km*F.S.tm) * (F.a11 - F.a12) + (-F.S.hm*F.S.sm + F.S.hm + F.S.km*F.S.tm - F.S.km) * F.a12) :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (htt : 0 ≤ F.S.tm - F.S.tp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.km*F.S.tm) * (F.a11 - F.a12) + (-F.S.hm*F.S.sm + F.S.hm + F.S.km*F.S.tm - F.S.km) * F.a12) :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -182,7 +182,7 @@ theorem Frame20.om1z1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
 
 /-- 27.74 (i), ω = 0, off ℓ1 -/
 theorem Frame20.om1z2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (htt : 0 ≤ F.S.tm - F.S.tp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (-F.S.km*F.S.tm) * (F.a11 - F.a12) + (F.S.hm*F.S.sm - F.S.hm - F.S.km*F.S.tm + F.S.km) * F.a12) :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (htt : 0 ≤ F.S.tm - F.S.tp) (hl : 0 < (-F.S.km*F.S.tm) * (F.a11 - F.a12) + (F.S.hm*F.S.sm - F.S.hm - F.S.km*F.S.tm + F.S.km) * F.a12) :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -250,7 +250,7 @@ theorem Frame20.om2a {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
 
 /-- 27.74 (ii): {T_A, V}, t+ ≤ t−, h+ ≤ d+ -/
 theorem Frame20.om2b {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1 : 0 < F.S.hm*F.S.tp - F.S.hm + F.S.hp*F.S.tm) (hVp : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVW : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (htt : 0 ≤ F.S.tm - F.S.tp) (hWn : 0 ≤ F.S.hp*F.S.sp - F.S.hp + F.S.kp) :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1 : 0 < F.S.hm*F.S.tp - F.S.hm + F.S.hp*F.S.tm) (hVp : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVW : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (htt : 0 ≤ F.S.tm - F.S.tp) :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -370,7 +370,7 @@ theorem Frame20.om3n {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
 
 /-- 27.74 (ii): {T_A, V, T′}, h+ ≥ d+, z1 -/
 theorem Frame20.om3z1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hVp : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVW : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hWp : 0 ≤ -F.S.hp*F.S.sp + F.S.hp - F.S.kp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.km*F.S.tm) * (F.a11 - F.a12) + (-F.S.hm*F.S.sm + F.S.hm + F.S.km*F.S.tm - F.S.km) * F.a12)  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hVp : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVW : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hWp : 0 ≤ -F.S.hp*F.S.sp + F.S.hp - F.S.kp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.km*F.S.tm) * (F.a11 - F.a12) + (-F.S.hm*F.S.sm + F.S.hm + F.S.km*F.S.tm - F.S.km) * F.a12)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -413,7 +413,7 @@ theorem Frame20.om3z1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
 
 /-- 27.74 (ii): {T_A, V, T′}, h+ ≥ d+, z2 -/
 theorem Frame20.om3z2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hVp : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVW : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hWp : 0 ≤ -F.S.hp*F.S.sp + F.S.hp - F.S.kp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (-F.S.km*F.S.tm) * (F.a11 - F.a12) + (F.S.hm*F.S.sm - F.S.hm - F.S.km*F.S.tm + F.S.km) * F.a12)  :
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.hm*F.S.tp + F.S.hm - F.S.hp*F.S.tm) (hVp : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.tm - F.S.kp*F.S.tm) (hVW : 0 < -F.S.hm*F.S.sp*F.S.tp + F.S.hm*F.S.tp - F.S.hp*F.S.sp*F.S.tm + F.S.hp*F.S.sp + F.S.hp*F.S.tm - F.S.hp - F.S.kp*F.S.tm + F.S.kp) (hWp : 0 ≤ -F.S.hp*F.S.sp + F.S.hp - F.S.kp) (hl : 0 < (-F.S.km*F.S.tm) * (F.a11 - F.a12) + (F.S.hm*F.S.sm - F.S.hm - F.S.km*F.S.tm + F.S.km) * F.a12)  :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -455,8 +455,8 @@ theorem Frame20.om3z2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
   · linarith only [mul_nonneg ((mul_pos F.S.tp_pos hsp1)).le (sub_nonneg.2 n0_2), mul_nonneg (htp1).le (sub_nonneg.2 n1_1), mul_pos ((mul_pos (mul_pos F.S.tp_pos F.S.hm_pos) rp)) hde, mul_pos ((mul_pos (mul_pos F.S.tp_pos rp) rp)) hde, mul_pos ((mul_pos (mul_pos htp1 F.S.kp_pos) rp)) hde, mul_pos ((mul_pos (mul_pos htp1 rp) rp)) hde, mul_pos ((mul_pos (mul_pos F.S.tm_pos F.S.hp_pos) rp)) hde, mul_pos ((mul_pos (mul_pos F.S.sp_pos F.S.hp_pos) rp)) hde, mul_pos ((mul_pos (mul_pos F.S.sp_pos rp) hA1r)) hde, mul_pos ((mul_pos (mul_pos hsp1 rp) hA1r)) hde]
 
 /-- family A, T1 (⟨u1,u2⟩ > 0) -/
-theorem Frame20.famA1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
-    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1 : 0 < F.S.hm*F.S.tp - F.S.hm + F.S.hp*F.S.tm) (hA2 : 0 < F.S.hm*F.S.sm*F.S.tp + F.S.hp*F.S.sm*F.S.tm - F.S.km*F.S.tm) (hA3 : 0 < -F.S.hm*F.S.sm*F.S.tp + F.S.hm - F.S.hp*F.S.sm*F.S.tm + F.S.hp*F.S.sm + F.S.km*F.S.tm - F.S.km) (hg : 0 < (F.S.tp^2 - F.S.tp) * (F.a11 - F.a12) + (F.S.tp^2 - 2*F.S.tp + 1) * F.a12 + (F.S.hp^2) * F.gg)   :
+theorem Frame20.famA1 {x : Fin 7 → ℝ³} (F : Frame20 x)
+    (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1 : 0 < F.S.hm*F.S.tp - F.S.hm + F.S.hp*F.S.tm) (hg : 0 < (F.S.tp^2 - F.S.tp) * (F.a11 - F.a12) + (F.S.tp^2 - 2*F.S.tp + 1) * F.a12 + (F.S.hp^2) * F.gg)   :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
   have hbe : 0 < F.a22 - F.a12 := sub_pos.2 hβ
@@ -482,7 +482,7 @@ theorem Frame20.famA1 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
   · linarith only [mul_nonneg (F.S.sp_pos).le (sub_nonneg.2 n0_1), mul_nonneg (hsp1).le (sub_nonneg.2 n0_1), mul_pos F.S.tm_pos hg, mul_pos htm1 hg]
 
 /-- family A, T2 (⟨u1,u2⟩ ≤ 0) -/
-theorem Frame20.famA2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
+theorem Frame20.famA2 {x : Fin 7 → ℝ³} (F : Frame20 x)
     (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1 : 0 < F.S.hm*F.S.tp - F.S.hm + F.S.hp*F.S.tm) (hA2 : 0 < F.S.hm*F.S.sm*F.S.tp + F.S.hp*F.S.sm*F.S.tm - F.S.km*F.S.tm) (hA3 : 0 < -F.S.hm*F.S.sm*F.S.tp + F.S.hm - F.S.hp*F.S.sm*F.S.tm + F.S.hp*F.S.sm + F.S.km*F.S.tm - F.S.km) (hg : 0 ≤ (-F.S.tp^2 + F.S.tp) * (F.a11 - F.a12) + (-F.S.tp^2 + 2*F.S.tp - 1) * F.a12 + (-F.S.hp^2) * F.gg)   :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
@@ -512,7 +512,7 @@ theorem Frame20.famA2 {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injec
   · linarith only [mul_nonneg (htm1).le (sub_nonneg.2 n0_1), mul_nonneg (F.S.tm_pos).le (sub_nonneg.2 n0_2), mul_pos ((mul_pos F.S.hp_pos F.S.hm_pos)) hde]
 
 /-- 27.78: the edge crossing at xa xb -/
-theorem Frame20.famE {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
+theorem Frame20.famE {x : Fin 7 → ℝ³} (F : Frame20 x)
     (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1 : 0 < F.S.hm*F.S.tp - F.S.hm + F.S.hp*F.S.tm) (hA1R : 0 < F.S.km*F.S.sp + F.S.kp*F.S.sm - F.S.kp) (hA2f : 0 ≤ -F.S.hm*F.S.sm*F.S.tp - F.S.hp*F.S.sm*F.S.tm + F.S.km*F.S.tm) (hA2Rf : 0 ≤ F.S.hp*F.S.sp - F.S.km*F.S.sp*F.S.tp - F.S.kp*F.S.sm*F.S.tp)   :
     IsRupert (Finset.univ.image x) := by
   have hal : 0 < F.a11 - F.a12 := sub_pos.2 hα
@@ -542,7 +542,7 @@ theorem Frame20.famE {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inject
 theorem Frame20.ra4_tBR_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
     (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hCr : 0 < -F.S.hp*F.S.sm + F.S.hp - F.S.km*F.S.tp)   :
     IsRupert (Finset.univ.image x) :=
-  rupert_of_r (F.rFrame.ra4_tBR (hx.comp rperm_bijective.1) (rh hβ) (rh hα) (rh hA1r) (rh hCr))
+  rupert_of_r (F.rFrame.ra4_tBR (rh hβ) (rh hα) (rh hCr))
 
 /-- 27.74 (i), ω > 0 (R-image) -/
 theorem Frame20.om1p_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
@@ -560,13 +560,13 @@ theorem Frame20.om1n_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
 theorem Frame20.om1z1_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
     (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (htt : 0 ≤ -F.S.sm + F.S.sp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.hp*F.S.sp) * (F.a22 - F.a12) + (F.S.hp*F.S.sp - F.S.hp - F.S.kp*F.S.tp + F.S.kp) * F.a12) :
     IsRupert (Finset.univ.image x) :=
-  rupert_of_r (F.rFrame.om1z1 (hx.comp rperm_bijective.1) (rh hβ) (rh hα) (rh hA1r) (rh htt) (rh hom1) (rh hom2) (rh hl))
+  rupert_of_r (F.rFrame.om1z1 (hx.comp rperm_bijective.1) (rh hβ) (rh hα) (rh hA1r) (rh htt) (rh hom1) (rh hl))
 
 /-- 27.74 (i), ω = 0, off ℓ1 (R-image) -/
 theorem Frame20.om1z2_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
     (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (htt : 0 ≤ -F.S.sm + F.S.sp) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (-F.S.hp*F.S.sp) * (F.a22 - F.a12) + (-F.S.hp*F.S.sp + F.S.hp + F.S.kp*F.S.tp - F.S.kp) * F.a12) :
     IsRupert (Finset.univ.image x) :=
-  rupert_of_r (F.rFrame.om1z2 (hx.comp rperm_bijective.1) (rh hβ) (rh hα) (rh hA1r) (rh htt) (rh hom1) (rh hom2) (rh hl))
+  rupert_of_r (F.rFrame.om1z2 (hx.comp rperm_bijective.1) (rh hβ) (rh hα) (rh hA1r) (rh htt) (rh hl))
 
 /-- 27.74 (ii): {T_A, V}, h+ ≥ d+ (R-image) -/
 theorem Frame20.om2a_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
@@ -578,7 +578,7 @@ theorem Frame20.om2a_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
 theorem Frame20.om2b_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
     (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1 : 0 < F.S.km*F.S.sp + F.S.kp*F.S.sm - F.S.kp) (hVp : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVW : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (htt : 0 ≤ -F.S.sm + F.S.sp) (hWn : 0 ≤ F.S.hm + F.S.km*F.S.tm - F.S.km) :
     IsRupert (Finset.univ.image x) :=
-  rupert_of_r (F.rFrame.om2b (hx.comp rperm_bijective.1) (rh hβ) (rh hα) (rh hA1) (rh hVp) (rh hVW) (rh htt) (rh hWn))
+  rupert_of_r (F.rFrame.om2b (hx.comp rperm_bijective.1) (rh hβ) (rh hα) (rh hA1) (rh hVp) (rh hVW) (rh htt))
 
 /-- 27.74 (ii): {T_A, V, T′}, h+ ≥ d+, p (R-image) -/
 theorem Frame20.om3p_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
@@ -596,25 +596,25 @@ theorem Frame20.om3n_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Inje
 theorem Frame20.om3z1_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
     (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVp : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVW : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hWp : 0 ≤ -F.S.hm - F.S.km*F.S.tm + F.S.km) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (F.S.hp*F.S.sp) * (F.a22 - F.a12) + (F.S.hp*F.S.sp - F.S.hp - F.S.kp*F.S.tp + F.S.kp) * F.a12)  :
     IsRupert (Finset.univ.image x) :=
-  rupert_of_r (F.rFrame.om3z1 (hx.comp rperm_bijective.1) (rh hβ) (rh hα) (rh hA1r) (rh hVp) (rh hVW) (rh hWp) (rh hom1) (rh hom2) (rh hl))
+  rupert_of_r (F.rFrame.om3z1 (hx.comp rperm_bijective.1) (rh hβ) (rh hα) (rh hA1r) (rh hVp) (rh hVW) (rh hWp) (rh hom1) (rh hl))
 
 /-- 27.74 (ii): {T_A, V, T′}, h+ ≥ d+, z2 (R-image) -/
 theorem Frame20.om3z2_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
     (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1r : 0 < -F.S.km*F.S.sp - F.S.kp*F.S.sm + F.S.kp) (hVp : 0 < -F.S.hm*F.S.sp - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hVW : 0 < -F.S.hm*F.S.sp + F.S.hm - F.S.km*F.S.sp*F.S.tm + F.S.km*F.S.sp + F.S.km*F.S.tm - F.S.km - F.S.kp*F.S.sm*F.S.tm + F.S.kp*F.S.sm) (hWp : 0 ≤ -F.S.hm - F.S.km*F.S.tm + F.S.km) (hom1 : 0 ≤ (F.S.sm*F.S.tp - F.S.sm - F.S.tp + 1) * F.a12 + (-F.S.hp*F.S.km) * F.gg) (hom2 : 0 ≤ (-F.S.sm*F.S.tp + F.S.sm + F.S.tp - 1) * F.a12 + (F.S.hp*F.S.km) * F.gg) (hl : 0 < (-F.S.hp*F.S.sp) * (F.a22 - F.a12) + (-F.S.hp*F.S.sp + F.S.hp + F.S.kp*F.S.tp - F.S.kp) * F.a12)  :
     IsRupert (Finset.univ.image x) :=
-  rupert_of_r (F.rFrame.om3z2 (hx.comp rperm_bijective.1) (rh hβ) (rh hα) (rh hA1r) (rh hVp) (rh hVW) (rh hWp) (rh hom1) (rh hom2) (rh hl))
+  rupert_of_r (F.rFrame.om3z2 (hx.comp rperm_bijective.1) (rh hβ) (rh hα) (rh hA1r) (rh hVp) (rh hVW) (rh hWp) (rh hl))
 
 /-- family A, T1 (⟨u1,u2⟩ > 0) (R-image) -/
 theorem Frame20.famA1_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
     (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1 : 0 < F.S.km*F.S.sp + F.S.kp*F.S.sm - F.S.kp) (hA2 : 0 < -F.S.hp*F.S.sp + F.S.km*F.S.sp*F.S.tp + F.S.kp*F.S.sm*F.S.tp) (hA3 : 0 < F.S.hp*F.S.sp - F.S.hp - F.S.km*F.S.sp*F.S.tp + F.S.km*F.S.tp - F.S.kp*F.S.sm*F.S.tp + F.S.kp) (hg : 0 < (F.S.sm^2 - F.S.sm) * (F.a22 - F.a12) + (F.S.sm^2 - 2*F.S.sm + 1) * F.a12 + (F.S.km^2) * F.gg)   :
     IsRupert (Finset.univ.image x) :=
-  rupert_of_r (F.rFrame.famA1 (hx.comp rperm_bijective.1) (rh hβ) (rh hα) (rh hA1) (rh hA2) (rh hA3) (rh hg))
+  rupert_of_r (F.rFrame.famA1 (rh hβ) (rh hα) (rh hA1) (rh hg))
 
 /-- family A, T2 (⟨u1,u2⟩ ≤ 0) (R-image) -/
 theorem Frame20.famA2_R {x : Fin 7 → ℝ³} (F : Frame20 x) (hx : Function.Injective x)
     (hα : F.a12 < F.a11) (hβ : F.a12 < F.a22) (hA1 : 0 < F.S.km*F.S.sp + F.S.kp*F.S.sm - F.S.kp) (hA2 : 0 < -F.S.hp*F.S.sp + F.S.km*F.S.sp*F.S.tp + F.S.kp*F.S.sm*F.S.tp) (hA3 : 0 < F.S.hp*F.S.sp - F.S.hp - F.S.km*F.S.sp*F.S.tp + F.S.km*F.S.tp - F.S.kp*F.S.sm*F.S.tp + F.S.kp) (hg : 0 ≤ (-F.S.sm^2 + F.S.sm) * (F.a22 - F.a12) + (-F.S.sm^2 + 2*F.S.sm - 1) * F.a12 + (-F.S.km^2) * F.gg)   :
     IsRupert (Finset.univ.image x) :=
-  rupert_of_r (F.rFrame.famA2 (hx.comp rperm_bijective.1) (rh hβ) (rh hα) (rh hA1) (rh hA2) (rh hA3) (rh hg))
+  rupert_of_r (F.rFrame.famA2 (rh hβ) (rh hα) (rh hA1) (rh hA2) (rh hA3) (rh hg))
 
 end Minimality.CaseC20
 

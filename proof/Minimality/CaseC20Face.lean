@@ -90,7 +90,7 @@ theorem pent1_rest1 (S : Shape20) (θ : ℝ) (hθ0 : 0 < θ) (hθ1 : θ * S.hp <
   · simp only [CaseC09.ST, Dc, C3.sub, Shape20.u_tA, Shape20.w_T1]
     right; refine ⟨by ring, ?_⟩; linarith [mul_pos hθ0 hhp]
 
-theorem pent1_rest2 (S : Shape20) (θ : ℝ) (hθ0 : 0 < θ) (hθ1 : θ * S.hp < 1 - S.tp) (hθ2 : θ * S.km < S.sm)
+theorem pent1_rest2 (S : Shape20) (θ : ℝ) (hθ0 : 0 < θ)
     (hA : S.hm*S.tp - S.hm + S.hp*S.tm ≤ 0) :
     Rest5 (-1) S.u_tA (S.w_T1 θ) (⟨0, 0, 0⟩ : C3) ⟨S.tm, 0, -S.hm⟩ ⟨0, S.sm, -S.km⟩ ⟨0, 1, 0⟩ ⟨S.tp, 0, S.hp⟩
       ⟨0, S.sp, S.kp⟩ := by
@@ -155,7 +155,7 @@ theorem Frame20.pent1 {x : Fin 7 → ℝ³} (F : Frame20 x) (θ : ℝ) (hθ0 : 0
     rcases fin7_cases j' with rfl | rfl | rfl | rfl | rfl | rfl | rfl
     · exact absurd rfl h4
     · rw [F.ptC_1]; exact pent1_rest1 F.S θ hθ0 hθ1
-    · rw [F.ptC_2]; exact pent1_rest2 F.S θ hθ0 hθ1 hθ2 hA
+    · rw [F.ptC_2]; exact pent1_rest2 F.S θ hθ0 hA
     · exact absurd rfl h1
     · exact absurd rfl h2
     · exact absurd rfl h0
