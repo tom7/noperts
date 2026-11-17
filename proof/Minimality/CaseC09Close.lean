@@ -175,10 +175,9 @@ theorem rimW_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) (h
   intro i j h1 h2
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-    first
+    try (first
     | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    | exact absurd (by decide) h2)
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     left; nlinarith
@@ -303,10 +302,9 @@ theorem rimT2p_cyc (hsm : 0 < sm) (hsm1 : sm < 1) (hkm : 0 < km) (htm : 0 < tm) 
   intro i j h1 h2
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-    first
+    try (first
     | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    | exact absurd (by decide) h2)
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, quad_0, quad_1, quad_2, quad_3]
     left; nlinarith
@@ -454,10 +452,9 @@ theorem rimWpp_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (htm : 0 < tm) 
   intro i j h1 h2
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
+    try (first
     | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    | exact absurd (by decide) h2)
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
@@ -875,10 +872,9 @@ theorem rimK1a_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (h
   intro i j h1 h2
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
+    try (first
     | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    | exact absurd (by decide) h2)
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
@@ -973,10 +969,9 @@ theorem rimK1b_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (h
   intro i j h1 h2
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
+    try (first
     | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    | exact absurd (by decide) h2)
   all_goals
     simp only [ST, Dc, C3.sub, b0, b1, b2, b3, b4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
@@ -1282,16 +1277,14 @@ theorem rimK1c_lt_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t)
   intro i j h1 h2
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
+    try (first
     | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    | exact absurd (by decide) h2)
   all_goals
     simp only [ST, Dc, C3.sub, z0, z1, z2, z3, z4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
     | (left; nlinarith)
     | (right; refine ⟨by nlinarith, by nlinarith⟩)
-    | skip
 
 set_option maxHeartbeats 4000000 in
 theorem rimK1c_lt_rest4 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (ht1 : t < 1)
@@ -1349,10 +1342,9 @@ theorem rimK1c_gt_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t)
   intro i j h1 h2
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-    first
+    try (first
     | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    | exact absurd (by decide) h2)
   all_goals
     simp only [ST, Dc, C3.sub, z0, z1, z2, z3, quad_0, quad_1, quad_2, quad_3]
     first
@@ -1417,16 +1409,14 @@ theorem rimK1c_eq5_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t
   intro i j h1 h2
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;>
     rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first
+    try (first
     | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    | exact absurd (by decide) h2)
   all_goals
     simp only [ST, Dc, C3.sub, z0, z1, z2, z3, z4, quint_0, quint_1, quint_2, quint_3, quint_4]
     first
     | (left; nlinarith)
     | (right; refine ⟨by nlinarith, by nlinarith⟩)
-    | skip
 
 set_option maxHeartbeats 4000000 in
 theorem rimK1c_eq5_rest4 (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t) (ht1 : t < 1)
@@ -1483,10 +1473,9 @@ theorem rimK1c_eq4_cyc (hsp : 0 < sp) (hsp1 : sp < 1) (hkp : 0 < kp) (ht : 0 < t
   intro i j h1 h2
   rcases zmod4_cases i with rfl | rfl | rfl | rfl <;>
     rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
-    first
+    try (first
     | exact absurd rfl h1
-    | exact absurd (by decide) h2
-    | skip
+    | exact absurd (by decide) h2)
   all_goals
     simp only [ST, Dc, C3.sub, z0, z1, z2, z3, quad_0, quad_1, quad_2, quad_3]
     first
@@ -1844,15 +1833,8 @@ theorem t1pST_cyc {tm hm tp hp sp kp sm km : ℝ} (hsp : 0 < sp) (hsp1 : sp < 1)
     first
     | (left; nlinarith)
     | (right; refine ⟨by ring1, by nlinarith⟩)
-    | (right; refine ⟨by linear_combination hH, by nlinarith⟩)
     | (right; refine ⟨by linear_combination (-1 : ℝ) * hH, by nlinarith⟩)
-    | (right; refine ⟨by linear_combination (1 - sp) * hH, by nlinarith⟩)
-    | (right; refine ⟨by linear_combination (sp - 1) * hH, by nlinarith⟩)
-    | (right; refine ⟨by linear_combination sp * hH, by nlinarith⟩)
     | (right; refine ⟨by linear_combination (-sp) * hH, by nlinarith⟩)
-    | (right; refine ⟨by linear_combination (1 - sm) * hH, by nlinarith⟩)
-    | (right; refine ⟨by linear_combination (sm - 1) * hH, by nlinarith⟩)
-    | (right; refine ⟨by linear_combination sm * hH, by nlinarith⟩)
     | (right; refine ⟨by linear_combination (-sm) * hH, by nlinarith⟩)
 
 set_option linter.unusedTactic false in
