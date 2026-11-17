@@ -67,7 +67,7 @@ theorem v12_cycA (pb : 0 < -(k * vx + vz)) (pd : 0 < l * (1 - tm) * vx + tm * vz
   obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
   intro i j h1 h2
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first | exact absurd rfl h1 | exact absurd (by decide) h2 | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals (
     simp only [CaseC09.ST, Dc, C3.sub, Pt_0, Pt_1, Pt_2, Pt_4, Pt_6, b0, b1, b2, b3, b4,
       vA_0, vA_1, vA_2, vA_3, vA_4]
@@ -109,7 +109,7 @@ theorem v12_cycB (pb : 0 < k * vx + vz) (pd : 0 < l * (1 - tm) * vx + tm * vz) :
   obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
   intro i j h1 h2
   rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl <;> rcases zmod5_cases j with rfl | rfl | rfl | rfl | rfl <;>
-    first | exact absurd rfl h1 | exact absurd (by decide) h2 | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals (
     simp only [CaseC09.ST, Dc, C3.sub, Pt_0, Pt_2, Pt_3, Pt_4, Pt_6, b0, b1, b2, b3, b4,
       vB_0, vB_1, vB_2, vB_3, vB_4]
@@ -151,7 +151,7 @@ theorem v12_cycC (pb : 0 < -(k * vx + vz)) (pd : 0 < -(l * (1 - tm) * vx) - tm *
   obtain ⟨b0, b1, b2, b3, b4, b5⟩ := zmod6_add_one
   intro i j h1 h2
   rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl <;> rcases zmod6_cases j with rfl | rfl | rfl | rfl | rfl | rfl <;>
-    first | exact absurd rfl h1 | exact absurd (by decide) h2 | skip
+    try (first | exact absurd rfl h1 | exact absurd (by decide) h2)
   all_goals (
     simp only [CaseC09.ST, Dc, C3.sub, Pt_0, Pt_1, Pt_2, Pt_4, Pt_5, Pt_6, b0, b1, b2, b3, b4, b5,
       vC_0, vC_1, vC_2, vC_3, vC_4, vC_5]
