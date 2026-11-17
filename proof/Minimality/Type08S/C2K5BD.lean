@@ -53,7 +53,7 @@ theorem k5b_cycN_inj {α1 β1 β6 γ6 : ℝ} (hα1 : 0 < α1) (hβ1 : 0 < β1) (
     | (exfalso
        simp only [k5b_cyc1, k5b_cyc2, pc5_0, pc5_1, pc5_2, pc5_3, pc5_4, Prod.mk.injEq] at h
        obtain ⟨e1, e2, e3⟩ := h
-       first | linarith | nlinarith)
+       linarith)
 
 set_option maxHeartbeats 6400000 in
 /-- **Cell 1 `(a, d, b, a', b')` at `r = b - c`** (ccw cycle `(a, b', a', b, d)`, tilt `v1 > 0`). -/
