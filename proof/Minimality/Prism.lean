@@ -1,5 +1,6 @@
 module
 
+public import Minimality.ZModLemmas
 public import Minimality.Octahedron
 
 @[expose] public section
@@ -30,16 +31,6 @@ theorem quint_2 : quint p₀ p₁ p₂ p₃ p₄ 2 = p₂ := rfl
 theorem quint_3 : quint p₀ p₁ p₂ p₃ p₄ 3 = p₃ := rfl
 theorem quint_4 : quint p₀ p₁ p₂ p₃ p₄ 4 = p₄ := rfl
 end quint
-
-theorem zmod5_add_one :
-    (0 : ZMod 5) + 1 = 1 ∧ (1 : ZMod 5) + 1 = 2 ∧ (2 : ZMod 5) + 1 = 3 ∧ (3 : ZMod 5) + 1 = 4 ∧
-      (4 : ZMod 5) + 1 = 0 := by decide
-
-theorem zmod5_sub_one :
-    (0 : ZMod 5) - 1 = 4 ∧ (1 : ZMod 5) - 1 = 0 ∧ (2 : ZMod 5) - 1 = 1 ∧ (3 : ZMod 5) - 1 = 2 ∧
-      (4 : ZMod 5) - 1 = 3 := by decide
-
-theorem zmod5_cases (i : ZMod 5) : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 := by revert i; decide
 
 /-- The open depth condition of the prism pentagon `X X' Y' Y Z`: the lifts
 `X → X'`, `Y → Y'` go up and `Z` is below `X` or `Y`. -/

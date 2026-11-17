@@ -1,5 +1,6 @@
 module
 
+public import Minimality.ZModLemmas
 public import Minimality.Type08Slide
 
 @[expose] public section
@@ -468,9 +469,6 @@ theorem uni5_valley {z : ZMod 5 → ℝ} (hinj : Function.Injective z) (h1 : z 1
   · right; rw [a2]; exact h23
   · right; rw [a3]; exact h34
   · right; rw [a4]; exact h40
-
-theorem zmod4_sub_one : (0 : ZMod 4) - 1 = 3 ∧ (1 : ZMod 4) - 1 = 0 ∧ (2 : ZMod 4) - 1 = 1 ∧
-    (3 : ZMod 4) - 1 = 2 := by decide
 
 /-- A 4-cycle with the top at `0` and the chain `0 > 1 > 3 > 2`. -/
 theorem uni4_down {z : ZMod 4 → ℝ} (h1 : z 1 < z 0) (h3 : z 3 < z 1) (h2 : z 2 < z 3) :

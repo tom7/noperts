@@ -1,5 +1,6 @@
 module
 
+public import Minimality.ZModLemmas
 public import Minimality.CaseC18Sp
 public import Minimality.CaseC09Rims
 
@@ -382,12 +383,6 @@ theorem Q6m_smul {z : ZMod 6 → ℝ} {a : ℝ} (ha : 0 < a) (h : Q6m z) : Q6m f
 theorem Q6m_shift {z : ZMod 6 → ℝ} (a : ℝ) (h : Q6m z) : Q6m fun i => z i + a := by
   obtain ⟨h1, h2, h3, h4, h5⟩ := h
   exact ⟨by linarith, by linarith, by linarith, by linarith, by linarith⟩
-
-theorem zmod6_add_one : (0 : ZMod 6) + 1 = 1 ∧ (1 : ZMod 6) + 1 = 2 ∧ (2 : ZMod 6) + 1 = 3 ∧
-    (3 : ZMod 6) + 1 = 4 ∧ (4 : ZMod 6) + 1 = 5 ∧ (5 : ZMod 6) + 1 = 0 := by decide
-
-theorem zmod6_sub_one : (0 : ZMod 6) - 1 = 5 ∧ (1 : ZMod 6) - 1 = 0 ∧ (2 : ZMod 6) - 1 = 1 ∧
-    (3 : ZMod 6) - 1 = 2 ∧ (4 : ZMod 6) - 1 = 3 ∧ (5 : ZMod 6) - 1 = 4 := by decide
 
 theorem Q6m_unimodal {z : ZMod 6 → ℝ} (hinj : Function.Injective z) (h : Q6m z) :
     IsCyclicUnimodal z := by
@@ -775,9 +770,6 @@ theorem hex6_3 : hex6 p₀ p₁ p₂ p₃ p₄ p₅ 3 = p₃ := rfl
 theorem hex6_4 : hex6 p₀ p₁ p₂ p₃ p₄ p₅ 4 = p₄ := rfl
 theorem hex6_5 : hex6 p₀ p₁ p₂ p₃ p₄ p₅ 5 = p₅ := rfl
 end hex6
-
-theorem zmod6_cases (i : ZMod 6) : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 ∨ i = 5 := by
-  revert i; decide
 
 /-! rim (C+) `(m1-, m2-, xb, m2+, m1+, xa)` at `u0`, `dp = A1 tp`, tilt `(q, P, 0)` -/
 set_option maxHeartbeats 2000000 in

@@ -1,5 +1,6 @@
 module
 
+public import Minimality.ZModLemmas
 public import Minimality.Type16V2Core
 public import Minimality.Type16V2Uni4
 public import Minimality.TwoRayDiag
@@ -25,8 +26,6 @@ open Finset Filter
 namespace Minimality
 namespace V2
 open TwoRay Type08Sp Type08Sp.C2
-
-theorem zmod4_cases' (i : ZMod 4) : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 := by revert i; decide
 
 set_option maxHeartbeats 3200000 in
 theorem pop_aux (V : Finset ℝ³) (fP fQ f3Q G : ℝ³ → ℝ) (NP NQ N3Q NG : ℝ³)
@@ -111,14 +110,14 @@ theorem pop_aux (V : Finset ℝ³) (fP fQ f3Q G : ℝ³ → ℝ) (NP NQ N3Q NG :
   have e3 : fpoint p q r w (Y 3) = B := by simp [hY3, fpoint, fcomb, hq]
   have hmem : ∀ i, fpoint p q r w (Y i) ∈ V := by
     intro i
-    rcases zmod4_cases' i with rfl | rfl | rfl | rfl
+    rcases zmod4_cases i with rfl | rfl | rfl | rfl
     · rw [e0]; exact hwV
     · rw [e1]; exact hmV
     · rw [e2]; exact hAV
     · rw [e3]; exact hBV
   have hdist : ∀ i j, ⟪fpoint p q r w (Y i), r⟫ = ⟪fpoint p q r w (Y j), r⟫ → i = j := by
     intro i j h
-    rcases zmod4_cases' i with rfl | rfl | rfl | rfl <;> rcases zmod4_cases' j with rfl | rfl | rfl | rfl <;>
+    rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
       simp only [e0, e1, e2, e3] at h <;>
       first
         | rfl
@@ -138,7 +137,7 @@ theorem pop_aux (V : Finset ℝ³) (fP fQ f3Q G : ℝ³ → ℝ) (NP NQ N3Q NG :
   refine v1b_hasLexCellAt V p q r w hΔ (k := 4) (by norm_num) Y hY0 hY1 hY2 hYm hs0 hs0' hc0 hσQ hz0c hmem ?_ hdep ?_
   · intro i j hji hj t02 t10
     have hs := hs0; have hs' := hs0'
-    rcases zmod4_cases' i with rfl | rfl | rfl | rfl <;> rcases zmod4_cases' j with rfl | rfl | rfl | rfl <;>
+    rcases zmod4_cases i with rfl | rfl | rfl | rfl <;> rcases zmod4_cases j with rfl | rfl | rfl | rfl <;>
       first
         | exact absurd rfl hji
         | exact absurd (by decide) hj
@@ -172,7 +171,7 @@ theorem pop_aux (V : Finset ℝ³) (fP fQ f3Q G : ℝ³ → ℝ) (NP NQ N3Q NG :
         rw [div_add_div _ _ hQA.ne hPB.ne, div_lt_one (mul_pos_of_neg_of_neg hQA hPB)]
         nlinarith
       intro i
-      rcases zmod4_cases' i with rfl | rfl | rfl | rfl
+      rcases zmod4_cases i with rfl | rfl | rfl | rfl
       · simp only [TwoRay.cross2, hY0, hY1, show (0 : ZMod 4) + 1 = 1 from rfl, Prod.mk_sub_mk]
         nlinarith
       · simp only [TwoRay.cross2, hY1, hY2, show (1 : ZMod 4) + 1 = 2 from rfl, Prod.mk_sub_mk]

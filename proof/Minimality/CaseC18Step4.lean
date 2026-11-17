@@ -1,5 +1,6 @@
 module
 
+public import Minimality.ZModLemmas
 public import Minimality.CaseC18VSlide
 public import Minimality.DepthSepTorque
 public import Minimality.SlideDS
@@ -306,11 +307,6 @@ theorem PS_ev' (u e a b : C3) (h : 0 < Dc a b u ∨ (Dc a b u = 0 ∧ 0 < Dc a b
     ∀ᶠ η in 𝓝[>] (0 : ℝ), PS 1 (C3.slide u e η) a b := by
   filter_upwards [eventually_pos_affine (A := Dc a b u) (B := Dc a b e) h] with η hη
   unfold PS; rw [one_mul, Dc_slide]; exact hη
-
-theorem zmod5_cases (i : ZMod 5) : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 := by revert i; decide
-
-theorem zmod5_add_one : (0 : ZMod 5) + 1 = 1 ∧ (1 : ZMod 5) + 1 = 2 ∧ (2 : ZMod 5) + 1 = 3 ∧
-    (3 : ZMod 5) + 1 = 4 ∧ (4 : ZMod 5) + 1 = 0 := by decide
 
 section pent
 variable {α : Type*} (c0 c1 c2 c3 c4 : α)

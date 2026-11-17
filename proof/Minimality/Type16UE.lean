@@ -1,5 +1,6 @@
 module
 
+public import Minimality.ZModLemmas
 public import Minimality.Type16UA
 public import Minimality.Type16V2Uni4
 
@@ -21,9 +22,6 @@ open Finset Filter
 namespace Minimality
 namespace H16U
 open TwoRay Type08Sp Type08Sp.C2 V2
-
-theorem zmod4_cases (i : ZMod 4) : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 := by revert i; decide
-theorem zmod5_cases (i : ZMod 5) : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 := by revert i; decide
 
 /-- The quadrilateral cycle. -/
 def cyc4 (A B z : ℝ) : ZMod 4 → ℝ × ℝ × ℝ := fun i =>

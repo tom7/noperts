@@ -1,5 +1,6 @@
 module
 
+public import Minimality.ZModLemmas
 public import Minimality.Tilt
 public import Minimality.Octahedron
 
@@ -81,14 +82,9 @@ theorem quad_2 : quad p₀ p₁ p₂ p₃ 2 = p₂ := rfl
 theorem quad_3 : quad p₀ p₁ p₂ p₃ 3 = p₃ := rfl
 end quad
 
-theorem zmod4_add_one : (0 : ZMod 4) + 1 = 1 ∧ (1 : ZMod 4) + 1 = 2 ∧ (2 : ZMod 4) + 1 = 3 ∧
-    (3 : ZMod 4) + 1 = 0 := by decide
-
 theorem zmod4_pairs : ∀ i j : ZMod 4, j ≠ i → j ≠ i + 1 →
     (i = 0 ∧ j = 2) ∨ (i = 0 ∧ j = 3) ∨ (i = 1 ∧ j = 3) ∨ (i = 1 ∧ j = 0) ∨
     (i = 2 ∧ j = 0) ∨ (i = 2 ∧ j = 1) ∨ (i = 3 ∧ j = 1) ∨ (i = 3 ∧ j = 2) := by decide
-
-theorem zmod4_cases (i : ZMod 4) : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 := by revert i; decide
 
 /-- The diagonals `{z₀, z₂}`, `{z₁, z₃}` of a 4-cycle are *not weakly
 separated* (Corollary 8.0′). -/

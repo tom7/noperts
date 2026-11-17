@@ -1,5 +1,6 @@
 module
 
+public import Minimality.ZModLemmas
 public import Minimality.Type02B
 
 @[expose] public section
@@ -45,15 +46,12 @@ theorem Q6x_shift {z : ZMod 6 → ℝ} (a : ℝ) (h : Q6x z) : Q6x fun i => z i 
   obtain ⟨h1, h2, h3, h4, h5⟩ := h
   exact ⟨by linarith, by linarith, by linarith, by linarith, by linarith⟩
 
-theorem zmod6_sub_one' : (0 : ZMod 6) - 1 = 5 ∧ (1 : ZMod 6) - 1 = 0 ∧ (2 : ZMod 6) - 1 = 1 ∧
-    (3 : ZMod 6) - 1 = 2 ∧ (4 : ZMod 6) - 1 = 3 ∧ (5 : ZMod 6) - 1 = 4 := by decide
-
 theorem Q6x_unimodal {z : ZMod 6 → ℝ} (hinj : Function.Injective z) (h : Q6x z) :
     IsCyclicUnimodal z := by
   obtain ⟨h1, h2, h3, h4, h5⟩ := h
   have hc : ∀ i : ZMod 6, i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 ∨ i = 5 := by decide
   obtain ⟨a0, a1, a2, a3, a4, a5⟩ := z6a
-  obtain ⟨b0, b1, b2, b3, b4, b5⟩ := zmod6_sub_one'
+  obtain ⟨b0, b1, b2, b3, b4, b5⟩ := zmod6_sub_one
   have h23 : z 2 ≠ z 3 := hinj.ne (by decide)
   rcases lt_or_gt_of_ne h23 with h6 | h6
   · refine isCyclicUnimodal_of_top (by norm_num) hinj 3 ?_

@@ -1,5 +1,6 @@
 module
 
+public import Minimality.ZModLemmas
 public import Minimality.Type02FN
 
 @[expose] public section
@@ -181,9 +182,6 @@ theorem v12_restC (pb : 0 < -(k * vx + vz)) (pd : 0 < -(l * (1 - tm) * vx) - tm 
       · linarith))
 end rows
 
-theorem zmod5_sub_one' : (0 : ZMod 5) - 1 = 4 ∧ (1 : ZMod 5) - 1 = 0 ∧ (2 : ZMod 5) - 1 = 1 ∧
-    (3 : ZMod 5) - 1 = 2 ∧ (4 : ZMod 5) - 1 = 3 := by decide
-
 /-- depth predicate: every index except `t` has a strictly larger neighbour -/
 def QtV {k : ℕ} (t : ZMod k) (z : ZMod k → ℝ) : Prop :=
   ∀ i, i ≠ t → z i < z (i - 1) ∨ z i < z (i + 1)
@@ -281,9 +279,6 @@ theorem v12_mA (hr : gA12 x = gA11 x) (hA : F.S.tp = F.S.sp) (hB : F.S.tm = F.S.
       (mul_pos F.S.tp_pos hD)
 
 
-theorem zmod6_sub_one_V : (0 : ZMod 6) - 1 = 5 ∧ (1 : ZMod 6) - 1 = 0 ∧ (2 : ZMod 6) - 1 = 1 ∧
-    (3 : ZMod 6) - 1 = 2 ∧ (4 : ZMod 6) - 1 = 3 ∧ (5 : ZMod 6) - 1 = 4 := by decide
-
 /-- Rim B: `a < 0, b > 0, c > 0, d < 0`, and `φ(0) < φ(3) ∨ φ(0) < φ(2)` (`φ(P) = A11 vx (x+y) + g vz z`). -/
 theorem v12_mB (hr : gA12 x = gA11 x) (hA : F.S.tp = F.S.sp) (hB : F.S.tm = F.S.sm) (k l : ℝ)
     (hk : 0 < k) (hl : 0 < l)
@@ -310,7 +305,7 @@ theorem v12_mB (hr : gA12 x = gA11 x) (hA : F.S.tp = F.S.sp) (hB : F.S.tm = F.S.
     rw [hP]
     exact v12_restB _ _ _ _ _ _ F.S.tp_pos F.S.tm_pos hk hl a1 a3 pa pc pb pd j' (v12_hjB j' hj') i
   · obtain ⟨b0, b1, b2, b3, b4⟩ := zmod5_add_one
-    obtain ⟨c0, c1, c2, c3, c4⟩ := zmod5_sub_one'
+    obtain ⟨c0, c1, c2, c3, c4⟩ := zmod5_sub_one
     intro i hi
     simp only [F.GG_u hr, GG_v F hr, hP]
     rcases zmod5_cases i with rfl | rfl | rfl | rfl | rfl
@@ -350,7 +345,7 @@ theorem v12_mC (hr : gA12 x = gA11 x) (hA : F.S.tp = F.S.sp) (hB : F.S.tm = F.S.
     rw [v12_hjC j' hj']
     exact v12_restC _ _ _ _ _ _ F.S.tp_pos F.S.tm_pos hk hl a1 a3 pa pc pb pd i
   · obtain ⟨b0, b1, b2, b3, b4, b5⟩ := zmod6_add_one
-    obtain ⟨c0, c1, c2, c3, c4, c5⟩ := zmod6_sub_one_V
+    obtain ⟨c0, c1, c2, c3, c4, c5⟩ := zmod6_sub_one
     intro i hi
     simp only [F.GG_u hr, GG_v F hr, hP]
     rcases zmod6_cases i with rfl | rfl | rfl | rfl | rfl | rfl
