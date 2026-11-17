@@ -231,6 +231,129 @@ theorem cornerLeaf_of_kernel {Y : Finset (Fin 3 → ℝ)} {k k' p q : ℕ} (hk :
 
 end Kernel
 
+
+section FacePair
+
+variable {Y : Finset (Fin 3 → ℝ)}
+
+theorem omega_smul_left (a : ℝ) (b x z : Fin 3 → ℝ) : omega (a • b) x z = a * omega b x z := by
+  simp only [omega, Matrix.det_fin_three]; simp; ring
+
+theorem omega_add_left (a b x z : Fin 3 → ℝ) : omega (a + b) x z = omega a x z + omega b x z := by
+  simp only [omega, Matrix.det_fin_three]; simp; ring
+
+/-- `closure (convSet y)` is closed under addition (`convSet` is an open convex cone). -/
+theorem closure_convSet_add {k : ℕ} (y : ZMod k → Fin 3 → ℝ) {u v : Fin 3 → ℝ}
+    (hu : u ∈ closure (convSet y)) (hv : v ∈ closure (convSet y)) : u + v ∈ closure (convSet y) := by
+  have hmem : (u, v) ∈ closure (convSet y ×ˢ convSet y) := by
+    rw [closure_prod_eq]; exact ⟨hu, hv⟩
+  have hc : Continuous fun z : (Fin 3 → ℝ) × (Fin 3 → ℝ) => z.1 + z.2 := by fun_prop
+  have h1 := image_closure_subset_closure_image hc ⟨_, hmem, rfl⟩
+  refine closure_mono ?_ h1
+  rintro _ ⟨⟨a, b⟩, ⟨ha, hb⟩, rfl⟩ i
+  show 0 < omega (a + b) _ _
+  rw [omega_add_left]
+  exact add_pos (ha i) (hb i)
+
+/-- `closure (convSet y)` is closed under nonnegative scaling. -/
+theorem closure_convSet_smul {k : ℕ} (y : ZMod k → Fin 3 → ℝ) {u : Fin 3 → ℝ} {c : ℝ} (hc : 0 ≤ c)
+    (hu : u ∈ closure (convSet y)) : c • u ∈ closure (convSet y) := by
+  have hmem : (c, u) ∈ closure (Set.Ioi (0 : ℝ) ×ˢ convSet y) := by
+    rw [closure_prod_eq, closure_Ioi]; exact ⟨hc, hu⟩
+  have hct : Continuous fun z : ℝ × (Fin 3 → ℝ) => z.1 • z.2 := by fun_prop
+  have h1 := image_closure_subset_closure_image hct ⟨_, hmem, rfl⟩
+  refine closure_mono ?_ h1
+  rintro _ ⟨⟨a, b⟩, ⟨ha, hb⟩, rfl⟩ i
+  have ha' : (0 : ℝ) < a := ha
+  show 0 < omega (a • b) _ _
+  rw [omega_smul_left]; exact mul_pos ha' (hb i)
+
+/-- The two-leaf certificate of Lemma E2: `(ρ, -(μρ + cρ'))` on rim `y` and `(ρ', ρ)` on rim `y'` have
+certificate matrix `μ ρ ρᵀ`. -/
+noncomputable def facePairLeaves {k k' : ℕ} (hk : 3 ≤ k) (hk' : 3 ≤ k')
+    (y : ZMod k → Fin 3 → ℝ) (y' : ZMod k' → Fin 3 → ℝ)
+    (hy : Function.Injective y) (hyY : ∀ j, y j ∈ Y)
+    (hy' : Function.Injective y') (hyY' : ∀ j, y' j ∈ Y)
+    (ρ ρ' : Fin 3 → ℝ) (μ c : ℝ) (hc : 0 ≤ c)
+    (hρ : ρ ∈ closure (cellSet Y y)) (hρ' : ρ' ∈ closure (cellSet Y y'))
+    (hσ : -(μ • ρ + c • ρ') ∈ closure (convSet y)) (hσ' : ρ ∈ closure (convSet y')) :
+    Fin 2 → EQLeaf Y :=
+  ![⟨k, hk, y, hy, hyY, ρ, -(μ • ρ + c • ρ'), hρ, hσ, 1, zero_le_one⟩,
+    ⟨k', hk', y', hy', hyY', ρ', ρ, hρ', hσ', c, hc⟩]
+
+theorem certMatrix_facePair {k k' : ℕ} (hk : 3 ≤ k) (hk' : 3 ≤ k')
+    (y : ZMod k → Fin 3 → ℝ) (y' : ZMod k' → Fin 3 → ℝ)
+    (hy : Function.Injective y) (hyY : ∀ j, y j ∈ Y)
+    (hy' : Function.Injective y') (hyY' : ∀ j, y' j ∈ Y)
+    (ρ ρ' : Fin 3 → ℝ) (μ c : ℝ) (hc : 0 ≤ c)
+    (hρ : ρ ∈ closure (cellSet Y y)) (hρ' : ρ' ∈ closure (cellSet Y y'))
+    (hσ : -(μ • ρ + c • ρ') ∈ closure (convSet y)) (hσ' : ρ ∈ closure (convSet y')) :
+    certMatrix (facePairLeaves hk hk' y y' hy hyY hy' hyY' ρ ρ' μ c hc hρ hρ' hσ hσ') =
+      μ • Matrix.vecMulVec ρ ρ := by
+  ext a b
+  simp only [certMatrix, facePairLeaves, Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.smul_apply, Matrix.vecMulVec_apply, Pi.neg_apply, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+  ring
+
+theorem facePair_psd {k k' : ℕ} (hk : 3 ≤ k) (hk' : 3 ≤ k')
+    (y : ZMod k → Fin 3 → ℝ) (y' : ZMod k' → Fin 3 → ℝ)
+    (hy : Function.Injective y) (hyY : ∀ j, y j ∈ Y)
+    (hy' : Function.Injective y') (hyY' : ∀ j, y' j ∈ Y)
+    (ρ ρ' : Fin 3 → ℝ) (μ c : ℝ) (hμ : 0 < μ) (hc : 0 ≤ c) (hρ0 : ρ ≠ 0)
+    (hρ : ρ ∈ closure (cellSet Y y)) (hρ' : ρ' ∈ closure (cellSet Y y'))
+    (hσ : -(μ • ρ + c • ρ') ∈ closure (convSet y)) (hσ' : ρ ∈ closure (convSet y')) :
+    (certMatrix (facePairLeaves hk hk' y y' hy hyY hy' hyY' ρ ρ' μ c hc hρ hρ' hσ hσ')).PosSemidef ∧
+    certMatrix (facePairLeaves hk hk' y y' hy hyY hy' hyY' ρ ρ' μ c hc hρ hρ' hσ hσ') ≠ 0 := by
+  rw [certMatrix_facePair]
+  refine ⟨?_, ?_⟩
+  · have := (Matrix.posSemidef_vecMulVec_self_star (R := ℝ) ρ)
+    simpa using this.smul hμ.le
+  · intro h
+    obtain ⟨i, hi⟩ : ∃ i, ρ i ≠ 0 := by
+      by_contra hh; push Not at hh; exact hρ0 (funext hh)
+    have := congrFun (congrFun h i) i
+    simp [Matrix.vecMulVec_apply] at this
+    rcases this with h | h
+    · exact hμ.ne' h
+    · exact hi h
+
+/-- **Lemma E2 (face-pair certificate).**  Rims `y`, `y'`, closed-cell points `ρ`, `ρ'`, with
+`-(μρ + cρ') ∈ cl Conv(y)` and `ρ ∈ cl Conv(y')` (`μ > 0`, `c ≥ 0`, `ρ ≠ 0`): Rupert for every `E` with
+`det E > 0`.  The two EQ pairs `(ρ, -(μρ + cρ'))`, `(ρ', ρ)` weighted `1`, `c` have certificate matrix
+`μ ρ ρᵀ`, PSD and nonzero.  Nothing beyond the section 7 signature is dropped: all hypotheses are used
+(`hc` for the weight `c`, `hρ'` for the second leaf's cell, `hμ`, `hρ0` for nonzero). -/
+theorem isRupert_of_face_pair {Y : Finset (Fin 3 → ℝ)} {k k' : ℕ} (hk : 3 ≤ k) (hk' : 3 ≤ k')
+    (y : ZMod k → Fin 3 → ℝ) (y' : ZMod k' → Fin 3 → ℝ)
+    (hy : Function.Injective y) (hyY : ∀ j, y j ∈ Y)
+    (hy' : Function.Injective y') (hyY' : ∀ j, y' j ∈ Y)
+    (ρ ρ' : Fin 3 → ℝ) (μ c : ℝ) (hμ : 0 < μ) (hc : 0 ≤ c) (hρ0 : ρ ≠ 0)
+    (hρ : ρ ∈ closure (cellSet Y y)) (hρ' : ρ' ∈ closure (cellSet Y y'))
+    (hσ : -(μ • ρ + c • ρ') ∈ closure (convSet y)) (hσ' : ρ ∈ closure (convSet y'))
+    (E : Matrix (Fin 3) (Fin 3) ℝ) (hE : 0 < E.det) : IsRupert (Y.image (emb E)) := by
+  obtain ⟨h1, h2⟩ := facePair_psd hk hk' y y' hy hyY hy' hyY' ρ ρ' μ c hμ hc hρ0 hρ hρ' hσ hσ'
+  exact isRupert_of_eq_cert_psd _ h1 h2 E hE
+
+/-- Corner-leaf form of `isRupert_of_face_pair`; additionally both rims avoid the apex `0 ∈ Y`. -/
+theorem cornerLeaf_of_face_pair {Y : Finset (Fin 3 → ℝ)} {k k' : ℕ} (hk : 3 ≤ k) (hk' : 3 ≤ k')
+    (y : ZMod k → Fin 3 → ℝ) (y' : ZMod k' → Fin 3 → ℝ)
+    (hy : Function.Injective y) (hyY : ∀ j, y j ∈ Y)
+    (hy' : Function.Injective y') (hyY' : ∀ j, y' j ∈ Y)
+    (hrim : ∀ j, y j ≠ 0) (hrim' : ∀ j, y' j ≠ 0)
+    (ρ ρ' : Fin 3 → ℝ) (μ c : ℝ) (hμ : 0 < μ) (hc : 0 ≤ c) (hρ0 : ρ ≠ 0)
+    (hρ : ρ ∈ closure (cellSet Y y)) (hρ' : ρ' ∈ closure (cellSet Y y'))
+    (hσ : -(μ • ρ + c • ρ') ∈ closure (convSet y)) (hσ' : ρ ∈ closure (convSet y'))
+    (E : Matrix (Fin 3) (Fin 3) ℝ) (hE : 0 < E.det)
+    (h0 : (0 : Fin 3 → ℝ) ∈ Y) (p : ℝ³) (z : Fin 3 → ℝ³) :
+    CornerLeaf ((Y.erase 0).image fun w => p + emb E w) z p := by
+  obtain ⟨h1, h2⟩ := facePair_psd hk hk' y y' hy hyY hy' hyY' ρ ρ' μ c hμ hc hρ0 hρ hρ' hσ hσ'
+  refine cornerLeaf_of_eq_cert_psd _ h1 h2 E hE h0 ?_ p z
+  intro i j
+  fin_cases i
+  · exact hrim j
+  · exact hrim' j
+
+end FacePair
+
 end
 
 end Minimality.CornerEQ
