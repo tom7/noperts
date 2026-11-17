@@ -85,7 +85,7 @@ theorem poly_rupert_H2 {a a' b b' c c' d x0 x0' y0 y0' : ℝ³} (N : Norm08 a a'
     rcases hy with ⟨h1, h2⟩ | ⟨h1, h2⟩
     · exact ⟨C0, β6 * ν + C0, Or.inl ⟨rfl, rfl⟩, by rw [h1, hc], by rw [h2, ha']⟩
     · exact ⟨β6 * ν + C0, C0, Or.inr ⟨rfl, rfl⟩, by rw [h1, ha'], by rw [h2, hc]⟩
-  have hzx0 : 0 ≤ zx := by rcases hzx with ⟨h, -⟩ | ⟨h, -⟩ <;> rw [h] <;> linarith
+  have hzx0 : 0 ≤ zx := by rcases hzx with ⟨h, -⟩ | ⟨h, -⟩ <;> (rw [h]; try linarith)
   have hzxne : zx' ≠ zx := by
     rcases hzx with ⟨h, h'⟩ | ⟨h, h'⟩ <;> rw [h, h'] <;> intro e <;> linarith
   have hzyne : zy' ≠ zy := by
