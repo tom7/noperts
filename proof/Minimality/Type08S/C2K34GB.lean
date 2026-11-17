@@ -66,7 +66,7 @@ theorem k32g_hE {a a' b b' c c' d : ℝ³} {α1 β1 γ6 : ℝ}
     nlinarith [mul_pos (sub_pos.2 hβ1) hD]
   have em1 : ⟪c' - a', P⟫ = α1 * ⟪P, P⟫ + (β1 - 1 - γ6) * ⟪P, Q⟫ := by
     rw [e1]
-    simp only [inner_smul_left, inner_sub_left, inner_add_left, conj_trivial, hPR, hRP, hPQ] <;> ring
+    simp only [inner_smul_left, inner_sub_left, inner_add_left, conj_trivial, hPR, hRP, hPQ]; ring
   have em3 : ⟪c' - a', R⟫ = α1 * ⟪P, Q⟫ + (β1 - 1) * ⟪Q, R⟫ - γ6 * ⟪R, R⟫ := by
     rw [e1]
     simp only [inner_smul_left, inner_sub_left, inner_add_left, conj_trivial, hPR, hRP, hPQ, hRQ] 
