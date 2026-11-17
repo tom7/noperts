@@ -37,6 +37,7 @@ public import Minimality.Type24SAT.K24.Wire24Zero
 public import Minimality.Type24SAT.K24.Wire24Res
 public import Minimality.Type24Z0
 public import Minimality.Type24NC
+public import Minimality.Type24Adj
 public import Minimality.SilS0XD
 public import Minimality.Type20IMA
 public import Minimality.Type20IV
@@ -1118,10 +1119,10 @@ theorem anySevenVertexNopertIsSimplicial : AnySevenVertexNopertIsSimplicial := b
     obtain ⟨fG, hfG⟩ := hR {0, 3, 4, 5} (by decide)
     obtain ⟨fH, hfH⟩ := hR {2, 3, 5} (by decide)
     obtain ⟨fI, hfI⟩ := hR {3, 4, 6} (by decide)
-    rcases Minimality.T24.NC.rupert_or_resid24_noFacetCell_noNC fA fB fC fD fE fF fG fH fI hfA hfB hfC hfD hfE hfF hfG hfH hfI with
-      hRup | ⟨hres, hz, hT0, hNC⟩
+    rcases Minimality.T24.Adj.rupert_or_resid24_noFacetCell_noNC_noAdj fA fB fC fD fE fF fG fH fI hfA hfB hfC hfD hfE hfF hfG hfH hfI with
+      hRup | ⟨hres, hz, hT0, hNC, hAdj⟩
     · exact hnR hRup
-    -- `hz`: no facet cell; `hT0`: no 3-rim cell of the six other vertices over the apex cone (Root T0); `hNC`: Lemma NC fails (`Minimality.T24.NC.T024`, `NC24`)
+    -- `hz`: no facet cell; `hT0`: no 3-rim cell of the six other vertices over the apex cone (Root T0); `hNC`: Lemma NC fails (`Minimality.T24.NC.T024`, `NC24`); `hAdj`: no Kernel-Lemma adjacency star 2 | edge 24 or star 0 | edge 05 (`Minimality.T24.Adj.Adj24`)
     -- the sorry: type 24 inside C̄ = {ω3, ω4, ω5 > 0, Δ ≥ 0} (open), or in Σ_B without a free side
     -- crossing, and in `Resid24` (`hres`): on the obtuse corner `OB1`, or the class `mpppz` (`ZRes24`, the zero-bracket classes being wired in `Wire24Zero`),
     -- or the class is `mpppp` or `mpppm`
